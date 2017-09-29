@@ -1,0 +1,213 @@
+#pragma once
+
+// viewdata.h : header file
+//
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+#include "RulerBar.h"
+#include "ScrollBarEx.h"
+#include "dbWave_constants.h"
+
+class CdbWaveCntrItem;
+class CdbMainTable;
+
+/////////////////////////////////////////////////////////////////////////////
+class CDataView : public CDaoRecordView
+{
+protected:
+	DECLARE_DYNCREATE(CDataView)
+	CDataView();					// protected constructor used by dynamic creation
+
+// Form Data
+public:	
+	enum { IDD = IDD_VIEWDATA };
+	
+	int		m_ichanselected;
+	float	m_v1;
+	float	m_v2;
+	float	m_diff;	
+	float	m_timefirst;
+	float	m_timelast;
+	float	m_yupper;
+	float	m_ylower;
+
+	// subclassed controls within CDaoRecordView
+	CLineViewWnd	m_VDlineview;		// data display
+	CEditCtrl	mm_ichanselected;	// current selected channel
+	float		m_floatNDigits; 	// 10(000) -> n digits displayed
+	CEditCtrl	mm_v1;				// first HZ cursor
+	CEditCtrl	mm_v2;				// second HZ cursor
+	CEditCtrl	mm_diff;			// difference v1-v2
+	CEditCtrl	mm_timefirst;		// first abcissa value
+	CEditCtrl	mm_timelast;		// last abcissa value
+	CEditCtrl	mm_yupper;
+	CEditCtrl	mm_ylower;
+
+	BOOL		m_bInitComment;	
+	CdbWaveDoc*	GetDocument();
+	
+protected:	
+	// parameters related to data display and to document	
+	CAcqDataDoc* m_pdatDoc;			// document pointer
+	BOOL	m_bvalidDoc;
+	float	m_samplingRate;
+	int 	m_cursorstate;			// lineview cursor 
+	int		m_VBarpixelratio;		// vertical bar pixel ratio
+	int		m_HBarpixelratio;		// horizontal bar pixel ratio
+	int		m_currentfileindex;
+
+	HICON	m_hBias;
+	HICON	m_hZoom;
+	int		scan_count;
+	float	chrate;
+	
+////////////////////////////////////////////////////////////////////////////////
+// VIEWPRNT.CPP: print view
+protected:
+	CRect 	m_Margin;				// margins (pixels)
+	int		m_file0;				// current file
+	long	m_lFirst0;
+	long	m_lLast0;
+	int		m_npixels0;
+		
+	int		m_nfiles;				// nb of files in doc
+	int 	m_nbrowsperpage;		// USER: nb files/page
+	long 	m_lprintFirst;			// file index of first pt
+	long 	m_lprintLen;			// nb pts per line
+	float 	m_printFirst;
+	float 	m_printLast;
+	BOOL	m_bIsPrinting;
+
+	// specific printer parameters
+	TEXTMETRIC m_tMetric;			// onbegin/onendPrinting
+	LOGFONT	m_logFont;				// onbegin/onendPrinting
+	CFont*	m_pOldFont;				// onbegin/onendPrinting
+	CFont	m_fontPrint;			// onbegin/onendPrinting    
+
+	// page format printing parameters (pixel unit)    
+	CRect						m_printRect;
+	OPTIONS_VIEWDATA*			mdPM;		// view data options
+	OPTIONS_VIEWDATAMEASURE*	mdMO;		// measure options
+
+protected:
+	void 	PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);	
+	CString ConvertFileIndex(long lFirst, long lLast);
+	void 	ComputePrinterPageSize();
+	CString GetFileInfos();
+	CString PrintBars(CDC* pDC, CRect* rect);
+	BOOL	GetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst);
+	BOOL	PrintGetNextRow(int &filenumber, long &lFirst, long &verylast);
+	void	SaveModifiedFile();
+	void	UpdateFileParameters(BOOL bUpdateInterface=TRUE);	
+	void	UpdateChannelsDisplayParameters();
+	void	ChainDialog(WORD iID);
+	int		PrintGetNPages();	
+		
+////////////////////////////////////////////////////////////////////////////////
+// VIEWCTRL.CPP: manipulate controls position, size
+protected:
+	CStretchControl m_stretch;			// properties for controls
+	BOOL			m_binit;
+
+////////////////////////////////////////////////////////////////////////////////
+// VIEWSCRO.CPP: manipulate scroll bars, pos, and corresp commands
+//public:
+protected:
+	CScrollBarEx	m_filescroll;		// data position within file
+	SCROLLINFO		m_filescroll_infos;	// infos for scrollbar
+
+protected:
+	int				m_VBarMode;			// flag V scrollbar state
+	CScrollBar 		m_scrolly;			// V scrollbar
+
+protected:
+	void OnFileScroll(UINT nSBCode, UINT nPos);
+	void OnGainScroll(UINT nSBCode, UINT nPos);
+	void OnBiasScroll(UINT nSBCode, UINT nPos);
+	void UpdateGainScroll();
+	void UpdateBiasScroll();
+	void SetVBarMode(short bMode);
+	void UpdateFileScroll();
+
+////////////////////////////////////////////////////////////////////////////////
+// conversions Helper functions
+protected:
+	void MeasureProperties(int item);
+	
+// Operations on FormView
+// public interface to viewdata
+public:
+
+	// Overrides
+public:
+	virtual CDaoRecordset* OnGetRecordset();
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual BOOL OnMove(UINT nIDMoveCommand);
+protected:
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);   	
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void OnInitialUpdate(); // called first time after construct
+	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
+	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
+
+// Implementation
+public:
+	virtual ~CDataView();
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+
+protected:
+	void  UpdateLegends(int operation);
+	void  UpdateHZtagsVal();
+	void  SetCursorAssociatedWindows();
+
+	// Generated message map functions
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnClickedBias();
+	afx_msg void OnClickedGain();
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnFormatXscale();
+	afx_msg void OnFormatYscale();
+	afx_msg void OnEnChangeChannel();
+	afx_msg void OnEditCopy();
+	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI);
+	afx_msg void OnToolsDataseries();
+	afx_msg void OnHardwareAdchannels();
+	afx_msg void OnHardwareAdintervals();
+	afx_msg void OnCenterCurve();
+	afx_msg void OnGainAdjustCurve();
+	afx_msg void OnSplitCurves();
+	afx_msg void OnFirstFrame();
+	afx_msg void OnLastFrame();
+	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnViewAlldata();
+	afx_msg void OnFormatDataseriesattributes();
+	afx_msg void OnToolsMeasuremode();
+	afx_msg void OnToolsMeasure();
+	afx_msg void OnToolsVerticaltags();
+	afx_msg void OnToolsHorizontalcursors();
+	afx_msg void OnUpdateToolsHorizontalcursors(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateToolsVerticaltags(CCmdUI* pCmdUI);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnDestroy();
+	afx_msg void OnHardwareDefineexperiment();
+	afx_msg void OnEnChangeTimefirst();
+	afx_msg void OnEnChangeTimelast();
+public:
+	afx_msg void OnEnChangeYlower();
+	afx_msg void OnEnChangeYupper();
+	DECLARE_MESSAGE_MAP()
+};
+
+#ifndef _DEBUG  // debug version in dataView.cpp
+inline CdbWaveDoc* CDataView::GetDocument()
+   { return (CdbWaveDoc*)m_pDocument; }
+#endif
+

@@ -1,0 +1,5 @@
+// Microsoft Visual C++ generated Help ID include file.
+// Used by dbWave.rc
+//
+#define HIDC_RADIO1                     0x821a020a    // IDD_DBUPDATELINKEDTABLE [English (United States)]
+#define HIDC_RADIO2                     0x80e3020b    // IDD_BROWSEFILE_DETECT [English (United States)]

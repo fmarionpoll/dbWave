@@ -1,0 +1,496 @@
+[OPTIONS]
+Auto Index=Yes
+Compatibility=1.1 or later
+Compiled file=dbWave2.chm
+Contents file=dbWave2.hhc
+Default Font=Calibri,8,0
+Default topic=main_index.htm
+Display compile progress=No
+Error log file=log1.log
+Full-text search=Yes
+Index file=dbWave2.hhk
+Language=0x409 English (United States)
+Title=dbWave help
+
+
+[FILES]
+afx_hidd_color.htm
+afx_hidd_fileopen.htm
+afx_hidd_filesave.htm
+afx_hidd_find.htm
+afx_hidd_font.htm
+afx_hidd_replace.htm
+afx_hidp_default.htm
+afx_hidw_dockbar_top.htm
+afx_hidw_status_bar.htm
+afx_hidw_toolbar.htm
+hidr_dbdatatype.htm
+hidr_dbspiketype.htm
+hidr_dbwavetype.htm
+hidr_mainframe.htm
+hidr_projecttype.htm
+hid_app_about.htm
+hid_app_exit.htm
+hid_context_help.htm
+hid_edit_copy.htm
+hid_edit_paste.htm
+hid_file_mru_file1.htm
+hid_help_index.htm
+hid_help_using.htm
+hid_ht_caption.htm
+hid_ht_nowhere.htm
+hid_next_pane.htm
+hid_prev_pane.htm
+hid_sc_close.htm
+hid_sc_maximize.htm
+hid_sc_minimize.htm
+hid_sc_move.htm
+hid_sc_nextwindow.htm
+hid_sc_prevwindow.htm
+hid_sc_restore.htm
+hid_sc_size.htm
+hid_sc_tasklist.htm
+hid_view_ruler.htm
+hid_view_status_bar.htm
+hid_view_toolbar.htm
+hid_window_all.htm
+hid_window_arrange.htm
+hid_window_cascade.htm
+hid_window_new.htm
+hid_window_split.htm
+hid_window_tile.htm
+hid_window_tile_horz.htm
+hid_window_tile_vert.htm
+main_index.htm
+menu_edit.htm
+menu_file.htm
+menu_help.htm
+menu_view.htm
+menu_window.htm
+scrollbars.htm
+HIDD_ABCISSA.htm
+HIDD_AD_EXPERIMENT.htm
+HIDD_AD_INPUTPARMSDLG.htm
+HIDD_AD_INTERVALS.htm
+HIDD_BROWSEFILE.htm
+HIDD_BROWSEFILE_DETECT.htm
+HIDD_CONFIRMDIALOG.htm
+HIDD_COPYAS.htm
+HIDD_DA_CHANNELS.htm
+HIDD_DA_MSEQ.htm
+HIDD_DA_NOISE.htm
+HIDD_DA_PARAMETERS.htm
+HIDD_DATACOMMENTS.htm
+HIDD_DATASERIES.htm
+HIDD_DATASERIESFORMAT.htm
+HIDD_DBREPLACETEXT.htm
+HIDD_DBUPDATELINKEDTABLE.htm
+HIDD_DEFINEARTEFACTSLIMITS.htm
+HIDD_DELRECORDOPTIONS.htm
+HIDD_DUPLICATEFOUND.htm
+HIDD_EDITLISTDLG.htm
+HIDD_EDITRECORDDLG.htm
+HIDD_EDITSPIKE.htm
+HIDD_EDITSPIKECLASS.htm
+HIDD_EDITSTIMULUS.htm
+HIDD_ERASEFILEDLG.htm
+HIDD_EXPORTDATAFILE.htm
+HIDD_EXPORTSPIKEINFOS.htm
+HIDD_FINDFILES.htm
+HIDD_GOTORECORDID.htm
+HIDD_HIISTOGRAMPARAMETERS.htm
+HIDD_IMPORTFILESDLG.htm
+HIDD_IMPORTGENERICDATAFILE.htm
+HIDD_IMPORTOPTIONS.htm
+HIDD_LISTBCLAPARAMETERS.htm
+HIDD_LOADSAVEOPTIONS.htm
+HIDD_ORDINATES.htm
+HIDD_PRINTDATACOMMENTSOPTIONS.htm
+HIDD_PRINTDATADRAWOPTIONS.htm
+HIDD_PRINTDRAWAREA.htm
+HIDD_PRINTMARGINS.htm
+HIDD_PRINTPAGEMARGINS.htm
+HIDD_PROGRESS.htm
+HIDD_PROPPAGE1.htm
+HIDD_PROPPAGE2.htm
+HIDD_PROPPAGE3.htm
+HIDD_PROPPAGE4.htm
+HIDD_SCOPEPROPERTIES.htm
+HIDD_SPKDETECTPARM.htm
+HIDD_STATICLEFT.htm
+HIDD_STATICLEFT2.htm
+HIDD_STATICRIGHT2.htm
+HIDD_VIEWADCONTINUOUS.htm
+HIDD_VIEWBROWSE.htm
+HIDD_VIEWDATA.htm
+HIDD_VIEWDBWAVE.htm
+HIDD_VIEWPANELEFT1.htm
+HIDD_VIEWSPIKES.htm
+HIDD_VIEWSPKDETECTION.htm
+HIDD_VIEWSPKSORT1.htm
+HIDD_VIEWSPKTEMPLATES.htm
+HIDD_VIEWSPKTIMESERIES.htm
+HIDD_XYPARAMETERS.htm
+content_1_what_is_it_about.htm
+content_1_1datatranslation.htm
+content_1_2eventsdetection.htm
+content_1_3recordsignals.htm
+content_2_how_to.htm
+content_2_0installdbwave.htm
+content_2_1startfromscratch.htm
+content_2_1startfromscratch_1.htm
+content_2_1startfromscratch_2.htm
+content_2_1startfromscratch_3.htm
+content_2_1startfromscratch_4.htm
+content_2_1startfromscratch_5.htm
+content_2_1startfromscratch_6.htm
+content_2_1startfromscratch_7.htm
+content_2_2acquire_data.htm
+content_2_3import_data.htm
+content_2_4detectspikes.htm
+content_2_5sortspikes_by_amplitude.htm
+content_2_6sortmanually.htm
+content_2_7exportspikes.htm
+content_3_basic_concepts.htm
+content_3_1datafile.htm
+content_3_2spikefiles.htm
+content_3_3database_mdb.htm
+content_3_4projectfile.htm
+content_3_5parameterfile.htm
+content_4_dbWave reference.htm
+hid_file_new.htm
+hid_file_open.htm
+hid_file_close.htm
+hid_file_save.htm
+hid_file_save_as.htm
+hid_file_print.htm
+hid_file_print_preview.htm
+hid_file_print_setup.htm
+hid_record_first.htm
+hid_record_prev.htm
+hid_record_next.htm
+hid_record_last.htm
+hid_record_delete.htm
+hid_view_cursormode_normal.htm
+hid_view_cursormode_zoomin.htm
+hid_view_cursormode_measure.htm
+hid_view_database.htm
+hid_view_datafile.htm
+hid_view_spikedetection.htm
+hid_view_spikedisplay.htm
+hid_view_spikesortingamplitude.htm
+hid_view_spikesortingtemplates.htm
+hid_view_spikestimeseries.htm
+hid_view_acquiredata.htm
+hid_format_xscale.htm
+hid_format_firstframe.htm
+hid_format_lastframe.htm
+hid_format_alldata.htm
+hid_format_ordinates.htm
+hid_format_centercurve.htm
+hid_format_gainadjust.htm
+hid_format_splitcurves.htm
+hid_format_dataseriesattributes.htm
+hid_format_copysettingstoall.htm
+hid_hardware_adchannels.htm
+hid_hardware_intervals.htm
+hid_hardware_defineexperiment.htm
+hid_tools_dataseries.htm
+hid_tools_exportdatacomments.htm
+hid_tools_exportnumberofspikes.htm
+hid_tools_exportdatafile.htm
+hid_tools_exportdataastext.htm
+hid_tools_detectionoption.htm
+hid_tools_detectionparameters.htm
+hid_tools_stimulusdetectionparameters.htm
+hid_tools_detectspikes.htm
+hid_tools_edittransformspikes.htm
+hid_tools_editstimulus.htm
+hid_tools_measuremode.htm
+hid_tools_verticaltags.htm
+hid_tools_horizontalcursors.htm
+hid_options_browsemode.htm
+hid_options_printmargins.htm
+hid_options_loadsave.htm
+hidd_file_new.htm
+images\About_dbWave.jpg
+images\dbwave.jpg
+images\dlg_newfile.jpg
+images\file_open.jpg
+images\idd_file_new.jpg
+images\idr_mainframe.jpg
+images\installdbwave_dtopenlayers.jpg
+images\installdbwave_files0.jpg
+images\installdbwave_menu.jpg
+images\onstart.jpg
+images\scratch_acquisition.jpg
+images\scratch_amplifiersettings.jpg
+images\scratch_band2.jpg
+images\scratch_samplingmode.jpg
+images\scratch_savefileas.jpg
+images\scratch_screeen0.jpg
+images\scratch_screen1.jpg
+images\scratch_upperpanel.jpg
+images\scratch_validate_record.jpg
+images\scratch_voila.jpg
+images\screen10.jpg
+images\screen11.jpg
+images\screen12.jpg
+images\screen13.jpg
+images\screen14.jpg
+images\screen15.jpg
+images\screen16.jpg
+images\screen5.jpg
+images\screen6.jpg
+images\screen7.jpg
+images\screen8.jpg
+images\screen9.jpg
+Images/bar_formatcurves_centercurve.jpg
+Images\bar_formatcurves_alldata.jpg
+Images\bar_formatcurves_splitcurves.jpg
+Images/bar_formatcurves_gainadjust.jpg
+Images/bar_formatcurves_measurecursor.jpg
+Images/bar_formatcurves_arrowcursor.jpg
+Images/viewicons_database.jpg
+Images/viewicons_dataview.jpg
+Images/viewicons_detectspikes.jpg
+Images/viewicons_viewspikes.jpg
+Images/viewicons_sortspikes.jpg
+Images/viewicons_templates.jpg
+Images/viewicons_timeseries.jpg
+Images/viewicons_record.jpg
+Images/project_file.jpg
+hid_tools_transferfiles.htm
+hidd_transferfiles.htm
+Images/hidd_transferfiles.jpg
+Images/hidd_transferfiles2.jpg
+Images/hidd_transferfiles1.jpg
+Images/file_exportdata.jpg
+Images/file_exportdata1.jpg
+
+[ALIAS]
+hidd_transferfiles = hidd_transferfiles.htm
+hid_tools_transferfiles = hid_tools_transferfiles.htm
+hidd_file_new1 = hidd_file_new.htm
+hid_tools_detectionoption = hid_tools_detectionoption.htm
+hid_tools_detectionparameters = hid_tools_detectionparameters.htm
+hid_tools_stimulusdetectionparameters = hid_tools_stimulusdetectionparameters.htm
+hid_tools_detectspikes = hid_tools_detectspikes.htm
+hid_tools_edittransformspikes = hid_tools_edittransformspikes.htm
+hid_tools_editstimulus = hid_tools_editstimulus.htm
+hid_tools_measuremode = hid_tools_measuremode.htm
+hid_tools_verticaltags = hid_tools_verticaltags.htm
+hid_tools_horizontalcursors = hid_tools_horizontalcursors.htm
+hid_options_browsemode = hid_options_browsemode.htm
+hid_options_printmargins = hid_options_printmargins.htm
+hid_options_loadsave = hid_options_loadsave.htm
+hid_tools_exportdatafile = hid_tools_exportdatafile.htm
+hid_tools_exportdataastext = hid_tools_exportdataastext.htm
+hid_tools_exportnumberofspikes = hid_tools_exportnumberofspikes.htm
+hid_tools_exportdatacomments = hid_tools_exportdatacomments.htm
+hid_tools_dataseries = hid_tools_dataseries.htm
+hid_hardware_defineexperiment = hid_hardware_defineexperiment.htm
+hid_hardware_intervals = hid_hardware_intervals.htm
+hid_hardware_adchannels = hid_hardware_adchannels.htm
+hid_format_copysettingstoall = hid_format_copysettingstoall.htm
+hid_format_dataseriesattributes = hid_format_dataseriesattributes.htm
+hid_format_splitcurves = hid_format_splitcurves.htm
+hid_format_gainadjust = hid_format_gainadjust.htm
+hid_format_centercurve = hid_format_centercurve.htm
+hid_format_ordinates = hid_format_ordinates.htm
+hid_format_alldata = hid_format_alldata.htm
+hid_format_lastframe = hid_format_lastframe.htm
+hid_format_firstframe = hid_format_firstframe.htm
+hid_format_xscale = hid_format_xscale.htm
+hid_view_acquiredata = hid_view_acquiredata.htm
+hid_view_spikestimeseries = hid_view_spikestimeseries.htm
+hid_view_spikesortingtemplates = hid_view_spikesortingtemplates.htm
+hid_view_spikesortingamplitude = hid_view_spikesortingamplitude.htm
+hid_view_spikedisplay = hid_view_spikedisplay.htm
+hid_view_spikedetection = hid_view_spikedetection.htm
+hid_view_datafile = hid_view_datafile.htm
+hid_view_database = hid_view_database.htm
+hid_view_cursormode_measure = hid_view_cursormode_measure.htm
+hid_view_cursormode_zoomin = hid_view_cursormode_zoomin.htm
+hid_view_cursormode_normal = hid_view_cursormode_normal.htm
+hid_record_delete = hid_record_delete.htm
+hid_record_last = hid_record_last.htm
+hid_record_next = hid_record_next.htm
+hid_record_prev = hid_record_prev.htm
+hid_record_first = hid_record_first.htm
+hid_file_print_setup = hid_file_print_setup.htm
+hid_file_print_preview = hid_file_print_preview.htm
+hid_file_print = hid_file_print.htm
+hid_file_save_as = hid_file_save_as.htm
+hid_file_save = hid_file_save.htm
+hid_file_close = hid_file_close.htm
+hid_file_open = hid_file_open.htm
+hid_file_new						= hid_file_new.htm
+HIDR_DBDATATYPE						= hidr_dbdatatype.htm
+HIDR_DBSPIKETYPE					= hidr_dbspiketype.htm
+HIDR_DBWAVETYPE						= hidr_dbwavetype.htm
+HIDR_MAINFRAME						= hidr_mainframe.htm
+HIDR_PROJECTTYPE					= hidr_projecttype.htm
+HIDD_ABCISSA					= HIDD_ABCISSA.htm
+HIDD_AD_EXPERIMENT				= HIDD_AD_EXPERIMENT.htm
+HIDD_AD_INPUTPARMSDLG			= HIDD_AD_INPUTPARMSDLG.htm
+HIDD_AD_INTERVALS				= HIDD_AD_INTERVALS.htm
+HIDD_BROWSEFILE					= HIDD_BROWSEFILE.htm
+HIDD_BROWSEFILE_DETECT			= HIDD_BROWSEFILE_DETECT.htm
+afx_hidd_color						= afx_hidd_color.htm
+HIDD_CONFIRMDIALOG				= HIDD_CONFIRMDIALOG.htm
+HIDD_COPYAS						= HIDD_COPYAS.htm
+HIDD_DA_CHANNELS				= HIDD_DA_CHANNELS.htm
+HIDD_DA_MSEQ					= HIDD_DA_MSEQ.htm
+HIDD_DA_NOISE					= HIDD_DA_NOISE.htm
+HIDD_DA_PARAMETERS				= HIDD_DA_PARAMETERS.htm
+HIDD_DATACOMMENTS				= HIDD_DATACOMMENTS.htm
+HIDD_DATASERIES					= HIDD_DATASERIES.htm
+HIDD_DATASERIESFORMAT			= HIDD_DATASERIESFORMAT.htm
+HIDD_DBREPLACETEXT				= HIDD_DBREPLACETEXT.htm
+HIDD_DBUPDATELINKEDTABLE		= HIDD_DBUPDATELINKEDTABLE.htm
+HIDD_DEFINEARTEFACTSLIMITS		= HIDD_DEFINEARTEFACTSLIMITS.htm
+HIDD_DELRECORDOPTIONS			= HIDD_DELRECORDOPTIONS.htm
+HIDD_DUPLICATEFOUND				= HIDD_DUPLICATEFOUND.htm
+HIDD_EDITLISTDLG				= HIDD_EDITLISTDLG.htm
+HIDD_EDITRECORDDLG				= HIDD_EDITRECORDDLG.htm
+HIDD_EDITSPIKE					= HIDD_EDITSPIKE.htm
+HIDD_EDITSPIKECLASS				= HIDD_EDITSPIKECLASS.htm
+HIDD_EDITSTIMULUS				= HIDD_EDITSTIMULUS.htm
+HIDD_ERASEFILEDLG				= HIDD_ERASEFILEDLG.htm
+HIDD_EXPORTDATAFILE				= HIDD_EXPORTDATAFILE.htm
+HIDD_EXPORTSPIKEINFOS			= HIDD_EXPORTSPIKEINFOS.htm
+afx_hidd_fileopen					= afx_hidd_fileopen.htm
+afx_hidd_filesave					= afx_hidd_filesave.htm
+afx_hidd_find						= afx_hidd_find.htm
+HIDD_FINDFILES					= HIDD_FINDFILES.htm
+afx_hidd_font						= afx_hidd_font.htm
+HIDD_GOTORECORDID				= HIDD_GOTORECORDID.htm
+HIDD_HIISTOGRAMPARAMETERS		= HIDD_HIISTOGRAMPARAMETERS.htm
+HIDD_IMPORTFILESDLG				= HIDD_IMPORTFILESDLG.htm
+HIDD_IMPORTGENERICDATAFILE		= HIDD_IMPORTGENERICDATAFILE.htm
+HIDD_IMPORTOPTIONS				= HIDD_IMPORTOPTIONS.htm
+HIDD_LISTBCLAPARAMETERS			= HIDD_LISTBCLAPARAMETERS.htm
+HIDD_LOADSAVEOPTIONS			= HIDD_LOADSAVEOPTIONS.htm
+HIDD_ORDINATES					= HIDD_ORDINATES.htm
+HIDD_PRINTDATACOMMENTSOPTIONS	= HIDD_PRINTDATACOMMENTSOPTIONS.htm
+HIDD_PRINTDATADRAWOPTIONS		= HIDD_PRINTDATADRAWOPTIONS.htm
+HIDD_PRINTDRAWAREA				= HIDD_PRINTDRAWAREA.htm
+HIDD_PRINTMARGINS				= HIDD_PRINTMARGINS.htm
+HIDD_PRINTPAGEMARGINS			= HIDD_PRINTPAGEMARGINS.htm
+HIDD_PROGRESS					= HIDD_PROGRESS.htm
+HIDD_PROPPAGE1					= HIDD_PROPPAGE1.htm
+HIDD_PROPPAGE2					= HIDD_PROPPAGE2.htm
+HIDD_PROPPAGE3					= HIDD_PROPPAGE3.htm
+HIDD_PROPPAGE4					= HIDD_PROPPAGE4.htm
+afx_hidd_replace					= afx_hidd_replace.htm
+HIDD_SCOPEPROPERTIES			= HIDD_SCOPEPROPERTIES.htm
+HIDD_SPKDETECTPARM				= HIDD_SPKDETECTPARM.htm
+HIDD_STATICLEFT					= HIDD_STATICLEFT.htm
+HIDD_STATICLEFT2				= HIDD_STATICLEFT2.htm
+HIDD_STATICRIGHT2				= HIDD_STATICRIGHT2.htm
+HIDD_VIEWADCONTINUOUS			= HIDD_VIEWADCONTINUOUS.htm
+HIDD_VIEWBROWSE					= HIDD_VIEWBROWSE.htm
+HIDD_VIEWDATA					= HIDD_VIEWDATA.htm
+HIDD_VIEWDBWAVE					= HIDD_VIEWDBWAVE.htm
+HIDD_VIEWPANELEFT1				= HIDD_VIEWPANELEFT1.htm
+HIDD_VIEWSPIKES					= HIDD_VIEWSPIKES.htm
+HIDD_VIEWSPKDETECTION			= HIDD_VIEWSPKDETECTION.htm
+HIDD_VIEWSPKSORT1				= HIDD_VIEWSPKSORT1.htm
+HIDD_VIEWSPKTEMPLATES			= HIDD_VIEWSPKTEMPLATES.htm
+HIDD_VIEWSPKTIMESERIES			= HIDD_VIEWSPKTIMESERIES.htm
+HIDD_XYPARAMETERS				= HIDD_XYPARAMETERS.htm
+AFX_HIDP_ASK_TO_SAVE				= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_ASK_TO_UPDATE				= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_BAD_VERB					= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_COMMAND_FAILURE			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_DEFAULT					= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_ACCESS_READ			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_ACCESS_WRITE		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_DISK_FULL			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_INVALID_FORMAT		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_INVALID_PATH		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_IO_ERROR_READ		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_IO_ERROR_WRITE		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_MEMORY_ALLOC		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_AUTO_REGISTER	= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_CONNECT			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_CREATE_DOC		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_LAUNCH			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_LAUNCH_HELP		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_NOTIFY			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_OPEN_DOC			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_REGISTER			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_SAVE_DOC			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_START_PRINT		= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FAILED_TO_UPDATE			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_FILE_TOO_LARGE				= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_INTERNAL_FAILURE			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_INVALID_FILENAME			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_PARSE_INT					= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_PARSE_INT_RANGE			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_PARSE_REAL					= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_PARSE_REAL_RANGE			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_PARSE_STRING_SIZE			= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_SERVER_BUSY				= AFX_HIDP_DEFAULT.htm
+AFX_HIDP_STATIC_OBJECT				= AFX_HIDP_DEFAULT.htm
+AFX_HIDW_DOCKBAR_BOTTOM				= AFX_HIDW_DOCKBAR_TOP.HTM ; Same topic, 4 different possible hit tests
+AFX_HIDW_DOCKBAR_LEFT				= AFX_HIDW_DOCKBAR_TOP.HTM ; Same topic, 4 different possible hit tests
+AFX_HIDW_DOCKBAR_RIGHT				= AFX_HIDW_DOCKBAR_TOP.HTM ; Same topic, 4 different possible hit tests
+afx_hidw_dockbar_top				= afx_hidw_dockbar_top.htm
+afx_hidw_status_bar					= afx_hidw_status_bar.htm
+afx_hidw_toolbar					= afx_hidw_toolbar.htm
+hid_app_about						= hid_app_about.htm
+HIDD_ABOUTBOX						= HID_APP_ABOUT.htm
+hid_app_exit						= hid_app_exit.htm
+hid_context_help					= hid_context_help.htm
+hid_edit_copy						= hid_edit_copy.htm
+hid_edit_paste						= hid_edit_paste.htm
+hid_file_mru_file1					= hid_file_mru_file1.htm
+hid_help_index						= hid_help_index.htm
+hid_help_using						= hid_help_using.htm
+hid_ht_caption						= hid_ht_caption.htm
+HID_HT_HSCROLL						= scrollbars.htm
+HID_HT_MAXBUTTON					= HID_SC_MAXIMIZE.htm
+HID_HT_MINBUTTON					= HID_SC_MINIMIZE.htm
+hid_ht_nowhere						= hid_ht_nowhere.htm
+HID_HT_SIZE							= HID_SC_SIZE.htm
+HID_HT_VSCROLL						= scrollbars.htm
+hid_next_pane						= hid_next_pane.htm
+hid_prev_pane						= hid_prev_pane.htm
+hid_sc_close						= hid_sc_close.htm
+hid_sc_maximize						= hid_sc_maximize.htm
+hid_sc_minimize						= hid_sc_minimize.htm
+hid_sc_move							= hid_sc_move.htm
+hid_sc_nextwindow					= hid_sc_nextwindow.htm
+hid_sc_prevwindow					= hid_sc_prevwindow.htm
+hid_sc_restore						= hid_sc_restore.htm
+hid_sc_size							= hid_sc_size.htm
+hid_sc_tasklist						= hid_sc_tasklist.htm
+hid_view_ruler						= hid_view_ruler.htm
+hid_view_status_bar					= hid_view_status_bar.htm
+hid_view_toolbar					= hid_view_toolbar.htm
+hid_window_all						= hid_window_all.htm
+hid_window_arrange					= hid_window_arrange.htm
+hid_window_cascade					= hid_window_cascade.htm
+hid_window_new						= hid_window_new.htm
+hid_window_split					= hid_window_split.htm
+hid_window_tile						= hid_window_tile.htm
+hid_window_tile_horz				= hid_window_tile_horz.htm
+hid_window_tile_vert				= hid_window_tile_vert.htm
+main_index							= main_index.htm
+menu_edit							= menu_edit.htm
+menu_file							= menu_file.htm
+menu_help							= menu_help.htm
+menu_view							= menu_view.htm
+menu_window							= menu_window.htm
+scrollbars							= scrollbars.htm
+
+[MAP]
+#include HTMLDefines.h
+
+[TEXT POPUPS]
+HTMLDefines.h
+
+[INFOTYPES]
+

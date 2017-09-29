@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Export Data File</TITLE>
+    <style type="text/css">
+        .style1 {
+            width: 440px;
+            height: 259px;
+        }
+        .style2
+        {
+            width: 231px;
+            height: 54px;
+        }
+    </style>
+</HEAD>
+<BODY>
+<h1><A NAME="AFX_HIDD_EXPORTDATAFILE"></A>Export Data Dialog</h1>
+    <P>This dialog is called by the menu item &quot;File / Export data file...&quot; which is 
+        available under the view &quot;Data&quot; (see <a href="hid_file_exportdata.htm">here</a>).</P>
+    <p>
+        <img alt="Export data file dlg" class="style1" 
+            src="Images/file_exportdata.jpg" /></p>
+
+
+
+    <p>
+        <strong>Source file</strong>: name of file to be transformed/exported. It can be 
+        either a single file, or the whole list. This dialog box just display the names 
+        of the files without the path.</p>
+    <p>
+        <strong>Export as:</strong> format under which the data files will be saved. 
+        They will be saved into the same directory as the source file.</p>
+    <p style="margin-left: 40px">
+        <img alt="export as" class="style2" 
+            src="Images/file_exportdata1.jpg" /></p>
+    <ul>
+        <li><strong>dbWave</strong> is the genuine dbWave format. It might be useful if one 
+            wants to extract a channel or to undersample the data. Each exported file will 
+            have the same name as the original file, except that the prefix &quot;AW_&quot; 
+            will be added to their name.</li>
+        <li><strong>Sapid 3.5</strong> is the format read by a specific program (written by 
+            Bev Mitchell) which had been designed to sort spikes from extracellular 
+            recordings from insect sensilla. Each file name will be concatenated with the 
+            prefix &quot;SAP_&quot;.</li>
+        <li><strong>ASCII text</strong> is a simple text file, where data are saved; each 
+            row is one sampling interval while each column is from a different channel. Each 
+            file will be prefixed with &quot;ASC_&quot; and its extension will be &quot;.TXT&quot; (instead of 
+            &quot;.dat&quot;). </li>
+        <li><strong>Excel</strong> is a spreadsheet that you can read with Microsoft Excel. 
+            The file will have the extension &quot;.xls&quot;. As Excel files had a limitation in the 
+            number of rows, data which have more than 16384 rows are spread across 
+            consecutive columns.</li>
+    </ul>
+    <p>
+        <strong>Save comments in a separate file:</strong> tick this option if you want 
+        to store descriptors of each data file into a different file.</p>
+    <p style="font-weight: 700">
+        Export options:</p>
+    <ul>
+        <li>
+            <p>
+                <strong>all channels:</strong> export all data channels.</p>
+        </li>
+        <li>
+            <p>
+                <strong>single channel:</strong> export only one data channel. If selected, this 
+                option will allow the user to select a given channel. This is useful if the data 
+                recorded include additional channels which are not used for the analysis.</p>
+        </li>
+        <li>
+            <p>
+                <strong>complete file</strong> or <strong>from (s) t1 to t2</strong>: define 
+                here if you want to export the entire recording or just a part of it.</p>
+        </li>
+        <li>
+            <p>
+                <strong>undersample ratio</strong>: 1 to n - you can export either the raw data, 
+                or you can undersample the data by exporting only 1 point under 2 or 10 (ad 
+                libitum). Each point exported will be then computed as the average of 2 or 10 
+                consecutive points.</p>
+        </li>
+    </ul>
+    <p>
+        <strong>Export</strong>:: transform a single file. A message box will be 
+        displayed upon completion of the operation and the name of the file which has 
+        been exported is removed from the dropdown list.</p>
+    <p>
+        <strong>Export All:</strong> transform all files of the list.</p>
+
+
+
+</BODY>
+</HTML>

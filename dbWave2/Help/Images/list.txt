@@ -1,0 +1,39 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 98FB-DD7B
+
+ Directory of C:\Users\fred\Documents\Visual Studio 2010\Projects\dbWave\dbWave\Help\Images
+
+27/12/2013  16:49            35ÿ030 About_dbWave.jpg
+27/12/2013  16:31             1ÿ267 dbwave.jpg
+27/12/2013  16:30             6ÿ723 dlg_newfile.jpg
+27/12/2013  16:54            55ÿ084 file_open.jpg
+06/01/2014  01:46             5ÿ072 idd_file_new.jpg
+27/12/2013  16:31             2ÿ672 idr_mainframe.jpg
+04/01/2014  08:26            16ÿ016 installdbwave_dtopenlayers.jpg
+04/01/2014  07:56             6ÿ908 installdbwave_files0.jpg
+04/01/2014  08:07             3ÿ820 installdbwave_menu.jpg
+27/12/2013  16:29            13ÿ854 onstart.jpg
+04/01/2014  11:24            24ÿ671 scratch_acquisition.jpg
+04/01/2014  09:50            34ÿ715 scratch_amplifiersettings.jpg
+04/01/2014  09:53             3ÿ163 scratch_band2.jpg
+04/01/2014  11:23            20ÿ119 scratch_samplingmode.jpg
+04/01/2014  09:52            20ÿ640 scratch_savefileas.jpg
+04/01/2014  09:02            57ÿ559 scratch_screeen0.jpg
+04/01/2014  09:47            23ÿ648 scratch_screen1.jpg
+04/01/2014  09:54             8ÿ291 scratch_upperpanel.jpg
+04/01/2014  11:25             6ÿ941 scratch_validate_record.jpg
+04/01/2014  09:55            70ÿ657 scratch_voila.jpg
+07/01/2014  07:55            27ÿ927 screen10.jpg
+07/01/2014  07:55            26ÿ824 screen11.jpg
+07/01/2014  07:56            28ÿ244 screen12.jpg
+07/01/2014  07:56            25ÿ593 screen13.jpg
+07/01/2014  07:56            24ÿ329 screen14.jpg
+07/01/2014  07:54            62ÿ722 screen15.jpg
+07/01/2014  07:54            21ÿ911 screen16.jpg
+07/01/2014  07:57            23ÿ648 screen5.jpg
+07/01/2014  07:57           162ÿ201 screen6.jpg
+07/01/2014  07:56            26ÿ764 screen7.jpg
+07/01/2014  07:54            19ÿ580 screen8.jpg
+07/01/2014  07:55            19ÿ803 screen9.jpg
+              32 File(s)        886ÿ396 bytes
+               0 Dir(s)  16ÿ074ÿ829ÿ824 bytes free

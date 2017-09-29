@@ -1,0 +1,24 @@
+dbWave is copyright ©2011 by Frédéric C. Marion-Poll.
+
+Unauthorized use of this software is forbidden.
+
+You may not copy, distribute, sell or modify
+this software without the express permission
+of the author.
+
+Frédéric C. Marion-Poll does not imply
+any warranty regarding the use of this software.
+
+Frédéric C. Marion-Poll will
+be held responsible for anything resulting from
+the use of this software.
+
+Registration of this software entitles you to
+install and use it on one computer at any one
+time. For information regarding multiple user
+registration or network installation, please
+contact Andrew French.
+
+By continuing with this installation,
+you accept these terms and conditions.
+

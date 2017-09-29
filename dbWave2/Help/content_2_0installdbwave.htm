@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<Title>Install dbWave</Title>
+    
+    </style>
+    <style type="text/css">
+        .style2
+        {
+            width: 60px;
+            height: 40px;
+        }
+        .style3
+        {
+            width: 242px;
+            height: 83px;
+        }
+        .style4
+        {
+            width: 562px;
+            height: 314px;
+        }
+    </style>
+</HEAD>
+<BODY>
+
+
+    <h1>
+        Install dbWave</h1>
+    <p>
+        In order to install dbWave, you need to run &quot;setup.exe&quot; with &quot;dbwave_setup.msi&quot; 
+        in the same directory.
+        You also need to run Windows (XP, 7 or 8).</p>
+    <p>
+        <img alt="Files needed to install dbWave"  
+            src="Images/installdbwave_files0.jpg" /></p>
+
+
+    <p>
+        The installation process with check if a previous install of dbwave is present 
+        in the computer, and if the version you have launched is a new version, you can 
+        overwrite the previous install. Setup will install the program, a few dlls and 
+        the help into a directory c:\Program Files\FMP\dbWave (or
+        c:\Program Files (x86) if you run a 64 bits machine).</p>
+    <p>
+        <strong>If you want to use dbWave to read previously acquired data / 
+		spike files, this is all that you need to do</strong>.</p>
+    <table>
+		<tr>
+			<td style="width: 348px">You have now an icon of the program on your 
+			desktop</td> 
+			<td>
+        <img alt="dbWave icon" class="style2" 
+            src="Images/dbwave.jpg" /></td>
+		</tr>
+		<tr>
+			<td style="width: 348px">and you can access it through a menu.</td>
+			<td>
+        <img alt="dbWave Menu" class="style3" 
+            src="Images/installdbwave_menu.jpg" /></td>
+		</tr>
+	</table>
+	<p><strong>If you want to acquire data, you have to connect your computer to 
+	a data acquisition card.</strong> </p>
+	<p>dbWave is interfaced to DTOpenLayer, which is a driver made available by 
+	Data Translation to connect computers and programs to data acquisition 
+	cards. These drivers are freely downloadable from their site. If installed 
+	properly, you should find in your control panel, a DT Open Layer board with 
+	a list of the current data acquisition cards connected to your computer:</p>
+	<p>
+        <img alt="Dt Open Layers" class="style4" 
+            src="Images/installdbwave_dtopenlayers.jpg" /></p>
+    <p>Check that you find this driver and that the card is active. In this example, we 
+        have connected a DT9818 card to our computer. </p>
+    <p>Sometimes, DT cards are equipped with a red LED which indicates that the computer 
+        has detected it. If the LED is not active, then dbWave will not be able to 
+        communicate with the card. Use diagnostic programs shipped with your card driver 
+        to make sure that your system is working properly.</p>
+    <p>In our laboratory, our data acquisition setup also includes CyberAmp amplifiers 
+        which are programmable through a serial cable. DbWave is interfaced to them and 
+        can modify the gain and filter settings of these amplifiers.</p>
+
+
+</BODY>
+</HTML>
