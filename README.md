@@ -1,15 +1,32 @@
-# Introduction
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
-dbWave2 is a database-oriented electrophysiological analysis program developed to acquire and analyze recordings from taste and olfactory sensilla of insects. 
-Each recording is stored along with descriptors which are read by dbWave and exported to a database. 
-dbWave2 differs from dbWave1 in that it allows users to filter each filed on several criteria while dbwave (the original), allows only to filter on a single parameter.
+# dbWave2
+
+**dbwave2** is a program routinely used in our laboratory to acquire and analyze extracellular data from olfactory and taste sensilla of insects.
+
+During an experimental session, it collects data (electrophysiological recordings typically of 2 to 30 s) and stores them on disk, along with information describing the experiment.
+After the experiment, recordings are displayed and analyzed, to detect and sort spikes, and to export data and results under different formats. 
+
+**Data acquisition**: dbWave2 is interfaced to [Data Translation](http://www.datatranslation.eu/) cards to sample electrical data on several channels (1 to 8 or 16), convert them into numbers (12 or 16 bits) by sampling them at a frequency usually of 10 kHz and store them into a binary file along with a descriptor header (**.dat files**).
+It also communicates to Axon Instrument amplifiers (CyberAmp 320) and to Alligator Technology amplifiers.
+Depending on the Data Translation card model, it may also drive digital or output lines. 
+Usually, data acquisition bouts are triggered by an external TTL signal.
+
+**Data analysis**: dbWave2 reads binary data files stored under different formats.
+Typically, it is used in our laboratory to detect and sort action potentials from one or several channels.
+Spikes detected from a recording are stored as arrays of recording bouts(typically 60 data points), together with the time and a class number int a spike file (**.spk files**).
+
+**Database**: dbWave2 collects information about each recording (time, stimulus, concentration, insect, sensillum, etc) either directly or from the user, to build a database (**.mdb files**). 
+This database allows the user to interactively select files of interest based on multiple criteria.
+
+**Export**: Data and results can be exported to various formats, including as Excel tables or figures. 
+
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+TODO: Guide users through getting your code up and running on their own system. 
+## 1.	Installation process
+
+## 2.	Software dependencies
+## 3.	Latest releases
+## 4.	API references
 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 

@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_03E583C6E7104B95AFAF3536CE776B35"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_12791F6969BF4BF29E334A35200FB6AB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -27,19 +33,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2B0D1DB417CB45DA931E7EE7F6129DA7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2F724C04FB4A45EA908B1EFCC6994A1B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_B7B07555C2C548F5BCFCE1DD172CD53C"
+        "MsmKey" = "8:_6F265BC5E555439E9411350BD2419387"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -106,7 +106,7 @@
         "InstallerBootstrapper" = "3:2"
             "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
             {
-            "Enabled" = "11:TRUE"
+            "Enabled" = "11:FALSE"
             "PromptEnabled" = "11:TRUE"
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
@@ -146,6 +146,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_03E583C6E7104B95AFAF3536CE776B35"
+            {
+            "SourcePath" = "8:..\\dbWave2\\Help\\dbWave2.chm"
+            "TargetName" = "8:dbWave2.chm"
+            "Tag" = "8:"
+            "Folder" = "8:_AC4A49FBB6AC4E19A3805CDDF1E6F802"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12791F6969BF4BF29E334A35200FB6AB"
             {
             "SourcePath" = "8:to add if missing\\OLMEM32.dll"
@@ -186,26 +206,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2B0D1DB417CB45DA931E7EE7F6129DA7"
-            {
-            "SourcePath" = "8:..\\dbWave\\res\\dbWave.ico"
-            "TargetName" = "8:dbWave.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_AC4A49FBB6AC4E19A3805CDDF1E6F802"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2F724C04FB4A45EA908B1EFCC6994A1B"
             {
             "SourcePath" = "8:to add if missing\\VERSION.dll"
@@ -226,10 +226,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B7B07555C2C548F5BCFCE1DD172CD53C"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6F265BC5E555439E9411350BD2419387"
             {
-            "SourcePath" = "8:..\\dbWave\\Help\\dbWave2.chm"
-            "TargetName" = "8:dbWave2.chm"
+            "SourcePath" = "8:..\\dbWave2\\res\\dbWave.ico"
+            "TargetName" = "8:dbWave.ico"
             "Tag" = "8:"
             "Folder" = "8:_AC4A49FBB6AC4E19A3805CDDF1E6F802"
             "Condition" = "8:"
@@ -313,15 +313,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:dbWave2"
-        "ProductCode" = "8:{D9ECA308-2D78-4C2B-BD2D-45EBD86BA68B}"
-        "PackageCode" = "8:{43EC6DE7-7B35-41A2-A90C-6792416CFE8F}"
+        "ProductCode" = "8:{1F16859C-6F23-4C9C-BF34-4E36C987DB64}"
+        "PackageCode" = "8:{3E4CC9B2-9FF1-4A22-AB24-E7C7D1EEE854}"
         "UpgradeCode" = "8:{A9B664F0-5F5A-4FBF-AA04-3583AF3BFED6}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.11"
+        "ProductVersion" = "8:1.1.12"
         "Manufacturer" = "8:FMP"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -331,7 +331,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:Program to acquire and analyse electrophysiology data"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:"
+        "ARPPRODUCTICON" = "8:_6F265BC5E555439E9411350BD2419387"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -445,7 +445,7 @@
             "Target" = "8:_C16F3AFFCBBC4457BC15E997E4F4CA14"
             "Folder" = "8:_E0AE28AF145A4E25A8A840AA4DB09F20"
             "WorkingFolder" = "8:_AC4A49FBB6AC4E19A3805CDDF1E6F802"
-            "Icon" = "8:_2B0D1DB417CB45DA931E7EE7F6129DA7"
+            "Icon" = "8:_6F265BC5E555439E9411350BD2419387"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_51FFD53C15D844AD8F4D806DE1672E74"
@@ -459,7 +459,7 @@
             "Target" = "8:_C16F3AFFCBBC4457BC15E997E4F4CA14"
             "Folder" = "8:_332FCB3126B94C24B8EAE5E86677DDEC"
             "WorkingFolder" = "8:_AC4A49FBB6AC4E19A3805CDDF1E6F802"
-            "Icon" = "8:_2B0D1DB417CB45DA931E7EE7F6129DA7"
+            "Icon" = "8:_6F265BC5E555439E9411350BD2419387"
             "Feature" = "8:"
             }
         }
@@ -919,7 +919,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C16F3AFFCBBC4457BC15E997E4F4CA14"
             {
-            "SourcePath" = "8:..\\dbWave\\Release\\dbWave2.exe"
+            "SourcePath" = "8:..\\dbWave2\\Release\\dbWave2.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_AC4A49FBB6AC4E19A3805CDDF1E6F802"

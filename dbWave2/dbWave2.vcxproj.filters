@@ -1012,7 +1012,6 @@
     <None Include="res\dbwave_07dec2012.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="dbWave.vcproj" />
     <None Include="ReadMe.txt" />
     <None Include="Help\Images\Bullet.gif">
       <Filter>Resource Files</Filter>
@@ -1711,19 +1710,23 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="packages.config" />
-    <None Include="Help\dbWave.hhp">
+    <None Include="dbWave2.vcproj" />
+    <None Include="..\README.md" />
+    <None Include="res\ribbon1.mfcribbon-ms">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Help\dbWave2.chw">
       <Filter>HTML Help Topics</Filter>
     </None>
-    <None Include="Help\dbwave.chw">
+    <None Include="Help\dbWave2.hhc">
       <Filter>HTML Help Topics</Filter>
     </None>
-    <None Include="Help\dbWave.hhc">
+    <None Include="Help\dbWave2.hhk">
       <Filter>HTML Help Topics</Filter>
     </None>
-    <None Include="Help\dbWave.hhk">
+    <None Include="Help\dbWave2.hhp">
       <Filter>HTML Help Topics</Filter>
     </None>
-    <None Include="res\ribbon1.mfcribbon-ms" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="dbWave.rc">

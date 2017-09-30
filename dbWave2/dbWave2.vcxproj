@@ -805,6 +805,7 @@ if %ERRORLEVEL%==1 (
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="dbWave2.vcproj" />
     <None Include="dbWaveHelp_style.css" />
     <None Include="Help\dbWave2.chw" />
@@ -1562,5 +1563,4 @@ if %ERRORLEVEL%==1 (
       <UserProperties RESOURCE_FILE="dbWave.rc" />
     </VisualStudio>
   </ProjectExtensions>
-  
 </Project>
