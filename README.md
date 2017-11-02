@@ -1,7 +1,6 @@
 # dbWave2
 
-**dbwave2** is a program routinely used in our laboratory to acquire and analyze extracellular data from olfactory and taste sensilla of insects.
-
+**dbwave2** is a program routinely used in our laboratory to acquire and analyze extracellular data from olfactory and taste sensilla of insects. 
 During an experimental session, it collects data (electrophysiological recordings typically of 2 to 30 s) and stores them on disk, along with information describing the experiment.
 After the experiment, recordings are displayed and analyzed, to detect and sort spikes, and to export data and results under different formats. 
 
