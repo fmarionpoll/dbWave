@@ -145,11 +145,13 @@ BOOL CDAChannelsDlg::OnInitDialog()
 	m_famplitude0		= m_outD.DAparmsChan0.dAmplitudeMaxV;
 	m_ffrequence0		= m_outD.DAparmsChan0.dFrequency;
 	((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->SetCurSel(m_waveformChannel0);
+	OnCbnSelchangeCombosource0();
 
 	m_waveformChannel1	= m_outD.DAparmsChan1.iWaveform;
 	m_famplitude1		= m_outD.DAparmsChan1.dAmplitudeMaxV;
 	m_ffrequence1		= m_outD.DAparmsChan1.dFrequency;
 	((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->SetCurSel(m_waveformChannel1);
+	OnCbnSelchangeCombosource1();
 
 	UpdateData(FALSE);
 	return TRUE;  
@@ -160,6 +162,8 @@ void CDAChannelsDlg::OnBnClickedButtonsource0()
 {
 	CEditStimArrayDlg dlg;
 	dlg.m_stim = m_outD.DAparmsChan0.stimulussequence;
+	dlg.m_pstimsaved = &m_stimsaved;
+	dlg.m_rate = m_samplingRate;
 	if (IDOK == dlg.DoModal())
 	{
 		m_outD.DAparmsChan0.stimulussequence = dlg.m_stim;

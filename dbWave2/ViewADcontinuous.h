@@ -107,9 +107,10 @@ protected:
 	long				m_chDTbuflen;		// nb pts for one chan in DT buffer
 	HBUF				m_DAbufhandle;
 	//long				m_DAbuflen;			// nb of acq sample per DT buffer
-	//int					m_DAmode;			// type of analog output (0=SINE, 1= SQUARE, 2=TRIANGLE, etc)
+	//int				m_DAmode;			// type of analog output (0=SINE, 1= SQUARE, 2=TRIANGLE, etc)
 	long				m_DAnBuffersFilledSinceStart;
 	double				m_lastphaseValue;
+	double				m_lastampValue;
 
 	// sweep
 	long				m_chsweeplength;	// sweep length (per channel)
