@@ -234,6 +234,7 @@
 #define HIDD_VIEWPANELEFT3                      0x200E5
 #define HIDD_DAPARAMETERS                       0x200F3
 #define HIDD_DA_PARAMETERS                      0x200F3
+#define HIDD_DA_OUTPUTPARMS                     0x200F3
 #define HIDD_DACHANNELS                         0x200F4
 #define HIDD_DA_CHANNELS                        0x200F4
 #define HIDD_DANOISE                            0x200F7

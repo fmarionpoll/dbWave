@@ -1613,6 +1613,7 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	noise_dAmplitV	=arg.noise_dAmplitV;	
 	noise_dFactor	=arg.noise_dFactor;
 	noise_dOffsetV	=arg.noise_dOffsetV;	
+	stimulussequence = arg.stimulussequence;
 }
 
 void OUTPUTPARMS::Serialize(CArchive& ar)
@@ -1645,7 +1646,8 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar << noise_dFactor;
 		ar << noise_dOffsetV;	
 
-		ar << (WORD) 0;			// no more ...
+		ar << (WORD) 1;			// 1 more object
+		stimulussequence.Serialize(ar);
 	} 
 	else
 	{
@@ -1688,8 +1690,14 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 
 		// other?
 		ar >> wn; n = wn;
+		if (n > 0) {
+			stimulussequence.Serialize(ar);
+			n--;
+		}
 		ASSERT(n==0);
 	}
 }
+
+
 
 

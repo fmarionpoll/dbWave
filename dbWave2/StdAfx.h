@@ -66,6 +66,7 @@
 #include "Taglines.h"		// tag structures
 #include "datafile_X.h"		// data file base class
 #include "wavebuf.h"		// data file buffer structure
+#include "StimLevelArray.h"
 #include "awavepar.h"		// view data options
 #include "spikepar.h"		// spike parameters options
 #include "dbMultiDocTemplate.h"
