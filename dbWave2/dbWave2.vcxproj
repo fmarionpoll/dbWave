@@ -59,15 +59,15 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\DTx-EZ\Include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\DTx-EZ\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\DTx-EZ\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Lib;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <LibraryPath>C:\Users\fred\OneDrive\Documents\workspace\MFC\DTx-EZ\Lib;$(LibraryPath);</LibraryPath>
+    <LibraryPath>C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Lib;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath);$(ProgramFiles)\HTML Help Workshop\redist\</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -312,7 +312,7 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="DAChannelsDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DAOutputsDlg.cpp">
+    <ClCompile Include="DAOutputsParmsDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Datacomm.cpp">
@@ -647,7 +647,7 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="CWorksheets.h" />
     <ClInclude Include="CyberAmp.h" />
     <ClInclude Include="DAChannelsDlg.h" />
-    <ClInclude Include="DAOutputsDlg.h" />
+    <ClInclude Include="DAOutputsParmsDlg.h" />
     <ClInclude Include="Datacomm.h" />
     <ClInclude Include="datafile_ASD.h" />
     <ClInclude Include="datafile_Atlab.h" />

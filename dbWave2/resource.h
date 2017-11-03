@@ -202,6 +202,7 @@
 #define IDB_CHECKNO32                   242
 #define IDD_DAPARAMETERS                243
 #define IDD_DA_PARAMETERS               243
+#define IDD_DA_OUTPUTPARMS              243
 #define IDD_DACHANNELS                  244
 #define IDD_DA_CHANNELS                 244
 #define IDD_DANOISE                     247
@@ -417,19 +418,19 @@
 #define IDC_LISTCLASSES                 534
 #define IDD_DBEDITRECORDFIELD           535
 #define IDC_SPKFILECOMMENTS             536
-#define	IDR_THEME_MENU					538
-#define ID_SET_STYLE					539
-#define ID_VIEW_APPLOOK_WIN_2000		540
-#define ID_VIEW_APPLOOK_OFF_XP			541
-#define ID_VIEW_APPLOOK_WIN_XP			542
-#define ID_VIEW_APPLOOK_OFF_2003		543
-#define ID_VIEW_APPLOOK_VS_2005			544
-#define ID_VIEW_APPLOOK_VS_2008			545
-#define ID_VIEW_APPLOOK_OFF_2007_BLUE	550
-#define ID_VIEW_APPLOOK_OFF_2007_BLACK	551
-#define ID_VIEW_APPLOOK_OFF_2007_SILVER	552
-#define ID_VIEW_APPLOOK_OFF_2007_AQUA	553
-#define ID_VIEW_APPLOOK_WINDOWS_7		554
+#define IDR_THEME_MENU                  538
+#define ID_SET_STYLE                    539
+#define ID_VIEW_APPLOOK_WIN_2000        540
+#define ID_VIEW_APPLOOK_OFF_XP          541
+#define ID_VIEW_APPLOOK_WIN_XP          542
+#define ID_VIEW_APPLOOK_OFF_2003        543
+#define ID_VIEW_APPLOOK_VS_2005         544
+#define ID_VIEW_APPLOOK_VS_2008         545
+#define ID_VIEW_APPLOOK_OFF_2007_BLUE   550
+#define ID_VIEW_APPLOOK_OFF_2007_BLACK  551
+#define ID_VIEW_APPLOOK_OFF_2007_SILVER 552
+#define ID_VIEW_APPLOOK_OFF_2007_AQUA   553
+#define ID_VIEW_APPLOOK_WINDOWS_7       554
 #define ID_STARTSTOP                    1001
 #define IDC_VERSION                     1003
 #define IDC_SAMPLINGRATE                1003
@@ -711,6 +712,7 @@
 #define IDC_EDITFREQ1                   1424
 #define IDC_EDITNBUFFERS                1424
 #define IDC_EDITBUFFERLENGTH            1425
+#define IDC_COMBOSOURCE2                1425
 #define IDC_STATICSWEEPLENGTH           1426
 #define IDC_RADIOEDITW                  1427
 #define IDC_RADIOPRESET                 1428
@@ -736,6 +738,11 @@
 #define IDC_MFCCOLORBUTTON1             1473
 #define IDC_MFCEDITBROWSE1              1477
 #define IDC_COMBOBOXEX1                 1478
+#define IDC_STATIC00                    1487
+#define IDC_STATIC01                    1488
+#define IDC_BUTTONSOURCE0               1490
+#define IDC_BUTTONSOURCE1               1491
+#define IDC_BUTTONSOURCE2               1492
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -855,10 +862,10 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_3D_CONTROLS                1
-#define _APS_NEXT_RESOURCE_VALUE        555
-#define _APS_NEXT_CONTROL_VALUE         1487
-#define _APS_NEXT_SYMED_VALUE           555
+#define _APS_3D_CONTROLS                     1
+#define _APS_NEXT_RESOURCE_VALUE        558
 #define _APS_NEXT_COMMAND_VALUE         33010
+#define _APS_NEXT_CONTROL_VALUE         1491
+#define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

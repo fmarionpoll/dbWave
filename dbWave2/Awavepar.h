@@ -412,6 +412,7 @@ public:
 // ---------------------------------------------------------------------
 // output data options - version 1 (11/09/2011)
 
+
 class OUTPUTPARMS : public CObject
 {
 	DECLARE_SERIAL(OUTPUTPARMS)
@@ -425,8 +426,8 @@ public:
 	double	dFrequency;								// frequency of the output signal
 	int		iWaveform;								// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
 	CString	csFilename;								// filename to output
-	int		mseq_iRatio;								// ratio for M-Sequence output
-	int		mseq_iDelay;								// delay for M-Sequence output
+	int		mseq_iRatio;							// ratio for M-Sequence output
+	int		mseq_iDelay;							// delay for M-Sequence output
 	int		mseq_iSeed;								// seed for M-Sequence output
 	double	mseq_dAmplitV;							// amplitude of the signal
 	double	mseq_dOffsetV;							// offset in volts
@@ -435,6 +436,7 @@ public:
 	double	noise_dOffsetV;
 	int		noise_iDelay;
 	BOOL	noise_bExternal;
+	CStimLevelSeries stimulussequence;
 
 	OUTPUTPARMS();									// constructor
 	~OUTPUTPARMS();									// destructor

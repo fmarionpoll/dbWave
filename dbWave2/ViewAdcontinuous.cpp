@@ -15,8 +15,7 @@
 #include "cscale.h"
 #include "scopescr.h"
 #include "lineview.h"
-#include <oltypes.h>
-#include <olerrors.h>
+
 #include <Olxdadefs.h>
 #include <olxdaapi.h>
 #include "ViewADcontinuous.h"
@@ -24,7 +23,7 @@
 #include "MainFrm.h"
 #include "ConfirmSaveDlg.h"
 #include "DAChannelsDlg.h"
-#include "DAOutputsDlg.h"
+#include "DAOutputsParmsDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -509,7 +508,7 @@ BOOL CADContView::DA_InitSubSystem()
 	m_DAC.SetTrigger(trig);
 
 	// number of channels
-	//int nchannels	= m_DAC.GetSSCaps(OLSSC_NUMCHANNELS);	// DT9818: 2x 16 bits + 1 for the 8 digital outputs
+	int nchannels	= m_DAC.GetSSCaps(OLSSC_NUMCHANNELS);	// DT9818: 2x 16 bits + 1 for the 8 digital outputs
 
 	// update channel list (chan & gain)
 	// check here that list size is correct and that max chan is ok?
@@ -655,17 +654,20 @@ void CADContView::DA_DeclareBuffers()
 	// close data buffers
 	DA_DeleteBuffers();
 
-	// make sure that buffer length contains at least nacq chans
-	int scan_count=1;
+	// get current parms from A/D conversion
 	CWaveFormat* pWFormat = &(m_pacqD->waveFormat); // get pointer to m_pacqD wave format
 
 	// define buffer length
 	float sweepduration = m_pacqD->sweepduration;
 	long chsweeplength	= (long) (sweepduration* pWFormat->chrate / (float) m_pacqD->iundersample);
 	long chDAbuflen		= chsweeplength * m_pacqD->iundersample / pWFormat->bufferNitems;
-	long DAbuflen		= chDAbuflen; // * pWFormat->scan_count;
+	long DAbuflen		= chDAbuflen; 
 	
 	// declare buffers to DT
+	m_DAnBuffersFilledSinceStart = 0;
+	m_lastphaseValue = 0;
+	m_lastampValue = 0;
+
 	ECODE ecode;
 	for (int i=0; i <= pWFormat->bufferNitems; i++)
 	{ 
@@ -1990,78 +1992,127 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 	// set data within buffer
 	
 	// dummy parameters ----------------------------
-	double WAVEFREQ = 50.0;			// 50 HZ
+	const double	WAVEFREQ = m_poutD->DAparmsChan0.dFrequency;	
 	CWaveFormat* pWFormat = &(m_pacqD->waveFormat);
-	double OUTFREQ =  pWFormat->chrate;
-	double PEAKVOLTAGE = 1.0;		// peakvoltage = 1 V
-#define SINE		0
-#define SQUARE		1
-#define TRIANGLE	2
-#define LINE		3
-	int WAVEFORM = SINE;
+	const double	OUTFREQ =  pWFormat->chrate;
+	const double	PEAKVOLTAGE = m_poutD->DAparmsChan0.dAmplitudeMaxV;
+	const int		WAVEFORM = m_poutD->DAparmsChan0.iWaveform;
 
 	// dummy parameters ----------------------------
 	float sweepduration = m_pacqD->sweepduration;
 	long chsweeplength	= (long) (sweepduration* pWFormat->chrate / (float) m_pacqD->iundersample);
-	long OUTBUFSIZE		= chsweeplength * m_pacqD->iundersample / pWFormat->bufferNitems;
+	const long		OUTBUFSIZE		= chsweeplength * m_pacqD->iundersample / pWFormat->bufferNitems;
 
-	double phase = 0;
-	double Freq = WAVEFREQ / OUTFREQ;
+	double phase = m_lastphaseValue;
+	double Freq = m_poutD->DAparmsChan0.dFrequency / OUTFREQ;
 
 	long msbit = (long) pow(2.0,(m_DAC.GetResolution() - 1));
 	long lRes = (long) pow(2.0, m_DAC.GetResolution()) - 1;
 
-	double amp = PEAKVOLTAGE *  pow(2.0 ,m_DAC.GetResolution()) / (m_DAC.GetMaxRange() - m_DAC.GetMinRange()) ;
+	double amp = PEAKVOLTAGE *  pow(2.0 , m_DAC.GetResolution()) / (m_DAC.GetMaxRange() - m_DAC.GetMinRange()) ;
 
-	switch(WAVEFORM)
+	switch (WAVEFORM)
 	{
-	case SINE: 
+	case DA_SINEWAVE:
+	{
+		double pi2 = 3.1415927 * 2;
+		Freq = Freq * pi2;
+		for (int i = 0; i < OUTBUFSIZE; i++)
 		{
-			double pi2 = 3.1415927 * 2;
-			Freq = Freq * pi2;
-			for(int i=0; i< OUTBUFSIZE; i++)
-			{
-				*(pDTbuf + i) = (short)(cos(phase) * amp);
-				// clip value
-				if(*(pDTbuf + i) > msbit) 
-					*(pDTbuf + i) = (short) (msbit -1);
-				phase += Freq;
-				if(phase > pi2) 
-					phase -= pi2;
-			}
+			*(pDTbuf + i) = (short)(cos(phase) * amp);
+			// clip value
+			if (*(pDTbuf + i) > msbit)
+				*(pDTbuf + i) = (short)(msbit - 1);
+			phase += Freq;
+			if (phase > pi2)
+				phase -= pi2;
 		}
-		break;
-	case SQUARE:
-		for(int i=0; i<OUTBUFSIZE; i++)
+	}
+	m_lastphaseValue = phase;
+	break;
+	case DA_SQUAREWAVE:
+		for (int i = 0; i < OUTBUFSIZE; i++)
 		{
-			if (phase < 0) 
-				*(pDTbuf + i) = (WORD)(0 - (amp /2));
-			else 
-				*(pDTbuf + i) = (WORD)(amp /2);
+			if (phase < 0)
+				*(pDTbuf + i) = (WORD)(0 - (amp / 2));
+			else
+				*(pDTbuf + i) = (WORD)(amp / 2);
 
 			phase += Freq;
-			if(phase > 0.5) 
+			if (phase > 0.5)
 				phase -= 1;
 		}
+		m_lastphaseValue = phase;
 		break;
-	case TRIANGLE: 
-		for(int i=0; i<OUTBUFSIZE; i++)
+	case DA_TRIANGLEWAVE:
+		for (int i = 0; i < OUTBUFSIZE; i++)
 		{
 			*(pDTbuf + i) = (WORD)(2 * phase * amp);
 			// clip value
-			if(*(pDTbuf + i) >= msbit) 
-				*(pDTbuf + i) = (short) (msbit -1);
+			if (*(pDTbuf + i) >= msbit)
+				*(pDTbuf + i) = (short)(msbit - 1);
 			phase = phase + 2 * Freq;
-			if(phase > 0.5) 
+			if (phase > 0.5)
 			{
 				phase -= 1;
 				amp--;
 			}
 		}
+		m_lastphaseValue = phase;
 		break;
-	case LINE:
-		for(int i=0; i<OUTBUFSIZE; i++)
-				*(pDTbuf + i) = (WORD) amp;
+	case DA_LINEWAVE:
+		for (int i = 0; i < OUTBUFSIZE; i++)
+			*(pDTbuf + i) = (WORD) amp;
+		break;
+
+	case DA_SEQUENCEWAVE:
+	{
+		CStimLevelSeries* pstim = &m_poutD->DAparmsChan0.stimulussequence;
+		long iitime_start	= m_DAnBuffersFilledSinceStart*OUTBUFSIZE;
+		long iitime_end		= (m_DAnBuffersFilledSinceStart +1)*OUTBUFSIZE;
+		
+		double ampUp = PEAKVOLTAGE *  pow(2.0, m_DAC.GetResolution()) / (m_DAC.GetMaxRange() - m_DAC.GetMinRange());
+		double ampZero = 0;
+
+		long iitime = iitime_start;
+		long iistim = -1;
+
+		// find first relevant iistim
+		int istim = 0;
+		int istim0 = 0;
+		int istim1 = pstim->iisti.GetSize();
+		int bUP = 1;
+		for (istim = istim0; istim < istim1; istim++)
+		{
+			iistim = pstim->iisti.GetAt(istim);
+			bUP *= -1;
+			if (iistim < iitime_start)
+				continue;
+			if (iistim > iitime_end)
+				break;
+		}
+		amp = ampZero;
+		if (bUP > 0)
+			amp = ampUp;
+
+		for (int i = 0; i < OUTBUFSIZE; i++)
+		{
+			*(pDTbuf + i) = (WORD)(amp);
+			iitime++;
+			if (istim <= istim1 && iitime >= iistim)
+			{
+				bUP *= -1;
+				amp = ampZero;
+				if (bUP > 0)
+					amp = ampUp;
+				istim++;
+				if (istim < istim1) 
+				{
+					iistim = pstim->iisti.GetAt(istim);
+				}
+			}
+		}
+	}
 		break;
 	default:
 		break;
@@ -2074,6 +2125,8 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 		for(int i=0;i<OUTBUFSIZE;i++)
 			*(pDTbuf+i) = (WORD)( (*(pDTbuf+i) ^ msbit) & lRes);
 	}
+	m_DAnBuffersFilledSinceStart++;
+	m_lastampValue = amp;
 }
 
 void CADContView::OnBufferDone_DAC()
@@ -2192,10 +2245,11 @@ void CADContView::OnBnClickedEnableoutput()
 
 void CADContView::OnBnClickedDaparameters()
 {
-	CDAOutputsDlg dlg;
-		dlg.poutD = m_poutD;
+	CDAOutputParametersDlg dlg;
+		dlg.m_outD = *m_poutD;
 	if (dlg.DoModal() == IDOK)
 	{
+		*m_poutD = dlg.m_outD;
 	}
 
 }
@@ -2203,9 +2257,12 @@ void CADContView::OnBnClickedDaparameters()
 void CADContView::OnBnClickedDaparameters2()
 {
 	CDAChannelsDlg dlg;
-	dlg.poutD = m_poutD;
+	dlg.m_outD = *m_poutD;
+	CWaveFormat* pWFormat = &(m_pacqD->waveFormat);
+	dlg.m_samplingRate = pWFormat->chrate;
 	if (dlg.DoModal() == IDOK)
 	{
+		*m_poutD = dlg.m_outD;
 	}
 }
 

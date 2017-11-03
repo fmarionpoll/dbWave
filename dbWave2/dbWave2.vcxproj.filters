@@ -102,9 +102,6 @@
     <ClCompile Include="DAChannelsDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DAOutputsDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Datacomm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -390,6 +387,9 @@
     <ClCompile Include="QuadStateTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DAOutputsParmsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -468,9 +468,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DAChannelsDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DAOutputsDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Datacomm.h">
@@ -846,6 +843,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DTx-EZ\Include\OLERRORS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DAOutputsParmsDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
