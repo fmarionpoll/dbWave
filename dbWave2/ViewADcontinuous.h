@@ -105,8 +105,9 @@ protected:
 	HBUF				m_ADbufhandle;
 	long				m_ADbuflen;			// nb of acq sample per DT buffer
 	long				m_chDTbuflen;		// nb pts for one chan in DT buffer
+
 	HBUF				m_DAbufhandle;
-	//long				m_DAbuflen;			// nb of acq sample per DT buffer
+	long				m_DAbuflen;			// nb of acq sample per DT buffer
 	//int				m_DAmode;			// type of analog output (0=SINE, 1= SQUARE, 2=TRIANGLE, etc)
 	long				m_DAnBuffersFilledSinceStart;
 	double				m_lastphaseValue;
@@ -120,6 +121,10 @@ protected:
 	int					m_chsweepRefresh;
 	int					m_bytesweepRefresh;
 	float				m_fclockrate;		// apparent clock rate
+
+	// D/A parameters
+	long m_chDAbuflen;
+	double m_DAfrequency;
 
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoard();
@@ -142,13 +147,13 @@ protected:
 
 	void StopAD(BOOL bDisplayErrorMsg);
 	BOOL StartAD();
+	BOOL StartDA();
+	void StopDA();
+
 	BOOL InitCyberAmp();
 	BOOL Defineexperiment() ;
 	void TransferFilesToDatabase();
 	void UpdateViewDataFinal();
-
-	BOOL StartDA();
-	void StopDA();
 	void displayolDaErrorMessage(CHAR* errstr);
 
 // Overrides

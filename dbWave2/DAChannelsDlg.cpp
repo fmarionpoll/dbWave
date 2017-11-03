@@ -50,6 +50,8 @@ BEGIN_MESSAGE_MAP(CDAChannelsDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE1, &CDAChannelsDlg::OnCbnSelchangeCombosource1)
 	ON_BN_CLICKED(IDOK, &CDAChannelsDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_BUTTONSOURCE0, &CDAChannelsDlg::OnBnClickedButtonsource0)
+	ON_BN_CLICKED(IDC_CHECKCHAN0, &CDAChannelsDlg::OnBnClickedCheckchan0)
+	ON_BN_CLICKED(IDC_CHECKCHAN1, &CDAChannelsDlg::OnBnClickedCheckchan1)
 END_MESSAGE_MAP()
 
 
@@ -58,27 +60,43 @@ END_MESSAGE_MAP()
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 {
+	if (!m_bChannel0) 
+	{
+		GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(FALSE);
+		GetDlgItem(IDC_STATIC00)->EnableWindow(FALSE);
+		GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(FALSE);
+		GetDlgItem(IDC_STATIC01)->EnableWindow(FALSE);
+		GetDlgItem(IDC_EDITFREQ0)->EnableWindow(FALSE);
+		GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(FALSE);
+		return;
+	}
+	else
+		GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(TRUE);
+
 	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->GetCurSel();
 	BOOL	bEnabled = TRUE;
-	BOOL	bEnabled2 = FALSE;
+	BOOL	bEnabled2 = TRUE;
 	switch (isel) {
 	case DA_SINEWAVE:		// sinusoid
 	case DA_SQUAREWAVE:		// square
 	case DA_TRIANGLEWAVE:	// triangle
-		bEnabled = TRUE;
 		break;
 
 	case DA_SEQUENCEWAVE:	// sequence
 		bEnabled2 = TRUE;
+		bEnabled = FALSE;
+		break;
+
 	case DA_MSEQWAVE:		// M-seq
 	case DA_NOISEWAVE:		// Noise
 	case DA_FILEWAVE:		// data file
 	default:
 		bEnabled = FALSE;
+		bEnabled2 = FALSE;
 		break;
 	}
-	GetDlgItem(IDC_STATIC00)->EnableWindow(bEnabled); 
-	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(bEnabled);
+	GetDlgItem(IDC_STATIC00)->EnableWindow(bEnabled2); 
+	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(bEnabled2);
 	GetDlgItem(IDC_STATIC01)->EnableWindow(bEnabled);
 	GetDlgItem(IDC_EDITFREQ0)->EnableWindow(bEnabled);
 	GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(bEnabled2);
@@ -87,27 +105,43 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 {
+	if (!m_bChannel1)
+	{
+		GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_STATIC10)->EnableWindow(FALSE);
+		GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_STATIC11)->EnableWindow(FALSE);
+		GetDlgItem(IDC_EDITFREQ1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(FALSE);
+		return;
+	}
+	else
+		GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(TRUE);
+
 	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->GetCurSel();
 	BOOL	bEnabled = TRUE;
-	BOOL	bEnabled2 = FALSE;
+	BOOL	bEnabled2 = TRUE;
 	switch (isel) {
 	case DA_SINEWAVE:		// sinusoid
 	case DA_SQUAREWAVE:		// square
 	case DA_TRIANGLEWAVE:	// triangle
-		bEnabled = TRUE;
 		break;
 
 	case DA_SEQUENCEWAVE:	// sequence
 		bEnabled2 = TRUE;
+		bEnabled = FALSE;
+		break; 
+
 	case DA_MSEQWAVE:		// M-seq
 	case DA_NOISEWAVE:		// Noise
 	case DA_FILEWAVE:		// data file
 	default:
 		bEnabled = FALSE;
+		bEnabled2 = FALSE;
 		break;
 	}
-	GetDlgItem(IDC_STATIC10)->EnableWindow(bEnabled);
-	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(bEnabled);
+	GetDlgItem(IDC_STATIC10)->EnableWindow(bEnabled2);
+	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(bEnabled2);
 	GetDlgItem(IDC_STATIC11)->EnableWindow(bEnabled);
 	GetDlgItem(IDC_EDITFREQ1)->EnableWindow(bEnabled);
 	GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(bEnabled2);
@@ -168,4 +202,18 @@ void CDAChannelsDlg::OnBnClickedButtonsource0()
 	{
 		m_outD.DAparmsChan0.stimulussequence = dlg.m_stim;
 	}
+}
+
+
+void CDAChannelsDlg::OnBnClickedCheckchan0()
+{
+	UpdateData(TRUE);
+	OnCbnSelchangeCombosource0();
+}
+
+
+void CDAChannelsDlg::OnBnClickedCheckchan1()
+{
+	UpdateData(TRUE);
+	OnCbnSelchangeCombosource1();
 }

@@ -59,7 +59,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Lib;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
