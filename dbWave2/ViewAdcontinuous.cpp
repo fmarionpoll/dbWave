@@ -486,10 +486,7 @@ BOOL CADContView::DA_InitSubSystem()
 	if (m_DAC.GetHDass() == NULL)
 		if (!FindDTOpenLayersBoard())
 			return FALSE;
-
-	// store all values within global parameters array
-	CWaveFormat* pAcqDwaveFormat = &(m_pacqD->waveFormat);
-	
+		
 	// Set up the ADC - multiple wrap so we can get buffer reused	
 	m_DAC.SetDataFlow(OLx_DF_CONTINUOUS);
 	m_DAC.SetWrapMode(OLx_WRP_NONE);
@@ -498,12 +495,12 @@ BOOL CADContView::DA_InitSubSystem()
 	// sampling rate (set / get)
 	m_DAC.SetClockSource(OLx_CLK_INTERNAL);
 	// set clock the same as for A/D
-	double clockrate = pAcqDwaveFormat->chrate;
+	double clockrate = m_pacqD->waveFormat.chrate;
 	m_DAC.SetFrequency(clockrate);			// set sampling frequency (total throughput)
 	clockrate = m_DAC.GetFrequency();		// make sure it works
 
 	// set trigger mode
-	int trig = pAcqDwaveFormat->trig_mode;
+	int trig = m_pacqD->waveFormat.trig_mode;
 	if (trig > OLx_TRG_EXTRA) trig = 0;
 	m_DAC.SetTrigger(trig);
 
@@ -656,12 +653,13 @@ void CADContView::DA_DeclareBuffers()
 
 	// get current parms from A/D conversion
 	CWaveFormat* pWFormat = &(m_pacqD->waveFormat); // get pointer to m_pacqD wave format
+	m_DAfrequency = pWFormat->chrate;
 
 	// define buffer length
 	float sweepduration = m_pacqD->sweepduration;
 	long chsweeplength	= (long) (sweepduration* pWFormat->chrate / (float) m_pacqD->iundersample);
-	long chDAbuflen		= chsweeplength * m_pacqD->iundersample / pWFormat->bufferNitems;
-	long DAbuflen		= chDAbuflen; 
+	m_chDAbuflen		= chsweeplength * m_pacqD->iundersample / pWFormat->bufferNitems;
+	m_DAbuflen			= m_chDAbuflen; 
 	
 	// declare buffers to DT
 	m_DAnBuffersFilledSinceStart = 0;
@@ -671,7 +669,7 @@ void CADContView::DA_DeclareBuffers()
 	ECODE ecode;
 	for (int i=0; i <= pWFormat->bufferNitems; i++)
 	{ 
-		ecode = olDmAllocBuffer(0, DAbuflen, &m_DAbufhandle);
+		ecode = olDmAllocBuffer(0, m_DAbuflen, &m_DAbufhandle);
 		short* pDTbuf;
 		ecode = olDmGetBufferPtr(m_DAbufhandle,(void **)&pDTbuf);
 		DA_FillBuffer(pDTbuf);
@@ -704,23 +702,6 @@ void CADContView::StopDA()
 		e->Delete();
 	}
 	m_bDAinprogress=FALSE; 
-
-	// reset D/A outputs to zero
-	try {
-		m_DAC.SetDataFlow(OLx_DF_SINGLEVALUE);
-		m_DAC.Config();
-		long nchannels	= m_DAC.GetSSCaps(OLSSC_NUMCHANNELS)-1;	// DT9818: 2x 16 bits + 1 for the 8 digital outputs
-		for (long i = 0; i < nchannels; i++)
-		{
-			long Value = VoltsToValue(&m_DAC, 0., 1.);
-			m_DAC.PutSingleValue(i, 1., Value);
-		}
-	}
-	catch(COleDispatchException* e)
-	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
-	}
 }
 
 
@@ -915,18 +896,28 @@ BOOL CADContView::StartAD()
 	}
 
 	// start D/A and then A/D 
-	StartDA();
-
-	// start acquisition
+	//StartDA();
+	if (m_bOutputsEnabled)
+	{
+		BOOL flag = DA_InitSubSystem();
+		m_DAC.ClearError();
+	}
 	m_ADC.ClearError();
 	
 	// starting mode of A/D if not simultaneous list------------------------
-	if (!m_bSimultaneousStart || !m_bOutputsEnabled)
+	if (!m_bSimultaneousStart)
 	{
 		m_ADC.Config();
 		m_ADC.Start();
-		m_bADinprogress	=TRUE;	// AD is running
+		m_bADinprogress	=TRUE;
+		if (m_bOutputsEnabled) 
+		{
+			m_DAC.Config();
+			m_DAC.Start();
+			m_bDAinprogress = TRUE;
+		}
 	}
+
 	// starting mode of A/D if simultaneous list ---------------------------
 	else
 	{
@@ -973,7 +964,6 @@ BOOL CADContView::StartAD()
 		{
 			displayolDaErrorMessage(errstr);
 		}
-
 
 		// start simultaneously
 		ecode = olDaSimultaneousStart(hSSlist);
@@ -1991,18 +1981,12 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 {
 	// set data within buffer
 	
-	// dummy parameters ----------------------------
 	const double	WAVEFREQ = m_poutD->DAparmsChan0.dFrequency;	
-	CWaveFormat* pWFormat = &(m_pacqD->waveFormat);
-	const double	OUTFREQ =  pWFormat->chrate;
+	//CWaveFormat*	pWFormat = &(m_pacqD->waveFormat);
+	const double	OUTFREQ =  m_DAfrequency;
 	const double	PEAKVOLTAGE = m_poutD->DAparmsChan0.dAmplitudeMaxV;
 	const int		WAVEFORM = m_poutD->DAparmsChan0.iWaveform;
-
-	// dummy parameters ----------------------------
-	float sweepduration = m_pacqD->sweepduration;
-	long chsweeplength	= (long) (sweepduration* pWFormat->chrate / (float) m_pacqD->iundersample);
-	const long		OUTBUFSIZE		= chsweeplength * m_pacqD->iundersample / pWFormat->bufferNitems;
-
+	const long		OUTBUFSIZE	= m_chDAbuflen;
 	double phase = m_lastphaseValue;
 	double Freq = m_poutD->DAparmsChan0.dFrequency / OUTFREQ;
 
@@ -2014,22 +1998,23 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 	switch (WAVEFORM)
 	{
 	case DA_SINEWAVE:
-	{
-		double pi2 = 3.1415927 * 2;
-		Freq = Freq * pi2;
-		for (int i = 0; i < OUTBUFSIZE; i++)
 		{
-			*(pDTbuf + i) = (short)(cos(phase) * amp);
-			// clip value
-			if (*(pDTbuf + i) > msbit)
-				*(pDTbuf + i) = (short)(msbit - 1);
-			phase += Freq;
-			if (phase > pi2)
-				phase -= pi2;
+			double pi2 = 3.1415927 * 2;
+			Freq = Freq * pi2;
+			for (int i = 0; i < OUTBUFSIZE; i++)
+			{
+				*(pDTbuf + i) = (short)(cos(phase) * amp);
+				// clip value
+				if (*(pDTbuf + i) > msbit)
+					*(pDTbuf + i) = (short)(msbit - 1);
+				phase += Freq;
+				if (phase > pi2)
+					phase -= pi2;
+			}
 		}
-	}
-	m_lastphaseValue = phase;
-	break;
+		m_lastphaseValue = phase;
+		break;
+
 	case DA_SQUAREWAVE:
 		for (int i = 0; i < OUTBUFSIZE; i++)
 		{
@@ -2044,6 +2029,7 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 		}
 		m_lastphaseValue = phase;
 		break;
+
 	case DA_TRIANGLEWAVE:
 		for (int i = 0; i < OUTBUFSIZE; i++)
 		{
@@ -2060,6 +2046,7 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 		}
 		m_lastphaseValue = phase;
 		break;
+
 	case DA_LINEWAVE:
 		for (int i = 0; i < OUTBUFSIZE; i++)
 			*(pDTbuf + i) = (WORD) amp;
@@ -2069,28 +2056,27 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 	{
 		CStimLevelSeries* pstim = &m_poutD->DAparmsChan0.stimulussequence;
 		long iitime_start	= m_DAnBuffersFilledSinceStart*OUTBUFSIZE;
-		long iitime_end		= (m_DAnBuffersFilledSinceStart +1)*OUTBUFSIZE;
-		
-		double ampUp = PEAKVOLTAGE *  pow(2.0, m_DAC.GetResolution()) / (m_DAC.GetMaxRange() - m_DAC.GetMinRange());
-		double ampZero = 0;
-
-		long iitime = iitime_start;
-		long iistim = -1;
+		long iitime_end		= (m_DAnBuffersFilledSinceStart +1)*OUTBUFSIZE;	
+		long iitime			= iitime_start;
 
 		// find first relevant iistim
-		int istim = 0;
-		int istim0 = 0;
-		int istim1 = pstim->iisti.GetSize();
-		int bUP = 1;
-		for (istim = istim0; istim < istim1; istim++)
+		int interval = 0;
+		int ifirstinterval = 0;
+		int ilastinterval = pstim->iisti.GetSize();
+		int bUP = -1;
+		double ampUp = PEAKVOLTAGE *  pow(2.0, m_DAC.GetResolution()) / (m_DAC.GetMaxRange() - m_DAC.GetMinRange());
+		double ampZero = 0;
+		long iistim = -1;
+
+		for (interval = ifirstinterval; interval < ilastinterval; interval++)
 		{
-			iistim = pstim->iisti.GetAt(istim);
-			bUP *= -1;
-			if (iistim < iitime_start)
-				continue;
-			if (iistim > iitime_end)
+			iistim = pstim->iisti.GetAt(interval);
+			if (iitime_start < iistim) 
 				break;
+			bUP *= -1;
 		}
+		
+		// set value of first point
 		amp = ampZero;
 		if (bUP > 0)
 			amp = ampUp;
@@ -2099,25 +2085,29 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 		{
 			*(pDTbuf + i) = (WORD)(amp);
 			iitime++;
-			if (istim <= istim1 && iitime >= iistim)
+			if (interval < ilastinterval && iitime >= iistim)
 			{
+				interval++;
 				bUP *= -1;
 				amp = ampZero;
 				if (bUP > 0)
 					amp = ampUp;
-				istim++;
-				if (istim < istim1) 
-				{
-					iistim = pstim->iisti.GetAt(istim);
-				}
+				
+				if (interval < ilastinterval) 
+					iistim = pstim->iisti.GetAt(interval);
 			}
 		}
+		
 	}
 		break;
+
 	default:
 		break;
 	}// end switch
 
+	// store values for next buffer
+	m_DAnBuffersFilledSinceStart++;
+	m_lastampValue = amp;
 
 	// convert from 2's Complement to offset binary if required
 	if(m_DAC.GetEncoding() == OLx_ENC_BINARY)
@@ -2125,8 +2115,6 @@ void CADContView::DA_FillBuffer(short* pDTbuf)
 		for(int i=0;i<OUTBUFSIZE;i++)
 			*(pDTbuf+i) = (WORD)( (*(pDTbuf+i) ^ msbit) & lRes);
 	}
-	m_DAnBuffersFilledSinceStart++;
-	m_lastampValue = amp;
 }
 
 void CADContView::OnBufferDone_DAC()

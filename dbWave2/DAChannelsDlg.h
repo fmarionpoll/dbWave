@@ -44,4 +44,6 @@ public:
 	afx_msg void OnBnClickedButtonsource0();
 	CStimLevelSeries m_stimsaved;
 	float	m_samplingRate;
+	afx_msg void OnBnClickedCheckchan0();
+	afx_msg void OnBnClickedCheckchan1();
 };
