@@ -2338,8 +2338,8 @@ IDB_WRITESMALL          BITMAP                  "res\\writesmall.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,2017,9,1
- PRODUCTVERSION 4,2017,9,1
+ FILEVERSION 4,2017,10,3
+ PRODUCTVERSION 4,2017,10,3
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2356,12 +2356,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "AgroParisTech - EGCE UMR 9191 (CNRS-Paris Sud-IRD)"
             VALUE "FileDescription", "Database-oriented  data acquisition and analysis for extracellular electrophysiology"
-            VALUE "FileVersion", "4.2017.9.1"
+            VALUE "FileVersion", "4.2017.10.3"
             VALUE "InternalName", "dbWave2"
             VALUE "LegalCopyright", "Copyright (C) 2017-2021"
             VALUE "OriginalFilename", "dbWave2.exe"
             VALUE "ProductName", " dbWave Application"
-            VALUE "ProductVersion", "4.2017.9.1"
+            VALUE "ProductVersion", "4.2017.10.3"
         END
     END
     BLOCK "VarFileInfo"

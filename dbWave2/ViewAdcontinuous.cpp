@@ -843,6 +843,7 @@ void CADContView::TransferFilesToDatabase()
 BOOL CADContView::StartAD()
 {
 	// set display
+	m_bOutputsEnabled = ((CButton*)GetDlgItem(IDC_ENABLEOUTPUT))->GetCheck();
 	if (m_bADwritetofile && !Defineexperiment())
 	{
 		StopAD(FALSE);
@@ -905,7 +906,7 @@ BOOL CADContView::StartAD()
 	m_ADC.ClearError();
 	
 	// starting mode of A/D if not simultaneous list------------------------
-	if (!m_bSimultaneousStart)
+	if (!m_bSimultaneousStart || !m_bOutputsEnabled)
 	{
 		m_ADC.Config();
 		m_ADC.Start();
@@ -916,6 +917,8 @@ BOOL CADContView::StartAD()
 			m_DAC.Start();
 			m_bDAinprogress = TRUE;
 		}
+		else
+			m_bDAinprogress = FALSE;
 	}
 
 	// starting mode of A/D if simultaneous list ---------------------------
@@ -937,6 +940,7 @@ BOOL CADContView::StartAD()
 		olDaGetErrorString(ecode,errstr,255);
 		
 		// put both subsystems onto simultaneous start List
+		// AD system
 		HDASS hADC = (HDASS) m_ADC.GetHDass();
 		int nbuffers = m_ADC.GetListSize();
 		ecode = olDaPutDassToSSList (hSSlist, hADC);
@@ -946,17 +950,18 @@ BOOL CADContView::StartAD()
 			ecode = olDaReleaseSSList(hSSlist);
 			return(retval);
 		}
-		ecode = olDaPutDassToSSList(hSSlist, (HDASS) m_DAC.GetHDass());
-		if(ecode != OLNOERROR)
+		m_ADC.Config();
+
+		// DA system
+		ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_DAC.GetHDass());
+		if (ecode != OLNOERROR)
 		{
 			retval = ecode;
 			ecode = olDaReleaseSSList(hSSlist);
 			return(retval);
 		}
-		// config
-		m_ADC.Config();
 		m_DAC.Config();
-
+		
 		// prestart
 		ecode = olDaSimultaneousPrestart(hSSlist);
 		olDaGetErrorString(ecode, errstr, 255);
@@ -990,6 +995,7 @@ void CADContView::displayolDaErrorMessage(CHAR* errstr)
 
 BOOL CADContView::StartDA()
 {
+	m_bDAinprogress = FALSE;
 	if (!m_bOutputsEnabled)
 		return FALSE;
 
