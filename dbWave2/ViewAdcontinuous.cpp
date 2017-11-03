@@ -264,7 +264,7 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(bShow);
 
 	// simultaneous A/D and D/A
-	m_bSimultaneousStart = bsimultaneousStartDA & bsimultaneousStartAD;
+	m_bSimultaneousStart = bsimultaneousStartDA && bsimultaneousStartAD;
 	return TRUE;
 }
 
@@ -285,7 +285,7 @@ BOOL CADContView::DA_OpenSubSystem()
 	}
 	catch(COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
+		//AfxMessageBox(e->m_strDescription);
 		e->Delete();
 		return FALSE;
 	} 
@@ -363,6 +363,15 @@ BOOL CADContView::AD_OpenSubSystem()
 
 	// load infos concerning frequency, dma chans, programmable gains
 	m_freqmax	= m_ADC.GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
+
+	// TODO tell sourceview here under which format are data
+	// TODO save format of data into temp document
+	// float volts = (float) ((pWFormat->fullscale_Volts) 
+	//				/(pWFormat->fullscale_bins) * value  -pWFormat->fullscale_Volts/2);
+	// TODO: update max min of chan 1 with gain && instrumental gain
+	//UpdateChanLegends(0);
+	//UpdateHorizontalRulerBar();
+	//UpdateVerticalRulerBar();
 
 	// check that subsystem is here
 	if(m_ADC.GetHDass() == NULL)
@@ -502,9 +511,6 @@ BOOL CADContView::DA_InitSubSystem()
 	int nchannels	= m_DAC.GetSSCaps(OLSSC_NUMCHANNELS);	// DT9818: 2x 16 bits + 1 for the 8 digital outputs
 
 	// update channel list (chan & gain)
-	m_DAC.SetListSize(1);
-	m_DAC.SetChannelList(0, 0);
-
 	// check here that list size is correct and that max chan is ok?
 	//m_DAC.SetListSize(pAcqDwaveFormat->scan_count);
 	//for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
@@ -704,11 +710,8 @@ void CADContView::StopDA()
 		m_DAC.SetDataFlow(OLx_DF_SINGLEVALUE);
 		m_DAC.Config();
 		long nchannels	= m_DAC.GetSSCaps(OLSSC_NUMCHANNELS)-1;	// DT9818: 2x 16 bits + 1 for the 8 digital outputs
-		m_DAC.SetListSize(nchannels);
-		
 		for (long i = 0; i < nchannels; i++)
 		{
-			m_DAC.SetChannelList(i, i);
 			long Value = VoltsToValue(&m_DAC, 0., 1.);
 			m_DAC.PutSingleValue(i, 1., Value);
 		}
@@ -719,6 +722,7 @@ void CADContView::StopDA()
 		e->Delete();
 	}
 }
+
 
 void CADContView::StopAD(BOOL bDisplayErrorMsg)
 {
