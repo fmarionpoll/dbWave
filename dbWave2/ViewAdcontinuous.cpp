@@ -32,14 +32,11 @@
 #define MIN_DURATION 0.1
 #define MIN_BUFLEN	32
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CADContView
 
 IMPLEMENT_DYNCREATE(CADContView, CFormView)
 
-	
-// --------------------------------------------------------------------------
 CADContView::CADContView()
 	: CFormView(CADContView::IDD)
 	, m_bOutputsEnabled(FALSE)
@@ -69,13 +66,9 @@ CADContView::CADContView()
 	m_bEnableActiveAccessibility=FALSE;
 }
 
-// --------------------------------------------------------------------------
-
 CADContView::~CADContView()
 {
 }
-
-// --------------------------------------------------------------------------
 
 void CADContView::DoDataExchange(CDataExchange* pDX)
 {
@@ -92,7 +85,6 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 }
 
-// --------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_MESSAGE(WM_MYMESSAGE, &CADContView::OnMyMessage)
 	ON_EN_CHANGE(IDC_XLAST, &CADContView::OnEnChangeDuration)
@@ -119,8 +111,6 @@ BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_BN_CLICKED(IDC_CARDFEATURES, &CADContView::OnBnClickedCardfeatures)
 END_MESSAGE_MAP()
 
-// --------------------------------------------------------------------------
-
 void CADContView::OnDestroy() 
 {
 	if (m_ADC_inprogress)
@@ -140,8 +130,6 @@ void CADContView::OnDestroy()
 	delete m_pEditBkBrush;		// brush for edit controls	
 	CFormView::OnDestroy();
 }
-
-// --------------------------------------------------------------------------
 
 HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
 {
@@ -172,6 +160,14 @@ HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 // all parameters are stored or come from the parameters array
 // OPTIONS_ACQDATA, structure that is present in the program's main memory
 // m_ADCsubsystem.GetHDass() = NULL
+
+void CADContView::OnCbnSelchangeComboboard()
+{
+	int isel = m_ADcardCombo.GetCurSel();
+	CString csCardName;
+	m_ADcardCombo.GetLBText(isel, csCardName);
+	SelectDTOpenLayersBoard(csCardName);
+}
 
 BOOL CADContView::FindDTOpenLayersBoard()
 {		
@@ -213,110 +209,45 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	// get infos
 	m_bFoundDTOPenLayerDLL = TRUE;	
 	(m_pADC_options->waveFormat).csADcardName = cardName;
-	
-	// assume here that only 1 card is connected and that both systems are on the card
-	// otherwise, we need to split this routine into 2 different routines
-	// and add another combo on the view to select the 2 systems indenpendently
 
 	// connect A/D subsystem and display/hide buttons
 	BOOL flagAD = FALSE;
 	BOOL bsimultaneousStartAD=FALSE;
+	BOOL flagDA = FALSE;
+	BOOL bsimultaneousStartDA = FALSE;
+	m_bOutputsEnabled = FALSE;
+
 	try
 	{
-		m_ADCsubsystem.SetBoard(cardName);		// select board
+		m_ADCsubsystem.SetBoard(cardName);
 		flagAD = ADC_OpenSubSystem();
 		bsimultaneousStartAD = m_ADCsubsystem.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+		m_DACsubsystem.SetBoard(cardName);
+		flagDA = DAC_OpenSubSystem();
+		if (flagDA) 
+		{
+			m_bOutputsEnabled = TRUE;
+			bsimultaneousStartDA = m_DACsubsystem.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+		}
+		m_bSimultaneousStart = bsimultaneousStartDA && bsimultaneousStartAD;
 	}
 	catch(COleDispatchException* e)
 	{
 		AfxMessageBox(e->m_strDescription);
 		e->Delete();
-		flagAD = FALSE;
 	}
 
+	// display additional interface elements
 	int bShow = (flagAD ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_ADPARAMETERS)->ShowWindow(bShow);
 	GetDlgItem(IDC_ADPARAMETERS2)->ShowWindow(bShow);
 
-	// connect D/A subsystem and display/hide buttons
-	BOOL flagDA = FALSE;
-	BOOL bsimultaneousStartDA=FALSE;
-	try
-	{
-		m_DACsubsystem.SetBoard(cardName);
-		flagDA = DAC_OpenSubSystem();
-		if (flagDA)
-			bsimultaneousStartDA= m_DACsubsystem.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
-		else
-			m_bOutputsEnabled = FALSE;
-	}
-	catch(COleDispatchException* e)
-	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
-		flagDA=FALSE;
-	}
-
-	// display additional interface elements
 	bShow = (flagDA ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_ENABLEOUTPUT)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAPARAMETERS)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAPARAMETERS2)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(bShow);
 
-	// simultaneous A/D and D/A
-	m_bSimultaneousStart = bsimultaneousStartDA && bsimultaneousStartAD;
-	return TRUE;
-}
-
-void CADContView::OnCbnSelchangeComboboard()
-{
-	int isel = m_ADcardCombo.GetCurSel();
-	CString csCardName;
-	m_ADcardCombo.GetLBText(isel, csCardName);
-	SelectDTOpenLayersBoard(csCardName);
-}
-
-// get Digital to analog parameters
-BOOL CADContView::DAC_OpenSubSystem() 
-{
-	try
-	{
-		m_DACsubsystem.SetSubSysType(OLSS_DA);
-	}
-	catch(COleDispatchException* e)
-	{
-		//AfxMessageBox(e->m_strDescription);
-		e->Delete();
-		return FALSE;
-	} 
-	// select D/A system
-	try {
-		int nDA = m_DACsubsystem.GetDevCaps(OLDC_DAELEMENTS);		// make sure D/A is available
-		if (nDA < 1)
-			return FALSE;
-		m_DACsubsystem.SetSubSysElement(0);
-	}
-	catch(COleDispatchException* e)
-	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
-		return FALSE;
-	} 
-	// get capacities of the subsystem
-	float max		= m_DACsubsystem.GetMaxRange();					// maximum out voltage
-	float min		= m_DACsubsystem.GetMinRange();					// minimum out voltage
-	int iresolution = m_DACsubsystem.GetResolution();				// nbits resolution: DT9818=16
-	int nchannels	= m_DACsubsystem.GetSSCaps(OLSSC_NUMCHANNELS);	// DT9818: 2x 16 bits + 1 for the 8 digital outputs
-	int iencoding	= m_DACsubsystem.GetEncoding();					// encoding mode DT9818: OLx_ENC_BINARY
-	ASSERT(iencoding == OLx_ENC_BINARY);
-
-	// check we have a correct handle to the system
-	if(m_DACsubsystem.GetHDass() == NULL)
-	{
-		AfxMessageBox(_T("Digital-to-Analog Subsystem is not available."));
-		return FALSE;
-	}
 	return TRUE;
 }
 
@@ -396,9 +327,7 @@ BOOL CADContView::ADC_OpenSubSystem()
 BOOL CADContView::ADC_InitSubSystem()
 {
 	// make sure we have a valid handle
-	if (m_ADCsubsystem.GetHDass() == NULL)
-		if (!FindDTOpenLayersBoard())
-			return FALSE;
+	ASSERT(m_ADCsubsystem.GetHDass() != NULL);
 
 	// store all values within global parameters array
 	CWaveFormat* pAcqDwaveFormat = &(m_pADC_options->waveFormat);
@@ -477,54 +406,60 @@ BOOL CADContView::ADC_InitSubSystem()
 	return TRUE;
 }
 
-BOOL CADContView::DAC_InitSubSystem()
+BOOL CADContView::DAC_OpenSubSystem()
 {
-	// define system parameters only if requested
-	if (!m_bOutputsEnabled)
-		return FALSE;
-
-	// make sure we have a valid handle
-	if (m_DACsubsystem.GetHDass() == NULL)
-		if (!FindDTOpenLayersBoard())
-			return FALSE;
-		
-	// Set up the ADC - multiple wrap so we can get buffer reused	
-	m_DACsubsystem.SetDataFlow(OLx_DF_CONTINUOUS);
-	m_DACsubsystem.SetWrapMode(OLx_WRP_NONE);
-	m_DACsubsystem.SetDmaUsage((short) m_DACsubsystem.GetSSCaps(OLSSC_NUMDMACHANS));
-
-	// sampling rate (set / get)
-	m_DACsubsystem.SetClockSource(OLx_CLK_INTERNAL);
-	// set clock the same as for A/D
-	double clockrate = m_pADC_options->waveFormat.chrate;
-	m_DACsubsystem.SetFrequency(clockrate);			// set sampling frequency (total throughput)
-	clockrate = m_DACsubsystem.GetFrequency();		// make sure it works
-
-	// set trigger mode
-	int trig = m_pADC_options->waveFormat.trig_mode;
-	if (trig > OLx_TRG_EXTRA) trig = 0;
-	m_DACsubsystem.SetTrigger(trig);
-
-	// number of channels
-	int nchannels	= m_DACsubsystem.GetSSCaps(OLSSC_NUMCHANNELS);	// DT9818: 2x 16 bits + 1 for the 8 digital outputs
-
-	// update channel list (chan & gain)
-	// check here that list size is correct and that max chan is ok?
-	//m_DACsubsystem.SetListSize(pAcqDwaveFormat->scan_count);
-	//for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
-	//{
-	//	CWaveChan* pChannel = (m_pADC_options->chanArray).GetWaveChan(i);
-	//	if ( pChannel->am_adchannel> m_numchansMAX-1 && pChannel->am_adchannel != 16)
-	//		 pChannel->am_adchannel= m_numchansMAX-1;
-	//	m_DACsubsystem.SetChannelList(i, pChannel->am_adchannel);
-	//	m_DACsubsystem.SetGainList(i, pChannel->am_adgain);
-	//	double dGain = m_DACsubsystem.GetGainList(i);
-	//	pChannel->am_adgain = (short) dGain;
-	//}
-
-	// pass parameters to the board and check if errors
 	try
 	{
+		m_DACsubsystem.SetSubSysType(OLSS_DA);
+		int nDA = m_DACsubsystem.GetDevCaps(OLDC_DAELEMENTS);
+		if (nDA < 1)
+			return FALSE;
+		m_DACsubsystem.SetSubSysElement(0);
+		if (m_DACsubsystem.GetHDass() == NULL)
+		{
+			AfxMessageBox(_T("Digital-to-Analog Subsystem is not available."));
+			return FALSE;
+		}
+	}
+	catch (COleDispatchException* e)
+	{
+		AfxMessageBox(e->m_strDescription);
+		e->Delete();
+		return FALSE;
+	}
+	return TRUE;
+}
+
+BOOL CADContView::DAC_InitSubSystem()
+{
+	try
+	{
+		// make sure we have a valid handle
+		ASSERT(m_DACsubsystem.GetHDass() != NULL);
+		
+		// Set up the ADC - multiple wrap so we can get buffer reused	
+		m_DACsubsystem.SetDataFlow(OLx_DF_CONTINUOUS);
+		m_DACsubsystem.SetWrapMode(OLx_WRP_NONE);
+		m_DACsubsystem.SetDmaUsage((short) m_DACsubsystem.GetSSCaps(OLSSC_NUMDMACHANS));
+
+		// set clock the same as for A/D
+		m_DACsubsystem.SetClockSource(OLx_CLK_INTERNAL);
+		double clockrate = m_pADC_options->waveFormat.chrate;
+		m_DACsubsystem.SetFrequency(clockrate);			// set sampling frequency (total throughput)
+		clockrate = m_DACsubsystem.GetFrequency();		// make sure it works
+
+		// set trigger mode
+		int trig = m_pADC_options->waveFormat.trig_mode;
+		if (trig > OLx_TRG_EXTRA) 
+			trig = 0;
+		m_DACsubsystem.SetTrigger(trig);
+
+		// number of D/A channels
+		int nchannels	= m_DACsubsystem.GetSSCaps(OLSSC_NUMCHANNELS);
+		m_DACsubsystem.SetListSize(1);
+		m_DACsubsystem.SetChannelList(0, 0);
+
+		// pass parameters to the board and check if errors
 		m_DACsubsystem.ClearError();
 		m_DACsubsystem.Config();
 	}
@@ -535,13 +470,10 @@ BOOL CADContView::DAC_InitSubSystem()
 		return FALSE;
 	}
 
-	// AD system is changed:  update AD buffers
+	// AD system is changed:  fill DA buffers
 	DAC_DeclareBuffers();
 	return TRUE;
 }
-
-// --------------------------------------------------------------------------
-// delete adbuffers
 
 void CADContView::ADC_DeleteBuffers()
 {
@@ -584,12 +516,6 @@ void CADContView::DAC_DeleteBuffers()
 	m_DAC_bufhandle = hBuf;
 	return;
 }
-
-// --------------------------------------------------------------------------
-// clear old buffers and attach buffers to the transfer list
-// variables:
-// pWFormat->bufferNitems		n buffers
-// m_buffersize		buffer size (total nb data points)
 
 void CADContView::ADC_DeclareBuffers()
 {
@@ -653,33 +579,168 @@ void CADContView::DAC_DeclareBuffers()
 	DAC_DeleteBuffers();
 
 	// get current parms from A/D conversion
-	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat); // get pointer to m_pADC_options wave format
+	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat); 
 	m_DAC_frequency = pWFormat->chrate;
 
 	// define buffer length
 	float sweepduration = m_pADC_options->sweepduration;
-	long chsweeplength	= (long) (sweepduration* pWFormat->chrate / (float) m_pADC_options->iundersample);
-	m_DAC_chbuflen		= chsweeplength * m_pADC_options->iundersample / pWFormat->bufferNitems;
-	m_DAC_buflen		= m_DAC_chbuflen; 
+	long chsweeplength	= (long) (sweepduration* pWFormat->chrate );
+	int nbuffers		= pWFormat->bufferNitems;
+	m_DAC_chbuflen		= chsweeplength / nbuffers;
+	int nchannels		= m_DACsubsystem.GetListSize();
+	m_DAC_buflen		= m_DAC_chbuflen * nchannels; 
 	
 	// declare buffers to DT
 	m_DAC_nBuffersFilledSinceStart = 0;
 	m_DAC_lastphaseValue = 0;
 	m_DAC_lastampValue = 0;
-
+	
 	ECODE ecode;
-	for (int i=0; i <= pWFormat->bufferNitems; i++)
+	for (int i=0; i <= nbuffers; i++)
 	{ 
 		ecode = olDmAllocBuffer(0, m_DAC_buflen, &m_DAC_bufhandle);
 		short* pDTbuf;
 		ecode = olDmGetBufferPtr(m_DAC_bufhandle,(void **)&pDTbuf);
 		DAC_FillBuffer(pDTbuf);
-		if((ecode == OLNOERROR)&&(m_DAC_bufhandle != NULL))
-			m_DACsubsystem.SetQueue((long)m_DAC_bufhandle);			// put buffer onto Ready queue
+		if ((ecode == OLNOERROR) && (m_DAC_bufhandle != NULL)) 
+		{
+			m_DACsubsystem.SetQueue((long)m_DAC_bufhandle);
+		}
 	}
 }
 
-// --------------------------------------------------------------------------
+void CADContView::DAC_FillBuffer(short* pDTbuf)
+{
+	double	phase = m_DAC_lastphaseValue;
+	double	Freq = m_pDAC_options->DAparmsChan0.dFrequency / m_DAC_frequency;
+	double	ampUp = m_pDAC_options->DAparmsChan0.dAmplitudeMaxV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
+	double	amp = ampUp;
+	long	msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
+	long	lRes = (long)pow(2.0, m_DACsubsystem.GetResolution()) - 1;
+
+	switch (m_pDAC_options->DAparmsChan0.iWaveform)
+	{
+	case DA_SINEWAVE:
+		{
+			double pi2 = 3.1415927 * 2;
+			Freq = Freq * pi2;
+			for (int i = 0; i < m_DAC_chbuflen; i++)
+			{
+				*(pDTbuf + i) = (short)(cos(phase) * amp);
+				// clip value
+				if (*(pDTbuf + i) > msbit)
+					*(pDTbuf + i) = (short)(msbit - 1);
+				phase += Freq;
+				if (phase > pi2)
+					phase -= pi2;
+			}
+		}
+		m_DAC_lastphaseValue = phase;
+		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+			Convert2ComplementsIntoOffsetBinary(pDTbuf);
+		break;
+
+	case DA_SQUAREWAVE:
+		for (int i = 0; i < m_DAC_chbuflen; i++)
+		{
+			if (phase < 0)
+				*(pDTbuf + i) = (WORD)(0 - (amp / 2));
+			else
+				*(pDTbuf + i) = (WORD)(amp / 2);
+			phase += Freq;
+			if (phase > 0.5)
+				phase -= 1;
+		}
+		m_DAC_lastphaseValue = phase;
+		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+			Convert2ComplementsIntoOffsetBinary(pDTbuf);
+		break;
+
+	case DA_TRIANGLEWAVE:
+		for (int i = 0; i < m_DAC_chbuflen; i++)
+		{
+			*(pDTbuf + i) = (WORD)(2 * phase * amp);
+			// clip value
+			if (*(pDTbuf + i) >= msbit)
+				*(pDTbuf + i) = (short)(msbit - 1);
+			phase = phase + 2 * Freq;
+			if (phase > 0.5)
+			{
+				phase -= 1;
+				amp--;
+			}
+		}
+		m_DAC_lastphaseValue = phase;
+		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+			Convert2ComplementsIntoOffsetBinary(pDTbuf);
+		break;
+
+	case DA_LINEWAVE:
+		for (int i = 0; i < m_DAC_chbuflen; i++)
+			*(pDTbuf + i) = (WORD) amp;
+		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+			Convert2ComplementsIntoOffsetBinary(pDTbuf);
+		break;
+
+	case DA_SEQUENCEWAVE:
+		{
+			CStimLevelSeries* pstim = &m_pDAC_options->DAparmsChan0.stimulussequence;
+			long	iitime_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
+			long	iitime_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
+			long	iitime = iitime_start;
+			int		interval = 0;
+			int		ifirstinterval = 0;
+			int		ilastinterval = pstim->iisti.GetSize();
+			int		bUP = -1;
+			long	iistim = -1;
+			for (interval = ifirstinterval; interval < ilastinterval; interval++)
+			{
+				iistim = pstim->iisti.GetAt(interval);
+				if (iitime_start < iistim)
+					break;
+				bUP *= -1;
+			}
+			
+			// set value of first point
+			WORD	wampUp = (WORD)ampUp;
+			WORD	wampZero = 0;
+			if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+			{
+				wampUp = (WORD)(wampUp ^ msbit) & lRes;
+				wampZero = (WORD)(wampZero ^ msbit) & lRes;
+			}
+			WORD wamp = wampZero;
+			if (bUP > 0)
+				wamp = wampUp;
+
+			// fill buffer
+			for (int i = 0; i < m_DAC_chbuflen; i++)
+			{
+				*(pDTbuf + i) = wamp;
+				iitime++;
+				if (interval < ilastinterval && iitime >= iistim)
+				{
+					interval++;
+					bUP *= -1;
+					wamp = wampZero;
+					if (bUP > 0)
+						wamp = wampUp;
+					if (interval < ilastinterval)
+						iistim = pstim->iisti.GetAt(interval);
+				}
+			}
+		}
+		break;
+
+	default:
+		break;
+	}// end switch
+
+	 // store values for next buffer
+	m_DAC_nBuffersFilledSinceStart++;
+	m_DAC_lastampValue = amp;
+}
+
 void CADContView::DAC_Stop()
 {
 	// stop DA, liberate DTbuffers
@@ -724,7 +785,6 @@ void CADContView::ADC_Stop()
 	}
 	m_ADC_inprogress = FALSE;
 }
-
 
 void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 {
@@ -842,8 +902,6 @@ void CADContView::TransferFilesToDatabase()
 	pdbDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
 }
 
-// --------------------------------------------------------------------------
-
 BOOL CADContView::StartAcquisition()
 {
 	// set display
@@ -859,6 +917,7 @@ BOOL CADContView::StartAcquisition()
 	// make sure that analog-to-digital is available
 	if (!ADC_InitSubSystem())
 		return FALSE;
+
 	m_ADCsubsystem.ClearError();
 	if (m_bOutputsEnabled)
 	{
@@ -870,10 +929,10 @@ BOOL CADContView::StartAcquisition()
 	m_chsweep1 = 0;
 	m_chsweep2 = -1;
 	m_ADsourceView.ADdisplayStart(m_chsweeplength);
-	CWaveFormat* pWFormat= m_inputDataFile.GetpWaveFormat();
-	pWFormat->sample_count		= 0;							// no samples yet
-	pWFormat->chrate			= pWFormat->chrate/m_pADC_options->iundersample;
-	m_fclockrate				= pWFormat->chrate*pWFormat->scan_count;
+	CWaveFormat* pWFormat	= m_inputDataFile.GetpWaveFormat();
+	pWFormat->sample_count	= 0;							// no samples yet
+	pWFormat->chrate		= pWFormat->chrate/m_pADC_options->iundersample;
+	m_fclockrate			= pWFormat->chrate*pWFormat->scan_count;
 	pWFormat->acqtime = CTime::GetCurrentTime();
 
 	// data format
@@ -906,20 +965,20 @@ BOOL CADContView::StartAcquisition()
 		}
 	}
 	
-	// starting mode of A/D if not simultaneous list------------------------
-	if (!m_bSimultaneousStart || !m_bOutputsEnabled)
+	// starting mode of A/D if not simultaneous list
+	if (!m_bSimultaneousStart)
 	{
 		m_ADCsubsystem.Config();
-		m_ADCsubsystem.Start();
-		m_ADC_inprogress	=TRUE;
+		m_DACsubsystem.Config();
+		m_DAC_inprogress = FALSE;
+
 		if (m_bOutputsEnabled) 
 		{
-			m_DACsubsystem.Config();
 			m_DACsubsystem.Start();
 			m_DAC_inprogress = TRUE;
 		}
-		else
-			m_DAC_inprogress = FALSE;
+		m_ADCsubsystem.Start();
+		m_ADC_inprogress = TRUE;
 	}
 
 	// starting A/D when simultaneous list ---------------------------
@@ -940,27 +999,24 @@ BOOL CADContView::StartAcquisition()
 		ecode = olDaGetSSList(&hSSlist);
 		olDaGetErrorString(ecode,errstr,255);
 		
-		// put both subsystems onto simultaneous start List
-
-		// AD system
-		m_ADCsubsystem.Config();
-		HDASS hADC = (HDASS) m_ADCsubsystem.GetHDass();
-		ecode = olDaPutDassToSSList (hSSlist, hADC);
-		if(ecode != OLNOERROR)
-		{
-			retval = ecode;
-			ecode = olDaReleaseSSList(hSSlist);
-			return(retval);
-		}
-
 		// DA system
 		m_DACsubsystem.Config();
-		ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_DACsubsystem.GetHDass());
+		ecode = olDaPutDassToSSList(hSSlist, (HDASS) m_DACsubsystem.GetHDass());
 		if (ecode != OLNOERROR)
 		{
 			retval = ecode;
 			ecode = olDaReleaseSSList(hSSlist);
-			return(retval);
+			return retval;
+		}
+
+		// AD system
+		m_ADCsubsystem.Config();
+		ecode = olDaPutDassToSSList (hSSlist, (HDASS) m_ADCsubsystem.GetHDass());
+		if(ecode != OLNOERROR)
+		{
+			retval = ecode;
+			ecode = olDaReleaseSSList(hSSlist);
+			return retval;
 		}
 
 		// prestart
@@ -993,7 +1049,6 @@ void CADContView::displayolDaErrorMessage(CHAR* errstr)
 	csError = cstringa;
 	AfxMessageBox(csError);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CADContView diagnostics
@@ -1128,8 +1183,6 @@ void CADContView::OnInitialUpdate()
 	// tell mmdi parent which cursor is active
 	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
-
-// --------------------------------------------------------------------------
 
 void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
@@ -1937,7 +1990,6 @@ void CADContView::UpdateBiasScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
 	int ichan = 0;			// TODO see which channel is selected
-
 	int iPos = (int) ((m_ADsourceView.GetChanlistYzero(ichan)- m_ADsourceView.GetChanlistBinZero(ichan))
 					*100/(int)YZERO_SPAN)+(int)50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
@@ -1955,154 +2007,20 @@ void CADContView::UpdateChanLegends(int chan)
 	int ichan = 0;
 	int yzero = m_ADsourceView.GetChanlistYzero(ichan);
 	int yextent = m_ADsourceView.GetChanlistYextent(ichan);
-	//int color = m_ADsourceView.GetChanlistColor(index);
-	//m_colors.SetCurSel(color);
 	float mVperbin= m_ADsourceView.GetChanlistVoltsperBin(ichan)*1000.0f;
 	int binzero = 0;
 	m_yupper=( yextent/2 +yzero -binzero)*mVperbin;
 	m_ylower=(-yextent/2 +yzero -binzero)*mVperbin;
 }
 
-void CADContView::DAC_FillBuffer(short* pDTbuf) 
+void CADContView::Convert2ComplementsIntoOffsetBinary(short* pDTbuf)
 {
-	// set data within buffer
-	
-	const double	WAVEFREQ = m_pDAC_options->DAparmsChan0.dFrequency;	
-	const double	OUTFREQ =  m_DAC_frequency;
-	const double	PEAKVOLTAGE = m_pDAC_options->DAparmsChan0.dAmplitudeMaxV;
-	const int		WAVEFORM = m_pDAC_options->DAparmsChan0.iWaveform;
-	const long		OUTBUFSIZE	= m_DAC_chbuflen;
-	double phase = m_DAC_lastphaseValue;
-	double Freq = m_pDAC_options->DAparmsChan0.dFrequency / OUTFREQ;
+	long msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
+	long lRes = (long)pow(2.0, m_DACsubsystem.GetResolution()) - 1;
 
-	long msbit = (long) pow(2.0,(m_DACsubsystem.GetResolution() - 1));
-	long lRes = (long) pow(2.0, m_DACsubsystem.GetResolution()) - 1;
-
-	double amp = PEAKVOLTAGE *  pow(2.0 , m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange()) ;
-
-	switch (WAVEFORM)
-	{
-	case DA_SINEWAVE:
-		{
-			double pi2 = 3.1415927 * 2;
-			Freq = Freq * pi2;
-			for (int i = 0; i < OUTBUFSIZE; i++)
-			{
-				*(pDTbuf + i) = (short)(cos(phase) * amp);
-				// clip value
-				if (*(pDTbuf + i) > msbit)
-					*(pDTbuf + i) = (short)(msbit - 1);
-				phase += Freq;
-				if (phase > pi2)
-					phase -= pi2;
-			}
-		}
-		m_DAC_lastphaseValue = phase;
-		break;
-
-	case DA_SQUAREWAVE:
-		for (int i = 0; i < OUTBUFSIZE; i++)
-		{
-			if (phase < 0)
-				*(pDTbuf + i) = (WORD)(0 - (amp / 2));
-			else
-				*(pDTbuf + i) = (WORD)(amp / 2);
-
-			phase += Freq;
-			if (phase > 0.5)
-				phase -= 1;
-		}
-		m_DAC_lastphaseValue = phase;
-		break;
-
-	case DA_TRIANGLEWAVE:
-		for (int i = 0; i < OUTBUFSIZE; i++)
-		{
-			*(pDTbuf + i) = (WORD)(2 * phase * amp);
-			// clip value
-			if (*(pDTbuf + i) >= msbit)
-				*(pDTbuf + i) = (short)(msbit - 1);
-			phase = phase + 2 * Freq;
-			if (phase > 0.5)
-			{
-				phase -= 1;
-				amp--;
-			}
-		}
-		m_DAC_lastphaseValue = phase;
-		break;
-
-	case DA_LINEWAVE:
-		for (int i = 0; i < OUTBUFSIZE; i++)
-			*(pDTbuf + i) = (WORD) amp;
-		break;
-
-	case DA_SEQUENCEWAVE:
-	{
-		CStimLevelSeries* pstim = &m_pDAC_options->DAparmsChan0.stimulussequence;
-		long iitime_start	= m_DAC_nBuffersFilledSinceStart*OUTBUFSIZE;
-		long iitime_end		= (m_DAC_nBuffersFilledSinceStart +1)*OUTBUFSIZE;	
-		long iitime			= iitime_start;
-
-		// find first relevant iistim
-		int interval = 0;
-		int ifirstinterval = 0;
-		int ilastinterval = pstim->iisti.GetSize();
-		int bUP = -1;
-		double ampUp = PEAKVOLTAGE *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
-		double ampZero = 0;
-		long iistim = -1;
-
-		for (interval = ifirstinterval; interval < ilastinterval; interval++)
-		{
-			iistim = pstim->iisti.GetAt(interval);
-			if (iitime_start < iistim) 
-				break;
-			bUP *= -1;
-		}
-		
-		// set value of first point
-		amp = ampZero;
-		if (bUP > 0)
-			amp = ampUp;
-
-		for (int i = 0; i < OUTBUFSIZE; i++)
-		{
-			*(pDTbuf + i) = (WORD)(amp);
-			iitime++;
-			if (interval < ilastinterval && iitime >= iistim)
-			{
-				interval++;
-				bUP *= -1;
-				amp = ampZero;
-				if (bUP > 0)
-					amp = ampUp;
-				
-				if (interval < ilastinterval) 
-					iistim = pstim->iisti.GetAt(interval);
-			}
-		}
-	}
-		break;
-
-	default:
-		break;
-	}// end switch
-
-	// store values for next buffer
-	m_DAC_nBuffersFilledSinceStart++;
-	m_DAC_lastampValue = amp;
-
-	// convert from 2's Complement to offset binary if required
-	if(m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
-	{
-		for(int i=0;i<OUTBUFSIZE;i++)
-			*(pDTbuf+i) = (WORD)( (*(pDTbuf+i) ^ msbit) & lRes);
-	}
+	for (int i = 0; i< m_DAC_chbuflen; i++)
+			*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ msbit) & lRes);
 }
-
-
-//This function converts a value from the specified subsystem into a voltage.
 
 float CADContView::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain)
 {
@@ -2136,9 +2054,7 @@ float CADContView::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain)
 	return fVolts;
 }
 
-//This function converts a voltage from the specified subsystem into a value.
-
-long CADContView::VoltsToValue(CDTAcq32* pSS,float fVolts,double dfGain)
+long CADContView::VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain)
 {
 	long lRes;
 	float fMin,fMax;
@@ -2270,7 +2186,6 @@ void CADContView::OnEnChangeYupper()
 	mm_yupper.m_nChar=0;
 	mm_yupper.SetSel(0, -1); 	//select all text
 }
-
 
 // Write to disk mode
 void CADContView::OnBnClickedRadio1()

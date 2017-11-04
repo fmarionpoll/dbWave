@@ -142,6 +142,7 @@ protected:
 	
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
+	void Convert2ComplementsIntoOffsetBinary(short* pDTbuf);
 
 	void StopAcquisition(BOOL bDisplayErrorMsg);
 	BOOL StartAcquisition();
