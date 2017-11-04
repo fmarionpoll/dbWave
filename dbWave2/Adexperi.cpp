@@ -29,7 +29,7 @@ ADExperimentDlg::ADExperimentDlg(CWnd* pParent /*=NULL*/)
 	m_csMoreComment = _T("");
 	m_exptnumber = 0;
 	m_csPathname = _T("");
-	m_pacqD = NULL;
+	m_pADC_options = NULL;
 	m_bADexpt = TRUE;
 	m_bFilename = TRUE;
 }
@@ -140,9 +140,9 @@ void ADExperimentDlg::OnOK()
 		m_exptnumber = iexptnumber;
 
 		// update file descriptors
-		m_pacqD->csPathname = m_csPathname;
-		m_pacqD->csBasename = m_csBasename;
-		m_pacqD->exptnumber = m_exptnumber+1; 
+		m_pADC_options->csPathname = m_csPathname;
+		m_pADC_options->csBasename = m_csBasename;
+		m_pADC_options->exptnumber = m_exptnumber+1; 
 		m_pwaveFormat->csMoreComment = m_csMoreComment;
 
 		// save descriptors into waveFormat (data acq file descriptor) and update database
@@ -158,23 +158,23 @@ void ADExperimentDlg::OnOK()
 		m_coInsect.GetWindowText(			m_pwaveFormat->csInsectname);
 		m_coExpt.GetWindowText(				m_pwaveFormat->csComment);
 		m_pwaveFormat->insectID	= m_IDinsect;
-		m_pwaveFormat->repeat	= m_pacqD->icsA_repeat;
-		m_pwaveFormat->repeat2	= m_pacqD->icsA_repeat2;
+		m_pwaveFormat->repeat	= m_pADC_options->icsA_repeat;
+		m_pwaveFormat->repeat2	= m_pADC_options->icsA_repeat2;
 
 		// save data into commons
-		m_pacqD->icsA_concentration = SaveList(&m_coConcentration, &(m_pacqD->csA_concentration));
-		m_pacqD->icsA_stimulus = SaveList(&m_coStimulus, &(m_pacqD->csA_stimulus));
-		m_pacqD->icsA_insect = SaveList(&m_coInsect, &(m_pacqD->csA_insect));
-		m_pacqD->icsA_location = SaveList(&m_coLocation, &(m_pacqD->csA_location));
-		m_pacqD->icsA_sensillum = SaveList(&m_coSensillum, &(m_pacqD->csA_sensillum));
-		m_pacqD->icsA_strain = SaveList(&m_coStrain, &(m_pacqD->csA_strain));
-		m_pacqD->icsA_sex = SaveList(&m_coSex, &(m_pacqD->csA_sex));
-		m_pacqD->icsA_operatorname = SaveList(&m_coOperator, &(m_pacqD->csA_operatorname));
-		m_pacqD->icsA_concentration2 = SaveList(&m_coConcentration2, &(m_pacqD->csA_concentration2));
-		m_pacqD->icsA_stimulus2 = SaveList(&m_coStimulus2, &(m_pacqD->csA_stimulus2));
-		m_pacqD->icsA_repeat = SaveList(&m_coRepeat, NULL);
-		m_pacqD->icsA_repeat2 = SaveList(&m_coRepeat2, NULL);
-		m_pacqD->icsA_expt = SaveList(&m_coExpt, &(m_pacqD->csA_expt));
+		m_pADC_options->icsA_concentration = SaveList(&m_coConcentration, &(m_pADC_options->csA_concentration));
+		m_pADC_options->icsA_stimulus = SaveList(&m_coStimulus, &(m_pADC_options->csA_stimulus));
+		m_pADC_options->icsA_insect = SaveList(&m_coInsect, &(m_pADC_options->csA_insect));
+		m_pADC_options->icsA_location = SaveList(&m_coLocation, &(m_pADC_options->csA_location));
+		m_pADC_options->icsA_sensillum = SaveList(&m_coSensillum, &(m_pADC_options->csA_sensillum));
+		m_pADC_options->icsA_strain = SaveList(&m_coStrain, &(m_pADC_options->csA_strain));
+		m_pADC_options->icsA_sex = SaveList(&m_coSex, &(m_pADC_options->csA_sex));
+		m_pADC_options->icsA_operatorname = SaveList(&m_coOperator, &(m_pADC_options->csA_operatorname));
+		m_pADC_options->icsA_concentration2 = SaveList(&m_coConcentration2, &(m_pADC_options->csA_concentration2));
+		m_pADC_options->icsA_stimulus2 = SaveList(&m_coStimulus2, &(m_pADC_options->csA_stimulus2));
+		m_pADC_options->icsA_repeat = SaveList(&m_coRepeat, NULL);
+		m_pADC_options->icsA_repeat2 = SaveList(&m_coRepeat2, NULL);
+		m_pADC_options->icsA_expt = SaveList(&m_coExpt, &(m_pADC_options->csA_expt));
 
 		CDialog::OnOK();
 	}
@@ -207,10 +207,10 @@ BOOL ADExperimentDlg::OnInitDialog()
 
 	// load address of items defined for this dialog and load corresp data
 	if (m_bADexpt)
-		m_pwaveFormat= &(m_pacqD->waveFormat);
+		m_pwaveFormat= &(m_pADC_options->waveFormat);
 
-	m_exptnumber = m_pacqD->exptnumber;
-	m_csBasename = m_pacqD->csBasename;
+	m_exptnumber = m_pADC_options->exptnumber;
+	m_csBasename = m_pADC_options->csBasename;
 	if (m_csBasename.IsEmpty())
 		m_csBasename = _T("data");
 	m_csPathname = m_pdbDoc->m_ProposedDataPathName;
@@ -218,19 +218,19 @@ BOOL ADExperimentDlg::OnInitDialog()
 	
 	m_csMoreComment = m_pwaveFormat->csMoreComment;
 	m_IDinsect = m_pwaveFormat->insectID;
-	LoadList(&m_coConcentration, &(m_pacqD->csA_concentration), m_pacqD->icsA_concentration,	&(m_pdbDoc->m_pDB->m_concSet));
-	LoadList(&m_coStimulus,		&(m_pacqD->csA_stimulus),		m_pacqD->icsA_stimulus,			&(m_pdbDoc->m_pDB->m_stimSet));
-	LoadList(&m_coConcentration2, &(m_pacqD->csA_concentration2), m_pacqD->icsA_concentration2, &(m_pdbDoc->m_pDB->m_concSet));
-	LoadList(&m_coStimulus2,	&(m_pacqD->csA_stimulus2),		m_pacqD->icsA_stimulus2,		&(m_pdbDoc->m_pDB->m_stimSet));
-	LoadList(&m_coInsect,		&(m_pacqD->csA_insect),			m_pacqD->icsA_insect,			&(m_pdbDoc->m_pDB->m_insectSet));
-	LoadList(&m_coLocation,		&(m_pacqD->csA_location),		m_pacqD->icsA_location,			&(m_pdbDoc->m_pDB->m_locationSet));
-	LoadList(&m_coSensillum,	&(m_pacqD->csA_sensillum),		m_pacqD->icsA_sensillum,		&(m_pdbDoc->m_pDB->m_sensillumSet));
-	LoadList(&m_coStrain,		&(m_pacqD->csA_strain),			m_pacqD->icsA_strain,			&(m_pdbDoc->m_pDB->m_strainSet));
-	LoadList(&m_coSex,			&(m_pacqD->csA_sex),			m_pacqD->icsA_sex,				&(m_pdbDoc->m_pDB->m_sexSet));
-	LoadList(&m_coOperator,		&(m_pacqD->csA_operatorname),	m_pacqD->icsA_operatorname,		&(m_pdbDoc->m_pDB->m_operatorSet));
-	LoadList(&m_coExpt,			&(m_pacqD->csA_expt),			m_pacqD->icsA_expt,				&(m_pdbDoc->m_pDB->m_exptSet));
-	LoadList(&m_coRepeat,		NULL,							m_pacqD->icsA_repeat,			NULL);
-	LoadList(&m_coRepeat2,		NULL,							m_pacqD->icsA_repeat2,			NULL);
+	LoadList(&m_coConcentration, &(m_pADC_options->csA_concentration), m_pADC_options->icsA_concentration,	&(m_pdbDoc->m_pDB->m_concSet));
+	LoadList(&m_coStimulus,		&(m_pADC_options->csA_stimulus),		m_pADC_options->icsA_stimulus,			&(m_pdbDoc->m_pDB->m_stimSet));
+	LoadList(&m_coConcentration2, &(m_pADC_options->csA_concentration2), m_pADC_options->icsA_concentration2, &(m_pdbDoc->m_pDB->m_concSet));
+	LoadList(&m_coStimulus2,	&(m_pADC_options->csA_stimulus2),		m_pADC_options->icsA_stimulus2,		&(m_pdbDoc->m_pDB->m_stimSet));
+	LoadList(&m_coInsect,		&(m_pADC_options->csA_insect),			m_pADC_options->icsA_insect,			&(m_pdbDoc->m_pDB->m_insectSet));
+	LoadList(&m_coLocation,		&(m_pADC_options->csA_location),		m_pADC_options->icsA_location,			&(m_pdbDoc->m_pDB->m_locationSet));
+	LoadList(&m_coSensillum,	&(m_pADC_options->csA_sensillum),		m_pADC_options->icsA_sensillum,		&(m_pdbDoc->m_pDB->m_sensillumSet));
+	LoadList(&m_coStrain,		&(m_pADC_options->csA_strain),			m_pADC_options->icsA_strain,			&(m_pdbDoc->m_pDB->m_strainSet));
+	LoadList(&m_coSex,			&(m_pADC_options->csA_sex),			m_pADC_options->icsA_sex,				&(m_pdbDoc->m_pDB->m_sexSet));
+	LoadList(&m_coOperator,		&(m_pADC_options->csA_operatorname),	m_pADC_options->icsA_operatorname,		&(m_pdbDoc->m_pDB->m_operatorSet));
+	LoadList(&m_coExpt,			&(m_pADC_options->csA_expt),			m_pADC_options->icsA_expt,				&(m_pdbDoc->m_pDB->m_exptSet));
+	LoadList(&m_coRepeat,		NULL,							m_pADC_options->icsA_repeat,			NULL);
+	LoadList(&m_coRepeat2,		NULL,							m_pADC_options->icsA_repeat2,			NULL);
 
 	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN1))->SetRange( 0, 9999);
 

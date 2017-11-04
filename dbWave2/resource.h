@@ -191,7 +191,6 @@
 #define IDD_VIEWPANELEFT3               229
 #define IDC_CONTINUOUS                  230
 #define IDC_BURST                       231
-#define IDC_WRITETODISK                 232
 #define IDC_DURATION                    233
 #define IDC_ONLINEDISPLAY               234
 #define IDI_START                       234
@@ -404,9 +403,11 @@
 #define IDC_STIMULUSTAG                 513
 #define IDC_APPLYTOALLFILES             514
 #define IDC_SINGLECHANNEL               522
+#define IDC_WRITETODISK                 522
 #define IDC_RADIO1                      522
 #define IDC_RECTANGLETAG                523
 #define IDC_RADIO2                      523
+#define IDC_OSCILLOSCOPE                523
 #define IDC_BISI                        525
 #define IDC_REMOVE                      527
 #define IDC_MVLEVEL                     528
@@ -431,6 +432,7 @@
 #define ID_VIEW_APPLOOK_OFF_2007_SILVER 552
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA   553
 #define ID_VIEW_APPLOOK_WINDOWS_7       554
+#define IDD_DTBOARD_DLG                 558
 #define ID_STARTSTOP                    1001
 #define IDC_VERSION                     1003
 #define IDC_SAMPLINGRATE                1003
@@ -742,7 +744,18 @@
 #define IDC_STATIC01                    1488
 #define IDC_BUTTONSOURCE0               1490
 #define IDC_BUTTONSOURCE1               1491
+#define IDC_BOARD                       1491
 #define IDC_BUTTONSOURCE2               1492
+#define IDC_SUBSYSTEM                   1492
+#define IDC_BOARD_PROPERTIES            1493
+#define IDC_BOARD_INFO                  1494
+#define IDC_NUMERICAL_PROPERTIES2       1495
+#define IDC_SS_NUMERICAL                1496
+#define IDC_SUBSYSTEM_PROPERTIES2       1497
+#define IDC_SS_CAP                      1498
+#define IDC_CUSTOM1                     1499
+#define IDC_CARDFEATURES                1500
+
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -862,10 +875,10 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        558
+#define _APS_3D_CONTROLS                1
+#define _APS_NEXT_RESOURCE_VALUE        562
 #define _APS_NEXT_COMMAND_VALUE         33010
-#define _APS_NEXT_CONTROL_VALUE         1491
+#define _APS_NEXT_CONTROL_VALUE         1502
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

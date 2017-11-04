@@ -435,7 +435,7 @@ BOOL CImportFilesDlg::GetExperimentParameters(CAcqDataDoc* pTo)
 	dlg.m_bFilename = FALSE;						// hide path name
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
 	OPTIONS_ACQDATA* pacqD= &(pApp->acqD);			// pointer to data acq options 
-	dlg.m_pacqD = pacqD;
+	dlg.m_pADC_options = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
 	// ...	
 	BOOL flag = dlg.DoModal();

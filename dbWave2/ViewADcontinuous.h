@@ -36,8 +36,8 @@ public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet;
 	float				m_sweepduration;
-	CDTAcq32			m_ADC;
-	CDTAcq32			m_DAC;
+	CDTAcq32			m_ADCsubsystem;
+	CDTAcq32			m_DACsubsystem;
 	float				m_yupper;
 	float				m_ylower;
 	CRulerBar			m_adxscale;
@@ -81,37 +81,37 @@ protected:
 protected:
 	BOOL				m_bFoundDTOPenLayerDLL;
 	BOOL				m_bhidesubsequent;
-	OPTIONS_ACQDATA*	m_pacqD;			// pointer to data acq options 
-	OPTIONS_OUTPUTDATA*	m_poutD;			// pointer to data output options
 
 	CAcqDataDoc			m_inputDataFile;	// document
 	//CAcqDataDoc		m_outputDataFile;	// D/A file...
 	CStringArray		m_csNameArray;
-
 	BOOL				m_bFileOpen;		// flag / file open
 	CString				m_szFileName;		// data filename
 
 	BOOL 				m_bAskErase;		// ask erase when data may be lost (default = FALSE)
-	BOOL				m_bADinprogress;	// A/D is in progress (used by OnStop/OnStart)
 	BOOL				m_bchanged;			// flag: save data or not	
 	double 				m_freqmax;			// maximum sampling frequency (Hz)
 	int					m_numchansMAX;
 
-	BOOL				m_bDAinprogress;	// D/A in progress
 	BOOL				m_bSimultaneousStart;	//TRUE if the card is capable of this
+	ECODE				m_ecode;
 
 	// DT buffer
-	ECODE				m_ecode;
-	HBUF				m_ADbufhandle;
-	long				m_ADbuflen;			// nb of acq sample per DT buffer
-	long				m_chDTbuflen;		// nb pts for one chan in DT buffer
+	OPTIONS_ACQDATA*	m_pADC_options;			// pointer to data acq options 
+	BOOL				m_ADC_inprogress;	// A/D is in progress (used by OnStop/OnStart)
+	HBUF				m_ADC_bufhandle;
+	long				m_ADC_buflen;		// nb of acq sample per DT buffer
+	long				m_ADC_chbuflen;		// nb pts for one chan in DT buffer
 
-	HBUF				m_DAbufhandle;
-	long				m_DAbuflen;			// nb of acq sample per DT buffer
-	//int				m_DAmode;			// type of analog output (0=SINE, 1= SQUARE, 2=TRIANGLE, etc)
-	long				m_DAnBuffersFilledSinceStart;
-	double				m_lastphaseValue;
-	double				m_lastampValue;
+	OPTIONS_OUTPUTDATA*	m_pDAC_options;			// pointer to data output options
+	BOOL				m_DAC_inprogress;	// D/A in progress
+	HBUF				m_DAC_bufhandle;
+	long				m_DAC_buflen;			// nb of acq sample per DT buffer
+	long				m_DAC_nBuffersFilledSinceStart;
+	double				m_DAC_lastphaseValue;
+	double				m_DAC_lastampValue;
+	double				m_DAC_frequency;
+	long				m_DAC_chbuflen;
 
 	// sweep
 	long				m_chsweeplength;	// sweep length (per channel)
@@ -122,33 +122,29 @@ protected:
 	int					m_bytesweepRefresh;
 	float				m_fclockrate;		// apparent clock rate
 
-	// D/A parameters
-	long m_chDAbuflen;
-	double m_DAfrequency;
-
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoard();
 	BOOL SelectDTOpenLayersBoard(CString cardName);
 	
-	BOOL AD_OpenSubSystem();
-	BOOL AD_InitSubSystem();
-	void AD_DeleteBuffers();
-	void AD_DeclareBuffers();
-	void AD_Transfer(short* pDTbuf);
+	BOOL ADC_OpenSubSystem();
+	BOOL ADC_InitSubSystem();
+	void ADC_DeleteBuffers();
+	void ADC_DeclareBuffers();
+	void ADC_Transfer(short* pDTbuf);
+	void ADC_Stop();
 	
-	BOOL DA_OpenSubSystem();
-	BOOL DA_InitSubSystem();
-	void DA_DeleteBuffers();
-	void DA_DeclareBuffers();
-	void DA_FillBuffer(short* pDTbuf);
+	BOOL DAC_OpenSubSystem();
+	BOOL DAC_InitSubSystem();
+	void DAC_DeleteBuffers();
+	void DAC_DeclareBuffers();
+	void DAC_FillBuffer(short* pDTbuf);
+	void DAC_Stop();
 	
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
 
-	void StopAD(BOOL bDisplayErrorMsg);
-	BOOL StartAD();
-	BOOL StartDA();
-	void StopDA();
+	void StopAcquisition(BOOL bDisplayErrorMsg);
+	BOOL StartAcquisition();
 
 	BOOL InitCyberAmp();
 	BOOL Defineexperiment() ;
@@ -213,6 +209,7 @@ public:
 	afx_msg void OnEnChangeYupper();
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
+	afx_msg void OnBnClickedCardfeatures();
 };
 
 
