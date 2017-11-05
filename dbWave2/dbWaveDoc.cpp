@@ -2264,10 +2264,10 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 	dlg.SetRange(0, nfiles);
 	dlg.SetStep(1);
 	
-	CStringArray csDeletedNames;
-	CStringArray csDeletedSpkNames;
-	CStringArray csOriginalNames;
-	CStringArray csAllNames;
+	CStringArray		csDeletedNames;
+	CStringArray		csDeletedSpkNames;
+	CStringArray		csOriginalNames;
+	CStringArray		csAllNames;
 	CArray <CTime, CTime> oTimeArray;
 	csDeletedNames.SetSize(nfiles);
 	csDeletedSpkNames.SetSize(nfiles);

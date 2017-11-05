@@ -97,21 +97,20 @@ protected:
 	ECODE				m_ecode;
 
 	// DT buffer
-	OPTIONS_ACQDATA*	m_pADC_options;			// pointer to data acq options 
+	OPTIONS_ACQDATA*	m_pADC_options;		// pointer to data acq options 
 	BOOL				m_ADC_inprogress;	// A/D is in progress (used by OnStop/OnStart)
 	HBUF				m_ADC_bufhandle;
 	long				m_ADC_buflen;		// nb of acq sample per DT buffer
 	long				m_ADC_chbuflen;		// nb pts for one chan in DT buffer
 
-	OPTIONS_OUTPUTDATA*	m_pDAC_options;			// pointer to data output options
+	OPTIONS_OUTPUTDATA*	m_pDAC_options;		// pointer to data output options
 	BOOL				m_DAC_inprogress;	// D/A in progress
 	HBUF				m_DAC_bufhandle;
-	long				m_DAC_buflen;			// nb of acq sample per DT buffer
-	long				m_DAC_nBuffersFilledSinceStart;
-	double				m_DAC_lastphaseValue;
-	double				m_DAC_lastampValue;
-	double				m_DAC_frequency;
+	long				m_DAC_buflen;		// nb of acq sample per DT buffer
 	long				m_DAC_chbuflen;
+	long				m_DAC_nBuffersFilledSinceStart;
+	double				m_DAC_frequency;
+	CArray <OUTPUTPARMS, OUTPUTPARMS> m_DAC_chanList;
 
 	// sweep
 	long				m_chsweeplength;	// sweep length (per channel)
@@ -137,12 +136,23 @@ protected:
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareBuffers();
+	void DAC_FillBufferWithSineWave(short * pDTbuf, int chan);
+	void DAC_FillBufferWithSquareWave(short * pDTbuf, int chan);
+	void DAC_FillBufferWithTriangleWave(short * pDTbuf, int chan);
+	void DAC_FillBufferWithLineWave(short * pDTbuf, int chan);
+	void DAC_FillBufferWithConstant(short * pDTbuf, int chan);
+	void DAC_FillBufferWithSequenceWave(short * pDTbuf, int chan);
+
+	double MSequence(BOOL start, OUTPUTPARMS * parmsChan);
+	
+	void DAC_FillBufferWithMSEQWave(short * pDTbuf, int chan);
+	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 	void DAC_FillBuffer(short* pDTbuf);
+	void DAC_ConvertOptionsIntoChanList();
 	void DAC_Stop();
 	
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
-	void Convert2ComplementsIntoOffsetBinary(short* pDTbuf);
 
 	void StopAcquisition(BOOL bDisplayErrorMsg);
 	BOOL StartAcquisition();
@@ -208,8 +218,8 @@ public:
 	afx_msg void OnBnClickedStartstop();
 	afx_msg void OnEnChangeYlower();
 	afx_msg void OnEnChangeYupper();
-	afx_msg void OnBnClickedRadio1();
-	afx_msg void OnBnClickedRadio2();
+	afx_msg void OnBnClickedWriteToDisk();
+	afx_msg void OnBnClickedOscilloscope();
 	afx_msg void OnBnClickedCardfeatures();
 };
 

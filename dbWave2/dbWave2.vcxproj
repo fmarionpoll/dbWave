@@ -314,6 +314,7 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="DAChannelsDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EditDAMseqDlg.cpp" />
     <ClCompile Include="DAOutputsParmsDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -649,6 +650,7 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="CWorksheets.h" />
     <ClInclude Include="CyberAmp.h" />
     <ClInclude Include="DAChannelsDlg.h" />
+    <ClInclude Include="EditDAMseqDlg.h" />
     <ClInclude Include="DAOutputsParmsDlg.h" />
     <ClInclude Include="Datacomm.h" />
     <ClInclude Include="datafile_ASD.h" />

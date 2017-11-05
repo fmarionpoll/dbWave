@@ -106,8 +106,8 @@ BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_BN_CLICKED(IDC_STARTSTOP, &CADContView::OnBnClickedStartstop)
 	ON_EN_CHANGE(IDC_YLOWER, &CADContView::OnEnChangeYlower)
 	ON_EN_CHANGE(IDC_YUPPER, &CADContView::OnEnChangeYupper)
-	ON_BN_CLICKED(IDC_WRITETODISK, &CADContView::OnBnClickedRadio1)
-	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &CADContView::OnBnClickedRadio2)
+	ON_BN_CLICKED(IDC_WRITETODISK, &CADContView::OnBnClickedWriteToDisk)
+	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &CADContView::OnBnClickedOscilloscope)
 	ON_BN_CLICKED(IDC_CARDFEATURES, &CADContView::OnBnClickedCardfeatures)
 END_MESSAGE_MAP()
 
@@ -455,9 +455,24 @@ BOOL CADContView::DAC_InitSubSystem()
 		m_DACsubsystem.SetTrigger(trig);
 
 		// number of D/A channels
-		int nchannels	= m_DACsubsystem.GetSSCaps(OLSSC_NUMCHANNELS);
-		m_DACsubsystem.SetListSize(1);
-		m_DACsubsystem.SetChannelList(0, 0);
+		int nchansmax	= m_DACsubsystem.GetSSCaps(OLSSC_NUMCHANNELS);
+		DAC_ConvertOptionsIntoChanList();
+		int nchans = m_DAC_chanList.GetSize();
+		if (nchans > nchansmax) 
+		{
+			nchans = nchansmax;
+			m_DAC_chanList.SetSize(nchans);
+		}
+		m_DACsubsystem.SetListSize(nchans);
+		for (int i = 0; i < nchans; i++) 
+		{
+			OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(i));
+			m_DACsubsystem.SetChannelList(i, parmsChan->iChan);
+	
+			parmsChan->ampUp = parmsChan->mseq_dAmplitV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
+			parmsChan->ampLow = parmsChan->mseq_dOffsetV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
+			MSequence(TRUE, parmsChan);
+		}
 
 		// pass parameters to the board and check if errors
 		m_DACsubsystem.ClearError();
@@ -473,6 +488,36 @@ BOOL CADContView::DAC_InitSubSystem()
 	// AD system is changed:  fill DA buffers
 	DAC_DeclareBuffers();
 	return TRUE;
+}
+
+void CADContView::DAC_ConvertOptionsIntoChanList()
+{
+	//count how many valid outputs are defined
+	int noptions = m_pDAC_options->parmsChan.GetSize();
+	int jmax = 0;
+	for (int i = 0; i < noptions; i++) {
+
+		if (m_pDAC_options->parmsChan.GetAt(i).bON == TRUE)
+			jmax++;
+	}
+	if (jmax == 0) {
+		m_DAC_chanList.SetSize(1);
+		m_pDAC_options->parmsChan.GetAt(0).bON =TRUE;
+		m_pDAC_options->parmsChan.GetAt(0).iChan = 0;
+		m_pDAC_options->parmsChan.GetAt(0).iWaveform = DA_CONSTANT;
+		m_pDAC_options->parmsChan.GetAt(0).value = 0;
+		return;
+	}
+
+	m_DAC_chanList.SetSize(jmax);
+	int j = 0;
+	for (int i = 0; i < noptions; i++) {
+
+		if (m_pDAC_options->parmsChan.GetAt(i).bON == FALSE)
+			continue;
+		m_DAC_chanList.GetAt(j) = m_pDAC_options->parmsChan.GetAt(i);
+		j++;
+	}
 }
 
 void CADContView::ADC_DeleteBuffers()
@@ -589,12 +634,14 @@ void CADContView::DAC_DeclareBuffers()
 	m_DAC_chbuflen		= chsweeplength / nbuffers;
 	int nchannels		= m_DACsubsystem.GetListSize();
 	m_DAC_buflen		= m_DAC_chbuflen * nchannels; 
+
+	for (int i = 0; i < nchannels; i++) {
+		m_DAC_chanList.GetAt(i).lastphase = 0;
+		m_DAC_chanList.GetAt(i).lastamp = 0;
+	}
 	
 	// declare buffers to DT
 	m_DAC_nBuffersFilledSinceStart = 0;
-	m_DAC_lastphaseValue = 0;
-	m_DAC_lastampValue = 0;
-	
 	ECODE ecode;
 	for (int i=0; i <= nbuffers; i++)
 	{ 
@@ -609,136 +656,273 @@ void CADContView::DAC_DeclareBuffers()
 	}
 }
 
-void CADContView::DAC_FillBuffer(short* pDTbuf)
+void CADContView::DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan)
 {
-	double	phase = m_DAC_lastphaseValue;
-	double	Freq = m_pDAC_options->DAparmsChan0.dFrequency / m_DAC_frequency;
-	double	ampUp = m_pDAC_options->DAparmsChan0.dAmplitudeMaxV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
-	double	amp = ampUp;
+	long msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
+	long lRes = (long)pow(2.0, m_DACsubsystem.GetResolution()) - 1;
+	int nchans = m_DACsubsystem.GetListSize();
+
+	for (int i = chan; i< m_DAC_buflen; i += nchans)
+		*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ msbit) & lRes);
+}
+
+void CADContView::DAC_FillBufferWithSineWave(short* pDTbuf, int chan)
+{
+	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	double	phase = parmsChan->lastphase;
+	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
+	double	amp = parmsChan->ampUp;
+	long	msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
+	int nchans = m_DACsubsystem.GetListSize();
+
+	double pi2 = 3.1415927 * 2;
+	Freq = Freq * pi2;
+	for (int i = chan; i < m_DAC_buflen; i+= nchans)
+	{
+		*(pDTbuf + i) = (short)(cos(phase) * amp);
+		// clip value
+		if (*(pDTbuf + i) > msbit)
+			*(pDTbuf + i) = (short)(msbit - 1);
+		phase += Freq;
+		if (phase > pi2)
+			phase -= pi2;
+	}
+
+	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+
+	m_DAC_chanList.GetAt(chan).lastphase = phase;
+	m_DAC_chanList.GetAt(chan).lastamp = amp;
+}
+
+void CADContView::DAC_FillBufferWithSquareWave(short* pDTbuf, int chan)
+{
+	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	double	phase = parmsChan->lastphase;
+	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
+	double	amp = parmsChan->ampUp;
+	long	msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
+	int nchans = m_DACsubsystem.GetListSize();
+
+	for (int i = chan; i < m_DAC_buflen; i+= nchans)
+	{
+		if (phase < 0)
+			*(pDTbuf + i) = (WORD)(0 - (amp / 2));
+		else
+			*(pDTbuf + i) = (WORD)(amp / 2);
+		phase += Freq;
+		if (phase > 0.5)
+			phase -= 1;
+	}
+
+	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+
+	m_DAC_chanList.GetAt(chan).lastphase = phase;
+	m_DAC_chanList.GetAt(chan).lastamp = amp;
+}
+
+void CADContView::DAC_FillBufferWithTriangleWave(short* pDTbuf, int chan)
+{
+	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	double	phase = parmsChan->lastphase;
+	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
+	double	amp = parmsChan->ampUp;
+	long	msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
+	int nchans = m_DACsubsystem.GetListSize();
+
+	for (int i = chan; i < m_DAC_buflen; i+= nchans)
+	{
+		*(pDTbuf + i) = (WORD)(2 * phase * amp);
+		// clip value
+		if (*(pDTbuf + i) >= msbit)
+			*(pDTbuf + i) = (short)(msbit - 1);
+		phase = phase + 2 * Freq;
+		if (phase > 0.5)
+		{
+			phase -= 1;
+			amp--;
+		}
+	}
+
+	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+
+	m_DAC_chanList.GetAt(chan).lastphase = phase;
+	m_DAC_chanList.GetAt(chan).lastamp = amp;
+}
+
+void CADContView::DAC_FillBufferWithLineWave(short* pDTbuf, int chan)
+{
+	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	double	amp = parmsChan->ampUp;
+	int nchans = m_DACsubsystem.GetListSize();
+
+	for (int i = chan; i < m_DAC_buflen; i+= nchans)
+		*(pDTbuf + i) = (WORD) amp;
+
+	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+
+	m_DAC_chanList.GetAt(chan).lastamp = amp;
+}
+
+void CADContView::DAC_FillBufferWithConstant(short* pDTbuf, int chan)
+{
+	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	double	amp = parmsChan->value *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
+	int nchans = m_DACsubsystem.GetListSize();
+
+	for (int i = chan; i < m_DAC_buflen; i += nchans)
+		*(pDTbuf + i) = (WORD) amp;
+
+	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+
+	m_DAC_chanList.GetAt(chan).lastamp = amp;
+}
+
+void CADContView::DAC_FillBufferWithSequenceWave(short* pDTbuf, int chan)
+{
+	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
+	double	amp = parmsChan->ampUp;
+	double	ampUp = amp;
 	long	msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
 	long	lRes = (long)pow(2.0, m_DACsubsystem.GetResolution()) - 1;
+	int nchans = m_DACsubsystem.GetListSize();
 
-	switch (m_pDAC_options->DAparmsChan0.iWaveform)
+	CStimLevelSeries* pstim = &parmsChan->stimulussequence;
+	long	iitime_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
+	long	iitime_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
+	long	iitime = iitime_start;
+	int		interval = 0;
+	int		ifirstinterval = 0;
+	int		ilastinterval = pstim->iisti.GetSize();
+	int		bUP = -1;
+	long	iistim = -1;
+	for (interval = ifirstinterval; interval < ilastinterval; interval++)
 	{
-	case DA_SINEWAVE:
-		{
-			double pi2 = 3.1415927 * 2;
-			Freq = Freq * pi2;
-			for (int i = 0; i < m_DAC_chbuflen; i++)
-			{
-				*(pDTbuf + i) = (short)(cos(phase) * amp);
-				// clip value
-				if (*(pDTbuf + i) > msbit)
-					*(pDTbuf + i) = (short)(msbit - 1);
-				phase += Freq;
-				if (phase > pi2)
-					phase -= pi2;
-			}
-		}
-		m_DAC_lastphaseValue = phase;
-		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
-			Convert2ComplementsIntoOffsetBinary(pDTbuf);
-		break;
+		iistim = pstim->iisti.GetAt(interval);
+		if (iitime_start < iistim)
+			break;
+		bUP *= -1;
+	}
 
-	case DA_SQUAREWAVE:
-		for (int i = 0; i < m_DAC_chbuflen; i++)
-		{
-			if (phase < 0)
-				*(pDTbuf + i) = (WORD)(0 - (amp / 2));
-			else
-				*(pDTbuf + i) = (WORD)(amp / 2);
-			phase += Freq;
-			if (phase > 0.5)
-				phase -= 1;
-		}
-		m_DAC_lastphaseValue = phase;
-		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
-			Convert2ComplementsIntoOffsetBinary(pDTbuf);
-		break;
+	// set value of first point
+	WORD wampUp = (WORD) ampUp;
+	WORD wampZero = 0;
+	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+	{
+		wampUp = (WORD)(wampUp ^ msbit) & lRes;
+		wampZero = (WORD)(wampZero ^ msbit) & lRes;
+	}
+	WORD wamp = wampZero;
+	if (bUP > 0)
+		wamp = wampUp;
 
-	case DA_TRIANGLEWAVE:
-		for (int i = 0; i < m_DAC_chbuflen; i++)
+	// fill buffer
+	for (int i = chan; i < m_DAC_buflen; i+= nchans)
+	{
+		*(pDTbuf + i) = wamp;
+		iitime++;
+		if (interval < ilastinterval && iitime >= iistim)
 		{
-			*(pDTbuf + i) = (WORD)(2 * phase * amp);
-			// clip value
-			if (*(pDTbuf + i) >= msbit)
-				*(pDTbuf + i) = (short)(msbit - 1);
-			phase = phase + 2 * Freq;
-			if (phase > 0.5)
-			{
-				phase -= 1;
-				amp--;
-			}
-		}
-		m_DAC_lastphaseValue = phase;
-		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
-			Convert2ComplementsIntoOffsetBinary(pDTbuf);
-		break;
-
-	case DA_LINEWAVE:
-		for (int i = 0; i < m_DAC_chbuflen; i++)
-			*(pDTbuf + i) = (WORD) amp;
-		if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
-			Convert2ComplementsIntoOffsetBinary(pDTbuf);
-		break;
-
-	case DA_SEQUENCEWAVE:
-		{
-			CStimLevelSeries* pstim = &m_pDAC_options->DAparmsChan0.stimulussequence;
-			long	iitime_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
-			long	iitime_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
-			long	iitime = iitime_start;
-			int		interval = 0;
-			int		ifirstinterval = 0;
-			int		ilastinterval = pstim->iisti.GetSize();
-			int		bUP = -1;
-			long	iistim = -1;
-			for (interval = ifirstinterval; interval < ilastinterval; interval++)
-			{
-				iistim = pstim->iisti.GetAt(interval);
-				if (iitime_start < iistim)
-					break;
-				bUP *= -1;
-			}
-			
-			// set value of first point
-			WORD	wampUp = (WORD)ampUp;
-			WORD	wampZero = 0;
-			if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
-			{
-				wampUp = (WORD)(wampUp ^ msbit) & lRes;
-				wampZero = (WORD)(wampZero ^ msbit) & lRes;
-			}
-			WORD wamp = wampZero;
+			interval++;
+			bUP *= -1;
+			wamp = wampZero;
 			if (bUP > 0)
 				wamp = wampUp;
+			if (interval < ilastinterval)
+				iistim = pstim->iisti.GetAt(interval);
+		}
+	}
 
-			// fill buffer
-			for (int i = 0; i < m_DAC_chbuflen; i++)
-			{
-				*(pDTbuf + i) = wamp;
-				iitime++;
-				if (interval < ilastinterval && iitime >= iistim)
-				{
-					interval++;
-					bUP *= -1;
-					wamp = wampZero;
-					if (bUP > 0)
-						wamp = wampUp;
-					if (interval < ilastinterval)
-						iistim = pstim->iisti.GetAt(interval);
-				}
+	m_DAC_chanList.GetAt(chan).lastamp = amp;
+}
+
+double CADContView::MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) {
+
+	parmsChan->count--;
+	if (parmsChan->count == 0) {
+		parmsChan->count = parmsChan->mseq_iRatio + 1;
+		if (bStart) {
+			parmsChan->num = parmsChan->mseq_iSeed;
+			parmsChan->bit1 = 1;
+			parmsChan->bit33 = 0;
+			parmsChan->count = 1;
+		}
+		UINT bit13 = ((parmsChan->num & 0x1000) != 0);
+		parmsChan->bit1 = (bit13 == parmsChan->bit33) ? 0 : 1;
+		parmsChan->bit33 = ((parmsChan->num & 0x80000000) != 0);
+		parmsChan->num = (parmsChan->num << 1) + parmsChan->bit1;
+	}
+	return (double)parmsChan->bit1*parmsChan->ampUp;
+}
+
+void CADContView::DAC_FillBufferWithMSEQWave(short* pDTbuf, int chan)
+{
+	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	int nchans = m_DACsubsystem.GetListSize();
+
+	double x = 0;
+	int mseqOffsetDelay = parmsChan->mseq_iDelay;
+
+	for (int i = chan; i < m_DAC_buflen; i += nchans) {
+		x = 0;
+		// is there a delay in turnin ON the m-sequence and offsert?
+		if (parmsChan->mseq_iDelay > 0)
+			parmsChan->mseq_iDelay--;
+		else {
+			x = parmsChan->ampLow;
+			if (parmsChan->mseq_iDelay == 0) {
+				x += MSequence(FALSE, parmsChan);
 			}
 		}
-		break;
+		*(pDTbuf + i) = (WORD) x;
+	}
 
-	default:
-		break;
-	}// end switch
+	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
-	 // store values for next buffer
+	m_DAC_chanList.GetAt(chan).lastamp = x;
+}
+
+void CADContView::DAC_FillBuffer(short* pDTbuf)
+{
+	int nchans = m_DACsubsystem.GetListSize();
+	
+	for (int i = 0; i < nchans; i++)
+	{
+		switch (m_DAC_chanList.GetAt(i).iWaveform)
+		{
+		case DA_SINEWAVE:
+			DAC_FillBufferWithSineWave(pDTbuf, i);
+			break;
+		case DA_SQUAREWAVE:
+			DAC_FillBufferWithSquareWave(pDTbuf, i);
+			break;
+		case DA_TRIANGLEWAVE:
+			DAC_FillBufferWithTriangleWave(pDTbuf, i);
+			break;
+		case DA_LINEWAVE:
+			DAC_FillBufferWithLineWave(pDTbuf, i);
+			break;
+		case DA_SEQUENCEWAVE:
+			DAC_FillBufferWithSequenceWave(pDTbuf, i);
+			break;
+		case DA_MSEQWAVE:
+			DAC_FillBufferWithMSEQWave(pDTbuf, i);
+			break;
+		case DA_CONSTANT:
+		default:
+			DAC_FillBufferWithConstant(pDTbuf, i);
+			break;
+		}// end switch
+	}
+
+	 // update number of buffers processed
 	m_DAC_nBuffersFilledSinceStart++;
-	m_DAC_lastampValue = amp;
 }
 
 void CADContView::DAC_Stop()
@@ -1734,7 +1918,6 @@ void CADContView::OnBufferDone_DAC()
 	}
 }
 
-
 // --------------------------------------------------------------------------
 // transfert DT buffer to acqDataDoc buffer
 
@@ -1793,8 +1976,6 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	// update byte length of buffer
 	m_bytesweepRefresh = m_chsweepRefresh * sizeof(short) * pWFormat->scan_count;
 }
-
-// --------------------------------------------------------------------------
 
 BOOL CADContView::InitCyberAmp()
 {
@@ -2013,15 +2194,6 @@ void CADContView::UpdateChanLegends(int chan)
 	m_ylower=(-yextent/2 +yzero -binzero)*mVperbin;
 }
 
-void CADContView::Convert2ComplementsIntoOffsetBinary(short* pDTbuf)
-{
-	long msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
-	long lRes = (long)pow(2.0, m_DACsubsystem.GetResolution()) - 1;
-
-	for (int i = 0; i< m_DAC_chbuflen; i++)
-			*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ msbit) & lRes);
-}
-
 float CADContView::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain)
 {
 	long lRes;
@@ -2187,16 +2359,14 @@ void CADContView::OnEnChangeYupper()
 	mm_yupper.SetSel(0, -1); 	//select all text
 }
 
-// Write to disk mode
-void CADContView::OnBnClickedRadio1()
+void CADContView::OnBnClickedWriteToDisk()
 {
 	m_bADwritetofile=TRUE;
 	m_pADC_options->waveFormat.bADwritetofile = m_bADwritetofile;
 	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
 }
 
-// Oscilloscope mode
-void CADContView::OnBnClickedRadio2()
+void CADContView::OnBnClickedOscilloscope()
 {
 	m_bADwritetofile=FALSE;
 	m_pADC_options->waveFormat.bADwritetofile = m_bADwritetofile;

@@ -420,22 +420,34 @@ public:
 	BOOL	bChanged;								// flag set TRUE if contents has changed
 	WORD	wversion;								// version number
 
-	int		iChan;									// chan nb
+	BOOL	bON;									// channel authorized or not
+	int		iChan;									// chan 
 	double	dAmplitudeMaxV;							// maximum amplitude of the signal
 	double	dAmplitudeMinV;							// minimum amplitude of the signal
 	double	dFrequency;								// frequency of the output signal
 	int		iWaveform;								// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
 	CString	csFilename;								// filename to output
-	int		mseq_iRatio;							// ratio for M-Sequence output
-	int		mseq_iDelay;							// delay for M-Sequence output
-	int		mseq_iSeed;								// seed for M-Sequence output
-	double	mseq_dAmplitV;							// amplitude of the signal
-	double	mseq_dOffsetV;							// offset in volts
-	double	noise_dAmplitV;
+
+	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval
+	int		mseq_iDelay;							// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples
+	int		mseq_iSeed;								// m_mSeqSeed;		// Sequence seed or zero=random seed
+	double	mseq_dAmplitV;							// m_mSeqAmplitude; // M-sequence amplitude
+	double	mseq_dOffsetV;							// m_mSeqOffset;	// Add this offset before multiplication
+	int		num;
+	UINT	bit33;
+	UINT	count;
+	UINT	bit1;
+	double	ampUp;
+	double	ampLow;
+
+	double	noise_dAmplitV;	
 	double	noise_dFactor;
 	double	noise_dOffsetV;
 	int		noise_iDelay;
 	BOOL	noise_bExternal;
+	double	lastamp;
+	double	lastphase;
+	double	value;
 	CStimLevelSeries stimulussequence;
 
 	OUTPUTPARMS();									// constructor
@@ -448,26 +460,22 @@ class OPTIONS_OUTPUTDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_OUTPUTDATA)
 public:
-	BOOL	bChanged;									// flag set TRUE if contents has changed
-	WORD	wversion;									// version number
+	BOOL	bChanged;								// flag set TRUE if contents has changed
+	WORD	wversion;								// version number
 
-	BOOL	bAllowDA;									// allow DA if present
-	BOOL	bPresetWave;								// 0=preset, 1=from file
-	CString	csOutputFile;								// output file
+	BOOL	bAllowDA;								// allow DA if present
+	BOOL	bPresetWave;							// 0=preset, 1=from file
+	CString	csOutputFile;							// output file
 
-	BOOL	bChan0;										// use chan0
-	BOOL	bChan1;										// use chan1
-	BOOL	bDigitalOut;								// use digital outputs
-	OUTPUTPARMS DAparmsChan0;
-	OUTPUTPARMS DAparmsChan1;
+	CArray <OUTPUTPARMS, OUTPUTPARMS> parmsChan;
 
-	double	dDAFrequency_perchan;						// output frequency (per chan)
-	int		iDATriggermode;								// 0=synchronous; 1=soft on start; 2=external trigger
-	int		iDAnbuffers;								// number of DA buffers
-	int		iDAbufferlength;							// length of each buffer
+	double	dDAFrequency_perchan;					// output frequency (per chan)
+	int		iDATriggermode;							// 0=synchronous; 1=soft on start; 2=external trigger
+	int		iDAnbuffers;							// number of DA buffers
+	int		iDAbufferlength;						// length of each buffer
 	
-	OPTIONS_OUTPUTDATA();								// constructor
-	~OPTIONS_OUTPUTDATA();								// destructor
-	void operator = (const OPTIONS_OUTPUTDATA& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);				// overridden for document i/o
+	OPTIONS_OUTPUTDATA();							// constructor
+	~OPTIONS_OUTPUTDATA();							// destructor
+	void operator = (const OPTIONS_OUTPUTDATA& arg);// operator redefinition
+	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 };

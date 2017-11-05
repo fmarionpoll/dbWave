@@ -10,6 +10,7 @@
 #define DA_NOISEWAVE	5
 #define	DA_FILEWAVE		6
 #define DA_LINEWAVE		7
+#define DA_CONSTANT		8
 
 class CDAChannelsDlg : public CDialogEx
 {
@@ -46,4 +47,5 @@ public:
 	float	m_samplingRate;
 	afx_msg void OnBnClickedCheckchan0();
 	afx_msg void OnBnClickedCheckchan1();
+	afx_msg void OnBnClickedButtonsource1();
 };

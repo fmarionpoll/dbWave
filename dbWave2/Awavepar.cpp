@@ -1192,8 +1192,6 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		ntypes = 1;
 		ar << ntypes;	// nb of strings
 		ar << path;
-
-
 	}
 	else
 	{
@@ -1231,7 +1229,7 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 			bincludeTime = bflag; bincludeTime &= 0x1; bflag >>= 1;	// 4th:	includetime
 			bentireFile = bflag; bentireFile &= 0x1; bflag >>= 1;	// 3rd: entirefile
 			bSeparateComments = bflag; bSeparateComments &= 0x1; bflag >>= 1;// 2nd: separatecomments
-			bAllchannels=bflag; bAllchannels &= 0x1;		// 1rst: allchannels
+			bAllchannels=bflag; bAllchannels &= 0x1;				// 1rst: allchannels
 			ar >> selectedChannel;
 			ar >> fTimefirst; ar >> fTimelast;
 		}
@@ -1458,10 +1456,7 @@ OPTIONS_OUTPUTDATA::OPTIONS_OUTPUTDATA()
 	bChanged=FALSE;						// flag set TRUE if contents has changed
 	wversion=1;							// version number
 	bAllowDA				=TRUE;
-	bChan0					=TRUE;
-	bChan1					=FALSE;
 	bPresetWave				=TRUE;
-	bDigitalOut				=FALSE;
 	iDAbufferlength			=10000;
 	iDAnbuffers				=10;
 	iDATriggermode			=0;
@@ -1477,16 +1472,17 @@ void OPTIONS_OUTPUTDATA::operator = (const OPTIONS_OUTPUTDATA& arg)
 	wversion				=arg.wversion;
 	bAllowDA				=arg.bAllowDA;
 	csOutputFile			=arg.csOutputFile;;
-	bChan0					=arg.bChan0;
-	bChan1					=arg.bChan1;
 	bPresetWave				=arg.bPresetWave;
-	bDigitalOut				=arg.bDigitalOut;
 	iDAbufferlength			=arg.iDAbufferlength;
 	iDAnbuffers				=arg.iDAnbuffers;
 	iDATriggermode			=arg.iDATriggermode;
 	dDAFrequency_perchan	=arg.dDAFrequency_perchan;
-	DAparmsChan0			=arg.DAparmsChan0;
-	DAparmsChan1			=arg.DAparmsChan1;	
+	int nchannels			=arg.parmsChan.GetSize();
+	parmsChan.SetSize(nchannels);
+
+	for (int i = 0; i < nchannels; i++) {
+		parmsChan.GetAt(i) = arg.parmsChan.GetAt(i);
+	}
 }
 
 void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
@@ -1494,30 +1490,27 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		ar << wversion;
-		
+
 		ar << (WORD) 1;			// CString 
 		ar << csOutputFile;
 
-		ar << (WORD) 5;			// BOOL
+		ar << (WORD) 2;			// BOOL
 		ar << bAllowDA;
-		ar << bChan0;
-		ar << bChan1;
 		ar << bPresetWave;
-		ar << bDigitalOut;
 
 		ar << (WORD) 3;			// int 
 		ar << iDAbufferlength;
 		ar << iDAnbuffers;
 		ar << iDATriggermode;
-	
 
 		ar << (WORD) 1;			// double
 		ar << dDAFrequency_perchan;
 
-		ar << (WORD) 2;			// OUTPUT_PARMS
-		DAparmsChan0.Serialize(ar);
-		DAparmsChan1.Serialize(ar);	
-
+		int nchannels = parmsChan.GetSize(); // OUTPUT_PARMS
+		ar << (WORD) nchannels;	
+		for (int i = 0; i < nchannels; i++) {
+			parmsChan.GetAt(i).Serialize(ar);
+		}
 		ar << (WORD) 0;			// no more ...
 	} 
 	else
@@ -1528,16 +1521,13 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 
 		// cstring parameters
 		ar >> wn; n = wn;
-		if (n > 0)ar >> csOutputFile;			n--;
+		if (n > 0) ar >> csOutputFile;			n--;
 		CString csdummy; while (n > 0) {n--; ar >> csdummy;}
 
 		// BOOL parameters
 		ar >> wn; n = wn;
 		if (n > 0) ar >> bAllowDA;				n--;
-		if (n > 0) ar >> bChan0;				n--;
-		if (n > 0) ar >> bChan1;				n--;
 		if (n > 0) ar >> bPresetWave;			n--;
-		if (n > 0) ar >> bDigitalOut;			n--;
 		BOOL bdummy; while (n > 0) {n--; ar >> bdummy;}
 
 		// int parameters
@@ -1554,10 +1544,10 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 
 		// output_parms
 		ar >> wn; n = wn;
-		if (n > 0) DAparmsChan0.Serialize(ar);	n--;
-		if (n > 0) DAparmsChan1.Serialize(ar);	n--;
-		ASSERT(n== 0);
-		OUTPUTPARMS odummy; while (n > 0) {n--; odummy.Serialize(ar);}
+		parmsChan.SetSize(n);
+		for (int i = 0; i < n; i++) {
+			parmsChan.GetAt(i).Serialize(ar);
+		}
 
 		// other?
 		ar >> wn; n = wn;
@@ -1573,6 +1563,7 @@ IMPLEMENT_SERIAL(OUTPUTPARMS, CObject, 0 /* schema number*/ )
 OUTPUTPARMS::OUTPUTPARMS()
 {
 	wversion=1;
+	bON = FALSE;
 	noise_bExternal=FALSE;
 	iChan=0;
 	iWaveform=0;
@@ -1587,7 +1578,11 @@ OUTPUTPARMS::OUTPUTPARMS()
 	mseq_dOffsetV=0.;
 	noise_dAmplitV=1.;	
 	noise_dFactor=1.;
-	noise_dOffsetV=0.;	
+	noise_dOffsetV=0.;
+	value = 0;
+	num = 512;
+	bit33 = 1;
+	count = 1;
 }
 
 OUTPUTPARMS::~OUTPUTPARMS()
@@ -1599,6 +1594,7 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	wversion		=arg.wversion;
 	csFilename		=arg.csFilename;
 	noise_bExternal	=arg.noise_bExternal;
+	bON				= arg.bON;
 	iChan			=arg.iChan;
 	iWaveform		=arg.iWaveform;
 	mseq_iRatio		=arg.mseq_iRatio;
@@ -1614,6 +1610,7 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	noise_dFactor	=arg.noise_dFactor;
 	noise_dOffsetV	=arg.noise_dOffsetV;	
 	stimulussequence = arg.stimulussequence;
+	value			= arg.value;
 }
 
 void OUTPUTPARMS::Serialize(CArchive& ar)
@@ -1625,8 +1622,9 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar << (WORD) 1;			// CString 
 		ar << csFilename;
 		
-		ar << (WORD) 1;			// BOOL
+		ar << (WORD) 2;			// BOOL
 		ar << noise_bExternal;
+		ar << bON;
 
 		ar << (WORD) 6;			// int 
 		ar << iChan;
@@ -1636,7 +1634,7 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar << mseq_iSeed;	
 		ar << noise_iDelay;
 
-		ar << (WORD) 8;			// double
+		ar << (WORD) 9;			// double
 		ar << dAmplitudeMaxV;
 		ar << dAmplitudeMinV;
 		ar << dFrequency;	
@@ -1644,7 +1642,8 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar << mseq_dOffsetV;
 		ar << noise_dAmplitV;	
 		ar << noise_dFactor;
-		ar << noise_dOffsetV;	
+		ar << noise_dOffsetV;
+		ar << value;
 
 		ar << (WORD) 1;			// 1 more object
 		stimulussequence.Serialize(ar);
@@ -1663,6 +1662,7 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		// BOOL parameters
 		ar >> wn; n = wn;
 		if (n > 0) ar >> noise_bExternal;	n--;
+		if (n > 0) ar >> bON; n--;
 		BOOL bdummy; while (n > 0) {n--; ar >> bdummy;}
 
 		// int parameters
@@ -1685,6 +1685,7 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		if (n > 0) ar >> noise_dAmplitV;	n--;
 		if (n > 0) ar >> noise_dFactor;		n--;
 		if (n > 0) ar >> noise_dOffsetV;	n--;
+		if (n > 0) ar >> value;				n--;
 	
 		double ddummy; while (n > 0) {n--; ar >> ddummy;}
 
