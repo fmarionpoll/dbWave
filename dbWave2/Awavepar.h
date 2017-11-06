@@ -431,8 +431,8 @@ public:
 	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval
 	int		mseq_iDelay;							// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples
 	int		mseq_iSeed;								// m_mSeqSeed;		// Sequence seed or zero=random seed
-	double	mseq_dAmplitV;							// m_mSeqAmplitude; // M-sequence amplitude
-	double	mseq_dOffsetV;							// m_mSeqOffset;	// Add this offset before multiplication
+	double	dummy1;					// m_mSeqAmplitude; // M-sequence amplitude
+	double	dummy2;					// m_mSeqOffset;	// Add this offset before multiplication
 	int		num;
 	UINT	bit33;
 	UINT	count;

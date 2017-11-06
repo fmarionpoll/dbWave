@@ -31,21 +31,35 @@ protected:
 public:
 	BOOL	m_bChannel0;
 	BOOL	m_bChannel1;
-	BOOL	m_bChannelDigital;
-	afx_msg void OnCbnSelchangeCombosource0();
-	int		m_waveformChannel0;
+	BOOL	m_bChannel2;
+	
 	double	m_famplitude0;
+	double	m_famplitudelow0;
 	double	m_ffrequence0;
-	afx_msg void OnCbnSelchangeCombosource1();
+
+	int		m_waveformChannel0;
 	int		m_waveformChannel1;
+	int		m_waveformChannel2;
+
 	double	m_famplitude1;
+	double	m_famplitudelow1;
 	double	m_ffrequence1;
-	afx_msg void OnBnClickedOk();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnBnClickedButtonsource0();
+
 	CStimLevelSeries m_stimsaved;
 	float	m_samplingRate;
+
+	virtual BOOL OnInitDialog();
+	afx_msg void OnBnClickedOk();
+	
 	afx_msg void OnBnClickedCheckchan0();
 	afx_msg void OnBnClickedCheckchan1();
+	afx_msg void OnBnClickedCheckchan2();
+
+	afx_msg void OnCbnSelchangeCombosource0(); 
+	afx_msg void OnCbnSelchangeCombosource1();
+	afx_msg void OnCbnSelchangeCombosource2();
+
+	afx_msg void OnBnClickedButtonsource0();
 	afx_msg void OnBnClickedButtonsource1();
+	afx_msg void OnBnClickedButtonsource2();
 };
