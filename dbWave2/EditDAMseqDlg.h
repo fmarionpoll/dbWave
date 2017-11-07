@@ -21,8 +21,6 @@ protected:
 public:
 
 	long	m_mSeqRatio;
-	double	m_mSeqAmplitude;
-	double	m_mSeqOffset;
 	long	m_mSeqDelay;
 	long	m_mSeqSeed;
 	CButton m_mSeqRandomSeed;

@@ -716,7 +716,10 @@
 #define IDC_EDITBUFFERLENGTH            1425
 #define IDC_COMBOSOURCE2                1425
 #define IDC_STATICSWEEPLENGTH           1426
+#define IDC_EDITAMPLITUDE0LOW           1426
+#define IDC_EDITAMPLITUDELOW0           1426
 #define IDC_RADIOEDITW                  1427
+#define IDC_EDITAMPLITUDELOW1           1427
 #define IDC_RADIOPRESET                 1428
 #define IDC_STATICLEFT                  1435
 #define IDC_STATICRIGHT                 1436

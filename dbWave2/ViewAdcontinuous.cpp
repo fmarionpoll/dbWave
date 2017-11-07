@@ -469,8 +469,8 @@ BOOL CADContView::DAC_InitSubSystem()
 			OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(i));
 			m_DACsubsystem.SetChannelList(i, parmsChan->iChan);
 	
-			parmsChan->ampUp = parmsChan->mseq_dAmplitV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
-			parmsChan->ampLow = parmsChan->mseq_dOffsetV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
+			parmsChan->ampUp = parmsChan->dAmplitudeMaxV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
+			parmsChan->ampLow = parmsChan->dAmplitudeMinV *  pow(2.0, m_DACsubsystem.GetResolution()) / (m_DACsubsystem.GetMaxRange() - m_DACsubsystem.GetMinRange());
 			MSequence(TRUE, parmsChan);
 		}
 

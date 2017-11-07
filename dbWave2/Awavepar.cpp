@@ -1574,8 +1574,8 @@ OUTPUTPARMS::OUTPUTPARMS()
 	dAmplitudeMaxV=1.;
 	dAmplitudeMinV=-1.;
 	dFrequency=1000.;	
-	mseq_dAmplitV=1.;
-	mseq_dOffsetV=0.;
+	dummy1=1.;
+	dummy2=0.;
 	noise_dAmplitV=1.;	
 	noise_dFactor=1.;
 	noise_dOffsetV=0.;
@@ -1604,8 +1604,8 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	dAmplitudeMaxV	=arg.dAmplitudeMaxV;
 	dAmplitudeMinV	=arg.dAmplitudeMinV;
 	dFrequency		=arg.dFrequency;	
-	mseq_dAmplitV	=arg.mseq_dAmplitV;
-	mseq_dOffsetV	=arg.mseq_dOffsetV;
+	dummy1	=arg.dummy1;
+	dummy2	=arg.dummy2;
 	noise_dAmplitV	=arg.noise_dAmplitV;	
 	noise_dFactor	=arg.noise_dFactor;
 	noise_dOffsetV	=arg.noise_dOffsetV;	
@@ -1638,8 +1638,8 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar << dAmplitudeMaxV;
 		ar << dAmplitudeMinV;
 		ar << dFrequency;	
-		ar << mseq_dAmplitV;
-		ar << mseq_dOffsetV;
+		ar << dummy1;
+		ar << dummy2;
 		ar << noise_dAmplitV;	
 		ar << noise_dFactor;
 		ar << noise_dOffsetV;
@@ -1680,8 +1680,8 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		if (n > 0) ar >> dAmplitudeMaxV;	n--;
 		if (n > 0) ar >> dAmplitudeMinV;	n--;
 		if (n > 0) ar >> dFrequency;		n--;
-		if (n > 0) ar >> mseq_dAmplitV;		n--;
-		if (n > 0) ar >> mseq_dOffsetV;		n--;
+		if (n > 0) ar >> dummy1;		n--;
+		if (n > 0) ar >> dummy2;		n--;
 		if (n > 0) ar >> noise_dAmplitV;	n--;
 		if (n > 0) ar >> noise_dFactor;		n--;
 		if (n > 0) ar >> noise_dOffsetV;	n--;
