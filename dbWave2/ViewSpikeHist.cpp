@@ -1519,7 +1519,7 @@ long CSpikeHistView::PlotHistog(CDC* pDC, CRect* pdispRect, int nbinshistog, lon
 		{	
 			CSpikeList* pSpkList = m_pSpkDoc->GetSpkListCurrent();
 			float samprate = pSpkList->GetAcqSampRate();
-			int iioffset0 = m_pSpkDoc->m_stim.iisti.GetAt(m_pvdS->istimulusindex);
+			int iioffset0 = m_pSpkDoc->m_stim.iistimulus.GetAt(m_pvdS->istimulusindex);
 			if (m_pvdS->babsolutetime )
 				iioffset0 = 0;
 	
@@ -1730,7 +1730,7 @@ void CSpikeHistView::DisplayDot(CDC* pDC, CRect* pRect)
 			// if bCycleHist - one line per stimulus (or group of stimuli)
 			if (m_pvdS->bCycleHist)
 			{
-				lastStim = m_pSpkDoc->m_stim.iisti.GetSize();
+				lastStim = m_pSpkDoc->m_stim.iistimulus.GetSize();
 				if (lastStim == 0)
 					lastStim = 1;
 				increment = m_pvdS->nstipercycle;
@@ -1746,7 +1746,7 @@ void CSpikeHistView::DisplayDot(CDC* pDC, CRect* pRect)
 				// compute temp parameters
 				long istart;
 				if (m_pSpkDoc->m_stim.nitems > 0)
-					istart = m_pSpkDoc->m_stim.iisti.GetAt(istim);
+					istart = m_pSpkDoc->m_stim.iistimulus.GetAt(istim);
 				else
 					istart = (long) -(m_pvdS->timestart * samprate);
 				long iend = iiFrameLast + istart;
@@ -1785,7 +1785,7 @@ void CSpikeHistView::DisplayDot(CDC* pDC, CRect* pRect)
 			if (m_pSpkDoc->m_stim.nitems > 1) 
 			{
 				// stimulus
-				long istart = m_pSpkDoc->m_stim.iisti.GetAt(m_pvdS->istimulusindex);				
+				long istart = m_pSpkDoc->m_stim.iistimulus.GetAt(m_pvdS->istimulusindex);				
 				long iend = iiFrameLast+istart;
 				istart = iiFrameFirst + istart;
 
@@ -2184,8 +2184,8 @@ void CSpikeHistView::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLa
 	long iiend = *lLast; 
 	long iilen = iiend - iistart;
 	int i0 = 0;
-	while (i0 < m_pSpkDoc->m_stim.iisti.GetSize() 
-			&& m_pSpkDoc->m_stim.iisti.GetAt(i0) < iistart)
+	while (i0 < m_pSpkDoc->m_stim.iistimulus.GetSize() 
+			&& m_pSpkDoc->m_stim.iistimulus.GetAt(i0) < iistart)
 		i0++;				// loop until found
 
 	int displen = pRect->Width();
@@ -2208,10 +2208,10 @@ void CSpikeHistView::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLa
 		istate = top;
 	pDC->MoveTo(pRect->left, istate);
 
-	for (ii; ii< m_pSpkDoc->m_stim.iisti.GetSize(); ii++, ii++)
+	for (ii; ii< m_pSpkDoc->m_stim.iistimulus.GetSize(); ii++, ii++)
 	{
 		// stim starts here
-		int iix0 = m_pSpkDoc->m_stim.iisti.GetAt(ii) - iistart;
+		int iix0 = m_pSpkDoc->m_stim.iistimulus.GetAt(ii) - iistart;
 		if (iix0 >= iilen)				// first transition ON after last graph pt?
 			break;						// yes = exit loop
 
@@ -2225,8 +2225,8 @@ void CSpikeHistView::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLa
 		// stim ends here
 		istate = bottom;				// after pulse, descend to bottom level
 		int iix1 = iilen;
-		if (ii < m_pSpkDoc->m_stim.iisti.GetSize()-1)
-			iix1 = m_pSpkDoc->m_stim.iisti.GetAt(ii+1) - iistart;
+		if (ii < m_pSpkDoc->m_stim.iistimulus.GetSize()-1)
+			iix1 = m_pSpkDoc->m_stim.iistimulus.GetAt(ii+1) - iistart;
 		if (iix1 > iilen)				// last transition off graph?
 		{
 			iix1 = iilen;				// yes = clip
@@ -2267,8 +2267,8 @@ void CSpikeHistView::OnEnChangeEditlockonstim()
 	int ilock = GetDlgItemInt(IDC_EDITLOCKONSTIM);
 	if (ilock != m_pvdS->istimulusindex)
 	{
-		if (ilock >= m_pSpkDoc->m_stim.iisti.GetSize())
-			ilock = m_pSpkDoc->m_stim.iisti.GetSize()-1;
+		if (ilock >= m_pSpkDoc->m_stim.iistimulus.GetSize())
+			ilock = m_pSpkDoc->m_stim.iistimulus.GetSize()-1;
 		if (ilock <0)
 			ilock = 0;
 		m_pvdS->istimulusindex = ilock;

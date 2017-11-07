@@ -35,7 +35,7 @@ void CSpikeDoc::ClearData()
 	m_spkclass.EraseData();	
 	if (m_stim.nitems > 0)
 	{
-		m_stim.iisti.RemoveAll();
+		m_stim.iistimulus.RemoveAll();
 		m_stim.nitems=0;
 	}
 	m_spklistArray.SetSize(1);
@@ -127,21 +127,21 @@ void CSpikeDoc::Serialize(CArchive& ar)
 }
 void CSpikeDoc::SortStimArray()
 {
-	int nsti = m_stim.iisti.GetSize();
-	if (nsti == 0 || (m_stim.iisti[nsti-1] > m_stim.iisti[0]))
+	int nsti = m_stim.iistimulus.GetSize();
+	if (nsti == 0 || (m_stim.iistimulus[nsti-1] > m_stim.iistimulus[0]))
 		return;
 
 	// bubble sort from bottom to top
 	for (int j=0; j< nsti; j++)
 	{
-		int imin = m_stim.iisti[j];
+		int imin = m_stim.iistimulus[j];
 		for (int k=j+1; k<nsti; k++)
 		{
-			if (m_stim.iisti[k] < imin)
+			if (m_stim.iistimulus[k] < imin)
 			{	// if new min, exchange positions
-				imin = m_stim.iisti[k];
-				m_stim.iisti[k] = m_stim.iisti[j];
-				m_stim.iisti[j] = imin;
+				imin = m_stim.iistimulus[k];
+				m_stim.iistimulus[k] = m_stim.iistimulus[j];
+				m_stim.iistimulus[j] = imin;
 			}
 		}
 	}
@@ -161,7 +161,7 @@ void CSpikeDoc::ReadBeforeVersion6(CArchive& ar, WORD wwVersion)
 	if (wwVersion >= 3 && wwVersion <= 5)
 	{
 			ar >> m_stim.nitems;	// R9 - load number of items
-			m_stim.iisti.Serialize(ar);	// R10 - read data from file
+			m_stim.iistimulus.Serialize(ar);	// R10 - read data from file
 			SortStimArray();
 	}
 
@@ -609,15 +609,15 @@ void CSpikeDoc::_ExportSpkPSTH (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long*
 	}
 
 	// export stimulus occurence time(s) that fit(s) into the time interval requested
-	if (vdS->exportdatatype == EXPORT_PSTH && m_stim.iisti.GetSize() > 0)
+	if (vdS->exportdatatype == EXPORT_PSTH && m_stim.iistimulus.GetSize() > 0)
 	{			
 		float samprate = pspklist->GetAcqSampRate();
 		ASSERT(samprate != 0.f);
 		int istim0 = 0;
-		int istim1 = m_stim.iisti.GetSize() -1;
+		int istim1 = m_stim.iistimulus.GetSize() -1;
 		int iioffset0 = 0;
 		if (!vdS->babsolutetime)
-			iioffset0= m_stim.iisti.GetAt(vdS->istimulusindex);
+			iioffset0= m_stim.iistimulus.GetAt(vdS->istimulusindex);
 		long iistart = (long) (vdS->timestart*samprate) +iioffset0;
 		long iiend = (long) (vdS->timeend*samprate) +iioffset0;
 		int bUP = -1;
@@ -625,7 +625,7 @@ void CSpikeDoc::_ExportSpkPSTH (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long*
 
 		for (int istim = istim0; istim <= istim1; istim++)
 		{
-			int iistim = m_stim.iisti.GetAt(istim);
+			int iistim = m_stim.iistimulus.GetAt(istim);
 			bUP *= -1;
 			if (iistim < iistart)
 				continue;
@@ -718,7 +718,7 @@ void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 	// update offset
 	int iioffset0 = 0;
 	if (!vdS->babsolutetime && m_stim.nitems > 0) 
-		iioffset0= m_stim.iisti.GetAt(vdS->istimulusindex);
+		iioffset0= m_stim.iistimulus.GetAt(vdS->istimulusindex);
 
 	// clear histogram area
 	ASSERT(vdS->exportdatatype == EXPORT_HISTAMPL);
@@ -854,7 +854,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 	int iioffset0 = 0;
 	if (!vdS->babsolutetime && m_stim.nitems > 0) 
 	{
-		iioffset0= m_stim.iisti.GetAt(vdS->istimulusindex);
+		iioffset0= m_stim.iistimulus.GetAt(vdS->istimulusindex);
 	}
 
 
@@ -1257,8 +1257,8 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 
 	// check validity of istimulusindex
 	int istimulusindex = vdS->istimulusindex;
-	if (istimulusindex > m_stim.iisti.GetSize()-1)
-		istimulusindex = m_stim.iisti.GetSize() -1;
+	if (istimulusindex > m_stim.iistimulus.GetSize()-1)
+		istimulusindex = m_stim.iistimulus.GetSize() -1;
 	if (istimulusindex < 0)
 		istimulusindex = 0;
 	int istim0 = istimulusindex;
@@ -1266,7 +1266,7 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 	int increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stim.iisti.GetSize();
+		istim1 = m_stim.iistimulus.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stim.npercycle > 1 && increment > m_stim.npercycle)
 			increment = m_stim.npercycle;
@@ -1279,7 +1279,7 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		if (!vdS->babsolutetime)
 		{
 			if (m_stim.nitems > 0) 
-				iioffset0= m_stim.iisti.GetAt(istim);
+				iioffset0= m_stim.iistimulus.GetAt(istim);
 			else
 				iioffset0 = (long) -(vdS->timestart * rate);
 		}
@@ -1352,7 +1352,7 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 	int increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stim.iisti.GetSize();
+		istim1 = m_stim.iistimulus.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stim.npercycle > 1 && increment > m_stim.npercycle)
 			increment = m_stim.npercycle;
@@ -1366,8 +1366,8 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		long iiend = (long) (vdS->timeend*samprate);
 		if (!vdS->babsolutetime && m_stim.nitems > 0)	// adjust boundaries if ref is made to
 		{										// a stimulus
-				iistart += m_stim.iisti.GetAt(istim);
-				iiend += m_stim.iisti.GetAt(istim);
+				iistart += m_stim.iistimulus.GetAt(istim);
+				iiend += m_stim.iistimulus.GetAt(istim);
 		}
 
 		// find first spike within interval requested
@@ -1442,7 +1442,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 	int increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stim.iisti.GetSize();
+		istim1 = m_stim.iistimulus.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stim.npercycle > 1 && increment > m_stim.npercycle)
 			increment = m_stim.npercycle;
@@ -1455,7 +1455,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		if (!vdS->babsolutetime)						// if stimulus locking
 		{												// get time of reference stim
 			if (m_stim.nitems > 0) 
-				iioffset0= m_stim.iisti.GetAt(istim);
+				iioffset0= m_stim.iistimulus.GetAt(istim);
 			else
 				iioffset0 = (long) -(vdS->timestart * samprate);
 		}
@@ -1552,7 +1552,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 	int increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stim.iisti.GetSize();
+		istim1 = m_stim.iistimulus.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stim.npercycle > 1 && increment > m_stim.npercycle)
 			increment = m_stim.npercycle;
@@ -1565,7 +1565,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 		if (!vdS->babsolutetime)
 		{
 			if (m_stim.nitems > 0) 
-				iioffset0= m_stim.iisti.GetAt(istim);
+				iioffset0= m_stim.iistimulus.GetAt(istim);
 			else
 				iioffset0 = (long) -(vdS->timestart * samprate);
 		}
@@ -1653,7 +1653,7 @@ void CSpikeDoc::_ExportSpkAverageWave (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS
 	// update offset
 	int iioffset0 = 0;
 	if (!vdS->babsolutetime && m_stim.nitems > 0) 
-		iioffset0= m_stim.iisti.GetAt(vdS->istimulusindex);
+		iioffset0= m_stim.iistimulus.GetAt(vdS->istimulusindex);
 	// prepare parameters
 	float rate = pspklist->GetAcqSampRate();
 	long iitime_start = (long) (vdS->timestart * rate) + iioffset0;

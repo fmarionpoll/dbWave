@@ -798,12 +798,12 @@ void CADContView::DAC_FillBufferWithSequenceWave(short* pDTbuf, int chan)
 	long	iitime = iitime_start;
 	int		interval = 0;
 	int		ifirstinterval = 0;
-	int		ilastinterval = pstim->iisti.GetSize();
+	int		ilastinterval = pstim->iistimulus.GetSize();
 	int		bUP = -1;
 	long	iistim = -1;
 	for (interval = ifirstinterval; interval < ilastinterval; interval++)
 	{
-		iistim = pstim->iisti.GetAt(interval);
+		iistim = pstim->iistimulus.GetAt(interval);
 		if (iitime_start < iistim)
 			break;
 		bUP *= -1;
@@ -834,7 +834,7 @@ void CADContView::DAC_FillBufferWithSequenceWave(short* pDTbuf, int chan)
 			if (bUP > 0)
 				wamp = wampUp;
 			if (interval < ilastinterval)
-				iistim = pstim->iisti.GetAt(interval);
+				iistim = pstim->iistimulus.GetAt(interval);
 		}
 	}
 

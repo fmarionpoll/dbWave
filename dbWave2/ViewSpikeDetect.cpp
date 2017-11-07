@@ -946,9 +946,9 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				lLimitRight = lLimitLeft;
 				lLimitLeft = i;
 			}
-			m_pspkDocVSD->m_stim.iisti.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitLeft);
+			m_pspkDocVSD->m_stim.iistimulus.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitLeft);
 			m_pspkDocVSD->m_stim.nitems++;
-			m_pspkDocVSD->m_stim.iisti.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitRight);
+			m_pspkDocVSD->m_stim.iistimulus.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitRight);
 			m_pspkDocVSD->m_stim.nitems++;
 			UpdateVTtags();
 
@@ -967,13 +967,13 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	//case HINT_MOVEVERTTAG: //12	// vertical tag has moved 		lowp = new pixel / selected tag
 	case HINT_CHANGEVERTTAG: //13
 		{
-		int lvalue = m_pspkDocVSD->m_stim.iisti.GetAt(threshold);
+		int lvalue = m_pspkDocVSD->m_stim.iistimulus.GetAt(threshold);
 		if(iID == m_displayDetect.GetDlgCtrlID())
 			lvalue = m_displayDetect.GetVTtagLval(threshold);
 		else if (iID == m_displayData.GetDlgCtrlID())
 			lvalue = m_displayData.GetVTtagLval(threshold);
 
-		m_pspkDocVSD->m_stim.iisti.SetAt(threshold, lvalue);
+		m_pspkDocVSD->m_stim.iistimulus.SetAt(threshold, lvalue);
 		UpdateVTtags();
 
 		m_spkBarView.Invalidate();
@@ -989,7 +989,7 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		int cx = LOWORD(lParam);
 		int cy = HIWORD(lParam);
 		int lLimitLeft = m_displayDetect.GetDataOffsetfromPixel(cx);
-		m_pspkDocVSD->m_stim.iisti.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitLeft);
+		m_pspkDocVSD->m_stim.iistimulus.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitLeft);
 		m_pspkDocVSD->m_stim.nitems++;
 		UpdateVTtags();
 
@@ -1524,7 +1524,7 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 					lLast = lDataLast;
 					// clear stimulus detected
 					CStimLevelSeries* pSti = &(m_pspkDocVSD->m_stim);
-					pSti->iisti.RemoveAll();
+					pSti->iistimulus.RemoveAll();
 					m_pspkDocVSD->m_stim.nitems=0;
 					break;
 				}
@@ -1534,9 +1534,9 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 			int jitter = 2;		// allow some jitter in the detection (+-2)
 			BOOL flag = TRUE;
 			int i=0;
-			for (i=0; i< pSti->iisti.GetSize(); i++)
+			for (i=0; i< pSti->iistimulus.GetSize(); i++)
 			{
-				long lval = pSti->iisti.GetAt(i);
+				long lval = pSti->iistimulus.GetAt(i);
 				if (cx <= (lval +jitter) && cx >= (lval-jitter))
 				{
 					flag = FALSE;		// no new stim - already detected at that time
@@ -1551,7 +1551,7 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 			}
 			if (flag)
 			{
-				pSti->iisti.InsertAt(i, cx);
+				pSti->iistimulus.InsertAt(i, cx);
 				m_pspkDocVSD->m_stim.nitems++;
 			}
 		}
@@ -1801,7 +1801,7 @@ void CSpikeDetectionView::OnBnClickedClearall()
 	HighlightSpikes(FALSE);				// remove display of spikes
 	m_spkShapeView.SetSourceData(m_pSpkListVSD);
 	m_pspkDocVSD->m_stim.nitems=0;		// zero stimuli
-	m_pspkDocVSD->m_stim.iisti.RemoveAll();
+	m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
 
 	UpdateDetectionParameters();
 	UpdateVTtags();						// update display of vertical tags
@@ -1824,7 +1824,7 @@ void CSpikeDetectionView::OnClear()
 	if(m_pSpkListVSD->GetdetectWhat() == 1)
 	{
 		m_pspkDocVSD->m_stim.nitems=0;		// zero stimuli
-		m_pspkDocVSD->m_stim.iisti.RemoveAll();
+		m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
 		UpdateVTtags();					// update display of vertical tags
 	}
 
@@ -2386,9 +2386,9 @@ void CSpikeDetectionView::UpdateVTtags()
 	if (m_pspkDocVSD->m_stim.nitems == 0)
 		return;
 
-	for (int i=0; i <m_pspkDocVSD->m_stim.iisti.GetSize(); i++)
+	for (int i=0; i <m_pspkDocVSD->m_stim.iistimulus.GetSize(); i++)
 	{
-		int cx = m_pspkDocVSD->m_stim.iisti.GetAt(i);
+		int cx = m_pspkDocVSD->m_stim.iistimulus.GetAt(i);
 		m_spkBarView.AddVTLtag(cx);
 		m_displayDetect.AddVTLtag(cx);
 		m_displayData.AddVTLtag(cx);
@@ -3510,12 +3510,12 @@ void CSpikeDetectionView::OnToolsEditstimulus()
 	if (IDOK == dlg.DoModal())
 	{
 		m_pspkDocVSD->m_stim.nitems=0;	// zero stimuli
-		m_pspkDocVSD->m_stim.iisti.RemoveAll();
+		m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
 
 		CStimLevelSeries* pSti = &(m_pspkDocVSD->m_stim);
-		for (int i=0; i< dlg.m_stim.iisti.GetCount(); i++)
+		for (int i=0; i< dlg.m_stim.iistimulus.GetCount(); i++)
 		{
-			pSti->iisti.InsertAt(i, dlg.m_stim.iisti[i]);
+			pSti->iistimulus.InsertAt(i, dlg.m_stim.iistimulus[i]);
 			m_pspkDocVSD->m_stim.nitems++;
 		}
 

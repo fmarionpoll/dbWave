@@ -1626,12 +1626,12 @@ void CSpikeView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 			if (RWspikes.top == RWspikes.bottom) 
 				RWspikes.bottom++;
 
-			for (int ii=0; ii < m_pSpkDoc->m_stim.iisti.GetSize(); ii++, ii++)
+			for (int ii=0; ii < m_pSpkDoc->m_stim.iistimulus.GetSize(); ii++, ii++)
 			{
-				int iifirst = m_pSpkDoc->m_stim.iisti.GetAt(ii);
-				if ((ii+1)>=  m_pSpkDoc->m_stim.iisti.GetSize())
+				int iifirst = m_pSpkDoc->m_stim.iistimulus.GetAt(ii);
+				if ((ii+1)>=  m_pSpkDoc->m_stim.iistimulus.GetSize())
 					continue;
-				int iilast =  m_pSpkDoc->m_stim.iisti.GetAt(ii+1);
+				int iilast =  m_pSpkDoc->m_stim.iistimulus.GetAt(ii+1);
 				if (iifirst > lLast || iilast < lFirst)
 					continue;
 				if (iifirst < lFirst)

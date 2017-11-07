@@ -16,15 +16,20 @@ public :
 		
 // Attributes
 public:
-	CArray <long, long> iisti;	// time on, time off
+	CArray <long, long> iistimulus;	// time on, time off
 	int		iID;				// ID number of the array
 	CString	csDescriptor;		// descriptor of the array
 	int		nitems;				// number of on/off events
 	int		npercycle;
 
+protected:
+	int		version;			// current: 1
+
 // Implementation
 public:
 	virtual		~CStimLevelSeries();
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
-	void operator = (const CStimLevelSeries& arg);	// operator redefinition
+	virtual void	Serialize(CArchive& ar);			// overridden for document i/o
+	void	 operator = (const CStimLevelSeries& arg);	// operator redefinition
+	long	GetiiTime(int i);
+	void	SetiiTime(int i, long iitime);
 };
