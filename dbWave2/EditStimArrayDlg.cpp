@@ -35,10 +35,10 @@ void CEditStimArrayDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CEditStimArrayDlg, CDialog)
 	ON_WM_SIZE()
-	ON_BN_CLICKED(IDC_EDIT, OnBnClickedEdit)
-	ON_EN_KILLFOCUS(IDC_EDIT1, OnEnKillfocusEdit1)
-	ON_BN_CLICKED(IDC_DELETE, OnBnClickedDelete)
-	ON_BN_CLICKED(IDC_INSERT, OnBnClickedInsert)
+	ON_BN_CLICKED(IDC_EDIT, &CEditStimArrayDlg::OnBnClickedEdit)
+	ON_EN_KILLFOCUS(IDC_EDIT1, &CEditStimArrayDlg::OnEnKillfocusEdit1)
+	ON_BN_CLICKED(IDC_DELETE, &CEditStimArrayDlg::OnBnClickedDelete)
+	ON_BN_CLICKED(IDC_INSERT, &CEditStimArrayDlg::OnBnClickedInsert)
 	ON_BN_CLICKED(IDC_DELETE3, &CEditStimArrayDlg::OnBnClickedDelete3)
 	ON_BN_CLICKED(IDC_BUTTON1, &CEditStimArrayDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_COPY, &CEditStimArrayDlg::OnBnClickedCopy)
@@ -100,31 +100,7 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 
 	m_stimarrayCtrl.SetImageList(m_pimagelist, LVSIL_SMALL );
 
-	int nitems = m_stim.iistimulus.GetSize();
-	// Use the LV_ITEM structure to insert the items
-	LVITEM lvi;
-	CString cs;
-	for (int i = 0; i< nitems; i++)
-	{
-		lvi.iItem = i;
-		
-		// Insert the first item
-		lvi.iSubItem =0;
-		lvi.mask =  LVIF_IMAGE | LVIF_TEXT;
-		cs.Format(_T("%i"), i);
-		lvi.pszText = (LPTSTR)(LPCTSTR)(cs);
-		lvi.iImage = i%2;		// There are 8 images in the image list
-
-		m_stimarrayCtrl.InsertItem(&lvi);
-
-		// Set subitem 
-		lvi.mask = LVIF_TEXT;
-		lvi.iSubItem = 1;
-		cs.Format(_T("%10.3f"), ((float) m_stim.iistimulus[i])/m_rate);
-		lvi.pszText = (LPTSTR)(LPCTSTR)(cs);
-		
-		m_stimarrayCtrl.SetItem(&lvi);
-	}
+	TransferStimlevelToList(&m_stim);
 
 	// update paste button (disabled if stimsaved is empty
 	if(m_pstimsaved->iistimulus.GetSize() <1)
@@ -166,6 +142,40 @@ void CEditStimArrayDlg::ResetListOrder()
 	}
 }
 
+void CEditStimArrayDlg::TransferStimlevelToList(CIntervalsSeries* pstim)
+{
+	m_pstim = pstim;
+	int nitems = m_pstim->iistimulus.GetSize();
+	// Use the LV_ITEM structure to insert the items
+	LVITEM lvi;
+	CString cs;
+	for (int i = 0; i< nitems; i++)
+	{
+		lvi.iItem = i;
+
+		// Insert the first item
+		lvi.iSubItem = 0;
+		lvi.mask = LVIF_IMAGE | LVIF_TEXT;
+		cs.Format(_T("%i"), i);
+		lvi.pszText = (LPTSTR)(LPCTSTR)(cs);
+		lvi.iImage = i % 2;		// There are 8 images in the image list
+
+		m_stimarrayCtrl.InsertItem(&lvi);
+
+		// Set subitem 
+		lvi.mask = LVIF_TEXT;
+		lvi.iSubItem = 1;
+		cs.Format(_T("%10.3f"), ((float)m_pstim->iistimulus[i]) / m_rate);
+		lvi.pszText = (LPTSTR)(LPCTSTR)(cs);
+
+		m_stimarrayCtrl.SetItem(&lvi);
+	}
+}
+
+void CEditStimArrayDlg::TransferListToStimlevel()
+{
+}
+
 void CEditStimArrayDlg::OnSize(UINT nType, int cx, int cy)
 {
 	if (cx > 1 || cy > 1 ) 
@@ -185,7 +195,7 @@ void CEditStimArrayDlg::OnBnClickedEdit()
 
 	m_csEdit.MoveWindow(&rect);
 	CString cs;
-	m_value = ((float) m_stim.iistimulus[m_iItem])/m_rate;
+	m_value = ((float) m_pstim->iistimulus[m_iItem])/m_rate;
 	m_csEdit.ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_EDIT)->SetWindowText(_T("&Validate"));
 
@@ -202,12 +212,12 @@ void CEditStimArrayDlg::OnEnKillfocusEdit1()
 	m_csEdit.ShowWindow(SW_HIDE);
 
 
-	m_stim.iistimulus[m_iItem] = (long)( m_value * m_rate);
+	m_pstim->iistimulus[m_iItem] = (long)( m_value * m_rate);
 	LVITEM lvi;	
 	lvi.iItem = m_iItem;
 	lvi.mask = LVIF_TEXT;
 	lvi.iSubItem = 1;
-	cs.Format(_T("%10.3f"), ((float) m_stim.iistimulus[m_iItem])/m_rate);
+	cs.Format(_T("%10.3f"), ((float) m_pstim->iistimulus[m_iItem])/m_rate);
 	lvi.pszText = (LPTSTR)(LPCTSTR)(cs);
 
 	m_stimarrayCtrl.SetItem(&lvi);
@@ -225,7 +235,7 @@ void CEditStimArrayDlg::OnBnClickedDelete()
 	
 	m_stimarrayCtrl.SetItemState(m_iItem, 0, LVIS_SELECTED|LVIS_FOCUSED);
 	m_stimarrayCtrl.DeleteItem(m_iItem);
-	m_stim.iistimulus.RemoveAt(m_iItem);
+	m_pstim->iistimulus.RemoveAt(m_iItem);
 	int ilast = m_stimarrayCtrl.GetItemCount() -1;
 	if (m_iItem > ilast)
 		m_iItem = ilast;
@@ -255,12 +265,12 @@ void CEditStimArrayDlg::OnBnClickedInsert()
 	m_stimarrayCtrl.InsertItem(&lvi);
 
 	// add item in the list
-	m_stim.iistimulus.InsertAt(m_iItem, 0L);
+	m_pstim->iistimulus.InsertAt(m_iItem, 0L);
 	
 	// Set subitem 
 	lvi.mask = LVIF_TEXT;
 	lvi.iSubItem = 1;		// time value
-	cs.Format(_T("%10.3f"), ((float) m_stim.iistimulus[m_iItem])/m_rate);
+	cs.Format(_T("%10.3f"), ((float) m_pstim->iistimulus[m_iItem])/m_rate);
 	lvi.pszText = (LPTSTR)(LPCTSTR)(cs);	
 	m_stimarrayCtrl.SetItem(&lvi);
 
@@ -271,23 +281,23 @@ void CEditStimArrayDlg::OnBnClickedInsert()
 void CEditStimArrayDlg::OnBnClickedDelete3()
 {
 	m_stimarrayCtrl.DeleteAllItems();
-	m_stim.iistimulus.RemoveAll();
+	m_pstim->iistimulus.RemoveAll();
 }
 
 void CEditStimArrayDlg::OnBnClickedButton1()
 {
 	// sort sti
-	int nitems = m_stim.iistimulus.GetSize();
+	int nitems = m_pstim->iistimulus.GetSize();
 	for (int i = 0; i< nitems-1; i++)
 	{
-		long imin = m_stim.iistimulus[i];
+		long imin = m_pstim->iistimulus[i];
 		for (int j = i+1; j<nitems; j++)
 		{
-			if (m_stim.iistimulus[j] < imin)
+			if (m_pstim->iistimulus[j] < imin)
 			{
-				m_stim.iistimulus[i] = m_stim.iistimulus[j];
-				m_stim.iistimulus[j] = imin;
-				imin = m_stim.iistimulus[i];
+				m_pstim->iistimulus[i] = m_pstim->iistimulus[j];
+				m_pstim->iistimulus[j] = imin;
+				imin = m_pstim->iistimulus[i];
 			}
 		}
 	}
@@ -301,7 +311,7 @@ void CEditStimArrayDlg::OnBnClickedButton1()
 		lvi.iItem = i;
 		lvi.iSubItem = 1;		// time value
 		lvi.mask = LVIF_TEXT;
-		cs.Format(_T("%10.3f"), ((float) m_stim.iistimulus[i])/m_rate);
+		cs.Format(_T("%10.3f"), ((float) m_pstim->iistimulus[i])/m_rate);
 		lvi.pszText = (LPTSTR)(LPCTSTR)(cs);
 		lvi.iImage = i%2;
 		
@@ -314,7 +324,7 @@ void CEditStimArrayDlg::OnBnClickedButton1()
 
 void CEditStimArrayDlg::OnBnClickedCopy()
 {
-	*m_pstimsaved = m_stim;
+	*m_pstimsaved = *m_pstim;
 	GetDlgItem(IDC_PASTE)->EnableWindow(TRUE);
 }
 
@@ -343,13 +353,13 @@ void CEditStimArrayDlg::OnBnClickedPaste()
 		m_stimarrayCtrl.InsertItem(&lvi);
 
 		// add item in the list
-		m_stim.iistimulus.InsertAt(m_iItem, 0L);
-		m_stim.iistimulus[m_iItem] = m_pstimsaved->iistimulus[j];
+		m_pstim->iistimulus.InsertAt(m_iItem, 0L);
+		m_pstim->iistimulus[m_iItem] = m_pstimsaved->iistimulus[j];
 	
 		// Set subitem 
 		lvi.mask = LVIF_TEXT;
 		lvi.iSubItem = 1;		// time value
-		cs.Format(_T("%10.3f"), ((float) m_stim.iistimulus[m_iItem])/m_rate);
+		cs.Format(_T("%10.3f"), ((float) m_pstim->iistimulus[m_iItem])/m_rate);
 		lvi.pszText = (LPTSTR)(LPCTSTR)(cs);	
 		m_stimarrayCtrl.SetItem(&lvi);
 	}

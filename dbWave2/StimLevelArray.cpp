@@ -8,11 +8,11 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CStimLevelSeries
+// CIntervalsSeries
 
-IMPLEMENT_SERIAL(CStimLevelSeries, CObject, 0 /* schema number*/ )
+IMPLEMENT_SERIAL(CIntervalsSeries, CObject, 0 /* schema number*/ )
 
-CStimLevelSeries::CStimLevelSeries()
+CIntervalsSeries::CIntervalsSeries()
 {
 	iID=1;					// ID number of the array
 	csDescriptor=_T("stimulus intervals");	// descriptor of the array
@@ -22,11 +22,11 @@ CStimLevelSeries::CStimLevelSeries()
 	version = 1;
 }
 
-CStimLevelSeries::~CStimLevelSeries()
+CIntervalsSeries::~CIntervalsSeries()
 {
 }
 
-void CStimLevelSeries::operator = (const CStimLevelSeries& arg)
+void CIntervalsSeries::operator = (const CIntervalsSeries& arg)
 {
 	iID			= arg.iID;						// ID number of the array
 	csDescriptor= arg.csDescriptor;				// descriptor of the array
@@ -38,17 +38,17 @@ void CStimLevelSeries::operator = (const CStimLevelSeries& arg)
 	npercycle	= arg.npercycle;
 }
 
-long CStimLevelSeries::GetiiTime(int i)
+long CIntervalsSeries::GetiiTime(int i)
 {
 	return iistimulus.GetAt(i);
 }
 
-void CStimLevelSeries::SetiiTime(int i, long iitime)
+void CIntervalsSeries::SetiiTime(int i, long iitime)
 {
 	iistimulus.SetAt(i, iitime);
 }
 
-void CStimLevelSeries::Serialize(CArchive& ar)
+void CIntervalsSeries::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{

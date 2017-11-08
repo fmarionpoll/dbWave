@@ -2,8 +2,6 @@
 
 #pragma once
 
-/////////////////////////////////////////////////////////////////////////////
-// descrip structure
 
 class CScale:public CObject
 {
@@ -22,11 +20,11 @@ protected:
 	CDWordArray m_position;	// interval array: consecutive file index (long)
 
 public:
-	int SetScale(int npixels, long lNpoints);
-	int	HowManyIntervalsFit(int fromIndex, long* lLast);
-	int GetWhichInterval(long lindex);
-	inline int GetnPixels() const {return m_npixels;}
-	inline int GetnIntervals() const { return m_nintervals;}
+	int			SetScale(int npixels, long lNpoints);
+	int			HowManyIntervalsFit(int fromIndex, long* lLast);
+	int			GetWhichInterval(long lindex);
+	inline int	GetnPixels() const {return m_npixels;}
+	inline int	GetnIntervals() const { return m_nintervals;}
 	inline long GetNdatapoints() const { return m_lNdatapoints;}
 	inline LPWORD ElementAt(int i) {return &(m_intervals[i]);}
 	inline long GetPosition(int i) {return (long) m_position[i];}

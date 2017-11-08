@@ -160,8 +160,8 @@ protected:
 	static DWORD	m_C300fReceiveDelay;
 	COMMTIMEOUTS	m_CommTimeOuts;
 
-	DCB		m_dcb;	// DCB structure containing COM parameters
-	HANDLE	m_hComm;// handle to file used to communicate with COM
+	DCB				m_dcb;		// DCB structure containing COM parameters
+	HANDLE			m_hComm;	// handle to file used to communicate with COM
 
 	void C300_ResetParms();
 

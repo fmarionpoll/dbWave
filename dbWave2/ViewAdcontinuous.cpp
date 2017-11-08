@@ -792,7 +792,7 @@ void CADContView::DAC_FillBufferWithSequenceWave(short* pDTbuf, int chan)
 	long	lRes = (long)pow(2.0, m_DACsubsystem.GetResolution()) - 1;
 	int nchans = m_DACsubsystem.GetListSize();
 
-	CStimLevelSeries* pstim = &parmsChan->stimulussequence;
+	CIntervalsSeries* pstim = &parmsChan->stimulussequence;
 	long	iitime_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
 	long	iitime_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
 	long	iitime = iitime_start;

@@ -448,7 +448,7 @@ public:
 	double	lastamp;
 	double	lastphase;
 	double	value;
-	CStimLevelSeries stimulussequence;
+	CIntervalsSeries stimulussequence;
 
 	OUTPUTPARMS();									// constructor
 	~OUTPUTPARMS();									// destructor

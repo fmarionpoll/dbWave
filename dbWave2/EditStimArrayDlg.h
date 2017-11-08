@@ -12,9 +12,10 @@ public:
 	virtual ~CEditStimArrayDlg();
 
 	// data passed by caller
-	CStimLevelSeries	m_stim;
+	CIntervalsSeries	m_stim;
+	CIntervalsSeries*	m_pstim;
 	float				m_rate;
-	CStimLevelSeries*	m_pstimsaved;
+	CIntervalsSeries*	m_pstimsaved;
 
 // Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
@@ -24,11 +25,15 @@ protected:
 	CImageList*		m_pimagelist;
 	CStretchControl m_stretch;
 	BOOL			m_binit;
-	CEdit			m_csEdit;
+	CEdit			m_csEdit;		// IDC_EDIT1
+	float			m_value;		// IDC_EDIT1
 	int				m_iItem;
-	CListCtrl		m_stimarrayCtrl;
+	CListCtrl		m_stimarrayCtrl;// IDC_LISTSTIM	
+
 	void			SelectItem(int i);
 	void			ResetListOrder();
+	void			TransferStimlevelToList(CIntervalsSeries* pstim);
+	void			TransferListToStimlevel();
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -39,7 +44,6 @@ public:
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedInsert();
 	afx_msg void OnBnClickedDelete3();
-	float m_value;
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedCopy();
 	afx_msg void OnBnClickedPaste();
