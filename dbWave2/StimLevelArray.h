@@ -4,20 +4,21 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CIntervalsSeries object
+// CIntervalsArray object
 
 
-class CIntervalsSeries : public CObject
+class CIntervalsArray : public CObject
 {
-	DECLARE_SERIAL(CIntervalsSeries)
+	DECLARE_SERIAL(CIntervalsArray)
 
 public :
-	CIntervalsSeries();			// protected constructor used by dynamic creation
+	CIntervalsArray();			// protected constructor used by dynamic creation
 		
 // Attributes
 public:
 	CArray <long, long> iistimulus;	// time on, time off
 	int		iID;				// ID number of the array
+	int		ichan;
 	CString	csDescriptor;		// descriptor of the array
 	int		nitems;				// number of on/off events
 	int		npercycle;
@@ -27,40 +28,49 @@ protected:
 
 // Implementation
 public:
-	virtual		~CIntervalsSeries();
-	virtual void	Serialize(CArchive& ar);			// overridden for document i/o
-	void	 operator = (const CIntervalsSeries& arg);	// operator redefinition
-	long	GetiiTime(int i);
-	void	SetiiTime(int i, long iitime);
+	virtual		~CIntervalsArray();
+	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+	void	operator = (const CIntervalsArray& arg);	// operator redefinition
+	inline long	GetiiTime(int i) { return iistimulus.GetAt(i); };
+	inline void	SetiiTime(int i, long iitime) { iistimulus.SetAt(i, iitime);};
+	inline long	GetSize() { return iistimulus.GetSize(); }
+	inline int  GetChan() { return ichan; }
+	inline void SetChan(int chan) { ichan = chan; }
+	inline void AddInterval(long ii) { iistimulus.Add(ii); }
 };
 
-typedef struct taglongW
-{
-	long  ii;
-	WORD  w;
-} longW, *longW, NEAR *longW, FAR *longW;
 
+class CIntervalPoint : public CObject
+{
+	DECLARE_SERIAL(CIntervalPoint)
+	CIntervalPoint();
+	~CIntervalPoint();
+	virtual void Serialize(CArchive& ar);
+	void operator = (const CIntervalPoint& arg);
+
+public:
+	long ii;
+	WORD w;
+};
 
 class CIntervalsAndWordsSeries : public CObject
 {
-	DECLARE_SERIAL(CIntervalsSeries)
+	DECLARE_SERIAL(CIntervalsArray)
+	CIntervalsAndWordsSeries();		// protected constructor used by dynamic creation
+	~CIntervalsAndWordsSeries();
+	void			operator = (const CIntervalsAndWordsSeries& arg);	// operator redefinition
+	virtual void	Serialize(CArchive& ar);							// overridden for document i/o
 
 public:
-	CIntervalsAndWordsSeries();			// protected constructor used by dynamic creation
-
-// Attributes
-public:
-	CArray <longW, longW>  iistep;	// time on, time off
-	int		nitems;					// number of on/off events
-
+	CArray <CIntervalPoint, CIntervalPoint>  iistep;	// time on, time off
 protected:
-	int		version;			// current: 1
+	int		version;				// current: 1
 
 // Implementation
 public:
-	virtual			~CIntervalsAndWordsSeries();
-	virtual void	Serialize(CArchive& ar);							// overridden for document i/o
-	void			operator = (const CIntervalsAndWordsSeries& arg);	// operator redefinition
-	void			ImportIntervalsSeries(CIntervalsSeries* pIntervals);
-	CIntervalsSeries* ExportIntervalsSeries();
+	void			EraseAllData();
+	inline long		GetSize() { return iistep.GetSize(); }
+	void			ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1);
+	void			ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
+	CIntervalsArray* ExportIntervalsSeries(int chan);
 };

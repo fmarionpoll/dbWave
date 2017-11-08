@@ -142,7 +142,7 @@ void CEditStimArrayDlg::ResetListOrder()
 	}
 }
 
-void CEditStimArrayDlg::TransferStimlevelToList(CIntervalsSeries* pstim)
+void CEditStimArrayDlg::TransferStimlevelToList(CIntervalsArray* pstim)
 {
 	m_pstim = pstim;
 	int nitems = m_pstim->iistimulus.GetSize();

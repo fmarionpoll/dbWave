@@ -12,10 +12,10 @@ public:
 	virtual ~CEditStimArrayDlg();
 
 	// data passed by caller
-	CIntervalsSeries	m_stim;
-	CIntervalsSeries*	m_pstim;
+	CIntervalsArray	m_stim;
+	CIntervalsArray*	m_pstim;
 	float				m_rate;
-	CIntervalsSeries*	m_pstimsaved;
+	CIntervalsArray*	m_pstimsaved;
 
 // Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
@@ -32,7 +32,7 @@ protected:
 
 	void			SelectItem(int i);
 	void			ResetListOrder();
-	void			TransferStimlevelToList(CIntervalsSeries* pstim);
+	void			TransferStimlevelToList(CIntervalsArray* pstim);
 	void			TransferListToStimlevel();
 
 	DECLARE_MESSAGE_MAP()

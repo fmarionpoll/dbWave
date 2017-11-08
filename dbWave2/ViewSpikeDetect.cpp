@@ -1523,14 +1523,14 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 					// set condition to stop detection
 					lLast = lDataLast;
 					// clear stimulus detected
-					CIntervalsSeries* pSti = &(m_pspkDocVSD->m_stim);
+					CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
 					pSti->iistimulus.RemoveAll();
 					m_pspkDocVSD->m_stim.nitems=0;
 					break;
 				}
 
 			// check if already present and insert it at the proper place
-			CIntervalsSeries* pSti = &(m_pspkDocVSD->m_stim);
+			CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
 			int jitter = 2;		// allow some jitter in the detection (+-2)
 			BOOL flag = TRUE;
 			int i=0;
@@ -3512,7 +3512,7 @@ void CSpikeDetectionView::OnToolsEditstimulus()
 		m_pspkDocVSD->m_stim.nitems=0;	// zero stimuli
 		m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
 
-		CIntervalsSeries* pSti = &(m_pspkDocVSD->m_stim);
+		CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
 		for (int i=0; i< dlg.m_stim.iistimulus.GetCount(); i++)
 		{
 			pSti->iistimulus.InsertAt(i, dlg.m_stim.iistimulus[i]);

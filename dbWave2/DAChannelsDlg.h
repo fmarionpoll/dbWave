@@ -45,7 +45,7 @@ public:
 	double	m_famplitudelow1;
 	double	m_ffrequence1;
 
-	CIntervalsSeries m_stimsaved;
+	CIntervalsArray m_stimsaved;
 	float	m_samplingRate;
 
 	virtual BOOL OnInitDialog();
