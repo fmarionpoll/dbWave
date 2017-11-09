@@ -14,6 +14,11 @@
 class SCOPESTRUCT : public CObject
 {
 	DECLARE_SERIAL(SCOPESTRUCT)
+	SCOPESTRUCT();		// constructor
+	~SCOPESTRUCT();		// destructor
+	void operator = (const SCOPESTRUCT& arg);	// operator redefinition
+	virtual void Serialize(CArchive& ar);		// overridden for document i/o
+
 public:
 	WORD		wversion;			// version number
 	int			iID;
@@ -31,12 +36,6 @@ public:
 	float		yScaleUnitValue;
 	float		xScaleSpan_s;
 	float		yScaleSpan_v;
-
-public :
-	SCOPESTRUCT();		// constructor
-	~SCOPESTRUCT();		// destructor
-	void operator = (const SCOPESTRUCT& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);		// overridden for document i/o
 };
 
 // ---------------------------------------------------------------------
@@ -45,6 +44,11 @@ public :
 class OPTIONS_VIEWDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_VIEWDATA)
+	OPTIONS_VIEWDATA();								// constructor
+	~OPTIONS_VIEWDATA();							// destructor
+	void operator = (const OPTIONS_VIEWDATA& arg);	// operator redefinition
+	virtual void Serialize(CArchive& ar);			// document i/o
+
 public:
 	BOOL bChanged;			// flag set TRUE if contents has changed
 	WORD m_wversion;		// version number
@@ -150,12 +154,6 @@ public:
 	float	tLast;
 	float	mVspan;
 	int		displaymode;
-
-public :
-	OPTIONS_VIEWDATA();								// constructor
-	~OPTIONS_VIEWDATA();							// destructor
-	void operator = (const OPTIONS_VIEWDATA& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);			// document i/o
 };
 
 
@@ -176,6 +174,11 @@ public :
 class OPTIONS_VIEWSPIKES : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_VIEWSPIKES)
+	OPTIONS_VIEWSPIKES();		// constructor
+	~OPTIONS_VIEWSPIKES();		// destructor
+	void operator = (const OPTIONS_VIEWSPIKES& arg);	// operator redefinition
+	virtual void Serialize(CArchive& ar);	// overridden for document i/o	
+
 public:
 	BOOL bChanged;				// flag set TRUE if contents has changed
 	WORD wversion;				// version number
@@ -240,12 +243,6 @@ public:
 	int		bhistType;			// type of histogram requested (PSTH, ISI, ...)
 	BOOL	bCycleHist;			// cycle histogram (TRUE/FALSE), default=FALSE
 	int		nstipercycle;		// n stimuli per cycle
-
-public :
-	OPTIONS_VIEWSPIKES();		// constructor
-	~OPTIONS_VIEWSPIKES();		// destructor
-	void operator = (const OPTIONS_VIEWSPIKES& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o	
 };
 
 
@@ -255,6 +252,11 @@ public :
 class OPTIONS_VIEWDATAMEASURE : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_VIEWDATAMEASURE)
+	OPTIONS_VIEWDATAMEASURE();	// constructor
+	~OPTIONS_VIEWDATAMEASURE();	// destructor
+	void operator = (const OPTIONS_VIEWDATAMEASURE& arg);	// operator redefinition
+	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+
 public:
 	BOOL bChanged;			// flag set TRUE if contents has changed
 	WORD wversion;			// version number
@@ -291,12 +293,6 @@ public:
 	float period;			// period (sec)
 	int	  nperiods;			// nb of duplicates
 	float timeshift;		// shift tags
-
-public :
-	OPTIONS_VIEWDATAMEASURE();	// constructor
-	~OPTIONS_VIEWDATAMEASURE();	// destructor
-	void operator = (const OPTIONS_VIEWDATAMEASURE& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
 };
 
 //#endif  // 
@@ -307,6 +303,11 @@ public :
 class OPTIONS_IMPORT : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_IMPORT);
+	OPTIONS_IMPORT();
+	virtual ~OPTIONS_IMPORT();
+	void operator = (const OPTIONS_IMPORT& arg);
+	virtual void Serialize(CArchive& ar);
+
 public:
 	BOOL  bChanged;					// flag set TRUE if contents has changed
 	WORD  wVersion;
@@ -346,12 +347,6 @@ public:
 	int		iundersample;			// undersample factor when exporting data
 
 	CString path;					// path to files to import
-
-public:
-	OPTIONS_IMPORT();
-	virtual ~OPTIONS_IMPORT();
-	void operator = (const OPTIONS_IMPORT& arg);
-	virtual void Serialize(CArchive& ar);
 };
 
 
@@ -361,6 +356,11 @@ public:
 class OPTIONS_ACQDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_ACQDATA)
+	OPTIONS_ACQDATA();								// constructor
+	~OPTIONS_ACQDATA();								// destructor
+	void operator = (const OPTIONS_ACQDATA& arg);	// operator redefinition
+	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+
 public:
 	BOOL			bChanged;						// flag set TRUE if contents has changed
 	WORD			m_wversion;						// version number
@@ -402,20 +402,19 @@ public:
 	CWaveFormat		waveFormat;						// wave format
 	CWaveChanArray	chanArray;						// channels descriptors
 	float			sweepduration;					// display parameter
-
-	OPTIONS_ACQDATA();								// constructor
-	~OPTIONS_ACQDATA();								// destructor
-	void operator = (const OPTIONS_ACQDATA& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 };
 
 // ---------------------------------------------------------------------
 // output data options - version 1 (11/09/2011)
 
-
 class OUTPUTPARMS : public CObject
 {
 	DECLARE_SERIAL(OUTPUTPARMS)
+	OUTPUTPARMS();									// constructor
+	~OUTPUTPARMS();									// destructor
+	void operator = (const OUTPUTPARMS& arg);		// operator redefinition
+	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+
 public:
 	BOOL	bChanged;								// flag set TRUE if contents has changed
 	WORD	wversion;								// version number
@@ -427,12 +426,15 @@ public:
 	double	dFrequency;								// frequency of the output signal
 	int		iWaveform;								// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
 	CString	csFilename;								// filename to output
+	CIntervalsArray stimulussequence;
+	CIntervalsArray stim8lines[8];
+	CIntervalsAndWordsSeries sti;
 
 	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval
 	int		mseq_iDelay;							// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples
 	int		mseq_iSeed;								// m_mSeqSeed;		// Sequence seed or zero=random seed
-	double	dummy1;					// m_mSeqAmplitude; // M-sequence amplitude
-	double	dummy2;					// m_mSeqOffset;	// Add this offset before multiplication
+	double	dummy1;									// m_mSeqAmplitude; // M-sequence amplitude
+	double	dummy2;									// m_mSeqOffset;	// Add this offset before multiplication
 	int		num;
 	UINT	bit33;
 	UINT	count;
@@ -448,17 +450,17 @@ public:
 	double	lastamp;
 	double	lastphase;
 	double	value;
-	CIntervalsArray stimulussequence;
-
-	OUTPUTPARMS();									// constructor
-	~OUTPUTPARMS();									// destructor
-	void operator = (const OUTPUTPARMS& arg);		// operator redefinition
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 };
+
 
 class OPTIONS_OUTPUTDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_OUTPUTDATA)
+	OPTIONS_OUTPUTDATA();							// constructor
+	~OPTIONS_OUTPUTDATA();							// destructor
+	void operator = (const OPTIONS_OUTPUTDATA& arg);// operator redefinition
+	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+
 public:
 	BOOL	bChanged;								// flag set TRUE if contents has changed
 	WORD	wversion;								// version number
@@ -473,9 +475,4 @@ public:
 	int		iDATriggermode;							// 0=synchronous; 1=soft on start; 2=external trigger
 	int		iDAnbuffers;							// number of DA buffers
 	int		iDAbufferlength;						// length of each buffer
-	
-	OPTIONS_OUTPUTDATA();							// constructor
-	~OPTIONS_OUTPUTDATA();							// destructor
-	void operator = (const OPTIONS_OUTPUTDATA& arg);// operator redefinition
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 };

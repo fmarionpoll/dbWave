@@ -12,13 +12,18 @@
 #define new DEBUG_NEW
 #endif
 
-// CRuler --------------------------------------------------------------------
+// CRuler -------------------------------------------------------------------- lower/upper
 
 void CRuler::SetRange (float* dfirst, float* dlast)
 {
 	m_dfirst = *dfirst;
 	m_dlast  = *dlast;
-
+	if (m_dfirst > m_dlast)
+	{
+		double x = m_dfirst;
+		m_dfirst = m_dlast;
+		m_dlast = x;
+	}
 	AdjustScale();
 }
 

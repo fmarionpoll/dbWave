@@ -512,11 +512,12 @@ void CADContView::DAC_ConvertOptionsIntoChanList()
 
 	m_DAC_chanList.SetSize(jmax);
 	int j = 0;
-	for (int i = 0; i < noptions; i++) {
-
-		if (m_pDAC_options->parmsChan.GetAt(i).bON == FALSE)
+	for (int i = 0; i < noptions; i++) 
+	{
+		OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
+		if (pParms->bON == FALSE)
 			continue;
-		m_DAC_chanList.GetAt(j) = m_pDAC_options->parmsChan.GetAt(i);
+		m_DAC_chanList.GetAt(j) = *pParms;
 		j++;
 	}
 }
@@ -787,58 +788,54 @@ void CADContView::DAC_FillBufferWithSequenceWave(short* pDTbuf, int chan)
 {
 	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
 	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
-	double	amp = parmsChan->ampUp;
-	double	ampUp = amp;
+	double	ampUp = parmsChan->ampUp;
+	double  ampLow = parmsChan->ampLow;
 	long	msbit = (long)pow(2.0, (m_DACsubsystem.GetResolution() - 1));
 	long	lRes = (long)pow(2.0, m_DACsubsystem.GetResolution()) - 1;
-	int nchans = m_DACsubsystem.GetListSize();
+	int		nchans = m_DACsubsystem.GetListSize();
 
-	CIntervalsArray* pstim = &parmsChan->stimulussequence;
+	CIntervalsAndWordsSeries* pstim = &parmsChan->sti;
 	long	iitime_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
 	long	iitime_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
 	long	iitime = iitime_start;
 	int		interval = 0;
 	int		ifirstinterval = 0;
-	int		ilastinterval = pstim->iistimulus.GetSize();
-	int		bUP = -1;
-	long	iistim = -1;
+	int		ilastinterval = pstim->GetSize();
+	WORD	wamp = 0;
+	long	iistim = 0;
 	for (interval = ifirstinterval; interval < ilastinterval; interval++)
 	{
-		iistim = pstim->iistimulus.GetAt(interval);
+		iistim = pstim->GetIntervalPointAt(interval).ii;
 		if (iitime_start < iistim)
 			break;
-		bUP *= -1;
+		wamp = pstim->GetIntervalPointAt(interval).w;
 	}
 
-	// set value of first point
-	WORD wampUp = (WORD) ampUp;
-	WORD wampZero = 0;
+	double amp = ampUp * wamp + ampLow * !wamp;
+	WORD wout = (WORD) amp;
 	if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
-	{
-		wampUp = (WORD)(wampUp ^ msbit) & lRes;
-		wampZero = (WORD)(wampZero ^ msbit) & lRes;
-	}
-	WORD wamp = wampZero;
-	if (bUP > 0)
-		wamp = wampUp;
+		wout = (WORD)(wout ^ msbit) & lRes;
+
 
 	// fill buffer
 	for (int i = chan; i < m_DAC_buflen; i+= nchans)
 	{
-		*(pDTbuf + i) = wamp;
+		*(pDTbuf + i) = wout;
 		iitime++;
 		if (interval < ilastinterval && iitime >= iistim)
 		{
 			interval++;
-			bUP *= -1;
-			wamp = wampZero;
-			if (bUP > 0)
-				wamp = wampUp;
-			if (interval < ilastinterval)
-				iistim = pstim->iistimulus.GetAt(interval);
+			if (interval < ilastinterval) 
+			{
+				iistim = pstim->GetIntervalPointAt(interval).ii;
+				wamp = pstim->GetIntervalPointAt(interval).w;
+				amp = amp = ampUp * wamp + ampLow * !wamp;
+				wout = (WORD) amp;
+				if (m_DACsubsystem.GetEncoding() == OLx_ENC_BINARY)
+					wout = (WORD)(wout ^ msbit) & lRes;
+			}
 		}
 	}
-
 	m_DAC_chanList.GetAt(chan).lastamp = amp;
 }
 
@@ -858,7 +855,7 @@ double CADContView::MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) {
 		parmsChan->bit33 = ((parmsChan->num & 0x80000000) != 0);
 		parmsChan->num = (parmsChan->num << 1) + parmsChan->bit1;
 	}
-	return (double)parmsChan->bit1*parmsChan->ampUp;
+	return ((double)parmsChan->bit1*parmsChan->ampUp) + ((double)(!parmsChan->bit1)*parmsChan->ampLow);
 }
 
 void CADContView::DAC_FillBufferWithMSEQWave(short* pDTbuf, int chan)
@@ -871,13 +868,13 @@ void CADContView::DAC_FillBufferWithMSEQWave(short* pDTbuf, int chan)
 
 	for (int i = chan; i < m_DAC_buflen; i += nchans) {
 		x = 0;
-		// is there a delay in turnin ON the m-sequence and offsert?
+		// is there a delay in turnin ON the m-sequence and offset?
 		if (parmsChan->mseq_iDelay > 0)
 			parmsChan->mseq_iDelay--;
 		else {
 			x = parmsChan->ampLow;
 			if (parmsChan->mseq_iDelay == 0) {
-				x += MSequence(FALSE, parmsChan);
+				x = MSequence(FALSE, parmsChan);
 			}
 		}
 		*(pDTbuf + i) = (WORD) x;

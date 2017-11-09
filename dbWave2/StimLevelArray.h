@@ -63,7 +63,7 @@ class CIntervalsAndWordsSeries : public CObject
 	inline CIntervalPoint  GetIntervalPointAt(int i) {return iistep.GetAt(i); }
 	void ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1);
 	void ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
-	CIntervalsArray* ExportIntervalsSeries(int chan);
+	void ExportIntervalsSeries(int chan, CIntervalsArray* pOut);
 
 public:
 	CArray <CIntervalPoint, CIntervalPoint>  iistep;	// array of intervals & words

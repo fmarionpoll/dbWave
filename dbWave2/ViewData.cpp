@@ -389,7 +389,7 @@ void CDataView::UpdateLegends(int ioperation)
 		m_yupper = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, max);
 		int min = m_VDlineview.FromChanlistPixeltoBin(m_ichanselected, m_VDlineview.Height());
 		m_ylower = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, min);
-		ASSERT(m_yupper > m_ylower);
+
 		m_VDlineview.m_yscale.SetRange(&m_ylower, &m_yupper);
 	}
 

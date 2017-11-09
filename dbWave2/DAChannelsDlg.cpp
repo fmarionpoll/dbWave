@@ -271,7 +271,9 @@ void CDAChannelsDlg::OnBnClickedButtonsource0()
 				dlg.m_outDParms = m_outD.parmsChan.GetAt(channel);
 				if (IDOK == dlg.DoModal()) 
 				{
-					m_outD.parmsChan.GetAt(channel) = dlg.m_outDParms;
+					OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+					*pParms = dlg.m_outDParms;
+					pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 				}
 			}
 			break;
@@ -285,7 +287,8 @@ void CDAChannelsDlg::OnBnClickedButtonsource0()
 				dlg.m_rate = m_samplingRate;
 				if (IDOK == dlg.DoModal())
 				{
-					
+					OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+					pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 				}
 			}
 			break;
@@ -309,7 +312,9 @@ void CDAChannelsDlg::OnBnClickedButtonsource1()
 			dlg.m_outDParms = m_outD.parmsChan.GetAt(channel);
 			if (IDOK == dlg.DoModal()) 
 			{
-				m_outD.parmsChan.GetAt(channel) = dlg.m_outDParms;
+				OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+				*pParms = dlg.m_outDParms;
+				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 			}
 		}
 			break;
@@ -317,12 +322,14 @@ void CDAChannelsDlg::OnBnClickedButtonsource1()
 		case DA_SEQUENCEWAVE:	// sequence
 		{
 			CEditStimArrayDlg dlg;
-			dlg.m_stim = m_outD.parmsChan.GetAt(channel).stimulussequence;
+			dlg.m_pIntervalArrays.RemoveAll();
+			dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
 			dlg.m_pstimsaved = &m_stimsaved;
 			dlg.m_rate = m_samplingRate;
 			if (IDOK == dlg.DoModal())
 			{
-				m_outD.parmsChan.GetAt(channel).stimulussequence = dlg.m_stim;
+				OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 			}
 		}
 		break;
@@ -352,7 +359,9 @@ void CDAChannelsDlg::OnBnClickedButtonsource2()
 		dlg.m_outDParms = m_outD.parmsChan.GetAt(channel);
 		if (IDOK == dlg.DoModal()) 
 		{
-			m_outD.parmsChan.GetAt(channel) = dlg.m_outDParms;
+			OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+			*pParms = dlg.m_outDParms;
+			pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 		}
 	}
 	break;
@@ -360,12 +369,15 @@ void CDAChannelsDlg::OnBnClickedButtonsource2()
 	case DA_SEQUENCEWAVE:	// sequence
 	{
 		CEditStimArrayDlg dlg;
-		dlg.m_stim = m_outD.parmsChan.GetAt(channel).stimulussequence;
+		dlg.m_pIntervalArrays.RemoveAll();
+		for (int i=0; i<8; i++)
+			dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stim8lines[i]); 
 		dlg.m_pstimsaved = &m_stimsaved;
 		dlg.m_rate = m_samplingRate;
 		if (IDOK == dlg.DoModal())
 		{
-			m_outD.parmsChan.GetAt(channel).stimulussequence = dlg.m_stim;
+			OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+			pParms->sti.ImportAndMergeIntervalsArrays(&dlg.m_pIntervalArrays);			
 		}
 	}
 	break;

@@ -105,7 +105,7 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 
 	// hide/display combo and load data into listbox
 	int nArrays = m_pIntervalArrays.GetSize();
-	if (nArrays == 1)
+	if (nArrays > 1)
 	{
 		CString cs;
 		CComboBox* pCombo = (CComboBox *)GetDlgItem(IDC_CHANCOMBO);
@@ -113,11 +113,12 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 		{
 			CIntervalsArray* ptr = (CIntervalsArray*)m_pIntervalArrays.GetAt(i);
 			int chan = ptr->GetChan();
-			cs.Format(_T("channel %i"), chan);
+			cs.Format(_T("%i"), chan);
 			pCombo->AddString(cs);
 		}
-		GetDlgItem(IDC_CHANCOMBO)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_CHANSTATIC)->ShowWindow(SW_SHOW);
+		pCombo->ShowWindow(SW_SHOW);
+		pCombo->SetCurSel(0);
 	}
 	m_pstim = (CIntervalsArray*)m_pIntervalArrays.GetAt(0);
 	TransferStimlevelToList(m_pstim);

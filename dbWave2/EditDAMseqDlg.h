@@ -12,6 +12,10 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_DA_MSEQ };
 	OUTPUTPARMS	m_outDParms;
+	long		m_mSeqRatio;
+	long		m_mSeqDelay;
+	long		m_mSeqSeed;
+	CButton		m_mSeqRandomSeed;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -19,14 +23,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-
-	long	m_mSeqRatio;
-	long	m_mSeqDelay;
-	long	m_mSeqSeed;
-	CButton m_mSeqRandomSeed;
-
 	virtual void OnOK();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedMseqRandomSeed();
-	afx_msg void OnEnChangeEdit1();
 };

@@ -19,7 +19,7 @@ CIntervalsArray::CIntervalsArray()
 	iistimulus.SetSize(0);	// time on, time off
 	npercycle = 1;
 	version = 1;
-	ichan = -1;				// -1 = undefined; otherwise: 0, 1...7
+	ichan = 0;				// otherwise: 0, 1...7
 }
 
 CIntervalsArray::~CIntervalsArray()
@@ -284,9 +284,9 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	TransformedArrays.RemoveAll();
 }
 
-CIntervalsArray * CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan)
+
+void CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan, CIntervalsArray * pOut)
 {
-	CIntervalsArray * ptr = new CIntervalsArray();
 	WORD ifilter = 2 << chan;
 	WORD istatus = 0;
 	for (int i = 0; i < iistep.GetSize(); i++)
@@ -294,10 +294,9 @@ CIntervalsArray * CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan)
 		if ((ifilter & iistep[i].w) != istatus)
 		{
 			istatus = ifilter & iistep[i].w;
-			ptr->AddInterval(iistep[i].ii);
+			pOut->AddInterval(iistep[i].ii);
 		}
 	}
-	return ptr;
 }
 
 
