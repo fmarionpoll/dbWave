@@ -279,12 +279,13 @@ void CDAChannelsDlg::OnBnClickedButtonsource0()
 		case DA_SEQUENCEWAVE:	// sequence
 			{
 				CEditStimArrayDlg dlg;
-				dlg.m_stim = m_outD.parmsChan.GetAt(channel).stimulussequence;
+				dlg.m_pIntervalArrays.RemoveAll();
+				dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
 				dlg.m_pstimsaved = &m_stimsaved;
 				dlg.m_rate = m_samplingRate;
 				if (IDOK == dlg.DoModal())
 				{
-					m_outD.parmsChan.GetAt(channel).stimulussequence = dlg.m_stim;
+					
 				}
 			}
 			break;

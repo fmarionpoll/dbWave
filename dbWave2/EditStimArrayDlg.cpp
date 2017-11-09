@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CEditStimArrayDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON1, &CEditStimArrayDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_COPY, &CEditStimArrayDlg::OnBnClickedCopy)
 	ON_BN_CLICKED(IDC_PASTE, &CEditStimArrayDlg::OnBnClickedPaste)
+	ON_CBN_SELCHANGE(IDC_CHANCOMBO, &CEditStimArrayDlg::OnCbnSelchangeChancombo)
 END_MESSAGE_MAP()
 
 
@@ -52,6 +53,7 @@ END_MESSAGE_MAP()
 BOOL CEditStimArrayDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+
 	// init dialog size
 	m_stretch.AttachDialogParent(this);	// attach dialog pointer
 	m_stretch.newProp(IDC_LISTSTIM,	    XLEQ_XREQ,YTEQ_YBEQ);
@@ -101,7 +103,24 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 
 	m_stimarrayCtrl.SetImageList(m_pimagelist, LVSIL_SMALL );
 
-	TransferStimlevelToList(&m_stim);
+	// hide/display combo and load data into listbox
+	int nArrays = m_pIntervalArrays.GetSize();
+	if (nArrays == 1)
+	{
+		CString cs;
+		CComboBox* pCombo = (CComboBox *)GetDlgItem(IDC_CHANCOMBO);
+		for (int i = 0; i < nArrays; i++)
+		{
+			CIntervalsArray* ptr = (CIntervalsArray*)m_pIntervalArrays.GetAt(i);
+			int chan = ptr->GetChan();
+			cs.Format(_T("channel %i"), chan);
+			pCombo->AddString(cs);
+		}
+		GetDlgItem(IDC_CHANCOMBO)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_CHANSTATIC)->ShowWindow(SW_SHOW);
+	}
+	m_pstim = (CIntervalsArray*)m_pIntervalArrays.GetAt(0);
+	TransferStimlevelToList(m_pstim);
 
 	// update paste button (disabled if stimsaved is empty
 	if(m_pstimsaved->iistimulus.GetSize() <1)
@@ -145,7 +164,8 @@ void CEditStimArrayDlg::ResetListOrder()
 
 void CEditStimArrayDlg::TransferStimlevelToList(CIntervalsArray* pstim)
 {
-	m_pstim = pstim;
+	m_stimarrayCtrl.DeleteAllItems();
+
 	int nitems = m_pstim->iistimulus.GetSize();
 	// Use the LV_ITEM structure to insert the items
 	LVITEM lvi;
@@ -211,7 +231,6 @@ void CEditStimArrayDlg::OnEnKillfocusEdit1()
 	CString cs;
 	m_csEdit.GetWindowText(cs);
 	m_csEdit.ShowWindow(SW_HIDE);
-
 
 	m_pstim->iistimulus[m_iItem] = (long)( m_value * m_rate);
 	LVITEM lvi;	
@@ -365,4 +384,13 @@ void CEditStimArrayDlg::OnBnClickedPaste()
 		m_stimarrayCtrl.SetItem(&lvi);
 	}
 	ResetListOrder();
+}
+
+
+void CEditStimArrayDlg::OnCbnSelchangeChancombo()
+{
+	CComboBox* pCombo = (CComboBox *)GetDlgItem(IDC_CHANCOMBO);
+	int isel = pCombo->GetCurSel();
+	m_pstim = (CIntervalsArray*)m_pIntervalArrays.GetAt(isel);
+	TransferStimlevelToList(m_pstim);
 }

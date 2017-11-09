@@ -3501,23 +3501,26 @@ void CSpikeDetectionView::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CSpikeDetectionView::OnToolsEditstimulus()
 {
-	CEditStimArrayDlg dlg;
-	// sort stimulus array
 	m_pspkDocVSD->SortStimArray();
-	dlg.m_stim = m_pspkDocVSD->m_stim;
+
+	CEditStimArrayDlg dlg;
+	dlg.m_pIntervalArrays.RemoveAll();
+	dlg.m_pIntervalArrays.Add(&m_pspkDocVSD->m_stim);
 	dlg.m_rate = m_samplingRate;
 	dlg.m_pstimsaved = &GetDocument()->m_stimsaved;
+
 	if (IDOK == dlg.DoModal())
 	{
-		m_pspkDocVSD->m_stim.nitems=0;	// zero stimuli
-		m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
+		//m_pspkDocVSD->m_stim.nitems=0;	// zero stimuli
+		//m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
 
-		CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
-		for (int i=0; i< dlg.m_stim.iistimulus.GetCount(); i++)
-		{
-			pSti->iistimulus.InsertAt(i, dlg.m_stim.iistimulus[i]);
-			m_pspkDocVSD->m_stim.nitems++;
-		}
+		//CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
+		//CIntervalsArray* pStiDlg = (CIntervalsArray*) dlg.m_pIntervalArrays.GetAt(0);
+		//for (int i=0; i< pStiDlg->iistimulus.GetCount(); i++)
+		//{
+		//	pSti->iistimulus.InsertAt(i, pStiDlg->iistimulus[i]);
+		//	m_pspkDocVSD->m_stim.nitems++;
+		//}
 
 		UpdateVTtags();
 		m_spkBarView.Invalidate();

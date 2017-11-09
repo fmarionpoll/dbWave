@@ -758,6 +758,9 @@
 #define IDC_SS_CAP                      1498
 #define IDC_CUSTOM1                     1499
 #define IDC_CARDFEATURES                1500
+#define IDC_COMBOCHAN                   1502
+#define IDC_CHANCOMBO                   1502
+#define IDC_CHANSTATIC                  1503
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -878,9 +881,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        563
+#define _APS_NEXT_RESOURCE_VALUE        564
 #define _APS_NEXT_COMMAND_VALUE         33010
-#define _APS_NEXT_CONTROL_VALUE         1502
+#define _APS_NEXT_CONTROL_VALUE         1504
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

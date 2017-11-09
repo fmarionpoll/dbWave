@@ -12,8 +12,7 @@ public:
 	virtual ~CEditStimArrayDlg();
 
 	// data passed by caller
-	CIntervalsArray		m_stim;
-	CIntervalsArray*	m_pstim;
+	CPtrArray			m_pIntervalArrays;
 	float				m_rate;
 	CIntervalsArray*	m_pstimsaved;
 
@@ -21,7 +20,9 @@ public:
 	enum { IDD = IDD_EDITSTIMULUS };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	CIntervalsArray* m_pstim;
+
+	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	CImageList*		m_pimagelist;
 	CStretchControl m_stretch;
 	BOOL			m_binit;
@@ -47,4 +48,5 @@ public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedCopy();
 	afx_msg void OnBnClickedPaste();
+	afx_msg void OnCbnSelchangeChancombo();
 };
