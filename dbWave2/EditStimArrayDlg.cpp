@@ -13,6 +13,7 @@
 // CEditStimArrayDlg dialog
 
 IMPLEMENT_DYNAMIC(CEditStimArrayDlg, CDialog)
+
 CEditStimArrayDlg::CEditStimArrayDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CEditStimArrayDlg::IDD, pParent)
 	, m_value(0)

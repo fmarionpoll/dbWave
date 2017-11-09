@@ -393,6 +393,9 @@
     <ClCompile Include="EditDAMseqDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dtBoardDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -852,6 +855,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditDAMseqDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dtBoardDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

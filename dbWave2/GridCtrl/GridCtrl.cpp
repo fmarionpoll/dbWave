@@ -6525,9 +6525,9 @@ void CGridCtrl::Print(CPrintDialog* pPrntDialog /*=NULL*/)
 	dc.m_bPrinting = TRUE;
 
 	CString strTitle;
-	strTitle.LoadString(AFX_IDS_APP_TITLE);
+	BOOL flag = strTitle.LoadString(AFX_IDS_APP_TITLE);
 
-	if( strTitle.IsEmpty() )
+	if(!flag || strTitle.IsEmpty() )
 	{
 		CWnd *pParentWnd = GetParent();
 		while (pParentWnd)
@@ -7033,7 +7033,7 @@ void CGridCtrl::PrintHeader(CDC *pDC, CPrintInfo *pInfo)
 {
 	// print App title on top right margin
 	CString strRight;
-	strRight.LoadString(AFX_IDS_APP_TITLE);
+	BOOL flag = strRight.LoadString(AFX_IDS_APP_TITLE);
 
 	// print parent window title in the centre (Gert Rijs)
 	CString strCenter;

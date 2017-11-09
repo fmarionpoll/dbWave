@@ -12,7 +12,7 @@ public:
 	virtual ~CEditStimArrayDlg();
 
 	// data passed by caller
-	CIntervalsArray	m_stim;
+	CIntervalsArray		m_stim;
 	CIntervalsArray*	m_pstim;
 	float				m_rate;
 	CIntervalsArray*	m_pstimsaved;

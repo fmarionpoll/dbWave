@@ -291,6 +291,7 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="Browsefi.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="dtBoardDlg.cpp" />
     <ClCompile Include="chanlistitem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -620,6 +621,7 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="Awavepar.h" />
     <ClInclude Include="Browsefi.h" />
     <ClInclude Include="CApplication.h" />
+    <ClInclude Include="dtBoardDlg.h" />
     <ClInclude Include="chanlistitem.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="ConfirmSaveDlg.h" />

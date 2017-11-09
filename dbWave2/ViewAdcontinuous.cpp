@@ -24,6 +24,7 @@
 #include "ConfirmSaveDlg.h"
 #include "DAChannelsDlg.h"
 #include "DAOutputsParmsDlg.h"
+#include "dtBoardDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -2383,7 +2384,8 @@ void CADContView::UpdateRadioButtons()
 	UpdateData(TRUE);
 }
 
+
 void CADContView::OnBnClickedCardfeatures()
 {
-	// TODO: Add your control notification handler code here
+	CDataTranslationBoardDlg dlg;
 }
