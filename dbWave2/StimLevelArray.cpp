@@ -180,7 +180,7 @@ void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsArray * pInterval
 	iistep.SetSize(nitems);
 	WORD wLOW = 0;
 	WORD wUP = valUP;
-	WORD wState = wLOW;
+	WORD wState = wUP;
 	CIntervalPoint dummy;
 	for (int i = 0; i < nitems; i++)
 	{

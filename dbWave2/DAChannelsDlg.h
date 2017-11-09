@@ -9,8 +9,9 @@
 #define DA_MSEQWAVE		4
 #define DA_NOISEWAVE	5
 #define	DA_FILEWAVE		6
-#define DA_LINEWAVE		7
-#define DA_CONSTANT		8
+#define DA_CONSTANT		7
+#define DA_LINEWAVE		8
+
 
 class CDAChannelsDlg : public CDialogEx
 {

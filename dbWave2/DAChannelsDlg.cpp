@@ -84,6 +84,7 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->GetCurSel();
 	BOOL	bEnable = TRUE;
 	BOOL	bEnable2 = TRUE;
+	BOOL	bEnable2b = TRUE;
 	BOOL	bEnable3 = FALSE;
 	switch (isel) {
 	case DA_SINEWAVE:		// sinusoid
@@ -93,9 +94,12 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 
 	case DA_SEQUENCEWAVE:	// sequence
 	case DA_MSEQWAVE:		// M-seq
-		bEnable2 = TRUE;
 		bEnable = FALSE;
 		bEnable3 = TRUE;
+		break;
+
+	case DA_CONSTANT:
+		bEnable2b = FALSE;
 		break;
 
 	case DA_NOISEWAVE:		// Noise
@@ -103,12 +107,13 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 	default:
 		bEnable = FALSE;
 		bEnable2 = FALSE;
+		bEnable2b = FALSE;
 		bEnable3 = TRUE;
 		break;
 	}
 	GetDlgItem(IDC_STATIC00)->EnableWindow(bEnable2); 
 	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(bEnable2);
-	GetDlgItem(IDC_EDITAMPLITUDELOW0)->EnableWindow(bEnable2);
+	GetDlgItem(IDC_EDITAMPLITUDELOW0)->EnableWindow(bEnable2b);
 
 	GetDlgItem(IDC_STATIC01)->EnableWindow(bEnable);
 	GetDlgItem(IDC_EDITFREQ0)->EnableWindow(bEnable);
@@ -136,6 +141,7 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->GetCurSel();
 	BOOL	bEnable = TRUE;
 	BOOL	bEnable2 = TRUE;
+	BOOL	bEnable2b = TRUE;
 	BOOL	bEnable3 = FALSE;
 	switch (isel) {
 	case DA_SINEWAVE:		// sinusoid
@@ -145,22 +151,27 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 
 	case DA_SEQUENCEWAVE:	// sequence
 	case DA_MSEQWAVE:		// M-seq
-		bEnable2 = TRUE;
 		bEnable = FALSE;
 		bEnable3 = TRUE;
 		break; 
+
+	case DA_CONSTANT:
+		bEnable2b = FALSE;
+		break;
 
 	case DA_NOISEWAVE:		// Noise
 	case DA_FILEWAVE:		// data file
 	default:
 		bEnable = FALSE;
 		bEnable2 = FALSE;
+		bEnable2b = FALSE;
 		bEnable3 = TRUE;
 		break;
 	}
 	GetDlgItem(IDC_STATIC10)->EnableWindow(bEnable2);
 	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(bEnable2);
-	GetDlgItem(IDC_EDITAMPLITUDELOW1)->EnableWindow(bEnable2);
+	GetDlgItem(IDC_EDITAMPLITUDELOW1)->EnableWindow(bEnable2b);
+
 	GetDlgItem(IDC_STATIC11)->EnableWindow(bEnable);
 	GetDlgItem(IDC_EDITFREQ1)->EnableWindow(bEnable);
 	GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(bEnable3);
@@ -187,6 +198,7 @@ void CDAChannelsDlg::OnBnClickedOk()
 	int isize = m_outD.parmsChan.GetSize();
 	if (isize < 3)
 		m_outD.parmsChan.SetSize(3);
+
 	int channel = 0;
 	m_outD.parmsChan.GetAt(channel).iChan = channel;
 	m_outD.parmsChan.GetAt(channel).bON = m_bChannel0;

@@ -36,8 +36,12 @@ public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet;
 	float				m_sweepduration;
-	CDTAcq32			m_ADCsubsystem;
-	CDTAcq32			m_DACsubsystem;
+	CString				m_boardName;
+	CDTAcq32			m_AnalogIN;
+	CDTAcq32			m_AnalogOUT;
+	CDTAcq32			m_DigitalIN;
+	CDTAcq32			m_DigitalOUT;
+
 	float				m_yupper;
 	float				m_ylower;
 	CRulerBar			m_adxscale;
@@ -133,6 +137,7 @@ protected:
 	void ADC_Stop();
 	
 	BOOL DAC_OpenSubSystem();
+	BOOL DAC_ClearAllOutputs();
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareBuffers();
