@@ -126,7 +126,7 @@ protected:
 	float				m_fclockrate;		// apparent clock rate
 
 // functions for data acquisition
-	BOOL FindDTOpenLayersBoard();
+	BOOL FindDTOpenLayersBoards();
 	BOOL SelectDTOpenLayersBoard(CString cardName);
 	
 	BOOL ADC_OpenSubSystem();
