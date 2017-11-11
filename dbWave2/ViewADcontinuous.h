@@ -39,8 +39,6 @@ public:
 	CString				m_boardName;
 	CDTAcq32			m_AnalogIN;
 	CDTAcq32			m_AnalogOUT;
-	CDTAcq32			m_DigitalIN;
-	CDTAcq32			m_DigitalOUT;
 
 	float				m_yupper;
 	float				m_ylower;

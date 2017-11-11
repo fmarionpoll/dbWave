@@ -122,9 +122,10 @@ void CADContView::OnDestroy()
 
 	if (m_bFoundDTOPenLayerDLL)
 	{
-		// save data here ... TODO
+		// TODO: save data here 
 		if (m_AnalogIN.GetHDass() != NULL)
 			ADC_DeleteBuffers();
+			
 		if (m_AnalogOUT.GetHDass() != NULL)
 			DAC_DeleteBuffers();
 	}
@@ -154,13 +155,28 @@ HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 /////////////////////////////////////////////////////////////////////////////
 // DT Openlayer board functions
 /////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+BEGIN_EVENTSINK_MAP(CADContView, CFormView)
+
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 1, CADContView::OnBufferDone_ADC, VTS_NONE)
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 2, CADContView::OnQueueDone_ADC, VTS_NONE)
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 4, CADContView::OnTriggerError_ADC, VTS_NONE)
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 5, CADContView::OnOverrunError_ADC, VTS_NONE)
+
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 1, CADContView::OnBufferDone_DAC, VTS_NONE)
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 5, CADContView::OnOverrunError_DAC, VTS_NONE)
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::OnQueueDone_DAC, VTS_NONE)
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::OnTriggerError_DAC, VTS_NONE)
+
+END_EVENTSINK_MAP()
 
 // --------------------------------------------------------------------------
 // open DT layer board connection to driver
 //
 // all parameters are stored or come from the parameters array
 // OPTIONS_ACQDATA, structure that is present in the program's main memory
-// m_AnalogIN.GetHDass() = NULL
+// m_Analog.GetHDass() = NULL
 
 void CADContView::OnCbnSelchangeComboboard()
 {
@@ -222,12 +238,9 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	try
 	{
 		m_AnalogIN.SetBoard(cardName);
-		m_AnalogOUT.SetBoard(cardName);
-		//m_DigitalIN.SetBoard(cardName);
-		//m_DigitalOUT.SetBoard(cardName);
-
 		flagAD = ADC_OpenSubSystem();
 		bsimultaneousStartAD = m_AnalogIN.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+
 		m_AnalogOUT.SetBoard(cardName);
 		flagDA = DAC_OpenSubSystem();
 		if (flagDA) 
@@ -267,6 +280,7 @@ BOOL CADContView::ADC_OpenSubSystem()
 			return FALSE;
 		m_AnalogIN.SetSubSysType(OLSS_AD);						// select A/D system
 		m_AnalogIN.SetSubSysElement(0);
+		ASSERT(m_AnalogIN.GetHDass() != NULL);
 	}
 	catch(COleDispatchException* e)
 	{
@@ -293,7 +307,7 @@ BOOL CADContView::ADC_OpenSubSystem()
 		m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXDICHANS);
 
 	// data encoding (binary or offset encoding)
-	pWFormat->mode_encoding = (int) m_AnalogIN.GetEncoding();
+	pWFormat->mode_encoding = (int)m_AnalogIN.GetEncoding();
 	if (pWFormat->mode_encoding == OLx_ENC_BINARY)
 		pWFormat->binzero = pWFormat->fullscale_bins/2+1;
 	else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
@@ -311,12 +325,6 @@ BOOL CADContView::ADC_OpenSubSystem()
 	//UpdateHorizontalRulerBar();
 	//UpdateVerticalRulerBar();
 
-	// check that subsystem is here
-	if(m_AnalogIN.GetHDass() == NULL)
-	{
-		AfxMessageBox(_T("Analog-to-Digital Subsystem is not available."));
-		return FALSE;
-	}
 	return TRUE;
 }
 
@@ -341,7 +349,7 @@ BOOL CADContView::ADC_InitSubSystem()
 	// Set up the ADC - no wrap so we can get buffer reused	
 	m_AnalogIN.SetDataFlow(OLx_DF_CONTINUOUS);
 	m_AnalogIN.SetWrapMode(OLx_WRP_NONE);
-	m_AnalogIN.SetDmaUsage((short) m_AnalogIN.GetSSCaps(OLSSC_NUMDMACHANS));
+	m_AnalogIN.SetDmaUsage((short)m_AnalogIN.GetSSCaps(OLSSC_NUMDMACHANS));
 	m_AnalogIN.SetClockSource(OLx_CLK_INTERNAL);
 
 	// set trigger mode
@@ -442,6 +450,7 @@ BOOL CADContView::DAC_ClearAllOutputs()
 	{
 		// make sure we have a valid handle
 		ASSERT(m_AnalogOUT.GetHDass() != NULL);
+
 		if (m_AnalogOUT.GetSSCaps(OLSSC_SUP_SINGLEVALUE) == FALSE)
 		{
 			AfxMessageBox(_T("D/A SubSystem cannot run in single value mode"));
@@ -470,7 +479,6 @@ BOOL CADContView::DAC_ClearAllOutputs()
 		e->Delete();
 		return FALSE;
 	}
-
 	return TRUE;
 
 }
@@ -485,7 +493,7 @@ BOOL CADContView::DAC_InitSubSystem()
 		// Set up the ADC - multiple wrap so we can get buffer reused	
 		m_AnalogOUT.SetDataFlow(OLx_DF_CONTINUOUS);
 		m_AnalogOUT.SetWrapMode(OLx_WRP_NONE);
-		m_AnalogOUT.SetDmaUsage((short) m_AnalogOUT.GetSSCaps(OLSSC_NUMDMACHANS));
+		m_AnalogOUT.SetDmaUsage((short)m_AnalogOUT.GetSSCaps(OLSSC_NUMDMACHANS));
 
 		// set clock the same as for A/D
 		m_AnalogOUT.SetClockSource(OLx_CLK_INTERNAL);
@@ -597,7 +605,7 @@ void CADContView::DAC_DeleteBuffers()
 	if (m_AnalogOUT.GetHDass() == NULL)
 		return;
 
-	m_AnalogOUT.Flush();		// clean
+	m_AnalogOUT.Flush();	// clean
 	HBUF hBuf;			// handle to buffer
 	do					// loop until all buffers are removed
 	{
@@ -937,9 +945,7 @@ void CADContView::DAC_FillBufferWithMSEQWave(short* pDTbuf, int chan)
 
 void CADContView::DAC_FillBuffer(short* pDTbuf)
 {
-	int nchans = m_AnalogOUT.GetListSize();
-	
-	for (int i = 0; i < nchans; i++)
+	for (int i = 0; i <  m_AnalogOUT.GetListSize(); i++)
 	{
 		switch (m_DAC_chanList.GetAt(i).iWaveform)
 		{
@@ -980,7 +986,7 @@ void CADContView::DAC_Stop()
 		m_AnalogOUT.Flush();	// flush all buffers to Done Queue
 		HBUF hBuf;
 		do {
-			hBuf = (HBUF) m_AnalogOUT.GetQueue();
+			hBuf = (HBUF)m_AnalogOUT.GetQueue();
 			if(hBuf != NULL) { 
 				ECODE ecode = olDmFreeBuffer(hBuf);
 				if(ecode != OLNOERROR)
@@ -1005,7 +1011,7 @@ void CADContView::ADC_Stop()
 		m_AnalogIN.Flush();							// flush all buffers to Done Queue
 		HBUF hBuf;
 		do {
-			hBuf = (HBUF)m_AnalogIN.GetQueue();
+			hBuf = (HBUF) m_AnalogIN.GetQueue();
 			if (hBuf != NULL) m_AnalogIN.SetQueue((long)hBuf);
 		} while (hBuf != NULL);
 		m_ADsourceView.ADdisplayStop();
@@ -1043,7 +1049,6 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 	if (m_DAC_inprogress)
 		DAC_Stop();
 	
-
 	// close file and update display
 	if (m_bFileOpen)
 	{
@@ -1151,12 +1156,12 @@ BOOL CADContView::StartAcquisition()
 	// make sure that analog-to-digital is available
 	if (!ADC_InitSubSystem())
 		return FALSE;
-
 	m_AnalogIN.ClearError();
+
 	if (m_bOutputsEnabled)
 	{
-		BOOL flag = DAC_InitSubSystem();
-		m_AnalogOUT.ClearError();
+		if (DAC_InitSubSystem())
+			m_AnalogOUT.ClearError();
 	}
 	
 	// start AD display
@@ -1199,18 +1204,18 @@ BOOL CADContView::StartAcquisition()
 		}
 	}
 	
-	// starting mode of A/D if not simultaneous list
+	// starting mode of A/D if no simultaneous list
 	if (!m_bSimultaneousStart)
 	{
-		m_AnalogIN.Config();
-		m_AnalogOUT.Config();
 		m_DAC_inprogress = FALSE;
-
 		if (m_bOutputsEnabled) 
 		{
+			m_AnalogOUT.Config();
 			m_AnalogOUT.Start();
 			m_DAC_inprogress = TRUE;
 		}
+		
+		m_AnalogIN.Config();
 		m_AnalogIN.Start();
 		m_ADC_inprogress = TRUE;
 	}
@@ -1244,8 +1249,9 @@ BOOL CADContView::StartAcquisition()
 		}
 
 		// AD system
+		m_AnalogIN.SetSubSysType(OLSS_AD);
 		m_AnalogIN.Config();
-		ecode = olDaPutDassToSSList (hSSlist, (HDASS) m_AnalogIN.GetHDass());
+		ecode = olDaPutDassToSSList (hSSlist, (HDASS)m_AnalogIN.GetHDass());
 		if(ecode != OLNOERROR)
 		{
 			retval = ecode;
@@ -1397,7 +1403,7 @@ void CADContView::OnInitialUpdate()
 	{
 		ADC_InitSubSystem();									// connect A/D DT OpenLayer subsystem
 		InitCyberAmp();											// control cyberamplifier
-		//DAC_InitSubSystem();									// connect D/A DT OpenLayers subsystem
+		DAC_InitSubSystem();									// connect D/A DT OpenLayers subsystem
 		DAC_ClearAllOutputs();
 	}
 	else
@@ -1832,21 +1838,7 @@ void CADContView::ChainDialog(WORD iID)
 	return;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-BEGIN_EVENTSINK_MAP(CADContView, CFormView)
-	
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 1 /* BufferDone */, CADContView::OnBufferDone_ADC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 2 /* QueueDone */, CADContView::OnQueueDone_ADC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 4 /* TriggerError */, CADContView::OnTriggerError_ADC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 5 /* OverrunError */, CADContView::OnOverrunError_ADC, VTS_NONE)
-	
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 1, CADContView::OnBufferDone_DAC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 5, CADContView::OnOverrunError_DAC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::OnQueueDone_DAC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::OnTriggerError_DAC, VTS_NONE)
-
-END_EVENTSINK_MAP()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1940,7 +1932,7 @@ void CADContView::OnBufferDone_ADC()
 			if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
 				pWFormat->sample_count = 0;
 		}
-		m_AnalogIN.SetQueue((long)m_ADC_bufhandle);						// tell ADdriver that data buffer is free
+		m_AnalogIN.SetQueue((long)m_ADC_bufhandle);					// tell ADdriver that data buffer is free
 
 		// then: display acqDataDoc buffer
 		if (pWFormat->bOnlineDisplay)								// display data if requested
@@ -1954,7 +1946,7 @@ void CADContView::OnBufferDone_ADC()
 void CADContView::OnBufferDone_DAC()
 {
 	// get buffer off done list	
-	m_DAC_bufhandle = (HBUF)m_AnalogOUT.GetQueue();
+	m_DAC_bufhandle = (HBUF) m_AnalogOUT.GetQueue();
 	if (m_DAC_bufhandle == NULL)
 		return;
 
@@ -2434,14 +2426,9 @@ void CADContView::UpdateRadioButtons()
 	UpdateData(TRUE);
 }
 
-
 void CADContView::OnBnClickedCardfeatures()
 {
 	CDataTranslationBoardDlg dlg;
 	dlg.m_pAnalogIN = &m_AnalogIN;
-	dlg.m_pAnalogOUT = &m_AnalogOUT;
-	dlg.m_pDigitalIN = &m_DigitalIN;
-	dlg.m_pDigitalOUT = &m_DigitalOUT;
-
 	dlg.DoModal();
 }

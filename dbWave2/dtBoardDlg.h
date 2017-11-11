@@ -3,9 +3,9 @@
 #include <oltypes.h>
 #include <olerrors.h>
 #include <Olmem.h>
+#include <oldaapi.h>
 #include "dtacq32.h"
-
-#define STRLEN	100				// general string length
+#include "afxwin.h"
 
 class CDataTranslationBoardDlg : public CDialog
 {
@@ -15,16 +15,14 @@ public:
 	CDataTranslationBoardDlg(CWnd* pParent = NULL);
 	virtual ~CDataTranslationBoardDlg();
 	enum {IDD= IDD_DTBOARD_DLG};
-	CComboBox	m_cboBoard;
-	CStatic		m_boardInfo;
-	CStatic		m_subsystems;
-	CStatic		m_subsystemCapability;
-	CComboBox	m_subsystem;
 
 	CDTAcq32*	m_pAnalogIN;
-	CDTAcq32*	m_pAnalogOUT;
-	CDTAcq32*	m_pDigitalIN;
-	CDTAcq32*	m_pDigitalOUT;
+private:
+	UINT		m_atodCount;
+	UINT		m_dtoaCount;
+	UINT		m_dioCount;
+	int			m_nsubsystems;
+	CString		m_boardName;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -32,22 +30,18 @@ protected:
 protected:
 	virtual BOOL OnInitDialog();
 	BOOL FindDTOpenLayersBoards();
-	afx_msg void OnBnClickedOk();
+	int  GetBoardCapabilities();
+	void GetSubsystemYNCapabilities();
+	void GetSubsystemNumericalCapabilities();
+
 	afx_msg void OnSelchangeBoard();
-	void GetBoardCapabilities();
 	afx_msg void OnSelchangeSubsystem();
-
 	DECLARE_MESSAGE_MAP()
-
-private:
-	UINT		m_atodCount;
-	UINT		m_dtoaCount;
-	UINT		m_dioCount;
-	CWnd*		m_pParent;
-
-	CString		m_boardName;
-	char		m_str[STRLEN];
 public:
-	CStatic		m_ssNumerical;
+	CComboBox	m_cbBoard;
+	CComboBox	m_cbSubsystem;
+	CListBox	m_listBoardCaps;
+	CListBox	m_listSSNumCaps;
+	CListBox	m_listSSYNCaps;
 };
 

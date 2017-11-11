@@ -40,8 +40,8 @@ public:
 	UINT m_postmessage;				// launch assoc dialog
 
 	BOOL m_bchantype;				// flag TRUE=single ended; false=differential - default: false
-	int m_numchansMAXDI;			// = m_AnalogIN.GetSSCaps(OLSSC_MAXDICHANS); default = 8
-	int m_numchansMAXSE;			// = m_AnalogIN.GetSSCaps(OLSSC_MAXSECHANS); default = 16
+	int m_numchansMAXDI;			// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
+	int m_numchansMAXSE;			// = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
 	BOOL m_bcommandAmplifier;		// change ampli settings on the fly (if present); default = none
 	
 	// Implementation
