@@ -1607,8 +1607,8 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	dAmplitudeMaxV	=arg.dAmplitudeMaxV;
 	dAmplitudeMinV	=arg.dAmplitudeMinV;
 	dFrequency		=arg.dFrequency;	
-	dummy1	=arg.dummy1;
-	dummy2	=arg.dummy2;
+	dummy1			=arg.dummy1;
+	dummy2			=arg.dummy2;
 	noise_dAmplitV	=arg.noise_dAmplitV;	
 	noise_dFactor	=arg.noise_dFactor;
 	noise_dOffsetV	=arg.noise_dOffsetV;	
@@ -1616,7 +1616,7 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	value			= arg.value;
 	for (int i = 0; i < 8; i++)
 		stim8lines[i] = arg.stim8lines[i];
-	sti = arg.sti;
+	sti				= arg.sti;
 }
 
 void OUTPUTPARMS::Serialize(CArchive& ar)
@@ -1659,13 +1659,13 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 	} 
 	else
 	{
-		WORD version;  ar >> version;
+		WORD version; ar >> version;
 		int n; 
 		WORD wn;
 
 		// cstring parameters
 		ar >> wn; n = wn;
-		if (n > 0)ar >> csFilename;			n--;
+		if (n > 0) ar >> csFilename; n--;
 		CString csdummy; while (n > 0) {n--; ar >> csdummy;}
 
 		// BOOL parameters
@@ -1689,13 +1689,12 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		if (n > 0) ar >> dAmplitudeMaxV;	n--;
 		if (n > 0) ar >> dAmplitudeMinV;	n--;
 		if (n > 0) ar >> dFrequency;		n--;
-		if (n > 0) ar >> dummy1;		n--;
-		if (n > 0) ar >> dummy2;		n--;
+		if (n > 0) ar >> dummy1;			n--;
+		if (n > 0) ar >> dummy2;			n--;
 		if (n > 0) ar >> noise_dAmplitV;	n--;
 		if (n > 0) ar >> noise_dFactor;		n--;
 		if (n > 0) ar >> noise_dOffsetV;	n--;
 		if (n > 0) ar >> value;				n--;
-	
 		double ddummy; while (n > 0) {n--; ar >> ddummy;}
 
 		// other?
@@ -1703,7 +1702,10 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		if (n > 0) { stimulussequence.Serialize(ar); n--; }
 		for (int i = 0; i < 8; i++) 
 		{
-			if (n > 0) { stim8lines[i].Serialize(ar); n--; }
+			if (n > 0) { 
+				stim8lines[i].Serialize(ar); 
+				n--; 
+			}
 		}
 		if (n > 0) { sti.Serialize(ar); n--; }
 		ASSERT(n==0);

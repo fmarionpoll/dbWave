@@ -65,6 +65,8 @@ CADContView::CADContView()
 	ASSERT(m_pEditBkBrush != NULL);			// check brush
 
 	m_bEnableActiveAccessibility=FALSE;
+	m_bsimultaneousStartAD = FALSE;
+	m_bsimultaneousStartDA = FALSE;
 }
 
 CADContView::~CADContView()
@@ -187,39 +189,32 @@ void CADContView::OnCbnSelchangeComboboard()
 }
 
 BOOL CADContView::FindDTOpenLayersBoards()
-{		
+{
+	m_ADcardCombo.ResetContent();
+
 	// load board name - skip dialog if only one is present
 	UINT uiNumBoards = m_AnalogIN.GetNumBoards();
-	BOOL flag = (uiNumBoards > 0 ? TRUE: FALSE);
-
-	m_ADcardCombo.ResetContent();
+	if (uiNumBoards == 0)
+	{
+		m_ADcardCombo.AddString(_T("No Board"));
+		m_ADcardCombo.SetCurSel(0);
+		return FALSE;
+	}
+	
 	for(UINT i=0; i < uiNumBoards; i++)
 		m_ADcardCombo.AddString (m_AnalogIN.GetBoardList(i));
 
 	int isel = 0;
-	switch (uiNumBoards)
-	{
-	case 0:												// no board present: exit
-		m_ADcardCombo.AddString(_T("No Board"));
-		m_ADcardCombo.SetCurSel(0);
-		return FALSE; 
-		break;
-	case 1:												// only one board: no fuss, stick to it!
+	// if name already defined, check if board present
+	if (!(m_pADC_options->waveFormat).csADcardName.IsEmpty())
+		isel = m_ADcardCombo.FindString(-1, (m_pADC_options->waveFormat).csADcardName);
+	if (isel < 0)
 		isel = 0;
-		break;
-	default:											// more than on board (unlikely?!)
-		// if name already defined, check if board present
-		if (!(m_pADC_options->waveFormat).csADcardName.IsEmpty())
-			isel = m_ADcardCombo.FindString(-1, (m_pADC_options->waveFormat).csADcardName);
-		// former card not found, take the first in the list
-		if (isel < 0)
-			isel = 0;
-		break;
-	}
+
 	m_ADcardCombo.SetCurSel(isel);
 	m_boardName = m_AnalogIN.GetBoardList(isel);
 	SelectDTOpenLayersBoard (m_boardName);
-	return flag;
+	return TRUE;
 }
 
 BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
@@ -229,32 +224,12 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	(m_pADC_options->waveFormat).csADcardName = cardName;
 
 	// connect A/D subsystem and display/hide buttons
-	BOOL flagAD = FALSE;
-	BOOL bsimultaneousStartAD=FALSE;
-	BOOL flagDA = FALSE;
-	BOOL bsimultaneousStartDA = FALSE;
 	m_bOutputsEnabled = FALSE;
-
-	try
-	{
-		m_AnalogIN.SetBoard(cardName);
-		flagAD = ADC_OpenSubSystem();
-		bsimultaneousStartAD = m_AnalogIN.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
-
-		m_AnalogOUT.SetBoard(cardName);
-		flagDA = DAC_OpenSubSystem();
-		if (flagDA) 
-		{
-			m_bOutputsEnabled = TRUE;
-			bsimultaneousStartDA = m_AnalogOUT.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
-		}
-		m_bSimultaneousStart = bsimultaneousStartDA && bsimultaneousStartAD;
-	}
-	catch(COleDispatchException* e)
-	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
-	}
+	BOOL flagAD = ADC_OpenSubSystem(cardName);
+	BOOL flagDA = DAC_OpenSubSystem(cardName);
+	if (flagDA) 
+		m_bOutputsEnabled = TRUE;
+	m_bSimultaneousStart = m_bsimultaneousStartDA && m_bsimultaneousStartAD;
 
 	// display additional interface elements
 	int bShow = (flagAD ? SW_SHOW : SW_HIDE);
@@ -271,16 +246,18 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 }
 
 // get Analog to Digital parameters
-BOOL CADContView::ADC_OpenSubSystem() 
+BOOL CADContView::ADC_OpenSubSystem(CString cardName) 
 {
 	try
 	{
+		m_AnalogIN.SetBoard(cardName);
 		int nAD = m_AnalogIN.GetDevCaps(OLDC_ADELEMENTS);		// make sure A/D is available
 		if (nAD < 1)
 			return FALSE;
 		m_AnalogIN.SetSubSysType(OLSS_AD);						// select A/D system
 		m_AnalogIN.SetSubSysElement(0);
 		ASSERT(m_AnalogIN.GetHDass() != NULL);
+		m_bsimultaneousStartAD = m_AnalogIN.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
 	}
 	catch(COleDispatchException* e)
 	{
@@ -340,68 +317,67 @@ BOOL CADContView::ADC_OpenSubSystem()
 
 BOOL CADContView::ADC_InitSubSystem()
 {
-	// make sure we have a valid handle
-	ASSERT(m_AnalogIN.GetHDass() != NULL);
-
-	// store all values within global parameters array
-	CWaveFormat* pAcqDwaveFormat = &(m_pADC_options->waveFormat);
-
-	// Set up the ADC - no wrap so we can get buffer reused	
-	m_AnalogIN.SetDataFlow(OLx_DF_CONTINUOUS);
-	m_AnalogIN.SetWrapMode(OLx_WRP_NONE);
-	m_AnalogIN.SetDmaUsage((short)m_AnalogIN.GetSSCaps(OLSSC_NUMDMACHANS));
-	m_AnalogIN.SetClockSource(OLx_CLK_INTERNAL);
-
-	// set trigger mode
-	int trig = pAcqDwaveFormat->trig_mode;
-	if (trig > OLx_TRG_EXTRA) 		trig = 0;
-	m_AnalogIN.SetTrigger(trig);
-
-	// number of channels
-	if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED && m_AnalogIN.GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
-		m_pADC_options->bChannelType = OLx_CHNT_DIFFERENTIAL;
-	if (m_pADC_options->bChannelType == OLx_CHNT_DIFFERENTIAL && m_AnalogIN.GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
-		m_pADC_options->bChannelType = OLx_CHNT_SINGLEENDED;
-	m_AnalogIN.SetChannelType(m_pADC_options->bChannelType);
-	if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
-		m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXSECHANS);
-	else
-		m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXDICHANS);
-	// limit scan_count to m_numchansMAX -
-	// this limits the nb of data acquisition channels to max-1 if one wants to use the additional I/O input "pseudo"channel
-	// so far, it seems acceptable...
-	if (pAcqDwaveFormat->scan_count > m_numchansMAX)
-		pAcqDwaveFormat->scan_count = m_numchansMAX;
-
-	// set frequency to value requested, set frequency and get the value returned
-	double clockrate = pAcqDwaveFormat->chrate*pAcqDwaveFormat->scan_count;
-	m_AnalogIN.SetFrequency(clockrate);			// set sampling frequency (total throughput)
-	clockrate = m_AnalogIN.GetFrequency();
-	pAcqDwaveFormat->chrate = (float) clockrate / pAcqDwaveFormat->scan_count;
-
-	// update channel list (chan & gain)
-	// pD->SetBinFormat(docVoltsperb, pwaveFormat->binzero, pwaveFormat->fullscale_bins);
-	// 
-	m_AnalogIN.SetListSize(pAcqDwaveFormat->scan_count);
-	for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
-	{
-		// transfer data from CWaveChan to chanlist of the A/D subsystem
-		CWaveChan* pChannel = (m_pADC_options->chanArray).GetWaveChan(i);
-		if ( pChannel->am_adchannel> m_numchansMAX-1 && pChannel->am_adchannel != 16)
-			 pChannel->am_adchannel= m_numchansMAX-1;
-		m_AnalogIN.SetChannelList(i, pChannel->am_adchannel);
-		m_AnalogIN.SetGainList(i, pChannel->am_adgain);
-		double dGain = m_AnalogIN.GetGainList(i);
-		pChannel->am_adgain = (short) dGain;
-		// compute dependent parameters
-		pChannel->am_gainfract = pChannel->am_gainheadstage * (float) pChannel->am_gainpre * (float) pChannel->am_gainpost;
-		pChannel->am_totalgain = pChannel->am_gainfract * pChannel->am_adgain;
-		pChannel->am_resolutionV = pAcqDwaveFormat->fullscale_Volts / pChannel->am_totalgain / pAcqDwaveFormat->fullscale_bins;
-	}
-
-	// pass parameters to the board and check if errors
 	try
 	{
+		ASSERT(m_AnalogIN.GetHDass() != NULL);
+
+		// store all values within global parameters array
+		CWaveFormat* pAcqDwaveFormat = &(m_pADC_options->waveFormat);
+
+		// Set up the ADC - no wrap so we can get buffer reused	
+		m_AnalogIN.SetDataFlow(OLx_DF_CONTINUOUS);
+		m_AnalogIN.SetWrapMode(OLx_WRP_NONE);
+		m_AnalogIN.SetDmaUsage((short)m_AnalogIN.GetSSCaps(OLSSC_NUMDMACHANS));
+		m_AnalogIN.SetClockSource(OLx_CLK_INTERNAL);
+
+		// set trigger mode
+		int trig = pAcqDwaveFormat->trig_mode;
+		if (trig > OLx_TRG_EXTRA) 		trig = 0;
+		m_AnalogIN.SetTrigger(trig);
+
+		// number of channels
+		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED && m_AnalogIN.GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
+			m_pADC_options->bChannelType = OLx_CHNT_DIFFERENTIAL;
+		if (m_pADC_options->bChannelType == OLx_CHNT_DIFFERENTIAL && m_AnalogIN.GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
+			m_pADC_options->bChannelType = OLx_CHNT_SINGLEENDED;
+		m_AnalogIN.SetChannelType(m_pADC_options->bChannelType);
+		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
+			m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXSECHANS);
+		else
+			m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXDICHANS);
+		// limit scan_count to m_numchansMAX -
+		// this limits the nb of data acquisition channels to max-1 if one wants to use the additional I/O input "pseudo"channel
+		// so far, it seems acceptable...
+		if (pAcqDwaveFormat->scan_count > m_numchansMAX)
+			pAcqDwaveFormat->scan_count = m_numchansMAX;
+
+		// set frequency to value requested, set frequency and get the value returned
+		double clockrate = pAcqDwaveFormat->chrate*pAcqDwaveFormat->scan_count;
+		m_AnalogIN.SetFrequency(clockrate);			// set sampling frequency (total throughput)
+		clockrate = m_AnalogIN.GetFrequency();
+		pAcqDwaveFormat->chrate = (float) clockrate / pAcqDwaveFormat->scan_count;
+
+		// update channel list (chan & gain)
+		// pD->SetBinFormat(docVoltsperb, pwaveFormat->binzero, pwaveFormat->fullscale_bins);
+		// 
+		m_AnalogIN.SetListSize(pAcqDwaveFormat->scan_count);
+		for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
+		{
+			// transfer data from CWaveChan to chanlist of the A/D subsystem
+			CWaveChan* pChannel = (m_pADC_options->chanArray).GetWaveChan(i);
+			if ( pChannel->am_adchannel> m_numchansMAX-1 && pChannel->am_adchannel != 16)
+				 pChannel->am_adchannel= m_numchansMAX-1;
+			m_AnalogIN.SetChannelList(i, pChannel->am_adchannel);
+			m_AnalogIN.SetGainList(i, pChannel->am_adgain);
+			double dGain = m_AnalogIN.GetGainList(i);
+			pChannel->am_adgain = (short) dGain;
+			// compute dependent parameters
+			pChannel->am_gainfract = pChannel->am_gainheadstage * (float) pChannel->am_gainpre * (float) pChannel->am_gainpost;
+			pChannel->am_totalgain = pChannel->am_gainfract * pChannel->am_adgain;
+			pChannel->am_resolutionV = pAcqDwaveFormat->fullscale_Volts / pChannel->am_totalgain / pAcqDwaveFormat->fullscale_bins;
+		}
+
+		// pass parameters to the board and check if errors
 		m_AnalogIN.ClearError();
 		m_AnalogIN.Config();
 	}
@@ -420,20 +396,18 @@ BOOL CADContView::ADC_InitSubSystem()
 	return TRUE;
 }
 
-BOOL CADContView::DAC_OpenSubSystem()
+BOOL CADContView::DAC_OpenSubSystem(CString cardName)
 {
 	try
 	{
+		m_AnalogOUT.SetBoard(cardName);
 		m_AnalogOUT.SetSubSysType(OLSS_DA);
 		int nDA = m_AnalogOUT.GetDevCaps(OLDC_DAELEMENTS);
 		if (nDA < 1)
 			return FALSE;
 		m_AnalogOUT.SetSubSysElement(0);
-		if (m_AnalogOUT.GetHDass() == NULL)
-		{
-			AfxMessageBox(_T("Digital-to-Analog Subsystem is not available."));
-			return FALSE;
-		}
+		ASSERT(m_AnalogOUT.GetHDass() != NULL),
+		m_bsimultaneousStartDA = m_AnalogOUT.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
 	}
 	catch (COleDispatchException* e)
 	{
@@ -448,9 +422,7 @@ BOOL CADContView::DAC_ClearAllOutputs()
 {
 	try
 	{
-		// make sure we have a valid handle
 		ASSERT(m_AnalogOUT.GetHDass() != NULL);
-
 		if (m_AnalogOUT.GetSSCaps(OLSSC_SUP_SINGLEVALUE) == FALSE)
 		{
 			AfxMessageBox(_T("D/A SubSystem cannot run in single value mode"));
@@ -480,14 +452,12 @@ BOOL CADContView::DAC_ClearAllOutputs()
 		return FALSE;
 	}
 	return TRUE;
-
 }
 
 BOOL CADContView::DAC_InitSubSystem()
 {
 	try
 	{
-		// make sure we have a valid handle
 		ASSERT(m_AnalogOUT.GetHDass() != NULL);
 		
 		// Set up the ADC - multiple wrap so we can get buffer reused	
@@ -498,7 +468,7 @@ BOOL CADContView::DAC_InitSubSystem()
 		// set clock the same as for A/D
 		m_AnalogOUT.SetClockSource(OLx_CLK_INTERNAL);
 		double clockrate = m_pADC_options->waveFormat.chrate;
-		m_AnalogOUT.SetFrequency(clockrate);			// set sampling frequency (total throughput)
+		m_AnalogOUT.SetFrequency(clockrate);		// set sampling frequency (total throughput)
 		clockrate = m_AnalogOUT.GetFrequency();		// make sure it works
 
 		// set trigger mode
@@ -536,9 +506,6 @@ BOOL CADContView::DAC_InitSubSystem()
 		e->Delete();
 		return FALSE;
 	}
-
-	// AD system is changed:  fill DA buffers
-	DAC_DeclareBuffers();
 	return TRUE;
 }
 
@@ -580,44 +547,47 @@ void CADContView::DAC_ConvertOptionsIntoChanList()
 
 void CADContView::ADC_DeleteBuffers()
 {
-	// exit if not connected
-	if (m_AnalogIN.GetHDass() == NULL)
-		return;
-
-	m_AnalogIN.Flush();		// clean
-	HBUF hBuf;			// handle to buffer
-	do					// loop until all buffers are removed
+	try {
+		if (m_AnalogIN.GetHDass() == NULL)
+			return;
+		m_AnalogIN.Flush();	// clean
+		HBUF hBuf = NULL;			// handle to buffer
+		do	{				// loop until all buffers are removed
+			hBuf = (HBUF) m_AnalogIN.GetQueue();
+			if (hBuf != NULL)
+				if (olDmFreeBuffer(hBuf) != OLNOERROR)
+					AfxMessageBox(_T("Error Freeing Buffer"));
+		} while (hBuf != NULL);
+		m_ADC_bufhandle = hBuf;
+	}
+	catch (COleDispatchException* e)
 	{
-		hBuf = (HBUF)m_AnalogIN.GetQueue();
-		if(hBuf != NULL)
-		{
-			if (olDmFreeBuffer(hBuf) != OLNOERROR)
-				AfxMessageBox(_T("Error Freeing Buffer"));
-		}
-	} while (hBuf != NULL);
-	m_ADC_bufhandle = hBuf;
-	return;
+		AfxMessageBox(e->m_strDescription);
+		e->Delete();
+	}
 }
 
 void CADContView::DAC_DeleteBuffers()
 {
-	// exit if not connected
-	if (m_AnalogOUT.GetHDass() == NULL)
-		return;
+	try {
+		if (m_AnalogOUT.GetHDass() == NULL)
+			return;
 
-	m_AnalogOUT.Flush();	// clean
-	HBUF hBuf;			// handle to buffer
-	do					// loop until all buffers are removed
+		m_AnalogOUT.Flush();	// clean
+		HBUF hBuf;			// handle to buffer
+		do	{				// loop until all buffers are removed
+			hBuf = (HBUF)m_AnalogOUT.GetQueue();
+			if(hBuf != NULL)
+				if (olDmFreeBuffer(hBuf) != OLNOERROR)
+					AfxMessageBox(_T("Error Freeing Buffer"));
+		} while (hBuf != NULL);
+		m_DAC_bufhandle = hBuf;
+	}
+	catch (COleDispatchException* e)
 	{
-		hBuf = (HBUF)m_AnalogOUT.GetQueue();
-		if(hBuf != NULL)
-		{
-			if (olDmFreeBuffer(hBuf) != OLNOERROR)
-				AfxMessageBox(_T("Error Freeing Buffer"));
-		}
-	} while (hBuf != NULL);
-	m_DAC_bufhandle = hBuf;
-	return;
+		AfxMessageBox(e->m_strDescription);
+		e->Delete();
+	}
 }
 
 void CADContView::ADC_DeclareBuffers()
@@ -676,7 +646,7 @@ void CADContView::ADC_DeclareBuffers()
 	UpdateData(FALSE);
 }
 
-void CADContView::DAC_DeclareBuffers()
+void CADContView::DAC_DeclareAndFillBuffers()
 {
 	// close data buffers
 	DAC_DeleteBuffers();
@@ -980,7 +950,6 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 
 void CADContView::DAC_Stop()
 {
-	// stop DA, liberate DTbuffers
 	try {
 		m_AnalogOUT.Stop();
 		m_AnalogOUT.Flush();	// flush all buffers to Done Queue
@@ -1033,8 +1002,6 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 		HSSLIST hSSlist;
 		CHAR errstr[255];
 		ECODE ecode;
-
-		// get simultaneous start list
 		ecode = olDaGetSSList(&hSSlist);
 		olDaGetErrorString(ecode, errstr, 255);
 		ecode = olDaReleaseSSList(hSSlist);
@@ -1052,58 +1019,62 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 	// close file and update display
 	if (m_bFileOpen)
 	{
-		m_inputDataFile.AcqDoc_DataAppendStop();
-		CWaveFormat* pWFormat= m_inputDataFile.GetpWaveFormat();
-
-		// if burst data acquisition mode ------------------------------------
-		if (m_bhidesubsequent)
-		{
-			if (pWFormat->sample_count > 1) // make sure real data have been acquired
-				m_csNameArray.Add(m_szFileName);
-			else
-				m_inputDataFile.AcqDeleteFile();
-			return;
-		}
-
-		// normal data acquisition mode --------------------------------------
-		else
-		{
-			int ires = IDCANCEL;
-			if (pWFormat->sample_count > 1) // make sure real data have been acquired
-			{
-				CConfirmSaveDlg dlg;
-				dlg.m_csfilename=m_szFileName;
-				ires = dlg.DoModal();
-			}
-			// if no data or user answered no, erase the data
-			if (IDOK != ires)
-			{
-				m_inputDataFile.AcqDeleteFile();
-				return;
-			}
-			else
-			{
-				// -----------------------------------------------------
-				// if current document name is the same, it means something happened and we have erased a previously existing file
-				// if so, skip
-				// otherwise add data file name to the database
-				CdbWaveDoc* pdbDoc = GetDocument();
-				if (m_szFileName.CompareNoCase(pdbDoc->DBGetCurrentDatFileName(FALSE)) != 0)
-				{
-					// add document to database
-					m_csNameArray.Add(m_szFileName);
-					TransferFilesToDatabase();
-					UpdateViewDataFinal();
-					return;
-				}
-			}
-		}
-
+		SaveAndCloseFile();
 		// update view data	
 		long lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
 		m_ADsourceView.AttachDataFile(&m_inputDataFile, lsizeDOCchan);
 		m_ADsourceView.ResizeChannels(m_ADsourceView.Width(), lsizeDOCchan);
 		m_ADsourceView.GetDataFromDoc(0, lsizeDOCchan);
+	}
+}
+
+void CADContView::SaveAndCloseFile()
+{
+	m_inputDataFile.AcqDoc_DataAppendStop();
+	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
+
+	// if burst data acquisition mode ------------------------------------
+	if (m_bhidesubsequent)
+	{
+		if (pWFormat->sample_count > 1) // make sure real data have been acquired
+			m_csNameArray.Add(m_szFileName);
+		else
+			m_inputDataFile.AcqDeleteFile();
+		return;
+	}
+
+	// normal data acquisition mode --------------------------------------
+	else
+	{
+		int ires = IDCANCEL;
+		if (pWFormat->sample_count > 1) // make sure real data have been acquired
+		{
+			CConfirmSaveDlg dlg;
+			dlg.m_csfilename = m_szFileName;
+			ires = dlg.DoModal();
+		}
+		// if no data or user answered no, erase the data
+		if (IDOK != ires)
+		{
+			m_inputDataFile.AcqDeleteFile();
+			return;
+		}
+		else
+		{
+			// -----------------------------------------------------
+			// if current document name is the same, it means something happened and we have erased a previously existing file
+			// if so, skip
+			// otherwise add data file name to the database
+			CdbWaveDoc* pdbDoc = GetDocument();
+			if (m_szFileName.CompareNoCase(pdbDoc->DBGetCurrentDatFileName(FALSE)) != 0)
+			{
+				// add document to database
+				m_csNameArray.Add(m_szFileName);
+				TransferFilesToDatabase();
+				UpdateViewDataFinal();
+				return;
+			}
+		}
 	}
 }
 
@@ -1145,7 +1116,6 @@ BOOL CADContView::StartAcquisition()
 {
 	// set display
 	ASSERT(m_bOutputsEnabled == ((CButton*)GetDlgItem(IDC_ENABLEOUTPUT))->GetCheck());
-
 	if (m_bADwritetofile && !Defineexperiment())
 	{
 		StopAcquisition(FALSE);
@@ -1153,16 +1123,11 @@ BOOL CADContView::StartAcquisition()
 		return FALSE;
 	}
 
-	// make sure that analog-to-digital is available
 	if (!ADC_InitSubSystem())
 		return FALSE;
-	m_AnalogIN.ClearError();
 
-	if (m_bOutputsEnabled)
-	{
-		if (DAC_InitSubSystem())
-			m_AnalogOUT.ClearError();
-	}
+	if (m_bOutputsEnabled && DAC_InitSubSystem())
+		DAC_DeclareAndFillBuffers();
 	
 	// start AD display
 	m_chsweep1 = 0;
@@ -1182,42 +1147,39 @@ BOOL CADContView::StartAcquisition()
 	pWFormat->mode_encoding		=  OLx_ENC_2SCOMP;
 	pWFormat->binzero			= 0;
 
-	//
-	if (m_bADwritetofile == TRUE)
+	// start acquisition and save data to file?
+	if (m_bADwritetofile && (pWFormat->trig_mode == OLx_TRG_EXTRA+1))
 	{
-		switch (pWFormat->trig_mode)
+		if (AfxMessageBox(_T("Start data acquisition"), MB_OKCANCEL) != IDOK)
 		{
-		case OLx_TRG_EXTRA+1:
-			if (AfxMessageBox(_T("Start data acquisition"), MB_OKCANCEL) != IDOK)
-			{
-				StopAcquisition(FALSE);
-				UpdateStartStop(FALSE);
-				return FALSE;
-			}
-			break;
-		case OLx_TRG_EXTERN:
-		case OLx_TRG_SOFT:
-		case OLx_TRG_THRESHPOS:
-		case OLx_TRG_THRESHNEG:
-		default:
-			break;
+			StopAcquisition(FALSE);
+			UpdateStartStop(FALSE);
+			return FALSE;
 		}
 	}
 	
 	// starting mode of A/D if no simultaneous list
 	if (!m_bSimultaneousStart)
 	{
-		m_DAC_inprogress = FALSE;
-		if (m_bOutputsEnabled) 
+		try
 		{
-			m_AnalogOUT.Config();
-			m_AnalogOUT.Start();
-			m_DAC_inprogress = TRUE;
-		}
+			m_DAC_inprogress = FALSE;
+			if (m_bOutputsEnabled) 
+			{
+				//m_AnalogOUT.Config();
+				m_AnalogOUT.Start();
+				m_DAC_inprogress = TRUE;
+			}
 		
-		m_AnalogIN.Config();
-		m_AnalogIN.Start();
-		m_ADC_inprogress = TRUE;
+			//m_AnalogIN.Config();
+			m_AnalogIN.Start();
+			m_ADC_inprogress = TRUE;
+		}
+		catch (COleDispatchException* e)
+		{
+			AfxMessageBox(e->m_strDescription);
+			e->Delete();
+		}
 	}
 
 	// starting A/D when simultaneous list ---------------------------
@@ -1239,7 +1201,7 @@ BOOL CADContView::StartAcquisition()
 		olDaGetErrorString(ecode,errstr,255);
 		
 		// DA system
-		m_AnalogOUT.Config();
+		//m_AnalogOUT.Config();
 		ecode = olDaPutDassToSSList(hSSlist, (HDASS) m_AnalogOUT.GetHDass());
 		if (ecode != OLNOERROR)
 		{
@@ -1249,8 +1211,8 @@ BOOL CADContView::StartAcquisition()
 		}
 
 		// AD system
-		m_AnalogIN.SetSubSysType(OLSS_AD);
-		m_AnalogIN.Config();
+		//m_AnalogIN.SetSubSysType(OLSS_AD);
+		//m_AnalogIN.Config();
 		ecode = olDaPutDassToSSList (hSSlist, (HDASS)m_AnalogIN.GetHDass());
 		if(ecode != OLNOERROR)
 		{
@@ -2430,5 +2392,6 @@ void CADContView::OnBnClickedCardfeatures()
 {
 	CDataTranslationBoardDlg dlg;
 	dlg.m_pAnalogIN = &m_AnalogIN;
+	dlg.m_pAnalogOUT = &m_AnalogOUT;
 	dlg.DoModal();
 }

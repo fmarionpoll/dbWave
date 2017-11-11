@@ -35,7 +35,6 @@ protected:
 	int		version;
 };
 
-
 class CIntervalPoint : public CObject
 {
 	DECLARE_SERIAL(CIntervalPoint)
@@ -53,14 +52,16 @@ public:
 class CIntervalsAndWordsSeries : public CObject
 {
 	DECLARE_SERIAL(CIntervalsAndWordsSeries)
-	CIntervalsAndWordsSeries();		
-	CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& pObject);
+
+	CIntervalsAndWordsSeries();
+	CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg);
 	~CIntervalsAndWordsSeries();
 	void operator = (const CIntervalsAndWordsSeries& arg);
 	virtual void Serialize(CArchive& ar);
+
 	void EraseAllData();
 	inline long GetSize() { return iistep.GetSize(); }
-	inline CIntervalPoint  GetIntervalPointAt(int i) {return iistep.GetAt(i); }
+	CIntervalPoint  GetIntervalPointAt(int i);
 	void ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1);
 	void ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
 	void ExportIntervalsSeries(int chan, CIntervalsArray* pOut);

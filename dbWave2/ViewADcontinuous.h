@@ -104,12 +104,14 @@ protected:
 	HBUF				m_ADC_bufhandle;
 	long				m_ADC_buflen;		// nb of acq sample per DT buffer
 	long				m_ADC_chbuflen;		// nb pts for one chan in DT buffer
+	BOOL				m_bsimultaneousStartAD;
 
 	OPTIONS_OUTPUTDATA*	m_pDAC_options;		// pointer to data output options
 	BOOL				m_DAC_inprogress;	// D/A in progress
 	HBUF				m_DAC_bufhandle;
 	long				m_DAC_buflen;		// nb of acq sample per DT buffer
 	long				m_DAC_chbuflen;
+	BOOL				m_bsimultaneousStartDA;
 	long				m_DAC_nBuffersFilledSinceStart;
 	double				m_DAC_frequency;
 	CArray <OUTPUTPARMS, OUTPUTPARMS> m_DAC_chanList;
@@ -127,18 +129,18 @@ protected:
 	BOOL FindDTOpenLayersBoards();
 	BOOL SelectDTOpenLayersBoard(CString cardName);
 	
-	BOOL ADC_OpenSubSystem();
+	BOOL ADC_OpenSubSystem(CString cardName);
 	BOOL ADC_InitSubSystem();
 	void ADC_DeleteBuffers();
 	void ADC_DeclareBuffers();
 	void ADC_Transfer(short* pDTbuf);
 	void ADC_Stop();
 	
-	BOOL DAC_OpenSubSystem();
+	BOOL DAC_OpenSubSystem(CString cardName);
 	BOOL DAC_ClearAllOutputs();
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
-	void DAC_DeclareBuffers();
+	void DAC_DeclareAndFillBuffers();
 	void DAC_FillBufferWithSineWave(short * pDTbuf, int chan);
 	void DAC_FillBufferWithSquareWave(short * pDTbuf, int chan);
 	void DAC_FillBufferWithTriangleWave(short * pDTbuf, int chan);
@@ -158,6 +160,7 @@ protected:
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
 
 	void StopAcquisition(BOOL bDisplayErrorMsg);
+	void SaveAndCloseFile();
 	BOOL StartAcquisition();
 
 	BOOL InitCyberAmp();

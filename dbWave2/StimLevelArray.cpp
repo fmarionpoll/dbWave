@@ -96,7 +96,7 @@ void CIntervalPoint::Serialize(CArchive & ar)
 {
 	if (ar.IsStoring())
 	{
-		int n = 1;
+		int n = 2;
 		ar << n;
 		ar << ii;
 		ar << w;
@@ -105,8 +105,8 @@ void CIntervalPoint::Serialize(CArchive & ar)
 	{
 		int n;
 		ar >> n;
-		ar >> ii;
-		ar >> w;
+		ar >> ii;	n--;
+		ar >> w;	n--;
 	}
 }
 
@@ -157,7 +157,7 @@ void CIntervalsAndWordsSeries::Serialize(CArchive & ar)
 		version = 1; if (n > 0) { ar >> version; n--; }
 
 		ar >> n;
-		iistep.Serialize(ar);
+		iistep.Serialize(ar); n--;
 	}
 }
 
@@ -167,6 +167,12 @@ void CIntervalsAndWordsSeries::operator = (const CIntervalsAndWordsSeries & arg)
 	iistep.SetSize(nitems);
 	for (int i = 0; i < nitems; i++)
 		iistep[i] = arg.iistep.GetAt(i);
+}
+
+CIntervalPoint  CIntervalsAndWordsSeries::GetIntervalPointAt(int i)
+{ 
+	CIntervalPoint pt = iistep[i];
+	return pt; 
 }
 
 void CIntervalsAndWordsSeries::EraseAllData()
@@ -241,7 +247,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 		int k = 0;
 		for (int j = 0; j < pTransf->GetSize(); j++)
 		{
-			CIntervalPoint pt = (pTransf->iistep).GetAt(j);
+			CIntervalPoint pt = pTransf->iistep[j];
 			BOOL bFound = false;
 
 			// loop over all intervals stored into the local array and merge output state
