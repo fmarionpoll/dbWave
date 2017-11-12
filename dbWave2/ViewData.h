@@ -9,6 +9,7 @@
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "dbWave_constants.h"
+#include "afxwin.h"
 
 class CdbWaveCntrItem;
 class CdbMainTable;
@@ -35,7 +36,6 @@ public:
 
 	// subclassed controls within CDaoRecordView
 	CLineViewWnd	m_VDlineview;		// data display
-	CEditCtrl	mm_ichanselected;	// current selected channel
 	float		m_floatNDigits; 	// 10(000) -> n digits displayed
 	CEditCtrl	mm_v1;				// first HZ cursor
 	CEditCtrl	mm_v2;				// second HZ cursor
@@ -44,6 +44,7 @@ public:
 	CEditCtrl	mm_timelast;		// last abcissa value
 	CEditCtrl	mm_yupper;
 	CEditCtrl	mm_ylower;
+	CComboBox	m_comboSelectChan;
 
 	BOOL		m_bInitComment;	
 	CdbWaveDoc*	GetDocument();
@@ -117,15 +118,15 @@ protected:
 protected:
 	CScrollBarEx	m_filescroll;		// data position within file
 	SCROLLINFO		m_filescroll_infos;	// infos for scrollbar
-
-protected:
 	int				m_VBarMode;			// flag V scrollbar state
 	CScrollBar 		m_scrolly;			// V scrollbar
 
 protected:
 	void OnFileScroll(UINT nSBCode, UINT nPos);
 	void OnGainScroll(UINT nSBCode, UINT nPos);
+	void UpdateYExtent(int ichan, int yextent);
 	void OnBiasScroll(UINT nSBCode, UINT nPos);
+	void UpdateYZero(int ichan, int ybias);
 	void UpdateGainScroll();
 	void UpdateBiasScroll();
 	void SetVBarMode(short bMode);
@@ -167,7 +168,9 @@ protected:
 	void  UpdateLegends(int operation);
 	void  UpdateHZtagsVal();
 	void  SetCursorAssociatedWindows();
-
+	void UpdateChannel(int channel);
+public:
+	DECLARE_MESSAGE_MAP()
 	// Generated message map functions
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnClickedBias();
@@ -175,7 +178,6 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnFormatXscale();
 	afx_msg void OnFormatYscale();
-	afx_msg void OnEnChangeChannel();
 	afx_msg void OnEditCopy();
 	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI);
 	afx_msg void OnToolsDataseries();
@@ -200,10 +202,10 @@ protected:
 	afx_msg void OnHardwareDefineexperiment();
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();
-public:
 	afx_msg void OnEnChangeYlower();
 	afx_msg void OnEnChangeYupper();
-	DECLARE_MESSAGE_MAP()
+	afx_msg void OnCbnSelchangeCombochan();
+
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

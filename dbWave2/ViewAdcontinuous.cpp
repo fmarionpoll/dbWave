@@ -1360,7 +1360,7 @@ void CADContView::OnInitialUpdate()
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
 	m_ADsourceView.AttachDataFile(&m_inputDataFile, 10);		// prepare display area
 	
-	pApp->m_bADcardFound = FindDTOpenLayersBoards();				// open DT Open Layers board
+	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
 	if (pApp->m_bADcardFound)
 	{
 		ADC_InitSubSystem();									// connect A/D DT OpenLayer subsystem

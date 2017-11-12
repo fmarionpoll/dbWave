@@ -39,8 +39,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-
 IMPLEMENT_DYNCREATE(CDataView, CDaoRecordView)
 
 BEGIN_MESSAGE_MAP(CDataView, CDaoRecordView)
@@ -50,7 +48,6 @@ BEGIN_MESSAGE_MAP(CDataView, CDaoRecordView)
 	ON_WM_VSCROLL()
 	ON_COMMAND(ID_FORMAT_XSCALE, &CDataView::OnFormatXscale)
 	ON_COMMAND(ID_FORMAT_SETORDINATES, &CDataView::OnFormatYscale)
-	ON_EN_CHANGE(IDC_CHANSELECTED, &CDataView::OnEnChangeChannel)
 	ON_COMMAND(ID_EDIT_COPY, &CDataView::OnEditCopy)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, &CDataView::OnUpdateEditCopy)
 	ON_COMMAND(ID_TOOLS_DATASERIES, &CDataView::OnToolsDataseries)
@@ -82,6 +79,7 @@ BEGIN_MESSAGE_MAP(CDataView, CDaoRecordView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CDaoRecordView::OnFilePrintPreview)
 	ON_EN_CHANGE(IDC_YLOWER, &CDataView::OnEnChangeYlower)
 	ON_EN_CHANGE(IDC_YUPPER, &CDataView::OnEnChangeYupper)
+	ON_CBN_SELCHANGE(IDC_COMBOCHAN, &CDataView::OnCbnSelchangeCombochan)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -124,20 +122,18 @@ CDataView::~CDataView()
 void CDataView::DoDataExchange(CDataExchange* pDX)
 {   
 	// pass values
-	CDaoRecordView::DoDataExchange(pDX);	
-	m_ichanselected++;
-	DDX_Text(pDX, IDC_CHANSELECTED, m_ichanselected);
-	m_ichanselected--;
+	CDaoRecordView::DoDataExchange(pDX);
+
 	DDX_Text(pDX, IDC_EDIT1, m_v1);
 	DDX_Text(pDX, IDC_EDIT2, m_v2);
 	DDX_Text(pDX, IDC_EDIT3, m_diff);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
-	//m_ichanselected--;
 
 	DDX_Control(pDX, IDC_FILESCROLL, m_filescroll);
 	DDX_Text(pDX, IDC_YUPPER, m_yupper);
 	DDX_Text(pDX, IDC_YLOWER, m_ylower);
+	DDX_Control(pDX, IDC_COMBOCHAN, m_comboSelectChan);
 }
 
 BOOL CDataView::PreCreateWindow(CREATESTRUCT& cs)
@@ -153,10 +149,6 @@ BOOL CDataView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CDataView::OnInitialUpdate()
 {	
-	// associate controls with C++ objects (controls within formview)
-	VERIFY(mm_ichanselected.SubclassDlgItem(IDC_CHANSELECTED, this));
-
-	// scrollbars
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
 	m_scrolly.SetScrollRange(0, 100);
 
@@ -175,7 +167,7 @@ void CDataView::OnInitialUpdate()
 	// save coordinates and properties of "always visible" controls
 	m_stretch.AttachParent(this);		// attach formview pointer
 	m_stretch.newProp(IDC_DISPLAREA_button,	XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_CHANSELECTED, 	SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_COMBOCHAN, 		SZEQ_XREQ, SZEQ_YTEQ);
 
 	m_stretch.newProp(IDC_GAIN_button, 		SZEQ_XREQ, SZEQ_YTEQ);	
 	m_stretch.newProp(IDC_BIAS_button,		SZEQ_XREQ, SZEQ_YTEQ);
@@ -267,8 +259,6 @@ CDaoRecordset* CDataView::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
-
-// --------------------------------------------------------------------------
 
 /////////////////////////////////////////////////////////////////////////////
 // Operations    
@@ -420,49 +410,24 @@ void CDataView::OnClickedGain()
 	SetVBarMode(BAR_GAIN);
 } 
 
-// --------------------------------------------------------------------------
-// OnEnChangeChannel: change channel -> change y parameters  EN_CHANGE
-// --------------------------------------------------------------------------
-void CDataView::OnEnChangeChannel()
+void CDataView::UpdateChannel(int channel)
 {
-	if (!mm_ichanselected.m_bEntryDone)
-		return;
-
-	int channel = m_ichanselected;			// keep value before change	
-	switch (mm_ichanselected.m_nChar)			// action according to code
-	{		
-	case VK_RETURN:					// plain text validated by CR
-		UpdateData(TRUE);			// load data from edit controls
-		break;
-	case VK_UP:						// arrows: increment value
-	case VK_PRIOR:					// page up: increment value
-		m_ichanselected++;
-		break;
-	case VK_DOWN:					// arrow down: decrement value
-	case VK_NEXT:					// page down: decrement value
-		m_ichanselected--;
-		break;
-	}
-	
-	mm_ichanselected.m_bEntryDone=FALSE;
-	mm_ichanselected.m_nChar=0;
-	mm_ichanselected.SetSel(0, -1); 						//select all text
-	
-	if (m_ichanselected > m_VDlineview.GetChanlistSize()-1)	// less or equal than max nb of chans?
-		m_ichanselected = m_VDlineview.GetChanlistSize()-1;	// clip to maximum
+	m_ichanselected = channel;
+	if (m_ichanselected > m_VDlineview.GetChanlistSize() - 1)	// less or equal than max nb of chans?
+		m_ichanselected = m_VDlineview.GetChanlistSize() - 1;	// clip to maximum
 	else if (m_ichanselected < 0)							// less than 1 channel?
 		m_ichanselected = 0;								// clip to minimum (and if 0?)
 	if (m_ichanselected != channel)							// new value is different than previous
 	{														// change other dependent parameters
-		if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption ==1
-		&& m_VDlineview.GetNHZtags()>0)
+		if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption == 1
+			&& m_VDlineview.GetNHZtags()>0)
 		{
-			for (int i=0; i< m_VDlineview.GetNHZtags(); i++)
+			for (int i = 0; i< m_VDlineview.GetNHZtags(); i++)
 				m_VDlineview.SetHZtagChan(i, m_ichanselected);
 			UpdateHZtagsVal();
 			m_VDlineview.Invalidate();
 		}
-		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);		
+		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
 	}
 	else					 			// new value is same as previous
 	{									// change content of control
@@ -784,17 +749,16 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
 	int lnvchans = m_VDlineview.GetChanlistSize();
 	int ndocchans = pwaveFormat->scan_count;
-
+	
 	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
 	if (mdPM->bAllChannels || lnvchans == 0)
 	{		
-		for (int jdocchan = 0; jdocchan<ndocchans; jdocchan++)
+		for (int jdocchan = 0; jdocchan < ndocchans; jdocchan++)
 		{										// check if present in the list
 			BOOL bPresent=FALSE;				// pessimistic
 			for (int j = lnvchans-1; j>= 0; j--)// check all channels / display list
 			{									// test if this data chan is present + no transf
-				if (m_VDlineview.GetChanlistSourceChan(j) == jdocchan
-				  /*&& m_VDlineview.GetChanlistTransformMode(j) == 0*/)
+				if (m_VDlineview.GetChanlistSourceChan(j) == jdocchan)
 				{
 					bPresent = TRUE;			// the wanted chan is present
 					break;						// examine next doc channel
@@ -813,15 +777,29 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	m_VDlineview.GetDataFromDoc(lFirst, lLast);	// load data requested	
 	m_timefirst = m_VDlineview.GetDataFirst()/ m_samplingRate;	// update abcissa parameters
 	m_timelast = m_VDlineview.GetDataLast()/ m_samplingRate;	// first - end
-	m_ichanselected = 0;								// select chan 0
+	m_ichanselected = 0;										// select chan 0
 
 	// ----------- option ------------------------------------------
 	// split curves??
 	// ----------- option ------------------------------------------	
+
 	if (!bFirstUpdate)
 	{
 		UpdateChannelsDisplayParameters();
 	}
+
+	// fill combo
+	m_comboSelectChan.ResetContent();
+	for (int i = 0; i < lnvchans; i++)
+	{
+		CString cs;
+		cs.Format(_T("channel %i - "), i);
+		cs = cs + m_VDlineview.GetChanlistComment(i);
+		m_comboSelectChan.AddString(cs);
+	}
+	if (ndocchans > 1)
+		m_comboSelectChan.AddString(_T("all channels"));
+	m_comboSelectChan.SetCurSel(0);
 
 	// done	
 	if (bUpdateInterface)
@@ -1215,13 +1193,23 @@ void CDataView::OnGainScroll(UINT nSBCode, UINT nPos)
 	// change y extent
 	if (lSize>0 ) //&& lSize<=YEXTENT_MAX)
 	{
-		m_VDlineview.SetChanlistYextent(m_ichanselected, lSize);
+		UpdateYExtent(m_ichanselected, lSize);
 		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
-		m_VDlineview.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_GAIN)
 		UpdateGainScroll();
+}
+
+void CDataView::UpdateYExtent(int ichan, int yextent) 
+{
+	m_VDlineview.SetChanlistYextent(ichan, yextent);
+	if (m_comboSelectChan.GetCurSel() == m_VDlineview.GetChanlistSize())
+	{
+		for (int i= 0; i < m_VDlineview.GetChanlistSize(); i++)
+			m_VDlineview.SetChanlistYextent(i, yextent);
+	}
+	m_VDlineview.Invalidate();
 }
 
 // --------------------------------------------------------------------------
@@ -1278,12 +1266,23 @@ void CDataView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (lSize>YZERO_MIN && lSize<YZERO_MAX)
 	{		
-		m_VDlineview.SetChanlistZero(m_ichanselected, lSize+ m_VDlineview.GetChanlistBinZero(m_ichanselected));
+		UpdateYZero(m_ichanselected, lSize + m_VDlineview.GetChanlistBinZero(m_ichanselected));
 		m_VDlineview.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_BIAS)
 		UpdateBiasScroll();
+}
+
+void CDataView::UpdateYZero(int ichan, int ybias)
+{
+	m_VDlineview.SetChanlistZero(ichan, ybias);
+	if (m_comboSelectChan.GetCurSel() == m_VDlineview.GetChanlistSize())
+	{
+		for (int i = 0; i < m_VDlineview.GetChanlistSize(); i++)
+			m_VDlineview.SetChanlistZero(i, ybias);
+	}
+	m_VDlineview.Invalidate();
 }
 
 // --------------------------------------------------------------------------
@@ -2182,4 +2181,19 @@ void CDataView::OnEnChangeYupper()
 	mm_yupper.SetSel(0, -1); 	//select all text
 }
 
-
+void CDataView::OnCbnSelchangeCombochan()
+{
+	int ichan = m_comboSelectChan.GetCurSel();
+	if (ichan < m_VDlineview.GetChanlistSize()) 
+	{
+		UpdateChannel(ichan);
+	}
+	else
+	{
+		m_ichanselected = 0;
+		int yextent = m_VDlineview.GetChanlistYextent(0);
+		UpdateYExtent(0, yextent);
+		int yzero = m_VDlineview.GetChanlistYzero(0);
+		UpdateYZero(0, yzero);
+	}
+}
