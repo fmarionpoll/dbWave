@@ -33,9 +33,8 @@ protected:
 
 	void			SelectItem(int i);
 	void			ResetListOrder();
-	void			TransferStimlevelToList(CIntervalsArray* pstim);
-	void			TransferListToStimlevel();
-
+	void			TransferIntervalsArrayToDialogList(CIntervalsArray* pstim);
+	
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();

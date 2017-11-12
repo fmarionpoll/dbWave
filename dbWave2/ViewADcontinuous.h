@@ -141,16 +141,14 @@ protected:
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
-	void DAC_FillBufferWithSineWave(short * pDTbuf, int chan);
-	void DAC_FillBufferWithSquareWave(short * pDTbuf, int chan);
-	void DAC_FillBufferWithTriangleWave(short * pDTbuf, int chan);
-	void DAC_FillBufferWithLineWave(short * pDTbuf, int chan);
-	void DAC_FillBufferWithConstant(short * pDTbuf, int chan);
-	void DAC_FillBufferWithSequenceWave(short * pDTbuf, int chan);
-
-	double MSequence(BOOL start, OUTPUTPARMS * parmsChan);
-	
-	void DAC_FillBufferWithMSEQWave(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_SINUSOID(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_SQUARE(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_TRIANGLE(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_RAMP(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_CONSTANT(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan);
+	double DAC_MSequence(BOOL start, OUTPUTPARMS * parmsChan);
+	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan);
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 	void DAC_FillBuffer(short* pDTbuf);
 	void DAC_ConvertOptionsIntoChanList();

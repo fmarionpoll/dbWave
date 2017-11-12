@@ -1,11 +1,6 @@
 #pragma once
 
-// StimLevelArray.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CIntervalsArray object
-
+// ----------------------------------------------
 
 class CIntervalsArray : public CObject
 {
@@ -25,29 +20,34 @@ public :
 	inline void AddInterval(long ii) { iistimulus.Add(ii); }
 
 public:
-	CArray <long, long> iistimulus;	// time on, time off
+	CArray <long, long> iistimulus;	// time on, time off (n clock intervals)
 	int		iID;				// ID number of the array
 	int		ichan;
 	CString	csDescriptor;		// descriptor of the array
 	int		nitems;				// number of on/off events
-	int		npercycle;
+	int		npercycle;			// repeat sequence parameter
+	float	chrate;				// n clock cycles per second
 protected:
 	int		version;
 };
+
+// ----------------------------------------------
 
 class CIntervalPoint : public CObject
 {
 	DECLARE_SERIAL(CIntervalPoint)
 	CIntervalPoint();
 	CIntervalPoint(const CIntervalPoint& pt);
-	~CIntervalPoint();
+	//~CIntervalPoint();
 	virtual void Serialize(CArchive& ar);
 	void operator = (const CIntervalPoint& arg);
 
 public:
-	long ii;		// time interval
-	WORD w;			// word associated to this time interval
+	long ii;					// n clock intervals
+	WORD w;						// word associated to this time interval
 };
+
+// ----------------------------------------------
 
 class CIntervalsAndWordsSeries : public CObject
 {
@@ -55,19 +55,21 @@ class CIntervalsAndWordsSeries : public CObject
 
 	CIntervalsAndWordsSeries();
 	CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg);
-	~CIntervalsAndWordsSeries();
+	//~CIntervalsAndWordsSeries();
 	void operator = (const CIntervalsAndWordsSeries& arg);
 	virtual void Serialize(CArchive& ar);
 
-	void EraseAllData();
-	inline long GetSize() { return iistep.GetSize(); }
+	void			EraseAllData();
+	inline long		GetSize() { return iistep.GetSize(); }
 	CIntervalPoint  GetIntervalPointAt(int i);
-	void ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1);
-	void ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
-	void ExportIntervalsSeries(int chan, CIntervalsArray* pOut);
+
+	void			ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1, BOOL bcopyRate = TRUE);
+	void			ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
+	void			ExportIntervalsSeries(int chan, CIntervalsArray* pOut);
 
 public:
-	CArray <CIntervalPoint, CIntervalPoint>  iistep;	// array of intervals & words
-	int version;
+	CArray <CIntervalPoint, CIntervalPoint>  iistep;
+	float									chrate;
+	int										version;
 };
 
