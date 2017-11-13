@@ -702,6 +702,7 @@
 #define IDC_COMBOBOARD                  1401
 #define IDC_STARTSTOP                   1413
 #define IDC_OUTPUTFREQUENCY             1414
+#define IDC_STARTSTOP2                  1414
 #define IDC_TRIGGERMODE                 1415
 #define IDC_CHECKCHAN0                  1416
 #define IDC_CHECKCHAN1                  1417
@@ -764,6 +765,7 @@
 #define IDC_LIST_SSCAPS                 1504
 #define IDC_LIST_SSNUM                  1505
 #define IDC_LIST_BOARDCAPS              1506
+#define IDC_COMBOSTARTOUTPUT            1507
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -884,9 +886,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        564
+#define _APS_NEXT_RESOURCE_VALUE        565
 #define _APS_NEXT_COMMAND_VALUE         33010
-#define _APS_NEXT_CONTROL_VALUE         1507
+#define _APS_NEXT_CONTROL_VALUE         1508
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

@@ -44,10 +44,10 @@ public:
 	float				m_ylower;
 	CRulerBar			m_adxscale;
 	CRulerBar			m_adyscale;
-	BOOL				m_bOutputsEnabled;
 	CComboBox			m_ADcardCombo;
 	CMFCButton			m_btnStartStop;
 	BOOL				m_bADwritetofile;
+	int					m_bStartOutPutMode;
 
 protected:
 	// display data button and associated procedures
@@ -215,7 +215,7 @@ public:
 	afx_msg void OnBnClickedGainbutton();
 	afx_msg void OnBnClickedBiasbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnBnClickedEnableoutput();
+//	afx_msg void OnBnClickedEnableoutput();
 	afx_msg void OnBnClickedDaparameters();
 	afx_msg void OnBnClickedDaparameters2();
 	afx_msg void OnCbnSelchangeComboboard();
@@ -225,6 +225,8 @@ public:
 	afx_msg void OnBnClickedWriteToDisk();
 	afx_msg void OnBnClickedOscilloscope();
 	afx_msg void OnBnClickedCardfeatures();
+	afx_msg void OnCbnSelchangeCombostartoutput();
+	afx_msg void OnBnClickedStartstop2();
 };
 
 

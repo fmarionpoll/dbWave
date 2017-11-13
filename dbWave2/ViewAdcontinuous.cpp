@@ -40,9 +40,9 @@ IMPLEMENT_DYNCREATE(CADContView, CFormView)
 
 CADContView::CADContView()
 	: CFormView(CADContView::IDD)
-	, m_bOutputsEnabled(FALSE)
 	, m_yupper(0)
 	, m_ylower(0)
+	, m_bStartOutPutMode(0)
 {
 	m_sweepduration = 1.0f;
 	m_bADwritetofile = FALSE;
@@ -56,7 +56,6 @@ CADContView::CADContView()
 	m_bFileOpen = FALSE;
 	m_numchansMAX = 8;
 	m_freqmax	= 50000.f;
-	m_bOutputsEnabled = FALSE;
 	m_bSimultaneousStart=FALSE;
 	m_bhidesubsequent=FALSE;
 
@@ -79,13 +78,13 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_XLAST, m_sweepduration);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_AnalogIN);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_AnalogOUT);
-	DDX_Check(pDX, IDC_ENABLEOUTPUT, m_bOutputsEnabled);
 	DDX_Control(pDX, IDC_XSCALE, m_adxscale);
 	DDX_Control(pDX, IDC_YSCALE, m_adyscale);
 	DDX_Text(pDX, IDC_YUPPER, m_yupper);
 	DDX_Text(pDX, IDC_YLOWER, m_ylower);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
+	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
 }
 
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
@@ -102,7 +101,7 @@ BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_BN_CLICKED(IDC_GAIN_button, &CADContView::OnBnClickedGainbutton)
 	ON_BN_CLICKED(IDC_BIAS_button, &CADContView::OnBnClickedBiasbutton)
 	ON_WM_VSCROLL()
-	ON_BN_CLICKED(IDC_ENABLEOUTPUT, &CADContView::OnBnClickedEnableoutput)
+//	ON_BN_CLICKED(IDC_ENABLEOUTPUT, &CADContView::OnBnClickedEnableoutput)
 	ON_BN_CLICKED(IDC_DAPARAMETERS, &CADContView::OnBnClickedDaparameters)
 	ON_BN_CLICKED(IDC_DAPARAMETERS2, &CADContView::OnBnClickedDaparameters2)
 	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &CADContView::OnCbnSelchangeComboboard)
@@ -112,6 +111,8 @@ BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_BN_CLICKED(IDC_WRITETODISK, &CADContView::OnBnClickedWriteToDisk)
 	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &CADContView::OnBnClickedOscilloscope)
 	ON_BN_CLICKED(IDC_CARDFEATURES, &CADContView::OnBnClickedCardfeatures)
+	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &CADContView::OnCbnSelchangeCombostartoutput)
+	ON_BN_CLICKED(IDC_STARTSTOP2, &CADContView::OnBnClickedStartstop2)
 END_MESSAGE_MAP()
 
 void CADContView::OnDestroy() 
@@ -224,20 +225,20 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	(m_pADC_options->waveFormat).csADcardName = cardName;
 
 	// connect A/D subsystem and display/hide buttons
-	m_bOutputsEnabled = FALSE;
+	m_bStartOutPutMode = 0;
 	BOOL flagAD = ADC_OpenSubSystem(cardName);
 	BOOL flagDA = DAC_OpenSubSystem(cardName);
 	if (flagDA) 
-		m_bOutputsEnabled = TRUE;
+		m_bStartOutPutMode = 0;
 	m_bSimultaneousStart = m_bsimultaneousStartDA && m_bsimultaneousStartAD;
 
 	// display additional interface elements
 	int bShow = (flagAD ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_ADPARAMETERS)->ShowWindow(bShow);
 	GetDlgItem(IDC_ADPARAMETERS2)->ShowWindow(bShow);
+	GetDlgItem(IDC_COMBOSTARTOUTPUT)->ShowWindow(bShow);
 
 	bShow = (flagDA ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_ENABLEOUTPUT)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAPARAMETERS)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAPARAMETERS2)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(bShow);
@@ -1001,7 +1002,7 @@ void CADContView::ADC_Stop()
 void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 {
 	// special treatment if simultaneous list
-	if (m_bSimultaneousStart && m_bOutputsEnabled)
+	if (m_bSimultaneousStart && m_bStartOutPutMode == 0)
 	{
 		HSSLIST hSSlist;
 		CHAR errstr[255];
@@ -1119,7 +1120,6 @@ void CADContView::TransferFilesToDatabase()
 BOOL CADContView::StartAcquisition()
 {
 	// set display
-	ASSERT(m_bOutputsEnabled == ((CButton*)GetDlgItem(IDC_ENABLEOUTPUT))->GetCheck());
 	if (m_bADwritetofile && !Defineexperiment())
 	{
 		StopAcquisition(FALSE);
@@ -1130,7 +1130,7 @@ BOOL CADContView::StartAcquisition()
 	if (!ADC_InitSubSystem())
 		return FALSE;
 
-	if (m_bOutputsEnabled && DAC_InitSubSystem())
+	if (m_bStartOutPutMode == 0 && DAC_InitSubSystem())
 		DAC_DeclareAndFillBuffers();
 	
 	// start AD display
@@ -1168,7 +1168,7 @@ BOOL CADContView::StartAcquisition()
 		try
 		{
 			m_DAC_inprogress = FALSE;
-			if (m_bOutputsEnabled) 
+			if (m_bStartOutPutMode == 0)
 			{
 				m_AnalogOUT.Config();
 				m_AnalogOUT.Start();
@@ -1328,7 +1328,8 @@ void CADContView::OnInitialUpdate()
 	m_pDAC_options = &(pApp->outD);								// address of data output parameters
 	m_bFoundDTOPenLayerDLL = FALSE;								// assume there is no card
 	m_bADwritetofile = m_pADC_options->waveFormat.bADwritetofile;
-	m_bOutputsEnabled = m_pDAC_options->bAllowDA;
+	m_bStartOutPutMode = m_pDAC_options->bAllowDA;
+	((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(m_bStartOutPutMode);
 	
 	// open document and remove database filters
 	CdbWaveDoc* pdbDoc = GetDocument();							// data document with database
@@ -1375,7 +1376,8 @@ void CADContView::OnInitialUpdate()
 		GetDlgItem(IDC_ADPARAMETERS2)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_ADGROUP)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_DAGROUP)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_ENABLEOUTPUT)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_COMBOSTARTOUTPUT)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_STARTSTOP2)->ShowWindow(SW_HIDE);
 	}
 	
 	UpdateChanLegends(0);
@@ -2267,11 +2269,19 @@ long CADContView::VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain)
 	return lValue;
 }
 
-void CADContView::OnBnClickedEnableoutput()
+void CADContView::OnCbnSelchangeCombostartoutput()
 {
-	m_bOutputsEnabled = ((CButton*) GetDlgItem(IDC_ENABLEOUTPUT))->GetCheck();
-	m_pDAC_options->bAllowDA = m_bOutputsEnabled;
+	m_bStartOutPutMode = ((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
+	m_pDAC_options->bAllowDA = m_bStartOutPutMode;
+	BOOL bEnabled = m_bStartOutPutMode != 0;
+	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(bEnabled);
 }
+
+//void CADContView::OnBnClickedEnableoutput()
+//{
+//	m_bStartOutPutMode = ((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
+//	m_pDAC_options->bAllowDA = m_bStartOutPutMode;
+//}
 
 void CADContView::OnBnClickedDaparameters()
 {
@@ -2394,4 +2404,10 @@ void CADContView::OnBnClickedCardfeatures()
 	dlg.m_pAnalogIN = &m_AnalogIN;
 	dlg.m_pAnalogOUT = &m_AnalogOUT;
 	dlg.DoModal();
+}
+
+
+void CADContView::OnBnClickedStartstop2()
+{
+	// TODO: Add your control notification handler code here
 }
