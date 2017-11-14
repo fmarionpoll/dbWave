@@ -29,18 +29,18 @@ void CRuler::SetRange (float* dfirst, float* dlast)
 
 BOOL CRuler::AdjustScale()
 {
-	// compute scale using an algorithm found in
-	// Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
+	// cf Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
 	// http://drdobbs.com/184401258
 
-	double range = m_dlast - m_dfirst;
-
-	// discard negative scale
-	if (range < 0)
-		return FALSE;
+	double dfirst = m_dfirst;
+	if (m_dfirst < 0)
+		dfirst = 0;
+	double range1 = m_dlast - dfirst;
+	double range2 = -(m_dfirst - dfirst);
+	double range = max(range1, range2);
 
 	// deal with repeated values
-	else if (range == 0)
+	if (range == 0)
 	{
 		m_dfirst = ceil (m_dlast) - 1;
 		m_dlast = m_dfirst + 1;

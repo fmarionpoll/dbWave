@@ -3,7 +3,6 @@
 // CRuler
 class CRuler : public CObject
 {
-	//DECLARE_SERIAL(CRuler);
 public:
 	void			SetRange(float* dfirst, float* dlast);
 	inline int		GetScaleUnitPixels(int cx) {return (int) (m_dscaleinc* cx / (m_dlast - m_dfirst));};

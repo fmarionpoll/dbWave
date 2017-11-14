@@ -197,7 +197,7 @@ CScopeScreen::CScopeScreen()
 	m_yscale.m_bHorizontal	= FALSE;
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH|FF_ROMAN, _T("Arial"));
 	m_abcissaheight  = 10;
-	m_ordinateswidth = 15;
+	m_ordinateswidth = 25;
 }
 
 CScopeScreen::~CScopeScreen()

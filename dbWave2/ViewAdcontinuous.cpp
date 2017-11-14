@@ -242,7 +242,8 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	GetDlgItem(IDC_DAPARAMETERS)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAPARAMETERS2)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(bShow);
-
+	SetCombostartoutput(m_pDAC_options->bAllowDA);
+	
 	return TRUE;
 }
 
@@ -1018,7 +1019,7 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 		ADC_Stop();
 
 	// stop DA, liberate buffers
-	if (m_DAC_inprogress)
+	if (m_DAC_inprogress && m_bStartOutPutMode == 0)
 		DAC_Stop();
 	
 	// close file and update display
@@ -1163,7 +1164,7 @@ BOOL CADContView::StartAcquisition()
 	}
 	
 	// starting mode of A/D if no simultaneous list
-	if (!m_bSimultaneousStart)
+	if (!m_bSimultaneousStart || m_bStartOutPutMode != 0)
 	{
 		try
 		{
@@ -2277,11 +2278,15 @@ void CADContView::OnCbnSelchangeCombostartoutput()
 	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(bEnabled);
 }
 
-//void CADContView::OnBnClickedEnableoutput()
-//{
-//	m_bStartOutPutMode = ((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
-//	m_pDAC_options->bAllowDA = m_bStartOutPutMode;
-//}
+void CADContView::SetCombostartoutput(int option)
+{
+	((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(option);
+	option = ((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
+	m_bStartOutPutMode = option;
+	m_pDAC_options->bAllowDA = option;
+	BOOL bEnabled = m_bStartOutPutMode != 0;
+	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(bEnabled);
+}
 
 void CADContView::OnBnClickedDaparameters()
 {

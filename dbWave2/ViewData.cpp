@@ -190,7 +190,7 @@ void CDataView::OnInitialUpdate()
 	
 	// set data file
 	CDaoRecordView::OnInitialUpdate();	
-	UpdateFileParameters(TRUE);		// load file parameters
+	UpdateFileParameters(TRUE);	// load file parameters
 	
 	m_VDlineview.m_parms = mdPM->viewdata;
 	OnClickedBias();			// init V bar mode: bias (push button)

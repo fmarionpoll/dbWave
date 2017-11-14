@@ -153,6 +153,7 @@ protected:
 	void DAC_FillBuffer(short* pDTbuf);
 	void DAC_ConvertOptionsIntoChanList();
 	void DAC_Stop();
+	void SetCombostartoutput(int option);
 	
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
