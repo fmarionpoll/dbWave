@@ -2409,5 +2409,44 @@ void CADContView::OnBnClickedCardfeatures()
 
 void CADContView::OnBnClickedStartstop2()
 {
-	// TODO: Add your control notification handler code here
+	CString cs;
+	if (m_DAC_inprogress)
+	{
+		cs = _T("Start");
+		StopOutput();
+	}
+	else
+	{
+		cs = _T("Stop");
+		StartOutput();
+	}
+	GetDlgItem(IDC_STARTSTOP2)->SetWindowTextW(cs);
 }
+
+BOOL CADContView::StartOutput()
+{
+	if (!DAC_InitSubSystem())
+		return FALSE;
+	DAC_DeclareAndFillBuffers();
+	try
+	{
+		m_DAC_inprogress = FALSE;
+		m_AnalogOUT.Config();
+		m_AnalogOUT.Start();
+		m_DAC_inprogress = TRUE;		
+	}
+	catch (COleDispatchException* e)
+	{
+		AfxMessageBox(e->m_strDescription);
+		e->Delete();
+	}
+	return TRUE;
+}
+
+void CADContView::StopOutput()
+{
+	// stop DA, liberate buffers
+	if (m_DAC_inprogress)
+		DAC_Stop();
+}
+

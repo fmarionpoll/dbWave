@@ -160,6 +160,8 @@ protected:
 	void StopAcquisition(BOOL bDisplayErrorMsg);
 	void SaveAndCloseFile();
 	BOOL StartAcquisition();
+	BOOL StartOutput();
+	void StopOutput();
 
 	BOOL InitCyberAmp();
 	BOOL Defineexperiment() ;
@@ -215,7 +217,6 @@ public:
 	afx_msg void OnBnClickedGainbutton();
 	afx_msg void OnBnClickedBiasbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-//	afx_msg void OnBnClickedEnableoutput();
 	afx_msg void OnBnClickedDaparameters();
 	afx_msg void OnBnClickedDaparameters2();
 	afx_msg void OnCbnSelchangeComboboard();
