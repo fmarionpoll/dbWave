@@ -448,9 +448,9 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pScale)
 	tickSmallHeight = 4;
 
 	// draw scale
-	double dpos = floor(pScale->m_dfirst);
-	double dlen = pScale->m_dlast - pScale->m_dfirst;
 	double smallscaleinc = pScale->m_dscaleinc / 5.;
+	double dpos = floor(pScale->m_dscalefirst);
+	double dlen = pScale->m_dlast - pScale->m_dfirst;
 	pDC->SetBkMode(TRANSPARENT);
 
 	while (dpos <= pScale->m_dlast)
@@ -463,7 +463,6 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pScale)
 		{
 			dsmallpos += smallscaleinc;
 			double ratio = (pScale->m_dlast - dsmallpos) / dlen;
-
 			if (pScale->m_bHorizontal) // ----------------------------- horizontal
 			{
 				tickPos = (int) (rcClient.Width() * (dsmallpos - pScale->m_dfirst) / dlen) + rcClient.left;
@@ -486,7 +485,6 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pScale)
 
 		// display large ticks and text
 		pDC->SelectObject(&aPen2);
-		
 		if (pScale->m_bHorizontal)	// horizontal
 			tickPos = (int) (rcClient.Width() * (dpos - pScale->m_dfirst) / dlen) + rcClient.left;
 		else						// vertical

@@ -32,12 +32,7 @@ BOOL CRuler::AdjustScale()
 	// cf Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
 	// http://drdobbs.com/184401258
 
-	double dfirst = m_dfirst;
-	if (m_dfirst < 0)
-		dfirst = 0;
-	double range1 = m_dlast - dfirst;
-	double range2 = -(m_dfirst - dfirst);
-	double range = max(range1, range2);
+	double range = m_dlast - m_dfirst;
 
 	// deal with repeated values
 	if (range == 0)
