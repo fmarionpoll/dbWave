@@ -227,6 +227,7 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	// connect A/D subsystem and display/hide buttons
 	m_bStartOutPutMode = 0;
 	BOOL flagAD = ADC_OpenSubSystem(cardName);
+
 	BOOL flagDA = DAC_OpenSubSystem(cardName);
 	if (flagDA) 
 		m_bStartOutPutMode = 0;
@@ -242,6 +243,8 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	GetDlgItem(IDC_DAPARAMETERS)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAPARAMETERS2)->ShowWindow(bShow);
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(bShow);
+	GetDlgItem(IDC_COMBOSTARTOUTPUT)->ShowWindow(bShow);
+	GetDlgItem(IDC_STARTSTOP2)->ShowWindow(bShow);
 	SetCombostartoutput(m_pDAC_options->bAllowDA);
 	
 	return TRUE;
@@ -403,17 +406,23 @@ BOOL CADContView::DAC_OpenSubSystem(CString cardName)
 	try
 	{
 		m_AnalogOUT.SetBoard(cardName);
+		if (m_AnalogOUT.GetDevCaps(OLSS_DA) == 0)
+			return FALSE;
+
 		m_AnalogOUT.SetSubSysType(OLSS_DA);
 		int nDA = m_AnalogOUT.GetDevCaps(OLDC_DAELEMENTS);
 		if (nDA < 1)
 			return FALSE;
 		m_AnalogOUT.SetSubSysElement(0);
 		ASSERT(m_AnalogOUT.GetHDass() != NULL),
-		m_bsimultaneousStartDA = m_AnalogOUT.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+			m_bsimultaneousStartDA = m_AnalogOUT.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+		
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
 		e->Delete();
 		return FALSE;
 	}
@@ -424,7 +433,9 @@ BOOL CADContView::DAC_ClearAllOutputs()
 {
 	try
 	{
-		ASSERT(m_AnalogOUT.GetHDass() != NULL);
+		if (m_AnalogOUT.GetHDass() == NULL)
+			return FALSE;
+
 		if (m_AnalogOUT.GetSSCaps(OLSSC_SUP_SINGLEVALUE) == FALSE)
 		{
 			AfxMessageBox(_T("D/A SubSystem cannot run in single value mode"));
@@ -449,7 +460,9 @@ BOOL CADContView::DAC_ClearAllOutputs()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
 		e->Delete();
 		return FALSE;
 	}
@@ -460,7 +473,8 @@ BOOL CADContView::DAC_InitSubSystem()
 {
 	try
 	{
-		ASSERT(m_AnalogOUT.GetHDass() != NULL);
+		if (m_AnalogOUT.GetHDass() == NULL)
+			return FALSE;
 		
 		// Set up the ADC - multiple wrap so we can get buffer reused	
 		m_AnalogOUT.SetDataFlow(OLx_DF_CONTINUOUS);
@@ -565,7 +579,9 @@ void CADContView::ADC_DeleteBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
 		e->Delete();
 	}
 }
@@ -588,7 +604,9 @@ void CADContView::DAC_DeleteBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
 		e->Delete();
 	}
 }
@@ -994,7 +1012,9 @@ void CADContView::ADC_Stop()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
 		e->Delete();
 	}
 	m_ADC_inprogress = FALSE;
@@ -1182,7 +1202,9 @@ BOOL CADContView::StartAcquisition()
 		}
 		catch (COleDispatchException* e)
 		{
-			AfxMessageBox(e->m_strDescription);
+			CString myError;
+			myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+			AfxMessageBox(myError);
 			e->Delete();
 		}
 	}
@@ -2291,7 +2313,7 @@ void CADContView::SetCombostartoutput(int option)
 void CADContView::OnBnClickedDaparameters()
 {
 	CDAOutputParametersDlg dlg;
-		dlg.m_outD = *m_pDAC_options;
+	dlg.m_outD = *m_pDAC_options;
 	if (dlg.DoModal() == IDOK)
 	{
 		*m_pDAC_options = dlg.m_outD;
@@ -2395,7 +2417,6 @@ void CADContView::OnBnClickedOscilloscope()
 
 void CADContView::UpdateRadioButtons()
 {
-	// set the oscilloscope / write to disk button
 	if (m_bADwritetofile)
 		((CButton * )GetDlgItem(IDC_WRITETODISK))->SetCheck(BST_CHECKED);
 	else
@@ -2408,7 +2429,8 @@ void CADContView::OnBnClickedCardfeatures()
 	CDataTranslationBoardDlg dlg;
 	dlg.m_pAnalogIN = &m_AnalogIN;
 	dlg.m_pAnalogOUT = &m_AnalogOUT;
-	dlg.DoModal();
+	int iout = dlg.DoModal();
+	iout++;
 }
 
 
@@ -2442,7 +2464,9 @@ BOOL CADContView::StartOutput()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
 		e->Delete();
 	}
 	return TRUE;
@@ -2450,7 +2474,6 @@ BOOL CADContView::StartOutput()
 
 void CADContView::StopOutput()
 {
-	// stop DA, liberate buffers
 	if (m_DAC_inprogress)
 		DAC_Stop();
 }

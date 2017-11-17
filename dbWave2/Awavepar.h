@@ -427,7 +427,7 @@ public:
 	int		iWaveform;								// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
 	CString	csFilename;								// filename to output
 	CIntervalsArray stimulussequence;
-	CIntervalsArray stim8lines[8];
+	CArray <CIntervalsArray, CIntervalsArray> stim8lines;
 	CIntervalsAndWordsSeries sti;
 
 	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval

@@ -38,13 +38,13 @@ class CIntervalPoint : public CObject
 	DECLARE_SERIAL(CIntervalPoint)
 	CIntervalPoint();
 	CIntervalPoint(const CIntervalPoint& pt);
-	//~CIntervalPoint();
+	~CIntervalPoint();
 	virtual void Serialize(CArchive& ar);
 	void operator = (const CIntervalPoint& arg);
 
 public:
-	long ii;					// n clock intervals
-	WORD w;						// word associated to this time interval
+	long ii;		// n clock intervals
+	WORD w;			// word associated to this time interval
 };
 
 // ----------------------------------------------
@@ -55,21 +55,21 @@ class CIntervalsAndWordsSeries : public CObject
 
 	CIntervalsAndWordsSeries();
 	CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg);
-	//~CIntervalsAndWordsSeries();
+	~CIntervalsAndWordsSeries();
 	void operator = (const CIntervalsAndWordsSeries& arg);
 	virtual void Serialize(CArchive& ar);
 
-	void			EraseAllData();
+	void	EraseAllData();
 	inline long		GetSize() { return iistep.GetSize(); }
 	CIntervalPoint  GetIntervalPointAt(int i);
 
-	void			ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1, BOOL bcopyRate = TRUE);
-	void			ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
-	void			ExportIntervalsSeries(int chan, CIntervalsArray* pOut);
+	void	ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1, BOOL bcopyRate = TRUE);
+	void	ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
+	void	ExportIntervalsSeries(int chan, CIntervalsArray* pOut);
 
 public:
 	CArray <CIntervalPoint, CIntervalPoint>  iistep;
-	float									chrate;
-	int										version;
+	float	chrate;
+	int		version;
 };
 

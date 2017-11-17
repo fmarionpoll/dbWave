@@ -1584,6 +1584,7 @@ OUTPUTPARMS::OUTPUTPARMS()
 	num = 512;
 	bit33 = 1;
 	count = 1;
+	stim8lines.SetSize(8);
 	for (int i = 0; i < 8; i++)
 		stim8lines[i].SetChan(i);
 }

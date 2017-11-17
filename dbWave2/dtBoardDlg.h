@@ -36,18 +36,18 @@ protected:
 	virtual BOOL OnInitDialog();
 	BOOL FindDTOpenLayersBoards();
 	int  GetBoardCapabilities();
-	void GetSubsystemYNCapabilities();
-	void GetSubsystemNumericalCapabilities();
+	void GetSubsystemYNCapabilities(int numitems);
+	void GetSubsystemNumericalCapabilities(int numitems);
+	void ChangeSubsystem(int index);
 
 	afx_msg void OnSelchangeBoard();
-	afx_msg void OnSelchangeSubsystem();
+	afx_msg void OnLbnSelchangeListBoardcaps();
 	DECLARE_MESSAGE_MAP()
 public:
 	CComboBox	m_cbBoard;
-	CComboBox	m_cbSubsystem;
 	CListBox	m_listBoardCaps;
 	CListBox	m_listSSNumCaps;
 	CListBox	m_listSSYNCaps;
-	afx_msg void OnLbnSelchangeListBoardcaps();
+	
 };
 

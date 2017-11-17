@@ -17,15 +17,16 @@ CDataTranslationBoardDlg::CDataTranslationBoardDlg(CWnd* pParent /*=NULL*/)
 
 CDataTranslationBoardDlg::~CDataTranslationBoardDlg()
 {
-	 m_pAnalogIN->SetSubSysType(m_subssystemIN);
-	 m_pAnalogIN->SetSubSysElement(m_subsystemelementIN);
+	UINT uiNumBoards = m_pDTAcq32->GetNumBoards();
+	if (uiNumBoards > 0) {
+		m_pAnalogIN->SetSubSysType(m_subssystemIN);
+	}
 }
 
 void CDataTranslationBoardDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_BOARD, m_cbBoard);
-	DDX_Control(pDX, IDC_SUBSYSTEM, m_cbSubsystem);
 	DDX_Control(pDX, IDC_LIST_BOARDCAPS, m_listBoardCaps);
 	DDX_Control(pDX, IDC_LIST_SSNUM, m_listSSNumCaps);
 	DDX_Control(pDX, IDC_LIST_SSCAPS, m_listSSYNCaps);
@@ -33,15 +34,14 @@ void CDataTranslationBoardDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDataTranslationBoardDlg, CDialog)
 	ON_CBN_SELCHANGE(IDC_BOARD, &CDataTranslationBoardDlg::OnSelchangeBoard)
-	ON_CBN_SELCHANGE(IDC_SUBSYSTEM, &CDataTranslationBoardDlg::OnSelchangeSubsystem)
 	ON_LBN_SELCHANGE(IDC_LIST_BOARDCAPS, &CDataTranslationBoardDlg::OnLbnSelchangeListBoardcaps)
 END_MESSAGE_MAP()
 
 BOOL CDataTranslationBoardDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_subssystemIN = m_pAnalogIN->GetSubSysType();
-	m_subsystemelementIN = m_pAnalogIN->GetSubSysElement();
+	m_subssystemIN			= m_pAnalogIN->GetSubSysType();
+
 	m_pDTAcq32 = m_pAnalogIN;
 	FindDTOpenLayersBoards();
 	OnSelchangeBoard();
@@ -69,113 +69,142 @@ void CDataTranslationBoardDlg::OnSelchangeBoard()
 {
 	int isel = m_cbBoard.GetCurSel();
 	m_cbBoard.GetLBText(isel, m_boardName);
-	m_cbSubsystem.AddString(_T("No subsystems"));
 	m_nsubsystems = GetBoardCapabilities(); 
-	m_cbSubsystem.SetCurSel(0);
-	OnSelchangeSubsystem();
 }
 
 #define SS_LIST_SIZE 6
 #define	SS_CODES {OLSS_AD, OLSS_DA, OLSS_DIN, OLSS_DOUT, OLSS_CT, OLSS_SRL}
 #define	SS_LIST	 {OLDC_ADELEMENTS, OLDC_DAELEMENTS, OLDC_DINELEMENTS, OLDC_DOUTELEMENTS, OLDC_CTELEMENTS, OLDC_SRLELEMENTS}
-#define SS_TEXT	 {	_T("Analog IN (A/D)"), _T("Analog OUT (D/A)"), _T("Digital IN"), _T("Digital OUT"),	_T("Counter/Trigger"), _T("Serial Port")}
+#define SS_TEXT	 {	_T("Analog Inputs"), _T("Analog outputs"), _T("Digital Inputs"), _T("Digital Outputs"),	_T("Counter/Trigger"), _T("Serial Port")}
 
 int CDataTranslationBoardDlg::GetBoardCapabilities()
 {
-	m_pDTAcq32->SetBoard(m_boardName);
-	m_listBoardCaps.ResetContent();
+	int nsubsystems = 0;
+	
+	try {
+		m_pDTAcq32->SetBoard(m_boardName);
+		m_listBoardCaps.ResetContent();
 
-	CString board_text;
-	int nsubsystems = m_pDTAcq32->GetNumSubSystems();
-	m_cbSubsystem.ResetContent();
-	if (nsubsystems == 0) 
-		m_cbSubsystem.AddString(_T("No subsystems"));
-	board_text = _T("Board name: ") + m_boardName;
-	m_listBoardCaps.AddString(board_text);
+		CString board_text;
+		nsubsystems = m_pDTAcq32->GetNumSubSystems();
+		
+		CString subsystem_text[SS_LIST_SIZE] = SS_TEXT;
+		int ss_list[SS_LIST_SIZE] = SS_LIST;
 
-	CString subsystem_text[SS_LIST_SIZE] = SS_TEXT;
-	int ss_list[SS_LIST_SIZE] = SS_LIST;
-	int ss_codes[SS_LIST_SIZE] = SS_CODES;
-
-	for (int i = 0; i < SS_LIST_SIZE; i++)
-	{
-		int number = m_pDTAcq32->GetDevCaps(ss_list[i]);
-		if (number > 0) 
+		for (int i = 0; i < SS_LIST_SIZE; i++)
 		{
-			m_cbSubsystem.AddString(subsystem_text[i]);
-			m_cbSubsystem.SetItemData(i, ss_codes[i]);
+			int number = m_pDTAcq32->GetDevCaps(ss_list[i]);
+			CString cs;
+			cs.Format(_T("\n  %i: "), number);
+			board_text = cs + subsystem_text[i];
+			m_listBoardCaps.AddString(board_text);
+			m_listBoardCaps.SetItemData(i, number);
 		}
-		CString cs;
-		cs.Format(_T("\n  %i: "), number);
-		board_text = cs + subsystem_text[i];
-		m_listBoardCaps.AddString(board_text);
-	}	
+	}
+	catch (COleDispatchException* e)
+	{
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
+		e->Delete();
+		return nsubsystems;
+	}
 	return nsubsystems;
 }
 
-void CDataTranslationBoardDlg::OnSelchangeSubsystem()
-{
-	int index = m_cbSubsystem.GetCurSel();
-	if (index < 0)
-		index = 0;
 
-	DWORD ss_info = m_cbSubsystem.GetItemData(index);
+void CDataTranslationBoardDlg::ChangeSubsystem(int index)
+{
+	int ss_codes[SS_LIST_SIZE] = SS_CODES;
+	DWORD ss_info = ss_codes[index];
+	int numitems= m_listBoardCaps.GetItemData(index);
 	DWORD OlSs = (ss_info & 0xffff);
 	UINT uiElement = (ss_info >> 16) & 0xff;
-
-	if (OlSs == m_pAnalogOUT->GetSubSysType())
-		m_pDTAcq32 = m_pAnalogOUT;
-	else
-		m_pDTAcq32 = m_pAnalogIN;
-	m_pDTAcq32->SetSubSysType((short) OlSs);
-	m_pDTAcq32->SetSubSysElement(uiElement);
-
-	GetSubsystemYNCapabilities();
-	GetSubsystemNumericalCapabilities();
+	if (numitems > 0 && m_pDTAcq32->GetSubSysType() != OlSs) {
+		try {
+			if (OlSs == m_pAnalogOUT->GetSubSysType())
+				m_pDTAcq32 = m_pAnalogOUT;
+			else
+				m_pDTAcq32 = m_pAnalogIN;
+			m_pDTAcq32->SetSubSysType((short)OlSs);
+			m_pDTAcq32->SetSubSysElement(0);
+		}
+		catch (COleDispatchException* e)
+		{
+			CString myError;
+			myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
+			AfxMessageBox(myError);
+			e->Delete();
+			return;
+		}
+	}
+	GetSubsystemYNCapabilities(numitems);
+	GetSubsystemNumericalCapabilities(numitems);
 }
 
 #define	SUB_COUNT	36
 #define	SUB_CAP		{OLSSC_SUP_AUTO_CALIBRATE, OLSSC_SUP_SINGLEVALUE, OLSSC_SUP_CONTINUOUS, OLSSC_SUP_CONTINUOUS_PRETRIG, OLSSC_SUP_CONTINUOUS_ABOUTTRIG, OLSSC_SUP_RANDOM_CGL, OLSSC_SUP_SEQUENTIAL_CGL, OLSSC_SUP_ZEROSEQUENTIAL_CGL, OLSSC_SUP_SIMULTANEOUS_SH, OLSSC_SUP_SIMULTANEOUS_START, OLSSC_SUP_SYNCHRONIZATION, OLSSC_SUP_SIMULTANEOUS_CLOCKING, OLSSC_SUP_PAUSE, OLSSC_SUP_POSTMESSAGE, OLSSC_SUP_INPROCESSFLUSH, OLSSC_SUP_BUFFERING, OLSSC_SUP_WRPSINGLE, OLSSC_SUP_WRPMULTIPLE, OLSSC_SUP_WRPWAVEFORM, OLSSC_SUP_WRPWAVEFORM_ONLY, OLSSC_SUP_GAPFREE_NODMA, OLSSC_SUP_GAPFREE_SINGLEDMA, OLSSC_SUP_GAPFREE_DUALDMA, OLSSC_SUP_TRIGSCAN, OLSSC_MAXMULTISCAN, OLSS_SUP_RETRIGGER_SCAN_PER_TRIGGER, OLSS_SUP_RETRIGGER_INTERNAL, OLSSC_SUP_RETRIGGER_EXTRA, OLSSC_SUP_INTERRUPT, OLSSC_SUP_SINGLEENDED, OLSSC_SUP_DIFFERENTIAL, OLSSC_SUP_BINARY, OLSSC_SUP_2SCOMP, OLSSC_RETURNS_FLOATS, OLSSC_NUMRANGES}
 #define	SUB_TEXT	{_T("Automatic calibration"), _T("Single sampling"), _T("Continuous sampling"), _T("Continuous pretriggered"), _T("Continuous about triggered"), _T("Random channels allowed"), _T("Sequential channels allowed"),  _T("Zero first channel allowed"),  _T("Hold channel required"),  _T("Simultaneous start"),  _T("Prog. synchronization"),  _T("Simultaneous clocking"), _T("Pausing"), _T("Post messages"), _T("In-process buffering"), _T("Buffering"), _T("Single-buffer wrap"), _T("Multi-buffer wrap"),  _T("Waveform generation"),  _T("FIFI Waveform only"), _T("Gap-free without DMA"), _T("Gap-free single DMA"), _T("Gap-free dual DMA"), _T("Triggered scans"),  _T("Multiple scans"),  _T("Scan-per-trigger"), _T("Internal retriggering"), _T("Extra retriggering"), _T("Interrupt-driven I/O"),  _T("Single-ended"), _T("Differential"), _T("Binary encoding"),  _T("Twos-Complement"),  _T("Floating point"), _T("Multiple voltage ranges")}
 
-void CDataTranslationBoardDlg::GetSubsystemYNCapabilities()
+void CDataTranslationBoardDlg::GetSubsystemYNCapabilities(int numitems)
 {
-	OLSSC	olssc[SUB_COUNT] = SUB_CAP;
-	CString	cap_text[SUB_COUNT] = SUB_TEXT;
-	m_listSSYNCaps.ResetContent();;
-
-	for (UINT i = 0; i<SUB_COUNT; i++) 
-		if (m_pDTAcq32->GetSSCaps(olssc[i]) != 0)
-			m_listSSYNCaps.AddString(cap_text[i]);
+	m_listSSYNCaps.ResetContent();
+	if (numitems > 0) {
+		OLSSC	olssc[SUB_COUNT] = SUB_CAP;
+		CString	cap_text[SUB_COUNT] = SUB_TEXT;
+		try {
+			for (UINT i = 0; i < SUB_COUNT; i++)
+				if (m_pDTAcq32->GetSSCaps(olssc[i]) != 0)
+					m_listSSYNCaps.AddString(cap_text[i]);
+		}
+		catch (COleDispatchException* e)
+		{
+			CString myError;
+			myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
+			AfxMessageBox(myError);
+			e->Delete();
+		}
+	}
+	m_listSSYNCaps.Invalidate();
 }
 
 #define SS_NUM_COUNT 10
 #define SS_NUM_CAP	{OLSSC_MAXSECHANS, OLSSC_MAXDICHANS, OLSSC_NUMGAINS, OLSSC_CGLDEPTH, OLSSC_NUMDMACHANS, OLSSC_NUMFILTERS, OLSSC_NUMRANGES, OLSSC_NUMRESOLUTIONS, OLSSC_FIFO_SIZE_IN_K, OLSSC_NUMCHANNELS}
 #define SS_NUM_TEXT	{_T("Single-ended channels"), _T("Differential channels"), _T("Gain selections"), _T("Channel gain list"),_T("DMA channels"), _T("Filters"), _T("Ranges"), _T("Resolutions"), _T("FIFO (KB)"), _T("I/O Channels")}
 
-void CDataTranslationBoardDlg::GetSubsystemNumericalCapabilities()
+void CDataTranslationBoardDlg::GetSubsystemNumericalCapabilities(int numitems)
 {
 	m_listSSNumCaps.ResetContent();
-
-	OLSSC	olssc_num[SS_NUM_COUNT] = SS_NUM_CAP;
-	CString	num_text[SS_NUM_COUNT] = SS_NUM_TEXT;
-	for (UINT i = 0; i<SS_NUM_COUNT; i++) 
-	{
-		UINT capability = m_pDTAcq32->GetSSCaps(olssc_num[i]);		
-		if (capability != 0) 
+	if (numitems > 0) {
+		OLSSC	olssc_num[SS_NUM_COUNT] = SS_NUM_CAP;
+		CString	num_text[SS_NUM_COUNT] = SS_NUM_TEXT;
+		try {
+			for (UINT i = 0; i < SS_NUM_COUNT; i++)
+			{
+				UINT capability = m_pDTAcq32->GetSSCaps(olssc_num[i]);
+				if (capability != 0)
+				{
+					CString cs;
+					cs.Format(_T(": %d"), capability);
+					m_listSSNumCaps.AddString(num_text[i] + cs);
+				}
+			}
+		}
+		catch (COleDispatchException* e)
 		{
-			CString cs;
-			cs.Format(_T(": %d"), capability);
-			m_listSSNumCaps.AddString(num_text[i] + cs);
+			CString myError;
+			myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
+			AfxMessageBox(myError);
+			e->Delete();
 		}
 	}
+	m_listSSNumCaps.Invalidate();
 }
 
 void CDataTranslationBoardDlg::OnLbnSelchangeListBoardcaps()
 {
 	int isel = m_listBoardCaps.GetCurSel();
-	if (isel > 0) {
-		m_cbSubsystem.SetCurSel(isel-1);
-		OnSelchangeSubsystem();
+	if (isel >= 0) {
+		ChangeSubsystem(isel);
 	}
 }

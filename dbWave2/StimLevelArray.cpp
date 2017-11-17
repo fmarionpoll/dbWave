@@ -25,6 +25,7 @@ CIntervalsArray::CIntervalsArray()
 
 CIntervalsArray::~CIntervalsArray()
 {
+	iistimulus.RemoveAll();
 }
 
 void CIntervalsArray::operator = (const CIntervalsArray& arg)
@@ -93,9 +94,9 @@ CIntervalPoint::CIntervalPoint(const CIntervalPoint& pt)
 	w = pt.w;
 }
 
-//CIntervalPoint::~CIntervalPoint()
-//{
-//}
+CIntervalPoint::~CIntervalPoint()
+{
+}
 
 void CIntervalPoint::Serialize(CArchive & ar)
 {
@@ -141,9 +142,9 @@ CIntervalsAndWordsSeries::CIntervalsAndWordsSeries(const CIntervalsAndWordsSerie
 	chrate = arg.chrate;
 }
 
-//CIntervalsAndWordsSeries::~CIntervalsAndWordsSeries()
-//{
-//}
+CIntervalsAndWordsSeries::~CIntervalsAndWordsSeries()
+{
+}
 
 void CIntervalsAndWordsSeries::Serialize(CArchive & ar)
 {
