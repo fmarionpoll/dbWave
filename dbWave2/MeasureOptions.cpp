@@ -912,7 +912,6 @@ void CMeasureResultsPage::OnExport()
 	CRichEditView* pView = (CRichEditView*)pDoc->GetNextView(pos);
 	CRichEditCtrl& pEdit = pView->GetRichEditCtrl();	
 	pEdit.SetWindowText(csBuffer);		// copy content of window into CString
-
 }
 
 void CMeasureResultsPage::OutputTitle()

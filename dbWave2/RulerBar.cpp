@@ -95,23 +95,21 @@ BEGIN_MESSAGE_MAP(CRulerBar, CWnd)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-
 // CRulerBar message handlers
 
 void CRulerBar::OnPaint()
 {
-	CPaintDC dc(this);												// =
-
-	CRect rcClient;													// =
-	GetClientRect(&rcClient);										// =
+	CPaintDC dc(this);
+	CRect rcClient;
+	GetClientRect(&rcClient);
 	// exit if the length is not properly defined
-	if (m_ruler.m_dlast == m_ruler.m_dfirst)						// =
-		return;														// =
+	if (m_ruler.m_dlast == m_ruler.m_dfirst)
+		return;
 
-	CPen aPen;														// =
-	aPen.CreatePen(PS_SOLID, 0, m_penColor);						// =
-	CPen* pOldPen = dc.SelectObject(&aPen);							// =
-	CFont* pOldFont= dc.SelectObject(&m_hFont);						// =
+	CPen aPen;
+	aPen.CreatePen(PS_SOLID, 0, m_penColor);
+	CPen* pOldPen = dc.SelectObject(&aPen);	
+	CFont* pOldFont= dc.SelectObject(&m_hFont);
 	CString str;
 
 	// draw ticks and legends
@@ -128,8 +126,8 @@ void CRulerBar::OnPaint()
 	}
 
 	// draw solid background
-	dc.IntersectClipRect(rcClient);									// =
-	dc.FillSolidRect(rcClient, ::GetSysColor(COLOR_3DFACE));		// =
+	dc.IntersectClipRect(rcClient);	
+	dc.FillSolidRect(rcClient, ::GetSysColor(COLOR_3DFACE));
 
 	// draw baseline on the right side
 	if (!m_bHorizontal)
@@ -144,10 +142,10 @@ void CRulerBar::OnPaint()
 	}
 
 	// draw scale
-	double dpos = floor(m_ruler.m_dfirst);							// =
-	double dlen = m_ruler.m_dlast - m_ruler.m_dfirst;				// =
-	double smallscaleinc = m_ruler.m_dscaleinc / 5.;				// =
-	dc.SetBkMode(TRANSPARENT);										// =
+	double dpos = floor(m_ruler.m_dscalefirst); // floor(m_ruler.m_dfirst);
+	double dlen = m_ruler.m_dlast - m_ruler.m_dfirst;
+	double smallscaleinc = m_ruler.m_dscaleinc / 5.;
+	dc.SetBkMode(TRANSPARENT);
 
 	while (dpos <= m_ruler.m_dlast)									// =
 	{

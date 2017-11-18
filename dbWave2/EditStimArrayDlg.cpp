@@ -45,8 +45,8 @@ BEGIN_MESSAGE_MAP(CEditStimArrayDlg, CDialog)
 	ON_BN_CLICKED(IDC_COPY, &CEditStimArrayDlg::OnBnClickedCopy)
 	ON_BN_CLICKED(IDC_PASTE, &CEditStimArrayDlg::OnBnClickedPaste)
 	ON_CBN_SELCHANGE(IDC_CHANCOMBO, &CEditStimArrayDlg::OnCbnSelchangeChancombo)
+	ON_BN_CLICKED(IDC_EXPORT, &CEditStimArrayDlg::OnBnClickedExport)
 END_MESSAGE_MAP()
-
 
 // CEditStimArrayDlg message handlers
 
@@ -385,11 +385,31 @@ void CEditStimArrayDlg::OnBnClickedPaste()
 	ResetListOrder();
 }
 
-
 void CEditStimArrayDlg::OnCbnSelchangeChancombo()
 {
 	CComboBox* pCombo = (CComboBox *)GetDlgItem(IDC_CHANCOMBO);
 	int isel = pCombo->GetCurSel();
 	m_pstim = (CIntervalsArray*)m_pIntervalArrays.GetAt(isel);
 	TransferIntervalsArrayToDialogList(m_pstim);
+}
+
+void CEditStimArrayDlg::OnBnClickedExport()
+{
+	CString csBuffer;
+	int nitems = m_stimarrayCtrl.GetItemCount();
+	// copy results from CListCtrl into text buffer
+	for (int i = 0; i < nitems; i++)
+	{
+		CString cs = m_stimarrayCtrl.GetItemText(i, 1);
+		csBuffer += cs + _T("\n");
+	}
+	
+	CdbWaveApp* pApp = (CdbWaveApp*)AfxGetApp();
+
+	CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
+	CDocument* pDoc = pTempl->OpenDocumentFile(NULL);
+	POSITION pos = pDoc->GetFirstViewPosition();
+	CRichEditView* pView = (CRichEditView*)pDoc->GetNextView(pos);
+	CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
+	pEdit.SetWindowText(csBuffer);		// copy content of window into CString
 }

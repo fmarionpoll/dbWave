@@ -847,20 +847,20 @@ void CADContView::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan)
 	
 	CIntervalsAndWordsSeries* pstim = &parmsChan->sti;
 	double	chFreqRatio = m_DAC_frequency / pstim->chrate;
-	long	iitime_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
-	long	iitime_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
-	long	iitime = iitime_start;
+	long	buffer_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
+	long	buffer_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
+	long	buffer_ii = buffer_start;
 	int		interval = 0;
 
-	BOOL	wamp = 0;
-	long	iistim = 0;
+	BOOL	wamp = FALSE;
+	long	stim_end = 0;
+
+	// find end = first interval after buffer_end; find start 
 	for (interval = 0; interval < pstim->GetSize(); interval++)
 	{
-		iistim = (long) (pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
-		if (iistim > iitime_end)
-			break;
-		if (iistim > iitime_start)
-			break;
+		stim_end = (long) (pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+		if (stim_end > buffer_start)
+			break;	
 		wamp = pstim->GetIntervalPointAt(interval).w;
 	}
 	double amp = ampUp * wamp + ampLow * !wamp;
@@ -869,22 +869,21 @@ void CADContView::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan)
 		wout = (WORD)(wout ^ msbit) & lRes;
 
 	// fill buffer
-	for (int i = chan; i < m_DAC_buflen; i+= nchans, iitime)
+	for (int i = chan; i < m_DAC_buflen; i+= nchans, buffer_ii++)
 	{
 		*(pDTbuf + i) = wout;
 		
-		if ((interval < pstim->GetSize()) && iitime > iistim)
+		if ((interval < pstim->GetSize()) && buffer_ii >= stim_end)
 		{
 			interval++;
+			wamp = FALSE;
 			if (interval < pstim->GetSize())
-			{
-				iistim = (long) (pstim->GetIntervalPointAt(interval).ii  * chFreqRatio);
-				wamp = pstim->GetIntervalPointAt(interval).w;
-				amp = amp = ampUp * wamp + ampLow * !wamp;
-				wout = (WORD) amp;
-				if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
-					wout = (WORD)(wout ^ msbit) & lRes;
-			}
+				stim_end = (long)(pstim->GetIntervalPointAt(interval).ii  * chFreqRatio);
+			wamp = pstim->GetIntervalPointAt(interval-1).w;
+			amp = ampUp * wamp + ampLow * !wamp;
+			wout = (WORD) amp;
+			if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
+				wout = (WORD)(wout ^ msbit) & lRes;
 		}
 	}
 	m_DAC_chanList.GetAt(chan).lastamp = amp;
