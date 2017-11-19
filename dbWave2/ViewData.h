@@ -31,19 +31,15 @@ public:
 	float	m_diff;	
 	float	m_timefirst;
 	float	m_timelast;
-	float	m_yupper;
-	float	m_ylower;
 
 	// subclassed controls within CDaoRecordView
-	CLineViewWnd	m_VDlineview;		// data display
+	CLineViewWnd	m_VDlineview;	// data display
 	float		m_floatNDigits; 	// 10(000) -> n digits displayed
 	CEditCtrl	mm_v1;				// first HZ cursor
 	CEditCtrl	mm_v2;				// second HZ cursor
 	CEditCtrl	mm_diff;			// difference v1-v2
 	CEditCtrl	mm_timefirst;		// first abcissa value
 	CEditCtrl	mm_timelast;		// last abcissa value
-	CEditCtrl	mm_yupper;
-	CEditCtrl	mm_ylower;
 	CComboBox	m_comboSelectChan;
 
 	BOOL		m_bInitComment;	
@@ -109,7 +105,7 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 // VIEWCTRL.CPP: manipulate controls position, size
 protected:
-	CStretchControl m_stretch;			// properties for controls
+	CStretchControl m_stretch;
 	BOOL			m_binit;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,10 +133,6 @@ protected:
 protected:
 	void MeasureProperties(int item);
 	
-// Operations on FormView
-// public interface to viewdata
-public:
-
 	// Overrides
 public:
 	virtual CDaoRecordset* OnGetRecordset();
@@ -168,7 +160,7 @@ protected:
 	void  UpdateLegends(int operation);
 	void  UpdateHZtagsVal();
 	void  SetCursorAssociatedWindows();
-	void UpdateChannel(int channel);
+	void  UpdateChannel(int channel);
 public:
 	DECLARE_MESSAGE_MAP()
 	// Generated message map functions
@@ -202,10 +194,7 @@ public:
 	afx_msg void OnHardwareDefineexperiment();
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();
-	afx_msg void OnEnChangeYlower();
-	afx_msg void OnEnChangeYupper();
 	afx_msg void OnCbnSelchangeCombochan();
-
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

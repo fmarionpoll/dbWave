@@ -35,13 +35,12 @@ protected:
 public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet;
-	float				m_sweepduration;
 	CString				m_boardName;
 	CDTAcq32			m_AnalogIN;
 	CDTAcq32			m_AnalogOUT;
 
-	float				m_yupper;
-	float				m_ylower;
+	//float				m_yupper;
+	//float				m_ylower;
 	CRulerBar			m_adxscale;
 	CRulerBar			m_adyscale;
 	CComboBox			m_ADcardCombo;
@@ -53,10 +52,10 @@ protected:
 	// display data button and associated procedures
 	CLineViewWnd		m_ADsourceView;		// source data display button
 	int 				m_cursorstate;		// source data cursor state	
-	CEditCtrl			mm_sweepduration;	// edit control for data acq duration	
-	CEditCtrl			mm_samplingrate;	// edit control for sampling rate
-	CEditCtrl			mm_yupper;			// edit control for data acq duration	
-	CEditCtrl			mm_ylower;			// edit control for sampling rate
+	float				m_sweepduration;
+
+	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed	
+	CEditCtrl			mm_ylower;			// edit control for min amplitude displayed
 	CStretchControl		m_stretch;			// array of properties associated with controls
 	HICON				m_hBias;
 	HICON				m_hZoom;
@@ -195,17 +194,14 @@ inline CdbWaveDoc* CADContView::GetDocument()
 	// Generated message map functions
 	DECLARE_MESSAGE_MAP()
 	DECLARE_EVENTSINK_MAP()
-
+public:
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnEnChangeDuration();
 	afx_msg void OnHardwareAdchannels();
 	afx_msg void OnHardwareAdintervals();
 	afx_msg void OnHardwareDefineexperiment();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-
-public:
 	afx_msg void OnBufferDone_ADC();
 	afx_msg void OnTriggerError_ADC();
 	afx_msg void OnOverrunError_ADC();
@@ -214,7 +210,6 @@ public:
 	afx_msg void OnOverrunError_DAC();
 	afx_msg void OnQueueDone_DAC();
 	afx_msg void OnTriggerError_DAC();
-
 	afx_msg void OnBnClickedGainbutton();
 	afx_msg void OnBnClickedBiasbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -222,13 +217,9 @@ public:
 	afx_msg void OnBnClickedDaparameters2();
 	afx_msg void OnCbnSelchangeComboboard();
 	afx_msg void OnBnClickedStartstop();
-	afx_msg void OnEnChangeYlower();
-	afx_msg void OnEnChangeYupper();
 	afx_msg void OnBnClickedWriteToDisk();
 	afx_msg void OnBnClickedOscilloscope();
 	afx_msg void OnBnClickedCardfeatures();
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void OnBnClickedStartstop2();
 };
-
-

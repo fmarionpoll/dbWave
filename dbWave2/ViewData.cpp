@@ -77,8 +77,6 @@ BEGIN_MESSAGE_MAP(CDataView, CDaoRecordView)
 	ON_COMMAND(ID_FILE_PRINT, CDaoRecordView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CDaoRecordView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CDaoRecordView::OnFilePrintPreview)
-	ON_EN_CHANGE(IDC_YLOWER, &CDataView::OnEnChangeYlower)
-	ON_EN_CHANGE(IDC_YUPPER, &CDataView::OnEnChangeYupper)
 	ON_CBN_SELCHANGE(IDC_COMBOCHAN, &CDataView::OnCbnSelchangeCombochan)
 END_MESSAGE_MAP()
 
@@ -91,8 +89,6 @@ END_MESSAGE_MAP()
 
 CDataView::CDataView()
 	: CDaoRecordView(CDataView::IDD)
-	, m_yupper(0)
-	, m_ylower(0)
 {	
 	// init parameters
 
@@ -131,8 +127,6 @@ void CDataView::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
 
 	DDX_Control(pDX, IDC_FILESCROLL, m_filescroll);
-	DDX_Text(pDX, IDC_YUPPER, m_yupper);
-	DDX_Text(pDX, IDC_YLOWER, m_ylower);
 	DDX_Control(pDX, IDC_COMBOCHAN, m_comboSelectChan);
 }
 
@@ -159,8 +153,6 @@ void CDataView::OnInitialUpdate()
 	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE,(WPARAM)IMAGE_ICON,(LPARAM)(HANDLE)m_hZoom);
 
 	VERIFY(m_VDlineview.SubclassDlgItem(IDC_DISPLAREA_button, this));	
-	VERIFY(mm_yupper.SubclassDlgItem(IDC_YUPPER, this));
-	VERIFY(mm_ylower.SubclassDlgItem(IDC_YLOWER, this));
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
 
@@ -178,7 +170,6 @@ void CDataView::OnInitialUpdate()
 	m_stretch.newProp(IDC_TIMELAST,			SZEQ_XREQ, SZEQ_YBEQ);
 
 	m_stretch.newProp(IDC_FILESCROLL,		XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_YLOWER,			SZEQ_XLEQ, SZEQ_YBEQ);
 
 	m_binit = TRUE;
 	m_VDlineview.m_bNiceGrid = TRUE;
@@ -376,11 +367,10 @@ void CDataView::UpdateLegends(int ioperation)
 	if (ioperation & CHG_YBAR)
 	{
 		int max =  m_VDlineview.FromChanlistPixeltoBin(m_ichanselected, 0);
-		m_yupper = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, max);
+		float vmax = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, max);
 		int min = m_VDlineview.FromChanlistPixeltoBin(m_ichanselected, m_VDlineview.Height());
-		m_ylower = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, min);
-
-		m_VDlineview.m_yscale.SetRange(&m_ylower, &m_yupper);
+		float vmin = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, min);
+		m_VDlineview.m_yscale.SetRange(&vmin, &vmax);
 	}
 
 	// -------------------------------------------
@@ -797,8 +787,9 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 		cs = cs + m_VDlineview.GetChanlistComment(i);
 		m_comboSelectChan.AddString(cs);
 	}
-	if (ndocchans > 1)
+	if (ndocchans > 1) {
 		m_comboSelectChan.AddString(_T("all channels"));
+	}
 	m_comboSelectChan.SetCurSel(0);
 
 	// done	
@@ -1489,10 +1480,6 @@ void CDataView::OnHardwareDefineexperiment()
 	}
 }
 
-// --------------------------------------------------------------------------
-// OnClickedXscale	call dialog box
-// --------------------------------------------------------------------------
-
 void CDataView::OnFormatXscale()
 {
 	// init dialog data 
@@ -1512,10 +1499,6 @@ void CDataView::OnFormatXscale()
 	}
 }
 
-//-----------------------------------------------------------------------
-// compute printer's page dot resolution
-// borrowed from VC++ sample\drawcli\drawdoc.cpp
-//-----------------------------------------------------------------------
 void CDataView::ComputePrinterPageSize()
 {
 	// magic to get printer dialog that would be used if we were printing!
@@ -1538,10 +1521,6 @@ void CDataView::ComputePrinterPageSize()
 	m_printRect.left = mdPM->leftPageMargin;
 	m_printRect.top = mdPM->topPageMargin;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// print paging information, date on the bottom of the page
-/////////////////////////////////////////////////////////////////////////////
 
 void CDataView::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
 {
@@ -1623,11 +1602,6 @@ BOOL CDataView::GetFileSeriesIndexFromPage(int page, int &filenumber, long &lFir
 	return TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// print text for a file items
-// take care of user's options saved in mdPM structure
-/////////////////////////////////////////////////////////////////////////////
-
 CString CDataView::GetFileInfos()
 {
 	CString strComment;   					// scratch pad
@@ -1657,11 +1631,6 @@ CString CDataView::GetFileInfos()
 	return strComment;
 }       
 
-// ---------------------------------------------------------------------------------------
-// PrintBars
-// print bars and afferent comments ie value for each channel
-// return comment associated with bars and individual channels
-// ---------------------------------------------------------------------------------------
 CString CDataView::PrintBars(CDC* pDC, CRect* prect)
 {
 	CString strComment;
@@ -1772,11 +1741,6 @@ CString CDataView::PrintBars(CDC* pDC, CRect* prect)
 	return strComment;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// (1) OnPreparePrinting()
-// override standard setting before calling print dialog
-/////////////////////////////////////////////////////////////////////////////
-
 BOOL CDataView::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// printing margins	
@@ -1884,10 +1848,6 @@ int	CDataView::PrintGetNPages()
 	return npages;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// (2) OnBeginPrinting
-/////////////////////////////////////////////////////////////////////////////
-
 void CDataView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
@@ -1903,10 +1863,6 @@ void CDataView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	BOOL flag = m_fontPrint.CreateFontIndirect(&m_logFont);
 	pDC->SetBkMode (TRANSPARENT);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-//	(3) OnPrint() -- for each page
-/////////////////////////////////////////////////////////////////////////////
 
 void CDataView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 {
@@ -2008,8 +1964,6 @@ void CDataView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	m_VDlineview.m_parms = oldparms;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 BOOL CDataView::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
 {
 	if (!mdPM->bMultirowDisplay || !mdPM->bEntireRecord)
@@ -2041,10 +1995,6 @@ BOOL CDataView::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
 	}
 	return TRUE;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-//	(4) OnEndPrinting() - lastly
-/////////////////////////////////////////////////////////////////////////////
 
 void CDataView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 {
@@ -2120,65 +2070,6 @@ void CDataView::UpdateFileScroll()
 	m_filescroll_infos.nPos = m_VDlineview.GetDataFirst();
 	m_filescroll_infos.nPage = m_VDlineview.GetDataLast()-m_VDlineview.GetDataFirst()+1;
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
-}
-
-void CDataView::OnEnChangeYlower()
-{
-	if (!mm_ylower.m_bEntryDone)
-		return;
-
-	switch (mm_ylower.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE);
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_ylower++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_ylower--;
-		break;
-	}	
-	
-	m_VDlineview.SetChanlistVoltsMaxMin(m_ichanselected, m_yupper, m_ylower);
-	m_VDlineview.Invalidate();
-	UpdateLegends(CHG_YBAR);
-
-	mm_ylower.m_bEntryDone=FALSE;
-	mm_ylower.m_nChar=0;
-	mm_ylower.SetSel(0, -1); 	//select all text
-}
-
-void CDataView::OnEnChangeYupper()
-{
-	if (!mm_yupper.m_bEntryDone)
-		return;
-
-	switch (mm_yupper.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE);
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_yupper++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_yupper--;
-		break;
-	}	
-	
-	m_VDlineview.SetChanlistVoltsMaxMin(m_ichanselected, m_yupper, m_ylower);
-	m_VDlineview.m_yscale.SetRange (&m_ylower, &m_yupper);
-	m_VDlineview.Invalidate();
-	UpdateLegends(CHG_YBAR);
-
-	mm_yupper.m_bEntryDone=FALSE;
-	mm_yupper.m_nChar=0;
-	mm_yupper.SetSel(0, -1); 	//select all text
 }
 
 void CDataView::OnCbnSelchangeCombochan()

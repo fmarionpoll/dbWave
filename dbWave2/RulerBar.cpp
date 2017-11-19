@@ -44,20 +44,21 @@ BOOL CRuler::AdjustScale()
 	}
 
 	// compute increment
-	m_dscaleinc = pow((double) 10, ceil (log10(range/10)));
+	double exponent = ceil(log10(range / 10));
+	m_dscaleinc = pow(10, exponent);
 
-	// set max scale
-	m_dscalelast = ((long) (m_dlast / m_dscaleinc)) * m_dscaleinc;
-	if (m_dscalelast < m_dlast)
-		m_dscalelast += m_dscaleinc;
 	// set min scale
-	m_dscalefirst = m_dscalelast;
+	m_dscalefirst = ((long) (m_dfirst / m_dscaleinc)) * m_dscaleinc;
+	if (m_dscalefirst > m_dfirst)
+		m_dscalefirst -= m_dscaleinc;
+	// set max scale
+	m_dscalelast = m_dscalefirst;
 	int i = 0;
 	do {
 		++i;
-		m_dscalefirst -= m_dscaleinc;
+		m_dscalelast += m_dscaleinc;
 	}
-	while (m_dscalefirst > m_dfirst);
+	while (m_dscalelast < m_dlast);
 
 	// adjust for too few tickmarks
 	int iTOOFEW = 5;

@@ -25,6 +25,8 @@
 #include "DAChannelsDlg.h"
 #include "DAOutputsParmsDlg.h"
 #include "dtBoardDlg.h"
+#include "adinputparmsdlg.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,15 +35,10 @@
 #define MIN_DURATION 0.1
 #define MIN_BUFLEN	32
 
-/////////////////////////////////////////////////////////////////////////////
-// CADContView
-
 IMPLEMENT_DYNCREATE(CADContView, CFormView)
 
 CADContView::CADContView()
 	: CFormView(CADContView::IDD)
-	, m_yupper(0)
-	, m_ylower(0)
 	, m_bStartOutPutMode(0)
 {
 	m_sweepduration = 1.0f;
@@ -75,13 +72,10 @@ CADContView::~CADContView()
 void CADContView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_XLAST, m_sweepduration);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_AnalogIN);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_AnalogOUT);
 	DDX_Control(pDX, IDC_XSCALE, m_adxscale);
 	DDX_Control(pDX, IDC_YSCALE, m_adyscale);
-	DDX_Text(pDX, IDC_YUPPER, m_yupper);
-	DDX_Text(pDX, IDC_YLOWER, m_ylower);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
@@ -89,7 +83,6 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_MESSAGE(WM_MYMESSAGE, &CADContView::OnMyMessage)
-	ON_EN_CHANGE(IDC_XLAST, &CADContView::OnEnChangeDuration)
 	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CADContView::OnHardwareAdchannels)
 	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CADContView::OnHardwareAdintervals)
 	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CADContView::OnHardwareDefineexperiment)
@@ -101,13 +94,10 @@ BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_BN_CLICKED(IDC_GAIN_button, &CADContView::OnBnClickedGainbutton)
 	ON_BN_CLICKED(IDC_BIAS_button, &CADContView::OnBnClickedBiasbutton)
 	ON_WM_VSCROLL()
-//	ON_BN_CLICKED(IDC_ENABLEOUTPUT, &CADContView::OnBnClickedEnableoutput)
 	ON_BN_CLICKED(IDC_DAPARAMETERS, &CADContView::OnBnClickedDaparameters)
 	ON_BN_CLICKED(IDC_DAPARAMETERS2, &CADContView::OnBnClickedDaparameters2)
 	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &CADContView::OnCbnSelchangeComboboard)
 	ON_BN_CLICKED(IDC_STARTSTOP, &CADContView::OnBnClickedStartstop)
-	ON_EN_CHANGE(IDC_YLOWER, &CADContView::OnEnChangeYlower)
-	ON_EN_CHANGE(IDC_YUPPER, &CADContView::OnEnChangeYupper)
 	ON_BN_CLICKED(IDC_WRITETODISK, &CADContView::OnBnClickedWriteToDisk)
 	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &CADContView::OnBnClickedOscilloscope)
 	ON_BN_CLICKED(IDC_CARDFEATURES, &CADContView::OnBnClickedCardfeatures)
@@ -155,11 +145,6 @@ HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// DT Openlayer board functions
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
 BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 
 	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 1, CADContView::OnBufferDone_ADC, VTS_NONE)
@@ -173,13 +158,6 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::OnTriggerError_DAC, VTS_NONE)
 
 END_EVENTSINK_MAP()
-
-// --------------------------------------------------------------------------
-// open DT layer board connection to driver
-//
-// all parameters are stored or come from the parameters array
-// OPTIONS_ACQDATA, structure that is present in the program's main memory
-// m_Analog.GetHDass() = NULL
 
 void CADContView::OnCbnSelchangeComboboard()
 {
@@ -250,7 +228,6 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	return TRUE;
 }
 
-// get Analog to Digital parameters
 BOOL CADContView::ADC_OpenSubSystem(CString cardName) 
 {
 	try
@@ -309,16 +286,6 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 
 	return TRUE;
 }
-
-// --------------------------------------------------------------------------
-// set up configuration of the AD parameters of the board
-// called when a data acquisition parameter is changed
-// copy parameters stored within m_pacqdef
-//
-// all parameters are stored or come from the parameters array OPTIONS_ACQDATA
-// This structure is present in the program's main memory at the end of this routine
-// This parameters array is passed to the current document 
-// and the data buffer is modified accordingly to handle the flow of data
 
 BOOL CADContView::ADC_InitSubSystem()
 {
@@ -1274,9 +1241,6 @@ void CADContView::displayolDaErrorMessage(CHAR* errstr)
 	AfxMessageBox(csError);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CADContView diagnostics
-
 #ifdef _DEBUG
 void CADContView::AssertValid() const
 {
@@ -1296,37 +1260,24 @@ CdbWaveDoc* CADContView::GetDocument() // non-debug version is inline
 
 #endif //_DEBUG
 
-/////////////////////////////////////////////////////////////////////////////
-// CADContView overriden functions
-/////////////////////////////////////////////////////////////////////////////
-
 CDaoRecordset* CADContView::OnGetRecordset()
 {
 	return m_ptableSet;
 }
 
-// --------------------------------------------------------------------------
-// initial settings
-
 void CADContView::OnInitialUpdate()
 {
 	// attach controls
 	VERIFY(m_ADsourceView.SubclassDlgItem(IDC_DISPLAYDATA, this));
-	VERIFY(mm_sweepduration.SubclassDlgItem(IDC_XLAST, this));
-	VERIFY(mm_yupper.SubclassDlgItem(IDC_YUPPER, this));
-	VERIFY(mm_ylower.SubclassDlgItem(IDC_YLOWER, this));
 	m_stretch.AttachParent(this);
 
 	m_stretch.newProp(IDC_DISPLAYDATA,		XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_YLOWER,			SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_XLAST,			SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_STATICSWEEPLENGTH,SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_XSCALE, 			XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_YSCALE,			SZEQ_XLEQ, YTEQ_YBEQ);
 
 	m_stretch.newProp(IDC_GAIN_button, 		SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_BIAS_button,		SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_SCROLLY_scrollbar,SZEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_YSCALE, 			SZEQ_XLEQ, YTEQ_YBEQ);
 
 	// bitmap buttons: load icons & set buttons
 	m_hBias=AfxGetApp()->LoadIcon(IDI_BIAS);
@@ -1423,7 +1374,6 @@ void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CADContView::UpdateHorizontalRulerBar()
 {
-	// update horizontal scale
 	CWaveFormat* pwaveFormat = &(m_pADC_options->waveFormat);
 	float samplingrate = pwaveFormat->chrate;
 	float timefirst = m_ADsourceView.GetDataFirst()/samplingrate;
@@ -1433,17 +1383,13 @@ void CADContView::UpdateHorizontalRulerBar()
 
 void CADContView::UpdateChanVerticalRulerBar(int chan)
 {
-	// update vertical scale
 	int ichan = 0;
 	int max =  m_ADsourceView.FromChanlistPixeltoBin(ichan, 0);
 	float xmax = m_ADsourceView.GetChanlistBintoMilliVolts(ichan, max);
 	int min = m_ADsourceView.FromChanlistPixeltoBin(ichan, m_ADsourceView.Height());
 	float xmin = m_ADsourceView.GetChanlistBintoMilliVolts(ichan, min);
 	m_adyscale.SetRange(&xmin, &xmax);
-	// TODO update m_ylower & m_yupper
 }
-
-// --------------------------------------------------------------------------
 
 void CADContView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
@@ -1458,11 +1404,6 @@ void CADContView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* p
 	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CADContView message handlers
-
-// --------------------------------------------------------------------------
-// OnSize() update position of controls
 void CADContView::OnSize(UINT nType, int cx, int cy) 
 {
 	switch (nType)
@@ -1483,9 +1424,6 @@ void CADContView::OnSize(UINT nType, int cx, int cy)
 	}
 	CFormView::OnSize(nType, cx, cy);	
 }
-
-// --------------------------------------------------------------------------
-// answer to message from either sourceview or other ...
 
 LRESULT CADContView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
@@ -1515,9 +1453,6 @@ LRESULT CADContView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	}
 	return 0L;
 }
-
-// ---------------------------------------------------------------
-// toggle data acquisition ON/OFF
 
 void CADContView::OnBnClickedStartstop()
 {
@@ -1578,79 +1513,6 @@ void CADContView::UpdateStartStop(BOOL bStart)
 	// change display
 	m_ADsourceView.Invalidate();
 }
-
-// --------------------------------------------------------------------------
-// change total sweep duration - modify buffers
-
-void CADContView::OnEnChangeDuration() 
-{
-	if (!mm_sweepduration.m_bEntryDone)
-		return;
-
-	float duration = m_sweepduration;
-	switch (mm_sweepduration.m_nChar)
-	{				// load data from edit controls
-	case VK_RETURN:	
-		UpdateData(TRUE);
-		duration = m_sweepduration;
-		m_sweepduration = 0.f;
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		duration++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:   
-		duration--;	
-		break;
-	}
-	// check boundaries	
-	if (duration < MIN_DURATION)	// minimum duration
-		duration = (float) MIN_DURATION;
-	// max duration ?
-
-	// change display if necessary
-	BOOL flag=FALSE;
-	if (m_sweepduration != duration)
-	{
-		StopAcquisition(TRUE);
-		UpdateStartStop(FALSE);
-		CWaveFormat* pWFormat = &(m_pADC_options->waveFormat);
-		pWFormat->buffersize = (WORD) (duration 
-			* pWFormat->chrate
-			* pWFormat->scan_count)
-			/ pWFormat->bufferNitems;
-		ADC_DeclareBuffers();
-	}
-	// update CMyEdit control
-	mm_sweepduration.m_bEntryDone=FALSE;	// clear flag
-	mm_sweepduration.m_nChar=0;				// empty buffer
-	mm_sweepduration.SetSel(0, -1);			// select all text
-	// update data stored
-	m_pADC_options->sweepduration = m_sweepduration;
-	// display result
-	UpdateData(FALSE);
-	return;
-}
-
-// --------------------------------------------------------------------------
-
-//void CADContView::OnWritetoDisk() 
-//{
-//	UpdateData(TRUE);
-//	BOOL bADon = m_bADinprogress;		// save state of data acquisition
-//	if (bADon)							// if acquisition running, stop it
-//	{
-//		StopAcquisition(TRUE);
-//		UpdateStartStop(FALSE);
-//	}
-//	m_pADC_options->waveFormat.bADwritetofile = m_bADwritetofile;
-//	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
-//	if (bADon)							// if acquisition was running, restart
-//		OnBnClickedStartstop();
-//}
-
-// --------------------------------------------------------------------------
 
 void CADContView::OnHardwareDefineexperiment()
 {
@@ -1717,14 +1579,6 @@ BOOL CADContView::Defineexperiment()
 	return TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-// HARDWARE
-/////////////////////////////////////////////////////////////////////////////////////
-
-// --------------------------------------------------------------------------
-// OnHardwareAdchannels
-#include "adinputparmsdlg.h"
-
 void CADContView::OnHardwareAdchannels() 
 {
 	if (m_ADC_inprogress)
@@ -1758,9 +1612,6 @@ void CADContView::OnHardwareAdchannels()
 			ChainDialog(dlg.m_postmessage);	
 	}
 }
-
-// --------------------------------------------------------------------------
-// OnHardwareAdintervals
 
 void CADContView::OnHardwareAdintervals()
 {
@@ -1796,15 +1647,6 @@ void CADContView::OnHardwareAdintervals()
 	}
 }
 
-// --------------------------------------------------------------------------
-// Chaindialog
-// some dialogs return an ID in a parameter
-// (OnHardware.. adchannels, adtrigger, adintervals)
-// this routine launch the dialog box corresponding to this ID
-// ! this ID must be different from the menu_ID, otherwise, when the
-// corresponding button is depressed, the dialog box is CALLED over the
-// current one..
-
 void CADContView::ChainDialog(WORD iID)
 {
 	WORD menuID;
@@ -1823,10 +1665,6 @@ void CADContView::ChainDialog(WORD iID)
 	PostMessage(WM_COMMAND, menuID, NULL);
 	return;
 }
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void CADContView::OnTriggerError_ADC() 
 {
@@ -1946,9 +1784,6 @@ void CADContView::OnBufferDone_DAC()
 		m_AnalogOUT.SetQueue((long)m_DAC_bufhandle);
 	}
 }
-
-// --------------------------------------------------------------------------
-// transfert DT buffer to acqDataDoc buffer
 
 void CADContView::ADC_Transfer(short* pDTbuf0)
 {
@@ -2219,8 +2054,6 @@ void CADContView::UpdateChanLegends(int chan)
 	int yextent = m_ADsourceView.GetChanlistYextent(ichan);
 	float mVperbin= m_ADsourceView.GetChanlistVoltsperBin(ichan)*1000.0f;
 	int binzero = 0;
-	m_yupper=( yextent/2 +yzero -binzero)*mVperbin;
-	m_ylower=(-yextent/2 +yzero -binzero)*mVperbin;
 }
 
 float CADContView::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain)
@@ -2332,74 +2165,6 @@ void CADContView::OnBnClickedDaparameters2()
 	}
 }
 
-void CADContView::OnEnChangeYlower()
-{
-	if (!mm_ylower.m_bEntryDone)
-		return;
-
-	switch (mm_ylower.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE);
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_ylower++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_ylower--;
-		break;
-	}	
-	
-	for (int i=0; i < m_ADsourceView.GetChanlistSize(); i++)
-		m_ADsourceView.SetChanlistmilliVoltsMaxMin(i, m_yupper, m_ylower);
-	m_ADsourceView.Invalidate();
-	UpdateGainScroll();
-	UpdateBiasScroll();
-	int ichan = 0;
-	UpdateChanLegends(ichan);
-	UpdateChanVerticalRulerBar(ichan);
-
-	mm_ylower.m_bEntryDone=FALSE;
-	mm_ylower.m_nChar=0;
-	mm_ylower.SetSel(0, -1); 	//select all text
-}
-
-void CADContView::OnEnChangeYupper()
-{
-	if (!mm_yupper.m_bEntryDone)
-		return;
-
-	switch (mm_yupper.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE);
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_yupper++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_yupper--;
-		break;
-	}	
-	
-	for (int i=0; i < m_ADsourceView.GetChanlistSize(); i++)
-		m_ADsourceView.SetChanlistmilliVoltsMaxMin(i, m_yupper, m_ylower);
-	m_ADsourceView.Invalidate();
-	UpdateGainScroll();
-	UpdateBiasScroll();
-	int ichan = 0;
-	UpdateChanLegends(ichan);
-	UpdateChanVerticalRulerBar(ichan);
-
-	mm_yupper.m_bEntryDone=FALSE;
-	mm_yupper.m_nChar=0;
-	mm_yupper.SetSel(0, -1); 	//select all text
-}
-
 void CADContView::OnBnClickedWriteToDisk()
 {
 	m_bADwritetofile=TRUE;
@@ -2431,7 +2196,6 @@ void CADContView::OnBnClickedCardfeatures()
 	int iout = dlg.DoModal();
 	iout++;
 }
-
 
 void CADContView::OnBnClickedStartstop2()
 {

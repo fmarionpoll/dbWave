@@ -22,7 +22,7 @@ public:
 // Attributes
 protected:
 	CQuadStateTree		m_wndFilterView;
-	CFilterToolBar	m_wndToolBar;
+	CFilterToolBar		m_wndToolBar;
 
 	CdbWaveDoc*			m_pDoc;
 	CdbWaveDoc*			m_pDocOld;
@@ -31,7 +31,6 @@ protected:
 
 protected:
 	void InitFilterList();
-	//void PopulateItemFromTableText(CStringArray &csArray, DB_ITEMDESC* pdesc);
 	void PopulateItemFromTableLong(DB_ITEMDESC* pdesc);
 	void PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc);
 	void PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc);
