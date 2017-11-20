@@ -79,48 +79,48 @@ void CIntervalsArray::Serialize(CArchive& ar)
 }
 
 // -------------------------------------------------------
-
-IMPLEMENT_SERIAL(CIntervalPoint, CObject, 0 )
-
-CIntervalPoint::CIntervalPoint()
-{
-	ii = 0;
-	w = 0;
-}
-
-CIntervalPoint::CIntervalPoint(const CIntervalPoint& pt)
-{
-	ii = pt.ii;
-	w = pt.w;
-}
-
-CIntervalPoint::~CIntervalPoint()
-{
-}
-
-void CIntervalPoint::Serialize(CArchive & ar)
-{
-	if (ar.IsStoring())
-	{
-		int n = 2;
-		ar << n;
-		ar << ii;
-		ar << w;
-	}
-	else
-	{
-		int n;
-		ar >> n;
-		if (n>0) ar >> ii;	n--;
-		if (n>0) ar >> w;	n--;
-	}
-}
-
-void CIntervalPoint::operator = (const CIntervalPoint & arg)
-{
-	ii = arg.ii;
-	w = arg.w;
-}
+//
+//IMPLEMENT_SERIAL(CIntervalPoint, CObject, 0 )
+//
+//CIntervalPoint::CIntervalPoint()
+//{
+//	ii = 0;
+//	w = 0;
+//}
+//
+//CIntervalPoint::CIntervalPoint(const CIntervalPoint& pt)
+//{
+//	ii = pt.ii;
+//	w = pt.w;
+//}
+//
+//CIntervalPoint::~CIntervalPoint()
+//{
+//}
+//
+//void CIntervalPoint::Serialize(CArchive & ar)
+//{
+//	if (ar.IsStoring())
+//	{
+//		int n = 2;
+//		ar << n;
+//		ar << ii;
+//		ar << w;
+//	}
+//	else
+//	{
+//		int n;
+//		ar >> n;
+//		if (n>0) ar >> ii;	n--;
+//		if (n>0) ar >> w;	n--;
+//	}
+//}
+//
+//void CIntervalPoint::operator = (const CIntervalPoint & arg)
+//{
+//	ii = arg.ii;
+//	w = arg.w;
+//}
 
 // --------------------------------------------------------
 

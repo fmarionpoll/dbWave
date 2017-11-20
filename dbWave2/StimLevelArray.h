@@ -33,18 +33,9 @@ protected:
 
 // ----------------------------------------------
 
-class CIntervalPoint : public CObject
-{
-	DECLARE_SERIAL(CIntervalPoint)
-	CIntervalPoint();
-	CIntervalPoint(const CIntervalPoint& pt);
-	~CIntervalPoint();
-	virtual void Serialize(CArchive& ar);
-	void operator = (const CIntervalPoint& arg);
-
-public:
-	long ii;		// n clock intervals
-	WORD w;			// word associated to this time interval
+struct CIntervalPoint  {
+	long ii;
+	WORD w;
 };
 
 // ----------------------------------------------

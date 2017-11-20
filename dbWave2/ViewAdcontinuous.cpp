@@ -1762,7 +1762,7 @@ void CADContView::OnBufferDone_ADC()
 		if (pWFormat->bOnlineDisplay)								// display data if requested
 			m_ADsourceView.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
 		CString cs;
-		cs.Format(_T("%.3lf"), duration);								// update total time on the screen
+		cs.Format(_T("%.3lf"), duration);							// update total time on the screen
 		SetDlgItemText(IDC_STATIC1, cs);							// update time elapsed
 	}
 }

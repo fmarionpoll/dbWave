@@ -66,6 +66,7 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 	m_stretch.newProp(IDC_COPY,			SZEQ_XREQ,SZEQ_YTEQ);
 	m_stretch.newProp(IDC_PASTE,		SZEQ_XREQ,SZEQ_YTEQ);
 	m_stretch.newProp(IDC_BUTTON1,		SZEQ_XREQ,SZEQ_YTEQ);
+	m_stretch.newProp(IDC_EXPORT,		SZEQ_XREQ, SZEQ_YTEQ);
 
 	m_stretch.newProp(IDC_SIZEBOX,		SZEQ_XREQ,SZEQ_YBEQ);
 	m_stretch.newProp(IDC_EDIT,			SZEQ_XLEQ,SZEQ_YBEQ);

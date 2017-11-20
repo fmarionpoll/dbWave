@@ -106,6 +106,7 @@ protected:
 	BOOL				m_bsimultaneousStartAD;
 
 	OPTIONS_OUTPUTDATA*	m_pDAC_options;		// pointer to data output options
+	CArray <OUTPUTPARMS, OUTPUTPARMS> m_DAC_chanList;
 	BOOL				m_DAC_inprogress;	// D/A in progress
 	HBUF				m_DAC_bufhandle;
 	long				m_DAC_buflen;		// nb of acq sample per DT buffer
@@ -113,8 +114,7 @@ protected:
 	BOOL				m_bsimultaneousStartDA;
 	long				m_DAC_nBuffersFilledSinceStart;
 	double				m_DAC_frequency;
-	CArray <OUTPUTPARMS, OUTPUTPARMS> m_DAC_chanList;
-
+	
 	// sweep
 	long				m_chsweeplength;	// sweep length (per channel)
 	long				m_sweeplength;		// sweep length (all channels)
