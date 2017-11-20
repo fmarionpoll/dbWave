@@ -368,6 +368,109 @@ BOOL CADContView::ADC_InitSubSystem()
 	return TRUE;
 }
 
+void CADContView::ADC_DeclareBuffers()
+{
+	// close data buffers
+	ADC_DeleteBuffers();
+
+	// make sure that buffer length contains at least nacq chans
+	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat); // get pointer to m_pADC_options wave format
+	if (pWFormat->buffersize < pWFormat->scan_count*m_pADC_options->iundersample)
+		pWFormat->buffersize = pWFormat->scan_count*m_pADC_options->iundersample;
+
+	// define buffer length
+	m_sweepduration = m_pADC_options->sweepduration;
+	m_chsweeplength = (long)(m_sweepduration* pWFormat->chrate / (float)m_pADC_options->iundersample);
+	m_ADC_chbuflen = m_chsweeplength * m_pADC_options->iundersample / pWFormat->bufferNitems;
+	m_ADC_buflen = m_ADC_chbuflen * pWFormat->scan_count;
+
+	// declare buffers to DT
+	ECODE ecode;
+	for (int i = 0; i < pWFormat->bufferNitems; i++)
+	{
+		ecode = olDmAllocBuffer(0, m_ADC_buflen, &m_ADC_bufhandle);
+		ecode = OLNOERROR;
+		if ((ecode == OLNOERROR) && (m_ADC_bufhandle != NULL))
+			m_AnalogIN.SetQueue((long)m_ADC_bufhandle); // but buffer onto Ready queue
+	}
+
+	// set sweep length to the nb of data buffers
+	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * (long)pWFormat->scan_count;	// ?
+	m_inputDataFile.AdjustBUF(m_chsweeplength);
+	*(m_inputDataFile.GetpWaveFormat()) = *pWFormat;	// save settings into data file	
+
+														// update display length (and also the text - abcissa)	
+	m_ADsourceView.AttachDataFile(&m_inputDataFile, 0);
+	m_ADsourceView.ResizeChannels(0, m_chsweeplength);
+	if (m_ADsourceView.GetChanlistSize() != pWFormat->scan_count)
+	{
+		m_ADsourceView.RemoveAllChanlistItems();
+		for (int j = 0; j< pWFormat->scan_count; j++)
+			m_ADsourceView.AddChanlistItem(j, 0);
+	}
+
+	// adapt source view 
+	int iextent = MulDiv(pWFormat->fullscale_bins, 12, 10);
+	if (m_pADC_options->izoomCursel != 0)
+		iextent = m_pADC_options->izoomCursel;
+	int ioffset = 0;
+	for (int i = 0; i < pWFormat->scan_count; i++)
+	{
+		m_ADsourceView.SetChanlistZero(i, ioffset);	// combine calls into one?
+		m_ADsourceView.SetChanlistYextent(i, iextent);
+		m_ADsourceView.SetChanlistColor(i, i);
+	}
+	m_ADsourceView.Invalidate();
+	UpdateData(FALSE);
+}
+
+void CADContView::ADC_DeleteBuffers()
+{
+	try {
+		if (m_AnalogIN.GetHDass() == NULL)
+			return;
+		m_AnalogIN.Flush();	// clean
+		HBUF hBuf = NULL;			// handle to buffer
+		do {				// loop until all buffers are removed
+			hBuf = (HBUF)m_AnalogIN.GetQueue();
+			if (hBuf != NULL)
+				if (olDmFreeBuffer(hBuf) != OLNOERROR)
+					AfxMessageBox(_T("Error Freeing Buffer"));
+		} while (hBuf != NULL);
+		m_ADC_bufhandle = hBuf;
+	}
+	catch (COleDispatchException* e)
+	{
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
+		e->Delete();
+	}
+}
+
+void CADContView::ADC_Stop()
+{
+	try {
+		m_AnalogIN.Stop();
+		m_AnalogIN.Flush();							// flush all buffers to Done Queue
+		HBUF hBuf;
+		do {
+			hBuf = (HBUF)m_AnalogIN.GetQueue();
+			if (hBuf != NULL) m_AnalogIN.SetQueue((long)hBuf);
+		} while (hBuf != NULL);
+		m_ADsourceView.ADdisplayStop();
+		m_bchanged = TRUE;
+	}
+	catch (COleDispatchException* e)
+	{
+		CString myError;
+		myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
+		AfxMessageBox(myError);
+		e->Delete();
+	}
+	m_ADC_inprogress = FALSE;
+}
+
 BOOL CADContView::DAC_OpenSubSystem(CString cardName)
 {
 	try
@@ -529,30 +632,6 @@ void CADContView::DAC_ConvertOptionsIntoChanList()
 	}
 }
 
-void CADContView::ADC_DeleteBuffers()
-{
-	try {
-		if (m_AnalogIN.GetHDass() == NULL)
-			return;
-		m_AnalogIN.Flush();	// clean
-		HBUF hBuf = NULL;			// handle to buffer
-		do	{				// loop until all buffers are removed
-			hBuf = (HBUF) m_AnalogIN.GetQueue();
-			if (hBuf != NULL)
-				if (olDmFreeBuffer(hBuf) != OLNOERROR)
-					AfxMessageBox(_T("Error Freeing Buffer"));
-		} while (hBuf != NULL);
-		m_ADC_bufhandle = hBuf;
-	}
-	catch (COleDispatchException* e)
-	{
-		CString myError;
-		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
-		AfxMessageBox(myError);
-		e->Delete();
-	}
-}
-
 void CADContView::DAC_DeleteBuffers()
 {
 	try {
@@ -576,62 +655,6 @@ void CADContView::DAC_DeleteBuffers()
 		AfxMessageBox(myError);
 		e->Delete();
 	}
-}
-
-void CADContView::ADC_DeclareBuffers()
-{
-	// close data buffers
-	ADC_DeleteBuffers();
-
-	// make sure that buffer length contains at least nacq chans
-	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat); // get pointer to m_pADC_options wave format
-	if (pWFormat->buffersize < pWFormat->scan_count*m_pADC_options->iundersample)
-		pWFormat->buffersize = pWFormat->scan_count*m_pADC_options->iundersample;
-
-	// define buffer length
-	m_sweepduration = m_pADC_options->sweepduration;
-	m_chsweeplength = (long) (m_sweepduration* pWFormat->chrate / (float) m_pADC_options->iundersample);
-	m_ADC_chbuflen = m_chsweeplength * m_pADC_options->iundersample / pWFormat->bufferNitems;
-	m_ADC_buflen = m_ADC_chbuflen * pWFormat->scan_count;
-	
-	// declare buffers to DT
-	ECODE ecode;
-	for (int i=0; i < pWFormat->bufferNitems; i++)
-	{ 
-		ecode = olDmAllocBuffer(0, m_ADC_buflen, &m_ADC_bufhandle);
-		ecode = OLNOERROR;
-		if((ecode == OLNOERROR)&&(m_ADC_bufhandle != NULL))
-			m_AnalogIN.SetQueue((long)m_ADC_bufhandle); // but buffer onto Ready queue
-	}
-
-	// set sweep length to the nb of data buffers
-	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * (long) pWFormat->scan_count;	// ?
-	m_inputDataFile.AdjustBUF(m_chsweeplength);
-	*(m_inputDataFile.GetpWaveFormat()) = *pWFormat;	// save settings into data file	
-
-	// update display length (and also the text - abcissa)	
-	m_ADsourceView.AttachDataFile(&m_inputDataFile, 0);
-	m_ADsourceView.ResizeChannels(0, m_chsweeplength);
-	if (m_ADsourceView.GetChanlistSize() != pWFormat->scan_count)
-	{
-		m_ADsourceView.RemoveAllChanlistItems();
-		for (int j = 0; j< pWFormat->scan_count; j++)
-			m_ADsourceView.AddChanlistItem(j, 0);
-	}
-
-	// adapt source view 
-	int iextent =  MulDiv(pWFormat->fullscale_bins, 12, 10);
-	if (m_pADC_options->izoomCursel != 0)
-		iextent = m_pADC_options->izoomCursel;
-	int ioffset = 0; 
-	for (int i = 0; i < pWFormat->scan_count; i++)
-	{    	
-		m_ADsourceView.SetChanlistZero(i, ioffset);	// combine calls into one?
-		m_ADsourceView.SetChanlistYextent(i, iextent);
-		m_ADsourceView.SetChanlistColor(i, i);
-	}
-	m_ADsourceView.Invalidate();
-	UpdateData(FALSE);
 }
 
 void CADContView::DAC_DeclareAndFillBuffers()
@@ -806,6 +829,7 @@ void CADContView::DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan)
 void CADContView::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan)
 {
 	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+
 	double	ampUp = parmsChan->ampUp;
 	double  ampLow = parmsChan->ampLow;
 	long	msbit = (long)pow(2.0, (m_AnalogOUT.GetResolution() - 1));
@@ -907,34 +931,52 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 {
 	for (int i = 0; i <  m_AnalogOUT.GetListSize(); i++)
 	{
-		switch (m_DAC_chanList.GetAt(i).iWaveform)
+		if (!m_DAC_chanList.GetAt(i).bDigital) 
 		{
-		case DA_SINEWAVE:
-			DAC_FillBufferWith_SINUSOID(pDTbuf, i);
-			break;
-		case DA_SQUAREWAVE:
-			DAC_FillBufferWith_SQUARE(pDTbuf, i);
-			break;
-		case DA_TRIANGLEWAVE:
-			DAC_FillBufferWith_TRIANGLE(pDTbuf, i);
-			break;
-		case DA_LINEWAVE:
-			DAC_FillBufferWith_RAMP(pDTbuf, i);
-			break;
-		case DA_SEQUENCEWAVE:
-			DAC_FillBufferWith_ONOFFSeq(pDTbuf, i);
-			break;
-		case DA_MSEQWAVE:
-			DAC_FillBufferWith_MSEQ(pDTbuf, i);
-			break;
-		case DA_CONSTANT:
-		default:
-			DAC_FillBufferWith_CONSTANT(pDTbuf, i);
-			break;
-		}// end switch
+			switch (m_DAC_chanList.GetAt(i).iWaveform)
+			{
+			case DA_SINEWAVE:
+				DAC_FillBufferWith_SINUSOID(pDTbuf, i);
+				break;
+			case DA_SQUAREWAVE:
+				DAC_FillBufferWith_SQUARE(pDTbuf, i);
+				break;
+			case DA_TRIANGLEWAVE:
+				DAC_FillBufferWith_TRIANGLE(pDTbuf, i);
+				break;
+			case DA_LINEWAVE:
+				DAC_FillBufferWith_RAMP(pDTbuf, i);
+				break;
+			case DA_SEQUENCEWAVE:
+				DAC_FillBufferWith_ONOFFSeq(pDTbuf, i);
+				break;
+			case DA_MSEQWAVE:
+				DAC_FillBufferWith_MSEQ(pDTbuf, i);
+				break;
+			case DA_CONSTANT:
+			default:
+				DAC_FillBufferWith_CONSTANT(pDTbuf, i);
+				break;
+			}
+		}
+		else
+		{
+			switch (m_DAC_chanList.GetAt(i).iWaveform)
+			{
+			case DA_SQUAREWAVE:
+				DAC_FillBufferWith_SQUARE(pDTbuf, i);
+				break;
+			case DA_SEQUENCEWAVE:
+				DAC_FillBufferWith_ONOFFSeq(pDTbuf, i);
+				break;
+			case DA_MSEQWAVE:
+				DAC_FillBufferWith_MSEQ(pDTbuf, i);
+				break;
+			default:
+				break;
+			}
+		}
 	}
-
-	 // update number of buffers processed
 	m_DAC_nBuffersFilledSinceStart++;
 }
 
@@ -961,29 +1003,6 @@ void CADContView::DAC_Stop()
 		e->Delete();
 	}
 	m_DAC_inprogress=FALSE; 
-}
-
-void CADContView::ADC_Stop()
-{
-	try {
-		m_AnalogIN.Stop();
-		m_AnalogIN.Flush();							// flush all buffers to Done Queue
-		HBUF hBuf;
-		do {
-			hBuf = (HBUF) m_AnalogIN.GetQueue();
-			if (hBuf != NULL) m_AnalogIN.SetQueue((long)hBuf);
-		} while (hBuf != NULL);
-		m_ADsourceView.ADdisplayStop();
-		m_bchanged = TRUE;
-	}
-	catch (COleDispatchException* e)
-	{
-		CString myError;
-		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
-		AfxMessageBox(myError);
-		e->Delete();
-	}
-	m_ADC_inprogress = FALSE;
 }
 
 void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)

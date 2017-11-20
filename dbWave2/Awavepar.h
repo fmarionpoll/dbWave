@@ -417,6 +417,7 @@ public:
 
 	BOOL	bON;									// channel authorized or not
 	int		iChan;									// chan 
+	BOOL	bDigital;								// digital or Analog
 	double	dAmplitudeMaxV;							// maximum amplitude of the signal
 	double	dAmplitudeMinV;							// minimum amplitude of the signal
 	double	dFrequency;								// frequency of the output signal

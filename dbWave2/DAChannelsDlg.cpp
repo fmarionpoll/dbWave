@@ -25,6 +25,7 @@ CDAChannelsDlg::CDAChannelsDlg(CWnd* pParent /*=NULL*/)
 	, m_ffrequence0(0)
 	, m_famplitude1(0)
 	, m_ffrequence1(0)
+	, m_ffrequence2(0)
 {
 
 }
@@ -45,8 +46,8 @@ void CDAChannelsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDITAMPLITUDE1, m_famplitude1);
 	DDX_Text(pDX, IDC_EDITAMPLITUDELOW1, m_famplitudelow1);
 	DDX_Text(pDX, IDC_EDITFREQ1, m_ffrequence1);
+	DDX_Text(pDX, IDC_EDITFREQ2, m_ffrequence2);
 }
-
 
 BEGIN_MESSAGE_MAP(CDAChannelsDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE0, &CDAChannelsDlg::OnCbnSelchangeCombosource0)
@@ -61,9 +62,7 @@ BEGIN_MESSAGE_MAP(CDAChannelsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTONSOURCE2, &CDAChannelsDlg::OnBnClickedButtonsource2)
 END_MESSAGE_MAP()
 
-
 // CDAChannelsDlg message handlers
-
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 {
@@ -78,10 +77,10 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 		GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(FALSE);
 		return;
 	}
-	else
-		GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(TRUE);
 
-	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->GetCurSel();
+	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0));
+	pCombo->EnableWindow(TRUE);
+	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
 	BOOL	bEnable = TRUE;
 	BOOL	bEnable2 = TRUE;
 	BOOL	bEnable2b = TRUE;
@@ -114,13 +113,10 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 	GetDlgItem(IDC_STATIC00)->EnableWindow(bEnable2); 
 	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(bEnable2);
 	GetDlgItem(IDC_EDITAMPLITUDELOW0)->EnableWindow(bEnable2b);
-
 	GetDlgItem(IDC_STATIC01)->EnableWindow(bEnable);
 	GetDlgItem(IDC_EDITFREQ0)->EnableWindow(bEnable);
-
 	GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(bEnable3);
 }
-
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 {
@@ -135,10 +131,10 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 		GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(FALSE);
 		return;
 	}
-	else
-		GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(TRUE);
 
-	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->GetCurSel();
+	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1));
+	pCombo->EnableWindow(TRUE);
+	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
 	BOOL	bEnable = TRUE;
 	BOOL	bEnable2 = TRUE;
 	BOOL	bEnable2b = TRUE;
@@ -171,7 +167,6 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 	GetDlgItem(IDC_STATIC10)->EnableWindow(bEnable2);
 	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(bEnable2);
 	GetDlgItem(IDC_EDITAMPLITUDELOW1)->EnableWindow(bEnable2b);
-
 	GetDlgItem(IDC_STATIC11)->EnableWindow(bEnable);
 	GetDlgItem(IDC_EDITFREQ1)->EnableWindow(bEnable);
 	GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(bEnable3);
@@ -185,11 +180,36 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource2()
 		GetDlgItem(IDC_BUTTONSOURCE2)->EnableWindow(FALSE);
 		return;
 	}
-	else
-		GetDlgItem(IDC_COMBOSOURCE2)->EnableWindow(TRUE);
 
+	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
+	pCombo->EnableWindow(TRUE);
+	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
+	BOOL	bEnable = TRUE;
+	BOOL	bEnable2 = TRUE;
+	switch (isel) {
+		case DA_SEQUENCEWAVE:	// sequence
+		case DA_MSEQWAVE:		// M-seq
+			bEnable = FALSE;
+			break;
+		case DA_SQUAREWAVE:		// square
+			bEnable = TRUE;
+			bEnable2 = FALSE;
+			break;
+		case DA_CONSTANT:
+		case DA_NOISEWAVE:		// Noise
+		case DA_FILEWAVE:		// data file
+		case DA_SINEWAVE:		// sinusoid
+		case DA_TRIANGLEWAVE:	// triangle
+		default:
+			bEnable = FALSE;
+			bEnable2 = FALSE;
+			break;
+	}
+	GetDlgItem(IDC_BUTTONSOURCE2)->EnableWindow(bEnable2);
+	GetDlgItem(IDC_COMBOCHANDIGITAL)->EnableWindow(bEnable2);
+	GetDlgItem(IDC_STATIC12)->EnableWindow(bEnable);
+	GetDlgItem(IDC_EDITFREQ2)->EnableWindow(bEnable);
 }
-
 
 void CDAChannelsDlg::OnBnClickedOk()
 {
@@ -200,63 +220,136 @@ void CDAChannelsDlg::OnBnClickedOk()
 		m_outD.parmsChan.SetSize(3);
 
 	int channel = 0;
+	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0));
 	m_outD.parmsChan.GetAt(channel).iChan = channel;
 	m_outD.parmsChan.GetAt(channel).bON = m_bChannel0;
-	m_outD.parmsChan.GetAt(channel).iWaveform = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->GetCurSel();
+	m_outD.parmsChan.GetAt(channel).bDigital = FALSE;
+	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo->GetItemData(pCombo->GetCurSel());
 	m_outD.parmsChan.GetAt(channel).dAmplitudeMaxV = m_famplitude0;
 	m_outD.parmsChan.GetAt(channel).dAmplitudeMinV = m_famplitudelow0;
 	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence0;
 	
 	channel = 1;
+	pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1));
 	m_outD.parmsChan.GetAt(channel).iChan = channel;
 	m_outD.parmsChan.GetAt(channel).bON = m_bChannel1;
-	m_outD.parmsChan.GetAt(channel).iWaveform = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->GetCurSel();
+	m_outD.parmsChan.GetAt(channel).bDigital = FALSE;
+	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo->GetItemData(pCombo->GetCurSel());
 	m_outD.parmsChan.GetAt(channel).dAmplitudeMaxV = m_famplitude1;
 	m_outD.parmsChan.GetAt(channel).dAmplitudeMinV = m_famplitudelow1;
 	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence1;
 	
 	channel = 2;
+	pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
+	m_outD.parmsChan.GetAt(channel).bDigital = TRUE;
 	m_outD.parmsChan.GetAt(channel).iChan = channel;
 	m_outD.parmsChan.GetAt(channel).bON = m_bChannel2;
+	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence2;
+	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo->GetItemData(pCombo->GetCurSel());
 
 	CDialogEx::OnOK();
 }
 
+CString CDAChannelsDlg::comboText[] = { _T("Stored sequence"), _T("Sinusoid"), _T("Square"), _T("Triangle"), _T("M - sequence"), _T("Noise"), _T("Data File"), _T("Constant") };
+DWORD	CDAChannelsDlg::comboVal[] = { DA_SEQUENCEWAVE, DA_SINEWAVE, DA_SQUAREWAVE, DA_TRIANGLEWAVE, DA_MSEQWAVE, DA_NOISEWAVE, DA_FILEWAVE, DA_CONSTANT, DA_LINEWAVE };
+
+void CDAChannelsDlg::FillCombo(CComboBox* pCombo, int channel)
+{
+	pCombo->ResetContent();
+	switch (channel)
+	{
+	case 0:
+	case 1:
+			for (int i = 0; i < 8; i++)
+			{
+				int j = pCombo->AddString(comboText[i]);
+				pCombo->SetItemData(j, comboVal[i]);
+			}
+			break;
+	case 2:
+	{
+		int i = 0;
+		int j = pCombo->AddString(comboText[i]);
+		pCombo->SetItemData(j, comboVal[i]);
+		i = 2;
+		j = pCombo->AddString(comboText[i]);
+		pCombo->SetItemData(j, comboVal[i]);
+		i = 4;
+		j = pCombo->AddString(comboText[i]);
+		pCombo->SetItemData(j, comboVal[i]);
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void CDAChannelsDlg::SelectComboItem(CComboBox* pCombo, DWORD val)
+{
+	int isel = 0;
+	for (isel; isel < pCombo->GetCount(); isel++)
+	{
+		if (val == pCombo->GetItemData(isel))
+			break;
+	}
+	pCombo->SetCurSel(isel);
+}
 
 BOOL CDAChannelsDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
 	int isize = m_outD.parmsChan.GetSize();
-	if (isize > 0) {
+	CComboBox* pCombo = NULL;
+
+	pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE0);
+	FillCombo(pCombo, 0);
+	if (isize > 0) 
+	{
 		m_bChannel0 = m_outD.parmsChan.GetAt(0).bON;
 		m_waveformChannel0 = m_outD.parmsChan.GetAt(0).iWaveform;
 		m_famplitude0 = m_outD.parmsChan.GetAt(0).dAmplitudeMaxV;
 		m_famplitudelow0 = m_outD.parmsChan.GetAt(0).dAmplitudeMinV;
 		m_ffrequence0 = m_outD.parmsChan.GetAt(0).dFrequency;
 	}
-	((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->SetCurSel(m_waveformChannel0);
+	SelectComboItem(pCombo, m_waveformChannel0);
 	OnCbnSelchangeCombosource0();
-
-	if (isize > 1) {
+	
+	pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE1);
+	FillCombo(pCombo, 1);
+	if (isize > 1) 
+	{
 		m_bChannel1 = m_outD.parmsChan.GetAt(1).bON;
 		m_waveformChannel1 = m_outD.parmsChan.GetAt(1).iWaveform;
 		m_famplitude1 = m_outD.parmsChan.GetAt(1).dAmplitudeMaxV;
 		m_famplitudelow1 = m_outD.parmsChan.GetAt(1).dAmplitudeMinV;
 		m_ffrequence1 = m_outD.parmsChan.GetAt(1).dFrequency;
 	}
-	((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->SetCurSel(m_waveformChannel1);
+	SelectComboItem(pCombo, m_waveformChannel1);
 	OnCbnSelchangeCombosource1();
 
-	if (isize > 2) {
+	pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE2);
+	FillCombo(pCombo, 2);
+	if (isize > 2) 
+	{
 		m_bChannel2 = m_outD.parmsChan.GetAt(2).bON;
 		m_waveformChannel2 = m_outD.parmsChan.GetAt(2).iWaveform;
+		m_ffrequence2 = m_outD.parmsChan.GetAt(2).dFrequency;
 	}
+	SelectComboItem(pCombo, m_waveformChannel2);
+	OnCbnSelchangeCombosource2();
+	pCombo = (CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL);
+	for (int i = 0; i < 8; i++)
+	{
+		CString cs;
+		cs.Format(_T("channel %i"), i);
+		pCombo->AddString(cs);
+	}
+	pCombo->SetCurSel(0);
 
 	UpdateData(FALSE);
 	return TRUE;  
 }
-
 
 void CDAChannelsDlg::OnBnClickedCheckchan0()
 {
@@ -264,98 +357,10 @@ void CDAChannelsDlg::OnBnClickedCheckchan0()
 	OnCbnSelchangeCombosource0();
 }
 
-
 void CDAChannelsDlg::OnBnClickedCheckchan1()
 {
 	UpdateData(TRUE);
 	OnCbnSelchangeCombosource1();
-}
-
-
-void CDAChannelsDlg::OnBnClickedButtonsource0()
-{
-	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->GetCurSel();
-	int channel = 0;
-	switch (isel) {
-		case DA_MSEQWAVE:		// M-seq
-			{
-				CEditDAMseqDlg dlg;
-				dlg.m_outDParms = m_outD.parmsChan.GetAt(channel);
-				if (IDOK == dlg.DoModal()) 
-				{
-					OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-					*pParms = dlg.m_outDParms;
-					pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
-				}
-			}
-			break;
-
-		case DA_SEQUENCEWAVE:	// sequence
-			{
-				CEditStimArrayDlg dlg;
-				dlg.m_pIntervalArrays.RemoveAll();
-				if (m_outD.parmsChan.GetSize() <=channel) 
-				{
-					m_outD.parmsChan.SetSize(channel + 1);
-					OUTPUTPARMS outdummy = m_outD.parmsChan.GetAt(channel);
-				}
-				dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
-				dlg.m_pstimsaved = &m_stimsaved;
-				dlg.m_rate = m_samplingRate;
-				if (IDOK == dlg.DoModal())
-				{
-					OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-					pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
-				}
-			}
-			break;
-
-		case DA_NOISEWAVE:		// Noise
-		case DA_FILEWAVE:		// data file
-		default:
-			break;
-	}
-}
-
-
-void CDAChannelsDlg::OnBnClickedButtonsource1()
-{
-	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->GetCurSel();
-	int channel = 1;
-	switch (isel) {
-		case DA_MSEQWAVE:		// M-seq
-		{
-			CEditDAMseqDlg dlg;
-			dlg.m_outDParms = m_outD.parmsChan.GetAt(channel);
-			if (IDOK == dlg.DoModal()) 
-			{
-				OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-				*pParms = dlg.m_outDParms;
-				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
-			}
-		}
-			break;
-
-		case DA_SEQUENCEWAVE:	// sequence
-		{
-			CEditStimArrayDlg dlg;
-			dlg.m_pIntervalArrays.RemoveAll();
-			dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
-			dlg.m_pstimsaved = &m_stimsaved;
-			dlg.m_rate = m_samplingRate;
-			if (IDOK == dlg.DoModal())
-			{
-				OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
-			}
-		}
-		break;
-
-		case DA_NOISEWAVE:		// Noise
-		case DA_FILEWAVE:		// data file
-		default:
-			break;
-	}
 }
 
 void CDAChannelsDlg::OnBnClickedCheckchan2()
@@ -364,44 +369,70 @@ void CDAChannelsDlg::OnBnClickedCheckchan2()
 	OnCbnSelchangeCombosource2();
 }
 
+void CDAChannelsDlg::OnBnClickedButtonsource0()
+{
+	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->GetCurSel();
+	int channel = 0;
+	EditSequence(isel, channel);
+}
+
+void CDAChannelsDlg::OnBnClickedButtonsource1()
+{
+	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->GetCurSel();
+	int channel = 1;
+	EditSequence(isel, channel);
+}
 
 void CDAChannelsDlg::OnBnClickedButtonsource2()
 {
 	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2))->GetCurSel();
 	int channel = 2;
-	switch (isel) {
-	case DA_MSEQWAVE:		// M-seq
-	{
-		CEditDAMseqDlg dlg;
-		dlg.m_outDParms = m_outD.parmsChan.GetAt(channel);
-		if (IDOK == dlg.DoModal()) 
-		{
-			OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-			*pParms = dlg.m_outDParms;
-			pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
-		}
-	}
-	break;
-
-	case DA_SEQUENCEWAVE:	// sequence
-	{
-		CEditStimArrayDlg dlg;
-		dlg.m_pIntervalArrays.RemoveAll();
-		for (int i=0; i<8; i++)
-			dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stim8lines[i]); 
-		dlg.m_pstimsaved = &m_stimsaved;
-		dlg.m_rate = m_samplingRate;
-		if (IDOK == dlg.DoModal())
-		{
-			OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-			pParms->sti.ImportAndMergeIntervalsArrays(&dlg.m_pIntervalArrays);			
-		}
-	}
-	break;
-
-	case DA_FILEWAVE:		// data file
-	default:
-		break;
-	}
+	EditSequence(isel, channel);
 }
 
+void CDAChannelsDlg::EditSequence(int isel, int channel)
+{
+	switch (isel) {
+		case DA_MSEQWAVE:		// M-seq
+		{
+			CEditDAMseqDlg dlg;
+			dlg.m_outDParms = m_outD.parmsChan.GetAt(channel);
+			if (IDOK == dlg.DoModal())
+			{
+				OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+				*pParms = dlg.m_outDParms;
+				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
+			}
+		}
+		break;
+
+		case DA_SEQUENCEWAVE:	// sequence
+		{
+			CEditStimArrayDlg dlg;
+			dlg.m_pIntervalArrays.RemoveAll();
+			if (channel < 2)
+				dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
+			else
+			{
+				for (int i = 0; i<8; i++)
+					dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stim8lines[i]);
+			}
+			dlg.m_pstimsaved = &m_stimsaved;
+			dlg.m_rate = m_samplingRate;
+			if (IDOK == dlg.DoModal())
+			{
+				OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+				if (channel < 2)
+					pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
+				else
+					pParms->sti.ImportAndMergeIntervalsArrays(&dlg.m_pIntervalArrays);
+			}
+		}
+		break;
+
+		case DA_NOISEWAVE:		// Noise
+		case DA_FILEWAVE:		// data file
+		default:
+			break;
+	}
+}

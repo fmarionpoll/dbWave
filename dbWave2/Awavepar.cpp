@@ -1564,6 +1564,7 @@ OUTPUTPARMS::OUTPUTPARMS()
 {
 	wversion=1;
 	bON = FALSE;
+	bDigital = FALSE;
 	noise_bExternal=FALSE;
 	iChan=0;
 	iWaveform=0;
@@ -1591,6 +1592,7 @@ OUTPUTPARMS::OUTPUTPARMS()
 OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
 {
 	bON = arg.bON;
+	bDigital = arg.bDigital;
 	noise_bExternal = arg.noise_bExternal;
 	iChan = arg.iChan;
 	iWaveform = arg.iWaveform;
@@ -1624,6 +1626,7 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	csFilename		=arg.csFilename;
 	noise_bExternal	=arg.noise_bExternal;
 	bON				= arg.bON;
+	bDigital		= arg.bDigital;
 	iChan			=arg.iChan;
 	iWaveform		=arg.iWaveform;
 	mseq_iRatio		=arg.mseq_iRatio;
@@ -1654,9 +1657,10 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar << (WORD) 1;			// CString 
 		ar << csFilename;
 		
-		ar << (WORD) 2;			// BOOL
+		ar << (WORD) 3;			// BOOL
 		ar << noise_bExternal;
 		ar << bON;
+		ar << bDigital;
 
 		ar << (WORD) 6;			// int 
 		ar << iChan;
@@ -1698,6 +1702,7 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar >> wn; n = wn;
 		if (n > 0) ar >> noise_bExternal;	n--;
 		if (n > 0) ar >> bON; n--;
+		if (n > 0) ar >> bDigital; n--;
 		BOOL bdummy; while (n > 0) {n--; ar >> bdummy;}
 
 		// int parameters

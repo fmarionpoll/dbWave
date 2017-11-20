@@ -27,6 +27,11 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void EditSequence(int isel, int channel);
+	void FillCombo(CComboBox* pCombo, int channel);
+	void SelectComboItem(CComboBox * pCombo, DWORD val);
+	static CString	comboText[];
+	static DWORD	comboVal[];
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -35,16 +40,18 @@ public:
 	BOOL	m_bChannel2;
 	
 	double	m_famplitude0;
+	double	m_famplitude1;
+	
 	double	m_famplitudelow0;
-	double	m_ffrequence0;
+	double	m_famplitudelow1;
 
 	int		m_waveformChannel0;
 	int		m_waveformChannel1;
 	int		m_waveformChannel2;
 
-	double	m_famplitude1;
-	double	m_famplitudelow1;
+	double	m_ffrequence0;
 	double	m_ffrequence1;
+	double	m_ffrequence2;
 
 	CIntervalsArray m_stimsaved;
 	float	m_samplingRate;

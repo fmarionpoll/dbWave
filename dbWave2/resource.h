@@ -722,6 +722,7 @@
 #define IDC_RADIOEDITW                  1427
 #define IDC_EDITAMPLITUDELOW1           1427
 #define IDC_RADIOPRESET                 1428
+#define IDC_EDITFREQ2                   1428
 #define IDC_STATICLEFT                  1435
 #define IDC_STATICRIGHT                 1436
 #define IDC_EMPTYPICTURE                1444
@@ -766,6 +767,7 @@
 #define IDC_LIST_SSNUM                  1505
 #define IDC_LIST_BOARDCAPS              1506
 #define IDC_COMBOSTARTOUTPUT            1507
+#define IDC_COMBOCHANDIGITAL            1508
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -888,7 +890,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        565
 #define _APS_NEXT_COMMAND_VALUE         33010
-#define _APS_NEXT_CONTROL_VALUE         1508
+#define _APS_NEXT_CONTROL_VALUE         1509
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif
