@@ -294,6 +294,11 @@ void CDAChannelsDlg::OnBnClickedButtonsource0()
 			{
 				CEditStimArrayDlg dlg;
 				dlg.m_pIntervalArrays.RemoveAll();
+				if (m_outD.parmsChan.GetSize() <=channel) 
+				{
+					m_outD.parmsChan.SetSize(channel + 1);
+					OUTPUTPARMS outdummy = m_outD.parmsChan.GetAt(channel);
+				}
 				dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
 				dlg.m_pstimsaved = &m_stimsaved;
 				dlg.m_rate = m_samplingRate;

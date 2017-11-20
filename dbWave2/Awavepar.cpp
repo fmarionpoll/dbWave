@@ -1445,7 +1445,6 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 	}
 }
 
-//----------------------------------------------
 	
 //------------------ class OPTIONS_OUTPUTDATA ---------------------------------
 
@@ -1588,6 +1587,32 @@ OUTPUTPARMS::OUTPUTPARMS()
 	for (int i = 0; i < 8; i++)
 		stim8lines[i].SetChan(i);
 }
+
+OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
+{
+	bON = arg.bON;
+	noise_bExternal = arg.noise_bExternal;
+	iChan = arg.iChan;
+	iWaveform = arg.iWaveform;
+	mseq_iRatio = arg.mseq_iRatio;
+	mseq_iDelay = arg.mseq_iDelay;
+	mseq_iSeed = arg.mseq_iSeed;
+	noise_iDelay = arg.noise_iDelay;
+	dAmplitudeMaxV = arg.dAmplitudeMaxV;
+	dAmplitudeMinV = arg.dAmplitudeMinV;
+	dFrequency = arg.dFrequency;
+	noise_dAmplitV = arg.noise_dAmplitV;
+	noise_dFactor = arg.noise_dFactor;
+	noise_dOffsetV = arg.noise_dOffsetV;
+	value = arg.value;
+	num = arg.num;
+	bit33 = arg.bit33;
+	count = arg.count;
+	stim8lines.SetSize(8);
+	for (int i = 0; i < 8; i++)
+		stim8lines[i] = arg.stim8lines[i];
+}
+
 
 OUTPUTPARMS::~OUTPUTPARMS()
 {

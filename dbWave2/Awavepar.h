@@ -156,7 +156,6 @@ public:
 	int		displaymode;
 };
 
-
 // ---------------------------------------------------------------------
 // view spikes options 
 #define EXPORT_PSTH			0
@@ -245,7 +244,6 @@ public:
 	int		nstipercycle;		// n stimuli per cycle
 };
 
-
 // --------------------------------------------------------------
 // view data measure options
 
@@ -294,8 +292,6 @@ public:
 	int	  nperiods;			// nb of duplicates
 	float timeshift;		// shift tags
 };
-
-//#endif  // 
 
 //-----------------------------------------------------------------------------------
 // File importation parameters & options
@@ -348,7 +344,6 @@ public:
 
 	CString path;					// path to files to import
 };
-
 
 // ---------------------------------------------------------------------
 // acquisition data options - version 1 (17-2-98)
@@ -411,6 +406,7 @@ class OUTPUTPARMS : public CObject
 {
 	DECLARE_SERIAL(OUTPUTPARMS)
 	OUTPUTPARMS();									// constructor
+	OUTPUTPARMS(const OUTPUTPARMS& arg);
 	~OUTPUTPARMS();									// destructor
 	void operator = (const OUTPUTPARMS& arg);		// operator redefinition
 	virtual void Serialize(CArchive& ar);			// overridden for document i/o
@@ -426,10 +422,10 @@ public:
 	double	dFrequency;								// frequency of the output signal
 	int		iWaveform;								// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
 	CString	csFilename;								// filename to output
-	CIntervalsArray stimulussequence;
+	CIntervalsArray				stimulussequence;
+	CIntervalsAndWordsSeries	sti;
 	CArray <CIntervalsArray, CIntervalsArray> stim8lines;
-	CIntervalsAndWordsSeries sti;
-
+	
 	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval
 	int		mseq_iDelay;							// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples
 	int		mseq_iSeed;								// m_mSeqSeed;		// Sequence seed or zero=random seed
@@ -451,7 +447,6 @@ public:
 	double	lastphase;
 	double	value;
 };
-
 
 class OPTIONS_OUTPUTDATA : public CObject
 {
