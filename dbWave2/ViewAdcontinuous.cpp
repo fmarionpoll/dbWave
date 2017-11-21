@@ -605,17 +605,19 @@ void CADContView::DAC_ConvertOptionsIntoChanList()
 		if (m_pDAC_options->parmsChan.GetAt(i).bON == TRUE)
 			jmax++;
 	}
-	// nothing defined? output constant = 3 on 3 channels
+	// nothing defined? output constant on 2+8 channels
 	if (jmax == 0) 
 	{
-		int nchans = 3;
-		m_DAC_chanList.SetSize(3);
-		for (int i = 0; i < 3; i++) 
+		int nchans = 2+8;
+		m_DAC_chanList.SetSize(nchans);
+		for (int i = 0; i < nchans; i++) 
 		{
 			m_DAC_chanList.GetAt(i).bON = TRUE;
 			m_DAC_chanList.GetAt(i).iChan = i;
 			m_DAC_chanList.GetAt(i).iWaveform = DA_CONSTANT;
 			m_DAC_chanList.GetAt(i).value = 0;
+			if (i > 1)
+				m_DAC_chanList.GetAt(i).bDigital = TRUE;
 		}
 		return;
 	}
@@ -972,6 +974,9 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 			case DA_MSEQWAVE:
 				DAC_FillBufferWith_MSEQ(pDTbuf, i);
 				break;
+			case DA_ONE:
+				break;
+			case DA_ZERO:
 			default:
 				break;
 			}

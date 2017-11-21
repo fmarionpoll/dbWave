@@ -11,6 +11,8 @@
 #define	DA_FILEWAVE		6
 #define DA_CONSTANT		7
 #define DA_LINEWAVE		8
+#define DA_ZERO			9
+#define DA_ONE			10
 
 
 class CDAChannelsDlg : public CDialogEx
@@ -70,4 +72,5 @@ public:
 	afx_msg void OnBnClickedButtonsource0();
 	afx_msg void OnBnClickedButtonsource1();
 	afx_msg void OnBnClickedButtonsource2();
+	afx_msg void OnCbnSelchangeCombochandigital();
 };

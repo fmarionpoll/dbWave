@@ -1460,7 +1460,7 @@ OPTIONS_OUTPUTDATA::OPTIONS_OUTPUTDATA()
 	iDAnbuffers				=10;
 	iDATriggermode			=0;
 	dDAFrequency_perchan	=1000.;
-	parmsChan.SetSize(1);
+	parmsChan.SetSize(10);
 }
 
 OPTIONS_OUTPUTDATA::~OPTIONS_OUTPUTDATA()
@@ -1508,7 +1508,8 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 
 		int nchannels = parmsChan.GetSize(); // OUTPUT_PARMS
 		ar << (WORD) nchannels;	
-		for (int i = 0; i < nchannels; i++) {
+		for (int i = 0; i < nchannels; i++) 
+		{
 			parmsChan.GetAt(i).Serialize(ar);
 		}
 		ar << (WORD) 0;			// no more ...
@@ -1544,7 +1545,8 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 
 		// output_parms
 		ar >> wn; n = wn;
-		parmsChan.SetSize(n);
+		if (n > parmsChan.GetSize())
+			parmsChan.SetSize(n);
 		for (int i = 0; i < n; i++) {
 			parmsChan.GetAt(i).Serialize(ar);
 		}

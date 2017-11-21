@@ -60,24 +60,13 @@ BEGIN_MESSAGE_MAP(CDAChannelsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTONSOURCE0, &CDAChannelsDlg::OnBnClickedButtonsource0)
 	ON_BN_CLICKED(IDC_BUTTONSOURCE1, &CDAChannelsDlg::OnBnClickedButtonsource1)
 	ON_BN_CLICKED(IDC_BUTTONSOURCE2, &CDAChannelsDlg::OnBnClickedButtonsource2)
+	ON_CBN_SELCHANGE(IDC_COMBOCHANDIGITAL, &CDAChannelsDlg::OnCbnSelchangeCombochandigital)
 END_MESSAGE_MAP()
 
 // CDAChannelsDlg message handlers
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 {
-	if (!m_bChannel0) 
-	{
-		GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(FALSE);
-		GetDlgItem(IDC_STATIC00)->EnableWindow(FALSE);
-		GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(FALSE);
-		GetDlgItem(IDC_EDITAMPLITUDELOW0)->EnableWindow(FALSE);
-		GetDlgItem(IDC_STATIC01)->EnableWindow(FALSE);
-		GetDlgItem(IDC_EDITFREQ0)->EnableWindow(FALSE);
-		GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(FALSE);
-		return;
-	}
-
 	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0));
 	pCombo->EnableWindow(TRUE);
 	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
@@ -120,18 +109,6 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 {
-	if (!m_bChannel1)
-	{
-		GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_STATIC10)->EnableWindow(FALSE);
-		GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_EDITAMPLITUDELOW1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_STATIC11)->EnableWindow(FALSE);
-		GetDlgItem(IDC_EDITFREQ1)->EnableWindow(FALSE);
-		GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(FALSE);
-		return;
-	}
-
 	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1));
 	pCombo->EnableWindow(TRUE);
 	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
@@ -174,13 +151,6 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource2()
 {
-	if (!m_bChannel2)
-	{
-		GetDlgItem(IDC_COMBOSOURCE2)->EnableWindow(FALSE);
-		GetDlgItem(IDC_BUTTONSOURCE2)->EnableWindow(FALSE);
-		return;
-	}
-
 	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
 	pCombo->EnableWindow(TRUE);
 	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
@@ -216,8 +186,8 @@ void CDAChannelsDlg::OnBnClickedOk()
 	UpdateData(TRUE);
 	
 	int isize = m_outD.parmsChan.GetSize();
-	if (isize < 3)
-		m_outD.parmsChan.SetSize(3);
+	if (isize < 10)
+		m_outD.parmsChan.SetSize(10);
 
 	int channel = 0;
 	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0));
@@ -250,8 +220,8 @@ void CDAChannelsDlg::OnBnClickedOk()
 	CDialogEx::OnOK();
 }
 
-CString CDAChannelsDlg::comboText[] = { _T("Stored sequence"), _T("Sinusoid"), _T("Square"), _T("Triangle"), _T("M - sequence"), _T("Noise"), _T("Data File"), _T("Constant") };
-DWORD	CDAChannelsDlg::comboVal[] = { DA_SEQUENCEWAVE, DA_SINEWAVE, DA_SQUAREWAVE, DA_TRIANGLEWAVE, DA_MSEQWAVE, DA_NOISEWAVE, DA_FILEWAVE, DA_CONSTANT, DA_LINEWAVE };
+CString CDAChannelsDlg::comboText[] = { _T("Stored sequence"), _T("Sinusoid"), _T("Square"), _T("Triangle"), _T("M - sequence"), _T("Noise"), _T("Data File"), _T("Constant"), _T("OFF"), _T("ON") };
+DWORD	CDAChannelsDlg::comboVal[] = { DA_SEQUENCEWAVE, DA_SINEWAVE, DA_SQUAREWAVE, DA_TRIANGLEWAVE, DA_MSEQWAVE, DA_NOISEWAVE, DA_FILEWAVE, DA_CONSTANT, DA_ZERO, DA_ONE };
 
 void CDAChannelsDlg::FillCombo(CComboBox* pCombo, int channel)
 {
@@ -275,6 +245,12 @@ void CDAChannelsDlg::FillCombo(CComboBox* pCombo, int channel)
 		j = pCombo->AddString(comboText[i]);
 		pCombo->SetItemData(j, comboVal[i]);
 		i = 4;
+		j = pCombo->AddString(comboText[i]);
+		pCombo->SetItemData(j, comboVal[i]);
+		i = 8;
+		j = pCombo->AddString(comboText[i]);
+		pCombo->SetItemData(j, comboVal[i]);
+		i = 9;
 		j = pCombo->AddString(comboText[i]);
 		pCombo->SetItemData(j, comboVal[i]);
 	}
@@ -354,19 +330,39 @@ BOOL CDAChannelsDlg::OnInitDialog()
 void CDAChannelsDlg::OnBnClickedCheckchan0()
 {
 	UpdateData(TRUE);
-	OnCbnSelchangeCombosource0();
+	GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(m_bChannel0);
+	GetDlgItem(IDC_STATIC00)->EnableWindow(m_bChannel0);
+	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(m_bChannel0);
+	GetDlgItem(IDC_EDITAMPLITUDELOW0)->EnableWindow(m_bChannel0);
+	GetDlgItem(IDC_STATIC01)->EnableWindow(m_bChannel0);
+	GetDlgItem(IDC_EDITFREQ0)->EnableWindow(m_bChannel0);
+	GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(m_bChannel0);
+	if (m_bChannel0) 
+		OnCbnSelchangeCombosource0();
 }
 
 void CDAChannelsDlg::OnBnClickedCheckchan1()
 {
 	UpdateData(TRUE);
-	OnCbnSelchangeCombosource1();
+	GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(m_bChannel1);
+	GetDlgItem(IDC_STATIC10)->EnableWindow(m_bChannel1);
+	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(m_bChannel1);
+	GetDlgItem(IDC_EDITAMPLITUDELOW1)->EnableWindow(m_bChannel1);
+	GetDlgItem(IDC_STATIC11)->EnableWindow(m_bChannel1);
+	GetDlgItem(IDC_EDITFREQ1)->EnableWindow(m_bChannel1);
+	GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(m_bChannel1);
+	if (m_bChannel1)
+		OnCbnSelchangeCombosource1();
 }
 
 void CDAChannelsDlg::OnBnClickedCheckchan2()
 {
 	UpdateData(TRUE);
-	OnCbnSelchangeCombosource2();
+	GetDlgItem(IDC_COMBOSOURCE2)->EnableWindow(m_bChannel2);
+	GetDlgItem(IDC_BUTTONSOURCE2)->EnableWindow(m_bChannel2);
+	GetDlgItem(IDC_COMBOCHANDIGITAL)->EnableWindow(m_bChannel2);
+	if (m_bChannel2)
+		OnCbnSelchangeCombosource2();
 }
 
 void CDAChannelsDlg::OnBnClickedButtonsource0()
@@ -435,4 +431,9 @@ void CDAChannelsDlg::EditSequence(int isel, int channel)
 		default:
 			break;
 	}
+}
+
+void CDAChannelsDlg::OnCbnSelchangeCombochandigital()
+{
+	// TODO: Add your control notification handler code here
 }
