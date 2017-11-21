@@ -190,32 +190,35 @@ void CDAChannelsDlg::OnBnClickedOk()
 
 	int channel = 0;
 	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0));
-	m_outD.parmsChan.GetAt(channel).iChan = channel;
-	m_outD.parmsChan.GetAt(channel).bON = m_bChannel0;
-	m_outD.parmsChan.GetAt(channel).bDigital = FALSE;
-	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo->GetItemData(pCombo->GetCurSel());
-	m_outD.parmsChan.GetAt(channel).dAmplitudeMaxV = m_famplitude0;
-	m_outD.parmsChan.GetAt(channel).dAmplitudeMinV = m_famplitudelow0;
-	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence0;
+	OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+	pParms->iChan			= channel;
+	pParms->bON				= m_bChannel0;
+	pParms->bDigital		= FALSE;
+	pParms->iWaveform		= pCombo->GetItemData(pCombo->GetCurSel());
+	pParms->dAmplitudeMaxV	= m_famplitude0;
+	pParms->dAmplitudeMinV	= m_famplitudelow0;
+	pParms->dFrequency		= m_ffrequence0;
 	
 	channel = 1;
+	pParms = &m_outD.parmsChan.GetAt(channel);
 	pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1));
-	m_outD.parmsChan.GetAt(channel).iChan = channel;
-	m_outD.parmsChan.GetAt(channel).bON = m_bChannel1;
-	m_outD.parmsChan.GetAt(channel).bDigital = FALSE;
-	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo->GetItemData(pCombo->GetCurSel());
-	m_outD.parmsChan.GetAt(channel).dAmplitudeMaxV = m_famplitude1;
-	m_outD.parmsChan.GetAt(channel).dAmplitudeMinV = m_famplitudelow1;
-	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence1;
+	pParms->iChan			= channel;
+	pParms->bON				= m_bChannel1;
+	pParms->bDigital		= FALSE;
+	pParms->iWaveform		= pCombo->GetItemData(pCombo->GetCurSel());
+	pParms->dAmplitudeMaxV	= m_famplitude1;
+	pParms->dAmplitudeMinV	= m_famplitudelow1;
+	pParms->dFrequency		= m_ffrequence1;
 	
 	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL));
 	channel = pCombo2->GetCurSel() + 2;
+	pParms = &m_outD.parmsChan.GetAt(channel);
 	pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
-	m_outD.parmsChan.GetAt(channel).bDigital = TRUE;
-	m_outD.parmsChan.GetAt(channel).iChan = channel;
-	m_outD.parmsChan.GetAt(channel).bON = m_bChannel2;
-	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence2;
-	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo->GetItemData(pCombo->GetCurSel());
+	pParms->bDigital		= TRUE;
+	pParms->iChan			= channel;
+	pParms->bON				= m_bChannel2;
+	pParms->dFrequency		= m_ffrequence2;
+	pParms->iWaveform		= pCombo->GetItemData(pCombo->GetCurSel());
 
 	CDialogEx::OnOK();
 }
@@ -440,19 +443,22 @@ void CDAChannelsDlg::OnCbnSelchangeCombochandigital()
 void CDAChannelsDlg::SetDigitalParmsToDlg(int digitalchannel)
 {
 	int channel = m_iseldigital + 2;
-	m_ffrequence2 = m_outD.parmsChan.GetAt(channel).dFrequency;
+	OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+	m_ffrequence2 = pParms->dFrequency;
 	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
-	int val = m_outD.parmsChan.GetAt(channel).iWaveform;
+	int val = pParms->iWaveform;
 	SelectComboItem(pCombo2, val);
 }
 
 void CDAChannelsDlg::GetDigitalParmsFromDlg(int digitalchannel)
 {
 	int channel = m_iseldigital + 2;
-	m_outD.parmsChan.GetAt(channel).bDigital = TRUE;
-	m_outD.parmsChan.GetAt(channel).iChan = channel;
-	m_outD.parmsChan.GetAt(channel).bON = m_bChannel2;
-	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence2;
+	OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
+
+	pParms->bDigital = TRUE;
+	pParms->iChan = channel;
+	pParms->bON = m_bChannel2;
+	pParms->dFrequency = m_ffrequence2;
 	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
-	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo2->GetItemData(pCombo2->GetCurSel());
+	pParms->iWaveform = pCombo2->GetItemData(pCombo2->GetCurSel());
 }
