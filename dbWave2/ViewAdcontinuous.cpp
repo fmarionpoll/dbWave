@@ -767,18 +767,27 @@ void CADContView::DACDig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPA
 	double	phase = parmsChan->lastphase;
 	WORD	amp = 0;
 	WORD	ampUp = 1;
-	ampUp = ampUp << chan;
+	ampUp = ampUp << parmsChan->iChan;
 	WORD	ampLow = 0;
 	double	Freq = parmsChan->dFrequency / m_DAC_frequency;	
 	int nchans = m_DAClistsize;
-
+	
 	for (int i = chan; i < m_DAC_buflen; i += nchans)
 	{
 		if (phase < 0)
 			amp = ampUp;
 		else
 			amp = ampLow;
-		*(pDTbuf + i) = *(pDTbuf + i) | amp;
+		if (m_DACdigitalfirst == 0)
+			*(pDTbuf + i) = amp;
+		else
+		{ 
+			WORD dummy1 = *(pDTbuf + i);
+			*(pDTbuf + i) |= amp;
+			WORD dummy2 = *(pDTbuf + i);
+			dummy1 = dummy2 - dummy1;
+		}
+			
 		phase += Freq;
 		if (phase > 0.5)
 			phase -= 1;
@@ -896,7 +905,7 @@ void CADContView::DACDig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 {
 	WORD	ampLow = 0;
 	WORD	ampUp = 1;
-	ampUp = ampUp << chan;
+	ampUp = ampUp << parmsChan->iChan;
 	int		nchans = m_DAClistsize;
 
 	CIntervalsAndWordsSeries* pstim = &parmsChan->sti;
@@ -924,7 +933,10 @@ void CADContView::DACDig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 	// fill buffer
 	for (int i = chan; i < m_DAC_buflen; i += nchans, buffer_ii++)
 	{
-		*(pDTbuf + i) = *(pDTbuf + i) | wout;
+		if (m_DACdigitalfirst == 0)
+			*(pDTbuf + i) = wout;
+		else
+			*(pDTbuf + i) |= wout;
 
 		if ((interval < pstim->GetSize()) && buffer_ii >= stim_end)
 		{
@@ -989,7 +1001,7 @@ void CADContView::DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPAR
 {
 	WORD	ampLow = 0;
 	WORD	ampUp = 1;
-	ampUp = ampUp << chan;
+	ampUp = ampUp << parmsChan->iChan;
 	WORD    wout= ampLow;
 	// dummy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	for (int i = chan; i < m_DAC_buflen; i += m_DAClistsize) {
@@ -1005,6 +1017,7 @@ void CADContView::DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPAR
 void CADContView::DAC_FillBuffer(short* pDTbuf)
 {
 	int janalog = 0;
+	m_DACdigitalfirst = 0;
 	for (int i = 0; i <  m_pDAC_options->parmsChan.GetSize(); i++)
 	{
 		OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
@@ -1059,6 +1072,7 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 			default:
 				break;
 			}
+			m_DACdigitalfirst++;
 		}
 	}
 	m_DAC_nBuffersFilledSinceStart++;

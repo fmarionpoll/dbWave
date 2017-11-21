@@ -107,6 +107,7 @@ protected:
 
 	OPTIONS_OUTPUTDATA*	m_pDAC_options;		// pointer to data output options
 	int					m_DACdigitalchannel;
+	BOOL				m_DACdigitalfirst;
 	int					m_DAClistsize;
 	long				m_DACmsbit;
 	long				m_DAClRes;
