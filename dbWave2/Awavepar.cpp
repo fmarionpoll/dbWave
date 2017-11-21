@@ -1586,9 +1586,6 @@ OUTPUTPARMS::OUTPUTPARMS()
 	num = 512;
 	bit33 = 1;
 	count = 1;
-	stim8lines.SetSize(8);
-	for (int i = 0; i < 8; i++)
-		stim8lines[i].SetChan(i);
 }
 
 OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
@@ -1612,9 +1609,6 @@ OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
 	num = arg.num;
 	bit33 = arg.bit33;
 	count = arg.count;
-	stim8lines.SetSize(8);
-	for (int i = 0; i < 8; i++)
-		stim8lines[i] = arg.stim8lines[i];
 }
 
 
@@ -1645,8 +1639,6 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	noise_dOffsetV	=arg.noise_dOffsetV;	
 	stimulussequence = arg.stimulussequence;
 	value			= arg.value;
-	for (int i = 0; i < 8; i++)
-		stim8lines[i] = arg.stim8lines[i];
 	sti				= arg.sti;
 }
 
@@ -1683,10 +1675,8 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ar << noise_dOffsetV;
 		ar << value;
 
-		ar << (WORD) 10;			// 1 more object
+		ar << (WORD) 2;			// 1 more object
 		stimulussequence.Serialize(ar);
-		for (int i = 0; i < 8; i++)
-			stim8lines[i].Serialize(ar);
 		sti.Serialize(ar);
 	} 
 	else
@@ -1733,13 +1723,6 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		// other?
 		ar >> wn; n = wn;
 		if (n > 0) { stimulussequence.Serialize(ar); n--; }
-		for (int i = 0; i < 8; i++) 
-		{
-			if (n > 0) { 
-				stim8lines[i].Serialize(ar); 
-				n--; 
-			}
-		}
 		if (n > 0) { sti.Serialize(ar); n--; }
 		ASSERT(n==0);
 	}

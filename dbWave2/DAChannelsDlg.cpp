@@ -176,7 +176,6 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource2()
 			break;
 	}
 	GetDlgItem(IDC_BUTTONSOURCE2)->EnableWindow(bEnable2);
-	GetDlgItem(IDC_COMBOCHANDIGITAL)->EnableWindow(bEnable2);
 	GetDlgItem(IDC_STATIC12)->EnableWindow(bEnable);
 	GetDlgItem(IDC_EDITFREQ2)->EnableWindow(bEnable);
 }
@@ -209,7 +208,8 @@ void CDAChannelsDlg::OnBnClickedOk()
 	m_outD.parmsChan.GetAt(channel).dAmplitudeMinV = m_famplitudelow1;
 	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence1;
 	
-	channel = 2;
+	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL));
+	channel = pCombo2->GetCurSel() + 2;
 	pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
 	m_outD.parmsChan.GetAt(channel).bDigital = TRUE;
 	m_outD.parmsChan.GetAt(channel).iChan = channel;
@@ -321,7 +321,8 @@ BOOL CDAChannelsDlg::OnInitDialog()
 		cs.Format(_T("channel %i"), i);
 		pCombo->AddString(cs);
 	}
-	pCombo->SetCurSel(0);
+	m_iseldigital = 0;
+	pCombo->SetCurSel(m_iseldigital);
 
 	UpdateData(FALSE);
 	return TRUE;  
@@ -382,7 +383,8 @@ void CDAChannelsDlg::OnBnClickedButtonsource1()
 void CDAChannelsDlg::OnBnClickedButtonsource2()
 {
 	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2))->GetCurSel();
-	int channel = 2;
+	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL);
+	int channel = 2+ pCombo->GetCurSel();
 	EditSequence(isel, channel);
 }
 
@@ -406,22 +408,13 @@ void CDAChannelsDlg::EditSequence(int isel, int channel)
 		{
 			CEditStimArrayDlg dlg;
 			dlg.m_pIntervalArrays.RemoveAll();
-			if (channel < 2)
-				dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
-			else
-			{
-				for (int i = 0; i<8; i++)
-					dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stim8lines[i]);
-			}
+			dlg.m_pIntervalArrays.Add(&m_outD.parmsChan.GetAt(channel).stimulussequence);
 			dlg.m_pstimsaved = &m_stimsaved;
 			dlg.m_rate = m_samplingRate;
 			if (IDOK == dlg.DoModal())
 			{
 				OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-				if (channel < 2)
-					pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
-				else
-					pParms->sti.ImportAndMergeIntervalsArrays(&dlg.m_pIntervalArrays);
+				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 			}
 		}
 		break;
@@ -435,5 +428,31 @@ void CDAChannelsDlg::EditSequence(int isel, int channel)
 
 void CDAChannelsDlg::OnCbnSelchangeCombochandigital()
 {
-	// TODO: Add your control notification handler code here
+	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL);
+	int isel = pCombo->GetCurSel();
+	if (isel != m_iseldigital)
+		GetDigitalParmsFromDlg(m_iseldigital);
+	m_iseldigital = isel;
+	SetDigitalParmsToDlg(m_iseldigital);
+	OnCbnSelchangeCombosource2();
+}
+
+void CDAChannelsDlg::SetDigitalParmsToDlg(int digitalchannel)
+{
+	int channel = m_iseldigital + 2;
+	m_ffrequence2 = m_outD.parmsChan.GetAt(channel).dFrequency;
+	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
+	int val = m_outD.parmsChan.GetAt(channel).iWaveform;
+	SelectComboItem(pCombo2, val);
+}
+
+void CDAChannelsDlg::GetDigitalParmsFromDlg(int digitalchannel)
+{
+	int channel = m_iseldigital + 2;
+	m_outD.parmsChan.GetAt(channel).bDigital = TRUE;
+	m_outD.parmsChan.GetAt(channel).iChan = channel;
+	m_outD.parmsChan.GetAt(channel).bON = m_bChannel2;
+	m_outD.parmsChan.GetAt(channel).dFrequency = m_ffrequence2;
+	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
+	m_outD.parmsChan.GetAt(channel).iWaveform = pCombo2->GetItemData(pCombo2->GetCurSel());
 }

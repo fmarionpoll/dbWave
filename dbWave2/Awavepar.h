@@ -425,7 +425,6 @@ public:
 	CString	csFilename;								// filename to output
 	CIntervalsArray				stimulussequence;
 	CIntervalsAndWordsSeries	sti;
-	CArray <CIntervalsArray, CIntervalsArray> stim8lines;
 	
 	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval
 	int		mseq_iDelay;							// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples

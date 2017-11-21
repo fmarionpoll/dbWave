@@ -26,39 +26,39 @@ public:
 // Dialog Data
 	enum { IDD = IDD_DA_CHANNELS };
 	OPTIONS_OUTPUTDATA	m_outD;
+	BOOL	m_bChannel0;
+	BOOL	m_bChannel1;
+	BOOL	m_bChannel2;
+	double	m_famplitude0;
+	double	m_famplitude1;
+	double	m_famplitudelow0;
+	double	m_famplitudelow1;
+	int		m_waveformChannel0;
+	int		m_waveformChannel1;
+	int		m_waveformChannel2;
+	double	m_ffrequence0;
+	double	m_ffrequence1;
+	double	m_ffrequence2;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	void EditSequence(int isel, int channel);
 	void FillCombo(CComboBox* pCombo, int channel);
 	void SelectComboItem(CComboBox * pCombo, DWORD val);
+	void SetDigitalParmsToDlg(int channel);
+	void GetDigitalParmsFromDlg(int channel);
+
 	static CString	comboText[];
 	static DWORD	comboVal[];
 
-	DECLARE_MESSAGE_MAP()
 public:
-	BOOL	m_bChannel0;
-	BOOL	m_bChannel1;
-	BOOL	m_bChannel2;
-	
-	double	m_famplitude0;
-	double	m_famplitude1;
-	
-	double	m_famplitudelow0;
-	double	m_famplitudelow1;
-
-	int		m_waveformChannel0;
-	int		m_waveformChannel1;
-	int		m_waveformChannel2;
-
-	double	m_ffrequence0;
-	double	m_ffrequence1;
-	double	m_ffrequence2;
-
 	CIntervalsArray m_stimsaved;
 	float	m_samplingRate;
+	int		m_iseldigital;
 
 	virtual BOOL OnInitDialog();
+
+	DECLARE_MESSAGE_MAP()
 	afx_msg void OnBnClickedOk();
 	
 	afx_msg void OnBnClickedCheckchan0();

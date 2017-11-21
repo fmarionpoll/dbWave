@@ -72,8 +72,8 @@ CADContView::~CADContView()
 void CADContView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_AnalogIN);
-	DDX_Control(pDX, IDC_DIGITTOANALOG, m_AnalogOUT);
+	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32IN);
+	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32OUT);
 	DDX_Control(pDX, IDC_XSCALE, m_adxscale);
 	DDX_Control(pDX, IDC_YSCALE, m_adyscale);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
@@ -116,10 +116,10 @@ void CADContView::OnDestroy()
 	if (m_bFoundDTOPenLayerDLL)
 	{
 		// TODO: save data here 
-		if (m_AnalogIN.GetHDass() != NULL)
+		if (m_Acq32IN.GetHDass() != NULL)
 			ADC_DeleteBuffers();
 			
-		if (m_AnalogOUT.GetHDass() != NULL)
+		if (m_Acq32OUT.GetHDass() != NULL)
 			DAC_DeleteBuffers();
 	}
 	delete m_pEditBkBrush;		// brush for edit controls	
@@ -172,7 +172,7 @@ BOOL CADContView::FindDTOpenLayersBoards()
 	m_ADcardCombo.ResetContent();
 
 	// load board name - skip dialog if only one is present
-	UINT uiNumBoards = m_AnalogIN.GetNumBoards();
+	UINT uiNumBoards = m_Acq32IN.GetNumBoards();
 	if (uiNumBoards == 0)
 	{
 		m_ADcardCombo.AddString(_T("No Board"));
@@ -181,7 +181,7 @@ BOOL CADContView::FindDTOpenLayersBoards()
 	}
 	
 	for(UINT i=0; i < uiNumBoards; i++)
-		m_ADcardCombo.AddString (m_AnalogIN.GetBoardList(i));
+		m_ADcardCombo.AddString (m_Acq32IN.GetBoardList(i));
 
 	int isel = 0;
 	// if name already defined, check if board present
@@ -191,7 +191,7 @@ BOOL CADContView::FindDTOpenLayersBoards()
 		isel = 0;
 
 	m_ADcardCombo.SetCurSel(isel);
-	m_boardName = m_AnalogIN.GetBoardList(isel);
+	m_boardName = m_Acq32IN.GetBoardList(isel);
 	SelectDTOpenLayersBoard (m_boardName);
 	return TRUE;
 }
@@ -232,14 +232,14 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 {
 	try
 	{
-		m_AnalogIN.SetBoard(cardName);
-		int nAD = m_AnalogIN.GetDevCaps(OLDC_ADELEMENTS);		// make sure A/D is available
+		m_Acq32IN.SetBoard(cardName);
+		int nAD = m_Acq32IN.GetDevCaps(OLDC_ADELEMENTS);		// make sure A/D is available
 		if (nAD < 1)
 			return FALSE;
-		m_AnalogIN.SetSubSysType(OLSS_AD);						// select A/D system
-		m_AnalogIN.SetSubSysElement(0);
-		ASSERT(m_AnalogIN.GetHDass() != NULL);
-		m_bsimultaneousStartAD = m_AnalogIN.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+		m_Acq32IN.SetSubSysType(OLSS_AD);						// select A/D system
+		m_Acq32IN.SetSubSysElement(0);
+		ASSERT(m_Acq32IN.GetHDass() != NULL);
+		m_bsimultaneousStartAD = m_Acq32IN.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
 	}
 	catch(COleDispatchException* e)
 	{
@@ -250,30 +250,30 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 	
 	// save parameters into CWaveFormat
 	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat); 
-	float max = m_AnalogIN.GetMaxRange();						// maximum input voltage
-	float min = m_AnalogIN.GetMinRange();						// minimum input voltage
+	float max = m_Acq32IN.GetMaxRange();						// maximum input voltage
+	float min = m_Acq32IN.GetMinRange();						// minimum input voltage
 	pWFormat->fullscale_Volts = (float) (max-min);
 
 	// convert into bin scale (nb of divisions)
-	int iresolution = m_AnalogIN.GetResolution();
+	int iresolution = m_Acq32IN.GetResolution();
 	pWFormat->fullscale_bins = ((1L << iresolution) - 1);
 
 	// set max channel number according to input configuration m_numchansMAX
-	m_pADC_options->bChannelType = m_AnalogIN.GetChannelType();
+	m_pADC_options->bChannelType = m_Acq32IN.GetChannelType();
 	if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
-		m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXSECHANS);
+		m_numchansMAX = m_Acq32IN.GetSSCaps(OLSSC_MAXSECHANS);
 	else 
-		m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXDICHANS);
+		m_numchansMAX = m_Acq32IN.GetSSCaps(OLSSC_MAXDICHANS);
 
 	// data encoding (binary or offset encoding)
-	pWFormat->mode_encoding = (int)m_AnalogIN.GetEncoding();
+	pWFormat->mode_encoding = (int)m_Acq32IN.GetEncoding();
 	if (pWFormat->mode_encoding == OLx_ENC_BINARY)
 		pWFormat->binzero = pWFormat->fullscale_bins/2+1;
 	else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
 		pWFormat->binzero = 0;
 
 	// load infos concerning frequency, dma chans, programmable gains
-	m_freqmax	= m_AnalogIN.GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
+	m_freqmax	= m_Acq32IN.GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
 
 	// TODO tell sourceview here under which format are data
 	// TODO save format of data into temp document
@@ -291,32 +291,32 @@ BOOL CADContView::ADC_InitSubSystem()
 {
 	try
 	{
-		ASSERT(m_AnalogIN.GetHDass() != NULL);
+		ASSERT(m_Acq32IN.GetHDass() != NULL);
 
 		// store all values within global parameters array
 		CWaveFormat* pAcqDwaveFormat = &(m_pADC_options->waveFormat);
 
 		// Set up the ADC - no wrap so we can get buffer reused	
-		m_AnalogIN.SetDataFlow(OLx_DF_CONTINUOUS);
-		m_AnalogIN.SetWrapMode(OLx_WRP_NONE);
-		m_AnalogIN.SetDmaUsage((short)m_AnalogIN.GetSSCaps(OLSSC_NUMDMACHANS));
-		m_AnalogIN.SetClockSource(OLx_CLK_INTERNAL);
+		m_Acq32IN.SetDataFlow(OLx_DF_CONTINUOUS);
+		m_Acq32IN.SetWrapMode(OLx_WRP_NONE);
+		m_Acq32IN.SetDmaUsage((short)m_Acq32IN.GetSSCaps(OLSSC_NUMDMACHANS));
+		m_Acq32IN.SetClockSource(OLx_CLK_INTERNAL);
 
 		// set trigger mode
 		int trig = pAcqDwaveFormat->trig_mode;
 		if (trig > OLx_TRG_EXTRA) 		trig = 0;
-		m_AnalogIN.SetTrigger(trig);
+		m_Acq32IN.SetTrigger(trig);
 
 		// number of channels
-		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED && m_AnalogIN.GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
+		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED && m_Acq32IN.GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
 			m_pADC_options->bChannelType = OLx_CHNT_DIFFERENTIAL;
-		if (m_pADC_options->bChannelType == OLx_CHNT_DIFFERENTIAL && m_AnalogIN.GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
+		if (m_pADC_options->bChannelType == OLx_CHNT_DIFFERENTIAL && m_Acq32IN.GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
 			m_pADC_options->bChannelType = OLx_CHNT_SINGLEENDED;
-		m_AnalogIN.SetChannelType(m_pADC_options->bChannelType);
+		m_Acq32IN.SetChannelType(m_pADC_options->bChannelType);
 		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
-			m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXSECHANS);
+			m_numchansMAX = m_Acq32IN.GetSSCaps(OLSSC_MAXSECHANS);
 		else
-			m_numchansMAX = m_AnalogIN.GetSSCaps(OLSSC_MAXDICHANS);
+			m_numchansMAX = m_Acq32IN.GetSSCaps(OLSSC_MAXDICHANS);
 		// limit scan_count to m_numchansMAX -
 		// this limits the nb of data acquisition channels to max-1 if one wants to use the additional I/O input "pseudo"channel
 		// so far, it seems acceptable...
@@ -325,23 +325,23 @@ BOOL CADContView::ADC_InitSubSystem()
 
 		// set frequency to value requested, set frequency and get the value returned
 		double clockrate = pAcqDwaveFormat->chrate*pAcqDwaveFormat->scan_count;
-		m_AnalogIN.SetFrequency(clockrate);			// set sampling frequency (total throughput)
-		clockrate = m_AnalogIN.GetFrequency();
+		m_Acq32IN.SetFrequency(clockrate);			// set sampling frequency (total throughput)
+		clockrate = m_Acq32IN.GetFrequency();
 		pAcqDwaveFormat->chrate = (float) clockrate / pAcqDwaveFormat->scan_count;
 
 		// update channel list (chan & gain)
 		// pD->SetBinFormat(docVoltsperb, pwaveFormat->binzero, pwaveFormat->fullscale_bins);
 		// 
-		m_AnalogIN.SetListSize(pAcqDwaveFormat->scan_count);
+		m_Acq32IN.SetListSize(pAcqDwaveFormat->scan_count);
 		for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
 			CWaveChan* pChannel = (m_pADC_options->chanArray).GetWaveChan(i);
 			if ( pChannel->am_adchannel> m_numchansMAX-1 && pChannel->am_adchannel != 16)
 				 pChannel->am_adchannel= m_numchansMAX-1;
-			m_AnalogIN.SetChannelList(i, pChannel->am_adchannel);
-			m_AnalogIN.SetGainList(i, pChannel->am_adgain);
-			double dGain = m_AnalogIN.GetGainList(i);
+			m_Acq32IN.SetChannelList(i, pChannel->am_adchannel);
+			m_Acq32IN.SetGainList(i, pChannel->am_adgain);
+			double dGain = m_Acq32IN.GetGainList(i);
 			pChannel->am_adgain = (short) dGain;
 			// compute dependent parameters
 			pChannel->am_gainfract = pChannel->am_gainheadstage * (float) pChannel->am_gainpre * (float) pChannel->am_gainpost;
@@ -350,8 +350,8 @@ BOOL CADContView::ADC_InitSubSystem()
 		}
 
 		// pass parameters to the board and check if errors
-		m_AnalogIN.ClearError();
-		m_AnalogIN.Config();
+		m_Acq32IN.ClearError();
+		m_Acq32IN.Config();
 	}
 	catch(COleDispatchException* e)
 	{
@@ -391,7 +391,7 @@ void CADContView::ADC_DeclareBuffers()
 		ecode = olDmAllocBuffer(0, m_ADC_buflen, &m_ADC_bufhandle);
 		ecode = OLNOERROR;
 		if ((ecode == OLNOERROR) && (m_ADC_bufhandle != NULL))
-			m_AnalogIN.SetQueue((long)m_ADC_bufhandle); // but buffer onto Ready queue
+			m_Acq32IN.SetQueue((long)m_ADC_bufhandle); // but buffer onto Ready queue
 	}
 
 	// set sweep length to the nb of data buffers
@@ -427,12 +427,12 @@ void CADContView::ADC_DeclareBuffers()
 void CADContView::ADC_DeleteBuffers()
 {
 	try {
-		if (m_AnalogIN.GetHDass() == NULL)
+		if (m_Acq32IN.GetHDass() == NULL)
 			return;
-		m_AnalogIN.Flush();	// clean
+		m_Acq32IN.Flush();	// clean
 		HBUF hBuf = NULL;			// handle to buffer
 		do {				// loop until all buffers are removed
-			hBuf = (HBUF)m_AnalogIN.GetQueue();
+			hBuf = (HBUF)m_Acq32IN.GetQueue();
 			if (hBuf != NULL)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
@@ -451,12 +451,12 @@ void CADContView::ADC_DeleteBuffers()
 void CADContView::ADC_Stop()
 {
 	try {
-		m_AnalogIN.Stop();
-		m_AnalogIN.Flush();							// flush all buffers to Done Queue
+		m_Acq32IN.Stop();
+		m_Acq32IN.Flush();							// flush all buffers to Done Queue
 		HBUF hBuf;
 		do {
-			hBuf = (HBUF)m_AnalogIN.GetQueue();
-			if (hBuf != NULL) m_AnalogIN.SetQueue((long)hBuf);
+			hBuf = (HBUF)m_Acq32IN.GetQueue();
+			if (hBuf != NULL) m_Acq32IN.SetQueue((long)hBuf);
 		} while (hBuf != NULL);
 		m_ADsourceView.ADdisplayStop();
 		m_bchanged = TRUE;
@@ -475,17 +475,17 @@ BOOL CADContView::DAC_OpenSubSystem(CString cardName)
 {
 	try
 	{
-		m_AnalogOUT.SetBoard(cardName);
-		if (m_AnalogOUT.GetDevCaps(OLSS_DA) == 0)
+		m_Acq32OUT.SetBoard(cardName);
+		if (m_Acq32OUT.GetDevCaps(OLSS_DA) == 0)
 			return FALSE;
 
-		m_AnalogOUT.SetSubSysType(OLSS_DA);
-		int nDA = m_AnalogOUT.GetDevCaps(OLDC_DAELEMENTS);
+		m_Acq32OUT.SetSubSysType(OLSS_DA);
+		int nDA = m_Acq32OUT.GetDevCaps(OLDC_DAELEMENTS);
 		if (nDA < 1)
 			return FALSE;
-		m_AnalogOUT.SetSubSysElement(0);
-		ASSERT(m_AnalogOUT.GetHDass() != NULL),
-			m_bsimultaneousStartDA = m_AnalogOUT.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+		m_Acq32OUT.SetSubSysElement(0);
+		ASSERT(m_Acq32OUT.GetHDass() != NULL),
+			m_bsimultaneousStartDA = m_Acq32OUT.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
 		
 	}
 	catch (COleDispatchException* e)
@@ -503,30 +503,26 @@ BOOL CADContView::DAC_ClearAllOutputs()
 {
 	try
 	{
-		if (m_AnalogOUT.GetHDass() == NULL)
+		if (m_Acq32OUT.GetHDass() == NULL)
 			return FALSE;
 
-		if (m_AnalogOUT.GetSSCaps(OLSSC_SUP_SINGLEVALUE) == FALSE)
+		if (m_Acq32OUT.GetSSCaps(OLSSC_SUP_SINGLEVALUE) == FALSE)
 		{
 			AfxMessageBox(_T("D/A SubSystem cannot run in single value mode"));
 			return FALSE;
 		}
-
-		m_AnalogOUT.ClearError();
-		m_AnalogOUT.SetDataFlow(OLx_DF_SINGLEVALUE);
+		m_Acq32OUT.ClearError();
+		m_Acq32OUT.SetDataFlow(OLx_DF_SINGLEVALUE);
 		long OutValue = 0;
-		m_AnalogOUT.Config();
-		int nchansmax = m_AnalogOUT.GetSSCaps(OLSSC_NUMCHANNELS) - 1;
-		for (int i = 0; i < nchansmax; i++) 
-		{
-			m_AnalogOUT.PutSingleValue(i, 1.0, OutValue);
-		}
+		if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY) 
+			OutValue = (WORD)((OutValue ^ m_DACmsbit) & m_DAClRes);
 
-		//// clear also digital outputs
-		//m_DigitalOUT.SetSubSysType(OLSS_DOUT);
-		//short numSS = m_DigitalOUT.GetDevCaps((short)OLDC_DOUTELEMENTS);
-		//m_DigitalOUT.SetSubSysElement(numSS - 1);
-		//m_DigitalOUT.PutSingleValue(0L, 1.0, 0);
+		m_Acq32OUT.Config();
+		int nchansmax = m_Acq32OUT.GetSSCaps(OLSSC_NUMCHANNELS) - 1;
+		for (int i = 0; i < 2; i++) 
+		{
+			m_Acq32OUT.PutSingleValue(i, 1.0, OutValue);
+		}
 	}
 	catch (COleDispatchException* e)
 	{
@@ -543,48 +539,32 @@ BOOL CADContView::DAC_InitSubSystem()
 {
 	try
 	{
-		if (m_AnalogOUT.GetHDass() == NULL)
+		if (m_Acq32OUT.GetHDass() == NULL)
 			return FALSE;
 		
 		// Set up the ADC - multiple wrap so we can get buffer reused	
-		m_AnalogOUT.SetDataFlow(OLx_DF_CONTINUOUS);
-		m_AnalogOUT.SetWrapMode(OLx_WRP_NONE);
-		m_AnalogOUT.SetDmaUsage((short)m_AnalogOUT.GetSSCaps(OLSSC_NUMDMACHANS));
+		m_Acq32OUT.SetDataFlow(OLx_DF_CONTINUOUS);
+		m_Acq32OUT.SetWrapMode(OLx_WRP_NONE);
+		m_Acq32OUT.SetDmaUsage((short)m_Acq32OUT.GetSSCaps(OLSSC_NUMDMACHANS));
 
 		// set clock the same as for A/D
-		m_AnalogOUT.SetClockSource(OLx_CLK_INTERNAL);
+		m_Acq32OUT.SetClockSource(OLx_CLK_INTERNAL);
 		double clockrate = m_pADC_options->waveFormat.chrate;
-		m_AnalogOUT.SetFrequency(clockrate);		// set sampling frequency (total throughput)
-		clockrate = m_AnalogOUT.GetFrequency();		// make sure it works
+		m_Acq32OUT.SetFrequency(clockrate);		// set sampling frequency (total throughput)
 
 		// set trigger mode
 		int trig = m_pADC_options->waveFormat.trig_mode;
 		if (trig > OLx_TRG_EXTRA) 
 			trig = 0;
-		m_AnalogOUT.SetTrigger(trig);
+		m_Acq32OUT.SetTrigger(trig);
 
-		// number of D/A channels
-		int nchansmax	= m_AnalogOUT.GetSSCaps(OLSSC_NUMCHANNELS);
-		DAC_ConvertOptionsIntoChanList();
-		int nchans = m_DAC_chanList.GetSize();
-		if (nchans > nchansmax) 
-		{
-			nchans = nchansmax;
-			m_DAC_chanList.SetSize(nchans);
-		}
-		m_AnalogOUT.SetListSize(nchans);
-		for (int i = 0; i < nchans; i++) 
-		{
-			OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(i));
-			m_AnalogOUT.SetChannelList(i, parmsChan->iChan);
-			parmsChan->ampUp = parmsChan->dAmplitudeMaxV *  pow(2.0, m_AnalogOUT.GetResolution()) / (m_AnalogOUT.GetMaxRange() - m_AnalogOUT.GetMinRange());
-			parmsChan->ampLow = parmsChan->dAmplitudeMinV *  pow(2.0, m_AnalogOUT.GetResolution()) / (m_AnalogOUT.GetMaxRange() - m_AnalogOUT.GetMinRange());
-			DAC_MSequence(TRUE, parmsChan);
-		}
+		DAC_SetChannelList();
+		m_DACmsbit = (long)pow(2.0, (m_Acq32OUT.GetResolution() - 1));
+		m_DAClRes = (long)pow(2.0, m_Acq32OUT.GetResolution()) - 1;
 
 		// pass parameters to the board and check if errors
-		m_AnalogOUT.ClearError();
-		m_AnalogOUT.Config();
+		m_Acq32OUT.ClearError();
+		m_Acq32OUT.Config();
 	}
 	catch(COleDispatchException* e)
 	{
@@ -595,55 +575,62 @@ BOOL CADContView::DAC_InitSubSystem()
 	return TRUE;
 }
 
-void CADContView::DAC_ConvertOptionsIntoChanList()
+void CADContView::DAC_SetChannelList()
 {
-	//count how many valid outputs are defined
-	int noptions = m_pDAC_options->parmsChan.GetSize();
-	int jmax = 0;
-	for (int i = 0; i < noptions; i++) {
+	int nanalogOutputs = 0;
+	int ndigitalOutputs = 0;
 
-		if (m_pDAC_options->parmsChan.GetAt(i).bON == TRUE)
-			jmax++;
-	}
-	// nothing defined? output constant on 2+8 channels
-	if (jmax == 0) 
-	{
-		int nchans = 2+8;
-		m_DAC_chanList.SetSize(nchans);
-		for (int i = 0; i < nchans; i++) 
-		{
-			m_DAC_chanList.GetAt(i).bON = TRUE;
-			m_DAC_chanList.GetAt(i).iChan = i;
-			m_DAC_chanList.GetAt(i).iWaveform = DA_CONSTANT;
-			m_DAC_chanList.GetAt(i).value = 0;
-			if (i > 1)
-				m_DAC_chanList.GetAt(i).bDigital = TRUE;
-		}
-		return;
-	}
-	// 1 to 3 chans defined: pass parameters values
-	m_DAC_chanList.SetSize(jmax);
-	int j = 0;
-	for (int i = 0; i < noptions; i++) 
+	for (int i = 0; i < m_pDAC_options->parmsChan.GetSize(); i++)
 	{
 		OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
-		if (pParms->bON == FALSE)
+		if (!pParms->bON)
 			continue;
-		m_DAC_chanList.GetAt(j) = *pParms;
-		j++;
+		if (!pParms->bDigital)
+			nanalogOutputs++;
+		else
+			ndigitalOutputs++;
+	}
+	m_DACdigitalchannel = 0;
+
+	try 
+	{
+		// number of D/A channels
+		int nchansmax = m_Acq32OUT.GetSSCaps(OLSSC_NUMCHANNELS);
+		m_Acq32OUT.SetListSize(nchansmax);
+		for (int i = 0; i < nchansmax-1; i++)
+		{
+			if (nanalogOutputs > 0) 
+			{
+				m_Acq32OUT.SetChannelList(i, i);
+				nanalogOutputs--;
+				m_DACdigitalchannel++;
+			}
+		}
+		if (ndigitalOutputs)
+		{
+			m_Acq32OUT.SetChannelList(m_DACdigitalchannel, nchansmax - 1);
+			ndigitalOutputs--;
+		}
+
+		m_DAClistsize = m_Acq32OUT.GetListSize();
+	}
+	catch (COleDispatchException* e)
+	{
+		AfxMessageBox(e->m_strDescription);
+		e->Delete();
 	}
 }
 
 void CADContView::DAC_DeleteBuffers()
 {
 	try {
-		if (m_AnalogOUT.GetHDass() == NULL)
+		if (m_Acq32OUT.GetHDass() == NULL)
 			return;
 
-		m_AnalogOUT.Flush();	// clean
+		m_Acq32OUT.Flush();	// clean
 		HBUF hBuf;			// handle to buffer
 		do	{				// loop until all buffers are removed
-			hBuf = (HBUF)m_AnalogOUT.GetQueue();
+			hBuf = (HBUF)m_Acq32OUT.GetQueue();
 			if(hBuf != NULL)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
@@ -673,12 +660,13 @@ void CADContView::DAC_DeclareAndFillBuffers()
 	long chsweeplength	= (long) (sweepduration* pWFormat->chrate );
 	int nbuffers		= pWFormat->bufferNitems;
 	m_DAC_chbuflen		= chsweeplength / nbuffers;
-	int nchannels		= m_AnalogOUT.GetListSize();
-	m_DAC_buflen		= m_DAC_chbuflen * nchannels; 
+	m_DAC_buflen		= m_DAC_chbuflen * m_DAClistsize; 
 
-	for (int i = 0; i < nchannels; i++) {
-		m_DAC_chanList.GetAt(i).lastphase = 0;
-		m_DAC_chanList.GetAt(i).lastamp = 0;
+	for (int i = 0; i < m_pDAC_options->parmsChan.GetSize(); i++)
+	{
+		OUTPUTPARMS* parmsChan = &(m_pDAC_options->parmsChan.GetAt(i));
+		parmsChan->lastphase = 0;
+		parmsChan->lastamp = 0;
 	}
 	
 	// declare buffers to DT
@@ -692,30 +680,24 @@ void CADContView::DAC_DeclareAndFillBuffers()
 		DAC_FillBuffer(pDTbuf);
 		if ((ecode == OLNOERROR) && (m_DAC_bufhandle != NULL)) 
 		{
-			m_AnalogOUT.SetQueue((long)m_DAC_bufhandle);
+			m_Acq32OUT.SetQueue((long)m_DAC_bufhandle);
 		}
 	}
 }
 
 void CADContView::DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan)
 {
-	long msbit = (long)pow(2.0, (m_AnalogOUT.GetResolution() - 1));
-	long lRes = (long)pow(2.0, m_AnalogOUT.GetResolution()) - 1;
-	int nchans = m_AnalogOUT.GetListSize();
-
-	for (int i = chan; i< m_DAC_buflen; i += nchans)
-		*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ msbit) & lRes);
+		for (int i = chan; i< m_DAC_buflen; i += m_DAClistsize)
+		*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ m_DACmsbit) & m_DAClRes);
 }
 
-void CADContView::DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan)
+void CADContView::DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
 	double	phase = parmsChan->lastphase;
 	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
 	double	amp = (parmsChan->ampUp - parmsChan->ampLow)/2;
 	double offset = (parmsChan->ampUp + parmsChan->ampLow) / 2;
-	long	msbit = (long)pow(2.0, (m_AnalogOUT.GetResolution() - 1));
-	int nchans = m_AnalogOUT.GetListSize();
+	int nchans = m_DAClistsize;
 
 	double pi2 = 3.1415927 * 2;
 	Freq = Freq * pi2;
@@ -723,31 +705,28 @@ void CADContView::DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan)
 	{
 		*(pDTbuf + i) = (short)(cos(phase) * amp +offset);
 		// clip value
-		if (*(pDTbuf + i) > msbit)
-			*(pDTbuf + i) = (short)(msbit - 1);
+		if (*(pDTbuf + i) > m_DACmsbit)
+			*(pDTbuf + i) = (short)(m_DACmsbit - 1);
 		phase += Freq;
 		if (phase > pi2)
 			phase -= pi2;
 	}
 
-	if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
+	if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
 		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
-	m_DAC_chanList.GetAt(chan).lastphase = phase;
-	m_DAC_chanList.GetAt(chan).lastamp = amp;
+	parmsChan->lastphase = phase;
+	parmsChan->lastamp = amp;
 }
 
-void CADContView::DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan)
+void CADContView::DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
 	double	phase = parmsChan->lastphase;
-	double amp = m_DAC_chanList.GetAt(chan).lastamp;
-
 	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
 	double	ampUp = parmsChan->ampUp;
 	double	ampLow = parmsChan->ampLow;
-	long	msbit = (long)pow(2.0, (m_AnalogOUT.GetResolution() - 1));
-	int nchans = m_AnalogOUT.GetListSize();
+	double	amp = ampUp;
+	int		nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i+= nchans)
 	{
@@ -761,28 +740,49 @@ void CADContView::DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan)
 			phase -= 1;
 	}
 
-	if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
+	if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
 		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
-	m_DAC_chanList.GetAt(chan).lastphase = phase;
-	m_DAC_chanList.GetAt(chan).lastamp = amp;
+	parmsChan->lastphase = phase;
 }
 
-void CADContView::DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan)
+void CADContView::DACDig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
+	double	phase = parmsChan->lastphase;
+	WORD	amp = 0;
+	WORD	ampUp = 1;
+	ampUp = ampUp << chan;
+	WORD	ampLow = 0;
+	double	Freq = parmsChan->dFrequency / m_DAC_frequency;	
+	int nchans = m_DAClistsize;
+
+	for (int i = chan; i < m_DAC_buflen; i += nchans)
+	{
+		if (phase < 0)
+			amp = ampUp;
+		else
+			amp = ampLow;
+		*(pDTbuf + i) = *(pDTbuf + i) | amp;
+		phase += Freq;
+		if (phase > 0.5)
+			phase -= 1;
+	}
+	parmsChan->lastphase = phase;
+}
+
+void CADContView::DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
+{
 	double	phase = parmsChan->lastphase;
 	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
 	double	amp = parmsChan->ampUp;
-	long	msbit = (long)pow(2.0, (m_AnalogOUT.GetResolution() - 1));
-	int nchans = m_AnalogOUT.GetListSize();
+	int nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i+= nchans)
 	{
 		*(pDTbuf + i) = (WORD)(2 * phase * amp);
 		// clip value
-		if (*(pDTbuf + i) >= msbit)
-			*(pDTbuf + i) = (short)(msbit - 1);
+		if (*(pDTbuf + i) >= m_DACmsbit)
+			*(pDTbuf + i) = (short)(m_DACmsbit - 1);
 		phase = phase + 2 * Freq;
 		if (phase > 0.5)
 		{
@@ -791,52 +791,46 @@ void CADContView::DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan)
 		}
 	}
 
-	if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
+	if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
 		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
-	m_DAC_chanList.GetAt(chan).lastphase = phase;
-	m_DAC_chanList.GetAt(chan).lastamp = amp;
+	parmsChan->lastphase = phase;
+	parmsChan->lastamp = amp;
 }
 
-void CADContView::DAC_FillBufferWith_RAMP(short* pDTbuf, int chan)
+void CADContView::DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
 	double	amp = parmsChan->ampUp;
-	int nchans = m_AnalogOUT.GetListSize();
+	int nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i+= nchans)
 		*(pDTbuf + i) = (WORD) amp;
 
-	if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
+	if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
 		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
-	m_DAC_chanList.GetAt(chan).lastamp = amp;
+	parmsChan->lastamp = amp;
 }
 
-void CADContView::DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan)
+void CADContView::DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
-	double	amp = parmsChan->value *  pow(2.0, m_AnalogOUT.GetResolution()) / (m_AnalogOUT.GetMaxRange() - m_AnalogOUT.GetMinRange());
-	int nchans = m_AnalogOUT.GetListSize();
+	double	amp = parmsChan->value *  pow(2.0, m_Acq32OUT.GetResolution()) / (m_Acq32OUT.GetMaxRange() - m_Acq32OUT.GetMinRange());
+	int nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i += nchans)
 		*(pDTbuf + i) = (WORD) amp;
 
-	if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
+	if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
 		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
-	m_DAC_chanList.GetAt(chan).lastamp = amp;
+	parmsChan->lastamp = amp;
 }
 
-void CADContView::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan)
+void CADContView::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
-
 	double	ampUp = parmsChan->ampUp;
 	double  ampLow = parmsChan->ampLow;
-	long	msbit = (long)pow(2.0, (m_AnalogOUT.GetResolution() - 1));
-	long	lRes = (long)pow(2.0, m_AnalogOUT.GetResolution()) - 1;
-	int		nchans = m_AnalogOUT.GetListSize();
+	int		nchans = m_DAClistsize;
 	
 	CIntervalsAndWordsSeries* pstim = &parmsChan->sti;
 	double	chFreqRatio = m_DAC_frequency / pstim->chrate;
@@ -858,8 +852,8 @@ void CADContView::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan)
 	}
 	double amp = ampUp * wamp + ampLow * !wamp;
 	WORD wout = (WORD) amp;
-	if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
-		wout = (WORD)(wout ^ msbit) & lRes;
+	if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
+		wout = (WORD)(wout ^ m_DACmsbit) & m_DAClRes;
 
 	// fill buffer
 	for (int i = chan; i < m_DAC_buflen; i+= nchans, buffer_ii++)
@@ -875,11 +869,59 @@ void CADContView::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan)
 			wamp = pstim->GetIntervalPointAt(interval-1).w;
 			amp = ampUp * wamp + ampLow * !wamp;
 			wout = (WORD) amp;
-			if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
-				wout = (WORD)(wout ^ msbit) & lRes;
+			if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
+				wout = (WORD)(wout ^ m_DACmsbit) & m_DAClRes;
 		}
 	}
-	m_DAC_chanList.GetAt(chan).lastamp = amp;
+	parmsChan->lastamp = amp;
+}
+
+void CADContView::DACDig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
+{
+	WORD	ampLow = 0;
+	WORD	ampUp = 1;
+	ampUp = ampUp << chan;
+	int		nchans = m_DAClistsize;
+
+	CIntervalsAndWordsSeries* pstim = &parmsChan->sti;
+	double	chFreqRatio = m_DAC_frequency / pstim->chrate;
+	long	buffer_start = m_DAC_nBuffersFilledSinceStart*m_DAC_chbuflen;
+	long	buffer_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
+	long	buffer_ii = buffer_start;
+	int		interval = 0;
+
+	BOOL	wamp = 0;
+	long	stim_end = 0;
+
+	// find end = first interval after buffer_end; find start 
+	for (interval = 0; interval < pstim->GetSize(); interval++)
+	{
+		stim_end = (long)(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+		if (stim_end > buffer_start)
+			break;
+		wamp = pstim->GetIntervalPointAt(interval).w;
+	}
+	WORD wout = ampLow;
+	if (wamp > 0)
+		wout = ampUp;
+
+	// fill buffer
+	for (int i = chan; i < m_DAC_buflen; i += nchans, buffer_ii++)
+	{
+		*(pDTbuf + i) = *(pDTbuf + i) | wout;
+
+		if ((interval < pstim->GetSize()) && buffer_ii >= stim_end)
+		{
+			interval++;
+			if (interval < pstim->GetSize())
+				stim_end = (long)(pstim->GetIntervalPointAt(interval).ii  * chFreqRatio);
+			wamp = pstim->GetIntervalPointAt(interval - 1).w;
+			if (wamp > 0)
+				wout = ampUp;
+			else
+				wout = ampLow;
+		}
+	}
 }
 
 double CADContView::DAC_MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) {
@@ -901,15 +943,13 @@ double CADContView::DAC_MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) {
 	return ((double)parmsChan->bit1*parmsChan->ampUp) + ((double)(!parmsChan->bit1)*parmsChan->ampLow);
 }
 
-void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan)
+void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	OUTPUTPARMS* parmsChan = &(m_DAC_chanList.GetAt(chan));
-	int nchans = m_AnalogOUT.GetListSize();
-
+	int DAClistsize = m_DAClistsize;
 	double x = 0;
 	int mseqOffsetDelay = parmsChan->mseq_iDelay;
 
-	for (int i = chan; i < m_DAC_buflen; i += nchans) {
+	for (int i = chan; i < m_DAC_buflen; i += DAClistsize) {
 		x = 0;
 		// is there a delay in turnin ON the m-sequence and offset?
 		if (parmsChan->mseq_iDelay > 0)
@@ -923,56 +963,76 @@ void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan)
 		*(pDTbuf + i) = (WORD) x;
 	}
 
-	if (m_AnalogOUT.GetEncoding() == OLx_ENC_BINARY)
+	if (m_Acq32OUT.GetEncoding() == OLx_ENC_BINARY)
 		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
-	m_DAC_chanList.GetAt(chan).lastamp = x;
+	parmsChan->lastamp = x;
+}
+
+void CADContView::DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* parmsChan)
+{
+	WORD	ampLow = 0;
+	WORD	ampUp = 1;
+	ampUp = ampUp << chan;
+	WORD    wout= ampLow;
+	// dummy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	for (int i = chan; i < m_DAC_buflen; i += m_DAClistsize) {
+		
+		*(pDTbuf + i) |= wout;
+		if (wout == ampLow)
+			wout = ampUp;
+		else
+			wout = ampLow;
+	}
 }
 
 void CADContView::DAC_FillBuffer(short* pDTbuf)
 {
-	for (int i = 0; i <  m_AnalogOUT.GetListSize(); i++)
+	int janalog = 0;
+	for (int i = 0; i <  m_pDAC_options->parmsChan.GetSize(); i++)
 	{
-		if (!m_DAC_chanList.GetAt(i).bDigital) 
+		OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
+		if (!pParms->bDigital) 
 		{
-			switch (m_DAC_chanList.GetAt(i).iWaveform)
+			switch (pParms->iWaveform)
 			{
 			case DA_SINEWAVE:
-				DAC_FillBufferWith_SINUSOID(pDTbuf, i);
+				DAC_FillBufferWith_SINUSOID(pDTbuf, janalog, pParms);
 				break;
 			case DA_SQUAREWAVE:
-				DAC_FillBufferWith_SQUARE(pDTbuf, i);
+				DAC_FillBufferWith_SQUARE(pDTbuf, janalog, pParms);
 				break;
 			case DA_TRIANGLEWAVE:
-				DAC_FillBufferWith_TRIANGLE(pDTbuf, i);
+				DAC_FillBufferWith_TRIANGLE(pDTbuf, janalog, pParms);
 				break;
 			case DA_LINEWAVE:
-				DAC_FillBufferWith_RAMP(pDTbuf, i);
+				DAC_FillBufferWith_RAMP(pDTbuf, janalog, pParms);
 				break;
 			case DA_SEQUENCEWAVE:
-				DAC_FillBufferWith_ONOFFSeq(pDTbuf, i);
+				DAC_FillBufferWith_ONOFFSeq(pDTbuf, janalog, pParms);
 				break;
 			case DA_MSEQWAVE:
-				DAC_FillBufferWith_MSEQ(pDTbuf, i);
+				DAC_FillBufferWith_MSEQ(pDTbuf, janalog, pParms);
 				break;
 			case DA_CONSTANT:
 			default:
-				DAC_FillBufferWith_CONSTANT(pDTbuf, i);
+				DAC_FillBufferWith_CONSTANT(pDTbuf, janalog, pParms);
 				break;
 			}
+			janalog++;
 		}
 		else
 		{
-			switch (m_DAC_chanList.GetAt(i).iWaveform)
+			switch (pParms->iWaveform)
 			{
 			case DA_SQUAREWAVE:
-				DAC_FillBufferWith_SQUARE(pDTbuf, i);
+				DACDig_FillBufferWith_SQUARE(pDTbuf, m_DACdigitalchannel, pParms);
 				break;
 			case DA_SEQUENCEWAVE:
-				DAC_FillBufferWith_ONOFFSeq(pDTbuf, i);
+				DACDig_FillBufferWith_ONOFFSeq(pDTbuf, m_DACdigitalchannel, pParms);
 				break;
 			case DA_MSEQWAVE:
-				DAC_FillBufferWith_MSEQ(pDTbuf, i);
+				DACDig_FillBufferWith_MSEQ(pDTbuf, m_DACdigitalchannel, pParms);
 				break;
 			case DA_ONE:
 				break;
@@ -988,11 +1048,11 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 void CADContView::DAC_Stop()
 {
 	try {
-		m_AnalogOUT.Stop();
-		m_AnalogOUT.Flush();	// flush all buffers to Done Queue
+		m_Acq32OUT.Stop();
+		m_Acq32OUT.Flush();	// flush all buffers to Done Queue
 		HBUF hBuf;
 		do {
-			hBuf = (HBUF)m_AnalogOUT.GetQueue();
+			hBuf = (HBUF)m_Acq32OUT.GetQueue();
 			if(hBuf != NULL) { 
 				ECODE ecode = olDmFreeBuffer(hBuf);
 				if(ecode != OLNOERROR)
@@ -1181,13 +1241,13 @@ BOOL CADContView::StartAcquisition()
 			m_DAC_inprogress = FALSE;
 			if (m_bStartOutPutMode == 0)
 			{
-				m_AnalogOUT.Config();
-				m_AnalogOUT.Start();
+				m_Acq32OUT.Config();
+				m_Acq32OUT.Start();
 				m_DAC_inprogress = TRUE;
 			}
 		
-			m_AnalogIN.Config();
-			m_AnalogIN.Start();
+			m_Acq32IN.Config();
+			m_Acq32IN.Start();
 			m_ADC_inprogress = TRUE;
 		}
 		catch (COleDispatchException* e)
@@ -1218,7 +1278,7 @@ BOOL CADContView::StartAcquisition()
 		olDaGetErrorString(ecode,errstr,255);
 
 		// DA system
-		ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_AnalogOUT.GetHDass());
+		ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_Acq32OUT.GetHDass());
 		if (ecode != OLNOERROR)
 		{
 			retval = ecode;
@@ -1227,7 +1287,7 @@ BOOL CADContView::StartAcquisition()
 		}
 
 		// AD system
-		ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_AnalogIN.GetHDass());
+		ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_Acq32IN.GetHDass());
 		if (ecode != OLNOERROR)
 		{
 			retval = ecode;
@@ -1235,8 +1295,8 @@ BOOL CADContView::StartAcquisition()
 			return retval;
 		}
 
-		m_AnalogIN.Config();
-		m_AnalogOUT.Config();
+		m_Acq32IN.Config();
+		m_Acq32OUT.Config();
 		
 		// prestart
 		ecode = olDaSimultaneousPrestart(hSSlist);
@@ -1615,8 +1675,8 @@ void CADContView::OnHardwareAdchannels()
 	// init dialog data
 	dlg.m_pwFormat = &(m_pADC_options->waveFormat);
 	dlg.m_pchArray = &(m_pADC_options->chanArray);
-	dlg.m_numchansMAXDI = m_AnalogIN.GetSSCaps(OLSSC_MAXDICHANS);
-	dlg.m_numchansMAXSE = m_AnalogIN.GetSSCaps(OLSSC_MAXSECHANS);
+	dlg.m_numchansMAXDI = m_Acq32IN.GetSSCaps(OLSSC_MAXDICHANS);
+	dlg.m_numchansMAXSE = m_Acq32IN.GetSSCaps(OLSSC_MAXSECHANS);
 	dlg.m_bchantype = m_pADC_options->bChannelType;
 	dlg.m_bchainDialog= TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
@@ -1732,7 +1792,7 @@ void CADContView::OnTriggerError_DAC()
 void CADContView::OnBufferDone_ADC() 
 {
 	// get buffer off done list	
-	m_ADC_bufhandle = (HBUF)m_AnalogIN.GetQueue();
+	m_ADC_bufhandle = (HBUF)m_Acq32IN.GetQueue();
 	if (m_ADC_bufhandle == NULL)
 		return;
 
@@ -1780,7 +1840,7 @@ void CADContView::OnBufferDone_ADC()
 			if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
 				pWFormat->sample_count = 0;
 		}
-		m_AnalogIN.SetQueue((long)m_ADC_bufhandle);					// tell ADdriver that data buffer is free
+		m_Acq32IN.SetQueue((long)m_ADC_bufhandle);					// tell ADdriver that data buffer is free
 
 		// then: display acqDataDoc buffer
 		if (pWFormat->bOnlineDisplay)								// display data if requested
@@ -1794,7 +1854,7 @@ void CADContView::OnBufferDone_ADC()
 void CADContView::OnBufferDone_DAC()
 {
 	// get buffer off done list	
-	m_DAC_bufhandle = (HBUF) m_AnalogOUT.GetQueue();
+	m_DAC_bufhandle = (HBUF) m_Acq32OUT.GetQueue();
 	if (m_DAC_bufhandle == NULL)
 		return;
 
@@ -1805,7 +1865,7 @@ void CADContView::OnBufferDone_DAC()
 	if (m_ecode == OLNOERROR)
 	{
 		DAC_FillBuffer(pDTbuf);
-		m_AnalogOUT.SetQueue((long)m_DAC_bufhandle);
+		m_Acq32OUT.SetQueue((long)m_DAC_bufhandle);
 	}
 }
 
@@ -2100,7 +2160,7 @@ float CADContView::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain)
 			lVal = lVal - lRes;
 	}
 
-	// convert it to volts
+	// convert to volts
 	fVolts = lVal * ((fMax - fMin) / lRes);
 
 	// adjust DC offset
@@ -2215,8 +2275,8 @@ void CADContView::UpdateRadioButtons()
 void CADContView::OnBnClickedCardfeatures()
 {
 	CDataTranslationBoardDlg dlg;
-	dlg.m_pAnalogIN = &m_AnalogIN;
-	dlg.m_pAnalogOUT = &m_AnalogOUT;
+	dlg.m_pAnalogIN = &m_Acq32IN;
+	dlg.m_pAnalogOUT = &m_Acq32OUT;
 	int iout = dlg.DoModal();
 	iout++;
 }
@@ -2245,8 +2305,8 @@ BOOL CADContView::StartOutput()
 	try
 	{
 		m_DAC_inprogress = FALSE;
-		m_AnalogOUT.Config();
-		m_AnalogOUT.Start();
+		m_Acq32OUT.Config();
+		m_Acq32OUT.Start();
 		m_DAC_inprogress = TRUE;		
 	}
 	catch (COleDispatchException* e)

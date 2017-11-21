@@ -44,7 +44,6 @@ BEGIN_MESSAGE_MAP(CEditStimArrayDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON1, &CEditStimArrayDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_COPY, &CEditStimArrayDlg::OnBnClickedCopy)
 	ON_BN_CLICKED(IDC_PASTE, &CEditStimArrayDlg::OnBnClickedPaste)
-	ON_CBN_SELCHANGE(IDC_CHANCOMBO, &CEditStimArrayDlg::OnCbnSelchangeChancombo)
 	ON_BN_CLICKED(IDC_EXPORT, &CEditStimArrayDlg::OnBnClickedExport)
 END_MESSAGE_MAP()
 
@@ -106,21 +105,7 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 
 	// hide/display combo and load data into listbox
 	int nArrays = m_pIntervalArrays.GetSize();
-	if (nArrays > 1)
-	{
-		CString cs;
-		CComboBox* pCombo = (CComboBox *)GetDlgItem(IDC_CHANCOMBO);
-		for (int i = 0; i < nArrays; i++)
-		{
-			CIntervalsArray* ptr = (CIntervalsArray*)m_pIntervalArrays.GetAt(i);
-			int chan = ptr->GetChan();
-			cs.Format(_T("%i"), chan);
-			pCombo->AddString(cs);
-		}
-		GetDlgItem(IDC_CHANSTATIC)->ShowWindow(SW_SHOW);
-		pCombo->ShowWindow(SW_SHOW);
-		pCombo->SetCurSel(0);
-	}
+	ASSERT(nArrays == 1);
 	m_pstim = (CIntervalsArray*)m_pIntervalArrays.GetAt(0);
 	TransferIntervalsArrayToDialogList(m_pstim);
 
@@ -386,13 +371,6 @@ void CEditStimArrayDlg::OnBnClickedPaste()
 	ResetListOrder();
 }
 
-void CEditStimArrayDlg::OnCbnSelchangeChancombo()
-{
-	CComboBox* pCombo = (CComboBox *)GetDlgItem(IDC_CHANCOMBO);
-	int isel = pCombo->GetCurSel();
-	m_pstim = (CIntervalsArray*)m_pIntervalArrays.GetAt(isel);
-	TransferIntervalsArrayToDialogList(m_pstim);
-}
 
 void CEditStimArrayDlg::OnBnClickedExport()
 {

@@ -36,8 +36,8 @@ public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet;
 	CString				m_boardName;
-	CDTAcq32			m_AnalogIN;
-	CDTAcq32			m_AnalogOUT;
+	CDTAcq32			m_Acq32IN;
+	CDTAcq32			m_Acq32OUT;
 
 	//float				m_yupper;
 	//float				m_ylower;
@@ -106,7 +106,11 @@ protected:
 	BOOL				m_bsimultaneousStartAD;
 
 	OPTIONS_OUTPUTDATA*	m_pDAC_options;		// pointer to data output options
-	CArray <OUTPUTPARMS, OUTPUTPARMS> m_DAC_chanList;
+	int					m_DACdigitalchannel;
+	int					m_DAClistsize;
+	long				m_DACmsbit;
+	long				m_DAClRes;
+
 	BOOL				m_DAC_inprogress;	// D/A in progress
 	HBUF				m_DAC_bufhandle;
 	long				m_DAC_buflen;		// nb of acq sample per DT buffer
@@ -137,20 +141,25 @@ protected:
 	
 	BOOL DAC_OpenSubSystem(CString cardName);
 	BOOL DAC_ClearAllOutputs();
+	void DAC_SetChannelList();
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
-	void DAC_FillBufferWith_SINUSOID(short * pDTbuf, int chan);
-	void DAC_FillBufferWith_SQUARE(short * pDTbuf, int chan);
-	void DAC_FillBufferWith_TRIANGLE(short * pDTbuf, int chan);
-	void DAC_FillBufferWith_RAMP(short * pDTbuf, int chan);
-	void DAC_FillBufferWith_CONSTANT(short * pDTbuf, int chan);
-	void DAC_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_SINUSOID(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_TRIANGLE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_RAMP(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_CONSTANT(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	double DAC_MSequence(BOOL start, OUTPUTPARMS * parmsChan);
-	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan);
+	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
+
+	void DACDig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DACDig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+
 	void DAC_FillBuffer(short* pDTbuf);
-	void DAC_ConvertOptionsIntoChanList();
 	void DAC_Stop();
 	void SetCombostartoutput(int option);
 	

@@ -47,6 +47,5 @@ public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedCopy();
 	afx_msg void OnBnClickedPaste();
-	afx_msg void OnCbnSelchangeChancombo();
 	afx_msg void OnBnClickedExport();
 };
