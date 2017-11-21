@@ -371,29 +371,32 @@ void CDAChannelsDlg::OnBnClickedCheckchan2()
 
 void CDAChannelsDlg::OnBnClickedButtonsource0()
 {
-	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0))->GetCurSel();
+	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE0);
+	int isel = pCombo->GetCurSel();
 	int channel = 0;
-	EditSequence(isel, channel);
+	EditSequence(pCombo->GetItemData(isel), channel);
 }
 
 void CDAChannelsDlg::OnBnClickedButtonsource1()
 {
-	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1))->GetCurSel();
+	CComboBox* pCombo = (CComboBox*) GetDlgItem(IDC_COMBOSOURCE1);
+	int isel = pCombo->GetCurSel();
 	int channel = 1;
-	EditSequence(isel, channel);
+	EditSequence(pCombo->GetItemData(isel), channel);
 }
 
 void CDAChannelsDlg::OnBnClickedButtonsource2()
 {
-	int isel = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2))->GetCurSel();
-	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL);
-	int channel = 2+ pCombo->GetCurSel();
-	EditSequence(isel, channel);
+	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE2);
+	int isel = pCombo->GetCurSel();
+	CComboBox* pCombo1 = (CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL);
+	int channel = 2+ pCombo1->GetCurSel();
+	EditSequence(pCombo->GetItemData(isel), channel);
 }
 
-void CDAChannelsDlg::EditSequence(int isel, int channel)
+void CDAChannelsDlg::EditSequence(int iID, int channel)
 {
-	switch (isel) {
+	switch (iID) {
 		case DA_MSEQWAVE:		// M-seq
 		{
 			CEditDAMseqDlg dlg;

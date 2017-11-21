@@ -624,7 +624,7 @@ void CADContView::DAC_SetChannelList()
 		}
 		if (ndigitalOutputs)
 		{
-			m_Acq32OUT.SetChannelList(m_DACdigitalchannel, nchans - 1);
+			m_Acq32OUT.SetChannelList(m_DACdigitalchannel, nchansmax - 1);
 			ndigitalOutputs--;
 		}
 
@@ -778,16 +778,12 @@ void CADContView::DACDig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPA
 			amp = ampUp;
 		else
 			amp = ampLow;
+
 		if (m_DACdigitalfirst == 0)
 			*(pDTbuf + i) = amp;
 		else
-		{ 
-			WORD dummy1 = *(pDTbuf + i);
 			*(pDTbuf + i) |= amp;
-			WORD dummy2 = *(pDTbuf + i);
-			dummy1 = dummy2 - dummy1;
-		}
-			
+
 		phase += Freq;
 		if (phase > 0.5)
 			phase -= 1;
@@ -952,8 +948,8 @@ void CADContView::DACDig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 	}
 }
 
-double CADContView::DAC_MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) {
-
+double CADContView::DAC_MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) 
+{
 	parmsChan->count--;
 	if (parmsChan->count == 0) {
 		parmsChan->count = parmsChan->mseq_iRatio + 1;
@@ -977,16 +973,16 @@ void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* 
 	double x = 0;
 	int mseqOffsetDelay = parmsChan->mseq_iDelay;
 
-	for (int i = chan; i < m_DAC_buflen; i += DAClistsize) {
+	for (int i = chan; i < m_DAC_buflen; i += DAClistsize) 
+	{
 		x = 0;
-		// is there a delay in turnin ON the m-sequence and offset?
 		if (parmsChan->mseq_iDelay > 0)
 			parmsChan->mseq_iDelay--;
-		else {
+		else 
+		{
 			x = parmsChan->ampLow;
-			if (parmsChan->mseq_iDelay == 0) {
+			if (parmsChan->mseq_iDelay == 0) 
 				x = DAC_MSequence(FALSE, parmsChan);
-			}
 		}
 		*(pDTbuf + i) = (WORD) x;
 	}
@@ -999,19 +995,30 @@ void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* 
 
 void CADContView::DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	WORD	ampLow = 0;
+	parmsChan->ampLow = 0;
 	WORD	ampUp = 1;
-	ampUp = ampUp << parmsChan->iChan;
-	WORD    wout= ampLow;
-	// dummy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	for (int i = chan; i < m_DAC_buflen; i += m_DAClistsize) {
-		
-		*(pDTbuf + i) |= wout;
-		if (wout == ampLow)
-			wout = ampUp;
+	parmsChan->ampUp = ampUp << parmsChan->iChan;
+	int DAClistsize = m_DAClistsize;
+	double x = 0;
+	int mseqOffsetDelay = parmsChan->mseq_iDelay;
+
+	for (int i = chan; i < m_DAC_buflen; i += DAClistsize)
+	{
+		x = 0;
+		if (parmsChan->mseq_iDelay > 0)
+			parmsChan->mseq_iDelay--;
 		else
-			wout = ampLow;
+		{
+			x = parmsChan->ampLow;
+			if (parmsChan->mseq_iDelay == 0)
+				x = DAC_MSequence(FALSE, parmsChan);
+		}
+		if (m_DACdigitalfirst == 0)
+			*(pDTbuf + i) = (WORD)x;
+		else
+			*(pDTbuf + i) |= (WORD)x;
 	}
+	parmsChan->lastamp = x;
 }
 
 void CADContView::DAC_FillBuffer(short* pDTbuf)
