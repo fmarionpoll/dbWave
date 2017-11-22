@@ -615,7 +615,7 @@ void CImportGenericDataDlg::UpdatePreview()
 		int iextent = MulDiv(max-min+1, 11, 10);
 		int izero = (max+min)/2;
 		m_lineview.SetChanlistYextent(i, iextent);
-		m_lineview.SetChanlistZero(i, izero);
+		m_lineview.SetChanlistYzero(i, izero);
 	}
 	m_lineview.Invalidate();
 }

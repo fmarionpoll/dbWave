@@ -718,7 +718,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 			}
 			j -= 2;
 			pWnd->SetChanlistYextent(i, iextent);
-			pWnd->SetChanlistZero(i, izero);
+			pWnd->SetChanlistYzero(i, izero);
 		}
 	}
 

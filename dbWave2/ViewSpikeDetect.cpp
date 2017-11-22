@@ -1765,7 +1765,7 @@ void CSpikeDetectionView::OnFormatXscale()
 	{
 		if (dlg.m_bDisplaysource)
 		{
-			m_displayDetect.SetChanlistZero(0, dlg.m_yzero);
+			m_displayDetect.SetChanlistYzero(0, dlg.m_yzero);
 			m_displayDetect.SetChanlistYextent(0, dlg.m_yextent);
 			m_displayDetect.Invalidate();
 		}
@@ -3290,7 +3290,7 @@ void CSpikeDetectionView::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 	// try to read data with this new size
 	if (lSize>YZERO_MIN && lSize<YZERO_MAX)
 	{		
-		pView->SetChanlistZero(ichan, lSize+ pView->GetChanlistBinZero(ichan));
+		pView->SetChanlistYzero(ichan, lSize+ pView->GetChanlistBinZero(ichan));
 		pView->Invalidate();
 	}
 	// update scrollBar

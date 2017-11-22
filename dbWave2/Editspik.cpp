@@ -373,12 +373,12 @@ void CSpikeEditDlg::LoadSourceData()
 	m_sourceView.GetDataFromDoc(lVFirst, lVLast);	// load data from file
 
 	// adjust offset (center spike) : use initial offset from spike	
-	m_sourceView.SetChanlistZero(0, m_yzero+pS->GetSpikeAmplitudeOffset());
+	m_sourceView.SetChanlistYzero(0, m_yzero+pS->GetSpikeAmplitudeOffset());
 	m_sourceView.SetChanlistYextent(0, m_yextent);
 
 	if (m_pSpkList->GetcompensateBaseline())
 	{
-		m_sourceView.SetChanlistZero(1,m_yzero+pS->GetSpikeAmplitudeOffset());
+		m_sourceView.SetChanlistYzero(1,m_yzero+pS->GetSpikeAmplitudeOffset());
 		m_sourceView.SetChanlistYextent(1, m_yextent);
 	}
 	m_sourceView.Invalidate();

@@ -48,10 +48,10 @@ public:
 	inline WORD		GetColor()							const {return dl_color;}
 	inline WORD		GetflagPrintVisible()				const {return dl_bprint;}
 	inline float	GetVoltsperBin()					const {return dl_voltsperbin;}
-	inline float	ConvertBintoVolts(int bins)		const {return ((float)(bins/*-dl_binzero*/))*dl_voltsperbin;}
-	inline int		ConvertVoltstoBins(float nvolts)	const {return (int) (/*dl_binzero + */(nvolts/dl_voltsperbin));}
+	inline float	ConvertBintoVolts(int bins)			const {return ((float)(bins))*dl_voltsperbin;}
+	inline int		ConvertVoltstoBins(float nvolts)	const {return (int) (nvolts/dl_voltsperbin);}
 	inline BOOL		GetHZtagsPrintFlag()				const {return dl_bHZtagsPrint;}
-	inline int		GetBinZero()						const {return 0 /*dl_binzero*/;}
+	inline int		GetBinZero()						const {return 0;}
 	inline float	GetVoltsExtent()					const {return dl_voltsextent;}
 
 	inline void		SetZero(int zero)					{dl_zero=zero;}
@@ -60,9 +60,7 @@ public:
 	inline void		SetPenWidth(WORD penwidth)			{dl_penwidth=penwidth;}
 	inline void		SetColor(WORD color)				{dl_color=color;}
 	inline void		SetflagPrintVisible(WORD drawmode)	{dl_bprint=drawmode;}
-	inline void		SetBinFormat(float VoltsperBin, long binzero, long binspan) 
-														{dl_voltsperbin=VoltsperBin;dl_binzero=binzero; dl_binspan=binspan;}
+	inline void		SetBinFormat(float VoltsperBin, long binzero, long binspan)  {dl_voltsperbin=VoltsperBin;dl_binzero=binzero; dl_binspan=binspan;}
 	inline void		SetHZtagsPrintFlag(BOOL bPrint)		{dl_bHZtagsPrint = bPrint;}	
-	inline void		SetOrdinatesSourceData(int chan, int transform) 
-														{pOrdinates->SetSourceData(chan, transform);}
+	inline void		SetOrdinatesSourceData(int chan, int transform) {pOrdinates->SetSourceData(chan, transform);}
 };

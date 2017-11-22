@@ -839,7 +839,7 @@ void CDataView::UpdateChannelsDisplayParameters()
 				izero = (max+min)/2;
 		}
 		m_VDlineview.SetChanlistYextent(i, iextent);
-		m_VDlineview.SetChanlistZero(i, izero);
+		m_VDlineview.SetChanlistYzero(i, izero);
 	}
 
 	if (m_VDlineview.GetChanlistYextent(0) != iextent0 || m_VDlineview.GetChanlistYzero(0) != izero0)
@@ -1267,11 +1267,11 @@ void CDataView::OnBiasScroll(UINT nSBCode, UINT nPos)
 
 void CDataView::UpdateYZero(int ichan, int ybias)
 {
-	m_VDlineview.SetChanlistZero(ichan, ybias);
+	m_VDlineview.SetChanlistYzero(ichan, ybias);
 	if (m_comboSelectChan.GetCurSel() == m_VDlineview.GetChanlistSize())
 	{
 		for (int i = 0; i < m_VDlineview.GetChanlistSize(); i++)
-			m_VDlineview.SetChanlistZero(i, ybias);
+			m_VDlineview.SetChanlistYzero(i, ybias);
 	}
 	m_VDlineview.Invalidate();
 }
@@ -1322,7 +1322,7 @@ void CDataView::OnSplitCurves()
 		int ibias = MulDiv(pxzero, iextent, pxheight);  // convert pixel into bins
 		int izero = (max+min)/2 - ibias;				// change bias
 		m_VDlineview.SetChanlistYextent(i, iextent);
-		m_VDlineview.SetChanlistZero(i, izero);
+		m_VDlineview.SetChanlistYzero(i, izero);
 		pxzero -= pxoffset;								// update position of next curve
 	}
 	UpdateLegends(CHG_YSCALE);

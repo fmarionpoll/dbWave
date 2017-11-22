@@ -516,7 +516,7 @@ void CLineViewWnd::AutoZoomChan(int j)
 	for (int i=i1; i<= i2; i++)
 	{
 		GetChanlistMaxMin(i, &max, &min);
-		SetChanlistZero(i, (max+min)/2);
+		SetChanlistYzero(i, (max+min)/2);
 		SetChanlistYextent(i, MulDiv(max-min+1, 10, 8));
 	}
 }
@@ -534,7 +534,7 @@ void CLineViewWnd::SplitChans()
 		int amplitudespan = MulDiv((max-min), 12*nchans, 10);
 		SetChanlistYextent(i, amplitudespan);
 		int ioffset = (max+min)/2 + MulDiv(amplitudespan, icur, nchans*2);
-		SetChanlistZero(i, ioffset);
+		SetChanlistYzero(i, ioffset);
 	}
 }
 
@@ -555,7 +555,7 @@ void CLineViewWnd::CenterChan(int j)
 	{
 		GetChanlistMaxMin(i, &max, &min);
 		int yzero = (max+min)/2;
-		SetChanlistZero(i, yzero);
+		SetChanlistYzero(i, yzero);
 	}
 }
 
@@ -1967,7 +1967,7 @@ void CLineViewWnd::HighlightData(CDC* pDC, int chan)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void CLineViewWnd::SetChanlistZero(WORD i, int zero)
+void CLineViewWnd::SetChanlistYzero(WORD i, int zero)
 {
 	((CChanlistItem*)m_pChanArray[i])->SetZero(zero);
 }

@@ -24,9 +24,6 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // data display operations    
 public:
-
-	// document operations
-
 	BOOL GetDataFromDoc();							// load data from document
 	BOOL GetDataFromDoc(long lFirst);				// load data from doc, from index lFirst, same length
 	BOOL GetDataFromDoc(long lFirst, long lLast);	// load data from doc: lFirst to lLast
@@ -51,16 +48,15 @@ public:
 
 	// Helper functions	
 
-	long GetNxPixels() const	{return m_npixels;}	// number of pixels defined in this window
-	long GetDataFirst() const	{return m_lxFirst;}	// document index of first abcissa
-	long GetDataLast() const	{return m_lxLast;}	// document index of last abcissa
-	long GetDataSize() const	{return m_lxSize;}	// nb of data pts displayed
-	long GetPageSize() const	{return m_lxPage;}	// size of page increment used to browse through doc
-	long GetLineSize() const	{return m_lxLine;}	// size of line increment used to browse through doc	
+	inline long GetNxPixels()		const	{return m_npixels;}	// number of pixels defined in this window
+	inline long GetDataFirst()		const	{return m_lxFirst;}	// document index of first abcissa
+	inline long GetDataLast()		const	{return m_lxLast;}	// document index of last abcissa
+	inline long GetDataSize()		const	{return m_lxSize;}	// nb of data pts displayed
+	inline long GetPageSize()		const	{return m_lxPage;}	// size of page increment used to browse through doc
+	inline long GetLineSize()		const	{return m_lxLine;}	// size of line increment used to browse through doc	
+	inline long GetDocumentLast()	const {return m_lxVeryLast;}// index of document's last pt
+	inline long GetDataOffsetfromPixel(int pix) const {return ((long)pix)*(m_lxLast-m_lxFirst+1)/((long)m_displayRect.right) + m_lxFirst;}
 	void UpdatePageLineSize();						// update page and line size parameters
-	long GetDocumentLast() const {return m_lxVeryLast;}// index of document's last pt
-	long GetDataOffsetfromPixel(int pix) const
-								{return ((long)pix)*(m_lxLast-m_lxFirst+1)/((long)m_displayRect.right) + m_lxFirst;}
 
 // Attributes
 protected:
@@ -106,9 +102,10 @@ public:
 	void 	RemoveAllChanlistItems();			// remove all channels displayed
 	int  	AddChanlistItem(int ns, int mode);	// add one channel
 	int  	RemoveChanlistItem(WORD i);			// remove chan(i)
+	inline CChanlistItem* GetChanlistItem(int i) const {return (CChanlistItem*) m_pChanArray.GetAt(i); }
 	
 	// GET/set binary parms
-	void 	SetChanlistZero(WORD i, int zero);
+	void 	SetChanlistYzero(WORD i, int zero);
 	void 	SetChanlistYextent(WORD i, int yextent);
 	void 	SetChanlistComment(WORD i, CString& comment);
 	void	SetChanlistColor(WORD i, int color);
@@ -168,16 +165,11 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 	void 	MoveHZtagtoVal(int itag, int ival);	
-
-protected:
-	// implementation
-	void	ZoomData(CRect* prevRect, CRect* newRect);	// zoom display	
-public:
 	void	PlotDatatoDC(CDC* pDC);
 protected:
 	int		DoesCursorHitCurve(CPoint point);	
 	void	XORcurve();
-	void	XORHZcur(CPoint point);	
+	void	ZoomData(CRect* prevRect, CRect* newRect);	// zoom display
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // overloaded functions	

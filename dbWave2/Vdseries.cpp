@@ -149,7 +149,7 @@ void CDataSeriesDlg::OnClickedDefineseries()
 	m_lineview->GetDataFromDoc();	// load data from document
 	int max, min;					// center the new curve
 	m_lineview->GetChanlistMaxMin(m_listindex, &max, &min);		
-	m_lineview->SetChanlistZero(m_listindex, (max+min)/2);	
+	m_lineview->SetChanlistYzero(m_listindex, (max+min)/2);	
 	m_lineview->SetChanlistYextent(m_listindex, (int) ((max-min+1)*1.2));
 	m_lineview->Invalidate();
 

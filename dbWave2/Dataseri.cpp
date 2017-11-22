@@ -64,7 +64,7 @@ void CDataSeriesFormatDlg::SetParams(int index)
 {	
 	m_yzero = (int) ((m_maxmv+m_minmv)/(m_mVperbin*2.0f)) + m_binzero;
 	m_yextent = (int) ((m_maxmv - m_minmv)/m_mVperbin);
-	m_plineview->SetChanlistZero(index, m_yzero);
+	m_plineview->SetChanlistYzero(index, m_yzero);
 	m_plineview->SetChanlistYextent(index, m_yextent);
 	COLORREF ccolor = m_colorbutton.GetColor();
 	int icolor = m_plineview->FindColor(ccolor);

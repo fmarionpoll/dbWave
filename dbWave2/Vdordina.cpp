@@ -113,7 +113,7 @@ BOOL CDataViewOrdinatesDlg::OnInitDialog()
 	int j = 0;														// index to restore parms
 	for (i=0; i < m_nChanmax; i++)									// browse through all chans again
 	{
-		m_plinev->SetChanlistZero(i, m_settings.GetAt(j)); j++;		// restore zero
+		m_plinev->SetChanlistYzero(i, m_settings.GetAt(j)); j++;		// restore zero
 		m_plinev->SetChanlistYextent(i, m_settings.GetAt(j)); j++;	// restore extent
 		m_chanSelect.AddString(m_plinev->GetChanlistComment(i));	// load comment/chan
 	}
@@ -172,7 +172,7 @@ void CDataViewOrdinatesDlg::SaveChanlistData(int indexlist)
 		float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
 		float xextent = (m_xmax - m_xmin) * m_p10;
 		int i = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(j);
-		m_plinev->SetChanlistZero(j,i);		// change zero
+		m_plinev->SetChanlistYzero(j,i);		// change zero
 		i = (int) (xextent /VperBin);
 		m_plinev->SetChanlistYextent(j, i);	// change extent
 	}
@@ -257,7 +257,7 @@ void CDataViewOrdinatesDlg::OnKillfocusVertcenter()
 	float VperBin =  m_plinev->GetChanlistVoltsperBin(m_Channel);
 	float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;	
 	int zero = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(m_Channel);
-	m_plinev->SetChanlistZero(m_Channel,zero);		// change zero
+	m_plinev->SetChanlistYzero(m_Channel,zero);		// change zero
 
 	// convert into current volts units
 	m_bChanged = TRUE;
@@ -280,7 +280,7 @@ void CDataViewOrdinatesDlg::OnKillfocusVertMxMi()
 	int zero = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(m_Channel);
 	int extent = (int) (xextent /VperBin);
 
-	m_plinev->SetChanlistZero(m_Channel, zero);
+	m_plinev->SetChanlistYzero(m_Channel, zero);
 	m_plinev->SetChanlistYextent(m_Channel, extent);
 	LoadChanlistData(m_Channel);	// reload params
 	ChangeUnits(m_iUnit, FALSE);	// convert into current volts units
@@ -300,7 +300,7 @@ void CDataViewOrdinatesDlg::OnCancel()
 	int j = 0;
 	for (int i = 0; i<m_nChanmax; i++)
 	{
-		m_plinev->SetChanlistZero(i, (int) m_settings[j]);
+		m_plinev->SetChanlistYzero(i, (int) m_settings[j]);
 		j++;
 		m_plinev->SetChanlistYextent(i, (int) m_settings[j]);
 		j++;

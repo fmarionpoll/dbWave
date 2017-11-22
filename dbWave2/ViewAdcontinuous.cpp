@@ -330,8 +330,7 @@ BOOL CADContView::ADC_InitSubSystem()
 		pAcqDwaveFormat->chrate = (float) clockrate / pAcqDwaveFormat->scan_count;
 
 		// update channel list (chan & gain)
-		// pD->SetBinFormat(docVoltsperb, pwaveFormat->binzero, pwaveFormat->fullscale_bins);
-		// 
+		
 		m_Acq32IN.SetListSize(pAcqDwaveFormat->scan_count);
 		for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
 		{
@@ -405,8 +404,10 @@ void CADContView::ADC_DeclareBuffers()
 	if (m_ADsourceView.GetChanlistSize() != pWFormat->scan_count)
 	{
 		m_ADsourceView.RemoveAllChanlistItems();
-		for (int j = 0; j< pWFormat->scan_count; j++)
+		for (int j = 0; j < pWFormat->scan_count; j++)
+		{
 			m_ADsourceView.AddChanlistItem(j, 0);
+		}
 	}
 
 	// adapt source view 
@@ -414,11 +415,16 @@ void CADContView::ADC_DeclareBuffers()
 	if (m_pADC_options->izoomCursel != 0)
 		iextent = m_pADC_options->izoomCursel;
 	int ioffset = 0;
+
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
-		m_ADsourceView.SetChanlistZero(i, ioffset);	// combine calls into one?
+		m_ADsourceView.SetChanlistYzero(i, ioffset);
 		m_ADsourceView.SetChanlistYextent(i, iextent);
 		m_ADsourceView.SetChanlistColor(i, i);
+		float docVoltsperb;
+		m_inputDataFile.GetWBVoltsperBin(i, &docVoltsperb);
+		CChanlistItem* pD = m_ADsourceView.GetChanlistItem(i);
+		pD->SetBinFormat(docVoltsperb, pWFormat->binzero, pWFormat->fullscale_bins);
 	}
 	m_ADsourceView.Invalidate();
 	UpdateData(FALSE);
@@ -948,7 +954,7 @@ void CADContView::DACDig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 	}
 }
 
-double CADContView::DAC_MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) 
+void CADContView::DAC_MSequence(BOOL bStart, OUTPUTPARMS* parmsChan) 
 {
 	parmsChan->count--;
 	if (parmsChan->count == 0) {
@@ -964,7 +970,6 @@ double CADContView::DAC_MSequence(BOOL bStart, OUTPUTPARMS* parmsChan)
 		parmsChan->bit33 = ((parmsChan->num & 0x80000000) != 0);
 		parmsChan->num = (parmsChan->num << 1) + parmsChan->bit1;
 	}
-	return ((double)parmsChan->bit1*parmsChan->ampUp) + ((double)(!parmsChan->bit1)*parmsChan->ampLow);
 }
 
 void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
@@ -981,8 +986,10 @@ void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* 
 		else 
 		{
 			x = parmsChan->ampLow;
-			if (parmsChan->mseq_iDelay == 0) 
-				x = DAC_MSequence(FALSE, parmsChan);
+			if (parmsChan->mseq_iDelay == 0) {
+				DAC_MSequence(FALSE, parmsChan);
+				x = (parmsChan->bit1 * parmsChan->ampUp) + (!parmsChan->bit1 * parmsChan->ampLow);
+			}
 		}
 		*(pDTbuf + i) = (WORD) x;
 	}
@@ -995,9 +1002,9 @@ void CADContView::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* 
 
 void CADContView::DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	parmsChan->ampLow = 0;
+	WORD	ampLow = 0;
 	WORD	ampUp = 1;
-	parmsChan->ampUp = ampUp << parmsChan->iChan;
+	ampUp = ampUp << parmsChan->iChan;
 	int DAClistsize = m_DAClistsize;
 	double x = 0;
 	int mseqOffsetDelay = parmsChan->mseq_iDelay;
@@ -1010,8 +1017,10 @@ void CADContView::DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPAR
 		else
 		{
 			x = parmsChan->ampLow;
-			if (parmsChan->mseq_iDelay == 0)
-				x = DAC_MSequence(FALSE, parmsChan);
+			if (parmsChan->mseq_iDelay == 0) {
+				DAC_MSequence(FALSE, parmsChan);
+				x = (double)(parmsChan->bit1 * ampUp + !parmsChan->bit1 * ampLow);
+			}
 		}
 		if (m_DACdigitalfirst == 0)
 			*(pDTbuf + i) = (WORD)x;
@@ -2142,7 +2151,7 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 		int ichanfirst = 0;
 		int ichanlast = pWFormat->scan_count-1;
 		for (int ichan = ichanfirst; ichan <= ichanlast; ichan++)
-			m_ADsourceView.SetChanlistZero(ichan, lSize+ m_ADsourceView.GetChanlistBinZero(ichan));
+			m_ADsourceView.SetChanlistYzero(ichan, lSize+ m_ADsourceView.GetChanlistBinZero(ichan));
 		m_ADsourceView.Invalidate();
 	}
 	// update scrollBar

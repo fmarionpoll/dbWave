@@ -38,9 +38,6 @@ public:
 	CString				m_boardName;
 	CDTAcq32			m_Acq32IN;
 	CDTAcq32			m_Acq32OUT;
-
-	//float				m_yupper;
-	//float				m_ylower;
 	CRulerBar			m_adxscale;
 	CRulerBar			m_adyscale;
 	CComboBox			m_ADcardCombo;
@@ -49,21 +46,17 @@ public:
 	int					m_bStartOutPutMode;
 
 protected:
-	// display data button and associated procedures
 	CLineViewWnd		m_ADsourceView;		// source data display button
 	int 				m_cursorstate;		// source data cursor state	
 	float				m_sweepduration;
-
 	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed	
 	CEditCtrl			mm_ylower;			// edit control for min amplitude displayed
 	CStretchControl		m_stretch;			// array of properties associated with controls
 	HICON				m_hBias;
 	HICON				m_hZoom;
-
 	float				m_yscaleFactor;		// div factor for y bar 
 	int					m_VBarMode;			// flag V scrollbar state
 	CScrollBar 			m_scrolly;			// V scrollbar
-
 	CBrush*				m_pEditBkBrush;
 	COLORREF			m_BkColor;
 
@@ -152,7 +145,7 @@ protected:
 	void DAC_FillBufferWith_RAMP(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_CONSTANT(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	double DAC_MSequence(BOOL start, OUTPUTPARMS * parmsChan);
+	void DAC_MSequence(BOOL start, OUTPUTPARMS * parmsChan);
 	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 

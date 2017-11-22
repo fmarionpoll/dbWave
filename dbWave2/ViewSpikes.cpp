@@ -514,7 +514,7 @@ void CSpikeView::OnEnChangeNOspike()
 			// center curve vertically
 			int ixpixel = MulDiv(lcenter - m_lFirst, m_sourceView.GetNxPixels(), m_lLast - m_lFirst);
 			int ival = m_sourceView.GetChanlistBinAt(0, ixpixel);
-			m_sourceView.SetChanlistZero(0, ival);
+			m_sourceView.SetChanlistYzero(0, ival);
 			// display data
 			m_spkClass.Invalidate();
 			m_sourceView.Invalidate();
@@ -716,7 +716,7 @@ void CSpikeView::UpdateLegends(BOOL bFirst)
 					int iextent = MulDiv(max-min+1, 11, 10);
 					int izero = (max+min)/2;
 					m_sourceView.SetChanlistYextent(0, iextent);
-					m_sourceView.SetChanlistZero(0, izero);
+					m_sourceView.SetChanlistYzero(0, izero);
 				}
 			}
 			m_DWintervals.SetSize(3+2);					// total size
@@ -879,7 +879,7 @@ void CSpikeView::SelectSpkList(int icursel)
 		int iextent = MulDiv(max-min+1, 11, 10);
 		int izero = (max+min)/2;
 		m_sourceView.SetChanlistYextent(0, iextent);
-		m_sourceView.SetChanlistZero(0, izero);
+		m_sourceView.SetChanlistYzero(0, izero);
 	}
 	m_sourceView.Invalidate();
 }
@@ -2404,7 +2404,7 @@ void CSpikeView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (lSize>YZERO_MIN && lSize<YZERO_MAX)
 	{		
-		m_sourceView.SetChanlistZero(0, lSize+ m_sourceView.GetChanlistBinZero(0));
+		m_sourceView.SetChanlistYzero(0, lSize+ m_sourceView.GetChanlistBinZero(0));
 		m_sourceView.Invalidate();
 	}
 	// update scrollBar
