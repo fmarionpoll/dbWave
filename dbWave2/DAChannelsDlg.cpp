@@ -450,6 +450,7 @@ void CDAChannelsDlg::SetDigitalParmsToDlg(int digitalchannel)
 	m_ffrequence2 = pParms->dFrequency;
 	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
 	int val = pParms->iWaveform;
+
 	SelectComboItem(pCombo2, val);
 	UpdateData(FALSE);
 }
@@ -459,10 +460,13 @@ void CDAChannelsDlg::GetDigitalParmsFromDlg(int digitalchannel)
 	int channel = m_iseldigital + 2;
 	OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
 	UpdateData(TRUE);
+
 	pParms->bDigital = TRUE;
 	pParms->iChan = channel-2;
 	pParms->bON = m_bChannel2;
 	pParms->dFrequency = m_ffrequence2;
 	CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
 	pParms->iWaveform = pCombo2->GetItemData(pCombo2->GetCurSel());
+	if (DA_ZERO == pParms->iWaveform)
+		pParms->bON = FALSE;
 }
