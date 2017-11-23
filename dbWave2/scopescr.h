@@ -97,8 +97,8 @@ public:
 
 	// new x scale -----------------------------------------------------------------
 public:
-	CRuler		m_xscale;
-	CRuler		m_yscale;
+	CRuler		m_xRuler;
+	CRuler		m_yRuler;
 	CFont		m_hFont;
 	BOOL		m_bNiceGrid;
 	int			m_abcissaheight;

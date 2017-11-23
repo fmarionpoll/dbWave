@@ -36,8 +36,8 @@ public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet;
 	CString				m_boardName;
-	CDTAcq32			m_Acq32IN;
-	CDTAcq32			m_Acq32OUT;
+	CDTAcq32			m_Acq32_ADC;
+	CDTAcq32			m_Acq32_DAC;
 	CRulerBar			m_adxscale;
 	CRulerBar			m_adyscale;
 	CComboBox			m_ADcardCombo;
@@ -131,7 +131,7 @@ protected:
 	void ADC_DeleteBuffers();
 	void ADC_DeclareBuffers();
 	void ADC_Transfer(short* pDTbuf);
-	void ADC_Stop();
+	void ADC_StopAndLiberateBuffers();
 	
 	BOOL DAC_OpenSubSystem(CString cardName);
 	BOOL DAC_ClearAllOutputs();
@@ -149,12 +149,12 @@ protected:
 	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 
-	void DACDig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DACDig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DACDig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_Dig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_Dig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 
 	void DAC_FillBuffer(short* pDTbuf);
-	void DAC_Stop();
+	void DAC_StopAndLiberateBuffers();
 	void SetCombostartoutput(int option);
 	
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);

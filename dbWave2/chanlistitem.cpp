@@ -55,8 +55,7 @@ CChanlistItem::CChanlistItem(CEnvelope* pX, int indexX, CEnvelope* pY, int index
 // init display parameters from chan list item
 //---------------------------------------------------------------------------
 
-void CChanlistItem::InitDisplayParms(WORD new_penwidth, WORD new_color, 
-					int new_zero, int new_yextent, WORD new_drawmode)
+void CChanlistItem::InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent, WORD new_drawmode)
 {
 	dl_penwidth = new_penwidth;
 	dl_color = new_color;

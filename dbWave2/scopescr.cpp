@@ -193,8 +193,8 @@ CScopeScreen::CScopeScreen()
 		m_penTable[i].CreatePen(PS_SOLID, 0, m_colorTable[i]);
 
 	m_bNiceGrid				= FALSE;
-	m_xscale.m_bHorizontal	= TRUE;
-	m_yscale.m_bHorizontal	= FALSE;
+	m_xRuler.m_bHorizontal	= TRUE;
+	m_yRuler.m_bHorizontal	= FALSE;
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH|FF_ROMAN, _T("Arial"));
 	m_abcissaheight  = 10;
 	m_ordinateswidth = 25;
@@ -526,8 +526,8 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 
 void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
 {
-	DrawGridfromScale (pDC, &m_xscale);
-	DrawGridfromScale (pDC, &m_yscale);
+	DrawGridfromScale (pDC, &m_xRuler);
+	DrawGridfromScale (pDC, &m_yRuler);
 }
 
 void CScopeScreen::AdjustDisplayRect(CRect* pRect)

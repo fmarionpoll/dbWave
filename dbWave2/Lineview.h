@@ -141,8 +141,8 @@ public:
 	int		GetChanlistVoltstoBins(WORD i, float nvolts);
 	int		GetChanlistMilliVoltstoBins(WORD i, float millivolts);
 	
-	int		FromChanlistBintoPixel(WORD chan, int bin);
-	int		FromChanlistPixeltoBin(WORD chan, int pixels);
+	int		GetChanlistBintoPixel(WORD chan, int bin);
+	int		GetChanlistPixeltoBin(WORD chan, int pixels);
 
 	void	AutoZoomChan(int i);	// maximize gain and offset to center curve
 	void	CenterChan(int i);		// center curve within button area

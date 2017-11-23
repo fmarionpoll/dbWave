@@ -1548,7 +1548,7 @@ LPTSTR CLineViewWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 //		viewport extent: VE: pDC->SetViewportExt (m_Size.cx, -m_Size.cy);	
 //---------------------------------------------------------------------------
 
-int CLineViewWnd::FromChanlistBintoPixel(WORD chan, int bin)
+int CLineViewWnd::GetChanlistBintoPixel(WORD chan, int bin)
 {
 	CChanlistItem* pD = (CChanlistItem*)m_pChanArray[chan];	
 	int j = MulDiv(bin - pD->GetZero(), m_yVE, pD->GetExtent()) + m_yVO;
@@ -1556,14 +1556,14 @@ int CLineViewWnd::FromChanlistBintoPixel(WORD chan, int bin)
 }
 
 //---------------------------------------------------------------------------
-// FromChanlistPixeltoBin()
+// GetChanlistPixeltoBin()
 // 		logical (bin: L) <= device(pixel: D) ...
 // 		Lx = ((D -VO) * WE / VE) + WO
 //		viewport origin: VO: pDC->SetViewportOrg (0, m_Size.cy/2);
 //		viewport extent: VE: pDC->SetViewportExt (m_Size.cx, -m_Size.cy);
 //---------------------------------------------------------------------------
 
-int CLineViewWnd::FromChanlistPixeltoBin(WORD chan, int pixels)
+int CLineViewWnd::GetChanlistPixeltoBin(WORD chan, int pixels)
 {
 	CChanlistItem* pD = (CChanlistItem*)m_pChanArray[chan];	
 	int j = MulDiv(pixels - m_yVO, pD->GetExtent(), m_yVE) + pD->GetZero();
@@ -1628,7 +1628,7 @@ void CLineViewWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		for (int icur = 0; icur<GetNHZtags(); icur++)
 		{
 			// convert device coordinates into val
-			int pixval = FromChanlistBintoPixel(GetHZtagChan(icur), GetHZtagVal(icur));			
+			int pixval = GetChanlistBintoPixel(GetHZtagChan(icur), GetHZtagVal(icur));			
 			SetHZtagPix(icur, pixval);			// set pixval
 		}
 	}
@@ -1731,9 +1731,9 @@ void CLineViewWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	case TRACK_HZTAG:
 		{
 		int chan = GetHZtagChan(m_HCtrapped);		// get channel
-		int val = FromChanlistPixeltoBin(chan, m_ptLast.y);
+		int val = GetChanlistPixeltoBin(chan, m_ptLast.y);
 		SetHZtagVal(m_HCtrapped, val);				// change cursor value
-		point.y = FromChanlistBintoPixel(chan, val);		
+		point.y = GetChanlistBintoPixel(chan, val);		
 		XorHZtag(point.y);
 		PostMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);	// tell parent that val changed		
 		m_trackMode = TRACK_OFF;
@@ -1829,7 +1829,7 @@ int CLineViewWnd::DoesCursorHitCurve(CPoint point)
 	for (int chan=0; chan<=ichans; chan++)	// scan all channels
 	{
 		// convert device coordinates into val
-		int ival = FromChanlistPixeltoBin(chan, point.y);
+		int ival = GetChanlistPixeltoBin(chan, point.y);
 		int ijitter = MulDiv(m_cyjitter, GetChanlistYextent(chan), -m_yVE);
 		int valmax = ival+ijitter;			// mouse max
 		int valmin = ival-ijitter;			// mouse min

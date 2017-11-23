@@ -341,7 +341,7 @@ void CDataView::UpdateLegends(int ioperation)
 	{
 		m_timefirst = m_VDlineview.GetDataFirst()/m_samplingRate;
 		m_timelast = (m_VDlineview.GetDataLast()+1)/m_samplingRate;	
-		m_VDlineview.m_xscale.SetRange(&m_timefirst, &m_timelast);
+		m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 		UpdateFileScroll();
 	}
 
@@ -366,11 +366,11 @@ void CDataView::UpdateLegends(int ioperation)
 	// ------------------------------------------- adapt vertical scale
 	if (ioperation & CHG_YBAR)
 	{
-		int max =  m_VDlineview.FromChanlistPixeltoBin(m_ichanselected, 0);
-		float vmax = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, max);
-		int min = m_VDlineview.FromChanlistPixeltoBin(m_ichanselected, m_VDlineview.Height());
-		float vmin = m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, min);
-		m_VDlineview.m_yscale.SetRange(&vmin, &vmax);
+		int max		= m_VDlineview.GetChanlistPixeltoBin(m_ichanselected, 0);
+		float vmax	= m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, max);
+		int min		= m_VDlineview.GetChanlistPixeltoBin(m_ichanselected, m_VDlineview.Height());
+		float vmin	= m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, min);
+		TRACE(_T("max, min mV= %f, %f\n"), vmin, vmax); m_VDlineview.m_yRuler.SetRange(&vmin, &vmax);
 	}
 
 	// -------------------------------------------
@@ -532,10 +532,10 @@ void CDataView::OnEditCopy()
 			comments += content;
 			mDC.TextOut(xcol, ypxrow, comments);
 			ypxrow += lineheight;
-			comments.Format( _T("Vertical bar (ch. 0) = %g mV"),  m_VDlineview.m_yscale.GetScaleIncrement());
+			comments.Format( _T("Vertical bar (ch. 0) = %g mV"),  m_VDlineview.m_yRuler.GetScaleIncrement());
 			mDC.TextOut(xcol, ypxrow, comments);
 			ypxrow += lineheight;
-			comments.Format(_T("Horizontal bar = %g s"), m_VDlineview.m_xscale.GetScaleIncrement());
+			comments.Format(_T("Horizontal bar = %g s"), m_VDlineview.m_xRuler.GetScaleIncrement());
 			mDC.TextOut(xcol, ypxrow, comments);
 			ypxrow += lineheight;
 
@@ -543,11 +543,11 @@ void CDataView::OnEditCopy()
 			CBrush* pOldBrush= (CBrush*) mDC.SelectStockObject(BLACK_BRUSH);
 			// vertical bar
 			mDC.MoveTo(0,ypxrow);
-			int bottom = m_VDlineview.m_yscale.GetScaleUnitPixels(rect.Height());
+			int bottom = m_VDlineview.m_yRuler.GetScaleUnitPixels(rect.Height());
 			mDC.LineTo(0, ypxrow - bottom);
 			// horizontal bar
 			mDC.MoveTo(0,ypxrow);
-			int left = m_VDlineview.m_xscale.GetScaleUnitPixels(rect.Width());
+			int left = m_VDlineview.m_xRuler.GetScaleUnitPixels(rect.Width());
 			mDC.LineTo(left, ypxrow);
 
 			mDC.SelectObject(pOldBrush);
@@ -795,7 +795,7 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	// done	
 	if (bUpdateInterface)
 	{
-		m_VDlineview.m_xscale.SetRange(&m_timefirst, &m_timelast);
+		m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 		UpdateFileScroll();
 		UpdateLegends(UPD_ABCISSA | CHG_XSCALE | CHG_YSCALE);
 		m_VDlineview.Invalidate();
@@ -846,12 +846,12 @@ void CDataView::UpdateChannelsDisplayParameters()
 	{
 		int i = 0;
 		int max, min;
-		max = m_VDlineview.FromChanlistPixeltoBin(i, 0);
-		min = m_VDlineview.FromChanlistPixeltoBin(i, m_VDlineview.Height());
+		max = m_VDlineview.GetChanlistPixeltoBin(i, 0);
+		min = m_VDlineview.GetChanlistPixeltoBin(i, m_VDlineview.Height());
 		float xmax = m_VDlineview.GetChanlistBintoMilliVolts(i, max);
 		float xmin = m_VDlineview.GetChanlistBintoMilliVolts(i, min);
 		ASSERT(xmax > xmin);
-		m_VDlineview.m_yscale.SetRange(&xmin, &xmax);
+		m_VDlineview.m_yRuler.SetRange(&xmin, &xmax);
 	}
 }
 // --------------------------------------------------------------------------
@@ -993,9 +993,9 @@ LRESULT CDataView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 		// ......................  horizontal cursors
 		case 1:					// if no HZcursors, take those of rectangle or limits of lineview
-			m_VDlineview.AddHZtag(m_VDlineview.FromChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
+			m_VDlineview.AddHZtag(m_VDlineview.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
 			if (mdMO->wLimitInf != mdMO->wLimitSup)
-				m_VDlineview.AddHZtag(m_VDlineview.FromChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
+				m_VDlineview.AddHZtag(m_VDlineview.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
 			m_pdatDoc->GetpHZtags()->CopyTagList(m_VDlineview.GetHZtagList());
 			if (m_VDlineview.GetNHZtags()==2)
 				SetCursorAssociatedWindows();
@@ -1042,7 +1042,7 @@ void CDataView::OnViewAlldata()
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 	UpdateData(FALSE);
 	m_VDlineview.Invalidate();    
-	m_VDlineview.m_xscale.SetRange(&m_timefirst, &m_timelast);
+	m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 	UpdateFileScroll();
 }
 
@@ -1363,7 +1363,7 @@ void CDataView::OnFileScroll(UINT nSBCode, UINT nPos)
 		UpdateData(FALSE);	// copy view object to controls
 		m_VDlineview.Invalidate();
 	}
-	m_VDlineview.m_xscale.SetRange(&m_timefirst, &m_timelast);
+	m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 	UpdateFileScroll();
 }
 
@@ -1394,7 +1394,7 @@ void CDataView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_timelast	= (float) lLast / m_samplingRate;
 		m_VDlineview.GetDataFromDoc(lFirst, lLast);
 		m_VDlineview.Invalidate();
-		m_VDlineview.m_xscale.SetRange(&m_timefirst, &m_timelast);
+		m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 		cs.Format(_T("%.3f"), m_timefirst);
 		SetDlgItemText(IDC_TIMEFIRST, cs);
 		cs.Format(_T("%.3f"), m_timelast);
@@ -1650,9 +1650,9 @@ CString CDataView::PrintBars(CDC* pDC, CRect* prect)
 	CPoint ybarEnd = barOrigin;
 
 	// same len ratio as displayed on viewdata
-	int horzBar = m_VDlineview.m_xscale.GetScaleUnitPixels(m_VDlineview.Width());
+	int horzBar = m_VDlineview.m_xRuler.GetScaleUnitPixels(m_VDlineview.Width());
 	ASSERT(horzBar > 0);
-	int vertBar = m_VDlineview.m_yscale.GetScaleUnitPixels(m_VDlineview.Height());
+	int vertBar = m_VDlineview.m_yRuler.GetScaleUnitPixels(m_VDlineview.Height());
 	ASSERT(vertBar > 0);
 
 	///// time abcissa ///////////////////////////	
@@ -1668,7 +1668,7 @@ CString CDataView::PrintBars(CDC* pDC, CRect* prect)
 		
 		// read text from control edit
 		CString cs;
-		cs.Format(_T(" bar= %g"), m_VDlineview.m_xscale.GetScaleIncrement());
+		cs.Format(_T(" bar= %g"), m_VDlineview.m_xRuler.GetScaleIncrement());
 		csComment += cs;
 		strComment += csComment + RC;
 	}
