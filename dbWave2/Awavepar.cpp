@@ -125,8 +125,7 @@ void SCOPESTRUCT::Serialize(CArchive& ar)
 		}
 	}
 }
-
-									   
+						   
 //------------------ class OPTIONS_VIEWDATA ---------------------------------
 
 IMPLEMENT_SERIAL(OPTIONS_VIEWDATA, CObject, 0 /* schema number*/ )
@@ -1049,7 +1048,6 @@ void OPTIONS_VIEWDATAMEASURE::Serialize(CArchive& ar)
 	}    	
 }
 
-
 //------------------ class OPTIONS_IMPORT ---------------------------------
 
 IMPLEMENT_SERIAL(OPTIONS_IMPORT, CObject, 0)
@@ -1445,7 +1443,6 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 	}
 }
 
-	
 //------------------ class OPTIONS_OUTPUTDATA ---------------------------------
 
 IMPLEMENT_SERIAL(OPTIONS_OUTPUTDATA, CObject, 0 /* schema number*/ )
@@ -1557,7 +1554,6 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 	}
 }
 
-
 //------------------ class OUTPUTPARMS ---------------------------------
 
 IMPLEMENT_SERIAL(OUTPUTPARMS, CObject, 0 /* schema number*/ )
@@ -1610,7 +1606,6 @@ OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
 	bit33 = arg.bit33;
 	count = arg.count;
 }
-
 
 OUTPUTPARMS::~OUTPUTPARMS()
 {

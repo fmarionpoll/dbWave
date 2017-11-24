@@ -163,7 +163,6 @@ public:
 #define EXPORT_AUTOCORR		2
 #define EXPORT_LATENCY		3
 #define EXPORT_AVERAGE		4
-
 #define EXPORT_INTERV		5
 #define EXPORT_EXTREMA		6
 #define EXPORT_AMPLIT		7

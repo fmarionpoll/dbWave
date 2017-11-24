@@ -20,8 +20,8 @@ public:
 	void			InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, 
 							int new_yextent, WORD new_drawmode=1);
 public:
-	CEnvelope*		pAbcissa;		// pointer to abcissa Envelope
-	CEnvelope*		pOrdinates;		// pointer to ordinates	Envelope
+	CEnvelope*		pEnvelopeAbcissa;		// pointer to abcissa Envelope
+	CEnvelope*		pEnvelopeOrdinates;		// pointer to ordinates	Envelope
 	CString			dl_comment;		// comment (40 chars initially)
 	void			GetEnvelopeArrayIndexes(int& x, int& y);
 	void			SetEnvelopeArrays(CEnvelope* px, int x, CEnvelope* py, int y);
@@ -62,5 +62,5 @@ public:
 	inline void		SetflagPrintVisible(WORD drawmode)	{dl_bprint=drawmode;}
 	inline void		SetBinFormat(float VoltsperBin, long binzero, long binspan)  {dl_voltsperbin=VoltsperBin;dl_binzero=binzero; dl_binspan=binspan;}
 	inline void		SetHZtagsPrintFlag(BOOL bPrint)		{dl_bHZtagsPrint = bPrint;}	
-	inline void		SetOrdinatesSourceData(int chan, int transform) {pOrdinates->SetSourceData(chan, transform);}
+	inline void		SetOrdinatesSourceData(int chan, int transform) {pEnvelopeOrdinates->SetSourceData(chan, transform);}
 };

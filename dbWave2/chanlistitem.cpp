@@ -37,8 +37,8 @@ CChanlistItem::CChanlistItem()
 
 CChanlistItem::CChanlistItem(CEnvelope* pX, int indexX, CEnvelope* pY, int indexY)
 {
-	pAbcissa = pX;
-	pOrdinates = pY;
+	pEnvelopeAbcissa = pX;
+	pEnvelopeOrdinates = pY;
 	dl_zero = 2048;
 	dl_yextent = 4096;
 	dl_voltsperbin=(float) 20./dl_yextent;// scale factor (1 unit (0-4095) -> y volts)
@@ -111,6 +111,6 @@ void CChanlistItem::SetEnvelopeArrays(CEnvelope* px, int ix, CEnvelope* py, int 
 {
 	dl_indexabcissa = ix;
 	dl_indexordinates = iy;
-	pAbcissa = px;
-	pOrdinates = py;
+	pEnvelopeAbcissa = px;
+	pEnvelopeOrdinates = py;
 }

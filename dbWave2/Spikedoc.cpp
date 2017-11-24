@@ -960,17 +960,17 @@ void CSpikeDoc::ExportTableTitle(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int 
 
 	switch (vdS->exportdatatype)
 	{	
-	case EXPORT_PSTH:		csDummy = _T("Histogram nb spikes/bin");	break;
+	case EXPORT_PSTH:		csDummy = _T("Histogram nb spikes/bin");			break;
 	case EXPORT_ISI:		csDummy = _T("Intervals between spikes histogram");	break;
-	case EXPORT_AUTOCORR:	csDummy = _T("Autocorrelation histogram");	break;
-	case EXPORT_LATENCY:	csDummy = _T("Latency first 10 spikes");break;
-	case EXPORT_AVERAGE:	csDummy = _T("Spike average waveform"); break;
-	case EXPORT_INTERV:		csDummy = _T("Spike time intervals"); nfiles = 1; break;
+	case EXPORT_AUTOCORR:	csDummy = _T("Autocorrelation histogram");			break;
+	case EXPORT_LATENCY:	csDummy = _T("Latency first 10 spikes");			break;
+	case EXPORT_AVERAGE:	csDummy = _T("Spike average waveform");				break;
+	case EXPORT_INTERV:		csDummy = _T("Spike time intervals"); nfiles = 1;	break;
 	case EXPORT_EXTREMA:	csDummy = _T("Spike amplitude extrema"); nfiles = 1; break;
-	case EXPORT_AMPLIT:		csDummy = _T("Spike amplitudes"); nfiles = 1; break;
-	case EXPORT_HISTAMPL:	csDummy = _T("Spike amplitude histograms"); break;
-	case EXPORT_SPIKEPOINTS: csDummy= _T("Spike data points"); break;
-	default: vdS->exportdatatype = 0; csDummy = _T("Histogram nb spikes/bin"); break;
+	case EXPORT_AMPLIT:		csDummy = _T("Spike amplitudes"); nfiles = 1;		break;
+	case EXPORT_HISTAMPL:	csDummy = _T("Spike amplitude histograms");			break;
+	case EXPORT_SPIKEPOINTS: csDummy= _T("Spike data points");					break;
+	default: vdS->exportdatatype = 0; csDummy = _T("Histogram nb spikes/bin");	break;
 	}
 	CTime t= CTime::GetCurrentTime();				// current date & time
 	CString csDate;									// first string to receive date and time
