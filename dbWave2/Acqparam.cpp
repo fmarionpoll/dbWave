@@ -33,7 +33,7 @@ CWaveFormat::CWaveFormat()
 
 	wversion=8;						// header version number 
 	fullscale_Volts=20.0f;			// volts full scale, gain 1	
-	fullscale_bins=4096;			// nb of bins (4096)
+	binspan=4096;			// nb of bins (4096)
 	binzero=2048;
 	mode_encoding = OLx_ENC_BINARY;
 	mode_clock = INTERNAL_CLOCK;	// internal, external
@@ -69,7 +69,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << (WORD)9;				// 1
 		ar << acqtime;				// 2
 		ar << fullscale_Volts;		// 3
-		ar << fullscale_bins;		// 4
+		ar << binspan;		// 4
 		ar << binzero;				// 5
 		ar << (WORD)mode_encoding;	// 6
 		ar << (WORD)mode_clock;		// 7
@@ -123,7 +123,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 			WORD w;
 			ar >> acqtime;						// 2
 			ar >> fullscale_Volts;				// 3
-			ar >> fullscale_bins;				// 4
+			ar >> binspan;				// 4
 			ar >> binzero;						// 5
 			ar >> w; mode_encoding	= (short)w;	// 6         	    	
 			ar >> w; mode_clock		= (short)w;	// 7    	    	
@@ -176,12 +176,12 @@ void CWaveFormat::Read_v8andbefore(CArchive& ar, WORD version)
 	ar >> fullscale_Volts;           	// 3
 	if (version < 6)
 	{
-		ar >> w;  fullscale_bins = w;	// 4    	
+		ar >> w;  binspan = w;	// 4    	
 		ar >> w;  binzero = w;			// 5
 	}
 	else
 	{
-		ar >> fullscale_bins;			// 4    	
+		ar >> binspan;			// 4    	
 		ar >> binzero;					// 5
 	}
 	ar >> w ; mode_encoding	=(short)w;	// 6         	    	
@@ -256,7 +256,7 @@ void CWaveFormat::operator = (const CWaveFormat& arg)
 	acqtime=arg.acqtime;
 	wversion=arg.wversion;
 	fullscale_Volts = arg.fullscale_Volts;
-	fullscale_bins = arg.fullscale_bins;
+	binspan = arg.binspan;
 	binzero = arg.binzero;
 
 	mode_encoding=arg.mode_encoding;

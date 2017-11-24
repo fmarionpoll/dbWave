@@ -227,7 +227,7 @@ BOOL CImportFilesDlg::ImportATFFile()
 	m_xrate = 10000.0f;	// tentative value
 	CWaveFormat* pwF= pTo->GetpWaveFormat();
 	pwF->fullscale_Volts = 20.0f;	// 20 V full scale
-	pwF->fullscale_bins = 65536;	// 16 bits resolution
+	pwF->binspan = 65536;	// 16 bits resolution
 	pwF->binzero = 0 ;	// ?
 
 	pwF->mode_encoding = OLx_ENC_2SCOMP;
@@ -335,7 +335,7 @@ line 11-	0	141.144	0.0317383
 		goto Emergency_exit;
 	}
 	
-	pwF->fullscale_bins = 65536;				// 16 bits resolution
+	pwF->binspan = 65536;				// 16 bits resolution
 	pwF->binzero = 0;
 	pwF->mode_encoding = OLx_ENC_BINARY;
 	

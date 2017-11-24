@@ -666,7 +666,7 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(int index)
 	m_index=index;
 	m_datachannel=m_plineview->GetHZtagChan(index);
 	int k = m_plineview->GetHZtagVal(m_index);
-	m_mvlevel = m_plineview->GetChanlistBintoVolts(m_datachannel, k)*1000.0f;
+	m_mvlevel = m_plineview->GetChanlistBinsToMilliVolts(m_datachannel, k);
 	
 	return TRUE;
 }
@@ -678,7 +678,7 @@ void CMeasureHZtagsPage::OnCenter()
 	int val = (max+min)/2;
 	m_plineview->SetHZtagVal(m_index, val);
 	m_plineview->Invalidate();
-	m_mvlevel = m_plineview->GetChanlistBintoVolts(m_datachannel, val)*1000.0f;
+	m_mvlevel = m_plineview->GetChanlistBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
 
@@ -812,7 +812,7 @@ void CMeasureHZtagsPage::OnAdjust()
 	}
 	m_plineview->Invalidate();
 	val = m_plineview->GetHZtagVal(m_index);
-	m_mvlevel = m_plineview->GetChanlistBintoVolts(m_datachannel, val)*1000.0f;
+	m_mvlevel = m_plineview->GetChanlistBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
 
@@ -1123,7 +1123,7 @@ void CMeasureResultsPage::GetMaxMin(int ichan, long lFirst, long lLast)
 void CMeasureResultsPage::MeasureWithinInterval(int ichan, int line, long l1, long l2)
 {
 	// get scale factor for ichan and sampling rate
-	m_mVperBin = m_plineview->GetChanlistVoltsperBin(ichan)*1000.0f;
+	m_mVperBin = m_plineview->GetChanlistVoltsperDataBin(ichan)*1000.0f;
 	float rate = m_pdatDoc->GetpWaveFormat()->chrate;
 
 	int icol = (m_col-1)*m_nbdatacols+1;		// output data into column icol
@@ -1297,7 +1297,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 void CMeasureResultsPage::MeasureBetweenHZ(int ichan, int line, int v1, int v2)
 {
 	// get scale factor for ichan and sampling rate
-	m_mVperBin = m_plineview->GetChanlistVoltsperBin(ichan)*1000.0f;
+	m_mVperBin = m_plineview->GetChanlistVoltsperDataBin(ichan)*1000.0f;
 
 	int icol = (m_col-1)*m_nbdatacols+1;		// output data into column icol
 	int item = m_listResults.GetItemCount();	// compute which line will receive data

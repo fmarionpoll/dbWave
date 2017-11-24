@@ -137,7 +137,7 @@ BOOL CDataViewOrdinatesDlg::OnInitDialog()
 void CDataViewOrdinatesDlg::LoadChanlistData(int i)
 {
 	// compute max and min from zero and extent
-	m_VoltsperBin =  m_plinev->GetChanlistVoltsperBin(i);
+	m_VoltsperBin =  m_plinev->GetChanlistVoltsperDataBin(i);
 	float zero = (float) m_plinev->GetChanlistYzero(i);
 	float extent =  (float) m_plinev->GetChanlistYextent(i);
 	float binzero =  (float)0.0  /*m_plinev->GetChanlistBinZero(i)*/;
@@ -168,10 +168,10 @@ void CDataViewOrdinatesDlg::SaveChanlistData(int indexlist)
 
 	for (int j = indexfirst; j<indexlast; j++)
 	{
-		float VperBin =  m_plinev->GetChanlistVoltsperBin(j);
+		float VperBin =  m_plinev->GetChanlistVoltsperDataBin(j);
 		float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
 		float xextent = (m_xmax - m_xmin) * m_p10;
-		int i = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(j);
+		int i = (int) (xzero/VperBin) + m_plinev->GetChanlistBinZero(j);
 		m_plinev->SetChanlistYzero(j,i);		// change zero
 		i = (int) (xextent /VperBin);
 		m_plinev->SetChanlistYextent(j, i);	// change extent
@@ -254,7 +254,7 @@ void CDataViewOrdinatesDlg::OnKillfocusVertcenter()
 	m_xmax += diff;
 	m_xmin += diff;
 	
-	float VperBin =  m_plinev->GetChanlistVoltsperBin(m_Channel);
+	float VperBin =  m_plinev->GetChanlistVoltsperDataBin(m_Channel);
 	float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;	
 	int zero = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(m_Channel);
 	m_plinev->SetChanlistYzero(m_Channel,zero);		// change zero
@@ -274,7 +274,7 @@ void CDataViewOrdinatesDlg::OnKillfocusVertMxMi()
 	UpdateData(TRUE);
 
 	// save into lineview and reload to change scale and voltsperpixel
-	float VperBin =  m_plinev->GetChanlistVoltsperBin(m_Channel);
+	float VperBin =  m_plinev->GetChanlistVoltsperDataBin(m_Channel);
 	float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
 	float xextent = (m_xmax - m_xmin) * m_p10;
 	int zero = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(m_Channel);

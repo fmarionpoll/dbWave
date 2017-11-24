@@ -732,20 +732,20 @@ void CImportGenericDataDlg::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 	pwF->acqtime = rStatus.m_ctime;	// use CFile creation time
 	pwF->fullscale_Volts = piivO->voltageMax - piivO->voltageMin;
 	pwF->mode_encoding = piivO->encodingMode;
-	long fullscale_bins = 4096;
+	long binspan = 4096;
 	switch (piivO->bitsPrecision)
 	{
-	case 8:		fullscale_bins = 256;		break;
-	case 12:	fullscale_bins = 4096;	break;
+	case 8:		binspan = 256;		break;
+	case 12:	binspan = 4096;	break;
 	case 16:
 	case 24:		
-	case 32:	fullscale_bins = 65536;	break;	
+	case 32:	binspan = 65536;	break;	
 	default:	break;
 	}
-	pwF->fullscale_bins = fullscale_bins;
+	pwF->binspan = binspan;
 	pwF->binzero = 0;
 	if (piivO->encodingMode == 0)	// OLx_ENC_BINARY
-		pwF->binzero = fullscale_bins/2;
+		pwF->binzero = binspan/2;
 
 	// copy ACQCHAN directly from iivO	
 	*(pDataF->GetpWavechanArray()) = *(piivO->pwaveChanArray);

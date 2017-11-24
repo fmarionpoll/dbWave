@@ -609,7 +609,7 @@ void CWaveBuf::BDeri3f3(short* lpSource, short* lpDest, int cx)
 }
 
 /**************************************************************************
- function:  GetVoltsperBin(short chIndex, float* VoltsperBin)
+ function:  GetVoltsperDataBin(short chIndex, float* VoltsperBin)
  purpose:		get nb volts corresp to one bin /data channel chIndex
 				voltperBin= 10 (Volts) / gain / 4096 (12 bits)
  parameters:	chIndex = channel index (0->n)
@@ -628,16 +628,20 @@ BOOL CWaveBuf::GetWBVoltsperBin(int chIndex, float* VoltsperBin, int mode)
 	{
 		if (m_chanArray[chIndex].am_totalgain == 0.)
 		{
-			m_chanArray[chIndex].am_totalgain = m_chanArray[chIndex].am_gainfract 
-				* (float) m_chanArray[chIndex].am_gainpre * (float) m_chanArray[chIndex].am_gainpost 
-				* (float)m_chanArray[chIndex].am_gainheadstage * (float) m_chanArray[chIndex].am_adgain;
+			m_chanArray[chIndex].am_totalgain = 
+				m_chanArray[chIndex].am_gainfract 
+				* (float) m_chanArray[chIndex].am_gainpre 
+				* (float) m_chanArray[chIndex].am_gainpost 
+				* (float)m_chanArray[chIndex].am_gainheadstage 
+				* (float) m_chanArray[chIndex].am_adgain;
 		}
-		double am_totalgain = m_chanArray[chIndex].am_totalgain;
-		long fullscale_bins = m_waveFormat.fullscale_bins;
+		
+		long binspan = m_waveFormat.binspan;
 		float fullscale_Volts = m_waveFormat.fullscale_Volts;
-		m_chanArray[chIndex].am_resolutionV = m_waveFormat.fullscale_Volts 
+		m_chanArray[chIndex].am_resolutionV = 
+					m_waveFormat.fullscale_Volts 
 					/(float)m_chanArray[chIndex].am_totalgain
-					/(float)m_waveFormat.fullscale_bins;
+					/(float)m_waveFormat.binspan;
 		double am_resolutionV = m_chanArray[chIndex].am_resolutionV;
 	}
 	*VoltsperBin = (float) (m_chanArray[chIndex].am_resolutionV /correction);

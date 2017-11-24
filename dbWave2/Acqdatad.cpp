@@ -461,7 +461,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 
 	// loop to read actual data
 	ReadDataBlock(0); 
-	double mVfactor = pwaveFormat->fullscale_Volts / pwaveFormat->fullscale_bins * 1000.;
+	double mVfactor = pwaveFormat->fullscale_Volts / pwaveFormat->binspan * 1000.;
 	for (long j = 0; j < GetDOCchanLength(); j++)
 	{
 		CString cs;

@@ -1,17 +1,10 @@
 #pragma once
 
-// lineview.h : header file
-//
-/////////////////////////////////////////////////////////////////////////////
-
-
 #include "Envelope.h" 
 #include "chanlistitem.h"
 #include "scopescr.h"
 #include "acqdatad.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CLineViewWnd button
 class CLineViewWnd : public CScopeScreen
 {
 // Construction
@@ -21,7 +14,6 @@ public:
 	DECLARE_SERIAL( CLineViewWnd)
 	virtual void Serialize( CArchive& archive );
 
-/////////////////////////////////////////////////////////////////////////////
 // data display operations    
 public:
 	BOOL GetDataFromDoc();							// load data from document
@@ -41,28 +33,27 @@ public:
 	inline void ADdisplayStop() { m_bADbuffers = FALSE; }
 			
 	// export representation of data to the clipboard
-
-	BOOL  CopyAsText(int ioption, int iunit, int nabcissa);
-	LPTSTR GetAsciiLine (LPTSTR lpCopy, int iunit);
-	LPTSTR GetAsciiEnvelope (LPTSTR lpCopy, int iunit);
+	BOOL	CopyAsText(int ioption, int iunit, int nabcissa);
+	LPTSTR	GetAsciiLine (LPTSTR lpCopy, int iunit);
+	LPTSTR	GetAsciiEnvelope (LPTSTR lpCopy, int iunit);
 
 	// Helper functions	
-	inline long GetNxPixels()		const	{return m_npixels;}	// number of pixels defined in this window
-	inline long GetDataFirst()		const	{return m_lxFirst;}	// document index of first abcissa
-	inline long GetDataLast()		const	{return m_lxLast;}	// document index of last abcissa
-	inline long GetDataSize()		const	{return m_lxSize;}	// nb of data pts displayed
-	inline long GetPageSize()		const	{return m_lxPage;}	// size of page increment used to browse through doc
-	inline long GetLineSize()		const	{return m_lxLine;}	// size of line increment used to browse through doc	
+	inline long GetNxPixels()		const {return m_npixels;}	// number of pixels defined in this window
+	inline long GetDataFirst()		const {return m_lxFirst;}	// document index of first abcissa
+	inline long GetDataLast()		const {return m_lxLast;}	// document index of last abcissa
+	inline long GetDataSize()		const {return m_lxSize;}	// nb of data pts displayed
+	inline long GetPageSize()		const {return m_lxPage;}	// size of page increment used to browse through doc
+	inline long GetLineSize()		const {return m_lxLine;}	// size of line increment used to browse through doc	
 	inline long GetDocumentLast()	const {return m_lxVeryLast;}// index of document's last pt
 	inline long GetDataOffsetfromPixel(int pix) const {return ((long)pix)*(m_lxLast-m_lxFirst+1)/((long)m_displayRect.right) + m_lxFirst;}
-	void UpdatePageLineSize();						// update page and line size parameters
+	void UpdatePageLineSize();									// update page and line size parameters
 
 // Attributes
 protected:
 	// these variables define the curves displayed on the screen (data from doc)
 	CDWordArray m_PolyPoints;		// array with abcissa & ordinates
-	CArray<CChanlistItem*, CChanlistItem*>	m_pChanlistItemArray;		// list of display items (abcissa, Envelope, disp. parms)
-	CArray<CEnvelope*, CEnvelope*>			m_pEnvelopesArray;	// list of Envelopes
+	CArray<CChanlistItem*, CChanlistItem*>	m_pChanlistItemArray;	// list of display items (abcissa, Envelope, disp. parms)
+	CArray<CEnvelope*, CEnvelope*>			m_pEnvelopesArray;		// list of Envelopes
 	CScale 		m_scale;			// scale (array and a few parameters)   
 	CDWordArray* m_pDWintervals;	// intervals of data that are highlighted
 	CAcqDataDoc* m_pDataFile;		// pointer to data source file
@@ -92,10 +83,7 @@ protected:
 	int		m_trackoffset;			// offset of waveform from cursor
 	int		m_trackchannel;			// lineview channel	
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ChanList operations
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 public:
 	int  	GetChanlistSize() const {return m_pChanlistItemArray.GetSize();} // nb of displ channels
 	void 	RemoveAllChanlistItems();			// remove all channels displayed
@@ -104,9 +92,9 @@ public:
 	inline CChanlistItem* GetChanlistItem(int i) const {return m_pChanlistItemArray.GetAt(i); }
 	
 	// GET/set binary parms
-	inline void 	SetChanlistYzero(WORD i, int zero) {m_pChanlistItemArray[i]->SetZero(zero);}
-	inline void 	SetChanlistYextent(WORD i, int yextent) {m_pChanlistItemArray[i]->SetExtent(yextent);}
-	inline void 	SetChanlistComment(WORD i, CString& comment) {m_pChanlistItemArray[i]->dl_comment = comment;}
+	inline void SetChanlistYzero(WORD i, int zero) {m_pChanlistItemArray[i]->SetYzero(zero);}
+	inline void SetChanlistYextent(WORD i, int yextent) {m_pChanlistItemArray[i]->SetYextent(yextent);}
+	inline void SetChanlistComment(WORD i, CString& comment) {m_pChanlistItemArray[i]->dl_comment = comment;}
 	inline void	SetChanlistColor(WORD i, int color) {m_pChanlistItemArray[i]->SetColor(color);}
 	inline void	SetChanlistPenWidth(WORD i, WORD penwidth) {m_pChanlistItemArray[i]->SetPenWidth(penwidth);}
 	inline void	SetChanlistflagPrintVisible(WORD i, WORD drawmode) {m_pChanlistItemArray[i]->SetflagPrintVisible(drawmode);}
@@ -115,33 +103,35 @@ public:
 
 	void	SetChanlistOrdinates(WORD i, int chan, int transform);
 	void	SetChanlistVoltsExtent(int chan, float* pvalue);
-	void	SetChanlistVoltsMaxMin(int ichan, float vMax, float vMin);
-	void	SetChanlistmilliVoltsMaxMin (int chan, float vMax, float vMin) {SetChanlistVoltsMaxMin(chan, vMax / 1000.f, vMin / 1000.f);}
+	void	SetChanlistVoltsZero(int chan, float * pvalue);
 
-	inline float	GetChanlistVoltsExtent(int chan) { return m_pChanlistItemArray[chan]->GetVoltsExtent(); }
+	inline float	GetChanlistVoltsExtent(int chan) {return m_pChanlistItemArray[chan]->GetDataVoltsSpan(); }
 	inline CString	GetChanlistComment(WORD i) {return m_pChanlistItemArray[i]->dl_comment;}
-	inline float 	GetChanlistVoltsperBin(WORD i) {return m_pChanlistItemArray[i]->GetVoltsperBin();}
-	inline int 	GetChanlistYextent(WORD i) {return m_pChanlistItemArray[i]->GetExtent();}
-	inline int 	GetChanlistYzero(WORD i) {return m_pChanlistItemArray[i]->GetZero();}
-	inline float 	GetChanlistVoltsperPixel(WORD i) {return ((float)m_pChanlistItemArray[i]->GetExtent() * m_pChanlistItemArray[i]->GetVoltsperBin() / -m_yVE);}
+	inline float 	GetChanlistVoltsperDataBin(WORD i) {return m_pChanlistItemArray[i]->GetVoltsperDataBin();}
+	inline int 		GetChanlistYextent(WORD i) {return m_pChanlistItemArray[i]->GetYextent();}
+	inline int 		GetChanlistYzero(WORD i) {return m_pChanlistItemArray[i]->GetYzero();}
+
+	inline float 	GetChanlistVoltsperPixel(WORD i) {return ((float)m_pChanlistItemArray[i]->GetYextent() * m_pChanlistItemArray[i]->GetVoltsperDataBin() / -m_yVE);}
 	inline float 	GetTimeperPixel() {return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)Width();}
 	inline int		GetChanlistColor(WORD i) {return m_pChanlistItemArray[i]->GetColor();}
-	inline WORD	GetChanlistPenWidth(WORD i) {return m_pChanlistItemArray[i]->GetPenWidth();}
+	inline WORD		GetChanlistPenWidth(WORD i) {return m_pChanlistItemArray[i]->GetPenWidth();}
 	inline int		GetChanlistYsource(WORD i) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetSourceChan();}
-	inline int 	GetChanlistYmode(WORD i) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetSourceMode();}
-	inline WORD	GetChanlistflagPrintVisible(WORD i) {return m_pChanlistItemArray[i]->GetflagPrintVisible();}
-	inline int		GetChanlistBinZero(WORD i) {return m_pChanlistItemArray[i]->GetBinZero();}
-	inline int 	GetChanlistSourceChan(WORD i) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetSourceChan();}
-	inline int 	GetChanlistTransformMode(WORD i) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetSourceMode();}
+	inline int 		GetChanlistYmode(WORD i) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetSourceMode();}
+	inline WORD		GetChanlistflagPrintVisible(WORD i) {return m_pChanlistItemArray[i]->GetflagPrintVisible();}
+
+	inline int		GetChanlistBinZero(WORD i) {return m_pChanlistItemArray[i]->GetDataBinZero();}
+	inline int		GetChanlistBinSpan(WORD i) { return m_pChanlistItemArray[i]->GetDataBinSpan(); }
+
+	inline int 		GetChanlistSourceChan(WORD i) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetSourceChan();}
+	inline int 		GetChanlistTransformMode(WORD i) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetSourceMode();}
 	inline int		GetChanlistBinAt(WORD i, int index) {return m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetPointAt(index);}
 	inline void  	GetChanlistMaxMin(WORD i, int* pmax, int* pmin) {m_pChanlistItemArray[i]->pEnvelopeOrdinates->GetEnvelopeMaxMin(pmax, pmin);}
-	inline float	GetChanlistBintoVolts(WORD i, int bins) {return m_pChanlistItemArray[i]->ConvertBintoVolts(bins);}
-	inline float	GetChanlistBintoMilliVolts(WORD i, int bins) {return (m_pChanlistItemArray[i]->ConvertBintoVolts(bins)*1000.f);}
-	inline int		GetChanlistVoltstoBins(WORD i, float nvolts) {return m_pChanlistItemArray[i]->ConvertVoltstoBins(nvolts);}
-	inline int		GetChanlistMilliVoltstoBins(WORD i, float mvolts) {return m_pChanlistItemArray[i]->ConvertVoltstoBins(mvolts / 1000.f);}
+	inline float	GetChanlistBinsToVolts(WORD i, int bins) {return m_pChanlistItemArray[i]->ConvertDataBinsToVolts(bins);}
+	inline float	GetChanlistBinsToMilliVolts(WORD i, int bins) {return (m_pChanlistItemArray[i]->ConvertDataBinsToVolts(bins)*1000.f);}
+	inline int		GetChanlistVoltstoBins(WORD i, float nvolts) {return m_pChanlistItemArray[i]->ConvertVoltsToDataBins(nvolts);}
 	
-	inline int		GetChanlistBintoPixel(WORD chan, int bin) { return MulDiv(bin - m_pChanlistItemArray[chan]->GetZero(), m_yVE, m_pChanlistItemArray[chan]->GetExtent()) + m_yVO; }
-	inline int		GetChanlistPixeltoBin(WORD chan, int pixels) {return MulDiv(pixels - m_yVO, m_pChanlistItemArray[chan]->GetExtent(), m_yVE) + m_pChanlistItemArray[chan]->GetZero();}
+	inline int		GetChanlistBintoPixel(WORD chan, int bin) { return MulDiv(bin - m_pChanlistItemArray[chan]->GetYzero(), m_yVE, m_pChanlistItemArray[chan]->GetYextent()) + m_yVO; }
+	inline int		GetChanlistPixeltoBin(WORD chan, int pixels) {return MulDiv(pixels - m_yVO, m_pChanlistItemArray[chan]->GetYextent(), m_yVE) + m_pChanlistItemArray[chan]->GetYzero();}
 
 	void	AutoZoomChan(int i);	// maximize gain and offset to center curve
 	void	CenterChan(int i);		// center curve within button area
@@ -157,11 +147,8 @@ public:
 
 protected:
 	void	HighlightData(CDC* pDC, int chan);	
-
-					
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 // mouse cursor operations
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 	void 	MoveHZtagtoVal(int itag, int ival);	
 	void	PlotDatatoDC(CDC* pDC);
@@ -170,7 +157,6 @@ protected:
 	void	XORcurve();
 	void	ZoomData(CRect* prevRect, CRect* newRect);	// zoom display
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // overloaded functions	
 public:	
 	void Print(CDC* pDC, CRect* rect, BOOL bCenterline=FALSE);	// print curve inside a rectangle

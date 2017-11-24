@@ -258,7 +258,7 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 
 	// convert into bin scale (nb of divisions)
 	int iresolution = m_Acq32_ADC.GetResolution();
-	pWFormat->fullscale_bins = ((1L << iresolution) - 1);
+	pWFormat->binspan = ((1L << iresolution) - 1);
 
 	// set max channel number according to input configuration m_numchansMAX
 	m_pADC_options->bChannelType = m_Acq32_ADC.GetChannelType();
@@ -270,7 +270,7 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 	// data encoding (binary or offset encoding)
 	pWFormat->mode_encoding = (int)m_Acq32_ADC.GetEncoding();
 	if (pWFormat->mode_encoding == OLx_ENC_BINARY)
-		pWFormat->binzero = pWFormat->fullscale_bins/2+1;
+		pWFormat->binzero = pWFormat->binspan/2+1;
 	else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
 		pWFormat->binzero = 0;
 
@@ -280,7 +280,7 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 	// TODO tell sourceview here under which format are data
 	// TODO save format of data into temp document
 	// float volts = (float) ((pWFormat->fullscale_Volts) 
-	//				/(pWFormat->fullscale_bins) * value  -pWFormat->fullscale_Volts/2);
+	//				/(pWFormat->binspan) * value  -pWFormat->fullscale_Volts/2);
 	// TODO: update max min of chan 1 with gain && instrumental gain
 	//UpdateChanLegends(0);
 	//UpdateHorizontalRulerBar();
@@ -347,7 +347,7 @@ BOOL CADContView::ADC_InitSubSystem()
 			// compute dependent parameters
 			pChannel->am_gainfract = pChannel->am_gainheadstage * (float) pChannel->am_gainpre * (float) pChannel->am_gainpost;
 			pChannel->am_totalgain = pChannel->am_gainfract * pChannel->am_adgain;
-			pChannel->am_resolutionV = pAcqDwaveFormat->fullscale_Volts / pChannel->am_totalgain / pAcqDwaveFormat->fullscale_bins;
+			pChannel->am_resolutionV = pAcqDwaveFormat->fullscale_Volts / pChannel->am_totalgain / pAcqDwaveFormat->binspan;
 		}
 
 		// pass parameters to the board and check if errors
@@ -413,7 +413,7 @@ void CADContView::ADC_DeclareBuffers()
 	}
 
 	// adapt source view 
-	int iextent = MulDiv(pWFormat->fullscale_bins, 12, 10);
+	int iextent = MulDiv(pWFormat->binspan, 12, 10);
 	if (m_pADC_options->izoomCursel != 0)
 		iextent = m_pADC_options->izoomCursel;
 	int ioffset = 0;
@@ -426,7 +426,8 @@ void CADContView::ADC_DeclareBuffers()
 		float docVoltsperb;
 		m_inputDataFile.GetWBVoltsperBin(i, &docVoltsperb);
 		CChanlistItem* pD = m_ADsourceView.GetChanlistItem(i);
-		pD->SetBinFormat(docVoltsperb, pWFormat->binzero, pWFormat->fullscale_bins);
+		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
+		pD->SetDataVoltsFormat(docVoltsperb, pWFormat->fullscale_Volts);
 	}
 	m_ADsourceView.Invalidate();
 	UpdateData(FALSE);
@@ -1270,7 +1271,7 @@ BOOL CADContView::StartAcquisition()
 	pWFormat->acqtime		= CTime::GetCurrentTime();
 
 	// data format
-	pWFormat->fullscale_bins	= (m_pADC_options->waveFormat).fullscale_bins;
+	pWFormat->binspan	= (m_pADC_options->waveFormat).binspan;
 	pWFormat->fullscale_Volts	= (m_pADC_options->waveFormat).fullscale_Volts ;
 	// trick: if OLx_ENC_BINARY, it is changed on the fly within AD_Transfer function 
 	// when a DT buffer into a CAcqDataDoc buffer
@@ -1519,9 +1520,9 @@ void CADContView::UpdateChanVerticalRulerBar(int chan)
 {
 	int ichan = 0;
 	int max		= m_ADsourceView.GetChanlistPixeltoBin(ichan, 0);
-	float xmax	= m_ADsourceView.GetChanlistBintoMilliVolts(ichan, max);
+	float xmax	= m_ADsourceView.GetChanlistBinsToMilliVolts(ichan, max);
 	int min		= m_ADsourceView.GetChanlistPixeltoBin(ichan, m_ADsourceView.Height());
-	float xmin	= m_ADsourceView.GetChanlistBintoMilliVolts(ichan, min);
+	float xmin	= m_ADsourceView.GetChanlistBinsToMilliVolts(ichan, min);
 	m_adyscale.SetRange(&xmin, &xmax);
 }
 
@@ -2186,7 +2187,7 @@ void CADContView::UpdateChanLegends(int chan)
 	int ichan = 0;
 	int yzero = m_ADsourceView.GetChanlistYzero(ichan);
 	int yextent = m_ADsourceView.GetChanlistYextent(ichan);
-	float mVperbin= m_ADsourceView.GetChanlistVoltsperBin(ichan)*1000.0f;
+	float mVperbin= m_ADsourceView.GetChanlistVoltsperDataBin(ichan)*1000.0f;
 	int binzero = 0;
 }
 

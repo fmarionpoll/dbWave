@@ -366,11 +366,7 @@ void CDataView::UpdateLegends(int ioperation)
 	// ------------------------------------------- adapt vertical scale
 	if (ioperation & CHG_YBAR)
 	{
-		int max		= m_VDlineview.GetChanlistPixeltoBin(m_ichanselected, 0);
-		float vmax	= m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, max);
-		int min		= m_VDlineview.GetChanlistPixeltoBin(m_ichanselected, m_VDlineview.Height());
-		float vmin	= m_VDlineview.GetChanlistBintoMilliVolts(m_ichanselected, min);
-		TRACE(_T("max, min mV= %f, %f\n"), vmin, vmax); m_VDlineview.m_yRuler.SetRange(&vmin, &vmax);
+		UpdateYRuler(m_ichanselected);
 	}
 
 	// -------------------------------------------
@@ -430,12 +426,9 @@ void CDataView::UpdateChannel(int channel)
 // --------------------------------------------------------------------------
 void CDataView::OnFormatYscale()
 {
-	// init dialog data
-	CDataViewOrdinatesDlg dlg;		// dialog box
-	dlg.m_plinev = &m_VDlineview;		// pointer to lineview button
-	dlg.m_Channel = m_ichanselected;		// current channel
-
-	// invoke dialog box
+	CDataViewOrdinatesDlg dlg;
+	dlg.m_plinev = &m_VDlineview;
+	dlg.m_Channel = m_ichanselected;
 	if (IDOK == dlg.DoModal())
 		UpdateLegends(UPD_ORDINATES | UPD_YSCALE | CHG_YBAR);		
 
@@ -838,8 +831,8 @@ void CDataView::UpdateChannelsDisplayParameters()
 			if (mdPM->bCenterCurves)
 				izero = (max+min)/2;
 		}
-		m_VDlineview.SetChanlistYextent(i, iextent);
-		m_VDlineview.SetChanlistYzero(i, izero);
+		UpdateYExtent(i, iextent);
+		UpdateYZero(i, izero);
 	}
 
 	if (m_VDlineview.GetChanlistYextent(0) != iextent0 || m_VDlineview.GetChanlistYzero(0) != izero0)
@@ -848,8 +841,8 @@ void CDataView::UpdateChannelsDisplayParameters()
 		int max, min;
 		max = m_VDlineview.GetChanlistPixeltoBin(i, 0);
 		min = m_VDlineview.GetChanlistPixeltoBin(i, m_VDlineview.Height());
-		float xmax = m_VDlineview.GetChanlistBintoMilliVolts(i, max);
-		float xmin = m_VDlineview.GetChanlistBintoMilliVolts(i, min);
+		float xmax = m_VDlineview.GetChanlistBinsToMilliVolts(i, max);
+		float xmin = m_VDlineview.GetChanlistBinsToMilliVolts(i, min);
 		ASSERT(xmax > xmin);
 		m_VDlineview.m_yRuler.SetRange(&xmin, &xmax);
 	}
@@ -891,7 +884,7 @@ void CDataView::UpdateHZtagsVal()
 	if (m_VDlineview.GetNHZtags()>1)
 		itag=1;
 	int v2 = m_VDlineview.GetHZtagVal(itag);
-	float mVperBin = m_VDlineview.GetChanlistVoltsperBin(m_ichanselected)*1000.0f;
+	float mVperBin = m_VDlineview.GetChanlistVoltsperDataBin(m_ichanselected)*1000.0f;
 	m_v1=((float)v1)*mVperBin;
 	m_v2=((float)v2)*mVperBin;
 	m_diff=m_v1-m_v2;
@@ -1192,17 +1185,6 @@ void CDataView::OnGainScroll(UINT nSBCode, UINT nPos)
 		UpdateGainScroll();
 }
 
-void CDataView::UpdateYExtent(int ichan, int yextent) 
-{
-	m_VDlineview.SetChanlistYextent(ichan, yextent);
-	if (m_comboSelectChan.GetCurSel() == m_VDlineview.GetChanlistSize())
-	{
-		for (int i= 0; i < m_VDlineview.GetChanlistSize(); i++)
-			m_VDlineview.SetChanlistYextent(i, yextent);
-	}
-	m_VDlineview.Invalidate();
-}
-
 // --------------------------------------------------------------------------
 // UpdateBiasScroll()
 // -- not very nice code; interface counter intuitive
@@ -1210,9 +1192,10 @@ void CDataView::UpdateYExtent(int ichan, int yextent)
 
 void CDataView::UpdateBiasScroll()
 {
-	int iPos = (int) ((m_VDlineview.GetChanlistYzero(m_ichanselected)
-						- m_VDlineview.GetChanlistBinZero(m_ichanselected))
-					*100/(int)YZERO_SPAN)+(int)50;
+	int iPos = (int) ((m_VDlineview.GetChanlistYzero(m_ichanselected)- m_VDlineview.GetChanlistBinZero(m_ichanselected)) 
+		* 100
+		/ (int)YZERO_SPAN)
+		+ (int)50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
 	UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
 }
@@ -1265,17 +1248,6 @@ void CDataView::OnBiasScroll(UINT nSBCode, UINT nPos)
 		UpdateBiasScroll();
 }
 
-void CDataView::UpdateYZero(int ichan, int ybias)
-{
-	m_VDlineview.SetChanlistYzero(ichan, ybias);
-	if (m_comboSelectChan.GetCurSel() == m_VDlineview.GetChanlistSize())
-	{
-		for (int i = 0; i < m_VDlineview.GetChanlistSize(); i++)
-			m_VDlineview.SetChanlistYzero(i, ybias);
-	}
-	m_VDlineview.Invalidate();
-}
-
 // --------------------------------------------------------------------------
 // OnCenterCurve()
 // --------------------------------------------------------------------------
@@ -1283,7 +1255,10 @@ void CDataView::UpdateYZero(int ichan, int ybias)
 void CDataView::OnCenterCurve()
 {
 	m_VDlineview.CenterChan(m_ichanselected);
-	m_VDlineview.Invalidate();
+	int yextent = m_VDlineview.GetChanlistYextent(m_ichanselected);
+	UpdateYExtent(m_ichanselected, yextent);
+	int yzero = m_VDlineview.GetChanlistYzero(m_ichanselected);
+	UpdateYZero(m_ichanselected, yzero);
 }
 
 // --------------------------------------------------------------------------
@@ -1293,7 +1268,10 @@ void CDataView::OnCenterCurve()
 void CDataView::OnGainAdjustCurve()
 {
 	m_VDlineview.MaxgainChan(m_ichanselected);	
-	m_VDlineview.Invalidate();
+	int yextent = m_VDlineview.GetChanlistYextent(m_ichanselected);
+	UpdateYExtent(m_ichanselected, yextent);
+	int yzero = m_VDlineview.GetChanlistYzero(m_ichanselected);
+	UpdateYZero(m_ichanselected, yzero);
 	UpdateLegends(CHG_YSCALE);	
 }
 
@@ -2053,8 +2031,7 @@ void CDataView::OnEnChangeTimelast()
 		m_timelast--;
 		break;
 	}	
-	m_VDlineview.GetDataFromDoc((long) (m_timefirst*m_samplingRate), 
-								(long) (m_timelast*m_samplingRate));	
+	m_VDlineview.GetDataFromDoc((long) (m_timefirst*m_samplingRate), (long) (m_timelast*m_samplingRate));	
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 	m_VDlineview.Invalidate();
 	mm_timelast.m_bEntryDone=FALSE;
@@ -2087,4 +2064,36 @@ void CDataView::OnCbnSelchangeCombochan()
 		int yzero = m_VDlineview.GetChanlistYzero(0);
 		UpdateYZero(0, yzero);
 	}
+}
+
+void CDataView::UpdateYExtent(int ichan, int yextent)
+{
+	m_VDlineview.SetChanlistYextent(ichan, yextent);
+	if (m_comboSelectChan.GetCurSel() == m_VDlineview.GetChanlistSize())
+	{
+		float yVoltsextent = m_VDlineview.GetChanlistVoltsperDataBin(ichan) * yextent;
+		m_VDlineview.SetChanlistVoltsExtent(-1, &yVoltsextent);
+	}
+	UpdateYRuler(ichan);
+	m_VDlineview.Invalidate();
+}
+
+void CDataView::UpdateYRuler(int ichan)
+{
+	int max = m_VDlineview.GetChanlistPixeltoBin(ichan, 0);
+	float vmax = m_VDlineview.GetChanlistBinsToMilliVolts(ichan, max);
+	int min = m_VDlineview.GetChanlistPixeltoBin(ichan, m_VDlineview.Height());
+	float vmin = m_VDlineview.GetChanlistBinsToMilliVolts(ichan, min);
+	m_VDlineview.m_yRuler.SetRange(&vmin, &vmax);
+}
+
+void CDataView::UpdateYZero(int ichan, int ybias)
+{
+	m_VDlineview.SetChanlistYzero(ichan, ybias);
+	if (m_comboSelectChan.GetCurSel() == m_VDlineview.GetChanlistSize())
+	{
+		float yVoltsextent = m_VDlineview.GetChanlistVoltsperDataBin(ichan) * ybias;
+		m_VDlineview.SetChanlistVoltsZero(-1, &yVoltsextent);
+	}
+	m_VDlineview.Invalidate();
 }

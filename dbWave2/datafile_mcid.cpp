@@ -94,7 +94,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	//	tentative
 	pWFormat->fullscale_Volts = 5.0f;				// 10 V full scale
-	pWFormat->fullscale_bins = 65536;				// 16 bits resolution
+	pWFormat->binspan = 65536;				// 16 bits resolution
 	pWFormat->binzero = 0;
  
 	pWFormat->mode_encoding = OLx_ENC_BINARY;

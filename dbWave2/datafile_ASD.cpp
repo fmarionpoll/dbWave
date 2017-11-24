@@ -150,8 +150,8 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	// ---------------- specifics from Syntech A/D card
 	pWFormat->fullscale_Volts = 10.0f;	// 10 mv full scale
-	pWFormat->fullscale_bins = 32768;		// 15 bits resolution
-	pWFormat->binzero = pWFormat->fullscale_bins/2 ;	// ?
+	pWFormat->binspan = 32768;			// 15 bits resolution
+	pWFormat->binzero = pWFormat->binspan/2 ;	// ?
 
 	pWFormat->mode_encoding = OLx_ENC_BINARY;
 	pWFormat->mode_clock = INTERNAL_CLOCK;
@@ -181,7 +181,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	pChan->am_gainfract = (float) recFactor;
 
 	pChan->am_totalgain = pChan->am_gainfract * pChan->am_gainheadstage;		// total gain
-	pChan->am_resolutionV = 10. / (double) (pWFormat->fullscale_bins/2)  / pChan->am_totalgain;
+	pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_totalgain / pWFormat->binspan;
 	//}
 
 	// ---------------- ASD -- capture date and time

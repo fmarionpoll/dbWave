@@ -100,7 +100,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	// decode ATLAB header and fill in windows structure
 	// ---------------- specific DT2821 differential mode
 	pWFormat->fullscale_Volts	= 20.f;	// 20 mv full scale (+10 V to -10 V)
-	pWFormat->fullscale_bins	= 4096;	// 12 bits resolution
+	pWFormat->binspan	= 4096;	// 12 bits resolution
 	pWFormat->binzero			= 2048;			// offset binary encoding
 	
 	// 1) version independent parameters
@@ -170,7 +170,8 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 		pChan->am_gainfract = *pxgainlist;				// total gain (ampli + A/D card)
 		pChan->am_totalgain = pChan->am_gainfract *((float)pChan->am_adgain);
 		// TODO: check if resolution is computed correctly
-		pChan->am_resolutionV = 20. / (double) (pWFormat->fullscale_bins)  / pChan->am_totalgain;
+		//pChan->am_resolutionV = 20. / (double) (pWFormat->binspan)  / pChan->am_totalgain;
+		pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_totalgain / pWFormat->binspan;
 		pgainlist++;		
 	}
 

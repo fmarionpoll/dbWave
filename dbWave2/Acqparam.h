@@ -22,7 +22,7 @@ public :
 
 	CTime	acqtime;
 	float	fullscale_Volts;	// volts full scale, gain 1	
-	long	fullscale_bins;		// 2^12, 2^16
+	long	binspan;			// 2^12, 2^16
 	long	binzero;			// 2048, 32768 (0 if 2's complement)
 
 	short	mode_encoding;		// 0=offset binary/1=straight/2=2scomplement

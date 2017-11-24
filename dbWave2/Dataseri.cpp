@@ -54,7 +54,7 @@ void CDataSeriesFormatDlg::GetParams(int index)
 	m_yextent = m_plineview->GetChanlistYextent(index);
 	int color = m_plineview->GetChanlistColor(index);
 	m_colorbutton.SetColor(color);
-	m_mVperbin= m_plineview->GetChanlistVoltsperBin(index)*1000.0f;
+	m_mVperbin= m_plineview->GetChanlistVoltsperDataBin(index)*1000.0f;
 	m_binzero = 0; // m_dbDoc->m_pDataFile->GetpWaveFormat()->binzero;
 	m_maxmv=( m_yextent/2 +m_yzero -m_binzero)*m_mVperbin;
 	m_minmv=(-m_yextent/2 +m_yzero -m_binzero)*m_mVperbin;

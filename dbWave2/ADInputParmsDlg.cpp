@@ -151,7 +151,7 @@ BOOL CADInputParmsDlg::OnInitDialog()
 		m_nacqchans = m_pwFormat->scan_count;
 		GetDlgItem(IDC_ADCARDNAME)->SetWindowText(m_pwFormat->csADcardName);
 		// get precision and compute corresponding nb of bits
-		m_iNBins = m_pwFormat->fullscale_bins+1;
+		m_iNBins = m_pwFormat->binspan+1;
 		int ibins = m_iNBins;
 		int nbits = 0;
 		do {
@@ -753,7 +753,7 @@ void CADInputParmsDlg::SaveData()
 	}
 	// general acq parameters
 	GetDlgItem(IDC_ADCARDNAME)->GetWindowText(m_pwFormat->csADcardName);
-	m_pwFormat->fullscale_bins = m_iNBins;
+	m_pwFormat->binspan = m_iNBins;
 
 	// save each channel
 	for (int i=1; i<= m_nacqchans; i++)
@@ -828,7 +828,7 @@ void CADInputParmsDlg::SaveChanData(int col)
 	pchan->am_gainfract = pchan->am_gainheadstage * (float)pchan->am_gainpre * (float)pchan->am_gainpost;
 	pchan->am_totalgain = pchan->am_gainfract * pchan->am_adgain;
 	// compute dependent parameters
-	pchan->am_resolutionV = m_pwFormat->fullscale_Volts / pchan->am_totalgain / m_pwFormat->fullscale_bins;
+	pchan->am_resolutionV = m_pwFormat->fullscale_Volts / pchan->am_totalgain / m_pwFormat->binspan;
 }
 
 void CADInputParmsDlg::OnBnClickedOk()

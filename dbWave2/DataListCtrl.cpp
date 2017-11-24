@@ -706,7 +706,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 			int izero = pWnd->GetChanlistYzero(i);
 			if(m_bsetmVSpan > 0.f)
 			{
-				ispan = pWnd->GetChanlistMilliVoltstoBins(i, m_mVspan) ;
+				ispan = pWnd->GetChanlistVoltstoBins(i, m_mVspan / 1000.f) ;
 				izero = pWnd->GetChanlistBinZero(i);
 				iextent = ispan;
 			}

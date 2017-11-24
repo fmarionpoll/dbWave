@@ -121,6 +121,7 @@ protected:
 	void OnFileScroll(UINT nSBCode, UINT nPos);
 	void OnGainScroll(UINT nSBCode, UINT nPos);
 	void UpdateYExtent(int ichan, int yextent);
+	void UpdateYRuler(int ichan);
 	void OnBiasScroll(UINT nSBCode, UINT nPos);
 	void UpdateYZero(int ichan, int ybias);
 	void UpdateGainScroll();

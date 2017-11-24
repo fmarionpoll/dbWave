@@ -134,7 +134,8 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 		m_pDataFile->GetWBVoltsperBin(ns, &voltsperb, mode);
 		CWaveChanArray* pchanArray = m_pDataFile->GetpWavechanArray();
 		CWaveFormat*    pwaveFormat = m_pDataFile->GetpWaveFormat();
-		pD->SetBinFormat(voltsperb, pwaveFormat->binzero, pwaveFormat->fullscale_bins);
+		pD->SetDataBinFormat(pwaveFormat->binzero, pwaveFormat->binspan);
+		pD->SetDataVoltsFormat(voltsperb, pwaveFormat->fullscale_Volts);
 		if (ns >= pchanArray->ChannelGetnum())
 			ns = 0;
 		CWaveChan* pchan = pchanArray->GetWaveChan(ns);
@@ -246,14 +247,15 @@ void CLineViewWnd::UpdateGainSettings(int i)
 	int mode = pOrd->GetSourceMode();
 	float docVoltsperb;
 	m_pDataFile->GetWBVoltsperBin(ns,	&docVoltsperb, mode);	
-	float pDVoltsperBin = pD->GetVoltsperBin();
+	float pDVoltsperBin = pD->GetVoltsperDataBin();
 	CWaveFormat* pwaveFormat = m_pDataFile->GetpWaveFormat();
 	if (docVoltsperb != pDVoltsperBin)
 	{
-		pD->SetBinFormat(docVoltsperb, pwaveFormat->binzero, pwaveFormat->fullscale_bins);
-		int iextent = pD->GetExtent();
+		pD->SetDataBinFormat(pwaveFormat->binzero, pwaveFormat->binspan);
+		pD->SetDataVoltsFormat(docVoltsperb, pwaveFormat->fullscale_Volts);
+		int iextent = pD->GetYextent();
 		iextent = (int) (((float) iextent)/docVoltsperb*pDVoltsperBin);
-		pD->SetExtent(iextent);
+		pD->SetYextent(iextent);
 	}
 }
 
@@ -313,7 +315,7 @@ void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 	pD->dl_comment= pchan->am_csComment;		
 	if (transform > 0)
 		pD->dl_comment = (m_pDataFile->GetTransfDataName(transform)).Left(6) 
-						+ ": " + pD->dl_comment;
+						+ _T(": ") + pD->dl_comment;
 }
 
 // set extent of chanlist in reference to a voltage
@@ -323,59 +325,45 @@ void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 
 void CLineViewWnd::SetChanlistVoltsExtent(int chan, float* pvalue)
 {
-	int ichanfirst = 0;
-	int ichanlast = m_pChanlistItemArray.GetUpperBound();
-	if (chan >= 0)
+	int ichanfirst = chan;
+	int ichanlast = chan;
+	if (chan < 0) 
 	{
-		ichanfirst = chan;
-		ichanlast = chan;
+		ichanfirst = 0;
+		ichanlast = m_pChanlistItemArray.GetUpperBound();
 	}
-
+	float voltsextent = *pvalue;
 	for (int i= ichanfirst; i<= ichanlast; i++)
 	{
 		CChanlistItem* pD =  m_pChanlistItemArray[i];
-		if (pvalue != NULL) 
-		{
-			pD->SetVoltsExtent(*pvalue);
-		}
-		else 
-		{
-			int iextent = pD->GetExtent();
-			float yvoltsperbin = pD->GetVoltsperBin();		// assume xvoltsperbin is correctly set
-			float yextent = yvoltsperbin * iextent;			// old extent value
-			iextent = (int) (yextent / yvoltsperbin);
-			pD->SetExtent(iextent);
-			pD->SetVoltsExtent(yextent);
-		}
+		float yvoltsperbin = pD->GetVoltsperDataBin();
+		if (pvalue == NULL) 
+			voltsextent = yvoltsperbin * pD->GetYextent();
+
+		int yextent = (int)(voltsextent / yvoltsperbin);
+		pD->SetYextent(yextent);
 	}
 }
 
-
-void CLineViewWnd::SetChanlistVoltsMaxMin (int chan, float vMax, float vMin)
+void CLineViewWnd::SetChanlistVoltsZero(int chan, float* pvalue)
 {
-	float yextent = vMax-vMin;
-	float yzero = (vMax + vMin )/ 2.f;
-
-	int ichanfirst = 0;
-	int ichanlast = m_pChanlistItemArray.GetUpperBound();
-	if (chan >= 0)
+	int ichanfirst = chan;
+	int ichanlast = chan;
+	if (chan < 0)
 	{
-		ichanfirst = chan;
-		ichanlast = chan;
+		ichanfirst = 0;
+		ichanlast = m_pChanlistItemArray.GetUpperBound();
 	}
-
-	for (int i= ichanfirst; i<= ichanlast; i++)
+	float voltsextent = *pvalue;
+	for (int i = ichanfirst; i <= ichanlast; i++)
 	{
 		CChanlistItem* pD = m_pChanlistItemArray[i];
-		
-		float yvoltsperbin = pD->GetVoltsperBin();		// assume xvoltsperbin is correctly set
-		int iextent = pD->GetExtent();
-		iextent = (int) (yextent / yvoltsperbin);
-		int izero = pD->GetBinZero();
-		izero = (int) (yzero/yvoltsperbin);
-		pD->SetExtent(iextent);
-		pD->SetZero(izero);
-		pD->SetVoltsExtent(yextent);
+		float yvoltsperbin = pD->GetVoltsperDataBin();
+		if (pvalue == NULL)
+			voltsextent = yvoltsperbin * pD->GetDataBinZero();
+
+		int iyzero = (int)(voltsextent / yvoltsperbin);
+		pD->SetYzero(iyzero);
 	}
 }
 
@@ -413,12 +401,7 @@ int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 	return imode;
 }
 
-//---------------------------------------------------------------------------
-//	GetChanlistMaxMin
-// compute max and min from Envelope
-//---------------------------------------------------------------------------
 
-	
 //---------------------------------------------------------------------------
 //	AutoZoomChan()	-- center curve & maximize gain
 //	CenterChan()	-- center curve
@@ -913,12 +896,11 @@ void CLineViewWnd::ZoomData(CRect* r1, CRect* r2)
 	{
 		// display loop: load abcissa
 		CChanlistItem* pDL = m_pChanlistItemArray[i];	
-		int newext = MulDiv (pDL->GetExtent(), r2->Height(), r1->Height());
-		pDL->SetExtent (newext);
-		int zero = pDL->GetZero();
-		int newzero = zero-MulDiv((r1->Height() - r2->Height())/2, 
-							newext, r2->Height());
-		pDL->SetZero (newzero);
+		int newext = MulDiv (pDL->GetYextent(), r2->Height(), r1->Height());
+		pDL->SetYextent (newext);
+		int zero = pDL->GetYzero();
+		int newzero = zero-MulDiv((r1->Height() - r2->Height())/2, newext, r2->Height());
+		pDL->SetYzero (newzero);
 	}
 		
 	// change index of first and last pt displayed
@@ -1031,10 +1013,10 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 			pX->ExportToPolyPts(pPolypoints_X);			
 		}
 		// change extent, org ? ------------------------------------------------
-		if (pDL->GetExtent() != wext)
-			wext = pDL->GetExtent();
-		if (pDL->GetZero() != worg)
-			worg = pDL->GetZero();
+		if (pDL->GetYextent() != wext)
+			wext = pDL->GetYextent();
+		if (pDL->GetYzero() != worg)
+			worg = pDL->GetYzero();
 		// display: load new ordinates ? ------------------------------------------
 		pY = pDL->pEnvelopeOrdinates;
 		pY->ExportToPolyPts(pPolypoints_Y);	
@@ -1227,8 +1209,8 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 		pY->ExportToPolyPts(pPolypoints_Y);	// copy ordinates to polypts buffer
 
 		// change extent, org and color ----------------------------------------
-		yextent = pDL->GetExtent();
-		yzero   = pDL->GetZero();
+		yextent = pDL->GetYextent();
+		yzero   = pDL->GetYzero();
 		if (pDL->GetColor() != color)	
 		{
 			color = pDL->GetColor();			
@@ -1349,7 +1331,7 @@ BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 				// unit for each channel
 				code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("mvolts per bin:\r\n"));
 				for (int i=0; i<GetChanlistSize(); i++) 
-					code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("%f\t"), GetChanlistVoltsperBin(i)*1000.f);
+					code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("%f\t"), GetChanlistVoltsperDataBin(i)*1000.f);
 				lpCopy--;	// erase last tab
 			}
 
@@ -1413,7 +1395,7 @@ LPTSTR CLineViewWnd::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 			int k = (pDL->pEnvelopeOrdinates)->GetPointAt(j);
 			if (iunit == 1)
 			{
-				lpCopy += wsprintf(lpCopy, _T("%f\t"), ((float)k)*GetChanlistVoltsperBin(i)*1000.f);
+				lpCopy += wsprintf(lpCopy, _T("%f\t"), ((float)k)*GetChanlistVoltsperDataBin(i)*1000.f);
 			}
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);
@@ -1450,7 +1432,7 @@ LPTSTR CLineViewWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 			}
 			if (iunit == 1)
 			{
-				lpCopy += wsprintf(lpCopy, _T("%f\t"), ((float)k)*GetChanlistVoltsperBin(i)*1000.f);
+				lpCopy += wsprintf(lpCopy, _T("%f\t"), ((float)k)*GetChanlistVoltsperDataBin(i)*1000.f);
 			}
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);			
@@ -1560,8 +1542,8 @@ void CLineViewWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			
 			pX = pDL->pEnvelopeOrdinates;				// load ordinates
 			pX->GetMeantoPolypoints((long*) &m_PolyPoints[1]);			
-			m_XORyext = pDL->GetExtent();		// store extent
-			m_zero = pDL->GetZero();			// store zero
+			m_XORyext = pDL->GetYextent();		// store extent
+			m_zero = pDL->GetYzero();			// store zero
 			m_ptFirst = point;					// save first point
 			m_curTrack = m_zero;				// use m_curTrack to store zero
 
@@ -1575,8 +1557,8 @@ void CLineViewWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	if (m_trackMode == TRACK_HZTAG)
 	{		
 		CChanlistItem* pDL = m_pChanlistItemArray[GetHZtagChan(m_HCtrapped)];
-		m_yWE = pDL->GetExtent();				// store extent
-		m_yWO = pDL->GetZero();					// store zero		
+		m_yWE = pDL->GetYextent();				// store extent
+		m_yWO = pDL->GetYzero();					// store zero		
 	}
 }
 
@@ -1618,7 +1600,7 @@ void CLineViewWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		{
 		XORcurve();	// (clear) necessary since XORcurve can draw outside client area
 		CChanlistItem* pDL = m_pChanlistItemArray[m_hitcurve];
-		pDL->SetZero(m_zero);
+		pDL->SetYzero(m_zero);
 		m_trackMode = TRACK_OFF;
 		PostMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
 		Invalidate();
@@ -1775,8 +1757,8 @@ void CLineViewWnd::MoveHZtagtoVal(int i, int val)
 {	
 	int chan = GetHZtagChan(i);
 	CChanlistItem* pDL = m_pChanlistItemArray[chan];
-	m_XORyext = pDL->GetExtent();			// store extent
-	m_zero = pDL->GetZero();				// store zero	
+	m_XORyext = pDL->GetYextent();			// store extent
+	m_zero = pDL->GetYzero();				// store zero	
 	m_ptLast.y = MulDiv(GetHZtagVal(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
 	CPoint point;
 	point.y = MulDiv(val - m_zero, m_yVE, m_XORyext) + m_yVO;
@@ -1977,8 +1959,8 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 	pDC->SetMapMode (MM_ANISOTROPIC);		// display in anisotropic mode
 	pDC->SetViewportExt (m_xVE, m_yVE);
 	pDC->SetViewportOrg (m_xVO, m_yVO);
-	pDC->SetWindowExt (m_npixels, m_yVE);	//pDL->GetExtent());
-	pDC->SetWindowOrg (0, 0);				//pDL->GetZero());
+	pDC->SetWindowExt (m_npixels, m_yVE);	//pDL->GetYextent());
+	pDC->SetWindowOrg (0, 0);				//pDL->GetYzero());
 	int yVE = m_yVE;
 
 	for (int ichan = 0; ichan<m_pChanlistItemArray.GetSize(); ichan++)
@@ -1992,8 +1974,8 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 		// compute max min and plot array
 		POINT* ppt = pPolypoints_X;
 		short* pData = lpBuf + ichan;
-		int worg=pDL->GetZero(); 
-		int wext=pDL->GetExtent();
+		int worg=pDL->GetYzero(); 
+		int wext=pDL->GetYextent();
 
 		// only one data point per pixel
 		if (m_dataperpixel == 1)
