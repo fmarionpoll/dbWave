@@ -1,5 +1,3 @@
-// viewdata.cpp : implementation file
-//
 // View data displays data and allow interactive browsing through the file
 // print and copy implemented
 
@@ -13,7 +11,6 @@
 #include "scopescr.h"
 #include "lineview.h"
 #include "editctrl.h"
-//
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "viewdata.h"
@@ -80,18 +77,9 @@ BEGIN_MESSAGE_MAP(CDataView, CDaoRecordView)
 	ON_CBN_SELCHANGE(IDC_COMBOCHAN, &CDataView::OnCbnSelchangeCombochan)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataView construction, destruction
-//	CDataView
-//	DoDataExchange
-//	~CDataView
-/////////////////////////////////////////////////////////////////////////////
-
 CDataView::CDataView()
 	: CDaoRecordView(CDataView::IDD)
 {	
-	// init parameters
-
 	m_ichanselected = 0;
 	m_timefirst = 0.0f;
 	m_timelast = 0.0f;
@@ -137,10 +125,6 @@ BOOL CDataView::PreCreateWindow(CREATESTRUCT& cs)
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
-//---------------------------------------------------------------------------
-// OnInitial update is called once before the frame is displayed
-//---------------------------------------------------------------------------
-
 void CDataView::OnInitialUpdate()
 {	
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
@@ -185,11 +169,12 @@ void CDataView::OnInitialUpdate()
 	
 	m_VDlineview.m_parms = mdPM->viewdata;
 	OnClickedBias();			// init V bar mode: bias (push button)
-	OnSplitCurves();			// split curves ...	
+	//OnSplitCurves();			// split curves ...	
+	m_bCommonScale = TRUE;
+	m_comboSelectChan.SetCurSel(m_VDlineview.GetChanlistSize());
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE);
 }
 
-// remove objects
 void CDataView::OnDestroy() 
 {
 	CDaoRecordView::OnDestroy();
@@ -197,10 +182,6 @@ void CDataView::OnDestroy()
 	DeleteObject(m_hBias);		// bias button (handle)
 	DeleteObject(m_hZoom);		// zoom button (handle)
 }
-
-// --------------------------------------------------------------------------
-// OnSize
-// --------------------------------------------------------------------------
 
 void CDataView::OnSize(UINT nType, int cx, int cy)
 {	
@@ -218,12 +199,8 @@ void CDataView::OnSize(UINT nType, int cx, int cy)
 			break;
 		}
 	}
-
 	CDaoRecordView::OnSize(nType, cx, cy);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CdbWaveView diagnostics
 
 #ifdef _DEBUG
 void CDataView::AssertValid() const
@@ -243,18 +220,10 @@ CdbWaveDoc* CDataView::GetDocument() // non-debug version is inline
 }
 #endif //_DEBUG
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbWaveView database support
-
 CDaoRecordset* CDataView::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// Operations    
-//	OnUpdate
-/////////////////////////////////////////////////////////////////////////////
 
 BOOL CDataView::OnMove(UINT nIDMoveCommand) 
 {
@@ -262,11 +231,6 @@ BOOL CDataView::OnMove(UINT nIDMoveCommand)
 	GetDocument()->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
 	return flag;
 }
-
-//---------------------------------------------------------------------------
-// OnUpdate is called whenever the document has changed and 
-// the view needs to redisplay some or all of itself
-//---------------------------------------------------------------------------
 
 void CDataView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
@@ -294,21 +258,11 @@ void CDataView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		iUpdate = UPD_ABCISSA | UPD_XSCALE | UPD_ORDINATES | UPD_YSCALE;
 		break;
 	}
-	
 	// update controls according to iupdate
 	UpdateLegends(iUpdate);
 	m_VDlineview.Invalidate();
 	SetVBarMode(m_VBarMode);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataView message handlers
-//	OnActivateView
-/////////////////////////////////////////////////////////////////////////////
-
-// --------------------------------------------------------------------------
-// OnActivateView()
-// -------------------------------------------------------------------------- 
 
 void CDataView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
@@ -317,19 +271,10 @@ void CDataView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDea
 	{
 		BOOL flag = pmF->SetSecondToolBar(IDR_DBDATATYPE);
 		ASSERT(flag);
-		//((CChildFrame*)pmF->MDIGetActive())->m_cursorstate = 0;
 		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
-
-// --------------------------------------------------------------------------
-// Update legends
-// UPD_ABCISSA
-// CHG_XSCALE	CHG_YSCALE
-// UPD_XSCALE	UPD_YSCALE
-// CHG_XBAR		CHG_YBAR
-// --------------------------------------------------------------------------
 
 void CDataView::UpdateLegends(int ioperation)
 {
@@ -344,11 +289,6 @@ void CDataView::UpdateLegends(int ioperation)
 		m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 		UpdateFileScroll();
 	}
-
-	// ------------------------------------------- update ordinates (max , min)
-	/*	if (ioperation & UPD_ORDINATES) // not implemented yet
-		{
-		} */
 
 	// ------------------------------------------- update y scale val
 	if (ioperation & CHG_YSCALE)
@@ -366,6 +306,7 @@ void CDataView::UpdateLegends(int ioperation)
 	// ------------------------------------------- adapt vertical scale
 	if (ioperation & CHG_YBAR)
 	{
+		UpdateYZero(m_ichanselected, m_VDlineview.GetChanlistYzero(m_ichanselected));
 		UpdateYRuler(m_ichanselected);
 	}
 
@@ -373,10 +314,6 @@ void CDataView::UpdateLegends(int ioperation)
 	UpdateData(FALSE);	// copy view object to controls
 }
 
-// --------------------------------------------------------------------------
-// OnClickedBias
-// change state of the buttons, update scroll bar (vertical)
-// --------------------------------------------------------------------------
 void CDataView::OnClickedBias()
 {	
 	// set bias down and set gain up CButton	
@@ -385,10 +322,6 @@ void CDataView::OnClickedBias()
 	SetVBarMode(BAR_BIAS);
 }
 
-// --------------------------------------------------------------------------
-// OnClickedGain
-// change state of both buttons and update scroll bar (vertical)
-// --------------------------------------------------------------------------
 void CDataView::OnClickedGain()
 {	
 	((CButton*) GetDlgItem(IDC_BIAS_button))->SetState(0);
@@ -421,9 +354,6 @@ void CDataView::UpdateChannel(int channel)
 	}
 }
 
-// --------------------------------------------------------------------------
-// OnClickedYscale	call dialog box
-// --------------------------------------------------------------------------
 void CDataView::OnFormatYscale()
 {
 	CDataViewOrdinatesDlg dlg;
@@ -435,9 +365,6 @@ void CDataView::OnFormatYscale()
 	m_VDlineview.Invalidate();
 }
 
-// --------------------------------------------------------------------------
-// OnToolsDataSeries()
-// --------------------------------------------------------------------------
 void CDataView::OnToolsDataseries()
 {
 	// init dialog data 
@@ -452,11 +379,6 @@ void CDataView::OnToolsDataseries()
 	UpdateLegends(UPD_YSCALE);
 }
 
-// --------------------------------------------------------------------------
-// OnEditCopy
-// launch dialog box
-// copy Envelopes of displayed data to clipboard
-// --------------------------------------------------------------------------
 void CDataView::OnEditCopy()
 {	
 	CCopyAsDlg dlg;
@@ -574,21 +496,11 @@ void CDataView::OnEditCopy()
 	}
 }
 
-// --------------------------------------------------------------------------
-// allow copy operation if document has data
-// --------------------------------------------------------------------------
 void CDataView::OnUpdateEditCopy(CCmdUI* pCmdUI)
 {	
 	pCmdUI->Enable(m_VDlineview.IsDefined() != NULL); // if document has data
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-// HARDWARE
-/////////////////////////////////////////////////////////////////////////////////////
-
-// --------------------------------------------------------------------------
-// OnHardwareAdchannels
-// --------------------------------------------------------------------------
 #include "ADInputParmsDlg.h"
 #include ".\viewdata.h"
 
@@ -608,9 +520,6 @@ void CDataView::OnHardwareAdchannels()
 	}
 }
 
-// --------------------------------------------------------------------------
-// OnHardwareAdintervals
-// --------------------------------------------------------------------------
 void CDataView::OnHardwareAdintervals()
 {
 	ADIntervalsDlg dlg;
@@ -625,15 +534,6 @@ void CDataView::OnHardwareAdintervals()
 	}
 }
 
-// --------------------------------------------------------------------------
-// Chaindialog
-// some dialogs return an ID in a parameter
-// (OnHardware.. adchannels, adtrigger, adintervals)
-// this routine launch the dialog box corresponding to this ID
-// ! this ID must be different from the menu_ID, otherwise, when the
-// corresponding button is depressed, the dialog box is CALLED over the
-// current one..
-// --------------------------------------------------------------------------
 void CDataView::ChainDialog(WORD iID)
 {
 	WORD menuID;
@@ -652,9 +552,6 @@ void CDataView::ChainDialog(WORD iID)
 	PostMessage(WM_COMMAND, menuID, NULL);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// OnFormat procedures
-// --------------------------------------------------------------------------
 void CDataView::OnFirstFrame()
 {
 	OnFileScroll(SB_LEFT, 1L);
@@ -665,26 +562,14 @@ void CDataView::OnLastFrame()
 	OnFileScroll(SB_RIGHT, 1L);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// OnView procedures: multi-files document
-
-// --------------------------------------------------------------------------
-// UpdateFileParameters
-// protected procedure that allows the selection of a new file
-// with different parameters (length, rate, comments, etc)
-// --------------------------------------------------------------------------
 void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 {
 	// load parameters from document file: none yet loaded?
 	BOOL bFirstUpdate = (m_pdatDoc == NULL);
 	CdbWaveDoc* pdbDoc = GetDocument();
 	CString csDatFile = pdbDoc->DBGetCurrentDatFileName();
-	if (csDatFile.IsEmpty())
-	{
-		m_bvalidDoc = FALSE;
+	if (m_bvalidDoc = csDatFile.IsEmpty())
 		return;
-	}
-	m_bvalidDoc = TRUE;
 
 	// open data file
 	if (!pdbDoc->OpenCurrentDataFile())
@@ -708,10 +593,6 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	m_VDlineview.AttachDataFile(m_pdatDoc, 0);	// prepare lineview
 	m_pdatDoc->SetModifiedFlag(FALSE);	
 
-	// ----------- option ------------------------------------------
-	// display complete file?? ABCISSA
-	// ----------- option ------------------------------------------
-
 	// OPTION: display entire file				// (inactif si multirow)
 	long lFirst=0;								// first abcissa
 	long lLast = m_pdatDoc->GetDOCchanLength()-1;	// last abcissa	
@@ -725,11 +606,7 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	}    
 	m_samplingRate = pwaveFormat->chrate;			// update sampling rate	
 
-	// ----------- option -----------------------------------------
-	// display all channels?: CHANNELS
-	// ----------- option -----------------------------------------	
-
-	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
+	// display all channels
 	int lnvchans = m_VDlineview.GetChanlistSize();
 	int ndocchans = pwaveFormat->scan_count;
 	
@@ -737,19 +614,15 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	if (mdPM->bAllChannels || lnvchans == 0)
 	{		
 		for (int jdocchan = 0; jdocchan < ndocchans; jdocchan++)
-		{										// check if present in the list
-			BOOL bPresent=FALSE;				// pessimistic
-			for (int j = lnvchans-1; j>= 0; j--)// check all channels / display list
-			{									// test if this data chan is present + no transf
-				if (m_VDlineview.GetChanlistSourceChan(j) == jdocchan)
-				{
-					bPresent = TRUE;			// the wanted chan is present
-					break;						// examine next doc channel
-				}
-			}
-			if (bPresent == FALSE)				// no display chan contains that doc chan
+		{
+			BOOL bPresent=FALSE;
+			for (int j = lnvchans-1; j>= 0; j--)
 			{
-				m_VDlineview.AddChanlistItem(jdocchan, 0);	// add this channel
+				if (bPresent = (m_VDlineview.GetChanlistSourceChan(j) == jdocchan))
+					break;
+			}
+			if (!bPresent) {
+				m_VDlineview.AddChanlistItem(jdocchan, 0);
 				lnvchans++;
 			}
 			m_VDlineview.SetChanlistColor(jdocchan, jdocchan);
@@ -757,23 +630,19 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	}
 
 	// load real data from file and update time parameters
-	m_VDlineview.GetDataFromDoc(lFirst, lLast);	// load data requested	
+	m_VDlineview.GetDataFromDoc(lFirst, lLast);					// load data requested	
 	m_timefirst = m_VDlineview.GetDataFirst()/ m_samplingRate;	// update abcissa parameters
 	m_timelast = m_VDlineview.GetDataLast()/ m_samplingRate;	// first - end
 	m_ichanselected = 0;										// select chan 0
 
-	// ----------- option ------------------------------------------
-	// split curves??
 	// ----------- option ------------------------------------------	
 
 	if (!bFirstUpdate)
-	{
 		UpdateChannelsDisplayParameters();
-	}
 
 	// fill combo
 	m_comboSelectChan.ResetContent();
-	for (int i = 0; i < lnvchans; i++)
+	for (int i = 0; i < m_VDlineview.GetChanlistSize(); i++)
 	{
 		CString cs;
 		cs.Format(_T("channel %i - "), i);
@@ -783,7 +652,10 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	if (ndocchans > 1) {
 		m_comboSelectChan.AddString(_T("all channels"));
 	}
-	m_comboSelectChan.SetCurSel(0);
+	if (!m_bCommonScale)
+		m_comboSelectChan.SetCurSel(0);
+	else
+		m_comboSelectChan.SetCurSel(m_VDlineview.GetChanlistSize());
 
 	// done	
 	if (bUpdateInterface)
@@ -797,59 +669,59 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 
 void CDataView::UpdateChannelsDisplayParameters()
 {
-	int max, min;
 	int lnvchans = m_VDlineview.GetChanlistSize();
-	int i, iextent, izero;
-	int j = lnvchans-1;
-	int iextent0 = m_VDlineview.GetChanlistYextent(0);
-	int izero0	 = m_VDlineview.GetChanlistYzero(0);
-
-	for (i=0; i<lnvchans; i++)
+	int max;
+	int min;
+	if (!m_bCommonScale) 
 	{
-		// keep final gain constant even if ampli gain changed
-		m_VDlineview.GetChanlistMaxMin(i, &max, &min);
-		iextent = m_VDlineview.GetChanlistYextent(i);
-		izero = m_VDlineview.GetChanlistYzero(i);
-
-		// split curves if requested by options
-		if (mdPM->bSplitCurves)
+		for (int i = 0; i < lnvchans; i++)
 		{
+			// keep final gain constant even if ampli gain changed
+			m_VDlineview.GetChanlistMaxMin(i, &max, &min);
+			int iextent = m_VDlineview.GetChanlistYextent(i);
+			int izero = m_VDlineview.GetChanlistYzero(i);
+			
 			if (mdPM->bMaximizeGain)
-				iextent = MulDiv(max-min+1, 11*lnvchans, 10);
-			if (mdPM->bCenterCurves)
-			{				
-				izero = (max+min)/2 - MulDiv(iextent, j, lnvchans*2);
-				j -= 2;				
-			}
-		}
-		// maximize gain
-		else
-		{
-			if (mdPM->bMaximizeGain)
-				iextent = MulDiv(max-min+1, 11, 10);
+				iextent = MulDiv(max - min + 1, 11, 10);
 			// center curve
 			if (mdPM->bCenterCurves)
-				izero = (max+min)/2;
-		}
-		UpdateYExtent(i, iextent);
-		UpdateYZero(i, izero);
-	}
+				izero = (max + min) / 2;
 
-	if (m_VDlineview.GetChanlistYextent(0) != iextent0 || m_VDlineview.GetChanlistYzero(0) != izero0)
-	{
-		int i = 0;
-		int max, min;
-		max = m_VDlineview.GetChanlistPixeltoBin(i, 0);
-		min = m_VDlineview.GetChanlistPixeltoBin(i, m_VDlineview.Height());
-		float xmax = m_VDlineview.GetChanlistBinsToMilliVolts(i, max);
-		float xmin = m_VDlineview.GetChanlistBinsToMilliVolts(i, min);
-		ASSERT(xmax > xmin);
-		m_VDlineview.m_yRuler.SetRange(&xmin, &xmax);
+			UpdateYExtent(i, iextent);
+			UpdateYZero(i, izero);
+		}
 	}
+	else
+	{
+		int ichan = 0;
+		int iextent = m_VDlineview.GetChanlistYextent(ichan);
+		int izero = m_VDlineview.GetChanlistYzero(ichan);
+		if (mdPM->bMaximizeGain) 
+		{
+			float vmax = 0.;
+			float vmin = 0.;
+			for (int i = 0; i < lnvchans; i++)
+			{
+				// keep final gain constant even if ampli gain changed
+				m_VDlineview.GetChanlistMaxMin(i, &max, &min);
+				float maxchani = m_VDlineview.ConvertChanlistDataBinsToVolts(i, max);
+				float minchani = m_VDlineview.ConvertChanlistDataBinsToVolts(i, min);
+				if (maxchani > vmax)
+					vmax = maxchani;
+				if (minchani < vmin)
+					vmin = minchani;
+			}
+			max = m_VDlineview.ConvertChanlistVoltstoDataBins(ichan, vmax);
+			min = m_VDlineview.ConvertChanlistVoltstoDataBins(ichan, vmin);
+			iextent = MulDiv(max - min + 1, 10, 8);
+			izero = (max + min) / 2;
+		}
+		UpdateYExtent (ichan, iextent);
+		UpdateYZero (ichan, izero);
+	}
+	UpdateYRuler(0);
 }
-// --------------------------------------------------------------------------
-// message handler to messages from lineview
-// --------------------------------------------------------------------------
+
 void CDataView::SetCursorAssociatedWindows()
 {
 	int nCmdShow  = SW_HIDE;
@@ -1056,9 +928,6 @@ void CDataView::OnFormatDataseriesattributes()
 	
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// measure routines
-
 void CDataView::OnToolsVerticaltags() 
 {
 	MeasureProperties(1);
@@ -1093,10 +962,6 @@ void CDataView::OnToolsMeasure()
 	MeasureProperties(3);
 }
 
-// --------------------------------------------------------------------------
-// OnVScroll
-// --------------------------------------------------------------------------
-
 void CDataView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
@@ -1119,9 +984,6 @@ void CDataView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 }
 
-// --------------------------------------------------------------------------
-// SetVBarMode
-// --------------------------------------------------------------------------
 void CDataView::SetVBarMode (short bMode)
 {
 	if (bMode == BAR_BIAS)
@@ -1130,10 +992,6 @@ void CDataView::SetVBarMode (short bMode)
 		m_VBarMode = BAR_GAIN;
 	UpdateBiasScroll();
 }        
-
-// --------------------------------------------------------------------------
-// UpdateGainScroll()
-// --------------------------------------------------------------------------
 
 void CDataView::UpdateGainScroll()
 {
@@ -1146,9 +1004,6 @@ void CDataView::UpdateGainScroll()
 		TRUE);
 }
 
-// --------------------------------------------------------------------------
-// OnGainScroll()
-// --------------------------------------------------------------------------
 void CDataView::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	int lSize = m_VDlineview.GetChanlistYextent(m_ichanselected);
@@ -1185,11 +1040,6 @@ void CDataView::OnGainScroll(UINT nSBCode, UINT nPos)
 		UpdateGainScroll();
 }
 
-// --------------------------------------------------------------------------
-// UpdateBiasScroll()
-// -- not very nice code; interface counter intuitive
-// --------------------------------------------------------------------------
-
 void CDataView::UpdateBiasScroll()
 {
 	int iPos = (int) ((m_VDlineview.GetChanlistYzero(m_ichanselected)- m_VDlineview.GetChanlistBinZero(m_ichanselected)) 
@@ -1199,10 +1049,6 @@ void CDataView::UpdateBiasScroll()
 	m_scrolly.SetScrollPos(iPos, TRUE);
 	UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
 }
-
-// --------------------------------------------------------------------------
-// OnBiasScroll()
-// --------------------------------------------------------------------------
 
 void CDataView::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
@@ -1240,17 +1086,12 @@ void CDataView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (lSize>YZERO_MIN && lSize<YZERO_MAX)
 	{		
-		UpdateYZero(m_ichanselected, lSize + m_VDlineview.GetChanlistBinZero(m_ichanselected));
-		m_VDlineview.Invalidate();
+		UpdateYZero(m_ichanselected, m_VDlineview.GetChanlistBinZero(m_ichanselected));
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_BIAS)
 		UpdateBiasScroll();
 }
-
-// --------------------------------------------------------------------------
-// OnCenterCurve()
-// --------------------------------------------------------------------------
 
 void CDataView::OnCenterCurve()
 {
@@ -1260,10 +1101,6 @@ void CDataView::OnCenterCurve()
 	int yzero = m_VDlineview.GetChanlistYzero(m_ichanselected);
 	UpdateYZero(m_ichanselected, yzero);
 }
-
-// --------------------------------------------------------------------------
-// OnGainAdjustCurve()
-// --------------------------------------------------------------------------
 
 void CDataView::OnGainAdjustCurve()
 {
@@ -1275,20 +1112,13 @@ void CDataView::OnGainAdjustCurve()
 	UpdateLegends(CHG_YSCALE);	
 }
 
-// --------------------------------------------------------------------------
-// OnSplitcurves()
-// adjust position of each channel when new document is loaded for ex
-// get nb of channels in the display list
-// loop through all channels to get max min and center / adjust gain
-// to display all signals on separate lines
-// --------------------------------------------------------------------------
 void CDataView::OnSplitCurves()
 {
 	int i;
-	int nchans = m_VDlineview.GetChanlistSize();	// nb of data channels
+	int nchans = m_VDlineview.GetChanlistSize();		// nb of data channels
 	int pxheight = m_VDlineview.Height();				// height of the display area
-	int pxoffset = pxheight/nchans;			// height for each channel
-	int pxzero = (pxheight - pxoffset)/2;	// center first curve at
+	int pxoffset = pxheight/nchans;						// height for each channel
+	int pxzero = (pxheight - pxoffset)/2;				// center first curve at
 
 	// split display area	
 	int  max, min;
@@ -1306,10 +1136,6 @@ void CDataView::OnSplitCurves()
 	UpdateLegends(CHG_YSCALE);
 	m_VDlineview.Invalidate();
 }
-
-// --------------------------------------------------------------------------
-// OnFileScroll()
-// --------------------------------------------------------------------------
 
 void CDataView::OnFileScroll(UINT nSBCode, UINT nPos)
 {
@@ -1344,10 +1170,6 @@ void CDataView::OnFileScroll(UINT nSBCode, UINT nPos)
 	m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 	UpdateFileScroll();
 }
-
-// --------------------------------------------------------------------------
-// OnHScroll()
-// --------------------------------------------------------------------------
 
 void CDataView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
@@ -1516,11 +1338,6 @@ void CDataView::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
 	pDC->TextOut(mdPM->horzRes/2, mdPM->vertRes-57,	ch_date);
 }
 
-// ---------------------------------------------------------------------------------------
-// ConvertFileIndex
-// return ascii string
-// ---------------------------------------------------------------------------------------
-
 CString CDataView::ConvertFileIndex(long lFirst, long lLast)
 {
 	CString csUnit= _T(" s");								// get time,  prepare time unit
@@ -1539,22 +1356,6 @@ CString CDataView::ConvertFileIndex(long lFirst, long lLast)
 	csComment += pszValue;
 	return csComment;
 }
-
-// -----------------------------------------------------------------------------------
-// GetFileSeriesIndexFromPage
-//
-// parameters
-//	page : current printer page
-//	file : filelist index
-// returns lFirst = index first pt to display
-// assume correct parameters:
-// 	m_lprintFirst
-// 	m_lprintLen
-//
-// count how many rows by reading the length of each file of the list starting from the
-// first. Stop looping through list whenever count of rows is reached or file number is
-// exhausted
-// -----------------------------------------------------------------------------------
 
 BOOL CDataView::GetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst)
 {
@@ -2054,10 +1855,12 @@ void CDataView::OnCbnSelchangeCombochan()
 	int ichan = m_comboSelectChan.GetCurSel();
 	if (ichan < m_VDlineview.GetChanlistSize()) 
 	{
+		m_bCommonScale = FALSE;
 		UpdateChannel(ichan);
 	}
 	else
 	{
+		m_bCommonScale = TRUE;
 		m_ichanselected = 0;
 		int yextent = m_VDlineview.GetChanlistYextent(0);
 		UpdateYExtent(0, yextent);
@@ -2081,9 +1884,9 @@ void CDataView::UpdateYExtent(int ichan, int yextent)
 void CDataView::UpdateYRuler(int ichan)
 {
 	int max = m_VDlineview.GetChanlistPixeltoBin(ichan, 0);
-	float vmax = m_VDlineview.GetChanlistBinsToMilliVolts(ichan, max);
+	float vmax = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, max);
 	int min = m_VDlineview.GetChanlistPixeltoBin(ichan, m_VDlineview.Height());
-	float vmin = m_VDlineview.GetChanlistBinsToMilliVolts(ichan, min);
+	float vmin = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, min);
 	m_VDlineview.m_yRuler.SetRange(&vmin, &vmax);
 }
 

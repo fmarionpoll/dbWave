@@ -2,11 +2,13 @@
 //
 
 #include "stdafx.h"
+#include "lineview.h"
 #include "RulerBar.h"
 #include ".\rulerbar.h"
 
 #include <math.h>
 #include "resource.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -73,7 +75,6 @@ BOOL CRuler::AdjustScale()
 	return TRUE;
 }
 
-
 // -------------------------------------------------------------------------
 // CRulerBar
 
@@ -84,6 +85,9 @@ CRulerBar::CRulerBar()
 	m_penColor = ::GetSysColor(COLOR_WINDOWTEXT);
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH|FF_ROMAN, _T("Arial"));
 	m_bHorizontal = TRUE;
+	m_pLineViewWnd=NULL;
+	m_bCaptured = FALSE;
+	m_captureMode = -1;
 }
 
 CRulerBar::~CRulerBar()
@@ -94,6 +98,9 @@ BEGIN_MESSAGE_MAP(CRulerBar, CWnd)
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
+	ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // CRulerBar message handlers
@@ -101,8 +108,7 @@ END_MESSAGE_MAP()
 void CRulerBar::OnPaint()
 {
 	CPaintDC dc(this);
-	CRect rcClient;
-	GetClientRect(&rcClient);
+
 	// exit if the length is not properly defined
 	if (m_ruler.m_dlast == m_ruler.m_dfirst)
 		return;
@@ -116,34 +122,29 @@ void CRulerBar::OnPaint()
 	// draw ticks and legends
 	int tickBigHeight, tickSmallHeight;
 	if (!m_bHorizontal)
-	{
-		tickBigHeight = rcClient.Width() /2 -2;	
-		tickSmallHeight = tickBigHeight/2;	
-	}
+		tickBigHeight = m_rcClient.Width() /2 -2;
 	else
-	{
-		tickBigHeight = rcClient.Height() /2 -2;
-		tickSmallHeight = tickBigHeight/2;
-	}
+		tickBigHeight = m_rcClient.Height() /2 -2;
+	tickSmallHeight = tickBigHeight / 2;
 
 	// draw solid background
-	dc.IntersectClipRect(rcClient);	
-	dc.FillSolidRect(rcClient, ::GetSysColor(COLOR_3DFACE));
+	dc.IntersectClipRect(m_rcClient);
+	dc.FillSolidRect(m_rcClient, ::GetSysColor(COLOR_3DFACE));
 
 	// draw baseline on the right side
 	if (!m_bHorizontal)
 	{
-		dc.MoveTo(rcClient.right-1, rcClient.top);
-		dc.LineTo(rcClient.right-1, rcClient.bottom);
+		dc.MoveTo(m_rcClient.right-1, m_rcClient.top);
+		dc.LineTo(m_rcClient.right-1, m_rcClient.bottom);
 	}
 	else
 	{
-		dc.MoveTo(rcClient.left, rcClient.top);
-		dc.LineTo(rcClient.right, rcClient.top);
+		dc.MoveTo(m_rcClient.left, m_rcClient.top);
+		dc.LineTo(m_rcClient.right, m_rcClient.top);
 	}
 
 	// draw scale
-	double dpos = floor(m_ruler.m_dscalefirst); // floor(m_ruler.m_dfirst);
+	double dpos = floor(m_ruler.m_dscalefirst); 
 	double dlen = m_ruler.m_dlast - m_ruler.m_dfirst;
 	double smallscaleinc = m_ruler.m_dscaleinc / 5.;
 	dc.SetBkMode(TRANSPARENT);
@@ -159,23 +160,23 @@ void CRulerBar::OnPaint()
 			double ratio = (m_ruler.m_dlast - dsmallpos) / dlen;	// =
 			if (!m_bHorizontal)
 			{
-				tickPos = (int)(rcClient.Height() * (m_ruler.m_dlast - dsmallpos) / dlen); 
-				dc.MoveTo(rcClient.right, tickPos);
-				dc.LineTo(rcClient.right -tickSmallHeight, tickPos);
+				tickPos = (int)(m_rcClient.Height() * (m_ruler.m_dlast - dsmallpos) / dlen);
+				dc.MoveTo(m_rcClient.right, tickPos);
+				dc.LineTo(m_rcClient.right -tickSmallHeight, tickPos);
 			}
 			else
 			{
-				tickPos = (int) (rcClient.Width() * (dsmallpos - m_ruler.m_dfirst) / dlen);
-				dc.MoveTo(tickPos, rcClient.top);
-				dc.LineTo(tickPos, rcClient.top+tickSmallHeight);
+				tickPos = (int) (m_rcClient.Width() * (dsmallpos - m_ruler.m_dfirst) / dlen);
+				dc.MoveTo(tickPos, m_rcClient.top);
+				dc.LineTo(tickPos, m_rcClient.top+tickSmallHeight);
 			}
 		}
 
 		// display large ticks and text
 		if (!m_bHorizontal)
-			tickPos = (int) (rcClient.Height() * (m_ruler.m_dlast - dpos) / dlen);
+			tickPos = (int) (m_rcClient.Height() * (m_ruler.m_dlast - dpos) / dlen);
 		else
-			tickPos = (int) (rcClient.Width() * (dpos - m_ruler.m_dfirst) / dlen);
+			tickPos = (int) (m_rcClient.Width() * (dpos - m_ruler.m_dfirst) / dlen);
 
 		if (tickPos >= 0)											// =
 		{
@@ -185,24 +186,24 @@ void CRulerBar::OnPaint()
 			if (!m_bHorizontal)
 			{
 				// tick
-				dc.MoveTo(rcClient.right, tickPos);
-				dc.LineTo(rcClient.right - tickBigHeight, tickPos);
+				dc.MoveTo(m_rcClient.right, tickPos);
+				dc.LineTo(m_rcClient.right - tickBigHeight, tickPos);
 				// text
 				if( dpos != 0. && fabs(dpos) < 1E-10 )				// prevent "bad" zero
 				   dpos = 0 ;
-				x = rcClient.right - tickBigHeight - size.cx -2;
+				x = m_rcClient.right - tickBigHeight - size.cx -2;
 				y = tickPos - (size.cy/2);
 			}
 			else
 			{
-				dc.MoveTo(tickPos, rcClient.top);
-				dc.LineTo(tickPos, rcClient.top+tickBigHeight);
+				dc.MoveTo(tickPos, m_rcClient.top);
+				dc.LineTo(tickPos, m_rcClient.top+tickBigHeight);
 				x = tickPos - (size.cx/2);
 				if (x < 0) 
 					x = 0;
-				if (x + size.cx > rcClient.right)
-					x = rcClient.right - size.cx;
-				y = rcClient.top+tickBigHeight +1;
+				if (x + size.cx > m_rcClient.right)
+					x = m_rcClient.right - size.cx;
+				y = m_rcClient.top+tickBigHeight +1;
 			}
 			dc.TextOut(x, y, str);									// = 
 		}
@@ -223,15 +224,15 @@ BOOL CRulerBar::OnEraseBkgnd(CDC* pDC)
 void CRulerBar::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
+	GetClientRect(&m_rcClient);
 }
 
 void CRulerBar::PreSubclassWindow()
 {
 	if (IsWindow(m_hWnd))
 	{
-		CRect rect;
-		GetClientRect(&rect);
-		if (rect.Width()  < rect.Height() )
+		GetClientRect(&m_rcClient);
+		if (m_rcClient.Width()  < m_rcClient.Height() )
 			m_bHorizontal = FALSE;
 	}
 	CWnd::PreSubclassWindow();
@@ -262,6 +263,64 @@ void CRulerBar::SetRange(float* dfirst, float* dlast)
 	Invalidate();
 }
 
+#define MODEZOOM	0
+#define MODEBIAS	1
+void CRulerBar::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (!m_bHorizontal) 
+	{
+		int delta = 10;
+		if (point.y < delta || point.y > m_rcClient.Height() - delta)
+			SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL));
+	}
 
+	CWnd::OnMouseMove(nFlags, point);
+}
 
+void CRulerBar::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	int delta = 10;
+	if (point.y < delta || point.y > m_rcClient.Height() - delta)
+	{
+		m_captureMode = MODEZOOM;
+		SetCapture();
+		m_bCaptured = TRUE;
+		oldpt = point;
+		m_bBottom = (point.y < delta);
+	}
+	else
+		CWnd::OnLButtonDown(nFlags, point);
+}
 
+void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	if (m_bCaptured)
+	{
+		m_bCaptured = FALSE;
+		m_captureMode = 0;
+		ReleaseCapture();
+		newpt = point;
+		int delta = -(newpt.y - oldpt.y);
+		if (m_pLineViewWnd != NULL)
+		{
+			CRect prevrect;
+			m_pLineViewWnd->GetClientRect(prevrect);
+			CRect newrect = prevrect;
+			if (m_bBottom)
+				newrect.bottom -= delta;
+			else
+				newrect.top += delta;
+				
+			m_pLineViewWnd->ZoomData(&prevrect, &newrect);
+			int ichan = 0;
+			int max = m_pLineViewWnd->GetChanlistPixeltoBin(ichan, 0);
+			float xmax = m_pLineViewWnd->ConvertChanlistDataBinsToMilliVolts(ichan, max);
+			int min = m_pLineViewWnd->GetChanlistPixeltoBin(ichan, m_pLineViewWnd->Height());
+			float xmin = m_pLineViewWnd->ConvertChanlistDataBinsToMilliVolts(ichan, min);
+			SetRange(&xmin, &xmax);
+			m_pLineViewWnd->Invalidate();
+		}
+	}
+	else
+		CWnd::OnLButtonUp(nFlags, point);
+}

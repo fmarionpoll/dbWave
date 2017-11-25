@@ -56,13 +56,14 @@ CADContView::CADContView()
 	m_bSimultaneousStart=FALSE;
 	m_bhidesubsequent=FALSE;
 
-	m_BkColor = GetSysColor(COLOR_BTNFACE);	// set color for edit button
-	m_pEditBkBrush = new CBrush(m_BkColor);	// background color = like a button
-	ASSERT(m_pEditBkBrush != NULL);			// check brush
+	m_BkColor = GetSysColor(COLOR_BTNFACE);		// set color for edit button
+	m_pEditBkBrush = new CBrush(m_BkColor);		// background color = like a button
+	ASSERT(m_pEditBkBrush != NULL);				// check brush
 
 	m_bEnableActiveAccessibility=FALSE;
 	m_bsimultaneousStartAD = FALSE;
 	m_bsimultaneousStartDA = FALSE;
+	m_ADC_yRulerBar.AttachScopeWnd(&m_ADsourceView);
 }
 
 CADContView::~CADContView()
@@ -74,8 +75,8 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_ADC);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DAC);
-	DDX_Control(pDX, IDC_XSCALE, m_adxscale);
-	DDX_Control(pDX, IDC_YSCALE, m_adyscale);
+	DDX_Control(pDX, IDC_XSCALE, m_ADC_xRulerBar);
+	DDX_Control(pDX, IDC_YSCALE, m_ADC_yRulerBar);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
@@ -1513,17 +1514,17 @@ void CADContView::UpdateHorizontalRulerBar()
 	float samplingrate = pwaveFormat->chrate;
 	float timefirst = m_ADsourceView.GetDataFirst()/samplingrate;
 	float timelast = m_ADsourceView.GetDataLast()/samplingrate;
-	m_adxscale.SetRange(&timefirst, &timelast);
+	m_ADC_xRulerBar.SetRange(&timefirst, &timelast);
 }
 
 void CADContView::UpdateChanVerticalRulerBar(int chan)
 {
 	int ichan = 0;
 	int max		= m_ADsourceView.GetChanlistPixeltoBin(ichan, 0);
-	float xmax	= m_ADsourceView.GetChanlistBinsToMilliVolts(ichan, max);
+	float xmax	= m_ADsourceView.ConvertChanlistDataBinsToMilliVolts(ichan, max);
 	int min		= m_ADsourceView.GetChanlistPixeltoBin(ichan, m_ADsourceView.Height());
-	float xmin	= m_ADsourceView.GetChanlistBinsToMilliVolts(ichan, min);
-	m_adyscale.SetRange(&xmin, &xmax);
+	float xmin	= m_ADsourceView.ConvertChanlistDataBinsToMilliVolts(ichan, min);
+	m_ADC_yRulerBar.SetRange(&xmin, &xmax);
 }
 
 void CADContView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)

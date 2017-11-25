@@ -666,7 +666,7 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(int index)
 	m_index=index;
 	m_datachannel=m_plineview->GetHZtagChan(index);
 	int k = m_plineview->GetHZtagVal(m_index);
-	m_mvlevel = m_plineview->GetChanlistBinsToMilliVolts(m_datachannel, k);
+	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, k);
 	
 	return TRUE;
 }
@@ -678,7 +678,7 @@ void CMeasureHZtagsPage::OnCenter()
 	int val = (max+min)/2;
 	m_plineview->SetHZtagVal(m_index, val);
 	m_plineview->Invalidate();
-	m_mvlevel = m_plineview->GetChanlistBinsToMilliVolts(m_datachannel, val);
+	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
 
@@ -776,7 +776,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 	UpdateData(FALSE);
 	if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 	{
-		int val = m_plineview->GetChanlistVoltstoBins(m_datachannel, m_mvlevel/1000.0f);
+		int val = m_plineview->ConvertChanlistVoltstoDataBins(m_datachannel, m_mvlevel/1000.0f);
 		m_plineview->SetHZtagVal(m_index, val);
 		m_plineview->Invalidate();
 	}
@@ -812,7 +812,7 @@ void CMeasureHZtagsPage::OnAdjust()
 	}
 	m_plineview->Invalidate();
 	val = m_plineview->GetHZtagVal(m_index);
-	m_mvlevel = m_plineview->GetChanlistBinsToMilliVolts(m_datachannel, val);
+	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
 

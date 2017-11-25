@@ -60,9 +60,6 @@ protected:
 	int		scan_count;
 	float	chrate;
 	
-////////////////////////////////////////////////////////////////////////////////
-// VIEWPRNT.CPP: print view
-protected:
 	CRect 	m_Margin;				// margins (pixels)
 	int		m_file0;				// current file
 	long	m_lFirst0;
@@ -102,14 +99,11 @@ protected:
 	void	ChainDialog(WORD iID);
 	int		PrintGetNPages();	
 		
-////////////////////////////////////////////////////////////////////////////////
-// VIEWCTRL.CPP: manipulate controls position, size
 protected:
 	CStretchControl m_stretch;
-	BOOL			m_binit;
+	BOOL	m_binit;
+	BOOL	m_bCommonScale;
 
-////////////////////////////////////////////////////////////////////////////////
-// VIEWSCRO.CPP: manipulate scroll bars, pos, and corresp commands
 //public:
 protected:
 	CScrollBarEx	m_filescroll;		// data position within file
@@ -118,16 +112,20 @@ protected:
 	CScrollBar 		m_scrolly;			// V scrollbar
 
 protected:
-	void OnFileScroll(UINT nSBCode, UINT nPos);
-	void OnGainScroll(UINT nSBCode, UINT nPos);
-	void UpdateYExtent(int ichan, int yextent);
-	void UpdateYRuler(int ichan);
-	void OnBiasScroll(UINT nSBCode, UINT nPos);
-	void UpdateYZero(int ichan, int ybias);
-	void UpdateGainScroll();
-	void UpdateBiasScroll();
-	void SetVBarMode(short bMode);
-	void UpdateFileScroll();
+	void	OnFileScroll(UINT nSBCode, UINT nPos);
+	void	OnGainScroll(UINT nSBCode, UINT nPos);
+	void	UpdateYExtent(int ichan, int yextent);
+	void	UpdateYZero(int ichan, int ybias);
+	void	UpdateYRuler(int ichan);
+	void	OnBiasScroll(UINT nSBCode, UINT nPos);
+	void	UpdateGainScroll();
+	void	UpdateBiasScroll();
+	void	SetVBarMode(short bMode);
+	void	UpdateFileScroll();
+	void	UpdateLegends(int operation);
+	void	UpdateHZtagsVal();
+	void	SetCursorAssociatedWindows();
+	void	UpdateChannel(int channel);
 
 ////////////////////////////////////////////////////////////////////////////////
 // conversions Helper functions
@@ -157,11 +155,6 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-protected:
-	void  UpdateLegends(int operation);
-	void  UpdateHZtagsVal();
-	void  SetCursorAssociatedWindows();
-	void  UpdateChannel(int channel);
 public:
 	DECLARE_MESSAGE_MAP()
 	// Generated message map functions

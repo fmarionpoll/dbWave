@@ -38,8 +38,8 @@ public:
 	CString				m_boardName;
 	CDTAcq32			m_Acq32_ADC;
 	CDTAcq32			m_Acq32_DAC;
-	CRulerBar			m_adxscale;
-	CRulerBar			m_adyscale;
+	CRulerBar			m_ADC_xRulerBar;
+	CRulerBar			m_ADC_yRulerBar;
 	CComboBox			m_ADcardCombo;
 	CMFCButton			m_btnStartStop;
 	BOOL				m_bADwritetofile;

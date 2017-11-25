@@ -34,29 +34,23 @@ CScrollBarEx::~CScrollBarEx()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CScrollBarEx, CScrollBar)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
-
 // CScrollBarEx message handlers
-
 
 void CScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// get ScrollBar infos (size and position of thumb)
 	if (!GetScrollBarInfo(&m_scBarInfo))
 		return;
 
-	if (m_captureMode == MOVERIGHT
-		|| (point.x >= m_scBarInfo.xyThumbTop-SPLITSIZE-TRACKSIZE 
-			&& point.x <= m_scBarInfo.xyThumbTop+SPLITSIZE+TRACKSIZE)
-		||m_captureMode == MOVELEFT
-		|| (point.x >= m_scBarInfo.xyThumbBottom-SPLITSIZE-TRACKSIZE 
-			&& point.x <= m_scBarInfo.xyThumbBottom+SPLITSIZE+TRACKSIZE))
+	if (  m_captureMode == MOVERIGHT
+		|| m_captureMode == MOVELEFT
+		|| (point.x >= m_scBarInfo.xyThumbTop-SPLITSIZE-TRACKSIZE  && point.x <= m_scBarInfo.xyThumbTop+SPLITSIZE+TRACKSIZE)	
+		|| (point.x >= m_scBarInfo.xyThumbBottom-SPLITSIZE-TRACKSIZE  && point.x <= m_scBarInfo.xyThumbBottom+SPLITSIZE+TRACKSIZE))
 		SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
 
 	if (m_bCaptured)
@@ -115,7 +109,6 @@ void CScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 		CScrollBar::OnMouseMove(nFlags, point);
 }
 
-
 void CScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// capture mouse, get current scroll max and min values
@@ -135,16 +128,14 @@ void CScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
 		SetCapture();
 		m_bCaptured = TRUE;
 	}
-
 	// click on right limit of thumb
-	else if(point.x >= m_scBarInfo.xyThumbTop-SPLITSIZE-TRACKSIZE 
+	else if (point.x >= m_scBarInfo.xyThumbTop-SPLITSIZE-TRACKSIZE 
 			&& point.x <= m_scBarInfo.xyThumbTop+SPLITSIZE+TRACKSIZE)
 	{
 		m_captureMode = MOVETOP;
 		SetCapture();
 		m_bCaptured = TRUE;
 	}
-
 	// click on thumb; it is necessary to catch this event because the standard routine
 	// does not transfert nPos as (int) but as a 16 bits value only
 	else if (point.x <= m_scBarInfo.xyThumbBottom-SPLITSIZE-TRACKSIZE

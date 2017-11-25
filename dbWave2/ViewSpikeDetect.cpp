@@ -589,7 +589,7 @@ void CSpikeDetectionView::UpdateDataFile(BOOL bUpdateInterface)
 		m_displayDetect.AddChanlistItem(0, 0);
 		m_displayDetect.SetChanlistColor(0, 0);
 		m_displayDetect.DelAllHZtags();
-		m_pDetectParms->detectThreshold = m_displayDetect.GetChanlistVoltstoBins(0, m_pDetectParms->detectThresholdmV/1000.f);
+		m_pDetectParms->detectThreshold = m_displayDetect.ConvertChanlistVoltstoDataBins(0, m_pDetectParms->detectThresholdmV/1000.f);
 		m_displayDetect.AddHZtag(m_pDetectParms->detectThreshold, 0);
 	}
 
@@ -885,7 +885,7 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	// ----------------------------- move horizontal cursor / source data
 	case HINT_MOVEHZTAG:
 		m_pDetectParms->detectThreshold = m_displayDetect.GetHZtagVal(threshold);
-		m_thresholdval = m_displayDetect.GetChanlistBinsToMilliVolts(0, m_displayDetect.GetHZtagVal(threshold));
+		m_thresholdval = m_displayDetect.ConvertChanlistDataBinsToMilliVolts(0, m_displayDetect.GetHZtagVal(threshold));
 		m_pDetectParms->detectThresholdmV = m_thresholdval;
 		mm_thresholdval.m_bEntryDone = TRUE;			
 		OnEnChangeThresholdval();			
@@ -1288,7 +1288,7 @@ void CSpikeDetectionView::OnSelchangeDetectchan()
 	m_pDetectParms->detectChan = m_CBdetectChan.GetCurSel(); // get new channel
 	m_pDetectParms->bChanged = TRUE;			// and flag it
 	m_displayDetect.SetChanlistOrdinates(0, m_pDetectParms->detectChan, m_pDetectParms->detectTransform);
-	m_pDetectParms->detectThreshold = m_displayDetect.GetChanlistVoltstoBins(0, m_pDetectParms->detectThresholdmV / 1000.f);
+	m_pDetectParms->detectThreshold = m_displayDetect.ConvertChanlistVoltstoDataBins(0, m_pDetectParms->detectThresholdmV / 1000.f);
 	m_displayDetect.MoveHZtagtoVal(0, m_pDetectParms->detectThreshold);
 
 	m_displayDetect.GetDataFromDoc(); 				// load data
@@ -2083,7 +2083,7 @@ void CSpikeDetectionView::OnEnChangeThresholdval()
 	{
 		m_thresholdval = thresholdval;
 		m_pDetectParms->detectThresholdmV = thresholdval;
-		m_pDetectParms->detectThreshold = m_displayDetect.GetChanlistVoltstoBins(0, m_thresholdval / 1000.f);
+		m_pDetectParms->detectThreshold = m_displayDetect.ConvertChanlistVoltstoDataBins(0, m_thresholdval / 1000.f);
 		m_displayDetect.MoveHZtagtoVal(0, m_pDetectParms->detectThreshold);
 	}
 	
@@ -2370,7 +2370,7 @@ void CSpikeDetectionView::UpdateCB()
 	m_CBdetectChan.SetCurSel(m_pDetectParms->detectChan);
 	m_CBtransform.SetCurSel(m_pDetectParms->detectTransform);
 	m_displayDetect.SetChanlistOrdinates(0, m_pDetectParms->detectChan, m_pDetectParms->detectTransform);
-	m_pDetectParms->detectThreshold = m_displayDetect.GetChanlistVoltstoBins(0, m_thresholdval / 1000.f);
+	m_pDetectParms->detectThreshold = m_displayDetect.ConvertChanlistVoltstoDataBins(0, m_thresholdval / 1000.f);
 	m_displayDetect.SetHZtagChan(0,0);
 	m_displayDetect.SetHZtagVal(0, m_pDetectParms->detectThreshold);
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
@@ -3391,7 +3391,7 @@ void CSpikeDetectionView::OnBnClickedLocatebttn()
 	
 	// modify value
 	m_pDetectParms->detectThreshold = (max + min) / 2;
-	m_thresholdval = m_displayDetect.GetChanlistBinsToMilliVolts(0, m_pDetectParms->detectThreshold);
+	m_thresholdval = m_displayDetect.ConvertChanlistDataBinsToMilliVolts(0, m_pDetectParms->detectThreshold);
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
 	// update user-interface: edit control and threshold bar in sourceview
 	CString cs;
@@ -3479,7 +3479,7 @@ void CSpikeDetectionView::UpdateDetectionControls()
 		m_displayDetect.SplitChans();
 
 	int ithreshold = m_pSpkListVSD->GetdetectThreshold();
-	m_thresholdval = m_displayDetect.GetChanlistBinsToMilliVolts(0, ithreshold);
+	m_thresholdval = m_displayDetect.ConvertChanlistDataBinsToMilliVolts(0, ithreshold);
 	if (m_displayDetect.GetNHZtags() <1)
 		m_displayDetect.AddHZtag(ithreshold, 0);
 	else
