@@ -45,11 +45,15 @@ private:
 	CLineViewWnd*	m_pLineViewWnd;
 
 public:
-	virtual BOOL  Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
-	void		  SetRange(float* dfirst, float* dlast);
-	int			  GetScaleUnitPixels();
-	inline void	  AttachScopeWnd(CLineViewWnd* pLineViewWnd) { m_pLineViewWnd = pLineViewWnd; }
-	inline double GetScaleIncrement() { return m_ruler.m_dscaleinc; };
+	virtual BOOL  Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, 
+						DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, 
+						UINT nID, CCreateContext* pContext = NULL);
+	BOOL			Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAxis, int dSize, UINT nID);
+	void			SetRange(float* dfirst, float* dlast);
+	int				GetScaleUnitPixels();
+	void			DrawGridfromScale(CRuler* pRuler);
+	inline void		AttachScopeWnd(CLineViewWnd* pLineViewWnd, BOOL bXaxis) { m_pLineViewWnd = pLineViewWnd; m_bHorizontal = bXaxis; }
+	inline double	GetScaleIncrement() { return m_ruler.m_dscaleinc; };
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnPaint();

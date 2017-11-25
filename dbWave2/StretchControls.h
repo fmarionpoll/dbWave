@@ -108,7 +108,8 @@ public:
 	void AttachParent(CFormView* pF);
 	void AttachDialogParent(CDialog* pWnd);
 	BOOL newProp(int iID, int xsizeMode, int ysizeMode);
-	BOOL newMasterProp(int iID, int xsizeMode, int ysizeMode);
+	BOOL newProp(CWnd * pWnd, int iID, int xsizeMode, int ysizeMode);
+
 	BOOL newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int iMASTER);
 	BOOL GetbVBarControls() const {return m_bVBAR;}	
 	BOOL GetbHBarControls() const {return m_bHBAR;}	

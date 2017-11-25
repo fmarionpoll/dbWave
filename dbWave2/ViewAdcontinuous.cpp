@@ -63,7 +63,7 @@ CADContView::CADContView()
 	m_bEnableActiveAccessibility=FALSE;
 	m_bsimultaneousStartAD = FALSE;
 	m_bsimultaneousStartDA = FALSE;
-	m_ADC_yRulerBar.AttachScopeWnd(&m_ADsourceView);
+	m_ADC_yRulerBar.AttachScopeWnd(&m_ADsourceView, FALSE);
 }
 
 CADContView::~CADContView()

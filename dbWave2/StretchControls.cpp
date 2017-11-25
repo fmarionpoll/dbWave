@@ -80,27 +80,31 @@ void CStretchControl::ChangeBarSizes(int RIGHTwidth, int BOTTOMheight)
 
 BOOL CStretchControl::newProp(int iID, int xsizeMode, int ysizeMode)
 {
+	CWnd* pC = m_parent->GetDlgItem(iID);	
+	return newProp(pC, iID, xsizeMode, ysizeMode);
+}
+
+BOOL CStretchControl::newProp(CWnd* pWnd, int iID, int xsizeMode, int ysizeMode)
+{
 	if (m_parent == NULL)
 		return FALSE;
 
-	CWnd* pC = m_parent->GetDlgItem(iID);	
 	CRect rect0, rect;
-	pC->GetWindowRect(&rect);			// get screen window coordinates
+	pWnd->GetWindowRect(&rect);			// get screen window coordinates
 	m_parent->ScreenToClient(&rect);	// convert in client coordinates
 	rect0 = rect;
 
 	rect.right -= m_DialogSize.cx; 		// distance of right from border
 	rect.bottom -= m_DialogSize.cy;		// distance from lower border
-	CCtrlProp* ppC = new CCtrlProp(iID, pC->m_hWnd, xsizeMode, ysizeMode, &rect);
+	CCtrlProp* ppC = new CCtrlProp(iID, pWnd->m_hWnd, xsizeMode, ysizeMode, &rect);
 	ASSERT(ppC != NULL);
 	ppC->m_rect0 = rect0;
-	ppC->m_rmaster0 = CRect(0,0,0,0);
-	ppC->m_slaveorder= 0;
+	ppC->m_rmaster0 = CRect(0, 0, 0, 0);
+	ppC->m_slaveorder = 0;
 
 	m_props.Add(ppC);
 	return TRUE;
 }
-
 
 // iID stays at a constant offset from the sides of iMASTER
 // sizeModes concern iMASTER
@@ -379,11 +383,6 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 	return newRect;
 }
 
-
-// --------------------------------------------------------------------------
-// AreaLeftControls
-// --------------------------------------------------------------------------
-
 void CStretchControl::AreaLeftbyControls(int* cx, int *cy)
 {	
 	if (GetbVBarControls())
@@ -391,7 +390,6 @@ void CStretchControl::AreaLeftbyControls(int* cx, int *cy)
 	if (GetbHBarControls())
 		*cy -= m_BOTTOMBARHeight;
 }
-
 
 // --------------------------------------------------------------------------
 // DisplayVBarControls - assume m_DialogSize minus bar area
@@ -421,7 +419,6 @@ BOOL CStretchControl::DisplayVBarControls(BOOL bVisible)
 	return bPrevState;
 }
 
-
 // --------------------------------------------------------------------------
 // DisplayHBarControls -- assume m_DialogSize minus bar area
 // return previous state
@@ -449,12 +446,6 @@ BOOL CStretchControl::DisplayHBarControls(BOOL bVisible)
 	UpdateClientControls();
 	return bPrevState;
 }
-
-
-// --------------------------------------------------------------------------
-// UpdateClientControls() -- makes more conpact code
-//		used only with InitControls && in 2 other occasions (VIEWCTRL.CPP)
-// --------------------------------------------------------------------------
 
 void CStretchControl::UpdateClientControls()
 {

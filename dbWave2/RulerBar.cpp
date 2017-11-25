@@ -107,10 +107,15 @@ END_MESSAGE_MAP()
 
 void CRulerBar::OnPaint()
 {
+	DrawGridfromScale(&m_ruler);
+}
+
+void CRulerBar::DrawGridfromScale(CRuler * pRuler)
+{
 	CPaintDC dc(this);
 
 	// exit if the length is not properly defined
-	if (m_ruler.m_dlast == m_ruler.m_dfirst)
+	if (pRuler->m_dlast == pRuler->m_dfirst)
 		return;
 
 	CPen aPen;
@@ -144,12 +149,12 @@ void CRulerBar::OnPaint()
 	}
 
 	// draw scale
-	double dpos = floor(m_ruler.m_dscalefirst); 
-	double dlen = m_ruler.m_dlast - m_ruler.m_dfirst;
-	double smallscaleinc = m_ruler.m_dscaleinc / 5.;
+	double dpos = floor(pRuler->m_dscalefirst); 
+	double dlen = pRuler->m_dlast - pRuler->m_dfirst;
+	double smallscaleinc = pRuler->m_dscaleinc / 5.;
 	dc.SetBkMode(TRANSPARENT);
 
-	while (dpos <= m_ruler.m_dlast)									// =
+	while (dpos <= pRuler->m_dlast)									// =
 	{
 		// display small ticks
 		double dsmallpos = dpos;									// =
@@ -157,16 +162,16 @@ void CRulerBar::OnPaint()
 		for (int i= 0; i<4; i++)									// =
 		{
 			dsmallpos += smallscaleinc;								// =
-			double ratio = (m_ruler.m_dlast - dsmallpos) / dlen;	// =
+			double ratio = (pRuler->m_dlast - dsmallpos) / dlen;	// =
 			if (!m_bHorizontal)
 			{
-				tickPos = (int)(m_rcClient.Height() * (m_ruler.m_dlast - dsmallpos) / dlen);
+				tickPos = (int)(m_rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen);
 				dc.MoveTo(m_rcClient.right, tickPos);
 				dc.LineTo(m_rcClient.right -tickSmallHeight, tickPos);
 			}
 			else
 			{
-				tickPos = (int) (m_rcClient.Width() * (dsmallpos - m_ruler.m_dfirst) / dlen);
+				tickPos = (int) (m_rcClient.Width() * (dsmallpos - pRuler->m_dfirst) / dlen);
 				dc.MoveTo(tickPos, m_rcClient.top);
 				dc.LineTo(tickPos, m_rcClient.top+tickSmallHeight);
 			}
@@ -174,9 +179,9 @@ void CRulerBar::OnPaint()
 
 		// display large ticks and text
 		if (!m_bHorizontal)
-			tickPos = (int) (m_rcClient.Height() * (m_ruler.m_dlast - dpos) / dlen);
+			tickPos = (int) (m_rcClient.Height() * (pRuler->m_dlast - dpos) / dlen);
 		else
-			tickPos = (int) (m_rcClient.Width() * (dpos - m_ruler.m_dfirst) / dlen);
+			tickPos = (int) (m_rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen);
 
 		if (tickPos >= 0)											// =
 		{
@@ -207,7 +212,7 @@ void CRulerBar::OnPaint()
 			}
 			dc.TextOut(x, y, str);									// = 
 		}
-		dpos += m_ruler.m_dscaleinc;								// =
+		dpos += pRuler->m_dscaleinc;								// =
 	}
 
 	// restore objects used in this routine
@@ -245,6 +250,27 @@ BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwSt
 	return CWnd::Create(NULL, _T("RulerBarWnd"), dwStyle, rect, pParentWnd, nID);
 }
 
+BOOL CRulerBar::Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAxis, int dSize, UINT nID)
+{
+	m_pLineViewWnd = pLineViewWnd;
+	CRect rect;
+	pLineViewWnd->GetWindowRect(&rect);
+	CRect rectthis = rect;
+	if (bAsXAxis)
+	{
+		rectthis.top = rect.bottom - 1;
+		rectthis.bottom = rectthis.top + dSize;
+		m_bHorizontal = TRUE;
+	}
+	else
+	{
+		rectthis.right = rect.left - 1;
+		rectthis.left = rectthis.right - dSize;
+		m_bHorizontal = FALSE;
+	}
+	return CWnd::Create(_T("RulerBarWnd"), NULL, WS_CHILD, rectthis, pParentWnd, nID);
+}
+
 int	CRulerBar::GetScaleUnitPixels() 
 {
 	if (!IsWindow(m_hWnd))
@@ -263,30 +289,37 @@ void CRulerBar::SetRange(float* dfirst, float* dlast)
 	Invalidate();
 }
 
+
 #define MODEZOOM	0
 #define MODEBIAS	1
+#define DELTA		10
 void CRulerBar::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (!m_bHorizontal) 
-	{
-		int delta = 10;
-		if (point.y < delta || point.y > m_rcClient.Height() - delta)
+	if (!m_bHorizontal && (point.y < DELTA || point.y > m_rcClient.Height() - DELTA))
 			SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL));
-	}
+	else if (m_bHorizontal && (point.x < DELTA || point.x > m_rcClient.Width() - DELTA))
+			SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
 
 	CWnd::OnMouseMove(nFlags, point);
 }
 
 void CRulerBar::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	int delta = 10;
-	if (point.y < delta || point.y > m_rcClient.Height() - delta)
+	if (!m_bHorizontal && (point.y < DELTA || point.y > m_rcClient.Height() - DELTA))
 	{
 		m_captureMode = MODEZOOM;
 		SetCapture();
 		m_bCaptured = TRUE;
 		oldpt = point;
-		m_bBottom = (point.y < delta);
+		m_bBottom = (point.y < DELTA);
+	}
+	else if (m_bHorizontal && (point.x < DELTA || point.x > m_rcClient.Width() - DELTA))
+	{
+		m_captureMode = MODEZOOM;
+		SetCapture();
+		m_bCaptured = TRUE;
+		oldpt = point;
+		m_bBottom = (point.x < DELTA);
 	}
 	else
 		CWnd::OnLButtonDown(nFlags, point);
@@ -306,19 +339,26 @@ void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 			CRect prevrect;
 			m_pLineViewWnd->GetClientRect(prevrect);
 			CRect newrect = prevrect;
-			if (m_bBottom)
-				newrect.bottom -= delta;
-			else
-				newrect.top += delta;
-				
-			m_pLineViewWnd->ZoomData(&prevrect, &newrect);
-			int ichan = 0;
-			int max = m_pLineViewWnd->GetChanlistPixeltoBin(ichan, 0);
-			float xmax = m_pLineViewWnd->ConvertChanlistDataBinsToMilliVolts(ichan, max);
-			int min = m_pLineViewWnd->GetChanlistPixeltoBin(ichan, m_pLineViewWnd->Height());
-			float xmin = m_pLineViewWnd->ConvertChanlistDataBinsToMilliVolts(ichan, min);
-			SetRange(&xmin, &xmax);
-			m_pLineViewWnd->Invalidate();
+			if (!m_bHorizontal) {
+				if (m_bBottom)
+					newrect.bottom -= delta;
+				else
+					newrect.top += delta;
+				m_pLineViewWnd->ZoomData(&prevrect, &newrect);
+				int ichan = 0;
+				int max = m_pLineViewWnd->GetChanlistPixeltoBin(ichan, 0);
+				float xmax = m_pLineViewWnd->ConvertChanlistDataBinsToMilliVolts(ichan, max);
+				int min = m_pLineViewWnd->GetChanlistPixeltoBin(ichan, m_pLineViewWnd->Height());
+				float xmin = m_pLineViewWnd->ConvertChanlistDataBinsToMilliVolts(ichan, min);
+				SetRange(&xmin, &xmax);
+				m_pLineViewWnd->Invalidate();
+			}
+			else {
+				if (m_bBottom)
+					newrect.left -= delta;
+				else
+					newrect.right += delta;
+			}
 		}
 	}
 	else

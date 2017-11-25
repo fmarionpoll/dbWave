@@ -41,6 +41,8 @@ public:
 	CEditCtrl	mm_timefirst;		// first abcissa value
 	CEditCtrl	mm_timelast;		// last abcissa value
 	CComboBox	m_comboSelectChan;
+	CRulerBar	m_ADC_yRulerBar;
+	CRulerBar	m_ADC_xRulerBar;
 
 	BOOL		m_bInitComment;	
 	CdbWaveDoc*	GetDocument();
@@ -116,6 +118,7 @@ protected:
 	void	OnGainScroll(UINT nSBCode, UINT nPos);
 	void	UpdateYExtent(int ichan, int yextent);
 	void	UpdateYZero(int ichan, int ybias);
+	void	UpdateChanVerticalRulerBar(int chan);
 	void	UpdateYRuler(int ichan);
 	void	OnBiasScroll(UINT nSBCode, UINT nPos);
 	void	UpdateGainScroll();

@@ -131,22 +131,30 @@ void CDataView::OnInitialUpdate()
 	m_scrolly.SetScrollRange(0, 100);
 
 	// bitmap buttons: load icons & set buttons
-	m_hBias=AfxGetApp()->LoadIcon(IDI_BIAS);
-	m_hZoom=AfxGetApp()->LoadIcon(IDI_ZOOM);
-	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE,(WPARAM)IMAGE_ICON,(LPARAM)(HANDLE)m_hBias);
-	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE,(WPARAM)IMAGE_ICON,(LPARAM)(HANDLE)m_hZoom);
+	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
+	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
+	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)(HANDLE)m_hBias);
+	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)(HANDLE)m_hZoom);
 
-	VERIFY(m_VDlineview.SubclassDlgItem(IDC_DISPLAREA_button, this));	
+	VERIFY(m_VDlineview.SubclassDlgItem(IDC_DISPLAY, this));
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
+	VERIFY(m_ADC_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
+	VERIFY(m_ADC_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
+
+	m_ADC_yRulerBar.AttachScopeWnd(&m_VDlineview, FALSE);
+	m_ADC_xRulerBar.AttachScopeWnd(&m_VDlineview, TRUE);
+	m_VDlineview.AttachExternalXRuler(&m_ADC_xRulerBar);
+	m_VDlineview.AttachExternalYRuler(&m_ADC_yRulerBar);
 
 	// save coordinates and properties of "always visible" controls
 	m_stretch.AttachParent(this);		// attach formview pointer
-	m_stretch.newProp(IDC_DISPLAREA_button,	XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch.newProp(IDC_DISPLAY,			XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_COMBOCHAN, 		SZEQ_XREQ, SZEQ_YTEQ);
 
 	m_stretch.newProp(IDC_GAIN_button, 		SZEQ_XREQ, SZEQ_YTEQ);	
 	m_stretch.newProp(IDC_BIAS_button,		SZEQ_XREQ, SZEQ_YTEQ);
+
 	m_stretch.newProp(IDC_SCROLLY_scrollbar,SZEQ_XREQ, YTEQ_YBEQ);
 
 	m_stretch.newProp(IDC_SOURCE,			SZEQ_XLEQ, SZEQ_YBEQ);
@@ -154,6 +162,9 @@ void CDataView::OnInitialUpdate()
 	m_stretch.newProp(IDC_TIMELAST,			SZEQ_XREQ, SZEQ_YBEQ);
 
 	m_stretch.newProp(IDC_FILESCROLL,		XLEQ_XREQ, SZEQ_YBEQ);
+
+	m_stretch.newProp( IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
+	m_stretch.newProp( IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
 
 	m_binit = TRUE;
 	m_VDlineview.m_bNiceGrid = TRUE;
@@ -168,8 +179,7 @@ void CDataView::OnInitialUpdate()
 	UpdateFileParameters(TRUE);	// load file parameters
 	
 	m_VDlineview.m_parms = mdPM->viewdata;
-	OnClickedBias();			// init V bar mode: bias (push button)
-	//OnSplitCurves();			// split curves ...	
+	OnClickedBias();			// init V bar mode: bias (push button)	
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_VDlineview.GetChanlistSize());
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE);
@@ -1899,4 +1909,14 @@ void CDataView::UpdateYZero(int ichan, int ybias)
 		m_VDlineview.SetChanlistVoltsZero(-1, &yVoltsextent);
 	}
 	m_VDlineview.Invalidate();
+}
+
+void CDataView::UpdateChanVerticalRulerBar(int chan)
+{
+	int ichan = 0;
+	int max = m_VDlineview.GetChanlistPixeltoBin(ichan, 0);
+	float xmax = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, max);
+	int min = m_VDlineview.GetChanlistPixeltoBin(ichan, m_VDlineview.Height());
+	float xmin = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, min);
+	m_ADC_yRulerBar.SetRange(&xmin, &xmax);
 }

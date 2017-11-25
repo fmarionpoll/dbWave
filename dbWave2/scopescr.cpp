@@ -1,6 +1,3 @@
-// scopescr.cpp : implementation file
-//
-
 #include "stdafx.h"
 #include "resource.h"
 #include "scopescr.h"
@@ -38,10 +35,6 @@ HCURSOR CScopeScreen::m_cursor[NB_CURSORS];
 int		CScopeScreen::m_cursordragmode[NB_CURSORS];
 int		CScopeScreen::m_countcurs=0;
 
-// --------------------------------------------------------------------------
-// used by NiceUnits
-// --------------------------------------------------------------------------
-
 static TCHAR csUnit[] = {_T("GM  mµpf  ")};		// units & corresp powers
 static int  dUnitsPower[] = { 9,6, 0, 0, -3, -6, -9, -12, 0}; 
 static int	dmaxIndex		= 8;				// nb of elmts
@@ -49,10 +42,6 @@ static int	dniceIntervals[] = {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 2
 								/*600,*/ /*700,*//* 800, *//*900,*/
 								0};
 
-// --------------------------------------------------------------------------
-// FindColor(ccolor)
-// find if the selected color already exist
-// --------------------------------------------------------------------------
 int CScopeScreen::FindColor(COLORREF ccolor)
 {
 	int icolor = -1;
@@ -61,11 +50,6 @@ int CScopeScreen::FindColor(COLORREF ccolor)
 			icolor = i;
 	return icolor;
 }
-
-// --------------------------------------------------------------------------
-// NiceUnit(xVal)
-// compute unit that fits the current value
-// --------------------------------------------------------------------------
 
 int CScopeScreen::NiceUnit(float xVal)
 {   
@@ -126,9 +110,6 @@ float CScopeScreen::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 	xUnit->SetAt(0, csUnit[i]);								// replace character corresp to unit
 	return xVal*isign / *xScalefactor;						// return value/scale_factor
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CScopeScreen
 
 IMPLEMENT_SERIAL (CScopeScreen, CWnd, 1)
 
@@ -198,6 +179,9 @@ CScopeScreen::CScopeScreen()
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH|FF_ROMAN, _T("Arial"));
 	m_abcissaheight  = 10;
 	m_ordinateswidth = 25;
+
+	m_pXRulerBar = NULL;
+	m_pYRulerBar = NULL;
 }
 
 CScopeScreen::~CScopeScreen()
@@ -237,7 +221,6 @@ void CScopeScreen::PreSubclassWindow()
 	m_yVE=	-m_displayRect.Height();	
 }
 
-
 BEGIN_MESSAGE_MAP(CScopeScreen, CWnd)
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
@@ -254,8 +237,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CScopeScreen message handlers
 
-BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, 
-						UINT nID, CCreateContext* pContext)
+BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	BOOL flag = CWnd::Create(NULL, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 	if (flag != 0)
@@ -330,7 +312,6 @@ void CScopeScreen::OnPaint()
 		PlotToBitmap(&dc);
 }
 
-// virtual function - do nothing here
 void CScopeScreen::PlotDatatoDC(CDC* pDC)
 {
 }
@@ -360,7 +341,6 @@ void CScopeScreen::EraseBkgnd(CDC* pDC)
 	DrawGrid(pDC);
 }
 
-/////////////////////////////////////////////////////////////////////
 void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
 {
 	CRect rect = m_displayRect;
@@ -526,8 +506,14 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 
 void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
 {
-	DrawGridfromScale (pDC, &m_xRuler);
-	DrawGridfromScale (pDC, &m_yRuler);
+	if (m_pXRulerBar == NULL)
+		DrawGridfromScale (pDC, &m_xRuler);
+	else
+		m_pXRulerBar->DrawGridfromScale(&m_xRuler);
+	if (m_pYRulerBar == NULL) 
+		DrawGridfromScale (pDC, &m_yRuler);
+	else
+		m_pYRulerBar->DrawGridfromScale(&m_yRuler);
 }
 
 void CScopeScreen::AdjustDisplayRect(CRect* pRect)
@@ -535,8 +521,10 @@ void CScopeScreen::AdjustDisplayRect(CRect* pRect)
 	m_displayRect = *pRect;
 	if(m_bNiceGrid)
 	{
-		m_displayRect.left	+= m_ordinateswidth;
-		m_displayRect.bottom -= m_abcissaheight;
+		if (m_pYRulerBar == NULL) 
+			m_displayRect.left	+= m_ordinateswidth;
+		if (m_pXRulerBar == NULL)
+			m_displayRect.bottom -= m_abcissaheight;
 	}
 }
 
@@ -561,12 +549,6 @@ void CScopeScreen::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
 	m_parms.iYTicks = iTicks; 
 	m_parms.iYTickLine = iTickLine;
 }
-	
-////////////////////////////////////////////////////////////////////
-
-//---------------------------------------------------------------------------
-// Send/Post -MyMessage()
-//---------------------------------------------------------------------------
 
 void CScopeScreen::SendMyMessage(int code, int codeparm)
 {
@@ -582,10 +564,6 @@ void CScopeScreen::PostMyMessage(int code, int codeparm)
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, iID));
 }
 
-//---------------------------------------------------------------------------
-// PrepareDC
-// set MM_ANISOTROPIC coordinates
-//---------------------------------------------------------------------------
 void CScopeScreen::PrepareDC(CDC* pDC, CPrintInfo* pInfo)
 {
 	// mapping mode is MM_ANISOTROPIC
@@ -603,9 +581,6 @@ void CScopeScreen::PrepareDC(CDC* pDC, CPrintInfo* pInfo)
 	}
 }
 
-//---------------------------------------------------------------------------
-// SetMouseCursor() change cursor state
-//---------------------------------------------------------------------------
 int CScopeScreen::SetMouseCursorType(int cursorm)
 {
 	m_oldcursorType = m_cursorType;
@@ -619,9 +594,6 @@ int CScopeScreen::SetMouseCursorType(int cursorm)
 	return cursorm;
 }
 
-//---------------------------------------------------------------------------
-// CaptureCursor() capture mouse
-//---------------------------------------------------------------------------
 void CScopeScreen::CaptureCursor()
 {	
 	SetCapture();				// capture mouse
@@ -630,9 +602,6 @@ void CScopeScreen::CaptureCursor()
 	ClipCursor(rectLimit);		// tell mouse cursor what are the limits
 }
 
-//---------------------------------------------------------------------------
-// ReleaseCursor() release mouse
-//---------------------------------------------------------------------------
 void CScopeScreen::ReleaseCursor()
 {
 	// mouse was captured	
@@ -640,19 +609,11 @@ void CScopeScreen::ReleaseCursor()
 	ClipCursor(NULL);
 }
 
-
 BOOL CScopeScreen::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
 {
 	::SetCursor(m_currCursor);
 	return TRUE;	
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// MOUSE operations & messages
-//
-//---------------------------------------------------------------------------
-// OnLButtonDblClk - double click left button -> change cursor & send message
-//---------------------------------------------------------------------------
 
 void CScopeScreen::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
@@ -933,9 +894,6 @@ void CScopeScreen::OnRButtonUp(UINT nFlags, CPoint point)
 	m_trackMode = TRACK_OFF;
 }
 
-//---------------------------------------------------------------------------
-// Zoom .. Data; -Pop; -Out; -In
-//---------------------------------------------------------------------------
 void CScopeScreen::ZoomData(CRect* prevRect, CRect* newRect)
 {
 }
@@ -1034,9 +992,6 @@ int CScopeScreen::HitTestVTtagPix(int x)
 	return chit;
 }
 
-//---------------------------------------------------------------------------
-// invert rectangle
-//---------------------------------------------------------------------------
 void CScopeScreen::InvertTracker(CPoint point)
 {	
 	CClientDC dc(this);						// get dc to fbutton window	
@@ -1051,10 +1006,6 @@ void CScopeScreen::InvertTracker(CPoint point)
 	dc.SetROP2(noldROP);					// select previous draw mode
 	m_ptLast = point;						// update m_ptLast
 }
-
-//---------------------------------------------------------------------------
-// Display(VT/HZ)tag()
-//---------------------------------------------------------------------------
 
 void CScopeScreen::DisplayVTtags(CDC* pDC)
 {
@@ -1097,9 +1048,6 @@ void CScopeScreen::DisplayHZtags(CDC* pDC)
 	pDC->SetROP2(noldROP);			// restore old display mode		
 }
 
-//---------------------------------------------------------------------------
-// Xor(VT/HZ)tag()
-//---------------------------------------------------------------------------
 void CScopeScreen::XorHZtag(int ypoint)
 {
 	if (m_ptLast.y == ypoint)
@@ -1168,6 +1116,7 @@ void CScopeScreen::SetbUseDIB(BOOL bsetPlot)
 }
 
 int CScopeScreen::GetNHZtags() {return m_HZtags.GetNTags();}
+
 int CScopeScreen::GetNVTtags() {return m_VTtags.GetNTags();}
 
 void CScopeScreen::Serialize( CArchive& ar )

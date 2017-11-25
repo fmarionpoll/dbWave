@@ -1,5 +1,3 @@
-// lineview.cpp : implementation file
-//
 
 #include "stdafx.h"
 #include "dbWave_constants.h"
@@ -15,16 +13,7 @@
 
 #define new DEBUG_NEW
 
-/////////////////////////////////////////////////////////////////////////////
-// CLineViewWnd
-/////////////////////////////////////////////////////////////////////////////
-
 IMPLEMENT_SERIAL (CLineViewWnd, CScopeScreen, 1)
-
-//---------------------------------------------------------------------------
-// CLineViewWnd()
-//	construction
-//---------------------------------------------------------------------------
 
 CLineViewWnd::CLineViewWnd()
 {
@@ -51,18 +40,12 @@ CLineViewWnd::CLineViewWnd()
 	m_csEmpty = "no data";
 }
 
-//---------------------------------------------------------------------------
-// ~CLineViewWnd()
-//	destruction
-//---------------------------------------------------------------------------
-
 CLineViewWnd::~CLineViewWnd()
 {
 	// remove list of objects (channels & Envelopes)
 	RemoveAllChanlistItems();
 }
 
-/////////////////////////////////////////////////////////////////////////////
 BEGIN_MESSAGE_MAP(CLineViewWnd, CScopeScreen)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
@@ -74,10 +57,6 @@ END_MESSAGE_MAP()
 // lineview operations on chanlist items
 // changes to list or list contents
 /////////////////////////////////////////////////////////////////////////////
-
-//---------------------------------------------------------------------------
-// remove all chan list items
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::RemoveAllChanlistItems()
 {        
@@ -91,12 +70,6 @@ void CLineViewWnd::RemoveAllChanlistItems()
 		delete m_pChanlistItemArray[i];
 	m_pChanlistItemArray.RemoveAll();	
 }
-
-//---------------------------------------------------------------------------
-// AddChanlistItem()  returns array index
-// ns =data acq chan index (1...n), mode: 0=raw data
-// returns: index of the added channel
-//---------------------------------------------------------------------------
 
 int CLineViewWnd::AddChanlistItem(int ns, int mode)
 { 
@@ -147,11 +120,6 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 	return index_newchan;
 }
 
-//---------------------------------------------------------------------------
-// RemoveChanlistItem
-// return number of items left in the display list
-//---------------------------------------------------------------------------
-
 int CLineViewWnd::RemoveChanlistItem(WORD i)
 {   
 	int j = m_pChanlistItemArray.GetSize();	// get size of chan array
@@ -191,10 +159,6 @@ int CLineViewWnd::RemoveChanlistItem(WORD i)
 	return j-1;
 }
 
-//---------------------------------------------------------------------------
-// keep max span factor
-//---------------------------------------------------------------------------
-
 void CLineViewWnd::UpdateChanlistMaxSpan()
 {
 	if (m_pEnvelopesArray.GetSize() <= 1)
@@ -210,10 +174,6 @@ void CLineViewWnd::UpdateChanlistMaxSpan()
 	 // store imax
 	m_pEnvelopesArray[0]->SetDocbufferSpan(imax);	//store max
 }
-
-//---------------------------------------------------------------------------
-// UpdateChanlistFromDoc() load comment, source chan, and voltsperbin
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::UpdateChanlistFromDoc()
 {
@@ -234,11 +194,6 @@ void CLineViewWnd::UpdateChanlistFromDoc()
 	UpdateChanlistMaxSpan();	// update max span
 }
 
-//---------------------------------------------------------------------------
-// UpdateGainSettings(i);	
-// keep physical value of yextent and zero constant for chanlist item i
-//---------------------------------------------------------------------------
-
 void CLineViewWnd::UpdateGainSettings(int i)
 {
 	CChanlistItem* pD =  m_pChanlistItemArray[i];
@@ -258,12 +213,6 @@ void CLineViewWnd::UpdateGainSettings(int i)
 		pD->SetYextent(iextent);
 	}
 }
-
-
-//---------------------------------------------------------------------------
-// SetChanlistSourceChan(WORD list, int ns) 
-// change source channel index
-//---------------------------------------------------------------------------
 
 int CLineViewWnd::SetChanlistSourceChan(WORD i, int ns)
 {
@@ -297,11 +246,6 @@ int CLineViewWnd::SetChanlistSourceChan(WORD i, int ns)
 	return ns;
 }
 
-//---------------------------------------------------------------------------
-// SetChanlistOrdinates
-// Changes channel and transform
-//---------------------------------------------------------------------------
-
 void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 {
 	// change channel
@@ -322,7 +266,6 @@ void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 // in: chan : chanlist item to set (if chan=-1: set all channels to the same voltage)
 //     *pvalue: pointer to float value of the voltage (if pointer = NULL, compute voltage extent and return)
 // out: nothing
-
 void CLineViewWnd::SetChanlistVoltsExtent(int chan, float* pvalue)
 {
 	int ichanfirst = chan;
@@ -367,11 +310,6 @@ void CLineViewWnd::SetChanlistVoltsZero(int chan, float* pvalue)
 	}
 }
 
-//---------------------------------------------------------------------------
-// SetChanlistTransformMode
-// change transformation applied to source channel
-//---------------------------------------------------------------------------
-
 int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 {
 	// check if transform is allowed
@@ -401,15 +339,6 @@ int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 	return imode;
 }
 
-
-//---------------------------------------------------------------------------
-//	AutoZoomChan()	-- center curve & maximize gain
-//	CenterChan()	-- center curve
-//	MaxgainChan		-- maximize gain
-//
-// apply to all chans if channel requested < 0
-//---------------------------------------------------------------------------
-
 void CLineViewWnd::AutoZoomChan(int j)
 {
 	int i1 = j;
@@ -429,8 +358,6 @@ void CLineViewWnd::AutoZoomChan(int j)
 	}
 }
 
-// split chans - adjust gain and offset
-
 void CLineViewWnd::SplitChans()
 {
 	int max, min;
@@ -445,8 +372,6 @@ void CLineViewWnd::SplitChans()
 		SetChanlistYzero(i, ioffset);
 	}
 }
-
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::CenterChan(int j)
 {
@@ -466,8 +391,6 @@ void CLineViewWnd::CenterChan(int j)
 		SetChanlistYzero(i, yzero);
 	}
 }
-
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::MaxgainChan(int j)
 {
@@ -491,13 +414,6 @@ void CLineViewWnd::MaxgainChan(int j)
 /////////////////////////////////////////////////////////////////////////////
 // CLineViewWnd message handlers
 /////////////////////////////////////////////////////////////////////////////
-
-//---------------------------------------------------------------------------
-// ResizeChannels()
-//		npixels: nb of pixels to display (if == 0 then old pixels size)
-//		lSize  : nb of channel pts to display (if ==0, then old size)
-// return old size (n pixels)
-//---------------------------------------------------------------------------
 
 int CLineViewWnd::ResizeChannels(int npixels, long lSize)
 {
@@ -551,12 +467,6 @@ int CLineViewWnd::ResizeChannels(int npixels, long lSize)
 	return oldNpixels;
 }
 
-//---------------------------------------------------------------------------
-// AttachDataFile()
-// pDoc = pointer to document
-// lSize = nb pts to display
-//---------------------------------------------------------------------------
-
 BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* pDataFile, long lSize)
 {
 	m_pDataFile = pDataFile;
@@ -608,15 +518,6 @@ BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* pDataFile, long lSize)
 	UpdateChanlistFromDoc();
 	return TRUE;
 }
-
-//---------------------------------------------------------------------------
-// GetDataFromDoc()
-// 	load data from document into envelopes
-//
-// comment
-// 	"buffer-ized" loading: This routine loads as many data that can fit in
-//	document's buffer and loops through the file iteratively.
-//---------------------------------------------------------------------------
 
 BOOL CLineViewWnd::GetDataFromDoc()
 {   	
@@ -779,10 +680,6 @@ BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 	return TRUE;
 }
 
-//---------------------------------------------------------------------------
-// GetDataFromDoc(long lFirst)
-//---------------------------------------------------------------------------
-
 BOOL CLineViewWnd::GetDataFromDoc(long lFirst)
 {	
 	if (lFirst == m_lxFirst)
@@ -790,11 +687,6 @@ BOOL CLineViewWnd::GetDataFromDoc(long lFirst)
 	m_lxFirst = lFirst;
 	return GetDataFromDoc();	
 }
-
-//---------------------------------------------------------------------------
-// GetDataFromDoc(long lFirst, long lLast)     
-// allow new data and new data size
-//---------------------------------------------------------------------------
 
 BOOL CLineViewWnd::GetDataFromDoc(long lFirst, long lLast)
 {
@@ -822,10 +714,6 @@ BOOL CLineViewWnd::GetDataFromDoc(long lFirst, long lLast)
 	m_lxLast = lLast;
 	return GetDataFromDoc();
 }
-
-//---------------------------------------------------------------------------
-// ScrollDataFromDoc(WORD nSBCode)
-//---------------------------------------------------------------------------
 
 BOOL CLineViewWnd::ScrollDataFromDoc(WORD nSBCode)
 {
@@ -858,10 +746,6 @@ BOOL CLineViewWnd::ScrollDataFromDoc(WORD nSBCode)
 	return GetDataFromDoc();	
 }
 
-//---------------------------------------------------------------------------
-// UpdatePageLineSize()
-//---------------------------------------------------------------------------
-
 void CLineViewWnd::UpdatePageLineSize()
 {
 	if (m_pDataFile != NULL)
@@ -874,16 +758,6 @@ void CLineViewWnd::UpdatePageLineSize()
 	if (m_lxLine == 0)
 		m_lxLine=1;
 }
-
-//---------------------------------------------------------------------------
-// ZoomData()
-// convert pixels to logical pts and reverse to adjust curve to the
-// rectangle selected
-// lp to dp: d = (l -wo)*ve/we + vo
-// dp to lp: l = (d -vo)*we/ve + wo
-// wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
-// with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.Height()/2
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::ZoomData(CRect* r1, CRect* r2)
 {
@@ -1100,19 +974,6 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 	}
 }
 
-//---------------------------------------------------------------------------
-// OnSize()
-// nType
-//    Specifies the type of resizing requested. This parameter can be one of the following values:
-//        SIZE_MAXIMIZED   Window has been maximized.
-//        SIZE_MINIMIZED   Window has been minimized.
-//        SIZE_RESTORED   Window has been resized, but neither SIZE_MINIMIZED nor SIZE_MAXIMIZED applies.
-//        SIZE_MAXHIDE   Message is sent to all pop-up windows when some other window is maximized.
-//        SIZE_MAXSHOW   Message is sent to all pop-up windows when some other window has been restored to its former size.
-//cx	Specifies the new width of the client area.
-//cy	Specifies the new height of the client area.
-//---------------------------------------------------------------------------
-
 void CLineViewWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CScopeScreen::OnSize(nType, cx, cy);
@@ -1125,12 +986,6 @@ void CLineViewWnd::OnSize(UINT nType, int cx, int cy)
 		GetDataFromDoc();
 	}
 }
-
-/////////////////////////////////////////////////////////////////////////////
-
-//---------------------------------------------------------------------------
-// Print()
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 {	
@@ -1290,11 +1145,6 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	AdjustDisplayRect(&m_clientRect);
 }
 
-//---------------------------------------------------------------------------
-// CopyAsText
-// copy Envelopes as text to the clipboard
-//---------------------------------------------------------------------------
-
 BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 {	
 	// Clean clipboard of contents, and copy the text
@@ -1375,11 +1225,6 @@ BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 	return flag;
 }
 
-//--------------------------------------------------------------------------
-// GetAsciiData()
-// export Ascii representation of data to clipboard
-//--------------------------------------------------------------------------
-
 LPTSTR CLineViewWnd::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 {
 	// time intervals
@@ -1409,8 +1254,6 @@ LPTSTR CLineViewWnd::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 	lpCopy++;	
 	return lpCopy;
 }
-
-// get point between 2 points if m_dataperpixel == 2
 
 LPTSTR CLineViewWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 {
@@ -1447,21 +1290,13 @@ LPTSTR CLineViewWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 	return lpCopy;
 }
 
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Mouse operations & tracks
-
 // XORcurve
-
 // in order to move a curve vertically with the cursor, a special envelope is
 // stored within the pData array and displayed using XOR mode.
 // this curve has 2 times less points (median) to speed up the display
-
 // Although CClientDC is claimed as attached to the client area of the button
 // ("this"), moving the curve along the vertical direction will draw outside of
 // the client area, suggesting that it is necessary to clip the client area...
-
 // this code was also tested with m_dibSurf: XOR to DIB surface, then redraw the
 // client area by fast BitBlt. This latter method was less efficient (slower)
 // than XORing directly to the screen.
@@ -1494,10 +1329,6 @@ void CLineViewWnd::XORcurve()
 	ReleaseDC(pDC);						// release DC
 	tempPen.DeleteObject();
 }
-
-//---------------------------------------------------------------------------
-// OnLButtonDown()	start mouse move tracking
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
@@ -1562,10 +1393,6 @@ void CLineViewWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-//---------------------------------------------------------------------------
-// OnMouseMove()
-//---------------------------------------------------------------------------
-
 void CLineViewWnd::OnMouseMove(UINT nFlags, CPoint point)
 {	
 	
@@ -1582,10 +1409,6 @@ void CLineViewWnd::OnMouseMove(UINT nFlags, CPoint point)
 		break;
 	}
 }
-
-//---------------------------------------------------------------------------
-// OnLButtonUp() if mouse was captured, releases it and perform action
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
@@ -1678,10 +1501,6 @@ void CLineViewWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	}	
 }
 
-//---------------------------------------------------------------------------
-// DoesCursorHitCurve()
-//---------------------------------------------------------------------------
-
 int CLineViewWnd::DoesCursorHitCurve(CPoint point)
 {
 	int chanfound=-1;						// output value
@@ -1750,9 +1569,6 @@ int CLineViewWnd::DoesCursorHitCurve(CPoint point)
 	return chanfound;
 }
 
-//---------------------------------------------------------------------------
-// change position of cursor
-//---------------------------------------------------------------------------
 void CLineViewWnd::MoveHZtagtoVal(int i, int val)
 {	
 	int chan = GetHZtagChan(i);
@@ -1766,19 +1582,12 @@ void CLineViewWnd::MoveHZtagtoVal(int i, int val)
 	SetHZtagVal(i, val);
 }
 
-//---------------------------------------------------------------------------
-// SetHighlightData
-//---------------------------------------------------------------------------
 void CLineViewWnd::SetHighlightData(CDWordArray* pDWintervals)
 {
 	if (pDWintervals!= NULL && pDWintervals->GetSize() < 5)
 		pDWintervals = NULL;
 	m_pDWintervals = pDWintervals;
 }
-
-//---------------------------------------------------------------------------
-// HighlightData()
-//---------------------------------------------------------------------------
 
 void CLineViewWnd::HighlightData(CDC* pDC, int chan)
 {
@@ -1845,12 +1654,6 @@ void CLineViewWnd::HighlightData(CDC* pDC, int chan)
 	pDC->SelectObject(poldpen);	
 }
 
-
-
-/////////////////////////////////////////////////////////////////////////////////
-// AD buffers specific routines
-
-
 //---------------------------------------------------------------------------
 // ADdisplayStart
 //
@@ -1883,8 +1686,6 @@ void CLineViewWnd::ADdisplayStart(int chsamples)
 	int textlen = cs.GetLength();
 	dc.DrawText(cs, textlen, rect, DT_LEFT); //|DT_WORDBREAK);
 }
-
-//---------------------------------------------------------------------------
 
 // ADdisplayBuffer()
 //		display nsamples of data, all channels

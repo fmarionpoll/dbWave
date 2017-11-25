@@ -94,6 +94,8 @@ public:
 	inline int  GetNyScaleCells()					{return m_parms.iYCells;}
 	inline void SetxScaleUnitValue(float x)			{m_parms.xScaleUnitValue=x;}
 	inline void SetyScaleUnitValue(float y)			{m_parms.yScaleUnitValue=y;}
+	inline void	AttachExternalXRuler(CRulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
+	inline void	AttachExternalYRuler(CRulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
 	// new x scale -----------------------------------------------------------------
 public:
@@ -103,6 +105,8 @@ public:
 	BOOL		m_bNiceGrid;
 	int			m_abcissaheight;
 	int			m_ordinateswidth;
+	CRulerBar*	m_pXRulerBar;
+	CRulerBar*	m_pYRulerBar;
 public:
 	void		DrawGrid(CDC *pDC);
 	void		AdjustDisplayRect(CRect* rect);
