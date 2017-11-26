@@ -144,6 +144,7 @@ public:
 	void	SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, int trackchannel);
 	void 	MoveHZtagtoVal(int itag, int ival);	
 	void	UpdateXRuler();
+	void	UpdateYRuler();
 	void	PlotDatatoDC(CDC* pDC);
 	void	ZoomData(CRect* prevRect, CRect* newRect);
 

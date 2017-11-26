@@ -559,6 +559,7 @@ void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
 	else
 	{
 		m_pYRulerBar->DrawScalefromRuler(&m_yRuler);
+		m_pYRulerBar->Invalidate(); 
 		DrawGridFromRuler(pDC, &m_yRuler);
 	}
 }

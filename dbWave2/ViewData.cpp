@@ -146,28 +146,23 @@ void CDataView::OnInitialUpdate()
 	m_ADC_xRulerBar.AttachScopeWnd(&m_VDlineview, TRUE);
 	m_VDlineview.AttachExternalXRuler(&m_ADC_xRulerBar);
 	m_VDlineview.AttachExternalYRuler(&m_ADC_yRulerBar);
+	m_VDlineview.m_bNiceGrid = TRUE;
 
 	// save coordinates and properties of "always visible" controls
 	m_stretch.AttachParent(this);		// attach formview pointer
 	m_stretch.newProp(IDC_DISPLAY,			XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_COMBOCHAN, 		SZEQ_XREQ, SZEQ_YTEQ);
-
 	m_stretch.newProp(IDC_GAIN_button, 		SZEQ_XREQ, SZEQ_YTEQ);	
 	m_stretch.newProp(IDC_BIAS_button,		SZEQ_XREQ, SZEQ_YTEQ);
-
 	m_stretch.newProp(IDC_SCROLLY_scrollbar,SZEQ_XREQ, YTEQ_YBEQ);
-
 	m_stretch.newProp(IDC_SOURCE,			SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_TIMEFIRST,		SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_TIMELAST,			SZEQ_XREQ, SZEQ_YBEQ);
-
 	m_stretch.newProp(IDC_FILESCROLL,		XLEQ_XREQ, SZEQ_YBEQ);
-
 	m_stretch.newProp( IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp( IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
 
 	m_binit = TRUE;
-	m_VDlineview.m_bNiceGrid = TRUE;
 
 	// init relation with document, display data, adjust parameters    
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();	// load browse parameters
@@ -268,7 +263,7 @@ void CDataView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		iUpdate = UPD_ABCISSA | UPD_XSCALE | UPD_ORDINATES | UPD_YSCALE;
 		break;
 	}
-	// update controls according to iupdate
+
 	UpdateLegends(iUpdate);
 	m_VDlineview.Invalidate();
 	SetVBarMode(m_VBarMode);
@@ -291,33 +286,21 @@ void CDataView::UpdateLegends(int ioperation)
 	if (!m_VDlineview.IsDefined() && !m_bvalidDoc)
 		return;
 
-	// ------------------------------------------- update abcissa
-	if (ioperation & UPD_ABCISSA)
-	{
+	if (ioperation & UPD_ABCISSA)	// ------------------------------------------- update abcissa
 		UpdateFileScroll();
-	}
-
-	// ------------------------------------------- update y scale val
-	if (ioperation & CHG_YSCALE)
+	
+	if (ioperation & CHG_YSCALE)	// ------------------------------------------- update y scale val
 	{
 		UpdateHZtagsVal();
 		ioperation |= CHG_YBAR;
 	}	
 
-	// ------------------------------------------- update y scale val
-	if (ioperation & UPD_YSCALE)
-	{
+	if (ioperation & UPD_YSCALE)	// ------------------------------------------- update y scale val
 		ioperation |= CHG_YBAR;
-	}	
 
-	// ------------------------------------------- adapt vertical scale
-	if (ioperation & CHG_YBAR)
-	{
+	if (ioperation & CHG_YBAR)		// ------------------------------------------- adapt vertical scale
 		UpdateYZero(m_ichanselected, m_VDlineview.GetChanlistYzero(m_ichanselected));
-		UpdateYRuler(m_ichanselected);
-	}
 
-	// -------------------------------------------
 	UpdateData(FALSE);	// copy view object to controls
 }
 
@@ -725,7 +708,6 @@ void CDataView::UpdateChannelsDisplayParameters()
 		UpdateYExtent (ichan, iextent);
 		UpdateYZero (ichan, izero);
 	}
-	UpdateYRuler(0);
 }
 
 void CDataView::SetCursorAssociatedWindows()
@@ -1048,9 +1030,7 @@ void CDataView::OnGainScroll(UINT nSBCode, UINT nPos)
 void CDataView::UpdateBiasScroll()
 {
 	int iPos = (int) ((m_VDlineview.GetChanlistYzero(m_ichanselected)- m_VDlineview.GetChanlistBinZero(m_ichanselected)) 
-		* 100
-		/ (int)YZERO_SPAN)
-		+ (int)50;
+		* 100 	/ (int)YZERO_SPAN) 	+ (int)50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
 	UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
 }
@@ -1091,7 +1071,7 @@ void CDataView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (lSize>YZERO_MIN && lSize<YZERO_MAX)
 	{		
-		UpdateYZero(m_ichanselected, m_VDlineview.GetChanlistBinZero(m_ichanselected));
+		UpdateYZero(m_ichanselected, lSize+ m_VDlineview.GetChanlistBinZero(m_ichanselected));
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_BIAS)
@@ -1878,17 +1858,7 @@ void CDataView::UpdateYExtent(int ichan, int yextent)
 		float yVoltsextent = m_VDlineview.GetChanlistVoltsperDataBin(ichan) * yextent;
 		m_VDlineview.SetChanlistVoltsExtent(-1, &yVoltsextent);
 	}
-	UpdateYRuler(ichan);
 	m_VDlineview.Invalidate();
-}
-
-void CDataView::UpdateYRuler(int ichan)
-{
-	int max = m_VDlineview.GetChanlistPixeltoBin(ichan, 0);
-	float vmax = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, max);
-	int min = m_VDlineview.GetChanlistPixeltoBin(ichan, m_VDlineview.Height());
-	float vmin = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, min);
-	m_VDlineview.m_yRuler.SetRange(&vmin, &vmax);
 }
 
 void CDataView::UpdateYZero(int ichan, int ybias)
@@ -1900,9 +1870,4 @@ void CDataView::UpdateYZero(int ichan, int ybias)
 		m_VDlineview.SetChanlistVoltsZero(-1, &yVoltsextent);
 	}
 	m_VDlineview.Invalidate();
-}
-
-void CDataView::UpdateChanVerticalRulerBar(int chan)
-{
-	m_ADC_yRulerBar.Invalidate();
 }

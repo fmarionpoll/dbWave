@@ -1,7 +1,4 @@
-// viewspkd.cpp : implementation file
-//
-// composite view. 
-	
+
 // * m_displayData   display source data (all channels)
 // * m_displayDetect holds a display of source data displayed as transformed for spike detection
 // * m_spkBarView display spikes detected
@@ -53,8 +50,6 @@
 
 IMPLEMENT_DYNCREATE(CSpikeDetectionView, CDaoRecordView)
 
-// --------------------------------------------------------------------------
-
 CSpikeDetectionView::CSpikeDetectionView()
 	: CDaoRecordView(CSpikeDetectionView::IDD)
 {   
@@ -76,8 +71,6 @@ CSpikeDetectionView::CSpikeDetectionView()
 	m_bEnableActiveAccessibility=FALSE;
 }
 
-// --------------------------------------------------------------------------
-
 CSpikeDetectionView::~CSpikeDetectionView()
 {
 	// save spkD list i	 changed
@@ -91,8 +84,6 @@ BOOL CSpikeDetectionView::PreCreateWindow(CREATESTRUCT &cs)
 	//  the CREATESTRUCT cs
 	return CDaoRecordView::PreCreateWindow(cs);
 }
-
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::DoDataExchange(CDataExchange* pDX)
 {
@@ -116,7 +107,6 @@ void CSpikeDetectionView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX,	IDC_TAB1, m_tabCtrl);
 }
 
-// --------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP(CSpikeDetectionView, CDaoRecordView)
 	ON_WM_SIZE()
@@ -171,7 +161,6 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSpikeDetectionView message handlers
 
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::OnFileSave() 
 {
@@ -190,8 +179,6 @@ void CSpikeDetectionView::OnFileSave()
 		m_pspkDocVSD->SetModifiedFlag(FALSE);
 	}
 }
-
-// --------------------------------------------------------------------------
 
 BOOL CSpikeDetectionView::OnMove(UINT nIDMoveCommand) 
 {
@@ -248,8 +235,6 @@ void CSpikeDetectionView::OnActivateView(BOOL bActivate, CView* pActivateView, C
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::UpdateLegends()
 {
 	long lFirst = m_displayDetect.GetDataFirst();		// get source data time range
@@ -296,8 +281,6 @@ void CSpikeDetectionView::UpdateLegends()
 	}
 }
 
-//---------------------------------------------------------------------------
-
 void CSpikeDetectionView::SaveCurrentFileParms()
 {
 	CdbWaveDoc* pDoc = GetDocument();
@@ -339,8 +322,6 @@ void CSpikeDetectionView::SaveCurrentFileParms()
 	CSpkDetectArray* parray = m_pArrayFromApp->GetChanArray(m_scancount_doc);
 	*parray = m_parmsCurrent;
 }
-
-//---------------------------------------------------------------------------
 
 void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
 {	
@@ -429,8 +410,6 @@ void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
 	if (nspikes != GetDlgItemInt(IDC_NBSPIKES_NB))
 		SetDlgItemInt(IDC_NBSPIKES_NB, nspikes);
 }
-
-//---------------------------------------------------------------------------
 
 void CSpikeDetectionView::HighlightSpikes(BOOL flag)
 {
@@ -1047,21 +1026,15 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 /////////////////////////////////////////////////////////////////////////////
 // OnFormat procedures
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnFirstFrame()
 {
 	OnFileScroll(SB_LEFT, 1L);
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnLastFrame()
 {
 	OnFileScroll(SB_RIGHT, 1L);
 }
-
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
@@ -1102,8 +1075,6 @@ void CSpikeDetectionView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	}
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::UpdateFileScroll()
 {
 	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
@@ -1142,8 +1113,6 @@ void CSpikeDetectionView::OnFileScroll(UINT nSBCode, UINT nPos)
 		UpdateLegends();
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnFormatYscaleCentercurve()
 {
 	m_displayDetect.CenterChan(0);
@@ -1160,8 +1129,6 @@ void CSpikeDetectionView::OnFormatYscaleCentercurve()
 	UpdateSpkShapeWndScale(TRUE);
 	m_spkShapeView.Invalidate();
 }
-
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::OnFormatYscaleGainadjust()
 {
@@ -1210,8 +1177,6 @@ void CSpikeDetectionView::OnFormatSplitcurves()
 	m_spkShapeView.Invalidate();
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnFormatAlldata()
 {
 	long lLast = GetDocument()->m_pDat->GetDOCchanLength(); 
@@ -1229,8 +1194,6 @@ void CSpikeDetectionView::OnFormatAlldata()
 	
 	UpdateLegends();
 }
-
-//////////////////////////////////////////////////////////////////////////////
 
 // --------------------------------------------------------------------------
 // OnToolsDetectionparameters()
@@ -1279,8 +1242,6 @@ void CSpikeDetectionView::OnToolsDetectionparameters()
 	}
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnSelchangeDetectchan()
 {
 	UpdateData(TRUE);
@@ -1295,8 +1256,6 @@ void CSpikeDetectionView::OnSelchangeDetectchan()
 	m_displayDetect.Invalidate();
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnSelchangeTransform()
 {
 	UpdateData(TRUE);
@@ -1307,8 +1266,6 @@ void CSpikeDetectionView::OnSelchangeTransform()
 	m_displayDetect.AutoZoomChan(0);				// vertical position of channel
 	m_displayDetect.Invalidate();
 }
-
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::OnMeasureAll()
 {
@@ -1700,8 +1657,6 @@ int CSpikeDetectionView::DetectMethod1(WORD schan)
 	return m_pSpkListVSD->GetTotalSpikes();
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnToolsEdittransformspikes()
 {
 	CSpikeEditDlg dlg;							// dialog box
@@ -1729,8 +1684,6 @@ void CSpikeDetectionView::OnToolsEdittransformspikes()
 
 	UpdateLegends();
 }
-
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::OnFormatXscale()
 {
@@ -1808,8 +1761,6 @@ void CSpikeDetectionView::OnBnClickedClearall()
 	m_pspkDocVSD->SetModifiedFlag(TRUE);	// mark spike document as changed
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnClear()
 {
 	m_spikeno = -1;						// unselect spike
@@ -1830,8 +1781,6 @@ void CSpikeDetectionView::OnClear()
 	UpdateLegends();					// change legends
 	m_pspkDocVSD->SetModifiedFlag(TRUE);	// mark spike document as changed
 }
-
-//-----------------------------------------------------------------------
 
 void CSpikeDetectionView::OnEnChangeSpikeno()
 {
@@ -1948,8 +1897,6 @@ void CSpikeDetectionView::AlignDisplayToCurrentSpike()
 	}	
 }
 
-// --------------------------------------------------------------------
-
 void CSpikeDetectionView::UpdateSpkShapeWndScale(BOOL bSetFromControls)
 {
 	// get current values	
@@ -2008,8 +1955,6 @@ void CSpikeDetectionView::UpdateSpkShapeWndScale(BOOL bSetFromControls)
 		m_spkShapeView.SetxScaleUnitValue(xunit);
 
 }
-
-// --------------------------------------------------------------------
 
 void CSpikeDetectionView::SelectSpikeNo(int spikeno, BOOL bMultipleSelection)
 {
@@ -2096,8 +2041,6 @@ void CSpikeDetectionView::OnEnChangeThresholdval()
 	return;	
 }
 
-// --------------------------------------------------------------------
-
 void CSpikeDetectionView::OnEnChangeTimefirst() 
 {
 	if (!mm_timefirst.m_bEntryDone)
@@ -2125,8 +2068,6 @@ void CSpikeDetectionView::OnEnChangeTimefirst()
 	mm_timefirst.m_nChar=0;
 	mm_timefirst.SetSel(0, -1); 	//select all text
 }
-
-// --------------------------------------------------------------------
 
 void CSpikeDetectionView::OnEnChangeTimelast() 
 {
@@ -2156,8 +2097,6 @@ void CSpikeDetectionView::OnEnChangeTimelast()
 	mm_timelast.SetSel(0, -1); 	//select all text
 }
 
-// --------------------------------------------------------------------
-
 void CSpikeDetectionView::OnToolsDataseries() 
 {
 	// init dialog data 
@@ -2176,7 +2115,6 @@ void CSpikeDetectionView::OnToolsDataseries()
 	UpdateLegends();
 }
 
-// ----------------------------------------------------------------------------
 void CSpikeDetectionView::PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars)
 {
 		BOOL bDrawF = plineViewWnd->m_parms.bDrawframe;
@@ -2350,8 +2288,6 @@ void CSpikeDetectionView::OnEditCopy()
 	}
 }
 
-// ----------------------------------------------------------------------------
-
 void CSpikeDetectionView::OnSelchangeDetectMode() 
 {
 	UpdateData(TRUE);
@@ -2361,8 +2297,6 @@ void CSpikeDetectionView::OnSelchangeDetectMode()
 	m_displayDetect.AutoZoomChan(0);		// vertical position of channel	
 	m_displayDetect.Invalidate();	
 }
-
-// ----------------------------------------------------------------------------
 
 void CSpikeDetectionView::UpdateCB()
 {
@@ -2374,8 +2308,6 @@ void CSpikeDetectionView::UpdateCB()
 	m_displayDetect.SetHZtagVal(0, m_pDetectParms->detectThreshold);
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
 }
-
-// ----------------------------------------------------------------------------
 
 void CSpikeDetectionView::UpdateVTtags()
 {
@@ -2658,8 +2590,6 @@ CString CSpikeDetectionView::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 	pDC->SelectObject(pOldBrush);
 	return strComment;
 }
-
-// -------------------------------------------------------------------------------
 
 CString CSpikeDetectionView::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 {
@@ -3181,8 +3111,6 @@ void CSpikeDetectionView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		CDaoRecordView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::SetVBarMode (short bMode, int iID)
 {
 	if (bMode == BAR_BIAS)
@@ -3191,8 +3119,6 @@ void CSpikeDetectionView::SetVBarMode (short bMode, int iID)
 		m_VBarMode = BAR_GAIN;
 	UpdateBiasScroll(iID);
 }        
-
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::UpdateGainScroll(int iID)
 {
@@ -3204,7 +3130,6 @@ void CSpikeDetectionView::UpdateGainScroll(int iID)
 			MulDiv(m_displayData.GetChanlistYextent(m_ichanselected2), 100, YEXTENT_MAX) +50, TRUE);
 }
 
-// --------------------------------------------------------------------------
 void CSpikeDetectionView::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 {
 	CLineViewWnd* pView = &m_displayDetect;
@@ -3240,8 +3165,6 @@ void CSpikeDetectionView::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 		UpdateGainScroll(iID);
 }
 
-// --------------------------------------------------------------------------
-
 void CSpikeDetectionView::UpdateBiasScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
@@ -3257,8 +3180,6 @@ void CSpikeDetectionView::UpdateBiasScroll(int iID)
 		m_scrolly2.SetScrollPos(iPos, TRUE);
 	}
 }
-
-// --------------------------------------------------------------------------
 
 void CSpikeDetectionView::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 {

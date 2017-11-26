@@ -765,11 +765,12 @@ void CLineViewWnd::ZoomData(CRect* r1, CRect* r2)
 	for (i; i>=0; i--)	// scan all channels
 	{
 		// display loop: load abcissa
-		CChanlistItem* pDL = m_pChanlistItemArray[i];	
-		int newext = MulDiv (pDL->GetYextent(), r2->Height(), r1->Height());
+		CChanlistItem* pDL = m_pChanlistItemArray[i];
+		int extent = pDL->GetYextent();
+		int newext = MulDiv (extent, r2->Height(), r1->Height());
 		pDL->SetYextent (newext);
 		int zero = pDL->GetYzero();
-		int newzero = zero-MulDiv((r1->Height() - r2->Height())/2, newext, r2->Height());
+		int newzero = zero - (r1->Height() - r2->Height()) / 2;
 		pDL->SetYzero (newzero);
 	}
 		
@@ -815,7 +816,21 @@ void CLineViewWnd::UpdateXRuler()
 			m_xRuler.UpdateRange(&first, &last);
 		}
 	}
-	
+}
+
+void CLineViewWnd::UpdateYRuler()
+{
+	if (m_bNiceGrid)
+	{
+		if (m_pYRulerBar != NULL)
+		{
+			int binlow = GetChanlistPixeltoBin(0, 0);
+			int binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
+			float yfirst = ConvertChanlistDataBinsToVolts(0, binlow);
+			float ylast = ConvertChanlistDataBinsToVolts(0, binhigh);
+			m_yRuler.UpdateRange(&yfirst, &ylast);
+		}
+	}
 }
 
 void CLineViewWnd::PlotDatatoDC(CDC* pDC)
@@ -827,6 +842,7 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 	if (m_erasebkgnd) 
 	{
 		UpdateXRuler();
+		UpdateYRuler();
 		EraseBkgnd(pDC);
 	}
 

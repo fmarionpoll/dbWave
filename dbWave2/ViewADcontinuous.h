@@ -66,8 +66,7 @@ protected:
 	void UpdateBiasScroll();
 	void SetVBarMode(short bMode);
 	void UpdateChanLegends(int ichan);
-	void UpdateHorizontalRulerBar();
-	void UpdateChanVerticalRulerBar(int ichan);
+
 	void UpdateStartStop(BOOL bStart);
 	void UpdateRadioButtons();
 

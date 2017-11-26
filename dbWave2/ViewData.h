@@ -118,8 +118,6 @@ protected:
 	void	OnGainScroll(UINT nSBCode, UINT nPos);
 	void	UpdateYExtent(int ichan, int yextent);
 	void	UpdateYZero(int ichan, int ybias);
-	void	UpdateChanVerticalRulerBar(int chan);
-	void	UpdateYRuler(int ichan);
 	void	OnBiasScroll(UINT nSBCode, UINT nPos);
 	void	UpdateGainScroll();
 	void	UpdateBiasScroll();

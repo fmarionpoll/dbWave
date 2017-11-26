@@ -1,6 +1,3 @@
-// adcontvi.cpp : implementation file
-//
-
 #include "stdafx.h"
 #include <math.h>
 #include "resource.h"
@@ -26,7 +23,6 @@
 #include "DAOutputsParmsDlg.h"
 #include "dtBoardDlg.h"
 #include "adinputparmsdlg.h"
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -75,8 +71,6 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_ADC);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DAC);
-	DDX_Control(pDX, IDC_XSCALE, m_ADC_xRulerBar);
-	DDX_Control(pDX, IDC_YSCALE, m_ADC_yRulerBar);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
@@ -228,8 +222,6 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	
 	return TRUE;
 }
-
-// ---------------------------------------
 
 BOOL CADContView::ADC_OpenSubSystem(CString cardName) 
 {
@@ -480,8 +472,6 @@ void CADContView::ADC_StopAndLiberateBuffers()
 	}
 	m_ADC_inprogress = FALSE;
 }
-
-// ---------------------------------------
 
 BOOL CADContView::DAC_OpenSubSystem(CString cardName)
 {
@@ -1125,8 +1115,6 @@ void CADContView::DAC_StopAndLiberateBuffers()
 	m_DAC_inprogress=FALSE; 
 }
 
-// ---------------------------------------
-
 void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 {
 	// special treatment if simultaneous list
@@ -1405,12 +1393,18 @@ void CADContView::OnInitialUpdate()
 {
 	// attach controls
 	VERIFY(m_ADsourceView.SubclassDlgItem(IDC_DISPLAYDATA, this));
-	m_stretch.AttachParent(this);
+	VERIFY(m_ADC_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
+	VERIFY(m_ADC_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
+	m_ADC_yRulerBar.AttachScopeWnd(&m_ADsourceView, FALSE);
+	m_ADC_xRulerBar.AttachScopeWnd(&m_ADsourceView, TRUE);
+	m_ADsourceView.AttachExternalXRuler(&m_ADC_xRulerBar);
+	m_ADsourceView.AttachExternalYRuler(&m_ADC_yRulerBar);
+	m_ADsourceView.m_bNiceGrid = TRUE;
 
+	m_stretch.AttachParent(this);
 	m_stretch.newProp(IDC_DISPLAYDATA,		XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_XSCALE, 			XLEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_YSCALE,			SZEQ_XLEQ, YTEQ_YBEQ);
-
 	m_stretch.newProp(IDC_GAIN_button, 		SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_BIAS_button,		SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_SCROLLY_scrollbar,SZEQ_XREQ, YTEQ_YBEQ);
@@ -1490,8 +1484,6 @@ void CADContView::OnInitialUpdate()
 	}
 	
 	UpdateChanLegends(0);
-	UpdateHorizontalRulerBar();
-	UpdateChanVerticalRulerBar(0);
 	UpdateRadioButtons();
 
 	// tell mmdi parent which cursor is active
@@ -1506,16 +1498,6 @@ void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		ASSERT(GetDocument() != NULL);
 		m_ADsourceView.Invalidate();		// display data
 	}
-}
-
-void CADContView::UpdateHorizontalRulerBar()
-{
-	m_ADC_xRulerBar.Invalidate();
-}
-
-void CADContView::UpdateChanVerticalRulerBar(int chan)
-{
-	m_ADC_yRulerBar.Invalidate();
 }
 
 void CADContView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
@@ -1732,8 +1714,6 @@ void CADContView::OnHardwareAdchannels()
 		ADC_InitSubSystem();
 		UpdateData(FALSE);
 		UpdateChanLegends(0);
-		UpdateHorizontalRulerBar();
-		UpdateChanVerticalRulerBar(0);
 
 		if (dlg.m_postmessage != NULL)
 			ChainDialog(dlg.m_postmessage);	
@@ -2090,7 +2070,6 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 			m_ADsourceView.SetChanlistYextent(ichan, lSize);
 		m_ADsourceView.Invalidate();
 		UpdateChanLegends(0);
-		UpdateHorizontalRulerBar();
 		m_pADC_options->izoomCursel = lSize;
 	}
 	// update scrollBar
@@ -2100,7 +2079,6 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 		UpdateChanLegends(0);
 		UpdateData(false);
 	}
-	UpdateChanVerticalRulerBar(0);
 }
 
 void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
@@ -2155,7 +2133,6 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 		UpdateChanLegends(0);
 		UpdateData(false);
 	}
-	UpdateChanVerticalRulerBar(0);
 }
 
 void CADContView::UpdateBiasScroll()
@@ -2367,4 +2344,3 @@ void CADContView::StopOutput()
 	if (m_DAC_inprogress)
 		DAC_StopAndLiberateBuffers();
 }
-
