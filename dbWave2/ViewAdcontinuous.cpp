@@ -1510,21 +1510,12 @@ void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CADContView::UpdateHorizontalRulerBar()
 {
-	CWaveFormat* pwaveFormat = &(m_pADC_options->waveFormat);
-	float samplingrate = pwaveFormat->chrate;
-	float timefirst = m_ADsourceView.GetDataFirst()/samplingrate;
-	float timelast = m_ADsourceView.GetDataLast()/samplingrate;
-	m_ADC_xRulerBar.SetRange(&timefirst, &timelast);
+	m_ADC_xRulerBar.Invalidate();
 }
 
 void CADContView::UpdateChanVerticalRulerBar(int chan)
 {
-	int ichan = 0;
-	int max		= m_ADsourceView.GetChanlistPixeltoBin(ichan, 0);
-	float xmax	= m_ADsourceView.ConvertChanlistDataBinsToMilliVolts(ichan, max);
-	int min		= m_ADsourceView.GetChanlistPixeltoBin(ichan, m_ADsourceView.Height());
-	float xmin	= m_ADsourceView.ConvertChanlistDataBinsToMilliVolts(ichan, min);
-	m_ADC_yRulerBar.SetRange(&xmin, &xmax);
+	m_ADC_yRulerBar.Invalidate();
 }
 
 void CADContView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)

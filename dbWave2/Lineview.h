@@ -28,8 +28,8 @@ public:
 	CAcqDataDoc* GetpDataFile() const {return m_pDataFile;}
 
 	// display given buffer operation	
-	void ADdisplayStart(int chsamplesw);
-	void ADdisplayBuffer(short* lpBuf, long nchsamples);
+	void		ADdisplayStart(int chsamplesw);
+	void		ADdisplayBuffer(short* lpBuf, long nchsamples);
 	inline void ADdisplayStop() { m_bADbuffers = FALSE; }
 			
 	// export representation of data to the clipboard
@@ -51,7 +51,7 @@ public:
 // Attributes
 protected:
 	// these variables define the curves displayed on the screen (data from doc)
-	CAcqDataDoc* m_pDataFile;		// pointer to data source file
+	CAcqDataDoc*							m_pDataFile;		// pointer to data source file
 	CArray<CChanlistItem*, CChanlistItem*>	m_pChanlistItemArray;	// list of display items (abcissa, Envelope, disp. parms)
 	CArray<CEnvelope*, CEnvelope*>			m_pEnvelopesArray;	// list of Envelopes
 	CDWordArray								m_PolyPoints;		// array with abcissa & ordinates
@@ -66,6 +66,7 @@ protected:
 	long	m_lxSize;				// nb of data pts represented in a Envelope
 	long	m_lxFirst;				// file index of 1rst pt in the Envelopes
 	long	m_lxLast;				// file index of last pt in the Envelopes
+	float	m_samplingrate;
 	BOOL	m_btrackCurve;			// track curve if hit	
 
 	int		m_XORnelmts;			// curve tracking parameters
@@ -142,6 +143,7 @@ public:
 	void	SetHighlightData(CDWordArray* pIntervals);
 	void	SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, int trackchannel);
 	void 	MoveHZtagtoVal(int itag, int ival);	
+	void	UpdateXRuler();
 	void	PlotDatatoDC(CDC* pDC);
 	void	ZoomData(CRect* prevRect, CRect* newRect);
 
@@ -151,7 +153,7 @@ protected:
 	void	XORcurve();
 
 public:	
-	void Print(CDC* pDC, CRect* rect, BOOL bCenterline=FALSE);
+	void	Print(CDC* pDC, CRect* rect, BOOL bCenterline=FALSE);
 
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

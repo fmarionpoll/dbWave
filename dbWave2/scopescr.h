@@ -107,13 +107,15 @@ public:
 	int			m_ordinateswidth;
 	CRulerBar*	m_pXRulerBar;
 	CRulerBar*	m_pYRulerBar;
+
 public:
 	void		DrawGrid(CDC *pDC);
 	void		AdjustDisplayRect(CRect* rect);
 protected:
 	void		DrawGridEvenlySpaced(CDC *pDC);
+	void		DrawGridFromRuler(CDC * pDC, CRuler * pRuler);
 	void		DrawGridNicelySpaced(CDC *pDC);
-	void		DrawGridfromScale(CDC *pDC, CRuler* scale);
+	void		DrawScalefromRuler(CDC *pDC, CRuler* scale);
 
 	// tags ------------------------------------------------------------------------
 public:

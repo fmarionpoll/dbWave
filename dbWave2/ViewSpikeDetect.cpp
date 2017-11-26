@@ -277,7 +277,6 @@ void CSpikeDetectionView::UpdateLegends()
 		m_bartefact = FALSE;
 	}
 	
-	m_xspkdscale.SetRange(&m_timefirst, &m_timelast);
 	UpdateFileScroll();		// adjust scroll bar to file position	
 	UpdateCB();				// update combo box
 	UpdateVTtags();			// set VT tags

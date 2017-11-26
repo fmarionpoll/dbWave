@@ -262,10 +262,6 @@ void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 						+ _T(": ") + pD->dl_comment;
 }
 
-// set extent of chanlist in reference to a voltage
-// in: chan : chanlist item to set (if chan=-1: set all channels to the same voltage)
-//     *pvalue: pointer to float value of the voltage (if pointer = NULL, compute voltage extent and return)
-// out: nothing
 void CLineViewWnd::SetChanlistVoltsExtent(int chan, float* pvalue)
 {
 	int ichanfirst = chan;
@@ -470,6 +466,7 @@ int CLineViewWnd::ResizeChannels(int npixels, long lSize)
 BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* pDataFile, long lSize)
 {
 	m_pDataFile = pDataFile;
+	m_samplingrate = m_pDataFile->GetpWaveFormat()->chrate;
 	m_pDataFile->SetReadingBufferDirty();
 	ASSERT(m_pDataFile->GetDOCchanLength() > 0);
 	if (lSize <= 0)
@@ -492,7 +489,6 @@ BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* pDataFile, long lSize)
 	}
 
 	//Remove irrelevant Chanlist items;	
-	// remove channel if doc chan does not exist
 	int docchanmax = m_pDataFile->GetpWaveFormat()->scan_count - 1;
 	int chanlistmax = m_pChanlistItemArray.GetUpperBound();
 	for (int i=chanlistmax; i>=0; i--)
@@ -808,14 +804,31 @@ void CLineViewWnd::ZoomData(CRect* r1, CRect* r2)
 // direct approach is faster than resorting to the DIBsurface
 //---------------------------------------------------------------------------
 
+void CLineViewWnd::UpdateXRuler()
+{
+	if (m_bNiceGrid)
+	{
+		if (m_pXRulerBar != NULL)
+		{
+			float first = m_lxFirst/ m_samplingrate;
+			float last = m_lxLast/ m_samplingrate;
+			m_xRuler.UpdateRange(&first, &last);
+		}
+	}
+	
+}
+
 void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 {
 	if (m_bADbuffers)
 		return;
 
 	// erase background
-	if (m_erasebkgnd)
+	if (m_erasebkgnd) 
+	{
+		UpdateXRuler();
 		EraseBkgnd(pDC);
+	}
 
 	CRect rect = m_displayRect;
 	rect.DeflateRect(1,1);

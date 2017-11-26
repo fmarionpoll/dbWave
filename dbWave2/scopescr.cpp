@@ -282,19 +282,11 @@ BOOL CScopeScreen::OnEraseBkgnd(CDC* pDC)
 void CScopeScreen::PlotToBitmap(CDC *pDC)
 {
 	CBitmap* poldPlotBitmap = NULL;
-	// create bitmap if pointer is null
-	//if (!m_PlotDC.GetSafeHdc())
-	//{
 	CBitmap bitmapPlot;
 	bitmapPlot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), NULL);
 	m_PlotDC.CreateCompatibleDC(pDC);
 	poldPlotBitmap = m_PlotDC.SelectObject(&bitmapPlot);
-	//}
-
-	// call virtual function to plot data
 	PlotDatatoDC(&m_PlotDC);
-
-	// plot data display plane to memory DC
 	pDC->BitBlt(0, 0, m_displayRect.right, m_displayRect.bottom, &m_PlotDC,0,0, SRCCOPY);
 	m_PlotDC.SelectObject(poldPlotBitmap);
 }
@@ -337,6 +329,7 @@ void CScopeScreen::EraseBkgnd(CDC* pDC)
 	pDC->Rectangle(&m_displayRect);
 	pDC->SelectObject(pOldPen);
 	pDC->SelectObject(pOldBrush);
+
 	// display grid
 	DrawGrid(pDC);
 }
@@ -396,7 +389,61 @@ void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
 	}
 }
 
-void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
+void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
+{
+	CRect rcClient = m_displayRect;
+	rcClient.DeflateRect(1, 1);
+
+	// exit if length is not properly defined
+	if (pRuler->m_dlast == pRuler->m_dfirst)
+		return;
+
+	CPen aPen2;
+	aPen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
+	CPen* pOldPen = pDC->SelectObject(&aPen2);
+
+	// draw ticks and legends
+	int tickSmallHeight = 4;
+	int tickmax;
+	if (pRuler->m_bHorizontal)		// horizontal
+		tickmax = rcClient.Width();
+	else							// vertical
+		tickmax = rcClient.Height();
+
+	// draw scale
+	//double smallscaleinc = pRuler->m_dscaleinc / 5.;
+	double dpos = floor(pRuler->m_dscalefirst);
+	double dlen = pRuler->m_dlast - pRuler->m_dfirst;
+	pDC->SetBkMode(TRANSPARENT);
+
+	while (dpos <= pRuler->m_dlast)
+	{
+		int tickPos;
+		if (pRuler->m_bHorizontal)	// horizontal
+		{
+			tickPos = (int)(rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen) + rcClient.left;
+			if (tickPos >= 0 && tickPos <= tickmax) {
+				pDC->MoveTo(tickPos, rcClient.bottom - 1);	// line
+				pDC->LineTo(tickPos, rcClient.top    + 1);
+			}
+		}
+		else						// vertical
+		{
+			tickPos = (int)(rcClient.Height() * (pRuler->m_dlast - dpos) / dlen) + rcClient.top;
+			if (tickPos >= 0 && tickPos <= tickmax) {
+				pDC->MoveTo(rcClient.left + 1, tickPos);	// line
+				pDC->LineTo(rcClient.right - 1, tickPos);
+			}
+		}
+		if( dpos != 0. && fabs(dpos) < 1E-10 )
+		   dpos = 0 ;
+		dpos += pRuler->m_dscaleinc;
+	}
+	// restore objects used in this routine
+	pDC->SelectObject(pOldPen);
+}
+
+void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 {
 	CRect rcClient = m_displayRect;
 	rcClient.DeflateRect(1, 1);
@@ -409,23 +456,16 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 	aPen1.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
 	CPen* pOldPen = pDC->SelectObject(&aPen1);
 	aPen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
-	CFont* pOldFont= pDC->SelectObject(&m_hFont);
+	CFont* pOldFont = pDC->SelectObject(&m_hFont);
 	CString str;
 
 	// draw ticks and legends
-	int tickBigHeight, tickSmallHeight;
+	int tickSmallHeight = 4;
 	int tickmax;
 	if (pRuler->m_bHorizontal)		// horizontal
-	{
-		tickBigHeight = rcClient.Height();
 		tickmax = rcClient.Width();
-	}
 	else							// vertical
-	{
-		tickBigHeight = rcClient.Width();
 		tickmax = rcClient.Height();
-	}
-	tickSmallHeight = 4;
 
 	// draw scale
 	double smallscaleinc = pRuler->m_dscaleinc / 5.;
@@ -439,13 +479,13 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 		pDC->SelectObject(&aPen1);
 		double dsmallpos = dpos;
 		int tickPos;
-		for (int i= 0; i<4; i++)
+		for (int i = 0; i<4; i++)
 		{
 			dsmallpos += smallscaleinc;
 			double ratio = (pRuler->m_dlast - dsmallpos) / dlen;
 			if (pRuler->m_bHorizontal) // ----------------------------- horizontal
 			{
-				tickPos = (int) (rcClient.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rcClient.left;
+				tickPos = (int)(rcClient.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rcClient.left;
 				if (tickPos >= rcClient.left && tickPos <= tickmax)
 				{
 					pDC->MoveTo(tickPos, rcClient.bottom - 1);
@@ -454,10 +494,10 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 			}
 			else // --------------------------------------------------- vertical
 			{
-				tickPos = (int)(rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rcClient.top; 
+				tickPos = (int)(rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rcClient.top;
 				if (tickPos >= rcClient.top && tickPos <= tickmax)
 				{
-					pDC->MoveTo(rcClient.left+1,				 tickPos);
+					pDC->MoveTo(rcClient.left + 1, tickPos);
 					pDC->LineTo(rcClient.left + tickSmallHeight, tickPos);
 				}
 			}
@@ -466,21 +506,20 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 		// display large ticks and text
 		pDC->SelectObject(&aPen2);
 		if (pRuler->m_bHorizontal)	// horizontal
-			tickPos = (int) (rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen) + rcClient.left;
+			tickPos = (int)(rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen) + rcClient.left;
 		else						// vertical
-			tickPos = (int) (rcClient.Height() * (pRuler->m_dlast - dpos) / dlen) + rcClient.top;
-
+			tickPos = (int)(rcClient.Height() * (pRuler->m_dlast - dpos) / dlen) + rcClient.top;
 		if (tickPos >= 0 && tickPos <= tickmax)
 		{
-			str.Format(_T("%g"), dpos);	
+			str.Format(_T("%g"), dpos);
 			CSize size = pDC->GetTextExtent(str);
 			int x, y;
 			if (pRuler->m_bHorizontal)	// ----------- horizontal
 			{
 				pDC->MoveTo(tickPos, rcClient.bottom - 1);	// line
-				pDC->LineTo(tickPos, rcClient.top    + 1);
-				x = tickPos - (size.cx/2);					// text position (upper left)
-				if (x < 0) 
+				pDC->LineTo(tickPos, rcClient.top + 1);
+				x = tickPos - (size.cx / 2);					// text position (upper left)
+				if (x < 0)
 					x = 0;
 				if (x + size.cx > rcClient.right)
 					x = rcClient.right - size.cx;
@@ -488,15 +527,15 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 			}
 			else // ---------------------------------- vertical
 			{
-				pDC->MoveTo(rcClient.left  + 1, tickPos);	// line
+				pDC->MoveTo(rcClient.left + 1, tickPos);	// line
 				pDC->LineTo(rcClient.right - 1, tickPos);
 				x = rcClient.left - size.cx - 2;			// text position (upper left)
-				y = tickPos - (size.cy/2);
+				y = tickPos - (size.cy / 2);
 			}
 			pDC->TextOut(x, y, str);
 		}
-		if( dpos != 0. && fabs(dpos) < 1E-10 )
-		   dpos = 0 ;
+		if (dpos != 0. && fabs(dpos) < 1E-10)
+			dpos = 0;
 		dpos += pRuler->m_dscaleinc;
 	}
 
@@ -507,13 +546,21 @@ void CScopeScreen::DrawGridfromScale(CDC *pDC, CRuler* pRuler)
 void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
 {
 	if (m_pXRulerBar == NULL)
-		DrawGridfromScale (pDC, &m_xRuler);
+		DrawScalefromRuler (pDC, &m_xRuler);
 	else
-		m_pXRulerBar->DrawGridfromScale(&m_xRuler);
+	{ 
+		m_pXRulerBar->DrawScalefromRuler(&m_xRuler);
+		m_pXRulerBar->Invalidate();
+		DrawGridFromRuler(pDC, &m_xRuler);
+	}
+		
 	if (m_pYRulerBar == NULL) 
-		DrawGridfromScale (pDC, &m_yRuler);
+		DrawScalefromRuler (pDC, &m_yRuler);
 	else
-		m_pYRulerBar->DrawGridfromScale(&m_yRuler);
+	{
+		m_pYRulerBar->DrawScalefromRuler(&m_yRuler);
+		DrawGridFromRuler(pDC, &m_yRuler);
+	}
 }
 
 void CScopeScreen::AdjustDisplayRect(CRect* pRect)

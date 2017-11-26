@@ -294,9 +294,6 @@ void CDataView::UpdateLegends(int ioperation)
 	// ------------------------------------------- update abcissa
 	if (ioperation & UPD_ABCISSA)
 	{
-		m_timefirst = m_VDlineview.GetDataFirst()/m_samplingRate;
-		m_timelast = (m_VDlineview.GetDataLast()+1)/m_samplingRate;	
-		m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 		UpdateFileScroll();
 	}
 
@@ -670,7 +667,6 @@ void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 	// done	
 	if (bUpdateInterface)
 	{
-		m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 		UpdateFileScroll();
 		UpdateLegends(UPD_ABCISSA | CHG_XSCALE | CHG_YSCALE);
 		m_VDlineview.Invalidate();
@@ -917,7 +913,6 @@ void CDataView::OnViewAlldata()
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 	UpdateData(FALSE);
 	m_VDlineview.Invalidate();    
-	m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 	UpdateFileScroll();
 }
 
@@ -1177,7 +1172,6 @@ void CDataView::OnFileScroll(UINT nSBCode, UINT nPos)
 		UpdateData(FALSE);	// copy view object to controls
 		m_VDlineview.Invalidate();
 	}
-	m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 	UpdateFileScroll();
 }
 
@@ -1204,7 +1198,6 @@ void CDataView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_timelast	= (float) lLast / m_samplingRate;
 		m_VDlineview.GetDataFromDoc(lFirst, lLast);
 		m_VDlineview.Invalidate();
-		m_VDlineview.m_xRuler.SetRange(&m_timefirst, &m_timelast);
 		cs.Format(_T("%.3f"), m_timefirst);
 		SetDlgItemText(IDC_TIMEFIRST, cs);
 		cs.Format(_T("%.3f"), m_timelast);
@@ -1303,8 +1296,7 @@ void CDataView::OnFormatXscale()
 	{
 		m_timefirst = dlg.m_firstAbcissa * dlg.m_abcissaScale;
 		m_timelast  = dlg.m_lastAbcissa * dlg.m_abcissaScale;
-		m_VDlineview.GetDataFromDoc((long) (m_timefirst*m_samplingRate), 
-									(long) (m_timelast*m_samplingRate));
+		m_VDlineview.GetDataFromDoc((long) (m_timefirst*m_samplingRate),(long) (m_timelast*m_samplingRate));
 		UpdateLegends(UPD_ABCISSA | UPD_XSCALE | CHG_XBAR);		
 	}
 }
@@ -1814,8 +1806,7 @@ void CDataView::OnEnChangeTimefirst()
 		m_timefirst--;
 		break;
 	}	
-	m_VDlineview.GetDataFromDoc((long) (m_timefirst*m_samplingRate), 
-								(long) (m_timelast*m_samplingRate));	
+	m_VDlineview.GetDataFromDoc((long) (m_timefirst*m_samplingRate), (long) (m_timelast*m_samplingRate));	
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 	m_VDlineview.Invalidate();
 	mm_timefirst.m_bEntryDone=FALSE;
@@ -1913,10 +1904,5 @@ void CDataView::UpdateYZero(int ichan, int ybias)
 
 void CDataView::UpdateChanVerticalRulerBar(int chan)
 {
-	int ichan = 0;
-	int max = m_VDlineview.GetChanlistPixeltoBin(ichan, 0);
-	float xmax = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, max);
-	int min = m_VDlineview.GetChanlistPixeltoBin(ichan, m_VDlineview.Height());
-	float xmin = m_VDlineview.ConvertChanlistDataBinsToMilliVolts(ichan, min);
-	m_ADC_yRulerBar.SetRange(&xmin, &xmax);
+	m_ADC_yRulerBar.Invalidate();
 }
