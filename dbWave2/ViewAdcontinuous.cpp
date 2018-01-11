@@ -568,7 +568,7 @@ BOOL CADContView::DAC_InitSubSystem()
 		for (int i = 0; i <  m_pDAC_options->parmsChan.GetSize(); i++)
 		{
 			OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
-			DAC_MSequence(TRUE, pParms);
+			//DAC_MSequence(TRUE, pParms);
 			if (pParms->bDigital)
 				continue;
 			pParms->ampUp = pParms->dAmplitudeMaxV *  resolutionfactor / (m_Acq32_DAC.GetMaxRange() - m_Acq32_DAC.GetMinRange());
@@ -604,30 +604,32 @@ void CADContView::DAC_SetChannelList()
 			ndigitalOutputs++;
 	}
 	m_DACdigitalchannel = 0;
+	int nchans = nanalogOutputs;
+	nchans += (ndigitalOutputs > 0);
 
 	try 
 	{
 		// number of D/A channels
 		int nchansmax = m_Acq32_DAC.GetSSCaps(OLSSC_NUMCHANNELS);
-		int nchans = ndigitalOutputs;
-		if (nchans > 0)
-			nchans = 1;
-		nchans += nanalogOutputs;
 		ASSERT(nchans <= nchansmax);
 		m_Acq32_DAC.SetListSize(nchans);
-		for (int i = 0; i < nchansmax-1; i++)
+
+		if (nanalogOutputs) 
 		{
-			if (nanalogOutputs > 0) 
+			for (int i = 0; i < nchansmax; i++)
 			{
-				m_Acq32_DAC.SetChannelList(i, i);
-				nanalogOutputs--;
-				m_DACdigitalchannel++;
+				if (nanalogOutputs > 0)
+				{
+					m_Acq32_DAC.SetChannelList(i, i);
+					nanalogOutputs--;
+					m_DACdigitalchannel++;
+				}
 			}
 		}
+
 		if (ndigitalOutputs)
 		{
 			m_Acq32_DAC.SetChannelList(m_DACdigitalchannel, nchansmax - 1);
-			ndigitalOutputs--;
 		}
 
 		m_DAClistsize = m_Acq32_DAC.GetListSize();
