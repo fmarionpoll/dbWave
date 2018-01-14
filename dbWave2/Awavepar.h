@@ -430,6 +430,7 @@ public:
 	int		mseq_iSeed;								// m_mSeqSeed;		// Sequence seed or zero=random seed
 	double	dummy1;									// m_mSeqAmplitude; // M-sequence amplitude
 	double	dummy2;									// m_mSeqOffset;	// Add this offset before multiplication
+	BOOL	bStart;
 	int		num;
 	UINT	bit33;
 	UINT	count;

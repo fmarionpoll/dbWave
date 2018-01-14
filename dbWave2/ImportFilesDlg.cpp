@@ -52,7 +52,7 @@ void CImportFilesDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CImportFilesDlg, CDialog)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDCANCEL, &CImportFilesDlg::OnBnClickedCancel)
-	ON_BN_CLICKED(ID_STARTSTOP, &CImportFilesDlg::OnBnClickedStartstop)
+	ON_BN_CLICKED(ID_STARTSTOP, &CImportFilesDlg::ADC_OnBnClickedStartstop)
 END_MESSAGE_MAP()
 
 
@@ -107,7 +107,7 @@ void CImportFilesDlg::OnBnClickedCancel()
 }
 
 
-void CImportFilesDlg::OnBnClickedStartstop()
+void CImportFilesDlg::ADC_OnBnClickedStartstop()
 {
 	m_pconvertedFiles->RemoveAll();
 
