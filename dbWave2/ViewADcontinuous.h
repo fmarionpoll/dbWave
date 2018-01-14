@@ -150,6 +150,7 @@ protected:
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 	void DAC_Dig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_Dig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_Dig_FillBufferWith_VAL(short * pDTbuf, int chan, OUTPUTPARMS * parmsChan, BOOL bVal);
 	void DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_UpdateStartStop(BOOL bStart);
 	void DAC_FillBuffer(short* pDTbuf);

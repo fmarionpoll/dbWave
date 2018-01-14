@@ -981,6 +981,36 @@ void CADContView::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPU
 	}
 }
 
+void CADContView::DAC_Dig_FillBufferWith_VAL(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan, BOOL val)
+{
+	int	nchans = m_DAClistsize;
+	int w1 = 1 << parmsChan->iChan;
+	int w0 = 0;
+
+	// fill buffer
+	if (m_DACdigitalfirst == 0) {
+		int wout = w0;
+		if (val > 0)
+			wout = w1;
+		for (int i = chan; i < m_DAC_buflen; i += nchans)
+			*(pDTbuf + i) = wout;
+	}
+	else {
+		if (val > 0) {
+			int wout = w1;
+			for (int i = chan; i < m_DAC_buflen; i += nchans)
+				*(pDTbuf + i) |= wout;
+		}
+		else
+		{
+			int wout = ~w1;
+			for (int i = chan; i < m_DAC_buflen; i += nchans)
+				*(pDTbuf + i) &= wout;
+		}
+
+	}
+}
+
 void CADContView::DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
 	double	phase = parmsChan->lastphase;
@@ -1093,8 +1123,10 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 				DAC_Dig_FillBufferWith_MSEQ(pDTbuf, m_DACdigitalchannel, pParms);
 				break;
 			case DA_ONE:
+				DAC_Dig_FillBufferWith_VAL(pDTbuf, m_DACdigitalchannel, pParms, 1);
 				break;
 			case DA_ZERO:
+				DAC_Dig_FillBufferWith_VAL(pDTbuf, m_DACdigitalchannel, pParms, 0);
 			default:
 				break;
 			}
