@@ -48,6 +48,9 @@ protected:
 	void SetDigitalParmsToDlg(int channel);
 	void GetDigitalParmsFromDlg(int channel);
 
+	void OnBnClickedButtonsource(int ID, int channel);
+	void OnCbnSelchangeCombosource(int IDCOMBO, int IDBUTTON, int IDFREQ);
+
 	static CString	comboText[];
 	static DWORD	comboVal[];
 
@@ -72,5 +75,20 @@ public:
 	afx_msg void OnBnClickedButtonsource0();
 	afx_msg void OnBnClickedButtonsource1();
 	afx_msg void OnBnClickedButtonsource2();
-	afx_msg void OnCbnSelchangeCombochandigital();
+	// TODO
+	//afx_msg void OnCbnSelchangeCombochandigital();
+	afx_msg void OnBnClickedButtonsource3();
+	afx_msg void OnBnClickedButtonsource4();
+	afx_msg void OnBnClickedButtonsource5();
+	afx_msg void OnBnClickedButtonsource6();
+	afx_msg void OnBnClickedButtonsource7();
+	afx_msg void OnBnClickedButtonsource8();
+	afx_msg void OnBnClickedButtonsource9();
+	afx_msg void OnCbnSelchangeCombosource3();
+	afx_msg void OnCbnSelchangeCombosource4();
+	afx_msg void OnCbnSelchangeCombosource5();
+	afx_msg void OnCbnSelchangeCombosource6();
+	afx_msg void OnCbnSelchangeCombosource7();
+	afx_msg void OnCbnSelchangeCombosource8();
+	afx_msg void OnCbnSelchangeCombosource9();
 };
