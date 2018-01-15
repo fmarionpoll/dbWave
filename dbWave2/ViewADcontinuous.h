@@ -67,7 +67,7 @@ protected:
 	void SetVBarMode(short bMode);
 	void UpdateChanLegends(int ichan);
 
-	void UpdateStartStop(BOOL bStart);
+	void ADC_UpdateStartStop(BOOL bStart);
 	void UpdateRadioButtons();
 
 	// data	parameters
@@ -134,8 +134,9 @@ protected:
 	
 	BOOL DAC_OpenSubSystem(CString cardName);
 	BOOL DAC_ClearAllOutputs();
-	void DAC_SetChannelList();
+	int	 DAC_SetChannelList();
 	BOOL DAC_InitSubSystem();
+	int DAC_GetNumberOfChans();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
 	void DAC_FillBufferWith_SINUSOID(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
@@ -144,14 +145,14 @@ protected:
 	void DAC_FillBufferWith_RAMP(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_CONSTANT(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_MSequence(BOOL start, OUTPUTPARMS * parmsChan);
+	void DAC_MSequence(OUTPUTPARMS * parmsChan);
 	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
-
 	void DAC_Dig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_Dig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_Dig_FillBufferWith_VAL(short * pDTbuf, int chan, OUTPUTPARMS * parmsChan, BOOL bVal);
 	void DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-
+	void DAC_UpdateStartStop(BOOL bStart);
 	void DAC_FillBuffer(short* pDTbuf);
 	void DAC_StopAndLiberateBuffers();
 	void SetCombostartoutput(int option);
@@ -159,14 +160,14 @@ protected:
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
 
-	void StopAcquisition(BOOL bDisplayErrorMsg);
+	void ADC_Stop(BOOL bDisplayErrorMsg);
 	void SaveAndCloseFile();
-	BOOL StartAcquisition();
-	BOOL StartOutput();
-	void StopOutput();
+	BOOL ADC_Start();
+	BOOL DAC_Start();
+	void DAC_Stop();
 
 	BOOL InitCyberAmp();
-	BOOL Defineexperiment() ;
+	BOOL ADC_DefineExperimentDlg() ;
 	void TransferFilesToDatabase();
 	void UpdateViewDataFinal();
 	void displayolDaErrorMessage(CHAR* errstr);
@@ -198,30 +199,29 @@ inline CdbWaveDoc* CADContView::GetDocument()
 	DECLARE_EVENTSINK_MAP()
 public:
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnHardwareAdchannels();
-	afx_msg void OnHardwareAdintervals();
-	afx_msg void OnHardwareDefineexperiment();
+	afx_msg void ADC_OnHardwareChannelsDlg();
+	afx_msg void ADC_OnHardwareIntervalsDlg();
+	afx_msg void ADC_OnHardwareDefineexperiment();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnBufferDone_ADC();
-	afx_msg void OnTriggerError_ADC();
-	afx_msg void OnOverrunError_ADC();
-	afx_msg void OnQueueDone_ADC();
-	afx_msg void OnBufferDone_DAC();
-	afx_msg void OnOverrunError_DAC();
-	afx_msg void OnQueueDone_DAC();
-	afx_msg void OnTriggerError_DAC();
+	afx_msg void ADC_OnBufferDone();
+	afx_msg void ADC_OnTriggerError();
+	afx_msg void ADC_OnOverrunError();
+	afx_msg void ADC_OnQueueDone();
+	afx_msg void DAC_OnBufferDone();
+	afx_msg void DAC_OnOverrunError();
+	afx_msg void DAC_OnQueueDone();
+	afx_msg void DAC_OnTriggerError();
 	afx_msg void OnBnClickedGainbutton();
 	afx_msg void OnBnClickedBiasbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnBnClickedDaparameters();
-	afx_msg void OnBnClickedDaparameters2();
+	afx_msg void DAC_OnBnClickedParameters2();
 	afx_msg void OnCbnSelchangeComboboard();
-	afx_msg void OnBnClickedStartstop();
+	afx_msg void ADC_OnBnClickedStartstop();
 	afx_msg void OnBnClickedWriteToDisk();
 	afx_msg void OnBnClickedOscilloscope();
-	afx_msg void OnBnClickedCardfeatures();
+	afx_msg void OnBnClickedCardFeatures();
 	afx_msg void OnCbnSelchangeCombostartoutput();
-	afx_msg void OnBnClickedStartstop2();
+	afx_msg void DAC_OnBnClickedStartStop();
 };

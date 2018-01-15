@@ -52,6 +52,6 @@ protected:
 public:
 	afx_msg void OnDestroy();
 	afx_msg void OnBnClickedCancel();
-	afx_msg void OnBnClickedStartstop();
+	afx_msg void ADC_OnBnClickedStartstop();
 	BOOL m_bReadHeader;
 };

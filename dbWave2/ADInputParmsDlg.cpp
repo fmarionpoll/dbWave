@@ -48,8 +48,8 @@ TCHAR* CADInputParmsDlg::pszRowTitle[] = {
 TCHAR*	CADInputParmsDlg::pszHighPass[]	= { _T("GND"),_T("DC"),_T("0.1"),_T("1"),_T("10"),_T("30"),_T("100"),_T("300"),
 											_T(""),_T(""),_T(""),_T(""),_T(""),_T(""),_T(""),_T("")};
 TCHAR*	CADInputParmsDlg::pszADGains[]	= { _T("1"),_T("2"),_T("4"),_T("8"),_T(""),_T(""),_T(""),_T("")};
-TCHAR*	CADInputParmsDlg::pszAmplifier[]	= { _T("CyberAmp 320"),_T("Neurolog"),_T("IDAC"),_T("none"),_T(""),_T(""),_T(""),_T("")};
-TCHAR*	CADInputParmsDlg::pszProbeType[]	= { _T("Taste01"),_T("DTP02"),_T("AI401"),_T("Neurolog"),_T("AD575"),_T(""),_T(""),_T("")};
+TCHAR*	CADInputParmsDlg::pszAmplifier[]	= { _T("CyberAmp 320"),_T("Neurolog"),_T("IDAC"),_T("Dagan"),_T("none"),_T(""),_T(""),_T("")};
+TCHAR*	CADInputParmsDlg::pszProbeType[]	= { _T("Syntech"),_T("DTP02"),_T("AI401"),_T("Neurolog"),_T("AD575"),_T("Dagan"),_T("none"),_T("")};
 TCHAR*	CADInputParmsDlg::pszEncoding[]	= { _T("Offset binary"),_T("Two's complement"),_T("Unknown"),_T(""),_T(""),_T(""),_T(""),_T("")};
 int		CADInputParmsDlg::iEncoding[]= { OLx_ENC_BINARY, OLx_ENC_2SCOMP, -1};
 

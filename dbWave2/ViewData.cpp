@@ -48,8 +48,8 @@ BEGIN_MESSAGE_MAP(CDataView, CDaoRecordView)
 	ON_COMMAND(ID_EDIT_COPY, &CDataView::OnEditCopy)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, &CDataView::OnUpdateEditCopy)
 	ON_COMMAND(ID_TOOLS_DATASERIES, &CDataView::OnToolsDataseries)
-	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CDataView::OnHardwareAdchannels)
-	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CDataView::OnHardwareAdintervals)
+	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CDataView::ADC_OnHardwareChannelsDlg)
+	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CDataView::ADC_OnHardwareIntervalsDlg)
 	ON_COMMAND(ID_FORMAT_CENTERCURVE, &CDataView::OnCenterCurve)
 	ON_COMMAND(ID_FORMAT_GAINADJUST, &CDataView::OnGainAdjustCurve)
 	ON_COMMAND(ID_FORMAT_SPLITCURVES, &CDataView::OnSplitCurves)
@@ -66,7 +66,7 @@ BEGIN_MESSAGE_MAP(CDataView, CDaoRecordView)
 	ON_UPDATE_COMMAND_UI(ID_TOOLS_VERTICALTAGS, &CDataView::OnUpdateToolsVerticaltags)
 	ON_WM_HSCROLL()
 	ON_WM_DESTROY()
-	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CDataView::OnHardwareDefineexperiment)
+	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CDataView::ADC_OnHardwareDefineexperiment)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &CDataView::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &CDataView::OnEnChangeTimelast)
 	ON_WM_SETFOCUS()
@@ -494,7 +494,7 @@ void CDataView::OnUpdateEditCopy(CCmdUI* pCmdUI)
 #include "ADInputParmsDlg.h"
 #include ".\viewdata.h"
 
-void CDataView::OnHardwareAdchannels()
+void CDataView::ADC_OnHardwareChannelsDlg()
 {
 	CADInputParmsDlg dlg;
 	
@@ -510,7 +510,7 @@ void CDataView::OnHardwareAdchannels()
 	}
 }
 
-void CDataView::OnHardwareAdintervals()
+void CDataView::ADC_OnHardwareIntervalsDlg()
 {
 	ADIntervalsDlg dlg;
 	// init dialog data	
@@ -1248,7 +1248,7 @@ void CDataView::SaveModifiedFile()
 	m_pdatDoc->SetModifiedFlag(FALSE);
 }
 
-void CDataView::OnHardwareDefineexperiment()
+void CDataView::ADC_OnHardwareDefineexperiment()
 {
 	CdbEditRecordDlg dlg;
 	dlg.m_pdbDoc = GetDocument();

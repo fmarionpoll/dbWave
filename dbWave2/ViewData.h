@@ -168,8 +168,8 @@ public:
 	afx_msg void OnEditCopy();
 	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI);
 	afx_msg void OnToolsDataseries();
-	afx_msg void OnHardwareAdchannels();
-	afx_msg void OnHardwareAdintervals();
+	afx_msg void ADC_OnHardwareChannelsDlg();
+	afx_msg void ADC_OnHardwareIntervalsDlg();
 	afx_msg void OnCenterCurve();
 	afx_msg void OnGainAdjustCurve();
 	afx_msg void OnSplitCurves();
@@ -186,7 +186,7 @@ public:
 	afx_msg void OnUpdateToolsVerticaltags(CCmdUI* pCmdUI);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnDestroy();
-	afx_msg void OnHardwareDefineexperiment();
+	afx_msg void ADC_OnHardwareDefineexperiment();
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();
 	afx_msg void OnCbnSelchangeCombochan();
