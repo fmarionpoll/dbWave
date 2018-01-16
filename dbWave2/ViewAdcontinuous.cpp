@@ -563,9 +563,9 @@ BOOL CADContView::DAC_InitSubSystem()
 		m_DACmsbit = (long)pow(2.0, (m_Acq32_DAC.GetResolution() - 1));
 		m_DAClRes  = (long) resolutionfactor - 1;
 
-		for (int i = 0; i <  m_pDAC_options->parmsChan.GetSize(); i++)
+		for (int i = 0; i <  m_pDAC_options->outputParmsArray.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
+			OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
 			if (pParms->bDigital)
 				continue;
 			pParms->ampUp = pParms->dAmplitudeMaxV *  resolutionfactor / (m_Acq32_DAC.GetMaxRange() - m_Acq32_DAC.GetMinRange());
@@ -591,19 +591,18 @@ int CADContView::DAC_GetNumberOfChans()
 	int ndigitalOutputs = 0;
 
 	// first pass: count number of channels requested
-	for (int i = 0; i < m_pDAC_options->parmsChan.GetSize(); i++)
+	for (int i = 0; i < m_pDAC_options->outputParmsArray.GetSize(); i++)
 	{
-		OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
+		OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
 		if (!pParms->bON)
 			continue;
-		if (!pParms->bDigital) 
-			nanalogOutputs++;
-		else 
+		if (pParms->bDigital)
 			ndigitalOutputs++;
+		else
+			nanalogOutputs++;
 	}
 	m_DACdigitalchannel = 0;
-	int nchans = nanalogOutputs;
-	nchans += (ndigitalOutputs > 0);
+	int nchans = nanalogOutputs + (ndigitalOutputs > 0);
 	return nchans;
 }
 
@@ -613,32 +612,32 @@ int CADContView::DAC_SetChannelList()
 	try
 	{
 		// number of D/A channels
-		int nchansmax = m_Acq32_DAC.GetSSCaps(OLSSC_NUMCHANNELS);
-		ASSERT(m_DAClistsize <= nchansmax);
+		int numChannels = m_Acq32_DAC.GetSSCaps(OLSSC_NUMCHANNELS);
+		ASSERT(m_DAClistsize <= numChannels);
 		m_Acq32_DAC.SetListSize(m_DAClistsize);
 		ASSERT(m_DAClistsize == m_Acq32_DAC.GetListSize());
 
-		int ndigitalOutputs = 0;
-		int nanalogOutputs = 0;
-		for (int i = 0; i < m_pDAC_options->parmsChan.GetSize(); i++)
+		int digitalOutput = 0;
+		int analogOutput = 0;
+		for (int i = 0; i < m_pDAC_options->outputParmsArray.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
+			OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
 			if (!pParms->bON)
 				continue;
 
-			if (!pParms->bDigital) {
-				m_Acq32_DAC.SetChannelList(nanalogOutputs, pParms->iChan);
-				nanalogOutputs++;
-			}
-			else {
-				ndigitalOutputs++;
+			if (pParms->bDigital) 
+				digitalOutput++;
+			else
+			{
+				m_Acq32_DAC.SetChannelList(analogOutput, pParms->iChan);
+				analogOutput++;
 			}
 		}
 
-		if (ndigitalOutputs)
+		if (digitalOutput > 0)
 		{
-			m_DACdigitalchannel = nanalogOutputs;
-			m_Acq32_DAC.SetChannelList(m_DACdigitalchannel, nchansmax - 1);
+			m_DACdigitalchannel = analogOutput;
+			m_Acq32_DAC.SetChannelList(m_DACdigitalchannel, numChannels - 1);
 		}
 	}
 	catch (COleDispatchException* e)
@@ -692,9 +691,9 @@ void CADContView::DAC_DeclareAndFillBuffers()
 	m_DAC_chbuflen		= chsweeplength / nbuffers;
 	m_DAC_buflen		= m_DAC_chbuflen * m_DAClistsize; 
 
-	for (int i = 0; i < m_pDAC_options->parmsChan.GetSize(); i++)
+	for (int i = 0; i < m_pDAC_options->outputParmsArray.GetSize(); i++)
 	{
-		OUTPUTPARMS* parmsChan = &(m_pDAC_options->parmsChan.GetAt(i));
+		OUTPUTPARMS* parmsChan = &(m_pDAC_options->outputParmsArray.GetAt(i));
 		parmsChan->lastphase = 0;
 		parmsChan->lastamp = 0;
 		parmsChan->bStart = TRUE;
@@ -935,6 +934,7 @@ void CADContView::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPU
 	WORD	ampLow = 0;
 	WORD	ampUp = 1;
 	ampUp = ampUp << parmsChan->iChan;
+	WORD	ampUpInverted = ~ampUp;
 	int		nchans = m_DAClistsize;
 
 	CIntervalsAndWordsSeries* pstim = &parmsChan->sti;
@@ -955,17 +955,14 @@ void CADContView::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPU
 			break;
 		wamp = pstim->GetIntervalPointAt(interval).w;
 	}
-	WORD wout = ampLow;
-	if (wamp > 0)
-		wout = ampUp;
 
 	// fill buffer
 	for (int i = chan; i < m_DAC_buflen; i += nchans, buffer_ii++)
 	{
-		if (m_DACdigitalfirst == 0)
-			*(pDTbuf + i) = wout;
+		if (wamp > 0)
+			*(pDTbuf + i) |= ampUp;
 		else
-			*(pDTbuf + i) |= wout;
+			*(pDTbuf + i) &= ampUpInverted;
 
 		if ((interval < pstim->GetSize()) && buffer_ii >= stim_end)
 		{
@@ -973,10 +970,6 @@ void CADContView::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPU
 			if (interval < pstim->GetSize())
 				stim_end = (long)(pstim->GetIntervalPointAt(interval).ii  * chFreqRatio);
 			wamp = pstim->GetIntervalPointAt(interval - 1).w;
-			if (wamp > 0)
-				wout = ampUp;
-			else
-				wout = ampLow;
 		}
 	}
 }
@@ -995,7 +988,8 @@ void CADContView::DAC_Dig_FillBufferWith_VAL(short* pDTbuf, int chan, OUTPUTPARM
 		for (int i = chan; i < m_DAC_buflen; i += nchans)
 			*(pDTbuf + i) = wout;
 	}
-	else {
+	else 
+	{
 		if (val > 0) {
 			int wout = w1;
 			for (int i = chan; i < m_DAC_buflen; i += nchans)
@@ -1014,24 +1008,18 @@ void CADContView::DAC_Dig_FillBufferWith_VAL(short* pDTbuf, int chan, OUTPUTPARM
 void CADContView::DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
 	double	phase = parmsChan->lastphase;
-	WORD	amp = 0;
 	WORD	ampUp = 1;
 	ampUp = ampUp << parmsChan->iChan;
-	WORD	ampLow = 0;
+	WORD ampUpInverted = ~ampUp;
 	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
 	int nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i += nchans)
 	{
 		if (phase < 0)
-			amp = ampUp;
+			*(pDTbuf + i) |= ampUp;
 		else
-			amp = ampLow;
-
-		if (m_DACdigitalfirst == 0)
-			*(pDTbuf + i) = amp;
-		else
-			*(pDTbuf + i) |= amp;
+			*(pDTbuf + i) &= ampUpInverted;
 
 		phase += Freq;
 		if (phase > 0.5)
@@ -1062,6 +1050,7 @@ void CADContView::DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPA
 				x = (double)(parmsChan->bit1 * ampUp + !parmsChan->bit1 * ampLow);
 			}
 		}
+		// TODO: check if ok (replace = with ~ and &)?
 		if (m_DACdigitalfirst == 0)
 			*(pDTbuf + i) = (WORD)x;
 		else
@@ -1074,9 +1063,11 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 {
 	int janalog = 0;
 	m_DACdigitalfirst = 0;
-	for (int i = 0; i <  m_pDAC_options->parmsChan.GetSize(); i++)
+	int nchans = m_pDAC_options->outputParmsArray.GetSize();
+	ASSERT(nchans == 10);
+	for (int i = 0; i <  nchans; i++)
 	{
-		OUTPUTPARMS* pParms = &m_pDAC_options->parmsChan.GetAt(i);
+		OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
 		if (!pParms->bON)
 			continue;
 
@@ -1126,8 +1117,8 @@ void CADContView::DAC_FillBuffer(short* pDTbuf)
 				DAC_Dig_FillBufferWith_VAL(pDTbuf, m_DACdigitalchannel, pParms, 1);
 				break;
 			case DA_ZERO:
-				DAC_Dig_FillBufferWith_VAL(pDTbuf, m_DACdigitalchannel, pParms, 0);
 			default:
+				DAC_Dig_FillBufferWith_VAL(pDTbuf, m_DACdigitalchannel, pParms, 0);
 				break;
 			}
 			m_DACdigitalfirst++;
@@ -2287,12 +2278,25 @@ void CADContView::SetCombostartoutput(int option)
 void CADContView::DAC_OnBnClickedParameters2()
 {
 	CDAChannelsDlg dlg;
-	dlg.m_outD = *m_pDAC_options;
+	int isize = m_pDAC_options->outputParmsArray.GetSize();
+	if (isize < 10)
+		m_pDAC_options->outputParmsArray.SetSize(10);
+	dlg.outputParmsArray.SetSize(10);
+	for (int i = 0; i < 10; i++)
+	{
+		dlg.outputParmsArray[i] = m_pDAC_options->outputParmsArray[i];
+	}
 	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat);
 	dlg.m_samplingRate = pWFormat->chrate;
-	if (dlg.DoModal() == IDOK)
+	
+	if (IDOK == dlg.DoModal())
 	{
-		*m_pDAC_options = dlg.m_outD;
+		for (int i = 0; i < 10; i++)
+		{
+			OUTPUTPARMS* pParms = &dlg.outputParmsArray[i];
+			m_pDAC_options->outputParmsArray[i] = dlg.outputParmsArray[i];
+			ATLTRACE2(_T("iwave(%i) = %i versus %i\n"), i, m_pDAC_options->outputParmsArray[i].iWaveform, dlg.outputParmsArray[i].iWaveform);
+		}
 		int nchans = DAC_GetNumberOfChans();
 		GetDlgItem(IDC_STARTSTOP2)->EnableWindow(nchans > 0);
 	}

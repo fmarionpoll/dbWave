@@ -26,20 +26,17 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_DA_CHANNELS };
-	OPTIONS_OUTPUTDATA	m_outD;
-	BOOL				m_bChannel2;
+	CArray <OUTPUTPARMS, OUTPUTPARMS> outputParmsArray;
 	CArray <CComboBox*, CComboBox*> m_pcombos;
+	BOOL m_bChannel2;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	void EditSequence(int isel, int channel);
-	void FillCombo(CComboBox* pCombo, int channel);
+	void FillCombo(int channel);
 	void SelectComboItem(CComboBox * pCombo, DWORD val);
-	void SetDigitalParmsToDlg(int channel);
-	void GetDigitalParmsFromDlg(int channel);
-
-	void OnBnClickedButtonsource(int ID, int channel);
-	void OnCbnSelchangeCombosource(int IDCOMBO, int IDBUTTON, int IDFREQ);
+	void OnBnClickedButtonsource(int channel);
+	void OnCbnSelchangeCombosource(int IDCOMBO, int IDBUTTON, int IDFREQ, int IDAMPLITUDE1=0, int IDAMPLITUDELOW=0);
 
 	static CString	comboText[];
 	static DWORD	comboVal[];
@@ -62,11 +59,9 @@ public:
 	afx_msg void OnCbnSelchangeCombosource1();
 	afx_msg void OnCbnSelchangeCombosource2();
 
-	afx_msg void OnBnClickedButtonsource0();
+	afx_msg	void OnBnClickedButtonsource0();
 	afx_msg void OnBnClickedButtonsource1();
 	afx_msg void OnBnClickedButtonsource2();
-	// TODO
-	//afx_msg void OnCbnSelchangeCombochandigital();
 	afx_msg void OnBnClickedButtonsource3();
 	afx_msg void OnBnClickedButtonsource4();
 	afx_msg void OnBnClickedButtonsource5();

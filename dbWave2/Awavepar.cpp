@@ -1457,7 +1457,7 @@ OPTIONS_OUTPUTDATA::OPTIONS_OUTPUTDATA()
 	iDAnbuffers				=10;
 	iDATriggermode			=0;
 	dDAFrequency_perchan	=1000.;
-	parmsChan.SetSize(10);
+	outputParmsArray.SetSize(10);
 }
 
 OPTIONS_OUTPUTDATA::~OPTIONS_OUTPUTDATA()
@@ -1474,11 +1474,11 @@ void OPTIONS_OUTPUTDATA::operator = (const OPTIONS_OUTPUTDATA& arg)
 	iDAnbuffers				=arg.iDAnbuffers;
 	iDATriggermode			=arg.iDATriggermode;
 	dDAFrequency_perchan	=arg.dDAFrequency_perchan;
-	int nchannels			=arg.parmsChan.GetSize();
-	parmsChan.SetSize(nchannels);
+	int nchannels			=arg.outputParmsArray.GetSize();
+	outputParmsArray.SetSize(nchannels);
 
 	for (int i = 0; i < nchannels; i++) {
-		parmsChan.GetAt(i) = arg.parmsChan.GetAt(i);
+		outputParmsArray[i] = arg.outputParmsArray[i];
 	}
 }
 
@@ -1503,11 +1503,11 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 		ar << (WORD) 1;			// double
 		ar << dDAFrequency_perchan;
 
-		int nchannels = parmsChan.GetSize(); // OUTPUT_PARMS
+		int nchannels = outputParmsArray.GetSize(); // OUTPUT_PARMS
 		ar << (WORD) nchannels;	
 		for (int i = 0; i < nchannels; i++) 
 		{
-			parmsChan.GetAt(i).Serialize(ar);
+			outputParmsArray.GetAt(i).Serialize(ar);
 		}
 		ar << (WORD) 0;			// no more ...
 	} 
@@ -1542,10 +1542,10 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 
 		// output_parms
 		ar >> wn; n = wn;
-		if (n > parmsChan.GetSize())
-			parmsChan.SetSize(n);
+		if (n > outputParmsArray.GetSize())
+			outputParmsArray.SetSize(n);
 		for (int i = 0; i < n; i++) {
-			parmsChan.GetAt(i).Serialize(ar);
+			outputParmsArray.GetAt(i).Serialize(ar);
 		}
 
 		// other?
@@ -1586,25 +1586,25 @@ OUTPUTPARMS::OUTPUTPARMS()
 
 OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
 {
-	bON = arg.bON;
-	bDigital = arg.bDigital;
+	bON				= arg.bON;
+	bDigital		= arg.bDigital;
 	noise_bExternal = arg.noise_bExternal;
-	iChan = arg.iChan;
-	iWaveform = arg.iWaveform;
-	mseq_iRatio = arg.mseq_iRatio;
-	mseq_iDelay = arg.mseq_iDelay;
-	mseq_iSeed = arg.mseq_iSeed;
-	noise_iDelay = arg.noise_iDelay;
-	dAmplitudeMaxV = arg.dAmplitudeMaxV;
-	dAmplitudeMinV = arg.dAmplitudeMinV;
-	dFrequency = arg.dFrequency;
-	noise_dAmplitV = arg.noise_dAmplitV;
-	noise_dFactor = arg.noise_dFactor;
-	noise_dOffsetV = arg.noise_dOffsetV;
-	value = arg.value;
-	num = arg.num;
-	bit33 = arg.bit33;
-	count = arg.count;
+	iChan			= arg.iChan;
+	iWaveform		= arg.iWaveform;
+	mseq_iRatio		= arg.mseq_iRatio;
+	mseq_iDelay		= arg.mseq_iDelay;
+	mseq_iSeed		= arg.mseq_iSeed;
+	noise_iDelay	= arg.noise_iDelay;
+	dAmplitudeMaxV	= arg.dAmplitudeMaxV;
+	dAmplitudeMinV	= arg.dAmplitudeMinV;
+	dFrequency		= arg.dFrequency;
+	noise_dAmplitV	= arg.noise_dAmplitV;
+	noise_dFactor	= arg.noise_dFactor;
+	noise_dOffsetV	= arg.noise_dOffsetV;
+	value			= arg.value;
+	num				= arg.num;
+	bit33			= arg.bit33;
+	count			= arg.count;
 }
 
 OUTPUTPARMS::~OUTPUTPARMS()
@@ -1632,7 +1632,7 @@ void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 	noise_dAmplitV	=arg.noise_dAmplitV;	
 	noise_dFactor	=arg.noise_dFactor;
 	noise_dOffsetV	=arg.noise_dOffsetV;	
-	stimulussequence = arg.stimulussequence;
+	stimulussequence= arg.stimulussequence;
 	value			= arg.value;
 	sti				= arg.sti;
 }

@@ -464,7 +464,7 @@ public:
 	BOOL	bPresetWave;							// 0=preset, 1=from file
 	CString	csOutputFile;							// output file
 
-	CArray <OUTPUTPARMS, OUTPUTPARMS> parmsChan;
+	CArray <OUTPUTPARMS, OUTPUTPARMS> outputParmsArray;
 
 	double	dDAFrequency_perchan;					// output frequency (per chan)
 	int		iDATriggermode;							// 0=synchronous; 1=soft on start; 2=external trigger
