@@ -934,7 +934,6 @@ void CADContView::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPU
 	WORD	ampLow = 0;
 	WORD	ampUp = 1;
 	ampUp = ampUp << parmsChan->iChan;
-	WORD	ampUpInverted = ~ampUp;
 	int		nchans = m_DAClistsize;
 
 	CIntervalsAndWordsSeries* pstim = &parmsChan->sti;
@@ -955,14 +954,17 @@ void CADContView::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPU
 			break;
 		wamp = pstim->GetIntervalPointAt(interval).w;
 	}
+	WORD wout = ampLow;
+	if (wamp > 0)
+		wout = ampUp;
 
 	// fill buffer
 	for (int i = chan; i < m_DAC_buflen; i += nchans, buffer_ii++)
 	{
-		if (wamp > 0)
-			*(pDTbuf + i) |= ampUp;
+		if (m_DACdigitalfirst == 0)
+			*(pDTbuf + i) = wout;
 		else
-			*(pDTbuf + i) &= ampUpInverted;
+			*(pDTbuf + i) |= wout;
 
 		if ((interval < pstim->GetSize()) && buffer_ii >= stim_end)
 		{
@@ -970,6 +972,10 @@ void CADContView::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPU
 			if (interval < pstim->GetSize())
 				stim_end = (long)(pstim->GetIntervalPointAt(interval).ii  * chFreqRatio);
 			wamp = pstim->GetIntervalPointAt(interval - 1).w;
+			if (wamp > 0)
+				wout = ampUp;
+			else
+				wout = ampLow;
 		}
 	}
 }
@@ -988,8 +994,7 @@ void CADContView::DAC_Dig_FillBufferWith_VAL(short* pDTbuf, int chan, OUTPUTPARM
 		for (int i = chan; i < m_DAC_buflen; i += nchans)
 			*(pDTbuf + i) = wout;
 	}
-	else 
-	{
+	else {
 		if (val > 0) {
 			int wout = w1;
 			for (int i = chan; i < m_DAC_buflen; i += nchans)
@@ -1008,18 +1013,24 @@ void CADContView::DAC_Dig_FillBufferWith_VAL(short* pDTbuf, int chan, OUTPUTPARM
 void CADContView::DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
 	double	phase = parmsChan->lastphase;
+	WORD	amp = 0;
 	WORD	ampUp = 1;
 	ampUp = ampUp << parmsChan->iChan;
-	WORD ampUpInverted = ~ampUp;
+	WORD	ampLow = 0;
 	double	Freq = parmsChan->dFrequency / m_DAC_frequency;
 	int nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i += nchans)
 	{
 		if (phase < 0)
-			*(pDTbuf + i) |= ampUp;
+			amp = ampUp;
 		else
-			*(pDTbuf + i) &= ampUpInverted;
+			amp = ampLow;
+
+		if (m_DACdigitalfirst == 0)
+			*(pDTbuf + i) = amp;
+		else
+			*(pDTbuf + i) |= amp;
 
 		phase += Freq;
 		if (phase > 0.5)
@@ -1050,7 +1061,6 @@ void CADContView::DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPA
 				x = (double)(parmsChan->bit1 * ampUp + !parmsChan->bit1 * ampLow);
 			}
 		}
-		// TODO: check if ok (replace = with ~ and &)?
 		if (m_DACdigitalfirst == 0)
 			*(pDTbuf + i) = (WORD)x;
 		else
@@ -2283,20 +2293,14 @@ void CADContView::DAC_OnBnClickedParameters2()
 		m_pDAC_options->outputParmsArray.SetSize(10);
 	dlg.outputParmsArray.SetSize(10);
 	for (int i = 0; i < 10; i++)
-	{
 		dlg.outputParmsArray[i] = m_pDAC_options->outputParmsArray[i];
-	}
 	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat);
 	dlg.m_samplingRate = pWFormat->chrate;
 	
 	if (IDOK == dlg.DoModal())
 	{
 		for (int i = 0; i < 10; i++)
-		{
-			OUTPUTPARMS* pParms = &dlg.outputParmsArray[i];
 			m_pDAC_options->outputParmsArray[i] = dlg.outputParmsArray[i];
-			ATLTRACE2(_T("iwave(%i) = %i versus %i\n"), i, m_pDAC_options->outputParmsArray[i].iWaveform, dlg.outputParmsArray[i].iWaveform);
-		}
 		int nchans = DAC_GetNumberOfChans();
 		GetDlgItem(IDC_STARTSTOP2)->EnableWindow(nchans > 0);
 	}

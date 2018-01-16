@@ -136,7 +136,7 @@ protected:
 	BOOL DAC_ClearAllOutputs();
 	int	 DAC_SetChannelList();
 	BOOL DAC_InitSubSystem();
-	int DAC_GetNumberOfChans();
+	int  DAC_GetNumberOfChans();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
 	void DAC_FillBufferWith_SINUSOID(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
