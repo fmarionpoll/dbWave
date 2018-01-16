@@ -452,7 +452,9 @@
 #define IDC_COMBO_CONCENTRATION         1012
 #define IDD_STATICLEFT2                 1012
 #define IDC_STATICLEFT2                 1012
+#define IDC_STATIC15                    1012
 #define IDC_COMBO_INSECTNAME            1013
+#define IDC_STATIC16                    1013
 #define IDC_COMBO1                      1014
 #define IDC_COMBO_LOCATION              1014
 #define IDC_COMBO_SENSILLUMNAME         1015

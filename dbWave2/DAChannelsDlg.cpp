@@ -18,14 +18,7 @@ IMPLEMENT_DYNAMIC(CDAChannelsDlg, CDialogEx)
 
 CDAChannelsDlg::CDAChannelsDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CDAChannelsDlg::IDD, pParent)
-	, m_bChannel0(FALSE)
-	, m_bChannel1(FALSE)
 	, m_bChannel2(FALSE)
-	, m_famplitude0(0)
-	, m_ffrequence0(0)
-	, m_famplitude1(0)
-	, m_ffrequence1(0)
-	, m_ffrequence2(0)
 {
 
 }
@@ -37,37 +30,54 @@ CDAChannelsDlg::~CDAChannelsDlg()
 void CDAChannelsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Check(pDX, IDC_CHECKCHAN0, m_bChannel0);
-	DDX_Check(pDX, IDC_CHECKCHAN1, m_bChannel1);
+
+	DDX_Check(pDX, IDC_CHECKCHAN0, m_outD.parmsChan[0].bON);
+	DDX_Check(pDX, IDC_CHECKCHAN1, m_outD.parmsChan[1].bON);
 	DDX_Check(pDX, IDC_CHECKDIGITAL, m_bChannel2);
-	DDX_Text(pDX, IDC_EDITAMPLITUDE0, m_famplitude0);
-	DDX_Text(pDX, IDC_EDITAMPLITUDELOW0, m_famplitudelow0);
-	DDX_Text(pDX, IDC_EDITFREQ0, m_ffrequence0);
-	DDX_Text(pDX, IDC_EDITAMPLITUDE1, m_famplitude1);
-	DDX_Text(pDX, IDC_EDITAMPLITUDELOW1, m_famplitudelow1);
-	DDX_Text(pDX, IDC_EDITFREQ1, m_ffrequence1);
-	DDX_Text(pDX, IDC_EDITFREQ2, m_ffrequence2);
+
+	DDX_Text(pDX, IDC_EDITAMPLITUDE0, m_outD.parmsChan[0].dAmplitudeMaxV);
+	DDX_Text(pDX, IDC_EDITAMPLITUDELOW0, m_outD.parmsChan[0].dAmplitudeMinV);
+	DDX_Text(pDX, IDC_EDITAMPLITUDE1, m_outD.parmsChan[1].dAmplitudeMaxV);
+	DDX_Text(pDX, IDC_EDITAMPLITUDELOW1, m_outD.parmsChan[1].dAmplitudeMinV);
+
+	DDX_Text(pDX, IDC_EDITFREQ0, m_outD.parmsChan[0].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ1, m_outD.parmsChan[1].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ2, m_outD.parmsChan[2].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ3, m_outD.parmsChan[3].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ4, m_outD.parmsChan[4].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ5, m_outD.parmsChan[5].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ6, m_outD.parmsChan[6].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ7, m_outD.parmsChan[7].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ8, m_outD.parmsChan[8].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ9, m_outD.parmsChan[9].dFrequency);
+
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE0, m_outD.parmsChan[0].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE1, m_outD.parmsChan[1].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE2, m_outD.parmsChan[2].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE3, m_outD.parmsChan[3].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE4, m_outD.parmsChan[4].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE5, m_outD.parmsChan[5].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE6, m_outD.parmsChan[6].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE7, m_outD.parmsChan[7].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE8, m_outD.parmsChan[8].iWaveform);
+	DDX_CBIndex(pDX, IDC_COMBOSOURCE9, m_outD.parmsChan[9].iWaveform);
+
+	DDX_Control(pDX, IDC_COMBOSOURCE0, *m_pcombos[0]);
+	DDX_Control(pDX, IDC_COMBOSOURCE1, *m_pcombos[1]);
+	DDX_Control(pDX, IDC_COMBOSOURCE2, *m_pcombos[2]);
+	DDX_Control(pDX, IDC_COMBOSOURCE3, *m_pcombos[3]);
+	DDX_Control(pDX, IDC_COMBOSOURCE4, *m_pcombos[4]);
+	DDX_Control(pDX, IDC_COMBOSOURCE5, *m_pcombos[5]);
+	DDX_Control(pDX, IDC_COMBOSOURCE6, *m_pcombos[6]);
+	DDX_Control(pDX, IDC_COMBOSOURCE7, *m_pcombos[7]);
+	DDX_Control(pDX, IDC_COMBOSOURCE8, *m_pcombos[8]);
+	DDX_Control(pDX, IDC_COMBOSOURCE9, *m_pcombos[9]);
 }
 
 BEGIN_MESSAGE_MAP(CDAChannelsDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE0, &CDAChannelsDlg::OnCbnSelchangeCombosource0)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE1, &CDAChannelsDlg::OnCbnSelchangeCombosource1)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE2, &CDAChannelsDlg::OnCbnSelchangeCombosource2)
-	ON_BN_CLICKED(IDOK, &CDAChannelsDlg::OnBnClickedOk)
-	ON_BN_CLICKED(IDC_CHECKCHAN0, &CDAChannelsDlg::OnBnClickedCheckchan0)
-	ON_BN_CLICKED(IDC_CHECKCHAN1, &CDAChannelsDlg::OnBnClickedCheckchan1)
-	ON_BN_CLICKED(IDC_CHECKDIGITAL, &CDAChannelsDlg::OnBnClickedCheckchan2)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE0, &CDAChannelsDlg::OnBnClickedButtonsource0)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE1, &CDAChannelsDlg::OnBnClickedButtonsource1)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE2, &CDAChannelsDlg::OnBnClickedButtonsource2)
-	//ON_CBN_SELCHANGE(IDC_COMBOCHANDIGITAL, &CDAChannelsDlg::OnCbnSelchangeCombochandigital)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE3, &CDAChannelsDlg::OnBnClickedButtonsource3)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE4, &CDAChannelsDlg::OnBnClickedButtonsource4)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE5, &CDAChannelsDlg::OnBnClickedButtonsource5)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE6, &CDAChannelsDlg::OnBnClickedButtonsource6)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE7, &CDAChannelsDlg::OnBnClickedButtonsource7)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE8, &CDAChannelsDlg::OnBnClickedButtonsource8)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE9, &CDAChannelsDlg::OnBnClickedButtonsource9)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE3, &CDAChannelsDlg::OnCbnSelchangeCombosource3)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE4, &CDAChannelsDlg::OnCbnSelchangeCombosource4)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE5, &CDAChannelsDlg::OnCbnSelchangeCombosource5)
@@ -75,13 +85,30 @@ BEGIN_MESSAGE_MAP(CDAChannelsDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE7, &CDAChannelsDlg::OnCbnSelchangeCombosource7)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE8, &CDAChannelsDlg::OnCbnSelchangeCombosource8)
 	ON_CBN_SELCHANGE(IDC_COMBOSOURCE9, &CDAChannelsDlg::OnCbnSelchangeCombosource9)
+
+	ON_BN_CLICKED(IDC_CHECKCHAN0, &CDAChannelsDlg::OnBnClickedCheckchan0)
+	ON_BN_CLICKED(IDC_CHECKCHAN1, &CDAChannelsDlg::OnBnClickedCheckchan1)
+	ON_BN_CLICKED(IDC_CHECKDIGITAL, &CDAChannelsDlg::OnBnClickedCheckchan2)
+
+	ON_BN_CLICKED(IDC_BUTTONSOURCE0, &CDAChannelsDlg::OnBnClickedButtonsource0)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE1, &CDAChannelsDlg::OnBnClickedButtonsource1)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE2, &CDAChannelsDlg::OnBnClickedButtonsource2)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE3, &CDAChannelsDlg::OnBnClickedButtonsource3)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE4, &CDAChannelsDlg::OnBnClickedButtonsource4)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE5, &CDAChannelsDlg::OnBnClickedButtonsource5)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE6, &CDAChannelsDlg::OnBnClickedButtonsource6)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE7, &CDAChannelsDlg::OnBnClickedButtonsource7)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE8, &CDAChannelsDlg::OnBnClickedButtonsource8)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE9, &CDAChannelsDlg::OnBnClickedButtonsource9)
+
+	ON_BN_CLICKED(IDOK, &CDAChannelsDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 // CDAChannelsDlg message handlers
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 {
-	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0));
+	CComboBox* pCombo = m_pcombos[0];
 	pCombo->EnableWindow(TRUE);
 	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
 	BOOL	bEnable = TRUE;
@@ -166,43 +193,29 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 void CDAChannelsDlg::OnBnClickedOk()
 {
 	UpdateData(TRUE);
-	
+
 	int isize = m_outD.parmsChan.GetSize();
 	if (isize < 10)
 		m_outD.parmsChan.SetSize(10);
 
 	int channel = 0;
-	CComboBox* pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE0));
 	OUTPUTPARMS* pParms = &m_outD.parmsChan.GetAt(channel);
-	pParms->iChan			= channel;
-	pParms->bON				= m_bChannel0;
-	pParms->bDigital		= FALSE;
-	pParms->iWaveform		= pCombo->GetItemData(pCombo->GetCurSel());
-	pParms->dAmplitudeMaxV	= m_famplitude0;
-	pParms->dAmplitudeMinV	= m_famplitudelow0;
-	pParms->dFrequency		= m_ffrequence0;
-	
+	pParms->iChan = channel;
+	pParms->bDigital = FALSE;
+	pParms->iWaveform = m_pcombos[channel]->GetItemData(m_pcombos[channel]->GetCurSel());
+
 	channel = 1;
 	pParms = &m_outD.parmsChan.GetAt(channel);
-	pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE1));
-	pParms->iChan			= channel;
-	pParms->bON				= m_bChannel1;
-	pParms->bDigital		= FALSE;
-	pParms->iWaveform		= pCombo->GetItemData(pCombo->GetCurSel());
-	pParms->dAmplitudeMaxV	= m_famplitude1;
-	pParms->dAmplitudeMinV	= m_famplitudelow1;
-	pParms->dFrequency		= m_ffrequence1;
-	
-	// TODO
-	//CComboBox* pCombo2 = ((CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL));
-	//channel = pCombo2->GetCurSel() + 2;
-	pParms = &m_outD.parmsChan.GetAt(channel);
-	pCombo = ((CComboBox*)GetDlgItem(IDC_COMBOSOURCE2));
-	pParms->bDigital		= TRUE;
-	pParms->iChan			= channel-2;
-	pParms->bON				= m_bChannel2;
-	pParms->dFrequency		= m_ffrequence2;
-	pParms->iWaveform		= pCombo->GetItemData(pCombo->GetCurSel());
+	pParms->iChan = channel;
+	pParms->bDigital = FALSE;
+	pParms->iWaveform = m_pcombos[channel]->GetItemData(m_pcombos[channel]->GetCurSel());
+
+	for (channel = 2; channel < 10; channel++)
+	{
+		pParms->bDigital = TRUE;
+		pParms->iChan = channel - 2;
+		pParms->bON = m_bChannel2;
+	}
 
 	CDialogEx::OnOK();
 }
@@ -262,57 +275,30 @@ BOOL CDAChannelsDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	int isize = m_outD.parmsChan.GetSize();
-	CComboBox* pCombo = NULL;
+	if (m_outD.parmsChan.GetSize() < 10)
+		m_outD.parmsChan.SetSize(10);
 
-	pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE0);
-	FillCombo(pCombo, 0);
-	if (isize > 0) 
-	{
-		m_bChannel0 = m_outD.parmsChan.GetAt(0).bON;
-		m_waveformChannel0 = m_outD.parmsChan.GetAt(0).iWaveform;
-		m_famplitude0 = m_outD.parmsChan.GetAt(0).dAmplitudeMaxV;
-		m_famplitudelow0 = m_outD.parmsChan.GetAt(0).dAmplitudeMinV;
-		m_ffrequence0 = m_outD.parmsChan.GetAt(0).dFrequency;
-	}
-	SelectComboItem(pCombo, m_waveformChannel0);
-	OnCbnSelchangeCombosource0();
+	m_pcombos.SetSize(10);
+	m_pcombos[0] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE0);
+	m_pcombos[1] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE1);
+	m_pcombos[2] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE2);
+	m_pcombos[3] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE3);
+	m_pcombos[4] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE4);
+	m_pcombos[5] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE5);
+	m_pcombos[6] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE6);
+	m_pcombos[7] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE7);
+	m_pcombos[8] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE8);
+	m_pcombos[9] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE9);
+
+	for (int i= 0; i < 10; i++) 
+		FillCombo(m_pcombos[i], i);
 	
-	pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE1);
-	FillCombo(pCombo, 1);
-	if (isize > 1) 
-	{
-		m_bChannel1 = m_outD.parmsChan.GetAt(1).bON;
-		m_waveformChannel1 = m_outD.parmsChan.GetAt(1).iWaveform;
-		m_famplitude1 = m_outD.parmsChan.GetAt(1).dAmplitudeMaxV;
-		m_famplitudelow1 = m_outD.parmsChan.GetAt(1).dAmplitudeMinV;
-		m_ffrequence1 = m_outD.parmsChan.GetAt(1).dFrequency;
+	for (int i = 2; i < 10; i++) {
+		if (m_outD.parmsChan.GetAt(i).bON) {
+			m_bChannel2 = TRUE;
+			break;
+		}
 	}
-	SelectComboItem(pCombo, m_waveformChannel1);
-	OnCbnSelchangeCombosource1();
-
-	pCombo = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE2);
-	FillCombo(pCombo, 2);
-	if (isize > 2) 
-	{
-		m_bChannel2 = m_outD.parmsChan.GetAt(2).bON;
-		m_waveformChannel2 = m_outD.parmsChan.GetAt(2).iWaveform;
-		m_ffrequence2 = m_outD.parmsChan.GetAt(2).dFrequency;
-	}
-	SelectComboItem(pCombo, m_waveformChannel2);
-	OnCbnSelchangeCombosource2();
-
-	// TODO
-	//pCombo = (CComboBox*)GetDlgItem(IDC_COMBOCHANDIGITAL);
-	//for (int i = 0; i < 8; i++)
-	//{
-	//	CString cs;
-	//	cs.Format(_T("channel %i"), i);
-	//	pCombo->AddString(cs);
-	//}
-	//m_iseldigital = 0;
-	//pCombo->SetCurSel(m_iseldigital);
-
 	UpdateData(FALSE);
 	return TRUE;  
 }
@@ -320,39 +306,52 @@ BOOL CDAChannelsDlg::OnInitDialog()
 void CDAChannelsDlg::OnBnClickedCheckchan0()
 {
 	UpdateData(TRUE);
-	GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(m_bChannel0);
-	GetDlgItem(IDC_STATIC00)->EnableWindow(m_bChannel0);
-	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(m_bChannel0);
-	GetDlgItem(IDC_EDITAMPLITUDELOW0)->EnableWindow(m_bChannel0);
-	GetDlgItem(IDC_STATIC01)->EnableWindow(m_bChannel0);
-	GetDlgItem(IDC_EDITFREQ0)->EnableWindow(m_bChannel0);
-	GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(m_bChannel0);
-	if (m_bChannel0) 
+	BOOL bchan = m_outD.parmsChan[0].bON;
+	GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(bchan);
+	GetDlgItem(IDC_STATIC00)->EnableWindow(bchan);
+	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(bchan);
+	GetDlgItem(IDC_EDITAMPLITUDELOW0)->EnableWindow(bchan);
+	GetDlgItem(IDC_EDITFREQ0)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE0)->EnableWindow(bchan);
+	if (bchan) 
 		OnCbnSelchangeCombosource0();
 }
 
 void CDAChannelsDlg::OnBnClickedCheckchan1()
 {
 	UpdateData(TRUE);
-	GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(m_bChannel1);
-	GetDlgItem(IDC_STATIC10)->EnableWindow(m_bChannel1);
-	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(m_bChannel1);
-	GetDlgItem(IDC_EDITAMPLITUDELOW1)->EnableWindow(m_bChannel1);
-	GetDlgItem(IDC_STATIC11)->EnableWindow(m_bChannel1);
-	GetDlgItem(IDC_EDITFREQ1)->EnableWindow(m_bChannel1);
-	GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(m_bChannel1);
-	if (m_bChannel1)
+	BOOL bchan = m_outD.parmsChan[1].bON;
+	GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(bchan);
+	GetDlgItem(IDC_STATIC10)->EnableWindow(bchan);
+	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(bchan);
+	GetDlgItem(IDC_EDITAMPLITUDELOW1)->EnableWindow(bchan);
+	GetDlgItem(IDC_EDITFREQ1)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE1)->EnableWindow(bchan);
+	if (bchan)
 		OnCbnSelchangeCombosource1();
 }
 
 void CDAChannelsDlg::OnBnClickedCheckchan2()
 {
 	UpdateData(TRUE);
-	GetDlgItem(IDC_COMBOSOURCE2)->EnableWindow(m_bChannel2);
-	GetDlgItem(IDC_BUTTONSOURCE2)->EnableWindow(m_bChannel2);
-	// TODO
-	//GetDlgItem(IDC_COMBOCHANDIGITAL)->EnableWindow(m_bChannel2);
-	if (m_bChannel2)
+	BOOL bchan = m_bChannel2;
+	GetDlgItem(IDC_COMBOSOURCE2)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE2)->EnableWindow(bchan);
+	GetDlgItem(IDC_COMBOSOURCE3)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE3)->EnableWindow(bchan);
+	GetDlgItem(IDC_COMBOSOURCE4)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE4)->EnableWindow(bchan);
+	GetDlgItem(IDC_COMBOSOURCE5)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE5)->EnableWindow(bchan);
+	GetDlgItem(IDC_COMBOSOURCE6)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE6)->EnableWindow(bchan);
+	GetDlgItem(IDC_COMBOSOURCE7)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE7)->EnableWindow(bchan);
+	GetDlgItem(IDC_COMBOSOURCE8)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE8)->EnableWindow(bchan);
+	GetDlgItem(IDC_COMBOSOURCE9)->EnableWindow(bchan);
+	GetDlgItem(IDC_BUTTONSOURCE9)->EnableWindow(bchan);
+	if (bchan)
 		OnCbnSelchangeCombosource2();
 }
 
@@ -566,3 +565,4 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource9()
 {
 	OnCbnSelchangeCombosource(IDC_COMBOSOURCE9, IDC_BUTTONSOURCE9, IDC_EDITFREQ9);
 }
+

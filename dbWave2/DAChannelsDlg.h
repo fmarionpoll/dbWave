@@ -1,4 +1,5 @@
 #pragma once
+#include "afxwin.h"
 
 // CDAChannelsDlg dialog
 
@@ -26,19 +27,8 @@ public:
 // Dialog Data
 	enum { IDD = IDD_DA_CHANNELS };
 	OPTIONS_OUTPUTDATA	m_outD;
-	BOOL	m_bChannel0;
-	BOOL	m_bChannel1;
-	BOOL	m_bChannel2;
-	double	m_famplitude0;
-	double	m_famplitude1;
-	double	m_famplitudelow0;
-	double	m_famplitudelow1;
-	int		m_waveformChannel0;
-	int		m_waveformChannel1;
-	int		m_waveformChannel2;
-	double	m_ffrequence0;
-	double	m_ffrequence1;
-	double	m_ffrequence2;
+	BOOL				m_bChannel2;
+	CArray <CComboBox*, CComboBox*> m_pcombos;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
