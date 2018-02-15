@@ -2581,7 +2581,7 @@ CString CSpikeDetectionView::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 				CWaveChanArray* pchanArray = GetDocument()->m_pDat->GetpWavechanArray();
 				CWaveChan* pChan = pchanArray->GetWaveChan(channb);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"), 
-					(LPCTSTR) pChan->am_csheadstage, (long) (pChan->am_totalgain), pChan->am_lowpass, (LPCTSTR) pChan->am_csInputpos, (LPCTSTR) pChan->am_csInputneg);
+					(LPCTSTR) pChan->am_csheadstage, (long) (pChan->am_gaintotal), pChan->am_lowpass, (LPCTSTR) pChan->am_csInputpos, (LPCTSTR) pChan->am_csInputneg);
 				strComment += cs;
 				strComment += RC;
 			}

@@ -626,21 +626,21 @@ BOOL CWaveBuf::GetWBVoltsperBin(int chIndex, float* VoltsperBin, int mode)
 
 	if (m_chanArray[chIndex].am_resolutionV == 0)
 	{
-		if (m_chanArray[chIndex].am_totalgain == 0.)
+		if (m_chanArray[chIndex].am_gaintotal == 0.)
 		{
-			m_chanArray[chIndex].am_totalgain = 
-				m_chanArray[chIndex].am_gainfract 
+			m_chanArray[chIndex].am_gaintotal = 
+				m_chanArray[chIndex].am_gainamplifier 
 				* (float) m_chanArray[chIndex].am_gainpre 
 				* (float) m_chanArray[chIndex].am_gainpost 
 				* (float)m_chanArray[chIndex].am_gainheadstage 
-				* (float) m_chanArray[chIndex].am_adgain;
+				* (float) m_chanArray[chIndex].am_gainAD;
 		}
 		
 		long binspan = m_waveFormat.binspan;
 		float fullscale_Volts = m_waveFormat.fullscale_Volts;
 		m_chanArray[chIndex].am_resolutionV = 
 					m_waveFormat.fullscale_Volts 
-					/(float)m_chanArray[chIndex].am_totalgain
+					/(float)m_chanArray[chIndex].am_gaintotal
 					/(float)m_waveFormat.binspan;
 		double am_resolutionV = m_chanArray[chIndex].am_resolutionV;
 	}

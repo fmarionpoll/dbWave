@@ -162,16 +162,16 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 		pArray->ChannelAdd();
 		CWaveChan* pChan = (CWaveChan*) pArray->GetWaveChan(i);
 		pChan->am_adchannel = *pchanlist; pchanlist++;	// acq chan
-		pChan->am_adgain = *pgainlist; pgainlist++;		// gain on the A/D card
+		pChan->am_gainAD = *pgainlist; pgainlist++;		// gain on the A/D card
 		short j = (short) strlen(pcomtlist);
 		if (j > 40 || j <0)
 			j = 40;
 		pChan->am_csComment = CStringA(pcomtlist, j);			// chan comment
-		pChan->am_gainfract = *pxgainlist;				// total gain (ampli + A/D card)
-		pChan->am_totalgain = pChan->am_gainfract *((float)pChan->am_adgain);
+		pChan->am_gainamplifier = *pxgainlist;				// total gain (ampli + A/D card)
+		pChan->am_gaintotal = pChan->am_gainamplifier *((float)pChan->am_gainAD);
 		// TODO: check if resolution is computed correctly
-		//pChan->am_resolutionV = 20. / (double) (pWFormat->binspan)  / pChan->am_totalgain;
-		pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_totalgain / pWFormat->binspan;
+		//pChan->am_resolutionV = 20. / (double) (pWFormat->binspan)  / pChan->am_gaintotal;
+		pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_gaintotal / pWFormat->binspan;
 		pgainlist++;		
 	}
 
@@ -284,8 +284,8 @@ void CDataFileATLAB::LoadChanFromCyber(short i, char* pcyberchan)
 	pChan->am_offset	= pcyb->offset;		// input offset
 	pChan->am_csInputpos= GetCyberA320filter(pcyb->inputpos);
 	pChan->am_csInputneg= GetCyberA320filter(pcyb->inputneg);
-	pChan->am_gainfract = 1.;
-	pChan->am_totalgain = (float) pcyb->gainpre * (float) pcyb->gainpost * (float) pcyb->gainprobe * (float) pChan->am_adgain;
+	pChan->am_gainamplifier = 1.;
+	pChan->am_gaintotal = (float) pcyb->gainpre * (float) pcyb->gainpost * (float) pcyb->gainprobe * (float) pChan->am_gainAD;
 }
 
 

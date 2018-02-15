@@ -110,7 +110,7 @@ void CDAChannelsDlg::OnBnClickedOk()
 	for (int ichannel = 2; ichannel < 10; ichannel++)
 	{
 		outputParmsArray[ichannel].bDigital = TRUE;
-		outputParmsArray[ichannel].iChan = channel - 2;
+		outputParmsArray[ichannel].iChan = ichannel - 2;
 		outputParmsArray[ichannel].bON = m_bChannel2;
 		outputParmsArray[ichannel].iWaveform = m_pcombos[ichannel]->GetItemData(m_pcombos[ichannel]->GetCurSel());
 	}
@@ -157,8 +157,10 @@ void CDAChannelsDlg::FillCombo( int channel)
 	}
 }
 
-void CDAChannelsDlg::SelectComboItem(CComboBox* pCombo, DWORD val)
+void CDAChannelsDlg::SelectComboItemFromOutputParm(int ival)
 {
+	CComboBox* pCombo = m_pcombos[ival];
+	DWORD val = outputParmsArray[ival].iWaveform;
 	int isel = 0;
 	for (isel; isel < pCombo->GetCount(); isel++)
 	{
@@ -190,7 +192,8 @@ BOOL CDAChannelsDlg::OnInitDialog()
 	for (int i = 0; i < 10; i++)
 	{
 		FillCombo(i);
-		SelectComboItem(m_pcombos[i], outputParmsArray[i].iWaveform);
+		SelectComboItemFromOutputParm(i);
+		OnCbnSelchangeCombosource(i);
 	}
 	
 	for (int i = 2; i < 10; i++) {
@@ -352,9 +355,27 @@ void CDAChannelsDlg::OnBnClickedButtonsource9()
 	OnBnClickedButtonsource(9);
 }
 
-void CDAChannelsDlg::OnCbnSelchangeCombosource(int IDCOMBO, int IDBUTTON, int IDFREQ, int IDAMPLITUDEHIGH, int IDAMPLITUDELOW)
+static int matrix[10][4] = {
+	{ IDC_BUTTONSOURCE0, IDC_EDITFREQ0, IDC_EDITAMPLITUDE0, IDC_EDITAMPLITUDELOW0},
+	{ IDC_BUTTONSOURCE1, IDC_EDITFREQ1, IDC_EDITAMPLITUDE1, IDC_EDITAMPLITUDELOW1},
+	{ IDC_BUTTONSOURCE2, IDC_EDITFREQ2,  0, 0},
+	{ IDC_BUTTONSOURCE3, IDC_EDITFREQ3, 0, 0},
+	{ IDC_BUTTONSOURCE4, IDC_EDITFREQ4, 0, 0},
+	{ IDC_BUTTONSOURCE5, IDC_EDITFREQ5, 0, 0},
+	{ IDC_BUTTONSOURCE6, IDC_EDITFREQ6, 0, 0},
+	{ IDC_BUTTONSOURCE7, IDC_EDITFREQ7, 0, 0},
+	{ IDC_BUTTONSOURCE8, IDC_EDITFREQ8, 0, 0},
+	{ IDC_BUTTONSOURCE9, IDC_EDITFREQ9, 0, 0}
+};
+
+void CDAChannelsDlg::OnCbnSelchangeCombosource(int ival)
 {
-	CComboBox* pCombo = m_pcombos[IDCOMBO];
+	int IDBUTTON = matrix[ival][0]; 
+	int IDFREQ = matrix[ival][1];
+	int IDAMPLITUDEHIGH = matrix[ival][2]; 
+	int IDAMPLITUDELOW = matrix[ival][3];;
+
+	CComboBox* pCombo = m_pcombos[ival];
 	pCombo->EnableWindow(TRUE);
 	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
 	BOOL	bEnableFrequency = TRUE;
@@ -366,25 +387,29 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource(int IDCOMBO, int IDBUTTON, int ID
 	case DA_SINEWAVE:		// sinusoid
 	case DA_SQUAREWAVE:		// square
 	case DA_TRIANGLEWAVE:	// triangle
-		bEnableFrequency = TRUE;
-		bEnableButton = FALSE;
+		bEnableFrequency	= TRUE;
+		bEnableButton		= FALSE;
 		break;
 
 	case DA_SEQUENCEWAVE:	// sequence
 	case DA_MSEQWAVE:		// M-seq
-		bEnableFrequency = FALSE;
+		bEnableFrequency	= FALSE;
+		bEnableButton		= TRUE;
 		break;
 
 	case DA_CONSTANT:
-		bEnableAmplitudeLow = FALSE;
+		bEnableAmplitudeLow	= FALSE;
+		bEnableButton		= FALSE;
+		bEnableFrequency	= FALSE;
+		bEnableAmplitudeHigh= TRUE;
 		break;
 
 	case DA_NOISEWAVE:		// Noise
 	case DA_FILEWAVE:		// data file
 	default:
-		bEnableFrequency = FALSE;
-		bEnableButton = FALSE;
-		bEnableAmplitudeHigh = FALSE;
+		bEnableFrequency	= FALSE;
+		bEnableButton		= FALSE;
+		bEnableAmplitudeHigh= FALSE;
 		bEnableAmplitudeLow = FALSE;
 		break;
 	}
@@ -398,51 +423,51 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource(int IDCOMBO, int IDBUTTON, int ID
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource0()
 {
-	OnCbnSelchangeCombosource(0, IDC_BUTTONSOURCE0, IDC_EDITFREQ0, IDC_EDITAMPLITUDE0, IDC_EDITAMPLITUDELOW0);
+	OnCbnSelchangeCombosource(0);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource1()
 {
-	OnCbnSelchangeCombosource(1, IDC_BUTTONSOURCE1, IDC_EDITFREQ1, IDC_EDITAMPLITUDE1, IDC_EDITAMPLITUDELOW1);
+	OnCbnSelchangeCombosource(1);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource2()
 {
-	OnCbnSelchangeCombosource(2, IDC_BUTTONSOURCE2, IDC_EDITFREQ2);
+	OnCbnSelchangeCombosource(2);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource3()
 {
-	OnCbnSelchangeCombosource(3, IDC_BUTTONSOURCE3, IDC_EDITFREQ3);
+	OnCbnSelchangeCombosource(3);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource4()
 {
-	OnCbnSelchangeCombosource(4, IDC_BUTTONSOURCE4, IDC_EDITFREQ4);
+	OnCbnSelchangeCombosource(4);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource5()
 {
-	OnCbnSelchangeCombosource(5, IDC_BUTTONSOURCE5, IDC_EDITFREQ5);
+	OnCbnSelchangeCombosource(5);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource6()
 {
-	OnCbnSelchangeCombosource(6, IDC_BUTTONSOURCE6, IDC_EDITFREQ6);
+	OnCbnSelchangeCombosource(6);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource7()
 {
-	OnCbnSelchangeCombosource(7, IDC_BUTTONSOURCE7, IDC_EDITFREQ7);
+	OnCbnSelchangeCombosource(7);
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource8()
 {
-	OnCbnSelchangeCombosource(8, IDC_BUTTONSOURCE8, IDC_EDITFREQ8); 
+	OnCbnSelchangeCombosource(8); 
 }
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource9()
 {
-	OnCbnSelchangeCombosource(9, IDC_BUTTONSOURCE9, IDC_EDITFREQ9);
+	OnCbnSelchangeCombosource(9);
 }
 

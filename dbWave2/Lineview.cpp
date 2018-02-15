@@ -271,7 +271,9 @@ void CLineViewWnd::SetChanlistVoltsExtent(int chan, float* pvalue)
 		ichanfirst = 0;
 		ichanlast = m_pChanlistItemArray.GetUpperBound();
 	}
-	float voltsextent = *pvalue;
+	float voltsextent = 0.f;
+	if (pvalue !=  NULL)
+		voltsextent = *pvalue;
 	for (int i= ichanfirst; i<= ichanlast; i++)
 	{
 		CChanlistItem* pD =  m_pChanlistItemArray[i];
@@ -293,7 +295,10 @@ void CLineViewWnd::SetChanlistVoltsZero(int chan, float* pvalue)
 		ichanfirst = 0;
 		ichanlast = m_pChanlistItemArray.GetUpperBound();
 	}
-	float voltsextent = *pvalue;
+
+	float voltsextent = 0.f;
+	if (pvalue != NULL)
+		voltsextent = *pvalue;
 	for (int i = ichanfirst; i <= ichanlast; i++)
 	{
 		CChanlistItem* pD = m_pChanlistItemArray[i];

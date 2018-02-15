@@ -404,7 +404,7 @@ CString CAcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 			{
 				cs.Format(_T("\theadstage=%s\tgain=%.0f\tfilter= %s\t%i Hz"), 
 					(LPCTSTR) pChan->am_csheadstage,
-					pChan->am_totalgain, 
+					pChan->am_gaintotal, 
 					(LPCTSTR) pChan->am_csInputpos,
 					pChan->am_lowpass);
 				csOut += cs;
@@ -470,7 +470,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 		{
 			CWaveChan* pChan = (GetpWavechanArray())->GetWaveChan(ichan);
 			int ival = BGetVal(ichan, j);
-			double changain = pChan->am_gainheadstage* pChan->am_adgain * pChan->am_gainpre * pChan->am_gainpost;
+			double changain = pChan->am_gainheadstage* pChan->am_gainAD * pChan->am_gainpre * pChan->am_gainpost;
 			double xval = ival* mVfactor / changain ;
 			cs.Format(_T("%f"), xval);
 			csOut+= cs;

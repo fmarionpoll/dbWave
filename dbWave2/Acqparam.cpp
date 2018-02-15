@@ -366,10 +366,10 @@ IMPLEMENT_SERIAL(CWaveChan, CObject, 0 /* schema number*/ )
 CWaveChan::CWaveChan()
 {
 	am_csComment.Empty();
-	am_totalgain=0.0f;
+	am_gaintotal=0.0f;
 	am_resolutionV = 0.;
 	am_adchannel = 0;
-	am_adgain = 1;
+	am_gainAD = 1;
 	am_csheadstage= _T("none");
 	am_gainheadstage = 1;
 	am_csamplifier= _T("Unknown");
@@ -383,7 +383,7 @@ CWaveChan::CWaveChan()
 	am_csInputpos = _T("DC");
 	am_csInputneg = _T("GND");
 	am_offset=0.0f;	
-	am_gainfract=1.0f;
+	am_gainamplifier=1.0f;
 	am_version = 1;
 	am_csversion= _T("mcid");
 }
@@ -392,7 +392,7 @@ CWaveChan::CWaveChan(CWaveChan& arg)
 {
 	am_csComment = arg.am_csComment;
 	am_adchannel = arg.am_adchannel;
-	am_adgain = arg.am_adgain;
+	am_gainAD = arg.am_gainAD;
 	am_csheadstage = arg.am_csheadstage;
 	am_gainheadstage = arg.am_gainheadstage;
 	am_csamplifier=arg.am_csamplifier;
@@ -404,8 +404,8 @@ CWaveChan::CWaveChan(CWaveChan& arg)
 	am_offset=arg.am_offset;
 	am_csInputpos = arg.am_csInputpos;
 	am_csInputneg= arg.am_csInputneg;
-	am_gainfract = arg.am_gainfract;
-	am_totalgain= arg.am_totalgain;
+	am_gainamplifier = arg.am_gainamplifier;
+	am_gaintotal= arg.am_gaintotal;
 	am_resolutionV = arg.am_resolutionV;
 }
 
@@ -417,7 +417,7 @@ void CWaveChan::operator = (const CWaveChan& arg)
 {
 	am_csComment=arg.am_csComment;
 	am_adchannel=arg.am_adchannel;
-	am_adgain=arg.am_adgain;
+	am_gainAD=arg.am_gainAD;
 
 	am_csheadstage=arg.am_csheadstage;
 	am_gainheadstage=arg.am_gainheadstage;
@@ -431,8 +431,8 @@ void CWaveChan::operator = (const CWaveChan& arg)
 	am_offset=arg.am_offset;
 	am_csInputpos = arg.am_csInputpos;
 	am_csInputneg= arg.am_csInputneg;
-	am_gainfract = arg.am_gainfract;
-	am_totalgain = arg.am_totalgain;
+	am_gainamplifier = arg.am_gainamplifier;
+	am_gaintotal = arg.am_gaintotal;
 	am_resolutionV = arg.am_resolutionV;
 }
 
@@ -444,7 +444,7 @@ void CWaveChan::Serialize(CArchive& ar)
 		ar << csdummy;
 		float xgain = 0.0f;
 		ar << xgain;		// dummy
-		ar << (WORD) am_adchannel << (WORD) am_adgain;
+		ar << (WORD) am_adchannel << (WORD) am_gainAD;
 		ar << am_csheadstage;
 		ar << (WORD) am_gainheadstage;
 		ar << am_csamplifier << (WORD) am_amplifierchan;
@@ -458,8 +458,8 @@ void CWaveChan::Serialize(CArchive& ar)
 		ar << am_csInputneg;
 		// addition 5 nov 2010
 		ar << am_version;
-		ar << am_gainfract;
-		ar << am_totalgain;
+		ar << am_gainamplifier;
+		ar << am_gaintotal;
 		ar << am_resolutionV;
 	} 
 	else
@@ -468,7 +468,7 @@ void CWaveChan::Serialize(CArchive& ar)
 		ar >> am_csComment;
 		float xgain;
 		ar >> xgain ;				// dummy
-		ar >> w1 >> w2; am_adchannel = (short) w1; am_adgain = (short) w2;
+		ar >> w1 >> w2; am_adchannel = (short) w1; am_gainAD = (short) w2;
 		ar >> am_csheadstage;
 		ar >> w1; am_gainheadstage = w1;
 		ar >> am_csamplifier >> w1 >> w2 >> w3;
@@ -499,8 +499,8 @@ void CWaveChan::Serialize(CArchive& ar)
 			am_csComment = csdummy.Right(csdummy.GetLength()-nchars);
 			// read the rest of the archive
 			ar >> w1;
-			ar >> am_gainfract;
-			ar >> am_totalgain;
+			ar >> am_gainamplifier;
+			ar >> am_gaintotal;
 			ar >> am_resolutionV;
 		}
 	}

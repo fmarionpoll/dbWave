@@ -74,10 +74,10 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 		CWaveChan* pChan = (CWaveChan*) pArray->GetWaveChan(i);
 		pChan->am_csComment=CString(" ");			// channel annotation
 		pChan->am_resolutionV = mcidHeader.sensitivity[i]/2000.;
-		pChan->am_gainfract = 1./pChan->am_resolutionV;	// fractional gain
+		pChan->am_gainamplifier = 1./pChan->am_resolutionV;	// fractional gain
 
 		pChan->am_adchannel=0;						// channel scan list
-		pChan->am_adgain=1;							// channel gain list
+		pChan->am_gainAD=1;							// channel gain list
 		pChan->am_csamplifier= CString(" ");		// amplifier type
 		pChan->am_csheadstage=CString(" ");			// headstage type
 		pChan->am_gainheadstage=1;					// assume headstage gain = 1
@@ -89,7 +89,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 		pChan->am_offset=0.0f;						// assume no offset compensation
 		pChan->am_csInputpos = "DC";				// assume input + = DC
 		pChan->am_csInputneg = "GND";				// assume input - = GND
-		pChan->am_totalgain = pChan->am_gainfract;
+		pChan->am_gaintotal = pChan->am_gainamplifier;
 	}
 
 	//	tentative

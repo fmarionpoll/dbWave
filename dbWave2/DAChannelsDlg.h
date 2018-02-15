@@ -34,9 +34,9 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	void EditSequence(int isel, int channel);
 	void FillCombo(int channel);
-	void SelectComboItem(CComboBox * pCombo, DWORD val);
+	void SelectComboItemFromOutputParm(int ival);
 	void OnBnClickedButtonsource(int channel);
-	void OnCbnSelchangeCombosource(int IDCOMBO, int IDBUTTON, int IDFREQ, int IDAMPLITUDE1=0, int IDAMPLITUDELOW=0);
+	void OnCbnSelchangeCombosource(int ival);
 
 	static CString	comboText[];
 	static DWORD	comboVal[];

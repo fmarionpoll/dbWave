@@ -195,7 +195,7 @@ void CImportGenericDataDlg::UpdateControlsFromStruct()
 	m_skipNbytes = piivO->skipNbytes;		// set "skip n bytes"
 	m_csFileTitle = piivO->title;			// file global comment
 	CWaveChan* pChannel = piivO->pwaveChanArray->GetWaveChan(m_adChannelChan-1);
-	m_adChannelGain = (float) pChannel->am_totalgain;	// set gain
+	m_adChannelGain = (float) pChannel->am_gaintotal;	// set gain
 	m_adChannelComment = pChannel->am_csComment;		// and comment
 
 	// set limits associated spin controls
@@ -237,9 +237,9 @@ void CImportGenericDataDlg::UpdateStructFromControls()
 	piivO->title= m_csFileTitle;			// file global comment
 
 	CWaveChan* pChannel = piivO->pwaveChanArray->GetWaveChan(m_adChannelChan-1);
-	pChannel->am_totalgain= m_adChannelGain;	// set gain
-	pChannel->am_gainfract = pChannel->am_totalgain;
-	pChannel->am_adgain = 1;
+	pChannel->am_gaintotal= m_adChannelGain;	// set gain
+	pChannel->am_gainamplifier = pChannel->am_gaintotal;
+	pChannel->am_gainAD = 1;
 	pChannel->am_gainpre = 1;
 	pChannel->am_gainpost = 1;
 	pChannel->am_gainheadstage = 1;
@@ -429,15 +429,15 @@ void CImportGenericDataDlg::OnEnChangeChannelno()
 		UpdateData(TRUE);			// load data from controls
 		m_adChannelChan = previouschan;
 		CWaveChan* pChannel = piivO->pwaveChanArray->GetWaveChan(previouschan-1);
-		pChannel->am_totalgain= m_adChannelGain;		// set gain
-		pChannel->am_gainfract = pChannel->am_totalgain;
+		pChannel->am_gaintotal= m_adChannelGain;		// set gain
+		pChannel->am_gainamplifier = pChannel->am_gaintotal;
 		pChannel->am_csComment= m_adChannelComment;	// and comment
 		// point to new channel: add new descriptors if necessary
 		piivO->pwaveChanArray->ChannelSetnum(m_nbADchannels);
 
 		// load data from new current channel
 		pChannel = piivO->pwaveChanArray->GetWaveChan(m_adChannelChan-1);
-		m_adChannelGain = (float) pChannel->am_totalgain;	// set gain
+		m_adChannelGain = (float) pChannel->am_gaintotal;	// set gain
 		m_adChannelComment = pChannel->am_csComment;		// and comment
 		UpdateData(FALSE);
 	}

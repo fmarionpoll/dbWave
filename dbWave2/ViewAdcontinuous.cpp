@@ -47,7 +47,7 @@ CADContView::CADContView()
 	m_chsweeplength=0;
 	m_ADC_chbuflen=0;
 	m_bFileOpen = FALSE;
-	m_numchansMAX = 8;
+	m_numchansMAX = 16;
 	m_freqmax	= 50000.f;
 	m_bSimultaneousStart=FALSE;
 	m_bhidesubsequent=FALSE;
@@ -251,15 +251,8 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 	int iresolution = m_Acq32_ADC.GetResolution();
 	pWFormat->binspan = ((1L << iresolution) - 1);
 
-	// set max channel number according to input configuration m_numchansMAX
-	m_pADC_options->bChannelType = m_Acq32_ADC.GetChannelType();
-	if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
-		m_numchansMAX = m_Acq32_ADC.GetSSCaps(OLSSC_MAXSECHANS);
-	else 
-		m_numchansMAX = m_Acq32_ADC.GetSSCaps(OLSSC_MAXDICHANS);
-
 	// data encoding (binary or offset encoding)
-	pWFormat->mode_encoding = (int)m_Acq32_ADC.GetEncoding();
+	pWFormat->mode_encoding = (int) m_Acq32_ADC.GetEncoding();
 	if (pWFormat->mode_encoding == OLx_ENC_BINARY)
 		pWFormat->binzero = pWFormat->binspan/2+1;
 	else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
@@ -297,14 +290,16 @@ BOOL CADContView::ADC_InitSubSystem()
 
 		// set trigger mode
 		int trig = pAcqDwaveFormat->trig_mode;
-		if (trig > OLx_TRG_EXTRA) 		trig = 0;
+		if (trig > OLx_TRG_EXTRA) 		
+			trig = 0;
 		m_Acq32_ADC.SetTrigger(trig);
 
 		// number of channels
-		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED && m_Acq32_ADC.GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
-			m_pADC_options->bChannelType = OLx_CHNT_DIFFERENTIAL;
-		if (m_pADC_options->bChannelType == OLx_CHNT_DIFFERENTIAL && m_Acq32_ADC.GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
-			m_pADC_options->bChannelType = OLx_CHNT_SINGLEENDED;
+		//if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED && m_Acq32_ADC.GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
+		//	m_pADC_options->bChannelType = OLx_CHNT_DIFFERENTIAL;
+		//if (m_pADC_options->bChannelType == OLx_CHNT_DIFFERENTIAL && m_Acq32_ADC.GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
+		//	m_pADC_options->bChannelType = OLx_CHNT_SINGLEENDED;
+
 		m_Acq32_ADC.SetChannelType(m_pADC_options->bChannelType);
 		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
 			m_numchansMAX = m_Acq32_ADC.GetSSCaps(OLSSC_MAXSECHANS);
@@ -323,7 +318,6 @@ BOOL CADContView::ADC_InitSubSystem()
 		pAcqDwaveFormat->chrate = (float) clockrate / pAcqDwaveFormat->scan_count;
 
 		// update channel list (chan & gain)
-		
 		m_Acq32_ADC.SetListSize(pAcqDwaveFormat->scan_count);
 		for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
 		{
@@ -332,13 +326,13 @@ BOOL CADContView::ADC_InitSubSystem()
 			if ( pChannel->am_adchannel> m_numchansMAX-1 && pChannel->am_adchannel != 16)
 				 pChannel->am_adchannel= m_numchansMAX-1;
 			m_Acq32_ADC.SetChannelList(i, pChannel->am_adchannel);
-			m_Acq32_ADC.SetGainList(i, pChannel->am_adgain);
+			m_Acq32_ADC.SetGainList(i, pChannel->am_gainAD);
 			double dGain = m_Acq32_ADC.GetGainList(i);
-			pChannel->am_adgain = (short) dGain;
+			pChannel->am_gainAD = (short) dGain;
 			// compute dependent parameters
-			pChannel->am_gainfract = pChannel->am_gainheadstage * (float) pChannel->am_gainpre * (float) pChannel->am_gainpost;
-			pChannel->am_totalgain = pChannel->am_gainfract * pChannel->am_adgain;
-			pChannel->am_resolutionV = pAcqDwaveFormat->fullscale_Volts / pChannel->am_totalgain / pAcqDwaveFormat->binspan;
+			pChannel->am_gainamplifier = pChannel->am_gainheadstage * (float) pChannel->am_gainpre * (float) pChannel->am_gainpost;
+			pChannel->am_gaintotal = pChannel->am_gainamplifier * pChannel->am_gainAD;
+			pChannel->am_resolutionV = pAcqDwaveFormat->fullscale_Volts / pChannel->am_gaintotal / pAcqDwaveFormat->binspan;
 		}
 
 		// pass parameters to the board and check if errors
@@ -1737,9 +1731,8 @@ BOOL CADContView::ADC_DefineExperimentDlg()
 void CADContView::ADC_OnHardwareChannelsDlg() 
 {
 	if (m_ADC_inprogress)
-	{
 		ADC_Stop(TRUE);
-	}
+
 	CADInputParmsDlg dlg;
 
 	// init dialog data
@@ -1748,7 +1741,7 @@ void CADContView::ADC_OnHardwareChannelsDlg()
 	dlg.m_numchansMAXDI = m_Acq32_ADC.GetSSCaps(OLSSC_MAXDICHANS);
 	dlg.m_numchansMAXSE = m_Acq32_ADC.GetSSCaps(OLSSC_MAXSECHANS);
 	dlg.m_bchantype = m_pADC_options->bChannelType;
-	dlg.m_bchainDialog= TRUE;
+	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
 
 	// invoke dialog box
@@ -2001,7 +1994,7 @@ BOOL CADContView::InitCyberAmp()
 
 		int a = pchan->am_csamplifier.Find(_T("CyberAmp"));
 		int b = pchan->am_csamplifier.Find(_T("Axon Instrument")); 
-		if (a == 0 || b == 0)
+		if (a >= 0 || b >= 0)
 		{
 			// test if cyberamp present
 			if (!bcyberPresent)
@@ -2014,9 +2007,8 @@ BOOL CADContView::InitCyberAmp()
 			// chan, gain, filter +, lowpass, notch	
 			m_cyber.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT,	 pchan->am_csInputpos);
 			m_cyber.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
-
 			m_cyber.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-			m_cyber.SetGain(pchan->am_amplifierchan, (int)(pchan->am_totalgain / (pchan->am_gainheadstage*pchan->am_adgain)));
+			m_cyber.SetGain(pchan->am_amplifierchan, (int)(pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD)));
 			m_cyber.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
 			int errorcode = m_cyber.C300_FlushCommandsAndAwaitResponse();
 		}

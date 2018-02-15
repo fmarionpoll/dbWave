@@ -166,7 +166,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	CWaveChan* pChan = (CWaveChan*) pArray->GetWaveChan(i);
 	pChan->am_csComment=CString(" ");					// channel annotation
 	pChan->am_adchannel=0;								// channel scan list
-	pChan->am_adgain=1;									// channel gain list
+	pChan->am_gainAD=1;									// channel gain list
 	pChan->am_csamplifier= CString("syntechAmplifier");		// amplifier type
 	pChan->am_csheadstage = CString("syntechProbe");	// headstage type
 	pChan->am_gainheadstage=10;							// assume headstage gain = 10
@@ -178,10 +178,10 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	pChan->am_offset= 0.0f;								// assume no offset compensation
 	pChan->am_csInputpos = "25";
 	pChan->am_csInputneg = "GND";
-	pChan->am_gainfract = (float) recFactor;
+	pChan->am_gainamplifier = (float) recFactor;
 
-	pChan->am_totalgain = pChan->am_gainfract * pChan->am_gainheadstage;		// total gain
-	pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_totalgain / pWFormat->binspan;
+	pChan->am_gaintotal = pChan->am_gainamplifier * pChan->am_gainheadstage;		// total gain
+	pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_gaintotal / pWFormat->binspan;
 	//}
 
 	// ---------------- ASD -- capture date and time

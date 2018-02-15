@@ -692,7 +692,7 @@ void CADInputParmsDlg::LoadChanData(int col)
 	m_Grid.SetItem(&Item);
 	// " ADgain" - combo
 	Item.row++;
-	Item.strText.Format(_T("%i"),pchan->am_adgain);
+	Item.strText.Format(_T("%i"),pchan->am_gainAD);
 	m_Grid.SetItem(&Item);
 	// ----------------------------------------
 	// amplifier name
@@ -705,7 +705,7 @@ void CADInputParmsDlg::LoadChanData(int col)
 	m_Grid.SetItem(&Item);
 	// amplifier gain
 	Item.row++;
-	double gain = (pchan->am_totalgain)/(pchan->am_gainheadstage*pchan->am_adgain);
+	double gain = (pchan->am_gaintotal)/(pchan->am_gainheadstage*pchan->am_gainAD);
 	int igain = (int) gain;
 	if (igain == 0)
 		igain = 1;
@@ -783,7 +783,7 @@ void CADInputParmsDlg::SaveChanData(int col)
 	// " ADgain" - combo
 	row++;
 	cs = m_Grid.GetItemText(row, col);
-	pchan->am_adgain = _ttoi(cs);
+	pchan->am_gainAD = _ttoi(cs);
 
 	// amplifier name
 	row++;
@@ -799,7 +799,7 @@ void CADInputParmsDlg::SaveChanData(int col)
 	cs = m_Grid.GetItemText(row, col);
 	pchan->am_gainpre = _ttoi(cs);
 	pchan->am_gainpost = 1;
-	//pchan->am_gainfract = _ttoi(cs);
+	//pchan->am_gainamplifier = _ttoi(cs);
 
 	// amplifier notch filter
 	row++;
@@ -825,10 +825,10 @@ void CADInputParmsDlg::SaveChanData(int col)
 	row++;
 	cs = m_Grid.GetItemText(row, col);
 	pchan->am_gainheadstage= _ttoi(cs);
-	pchan->am_gainfract = pchan->am_gainheadstage * (float)pchan->am_gainpre * (float)pchan->am_gainpost;
-	pchan->am_totalgain = pchan->am_gainfract * pchan->am_adgain;
+	pchan->am_gainamplifier = pchan->am_gainheadstage * (float)pchan->am_gainpre * (float)pchan->am_gainpost;
+	pchan->am_gaintotal = pchan->am_gainamplifier * pchan->am_gainAD;
 	// compute dependent parameters
-	pchan->am_resolutionV = m_pwFormat->fullscale_Volts / pchan->am_totalgain / m_pwFormat->binspan;
+	pchan->am_resolutionV = m_pwFormat->fullscale_Volts / pchan->am_gaintotal / m_pwFormat->binspan;
 }
 
 void CADInputParmsDlg::OnBnClickedOk()
@@ -875,7 +875,7 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 	cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
 	cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
 	cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-	double gain = pchan->am_totalgain/(pchan->am_gainheadstage*pchan->am_adgain);
+	double gain = pchan->am_gaintotal/(pchan->am_gainheadstage*pchan->am_gainAD);
 	cyberAmp.SetGain(pchan->am_amplifierchan, (int) gain);
 	cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int) (pchan->am_lowpass));
 	int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();

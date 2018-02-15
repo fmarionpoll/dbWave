@@ -94,7 +94,7 @@ class CWaveChan : public CObject
 public :
 	CString		am_csComment;		// channel annotation
 	short		am_adchannel;		// channel A/D 
-	short		am_adgain;			// channel A/D gain 
+	short		am_gainAD;			// channel A/D gain 
 	short		am_maxchannel;		// maximum in the channel
 	short		am_minchannel;		// minimum in the channel
 
@@ -111,8 +111,8 @@ public :
 	CString		am_csInputpos;		// in+ filter settings GND= inactive input
 	CString		am_csInputneg;		// in- filter settings GND= inactive input
 
-	double		am_gainfract;		// double value to allow fractional gain 
-	double		am_totalgain;		// total gain as double
+	double		am_gainamplifier;		// double value to allow fractional gain 
+	double		am_gaintotal;		// total gain as double
 	double		am_resolutionV;		// resolution
 
 public :

@@ -247,6 +247,9 @@ void CSpikeDoc::ReadVersion7(CArchive& ar)
 
 	m_spklistArray.RemoveAll();
 	ar >> isize;
+	//if (isize > UINT_MAX / sizeof(CSpikeList))  //SIZE_T_MAX/sizeof(TYPE))
+	//	return;
+
 	m_spklistArray.SetSize(isize);
 	for (int i=0; i< isize; i++)
 		m_spklistArray[i].Serialize(ar);
