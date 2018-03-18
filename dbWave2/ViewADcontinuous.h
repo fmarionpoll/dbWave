@@ -36,17 +36,19 @@ public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet;
 	CString				m_boardName;
-	CDTAcq32			m_Acq32_ADC;
-	CDTAcq32			m_Acq32_DAC;
+	CDTAcq32			m_ADC_DTAcq32;
+	CDTAcq32			m_DAC_DTAcq32;
 	CRulerBar			m_ADC_xRulerBar;
 	CRulerBar			m_ADC_yRulerBar;
 	CComboBox			m_ADcardCombo;
 	CMFCButton			m_btnStartStop;
 	BOOL				m_bADwritetofile;
 	int					m_bStartOutPutMode;
+	BOOL				m_bADC_IsPresent;
+	BOOL				m_bDAC_IsPresent;
 
 protected:
-	CLineViewWnd		m_ADsourceView;		// source data display button
+	CLineViewWnd		m_ADC_View;		// source data display button
 	int 				m_cursorstate;		// source data cursor state	
 	float				m_sweepduration;
 	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed	
@@ -133,12 +135,13 @@ protected:
 	void ADC_StopAndLiberateBuffers();
 	
 	BOOL DAC_OpenSubSystem(CString cardName);
-	BOOL DAC_ClearAllOutputs();
-	int	 DAC_SetChannelList();
 	BOOL DAC_InitSubSystem();
-	int  DAC_GetNumberOfChans();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
+	void DAC_StopAndLiberateBuffers();
+	BOOL DAC_ClearAllOutputs();
+	int	 DAC_SetChannelList();
+	int  DAC_GetNumberOfChans();
 	void DAC_FillBufferWith_SINUSOID(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_TRIANGLE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
@@ -154,19 +157,18 @@ protected:
 	void DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_UpdateStartStop(BOOL bStart);
 	void DAC_FillBuffer(short* pDTbuf);
-	void DAC_StopAndLiberateBuffers();
 	void SetCombostartoutput(int option);
 	
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
 
-	void ADC_Stop(BOOL bDisplayErrorMsg);
 	void SaveAndCloseFile();
-	BOOL ADC_Start();
+	BOOL OnStart();
+	void OnStop(BOOL bDisplayErrorMsg);
 	BOOL DAC_Start();
 	void DAC_Stop();
 
-	BOOL InitCyberAmp();
+	BOOL InitConnectionWithAmplifier();
 	BOOL ADC_DefineExperimentDlg() ;
 	void TransferFilesToDatabase();
 	void UpdateViewDataFinal();
