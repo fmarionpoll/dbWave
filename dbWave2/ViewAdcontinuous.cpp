@@ -201,7 +201,7 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	// connect A/D subsystem and display/hide buttons
 	m_bStartOutPutMode = 0;
 	m_bADC_IsPresent = ADC_OpenSubSystem(cardName);
-	m_bADC_IsPresent = DAC_OpenSubSystem(cardName);
+	m_bDAC_IsPresent = DAC_OpenSubSystem(cardName);
 	if (m_bDAC_IsPresent)
 		m_bStartOutPutMode = 0;
 	m_bSimultaneousStart = m_bsimultaneousStartDA && m_bsimultaneousStartAD;
