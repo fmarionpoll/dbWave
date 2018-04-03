@@ -924,10 +924,10 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				lLimitRight = lLimitLeft;
 				lLimitLeft = i;
 			}
-			m_pspkDocVSD->m_stim.iistimulus.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitLeft);
-			m_pspkDocVSD->m_stim.nitems++;
-			m_pspkDocVSD->m_stim.iistimulus.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitRight);
-			m_pspkDocVSD->m_stim.nitems++;
+			m_pspkDocVSD->m_stimIntervals.intervalsArray.SetAtGrow(m_pspkDocVSD->m_stimIntervals.nitems, lLimitLeft);
+			m_pspkDocVSD->m_stimIntervals.nitems++;
+			m_pspkDocVSD->m_stimIntervals.intervalsArray.SetAtGrow(m_pspkDocVSD->m_stimIntervals.nitems, lLimitRight);
+			m_pspkDocVSD->m_stimIntervals.nitems++;
 			UpdateVTtags();
 
 			m_spkBarView.Invalidate();
@@ -945,13 +945,13 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	//case HINT_MOVEVERTTAG: //12	// vertical tag has moved 		lowp = new pixel / selected tag
 	case HINT_CHANGEVERTTAG: //13
 		{
-		int lvalue = m_pspkDocVSD->m_stim.iistimulus.GetAt(threshold);
+		int lvalue = m_pspkDocVSD->m_stimIntervals.intervalsArray.GetAt(threshold);
 		if(iID == m_displayDetect.GetDlgCtrlID())
 			lvalue = m_displayDetect.GetVTtagLval(threshold);
 		else if (iID == m_displayData.GetDlgCtrlID())
 			lvalue = m_displayData.GetVTtagLval(threshold);
 
-		m_pspkDocVSD->m_stim.iistimulus.SetAt(threshold, lvalue);
+		m_pspkDocVSD->m_stimIntervals.intervalsArray.SetAt(threshold, lvalue);
 		UpdateVTtags();
 
 		m_spkBarView.Invalidate();
@@ -967,8 +967,8 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		int cx = LOWORD(lParam);
 		int cy = HIWORD(lParam);
 		int lLimitLeft = m_displayDetect.GetDataOffsetfromPixel(cx);
-		m_pspkDocVSD->m_stim.iistimulus.SetAtGrow(m_pspkDocVSD->m_stim.nitems, lLimitLeft);
-		m_pspkDocVSD->m_stim.nitems++;
+		m_pspkDocVSD->m_stimIntervals.intervalsArray.SetAtGrow(m_pspkDocVSD->m_stimIntervals.nitems, lLimitLeft);
+		m_pspkDocVSD->m_stimIntervals.nitems++;
 		UpdateVTtags();
 
 		m_spkBarView.Invalidate();
@@ -1470,7 +1470,7 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 			int cxpos = (cx - lDataFirst0)*100 / lDataLen;
 			dlg.SetPos(cxpos);
 			CString cscomment;
-			cscomment.Format(_T("Processing stimulus event: %i"), m_pspkDocVSD->m_stim.nitems +1 );
+			cscomment.Format(_T("Processing stimulus event: %i"), m_pspkDocVSD->m_stimIntervals.nitems +1 );
 			dlg.SetStatus(cscomment);
 
 			if(dlg.CheckCancelButton())
@@ -1479,20 +1479,20 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 					// set condition to stop detection
 					lLast = lDataLast;
 					// clear stimulus detected
-					CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
-					pSti->iistimulus.RemoveAll();
-					m_pspkDocVSD->m_stim.nitems=0;
+					CIntervalsAndLevels* pSti = &(m_pspkDocVSD->m_stimIntervals);
+					pSti->intervalsArray.RemoveAll();
+					m_pspkDocVSD->m_stimIntervals.nitems=0;
 					break;
 				}
 
 			// check if already present and insert it at the proper place
-			CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
+			CIntervalsAndLevels* pSti = &(m_pspkDocVSD->m_stimIntervals);
 			int jitter = 2;		// allow some jitter in the detection (+-2)
 			BOOL flag = TRUE;
 			int i=0;
-			for (i=0; i< pSti->iistimulus.GetSize(); i++)
+			for (i=0; i< pSti->intervalsArray.GetSize(); i++)
 			{
-				long lval = pSti->iistimulus.GetAt(i);
+				long lval = pSti->intervalsArray.GetAt(i);
 				if (cx <= (lval +jitter) && cx >= (lval-jitter))
 				{
 					flag = FALSE;		// no new stim - already detected at that time
@@ -1507,15 +1507,15 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 			}
 			if (flag)
 			{
-				pSti->iistimulus.InsertAt(i, cx);
-				m_pspkDocVSD->m_stim.nitems++;
+				pSti->intervalsArray.InsertAt(i, cx);
+				m_pspkDocVSD->m_stimIntervals.nitems++;
 			}
 		}
 		///////////////////////////////////////////////////////////////
 		lDataFirst = lLast+1;					// update for next loop		
 	}
 
-	return m_pspkDocVSD->m_stim.nitems;
+	return m_pspkDocVSD->m_stimIntervals.nitems;
 }
 
 // --------------------------------------------------------------------------
@@ -1752,8 +1752,8 @@ void CSpikeDetectionView::OnBnClickedClearall()
 
 	HighlightSpikes(FALSE);				// remove display of spikes
 	m_spkShapeView.SetSourceData(m_pSpkListVSD);
-	m_pspkDocVSD->m_stim.nitems=0;		// zero stimuli
-	m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
+	m_pspkDocVSD->m_stimIntervals.nitems=0;		// zero stimuli
+	m_pspkDocVSD->m_stimIntervals.intervalsArray.RemoveAll();
 
 	UpdateDetectionParameters();
 	UpdateVTtags();						// update display of vertical tags
@@ -1773,8 +1773,8 @@ void CSpikeDetectionView::OnClear()
 
 	if(m_pSpkListVSD->GetdetectWhat() == 1)
 	{
-		m_pspkDocVSD->m_stim.nitems=0;		// zero stimuli
-		m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
+		m_pspkDocVSD->m_stimIntervals.nitems=0;		// zero stimuli
+		m_pspkDocVSD->m_stimIntervals.intervalsArray.RemoveAll();
 		UpdateVTtags();					// update display of vertical tags
 	}
 
@@ -2314,12 +2314,12 @@ void CSpikeDetectionView::UpdateVTtags()
 	m_spkBarView.DelAllVTtags();
 	m_displayDetect.DelAllVTtags();
 	m_displayData.DelAllVTtags();
-	if (m_pspkDocVSD->m_stim.nitems == 0)
+	if (m_pspkDocVSD->m_stimIntervals.nitems == 0)
 		return;
 
-	for (int i=0; i <m_pspkDocVSD->m_stim.iistimulus.GetSize(); i++)
+	for (int i=0; i <m_pspkDocVSD->m_stimIntervals.intervalsArray.GetSize(); i++)
 	{
-		int cx = m_pspkDocVSD->m_stim.iistimulus.GetAt(i);
+		int cx = m_pspkDocVSD->m_stimIntervals.intervalsArray.GetAt(i);
 		m_spkBarView.AddVTLtag(cx);
 		m_displayDetect.AddVTLtag(cx);
 		m_displayData.AddVTLtag(cx);
@@ -3425,21 +3425,21 @@ void CSpikeDetectionView::OnToolsEditstimulus()
 
 	CEditStimArrayDlg dlg;
 	dlg.m_pIntervalArrays.RemoveAll();
-	dlg.m_pIntervalArrays.Add(&m_pspkDocVSD->m_stim);
+	dlg.m_pIntervalArrays.Add(&m_pspkDocVSD->m_stimIntervals);
 	dlg.m_rate = m_samplingRate;
 	dlg.m_pstimsaved = &GetDocument()->m_stimsaved;
 
 	if (IDOK == dlg.DoModal())
 	{
-		//m_pspkDocVSD->m_stim.nitems=0;	// zero stimuli
-		//m_pspkDocVSD->m_stim.iistimulus.RemoveAll();
+		//m_pspkDocVSD->m_stimIntervals.nitems=0;	// zero stimuli
+		//m_pspkDocVSD->m_stimIntervals.intervalsArray.RemoveAll();
 
-		//CIntervalsArray* pSti = &(m_pspkDocVSD->m_stim);
-		//CIntervalsArray* pStiDlg = (CIntervalsArray*) dlg.m_pIntervalArrays.GetAt(0);
-		//for (int i=0; i< pStiDlg->iistimulus.GetCount(); i++)
+		//CIntervalsAndLevels* pSti = &(m_pspkDocVSD->m_stimIntervals);
+		//CIntervalsAndLevels* pStiDlg = (CIntervalsAndLevels*) dlg.m_pIntervalArrays.GetAt(0);
+		//for (int i=0; i< pStiDlg->intervalsArray.GetCount(); i++)
 		//{
-		//	pSti->iistimulus.InsertAt(i, pStiDlg->iistimulus[i]);
-		//	m_pspkDocVSD->m_stim.nitems++;
+		//	pSti->intervalsArray.InsertAt(i, pStiDlg->intervalsArray[i]);
+		//	m_pspkDocVSD->m_stimIntervals.nitems++;
 		//}
 
 		UpdateVTtags();

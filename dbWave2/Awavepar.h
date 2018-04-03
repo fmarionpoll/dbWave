@@ -422,7 +422,7 @@ public:
 	double	dFrequency;								// frequency of the output signal
 	int		iWaveform;								// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
 	CString	csFilename;								// filename to output
-	CIntervalsArray				stimulussequence;
+	CIntervalsAndLevels				stimulussequence;
 	CIntervalsAndWordsSeries	sti;
 	
 	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval

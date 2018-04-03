@@ -9,44 +9,45 @@
 
 // ------------------------------------------------------
 
-IMPLEMENT_SERIAL(CIntervalsArray, CObject, 0 )
+IMPLEMENT_SERIAL(CIntervalsAndLevels, CObject, 0 )
 
-CIntervalsArray::CIntervalsArray()
+CIntervalsAndLevels::CIntervalsAndLevels()
 {
 	iID=1;					// ID number of the array
 	csDescriptor=_T("stimulus intervals");	// descriptor of the array
    	nitems=0;				// number of on & off events
-	iistimulus.SetSize(0);	// time on, time off
+	intervalsArray.SetSize(0);	// time on, time off
 	npercycle = 1;
-	version = 2;
+	version = 4;
 	ichan = 0;				// otherwise: 0, 1...7
 	chrate = 10000.;
 }
 
-CIntervalsArray::~CIntervalsArray()
+CIntervalsAndLevels::~CIntervalsAndLevels()
 {
-	iistimulus.RemoveAll();
+	intervalsArray.RemoveAll();
 }
 
-void CIntervalsArray::operator = (const CIntervalsArray& arg)
+void CIntervalsAndLevels::operator = (const CIntervalsAndLevels& arg)
 {
 	iID			= arg.iID;						// ID number of the array
 	csDescriptor= arg.csDescriptor;				// descriptor of the array
    	nitems		= arg.nitems;					// number of on/off events
-	iistimulus.SetSize(arg.iistimulus.GetSize());
+	intervalsArray.SetSize(arg.intervalsArray.GetSize());
 
-	for (int i=0; i < arg.iistimulus.GetSize(); i++)
-		iistimulus.SetAt(i, arg.iistimulus.GetAt(i)); 	// time on, time off
+	for (int i=0; i < arg.intervalsArray.GetSize(); i++)
+		intervalsArray.SetAt(i, arg.intervalsArray.GetAt(i)); 	// time on, time off
 	npercycle	= arg.npercycle;
 	chrate		= arg.chrate;
 }
 
-void CIntervalsArray::Serialize(CArchive& ar)
+void CIntervalsAndLevels::Serialize(CArchive& ar)
 {
 	int iversion = 2;
 	if (ar.IsStoring())
 	{
-		int n=4; ar << n;
+		int n=4; 
+		ar << n;
 		ar << iID;
 		ar << nitems;	
 		ar << npercycle;
@@ -56,7 +57,7 @@ void CIntervalsArray::Serialize(CArchive& ar)
 		ar << csDescriptor;	
 
 		n = 1; ar << n;
-		iistimulus.Serialize(ar);
+		intervalsArray.Serialize(ar);
 
 		n = 1; ar << n;
 		ar << chrate;
@@ -67,14 +68,26 @@ void CIntervalsArray::Serialize(CArchive& ar)
 		ar >> iID; n--;		
 		ar >> nitems; n--;	
 		npercycle = 1; if (n > 0)  ar >> npercycle; n--;
-		if (n > 0) ar >> iversion; n--; 
-		ar >> n;
-		if (n> 0) ar >> csDescriptor; n--;
-		ar >> n;
-		if (n > 0) iistimulus.Serialize(ar); n--;
-		if (iversion > 1) 
+
+		if (n > 0) {
+			ar >> iversion; n--;
+			ASSERT(iversion == 2);
+
 			ar >> n;
-		if (n > 0) ar >> chrate; n--;
+			if (n > 0) ar >> csDescriptor; n--;
+			ar >> n;
+			if (n > 0) intervalsArray.Serialize(ar); n--;
+			if (iversion > 1)
+				ar >> n;
+			if (n > 0) ar >> chrate; n--;
+		}
+		else // old version
+		{
+			ar >> n;
+			ar >> csDescriptor;		// descriptor of the array
+			ar >> n;
+			intervalsArray.Serialize(ar);
+		}
 	}
 }
 
@@ -193,7 +206,7 @@ void CIntervalsAndWordsSeries::EraseAllData()
 	iistep.RemoveAll();
 }
 
-void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsArray * pIntervals, WORD valUP, BOOL bcopyRate)
+void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels * pIntervals, WORD valUP, BOOL bcopyRate)
 {	
 	float ichrate = pIntervals->chrate;
 	if (bcopyRate)
@@ -217,9 +230,9 @@ void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsArray * pInterval
 	}
 }
 
-// combine up to 8 chans stored into CIntervalsArray(s). 
+// combine up to 8 chans stored into CIntervalsAndLevels(s). 
 // in the resulting CIntervaAndWordsSeries, each bit is coding for a channel
-// the channel number is sotred in the CIntervalsArray (parameter "ichan")
+// the channel number is sotred in the CIntervalsAndLevels (parameter "ichan")
 // 1) create separate CIntervalsAndWordsSeries objects with bits set 
 // 2) merge the series
 
@@ -238,7 +251,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	for (int i = 0; i < nseries; i++) 
 	{
 		// transform this series if not empty
-		CIntervalsArray * pSource = (CIntervalsArray *) pSourceIntervals->GetAt(i);
+		CIntervalsAndLevels * pSource = (CIntervalsAndLevels *) pSourceIntervals->GetAt(i);
 		if (pSource->GetSize() == 0)
 			continue;
 
@@ -308,7 +321,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 }
 
 
-void CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan, CIntervalsArray * pOut)
+void CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan, CIntervalsAndLevels * pOut)
 {
 	WORD ifilter = 2 << chan;
 	WORD istatus = 0;

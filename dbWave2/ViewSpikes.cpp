@@ -1609,7 +1609,7 @@ void CSpikeView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// ------------------------ print stimulus
 
-		if (m_pSpkDoc->m_stim.nitems > 0)
+		if (m_pSpkDoc->m_stimIntervals.nitems > 0)
 		{
 			CBrush bluebrush;	// create and select a solid blue brush
 			bluebrush.CreateSolidBrush(RGB(0, 0, 255));
@@ -1626,12 +1626,12 @@ void CSpikeView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 			if (RWspikes.top == RWspikes.bottom) 
 				RWspikes.bottom++;
 
-			for (int ii=0; ii < m_pSpkDoc->m_stim.iistimulus.GetSize(); ii++, ii++)
+			for (int ii=0; ii < m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize(); ii++, ii++)
 			{
-				int iifirst = m_pSpkDoc->m_stim.iistimulus.GetAt(ii);
-				if ((ii+1)>=  m_pSpkDoc->m_stim.iistimulus.GetSize())
+				int iifirst = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(ii);
+				if ((ii+1)>=  m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize())
 					continue;
-				int iilast =  m_pSpkDoc->m_stim.iistimulus.GetAt(ii+1);
+				int iilast =  m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(ii+1);
 				if (iifirst > lLast || iilast < lFirst)
 					continue;
 				if (iifirst < lFirst)

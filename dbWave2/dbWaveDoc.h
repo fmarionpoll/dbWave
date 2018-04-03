@@ -25,7 +25,7 @@ public:
 	CAcqDataDoc*	m_pDat;
 	CSpikeDoc*		m_pSpk;
 	HMENU			m_hMyMenu;
-	CIntervalsArray m_stimsaved;
+	CIntervalsAndLevels m_stimsaved;
 	
 	// database
 	CdbWdatabase*	m_pDB;

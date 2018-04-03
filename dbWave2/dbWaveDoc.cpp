@@ -1583,10 +1583,10 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase (CWaveFormat* pWF)
 	// long	m_repeat2;
 	pWF->repeat2 = m_pDB->m_tableSet.m_repeat2;
 
-	int npercycle = (int) ((m_pSpk->m_stim.nitems / 2) 
+	int npercycle = (int) ((m_pSpk->m_stimIntervals.nitems / 2) 
 		/ (m_pSpk->GetAcqDuration()/8.192f));
-	bChanged |= (npercycle != m_pSpk->m_stim.npercycle);
-	m_pSpk->m_stim.npercycle = npercycle;
+	bChanged |= (npercycle != m_pSpk->m_stimIntervals.npercycle);
+	m_pSpk->m_stimIntervals.npercycle = npercycle;
 
 	return bChanged;
 }

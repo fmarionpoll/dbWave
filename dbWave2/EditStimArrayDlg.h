@@ -14,13 +14,13 @@ public:
 	// data passed by caller
 	CPtrArray			m_pIntervalArrays;
 	float				m_rate;
-	CIntervalsArray*	m_pstimsaved;
+	CIntervalsAndLevels*	m_pstimsaved;
 
 // Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
 
 protected:
-	CIntervalsArray* m_pstim;
+	CIntervalsAndLevels* m_pstim;
 
 	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	CImageList*		m_pimagelist;
@@ -33,7 +33,7 @@ protected:
 
 	void			SelectItem(int i);
 	void			ResetListOrder();
-	void			TransferIntervalsArrayToDialogList(CIntervalsArray* pstim);
+	void			TransferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
 	
 	DECLARE_MESSAGE_MAP()
 public:

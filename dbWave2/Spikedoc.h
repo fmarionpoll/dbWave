@@ -32,7 +32,7 @@ public:
 	long				m_acqsize;		// duration (nb of pts/chan)
 	CSpikeClass			m_spkclass;		// list of templates
 	int					m_currspklist;
-	CIntervalsArray	m_stim;			// stimulus array
+	CIntervalsAndLevels		m_stimIntervals;			// stimulus array
 
 protected:
 	CArray				<CSpikeList, CSpikeList> m_spklistArray;

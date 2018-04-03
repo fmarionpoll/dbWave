@@ -2,25 +2,25 @@
 
 // ----------------------------------------------
 
-class CIntervalsArray : public CObject
+class CIntervalsAndLevels : public CObject
 {
-	DECLARE_SERIAL(CIntervalsArray)
+	DECLARE_SERIAL(CIntervalsAndLevels)
 
 public :
-	CIntervalsArray();	
-	virtual		~CIntervalsArray();
+	CIntervalsAndLevels();	
+	virtual		~CIntervalsAndLevels();
 	virtual void Serialize(CArchive& ar);	
-	void operator = (const CIntervalsArray& arg);
+	void operator = (const CIntervalsAndLevels& arg);
 
-	inline long	GetiiTime(int i) { return iistimulus.GetAt(i); };
-	inline void	SetiiTime(int i, long iitime) { iistimulus.SetAt(i, iitime);};
-	inline long	GetSize() { return iistimulus.GetSize(); }
+	inline long	GetiiTime(int i) { return intervalsArray.GetAt(i); };
+	inline void	SetiiTime(int i, long iitime) { intervalsArray.SetAt(i, iitime);};
+	inline long	GetSize() { return intervalsArray.GetSize(); }
 	inline int  GetChan() { return ichan; }
 	inline void SetChan(int chan) { ichan = chan; }
-	inline void AddInterval(long ii) { iistimulus.Add(ii); }
+	inline void AddInterval(long ii) { intervalsArray.Add(ii); }
 
 public:
-	CArray <long, long> iistimulus;	// time on, time off (n clock intervals)
+	CArray <long, long> intervalsArray;	// time on, time off (n clock intervals)
 	int		iID;				// ID number of the array
 	int		ichan;
 	CString	csDescriptor;		// descriptor of the array
@@ -54,9 +54,9 @@ class CIntervalsAndWordsSeries : public CObject
 	inline long		GetSize() { return iistep.GetSize(); }
 	CIntervalPoint  GetIntervalPointAt(int i);
 
-	void	ImportIntervalsSeries(CIntervalsArray* pIntervals, WORD valUP=1, BOOL bcopyRate = TRUE);
+	void	ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP=1, BOOL bcopyRate = TRUE);
 	void	ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
-	void	ExportIntervalsSeries(int chan, CIntervalsArray* pOut);
+	void	ExportIntervalsSeries(int chan, CIntervalsAndLevels* pOut);
 
 public:
 	CArray <CIntervalPoint, CIntervalPoint>  iistep;

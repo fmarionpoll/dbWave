@@ -42,7 +42,7 @@ protected:
 	static DWORD	comboVal[];
 
 public:
-	CIntervalsArray m_stimsaved;
+	CIntervalsAndLevels m_stimsaved;
 	float	m_samplingRate;
 	int		m_iseldigital;
 

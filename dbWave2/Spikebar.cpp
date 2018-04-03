@@ -128,7 +128,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		pDC->RestoreDC(nSavedDC);
 
 		// display stimulus
-		if (m_pSDoc->m_stim.nitems > 0)
+		if (m_pSDoc->m_stimIntervals.nitems > 0)
 			DisplayStim(pDC, &m_displayRect);
 
 		// display vertical cursors
@@ -190,8 +190,8 @@ void CSpikeBarWnd::DisplayStim(CDC* pDC, CRect* rect)
 	long iiend = m_lLast; 
 	long iilen = iiend - iistart;
 	int i0 = 0;
-	while (i0 < m_pSDoc->m_stim.iistimulus.GetSize() 
-			&& m_pSDoc->m_stim.iistimulus.GetAt(i0) < iistart)
+	while (i0 < m_pSDoc->m_stimIntervals.intervalsArray.GetSize() 
+			&& m_pSDoc->m_stimIntervals.intervalsArray.GetAt(i0) < iistart)
 		i0++;				// loop until found
 	int iix00 = 0;			// start looping from the first interval that meet the criteria
 	int istate =bottom;		// use this variable to keep track of pulse broken by display limits
@@ -200,11 +200,11 @@ void CSpikeBarWnd::DisplayStim(CDC* pDC, CRect* rect)
 		istate = top;
 	pDC->MoveTo(rect->left, istate); // iix00, istate);
 
-	int nsti = ((m_pSDoc->m_stim.iistimulus.GetSize())/2)*2;
+	int nsti = ((m_pSDoc->m_stimIntervals.intervalsArray.GetSize())/2)*2;
 	for (ii; ii< nsti; ii++, ii++)
 	{
 		// stim starts here
-		int iix0 = m_pSDoc->m_stim.iistimulus.GetAt(ii) - iistart;
+		int iix0 = m_pSDoc->m_stimIntervals.intervalsArray.GetAt(ii) - iistart;
 		if (iix0 >= iilen)				// first transition ON after last graph pt?
 			break;						// yes = exit loop
 
@@ -217,7 +217,7 @@ void CSpikeBarWnd::DisplayStim(CDC* pDC, CRect* rect)
 
 		// stim ends here
 		istate = bottom;				// after pulse, descend to bottom level
-		int iix1 = m_pSDoc->m_stim.iistimulus.GetAt(ii+1) - iistart;
+		int iix1 = m_pSDoc->m_stimIntervals.intervalsArray.GetAt(ii+1) - iistart;
 		if (iix1 > iilen)				// last transition off graph?
 		{
 			iix1 = iilen;				// yes = clip
@@ -854,7 +854,7 @@ void CSpikeBarWnd::Print(CDC* pDC, CRect* rect)
 	// set mapping mode and viewport
 	int nSavedDC = pDC->SaveDC();				// save display context	
 	DisplayBars(pDC, rect);
-	if (m_pSDoc->m_stim.nitems > 0)	
+	if (m_pSDoc->m_stimIntervals.nitems > 0)	
 		DisplayStim(pDC, rect);
 
 	pDC->RestoreDC(nSavedDC);	
