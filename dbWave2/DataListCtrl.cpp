@@ -614,6 +614,24 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
+BOOL CDataListCtrl::TestIfSpikesWereDetected(CString csDataFileName)
+{
+	// open document and read data - go to next file if not readable
+	int ilastbackslashposition = csDataFileName.ReverseFind('\\');
+	int idotposition = csDataFileName.ReverseFind('.');
+	int namelen = idotposition - ilastbackslashposition - 1;
+	CString csPath = csDataFileName.Left(ilastbackslashposition);
+	csPath.MakeLower();
+	CString csExtent = csDataFileName.Right(csDataFileName.GetLength() - idotposition - 1);
+	CString csRootName = csDataFileName.Mid(ilastbackslashposition + 1, namelen);
+
+	CString csSpkFile = csDataFileName.Left(idotposition) + _T(".spk");
+
+	// test  files
+	CFileStatus rStatus;
+	return CFile::GetStatus(csSpkFile, rStatus);
+}
+
 
 void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
@@ -648,6 +666,10 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	// if available, load data into CLineViewWnd object
 	else
 	{
+
+		if (!TestIfSpikesWereDetected(ptr->csDatafileName))
+			pWnd->m_parms.crScopeFill = pWnd->GetColor(2);
+
 		ptr->pdataDoc->ReadDataInfos();
 		pWnd->AttachDataFile(ptr->pdataDoc, 0);
 
@@ -766,7 +788,7 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 	}
 	CString csSpikeName (ptr->csSpikefileName);
 	LPCTSTR pcsSpikeName = csSpikeName;
-	if (!ptr->pspikeDoc->OnOpenDocument(pcsSpikeName))
+	if (csSpikeName.IsEmpty() || !ptr->pspikeDoc->OnOpenDocument(pcsSpikeName))
 	// consider here that requested,document is not reachable
 	// tell it to spikeview and display "data not available"...
 	{

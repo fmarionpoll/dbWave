@@ -1120,7 +1120,7 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		m_pDB->m_tableSet.AddNew();
 		mID++;
 		m_pDB->m_tableSet.m_ID = mID;  // is this necessary? there is an autonumber in the definition of the field in this table
-		// but autonumber does not necessarily works when you add a new record to a table?
+		// but autonumber does not necessarily work when you add a new record to a table?
 
 		// save file names	
 		if (bDatPresent)
