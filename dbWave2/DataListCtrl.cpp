@@ -614,25 +614,6 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-BOOL CDataListCtrl::TestIfSpikesWereDetected(CString csDataFileName)
-{
-	// open document and read data - go to next file if not readable
-	int ilastbackslashposition = csDataFileName.ReverseFind('\\');
-	int idotposition = csDataFileName.ReverseFind('.');
-	int namelen = idotposition - ilastbackslashposition - 1;
-	CString csPath = csDataFileName.Left(ilastbackslashposition);
-	csPath.MakeLower();
-	CString csExtent = csDataFileName.Right(csDataFileName.GetLength() - idotposition - 1);
-	CString csRootName = csDataFileName.Mid(ilastbackslashposition + 1, namelen);
-
-	CString csSpkFile = csDataFileName.Left(idotposition) + _T(".spk");
-
-	// test  files
-	CFileStatus rStatus;
-	return CFile::GetStatus(csSpkFile, rStatus);
-}
-
-
 void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
 	// create objects if necessary : CLineView and CAcqDataDoc
@@ -666,9 +647,11 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	// if available, load data into CLineViewWnd object
 	else
 	{
-
-		if (!TestIfSpikesWereDetected(ptr->csDatafileName))
+		//if (!TestIfSpikesWereDetected(ptr->csDatafileName))
+		if (ptr->csNspk.IsEmpty())
 			pWnd->m_parms.crScopeFill = pWnd->GetColor(2);
+		else 
+			pWnd->m_parms.crScopeFill = pWnd->GetColor(15);
 
 		ptr->pdataDoc->ReadDataInfos();
 		pWnd->AttachDataFile(ptr->pdataDoc, 0);

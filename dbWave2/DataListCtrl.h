@@ -82,7 +82,6 @@ protected:
 	void		DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage);
 	void		DisplayDataWnd  (CDataListCtrlRowObject* ptr, int iImage);
 	void		DisplayEmptyWnd (CDataListCtrlRowObject* ptr, int iImage);
-	BOOL		TestIfSpikesWereDetected(CString csDatFile);
 
 	BOOL		m_bDisplayFileName;
 	

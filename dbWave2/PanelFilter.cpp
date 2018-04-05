@@ -4,6 +4,7 @@
 #include "mainfrm.h"
 #include "Resource.h"
 #include "PanelFilter.h"
+#include "progdlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -230,7 +231,14 @@ void CFilterWnd::InitFilterList()
 	CdbWdatabase* pDB = m_pDoc->m_pDB;
 	ASSERT(pDB);
 
+	// setup dialog box
+	CProgressDlg dlg;
+	dlg.Create();
+	int istep = 0;
+	dlg.SetStep(1);
+	
 	// fill items of the combo (column heads to sort data)
+	dlg.SetStatus(_T("List categories available..."));
 	CMFCToolBarComboBoxButton* pCombo = (CMFCToolBarComboBoxButton*)m_wndToolBar.GetButton(3);
 	ASSERT(ID_RECORD_SORT == m_wndToolBar.GetItemID(3));
 	if (pCombo->GetCount() <= 0)
@@ -242,6 +250,7 @@ void CFilterWnd::InitFilterList()
 	int isel = pCombo->SelectItem(pDB->m_tableSet.m_strSort);
 
 	// fill items of the tree
+	dlg.SetStatus(_T("Populate categories..."));
 	if (pDB->m_tableSet.IsBOF() && pDB->m_tableSet.IsEOF())
 		return;
 	m_wndFilterView.LockWindowUpdate();		// prevent screen upate (and flicker)
@@ -251,8 +260,12 @@ void CFilterWnd::InitFilterList()
 	int i = 0;
 	pDB->m_tableSet.BuildAndSortIDArrays();
 
+	CString csComment;
 	while (m_noCol[i] > 0)
 	{
+		csComment.Format(_T("category %i"), i);
+		dlg.SetStatus(csComment);
+
 		int icol = m_noCol[i];
 		DB_ITEMDESC* pdesc = pDB->GetRecordItemDescriptor(icol);
 		m_htreeitem[i] = m_wndFilterView.InsertItem(pDB->m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
@@ -282,6 +295,9 @@ void CFilterWnd::InitFilterList()
 		int nitems = 0;
 		for (int j = 0; j < pdesc->csElementsArray.GetSize(); j++)
 		{
+			csComment.Format(_T("create subitem %i"), j);
+			dlg.SetStatus(csComment);
+
 			htreeItem = m_wndFilterView.InsertItem(pdesc->csElementsArray.GetAt(j), m_htreeitem[i]);
 			bcheck = TVCS_CHECKED;
 			CString csElmtj = pdesc->csElementsArray.GetAt(j);
@@ -306,7 +322,7 @@ void CFilterWnd::InitFilterList()
 			isum += bcheck;	// count number of positive checks (no check=0, check = 1)
 			nitems++;
 		}
-		// trick needed because if the first item is checked and not the others, then the parent stays in the initial state
+		// trick needed here because if the first item is checked and not the others, then the parent stays in the initial state
 		// namely "checked" (because at that moment it did not have other children)
 		if (isum == 1 && htreeItem != NULL)
 		{
