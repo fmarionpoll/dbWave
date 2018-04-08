@@ -10,7 +10,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CFilterPanel
 
@@ -23,16 +22,13 @@ int CFilterWnd::m_noCol[] = {
 	CH_FLAG, CH_ACQDATE_DAY, -1 
 };		
 
-
 CFilterWnd::CFilterWnd()
 {
 }
 
-
 CFilterWnd::~CFilterWnd()
 {
 }
-
 
 BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
 	ON_WM_CREATE()
@@ -83,13 +79,11 @@ int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-
 void CFilterWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
-
 
 void CFilterWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 {
@@ -120,7 +114,6 @@ void CFilterWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
-
 void CFilterWnd::AdjustLayout()
 {
 	if (GetSafeHwnd() == NULL)
@@ -135,7 +128,6 @@ void CFilterWnd::AdjustLayout()
 	m_wndFilterView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-
 void CFilterWnd::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
@@ -148,20 +140,17 @@ void CFilterWnd::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-
 void CFilterWnd::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 	m_wndFilterView.SetFocus();
 }
 
-
 void CFilterWnd::OnUpdateTree()
 {
 	m_pDocOld = NULL;
 	InitFilterList();
 }
-
 
 LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
@@ -199,7 +188,6 @@ LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-
 void CFilterWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	m_pDoc = (CdbWaveDoc*)pSender;
@@ -220,7 +208,6 @@ void CFilterWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		break;
 	}
 }
-
 
 void CFilterWnd::InitFilterList()
 {
@@ -336,7 +323,6 @@ void CFilterWnd::InitFilterList()
 	m_wndFilterView.UnlockWindowUpdate();
 }
 
-
 void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 {
 	CString cs;		// to construct insect and sensillum number (for example)
@@ -373,7 +359,6 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 		}
 	}
 }
-
 
 void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 {
@@ -419,15 +404,13 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 	}
 }
 
-
 void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 {
 	CString cs;		// to construct date
 	CString cscolhead = pdesc->csColName;
 	CString str;	// to construct filter
 	CdbMainTable* pSet = &m_pDoc->m_pDB->m_tableSet;
-	CArray<COleDateTime, COleDateTime>*	ptiArray = &pSet->m_desc[CH_ACQDATE_DAY].tiArray;
-	int arraySize = ptiArray->GetSize();
+	int arraySize = pSet->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
 	if (pdesc->bFilter2)
 	{
@@ -443,7 +426,7 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 		pdesc->csElementsArray.RemoveAll();
 		for (int i = 0; i < arraySize; i++)
 		{
-			COleDateTime oTime = ptiArray->GetAt(i);
+			COleDateTime oTime = pSet->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
 			cs = oTime.Format(_T("%m/%d/%y"));		// filter needs to be constructed as month-day-year
 			str.Format(_T("%s=#%s#"), (LPCTSTR) cscolhead, (LPCTSTR) cs);
 			BOOL flag = pSet->FindFirst(str);
@@ -455,7 +438,6 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 		}
 	}
 }
-
 
 void  CFilterWnd::InsertAlphabetic(CString cs, CStringArray &csArray)
 {
@@ -469,7 +451,6 @@ void  CFilterWnd::InsertAlphabetic(CString cs, CStringArray &csArray)
 	}
 	csArray.InsertAt(i, cs);
 }
-
 
 void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
@@ -495,7 +476,6 @@ void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITE
 	}
 }
 
-
 void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	
@@ -513,7 +493,6 @@ void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 	}
 }
 
-
 void CFilterWnd::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	int i = 0;
@@ -522,22 +501,14 @@ void CFilterWnd::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 		TVCS_CHECKSTATE state = m_wndFilterView.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
-			CString cs = m_wndFilterView.GetItemText(item);
-			for (int j = 0; j < pdesc->tiArray.GetSize(); j++)
-			{
-				COleDateTime oTime = pdesc->tiArray.GetAt(j);
-				CString str = oTime.Format(VAR_DATEVALUEONLY);
-				if (str == cs)
-				{ 
-					pdesc->otfilterParam2.Add(oTime);
-					pdesc->csfilterParam2.Add(cs);
-					break;
-				}
-			}
+			CString csFilterChecked = m_wndFilterView.GetItemText(item);
+			COleDateTime oTime;
+			oTime.ParseDateTime(csFilterChecked);
+			pdesc->otfilterParam2.Add(oTime);
+			pdesc->csfilterParam2.Add(csFilterChecked);
 		}
 	}
 }
-
 
 void CFilterWnd::OnApplyFilter()
 {
@@ -565,6 +536,7 @@ void CFilterWnd::OnApplyFilter()
 			pdesc->bFilter2 = TRUE;
 			pdesc->lfilterParam2.RemoveAll();
 			pdesc->csfilterParam2.RemoveAll();
+			pdesc->otfilterParam2.RemoveAll();
 			HTREEITEM startItem = m_wndFilterView.GetNextItem(hParent, TVGN_CHILD);
 			switch (pdesc->typeLocal)
 			{
@@ -575,8 +547,11 @@ void CFilterWnd::OnApplyFilter()
 			case FIELD_LONG:
 				BuildFilterItemLongFromTree(pdesc, startItem);
 				break;
-			case FIELD_DATE:
+			case FIELD_DATE_YMD:
 				BuildFilterItemDateFromTree(pdesc, startItem);
+				break;
+			default:
+				ASSERT(false);
 				break;
 			}
 		}

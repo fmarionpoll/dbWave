@@ -353,7 +353,8 @@ void CdbMainTable::BuildFilters()
 					}
 				}
 				break;
-			case FIELD_DATE:
+
+			case FIELD_DATE_YMD:
 				{
 					int i = 0;
 					COleDateTime oTime = m_desc[ifield].otfilterParam2.GetAt(i);
@@ -366,6 +367,10 @@ void CdbMainTable::BuildFilters()
 						m_strFilter += cs;
 					}
 				}
+				break;
+
+			default:
+				ASSERT(false);
 				break;
 			}
 			m_strFilter += _T(")");
@@ -425,12 +430,12 @@ void CdbMainTable::AddDaytoDateArray(COleDateTime &oTime)
 {
 	BOOL bFlag = FALSE;
 	COleDateTime dayTime;
+	COleDateTime ioTime;
 	dayTime.SetDateTime(oTime.GetYear(), oTime.GetMonth(), oTime.GetDay(), 0, 0, 0);
-	CArray<COleDateTime, COleDateTime>*	ptiArray = &m_desc[CH_ACQDATE_DAY].tiArray;
 
-	for (int i = 0; i < ptiArray->GetSize(); i++)
+	for (int i = 0; i < m_desc[CH_ACQDATE_DAY].tiArray.GetSize(); i++)
 	{
-		COleDateTime ioTime = ptiArray->GetAt(i);
+		ioTime = m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
 		// element already exist? -- assume this is the most frequent case
 		if (dayTime == ioTime)
 		{
@@ -440,7 +445,7 @@ void CdbMainTable::AddDaytoDateArray(COleDateTime &oTime)
 		// insert element before current?
 		if (dayTime < ioTime)
 		{
-			ptiArray->InsertAt(i, dayTime);
+			m_desc[CH_ACQDATE_DAY].tiArray.InsertAt(i, dayTime);
 			bFlag = TRUE;
 			break;
 		}
@@ -450,7 +455,7 @@ void CdbMainTable::AddDaytoDateArray(COleDateTime &oTime)
 	// no element found, add one at the end of the array
 	if (!bFlag)
 	{
-		ptiArray->Add(dayTime);
+		m_desc[CH_ACQDATE_DAY].tiArray.Add(dayTime);
 	}
 }
 
@@ -559,9 +564,8 @@ void CdbMainTable::AddCurrentRecordtoIDArrays()
 
 void CdbMainTable::DeleteDateArray()
 {
-	CArray<COleDateTime, COleDateTime>*	ptiArray = &m_desc[CH_ACQDATE_DAY].tiArray;
-	if (ptiArray->GetSize() > 0)
-		ptiArray->RemoveAll();
+	if (m_desc[CH_ACQDATE_DAY].tiArray.GetSize() > 0)
+		m_desc[CH_ACQDATE_DAY].tiArray.RemoveAll();
 }
 
 // loop over the entire database and save descriptors
