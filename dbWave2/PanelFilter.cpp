@@ -43,11 +43,6 @@ BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
 	ON_COMMAND(ID_EXPLORER_NEXT, OnSelectNext)
 	ON_COMMAND(ID_EXPLORER_PREVIOUS, OnSelectPrevious)
 
-	//ON_TVN_CHECK(				IDC_TREE1, OnTvnCheckTree)
-	//ON_NOTIFY(TVN_ITEMCHANGED,IDC_TREE1, OnTvnItemchangedTree)
-	//ON_NOTIFY(NM_CLICK,		IDC_TREE1, OnNMClickTree)
-	//ON_NOTIFY(TVN_KEYDOWN,	IDC_TREE1, OnTvnKeydownTree)
-
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -250,14 +245,15 @@ void CFilterWnd::InitFilterList()
 	CString csComment;
 	while (m_noCol[i] > 0)
 	{
-		csComment.Format(_T("category %i"), i);
-		dlg.SetStatus(csComment);
-
 		int icol = m_noCol[i];
 		DB_ITEMDESC* pdesc = pDB->GetRecordItemDescriptor(icol);
 		m_htreeitem[i] = m_wndFilterView.InsertItem(pDB->m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
 		m_wndFilterView.SetItemData(m_htreeitem[i], m_noCol[i]);		// save table index into head of the list
 
+		csComment.Format(_T("Category %i: "), i);
+		csComment += pDB->m_desctab[icol].szDescriptor;
+		dlg.SetStatus(csComment);
+		
 		// collect data (array of unique descriptors)
 		switch (pdesc->typeLocal) 
 		{
@@ -282,7 +278,7 @@ void CFilterWnd::InitFilterList()
 		int nitems = 0;
 		for (int j = 0; j < pdesc->csElementsArray.GetSize(); j++)
 		{
-			csComment.Format(_T("create subitem %i"), j);
+			csComment.Format(_T("Create subitem %i"), j);
 			dlg.SetStatus(csComment);
 
 			htreeItem = m_wndFilterView.InsertItem(pdesc->csElementsArray.GetAt(j), m_htreeitem[i]);

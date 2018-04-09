@@ -326,7 +326,7 @@ void CdbEditFieldDlg::ModifyAll()
 
 void CdbEditFieldDlg::ModifyCurrent()
 {
-	long iIDcurrent = 0;												// ID of current record
+	long iIDcurrent = 0;								// ID of current record
 	int ifound = 0;
 	CString csvalue;
 	COleVariant varValue;
@@ -363,7 +363,7 @@ void CdbEditFieldDlg::ModifyCurrent()
 	// change ID value, erase ID value or change text...
 	switch (m_destaction)
 	{
-	case CHGE_ID:					// change ID
+	case CHGE_ID:				// change ID
 		m_pMainTable->SetLongValue(m_destID, m_csColName);
 		break;
 	case CHGE_CLEAR:			// erase iID 
