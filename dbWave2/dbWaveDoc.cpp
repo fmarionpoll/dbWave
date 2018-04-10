@@ -1568,7 +1568,7 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase (CWaveFormat* pWF)
 	}
 
 	bChanged |= (pWF->insectID != m_pDB->m_mainTableSet.m_IDinsect);
-	// long	m_IDinsect;
+	// long	m_insectnumber;
 	pWF->insectID = m_pDB->m_mainTableSet.m_IDinsect;
 
 	bChanged |= (pWF->sensillumID != m_pDB->m_mainTableSet.m_IDsensillum);

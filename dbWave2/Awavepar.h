@@ -362,6 +362,7 @@ public:
 	CString			csBasename;
 	CString			csPathname;
 	int				exptnumber;
+	int				insectnumber;
 	int				iundersample;
 	BOOL			baudiblesound;
 	BOOL			bChannelType;					// OLx_CHNT_SINGLEENDED or OLx_CHNT_DIFFERENTIAL

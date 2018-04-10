@@ -13,13 +13,13 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_AD_EXPERIMENTDLG };
-	CString	 m_csBasename;
-	CString	 m_csMoreComment;
-	UINT	 m_exptnumber;
-	CString	 m_csPathname;
-	BOOL	 m_bhidesubsequent;
+	CString	  m_csBasename;
+	CString	  m_csMoreComment;
+	UINT	  m_exptnumber;
+	UINT	  m_insectnumber;
+	CString	  m_csPathname;
+	BOOL	  m_bhidesubsequent;
 
-	UINT	  m_IDinsect;
 	CComboBox m_coStrain;
 	CComboBox m_coSex;
 	CComboBox m_coSensillum;

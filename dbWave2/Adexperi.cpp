@@ -21,12 +21,12 @@
 
 ADExperimentDlg::ADExperimentDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(ADExperimentDlg::IDD, pParent)
-	, m_IDinsect(0)
 	, m_bhidesubsequent(FALSE)
 {
 	m_csBasename = _T("");
 	m_csMoreComment = _T("");
 	m_exptnumber = 0;
+	m_insectnumber = 0;
 	m_csPathname = _T("");
 	m_pADC_options = NULL;
 	m_bADexpt = TRUE;
@@ -41,7 +41,7 @@ void ADExperimentDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_NAME, m_csBasename);
 	DDX_Text(pDX, IDC_EDIT_COMMENT, m_csMoreComment);
 	DDX_Text(pDX, IDC_EDIT_NUMNAME, m_exptnumber);
-	DDX_Text(pDX, IDC_INSECTID, m_IDinsect);
+	DDX_Text(pDX, IDC_INSECTID, m_insectnumber);
 
 	DDX_Control(pDX, IDC_COMBO_STRAIN, m_coStrain);
 	DDX_Control(pDX, IDC_COMBO_SEX, m_coSex);
@@ -141,6 +141,11 @@ void ADExperimentDlg::OnOK()
 		m_pADC_options->csPathname = m_csPathname;
 		m_pADC_options->csBasename = m_csBasename;
 		m_pADC_options->exptnumber = m_exptnumber+1; 
+		m_pADC_options->insectnumber = m_insectnumber;
+
+		m_pwaveFormat->insectID = m_insectnumber;
+		m_pwaveFormat->repeat = m_pADC_options->icsA_repeat;
+		m_pwaveFormat->repeat2 = m_pADC_options->icsA_repeat2;
 		m_pwaveFormat->csMoreComment = m_csMoreComment;
 
 		// save descriptors into waveFormat (data acq file descriptor) and update database
@@ -155,9 +160,6 @@ void ADExperimentDlg::OnOK()
 		m_coOperator.GetWindowText(			m_pwaveFormat->csOperator);
 		m_coInsect.GetWindowText(			m_pwaveFormat->csInsectname);
 		m_coExpt.GetWindowText(				m_pwaveFormat->csComment);
-		m_pwaveFormat->insectID	= m_IDinsect;
-		m_pwaveFormat->repeat	= m_pADC_options->icsA_repeat;
-		m_pwaveFormat->repeat2	= m_pADC_options->icsA_repeat2;
 
 		// save data into commons
 		m_pADC_options->icsA_concentration = SaveList(&m_coConcentration, &(m_pADC_options->csA_concentration));
@@ -208,6 +210,7 @@ BOOL ADExperimentDlg::OnInitDialog()
 		m_pwaveFormat= &(m_pADC_options->waveFormat);
 
 	m_exptnumber = m_pADC_options->exptnumber;
+	m_insectnumber = m_pADC_options->insectnumber;
 	m_csBasename = m_pADC_options->csBasename;
 	if (m_csBasename.IsEmpty())
 		m_csBasename = _T("data");
@@ -215,24 +218,23 @@ BOOL ADExperimentDlg::OnInitDialog()
 	m_mfcBrowsePath.SetWindowTextW(m_csPathname);
 	
 	m_csMoreComment = m_pwaveFormat->csMoreComment;
-	m_IDinsect = m_pwaveFormat->insectID;
-	LoadList(&m_coConcentration, &(m_pADC_options->csA_concentration), m_pADC_options->icsA_concentration,	&(m_pdbDoc->m_pDB->m_concSet));
+	LoadList(&m_coConcentration, &(m_pADC_options->csA_concentration), m_pADC_options->icsA_concentration,		&(m_pdbDoc->m_pDB->m_concSet));
 	LoadList(&m_coStimulus,		&(m_pADC_options->csA_stimulus),		m_pADC_options->icsA_stimulus,			&(m_pdbDoc->m_pDB->m_stimSet));
-	LoadList(&m_coConcentration2, &(m_pADC_options->csA_concentration2), m_pADC_options->icsA_concentration2, &(m_pdbDoc->m_pDB->m_concSet));
-	LoadList(&m_coStimulus2,	&(m_pADC_options->csA_stimulus2),		m_pADC_options->icsA_stimulus2,		&(m_pdbDoc->m_pDB->m_stimSet));
+	LoadList(&m_coConcentration2,&(m_pADC_options->csA_concentration2), m_pADC_options->icsA_concentration2, &(m_pdbDoc->m_pDB->m_concSet));
+	LoadList(&m_coStimulus2,	&(m_pADC_options->csA_stimulus2),		m_pADC_options->icsA_stimulus2,			&(m_pdbDoc->m_pDB->m_stimSet));
 	LoadList(&m_coInsect,		&(m_pADC_options->csA_insect),			m_pADC_options->icsA_insect,			&(m_pdbDoc->m_pDB->m_insectSet));
 	LoadList(&m_coLocation,		&(m_pADC_options->csA_location),		m_pADC_options->icsA_location,			&(m_pdbDoc->m_pDB->m_locationSet));
-	LoadList(&m_coSensillum,	&(m_pADC_options->csA_sensillum),		m_pADC_options->icsA_sensillum,		&(m_pdbDoc->m_pDB->m_sensillumSet));
+	LoadList(&m_coSensillum,	&(m_pADC_options->csA_sensillum),		m_pADC_options->icsA_sensillum,			&(m_pdbDoc->m_pDB->m_sensillumSet));
 	LoadList(&m_coStrain,		&(m_pADC_options->csA_strain),			m_pADC_options->icsA_strain,			&(m_pdbDoc->m_pDB->m_strainSet));
-	LoadList(&m_coSex,			&(m_pADC_options->csA_sex),			m_pADC_options->icsA_sex,				&(m_pdbDoc->m_pDB->m_sexSet));
+	LoadList(&m_coSex,			&(m_pADC_options->csA_sex),				m_pADC_options->icsA_sex,				&(m_pdbDoc->m_pDB->m_sexSet));
 	LoadList(&m_coOperator,		&(m_pADC_options->csA_operatorname),	m_pADC_options->icsA_operatorname,		&(m_pdbDoc->m_pDB->m_operatorSet));
 	LoadList(&m_coExpt,			&(m_pADC_options->csA_expt),			m_pADC_options->icsA_expt,				&(m_pdbDoc->m_pDB->m_exptSet));
-	LoadList(&m_coRepeat,		NULL,							m_pADC_options->icsA_repeat,			NULL);
-	LoadList(&m_coRepeat2,		NULL,							m_pADC_options->icsA_repeat2,			NULL);
+	LoadList(&m_coRepeat,		NULL,									m_pADC_options->icsA_repeat,			NULL);
+	LoadList(&m_coRepeat2,		NULL,									m_pADC_options->icsA_repeat2,			NULL);
 
 	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN1))->SetRange32( 0, 99999);
-	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN2))->SetRange32(0, 99999);
-
+	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN2))->SetRange32( 0, 99999);
+	
 	if (!m_bADexpt)
 	{
 		m_coStimulus.SetWindowText		(m_pwaveFormat->csStimulus);
@@ -269,9 +271,11 @@ int ADExperimentDlg::SaveList(CComboBox* pcombo, CStringArray* pS)
 	{
 		CString csEdit;
 		pcombo->GetWindowText(csEdit);
-		iexist = pcombo->FindStringExact(-1, csEdit);
-		if (iexist == CB_ERR)
-			iexist = pcombo->AddString(csEdit);
+		if (!csEdit.IsEmpty()) {
+			iexist = pcombo->FindStringExact(-1, csEdit);
+			if (iexist == CB_ERR)
+				iexist = pcombo->AddString(csEdit);
+		}
 
 		// loop over each entry of the combo box and save it in the string array
 		CString csdummy;
@@ -450,6 +454,6 @@ void ADExperimentDlg::OnBnClickedButtonNextid()
 {
 	CdbWdatabase*	pDB = m_pdbDoc->m_pDB;
 	pDB->m_mainTableSet.GetMaxIDs();
-	m_IDinsect = pDB->m_mainTableSet.max_insectID + 1;
+	m_insectnumber = pDB->m_mainTableSet.max_insectID + 1;
 	UpdateData(FALSE);
 }

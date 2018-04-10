@@ -1285,6 +1285,7 @@ OPTIONS_ACQDATA::OPTIONS_ACQDATA()
 	bChannelType=OLx_CHNT_DIFFERENTIAL;
 	izoomCursel=0;
 	sweepduration = 1.0f;
+	insectnumber = 0;
 }
 
 OPTIONS_ACQDATA::~OPTIONS_ACQDATA()
@@ -1328,6 +1329,7 @@ void OPTIONS_ACQDATA::operator = (const OPTIONS_ACQDATA& arg)
 	bChannelType = arg.bChannelType;
 
 	sweepduration = arg.sweepduration;
+	insectnumber = arg.insectnumber;
 }
 
 void OPTIONS_ACQDATA::Serialize(CArchive& ar)
@@ -1340,7 +1342,7 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 		ar << csBasename;
 		ar << csPathname;
 
-		ar << (WORD) 18;			// 2 - int parameters
+		ar << (WORD) 19;			// 2 - int parameters
 		ar << exptnumber;			// 1
 		ar << icsA_stimulus;		// 2
 		ar << icsA_concentration;	// 3
@@ -1359,6 +1361,7 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 		ar << icsA_repeat;			// 16
 		ar << icsA_repeat2;			// 17
 		ar << icsA_expt;			// 18
+		ar << insectnumber;				// 19
 
 		ar << (WORD) 11;			// 3 - CStringArray parameters
 		int nsize;
@@ -1413,6 +1416,7 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 		if (n > 0) ar >> icsA_repeat; n--;
 		if (n > 0) ar >> icsA_repeat2; n--;
 		if (n > 0) ar >> icsA_expt; n--;
+		if (n > 0) ar >> insectnumber; n--;
 		int	idummy; while (n > 0) {n--; ar >> idummy;}
 
 		// CStringArray parameters
