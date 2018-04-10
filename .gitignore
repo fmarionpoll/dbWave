@@ -246,3 +246,6 @@ ModelManifest.xml
 
 # help file
 *.chm
+
+#project
+*.vdproj
