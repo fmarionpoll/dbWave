@@ -13,15 +13,13 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_AD_EXPERIMENTDLG };
-	//CString	m_csComment;
-	CString	m_csBasename;
-	CString	m_csMoreComment;
-	UINT	m_exptnumber;
-	CString	m_csPathname;
-	BOOL	m_bhidesubsequent;
+	CString	 m_csBasename;
+	CString	 m_csMoreComment;
+	UINT	 m_exptnumber;
+	CString	 m_csPathname;
+	BOOL	 m_bhidesubsequent;
 
-	UINT m_IDinsect;
-	BOOL m_bAuto;
+	UINT	  m_IDinsect;
 	CComboBox m_coStrain;
 	CComboBox m_coSex;
 	CComboBox m_coSensillum;
@@ -67,7 +65,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedCheck1();
 	afx_msg void OnBnClickedButtoninsectname();
 	afx_msg void OnBnClickedButtonstrain();
 	afx_msg void OnBnClickedButtonsex();

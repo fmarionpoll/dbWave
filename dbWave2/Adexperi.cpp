@@ -22,7 +22,6 @@
 ADExperimentDlg::ADExperimentDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(ADExperimentDlg::IDD, pParent)
 	, m_IDinsect(0)
-	, m_bAuto(FALSE)
 	, m_bhidesubsequent(FALSE)
 {
 	m_csBasename = _T("");
@@ -58,7 +57,6 @@ void ADExperimentDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1_REPEAT2, m_coRepeat2);
 	DDX_Control(pDX, IDC_COMBO_EXPT3, m_coExpt);
 
-	DDX_Check(pDX, IDC_CHECK1, m_bAuto);
 	DDX_Check(pDX, IDC_CHECK2, m_bhidesubsequent);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_mfcBrowsePath);
 }
@@ -66,7 +64,6 @@ void ADExperimentDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(ADExperimentDlg, CDialog)
 
-	ON_BN_CLICKED(IDC_CHECK1,			&ADExperimentDlg::OnBnClickedCheck1)
 	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &ADExperimentDlg::OnBnClickedButtoninsectname)
 	ON_BN_CLICKED(IDC_BUTTONSTRAIN,		&ADExperimentDlg::OnBnClickedButtonstrain)
 	ON_BN_CLICKED(IDC_BUTTONSEX,		&ADExperimentDlg::OnBnClickedButtonsex)
@@ -232,7 +229,8 @@ BOOL ADExperimentDlg::OnInitDialog()
 	LoadList(&m_coRepeat,		NULL,							m_pADC_options->icsA_repeat,			NULL);
 	LoadList(&m_coRepeat2,		NULL,							m_pADC_options->icsA_repeat2,			NULL);
 
-	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN1))->SetRange( 0, 9999);
+	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN1))->SetRange32( 0, 99999);
+	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN2))->SetRange32(0, 99999);
 
 	if (!m_bADexpt)
 	{
@@ -339,12 +337,6 @@ void ADExperimentDlg::LoadList(CComboBox* pcombo, CStringArray* pS, int isel, CD
 	pcombo->SetCurSel(isel);
 }
 
-
-void ADExperimentDlg::OnBnClickedCheck1()
-{
-	m_bAuto = ((CButton*) GetDlgItem(IDC_CHECK1))->GetState() & 0x1;
-	GetDlgItem(IDC_INSECTID)->EnableWindow(!m_bAuto);
-}
 
 void ADExperimentDlg::EditComboBox(CComboBox* pCo)
 {
