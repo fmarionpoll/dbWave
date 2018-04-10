@@ -813,8 +813,6 @@ void CWaveBuf::BMedian(short* lpSource, short* lpDest, int cx, int nbspan)
 		oldvalue = *(m_parrayCircular+i_parrayCircular);	// old value
 		newvalue = *lpNext;									// new value to insert into array
 		*(m_parrayCircular + i_parrayCircular)= newvalue;	// save new value into circular array
-		// DEBUG
-		//ASSERT(lpNext <= max_lpSource);
 		
 		// update circular array pointer
 		i_parrayCircular++;

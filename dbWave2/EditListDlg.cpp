@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(CEditListDlg, CDialog)
 	ON_BN_CLICKED(IDC_DELETE, &CEditListDlg::OnBnClickedDelete)
 	ON_BN_CLICKED(IDC_ADDITEM, &CEditListDlg::OnBnClickedAdditem)
 	ON_WM_SIZE()
+//	ON_BN_CLICKED(IDC_BUTTON1, &CEditListDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 // CEditListDlg message handlers
@@ -61,7 +62,8 @@ void CEditListDlg::OnOK()
 	for (int i=0; i< nitems; i++)
 	{
 		m_clStrings.GetText(i, csdummy);
-		m_csArray.Add(csdummy);
+		if (!csdummy.IsEmpty())
+			m_csArray.Add(csdummy);
 	}
 	CDialog::OnOK();
 }
@@ -75,8 +77,17 @@ void CEditListDlg::OnBnClickedDelete()
 	m_clStrings.GetSelItems(ncount, selIndex); 
 	for (int i= ncount; i>0; i--)
 		m_clStrings.DeleteString(selIndex[i-1]);
-
 	delete [] selIndex;
+
+	int nitems = m_clStrings.GetCount();
+	CString csdummy;
+	for (int i = nitems-1; i>= 0; i--)
+	{
+		m_clStrings.GetText(i, csdummy);
+		if (csdummy.IsEmpty())
+			m_clStrings.DeleteString(i);
+	}
+
 	UpdateData(FALSE);
 }
 
