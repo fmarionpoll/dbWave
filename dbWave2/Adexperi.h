@@ -79,4 +79,5 @@ public:
 	afx_msg void OnBnClickedButtonrepeat2();
 	afx_msg void OnBnClickedButtonexpt();
 	afx_msg void OnEnKillfocusMfceditbrowse1();
+	afx_msg void OnBnClickedButtonNextid();
 };

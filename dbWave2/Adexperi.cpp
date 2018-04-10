@@ -79,6 +79,7 @@ BEGIN_MESSAGE_MAP(ADExperimentDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTONEXPT3,		&ADExperimentDlg::OnBnClickedButtonexpt)
 
 	ON_EN_KILLFOCUS(IDC_MFCEDITBROWSE1, &ADExperimentDlg::OnEnKillfocusMfceditbrowse1)
+	ON_BN_CLICKED(IDC_BUTTON_NEXTID, &ADExperimentDlg::OnBnClickedButtonNextid)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -442,4 +443,13 @@ void ADExperimentDlg::OnEnKillfocusMfceditbrowse1()
 		if (!CreateDirectory(cspath, NULL))
 			AfxMessageBox(IDS_DIRECTORYFAILED);
 	}
+}
+
+
+void ADExperimentDlg::OnBnClickedButtonNextid()
+{
+	CdbWdatabase*	pDB = m_pdbDoc->m_pDB;
+	pDB->m_mainTableSet.GetMaxIDs();
+	m_IDinsect = pDB->m_mainTableSet.max_insectID + 1;
+	UpdateData(FALSE);
 }

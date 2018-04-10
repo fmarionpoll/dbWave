@@ -229,18 +229,18 @@ void CFilterWnd::InitFilterList()
 		for (int i = 0; i < NTABLECOLS; i++)
 			k = pCombo->AddSortedItem(pDB->m_desctab[i].szDescriptor, i);
 	}
-	int isel = pCombo->SelectItem(pDB->m_tableSet.m_strSort);
+	int isel = pCombo->SelectItem(pDB->m_mainTableSet.m_strSort);
 
 	// fill items of the tree
 	dlg.SetStatus(_T("Populate categories..."));
-	if (pDB->m_tableSet.IsBOF() && pDB->m_tableSet.IsEOF())
+	if (pDB->m_mainTableSet.IsBOF() && pDB->m_mainTableSet.IsEOF())
 		return;
 	m_wndFilterView.LockWindowUpdate();		// prevent screen upate (and flicker)
 	if (m_wndFilterView.GetCount() > 0)
 		m_wndFilterView.DeleteAllItems();
 
 	int i = 0;
-	pDB->m_tableSet.BuildAndSortIDArrays();
+	pDB->m_mainTableSet.BuildAndSortIDArrays();
 
 	CString csComment;
 	while (m_noCol[i] > 0)
@@ -323,7 +323,7 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 {
 	CString cs;		// to construct insect and sensillum number (for example)
 	CString str;	// to store FindFirst filter
-	CdbMainTable* pSet = &m_pDoc->m_pDB->m_tableSet;
+	CdbMainTable* pSet = &m_pDoc->m_pDB->m_mainTableSet;
 	CString cscolhead = pdesc->csColName;
 	int arraySize = pdesc->liArray.GetSize();
 	if (pdesc->bFilter2)
@@ -363,7 +363,7 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 	ASSERT(!str2.IsEmpty());
 
 	CdbIndexTable* plinkedSet = pdesc->plinkedSet;
-	CdbMainTable* pSet = &m_pDoc->m_pDB->m_tableSet;
+	CdbMainTable* pSet = &m_pDoc->m_pDB->m_mainTableSet;
 	if (pdesc->bFilter2)
 	{
 		return;
@@ -405,7 +405,7 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 	CString cs;		// to construct date
 	CString cscolhead = pdesc->csColName;
 	CString str;	// to construct filter
-	CdbMainTable* pSet = &m_pDoc->m_pDB->m_tableSet;
+	CdbMainTable* pSet = &m_pDoc->m_pDB->m_mainTableSet;
 	int arraySize = pSet->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
 	if (pdesc->bFilter2)
@@ -554,8 +554,8 @@ void CFilterWnd::OnApplyFilter()
 	}
 
 	// update recordset and tell other views...
-	pDB->m_tableSet.BuildFilters();
-	pDB->m_tableSet.RefreshQuery();
+	pDB->m_mainTableSet.BuildFilters();
+	pDB->m_mainTableSet.RefreshQuery();
 	m_pDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
 }
 
@@ -569,9 +569,9 @@ void CFilterWnd::OnSortRecords()
 	int isel = pCombo->GetCurSel();
 	ASSERT(isel != CB_ERR);
 	int i = pCombo->GetItemData(isel);
-	pDB->m_tableSet.m_strSort = pDB->m_desctab[i].szTableCol;
+	pDB->m_mainTableSet.m_strSort = pDB->m_desctab[i].szTableCol;
 
-	pDB->m_tableSet.RefreshQuery();
+	pDB->m_mainTableSet.RefreshQuery();
 	m_pDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
 }
 

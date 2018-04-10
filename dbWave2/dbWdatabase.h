@@ -21,7 +21,7 @@ public:
 	static	TABCOL  m_desctab[];
 
 	// CDaoRecordSets
-	CdbMainTable	m_tableSet;
+	CdbMainTable	m_mainTableSet;
 
 	CdbIndexTable	m_operatorSet;
 	CdbIndexTable	m_insectSet;
@@ -75,9 +75,9 @@ public:
 	inline BOOL MoveNext()	{return MoveRecord(ID_RECORD_NEXT);}
 	inline BOOL MovePrev()	{return MoveRecord(ID_RECORD_PREV);}
 	inline BOOL MoveLast()	{return MoveRecord(ID_RECORD_LAST);}
-	inline void	SetDataLen(long datalen) {m_tableSet.SetDataLen(datalen);}
-	inline long GetNRecords() {return m_tableSet.GetNRecords();}
-	inline long GetNFields()  {return m_tableSet.m_nFields;}
+	inline void	SetDataLen(long datalen) {m_mainTableSet.SetDataLen(datalen);}
+	inline long GetNRecords() {return m_mainTableSet.GetNRecords();}
+	inline long GetNFields()  {return m_mainTableSet.m_nFields;}
 	
 	// get associated table?
 	// get list of items in associated tables?

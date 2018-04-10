@@ -207,13 +207,13 @@ void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup)
 		int icol = pProp->GetData();
 		pDB->GetRecordItemValue(icol, &desc);
 		pProp->ResetOriginalValue();
-		switch (pDB->m_tableSet.m_desc[icol].typeLocal) 
+		switch (pDB->m_mainTableSet.m_desc[icol].typeLocal) 
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
 			pProp->SetValue(desc.csVal);
 			pProp->SetOriginalValue(desc.csVal);
-			p2linkedSet = pDB->m_tableSet.m_desc[icol].plinkedSet;
+			p2linkedSet = pDB->m_mainTableSet.m_desc[icol].plinkedSet;
 			if (m_bUpdateCombos || (pProp->GetOptionCount() != p2linkedSet->GetRecordCount()))
 			{
 				pProp->RemoveAllOptions();
@@ -263,7 +263,7 @@ void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup)
 void CPropertiesWnd::UpdateTableFromProp()
 {
 	CdbWdatabase* pDB = m_pDoc->m_pDB;
-	CdbMainTable* pSet = &pDB->m_tableSet;
+	CdbMainTable* pSet = &pDB->m_mainTableSet;
 	m_bchangedProperty = FALSE;		// reseet flag
 	pSet->Edit();
 
@@ -356,8 +356,8 @@ void CPropertiesWnd::InitPropList()
 	CMFCPropertyGridProperty* pGroup0 = new CMFCPropertyGridProperty(_T("Database"));
 	pGroup0->SetData(m_iID); 
 	m_iID++;	// iID = 1000
-	int ipos = pDB->m_tableSet.GetAbsolutePosition() +1;
-	int irows = pDB->m_tableSet.GetNRecords();
+	int ipos = pDB->m_mainTableSet.GetAbsolutePosition() +1;
+	int irows = pDB->m_mainTableSet.GetNRecords();
 	CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(_T("current record"), (_variant_t)ipos, _T("current record in the database (soft index)"));
 	pProp->SetData(m_iID); 
 	m_iID++;		// iID = 1001
@@ -408,7 +408,7 @@ void CPropertiesWnd::InitPropList()
 int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
 {
 	CdbWdatabase* pDB = m_pDoc->m_pDB;
-	int nrecords = pDB->m_tableSet.GetNRecords();
+	int nrecords = pDB->m_mainTableSet.GetNRecords();
 	int icol1 = sizeof(m_noCol) / sizeof(int);
 	if (icol0 > icol1) icol0 = icol1-1;
 	int i;
@@ -422,7 +422,7 @@ int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int ico
 		DB_ITEMDESC desc;
 		desc.csVal = _T("undefined");
 		desc.lVal = 0;
-		desc.typeLocal = pDB->m_tableSet.m_desc[idesctab].typeLocal;
+		desc.typeLocal = pDB->m_mainTableSet.m_desc[idesctab].typeLocal;
 	
 		CMFCPropertyGridProperty* pProp;
 		CString csComment;

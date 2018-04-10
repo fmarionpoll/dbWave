@@ -109,7 +109,7 @@ void CdbWaveView::OnInitialUpdate()
 {	
 	// init document and DaoRecordView
 	CdbWaveDoc* pdbDoc = GetDocument();
-	m_pSet = &pdbDoc->m_pDB->m_tableSet;
+	m_pSet = &pdbDoc->m_pDB->m_mainTableSet;
 	CDaoRecordView::OnInitialUpdate();
 	
 	// subclass display controls and attach them to stretch CFolderview
@@ -538,15 +538,15 @@ void CdbWaveView::OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 	CdbWaveDoc* pdbDoc = GetDocument();
 	switch(pNMLV->iSubItem)
 	{
-	case COL_CURVE:	cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_DATALEN].csColName; break;		// datalen
-	case COL_INDEX:	cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_ID].csColName; break;			// ID
-	case COL_SENSI:	cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_SENSILLUM_ID].csColName; break;	// sensillum_ID
-	case COL_STIM1:	cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_STIM_ID].csColName; break;		// stim_ID
-	case COL_CONC1:	cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_CONC_ID].csColName; break;		// conc_ID
-	case COL_STIM2:	cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_STIM2_ID].csColName; break;	// stim2_ID
-	case COL_CONC2:	cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_CONC2_ID].csColName; break;	// conc2_ID
-	case COL_NBSPK: cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_NSPIKES].csColName; break;		// nspikes
-	case COL_FLAG: cs = pdbDoc->m_pDB->m_tableSet.m_desc[CH_FLAG].csColName; break;			// flag
+	case COL_CURVE:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_DATALEN].csColName; break;		// datalen
+	case COL_INDEX:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_ID].csColName; break;			// ID
+	case COL_SENSI:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName; break;	// sensillum_ID
+	case COL_STIM1:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_STIM_ID].csColName; break;		// stim_ID
+	case COL_CONC1:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_CONC_ID].csColName; break;		// conc_ID
+	case COL_STIM2:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_STIM2_ID].csColName; break;	// stim2_ID
+	case COL_CONC2:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_CONC2_ID].csColName; break;	// conc2_ID
+	case COL_NBSPK: cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_NSPIKES].csColName; break;		// nspikes
+	case COL_FLAG: cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_FLAG].csColName; break;			// flag
 	default:
 		break;
 	}

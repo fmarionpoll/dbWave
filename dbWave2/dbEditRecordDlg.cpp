@@ -93,7 +93,7 @@ END_MESSAGE_MAP()
 BOOL CdbEditRecordDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_pSet = &m_pdbDoc->m_pDB->m_tableSet;
+	m_pSet = &m_pdbDoc->m_pDB->m_mainTableSet;
 	PopulateControls();
 	// TODO? disable controls corresponding to a filtered field
 	UpdateData(FALSE);

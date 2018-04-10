@@ -107,8 +107,8 @@ public:
 // DAO database functions
 public:
 	inline long DBGetNRecords()						{ return m_pDB->GetNRecords(); }
-	inline CDaoRecordset* DBGetRecordset()			{ return &m_pDB->m_tableSet; }
-	inline void DBRefreshQuery()					{ if (m_pDB->m_tableSet.IsBOF()) m_pDB->m_tableSet.SetFieldNull(NULL); m_pDB->m_tableSet.RefreshQuery();}
+	inline CDaoRecordset* DBGetRecordset()			{ return &m_pDB->m_mainTableSet; }
+	inline void DBRefreshQuery()					{ if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(NULL); m_pDB->m_mainTableSet.RefreshQuery();}
 	void		DBDeleteCurrentRecord();
 	CString		DBGetCurrentDatFileName(BOOL bTest = FALSE);
 	CString		DBGetCurrentSpkFileName(BOOL bTest = FALSE);
@@ -116,7 +116,7 @@ public:
 	inline void DBSetDataLen(long len) { m_pDB->SetDataLen(len); }
 	long		DBGetDataLen();
 	void		DBSetCurrentRecordFlag(int flag);
-	inline int	DBGetCurrentRecordFlag() { return m_pDB->m_tableSet.m_flag; }
+	inline int	DBGetCurrentRecordFlag() { return m_pDB->m_mainTableSet.m_flag; }
 	void		DBSetPathsRelative_to_DataBaseFile();
 	void		DBSetPathsAbsolute();
 	void		DBTransferDatPathToSpkPath();

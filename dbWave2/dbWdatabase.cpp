@@ -52,11 +52,11 @@ CdbWdatabase::CdbWdatabase()
 	for (int i = 0; i < NTABLECOLS; i++)
 	{
 		CString csdummy = m_desctab[i].szTableCol;
-		m_tableSet.m_desc[i].csColName = csdummy;
-		m_tableSet.m_desc[i].csColNamewithBrackets = _T("[") + csdummy + _T("]");
-		m_tableSet.m_desc[i].csColParam = csdummy + _T("Param");
-		m_tableSet.m_desc[i].csEQUcondition = csdummy + _T("=") + m_tableSet.m_desc[i].csColParam;
-		m_tableSet.m_desc[i].typeLocal = m_desctab[i].propCol;
+		m_mainTableSet.m_desc[i].csColName = csdummy;
+		m_mainTableSet.m_desc[i].csColNamewithBrackets = _T("[") + csdummy + _T("]");
+		m_mainTableSet.m_desc[i].csColParam = csdummy + _T("Param");
+		m_mainTableSet.m_desc[i].csEQUcondition = csdummy + _T("=") + m_mainTableSet.m_desc[i].csColParam;
+		m_mainTableSet.m_desc[i].typeLocal = m_desctab[i].propCol;
 	}
 
 	// SetNames(CString defaultSQL /* or table name*/, CString DFX_cs, CString DFX_ID) 
@@ -71,7 +71,7 @@ CdbWdatabase::CdbWdatabase()
 	m_strainSet.SetNames	(m_desctab[CH_STRAIN_ID].szRelTable,	_T("strain"),	_T("strainID"));
 	m_exptSet.SetNames		(m_desctab[CH_EXPT_ID].szRelTable,		_T("expt"),		_T("exptID"));
 
-	m_tableSet.m_strSort = m_desctab[CH_ACQDATE].szTableCol;
+	m_mainTableSet.m_strSort = m_desctab[CH_ACQDATE].szTableCol;
 
 	m_databasePath.Empty();
 }
@@ -99,7 +99,7 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 	//first create the main field, and ID number that is incremented automatically
 	// when a new record is created. This column is indexed
 	CDaoFieldInfo fd0;
-	fd0.m_strName				= m_tableSet.m_desc[CH_ID].csColName;	// "ID"
+	fd0.m_strName				= m_mainTableSet.m_desc[CH_ID].csColName;	// "ID"
 	fd0.m_nType					= dbLong;						// Primary
 	fd0.m_lSize					= 4;							// Primary
 	fd0.m_lAttributes			= dbAutoIncrField;				// Primary
@@ -117,7 +117,7 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 	
 	// then create data fields
 	int i=1;
-	tableDef.CreateField(m_tableSet.m_desc[i].csColName, dbDate, 8,	  0);		// 1 -acq_date
+	tableDef.CreateField(m_mainTableSet.m_desc[i].csColName, dbDate, 8,	  0);		// 1 -acq_date
 
 	fd0.m_bAllowZeroLength = TRUE;
 	fd0.m_bRequired = FALSE;
@@ -127,32 +127,32 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 
 	for (i = 2; i <= 4; i++)													// 2 -filename / 3 -filespk // 4 - "acq_comment" 
 	{ 
-		fd0.m_strName = m_tableSet.m_desc[i].csColName;
+		fd0.m_strName = m_mainTableSet.m_desc[i].csColName;
 		fd0.m_nOrdinalPosition = i;
 		tableDef.CreateField(fd0);
 	}
 
 	i=5;																		// 5 - "more"
-	fd0.m_strName			= m_tableSet.m_desc[i].csColName;	
+	fd0.m_strName			= m_mainTableSet.m_desc[i].csColName;	
 	fd0.m_nOrdinalPosition = i;
 	fd0.m_nType				= dbMemo;
 	fd0.m_lSize				= dbMemo;
 	tableDef.CreateField(fd0);
 	
 	for (i = 6; i <= 25; i++)
-		tableDef.CreateField(m_tableSet.m_desc[i].csColName, dbLong, 4, 0);		//  6 - insectID to 25 = sex_ID
+		tableDef.CreateField(m_mainTableSet.m_desc[i].csColName, dbLong, 4, 0);		//  6 - insectID to 25 = sex_ID
 	for ( i = 26; i <= 27; i++)
-		tableDef.CreateField(m_tableSet.m_desc[i].csColName, dbDate, 8, 0);		// 26 - acqdate_day / 27 - acqdate_time
+		tableDef.CreateField(m_mainTableSet.m_desc[i].csColName, dbDate, 8, 0);		// 26 - acqdate_day / 27 - acqdate_time
 	i=28; 
-	tableDef.CreateField(m_tableSet.m_desc[i].csColName, dbLong, 4, 0);			// 28 - expt_ID
+	tableDef.CreateField(m_mainTableSet.m_desc[i].csColName, dbLong, 4, 0);			// 28 - expt_ID
 
 	// create the corresponding indexes
 	CDaoIndexFieldInfo indexfield0;
-	indexfield0.m_strName = m_tableSet.m_desc[CH_IDINSECT].csColName;			// insectID
+	indexfield0.m_strName = m_mainTableSet.m_desc[CH_IDINSECT].csColName;			// insectID
 	indexfield0.m_bDescending = FALSE;
 
 	CDaoIndexInfo indexfd0;
-	indexfield0.m_strName	= m_tableSet.m_desc[CH_ID].csColName;				// ID
+	indexfield0.m_strName	= m_mainTableSet.m_desc[CH_ID].csColName;				// ID
 	indexfd0.m_strName		= _T("Primary_Key");
 	indexfd0.m_pFieldInfos	= &indexfield0;
 	indexfd0.m_bPrimary		= TRUE;
@@ -197,18 +197,18 @@ BOOL CdbWdatabase::CreateRelationwith2AssocTables(LPCTSTR lpszForeignTable, int 
 		CDaoRelationFieldInfo rfield[2];
 		rfield[0].m_strName = lpszTable;
 		rfield[0].m_strName += _T("ID");
-		rfield[0].m_strForeignName = m_tableSet.m_desc[icol1].csColName; // path_ID
+		rfield[0].m_strForeignName = m_mainTableSet.m_desc[icol1].csColName; // path_ID
 		rfield[1].m_strName = rfield[0].m_strName;
-		rfield[1].m_strForeignName = m_tableSet.m_desc[icol2].csColName; // path2_ID
+		rfield[1].m_strForeignName = m_mainTableSet.m_desc[icol2].csColName; // path2_ID
 		rlinfo.m_pFieldInfos = &rfield[0];
 		rlinfo.m_nFields = 2;
 		CreateRelation(rlinfo);
 	
-		m_tableSet.m_desc[icol1].plinkedSet = &m_pathSet;
-		m_tableSet.m_desc[icol1].csAssocTable = rfield[0].m_strName;
+		m_mainTableSet.m_desc[icol1].plinkedSet = &m_pathSet;
+		m_mainTableSet.m_desc[icol1].csAssocTable = rfield[0].m_strName;
 	
-		m_tableSet.m_desc[icol2].plinkedSet = &m_pathSet;
-		m_tableSet.m_desc[icol2].csAssocTable = rfield[0].m_strName;
+		m_mainTableSet.m_desc[icol2].plinkedSet = &m_pathSet;
+		m_mainTableSet.m_desc[icol2].csAssocTable = rfield[0].m_strName;
 	}
 	catch (CDaoException* e)
 	{
@@ -224,13 +224,13 @@ BOOL CdbWdatabase::CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int ic
 {
 	try {
 		LPCTSTR lpszTable = m_desctab[icol].szRelTable;
-		m_tableSet.m_desc[icol].csAssocTable = lpszTable;
+		m_mainTableSet.m_desc[icol].csAssocTable = lpszTable;
 		CString csrel;		// unique name of the relation object (max 40 chars)
 		csrel.Format(_T("%s_%s"), lpszForeignTable, lpszTable);
 		CString szField = lpszTable;
 		szField += _T("ID");
-		CreateRelation(csrel, lpszTable, lpszForeignTable, lAttributes, szField, m_tableSet.m_desc[icol].csColName);
-		m_tableSet.m_desc[icol].plinkedSet = plink;
+		CreateRelation(csrel, lpszTable, lpszForeignTable, lAttributes, szField, m_mainTableSet.m_desc[icol].csColName);
+		m_mainTableSet.m_desc[icol].plinkedSet = plink;
 	}
 	catch (CDaoException* e)
 	{
@@ -288,7 +288,7 @@ BOOL CdbWdatabase::OpenTables()
 		CDaoFieldInfo fd0;
 		recordSet.Open(dbOpenTable, csTable);
 		// check if column "filename" is present
-		recordSet.GetFieldInfo(m_tableSet.m_desc[CH_FILENAME].csColName, fd0);
+		recordSet.GetFieldInfo(m_mainTableSet.m_desc[CH_FILENAME].csColName, fd0);
 		// check number of columns
 		int nfields = recordSet.GetFieldCount();
 		recordSet.Close();
@@ -311,18 +311,18 @@ BOOL CdbWdatabase::OpenTables()
 				tableDef.Open(csTable);
 				csRel = _T("table_Rel1");
 				int ipos = csRel.GetLength()-1;
-				tableDef.CreateField(m_tableSet.m_desc[CH_STIM2_ID].csColName, dbLong, 4, 0); // stim2_ID
-				tableDef.CreateField(m_tableSet.m_desc[CH_CONC2_ID].csColName, dbLong, 4, 0); // conc2_ID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_STIM2_ID].csColName, dbLong, 4, 0); // stim2_ID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_CONC2_ID].csColName, dbLong, 4, 0); // conc2_ID
 				csRel.SetAt(ipos, '9');
-				CreateRelation(csRel, _T("stim"), csTable, lAttr, _T("stimID"), m_tableSet.m_desc[CH_STIM2_ID].csColName); // stim2_ID
+				CreateRelation(csRel, _T("stim"), csTable, lAttr, _T("stimID"), m_mainTableSet.m_desc[CH_STIM2_ID].csColName); // stim2_ID
 				csRel.SetAt(ipos, 'A');
-				CreateRelation(csRel, _T("conc"), csTable, lAttr, _T("concID"), m_tableSet.m_desc[CH_CONC2_ID].csColName); // conc2_ID
+				CreateRelation(csRel, _T("conc"), csTable, lAttr, _T("concID"), m_mainTableSet.m_desc[CH_CONC2_ID].csColName); // conc2_ID
 				tableDef.Close();
 				}
 			// only 21 fields (instead of 22) - add one field for flags
 			case 21:
 				tableDef.Open(csTable);
-				tableDef.CreateField(m_tableSet.m_desc[CH_FLAG].csColName, dbLong, 4, 0);		// flag
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_FLAG].csColName, dbLong, 4, 0);		// flag
 				tableDef.Close();
 
 			// only 22 fields (instead of 24) - add 2 fields for strain and sex
@@ -331,20 +331,20 @@ BOOL CdbWdatabase::OpenTables()
 				tableDef.Open(csTable);
 		
 				// add fields in the maintable, add the corresponding tables and the relations between the main table and the new index tables
-				tableDef.CreateField(m_tableSet.m_desc[CH_STRAIN_ID].csColName, dbLong, 4, 0);	// strain_ID
-				tableDef.CreateField(m_tableSet.m_desc[CH_SEX_ID].csColName, dbLong, 4, 0);		// sex_ID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_STRAIN_ID].csColName, dbLong, 4, 0);	// strain_ID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_SEX_ID].csColName, dbLong, 4, 0);		// sex_ID
 				m_strainSet.CreateIndextable(_T("strain"), _T("strain"), _T("strainID"), 100, this);
 				m_sexSet.CreateIndextable(_T("sex"), _T("sex"), _T("sexID"), 10,  this);
-				CreateRelation(_T("table_strain"), _T("strain"), csTable, lAttr, _T("strainID"),m_tableSet.m_desc[CH_STRAIN_ID].csColName); // strain_ID
-				CreateRelation(_T("table_sex"), _T("sex"), csTable, lAttr, _T("sexID"), m_tableSet.m_desc[CH_SEX_ID].csColName);		// sex_ID
+				CreateRelation(_T("table_strain"), _T("strain"), csTable, lAttr, _T("strainID"),m_mainTableSet.m_desc[CH_STRAIN_ID].csColName); // strain_ID
+				CreateRelation(_T("table_sex"), _T("sex"), csTable, lAttr, _T("sexID"), m_mainTableSet.m_desc[CH_SEX_ID].csColName);		// sex_ID
 				// type -> location
 				DeleteRelation(_T("table_type"));									// delete relationship
 				tableDef.DeleteField(CH_LOCATION_ID);								// delete the field (index is different because we deleted one field)
-				tableDef.CreateField(m_tableSet.m_desc[CH_LOCATION_ID].csColName, dbLong, 4, 0);	// locationID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_LOCATION_ID].csColName, dbLong, 4, 0);	// locationID
 				// stage -> sensillumname
 				DeleteRelation(_T("table_stage"));									// delete relationship
 				tableDef.DeleteField(CH_SENSILLUM_ID);							// delete field
-				tableDef.CreateField(m_tableSet.m_desc[CH_SENSILLUM_ID].csColName, dbLong, 4, 0);	// sensillumID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName, dbLong, 4, 0);	// sensillumID
 				tableDef.Close();
 
 				// rename table stage into sensillumname
@@ -362,32 +362,32 @@ BOOL CdbWdatabase::OpenTables()
 				// create relations
 				tableDef.Open(csTable);
 				csRel = _T("table_sensillumname");
-				CreateRelation(csRel, _T("sensillumname"), csTable, lAttr, _T("stageID"), m_tableSet.m_desc[CH_SENSILLUM_ID].csColName); // sensillumname_ID
+				CreateRelation(csRel, _T("sensillumname"), csTable, lAttr, _T("stageID"), m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName); // sensillumname_ID
 				csRel = _T("table_location");
-				CreateRelation(csRel, _T("location"), csTable, lAttr, _T("typeID"), m_tableSet.m_desc[CH_LOCATION_ID].csColName); //location_ID
+				CreateRelation(csRel, _T("location"), csTable, lAttr, _T("typeID"), m_mainTableSet.m_desc[CH_LOCATION_ID].csColName); //location_ID
 				tableDef.Close();
 				}
 		
 				// only 24 fields instead of 26
 			case 24:
 				tableDef.Open(csTable);
-				tableDef.CreateField(m_tableSet.m_desc[CH_REPEAT].csColName, dbLong, 4, 0);		// repeatID
-				tableDef.CreateField(m_tableSet.m_desc[CH_REPEAT2].csColName, dbLong, 4, 0);	// repeat2ID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_REPEAT].csColName, dbLong, 4, 0);		// repeatID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].csColName, dbLong, 4, 0);	// repeat2ID
 				tableDef.Close();
 
 				// only 26 instead of 28
 			case 26:
 				tableDef.Open(csTable);
-				tableDef.CreateField(m_tableSet.m_desc[CH_ACQDATE_DAY].csColName, dbDate, 8, 0); // acqdate_day
-				tableDef.CreateField(m_tableSet.m_desc[CH_ACQDATE_TIME].csColName, dbDate, 8, 0); // acqdate_time
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_DAY].csColName, dbDate, 8, 0); // acqdate_day
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_TIME].csColName, dbDate, 8, 0); // acqdate_time
 				tableDef.Close();
 
 				// only 28 instead of 29: add "exptID" column and 1 table
 			case 28:
 				tableDef.Open(csTable);
-				tableDef.CreateField(m_tableSet.m_desc[CH_EXPT_ID].csColName, dbLong, 4, 0);	// expt_ID
+				tableDef.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].csColName, dbLong, 4, 0);	// expt_ID
 				m_exptSet.CreateIndextable (_T("expt"), _T("expt"), _T("exptID"), 100, this);
-				CreateRelation(_T("table_expt"), _T("expt"), csTable, lAttr, _T("exptID"), m_tableSet.m_desc[CH_EXPT_ID].csColName); // strain_ID
+				CreateRelation(_T("table_expt"), _T("expt"), csTable, lAttr, _T("exptID"), m_mainTableSet.m_desc[CH_EXPT_ID].csColName); // strain_ID
 				tableDef.Close();
 				break;
 
@@ -431,8 +431,8 @@ BOOL CdbWdatabase::OpenTables()
 
 	try 
 	{
-		m_tableSet.m_defaultName = GetName();
-		m_tableSet.Open (dbOpenDynaset, NULL, 0);
+		m_mainTableSet.m_defaultName = GetName();
+		m_mainTableSet.Open (dbOpenDynaset, NULL, 0);
 	}
 	catch(CDaoException* e) 
 	{
@@ -461,7 +461,7 @@ void CdbWdatabase::CloseDatabase()
 	{
 		// closing the workspace does not close the recordsets
 		// so first close them
-		if (m_tableSet.IsOpen())		m_tableSet.Close();
+		if (m_mainTableSet.IsOpen())		m_mainTableSet.Close();
 		if (m_operatorSet.IsOpen())		m_operatorSet.Close();
 		if (m_insectSet.IsOpen())		m_insectSet.Close();
 		if (m_locationSet.IsOpen())		m_locationSet.Close();
@@ -487,8 +487,8 @@ void CdbWdatabase::UpdateTables()
 	//	= dbEditAdd (AddNew has been called)
 	// Update() is necessary before calling Moveto to complete AddNew or Edit operations
 
-	if (m_tableSet.GetEditMode() != dbEditNone)
-		m_tableSet.Update();
+	if (m_mainTableSet.GetEditMode() != dbEditNone)
+		m_mainTableSet.Update();
 	if (m_operatorSet.GetEditMode() != dbEditNone)
 		m_operatorSet.Update();
 	if (m_insectSet.GetEditMode() != dbEditNone)
@@ -514,7 +514,7 @@ BOOL CdbWdatabase::MoveToID(long recordID)
 	str.Format(_T("ID=%li"), recordID);
 	try
 	{
-		if (!m_tableSet.FindFirst(str))
+		if (!m_mainTableSet.FindFirst(str))
 			return FALSE;
 	}
 	catch(CDaoException* e)
@@ -571,15 +571,15 @@ long CdbWdatabase::GetRelativePathFromID(long iID)
 void CdbWdatabase::ConvertPathtoRelativePath(long icolpath)
 {
 	COleVariant varValue;
-	m_tableSet.GetFieldValue(icolpath, varValue);
+	m_mainTableSet.GetFieldValue(icolpath, varValue);
 	long pathID = varValue.lVal;
 	long iID = GetRelativePathFromID(pathID);
 	if (iID != pathID && iID != -1)
 	{
-		m_tableSet.Edit();
+		m_mainTableSet.Edit();
 		varValue.lVal = iID;
-		m_tableSet.SetFieldValue(icolpath, varValue.lVal);
-		m_tableSet.Update();
+		m_mainTableSet.SetFieldValue(icolpath, varValue.lVal);
+		m_mainTableSet.Update();
 	}
 }
 
@@ -587,24 +587,24 @@ void CdbWdatabase::ConvertPathtoRelativePath(long icolpath)
 void CdbWdatabase::ConvertPathTabletoRelativePath() 
 {
 	const CString csOrigin = GetDataBasePath();
-	if (m_tableSet.IsBOF() && m_tableSet.IsEOF())
+	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
 		return;
 
-	ASSERT(m_tableSet.CanBookmark());
+	ASSERT(m_mainTableSet.CanBookmark());
 	try
 	{
-		COleVariant ol = m_tableSet.GetBookmark();
-		m_tableSet.MoveFirst();
-		int icolpath = CH_PATH_ID - 1; // m_tableSet.GetColumnIndex(m_tableSet.m_desc[CH_PATH_ID].csColName);
-		int icolpath2 = CH_PATH2_ID - 1; //  m_tableSet.GetColumnIndex(m_tableSet.m_desc[CH_PATH2_ID].csColName);
+		COleVariant ol = m_mainTableSet.GetBookmark();
+		m_mainTableSet.MoveFirst();
+		int icolpath = CH_PATH_ID - 1; // m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH_ID].csColName);
+		int icolpath2 = CH_PATH2_ID - 1; //  m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH2_ID].csColName);
 
-		while (!m_tableSet.IsEOF())
+		while (!m_mainTableSet.IsEOF())
 		{
 			ConvertPathtoRelativePath(icolpath);
 			ConvertPathtoRelativePath(icolpath2);
-			m_tableSet.MoveNext();
+			m_mainTableSet.MoveNext();
 		}
-		m_tableSet.SetBookmark(ol);
+		m_mainTableSet.SetBookmark(ol);
 	}
 	catch (CDaoException* e) 
 	{ 
@@ -649,15 +649,15 @@ long CdbWdatabase::GetAbsolutePathFromID(long iID)
 void CdbWdatabase::ConvertPathtoAbsolutePath(int icolpath)
 {
 	COleVariant varValue;
-	m_tableSet.GetFieldValue(icolpath, varValue);
+	m_mainTableSet.GetFieldValue(icolpath, varValue);
 	long pathID = varValue.lVal;
 	long iID = GetAbsolutePathFromID(pathID);
 	if (iID != pathID && iID != -1)
 	{
-		m_tableSet.Edit();
+		m_mainTableSet.Edit();
 		varValue.lVal = iID;
-		m_tableSet.SetFieldValue(icolpath, varValue.lVal);
-		m_tableSet.Update();
+		m_mainTableSet.SetFieldValue(icolpath, varValue.lVal);
+		m_mainTableSet.Update();
 	}
 }
 
@@ -665,24 +665,24 @@ void CdbWdatabase::ConvertPathtoAbsolutePath(int icolpath)
 void CdbWdatabase::ConvertPathTabletoAbsolutePath() 
 {
 	const CString csOrigin = GetDataBasePath();
-	if (m_tableSet.IsBOF() && m_tableSet.IsEOF())
+	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
 		return;
 
-	ASSERT(m_tableSet.CanBookmark());
+	ASSERT(m_mainTableSet.CanBookmark());
 	try
 	{
-		COleVariant ol = m_tableSet.GetBookmark();
-		m_tableSet.MoveFirst();
-		int icolpath = CH_PATH_ID - 1; // m_tableSet.GetColumnIndex(m_tableSet.m_desc[CH_PATH_ID].csColName);
-		int icolpath2 = CH_PATH2_ID - 1; //  m_tableSet.GetColumnIndex(m_tableSet.m_desc[CH_PATH2_ID].csColName);
+		COleVariant ol = m_mainTableSet.GetBookmark();
+		m_mainTableSet.MoveFirst();
+		int icolpath = CH_PATH_ID - 1; // m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH_ID].csColName);
+		int icolpath2 = CH_PATH2_ID - 1; //  m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH2_ID].csColName);
 
-		while (!m_tableSet.IsEOF())
+		while (!m_mainTableSet.IsEOF())
 		{
 			ConvertPathtoAbsolutePath(icolpath);
 			ConvertPathtoAbsolutePath(icolpath2);
-			m_tableSet.MoveNext();
+			m_mainTableSet.MoveNext();
 		}
-		m_tableSet.SetBookmark(ol);
+		m_mainTableSet.SetBookmark(ol);
 	}
 	catch (CDaoException* e)
 	{
@@ -703,9 +703,9 @@ CString CdbWdatabase::GetDatFilenameFromCurrentRecord()
 {
 	CString filename;
 	filename.Empty();
-	if (!m_tableSet.IsFieldNull(&m_tableSet.m_Filedat) && !m_tableSet.m_Filedat.IsEmpty())
+	if (!m_mainTableSet.IsFieldNull(&m_mainTableSet.m_Filedat) && !m_mainTableSet.m_Filedat.IsEmpty())
 	{
-		filename = GetFilePath(m_tableSet.m_path_ID) + '\\' + m_tableSet.m_Filedat;
+		filename = GetFilePath(m_mainTableSet.m_path_ID) + '\\' + m_mainTableSet.m_Filedat;
 	}
 	return filename;
 }
@@ -717,15 +717,15 @@ CString CdbWdatabase::GetSpkFilenameFromCurrentRecord()
 	filename.Empty();
 
 	// set current spkdocument
-	if (!m_tableSet.IsFieldNull(&m_tableSet.m_Filespk) && !m_tableSet.m_Filespk.IsEmpty())
+	if (!m_mainTableSet.IsFieldNull(&m_mainTableSet.m_Filespk) && !m_mainTableSet.m_Filespk.IsEmpty())
 	{
-		if (m_tableSet.IsFieldNull(&m_tableSet.m_path2_ID))
+		if (m_mainTableSet.IsFieldNull(&m_mainTableSet.m_path2_ID))
 		{
-			m_tableSet.Edit();
-			m_tableSet.m_path2_ID = m_tableSet.m_path_ID;
-			m_tableSet.Update();
+			m_mainTableSet.Edit();
+			m_mainTableSet.m_path2_ID = m_mainTableSet.m_path_ID;
+			m_mainTableSet.Update();
 		}
-		filename = GetFilePath(m_tableSet.m_path2_ID) + '\\' + m_tableSet.m_Filespk;
+		filename = GetFilePath(m_mainTableSet.m_path2_ID) + '\\' + m_mainTableSet.m_Filespk;
 	}
 	return filename;
 }
@@ -738,25 +738,25 @@ BOOL CdbWdatabase::MoveRecord (UINT nIDMoveCommand)
 	switch (nIDMoveCommand)
 	{
 		case ID_RECORD_PREV:
-			m_tableSet.MovePrev();
-			if (!m_tableSet.IsBOF())
+			m_mainTableSet.MovePrev();
+			if (!m_mainTableSet.IsBOF())
 				break;
 			// Fall through to reset to first record
 			flag = FALSE;
 
 		case ID_RECORD_FIRST:
-			m_tableSet.MoveFirst();
+			m_mainTableSet.MoveFirst();
 			break;
 
 		case ID_RECORD_NEXT:
-			m_tableSet.MoveNext();
-			if (!m_tableSet.IsEOF())
+			m_mainTableSet.MoveNext();
+			if (!m_mainTableSet.IsEOF())
 				break;
 			// Fall through to reset to last record
 			flag = FALSE;
 
 		case ID_RECORD_LAST:
-			m_tableSet.MoveLast();
+			m_mainTableSet.MoveLast();
 			break;
 
 		default:
@@ -773,7 +773,7 @@ BOOL CdbWdatabase::SetIndexCurrentFile(long ifile)
 {
 	// save any pending edit or add operation
 	UpdateTables();
-	int nbrecords = m_tableSet.GetRecordCount();
+	int nbrecords = m_mainTableSet.GetRecordCount();
 	if (ifile < 0 || nbrecords < 1)
 		return FALSE;
 
@@ -782,8 +782,8 @@ BOOL CdbWdatabase::SetIndexCurrentFile(long ifile)
 	{
 		if (ifile >= nbrecords)
 			ifile = nbrecords -1;
-		if (ifile != m_tableSet.GetAbsolutePosition())
-			m_tableSet.SetAbsolutePosition(ifile);
+		if (ifile != m_mainTableSet.GetAbsolutePosition())
+			m_mainTableSet.SetAbsolutePosition(ifile);
 		GetFilenamesFromCurrentRecord();
 	}
 	catch(CDaoException* e) {DisplayDaoException(e, 13); e->Delete(); flag=FALSE;}
@@ -800,13 +800,13 @@ BOOL CdbWdatabase::SetIndexCurrentFile(long ifile)
 
 DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 {
-	DB_ITEMDESC* pdesc = &m_tableSet.m_desc[icol];
+	DB_ITEMDESC* pdesc = &m_mainTableSet.m_desc[icol];
 	pdesc->icol = icol;
 
 	switch (icol)
 	{
 	case CH_ID:
-		pdesc->pdataItem	= &m_tableSet.m_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_ID;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_ACQDATE:
@@ -821,95 +821,95 @@ DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 		ASSERT(pdesc->typeLocal == FIELD_TEXT);
 		break;
 	case CH_IDINSECT:
-		pdesc->pdataItem	= &m_tableSet.m_IDinsect;
+		pdesc->pdataItem	= &m_mainTableSet.m_IDinsect;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_IDSENSILLUM:
-		pdesc->pdataItem	= &m_tableSet.m_IDsensillum;
+		pdesc->pdataItem	= &m_mainTableSet.m_IDsensillum;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_DATALEN:
-		pdesc->pdataItem	= &m_tableSet.m_datalen;
+		pdesc->pdataItem	= &m_mainTableSet.m_datalen;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_NSPIKES:
-		pdesc->pdataItem	= &m_tableSet.m_nspikes;
+		pdesc->pdataItem	= &m_mainTableSet.m_nspikes;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_NSPIKECLASSES:
-		pdesc->pdataItem	= &m_tableSet.m_nspikeclasses;
+		pdesc->pdataItem	= &m_mainTableSet.m_nspikeclasses;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_FLAG:
-		pdesc->pdataItem	= &m_tableSet.m_flag;
+		pdesc->pdataItem	= &m_mainTableSet.m_flag;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_INSECT_ID:
-		pdesc->pdataItem	= &m_tableSet.m_insect_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_insect_ID;
 		pdesc->plinkedSet	= &m_insectSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_SENSILLUM_ID:
-		pdesc->pdataItem	= &m_tableSet.m_sensillum_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_sensillum_ID;
 		pdesc->plinkedSet	= &m_sensillumSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_OPERATOR_ID:
-		pdesc->pdataItem	= &m_tableSet.m_operator_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_operator_ID;
 		pdesc->plinkedSet	= &m_operatorSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_STIM_ID:
-		pdesc->pdataItem	= &m_tableSet.m_stim_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_stim_ID;
 		pdesc->plinkedSet	= &m_stimSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_CONC_ID:
-		pdesc->pdataItem	= &m_tableSet.m_conc_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_conc_ID;
 		pdesc->plinkedSet	= &m_concSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_LOCATION_ID:
-		pdesc->pdataItem	= &m_tableSet.m_location_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_location_ID;
 		pdesc->plinkedSet	= &m_locationSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_PATH_ID:
-		pdesc->pdataItem	= &m_tableSet.m_path_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_path_ID;
 		pdesc->plinkedSet	= &m_pathSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_FILEPATH);
 		break;
 	case CH_PATH2_ID:
-		pdesc->pdataItem	= &m_tableSet.m_path2_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_path2_ID;
 		pdesc->plinkedSet	= &m_pathSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_FILEPATH);
 		break;
 	case CH_STIM2_ID:
-		pdesc->pdataItem	= &m_tableSet.m_stim2_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_stim2_ID;
 		pdesc->plinkedSet	= &m_stimSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_CONC2_ID:
-		pdesc->pdataItem	= &m_tableSet.m_conc2_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_conc2_ID;
 		pdesc->plinkedSet	= &m_concSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_STRAIN_ID:
-		pdesc->pdataItem	= &m_tableSet.m_strain_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_strain_ID;
 		pdesc->plinkedSet	= &m_strainSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_SEX_ID:
-		pdesc->pdataItem	= &m_tableSet.m_sex_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_sex_ID;
 		pdesc->plinkedSet	= &m_sexSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
 	case CH_REPEAT:
-		pdesc->pdataItem	= &m_tableSet.m_repeat;
+		pdesc->pdataItem	= &m_mainTableSet.m_repeat;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_REPEAT2:
-		pdesc->pdataItem	= &m_tableSet.m_repeat2;
+		pdesc->pdataItem	= &m_mainTableSet.m_repeat2;
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_ACQDATE_DAY:
@@ -921,7 +921,7 @@ DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 		ASSERT(pdesc->typeLocal == FIELD_DATE_HMS);
 		break;
 	case CH_EXPT_ID:
-		pdesc->pdataItem	= &m_tableSet.m_expt_ID;
+		pdesc->pdataItem	= &m_mainTableSet.m_expt_ID;
 		pdesc->plinkedSet	= &m_exptSet;
 		ASSERT(pdesc->typeLocal == FIELD_IND_TEXT);
 		break;
@@ -941,7 +941,7 @@ BOOL CdbWdatabase::GetRecordItemValue(int ich, DB_ITEMDESC* pdesc)
 {
 	BOOL flag = TRUE;
 	COleVariant varValue;
-	m_tableSet.GetFieldValue(m_tableSet.m_desc[ich].csColName, varValue);
+	m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[ich].csColName, varValue);
 	switch (ich)
 	{
 	case CH_INSECT_ID:
@@ -957,7 +957,7 @@ BOOL CdbWdatabase::GetRecordItemValue(int ich, DB_ITEMDESC* pdesc)
 	case CH_STRAIN_ID:
 	case CH_SEX_ID:
 		pdesc->lVal = varValue.lVal;
-		pdesc->csVal = m_tableSet.m_desc[ich].plinkedSet->GetStringFromID(varValue.lVal);
+		pdesc->csVal = m_mainTableSet.m_desc[ich].plinkedSet->GetStringFromID(varValue.lVal);
 		break;
 
 	case CH_NSPIKES:
@@ -984,13 +984,13 @@ BOOL CdbWdatabase::GetRecordItemValue(int ich, DB_ITEMDESC* pdesc)
 	case CH_FILESPK:
 	case CH_ACQ_COMMENTS:
 	case CH_MORE:
-		m_tableSet.GetFieldValue(m_tableSet.m_desc[ich].csColName, varValue);
+		m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[ich].csColName, varValue);
 		pdesc->csVal = V_BSTRT(&varValue);
 		break;
 
 	case CH_EXPT_ID:
 		pdesc->lVal = varValue.lVal;
-		pdesc->csVal = m_tableSet.m_desc[ich].plinkedSet->GetStringFromID(varValue.lVal);
+		pdesc->csVal = m_mainTableSet.m_desc[ich].plinkedSet->GetStringFromID(varValue.lVal);
 		if (pdesc->csVal.IsEmpty())
 		{
 			CString cs = pdesc->csVal = GetName();
@@ -1026,14 +1026,14 @@ BOOL CdbWdatabase::SetRecordItemValue(int ich, DB_ITEMDESC* pdesc)
 	case CH_REPEAT:
 	case CH_REPEAT2:
 		varValue = pdesc->lVal;
-		m_tableSet.SetFieldValue(m_tableSet.m_desc[ich].csColName, varValue);
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].csColName, varValue);
 		break;
 
 	case CH_ACQDATE_DAY:
 	case CH_ACQDATE_TIME:
 	case CH_ACQDATE:
 		varValue = pdesc->oVal;
-		m_tableSet.SetFieldValue(m_tableSet.m_desc[ich].csColName, varValue);
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].csColName, varValue);
 		break;
 
 	case CH_FILENAME:
@@ -1041,7 +1041,7 @@ BOOL CdbWdatabase::SetRecordItemValue(int ich, DB_ITEMDESC* pdesc)
 	case CH_ACQ_COMMENTS:
 	case CH_MORE:
 		varValue = pdesc->csVal;
-		m_tableSet.SetFieldValue(m_tableSet.m_desc[ich].csColName, varValue);
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].csColName, varValue);
 		break;
 
 	case CH_INSECT_ID:
@@ -1057,11 +1057,11 @@ BOOL CdbWdatabase::SetRecordItemValue(int ich, DB_ITEMDESC* pdesc)
 	case CH_STRAIN_ID:
 	case CH_SEX_ID:
 	case CH_EXPT_ID:
-		dummyID = ((CdbIndexTable*)m_tableSet.m_desc[ich].plinkedSet)->GetIDorCreateIDforString(pdesc->csVal);
+		dummyID = ((CdbIndexTable*)m_mainTableSet.m_desc[ich].plinkedSet)->GetIDorCreateIDforString(pdesc->csVal);
 		if (dummyID >= 0)
 		{
 			varValue.lVal = dummyID;
-			m_tableSet.SetFieldValue(m_tableSet.m_desc[ich].csColName, varValue.lVal);
+			m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].csColName, varValue.lVal);
 		}
 		break;
 
@@ -1080,15 +1080,15 @@ BOOL CdbWdatabase::ImportRecordfromDatabase(CdbWdatabase* pdbW)
 	DB_ITEMDESC desc;
 	BOOL flag = TRUE;
 	// insert new record
-	m_tableSet.AddNew();
+	m_mainTableSet.AddNew();
 
 	// copy each field of the source database into current
-	for (int i=1; i< m_tableSet.m_nFields; i++)
+	for (int i=1; i< m_mainTableSet.m_nFields; i++)
 	{
 		pdbW->GetRecordItemValue(i, &desc);
 		SetRecordItemValue(i, &desc);
 	}
-	m_tableSet.Update();
+	m_mainTableSet.Update();
 	return flag;
 }
 
@@ -1099,38 +1099,38 @@ void CdbWdatabase::TransferWaveFormatDataToRecord(CWaveFormat * pWF)
 	COleDateTime oTime;
 	CTime t = pWF->acqtime;
 	oTime.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
-	m_tableSet.SetFieldNull(&(m_tableSet.m_acq_date), FALSE);
-	m_tableSet.m_acq_date = oTime;
-	m_tableSet.m_acqdate_time = oTime;
+	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_acq_date), FALSE);
+	m_mainTableSet.m_acq_date = oTime;
+	m_mainTableSet.m_acqdate_time = oTime;
 	oTime.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
-	m_tableSet.m_acqdate_day = oTime;
+	m_mainTableSet.m_acqdate_day = oTime;
 
 	// set insect ID, sensillumID, repeat and repeat2, moreComment
-	m_tableSet.SetFieldNull(&(m_tableSet.m_IDinsect), FALSE);
-	m_tableSet.m_IDinsect = pWF->insectID;
-	m_tableSet.SetFieldNull(&(m_tableSet.m_IDsensillum), FALSE);
-	m_tableSet.m_IDsensillum = pWF->sensillumID;
-	m_tableSet.SetFieldNull(&(m_tableSet.m_repeat), FALSE);
-	m_tableSet.m_repeat = pWF->repeat;
-	m_tableSet.SetFieldNull(&(m_tableSet.m_repeat2), FALSE);
-	m_tableSet.m_repeat2 = pWF->repeat2;
-	m_tableSet.SetFieldNull(&(m_tableSet.m_more), FALSE);
-	m_tableSet.m_more = pWF->csMoreComment;
+	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_IDinsect), FALSE);
+	m_mainTableSet.m_IDinsect = pWF->insectID;
+	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_IDsensillum), FALSE);
+	m_mainTableSet.m_IDsensillum = pWF->sensillumID;
+	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_repeat), FALSE);
+	m_mainTableSet.m_repeat = pWF->repeat;
+	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_repeat2), FALSE);
+	m_mainTableSet.m_repeat2 = pWF->repeat2;
+	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_more), FALSE);
+	m_mainTableSet.m_more = pWF->csMoreComment;
 
 	// set type, stimulus and concentrations
-	m_tableSet.m_operator_ID	= m_operatorSet.GetIDorCreateIDforString(pWF->csOperator);
-	m_tableSet.m_insect_ID		= m_insectSet.GetIDorCreateIDforString(pWF->csInsectname);
-	m_tableSet.m_location_ID	= m_locationSet.GetIDorCreateIDforString(pWF->csLocation);
-	m_tableSet.m_expt_ID		= m_exptSet.GetIDorCreateIDforString(pWF->csComment);
-	m_tableSet.m_sensillum_ID	= m_sensillumSet.GetIDorCreateIDforString(pWF->csSensillum);
-	m_tableSet.m_stim_ID		= m_stimSet.GetIDorCreateIDforString(pWF->csStimulus);
-	m_tableSet.m_conc_ID		= m_concSet.GetIDorCreateIDforString(pWF->csConcentration);
-	m_tableSet.m_stim2_ID		= m_stimSet.GetIDorCreateIDforString(pWF->csStimulus2);
-	m_tableSet.m_conc2_ID		= m_concSet.GetIDorCreateIDforString(pWF->csConcentration2);
-	m_tableSet.m_sex_ID			= m_sexSet.GetIDorCreateIDforString(pWF->csSex);
-	m_tableSet.m_strain_ID		= m_strainSet.GetIDorCreateIDforString(pWF->csStrain);
-	m_tableSet.m_expt_ID		= m_exptSet.GetIDorCreateIDforString(pWF->csComment);
-	m_tableSet.m_flag = 0;
+	m_mainTableSet.m_operator_ID	= m_operatorSet.GetIDorCreateIDforString(pWF->csOperator);
+	m_mainTableSet.m_insect_ID		= m_insectSet.GetIDorCreateIDforString(pWF->csInsectname);
+	m_mainTableSet.m_location_ID	= m_locationSet.GetIDorCreateIDforString(pWF->csLocation);
+	m_mainTableSet.m_expt_ID		= m_exptSet.GetIDorCreateIDforString(pWF->csComment);
+	m_mainTableSet.m_sensillum_ID	= m_sensillumSet.GetIDorCreateIDforString(pWF->csSensillum);
+	m_mainTableSet.m_stim_ID		= m_stimSet.GetIDorCreateIDforString(pWF->csStimulus);
+	m_mainTableSet.m_conc_ID		= m_concSet.GetIDorCreateIDforString(pWF->csConcentration);
+	m_mainTableSet.m_stim2_ID		= m_stimSet.GetIDorCreateIDforString(pWF->csStimulus2);
+	m_mainTableSet.m_conc2_ID		= m_concSet.GetIDorCreateIDforString(pWF->csConcentration2);
+	m_mainTableSet.m_sex_ID			= m_sexSet.GetIDorCreateIDforString(pWF->csSex);
+	m_mainTableSet.m_strain_ID		= m_strainSet.GetIDorCreateIDforString(pWF->csStrain);
+	m_mainTableSet.m_expt_ID		= m_exptSet.GetIDorCreateIDforString(pWF->csComment);
+	m_mainTableSet.m_flag = 0;
 }
 
 void CdbWdatabase::DeleteUnusedEntriesInAccessoryTables()
@@ -1160,10 +1160,10 @@ void CdbWdatabase::DeleteUnusedEntriesInAttachedTable(CdbIndexTable* pIndexTable
 		// pIndexTable->GetFieldValue(0, varValue0);
 		pIndexTable->GetFieldValue(1, varValue1);
 		long iIDcurrent = varValue1.lVal;
-		BOOL flag1 = m_tableSet.FindIDinColumn(iIDcurrent, column1);
+		BOOL flag1 = m_mainTableSet.FindIDinColumn(iIDcurrent, column1);
 		BOOL flag2 = FALSE;
 		if (column2 >= 0)
-			flag2 = m_tableSet.FindIDinColumn(iIDcurrent, column2);
+			flag2 = m_mainTableSet.FindIDinColumn(iIDcurrent, column2);
 		if (flag1 == FALSE && flag2 == FALSE) {
 			pIndexTable->Delete();
 		}

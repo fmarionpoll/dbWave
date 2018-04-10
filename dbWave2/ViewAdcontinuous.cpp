@@ -1270,7 +1270,7 @@ void CADContView::TransferFilesToDatabase()
 	pdbDoc->ImportDescFromFileList(m_csNameArray);				// add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll();									// clear file names
 
-	CdbMainTable* pSet = &(GetDocument()->m_pDB->m_tableSet);
+	CdbMainTable* pSet = &(GetDocument()->m_pDB->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
 	int nfiles = pdbDoc->m_pDB->GetNRecords();
@@ -1482,7 +1482,7 @@ void CADContView::OnInitialUpdate()
 	
 	// open document and remove database filters
 	CdbWaveDoc* pdbDoc = GetDocument();							// data document with database
-	m_ptableSet = &pdbDoc->m_pDB->m_tableSet;					// database itself
+	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;					// database itself
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
 	m_ptableSet->RefreshQuery();
