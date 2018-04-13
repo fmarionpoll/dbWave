@@ -433,6 +433,8 @@
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA   553
 #define ID_VIEW_APPLOOK_WINDOWS_7       554
 #define IDD_DTBOARD_DLG                 558
+#define IDR_DBDATATYPE_256              571
+#define IDR_DBSPIKETYPE_256             572
 #define ID_STARTSTOP                    1001
 #define IDC_VERSION                     1003
 #define IDC_SAMPLINGRATE                1003
@@ -899,6 +901,9 @@
 #define ID_TOOLS_CHECKCONSISTENCY       33007
 #define ID_TOOLS_SYNCHRO_ALLFILES       33008
 #define ID_TOOLS_SYNCHRO_CURRENTFILE    33009
+#define ID_BUTTON2                      33010
+#define ID_BUTTON3                      33011
+#define ID_BUTTON4                      33012
 #define ID_CHECK_FILTERPANE             33088
 #define ID_CHECK_PROPERTIESPANE         33089
 #define ID_TOOLS_IMPORT                 33097
@@ -918,8 +923,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        565
-#define _APS_NEXT_COMMAND_VALUE         33010
+#define _APS_NEXT_RESOURCE_VALUE        575
+#define _APS_NEXT_COMMAND_VALUE         33013
 #define _APS_NEXT_CONTROL_VALUE         1510
 #define _APS_NEXT_SYMED_VALUE           555
 #endif

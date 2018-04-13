@@ -19,7 +19,7 @@
     <RootNamespace>dbWave2</RootNamespace>
     <Keyword>MFCProj</Keyword>
     <ProjectName>dbWave2</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -1457,15 +1457,6 @@ if %ERRORLEVEL%==1 (
     <None Include="ReadMe.txt" />
     <None Include="resource.hm" />
     <None Include="res\bias.ico" />
-    <None Include="res\bitmap1.bmp" />
-    <None Include="res\bitmap2.bmp" />
-    <None Include="res\bitmap3.bmp" />
-    <None Include="res\bmp00001.bmp" />
-    <None Include="res\bmp00002.bmp" />
-    <None Include="res\bmp00003.bmp" />
-    <None Include="res\bmp00004.bmp" />
-    <None Include="res\bmp00005.bmp" />
-    <None Include="res\bmp00006.bmp" />
     <None Include="res\check.bmp" />
     <None Include="res\check32.bmp" />
     <None Include="res\checkno.bmp" />
@@ -1556,6 +1547,9 @@ if %ERRORLEVEL%==1 (
     <Image Include="res\sort_hc.bmp" />
     <Image Include="res\Spikeslarge.bmp" />
     <Image Include="res\Spikessmall.bmp" />
+    <Image Include="res\toolbar1.bmp" />
+    <Image Include="res\toolbar_dat256.bmp" />
+    <Image Include="res\toolbar_spk256.bmp" />
     <Image Include="res\writelarge.bmp" />
     <Image Include="res\writesmall.bmp" />
   </ItemGroup>

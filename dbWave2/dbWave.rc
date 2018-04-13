@@ -2310,7 +2310,7 @@ IDB_BUTTONS             BITMAP                  "res\\buttons.bmp"
 
 IDB_DATABASELARGE       BITMAP                  "res\\Databaselarge.bmp"
 
-IDB_DATABASESMALL       BITMAP                  "res\\Databasesmall.bmp"
+IDB_DATABASESMALL       BITMAP                  "C:\\Users\\fred\\source\\repos\\dbWave2\\dbWave2\\res\\Databasesmall.bmp"
 
 IDB_DATALARGE           BITMAP                  "res\\Datalarge.bmp"
 
@@ -2341,6 +2341,10 @@ IDB_SPIKESSMALL         BITMAP                  "res\\Spikessmall.bmp"
 IDB_WRITELARGE          BITMAP                  "res\\writelarge.bmp"
 
 IDB_WRITESMALL          BITMAP                  "res\\writesmall.bmp"
+
+IDR_DBSPIKETYPE_256     BITMAP                  "res\\toolbar_spk256.bmp"
+
+IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -177,6 +177,8 @@
 #define HIDR_PROPERTIES                         0x200B7
 #define HIDR_RIBBON                             0x2013F
 #define HIDR_THEME_MENU                         0x2021A
+#define HIDR_DBDATATYPE_256                     0x2023B
+#define HIDR_DBSPIKETYPE_256                    0x2023C
  
 // Dialogs (IDD_*) 
 #define HIDD_ABOUTBOXDLG                        0x20064

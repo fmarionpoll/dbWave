@@ -97,6 +97,21 @@ void CMainFrame::ActivateFilterPane(BOOL bActivate)
 
 BOOL CMainFrame::SetSecondToolBar(UINT nIDResource)
 {
+	int IDresource = nIDResource;
+	int IDstring = 0;
+	switch (nIDResource)
+	{
+	case IDR_DBSPIKETYPE:
+		IDresource = theApp.m_bHiColorIcons ? IDR_DBSPIKETYPE_256 : IDR_DBSPIKETYPE;
+		IDstring = IDS_TOOLBAR_4SPIKES;
+		break;
+	case IDR_DBDATATYPE:
+	default:
+		IDresource = theApp.m_bHiColorIcons ? IDR_DBDATATYPE_256 : IDR_DBDATATYPE;
+		IDstring = IDS_TOOLBAR_4DATA;
+		break;
+	}
+
 	// check if same request as the previous one
 	if (nIDResource == m_SecondToolBarID)
 	{
@@ -107,6 +122,7 @@ BOOL CMainFrame::SetSecondToolBar(UINT nIDResource)
 	}
 
 	m_SecondToolBarID = nIDResource;
+	IDresource = nIDResource;
 	if (m_pSecondToolBar == NULL)
 	{
 		m_pSecondToolBar = new CMFCToolBar;
@@ -115,32 +131,23 @@ BOOL CMainFrame::SetSecondToolBar(UINT nIDResource)
 		if (!m_pSecondToolBar->CreateEx(this, 
 			TBSTYLE_FLAT, 
 			WS_CHILD | WS_VISIBLE | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
-			CRect(1, 1, 1, 1), nIDResource)
-		|| !m_pSecondToolBar->LoadToolBar(nIDResource))
+			CRect(1, 1, 1, 1), nIDResource))
 			return FALSE;      // fail to create
 	}
-	else
-	{
-		m_pSecondToolBar->LoadToolBar(nIDResource);
-		// make sure the toolbar is visible
-		if(!m_pSecondToolBar->IsWindowVisible())
-			m_pSecondToolBar->ShowWindow(SW_SHOWNORMAL);
-	}
-
+		
+	BOOL flag = m_pSecondToolBar->LoadToolBar(nIDResource);
+	ASSERT(flag != 0);
+	m_pSecondToolBar->ResetImages();
+	flag = m_pSecondToolBar->LoadBitmap(IDresource);
+	ASSERT(flag != 0);
 	CString strToolBarName;
-	BOOL bNameValid = FALSE;
-	switch (nIDResource)
-	{
-	case IDR_DBSPIKETYPE:
-		bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_4SPIKES);
-		break;
-	case IDR_DBDATATYPE:
-	default:
-		bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_4DATA);
-		break;
-	}
+	BOOL bNameValid = strToolBarName.LoadString(IDstring);
 	ASSERT(bNameValid);
 	m_pSecondToolBar->SetWindowText(strToolBarName);
+	// make sure the toolbar is visible
+	if (!m_pSecondToolBar->IsWindowVisible())
+		m_pSecondToolBar->ShowWindow(SW_SHOWNORMAL);
+
 
 	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
 	m_pSecondToolBar->EnableDocking(CBRS_ALIGN_TOP);
