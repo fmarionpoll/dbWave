@@ -142,6 +142,10 @@
 #define HID_TOOLS_CHECKCONSISTENCY              0x180EF
 #define HID_TOOLS_SYNCHRO_ALLFILES              0x180F0
 #define HID_TOOLS_SYNCHRO_CURRENTFILE           0x180F1
+#define HID_BUTTON2                             0x180F2
+#define HID_BUTTON3                             0x180F3
+#define HID_record_pre                          0x180F3
+#define HID_BUTTON4                             0x180F4
 #define HID_CHECK_FILTERPANE                    0x18140
 #define HID_CHECK_PROPERTIESPANE                0x18141
 #define HID_TOOLS_IMPORT                        0x18149

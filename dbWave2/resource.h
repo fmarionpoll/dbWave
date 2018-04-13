@@ -903,6 +903,7 @@
 #define ID_TOOLS_SYNCHRO_CURRENTFILE    33009
 #define ID_BUTTON2                      33010
 #define ID_BUTTON3                      33011
+#define ID_record_pre                   33011
 #define ID_BUTTON4                      33012
 #define ID_CHECK_FILTERPANE             33088
 #define ID_CHECK_PROPERTIESPANE         33089
@@ -924,7 +925,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        575
-#define _APS_NEXT_COMMAND_VALUE         33013
+#define _APS_NEXT_COMMAND_VALUE         33016
 #define _APS_NEXT_CONTROL_VALUE         1510
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
