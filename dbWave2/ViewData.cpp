@@ -271,11 +271,9 @@ void CDataView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CDataView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
-	CMainFrame* pmF = (CMainFrame*) AfxGetMainWnd();
 	if (bActivate)
 	{
-		BOOL flag = pmF->SetSecondToolBar(IDR_DBDATATYPE);
-		ASSERT(flag);
+		CMainFrame* pmF = (CMainFrame*)AfxGetMainWnd();
 		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);

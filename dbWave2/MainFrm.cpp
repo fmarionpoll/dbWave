@@ -44,10 +44,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 
 	ON_COMMAND(ID_TOOLS_COMPACTDATABASE,			&CMainFrame::OnToolsCompactdatabase)
 
-	ON_COMMAND(ID_HELP_FINDER,	&CMDIFrameWndEx::OnHelpFinder)
-	ON_COMMAND(ID_HELP,			&CMDIFrameWndEx::OnHelp)
-	ON_COMMAND(ID_CONTEXT_HELP, &CMDIFrameWndEx::OnContextHelp)
-	ON_COMMAND(ID_DEFAULT_HELP, &CMDIFrameWndEx::OnHelpFinder)
+	ON_COMMAND(ID_HELP_FINDER,			&CMDIFrameWndEx::OnHelpFinder)
+	ON_COMMAND(ID_HELP,					&CMDIFrameWndEx::OnHelp)
+	ON_COMMAND(ID_CONTEXT_HELP,			&CMDIFrameWndEx::OnContextHelp)
+	ON_COMMAND(ID_DEFAULT_HELP,			&CMDIFrameWndEx::OnHelpFinder)
 
 END_MESSAGE_MAP()
 
@@ -66,7 +66,6 @@ CMainFrame::CMainFrame()
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 }
 
-
 CMainFrame::~CMainFrame()
 {
 	m_wndOutlookPane.ClearAll();
@@ -74,12 +73,10 @@ CMainFrame::~CMainFrame()
 	SAFE_DELETE(m_pSecondToolBar);
 }
 
-
 void CMainFrame::OnDestroy()
 {
 	CMDIFrameWndEx::OnDestroy();
 }
-
 
 void CMainFrame::ActivatePropertyPane(BOOL bActivate)
 {
@@ -87,76 +84,11 @@ void CMainFrame::ActivatePropertyPane(BOOL bActivate)
 		m_wndProperties.ShowPane(bActivate, FALSE, FALSE);
 }
 
-
 void CMainFrame::ActivateFilterPane(BOOL bActivate)
 {
 	if (bActivate != m_wndFilter.IsVisible())
 		m_wndFilter.ShowPane(bActivate, FALSE, FALSE);
 }
-
-
-BOOL CMainFrame::SetSecondToolBar(UINT nIDResource)
-{
-	int IDresource = nIDResource;
-	int IDstring = 0;
-	switch (nIDResource)
-	{
-	case IDR_DBSPIKETYPE:
-		IDresource = theApp.m_bHiColorIcons ? IDR_DBSPIKETYPE_256 : IDR_DBSPIKETYPE;
-		IDstring = IDS_TOOLBAR_4SPIKES;
-		break;
-	case IDR_DBDATATYPE:
-	default:
-		IDresource = theApp.m_bHiColorIcons ? IDR_DBDATATYPE_256 : IDR_DBDATATYPE;
-		IDstring = IDS_TOOLBAR_4DATA;
-		break;
-	}
-
-	// check if same request as the previous one
-	if (nIDResource == m_SecondToolBarID)
-	{
-		// it toolbar is not visible, make it visible
-		if(!m_pSecondToolBar->IsWindowVisible())
-			m_pSecondToolBar->ShowWindow(SW_SHOWNORMAL);
-		return TRUE;
-	}
-
-	m_SecondToolBarID = nIDResource;
-	IDresource = nIDResource;
-	if (m_pSecondToolBar == NULL)
-	{
-		m_pSecondToolBar = new CMFCToolBar;
-		ASSERT(m_pSecondToolBar != NULL);
-
-		if (!m_pSecondToolBar->CreateEx(this, 
-			TBSTYLE_FLAT, 
-			WS_CHILD | WS_VISIBLE | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
-			CRect(1, 1, 1, 1), nIDResource))
-			return FALSE;      // fail to create
-	}
-		
-	BOOL flag = m_pSecondToolBar->LoadToolBar(nIDResource);
-	ASSERT(flag != 0);
-	m_pSecondToolBar->ResetImages();
-	flag = m_pSecondToolBar->LoadBitmap(IDresource);
-	ASSERT(flag != 0);
-	CString strToolBarName;
-	BOOL bNameValid = strToolBarName.LoadString(IDstring);
-	ASSERT(bNameValid);
-	m_pSecondToolBar->SetWindowText(strToolBarName);
-	// make sure the toolbar is visible
-	if (!m_pSecondToolBar->IsWindowVisible())
-		m_pSecondToolBar->ShowWindow(SW_SHOWNORMAL);
-
-
-	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
-	m_pSecondToolBar->EnableDocking(CBRS_ALIGN_TOP);
-	DockPane(m_pSecondToolBar);
-	m_dockManager.DockPaneLeftOf(&m_wndToolBar, m_pSecondToolBar);
-	
-	return TRUE;
-}
-
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -170,9 +102,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	mdiTabParams.m_bAutoColor = TRUE;					// set to FALSE to disable auto-coloring of MDI tabs
 	mdiTabParams.m_bDocumentMenu = TRUE;				// enable the document menu at the right edge of the tab area
 	EnableMDITabbedGroups(TRUE, mdiTabParams);
+
 	// Create the ribbon bar
 	if (!m_wndRibbonBar.Create(this))
 	{
+		TRACE0("Failed to create ribbon bar\n");
 		return -1; //Failed to create ribbon bar
 	}
 	m_wndRibbonBar.LoadFromResource(IDR_RIBBON);
@@ -183,10 +117,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create status bar\n");
 		return -1;      // fail to create
 	}
-
-	// enable Visual Studio 2005 style docking window behavior
 	CDockingManager::SetDockingMode(DT_SMART);
-	// enable Visual Studio 2005 style docking window auto-hide behavior
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
 
@@ -197,14 +128,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create navigation pane\n");
 		return -1;      // fail to create
 	}
-	EnableDocking(CBRS_ALIGN_LEFT);											// Outlook bar is created and docking on the left side should be allowed.
+	EnableDocking(CBRS_ALIGN_LEFT);	
 	EnableAutoHidePanes(CBRS_ALIGN_RIGHT);
 
 	// Load menu item image (not placed on any standard toolbars):
 	CMFCToolBar::AddToolBarForImageCollection(IDR_MENU_IMAGES, theApp.m_bHiColorIcons ? IDB_MENU_IMAGES_24 : 0);
 
 	// create docking windows
-	if (!CreateDockingWindows())
+	if (!CreateDockingPropertiesPanes())
 	{
 		TRACE0("Failed to create docking windows\n");
 		return -1;
@@ -236,10 +167,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 
 	InitUserToolbars(NULL, uiFirstUserToolBarId, uiLastUserToolBarId);
-
-	// TODO: Delete these five lines if you don't want the toolbar and menubar to be dockable
-	//m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
-	//DockPane(&m_wndMenuBar);
 	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndToolBar);
@@ -285,8 +212,7 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 #endif //_DEBUG
 
-
-BOOL CMainFrame::CreateDockingWindows()
+BOOL CMainFrame::CreateDockingPropertiesPanes()
 {
 	// Create filter view
 	CString strFilterView;
@@ -296,7 +222,7 @@ BOOL CMainFrame::CreateDockingWindows()
 		ID_PANE_FILTERWND,
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
-		TRACE0("Failed to create filter View window\n");
+		TRACE0("Failed to create filter properties window\n");
 		return FALSE; // failed to create
 	}
 
@@ -308,16 +234,15 @@ BOOL CMainFrame::CreateDockingWindows()
 		ID_PANE_PROPERTIESWND,
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
 	{
-		TRACE0("Failed to create properties View window\n");
+		TRACE0("Failed to create record properties window\n");
 		return FALSE; // failed to create
 	}
 
-	SetDockingWindowIcons(theApp.m_bHiColorIcons);
+	SetDockingPropertiesPanesIcons(theApp.m_bHiColorIcons);
 	return TRUE;
 }
 
-
-void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
+void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 {
 	HICON hFilterPaneIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(),
 		MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW),
@@ -340,7 +265,6 @@ CdbWaveDoc * CMainFrame::GetMDIActiveDocument()
 	CDaoRecordView *pView = (CDaoRecordView*)pChild->GetActiveView();
 	return (CdbWaveDoc*)pView->GetDocument();
 }
-
 
 BOOL CMainFrame::CreateOutlookBar()
 {
@@ -402,8 +326,6 @@ BOOL CMainFrame::CreateOutlookBar()
 	return TRUE;
 }
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame message handlers
 
@@ -412,7 +334,6 @@ void CMainFrame::OnWindowManager()
 {
 	ShowWindowsDialog();
 }
-
 
 void CMainFrame::OnApplicationLook(UINT id)
 {
@@ -475,7 +396,6 @@ void CMainFrame::OnApplicationLook(UINT id)
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
 }
-
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
@@ -556,13 +476,11 @@ void CMainFrame::OnViewPropertiesWindow()
 	m_bPropertiesPaneVisible = TRUE;
 }
 
-
 void CMainFrame::OnUpdateViewPropertiesWindow(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
 	m_bPropertiesPaneVisible = TRUE;
 }
-
 
 void CMainFrame::OnViewFilterWindow()
 {
@@ -573,20 +491,17 @@ void CMainFrame::OnViewFilterWindow()
 	m_bFilterPaneVisible = TRUE;
 }
 
-
 void CMainFrame::OnUpdateViewFilterWindow(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
 	m_bFilterPaneVisible = TRUE;
 }
 
-
 void CMainFrame::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	m_wndProperties.OnUpdate(pSender, lHint, pHint);
 	m_wndFilter.OnUpdate(pSender, lHint, pHint);
 }
-
 
 LRESULT CMainFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
@@ -596,19 +511,16 @@ LRESULT CMainFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-
 void CMainFrame::OnCheckFilterpane()
 {
 	m_bFilterPaneVisible = !m_bFilterPaneVisible;
 	m_wndFilter.ShowPane(m_bFilterPaneVisible, FALSE, TRUE);
 }
 
-
 void CMainFrame::OnUpdateCheckFilterpane(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(m_bFilterPaneVisible);
 }
-
 
 void CMainFrame::OnCheckPropertiespane()
 {
@@ -616,13 +528,10 @@ void CMainFrame::OnCheckPropertiespane()
 	m_wndProperties.ShowPane(m_bPropertiesPaneVisible, FALSE, TRUE);
 }
 
-
 void CMainFrame::OnUpdateCheckPropertiespane(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(m_bPropertiesPaneVisible);
 }
-
-
 
 #define MAX_CFileDialog_FILE_COUNT 99
 #define FILE_LIST_BUFFER_SIZE ((MAX_CFileDialog_FILE_COUNT * (MAX_PATH + 1)) + 1)

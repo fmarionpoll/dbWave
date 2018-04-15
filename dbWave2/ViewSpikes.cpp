@@ -152,12 +152,9 @@ void CSpikeView::DoDataExchange(CDataExchange* pDX)
 // CSpikeView message handlers
 void CSpikeView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
-	CMainFrame* pmF = (CMainFrame*) AfxGetMainWnd();
 	if (bActivate)
 	{
-		BOOL flag = pmF->SetSecondToolBar(IDR_DBSPIKETYPE);
-		ASSERT(flag);
-		//((CChildFrame*)pmF->MDIGetActive())->m_cursorstate = 0;
+		CMainFrame* pmF = (CMainFrame*)AfxGetMainWnd();
 		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	else

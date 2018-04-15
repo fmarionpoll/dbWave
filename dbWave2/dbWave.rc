@@ -3727,6 +3727,7 @@ BEGIN
     ID_RECORD_REFRESH       "Import a file from another format"
     ID_RECORD_DELETE        "Delete record"
     ID_RECORD_FILTERMODE    "Selected items define which records are viewed"
+    ID_TOOLS_OPENDATAFILES  "Open dat files corresponding to the list of files in the text"
 END
 
 STRINGTABLE

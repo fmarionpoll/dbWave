@@ -305,9 +305,6 @@ void CSpikeSort1View::OnActivateView( BOOL bActivate, CView* pActivateView, CVie
 	if (bActivate)
 	{
 		CMainFrame* pmF = (CMainFrame*) AfxGetMainWnd();
-		BOOL flag = pmF->SetSecondToolBar(IDR_DBSPIKETYPE);
-		ASSERT(flag);
-		//((CChildFrame*)pmF->MDIGetActive())->m_cursorstate = 0;
 		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	else

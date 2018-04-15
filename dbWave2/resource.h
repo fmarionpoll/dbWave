@@ -902,8 +902,8 @@
 #define ID_TOOLS_SYNCHRO_ALLFILES       33008
 #define ID_TOOLS_SYNCHRO_CURRENTFILE    33009
 #define ID_BUTTON2                      33010
+#define ID_TOOLS_IMPORT_PROJECT         33010
 #define ID_BUTTON3                      33011
-#define ID_record_pre                   33011
 #define ID_BUTTON4                      33012
 #define ID_CHECK_FILTERPANE             33088
 #define ID_CHECK_PROPERTIESPANE         33089

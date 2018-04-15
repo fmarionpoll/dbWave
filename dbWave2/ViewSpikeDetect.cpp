@@ -215,13 +215,10 @@ void CSpikeDetectionView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CSpikeDetectionView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
-	CMainFrame* pmF = (CMainFrame*) AfxGetMainWnd();
 	// activate view
 	if (bActivate)
 	{
-		BOOL flag = pmF->SetSecondToolBar(IDR_DBDATATYPE);
-		ASSERT(flag);
-		//((CChildFrame*)pmF->MDIGetActive())->m_cursorstate = 0;
+		CMainFrame* pmF = (CMainFrame*)AfxGetMainWnd();
 		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	// exit view

@@ -1551,11 +1551,10 @@ void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CADContView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
-	CMainFrame* pmF = (CMainFrame*)AfxGetMainWnd();
 	// activate view
 	if (bActivate)
 	{
-		pmF->SetSecondToolBar(IDR_DBDATATYPE);
+		CMainFrame* pmF = (CMainFrame*)AfxGetMainWnd();
 		pmF->ActivatePropertyPane(FALSE);
 		((CChildFrame*)pmF->MDIGetActive())->m_cursorstate = 0;
 	}

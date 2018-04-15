@@ -22,7 +22,6 @@ public:
 public:
 	UINT			m_SecondToolBarID;
 	CMFCToolBar*	m_pSecondToolBar;
-	BOOL		SetSecondToolBar(UINT nIDResource);
 	void		ActivatePropertyPane(BOOL bDisplay);
 	void		ActivateFilterPane(BOOL bDisplay);
 
@@ -55,8 +54,8 @@ protected:  // control bar embedded members
 	CMFCOutlookBarPane	m_wndOutlookPane;
 
 	BOOL				CreateOutlookBar();
-	BOOL				CreateDockingWindows();
-	void				SetDockingWindowIcons(BOOL bHiColorIcons);
+	BOOL				CreateDockingPropertiesPanes();
+	void				SetDockingPropertiesPanesIcons(BOOL bHiColorIcons);
 	CdbWaveDoc*			GetMDIActiveDocument();
 
 // Generated message map functions
