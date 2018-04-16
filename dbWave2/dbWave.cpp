@@ -163,7 +163,7 @@ BOOL CdbWaveApp::InitInstance()
 
 	m_pNoteViewTemplate = new CdbMultiDocTemplate(IDR_PROJECTTYPE,
 		RUNTIME_CLASS(CNoteDoc),
-		RUNTIME_CLASS(CMDIChildWnd),	// standard MDI child frame
+		RUNTIME_CLASS(CMDIChildWndEx),	// standard MDI child frame
 		RUNTIME_CLASS(CNoteDocView));
 	m_pNoteViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
 	AddDocTemplate(m_pNoteViewTemplate);

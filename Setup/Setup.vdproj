@@ -308,15 +308,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:dbWave2"
-        "ProductCode" = "8:{F87967D9-B89C-40D3-A84E-6D53A476EA82}"
-        "PackageCode" = "8:{0835A1EF-7A49-4589-AAAE-2F722D8F198E}"
+        "ProductCode" = "8:{4E608040-D8C2-4FAE-BB44-2BD67D96A04E}"
+        "PackageCode" = "8:{CB8B728B-A09F-483E-9EAC-750F4CA1B539}"
         "UpgradeCode" = "8:{A9B664F0-5F5A-4FBF-AA04-3583AF3BFED6}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.31"
+        "ProductVersion" = "8:1.1.33"
         "Manufacturer" = "8:FMP"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -914,7 +914,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C16F3AFFCBBC4457BC15E997E4F4CA14"
             {
-            "SourcePath" = "8:..\\dbWave2\\Release\\dbWave2.exe"
+            "SourcePath" = "8:..\\dbWave2\\Debug\\dbWave2.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_AC4A49FBB6AC4E19A3805CDDF1E6F802"

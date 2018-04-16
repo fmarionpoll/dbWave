@@ -2353,8 +2353,8 @@ IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,2018,4,10
- PRODUCTVERSION 4,2018,4,10
+ FILEVERSION 4,2018,4,15
+ PRODUCTVERSION 4,2018,4,15
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2371,12 +2371,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "AgroParisTech - EGCE UMR 9191 (CNRS-Paris Sud-IRD)"
             VALUE "FileDescription", "Database-oriented  data acquisition and analysis for extracellular electrophysiology"
-            VALUE "FileVersion", "4.2018.4.10"
+            VALUE "FileVersion", "4.2018.4.15"
             VALUE "InternalName", "dbWave2"
             VALUE "LegalCopyright", "Copyright (C) 2018-2022"
             VALUE "OriginalFilename", "dbWave2.exe"
             VALUE "ProductName", " dbWave Application"
-            VALUE "ProductVersion", "4.2018.4.10"
+            VALUE "ProductVersion", "4.2018.4.15"
         END
     END
     BLOCK "VarFileInfo"
@@ -2583,7 +2583,7 @@ IDR_DBDATATYPE MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW_FRAME
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "&Close",                      ID_FILE_CLOSE
         MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
