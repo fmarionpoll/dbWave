@@ -146,6 +146,7 @@
 #define HID_TOOLS_IMPORT_PROJECT                0x180F2
 #define HID_BUTTON3                             0x180F3
 #define HID_BUTTON4                             0x180F4
+#define HID_BUTTON6                             0x180F9
 #define HID_CHECK_FILTERPANE                    0x18140
 #define HID_CHECK_PROPERTIESPANE                0x18141
 #define HID_TOOLS_IMPORT                        0x18149

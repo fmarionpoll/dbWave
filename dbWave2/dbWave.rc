@@ -3736,7 +3736,7 @@ BEGIN
     ID_TOOLS_IMPORT_SPIKEFILES "Import descriptors from Awave spike files"
     ID_TOOLS_IMPORT_DATABASE 
                             "Merge existing dbWave database (mdb) with current database..."
-    ID_TOOLS_TRANSFERFILES  "Copy files and database into a new directory..."
+    ID_TOOLS_TRANSFERFILES  "Transfer to new directory..."
     ID_TOOLS_IMPORT_ATFFILES "Import text files exported from pClamp"
 END
 
