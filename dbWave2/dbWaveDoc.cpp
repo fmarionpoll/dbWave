@@ -1098,6 +1098,10 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		CFileStatus rStatus;
 		BOOL bDatPresent = CFile::GetStatus(csDatFile, rStatus);
 		BOOL bSpikPresent = CFile::GetStatus(csSpkFile, rStatus);
+		if (bDatPresent)
+			csFilename = csDatFile;
+		else if (bSpikPresent)
+			csFilename = csSpkFile;
 		CWaveFormat* pWF = GetWaveFormat(csFilename, bDatPresent);
 		if (pWF == NULL)
 		{

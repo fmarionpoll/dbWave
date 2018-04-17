@@ -101,6 +101,20 @@ BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_BN_CLICKED(IDC_STARTSTOP2, &CADContView::DAC_OnBnClickedStartStop)
 END_MESSAGE_MAP()
 
+BEGIN_EVENTSINK_MAP(CADContView, CFormView)
+
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 1, CADContView::ADC_OnBufferDone, VTS_NONE)
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 2, CADContView::ADC_OnQueueDone, VTS_NONE)
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 4, CADContView::ADC_OnTriggerError, VTS_NONE)
+	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 5, CADContView::ADC_OnOverrunError, VTS_NONE)
+
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 1, CADContView::DAC_OnBufferDone, VTS_NONE)
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 5, CADContView::DAC_OnOverrunError, VTS_NONE)
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::DAC_OnQueueDone, VTS_NONE)
+	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::DAC_OnTriggerError, VTS_NONE)
+
+END_EVENTSINK_MAP()
+
 void CADContView::OnDestroy() 
 {
 	if (m_ADC_inprogress)
@@ -141,19 +155,6 @@ HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
-BEGIN_EVENTSINK_MAP(CADContView, CFormView)
-
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 1, CADContView::ADC_OnBufferDone, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 2, CADContView::ADC_OnQueueDone, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 4, CADContView::ADC_OnTriggerError, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 5, CADContView::ADC_OnOverrunError, VTS_NONE)
-
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 1, CADContView::DAC_OnBufferDone, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 5, CADContView::DAC_OnOverrunError, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::DAC_OnQueueDone, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::DAC_OnTriggerError, VTS_NONE)
-
-END_EVENTSINK_MAP()
 
 void CADContView::OnCbnSelchangeComboboard()
 {
@@ -2392,3 +2393,4 @@ void CADContView::DAC_Stop()
 		DAC_StopAndLiberateBuffers();
 	DAC_UpdateStartStop(m_DAC_inprogress);
 }
+

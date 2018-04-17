@@ -703,6 +703,7 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="GridCtrl\GridInPlaceEdit.h" />
     <ClInclude Include="GridCtrl\GridTitleTip.h" />
     <ClInclude Include="GridCtrl\GridURLCell.h" />
+    <ClInclude Include="ImportAlligatorDefinitions.h" />
     <ClInclude Include="ImportExcelDefinitions.h" />
     <ClInclude Include="ImportFilesDlg.h" />
     <ClInclude Include="importgenericdatadlg.h" />

@@ -9,6 +9,8 @@
 #include "GridCtrl\GridCellNumeric.h"
 #include "GridCtrl\GridCellCheck.h"
 #include "adinputparmsdlg.h"
+#include "cyberAmp.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -96,7 +98,6 @@ BEGIN_MESSAGE_MAP(CADInputParmsDlg, CDialog)
 	ON_BN_CLICKED(IDOK, OnBnClickedOk)
 	ON_BN_CLICKED(IDC_ADINTERVALS, OnBnClickedAdintervals)
 END_MESSAGE_MAP()
-
 
 // CADInputParmsDlg message handlers
 
@@ -338,7 +339,6 @@ void CADInputParmsDlg::OnSize(UINT nType, int cx, int cy)
 		pWnd->ShowWindow( (nType == SIZE_MAXIMIZED)? SW_HIDE : SW_SHOW);
 }
 
-
 //////////////////////////////////////////////////////
 // set column with proper header, combos, etc and data
 
@@ -493,23 +493,6 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 
 	// DC Offset (mV) " IN-" - combo
 	row++;
-	//if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCombo)))
-	//{
-	//	CStringArray csArrayOptions;
-	//	int i= 0;
-	//	do {
-	//		csArrayOptions.Add(pszHighPass[i]);
-	//		i++;
-	//	} while (pszHighPass[i] != _T(""));
-	//	CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(row, col);
-	//	pCell->SetOptions(csArrayOptions);
-	//	pCell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
-	//	// init value
-	//	if (col > 1)
-	//		m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col-1));
-	//	else
-	//		pCell->SetCurSel(1);
-	//} 
 	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
 	if (col > 1)
 		m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col - 1));
@@ -568,6 +551,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 
 	return TRUE;
 }
+
 void CADInputParmsDlg::InitGridColumnReadOnlyFields(int col)
 {
 	// "Signal total gain" - read only / numeric
@@ -846,9 +830,6 @@ void CADInputParmsDlg::OnBnClickedAdintervals()
 	OnOK();
 }
 
-
-#include "cyberAmp.h"
-
 void CADInputParmsDlg::SetAmplifierParms(int col)
 {
 	if (!m_bcommandAmplifier)
@@ -859,26 +840,30 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 	CWaveChan* pchan = m_pchArray->GetWaveChan(col-1);
 
 	// exit if cyberAmp not declared - if not, exit
-	int a = pchan->am_csamplifier.Find(_T("CyberAmp"));
-	int b = pchan->am_csamplifier.Find(_T("Axon")); 
-	if (a != 0 && b != 0) 
-		return;
+	if (pchan->am_csamplifier.Find(_T("CyberAmp")) >= 0 
+		|| pchan->am_csamplifier.Find(_T("Axon")) >= 0) 
+	{
 
-	// cyberAmp declared: check if connected -if not, exit
-	CCyberAmp cyberAmp;
-	BOOL bcyberPresent = (cyberAmp.Initialize() == NULL);
-	if (!bcyberPresent)
-		return;
+		// cyberAmp declared: check if connected -if not, exit
+		CCyberAmp cyberAmp;
+		BOOL bcyberPresent = (cyberAmp.Initialize() == NULL);
+		if (!bcyberPresent)
+			return;
 
-	// chan, gain, filter +, lowpass, notch	
-	cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);	
-	cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
-	cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
-	cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-	double gain = pchan->am_gaintotal/(pchan->am_gainheadstage*pchan->am_gainAD);
-	cyberAmp.SetGain(pchan->am_amplifierchan, (int) gain);
-	cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int) (pchan->am_lowpass));
-	int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();
+		// chan, gain, filter +, lowpass, notch	
+		cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
+		cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
+		cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
+		cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
+		double gain = pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD);
+		cyberAmp.SetGain(pchan->am_amplifierchan, (int)gain);
+		cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
+		int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();
+	}
+
+	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0) 
+	{
+
+	}
 }
-
 

@@ -87,5 +87,6 @@ public:
 	afx_msg void OnToolsImport();
 	afx_msg void OnToolsSynchro();
 	afx_msg void OnToolsGarbage();
+	afx_msg void OnToolsCompactdatabase();
 };
 

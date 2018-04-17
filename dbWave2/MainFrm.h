@@ -42,8 +42,7 @@ public:
 protected:  // control bar embedded members
 	BOOL	m_bPropertiesPaneVisible;
 	BOOL	m_bFilterPaneVisible;
-	//CMFCMenuBar			m_wndMenuBar;
-	CMFCToolBar			m_wndToolBar;
+
 	CMFCRibbonStatusBar	m_wndStatusBar;
 	CMFCRibbonBar		m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
@@ -81,7 +80,6 @@ public:
 	afx_msg void OnUpdateCheckFilterpane(CCmdUI *pCmdUI);
 	afx_msg void OnCheckPropertiespane();
 	afx_msg void OnUpdateCheckPropertiespane(CCmdUI *pCmdUI);
-	afx_msg void OnToolsCompactdatabase();
 };
 
 

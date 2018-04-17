@@ -42,8 +42,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_COMMAND(ID_CHECK_PROPERTIESPANE,				&CMainFrame::OnCheckPropertiespane)
 	ON_UPDATE_COMMAND_UI(ID_CHECK_PROPERTIESPANE,	&CMainFrame::OnUpdateCheckPropertiespane)
 
-	ON_COMMAND(ID_TOOLS_COMPACTDATABASE,			&CMainFrame::OnToolsCompactdatabase)
-
 	ON_COMMAND(ID_HELP_FINDER,			&CMDIFrameWndEx::OnHelpFinder)
 	ON_COMMAND(ID_HELP,					&CMDIFrameWndEx::OnHelp)
 	ON_COMMAND(ID_CONTEXT_HELP,			&CMDIFrameWndEx::OnContextHelp)
@@ -146,30 +144,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockPane(&m_wndFilter);
 	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndProperties);
-
-	// tools bar
-	if (!m_wndToolBar.CreateEx(this, 
-		TBSTYLE_FLAT, 
-		WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
-	{
-		TRACE0("Failed to create toolbar\n");
-		return -1;      // fail to create
-	}
-	CString strToolBarName;
-	BOOL bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
-	ASSERT(bNameValid);
-	m_wndToolBar.SetWindowText(strToolBarName);
-
-	CString strCustomize;
-	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
-	ASSERT(bNameValid);
-	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
-
-	InitUserToolbars(NULL, uiFirstUserToolBarId, uiLastUserToolBarId);
-	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
-	EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndToolBar);
 
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
@@ -533,35 +507,4 @@ void CMainFrame::OnUpdateCheckPropertiespane(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(m_bPropertiesPaneVisible);
 }
 
-#define MAX_CFileDialog_FILE_COUNT 99
-#define FILE_LIST_BUFFER_SIZE ((MAX_CFileDialog_FILE_COUNT * (MAX_PATH + 1)) + 1)
 
-void CMainFrame::OnToolsCompactdatabase()
-{
-	CString fileName;
-	wchar_t* p = fileName.GetBuffer(FILE_LIST_BUFFER_SIZE);
-	CFileDialog dlg(TRUE);
-
-	OPENFILENAME& ofn = dlg.GetOFN();
-	ofn.Flags |= OFN_ALLOWMULTISELECT;
-	ofn.lpstrFile = p;
-	ofn.nMaxFile = FILE_LIST_BUFFER_SIZE;
-	ofn.lpstrFilter = _T("MDB Files (*.mdb)\0*.mdb\0\0");
-	ofn.lpstrTitle = _T("Select MDB File");
-	INT_PTR result = dlg.DoModal();
-	fileName.ReleaseBuffer();
-
-	if (result == IDOK)
-	{
-		fileName = dlg.GetPathName(); // return full path and filename
-		int ipos = fileName.ReverseFind('.');
-		CString fileName_new = fileName.Left(ipos) + _T("_new.mdb");
-
-		// compact database and save new file
-		CDaoWorkspace::CompactDatabase(fileName, fileName_new, dbLangGeneral, 0);
-
-		CString cs;
-		cs = fileName + _T(" database compacted and saved as ") + fileName_new;
-		AfxMessageBox(cs);
-	}
-}

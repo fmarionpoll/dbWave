@@ -44,7 +44,6 @@ BEGIN
     CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,59,26,11,14
     LTEXT           "Max.",IDC_STATIC,23,46,17,8
     EDITTEXT        IDC_MAXLIST,43,43,28,14,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
-    CONTROL         "Custom2",IDC_GRID,"MFCGridCtrl",WS_TABSTOP,8,68,289,190
     PUSHBUTTON      "Channels...",IDC_ADCHANNELS,243,36,54,14,WS_DISABLED
     PUSHBUTTON      "Sampling...",IDC_ADINTERVALS,243,52,54,14
     SCROLLBAR       IDC_SIZEBOX,283,245,14,13,SBS_SIZEBOXBOTTOMRIGHTALIGN | SBS_SIZEBOX | SBS_SIZEGRIP
@@ -54,6 +53,7 @@ BEGIN
     LTEXT           "Model",IDC_STATIC,148,14,20,8
     LTEXT           "Encoding",IDC_STATIC,115,46,30,8
     COMBOBOX        IDC_ENCODING,147,43,82,30,CBS_DROPDOWN | CBS_SORT | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Custom2",IDC_GRID,"MFCGridCtrl",WS_TABSTOP,8,68,289,190
 END
 
 IDD_CONFIRMDIALOG DIALOGEX 0, 0, 204, 70
@@ -2353,8 +2353,8 @@ IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,2018,4,15
- PRODUCTVERSION 4,2018,4,15
+ FILEVERSION 4,2018,4,16
+ PRODUCTVERSION 4,2018,4,16
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2371,12 +2371,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "AgroParisTech - EGCE UMR 9191 (CNRS-Paris Sud-IRD)"
             VALUE "FileDescription", "Database-oriented  data acquisition and analysis for extracellular electrophysiology"
-            VALUE "FileVersion", "4.2018.4.15"
+            VALUE "FileVersion", "4.2018.4.16"
             VALUE "InternalName", "dbWave2"
             VALUE "LegalCopyright", "Copyright (C) 2018-2022"
             VALUE "OriginalFilename", "dbWave2.exe"
             VALUE "ProductName", " dbWave Application"
-            VALUE "ProductVersion", "4.2018.4.15"
+            VALUE "ProductVersion", "4.2018.4.16"
         END
     END
     BLOCK "VarFileInfo"
@@ -3929,6 +3929,12 @@ END
 STRINGTABLE
 BEGIN
     IDC_SPLITVERTICAL       "Set options to import a data file not directly supported by dbWave..."
+END
+
+STRINGTABLE
+BEGIN
+    ID_TOOLS_COMPACTDATABASE "Compact database"
+    ID_TOOLS_REMOVEUNUSED   "Remove un-used entries in database"
 END
 
 #endif    // English (United States) resources

@@ -124,6 +124,7 @@ ON_COMMAND(ID_TOOLS_IMPORT, &CChildFrame::OnToolsImport)
 ON_COMMAND(ID_TOOLS_SYNCHRO, &CChildFrame::OnToolsSynchro)
 ON_COMMAND(ID_TOOLS_REMOVEUNUSED, &CChildFrame::OnToolsRemoveunused)
 ON_COMMAND(ID_TOOLS_GARBAGE, &CChildFrame::OnToolsGarbage)
+ON_COMMAND(ID_TOOLS_COMPACTDATABASE, &CChildFrame::OnToolsCompactdatabase)
 
 END_MESSAGE_MAP()
 
@@ -1239,3 +1240,35 @@ void CChildFrame::OnToolsGarbage()
 	// TODO: Add your command handler code here
 }
 
+#define MAX_CFileDialog_FILE_COUNT 99
+#define FILE_LIST_BUFFER_SIZE ((MAX_CFileDialog_FILE_COUNT * (MAX_PATH + 1)) + 1)
+
+void CChildFrame::OnToolsCompactdatabase()
+{
+	CString fileName;
+	wchar_t* p = fileName.GetBuffer(FILE_LIST_BUFFER_SIZE);
+	CFileDialog dlg(TRUE);
+
+	OPENFILENAME& ofn = dlg.GetOFN();
+	ofn.Flags |= OFN_ALLOWMULTISELECT;
+	ofn.lpstrFile = p;
+	ofn.nMaxFile = FILE_LIST_BUFFER_SIZE;
+	ofn.lpstrFilter = _T("MDB Files (*.mdb)\0*.mdb\0\0");
+	ofn.lpstrTitle = _T("Select MDB File");
+	INT_PTR result = dlg.DoModal();
+	fileName.ReleaseBuffer();
+
+	if (result == IDOK)
+	{
+		fileName = dlg.GetPathName(); // return full path and filename
+		int ipos = fileName.ReverseFind('.');
+		CString fileName_new = fileName.Left(ipos) + _T("_new.mdb");
+
+		// compact database and save new file
+		CDaoWorkspace::CompactDatabase(fileName, fileName_new, dbLangGeneral, 0);
+
+		CString cs;
+		cs = fileName + _T(" database compacted and saved as ") + fileName_new;
+		AfxMessageBox(cs);
+	}
+}

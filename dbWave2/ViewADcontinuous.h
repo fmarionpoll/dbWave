@@ -226,4 +226,5 @@ public:
 	afx_msg void OnBnClickedCardFeatures();
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void DAC_OnBnClickedStartStop();
+
 };
