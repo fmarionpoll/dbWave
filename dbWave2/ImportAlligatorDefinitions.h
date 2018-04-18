@@ -1,7 +1,9 @@
 #pragma once
 #include "StdAfx.h"
 
-//#import "C:\Program Files (x86)\\Alligator Technologies\\SystemViewUSBPxx\\Distributable SDK Files\\win32\\USBPxxS1COM.dll" no_namespace raw_interfaces_only raw_native_types named_guids
+
+#import "C:\\Program Files (x86)\\Alligator Technologies\\SystemViewUSBPxx\\Distributable SDK Files\\win32\\USBPxxS1COM.dll" \
+		no_namespace raw_interfaces_only raw_native_types named_guids
 
 enum	FIRMWARE_PARAMETER_ID_SET
 {

@@ -17,6 +17,7 @@
 #include <oltypes.h>
 #include <olerrors.h>
 #include <Olmem.h>
+#include "CUSBPxxS1Ctl.h"
 
 // DT Openlayer board
 
@@ -46,9 +47,10 @@ public:
 	int					m_bStartOutPutMode;
 	BOOL				m_bADC_IsPresent;
 	BOOL				m_bDAC_IsPresent;
+	CUSBPxxS1Ctl		m_AlligatorAmplifier;
 
 protected:
-	CLineViewWnd		m_ADC_View;		// source data display button
+	CLineViewWnd		m_ADC_View;			// source data display button
 	int 				m_cursorstate;		// source data cursor state	
 	float				m_sweepduration;
 	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed	

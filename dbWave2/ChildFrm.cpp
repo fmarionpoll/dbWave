@@ -1076,7 +1076,7 @@ void CChildFrame::BuildPivot(void* poApp, void* podataSheet, CString csSourceDat
 		if (col1 < col2) // error fired if only 1 bin is measured
 		{
 			CPivotField oField = oPivot1.get_DataPivotField();
-			oField.put_Orientation(2); //XlPivotFieldOrientation.xlColumnField)
+			oField.put_Orientation(2); 
 		}
 		
 }

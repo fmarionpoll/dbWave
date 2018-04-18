@@ -396,7 +396,7 @@
     <ClCompile Include="dtBoardDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CUSBPxxS1Ctl0.cpp">
+    <ClCompile Include="CUSBPxxS1Ctl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -866,7 +866,7 @@
     <ClInclude Include="ImportAlligatorDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CUSBPxxS1Ctl0.h">
+    <ClInclude Include="CUSBPxxS1Ctl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

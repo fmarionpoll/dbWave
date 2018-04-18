@@ -701,8 +701,7 @@ dialog box, you are going to have to call CDocTemplate::OpenDocumentFile(NULL) o
 object yourself.
 */
 #include "FileNew1.h"
-#include "CUSBPxxS1Ctl.h"
-#include "CUSBPxxS1Ctl0.h"
+
 void CdbWaveApp::OnFileNew()
 {
 	// the standard way is to call CWinAppEx

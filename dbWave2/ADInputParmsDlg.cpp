@@ -9,7 +9,7 @@
 #include "GridCtrl\GridCellNumeric.h"
 #include "GridCtrl\GridCellCheck.h"
 #include "adinputparmsdlg.h"
-#include "cyberAmp.h"
+
 
 
 #ifdef _DEBUG
@@ -86,7 +86,6 @@ void CADInputParmsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RESOLUTION, m_resolutionCombo);
 	DDX_Control(pDX, IDC_ENCODING, m_encodingCombo);
 }
-
 
 BEGIN_MESSAGE_MAP(CADInputParmsDlg, CDialog)
 	ON_EN_CHANGE(IDC_NACQCHANS, OnEnChangeNacqchans)
@@ -418,7 +417,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 		} while (pszADGains[i] != _T(""));
 		CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(row, col);
 		pCell->SetOptions(csArrayOptions);
-		pCell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
+		pCell->SetStyle(CBS_DROPDOWN); 
 		// init value
 		if (col > 1)
 			m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col-1));
@@ -438,7 +437,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 		} while (pszAmplifier[i] != _T(""));
 		CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(row, col);
 		pCell->SetOptions(csArrayOptions);
-		pCell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
+		pCell->SetStyle(CBS_DROPDOWN); 
 		// init value
 		if (col > 1)
 			m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col-1));
@@ -678,6 +677,9 @@ void CADInputParmsDlg::LoadChanData(int col)
 	Item.row++;
 	Item.strText.Format(_T("%i"),pchan->am_gainAD);
 	m_Grid.SetItem(&Item);
+
+	GetAmplifierParms(col); // get amplifier current settings
+
 	// ----------------------------------------
 	// amplifier name
 	Item.row++;
@@ -843,7 +845,6 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 	if (pchan->am_csamplifier.Find(_T("CyberAmp")) >= 0 
 		|| pchan->am_csamplifier.Find(_T("Axon")) >= 0) 
 	{
-
 		// cyberAmp declared: check if connected -if not, exit
 		CCyberAmp cyberAmp;
 		BOOL bcyberPresent = (cyberAmp.Initialize() == NULL);
@@ -863,7 +864,59 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 
 	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0) 
 	{
+		USBPxxPARAMETERS device;
 
+		device.ChannelNumber = pchan->am_amplifierchan;
+		device.DeviceHandle = m_pAlligatorAmplifier->readHandleOfDevice(pchan->am_amplifierchan);
+
+		device.gain = pchan->am_amplifierchan;
+		m_pAlligatorAmplifier->writeGain(&device);
+		CString cs = pchan->am_csInputpos;
+		device.HPFc = _ttof(cs);
+		m_pAlligatorAmplifier->writeHPFC(&device);
+		device.LPFc = pchan->am_lowpass;
+		m_pAlligatorAmplifier->writeLPFC(&device);
+	}
+}
+
+void CADInputParmsDlg::GetAmplifierParms(int col)
+{
+	if (!m_bcommandAmplifier)
+		return;
+
+	MessageBox(_T("Get ampli parms"));
+	// transfer data into structure
+	CWaveChan* pchan = m_pchArray->GetWaveChan(col - 1);
+
+	// exit if cyberAmp not declared - if not, exit
+	if (pchan->am_csamplifier.Find(_T("CyberAmp")) >= 0
+		|| pchan->am_csamplifier.Find(_T("Axon")) >= 0)
+	{
+		// cyberAmp declared: check if connected -if not, exit
+		CCyberAmp cyberAmp;
+		BOOL bcyberPresent = (cyberAmp.Initialize() == NULL);
+		if (!bcyberPresent)
+			return;
+
+		// chan, gain, filter +, lowpass, notch	
+		//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
+		//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
+		//cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
+		//cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
+		//double gain = pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD);
+		//cyberAmp.SetGain(pchan->am_amplifierchan, (int)gain);
+		//cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
+		//int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();
+	}
+
+	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
+	{
+		USBPxxPARAMETERS device;
+		m_pAlligatorAmplifier->readAllParameters(0, &device);
+		pchan->am_amplifierchan = short( device.ChannelNumber);
+		pchan->am_amplifierchan = short(device.gain);
+		pchan->am_csInputpos.Format(_T("%f.3"), device.HPFc);
+		pchan->am_lowpass = short(device.LPFc);
 	}
 }
 

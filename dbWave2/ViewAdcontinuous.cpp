@@ -76,6 +76,7 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
+	DDX_Control(pDX, IDC_USBPXXS1CTL1, m_AlligatorAmplifier);
 }
 
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
@@ -1748,6 +1749,7 @@ void CADContView::ADC_OnHardwareChannelsDlg()
 	dlg.m_bchantype = m_pADC_options->bChannelType;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
+	dlg.m_pAlligatorAmplifier = &m_AlligatorAmplifier;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -2387,9 +2389,36 @@ void CADContView::DAC_Stop()
 	DAC_UpdateStartStop(m_DAC_inprogress);
 }
 
+
+//**************************************************************************************
+// USBPxxS1 event handler DeviceConnected is executed when a USBPxx-S1 module is
+// connected to the USB bus.  The value Handle is passed to us by the operating system
+// and is a unique identifier to be used in communication to the device.
+// Common practice would be to read all of the previous values stored in the module
+// and load up our data structure so that we are aware of the current operation of the
+// device.
+//**************************************************************************************
 void CADContView::DeviceConnectedUsbpxxs1ctl1(long Handle)
 {
-	// TODO: Add your message handler code here
+	USBPxxPARAMETERS*	pdevice1=  &m_AlligatorAmplifier.device1;
+	pdevice1->DeviceHandle = Handle;
+
+	m_AlligatorAmplifier.readLPFC (pdevice1);
+	m_AlligatorAmplifier.readHPFC (pdevice1);
+	m_AlligatorAmplifier.readGain (pdevice1);
+	m_AlligatorAmplifier.readCoupling (pdevice1);
+	m_AlligatorAmplifier.readClocksource (pdevice1);
+	m_AlligatorAmplifier.readPClock (pdevice1);
+	m_AlligatorAmplifier.readChannelNumber (pdevice1);
+	m_AlligatorAmplifier.readDescription(pdevice1);
+	m_AlligatorAmplifier.readLowPassFilterType (pdevice1);
+	m_AlligatorAmplifier.readHighPassFilterType (pdevice1);
+	m_AlligatorAmplifier.readSerialNumber (pdevice1);
+	m_AlligatorAmplifier.readProductID (pdevice1);
+	m_AlligatorAmplifier.readRevision (pdevice1);
+	m_AlligatorAmplifier.devicesConnected = m_AlligatorAmplifier.readNumberOfDevicesConnected ();
+	m_AlligatorAmplifier.deviceNumber = 0;
+
 }
 
 void CADContView::DeviceDisconnectedUsbpxxs1ctl1(long Handle)

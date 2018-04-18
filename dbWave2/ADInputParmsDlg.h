@@ -3,6 +3,7 @@
 // CADInputParmsDlg dialog
 
 #include "CyberAmp.h"
+#include "CUSBPxxS1Ctl.h"
 #include "GridCtrl\GridCtrl.h"
 
 class CADInputParmsDlg : public CDialog
@@ -43,6 +44,7 @@ public:
 	int m_numchansMAXDI;			// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
 	int m_numchansMAXSE;			// = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
 	BOOL m_bcommandAmplifier;		// change ampli settings on the fly (if present); default = none
+	CUSBPxxS1Ctl* 	m_pAlligatorAmplifier;
 	
 	// Implementation
 protected:
@@ -70,6 +72,7 @@ protected:
 	void	SaveChanData(int i);
 	void	SaveData();
 	void	SetAmplifierParms(int col);
+	void	GetAmplifierParms(int col);
 
 public:
 	virtual BOOL OnInitDialog();
