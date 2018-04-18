@@ -291,6 +291,7 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="Browsefi.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CUSBPxxS1Ctl0.cpp" />
     <ClCompile Include="dtBoardDlg.cpp" />
     <ClCompile Include="chanlistitem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -621,6 +622,7 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="Awavepar.h" />
     <ClInclude Include="Browsefi.h" />
     <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CUSBPxxS1Ctl0.h" />
     <ClInclude Include="dtBoardDlg.h" />
     <ClInclude Include="chanlistitem.h" />
     <ClInclude Include="ChildFrm.h" />
@@ -1561,7 +1563,7 @@ if %ERRORLEVEL%==1 (
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="dbWave.rc" />
+      <UserProperties RESOURCE_FILE="dbWave.rc" _x007B_9A90F3D9-6EEA-4735-87CB-E2DC7AF16EC6_x007D_="CUSBPxxS1Ctl" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

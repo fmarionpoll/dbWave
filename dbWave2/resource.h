@@ -801,6 +801,7 @@
 #define IDC_COMBOCHANDIGITAL            1508
 #define IDC_BUTTON_NEXTID               1509
 #define IDC_USBPXXS1CTL1                1510
+#define IDC_USBPXXS1CTL2                1511
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -927,7 +928,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        575
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1511
+#define _APS_NEXT_CONTROL_VALUE         1512
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

@@ -227,4 +227,6 @@ public:
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void DAC_OnBnClickedStartStop();
 
+	void DeviceConnectedUsbpxxs1ctl1(long Handle);
+	void DeviceDisconnectedUsbpxxs1ctl1(long Handle);
 };

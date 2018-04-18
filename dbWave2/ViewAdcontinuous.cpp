@@ -113,6 +113,8 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::DAC_OnQueueDone, VTS_NONE)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::DAC_OnTriggerError, VTS_NONE)
 
+	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 1, CADContView::DeviceConnectedUsbpxxs1ctl1, VTS_I4)
+	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 2, CADContView::DeviceDisconnectedUsbpxxs1ctl1, VTS_I4)
 END_EVENTSINK_MAP()
 
 void CADContView::OnDestroy() 
@@ -154,7 +156,6 @@ HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 	return hbr;
 }
-
 
 void CADContView::OnCbnSelchangeComboboard()
 {
@@ -2338,26 +2339,18 @@ void CADContView::DAC_OnBnClickedStartStop()
 {
 	CString cs;
 	if (m_DAC_inprogress)
-	{
 		DAC_Stop();
-	}
 	else
-	{
 		DAC_Start();
-	}
 }
 
 void CADContView::DAC_UpdateStartStop(BOOL bStart)
 {
 	CString cs;
 	if (bStart)
-	{
 		cs=_T("STOP");
-	}
 	else
-	{
 		cs =_T("START");
-	}
 	GetDlgItem(IDC_STARTSTOP2)->SetWindowTextW(cs);
 	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(m_bStartOutPutMode != 0);
 	GetDlgItem(IDC_DAPARAMETERS2)->EnableWindow(!bStart);
@@ -2394,3 +2387,12 @@ void CADContView::DAC_Stop()
 	DAC_UpdateStartStop(m_DAC_inprogress);
 }
 
+void CADContView::DeviceConnectedUsbpxxs1ctl1(long Handle)
+{
+	// TODO: Add your message handler code here
+}
+
+void CADContView::DeviceDisconnectedUsbpxxs1ctl1(long Handle)
+{
+	// TODO: Add your message handler code here
+}

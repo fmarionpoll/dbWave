@@ -73,6 +73,8 @@
 #pragma warning(disable : 4995)
 #include "dbwave.h"
 #include "resource.h"
+#include <afxdisp.h>
+#include <afxdisp.h>
 
 #define SAFE_DELETE(ptr) if (ptr) { delete ptr; ptr = NULL; }
 #define SAFE_DELETE_ARRAY(p) if(p) {delete [] p ;p = NULL ;}

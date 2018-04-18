@@ -396,6 +396,9 @@
     <ClCompile Include="dtBoardDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CUSBPxxS1Ctl0.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -861,6 +864,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImportAlligatorDefinitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CUSBPxxS1Ctl0.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
