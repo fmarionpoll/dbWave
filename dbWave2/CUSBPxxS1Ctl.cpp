@@ -11,7 +11,6 @@
 IMPLEMENT_DYNCREATE(CUSBPxxS1Ctl, CWnd)
 
 
-
 // CUSBPxxS1Ctl properties
 //**************************************************************************************
 // Read LPFc - LPFc is the low pass filter corner frequency.  The InVal is not used.
@@ -642,7 +641,7 @@ void CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan)
 
 	device.gain = pchan->am_amplifierchan;
 	writeGain(&device);
-	device.HPFc = atof(CT2A(pchan->am_csInputpos));
+	device.HPFc = (float) atof(CT2A(pchan->am_csInputpos));
 	writeHPFC(&device);
 	device.LPFc = pchan->am_lowpass;
 	writeLPFC(&device);
@@ -656,4 +655,9 @@ void CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan)
 	pchan->am_amplifierchan = short(device.gain);
 	pchan->am_csInputpos.Format(_T("%f.3"), device.HPFc);
 	pchan->am_lowpass = short(device.LPFc);
+}
+
+void CUSBPxxS1Ctl::InitializeDriver(LPDISPATCH pDisp)
+{
+	USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
 }

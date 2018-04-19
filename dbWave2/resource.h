@@ -800,8 +800,8 @@
 #define IDC_COMBOSTARTOUTPUT            1507
 #define IDC_COMBOCHANDIGITAL            1508
 #define IDC_BUTTON_NEXTID               1509
-#define IDC_USBPXXS1CTL1                1510
-#define IDC_USBPXXS1CTL2                1511
+#define IDC_USBPXXS1CTL2                 1510
+#define IDC_USBPXXS1CTL                 1511
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768

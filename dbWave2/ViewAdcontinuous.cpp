@@ -76,7 +76,8 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
-	DDX_Control(pDX, IDC_USBPXXS1CTL1, m_AlligatorAmplifier);
+	
+	DDX_Control(pDX, IDC_USBPXXS1CTL, m_AlligatorAmplifier);
 }
 
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
@@ -114,8 +115,8 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::DAC_OnQueueDone, VTS_NONE)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::DAC_OnTriggerError, VTS_NONE)
 
-	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 1, CADContView::DeviceConnectedUsbpxxs1ctl1, VTS_I4)
-	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 2, CADContView::DeviceDisconnectedUsbpxxs1ctl1, VTS_I4)
+	ON_EVENT(CADContView, IDC_USBPXXS1CTL, 1, CADContView::DeviceConnectedUsbpxxs1ctl1, VTS_I4)
+	ON_EVENT(CADContView, IDC_USBPXXS1CTL, 2, CADContView::DeviceDisconnectedUsbpxxs1ctl1, VTS_I4)
 END_EVENTSINK_MAP()
 
 void CADContView::OnDestroy() 
@@ -1512,8 +1513,15 @@ void CADContView::OnInitialUpdate()
 	m_pADC_options->chanArray.ChannelSetnum(m_pADC_options->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
 	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
-	//GetDlgItem(IDC_USBPXXS1CTL1)->ShowWindow(SW_HIDE);
-	
+
+	CWnd* pWnd = nullptr;
+	pWnd = GetDlgItem(IDC_USBPXXS1CTL);
+	LPUNKNOWN pUnk = pWnd->GetControlUnknown(); // Use the IUnknown of the control
+	LPDISPATCH pDisp = NULL;					// From there get the IDispatch interface of control
+	pUnk->QueryInterface(m_AlligatorAmplifier.GetClsid(), (LPVOID*)&pDisp);
+//	pDisp->USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
+	m_AlligatorAmplifier.InitializeDriver(pDisp);
+
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
 	if (pApp->m_bADcardFound)
 	{

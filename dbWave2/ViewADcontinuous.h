@@ -26,7 +26,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 class CADContView : public CFormView
 {
-friend class CBoard;
 
 protected:
 	CADContView();		// protected constructor used by dynamic creation

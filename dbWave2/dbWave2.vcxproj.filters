@@ -180,9 +180,6 @@
     <ClCompile Include="Exportsp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="exportToExcel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Fileversion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

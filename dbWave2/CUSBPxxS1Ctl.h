@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ImportAlligatorDefinitions.h"
+
 //**************************************************************************************
 // All of the parameters that can be programmed in an individual USBPxxS1 is in the structure
 // typedef listed below.  Even though each module type may not have the hardware to 
@@ -35,6 +36,7 @@ class CUSBPxxS1Ctl : public CWnd
 {
 protected:
 	DECLARE_DYNCREATE(CUSBPxxS1Ctl)
+
 public:
 	CLSID const& GetClsid()
 	{
@@ -43,32 +45,28 @@ public:
 		return clsid;
 	}
 
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle,
-						const RECT& rect, CWnd* pParentWnd, UINT nID,
-						CCreateContext* pContext = nullptr)
-	{
-		m_initialized = FALSE;
-		return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID);
-	}
+	virtual BOOL Create(LPCTSTR lpszClassName, 
+		LPCTSTR lpszWindowName, DWORD dwStyle,
+		const RECT& rect, 
+		CWnd* pParentWnd, UINT nID,
+		CCreateContext* pContext = nullptr)
+	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID);	}
 
-	BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd,
-				UINT nID, CFile* pPersist = nullptr, BOOL bStorage = FALSE,
-				BSTR bstrLicKey = nullptr)
-	{
-		m_initialized = FALSE;
-		return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID, pPersist, bStorage, bstrLicKey);
-	}
+	BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle, 
+		const RECT& rect, CWnd* pParentWnd, UINT nID, 
+		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
+		BSTR bstrLicKey = nullptr)
+	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID, 
+		pPersist, bStorage, bstrLicKey); }
 
 // Attributes
 public:
 	USBPxxPARAMETERS	device1;
 	long	devicesConnected;
 	long	deviceNumber;
-	BOOL	m_initialized;
 
 // Operations
 public:
-
 	void USBPxxS1Command(long Handle, long CmdID, VARIANT * DataInPtr, VARIANT * DataOutPtr)
 	{
 		static BYTE parms[] = VTS_I4 VTS_I4 VTS_PVARIANT VTS_PVARIANT ;
@@ -102,6 +100,8 @@ public:
 	void	writeChannelNumber(USBPxxPARAMETERS *d);
 	void	writeDescription(USBPxxPARAMETERS *d);
 
+	// dbWave-specific functions
 	void	SetWaveChanParms(CWaveChan* pChan);
 	void	GetWaveChanParms(CWaveChan* pChan);
+	void	InitializeDriver(LPDISPATCH pDisp);
 };
