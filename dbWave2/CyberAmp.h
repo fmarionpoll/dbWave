@@ -125,6 +125,9 @@ public:
 	int	SetNotchFilter(int nChannel, int nEnabled);
 	int	SetHPFilter(int nChannel, int nInput, CString csCoupling);
 
+	int SetWaveChanParms(CWaveChan* pchan);
+	int GetWaveChanParms(CWaveChan* pchan);
+
 	int	C300_SetDeviceNumber( int nWhichDev );
 	int	C300_SetOutputPortAndSpeed( int nWhichPort, int nWhichSpeed );
 	int	C300_SetReceiveTimeout( DWORD fTimeoutVal );

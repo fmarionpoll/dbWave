@@ -1467,8 +1467,8 @@ void CADContView::OnInitialUpdate()
 	BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
 	m_btnStartStop.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
 	m_btnStartStop.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
-	m_btnStartStop.EnableWindowsTheming(false); // true
-	m_btnStartStop.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D; //BUTTONSTYLE_SEMIFLAT;
+	m_btnStartStop.EnableWindowsTheming(false);
+	m_btnStartStop.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D; 
 
 	// scrollbar
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
@@ -1485,7 +1485,7 @@ void CADContView::OnInitialUpdate()
 	
 	// open document and remove database filters
 	CdbWaveDoc* pdbDoc = GetDocument();							// data document with database
-	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;					// database itself
+	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;				// database itself
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
 	m_ptableSet->RefreshQuery();
@@ -1511,13 +1511,14 @@ void CADContView::OnInitialUpdate()
 	*(m_inputDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;	// copy data formats into this file
 	m_pADC_options->chanArray.ChannelSetnum(m_pADC_options->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
-	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);		// prepare display area
+	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
+	//GetDlgItem(IDC_USBPXXS1CTL1)->ShowWindow(SW_HIDE);
 	
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
 	if (pApp->m_bADcardFound)
 	{
 		ADC_InitSubSystem();									// connect A/D DT OpenLayer subsystem
-		InitConnectionWithAmplifier();							// control cyberamplifier
+		InitConnectionWithAmplifiers();							// control cyberamplifier
 		if (m_bDAC_IsPresent) 
 		{
 			DAC_InitSubSystem();								// connect D/A DT OpenLayers subsystem
@@ -1988,7 +1989,7 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	m_bytesweepRefresh = m_chsweepRefresh * sizeof(short) * pWFormat->scan_count;
 }
 
-BOOL CADContView::InitConnectionWithAmplifier()
+BOOL CADContView::InitConnectionWithAmplifiers()
 {
 	CCyberAmp m_cyber;
 	BOOL bcyberPresent = FALSE;
@@ -2010,14 +2011,12 @@ BOOL CADContView::InitConnectionWithAmplifier()
 				AfxMessageBox(_T("CyberAmp not found"), MB_OK);
 				continue;
 			}
+			int errorcode = m_cyber.SetWaveChanParms(pchan);
+		}
 
-			// chan, gain, filter +, lowpass, notch	
-			m_cyber.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT,	 pchan->am_csInputpos);
-			m_cyber.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
-			m_cyber.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-			m_cyber.SetGain(pchan->am_amplifierchan, (int)(pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD)));
-			m_cyber.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
-			int errorcode = m_cyber.C300_FlushCommandsAndAwaitResponse();
+		if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
+		{
+			m_AlligatorAmplifier.SetWaveChanParms(pchan);
 		}
 	}
 	return bcyberPresent;

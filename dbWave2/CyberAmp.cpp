@@ -491,6 +491,34 @@ int	CCyberAmp::SetHPFilter( int nChannel, int nInput, CString csCoupling )
     return( m_C300nLastError );
 }
 
+int CCyberAmp::SetWaveChanParms(CWaveChan * pchan)
+{
+	// chan, gain, filter +, lowpass, notch	
+	SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
+	SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pchan->am_csInputneg);
+	SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
+	SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
+	double gain = pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD);
+	SetGain(pchan->am_amplifierchan, (int)gain);
+	SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
+	int errorcode = C300_FlushCommandsAndAwaitResponse();
+	return errorcode;
+}
+
+int CCyberAmp::GetWaveChanParms(CWaveChan * pchan)
+{
+	// chan, gain, filter +, lowpass, notch	
+	//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
+	//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
+	//cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
+	//cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
+	//double gain = pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD);
+	//cyberAmp.SetGain(pchan->am_amplifierchan, (int)gain);
+	//cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
+	//int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();
+	return 0;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////                                                                ////////
 ///////  Function to set the input offset for a given channel (in mV)  ////////

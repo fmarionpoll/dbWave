@@ -837,11 +837,10 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 	if (!m_bcommandAmplifier)
 		return;
 
-	MessageBox(_T("set ampli parms"));
+	//MessageBox(_T("set ampli parms"));
 	// transfer data into structure
 	CWaveChan* pchan = m_pchArray->GetWaveChan(col-1);
 
-	// exit if cyberAmp not declared - if not, exit
 	if (pchan->am_csamplifier.Find(_T("CyberAmp")) >= 0 
 		|| pchan->am_csamplifier.Find(_T("Axon")) >= 0) 
 	{
@@ -851,31 +850,13 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 		if (!bcyberPresent)
 			return;
 
-		// chan, gain, filter +, lowpass, notch	
-		cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
-		cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
-		cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
-		cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-		double gain = pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD);
-		cyberAmp.SetGain(pchan->am_amplifierchan, (int)gain);
-		cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
-		int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();
+		pchan->am_csInputneg = pszHighPass[0];
+		int errorcode = cyberAmp.SetWaveChanParms(pchan);
 	}
 
 	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0) 
 	{
-		USBPxxPARAMETERS device;
-
-		device.ChannelNumber = pchan->am_amplifierchan;
-		device.DeviceHandle = m_pAlligatorAmplifier->readHandleOfDevice(pchan->am_amplifierchan);
-
-		device.gain = pchan->am_amplifierchan;
-		m_pAlligatorAmplifier->writeGain(&device);
-		CString cs = pchan->am_csInputpos;
-		device.HPFc = _ttof(cs);
-		m_pAlligatorAmplifier->writeHPFC(&device);
-		device.LPFc = pchan->am_lowpass;
-		m_pAlligatorAmplifier->writeLPFC(&device);
+		m_pAlligatorAmplifier->SetWaveChanParms(pchan);
 	}
 }
 
@@ -898,25 +879,12 @@ void CADInputParmsDlg::GetAmplifierParms(int col)
 		if (!bcyberPresent)
 			return;
 
-		// chan, gain, filter +, lowpass, notch	
-		//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
-		//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
-		//cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
-		//cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-		//double gain = pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD);
-		//cyberAmp.SetGain(pchan->am_amplifierchan, (int)gain);
-		//cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
-		//int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();
+		//cyberAmp.GetWaveChanParms(pchan);
 	}
 
 	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
 	{
-		USBPxxPARAMETERS device;
-		m_pAlligatorAmplifier->readAllParameters(0, &device);
-		pchan->am_amplifierchan = short( device.ChannelNumber);
-		pchan->am_amplifierchan = short(device.gain);
-		pchan->am_csInputpos.Format(_T("%f.3"), device.HPFc);
-		pchan->am_lowpass = short(device.LPFc);
+		m_pAlligatorAmplifier->GetWaveChanParms(pchan);
 	}
 }
 

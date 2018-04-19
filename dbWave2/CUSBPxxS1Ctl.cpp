@@ -632,3 +632,28 @@ void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS *d)
 	InVal.lVal = PackedCharacter;
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &InVal, &OutVal);
 }
+
+void CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan)
+{
+	USBPxxPARAMETERS device;
+
+	device.ChannelNumber = pchan->am_amplifierchan;
+	device.DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
+
+	device.gain = pchan->am_amplifierchan;
+	writeGain(&device);
+	device.HPFc = atof(CT2A(pchan->am_csInputpos));
+	writeHPFC(&device);
+	device.LPFc = pchan->am_lowpass;
+	writeLPFC(&device);
+}
+
+void CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan)
+{
+	USBPxxPARAMETERS device;
+	readAllParameters(0, &device);
+	pchan->am_amplifierchan = short(device.ChannelNumber);
+	pchan->am_amplifierchan = short(device.gain);
+	pchan->am_csInputpos.Format(_T("%f.3"), device.HPFc);
+	pchan->am_lowpass = short(device.LPFc);
+}

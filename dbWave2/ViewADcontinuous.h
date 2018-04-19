@@ -170,7 +170,7 @@ protected:
 	BOOL DAC_Start();
 	void DAC_Stop();
 
-	BOOL InitConnectionWithAmplifier();
+	BOOL InitConnectionWithAmplifiers();
 	BOOL ADC_DefineExperimentDlg() ;
 	void TransferFilesToDatabase();
 	void UpdateViewDataFinal();

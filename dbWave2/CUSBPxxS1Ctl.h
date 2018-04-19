@@ -101,4 +101,7 @@ public:
 	void	writePClock(USBPxxPARAMETERS *d);
 	void	writeChannelNumber(USBPxxPARAMETERS *d);
 	void	writeDescription(USBPxxPARAMETERS *d);
+
+	void	SetWaveChanParms(CWaveChan* pChan);
+	void	GetWaveChanParms(CWaveChan* pChan);
 };
