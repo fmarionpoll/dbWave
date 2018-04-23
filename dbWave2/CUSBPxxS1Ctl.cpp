@@ -632,32 +632,26 @@ void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS *d)
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &InVal, &OutVal);
 }
 
-void CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan)
+void CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
 {
-	USBPxxPARAMETERS device;
+	pdevice->ChannelNumber = pchan->am_amplifierchan;
+	pdevice->DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
 
-	device.ChannelNumber = pchan->am_amplifierchan;
-	device.DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
-
-	device.gain = pchan->am_amplifierchan;
-	writeGain(&device);
-	device.HPFc = (float) atof(CT2A(pchan->am_csInputpos));
-	writeHPFC(&device);
-	device.LPFc = pchan->am_lowpass;
-	writeLPFC(&device);
+	pdevice->gain = pchan->am_amplifierchan;
+	writeGain(pdevice);
+	pdevice->HPFc = (float) atof(CT2A(pchan->am_csInputpos));
+	writeHPFC(pdevice);
+	pdevice->LPFc = pchan->am_lowpass;
+	writeLPFC(pdevice);
 }
 
-void CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan)
+void CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
 {
-	USBPxxPARAMETERS device;
-	readAllParameters(0, &device);
-	pchan->am_amplifierchan = short(device.ChannelNumber);
-	pchan->am_amplifierchan = short(device.gain);
-	pchan->am_csInputpos.Format(_T("%f.3"), device.HPFc);
-	pchan->am_lowpass = short(device.LPFc);
+	readAllParameters(0, pdevice);
+	pchan->am_amplifierchan = short(pdevice->ChannelNumber);
+	pchan->am_amplifierchan = short(pdevice->gain);
+	pchan->am_csInputpos.Format(_T("%f.3"), pdevice->HPFc);
+	pchan->am_lowpass = short(pdevice->LPFc);
 }
 
-void CUSBPxxS1Ctl::InitializeDriver(LPDISPATCH pDisp)
-{
-	USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
-}
+

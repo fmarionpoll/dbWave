@@ -1185,7 +1185,7 @@ BEGIN
     COMBOBOX        IDC_COMBOSTARTOUTPUT,7,127,70,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&START",IDC_STARTSTOP2,"Button",BS_AUTOCHECKBOX | BS_BITMAP | BS_PUSHLIKE | WS_TABSTOP,7,143,70,23
     CONTROL         "",IDC_USBPXXS1CTL,
-                    "{9A90F3D9-6EEA-4735-87CB-E2DC7AF16EC6}",WS_TABSTOP,11,177,60,25
+                    "{9A90F3D9-6EEA-4735-87CB-E2DC7AF16EC6}",NOT WS_VISIBLE | WS_TABSTOP,131,18,51,7
 END
 
 IDD_VIEWBROWSE DIALOGEX 0, 0, 494, 30
@@ -2356,8 +2356,8 @@ IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,2018,4,18
- PRODUCTVERSION 4,2018,4,18
+ FILEVERSION 4,2018,4,22
+ PRODUCTVERSION 4,2018,4,22
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2374,12 +2374,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "AgroParisTech - EGCE UMR 9191 (CNRS-Paris Sud-IRD)"
             VALUE "FileDescription", "Database-oriented  data acquisition and analysis for extracellular electrophysiology"
-            VALUE "FileVersion", "4.2018.4.18"
+            VALUE "FileVersion", "4.2018.4.22"
             VALUE "InternalName", "dbWave2"
             VALUE "LegalCopyright", "Copyright (C) 2018-2022"
             VALUE "OriginalFilename", "dbWave2.exe"
             VALUE "ProductName", " dbWave Application"
-            VALUE "ProductVersion", "4.2018.4.18"
+            VALUE "ProductVersion", "4.2018.4.22"
         END
     END
     BLOCK "VarFileInfo"

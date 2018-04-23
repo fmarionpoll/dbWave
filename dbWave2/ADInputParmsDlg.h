@@ -44,7 +44,8 @@ public:
 	int m_numchansMAXDI;			// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
 	int m_numchansMAXSE;			// = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
 	BOOL m_bcommandAmplifier;		// change ampli settings on the fly (if present); default = none
-	CUSBPxxS1Ctl* 	m_pAlligatorAmplifier;
+	CUSBPxxS1Ctl* 		m_pAlligatorAmplifier;
+	USBPxxPARAMETERS*	m_pdevice1;
 	
 	// Implementation
 protected:

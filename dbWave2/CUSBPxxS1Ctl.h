@@ -101,7 +101,6 @@ public:
 	void	writeDescription(USBPxxPARAMETERS *d);
 
 	// dbWave-specific functions
-	void	SetWaveChanParms(CWaveChan* pChan);
-	void	GetWaveChanParms(CWaveChan* pChan);
-	void	InitializeDriver(LPDISPATCH pDisp);
+	void	SetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
+	void	GetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
 };

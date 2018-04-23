@@ -856,7 +856,7 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 
 	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0) 
 	{
-		m_pAlligatorAmplifier->SetWaveChanParms(pchan);
+		m_pAlligatorAmplifier->SetWaveChanParms(pchan, m_pdevice1);
 	}
 }
 
@@ -884,7 +884,7 @@ void CADInputParmsDlg::GetAmplifierParms(int col)
 
 	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
 	{
-		m_pAlligatorAmplifier->GetWaveChanParms(pchan);
+		m_pAlligatorAmplifier->GetWaveChanParms(pchan, m_pdevice1);
 	}
 }
 

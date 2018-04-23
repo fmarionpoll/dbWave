@@ -36,8 +36,6 @@ public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet;
 	CString				m_boardName;
-	CDTAcq32			m_ADC_DTAcq32;
-	CDTAcq32			m_DAC_DTAcq32;
 	CRulerBar			m_ADC_xRulerBar;
 	CRulerBar			m_ADC_yRulerBar;
 	CComboBox			m_ADcardCombo;
@@ -46,7 +44,13 @@ public:
 	int					m_bStartOutPutMode;
 	BOOL				m_bADC_IsPresent;
 	BOOL				m_bDAC_IsPresent;
-	CUSBPxxS1Ctl		m_AlligatorAmplifier;
+	// Alligator amplifier
+	USBPxxPARAMETERS	m_device1;
+	CUSBPxxS1Ctl		m_AlligatorAmplifier;	// DDX
+	// Data Translation ActiveX
+	CDTAcq32			m_ADC_DTAcq32;			// DDX
+	CDTAcq32			m_DAC_DTAcq32;			// DDX
+
 
 protected:
 	CLineViewWnd		m_ADC_View;			// source data display button

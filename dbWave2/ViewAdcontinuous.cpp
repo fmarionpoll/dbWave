@@ -1514,13 +1514,8 @@ void CADContView::OnInitialUpdate()
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
 	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
 
-	CWnd* pWnd = nullptr;
-	pWnd = GetDlgItem(IDC_USBPXXS1CTL);
-	LPUNKNOWN pUnk = pWnd->GetControlUnknown(); // Use the IUnknown of the control
-	LPDISPATCH pDisp = NULL;					// From there get the IDispatch interface of control
-	pUnk->QueryInterface(m_AlligatorAmplifier.GetClsid(), (LPVOID*)&pDisp);
-//	pDisp->USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
-	m_AlligatorAmplifier.InitializeDriver(pDisp);
+	// init communication with Alligator
+	m_AlligatorAmplifier.USBPxxS1Command(0, ID_INITIALIZE, 0, 0);;
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
 	if (pApp->m_bADcardFound)
@@ -1759,6 +1754,7 @@ void CADContView::ADC_OnHardwareChannelsDlg()
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
 	dlg.m_pAlligatorAmplifier = &m_AlligatorAmplifier;
+	dlg.m_pdevice1 = &m_device1;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -2001,13 +1997,13 @@ BOOL CADContView::InitConnectionWithAmplifiers()
 {
 	CCyberAmp m_cyber;
 	BOOL bcyberPresent = FALSE;
+
 	int nchans= (m_pADC_options->chanArray).ChannelGetnum();
-	
-	// test if Cyberamp320 selected
 	for (int i = 0; i < nchans; i++)
 	{
 		CWaveChan* pchan = (m_pADC_options->chanArray).GetWaveChan(i);
 
+		// test if Cyberamp320 selected
 		int a = pchan->am_csamplifier.Find(_T("CyberAmp"));
 		int b = pchan->am_csamplifier.Find(_T("Axon Instrument")); 
 		if (a >= 0 || b >= 0)
@@ -2022,9 +2018,10 @@ BOOL CADContView::InitConnectionWithAmplifiers()
 			int errorcode = m_cyber.SetWaveChanParms(pchan);
 		}
 
+		// test if Alligator selected
 		if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
 		{
-			m_AlligatorAmplifier.SetWaveChanParms(pchan);
+			m_AlligatorAmplifier.SetWaveChanParms(pchan, &m_device1);
 		}
 	}
 	return bcyberPresent;
@@ -2407,24 +2404,23 @@ void CADContView::DAC_Stop()
 //**************************************************************************************
 void CADContView::DeviceConnectedUsbpxxs1ctl1(long Handle)
 {
-	USBPxxPARAMETERS*	pdevice1=  &m_AlligatorAmplifier.device1;
-	pdevice1->DeviceHandle = Handle;
+	m_device1.DeviceHandle = Handle;
 
-	m_AlligatorAmplifier.readLPFC (pdevice1);
-	m_AlligatorAmplifier.readHPFC (pdevice1);
-	m_AlligatorAmplifier.readGain (pdevice1);
-	m_AlligatorAmplifier.readCoupling (pdevice1);
-	m_AlligatorAmplifier.readClocksource (pdevice1);
-	m_AlligatorAmplifier.readPClock (pdevice1);
-	m_AlligatorAmplifier.readChannelNumber (pdevice1);
-	m_AlligatorAmplifier.readDescription(pdevice1);
-	m_AlligatorAmplifier.readLowPassFilterType (pdevice1);
-	m_AlligatorAmplifier.readHighPassFilterType (pdevice1);
-	m_AlligatorAmplifier.readSerialNumber (pdevice1);
-	m_AlligatorAmplifier.readProductID (pdevice1);
-	m_AlligatorAmplifier.readRevision (pdevice1);
-	m_AlligatorAmplifier.devicesConnected = m_AlligatorAmplifier.readNumberOfDevicesConnected ();
-	m_AlligatorAmplifier.deviceNumber = 0;
+	//m_AlligatorAmplifier.readLPFC (pdevice1);
+	//m_AlligatorAmplifier.readHPFC (pdevice1);
+	//m_AlligatorAmplifier.readGain (pdevice1);
+	//m_AlligatorAmplifier.readCoupling (pdevice1);
+	//m_AlligatorAmplifier.readClocksource (pdevice1);
+	//m_AlligatorAmplifier.readPClock (pdevice1);
+	//m_AlligatorAmplifier.readChannelNumber (pdevice1);
+	//m_AlligatorAmplifier.readDescription(pdevice1);
+	//m_AlligatorAmplifier.readLowPassFilterType (pdevice1);
+	//m_AlligatorAmplifier.readHighPassFilterType (pdevice1);
+	//m_AlligatorAmplifier.readSerialNumber (pdevice1);
+	//m_AlligatorAmplifier.readProductID (pdevice1);
+	//m_AlligatorAmplifier.readRevision (pdevice1);
+	//m_AlligatorAmplifier.devicesConnected = m_AlligatorAmplifier.readNumberOfDevicesConnected ();
+	//m_AlligatorAmplifier.deviceNumber = 0;
 
 }
 
