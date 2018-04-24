@@ -913,8 +913,8 @@ BOOL CChildFrame::ExportToExcel()
 	CRange oRange;
 	oRange = odataSheet.get_Range(COleVariant(_T("A1")), vOpt);					// select first cell
 
-	//odataSheet.Paste(vOpt, vOpt);											// paste data
-	odataSheet._PasteSpecial(COleVariant(_T("Text")), vOpt, vOpt, vOpt, vOpt, vOpt);
+	odataSheet.Paste(vOpt, vOpt);											// paste data
+	//odataSheet._PasteSpecial(COleVariant(_T("Text")), vOpt, vOpt, vOpt, vOpt, vOpt);
 
 	odataSheet.put_Name(_T("data"));											// change name of sheet
 	
@@ -949,8 +949,8 @@ BOOL CChildFrame::ExportToExcelAndBuildPivot(int option)
 	CWorksheet odataSheet = oSheets.get_Item(COleVariant((short) 1));		// select first sheet
 	CRange oRange;
 	oRange = odataSheet.get_Range(COleVariant(_T("A1")), vOpt);					// select first cell
-	//odataSheet.Paste(vOpt, vOpt);											// paste data - does not work under windows 8.1 on the HP laptop
-	odataSheet._PasteSpecial(COleVariant(_T("Text")), vOpt, vOpt, vOpt, vOpt, vOpt);
+	odataSheet.Paste(vOpt, vOpt);											// paste data - does not work under windows 8.1 on the HP laptop
+	//odataSheet._PasteSpecial(COleVariant(_T("Text")), vOpt, vOpt, vOpt, vOpt, vOpt);
 	odataSheet.put_Name(_T("data"));											// change name of sheet
 	if (option == 1)
 	{
