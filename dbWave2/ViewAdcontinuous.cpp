@@ -1515,7 +1515,7 @@ void CADContView::OnInitialUpdate()
 	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
 
 	// init communication with Alligator
-	m_AlligatorAmplifier.USBPxxS1Command(0, ID_INITIALIZE, 0, 0);;
+	m_AlligatorAmplifier.USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
 	if (pApp->m_bADcardFound)
@@ -2405,22 +2405,8 @@ void CADContView::DAC_Stop()
 void CADContView::DeviceConnectedUsbpxxs1ctl1(long Handle)
 {
 	m_device1.DeviceHandle = Handle;
-
-	//m_AlligatorAmplifier.readLPFC (pdevice1);
-	//m_AlligatorAmplifier.readHPFC (pdevice1);
-	//m_AlligatorAmplifier.readGain (pdevice1);
-	//m_AlligatorAmplifier.readCoupling (pdevice1);
-	//m_AlligatorAmplifier.readClocksource (pdevice1);
-	//m_AlligatorAmplifier.readPClock (pdevice1);
-	//m_AlligatorAmplifier.readChannelNumber (pdevice1);
-	//m_AlligatorAmplifier.readDescription(pdevice1);
-	//m_AlligatorAmplifier.readLowPassFilterType (pdevice1);
-	//m_AlligatorAmplifier.readHighPassFilterType (pdevice1);
-	//m_AlligatorAmplifier.readSerialNumber (pdevice1);
-	//m_AlligatorAmplifier.readProductID (pdevice1);
-	//m_AlligatorAmplifier.readRevision (pdevice1);
-	//m_AlligatorAmplifier.devicesConnected = m_AlligatorAmplifier.readNumberOfDevicesConnected ();
-	//m_AlligatorAmplifier.deviceNumber = 0;
+	MessageBox(_T("Alligator amplifier detected"));
+	m_AlligatorAmplifier.readAllParameters(Handle, &m_device1);
 
 }
 

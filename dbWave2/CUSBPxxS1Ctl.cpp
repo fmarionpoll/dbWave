@@ -4,9 +4,140 @@
 #include "stdafx.h"
 #include "CUSBPxxS1Ctl.h"
 
+//------------------ class USBPxxPARAMETERS ---------------------------------
+
+IMPLEMENT_SERIAL(USBPxxPARAMETERS, CObject, 0 /* schema number*/)
+
+USBPxxPARAMETERS::USBPxxPARAMETERS()
+{
+	DeviceHandle = NULL;
+}
+
+USBPxxPARAMETERS::~USBPxxPARAMETERS()
+{
+}
+
+void USBPxxPARAMETERS::operator=(const USBPxxPARAMETERS & arg)
+{
+	DeviceHandle = arg.DeviceHandle;
+	LPFc = arg.LPFc;
+	HPFc = arg.HPFc;
+	indexgain = arg.indexgain;
+	indexCoupling = arg.indexCoupling;
+	indexClockSource = arg.indexClockSource;
+	indexPClock = arg.indexPClock;
+	ChannelNumber = arg.ChannelNumber;
+	indexLPFilterType = arg.indexLPFilterType;
+	indexHPFilterType = arg.indexHPFilterType;
+	SerialNumber = arg.SerialNumber;
+	ProductID = arg.ProductID;
+	RevisionHigh = arg.RevisionHigh;
+	RevisionLow = arg.RevisionLow;
+	Description = arg.Description;
+}
+
+long USBPxxPARAMETERS::Write(CFile * datafile)
+{
+	ULONGLONG p1 = datafile->GetPosition();
+	CArchive ar(datafile, CArchive::store);
+	Serialize(ar);
+	ar.Close();
+	ULONGLONG p2 = datafile->GetPosition();
+	return (long)(p2 - p1);
+}
+
+BOOL USBPxxPARAMETERS::Read(CFile * datafile)
+{
+	CArchive ar(datafile, CArchive::load);
+	BOOL flag = TRUE;
+	try
+	{
+		Serialize(ar);
+	}
+	catch (CException* e)
+	{
+		e->Delete();
+		flag = FALSE;
+	}
+	ar.Close();
+	return flag;
+}
+
+void USBPxxPARAMETERS::Serialize(CArchive & ar)
+{
+	if (ar.IsStoring())
+	{
+		WORD wversion = 1;
+		ar << wversion;
+
+		int nitems = 2;
+		ar << nitems;
+		ar << LPFc;
+		ar << HPFc;
+
+		nitems = 10;
+		ar << nitems;
+		ar << DeviceHandle;
+		ar << indexgain;
+		ar << indexCoupling;
+		ar << indexClockSource;
+		ar << indexPClock;
+		ar << ChannelNumber;
+		ar << indexLPFilterType;
+		ar << indexHPFilterType;
+		ar << SerialNumber;
+		ar << ProductID;
+
+		nitems = 2;
+		ar << nitems;
+		ar << RevisionHigh;
+		ar << RevisionLow;
+
+		nitems = 1;
+		ar << nitems;
+		ar << Description;
+	}
+	else
+	{
+		WORD wversion;
+		ar >> wversion;
+		ASSERT(wversion == 1);
+
+		int nitems;  ar >> nitems;
+		if (nitems > 0) ar >> LPFc; nitems--;
+		if (nitems > 0) ar >> HPFc;
+
+		ar >> nitems;
+		if (nitems > 0) ar >> DeviceHandle; nitems--;
+		if (nitems > 0) ar >> indexgain; nitems--;
+		if (nitems > 0) ar >> indexCoupling; nitems--;
+		if (nitems > 0) ar >> indexClockSource; nitems--;
+		if (nitems > 0) ar >> indexPClock; nitems--;
+		if (nitems > 0) ar >> ChannelNumber; nitems--;
+		if (nitems > 0) ar >> indexLPFilterType; nitems--;
+		if (nitems > 0) ar >> indexHPFilterType; nitems--;
+		if (nitems > 0) ar >> SerialNumber; nitems--;
+		if (nitems > 0) ar >> ProductID;
+
+		ar >> nitems;
+		if (nitems > 0) ar >> RevisionHigh; nitems--;
+		if (nitems > 0) ar >> RevisionLow;
+
+		ar >> nitems;
+		if (nitems > 0) ar >> Description;
+	}
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CUSBPxxS1Ctl
+
+int		CUSBPxxS1Ctl::allig_Gain[] = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
+CString CUSBPxxS1Ctl::allig_Coupling[] = { _T("DC"), _T("AC") };
+CString CUSBPxxS1Ctl::allig_ClockSource[] = { _T("Internal"), _T("External") };
+CString CUSBPxxS1Ctl::allig_PClock[] = { _T("Disabled"), _T("Enabled") };
+CString CUSBPxxS1Ctl::allig_LPFilterType[] = { _T("LPFT_CE"), _T("LPFT_B"), _T("LPFT_L"), _T("LPFT_HC"), _T("LPFT_LP"), _T("LPFT_HLP") };
+CString CUSBPxxS1Ctl::allig_HPFilterType[] = { _T("HPFT_NONEE"), _T("HPFT_LNE"), _T("HPFT_LEE"), _T("HPFT_BNE"), _T("HPFT_BE") };
 
 IMPLEMENT_DYNCREATE(CUSBPxxS1Ctl, CWnd)
 
@@ -73,7 +204,8 @@ void CUSBPxxS1Ctl::readGain(USBPxxPARAMETERS *d)
 	VARIANT	OutVal;
 
 	USBPxxS1Command(d->DeviceHandle, ID_READ_GAIN, &InVal, &OutVal);
-	d->gain = OutVal.lVal;
+	d->indexgain = OutVal.lVal;
+	d->Gain = allig_Gain[d->indexgain];
 }
 
 //**************************************************************************************
@@ -84,6 +216,7 @@ void CUSBPxxS1Ctl::readGain(USBPxxPARAMETERS *d)
 //
 //  The InVal is not used.
 //  OutVal will contain the returned value after the call.
+// csCoupling will containe either DC or AC as a string
 //
 // Modules where this call is useful:
 //  USBPIA-S1
@@ -95,7 +228,8 @@ void CUSBPxxS1Ctl::readCoupling(USBPxxPARAMETERS *d)
 	VARIANT	OutVal;
 
 	USBPxxS1Command(d->DeviceHandle, ID_READ_COUPLING, &InVal, &OutVal);
-	d->coupling = OutVal.lVal;
+	d->indexCoupling = OutVal.lVal;
+	d->csCoupling = allig_Coupling[d->indexCoupling];
 }
 
 //**************************************************************************************
@@ -120,7 +254,8 @@ void CUSBPxxS1Ctl::readClocksource(USBPxxPARAMETERS *d)
 	VARIANT	OutVal;
 
 	USBPxxS1Command(d->DeviceHandle, ID_READ_CLOCKSOURCE, &InVal, &OutVal);
-	d->ClockSource = OutVal.lVal;
+	d->indexClockSource = OutVal.lVal;
+	d->csClockSource = allig_ClockSource[d->indexClockSource];
 }
 
 //**************************************************************************************
@@ -151,7 +286,8 @@ void CUSBPxxS1Ctl::readPClock(USBPxxPARAMETERS *d)
 	VARIANT	OutVal;
 
 	USBPxxS1Command(d->DeviceHandle, ID_READ_PCLOCK, &InVal, &OutVal);
-	d->PClock = OutVal.lVal;
+	d->indexPClock = OutVal.lVal;
+	d->csPClock = allig_PClock[d->indexPClock];
 }
 //**************************************************************************************
 // Read ChannelNumber - The Channel Number is an identifier.  It does not affect the 
@@ -233,7 +369,8 @@ void CUSBPxxS1Ctl::readLowPassFilterType(USBPxxPARAMETERS *d)
 	VARIANT	OutVal;
 
 	USBPxxS1Command(d->DeviceHandle, ID_READ_LPFILTERTYPE, &InVal, &OutVal);
-	d->LPFilterType = OutVal.lVal;
+	d->indexLPFilterType = OutVal.lVal;
+	d->csLPFilterType = allig_LPFilterType[d->indexLPFilterType];
 }
 
 //**************************************************************************************
@@ -253,7 +390,8 @@ void CUSBPxxS1Ctl::readHighPassFilterType(USBPxxPARAMETERS *d)
 	VARIANT	OutVal;
 
 	USBPxxS1Command(d->DeviceHandle, ID_READ_HPFILTERTYPE, &InVal, &OutVal);
-	d->HPFilterType = OutVal.lVal;
+	d->indexHPFilterType = OutVal.lVal;
+	d->csHPFilterType = allig_HPFilterType[d->indexHPFilterType];
 }
 
 //**************************************************************************************
@@ -380,9 +518,10 @@ long CUSBPxxS1Ctl::readHandleOfDevice(long device)
 	return	packed;
 }
 
-void CUSBPxxS1Ctl::readAllParameters(long device, USBPxxPARAMETERS* pUSBPxxParms)
+void CUSBPxxS1Ctl::readAllParameters(long handle, USBPxxPARAMETERS* pUSBPxxParms)
 {
-	pUSBPxxParms->DeviceHandle = readHandleOfDevice(device);
+	//pUSBPxxParms->DeviceHandle = readHandleOfDevice(device);
+	pUSBPxxParms->DeviceHandle = handle;
 
 	readLPFC(pUSBPxxParms);
 	readHPFC(pUSBPxxParms);
@@ -399,7 +538,6 @@ void CUSBPxxS1Ctl::readAllParameters(long device, USBPxxPARAMETERS* pUSBPxxParms
 	readRevision(pUSBPxxParms);
 	devicesConnected = readNumberOfDevicesConnected();
 	//deviceNumber = 0;
-
 }
 
 // CUSBPxxS1Ctl operations
@@ -475,7 +613,7 @@ void CUSBPxxS1Ctl::writeGain (USBPxxPARAMETERS *d)
 	VARIANT	InVal;
 	VARIANT	OutVal;
 
-	InVal.lVal = d->gain;
+	InVal.lVal = d->indexgain;
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_GAIN,  &InVal, &OutVal);
 }
 
@@ -501,7 +639,7 @@ void CUSBPxxS1Ctl::writeCoupling (USBPxxPARAMETERS *d)
 	VARIANT	InVal;
 	VARIANT	OutVal;
 
-	InVal.lVal = d->coupling;
+	InVal.lVal = d->indexCoupling;
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_COUPLING,  &InVal, &OutVal);
 }
 
@@ -528,7 +666,7 @@ void CUSBPxxS1Ctl::writeClockSource (USBPxxPARAMETERS *d)
 	VARIANT	InVal;
 	VARIANT	OutVal;
 
-	InVal.lVal = d->ClockSource;
+	InVal.lVal = d->indexClockSource;
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_CLOCKSOURCE,  &InVal, &OutVal);
 }
 
@@ -561,7 +699,7 @@ void CUSBPxxS1Ctl::writePClock (USBPxxPARAMETERS *d)
 	VARIANT	InVal;
 	VARIANT	OutVal;
 
-	InVal.lVal = d->PClock;
+	InVal.lVal = d->indexPClock;
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_PCLOCK,  &InVal, &OutVal);
 }
 
@@ -632,26 +770,32 @@ void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS *d)
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &InVal, &OutVal);
 }
 
-void CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
+BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
 {
-	pdevice->ChannelNumber = pchan->am_amplifierchan;
-	pdevice->DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
+	//pdevice->DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
 
-	pdevice->gain = pchan->am_amplifierchan;
+	if (pdevice->DeviceHandle == NULL)
+		return FALSE;
+	pdevice->ChannelNumber = pchan->am_amplifierchan;
+	
+	pdevice->indexgain = pchan->am_amplifierchan;
 	writeGain(pdevice);
 	pdevice->HPFc = (float) atof(CT2A(pchan->am_csInputpos));
 	writeHPFC(pdevice);
 	pdevice->LPFc = pchan->am_lowpass;
 	writeLPFC(pdevice);
+	return TRUE;
 }
 
-void CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
+BOOL CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
 {
+	if (pdevice->DeviceHandle == NULL)
+		return FALSE;
+
 	readAllParameters(0, pdevice);
 	pchan->am_amplifierchan = short(pdevice->ChannelNumber);
-	pchan->am_amplifierchan = short(pdevice->gain);
+	pchan->am_amplifierchan = short(pdevice->indexgain);
 	pchan->am_csInputpos.Format(_T("%f.3"), pdevice->HPFc);
 	pchan->am_lowpass = short(pdevice->LPFc);
+	return TRUE;
 }
-
-

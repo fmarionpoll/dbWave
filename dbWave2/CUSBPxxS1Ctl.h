@@ -10,24 +10,48 @@
 // support the function, all module types firmware is the same.  For instance the 
 // USBPGF-S1 does not have a high pass filter so HPFc is not functional.
 //**************************************************************************************
-typedef struct
+class USBPxxPARAMETERS: public CObject
 {
-	long	DeviceHandle;
+	DECLARE_SERIAL(USBPxxPARAMETERS);
+
+public:
 	float	LPFc;
 	float	HPFc;
-	long	gain;
-	long	coupling;
-	long	ClockSource;
-	long	PClock;
+	
+	long	DeviceHandle;
 	long	ChannelNumber;
-	long	LPFilterType;
-	long	HPFilterType;
 	long	SerialNumber;
 	long	ProductID;
+	
+	long	indexgain;
+	long	indexCoupling;
+	long	indexClockSource;
+	long	indexPClock;
+	long	indexLPFilterType;
+	long	indexHPFilterType;
+	
+	long	Gain;
 	int		RevisionHigh;
 	int		RevisionLow;
+	
 	CString Description;
-}	USBPxxPARAMETERS;
+	CString csCoupling;
+	CString csClockSource;
+	CString csPClock;
+	CString csLPFilterType;
+	CString csHPFilterType;
+
+public:
+	USBPxxPARAMETERS();								// constructor
+	~USBPxxPARAMETERS();							// destructor
+	void operator = (const USBPxxPARAMETERS& arg);	// operator redefinition
+	long Write(CFile* datafile);
+	BOOL Read(CFile* datafile);
+	virtual void Serialize(CArchive& ar);
+
+
+
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CUSBPxxS1Ctl
@@ -71,7 +95,17 @@ public:
 		InvokeHelper(0x1, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Handle, CmdID, DataInPtr, DataOutPtr);
 	}
 
+// constants
+private:
+	static int		allig_Gain[];
+	static CString	allig_Coupling[];
+	static CString	allig_ClockSource[];
+	static CString	allig_PClock[];
+	static CString	allig_LPFilterType[];
+	static CString	allig_HPFilterType[];
+
 // functions
+public:
 	void	readLPFC(USBPxxPARAMETERS *d);
 	void	readHPFC(USBPxxPARAMETERS *d);
 	void	readGain(USBPxxPARAMETERS *d);
@@ -87,7 +121,7 @@ public:
 	void	readRevision(USBPxxPARAMETERS *d);
 	long	readNumberOfDevicesConnected();
 	long	readHandleOfDevice(long device);
-	void	readAllParameters(long device, USBPxxPARAMETERS *d);
+	void	readAllParameters(long handle, USBPxxPARAMETERS *d);
 	
 	void	writeLPFC(USBPxxPARAMETERS *d);
 	void	writeHPFC(USBPxxPARAMETERS *d);
@@ -99,6 +133,6 @@ public:
 	void	writeDescription(USBPxxPARAMETERS *d);
 
 	// dbWave-specific functions
-	void	SetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
-	void	GetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
+	BOOL	SetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
+	BOOL	GetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
 };

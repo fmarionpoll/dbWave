@@ -66,7 +66,8 @@ void CWaveFormat::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << (WORD)9;				// 1
+		WORD wversion = 9;
+		ar << wversion;				// 1
 		ar << acqtime;				// 2
 		ar << fullscale_Volts;		// 3
 		ar << binspan;		// 4
