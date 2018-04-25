@@ -61,9 +61,7 @@ public:
 
 // Attributes
 public:
-	USBPxxPARAMETERS	device1;
 	long	devicesConnected;
-	long	deviceNumber;
 
 // Operations
 public:

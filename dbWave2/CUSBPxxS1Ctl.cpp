@@ -398,7 +398,7 @@ void CUSBPxxS1Ctl::readAllParameters(long device, USBPxxPARAMETERS* pUSBPxxParms
 	readProductID(pUSBPxxParms);
 	readRevision(pUSBPxxParms);
 	devicesConnected = readNumberOfDevicesConnected();
-	deviceNumber = 0;
+	//deviceNumber = 0;
 
 }
 

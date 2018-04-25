@@ -65,7 +65,6 @@
 #include "TransferFilesDlg.h"
 #include "afxdialogex.h" 
 #include "ExportDataDlg.h"
-//#include "excel9.h" 
 #include "ViewADContinuous.h"
 #include <process.h>
 
@@ -911,12 +910,12 @@ BOOL CChildFrame::ExportToExcel()
 	CWorksheets oSheets = oBook.get_Worksheets();
 	CWorksheet odataSheet = oSheets.get_Item(COleVariant((short) 1));		// select first sheet
 	CRange oRange;
-	oRange = odataSheet.get_Range(COleVariant(_T("A1")), vOpt);					// select first cell
+	oRange = odataSheet.get_Range(COleVariant(_T("A1")), vOpt);				// select first cell
 
 	odataSheet.Paste(vOpt, vOpt);											// paste data
 	//odataSheet._PasteSpecial(COleVariant(_T("Text")), vOpt, vOpt, vOpt, vOpt, vOpt);
 
-	odataSheet.put_Name(_T("data"));											// change name of sheet
+	odataSheet.put_Name(_T("data"));										// change name of sheet
 	
 	//Make Excel visible and give the user control
 	oApp.put_Visible(TRUE);
@@ -948,10 +947,10 @@ BOOL CChildFrame::ExportToExcelAndBuildPivot(int option)
 	CWorksheets oSheets = oBook.get_Worksheets();
 	CWorksheet odataSheet = oSheets.get_Item(COleVariant((short) 1));		// select first sheet
 	CRange oRange;
-	oRange = odataSheet.get_Range(COleVariant(_T("A1")), vOpt);					// select first cell
+	oRange = odataSheet.get_Range(COleVariant(_T("A1")), vOpt);				// select first cell
 	odataSheet.Paste(vOpt, vOpt);											// paste data - does not work under windows 8.1 on the HP laptop
 	//odataSheet._PasteSpecial(COleVariant(_T("Text")), vOpt, vOpt, vOpt, vOpt, vOpt);
-	odataSheet.put_Name(_T("data"));											// change name of sheet
+	odataSheet.put_Name(_T("data"));										// change name of sheet
 	if (option == 1)
 	{
 		// select data area to create pivot
