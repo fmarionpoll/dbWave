@@ -125,14 +125,15 @@ public:
 	
 	void	writeLPFC(USBPxxPARAMETERS *d);
 	void	writeHPFC(USBPxxPARAMETERS *d);
-	void	writeGain(USBPxxPARAMETERS *d);
-	void	writeCoupling(USBPxxPARAMETERS *d);
-	void	writeClockSource(USBPxxPARAMETERS *d);
-	void	writePClock(USBPxxPARAMETERS *d);
+	void	writeGainIndex(USBPxxPARAMETERS *d);
+	void	writeCouplingIndex(USBPxxPARAMETERS *d);
+	void	writeClockSourceIndex(USBPxxPARAMETERS *d);
+	void	writePClockIndex(USBPxxPARAMETERS *d);
 	void	writeChannelNumber(USBPxxPARAMETERS *d);
 	void	writeDescription(USBPxxPARAMETERS *d);
 
 	// dbWave-specific functions
 	BOOL	SetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
 	BOOL	GetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
+	int		ConvertAbsoluteGainToIndexGain(long gain);
 };

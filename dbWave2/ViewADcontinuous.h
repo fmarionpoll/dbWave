@@ -45,11 +45,11 @@ public:
 	BOOL				m_bADC_IsPresent;
 	BOOL				m_bDAC_IsPresent;
 	// Alligator amplifier
-	USBPxxPARAMETERS	m_device1;
-	CUSBPxxS1Ctl		m_AlligatorAmplifier;	// DDX
+	CPtrArray			m_AlligatorDevicePtrArray;
+	CUSBPxxS1Ctl		m_Alligator;		// DDX
 	// Data Translation ActiveX
-	CDTAcq32			m_ADC_DTAcq32;			// DDX
-	CDTAcq32			m_DAC_DTAcq32;			// DDX
+	CDTAcq32			m_ADC_DTAcq32;		// DDX
+	CDTAcq32			m_DAC_DTAcq32;		// DDX
 
 
 protected:

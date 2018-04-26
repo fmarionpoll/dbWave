@@ -66,6 +66,11 @@ CADContView::CADContView()
 
 CADContView::~CADContView()
 {
+	for (int i = 0; i < m_AlligatorDevicePtrArray.GetSize(); i++)
+	{
+		USBPxxPARAMETERS* ptr = (USBPxxPARAMETERS*) m_AlligatorDevicePtrArray.GetAt(i);
+		delete ptr;
+	}
 }
 
 void CADContView::DoDataExchange(CDataExchange* pDX)
@@ -77,7 +82,7 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
 	
-	DDX_Control(pDX, IDC_USBPXXS1CTL, m_AlligatorAmplifier);
+	DDX_Control(pDX, IDC_USBPXXS1CTL, m_Alligator);
 }
 
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
@@ -1515,7 +1520,7 @@ void CADContView::OnInitialUpdate()
 	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
 
 	// init communication with Alligator
-	m_AlligatorAmplifier.USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
+	m_Alligator.USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
 	if (pApp->m_bADcardFound)
@@ -1753,8 +1758,8 @@ void CADContView::ADC_OnHardwareChannelsDlg()
 	dlg.m_bchantype = m_pADC_options->bChannelType;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
-	dlg.m_pAlligatorAmplifier = &m_AlligatorAmplifier;
-	dlg.m_pdevice1 = &m_device1;
+	dlg.m_pAlligatorAmplifier = &m_Alligator;
+	dlg.m_pdevice1 = NULL; // &m_device1;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -2021,7 +2026,7 @@ BOOL CADContView::InitConnectionWithAmplifiers()
 		// test if Alligator selected
 		if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
 		{
-			m_AlligatorAmplifier.SetWaveChanParms(pchan, &m_device1);
+			m_Alligator.SetWaveChanParms(pchan, (USBPxxPARAMETERS*) m_AlligatorDevicePtrArray.GetAt(0));
 		}
 	}
 	return bcyberPresent;
@@ -2404,10 +2409,27 @@ void CADContView::DAC_Stop()
 //**************************************************************************************
 void CADContView::DeviceConnectedUsbpxxs1ctl1(long Handle)
 {
-	m_device1.DeviceHandle = Handle;
-	MessageBox(_T("Alligator amplifier detected"));
-	m_AlligatorAmplifier.readAllParameters(Handle, &m_device1);
+	USBPxxPARAMETERS	device1;
+	device1.DeviceHandle = Handle;
+	m_Alligator.readAllParameters(Handle, &device1);
 
+	boolean flagNotFound = TRUE;
+	for (int i = 0; i < m_AlligatorDevicePtrArray.GetSize(); i++)
+	{
+		USBPxxPARAMETERS* ptr = (USBPxxPARAMETERS*)m_AlligatorDevicePtrArray.GetAt(i);
+		if (ptr->DeviceHandle == device1.DeviceHandle)
+		{
+			flagNotFound = FALSE;
+			break;
+		}
+	}
+	if (flagNotFound)
+	{
+		USBPxxPARAMETERS* ptrNew = new USBPxxPARAMETERS();
+		*ptrNew = device1;
+		m_AlligatorDevicePtrArray.Add(ptrNew);
+	}
+	//MessageBox(_T("Alligator amplifier detected"));
 }
 
 void CADContView::DeviceDisconnectedUsbpxxs1ctl1(long Handle)

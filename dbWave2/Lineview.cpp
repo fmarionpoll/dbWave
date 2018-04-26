@@ -145,7 +145,7 @@ int CLineViewWnd::RemoveChanlistItem(WORD i)
 				CEnvelope* pb = m_pEnvelopesArray[k];
 				if (pa == pb)	// search where this Envelope was stored
 				{
-					delete pa;						// delete the object
+					delete pa;						// delete  object
 					m_pEnvelopesArray.RemoveAt(k);	// remove pointer from array
 					break;		// object is found, stop loop and delete chanlist item
 				}

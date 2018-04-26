@@ -34,6 +34,11 @@ void USBPxxPARAMETERS::operator=(const USBPxxPARAMETERS & arg)
 	RevisionHigh = arg.RevisionHigh;
 	RevisionLow = arg.RevisionLow;
 	Description = arg.Description;
+	csCoupling = arg.csCoupling;
+	csClockSource = arg.csClockSource;
+	csPClock = arg.csPClock;
+	csLPFilterType = arg.csLPFilterType;
+	csHPFilterType = arg.csHPFilterType;
 }
 
 long USBPxxPARAMETERS::Write(CFile * datafile)
@@ -70,13 +75,11 @@ void USBPxxPARAMETERS::Serialize(CArchive & ar)
 		WORD wversion = 1;
 		ar << wversion;
 
-		int nitems = 2;
-		ar << nitems;
+		int nitems = 2; ar << nitems;
 		ar << LPFc;
 		ar << HPFc;
 
-		nitems = 10;
-		ar << nitems;
+		nitems = 10; ar << nitems;
 		ar << DeviceHandle;
 		ar << indexgain;
 		ar << indexCoupling;
@@ -88,14 +91,17 @@ void USBPxxPARAMETERS::Serialize(CArchive & ar)
 		ar << SerialNumber;
 		ar << ProductID;
 
-		nitems = 2;
-		ar << nitems;
+		nitems = 2; ar << nitems; 
 		ar << RevisionHigh;
 		ar << RevisionLow;
 
-		nitems = 1;
-		ar << nitems;
+		nitems = 6; ar << nitems;
 		ar << Description;
+		ar << csCoupling;
+		ar << csClockSource ;
+		ar << csPClock;
+		ar << csLPFilterType;
+		ar << csHPFilterType;
 	}
 	else
 	{
@@ -105,7 +111,7 @@ void USBPxxPARAMETERS::Serialize(CArchive & ar)
 
 		int nitems;  ar >> nitems;
 		if (nitems > 0) ar >> LPFc; nitems--;
-		if (nitems > 0) ar >> HPFc;
+		if (nitems > 0) ar >> HPFc; nitems--;
 
 		ar >> nitems;
 		if (nitems > 0) ar >> DeviceHandle; nitems--;
@@ -117,14 +123,19 @@ void USBPxxPARAMETERS::Serialize(CArchive & ar)
 		if (nitems > 0) ar >> indexLPFilterType; nitems--;
 		if (nitems > 0) ar >> indexHPFilterType; nitems--;
 		if (nitems > 0) ar >> SerialNumber; nitems--;
-		if (nitems > 0) ar >> ProductID;
+		if (nitems > 0) ar >> ProductID; nitems--;
 
 		ar >> nitems;
 		if (nitems > 0) ar >> RevisionHigh; nitems--;
-		if (nitems > 0) ar >> RevisionLow;
+		if (nitems > 0) ar >> RevisionLow; nitems--;
 
 		ar >> nitems;
-		if (nitems > 0) ar >> Description;
+		if (nitems > 0) ar >> Description; nitems--;
+		if (nitems > 0) ar >> csCoupling; nitems--;
+		if (nitems > 0) ar >> csClockSource; nitems--;
+		if (nitems > 0) ar >> csPClock; nitems--;
+		if (nitems > 0) ar >> csLPFilterType; nitems--;
+		if (nitems > 0) ar >> csHPFilterType; nitems--;
 	}
 }
 
@@ -608,7 +619,7 @@ void CUSBPxxS1Ctl::writeHPFC (USBPxxPARAMETERS *d)
 //  USBPHP-S1
 //	USBPBP-S1
 //**************************************************************************************
-void CUSBPxxS1Ctl::writeGain (USBPxxPARAMETERS *d)
+void CUSBPxxS1Ctl::writeGainIndex (USBPxxPARAMETERS *d)
 {
 	VARIANT	InVal;
 	VARIANT	OutVal;
@@ -634,7 +645,7 @@ void CUSBPxxS1Ctl::writeGain (USBPxxPARAMETERS *d)
 //  USBPGF-S1
 //	USBPIA-S1
 //**************************************************************************************
-void CUSBPxxS1Ctl::writeCoupling (USBPxxPARAMETERS *d)
+void CUSBPxxS1Ctl::writeCouplingIndex (USBPxxPARAMETERS *d)
 {
 	VARIANT	InVal;
 	VARIANT	OutVal;
@@ -661,7 +672,7 @@ void CUSBPxxS1Ctl::writeCoupling (USBPxxPARAMETERS *d)
 //  USBPGF-S1
 //  USBPBP-S1
 //**************************************************************************************
-void CUSBPxxS1Ctl::writeClockSource (USBPxxPARAMETERS *d)
+void CUSBPxxS1Ctl::writeClockSourceIndex (USBPxxPARAMETERS *d)
 {
 	VARIANT	InVal;
 	VARIANT	OutVal;
@@ -694,7 +705,7 @@ void CUSBPxxS1Ctl::writeClockSource (USBPxxPARAMETERS *d)
 //  USBPGF-S1
 //  USBPBP-S1
 //**************************************************************************************
-void CUSBPxxS1Ctl::writePClock (USBPxxPARAMETERS *d)
+void CUSBPxxS1Ctl::writePClockIndex (USBPxxPARAMETERS *d)
 {
 	VARIANT	InVal;
 	VARIANT	OutVal;
@@ -770,6 +781,9 @@ void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS *d)
 	USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &InVal, &OutVal);
 }
 
+
+// dbWave-specific functions
+
 BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
 {
 	//pdevice->DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
@@ -778,8 +792,8 @@ BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice
 		return FALSE;
 	pdevice->ChannelNumber = pchan->am_amplifierchan;
 	
-	pdevice->indexgain = pchan->am_amplifierchan;
-	writeGain(pdevice);
+	pdevice->indexgain = ConvertAbsoluteGainToIndexGain(pchan->am_amplifierchan);
+	writeGainIndex(pdevice);
 	pdevice->HPFc = (float) atof(CT2A(pchan->am_csInputpos));
 	writeHPFC(pdevice);
 	pdevice->LPFc = pchan->am_lowpass;
@@ -798,4 +812,21 @@ BOOL CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice
 	pchan->am_csInputpos.Format(_T("%f.3"), pdevice->HPFc);
 	pchan->am_lowpass = short(pdevice->LPFc);
 	return TRUE;
+}
+
+// index functions
+
+// gain: convert to index which is inferior of equal to the table value explored from lower to higher values
+// array:	int CUSBPxxS1Ctl::allig_Gain[] = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
+
+int CUSBPxxS1Ctl::ConvertAbsoluteGainToIndexGain(long gain)
+{
+	int i;
+	int imax = sizeof(allig_Gain)/sizeof(int);
+	for (i = 0; i < imax; i++)
+	{
+		if (gain <= allig_Gain[i])
+			break;
+	}
+	return i;
 }
