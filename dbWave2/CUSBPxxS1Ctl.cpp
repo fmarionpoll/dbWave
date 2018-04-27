@@ -788,7 +788,7 @@ BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice
 {
 	//pdevice->DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
 
-	if (pdevice->DeviceHandle == NULL)
+	if (pdevice == nullptr || pdevice->DeviceHandle == NULL)
 		return FALSE;
 	pdevice->ChannelNumber = pchan->am_amplifierchan;
 	
@@ -803,7 +803,7 @@ BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice
 
 BOOL CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice)
 {
-	if (pdevice->DeviceHandle == NULL)
+	if (pdevice == nullptr || pdevice->DeviceHandle == NULL)
 		return FALSE;
 
 	readAllParameters(0, pdevice);
