@@ -806,10 +806,11 @@ BOOL CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice
 	if (pdevice == nullptr || pdevice->DeviceHandle == NULL)
 		return FALSE;
 
-	readAllParameters(0, pdevice);
+	readAllParameters(pdevice->DeviceHandle, pdevice);
 	pchan->am_amplifierchan = short(pdevice->ChannelNumber);
-	pchan->am_amplifierchan = short(pdevice->indexgain);
-	pchan->am_csInputpos.Format(_T("%f.3"), pdevice->HPFc);
+	pchan->am_gainpre = 1;
+	pchan->am_gainpost = short(pdevice->Gain);
+	pchan->am_csInputpos.Format(_T("%.3f"), pdevice->HPFc);
 	pchan->am_lowpass = short(pdevice->LPFc);
 	return TRUE;
 }

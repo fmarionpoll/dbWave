@@ -1759,7 +1759,7 @@ void CADContView::ADC_OnHardwareChannelsDlg()
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
 	dlg.m_pAlligatorAmplifier = &m_Alligator;
-	dlg.m_pdevice1 = NULL; // &m_device1;
+	dlg.m_pAlligatorDevicePtrArray = &m_AlligatorDevicePtrArray; 
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -2382,7 +2382,7 @@ BOOL CADContView::DAC_Start()
 		catch (COleDispatchException* e)
 		{
 			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
+			myError.Format(_T("DT-Open Layers Error: %i"), (int)e->m_scError); myError += e->m_strDescription;
 			AfxMessageBox(myError);
 			e->Delete();
 		}
