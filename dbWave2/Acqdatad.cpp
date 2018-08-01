@@ -55,6 +55,7 @@ CAcqDataDoc::CAcqDataDoc()
 	m_lBUFSize = 0;			// size of the read buffer (?)
 	m_lBUFmaxSize = MAX_BUFLENGTH_BYTES; // max buf size
 	m_iOffsetInt = sizeof(short);	// offset in bytes
+	m_tBUFfirst = 0;
 		
 	m_pWBuf = NULL;
 	m_pXFile = NULL;
@@ -470,7 +471,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 		{
 			CWaveChan* pChan = (GetpWavechanArray())->GetWaveChan(ichan);
 			int ival = BGetVal(ichan, j);
-			double changain = pChan->am_gainheadstage* pChan->am_gainAD * pChan->am_gainpre * pChan->am_gainpost;
+			double changain =((double) pChan->am_gainheadstage)*((double) pChan->am_gainAD )*((double) pChan->am_gainpre) *((double) pChan->am_gainpost);
 			double xval = ival* mVfactor / changain ;
 			cs.Format(_T("%f"), xval);
 			csOut+= cs;

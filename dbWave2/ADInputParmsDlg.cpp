@@ -573,7 +573,7 @@ void CADInputParmsDlg::InitGridColumnReadOnlyFields(int col)
 
 	// " resolution (µV)" - read only
 	row++;
-	cs.Format(_T("%1.3f"), (m_xVoltsMax * 1.E6 / float(igain*2) / float(m_iNBins)));
+	cs.Format(_T("%1.3f"), (double(m_xVoltsMax) * 1.E6 / double(igain*2) / double(m_iNBins)));
 	m_Grid.SetItemText(row, col, cs);
 }
 
