@@ -837,7 +837,6 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 	if (!m_bcommandAmplifier)
 		return;
 
-	//MessageBox(_T("set ampli parms"));
 	// transfer data into structure
 	CWaveChan* pchan = m_pchArray->GetWaveChan(col-1);
 
@@ -856,7 +855,7 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 
 	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0) 
 	{
-		m_pAlligatorAmplifier->SetWaveChanParms(pchan, m_pdevice1);
+		//m_pAlligatorAmplifier->SetWaveChanParms(pchan, m_pdevice1);
 	}
 }
 
@@ -865,7 +864,6 @@ void CADInputParmsDlg::GetAmplifierParms(int col)
 	if (!m_bcommandAmplifier)
 		return;
 
-	MessageBox(_T("Get ampli parms"));
 	// transfer data into structure
 	CWaveChan* pchan = m_pchArray->GetWaveChan(col - 1);
 
@@ -884,7 +882,21 @@ void CADInputParmsDlg::GetAmplifierParms(int col)
 
 	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
 	{
-		m_pAlligatorAmplifier->GetWaveChanParms(pchan, m_pdevice1);
+		int nAlligatorDescriptors = m_pAlligatorDevicePtrArray->GetCount();
+		USBPxxPARAMETERS* pdevice = nullptr;
+		for (int i = 0; i < nAlligatorDescriptors; i++)
+		{
+			USBPxxPARAMETERS* ptr = (USBPxxPARAMETERS*) m_pAlligatorDevicePtrArray->GetAt(i);
+			if (pchan->am_amplifierchan == ptr->ChannelNumber) 
+			{
+				pdevice = ptr;
+				break;
+			}
+		}
+		if (pdevice != nullptr)
+		{
+			m_pAlligatorAmplifier->GetWaveChanParms(pchan, pdevice);
+		}
 	}
 }
 
