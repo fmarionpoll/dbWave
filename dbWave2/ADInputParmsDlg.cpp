@@ -65,12 +65,22 @@ CADInputParmsDlg::CADInputParmsDlg(CWnd* pParent /*=NULL*/)
 	m_iNBins = 4096;
 	m_xVoltsMax = 10.0f;
 	m_bchainDialog = FALSE;
-	m_pwFormat=NULL;
-	m_pchArray=NULL;
+	m_pwFormat=nullptr;
+	m_pchArray=nullptr;
 	m_numchansMAXDI = 8;
 	m_numchansMAXSE = 16;
 	m_bcommandAmplifier=FALSE;
 	m_inputlistmax = 32;				// chan list size for DT9800
+	m_postmessage = 0;
+	m_bchantype = OLx_CHNT_SINGLEENDED;
+	m_pAlligatorAmplifier = nullptr;
+	m_pAlligatorDevicePtrArray = nullptr;
+	
+	m_rowADchannel = 0;
+	m_row_ADgain = 0;
+	m_row_headstagegain = 1;
+	m_row_ampgain = 1;
+	m_row_readonly = 1;
 }
 
 CADInputParmsDlg::~CADInputParmsDlg()
@@ -573,7 +583,7 @@ void CADInputParmsDlg::InitGridColumnReadOnlyFields(int col)
 
 	// " resolution (µV)" - read only
 	row++;
-	cs.Format(_T("%1.3f"), (double(m_xVoltsMax) * 1.E6 / double(igain*2) / double(m_iNBins)));
+	cs.Format(_T("%1.3f"), (float(m_xVoltsMax) * float (1.E6) / float (igain) *2 / float(m_iNBins)));
 	m_Grid.SetItemText(row, col, cs);
 }
 
@@ -691,7 +701,7 @@ void CADInputParmsDlg::LoadChanData(int col)
 	m_Grid.SetItem(&Item);
 	// amplifier gain
 	Item.row++;
-	double gain = (pchan->am_gaintotal)/(pchan->am_gainheadstage*pchan->am_gainAD);
+	double gain = double (pchan->am_gaintotal)/(double (pchan->am_gainheadstage) * double (pchan->am_gainAD));
 	int igain = (int) gain;
 	if (igain == 0)
 		igain = 1;
@@ -811,7 +821,7 @@ void CADInputParmsDlg::SaveChanData(int col)
 	row++;
 	cs = m_Grid.GetItemText(row, col);
 	pchan->am_gainheadstage= _ttoi(cs);
-	pchan->am_gainamplifier = pchan->am_gainheadstage * (float)pchan->am_gainpre * (float)pchan->am_gainpost;
+	pchan->am_gainamplifier = double (pchan->am_gainheadstage) * (double) pchan->am_gainpre * (double) pchan->am_gainpost;
 	pchan->am_gaintotal = pchan->am_gainamplifier * pchan->am_gainAD;
 	// compute dependent parameters
 	pchan->am_resolutionV = m_pwFormat->fullscale_Volts / pchan->am_gaintotal / m_pwFormat->binspan;

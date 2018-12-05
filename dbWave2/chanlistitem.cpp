@@ -24,10 +24,18 @@ IMPLEMENT_SERIAL(CChanlistItem, CObject, 1)
 
 CChanlistItem::CChanlistItem() 
 {
+	pEnvelopeAbcissa = nullptr;
+	pEnvelopeOrdinates = nullptr;
 	dl_yzero = 2048;
 	dl_yextent = 4096;
-	dl_bprint=1;				// print OK (0=no print)
-	dl_bHZtagsPrint = TRUE;		// do not print HZ tags
+	dl_datavoltspbin = (float) 20. / dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
+	dl_databinzero = 2048;
+	dl_databinspan = 4096;
+	dl_bprint = 1;					// print OK (0=no print)
+	dl_bHZtagsPrint = FALSE;		// do not print HZ tags
+	dl_indexabcissa = 0;
+	dl_indexordinates = 0;
+	dl_bHZtagsPrint = false;
 }
 
 
@@ -39,13 +47,13 @@ CChanlistItem::CChanlistItem(CEnvelope* pX, int indexX, CEnvelope* pY, int index
 {
 	pEnvelopeAbcissa = pX;
 	pEnvelopeOrdinates = pY;
-	dl_yzero = 2048;
-	dl_yextent = 4096;
-	dl_datavoltspbin= (float) 20./dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
-	dl_databinzero= 2048;
-	dl_databinspan= 4096;
-	dl_bprint=1;					// print OK (0=no print)
-	dl_bHZtagsPrint = FALSE;		// do not print HZ tags
+	//dl_yzero = 2048;
+	//dl_yextent = 4096;
+	//dl_datavoltspbin= (float) 20./dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
+	//dl_databinzero= 2048;
+	//dl_databinspan= 4096;
+	//dl_bprint=1;					// print OK (0=no print)
+	//dl_bHZtagsPrint = FALSE;		// do not print HZ tags
 	dl_indexabcissa = indexX;
 	dl_indexordinates = indexY;
 }

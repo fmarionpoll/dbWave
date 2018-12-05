@@ -43,7 +43,8 @@ CSpikeClassListBox::CSpikeClassListBox()
 {
 	m_rowheight=20;
 	m_leftcolwidth=20;
-	m_pSList = NULL;
+	m_pSList = nullptr;
+	m_pSDoc = nullptr;
 	m_bText=TRUE;
 	m_bSpikes=TRUE;
 	m_bBars=TRUE;	

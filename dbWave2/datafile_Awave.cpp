@@ -19,8 +19,9 @@ CDataFileAWAVE::CDataFileAWAVE() : CDataFileX()
 	m_idType= DOCTYPE_AWAVE;
 	m_csType = "AWAVE";
 	m_csFiledesc = "aWave 001.060298";
-	m_ulOffsetHeader= m_csFiledesc.GetLength()+1;
+	m_ulOffsetHeader= ULONGLONG(m_csFiledesc.GetLength())+1;
 	m_bHeaderSize= 256;
+	m_bmodified = false;
 }
 
 CDataFileAWAVE::CDataFileAWAVE(CFile* pfile)
@@ -28,7 +29,7 @@ CDataFileAWAVE::CDataFileAWAVE(CFile* pfile)
 	m_idType= DOCTYPE_AWAVE;
 	m_csType= "AWAVE";
 	m_csFiledesc = "aWave 001.260197";
-	m_ulOffsetHeader= m_csFiledesc.GetLength()+1;
+	m_ulOffsetHeader= ULONGLONG(m_csFiledesc.GetLength())+1;
 	m_bHeaderSize= 256;
 	m_hFile = pfile->m_hFile; // CFile
 

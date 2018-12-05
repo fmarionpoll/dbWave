@@ -77,16 +77,16 @@ private:
 
 private:
 	CDC		*m_pDC;
-	CRect		m_rectMine,m_rectMineClipped,
-				m_rectDC,m_rectDCClipped;
-	Angle		m_Angle;
+	CRect	m_rectMine, m_rectMineClipped;
+	CRect	m_rectDC,m_rectDCClipped;
+	Angle	m_Angle;
 	CBitmap	m_Bitmap;
-	CSize		m_szBitmap;
-	bool		m_bFinished;
+	CSize	m_szBitmap;
+	bool	m_bFinished;
 
 	// device context storings
 	int		m_iOldBkColor,m_iOldBkMode,m_iOldTextColor;
-	CFont		*m_pOldFont;
+	CFont	*m_pOldFont;
 	CBitmap	*m_pOldBitmap;
 
 public:

@@ -37,6 +37,7 @@ CImportGenericDataDlg::CImportGenericDataDlg(CWnd* pParent /*=NULL*/)
 	m_fileold=_T("");
 	m_bChanged=FALSE;
 	m_bimportall = FALSE;
+	piivO = nullptr;
 }
 
 

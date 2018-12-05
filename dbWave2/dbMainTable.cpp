@@ -105,6 +105,7 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	}
 
 	m_defaultName.Empty();
+	m_bFilterON = false;
 }
 
 CdbMainTable::~CdbMainTable()

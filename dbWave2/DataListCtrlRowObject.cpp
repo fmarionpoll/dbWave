@@ -21,6 +21,7 @@ CDataListCtrlRowObject::CDataListCtrlRowObject()
 	pspikeWnd = NULL;
 	pdataDoc = NULL;
 	pspikeDoc = NULL;
+	wversion = 0;
 }
 
 CDataListCtrlRowObject::CDataListCtrlRowObject(int i)
@@ -29,6 +30,7 @@ CDataListCtrlRowObject::CDataListCtrlRowObject(int i)
 	index = i;
 	pdataWnd = NULL;
 	pspikeWnd = NULL;
+	wversion = 0;
 }
 
 CDataListCtrlRowObject::~CDataListCtrlRowObject()

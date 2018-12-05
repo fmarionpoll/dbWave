@@ -56,6 +56,9 @@ CAcqDataDoc::CAcqDataDoc()
 	m_lBUFmaxSize = MAX_BUFLENGTH_BYTES; // max buf size
 	m_iOffsetInt = sizeof(short);	// offset in bytes
 	m_tBUFfirst = 0;
+	m_tBUFlast = 1;
+	m_tBUFtransform = 0;
+	m_tBUFsourcechan = 0;
 		
 	m_pWBuf = NULL;
 	m_pXFile = NULL;

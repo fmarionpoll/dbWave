@@ -50,6 +50,7 @@ IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
 CGridCell::CGridCell()
 {
 	m_plfFont = NULL;
+	m_nImage = 0;
 	CGridCell::Reset();
 }
 

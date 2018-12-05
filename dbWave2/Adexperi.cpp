@@ -31,6 +31,9 @@ ADExperimentDlg::ADExperimentDlg(CWnd* pParent /*=NULL*/)
 	m_pADC_options = NULL;
 	m_bADexpt = TRUE;
 	m_bFilename = TRUE;
+	m_pwaveFormat = nullptr;
+	m_pdbDoc = nullptr;
+	m_bEditMode = false;
 }
 
 

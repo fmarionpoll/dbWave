@@ -55,6 +55,10 @@ public:
     
     CCellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
     {
+		m_nMinRow = -1;
+		m_nMinCol = -1;
+		m_nMaxRow = -1;
+		m_nMaxCol = -1;
         Set(nMinRow, nMinCol, nMaxRow, nMaxCol);
     }
 

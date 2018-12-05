@@ -36,6 +36,7 @@ CMeasureVTtagsPage::CMeasureVTtagsPage() : CPropertyPage(CMeasureVTtagsPage::IDD
 	m_timesec = 0.0f;
 	m_timeshift = 0.0f;
 	m_duration = 0.0f;
+	m_plineview = nullptr;
 }
 
 CMeasureVTtagsPage::~CMeasureVTtagsPage()
@@ -442,6 +443,7 @@ CMeasureOptionsPage::CMeasureOptionsPage() : CPropertyPage(CMeasureOptionsPage::
 	m_fStimulusoffset = 0.0f;
 	m_uiStimulusThreshold = 0;
 	m_uiStimuluschan = 0;
+	m_bLimitsval = false;
 }
 
 CMeasureOptionsPage::~CMeasureOptionsPage()
@@ -628,6 +630,7 @@ CMeasureHZtagsPage::CMeasureHZtagsPage() : CPropertyPage(CMeasureHZtagsPage::IDD
 	m_index = 0;
 	m_mvlevel = 0.0f;
 	m_nbcursors = 0;
+	m_plineview = nullptr;
 }
 
 CMeasureHZtagsPage::~CMeasureHZtagsPage()
@@ -879,7 +882,8 @@ void CMeasureHZtagsPage::OnDeleteAll()
 
 CMeasureResultsPage::CMeasureResultsPage() : CPropertyPage(CMeasureResultsPage::IDD)
 {
-	
+
+	m_plineview = nullptr;
 }
 
 CMeasureResultsPage::~CMeasureResultsPage()

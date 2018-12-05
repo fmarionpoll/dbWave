@@ -45,6 +45,7 @@ SCOPESTRUCT::SCOPESTRUCT()
 	yScaleUnitValue = 0.0f;
 	yScaleSpan_v = 0.0f;
 	xScaleSpan_s = 0.0f;
+	bClipRect = false;
 }
 
 SCOPESTRUCT::~SCOPESTRUCT()
@@ -224,6 +225,11 @@ OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
 	bsetmVSpan=FALSE;
 	bDisplayAllClasses=TRUE;
 	spikeclass=0;
+
+	nscopeitems = 0;
+	nfilterindex = 0;
+	vertRes = 1;
+	horzRes = 1;
 }
 
 OPTIONS_VIEWDATA::~OPTIONS_VIEWDATA()
@@ -676,6 +682,10 @@ OPTIONS_VIEWSPIKES::OPTIONS_VIEWSPIKES()
 	bCycleHist=FALSE;
 	nstipercycle=1;
 	ballChannels = TRUE;
+
+	bChanged = false;
+	ichan = 0;
+	bexportPivot = false;
 }
 
 OPTIONS_VIEWSPIKES::~OPTIONS_VIEWSPIKES()
@@ -926,6 +936,12 @@ OPTIONS_VIEWDATAMEASURE::OPTIONS_VIEWDATAMEASURE()
 	nperiods=10;			// nb of duplicates
 	timeshift=0.0f;			// shift tags
 
+	lLimitLeft = 0;
+	lLimitRight = 1;
+	wLimitSup = 0;			// rectangle limits
+	wLimitInf = 1;
+	lLimitLeft= 0;
+	lLimitRight = 1;
 }
 
 OPTIONS_VIEWDATAMEASURE::~OPTIONS_VIEWDATAMEASURE()
@@ -1089,6 +1105,8 @@ OPTIONS_IMPORT::OPTIONS_IMPORT()
 	iundersample=1;
 	path.Empty();
 	bDummy=FALSE;
+	bImportDuplicateFiles = false;
+	bChanged = false;
 }
 
 OPTIONS_IMPORT::~OPTIONS_IMPORT()
@@ -1286,6 +1304,9 @@ OPTIONS_ACQDATA::OPTIONS_ACQDATA()
 	izoomCursel=0;
 	sweepduration = 1.0f;
 	insectnumber = 0;
+	icsA_repeat = 0;
+	icsA_repeat2 = 0;
+	icsA_expt = 0;
 }
 
 OPTIONS_ACQDATA::~OPTIONS_ACQDATA()
@@ -1586,6 +1607,11 @@ OUTPUTPARMS::OUTPUTPARMS()
 	num = 512;
 	bit33 = 1;
 	count = 1;
+	bStart = false;
+	dummy1 = 0;
+	dummy2 = 0;
+	bit1 = 0;
+	ampUp = 0;
 }
 
 OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
@@ -1609,6 +1635,9 @@ OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
 	num				= arg.num;
 	bit33			= arg.bit33;
 	count			= arg.count;
+	dummy1 = arg.dummy1;
+	dummy2 = arg.dummy2;
+	bStart = arg.bStart;
 }
 
 OUTPUTPARMS::~OUTPUTPARMS()

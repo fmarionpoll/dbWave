@@ -46,6 +46,7 @@ CdbWaveDoc::CdbWaveDoc()
 
 	m_icurSpkList = 0;
 	m_bClearMdbOnExit = FALSE;
+	m_bTranspose = false;
 }
 
 /////////////////////////////////////////////////////////////////////////////

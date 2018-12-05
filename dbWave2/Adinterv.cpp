@@ -30,6 +30,9 @@ ADIntervalsDlg::ADIntervalsDlg(CWnd* pParent /*=NULL*/)
 	m_ratemin=0.f;
 	m_ratemax=0.f;
 	m_bchainDialog = FALSE;
+	m_pwaveFormat = nullptr;
+	m_postmessage = 0;
+	m_bufferWsizemax = 0;
 }
 
 void ADIntervalsDlg::DoDataExchange(CDataExchange* pDX)

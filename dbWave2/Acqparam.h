@@ -95,8 +95,6 @@ public :
 	CString		am_csComment;		// channel annotation
 	short		am_adchannel;		// channel A/D 
 	short		am_gainAD;			// channel A/D gain 
-	short		am_maxchannel;		// maximum in the channel
-	short		am_minchannel;		// minimum in the channel
 
 	CString		am_csheadstage;   	// headstage type (ASCII)
 	short		am_gainheadstage;	// amplification factor at headstage level

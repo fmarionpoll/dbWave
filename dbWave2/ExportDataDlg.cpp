@@ -32,6 +32,7 @@ CExportDataDlg::CExportDataDlg(CWnd* pParent /*=NULL*/)
 	m_iundersample = 1;
 	m_icurrentfile = -1;
 	m_bAllFiles = TRUE; //FALSE;
+	m_pDat = nullptr;
 }
 
 
@@ -381,7 +382,7 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 	{
 		float VoltsperBin;							// declare float
 		m_pDat->GetWBVoltsperBin(i, &VoltsperBin, 0);// get value
-		csDummy.Format(_T("\t%f"), VoltsperBin*1000.f);		// copy to buffer
+		csDummy.Format(_T("\t%f"), float(VoltsperBin)*1000.f);		// copy to buffer
 		csCharBuf += csDummy;
 	}
 
@@ -668,8 +669,7 @@ BOOL CExportDataDlg::ExportDataAsExcelFile()
 			for (int j=j0; j<ncolsperbout; j++)
 			{
 				m_pDat->GetWBVoltsperBin(j-j0, &VoltsperBin, 0);
-				fdouble = (m_pDat->BGetVal(j-j0, iitime) 
-							- mm_binzero)*VoltsperBin;
+				fdouble = double (m_pDat->BGetVal(j-j0, iitime) - mm_binzero)* VoltsperBin;
 				save_BIFF(&dataDest, BIFF_FLOAT, row, col, (char *) &fdouble);
 				col++;
 			}

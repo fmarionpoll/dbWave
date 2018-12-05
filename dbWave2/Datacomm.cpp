@@ -23,6 +23,7 @@ CDataCommentsDlg::CDataCommentsDlg(CWnd* pParent /*=NULL*/)
 	m_bfilesize = FALSE;
 	m_bacqchsetting = FALSE;
 	m_btoExcel = FALSE;
+	m_bdatabasecols = false;
 }
 
 

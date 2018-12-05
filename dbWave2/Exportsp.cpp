@@ -38,6 +38,7 @@ CExportSpikeInfosDlg::CExportSpikeInfosDlg(CWnd* pParent /*=NULL*/)
 	m_bhist=SW_SHOW;
 	m_bhistampl=SW_SHOW;
 	m_brelation = TRUE;
+	m_pvdS = nullptr;
 }
 
 

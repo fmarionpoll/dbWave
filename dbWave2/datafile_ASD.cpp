@@ -119,7 +119,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	ULONGLONG lOffset1 = GetPosition();			// start of data area
 	m_ulOffsetData = lOffset1+1;
-	ULONGLONG lOffset2 = uicount*2;				// length of data area (in bytes)
+	ULONGLONG lOffset2 = ULONGLONG(uicount)*2;				// length of data area (in bytes)
 	Seek(lOffset2, CFile::current);				// position pointer
 
 	WORD checkSum;								// data end
@@ -347,7 +347,7 @@ BOOL CDataFileASD::CheckFileType(CFile* f, int bOffsetHeader)
 
 			ULONGLONG lOffset1 = f->GetPosition();		// start of data area
 			m_ulOffsetData = lOffset1+1;
-			ULONGLONG lOffset2 = uicount*2;				// length of data area (in bytes)
+			ULONGLONG lOffset2 = ULONGLONG(uicount)*2;				// length of data area (in bytes)
 			f->Seek(lOffset2, CFile::current);		// position pointer
 
 			WORD checkSum;							// data end

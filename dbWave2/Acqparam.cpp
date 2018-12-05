@@ -408,6 +408,10 @@ CWaveChan::CWaveChan(CWaveChan& arg)
 	am_gainamplifier = arg.am_gainamplifier;
 	am_gaintotal= arg.am_gaintotal;
 	am_resolutionV = arg.am_resolutionV;
+
+	am_inputpos = arg.am_inputpos;
+	am_inputneg = arg.am_inputneg;
+	am_version = arg.am_version;
 }
 
 CWaveChan::~CWaveChan()

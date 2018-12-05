@@ -18,6 +18,7 @@ CGotoRecordDlg::CGotoRecordDlg(CWnd* pParent /*=NULL*/)
 {
 	m_recordID = 0;
 	m_recordPos = 0;
+	m_bGotoRecordID = false;
 }
 
 

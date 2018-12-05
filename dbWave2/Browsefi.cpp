@@ -22,6 +22,7 @@ CBrowseFileDlg::CBrowseFileDlg(CWnd* pParent /*=NULL*/)
 	m_splitcurves = FALSE;
 	m_multirowdisplay = FALSE;
 	m_keepforeachfile = FALSE;
+	mfBR = nullptr;
 }
 
 void CBrowseFileDlg::DoDataExchange(CDataExchange* pDX)
@@ -47,13 +48,15 @@ END_MESSAGE_MAP()
 BOOL CBrowseFileDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_allchannels = mfBR->bAllChannels;
-	m_centercurves = mfBR->bCenterCurves;
-	m_completefile = mfBR->bEntireRecord;
-	m_splitcurves = mfBR->bSplitCurves;
-	m_maximizegain = mfBR->bMaximizeGain;
-	m_multirowdisplay = mfBR->bMultirowDisplay; 
-	m_keepforeachfile = mfBR->bKeepForEachFile;
+	if (mfBR != nullptr) {
+		m_allchannels = mfBR->bAllChannels;
+		m_centercurves = mfBR->bCenterCurves;
+		m_completefile = mfBR->bEntireRecord;
+		m_splitcurves = mfBR->bSplitCurves;
+		m_maximizegain = mfBR->bMaximizeGain;
+		m_multirowdisplay = mfBR->bMultirowDisplay;
+		m_keepforeachfile = mfBR->bKeepForEachFile;
+	}
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

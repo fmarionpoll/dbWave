@@ -17,7 +17,7 @@ IMPLEMENT_DYNAMIC(CFileNew1, CDialogEx)
 CFileNew1::CFileNew1(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CFileNew1::IDD, pParent)
 {
-
+	m_icursel = 0;
 }
 
 CFileNew1::~CFileNew1()

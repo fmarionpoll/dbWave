@@ -21,6 +21,7 @@ CDataFileATLAB::CDataFileATLAB()
 	m_ulOffsetHeader = 0;
 	m_idType = DOCTYPE_ATLAB;
 	m_csType= _T("ATLAB");
+	m_pWFormat = nullptr;
 }
 
 CDataFileATLAB::~CDataFileATLAB()
@@ -285,7 +286,7 @@ void CDataFileATLAB::LoadChanFromCyber(short i, char* pcyberchan)
 	pChan->am_csInputpos= GetCyberA320filter(pcyb->inputpos);
 	pChan->am_csInputneg= GetCyberA320filter(pcyb->inputneg);
 	pChan->am_gainamplifier = 1.;
-	pChan->am_gaintotal = (float) pcyb->gainpre * (float) pcyb->gainpost * (float) pcyb->gainprobe * (float) pChan->am_gainAD;
+	pChan->am_gaintotal = (double) pcyb->gainpre * (double) pcyb->gainpost * (double) pcyb->gainprobe * (double) pChan->am_gainAD;
 }
 
 

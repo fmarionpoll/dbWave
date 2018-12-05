@@ -27,7 +27,8 @@ CMeasureProperties::CMeasureProperties(CWnd* pWndParent, int iselect)
 {
 	// One way to make a different property page the 
 	// active one is to call SetActivePage().
-	
+
+	m_plineview = nullptr;
 	AddPage(&m_Page3);	// HZ edit
 	AddPage(&m_Page2);	// VT tags edit
 	AddPage(&m_Page1);	// measure options

@@ -80,8 +80,7 @@ public:
 		const RECT& rect, CWnd* pParentWnd, UINT nID, 
 		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
 		BSTR bstrLicKey = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID, 
-		pPersist, bStorage, bstrLicKey); }
+	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID, pPersist, bStorage, bstrLicKey); }
 
 // Attributes
 public:

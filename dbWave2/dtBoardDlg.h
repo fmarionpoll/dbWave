@@ -25,7 +25,6 @@ public:
 private:
 	UINT		m_atodCount;
 	UINT		m_dtoaCount;
-	UINT		m_dioCount;
 	int			m_nsubsystems;
 	CString		m_boardName;
 

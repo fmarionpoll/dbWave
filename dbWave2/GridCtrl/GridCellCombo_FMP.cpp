@@ -388,7 +388,8 @@ IMPLEMENT_DYNCREATE(CGridCellCombo, CGridCell)
 
 CGridCellCombo::CGridCellCombo() : CGridCell()
 {
-	SetStyle(CBS_DROPDOWN);  // CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
+	m_dwStyle = CBS_DROPDOWN;  // CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
+	SetStyle(m_dwStyle); 
 }
 
 // Create a control to do the editing
@@ -399,7 +400,6 @@ BOOL CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UI
 	// CGridInPlaceList auto-deletes itself
 	m_pEditWnd = new CGridInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol, 
 								  GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
-
 	return TRUE;
 }
 

@@ -20,6 +20,7 @@ CPrintDataOptionsDlg::CPrintDataOptionsDlg(CWnd* pParent /*=NULL*/)
 	m_bFrameRect = FALSE;
 	m_bTimeScaleBar = FALSE;
 	m_bVoltageScaleBar = FALSE;
+	m_bPrintSelection = false;
 }
 
 void CPrintDataOptionsDlg::DoDataExchange(CDataExchange* pDX)
@@ -54,6 +55,7 @@ CPrintDataCommentsDlg::CPrintDataCommentsDlg(CWnd* pParent /*=NULL*/)
 	m_bdocname = FALSE;
 	m_fontsize = 0;
 	m_textseparator = 0;
+	mdPM = nullptr;
 }
 
 void CPrintDataCommentsDlg::DoDataExchange(CDataExchange* pDX)

@@ -20,6 +20,7 @@ CPrintPageMarginsDlg::CPrintPageMarginsDlg(CWnd* pParent /*=NULL*/)
 	m_bottomPageMargin = 0;
 	m_rightPageMargin = 0;
 	m_topPageMargin = 0;
+	mdPM = nullptr;
 }
 
 void CPrintPageMarginsDlg::DoDataExchange(CDataExchange* pDX)

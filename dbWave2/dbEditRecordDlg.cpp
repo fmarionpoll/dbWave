@@ -29,6 +29,7 @@ CdbEditRecordDlg::CdbEditRecordDlg(CWnd* pParent /*=NULL*/)
 	//m_pDaoView = NULL;
 	m_bshowIDC_NEXT = TRUE;
 	m_bshowIDC_PREVIOUS = TRUE;
+	m_pdbDoc = nullptr;
 }
 
 CdbEditRecordDlg::~CdbEditRecordDlg()

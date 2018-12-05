@@ -23,6 +23,7 @@ CScopeScreenPropsDlg::CScopeScreenPropsDlg(CWnd* pParent /*=NULL*/)
 	m_xytickline = 0;
 	m_xcells = 0;
 	m_ycells = 0;
+	m_crScopeGrid = 0;
 }
 
 

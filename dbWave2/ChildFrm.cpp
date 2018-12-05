@@ -138,6 +138,7 @@ CChildFrame::CChildFrame()
 	m_cursorstate	= 0;
 	m_bDeleteFile	= FALSE;
 	m_bKeepChoice	= FALSE;
+	m_nStatus = 0;
 }
 
 

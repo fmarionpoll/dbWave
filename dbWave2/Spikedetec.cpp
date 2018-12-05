@@ -20,7 +20,7 @@
 CSpikeDetectDlg::CSpikeDetectDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSpikeDetectDlg::IDD, pParent)
 {
-
+	m_iDetectParmsDlg = 0;
 }
 
 void CSpikeDetectDlg::DoDataExchange(CDataExchange* pDX)

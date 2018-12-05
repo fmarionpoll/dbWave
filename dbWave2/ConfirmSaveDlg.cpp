@@ -14,6 +14,7 @@ IMPLEMENT_DYNAMIC(CConfirmSaveDlg, CDialog)
 CConfirmSaveDlg::CConfirmSaveDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CConfirmSaveDlg::IDD, pParent)
 {
+	m_timeleft = 5;
 }
 
 CConfirmSaveDlg::~CConfirmSaveDlg()

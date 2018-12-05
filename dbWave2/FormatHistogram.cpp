@@ -17,9 +17,9 @@
 CFormatHistogramDlg::CFormatHistogramDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CFormatHistogramDlg::IDD, pParent)
 {
-	//m_Ymax = 0.0f;
-	//m_xfirst = 0.0f;
-	//m_xlast = 0.0f;
+	m_Ymax = 0.0f;
+	m_xfirst = 0.0f;
+	m_xlast = 0.0f;
 }
 
 

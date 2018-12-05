@@ -18,7 +18,8 @@ CEditStimArrayDlg::CEditStimArrayDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CEditStimArrayDlg::IDD, pParent)
 	, m_value(0)
 {
-	m_pimagelist = NULL;
+	m_pimagelist = nullptr;
+	m_pstimsaved = nullptr;
 }
 
 CEditStimArrayDlg::~CEditStimArrayDlg()

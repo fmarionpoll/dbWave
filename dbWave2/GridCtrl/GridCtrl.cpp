@@ -246,6 +246,7 @@ CGridCtrl::CGridCtrl(int nRows, int nCols, int nFixedRows, int nFixedCols)
 	m_AllowSelectRowInFixedCol = false;
 	m_bDragRowMode = TRUE; // allow to drop a line over another one to change row order
 	m_pRtcDefault = RUNTIME_CLASS(CGridCell);
+	m_lParam = 0;
 
 	SetupDefaultCells();
 	SetGridBkColor(m_crShadow);

@@ -23,6 +23,7 @@ CDataFileX::CDataFileX()
 	m_bHeaderSize = 0;
 	m_ulOffsetData = 0;
 	m_ulOffsetHeader = 0;
+	m_ulbytescount = 0;
 	m_idType=DOCTYPE_UNKNOWN;
 	m_csType= _T("UNKNOWN");
 }
@@ -57,7 +58,7 @@ void CDataFileX::Dump(CDumpContext& dc) const
 long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
 {
 	// seek and read CFile
-	LONGLONG lOff = (dataIndex * sizeof(short)) + m_ulOffsetData;
+	LONGLONG lOff = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
 	Seek(lOff, CFile::begin);
 	long lSize = Read(pBuffer, nbpoints);
 	// adjust dependent parameters

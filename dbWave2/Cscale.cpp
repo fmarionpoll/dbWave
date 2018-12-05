@@ -16,6 +16,7 @@ IMPLEMENT_SERIAL(CScale, CObject, 1 /* schema number*/ )
 CScale::CScale()
 {
 	m_nintervals = 0;
+	m_npixels = 1;
 }
 
 
@@ -24,9 +25,10 @@ CScale::CScale()
 // --------------------------------------------------------------------------
 CScale::CScale(int npixels)
 {
+	m_npixels = 1;
 	m_intervals.SetSize(npixels);
 	m_position.SetSize(npixels+1);
-	m_nintervals = 0;	
+	m_nintervals = 0;
 }
 
 //---------------------------------------------------------------------------

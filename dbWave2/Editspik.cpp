@@ -30,8 +30,9 @@ CSpikeEditDlg::CSpikeEditDlg(CWnd* pParent /*=NULL*/)
 	m_bartefact = FALSE;
 	m_displayratio = 0;
 	m_yvextent = 0;
-	m_pSpkList=NULL;		// spike list
-	m_dbDoc=NULL;			// source data doc cDocument	
+	m_pSpkList =nullptr;		// spike list
+	m_dbDoc = nullptr;			// source data doc cDocument
+	m_spikeChan = 0;
 }
 
 void CSpikeEditDlg::DoDataExchange(CDataExchange* pDX)

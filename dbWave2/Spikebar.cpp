@@ -22,8 +22,8 @@ END_MESSAGE_MAP()
 
 CSpikeBarWnd::CSpikeBarWnd()
 {
-	m_pSL=NULL;
-	m_penvelope = NULL;
+	m_pSL= nullptr;
+	m_penvelope = nullptr;
 	m_lFirst = 0;
 	m_lLast = 0;
 	m_currentclass=-999;
@@ -35,7 +35,8 @@ CSpikeBarWnd::CSpikeBarWnd()
 	SetbUseDIB(FALSE);
 	m_csEmpty = "no \nspikes";
 	m_ballFiles = FALSE;
-	m_pDoc = NULL;
+	m_pDoc = nullptr;
+	m_spklast = 0;
 }  
 
 CSpikeBarWnd::~CSpikeBarWnd()

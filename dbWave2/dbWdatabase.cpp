@@ -74,6 +74,7 @@ CdbWdatabase::CdbWdatabase()
 	m_mainTableSet.m_strSort = m_desctab[CH_ACQDATE].szTableCol;
 
 	m_databasePath.Empty();
+	m_pcurrentSpkFileName = nullptr;
 }
 
 

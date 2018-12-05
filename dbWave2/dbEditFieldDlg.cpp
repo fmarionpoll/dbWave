@@ -31,6 +31,7 @@ CdbEditFieldDlg::CdbEditFieldDlg(CWnd* pParent /*=NULL*/)
 	m_initialID = -1;
 	m_bIndexTable = TRUE;
 	m_first=-1;
+	m_sourceID = 0;
 }
 
 CdbEditFieldDlg::~CdbEditFieldDlg()

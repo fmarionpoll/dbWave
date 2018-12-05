@@ -59,6 +59,7 @@ IMPLEMENT_DYNAMIC(CGridCellBase, CObject)
 
 CGridCellBase::CGridCellBase()
 {
+	m_nState = 0;
     Reset();
 }
 

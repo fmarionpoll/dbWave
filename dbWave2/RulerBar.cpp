@@ -108,6 +108,7 @@ CRulerBar::CRulerBar()
 	m_pRuler = NULL;
 	m_bCaptured = FALSE;
 	m_captureMode = -1;
+	m_bBottom = true;
 }
 
 CRulerBar::~CRulerBar()

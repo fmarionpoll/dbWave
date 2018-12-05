@@ -182,6 +182,9 @@ CScopeScreen::CScopeScreen()
 
 	m_pXRulerBar = NULL;
 	m_pYRulerBar = NULL;
+
+	m_liFirst = 0;
+	m_liLast = 0;
 }
 
 CScopeScreen::~CScopeScreen()

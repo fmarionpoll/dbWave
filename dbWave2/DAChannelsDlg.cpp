@@ -20,7 +20,7 @@ CDAChannelsDlg::CDAChannelsDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CDAChannelsDlg::IDD, pParent)
 	, m_bChannel2(FALSE)
 {
-
+	m_samplingRate = 10E3;
 }
 
 CDAChannelsDlg::~CDAChannelsDlg()

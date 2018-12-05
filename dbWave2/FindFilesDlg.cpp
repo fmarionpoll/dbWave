@@ -21,7 +21,8 @@ CFindFilesDlg::CFindFilesDlg(CWnd* pParent /*=NULL*/)
 	m_path = _T("");
 	m_selinit = 0;
 	m_ioption=0;
-	m_pdbDoc = NULL;
+	m_pdbDoc = nullptr;
+	m_nfound = 0;
 }
 
 // -----------------------------------------------------------------------------

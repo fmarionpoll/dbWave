@@ -22,6 +22,7 @@ CPrintDrawAreaDlg::CPrintDrawAreaDlg(CWnd* pParent /*=NULL*/)
 	m_WidthDoc = 0;
 	m_spkheight = 0;
 	m_spkwidth = 0;
+	mdPM = nullptr;
 }
 
 void CPrintDrawAreaDlg::DoDataExchange(CDataExchange* pDX)

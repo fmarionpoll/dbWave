@@ -26,7 +26,6 @@ public:
 	CWaveFormat*	m_pwaveFormat;
     
     UINT	m_postmessage;		// parameter passed on exit to activate another dialog
-    BOOL	m_bPrepareAcq;		// allow acquisition parameters
     float	m_ratemax;			// max sampling rate (per chan)
     float	m_ratemin;			// min sampling rate (per chan)
     UINT	m_bufferWsizemax;	// maximum buffer size

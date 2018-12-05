@@ -41,6 +41,7 @@ CGridCellDateTime::CGridCellDateTime() : CGridCell()
 
 CGridCellDateTime::CGridCellDateTime(DWORD dwStyle) : CGridCell()
 {
+	m_dwStyle = 0;
 	Init(dwStyle);
 }
 

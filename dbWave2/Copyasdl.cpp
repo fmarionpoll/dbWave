@@ -17,6 +17,8 @@ CCopyAsDlg::CCopyAsDlg(CWnd* pParent /*=NULL*/)
 {
 	m_nabcissa = 0;
 	m_nordinates = 0;
+	m_ioption = 0;
+	m_iunit = 0;
 }
 
 void CCopyAsDlg::DoDataExchange(CDataExchange* pDX)

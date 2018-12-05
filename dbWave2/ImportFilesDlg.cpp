@@ -32,6 +32,7 @@ CImportFilesDlg::CImportFilesDlg(CWnd* pParent /*=NULL*/)
 {
 	m_bconvert=FALSE;
 	m_option = 0;
+	m_pconvertedFiles = nullptr;
 }
 
 CImportFilesDlg::~CImportFilesDlg()

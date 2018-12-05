@@ -17,7 +17,7 @@ CEditListDlg::CEditListDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CEditListDlg::IDD, pParent)
 	, m_csNewString(_T(""))
 {
-
+	pCo = nullptr;
 }
 
 CEditListDlg::~CEditListDlg()

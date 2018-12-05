@@ -24,6 +24,7 @@ int CFilterWnd::m_noCol[] = {
 
 CFilterWnd::CFilterWnd()
 {
+	m_pDoc = nullptr;
 }
 
 CFilterWnd::~CFilterWnd()

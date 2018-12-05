@@ -20,6 +20,7 @@ CDataSeriesFormatDlg::CDataSeriesFormatDlg(CWnd* pParent /*=NULL*/)
 {
 	m_maxmv = 0.0f;
 	m_minmv = 0.0f;
+	m_binzero = 2048;
 }
 
 

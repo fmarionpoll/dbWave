@@ -20,6 +20,7 @@ CPrintMarginsDlg::CPrintMarginsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPrintMarginsDlg::IDD, pParent)
 {
  	m_bCaptured = FALSE;
+	mdPM = nullptr;
 }
 
 void CPrintMarginsDlg::DoDataExchange(CDataExchange* pDX)

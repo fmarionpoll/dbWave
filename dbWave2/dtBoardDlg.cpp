@@ -13,6 +13,9 @@ CDataTranslationBoardDlg::CDataTranslationBoardDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CDataTranslationBoardDlg::IDD, pParent)
 {
 	m_pDTAcq32 = NULL;
+	m_pAnalogIN = nullptr;
+	m_pAnalogOUT = nullptr;
+	m_nsubsystems = 0;
 }
 
 CDataTranslationBoardDlg::~CDataTranslationBoardDlg()
