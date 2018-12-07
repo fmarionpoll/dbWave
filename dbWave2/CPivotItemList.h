@@ -24,25 +24,25 @@ public:
 	LPDISPATCH get_Application()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	long get_Creator()
 	{
 		long result;
-		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Parent()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	long get_Count()
 	{
 		long result;
-		InvokeHelper(0x76, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x76, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH Item(VARIANT& Index)
@@ -62,7 +62,7 @@ public:
 	LPUNKNOWN _NewEnum()
 	{
 		LPUNKNOWN result;
-		InvokeHelper(0xfffffffc, DISPATCH_METHOD, VT_UNKNOWN, (void*)&result, NULL);
+		InvokeHelper(0xfffffffc, DISPATCH_METHOD, VT_UNKNOWN, (void*)&result, nullptr);
 		return result;
 	}
 

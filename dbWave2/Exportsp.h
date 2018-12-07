@@ -9,7 +9,7 @@ class CExportSpikeInfosDlg : public CDialog
 {
 // Construction
 public:
-	CExportSpikeInfosDlg(CWnd* pParent = NULL);	// standard constructor
+	CExportSpikeInfosDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_EXPORTSPIKEINFOS };

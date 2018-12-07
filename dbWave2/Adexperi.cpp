@@ -1,13 +1,11 @@
 // ADExperi.cpp : implementation file
 //
 #include "stdafx.h"
-#include <afxconv.h>           // For LPTSTR -> LPSTR macros
 
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "EditListDlg.h"
 #include "adexperi.h"
-#include <shlobj.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,7 +26,7 @@ ADExperimentDlg::ADExperimentDlg(CWnd* pParent /*=NULL*/)
 	m_exptnumber = 0;
 	m_insectnumber = 0;
 	m_csPathname = _T("");
-	m_pADC_options = NULL;
+	m_pADC_options = nullptr;
 	m_bADexpt = TRUE;
 	m_bFilename = TRUE;
 	m_pwaveFormat = nullptr;
@@ -104,7 +102,7 @@ void ADExperimentDlg::OnOK()
 	CFileFind cf;
 	if (!cspath.IsEmpty() && !cf.FindFile(cspath))
 	{
-		if (!CreateDirectory(cspath, NULL))
+		if (!CreateDirectory(cspath, nullptr))
 			AfxMessageBox(IDS_DIRECTORYFAILED);
 	}
 
@@ -175,8 +173,8 @@ void ADExperimentDlg::OnOK()
 		m_pADC_options->icsA_operatorname = SaveList(&m_coOperator, &(m_pADC_options->csA_operatorname));
 		m_pADC_options->icsA_concentration2 = SaveList(&m_coConcentration2, &(m_pADC_options->csA_concentration2));
 		m_pADC_options->icsA_stimulus2 = SaveList(&m_coStimulus2, &(m_pADC_options->csA_stimulus2));
-		m_pADC_options->icsA_repeat = SaveList(&m_coRepeat, NULL);
-		m_pADC_options->icsA_repeat2 = SaveList(&m_coRepeat2, NULL);
+		m_pADC_options->icsA_repeat = SaveList(&m_coRepeat, nullptr);
+		m_pADC_options->icsA_repeat2 = SaveList(&m_coRepeat2, nullptr);
 		m_pADC_options->icsA_expt = SaveList(&m_coExpt, &(m_pADC_options->csA_expt));
 
 		CDialog::OnOK();
@@ -232,8 +230,8 @@ BOOL ADExperimentDlg::OnInitDialog()
 	LoadList(&m_coSex,			&(m_pADC_options->csA_sex),				m_pADC_options->icsA_sex,				&(m_pdbDoc->m_pDB->m_sexSet));
 	LoadList(&m_coOperator,		&(m_pADC_options->csA_operatorname),	m_pADC_options->icsA_operatorname,		&(m_pdbDoc->m_pDB->m_operatorSet));
 	LoadList(&m_coExpt,			&(m_pADC_options->csA_expt),			m_pADC_options->icsA_expt,				&(m_pdbDoc->m_pDB->m_exptSet));
-	LoadList(&m_coRepeat,		NULL,									m_pADC_options->icsA_repeat,			NULL);
-	LoadList(&m_coRepeat2,		NULL,									m_pADC_options->icsA_repeat2,			NULL);
+	LoadList(&m_coRepeat, nullptr,									m_pADC_options->icsA_repeat, nullptr);
+	LoadList(&m_coRepeat2, nullptr,									m_pADC_options->icsA_repeat2, nullptr);
 
 	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN1))->SetRange32( 0, 99999);
 	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN2))->SetRange32( 0, 99999);
@@ -270,7 +268,7 @@ BOOL ADExperimentDlg::OnInitDialog()
 int ADExperimentDlg::SaveList(CComboBox* pcombo, CStringArray* pS)
 {
 	int iexist = -1;
-	if (pS != NULL)
+	if (pS != nullptr)
 	{
 		CString csEdit;
 		pcombo->GetWindowText(csEdit);
@@ -300,7 +298,7 @@ void ADExperimentDlg::LoadList(CComboBox* pcombo, CStringArray* pS, int isel, CD
 	pcombo->ResetContent();
 	int i;
 	// associated list available? yes
-	if (pS != NULL)
+	if (pS != nullptr)
 	{
 		for (i = 0; i < pS->GetSize(); i++)
 		{
@@ -323,7 +321,7 @@ void ADExperimentDlg::LoadList(CComboBox* pcombo, CStringArray* pS, int isel, CD
 	
 	// scan table and add missing strings
 	pcombo->SetCurSel(isel);
-	if (pmSet == NULL)
+	if (pmSet == nullptr)
 		return;
 
 	if (pmSet->IsOpen() && !pmSet->IsBOF()) 
@@ -447,7 +445,7 @@ void ADExperimentDlg::OnEnKillfocusMfceditbrowse1()
 	CFileFind cf;
 	if (!cspath.IsEmpty() && !cf.FindFile(cspath))
 	{
-		if (!CreateDirectory(cspath, NULL))
+		if (!CreateDirectory(cspath, nullptr))
 			AfxMessageBox(IDS_DIRECTORYFAILED);
 	}
 }

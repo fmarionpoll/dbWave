@@ -10,7 +10,7 @@ class CRejectRecordDlg : public CDialog
 {
 // Construction
 public:
-	CRejectRecordDlg(CWnd* pParent = NULL);   // standard constructor
+	CRejectRecordDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_DEFINEARTEFACTSLIMITS };

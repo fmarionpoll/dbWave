@@ -111,18 +111,17 @@ END_MESSAGE_MAP()
 
 CTemplateWnd::CTemplateWnd()
 {                                        
-	m_pSumArray = NULL;
-	m_pSUM0 = NULL;		// array with sum (X)
-	m_pSUM20 = NULL;	// array with sum (X * X)
+	m_pSumArray = nullptr;
+	m_pSUM0 = nullptr;		// array with sum (X)
+	m_pSUM20 = nullptr;	// array with sum (X * X)
 	m_nitems=0;			// n elements
 	m_tpllen=0;			// length of template array
-	m_pAvg=NULL;
+	m_pAvg=nullptr;
 	m_bValid=FALSE;
 	m_ktolerance=1.96f;
 	m_globalstd=0.f;
 	m_bUseDIB=TRUE;
 	m_classID=0;
-
 }
 
 // ---------------------------------------------------------------------------------
@@ -134,15 +133,15 @@ CTemplateWnd::~CTemplateWnd()
 
 void CTemplateWnd::DeleteArrays()
 {
-	if (m_pSumArray != NULL)
+	if (m_pSumArray != nullptr)
 		delete [] m_pSumArray;
-	if (m_pAvg != NULL)
+	if (m_pAvg != nullptr)
 		delete [] m_pAvg;
 
-	m_pSumArray = NULL;
-	m_pSUM0 = NULL;
-	m_pSUM20 = NULL;
-	m_pAvg = NULL;
+	m_pSumArray = nullptr;
+	m_pSUM0 = nullptr;
+	m_pSUM20 = nullptr;
+	m_pAvg = nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

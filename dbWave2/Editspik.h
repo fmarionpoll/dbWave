@@ -9,7 +9,7 @@ class CSpikeEditDlg : public CDialog
 {
 // Construction
 public:
-	CSpikeEditDlg(CWnd* pParent = NULL);	// standard constructor
+	CSpikeEditDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_EDITSPIKE };

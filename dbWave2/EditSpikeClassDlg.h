@@ -7,7 +7,7 @@ class CEditSpikeClassDlg : public CDialog
 	DECLARE_DYNAMIC(CEditSpikeClassDlg)
 
 public:
-	CEditSpikeClassDlg(CWnd* pParent = NULL);   // standard constructor
+	CEditSpikeClassDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditSpikeClassDlg();
 
 // Dialog Data

@@ -25,7 +25,7 @@ DWORD   CCyberAmp::m_C300fReceiveDelay;
 CCyberAmp::CCyberAmp()
 {
 	C300_ResetParms();
-	m_hComm = NULL;
+	m_hComm = nullptr;
 }
 
 void CCyberAmp::C300_ResetParms() 
@@ -40,7 +40,7 @@ void CCyberAmp::C300_ResetParms()
 
 CCyberAmp::~CCyberAmp()
 {
-	if (m_hComm != NULL)
+	if (m_hComm != nullptr)
 		CloseHandle(m_hComm);
 }
 
@@ -57,9 +57,9 @@ END_MESSAGE_MAP()
 int CCyberAmp::Initialize( void )
 {
 	C300_ResetParms();
-	if (m_hComm != NULL)
+	if (m_hComm != nullptr)
 		CloseHandle(m_hComm);
-	m_hComm = NULL;
+	m_hComm = nullptr;
 
 	m_C300nLastError = ABUS_Initialize();
 
@@ -171,7 +171,7 @@ void CCyberAmp::C300_INT_AddCommand( char *lpszCommandText )
 
     // Look for the last portion of the command string
 	char *lpszEndOfCommand = strrchr( m_C300szCommands, ENDCOMMAND );
-    if (lpszEndOfCommand  != NULL)
+    if (lpszEndOfCommand  != nullptr)
         ++lpszEndOfCommand;
     else 
         lpszEndOfCommand = m_C300szCommands;
@@ -209,7 +209,7 @@ int CCyberAmp::C300_FlushCommandsAndAwaitResponse( void )
         do  
 		{
 			if ((lpszEndCommand = strchr( m_C300szCommands, ENDCOMMAND ))
-                     != NULL)
+                     != nullptr)
             {           
                 // copy the first half of this string into szText
                 //     and terminate it
@@ -676,7 +676,7 @@ int CCyberAmp::C300_ZeroDCOffset( int nChannel, float *pfOffsetReturned )
 			// Check the returned text for any error.  Pick out the
             //    offset value and return it to the caller.
             if (*m_C300szRcvText == 'D' 
-                    && (lpszOffset = strchr( m_C300szRcvText, '=' )) != NULL)
+                    && (lpszOffset = strchr( m_C300szRcvText, '=' )) != nullptr)
             {
 				if (*(lpszOffset + 1) == '!')
 					if (C300_GetChannelStatus(nChannel, szText) == C300_SUCCESS)
@@ -801,7 +801,7 @@ int CCyberAmp::C300_GetOverloadStatus( int *lpnChannelMask )
 	        while (sscanf_s( lpszString, "%d", &nChannel ) > 0)
 			{
                 *lpnChannelMask |= (2 << (nChannel - 1));
-                if ((lpszTemp = strchr( lpszString, ' ' )) != NULL)
+                if ((lpszTemp = strchr( lpszString, ' ' )) != nullptr)
                     lpszString = lpszTemp + 1;
                 else 
                     lpszString = m_C300szRcvText + strlen( m_C300szRcvText );
@@ -838,7 +838,7 @@ int CCyberAmp::C300_GetLastReception( char *lpszResultText )
 	char* pCharend;
 	pCharend = strchr(m_C300szRcvText, ENDCOMMAND); 
 	// if found, add zero at the end
-	if (pCharend != NULL)	
+	if (pCharend != nullptr)	
 		*(pCharend + 1) = '\0';
 	// if not found search for the end of the string
 	else
@@ -991,10 +991,10 @@ int	CCyberAmp::ABUS_Initialize( void )
 int	CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed )
 {
 	// close file if already opened
-	if (m_hComm != NULL)
+	if (m_hComm != nullptr)
 	{
 		CloseHandle(m_hComm);
-		m_hComm = NULL;
+		m_hComm = nullptr;
 	}
 	m_C300nOutputPort = nWhichPort;
 	m_C300nOutputSpeed = nWhichSpeed;
@@ -1015,10 +1015,10 @@ int	CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed )
 	m_hComm = CreateFile(cs_comchan,		// file name (com port)
 			GENERIC_READ | GENERIC_WRITE,	// dwDesiredAccess: generic RW
 			0,				// dwShareMode: exclusive access
-			NULL,			// lpSecurityAttributes: no security attributes
+			nullptr,			// lpSecurityAttributes: no security attributes
 			OPEN_EXISTING,	// dwCreationDisposition: must exist
 			0,				// dwFlagsAndAttributes: not overlapped I/O
-			NULL);			// hTemplateFile: handle to file with attrib to copy
+			nullptr);			// hTemplateFile: handle to file with attrib to copy
 
 	if (m_hComm == INVALID_HANDLE_VALUE)
 	{
@@ -1091,7 +1091,7 @@ int CCyberAmp::ABUS_ReceiveString(int nOutputPort, char*  lpszCmdString, int nWa
 	SetCommTimeouts(m_hComm, &m_CommTimeOuts);
 	fsuccess = GetCommTimeouts(m_hComm, &m_CommTimeOuts);
 	
-	BOOL bSuccess = ReadFile(m_hComm, lpszCmdString, dwNumberOfBytesToRead, &dwNumberOfBytesRead, NULL);	
+	BOOL bSuccess = ReadFile(m_hComm, lpszCmdString, dwNumberOfBytesToRead, &dwNumberOfBytesRead, nullptr);	
 	if (bSuccess)
 	{
 		char* pchar = &lpszCmdString[dwNumberOfBytesRead];

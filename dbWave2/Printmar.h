@@ -10,7 +10,7 @@ class CPrintMarginsDlg : public CDialog
 {
 // Construction
 public:
-	CPrintMarginsDlg(CWnd* pParent = NULL);	// standard constructor
+	CPrintMarginsDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_PRINTMARGINS };

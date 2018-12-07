@@ -10,7 +10,7 @@ class CPrintDataOptionsDlg : public CDialog
 {
 // Construction
 public:
-	CPrintDataOptionsDlg(CWnd* pParent = NULL);	// standard constructor
+	CPrintDataOptionsDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_PRINTDATADRAWOPTIONS };
@@ -36,7 +36,7 @@ class CPrintDataCommentsDlg : public CDialog
 {
 // Construction
 public:
-	CPrintDataCommentsDlg(CWnd* pParent = NULL);	// standard constructor
+	CPrintDataCommentsDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_PRINTDATACOMMENTSOPTIONS };

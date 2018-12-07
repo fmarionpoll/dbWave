@@ -125,7 +125,7 @@ void CFormatHistogramDlg::OnPaint()
 
 void CFormatHistogramDlg::OnHistBordercolor() 
 {
-	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, NULL);
+	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, nullptr);
 	if(IDOK == dlg.DoModal() != IDOK)
 	{
 		m_crHistBorder=dlg.GetColor();
@@ -135,7 +135,7 @@ void CFormatHistogramDlg::OnHistBordercolor()
 
 void CFormatHistogramDlg::OnStimulusFillcolor() 
 {
-	CColorDialog dlg(m_crStimFill, CC_RGBINIT, NULL);
+	CColorDialog dlg(m_crStimFill, CC_RGBINIT, nullptr);
 	if(IDOK == dlg.DoModal())
 	{
 		m_crStimFill=dlg.GetColor();
@@ -145,7 +145,7 @@ void CFormatHistogramDlg::OnStimulusFillcolor()
 
 void CFormatHistogramDlg::OnStimulusBordercolor() 
 {
-	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, NULL);
+	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, nullptr);
 	if(IDOK == dlg.DoModal())
 	{
 		m_crStimBorder=dlg.GetColor();
@@ -155,7 +155,7 @@ void CFormatHistogramDlg::OnStimulusBordercolor()
 
 void CFormatHistogramDlg::OnButtonHistFill() 
 {
-	CColorDialog dlg(m_crHistFill, CC_RGBINIT, NULL);
+	CColorDialog dlg(m_crHistFill, CC_RGBINIT, nullptr);
 	if(IDOK == dlg.DoModal())
 	{
 		m_crHistFill=dlg.GetColor();
@@ -165,7 +165,7 @@ void CFormatHistogramDlg::OnButtonHistFill()
 
 void CFormatHistogramDlg::OnBackgroundcolor() 
 {
-	CColorDialog dlg(m_crChartArea, CC_RGBINIT, NULL);
+	CColorDialog dlg(m_crChartArea, CC_RGBINIT, nullptr);
 	if(IDOK == dlg.DoModal())
 	{
 		m_crChartArea=dlg.GetColor();

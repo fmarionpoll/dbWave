@@ -9,7 +9,7 @@ class CDataViewAbcissaDlg : public CDialog
 {
 // Construction
 public:
-	CDataViewAbcissaDlg(CWnd* pParent = NULL);	// standard constructor
+	CDataViewAbcissaDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_ABCISSADLG };

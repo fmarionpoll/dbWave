@@ -9,7 +9,7 @@
 class CdbIndexTable : public CDaoRecordset
 {
 public:
-	CdbIndexTable(CDaoDatabase* pDatabase = NULL);
+	CdbIndexTable(CDaoDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CdbIndexTable)
 
 // Field/Param Data

@@ -64,7 +64,7 @@ bool cdxCRot90DC::Create(CDC & destDC, const CRect & rectDC, int iAngle, bool bC
 
 	if(destDC.IsPrinting())
 	{
-		m_pDC	=	NULL;
+		m_pDC	= nullptr;
 		ASSERT(false);		// sorry, can't be used for printing.
 								// If you want you can try to use it
 								// - please report any results you made :)
@@ -79,7 +79,7 @@ bool cdxCRot90DC::Create(CDC & destDC, const CRect & rectDC, int iAngle, bool bC
 
 	if((m_rectDCClipped.left >= m_rectDCClipped.right) || (m_rectDCClipped.top >= m_rectDCClipped.bottom))
 	{
-		m_pDC	=	NULL;		// empty rectangle - nothing to do ...
+		m_pDC	= nullptr;		// empty rectangle - nothing to do ...
 		m_rectMine.SetRectEmpty();
 		return false;
 	}
@@ -106,7 +106,7 @@ bool cdxCRot90DC::Create(CDC & destDC, const CRect & rectDC, int iAngle, bool bC
 		if(!CreateCompatibleDC(&destDC))
 		{
 			ASSERT(false);		// Oups ??
-			m_pDC	=	NULL;		// empty rectangle - nothing to do ...
+			m_pDC	= nullptr;		// empty rectangle - nothing to do ...
 			m_rectMine.SetRectEmpty();
 			return false;
 		}
@@ -127,7 +127,7 @@ bool cdxCRot90DC::Create(CDC & destDC, const CRect & rectDC, int iAngle, bool bC
 	// check whether we need a new bitmap (reusing old if possible)
 	//
 
-	if(m_Bitmap.m_hObject != NULL)
+	if(m_Bitmap.m_hObject != nullptr)
 	{
 		if((m_szBitmap.cx < szNeeded.cx) || (m_szBitmap.cy < szNeeded.cy))
 		{
@@ -137,7 +137,7 @@ bool cdxCRot90DC::Create(CDC & destDC, const CRect & rectDC, int iAngle, bool bC
 		}
 	}
 
-	if(m_Bitmap.m_hObject == NULL)
+	if(m_Bitmap.m_hObject == nullptr)
 	{
 		m_szBitmap	=	szNeeded;
 		VERIFY( m_Bitmap.CreateCompatibleBitmap(m_pDC,m_szBitmap.cx,m_szBitmap.cy) );
@@ -204,7 +204,7 @@ bool cdxCRot90DC::Finish()
 
 void cdxCRot90DC::Destroy()
 {
-	m_pDC	=	NULL;
+	m_pDC	= nullptr;
 	if(!m_hDC)
 		return;
 
@@ -333,7 +333,7 @@ void cdxCRot90DC::DrawControl(CRect rect, CString strText, HICON hIcon, UINT nDr
 							sz,
 							hIcon,
 							DST_ICON|((nMyFlags & DRC_DISABLED) ? DSS_DISABLED : DSS_NORMAL),
-							(CBrush *)NULL);
+							(CBrush *)nullptr);
 		else
 		{
 			cdxCRot90DC	iconDC(this,CRect(pntIcon.x,pntIcon.y,pntIcon.x + sz.cx,pntIcon.y + sz.cy),-mkAngle(m_Angle),true);
@@ -343,7 +343,7 @@ void cdxCRot90DC::DrawControl(CRect rect, CString strText, HICON hIcon, UINT nDr
 										rect.Size(),
 										hIcon,
 										DST_ICON|((nMyFlags & DRC_DISABLED) ? DSS_DISABLED : DSS_NORMAL),
-										(CBrush *)NULL);
+										(CBrush *)nullptr);
 		}
 	}
 

@@ -10,7 +10,7 @@ class CListBClaSizeDlg : public CDialog
 {
 // Construction
 public:
-	CListBClaSizeDlg(CWnd* pParent = NULL);	// standard constructor
+	CListBClaSizeDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_LISTBCLAPARAMETERS };

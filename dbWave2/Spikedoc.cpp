@@ -1777,7 +1777,7 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 
 CSpikeList*	CSpikeDoc::SetSpkListCurrent (int ichan)
 {
-	CSpikeList* pspklist= NULL;
+	CSpikeList* pspklist= nullptr;
 	if (ichan < 0)
 		ichan = 0;
 
@@ -1796,7 +1796,7 @@ CSpikeList*	CSpikeDoc::SetSpkListCurrent (int ichan)
 
 CSpikeList*	CSpikeDoc::GetSpkListCurrent()
 {
-	CSpikeList* pspklist= NULL;
+	CSpikeList* pspklist= nullptr;
 	pspklist = &m_spklistArray[m_currspklist];
 	ASSERT(pspklist);
 	return pspklist;

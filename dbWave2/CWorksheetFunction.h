@@ -26,19 +26,19 @@ public:
 	LPDISPATCH get_Application()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	long get_Creator()
 	{
 		long result;
-		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Parent()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT _WSFunction(VARIANT& Arg1, VARIANT& Arg2, VARIANT& Arg3, VARIANT& Arg4, VARIANT& Arg5, VARIANT& Arg6, VARIANT& Arg7, VARIANT& Arg8, VARIANT& Arg9, VARIANT& Arg10, VARIANT& Arg11, VARIANT& Arg12, VARIANT& Arg13, VARIANT& Arg14, VARIANT& Arg15, VARIANT& Arg16, VARIANT& Arg17, VARIANT& Arg18, VARIANT& Arg19, VARIANT& Arg20, VARIANT& Arg21, VARIANT& Arg22, VARIANT& Arg23, VARIANT& Arg24, VARIANT& Arg25, VARIANT& Arg26, VARIANT& Arg27, VARIANT& Arg28, VARIANT& Arg29, VARIANT& Arg30)
@@ -128,7 +128,7 @@ public:
 	double Pi()
 	{
 		double result;
-		InvokeHelper(0x4013, DISPATCH_METHOD, VT_R8, (void*)&result, NULL);
+		InvokeHelper(0x4013, DISPATCH_METHOD, VT_R8, (void*)&result, nullptr);
 		return result;
 	}
 	double Ln(double Arg1)

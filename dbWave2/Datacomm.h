@@ -10,7 +10,7 @@ class CDataCommentsDlg : public CDialog
 {
 // Construction
 public:
-	CDataCommentsDlg(CWnd* pParent = NULL);	// standard constructor
+	CDataCommentsDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_DATACOMMENTS };

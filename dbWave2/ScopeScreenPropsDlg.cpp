@@ -237,7 +237,7 @@ void CScopeScreenPropsDlg::OnEnChangeYCells()
 
 void CScopeScreenPropsDlg::OnBackgroundColor() 
 {
-	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, NULL);
+	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, nullptr);
 	if(IDOK != dlg.DoModal())
 		return;
 	m_pscope->m_parms.crScopeFill= dlg.GetColor();
@@ -247,7 +247,7 @@ void CScopeScreenPropsDlg::OnBackgroundColor()
 
 void CScopeScreenPropsDlg::OnGridColor() 
 {
-	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, NULL);
+	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, nullptr);
 	if(IDOK != dlg.DoModal())
 		return;
 	m_pscope->m_parms.crScopeGrid= dlg.GetColor();

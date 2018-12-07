@@ -104,8 +104,8 @@ CRulerBar::CRulerBar()
 	m_penColor = ::GetSysColor(COLOR_WINDOWTEXT);
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH|FF_ROMAN, _T("Arial"));
 	m_bHorizontal = -1;
-	m_pLineViewWnd=NULL;
-	m_pRuler = NULL;
+	m_pLineViewWnd= nullptr;
+	m_pRuler = nullptr;
 	m_bCaptured = FALSE;
 	m_captureMode = -1;
 	m_bBottom = true;
@@ -128,7 +128,7 @@ END_MESSAGE_MAP()
 
 void CRulerBar::OnPaint()
 {
-	DrawScalefromRuler(NULL);
+	DrawScalefromRuler(nullptr);
 }
 
 void CRulerBar::DrawScalefromRuler(CRuler * pRuler)
@@ -136,11 +136,11 @@ void CRulerBar::DrawScalefromRuler(CRuler * pRuler)
 	CPaintDC dc(this);
 
 	// exit if the length is not properly defined
-	if (pRuler == NULL)
+	if (pRuler == nullptr)
 	{
-		if (m_pRuler != NULL)
+		if (m_pRuler != nullptr)
 			pRuler = m_pRuler;
-		else if (m_pLineViewWnd != NULL)
+		else if (m_pLineViewWnd != nullptr)
 		{
 			if (m_rcClient.Height() > m_rcClient.Width())
 				m_pRuler = &m_pLineViewWnd->m_yRuler;
@@ -285,7 +285,7 @@ BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwSt
 {
 	if ((rect.right - rect.left)  < (rect.bottom - rect.top))
 		m_bHorizontal = FALSE;
-	return CWnd::Create(NULL, _T("RulerBarWnd"), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(nullptr, _T("RulerBarWnd"), dwStyle, rect, pParentWnd, nID);
 }
 
 BOOL CRulerBar::Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAxis, int dSize, UINT nID)
@@ -306,7 +306,7 @@ BOOL CRulerBar::Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAx
 		rectthis.left = rectthis.right - dSize;
 		m_bHorizontal = FALSE;
 	}
-	return CWnd::Create(_T("RulerBarWnd"), NULL, WS_CHILD, rectthis, pParentWnd, nID);
+	return CWnd::Create(_T("RulerBarWnd"), nullptr, WS_CHILD, rectthis, pParentWnd, nID);
 }
 
 #define MODEZOOM	0
@@ -354,7 +354,7 @@ void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 		ReleaseCapture();
 		newpt = point;
 		int delta = -(newpt.y - oldpt.y);
-		if (m_pLineViewWnd != NULL)
+		if (m_pLineViewWnd != nullptr)
 		{
 			CRect prevrect;
 			m_pLineViewWnd->GetClientRect(prevrect);

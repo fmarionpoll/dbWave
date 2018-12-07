@@ -89,7 +89,7 @@ void CSpikeEditDlg::LoadSpikeParms()
 BOOL CSpikeEditDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();			// call base class function
-	if (m_pSpkList == NULL || m_pSpkList->GetTotalSpikes() == 0)
+	if (m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() == 0)
 	{
 		EndDialog(FALSE);			// exit if no spikes to edit
 		return TRUE;
@@ -114,7 +114,7 @@ BOOL CSpikeEditDlg::OnInitDialog()
 	m_spkForm.SetRangeMode(RANGE_ALL);		// display mode (lines)
 	m_spkForm.SetPlotMode(PLOT_BLACK, 0);// display also artefacts
 
-	if (m_dbDoc != NULL)
+	if (m_dbDoc != nullptr)
 	{
 		VERIFY(m_sourceView.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
 		m_sourceView.SetbUseDIB(FALSE);
@@ -349,7 +349,7 @@ void CSpikeEditDlg::OnEnChangeYextent()
 
 void CSpikeEditDlg::LoadSourceData()
 {
-	if (m_dbDoc == NULL)
+	if (m_dbDoc == nullptr)
 		return;
 
 	CSpikeElemt* pS = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms	
@@ -391,7 +391,7 @@ void CSpikeEditDlg::LoadSourceData()
 
 void CSpikeEditDlg::LoadSpikeFromData(int shift)
 {
-	if (m_dbDoc == NULL)
+	if (m_dbDoc == nullptr)
 		return;
 
 	int offset = m_pSpkList->GetSpikeAmplitudeOffset(m_spikeno);
@@ -439,7 +439,7 @@ void CSpikeEditDlg::OnDestroy()
 
 void CSpikeEditDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
@@ -480,7 +480,7 @@ void CSpikeEditDlg::UpdateSpikeScroll()
 
 void CSpikeEditDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDialog::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;

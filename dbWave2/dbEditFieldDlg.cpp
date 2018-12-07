@@ -69,7 +69,7 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// disable items not used here and enable only numeric input into edit boxes
-	if (m_pIndexTable == NULL)
+	if (m_pIndexTable == nullptr)
 		m_bIndexTable = FALSE;
 	else 
 		m_bIndexTable = TRUE;

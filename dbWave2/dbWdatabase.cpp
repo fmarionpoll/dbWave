@@ -433,7 +433,7 @@ BOOL CdbWdatabase::OpenTables()
 	try 
 	{
 		m_mainTableSet.m_defaultName = GetName();
-		m_mainTableSet.Open (dbOpenDynaset, NULL, 0);
+		m_mainTableSet.Open (dbOpenDynaset, nullptr, 0);
 	}
 	catch(CDaoException* e) 
 	{
@@ -452,7 +452,7 @@ BOOL CdbWdatabase::OpenTables()
 
 void CdbWdatabase::OpenIndexTable(int nOpenType, CdbIndexTable * pIndexTableSet) {
 	pIndexTableSet->m_defaultName = GetName();
-	pIndexTableSet->Open(dbOpenTable, NULL, 0);
+	pIndexTableSet->Open(dbOpenTable, nullptr, 0);
 }
 
 
@@ -811,14 +811,14 @@ DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_ACQDATE:
-		pdesc->pdataItem	= NULL; //&m_acq_date;
+		pdesc->pdataItem	= nullptr; //&m_acq_date;
 		ASSERT(pdesc->typeLocal == FIELD_DATE);
 		break; 
 	case CH_FILENAME:
 	case CH_FILESPK:
 	case CH_ACQ_COMMENTS:
 	case CH_MORE:
-		pdesc->pdataItem	= NULL; //&m_more;
+		pdesc->pdataItem	= nullptr; //&m_more;
 		ASSERT(pdesc->typeLocal == FIELD_TEXT);
 		break;
 	case CH_IDINSECT:
@@ -914,11 +914,11 @@ DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 		ASSERT(pdesc->typeLocal == FIELD_LONG);
 		break;
 	case CH_ACQDATE_DAY:
-		pdesc->pdataItem	= NULL; //&m_acqdate_day;
+		pdesc->pdataItem	= nullptr; //&m_acqdate_day;
 		ASSERT(pdesc->typeLocal == FIELD_DATE_YMD);
 		break;
 	case CH_ACQDATE_TIME:
-		pdesc->pdataItem	= NULL; //&m_acqdate_time;
+		pdesc->pdataItem	= nullptr; //&m_acqdate_time;
 		ASSERT(pdesc->typeLocal == FIELD_DATE_HMS);
 		break;
 	case CH_EXPT_ID:
@@ -929,7 +929,7 @@ DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 
 		// if it comes here, the program must have crashed because pdesc is not defined...
 	default:
-		return NULL;
+		return nullptr;
 		break;
 	}
 	////////////

@@ -10,7 +10,7 @@ class CPrintDrawAreaDlg : public CDialog
 {
 // Construction
 public:
-	CPrintDrawAreaDlg(CWnd* pParent = NULL);	// standard constructor
+	CPrintDrawAreaDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_PRINTDRAWAREA };

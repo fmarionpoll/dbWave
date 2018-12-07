@@ -8,7 +8,7 @@ class CEditStimArrayDlg : public CDialog
 	DECLARE_DYNAMIC(CEditStimArrayDlg)
 
 public:
-	CEditStimArrayDlg(CWnd* pParent = NULL);   // standard constructor
+	CEditStimArrayDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditStimArrayDlg();
 
 	// data passed by caller

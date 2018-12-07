@@ -61,8 +61,8 @@ CSpikeDetectionView::CSpikeDetectionView()
 	m_thresholdval = 0.f;
 	m_ichanselected = 0;
 	m_ichanselected2 = 0;
-	m_pspkDocVSD=NULL;
-	m_pSpkListVSD=NULL;
+	m_pspkDocVSD= nullptr;
+	m_pSpkListVSD= nullptr;
 	m_cursorstate = 0;
 	m_bValidThreshold = FALSE;
 	m_bDetected=FALSE;
@@ -74,7 +74,7 @@ CSpikeDetectionView::CSpikeDetectionView()
 CSpikeDetectionView::~CSpikeDetectionView()
 {
 	// save spkD list i	 changed
-	if (m_pspkDocVSD != NULL)
+	if (m_pspkDocVSD != nullptr)
 		SaveCurrentFileParms();	// save file if modified
 }
 
@@ -185,7 +185,7 @@ BOOL CSpikeDetectionView::OnMove(UINT nIDMoveCommand)
 	BOOL flag = TRUE;
 	SaveCurrentFileParms();
 	flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	GetDocument()->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -283,7 +283,7 @@ void CSpikeDetectionView::SaveCurrentFileParms()
 	CdbWaveDoc* pDoc = GetDocument();
 
 	// save spike file if anything has changed
-	if (m_pspkDocVSD != NULL && (m_pspkDocVSD->IsModified() 
+	if (m_pspkDocVSD != nullptr && (m_pspkDocVSD->IsModified() 
 		|| m_bDetected))
 	{
 		// save file data name
@@ -353,14 +353,14 @@ void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
 	m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(icurspklist);	// select this spike list in the spike document
 
 	// invalide spikelist?
-	if (m_pSpkListVSD == NULL && m_pspkDocVSD->GetSpkListSize() > 0)	
+	if (m_pSpkListVSD == nullptr && m_pspkDocVSD->GetSpkListSize() > 0)	
 	{
 		// at least one spike list is available, select list[0]
 		m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(0);
 	}
 
 	// no spikes list available, create one
-	if (m_pSpkListVSD == NULL)
+	if (m_pSpkListVSD == nullptr)
 	{
 		// create new list here
 		ASSERT(m_pspkDocVSD->GetSpkListSize()==0);
@@ -369,7 +369,7 @@ void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
 		for (int i=0; i < isize; i++)
 		{
 			CSpikeList*	pL = m_pspkDocVSD->SetSpkListCurrent(i);
-			if (pL == NULL)
+			if (pL == nullptr)
 			{
 				m_pspkDocVSD->AddSpkList();
 				pL = m_pspkDocVSD->GetSpkListCurrent();
@@ -379,7 +379,7 @@ void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
 		icurspklist = 0;
 		pdbDoc->SetcurrentSpkListIndex(icurspklist);
 		m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(icurspklist);
-		ASSERT(m_pSpkListVSD !=0);
+		ASSERT(m_pSpkListVSD !=nullptr);
 	}
 
 	// 
@@ -410,8 +410,8 @@ void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
 
 void CSpikeDetectionView::HighlightSpikes(BOOL flag)
 {
-	CDWordArray* pDWintervals = NULL;	  // remove setting if no spikes of if flag is false
-	if (flag && m_pSpkListVSD != NULL && m_pSpkListVSD->GetTotalSpikes() < 1)
+	CDWordArray* pDWintervals = nullptr;	  // remove setting if no spikes of if flag is false
+	if (flag && m_pSpkListVSD != nullptr && m_pSpkListVSD->GetTotalSpikes() < 1)
 	{
 		pDWintervals = &m_DWintervals;
 
@@ -457,7 +457,7 @@ BOOL CSpikeDetectionView::CheckDetectionSettings()
 	BOOL flag=TRUE;
 	ASSERT(m_pDetectParms != NULL);
 	ASSERT_VALID(m_pDetectParms);
-	if (NULL == m_pDetectParms)
+	if (nullptr == m_pDetectParms)
 	{
 		m_iDetectParms = GetDocument()->GetcurrentSpkListIndex();
 		m_pDetectParms = m_parmsCurrent.GetItem(m_iDetectParms);
@@ -632,7 +632,7 @@ void CSpikeDetectionView::UpdateDataFile(BOOL bUpdateInterface)
 			if (yvoltsextent == 0.0f)
 			{
 				m_displayDetect.MaxgainChan(-1);		// maximize gain of all curves
-				m_displayDetect.SetChanlistVoltsExtent(0, NULL);
+				m_displayDetect.SetChanlistVoltsExtent(0, nullptr);
 				yvoltsextent = m_displayDetect.GetChanlistVoltsExtent(0);
 				ASSERT(yvoltsextent != 0.0f);
 			}
@@ -1036,7 +1036,7 @@ void CSpikeDetectionView::OnLastFrame()
 void CSpikeDetectionView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// CDaoRecordView scroll bar: pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
@@ -1130,12 +1130,12 @@ void CSpikeDetectionView::OnFormatYscaleCentercurve()
 void CSpikeDetectionView::OnFormatYscaleGainadjust()
 {
 	m_displayDetect.MaxgainChan(0);
-	m_displayDetect.SetChanlistVoltsExtent(-1, NULL);
+	m_displayDetect.SetChanlistVoltsExtent(-1, nullptr);
 	m_displayDetect.Invalidate();
 
 	for (int i=0; i < m_displayData.GetChanlistSize(); i++)
 		m_displayData.MaxgainChan(i);
-	m_displayData.SetChanlistVoltsExtent(-1, NULL);
+	m_displayData.SetChanlistVoltsExtent(-1, nullptr);
 	m_displayData.Invalidate();
 
 	m_spkBarView.MaxCenter();
@@ -1158,11 +1158,11 @@ void CSpikeDetectionView::OnFormatYscaleGainadjust()
 void CSpikeDetectionView::OnFormatSplitcurves()
 {
 	m_displayDetect.SplitChans();
-	m_displayDetect.SetChanlistVoltsExtent(-1, NULL);
+	m_displayDetect.SetChanlistVoltsExtent(-1, nullptr);
 	m_displayDetect.Invalidate();
 
 	m_displayData.SplitChans();
-	m_displayData.SetChanlistVoltsExtent(-1, NULL);
+	m_displayData.SetChanlistVoltsExtent(-1, nullptr);
 	m_displayData.Invalidate();
 
 	// center curve and display bar & spikes
@@ -1288,7 +1288,7 @@ void CSpikeDetectionView::DetectAll(BOOL bAll)
 	
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
 	CAcqDataDoc* pDat = GetDocument()->m_pDat;
-	if (pDat == NULL)
+	if (pDat == nullptr)
 		return;
 	CWaveFormat* pwF= pDat->GetpWaveFormat();
 	int chanmax = pwF->scan_count -1;
@@ -1317,7 +1317,7 @@ void CSpikeDetectionView::DetectAll(BOOL bAll)
 
 		// select new spike list (list with no spikes for stimulus channel)
 		CSpikeList* pspklist = m_pspkDocVSD->SetSpkListCurrent(i);
-		if (pspklist == NULL)
+		if (pspklist == nullptr)
 		{
 			m_pspkDocVSD->AddSpkList();
 			pspklist = m_pspkDocVSD->GetSpkListCurrent();
@@ -1687,14 +1687,14 @@ void CSpikeDetectionView::OnFormatXscale()
 	XYParametersDlg dlg;
 	CWnd* pFocus = GetFocus();
 	
-	if (pFocus != NULL && m_displayDetect.m_hWnd == pFocus->m_hWnd)
+	if (pFocus != nullptr && m_displayDetect.m_hWnd == pFocus->m_hWnd)
 	{
 		dlg.m_xparam = FALSE;
 		dlg.m_yzero = m_displayDetect.GetChanlistYzero(m_pDetectParms->detectChan);
 		dlg.m_yextent = m_displayDetect.GetChanlistYextent(m_pDetectParms->detectChan);
 		dlg.m_bDisplaysource = TRUE;
 	}
-	else if (pFocus != NULL && m_spkBarView.m_hWnd == pFocus->m_hWnd)
+	else if (pFocus != nullptr && m_spkBarView.m_hWnd == pFocus->m_hWnd)
 	{
 		dlg.m_xparam = FALSE;
 		dlg.m_yzero = m_spkBarView.GetYWOrg();
@@ -1742,7 +1742,7 @@ void CSpikeDetectionView::OnBnClickedClearall()
 	for (int i=0; i < m_pspkDocVSD->GetSpkListSize(); i++)
 	{
 		CSpikeList* pspklist = m_pspkDocVSD->SetSpkListCurrent(i);
-		pspklist->InitSpikeList(GetDocument()->m_pDat, NULL);
+		pspklist->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	}
 	m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(GetDocument()->GetcurrentSpkListIndex());
 	ASSERT(m_pSpkListVSD != NULL);
@@ -1765,7 +1765,7 @@ void CSpikeDetectionView::OnClear()
 	m_spkShapeView.SelectSpikeShape(-1);// deselect superimposed spikes
 
 	m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(GetDocument()->GetcurrentSpkListIndex());
-	m_pSpkListVSD->InitSpikeList(GetDocument()->m_pDat, NULL);
+	m_pSpkListVSD->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	HighlightSpikes(FALSE);				// remove display of spikes
 
 	if(m_pSpkListVSD->GetdetectWhat() == 1)
@@ -2176,7 +2176,7 @@ void CSpikeDetectionView::OnEditCopy()
 			CDC* pDCRef=GetDC();
 			CString csTitle = _T("dbWave\0") + GetDocument()->m_pDat->GetTitle();
 			csTitle += _T("\0\0");
-			BOOL hmDC = mDC.CreateEnhanced(pDCRef, NULL, &rectBound, csTitle);
+			BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rectBound, csTitle);
 			ASSERT (hmDC != NULL);
 
 			// Draw document in metafile.
@@ -2187,7 +2187,7 @@ void CSpikeDetectionView::OnEditCopy()
 			mDC.SetAttribDC(attribDC.GetSafeHdc()) ;	// from current screen
 
 			// print comments : set font
-			m_pOldFont = NULL;
+			m_pOldFont = nullptr;
 			int oldsize = mdPM->fontsize;
 			mdPM->fontsize = 10;
 			PrintCreateFont();
@@ -2255,7 +2255,7 @@ void CSpikeDetectionView::OnEditCopy()
 			mDC.DrawText(comments, comments.GetLength(), rectComment, nFormat);
 			mDC.SelectObject(pOldBrush);
 
-			if (m_pOldFont != NULL)
+			if (m_pOldFont != nullptr)
 				mDC.SelectObject(m_pOldFont);
 			m_fontPrint.DeleteObject();
 
@@ -2676,14 +2676,14 @@ void CSpikeDetectionView::SerializeWindowsState(BOOL bSave, int itab)
 	
 	if (pApp->m_viewspkdParmsArray.GetSize() < m_tabCtrl.GetItemCount())
 		pApp->m_viewspkdParmsArray.SetSize(m_tabCtrl.GetItemCount());
-	CMemFile* pMemFile = NULL;
+	CMemFile* pMemFile = nullptr;
 	if (pApp->m_viewspkdParmsArray.GetSize() > 0 && pApp->m_viewspkdParmsArray.GetSize() > itab)
 		pMemFile = (CMemFile*) pApp->m_viewspkdParmsArray.GetAt(itab);
 
 	// save display parameters
 	if (bSave)
 	{
-		if (pMemFile == NULL)
+		if (pMemFile == nullptr)
 		{
 			pMemFile = new CMemFile;
 			ASSERT(pMemFile != NULL);
@@ -2702,7 +2702,7 @@ void CSpikeDetectionView::SerializeWindowsState(BOOL bSave, int itab)
 	// restore display parameters
 	else
 	{
-		if (pMemFile != NULL)
+		if (pMemFile != nullptr)
 		{
 			CArchive ar(pMemFile, CArchive::load);
 			pMemFile->SeekToBegin();
@@ -2855,7 +2855,7 @@ void CSpikeDetectionView::PrintCreateFont()
 	memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial"));		// Arial font
 	m_logFont.lfHeight = mdPM->fontsize;			// font height
-	m_pOldFont = NULL;
+	m_pOldFont = nullptr;
 	m_fontPrint.CreateFontIndirect(&m_logFont);
 }
 
@@ -2946,7 +2946,7 @@ void CSpikeDetectionView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		m_displayDetect.ResizeChannels(m_rData.Width(), 0);
 		m_displayDetect.GetDataFromDoc(lFirst, lLast);	// load data from file
 		m_displayDetect.Print(pDC, &m_rData);			// print data
-		pDC->SelectClipRgn(NULL);						// no more clipping
+		pDC->SelectClipRgn(nullptr);						// no more clipping
 
 		// print spike bars ---------------------------------------------------------------
 		if (mdPM->bPrintSpkBars)
@@ -2972,7 +2972,7 @@ void CSpikeDetectionView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		// restore DC and print comments ---------------------------------------------------
 		pDC->RestoreDC(oldDC);						// restore Display context	
 		pDC->SetMapMode(MM_TEXT);					// 1 LP = 1 pixel
-		pDC->SelectClipRgn(NULL);					// no more clipping
+		pDC->SelectClipRgn(nullptr);					// no more clipping
 		pDC->SetViewportOrg(0, 0);					// org = 0,0        
 
 		// print data Bars & get comments according to row within file
@@ -3031,7 +3031,7 @@ void CSpikeDetectionView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	if (!mdPM->bFilterDataSource)
 		m_displayDetect.SetChanlistTransformMode(0, m_pDetectParms->detectTransform);
 
-	if (m_pOldFont != NULL)
+	if (m_pOldFont != nullptr)
 		pDC->SelectObject(m_pOldFont);
 }
 
@@ -3086,7 +3086,7 @@ void CSpikeDetectionView::OnBnClickedGain2()
 void CSpikeDetectionView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
-	if (pScrollBar != NULL)
+	if (pScrollBar != nullptr)
 	{
 		int iID = pScrollBar->GetDlgCtrlID();
 		if ((iID == IDC_SCROLLY) || (iID == IDC_SCROLLY2))
@@ -3348,7 +3348,7 @@ void CSpikeDetectionView::UpdateDetectionSettings(int iSelParms)
 		// select new spike list (list with no spikes for stimulus channel)
 		CSpikeList* pspklist = m_pspkDocVSD->SetSpkListCurrent(i);
 		SPKDETECTPARM* pSd = m_parmsCurrent.GetItem(i);
-		if (pspklist == NULL)
+		if (pspklist == nullptr)
 		{
 			m_pspkDocVSD->AddSpkList();
 			pspklist  = m_pspkDocVSD->GetSpkListCurrent();
@@ -3364,7 +3364,7 @@ void CSpikeDetectionView::UpdateDetectionSettings(int iSelParms)
 	GetDocument()->SetcurrentSpkListIndex(iSelParms);
 	m_pDetectParms = m_parmsCurrent.GetItem(iSelParms);
 	m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(iSelParms);
-	if (m_pSpkListVSD != NULL)
+	if (m_pSpkListVSD != nullptr)
 		HighlightSpikes(TRUE);
 
 	UpdateDetectionControls();

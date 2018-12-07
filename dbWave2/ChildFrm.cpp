@@ -134,7 +134,7 @@ CChildFrame::CChildFrame()
 {
 	m_viewON		= ID_VIEW_DATABASE;
 	m_previousviewON= ID_VIEW_DATABASE;
-	m_pMenu			= NULL;
+	m_pMenu			= nullptr;
 	m_cursorstate	= 0;
 	m_bDeleteFile	= FALSE;
 	m_bKeepChoice	= FALSE;
@@ -283,7 +283,7 @@ void CChildFrame::OnToolsExportdataAsText()
 {
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();
 	pdbDoc->ExportDatafilesAsTXTfiles();
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);	
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);	
 	// display files which were transformed in a separate document
 	PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, (LPARAM) NULL);
 }
@@ -332,7 +332,7 @@ void CChildFrame::ExportASCII(int option)
 			if (!pApp->vdP.btoExcel || !flag)
 			{
 				CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
-				CDocument* pdbDocExport = pTempl->OpenDocumentFile(NULL);
+				CDocument* pdbDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pdbDocExport->GetFirstViewPosition();
 				CNoteDocView* pView = (CNoteDocView*)pdbDocExport->GetNextView(pos);
 				CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
@@ -349,7 +349,7 @@ void CChildFrame::ExportASCII(int option)
 			if (!pApp->vdS.bexporttoExcel || !flag)
 			{
 				CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
-				CDocument* pdbDocExport = pTempl->OpenDocumentFile(NULL);
+				CDocument* pdbDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pdbDocExport->GetFirstViewPosition();
 				CNoteDocView* pView = (CNoteDocView*)pdbDocExport->GetNextView(pos);
 				CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
@@ -404,10 +404,10 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_SHAREDMEMFILLED:
 		{
 			CdbWaveApp* pApp= (CdbWaveApp*) AfxGetApp();
-			if (pApp->m_psf != NULL)
+			if (pApp->m_psf != nullptr)
 			{
 				CMultiDocTemplate* pTempl = ((CdbWaveApp*) AfxGetApp())->m_pNoteViewTemplate;
-				CDocument* pDocExport = pTempl->OpenDocumentFile(NULL);
+				CDocument* pDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pDocExport->GetFirstViewPosition();
 				CNoteDocView* pView = (CNoteDocView*)pDocExport->GetNextView(pos);
 				CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
@@ -486,7 +486,7 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 		doctype = 0;
 	else
 		doctype = 1;
-	pdbDoc->UpdateAllViews(NULL, MAKELPARAM(HINT_REPLACEVIEW, doctype), NULL);
+	pdbDoc->UpdateAllViews(nullptr, MAKELPARAM(HINT_REPLACEVIEW, doctype), nullptr);
 }
 
 
@@ -495,7 +495,7 @@ void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();
 	ASSERT(pdbDoc);
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	BOOL flag = (pdbDoc != NULL);
+	BOOL flag = (pdbDoc != nullptr);
 		
 	switch (pCmdUI->m_nID)
 	{
@@ -554,18 +554,18 @@ void CChildFrame::ReplaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	CCreateContext context;						// prepare context structure for new view
 	context.m_pNewViewClass = pViewClass;		// change view class
 	context.m_pCurrentDoc = pdbDoc;				// assoc document
-	context.m_pNewDocTemplate = NULL;			//
-	context.m_pLastView = NULL;					//
-	context.m_pCurrentFrame = NULL;				// this??
+	context.m_pNewDocTemplate = nullptr;			//
+	context.m_pLastView = nullptr;					//
+	context.m_pCurrentFrame = nullptr;				// this??
 
 	// create view inside a splitter
 	CView* pNewView = (CView*) CreateView(&context);
 	pNewView->SendMessage(WM_INITIALUPDATE, 0, 0);
 
 	// change menu
-	if (m_pMenu == NULL)
+	if (m_pMenu == nullptr)
 		m_pMenu = new CMenu;
-	GetMDIFrame()->MDISetMenu(m_pMenu->FromHandle(hmenu), NULL);
+	GetMDIFrame()->MDISetMenu(m_pMenu->FromHandle(hmenu), nullptr);
 	GetMDIFrame()->DrawMenuBar();
 	RecalcLayout();
 
@@ -581,7 +581,7 @@ void CChildFrame::OnToolsRemoveMissingFiles()
 	ASSERT(pdbDoc);										// debug: check that doc is defined
 	
 	pdbDoc->RemoveMissingFiles();
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -591,7 +591,7 @@ void CChildFrame::OnToolsRemoveduplicatefiles()
 	ASSERT(pdbDoc);										// debug: check that doc is defined
 	
 	pdbDoc->RemoveDuplicateFiles();
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -601,7 +601,7 @@ void CChildFrame::OnToolsCheckFilelistsConsistency()
 	ASSERT(pdbDoc);										// debug: check that doc is defined
 	
 	pdbDoc->RemoveFalseSpkFiles();
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -643,7 +643,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 	}
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();// get pointer to document
 	ASSERT(pdbDoc != NULL);		
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -652,7 +652,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();// get pointer to document
 	ASSERT(pdbDoc);		
 	pdbDoc->SynchronizeSourceInfos(FALSE);
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -661,7 +661,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();// get pointer to document
 	ASSERT(pdbDoc);		
 	pdbDoc->SynchronizeSourceInfos(TRUE);
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -712,7 +712,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 			continue;
 
 		CAcqDataDoc* pDat = pdbDoc->m_pDat;
-		if (pDat == NULL)
+		if (pDat == nullptr)
 			continue;
 
 		int nconsecutivepoints = 0;
@@ -765,7 +765,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		}
 	}
 	// exit: update all views
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -785,7 +785,7 @@ void CChildFrame::OnRecordGotorecord()
 			pdbDoc->DBSetCurrentRecordPosition(dlg.m_recordPos);
 		else
 			pdbDoc->DBMoveToID(dlg.m_recordID);
-		pdbDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+		pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	}
 }
 
@@ -804,7 +804,7 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 	{	
 		CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();// get pointer to document
 		pdbDoc->ImportDescFromFileList(filenames, bOnlyGenuine);
-		pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);	
+		pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);	
 		// display files which were discarded in a separate document
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, (LPARAM) NULL);
 	}
@@ -835,7 +835,7 @@ void CChildFrame::OnToolsImportATFfiles()
 				CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();// get pointer to document
 				pdbDoc->ImportDescFromFileList(convertedFiles);
 				pdbDoc->DBMoveLast();
-				pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);	
+				pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);	
 				// display files which were discarded in a separate document
 				PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, (LPARAM) NULL);
 			}
@@ -879,9 +879,9 @@ void CChildFrame::OnRecordDeletecurrent()
 			pdbDoc->DBDeleteCurrentRecord();
 
 		// update views and rename "erased" files
-		pdbDoc->UpdateAllViews(NULL, HINT_DOCHASCHANGED, NULL);
+		pdbDoc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 		pdbDoc->DBSetCurrentRecordPosition(currentindex);
-		pdbDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+		pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 
 		// delete erased files
 		if (m_bDeleteFile)
@@ -1153,7 +1153,7 @@ void CChildFrame::OnToolsImportDatabase()
 		CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();	// get pointer to document
 		pdbDoc->ImportDatabase(fileName);
 		pdbDoc->DBMoveLast();
-		pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);	
+		pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);	
 	}
 }
 
@@ -1195,7 +1195,7 @@ void CChildFrame::OnToolsPathsRelative()
 {
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*)GetActiveDocument();
 	pdbDoc->DBSetPathsRelative_to_DataBaseFile();
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 
@@ -1203,7 +1203,7 @@ void CChildFrame::OnToolsPathsAbsolute()
 {
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*)GetActiveDocument();
 	pdbDoc->DBSetPathsAbsolute();
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 

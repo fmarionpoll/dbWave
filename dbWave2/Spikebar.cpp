@@ -41,7 +41,7 @@ CSpikeBarWnd::CSpikeBarWnd()
 
 CSpikeBarWnd::~CSpikeBarWnd()
 {
-	if (m_penvelope != NULL)
+	if (m_penvelope != nullptr)
 	{
 		m_penvelope->RemoveAll();
 		delete m_penvelope;
@@ -89,7 +89,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		}
 
 		// test presence of data	
-		if (m_pSL == NULL || m_pSL->GetTotalSpikes() == 0)
+		if (m_pSL == nullptr || m_pSL->GetTotalSpikes() == 0)
 		{
 			if (!m_ballFiles)
 			{
@@ -157,7 +157,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		}
 
 		// temp tag
-		if (m_hwndReflect != NULL && m_tempVTtag != NULL)
+		if (m_hwndReflect != nullptr && m_tempVTtag != nullptr)
 		{
 			CPen* oldp = pDC->SelectObject(&m_blackDottedPen);
 			int noldROP = pDC->SetROP2(R2_NOTXORPEN);
@@ -356,7 +356,7 @@ void CSpikeBarWnd::DisplayFlaggedSpikes(BOOL bHighLight)
 
 	// set correct color and draw mode
 	int pensize = 0;
-	CPen* oldpen = NULL;
+	CPen* oldpen = nullptr;
 	int color;
 
 	// loop over the array of flagged spikes
@@ -446,7 +446,7 @@ void CSpikeBarWnd::DisplaySpike(int nospike, BOOL bselect)
 
 	// set correct color and draw mode
 	int pensize = 0;
-	CPen* oldpen = NULL;
+	CPen* oldpen = nullptr;
 
 	int  color;
 	// spike is not selected
@@ -815,7 +815,7 @@ int CSpikeBarWnd::DoesCursorHitCurve(CPoint point)
 //---------------------------------------------------------------------------
 void CSpikeBarWnd::CenterCurve()
 {
-	if (m_pSL == 0 || m_pSL->GetTotalSpikes() <= 0)
+	if (m_pSL == nullptr || m_pSL->GetTotalSpikes() <= 0)
 		return;
 	int max, min;		
 	m_pSL->GetTotalMaxMin(TRUE, &max, &min);
@@ -825,7 +825,7 @@ void CSpikeBarWnd::CenterCurve()
 //---------------------------------------------------------------------------
 void CSpikeBarWnd::MaxGain()
 {
-	if (m_pSL == 0 || m_pSL->GetTotalSpikes() <= 0)
+	if (m_pSL == nullptr || m_pSL->GetTotalSpikes() <= 0)
 		return;
 	int max, min;		
 	m_pSL->GetTotalMaxMin(TRUE, &max, &min);
@@ -834,7 +834,7 @@ void CSpikeBarWnd::MaxGain()
 
 void CSpikeBarWnd::MaxCenter()
 {
-	if (m_pSL == 0 || m_pSL->GetTotalSpikes() <= 0)
+	if (m_pSL == nullptr || m_pSL->GetTotalSpikes() <= 0)
 		return;
 	int max, min;		
 	m_pSL->GetTotalMaxMin(TRUE, &max, &min);
@@ -849,7 +849,7 @@ void CSpikeBarWnd::MaxCenter()
 void CSpikeBarWnd::Print(CDC* pDC, CRect* rect)
 {
 	// check if there are valid data to display
-	if (m_pSL == NULL || m_pSL->GetTotalSpikes()== 0)
+	if (m_pSL == nullptr || m_pSL->GetTotalSpikes()== 0)
 		return;		
 
 	// set mapping mode and viewport

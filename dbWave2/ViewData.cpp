@@ -88,7 +88,7 @@ CDataView::CDataView()
 	m_cursorstate = 0;			// cursor state: system arrow
 	m_HBarpixelratio=10;		// horizontalbar pixel ratio (%)
 	m_VBarpixelratio=30;		// vertical bar pixel ratio
-	m_pdatDoc = NULL;
+	m_pdatDoc = nullptr;
 	m_bIsPrinting = FALSE;
 	m_currentfileindex=0;
 	m_bInitComment=TRUE;
@@ -233,7 +233,7 @@ CDaoRecordset* CDataView::OnGetRecordset()
 BOOL CDataView::OnMove(UINT nIDMoveCommand) 
 {
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	GetDocument()->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -258,7 +258,7 @@ void CDataView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		iUpdate = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
 		break;
 	default:
-		if (m_pdatDoc == NULL)
+		if (m_pdatDoc == nullptr)
 			return;
 		iUpdate = UPD_ABCISSA | UPD_XSCALE | UPD_ORDINATES | UPD_YSCALE;
 		break;
@@ -402,7 +402,7 @@ void CDataView::OnEditCopy()
 			CString csTitle = _T("dbWave\0") + m_pdatDoc->GetTitle();
 			csTitle +=_T("\0\0");
 			CRect rectBound (0, 0, 21000, 29700);  // dimensions in HIMETRIC units (in .01-millimeter increments)
-			BOOL hmDC = mDC.CreateEnhanced(pDCRef, NULL, &rectBound, csTitle);
+			BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rectBound, csTitle);
 			ASSERT (hmDC != NULL);
 
 			// Draw document in metafile.
@@ -420,7 +420,7 @@ void CDataView::OnEditCopy()
 			// print comments : set font
 			memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font
 			GetObject (GetStockObject (SYSTEM_FONT), sizeof (LOGFONT), (LPSTR) &m_logFont) ;
-			m_pOldFont = NULL;
+			m_pOldFont = nullptr;
 			BOOL flag = m_fontPrint.CreateFontIndirect(&m_logFont);
 			m_pOldFont = mDC.SelectObject(&m_fontPrint);
 			int lineheight = m_logFont.lfHeight + 5;
@@ -454,7 +454,7 @@ void CDataView::OnEditCopy()
 			mDC.LineTo(left, ypxrow);
 
 			mDC.SelectObject(pOldBrush);
-			if (m_pOldFont != NULL)
+			if (m_pOldFont != nullptr)
 				mDC.SelectObject(m_pOldFont);
 			m_fontPrint.DeleteObject();
 
@@ -553,7 +553,7 @@ void CDataView::OnLastFrame()
 void CDataView::UpdateFileParameters(BOOL bUpdateInterface)
 {
 	// load parameters from document file: none yet loaded?
-	BOOL bFirstUpdate = (m_pdatDoc == NULL);
+	BOOL bFirstUpdate = (m_pdatDoc == nullptr);
 	CdbWaveDoc* pdbDoc = GetDocument();
 	CString csDatFile = pdbDoc->DBGetCurrentDatFileName();
 	if (m_bvalidDoc = csDatFile.IsEmpty())
@@ -950,7 +950,7 @@ void CDataView::OnToolsMeasure()
 void CDataView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDaoRecordView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
@@ -1156,7 +1156,7 @@ void CDataView::OnFileScroll(UINT nSBCode, UINT nPos)
 void CDataView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
@@ -1219,7 +1219,7 @@ void CDataView::MeasureProperties(int item)
 	}
 
 	// call routine and pass parameters
-	CMeasureProperties dlg(NULL, item);
+	CMeasureProperties dlg(nullptr, item);
 	dlg.m_plineview = &m_VDlineview;
 	dlg.m_samplingrate = m_samplingRate;
 	dlg.m_pdatDoc = m_pdatDoc;
@@ -1235,7 +1235,7 @@ void CDataView::MeasureProperties(int item)
 void CDataView::SaveModifiedFile()
 {
 	// save previous file if anything has changed
-	if (m_pdatDoc == NULL)
+	if (m_pdatDoc == nullptr)
 		return;
 
 	if(m_pdatDoc->IsModified())
@@ -1255,9 +1255,9 @@ void CDataView::ADC_OnHardwareDefineexperiment()
 	{
 		CdbWaveDoc* pdbDoc = GetDocument();
 		long recordID = pdbDoc->DBGetCurrentRecordID();;
-		GetDocument()->UpdateAllViews(NULL, HINT_DOCHASCHANGED, NULL);
+		GetDocument()->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 		pdbDoc->DBMoveToID(recordID);
-		pdbDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+		pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	}
 }
 
@@ -1618,7 +1618,7 @@ void CDataView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial"));			// Arial font
 	m_logFont.lfHeight = mdPM->fontsize;			// font height
-	m_pOldFont = NULL;
+	m_pOldFont = nullptr;
 	BOOL flag = m_fontPrint.CreateFontIndirect(&m_logFont);
 	pDC->SetBkMode (TRANSPARENT);
 }
@@ -1682,7 +1682,7 @@ void CDataView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// restore DC and print comments --------------------------------------------------
 		pDC->SetMapMode(MM_TEXT);				// 1 LP = 1 pixel
-		pDC->SelectClipRgn(NULL);				// no more clipping
+		pDC->SelectClipRgn(nullptr);				// no more clipping
 		pDC->SetViewportOrg(0, 0);				// org = 0,0        
 
 		// print comments according to row within file
@@ -1718,7 +1718,7 @@ void CDataView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	pDC->RestoreDC(oldDC);					// restore Display context	
 
 	// end of file loop : restore initial conditions
-	if (m_pOldFont != NULL)
+	if (m_pOldFont != nullptr)
 		pDC->SelectObject(m_pOldFont);
 	m_VDlineview.m_parms = oldparms;
 }

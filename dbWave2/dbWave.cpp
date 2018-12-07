@@ -66,9 +66,9 @@ CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
 	SetAppID(_T("FMP.dbWave2.VS2017.Aug-2017"));
 
-	m_pviewdataMemFile		= NULL;
-	m_pviewspikesMemFile	= NULL;
-	m_psort1spikesMemFile	= NULL;
+	m_pviewdataMemFile		= nullptr;
+	m_pviewspikesMemFile	= nullptr;
+	m_psort1spikesMemFile	= nullptr;
 	m_bADcardFound			= TRUE;
 	m_pdbWaveViewTemplate = nullptr;
 }
@@ -331,7 +331,7 @@ BOOL CdbWaveApp::PreTranslateMessage(MSG* pMsg)
 void DisplayDaoException(CDaoException* e, int iID = 0)
 {
 	CString strMsg;
-	if (e->m_pErrorInfo!=NULL)
+	if (e->m_pErrorInfo!= nullptr)
 	{
 		strMsg.Format(
 			_T("%s   (%d) at line ID %i\n\n")
@@ -386,7 +386,7 @@ void CdbWaveApp::Defaultparameters(BOOL bRead)
 		BOOL bExist = PathFileExists(cspath);
 		if (!bExist)
 		{
-			if (!CreateDirectory(cspath, NULL))
+			if (!CreateDirectory(cspath, nullptr))
 				AfxMessageBox(IDS_DIRECTORYFAILED);
 		}
 	}
@@ -524,7 +524,7 @@ void CdbWaveApp::SetPrinterOrientation()
 	{
 		// Lock memory handle.
 		DEVMODE FAR* pDevMode = (DEVMODE FAR*)::GlobalLock(m_hDevMode);
-		LPDEVNAMES lpDevNames = NULL;
+		LPDEVNAMES lpDevNames = nullptr;
 		LPTSTR lpszDriverName, lpszDeviceName, lpszPortName;
 		HANDLE hPrinter;
 
@@ -537,15 +537,15 @@ void CdbWaveApp::SetPrinterOrientation()
 				pDevMode->dmOrientation = DMORIENT_PORTRAIT;
 			// Unlock memory handle.
 			lpDevNames = (LPDEVNAMES)GlobalLock(pd.hDevNames);
-			if (NULL != lpDevNames)
+			if (nullptr != lpDevNames)
 			{
 				lpszDriverName = (LPTSTR)lpDevNames + lpDevNames->wDriverOffset;
 				lpszDeviceName = (LPTSTR)lpDevNames + lpDevNames->wDeviceOffset;
 				lpszPortName = (LPTSTR)lpDevNames + lpDevNames->wOutputOffset;
 
 				// functions defined in winspool.h
-				OpenPrinter(lpszDeviceName, &hPrinter, NULL);
-				DocumentProperties(NULL, hPrinter, lpszDeviceName, pDevMode, pDevMode, DM_IN_BUFFER | DM_OUT_BUFFER);
+				OpenPrinter(lpszDeviceName, &hPrinter, nullptr);
+				DocumentProperties(nullptr, hPrinter, lpszDeviceName, pDevMode, pDevMode, DM_IN_BUFFER | DM_OUT_BUFFER);
 
 				// Sync the pDevMode.
 				// See SDK help for DocumentProperties for more info.
@@ -579,7 +579,7 @@ BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CS
 	}
 
 	LPTSTR lpText = (LPTSTR) ::GlobalLock(hText);	// lock this buffer and get a pointer to it	
-	if (NULL != lpText)
+	if (nullptr != lpText)
 	{
 		DWORD wflag = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
 
@@ -588,7 +588,7 @@ BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CS
 		BOOL flag = filedesc.LoadString(iIDS);	// title of dialog box
 
 		// call file open common dialog box
-		CFileDialog fd(TRUE, NULL, NULL, wflag, filedesc, NULL);
+		CFileDialog fd(TRUE, nullptr, nullptr, wflag, filedesc, nullptr);
 		fd.m_ofn.lpstrFile = lpText;			// attach local buffer to get file names
 		fd.m_ofn.nMaxFile = bufferSize /sizeof(TCHAR);	// declare max size of buffer
 		fd.m_ofn.nFilterIndex = *iFilterIndex;	// select filter item
@@ -601,7 +601,7 @@ BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CS
 			*iFilterIndex = fd.m_ofn.nFilterIndex;		// get filter item
 			POSITION pos = fd.GetStartPosition();		// get position of first name
 			CString file_a;					// declare dummy CString to receive file names
-			while (pos != NULL)				// if "CMultidoc", load other names
+			while (pos != nullptr)				// if "CMultidoc", load other names
 			{								// while name are in, read & store
 				file_a = fd.GetNextPathName(pos);
 				file_a.MakeUpper();			// convert into uppercase characters
@@ -634,7 +634,7 @@ CString CdbWaveApp::Get_MyDocuments_MydbWavePath()
 		CFileFind cf;
 		if (!cspath.IsEmpty() && !cf.FindFile(cspath))
 		{
-			if (!CreateDirectory(cspath, NULL))
+			if (!CreateDirectory(cspath, nullptr))
 				AfxMessageBox(IDS_DIRECTORYFAILED);
 		}
 	}
@@ -650,7 +650,7 @@ void CdbWaveApp::OnFileOpen()
 	//Spikes (*.spk)|*.spk|
 	//Text (*.txt)|*.txt|
 	//Project (*.prj)|*.prj|
-	GetFilenamesDlg(IDS_FILEDESCRIP, NULL, &vdP.nfilterindex, &filenames);
+	GetFilenamesDlg(IDS_FILEDESCRIP, nullptr, &vdP.nfilterindex, &filenames);
 	if (filenames.GetSize() == 0)
 		return;
 
@@ -663,13 +663,13 @@ void CdbWaveApp::OnFileOpen()
 	case 3:	// spk
 		{
 			CdbWaveDoc* pdbDoc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
-			if (pdbDoc != NULL) 
+			if (pdbDoc != nullptr) 
 			{
 				pdbDoc->SetClearMdbOnExit(TRUE);
 				if (pdbDoc->OnNewDocument())	// create table
 				{
 					pdbDoc->ImportDescFromFileList(filenames);
-					CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(pdbDoc, NULL);
+					CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(pdbDoc, nullptr);
 					ASSERT(pWF != NULL);
 					m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
 				}
@@ -718,11 +718,11 @@ void CdbWaveApp::OnFileNew()
 		case 1: // ---------------------------------------create notebook document
 			{
 			CNoteDoc* pdbDoc = (CNoteDoc*) m_pNoteViewTemplate->CreateNewDocument();
-			if (pdbDoc != NULL) 
+			if (pdbDoc != nullptr) 
 				{
 					if (pdbDoc->OnNewDocument())	// create table
 					{
-						CMDIFrameWnd* pWF = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(pdbDoc, NULL);
+						CMDIFrameWnd* pWF = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(pdbDoc, nullptr);
 						ASSERT(pWF != NULL);
 						m_pNoteViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
 					}
@@ -732,12 +732,12 @@ void CdbWaveApp::OnFileNew()
 		default: // -------------------------------------- create database document
 			{
 			CdbWaveDoc* pdbDoc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
-			if (pdbDoc != NULL) 
+			if (pdbDoc != nullptr) 
 				{
 					pdbDoc->SetClearMdbOnExit(FALSE);				// keep file on exit
 					if (pdbDoc->OnNewDocument())					// create table
 					{
-						CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(pdbDoc, NULL);
+						CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(pdbDoc, nullptr);
 						ASSERT(pWF != NULL);
 						m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
 					}

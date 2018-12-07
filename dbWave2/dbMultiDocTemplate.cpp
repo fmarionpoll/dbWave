@@ -67,12 +67,12 @@ BOOL CdbMultiDocTemplate::GetDocString(CString& rString, enum DocStringIndex i) 
 
 CMultiDocTemplate::Confidence CdbMultiDocTemplate::MatchDocType(LPCTSTR lpszPathName, CDocument*& rpDocMatch)
 {
-	rpDocMatch = NULL;
+	rpDocMatch = nullptr;
 	CString csPathName = lpszPathName;
 
 	// go through all documents to see if this document is already opened
 	POSITION pos = GetFirstDocPosition();
-	while (pos != NULL)
+	while (pos != nullptr)
 	{
 		CDocument* pDoc = GetNextDoc(pos);
 		if (pDoc->GetPathName() == csPathName)

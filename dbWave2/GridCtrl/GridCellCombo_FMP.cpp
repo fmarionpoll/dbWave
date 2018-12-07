@@ -376,7 +376,7 @@ HBRUSH CGridInPlaceList::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/)
 	*/
 	
 	// TODO: Return a non-NULL brush if the parent's handler should not be called
-	return NULL;
+	return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -408,7 +408,7 @@ CWnd* CGridCellCombo::GetEditWnd() const
 	if (m_pEditWnd && (m_pEditWnd->GetStyle() & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST )
 		return &(((CGridInPlaceList*)m_pEditWnd)->m_comboedit);
 
-	return NULL;
+	return nullptr;
 }
 
 

@@ -66,7 +66,7 @@ public :
 	//------------------- Total : 33 variable members
 protected:
 	CString AddComments(CString psep, BOOL bExpl, CString csExpl, CString cscomment);
-	void Read_v8andbefore(CArchive& ar, WORD version);
+	void Read_v8_and_before(CArchive& ar, WORD version);
 
 public :
 	CWaveFormat();	// constructor
@@ -117,8 +117,8 @@ public :
 	CWaveChan();					//constructor
 	CWaveChan(CWaveChan& arg);
 	~CWaveChan();					//destructor
-	long Write(CFile *datafile);
-	BOOL Read(CFile *datafile);
+	virtual long Write(CFile *datafile);
+	virtual BOOL Read(CFile *datafile);
 	void operator = (const CWaveChan& arg); // redefinition operator = 	
 	virtual void Serialize(CArchive & ar);
 

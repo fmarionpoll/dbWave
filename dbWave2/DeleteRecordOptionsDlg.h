@@ -8,7 +8,7 @@ class CDeleteRecordOptionsDlg : public CDialog
 	DECLARE_DYNAMIC(CDeleteRecordOptionsDlg)
 
 public:
-	CDeleteRecordOptionsDlg(CWnd* pParent = NULL);   // standard constructor
+	CDeleteRecordOptionsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDeleteRecordOptionsDlg();
 
 // Dialog Data

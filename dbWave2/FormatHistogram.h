@@ -11,7 +11,7 @@ class CFormatHistogramDlg : public CDialog
 {
 // Construction
 public:
-	CFormatHistogramDlg(CWnd* pParent = NULL);   // standard constructor
+	CFormatHistogramDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_HIISTOGRAMPARAMETERS };

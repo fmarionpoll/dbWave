@@ -24,7 +24,7 @@ CSplashWnd::~CSplashWnd()
 {
 	// Clear the static window pointer.
 	ASSERT(m_pSplashWnd == this);
-	m_pSplashWnd = NULL;
+	m_pSplashWnd = nullptr;
 }
 
 BEGIN_MESSAGE_MAP(CSplashWnd, CWnd)
@@ -40,7 +40,7 @@ void CSplashWnd::EnableSplashScreen(BOOL bEnable /*= TRUE*/)
 
 void CSplashWnd::ShowSplashScreen(CWnd* pParentWnd /*= NULL*/)
 {
-	if (!m_bShowSplashWnd || m_pSplashWnd != NULL)
+	if (!m_bShowSplashWnd || m_pSplashWnd != nullptr)
 		return;
 
 	// Allocate a new splash screen, and create the window.
@@ -53,7 +53,7 @@ void CSplashWnd::ShowSplashScreen(CWnd* pParentWnd /*= NULL*/)
 
 BOOL CSplashWnd::PreTranslateAppMessage(MSG* pMsg)
 {
-	if (m_pSplashWnd == NULL)
+	if (m_pSplashWnd == nullptr)
 		return FALSE;
 
 	// If we get a keyboard or mouse message, hide the splash screen.
@@ -83,7 +83,7 @@ BOOL CSplashWnd::Create(CWnd* pParentWnd /*= NULL*/)
 
 	return CreateEx(0,
 		AfxRegisterWndClass(0, AfxGetApp()->LoadStandardCursor(IDC_ARROW)),
-		NULL, WS_POPUP | WS_VISIBLE, 0, 0, bm.bmWidth, bm.bmHeight, pParentWnd->GetSafeHwnd(), NULL);
+		nullptr, WS_POPUP | WS_VISIBLE, 0, 0, bm.bmWidth, bm.bmHeight, pParentWnd->GetSafeHwnd(), nullptr);
 }
 
 void CSplashWnd::HideSplashScreen()
@@ -108,7 +108,7 @@ int CSplashWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CenterWindow();
 
 	// Set a timer to destroy the splash screen.
-	SetTimer(1, 2000, NULL);
+	SetTimer(1, 2000, nullptr);
 
 	return 0;
 }

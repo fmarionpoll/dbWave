@@ -13,12 +13,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CAcqDataDoc document
 
-#include "dataheader_Atlab.h"
 #include "wavebuf.h"		// data acquisition buffer
 #include "datafile_X.h"
 #include "awavepar.h"		// user parameters
-#include "subfileitem.h"
-#include "datafile_Awave.h"	// awave data acquisition file
 
 class CAcqDataDoc : public CDocument
 {
@@ -36,16 +33,16 @@ public:
 	
 	// Implementation
 	//---------------
-	BOOL 			OnSaveDocument (CString &szPathName);
-	BOOL 			OnOpenDocument (CString &szPathName);
-	BOOL 			OnNewDocument();
+	BOOL 			OnSaveDocument (CString &sz_path_name) ;
+	BOOL 			OnOpenDocument (CString &sz_path_name);
+	BOOL 			OnNewDocument() override;
 
 protected:
 	BOOL			OpenAcqFile(CString &szfilename);
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
 #endif
 
 // Generated message map functions
@@ -59,8 +56,8 @@ protected:
 
 	CDataFileX*		m_pXFile;			// data file /* CDataFileX* */
 	CWaveBuf*		m_pWBuf;			// CWaveBuffer
-	CTagList		m_HZtags;			// list of horizontal cursors
-	CTagList		m_VTtags;			// list of vertical tags
+	CTagList		m_hz_tags;			// list of horizontal cursors
+	CTagList		m_vt_tags;			// list of vertical tags
 	
 	long			m_lBUFmaxSize;		// constant (?) size of the buffer
 	long			m_lBUFchanFirst;	// file index of first word in RW buffer
@@ -83,8 +80,8 @@ protected:
 
 public:
 	inline long			GettBUFfirst() const {return m_tBUFfirst;}
-	inline CTagList*	GetpHZtags() {return &m_HZtags;}
-	inline CTagList*	GetpVTtags() {return &m_VTtags;}
+	inline CTagList*	GetpHZtags() {return &m_hz_tags;}
+	inline CTagList*	GetpVTtags() {return &m_vt_tags;}
 
 // Operations
 public:
@@ -100,10 +97,10 @@ public:
 	BOOL			WriteHZtags(CTagList* ptags);
 	BOOL			WriteVTtags(CTagList* ptags);
 	BOOL			AcqDoc_DataAppendStart();
-	BOOL			AcqDoc_DataAppend(short* pBU, UINT uilbytesLength);
+	BOOL			AcqDoc_DataAppend(short* pBU, UINT uilbytesLength) const;
 	BOOL			AcqDoc_DataAppendStop();
-	void			AcqDeleteFile();
-	void			AcqCloseFile();
+	void			AcqDeleteFile() const;
+	void			AcqCloseFile() const;
 	BOOL			AcqSaveDataDescriptors();
 
 	// AwaveFile operations -- could add parameter to create other type

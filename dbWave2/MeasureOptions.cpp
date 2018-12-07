@@ -911,7 +911,7 @@ void CMeasureResultsPage::OnExport()
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
 
 	CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
-	CDocument* pDoc = pTempl->OpenDocumentFile(NULL);
+	CDocument* pDoc = pTempl->OpenDocumentFile(nullptr);
 	POSITION pos = pDoc->GetFirstViewPosition();
 	CRichEditView* pView = (CRichEditView*)pDoc->GetNextView(pos);
 	CRichEditCtrl& pEdit = pView->GetRichEditCtrl();	
@@ -988,7 +988,7 @@ void CMeasureResultsPage::OutputTitle()
 		TCHAR* pszT = m_szT;		
 		TCHAR seps[]  = _T("\t");		// separator = tab
 		TCHAR* ptoken;				// pointer within pstring
-		TCHAR* next_token=NULL;
+		TCHAR* next_token= nullptr;
 		
 		for (int ichan=ichan0; ichan <= ichan1; ichan++)
 		{
@@ -996,7 +996,7 @@ void CMeasureResultsPage::OutputTitle()
 			TCHAR* pstring = cs.GetBuffer(cs.GetLength()+1);
 			pstring++;					// skip first tab
 			ptoken = _tcstok_s( pstring, seps, &next_token );
-			while (ptoken != NULL)
+			while (ptoken != nullptr)
 			{
 				if (m_pMO->bAllChannels)
 					wsprintf(m_szT, _T("ch%i-%s"), ichan, ptoken);
@@ -1005,7 +1005,7 @@ void CMeasureResultsPage::OutputTitle()
 				icol = 1+ m_listResults.InsertColumn(icol, pszT, LVCFMT_LEFT, npix_mV, icol);
 				m_csTitle += seps;
 				m_csTitle += pszT;
-				ptoken = _tcstok_s( NULL, seps, &next_token );	// get next token
+				ptoken = _tcstok_s(nullptr, seps, &next_token );	// get next token
 			}
 			
 			if (m_nbdatacols == 0)		// number of data columns
@@ -1388,13 +1388,13 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		m_listResults.DeleteAllItems();
 
 	// prepare clipboard and Edit control (CEdit)
-	HANDLE hCopy=NULL;
+	HANDLE hCopy= nullptr;
 	if (OpenClipboard())
 	{
 		EmptyClipboard();		// prepare clipboard and copy text to buffer
 		DWORD dwLen = 32768;	// 32 Kb
 		HANDLE hCopy = (HANDLE) ::GlobalAlloc (GHND, dwLen);
-		if (hCopy == NULL)
+		if (hCopy == nullptr)
 		{
 			AfxMessageBox(_T("Memory low: unable to allocate memory"));
 			return TRUE;

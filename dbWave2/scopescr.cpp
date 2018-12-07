@@ -119,7 +119,7 @@ CScopeScreen::CScopeScreen()
 	if (m_countcurs == 0)
 	{		
 		short j=0;
-		m_cursor[j] = ::LoadCursor(NULL,IDC_ARROW);
+		m_cursor[j] = ::LoadCursor(nullptr,IDC_ARROW);
 		m_cursordragmode[j] = 0;			// draw frame when changed
 		j++;								// catch object
 		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CZOOM);
@@ -161,8 +161,8 @@ CScopeScreen::CScopeScreen()
 	m_bUseDIB=FALSE;
 	m_bAllowProps=TRUE;
 	m_bLmouseDown=FALSE;
-	m_hwndReflect = NULL;
-	m_tempVTtag = NULL;
+	m_hwndReflect = nullptr;
+	m_tempVTtag = nullptr;
 
 	m_bBottomComment = FALSE;
 	m_blackDottedPen.CreatePen(PS_DOT, 0, m_colorTable[BLACK_COLOR]);
@@ -180,8 +180,8 @@ CScopeScreen::CScopeScreen()
 	m_abcissaheight  = 10;
 	m_ordinateswidth = 25;
 
-	m_pXRulerBar = NULL;
-	m_pYRulerBar = NULL;
+	m_pXRulerBar = nullptr;
+	m_pYRulerBar = nullptr;
 
 	m_liFirst = 0;
 	m_liLast = 0;
@@ -195,13 +195,13 @@ CScopeScreen::~CScopeScreen()
 	{
 		for (int i = 1; i<NB_CURSORS; i++)	// elmt 0: global object cursor
 		{
-			if (NULL != m_cursor[i]) 
+			if (nullptr != m_cursor[i]) 
 				::DestroyCursor(m_cursor[i]);
 		}
 	}
 	m_HZtags.RemoveAllTags();			// remove horizontal tags
 	m_VTtags.RemoveAllTags();			// remove vertical tags	
-	if (m_tempVTtag != NULL) delete m_tempVTtag;
+	if (m_tempVTtag != nullptr) delete m_tempVTtag;
 
 	// delete array of pens
 	for (int i = 0; i < NB_COLORS; i++) 
@@ -242,7 +242,7 @@ END_MESSAGE_MAP()
 
 BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
-	BOOL flag = CWnd::Create(NULL, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+	BOOL flag = CWnd::Create(nullptr, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 	if (flag != 0)
 		PreSubclassWindow();
 	return flag;
@@ -284,9 +284,9 @@ BOOL CScopeScreen::OnEraseBkgnd(CDC* pDC)
 	
 void CScopeScreen::PlotToBitmap(CDC *pDC)
 {
-	CBitmap* poldPlotBitmap = NULL;
+	CBitmap* poldPlotBitmap = nullptr;
 	CBitmap bitmapPlot;
-	bitmapPlot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), NULL);
+	bitmapPlot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), nullptr);
 	m_PlotDC.CreateCompatibleDC(pDC);
 	poldPlotBitmap = m_PlotDC.SelectObject(&bitmapPlot);
 	PlotDatatoDC(&m_PlotDC);
@@ -548,7 +548,7 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 
 void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
 {
-	if (m_pXRulerBar == NULL)
+	if (m_pXRulerBar == nullptr)
 		DrawScalefromRuler (pDC, &m_xRuler);
 	else
 	{ 
@@ -557,7 +557,7 @@ void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
 		DrawGridFromRuler(pDC, &m_xRuler);
 	}
 		
-	if (m_pYRulerBar == NULL) 
+	if (m_pYRulerBar == nullptr) 
 		DrawScalefromRuler (pDC, &m_yRuler);
 	else
 	{
@@ -572,9 +572,9 @@ void CScopeScreen::AdjustDisplayRect(CRect* pRect)
 	m_displayRect = *pRect;
 	if(m_bNiceGrid)
 	{
-		if (m_pYRulerBar == NULL) 
+		if (m_pYRulerBar == nullptr) 
 			m_displayRect.left	+= m_ordinateswidth;
-		if (m_pXRulerBar == NULL)
+		if (m_pXRulerBar == nullptr)
 			m_displayRect.bottom -= m_abcissaheight;
 	}
 }
@@ -621,7 +621,7 @@ void CScopeScreen::PrepareDC(CDC* pDC, CPrintInfo* pInfo)
 	pDC->SetMapMode(MM_ANISOTROPIC);
 
 	// not printing.............................
-	if (pInfo == NULL)
+	if (pInfo == nullptr)
 	{
 		pDC->SetViewportOrg (m_xVO, m_yVO);
 		pDC->SetViewportExt (m_xVE, m_yVE);
@@ -657,7 +657,7 @@ void CScopeScreen::ReleaseCursor()
 {
 	// mouse was captured	
 	ReleaseCapture();
-	ClipCursor(NULL);
+	ClipCursor(nullptr);
 }
 
 BOOL CScopeScreen::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
@@ -679,7 +679,7 @@ void CScopeScreen::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void CScopeScreen::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_hwndReflect != NULL)
+	if (m_hwndReflect != nullptr)
 	{
 		// convert coordinates
 		CRect rect0, rect1;
@@ -814,7 +814,7 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 		break;
 
 	default:
-		if (m_hwndReflect != NULL)
+		if (m_hwndReflect != nullptr)
 		{
 			// convert coordinates
 			CRect rect0, rect1;
@@ -842,7 +842,7 @@ void CScopeScreen::OnLButtonUp(UINT nFlags, CPoint point)
 			InvertTracker(point);
 		m_trackMode = TRACK_OFF;
 	}
-	else if (m_hwndReflect != NULL)
+	else if (m_hwndReflect != nullptr)
 	{
 		// convert coordinates
 		CRect rect0, rect1;
@@ -1016,7 +1016,7 @@ int CScopeScreen::HitTestVTtagLong(long lx)
 	for (int i = 0; i<j; i++)	// loop through all cursors
 	{
 		long lval = m_VTtags.GetTagLVal(i);
-		//long lval = (long) m_VTtags.GetTagVal(i);
+		//long lval = (long) m_vt_tags.GetTagVal(i);
 		if (lval <= lx+ m_liJitter && lval >= lx-m_liJitter)
 		{
 			chit = i;
@@ -1140,7 +1140,7 @@ void CScopeScreen::XorVTtag(int xpoint)
 
 void CScopeScreen::XorTempVTtag(int xpoint)
 {
-	if (m_tempVTtag == NULL)
+	if (m_tempVTtag == nullptr)
 	{
 		m_tempVTtag = new CTag;
 		m_ptLast.x = -1;

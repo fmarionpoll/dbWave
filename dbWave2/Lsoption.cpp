@@ -17,8 +17,8 @@ CLoadSaveOptionsDlg::CLoadSaveOptionsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CLoadSaveOptionsDlg::IDD, pParent)
 {
 	m_ddxcomment = _T("");
-	pParmFiles=NULL;
-	pcomment=NULL;
+	pParmFiles= nullptr;
+	pcomment= nullptr;
 	m_bfilenamechanged=FALSE;		// file name was modified
 	m_bcommentchanged=FALSE;		// comment was modified
 	m_cursel=0;

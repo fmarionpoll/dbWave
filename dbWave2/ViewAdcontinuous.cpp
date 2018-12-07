@@ -39,7 +39,7 @@ CADContView::CADContView()
 {
 	m_sweepduration = 1.0f;
 	m_bADwritetofile = FALSE;
-	m_ptableSet = NULL;
+	m_ptableSet = nullptr;
 	m_ADC_inprogress=FALSE;					// no A/D in progress
 	m_DAC_inprogress=FALSE;					// no D/A in progress
 	m_bchanged=FALSE;						// data unchanged
@@ -386,7 +386,7 @@ void CADContView::ADC_DeclareBuffers()
 	{
 		ecode = olDmAllocBuffer(0, m_ADC_buflen, &m_ADC_bufhandle);
 		ecode = OLNOERROR;
-		if ((ecode == OLNOERROR) && (m_ADC_bufhandle != NULL))
+		if ((ecode == OLNOERROR) && (m_ADC_bufhandle != nullptr))
 			m_ADC_DTAcq32.SetQueue((long)m_ADC_bufhandle); // but buffer onto Ready queue
 	}
 
@@ -434,13 +434,13 @@ void CADContView::ADC_DeleteBuffers()
 		if (m_ADC_DTAcq32.GetHDass() == NULL)
 			return;
 		m_ADC_DTAcq32.Flush();	// clean
-		HBUF hBuf = NULL;			// handle to buffer
+		HBUF hBuf = nullptr;			// handle to buffer
 		do {				// loop until all buffers are removed
 			hBuf = (HBUF)m_ADC_DTAcq32.GetQueue();
-			if (hBuf != NULL)
+			if (hBuf != nullptr)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
-		} while (hBuf != NULL);
+		} while (hBuf != nullptr);
 		m_ADC_bufhandle = hBuf;
 	}
 	catch (COleDispatchException* e)
@@ -460,8 +460,8 @@ void CADContView::ADC_StopAndLiberateBuffers()
 		HBUF hBuf;
 		do {
 			hBuf = (HBUF)m_ADC_DTAcq32.GetQueue();
-			if (hBuf != NULL) m_ADC_DTAcq32.SetQueue((long)hBuf);
-		} while (hBuf != NULL);
+			if (hBuf != nullptr) m_ADC_DTAcq32.SetQueue((long)hBuf);
+		} while (hBuf != nullptr);
 		m_ADC_View.ADdisplayStop();
 		m_bchanged = TRUE;
 	}
@@ -662,10 +662,10 @@ void CADContView::DAC_DeleteBuffers()
 		HBUF hBuf;			// handle to buffer
 		do	{				// loop until all buffers are removed
 			hBuf = (HBUF)m_DAC_DTAcq32.GetQueue();
-			if(hBuf != NULL)
+			if(hBuf != nullptr)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
-		} while (hBuf != NULL);
+		} while (hBuf != nullptr);
 		m_DAC_bufhandle = hBuf;
 	}
 	catch (COleDispatchException* e)
@@ -712,7 +712,7 @@ void CADContView::DAC_DeclareAndFillBuffers()
 		short* pDTbuf;
 		ecode = olDmGetBufferPtr(m_DAC_bufhandle,(void **)&pDTbuf);
 		DAC_FillBuffer(pDTbuf);
-		if ((ecode == OLNOERROR) && (m_DAC_bufhandle != NULL)) 
+		if ((ecode == OLNOERROR) && (m_DAC_bufhandle != nullptr)) 
 		{
 			m_DAC_DTAcq32.SetQueue((long)m_DAC_bufhandle);
 		}
@@ -1149,12 +1149,12 @@ void CADContView::DAC_StopAndLiberateBuffers()
 		HBUF hBuf;
 		do {
 			hBuf = (HBUF)m_DAC_DTAcq32.GetQueue();
-			if(hBuf != NULL) { 
+			if(hBuf != nullptr) { 
 				ECODE ecode = olDmFreeBuffer(hBuf);
 				if(ecode != OLNOERROR)
 					AfxMessageBox(_T("Could not free Buffer"));
 			}
-		}	while(hBuf != NULL);	
+		}	while(hBuf != nullptr);	
 
 		DAC_ClearAllOutputs();
 	}
@@ -1284,7 +1284,7 @@ void CADContView::TransferFilesToDatabase()
 	pSet->RefreshQuery();
 	int nfiles = pdbDoc->m_pDB->GetNRecords();
 	pdbDoc->DBSetCurrentRecordPosition(nfiles-1);
-	pdbDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
 BOOL CADContView::OnStart()
@@ -1502,7 +1502,7 @@ void CADContView::OnInitialUpdate()
 	if (pdbDoc->m_pDB->GetNRecords() > 0) {
 		pdbDoc->OpenCurrentDataFile();							// read data descriptors from current data file
 		CAcqDataDoc* pDat = pdbDoc->m_pDat;						// get a pointer to the data file itself
-		if (pDat != NULL) 
+		if (pDat != nullptr) 
 		{
 			m_pADC_options->waveFormat = *(pDat->GetpWaveFormat());	// read data header
 			m_pADC_options->chanArray.ChannelSetnum(m_pADC_options->waveFormat.scan_count);
@@ -1520,7 +1520,7 @@ void CADContView::OnInitialUpdate()
 	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
 
 	// init communication with Alligator
-	m_Alligator.USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
+	m_Alligator.USBPxxS1Command(0, ID_INITIALIZE, nullptr, nullptr);
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
 	if (pApp->m_bADcardFound)
@@ -1867,7 +1867,7 @@ void CADContView::ADC_OnBufferDone()
 {
 	// get buffer off done list	
 	m_ADC_bufhandle = (HBUF)m_ADC_DTAcq32.GetQueue();
-	if (m_ADC_bufhandle == NULL)
+	if (m_ADC_bufhandle == nullptr)
 		return;
 
 	// get pointer to buffer
@@ -1928,7 +1928,7 @@ void CADContView::DAC_OnBufferDone()
 {
 	// get buffer off done list	
 	m_DAC_bufhandle = (HBUF) m_DAC_DTAcq32.GetQueue();
-	if (m_DAC_bufhandle == NULL)
+	if (m_DAC_bufhandle == nullptr)
 		return;
 
 	// get pointer to buffer
@@ -2050,7 +2050,7 @@ void CADContView::OnBnClickedBiasbutton()
 void CADContView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;

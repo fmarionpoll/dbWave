@@ -20,9 +20,9 @@ END_MESSAGE_MAP()
 
 CSpikeXYpWnd::CSpikeXYpWnd()
 {   
-	m_pparm = NULL;
-	m_piitime = NULL;
-	m_pclass = NULL;
+	m_pparm = nullptr;
+	m_piitime = nullptr;
+	m_pclass = nullptr;
 	m_lFirst = 0;
 	m_lLast = 0;
 	m_currentclass=-999;
@@ -33,7 +33,7 @@ CSpikeXYpWnd::CSpikeXYpWnd()
 	m_rangemode = RANGE_TIMEINTERVALS;
 	SetbUseDIB(FALSE);
 	m_csEmpty = "no \nspikes";
-	m_pSL = NULL;
+	m_pSL = nullptr;
 }  
 
 
@@ -58,7 +58,7 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* pDC)
 	rect.DeflateRect(1,1);
 		
 	// test presence of data		
-	if (m_pparm == NULL || m_pparm->GetSize() == 0 )
+	if (m_pparm == nullptr || m_pparm->GetSize() == 0 )
 	{
 		int textlen = m_csEmpty.GetLength();
 		pDC->DrawText(m_csEmpty, textlen, rect, DT_LEFT); //|DT_WORDBREAK);

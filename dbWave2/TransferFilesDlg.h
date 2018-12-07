@@ -8,7 +8,7 @@ class CTransferFilesDlg : public CDialogEx
 	DECLARE_DYNAMIC(CTransferFilesDlg)
 
 public:
-	CTransferFilesDlg(CWnd* pParent = NULL);   // standard constructor
+	CTransferFilesDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CTransferFilesDlg();
 
 // Dialog Data

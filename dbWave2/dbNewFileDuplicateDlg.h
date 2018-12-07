@@ -10,7 +10,7 @@ class CdbNewFileDuplicateDlg : public CDialog
 {
 // Construction
 public:
-	CdbNewFileDuplicateDlg(CWnd* pParent = NULL);   // standard constructor
+	CdbNewFileDuplicateDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_DUPLICATEFOUND };

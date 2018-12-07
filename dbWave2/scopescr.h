@@ -38,7 +38,7 @@ public:
 	virtual void Serialize( CArchive& archive );
 
 public:
-	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);  	
+	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);  	
 	void	EraseBkgnd(CDC *pDC);
 	void	PlotToBitmap(CDC *pDC);
 	inline	COLORREF GetColor(int i) const {return m_colorTable[i];}
@@ -223,7 +223,7 @@ public:
 	void PlotToBitmap(CBitmap* pBitmap);
 
 protected:
-	void		PrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
+	void		PrepareDC(CDC* pDC, CPrintInfo* pInfo = nullptr);
 	void		CaptureCursor();
 	void		ReleaseCursor();
 	void		SendMyMessage(int code, int codeparm);

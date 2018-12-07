@@ -11,7 +11,7 @@ class CADInputParmsDlg : public CDialog
 	DECLARE_DYNAMIC(CADInputParmsDlg)
 
 public:
-	CADInputParmsDlg(CWnd* pParent = NULL);   // standard constructor
+	CADInputParmsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CADInputParmsDlg();
 	
 // Dialog Data

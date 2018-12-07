@@ -13,7 +13,7 @@ class CFindFilesDlg : public CDialog
 {
 // Construction
 public:
-	CFindFilesDlg(CWnd* pParent = NULL);   // standard constructor
+	CFindFilesDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_FINDFILES };

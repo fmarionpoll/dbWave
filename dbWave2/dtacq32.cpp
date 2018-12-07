@@ -584,49 +584,49 @@ void CDTAcq32::SetPreTrigger(short propVal)
 
 void CDTAcq32::Config()
 {
-	InvokeHelper(0x2b, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x2b, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::Start()
 {
-	InvokeHelper(0x2c, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x2c, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::Stop()
 {
-	InvokeHelper(0x2d, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x2d, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::Abort()
 {
-	InvokeHelper(0x2e, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x2e, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::Pause()
 {
-	InvokeHelper(0x2f, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x2f, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::Continue()
 {
-	InvokeHelper(0x30, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x30, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::Flush()
 {
-	InvokeHelper(0x31, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x31, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::Reset()
 {
-	InvokeHelper(0x32, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x32, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::PutSingleValue(long uiChannel, double dGain, long lValue)
 {
 	static BYTE parms[] =
 		VTS_I4 VTS_R8 VTS_I4;
-	InvokeHelper(0x33, DISPATCH_METHOD, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x33, DISPATCH_METHOD, VT_EMPTY, nullptr, parms,
 		 uiChannel, dGain, lValue);
 }
 
@@ -643,7 +643,7 @@ long CDTAcq32::GetSingleValue(long uiChannel, double dGain)
 long CDTAcq32::CTReadEvents()
 {
 	long result;
-	InvokeHelper(0x35, DISPATCH_METHOD, VT_I4, (void*)&result, NULL);
+	InvokeHelper(0x35, DISPATCH_METHOD, VT_I4, (void*)&result, nullptr);
 	return result;
 }
 
@@ -651,38 +651,38 @@ void CDTAcq32::MeasureFrequency(double dCountDuration)
 {
 	static BYTE parms[] =
 		VTS_R8;
-	InvokeHelper(0x36, DISPATCH_METHOD, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x36, DISPATCH_METHOD, VT_EMPTY, nullptr, parms,
 		 dCountDuration);
 }
 
 void CDTAcq32::EnumBoards()
 {
-	InvokeHelper(0x37, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x37, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::EnumSS()
 {
-	InvokeHelper(0x38, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x38, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::EnumSSCaps(short uiCap)
 {
 	static BYTE parms[] =
 		VTS_I2;
-	InvokeHelper(0x39, DISPATCH_METHOD, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x39, DISPATCH_METHOD, VT_EMPTY, nullptr, parms,
 		 uiCap);
 }
 
 void CDTAcq32::ClearError()
 {
-	InvokeHelper(0x3a, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0x3a, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void CDTAcq32::DTConnectBurst(long TransferSize, long TransferCount)
 {
 	static BYTE parms[] =
 		VTS_I4 VTS_I4;
-	InvokeHelper(0x3b, DISPATCH_METHOD, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x3b, DISPATCH_METHOD, VT_EMPTY, nullptr, parms,
 		 TransferSize, TransferCount);
 }
 
@@ -730,7 +730,7 @@ void CDTAcq32::SetChannelList(short index, short nNewValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_I2;
-	InvokeHelper(0x3f, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x3f, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, nNewValue);
 }
 
@@ -748,7 +748,7 @@ void CDTAcq32::SetGainList(short index, double newValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_R8;
-	InvokeHelper(0x40, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x40, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, newValue);
 }
 
@@ -766,7 +766,7 @@ void CDTAcq32::SetFilterList(short index, double newValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_R8;
-	InvokeHelper(0x41, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x41, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, newValue);
 }
 
@@ -834,7 +834,7 @@ void CDTAcq32::SetInhibitList(short index, BOOL bNewValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_BOOL;
-	InvokeHelper(0x47, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x47, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, bNewValue);
 }
 
@@ -852,7 +852,7 @@ void CDTAcq32::SetDIOList(short index, long nNewValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_I4;
-	InvokeHelper(0x48, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x48, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, nNewValue);
 }
 
@@ -888,5 +888,5 @@ short CDTAcq32::GetQueueSize(short uiQueue)
 
 void CDTAcq32::AboutBox()
 {
-	InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }

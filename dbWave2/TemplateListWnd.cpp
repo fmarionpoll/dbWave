@@ -127,7 +127,7 @@ CTemplateListWnd::CTemplateListWnd()
 	m_yextent=0;
 	m_yzero=0;
 	m_bDragging = FALSE;
-	m_pimageListDrag=NULL;
+	m_pimageListDrag= nullptr;
 	m_tpl0.tInit();	
 }
 
@@ -176,7 +176,7 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 		item.iItem = i;
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
-		item.pszText = NULL;
+		item.pszText = nullptr;
 		item.lParam = (LPARAM) pWnd;
 		int index1 = InsertItem(&item);
 	}
@@ -193,7 +193,7 @@ void CTemplateListWnd::TransferTemplateData()
 		item.iItem = i;
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
-		item.pszText = NULL;
+		item.pszText = nullptr;
 		item.lParam = (LPARAM) m_ptpl.GetAt(i);
 		int index = InsertItem(&item);
 		ASSERT(index >= 0);
@@ -308,7 +308,7 @@ void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
 		item.iItem = i;
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
-		item.pszText = NULL;
+		item.pszText = nullptr;
 		item.lParam = (LPARAM) m_ptpl.GetAt(i);
 		SetItem(&item);
 	}
@@ -381,7 +381,7 @@ void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClass
 		item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
-		item.pszText = NULL;
+		item.pszText = nullptr;
 		item.lParam = (LPARAM) m_ptpl.GetAt(i);
 		SetItem(&item);
 	}
@@ -458,7 +458,7 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 
 	// delete corresponding window object
 	CTemplateWnd* pS = (CTemplateWnd*) pNMListView->lParam;	
-	if (pS != NULL)
+	if (pS != nullptr)
 	{
 		// search corresponding window
 		int item=-1;
@@ -752,7 +752,7 @@ void CTemplateListWnd::OnButtonUp(CPoint point)
 		m_pimageListDrag->DragLeave(this);
 		m_pimageListDrag->EndDrag();
 		delete m_pimageListDrag;
-		m_pimageListDrag = NULL;
+		m_pimageListDrag = nullptr;
 
 		if (lStyle == LVS_REPORT && m_iItemDrop != m_iItemDrag)  
 		{

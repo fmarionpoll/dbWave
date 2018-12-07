@@ -61,13 +61,13 @@ CSpikeView::CSpikeView()
 	m_zoominteger = 1;
 	m_ptVT = -1;	
 	m_rectVTtrack = CRect(0,0,0,0);
-	m_pSpkDoc = NULL;
-	m_pDataDoc = NULL;
+	m_pSpkDoc = nullptr;
+	m_pDataDoc = nullptr;
 	m_bdummy = TRUE;
-	mdPM=NULL;			// view data options
-	mdMO=NULL;			// measure options
-	m_psC=NULL;
-	m_pspkDP=NULL;		// spike detection parameters
+	mdPM= nullptr;			// view data options
+	mdMO= nullptr;			// measure options
+	m_psC= nullptr;
+	m_pspkDP= nullptr;		// spike detection parameters
 
 	m_bEnableActiveAccessibility=FALSE; // workaround to crash / accessibility
 }
@@ -169,7 +169,7 @@ void CSpikeView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pD
 			m_psC->coltext = m_spkClass.GetColsTextWidth();
 
 			CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-			if (pApp->m_pviewspikesMemFile == NULL)
+			if (pApp->m_pviewspikesMemFile == nullptr)
 			{
 				pApp->m_pviewspikesMemFile = new CMemFile;
 				ASSERT(pApp->m_pviewspikesMemFile != NULL);
@@ -230,7 +230,7 @@ BOOL CSpikeView::OnMove(UINT nIDMoveCommand)
 		return false;
 	}
 
-	pDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	pDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -730,7 +730,7 @@ void CSpikeView::UpdateLegends(BOOL bFirst)
 	// set cursor
 	HWND hwnd = GetSafeHwnd();	
 	if (!m_baddspikemode)
-		hwnd = NULL;
+		hwnd = nullptr;
 	m_sourceView.ReflectMouseMoveMessg(hwnd);
 	m_spkClass.ReflectBarsMouseMoveMessg(hwnd);
 	m_sourceView.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
@@ -771,7 +771,7 @@ void CSpikeView::UpdateFileParameters()
 	if (!flag)
 	{
 		m_bSpkDocExists = FALSE;
-		m_spkClass.SetSourceData(NULL, NULL);
+		m_spkClass.SetSourceData(nullptr, nullptr);
 	}
 	else
 	{
@@ -833,7 +833,7 @@ void CSpikeView::UpdateFileParameters()
 	// get source data
 	CString docname = GetDocument()->DBGetCurrentDatFileName();
 	m_bDatDocExists = GetDocument()->OpenCurrentDataFile();
-	m_pDataDoc = NULL;
+	m_pDataDoc = nullptr;
 	if (m_bDatDocExists)
 		m_pDataDoc = GetDocument()->m_pDat;
 	m_spikeno = m_pSpkList->m_selspike;
@@ -885,7 +885,7 @@ void CSpikeView::SelectSpkList(int icursel)
 
 void CSpikeView::SaveCurrentFileParms()
 {
-	if (m_pSpkDoc != NULL && m_pSpkDoc->IsModified())
+	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
 		if (!m_pSpkList->IsClassListValid())	// if class list not valid:
 			m_pSpkList->UpdateClassList();		// rebuild list of classes
@@ -1322,7 +1322,7 @@ BOOL CSpikeView::OnPreparePrinting(CPrintInfo* pInfo)
 
 	// save current state of the windows
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	if (pApp->m_pviewspikesMemFile == NULL)
+	if (pApp->m_pviewspikesMemFile == nullptr)
 	{
 		pApp->m_pviewspikesMemFile = new CMemFile;
 		ASSERT(pApp->m_pviewspikesMemFile != NULL);
@@ -1470,7 +1470,7 @@ void CSpikeView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	memset(&m_logFont, 0, sizeof(LOGFONT));		// prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial"));		// Arial font
 	m_logFont.lfHeight = mdPM->fontsize;		// font height
-	m_pOldFont = NULL;
+	m_pOldFont = nullptr;
 	BOOL flag = m_fontPrint.CreateFontIndirect(&m_logFont);
 	pDC->SetBkMode (TRANSPARENT);
 }
@@ -1573,7 +1573,7 @@ void CSpikeView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 			m_sourceView.GetDataFromDoc(lFirst, lLast);	// load data from file
 			m_sourceView.CenterChan(0);
 			m_sourceView.Print(pDC, &RWbars);			// print data
-			pDC->SelectClipRgn(NULL);
+			pDC->SelectClipRgn(nullptr);
 
 			iextent = m_sourceView.GetChanlistYextent(0);
 			izero = m_sourceView.GetChanlistYzero(0);
@@ -1660,7 +1660,7 @@ void CSpikeView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		// print comments --------------------------------------------------
 
 		pDC->SetMapMode(MM_TEXT);				// 1 LP = 1 pixel
-		pDC->SelectClipRgn(NULL);				// no more clipping
+		pDC->SelectClipRgn(nullptr);				// no more clipping
 		pDC->SetViewportOrg(0, 0);				// org = 0,0        
 
 		// print comments according to row within file
@@ -1703,7 +1703,7 @@ void CSpikeView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		}
 	}	// this is the end of a very long for loop.....................
 
-	if (m_pOldFont != NULL)
+	if (m_pOldFont != nullptr)
 		pDC->SelectObject(m_pOldFont);
 }
 
@@ -1722,7 +1722,7 @@ void CSpikeView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 	m_spkClass.Invalidate();
 	
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	if (pApp->m_pviewspikesMemFile != NULL)
+	if (pApp->m_pviewspikesMemFile != nullptr)
 	{
 		CArchive ar(pApp->m_pviewspikesMemFile, CArchive::load);
 		pApp->m_pviewspikesMemFile->SeekToBegin();
@@ -1886,7 +1886,7 @@ void CSpikeView::OnEnChangeTimelast()
 void CSpikeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
@@ -1996,7 +1996,7 @@ void CSpikeView::OnEditCopy()
 
 		CString csTitle = _T("dbWave\0") + GetDocument()->GetTitle();
 		csTitle += _T("\0\0");
-		BOOL hmDC = mDC.CreateEnhanced(pDCRef, NULL, &rectBound, csTitle);
+		BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rectBound, csTitle);
 		ASSERT (hmDC != NULL);
 
 		// Draw document in metafile.
@@ -2007,13 +2007,13 @@ void CSpikeView::OnEditCopy()
 		mDC.SetAttribDC(attribDC.GetSafeHdc()) ;	// from current screen
 
 		// print comments : set font
-		m_pOldFont = NULL;
+		m_pOldFont = nullptr;
 		int oldsize = mdPM->fontsize;
 		mdPM->fontsize = 10;
 		memset(&m_logFont, 0, sizeof(LOGFONT));		// prepare font
 		lstrcpy(m_logFont.lfFaceName, _T("Arial"));		// Arial font
 		m_logFont.lfHeight = mdPM->fontsize;		// font height
-		m_pOldFont = NULL;
+		m_pOldFont = nullptr;
 		BOOL flag = m_fontPrint.CreateFontIndirect(&m_logFont);
 		mDC.SetBkMode (TRANSPARENT);
 
@@ -2124,7 +2124,7 @@ void CSpikeView::OnEditCopy()
 			mDC.DrawText(comments, comments.GetLength(), rectComment, nFormat);
 			mDC.SelectObject(pOldBrush);
 */
-			if (m_pOldFont != NULL)
+			if (m_pOldFont != nullptr)
 				mDC.SelectObject(m_pOldFont);
 			m_fontPrint.DeleteObject();
 
@@ -2413,7 +2413,7 @@ void CSpikeView::OnBiasScroll(UINT nSBCode, UINT nPos)
 void CSpikeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDaoRecordView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
@@ -2455,7 +2455,7 @@ void CSpikeView::SetAddspikesMode(int mousecursorType)
 	GetParent()->SendMessage(WM_COMMAND, commandID, NULL);
 	HWND hwnd = GetSafeHwnd();	
 	if (!m_baddspikemode)
-		hwnd = NULL;
+		hwnd = nullptr;
 	m_sourceView.ReflectMouseMoveMessg(hwnd);
 	m_spkClass.ReflectBarsMouseMoveMessg(hwnd);
 	m_sourceView.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);

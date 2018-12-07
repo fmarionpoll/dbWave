@@ -226,7 +226,7 @@ SPKDETECTARRAY::~SPKDETECTARRAY()
 void SPKDETECTARRAY::DeleteAll()
 {
 	POSITION pos = chanArrayMap.GetStartPosition();
-	void* ptr = NULL;
+	void* ptr = nullptr;
 	WORD wKey;
 	while (pos) 
 	{
@@ -234,7 +234,7 @@ void SPKDETECTARRAY::DeleteAll()
 		CSpkDetectArray* pspk = (CSpkDetectArray*) ptr;
 		ASSERT_VALID(pspk);
 		delete pspk;
-		pspk = NULL;
+		pspk = nullptr;
 	}
 	chanArrayMap.RemoveAll();
 }
@@ -243,7 +243,7 @@ void SPKDETECTARRAY::DeleteAll()
 // create empty CPtrArray if necessary
 CSpkDetectArray* SPKDETECTARRAY::GetChanArray(int acqchan)
 {
-	void* ptr = NULL;
+	void* ptr = nullptr;
 	BOOL flag = chanArrayMap.Lookup(acqchan, ptr);
 	if (!flag)
 	{
@@ -269,7 +269,7 @@ void SPKDETECTARRAY::Serialize(CArchive& ar)
 		int narrays = chanArrayMap.GetSize();
 		ar << narrays;
 		POSITION pos = chanArrayMap.GetStartPosition();
-		void* ptr = NULL;
+		void* ptr = nullptr;
 		WORD wKey;
 		while (pos) 
 		{
@@ -509,7 +509,7 @@ SPKCLASSIF::SPKCLASSIF()
 	coltext=-1;
 	colspikes=100;		// width of the spikes within one row
 	colseparator=5;
-	ptpl = NULL;
+	ptpl = nullptr;
 	mvmin =0.f;
 	mvmax= 2.f;
 	vdestclass = 1;
@@ -554,7 +554,7 @@ void SPKCLASSIF::operator = (const SPKCLASSIF& arg)
 	mvmin = arg.mvmin;
 	mvmax = arg.mvmax;
 	
-	if (arg.ptpl != NULL)
+	if (arg.ptpl != nullptr)
 	{
 		ptpl = new (CTemplateListWnd);
 		*((CTemplateListWnd*) ptpl) = *((CTemplateListWnd*) arg.ptpl);
@@ -593,7 +593,7 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 		ar << rowheight;		// 3
 		ar << hitrate;			// 4
 		ar << hitratesort;		// 5
-		btplIspresent = (ptpl != NULL);	// test if templatelist is present
+		btplIspresent = (ptpl != nullptr);	// test if templatelist is present
 		ar << btplIspresent;	// 6
 		ar << coltext;			// 7
 		ar << colspikes;		// 8
@@ -663,7 +663,7 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 			}
 			ASSERT(nfparms == 0);
 
-			if (!btplIspresent && ptpl != NULL)
+			if (!btplIspresent && ptpl != nullptr)
 				delete (CTemplateListWnd*)ptpl;
 		}
 	}
@@ -671,7 +671,7 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 	// serialize templates
 	if (btplIspresent)
 	{
-		if (ptpl == NULL)
+		if (ptpl == nullptr)
 			ptpl = new (CTemplateListWnd);
 		((CTemplateListWnd*)ptpl)->Serialize(ar);
 	}

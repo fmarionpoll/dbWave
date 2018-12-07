@@ -23,7 +23,7 @@ class CdbEditFieldDlg : public CDialogEx
 	DECLARE_DYNAMIC(CdbEditFieldDlg)
 
 public:
-	CdbEditFieldDlg(CWnd* pParent = NULL);   // standard constructor
+	CdbEditFieldDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CdbEditFieldDlg();
 
 // Dialog Data

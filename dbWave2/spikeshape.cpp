@@ -23,7 +23,7 @@ END_MESSAGE_MAP()
 
 CSpikeShapeWnd::CSpikeShapeWnd()
 {                                        
-	m_pSL=NULL;
+	m_pSL= nullptr;
 	m_lFirst = 0;
 	m_lLast = 0;
 	m_currentclass=-999;
@@ -36,7 +36,7 @@ CSpikeShapeWnd::CSpikeShapeWnd()
 	SetbUseDIB(FALSE); 
 	m_csEmpty = "no \nspikes";	
 	m_ballFiles = FALSE;
-	m_pDoc = NULL;
+	m_pDoc = nullptr;
 }
 
 // ---------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 		}
 
 		//test if data are there - if none, write it and exit
-		if (m_pSL == NULL || m_pSL->GetTotalSpikes() == 0)
+		if (m_pSL == nullptr || m_pSL->GetTotalSpikes() == 0)
 		{
 			if (!m_ballFiles)
 			{
@@ -227,7 +227,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 
 void CSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* pDC)
 {
-	CBitmap* poldbitmap = NULL;
+	CBitmap* poldbitmap = nullptr;
 	int nSavedDC = pDC->SaveDC();
 	CRect rect = m_displayRect;
 	pDC->DPtoLP(rect);
@@ -264,7 +264,7 @@ void CSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* pDC)
 
 void CSpikeShapeWnd::DrawFlaggedSpikes(CDC* pDC0)
 {
-	CBitmap* poldbitmap = NULL;
+	CBitmap* poldbitmap = nullptr;
 	ASSERT (pDC0 != NULL);
 	CDC* pDC = pDC0;
 	int nSavedDC = pDC->SaveDC();	
@@ -705,7 +705,7 @@ void CSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 void CSpikeShapeWnd::Print(CDC* pDC, CRect* rect)
 {
 	// check if there are valid data to display
-	if (m_pSL == NULL || m_pSL->GetTotalSpikes()== 0)
+	if (m_pSL == nullptr || m_pSL->GetTotalSpikes()== 0)
 		return;
 
 	int old_yVO = m_yVO;
@@ -848,7 +848,7 @@ void CSpikeShapeWnd::PlotArraytoDC(CDC* pDC, short* pspk)
 
 	// (3) display polypoint
 	CPoint* pP = (CPoint*) lpDest0;	
-	BOOL bPolyLine = (pDC->m_hAttribDC == NULL) 
+	BOOL bPolyLine = (pDC->m_hAttribDC == nullptr) 
 		|| (pDC->GetDeviceCaps(LINECAPS) && LC_POLYLINE);
 	if (bPolyLine)							// polypoint enabled
 		pDC->Polyline(pP, nelements);		// draw curve : polypoint
@@ -872,7 +872,7 @@ float CSpikeShapeWnd::GetDisplayMaxMv()
 
 float CSpikeShapeWnd::GetDisplayMinMv()
 {
-	if (m_pSL == NULL)
+	if (m_pSL == nullptr)
 		return 1.f;
 
 	GetExtents();
@@ -883,7 +883,7 @@ float CSpikeShapeWnd::GetDisplayMinMv()
 
 float CSpikeShapeWnd::GetExtent_mV()
 {
-	if (m_pSL == NULL)
+	if (m_pSL == nullptr)
 		return 1.f;
 
 	GetExtents();
@@ -894,7 +894,7 @@ float CSpikeShapeWnd::GetExtent_mV()
 
 float CSpikeShapeWnd::GetExtent_ms()
 {
-	if (m_pSL == NULL)
+	if (m_pSL == nullptr)
 		return 1.f;
 
 	GetExtents();

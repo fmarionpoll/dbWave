@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "dbWave.h"
 #include <Olxdadefs.h>
 #include "GridCtrl\GridCell.h"
 #include "GridCtrl\GridCellCombo_FMP.h"
@@ -147,7 +146,7 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	} while (pszEncoding[i] != _T(""));
 
 	// eventually load data
-	if (m_pwFormat==NULL)
+	if (m_pwFormat== nullptr)
 	{
 		m_nacqchans = 1;
 		// init other dialog box items
@@ -161,29 +160,31 @@ BOOL CADInputParmsDlg::OnInitDialog()
 		m_nacqchans = m_pwFormat->scan_count;
 		GetDlgItem(IDC_ADCARDNAME)->SetWindowText(m_pwFormat->csADcardName);
 		// get precision and compute corresponding nb of bits
-		m_iNBins = m_pwFormat->binspan+1;
+		m_iNBins = m_pwFormat->binspan + 1;
 		int ibins = m_iNBins;
 		int nbits = 0;
 		do {
-			ibins = ibins/2;
+			ibins = ibins / 2;
 			nbits++;
 		} while (ibins > 1);
-		
+
 		// select corresponding entry in the combobox
 		CString cs;
 		cs.Format(_T("%i"), nbits);
-		int i = m_resolutionCombo.FindStringExact(-1, cs);	
-		if (i != CB_ERR)
-			m_resolutionCombo.SetCurSel(i);
-		
+		const auto i_found = m_resolutionCombo.FindStringExact(-1, cs);
+		if (i_found != CB_ERR)
+			m_resolutionCombo.SetCurSel(i_found);
+
 		// select encoding mode according to parameter in waveFormat
-		int icur=0;
-		for (int icur = 0; icur < m_encodingCombo.GetCount(); icur++)
-			if (m_encodingCombo.GetItemData(icur) == (DWORD) (m_pwFormat->mode_encoding ))
+		int i_current = 0;
+		for (i_current; i_current < m_encodingCombo.GetCount(); i_current++)
+		{
+			if (m_encodingCombo.GetItemData(i_current) == static_cast<DWORD>(m_pwFormat->mode_encoding))
 				break;
-		if (icur == m_encodingCombo.GetCount())
-			icur --;
-		m_encodingCombo.SetCurSel(icur);
+		}
+		if (i_current == m_encodingCombo.GetCount())
+			i_current --;
+		m_encodingCombo.SetCurSel(i_current);
 	}
 
 	/////////////////////////////////////////////////////////////////////////
@@ -197,18 +198,18 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	m_Grid.SetFixedRowCount(1);
 
 	// get font and create bold face 
-	CFont *pFont = m_Grid.GetFont();
-	ASSERT (pFont != NULL);
+	CFont *p_font = m_Grid.GetFont();
+	ASSERT (p_font != NULL);
 	LOGFONT lf;
-	pFont->GetLogFont(&lf);
+	p_font->GetLogFont(&lf);
 	lf.lfWeight = FW_BOLD;
 
 	// set row headers
-	int nrows = 0;				// count number of rows
+	int n_rows = 0;				// count number of rows
 	do {
-		nrows++;
-	} while (pszRowTitle[nrows-1] != _T(""));
-	m_Grid.SetRowCount(nrows);
+		n_rows++;
+	} while (pszRowTitle[n_rows-1] != _T(""));
+	m_Grid.SetRowCount(n_rows);
 
 	// init row headers with descriptors
 	int col = 0;
@@ -230,7 +231,7 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	for (col=1; col<= m_nacqchans; col++)
 	{
 		InitGridColumnDefaults(col);
-		if (m_pwFormat!=NULL)
+		if (m_pwFormat!= nullptr)
 			LoadChanData(col);
 	}
 
@@ -260,7 +261,7 @@ void CADInputParmsDlg::OnEnChangeNacqchans()
 	CString cs; 
 	cs.Format(_T("A/D channel (0-%i)"), m_maxchans-1);
 	m_Grid.SetItemText(m_rowADchannel, 0, cs);
-	m_Grid.RedrawCell(m_rowADchannel, 0, NULL);
+	m_Grid.RedrawCell(m_rowADchannel, 0, nullptr);
 
 	// update combos / acq channels
 	for (int i=1; i<= m_nacqchans; i++)
@@ -365,7 +366,7 @@ void CADInputParmsDlg::InitADchannelCombo(int col, int iselect)
 
 	// select cell and corresponding combo
 	CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(m_rowADchannel, col);
-	if (pCell != NULL)
+	if (pCell != nullptr)
 	{
 		// if iselect negative, get current selection
 		if (iselect < 0)
@@ -647,15 +648,15 @@ void CADInputParmsDlg::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 void CADInputParmsDlg::OnCbnSelchangeResolution()
 {
 	CString cs;
-	int cursel = m_resolutionCombo.GetCurSel();
+	int current_sel = m_resolutionCombo.GetCurSel();
 	m_resolutionCombo.GetWindowText(cs);
-	int nbits = _ttoi(cs);
-	UINT oldNBins = m_iNBins;
-	m_iNBins = 1 << nbits; // 2 exp (nbits)
+	const int n_bits = _ttoi(cs);
+	const UINT old_n_bins = m_iNBins;
+	m_iNBins = 1 << n_bits; // 2 exp (nbits)
 	// change input resolution if value has changed
-	if (m_iNBins != oldNBins)
+	if (m_iNBins != old_n_bins)
 	{
-		for (int i= 1; i<= m_nacqchans; i++)
+		for (auto i= 1; i<= m_nacqchans; i++)
 			InitGridColumnReadOnlyFields(i);
 		m_Grid.Refresh();
 	}
@@ -848,22 +849,21 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	CWaveChan* pchan = m_pchArray->GetWaveChan(col-1);
+	CWaveChan* p_chan = m_pchArray->GetWaveChan(col-1);
 
-	if (pchan->am_csamplifier.Find(_T("CyberAmp")) >= 0 
-		|| pchan->am_csamplifier.Find(_T("Axon")) >= 0) 
+	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0 
+		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0) 
 	{
 		// cyberAmp declared: check if connected -if not, exit
-		CCyberAmp cyberAmp;
-		BOOL bcyberPresent = (cyberAmp.Initialize() == NULL);
-		if (!bcyberPresent)
+		CCyberAmp cyber_amp;
+		if (!(cyber_amp.Initialize() == NULL))
 			return;
 
-		pchan->am_csInputneg = pszHighPass[0];
-		int errorcode = cyberAmp.SetWaveChanParms(pchan);
+		p_chan->am_csInputneg = pszHighPass[0];
+		auto error_code = cyber_amp.SetWaveChanParms(p_chan);
 	}
 
-	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0) 
+	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0) 
 	{
 		//m_pAlligatorAmplifier->SetWaveChanParms(pchan, m_pdevice1);
 	}

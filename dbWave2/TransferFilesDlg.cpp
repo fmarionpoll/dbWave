@@ -70,12 +70,12 @@ void CTransferFilesDlg::OnBnClickedButtonpath()
 	LPITEMIDLIST pidlBrowse;			// PIDL selected by user 
  
 	// Allocate a buffer to receive browse information. 
-	if ((lpBuffer = (LPTSTR) g_pMalloc->Alloc(MAX_PATH)) == NULL) 
+	if ((lpBuffer = (LPTSTR) g_pMalloc->Alloc(MAX_PATH)) == nullptr) 
 		return; 
  
 	// Fill in the BROWSEINFO structure. 
 	bi.hwndOwner = GetSafeHwnd();		// owner of the dlg is this dlg box
-	bi.pidlRoot =  NULL;				//pidlPrograms; ? 
+	bi.pidlRoot = nullptr;				//pidlPrograms; ? 
 	bi.lpfn = BrowseCallbackProc3; 
 	bi.pszDisplayName = lpBuffer;		// output buffer
 	bi.lpszTitle = _T("Choose a Folder"); 
@@ -84,7 +84,7 @@ void CTransferFilesDlg::OnBnClickedButtonpath()
  
 	// Browse for a folder and return its PIDL. 
 	pidlBrowse = SHBrowseForFolder(&bi);
-	if (pidlBrowse != NULL)				// check if a folder was chosen
+	if (pidlBrowse != nullptr)				// check if a folder was chosen
 	{ 
  
 		// Show the display name, title, and file system path. 

@@ -9,7 +9,7 @@ class CCopyAsDlg : public CDialog
 {
 // Construction
 public:
-	CCopyAsDlg(CWnd* pParent = NULL);	// standard constructor
+	CCopyAsDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_COPYAS };

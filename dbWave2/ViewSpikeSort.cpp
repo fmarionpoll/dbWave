@@ -61,8 +61,8 @@ CSpikeSort1View::CSpikeSort1View()
 	m_bMeasureDone=FALSE;	// no measure done yet
 	m_bvalidextrema=FALSE;	// extrema are not valid
 	m_spikeno = -1;			// spike currently selected
-	m_pSpkDoc=NULL;
-	m_pSpkList=NULL;
+	m_pSpkDoc= nullptr;
+	m_pSpkList= nullptr;
 	m_divAmplitudeBy = 1;
 	m_binit = FALSE;
 	m_bEnableActiveAccessibility=FALSE; // workaround to crash / accessibility
@@ -73,7 +73,7 @@ CSpikeSort1View::CSpikeSort1View()
 CSpikeSort1View::~CSpikeSort1View()
 {
 	// save spkD list i	 changed
-	if (m_pSpkDoc != NULL)
+	if (m_pSpkDoc != nullptr)
 		SaveCurrentFileParms();	// save file if modified
 	// save current spike detection parameters
 	m_psC->bChanged = TRUE;
@@ -269,7 +269,7 @@ void CSpikeSort1View::ActivateMode4()
 		m_spkXYp.SetNxScaleCells(2, 0, 0);
 		m_spkXYp.m_parms.crScopeGrid= RGB(128,   128, 128);
 		
-		if (m_pSpkList != NULL)
+		if (m_pSpkList != nullptr)
 		{
 			float spikelen_ms = (m_pSpkList->GetSpikeLength()* m_tunit) / m_pSpkList->GetAcqSampRate() ;
 			CString csDummy;
@@ -312,7 +312,7 @@ void CSpikeSort1View::OnActivateView( BOOL bActivate, CView* pActivateView, CVie
 		SaveCurrentFileParms();	
 
 		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-		if (pApp->m_psort1spikesMemFile == NULL)
+		if (pApp->m_psort1spikesMemFile == nullptr)
 		{
 			pApp->m_psort1spikesMemFile = new CMemFile;
 			ASSERT(pApp->m_psort1spikesMemFile != NULL);
@@ -361,7 +361,7 @@ BOOL CSpikeSort1View::OnMove(UINT nIDMoveCommand)
 		((CChildFrame*)GetParent())->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 		return false;
 	}
-	pDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	pDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -422,11 +422,11 @@ void CSpikeSort1View::UpdateFileParameters()
 	}
 
 	// change pointer to select new spike list & test if one spike is selected
-	BOOL bfirstupdate = (m_pSpkDoc == NULL);
+	BOOL bfirstupdate = (m_pSpkDoc == nullptr);
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) m_pDocument;
 	pdbDoc->OpenCurrentSpikeFile();
 	m_pSpkDoc = pdbDoc->m_pSpk;
-	if (m_pSpkDoc == NULL)
+	if (m_pSpkDoc == nullptr)
 		return;
 
 	// reset tab control
@@ -866,7 +866,7 @@ void CSpikeSort1View::OnSort()
 	int currentlist = m_pSpkDoc->GetSpkListCurrentIndex();
 	
 	// change indexes if ALL files selected
-	CProgressDlg* pdlg = NULL;
+	CProgressDlg* pdlg = nullptr;
 	int istep = 0;
 	CString cscomment;
 
@@ -893,7 +893,7 @@ void CSpikeSort1View::OnSort()
 			pdbDoc->DBSetCurrentRecordPosition(ifile);
 			pdbDoc->OpenCurrentSpikeFile();
 			m_pSpkDoc = pdbDoc->m_pSpk;
-			if (m_pSpkDoc == NULL)
+			if (m_pSpkDoc == nullptr)
 				continue;
 			
 			// check if user wants to stop
@@ -908,11 +908,11 @@ void CSpikeSort1View::OnSort()
 				istep = MulDiv(ifile, 100, nfiles);
 			}
 		}
-		if (m_pSpkDoc == NULL)
+		if (m_pSpkDoc == nullptr)
 			continue;
 
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		if (m_pSpkList == NULL)
+		if (m_pSpkList == nullptr)
 			continue;
 
 		int nspikes = m_pSpkList->GetTotalSpikes();
@@ -1214,10 +1214,10 @@ void CSpikeSort1View::OnMeasure()
 			m_pSpkDoc = pdbDoc->m_pSpk;
 		}
 		// check if this file is ok
-		if (m_pSpkDoc == NULL)
+		if (m_pSpkDoc == nullptr)
 			continue;
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		if (m_pSpkList == NULL)
+		if (m_pSpkList == nullptr)
 			continue;
 
 		totalspikes += m_pSpkList->GetTotalSpikes();
@@ -1240,10 +1240,10 @@ void CSpikeSort1View::OnMeasure()
 			m_pSpkDoc = pdbDoc->m_pSpk;
 		}
 		// check if this file is ok
-		if (m_pSpkDoc == NULL)
+		if (m_pSpkDoc == nullptr)
 			continue;
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		if (m_pSpkList == NULL)
+		if (m_pSpkList == nullptr)
 			continue;
 		int nspikes = m_pSpkList->GetTotalSpikes();
 		if (nspikes <= 0 ||  m_pSpkList->GetSpikeLength() == 0)
@@ -1806,7 +1806,7 @@ int	 CSpikeSort1View::LocalIndextoGlobal(int filenb, int index_local)
 void CSpikeSort1View::SaveCurrentFileParms()
 {
 	// save previous file if anything has changed
-	if (m_pSpkDoc != NULL && m_pSpkDoc->IsModified())
+	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
 		int currentlist = m_tabCtrl.GetCurSel();
 		CSpikeList* pS = m_pSpkDoc->SetSpkListCurrent(currentlist);
@@ -2357,7 +2357,7 @@ void CSpikeSort1View::OnEnChangemVMax()
 void CSpikeSort1View::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;

@@ -33,9 +33,9 @@ CDataListCtrl::CDataListCtrl()
 	m_cx = 400;
 	m_cy = 50;
 	m_dattransform = 0;
-	m_picolwidth = NULL;
+	m_picolwidth = nullptr;
 	m_displaymode = 1;
-	m_pEmptyBitmap = NULL;
+	m_pEmptyBitmap = nullptr;
 	m_tFirst = 0.f;
 	m_tLast = 0.f;
 	m_mVspan = 0.f;
@@ -53,7 +53,7 @@ CDataListCtrl::~CDataListCtrl()
 
 void CDataListCtrl::OnDestroy() 
 {
-	if (m_picolwidth != NULL)
+	if (m_picolwidth != nullptr)
 	{
 		int nbcols_stored = m_picolwidth->GetSize();
 		if (nbcols_stored != NCOLS)
@@ -133,7 +133,7 @@ END_MESSAGE_MAP()
 
 void CDataListCtrl::InitColumns(CUIntArray* picolwidth)
 {
-	if (picolwidth != NULL)
+	if (picolwidth != nullptr)
 	{
 		m_picolwidth = picolwidth; 
 		int ncol_stored = picolwidth->GetSize();
@@ -277,7 +277,7 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	// now, the requested item is in the cache
 	// get data from database
 	CdbWaveDoc* pdbDoc = ((CdbWaveView*) GetParent())->GetDocument();
-	if (pdbDoc == NULL)
+	if (pdbDoc == nullptr)
 		return;
 
 	int ifirstvisible = ((CDataListCtrlRowObject*)  m_ptrArray.GetAt(0))->index;
@@ -377,7 +377,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 
 	// get data file pointer and pointer to database
 	CdbWaveDoc* pdbDoc = ((CdbWaveView*) GetParent())->GetDocument();
-	if (pdbDoc == NULL)
+	if (pdbDoc == nullptr)
 		return;
 	int indexcurrentfile = pdbDoc->DBGetCurrentRecordPosition();	// save current file
 
@@ -516,7 +516,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 ///////////////////////////////////////////////////////////////////////////////
 void CDataListCtrl::SetEmptyBitmap(BOOL bForcedUpdate)
 {
-	if (m_pEmptyBitmap != NULL && !bForcedUpdate)
+	if (m_pEmptyBitmap != nullptr && !bForcedUpdate)
 		return;
 
 	SAFE_DELETE(m_pEmptyBitmap);
@@ -525,7 +525,7 @@ void CDataListCtrl::SetEmptyBitmap(BOOL bForcedUpdate)
 	CWindowDC dc(this);
 	CDC memDC; 
 	VERIFY(memDC.CreateCompatibleDC(&dc));
-	m_pEmptyBitmap->CreateBitmap(m_cx, m_cy,  dc.GetDeviceCaps(PLANES), dc.GetDeviceCaps(BITSPIXEL), NULL);
+	m_pEmptyBitmap->CreateBitmap(m_cx, m_cy,  dc.GetDeviceCaps(PLANES), dc.GetDeviceCaps(BITSPIXEL), nullptr);
 	CBitmap *pBmp = memDC.SelectObject(m_pEmptyBitmap);
 	memDC.SetMapMode(dc.GetMapMode());
 
@@ -553,7 +553,7 @@ void CDataListCtrl::RefreshDisplay()
 	for (int index = 0; index < nrows; index++)
 	{
 		CDataListCtrlRowObject* ptr = (CDataListCtrlRowObject*) m_ptrArray.GetAt(index);
-		if (ptr == NULL)
+		if (ptr == nullptr)
 			continue;
 		switch (m_displaymode)
 		{
@@ -617,7 +617,7 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
 	// create objects if necessary : CLineView and CAcqDataDoc
-	if (ptr->pdataWnd == NULL)
+	if (ptr->pdataWnd == nullptr)
 	{
 		ptr->pdataWnd = new CLineViewWnd;
 		ASSERT(ptr->pdataWnd != NULL);
@@ -630,7 +630,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	pWnd->SetString(ptr->csComment);
 
 	// open data document
-	if (ptr->pdataDoc == NULL)
+	if (ptr->pdataDoc == nullptr)
 	{
 		ptr->pdataDoc = new CAcqDataDoc;
 		ASSERT(ptr->pdataDoc != NULL);
@@ -736,7 +736,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	CDC* pDC = pWnd->GetDC();
 	CDC memDC;
 	VERIFY(memDC.CreateCompatibleDC(pDC));
-	bitmapPlot.CreateBitmap(clientRect.right, clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), NULL);
+	bitmapPlot.CreateBitmap(clientRect.right, clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), nullptr);
 	CBitmap *pBmp = memDC.SelectObject(&bitmapPlot);
 	memDC.SetMapMode(pDC->GetMapMode());
 
@@ -745,14 +745,14 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
 	memDC.MoveTo(1, 0);
 	memDC.LineTo(1, clientRect.bottom);
-	m_imagelist.Replace(iImage, &bitmapPlot, NULL);
+	m_imagelist.Replace(iImage, &bitmapPlot, nullptr);
 }
 
 
 void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
 	// create spike window and spike document if necessary
-	if (ptr->pspikeWnd == NULL)
+	if (ptr->pspikeWnd == nullptr)
 	{
 		ptr->pspikeWnd = new CSpikeBarWnd;
 		ASSERT(ptr->pspikeWnd != NULL);
@@ -764,7 +764,7 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 	CdbWaveDoc* pdbDoc = ((CdbWaveView*) GetParent())->GetDocument();
 
 	// open spike document
-	if (ptr->pspikeDoc == NULL)
+	if (ptr->pspikeDoc == nullptr)
 	{
 		ptr->pspikeDoc = new CSpikeDoc;
 		ASSERT(ptr->pspikeDoc != NULL);
@@ -775,7 +775,7 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 	// consider here that requested,document is not reachable
 	// tell it to spikeview and display "data not available"...
 	{
-		m_imagelist.Replace(iImage, m_pEmptyBitmap, NULL);
+		m_imagelist.Replace(iImage, m_pEmptyBitmap, nullptr);
 	}
 	else
 	{
@@ -810,7 +810,7 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 		CDC* pDC = pWnd->GetDC();
 		CDC memDC;
 		VERIFY(memDC.CreateCompatibleDC(pDC));
-		bitmapPlot.CreateBitmap(clientRect.right, clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), NULL);
+		bitmapPlot.CreateBitmap(clientRect.right, clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), nullptr);
 		CBitmap *pBmp = memDC.SelectObject(&bitmapPlot);
 		memDC.SetMapMode(pDC->GetMapMode());
 
@@ -819,14 +819,14 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
 		memDC.MoveTo(1, 0);
 		memDC.LineTo(1, clientRect.bottom);
-		m_imagelist.Replace(iImage, &bitmapPlot, NULL);
+		m_imagelist.Replace(iImage, &bitmapPlot, nullptr);
 	}
 }
 
 
 void CDataListCtrl::DisplayEmptyWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
-	m_imagelist.Replace(iImage, m_pEmptyBitmap, NULL);
+	m_imagelist.Replace(iImage, m_pEmptyBitmap, nullptr);
 }
 
 

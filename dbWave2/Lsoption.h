@@ -10,7 +10,7 @@ class CLoadSaveOptionsDlg : public CDialog
 {
 // Construction
 public:
-	CLoadSaveOptionsDlg(CWnd* pParent = NULL);	// standard constructor	
+	CLoadSaveOptionsDlg(CWnd* pParent = nullptr);	// standard constructor	
 
 // Dialog Data
 	enum { IDD = IDD_LOADSAVEOPTIONS };

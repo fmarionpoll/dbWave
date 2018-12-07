@@ -15,7 +15,7 @@ class CMeasureProperties : public CPropertySheet
 
 // Construction
 public:
-	CMeasureProperties(CWnd* pParentWnd = NULL, int iselect=0);
+	CMeasureProperties(CWnd* pParentWnd = nullptr, int iselect=0);
 
 // Attributes
 public:

@@ -524,7 +524,7 @@ void CDTPlot32::SetPalette(short index, unsigned long newValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_I4;
-	InvokeHelper(0x28, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x28, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, newValue);
 }
 
@@ -542,7 +542,7 @@ void CDTPlot32::SetMarkerV1Data(short index, float newValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_R4;
-	InvokeHelper(0x29, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x29, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, newValue);
 }
 
@@ -560,11 +560,11 @@ void CDTPlot32::SetMarkerV2Data(short index, float newValue)
 {
 	static BYTE parms[] =
 		VTS_I2 VTS_R4;
-	InvokeHelper(0x2a, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+	InvokeHelper(0x2a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
 		 index, newValue);
 }
 
 void CDTPlot32::AboutBox()
 {
-	InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+	InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }

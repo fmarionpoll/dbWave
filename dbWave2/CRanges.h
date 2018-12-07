@@ -26,19 +26,19 @@ public:
 	LPDISPATCH get_Application()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	long get_Creator()
 	{
 		long result;
-		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Parent()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get__Default(VARIANT& Index)
@@ -51,7 +51,7 @@ public:
 	LPUNKNOWN get__NewEnum()
 	{
 		LPUNKNOWN result;
-		InvokeHelper(0xfffffffc, DISPATCH_PROPERTYGET, VT_UNKNOWN, (void*)&result, NULL);
+		InvokeHelper(0xfffffffc, DISPATCH_PROPERTYGET, VT_UNKNOWN, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Item(VARIANT& Index)
@@ -64,7 +64,7 @@ public:
 	long get_Count()
 	{
 		long result;
-		InvokeHelper(0x76, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x76, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 

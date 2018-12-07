@@ -96,7 +96,7 @@ typedef struct _DB_ITEMDESC {
 class CdbMainTable : public CDaoRecordset
 {
 public:
-	CdbMainTable(CDaoDatabase* pDatabase = NULL);
+	CdbMainTable(CDaoDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CdbMainTable)
 
 // Field/Param Data - these parameters are equivalent to column headers in a table, where each row is a record

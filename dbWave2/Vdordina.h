@@ -10,7 +10,7 @@ class CDataViewOrdinatesDlg : public CDialog
 {
 // Construction
 public:
-	CDataViewOrdinatesDlg(CWnd* pParent = NULL);	// standard constructor
+	CDataViewOrdinatesDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_ORDINATES };

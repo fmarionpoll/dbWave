@@ -21,9 +21,9 @@ CSpikeClass::CSpikeClass()
 	m_NClass=-1;
 	m_SpikeSize=0;
 	m_BufferSize=0; 
-	m_pRWBuffer = NULL;
+	m_pRWBuffer = nullptr;
 	m_EArraySize=0;
-	m_pEArray = NULL;
+	m_pEArray = nullptr;
 }
 
 /**************************************************************************
@@ -38,9 +38,9 @@ CSpikeClass::CSpikeClass(int SpikeSize)
 	m_NClass=-1;
 	m_SpikeSize=SpikeSize;
 	m_BufferSize=0;
-	m_pRWBuffer = NULL;
+	m_pRWBuffer = nullptr;
 	m_EArraySize=0;
-	m_pEArray = NULL;
+	m_pEArray = nullptr;
 }
 
 /**************************************************************************
@@ -58,12 +58,12 @@ CSpikeClass::~CSpikeClass()
 void CSpikeClass::EraseData()
 {
 	// delete buffer and array
-	if (m_pRWBuffer != NULL)
+	if (m_pRWBuffer != nullptr)
 		free(m_pRWBuffer);
-	m_pRWBuffer = NULL;
+	m_pRWBuffer = nullptr;
 	m_BufferSize=0;
 
-	if (m_pEArray != NULL)
+	if (m_pEArray != nullptr)
 		free(m_pEArray);
 	m_EArraySize=NULL;
 }
@@ -115,10 +115,10 @@ BOOL CSpikeClass::SizeNclasses(int nclasses, int spikesize)
 	BOOL bRet = FALSE;
 	size_t wsize = nclasses*spikesize * sizeof(short);
 	size_t isize = nclasses * sizeof(int);
-	short*	pRWBuffer = NULL;
-	int*	pEArray = NULL;
+	short*	pRWBuffer = nullptr;
+	int*	pEArray = nullptr;
 
-	if (m_pRWBuffer == NULL)
+	if (m_pRWBuffer == nullptr)
 	{
 		pRWBuffer = (short*)	malloc (wsize);
 		pEArray	= (int*)	malloc (isize);
@@ -129,7 +129,7 @@ BOOL CSpikeClass::SizeNclasses(int nclasses, int spikesize)
 		pEArray	= (int*)	realloc (m_pEArray, isize);
 	}
 
-	if (pRWBuffer != NULL && pEArray != NULL)
+	if (pRWBuffer != nullptr && pEArray != nullptr)
 	{
 		m_pRWBuffer = pRWBuffer;
 		m_pEArray = pEArray;

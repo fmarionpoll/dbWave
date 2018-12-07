@@ -6,7 +6,7 @@ class CEditDAMseqDlg : public CDialogEx
 	DECLARE_DYNAMIC(CEditDAMseqDlg)
 
 public:
-	CEditDAMseqDlg (CWnd* pParent = NULL);   // standard constructor
+	CEditDAMseqDlg (CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditDAMseqDlg();
 
 	// Dialog Data

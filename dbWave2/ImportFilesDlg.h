@@ -12,7 +12,7 @@ class CImportFilesDlg : public CDialog
 	DECLARE_DYNAMIC(CImportFilesDlg)
 
 public:
-	CImportFilesDlg(CWnd* pParent = NULL);   // standard constructor
+	CImportFilesDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CImportFilesDlg();
 
 // Dialog Data

@@ -134,13 +134,13 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	TCHAR* pnew = newList.GetBuffer(newList.GetLength());	
 	TCHAR seps[] = _T("\n\t;\r\f");
 	TCHAR* token;
-	TCHAR* next_token =NULL;
+	TCHAR* next_token = nullptr;
 	CStringArray csArrayfiles;
 	
 	// loop through the string to extract data and build file names
 	BOOL bchanged = FALSE;
 	token = _tcstok_s(pstring, seps, &next_token);
-	while (token != NULL)
+	while (token != nullptr)
 	{
 		CString filename = token;	// get filename into CString
 		CFileStatus status;	
@@ -158,7 +158,7 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 			csArrayfiles.Add(filename);
 		}
 		// scan next line
-		token = _tcstok_s(NULL, seps, &next_token);
+		token = _tcstok_s(nullptr, seps, &next_token);
 	}
 	if (bchanged)
 	{
@@ -184,7 +184,7 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
 		// create an empty document and then create a table with the same name as the project
 		CdbWaveDoc* pdbDoc = (CdbWaveDoc*) (pApp->m_pdbWaveViewTemplate)->CreateNewDocument();
-		if (pdbDoc != NULL) 
+		if (pdbDoc != nullptr) 
 		{
 			flag = TRUE;
 			CString dbname;
@@ -202,7 +202,7 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 			if (pdbDoc->OnNewDocument(dbname))	// create table
 			{
 				pdbDoc->ImportDescFromFileList(csArrayfiles);
-				CFrameWnd* pWF = (pApp->m_pdbWaveViewTemplate)->CreateNewFrame(pdbDoc, NULL);
+				CFrameWnd* pWF = (pApp->m_pdbWaveViewTemplate)->CreateNewFrame(pdbDoc, nullptr);
 				ASSERT(pWF != NULL);
 				pApp->m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
 			}

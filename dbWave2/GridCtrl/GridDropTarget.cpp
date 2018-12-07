@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 
 CGridDropTarget::CGridDropTarget()
 {
-    m_pGridCtrl = NULL;
+    m_pGridCtrl = nullptr;
     m_bRegistered = FALSE;
 }
 

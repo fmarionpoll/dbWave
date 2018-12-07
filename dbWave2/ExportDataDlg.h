@@ -10,7 +10,7 @@ class CExportDataDlg : public CDialog
 {
 // Construction
 public:
-	CExportDataDlg(CWnd* pParent = NULL);   // standard constructor
+	CExportDataDlg(CWnd* pParent = nullptr);   // standard constructor
 
 	OPTIONS_IMPORT	iivO;					// import options
 	CdbWaveDoc* m_dbDoc;					// (source) data document(s)	

@@ -21,7 +21,7 @@ class CDAChannelsDlg : public CDialogEx
 	DECLARE_DYNAMIC(CDAChannelsDlg)
 
 public:
-	CDAChannelsDlg(CWnd* pParent = NULL);   // standard constructor
+	CDAChannelsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDAChannelsDlg();
 
 // Dialog Data

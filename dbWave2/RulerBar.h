@@ -50,7 +50,7 @@ private:
 public:
 	virtual BOOL	Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, 
 						DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, 
-						UINT nID, CCreateContext* pContext = NULL);
+						UINT nID, CCreateContext* pContext = nullptr);
 	BOOL			Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAxis, int dSize, UINT nID);
 	void			DrawScalefromRuler(CRuler* pRuler);
 	inline void		AttachScopeWnd(CLineViewWnd* pLineViewWnd, BOOL bXaxis) { m_pLineViewWnd = pLineViewWnd; m_bHorizontal = bXaxis; }

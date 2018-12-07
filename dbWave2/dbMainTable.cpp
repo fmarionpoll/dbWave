@@ -49,11 +49,11 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_nFields = 29;
 
 	m_desc[CH_ID].pdataItem				= &m_ID; 
-	m_desc[CH_ACQDATE].pdataItem		= NULL; //&m_acq_date;
-	m_desc[CH_FILENAME].pdataItem		= NULL; //&m_Filedat;
-	m_desc[CH_FILESPK].pdataItem		= NULL; //&m_Filespk;
-	m_desc[CH_ACQ_COMMENTS].pdataItem	= NULL; //&m_acq_comment;
-	m_desc[CH_MORE].pdataItem			= NULL; //&m_more;
+	m_desc[CH_ACQDATE].pdataItem		= nullptr; //&m_acq_date;
+	m_desc[CH_FILENAME].pdataItem		= nullptr; //&m_Filedat;
+	m_desc[CH_FILESPK].pdataItem		= nullptr; //&m_Filespk;
+	m_desc[CH_ACQ_COMMENTS].pdataItem	= nullptr; //&m_acq_comment;
+	m_desc[CH_MORE].pdataItem			= nullptr; //&m_more;
 	m_desc[CH_IDINSECT].pdataItem		= &m_IDinsect;
 	m_desc[CH_IDSENSILLUM].pdataItem	= &m_IDsensillum;
 	m_desc[CH_DATALEN].pdataItem		= &m_datalen;
@@ -74,8 +74,8 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_desc[CH_SEX_ID].pdataItem			= &m_sex_ID;
 	m_desc[CH_REPEAT].pdataItem			= &m_repeat;
 	m_desc[CH_REPEAT2].pdataItem		= &m_repeat2;
-	m_desc[CH_ACQDATE_DAY].pdataItem	= NULL;
-	m_desc[CH_ACQDATE_TIME].pdataItem	= NULL;
+	m_desc[CH_ACQDATE_DAY].pdataItem	= nullptr;
+	m_desc[CH_ACQDATE_TIME].pdataItem	= nullptr;
 	m_desc[CH_EXPT_ID].pdataItem		= &m_expt_ID;
 
 	m_nDefaultType = dbOpenDynaset;
@@ -96,12 +96,12 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 		m_desc[i].lfilterParam2.RemoveAll();
 		m_desc[i].otfilterParam2.RemoveAll();
 		m_desc[i].csfilterParam2.RemoveAll();
-		m_desc[i].pdataItem = NULL;
+		m_desc[i].pdataItem = nullptr;
 		m_desc[i].icol = i;
 		m_desc[i].liArray.RemoveAll();
 		m_desc[i].tiArray.RemoveAll();
 		m_desc[i].csElementsArray.RemoveAll();
-		m_desc[i].pComboBox = NULL;
+		m_desc[i].pComboBox = nullptr;
 	}
 
 	m_defaultName.Empty();
@@ -116,7 +116,7 @@ CdbMainTable::~CdbMainTable()
 CString CdbMainTable::GetDefaultDBName()
 {
 	CString cs = m_defaultName;
-	if (m_pDatabase->m_pDAODatabase != NULL)
+	if (m_pDatabase->m_pDAODatabase != nullptr)
 		cs = m_pDatabase->GetName();
 	
 	return cs;

@@ -7,7 +7,7 @@ class CDAOutputParametersDlg : public CDialogEx
 	DECLARE_DYNAMIC(CDAOutputParametersDlg)
 
 public:
-	CDAOutputParametersDlg(CWnd* pParent = NULL);   // standard constructor
+	CDAOutputParametersDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDAOutputParametersDlg();
 
 // Dialog Data

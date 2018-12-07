@@ -24,19 +24,19 @@ public:
 	LPDISPATCH get_Application()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	long get_Creator()
 	{
 		long result;
-		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Parent()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_ColumnFields(VARIANT& Index)
@@ -91,36 +91,36 @@ public:
 	LPDISPATCH get_CubeFields()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x72f, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x72f, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_PivotCache()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x5d8, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x5d8, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_PivotTable()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x2cc, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x2cc, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	CString get_InnerDetail()
 	{
 		CString result;
-		InvokeHelper(0x2ba, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, NULL);
+		InvokeHelper(0x2ba, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, nullptr);
 		return result;
 	}
 	void put_InnerDetail(LPCTSTR newValue)
 	{
 		static BYTE parms[] = VTS_BSTR ;
-		InvokeHelper(0x2ba, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
+		InvokeHelper(0x2ba, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void AddFields(VARIANT& RowFields, VARIANT& ColumnFields, VARIANT& PageFields, VARIANT& AppendField)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x2c4, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &RowFields, &ColumnFields, &PageFields, &AppendField);
+		InvokeHelper(0x2c4, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &RowFields, &ColumnFields, &PageFields, &AppendField);
 	}
 
 	// PivotLayout properties

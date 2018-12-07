@@ -24,7 +24,7 @@ CLineViewWnd::CLineViewWnd()
 	m_cursorType =0;		// standard cursor until de-selected
 	m_npixels = 100;		// width = 10 pixel
 	m_dataperpixel=1;
-	m_pDWintervals = NULL;
+	m_pDWintervals = nullptr;
 	m_bVTtagsLONG=TRUE;		// VT tags defined as long
 	m_btrackCurve = FALSE;
 	m_btrackspike = FALSE;	// when mouse down, track spike / channel
@@ -33,7 +33,7 @@ CLineViewWnd::CLineViewWnd()
 	m_trackchannel = 0;
 
 	// init arrays for cool display of empty data
-	m_pDataFile = NULL;
+	m_pDataFile = nullptr;
 	m_bADbuffers = FALSE;
 	AddChanlistItem(0, 0);
 	ResizeChannels(m_npixels, 1024);
@@ -88,7 +88,7 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 
 	// create new Envelope and store pointer into Envelopeslist
 	int span=0;
-	if(m_pDataFile != NULL)
+	if(m_pDataFile != nullptr)
 		span = m_pDataFile->GetTransfDataSpan(mode);
 	CEnvelope* pY = new CEnvelope(m_npixels, m_dataperpixel, ns, mode, span);
 	ASSERT(pY != NULL);
@@ -102,7 +102,7 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 	// init display parameters
 	pD->InitDisplayParms(1, RGB(0,0,0), 2048, 4096);
 
-	if (m_pDataFile != NULL)
+	if (m_pDataFile != nullptr)
 	{
 		float voltsperb;
 		m_pDataFile->GetWBVoltsperBin(ns, &voltsperb, mode);
@@ -273,13 +273,13 @@ void CLineViewWnd::SetChanlistVoltsExtent(int chan, float* pvalue)
 		ichanlast = m_pChanlistItemArray.GetUpperBound();
 	}
 	float voltsextent = 0.f;
-	if (pvalue !=  NULL)
+	if (pvalue != nullptr)
 		voltsextent = *pvalue;
 	for (int i= ichanfirst; i<= ichanlast; i++)
 	{
 		CChanlistItem* pD =  m_pChanlistItemArray[i];
 		float yvoltsperbin = pD->GetVoltsperDataBin();
-		if (pvalue == NULL) 
+		if (pvalue == nullptr) 
 			voltsextent = yvoltsperbin * pD->GetYextent();
 
 		int yextent = (int)(voltsextent / yvoltsperbin);
@@ -298,13 +298,13 @@ void CLineViewWnd::SetChanlistVoltsZero(int chan, float* pvalue)
 	}
 
 	float voltsextent = 0.f;
-	if (pvalue != NULL)
+	if (pvalue != nullptr)
 		voltsextent = *pvalue;
 	for (int i = ichanfirst; i <= ichanlast; i++)
 	{
 		CChanlistItem* pD = m_pChanlistItemArray[i];
 		float yvoltsperbin = pD->GetVoltsperDataBin();
-		if (pvalue == NULL)
+		if (pvalue == nullptr)
 			voltsextent = yvoltsperbin * pD->GetDataBinZero();
 
 		int iyzero = (int)(voltsextent / yvoltsperbin);
@@ -524,7 +524,7 @@ BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* pDataFile, long lSize)
 BOOL CLineViewWnd::GetDataFromDoc()
 {   	
 	// get document parameters: exit if empty document	
-	if (m_bADbuffers || m_pDataFile == NULL )
+	if (m_bADbuffers || m_pDataFile == nullptr )
 		return FALSE;
 	if (m_pDataFile->GetDOCchanLength() <= 0)
 		return FALSE;
@@ -606,7 +606,7 @@ BOOL CLineViewWnd::GetDataFromDoc()
 BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 {   	
 	// get document parameters: exit if empty document	
-	if (m_bADbuffers || m_pDataFile == NULL )
+	if (m_bADbuffers || m_pDataFile == nullptr )
 		return FALSE;
 	if (m_pDataFile->GetDOCchanLength() <= 0)
 		return FALSE;
@@ -750,7 +750,7 @@ BOOL CLineViewWnd::ScrollDataFromDoc(WORD nSBCode)
 
 void CLineViewWnd::UpdatePageLineSize()
 {
-	if (m_pDataFile != NULL)
+	if (m_pDataFile != nullptr)
 		m_lxPage = m_lxSize;
 	else
 		m_lxPage = m_lxSize/10;
@@ -815,7 +815,7 @@ void CLineViewWnd::UpdateXRuler()
 {
 	if (m_bNiceGrid)
 	{
-		if (m_pXRulerBar != NULL)
+		if (m_pXRulerBar != nullptr)
 		{
 			float first = m_lxFirst/ m_samplingrate;
 			float last = m_lxLast/ m_samplingrate;
@@ -828,7 +828,7 @@ void CLineViewWnd::UpdateYRuler()
 {
 	if (m_bNiceGrid)
 	{
-		if (m_pYRulerBar != NULL)
+		if (m_pYRulerBar != nullptr)
 		{
 			int binlow = GetChanlistPixeltoBin(0, 0);
 			int binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
@@ -857,7 +857,7 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 	CFont* pOldFont= pDC->SelectObject(&m_hFont);
 
 	// exit if no data defined
-	if (!IsDefined() || m_pDataFile == NULL) 
+	if (!IsDefined() || m_pDataFile == nullptr) 
 	{
 		int textlen = m_csEmpty.GetLength();
 		pDC->DrawText(m_csEmpty, textlen, rect, DT_LEFT);
@@ -893,8 +893,8 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 	int worg = -1;		// force origin
 	int wext = -1;		// force <= yextent
 	int yVE = m_displayRect.Height();
-	CEnvelope* pX = NULL;
-	CEnvelope* pY = NULL;
+	CEnvelope* pX = nullptr;
+	CEnvelope* pY = nullptr;
 	int xextent = m_npixels;
 	int color = BLACK_COLOR;
 	CPen* poldpen=pDC->SelectObject(&m_penTable[color]);
@@ -966,7 +966,7 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 		}
 			
 		// highlight data
-		if (m_pDWintervals != NULL)
+		if (m_pDWintervals != nullptr)
 			HighlightData(pDC, ichan);
 	}
 
@@ -998,7 +998,7 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 	}
 
 	// temp tag
-	if (m_hwndReflect != NULL && m_tempVTtag != NULL)
+	if (m_hwndReflect != nullptr && m_tempVTtag != nullptr)
 	{
 		CPen* poldp =pDC->SelectObject(&m_blackDottedPen);
 		int noldROP = pDC->SetROP2(R2_NOTXORPEN);
@@ -1012,7 +1012,7 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 void CLineViewWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CScopeScreen::OnSize(nType, cx, cy);
-	if (!IsDefined() || m_pDataFile == NULL)
+	if (!IsDefined() || m_pDataFile == nullptr)
 		return;
 
 	ResizeChannels(cx-1, 0);
@@ -1038,7 +1038,7 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	if (m_parms.bClipRect)	
 		pDC->IntersectClipRect(m_displayRect);
 	else
-		pDC->SelectClipRgn(NULL);
+		pDC->SelectClipRgn(nullptr);
 
 	// adjust coordinates for anisotropic mode
 	int yVE = -m_displayRect.Height();
@@ -1068,13 +1068,13 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	long* pPolypoints_Y = (long*) &m_PolyPoints[1];
 	long* pData=pPolypoints_X;
 	int nelements=0;
-	CEnvelope* pX = NULL;
-	CEnvelope* pY = NULL;
+	CEnvelope* pX = nullptr;
+	CEnvelope* pY = nullptr;
 	int xextent = m_npixels;
 	int yextent=0;
 	int yzero=0;
 	
-	BOOL bPolyLine = (pDC->m_hAttribDC == NULL) || (pDC->GetDeviceCaps(LINECAPS) && LC_POLYLINE);
+	BOOL bPolyLine = (pDC->m_hAttribDC == nullptr) || (pDC->GetDeviceCaps(LINECAPS) && LC_POLYLINE);
 	int color = BLACK_COLOR;
 	CPen* poldpen=pDC->SelectObject(&m_penTable[color]);
 
@@ -1145,7 +1145,7 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 			pDC->SelectObject(poldPen);
 		}
 		// highlight data ------------------------------------------------------
-		if (m_pDWintervals != NULL)
+		if (m_pDWintervals != nullptr)
 			HighlightData(pDC, ichan);
 	}
 
@@ -1195,7 +1195,7 @@ BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 		HANDLE hCopy = (HANDLE) ::GlobalAlloc (GHND, dwLen);
 		CWaveFormat* pwaveFormat = m_pDataFile->GetpWaveFormat();
 
-		if (hCopy != NULL)
+		if (hCopy != nullptr)
 		{
 			// memory allocated -- get pointer to it
 			LPTSTR lpCopy = (LPTSTR) ::GlobalLock((HGLOBAL) hCopy);
@@ -1619,8 +1619,8 @@ void CLineViewWnd::MoveHZtagtoVal(int i, int val)
 
 void CLineViewWnd::SetHighlightData(CDWordArray* pDWintervals)
 {
-	if (pDWintervals!= NULL && pDWintervals->GetSize() < 5)
-		pDWintervals = NULL;
+	if (pDWintervals!= nullptr && pDWintervals->GetSize() < 5)
+		pDWintervals = nullptr;
 	m_pDWintervals = pDWintervals;
 }
 
@@ -1636,7 +1636,7 @@ void CLineViewWnd::HighlightData(CDC* pDC, int chan)
 	int pensize = (int) m_pDWintervals->GetAt(2);
 	newPen.CreatePen(PS_SOLID, pensize, color);
 	CPen* poldpen = (CPen*) pDC->SelectObject(&newPen);
-	BOOL bPolyLine = (pDC->m_hAttribDC == NULL)
+	BOOL bPolyLine = (pDC->m_hAttribDC == nullptr)
 		|| (pDC->GetDeviceCaps(LINECAPS) && LC_POLYLINE);
 
 	// loop to display data	

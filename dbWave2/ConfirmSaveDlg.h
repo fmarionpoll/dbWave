@@ -7,7 +7,7 @@ class CConfirmSaveDlg : public CDialog
 	DECLARE_DYNAMIC(CConfirmSaveDlg)
 
 public:
-	CConfirmSaveDlg(CWnd* pParent = NULL);   // standard constructor
+	CConfirmSaveDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CConfirmSaveDlg();
 
 // Dialog Data

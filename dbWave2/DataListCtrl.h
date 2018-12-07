@@ -33,7 +33,7 @@ public:
 // Implementation
 public:
 	virtual ~CDataListCtrl();
-	void	InitColumns(CUIntArray* picolwidth = NULL);
+	void	InitColumns(CUIntArray* picolwidth = nullptr);
 	void	SetCurSel(int recposition);
 	void	UpdateCache (int ifirst, int ilast);
 	void	RefreshDisplay();

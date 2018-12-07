@@ -61,8 +61,8 @@ int CPropertiesWnd::m_propCol[] ={ 	// TRUE = allow edit; list all possible colu
 CPropertiesWnd::CPropertiesWnd()
 {
 	m_wndEditInfosHeight = 0;
-	m_pDoc = NULL;
-	m_pDocOld = NULL;
+	m_pDoc = nullptr;
+	m_pDocOld = nullptr;
 	m_bUpdateCombos = FALSE;
 	m_bchangedProperty = FALSE;
 }
@@ -93,18 +93,18 @@ END_MESSAGE_MAP()
 
 void CPropertiesWnd::AdjustLayout()
 {
-	if (GetSafeHwnd () == NULL || (AfxGetMainWnd() != NULL && AfxGetMainWnd()->IsIconic()))
+	if (GetSafeHwnd () == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
 		return;
 
 	CRect rectClient;
 	GetClientRect(rectClient);
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, 
+	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, 
 		rectClient.top + m_wndEditInfosHeight, 
 		rectClient.Width(), 
 		cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndPropList.SetWindowPos(NULL, rectClient.left, 
+	m_wndPropList.SetWindowPos(nullptr, rectClient.left, 
 		rectClient.top + m_wndEditInfosHeight + cyTlb, 
 		rectClient.Width(), 
 		rectClient.Height() - m_wndEditInfosHeight-cyTlb,
@@ -291,7 +291,7 @@ void CPropertiesWnd::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 		int icol = pProp->GetData();
 		COleVariant propVal = pProp->GetValue();
 		pdesc = pDB->GetRecordItemDescriptor(icol);
-		if (pdesc == NULL)
+		if (pdesc == nullptr)
 			continue;
 
 		switch (pdesc->typeLocal)
@@ -328,7 +328,7 @@ void CPropertiesWnd::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 void CPropertiesWnd::InitPropList()
 {
 	// exit if doc is not defined
-	if (!m_pDoc || m_pDoc == NULL)
+	if (!m_pDoc || m_pDoc == nullptr)
 		return;
 
 	if (m_pDocOld == m_pDoc) //NULL) 
@@ -498,13 +498,13 @@ void CPropertiesWnd::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
 
 void CPropertiesWnd::OnBnClickedEditinfos()
 {
-	m_pDoc->UpdateAllViews(NULL, HINT_GETSELECTEDRECORDS, NULL); 
+	m_pDoc->UpdateAllViews(nullptr, HINT_GETSELECTEDRECORDS, nullptr); 
 	CdbEditRecordDlg dlg;
 	dlg.m_pdbDoc = m_pDoc;
 	if (IDOK == dlg.DoModal())
 	{
-		m_pDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
-		m_pDoc->UpdateAllViews(NULL, HINT_DOCHASCHANGED, NULL);
+		m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+		m_pDoc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 	}
 }
 
@@ -518,7 +518,7 @@ void CPropertiesWnd::OnBnClickedUpdateinfos()
 	long lIndex = m_pDoc->DBGetCurrentRecordPosition();
 	UpdateTableFromProp();
 	m_pDoc->DBSetCurrentRecordPosition(lIndex);
-	m_pDoc->UpdateAllViews(NULL, HINT_DOCHASCHANGED, NULL);
+	m_pDoc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 }
 
 LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM, LPARAM lParam)
@@ -580,7 +580,7 @@ void CPropertiesWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		break;
 
 	case HINT_CLOSEFILEMODIFIED:	// save current file parms 
-		m_pDocOld = NULL;
+		m_pDocOld = nullptr;
 		break;
 
 	case HINT_REPLACEVIEW:

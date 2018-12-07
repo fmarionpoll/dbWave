@@ -26,37 +26,37 @@ public:
 	LPDISPATCH get_Application()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x94, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	long get_Creator()
 	{
 		long result;
-		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x95, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Parent()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x96, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT Activate()
 	{
 		VARIANT result;
-		InvokeHelper(0x130, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x130, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_AddIndent()
 	{
 		VARIANT result;
-		InvokeHelper(0x427, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x427, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_AddIndent(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x427, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x427, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	CString get_Address(VARIANT& RowAbsolute, VARIANT& ColumnAbsolute, long ReferenceStyle, VARIANT& External, VARIANT& RelativeTo)
 	{
@@ -89,13 +89,13 @@ public:
 	VARIANT ApplyOutlineStyles()
 	{
 		VARIANT result;
-		InvokeHelper(0x1c0, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x1c0, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Areas()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x238, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x238, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	CString AutoComplete(LPCTSTR String)
@@ -122,7 +122,7 @@ public:
 	VARIANT AutoFit()
 	{
 		VARIANT result;
-		InvokeHelper(0xed, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xed, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT AutoFormat(long Format, VARIANT& Number, VARIANT& Font, VARIANT& Alignment, VARIANT& Border, VARIANT& Pattern, VARIANT& Width)
@@ -135,7 +135,7 @@ public:
 	VARIANT AutoOutline()
 	{
 		VARIANT result;
-		InvokeHelper(0x40c, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x40c, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT _BorderAround(VARIANT& LineStyle, long Weight, long ColorIndex, VARIANT& Color)
@@ -148,19 +148,19 @@ public:
 	LPDISPATCH get_Borders()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x1b3, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x1b3, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT Calculate()
 	{
 		VARIANT result;
-		InvokeHelper(0x117, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x117, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Cells()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0xee, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0xee, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Characters(VARIANT& Start, VARIANT& Length)
@@ -180,37 +180,37 @@ public:
 	VARIANT Clear()
 	{
 		VARIANT result;
-		InvokeHelper(0x6f, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x6f, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT ClearContents()
 	{
 		VARIANT result;
-		InvokeHelper(0x71, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x71, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT ClearFormats()
 	{
 		VARIANT result;
-		InvokeHelper(0x70, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x70, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT ClearNotes()
 	{
 		VARIANT result;
-		InvokeHelper(0xef, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xef, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT ClearOutline()
 	{
 		VARIANT result;
-		InvokeHelper(0x40d, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x40d, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	long get_Column()
 	{
 		long result;
-		InvokeHelper(0xf0, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0xf0, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH ColumnDifferences(VARIANT& Comparison)
@@ -223,19 +223,19 @@ public:
 	LPDISPATCH get_Columns()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0xf1, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0xf1, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_ColumnWidth()
 	{
 		VARIANT result;
-		InvokeHelper(0xf2, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xf2, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_ColumnWidth(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0xf2, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0xf2, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT Consolidate(VARIANT& Sources, VARIANT& Function, VARIANT& TopRow, VARIANT& LeftColumn, VARIANT& CreateLinks)
 	{
@@ -268,7 +268,7 @@ public:
 	long get_Count()
 	{
 		long result;
-		InvokeHelper(0x76, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x76, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT CreateNames(VARIANT& Top, VARIANT& Left, VARIANT& Bottom, VARIANT& Right)
@@ -288,13 +288,13 @@ public:
 	LPDISPATCH get_CurrentArray()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x1f5, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x1f5, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_CurrentRegion()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0xf3, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0xf3, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT Cut(VARIANT& Destination)
@@ -321,7 +321,7 @@ public:
 	void put__Default(VARIANT& RowIndex, VARIANT& ColumnIndex, VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x0, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &RowIndex, &ColumnIndex, &newValue);
+		InvokeHelper(0x0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &RowIndex, &ColumnIndex, &newValue);
 	}
 	VARIANT Delete(VARIANT& Shift)
 	{
@@ -333,25 +333,25 @@ public:
 	LPDISPATCH get_Dependents()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x21f, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x21f, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT _DialogBox()
 	{
 		VARIANT result;
-		InvokeHelper(0xf5, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xf5, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_DirectDependents()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x221, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x221, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_DirectPrecedents()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x222, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x222, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT EditionOptions(long Type, long Option, VARIANT& Name, VARIANT& Reference, long Appearance, long ChartSize, VARIANT& Format)
@@ -371,37 +371,37 @@ public:
 	LPDISPATCH get_EntireColumn()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0xf6, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0xf6, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_EntireRow()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0xf7, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0xf7, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT FillDown()
 	{
 		VARIANT result;
-		InvokeHelper(0xf8, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xf8, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT FillLeft()
 	{
 		VARIANT result;
-		InvokeHelper(0xf9, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xf9, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT FillRight()
 	{
 		VARIANT result;
-		InvokeHelper(0xfa, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xfa, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT FillUp()
 	{
 		VARIANT result;
-		InvokeHelper(0xfb, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xfb, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH Find(VARIANT& What, VARIANT& After, VARIANT& LookIn, VARIANT& LookAt, VARIANT& SearchOrder, long SearchDirection, VARIANT& MatchCase, VARIANT& MatchByte, VARIANT& SearchFormat)
@@ -428,90 +428,90 @@ public:
 	LPDISPATCH get_Font()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x92, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x92, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_Formula()
 	{
 		VARIANT result;
-		InvokeHelper(0x105, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x105, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_Formula(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x105, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x105, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_FormulaArray()
 	{
 		VARIANT result;
-		InvokeHelper(0x24a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x24a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_FormulaArray(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x24a, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x24a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	long get_FormulaLabel()
 	{
 		long result;
-		InvokeHelper(0x564, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x564, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	void put_FormulaLabel(long newValue)
 	{
 		static BYTE parms[] = VTS_I4 ;
-		InvokeHelper(0x564, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
+		InvokeHelper(0x564, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_FormulaHidden()
 	{
 		VARIANT result;
-		InvokeHelper(0x106, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x106, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_FormulaHidden(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x106, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x106, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_FormulaLocal()
 	{
 		VARIANT result;
-		InvokeHelper(0x107, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x107, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_FormulaLocal(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x107, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x107, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_FormulaR1C1()
 	{
 		VARIANT result;
-		InvokeHelper(0x108, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x108, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_FormulaR1C1(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x108, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x108, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_FormulaR1C1Local()
 	{
 		VARIANT result;
-		InvokeHelper(0x109, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x109, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_FormulaR1C1Local(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x109, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x109, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT FunctionWizard()
 	{
 		VARIANT result;
-		InvokeHelper(0x23b, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x23b, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	BOOL GoalSeek(VARIANT& Goal, LPDISPATCH ChangingCell)
@@ -531,58 +531,58 @@ public:
 	VARIANT get_HasArray()
 	{
 		VARIANT result;
-		InvokeHelper(0x10a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x10a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_HasFormula()
 	{
 		VARIANT result;
-		InvokeHelper(0x10b, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x10b, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_Height()
 	{
 		VARIANT result;
-		InvokeHelper(0x7b, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x7b, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_Hidden()
 	{
 		VARIANT result;
-		InvokeHelper(0x10c, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x10c, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_Hidden(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x10c, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x10c, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_HorizontalAlignment()
 	{
 		VARIANT result;
-		InvokeHelper(0x88, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x88, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_HorizontalAlignment(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x88, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x88, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_IndentLevel()
 	{
 		VARIANT result;
-		InvokeHelper(0xc9, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xc9, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_IndentLevel(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0xc9, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0xc9, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	void InsertIndent(long InsertAmount)
 	{
 		static BYTE parms[] = VTS_I4 ;
-		InvokeHelper(0x565, DISPATCH_METHOD, VT_EMPTY, NULL, parms, InsertAmount);
+		InvokeHelper(0x565, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, InsertAmount);
 	}
 	VARIANT Insert(VARIANT& Shift, VARIANT& CopyOrigin)
 	{
@@ -594,7 +594,7 @@ public:
 	LPDISPATCH get_Interior()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x81, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x81, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_Item(VARIANT& RowIndex, VARIANT& ColumnIndex)
@@ -607,85 +607,85 @@ public:
 	void put_Item(VARIANT& RowIndex, VARIANT& ColumnIndex, VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0xaa, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &RowIndex, &ColumnIndex, &newValue);
+		InvokeHelper(0xaa, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &RowIndex, &ColumnIndex, &newValue);
 	}
 	VARIANT Justify()
 	{
 		VARIANT result;
-		InvokeHelper(0x1ef, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x1ef, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_Left()
 	{
 		VARIANT result;
-		InvokeHelper(0x7f, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x7f, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	long get_ListHeaderRows()
 	{
 		long result;
-		InvokeHelper(0x4a3, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x4a3, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT ListNames()
 	{
 		VARIANT result;
-		InvokeHelper(0xfd, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xfd, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	long get_LocationInTable()
 	{
 		long result;
-		InvokeHelper(0x2b3, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x2b3, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_Locked()
 	{
 		VARIANT result;
-		InvokeHelper(0x10d, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x10d, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_Locked(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x10d, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x10d, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	void Merge(VARIANT& Across)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x234, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &Across);
+		InvokeHelper(0x234, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Across);
 	}
 	void UnMerge()
 	{
-		InvokeHelper(0x568, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+		InvokeHelper(0x568, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 	LPDISPATCH get_MergeArea()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x569, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x569, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_MergeCells()
 	{
 		VARIANT result;
-		InvokeHelper(0xd0, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xd0, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_MergeCells(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0xd0, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0xd0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_Name()
 	{
 		VARIANT result;
-		InvokeHelper(0x6e, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x6e, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_Name(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x6e, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x6e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT NavigateArrow(VARIANT& TowardPrecedent, VARIANT& ArrowNumber, VARIANT& LinkNumber)
 	{
@@ -697,13 +697,13 @@ public:
 	LPUNKNOWN get__NewEnum()
 	{
 		LPUNKNOWN result;
-		InvokeHelper(0xfffffffc, DISPATCH_PROPERTYGET, VT_UNKNOWN, (void*)&result, NULL);
+		InvokeHelper(0xfffffffc, DISPATCH_PROPERTYGET, VT_UNKNOWN, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Next()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x1f6, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x1f6, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	CString NoteText(VARIANT& Text, VARIANT& Start, VARIANT& Length)
@@ -716,24 +716,24 @@ public:
 	VARIANT get_NumberFormat()
 	{
 		VARIANT result;
-		InvokeHelper(0xc1, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xc1, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_NumberFormat(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0xc1, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0xc1, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_NumberFormatLocal()
 	{
 		VARIANT result;
-		InvokeHelper(0x449, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x449, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_NumberFormatLocal(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x449, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x449, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH get_Offset(VARIANT& RowOffset, VARIANT& ColumnOffset)
 	{
@@ -745,35 +745,35 @@ public:
 	VARIANT get_Orientation()
 	{
 		VARIANT result;
-		InvokeHelper(0x86, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x86, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_Orientation(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x86, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x86, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_OutlineLevel()
 	{
 		VARIANT result;
-		InvokeHelper(0x10f, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x10f, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_OutlineLevel(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x10f, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x10f, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	long get_PageBreak()
 	{
 		long result;
-		InvokeHelper(0xff, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0xff, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	void put_PageBreak(long newValue)
 	{
 		static BYTE parms[] = VTS_I4 ;
-		InvokeHelper(0xff, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
+		InvokeHelper(0xff, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT Parse(VARIANT& ParseLine, VARIANT& Destination)
 	{
@@ -792,37 +792,37 @@ public:
 	LPDISPATCH get_PivotField()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x2db, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x2db, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_PivotItem()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x2e4, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x2e4, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_PivotTable()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x2cc, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x2cc, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Precedents()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x220, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x220, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_PrefixCharacter()
 	{
 		VARIANT result;
-		InvokeHelper(0x1f8, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x1f8, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Previous()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x1f7, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x1f7, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT __PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate)
@@ -842,7 +842,7 @@ public:
 	LPDISPATCH get_QueryTable()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x56a, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x56a, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Range(VARIANT& Cell1, VARIANT& Cell2)
@@ -855,7 +855,7 @@ public:
 	VARIANT RemoveSubtotal()
 	{
 		VARIANT result;
-		InvokeHelper(0x373, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x373, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	BOOL Replace(VARIANT& What, VARIANT& Replacement, VARIANT& LookAt, VARIANT& SearchOrder, VARIANT& MatchCase, VARIANT& MatchByte, VARIANT& SearchFormat, VARIANT& ReplaceFormat)
@@ -875,7 +875,7 @@ public:
 	long get_Row()
 	{
 		long result;
-		InvokeHelper(0x101, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x101, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH RowDifferences(VARIANT& Comparison)
@@ -888,18 +888,18 @@ public:
 	VARIANT get_RowHeight()
 	{
 		VARIANT result;
-		InvokeHelper(0x110, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x110, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_RowHeight(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x110, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x110, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH get_Rows()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x102, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x102, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT Run(VARIANT& Arg1, VARIANT& Arg2, VARIANT& Arg3, VARIANT& Arg4, VARIANT& Arg5, VARIANT& Arg6, VARIANT& Arg7, VARIANT& Arg8, VARIANT& Arg9, VARIANT& Arg10, VARIANT& Arg11, VARIANT& Arg12, VARIANT& Arg13, VARIANT& Arg14, VARIANT& Arg15, VARIANT& Arg16, VARIANT& Arg17, VARIANT& Arg18, VARIANT& Arg19, VARIANT& Arg20, VARIANT& Arg21, VARIANT& Arg22, VARIANT& Arg23, VARIANT& Arg24, VARIANT& Arg25, VARIANT& Arg26, VARIANT& Arg27, VARIANT& Arg28, VARIANT& Arg29, VARIANT& Arg30)
@@ -912,13 +912,13 @@ public:
 	VARIANT Select()
 	{
 		VARIANT result;
-		InvokeHelper(0xeb, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xeb, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT Show()
 	{
 		VARIANT result;
-		InvokeHelper(0x1f0, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x1f0, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT ShowDependents(VARIANT& Remove)
@@ -931,18 +931,18 @@ public:
 	VARIANT get_ShowDetail()
 	{
 		VARIANT result;
-		InvokeHelper(0x249, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x249, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_ShowDetail(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x249, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x249, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT ShowErrors()
 	{
 		VARIANT result;
-		InvokeHelper(0x36e, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x36e, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT ShowPrecedents(VARIANT& Remove)
@@ -955,13 +955,13 @@ public:
 	VARIANT get_ShrinkToFit()
 	{
 		VARIANT result;
-		InvokeHelper(0xd1, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xd1, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_ShrinkToFit(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0xd1, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0xd1, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT Sort(VARIANT& Key1, long Order1, VARIANT& Key2, VARIANT& Type, long Order2, VARIANT& Key3, long Order3, long Header, VARIANT& OrderCustom, VARIANT& MatchCase, long Orientation, long SortMethod, long DataOption1, long DataOption2, long DataOption3)
 	{
@@ -980,7 +980,7 @@ public:
 	LPDISPATCH get_SoundNote()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x394, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x394, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH SpecialCells(long Type, VARIANT& Value)
@@ -993,13 +993,13 @@ public:
 	VARIANT get_Style()
 	{
 		VARIANT result;
-		InvokeHelper(0x104, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x104, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_Style(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x104, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x104, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT SubscribeTo(LPCTSTR Edition, long Format)
 	{
@@ -1018,7 +1018,7 @@ public:
 	VARIANT get_Summary()
 	{
 		VARIANT result;
-		InvokeHelper(0x111, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x111, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT Table(VARIANT& RowInput, VARIANT& ColumnInput)
@@ -1031,7 +1031,7 @@ public:
 	VARIANT get_Text()
 	{
 		VARIANT result;
-		InvokeHelper(0x8a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x8a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT TextToColumns(VARIANT& Destination, long DataType, long TextQualifier, VARIANT& ConsecutiveDelimiter, VARIANT& Tab, VARIANT& Semicolon, VARIANT& Comma, VARIANT& Space, VARIANT& Other, VARIANT& OtherChar, VARIANT& FieldInfo, VARIANT& DecimalSeparator, VARIANT& ThousandsSeparator, VARIANT& TrailingMinusNumbers)
@@ -1044,41 +1044,41 @@ public:
 	VARIANT get_Top()
 	{
 		VARIANT result;
-		InvokeHelper(0x7e, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x7e, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT Ungroup()
 	{
 		VARIANT result;
-		InvokeHelper(0xf4, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0xf4, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_UseStandardHeight()
 	{
 		VARIANT result;
-		InvokeHelper(0x112, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x112, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_UseStandardHeight(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x112, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x112, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_UseStandardWidth()
 	{
 		VARIANT result;
-		InvokeHelper(0x113, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x113, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_UseStandardWidth(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x113, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x113, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH get_Validation()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x56b, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x56b, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_Value(VARIANT& RangeValueDataType)
@@ -1091,52 +1091,52 @@ public:
 	void put_Value(VARIANT& RangeValueDataType, VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x6, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &RangeValueDataType, &newValue);
+		InvokeHelper(0x6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &RangeValueDataType, &newValue);
 	}
 	VARIANT get_Value2()
 	{
 		VARIANT result;
-		InvokeHelper(0x56c, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x56c, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_Value2(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x56c, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x56c, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_VerticalAlignment()
 	{
 		VARIANT result;
-		InvokeHelper(0x89, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x89, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_VerticalAlignment(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x89, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x89, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_Width()
 	{
 		VARIANT result;
-		InvokeHelper(0x7a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x7a, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Worksheet()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x15c, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x15c, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT get_WrapText()
 	{
 		VARIANT result;
-		InvokeHelper(0x114, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x114, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	void put_WrapText(VARIANT& newValue)
 	{
 		static BYTE parms[] = VTS_VARIANT ;
-		InvokeHelper(0x114, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, &newValue);
+		InvokeHelper(0x114, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH AddComment(VARIANT& Text)
 	{
@@ -1148,62 +1148,62 @@ public:
 	LPDISPATCH get_Comment()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x38e, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x38e, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	void ClearComments()
 	{
-		InvokeHelper(0x56e, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+		InvokeHelper(0x56e, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 	LPDISPATCH get_Phonetic()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x56f, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x56f, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_FormatConditions()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x570, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x570, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	long get_ReadingOrder()
 	{
 		long result;
-		InvokeHelper(0x3cf, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, NULL);
+		InvokeHelper(0x3cf, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 	void put_ReadingOrder(long newValue)
 	{
 		static BYTE parms[] = VTS_I4 ;
-		InvokeHelper(0x3cf, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
+		InvokeHelper(0x3cf, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_Hyperlinks()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x571, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x571, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_Phonetics()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x713, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x713, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	void SetPhonetic()
 	{
-		InvokeHelper(0x714, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+		InvokeHelper(0x714, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 	CString get_ID()
 	{
 		CString result;
-		InvokeHelper(0x715, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, NULL);
+		InvokeHelper(0x715, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, nullptr);
 		return result;
 	}
 	void put_ID(LPCTSTR newValue)
 	{
 		static BYTE parms[] = VTS_BSTR ;
-		InvokeHelper(0x715, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, newValue);
+		InvokeHelper(0x715, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT _PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
 	{
@@ -1215,29 +1215,29 @@ public:
 	LPDISPATCH get_PivotCell()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x7dd, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x7dd, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	void Dirty()
 	{
-		InvokeHelper(0x7de, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+		InvokeHelper(0x7de, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 	LPDISPATCH get_Errors()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x7df, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x7df, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_SmartTags()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x7e0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x7e0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	void Speak(VARIANT& SpeakDirection, VARIANT& SpeakFormulas)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x7e1, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &SpeakDirection, &SpeakFormulas);
+		InvokeHelper(0x7e1, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &SpeakDirection, &SpeakFormulas);
 	}
 	VARIANT PasteSpecial(long Paste, long Operation, VARIANT& SkipBlanks, VARIANT& Transpose)
 	{
@@ -1249,31 +1249,31 @@ public:
 	BOOL get_AllowEdit()
 	{
 		BOOL result;
-		InvokeHelper(0x7e4, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, NULL);
+		InvokeHelper(0x7e4, DISPATCH_PROPERTYGET, VT_BOOL, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_ListObject()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x8d1, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x8d1, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_XPath()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x8d2, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x8d2, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_ServerActions()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x9bb, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x9bb, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	void RemoveDuplicates(VARIANT& Columns, long Header)
 	{
 		static BYTE parms[] = VTS_VARIANT VTS_I4 ;
-		InvokeHelper(0x9bc, DISPATCH_METHOD, VT_EMPTY, NULL, parms, &Columns, Header);
+		InvokeHelper(0x9bc, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Columns, Header);
 	}
 	VARIANT PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
 	{
@@ -1285,40 +1285,40 @@ public:
 	CString get_MDX()
 	{
 		CString result;
-		InvokeHelper(0x84b, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, NULL);
+		InvokeHelper(0x84b, DISPATCH_PROPERTYGET, VT_BSTR, (void*)&result, nullptr);
 		return result;
 	}
 	void ExportAsFixedFormat(long Type, VARIANT& Filename, VARIANT& Quality, VARIANT& IncludeDocProperties, VARIANT& IgnorePrintAreas, VARIANT& From, VARIANT& To, VARIANT& OpenAfterPublish, VARIANT& FixedFormatExtClassPtr)
 	{
 		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
-		InvokeHelper(0x9bd, DISPATCH_METHOD, VT_EMPTY, NULL, parms, Type, &Filename, &Quality, &IncludeDocProperties, &IgnorePrintAreas, &From, &To, &OpenAfterPublish, &FixedFormatExtClassPtr);
+		InvokeHelper(0x9bd, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Type, &Filename, &Quality, &IncludeDocProperties, &IgnorePrintAreas, &From, &To, &OpenAfterPublish, &FixedFormatExtClassPtr);
 	}
 	VARIANT get_CountLarge()
 	{
 		VARIANT result;
-		InvokeHelper(0x9c3, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x9c3, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT CalculateRowMajorOrder()
 	{
 		VARIANT result;
-		InvokeHelper(0x93c, DISPATCH_METHOD, VT_VARIANT, (void*)&result, NULL);
+		InvokeHelper(0x93c, DISPATCH_METHOD, VT_VARIANT, (void*)&result, nullptr);
 		return result;
 	}
 	LPDISPATCH get_SparklineGroups()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0xb25, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0xb25, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	void ClearHyperlinks()
 	{
-		InvokeHelper(0xb26, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+		InvokeHelper(0xb26, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 	LPDISPATCH get_DisplayFormat()
 	{
 		LPDISPATCH result;
-		InvokeHelper(0x29a, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, NULL);
+		InvokeHelper(0x29a, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
 	VARIANT BorderAround(VARIANT& LineStyle, long Weight, long ColorIndex, VARIANT& Color, VARIANT& ThemeColor)
@@ -1330,11 +1330,11 @@ public:
 	}
 	void AllocateChanges()
 	{
-		InvokeHelper(0xb27, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+		InvokeHelper(0xb27, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 	void DiscardChanges()
 	{
-		InvokeHelper(0xb28, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+		InvokeHelper(0xb28, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 
 	// Range properties

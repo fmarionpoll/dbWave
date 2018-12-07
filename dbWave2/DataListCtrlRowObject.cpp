@@ -17,10 +17,10 @@ CDataListCtrlRowObject::CDataListCtrlRowObject()
 {
 	bInit = FALSE;
 	index = 0;
-	pdataWnd = NULL;
-	pspikeWnd = NULL;
-	pdataDoc = NULL;
-	pspikeDoc = NULL;
+	pdataWnd = nullptr;
+	pspikeWnd = nullptr;
+	pdataDoc = nullptr;
+	pspikeDoc = nullptr;
 	wversion = 0;
 }
 
@@ -28,19 +28,19 @@ CDataListCtrlRowObject::CDataListCtrlRowObject(int i)
 {
 	bInit = FALSE;
 	index = i;
-	pdataWnd = NULL;
-	pspikeWnd = NULL;
+	pdataWnd = nullptr;
+	pspikeWnd = nullptr;
 	wversion = 0;
 }
 
 CDataListCtrlRowObject::~CDataListCtrlRowObject()
 {
-	if (pdataWnd != NULL)	
+	if (pdataWnd != nullptr)	
 	{
 		pdataWnd->DestroyWindow();
 		delete pdataWnd;
 	}
-	if (pspikeWnd != NULL)
+	if (pspikeWnd != nullptr)
 	{
 		pspikeWnd->DestroyWindow();
 		delete pspikeWnd;

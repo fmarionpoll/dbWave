@@ -18,7 +18,7 @@ class CImportGenericDataDlg : public CDialog
 
 // Construction
 public:
-	CImportGenericDataDlg(CWnd* pParent = NULL);   // standard constructor
+	CImportGenericDataDlg(CWnd* pParent = nullptr);   // standard constructor
 
 	OPTIONS_IMPORT*	piivO;				// from caller
 	BOOL			bConvert;

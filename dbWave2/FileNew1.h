@@ -8,7 +8,7 @@ class CFileNew1 : public CDialogEx
 	DECLARE_DYNAMIC(CFileNew1)
 
 public:
-	CFileNew1(CWnd* pParent = NULL);   // standard constructor
+	CFileNew1(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CFileNew1();
 
 // Dialog Data

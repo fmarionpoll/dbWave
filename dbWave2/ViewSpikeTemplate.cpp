@@ -60,7 +60,7 @@ CSpikeTemplateView::CSpikeTemplateView()
 CSpikeTemplateView::~CSpikeTemplateView()
 {
 	// save spkD list i	 changed
-	if (m_pSpkDoc != NULL)
+	if (m_pSpkDoc != nullptr)
 		SaveCurrentSpkFile();	// save file if modified
 }
 
@@ -79,7 +79,7 @@ void CSpikeTemplateView::OnDestroy()
 	CDaoRecordView::OnDestroy();
 	if (m_templList.GetNtemplates() != 0)
 	{
-		if (m_psC->ptpl == NULL)
+		if (m_psC->ptpl == nullptr)
 			m_psC->CreateTPL();
 		*((CTemplateListWnd*) m_psC->ptpl) = m_templList;
 	}
@@ -166,7 +166,7 @@ BOOL CSpikeTemplateView::OnMove(UINT nIDMoveCommand)
 		return false;
 	}
 
-	pDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	pDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -249,7 +249,7 @@ void CSpikeTemplateView::OnSize(UINT nType, int cx, int cy)
 void CSpikeTemplateView::SaveCurrentSpkFile()
 {
 	// save previous file if anything has changed
-	if (m_pSpkDoc != NULL && m_pSpkDoc->IsModified())
+	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
 		m_pSpkDoc->OnSaveDocument(GetDocument()->DBGetCurrentSpkFileName(FALSE));
 		m_pSpkDoc->SetModifiedFlag(FALSE);
@@ -304,7 +304,7 @@ void CSpikeTemplateView::OnInitialUpdate()
 	mdPM = &(pApp->vdP);					// viewdata options
 	mdMO = &(pApp->vdM);					// measure options
 	m_psC= &(pApp->spkC);					// get address of spike classif parms
-	if (m_psC->ptpl != NULL)
+	if (m_psC->ptpl != nullptr)
 		m_templList =  *((CTemplateListWnd*) m_psC->ptpl);
 
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -328,7 +328,7 @@ void CSpikeTemplateView::OnInitialUpdate()
 	m_tab1Ctrl.MoveWindow(&rect, TRUE);
 
 	// load data from file
-	if (pdbDoc->m_pSpk == NULL)
+	if (pdbDoc->m_pSpk == nullptr)
 	{
 		pdbDoc->m_pSpk = new CSpikeDoc;
 		ASSERT(pdbDoc->m_pSpk != NULL);
@@ -676,7 +676,7 @@ void CSpikeTemplateView::OnEnChangeTimelast()
 void CSpikeTemplateView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == NULL)
+	if (pScrollBar == nullptr)
 	{
 		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
@@ -1355,7 +1355,7 @@ void CSpikeTemplateView::OnCheck1()
 void CSpikeTemplateView::EditSpikeClass(int controlID, int controlItem)
 {
 	// find which item has been selected
-	CTemplateListWnd* pList = NULL; 
+	CTemplateListWnd* pList = nullptr; 
 	BOOL bSpikes = TRUE; 
 	BOOL bAllFiles = m_ballfiles;
 	if (m_avgList.GetDlgCtrlID() == controlID)
@@ -1370,7 +1370,7 @@ void CSpikeTemplateView::EditSpikeClass(int controlID, int controlItem)
 		pList = &m_avgAllList;
 		bAllFiles = TRUE;
 	}
-	if (pList == NULL)
+	if (pList == nullptr)
 		return; 
 
 	// find which icon has been selected and get the key

@@ -11,7 +11,7 @@ class CGotoRecordDlg : public CDialog
 {
 // Construction
 public:
-	CGotoRecordDlg(CWnd* pParent = NULL);   // standard constructor
+	CGotoRecordDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_GOTORECORDID };

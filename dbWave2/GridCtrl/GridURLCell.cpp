@@ -9,7 +9,7 @@
 IMPLEMENT_DYNCREATE(CGridURLCell, CGridCell)
 
 #ifndef _WIN32_WCE
-HCURSOR CGridURLCell::g_hLinkCursor = NULL;
+HCURSOR CGridURLCell::g_hLinkCursor = nullptr;
 #endif
 
 // Possible prefixes that indicate a hyperlink
@@ -68,7 +68,7 @@ void CGridURLCell::OnClick(CPoint PointCellRelative)
 #ifndef _WIN32_WCE
 	CString strURL;
 	if (GetAutoLaunchUrl() && OverURL(PointCellRelative, strURL))
-		ShellExecute(NULL, _T("open"), strURL, NULL,NULL, SW_SHOW);
+		ShellExecute(nullptr, _T("open"), strURL, nullptr, nullptr, SW_SHOW);
 #endif
 }
 
@@ -94,13 +94,13 @@ BOOL CGridURLCell::OnSetCursor()
 #ifndef _WIN32_WCE
 HCURSOR CGridURLCell::GetHandCursor()
 {
-	if (g_hLinkCursor == NULL)		// No cursor handle - load our own
+	if (g_hLinkCursor == nullptr)		// No cursor handle - load our own
 	{
 		// Get the windows directory
 		CString strWndDir;
 		UINT ulen = GetWindowsDirectory(strWndDir.GetBuffer(MAX_PATH), MAX_PATH);
 		if (ulen == 0)
-			return NULL;
+			return nullptr;
 		strWndDir.ReleaseBuffer();
 
 		strWndDir += _T("\\winhlp32.exe");

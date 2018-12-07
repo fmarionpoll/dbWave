@@ -12,7 +12,7 @@ class CDataTranslationBoardDlg : public CDialog
 	DECLARE_DYNAMIC(CDataTranslationBoardDlg)
 
 public:
-	CDataTranslationBoardDlg(CWnd* pParent = NULL);
+	CDataTranslationBoardDlg(CWnd* pParent = nullptr);
 	virtual ~CDataTranslationBoardDlg();
 	enum {IDD= IDD_DTBOARD_DLG};
 

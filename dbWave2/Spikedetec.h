@@ -14,7 +14,7 @@ class CSpikeDetectDlg : public CDialog
 {
 // Construction
 public:
-	CSpikeDetectDlg(CWnd* pParent = NULL);	// standard constructor
+	CSpikeDetectDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_SPKDETECTPARM };

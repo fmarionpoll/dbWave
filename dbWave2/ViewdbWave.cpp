@@ -71,7 +71,7 @@ CdbWaveView::CdbWaveView()
 	, m_timelast(0)
 	, m_amplitudespan(0)
 {
-	m_pSet = NULL;
+	m_pSet = nullptr;
 	m_bAddMode=FALSE;
 	m_bFilterON = TRUE;
 	m_bvalidDat=FALSE;
@@ -336,7 +336,7 @@ void CdbWaveView::UpdateControls()
 BOOL CdbWaveView::OnMove(UINT nIDMoveCommand)
 {
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	GetDocument()->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -374,7 +374,7 @@ void CdbWaveView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	{
 		// make sure the secondary toolbar is not visible
 		// (none is defined for the database)
-		if (pmF->m_pSecondToolBar != NULL) 
+		if (pmF->m_pSecondToolBar != nullptr) 
 			pmF->ShowPane(pmF->m_pSecondToolBar, FALSE, FALSE, TRUE);
 		// load status
 		m_nStatus = ((CChildFrame*)pmF->MDIGetActive())->m_nStatus;
@@ -382,7 +382,7 @@ void CdbWaveView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	}
 	else
 	{
-		if (pActivateView != NULL)
+		if (pActivateView != nullptr)
 			((CChildFrame*)pmF->MDIGetActive())->m_nStatus = m_nStatus; // save status
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
@@ -404,7 +404,7 @@ void CdbWaveView::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	NMITEMACTIVATE* pItemActivate = (NMITEMACTIVATE*) pNMHDR;
 	if (pItemActivate->iItem >= 0)
 		GetDocument()->DBSetCurrentRecordPosition(pItemActivate->iItem);
-	GetDocument()->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	CDaoRecordView::OnInitialUpdate();
 
 	*pResult = 0;
@@ -501,7 +501,7 @@ void CdbWaveView::DeleteRecords()
 	// loop on Cdatalistctrl to delete all selected items
 	CdbWaveDoc* pdbDoc = GetDocument();
 	POSITION pos = m_dataListCtrl.GetFirstSelectedItemPosition();
-	if (pos == NULL)
+	if (pos == nullptr)
 	{
 		AfxMessageBox(_T("No item selected: delete operation failed"));
 		return;
@@ -527,7 +527,7 @@ void CdbWaveView::DeleteRecords()
 	m_pSet->RefreshQuery();*/
 
 	pdbDoc->DBSetCurrentRecordPosition(currentindex);
-	pdbDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CdbWaveView::OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult)
@@ -552,7 +552,7 @@ void CdbWaveView::OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 	m_pSet->m_strSort = cs;
 	m_pSet->Requery();
-	GetDocument()->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	GetDocument()->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	*pResult = 0;
 }
 

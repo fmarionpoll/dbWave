@@ -108,7 +108,7 @@ public:
 public:
 	inline long DBGetNRecords()						{ return m_pDB->GetNRecords(); }
 	inline CDaoRecordset* DBGetRecordset()			{ return &m_pDB->m_mainTableSet; }
-	inline void DBRefreshQuery()					{ if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(NULL); m_pDB->m_mainTableSet.RefreshQuery();}
+	inline void DBRefreshQuery()					{ if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery();}
 	void		DBDeleteCurrentRecord();
 	CString		DBGetCurrentDatFileName(BOOL bTest = FALSE);
 	CString		DBGetCurrentSpkFileName(BOOL bTest = FALSE);

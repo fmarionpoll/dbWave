@@ -12,7 +12,7 @@ class CDataSeriesFormatDlg : public CDialog
 {
 // Construction
 public:
-	CDataSeriesFormatDlg(CWnd* pParent = NULL);	// standard constructor
+	CDataSeriesFormatDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_DATASERIESFORMAT };

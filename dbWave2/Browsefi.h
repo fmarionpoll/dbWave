@@ -9,7 +9,7 @@ class CBrowseFileDlg : public CDialog
 {
 // Construction
 public:
-	CBrowseFileDlg(CWnd* pParent = NULL);	// standard constructor
+	CBrowseFileDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_BROWSEFILE };

@@ -7,7 +7,7 @@ class CImportOptionsDlg : public CDialogEx
 	DECLARE_DYNAMIC(CImportOptionsDlg)
 
 public:
-	CImportOptionsDlg(CWnd* pParent = NULL);   // standard constructor
+	CImportOptionsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CImportOptionsDlg();
 
 // Dialog Data

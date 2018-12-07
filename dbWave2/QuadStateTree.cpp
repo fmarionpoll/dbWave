@@ -45,7 +45,7 @@ CQuadStateTree::CQuadStateTree()
 : m_bIgnoreIndeterminateState(false)
 , m_bTvnCheckReturnedNonzero(false)
 , m_bSettingChildItems(true)
-, m_hTriggerItem(NULL)
+, m_hTriggerItem(nullptr)
 {
     BuildBitmap();
 }
@@ -194,7 +194,7 @@ BOOL CQuadStateTree::SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCh
         // TVCS_NONE state is only allowed at the top of the tree
         // Do not allow TVCS_NONE state under a non-TVCS_NONE item
         HTREEITEM Parent = GetParentItem(hTreeItem);
-        if (NULL != Parent && GetCheck(Parent) != TVCS_NONE)
+        if (nullptr != Parent && GetCheck(Parent) != TVCS_NONE)
         {
             return FALSE;
         }
@@ -314,7 +314,7 @@ LRESULT CQuadStateTree::SendTVNCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewChe
 {
     if (::IsWindow(GetParent()->m_hWnd))
     {
-        NMTVNCHECK tvn    = {0};
+        NMTVNCHECK tvn    = {nullptr};
         tvn.hdr.code      = TVN_CHECK;
         tvn.hdr.hwndFrom  = GetSafeHwnd();
         tvn.hdr.idFrom    = GetDlgCtrlID();
@@ -370,7 +370,7 @@ BOOL CQuadStateTree::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
     ScreenToClient(&point);
     HTREEITEM hTreeItem = HitTest(point, &Flags);
     // Was the click on a checkbox?
-    if (NULL != hTreeItem && (Flags & TVHT_ONITEMSTATEICON) == TVHT_ONITEMSTATEICON)
+    if (nullptr != hTreeItem && (Flags & TVHT_ONITEMSTATEICON) == TVHT_ONITEMSTATEICON)
     {
         ToggleCheck(hTreeItem);
     }
@@ -405,7 +405,7 @@ BOOL CQuadStateTree::OnTvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
     {
         HTREEITEM hTreeItem = GetSelectedItem();
         // KeyDown is called before StateImageChanging so check for TVCS_NONE state
-        if (NULL != hTreeItem && GetCheck(hTreeItem) != TVCS_NONE)
+        if (nullptr != hTreeItem && GetCheck(hTreeItem) != TVCS_NONE)
         {
             ToggleCheck(hTreeItem);
         }
@@ -493,7 +493,7 @@ BOOL CQuadStateTree::OnTvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
                 // Set all children to same state
                 // Will recursively end up back here for each level down
                 HTREEITEM Child = GetChildItem(pIC->hItem);
-                while(Child != NULL)
+                while(Child != nullptr)
                 {
                     SetCheckInternal(Child, NewCheckState);
                     Child = GetNextSiblingItem(Child);
@@ -511,14 +511,14 @@ BOOL CQuadStateTree::OnTvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
         if (!m_bSettingChildItems)
         {
             HTREEITEM ParentItem = GetParentItem(pIC->hItem);
-            if (ParentItem != NULL && GetCheck(ParentItem) != TVCS_NONE)
+            if (ParentItem != nullptr && GetCheck(ParentItem) != TVCS_NONE)
             {
                 // Set parent state depending on all it's child states
                 // Will recursively end up back here for each level up
                 HTREEITEM Child = GetChildItem(ParentItem);
                 TVCS_CHECKSTATE State = GetCheck(Child);
                 TVCS_CHECKSTATE Check = State;
-                while (Child != NULL && Check == State)
+                while (Child != nullptr && Check == State)
                 {
                     Check = GetCheck(Child);
                     Child = GetNextSiblingItem(Child);
@@ -677,11 +677,11 @@ void CQuadStateTree::BuildBitmap()
     BITMAPINFO *pbi = reinterpret_cast<BITMAPINFO *>(BitmapInfoData);
     BITMAPINFOHEADER *pbih = reinterpret_cast<BITMAPINFOHEADER *>(BitmapInfoData);
 
-    HBITMAP hBitmap = ::CreateDIBitmap(::GetDC(NULL), pbih, CBM_INIT,
+    HBITMAP hBitmap = ::CreateDIBitmap(::GetDC(nullptr), pbih, CBM_INIT,
                                        BitmapBitsData, pbi, DIB_RGB_COLORS);
     //ShowGraphic(hBitmap);
 
-    if (NULL != hBitmap && m_Bitmap.Attach(hBitmap))
+    if (nullptr != hBitmap && m_Bitmap.Attach(hBitmap))
     {
         if (m_ImageList.Create(pbih->biHeight, pbih->biHeight, pbih->biBitCount,
                              pbih->biWidth / pbih->biHeight, 0))

@@ -34,7 +34,7 @@ CdbEditRecordDlg::CdbEditRecordDlg(CWnd* pParent /*=NULL*/)
 
 CdbEditRecordDlg::~CdbEditRecordDlg()
 {
-	m_pdbDoc = NULL;
+	m_pdbDoc = nullptr;
 }
 
 void CdbEditRecordDlg::DoDataExchange(CDataExchange* pDX)
@@ -312,14 +312,14 @@ void CdbEditRecordDlg::OnBnClickedButtonrepeat2()
 void CdbEditRecordDlg::EditChangeItem_IndirectField(int IDC)
 {
 	DB_ITEMDESC* pdesc = GetItemDescriptors(IDC);
-	if (pdesc->pComboBox == NULL)
+	if (pdesc->pComboBox == nullptr)
 		return;
 
 	CdbEditFieldDlg dlg;
 	dlg.m_pMainTable	= m_pSet;				// address main table
 	dlg.m_csColName		= pdesc->csColName;		// name of the column
 	dlg.m_pIndexTable	= pdesc->plinkedSet;	// address secondary table
-	dlg.m_pliIDArray	= NULL;					// not a primary field
+	dlg.m_pliIDArray	= nullptr;					// not a primary field
 	dlg.m_pdbDoc		= m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
 		PopulateCombo_WithText(*pdesc->plinkedSet, *pdesc->pComboBox, *pdesc->pdataItem);
@@ -328,14 +328,14 @@ void CdbEditRecordDlg::EditChangeItem_IndirectField(int IDC)
 void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 {
 	DB_ITEMDESC* pdesc = GetItemDescriptors(IDC);
-	if (pdesc->pComboBox == NULL)
+	if (pdesc->pComboBox == nullptr)
 		return;
 
 	CdbEditFieldDlg dlg;
 	dlg.m_pMainTable	= m_pSet;				// address main table
 	dlg.m_csColName		= pdesc->csColName;		// name of the column
 	dlg.m_pliIDArray	= &pdesc->liArray;		// address of table of ids
-	dlg.m_pIndexTable   = NULL;
+	dlg.m_pIndexTable   = nullptr;
 	dlg.m_pdbDoc		= m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
 	{
@@ -363,7 +363,7 @@ void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 
 DB_ITEMDESC* CdbEditRecordDlg::GetItemDescriptors(int IDC)
 {
-	DB_ITEMDESC* pdesc = NULL;
+	DB_ITEMDESC* pdesc = nullptr;
 	CdbWaveDoc* pdbDoc = m_pdbDoc;
 	CdbWdatabase* pDB = pdbDoc->m_pDB;
 	int ich= 0;
@@ -540,7 +540,7 @@ void CdbEditRecordDlg::OnBnClickedPrevious()
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->DBMovePrev();
 
-	m_pdbDoc->UpdateAllViews(NULL, 0L, NULL);
+	m_pdbDoc->UpdateAllViews(nullptr, 0L, nullptr);
 	PopulateControls();
 	UpdateData(FALSE);
 }
@@ -550,7 +550,7 @@ void CdbEditRecordDlg::OnBnClickedNext()
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->DBMoveNext();
 
-	m_pdbDoc->UpdateAllViews(NULL, 0L, NULL);
+	m_pdbDoc->UpdateAllViews(nullptr, 0L, nullptr);
 
 	PopulateControls();
 	UpdateData(FALSE);

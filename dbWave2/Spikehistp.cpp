@@ -37,7 +37,7 @@ END_MESSAGE_MAP()
 
 CSpikeHistWnd::CSpikeHistWnd() 
 {
-	m_pSL = NULL;				// source spk list
+	m_pSL = nullptr;				// source spk list
 	m_lFirst = 0;				// source data intervals
 	m_lLast = 0;				// last interval
 	m_selclass = 0;				// selected class
@@ -167,7 +167,7 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* pDC)
 	{
 		color = BLACK_COLOR; 
 		GetClassArray(m_selclass, pDW);
-		if (pDW  != NULL)
+		if (pDW  != nullptr)
 		{
 			RectHistog.left = m_abcissaminval- m_binsize;
 			RectHistog.right = m_abcissaminval;
@@ -217,10 +217,10 @@ void CSpikeHistWnd::MoveVTtagtoVal(int itag, int ival)
 void CSpikeHistWnd::GetClassArray(int iclass, CDWordArray*& pDW)
 {
 	// test if pDW at 0 position is the right one
-	if ((NULL != pDW) && ((int) pDW->GetAt(0) == iclass))
+	if ((nullptr != pDW) && ((int) pDW->GetAt(0) == iclass))
 			return;
 	// not found, scan the array
-	pDW = NULL;
+	pDW = nullptr;
 	for (int i=1; i<m_pHistarray.GetSize(); i++)
 	{
 		if( (int) ((CDWordArray*)m_pHistarray[i])->GetAt(0) == iclass)
@@ -438,7 +438,7 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 	
 	// test selected histogram first (foreground)
 	int ihist =1;
-	CDWordArray* pDW = NULL;
+	CDWordArray* pDW = nullptr;
 	if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECLASSONLY)
 	{
 		// get array corresp to m_selclass as well as histogram index
@@ -452,7 +452,7 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 			}					
 		}
 		//
-		if (pDW != NULL)
+		if (pDW != nullptr)
 		{ 
 			for (int i = mouseX1; i<mouseX2; i++)
 			{
@@ -634,7 +634,7 @@ void CSpikeHistWnd::BuildHistFromWordArray(
 	// loop through source data array
 	DWORD dwData;
 	int spike_class;
-	CDWordArray* pDW = NULL;
+	CDWordArray* pDW = nullptr;
 
 	for (int i=pVal->GetUpperBound(); i>=0; i--)	
 	{
@@ -656,7 +656,7 @@ void CSpikeHistWnd::BuildHistFromWordArray(
 		{
 			spike_class = pClass->GetAt(i);
 			GetClassArray(spike_class, pDW);
-			if (pDW == NULL)
+			if (pDW == nullptr)
 			{
 				pDW = new (CDWordArray);	// init array
 				ASSERT(pDW != NULL);
@@ -667,7 +667,7 @@ void CSpikeHistWnd::BuildHistFromWordArray(
 				pDW->SetAt(0, spike_class);
 			}
 		}
-		if (pDW != NULL)
+		if (pDW != nullptr)
 		{ 
 			dwData = pDW->GetAt(index)+1;
 			pDW->SetAt(index, dwData);

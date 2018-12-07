@@ -9,7 +9,7 @@ class ADExperimentDlg : public CDialog
 {
 // Construction
 public:
-	ADExperimentDlg(CWnd* pParent = NULL);   // standard constructor
+	ADExperimentDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_AD_EXPERIMENTDLG };
@@ -55,7 +55,7 @@ public:
 
 protected:	
 	int  SaveList(CComboBox* pCo, CStringArray* pS);
-	void LoadList(CComboBox* pCo, CStringArray* pS, int isel, CDaoRecordset* pmSet = NULL);
+	void LoadList(CComboBox* pCo, CStringArray* pS, int isel, CDaoRecordset* pmSet = nullptr);
 	void EditComboBox(CComboBox* pCo);
 
 	// Generated message map functions

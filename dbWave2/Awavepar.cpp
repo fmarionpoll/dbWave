@@ -17,7 +17,6 @@
 
 
 #include "stdafx.h"
-#include "dataheader_Atlab.h"
 #include <Olxdadefs.h>
 
 #ifdef _DEBUG

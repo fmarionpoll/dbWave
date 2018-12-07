@@ -7,7 +7,7 @@ class CEditListDlg : public CDialog
 	DECLARE_DYNAMIC(CEditListDlg)
 
 public:
-	CEditListDlg(CWnd* pParent = NULL);   // standard constructor
+	CEditListDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditListDlg();
 	CComboBox* pCo;
 	CString		m_csNewString;

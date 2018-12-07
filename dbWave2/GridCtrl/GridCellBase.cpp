@@ -88,7 +88,7 @@ void CGridCellBase::operator=(const CGridCellBase& cell)
     SetFormat(cell.GetFormat());
     SetTextClr(cell.GetTextClr());
     SetBackClr(cell.GetBackClr());
-    SetFont(cell.IsDefaultFont()? NULL : cell.GetFont());
+    SetFont(cell.IsDefaultFont()? nullptr : cell.GetFont());
     SetMargin(cell.GetMargin());
 }
 
@@ -100,7 +100,7 @@ CGridCellBase* CGridCellBase::GetDefaultCell() const
 {
     if (GetGrid())
         return GetGrid()->GetDefaultCell(IsFixedRow(), IsFixedCol());
-    return NULL;
+    return nullptr;
 }
 
 
@@ -502,23 +502,23 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
 	ASSERT(pGrid);
 
     BOOL bReleaseDC = FALSE;
-    if (pDC == NULL || szText == NULL)
+    if (pDC == nullptr || szText == nullptr)
     {
         if (szText)
 			pDC = pGrid->GetDC();
-        if (pDC == NULL || szText == NULL) 
+        if (pDC == nullptr || szText == nullptr) 
         {
             CGridDefaultCell* pDefCell = (CGridDefaultCell*) GetDefaultCell();
 			ASSERT(pDefCell);
 			CSize value(0, 0);
-			if (pDefCell != NULL)
+			if (pDefCell != nullptr)
 				value = CSize(pDefCell->GetWidth(), pDefCell->GetHeight());
 			return value;
         }
         bReleaseDC = TRUE;
     }
 
-    CFont *pOldFont = NULL,
+    CFont *pOldFont = nullptr,
           *pFont = GetFontObject();
     if (pFont)
         pOldFont = pDC->SelectObject(pFont);
@@ -591,7 +591,7 @@ CSize CGridCellBase::GetCellExtent(CDC* pDC)
         CGridCtrl* pGrid = GetGrid();
 		ASSERT(pGrid);
         IMAGEINFO Info;        
-        if (pGrid != NULL && pGrid->GetImageList() && pGrid->GetImageList()->GetImageInfo(nImage, &Info))         
+        if (pGrid != nullptr && pGrid->GetImageList() && pGrid->GetImageList()->GetImageInfo(nImage, &Info))         
         {            
             ImageSize = CSize(Info.rcImage.right-Info.rcImage.left,                                 
                 Info.rcImage.bottom-Info.rcImage.top);            

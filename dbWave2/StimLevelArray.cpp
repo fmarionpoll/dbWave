@@ -270,7 +270,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	for (int i = 0; i < iseries; i++)
 	{
 		CIntervalsAndWordsSeries* pTransf = (CIntervalsAndWordsSeries*) TransformedArrays.GetAt(i);
-		if (pTransf == NULL)
+		if (pTransf == nullptr)
 			continue;
 
 		// loop over all intervals stored in this transformed series 
@@ -314,7 +314,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	for (int i = 0; i < 8; i++)
 	{
 		CIntervalsAndWordsSeries* pInterv = (CIntervalsAndWordsSeries*)TransformedArrays.GetAt(i);
-		if (pInterv != NULL)
+		if (pInterv != nullptr)
 			delete pInterv;
 	}
 	TransformedArrays.RemoveAll();

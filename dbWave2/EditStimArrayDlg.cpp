@@ -83,9 +83,9 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 	m_pimagelist->Create(16, 16, ILC_COLOR, 2, 2);
 	CBitmap bm1, bm2;
 	bm1.LoadBitmap(IDB_STIMON);
-	m_pimagelist->Add(&bm1, (CBitmap*) NULL);
+	m_pimagelist->Add(&bm1, (CBitmap*)nullptr);
 	bm2.LoadBitmap(IDB_STIMOFF);
-	m_pimagelist->Add(&bm2, (CBitmap*) NULL);
+	m_pimagelist->Add(&bm2, (CBitmap*)nullptr);
 
 	// add 2 columns (icon & time)
 	LVCOLUMN lvcol;
@@ -193,7 +193,7 @@ void CEditStimArrayDlg::OnSize(UINT nType, int cx, int cy)
 void CEditStimArrayDlg::OnBnClickedEdit()
 {
 	POSITION pos = m_stimarrayCtrl.GetFirstSelectedItemPosition();
-	if (pos == NULL)
+	if (pos == nullptr)
 		return;
 	m_iItem = m_stimarrayCtrl.GetNextSelectedItem(pos);
 	CRect rect;
@@ -235,7 +235,7 @@ void CEditStimArrayDlg::OnEnKillfocusEdit1()
 void CEditStimArrayDlg::OnBnClickedDelete()
 {
 	POSITION pos = m_stimarrayCtrl.GetFirstSelectedItemPosition();
-	if (pos == NULL)
+	if (pos == nullptr)
 		return;
 	m_iItem = m_stimarrayCtrl.GetNextSelectedItem(pos);
 	
@@ -253,7 +253,7 @@ void CEditStimArrayDlg::OnBnClickedDelete()
 void CEditStimArrayDlg::OnBnClickedInsert()
 {
 	POSITION pos = m_stimarrayCtrl.GetFirstSelectedItemPosition();
-	if (pos != NULL)
+	if (pos != nullptr)
 		m_iItem = m_stimarrayCtrl.GetNextSelectedItem(pos) +1;
 	else
 		m_iItem = 0;
@@ -341,7 +341,7 @@ void CEditStimArrayDlg::OnBnClickedPaste()
 	for (int j = nitems-1; j >= 0; j--)
 	{
 		POSITION pos = m_stimarrayCtrl.GetFirstSelectedItemPosition();
-		if (pos != NULL)
+		if (pos != nullptr)
 			m_iItem = m_stimarrayCtrl.GetNextSelectedItem(pos) +1;
 		else
 			m_iItem = 0;
@@ -387,7 +387,7 @@ void CEditStimArrayDlg::OnBnClickedExport()
 	CdbWaveApp* pApp = (CdbWaveApp*)AfxGetApp();
 
 	CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
-	CDocument* pDoc = pTempl->OpenDocumentFile(NULL);
+	CDocument* pDoc = pTempl->OpenDocumentFile(nullptr);
 	POSITION pos = pDoc->GetFirstViewPosition();
 	CRichEditView* pView = (CRichEditView*)pDoc->GetNextView(pos);
 	CRichEditCtrl& pEdit = pView->GetRichEditCtrl();

@@ -14,7 +14,7 @@ class CNotedocCntrItem : public CRichEditCntrItem
 
 // Constructors
 public:
-	CNotedocCntrItem(REOBJECT* preo = NULL, CNoteDoc* pContainer = NULL);
+	CNotedocCntrItem(REOBJECT* preo = nullptr, CNoteDoc* pContainer = nullptr);
 		// Note: pContainer is allowed to be NULL to enable IMPLEMENT_SERIALIZE.
 		//  IMPLEMENT_SERIALIZE requires the class have a constructor with
 		//  zero arguments.  Normally, OLE items are constructed with a

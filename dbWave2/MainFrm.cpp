@@ -57,7 +57,7 @@ END_MESSAGE_MAP()
 CMainFrame::CMainFrame()
 {
 	m_SecondToolBarID = 0;
-	m_pSecondToolBar = NULL;
+	m_pSecondToolBar = nullptr;
 	m_bPropertiesPaneVisible = TRUE;
 	m_bFilterPaneVisible = TRUE;
 
@@ -234,8 +234,8 @@ void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 CdbWaveDoc * CMainFrame::GetMDIActiveDocument()
 {
 	CMDIChildWnd *pChild = MDIGetActive();
-	if (pChild == NULL)
-		return NULL;
+	if (pChild == nullptr)
+		return nullptr;
 	CDaoRecordView *pView = (CDaoRecordView*)pChild->GetActiveView();
 	return (CdbWaveDoc*)pView->GetDocument();
 }
@@ -250,7 +250,7 @@ BOOL CMainFrame::CreateOutlookBar()
 
 						   // create the choices toolbar and fill it with images, buttons and text
 	CMFCOutlookBarTabCtrl* pShortcutsBarContainer = DYNAMIC_DOWNCAST(CMFCOutlookBarTabCtrl, m_wndOutlookBar.GetUnderlyingWindow());
-	if (pShortcutsBarContainer == NULL)
+	if (pShortcutsBarContainer == nullptr)
 		return FALSE;
 
 	// add images to this bar
@@ -367,7 +367,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 	}
 
 	m_wndRibbonBar.SetWindows7Look(bWindows7);
-	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
+	RedrawWindow(nullptr, nullptr, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
 }
 
@@ -431,7 +431,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	for (int i = 0; i < iMaxUserToolbars; i++)
 	{
 		CMFCToolBar* pUserToolbar = GetUserToolBarByIndex(i);
-		if (pUserToolbar != NULL)
+		if (pUserToolbar != nullptr)
 		{
 			pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 		}

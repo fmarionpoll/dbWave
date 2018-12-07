@@ -15,7 +15,7 @@ CdbNewFileDuplicateDlg::CdbNewFileDuplicateDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CdbNewFileDuplicateDlg::IDD, pParent)
 {
 	m_option = -1;
-	m_pfilein=NULL;
+	m_pfilein= nullptr;
 	m_csExt.Empty();
 }
 

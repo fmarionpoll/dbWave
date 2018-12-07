@@ -10,7 +10,7 @@ class CScopeScreenPropsDlg : public CDialog
 {
 // Construction
 public:
-	CScopeScreenPropsDlg(CWnd* pParent = NULL);   // standard constructor
+	CScopeScreenPropsDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_SCOPEPROPERTIES };

@@ -122,7 +122,7 @@ void CDataFileAWAVE::DeleteMap()
 	POSITION Pos =  m_structMap.GetStartPosition();	 // get position of first elmt
 	WORD wKey;									// key associated
 	CSubfileItem* pStruct;						// pointer to object
-	while (Pos != NULL)							// loop over all elements
+	while (Pos != nullptr)							// loop over all elements
 	{											// get struct pointer & key
 		m_structMap.GetNextAssoc(Pos, wKey, (CObject*&) pStruct);
 		delete pStruct;							// delete structure
@@ -161,7 +161,7 @@ void CDataFileAWAVE::WriteFileMap()
 	WORD wkey;							// key value
 	POSITION pos = m_structMap.GetStartPosition();	// position	
 
-	while (pos != NULL)					// loop through entire map
+	while (pos != nullptr)					// loop through entire map
 	{									// get pointer to object & key
 		m_structMap.GetNextAssoc( pos, wkey, (CObject*&) pStruct );
 		if (wkey == STRUCT_END)			// skip struct_end
@@ -249,7 +249,7 @@ BOOL CDataFileAWAVE::WriteVTtags(CTagList* ptags)
 void CDataFileAWAVE::ReportSaveLoadException(LPCTSTR lpszPathName,
 	CException* e, BOOL bSaving, UINT nIDP)
 {
-	if (e != NULL)
+	if (e != nullptr)
 	{
 		ASSERT_VALID(e);
 		if (e->IsKindOf(RUNTIME_CLASS(CFileException)))
@@ -317,7 +317,7 @@ BOOL CDataFileAWAVE::DataAppendStart()
 	WORD wkey;							// key value
 	POSITION pos = m_structMap.GetStartPosition();	// position	
 	// search nb of STRUCT_DATA items
-	while (pos != NULL)					// loop through entire map
+	while (pos != nullptr)					// loop through entire map
 	{									// get pointer to object & key
 		m_structMap.GetNextAssoc( pos, wkey, (CObject*&) pStruct );
 		if (wkey == STRUCT_DATA)			// skip struct_end
@@ -377,7 +377,7 @@ BOOL CDataFileAWAVE::DataAppendStop()
 
 BOOL CDataFileAWAVE::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 {
-	CSubfileItem* pStruct = NULL;
+	CSubfileItem* pStruct = nullptr;
 
 	// save ACQDEF
 	if (!m_structMap.Lookup(STRUCT_ACQDEF, (CObject*&) pStruct))

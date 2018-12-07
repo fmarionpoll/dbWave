@@ -107,7 +107,7 @@ IMPLEMENT_SERIAL(CSpikeBuffer, CObject, 0 /* schema number*/ )
 
 CSpikeBuffer::CSpikeBuffer()
 {
-	m_pspkbuffer=NULL;
+	m_pspkbuffer= nullptr;
 	m_binzero = 2048;
 	SetSpklen(1);	// init with spike len = 1	
 	m_idata.SetSize(0, 128);
@@ -115,7 +115,7 @@ CSpikeBuffer::CSpikeBuffer()
 
 CSpikeBuffer::CSpikeBuffer(int lenspk)
 {
-	m_pspkbuffer=NULL;
+	m_pspkbuffer= nullptr;
 	m_binzero = 2048;
 	SetSpklen(lenspk);
 	m_idata.SetSize(0, 128);
@@ -171,7 +171,7 @@ short* CSpikeBuffer::AddSpikeBuf(WORD spkindex)
 	{
 		m_spkbufferlength += m_spkbufferincrement;		
 		short* pspkbuffer = (short*) realloc(m_pspkbuffer, sizeof(short)*m_spkbufferlength);
-		if (pspkbuffer != NULL)
+		if (pspkbuffer != nullptr)
 			m_pspkbuffer = pspkbuffer;
 		m_lastindex = m_spkbufferlength/m_lenspk -1;
 	}
@@ -194,7 +194,7 @@ short*	CSpikeBuffer::AddNumbersofSpikes(WORD nspikes)
 	{
 		m_spkbufferlength += m_spkbufferincrement;		
 		short* pspkbuffer = (short*) realloc(m_pspkbuffer, sizeof(short)*m_spkbufferlength);
-		if (pspkbuffer != NULL)
+		if (pspkbuffer != nullptr)
 			m_pspkbuffer = pspkbuffer;
 		m_lastindex = m_spkbufferlength/m_lenspk -1;
 	}
@@ -216,9 +216,9 @@ short*	CSpikeBuffer::AddNumbersofSpikes(WORD nspikes)
 void CSpikeBuffer::RemoveAllBuffers()
 {
 	// delete handle array and liberate corresponding memory
-	if (m_pspkbuffer != NULL)
+	if (m_pspkbuffer != nullptr)
 		free(m_pspkbuffer);
-	m_pspkbuffer = NULL;
+	m_pspkbuffer = nullptr;
 
 	// delete array of pointers
 	m_idata.RemoveAll();
@@ -844,7 +844,7 @@ int CSpikeList::AddSpike(short* lpSource, WORD nchans, long iitime, int sourcech
 		ASSERT(se != NULL);
 		m_spkelmts.InsertAt(jspk, se);					// add element to the list of spikes
 
-		if (lpSource != NULL)
+		if (lpSource != nullptr)
 		{
 			m_spikebuffer.AddSpikeBuf(jspk);			// add buffer area
 			SetSpikeData(jspk, lpSource, nchans, TRUE);	// add spike but try to center it
@@ -1128,10 +1128,10 @@ BOOL CSpikeList::InitSpikeList(CAcqDataDoc* pDataFile, SPKDETECTPARM* pFC)
 	RemoveAllSpikeFlags();
 
 	// copy data from CObArray
-	if (pFC != NULL)
+	if (pFC != nullptr)
 		m_parm = *pFC;
 		
-	if (pDataFile != NULL)
+	if (pDataFile != nullptr)
 	{
 		CWaveFormat* pwaveFormat = pDataFile->GetpWaveFormat();
 		m_encoding = pwaveFormat->mode_encoding;

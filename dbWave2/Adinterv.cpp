@@ -140,24 +140,23 @@ BOOL ADIntervalsDlg::OnInitDialog()
 	if (0.0f == m_ratemin) m_ratemin=0.1f;
 	if (0.0f == m_ratemax) m_ratemax=50000.f;
 
-	((CButton*) GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(m_acqdef.bOnlineDisplay);
-	((CButton*) GetDlgItem(IDC_WRITETODISK))->SetCheck(m_acqdef.bADwritetofile);
-	int iID = (m_acqdef.data_flow == 0)? IDC_CONTINUOUS: IDC_BURST;
-	CheckRadioButton(IDC_CONTINUOUS, IDC_BURST, iID);
+	static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(m_acqdef.bOnlineDisplay);
+	static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(m_acqdef.bADwritetofile);
+	auto i_id = (m_acqdef.data_flow == 0)? IDC_CONTINUOUS: IDC_BURST;
+	CheckRadioButton(IDC_CONTINUOUS, IDC_BURST, i_id);
 
 	// trigger section
-	iID = IDC_TRIGSOFT;
 	BOOL flag = FALSE;
 	switch (m_acqdef.trig_mode)
 	{
-		case OLx_TRG_SOFT:		iID = IDC_TRIGSOFT; break;
-		case OLx_TRG_EXTRA+1:	iID = IDC_TRIGKEYBOARD; break;
-		case OLx_TRG_EXTERN:	iID = IDC_TRIGEXTERNAL; break;
-		case OLx_TRG_THRESHPOS:	iID = IDC_TRIGSUPTHRESHOLD; flag = TRUE; break;
-		case OLx_TRG_THRESHNEG:	iID = IDC_TRIGINFTHRESHOLD; flag = TRUE; break;
-		default:				iID = IDC_TRIGSOFT; break;
+		case OLx_TRG_SOFT:		i_id = IDC_TRIGSOFT; break;
+		case OLx_TRG_EXTRA+1:	i_id = IDC_TRIGKEYBOARD; break;
+		case OLx_TRG_EXTERN:	i_id = IDC_TRIGEXTERNAL; break;
+		case OLx_TRG_THRESHPOS:	i_id = IDC_TRIGSUPTHRESHOLD; flag = TRUE; break;
+		case OLx_TRG_THRESHNEG:	i_id = IDC_TRIGINFTHRESHOLD; flag = TRUE; break;
+		default:				i_id = IDC_TRIGSOFT; break;
 	}
-	CheckRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD, iID);
+	CheckRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD, i_id);
 	GetDlgItem(IDC_THRESHOLDCHAN)->EnableWindow(flag);
 	GetDlgItem(IDC_THRESHOLDVAL)->EnableWindow(flag);
 	m_threshchan = m_acqdef.trig_chan;
@@ -178,12 +177,13 @@ void ADIntervalsDlg::OnEnChangeAdratechan()
 		return;
 
 	switch (mm_adratechan.m_nChar)
-	{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+	{
 		case VK_UP:
 		case VK_PRIOR:	m_adratechan++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_adratechan--;	break;
+		case VK_RETURN: UpdateData(TRUE); break;
+		default: break;
 	}
 	mm_adratechan.m_bEntryDone=FALSE;	// clear flag
 	mm_adratechan.m_nChar=0;			// empty buffer
@@ -213,11 +213,13 @@ void ADIntervalsDlg::OnEnChangeDuration()
 
 	switch (mm_sweepduration.m_nChar)
 	{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
 		case VK_UP:
 		case VK_PRIOR:	m_sweepduration++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_sweepduration--;	break;
+		case VK_RETURN:	UpdateData(TRUE);	break;
+		default: break;
+
 	}
 	mm_sweepduration.m_bEntryDone=FALSE;	// clear flag
 	mm_sweepduration.m_nChar=0;			// empty buffer
@@ -269,6 +271,7 @@ void ADIntervalsDlg::OnEnChangeBuffersize()
 		case VK_PRIOR:	m_bufferWsize++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_bufferWsize--;	break;
+		default: break;
 	}
 	mm_bufferWsize.m_bEntryDone=FALSE;	// clear flag
 	mm_bufferWsize.m_nChar=0;			// empty buffer
@@ -301,6 +304,7 @@ void ADIntervalsDlg::OnEnChangeNbuffers()
 		case VK_PRIOR:	m_bufferNitems++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_bufferNitems--;	break;
+		default: break;
 	}
 	mm_bufferNitems.m_bEntryDone=FALSE;	// clear flag
 	mm_bufferNitems.m_nChar=0;			// empty buffer
@@ -326,6 +330,7 @@ void ADIntervalsDlg::OnEnChangeAcqduration()
 		case VK_PRIOR:	m_acqduration++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_acqduration--;	break;
+		default: break;
 	}
 	mm_acqduration.m_bEntryDone=FALSE;	// clear flag
 	mm_acqduration.m_nChar=0;			// empty buffer

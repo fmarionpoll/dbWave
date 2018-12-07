@@ -100,7 +100,7 @@ void CFilterWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		UINT flags = 0;
 		HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-		if (hTreeItem != NULL)
+		if (hTreeItem != nullptr)
 		{
 			pWndTree->SelectItem(hTreeItem);
 		}
@@ -112,7 +112,7 @@ void CFilterWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CFilterWnd::AdjustLayout()
 {
-	if (GetSafeHwnd() == NULL)
+	if (GetSafeHwnd() == nullptr)
 		return;
 
 	CRect rectClient;
@@ -120,8 +120,8 @@ void CFilterWnd::AdjustLayout()
 
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFilterView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndFilterView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFilterWnd::OnPaint()
@@ -144,7 +144,7 @@ void CFilterWnd::OnSetFocus(CWnd* pOldWnd)
 
 void CFilterWnd::OnUpdateTree()
 {
-	m_pDocOld = NULL;
+	m_pDocOld = nullptr;
 	InitFilterList();
 }
 
@@ -194,7 +194,7 @@ void CFilterWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		break;
 
 	case HINT_REQUERY:
-		m_pDocOld = NULL;
+		m_pDocOld = nullptr;
 
 	case HINT_DOCHASCHANGED:
 	case HINT_DOCMOVERECORD:
@@ -274,7 +274,7 @@ void CFilterWnd::InitFilterList()
 
 		// create subitems
 		int isum = 0;
-		HTREEITEM htreeItem = NULL;
+		HTREEITEM htreeItem = nullptr;
 		TVCS_CHECKSTATE bcheck;
 		int nitems = 0;
 		for (int j = 0; j < pdesc->csElementsArray.GetSize(); j++)
@@ -308,7 +308,7 @@ void CFilterWnd::InitFilterList()
 		}
 		// trick needed here because if the first item is checked and not the others, then the parent stays in the initial state
 		// namely "checked" (because at that moment it did not have other children)
-		if (isum == 1 && htreeItem != NULL)
+		if (isum == 1 && htreeItem != nullptr)
 		{
 			m_wndFilterView.SetCheck(htreeItem, TVCS_CHECKED);
 			m_wndFilterView.SetCheck(htreeItem, bcheck);
@@ -452,7 +452,7 @@ void  CFilterWnd::InsertAlphabetic(CString cs, CStringArray &csArray)
 void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	int i = 0;
-	for (HTREEITEM item = startItem; item != NULL; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	for (HTREEITEM item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
 	{
 		TVCS_CHECKSTATE state = m_wndFilterView.GetCheck(item);
 		if (state == TVCS_CHECKED)
@@ -477,7 +477,7 @@ void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 {
 	
 	int i = 0;
-	for (HTREEITEM item = startItem; item != NULL; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	for (HTREEITEM item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
 	{
 		TVCS_CHECKSTATE state = m_wndFilterView.GetCheck(item);
 		if (state == TVCS_CHECKED)
@@ -493,7 +493,7 @@ void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 void CFilterWnd::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	int i = 0;
-	for (HTREEITEM item = startItem; item != NULL; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	for (HTREEITEM item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
 	{
 		TVCS_CHECKSTATE state = m_wndFilterView.GetCheck(item);
 		if (state == TVCS_CHECKED)
@@ -557,7 +557,7 @@ void CFilterWnd::OnApplyFilter()
 	// update recordset and tell other views...
 	pDB->m_mainTableSet.BuildFilters();
 	pDB->m_mainTableSet.RefreshQuery();
-	m_pDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterWnd::OnSortRecords()
@@ -573,7 +573,7 @@ void CFilterWnd::OnSortRecords()
 	pDB->m_mainTableSet.m_strSort = pDB->m_desctab[i].szTableCol;
 
 	pDB->m_mainTableSet.RefreshQuery();
-	m_pDoc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
+	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterWnd::SelectNext(BOOL bNext)
@@ -583,12 +583,12 @@ void CFilterWnd::SelectNext(BOOL bNext)
 	HTREEITEM hItem = pTree->GetSelectedItem();
 	if (!pTree->ItemHasChildren(hItem))
 		hItem = pTree->GetParentItem(hItem);
-	if (hItem == NULL)
+	if (hItem == nullptr)
 		return;
 
 	int count = 0;
 	int lastselected = -1;
-	HTREEITEM hlastselected = NULL;
+	HTREEITEM hlastselected = nullptr;
 	int nselected = 0;
 	HTREEITEM hKid = pTree->GetChildItem(hItem);
 	do
@@ -611,7 +611,7 @@ void CFilterWnd::SelectNext(BOOL bNext)
 			hNext = pTree->GetNextSiblingItem(hlastselected);
 		else
 			hNext = pTree->GetPrevSiblingItem(hlastselected);
-		if (hNext == NULL)
+		if (hNext == nullptr)
 			return;
 		BOOL  bcheck = ((CQuadStateTree*)pTree)->SetCheck(hNext, TVCS_CHECKED);
 		BOOL  bucheck = ((CQuadStateTree*)pTree)->SetCheck(hlastselected, TVCS_UNCHECKED);

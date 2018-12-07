@@ -36,7 +36,7 @@ BOOL CConfirmSaveDlg::OnInitDialog()
 	m_cstimeleft.Format(_T("(in %i seconds)"), m_timeleft);
 	SetDlgItemText(IDC_STATIC2, m_cstimeleft);
 	SetDlgItemText(IDC_FILENAME, m_csfilename);
-	SetTimer(1, 1000, 0);
+	SetTimer(1, 1000, nullptr);
 	return TRUE; 
 }
 
@@ -49,7 +49,7 @@ void CConfirmSaveDlg::OnTimer(UINT nIDEvent)
 	// pass info to parent and take appropriate action
 	CDialog::OnTimer(nIDEvent);
 	if (m_timeleft > 0)
-		SetTimer(1, 1000, 0);	// one more tick
+		SetTimer(1, 1000, nullptr);	// one more tick
 	else
 		EndDialog(IDOK);		// end of the game
 }

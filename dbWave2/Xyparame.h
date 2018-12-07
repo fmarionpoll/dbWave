@@ -10,7 +10,7 @@ class XYParametersDlg : public CDialog
 {
 // Construction
 public:
-	XYParametersDlg(CWnd* pParent = NULL);	// standard constructor
+	XYParametersDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_XYPARAMETERS };

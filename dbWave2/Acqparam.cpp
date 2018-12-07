@@ -118,7 +118,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 		WORD wversion; ar >> wversion;			// 1 version number
 		ASSERT(wversion >= 3);					// assume higher version than 3
 		if (wversion < 9)
-			Read_v8andbefore(ar, wversion);
+			Read_v8_and_before(ar, wversion);
 		else
 		{
 			WORD w;
@@ -169,7 +169,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 	}
 }
 
-void CWaveFormat::Read_v8andbefore(CArchive& ar, WORD version)
+void CWaveFormat::Read_v8_and_before(CArchive& ar, WORD version)
 {
 	ASSERT(!ar.IsStoring());
 	WORD w;

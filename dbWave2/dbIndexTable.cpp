@@ -42,7 +42,7 @@ void CdbIndexTable::SetNames(CString defaultSQL, CString DFX_cs, CString DFX_ID)
 CString CdbIndexTable::GetDefaultDBName()
 {
 	CString cs = m_defaultName;
-	if (m_pDatabase->m_pDAODatabase != NULL) 
+	if (m_pDatabase->m_pDAODatabase != nullptr) 
 		cs = m_pDatabase->GetName();
 
 	return cs;
@@ -87,7 +87,7 @@ void CdbIndexTable::Dump(CDumpContext& dc) const
 long CdbIndexTable::GetIDorCreateIDforString(CString cs) 
 {
 	// string is empty - return nothing!
-	if (&cs == NULL || cs.IsEmpty())
+	if (&cs == nullptr || cs.IsEmpty())
 		return -1;
 
 	// record not found: add a new record - none found or empty

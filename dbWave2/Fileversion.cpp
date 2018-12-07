@@ -15,7 +15,7 @@
 
 CFileVersion::CFileVersion() 
 { 
-	m_lpVersionData = NULL;
+	m_lpVersionData = nullptr;
 	m_dwLangCharset = 0;
 }
 
@@ -69,7 +69,7 @@ CString CFileVersion::QueryValue(LPCTSTR lpszValueName,  DWORD dwLangCharset /* 
 {
 	// Must call Open() first
 	ASSERT(m_lpVersionData != NULL);
-	if ( m_lpVersionData == NULL )
+	if ( m_lpVersionData == nullptr )
 		return (CString)_T("");
 
 	// If no lang-charset specified use default
@@ -95,7 +95,7 @@ BOOL CFileVersion::GetFixedInfo(VS_FIXEDFILEINFO& vsffi)
 {
 	// Must call Open() first
 	ASSERT(m_lpVersionData != NULL);
-	if ( m_lpVersionData == NULL )
+	if ( m_lpVersionData == nullptr )
 		return FALSE;
 
 	UINT nQuerySize;

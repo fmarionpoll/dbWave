@@ -10,7 +10,7 @@ class CdbEditRecordDlg : public CDialog
 	DECLARE_DYNAMIC(CdbEditRecordDlg)
 
 public:
-	CdbEditRecordDlg(CWnd* pParent = NULL);   // standard constructor
+	CdbEditRecordDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CdbEditRecordDlg();
 
 	CdbWaveDoc*		m_pdbDoc;

@@ -10,7 +10,7 @@ class ADIntervalsDlg : public CDialog
 {
 // Construction
 public:
-	ADIntervalsDlg(CWnd* pParent = NULL);	// standard constructor
+	ADIntervalsDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_AD_INTERVALS };

@@ -42,34 +42,34 @@ CSpikeHistView::CSpikeHistView()
 	m_binISIms = 0.0f;
 	m_nbinsISI = 0;
 	m_timebinms = 0.0f;
-	m_parrayISI = NULL;
-	m_pPSTH  = NULL;
-	m_pISI = NULL;
+	m_parrayISI = nullptr;
+	m_pPSTH  = nullptr;
+	m_pISI = nullptr;
 	m_sizepPSTH = 0;
 	m_sizepISI = 0;
 	m_sizeparrayISI = 0;
 	m_initiated=FALSE;
-	m_pbitmap = NULL;
+	m_pbitmap = nullptr;
 	m_displayRect= CRect(0,0,0,0);
 	m_bmodified=TRUE;
 	m_nfiles=1;
 	t1000 = 1000.f;
 	m_bPrint=FALSE;
 	m_rectratio = 100;
-	m_pSpkDoc = NULL;
+	m_pSpkDoc = nullptr;
 	m_binit = FALSE;
 	m_bEnableActiveAccessibility=FALSE; // workaround to crash / accessibility
 }
 
 CSpikeHistView::~CSpikeHistView()
 {
-	if (m_pPSTH != NULL && m_sizepPSTH != 0)
+	if (m_pPSTH != nullptr && m_sizepPSTH != 0)
 		delete [] m_pPSTH;
-	if (m_pISI != NULL && m_sizepISI != 0)
+	if (m_pISI != nullptr && m_sizepISI != 0)
 		delete [] m_pISI;
-	if (m_parrayISI != NULL && m_sizeparrayISI != NULL)
+	if (m_parrayISI != nullptr && m_sizeparrayISI != NULL)
 		delete [] m_parrayISI;
-	if (m_pbitmap != NULL)
+	if (m_pbitmap != nullptr)
 		delete m_pbitmap;
 	m_fontDisp.DeleteObject();	
 }
@@ -205,7 +205,7 @@ void CSpikeHistView::OnInitialUpdate()
 	CDaoRecordView::OnInitialUpdate();
 
 	CdbWaveDoc* pdbDoc = GetDocument();
-	if (pdbDoc->m_pSpk == NULL)
+	if (pdbDoc->m_pSpk == nullptr)
 	{
 		pdbDoc->m_pSpk = new CSpikeDoc;
 		ASSERT(pdbDoc->m_pSpk != NULL);
@@ -292,7 +292,7 @@ BOOL CSpikeHistView::OnMove(UINT nIDMoveCommand)
 		return false;
 	}
 
-	pDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	pDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	if (!m_pvdS->ballfiles)
 		OnDisplay();
 	SelectSpkList(GetDocument()->GetcurrentSpkListIndex(), TRUE);
@@ -527,7 +527,7 @@ void CSpikeHistView::OnDraw(CDC* pDC)
 	// adjust size of the bitmap (eventually)
 	if (m_displayRect.Width() != rect.right || m_displayRect.Height() != rect.bottom)
 	{
-		if (m_pbitmap != NULL)	// erase old bitmap (size has changed)
+		if (m_pbitmap != nullptr)	// erase old bitmap (size has changed)
 			delete m_pbitmap;
 		m_pbitmap= new CBitmap;
 		ASSERT(m_pbitmap != NULL);
@@ -535,8 +535,8 @@ void CSpikeHistView::OnDraw(CDC* pDC)
 		m_displayRect.OffsetRect(m_topleft);
 		m_pbitmap->CreateBitmap(rect.Width(), rect.Height(), 
 			pDC->GetDeviceCaps(PLANES), 
-			pDC->GetDeviceCaps(BITSPIXEL), 
-			NULL);
+			pDC->GetDeviceCaps(BITSPIXEL),
+			nullptr);
 		m_bmodified=TRUE;
 	}
 
@@ -547,7 +547,7 @@ void CSpikeHistView::OnDraw(CDC* pDC)
 	{
 		int isavedDC = dcMem.SaveDC();	// save DC
 		dcMem.Rectangle(rect);			// erase window background
-		CFont* poldFont = NULL;
+		CFont* poldFont = nullptr;
 		if (!m_bPrint)
 			poldFont = (CFont*) dcMem.SelectObject(&m_fontDisp);
 
@@ -570,7 +570,7 @@ void CSpikeHistView::OnDraw(CDC* pDC)
 		}
 
 		// restore parameters
-		if (poldFont != NULL) 
+		if (poldFont != nullptr) 
 			dcMem.SelectObject(poldFont);
 
 		dcMem.RestoreDC(isavedDC);		// restore DC
@@ -882,7 +882,7 @@ void CSpikeHistView::OnEditCopy()
 	CDC* pDCRef= pWnd->GetDC();
 	CString csTitle = _T("dbWave\0") + (GetDocument())->GetTitle();
 	csTitle += _T("\0\0");
-	BOOL hmDC = mDC.CreateEnhanced(pDCRef, NULL, &rectBound, csTitle);
+	BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rectBound, csTitle);
 	ASSERT (hmDC != NULL);
 
 	// Draw document in metafile.
@@ -1075,7 +1075,7 @@ void CSpikeHistView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	}
 
 	// restore parameters
-	if (pOldFont != NULL) 
+	if (pOldFont != nullptr) 
 		pDC->SelectObject(pOldFont);
 
 	pdbDoc->DBSetCurrentRecordPosition(file0);
@@ -1232,7 +1232,7 @@ void CSpikeHistView::BuildData()
 	int firstfile = currentfile;		// index first file in the series
 	int lastfile = currentfile;			// index last file in the series
 
-	CProgressDlg* pdlg = NULL;
+	CProgressDlg* pdlg = nullptr;
 	int istep = 0;
 	CString cscomment;
 	CString csfilecomment = _T("Analyze file: ");
@@ -1267,7 +1267,7 @@ void CSpikeHistView::BuildData()
 		pdbDoc->DBSetCurrentRecordPosition(ifile);
 		pdbDoc->OpenCurrentSpikeFile();
 		m_pSpkDoc = pdbDoc->m_pSpk;
-		if (NULL == m_pSpkDoc )
+		if (nullptr == m_pSpkDoc )
 			continue;
 
 		m_pSpkDoc->SetSpkListCurrent(pdbDoc->GetcurrentSpkListIndex());
@@ -1823,7 +1823,7 @@ void CSpikeHistView::DisplayHistogram(CDC* pDC, CRect* pRect)
 	dispRect.right -= 2*tm.tmHeight;
 
 	// get data pointer and size
-	long* phistog0=NULL;			// pointer to first element
+	long* phistog0= nullptr;			// pointer to first element
 	int   nbinshistog=0;			// nelements
 	switch(m_bhistType)
 	{
@@ -2259,7 +2259,7 @@ void CSpikeHistView::OnEnChangeEditnstipercycle()
 
 void CSpikeHistView::OnEnChangeEditlockonstim() 
 {
-	if (m_pSpkDoc == NULL)
+	if (m_pSpkDoc == nullptr)
 		return;
 	int ilock = GetDlgItemInt(IDC_EDITLOCKONSTIM);
 	if (ilock != m_pvdS->istimulusindex)

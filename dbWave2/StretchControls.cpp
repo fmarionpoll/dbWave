@@ -18,7 +18,7 @@ CCtrlProp::CCtrlProp()
 	m_ctrlID	= NULL; 
 	m_bVisible	= TRUE;
 	m_master	= -1;
-	m_hWnd		= NULL;
+	m_hWnd		= nullptr;
 	m_slaveorder = 0;
 }
 
@@ -86,7 +86,7 @@ BOOL CStretchControl::newProp(int iID, int xsizeMode, int ysizeMode)
 
 BOOL CStretchControl::newProp(CWnd* pWnd, int iID, int xsizeMode, int ysizeMode)
 {
-	if (m_parent == NULL)
+	if (m_parent == nullptr)
 		return FALSE;
 
 	CRect rect0, rect;
@@ -111,7 +111,7 @@ BOOL CStretchControl::newProp(CWnd* pWnd, int iID, int xsizeMode, int ysizeMode)
 // if iMASTER already defined xsizeMaster and ysizeMaster are not used
 BOOL CStretchControl::newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int idMASTER)
 {
-	if (m_parent == NULL)
+	if (m_parent == nullptr)
 		return FALSE;
 
 	CWnd* pC = m_parent->GetDlgItem(idMASTER);	// get handle of master
@@ -122,7 +122,7 @@ BOOL CStretchControl::newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int 
 	
 	// find idMASTER 
 	int imaster = -1;							// master index
-	CCtrlProp* propmaster=NULL;					// pointer
+	CCtrlProp* propmaster= nullptr;					// pointer
 	if (m_props.GetUpperBound() >= 0)			// do we have masters?
 	{		
 		for (int i = 0; i<= m_props.GetUpperBound(); i++) // loop
@@ -156,7 +156,7 @@ BOOL CStretchControl::newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int 
 	pb->m_rect0 = rect0;
 	pb->m_rmaster0 = rectmaster0;
 	pb->m_slaveorder = 1;
-	if(propmaster != NULL)
+	if(propmaster != nullptr)
 		pb->m_slaveorder = propmaster->m_slaveorder + 1;
 
 	if (m_slavemax < pb->m_slaveorder)
@@ -203,7 +203,7 @@ void CStretchControl::ResizeControls(UINT nType, int cx, int cy)
 
 	// prepare looping through all controls	
 	HDWP hDWP = ::BeginDeferWindowPos(m_props.GetSize());
-	if (hDWP == NULL)		
+	if (hDWP == nullptr)		
 		return;		// exit if none available
 
 	// loop through all windows	
@@ -220,7 +220,7 @@ void CStretchControl::ResizeControls(UINT nType, int cx, int cy)
 				continue;
 			CRect newRect = AlignControl(pa, cx, cy);
 			pa->SetMasterRect(newRect);
-			hDWP = ::DeferWindowPos(hDWP, pa->GetHWnd(), NULL, 
+			hDWP = ::DeferWindowPos(hDWP, pa->GetHWnd(), nullptr, 
 				newRect.left, 
 				newRect.top, 
 				newRect.right - newRect.left, 

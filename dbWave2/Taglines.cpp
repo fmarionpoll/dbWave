@@ -186,7 +186,7 @@ int CTagList::RemoveChanTags(int refchan)
 	for (int i = m_array.GetUpperBound(); i>= 0; i--)
 	{
 		pcur =  (CTag*)m_array.GetAt(i);
-		if (pcur != NULL && pcur->m_refchan == refchan)
+		if (pcur != nullptr && pcur->m_refchan == refchan)
 		{
 			delete pcur;				// delete object pointed at
 			m_array.RemoveAt(i);		// remove item			
@@ -206,14 +206,14 @@ void CTagList::SetTagVal(int itag, int newval)
 		ASSERT(m_array.GetSize() >= itag);
 	}
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)       // if the cursor exist change the m_value
+	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_value=newval;
 }
 
 int CTagList::GetTagVal(int itag)
 {   
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)
+	if (pcur != nullptr)
 		return pcur->m_value;
 	else
 		return NULL;
@@ -225,7 +225,7 @@ int CTagList::GetTagVal(int itag)
 int CTagList::GetTagChan(int itag)
 {   
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)
+	if (pcur != nullptr)
 		return pcur->m_refchan;
 	else
 		return NULL;
@@ -234,7 +234,7 @@ int CTagList::GetTagChan(int itag)
 void CTagList::SetTagChan(int itag, int newchan)
 {   
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)       // if the cursor exist change the m_value
+	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_refchan=newchan;
 }
 
@@ -243,14 +243,14 @@ void CTagList::SetTagChan(int itag, int newchan)
 void CTagList::SetTagPix(int itag, int newval)
 {   
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)       // if the cursor exist change the m_value
+	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_pixel=newval;
 }
 
 int CTagList::GetTagPix(int itag)
 {   
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)
+	if (pcur != nullptr)
 		return pcur->m_pixel;
 	else
 		return NULL;
@@ -262,7 +262,7 @@ void CTagList::SetTagLVal(int itag, long longval)
 {
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
 	// if the cursor exist change the m_value
-	if (pcur != NULL)
+	if (pcur != nullptr)
 		pcur->m_lvalue=longval;
 }
 
@@ -270,7 +270,7 @@ void CTagList::SetTagLVal(int itag, long longval)
 long CTagList::GetTagLVal(int itag)
 {
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)
+	if (pcur != nullptr)
 		return pcur->m_lvalue;
 	else
 		return NULL;
@@ -281,7 +281,7 @@ long CTagList::GetTagLVal(int itag)
 void CTagList::SetTagComment(int itag, CString comment)
 {
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
-	if (pcur != NULL)       // if the cursor exist change the m_value
+	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_csComment=comment;
 }
 
@@ -290,7 +290,7 @@ CString CTagList::GetTagComment(int itag)
 {
 	CTag* pcur= (CTag*)m_array.GetAt(itag);
 	CString cs;
-	if (pcur != NULL)
+	if (pcur != nullptr)
 		cs= pcur->m_csComment;
 	return cs;
 }
@@ -307,13 +307,13 @@ CTag* CTagList::GetTag(int itag)
 	if (itag >= 0 && itag < m_array.GetSize()) 
 		return (CTag*) m_array.GetAt(itag);
 	else
-		return NULL;
+		return nullptr;
 }
 
 // copy list into current object; delete old objects
 void CTagList::CopyTagList(CTagList* pTList)
 {
-	if (pTList == this || pTList == NULL)
+	if (pTList == this || pTList == nullptr)
 		return;
 
 	//CPtrArray 	m_array;                              // array of cursors
@@ -322,7 +322,7 @@ void CTagList::CopyTagList(CTagList* pTList)
 	for (int i=0; i<nbtags; i++)
 	{
 		CTag* ptag = pTList->GetTag(i);
-		if (ptag != NULL)
+		if (ptag != nullptr)
 		{
 			CTag* pcur = new CTag;
 			ASSERT(pcur != NULL);

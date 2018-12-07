@@ -23,13 +23,13 @@ public:
 		LPCTSTR lpszWindowName, DWORD dwStyle,
 		const RECT& rect,
 		CWnd* pParentWnd, UINT nID,
-		CCreateContext* pContext = NULL)
+		CCreateContext* pContext = nullptr)
 	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID); }
 
 	BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle,
 		const RECT& rect, CWnd* pParentWnd, UINT nID,
-		CFile* pPersist = NULL, BOOL bStorage = FALSE,
-		BSTR bstrLicKey = NULL)
+		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
+		BSTR bstrLicKey = nullptr)
 	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID,
 		pPersist, bStorage, bstrLicKey); }
 

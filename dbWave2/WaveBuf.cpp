@@ -15,15 +15,15 @@ IMPLEMENT_SERIAL(CWaveBuf, CObject, 0)
 
 CWaveBuf::CWaveBuf()
 {
-	m_pWData = NULL;
-	m_pWTransf = NULL;
+	m_pWData = nullptr;
+	m_pWTransf = nullptr;
 	//m_hWTransf = NULL;
 	//m_hWData = NULL;
 	m_wversion=0;
 	m_bTransf = FALSE;
 	m_iNumElements = 0;
-	m_parraySorted=NULL;
-	m_parrayCircular=NULL;
+	m_parraySorted= nullptr;
+	m_parrayCircular= nullptr;
 	m_parray_size=0;
 	m_dwBufferSize=0;
 }
@@ -86,19 +86,19 @@ CWaveBuf::~CWaveBuf()
 // -----------------------------------------------------------
 void CWaveBuf::DeleteBuffers()
 {
-	if (m_pWData != NULL)
+	if (m_pWData != nullptr)
 	{
 		//HeapFree(m_hWData, 0, m_pWData);
 		//m_hWData = NULL;
 		free (m_pWData);
-		m_pWData = NULL;
+		m_pWData = nullptr;
 	}
-	if (m_pWTransf != NULL) 
+	if (m_pWTransf != nullptr) 
 	{
 		//HeapFree(m_hWTransf, 0, m_pWTransf);
 		//m_hWTransf = NULL;
 		free (m_pWTransf);
-		m_pWTransf = NULL;
+		m_pWTransf = nullptr;
 	}
 	m_iNumElements=0;
 }
@@ -131,7 +131,7 @@ BOOL CWaveBuf::CreateWBuffer(int iNumElements, int nchannels)
 		
 		m_pWData = (short*) malloc( dwBufferSize);
 		ASSERT(m_pWData != NULL);
-		if (m_pWData == NULL)
+		if (m_pWData == nullptr)
 			return FALSE;
 
 		// allocate transform heap if selected
@@ -147,7 +147,7 @@ BOOL CWaveBuf::CreateWBuffer(int iNumElements, int nchannels)
 			//m_pWTransf = (short*) HeapAlloc(m_hWTransf, flOptions, dwBufferSize);
 			m_pWTransf = (short*) malloc( dwBufferSize2);
 			ASSERT(m_pWTransf != NULL);
-			if (m_pWTransf == NULL)
+			if (m_pWTransf == nullptr)
 				return FALSE;
 		}
 		m_iNumElements = iNumElements;
@@ -313,16 +313,16 @@ BOOL CWaveBuf::InitWBTransformMode(int itransf)
 	BOOL flag = TRUE;
 
 	// allocate / reallocate transform heap
-	if (m_pWTransf != NULL) 
+	if (m_pWTransf != nullptr) 
 	{
 		free (m_pWTransf);
-		m_pWTransf = NULL;
+		m_pWTransf = nullptr;
 	}
 
 	m_pWTransf = (short*) malloc (dwBufferSize);
-	if (m_pWTransf == NULL)
+	if (m_pWTransf == nullptr)
 		return FALSE;
-	flag = (m_pWTransf != NULL);
+	flag = (m_pWTransf != nullptr);
 	m_bTransf = TRUE;	
 	return flag;
 }

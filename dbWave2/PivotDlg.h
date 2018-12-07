@@ -8,7 +8,7 @@ class CPivotDlg : public CDialogEx
 	DECLARE_DYNAMIC(CPivotDlg)
 
 public:
-	CPivotDlg(CWnd* pParent = NULL);   // standard constructor
+	CPivotDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CPivotDlg();
 
 // Dialog Data
