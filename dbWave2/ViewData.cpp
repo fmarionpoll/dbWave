@@ -1488,7 +1488,7 @@ CString CDataView::PrintBars(CDC* pDC, CRect* prect)
 				CString cs;
 				WORD channb = m_VDlineview.GetChanlistSourceChan(ichan);
 				CWaveChanArray* pchanArray = m_pdatDoc->GetpWavechanArray();
-				CWaveChan* pChan = pchanArray->GetWaveChan(channb);
+				CWaveChan* pChan = pchanArray->get_p_channel(channb);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), 
 					(LPCTSTR) pChan->am_csheadstage, pChan->am_gaintotal, (LPCTSTR) pChan->am_csInputpos, pChan->am_lowpass);
 				strComment += cs;

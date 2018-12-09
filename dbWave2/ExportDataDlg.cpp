@@ -395,7 +395,7 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 
 	for (i = mm_firstchan; i <= mm_lastchan; i++)
 	{
-		csDummy.Format(_T("\t%s"), (LPCTSTR)pChanArray[i].am_csComment);
+		csDummy.Format(_T("\t%s"), (LPCTSTR)(pChanArray->get_p_channel(i)->am_csComment));
 		csCharBuf += csDummy;
 	}
 
@@ -598,7 +598,7 @@ BOOL CExportDataDlg::ExportDataAsExcelFile()
 	save_BIFF(&dataDest, BIFF_CHARS, row, col, "comments"); col++;	
 	for (int i=mm_firstchan; i<= mm_lastchan; i++)
 	{
-		CWaveChan* pchan = pchanArray->GetWaveChan(i);
+		CWaveChan* pchan = pchanArray->get_p_channel(i);
 		CString comment = pchan->am_csComment;
 		saveCString_BIFF(&dataDest, row, col, comment); col++;
 	}
@@ -776,9 +776,9 @@ BOOL CExportDataDlg::ExportDataAsdbWaveFile()
 		for (int i= lastchannel; i> 0; i--)
 		{
 			if (i > mm_lastchan || i < mm_firstchan)
-				pwCDest->ChannelRemove(i);
+				pwCDest->channel_remove(i);
 		}
-		ASSERT(nchans == pwCDest->ChannelGetnum());
+		ASSERT(nchans == pwCDest->channel_get_number());
 		pwFDest->scan_count = nchans;
 	}
 

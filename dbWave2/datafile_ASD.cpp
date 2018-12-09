@@ -162,8 +162,8 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	//for (i = 0; i<pWFormat->scan_count; i++)
 	//{
 	int i=0;
-	pArray->ChannelAdd();
-	CWaveChan* pChan = (CWaveChan*) pArray->GetWaveChan(i);
+	pArray->channel_add();
+	CWaveChan* pChan = (CWaveChan*) pArray->get_p_channel(i);
 	pChan->am_csComment=CString(" ");					// channel annotation
 	pChan->am_adchannel=0;								// channel scan list
 	pChan->am_gainAD=1;									// channel gain list

@@ -134,28 +134,27 @@ protected:
 // Classe CWaveChanArray                                            //
 // tableau de CWaveChan                                             //
 ///////////////////////////////////////////////////////////////////////
-class CWaveChanArray : public CWaveChan
+class CWaveChanArray : public CObject
 {
 	DECLARE_SERIAL(CWaveChanArray);
 protected:
-	CObArray	m_chanArray;		// array of channels
+	CArray <CWaveChan*, CWaveChan*>	m_chanArray;		// array of channels
 
 public:
 	CWaveChanArray();				// create array
 	~CWaveChanArray();				// delete array
-	long Write(CFile *datafile);	// binary write
-	BOOL Read(CFile *datafile);		// binary read
+	long write(CFile *datafile);	// binary write
+	BOOL read(CFile *datafile);		// binary read
 
 	CWaveChanArray& operator = (const CWaveChanArray& arg);
-	CWaveChan& operator [] (int i);
-	CWaveChan* GetWaveChan(int i);
+	CWaveChan* get_p_channel(int i) const;
 
-	int		ChannelAdd();
-	int		ChannelAdd(CWaveChan* arg);
-	int		ChannelSetnum(int i);
-	void	ChannelInsert(int Indice);
-	void	ChannelRemove(int Indice);
-	void	ChannelRemoveAll();
-	int		ChannelGetnum();
-	virtual void Serialize(CArchive & ar);
+	int		channel_add();
+	int		channel_add(CWaveChan* arg);
+	int		channel_set_number(int i);
+	void	channel_insert(int i);
+	void	channel_remove(int i);
+	void	channel_remove_all();
+	int		channel_get_number() const;
+	void Serialize(CArchive & ar) override;
 };

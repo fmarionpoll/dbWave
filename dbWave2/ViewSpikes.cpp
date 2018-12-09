@@ -1285,7 +1285,7 @@ CString CSpikeView::PrintBars(CDC* pDC, CRect* rect)
 			{
 				CString cs;
 				WORD channb = m_sourceView.GetChanlistSourceChan(ichan);
-				CWaveChan* pChan = m_pDataDoc->m_pDataFile->GetpWavechanArray()->GetWaveChan(channb);
+				CWaveChan* pChan = m_pDataDoc->m_pDataFile->GetpWavechanArray()->get_p_channel(channb);
 				wsprintf(lpszVal, "headstage=%s", pChan->headstage);
 				cs += lpszVal;
 				wsprintf(lpszVal, " g=%li", (long) (pChan->xgain));

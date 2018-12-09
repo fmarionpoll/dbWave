@@ -110,9 +110,9 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 		CWaveFormat*    pwaveFormat = m_pDataFile->GetpWaveFormat();
 		pD->SetDataBinFormat(pwaveFormat->binzero, pwaveFormat->binspan);
 		pD->SetDataVoltsFormat(voltsperb, pwaveFormat->fullscale_Volts);
-		if (ns >= pchanArray->ChannelGetnum())
+		if (ns >= pchanArray->channel_get_number())
 			ns = 0;
-		CWaveChan* pchan = pchanArray->GetWaveChan(ns);
+		CWaveChan* pchan = pchanArray->get_p_channel(ns);
 		pD->dl_comment = pchan->am_csComment;	// get comment however
 		UpdateChanlistMaxSpan();				// update span max
 		if (mode > 0)							// modif comment if transform buffer
@@ -186,7 +186,7 @@ void CLineViewWnd::UpdateChanlistFromDoc()
 		int mode = pOrd->GetSourceMode();
 		pOrd->SetDocbufferSpan(m_pDataFile->GetTransfDataSpan(mode));
 		CWaveChanArray* pchanArray = m_pDataFile->GetpWavechanArray();
-		CWaveChan* pchan = pchanArray->GetWaveChan(ns);
+		CWaveChan* pchan = pchanArray->get_p_channel(ns);
 		pD->dl_comment= pchan->am_csComment;
 		if (mode > 0)
 			pD->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) + ": " + pD->dl_comment;
@@ -238,7 +238,7 @@ int CLineViewWnd::SetChanlistSourceChan(WORD i, int ns)
 	int mode = pOrd->GetSourceMode();	// get transform mode
 	// modify comment
 	CWaveChanArray* pchanArray = m_pDataFile->GetpWavechanArray();
-	CWaveChan* pchan = pchanArray->GetWaveChan(ns);
+	CWaveChan* pchan = pchanArray->get_p_channel(ns);
 	pD->dl_comment= pchan->am_csComment;		
 	if (mode > 0)
 		pD->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) 
@@ -254,9 +254,9 @@ void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 	pD->SetOrdinatesSourceData(chan, transform);
 	// modify comment
 	CWaveChanArray* pchanArray = m_pDataFile->GetpWavechanArray();
-	if (chan >= pchanArray->ChannelGetnum())
+	if (chan >= pchanArray->channel_get_number())
 			chan = 0;
-	CWaveChan* pchan = pchanArray->GetWaveChan(chan);
+	CWaveChan* pchan = pchanArray->get_p_channel(chan);
 	pD->dl_comment= pchan->am_csComment;		
 	if (transform > 0)
 		pD->dl_comment = (m_pDataFile->GetTransfDataName(transform)).Left(6) 
@@ -331,7 +331,7 @@ int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 
 	// modify comment
 	CWaveChanArray* pchanArray = m_pDataFile->GetpWavechanArray();
-	CWaveChan* pchan = pchanArray->GetWaveChan(ns);
+	CWaveChan* pchan = pchanArray->get_p_channel(ns);
 	pD->dl_comment= pchan->am_csComment;		
 	if (imode > 0)
 		pD->dl_comment = (m_pDataFile->GetTransfDataName(imode)).Left(8) 

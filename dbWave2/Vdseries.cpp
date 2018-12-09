@@ -61,7 +61,7 @@ BOOL CDataSeriesDlg::OnInitDialog()
 	CWaveChanArray* pchanArray = m_pdbDoc->GetpWavechanArray();
 	for (i = 0; i<chanmax; i++)
 	{
-		CWaveChan* pchan = pchanArray->GetWaveChan(i);
+		CWaveChan* pchan = pchanArray->get_p_channel(i);
 		m_ordinates.AddString(pchan->am_csComment);
 	}
 

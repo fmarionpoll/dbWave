@@ -33,12 +33,12 @@ int	CWaveBuf::WBDatachanSetnum(int i)
 {
 	// no action if the number of data channels is right
 	if (m_waveFormat.scan_count == i 
-		&& m_chanArray.ChannelGetnum() == i)
+		&& m_chanArray.channel_get_number() == i)
 		return i;
 	int iNumElements = m_waveFormat.buffersize / m_waveFormat.scan_count;	
 	m_waveFormat.scan_count = i;
-	m_chanArray.ChannelSetnum(i);
-	ASSERT(m_chanArray.ChannelGetnum() == m_waveFormat.scan_count);
+	m_chanArray.channel_set_number(i);
+	ASSERT(m_chanArray.channel_get_number() == m_waveFormat.scan_count);
 	CreateWBuffer(iNumElements, i);
 	return m_waveFormat.scan_count;
 }
@@ -624,27 +624,27 @@ BOOL CWaveBuf::GetWBVoltsperBin(int chIndex, float* VoltsperBin, int mode)
 	float correction = 1.0f;
 	GetWBcorrectionFact(mode, &correction);
 
-	if (m_chanArray[chIndex].am_resolutionV == 0)
+	if (m_chanArray.get_p_channel(chIndex)->am_resolutionV == 0)
 	{
-		if (m_chanArray[chIndex].am_gaintotal == 0.)
+		if (m_chanArray.get_p_channel(chIndex)->am_gaintotal == 0.)
 		{
-			m_chanArray[chIndex].am_gaintotal = 
-				m_chanArray[chIndex].am_gainamplifier 
-				* (float) m_chanArray[chIndex].am_gainpre 
-				* (float) m_chanArray[chIndex].am_gainpost 
-				* (float)m_chanArray[chIndex].am_gainheadstage 
-				* (float) m_chanArray[chIndex].am_gainAD;
+			m_chanArray.get_p_channel(chIndex)->am_gaintotal = 
+				m_chanArray.get_p_channel(chIndex)->am_gainamplifier 
+				* (float) m_chanArray.get_p_channel(chIndex)->am_gainpre 
+				* (float) m_chanArray.get_p_channel(chIndex)->am_gainpost 
+				* (float)m_chanArray.get_p_channel(chIndex)->am_gainheadstage 
+				* (float) m_chanArray.get_p_channel(chIndex)->am_gainAD;
 		}
 		
 		long binspan = m_waveFormat.binspan;
 		float fullscale_Volts = m_waveFormat.fullscale_Volts;
-		m_chanArray[chIndex].am_resolutionV = 
+		m_chanArray.get_p_channel(chIndex)->am_resolutionV = 
 					m_waveFormat.fullscale_Volts 
-					/(float)m_chanArray[chIndex].am_gaintotal
+					/(float)m_chanArray.get_p_channel(chIndex)->am_gaintotal
 					/(float)m_waveFormat.binspan;
-		double am_resolutionV = m_chanArray[chIndex].am_resolutionV;
+		double am_resolutionV = m_chanArray.get_p_channel(chIndex)->am_resolutionV;
 	}
-	*VoltsperBin = (float) (m_chanArray[chIndex].am_resolutionV /correction);
+	*VoltsperBin = (float) (m_chanArray.get_p_channel(chIndex)->am_resolutionV /correction);
 	return TRUE;
 }
 

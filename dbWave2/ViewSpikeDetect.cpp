@@ -537,7 +537,7 @@ void CSpikeDetectionView::UpdateDataFile(BOOL bUpdateInterface)
 			for (int i =0; i<imax; i++)	
 			{				
 				comment.Format(_T("%i: "), i);
-				comment += pchanArray->GetWaveChan(i)->am_csComment;
+				comment += pchanArray->get_p_channel(i)->am_csComment;
 				VERIFY(m_CBdetectChan.AddString(comment) != CB_ERR);// add string to control
 			}
 
@@ -2576,7 +2576,7 @@ CString CSpikeDetectionView::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 			{
 				WORD channb = pLineViewWnd->GetChanlistSourceChan(ichan);
 				CWaveChanArray* pchanArray = GetDocument()->m_pDat->GetpWavechanArray();
-				CWaveChan* pChan = pchanArray->GetWaveChan(channb);
+				CWaveChan* pChan = pchanArray->get_p_channel(channb);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"), 
 					(LPCTSTR) pChan->am_csheadstage, (long) (pChan->am_gaintotal), pChan->am_lowpass, (LPCTSTR) pChan->am_csInputpos, (LPCTSTR) pChan->am_csInputneg);
 				strComment += cs;

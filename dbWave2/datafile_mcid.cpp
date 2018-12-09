@@ -70,8 +70,8 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
  
 	for (UINT i = 0; i<mcidHeader.number_of_channels; i++)
 	{
-		pArray->ChannelAdd();
-		CWaveChan* pChan = (CWaveChan*) pArray->GetWaveChan(i);
+		pArray->channel_add();
+		CWaveChan* pChan = (CWaveChan*) pArray->get_p_channel(i);
 		pChan->am_csComment=CString(" ");			// channel annotation
 		pChan->am_resolutionV = mcidHeader.sensitivity[i]/2000.;
 		pChan->am_gainamplifier = 1./pChan->am_resolutionV;	// fractional gain

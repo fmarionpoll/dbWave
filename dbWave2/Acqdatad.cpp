@@ -395,7 +395,7 @@ CString CAcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 		CString cs;
 		for (auto i_chan=0; i_chan < p_wave_format->scan_count; i_chan++)
 		{
-			const auto p_chan = (GetpWavechanArray())->GetWaveChan(i_chan);
+			const auto p_chan = (GetpWavechanArray())->get_p_channel(i_chan);
 			if (pVD->bacqchcomment)
 				cs_out += sep + p_chan->am_csComment;
 			if (pVD->bacqchsetting)
@@ -449,7 +449,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	cs_out = sep;
 	for (auto i_chan=0; i_chan < p_wave_format->scan_count; i_chan++)
 	{
-		const auto p_chan = (GetpWavechanArray())->GetWaveChan(i_chan);
+		const auto p_chan = (GetpWavechanArray())->get_p_channel(i_chan);
 		cs_out += p_chan->am_csComment;
 		if (i_chan < p_wave_format->scan_count - 1)
 			cs_out += sep2;
@@ -465,7 +465,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 		cs_out= sep;
 		for (auto channel=0; channel < p_wave_format->scan_count; channel++)
 		{
-			const auto p_chan = (GetpWavechanArray())->GetWaveChan(channel);
+			const auto p_chan = (GetpWavechanArray())->get_p_channel(channel);
 			const auto value = BGetVal(channel, j);
 			const auto channel_gain =static_cast<double>(p_chan->am_gainheadstage)
 									*static_cast<double>(p_chan->am_gainAD)
@@ -1090,11 +1090,11 @@ BOOL CAcqDataDoc::SaveAs(CString &sznewName, BOOL bCheckOverWrite, int iType)
 	}
 	
 	// save data header
-	if (GetpWaveFormat()->scan_count < GetpWavechanArray()->ChannelGetnum())
+	if (GetpWaveFormat()->scan_count < GetpWavechanArray()->channel_get_number())
 	{
 		const auto last_channel = GetpWaveFormat()->scan_count-1;
-		for (auto i= GetpWavechanArray()->ChannelGetnum()-1; i> last_channel; i--)
-			GetpWavechanArray()->ChannelRemove(i);
+		for (auto i= GetpWavechanArray()->channel_get_number()-1; i> last_channel; i--)
+			GetpWavechanArray()->channel_remove(i);
 	}
 
 	// save data

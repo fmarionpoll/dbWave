@@ -665,8 +665,8 @@ void CADInputParmsDlg::OnCbnSelchangeResolution()
 void CADInputParmsDlg::LoadChanData(int col)
 {
 	// select channel and load parameters CComboBox
-	ASSERT(col <= m_pchArray->ChannelGetnum());
-	CWaveChan* pchan = m_pchArray->GetWaveChan(col-1);
+	ASSERT(col <= m_pchArray->channel_get_number());
+	CWaveChan* pchan = m_pchArray->get_p_channel(col-1);
 
 	// settings for the col
 	GV_ITEM Item;
@@ -743,7 +743,7 @@ void CADInputParmsDlg::SaveData()
 	if (m_nacqchans != m_pwFormat->scan_count)
 	{
 		m_pwFormat->scan_count = m_nacqchans;
-		m_pchArray->ChannelSetnum(m_nacqchans);
+		m_pchArray->channel_set_number(m_nacqchans);
 		WORD chbuffersize = m_pwFormat->buffersize/m_nacqchans;
 		m_pwFormat->buffersize = chbuffersize *m_nacqchans;
 	}
@@ -763,9 +763,9 @@ void CADInputParmsDlg::SaveData()
 void CADInputParmsDlg::SaveChanData(int col)
 {
 	// select channel and load parameters CComboBox
-	if (m_pchArray->ChannelGetnum() < col)
-		m_pchArray->ChannelSetnum(col);
-	CWaveChan* pchan = m_pchArray->GetWaveChan(col-1);
+	if (m_pchArray->channel_get_number() < col)
+		m_pchArray->channel_set_number(col);
+	CWaveChan* pchan = m_pchArray->get_p_channel(col-1);
 	CString cs;
 
 	// AD channel comment
@@ -848,7 +848,7 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	CWaveChan* p_chan = m_pchArray->GetWaveChan(col-1);
+	CWaveChan* p_chan = m_pchArray->get_p_channel(col-1);
 
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0 
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0) 
@@ -874,7 +874,7 @@ void CADInputParmsDlg::GetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	CWaveChan* pchan = m_pchArray->GetWaveChan(col - 1);
+	CWaveChan* pchan = m_pchArray->get_p_channel(col - 1);
 
 	// exit if cyberAmp not declared - if not, exit
 	if (pchan->am_csamplifier.Find(_T("CyberAmp")) >= 0

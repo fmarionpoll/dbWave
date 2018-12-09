@@ -332,7 +332,7 @@ BOOL CADContView::ADC_InitSubSystem()
 		for (int i = 0; i < pAcqDwaveFormat->scan_count; i++)
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
-			CWaveChan* pChannel = (m_pADC_options->chanArray).GetWaveChan(i);
+			CWaveChan* pChannel = (m_pADC_options->chanArray).get_p_channel(i);
 			if ( pChannel->am_adchannel> m_numchansMAX-1 && pChannel->am_adchannel != 16)
 				 pChannel->am_adchannel= m_numchansMAX-1;
 			m_ADC_DTAcq32.SetChannelList(i, pChannel->am_adchannel);
@@ -1505,7 +1505,7 @@ void CADContView::OnInitialUpdate()
 		if (pDat != nullptr) 
 		{
 			m_pADC_options->waveFormat = *(pDat->GetpWaveFormat());	// read data header
-			m_pADC_options->chanArray.ChannelSetnum(m_pADC_options->waveFormat.scan_count);
+			m_pADC_options->chanArray.channel_set_number(m_pADC_options->waveFormat.scan_count);
 			m_pADC_options->chanArray = *pDat->GetpWavechanArray();	// get channel descriptors
 			// restore state of "write-to-file" parameter that was just erased
 			m_pADC_options->waveFormat.bADwritetofile = m_bADwritetofile;
@@ -1515,7 +1515,7 @@ void CADContView::OnInitialUpdate()
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument();							// create a file to receive incoming data (A/D)
 	*(m_inputDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;	// copy data formats into this file
-	m_pADC_options->chanArray.ChannelSetnum(m_pADC_options->waveFormat.scan_count);
+	m_pADC_options->chanArray.channel_set_number(m_pADC_options->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
 	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
 
@@ -2003,10 +2003,10 @@ BOOL CADContView::InitConnectionWithAmplifiers()
 	CCyberAmp m_cyber;
 	BOOL bcyberPresent = FALSE;
 
-	int nchans= (m_pADC_options->chanArray).ChannelGetnum();
+	int nchans= (m_pADC_options->chanArray).channel_get_number();
 	for (int i = 0; i < nchans; i++)
 	{
-		CWaveChan* pchan = (m_pADC_options->chanArray).GetWaveChan(i);
+		CWaveChan* pchan = (m_pADC_options->chanArray).get_p_channel(i);
 
 		// test if Cyberamp320 selected
 		int a = pchan->am_csamplifier.Find(_T("CyberAmp"));

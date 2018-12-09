@@ -400,7 +400,7 @@ BOOL CDataFileAWAVE::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 	}
 	SeekToEnd();							// CFile: end of file (EOF)	
 	pStruct->SetDataOffset(GetPosition());	// get offset to EOF & save pos
-	ULONGLONG uLenwC = pwC->Write(this);
+	ULONGLONG uLenwC = pwC->write(this);
 	pStruct->SetDataLength(uLenwC);
 
 	// update header with these infos
@@ -448,7 +448,7 @@ BOOL CDataFileAWAVE::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 		if (pStruct->GetDataLength() >0)
 		{
 			Seek(pStruct->GetDataOffset(), CFile::begin);
-			if (!pArray->Read(this))
+			if (!pArray->read(this))
 				AfxMessageBox(_T("Error reading STRUCT_ACQCHAN\n"));
 		}
 	}

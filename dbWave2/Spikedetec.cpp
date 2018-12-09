@@ -68,7 +68,7 @@ BOOL CSpikeDetectDlg::OnInitDialog()
 	for (int i =0; i<chanmax; i++)
 	{
 		comment.Format(_T("%i"), i);		// channel index CString
-		CWaveChan* pchan = pchanArray->GetWaveChan(i);
+		CWaveChan* pchan = pchanArray->get_p_channel(i);
 		comment += _T(" - ") + pchan->am_csComment;
 		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->AddString(comment) != CB_ERR);
 		VERIFY(((CComboBox*)GetDlgItem(IDC_EXTRACTCHAN))->AddString(comment) != CB_ERR);
