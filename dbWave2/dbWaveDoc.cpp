@@ -1,15 +1,15 @@
 // dbWaveDoc.cpp : implementation of the CdbWaveDoc class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 
 #include "dbMainTable.h"
-#include "spikedoc.h"		// spike document
+#include "Spikedoc.h"		// spike document
 #include "dbWaveDoc.h"		// dbWave document
 #include "dbNewFileDuplicateDlg.h"
-#include "progdlg.h"
-#include "notedoc.h"
+#include "ProgDlg.h"
+#include "NoteDoc.h"
 #include "ViewNotedoc.h"
 #include "MainFrm.h"
 

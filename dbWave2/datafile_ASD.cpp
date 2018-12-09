@@ -4,8 +4,8 @@
 // ASDFile.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "dataheader_Atlab.h"
+#include "StdAfx.h"
+#include "dataheader_Atlab.H"
 #include "datafile_ASD.h"
 
 #ifdef _DEBUG

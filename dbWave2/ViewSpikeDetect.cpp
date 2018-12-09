@@ -9,32 +9,32 @@
 // cf: UpdateFileParameters
 
 /////////////////////////////////////////////////////
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <math.h>
 #include "dbWave.h"
 #include "dbWave_constants.h"
 #include "resource.h"
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "editctrl.h"
+#include "Lineview.h"
+#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 
-#include "spikedoc.h"
-#include "xyparame.h"
-#include "spikebar.h"
+#include "Spikedoc.h"
+#include "Xyparame.h"
+#include "Spikebar.h"
 #include "spikeshape.h"
 
-#include "spikedetec.h"
-#include "editspik.h"
-#include "vdseries.h"
-#include "copyasdl.h"
-#include "mainfrm.h"
-#include "childfrm.h"
+#include "Spikedetec.h"
+#include "Editspik.h"
+#include "Vdseries.h"
+#include "Copyasdl.h"
+#include "MainFrm.h"
+#include "ChildFrm.h"
 #include "EditStimArrayDlg.h"
-#include "progdlg.h"
+#include "ProgDlg.h"
 
 #include ".\ViewSpikeDetect.h" 
 

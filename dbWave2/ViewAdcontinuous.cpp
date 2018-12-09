@@ -1,20 +1,20 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <math.h>
 #include "resource.h"
-#include "acqdatad.h"
-#include "editctrl.h"
+#include "Acqdatad.h"
+#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "adinterv.h"
-#include "adexperi.h"
+#include "Adinterv.h"
+#include "Adexperi.h"
 #include "dtacq32.h"
 #include "CyberAmp.h"
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
+#include "Lineview.h"
 
 #include <Olxdadefs.h>
-#include <olxdaapi.h>
+#include <Olxdaapi.h>
 #include "ViewADcontinuous.h"
 #include "ChildFrm.h"
 #include "MainFrm.h"
@@ -22,7 +22,7 @@
 #include "DAChannelsDlg.h"
 #include "DAOutputsParmsDlg.h"
 #include "dtBoardDlg.h"
-#include "adinputparmsdlg.h"
+#include "ADInputParmsDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,8 +1,8 @@
 // exportsp.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include ".\exportsp.h"
+#include "StdAfx.h"
+#include ".\Exportsp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

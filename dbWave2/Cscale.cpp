@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CScale methods
 
-#include "stdafx.h"
-#include "cscale.h"
+#include "StdAfx.h"
+#include "Cscale.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

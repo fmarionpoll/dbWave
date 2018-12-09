@@ -1,9 +1,9 @@
 // CDataFileMCID.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "dataheader_Atlab.h"
-#include "datafile_Mcid.h"
+#include "StdAfx.h"
+#include "dataheader_Atlab.H"
+#include "datafile_mcid.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

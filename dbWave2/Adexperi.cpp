@@ -1,11 +1,11 @@
 // ADExperi.cpp : implementation file
 //
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "EditListDlg.h"
-#include "adexperi.h"
+#include "Adexperi.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,7 +1,7 @@
 // dbWave.cpp : Defines the class behaviors for the application.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <winspool.h>		// get access to some printer functions
 //#include "dbWave.h"
 
@@ -12,24 +12,24 @@
 #include "Acqparam.h"
 #include "Taglines.h"
 #include "datafile_X.h"
-#include "wavebuf.h"
-#include "awavepar.h"
-#include "acqdatad.h"
-#include "cscale.h"
+#include "WaveBuf.h"
+#include "Awavepar.h"
+#include "Acqdatad.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "spikebar.h"
+#include "Lineview.h"
+#include "Spikebar.h"
 #include "spikeshape.h"
-#include "Notedoc.h"
+#include "NoteDoc.h"
 #include "Splash.h"
-#include "editctrl.h"
+#include "Editctrl.h"
 #include "SpikeClassListBox.h"
 #include "Fileversion.h"
 
 #include "ViewData.h"
 #include "ViewSpikes.h"
 #include "ViewdbWave.h"
-#include "ViewadContinuous.h"
+#include "ViewADcontinuous.h"
 #include "ViewNotedoc.h"
 
 #ifdef _DEBUG

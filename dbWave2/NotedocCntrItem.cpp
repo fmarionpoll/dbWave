@@ -1,7 +1,7 @@
 // NotedocCntrItem.cpp : implementation of the CNotedocCntrItem class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 
 #include "NotedocCntrItem.h"

@@ -1,11 +1,11 @@
 // ScopeScreenPropsDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "editctrl.h"
+#include "StdAfx.h"
+#include "Editctrl.h"
 #include "resource.h"
 #include "scopescr.h"
-#include "editctrl.h"
+#include "Editctrl.h"
 #include "ScopeScreenPropsDlg.h"
 
 #ifdef _DEBUG

@@ -1,9 +1,9 @@
 // aqcparam.cpp    implementation file
 //
 //////////////////////////////////////////////////////////////////////
-#include "stdafx.h"
-#include "dataheader_Atlab.h"
-#include "acqparam.h"
+#include "StdAfx.h"
+#include "dataheader_Atlab.H"
+#include "Acqparam.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -66,30 +66,30 @@ void CWaveFormat::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		WORD wversion = 9;
-		ar << wversion;				// 1
+		const WORD version = 9;
+		ar << version;				// 1
 		ar << acqtime;				// 2
 		ar << fullscale_Volts;		// 3
 		ar << binspan;		// 4
 		ar << binzero;				// 5
-		ar << (WORD)mode_encoding;	// 6
-		ar << (WORD)mode_clock;		// 7
-		ar << (WORD)mode_trigger;	// 8
+		ar << static_cast<WORD>(mode_encoding);	// 6
+		ar << static_cast<WORD>(mode_clock);		// 7
+		ar << static_cast<WORD>(mode_trigger);	// 8
 		ar << chrate;				// 9
-		ar << (WORD)scan_count;		// 10
+		ar << static_cast<WORD>(scan_count);		// 10
 		ar << sample_count;
 		ar << duration;
-		ar << (WORD)trig_mode;
-		ar << (WORD)trig_chan;
-		ar << (WORD)trig_threshold;
-		ar << (WORD)data_flow;
+		ar << static_cast<WORD>(trig_mode);
+		ar << static_cast<WORD>(trig_chan);
+		ar << static_cast<WORD>(trig_threshold);
+		ar << static_cast<WORD>(data_flow);
 		ar << bOnlineDisplay;
 		ar << bADwritetofile;
 		ar << bufferNitems;
 		ar << buffersize;
 
-		int ncomments = 14;
-		ar << ncomments;
+		const int n_comments = 14;
+		ar << n_comments;
 		// save "CString"
 		ar << csComment;
 		ar << csStimulus;
@@ -105,8 +105,8 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << csConcentration2;
 		ar << csSex;
 
-		int nitems = 4;
-		ar << nitems;
+		const int n_items = 4;
+		ar << n_items;
 		// save "long"
 		ar << insectID;
 		ar << sensillumID;
@@ -115,10 +115,10 @@ void CWaveFormat::Serialize(CArchive& ar)
 	}
 	else
 	{
-		WORD wversion; ar >> wversion;			// 1 version number
-		ASSERT(wversion >= 3);					// assume higher version than 3
-		if (wversion < 9)
-			Read_v8_and_before(ar, wversion);
+		WORD version; ar >> version;			// 1 version number
+		ASSERT(version >= 3);					// assume higher version than 3
+		if (version < 9)
+			Read_v8_and_before(ar, version);
 		else
 		{
 			WORD w;
@@ -126,24 +126,24 @@ void CWaveFormat::Serialize(CArchive& ar)
 			ar >> fullscale_Volts;				// 3
 			ar >> binspan;				// 4
 			ar >> binzero;						// 5
-			ar >> w; mode_encoding	= (short)w;	// 6         	    	
-			ar >> w; mode_clock		= (short)w;	// 7    	    	
-			ar >> w; mode_trigger	= (short)w;	// 8
+			ar >> w; mode_encoding	= static_cast<short>(w);	// 6         	    	
+			ar >> w; mode_clock		= static_cast<short>(w);	// 7    	    	
+			ar >> w; mode_trigger	= static_cast<short>(w);	// 8
 			ar >> chrate;						// 9
-			ar >> w; scan_count		= (short)w;	// 10
+			ar >> w; scan_count		= static_cast<short>(w);	// 10
 			ar >> sample_count;
 			ar >> duration;
-			ar >> w; trig_mode		= (short)w;
-			ar >> w; trig_chan		= (short)w;
-			ar >> w; trig_threshold = (short)w;
-			ar >> w; data_flow		= (short)w;
+			ar >> w; trig_mode		= static_cast<short>(w);
+			ar >> w; trig_chan		= static_cast<short>(w);
+			ar >> w; trig_threshold = static_cast<short>(w);
+			ar >> w; data_flow		= static_cast<short>(w);
 			ar >> bOnlineDisplay;
 			ar >> bADwritetofile;
 			ar >> bufferNitems >> buffersize;
 
-			int ncomments;
-			ar >> ncomments; 
-			ASSERT(ncomments == 14);
+			int n_comments;
+			ar >> n_comments; 
+			ASSERT(n_comments == 14);
 			ar >> csComment;
 			ar >> csStimulus;
 			ar >> csConcentration;
@@ -158,9 +158,9 @@ void CWaveFormat::Serialize(CArchive& ar)
 			ar >> csConcentration2;
 			ar >> csSex;
 
-			int nitems;
-			ar >> nitems;
-			ASSERT(nitems == 4);
+			int n_items;
+			ar >> n_items;
+			ASSERT(n_items == 4);
 			ar >> insectID;
 			ar >> sensillumID;
 			ar >> repeat;
@@ -185,17 +185,17 @@ void CWaveFormat::Read_v8_and_before(CArchive& ar, WORD version)
 		ar >> binspan;			// 4    	
 		ar >> binzero;					// 5
 	}
-	ar >> w ; mode_encoding	=(short)w;	// 6         	    	
-	ar >> w ; mode_clock	=(short)w;		// 7    	    	
-	ar >> w ; mode_trigger	=(short)w;	// 8
+	ar >> w ; mode_encoding	=static_cast<short>(w);	// 6         	    	
+	ar >> w ; mode_clock	=static_cast<short>(w);		// 7    	    	
+	ar >> w ; mode_trigger	=static_cast<short>(w);	// 8
 	ar >> chrate;						// 9
-	ar >> w; scan_count		= (short)w;	// 10
+	ar >> w; scan_count		= static_cast<short>(w);	// 10
 	ar >> sample_count;
 	ar >> duration;
-	ar >> w; trig_mode		=(short)w;
-	ar >> w; trig_chan		=(short)w;
-	ar >> w; trig_threshold	=(short)w;
-	ar >> w; data_flow		=(short)w;
+	ar >> w; trig_mode		=static_cast<short>(w);
+	ar >> w; trig_chan		=static_cast<short>(w);
+	ar >> w; trig_threshold	=static_cast<short>(w);
+	ar >> w; data_flow		=static_cast<short>(w);
 	ar >> bOnlineDisplay;
 	ar >> bADwritetofile;
 	ar >> bufferNitems >> buffersize;
@@ -236,13 +236,13 @@ void CWaveFormat::Read_v8_and_before(CArchive& ar, WORD version)
 
 	if (version > 4)
 	{
-		int nitems; ar >> nitems;
-		ar >> insectID; nitems--;
-		ar >> sensillumID; nitems--;
+		int n_items; ar >> n_items;
+		ar >> insectID; n_items--;
+		ar >> sensillumID; n_items--;
 		repeat = 0;
 		repeat2 = 0;
-		if (nitems > 0) ar >> repeat; nitems--;
-		if (nitems > 0) ar >> repeat2; nitems--;
+		if (n_items > 0) ar >> repeat; n_items--;
+		if (n_items > 0) ar >> repeat2; n_items--;
 	}
 	else
 	{
@@ -252,8 +252,10 @@ void CWaveFormat::Read_v8_and_before(CArchive& ar, WORD version)
 }
 
 
-void CWaveFormat::operator = (const CWaveFormat& arg)
+CWaveFormat& CWaveFormat::operator = (const CWaveFormat& arg)
 {
+	if (this == &arg)
+		return *this;
 	acqtime=arg.acqtime;
 	wversion=arg.wversion;
 	fullscale_Volts = arg.fullscale_Volts;
@@ -297,6 +299,7 @@ void CWaveFormat::operator = (const CWaveFormat& arg)
 	sensillumID=arg.sensillumID;
 	repeat =arg.repeat;
 	repeat2 = arg.repeat2;
+	return *this;
 }
 
 
@@ -418,8 +421,11 @@ CWaveChan::~CWaveChan()
 {
 }
 
-void CWaveChan::operator = (const CWaveChan& arg)
+CWaveChan& CWaveChan::operator = (const CWaveChan& arg)
 {
+	if (this == &arg)
+		return *this;
+
 	am_csComment=arg.am_csComment;
 	am_adchannel=arg.am_adchannel;
 	am_gainAD=arg.am_gainAD;
@@ -439,22 +445,23 @@ void CWaveChan::operator = (const CWaveChan& arg)
 	am_gainamplifier = arg.am_gainamplifier;
 	am_gaintotal = arg.am_gaintotal;
 	am_resolutionV = arg.am_resolutionV;
+	return *this;
 }
 
 void CWaveChan::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		CString csdummy = am_csversion + am_csComment;	// modif 5 nov 2010 to introduce versioning in this structure
-		ar << csdummy;
-		float xgain = 0.0f;
-		ar << xgain;		// dummy
-		ar << (WORD) am_adchannel << (WORD) am_gainAD;
+		const CString dummy = am_csversion + am_csComment;	// modif 5 nov 2010 to introduce versioning in this structure
+		ar << dummy;
+		const float x_gain = 0.0f;
+		ar << x_gain;		// dummy
+		ar << static_cast<WORD>(am_adchannel) << static_cast<WORD>(am_gainAD);
 		ar << am_csheadstage;
-		ar << (WORD) am_gainheadstage;
-		ar << am_csamplifier << (WORD) am_amplifierchan;
-		ar << (WORD) am_gainpre << (WORD) am_gainpost;
-		ar << (WORD) am_notchfilt << (WORD) am_lowpass;
+		ar << static_cast<WORD>(am_gainheadstage);
+		ar << am_csamplifier << static_cast<WORD>(am_amplifierchan);
+		ar << static_cast<WORD>(am_gainpre) << static_cast<WORD>(am_gainpost);
+		ar << static_cast<WORD>(am_notchfilt) << (WORD) am_lowpass;
 		am_inputpos = 0;	// dummy value (version april 2004 to add csInput)
 		am_inputneg = 0;	// dummy value (version april 2004 to add csInput)
 		ar << am_inputpos << am_inputneg;
@@ -471,18 +478,18 @@ void CWaveChan::Serialize(CArchive& ar)
 	{
 		WORD w1, w2, w3, w4;
 		ar >> am_csComment;
-		float xgain;
-		ar >> xgain ;				// dummy
-		ar >> w1 >> w2; am_adchannel = (short) w1; am_gainAD = (short) w2;
+		float gain;
+		ar >> gain ;				// dummy
+		ar >> w1 >> w2; am_adchannel = static_cast<short>(w1); am_gainAD = static_cast<short>(w2);
 		ar >> am_csheadstage;
 		ar >> w1; am_gainheadstage = w1;
 		ar >> am_csamplifier >> w1 >> w2 >> w3;
-		am_amplifierchan = (short) w1; am_gainpre = (short) w2; am_gainpost = (short) w3;
+		am_amplifierchan = static_cast<short>(w1); am_gainpre = static_cast<short>(w2); am_gainpost = static_cast<short>(w3);
 		ar >> w1 >> w2 >> w3 >> w4;
-		am_notchfilt	= (short) w1; 
-		am_lowpass		= (short) w2;
-		am_inputpos		= (short) w3;  
-		am_inputneg		= (short) w4;
+		am_notchfilt	= static_cast<short>(w1); 
+		am_lowpass		= static_cast<short>(w2);
+		am_inputpos		= static_cast<short>(w3);  
+		am_inputneg		= static_cast<short>(w4);
 		ar >> am_offset;
 		if (am_inputpos == 0 && am_inputneg == 0)
 		{
@@ -496,12 +503,12 @@ void CWaveChan::Serialize(CArchive& ar)
 		}
 
 		// patch to read values stored after version 0
-		int nchars = am_csversion.GetLength();
-		if (am_csComment.GetLength() >= nchars && am_csComment.Find(am_csversion, 0) >= 0)
+		const auto n_chars = am_csversion.GetLength();
+		if (am_csComment.GetLength() >= n_chars && am_csComment.Find(am_csversion, 0) >= 0)
 		{
 			// extract the dummy sequence ("mcid")
-			CString csdummy = am_csComment;
-			am_csComment = csdummy.Right(csdummy.GetLength()-nchars);
+			CString dummy = am_csComment;
+			am_csComment = dummy.Right(dummy.GetLength()-n_chars);
 			// read the rest of the archive
 			ar >> w1;
 			ar >> am_gainamplifier;
@@ -516,19 +523,19 @@ void CWaveChan::Serialize(CArchive& ar)
 
 long CWaveChan::Write(CFile *datafile)
 {
-	ULONGLONG p1 = datafile->GetPosition();
+	const auto p1 = datafile->GetPosition();
 	CArchive ar(datafile, CArchive::store);
 	Serialize(ar);
 	ar.Close();
-	ULONGLONG p2 = datafile->GetPosition();
-	return (long) (p2-p1);
+	const auto p2 = datafile->GetPosition();
+	return static_cast<long>(p2 - p1);
 }
 
 // Read CWaveChan from a binary file
 BOOL CWaveChan::Read(CFile *datafile)
 {
 	CArchive ar(datafile, CArchive::load);
-	BOOL flag = TRUE;
+	auto flag = TRUE;
 	try 
 	{
 		Serialize(ar);
@@ -544,21 +551,21 @@ BOOL CWaveChan::Read(CFile *datafile)
 
 CString CWaveChan::GetCyberAmpInput(int value)
 {
-	CString csOut;
+	CString cs_out;
 	// values:GND(-1) DC(0) .1 1 10 30 100 300 Hz (*10)
 	switch (value)
 	{
 	case -10:
-		csOut = _T("GND");
+		cs_out = _T("GND");
 		break;
 	case 0: 
-		csOut = _T("DC");
+		cs_out = _T("DC");
 		break;
 	default: 
-		csOut.Format(_T("%i"), value / 10);
+		cs_out.Format(_T("%i"), value / 10);
 		break;
 	}
-	return csOut;
+	return cs_out;
 }
 
 
@@ -577,62 +584,61 @@ CWaveChanArray::~CWaveChanArray()
 
 long CWaveChanArray::Write(CFile *datafile)
 {
-	ULONGLONG p1 = datafile->GetPosition();
+	const auto p1 = datafile->GetPosition();
 
-	short arraySize = m_chanArray.GetSize();
-	datafile->Write(&arraySize, sizeof(short));
-	CWaveChan *pChannel;
-	for (int Compteur = 0; Compteur < arraySize; Compteur ++)
+	short array_size = m_chanArray.GetSize();
+	datafile->Write(&array_size, sizeof(short));
+	for (auto i = 0; i < array_size; i ++)
 	{
-		pChannel = (CWaveChan*) m_chanArray[Compteur];
-		pChannel->Write(datafile);
+		auto p_channel = static_cast<CWaveChan*>(m_chanArray[i]);
+		p_channel->Write(datafile);
 	}
 
-	ULONGLONG p2 = datafile->GetPosition();
-	return (long) (p2-p1);
+	const auto p2 = datafile->GetPosition();
+	return static_cast<long>(p2 - p1);
 }
 
 BOOL CWaveChanArray::Read(CFile *datafile)
 {
-	short arraySize;
-	datafile->Read(&arraySize, sizeof(short));
-	CWaveChan* pChannel;
-	int n = 0;	
+	short array_size;
+	datafile->Read(&array_size, sizeof(short));
+	CWaveChan* p_channel;
+	auto n = 0;	
 
 	// if size = 0, create dummy & empty channel
-	if (arraySize == 0)
+	if (array_size == 0)
 	{
 		ChannelRemoveAll();					// erase existing data	
-		pChannel = new CWaveChan;
-		ASSERT(pChannel != NULL);
-		m_chanArray.Add(pChannel);
+		p_channel = new CWaveChan;
+		ASSERT(p_channel != NULL);
+		m_chanArray.Add(p_channel);
 		return FALSE;
 	}
 	
 	// same size, load data in the objects already created
-	if (m_chanArray.GetSize() == arraySize)
+	if (m_chanArray.GetSize() == array_size)
 	{
 		do
 		{
-			pChannel = (CWaveChan*) m_chanArray.GetAt(n);
-			ASSERT(pChannel != NULL);
-			if (!pChannel->Read(datafile))
+			p_channel = static_cast<CWaveChan*>(m_chanArray.GetAt(n));
+			ASSERT(p_channel != NULL);
+			if (!p_channel->Read(datafile))
 				return FALSE;
 			n++;		
-		} while (n < arraySize);
+		} while (n < array_size);
 	}
 	else
 	{
 		ChannelRemoveAll();					// erase existing data	
 		do
 		{
-			pChannel = new CWaveChan;
-			ASSERT(pChannel != NULL);
-			if (!pChannel->Read(datafile))
+			p_channel = new CWaveChan;
+			ASSERT(p_channel != NULL);
+			if (!p_channel->Read(datafile))
 				return FALSE;
-			m_chanArray.Add(pChannel);
+			m_chanArray.Add(p_channel);
 			n++;		
-		} while (n < arraySize);
+		} while (n < array_size);
 	}
 	return TRUE;
 }
@@ -641,35 +647,37 @@ BOOL CWaveChanArray::Read(CFile *datafile)
 // otherwise the pointers would point to the same objects and
 // one of the array would be undefined when the other is destroyed
 
-void CWaveChanArray::operator = (const CWaveChanArray& arg)
+CWaveChanArray& CWaveChanArray::operator = (const CWaveChanArray& arg)
 {
-	int nItems=arg.m_chanArray.GetSize();// source size
+	if (this == &arg)
+		return *this;
+	const auto n_items=arg.m_chanArray.GetSize();// source size
 	ChannelRemoveAll();					// erase existing data
-	for (int i = 0; i < nItems; i++)	// loop over n items
+	for (auto i = 0; i < n_items; i++)	// loop over n items
 	{
-		CWaveChan* pChannel = new CWaveChan;// create new object
-		ASSERT(pChannel != NULL);
-		*pChannel = *((CWaveChan*) arg.m_chanArray[i]);
-		ChannelAdd(pChannel);		// store pointer into array
+		auto* p_channel = new CWaveChan;// create new object
+		ASSERT(p_channel != NULL);
+		*p_channel = *dynamic_cast<CWaveChan*>(arg.m_chanArray[i]);
+		ChannelAdd(p_channel);		// store pointer into array
 	}
+	return *this;
 }
 
 CWaveChan& CWaveChanArray::operator[] (int index)
 {	
-	return *((CWaveChan*) m_chanArray.GetAt(index));
+	return *(GetWaveChan(index));
 }
 
 CWaveChan* CWaveChanArray::GetWaveChan(int index)
 {	
-	return (CWaveChan*) m_chanArray.GetAt(index);
+	return dynamic_cast<CWaveChan*>(m_chanArray.GetAt(index));
 }
 
 void CWaveChanArray::ChannelRemoveAll()
 {
-	CWaveChan* p;
-	for (int i = 1; i <= m_chanArray.GetSize(); i++)
+	for (auto i = 1; i <= m_chanArray.GetSize(); i++)
 	{
-		p = (CWaveChan*) m_chanArray[i-1];
+		const auto p = dynamic_cast<CWaveChan*>(m_chanArray[i - 1]);
 		delete p;
 	}	
 	m_chanArray.RemoveAll();
@@ -682,21 +690,21 @@ int CWaveChanArray::ChannelAdd(CWaveChan *arg)
 
 int CWaveChanArray::ChannelAdd()
 {
-	CWaveChan* p = new CWaveChan;
+	auto* p = new CWaveChan;
 	ASSERT(p != NULL);
 	return ChannelAdd(p);
 }
 
 void CWaveChanArray::ChannelInsert(int Indice)
 {
-	CWaveChan* p = new CWaveChan;
+	auto p = new CWaveChan;
 	ASSERT(p != NULL);
 	m_chanArray.InsertAt(Indice, p, 1);
 }
 
 void CWaveChanArray::ChannelRemove(int Indice)
 {
-	CWaveChan* p = (CWaveChan*) m_chanArray[Indice];
+	const auto p = static_cast<CWaveChan*>(m_chanArray[Indice]);
 	delete p;
 	m_chanArray.RemoveAt(Indice);
 }
@@ -710,11 +718,11 @@ int CWaveChanArray::ChannelSetnum(int i)
 {
 	if (i < m_chanArray.GetSize())
 	{
-		for (int j = m_chanArray.GetUpperBound(); j>= i; j--)
+		for (auto j = m_chanArray.GetUpperBound(); j>= i; j--)
 			ChannelRemove(j);
 	}
 	else if (i > m_chanArray.GetSize())
-		for (int j = m_chanArray.GetSize(); j< i; j++)
+		for (auto j = m_chanArray.GetSize(); j< i; j++)
 			ChannelAdd();
 	return m_chanArray.GetSize();
 }
@@ -722,33 +730,33 @@ int CWaveChanArray::ChannelSetnum(int i)
 
 void CWaveChanArray::Serialize(CArchive & ar)
 {
-	WORD wversion;
+	WORD version;
 	if (ar.IsStoring())
 	{
-		wversion=1;
-		ar << wversion;				// save version number
-		int nitems = m_chanArray.GetSize();
-		ar << nitems;				// save number of items
-		if (nitems >0)				// loop to save each CWaveChan
+		version=1;
+		ar << version;				// save version number
+		const int n_items = m_chanArray.GetSize();
+		ar << n_items;				// save number of items
+		if (n_items >0)				// loop to save each CWaveChan
 		{
-			for (int i=0; i<nitems; i++)
+			for (auto i=0; i<n_items; i++)
 			{
-				CWaveChan* pItem = (CWaveChan*) m_chanArray.GetAt(i);
-				pItem->Serialize(ar);
+				auto* p_item = static_cast<CWaveChan*>(m_chanArray.GetAt(i));
+				p_item->Serialize(ar);
 			}
 		}
 		
 	} 
 	else
 	{
-		ar >> wversion;				// get version
-		int nitems; ar >> nitems;	// get number of items
-		if (nitems >0)				// loop to read all CWaveChan items
+		ar >> version;				// get version
+		int items; ar >> items;	// get number of items
+		if (items >0)				// loop to read all CWaveChan items
 		{
 			ChannelRemoveAll();
-			for (int i=0; i<nitems; i++)
+			for (auto i=0; i<items; i++)
 			{
-				CWaveChan* pItem = new CWaveChan;
+				auto pItem = new CWaveChan;
 				ASSERT(pItem != NULL);
 				pItem->Serialize(ar);
 				m_chanArray.Add(pItem);

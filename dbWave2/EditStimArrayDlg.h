@@ -1,5 +1,5 @@
 #pragma once
-#include "spikedoc.h"
+#include "Spikedoc.h"
 
 // CEditStimArrayDlg dialog
 

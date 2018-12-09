@@ -6,7 +6,7 @@
 // using a PC/AT.
 // Journal of Neuroscience Methods 31 : 109-118.
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "resource.h"
 #include "scopescr.h"

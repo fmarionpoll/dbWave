@@ -1,10 +1,10 @@
 // EditStimArrayDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "EditStimArrayDlg.h"
-#include ".\editstimarraydlg.h"
+#include ".\EditStimArrayDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

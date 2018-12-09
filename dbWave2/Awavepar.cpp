@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <Olxdadefs.h>
 
 #ifdef _DEBUG

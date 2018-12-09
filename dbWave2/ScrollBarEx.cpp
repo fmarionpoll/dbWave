@@ -2,7 +2,7 @@
 // extended scrollbar - catches mouse when it passes over the left and right bar
 // of the scroll button (HZ bar)
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "ScrollBarEx.h"
 

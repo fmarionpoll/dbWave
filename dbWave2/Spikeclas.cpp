@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////
 // CSpikeClass : implementation file 
 
-#include "stdafx.h" 
-#include "spikeclas.h"
+#include "StdAfx.h"
+#include "Spikeclas.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

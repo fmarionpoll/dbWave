@@ -1,8 +1,8 @@
 // browsefi.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "browsefi.h"
+#include "StdAfx.h"
+#include "Browsefi.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

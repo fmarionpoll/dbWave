@@ -1,12 +1,12 @@
 // vdseries.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "cscale.h"
+#include "StdAfx.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
+#include "Lineview.h"
 #include "resource.h"
-#include "vdseries.h"
+#include "Vdseries.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

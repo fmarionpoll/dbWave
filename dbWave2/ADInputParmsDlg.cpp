@@ -1,14 +1,13 @@
 // ADInputParmsDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <Olxdadefs.h>
 #include "GridCtrl\GridCell.h"
 #include "GridCtrl\GridCellCombo_FMP.h"
 #include "GridCtrl\GridCellNumeric.h"
 #include "GridCtrl\GridCellCheck.h"
-#include "adinputparmsdlg.h"
-
+#include "ADInputParmsDlg.h"
 
 
 #ifdef _DEBUG

@@ -1,7 +1,7 @@
 // WaveBuf.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <math.h> 
 
 #ifdef _DEBUG

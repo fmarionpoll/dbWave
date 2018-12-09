@@ -1,6 +1,6 @@
 // dbNewFileDuplicateDlg.cpp : implementation file
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbNewFileDuplicateDlg.h"
 
 #ifdef _DEBUG

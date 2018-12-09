@@ -1,8 +1,8 @@
 // SpikeShapeWnd.cpp Implementation File
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "scopescr.h"
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "dbWaveDoc.h"
 #include "spikeshape.h"
 

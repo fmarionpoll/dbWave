@@ -13,7 +13,7 @@
 // TVN_CHECK methods derived from:
 // http://www.apijunkie.com/APIJunkie/blog/post/2007/11/Handling-tree-control-check-box-selectionde-selection-in-Win32MFC.aspx
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "QuadStateTree.h"
 
 //#define ACTIVATE_VIEWER

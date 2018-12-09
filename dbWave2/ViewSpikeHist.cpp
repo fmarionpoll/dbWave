@@ -1,24 +1,24 @@
 // SpikeHistView.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "editctrl.h"
+#include "Lineview.h"
+#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "FormatHistogram.h"
 
-#include "mainfrm.h"
-#include "childfrm.h"
-#include "progdlg.h"
-#include ".\ViewSpikehist.h"
+#include "MainFrm.h"
+#include "ChildFrm.h"
+#include "ProgDlg.h"
+#include ".\ViewSpikeHist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

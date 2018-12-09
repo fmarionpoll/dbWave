@@ -1,10 +1,10 @@
 // spikebar.cpp Implementation File
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "scopescr.h"
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "dbWaveDoc.h"
-#include "spikebar.h"
+#include "Spikebar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

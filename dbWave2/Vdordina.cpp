@@ -1,14 +1,14 @@
 // vdordina.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
+#include "Lineview.h"
 
 #include "resource.h"
-#include "vdordina.h"
+#include "Vdordina.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

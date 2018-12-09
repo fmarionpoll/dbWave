@@ -1,10 +1,10 @@
 // RulerBar.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "lineview.h"
+#include "StdAfx.h"
+#include "Lineview.h"
 #include "RulerBar.h"
-#include ".\rulerbar.h"
+#include ".\RulerBar.h"
 
 #include <math.h>
 #include "resource.h"

@@ -1,7 +1,7 @@
 // CyberAmp.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CyberAmp.h"
 
 #ifdef _DEBUG

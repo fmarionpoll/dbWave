@@ -1,7 +1,7 @@
 // CUSBPxxS1Ctl.cpp  : Definition of ActiveX Control wrapper class(es) created by Microsoft Visual C++
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CUSBPxxS1Ctl.h"
 
 //------------------ class USBPxxPARAMETERS ---------------------------------

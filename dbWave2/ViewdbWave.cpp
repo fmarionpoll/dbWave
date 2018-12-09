@@ -1,25 +1,25 @@
 // dbWaveView.cpp : implementation of the CdbWaveView class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
 
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "spikedoc.h"
+#include "Spikedoc.h"
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "editctrl.h"
-#include "spikebar.h"
+#include "Lineview.h"
+#include "Editctrl.h"
+#include "Spikebar.h"
 #include "spikeshape.h"
 #include "DataListCtrl.h"
 
 #include "MainFrm.h"
-#include "childfrm.h"
-#include "progdlg.h"
+#include "ChildFrm.h"
+#include "ProgDlg.h"
 
 #include ".\ViewdbWave.h"
 

@@ -1,8 +1,8 @@
 // spikexyp.cpp Implementation File
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "scopescr.h"
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "spikexyp.h"
 
 #ifdef _DEBUG

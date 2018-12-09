@@ -1,7 +1,7 @@
 // ImportOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "ImportOptions.h"
 #include "afxdialogex.h"

@@ -1,18 +1,18 @@
 // editspik.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "dbWaveDoc.h"
-#include "acqdatad.h"
-#include "editctrl.h"
-#include "cscale.h"
+#include "Acqdatad.h"
+#include "Editctrl.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
+#include "Lineview.h"
 #include "spikeshape.h"
-#include "editspik.h"
+#include "Editspik.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

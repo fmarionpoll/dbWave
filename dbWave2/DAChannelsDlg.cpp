@@ -1,7 +1,7 @@
 // DAChannelsDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "DAChannelsDlg.h"
 #include "afxdialogex.h"

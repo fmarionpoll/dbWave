@@ -1,17 +1,17 @@
 // ImportFilesDlg.cpp : implementation file
 //
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "ImportFilesDlg.h"
 #include "afxdialogex.h"
 #include "dbWave.h"
 #include "resource.h"
 
-#include "dataheader_Atlab.h"
+#include "dataheader_Atlab.H"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "spikedoc.h"
-#include "adexperi.h"
+#include "Spikedoc.h"
+#include "Adexperi.h"
 #include "ADInputParmsDlg.h"
 
 #ifdef _DEBUG

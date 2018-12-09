@@ -1,7 +1,7 @@
 // DeleteRecordOptionsDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "DeleteRecordOptionsDlg.h"
 

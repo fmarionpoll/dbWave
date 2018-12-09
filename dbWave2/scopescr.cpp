@@ -1,8 +1,8 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "scopescr.h"
 
-#include "editctrl.h"
+#include "Editctrl.h"
 #include "ScopeScreenPropsDlg.h"
 #include <math.h>
 

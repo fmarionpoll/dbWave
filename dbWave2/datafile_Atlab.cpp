@@ -1,8 +1,8 @@
 // AtlabFile.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "dataheader_Atlab.h"
+#include "StdAfx.h"
+#include "dataheader_Atlab.H"
 #include "datafile_Atlab.h"
 
 #ifdef _DEBUG

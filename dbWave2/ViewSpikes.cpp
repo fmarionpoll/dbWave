@@ -1,28 +1,28 @@
 // Viewspikes.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "dbwave_constants.h"
+#include "StdAfx.h"
+#include "dbWave_constants.h"
 #include "dbWave.h"
 #include "resource.h"
 #include <math.h>
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "editctrl.h"
+#include "Lineview.h"
+#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 
-#include "spikedoc.h"
-#include "spikebar.h"
+#include "Spikedoc.h"
+#include "Spikebar.h"
 #include "spikeshape.h"
 #include "SpikeClassListBox.h"
 
-#include "editspik.h"
-#include "mainfrm.h"
-#include "copyasdl.h"
-#include "childfrm.h"
+#include "Editspik.h"
+#include "MainFrm.h"
+#include "Copyasdl.h"
+#include "ChildFrm.h"
 
 #include ".\ViewSpikes.h"
 

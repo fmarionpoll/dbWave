@@ -6,7 +6,7 @@
 #include "scopescr.h"
 #include "Envelope.h" 
 #include "chanlistitem.h"
-#include "lineview.h"
+#include "Lineview.h"
 #include "DataListCtrlRowObject.h"
 
 #define COL_INDEX		1

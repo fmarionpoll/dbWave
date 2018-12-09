@@ -1,9 +1,9 @@
 // datacomm.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
-#include "datacomm.h"
+#include "Datacomm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

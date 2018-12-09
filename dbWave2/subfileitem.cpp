@@ -1,6 +1,6 @@
 // subfileitem.cpp
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "subfileitem.h"
 
 #ifdef _DEBUG

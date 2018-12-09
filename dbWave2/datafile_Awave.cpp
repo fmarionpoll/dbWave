@@ -1,7 +1,7 @@
 // AwavFile.cpp
 
-#include "stdafx.h"
-#include "dataheader_Atlab.h"
+#include "StdAfx.h"
+#include "dataheader_Atlab.H"
 #include "subfileitem.h"
 #include "datafile_Awave.h"
 

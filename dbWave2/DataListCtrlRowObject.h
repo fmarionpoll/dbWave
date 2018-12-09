@@ -1,14 +1,14 @@
 #pragma once
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWaveDoc.h"
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "scopescr.h"
 #include "Envelope.h" 
 #include "chanlistitem.h"
-#include "lineview.h"
-#include "spikedoc.h"
-#include "spikebar.h"
+#include "Lineview.h"
+#include "Spikedoc.h"
+#include "Spikebar.h"
 
 // CDataListCtrlRowObject command target
 

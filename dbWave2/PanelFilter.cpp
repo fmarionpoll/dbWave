@@ -1,10 +1,10 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
-#include "mainfrm.h"
-#include "Resource.h"
+#include "MainFrm.h"
+#include "resource.h"
 #include "PanelFilter.h"
-#include "progdlg.h"
+#include "ProgDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

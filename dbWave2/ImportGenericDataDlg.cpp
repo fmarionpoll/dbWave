@@ -1,14 +1,14 @@
 // ImportGenericDataDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "dataheader_Atlab.h"
+#include "dataheader_Atlab.H"
 //#include "editctrl.h"
 //#include "cscale.h"
 //#include "scopescr.h"
 //#include "lineview.h"
-#include "ImportGenericDataDlg.h"
+#include "importgenericdatadlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "DataListCtrl.h"
-#include "editctrl.h"
+#include "Editctrl.h"
 
 //class CdbWaveCntrItem;
 class CdbMainTable;

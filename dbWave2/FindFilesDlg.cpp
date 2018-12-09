@@ -1,7 +1,7 @@
 // FindFilesDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "FindFilesDlg.h"
 #include <shlobj.h>
 

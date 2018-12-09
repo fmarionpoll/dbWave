@@ -2,8 +2,8 @@
 //
 // CEnvelope methods
 
-#include "stdafx.h"
-#include "envelope.h"
+#include "StdAfx.h"
+#include "Envelope.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

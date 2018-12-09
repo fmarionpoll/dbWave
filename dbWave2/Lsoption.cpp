@@ -1,9 +1,9 @@
 // lsoptions : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "lsoption.h"
+#include "Lsoption.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,11 +1,11 @@
 // ExportDataDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave_constants.h"
-#include "dataheader_Atlab.h"
+#include "dataheader_Atlab.H"
 #include "datafile_Atlab.h"
-#include "editctrl.h"
+#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "ExportDataDlg.h"

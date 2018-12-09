@@ -1,8 +1,8 @@
 // copyasdl.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "copyasdl.h"
+#include "StdAfx.h"
+#include "Copyasdl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

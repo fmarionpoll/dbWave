@@ -1,8 +1,8 @@
 // CDataFileX.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "dataheader_Atlab.h"
+#include "StdAfx.h"
+#include "dataheader_Atlab.H"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

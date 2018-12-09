@@ -8,10 +8,10 @@
 #include "dbMainTable.h"
 #include "dbWdatabase.h"
 #include "spikepar.h"		// spike parameters options
-#include "spikelist.h"		// list of spikes
-#include "spikeclas.h"		// spike classes
+#include "Spikelist.h"		// list of spikes
+#include "Spikeclas.h"		// spike classes
 #include "Spikedoc.h"
-#include "acqdatad.h"
+#include "Acqdatad.h"
 
 
 class CdbWaveDoc : public COleDocument

@@ -1,10 +1,10 @@
 // listbcla.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
-#include "listbcla.h"
+#include "Listbcla.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

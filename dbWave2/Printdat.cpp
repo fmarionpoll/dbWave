@@ -1,9 +1,9 @@
 // printdat.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "printdat.h"
+#include "Printdat.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

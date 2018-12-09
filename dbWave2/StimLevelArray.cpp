@@ -1,6 +1,6 @@
 // StimLevelArray.cpp : implementation file
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "StimLevelArray.h"
 
 #ifdef _DEBUG

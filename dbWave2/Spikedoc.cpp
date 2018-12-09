@@ -2,9 +2,9 @@
 //
 // derived from CDocument
 
-#include "stdafx.h"
-#include "acqdatad.h"
-#include "spikedoc.h"
+#include "StdAfx.h"
+#include "Acqdatad.h"
+#include "Spikedoc.h"
 #include <math.h>
 
 #ifdef _DEBUG

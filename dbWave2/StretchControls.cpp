@@ -1,7 +1,7 @@
 // CONTROLP.CPP
 
-#include "stdafx.h"
-#include "stretchcontrols.h"
+#include "StdAfx.h"
+#include "StretchControls.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

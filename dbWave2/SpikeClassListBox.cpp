@@ -1,17 +1,17 @@
 // lbspkcla.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
 
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "dbWaveDoc.h"
-#include "listbcla.h"
+#include "Listbcla.h"
 #include "SpikeClassListBox.h"
 
 #include "scopescr.h"
-#include "spikebar.h"
+#include "Spikebar.h"
 #include "spikeshape.h"
 
 #ifdef _DEBUG

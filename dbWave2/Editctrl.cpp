@@ -31,8 +31,8 @@
 // value can be validated.
 // 
 
-#include "stdafx.h"
-#include "editctrl.h"
+#include "StdAfx.h"
+#include "Editctrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

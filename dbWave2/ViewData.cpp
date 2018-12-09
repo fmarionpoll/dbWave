@@ -1,33 +1,33 @@
 // View data displays data and allow interactive browsing through the file
 // print and copy implemented
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <math.h>
 #include "dbWave.h"
 #include "dbWave_constants.h"
 #include "resource.h"
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "editctrl.h"
+#include "Lineview.h"
+#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "viewdata.h"
+#include "ViewData.h"
 
-#include "vdordina.h"
-#include "vdseries.h"
-#include "adinterv.h"
-#include "dataseri.h"
-#include "MeasureOptions.h"
+#include "Vdordina.h"
+#include "Vdseries.h"
+#include "Adinterv.h"
+#include "Dataseri.h"
+#include "measureoptions.h"
 #include "MeasureProperties.h"
-#include "editctrl.h"
-#include "cyberamp.h"
-#include "ADExperi.h"
-#include "mainfrm.h"
-#include "CopyAsdl.h"
-#include "childfrm.h"
-#include "vdabciss.h"
+#include "Editctrl.h"
+#include "CyberAmp.h"
+#include "Adexperi.h"
+#include "MainFrm.h"
+#include "Copyasdl.h"
+#include "ChildFrm.h"
+#include "Vdabciss.h"
 #include "RulerBar.h"
 
 #include "dbEditRecordDlg.h"
@@ -490,7 +490,7 @@ void CDataView::OnUpdateEditCopy(CCmdUI* pCmdUI)
 }
 
 #include "ADInputParmsDlg.h"
-#include ".\viewdata.h"
+#include ".\ViewData.h"
 
 void CDataView::ADC_OnHardwareChannelsDlg()
 {

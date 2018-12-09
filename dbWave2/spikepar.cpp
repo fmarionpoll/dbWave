@@ -14,7 +14,7 @@
 // SPKCLASSIF				version 1
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "scopescr.h"
 #include "TemplateWnd.h"

@@ -2,8 +2,8 @@
 // by Manuel Laflamme 
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#include "FileVersion.h"
+#include "StdAfx.h"
+#include "Fileversion.h"
 
 #pragma comment(lib, "version")
 

@@ -1,9 +1,9 @@
 // printdra.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include ".\printdra.h"
+#include ".\Printdra.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

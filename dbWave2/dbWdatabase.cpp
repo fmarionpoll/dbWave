@@ -1,6 +1,6 @@
 // dbWdatabase.cpp : implementation file
 //
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbIndexTable.h"
 #include "dbMainTable.h"
 #include "dbWdatabase.h"

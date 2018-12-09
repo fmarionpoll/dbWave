@@ -1,11 +1,11 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave_constants.h"
 #include <stdlib.h>
 #include <Strsafe.h>
 
 #include "resource.h"
-#include "lineview.h"
+#include "Lineview.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

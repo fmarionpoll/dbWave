@@ -1,9 +1,9 @@
 // printpag.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "printpag.h"
+#include "Printpag.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

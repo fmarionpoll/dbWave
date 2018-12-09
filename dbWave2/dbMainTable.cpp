@@ -1,7 +1,7 @@
 // dbWaveSet.cpp : implementation of the CdbMainTable class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "dbMainTable.h"
 

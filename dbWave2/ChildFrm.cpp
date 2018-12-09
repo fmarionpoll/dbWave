@@ -1,9 +1,9 @@
 // ChildFrm.cpp : implementation of the CChildFrame class
 //	accelerator
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "AFXPRIV.H"
+#include "afxpriv.h"
 #include "dbWave.h"
 #include "dbWaveDoc.h"
 #include "dbIndexTable.h"
@@ -11,17 +11,17 @@
 #include "MainFrm.h"
 #include "dbMainTable.h"
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "spikebar.h"
+#include "Lineview.h"
+#include "Spikebar.h"
 #include "spikeshape.h"
 #include "ViewdbWave.h"
-#include "editctrl.h"
-#include "viewdata.h"
-#include "browsefi.h"
-#include "printmar.h"
-#include "lsoption.h"
+#include "Editctrl.h"
+#include "ViewData.h"
+#include "Browsefi.h"
+#include "Printmar.h"
+#include "Lsoption.h"
 
 #include "ViewSpikeDetect.h"
 #include "SpikeClassListBox.h"
@@ -33,12 +33,12 @@
 #include "TemplateListWnd.h"
 #include "ViewSpikeTemplate.h"
 #include "ViewSpikeHist.h"
-#include "notedoc.h"
+#include "NoteDoc.h"
 #include "ViewNotedoc.h"
-#include "datacomm.h"
-#include "exportsp.h"
+#include "Datacomm.h"
+#include "Exportsp.h"
 
-#include "findfilesdlg.h"
+#include "FindFilesDlg.h"
 #include "ProgDlg.h"
 #include "RejectRecordDlg.h"
 #include "GotoRecordDlg.h"
@@ -65,7 +65,7 @@
 #include "TransferFilesDlg.h"
 #include "afxdialogex.h" 
 #include "ExportDataDlg.h"
-#include "ViewADContinuous.h"
+#include "ViewADcontinuous.h"
 #include <process.h>
 
 #ifdef _DEBUG

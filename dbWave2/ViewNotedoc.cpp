@@ -1,7 +1,7 @@
 // NotedocView.cpp : implementation of the CNoteDocView class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "NoteDoc.h"
 #include "ViewNotedoc.h"

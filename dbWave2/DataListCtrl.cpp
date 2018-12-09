@@ -1,23 +1,23 @@
 // DataListCtrl.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "DataListCtrl.h"
 
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "scopescr.h"
 #include "spikeshape.h"
 #include "Envelope.h" 
 #include "chanlistitem.h"
-#include "lineview.h"
-#include "spikebar.h"
+#include "Lineview.h"
+#include "Spikebar.h"
 #include "ViewdbWave.h"
 
 #include "DataListCtrlRowObject.h"
-#include ".\datalistctrl.h"
+#include ".\DataListCtrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

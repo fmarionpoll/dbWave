@@ -71,7 +71,7 @@ protected:
 public :
 	CWaveFormat();	// constructor
 	~CWaveFormat();	// destructor
-	void operator = (const CWaveFormat& arg);	// operator redefinition
+	CWaveFormat& operator = (const CWaveFormat& arg);	// operator redefinition
 	long Write(CFile* datafile);	
 	BOOL Read(CFile* datafile);
 	virtual void Serialize(CArchive& ar);
@@ -119,7 +119,7 @@ public :
 	~CWaveChan();					//destructor
 	virtual long Write(CFile *datafile);
 	virtual BOOL Read(CFile *datafile);
-	void operator = (const CWaveChan& arg); // redefinition operator = 	
+	CWaveChan& operator = (const CWaveChan& arg); // redefinition operator = 	
 	virtual void Serialize(CArchive & ar);
 
 protected:
@@ -146,9 +146,9 @@ public:
 	long Write(CFile *datafile);	// binary write
 	BOOL Read(CFile *datafile);		// binary read
 
-	void operator = (const CWaveChanArray& arg);
-	CWaveChan& operator [] (int Indice);
-	CWaveChan* GetWaveChan(int index);
+	CWaveChanArray& operator = (const CWaveChanArray& arg);
+	CWaveChan& operator [] (int i);
+	CWaveChan* GetWaveChan(int i);
 
 	int		ChannelAdd();
 	int		ChannelAdd(CWaveChan* arg);

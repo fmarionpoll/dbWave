@@ -4,10 +4,10 @@
 // m_iDetectParmsDlgDlg	= index spk detection parameters set to edit
 // m_spkDA = address of structure containing array of spk detection parameters structures
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
-#include ".\spikedetec.h"
+#include ".\Spikedetec.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

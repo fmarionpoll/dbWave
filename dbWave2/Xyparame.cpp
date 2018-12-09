@@ -1,11 +1,11 @@
 // xyparame.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
-#include "editctrl.h"
-#include "xyparame.h"
+#include "Editctrl.h"
+#include "Xyparame.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,7 +1,7 @@
 // CdbEditFieldDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <afxconv.h>           // For LPTSTR -> LPSTR macros
 #include "dbWave.h"
 #include "dbWaveDoc.h"

@@ -1,9 +1,9 @@
 // chanlistitem.cpp
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
-#include "envelope.h"
+#include "Envelope.h"
 #include "chanlistitem.h"
 
 #ifdef _DEBUG

@@ -13,9 +13,9 @@
 // 		evolved from CLineviewButton
 //
 ///////////////////////////////////////////////////////////////////////////
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "scopescr.h"
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "spikehistp.h"
 
 #ifdef _DEBUG

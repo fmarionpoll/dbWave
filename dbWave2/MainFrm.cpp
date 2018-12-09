@@ -4,7 +4,7 @@
 // MainFrm.cpp : implementation of the CMainFrame class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "MainFrm.h"
 #include "ChildFrm.h"
 

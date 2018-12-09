@@ -1,10 +1,10 @@
 // adinterv.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "editctrl.h"
-#include "dataheader_Atlab.h"
-#include "adinterv.h"
+#include "StdAfx.h"
+#include "Editctrl.h"
+#include "dataheader_Atlab.H"
+#include "Adinterv.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

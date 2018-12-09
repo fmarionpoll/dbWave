@@ -5,9 +5,9 @@
 // CSpikeElement
 // CSpikeList
 
-#include "stdafx.h"
-#include "acqdatad.h"
-#include "spikelist.h"
+#include "StdAfx.h"
+#include "Acqdatad.h"
+#include "Spikelist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

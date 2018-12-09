@@ -1,9 +1,9 @@
 // vdabcissa.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "vdabciss.h"
+#include "Vdabciss.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

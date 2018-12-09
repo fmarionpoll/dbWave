@@ -1,7 +1,7 @@
 // NoteDoc.cpp : implementation of the CNoteDoc class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 
 #include "dbMainTable.h"

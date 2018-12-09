@@ -1,29 +1,29 @@
 // spksort1.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <math.h>
 #include "dbWave.h"
 #include "resource.h"
 
-#include "cscale.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "editctrl.h"
+#include "Lineview.h"
+#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 
-#include "spikedoc.h"
+#include "Spikedoc.h"
 #include "spikeshape.h"
 #include "spikehistp.h"
 #include "spikexyp.h"
-#include "spikebar.h"
+#include "Spikebar.h"
 
-#include "editspik.h"
-#include "mainfrm.h"
-#include "copyasdl.h"
-#include "childfrm.h"
-#include "progdlg.h"
+#include "Editspik.h"
+#include "MainFrm.h"
+#include "Copyasdl.h"
+#include "ChildFrm.h"
+#include "ProgDlg.h"
 
 #include "ViewSpikeSort.h"
 

@@ -2,18 +2,18 @@
 //
 // TODO : measure data and output to notedocview
 
-#include "stdafx.h"
-#include "cscale.h" 
+#include "StdAfx.h"
+#include "Cscale.h"
 #include "scopescr.h"
-#include "lineview.h"
-#include "editctrl.h"
-#include "notedoc.h"
+#include "Lineview.h"
+#include "Editctrl.h"
+#include "NoteDoc.h"
 #include "ViewNotedoc.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 
 #include "resource.h"
-#include "MeasureOptions.h"
+#include "measureoptions.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

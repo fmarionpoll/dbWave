@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dbWave.h"
 #include "EditDAMseqDlg.h"
 #include "afxdialogex.h"

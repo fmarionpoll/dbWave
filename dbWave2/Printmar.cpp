@@ -1,12 +1,12 @@
 // printmar.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "printmar.h"
-#include "printpag.h"
-#include "printdat.h"
-#include "printdra.h"
+#include "Printmar.h"
+#include "Printpag.h"
+#include "Printdat.h"
+#include "Printdra.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,8 +1,8 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "PanelProperties.h"
-#include "Resource.h"
+#include "resource.h"
 //#include "MainFrm.h"
 #include "dbWave.h"
 #include "dbEditRecordDlg.h"
