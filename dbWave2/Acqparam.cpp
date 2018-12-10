@@ -254,51 +254,51 @@ void CWaveFormat::Read_v8_and_before(CArchive& ar, WORD version)
 
 CWaveFormat& CWaveFormat::operator = (const CWaveFormat& arg)
 {
-	if (this == &arg)
-		return *this;
-	acqtime=arg.acqtime;
-	wversion=arg.wversion;
-	fullscale_Volts = arg.fullscale_Volts;
-	binspan = arg.binspan;
-	binzero = arg.binzero;
+	if (this != &arg) {
+		acqtime = arg.acqtime;
+		wversion = arg.wversion;
+		fullscale_Volts = arg.fullscale_Volts;
+		binspan = arg.binspan;
+		binzero = arg.binzero;
 
-	mode_encoding=arg.mode_encoding;
-	mode_clock=arg.mode_clock;
-	mode_trigger=arg.mode_trigger;
+		mode_encoding = arg.mode_encoding;
+		mode_clock = arg.mode_clock;
+		mode_trigger = arg.mode_trigger;
 
-	chrate = arg.chrate;
-	scan_count=arg.scan_count;
-	sample_count=arg.sample_count;	
-	duration=arg.duration;
+		chrate = arg.chrate;
+		scan_count = arg.scan_count;
+		sample_count = arg.sample_count;
+		duration = arg.duration;
 
-	trig_mode=arg.trig_mode;
-	trig_chan=arg.trig_chan;
-	trig_threshold=arg.trig_threshold;
+		trig_mode = arg.trig_mode;
+		trig_chan = arg.trig_chan;
+		trig_threshold = arg.trig_threshold;
 
-	data_flow=arg.data_flow;
-	bOnlineDisplay=arg.bOnlineDisplay;
-	bADwritetofile=arg.bADwritetofile;
-	bufferNitems=arg.bufferNitems;
-	buffersize=arg.buffersize;	
+		data_flow = arg.data_flow;
+		bOnlineDisplay = arg.bOnlineDisplay;
+		bADwritetofile = arg.bADwritetofile;
+		bufferNitems = arg.bufferNitems;
+		buffersize = arg.buffersize;
 
-	csComment=arg.csComment;			// 1
-	csStimulus=arg.csStimulus;
-	csConcentration=arg.csConcentration;
-	csStimulus2=arg.csStimulus2;
-	csConcentration2=arg.csConcentration2;
+		csComment = arg.csComment;			// 1
+		csStimulus = arg.csStimulus;
+		csConcentration = arg.csConcentration;
+		csStimulus2 = arg.csStimulus2;
+		csConcentration2 = arg.csConcentration2;
 
-	csInsectname=arg.csInsectname;
-	csLocation = arg.csLocation;
-	csSensillum = arg.csSensillum;
-	csStrain = arg.csStrain;
-	csSex = arg.csSex;
-	csMoreComment = arg.csMoreComment;
-	csADcardName = arg.csADcardName;	// 10
-	csOperator=arg.csOperator;
-	insectID = arg.insectID;
-	sensillumID=arg.sensillumID;
-	repeat =arg.repeat;
-	repeat2 = arg.repeat2;
+		csInsectname = arg.csInsectname;
+		csLocation = arg.csLocation;
+		csSensillum = arg.csSensillum;
+		csStrain = arg.csStrain;
+		csSex = arg.csSex;
+		csMoreComment = arg.csMoreComment;
+		csADcardName = arg.csADcardName;	// 10
+		csOperator = arg.csOperator;
+		insectID = arg.insectID;
+		sensillumID = arg.sensillumID;
+		repeat = arg.repeat;
+		repeat2 = arg.repeat2;
+	}
 	return *this;
 }
 
@@ -394,23 +394,7 @@ CWaveChan::CWaveChan()
 
 CWaveChan::CWaveChan(CWaveChan& arg)
 {
-	am_csComment = arg.am_csComment;
-	am_adchannel = arg.am_adchannel;
-	am_gainAD = arg.am_gainAD;
-	am_csheadstage = arg.am_csheadstage;
-	am_gainheadstage = arg.am_gainheadstage;
-	am_csamplifier=arg.am_csamplifier;
-	am_amplifierchan=arg.am_amplifierchan;
-	am_gainpre=arg.am_gainpre;
-	am_gainpost=arg.am_gainpost;
-	am_notchfilt=arg.am_notchfilt;
-	am_lowpass=arg.am_lowpass;
-	am_offset=arg.am_offset;
-	am_csInputpos = arg.am_csInputpos;
-	am_csInputneg= arg.am_csInputneg;
-	am_gainamplifier = arg.am_gainamplifier;
-	am_gaintotal= arg.am_gaintotal;
-	am_resolutionV = arg.am_resolutionV;
+	*this = arg;
 
 	am_inputpos = arg.am_inputpos;
 	am_inputneg = arg.am_inputneg;
@@ -423,28 +407,27 @@ CWaveChan::~CWaveChan()
 
 CWaveChan& CWaveChan::operator = (const CWaveChan& arg)
 {
-	if (this == &arg)
-		return *this;
+	if (this != &arg) {
+		am_csComment = arg.am_csComment;
+		am_adchannel = arg.am_adchannel;
+		am_gainAD = arg.am_gainAD;
 
-	am_csComment=arg.am_csComment;
-	am_adchannel=arg.am_adchannel;
-	am_gainAD=arg.am_gainAD;
+		am_csheadstage = arg.am_csheadstage;
+		am_gainheadstage = arg.am_gainheadstage;
 
-	am_csheadstage=arg.am_csheadstage;
-	am_gainheadstage=arg.am_gainheadstage;
-
-	am_csamplifier=arg.am_csamplifier;
-	am_amplifierchan=arg.am_amplifierchan;
-	am_gainpre=arg.am_gainpre;
-	am_gainpost=arg.am_gainpost;
-	am_notchfilt=arg.am_notchfilt;
-	am_lowpass=arg.am_lowpass;
-	am_offset=arg.am_offset;
-	am_csInputpos = arg.am_csInputpos;
-	am_csInputneg= arg.am_csInputneg;
-	am_gainamplifier = arg.am_gainamplifier;
-	am_gaintotal = arg.am_gaintotal;
-	am_resolutionV = arg.am_resolutionV;
+		am_csamplifier = arg.am_csamplifier;
+		am_amplifierchan = arg.am_amplifierchan;
+		am_gainpre = arg.am_gainpre;
+		am_gainpost = arg.am_gainpost;
+		am_notchfilt = arg.am_notchfilt;
+		am_lowpass = arg.am_lowpass;
+		am_offset = arg.am_offset;
+		am_csInputpos = arg.am_csInputpos;
+		am_csInputneg = arg.am_csInputneg;
+		am_gainamplifier = arg.am_gainamplifier;
+		am_gaintotal = arg.am_gaintotal;
+		am_resolutionV = arg.am_resolutionV;
+	}
 	return *this;
 }
 
@@ -648,18 +631,18 @@ BOOL CWaveChanArray::read(CFile *datafile)
 
 CWaveChanArray& CWaveChanArray::operator = (const CWaveChanArray& arg)
 {
-	if (this == &arg)
-		return *this;
+	if (this != &arg) {
 
-	const auto n_items=arg.m_chanArray.GetSize();// source size
-	channel_remove_all();					// erase existing data
-	for (auto i = 0; i < n_items; i++)	// loop over n items
-	{
-		const auto  p_channel = new CWaveChan(); // create new object
-		ASSERT(p_channel != NULL);
-		*p_channel = *arg.get_p_channel(i);
+		const auto n_items = arg.m_chanArray.GetSize();// source size
+		channel_remove_all();					// erase existing data
+		for (auto i = 0; i < n_items; i++)	// loop over n items
+		{
+			const auto  p_channel = new CWaveChan(); // create new object
+			ASSERT(p_channel != NULL);
+			*p_channel = *arg.get_p_channel(i);
 
-		channel_add(p_channel);		// store pointer into array
+			channel_add(p_channel);		// store pointer into array
+		}
 	}
 	return *this;
 }

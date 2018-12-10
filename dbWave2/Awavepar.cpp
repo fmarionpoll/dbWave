@@ -51,20 +51,23 @@ SCOPESTRUCT::~SCOPESTRUCT()
 {
 }
 
-void SCOPESTRUCT::operator = (const SCOPESTRUCT& arg)
+SCOPESTRUCT& SCOPESTRUCT::operator = (const SCOPESTRUCT& arg)
 {
-	iID=arg.iID;
-	iXCells=arg.iXCells;
-	iYCells=arg.iYCells;
-	iXTicks=arg.iXTicks;
-	iYTicks=arg.iYTicks;
-	iXTickLine=arg.iXTickLine;
-	iYTickLine=arg.iYTickLine;
-	crScopeFill=arg.crScopeFill;
-	crScopeGrid=arg.crScopeGrid;
-	bDrawframe=arg.bDrawframe;
-	xScaleUnitValue = arg.xScaleUnitValue;
-	yScaleUnitValue = arg.yScaleUnitValue;
+	if (this != &arg) {
+		iID = arg.iID;
+		iXCells = arg.iXCells;
+		iYCells = arg.iYCells;
+		iXTicks = arg.iXTicks;
+		iYTicks = arg.iYTicks;
+		iXTickLine = arg.iXTickLine;
+		iYTickLine = arg.iYTickLine;
+		crScopeFill = arg.crScopeFill;
+		crScopeGrid = arg.crScopeGrid;
+		bDrawframe = arg.bDrawframe;
+		xScaleUnitValue = arg.xScaleUnitValue;
+		yScaleUnitValue = arg.yScaleUnitValue;
+	}
+	return *this;
 }
 
 void SCOPESTRUCT::Serialize(CArchive& ar)
@@ -235,89 +238,92 @@ OPTIONS_VIEWDATA::~OPTIONS_VIEWDATA()
 {
 }
 
-void OPTIONS_VIEWDATA::operator = (const OPTIONS_VIEWDATA& arg)
+OPTIONS_VIEWDATA& OPTIONS_VIEWDATA::operator = (const OPTIONS_VIEWDATA& arg)
 {
-	horzRes				= arg.horzRes;
-	vertRes				= arg.vertRes;
-	bAcqComment			= arg.bAcqComment;
-	bAcqDateTime		= arg.bAcqDateTime;
-	bChansComment		= arg.bChansComment;
-	bChanSettings		= arg.bChanSettings;
-	bDocName			= arg.bDocName;
-	bFrameRect			= arg.bFrameRect;
-	bClipRect			= arg.bClipRect;
-	bTimeScaleBar		= arg.bTimeScaleBar;
-	bVoltageScaleBar	= arg.bVoltageScaleBar;
-	HeightDoc			= arg.HeightDoc;
-	WidthDoc			= arg.WidthDoc;
-	leftPageMargin		= arg.leftPageMargin;
-	bottomPageMargin	= arg.bottomPageMargin;
-	rightPageMargin		= arg.rightPageMargin;
-	topPageMargin		= arg.topPageMargin;
-	heightSeparator		= arg.heightSeparator;
-	textseparator		= arg.textseparator;
-	fontsize			= arg.fontsize;
-	bAllChannels		= arg.bAllChannels;
-	bEntireRecord		= arg.bEntireRecord;
-	bMultirowDisplay	= arg.bMultirowDisplay;
-	bSplitCurves		= arg.bSplitCurves;
-	bMaximizeGain		= arg.bMaximizeGain;
-	bCenterCurves		= arg.bCenterCurves;
-	bKeepForEachFile	= arg.bKeepForEachFile;
-	bDispOldDetectP		= arg.bDispOldDetectP;
-	bFilterDataSource	= arg.bFilterDataSource;
-	bacqcomments		= arg.bacqcomments;
-	bacqdate			= arg.bacqdate;
-	bacqtime			= arg.bacqtime;
-	bfilesize			= arg.bfilesize;
-	bacqchcomment		= arg.bacqchcomment;
-	bacqchsetting		= arg.bacqchsetting;
-	bPrintSelection		= arg.bPrintSelection;
-	bPrintSpkBars		= arg.bPrintSpkBars;
-	bunits				= arg.bunits;
-	bcontours			= arg.bcontours;
-	bgraphics			= arg.bgraphics;
-	bdatabasecols		= arg.bdatabasecols;
-	btoExcel			= arg.btoExcel;
-	hzResolution		= arg.hzResolution;
-	vtResolution		= arg.vtResolution;
-	unitMode			= arg.unitMode;
-	spkheight			= arg.spkheight;
-	spkwidth			= arg.spkwidth;
-	viewdata			= arg.viewdata;
-	viewspkdetectfiltered = arg.viewspkdetectfiltered;
-	viewspkdetectdata	= arg.viewspkdetectdata;
-	viewspkdetectspk	= arg.viewspkdetectspk;
-	viewspkdetectbars	= arg.viewspkdetectbars;
-	viewadcontvi		= arg.viewadcontvi;
-	spkviewdata			= arg.spkviewdata;
-	spkviewspk			= arg.spkviewspk;
-	spkviewbars			= arg.spkviewbars;
-	spksort1spk			= arg.spksort1spk;
-	spksort1parms		= arg.spksort1parms;
-	spksort1bars		= arg.spksort1bars;
-	spksort1hist		= arg.spksort1hist;
-	dbviewdata			= arg.dbviewdata;
-	bFilterDat			= arg.bFilterDat;
-	dbviewbars			= arg.dbviewbars;
-	dbviewshape			= arg.dbviewshape;
-	nfilterindex		= arg.nfilterindex;
-	bDetectWhileBrowse	= arg.bDetectWhileBrowse;
-	bGotoRecordID		= arg.bGotoRecordID;
-	col0width			= arg.col0width;
-	row0height			= arg.row0height;
-	bcol0visible		= arg.bcol0visible;
-	brow0visible		= arg.brow0visible;
-	irowheight			= arg.irowheight;
-	tFirst				= arg.tFirst;
-	tLast				= arg.tLast;
-	mVspan				= arg.mVspan;
-	displaymode			= arg.displaymode;
-	bDisplayFileName	= arg.bDisplayFileName;
-	bsetTimeSpan		= arg.bsetTimeSpan;
-	bsetmVSpan			= arg.bsetmVSpan;
-	bDisplayAllClasses	= arg.bDisplayAllClasses;
-	spikeclass			= arg.spikeclass;
+	if (this != &arg) {
+		horzRes = arg.horzRes;
+		vertRes = arg.vertRes;
+		bAcqComment = arg.bAcqComment;
+		bAcqDateTime = arg.bAcqDateTime;
+		bChansComment = arg.bChansComment;
+		bChanSettings = arg.bChanSettings;
+		bDocName = arg.bDocName;
+		bFrameRect = arg.bFrameRect;
+		bClipRect = arg.bClipRect;
+		bTimeScaleBar = arg.bTimeScaleBar;
+		bVoltageScaleBar = arg.bVoltageScaleBar;
+		HeightDoc = arg.HeightDoc;
+		WidthDoc = arg.WidthDoc;
+		leftPageMargin = arg.leftPageMargin;
+		bottomPageMargin = arg.bottomPageMargin;
+		rightPageMargin = arg.rightPageMargin;
+		topPageMargin = arg.topPageMargin;
+		heightSeparator = arg.heightSeparator;
+		textseparator = arg.textseparator;
+		fontsize = arg.fontsize;
+		bAllChannels = arg.bAllChannels;
+		bEntireRecord = arg.bEntireRecord;
+		bMultirowDisplay = arg.bMultirowDisplay;
+		bSplitCurves = arg.bSplitCurves;
+		bMaximizeGain = arg.bMaximizeGain;
+		bCenterCurves = arg.bCenterCurves;
+		bKeepForEachFile = arg.bKeepForEachFile;
+		bDispOldDetectP = arg.bDispOldDetectP;
+		bFilterDataSource = arg.bFilterDataSource;
+		bacqcomments = arg.bacqcomments;
+		bacqdate = arg.bacqdate;
+		bacqtime = arg.bacqtime;
+		bfilesize = arg.bfilesize;
+		bacqchcomment = arg.bacqchcomment;
+		bacqchsetting = arg.bacqchsetting;
+		bPrintSelection = arg.bPrintSelection;
+		bPrintSpkBars = arg.bPrintSpkBars;
+		bunits = arg.bunits;
+		bcontours = arg.bcontours;
+		bgraphics = arg.bgraphics;
+		bdatabasecols = arg.bdatabasecols;
+		btoExcel = arg.btoExcel;
+		hzResolution = arg.hzResolution;
+		vtResolution = arg.vtResolution;
+		unitMode = arg.unitMode;
+		spkheight = arg.spkheight;
+		spkwidth = arg.spkwidth;
+		viewdata = arg.viewdata;
+		viewspkdetectfiltered = arg.viewspkdetectfiltered;
+		viewspkdetectdata = arg.viewspkdetectdata;
+		viewspkdetectspk = arg.viewspkdetectspk;
+		viewspkdetectbars = arg.viewspkdetectbars;
+		viewadcontvi = arg.viewadcontvi;
+		spkviewdata = arg.spkviewdata;
+		spkviewspk = arg.spkviewspk;
+		spkviewbars = arg.spkviewbars;
+		spksort1spk = arg.spksort1spk;
+		spksort1parms = arg.spksort1parms;
+		spksort1bars = arg.spksort1bars;
+		spksort1hist = arg.spksort1hist;
+		dbviewdata = arg.dbviewdata;
+		bFilterDat = arg.bFilterDat;
+		dbviewbars = arg.dbviewbars;
+		dbviewshape = arg.dbviewshape;
+		nfilterindex = arg.nfilterindex;
+		bDetectWhileBrowse = arg.bDetectWhileBrowse;
+		bGotoRecordID = arg.bGotoRecordID;
+		col0width = arg.col0width;
+		row0height = arg.row0height;
+		bcol0visible = arg.bcol0visible;
+		brow0visible = arg.brow0visible;
+		irowheight = arg.irowheight;
+		tFirst = arg.tFirst;
+		tLast = arg.tLast;
+		mVspan = arg.mVspan;
+		displaymode = arg.displaymode;
+		bDisplayFileName = arg.bDisplayFileName;
+		bsetTimeSpan = arg.bsetTimeSpan;
+		bsetmVSpan = arg.bsetmVSpan;
+		bDisplayAllClasses = arg.bDisplayAllClasses;
+		spikeclass = arg.spikeclass;
+	}
+	return *this;
 }
 
 void OPTIONS_VIEWDATA::Serialize(CArchive& ar)
@@ -691,57 +697,60 @@ OPTIONS_VIEWSPIKES::~OPTIONS_VIEWSPIKES()
 {
 }
 
-void OPTIONS_VIEWSPIKES::operator = (const OPTIONS_VIEWSPIKES& arg)
+OPTIONS_VIEWSPIKES& OPTIONS_VIEWSPIKES::operator = (const OPTIONS_VIEWSPIKES& arg)
 {
-	timestart=arg.timestart;
-	timeend=arg.timeend;
-	timebin=arg.timebin;
-	histampl_vmax=arg.histampl_vmax;
-	histampl_vmin=arg.histampl_vmin;
-	histampl_nbins=arg.histampl_nbins;
-	
-	nbins=arg.nbins;
-	classnb=arg.classnb;
-	classnb2= arg.classnb2;
-	bacqcomments=arg.bacqcomments;
-	bacqdate=arg.bacqdate;
-	bacqchsettings=arg.bacqchsettings;
-	bspkcomments=arg.bspkcomments;
-	exportdatatype=arg.exportdatatype;
-	spikeclassoption=arg.spikeclassoption;
-	bartefacts=arg.bartefacts;
-	bcolumnheader=arg.bcolumnheader;
-	btotalspikes=arg.btotalspikes;
-	babsolutetime=arg.babsolutetime;
-	bexportzero = arg.bexportzero;
-	ballChannels = arg.ballChannels;
+	if (this != &arg) {
+		timestart = arg.timestart;
+		timeend = arg.timeend;
+		timebin = arg.timebin;
+		histampl_vmax = arg.histampl_vmax;
+		histampl_vmin = arg.histampl_vmin;
+		histampl_nbins = arg.histampl_nbins;
 
-	heightLine=arg.heightLine;
-	bdisplayBars=arg.bdisplayBars;
-	bdisplayShapes=arg.bdisplayShapes;
-	heightSeparator=arg.heightSeparator;
-	bsplitClasses=arg.bsplitClasses;
-	ballfiles=arg.ballfiles;
-	dotheight=arg.dotheight;
-	dotlineheight=arg.dotlineheight;
-	bdotunderline=arg.bdotunderline;
-	nbinsISI=arg.nbinsISI;
-	binISI=arg.binISI;
-	bYmaxAuto=arg.bYmaxAuto;
-	Ymax=arg.Ymax;
+		nbins = arg.nbins;
+		classnb = arg.classnb;
+		classnb2 = arg.classnb2;
+		bacqcomments = arg.bacqcomments;
+		bacqdate = arg.bacqdate;
+		bacqchsettings = arg.bacqchsettings;
+		bspkcomments = arg.bspkcomments;
+		exportdatatype = arg.exportdatatype;
+		spikeclassoption = arg.spikeclassoption;
+		bartefacts = arg.bartefacts;
+		bcolumnheader = arg.bcolumnheader;
+		btotalspikes = arg.btotalspikes;
+		babsolutetime = arg.babsolutetime;
+		bexportzero = arg.bexportzero;
+		ballChannels = arg.ballChannels;
 
-	crHistFill= arg.crHistFill;
-	crHistBorder= arg.crHistBorder;
-	crStimFill=arg.crStimFill;
-	crStimBorder= arg.crStimBorder;
-	crChartArea=arg.crChartArea;
-	for (int i=0; i< 18; i++)
-		crScale[i] = arg.crScale[i];
-	fScalemax = arg.fScalemax ;
-	istimulusindex = arg.istimulusindex;
-	bhistType= arg.bhistType;
-	bCycleHist = arg.bCycleHist;
-	nstipercycle = arg.nstipercycle;
+		heightLine = arg.heightLine;
+		bdisplayBars = arg.bdisplayBars;
+		bdisplayShapes = arg.bdisplayShapes;
+		heightSeparator = arg.heightSeparator;
+		bsplitClasses = arg.bsplitClasses;
+		ballfiles = arg.ballfiles;
+		dotheight = arg.dotheight;
+		dotlineheight = arg.dotlineheight;
+		bdotunderline = arg.bdotunderline;
+		nbinsISI = arg.nbinsISI;
+		binISI = arg.binISI;
+		bYmaxAuto = arg.bYmaxAuto;
+		Ymax = arg.Ymax;
+
+		crHistFill = arg.crHistFill;
+		crHistBorder = arg.crHistBorder;
+		crStimFill = arg.crStimFill;
+		crStimBorder = arg.crStimBorder;
+		crChartArea = arg.crChartArea;
+		for (int i = 0; i < 18; i++)
+			crScale[i] = arg.crScale[i];
+		fScalemax = arg.fScalemax;
+		istimulusindex = arg.istimulusindex;
+		bhistType = arg.bhistType;
+		bCycleHist = arg.bCycleHist;
+		nstipercycle = arg.nstipercycle;
+	}
+	return *this;
 }
 
 void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
@@ -947,42 +956,45 @@ OPTIONS_VIEWDATAMEASURE::~OPTIONS_VIEWDATAMEASURE()
 {
 }
 
-void OPTIONS_VIEWDATAMEASURE::operator = (const OPTIONS_VIEWDATAMEASURE& arg)
+OPTIONS_VIEWDATAMEASURE& OPTIONS_VIEWDATAMEASURE::operator = (const OPTIONS_VIEWDATAMEASURE& arg)
 {
-	bChanged=arg.bChanged;	
+	if (this != &arg) {
+		bChanged = arg.bChanged;
 
-	// parameters to measure
-	bExtrema=arg.bExtrema;			// measure max and min (val, time)	
-	bDiffExtrema=arg.bDiffExtrema;	// difference between extrema (val, time)
-	bDiffDatalimits=arg.bDiffDatalimits; // diff between tags/cursors
-	bHalfrisetime=arg.bHalfrisetime;// time necessary to reach half of the amplitude
-	bHalfrecovery=arg.bHalfrecovery;// time necessary to regain half of the initial amplitude
-	bDatalimits=arg.bDatalimits;	// data value at limits
-	btime=arg.btime;
-	bKeepTags=arg.bKeepTags;		// keep flags after measurement
-	bSaveTags=arg.bSaveTags;
-	bSetTagsforCompleteFile=arg.bSetTagsforCompleteFile;
+		// parameters to measure
+		bExtrema = arg.bExtrema;			// measure max and min (val, time)	
+		bDiffExtrema = arg.bDiffExtrema;	// difference between extrema (val, time)
+		bDiffDatalimits = arg.bDiffDatalimits; // diff between tags/cursors
+		bHalfrisetime = arg.bHalfrisetime;// time necessary to reach half of the amplitude
+		bHalfrecovery = arg.bHalfrecovery;// time necessary to regain half of the initial amplitude
+		bDatalimits = arg.bDatalimits;	// data value at limits
+		btime = arg.btime;
+		bKeepTags = arg.bKeepTags;		// keep flags after measurement
+		bSaveTags = arg.bSaveTags;
+		bSetTagsforCompleteFile = arg.bSetTagsforCompleteFile;
 
-	// source data
-	bAllChannels=arg.bAllChannels;	// measure on all chans (TRUE) or on single chan (FALSE)
-	wSourceChan=arg.wSourceChan;	// if bAllChans=FALSE, source data chan
-	bAllFiles=arg.bAllFiles;		// measure on all files (default=FALSE)
+		// source data
+		bAllChannels = arg.bAllChannels;	// measure on all chans (TRUE) or on single chan (FALSE)
+		wSourceChan = arg.wSourceChan;	// if bAllChans=FALSE, source data chan
+		bAllFiles = arg.bAllFiles;		// measure on all files (default=FALSE)
 
-	// limits
-	wOption=arg.wOption;			// 0=between vertic tags, 1=between horiz lines, 2=relative to stimulus
-	wStimuluschan=arg.wStimuluschan;// if wOption=2: stimulus channel
-	wStimulusthresh=arg.wStimulusthresh;// if wOption=2: stimulus threshold
-	fStimulusoffset=arg.fStimulusoffset;// if wOption=2: offset interval (default=0)
-	wLimitSup=arg.wLimitSup;		// rectangle limits
-	wLimitInf=arg.wLimitInf;
-	lLimitLeft=arg.lLimitLeft;
-	lLimitRight=arg.lLimitRight;
+		// limits
+		wOption = arg.wOption;			// 0=between vertic tags, 1=between horiz lines, 2=relative to stimulus
+		wStimuluschan = arg.wStimuluschan;// if wOption=2: stimulus channel
+		wStimulusthresh = arg.wStimulusthresh;// if wOption=2: stimulus threshold
+		fStimulusoffset = arg.fStimulusoffset;// if wOption=2: offset interval (default=0)
+		wLimitSup = arg.wLimitSup;		// rectangle limits
+		wLimitInf = arg.wLimitInf;
+		lLimitLeft = arg.lLimitLeft;
+		lLimitRight = arg.lLimitRight;
 
-	// dlg edit VT
-	duration = arg.duration;		// on/OFF duration (sec)
-	period=arg.period;				// period (sec)
-	nperiods= arg.nperiods;			// nb of duplicates
-	timeshift= arg.timeshift;		// shift tags
+		// dlg edit VT
+		duration = arg.duration;		// on/OFF duration (sec)
+		period = arg.period;				// period (sec)
+		nperiods = arg.nperiods;			// nb of duplicates
+		timeshift = arg.timeshift;		// shift tags
+	}
+	return *this;
 
 }
 
@@ -1113,43 +1125,46 @@ OPTIONS_IMPORT::~OPTIONS_IMPORT()
 	SAFE_DELETE(pwaveChanArray);
 }
 
-void OPTIONS_IMPORT::operator = (const OPTIONS_IMPORT& arg)
+OPTIONS_IMPORT& OPTIONS_IMPORT::operator = (const OPTIONS_IMPORT& arg)
 {
-	wVersion = arg.wVersion;
-	fGainFID = arg.fGainFID;
-	fGainEAD = arg.fGainEAD;
-	pathWTOASCII=arg.pathWTOASCII;
+	if (this != &arg) {
+		wVersion = arg.wVersion;
+		fGainFID = arg.fGainFID;
+		fGainEAD = arg.fGainEAD;
+		pathWTOASCII = arg.pathWTOASCII;
 
-	// generic import options
-	bSingleRun=arg.bSingleRun;
-	bPreview = arg.bPreview;
-	bSapid3_5=arg.bSapid3_5;
-	bDummy=arg.bDummy;
-	nbRuns=arg.nbRuns;
-	nbChannels=arg.nbChannels;
-	samplingRate=arg.samplingRate;
-	encodingMode=arg.encodingMode;
-	bitsPrecision=arg.bitsPrecision;
-	voltageMax=arg.voltageMax;
-	voltageMin=arg.voltageMin;
-	skipNbytes=arg.skipNbytes;
-	title=arg.title;
-	*pwaveChanArray= *(arg.pwaveChanArray);
-	nSelectedFilter = arg.nSelectedFilter;
+		// generic import options
+		bSingleRun = arg.bSingleRun;
+		bPreview = arg.bPreview;
+		bSapid3_5 = arg.bSapid3_5;
+		bDummy = arg.bDummy;
+		nbRuns = arg.nbRuns;
+		nbChannels = arg.nbChannels;
+		samplingRate = arg.samplingRate;
+		encodingMode = arg.encodingMode;
+		bitsPrecision = arg.bitsPrecision;
+		voltageMax = arg.voltageMax;
+		voltageMin = arg.voltageMin;
+		skipNbytes = arg.skipNbytes;
+		title = arg.title;
+		*pwaveChanArray = *(arg.pwaveChanArray);
+		nSelectedFilter = arg.nSelectedFilter;
 
-	// export options
-	exportType= arg.exportType;
-	bAllchannels= arg.bAllchannels;
-	bSeparateComments= arg.bSeparateComments;
-	bincludeTime=arg.bincludeTime;
-	selectedChannel= arg.selectedChannel;
-	fTimefirst= arg.fTimefirst;
-	fTimelast= arg.fTimelast;
-	bentireFile=arg.bentireFile;
-	iundersample=arg.iundersample;
+		// export options
+		exportType = arg.exportType;
+		bAllchannels = arg.bAllchannels;
+		bSeparateComments = arg.bSeparateComments;
+		bincludeTime = arg.bincludeTime;
+		selectedChannel = arg.selectedChannel;
+		fTimefirst = arg.fTimefirst;
+		fTimelast = arg.fTimelast;
+		bentireFile = arg.bentireFile;
+		iundersample = arg.iundersample;
 
-	// others
-	path=arg.path;
+		// others
+		path = arg.path;
+	}
+	return *this;
 }
 
 void OPTIONS_IMPORT::Serialize(CArchive& ar)
@@ -1312,44 +1327,47 @@ OPTIONS_ACQDATA::~OPTIONS_ACQDATA()
 {
 }
 
-void OPTIONS_ACQDATA::operator = (const OPTIONS_ACQDATA& arg)
+OPTIONS_ACQDATA& OPTIONS_ACQDATA::operator = (const OPTIONS_ACQDATA& arg)
 {
-	chanArray=arg.chanArray;
-	waveFormat=arg.waveFormat;
-	csBasename=arg.csBasename;
-	csPathname=arg.csPathname;
-	exptnumber=arg.exptnumber;
-	csA_stimulus.RemoveAll(); csA_stimulus.Append(arg.csA_stimulus);
-	csA_concentration.RemoveAll(); csA_concentration.Append(arg.csA_concentration);
-	csA_stimulus2.RemoveAll(); csA_stimulus2.Append(arg.csA_stimulus2);
-	csA_concentration2.RemoveAll(); csA_concentration2.Append(arg.csA_concentration2);
-	csA_insect.RemoveAll(); csA_insect.Append(arg.csA_insect);
-	csA_location.RemoveAll(); csA_location.Append(arg.csA_location);
-	csA_sensillum.RemoveAll(); csA_sensillum.Append(arg.csA_sensillum);
-	csA_strain.RemoveAll(); csA_strain.Append(arg.csA_strain);
-	csA_sex.RemoveAll(); csA_sex.Append(arg.csA_sex);
-	csA_operatorname.RemoveAll(); csA_operatorname.Append(arg.csA_operatorname);
-	csA_expt.RemoveAll(); csA_expt.Append(arg.csA_expt);
+	if (this != &arg) {
+		chanArray = arg.chanArray;
+		waveFormat = arg.waveFormat;
+		csBasename = arg.csBasename;
+		csPathname = arg.csPathname;
+		exptnumber = arg.exptnumber;
+		csA_stimulus.RemoveAll(); csA_stimulus.Append(arg.csA_stimulus);
+		csA_concentration.RemoveAll(); csA_concentration.Append(arg.csA_concentration);
+		csA_stimulus2.RemoveAll(); csA_stimulus2.Append(arg.csA_stimulus2);
+		csA_concentration2.RemoveAll(); csA_concentration2.Append(arg.csA_concentration2);
+		csA_insect.RemoveAll(); csA_insect.Append(arg.csA_insect);
+		csA_location.RemoveAll(); csA_location.Append(arg.csA_location);
+		csA_sensillum.RemoveAll(); csA_sensillum.Append(arg.csA_sensillum);
+		csA_strain.RemoveAll(); csA_strain.Append(arg.csA_strain);
+		csA_sex.RemoveAll(); csA_sex.Append(arg.csA_sex);
+		csA_operatorname.RemoveAll(); csA_operatorname.Append(arg.csA_operatorname);
+		csA_expt.RemoveAll(); csA_expt.Append(arg.csA_expt);
 
-	icsA_stimulus=arg.icsA_stimulus;
-	icsA_concentration=arg.icsA_concentration;
-	icsA_stimulus2=arg.icsA_stimulus2;
-	icsA_concentration2=arg.icsA_concentration2;
-	icsA_expt= arg.icsA_expt;
-	izoomCursel= arg.izoomCursel;
+		icsA_stimulus = arg.icsA_stimulus;
+		icsA_concentration = arg.icsA_concentration;
+		icsA_stimulus2 = arg.icsA_stimulus2;
+		icsA_concentration2 = arg.icsA_concentration2;
+		icsA_expt = arg.icsA_expt;
+		izoomCursel = arg.izoomCursel;
 
-	icsA_insect=arg.icsA_insect;
-	icsA_location=arg.icsA_location;
-	icsA_sensillum=arg.icsA_sensillum;
-	icsA_strain=arg.icsA_strain;
-	icsA_sex = arg.icsA_sex;
-	icsA_operatorname=arg.icsA_operatorname;
-	iundersample=arg.iundersample;
-	baudiblesound=arg.baudiblesound;
-	bChannelType = arg.bChannelType;
+		icsA_insect = arg.icsA_insect;
+		icsA_location = arg.icsA_location;
+		icsA_sensillum = arg.icsA_sensillum;
+		icsA_strain = arg.icsA_strain;
+		icsA_sex = arg.icsA_sex;
+		icsA_operatorname = arg.icsA_operatorname;
+		iundersample = arg.iundersample;
+		baudiblesound = arg.baudiblesound;
+		bChannelType = arg.bChannelType;
 
-	sweepduration = arg.sweepduration;
-	insectnumber = arg.insectnumber;
+		sweepduration = arg.sweepduration;
+		insectnumber = arg.insectnumber;
+	}
+	return *this;
 }
 
 void OPTIONS_ACQDATA::Serialize(CArchive& ar)
@@ -1488,22 +1506,25 @@ OPTIONS_OUTPUTDATA::~OPTIONS_OUTPUTDATA()
 {
 }
 
-void OPTIONS_OUTPUTDATA::operator = (const OPTIONS_OUTPUTDATA& arg)
+OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator = (const OPTIONS_OUTPUTDATA& arg)
 {
-	wversion				=arg.wversion;
-	bAllowDA				=arg.bAllowDA;
-	csOutputFile			=arg.csOutputFile;;
-	bPresetWave				=arg.bPresetWave;
-	iDAbufferlength			=arg.iDAbufferlength;
-	iDAnbuffers				=arg.iDAnbuffers;
-	iDATriggermode			=arg.iDATriggermode;
-	dDAFrequency_perchan	=arg.dDAFrequency_perchan;
-	int nchannels			=arg.outputParmsArray.GetSize();
-	outputParmsArray.SetSize(nchannels);
+	if (this != &arg) {
+		wversion = arg.wversion;
+		bAllowDA = arg.bAllowDA;
+		csOutputFile = arg.csOutputFile;;
+		bPresetWave = arg.bPresetWave;
+		iDAbufferlength = arg.iDAbufferlength;
+		iDAnbuffers = arg.iDAnbuffers;
+		iDATriggermode = arg.iDATriggermode;
+		dDAFrequency_perchan = arg.dDAFrequency_perchan;
+		int nchannels = arg.outputParmsArray.GetSize();
+		outputParmsArray.SetSize(nchannels);
 
-	for (int i = 0; i < nchannels; i++) {
-		outputParmsArray[i] = arg.outputParmsArray[i];
+		for (int i = 0; i < nchannels; i++) {
+			outputParmsArray[i] = arg.outputParmsArray[i];
+		}
 	}
+	return *this;
 }
 
 void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
@@ -1643,30 +1664,34 @@ OUTPUTPARMS::~OUTPUTPARMS()
 {
 }
 
-void OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
+OUTPUTPARMS& OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 {
-	wversion		=arg.wversion;
-	csFilename		=arg.csFilename;
-	noise_bExternal	=arg.noise_bExternal;
-	bON				= arg.bON;
-	bDigital		= arg.bDigital;
-	iChan			=arg.iChan;
-	iWaveform		=arg.iWaveform;
-	mseq_iRatio		=arg.mseq_iRatio;
-	mseq_iDelay		=arg.mseq_iDelay;
-	mseq_iSeed		=arg.mseq_iSeed;	
-	noise_iDelay	=arg.noise_iDelay;
-	dAmplitudeMaxV	=arg.dAmplitudeMaxV;
-	dAmplitudeMinV	=arg.dAmplitudeMinV;
-	dFrequency		=arg.dFrequency;	
-	dummy1			=arg.dummy1;
-	dummy2			=arg.dummy2;
-	noise_dAmplitV	=arg.noise_dAmplitV;	
-	noise_dFactor	=arg.noise_dFactor;
-	noise_dOffsetV	=arg.noise_dOffsetV;	
-	stimulussequence= arg.stimulussequence;
-	value			= arg.value;
-	sti				= arg.sti;
+	if (this != &arg) {
+
+		wversion = arg.wversion;
+		csFilename = arg.csFilename;
+		noise_bExternal = arg.noise_bExternal;
+		bON = arg.bON;
+		bDigital = arg.bDigital;
+		iChan = arg.iChan;
+		iWaveform = arg.iWaveform;
+		mseq_iRatio = arg.mseq_iRatio;
+		mseq_iDelay = arg.mseq_iDelay;
+		mseq_iSeed = arg.mseq_iSeed;
+		noise_iDelay = arg.noise_iDelay;
+		dAmplitudeMaxV = arg.dAmplitudeMaxV;
+		dAmplitudeMinV = arg.dAmplitudeMinV;
+		dFrequency = arg.dFrequency;
+		dummy1 = arg.dummy1;
+		dummy2 = arg.dummy2;
+		noise_dAmplitV = arg.noise_dAmplitV;
+		noise_dFactor = arg.noise_dFactor;
+		noise_dOffsetV = arg.noise_dOffsetV;
+		stimulussequence = arg.stimulussequence;
+		value = arg.value;
+		sti = arg.sti;
+	}
+	return *this;
 }
 
 void OUTPUTPARMS::Serialize(CArchive& ar)

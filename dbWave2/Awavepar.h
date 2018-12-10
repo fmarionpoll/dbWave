@@ -16,7 +16,7 @@ class SCOPESTRUCT : public CObject
 	DECLARE_SERIAL(SCOPESTRUCT)
 	SCOPESTRUCT();		// constructor
 	~SCOPESTRUCT();		// destructor
-	void operator = (const SCOPESTRUCT& arg);	// operator redefinition
+	SCOPESTRUCT& operator = (const SCOPESTRUCT& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);		// overridden for document i/o
 
 public:
@@ -46,7 +46,7 @@ class OPTIONS_VIEWDATA : public CObject
 	DECLARE_SERIAL(OPTIONS_VIEWDATA)
 	OPTIONS_VIEWDATA();								// constructor
 	~OPTIONS_VIEWDATA();							// destructor
-	void operator = (const OPTIONS_VIEWDATA& arg);	// operator redefinition
+	OPTIONS_VIEWDATA& operator = (const OPTIONS_VIEWDATA& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);			// document i/o
 
 public:
@@ -174,7 +174,7 @@ class OPTIONS_VIEWSPIKES : public CObject
 	DECLARE_SERIAL(OPTIONS_VIEWSPIKES)
 	OPTIONS_VIEWSPIKES();		// constructor
 	~OPTIONS_VIEWSPIKES();		// destructor
-	void operator = (const OPTIONS_VIEWSPIKES& arg);	// operator redefinition
+	OPTIONS_VIEWSPIKES& operator = (const OPTIONS_VIEWSPIKES& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);	// overridden for document i/o	
 
 public:
@@ -251,7 +251,7 @@ class OPTIONS_VIEWDATAMEASURE : public CObject
 	DECLARE_SERIAL(OPTIONS_VIEWDATAMEASURE)
 	OPTIONS_VIEWDATAMEASURE();	// constructor
 	~OPTIONS_VIEWDATAMEASURE();	// destructor
-	void operator = (const OPTIONS_VIEWDATAMEASURE& arg);	// operator redefinition
+	OPTIONS_VIEWDATAMEASURE& operator = (const OPTIONS_VIEWDATAMEASURE& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);	// overridden for document i/o
 
 public:
@@ -300,7 +300,7 @@ class OPTIONS_IMPORT : public CObject
 	DECLARE_SERIAL(OPTIONS_IMPORT);
 	OPTIONS_IMPORT();
 	virtual ~OPTIONS_IMPORT();
-	void operator = (const OPTIONS_IMPORT& arg);
+	OPTIONS_IMPORT& operator = (const OPTIONS_IMPORT& arg);
 	virtual void Serialize(CArchive& ar);
 
 public:
@@ -352,7 +352,7 @@ class OPTIONS_ACQDATA : public CObject
 	DECLARE_SERIAL(OPTIONS_ACQDATA)
 	OPTIONS_ACQDATA();								// constructor
 	~OPTIONS_ACQDATA();								// destructor
-	void operator = (const OPTIONS_ACQDATA& arg);	// operator redefinition
+	OPTIONS_ACQDATA& operator = (const OPTIONS_ACQDATA& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 
 public:
@@ -408,7 +408,7 @@ class OUTPUTPARMS : public CObject
 	OUTPUTPARMS();									// constructor
 	OUTPUTPARMS(const OUTPUTPARMS& arg);
 	~OUTPUTPARMS();									// destructor
-	void operator = (const OUTPUTPARMS& arg);		// operator redefinition
+	OUTPUTPARMS& operator = (const OUTPUTPARMS& arg);		// operator redefinition
 	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 
 public:
@@ -454,7 +454,7 @@ class OPTIONS_OUTPUTDATA : public CObject
 	DECLARE_SERIAL(OPTIONS_OUTPUTDATA)
 	OPTIONS_OUTPUTDATA();							// constructor
 	~OPTIONS_OUTPUTDATA();							// destructor
-	void operator = (const OPTIONS_OUTPUTDATA& arg);// operator redefinition
+	OPTIONS_OUTPUTDATA& operator = (const OPTIONS_OUTPUTDATA& arg);// operator redefinition
 	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 
 public:
