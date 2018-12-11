@@ -67,19 +67,19 @@ END_MESSAGE_MAP()
 
 CdbWaveView::CdbWaveView()
 	: CDaoRecordView(CdbWaveView::IDD)
-	, m_timefirst(0)
-	, m_timelast(0)
-	, m_amplitudespan(0)
+	  , m_timefirst(0)
+	  , m_timelast(0)
+	  , m_amplitudespan(0), mdPM(nullptr)
 {
 	m_pSet = nullptr;
-	m_bAddMode=FALSE;
+	m_bAddMode = FALSE;
 	m_bFilterON = TRUE;
-	m_bvalidDat=FALSE;
-	m_bvalidSpk=FALSE;
-	m_dattransform=0;
+	m_bvalidDat = FALSE;
+	m_bvalidSpk = FALSE;
+	m_dattransform = 0;
 	m_binit = FALSE;
 	m_spikeclass = 0;
-	m_bEnableActiveAccessibility=FALSE;
+	m_bEnableActiveAccessibility = FALSE;
 }
 
 CdbWaveView::~CdbWaveView()

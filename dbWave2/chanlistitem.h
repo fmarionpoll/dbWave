@@ -17,8 +17,7 @@ public:
 	CChanlistItem(CEnvelope* pX, int iX, CEnvelope* pY, int iY);
 	DECLARE_SERIAL(CChanlistItem)
 	virtual void	Serialize (CArchive &ar);
-	void			InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, 
-							int new_yextent, WORD new_drawmode=1);
+	void			InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent, WORD new_drawmode=1);
 public:
 	CEnvelope*		pEnvelopeAbcissa;		// pointer to abcissa Envelope
 	CEnvelope*		pEnvelopeOrdinates;		// pointer to ordinates	Envelope
@@ -27,18 +26,18 @@ public:
 	void			SetEnvelopeArrays(CEnvelope* px, int x, CEnvelope* py, int y);
 
 protected:	
-	int				dl_yzero;				// data bin value for zero volts
-	int				dl_yextent;				// max to min extent
-	WORD			dl_penwidth;			// pen size
-	WORD			dl_color;				// color
-	WORD			dl_bprint;				// draw mode 
+	int				dl_yzero{};				// data bin value for zero volts
+	int				dl_yextent{};				// max to min extent
+	WORD			dl_penwidth = 0;			// pen size
+	WORD			dl_color{};				// color
+	WORD			dl_bprint{};				// draw mode 
 
-	float			dl_datavoltspbin;		// scale factor (1 unit (0-4095) -> y volts)
-	float			dl_datavoltspan;		// amplitude of data displayed
-	long			dl_databinzero;			// value of zero volts
-	long			dl_databinspan;			// nb of bins encoding values within envelope
+	float			dl_datavoltspbin{};		// scale factor (1 unit (0-4095) -> y volts)
+	float			dl_datavoltspan{};		// amplitude of data displayed
+	long			dl_databinzero{};			// value of zero volts
+	long			dl_databinspan{};			// nb of bins encoding values within envelope
 
-	BOOL			dl_bHZtagsPrint;		// print HZ tags flag
+	BOOL			dl_bHZtagsPrint{};		// print HZ tags flag
 	int				dl_indexabcissa;
 	int				dl_indexordinates;
 

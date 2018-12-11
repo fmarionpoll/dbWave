@@ -109,19 +109,19 @@ END_MESSAGE_MAP()
 
 //////////////////////////////////////////////////////////////////////////////
 
-CTemplateWnd::CTemplateWnd()
-{                                        
+CTemplateWnd::CTemplateWnd(): m_power(0), m_pMax0(nullptr), m_pMin0(nullptr)
+{
 	m_pSumArray = nullptr;
-	m_pSUM0 = nullptr;		// array with sum (X)
-	m_pSUM20 = nullptr;	// array with sum (X * X)
-	m_nitems=0;			// n elements
-	m_tpllen=0;			// length of template array
-	m_pAvg=nullptr;
-	m_bValid=FALSE;
-	m_ktolerance=1.96f;
-	m_globalstd=0.f;
-	m_bUseDIB=TRUE;
-	m_classID=0;
+	m_pSUM0 = nullptr; // array with sum (X)
+	m_pSUM20 = nullptr; // array with sum (X * X)
+	m_nitems = 0; // n elements
+	m_tpllen = 0; // length of template array
+	m_pAvg = nullptr;
+	m_bValid = FALSE;
+	m_ktolerance = 1.96f;
+	m_globalstd = 0.f;
+	m_bUseDIB = TRUE;
+	m_classID = 0;
 }
 
 // ---------------------------------------------------------------------------------

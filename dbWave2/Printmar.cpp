@@ -17,9 +17,9 @@
 
 
 CPrintMarginsDlg::CPrintMarginsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CPrintMarginsDlg::IDD, pParent)
+	: CDialog(CPrintMarginsDlg::IDD, pParent), m_viewtype(0), m_captureMode(0), m_icapturedBar(0)
 {
- 	m_bCaptured = FALSE;
+	m_bCaptured = FALSE;
 	mdPM = nullptr;
 }
 

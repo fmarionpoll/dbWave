@@ -22,7 +22,7 @@ int CFilterWnd::m_noCol[] = {
 	CH_FLAG, CH_ACQDATE_DAY, -1 
 };		
 
-CFilterWnd::CFilterWnd()
+CFilterWnd::CFilterWnd(): m_pDocOld(nullptr), m_htreeitem{}
 {
 	m_pDoc = nullptr;
 }

@@ -17,7 +17,7 @@
 
 
 CScopeScreenPropsDlg::CScopeScreenPropsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CScopeScreenPropsDlg::IDD, pParent)
+	: CDialog(CScopeScreenPropsDlg::IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
 {
 	m_xyticks = 0;
 	m_xytickline = 0;

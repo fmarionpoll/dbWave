@@ -28,15 +28,15 @@
 
 IMPLEMENT_SERIAL(STIMDETECT, CObject, 0)
 
-STIMDETECT::STIMDETECT()
+STIMDETECT::STIMDETECT(): bChanged(0)
 {
 	wversion = 2;
-	nItems=0;			// number of items/line (nb of chans/detection) ?
-	SourceChan=0;		// source channel
-	TransformMethod=0;	// detect from data transformed - i = transform method cf CAcqDataDoc
-	DetectMethod=0;		// detection method see CDetectionView for methods
-	Threshold1=0;		// value of threshold 1	
-	bMode = 0;			// ON/OFF
+	nItems = 0; // number of items/line (nb of chans/detection) ?
+	SourceChan = 0; // source channel
+	TransformMethod = 0; // detect from data transformed - i = transform method cf CAcqDataDoc
+	DetectMethod = 0; // detection method see CDetectionView for methods
+	Threshold1 = 0; // value of threshold 1	
+	bMode = 0; // ON/OFF
 }
 
 STIMDETECT::~STIMDETECT()
@@ -315,22 +315,22 @@ void SPKDETECTARRAY::Serialize(CArchive& ar)
 
 IMPLEMENT_SERIAL(SPKDETECTPARM, CObject, 0 /* schema number*/ )
 
-SPKDETECTPARM::SPKDETECTPARM()
+SPKDETECTPARM::SPKDETECTPARM(): bChanged(0)
 {
-	wversion = 7;				// version 6 (Aug 19 2005 FMP)
-	detectChan=0;				// source channel
-	detectTransform=13;			// detect from data transformed - i = transform method cf CAcqDataDoc
-	detectFrom=0;				// detection method 0=data, 1=tags
-	extractChan=0;
-	extractTransform=13;
-	compensateBaseline=FALSE;
-	detectThreshold=0;			// value of threshold 1	
-	extractNpoints=60;			// spike length (n data pts)
-	prethreshold=20;			// offset spike npts before threshold
-	refractory=20;				// re-start detection n pts after threshold
-	detectThresholdmV = 0.5f;	// detection threshold in mV
-	detectWhat=0;				// detect spikes, 1=detect stimulus
-	detectMode=0;				// if sti, = ON/OFF
+	wversion = 7; // version 6 (Aug 19 2005 FMP)
+	detectChan = 0; // source channel
+	detectTransform = 13; // detect from data transformed - i = transform method cf CAcqDataDoc
+	detectFrom = 0; // detection method 0=data, 1=tags
+	extractChan = 0;
+	extractTransform = 13;
+	compensateBaseline = FALSE;
+	detectThreshold = 0; // value of threshold 1	
+	extractNpoints = 60; // spike length (n data pts)
+	prethreshold = 20; // offset spike npts before threshold
+	refractory = 20; // re-start detection n pts after threshold
+	detectThresholdmV = 0.5f; // detection threshold in mV
+	detectWhat = 0; // detect spikes, 1=detect stimulus
+	detectMode = 0; // if sti, = ON/OFF
 }
 
 SPKDETECTPARM::~SPKDETECTPARM()
@@ -487,31 +487,31 @@ void SPKDETECTPARM::Serialize(CArchive& ar)
 
 IMPLEMENT_SERIAL(SPKCLASSIF, CObject, 0 /* schema number*/ )
 
-SPKCLASSIF::SPKCLASSIF()
-{	
+SPKCLASSIF::SPKCLASSIF(): bChanged(0), nintparms(0), nfloatparms(0)
+{
 	wversion = 2;
-	dataTransform=0;// data transform method (0=raw data)
-	iparameter=0;	// type of parameter measured
-	ileft=10;		// position of first cursor
-	iright=40;		// position of second cursor
-	ilower=0;		// second threshold
-	iupper=10;		// first threshold
-	ixyleft= 10;
-	ixyright= 40;
-	sourceclass=0;	// source class
-	destclass=0;	// destination class	
-	hitrate= 50;
+	dataTransform = 0; // data transform method (0=raw data)
+	iparameter = 0; // type of parameter measured
+	ileft = 10; // position of first cursor
+	iright = 40; // position of second cursor
+	ilower = 0; // second threshold
+	iupper = 10; // first threshold
+	ixyleft = 10;
+	ixyright = 40;
+	sourceclass = 0; // source class
+	destclass = 0; // destination class	
+	hitrate = 50;
 	hitratesort = 75;
 	ktolerance = 1.96f;
 	kleft = 10;
 	kright = 40;
-	rowheight=100;	// height of the spike row within spikeview
-	coltext=-1;
-	colspikes=100;		// width of the spikes within one row
-	colseparator=5;
+	rowheight = 100; // height of the spike row within spikeview
+	coltext = -1;
+	colspikes = 100; // width of the spikes within one row
+	colseparator = 5;
 	ptpl = nullptr;
-	mvmin =0.f;
-	mvmax= 2.f;
+	mvmin = 0.f;
+	mvmax = 2.f;
 	vdestclass = 1;
 	vsourceclass = 0;
 	fjitter_ms = 1.f;

@@ -16,7 +16,7 @@ IMPLEMENT_DYNAMIC(CEditStimArrayDlg, CDialog)
 
 CEditStimArrayDlg::CEditStimArrayDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CEditStimArrayDlg::IDD, pParent)
-	, m_value(0)
+	  , m_rate(0), m_pstim(nullptr), m_binit(0), m_value(0), m_iItem(0)
 {
 	m_pimagelist = nullptr;
 	m_pstimsaved = nullptr;

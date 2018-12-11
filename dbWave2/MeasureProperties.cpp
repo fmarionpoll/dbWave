@@ -2,13 +2,6 @@
 //
 
 #include "StdAfx.h"
-#include "Cscale.h"
-#include "scopescr.h"
-#include "Lineview.h"
-#include "Editctrl.h"
-#include "dbMainTable.h"
-#include "dbWaveDoc.h"
-
 #include "resource.h"
 #include "measureoptions.h"
 #include "MeasureProperties.h"
@@ -22,8 +15,8 @@
 
 IMPLEMENT_DYNAMIC(CMeasureProperties, CPropertySheet)
 
-CMeasureProperties::CMeasureProperties(CWnd* pWndParent, int iselect)
-	 : CPropertySheet(IDS_PROPSHT_CAPTION, pWndParent)
+CMeasureProperties::CMeasureProperties(CWnd* p_wnd_parent, const int select_active_page)
+	 : CPropertySheet(IDS_PROPSHT_CAPTION, p_wnd_parent)
 {
 	// One way to make a different property page the 
 	// active one is to call SetActivePage().
@@ -33,7 +26,7 @@ CMeasureProperties::CMeasureProperties(CWnd* pWndParent, int iselect)
 	AddPage(&m_Page2);	// VT tags edit
 	AddPage(&m_Page1);	// measure options
 	AddPage(&m_Page4);	// measure results
-	SetActivePage(iselect);
+	SetActivePage(select_active_page);
 }
 
 CMeasureProperties::~CMeasureProperties()
@@ -52,7 +45,6 @@ END_MESSAGE_MAP()
 BOOL CMeasureProperties::OnInitDialog() 
 {
 	// vertical tags
-	int ntags = m_plineview->GetNVTtags();
 	m_Page2.m_plineview=m_plineview;
 	m_Page2.m_pMO = m_pMO;
 	m_Page2.m_samplingrate = m_samplingrate;

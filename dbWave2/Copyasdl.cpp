@@ -12,8 +12,8 @@
 // CCopyAsDlg dialog
 
 
-CCopyAsDlg::CCopyAsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CCopyAsDlg::IDD, pParent)
+CCopyAsDlg::CCopyAsDlg(CWnd* p_parent /*=NULL*/)
+	: CDialog(CCopyAsDlg::IDD, p_parent), m_bgraphics(0)
 {
 	m_nabcissa = 0;
 	m_nordinates = 0;

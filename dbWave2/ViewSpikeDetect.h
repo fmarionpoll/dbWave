@@ -154,20 +154,20 @@ protected:
 	long			m_lFirst0;
 	long			m_lLast0;
 	int				m_npixels0;
-	int				m_nfiles;			// nb of files in doc
-	int 			m_nbrowsperpage;	// USER: nb files/page
-	long			m_lprintFirst;		// file index of first pt
-	long 			m_lprintLen;		// nb pts per line
-	float			m_printFirst;
-	float 			m_printLast;
-	BOOL			m_bIsPrinting;
+	int				m_nfiles{};			// nb of files in doc
+	int 			m_nbrowsperpage{};	// USER: nb files/page
+	long			m_lprintFirst{};		// file index of first pt
+	long 			m_lprintLen{};		// nb pts per line
+	float			m_printFirst{};
+	float 			m_printLast{};
+	BOOL			m_bIsPrinting{};
 	CRect			m_rData;
 	CRect			m_rSpike;
 
 	// specific printer parameters
-	TEXTMETRIC		m_tMetric;			// onbegin/onendPrinting
-	LOGFONT			m_logFont;			// onbegin/onendPrinting
-	CFont*			m_pOldFont;			// onbegin/onendPrinting
+	TEXTMETRIC		m_tMetric{};			// onbegin/onendPrinting
+	LOGFONT			m_logFont{};			// onbegin/onendPrinting
+	CFont*			m_pOldFont{};			// onbegin/onendPrinting
 	CFont			m_fontPrint;		// onbegin/onendPrinting    
 
 	// page format printing parameters (pixel unit)    
@@ -188,17 +188,17 @@ protected:
 	void		PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars);
 
 	// gain and bias setting: data and functions
-	HICON		m_hBias;
-	HICON		m_hZoom;
+	HICON		m_hBias{};
+	HICON		m_hZoom{};
 	CScrollBar 	m_scrolly;			// V scrollbar
-	float		m_yscaleFactor;		// div factor for y bar 
-	int			m_VBarMode;			// flag V scrollbar state
+	float		m_yscaleFactor{};		// div factor for y bar 
+	int			m_VBarMode{};			// flag V scrollbar state
 
-	HICON		m_hBias2;
-	HICON		m_hZoom2;
+	HICON		m_hBias2{};
+	HICON		m_hZoom2{};
 	CScrollBar 	m_scrolly2;			// V scrollbar
-	float		m_yscaleFactor2;	// div factor for y bar 
-	int			m_VBarMode2;		// flag V scrollbar state
+	float		m_yscaleFactor2{};	// div factor for y bar 
+	int			m_VBarMode2{};		// flag V scrollbar state
 
 	void		OnGainScroll(UINT nSBCode, UINT nPos, int iID);
 	void		OnBiasScroll(UINT nSBCode, UINT nPos, int iID);

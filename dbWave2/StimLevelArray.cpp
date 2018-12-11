@@ -146,7 +146,7 @@ CIntervalsAndWordsSeries::CIntervalsAndWordsSeries()
 	chrate = 10000.;
 }
 
-CIntervalsAndWordsSeries::CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg)
+CIntervalsAndWordsSeries::CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg): version(0)
 {
 	int nitems = arg.iistep.GetSize();
 	iistep.SetSize(nitems);

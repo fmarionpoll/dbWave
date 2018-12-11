@@ -24,13 +24,13 @@ IMPLEMENT_DYNAMIC(CImportFilesDlg, CDialog)
 
 CImportFilesDlg::CImportFilesDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CImportFilesDlg::IDD, pParent)
-	, m_ncurrent(0)
-	, m_nfiles(0)
-	, m_filefrom(_T(""))
-	, m_fileto(_T(""))
-	, m_bReadHeader(TRUE)
+	  , m_pfilenameArray(nullptr), m_pdbDoc(nullptr), m_ncurrent(0)
+	  , m_nfiles(0)
+	  , m_filefrom(_T(""))
+	  , m_fileto(_T(""))
+	  , m_scan_count(0), m_xinstgain(0), m_xrate(0), m_dspan{}, m_dbinval{}, m_bReadHeader(TRUE)
 {
-	m_bconvert=FALSE;
+	m_bconvert = FALSE;
 	m_option = 0;
 	m_pconvertedFiles = nullptr;
 }

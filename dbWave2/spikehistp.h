@@ -30,15 +30,15 @@ protected:
 	int  	m_hitspk;			// no of spike selected
 	int		m_selclass;			// index class selected
 	
-    int  	m_binsize;			// size of one bin
+    int  	m_binsize{};			// size of one bin
     int 	m_abcissaminval;	// minimum value from which histogram is built (abcissa)
     int 	m_abcissamaxval;	// maximum value (abcissa max)
     int  	m_nbins;			// n bins within histogram    
 
    	DWORD 	m_lmax;				// value max   	
-	int  	m_imax;				// index max
-	int  	m_ifirst;			// index first interval with data
-	int  	m_ilast;			// index last interval with data
+	int  	m_imax{};				// index max
+	int  	m_ifirst{};			// index first interval with data
+	int  	m_ilast{};			// index last interval with data
 	
 	
 // Helpers and public procedures

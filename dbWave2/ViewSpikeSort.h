@@ -62,27 +62,27 @@ protected:
 
 	CSpikeDoc*	m_pSpkDoc;			// document
 	CSpikeList*	m_pSpkList;			// spike list
-	SPKCLASSIF*	m_psC;
-	OPTIONS_VIEWDATA*  mdPM;		// view data options
+	SPKCLASSIF*	m_psC{};
+	OPTIONS_VIEWDATA*  mdPM{};		// view data options
 
-	int		m_itaglow;
-	int		m_itagup;
-	int		m_ixyright;
-	int		m_ixyleft;
+	int		m_itaglow{};
+	int		m_itagup{};
+	int		m_ixyright{};
+	int		m_ixyleft{};
 	
-	int		m_spkhistupper;
-	int		m_spkhistlower;	
-	int		m_spkformtagleft;
-	int		m_spkformtagright;
+	int		m_spkhistupper{};
+	int		m_spkhistlower{};	
+	int		m_spkformtagleft{};
+	int		m_spkformtagright{};
 	
 	float	m_tunit;				// 1=s, 1000f=ms, 1e6=us
 	float	m_vunit;				// 1=V, 1000f=mV, 1e6=uV
-	float	m_delta;
-	int		m_parmmax;				// max of array m_parm
-	int		m_parmmin;				// min of array m_parm
+	float	m_delta{};
+	int		m_parmmax{};				// max of array m_parm
+	int		m_parmmin{};				// min of array m_parm
 	BOOL	m_bvalidextrema;		// tells if m_parmmax & m_parmmin are valid
-	long	m_lFirst;				// display first
-	long	m_lLast;				// display last
+	long	m_lFirst{};				// display first
+	long	m_lLast{};				// display last
 	BOOL	m_bMeasureDone;			// flag m_parm valid
 	int		m_divAmplitudeBy;		// value to adjust changes in amplitude / filter(s)
 
@@ -91,7 +91,7 @@ protected:
 	CWordArray  m_class;			// spike class
 	CWordArray	m_nspkperfile;		// number of spikes per file
 	CDWordArray m_iitime;			// time index
-	SCROLLINFO	m_scrollFilePos_infos;
+	SCROLLINFO	m_scrollFilePos_infos{};
 
 // Operations
 public:

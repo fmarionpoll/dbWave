@@ -1,4 +1,4 @@
-// acqdatad.cpp : implementation file
+// Acqdatad.cpp : implementation file
 //
 
 #include "StdAfx.h"
@@ -68,7 +68,7 @@ CAcqDataDoc::CAcqDataDoc()
 
 /**************************************************************************
  function:  ~CAcqDataDoc()
- purpose: Remove from menory an CAcqDataDoc object
+ purpose: Remove from memory an CAcqDataDoc object
  parameters: none
  returns: none
  comments: 
@@ -106,8 +106,8 @@ BOOL CAcqDataDoc::OnSaveDocument(CString &szPathName)
  function:  OnOpenDocument(CString &szPathName)
  purpose: Open the file called szPathName
  parameters:
-	_ CString &szPathName : Name of the file to be openned
- returns: TRUE if operation was successfull, else returns FALSE	
+	_ CString &szPathName : Name of the file to be opened
+ returns: TRUE if operation was successful, else returns FALSE	
  comments:
  **************************************************************************/
 
@@ -218,7 +218,7 @@ int CAcqDataDoc::CheckFileTypeFromName(CString& sz_path_name)
 	if (!flag)
 		return flag;
 
-	// create standard object if pxfile is null
+	// create standard object if p file is null
 	if (m_pXFile == nullptr)
 		m_pXFile = new CDataFileAWAVE;
 
@@ -296,7 +296,7 @@ BOOL CAcqDataDoc::OpenAcqFile(CString &cs_filename)
 			break;
 			//case DOCTYPE_PCCLAMP		5	// PCCLAMP document (not implemented yet)
 			//case DOCTYPE_SAPID 		6	// SAPID document (not implemented yet)
-			//case DOCTYPE_UNKNOWN		-1	// The type of the document isn't accept by 
+			//case DOCTYPE_UNKNOWN		-1	// type of the document not accepted 
 		default:
 			m_pXFile = new CDataFileX;
 			break;
@@ -324,7 +324,7 @@ BOOL CAcqDataDoc::OpenAcqFile(CString &cs_filename)
  function:  OnNewDocument()
  purpose: Create a new document	
  parameters: none
- returns: TRUE if operation was successfull, else returns FALSE
+ returns: TRUE if operation was successful, else returns FALSE
  comments:
  **************************************************************************/
 
@@ -498,7 +498,7 @@ void CAcqDataDoc::Dump(CDumpContext& dc) const
 //////////////////////////////////////////////////////////////////////////////
 // check file type
 
-int CAcqDataDoc::CheckFileType(CFile* f)
+int CAcqDataDoc::CheckFileType(CFile* f) const
 {
 	auto i_id=DOCTYPE_UNKNOWN;
 	if (m_pXFile != nullptr)
@@ -581,7 +581,7 @@ BOOL CAcqDataDoc::AllocBUF()
 
 	ASSERT (m_pWBuf != NULL);	// check object created properly	
 	CWaveFormat* pwF= GetpWaveFormat();
-	m_lDOCchanLength = pwF->sample_count /(long) pwF->scan_count;
+	m_lDOCchanLength = pwF->sample_count /static_cast<long>(pwF->scan_count);
 	m_DOCnbchans = pwF->scan_count;
 	pwF->duration = static_cast<float>(m_lDOCchanLength)/pwF->chrate;
 
@@ -604,42 +604,42 @@ BOOL CAcqDataDoc::AllocBUF()
 
 // returns the address of the raw data buffer
 // and the number of interleaved channels
-short*	CAcqDataDoc::LoadRawDataParams(int* nchans) 
+short*	CAcqDataDoc::LoadRawDataParams(int* nb_channels) 
 {
-	*nchans = GetpWaveFormat()->scan_count; 
+	*nb_channels = GetpWaveFormat()->scan_count; 
 	return m_pWBuf->GetWBAdrRawDataBuf();
 }
 
 /**************************************************************************
- function:		LoadRawData (long* lFirst, long* lLast, short nspan)
+ function:		LoadRawData (long* lFirst, long* lLast, short n_span)
 
  purpose:		load data from file into memory buffer
  parameters:	
 	_ lFirst = file channel index of first pt (address of variable)
 	_ lLast = file channel index of last point (address of variable)
-	_ nspan = try having nspan points before lFirst and nspan after lLast
+	_ n_span = try having n_span points before lFirst and n_span after lLast
 			  (necessary for transforms)
  returns:		lFirst , lLast: chan file indexes of first and last pt 
 				buffer: data loaded from file
 				TRUE if no error
  comments:      load as much data as possible within buffer
  **************************************************************************/
-BOOL CAcqDataDoc::LoadRawData(long* lFirst, long* lLast, int nspan)
+BOOL CAcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 {
-		BOOL flag = TRUE;
+	auto flag = TRUE;
 
-	if ((*lFirst - nspan < m_lBUFchanFirst) 
-	|| (*lLast + nspan > m_lBUFchanLast) || !m_bValidReadBuffer)
+	if ((*l_first - n_span < m_lBUFchanFirst) 
+	|| (*l_last + n_span > m_lBUFchanLast) || !m_bValidReadBuffer)
 	{
-		flag = ReadDataBlock(*lFirst - nspan);
+		flag = ReadDataBlock(*l_first - n_span);
 		m_bValidReadBuffer = TRUE;
 		m_bValidTransfBuffer = FALSE;	
 	}
 
-	*lFirst = m_lBUFchanFirst + nspan;
-	*lLast = m_lBUFchanLast;
+	*l_first = m_lBUFchanFirst + n_span;
+	*l_last = m_lBUFchanLast;
 	if (m_lBUFchanLast < m_lDOCchanLength-1)
-		*lLast -= nspan;
+		*l_last -= n_span;
 
 	return flag;
 }
@@ -654,13 +654,13 @@ BOOL CAcqDataDoc::LoadRawData(long* lFirst, long* lLast, int nspan)
  comments: 
  **************************************************************************/
 
-BOOL CAcqDataDoc::ReadDataBlock(long lFirst)
+BOOL CAcqDataDoc::ReadDataBlock(long l_first)
 {
 	// check limits
-	if (lFirst < 0) 
-		lFirst = 0;
+	if (l_first < 0) 
+		l_first = 0;
 	// compute limits
-	m_lBUFchanFirst = lFirst;
+	m_lBUFchanFirst = l_first;
 	m_lBUFchanLast = m_lBUFchanFirst + m_lBUFchanSize-1;
 	if (m_lBUFchanLast > m_lDOCchanLength)
 	{
@@ -671,7 +671,7 @@ BOOL CAcqDataDoc::ReadDataBlock(long lFirst)
 		}
 		m_lBUFchanFirst = m_lDOCchanLength - m_lBUFchanSize;
 	}
-	lFirst = m_lBUFchanFirst * m_DOCnbchans;;
+	l_first = m_lBUFchanFirst * m_DOCnbchans;;
 	
 	// reallocate buffer if needed
 	if (m_pWBuf->GetWBNumElements() != m_lBUFchanSize)
@@ -680,17 +680,17 @@ BOOL CAcqDataDoc::ReadDataBlock(long lFirst)
 	// read data from file
 	if (m_pXFile != nullptr)
 	{
-		short* pBuffer = m_pWBuf->GetWBAdrRawDataBuf();
-		ASSERT(pBuffer != NULL);
-		long lSize = m_pXFile->ReadData(lFirst, m_lBUFSize*sizeof(short), pBuffer);
-		m_lBUFchanLast = m_lBUFchanFirst + lSize/m_DOCnbchans - 1;
+		short* p_buffer = m_pWBuf->GetWBAdrRawDataBuf();
+		ASSERT(p_buffer != NULL);
+		const auto l_size = m_pXFile->ReadData(l_first, m_lBUFSize*sizeof(short), p_buffer);
+		m_lBUFchanLast = m_lBUFchanFirst + l_size/m_DOCnbchans - 1;
 
 		// remove offset so that data are signed short (for offset binary data of 12 or 16 bits resolution)
 		const auto w_bin_zero = static_cast<WORD>(m_pWBuf->m_waveFormat.binzero);
 		if (m_bRemoveOffset && w_bin_zero != NULL)
 		{
 			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->GetWBAdrRawDataBuf());
-			for (long i = 0; i < lSize; i++, pw_buf++)
+			for (long i = 0; i < l_size; i++, pw_buf++)
 				*pw_buf -= w_bin_zero;
 		}
 		return TRUE;
@@ -709,21 +709,21 @@ void CAcqDataDoc::ReadDataInfos()
 }
 
 /**************************************************************************
- function:		BGetVal (short chan, long lIndex)
+ function:		BGetVal (short channel, long lIndex)
  purpose: Returns value and refreshes data if necessery
  parameters:
-	_ short chan : channel of the current plot
+	_ short channel : channel of the current plot
 	_ long lIndex : index of the current plot
  returns:			
  comments:      
  **************************************************************************/
 
-int CAcqDataDoc::BGetVal(int chan, long lIndex)
+int CAcqDataDoc::BGetVal(const int channel, const long l_index)
 {
-	if ((lIndex < m_lBUFchanFirst) || (lIndex > m_lBUFchanLast))
-		ReadDataBlock(lIndex);
-	const int index = lIndex-m_lBUFchanFirst;	
-	return *(m_pWBuf->GetWBAdrRawDataElmt(chan, index));
+	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
+		ReadDataBlock(l_index);
+	const int index = l_index-m_lBUFchanFirst;	
+	return *(m_pWBuf->GetWBAdrRawDataElmt(channel, index));
 }
 
 /**************************************************************************
@@ -742,40 +742,40 @@ int CAcqDataDoc::BGetVal(int chan, long lIndex)
  comments:      load as many data as possible within buffer
  **************************************************************************/
 
-short* CAcqDataDoc::LoadTransfData(long lFirst, long lLast, int transformType, int ns)
+short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const int transform_type, const int source_channel)
 {
 	const BOOL b_already_done = (m_bValidTransfBuffer 
-					 && (lFirst == m_tBUFfirst )
-					 && (lLast == m_tBUFlast)
-					 && (m_tBUFtransform == transformType)
-					 && (m_tBUFsourcechan == ns));
-	m_tBUFtransform = transformType;
-	m_tBUFsourcechan = ns;
-	m_tBUFfirst = lFirst;
-	m_tBUFlast = lLast;
+					 && (l_first == m_tBUFfirst )
+					 && (l_last == m_tBUFlast)
+					 && (m_tBUFtransform == transform_type)
+					 && (m_tBUFsourcechan == source_channel));
+	m_tBUFtransform = transform_type;
+	m_tBUFsourcechan = source_channel;
+	m_tBUFfirst = l_first;
+	m_tBUFlast = l_last;
 
 	if (m_pWBuf->GetWBAdrTransfData() == nullptr)
-		m_pWBuf->InitWBTransformMode(transformType);
+		m_pWBuf->InitWBTransformMode(transform_type);
 
-	const auto i_span = m_pWBuf->GetWBTransformSpan(transformType);
+	const auto i_span = m_pWBuf->GetWBTransformSpan(transform_type);
 	const auto l_span = static_cast<long>(i_span);
 	
 	// ASSERT make sure that all data requested are within the buffer ...
-	ASSERT(!(lFirst < m_lBUFchanFirst) && !(lLast > m_lBUFchanLast));
-	if (((lFirst-l_span) < m_lBUFchanFirst) || ((lLast+l_span) > m_lBUFchanLast)) // we should never get there
-		ReadDataBlock(lFirst-l_span);							// but, just in case 
+	ASSERT(!(l_first < m_lBUFchanFirst) && !(l_last > m_lBUFchanLast));
+	if (((l_first-l_span) < m_lBUFchanFirst) || ((l_last+l_span) > m_lBUFchanLast)) // we should never get there
+		ReadDataBlock(l_first-l_span);							// but, just in case 
 
-	auto n_points = static_cast<int>(lLast - lFirst + 1);
+	auto n_points = static_cast<int>(l_last - l_first + 1);
 	const int n_channels = GetpWaveFormat()->scan_count;
-	ASSERT(ns < n_channels);											// make sure this is a valid channel
-	const int i_offset = (lFirst-m_lBUFchanFirst)* n_channels + ns;
-	short* lp_source = m_pWBuf->GetWBAdrRawDataBuf() + i_offset;
+	ASSERT(source_channel < n_channels);											// make sure this is a valid channel
+	const int i_offset = (l_first-m_lBUFchanFirst)* n_channels + source_channel;
+	auto lp_source = m_pWBuf->GetWBAdrRawDataBuf() + i_offset;
 
 	// call corresponding one-pass routine
-	short* lp_destination = m_pWBuf->GetWBAdrTransfData();
+	auto lp_destination = m_pWBuf->GetWBAdrTransfData();
 
 	// check if source lFirst can be used
-	const auto b_isLFirstLower = (lFirst < l_span);
+	const auto b_isLFirstLower = (l_first < l_span);
 	if (b_isLFirstLower)	// no: skip these data and erase later corresp transform
 	{
 		lp_source += n_channels * i_span;
@@ -784,7 +784,7 @@ short* CAcqDataDoc::LoadTransfData(long lFirst, long lLast, int transformType, i
 	}
 
 	// check if source lLast can be used
-	const auto b_isLLastGreater = (lLast > m_lDOCchanLength-l_span);
+	const auto b_isLLastGreater = (l_last > m_lDOCchanLength-l_span);
 	if (b_isLLastGreater)	// no: skip these data and erase later corresp transform
 	{
 		n_points -= i_span;
@@ -793,14 +793,14 @@ short* CAcqDataDoc::LoadTransfData(long lFirst, long lLast, int transformType, i
 	if (n_points <= 0)
 	{
 		// erase data at the end of the buffer
-		const int i_cx = i_span + lLast - lFirst+1;
+		const int i_cx = i_span + l_last - l_first+1;
 		auto lp_dest0 = m_pWBuf->GetWBAdrTransfData();
 		for (auto cx = 0 ; cx<i_cx; cx++, lp_dest0++)
 			*lp_dest0 = 0;
 	}
 	else if (!b_already_done)
 	{
-		switch (transformType)
+		switch (transform_type)
 		{
 			case 0:  m_pWBuf->BCopy	    (lp_source,  lp_destination, n_points); break;
 			case 1:	 m_pWBuf->BDeriv	(lp_source,  lp_destination, n_points); break;
@@ -823,10 +823,10 @@ short* CAcqDataDoc::LoadTransfData(long lFirst, long lLast, int transformType, i
 		
 		// set undefined pts equal to first valid point
 		if (b_isLFirstLower)
-		{	
-			short* lpDest0 = m_pWBuf->GetWBAdrTransfData();
-			for (int cx = i_span; cx>0; cx--, lpDest0++)
-				*lpDest0 = 0;
+		{
+			auto lp_dest0 = m_pWBuf->GetWBAdrTransfData();
+			for (auto cx = i_span; cx>0; cx--, lp_dest0++)
+				*lp_dest0 = 0;
 			n_points += i_span;
 			lp_destination -= i_span;
 		}
@@ -859,21 +859,21 @@ short* CAcqDataDoc::LoadTransfData(long lFirst, long lLast, int transformType, i
  comments:      
  **************************************************************************/
 
-BOOL CAcqDataDoc::BuildTransfData(int transformType, int ns)
+BOOL CAcqDataDoc::BuildTransfData(const int transform_type, const int source_channel)
 {
 	// make sure that transform buffer is ready
 	if (m_pWBuf->GetWBAdrTransfData() == nullptr)
-		m_pWBuf->InitWBTransformMode(transformType);
+		m_pWBuf->InitWBTransformMode(transform_type);
 	auto flag = TRUE;
 
 	// init parameters
-	auto lp_source = m_pWBuf->GetWBAdrRawDataBuf()	+ ns;
+	auto lp_source = m_pWBuf->GetWBAdrRawDataBuf()	+ source_channel;
 	const int nb_channels = GetpWaveFormat()->scan_count;
-	ASSERT(ns < nb_channels);
+	ASSERT(source_channel < nb_channels);
 
 	// adjust pointers according to nspan - (fringe data) and set flags erase these data at the end
 	auto lp_dest = m_pWBuf->GetWBAdrTransfData();
-	const auto i_span_between_points = m_pWBuf->GetWBTransformSpan(transformType);
+	const auto i_span_between_points = m_pWBuf->GetWBTransformSpan(transform_type);
 	const auto l_span_between_points = static_cast<long>(i_span_between_points);
 	const auto l_first = m_lBUFchanFirst+l_span_between_points;
 	const auto l_last = m_lBUFchanLast-l_span_between_points;
@@ -882,7 +882,7 @@ BOOL CAcqDataDoc::BuildTransfData(int transformType, int ns)
 	int n_points = l_last - l_first +1;
 	ASSERT(n_points > 0);
 
-	switch (transformType)
+	switch (transform_type)
 	{
 		case 0:  m_pWBuf->BCopy	    (lp_source,  lp_dest, n_points); break;
 		case 1:	 m_pWBuf->BDeriv	(lp_source,  lp_dest, n_points); break;
@@ -923,9 +923,9 @@ BOOL CAcqDataDoc::BuildTransfData(int transformType, int ns)
 // create new awave file
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CAcqDataDoc::CreateAcqFile(CString &csFileName)
+BOOL CAcqDataDoc::CreateAcqFile(CString &cs_file_name)
 {
-	if (!csFileName.IsEmpty())
+	if (!cs_file_name.IsEmpty())
 	{
 		// Create file - send message if creation failed
 		if (m_pXFile == nullptr)
@@ -942,7 +942,7 @@ BOOL CAcqDataDoc::CreateAcqFile(CString &csFileName)
 
 		CFileException fe;	
 
-		if (!m_pXFile->Open(csFileName, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, &fe)) //shareDenyNone
+		if (!m_pXFile->Open(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, &fe)) //shareDenyNone
 		{
 			AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);
 			return FALSE;
@@ -958,24 +958,24 @@ BOOL CAcqDataDoc::CreateAcqFile(CString &csFileName)
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CAcqDataDoc::WriteHZtags(CTagList* ptags)
+BOOL CAcqDataDoc::WriteHZtags(CTagList* p_tags)
 {
-	if (ptags == nullptr)
-		ptags = &m_hz_tags;
-	if (ptags == nullptr || ptags->GetNTags() == 0)
+	if (p_tags == nullptr)
+		p_tags = &m_hz_tags;
+	if (p_tags == nullptr || p_tags->GetNTags() == 0)
 		return TRUE;
-	return m_pXFile->WriteHZtags(ptags);
+	return m_pXFile->WriteHZtags(p_tags);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CAcqDataDoc::WriteVTtags(CTagList* ptags)
+BOOL CAcqDataDoc::WriteVTtags(CTagList* p_tags)
 {
-	if (ptags == nullptr)
-		ptags = &m_vt_tags;
-	if (ptags == nullptr || ptags->GetNTags() == 0)
+	if (p_tags == nullptr)
+		p_tags = &m_vt_tags;
+	if (p_tags == nullptr || p_tags->GetNTags() == 0)
 		return TRUE;
-	return m_pXFile->WriteVTtags(ptags);
+	return m_pXFile->WriteVTtags(p_tags);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -995,9 +995,9 @@ BOOL CAcqDataDoc::AcqDoc_DataAppendStart()
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CAcqDataDoc::AcqDoc_DataAppend(short* p_buffer,  UINT ui_bytesLength) const
+BOOL CAcqDataDoc::AcqDoc_DataAppend(short* p_buffer, const UINT bytes_length) const
 {
-	return m_pXFile->DataAppend(p_buffer, ui_bytesLength);
+	return m_pXFile->DataAppend(p_buffer, bytes_length);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1005,11 +1005,11 @@ BOOL CAcqDataDoc::AcqDoc_DataAppend(short* p_buffer,  UINT ui_bytesLength) const
 BOOL CAcqDataDoc::AcqDoc_DataAppendStop()
 {
 	m_pXFile->DataAppendStop();
-	CWaveFormat* p_waveFormat = GetpWaveFormat();
-	p_waveFormat->sample_count= static_cast<long>(m_pXFile->m_ulbytescount / sizeof(short));
-	p_waveFormat->duration = static_cast<float>(p_waveFormat->sample_count) / static_cast<float>(p_waveFormat->scan_count)
-					/p_waveFormat->chrate;
-	m_pXFile->WriteDataInfos(p_waveFormat, GetpWavechanArray());
+	const auto p_wave_format = GetpWaveFormat();
+	p_wave_format->sample_count= static_cast<long>(m_pXFile->m_ulbytescount / sizeof(short));
+	p_wave_format->duration = static_cast<float>(p_wave_format->sample_count) / static_cast<float>(p_wave_format->scan_count)
+					/p_wave_format->chrate;
+	m_pXFile->WriteDataInfos(p_wave_format, GetpWavechanArray());
 	m_pXFile->Flush();
 	return TRUE;
 }
@@ -1042,29 +1042,29 @@ void CAcqDataDoc::AcqCloseFile() const
 // if "overwrite" (saveas is the same name than the source file: 
 //    create new file, copy into old file, delete new file
 
-BOOL CAcqDataDoc::SaveAs(CString &sznewName, BOOL bCheckOverWrite, int iType)
+BOOL CAcqDataDoc::SaveAs(CString &new_name, BOOL b_check_over_write, const int i_type)
 {
-	const auto i_position_of_extension = sznewName.ReverseFind('.');
+	const auto i_position_of_extension = new_name.ReverseFind('.');
 	if (i_position_of_extension > 0) 
 	{
-		auto ext = sznewName.Right(sznewName.GetLength() - i_position_of_extension - 1);
+		auto ext = new_name.Right(new_name.GetLength() - i_position_of_extension - 1);
 		const BOOL is_extension_dat = (ext.Compare(_T("dat")) == 0);
 		if (!is_extension_dat)
 		{
-			ext = sznewName.Left(i_position_of_extension +1);
-			sznewName = ext + _T("dat");
+			ext = new_name.Left(i_position_of_extension +1);
+			new_name = ext + _T("dat");
 		}
 	}
 
-	auto dummy_name = sznewName;
+	auto dummy_name = new_name;
 	auto cs_former_name = m_pXFile->GetFilePath();
 
 	// check if same file already exist
 	CFileStatus r_status;	// file status: time creation, ...
-	const auto b_file_already_exists = CFile::GetStatus(sznewName, r_status);
-	if (b_file_already_exists != 0 && bCheckOverWrite)
+	const auto b_file_already_exists = CFile::GetStatus(new_name, r_status);
+	if (b_file_already_exists != 0 && b_check_over_write)
 	{
-		auto prompt=sznewName;
+		auto prompt=new_name;
 		prompt += _T("\nThis file already exists.\nReplace existing file?");
 		if (AfxMessageBox(prompt, MB_YESNO) != IDYES)
 			return FALSE;       // don't continue
@@ -1076,7 +1076,7 @@ BOOL CAcqDataDoc::SaveAs(CString &sznewName, BOOL bCheckOverWrite, int iType)
 		cs_former_name.CompareNoCase(r_status.m_szFullName) == 0) // used in conjunction with CFile::GetStatus()
 	{
 		b_is_duplicate_name = TRUE;
-		dummy_name = sznewName;
+		dummy_name = new_name;
 		dummy_name += _T("_tmp.dat");
 	}
 
@@ -1113,7 +1113,7 @@ BOOL CAcqDataDoc::SaveAs(CString &sznewName, BOOL bCheckOverWrite, int iType)
 			l_buf_size = n_samples;		// then, store data in temporary buffer
 		const long n_bytes = l_buf_size*sizeof(short);
 		m_pXFile->Read(p_buf, n_bytes);
-		if (iType == 3)	// ASD file
+		if (i_type == 3)	// ASD file
 		{
 			auto p_buf2 = p_buf;
 			for (long i=0; i< n_bytes; i++)
@@ -1172,7 +1172,7 @@ BOOL CAcqDataDoc::SaveAs(CString &sznewName, BOOL bCheckOverWrite, int iType)
 
 		// open saved file
 		CFileException fe;	
-		if (!m_pXFile->Open(sznewName, CFile::modeReadWrite | CFile::shareDenyNone| CFile::typeBinary, &fe))
+		if (!m_pXFile->Open(new_name, CFile::modeReadWrite | CFile::shareDenyNone| CFile::typeBinary, &fe))
 		{		
 			m_pXFile->Abort();
 			return FALSE;

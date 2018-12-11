@@ -39,10 +39,10 @@ IMPLEMENT_DYNCREATE(CStretchControl, CObject)
 //---------------------------------------------------------------------------
 // Init Controls properties
 //---------------------------------------------------------------------------
-CStretchControl::CStretchControl()
+CStretchControl::CStretchControl(): m_parent(nullptr), m_DialogSize(), m_DlgMinSize(), m_bHBAR(0), m_bVBAR(0)
 {
 	m_BOTTOMBARHeight = 0; //::GetSystemMetrics(SM_CYHSCROLL);	// standard height
-	m_RIGHTBARWidth   = 0; //::GetSystemMetrics(SM_CXHSCROLL);	// std width/scrollbar
+	m_RIGHTBARWidth = 0; //::GetSystemMetrics(SM_CXHSCROLL);	// std width/scrollbar
 	m_slavemax = 0;
 }
 

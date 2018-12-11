@@ -13,7 +13,7 @@ IMPLEMENT_SERIAL(CDataListCtrlRowObject, CObject, 0 /* schema number*/ )
 
 // CDataListCtrlRowObject
 
-CDataListCtrlRowObject::CDataListCtrlRowObject()
+CDataListCtrlRowObject::CDataListCtrlRowObject(): bChanged(0), insectID(0)
 {
 	bInit = FALSE;
 	index = 0;
@@ -24,7 +24,7 @@ CDataListCtrlRowObject::CDataListCtrlRowObject()
 	wversion = 0;
 }
 
-CDataListCtrlRowObject::CDataListCtrlRowObject(int i)
+CDataListCtrlRowObject::CDataListCtrlRowObject(int i): bChanged(0), insectID(0), pdataDoc(nullptr), pspikeDoc(nullptr)
 {
 	bInit = FALSE;
 	index = i;

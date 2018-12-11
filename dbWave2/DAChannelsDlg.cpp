@@ -18,7 +18,7 @@ IMPLEMENT_DYNAMIC(CDAChannelsDlg, CDialogEx)
 
 CDAChannelsDlg::CDAChannelsDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CDAChannelsDlg::IDD, pParent)
-	, m_bChannel2(FALSE)
+	  , m_bChannel2(FALSE), m_iseldigital(0)
 {
 	m_samplingRate = 10E3;
 }

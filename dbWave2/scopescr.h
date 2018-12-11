@@ -167,17 +167,17 @@ protected:
 	BOOL	m_bVTtagsLONG;		// flag: TRUE if VTtags are defined as long
 	long	m_liFirst;			// file position of first left pixel
 	long	m_liLast;			// file position of last right pixel
-	long	m_liJitter;			// file position range corresponding mouse jitter
+	long	m_liJitter{};			// file position range corresponding mouse jitter
 
 	// plotting options - parameters for PLOT_WITHINBOUNDS
-	int		m_plotwithin_mode;
-	int		m_lowerlimit;
-	int		m_upperlimit;
-	int		m_color_withinlimits;
-	int		m_color_outsidelimits;
+	int		m_plotwithin_mode{};
+	int		m_lowerlimit{};
+	int		m_upperlimit{};
+	int		m_color_withinlimits{};
+	int		m_color_outsidelimits{};
 
 	// mouse tracking modes
-	int		m_HCtrapped;		// cursor index trapped by the mouse
+	int		m_HCtrapped{};		// cursor index trapped by the mouse
 	int		m_trackMode;
 
 	int 	m_xWO;				// x origin, extent / window & view
@@ -189,7 +189,7 @@ protected:
 	int		m_yVO;
 	int		m_yVE;
 
-	int 	m_curTrack;			// threshold  tracked
+	int 	m_curTrack{};			// threshold  tracked
 	CPoint	m_ptFirst;
 	CPoint	m_ptCurr;
 	CPoint	m_ptLast;

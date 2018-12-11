@@ -61,24 +61,24 @@ protected:
 	int		m_npixels;				// nb pixels displayed horizontally
 	int		m_dataperpixel;			// nb of data point per pixel	
 	long	m_lxVeryLast;			// end of document
-	long	m_lxPage;				// size of page increment / file index
-	long	m_lxLine;				// size of line increment / file index
+	long	m_lxPage{};				// size of page increment / file index
+	long	m_lxLine{};				// size of line increment / file index
 	long	m_lxSize;				// nb of data pts represented in a Envelope
 	long	m_lxFirst;				// file index of 1rst pt in the Envelopes
 	long	m_lxLast;				// file index of last pt in the Envelopes
-	float	m_samplingrate;
+	float	m_samplingrate{};
 	BOOL	m_btrackCurve;			// track curve if hit	
 
-	int		m_XORnelmts;			// curve tracking parameters
-	int		m_hitcurve;				// ibid  which curve was hitted if any
-	int		m_XORxext;				// ibid  x extent
-	int		m_XORyext;				// ibid  y extent
-	int		m_zero;					// ibid. zero
+	int		m_XORnelmts{};			// curve tracking parameters
+	int		m_hitcurve{};				// ibid  which curve was hitted if any
+	int		m_XORxext{};				// ibid  x extent
+	int		m_XORyext{};				// ibid  y extent
+	int		m_zero{};					// ibid. zero
 
 	BOOL	m_bADbuffers;			// flag when AD buffers are in displayed
-	long	m_lADbufferdone;		// position of incoming data along m_lxSize
+	long	m_lADbufferdone{};		// position of incoming data along m_lxSize
 
-	BOOL	m_bPrintHZcursor;		// default=FALSE
+	BOOL	m_bPrintHZcursor{};		// default=FALSE
 	BOOL	m_btrackspike;			// track spike with vertic cursor
 	int		m_tracklen;				// length of waveform to track
 	int		m_trackoffset;			// offset of waveform from cursor

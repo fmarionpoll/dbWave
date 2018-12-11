@@ -37,7 +37,7 @@ protected:
 	void	ModifySelected();
 
 	long	m_sourceID;
-	long	m_destID;
+	long	m_destID{};
 	long	m_initialID;
 	DECLARE_MESSAGE_MAP()
 public:
@@ -56,12 +56,12 @@ public:
 
 	//////////////////////////////////
 	// parameters passed
-	CdbMainTable*	m_pMainTable;		// address of main table
+	CdbMainTable*	m_pMainTable{};		// address of main table
 	CString			m_csColName;		// name of the column
-	CdbIndexTable*	m_pIndexTable;		// address secondary table
-	CArray<long, long>*		m_pliIDArray;		// address uiArray storing IDs
+	CdbIndexTable*	m_pIndexTable{};		// address secondary table
+	CArray<long, long>*		m_pliIDArray{};		// address uiArray storing IDs
 	BOOL			m_bIndexTable;		// TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
-	CdbWaveDoc*		m_pdbDoc;
+	CdbWaveDoc*		m_pdbDoc{};
 	/////////////////////////////////
 
 	afx_msg void OnBnClickedRadio1();

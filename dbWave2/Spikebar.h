@@ -19,18 +19,18 @@ protected:
 	int			m_rangemode;		// display range	
 	long		m_lFirst;			// time index of first pt displayed
 	long		m_lLast;			// time index of last pt displayed
-	int			m_spkfirst;			// index first spike
+	int			m_spkfirst{};			// index first spike
 	int			m_spklast;			// index last spike
 	int			m_currentclass;		// current class in case of displaying classes
 	int			m_selectedspike;	// selected spike (display differently)
 	int			m_hitspk;			// no of spike selected	
-	int			m_selclass;			// index class selected	
+	int			m_selclass{};			// index class selected	
 	BOOL		m_btrackCurve;		// track curve ?
 	CSpikeList*	m_pSL;				// spike list (source data)	
-	CSpikeDoc*	m_pSDoc;			// spike doc source (source data; stim)
-	BOOL		m_bDisplaySignal;	// flag default:FALSE=bars; TRUE=spikes
+	CSpikeDoc*	m_pSDoc{};			// spike doc source (source data; stim)
+	BOOL		m_bDisplaySignal{};	// flag default:FALSE=bars; TRUE=spikes
 	CDWordArray* m_penvelope;		// data envelope (should be 4 times greater than size)
-	int			m_selpen;
+	int			m_selpen{};
 	int			m_barheight;
 	BOOL		m_ballFiles;		// display data from all files in CdbWaveDoc*
 	CdbWaveDoc* m_pDoc;

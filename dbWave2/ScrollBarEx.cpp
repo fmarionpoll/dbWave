@@ -23,7 +23,7 @@
 // CScrollBarEx
 
 IMPLEMENT_DYNAMIC(CScrollBarEx, CScrollBar)
-CScrollBarEx::CScrollBarEx()
+CScrollBarEx::CScrollBarEx(): m_scBarInfo_old(), m_scInfo(), m_scInfo_old()
 {
 	m_bCaptured = FALSE;
 	m_captureMode = 0;

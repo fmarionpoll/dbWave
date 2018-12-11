@@ -31,7 +31,7 @@ public:
 protected:
 	CStringA		m_csFiledesc;	// ASCII chain w. file version
 	CMapWordToOb	m_structMap;	// subfile descriptors
-	BOOL			m_bmodified;
+	BOOL			m_bmodified{};
 
 	// Implementation
 protected:	

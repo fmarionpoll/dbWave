@@ -35,28 +35,33 @@ IMPLEMENT_DYNCREATE(CADContView, CFormView)
 
 CADContView::CADContView()
 	: CFormView(CADContView::IDD)
-	, m_bStartOutPutMode(0)
+	  , m_bStartOutPutMode(0), m_cursorstate(0), m_hBias(nullptr), m_hZoom(nullptr), m_yscaleFactor(0), m_VBarMode(0),
+	  m_bFoundDTOPenLayerDLL(0), m_ecode(0), m_pADC_options(nullptr), m_ADC_bufhandle(nullptr), m_ADC_buflen(0),
+	  m_pDAC_options(nullptr), m_DACdigitalchannel(0), m_DACdigitalfirst(0), m_DAClistsize(0), m_DACmsbit(0),
+	  m_DAClRes(0), m_DAC_bufhandle(nullptr), m_DAC_buflen(0), m_DAC_chbuflen(0), m_DAC_nBuffersFilledSinceStart(0),
+	  m_DAC_frequency(0), m_sweeplength(0), m_chsweep1(0), m_chsweep2(0), m_chsweepRefresh(0), m_bytesweepRefresh(0),
+	  m_fclockrate(0)
 {
 	m_sweepduration = 1.0f;
 	m_bADwritetofile = FALSE;
 	m_ptableSet = nullptr;
-	m_ADC_inprogress=FALSE;					// no A/D in progress
-	m_DAC_inprogress=FALSE;					// no D/A in progress
-	m_bchanged=FALSE;						// data unchanged
-	m_bAskErase=FALSE;						// no warning when data are erased	
-	m_chsweeplength=0;
-	m_ADC_chbuflen=0;
+	m_ADC_inprogress = FALSE; // no A/D in progress
+	m_DAC_inprogress = FALSE; // no D/A in progress
+	m_bchanged = FALSE; // data unchanged
+	m_bAskErase = FALSE; // no warning when data are erased	
+	m_chsweeplength = 0;
+	m_ADC_chbuflen = 0;
 	m_bFileOpen = FALSE;
 	m_numchansMAX = 16;
-	m_freqmax	= 50000.f;
-	m_bSimultaneousStart=FALSE;
-	m_bhidesubsequent=FALSE;
+	m_freqmax = 50000.f;
+	m_bSimultaneousStart = FALSE;
+	m_bhidesubsequent = FALSE;
 
-	m_BkColor = GetSysColor(COLOR_BTNFACE);		// set color for edit button
-	m_pEditBkBrush = new CBrush(m_BkColor);		// background color = like a button
-	ASSERT(m_pEditBkBrush != NULL);				// check brush
+	m_BkColor = GetSysColor(COLOR_BTNFACE); // set color for edit button
+	m_pEditBkBrush = new CBrush(m_BkColor); // background color = like a button
+	ASSERT(m_pEditBkBrush != NULL); // check brush
 
-	m_bEnableActiveAccessibility=FALSE;
+	m_bEnableActiveAccessibility = FALSE;
 	m_bsimultaneousStartAD = FALSE;
 	m_bsimultaneousStartDA = FALSE;
 	m_ADC_yRulerBar.AttachScopeWnd(&m_ADC_View, FALSE);

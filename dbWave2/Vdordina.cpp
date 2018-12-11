@@ -51,7 +51,8 @@
 
 
 CDataViewOrdinatesDlg::CDataViewOrdinatesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataViewOrdinatesDlg::IDD, pParent)
+	: CDialog(CDataViewOrdinatesDlg::IDD, pParent), m_plinev(nullptr), m_nChanmax(0), m_Channel(0), m_bChanged(0),
+	  m_p10(0), m_voltsperpixel(0), m_VoltsperBin(0)
 {
 	m_iUnit = -1;
 	m_xcenter = 0.0f;

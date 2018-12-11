@@ -24,10 +24,10 @@ CTag::CTag()
 	m_pixel = -1;
 }
 
-CTag::CTag(int ref_chan)
+CTag::CTag(int ref_chan): m_lvalue(0)
 {
-	m_refchan=ref_chan;
-	m_value=0;
+	m_refchan = ref_chan;
+	m_value = 0;
 	m_pixel = -1;
 }
 

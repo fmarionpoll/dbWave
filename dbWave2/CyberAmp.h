@@ -161,12 +161,12 @@ protected:
 	static int		m_C300nOutputSpeed;
 	static int		m_C300nDebugVersion;
 	static DWORD	m_C300fReceiveDelay;
-	COMMTIMEOUTS	m_CommTimeOuts;
+	COMMTIMEOUTS	m_CommTimeOuts{};
 
-	DCB				m_dcb;		// DCB structure containing COM parameters
+	DCB				m_dcb{};		// DCB structure containing COM parameters
 	HANDLE			m_hComm;	// handle to file used to communicate with COM
 
-	void C300_ResetParms();
+	static void C300_ResetParms();
 
 	static void C300_StringConcatChar( char *lpszString, int c );
 	static int C300_FoundListMatch( int nFilterValue, int *lpnList, int nListItems );

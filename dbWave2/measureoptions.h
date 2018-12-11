@@ -1,4 +1,8 @@
 #pragma once
+#include "dbWaveDoc.h"
+#include "Acqdatad.h"
+#include "Lineview.h"
+#include "Editctrl.h"
 
 // CMeasureOptionsPage.h : header file
 //
@@ -24,7 +28,7 @@ public:
 	BOOL	m_bHalfrecovery;
 	BOOL	m_bDatalimits;
 	BOOL	m_bLimitsval;
-	WORD	m_wSourcechan;
+	WORD	m_wSourcechan{};
 	WORD	m_wStimulusthresh;
 	WORD	m_wStimuluschan;
 	BOOL	m_bAllFiles;
@@ -33,11 +37,10 @@ public:
 	UINT	m_uiStimulusThreshold;
 	UINT	m_uiStimuluschan;
 	// input parameters
-	OPTIONS_VIEWDATAMEASURE* m_pMO;
-	CdbWaveDoc* 	m_pdbDoc;	
-	CAcqDataDoc* 	m_pdatDoc;	
-	CLineViewWnd*	m_plineview;
-
+	OPTIONS_VIEWDATAMEASURE* m_pMO {};
+	CdbWaveDoc* 	m_pdbDoc {};	
+	CAcqDataDoc* 	m_pdatDoc {};	
+	CLineViewWnd*	m_plineview {};
 
 // Overrides
 	public:
@@ -49,7 +52,7 @@ public:
 // Implementation
 protected:
 	void ShowLimitsParms(BOOL bShow);
-	void ShowChanParm(BOOL bShow);
+	void ShowChanParm(BOOL b_show);
 	void SaveOptions();
 	
 	// Generated message map functions
@@ -210,9 +213,9 @@ public:
 	// input parameters
 	CLineViewWnd*			m_plineview;
 	CdbWaveDoc* 			m_pdbDoc;	
-	CAcqDataDoc* 			m_pdatDoc;	
-	OPTIONS_VIEWDATAMEASURE* m_pMO;
-	int	m_currentchan;
+	CAcqDataDoc* 			m_pdatDoc{};	
+	OPTIONS_VIEWDATAMEASURE* m_pMO{};
+	int	m_currentchan{};
 
 protected:
 	// locals
@@ -227,16 +230,16 @@ protected:
 	void  MeasureWithinInterval(int ichan, int line, long l1, long l2);
 	void  MeasureBetweenHZ(int ichan, int line, int v1, int v2);
 	void  GetMaxMin(int chan, long lFirst, long lLast);
-	short	m_max;
-	long	m_imax;
-	short	m_min;
-	long	m_imin;
-	short	m_first;
-	short	m_last;
-	TCHAR	m_szT[64];		// dummy characters buffer
-	float	m_mVperBin;
-	int		m_nbdatacols;
-	int		m_col;
+	short	m_max{};
+	long	m_imax{};
+	short	m_min{};
+	long	m_imin{};
+	short	m_first{};
+	short	m_last{};
+	TCHAR	m_szT[64]{};		// dummy characters buffer
+	float	m_mVperBin{};
+	int		m_nbdatacols{};
+	int		m_col{};
 	CString	m_csTitle;
 
 // Overrides

@@ -16,7 +16,8 @@
 
 
 CDataSeriesFormatDlg::CDataSeriesFormatDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataSeriesFormatDlg::IDD, pParent)
+	: CDialog(CDataSeriesFormatDlg::IDD, pParent), m_plineview(nullptr), m_pdbDoc(nullptr), m_listindex(0), m_yzero(0),
+	  m_yextent(0), m_mVperbin(0)
 {
 	m_maxmv = 0.0f;
 	m_minmv = 0.0f;

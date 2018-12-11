@@ -10,7 +10,8 @@
 IMPLEMENT_DYNAMIC(CDataTranslationBoardDlg, CDialog)
 
 CDataTranslationBoardDlg::CDataTranslationBoardDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataTranslationBoardDlg::IDD, pParent)
+	: CDialog(CDataTranslationBoardDlg::IDD, pParent), m_subssystemIN(0), m_subsystemelementIN(0), m_atodCount(0),
+	  m_dtoaCount(0)
 {
 	m_pDTAcq32 = nullptr;
 	m_pAnalogIN = nullptr;

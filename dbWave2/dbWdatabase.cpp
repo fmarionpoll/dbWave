@@ -47,29 +47,29 @@ TABCOL CdbWdatabase::m_desctab[NTABLECOLS] =
 };
 
 
-CdbWdatabase::CdbWdatabase()
+CdbWdatabase::CdbWdatabase(): m_pcurrentDataFilename(nullptr)
 {
-	for (int i = 0; i < NTABLECOLS; i++)
+	for (auto i = 0; i < NTABLECOLS; i++)
 	{
-		CString csdummy = m_desctab[i].szTableCol;
-		m_mainTableSet.m_desc[i].csColName = csdummy;
-		m_mainTableSet.m_desc[i].csColNamewithBrackets = _T("[") + csdummy + _T("]");
-		m_mainTableSet.m_desc[i].csColParam = csdummy + _T("Param");
-		m_mainTableSet.m_desc[i].csEQUcondition = csdummy + _T("=") + m_mainTableSet.m_desc[i].csColParam;
+		CString dummy = m_desctab[i].szTableCol;
+		m_mainTableSet.m_desc[i].csColName = dummy;
+		m_mainTableSet.m_desc[i].csColNamewithBrackets = _T("[") + dummy + _T("]");
+		m_mainTableSet.m_desc[i].csColParam = dummy + _T("Param");
+		m_mainTableSet.m_desc[i].csEQUcondition = dummy + _T("=") + m_mainTableSet.m_desc[i].csColParam;
 		m_mainTableSet.m_desc[i].typeLocal = m_desctab[i].propCol;
 	}
 
 	// SetNames(CString defaultSQL /* or table name*/, CString DFX_cs, CString DFX_ID) 
-	m_stimSet.SetNames		(m_desctab[CH_STIM_ID].szRelTable,		_T("stim"),		_T("stimID"));
-	m_concSet.SetNames		(m_desctab[CH_CONC_ID].szRelTable,		_T("conc"),		_T("concID"));
-	m_operatorSet.SetNames	(m_desctab[CH_OPERATOR_ID].szRelTable,	_T("operator"), _T("operatorID"));
-	m_insectSet.SetNames	(m_desctab[CH_INSECT_ID].szRelTable,	_T("insect"),	_T("insectID"));
-	m_locationSet.SetNames	(m_desctab[CH_LOCATION_ID].szRelTable,	_T("type"),		_T("typeID"));
-	m_pathSet.SetNames		(m_desctab[CH_PATH_ID].szRelTable,		_T("path"),		_T("pathID"));
-	m_sensillumSet.SetNames	(m_desctab[CH_SENSILLUM_ID].szRelTable,	_T("stage"),	_T("stageID"));
-	m_sexSet.SetNames		(m_desctab[CH_SEX_ID].szRelTable,		_T("sex"),		_T("sexID"));
-	m_strainSet.SetNames	(m_desctab[CH_STRAIN_ID].szRelTable,	_T("strain"),	_T("strainID"));
-	m_exptSet.SetNames		(m_desctab[CH_EXPT_ID].szRelTable,		_T("expt"),		_T("exptID"));
+	m_stimSet.SetNames(m_desctab[CH_STIM_ID].szRelTable, _T("stim"), _T("stimID"));
+	m_concSet.SetNames(m_desctab[CH_CONC_ID].szRelTable, _T("conc"), _T("concID"));
+	m_operatorSet.SetNames(m_desctab[CH_OPERATOR_ID].szRelTable, _T("operator"), _T("operatorID"));
+	m_insectSet.SetNames(m_desctab[CH_INSECT_ID].szRelTable, _T("insect"), _T("insectID"));
+	m_locationSet.SetNames(m_desctab[CH_LOCATION_ID].szRelTable, _T("type"), _T("typeID"));
+	m_pathSet.SetNames(m_desctab[CH_PATH_ID].szRelTable, _T("path"), _T("pathID"));
+	m_sensillumSet.SetNames(m_desctab[CH_SENSILLUM_ID].szRelTable, _T("stage"), _T("stageID"));
+	m_sexSet.SetNames(m_desctab[CH_SEX_ID].szRelTable, _T("sex"), _T("sexID"));
+	m_strainSet.SetNames(m_desctab[CH_STRAIN_ID].szRelTable, _T("strain"), _T("strainID"));
+	m_exptSet.SetNames(m_desctab[CH_EXPT_ID].szRelTable, _T("expt"), _T("exptID"));
 
 	m_mainTableSet.m_strSort = m_desctab[CH_ACQDATE].szTableCol;
 
@@ -244,8 +244,8 @@ BOOL CdbWdatabase::CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int ic
 
 CString CdbWdatabase::GetDataBasePath() {
 	CString filename = GetName();
-	int ilastslash = filename.ReverseFind('\\');
-	m_databasePath = filename.Left(ilastslash+1);
+	const auto last_slash = filename.ReverseFind('\\');
+	m_databasePath = filename.Left(last_slash+1);
 	m_databasePath.MakeLower();
 	return m_databasePath;
 }

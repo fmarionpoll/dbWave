@@ -228,7 +228,7 @@ OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
 	bDisplayAllClasses=TRUE;
 	spikeclass=0;
 
-	nscopeitems = 0;
+	n_scope_items = 0;
 	nfilterindex = 0;
 	vertRes = 1;
 	horzRes = 1;
@@ -421,7 +421,7 @@ void OPTIONS_VIEWDATA::Serialize(CArchive& ar)
 		ar << tLast;
 		ar << mVspan;
 
-		nscopeitems = 16; ar << nscopeitems;
+		n_scope_items = 16; ar << n_scope_items;
 		viewdata.Serialize(ar);				//1
 		viewspkdetectdata.Serialize(ar);	//2
 		viewspkdetectspk.Serialize(ar);		//3
@@ -509,105 +509,105 @@ void OPTIONS_VIEWDATA::Serialize(CArchive& ar)
 
 		if (version >4)
 		{
-			WORD w1; ar >> w1; 
-			int nbINTitems = w1;
-			ar >> hzResolution;	nbINTitems--; //1
-			ar >> vtResolution;	nbINTitems--; //2
-			ar >> unitMode;		nbINTitems--; //3
-			ar >> spkheight;	nbINTitems--; //4
-			ar >> spkwidth;		nbINTitems--; //5
-			ar >> nfilterindex;	nbINTitems--; //6
-			ar >> col0width;	nbINTitems--; //7
-			ar >> row0height;	nbINTitems--; //8
-			ar >> bcol0visible;	nbINTitems--; //9
-			ar >> brow0visible;	nbINTitems--; //10
-			ar >> irowheight;	nbINTitems--; //11
-			ar >> displaymode;	nbINTitems--; //12
-			if (nbINTitems > 0) ar >> spikeclass; nbINTitems--;
+			WORD n_int_items; ar >> n_int_items; 
+			int nb_INT_items = n_int_items;
+			ar >> hzResolution;	nb_INT_items--; //1
+			ar >> vtResolution;	nb_INT_items--; //2
+			ar >> unitMode;		nb_INT_items--; //3
+			ar >> spkheight;	nb_INT_items--; //4
+			ar >> spkwidth;		nb_INT_items--; //5
+			ar >> nfilterindex;	nb_INT_items--; //6
+			ar >> col0width;	nb_INT_items--; //7
+			ar >> row0height;	nb_INT_items--; //8
+			ar >> bcol0visible;	nb_INT_items--; //9
+			ar >> brow0visible;	nb_INT_items--; //10
+			ar >> irowheight;	nb_INT_items--; //11
+			ar >> displaymode;	nb_INT_items--; //12
+			if (nb_INT_items > 0) ar >> spikeclass; nb_INT_items--;
 
-			ar >> nbINTitems; 
-			icolwidth.SetSize(nbINTitems);
-			for (int ii=0; ii< nbINTitems; ii++)
+			ar >> nb_INT_items; 
+			icolwidth.SetSize(nb_INT_items);
+			for (auto ii=0; ii< nb_INT_items; ii++)
 				ar >> icolwidth[ii];
-			int nfloats;
-			ar >> nfloats;
-			ar >> tFirst; nfloats--;
-			ar >> tLast; nfloats--;
-			ar >> mVspan; nfloats--;
+			int n_float_items;
+			ar >> n_float_items;
+			ar >> tFirst; n_float_items--;
+			ar >> tLast; n_float_items--;
+			ar >> mVspan; n_float_items--;
 
-			ar >> nscopeitems;
-			if (nscopeitems > 0)
+			ar >> n_scope_items;
+			if (n_scope_items > 0)
 			{
-				viewdata.Serialize(ar); nscopeitems--;
-				viewspkdetectdata.Serialize(ar); nscopeitems--;
-				viewspkdetectspk.Serialize(ar); nscopeitems--;
-				viewspkdetectbars.Serialize(ar); nscopeitems--;
-				viewadcontvi.Serialize(ar); nscopeitems--;
-				spkviewdata.Serialize(ar); nscopeitems--;
-				spkviewspk.Serialize(ar); nscopeitems--;
-				spkviewbars.Serialize(ar); nscopeitems--;
-				spksort1spk.Serialize(ar); nscopeitems--;
-				spksort1parms.Serialize(ar); nscopeitems--;
-				spksort1hist.Serialize(ar); nscopeitems--;				
-				if(nscopeitems > 0) {dbviewdata.Serialize(ar); nscopeitems--;}
-				if(nscopeitems > 0) {dbviewbars.Serialize(ar); nscopeitems--;}
-				if(nscopeitems > 0) {dbviewshape.Serialize(ar); nscopeitems--;}
-				if(nscopeitems > 0) {spksort1bars.Serialize(ar); nscopeitems--;}
-				if(nscopeitems > 0) {viewspkdetectfiltered.Serialize(ar); nscopeitems--;}
-				ASSERT(nscopeitems == 0);
+				viewdata.Serialize(ar); n_scope_items--;
+				viewspkdetectdata.Serialize(ar); n_scope_items--;
+				viewspkdetectspk.Serialize(ar); n_scope_items--;
+				viewspkdetectbars.Serialize(ar); n_scope_items--;
+				viewadcontvi.Serialize(ar); n_scope_items--;
+				spkviewdata.Serialize(ar); n_scope_items--;
+				spkviewspk.Serialize(ar); n_scope_items--;
+				spkviewbars.Serialize(ar); n_scope_items--;
+				spksort1spk.Serialize(ar); n_scope_items--;
+				spksort1parms.Serialize(ar); n_scope_items--;
+				spksort1hist.Serialize(ar); n_scope_items--;				
+				if(n_scope_items > 0) {dbviewdata.Serialize(ar); n_scope_items--;}
+				if(n_scope_items > 0) {dbviewbars.Serialize(ar); n_scope_items--;}
+				if(n_scope_items > 0) {dbviewshape.Serialize(ar); n_scope_items--;}
+				if(n_scope_items > 0) {spksort1bars.Serialize(ar); n_scope_items--;}
+				if(n_scope_items > 0) {viewspkdetectfiltered.Serialize(ar); n_scope_items--;}
+				ASSERT(n_scope_items == 0);
 			}
 		}
 		else if (version >= 2)
 		{
-			WORD w1; ar >> w1; int nbINTitems = w1;
-			if (nbINTitems > 0)	ar >> hzResolution; nbINTitems--;
-			if (nbINTitems > 0) {
-				ar >> vtResolution;  nbINTitems--;
-				ar >> unitMode;  nbINTitems--;
+			WORD w1; ar >> w1; int nb_int_items = w1;
+			if (nb_int_items > 0)	ar >> hzResolution; nb_int_items--;
+			if (nb_int_items > 0) {
+				ar >> vtResolution;  nb_int_items--;
+				ar >> unitMode;  nb_int_items--;
 			}
-			if (nbINTitems > 0)	{
-				ar >> spkheight;   nbINTitems--;
-				ar >> spkwidth;  nbINTitems--;
+			if (nb_int_items > 0)	{
+				ar >> spkheight;   nb_int_items--;
+				ar >> spkwidth;  nb_int_items--;
 			}
-			if (nbINTitems > 0)	
+			if (nb_int_items > 0)	
 				ar >> nfilterindex; 
-			nbINTitems--;
-			if (nbINTitems > 0)
+			nb_int_items--;
+			if (nb_int_items > 0)
 			{
-				for (int ii=0; ii< 8; ii++)
+				for (auto ii=0; ii< 8; ii++)
 				{
 					ar >> icolwidth[ii];
-					nbINTitems --;
+					nb_int_items --;
 				}
 			}
-			if (nbINTitems > 0)
+			if (nb_int_items > 0)
 			{
-				ar >> col0width; nbINTitems --;
-				ar >> row0height; nbINTitems --;
-				ar >> bcol0visible; nbINTitems --;
-				ar >> brow0visible; nbINTitems --;
+				ar >> col0width; nb_int_items --;
+				ar >> row0height; nb_int_items --;
+				ar >> bcol0visible; nb_int_items --;
+				ar >> brow0visible; nb_int_items --;
 			}
 
-			ar >> nscopeitems;
-			if (nscopeitems > 0)
+			ar >> n_scope_items;
+			if (n_scope_items > 0)
 			{
-				viewdata.Serialize(ar); nscopeitems--;
-				viewspkdetectdata.Serialize(ar); nscopeitems--;
-				viewspkdetectspk.Serialize(ar); nscopeitems--;
-				viewspkdetectbars.Serialize(ar); nscopeitems--;
-				viewadcontvi.Serialize(ar); nscopeitems--;
-				spkviewdata.Serialize(ar); nscopeitems--;
-				spkviewspk.Serialize(ar); nscopeitems--;
-				spkviewbars.Serialize(ar); nscopeitems--;
-				spksort1spk.Serialize(ar); nscopeitems--;
-				spksort1parms.Serialize(ar); nscopeitems--;
-				spksort1hist.Serialize(ar); nscopeitems--;				
-				if(nscopeitems > 0) {dbviewdata.Serialize(ar); nscopeitems--;}
-				if(nscopeitems > 0) {dbviewbars.Serialize(ar); nscopeitems--;}
-				if(nscopeitems > 0) {dbviewshape.Serialize(ar); nscopeitems--;}
-				if(nscopeitems > 0) {spksort1bars.Serialize(ar); nscopeitems--;}
-				if (nscopeitems > 0) {viewspkdetectfiltered.Serialize(ar); nscopeitems--;}
-				ASSERT(nscopeitems == 0);
+				viewdata.Serialize(ar); n_scope_items--;
+				viewspkdetectdata.Serialize(ar); n_scope_items--;
+				viewspkdetectspk.Serialize(ar); n_scope_items--;
+				viewspkdetectbars.Serialize(ar); n_scope_items--;
+				viewadcontvi.Serialize(ar); n_scope_items--;
+				spkviewdata.Serialize(ar); n_scope_items--;
+				spkviewspk.Serialize(ar); n_scope_items--;
+				spkviewbars.Serialize(ar); n_scope_items--;
+				spksort1spk.Serialize(ar); n_scope_items--;
+				spksort1parms.Serialize(ar); n_scope_items--;
+				spksort1hist.Serialize(ar); n_scope_items--;				
+				if(n_scope_items > 0) {dbviewdata.Serialize(ar); n_scope_items--;}
+				if(n_scope_items > 0) {dbviewbars.Serialize(ar); n_scope_items--;}
+				if(n_scope_items > 0) {dbviewshape.Serialize(ar); n_scope_items--;}
+				if(n_scope_items > 0) {spksort1bars.Serialize(ar); n_scope_items--;}
+				if (n_scope_items > 0) {viewspkdetectfiltered.Serialize(ar); n_scope_items--;}
+				ASSERT(n_scope_items == 0);
 			}
 		}
 	}
@@ -617,75 +617,94 @@ void OPTIONS_VIEWDATA::Serialize(CArchive& ar)
 
 IMPLEMENT_SERIAL(OPTIONS_VIEWSPIKES, CObject, 0 /* schema number*/ )
 
-OPTIONS_VIEWSPIKES::OPTIONS_VIEWSPIKES()
+OPTIONS_VIEWSPIKES::OPTIONS_VIEWSPIKES(): bexporttoExcel(0), bincrflagonsave(0), ncommentcolumns(0), wIntParms(0),
+                                          wBoolParms(0)
 {
 	wversion = 3;
 
-	timestart=0.0f;			// interval definition
-	timeend=2.0f;			//
-	timebin=0.1f;			// bin size (sec)
-	histampl_vmax=1.f;
-	histampl_vmin=0.f;
-	histampl_nbins=20;
-	nbins=20;				// number of bins
-	classnb=0;				// class nb
+	timestart = 0.0f; // interval definition
+	timeend = 2.0f; //
+	timebin = 0.1f; // bin size (sec)
+	histampl_vmax = 1.f;
+	histampl_vmin = 0.f;
+	histampl_nbins = 20;
+	nbins = 20; // number of bins
+	classnb = 0; // class nb
 	classnb2 = 0;
-	bacqcomments=TRUE;		// source data comments
-	bacqdate=TRUE;			// source data time and date
-	bacqchsettings=FALSE;	// source data acq chan settings
-	bspkcomments=FALSE;		// spike file comments
-	exportdatatype=0;
-	spikeclassoption=FALSE;	// discriminate spike class
-	bartefacts=TRUE;		// eliminate artefacts (class < 0)
-	bcolumnheader=TRUE;		// column headers ON/OFF
-	btotalspikes=TRUE;		// total nb of spikes
-	babsolutetime=TRUE;		// TRUE= absolute spike time
-	bexportzero=FALSE;
+	bacqcomments = TRUE; // source data comments
+	bacqdate = TRUE; // source data time and date
+	bacqchsettings = FALSE; // source data acq chan settings
+	bspkcomments = FALSE; // spike file comments
+	exportdatatype = 0;
+	spikeclassoption = FALSE; // discriminate spike class
+	bartefacts = TRUE; // eliminate artefacts (class < 0)
+	bcolumnheader = TRUE; // column headers ON/OFF
+	btotalspikes = TRUE; // total nb of spikes
+	babsolutetime = TRUE; // TRUE= absolute spike time
+	bexportzero = FALSE;
 
-	heightLine=130;			// height of one line
-	heightSeparator=20;		// height between lines
-	bdisplayBars=TRUE;		// default(TRUE)
-	bdisplayShapes=TRUE;	// default(TRUE)
-	bsplitClasses=TRUE;		// display classes on different lines
-	ballfiles=FALSE;
-	dotheight=3;
-	dotlineheight=5;
-	bdotunderline=FALSE;
-	nbinsISI=100;
-	binISI=2.f;
-	bYmaxAuto=TRUE;
-	Ymax=1.0f;
+	heightLine = 130; // height of one line
+	heightSeparator = 20; // height between lines
+	bdisplayBars = TRUE; // default(TRUE)
+	bdisplayShapes = TRUE; // default(TRUE)
+	bsplitClasses = TRUE; // display classes on different lines
+	ballfiles = FALSE;
+	dotheight = 3;
+	dotlineheight = 5;
+	bdotunderline = FALSE;
+	nbinsISI = 100;
+	binISI = 2.f;
+	bYmaxAuto = TRUE;
+	Ymax = 1.0f;
 
-	crHistFill= RGB(0x80, 0x80, 0x80);		// COLORREF
-	crHistBorder= RGB(0x80, 0x80, 0x80);
-	crStimFill=RGB(117, 192, 239);
-	crStimBorder= RGB(117, 192, 239);
-	crChartArea=RGB(255,255,255);
+	crHistFill = RGB(0x80, 0x80, 0x80); // COLORREF
+	crHistBorder = RGB(0x80, 0x80, 0x80);
+	crStimFill = RGB(117, 192, 239);
+	crStimBorder = RGB(117, 192, 239);
+	crChartArea = RGB(255,255,255);
 	int i = 18;
-	i--; crScale [i] = RGB(35,31,28); //RGB(255,255,255);
-	i--; crScale [i] = RGB(213,45,31);
-	i--; crScale [i] = RGB(222,100,19);
-	i--; crScale [i] = RGB(232,142,33);
-	i--; crScale [i] = RGB(243,196,0);
-	i--; crScale [i] = RGB(226,237,0);
-	i--; crScale [i] = RGB(142,201,33);
-	i--; crScale [i] = RGB(64,174,53);
-	i--; crScale [i] = RGB(0,152,62);
-	i--; crScale [i] = RGB(0,142,85);
-	i--; crScale [i] = RGB(0,142,123);
-	i--; crScale [i] = RGB(0,142,163);
-	i--; crScale [i] = RGB(0,139,206);
-	i--; crScale [i] = RGB(0,117,190);
-	i--; crScale [i] = RGB(0,90,158);
-	i--; crScale [i] = RGB(29,62,133);
-	i--; crScale [i] = RGB(49,20,105);
-	i--; crScale [i] = RGB(255,255,255); //RGB(35,31,28);
+	i--;
+	crScale[i] = RGB(35,31,28); //RGB(255,255,255);
+	i--;
+	crScale[i] = RGB(213,45,31);
+	i--;
+	crScale[i] = RGB(222,100,19);
+	i--;
+	crScale[i] = RGB(232,142,33);
+	i--;
+	crScale[i] = RGB(243,196,0);
+	i--;
+	crScale[i] = RGB(226,237,0);
+	i--;
+	crScale[i] = RGB(142,201,33);
+	i--;
+	crScale[i] = RGB(64,174,53);
+	i--;
+	crScale[i] = RGB(0,152,62);
+	i--;
+	crScale[i] = RGB(0,142,85);
+	i--;
+	crScale[i] = RGB(0,142,123);
+	i--;
+	crScale[i] = RGB(0,142,163);
+	i--;
+	crScale[i] = RGB(0,139,206);
+	i--;
+	crScale[i] = RGB(0,117,190);
+	i--;
+	crScale[i] = RGB(0,90,158);
+	i--;
+	crScale[i] = RGB(29,62,133);
+	i--;
+	crScale[i] = RGB(49,20,105);
+	i--;
+	crScale[i] = RGB(255,255,255); //RGB(35,31,28);
 	ASSERT(i>=0);
 	fScalemax = 100.f;
 	istimulusindex = 0;
 	bhistType = 0;
-	bCycleHist=FALSE;
-	nstipercycle=1;
+	bCycleHist = FALSE;
+	nstipercycle = 1;
 	ballChannels = TRUE;
 
 	bChanged = false;
@@ -1321,6 +1340,7 @@ OPTIONS_ACQDATA::OPTIONS_ACQDATA()
 	icsA_repeat = 0;
 	icsA_repeat2 = 0;
 	icsA_expt = 0;
+	exptnumber = 0;
 }
 
 OPTIONS_ACQDATA::~OPTIONS_ACQDATA()
@@ -1603,26 +1623,26 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 
 IMPLEMENT_SERIAL(OUTPUTPARMS, CObject, 0 /* schema number*/ )
 
-OUTPUTPARMS::OUTPUTPARMS()
+OUTPUTPARMS::OUTPUTPARMS(): bChanged(0), ampLow(0), lastamp(0), lastphase(0)
 {
-	wversion=1;
+	wversion = 1;
 	bON = FALSE;
 	bDigital = FALSE;
-	noise_bExternal=FALSE;
-	iChan=0;
-	iWaveform=0;
-	mseq_iRatio=1000;
-	mseq_iDelay=0;
-	mseq_iSeed=0;	
-	noise_iDelay=0;
-	dAmplitudeMaxV=1.;
-	dAmplitudeMinV=-1.;
-	dFrequency=1000.;	
-	dummy1=1.;
-	dummy2=0.;
-	noise_dAmplitV=1.;	
-	noise_dFactor=1.;
-	noise_dOffsetV=0.;
+	noise_bExternal = FALSE;
+	iChan = 0;
+	iWaveform = 0;
+	mseq_iRatio = 1000;
+	mseq_iDelay = 0;
+	mseq_iSeed = 0;
+	noise_iDelay = 0;
+	dAmplitudeMaxV = 1.;
+	dAmplitudeMinV = -1.;
+	dFrequency = 1000.;
+	dummy1 = 1.;
+	dummy2 = 0.;
+	noise_dAmplitV = 1.;
+	noise_dFactor = 1.;
+	noise_dOffsetV = 0.;
 	value = 0;
 	num = 512;
 	bit33 = 1;
@@ -1636,28 +1656,7 @@ OUTPUTPARMS::OUTPUTPARMS()
 
 OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
 {
-	bON				= arg.bON;
-	bDigital		= arg.bDigital;
-	noise_bExternal = arg.noise_bExternal;
-	iChan			= arg.iChan;
-	iWaveform		= arg.iWaveform;
-	mseq_iRatio		= arg.mseq_iRatio;
-	mseq_iDelay		= arg.mseq_iDelay;
-	mseq_iSeed		= arg.mseq_iSeed;
-	noise_iDelay	= arg.noise_iDelay;
-	dAmplitudeMaxV	= arg.dAmplitudeMaxV;
-	dAmplitudeMinV	= arg.dAmplitudeMinV;
-	dFrequency		= arg.dFrequency;
-	noise_dAmplitV	= arg.noise_dAmplitV;
-	noise_dFactor	= arg.noise_dFactor;
-	noise_dOffsetV	= arg.noise_dOffsetV;
-	value			= arg.value;
-	num				= arg.num;
-	bit33			= arg.bit33;
-	count			= arg.count;
-	dummy1 = arg.dummy1;
-	dummy2 = arg.dummy2;
-	bStart = arg.bStart;
+	*this = arg;
 }
 
 OUTPUTPARMS::~OUTPUTPARMS()

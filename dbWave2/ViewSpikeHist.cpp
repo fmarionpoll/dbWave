@@ -32,7 +32,8 @@ IMPLEMENT_DYNCREATE(CSpikeHistView, CDaoRecordView)
 // -------------------------------------------------------------------------
 
 CSpikeHistView::CSpikeHistView()
-	: CDaoRecordView(CSpikeHistView::IDD)
+	: CDaoRecordView(CSpikeHistView::IDD), m_pvdS(nullptr), mdPM(nullptr), m_bhistType(0), m_scrollFilePos_infos(),
+	  m_nPSTH(0), m_nISI(0), m_logFont(), m_xfirst(0), m_xlast(0), m_logFontDisp()
 {
 	m_timefirst = 0.0f;
 	m_timelast = 2.5f;
@@ -43,22 +44,22 @@ CSpikeHistView::CSpikeHistView()
 	m_nbinsISI = 0;
 	m_timebinms = 0.0f;
 	m_parrayISI = nullptr;
-	m_pPSTH  = nullptr;
+	m_pPSTH = nullptr;
 	m_pISI = nullptr;
 	m_sizepPSTH = 0;
 	m_sizepISI = 0;
 	m_sizeparrayISI = 0;
-	m_initiated=FALSE;
+	m_initiated = FALSE;
 	m_pbitmap = nullptr;
-	m_displayRect= CRect(0,0,0,0);
-	m_bmodified=TRUE;
-	m_nfiles=1;
+	m_displayRect = CRect(0, 0, 0, 0);
+	m_bmodified = TRUE;
+	m_nfiles = 1;
 	t1000 = 1000.f;
-	m_bPrint=FALSE;
+	m_bPrint = FALSE;
 	m_rectratio = 100;
 	m_pSpkDoc = nullptr;
 	m_binit = FALSE;
-	m_bEnableActiveAccessibility=FALSE; // workaround to crash / accessibility
+	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
 CSpikeHistView::~CSpikeHistView()

@@ -86,19 +86,19 @@ protected:
     virtual void OnEndEdit();
 
 protected:
-    CString    m_strText;      // Cell text (or binary data if you wish...)
-    LPARAM     m_lParam;       // 32-bit value to associate with item
+    CString    m_strText{};      // Cell text (or binary data if you wish...)
+    LPARAM     m_lParam{};       // 32-bit value to associate with item
     int        m_nImage;       // Index of the list view item’s icon
-    DWORD      m_nFormat;
-    COLORREF   m_crFgClr;
-    COLORREF   m_crBkClr;
-    LOGFONT*   m_plfFont;
-    UINT       m_nMargin;
+    DWORD      m_nFormat{};
+    COLORREF   m_crFgClr{};
+    COLORREF   m_crBkClr{};
+    LOGFONT*   m_plfFont{};
+    UINT       m_nMargin{};
 
-    BOOL       m_bEditing;     // Cell being edited?
+    BOOL       m_bEditing{};     // Cell being edited?
 
-    CGridCtrl* m_pGrid;        // Parent grid control
-    CWnd*      m_pEditWnd;
+    CGridCtrl* m_pGrid{};        // Parent grid control
+    CWnd*      m_pEditWnd{};
 };
 
 // This class is for storing grid default values. It's a little heavy weight, so

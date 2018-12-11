@@ -18,7 +18,8 @@
 
 
 CSpikeDetectDlg::CSpikeDetectDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CSpikeDetectDlg::IDD, pParent)
+	: CDialog(CSpikeDetectDlg::IDD, pParent), m_pDetectSettingsArray(nullptr), m_dbDoc(nullptr), mdPM(nullptr),
+	  m_pdisplayDetect(nullptr), m_pdisplayData(nullptr), m_pspkD(nullptr), m_scancount(0)
 {
 	m_iDetectParmsDlg = 0;
 }

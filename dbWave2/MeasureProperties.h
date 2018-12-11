@@ -1,4 +1,6 @@
 #pragma once
+#include "dbWaveDoc.h"
+#include "lineview.h"
 
 // MeasureProperties.h : header file
 //
@@ -8,6 +10,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // CMeasureProperties
+
 
 class CMeasureProperties : public CPropertySheet
 {
@@ -25,13 +28,13 @@ public:
 	CMeasureResultsPage m_Page4;
 
 	// CMeasureResults
-	CLineViewWnd*	m_plineview;
-	CdbWaveDoc* 	m_pdbDoc;	
-	CAcqDataDoc* 	m_pdatDoc;	
+	CLineViewWnd*	m_plineview{};
+	CdbWaveDoc* 	m_pdbDoc{};	
+	CAcqDataDoc* 	m_pdatDoc{};	
 
-	OPTIONS_VIEWDATAMEASURE* m_pMO;
-	int	m_currentchan;
-	float m_samplingrate;
+	OPTIONS_VIEWDATAMEASURE* m_pMO{};
+	int				m_currentchan{};
+	float			m_samplingrate{};
 
 // Operations
 public:

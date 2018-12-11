@@ -15,7 +15,7 @@ IMPLEMENT_DYNAMIC(CEditListDlg, CDialog)
 
 CEditListDlg::CEditListDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CEditListDlg::IDD, pParent)
-	, m_csNewString(_T(""))
+	  , m_csNewString(_T("")), m_selected(0)
 {
 	pCo = nullptr;
 }

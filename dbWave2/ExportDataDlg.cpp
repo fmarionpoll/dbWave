@@ -24,7 +24,8 @@
 
 
 CExportDataDlg::CExportDataDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CExportDataDlg::IDD, pParent)
+	: CDialog(CExportDataDlg::IDD, pParent), m_dbDoc(nullptr), m_indexoldselectedfile(0), mm_lFirst(0), mm_lLast(0),
+	  mm_timefirst(0), mm_timelast(0), mm_firstchan(0), mm_lastchan(0), mm_binzero(0)
 {
 	m_timefirst = 0.0f;
 	m_timelast = 0.0f;

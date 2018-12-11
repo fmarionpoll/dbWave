@@ -90,7 +90,10 @@ private:
 	CBitmap	*m_pOldBitmap;
 
 public:
-	cdxCRot90DC() : m_pDC(NULL), m_bFinished(true) {}
+	cdxCRot90DC() : m_pDC(NULL), m_bFinished(true)
+	{
+		m_Angle = a0;
+	}
 	cdxCRot90DC(CDC & destDC, const CRect & rectDC, int iAngle, bool bCopy = false) : m_pDC(NULL), m_bFinished(true) { Create(destDC,rectDC,iAngle,bCopy); }
 	cdxCRot90DC(CDC *pDC, const CRect & rectDC, int iAngle, bool bCopy = false) : m_pDC(NULL), m_bFinished(true) { Create(pDC,rectDC,iAngle,bCopy); }
 	cdxCRot90DC(CDC & destDC, int iAngle, bool bCopy = false) : m_pDC(NULL), m_bFinished(true) { VERIFY( Create(destDC,iAngle,bCopy) ); }

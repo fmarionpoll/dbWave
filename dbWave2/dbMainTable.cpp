@@ -15,78 +15,78 @@
 IMPLEMENT_DYNAMIC(CdbMainTable, CDaoRecordset)
 
 CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
-	: CDaoRecordset(pdb)
+	: CDaoRecordset(pdb), max_insectID(0), max_sensillumID(0), max_ID(0)
 {
-	m_ID = 0;						// 1
-	m_Filedat = _T("");				//
-	m_Filespk = _T("");				//
-	m_acq_date = (DATE)0;			//
-	m_acq_comment = _T("");			// 5
-	m_IDinsect = 0;					//
-	m_IDsensillum = 0;				//
-	m_more = _T("");				//
-	m_insect_ID = 0;				//
-	m_location_ID = 0;				// 10
-	m_operator_ID = 0;				//
-	m_sensillum_ID = 0;				//
-	m_path_ID = 0;					//
-	m_path2_ID = 0;					//
-	m_datalen=0;					// 15
-	m_nspikes=0;					//
-	m_nspikeclasses=0;				//
-	m_stim_ID = 0;					//
-	m_conc_ID = 0;					//
-	m_stim2_ID = 0;					// 20
-	m_conc2_ID = 0;					//
-	m_sex_ID = 0;					//
-	m_strain_ID = 0;				//
-	m_flag = 0;						// 24
-	m_repeat = 0;					// 25
-	m_repeat2 = 0;					// 26
-	m_acqdate_day  =(DATE)0;		// 27
-	m_acqdate_time =(DATE)0;		// 28
-	m_expt_ID = 0;					// 29
+	m_ID = 0; // 1
+	m_Filedat = _T(""); //
+	m_Filespk = _T(""); //
+	m_acq_date = (DATE)0; //
+	m_acq_comment = _T(""); // 5
+	m_IDinsect = 0; //
+	m_IDsensillum = 0; //
+	m_more = _T(""); //
+	m_insect_ID = 0; //
+	m_location_ID = 0; // 10
+	m_operator_ID = 0; //
+	m_sensillum_ID = 0; //
+	m_path_ID = 0; //
+	m_path2_ID = 0; //
+	m_datalen = 0; // 15
+	m_nspikes = 0; //
+	m_nspikeclasses = 0; //
+	m_stim_ID = 0; //
+	m_conc_ID = 0; //
+	m_stim2_ID = 0; // 20
+	m_conc2_ID = 0; //
+	m_sex_ID = 0; //
+	m_strain_ID = 0; //
+	m_flag = 0; // 24
+	m_repeat = 0; // 25
+	m_repeat2 = 0; // 26
+	m_acqdate_day = (DATE)0; // 27
+	m_acqdate_time = (DATE)0; // 28
+	m_expt_ID = 0; // 29
 	m_nFields = 29;
 
-	m_desc[CH_ID].pdataItem				= &m_ID; 
-	m_desc[CH_ACQDATE].pdataItem		= nullptr; //&m_acq_date;
-	m_desc[CH_FILENAME].pdataItem		= nullptr; //&m_Filedat;
-	m_desc[CH_FILESPK].pdataItem		= nullptr; //&m_Filespk;
-	m_desc[CH_ACQ_COMMENTS].pdataItem	= nullptr; //&m_acq_comment;
-	m_desc[CH_MORE].pdataItem			= nullptr; //&m_more;
-	m_desc[CH_IDINSECT].pdataItem		= &m_IDinsect;
-	m_desc[CH_IDSENSILLUM].pdataItem	= &m_IDsensillum;
-	m_desc[CH_DATALEN].pdataItem		= &m_datalen;
-	m_desc[CH_NSPIKES].pdataItem		= &m_nspikes;
-	m_desc[CH_NSPIKECLASSES].pdataItem	= &m_nspikeclasses;
-	m_desc[CH_FLAG].pdataItem			= &m_flag;
-	m_desc[CH_INSECT_ID].pdataItem		= &m_insect_ID;
-	m_desc[CH_SENSILLUM_ID].pdataItem	= &m_sensillum_ID;
-	m_desc[CH_OPERATOR_ID].pdataItem	= &m_operator_ID;
-	m_desc[CH_STIM_ID].pdataItem		= &m_stim_ID;
-	m_desc[CH_CONC_ID].pdataItem		= &m_conc_ID;
-	m_desc[CH_LOCATION_ID].pdataItem	= &m_location_ID;
-	m_desc[CH_PATH_ID].pdataItem		= &m_path_ID;
-	m_desc[CH_PATH2_ID].pdataItem		= &m_path2_ID;
-	m_desc[CH_STIM2_ID].pdataItem		= &m_stim2_ID;
-	m_desc[CH_CONC2_ID].pdataItem		= &m_conc2_ID;
-	m_desc[CH_STRAIN_ID].pdataItem		= &m_strain_ID;
-	m_desc[CH_SEX_ID].pdataItem			= &m_sex_ID;
-	m_desc[CH_REPEAT].pdataItem			= &m_repeat;
-	m_desc[CH_REPEAT2].pdataItem		= &m_repeat2;
-	m_desc[CH_ACQDATE_DAY].pdataItem	= nullptr;
-	m_desc[CH_ACQDATE_TIME].pdataItem	= nullptr;
-	m_desc[CH_EXPT_ID].pdataItem		= &m_expt_ID;
+	m_desc[CH_ID].pdataItem = &m_ID;
+	m_desc[CH_ACQDATE].pdataItem = nullptr; //&m_acq_date;
+	m_desc[CH_FILENAME].pdataItem = nullptr; //&m_Filedat;
+	m_desc[CH_FILESPK].pdataItem = nullptr; //&m_Filespk;
+	m_desc[CH_ACQ_COMMENTS].pdataItem = nullptr; //&m_acq_comment;
+	m_desc[CH_MORE].pdataItem = nullptr; //&m_more;
+	m_desc[CH_IDINSECT].pdataItem = &m_IDinsect;
+	m_desc[CH_IDSENSILLUM].pdataItem = &m_IDsensillum;
+	m_desc[CH_DATALEN].pdataItem = &m_datalen;
+	m_desc[CH_NSPIKES].pdataItem = &m_nspikes;
+	m_desc[CH_NSPIKECLASSES].pdataItem = &m_nspikeclasses;
+	m_desc[CH_FLAG].pdataItem = &m_flag;
+	m_desc[CH_INSECT_ID].pdataItem = &m_insect_ID;
+	m_desc[CH_SENSILLUM_ID].pdataItem = &m_sensillum_ID;
+	m_desc[CH_OPERATOR_ID].pdataItem = &m_operator_ID;
+	m_desc[CH_STIM_ID].pdataItem = &m_stim_ID;
+	m_desc[CH_CONC_ID].pdataItem = &m_conc_ID;
+	m_desc[CH_LOCATION_ID].pdataItem = &m_location_ID;
+	m_desc[CH_PATH_ID].pdataItem = &m_path_ID;
+	m_desc[CH_PATH2_ID].pdataItem = &m_path2_ID;
+	m_desc[CH_STIM2_ID].pdataItem = &m_stim2_ID;
+	m_desc[CH_CONC2_ID].pdataItem = &m_conc2_ID;
+	m_desc[CH_STRAIN_ID].pdataItem = &m_strain_ID;
+	m_desc[CH_SEX_ID].pdataItem = &m_sex_ID;
+	m_desc[CH_REPEAT].pdataItem = &m_repeat;
+	m_desc[CH_REPEAT2].pdataItem = &m_repeat2;
+	m_desc[CH_ACQDATE_DAY].pdataItem = nullptr;
+	m_desc[CH_ACQDATE_TIME].pdataItem = nullptr;
+	m_desc[CH_EXPT_ID].pdataItem = &m_expt_ID;
 
 	m_nDefaultType = dbOpenDynaset;
-	m_desc[CH_ACQDATE_DAY].otfilterParam1 =DATE(0);		// 16
-	m_desc[CH_ACQDATE_TIME].otfilterParam1 = DATE(0);	 // 17
-	m_nParams = 18;	
+	m_desc[CH_ACQDATE_DAY].otfilterParam1 = DATE(0); // 16
+	m_desc[CH_ACQDATE_TIME].otfilterParam1 = DATE(0); // 17
+	m_nParams = 18;
 
 	m_csdefaultSQL = _T("[table]");
 
 	// clear fields
-	for (int i=0; i<= m_nFields; i++)
+	for (int i = 0; i <= m_nFields; i++)
 	{
 		m_desc[i].bFilter1 = FALSE;
 		m_desc[i].csColParam.Empty();

@@ -37,7 +37,8 @@
 IMPLEMENT_DYNCREATE(CSpikeTemplateView, CDaoRecordView)
 
 CSpikeTemplateView::CSpikeTemplateView()
-	: CDaoRecordView(CSpikeTemplateView::IDD)
+	: CDaoRecordView(CSpikeTemplateView::IDD), m_pSpkDoc(nullptr), m_pSpkList(nullptr), m_lFirst(0), m_lLast(0),
+	  mdPM(nullptr), mdMO(nullptr), m_psC(nullptr), m_ktagleft(0), m_ktagright(0), m_scrollFilePos_infos()
 {
 	m_timefirst = 0.0f;
 	m_timelast = 0.0f;
@@ -47,12 +48,12 @@ CSpikeTemplateView::CSpikeTemplateView()
 	m_hitratesort = 0;
 	m_ifirstsortedclass = 0;
 	m_ballfiles = FALSE;
-	m_spikeno=-1;
-	m_ballclasses=FALSE;
+	m_spikeno = -1;
+	m_ballclasses = FALSE;
 	m_binit = FALSE;
-	m_ballTempl=FALSE;
-	m_ballSort=FALSE;
-	m_bEnableActiveAccessibility=FALSE; // workaround to crash / accessibility
+	m_ballTempl = FALSE;
+	m_ballSort = FALSE;
+	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
 //---------------------------------------------------------------------------

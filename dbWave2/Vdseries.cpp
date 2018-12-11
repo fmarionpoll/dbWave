@@ -16,7 +16,7 @@
 // CDataSeriesDlg dialog
 
 CDataSeriesDlg::CDataSeriesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataSeriesDlg::IDD, pParent)
+	: CDialog(CDataSeriesDlg::IDD, pParent), m_ispan(0), m_lineview(nullptr), m_pdbDoc(nullptr), m_listindex(0)
 {
 	m_name = "";
 }

@@ -14,7 +14,7 @@
 
 // Construction / Destruction
 
-CDataFileAWAVE::CDataFileAWAVE() : CDataFileX()
+CDataFileAWAVE::CDataFileAWAVE() 
 {
 	m_idType= DOCTYPE_AWAVE;
 	m_csType = "AWAVE";
@@ -24,7 +24,7 @@ CDataFileAWAVE::CDataFileAWAVE() : CDataFileX()
 	m_bmodified = false;
 }
 
-CDataFileAWAVE::CDataFileAWAVE(CFile* pfile)
+CDataFileAWAVE::CDataFileAWAVE(CFile* pfile) : m_bmodified(false)
 {
 	m_idType= DOCTYPE_AWAVE;
 	m_csType= "AWAVE";

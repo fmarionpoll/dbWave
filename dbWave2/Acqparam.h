@@ -65,7 +65,7 @@ public :
 
 	//------------------- Total : 33 variable members
 protected:
-	CString AddComments(CString psep, BOOL bExpl, CString csExpl, CString cscomment);
+	static CString AddComments(const CString& p_separator, BOOL bExpl, const CString& csExpl, const CString& cscomment);
 	void Read_v8_and_before(CArchive& ar, WORD version);
 
 public :
@@ -75,7 +75,7 @@ public :
 	long Write(CFile* datafile);	
 	BOOL Read(CFile* datafile);
 	virtual void Serialize(CArchive& ar);
-	CString GetComments(CString separator, BOOL bExplanations=FALSE);
+	CString GetComments(const CString& separator, BOOL bExplanations=FALSE) const;
 };
 
 
@@ -93,25 +93,25 @@ class CWaveChan : public CObject
 	DECLARE_SERIAL(CWaveChan);
 public :
 	CString		am_csComment;		// channel annotation
-	short		am_adchannel;		// channel A/D 
-	short		am_gainAD;			// channel A/D gain 
+	short		am_adchannel{};		// channel A/D 
+	short		am_gainAD{};			// channel A/D gain 
 
 	CString		am_csheadstage;   	// headstage type (ASCII)
-	short		am_gainheadstage;	// amplification factor at headstage level
+	short		am_gainheadstage{};	// amplification factor at headstage level
 
 	CString		am_csamplifier;		// instrumental amplifier
-	short 		am_amplifierchan;	// amplifier channel
-	short		am_gainpre;			// pre-filter amplification
-	short		am_gainpost;		// post-filter amplification
-	short		am_notchfilt;		// notch filter ON/off
-	short		am_lowpass;			// low pass filter 0=DC 4....30000
-	float		am_offset;			// input offset	
+	short 		am_amplifierchan{};	// amplifier channel
+	short		am_gainpre{};			// pre-filter amplification
+	short		am_gainpost{};		// post-filter amplification
+	short		am_notchfilt{};		// notch filter ON/off
+	short		am_lowpass{};			// low pass filter 0=DC 4....30000
+	float		am_offset{};			// input offset	
 	CString		am_csInputpos;		// in+ filter settings GND= inactive input
 	CString		am_csInputneg;		// in- filter settings GND= inactive input
 
-	double		am_gainamplifier;	// double value to allow fractional gain 
-	double		am_gaintotal;		// total gain as double
-	double		am_resolutionV;		// resolution
+	double		am_gainamplifier{};	// double value to allow fractional gain 
+	double		am_gaintotal{};		// total gain as double
+	double		am_resolutionV{};		// resolution
 
 public :
 	CWaveChan();					//constructor
@@ -127,7 +127,7 @@ protected:
 	CString		am_csversion;
 	short		am_inputpos;	// values:GND(-1) DC(0) .1 1 10 30 100 300 Hz (*10)
 	short		am_inputneg;	// ibidem.
-	CString		GetCyberAmpInput(int val);
+	static CString		GetCyberAmpInput(int val);
 };
 
 //////////////////////////////////////////////////////////////////////

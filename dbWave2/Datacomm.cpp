@@ -14,7 +14,7 @@
 
 
 CDataCommentsDlg::CDataCommentsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataCommentsDlg::IDD, pParent)
+	: CDialog(CDataCommentsDlg::IDD, pParent), m_pvO(nullptr)
 {
 	m_bacqchans = FALSE;
 	m_bacqcomments = FALSE;

@@ -116,19 +116,19 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 
 // ----------------------------------------------------------------------------
 
-CTemplateListWnd::CTemplateListWnd()
-{	
+CTemplateListWnd::CTemplateListWnd(): m_globaldist(0), m_iItemDrag(0), m_iItemDrop(0)
+{
 	m_hitrate = 75;
 	m_ktolerance = 1.96f;
 	m_globalstd = 0.f;
 	m_tpllen = 60;
-	m_tpleft=0;
+	m_tpleft = 0;
 	m_tpright = 1;
-	m_yextent=0;
-	m_yzero=0;
+	m_yextent = 0;
+	m_yzero = 0;
 	m_bDragging = FALSE;
-	m_pimageListDrag= nullptr;
-	m_tpl0.tInit();	
+	m_pimageListDrag = nullptr;
+	m_tpl0.tInit();
 }
 
 // ----------------------------------------------------------------------------

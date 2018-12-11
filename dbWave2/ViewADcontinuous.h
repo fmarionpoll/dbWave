@@ -123,10 +123,10 @@ protected:
 	long				m_chsweeplength;	// sweep length (per channel)
 	long				m_sweeplength;		// sweep length (all channels)
 	int					m_chsweep1;			// indexes
-	int					m_chsweep2;
-	int					m_chsweepRefresh;
-	int					m_bytesweepRefresh;
-	float				m_fclockrate;		// apparent clock rate
+	int					m_chsweep2{};
+	int					m_chsweepRefresh{};
+	int					m_bytesweepRefresh{};
+	float				m_fclockrate{};		// apparent clock rate
 
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoards();

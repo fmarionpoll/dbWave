@@ -85,13 +85,13 @@ public:
 
 // Operations
 public:
-	int				CheckFileType(CFile* file);
-	int 			CheckFileTypeFromName(CString& szPathName);
-	int  			BGetVal(int chan, long lIndex);
-	short* 			LoadTransfData (long lFirst, long lLast, int transformType, int zbsourcechan);
-	BOOL			BuildTransfData(int transformType, int ns);
-	BOOL			LoadRawData(long* lFirst, long* lLast, int nspan /*, BOOL bImposedReading*/);
-	short*			LoadRawDataParams(int* nchans);
+	int				CheckFileType(CFile* file) const;
+	int 			CheckFileTypeFromName(CString& sz_path_name);
+	int  			BGetVal(int chan, long l_index);
+	short* 			LoadTransfData (long l_first, long l_last, int transform_type, int source_channel);
+	BOOL			BuildTransfData(int transform_type, int ns);
+	BOOL			LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
+	short*			LoadRawDataParams(int* n_channels);
 
 	// write data
 	BOOL			WriteHZtags(CTagList* ptags);

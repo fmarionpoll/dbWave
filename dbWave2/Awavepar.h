@@ -122,7 +122,7 @@ public:
 	int			irowheight;
 
 	// save scopescreen item
-	int			nscopeitems;
+	int			n_scope_items;
 	SCOPESTRUCT	viewdata;
 	SCOPESTRUCT viewspkdetectfiltered;
 	SCOPESTRUCT	viewspkdetectdata;
@@ -236,7 +236,7 @@ public:
 	COLORREF crStimFill;
 	COLORREF crStimBorder;
 	COLORREF crChartArea;
-	COLORREF crScale[18];
+	COLORREF crScale[18]{};
 	float	 fScalemax;
 	int		bhistType;			// type of histogram requested (PSTH, ISI, ...)
 	BOOL	bCycleHist;			// cycle histogram (TRUE/FALSE), default=FALSE
@@ -361,7 +361,7 @@ public:
 
 	CString			csBasename;
 	CString			csPathname;
-	int				exptnumber;
+	int				exptnumber{};
 	int				insectnumber;
 	int				iundersample;
 	BOOL			baudiblesound;
@@ -412,8 +412,8 @@ class OUTPUTPARMS : public CObject
 	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 
 public:
-	BOOL	bChanged;								// flag set TRUE if contents has changed
-	WORD	wversion;								// version number
+	BOOL	bChanged{};								// flag set TRUE if contents has changed
+	WORD	wversion{};								// version number
 
 	BOOL	bON;									// channel authorized or not
 	int		iChan;									// chan 
@@ -435,17 +435,17 @@ public:
 	int		num;
 	UINT	bit33;
 	UINT	count;
-	UINT	bit1;
-	double	ampUp;
-	double	ampLow;
+	UINT	bit1{};
+	double	ampUp{};
+	double	ampLow{};
 
 	double	noise_dAmplitV;	
 	double	noise_dFactor;
 	double	noise_dOffsetV;
 	int		noise_iDelay;
 	BOOL	noise_bExternal;
-	double	lastamp;
-	double	lastphase;
+	double	lastamp{};
+	double	lastphase{};
 	double	value;
 };
 

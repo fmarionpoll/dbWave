@@ -51,8 +51,13 @@
 IMPLEMENT_DYNCREATE(CSpikeDetectionView, CDaoRecordView)
 
 CSpikeDetectionView::CSpikeDetectionView()
-	: CDaoRecordView(CSpikeDetectionView::IDD)
-{   
+	: CDaoRecordView(CSpikeDetectionView::IDD), m_dbDoc(nullptr), m_filescroll_infos(), m_zoominteger(0),
+	  m_pArrayFromApp(nullptr), m_pDetectParms(nullptr), m_iDetectParms(0), mdPM(nullptr), mdMO(nullptr),
+	  m_samplingRate(0), m_szbuf{}, m_file0(0), m_lFirst0(0), m_lLast0(0), m_npixels0(0), m_nfiles(0),
+	  m_nbrowsperpage(0), m_lprintFirst(0), m_lprintLen(0), m_printFirst(0), m_printLast(0), m_bIsPrinting(0),
+	  m_tMetric(), m_logFont(), m_pOldFont(nullptr), m_hBias(nullptr), m_hZoom(nullptr), m_yscaleFactor(0),
+	  m_VBarMode(0), m_hBias2(nullptr), m_hZoom2(nullptr), m_yscaleFactor2(0), m_VBarMode2(0)
+{
 	m_timefirst = 0.f;
 	m_timelast = 0.f;
 	m_datacomments = "";
@@ -61,14 +66,14 @@ CSpikeDetectionView::CSpikeDetectionView()
 	m_thresholdval = 0.f;
 	m_ichanselected = 0;
 	m_ichanselected2 = 0;
-	m_pspkDocVSD= nullptr;
-	m_pSpkListVSD= nullptr;
+	m_pspkDocVSD = nullptr;
+	m_pSpkListVSD = nullptr;
 	m_cursorstate = 0;
 	m_bValidThreshold = FALSE;
-	m_bDetected=FALSE;
+	m_bDetected = FALSE;
 	m_binit = FALSE;
 	m_scancount_doc = -1;
-	m_bEnableActiveAccessibility=FALSE;
+	m_bEnableActiveAccessibility = FALSE;
 }
 
 CSpikeDetectionView::~CSpikeDetectionView()

@@ -19,17 +19,17 @@ public:
 	CdbWaveApp();
 
 	CdbMultiDocTemplate* m_pdbWaveViewTemplate;
-	CdbMultiDocTemplate* m_pdbBrowseViewTemplate;
-	CdbMultiDocTemplate* m_pNoteViewTemplate;
-	CdbMultiDocTemplate* m_pdataViewTemplate;
-	CdbMultiDocTemplate* m_pspikeViewTemplate;
-	CdbMultiDocTemplate* m_pADViewTemplate;
+	CdbMultiDocTemplate* m_pdbBrowseViewTemplate{};
+	CdbMultiDocTemplate* m_pNoteViewTemplate{};
+	CdbMultiDocTemplate* m_pdataViewTemplate{};
+	CdbMultiDocTemplate* m_pspikeViewTemplate{};
+	CdbMultiDocTemplate* m_pADViewTemplate{};
 
-	HMENU	m_hDBView;
-	HMENU	m_hDataView;
-	HMENU	m_hSpikeView;
-	HMENU	m_hBrowseView;
-	HMENU	m_hAcqView;
+	HMENU	m_hDBView{};
+	HMENU	m_hDataView{};
+	HMENU	m_hSpikeView{};
+	HMENU	m_hBrowseView{};
+	HMENU	m_hAcqView{};
 
 // Overrides
 public:
@@ -37,7 +37,7 @@ public:
 	virtual int ExitInstance();
 
 // Implementation
-	UINT  m_nAppLook;
+	UINT  m_nAppLook{};
 	BOOL  m_bHiColorIcons;
 
 	virtual void PreLoadState();
@@ -61,7 +61,7 @@ public:
 	CMemFile*				m_pviewspikesMemFile;
 	CMemFile*				m_psort1spikesMemFile;
 	CStringArray			m_tempMDBfiles;
-	CSharedFile*			m_psf;
+	CSharedFile*			m_psf{};
 	BOOL					m_bADcardFound;
 
 	void	Defaultparameters(BOOL bRead);

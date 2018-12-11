@@ -23,15 +23,17 @@
 
 
 CSpikeEditDlg::CSpikeEditDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CSpikeEditDlg::IDD, pParent)
+	: CDialog(CSpikeEditDlg::IDD, pParent), m_parent(nullptr), m_xextent(0), m_yextent(0), m_xzero(0), m_yzero(0),
+	  m_bchanged(0), m_spkpretrig(0), m_spklen(0), m_viewdatalen(0), m_iitimeold(0), m_iitime(0), m_HScroll_infos(),
+	  m_VScroll_infos()
 {
 	m_spikeclass = 0;
 	m_spikeno = 0;
 	m_bartefact = FALSE;
 	m_displayratio = 0;
 	m_yvextent = 0;
-	m_pSpkList =nullptr;		// spike list
-	m_dbDoc = nullptr;			// source data doc cDocument
+	m_pSpkList = nullptr; // spike list
+	m_dbDoc = nullptr; // source data doc cDocument
 	m_spikeChan = 0;
 }
 

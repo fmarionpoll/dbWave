@@ -16,11 +16,11 @@
 
 CFindFilesDlg::CFindFilesDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CFindFilesDlg::IDD, pParent)
-	, m_banyformat(FALSE), m_bexcludecloud(TRUE)
+	  , m_pfilenames(nullptr), m_banyformat(FALSE), m_bexcludecloud(TRUE), m_bSubtreeSearch(0)
 {
 	m_path = _T("");
 	m_selinit = 0;
-	m_ioption=0;
+	m_ioption = 0;
 	m_pdbDoc = nullptr;
 	m_nfound = 0;
 }

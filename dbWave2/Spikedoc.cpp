@@ -784,8 +784,8 @@ void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		// 4) export histogram
 		if (yN > 0)
 		{
-			float VperBin = pspklist->GetAcqVoltsperBin()*1000.f;
-			csDummy.Format(_T("\t%.3lf\t%.3lf\t%i"), float(ySum/yN)*VperBin, float(ySum2)*VperBin*VperBin, yN);
+			const auto volts_per_bin = pspklist->GetAcqVoltsperBin()*1000.f;
+			csDummy.Format(_T("\t%.3lf\t%.3lf\t%i"), float(ySum/yN)*volts_per_bin, float(ySum2)*volts_per_bin*volts_per_bin, yN);
 		}
 		else
 			csDummy= _T("\t\t\t0"); 

@@ -84,7 +84,7 @@ public:
 
 // Attributes
 public:
-	long	devicesConnected;
+	long	devicesConnected{};
 
 // Operations
 public:

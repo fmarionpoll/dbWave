@@ -19,7 +19,7 @@
 
 
 CImportGenericDataDlg::CImportGenericDataDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CImportGenericDataDlg::IDD, pParent)
+	: CDialog(CImportGenericDataDlg::IDD, pParent), m_pfilenameArray(nullptr)
 {
 	m_adChannelComment = _T("");
 	m_adChannelGain = 0.0f;
@@ -32,10 +32,10 @@ CImportGenericDataDlg::CImportGenericDataDlg(CWnd* pParent /*=NULL*/)
 	m_voltageMin = 0.0f;
 	m_csFileTitle = _T("");
 	m_bpreviewON = FALSE;
-	bConvert=FALSE;	
-	m_bpreviewON=FALSE;
-	m_fileold=_T("");
-	m_bChanged=FALSE;
+	bConvert = FALSE;
+	m_bpreviewON = FALSE;
+	m_fileold = _T("");
+	m_bChanged = FALSE;
 	m_bimportall = FALSE;
 	piivO = nullptr;
 }

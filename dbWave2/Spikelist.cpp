@@ -17,9 +17,9 @@
 // CFromChan
 
 // default spike detection init
-CFromChan::CFromChan()
+CFromChan::CFromChan(): encoding(0), binzero(0), samprate(0), voltsperbin(0)
 {
-	wversion=5;
+	wversion = 5;
 }
 
 CFromChan::~CFromChan()
@@ -347,18 +347,18 @@ IMPLEMENT_SERIAL(CSpikeList,CObject,0)
  comments:
  **************************************************************************/
 
-CSpikeList::CSpikeList()
+CSpikeList::CSpikeList(): m_wversion(0), m_encoding(0), m_binzero(0), m_samprate(0), m_voltsperbin(0)
 {
-	m_bsaveartefacts = FALSE;	
+	m_bsaveartefacts = FALSE;
 	m_nbclasses = 1;
-	m_bvalidclasslist=FALSE;	// default: no valid array
+	m_bvalidclasslist = FALSE; // default: no valid array
 	//m_classArray.SetSize(2);	// default size - some functions
 	//m_classArray.SetAt(0,0);	// access this array anyway so provide dummy value
 	//m_classArray.SetAt(1,0);	// access this array anyway so provide dummy value
 	m_IDstring = "Awave Spike file v";
-	m_selspike=-1;
-	m_lFirstSL=0;
-	m_lLastSL=0;
+	m_selspike = -1;
+	m_lFirstSL = 0;
+	m_lLastSL = 0;
 	m_bextrema = FALSE;
 	m_totalmin = 2048;
 	m_totalmax = 2100;

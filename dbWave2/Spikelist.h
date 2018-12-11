@@ -53,13 +53,13 @@ public:
 // Attributes
 public:
 	CDWordArray	m_idata;			// pointers to individual spike data
-	WORD		m_lenspk;			// length of one spike
-	int			m_spkbufferincrement;//
-	int			m_spkbufferlength;	// current buffer length	
+	WORD		m_lenspk{};			// length of one spike
+	int			m_spkbufferincrement{};//
+	int			m_spkbufferlength{};	// current buffer length	
 	short*		m_pspkbuffer;		// buffer address
-	int			m_currentfilter;	// ID of last transform
-	int			m_nextindex;		// next available index	
-	int			m_lastindex;		// index last free space for spike data
+	int			m_currentfilter{};	// ID of last transform
+	int			m_nextindex{};		// next available index	
+	int			m_lastindex{};		// index last free space for spike data
 	int			m_binzero;			// zero... default = 2048
 
 // Operations
@@ -172,15 +172,15 @@ public:
 // Description 
 protected:
 // (0) ---------------infos about file version and ID
-	WORD			m_wversion;
+	WORD			m_wversion{};
 	CString			m_IDstring;
 
 // (1) ---------------infos about data acquisition and spike detection ------------------
 	CWaveChan		m_acqchan;			// description acquisition channel
-	WORD  			m_encoding;			// data encoding mode  
-	long  			m_binzero;			// 2048
-	float 			m_samprate;			// data acq sampling rate (Hz)
-	float 			m_voltsperbin;		// nb volts per bin (data)
+	WORD  			m_encoding{};			// data encoding mode  
+	long  			m_binzero{};			// 2048
+	float 			m_samprate{};			// data acq sampling rate (Hz)
+	float 			m_voltsperbin{};		// nb volts per bin (data)
 	SPKDETECTPARM	m_parm;				// detection parameters
 	CString			m_cscomment;		// spike channel descriptor (unused)
 

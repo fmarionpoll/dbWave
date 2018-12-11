@@ -306,19 +306,19 @@ CWaveFormat& CWaveFormat::operator = (const CWaveFormat& arg)
 // Write CWaveFormat in a binary file
 long CWaveFormat::Write(CFile* datafile)
 {
-	ULONGLONG p1 = datafile->GetPosition();
+	const auto p1 = datafile->GetPosition();
 	CArchive ar(datafile, CArchive::store);
 	Serialize(ar);
 	ar.Close();
-	ULONGLONG p2 = datafile->GetPosition();
-	return (long) (p2-p1);
+	const auto p2 = datafile->GetPosition();
+	return static_cast<long>(p2 - p1);
 }
 
 // Read CWaveFormat from a binary file
 BOOL CWaveFormat::Read(CFile* datafile)
 {
 	CArchive ar(datafile, CArchive::load);
-	BOOL flag = TRUE;
+	auto flag = TRUE;
 	try 
 	{
 		Serialize(ar);
@@ -332,35 +332,34 @@ BOOL CWaveFormat::Read(CFile* datafile)
 	return flag;
 }
 
-CString CWaveFormat::GetComments (CString psep, BOOL bExpl)
+CString CWaveFormat::GetComments (const CString& p_separator, const BOOL b_explanation) const
 {
-	CString csOut;
-	csOut += AddComments(psep, bExpl, _T("comment1="),	csComment);
-	csOut += AddComments(psep, bExpl, _T("stim1="),		csStimulus);
-	csOut += AddComments(psep, bExpl, _T("conc1= #"),	csConcentration);
-	csOut += AddComments(psep, bExpl, _T("stim2="),		csStimulus2);
-	csOut += AddComments(psep, bExpl, _T("com2= #"),	csConcentration2);
+	CString cs_out;
+	cs_out += AddComments(p_separator, b_explanation, _T("comment1="),	csComment);
+	cs_out += AddComments(p_separator, b_explanation, _T("stim1="),		csStimulus);
+	cs_out += AddComments(p_separator, b_explanation, _T("conc1= #"),	csConcentration);
+	cs_out += AddComments(p_separator, b_explanation, _T("stim2="),		csStimulus2);
+	cs_out += AddComments(p_separator, b_explanation, _T("com2= #"),	csConcentration2);
 	
-	csOut += AddComments(psep, bExpl, _T("insect="),	csInsectname);
-	csOut += AddComments(psep, bExpl, _T("location="),	csLocation);
-	csOut += AddComments(psep, bExpl, _T("sensillum="), csSensillum);
-	csOut += AddComments(psep, bExpl, _T("strain="),	csStrain);
-	csOut += AddComments(psep, bExpl, _T("sex="),		csSex);
-	csOut += AddComments(psep, bExpl, _T("operator="),	csOperator);
-	csOut += AddComments(psep, bExpl, _T("comment2="),	csMoreComment);
+	cs_out += AddComments(p_separator, b_explanation, _T("insect="),	csInsectname);
+	cs_out += AddComments(p_separator, b_explanation, _T("location="),	csLocation);
+	cs_out += AddComments(p_separator, b_explanation, _T("sensillum="), csSensillum);
+	cs_out += AddComments(p_separator, b_explanation, _T("strain="),	csStrain);
+	cs_out += AddComments(p_separator, b_explanation, _T("sex="),		csSex);
+	cs_out += AddComments(p_separator, b_explanation, _T("operator="),	csOperator);
+	cs_out += AddComments(p_separator, b_explanation, _T("comment2="),	csMoreComment);
 
-	return csOut;
+	return cs_out;
 }
 
-CString CWaveFormat::AddComments(CString psep, BOOL bExpl, CString csExpl, CString cscomment)
+CString CWaveFormat::AddComments(const CString& p_separator, const BOOL b_explanation, const CString& cs_explanation, const CString& cs_comment)
 {
-	CString csOut;
-	csOut += psep; 
-	if (bExpl) 
-		csOut += csExpl;	
-	if (!cscomment.IsEmpty())		
-		csOut += cscomment;
-	return csOut;
+	auto cs_out = p_separator; 
+	if (b_explanation) 
+		cs_out += cs_explanation;	
+	if (!cs_comment.IsEmpty())		
+		cs_out += cs_comment;
+	return cs_out;
 }
 
 //------------------ class CWaveChan ---------------------------------
@@ -435,16 +434,16 @@ void CWaveChan::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		const CString dummy = am_csversion + am_csComment;	// modif 5 nov 2010 to introduce versioning in this structure
+		const auto dummy = am_csversion + am_csComment;
 		ar << dummy;
-		const float x_gain = 0.0f;
+		const auto x_gain = 0.0f;
 		ar << x_gain;		// dummy
 		ar << static_cast<WORD>(am_adchannel) << static_cast<WORD>(am_gainAD);
 		ar << am_csheadstage;
 		ar << static_cast<WORD>(am_gainheadstage);
 		ar << am_csamplifier << static_cast<WORD>(am_amplifierchan);
 		ar << static_cast<WORD>(am_gainpre) << static_cast<WORD>(am_gainpost);
-		ar << static_cast<WORD>(am_notchfilt) << (WORD) am_lowpass;
+		ar << static_cast<WORD>(am_notchfilt) << static_cast<WORD>(am_lowpass);
 		am_inputpos = 0;	// dummy value (version april 2004 to add csInput)
 		am_inputneg = 0;	// dummy value (version april 2004 to add csInput)
 		ar << am_inputpos << am_inputneg;
@@ -490,7 +489,7 @@ void CWaveChan::Serialize(CArchive& ar)
 		if (am_csComment.GetLength() >= n_chars && am_csComment.Find(am_csversion, 0) >= 0)
 		{
 			// extract the dummy sequence ("mcid")
-			CString dummy = am_csComment;
+			auto dummy = am_csComment;
 			am_csComment = dummy.Right(dummy.GetLength()-n_chars);
 			// read the rest of the archive
 			ar >> w1;
@@ -532,7 +531,7 @@ BOOL CWaveChan::Read(CFile *datafile)
 	return flag;
 }
 
-CString CWaveChan::GetCyberAmpInput(int value)
+CString CWaveChan::GetCyberAmpInput(const int value)
 {
 	CString cs_out;
 	// values:GND(-1) DC(0) .1 1 10 30 100 300 Hz (*10)

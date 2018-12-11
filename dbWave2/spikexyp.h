@@ -18,12 +18,12 @@ protected:
 	int		m_rangemode;		// display range
 	long 	m_lFirst;			// time index of first pt displayed
 	long 	m_lLast;			// time index of last pt displayed
-	int		m_spkfirst;			// index first spike
-	int		m_spklast;			// index last spike
+	int		m_spkfirst{};			// index first spike
+	int		m_spklast{};			// index last spike
 	int  	m_currentclass;		// current class in case of displaying classes
 	int  	m_selectedspike;	// selected spike (display differently)
 	int  	m_hitspk;			// no of spike selected
-	int		m_selclass;			// index class selected
+	int		m_selclass{};			// index class selected
 	BOOL 	m_btrackCurve;		// track curve ?	
 	
 	int		m_rwidth;			// dot width

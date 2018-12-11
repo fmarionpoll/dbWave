@@ -14,13 +14,13 @@
 
 IMPLEMENT_DYNCREATE(CDataFileATLAB, CDataFileX)
 
-CDataFileATLAB::CDataFileATLAB()
+CDataFileATLAB::CDataFileATLAB(): m_pArray(nullptr)
 {
 	m_bHeaderSize = 1024;
 	m_ulOffsetData = m_bHeaderSize;
 	m_ulOffsetHeader = 0;
 	m_idType = DOCTYPE_ATLAB;
-	m_csType= _T("ATLAB");
+	m_csType = _T("ATLAB");
 	m_pWFormat = nullptr;
 }
 

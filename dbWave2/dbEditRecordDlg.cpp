@@ -22,9 +22,9 @@
 IMPLEMENT_DYNAMIC(CdbEditRecordDlg, CDialog)
 CdbEditRecordDlg::CdbEditRecordDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CdbEditRecordDlg::IDD, pParent)
-	, m_cs_more(_T(""))
-	, m_csnameDat(_T(""))
-	, m_csnameSpk(_T(""))
+	  , m_pSet(nullptr), m_cs_more(_T(""))
+	  , m_csnameDat(_T(""))
+	  , m_csnameSpk(_T(""))
 {
 	//m_pDaoView = NULL;
 	m_bshowIDC_NEXT = TRUE;

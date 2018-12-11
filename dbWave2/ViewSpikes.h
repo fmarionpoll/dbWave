@@ -112,23 +112,23 @@ public:
 // VIEWPRNT.CPP: print view
 protected:
 	CRect 	m_Margin;				// margins (pixels)
-	int		m_file0;				// current file
-	long	m_lFirst0;
-	long	m_lLast0;
+	int		m_file0{};				// current file
+	long	m_lFirst0{};
+	long	m_lLast0{};
 		
-	int		m_nfiles;				// nb of files in doc
-	int 	m_nbrowsperpage;		// USER: nb files/page
-	long 	m_lprintFirst;			// file index of first pt
-	long 	m_lprintLen;			// nb pts per line
-	int 	m_printFirst;
-	int 	m_printLast;
+	int		m_nfiles{};				// nb of files in doc
+	int 	m_nbrowsperpage{};		// USER: nb files/page
+	long 	m_lprintFirst{};			// file index of first pt
+	long 	m_lprintLen{};			// nb pts per line
+	int 	m_printFirst{};
+	int 	m_printLast{};
 	int		m_maxclasses;
-	BOOL	m_bIsPrinting;
+	BOOL	m_bIsPrinting{};
 	
 	// specific printer parameters
-	TEXTMETRIC m_tMetric;			// onbegin/onendPrinting
-	LOGFONT	m_logFont;				// onbegin/onendPrinting
-	CFont*	m_pOldFont;				// onbegin/onendPrinting
+	TEXTMETRIC m_tMetric{};			// onbegin/onendPrinting
+	LOGFONT	m_logFont{};				// onbegin/onendPrinting
+	CFont*	m_pOldFont{};				// onbegin/onendPrinting
 	CFont	m_fontPrint;			// onbegin/onendPrinting    
 
 	// page format printing parameters (pixel unit)    

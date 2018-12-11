@@ -19,9 +19,10 @@ IMPLEMENT_DYNAMIC(CdbEditFieldDlg, CDialogEx)
 
 CdbEditFieldDlg::CdbEditFieldDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CdbEditFieldDlg::IDD, pParent)
-	, m_csfieldvalue(_T(""))
-	, m_cstextsearch(_T(""))
-	, m_cstextreplacewith(_T(""))
+	  , m_destID(0), m_csfieldvalue(_T(""))
+	  , m_cstextsearch(_T(""))
+	  , m_cstextreplacewith(_T("")), m_pMainTable(nullptr), m_pIndexTable(nullptr), m_pliIDArray(nullptr),
+	  m_pdbDoc(nullptr)
 {
 	m_sourceselect = REC_CURRENT;
 	m_sourcecondition = COND_EQU;
@@ -30,7 +31,7 @@ CdbEditFieldDlg::CdbEditFieldDlg(CWnd* pParent /*=NULL*/)
 	m_bcodictchanged = FALSE;
 	m_initialID = -1;
 	m_bIndexTable = TRUE;
-	m_first=-1;
+	m_first = -1;
 	m_sourceID = 0;
 }
 

@@ -71,21 +71,21 @@ protected:
 	int		m_nfiles;				// nb of files in doc
 	int 	m_nbrowsperpage;		// USER: nb files/page
 	long 	m_lprintFirst;			// file index of first pt
-	long 	m_lprintLen;			// nb pts per line
-	float 	m_printFirst;
-	float 	m_printLast;
+	long 	m_lprintLen{};			// nb pts per line
+	float 	m_printFirst{};
+	float 	m_printLast{};
 	BOOL	m_bIsPrinting;
 
 	// specific printer parameters
-	TEXTMETRIC m_tMetric;			// onbegin/onendPrinting
-	LOGFONT	m_logFont;				// onbegin/onendPrinting
-	CFont*	m_pOldFont;				// onbegin/onendPrinting
+	TEXTMETRIC m_tMetric{};			// onbegin/onendPrinting
+	LOGFONT	m_logFont{};				// onbegin/onendPrinting
+	CFont*	m_pOldFont{};				// onbegin/onendPrinting
 	CFont	m_fontPrint;			// onbegin/onendPrinting    
 
 	// page format printing parameters (pixel unit)    
 	CRect						m_printRect;
-	OPTIONS_VIEWDATA*			mdPM;		// view data options
-	OPTIONS_VIEWDATAMEASURE*	mdMO;		// measure options
+	OPTIONS_VIEWDATA*			mdPM{};		// view data options
+	OPTIONS_VIEWDATAMEASURE*	mdMO{};		// measure options
 
 protected:
 	void 	PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);	
@@ -104,13 +104,13 @@ protected:
 protected:
 	CStretchControl m_stretch;
 	BOOL	m_binit;
-	BOOL	m_bCommonScale;
+	BOOL	m_bCommonScale{};
 
 //public:
 protected:
 	CScrollBarEx	m_filescroll;		// data position within file
-	SCROLLINFO		m_filescroll_infos;	// infos for scrollbar
-	int				m_VBarMode;			// flag V scrollbar state
+	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
+	int				m_VBarMode{};			// flag V scrollbar state
 	CScrollBar 		m_scrolly;			// V scrollbar
 
 protected:

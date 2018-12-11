@@ -36,7 +36,8 @@
 IMPLEMENT_DYNCREATE(CSpikeView, CDaoRecordView)
 
 CSpikeView::CSpikeView()
-	: CDaoRecordView(CSpikeView::IDD)
+	: CDaoRecordView(CSpikeView::IDD), m_hBias(nullptr), m_hZoom(nullptr), m_yscaleFactor(0), m_VBarMode(0),
+	  m_dbDoc(nullptr), m_pSpkList(nullptr), m_scrollFilePos_infos(), m_jitter(0)
 {
 	m_timefirst = 0.0f;
 	m_timelast = 0.0f;
@@ -49,27 +50,27 @@ CSpikeView::CSpikeView()
 	m_bartefact = FALSE;
 	m_jitter_ms = 1.0f;
 	m_baddspikemode = FALSE;
-	m_bInitSourceView=TRUE;
-	m_bDatDocExists=FALSE;
-	m_bSpkDocExists=FALSE;
+	m_bInitSourceView = TRUE;
+	m_bDatDocExists = FALSE;
+	m_bSpkDocExists = FALSE;
 	m_lFirst = 0;
-	m_lLast = -1;	
-	m_maxclasses=1;
+	m_lLast = -1;
+	m_maxclasses = 1;
 	m_binit = FALSE;
-	m_yWE =1;
+	m_yWE = 1;
 	m_yWO = 0;
 	m_zoominteger = 1;
-	m_ptVT = -1;	
-	m_rectVTtrack = CRect(0,0,0,0);
+	m_ptVT = -1;
+	m_rectVTtrack = CRect(0, 0, 0, 0);
 	m_pSpkDoc = nullptr;
 	m_pDataDoc = nullptr;
 	m_bdummy = TRUE;
-	mdPM= nullptr;			// view data options
-	mdMO= nullptr;			// measure options
-	m_psC= nullptr;
-	m_pspkDP= nullptr;		// spike detection parameters
+	mdPM = nullptr; // view data options
+	mdMO = nullptr; // measure options
+	m_psC = nullptr;
+	m_pspkDP = nullptr; // spike detection parameters
 
-	m_bEnableActiveAccessibility=FALSE; // workaround to crash / accessibility
+	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
 CSpikeView::~CSpikeView()

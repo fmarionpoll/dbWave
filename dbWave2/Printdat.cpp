@@ -14,7 +14,7 @@
 
 
 CPrintDataOptionsDlg::CPrintDataOptionsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CPrintDataOptionsDlg::IDD, pParent)
+	: CDialog(CPrintDataOptionsDlg::IDD, pParent), m_bPrintSpkBars(0), mdPM(nullptr)
 {
 	m_bClipRect = FALSE;
 	m_bFrameRect = FALSE;

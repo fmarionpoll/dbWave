@@ -22,17 +22,17 @@
 
 IMPLEMENT_SERIAL(CChanlistItem, CObject, 1)
 
-CChanlistItem::CChanlistItem() 
+CChanlistItem::CChanlistItem(): dl_color(0), dl_datavoltspan(0)
 {
 	pEnvelopeAbcissa = nullptr;
 	pEnvelopeOrdinates = nullptr;
 	dl_yzero = 2048;
 	dl_yextent = 4096;
-	dl_datavoltspbin = (float) 20. / dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
+	dl_datavoltspbin = static_cast<float>(20.) / dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
 	dl_databinzero = 2048;
 	dl_databinspan = 4096;
-	dl_bprint = 1;					// print OK (0=no print)
-	dl_bHZtagsPrint = FALSE;		// do not print HZ tags
+	dl_bprint = 1; // print OK (0=no print)
+	dl_bHZtagsPrint = FALSE; // do not print HZ tags
 	dl_indexabcissa = 0;
 	dl_indexordinates = 0;
 	dl_bHZtagsPrint = false;
@@ -43,19 +43,12 @@ CChanlistItem::CChanlistItem()
 // chan list item constructor: store pointer to 2 envelopes abcissa+ordinates
 //---------------------------------------------------------------------------
 
-CChanlistItem::CChanlistItem(CEnvelope* pX, int indexX, CEnvelope* pY, int indexY)
+CChanlistItem::CChanlistItem(CEnvelope* p_envelope_X, const int index_x, CEnvelope* p_envelope_Y, const int index_y)
 {
-	pEnvelopeAbcissa = pX;
-	pEnvelopeOrdinates = pY;
-	//dl_yzero = 2048;
-	//dl_yextent = 4096;
-	//dl_datavoltspbin= (float) 20./dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
-	//dl_databinzero= 2048;
-	//dl_databinspan= 4096;
-	//dl_bprint=1;					// print OK (0=no print)
-	//dl_bHZtagsPrint = FALSE;		// do not print HZ tags
-	dl_indexabcissa = indexX;
-	dl_indexordinates = indexY;
+	pEnvelopeAbcissa = p_envelope_X;
+	pEnvelopeOrdinates = p_envelope_Y;
+	dl_indexabcissa = index_x;
+	dl_indexordinates = index_y;
 }
 
 

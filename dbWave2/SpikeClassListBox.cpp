@@ -39,24 +39,24 @@ BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
 END_MESSAGE_MAP()
 //////////////////////////////////////////////////////////////////////////////
 
-CSpikeClassListBox::CSpikeClassListBox()
+CSpikeClassListBox::CSpikeClassListBox(): m_selspikeLB(0), m_oldsel(0), m_lFirst(0), m_lLast(0)
 {
-	m_rowheight=20;
-	m_leftcolwidth=20;
+	m_rowheight = 20;
+	m_leftcolwidth = 20;
 	m_pSList = nullptr;
 	m_pSDoc = nullptr;
-	m_bText=TRUE;
-	m_bSpikes=TRUE;
-	m_bBars=TRUE;	
-	m_widthText=-1;
-	m_widthSpikes=-1;
-	m_widthBars=-1;	
-	m_widthSeparator=5;
+	m_bText = TRUE;
+	m_bSpikes = TRUE;
+	m_bBars = TRUE;
+	m_widthText = -1;
+	m_widthSpikes = -1;
+	m_widthBars = -1;
+	m_widthSeparator = 5;
 	m_clrText = RGB( 0, 0, 0 );
 	m_clrBkgnd = GetSysColor(COLOR_SCROLLBAR);
-	m_brBkgnd.CreateSolidBrush( m_clrBkgnd );
-	m_topIndex=-1;
-	m_bHitspk=FALSE;
+	m_brBkgnd.CreateSolidBrush(m_clrBkgnd);
+	m_topIndex = -1;
+	m_bHitspk = FALSE;
 	m_hwndBarsReflect = nullptr;
 }
 

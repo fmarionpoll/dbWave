@@ -15,12 +15,12 @@ public:
 protected:
 	int m_npixels;			// scale built for n pixels	
 	int	m_nintervals;		// nb of elements within Scale
-	long m_lNdatapoints;	// Ndatapoints are mapped to m_nintervals
+	long m_lNdatapoints{};	// Ndatapoints are mapped to m_nintervals
 	CWordArray m_intervals;	// scale array: npts within each interval
 	CDWordArray m_position;	// interval array: consecutive file index (long)
 
 public:
-	int			SetScale(int npixels, long lNpoints);
+	int			SetScale(int n_pixels, long n_points);
 	int			HowManyIntervalsFit(int fromIndex, long* lLast);
 	int			GetWhichInterval(long lindex);
 	inline int	GetnPixels() const {return m_npixels;}
