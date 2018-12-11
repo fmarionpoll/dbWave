@@ -1902,11 +1902,11 @@ void CSpikeHistView::DisplayHistogram(CDC* pDC, CRect* pRect)
 	{
 	case 1:									// ISI
 		csXleft=_T("0"); 
-		csXright.Format(_T("%1.0f ms"), m_xlast*t1000);
+		csXright.Format(_T("%1.0f ms"), double(m_xlast)*t1000);
 		break;
 	case 2:									// AUTOCORR
-		csXleft.Format(_T("%1.0f"), m_xfirst*t1000); 
-		csXright.Format(_T("%1.0f ms"), m_xlast*t1000);
+		csXleft.Format(_T("%1.0f"), double(m_xfirst)*t1000); 
+		csXright.Format(_T("%1.0f ms"), double(m_xlast)*t1000);
 		break;
 	default: 								// PSTH (default)
 		csXleft.Format(_T("%1.3f"), m_xfirst); 

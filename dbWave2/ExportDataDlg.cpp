@@ -297,7 +297,7 @@ void CExportDataDlg::Export()
 		mm_lastchan = mm_firstchan;
 	}
 
-	mm_binzero = 0; //(short) pwaveFormat->binzero;
+	mm_binzero = 0;
 
 	// now that filenames are built, export the files	
 	switch (m_ComboExportas.GetCurSel())
@@ -383,7 +383,7 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 	{
 		float VoltsperBin;							// declare float
 		m_pDat->GetWBVoltsperBin(i, &VoltsperBin, 0);// get value
-		csDummy.Format(_T("\t%f"), float(VoltsperBin)*1000.f);		// copy to buffer
+		csDummy.Format(_T("\t%f"), double(VoltsperBin)*1000.f);		// copy to buffer
 		csCharBuf += csDummy;
 	}
 
@@ -670,7 +670,7 @@ BOOL CExportDataDlg::ExportDataAsExcelFile()
 			for (int j=j0; j<ncolsperbout; j++)
 			{
 				m_pDat->GetWBVoltsperBin(j-j0, &VoltsperBin, 0);
-				fdouble = double (m_pDat->BGetVal(j-j0, iitime) - mm_binzero)* VoltsperBin;
+				fdouble = (double (m_pDat->BGetVal(j-j0, iitime)) - double(mm_binzero)) * double (VoltsperBin);
 				save_BIFF(&dataDest, BIFF_FLOAT, row, col, (char *) &fdouble);
 				col++;
 			}

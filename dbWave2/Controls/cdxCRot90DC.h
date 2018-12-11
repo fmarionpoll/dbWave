@@ -76,18 +76,18 @@ private:
 	};
 
 private:
-	CDC		*m_pDC;
-	CRect	m_rectMine, m_rectMineClipped;
-	CRect	m_rectDC,m_rectDCClipped;
-	Angle	m_Angle;
-	CBitmap	m_Bitmap;
-	CSize	m_szBitmap;
-	bool	m_bFinished;
+	CDC		*m_pDC{};
+	CRect	m_rectMine{}, m_rectMineClipped{};
+	CRect	m_rectDC{},m_rectDCClipped{};
+	Angle	m_Angle{};
+	CBitmap	m_Bitmap{};
+	CSize	m_szBitmap{};
+	bool	m_bFinished=false;
 
 	// device context storings
-	int		m_iOldBkColor,m_iOldBkMode,m_iOldTextColor;
-	CFont	*m_pOldFont;
-	CBitmap	*m_pOldBitmap;
+	int		m_iOldBkColor=0,m_iOldBkMode=0,m_iOldTextColor=0;
+	CFont	*m_pOldFont{};
+	CBitmap	*m_pOldBitmap{};
 
 public:
 	cdxCRot90DC() : m_pDC(NULL), m_bFinished(true)

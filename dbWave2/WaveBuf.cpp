@@ -899,7 +899,7 @@ void CWaveBuf::BRMS(short* lpSource, short* lpDest, int cx)
 	for (int i=0; i < nbspan; i++)
 	{
 		long x = *lp;
-		sum2 += x*x;
+		sum2 += double(x)*x;
 		lp += offsetnextpoint;
 		N++;
 	}
@@ -909,8 +909,8 @@ void CWaveBuf::BRMS(short* lpSource, short* lpDest, int cx)
 	{			
 		*lpDest = *lpSource - (short) (sqrt(sum2/N));
 		long x = *(lpSource-offsetspan);
-		sum2 -= x*x;
+		sum2 -= double(x)*x;
 		x = *(lpSource+offsetspan);
-		sum2 += x*x;
+		sum2 += double(x)*x;
 	}
 }

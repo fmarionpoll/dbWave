@@ -53,7 +53,7 @@
 // Used for GetItemDescriptors calls to identify database items
 typedef struct _DB_ITEMDESC {
 	// -----------------descriptor and DFX parameters
-	int									icol;					// column number in the table
+	int									icol = 0;					// column number in the table
 	CString								csColName;				// x - "name" of the column in the main table
 	CString								csColNamewithBrackets;	// x - "[name]" used by DFX exchange mechanism
 	CString								csColParam;				// x - "nameParam"
@@ -61,32 +61,32 @@ typedef struct _DB_ITEMDESC {
 	CString								csAssocTable;
 
 	// ------------------filtering
-	BOOL								bFilter1;				// if TRUE, it means only 1 value is selected - the value of which is stored in lfilterParam1
-	long								lfilterParam1;
+	BOOL								bFilter1 = false;				// if TRUE, it means only 1 value is selected - the value of which is stored in lfilterParam1
+	long								lfilterParam1 = 0;
 	COleDateTime						otfilterParam1;
-	CString								csfilterParam1;
+	CString								csfilterParam1= 0;
 
-	BOOL								bFilter2;				// if TRUE, it means the values in lfilterParam2 are selected; 
+	BOOL								bFilter2= false;				// if TRUE, it means the values in lfilterParam2 are selected; 
 	CArray<long, long>					lfilterParam2;
 	CArray<COleDateTime, COleDateTime>	otfilterParam2;
 	CStringArray						csfilterParam2;
 
 	// ------------------value of current record parameter
-	long								lVal;
+	long								lVal=0;
 	CString								csVal;
 	COleDateTime						oVal;
-	BOOL								bIsFieldNull;
+	BOOL								bIsFieldNull=false;
 
 	// helpers
-	int									typeLocal;		// field type (FIELD_IND_TEXT, FIELD_LONG, FIELD_TEXT, FIELD_DATE, FIELD_IND_FILEPATH)
+	int									typeLocal= FIELD_LONG;		// field type (FIELD_IND_TEXT, FIELD_LONG, FIELD_TEXT, FIELD_DATE, FIELD_IND_FILEPATH)
 	CArray<long, long>					liArray;		// array storing the different elements of this field (if long or indirection)
 	CArray<COleDateTime, COleDateTime>	tiArray;		// array storing the different elements of this field (if date(day))
 	CStringArray						csElementsArray;	// string version of the list different elements (to compare with filter - either csfilterParam1, or csFilterParam2)
 
 	// --------------------temporary pointers
-	long*								pdataItem;		// x - address of the field in the main table
-	CdbIndexTable*						plinkedSet;		// x - address of the linked table (indirection)
-	CComboBox*							pComboBox;		// address of combobox associated with the item
+	long*								pdataItem=nullptr;		// x - address of the field in the main table
+	CdbIndexTable*						plinkedSet=nullptr;		// x - address of the linked table (indirection)
+	CComboBox*							pComboBox=nullptr;		// address of combobox associated with the item
 } DB_ITEMDESC;
 
 

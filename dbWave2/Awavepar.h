@@ -406,7 +406,6 @@ class OUTPUTPARMS : public CObject
 {
 	DECLARE_SERIAL(OUTPUTPARMS)
 	OUTPUTPARMS();									// constructor
-	OUTPUTPARMS(const OUTPUTPARMS& arg);
 	~OUTPUTPARMS();									// destructor
 	OUTPUTPARMS& operator = (const OUTPUTPARMS& arg);		// operator redefinition
 	virtual void Serialize(CArchive& ar);			// overridden for document i/o

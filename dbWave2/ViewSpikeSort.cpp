@@ -1920,7 +1920,7 @@ void CSpikeSort1View::OnToolsAlignspikes()
 	for (int i=kstart; i< kend; i++, pMean++)
 	{
 		int val = *pMean;		
-		Cxx_mean += val*val;
+		Cxx_mean += double(val)*val;
 	}
 
 	// get parameters from document
@@ -1997,12 +1997,12 @@ void CSpikeSort1View::OnToolsAlignspikes()
 			for (int k=kstart; k<kend; k++, pMean_k++, pdat_k += offset)
 			{
 				int val = *pdat_k;
-				*pCxy_lag += (*pMean_k * val);
-				Cxx_spike += val*val;
+				*pCxy_lag += double(*pMean_k) * val;
+				Cxx_spike += double(val)*val;
 			}
 
-			*pCxy_lag /= (kend - kstart +1);
-			*pCxy_lag = *pCxy_lag / sqrt(Cxx_mean * Cxx_spike);
+			*pCxy_lag /= (double(kend) - kstart +1);
+			*pCxy_lag = double(*pCxy_lag) / sqrt(Cxx_mean * Cxx_spike);
 		}
 
 		// get max and min of this correlation

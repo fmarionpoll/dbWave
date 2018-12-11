@@ -1654,11 +1654,6 @@ OUTPUTPARMS::OUTPUTPARMS(): bChanged(0), ampLow(0), lastamp(0), lastphase(0)
 	ampUp = 0;
 }
 
-OUTPUTPARMS::OUTPUTPARMS(const OUTPUTPARMS& arg)
-{
-	*this = arg;
-}
-
 OUTPUTPARMS::~OUTPUTPARMS()
 {
 }

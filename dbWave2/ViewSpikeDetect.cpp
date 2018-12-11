@@ -2610,7 +2610,7 @@ CString CSpikeDetectionView::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 		csUnit= _T(" mV");
 		z = m_spkShapeView.GetExtent_mV()/2.0f;	// half of total height
 		k = (int) z;							// clip to int
-		if (z - (float)k > 0.5)					// make sure it is not zero
+		if ((double(z) - k) > 0.5)					// make sure it is not zero
 			k++;
 		if (bAll)
 		{

@@ -327,7 +327,7 @@ BOOL CADContView::ADC_InitSubSystem()
 			pAcqDwaveFormat->scan_count = m_numchansMAX;
 
 		// set frequency to value requested, set frequency and get the value returned
-		double clockrate = pAcqDwaveFormat->chrate*pAcqDwaveFormat->scan_count;
+		double clockrate = double( pAcqDwaveFormat->chrate)*pAcqDwaveFormat->scan_count;
 		m_ADC_DTAcq32.SetFrequency(clockrate);			// set sampling frequency (total throughput)
 		clockrate = m_ADC_DTAcq32.GetFrequency();
 		pAcqDwaveFormat->chrate = (float) clockrate / pAcqDwaveFormat->scan_count;
@@ -345,7 +345,7 @@ BOOL CADContView::ADC_InitSubSystem()
 			double dGain = m_ADC_DTAcq32.GetGainList(i);
 			pChannel->am_gainAD = (short) dGain;
 			// compute dependent parameters
-			pChannel->am_gainamplifier = pChannel->am_gainheadstage * (float) pChannel->am_gainpre * (float) pChannel->am_gainpost;
+			pChannel->am_gainamplifier = double(pChannel->am_gainheadstage) * pChannel->am_gainpre * pChannel->am_gainpost;
 			pChannel->am_gaintotal = pChannel->am_gainamplifier * pChannel->am_gainAD;
 			pChannel->am_resolutionV = pAcqDwaveFormat->fullscale_Volts / pChannel->am_gaintotal / pAcqDwaveFormat->binspan;
 		}
@@ -577,8 +577,8 @@ BOOL CADContView::DAC_InitSubSystem()
 			OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
 			if (pParms->bDigital)
 				continue;
-			pParms->ampUp = pParms->dAmplitudeMaxV *  resolutionfactor / (m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
-			pParms->ampLow = pParms->dAmplitudeMinV *  resolutionfactor / (m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
+			pParms->ampUp = (double(pParms->dAmplitudeMaxV) *  resolutionfactor) / (double(m_DAC_DTAcq32.GetMaxRange()) - m_DAC_DTAcq32.GetMinRange());
+			pParms->ampLow = (double(pParms->dAmplitudeMinV) *  resolutionfactor) / (double(m_DAC_DTAcq32.GetMaxRange()) - m_DAC_DTAcq32.GetMinRange());
 		}
 
 		// pass parameters to the board and check if errors
@@ -829,7 +829,7 @@ void CADContView::DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* 
 
 void CADContView::DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan)
 {
-	double	amp = parmsChan->value *  pow(2.0, m_DAC_DTAcq32.GetResolution()) / (m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
+	double	amp = (double(parmsChan->value) *  pow(2.0, m_DAC_DTAcq32.GetResolution())) / (double(m_DAC_DTAcq32.GetMaxRange()) - m_DAC_DTAcq32.GetMinRange());
 	int nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i += nchans)
@@ -1067,7 +1067,7 @@ void CADContView::DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPA
 			x = parmsChan->ampLow;
 			if (parmsChan->mseq_iDelay == 0) {
 				DAC_MSequence(parmsChan);
-				x = (double)(parmsChan->bit1 * ampUp + !parmsChan->bit1 * ampLow);
+				x = double(parmsChan->bit1) * ampUp + double(!parmsChan->bit1) * ampLow;
 			}
 		}
 		if (m_DACdigitalfirst == 0)

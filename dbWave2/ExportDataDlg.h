@@ -28,7 +28,7 @@ public:
 	float	mm_timelast;
 	int		mm_firstchan;
 	int		mm_lastchan;
-	short	mm_binzero;
+	int		mm_binzero;
 	CAcqDataDoc* m_pDat;
 
 // Dialog Data

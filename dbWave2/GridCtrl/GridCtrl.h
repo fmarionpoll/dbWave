@@ -99,21 +99,21 @@
 
 // This structure sent to Grid's parent in a WM_NOTIFY message
 typedef struct tagNM_GRIDVIEW {
-	NMHDR hdr;
-	int   iRow;
-	int   iColumn;
+	NMHDR hdr{};
+	int   iRow = 0;
+	int   iColumn = 0;
 } NM_GRIDVIEW;
 
 // This is sent to the Grid from child in-place edit controls
 typedef struct tagGV_DISPINFO {
-	NMHDR   hdr;
-	GV_ITEM item;
+	NMHDR   hdr{};
+	GV_ITEM item{};
 } GV_DISPINFO;
 
 // This is sent to the Grid from child in-place edit controls
 typedef struct tagGV_CACHEHINT {
-	NMHDR      hdr;
-	CCellRange range;
+	NMHDR      hdr{};
+	CCellRange range{};
 } GV_CACHEHINT;
 
 // storage typedef for each row in the grid
@@ -628,102 +628,102 @@ protected:
 // Attributes
 protected:
 	// General attributes
-	COLORREF    m_crFixedTextColour, m_crFixedBkColour;
-	COLORREF    m_crGridBkColour, m_crGridLineColour;
-	COLORREF    m_crWindowText, m_crWindowColour, m_cr3DFace,     // System colours
-				m_crShadow;
-	COLORREF    m_crTTipBackClr, m_crTTipTextClr;                 // Titletip colours - FNA
+	COLORREF    m_crFixedTextColour{}, m_crFixedBkColour{};
+	COLORREF    m_crGridBkColour{}, m_crGridLineColour{};
+	COLORREF    m_crWindowText{}, m_crWindowColour{}, m_cr3DFace{},     // System colours
+				m_crShadow{};
+	COLORREF    m_crTTipBackClr{}, m_crTTipTextClr{};                 // Titletip colours - FNA
 	
-	BOOL        m_bVirtualMode;
+	BOOL        m_bVirtualMode=false;
 	LPARAM      m_lParam;                                           // lParam for callback
-	GRIDCALLBACK m_pfnCallback;                                     // The callback function
+	GRIDCALLBACK m_pfnCallback=nullptr;                                     // The callback function
 
-	int         m_nGridLines;
-	BOOL        m_bEditable;
-	BOOL        m_bModified;
-	BOOL        m_bAllowDragAndDrop;
-	BOOL        m_bListMode;
-	BOOL        m_bSingleRowSelection;
-	BOOL        m_bSingleColSelection;
-	BOOL        m_bAllowDraw;
-	BOOL        m_bEnableSelection;
-	BOOL        m_bFixedRowSelection, m_bFixedColumnSelection;
-	BOOL        m_bSortOnClick;
-	BOOL        m_bHandleTabKey;
-	BOOL        m_bDoubleBuffer;
-	BOOL        m_bTitleTips;
-	int         m_nBarState;
-	BOOL        m_bWysiwygPrinting;
-	BOOL        m_bHiddenColUnhide, m_bHiddenRowUnhide;
-	BOOL        m_bAllowColHide, m_bAllowRowHide;
-	BOOL        m_bAutoSizeSkipColHdr;
-	BOOL        m_bTrackFocusCell;
-	BOOL        m_bFrameFocus;
-	UINT        m_nAutoSizeColumnStyle;
+	int         m_nGridLines=0;
+	BOOL        m_bEditable=true;
+	BOOL        m_bModified=false;
+	BOOL        m_bAllowDragAndDrop=false;
+	BOOL        m_bListMode=false;
+	BOOL        m_bSingleRowSelection=false;
+	BOOL        m_bSingleColSelection=false;
+	BOOL        m_bAllowDraw=false;
+	BOOL        m_bEnableSelection=true;
+	BOOL        m_bFixedRowSelection=false, m_bFixedColumnSelection=false;
+	BOOL        m_bSortOnClick=false;
+	BOOL        m_bHandleTabKey=false;
+	BOOL        m_bDoubleBuffer=false;
+	BOOL        m_bTitleTips=false;
+	int         m_nBarState=0;
+	BOOL        m_bWysiwygPrinting=false;
+	BOOL        m_bHiddenColUnhide=false, m_bHiddenRowUnhide=false;
+	BOOL        m_bAllowColHide=false, m_bAllowRowHide=false;
+	BOOL        m_bAutoSizeSkipColHdr=false;
+	BOOL        m_bTrackFocusCell=false;
+	BOOL        m_bFrameFocus=false;
+	UINT        m_nAutoSizeColumnStyle=0;
 
 	// Cell size details
-	int         m_nRows, m_nFixedRows, m_nCols, m_nFixedCols;
-	CUIntArray  m_arRowHeights, m_arColWidths;
-	int         m_nVScrollMax, m_nHScrollMax;
+	int         m_nRows=0, m_nFixedRows=0, m_nCols=0, m_nFixedCols=0;
+	CUIntArray  m_arRowHeights{}, m_arColWidths {};
+	int         m_nVScrollMax=0, m_nHScrollMax=0;
 
 	// Fonts and images
-	CRuntimeClass*   m_pRtcDefault; // determines kind of Grid Cell created by default
-	CGridDefaultCell m_cellDefault;  // "default" cell. Contains default colours, font etc.
-	CGridDefaultCell m_cellFixedColDef, m_cellFixedRowDef, m_cellFixedRowColDef;
-	CFont       m_PrinterFont;  // for the printer
-	CImageList* m_pImageList;
+	CRuntimeClass*   m_pRtcDefault=nullptr; // determines kind of Grid Cell created by default
+	CGridDefaultCell m_cellDefault{};  // "default" cell. Contains default colours, font etc.
+	CGridDefaultCell m_cellFixedColDef{}, m_cellFixedRowDef{}, m_cellFixedRowColDef{};
+	CFont       m_PrinterFont{};  // for the printer
+	CImageList* m_pImageList=nullptr;
 
 	// Cell data
-	CTypedPtrArray<CObArray, GRID_ROW*> m_RowData;
+	CTypedPtrArray<CObArray, GRID_ROW*> m_RowData{};
 
 	// Mouse operations such as cell selection
-	int         m_MouseMode;
-	BOOL        m_bLMouseButtonDown, m_bRMouseButtonDown;
-	CPoint      m_LeftClickDownPoint, m_LastMousePoint;
-	CCellID     m_LeftClickDownCell, m_SelectionStartCell;
-	CCellID     m_idCurrentCell, m_idTopLeftCell;
-	INT_PTR     m_nTimerID;
-	int         m_nTimerInterval;
-	int         m_nResizeCaptureRange;
-	BOOL        m_bAllowRowResize, m_bAllowColumnResize;
-	int         m_nRowsPerWheelNotch;
-	CMap<DWORD,DWORD, CCellID, CCellID&> m_SelectedCellMap, m_PrevSelectedCellMap;
+	int         m_MouseMode=0;
+	BOOL        m_bLMouseButtonDown=false, m_bRMouseButtonDown=false;
+	CPoint      m_LeftClickDownPoint{}, m_LastMousePoint{};
+	CCellID     m_LeftClickDownCell{}, m_SelectionStartCell{};
+	CCellID     m_idCurrentCell{}, m_idTopLeftCell{};
+	INT_PTR     m_nTimerID{};
+	int         m_nTimerInterval=0;
+	int         m_nResizeCaptureRange=0;
+	BOOL        m_bAllowRowResize=false, m_bAllowColumnResize=false;
+	int         m_nRowsPerWheelNotch=0;
+	CMap<DWORD,DWORD, CCellID, CCellID&> m_SelectedCellMap{}, m_PrevSelectedCellMap{};
 
 #ifndef GRIDCONTROL_NO_TITLETIPS
-	CTitleTip   m_TitleTip;             // Title tips for cells
+	CTitleTip   m_TitleTip{};             // Title tips for cells
 #endif
 
 	// Drag and drop
-	CCellID     m_LastDragOverCell;
+	CCellID     m_LastDragOverCell{};
 #ifndef GRIDCONTROL_NO_DRAGDROP
-	CGridDropTarget m_DropTarget;       // OLE Drop target for the grid
+	CGridDropTarget m_DropTarget{};       // OLE Drop target for the grid
 #endif
 
 	// Printing information
-	CSize       m_CharSize;
-	int         m_nPageHeight;
-	CSize       m_LogicalPageSize,      // Page size in gridctrl units.
-				m_PaperSize;            // Page size in device units.
+	CSize       m_CharSize{};
+	int         m_nPageHeight=0;
+	CSize       m_LogicalPageSize{},      // Page size in gridctrl units.
+				m_PaperSize{};            // Page size in device units.
 	// additional properties to support Wysiwyg printing
-	int         m_nPageWidth;
-	int         m_nPrintColumn;
-	int         m_nCurrPrintRow;
-	int         m_nNumPages;
-	int         m_nPageMultiplier;
+	int         m_nPageWidth=0;
+	int         m_nPrintColumn=0;
+	int         m_nCurrPrintRow=0;
+	int         m_nNumPages=0;
+	int         m_nPageMultiplier=0;
 
 	// sorting
-	int          m_bAscending;
-	int          m_nSortColumn;
-	PFNLVCOMPARE m_pfnCompare;
+	int          m_bAscending=0;
+	int          m_nSortColumn=0;
+	PFNLVCOMPARE m_pfnCompare{};
 
 	// EFW - Added to support shaded/unshaded printout.  If true, colored
 	// cells will print as-is.  If false, all text prints as black on white.
-	BOOL        m_bShadedPrintOut;
+	BOOL        m_bShadedPrintOut=false;
 
 	// EFW - Added support for user-definable margins.  Top and bottom are in 
 	// lines.  Left, right, and gap are in characters (avg width is used).
-	int         m_nHeaderHeight, m_nFooterHeight, m_nLeftMargin,
-				m_nRightMargin, m_nTopMargin, m_nBottomMargin, m_nGap;
+	int         m_nHeaderHeight=0, m_nFooterHeight=0, m_nLeftMargin=0,
+				m_nRightMargin=0, m_nTopMargin=0, m_nBottomMargin=0, m_nGap=0;
 
 protected:
 	void SelectAllCells();
@@ -791,7 +791,7 @@ public:
 	typedef std::vector<int> intlist;
 	void Reorder(int From, int To);
 	void SetVirtualCompare(PVIRTUALCOMPARE VirtualCompare) { m_pfnVirtualCompare = VirtualCompare;}
-	int m_CurCol;
+	int m_CurCol=0;
 	void AllowReorderColumn(bool b=true) { m_AllowReorderColumn = b;}
 	void EnableDragRowMode(bool b=true) { m_bDragRowMode = b; if(b) EnableDragAndDrop(); } // to change row order
 	int GetLayer(int** pLayer); //  gives back the number of ints of the area (do not forget to delete *pLayer)
@@ -799,20 +799,20 @@ public:
 	void ForceQuitFocusOnTab(bool b=true) { m_QuitFocusOnTab = b;} // use only if GetParent() is a CDialog
 	void AllowSelectRowInFixedCol(bool b=true) { m_AllowSelectRowInFixedCol = b;} // 
 //    allow acces?
-	intlist m_arRowOrder, m_arColOrder;
+	intlist m_arRowOrder{}, m_arColOrder{};
 	static CGridCtrl* m_This;
 protected:
 	virtual void AddSubVirtualRow(int Num, int Nb);
-	bool m_bDragRowMode;
-	int m_CurRow;
+	bool m_bDragRowMode=false;
+	int m_CurRow=0;
 private:
 	void ResetVirtualOrder();
 	PVIRTUALCOMPARE m_pfnVirtualCompare;
 	static bool NotVirtualCompare(int c1, int c2);
-	bool m_InDestructor;
-	bool m_AllowReorderColumn;
-	bool m_QuitFocusOnTab;
-	bool m_AllowSelectRowInFixedCol;
+	bool m_InDestructor=false;
+	bool m_AllowReorderColumn=false;
+	bool m_QuitFocusOnTab=false;
+	bool m_AllowSelectRowInFixedCol=false;
 
 };
 

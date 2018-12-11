@@ -1460,7 +1460,7 @@ CString CDataView::PrintBars(CDC* pDC, CRect* prect)
 
 				// approximate
 				int j = (int) x;					// get int val				
-				if (x-j > 0.5)						// increment integer if diff > 0.5
+				if ((double(x)-j) > 0.5)				// increment integer if diff > 0.5
 					j++;
 				int k = m_VDlineview.NiceUnit(x);	// compare with nice unit abs
 				if (j > 750)                        // there is a gap between 500 and 1000

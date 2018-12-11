@@ -66,14 +66,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
     <LibraryPath>C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath);$(ProgramFiles)\HTML Help Workshop\redist\</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
     <ExecutablePath>$(ExecutablePath);$(ProgramFiles)\HTML Help Workshop\redist\</ExecutablePath>
-    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <OutDir>$(SolutionDir)\dbWave2\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -82,6 +82,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\SDK\Include;C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\DTx-EZ\Lib;C:\Users\fred\OneDrive\Documents\workspace\MFC\Data Translation\Win32\SDK\Lib;$(LibraryPath)</LibraryPath>
+    <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -812,6 +813,7 @@ if %ERRORLEVEL%==1 (
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
+    <None Include="dbWave2.ruleset" />
     <None Include="dbWave2.vcproj" />
     <None Include="dbWaveHelp_style.css" />
     <None Include="Help\dbWave2.chw" />

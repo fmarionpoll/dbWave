@@ -785,7 +785,7 @@ void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		if (yN > 0)
 		{
 			const auto volts_per_bin = pspklist->GetAcqVoltsperBin()*1000.f;
-			csDummy.Format(_T("\t%.3lf\t%.3lf\t%i"), float(ySum/yN)*volts_per_bin, float(ySum2)*volts_per_bin*volts_per_bin, yN);
+			csDummy.Format(_T("\t%.3lf\t%.3lf\t%i"), double(ySum/yN)*volts_per_bin, double(ySum2)*volts_per_bin*volts_per_bin, yN);
 		}
 		else
 			csDummy= _T("\t\t\t0"); 
@@ -932,20 +932,20 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		// 3) export extrema
 		case EXPORT_EXTREMA:
 			pspklist->GetSpikeExtrema(j, &max, &min);
-			csDummy.Format(_T("\t%.3lf\t%.3lf"), (max-binzero)*VperBin, (min-binzero)*VperBin);
+			csDummy.Format(_T("\t%.3lf\t%.3lf"), (double(max)-binzero)*VperBin, (double(min)-binzero)*VperBin);
 			pSF->Write(csDummy, csDummy.GetLength() * sizeof(TCHAR));
 			break;
 		// 4) export max - min
 		case EXPORT_AMPLIT:	
 			pspklist->MeasureSpikeMaxThenMinEx(j, &max, &imax, &min, &imin, ifirst, ilast);
-			csDummy.Format(_T("\t%.3lf\t%.3lf"), ((float)(max-min))*VperBin, ((float)(imin-imax))/ratems); 
+			csDummy.Format(_T("\t%.3lf\t%.3lf"), (double(max)-min)*VperBin, (double(imin)-imax)/ratems); 
 			pSF->Write(csDummy, csDummy.GetLength() * sizeof(TCHAR));
 			break;
 		case EXPORT_SPIKEPOINTS:
 			for (int index = 0; index< pspklist->GetSpikeLength(); index++)
 			{
 				int val = pspklist->GetSpikeValAt(j, index);
-				csDummy.Format(_T("\t%.3lf"), ((float)val)*VperBin);
+				csDummy.Format(_T("\t%.3lf"), double(val)*VperBin);
 				pSF->Write(csDummy, csDummy.GetLength() * sizeof(TCHAR));
 			}
 			break;
@@ -1135,10 +1135,10 @@ void CSpikeDoc::ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 	}
 	else
 	{
-		for (int i = 0; i<nbins; i++)
+		for (auto i = 0; i<nbins; i++)
 		{
 			CString cs;
-			cs.Format(_T("\tb_%.3f"), (float) (tstart + tbin*i)); 
+			cs.Format(_T("\tb_%.3f"), double (tstart) + double(tbin)*i); 
 			csDummy += cs;
 		}
 	}
@@ -1694,7 +1694,7 @@ void CSpikeDoc::_ExportSpkAverageWave (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS
 		double* pSUM2 = pDoubl0+2 +spklen;
 		for (int k = 0; k < spklen; k++, pSUM++, pSUM2++, pSpik++)
 		{
-			double x = double (*pSpik - binzero);
+			double x = double (*pSpik) - binzero;
 			*pSUM += x;
 			*pSUM2 += (x*x);				
 		}
@@ -1707,7 +1707,7 @@ void CSpikeDoc::_ExportSpkAverageWave (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS
 	double* pSUM2 = pDoubl0+2 +spklen;			
 	if (*pN > 0)
 	{
-		double VperBin = pspklist->GetAcqVoltsperBin()*1000.f;
+		double VperBin = double(pspklist->GetAcqVoltsperBin())*1000.f;
 		double VperBin2 = VperBin * VperBin;
 		double yN = *pN;
 		csDummy.Format(_T("\t%i"), int(yN)); 

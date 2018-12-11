@@ -1216,7 +1216,7 @@ BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 				// unit for each channel
 				code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("mvolts per bin:\r\n"));
 				for (int i=0; i<GetChanlistSize(); i++) 
-					code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("%f\t"), float(GetChanlistVoltsperDataBin(i))*1000.f);
+					code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("%f\t"), double(GetChanlistVoltsperDataBin(i))*1000.f);
 				lpCopy--;	// erase last tab
 			}
 
@@ -1275,7 +1275,7 @@ LPTSTR CLineViewWnd::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 			int k = (pDL->pEnvelopeOrdinates)->GetPointAt(j);
 			if (iunit == 1)
 			{
-				lpCopy += wsprintf(lpCopy, _T("%f\t"), float(k) *GetChanlistVoltsperDataBin(i) *1000.f);
+				lpCopy += wsprintf(lpCopy, _T("%f\t"), double(k) *GetChanlistVoltsperDataBin(i) *1000.f);
 			}
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);
@@ -1310,7 +1310,7 @@ LPTSTR CLineViewWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 			}
 			if (iunit == 1)
 			{
-				lpCopy += wsprintf(lpCopy, _T("%f\t"), float(k)*GetChanlistVoltsperDataBin(i)*1000.f);
+				lpCopy += wsprintf(lpCopy, _T("%f\t"), double(k)*GetChanlistVoltsperDataBin(i)*1000.f);
 			}
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);			

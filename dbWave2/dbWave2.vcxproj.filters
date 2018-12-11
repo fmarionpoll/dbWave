@@ -1718,6 +1718,7 @@
     <None Include="Help\dbWave2.hhp">
       <Filter>HTML Help Topics</Filter>
     </None>
+    <None Include="dbWave2.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="dbWave.rc">
