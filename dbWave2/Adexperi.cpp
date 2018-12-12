@@ -96,47 +96,47 @@ void ADExperimentDlg::OnOK()
 		m_csPathname += _T("\\");
 	
 	// check that directory is present - otherwise create...
-	CString cspath = m_csPathname.Left(m_csPathname.GetLength()-1);
+	auto cs_path = m_csPathname.Left(m_csPathname.GetLength()-1);
 
 	// create directory if necessary
 	CFileFind cf;
-	if (!cspath.IsEmpty() && !cf.FindFile(cspath))
+	if (!cs_path.IsEmpty() && !cf.FindFile(cs_path))
 	{
-		if (!CreateDirectory(cspath, nullptr))
+		if (!CreateDirectory(cs_path, nullptr))
 			AfxMessageBox(IDS_DIRECTORYFAILED);
 	}
 
 	// build file name
-	int iexptnumber = m_exptnumber;
-	CString csBufTemp;
-	csBufTemp.Format( _T("%06.6lu"), iexptnumber);
-	m_szFileName = m_csPathname + m_csBasename + csBufTemp + _T(".dat");
+	int i_experiment_number = m_exptnumber;
+	CString cs_buf_temp;
+	cs_buf_temp.Format( _T("%06.6lu"), i_experiment_number);
+	m_szFileName = m_csPathname + m_csBasename + cs_buf_temp + _T(".dat");
 	
 	// check if this file is already present, exit if not...
 	CFileStatus status;
-	int iIDresponse=IDYES;	// default: go on if file not found
+	auto i_id_response=IDYES;	// default: go on if file not found
 	if (CFile::GetStatus(m_szFileName, status))
-		iIDresponse = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
+		i_id_response = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
 	// no .. find first available number
-	if (IDNO == iIDresponse)
+	if (IDNO == i_id_response)
 	{
 		BOOL flag = TRUE;
 		while (flag)
 		{
-			iexptnumber++;
-			csBufTemp.Format(_T("%06.6lu"), iexptnumber);
-			m_szFileName = m_csPathname + m_csBasename + csBufTemp + _T(".dat");
+			i_experiment_number++;
+			cs_buf_temp.Format(_T("%06.6lu"), i_experiment_number);
+			m_szFileName = m_csPathname + m_csBasename + cs_buf_temp + _T(".dat");
 			flag = CFile::GetStatus(m_szFileName, status);
 		}
-		CString cs = _T("Next available file name is: ") + m_szFileName;
-		iIDresponse = AfxMessageBox(cs, MB_YESNO | MB_ICONWARNING);
+		const auto cs = _T("Next available file name is: ") + m_szFileName;
+		i_id_response = AfxMessageBox(cs, MB_YESNO | MB_ICONWARNING);
 	}
 
 	// OK .. pass parameters
-	if (IDYES == iIDresponse)
+	if (IDYES == i_id_response)
 	{
 		// update expt number
-		m_exptnumber = iexptnumber;
+		m_exptnumber = i_experiment_number;
 
 		// update file descriptors
 		m_pADC_options->csPathname = m_csPathname;
@@ -265,82 +265,82 @@ BOOL ADExperimentDlg::OnInitDialog()
 }
 
 // save content of the list
-int ADExperimentDlg::SaveList(CComboBox* pcombo, CStringArray* pS)
+int ADExperimentDlg::SaveList(CComboBox* p_combo, CStringArray* p_s)
 {
 	int iexist = -1;
-	if (pS != nullptr)
+	if (p_s != nullptr)
 	{
 		CString csEdit;
-		pcombo->GetWindowText(csEdit);
+		p_combo->GetWindowText(csEdit);
 		if (!csEdit.IsEmpty()) {
-			iexist = pcombo->FindStringExact(-1, csEdit);
+			iexist = p_combo->FindStringExact(-1, csEdit);
 			if (iexist == CB_ERR)
-				iexist = pcombo->AddString(csEdit);
+				iexist = p_combo->AddString(csEdit);
 		}
 
 		// loop over each entry of the combo box and save it in the string array
-		CString csdummy;
-		int iscount = pcombo->GetCount();
-		pS->SetSize(iscount);
-		for (int i=0; i < iscount; i++)
+		CString cs_dummy;
+		const int i_s_count = p_combo->GetCount();
+		p_s->SetSize(i_s_count);
+		for (auto i=0; i < i_s_count; i++)
 		{
-			pcombo->GetLBText(i, csdummy);			// load string from combo box
-			pS->SetAt(i, csdummy);					// save string into string list
+			p_combo->GetLBText(i, cs_dummy);			// load string from combo box
+			p_s->SetAt(i, cs_dummy);					// save string into string list
 		}
 	}
 	return iexist;
 }
 
 // load content of the list and of the corresponding DAOrecordset
-void ADExperimentDlg::LoadList(CComboBox* pcombo, CStringArray* pS, int isel, CDaoRecordset* pmSet)
+void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel, CDaoRecordset* pm_set)
 {
 	// add string from the string array
-	pcombo->ResetContent();
+	p_combo->ResetContent();
 	int i;
 	// associated list available? yes
-	if (pS != nullptr)
+	if (p_s != nullptr)
 	{
-		for (i = 0; i < pS->GetSize(); i++)
+		for (i = 0; i < p_s->GetSize(); i++)
 		{
-			CString cs = pS->GetAt(i);
-			pcombo->AddString(cs);
+			CString cs = p_s->GetAt(i);
+			p_combo->AddString(cs);
 		}
 	}
 	// no associated list -  insert provisional values in the table
 	else
 	{
-		int imax = isel + 10;
+		int imax = i_sel + 10;
 		CString cs;
 		for (i=0; i < imax; i++)
 		{
 			cs.Format(_T("%i"), i);
-			int j = pcombo->AddString(cs);
-			pcombo->SetItemData(j, i);
+			int j = p_combo->AddString(cs);
+			p_combo->SetItemData(j, i);
 		}
 	}
 	
 	// scan table and add missing strings
-	pcombo->SetCurSel(isel);
-	if (pmSet == nullptr)
+	p_combo->SetCurSel(i_sel);
+	if (pm_set == nullptr)
 		return;
 
-	if (pmSet->IsOpen() && !pmSet->IsBOF()) 
+	if (pm_set->IsOpen() && !pm_set->IsBOF()) 
 	{
 		COleVariant varValue0;
-		pmSet->MoveFirst();
-		while(!pmSet->IsEOF()) 
+		pm_set->MoveFirst();
+		while(!pm_set->IsEOF()) 
 		{
-			pmSet->GetFieldValue(0, varValue0);
+			pm_set->GetFieldValue(0, varValue0);
 			CString csField = varValue0.bstrVal;;		// check if the conversion is correct
-			if (pcombo->FindStringExact(0, csField) == CB_ERR)
+			if (p_combo->FindStringExact(0, csField) == CB_ERR)
 			{
-				pcombo->AddString(csField);
-				isel = 0;		// reset selection if a chain is added
+				p_combo->AddString(csField);
+				i_sel = 0;		// reset selection if a chain is added
 			}
-			pmSet->MoveNext();
+			pm_set->MoveNext();
 		}
 	}
-	pcombo->SetCurSel(isel);
+	p_combo->SetCurSel(i_sel);
 }
 
 
@@ -351,8 +351,8 @@ void ADExperimentDlg::EditComboBox(CComboBox* pCo)
 	if (IDOK == dlg.DoModal())
 	{
 		pCo->ResetContent();
-		int nitems = dlg.m_csArray.GetCount();
-		for (int i=0; i< nitems; i++)
+		const int n_items = dlg.m_csArray.GetCount();
+		for (int i=0; i< n_items; i++)
 		{
 			pCo->AddString(dlg.m_csArray.GetAt(i));
 		}
@@ -439,13 +439,13 @@ void ADExperimentDlg::OnEnKillfocusMfceditbrowse1()
 		m_csPathname += _T("\\");
 
 	// check that directory is present - otherwise create...
-	CString cspath = m_csPathname.Left(m_csPathname.GetLength() - 1);
+	auto cs_path = m_csPathname.Left(m_csPathname.GetLength() - 1);
 
 	// create directory if necessary
 	CFileFind cf;
-	if (!cspath.IsEmpty() && !cf.FindFile(cspath))
+	if (!cs_path.IsEmpty() && !cf.FindFile(cs_path))
 	{
-		if (!CreateDirectory(cspath, nullptr))
+		if (!CreateDirectory(cs_path, nullptr))
 			AfxMessageBox(IDS_DIRECTORYFAILED);
 	}
 }
@@ -453,7 +453,7 @@ void ADExperimentDlg::OnEnKillfocusMfceditbrowse1()
 
 void ADExperimentDlg::OnBnClickedButtonNextid()
 {
-	CdbWdatabase*	pDB = m_pdbDoc->m_pDB;
+	auto pDB = m_pdbDoc->m_pDB;
 	pDB->m_mainTableSet.GetMaxIDs();
 	m_insectnumber = pDB->m_mainTableSet.max_insectID + 1;
 	UpdateData(FALSE);

@@ -3,10 +3,10 @@
 
 #include "StdAfx.h"
 #include <Olxdadefs.h>
-#include "GridCtrl\GridCell.h"
-#include "GridCtrl\GridCellCombo_FMP.h"
-#include "GridCtrl\GridCellNumeric.h"
-#include "GridCtrl\GridCellCheck.h"
+#include "GridCtrl/GridCell.h"
+#include "GridCtrl/GridCellCombo_FMP.h"
+#include "GridCtrl/GridCellNumeric.h"
+#include "GridCtrl/GridCellCheck.h"
 #include "ADInputParmsDlg.h"
 
 
@@ -116,31 +116,31 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	m_OldSize = CSize(rect.Width(), rect.Height());
 
 	// display/hide chain dialog buttons
-	int showWindow = SW_HIDE;
+	auto show_window = SW_HIDE;
 	if (m_bchainDialog)
-		showWindow = SW_SHOW;
-	GetDlgItem(IDC_ADCHANNELS)->ShowWindow(showWindow);
-	GetDlgItem(IDC_ADINTERVALS)->ShowWindow(showWindow);
+		show_window = SW_SHOW;
+	GetDlgItem(IDC_ADCHANNELS)->ShowWindow(show_window);
+	GetDlgItem(IDC_ADINTERVALS)->ShowWindow(show_window);
 	
 	// display nb of available channels according to parameter
 	if (m_bchantype == OLx_CHNT_SINGLEENDED)
 	{
-		((CButton*) GetDlgItem(IDC_SINGLEENDED))->SetCheck(BST_CHECKED);
+		dynamic_cast<CButton*>(GetDlgItem(IDC_SINGLEENDED))->SetCheck(BST_CHECKED);
 		m_maxchans = m_numchansMAXSE;
 	}
 	else
 	{
-		((CButton*) GetDlgItem(IDC_DIFFERENTIAL))->SetCheck(BST_CHECKED);
+		dynamic_cast<CButton*>(GetDlgItem(IDC_DIFFERENTIAL))->SetCheck(BST_CHECKED);
 		m_maxchans = m_numchansMAXDI;
 	}
 
 	// set spin  max list: dt9800 = up to 32 channels
-	((CSpinButtonCtrl*) GetDlgItem(IDC_SPIN1))->SetRange(1, m_inputlistmax);
+	dynamic_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_inputlistmax);
 	// load encoding combo with data
 	int i= 0;
 	do {
-		int j=m_encodingCombo.AddString(pszEncoding[i]);
-		m_encodingCombo.SetItemData(j, (DWORD) iEncoding[i]);
+		auto j=m_encodingCombo.AddString(pszEncoding[i]);
+		m_encodingCombo.SetItemData(j, static_cast<DWORD>(iEncoding[i]));
 		i++;
 	} while (pszEncoding[i] != _T(""));
 
@@ -160,22 +160,22 @@ BOOL CADInputParmsDlg::OnInitDialog()
 		GetDlgItem(IDC_ADCARDNAME)->SetWindowText(m_pwFormat->csADcardName);
 		// get precision and compute corresponding nb of bits
 		m_iNBins = m_pwFormat->binspan + 1;
-		int ibins = m_iNBins;
-		int nbits = 0;
+		int i_bins = m_iNBins;
+		auto n_bits = 0;
 		do {
-			ibins = ibins / 2;
-			nbits++;
-		} while (ibins > 1);
+			i_bins = i_bins / 2;
+			n_bits++;
+		} while (i_bins > 1);
 
 		// select corresponding entry in the combobox
 		CString cs;
-		cs.Format(_T("%i"), nbits);
+		cs.Format(_T("%i"), n_bits);
 		const auto i_found = m_resolutionCombo.FindStringExact(-1, cs);
 		if (i_found != CB_ERR)
 			m_resolutionCombo.SetCurSel(i_found);
 
 		// select encoding mode according to parameter in waveFormat
-		int i_current = 0;
+		auto i_current = 0;
 		for (i_current; i_current < m_encodingCombo.GetCount(); i_current++)
 		{
 			if (m_encodingCombo.GetItemData(i_current) == static_cast<DWORD>(m_pwFormat->mode_encoding))
@@ -197,14 +197,14 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	m_Grid.SetFixedRowCount(1);
 
 	// get font and create bold face 
-	CFont *p_font = m_Grid.GetFont();
+	auto p_font = m_Grid.GetFont();
 	ASSERT (p_font != NULL);
 	LOGFONT lf;
 	p_font->GetLogFont(&lf);
 	lf.lfWeight = FW_BOLD;
 
 	// set row headers
-	int n_rows = 0;				// count number of rows
+	auto n_rows = 0;				// count number of rows
 	do {
 		n_rows++;
 	} while (pszRowTitle[n_rows-1] != _T(""));
@@ -272,57 +272,57 @@ void CADInputParmsDlg::OnEnChangeNacqchans()
 
 void CADInputParmsDlg::AdjustGridSize()
 {
-	int noldcols = m_Grid.GetColumnCount();
+	const auto n_old_columns = m_Grid.GetColumnCount();
 	// reduce size of the grid; delete last columns
-	if (noldcols > m_nacqchans+1)
+	if (n_old_columns > m_nacqchans+1)
 	{
-		for (int i = noldcols-1; i> m_nacqchans; i--)
+		for (auto i = n_old_columns-1; i> m_nacqchans; i--)
 			m_Grid.DeleteColumn(i);
 		m_Grid.Refresh();
 	}
 	// increase size of the grid
-	else if (noldcols < m_nacqchans+1)
+	else if (n_old_columns < m_nacqchans+1)
 	{
 		m_Grid.SetColumnCount(m_nacqchans +1);
-		for (int i= noldcols; i< m_nacqchans+1; i++)
+		for (int i= n_old_columns; i< m_nacqchans+1; i++)
 			InitGridColumnDefaults(i);
 		m_Grid.Refresh();
 	}
 }
 
-BOOL CALLBACK EnumProc(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 {
-	CWnd* pWnd = CWnd::FromHandle(hwnd);
-	CSize* pTranslate = (CSize*) lParam;
+	auto p_wnd = CWnd::FromHandle(h_wnd);
+	auto* p_translate = reinterpret_cast<CSize*>(lParam);
 
-	CADInputParmsDlg* pDlg = (CADInputParmsDlg*) pWnd->GetParent();
+	auto* pDlg = dynamic_cast<CADInputParmsDlg*>(p_wnd->GetParent());
 	if (!pDlg) return FALSE;
 
 	CRect rect;
-	pWnd->GetWindowRect(rect);
+	p_wnd->GetWindowRect(rect);
 	pDlg->ScreenToClient(rect);
-	if (hwnd == pDlg->m_Grid.GetSafeHwnd())
+	if (h_wnd == pDlg->m_Grid.GetSafeHwnd())
 	{
 		// move grid
-		if (  ((rect.top >= 7 && pTranslate->cy > 0) || rect.Height() > 20) && ((rect.left >= 7 && pTranslate->cx > 0) || rect.Width() > 20)   )
-			pWnd->MoveWindow(rect.left, rect.top,		rect.Width()+pTranslate->cx,	rect.Height()+pTranslate->cy,	FALSE);
+		if (  ((rect.top >= 7 && p_translate->cy > 0) || rect.Height() > 20) && ((rect.left >= 7 && p_translate->cx > 0) || rect.Width() > 20)   )
+			p_wnd->MoveWindow(rect.left, rect.top,		rect.Width()+p_translate->cx,	rect.Height()+p_translate->cy,	FALSE);
 		else
-			pWnd->MoveWindow(rect.left+pTranslate->cx,	rect.top+pTranslate->cy,		rect.Width(), rect.Height(),	FALSE);
+			p_wnd->MoveWindow(rect.left+p_translate->cx,	rect.top+p_translate->cy,		rect.Width(), rect.Height(),	FALSE);
 	}
 	else 
 	{
-		int iID = pWnd->GetDlgCtrlID();
-		switch (iID)
+		const auto i_id = p_wnd->GetDlgCtrlID();
+		switch (i_id)
 		{
 		case IDC_SIZEBOX:     // move size box on the lower right corner
-			pWnd->MoveWindow(rect.left+pTranslate->cx, rect.top+pTranslate->cy, 
+			p_wnd->MoveWindow(rect.left+p_translate->cx, rect.top+p_translate->cy, 
 							 rect.Width(), rect.Height(), FALSE);
 			break;
 		case IDOK:	// other windows to move with the right size switch..
 		case IDCANCEL:
 		case IDC_ADCHANNELS:
 		case IDC_ADINTERVALS:
-			pWnd->MoveWindow(rect.left+pTranslate->cx, rect.top, rect.Width(), rect.Height(), FALSE);
+			p_wnd->MoveWindow(rect.left+p_translate->cx, rect.top, rect.Width(), rect.Height(), FALSE);
 		break;
 	default:
 		break;
@@ -364,16 +364,16 @@ void CADInputParmsDlg::InitADchannelCombo(int col, int iselect)
 	csArrayOptions.Add(_T("16 (Din)"));
 
 	// select cell and corresponding combo
-	CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(m_rowADchannel, col);
-	if (pCell != nullptr)
+	auto p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(m_rowADchannel, col));
+	if (p_cell != nullptr)
 	{
 		// if iselect negative, get current selection
 		if (iselect < 0)
-			iselect = pCell->GetCurSel();
-		pCell->SetOptions(csArrayOptions);
-		pCell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
+			iselect = p_cell->GetCurSel();
+		p_cell->SetOptions(csArrayOptions);
+		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
-		pCell->SetCurSel(iselect);
+		p_cell->SetCurSel(iselect);
 	}
 }
 
@@ -383,30 +383,30 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 		return FALSE;
 
 	// get font and create bold face 
-	CFont *pFont = m_Grid.GetFont();
-	ASSERT (pFont != NULL);
+	auto p_font = m_Grid.GetFont();
+	ASSERT (p_font != NULL);
 	LOGFONT lf;
-	pFont->GetLogFont(&lf);
+	p_font->GetLogFont(&lf);
 	lf.lfWeight = FW_BOLD;
 
 	// set columns headers
-	int row = 0;
-	GV_ITEM Item;
-	Item.mask = GVIF_TEXT|GVIF_FORMAT;
-	Item.row = row;
-	Item.col = col;
-	Item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS|DT_NOPREFIX;
-	Item.strText.Format(_T("ch %i"),col);
-	m_Grid.SetItem(&Item);
+	auto row = 0;
+	GV_ITEM item;
+	item.mask = GVIF_TEXT|GVIF_FORMAT;
+	item.row = row;
+	item.col = col;
+	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS|DT_NOPREFIX;
+	item.strText.Format(_T("ch %i"),col);
+	m_Grid.SetItem(&item);
 	m_Grid.SetItemFont(row, col, &lf);
 	
 	// set cells content
 	//"Title",
 	row++;
-	Item.row = row;
-	Item.strText.Format(_T("channel %i"),col);
-	Item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS|DT_NOPREFIX;
-	m_Grid.SetItem(&Item);
+	item.row = row;
+	item.strText.Format(_T("channel %i"),col);
+	item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS|DT_NOPREFIX;
+	m_Grid.SetItem(&item);
 
 	//"A/D channel" - (col-1)
 	row++;
@@ -420,48 +420,48 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCombo)))
 	{
 		CStringArray csArrayOptions;
-		int i= 0;
+		auto i= 0;
 		do {
 			csArrayOptions.Add(pszADGains[i]);
 			i++;
 		} while (pszADGains[i] != _T(""));
-		CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(row, col);
-		pCell->SetOptions(csArrayOptions);
-		pCell->SetStyle(CBS_DROPDOWN); 
+		auto* p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		p_cell->SetOptions(csArrayOptions);
+		p_cell->SetStyle(CBS_DROPDOWN); 
 		// init value
 		if (col > 1)
 			m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col-1));
 		else
-			pCell->SetCurSel(0);
+			p_cell->SetCurSel(0);
 	}
 
 	// "Amplifier type" - combo
 	row++;
 	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCombo)))
 	{
-		CStringArray csArrayOptions;
-		int i= 0;
+		CStringArray cs_array_options;
+		auto i= 0;
 		do {
-			csArrayOptions.Add(pszAmplifier[i]);
+			cs_array_options.Add(pszAmplifier[i]);
 			i++;
 		} while (pszAmplifier[i] != _T(""));
-		CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(row, col);
-		pCell->SetOptions(csArrayOptions);
-		pCell->SetStyle(CBS_DROPDOWN); 
+		auto* p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		p_cell->SetOptions(cs_array_options);
+		p_cell->SetStyle(CBS_DROPDOWN); 
 		// init value
 		if (col > 1)
 			m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col-1));
 		else
-			pCell->SetCurSel(0);
+			p_cell->SetCurSel(0);
 	}
 
 	// " output channel" - numeric
 	row++;
 	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
 	// init value
-	Item.row = row;
-	Item.strText.Format(_T("%d"),col);
-	m_Grid.SetItem(&Item);
+	item.row = row;
+	item.strText.Format(_T("%d"),col);
+	m_Grid.SetItem(&item);
 
 	// " gain" - numeric
 	row++;
@@ -475,9 +475,9 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 
 	// " notch filter" - check box
 	row++;
-	Item.strText = _T("50 Hz");
-	Item.row = row;
-	m_Grid.SetItem(&Item);
+	item.strText = _T("50 Hz");
+	item.row = row;
+	m_Grid.SetItem(&item);
 	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCheck));
 
 	// " IN+" - combo
@@ -490,14 +490,14 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszHighPass[i]);
 			i++;
 		} while (pszHighPass[i] != _T(""));
-		CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(row, col);
-		pCell->SetOptions(csArrayOptions);
-		pCell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
+		auto p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		p_cell->SetOptions(csArrayOptions);
+		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
 		if (col > 1)
 			m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col-1));
 		else
-			pCell->SetCurSel(1);
+			p_cell->SetCurSel(1);
 	}
 
 	// DC Offset (mV) " IN-" - combo
@@ -526,14 +526,14 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszProbeType[i]);
 			i++;
 		} while (pszProbeType[i] != _T(""));
-		CGridCellCombo *pCell = (CGridCellCombo*) m_Grid.GetCell(row, col);
-		pCell->SetOptions(csArrayOptions);
-		pCell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
+		auto p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		p_cell->SetOptions(csArrayOptions);
+		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
 		if (col > 1)
 			m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col-1));
 		else
-			pCell->SetCurSel(0);
+			p_cell->SetCurSel(0);
 	}
 
 	// " gain" - numeric
@@ -548,8 +548,8 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 
 	// read only / numeric fields
 	m_row_readonly = row+1;
-	COLORREF clr = m_Grid.GetDefaultCell(TRUE, TRUE)->GetBackClr();
-	for (int i=0; i<3; i++)
+	const auto clr = m_Grid.GetDefaultCell(TRUE, TRUE)->GetBackClr();
+	for (auto i=0; i<3; i++)
 	{
 		row++;
 		m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
@@ -566,24 +566,23 @@ void CADInputParmsDlg::InitGridColumnReadOnlyFields(int col)
 	// "Signal total gain" - read only / numeric
 	int row = m_row_readonly;
 	CString cs;
-	int igain;
 	cs = m_Grid.GetItemText(m_row_ampgain, col);
-	igain = _ttoi(cs);
+	auto gain = _ttoi(cs);
 	cs = m_Grid.GetItemText(m_row_headstagegain, col);
-	igain *= _ttoi(cs);
+	gain *= _ttoi(cs);
 	cs = m_Grid.GetItemText(m_row_ADgain, col);
-	igain *= _ttoi(cs);
-	cs.Format(_T("%1.3f"), (m_xVoltsMax*1000.f / float(igain)));
+	gain *= _ttoi(cs);
+	cs.Format(_T("%1.3f"), (m_xVoltsMax*1000.f / float(gain)));
 	m_Grid.SetItemText(row, col, cs);
 
 	// "total gain" - read only / numeric
 	row++;
-	cs.Format(_T("%li"), igain);		// = ampgain * probegain * ADgain
+	cs.Format(_T("%li"), gain);		// = ampgain * probegain * ADgain
 	m_Grid.SetItemText(row, col, cs);
 
 	// " resolution (µV)" - read only
 	row++;
-	cs.Format(_T("%1.3f"), (float(m_xVoltsMax) * float (1.E6) / float (igain) *2 / float(m_iNBins)));
+	cs.Format(_T("%1.3f"), (float(m_xVoltsMax) * float (1.E6) / float (gain) *2 / float(m_iNBins)));
 	m_Grid.SetItemText(row, col, cs);
 }
 
@@ -603,34 +602,34 @@ void CADInputParmsDlg::OnBnClickedDifferential()
 
 void CADInputParmsDlg::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 {
-	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-	switch (pItem->iRow) 
+	const auto p_item = reinterpret_cast<NM_GRIDVIEW*>(pNotifyStruct);
+	switch (p_item->iRow) 
 	{
 	//case 1: // title - no action
 	//case 2: // A/D channel (0-7), (0-15) 
 	case 3: // A/D gain
-		InitGridColumnReadOnlyFields(pItem->iColumn);
+		InitGridColumnReadOnlyFields(p_item->iColumn);
 		break;
 	case 4: // ampli
 	case 5: // ampli out chan 
-		SaveChanData(pItem->iColumn);
-		SetAmplifierParms(pItem->iColumn);
+		SaveChanData(p_item->iColumn);
+		SetAmplifierParms(p_item->iColumn);
 		break;
 	case 6: // ampli gain
-		SaveChanData(pItem->iColumn);
-		SetAmplifierParms(pItem->iColumn);
-		InitGridColumnReadOnlyFields(pItem->iColumn);
+		SaveChanData(p_item->iColumn);
+		SetAmplifierParms(p_item->iColumn);
+		InitGridColumnReadOnlyFields(p_item->iColumn);
 		break;
 	case 7: // notch 
 	case 8: // IN+ 
 	case 9: // low pass
 	case 10:
-		SaveChanData(pItem->iColumn);
-		SetAmplifierParms(pItem->iColumn);
+		SaveChanData(p_item->iColumn);
+		SetAmplifierParms(p_item->iColumn);
 		break;
 	//case 11: // headstage 
 	case 12:  // headstage gain
-		InitGridColumnReadOnlyFields(pItem->iColumn);
+		InitGridColumnReadOnlyFields(p_item->iColumn);
 		break;
 	//case 13: // max range 
 	//case 14: // total gain 
@@ -647,10 +646,10 @@ void CADInputParmsDlg::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 void CADInputParmsDlg::OnCbnSelchangeResolution()
 {
 	CString cs;
-	int current_sel = m_resolutionCombo.GetCurSel();
+	auto current_sel = m_resolutionCombo.GetCurSel();
 	m_resolutionCombo.GetWindowText(cs);
-	const int n_bits = _ttoi(cs);
-	const UINT old_n_bins = m_iNBins;
+	const auto n_bits = _ttoi(cs);
+	const auto old_n_bins = m_iNBins;
 	m_iNBins = 1 << n_bits; // 2 exp (nbits)
 	// change input resolution if value has changed
 	if (m_iNBins != old_n_bins)
@@ -666,72 +665,72 @@ void CADInputParmsDlg::LoadChanData(int col)
 {
 	// select channel and load parameters CComboBox
 	ASSERT(col <= m_pchArray->channel_get_number());
-	CWaveChan* pchan = m_pchArray->get_p_channel(col-1);
+	const auto p_chan = m_pchArray->get_p_channel(col-1);
 
 	// settings for the col
-	GV_ITEM Item;
-	Item.mask = GVIF_TEXT|GVIF_FORMAT;
-	Item.col = col;
+	GV_ITEM item;
+	item.mask = GVIF_TEXT|GVIF_FORMAT;
+	item.col = col;
 	// ----------------------------------------
 	// AD channel comment
-	Item.row = 1;
-	Item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS|DT_NOPREFIX;
-	Item.strText = pchan->am_csComment;
-	if (pchan->am_csComment != _T(""))
-		m_Grid.SetItem(&Item);
+	item.row = 1;
+	item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS|DT_NOPREFIX;
+	item.strText = p_chan->am_csComment;
+	if (p_chan->am_csComment != _T(""))
+		m_Grid.SetItem(&item);
 	// AD input channel number
-	Item.row++;
-	Item.strText.Format(_T("%i"),pchan->am_adchannel);
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText.Format(_T("%i"),p_chan->am_adchannel);
+	m_Grid.SetItem(&item);
 	// " ADgain" - combo
-	Item.row++;
-	Item.strText.Format(_T("%i"),pchan->am_gainAD);
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText.Format(_T("%i"),p_chan->am_gainAD);
+	m_Grid.SetItem(&item);
 
 	GetAmplifierParms(col); // get amplifier current settings
 
 	// ----------------------------------------
 	// amplifier name
-	Item.row++;
-	Item.strText = pchan->am_csamplifier;	
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText = p_chan->am_csamplifier;	
+	m_Grid.SetItem(&item);
 	// amplifier channel
-	Item.row++;
-	Item.strText.Format(_T("%i"),pchan->am_amplifierchan);
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText.Format(_T("%i"),p_chan->am_amplifierchan);
+	m_Grid.SetItem(&item);
 	// amplifier gain
-	Item.row++;
-	double gain = double (pchan->am_gaintotal)/(double (pchan->am_gainheadstage) * double (pchan->am_gainAD));
-	int igain = (int) gain;
-	if (igain == 0)
-		igain = 1;
-	Item.strText.Format(_T("%d"), igain);
-	m_Grid.SetItem(&Item);
+	item.row++;
+	const auto gain = double (p_chan->am_gaintotal)/(double (p_chan->am_gainheadstage) * double (p_chan->am_gainAD));
+	auto i_gain = static_cast<int>(gain);
+	if (i_gain == 0)
+		i_gain = 1;
+	item.strText.Format(_T("%d"), i_gain);
+	m_Grid.SetItem(&item);
 	// amplifier notch filter
-	Item.row++;
-	((CGridCellCheck*) m_Grid.GetCell(Item.row, Item.col))->SetCheck(pchan->am_notchfilt);
+	item.row++;
+	dynamic_cast<CGridCellCheck*>(m_Grid.GetCell(item.row, item.col))->SetCheck(p_chan->am_notchfilt);
 	// IN+
-	Item.row++;
-	Item.strText=pchan->am_csInputpos;
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText=p_chan->am_csInputpos;
+	m_Grid.SetItem(&item);
 	// DC Offset (mV) // IN-
-	Item.row++;
+	item.row++;
 	//Item.strText=pchan->am_csInputneg;
-	Item.strText.Format(_T("%0.3f"), pchan->am_offset);
-	m_Grid.SetItem(&Item);
+	item.strText.Format(_T("%0.3f"), p_chan->am_offset);
+	m_Grid.SetItem(&item);
 	// amplifier low pass filter
-	Item.row++;
-	Item.strText.Format(_T("%i"),pchan->am_lowpass);
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText.Format(_T("%i"),p_chan->am_lowpass);
+	m_Grid.SetItem(&item);
 	// ----------------------------------------
 	// headstage
-	Item.row++;
-	Item.strText=pchan->am_csheadstage;
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText=p_chan->am_csheadstage;
+	m_Grid.SetItem(&item);
 	// headstage gain
-	Item.row++;
-	Item.strText.Format(_T("%i"),pchan->am_gainheadstage);
-	m_Grid.SetItem(&Item);
+	item.row++;
+	item.strText.Format(_T("%i"),p_chan->am_gainheadstage);
+	m_Grid.SetItem(&item);
 
 	// set read only fields
 	InitGridColumnReadOnlyFields(col);
@@ -744,15 +743,15 @@ void CADInputParmsDlg::SaveData()
 	{
 		m_pwFormat->scan_count = m_nacqchans;
 		m_pchArray->channel_set_number(m_nacqchans);
-		WORD chbuffersize = m_pwFormat->buffersize/m_nacqchans;
-		m_pwFormat->buffersize = chbuffersize *m_nacqchans;
+		const WORD ch_buffer_size = m_pwFormat->buffersize/m_nacqchans;
+		m_pwFormat->buffersize = ch_buffer_size *m_nacqchans;
 	}
 	// general acq parameters
 	GetDlgItem(IDC_ADCARDNAME)->GetWindowText(m_pwFormat->csADcardName);
 	m_pwFormat->binspan = m_iNBins;
 
 	// save each channel
-	for (int i=1; i<= m_nacqchans; i++)
+	for (auto i=1; i<= m_nacqchans; i++)
 	{
 		SaveChanData(i);
 		SetAmplifierParms(i);
@@ -765,66 +764,63 @@ void CADInputParmsDlg::SaveChanData(int col)
 	// select channel and load parameters CComboBox
 	if (m_pchArray->channel_get_number() < col)
 		m_pchArray->channel_set_number(col);
-	CWaveChan* pchan = m_pchArray->get_p_channel(col-1);
-	CString cs;
+	auto p_chan = m_pchArray->get_p_channel(col-1);
 
 	// AD channel comment
-	int row = 1;
-	pchan->am_csComment = m_Grid.GetItemText(row, col);
+	auto row = 1;
+	p_chan->am_csComment = m_Grid.GetItemText(row, col);
 	// "AD input channel" - combo
 	row++;
-	cs = m_Grid.GetItemText(row, col);
-	pchan->am_adchannel = _ttoi(cs);	// digital channels "16 [DIN]" is OK because of the space after "16"
+	auto cs = m_Grid.GetItemText(row, col);
+	p_chan->am_adchannel = _ttoi(cs);	// digital channels "16 [DIN]" is OK because of the space after "16"
 	
 	// " ADgain" - combo
 	row++;
 	cs = m_Grid.GetItemText(row, col);
-	pchan->am_gainAD = _ttoi(cs);
+	p_chan->am_gainAD = _ttoi(cs);
 
 	// amplifier name
 	row++;
-	pchan->am_csamplifier = m_Grid.GetItemText(row, col);
+	p_chan->am_csamplifier = m_Grid.GetItemText(row, col);
 
 	// amplifier channel
 	row++;
 	cs = m_Grid.GetItemText(row, col);
-	pchan->am_amplifierchan = _ttoi(cs);
+	p_chan->am_amplifierchan = _ttoi(cs);
 
 	// amplifier gain
 	row++;
 	cs = m_Grid.GetItemText(row, col);
-	pchan->am_gainpre = _ttoi(cs);
-	pchan->am_gainpost = 1;
-	//pchan->am_gainamplifier = _ttoi(cs);
-
+	p_chan->am_gainpre = _ttoi(cs);
+	p_chan->am_gainpost = 1;
+	
 	// amplifier notch filter
 	row++;
-	pchan->am_notchfilt= ((CGridCellCheck*) m_Grid.GetCell(row, col))->GetCheck();
+	p_chan->am_notchfilt= ((CGridCellCheck*) m_Grid.GetCell(row, col))->GetCheck();
 
 	// amplifier high pass filter (IN+)
 	row++;
-	pchan->am_csInputpos= m_Grid.GetItemText(row, col);
+	p_chan->am_csInputpos= m_Grid.GetItemText(row, col);
 	// DC Offset(mV) // IN-
 	row++;
-	//pchan->am_csInputneg= m_Grid.GetItemText(row, col);
 	cs = m_Grid.GetItemText(row, col);
-	pchan->am_offset = (float) _tstof(cs);
+	p_chan->am_offset = (float) _tstof(cs);
 	// amplifier low pass filter
 	row++;
 	cs = m_Grid.GetItemText(row, col);
-	pchan->am_lowpass = _ttoi(cs);
+	p_chan->am_lowpass = _ttoi(cs);
 
 	// headstage
 	row++;
-	pchan->am_csheadstage = m_Grid.GetItemText(row, col);
+	p_chan->am_csheadstage = m_Grid.GetItemText(row, col);
 	// headstage gain
 	row++;
 	cs = m_Grid.GetItemText(row, col);
-	pchan->am_gainheadstage= _ttoi(cs);
-	pchan->am_gainamplifier = double (pchan->am_gainheadstage) * (double) pchan->am_gainpre * (double) pchan->am_gainpost;
-	pchan->am_gaintotal = pchan->am_gainamplifier * pchan->am_gainAD;
+	p_chan->am_gainheadstage= _ttoi(cs);
+	p_chan->am_gainamplifier = double (p_chan->am_gainheadstage) * (double) p_chan->am_gainpre * (double) p_chan->am_gainpost;
+	p_chan->am_gaintotal = p_chan->am_gainamplifier * p_chan->am_gainAD;
 	// compute dependent parameters
-	pchan->am_resolutionV = m_pwFormat->fullscale_Volts / pchan->am_gaintotal / m_pwFormat->binspan;
+	p_chan->am_resolutionV = m_pwFormat->fullscale_Volts / p_chan->am_gaintotal / m_pwFormat->binspan;
 }
 
 void CADInputParmsDlg::OnBnClickedOk()
@@ -848,7 +844,7 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	CWaveChan* p_chan = m_pchArray->get_p_channel(col-1);
+	auto p_chan = m_pchArray->get_p_channel(col-1);
 
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0 
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0) 
@@ -874,37 +870,35 @@ void CADInputParmsDlg::GetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	CWaveChan* pchan = m_pchArray->get_p_channel(col - 1);
+	const auto p_chan = m_pchArray->get_p_channel(col - 1);
 
 	// exit if cyberAmp not declared - if not, exit
-	if (pchan->am_csamplifier.Find(_T("CyberAmp")) >= 0
-		|| pchan->am_csamplifier.Find(_T("Axon")) >= 0)
+	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0
+		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0)
 	{
 		// cyberAmp declared: check if connected -if not, exit
-		CCyberAmp cyberAmp;
-		BOOL bcyberPresent = (cyberAmp.Initialize() == NULL);
-		if (!bcyberPresent)
+		CCyberAmp cyber_amp;
+		const BOOL b_cyber_present = (cyber_amp.Initialize() == NULL);
+		if (!b_cyber_present)
 			return;
-
-		//cyberAmp.GetWaveChanParms(pchan);
 	}
 
-	if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
+	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
 	{
-		int nAlligatorDescriptors = m_pAlligatorDevicePtrArray->GetCount();
-		USBPxxPARAMETERS* pdevice = nullptr;
-		for (int i = 0; i < nAlligatorDescriptors; i++)
+		const auto nAlligatorDescriptors = m_pAlligatorDevicePtrArray->GetCount();
+		USBPxxPARAMETERS* p_device = nullptr;
+		for (auto i = 0; i < nAlligatorDescriptors; i++)
 		{
-			USBPxxPARAMETERS* ptr = (USBPxxPARAMETERS*) m_pAlligatorDevicePtrArray->GetAt(i);
-			if (pchan->am_amplifierchan == ptr->ChannelNumber) 
+			auto* ptr = static_cast<USBPxxPARAMETERS*>(m_pAlligatorDevicePtrArray->GetAt(i));
+			if (p_chan->am_amplifierchan == ptr->ChannelNumber) 
 			{
-				pdevice = ptr;
+				p_device = ptr;
 				break;
 			}
 		}
-		if (pdevice != nullptr)
+		if (p_device != nullptr)
 		{
-			m_pAlligatorAmplifier->GetWaveChanParms(pchan, pdevice);
+			m_pAlligatorAmplifier->GetWaveChanParms(p_chan, p_device);
 		}
 	}
 }

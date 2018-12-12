@@ -49,7 +49,7 @@ public:
 	BOOL		CreateMainTable(CString cs);
 	void		CreateTables();
 	BOOL		OpenTables();
-	void		OpenIndexTable(int nOpenType, CdbIndexTable * pIndexTableSet);
+	void		OpenIndexTable(CdbIndexTable * pIndexTableSet);
 	void		CloseDatabase();
 	void		UpdateTables();
 
