@@ -4,18 +4,18 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeDetectionView form view
+// CViewSpikeDetection form view
 
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "Controls\cdxCRotBevelLine.h"
 
-class CSpikeDetectionView : public CDaoRecordView
+class CViewSpikeDetection : public CDaoRecordView
 {
 
 protected:
-	DECLARE_DYNCREATE(CSpikeDetectionView)
-	CSpikeDetectionView();
+	DECLARE_DYNCREATE(CViewSpikeDetection)
+	CViewSpikeDetection();
 
 // Form Data
 public:
@@ -140,7 +140,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CSpikeDetectionView();
+	virtual ~CViewSpikeDetection();
 #ifdef _DEBUG
 	virtual void	AssertValid() const;
 	virtual void	Dump(CDumpContext& dc) const;
@@ -261,6 +261,6 @@ public:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CSpikeDetectionView::GetDocument()
+inline CdbWaveDoc* CViewSpikeDetection::GetDocument()
    { return (CdbWaveDoc*)m_pDocument; }
 #endif

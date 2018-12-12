@@ -32,12 +32,12 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeTemplateView
+// CViewSpikeSort_Templates
 
-IMPLEMENT_DYNCREATE(CSpikeTemplateView, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewSpikeSort_Templates, CDaoRecordView)
 
-CSpikeTemplateView::CSpikeTemplateView()
-	: CDaoRecordView(CSpikeTemplateView::IDD), m_pSpkDoc(nullptr), m_pSpkList(nullptr), m_lFirst(0), m_lLast(0),
+CViewSpikeSort_Templates::CViewSpikeSort_Templates()
+	: CDaoRecordView(CViewSpikeSort_Templates::IDD), m_pSpkDoc(nullptr), m_pSpkList(nullptr), m_lFirst(0), m_lLast(0),
 	  mdPM(nullptr), mdMO(nullptr), m_psC(nullptr), m_ktagleft(0), m_ktagright(0), m_scrollFilePos_infos()
 {
 	m_timefirst = 0.0f;
@@ -58,7 +58,7 @@ CSpikeTemplateView::CSpikeTemplateView()
 
 //---------------------------------------------------------------------------
 
-CSpikeTemplateView::~CSpikeTemplateView()
+CViewSpikeSort_Templates::~CViewSpikeSort_Templates()
 {
 	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
@@ -67,7 +67,7 @@ CSpikeTemplateView::~CSpikeTemplateView()
 
 // --------------------------------------------------------------------------
 
-BOOL CSpikeTemplateView::PreCreateWindow(CREATESTRUCT &cs)
+BOOL CViewSpikeSort_Templates::PreCreateWindow(CREATESTRUCT &cs)
 {
 // TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -75,7 +75,7 @@ BOOL CSpikeTemplateView::PreCreateWindow(CREATESTRUCT &cs)
 }
 
 
-void CSpikeTemplateView::OnDestroy() 
+void CViewSpikeSort_Templates::OnDestroy() 
 {
 	CDaoRecordView::OnDestroy();
 	if (m_templList.GetNtemplates() != 0)
@@ -88,20 +88,20 @@ void CSpikeTemplateView::OnDestroy()
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeTemplateView diagnostics
+// CViewSpikeSort_Templates diagnostics
 
 #ifdef _DEBUG
-void CSpikeTemplateView::AssertValid() const
+void CViewSpikeSort_Templates::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
 
-void CSpikeTemplateView::Dump(CDumpContext& dc) const
+void CViewSpikeSort_Templates::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
 
-CdbWaveDoc* CSpikeTemplateView::GetDocument() // non-debug version is inline
+CdbWaveDoc* CViewSpikeSort_Templates::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
 	return (CdbWaveDoc*)m_pDocument;
@@ -109,16 +109,16 @@ CdbWaveDoc* CSpikeTemplateView::GetDocument() // non-debug version is inline
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeTemplateView database support
+// CViewSpikeSort_Templates database support
 
-CDaoRecordset* CSpikeTemplateView::OnGetRecordset()
+CDaoRecordset* CViewSpikeSort_Templates::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
 
 //---------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
+void CViewSpikeSort_Templates::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
 {
 	if (bActivate)
 	{
@@ -136,7 +136,7 @@ void CSpikeTemplateView::OnActivateView(BOOL bActivate, CView* pActivateView, CV
 
 //---------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CViewSpikeSort_Templates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
 {
 	if (!m_binit)
 		return;
@@ -156,7 +156,7 @@ void CSpikeTemplateView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-BOOL CSpikeTemplateView::OnMove(UINT nIDMoveCommand) 
+BOOL CViewSpikeSort_Templates::OnMove(UINT nIDMoveCommand) 
 {
 	SaveCurrentSpkFile();	
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
@@ -173,7 +173,7 @@ BOOL CSpikeTemplateView::OnMove(UINT nIDMoveCommand)
 
 //---------------------------------------------------------------------------
 
-void CSpikeTemplateView::DoDataExchange(CDataExchange* pDX)
+void CViewSpikeSort_Templates::DoDataExchange(CDataExchange* pDX)
 {
 	CDaoRecordView::DoDataExchange(pDX);
 
@@ -192,7 +192,7 @@ void CSpikeTemplateView::DoDataExchange(CDataExchange* pDX)
 
 //---------------------------------------------------------------------------
 
-BEGIN_MESSAGE_MAP(CSpikeTemplateView, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikeSort_Templates, CDaoRecordView)
 
 	ON_WM_SIZE()
 	ON_EN_CHANGE(IDC_EDIT2, OnEnChangeclassno)
@@ -214,18 +214,18 @@ BEGIN_MESSAGE_MAP(CSpikeTemplateView, CDaoRecordView)
 	ON_WM_DESTROY()	
 	ON_WM_SETFOCUS()
 
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CSpikeTemplateView::OnTcnSelchangeTab1)
-	ON_BN_CLICKED(IDC_SORT, &CSpikeTemplateView::OnBnClickedSort)
-	ON_BN_CLICKED(IDC_DISPLAY, &CSpikeTemplateView::OnBnClickedDisplay)
-	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &CSpikeTemplateView::OnEnChangeIfirstsortedclass)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &CSpikeTemplateView::OnTcnSelchangeTab2)
-	ON_NOTIFY(NM_CLICK, IDC_TAB2, &CSpikeTemplateView::OnNMClickTab2)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeSort_Templates::OnTcnSelchangeTab1)
+	ON_BN_CLICKED(IDC_SORT, &CViewSpikeSort_Templates::OnBnClickedSort)
+	ON_BN_CLICKED(IDC_DISPLAY, &CViewSpikeSort_Templates::OnBnClickedDisplay)
+	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &CViewSpikeSort_Templates::OnEnChangeIfirstsortedclass)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &CViewSpikeSort_Templates::OnTcnSelchangeTab2)
+	ON_NOTIFY(NM_CLICK, IDC_TAB2, &CViewSpikeSort_Templates::OnNMClickTab2)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeTemplateView message handlers
+// CViewSpikeSort_Templates message handlers
 
-void CSpikeTemplateView::OnSize(UINT nType, int cx, int cy) 
+void CViewSpikeSort_Templates::OnSize(UINT nType, int cx, int cy) 
 {
 	if (m_binit)
 	{
@@ -247,7 +247,7 @@ void CSpikeTemplateView::OnSize(UINT nType, int cx, int cy)
 
 //---------------------------------------------------------------------------
 
-void CSpikeTemplateView::SaveCurrentSpkFile()
+void CViewSpikeSort_Templates::SaveCurrentSpkFile()
 {
 	// save previous file if anything has changed
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
@@ -271,7 +271,7 @@ void CSpikeTemplateView::SaveCurrentSpkFile()
 
 //---------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnInitialUpdate() 
+void CViewSpikeSort_Templates::OnInitialUpdate() 
 {
 	m_stretch.AttachParent(this);		// attach formview pointer
 	m_stretch.newProp(IDC_LIST1, 		XLEQ_XREQ, SZEQ_YTEQ);
@@ -354,7 +354,7 @@ void CSpikeTemplateView::OnInitialUpdate()
 // UpdateFileParameters()
 //---------------------------------------------------------------------------
 
-void CSpikeTemplateView::UpdateFileParameters()
+void CViewSpikeSort_Templates::UpdateFileParameters()
 {
 	// init views
 	GetDocument()->OpenCurrentSpikeFile();
@@ -379,7 +379,7 @@ void CSpikeTemplateView::UpdateFileParameters()
 	SelectSpikeList(icur);
 }
 
-void CSpikeTemplateView::SelectSpikeList(int icur)
+void CViewSpikeSort_Templates::SelectSpikeList(int icur)
 {
 	// select spike list 
 	GetDocument()->SetcurrentSpkListIndex(icur);
@@ -438,7 +438,7 @@ void CSpikeTemplateView::SelectSpikeList(int icur)
 
 //----------------------------------------------------------------------------
 
-void CSpikeTemplateView::UpdateTemplates()
+void CViewSpikeSort_Templates::UpdateTemplates()
 {
 	int nCmdShow = SW_HIDE;
 	if (m_templList.GetNtemplates() > 0)
@@ -462,7 +462,7 @@ void CSpikeTemplateView::UpdateTemplates()
 
 //----------------------------------------------------------------------------
 
-void CSpikeTemplateView::UpdateLegends()
+void CViewSpikeSort_Templates::UpdateLegends()
 {
 	if (m_lFirst < 0)
 		m_lFirst = 0;
@@ -494,7 +494,7 @@ void CSpikeTemplateView::UpdateLegends()
 // -------------------------------------------------------------------------
 // SelectSpike - display selected spike in the form window 
 
-void CSpikeTemplateView::SelectSpike(short spikeno)
+void CViewSpikeSort_Templates::SelectSpike(short spikeno)
 {
 	m_spkForm.SelectSpikeShape(spikeno);
 	m_spikeno = spikeno;
@@ -505,7 +505,7 @@ void CSpikeTemplateView::SelectSpike(short spikeno)
 // --------------------------------------------------------------------------
 // message handler for messages from CScopeScreenWnd windows and derived classes
 
-LRESULT CSpikeTemplateView::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT CViewSpikeSort_Templates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	short threshold = LOWORD(lParam);	// value associated	
 
@@ -558,7 +558,7 @@ LRESULT CSpikeTemplateView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::Onallclasses() 
+void CViewSpikeSort_Templates::Onallclasses() 
 {
 	m_ballclasses = TRUE;
 	GetDlgItem(IDC_EDIT2)->ShowWindow(SW_HIDE);
@@ -566,7 +566,7 @@ void CSpikeTemplateView::Onallclasses()
 	m_spkForm.Invalidate();
 }
 
-void CSpikeTemplateView::Onsingleclass() 
+void CViewSpikeSort_Templates::Onsingleclass() 
 {
 	m_ballclasses = FALSE;
 	GetDlgItem(IDC_EDIT2)->ShowWindow(SW_SHOW);
@@ -577,7 +577,7 @@ void CSpikeTemplateView::Onsingleclass()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnEnChangeclassno() 
+void CViewSpikeSort_Templates::OnEnChangeclassno() 
 {
 	if (!mm_spikenoclass.m_bEntryDone)
 		return;
@@ -606,7 +606,7 @@ void CSpikeTemplateView::OnEnChangeclassno()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnEnChangeTimefirst() 
+void CViewSpikeSort_Templates::OnEnChangeTimefirst() 
 {
 	if (!mm_timefirst.m_bEntryDone)
 		return;
@@ -640,7 +640,7 @@ void CSpikeTemplateView::OnEnChangeTimefirst()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnEnChangeTimelast() 
+void CViewSpikeSort_Templates::OnEnChangeTimelast() 
 {
 	if (!mm_timelast.m_bEntryDone)
 		return;
@@ -674,7 +674,7 @@ void CSpikeTemplateView::OnEnChangeTimelast()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CViewSpikeSort_Templates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
@@ -733,7 +733,7 @@ void CSpikeTemplateView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::UpdateScrollBar()
+void CViewSpikeSort_Templates::UpdateScrollBar()
 {
 	if (m_lFirst == 0 && m_lLast >= m_pSpkDoc->GetAcqSize()-1)
 		GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_HIDE);
@@ -750,7 +750,7 @@ void CSpikeTemplateView::UpdateScrollBar()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnFormatAlldata() 
+void CViewSpikeSort_Templates::OnFormatAlldata() 
 {
 	// dots: spk file length
 	m_lFirst = 0;
@@ -764,7 +764,7 @@ void CSpikeTemplateView::OnFormatAlldata()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnFormatGainadjust() 
+void CViewSpikeSort_Templates::OnFormatGainadjust() 
 {
 	int maxval, minval;
 	m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
@@ -783,7 +783,7 @@ void CSpikeTemplateView::OnFormatGainadjust()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnFormatCentercurve() 
+void CViewSpikeSort_Templates::OnFormatCentercurve() 
 {
 	int maxval, minval;
 	m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
@@ -801,7 +801,7 @@ void CSpikeTemplateView::OnFormatCentercurve()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnEnChangeHitrate() 
+void CViewSpikeSort_Templates::OnEnChangeHitrate() 
 {
 	if (!mm_hitrate.m_bEntryDone)
 		return;
@@ -834,7 +834,7 @@ void CSpikeTemplateView::OnEnChangeHitrate()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnEnChangeHitrateSort() 
+void CViewSpikeSort_Templates::OnEnChangeHitrateSort() 
 {
 	if (!mm_hitratesort.m_bEntryDone)
 		return;
@@ -867,7 +867,7 @@ void CSpikeTemplateView::OnEnChangeHitrateSort()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnEnChangeTolerance() 
+void CViewSpikeSort_Templates::OnEnChangeTolerance() 
 {
 	if (!mm_ktolerance.m_bEntryDone)
 		return;
@@ -902,7 +902,7 @@ void CSpikeTemplateView::OnEnChangeTolerance()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList) 
+void CViewSpikeSort_Templates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList) 
 {	
 	// get list of classes	
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
@@ -1024,7 +1024,7 @@ void CSpikeTemplateView::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnBuildTemplates() 
+void CViewSpikeSort_Templates::OnBuildTemplates() 
 {
 	// set file indexes - assume only one file selected
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -1174,7 +1174,7 @@ void CSpikeTemplateView::OnBuildTemplates()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::SortSpikes() 
+void CViewSpikeSort_Templates::SortSpikes() 
 {
 	// set tolerance to sort tolerance
 	m_templList.SetHitRate_Tolerance(&m_hitratesort, &m_ktolerance);
@@ -1315,7 +1315,7 @@ void CSpikeTemplateView::SortSpikes()
 
 // --------------------------------------------------------------------------
 
-void CSpikeTemplateView::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult) 
+void CViewSpikeSort_Templates::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	LV_KEYDOWN* pLVKeyDow = (LV_KEYDOWN*)pNMHDR;
 	
@@ -1348,12 +1348,12 @@ void CSpikeTemplateView::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 
-void CSpikeTemplateView::OnCheck1() 
+void CViewSpikeSort_Templates::OnCheck1() 
 {	
 	UpdateData(TRUE);
 }
 
-void CSpikeTemplateView::EditSpikeClass(int controlID, int controlItem)
+void CViewSpikeSort_Templates::EditSpikeClass(int controlID, int controlItem)
 {
 	// find which item has been selected
 	CTemplateListWnd* pList = nullptr; 
@@ -1453,7 +1453,7 @@ void CSpikeTemplateView::EditSpikeClass(int controlID, int controlItem)
 		}
 	}
 }
-void CSpikeTemplateView::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeSort_Templates::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	*pResult = 0;
 
@@ -1462,7 +1462,7 @@ void CSpikeTemplateView::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	UpdateCtrlTab1(iselect);
 }
 
-void CSpikeTemplateView::UpdateCtrlTab1(int iselect)
+void CViewSpikeSort_Templates::UpdateCtrlTab1(int iselect)
 {
 	WORD iTempl = SW_SHOW;
 	WORD iAvg = SW_HIDE;
@@ -1514,18 +1514,18 @@ void CSpikeTemplateView::UpdateCtrlTab1(int iselect)
 	GetDlgItem(IDC_DISPLAY)->ShowWindow(iAvg);
 }
 
-void CSpikeTemplateView::OnBnClickedSort()
+void CViewSpikeSort_Templates::OnBnClickedSort()
 {
 	SortSpikes();
 }
 
-void CSpikeTemplateView::OnBnClickedDisplay()
+void CViewSpikeSort_Templates::OnBnClickedDisplay()
 {
 	DisplayAvg(TRUE, &m_avgAllList); //, &m_ImListAll);
 }
 
 
-void CSpikeTemplateView::OnEnChangeIfirstsortedclass()
+void CViewSpikeSort_Templates::OnEnChangeIfirstsortedclass()
 {
 	if (!mm_ifirstsortedclass.m_bEntryDone)
 		return;
@@ -1555,14 +1555,14 @@ void CSpikeTemplateView::OnEnChangeIfirstsortedclass()
 	UpdateData(FALSE);
 }
 
-void CSpikeTemplateView::OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeSort_Templates::OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	SelectSpikeList(icursel);
 	*pResult = 0;
 }
 
-void CSpikeTemplateView::OnNMClickTab2(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeSort_Templates::OnNMClickTab2(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	SelectSpikeList(icursel);

@@ -4,15 +4,15 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeHistView form view
+// CViewSpikeHist form view
 
 //#include "CustomTabCtrl.h"
 
-class CSpikeHistView : public CDaoRecordView
+class CViewSpikeHist : public CDaoRecordView
 {
-	DECLARE_DYNCREATE(CSpikeHistView)	
+	DECLARE_DYNCREATE(CViewSpikeHist)	
 protected:
-	CSpikeHistView();           // protected constructor used by dynamic creation
+	CViewSpikeHist();           // protected constructor used by dynamic creation
 	
 // Form Data
 public:
@@ -114,7 +114,7 @@ protected:
 protected:
 	long PlotHistog(CDC* pDC, CRect* dispRect, int nbins, long* phistog0, int orientation=0, int btype=0);
 
-	virtual ~CSpikeHistView();
+	virtual ~CViewSpikeHist();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -151,6 +151,6 @@ public:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CSpikeHistView::GetDocument()
+	inline CdbWaveDoc* CViewSpikeHist::GetDocument()
 						{ return (CdbWaveDoc*)m_pDocument; }
 #endif

@@ -2403,7 +2403,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 		CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
 		CDocument* pdbDocExport = pTempl->OpenDocumentFile(nullptr);
 		POSITION pos = pdbDocExport->GetFirstViewPosition();
-		CNoteDocView* pView = (CNoteDocView*)pdbDocExport->GetNextView(pos);
+		CViewNoteDoc* pView = (CViewNoteDoc*)pdbDocExport->GetNextView(pos);
 		CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
 		pEdit.Paste();
 		//---------------------------------------------

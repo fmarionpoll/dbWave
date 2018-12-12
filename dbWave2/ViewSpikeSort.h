@@ -4,14 +4,14 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeSort1View form view
+// CViewSpikeSort_Parameters form view
 
 
-class CSpikeSort1View : public CDaoRecordView
+class CViewSpikeSort_Parameters : public CDaoRecordView
 {
-	DECLARE_DYNCREATE(CSpikeSort1View)
+	DECLARE_DYNCREATE(CViewSpikeSort_Parameters)
 protected:
-	CSpikeSort1View();			// protected constructor used by dynamic creation
+	CViewSpikeSort_Parameters();			// protected constructor used by dynamic creation
 
 // Form Data
 public:
@@ -101,7 +101,7 @@ public:
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CDataView)
+	//{{AFX_VIRTUAL(CViewData)
 	public:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -115,7 +115,7 @@ public:
 
 	// Implementation
 protected:
-	virtual ~CSpikeSort1View();
+	virtual ~CViewSpikeSort_Parameters();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -174,6 +174,6 @@ public:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CSpikeSort1View::GetDocument()
+	inline CdbWaveDoc* CViewSpikeSort_Parameters::GetDocument()
 						{ return (CdbWaveDoc*)m_pDocument; }
 #endif

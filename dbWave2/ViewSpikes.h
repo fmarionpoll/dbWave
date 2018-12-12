@@ -4,13 +4,13 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeView form view
+// CViewSpike form view
 
-class CSpikeView : public CDaoRecordView
+class CViewSpikes : public CDaoRecordView
 {
 protected:
-	DECLARE_DYNCREATE(CSpikeView)
-	CSpikeView();			// protected constructor used by dynamic creation
+	DECLARE_DYNCREATE(CViewSpikes)
+	CViewSpikes();			// protected constructor used by dynamic creation
 
 // Form Data
 public:
@@ -92,7 +92,7 @@ public:
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CDataView)
+	//{{AFX_VIRTUAL(CViewData)
 	public:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -149,7 +149,7 @@ protected:
 
 // Implementation
 protected:
-	virtual ~CSpikeView();
+	virtual ~CViewSpikes();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -196,6 +196,6 @@ public:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CSpikeView::GetDocument()
+	inline CdbWaveDoc* CViewSpikes::GetDocument()
 						{ return (CdbWaveDoc*)m_pDocument; }
 #endif

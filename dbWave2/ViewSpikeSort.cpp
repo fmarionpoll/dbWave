@@ -32,14 +32,14 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeSort1View
+// CViewSpikeSort_Parameters
 
-IMPLEMENT_DYNCREATE(CSpikeSort1View, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewSpikeSort_Parameters, CDaoRecordView)
 
 // -------------------------------------------------------------------------
 
-CSpikeSort1View::CSpikeSort1View()
-	: CDaoRecordView(CSpikeSort1View::IDD)
+CViewSpikeSort_Parameters::CViewSpikeSort_Parameters()
+	: CDaoRecordView(CViewSpikeSort_Parameters::IDD)
 {
 	m_t1 = 0.0f;
 	m_t2 = 0.0f;
@@ -70,7 +70,7 @@ CSpikeSort1View::CSpikeSort1View()
 
 // -------------------------------------------------------------------------
 
-CSpikeSort1View::~CSpikeSort1View()
+CViewSpikeSort_Parameters::~CViewSpikeSort_Parameters()
 {
 	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
@@ -83,7 +83,7 @@ CSpikeSort1View::~CSpikeSort1View()
 	m_psC->mvmin = m_mVMin;
 }
 
-BOOL CSpikeSort1View::PreCreateWindow(CREATESTRUCT &cs)
+BOOL CViewSpikeSort_Parameters::PreCreateWindow(CREATESTRUCT &cs)
 {
 // TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -92,7 +92,7 @@ BOOL CSpikeSort1View::PreCreateWindow(CREATESTRUCT &cs)
 
 // -------------------------------------------------------------------------
 
-void CSpikeSort1View::DoDataExchange(CDataExchange* pDX)
+void CViewSpikeSort_Parameters::DoDataExchange(CDataExchange* pDX)
 {
 	CDaoRecordView::DoDataExchange(pDX);
 
@@ -118,7 +118,7 @@ void CSpikeSort1View::DoDataExchange(CDataExchange* pDX)
 
 // -------------------------------------------------------------------------
 
-BEGIN_MESSAGE_MAP(CSpikeSort1View, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikeSort_Parameters, CDaoRecordView)
 
 	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)	 
 	ON_WM_SIZE()
@@ -144,24 +144,24 @@ BEGIN_MESSAGE_MAP(CSpikeSort1View, CDaoRecordView)
 	ON_EN_CHANGE(IDC_EDIT3,					OnEnChangetimeLast)
 	ON_EN_CHANGE(IDC_EDIT7,					OnEnChangemVMin)
 	ON_EN_CHANGE(IDC_EDIT6,					OnEnChangemVMax)
-	ON_EN_CHANGE(IDC_EDITLEFT2,				&CSpikeSort1View::OnEnChangeEditleft2)
-	ON_EN_CHANGE(IDC_EDITRIGHT2,			&CSpikeSort1View::OnEnChangeEditright2)
+	ON_EN_CHANGE(IDC_EDITLEFT2,				&CViewSpikeSort_Parameters::OnEnChangeEditleft2)
+	ON_EN_CHANGE(IDC_EDITRIGHT2,			&CViewSpikeSort_Parameters::OnEnChangeEditright2)
 	ON_EN_CHANGE(IDC_NSPIKES,				OnEnChangeNOspike)
 	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM,	OnToolsEdittransformspikes)
 	ON_EN_CHANGE(IDC_SPIKECLASS,			OnEnChangeSpikenoclass)
 	
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CSpikeSort1View::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CSpikeSort1View::OnTcnSelchangeTab1)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeSort_Parameters::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeSort_Parameters::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeSort1View overriden functions
+// CViewSpikeSort_Parameters overriden functions
 
 
 // -------------------------------------------------------------------------
 // OnInitialUpdate - start here before displaying the view
 
-void CSpikeSort1View::OnInitialUpdate()
+void CViewSpikeSort_Parameters::OnInitialUpdate()
 {
 	// attach set
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();    
@@ -252,7 +252,7 @@ void CSpikeSort1View::OnInitialUpdate()
 	m_binit = TRUE;
 }
 
-void CSpikeSort1View::ActivateMode4()
+void CViewSpikeSort_Parameters::ActivateMode4()
 {	
 	int nCmdShow = SW_SHOW;
 	if (m_psC->iparameter == 4)
@@ -300,7 +300,7 @@ void CSpikeSort1View::ActivateMode4()
 // -------------------------------------------------------------------------
 // OnActivateView - activate this view or exit from the view
 
-void CSpikeSort1View::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void CViewSpikeSort_Parameters::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -330,7 +330,7 @@ void CSpikeSort1View::OnActivateView( BOOL bActivate, CView* pActivateView, CVie
 // -------------------------------------------------------------------------
 // OnUpdate - update view
 
-void CSpikeSort1View::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CViewSpikeSort_Parameters::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (!m_binit)
 		return;
@@ -351,7 +351,7 @@ void CSpikeSort1View::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-BOOL CSpikeSort1View::OnMove(UINT nIDMoveCommand) 
+BOOL CViewSpikeSort_Parameters::OnMove(UINT nIDMoveCommand) 
 {
 	SaveCurrentFileParms();	
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
@@ -368,27 +368,27 @@ BOOL CSpikeSort1View::OnMove(UINT nIDMoveCommand)
 
 /////////////////////////////////////////////////////////////////////////////
 // remove objects
-void CSpikeSort1View::OnDestroy() 
+void CViewSpikeSort_Parameters::OnDestroy() 
 {
 	CDaoRecordView::OnDestroy();
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeSort1View diagnostics
+// CViewSpikeSort_Parameters diagnostics
 
 #ifdef _DEBUG
-void CSpikeSort1View::AssertValid() const
+void CViewSpikeSort_Parameters::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
 
-void CSpikeSort1View::Dump(CDumpContext& dc) const
+void CViewSpikeSort_Parameters::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
 
-CdbWaveDoc* CSpikeSort1View::GetDocument() // non-debug version is inline
+CdbWaveDoc* CViewSpikeSort_Parameters::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
 	return (CdbWaveDoc*)m_pDocument;
@@ -396,9 +396,9 @@ CdbWaveDoc* CSpikeSort1View::GetDocument() // non-debug version is inline
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeSort1View database support
+// CViewSpikeSort_Parameters database support
 
-CDaoRecordset* CSpikeSort1View::OnGetRecordset()
+CDaoRecordset* CViewSpikeSort_Parameters::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
@@ -409,7 +409,7 @@ CDaoRecordset* CSpikeSort1View::OnGetRecordset()
 //---------------------------------------------------------------------------
 // UpdateFileParameters()
 
-void CSpikeSort1View::UpdateFileParameters()
+void CViewSpikeSort_Parameters::UpdateFileParameters()
 {
 	// reset parms ? flag = single file or file list has changed
 	if (  !m_bAllfiles
@@ -536,7 +536,7 @@ void CSpikeSort1View::UpdateFileParameters()
 //----------------------------------------------------------------------------
 // Update content of controls & replot the 3 windows with data
 
-void CSpikeSort1View::UpdateLegends()
+void CViewSpikeSort_Parameters::UpdateLegends()
 {
 	// update text abcissa and horizontal scroll position
 	m_pSpkList->m_lFirstSL = m_lFirst;
@@ -563,12 +563,12 @@ void CSpikeSort1View::UpdateLegends()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeSort1View message handlers
+// CViewSpikeSort_Parameters message handlers
 
 // -------------------------------------------------------------------------
 // OnSize - modif change of view
 
-void CSpikeSort1View::OnSize(UINT nType, int cx, int cy)
+void CViewSpikeSort_Parameters::OnSize(UINT nType, int cx, int cy)
 {
 	if (m_binit)
 	{
@@ -591,7 +591,7 @@ void CSpikeSort1View::OnSize(UINT nType, int cx, int cy)
 // OnEnChangeSourceclass - change source spike class : 
 // display all spikes in grey, and the new source class in black
 
-void CSpikeSort1View::OnEnChangeSourceclass()
+void CViewSpikeSort_Parameters::OnEnChangeSourceclass()
 {
 	if (!mm_sourceclass.m_bEntryDone)
 		return;
@@ -633,7 +633,7 @@ void CSpikeSort1View::OnEnChangeSourceclass()
 // OnEnChangeDestinationclass - change no of spike class in which spikes
 // matching criteria will be transformed
 
-void CSpikeSort1View::OnEnChangeDestinationclass()
+void CViewSpikeSort_Parameters::OnEnChangeDestinationclass()
 {
 	if (!mm_destinationclass.m_bEntryDone)
 		return;
@@ -662,7 +662,7 @@ void CSpikeSort1View::OnEnChangeDestinationclass()
 // -------------------------------------------------------------------------
 // OnSelchangeParameter - change selection parameter
 
-void CSpikeSort1View::OnSelchangeParameter()
+void CViewSpikeSort_Parameters::OnSelchangeParameter()
 {
 	int iparameter = m_CBparameter.GetCurSel();
 	if (iparameter != m_psC->iparameter)
@@ -682,7 +682,7 @@ void CSpikeSort1View::OnSelchangeParameter()
 // -------------------------------------------------------------------------
 // OnEnChangelower - change lowver value
 
-void CSpikeSort1View::OnEnChangelower()
+void CViewSpikeSort_Parameters::OnEnChangelower()
 {
 	if (!mm_lower.m_bEntryDone)
 		return;
@@ -720,7 +720,7 @@ void CSpikeSort1View::OnEnChangelower()
 // -------------------------------------------------------------------------
 // OnEnChangeupper - change upper value
 
-void CSpikeSort1View::OnEnChangeupper()
+void CViewSpikeSort_Parameters::OnEnChangeupper()
 {
 	if (!mm_upper.m_bEntryDone)
 		return;
@@ -760,7 +760,7 @@ void CSpikeSort1View::OnEnChangeupper()
 // -------------------------------------------------------------------------
 // change t1 value
 
-void CSpikeSort1View::OnEnChangeT1()
+void CViewSpikeSort_Parameters::OnEnChangeT1()
 {
 	if (!mm_t1.m_bEntryDone)
 		return;
@@ -800,7 +800,7 @@ void CSpikeSort1View::OnEnChangeT1()
 // -------------------------------------------------------------------------
 // change t2 value
 
-void CSpikeSort1View::OnEnChangeT2()
+void CViewSpikeSort_Parameters::OnEnChangeT2()
 {
 	if (!mm_t2.m_bEntryDone)
 		return;
@@ -847,7 +847,7 @@ void CSpikeSort1View::OnEnChangeT2()
 // -------------------------------------------------------------------------
 // sort spikes according to the parameters
 
-void CSpikeSort1View::OnSort()
+void CViewSpikeSort_Parameters::OnSort()
 {
 	if (!m_bMeasureDone)
 	{
@@ -1007,7 +1007,7 @@ void CSpikeSort1View::OnSort()
 // --------------------------------------------------------------------------
 // message handler for messages from CScopeScreenWnd windows and derived classes
 
-LRESULT CSpikeSort1View::OnMyMessage(WPARAM code, LPARAM lParam)
+LRESULT CViewSpikeSort_Parameters::OnMyMessage(WPARAM code, LPARAM lParam)
 {
 	short threshold = LOWORD(lParam);	// value associated	
 	short wParam = HIWORD(lParam);
@@ -1176,7 +1176,7 @@ LRESULT CSpikeSort1View::OnMyMessage(WPARAM code, LPARAM lParam)
 // -------------------------------------------------------------------------
 // OnMeasure - measure parameters for 1 file (current) or all
 
-void CSpikeSort1View::OnMeasure() 
+void CViewSpikeSort_Parameters::OnMeasure() 
 {
 	// set file indexes - assume only one file selected
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -1374,7 +1374,7 @@ void CSpikeSort1View::OnMeasure()
 	UpdateData(FALSE);
 }
 
-void CSpikeSort1View::UpdateGain()
+void CViewSpikeSort_Parameters::UpdateGain()
 {
 	float delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 	
@@ -1396,7 +1396,7 @@ void CSpikeSort1View::UpdateGain()
 // assume m_pSpklist is valid
 
 
-BOOL CSpikeSort1View::MeasureSpkParm1(BOOL bkeepOldData, int ioption, int currentfile)
+BOOL CViewSpikeSort_Parameters::MeasureSpkParm1(BOOL bkeepOldData, int ioption, int currentfile)
 {
 	BOOL bChanged = FALSE;
 	int nspikes = m_pSpkList->GetTotalSpikes(); //m_nspkperfile[currentfile];
@@ -1480,7 +1480,7 @@ BOOL CSpikeSort1View::MeasureSpkParm1(BOOL bkeepOldData, int ioption, int curren
 // ioption = 1: measure at t2
 // assume m_pSpkList is valid
 
-void CSpikeSort1View::MeasureSpkParm2(BOOL bkeepOldData, int ioption, int currentfile)
+void CViewSpikeSort_Parameters::MeasureSpkParm2(BOOL bkeepOldData, int ioption, int currentfile)
 {	
 	int nspikes = m_pSpkList->GetTotalSpikes(); //m_nspkperfile[currentfile];
 	// index first spike within array
@@ -1531,7 +1531,7 @@ void CSpikeSort1View::MeasureSpkParm2(BOOL bkeepOldData, int ioption, int curren
 // -------------------------------------------------------------------------
 // OnFormatAlldata - view all data (length of the recordings)
 
-void CSpikeSort1View::OnFormatAlldata() 
+void CViewSpikeSort_Parameters::OnFormatAlldata() 
 {
 	// build new histogram only if necessary
 	BOOL buildHistogram = FALSE;
@@ -1579,7 +1579,7 @@ void CSpikeSort1View::OnFormatAlldata()
 // -------------------------------------------------------------------------
 // OnFormatCentercurve - center spikes & parameters
 
-void CSpikeSort1View::OnFormatCentercurve() 
+void CViewSpikeSort_Parameters::OnFormatCentercurve() 
 {
 	// loop over all spikes of the list  
 	int nspikes = m_pSpkList->GetTotalSpikes();
@@ -1598,7 +1598,7 @@ void CSpikeSort1View::OnFormatCentercurve()
 // -------------------------------------------------------------------------
 // OnFormatGainadjust - adjust gain to fit data within window
 
-void CSpikeSort1View::OnFormatGainadjust() 
+void CViewSpikeSort_Parameters::OnFormatGainadjust() 
 {		
 	// adjust gain of spkform and spkbar: data = raw signal
 	int max, min; 
@@ -1654,7 +1654,7 @@ void CSpikeSort1View::OnFormatGainadjust()
 // if mode is parameters displayed from all, enventually display file containing
 // this spike
 
-void CSpikeSort1View::SelectSpike(int spikeno, BOOL bglobal)
+void CViewSpikeSort_Parameters::SelectSpike(int spikeno, BOOL bglobal)
 {
 	// convert global index to local
 	int ispike_local = spikeno;		// always local index [/ current file]
@@ -1705,7 +1705,7 @@ void CSpikeSort1View::SelectSpike(int spikeno, BOOL bglobal)
 // ------------------------------------------------
 // edit and transform spikes
 
-void CSpikeSort1View::OnToolsEdittransformspikes() 
+void CViewSpikeSort_Parameters::OnToolsEdittransformspikes() 
 {
 	CSpikeEditDlg dlg;							// dialog box
 	dlg.m_yextent = m_spkForm.GetYWExtent();	// load display parameters
@@ -1758,7 +1758,7 @@ void CSpikeSort1View::OnToolsEdittransformspikes()
 // OnSelectAllFiles - called when IDC_CHECK1 is changed
 // call OnMeasure
 
-void CSpikeSort1View::OnSelectAllFiles() 
+void CViewSpikeSort_Parameters::OnSelectAllFiles() 
 {
 	m_bAllfiles = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
 	m_bMeasureDone=FALSE;
@@ -1771,7 +1771,7 @@ void CSpikeSort1View::OnSelectAllFiles()
 // -------------------------------------------------------------------------
 // convert global index into local index (filenb & index within this file)
 
-int CSpikeSort1View::GlobalIndextoLocal(int index_global, int* filenb)
+int CViewSpikeSort_Parameters::GlobalIndextoLocal(int index_global, int* filenb)
 {
 	int nbfiles	= m_nspkperfile.GetSize();
 	int index_local = 0;
@@ -1794,7 +1794,7 @@ int CSpikeSort1View::GlobalIndextoLocal(int index_global, int* filenb)
 // convert local index (spike "index" within "filenb") into global index
 // filenb = 0 to (nbfiles -1)
 
-int	 CSpikeSort1View::LocalIndextoGlobal(int filenb, int index_local)
+int	 CViewSpikeSort_Parameters::LocalIndextoGlobal(int filenb, int index_local)
 {
 	int index_global = index_local + m_nspkperfile[filenb];	
 	return index_global;
@@ -1803,7 +1803,7 @@ int	 CSpikeSort1View::LocalIndextoGlobal(int filenb, int index_local)
 //---------------------------------------------------------------------------
 // save file if modified, update parameters if they have changed
 
-void CSpikeSort1View::SaveCurrentFileParms()
+void CViewSpikeSort_Parameters::SaveCurrentFileParms()
 {
 	// save previous file if anything has changed
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
@@ -1853,7 +1853,7 @@ void CSpikeSort1View::SaveCurrentFileParms()
 
 //---------------------------------------------------------------------------
 
-void CSpikeSort1View::OnToolsAlignspikes() 
+void CViewSpikeSort_Parameters::OnToolsAlignspikes() 
 {
 	// get source data
 	BOOL bDocExist = FALSE;
@@ -2063,7 +2063,7 @@ void CSpikeSort1View::OnToolsAlignspikes()
 //	parm2 = Amplitude at offset t1 or t2
 //	parm3 = Time max-min (t1:t2)
 
-void CSpikeSort1View::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int currentfile)
+void CViewSpikeSort_Parameters::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int currentfile)
 {	
 	int nspikes = m_pSpkList->GetTotalSpikes(); //m_nspkperfile[currentfile];
 	
@@ -2231,7 +2231,7 @@ void CSpikeSort1View::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int curren
 }
 
 
-void CSpikeSort1View::OnEnChangetimeFirst() 
+void CViewSpikeSort_Parameters::OnEnChangetimeFirst() 
 {
 	if (!mm_timeFirst.m_bEntryDone)
 		return;
@@ -2261,7 +2261,7 @@ void CSpikeSort1View::OnEnChangetimeFirst()
 	UpdateLegends();
 }
 
-void CSpikeSort1View::OnEnChangetimeLast() 
+void CViewSpikeSort_Parameters::OnEnChangetimeLast() 
 {
 	if (!mm_timeLast.m_bEntryDone)
 		return;
@@ -2292,7 +2292,7 @@ void CSpikeSort1View::OnEnChangetimeLast()
 }
 
 
-void CSpikeSort1View::OnEnChangemVMin() 
+void CViewSpikeSort_Parameters::OnEnChangemVMin() 
 {
 	if (!mm_mVMin.m_bEntryDone)
 		return;
@@ -2323,7 +2323,7 @@ void CSpikeSort1View::OnEnChangemVMin()
 	UpdateLegends();
 }
 
-void CSpikeSort1View::OnEnChangemVMax() 
+void CViewSpikeSort_Parameters::OnEnChangemVMax() 
 {
 	if (!mm_mVMax.m_bEntryDone)
 		return;
@@ -2354,7 +2354,7 @@ void CSpikeSort1View::OnEnChangemVMax()
 	UpdateLegends();
 }
 
-void CSpikeSort1View::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CViewSpikeSort_Parameters::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
@@ -2417,7 +2417,7 @@ void CSpikeSort1View::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		UpdateScrollBar();
 }
 
-void CSpikeSort1View::UpdateScrollBar()
+void CViewSpikeSort_Parameters::UpdateScrollBar()
 {
 	GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_SHOW);		
 	m_scrollFilePos_infos.fMask = SIF_ALL;
@@ -2428,7 +2428,7 @@ void CSpikeSort1View::UpdateScrollBar()
 	((CScrollBar*) GetDlgItem(IDC_SCROLLBAR1))->SetScrollInfo(&m_scrollFilePos_infos);
 }
 
-void CSpikeSort1View::OnEnChangeNOspike() 
+void CViewSpikeSort_Parameters::OnEnChangeNOspike() 
 {
 if (!mm_spikeno.m_bEntryDone)
 		return;
@@ -2474,7 +2474,7 @@ if (!mm_spikeno.m_bEntryDone)
 }
 
 
-void CSpikeSort1View::OnEnChangeSpikenoclass() 
+void CViewSpikeSort_Parameters::OnEnChangeSpikenoclass() 
 {
 	if (!mm_spikenoclass.m_bEntryDone)
 		return;
@@ -2503,7 +2503,7 @@ void CSpikeSort1View::OnEnChangeSpikenoclass()
 	}
 }
 
-void CSpikeSort1View::SelectSpkList(int icursel)
+void CViewSpikeSort_Parameters::SelectSpkList(int icursel)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(icursel);
 	GetDocument()->SetcurrentSpkListIndex(icursel);
@@ -2523,7 +2523,7 @@ void CSpikeSort1View::SelectSpkList(int icursel)
 }
 
 
-void CSpikeSort1View::OnEnChangeEditleft2()
+void CViewSpikeSort_Parameters::OnEnChangeEditleft2()
 {
 	if (!mm_txyleft.m_bEntryDone)
 		return;
@@ -2560,7 +2560,7 @@ void CSpikeSort1View::OnEnChangeEditleft2()
 }
 
 
-void CSpikeSort1View::OnEnChangeEditright2()
+void CViewSpikeSort_Parameters::OnEnChangeEditright2()
 {
 	if (!mm_txyright.m_bEntryDone)
 		return;
@@ -2598,7 +2598,7 @@ void CSpikeSort1View::OnEnChangeEditright2()
 }
 
 
-void CSpikeSort1View::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeSort_Parameters::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	m_tabCtrl.SetCurSel(icursel);
@@ -2607,7 +2607,7 @@ void CSpikeSort1View::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 
-void CSpikeSort1View::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeSort_Parameters::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	SelectSpkList(icursel);

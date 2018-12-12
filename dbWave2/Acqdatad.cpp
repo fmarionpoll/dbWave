@@ -176,9 +176,8 @@ BOOL CAcqDataDoc::OnOpenDocument(CString &sz_path_name)
 		}
 		catch( CFileException* pEx )
 		{
-			#ifdef _DEBUG
-				afxDump << "File " << sz_path_name << " not found, cause = " << pEx->m_cause << "\n";
-			#endif
+			ATLTRACE2(_T("File %20s not found, cause = %20s\n"), sz_path_name, pEx->m_cause);
+			pEx->Delete();
 		}
 				
 		filename_old = cs_array->GetAt(0);
@@ -192,9 +191,8 @@ BOOL CAcqDataDoc::OnOpenDocument(CString &sz_path_name)
 		}
 		catch( CFileException* pEx )
 		{
-			#ifdef _DEBUG
-				afxDump << "File " << filename_old << " not found, cause = " << pEx->m_cause << "\n";
-			#endif
+			ATLTRACE2(_T("File %20s not found, cause = %20s\n"), filename_old, pEx->m_cause);
+			pEx->Delete();
 		}
 		
 		delete cs_array;

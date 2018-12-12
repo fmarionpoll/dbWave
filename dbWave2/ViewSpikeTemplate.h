@@ -4,13 +4,13 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeTemplateView form view
+// CViewSpikeSort_Templates form view
 
-class CSpikeTemplateView : public CDaoRecordView
+class CViewSpikeSort_Templates : public CDaoRecordView
 {
 protected:
-	CSpikeTemplateView();           // protected constructor used by dynamic creation
-	DECLARE_DYNCREATE(CSpikeTemplateView)
+	CViewSpikeSort_Templates();           // protected constructor used by dynamic creation
+	DECLARE_DYNCREATE(CViewSpikeSort_Templates)
 
 // Form Data
 public:
@@ -81,7 +81,7 @@ protected:
 
 // Implementation
 protected:
-	virtual ~CSpikeTemplateView();
+	virtual ~CViewSpikeSort_Templates();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -136,7 +136,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CSpikeTemplateView::GetDocument()
+	inline CdbWaveDoc* CViewSpikeSort_Templates::GetDocument()
 						{ return (CdbWaveDoc*)m_pDocument; }
 #endif
 

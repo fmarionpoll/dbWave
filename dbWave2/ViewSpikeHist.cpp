@@ -25,14 +25,14 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeHistView
+// CViewSpikeHist
 
-IMPLEMENT_DYNCREATE(CSpikeHistView, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewSpikeHist, CDaoRecordView)
 
 // -------------------------------------------------------------------------
 
-CSpikeHistView::CSpikeHistView()
-	: CDaoRecordView(CSpikeHistView::IDD), m_pvdS(nullptr), mdPM(nullptr), m_bhistType(0), m_scrollFilePos_infos(),
+CViewSpikeHist::CViewSpikeHist()
+	: CDaoRecordView(CViewSpikeHist::IDD), m_pvdS(nullptr), mdPM(nullptr), m_bhistType(0), m_scrollFilePos_infos(),
 	  m_nPSTH(0), m_nISI(0), m_logFont(), m_xfirst(0), m_xlast(0), m_logFontDisp()
 {
 	m_timefirst = 0.0f;
@@ -62,7 +62,7 @@ CSpikeHistView::CSpikeHistView()
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
-CSpikeHistView::~CSpikeHistView()
+CViewSpikeHist::~CViewSpikeHist()
 {
 	if (m_pPSTH != nullptr && m_sizepPSTH != 0)
 		delete [] m_pPSTH;
@@ -75,7 +75,7 @@ CSpikeHistView::~CSpikeHistView()
 	m_fontDisp.DeleteObject();	
 }
 
-BOOL CSpikeHistView::PreCreateWindow(CREATESTRUCT &cs)
+BOOL CViewSpikeHist::PreCreateWindow(CREATESTRUCT &cs)
 {
 // TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -84,7 +84,7 @@ BOOL CSpikeHistView::PreCreateWindow(CREATESTRUCT &cs)
 
 // -------------------------------------------------------------------------
 
-void CSpikeHistView::DoDataExchange(CDataExchange* pDX)
+void CViewSpikeHist::DoDataExchange(CDataExchange* pDX)
 {
 	CDaoRecordView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
@@ -100,7 +100,7 @@ void CSpikeHistView::DoDataExchange(CDataExchange* pDX)
 
 // -------------------------------------------------------------------------
 
-BEGIN_MESSAGE_MAP(CSpikeHistView, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikeHist, CDaoRecordView)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
@@ -126,14 +126,14 @@ BEGIN_MESSAGE_MAP(CSpikeHistView, CDaoRecordView)
 	ON_EN_CHANGE(IDC_EDITLOCKONSTIM, OnEnChangeEditlockonstim)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CSpikeHistView::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CSpikeHistView::OnTcnSelchangeTab1)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeHist::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeHist::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeHistView message handlers
+// CViewSpikeHist message handlers
 
-void CSpikeHistView::OnInitialUpdate() 
+void CViewSpikeHist::OnInitialUpdate() 
 {	
 	VERIFY(mm_binISIms.SubclassDlgItem(IDC_BINSIZE, this));
 	VERIFY(mm_timebinms.SubclassDlgItem(IDC_EDIT4, this));
@@ -220,7 +220,7 @@ void CSpikeHistView::OnInitialUpdate()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnSize(UINT nType, int cx, int cy) 
+void CViewSpikeHist::OnSize(UINT nType, int cx, int cy) 
 {
 	if (m_binit)
 	{
@@ -242,7 +242,7 @@ void CSpikeHistView::OnSize(UINT nType, int cx, int cy)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void CViewSpikeHist::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -259,7 +259,7 @@ void CSpikeHistView::OnActivateView( BOOL bActivate, CView* pActivateView, CView
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
 {
 	if (!m_binit)
 		return;
@@ -283,7 +283,7 @@ void CSpikeHistView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-BOOL CSpikeHistView::OnMove(UINT nIDMoveCommand) 
+BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand) 
 {
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	CdbWaveDoc* pDoc = GetDocument();
@@ -302,27 +302,27 @@ BOOL CSpikeHistView::OnMove(UINT nIDMoveCommand)
 
 /////////////////////////////////////////////////////////////////////////////
 // remove objects
-void CSpikeHistView::OnDestroy() 
+void CViewSpikeHist::OnDestroy() 
 {
 	CDaoRecordView::OnDestroy();
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeHistView diagnostics
+// CViewSpikeHist diagnostics
 
 #ifdef _DEBUG
-void CSpikeHistView::AssertValid() const
+void CViewSpikeHist::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
 
-void CSpikeHistView::Dump(CDumpContext& dc) const
+void CViewSpikeHist::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
 
-CdbWaveDoc* CSpikeHistView::GetDocument()
+CdbWaveDoc* CViewSpikeHist::GetDocument()
 { 
 	return (CdbWaveDoc*)m_pDocument; 
 }
@@ -331,9 +331,9 @@ CdbWaveDoc* CSpikeHistView::GetDocument()
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeHistView database support
+// CViewSpikeHist database support
 
-CDaoRecordset* CSpikeHistView::OnGetRecordset()
+CDaoRecordset* CViewSpikeHist::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
@@ -341,7 +341,7 @@ CDaoRecordset* CSpikeHistView::OnGetRecordset()
 /////////////////////////////////////////////////////////////////////////////
 
 
-void CSpikeHistView::OnEnChangeTimefirst() 
+void CViewSpikeHist::OnEnChangeTimefirst() 
 {
 	if (!mm_timefirst.m_bEntryDone)
 		return;
@@ -377,7 +377,7 @@ void CSpikeHistView::OnEnChangeTimefirst()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnEnChangeTimelast() 
+void CViewSpikeHist::OnEnChangeTimelast() 
 {
 	if (!mm_timelast.m_bEntryDone)
 		return;
@@ -412,7 +412,7 @@ void CSpikeHistView::OnEnChangeTimelast()
 }
 
 // -------------------------------------------------------------
-void CSpikeHistView::OnEnChangeTimebin()
+void CViewSpikeHist::OnEnChangeTimebin()
 {
 	if (!mm_timebinms.m_bEntryDone)
 		return;
@@ -441,7 +441,7 @@ void CSpikeHistView::OnEnChangeTimebin()
 }
 
 
-void CSpikeHistView::OnEnChangebinISI()
+void CViewSpikeHist::OnEnChangebinISI()
 {
 	if (!mm_binISIms.m_bEntryDone)
 		return;
@@ -471,7 +471,7 @@ void CSpikeHistView::OnEnChangebinISI()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnEnChangeSpikeclass() 
+void CViewSpikeHist::OnEnChangeSpikeclass() 
 {
 	if (!mm_spikeclass.m_bEntryDone)
 		return;
@@ -505,7 +505,7 @@ void CSpikeHistView::OnEnChangeSpikeclass()
 // display data
 //
 
-void CSpikeHistView::OnDisplay() 
+void CViewSpikeHist::OnDisplay() 
 {
 	if (!m_binit)
 		return;
@@ -516,7 +516,7 @@ void CSpikeHistView::OnDisplay()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnDraw(CDC* pDC) 
+void CViewSpikeHist::OnDraw(CDC* pDC) 
 {
 	CRect rect;								// get coordinates of display area
 	CWnd* pWnd= GetDlgItem(IDC_STATIC12);	// get pointer to display static control
@@ -595,7 +595,7 @@ void CSpikeHistView::OnDraw(CDC* pDC)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::GetFileInfos(CString &strComment)
+void CViewSpikeHist::GetFileInfos(CString &strComment)
 {
 	if (m_nfiles==1)
 	{
@@ -628,7 +628,7 @@ void CSpikeHistView::GetFileInfos(CString &strComment)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnClickAllfiles() 
+void CViewSpikeHist::OnClickAllfiles() 
 {
 	if (((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck())
 	{
@@ -645,7 +645,7 @@ void CSpikeHistView::OnClickAllfiles()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnClickCycleHist() 
+void CViewSpikeHist::OnClickCycleHist() 
 {
 	if (((CButton*) GetDlgItem(IDC_CHECK2))->GetCheck())
 	{
@@ -661,7 +661,7 @@ void CSpikeHistView::OnClickCycleHist()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnClickOneclass() 
+void CViewSpikeHist::OnClickOneclass() 
 {
 	if(!m_pvdS->spikeclassoption)
 	{
@@ -673,7 +673,7 @@ void CSpikeHistView::OnClickOneclass()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnClickAllclasses() 
+void CViewSpikeHist::OnClickAllclasses() 
 {
 	if(m_pvdS->spikeclassoption)
 	{
@@ -685,7 +685,7 @@ void CSpikeHistView::OnClickAllclasses()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnabsoluteTime() 
+void CViewSpikeHist::OnabsoluteTime() 
 {
 	if (!m_pvdS->babsolutetime)
 	{
@@ -696,7 +696,7 @@ void CSpikeHistView::OnabsoluteTime()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnrelativeTime() 
+void CViewSpikeHist::OnrelativeTime() 
 {
 	if (m_pvdS->babsolutetime)
 	{
@@ -708,7 +708,7 @@ void CSpikeHistView::OnrelativeTime()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::ShowControls(int iselect)
+void CViewSpikeHist::ShowControls(int iselect)
 {
 	m_bhistType=iselect;
 	switch (iselect)
@@ -772,7 +772,7 @@ void CSpikeHistView::ShowControls(int iselect)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnEnChangenbins() 
+void CViewSpikeHist::OnEnChangenbins() 
 {
 	if (!mm_nbinsISI.m_bEntryDone)
 		return;
@@ -803,7 +803,7 @@ void CSpikeHistView::OnEnChangenbins()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnEnChangerowheight() 
+void CViewSpikeHist::OnEnChangerowheight() 
 {
 	if (!mm_rowheight.m_bEntryDone)
 		return;
@@ -834,7 +834,7 @@ void CSpikeHistView::OnEnChangerowheight()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnEnChangeDotheight() 
+void CViewSpikeHist::OnEnChangeDotheight() 
 {
 	if (!mm_dotheight.m_bEntryDone)
 		return;
@@ -866,7 +866,7 @@ void CSpikeHistView::OnEnChangeDotheight()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnEditCopy() 
+void CViewSpikeHist::OnEditCopy() 
 {
 	// create metafile
 	CMetaFileDC mDC;
@@ -930,7 +930,7 @@ void CSpikeHistView::OnEditCopy()
 
 // -------------------------------------------------------------
 
-BOOL CSpikeHistView::OnPreparePrinting(CPrintInfo* pInfo) 
+BOOL CViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo) 
 {
 	if (!CView::DoPreparePrinting(pInfo))
 		return FALSE;
@@ -987,7 +987,7 @@ BOOL CSpikeHistView::OnPreparePrinting(CPrintInfo* pInfo)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnPrint(CDC* pDC, CPrintInfo* pInfo) 
+void CViewSpikeHist::OnPrint(CDC* pDC, CPrintInfo* pInfo) 
 {
 	// select font, set print flag, save current file index
 	CFont* pOldFont = pDC->SelectObject(&m_fontPrint);
@@ -1086,7 +1086,7 @@ void CSpikeHistView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo) 
+void CViewSpikeHist::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo) 
 {
 	m_fontPrint.DeleteObject();
 	m_bPrint=FALSE;
@@ -1095,7 +1095,7 @@ void CSpikeHistView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo) 
+void CViewSpikeHist::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo) 
 {
 	memset(&m_logFont, 0, sizeof(LOGFONT));		// prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial"));		// Arial font
@@ -1106,7 +1106,7 @@ void CSpikeHistView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::OnFormatHistogram() 
+void CViewSpikeHist::OnFormatHistogram() 
 {
 	CFormatHistogramDlg dlg;
 	dlg.m_bYmaxAuto = m_pvdS->bYmaxAuto;
@@ -1138,7 +1138,7 @@ void CSpikeHistView::OnFormatHistogram()
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::BuildData()
+void CViewSpikeHist::BuildData()
 {
 	// adjust size of the data array
 	int nbins=1;
@@ -1366,7 +1366,7 @@ void CSpikeHistView::BuildData()
 // output (modified internal parameters)
 //		m_rectratio	 % of histogram height versus plotting area
 
-long CSpikeHistView::PlotHistog(CDC* pDC, CRect* pdispRect, int nbinshistog, long* phistog0, int orientation, int btype)
+long CViewSpikeHist::PlotHistog(CDC* pDC, CRect* pdispRect, int nbinshistog, long* phistog0, int orientation, int btype)
 {
 	CPen penbars;
 	penbars.CreatePen(PS_SOLID, 0, m_pvdS->crHistBorder);
@@ -1556,7 +1556,7 @@ long CSpikeHistView::PlotHistog(CDC* pDC, CRect* pdispRect, int nbinshistog, lon
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::DisplayDot(CDC* pDC, CRect* pRect)
+void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 {
 	CWaitCursor wait;
 
@@ -1808,7 +1808,7 @@ void CSpikeHistView::DisplayDot(CDC* pDC, CRect* pRect)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::DisplayHistogram(CDC* pDC, CRect* pRect)
+void CViewSpikeHist::DisplayHistogram(CDC* pDC, CRect* pRect)
 {
 	CRect dispRect = *pRect;		// this will be the display rect for histogram
 
@@ -1955,7 +1955,7 @@ void CSpikeHistView::DisplayHistogram(CDC* pDC, CRect* pRect)
 
 // -------------------------------------------------------------
 
-void CSpikeHistView::DisplayPSTHAutoc(CDC* pDC, CRect* pRect)
+void CViewSpikeHist::DisplayPSTHAutoc(CDC* pDC, CRect* pRect)
 {
 	// print text on horizontal lines
 	TEXTMETRIC tm;					// load characteristics of the font
@@ -2167,7 +2167,7 @@ void CSpikeHistView::DisplayPSTHAutoc(CDC* pDC, CRect* pRect)
 // assume:
 //	m_pvdS
 
-void CSpikeHistView::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLast)
+void CViewSpikeHist::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLast)
 {
 	// draw rectangle for stimulus
 	if (m_pSpkDoc->m_stimIntervals.nitems <= 0)
@@ -2242,7 +2242,7 @@ void CSpikeHistView::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLa
 	pDC->SelectObject(poldP);
 }
 
-void CSpikeHistView::OnSelchangeHistogramtype() 
+void CViewSpikeHist::OnSelchangeHistogramtype() 
 {
 	int i = ((CListBox*) GetDlgItem(IDC_LIST1))->GetCurSel();	// CListBox
 	if (m_bhistType ==i)
@@ -2252,13 +2252,13 @@ void CSpikeHistView::OnSelchangeHistogramtype()
 }
 
 
-void CSpikeHistView::OnEnChangeEditnstipercycle() 
+void CViewSpikeHist::OnEnChangeEditnstipercycle() 
 {
 	m_pvdS->nstipercycle = GetDlgItemInt(IDC_EDITNSTIPERCYCLE);	
 	OnDisplay();
 }
 
-void CSpikeHistView::OnEnChangeEditlockonstim() 
+void CViewSpikeHist::OnEnChangeEditlockonstim() 
 {
 	if (m_pSpkDoc == nullptr)
 		return;
@@ -2276,7 +2276,7 @@ void CSpikeHistView::OnEnChangeEditlockonstim()
 }
 
 
-void CSpikeHistView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	if ((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1) != pScrollBar)
 		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
@@ -2336,7 +2336,7 @@ void CSpikeHistView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 
 
-void CSpikeHistView::SelectSpkList(int icur, BOOL bRefreshInterface)
+void CViewSpikeHist::SelectSpkList(int icur, BOOL bRefreshInterface)
 {
 	if (bRefreshInterface)
 	{
@@ -2361,7 +2361,7 @@ void CSpikeHistView::SelectSpkList(int icur, BOOL bRefreshInterface)
 	m_tabCtrl.SetCurSel(icur);
 }
 
-void CSpikeHistView::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeHist::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	SelectSpkList(icursel);
@@ -2370,7 +2370,7 @@ void CSpikeHistView::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 
-void CSpikeHistView::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeHist::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	SelectSpkList(icursel);

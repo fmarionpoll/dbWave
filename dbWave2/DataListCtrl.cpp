@@ -276,7 +276,7 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	
 	// now, the requested item is in the cache
 	// get data from database
-	CdbWaveDoc* pdbDoc = ((CdbWaveView*) GetParent())->GetDocument();
+	CdbWaveDoc* pdbDoc = ((CViewdbWave*) GetParent())->GetDocument();
 	if (pdbDoc == nullptr)
 		return;
 
@@ -376,7 +376,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 	}
 
 	// get data file pointer and pointer to database
-	CdbWaveDoc* pdbDoc = ((CdbWaveView*) GetParent())->GetDocument();
+	CdbWaveDoc* pdbDoc = ((CViewdbWave*) GetParent())->GetDocument();
 	if (pdbDoc == nullptr)
 		return;
 	int indexcurrentfile = pdbDoc->DBGetCurrentRecordPosition();	// save current file
@@ -761,7 +761,7 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 	}
 
 	CSpikeBarWnd* pWnd = ptr->pspikeWnd;
-	CdbWaveDoc* pdbDoc = ((CdbWaveView*) GetParent())->GetDocument();
+	CdbWaveDoc* pdbDoc = ((CViewdbWave*) GetParent())->GetDocument();
 
 	// open spike document
 	if (ptr->pspikeDoc == nullptr)

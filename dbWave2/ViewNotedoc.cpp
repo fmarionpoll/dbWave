@@ -1,4 +1,4 @@
-// NotedocView.cpp : implementation of the CNoteDocView class
+// NotedocView.cpp : implementation of the CViewNoteDoc class
 //
 
 #include "StdAfx.h"
@@ -11,11 +11,11 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CNoteDocView
+// CViewNoteDoc
 
-IMPLEMENT_DYNCREATE(CNoteDocView, CRichEditView)
+IMPLEMENT_DYNCREATE(CViewNoteDoc, CRichEditView)
 
-BEGIN_MESSAGE_MAP(CNoteDocView, CRichEditView)
+BEGIN_MESSAGE_MAP(CViewNoteDoc, CRichEditView)
 	ON_WM_DESTROY()
 	ON_COMMAND(ID_TOOLS_OPENDATAFILES, OnToolsOpendatafiles)
 	ON_COMMAND(ID_FILE_PRINT, CRichEditView::OnFilePrint)
@@ -24,19 +24,19 @@ BEGIN_MESSAGE_MAP(CNoteDocView, CRichEditView)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CNoteDocView construction/destruction
+// CViewNoteDoc construction/destruction
 
-CNoteDocView::CNoteDocView()
+CViewNoteDoc::CViewNoteDoc()
 {
 	// TODO: add construction code here
 	m_bEnableActiveAccessibility=FALSE;
 }
 
-CNoteDocView::~CNoteDocView()
+CViewNoteDoc::~CViewNoteDoc()
 {
 }
 
-BOOL CNoteDocView::PreCreateWindow(CREATESTRUCT& cs)
+BOOL CViewNoteDoc::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -44,7 +44,7 @@ BOOL CNoteDocView::PreCreateWindow(CREATESTRUCT& cs)
 	return CRichEditView::PreCreateWindow(cs);
 }
 
-void CNoteDocView::OnInitialUpdate()
+void CViewNoteDoc::OnInitialUpdate()
 {
 	CRichEditView::OnInitialUpdate();
 
@@ -53,16 +53,16 @@ void CNoteDocView::OnInitialUpdate()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CNoteDocView printing
+// CViewNoteDoc printing
 
-BOOL CNoteDocView::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL CViewNoteDoc::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// default preparation
 	return DoPreparePrinting(pInfo);
 }
 
 
-void CNoteDocView::OnDestroy()
+void CViewNoteDoc::OnDestroy()
 {
 	// Deactivate the item on destruction; this is important
 	// when a splitter view is being used.
@@ -80,20 +80,20 @@ void CNoteDocView::OnDestroy()
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CNoteDocView diagnostics
+// CViewNoteDoc diagnostics
 
 #ifdef _DEBUG
-void CNoteDocView::AssertValid() const
+void CViewNoteDoc::AssertValid() const
 {
 	CRichEditView::AssertValid();
 }
 
-void CNoteDocView::Dump(CDumpContext& dc) const
+void CViewNoteDoc::Dump(CDumpContext& dc) const
 {
 	CRichEditView::Dump(dc);
 }
 
-CNoteDoc* CNoteDocView::GetDocument() // non-debug version is inline
+CNoteDoc* CViewNoteDoc::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CNoteDoc)));
 	return (CNoteDoc*)m_pDocument;
@@ -101,9 +101,9 @@ CNoteDoc* CNoteDocView::GetDocument() // non-debug version is inline
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// CNoteDocView message handlers
+// CViewNoteDoc message handlers
 
-void CNoteDocView::OnToolsOpendatafiles() 
+void CViewNoteDoc::OnToolsOpendatafiles() 
 {
 	CNoteDoc* pDoc = (CNoteDoc*) GetDocument();
 	CString csname = pDoc->GetPathName();

@@ -142,7 +142,10 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 	dynamic_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->bSaveTags);
 
 	// save initial state of VTtags
-	m_plineview->SetVTtagList(m_pdatDoc->GetpVTtags());
+	//TODO bug here
+	auto p_vertical_tags_list = m_pdatDoc->GetpVTtags();
+	if (p_vertical_tags_list != nullptr)
+		m_plineview->SetVTtagList(p_vertical_tags_list);
 	m_plineview->DelAllHZtags();	
 	m_plineview->Invalidate();
 	m_nbtags = m_plineview->GetNVTtags();
@@ -613,8 +616,8 @@ BOOL CMeasureOptionsPage::OnInitDialog()
 	CheckRadioButton(IDC_VERTICALTAGS, IDC_STIMULUSTAG, i_id);
 	dynamic_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->btime);
 
-	GetDlgItem(IDC_CHECKRISETIME)->EnableWindow(FALSE);
-	GetDlgItem(IDC_CHECKRECOVERYTIME)->EnableWindow(FALSE);
+	//GetDlgItem(IDC_CHECKRISETIME)->EnableWindow(FALSE);
+	//GetDlgItem(IDC_CHECKRECOVERYTIME)->EnableWindow(FALSE);
 	
 	UpdateData(FALSE);
 

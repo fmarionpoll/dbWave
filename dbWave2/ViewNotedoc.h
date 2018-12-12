@@ -1,17 +1,17 @@
 #pragma once
 
-// NotedocView.h : interface of the CNoteDocView class
+// NotedocView.h : interface of the CViewNoteDoc class
 //
 /////////////////////////////////////////////////////////////////////////////
 
 
 class CProjectFilesCntrItem;
 
-class CNoteDocView : public CRichEditView
+class CViewNoteDoc : public CRichEditView
 {
 protected: // create from serialization only
-	CNoteDocView();
-	DECLARE_DYNCREATE(CNoteDocView)
+	CViewNoteDoc();
+	DECLARE_DYNCREATE(CViewNoteDoc)
 
 // Attributes
 public:
@@ -29,7 +29,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CNoteDocView();
+	virtual ~CViewNoteDoc();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -45,6 +45,6 @@ protected:
 };
 
 #ifndef _DEBUG  // debug version in NotedocView.cpp
-inline CNoteDoc* CNoteDocView::GetDocument()
+inline CNoteDoc* CViewNoteDoc::GetDocument()
    { return (CNoteDoc*)m_pDocument; }
 #endif

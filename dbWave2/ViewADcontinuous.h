@@ -4,7 +4,7 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CADContView form view
+// CViewADContinuous form view
 
 
 #ifndef __AFXEXT_H__
@@ -24,12 +24,12 @@
 #define STRLEN 80        // string size 
 
 ///////////////////////////////////////////////////////////////////////////////
-class CADContView : public CFormView
+class CViewADContinuous : public CFormView
 {
 
 protected:
-	CADContView();		// protected constructor used by dynamic creation
-	DECLARE_DYNCREATE(CADContView)
+	CViewADContinuous();		// protected constructor used by dynamic creation
+	DECLARE_DYNCREATE(CViewADContinuous)
 
 // Form Data
 public:
@@ -185,7 +185,7 @@ protected:
 	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void	OnInitialUpdate();
 	virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual			~CADContView();
+	virtual			~CViewADContinuous();
 	virtual	void	OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	void			ChainDialog(WORD iID);
 
@@ -195,7 +195,7 @@ protected:
 #endif
 
 #ifndef _DEBUG  // debug version in dbWaveView.cpp
-inline CdbWaveDoc* CADContView::GetDocument()
+inline CdbWaveDoc* CViewADContinuous::GetDocument()
    { return (CdbWaveDoc*)m_pDocument; }
 #else
 	CdbWaveDoc*	GetDocument();

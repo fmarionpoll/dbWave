@@ -1,4 +1,4 @@
-// dbWaveView.cpp : implementation of the CdbWaveView class
+// dbWaveView.cpp : implementation of the CViewdbWave class
 //
 
 #include "StdAfx.h"
@@ -28,45 +28,45 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbWaveView
+// CViewdbWave
 
-IMPLEMENT_DYNCREATE(CdbWaveView, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewdbWave, CDaoRecordView)
 
-BEGIN_MESSAGE_MAP(CdbWaveView, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewdbWave, CDaoRecordView)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
-	ON_COMMAND(ID_RECORD_PAGEUP, &CdbWaveView::OnRecordPageup)
-	ON_COMMAND(ID_RECORD_PAGEDOWN, &CdbWaveView::OnRecordPagedown)
-	ON_BN_CLICKED(IDC_FILTERCHECK, &CdbWaveView::OnClickMedianFilter)
-	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LISTCTRL, &CdbWaveView::OnItemActivateListctrl)
-	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL, &CdbWaveView::OnDblclkListctrl)
+	ON_COMMAND(ID_RECORD_PAGEUP, &CViewdbWave::OnRecordPageup)
+	ON_COMMAND(ID_RECORD_PAGEDOWN, &CViewdbWave::OnRecordPagedown)
+	ON_BN_CLICKED(IDC_FILTERCHECK, &CViewdbWave::OnClickMedianFilter)
+	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LISTCTRL, &CViewdbWave::OnItemActivateListctrl)
+	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL, &CViewdbWave::OnDblclkListctrl)
 	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_FILE_PRINT, CDaoRecordView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CDaoRecordView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CDaoRecordView::OnFilePrintPreview)
-	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTCTRL, &CdbWaveView::OnLvnColumnclickListctrl)
-	ON_BN_CLICKED(IDC_RADIO1, &CdbWaveView::OnBnClickedRadio1)
-	ON_BN_CLICKED(IDC_RADIO3, &CdbWaveView::OnBnClickedRadio3)
-	ON_EN_CHANGE(IDC_TIMEFIRST, &CdbWaveView::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &CdbWaveView::OnEnChangeTimelast)
-	ON_EN_CHANGE(IDC_AMPLITUDESPAN, &CdbWaveView::OnEnChangeAmplitudespan)
-	ON_BN_CLICKED(IDC_CHECKFILENAME, &CdbWaveView::OnBnClickedCheckfilename)
-	ON_NOTIFY(HDN_ENDTRACK, 0, &CdbWaveView::OnHdnEndtrackListctrl)
-	ON_BN_CLICKED(IDC_CHECK2, &CdbWaveView::OnBnClickedCheck2)
-	ON_BN_CLICKED(IDC_CHECK1, &CdbWaveView::OnBnClickedCheck1)
-	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &CdbWaveView::OnBnClickedRadioallclasses)
-	ON_BN_CLICKED(IDC_RADIOONECLASS, &CdbWaveView::OnBnClickedRadiooneclass)
-	ON_BN_CLICKED(IDC_RADIO2, &CdbWaveView::OnBnClickedRadio2)
-	ON_EN_CHANGE(IDC_SPIKECLASS, &CdbWaveView::OnEnChangeSpikeclass)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CdbWaveView::OnTcnSelchangeTab1)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CdbWaveView::OnNMClickTab1)
+	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTCTRL, &CViewdbWave::OnLvnColumnclickListctrl)
+	ON_BN_CLICKED(IDC_RADIO1, &CViewdbWave::OnBnClickedRadio1)
+	ON_BN_CLICKED(IDC_RADIO3, &CViewdbWave::OnBnClickedRadio3)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewdbWave::OnEnChangeTimefirst)
+	ON_EN_CHANGE(IDC_TIMELAST, &CViewdbWave::OnEnChangeTimelast)
+	ON_EN_CHANGE(IDC_AMPLITUDESPAN, &CViewdbWave::OnEnChangeAmplitudespan)
+	ON_BN_CLICKED(IDC_CHECKFILENAME, &CViewdbWave::OnBnClickedCheckfilename)
+	ON_NOTIFY(HDN_ENDTRACK, 0, &CViewdbWave::OnHdnEndtrackListctrl)
+	ON_BN_CLICKED(IDC_CHECK2, &CViewdbWave::OnBnClickedCheck2)
+	ON_BN_CLICKED(IDC_CHECK1, &CViewdbWave::OnBnClickedCheck1)
+	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &CViewdbWave::OnBnClickedRadioallclasses)
+	ON_BN_CLICKED(IDC_RADIOONECLASS, &CViewdbWave::OnBnClickedRadiooneclass)
+	ON_BN_CLICKED(IDC_RADIO2, &CViewdbWave::OnBnClickedRadio2)
+	ON_EN_CHANGE(IDC_SPIKECLASS, &CViewdbWave::OnEnChangeSpikeclass)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewdbWave::OnTcnSelchangeTab1)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewdbWave::OnNMClickTab1)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbWaveView construction/destruction
+// CViewdbWave construction/destruction
 
-CdbWaveView::CdbWaveView()
-	: CDaoRecordView(CdbWaveView::IDD)
+CViewdbWave::CViewdbWave()
+	: CDaoRecordView(CViewdbWave::IDD)
 	  , m_timefirst(0)
 	  , m_timelast(0)
 	  , m_amplitudespan(0), mdPM(nullptr)
@@ -82,11 +82,11 @@ CdbWaveView::CdbWaveView()
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-CdbWaveView::~CdbWaveView()
+CViewdbWave::~CViewdbWave()
 {
 }
 
-void CdbWaveView::DoDataExchange(CDataExchange* pDX)
+void CViewdbWave::DoDataExchange(CDataExchange* pDX)
 {
 	CDaoRecordView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
@@ -96,7 +96,7 @@ void CdbWaveView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BOOL CdbWaveView::PreCreateWindow(CREATESTRUCT& cs)
+BOOL CViewdbWave::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -105,7 +105,7 @@ BOOL CdbWaveView::PreCreateWindow(CREATESTRUCT& cs)
 
 /////////////////////////////////////////////////////////////////////////////
 
-void CdbWaveView::OnInitialUpdate()
+void CViewdbWave::OnInitialUpdate()
 {	
 	// init document and DaoRecordView
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -214,9 +214,9 @@ void CdbWaveView::OnInitialUpdate()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbWaveView printing
+// CViewdbWave printing
 
-BOOL CdbWaveView::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL CViewdbWave::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	if (!CView::DoPreparePrinting(pInfo))
 		return FALSE;
@@ -227,17 +227,17 @@ BOOL CdbWaveView::OnPreparePrinting(CPrintInfo* pInfo)
 	return TRUE;
 }
 
-void CdbWaveView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CViewdbWave::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add extra initialization before printing
 }
 
-void CdbWaveView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CViewdbWave::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add cleanup after printing
 }
 
-void CdbWaveView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+void CViewdbWave::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 {
 	// TODO: add customized printing code here
 	if(pInfo->m_bDocObject)
@@ -248,7 +248,7 @@ void CdbWaveView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 /////////////////////////////////////////////////////////////////////////////
 
-void CdbWaveView::OnDestroy()
+void CViewdbWave::OnDestroy()
 {
 	// Deactivate the item on destruction; this is important
 	// when a splitter view is being used.
@@ -258,7 +258,7 @@ void CdbWaveView::OnDestroy()
 /////////////////////////////////////////////////////////////////////////////
 // adapt the size of child windows when view is resized
 
-void CdbWaveView::OnSize(UINT nType, int cx, int cy)
+void CViewdbWave::OnSize(UINT nType, int cx, int cy)
 {
 	// adapt size of resizeable controls
 	if (m_binit)
@@ -287,20 +287,20 @@ void CdbWaveView::OnSize(UINT nType, int cx, int cy)
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbWaveView diagnostics
+// CViewdbWave diagnostics
 
 #ifdef _DEBUG
-void CdbWaveView::AssertValid() const
+void CViewdbWave::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
 
-void CdbWaveView::Dump(CDumpContext& dc) const
+void CViewdbWave::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
 
-CdbWaveDoc* CdbWaveView::GetDocument() // non-debug version is inline
+CdbWaveDoc* CViewdbWave::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
 	return (CdbWaveDoc*)m_pDocument;
@@ -309,16 +309,16 @@ CdbWaveDoc* CdbWaveView::GetDocument() // non-debug version is inline
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbWaveView database support
-CDaoRecordset* CdbWaveView::OnGetRecordset()
+// CViewdbWave database support
+CDaoRecordset* CViewdbWave::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbWaveView message handlers
-void CdbWaveView::UpdateControls()
+// CViewdbWave message handlers
+void CViewdbWave::UpdateControls()
 {
 	CdbWaveDoc* pdbDoc = GetDocument();
 	CFileStatus status;
@@ -333,7 +333,7 @@ void CdbWaveView::UpdateControls()
 	m_dataListCtrl.EnsureVisible(ifile, FALSE);
 }
 
-BOOL CdbWaveView::OnMove(UINT nIDMoveCommand)
+BOOL CViewdbWave::OnMove(UINT nIDMoveCommand)
 {
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -342,17 +342,17 @@ BOOL CdbWaveView::OnMove(UINT nIDMoveCommand)
 
 // ----------------------------------------------------------------------------
 
-void CdbWaveView::OnRecordPageup() 
+void CViewdbWave::OnRecordPageup() 
 {
 	m_dataListCtrl.SendMessage(WM_VSCROLL, SB_PAGEUP, NULL);
 }
 
-void CdbWaveView::OnRecordPagedown() 
+void CViewdbWave::OnRecordPagedown() 
 {
 	m_dataListCtrl.SendMessage(WM_VSCROLL, SB_PAGEDOWN, NULL);
 }
 
-void CdbWaveView::OnClickMedianFilter() 
+void CViewdbWave::OnClickMedianFilter() 
 {
 	if (mdPM->bFilterDat == ((CButton*)GetDlgItem(IDC_FILTERCHECK))->GetCheck())
 		return;
@@ -366,7 +366,7 @@ void CdbWaveView::OnClickMedianFilter()
 
 // ----------------------------------------------------------------------------
 
-void CdbWaveView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
+void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
 {
 	CMainFrame* pmF = (CMainFrame*) AfxGetMainWnd();
 	// activate view
@@ -390,7 +390,7 @@ void CdbWaveView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 
 //////////////////////////////////////////////////////////////////////////////
 
-void CdbWaveView::FillListBox()
+void CViewdbWave::FillListBox()
 {
 	CdbWaveDoc* pdbDoc = GetDocument();
 	int imax = pdbDoc->DBGetNRecords();
@@ -398,7 +398,7 @@ void CdbWaveView::FillListBox()
 	m_dataListCtrl.SetItemCountEx(imax);
 }
 
-void CdbWaveView::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult) 
+void CViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	// get item clicked and select it
 	NMITEMACTIVATE* pItemActivate = (NMITEMACTIVATE*) pNMHDR;
@@ -410,7 +410,7 @@ void CdbWaveView::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CdbWaveView::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult) 
+void CViewdbWave::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	*pResult = 0;
 	// quit the current view and load spike detection view
@@ -420,7 +420,7 @@ void CdbWaveView::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 			(LPARAM) NULL);
 }
 
-void CdbWaveView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
 {
 	if (!m_binit)
 		return;
@@ -491,7 +491,7 @@ void CdbWaveView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CdbWaveView::DeleteRecords()
+void CViewdbWave::DeleteRecords()
 {
 	// save index current file
 	long currentindex = GetDocument()->DBGetCurrentRecordPosition()-1;
@@ -530,7 +530,7 @@ void CdbWaveView::DeleteRecords()
 	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CdbWaveView::OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewdbWave::OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	CString filter0= m_pSet->GetSQL();
@@ -556,7 +556,7 @@ void CdbWaveView::OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-void CdbWaveView::OnBnClickedRadio1()
+void CViewdbWave::OnBnClickedRadio1()
 {
 	((CButton*)GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
 	mdPM->displaymode = 1;
@@ -570,7 +570,7 @@ void CdbWaveView::OnBnClickedRadio1()
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 }
 
-void CdbWaveView::InitctrlTab()
+void CViewdbWave::InitctrlTab()
 {
 	// reset tab control
 	m_tabCtrl.DeleteAllItems();
@@ -596,7 +596,7 @@ void CdbWaveView::InitctrlTab()
 	}
 }
 
-void CdbWaveView::OnBnClickedRadio3()
+void CViewdbWave::OnBnClickedRadio3()
 {
 	((CButton*)GetDlgItem(IDC_RADIO3))->SetCheck(BST_CHECKED);
 	mdPM->displaymode = 0;
@@ -610,7 +610,7 @@ void CdbWaveView::OnBnClickedRadio3()
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 }
 
-void CdbWaveView::OnEnChangeTimefirst()
+void CViewdbWave::OnEnChangeTimefirst()
 {
 	if (!mm_timefirst.m_bEntryDone)
 		return;
@@ -640,7 +640,7 @@ void CdbWaveView::OnEnChangeTimefirst()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnEnChangeTimelast()
+void CViewdbWave::OnEnChangeTimelast()
 {
 	if (!mm_timelast.m_bEntryDone)
 		return;
@@ -668,7 +668,7 @@ void CdbWaveView::OnEnChangeTimelast()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnEnChangeAmplitudespan()
+void CViewdbWave::OnEnChangeAmplitudespan()
 {
 	if (!mm_amplitudespan.m_bEntryDone)
 		return;
@@ -703,14 +703,14 @@ void CdbWaveView::OnEnChangeAmplitudespan()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnBnClickedCheckfilename()
+void CViewdbWave::OnBnClickedCheckfilename()
 {
 	mdPM->bDisplayFileName = IsDlgButtonChecked(IDC_CHECKFILENAME);
 	m_dataListCtrl.SetDisplayFileName(mdPM->bDisplayFileName);
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnHdnEndtrackListctrl(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewdbWave::OnHdnEndtrackListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
 	if (phdr->iItem == COL_CURVE)
@@ -718,7 +718,7 @@ void CdbWaveView::OnHdnEndtrackListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-void CdbWaveView::OnBnClickedCheck2()
+void CViewdbWave::OnBnClickedCheck2()
 {
 	mdPM->bsetmVSpan = IsDlgButtonChecked(IDC_CHECK2);
 	m_dataListCtrl.SetAmplitudeAdjustMode(mdPM->bsetmVSpan);
@@ -726,7 +726,7 @@ void CdbWaveView::OnBnClickedCheck2()
 	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(mdPM->bsetmVSpan);
 }
 
-void CdbWaveView::OnBnClickedCheck1()
+void CViewdbWave::OnBnClickedCheck1()
 {
 	mdPM->bsetTimeSpan = IsDlgButtonChecked(IDC_CHECK1);
 	// check intervals to avoid crash
@@ -747,7 +747,7 @@ void CdbWaveView::OnBnClickedCheck1()
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(mdPM->bsetTimeSpan);
 }
 
-void CdbWaveView::OnBnClickedRadioallclasses()
+void CViewdbWave::OnBnClickedRadioallclasses()
 {
 	(CWnd*)(GetDlgItem(IDC_SPIKECLASS))->EnableWindow(FALSE);
 	mdPM->bDisplayAllClasses = TRUE;
@@ -755,7 +755,7 @@ void CdbWaveView::OnBnClickedRadioallclasses()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnBnClickedRadiooneclass()
+void CViewdbWave::OnBnClickedRadiooneclass()
 {
 	(CWnd*)(GetDlgItem(IDC_SPIKECLASS))->EnableWindow(TRUE);
 	mdPM->bDisplayAllClasses = FALSE;
@@ -763,7 +763,7 @@ void CdbWaveView::OnBnClickedRadiooneclass()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnBnClickedRadio2()
+void CViewdbWave::OnBnClickedRadio2()
 {
 	((CButton*)GetDlgItem(IDC_RADIO2))->SetCheck(BST_CHECKED);
 
@@ -797,7 +797,7 @@ void CdbWaveView::OnBnClickedRadio2()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnEnChangeSpikeclass()
+void CViewdbWave::OnEnChangeSpikeclass()
 {
 	if (!mm_spikeclass.m_bEntryDone)
 		return;
@@ -826,7 +826,7 @@ void CdbWaveView::OnEnChangeSpikeclass()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CdbWaveView::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewdbWave::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	GetDocument()->SetcurrentSpkListIndex(icursel);
@@ -834,7 +834,7 @@ void CdbWaveView::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-void CdbWaveView::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewdbWave::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	*pResult = 0;

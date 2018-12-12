@@ -82,8 +82,8 @@ dbWaveDoc.h, dbWaveDoc.cpp - the document
 	(via CdbWaveDoc::Serialize).
 
 dbWaveView.h, dbWaveView.cpp - the view of the document
-	These files contain your CdbWaveView class.
-	CdbWaveView objects are used to view CdbWaveDoc objects.
+	These files contain your CViewdbWave class.
+	CViewdbWave objects are used to view CdbWaveDoc objects.
 
 //For a DAO database app:
 dbSetTable.h, dbSetTable.cpp - the recordset
@@ -101,7 +101,7 @@ AppWizard has also created classes specific to OLE
 
 CntrItem.h, CntrItem.cpp - this class is used to
 	manipulate OLE objects.  OLE objects are usually displayed by your
-	CdbWaveView class and serialized as part of your CdbWaveDoc class.
+	CViewdbWave class and serialized as part of your CdbWaveDoc class.
 
 
 /////////////////////////////////////////////////////////////////////////////

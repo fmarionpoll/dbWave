@@ -334,7 +334,7 @@ void CChildFrame::ExportASCII(int option)
 				CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
 				CDocument* pdbDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pdbDocExport->GetFirstViewPosition();
-				CNoteDocView* pView = (CNoteDocView*)pdbDocExport->GetNextView(pos);
+				CViewNoteDoc* pView = (CViewNoteDoc*)pdbDocExport->GetNextView(pos);
 				CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
 				pEdit.Paste();
 			}
@@ -351,7 +351,7 @@ void CChildFrame::ExportASCII(int option)
 				CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
 				CDocument* pdbDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pdbDocExport->GetFirstViewPosition();
-				CNoteDocView* pView = (CNoteDocView*)pdbDocExport->GetNextView(pos);
+				CViewNoteDoc* pView = (CViewNoteDoc*)pdbDocExport->GetNextView(pos);
 				CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
 				pEdit.Paste();
 			}
@@ -409,7 +409,7 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				CMultiDocTemplate* pTempl = ((CdbWaveApp*) AfxGetApp())->m_pNoteViewTemplate;
 				CDocument* pDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pDocExport->GetFirstViewPosition();
-				CNoteDocView* pView = (CNoteDocView*)pDocExport->GetNextView(pos);
+				CViewNoteDoc* pView = (CViewNoteDoc*)pDocExport->GetNextView(pos);
 				CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
 				OpenClipboard();
 				EmptyClipboard();
@@ -439,40 +439,40 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 	switch (iID)
 	{
 	case ID_VIEW_DATABASE:
-		ReplaceView(RUNTIME_CLASS(CdbWaveView), ((CdbWaveApp*)AfxGetApp())->m_hDBView);
+		ReplaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATAFILE:
 		if (!pdbDoc->DBGetCurrentDatFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CDataView), ((CdbWaveApp*)AfxGetApp())->m_hDataView);	
+			ReplaceView(RUNTIME_CLASS(CViewData), ((CdbWaveApp*)AfxGetApp())->m_hDataView);	
 		break;
 	case ID_VIEW_SPIKEDETECTION:
 		if (!pdbDoc->DBGetCurrentDatFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CSpikeDetectionView), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+			ReplaceView(RUNTIME_CLASS(CViewSpikeDetection), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
 		if (!pdbDoc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CSpikeView), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			ReplaceView(RUNTIME_CLASS(CViewSpikes), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
 		if (!pdbDoc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CSpikeSort1View), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			ReplaceView(RUNTIME_CLASS(CViewSpikeSort_Parameters), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 		if (!pdbDoc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CSpikeTemplateView), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			ReplaceView(RUNTIME_CLASS(CViewSpikeSort_Templates), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
 		if (!pdbDoc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CSpikeHistView), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			ReplaceView(RUNTIME_CLASS(CViewSpikeHist), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
-		ReplaceView(RUNTIME_CLASS(CADContView), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+		ReplaceView(RUNTIME_CLASS(CViewADContinuous), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		bActivePanes = FALSE;
 		break;
 
 	default:
 		iID = 0;
-		ReplaceView(RUNTIME_CLASS(CdbWaveView), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+		ReplaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		break;
 	}
 	pmF->ActivatePropertyPane(bActivePanes);
@@ -873,8 +873,8 @@ void CChildFrame::OnRecordDeletecurrent()
 	{
 		// delete records from the database and collect names of files to change
 		// save list of data files to delete into a temporary array
-		if (pView->IsKindOf(RUNTIME_CLASS(CdbWaveView)))
-			((CdbWaveView*)pView)->DeleteRecords();
+		if (pView->IsKindOf(RUNTIME_CLASS(CViewdbWave)))
+			((CViewdbWave*)pView)->DeleteRecords();
 		else
 			pdbDoc->DBDeleteCurrentRecord();
 

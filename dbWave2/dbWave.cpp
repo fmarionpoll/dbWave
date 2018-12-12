@@ -130,7 +130,7 @@ BOOL CdbWaveApp::InitInstance()
 	m_pdbWaveViewTemplate = new CdbMultiDocTemplate(IDR_DBWAVETYPE,
 		RUNTIME_CLASS(CdbWaveDoc),
 		RUNTIME_CLASS(CChildFrame), // custom MDI child frame
-		RUNTIME_CLASS(CdbWaveView));
+		RUNTIME_CLASS(CViewdbWave));
 	m_pdbWaveViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
 	AddDocTemplate(m_pdbWaveViewTemplate);
 	m_hDBView = m_pdbWaveViewTemplate->m_hMenuShared;
@@ -139,7 +139,7 @@ BOOL CdbWaveApp::InitInstance()
 	m_pdataViewTemplate = new CdbMultiDocTemplate(IDR_DBDATATYPE,
 		RUNTIME_CLASS(CdbWaveDoc),
 		RUNTIME_CLASS(CChildFrame), // custom MDI child frame
-		RUNTIME_CLASS(CDataView));
+		RUNTIME_CLASS(CViewData));
 	m_pdataViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
 	AddDocTemplate(m_pdataViewTemplate);
 	m_hDataView = m_pdataViewTemplate->m_hMenuShared;
@@ -148,7 +148,7 @@ BOOL CdbWaveApp::InitInstance()
 	m_pADViewTemplate= new CdbMultiDocTemplate(IDR_DBDATATYPE,
 		RUNTIME_CLASS(CdbWaveDoc),
 		RUNTIME_CLASS(CChildFrame),		// multifile MDI child frame
-		RUNTIME_CLASS(CADContView));	// AD view
+		RUNTIME_CLASS(CViewADContinuous));	// AD view
 	ASSERT(m_pADViewTemplate != NULL);
 	m_pADViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
 	AddDocTemplate(m_pADViewTemplate);
@@ -157,7 +157,7 @@ BOOL CdbWaveApp::InitInstance()
 	m_pspikeViewTemplate = new CdbMultiDocTemplate(IDR_DBSPIKETYPE,
 		RUNTIME_CLASS(CdbWaveDoc),
 		RUNTIME_CLASS(CChildFrame),		// custom MDI child frame
-		RUNTIME_CLASS(CSpikeView));
+		RUNTIME_CLASS(CViewSpikes));
 	m_pspikeViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
 	AddDocTemplate(m_pspikeViewTemplate);
 	m_hSpikeView = m_pspikeViewTemplate->m_hMenuShared;
@@ -165,7 +165,7 @@ BOOL CdbWaveApp::InitInstance()
 	m_pNoteViewTemplate = new CdbMultiDocTemplate(IDR_PROJECTTYPE,
 		RUNTIME_CLASS(CNoteDoc),
 		RUNTIME_CLASS(CMDIChildWndEx),	// standard MDI child frame
-		RUNTIME_CLASS(CNoteDocView));
+		RUNTIME_CLASS(CViewNoteDoc));
 	m_pNoteViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
 	AddDocTemplate(m_pNoteViewTemplate);
 

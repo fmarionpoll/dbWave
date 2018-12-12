@@ -15,11 +15,11 @@ class CdbWaveCntrItem;
 class CdbMainTable;
 
 /////////////////////////////////////////////////////////////////////////////
-class CDataView : public CDaoRecordView
+class CViewData : public CDaoRecordView
 {
 protected:
-	DECLARE_DYNCREATE(CDataView)
-	CDataView();					// protected constructor used by dynamic creation
+	DECLARE_DYNCREATE(CViewData)
+	CViewData();					// protected constructor used by dynamic creation
 
 // Form Data
 public:	
@@ -150,7 +150,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CDataView();
+	virtual ~CViewData();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -193,7 +193,7 @@ public:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CDataView::GetDocument()
+inline CdbWaveDoc* CViewData::GetDocument()
    { return (CdbWaveDoc*)m_pDocument; }
 #endif
 

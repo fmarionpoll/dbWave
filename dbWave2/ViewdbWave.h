@@ -1,6 +1,6 @@
 #pragma once
 
-// dbWaveView.h : interface of the CdbWaveView class
+// dbWaveView.h : interface of the CViewdbWave class
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,11 +14,11 @@ class CSpikeBarWnd;
 class CSpikeShapeWnd;
 class CDataListCtrl;
 
-class CdbWaveView : public CDaoRecordView
+class CViewdbWave : public CDaoRecordView
 {
 protected: // create from serialization only
-	DECLARE_DYNCREATE(CdbWaveView)
-	CdbWaveView();
+	DECLARE_DYNCREATE(CViewdbWave)
+	CViewdbWave();
 
 public:
 	enum { IDD = IDD_VIEWDBWAVE };
@@ -50,7 +50,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CdbWaveView();
+	virtual ~CViewdbWave();
 
 #ifdef _DEBUG
 	virtual void		AssertValid() const;
@@ -111,7 +111,7 @@ public:
 };
 
 #ifndef _DEBUG  // debug version in dbWaveView.cpp
-	inline CdbWaveDoc* CdbWaveView::GetDocument()
+	inline CdbWaveDoc* CViewdbWave::GetDocument()
 	{ 
 		return (CdbWaveDoc*)m_pDocument; 
 	}

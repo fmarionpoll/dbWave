@@ -56,8 +56,8 @@ protected:
 
 	CDataFileX*		m_pXFile;			// data file /* CDataFileX* */
 	CWaveBuf*		m_pWBuf;			// CWaveBuffer
-	CTagList		m_hz_tags;			// list of horizontal cursors
-	CTagList		m_vt_tags;			// list of vertical tags
+	CTagList		m_hz_tags{};			// list of horizontal cursors
+	CTagList		m_vt_tags{};			// list of vertical tags
 	
 	long			m_lBUFmaxSize;		// constant (?) size of the buffer
 	long			m_lBUFchanFirst;	// file index of first word in RW buffer

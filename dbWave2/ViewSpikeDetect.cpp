@@ -46,12 +46,12 @@
 #define BSAVE		1
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeDetectionView
+// CViewSpikeDetection
 
-IMPLEMENT_DYNCREATE(CSpikeDetectionView, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewSpikeDetection, CDaoRecordView)
 
-CSpikeDetectionView::CSpikeDetectionView()
-	: CDaoRecordView(CSpikeDetectionView::IDD), m_dbDoc(nullptr), m_filescroll_infos(), m_zoominteger(0),
+CViewSpikeDetection::CViewSpikeDetection()
+	: CDaoRecordView(CViewSpikeDetection::IDD), m_dbDoc(nullptr), m_filescroll_infos(), m_zoominteger(0),
 	  m_pArrayFromApp(nullptr), m_pDetectParms(nullptr), m_iDetectParms(0), mdPM(nullptr), mdMO(nullptr),
 	  m_samplingRate(0), m_szbuf{}, m_file0(0), m_lFirst0(0), m_lLast0(0), m_npixels0(0), m_nfiles(0),
 	  m_nbrowsperpage(0), m_lprintFirst(0), m_lprintLen(0), m_printFirst(0), m_printLast(0), m_bIsPrinting(0),
@@ -76,21 +76,21 @@ CSpikeDetectionView::CSpikeDetectionView()
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-CSpikeDetectionView::~CSpikeDetectionView()
+CViewSpikeDetection::~CViewSpikeDetection()
 {
 	// save spkD list i	 changed
 	if (m_pspkDocVSD != nullptr)
 		SaveCurrentFileParms();	// save file if modified
 }
 
-BOOL CSpikeDetectionView::PreCreateWindow(CREATESTRUCT &cs)
+BOOL CViewSpikeDetection::PreCreateWindow(CREATESTRUCT &cs)
 {
 // TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
-void CSpikeDetectionView::DoDataExchange(CDataExchange* pDX)
+void CViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
 {
 	CDaoRecordView::DoDataExchange(pDX);
 
@@ -113,7 +113,7 @@ void CSpikeDetectionView::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSpikeDetectionView, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikeDetection, CDaoRecordView)
 	ON_WM_SIZE()
 	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)	 
 	ON_COMMAND(ID_FORMAT_FIRSTFRAME, OnFirstFrame)
@@ -155,19 +155,19 @@ BEGIN_MESSAGE_MAP(CSpikeDetectionView, CDaoRecordView)
 
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)	
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
-	ON_BN_CLICKED(IDC_MEASURE, &CSpikeDetectionView::OnMeasure)
-	ON_BN_CLICKED(IDC_GAIN2, &CSpikeDetectionView::OnBnClickedGain2)
-	ON_BN_CLICKED(IDC_BIAS2, &CSpikeDetectionView::OnBnClickedBias2)
-	ON_EN_CHANGE(IDC_CHANSELECTED2, &CSpikeDetectionView::OnEnChangeChanselected2)
-	ON_CBN_SELCHANGE(IDC_TRANSFORM2, &CSpikeDetectionView::OnCbnSelchangeTransform2)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CSpikeDetectionView::OnNMClickTab1)
+	ON_BN_CLICKED(IDC_MEASURE, &CViewSpikeDetection::OnMeasure)
+	ON_BN_CLICKED(IDC_GAIN2, &CViewSpikeDetection::OnBnClickedGain2)
+	ON_BN_CLICKED(IDC_BIAS2, &CViewSpikeDetection::OnBnClickedBias2)
+	ON_EN_CHANGE(IDC_CHANSELECTED2, &CViewSpikeDetection::OnEnChangeChanselected2)
+	ON_CBN_SELCHANGE(IDC_TRANSFORM2, &CViewSpikeDetection::OnCbnSelchangeTransform2)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeDetection::OnNMClickTab1)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeDetectionView message handlers
+// CViewSpikeDetection message handlers
 
 
-void CSpikeDetectionView::OnFileSave() 
+void CViewSpikeDetection::OnFileSave() 
 {
 	CFile f;
 	CFileDialog dlg(FALSE,
@@ -185,7 +185,7 @@ void CSpikeDetectionView::OnFileSave()
 	}
 }
 
-BOOL CSpikeDetectionView::OnMove(UINT nIDMoveCommand) 
+BOOL CViewSpikeDetection::OnMove(UINT nIDMoveCommand) 
 {
 	BOOL flag = TRUE;
 	SaveCurrentFileParms();
@@ -194,7 +194,7 @@ BOOL CSpikeDetectionView::OnMove(UINT nIDMoveCommand)
 	return flag;
 }
 
-void CSpikeDetectionView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (!m_binit)
 		return;
@@ -218,7 +218,7 @@ void CSpikeDetectionView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 // OnActivateView()
 // --------------------------------------------------------------------------
 
-void CSpikeDetectionView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void CViewSpikeDetection::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	// activate view
 	if (bActivate)
@@ -237,7 +237,7 @@ void CSpikeDetectionView::OnActivateView(BOOL bActivate, CView* pActivateView, C
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CSpikeDetectionView::UpdateLegends()
+void CViewSpikeDetection::UpdateLegends()
 {
 	long lFirst = m_displayDetect.GetDataFirst();		// get source data time range
 	long lLast = m_displayDetect.GetDataLast();
@@ -283,7 +283,7 @@ void CSpikeDetectionView::UpdateLegends()
 	}
 }
 
-void CSpikeDetectionView::SaveCurrentFileParms()
+void CViewSpikeDetection::SaveCurrentFileParms()
 {
 	CdbWaveDoc* pDoc = GetDocument();
 
@@ -325,7 +325,7 @@ void CSpikeDetectionView::SaveCurrentFileParms()
 	*parray = m_parmsCurrent;
 }
 
-void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
+void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 {	
 	// update spike doc and temporary spike list
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -413,7 +413,7 @@ void CSpikeDetectionView::UpdateSpikeFile(BOOL bUpdateInterface)
 		SetDlgItemInt(IDC_NBSPIKES_NB, nspikes);
 }
 
-void CSpikeDetectionView::HighlightSpikes(BOOL flag)
+void CViewSpikeDetection::HighlightSpikes(BOOL flag)
 {
 	CDWordArray* pDWintervals = nullptr;	  // remove setting if no spikes of if flag is false
 	if (flag && m_pSpkListVSD != nullptr && m_pSpkListVSD->GetTotalSpikes() < 1)
@@ -449,7 +449,7 @@ void CSpikeDetectionView::HighlightSpikes(BOOL flag)
 // UpdateFileParameters()
 //---------------------------------------------------------------------------
 
-void CSpikeDetectionView::UpdateFileParameters(BOOL bUpdateInterface)
+void CViewSpikeDetection::UpdateFileParameters(BOOL bUpdateInterface)
 {
 	UpdateDataFile(bUpdateInterface);	// update data file
 	UpdateSpikeFile(bUpdateInterface);	// check if corresp spike file is present and load it
@@ -457,7 +457,7 @@ void CSpikeDetectionView::UpdateFileParameters(BOOL bUpdateInterface)
 		UpdateLegends();
 }
 
-BOOL CSpikeDetectionView::CheckDetectionSettings()
+BOOL CViewSpikeDetection::CheckDetectionSettings()
 {
 	BOOL flag=TRUE;
 	ASSERT(m_pDetectParms != NULL);
@@ -493,7 +493,7 @@ BOOL CSpikeDetectionView::CheckDetectionSettings()
 	return flag;
 }
 
-void CSpikeDetectionView::UpdateDataFile(BOOL bUpdateInterface)
+void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 {
 	// load method combo box with content
 	// init chan list, select first detection channel
@@ -667,7 +667,7 @@ void CSpikeDetectionView::UpdateDataFile(BOOL bUpdateInterface)
 // OnInitialUpdate()
 //---------------------------------------------------------------------------
 
-void CSpikeDetectionView::OnInitialUpdate()
+void CViewSpikeDetection::OnInitialUpdate()
 {
 	// load spike detection parameters from .INI file
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
@@ -777,7 +777,7 @@ void CSpikeDetectionView::OnInitialUpdate()
 
 /////////////////////////////////////////////////////////////////////////////
 // remove objects
-void CSpikeDetectionView::OnDestroy() 
+void CViewSpikeDetection::OnDestroy() 
 {
 	CDaoRecordView::OnDestroy();
 }
@@ -786,7 +786,7 @@ void CSpikeDetectionView::OnDestroy()
 // OnSize
 // --------------------------------------------------------------------------
 
-void CSpikeDetectionView::OnSize(UINT nType, int cx, int cy)
+void CViewSpikeDetection::OnSize(UINT nType, int cx, int cy)
 {	
 	if (m_binit)
 	{
@@ -806,20 +806,20 @@ void CSpikeDetectionView::OnSize(UINT nType, int cx, int cy)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CSpikeDetectionView diagnostics
+// CViewSpikeDetection diagnostics
 
 #ifdef _DEBUG
-void CSpikeDetectionView::AssertValid() const
+void CViewSpikeDetection::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
 
-void CSpikeDetectionView::Dump(CDumpContext& dc) const
+void CViewSpikeDetection::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
 
-CdbWaveDoc* CSpikeDetectionView::GetDocument()
+CdbWaveDoc* CViewSpikeDetection::GetDocument()
 { 
 	return (CdbWaveDoc*)m_pDocument; 
 }
@@ -827,9 +827,9 @@ CdbWaveDoc* CSpikeDetectionView::GetDocument()
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbWaveView database support
+// CViewdbWave database support
 
-CDaoRecordset* CSpikeDetectionView::OnGetRecordset()
+CDaoRecordset* CViewSpikeDetection::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
@@ -842,7 +842,7 @@ CDaoRecordset* CSpikeDetectionView::OnGetRecordset()
 //	i.e. source data, spike bars, spike forms
 // --------------------------------------------------------------------------
 
-LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	int threshold	= LOWORD(lParam);	// value associated	
 	int iID			= HIWORD(lParam);
@@ -1028,17 +1028,17 @@ LRESULT CSpikeDetectionView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 /////////////////////////////////////////////////////////////////////////////
 // OnFormat procedures
 
-void CSpikeDetectionView::OnFirstFrame()
+void CViewSpikeDetection::OnFirstFrame()
 {
 	OnFileScroll(SB_LEFT, 1L);
 }
 
-void CSpikeDetectionView::OnLastFrame()
+void CViewSpikeDetection::OnLastFrame()
 {
 	OnFileScroll(SB_RIGHT, 1L);
 }
 
-void CSpikeDetectionView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// CDaoRecordView scroll bar: pointer null
 	if (pScrollBar == nullptr)
@@ -1077,7 +1077,7 @@ void CSpikeDetectionView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	}
 }
 
-void CSpikeDetectionView::UpdateFileScroll()
+void CViewSpikeDetection::UpdateFileScroll()
 {
 	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
 	m_filescroll_infos.nPos = m_displayDetect.GetDataFirst();
@@ -1089,7 +1089,7 @@ void CSpikeDetectionView::UpdateFileScroll()
 // OnFileScroll()
 // --------------------------------------------------------------------------
 
-void CSpikeDetectionView::OnFileScroll(UINT nSBCode, UINT nPos)
+void CViewSpikeDetection::OnFileScroll(UINT nSBCode, UINT nPos)
 {
 	BOOL bResult=FALSE;	
 	// get corresponding data
@@ -1115,7 +1115,7 @@ void CSpikeDetectionView::OnFileScroll(UINT nSBCode, UINT nPos)
 		UpdateLegends();
 }
 
-void CSpikeDetectionView::OnFormatYscaleCentercurve()
+void CViewSpikeDetection::OnFormatYscaleCentercurve()
 {
 	m_displayDetect.CenterChan(0);
 	m_displayDetect.Invalidate();
@@ -1132,7 +1132,7 @@ void CSpikeDetectionView::OnFormatYscaleCentercurve()
 	m_spkShapeView.Invalidate();
 }
 
-void CSpikeDetectionView::OnFormatYscaleGainadjust()
+void CViewSpikeDetection::OnFormatYscaleGainadjust()
 {
 	m_displayDetect.MaxgainChan(0);
 	m_displayDetect.SetChanlistVoltsExtent(-1, nullptr);
@@ -1160,7 +1160,7 @@ void CSpikeDetectionView::OnFormatYscaleGainadjust()
 // to display all signals on separate lines
 // --------------------------------------------------------------------------
 
-void CSpikeDetectionView::OnFormatSplitcurves()
+void CViewSpikeDetection::OnFormatSplitcurves()
 {
 	m_displayDetect.SplitChans();
 	m_displayDetect.SetChanlistVoltsExtent(-1, nullptr);
@@ -1179,7 +1179,7 @@ void CSpikeDetectionView::OnFormatSplitcurves()
 	m_spkShapeView.Invalidate();
 }
 
-void CSpikeDetectionView::OnFormatAlldata()
+void CViewSpikeDetection::OnFormatAlldata()
 {
 	long lLast = GetDocument()->m_pDat->GetDOCchanLength(); 
 	m_displayDetect.ResizeChannels(0, lLast);
@@ -1201,7 +1201,7 @@ void CSpikeDetectionView::OnFormatAlldata()
 // OnToolsDetectionparameters()
 // method 1
 // --------------------------------------------------------------------------
-void CSpikeDetectionView::UpdateDetectionParameters()
+void CViewSpikeDetection::UpdateDetectionParameters()
 {
 	// refresh pointer to spike detection array
 	int narrays = m_parmsCurrent.GetSize();
@@ -1227,7 +1227,7 @@ void CSpikeDetectionView::UpdateDetectionParameters()
 	mm_thresholdval.Invalidate();
 }
 
-void CSpikeDetectionView::OnToolsDetectionparameters()
+void CViewSpikeDetection::OnToolsDetectionparameters()
 {   
 	CSpikeDetectDlg dlg;
 	dlg.m_dbDoc = GetDocument()->m_pDat;
@@ -1244,7 +1244,7 @@ void CSpikeDetectionView::OnToolsDetectionparameters()
 	}
 }
 
-void CSpikeDetectionView::OnSelchangeDetectchan()
+void CViewSpikeDetection::OnSelchangeDetectchan()
 {
 	UpdateData(TRUE);
 	m_pDetectParms->detectChan = m_CBdetectChan.GetCurSel(); // get new channel
@@ -1258,7 +1258,7 @@ void CSpikeDetectionView::OnSelchangeDetectchan()
 	m_displayDetect.Invalidate();
 }
 
-void CSpikeDetectionView::OnSelchangeTransform()
+void CViewSpikeDetection::OnSelchangeTransform()
 {
 	UpdateData(TRUE);
 	m_pDetectParms->detectTransform = m_CBtransform.GetCurSel();// get new method	
@@ -1269,18 +1269,18 @@ void CSpikeDetectionView::OnSelchangeTransform()
 	m_displayDetect.Invalidate();
 }
 
-void CSpikeDetectionView::OnMeasureAll()
+void CViewSpikeDetection::OnMeasureAll()
 {
 	DetectAll(TRUE);
 }
 
-void CSpikeDetectionView::OnMeasure()
+void CViewSpikeDetection::OnMeasure()
 {
 	DetectAll(FALSE);
 }
 
 // detect from current set of parms or from all
-void CSpikeDetectionView::DetectAll(BOOL bAll)
+void CViewSpikeDetection::DetectAll(BOOL bAll)
 {
 	// init spike document (erase spike list data & intervals)
 	m_bDetected=TRUE;									// set flag: detection = YES
@@ -1381,7 +1381,7 @@ void CSpikeDetectionView::DetectAll(BOOL bAll)
 // detect stimulus; returns the nb of events detected (ON/OFF)
 // --------------------------------------------------------------------------
 
-int CSpikeDetectionView::DetectStim1(int ichan)
+int CViewSpikeDetection::DetectStim1(int ichan)
 {
 	// set parameters (copy array into local parms)	
 	SPKDETECTPARM* pstiD = m_parmsCurrent.GetItem(ichan);
@@ -1527,7 +1527,7 @@ int CSpikeDetectionView::DetectStim1(int ichan)
 // returns the nb of spikes detected
 // --------------------------------------------------------------------------
 
-int CSpikeDetectionView::DetectMethod1(WORD schan)
+int CViewSpikeDetection::DetectMethod1(WORD schan)
 {
 	SPKDETECTPARM* pspkDP = m_parmsCurrent.GetItem(schan);
 	if (pspkDP->extractTransform != pspkDP->detectTransform &&
@@ -1659,7 +1659,7 @@ int CSpikeDetectionView::DetectMethod1(WORD schan)
 	return m_pSpkListVSD->GetTotalSpikes();
 }
 
-void CSpikeDetectionView::OnToolsEdittransformspikes()
+void CViewSpikeDetection::OnToolsEdittransformspikes()
 {
 	CSpikeEditDlg dlg;							// dialog box
 	dlg.m_yextent = m_spkShapeView.GetYWExtent();// load display parameters
@@ -1687,7 +1687,7 @@ void CSpikeDetectionView::OnToolsEdittransformspikes()
 	UpdateLegends();
 }
 
-void CSpikeDetectionView::OnFormatXscale()
+void CViewSpikeDetection::OnFormatXscale()
 {
 	XYParametersDlg dlg;
 	CWnd* pFocus = GetFocus();
@@ -1737,7 +1737,7 @@ void CSpikeDetectionView::OnFormatXscale()
 	}
 }
 
-void CSpikeDetectionView::OnBnClickedClearall()
+void CViewSpikeDetection::OnBnClickedClearall()
 {
 	m_spikeno = -1;						// unselect spike
 	m_spkBarView.SelectSpike(-1);		// deselect spike bars
@@ -1763,7 +1763,7 @@ void CSpikeDetectionView::OnBnClickedClearall()
 	m_pspkDocVSD->SetModifiedFlag(TRUE);	// mark spike document as changed
 }
 
-void CSpikeDetectionView::OnClear()
+void CViewSpikeDetection::OnClear()
 {
 	m_spikeno = -1;						// unselect spike
 	m_spkBarView.SelectSpike(-1);		// deselect spike bars
@@ -1784,7 +1784,7 @@ void CSpikeDetectionView::OnClear()
 	m_pspkDocVSD->SetModifiedFlag(TRUE);	// mark spike document as changed
 }
 
-void CSpikeDetectionView::OnEnChangeSpikeno()
+void CViewSpikeDetection::OnEnChangeSpikeno()
 {
 	if (!mm_spikeno.m_bEntryDone)
 		return;
@@ -1830,7 +1830,7 @@ void CSpikeDetectionView::OnEnChangeSpikeno()
 // offset of -1: 0/-1; 1/-2; 2/-3
 //-----------------------------------------------------------------------
 
-void CSpikeDetectionView::OnArtefact()
+void CViewSpikeDetection::OnArtefact()
 {
 	UpdateData(TRUE);						// load value from control
 	int nspikes = m_pSpkListVSD->GetSpikeFlagArrayCount();
@@ -1871,7 +1871,7 @@ void CSpikeDetectionView::OnArtefact()
 //-----------------------------------------------------------------------
 // adjust display horizontally to display/center spike "spikeno"
 
-void CSpikeDetectionView::AlignDisplayToCurrentSpike()
+void CViewSpikeDetection::AlignDisplayToCurrentSpike()
 {
 	if (m_spikeno < 0)
 		return;
@@ -1899,7 +1899,7 @@ void CSpikeDetectionView::AlignDisplayToCurrentSpike()
 	}	
 }
 
-void CSpikeDetectionView::UpdateSpkShapeWndScale(BOOL bSetFromControls)
+void CViewSpikeDetection::UpdateSpkShapeWndScale(BOOL bSetFromControls)
 {
 	// get current values	
 	int ixWE=0;
@@ -1958,7 +1958,7 @@ void CSpikeDetectionView::UpdateSpkShapeWndScale(BOOL bSetFromControls)
 
 }
 
-void CSpikeDetectionView::SelectSpikeNo(int spikeno, BOOL bMultipleSelection)
+void CViewSpikeDetection::SelectSpikeNo(int spikeno, BOOL bMultipleSelection)
 {
 	// load spike parameters	
 	if (spikeno >= 0)
@@ -1987,7 +1987,7 @@ void CSpikeDetectionView::SelectSpikeNo(int spikeno, BOOL bMultipleSelection)
 	}
 }
 
-void CSpikeDetectionView::UpdateSpikeDisplay()
+void CViewSpikeDetection::UpdateSpikeDisplay()
 {
 	// update spike display windows
 	m_spkBarView.Invalidate(TRUE);
@@ -2002,7 +2002,7 @@ void CSpikeDetectionView::UpdateSpikeDisplay()
 // this routine is called when the threshold is changed by the user (move cursor, change edit
 // content
 
-void CSpikeDetectionView::OnEnChangeThresholdval()
+void CViewSpikeDetection::OnEnChangeThresholdval()
 {
 	if (!mm_thresholdval.m_bEntryDone)
 		return;
@@ -2043,7 +2043,7 @@ void CSpikeDetectionView::OnEnChangeThresholdval()
 	return;	
 }
 
-void CSpikeDetectionView::OnEnChangeTimefirst() 
+void CViewSpikeDetection::OnEnChangeTimefirst() 
 {
 	if (!mm_timefirst.m_bEntryDone)
 		return;
@@ -2071,7 +2071,7 @@ void CSpikeDetectionView::OnEnChangeTimefirst()
 	mm_timefirst.SetSel(0, -1); 	//select all text
 }
 
-void CSpikeDetectionView::OnEnChangeTimelast() 
+void CViewSpikeDetection::OnEnChangeTimelast() 
 {
 	if (!mm_timelast.m_bEntryDone)
 		return;
@@ -2099,7 +2099,7 @@ void CSpikeDetectionView::OnEnChangeTimelast()
 	mm_timelast.SetSel(0, -1); 	//select all text
 }
 
-void CSpikeDetectionView::OnToolsDataseries() 
+void CViewSpikeDetection::OnToolsDataseries() 
 {
 	// init dialog data 
 	CDataSeriesDlg dlg;
@@ -2117,7 +2117,7 @@ void CSpikeDetectionView::OnToolsDataseries()
 	UpdateLegends();
 }
 
-void CSpikeDetectionView::PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars)
+void CViewSpikeDetection::PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars)
 {
 		BOOL bDrawF = plineViewWnd->m_parms.bDrawframe;
 		plineViewWnd->m_parms.bDrawframe = TRUE;
@@ -2141,7 +2141,7 @@ void CSpikeDetectionView::PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewW
 		rectComment.right = prect->left;
 }
 
-void CSpikeDetectionView::OnEditCopy() 
+void CViewSpikeDetection::OnEditCopy() 
 {
 	CCopyAsDlg dlg;
 	dlg.m_nabcissa = mdPM->hzResolution;
@@ -2290,7 +2290,7 @@ void CSpikeDetectionView::OnEditCopy()
 	}
 }
 
-void CSpikeDetectionView::OnSelchangeDetectMode() 
+void CViewSpikeDetection::OnSelchangeDetectMode() 
 {
 	UpdateData(TRUE);
 	m_pDetectParms->detectWhat = m_CBdetectWhat.GetCurSel();
@@ -2300,7 +2300,7 @@ void CSpikeDetectionView::OnSelchangeDetectMode()
 	m_displayDetect.Invalidate();	
 }
 
-void CSpikeDetectionView::UpdateCB()
+void CViewSpikeDetection::UpdateCB()
 {
 	m_CBdetectChan.SetCurSel(m_pDetectParms->detectChan);
 	m_CBtransform.SetCurSel(m_pDetectParms->detectTransform);
@@ -2311,7 +2311,7 @@ void CSpikeDetectionView::UpdateCB()
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
 }
 
-void CSpikeDetectionView::UpdateVTtags()
+void CViewSpikeDetection::UpdateVTtags()
 {
 	m_spkBarView.DelAllVTtags();
 	m_displayDetect.DelAllVTtags();
@@ -2332,7 +2332,7 @@ void CSpikeDetectionView::UpdateVTtags()
 // compute printer's page dot resolution
 // borrowed from VC++ sample\drawcli\drawdoc.cpp
 //-----------------------------------------------------------------------
-void CSpikeDetectionView::PrintComputePageSize()
+void CViewSpikeDetection::PrintComputePageSize()
 {
 	// magic to get printer dialog that would be used if we were printing!
 	CPrintDialog dlg(FALSE);
@@ -2359,7 +2359,7 @@ void CSpikeDetectionView::PrintComputePageSize()
 // print paging information, date on the bottom of the page
 /////////////////////////////////////////////////////////////////////////////
 
-void CSpikeDetectionView::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikeDetection::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
 {
 	CTime t = CTime::GetCurrentTime();
 	CString ch;
@@ -2375,7 +2375,7 @@ void CSpikeDetectionView::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
 // ConvertFileIndex
 // return ascii string
 // ---------------------------------------------------------------------------------------
-CString CSpikeDetectionView::PrintConvertFileIndex(long lFirst, long lLast)
+CString CViewSpikeDetection::PrintConvertFileIndex(long lFirst, long lLast)
 {
 	CString csUnit= _T(" s");			// get time,  prepare time unit
 	CString csComment;
@@ -2404,7 +2404,7 @@ CString CSpikeDetectionView::PrintConvertFileIndex(long lFirst, long lLast)
 // exhausted
 // -----------------------------------------------------------------------------------
 
-BOOL CSpikeDetectionView::PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst)
+BOOL CViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst)
 {
 	// loop until we get all rows
 	int totalrows= m_nbrowsperpage*(page-1);
@@ -2428,7 +2428,7 @@ BOOL CSpikeDetectionView::PrintGetFileSeriesIndexFromPage(int page, int &filenum
 	return TRUE;
 }
 
-BOOL CSpikeDetectionView::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
+BOOL CViewSpikeDetection::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
 {
 	if (!mdPM->bMultirowDisplay || !mdPM->bEntireRecord)
 	{
@@ -2465,7 +2465,7 @@ BOOL CSpikeDetectionView::PrintGetNextRow(int &filenumber, long &lFirst, long &v
 // take care of user's options saved in mdPM structure
 /////////////////////////////////////////////////////////////////////////////
 
-CString CSpikeDetectionView::PrintGetFileInfos()
+CString CViewSpikeDetection::PrintGetFileInfos()
 {
 	CString strComment;   					// scratch pad
 	CString Tab(_T("    "));					// use 4 spaces as tabulation character
@@ -2496,7 +2496,7 @@ CString CSpikeDetectionView::PrintGetFileInfos()
 
 // -------------------------------------------------------------------------------
 // print scale bars and print comments concerning the signal characteristics
-CString CSpikeDetectionView::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd, CRect* rect)
+CString CViewSpikeDetection::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd, CRect* rect)
 {
 	CString strComment;
 	CString cs;
@@ -2593,7 +2593,7 @@ CString CSpikeDetectionView::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 	return strComment;
 }
 
-CString CSpikeDetectionView::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
+CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 {
 	CString RC("\n");
 	CString strComment;
@@ -2664,7 +2664,7 @@ CString CSpikeDetectionView::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 	return strComment;
 }
 
-void CSpikeDetectionView::SerializeWindowsState(BOOL bSave, int itab)
+void CViewSpikeDetection::SerializeWindowsState(BOOL bSave, int itab)
 {
 	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();	// pointer to list of pointers to store parameters
 	if (itab < 0 || itab >= m_tabCtrl.GetItemCount())
@@ -2733,7 +2733,7 @@ void CSpikeDetectionView::SerializeWindowsState(BOOL bSave, int itab)
 // override standard setting before calling print dialog
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CSpikeDetectionView::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL CViewSpikeDetection::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// save current state of the windows
 	SerializeWindowsState(BSAVE);
@@ -2766,7 +2766,7 @@ BOOL CSpikeDetectionView::OnPreparePrinting(CPrintInfo* pInfo)
 	return TRUE; 
 }
 
-int	CSpikeDetectionView::PrintGetNPages()
+int	CViewSpikeDetection::PrintGetNPages()
 {
 	// how many rows per page?
 	int sizeRow=mdPM->HeightDoc + mdPM->heightSeparator;
@@ -2844,7 +2844,7 @@ int	CSpikeDetectionView::PrintGetNPages()
 // (2) OnBeginPrinting
 /////////////////////////////////////////////////////////////////////////////
 
-void CSpikeDetectionView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikeDetection::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_displayDetect.GetDataFirst();
@@ -2854,7 +2854,7 @@ void CSpikeDetectionView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	pDC->SetBkMode (TRANSPARENT);
 }	
 
-void CSpikeDetectionView::PrintCreateFont()
+void CViewSpikeDetection::PrintCreateFont()
 {
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font
@@ -2868,7 +2868,7 @@ void CSpikeDetectionView::PrintCreateFont()
 //	(3) OnPrint() -- for each page
 /////////////////////////////////////////////////////////////////////////////
 
-void CSpikeDetectionView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 {
 	m_pOldFont = pDC->SelectObject(&m_fontPrint);
 
@@ -3044,7 +3044,7 @@ void CSpikeDetectionView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 //	(4) OnEndPrinting() - lastly
 /////////////////////////////////////////////////////////////////////////////
 
-void CSpikeDetectionView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikeDetection::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	// restore file from index and display parameters
@@ -3060,35 +3060,35 @@ void CSpikeDetectionView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 }
 
 // trap messages
-void CSpikeDetectionView::OnBnClickedBiasbutton()
+void CViewSpikeDetection::OnBnClickedBiasbutton()
 {
 	((CButton*) GetDlgItem(IDC_BIAS))->SetState(1);
 	((CButton*) GetDlgItem(IDC_GAIN))->SetState(0);
 	SetVBarMode(BAR_BIAS, IDC_SCROLLY);
 }
 
-void CSpikeDetectionView::OnBnClickedBias2()
+void CViewSpikeDetection::OnBnClickedBias2()
 {
 	((CButton*) GetDlgItem(IDC_BIAS2))->SetState(1);
 	((CButton*) GetDlgItem(IDC_GAIN2))->SetState(0);
 	SetVBarMode(BAR_BIAS, IDC_SCROLLY2);
 }
 
-void CSpikeDetectionView::OnBnClickedGainbutton()
+void CViewSpikeDetection::OnBnClickedGainbutton()
 {
 	((CButton*) GetDlgItem(IDC_BIAS))->SetState(0);
 	((CButton*) GetDlgItem(IDC_GAIN))->SetState(1);
 	SetVBarMode(BAR_GAIN, IDC_SCROLLY);
 }
 
-void CSpikeDetectionView::OnBnClickedGain2()
+void CViewSpikeDetection::OnBnClickedGain2()
 {
 	((CButton*) GetDlgItem(IDC_BIAS2))->SetState(0);
 	((CButton*) GetDlgItem(IDC_GAIN2))->SetState(1);
 	SetVBarMode(BAR_GAIN, IDC_SCROLLY2);
 }
 
-void CSpikeDetectionView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CViewSpikeDetection::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	// formview scroll: if pointer null
 	if (pScrollBar != nullptr)
@@ -3096,7 +3096,7 @@ void CSpikeDetectionView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		int iID = pScrollBar->GetDlgCtrlID();
 		if ((iID == IDC_SCROLLY) || (iID == IDC_SCROLLY2))
 		{
-			// CDataView scroll: vertical scroll bar
+			// CViewData scroll: vertical scroll bar
 			switch (m_VBarMode)
 			{
 			case BAR_GAIN:
@@ -3113,7 +3113,7 @@ void CSpikeDetectionView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		CDaoRecordView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CSpikeDetectionView::SetVBarMode (short bMode, int iID)
+void CViewSpikeDetection::SetVBarMode (short bMode, int iID)
 {
 	if (bMode == BAR_BIAS)
 		m_VBarMode = bMode;
@@ -3122,7 +3122,7 @@ void CSpikeDetectionView::SetVBarMode (short bMode, int iID)
 	UpdateBiasScroll(iID);
 }        
 
-void CSpikeDetectionView::UpdateGainScroll(int iID)
+void CViewSpikeDetection::UpdateGainScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 		m_scrolly.SetScrollPos(
@@ -3132,7 +3132,7 @@ void CSpikeDetectionView::UpdateGainScroll(int iID)
 			MulDiv(m_displayData.GetChanlistYextent(m_ichanselected2), 100, YEXTENT_MAX) +50, TRUE);
 }
 
-void CSpikeDetectionView::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
+void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 {
 	CLineViewWnd* pView = &m_displayDetect;
 	int ichan = m_ichanselected;
@@ -3167,7 +3167,7 @@ void CSpikeDetectionView::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 		UpdateGainScroll(iID);
 }
 
-void CSpikeDetectionView::UpdateBiasScroll(int iID)
+void CViewSpikeDetection::UpdateBiasScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 	{
@@ -3183,7 +3183,7 @@ void CSpikeDetectionView::UpdateBiasScroll(int iID)
 	}
 }
 
-void CSpikeDetectionView::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
+void CViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 {
 	CLineViewWnd* pView = &m_displayDetect;
 	int ichan = m_ichanselected;
@@ -3220,7 +3220,7 @@ void CSpikeDetectionView::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 		UpdateBiasScroll(iID);
 }
 
-void CSpikeDetectionView::OnEnChangeSpkWndAmplitude()
+void CViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 {
 	if (!mm_spkWndAmplitude.m_bEntryDone)
 		return;
@@ -3263,7 +3263,7 @@ void CSpikeDetectionView::OnEnChangeSpkWndAmplitude()
 	GetDlgItem(IDC_SPIKEWINDOWAMPLITUDE)->SetWindowText(cs);
 }
 
-void CSpikeDetectionView::OnEnChangeSpkWndLength()
+void CViewSpikeDetection::OnEnChangeSpkWndLength()
 {
 	if (!mm_spkWndDuration.m_bEntryDone)
 		return;
@@ -3306,7 +3306,7 @@ void CSpikeDetectionView::OnEnChangeSpkWndLength()
 	GetDlgItem(IDC_SPIKEWINDOWLENGTH)->SetWindowText(cs);
 }
 
-void CSpikeDetectionView::OnBnClickedLocatebttn()
+void CViewSpikeDetection::OnBnClickedLocatebttn()
 {
 	int max, min;
 	m_displayDetect.GetChanlistMaxMin(0, &max, &min);
@@ -3329,7 +3329,7 @@ void CSpikeDetectionView::OnBnClickedLocatebttn()
 // if iSelParms > m_parmsCurrent.GetSize(): TRANSFER ALL DATA FROM SPKFILE -> PARMS
 // then TRANSFER ALL DATA FROM PARMS TO FILE
 
-void CSpikeDetectionView::UpdateDetectionSettings(int iSelParms)
+void CViewSpikeDetection::UpdateDetectionSettings(int iSelParms)
 {
 	// check size of spike detection parameters
 	if (iSelParms >= m_parmsCurrent.GetSize())
@@ -3376,7 +3376,7 @@ void CSpikeDetectionView::UpdateDetectionSettings(int iSelParms)
 	UpdateLegends();
 }
 
-void CSpikeDetectionView::UpdateDetectionControls()
+void CViewSpikeDetection::UpdateDetectionControls()
 {
 	m_CBdetectWhat.SetCurSel(m_pSpkListVSD->GetdetectWhat());
 	m_CBdetectChan.SetCurSel(m_pSpkListVSD->GetdetectChan());
@@ -3412,7 +3412,7 @@ void CSpikeDetectionView::UpdateDetectionControls()
 	m_spkShapeView.SetSpkList(m_pSpkListVSD);
 }
 
-void CSpikeDetectionView::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeDetection::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	SerializeWindowsState (BSAVE, m_iDetectParms);
 	int icursel = m_tabCtrl.GetCurSel();
@@ -3421,7 +3421,7 @@ void CSpikeDetectionView::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-void CSpikeDetectionView::OnToolsEditstimulus()
+void CViewSpikeDetection::OnToolsEditstimulus()
 {
 	m_pspkDocVSD->SortStimArray();
 
@@ -3452,7 +3452,7 @@ void CSpikeDetectionView::OnToolsEditstimulus()
 	}
 }
 
-void CSpikeDetectionView::OnEnChangeChanselected()
+void CViewSpikeDetection::OnEnChangeChanselected()
 {
 	if (!mm_ichanselected.m_bEntryDone)
 		return;
@@ -3474,7 +3474,7 @@ void CSpikeDetectionView::OnEnChangeChanselected()
 	SetDlgItemInt(IDC_CHANSELECTED, m_ichanselected);
 }
 
-void CSpikeDetectionView::OnEnChangeChanselected2()
+void CViewSpikeDetection::OnEnChangeChanselected2()
 {
 	if (!mm_ichanselected2.m_bEntryDone)
 		return;
@@ -3496,7 +3496,7 @@ void CSpikeDetectionView::OnEnChangeChanselected2()
 	SetDlgItemInt(IDC_CHANSELECTED2, m_ichanselected2);
 }
 
-void CSpikeDetectionView::OnCbnSelchangeTransform2()
+void CViewSpikeDetection::OnCbnSelchangeTransform2()
 {
 	int method = m_CBtransform2.GetCurSel();					// this is the extract method requested
 	
@@ -3550,14 +3550,14 @@ void CSpikeDetectionView::OnCbnSelchangeTransform2()
 	UpdateTabs();
 }
 
-void CSpikeDetectionView::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
+void CViewSpikeDetection::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	int icursel = m_tabCtrl.GetCurSel();
 	UpdateDetectionSettings(icursel);
 	*pResult = 0;
 }
 
-void CSpikeDetectionView::UpdateTabs()
+void CViewSpikeDetection::UpdateTabs()
 {
 	// load initial data
 	BOOL bReplace = (m_tabCtrl.GetItemCount() == m_pspkDocVSD->GetSpkListSize());
