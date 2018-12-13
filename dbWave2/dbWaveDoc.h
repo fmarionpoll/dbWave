@@ -47,7 +47,7 @@ protected:
 // Operations
 public:
 	void			ImportDescFromFileList(CStringArray& filename, BOOL bOnlygenuine=FALSE);
-	BOOL			IsDatFile(CString csFilename);
+	BOOL			IsDatFile(CString csFilename) const;
 	inline BOOL		IsFilePresent(CString csFilename) {CFileStatus rStatus; return CFile::GetStatus(csFilename, rStatus);}
 	CWaveFormat*	GetWaveFormat(CString filename, BOOL bIsDatFile);
 	BOOL			ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
@@ -76,10 +76,10 @@ public:
 	CString			ExportDatabaseData(int ioption = 0);
 	void			ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* pSL, int kclass);
 	void			SynchronizeSourceInfos(BOOL bAll);
-	BOOL			UpdateWaveFmtFromDatabase (CWaveFormat* pWF);
+	BOOL			UpdateWaveFmtFromDatabase (CWaveFormat* pWF) const;
 
 	void			ExportDatafilesAsTXTfiles	();
-	BOOL			CopyAllFilesintoDirectory	(CString path);
+	BOOL			CopyAllFilesintoDirectory	(const CString& path);
 	bool			BinaryFileCopy				(LPCTSTR pszSource, LPCTSTR pszDest);
 	BOOL			CreateDirectories			(CString path);
 

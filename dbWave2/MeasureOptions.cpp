@@ -77,7 +77,7 @@ END_MESSAGE_MAP()
 // get VT tag val and feed value into control edit
 BOOL CMeasureVTtagsPage::GetVTtagVal(int index)
 {
-	BOOL flag = (m_nbtags > 0);
+	const BOOL flag = (m_nbtags > 0);
 	GetDlgItem(IDC_REMOVE)->EnableWindow(flag);		
 
 	if (index < 0 || index >= m_nbtags)
@@ -143,7 +143,7 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 
 	// save initial state of VTtags
 	//TODO bug here
-	auto p_vertical_tags_list = m_pdatDoc->GetpVTtags();
+	const auto p_vertical_tags_list = m_pdatDoc->GetpVTtags();
 	if (p_vertical_tags_list != nullptr)
 		m_plineview->SetVTtagList(p_vertical_tags_list);
 	m_plineview->DelAllHZtags();	
@@ -1050,8 +1050,7 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 	if (tag_first > 0 && tag_last <0)
 	{
 		const auto l1 = m_plineview->GetVTtagLval(tag_first);
-		MeasureWithinInterval(channel, line, l1, l1);
-		line++;		
+		MeasureWithinInterval(channel, line, l1, l1);	
 	}	
 	return;
 }
@@ -1216,7 +1215,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 		{
 			x_dummy = static_cast<float>(m_imax - m_imin) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
-			m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+			m_listResults.SetItemText(item, output_column, cs_dummy); 
 		}
 	}
 
@@ -1263,7 +1262,6 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 	{
 		const auto v1 = m_plineview->GetHZtagVal(tag_first);
 		MeasureBetweenHZ(ichan, line, v1, v1);
-		line++;
 	}	
 }
 
@@ -1305,7 +1303,7 @@ void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, co
 	{
 		x_dummy = static_cast<float>(v2 - v1)*m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, column_1, cs_dummy); column_1++;
+		m_listResults.SetItemText(item, column_1, cs_dummy);
 	}
 
 	return;
@@ -1346,11 +1344,10 @@ BOOL CMeasureResultsPage::MeasureParameters()
 	}
 
 	// prepare listcontrol
-	while (m_listResults.DeleteColumn(0) != 0);
-		m_listResults.DeleteAllItems();
+//	while (m_listResults.DeleteColumn(0) != 0);
+	m_listResults.DeleteAllItems();
 
 	// prepare clipboard and Edit control (CEdit)
-	HANDLE h_copy= nullptr;
 	if (OpenClipboard())
 	{
 		EmptyClipboard();		// prepare clipboard and copy text to buffer
@@ -1373,7 +1370,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		ASSERT(p_vd != NULL);
 		const CString cs_out=_T("**filename\tdate\ttime\tcomment\tchannel\r\n");
 
-		for (int i=i_first; i<=i_last; i++, m_pdbDoc->DBMoveNext())
+		for (auto i=i_first; i<=i_last; i++, m_pdbDoc->DBMoveNext())
 		{
 			// open data file			
 			m_pdbDoc->OpenCurrentDataFile();
