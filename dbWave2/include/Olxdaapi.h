@@ -33,7 +33,7 @@ ABSTRACT:
 ---------------------------------------------------------------------------*/
 
 #include "./include/oltypes.h"
-#include "./include/olmem.h""
+#include "./include/olmem.h"
 #include "./include/olxdadefs.h"
 
 #ifdef WIN32
