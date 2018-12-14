@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include "./include/OLDAAPI.H"
-#include "./include/OLTYPES.H"
-#include "./include/OLERRORS.H"
-#include "./include/Olmem.h"
+#include "./include/DataTranslation/OLDAAPI.H"
+#include "./include/DataTranslation/OLTYPES.H"
+#include "./include/DataTranslation/OLERRORS.H"
+#include "./include/DataTranslation/Olmem.h"
 #include "dtacq32.h"
 #include "afxwin.h"
 

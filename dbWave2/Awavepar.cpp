@@ -17,7 +17,7 @@
 
 
 #include "StdAfx.h"
-#include "./include/Olxdadefs.h"
+#include "./include/DataTranslation/Olxdadefs.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

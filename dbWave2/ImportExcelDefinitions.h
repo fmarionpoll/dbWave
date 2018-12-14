@@ -6,17 +6,17 @@
 
 //import entry points for excel and access
 
-#import "C:\\Program Files\\Common Files\\Microsoft Shared\\OFFICE15\\mso.dll"  \
+#import "./include/office/mso.dll"  \
 		rename("RGB",			"MSORGB")
 using namespace Office;
 
-#import "C:\\Program Files (x86)\\Common Files\\Microsoft Shared\\VBA\\VBA6\\VBE6EXT.OLB" \
+#import "./include/office/VBE6EXT.OLB" \
 		raw_interfaces_only, \
 		rename("Reference",		"ignorethis"), \
 		rename("VBE",			"testVBE")
 using namespace VBIDE;
 
-#import "C:\\Program Files\\Microsoft Office\\OFFICE15\\excel.exe" \
+#import "./include/office/excel.exe" \
 		exclude("IFont", "IPicture") \
 		rename("VBE",			"testVBE") \
 		rename("FindText",		"ExcelFindText") \
@@ -28,7 +28,7 @@ using namespace VBIDE;
 		no_auto_exclude
 using namespace Excel;
 
-#import <C:\\Program Files\\Common Files\\Microsoft Shared\\OFFICE15\\ACEDAO.dll>  \
+#import "./include/office/ACEDAO.DLL"  \
 	rename( "EOF", "AdoNSEOF" ) \
 	auto_rename
 using namespace DAO;

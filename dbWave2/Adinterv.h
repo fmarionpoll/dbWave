@@ -5,6 +5,7 @@
 // ADIntervalsDlg dialog
 
 #pragma once
+#include "Editctrl.h"
 
 class ADIntervalsDlg : public CDialog
 {

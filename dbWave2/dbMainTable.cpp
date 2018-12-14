@@ -413,10 +413,9 @@ long CdbMainTable::GetNRecords()
 		return nrecords;
 
 	ASSERT(CanBookmark());
-	COleVariant ol;
 	try 
 	{
-		ol = GetBookmark();
+		const auto ol = GetBookmark();
 		MoveLast();
 		MoveFirst();
 		nrecords = GetRecordCount( );

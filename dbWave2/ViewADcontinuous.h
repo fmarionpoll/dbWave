@@ -11,12 +11,13 @@
 #include <afxext.h>
 #endif
 #include "RulerBar.h"
+#include "Editctrl.h"
 #include "ScrollBarEx.h"
 #include "afxwin.h"
 #include "dtacq32.h"
-#include "./include/OLTYPES.H"
-#include "./include/OLERRORS.H"
-#include "./include/Olmem.h"
+#include "./include/DataTranslation/OLTYPES.H"
+#include "./include/DataTranslation/OLERRORS.H"
+#include "./include/DataTranslation/Olmem.h"
 #include "CUSBPxxS1Ctl.h"
 
 // DT Openlayer board
@@ -130,7 +131,7 @@ protected:
 
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
-	BOOL SelectDTOpenLayersBoard(CString cardName);
+	BOOL SelectDTOpenLayersBoard(const CString& cardName);
 	
 	BOOL ADC_OpenSubSystem(CString cardName);
 	BOOL ADC_InitSubSystem();
@@ -144,6 +145,7 @@ protected:
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
 	void DAC_StopAndLiberateBuffers();
+	void get_dt_error(ECODE ecode, BOOL b_display) const;
 	BOOL DAC_ClearAllOutputs();
 	int	 DAC_SetChannelList();
 	int  DAC_GetNumberOfChans();
@@ -153,19 +155,19 @@ protected:
 	void DAC_FillBufferWith_RAMP(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_CONSTANT(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_MSequence(OUTPUTPARMS * parmsChan);
+	static void DAC_MSequence(OUTPUTPARMS * parmsChan);
 	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
-	void DAC_Dig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_Dig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_Dig_FillBufferWith_VAL(short * pDTbuf, int chan, OUTPUTPARMS * parmsChan, BOOL bVal);
-	void DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_UpdateStartStop(BOOL bStart);
+	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan) const;
+	void DAC_Dig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms) const;
+	void DAC_Dig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms) const;
+	void DAC_Dig_FillBufferWith_VAL(short * pDTbuf, int chan, OUTPUTPARMS * parmsChan, BOOL bVal) const;
+	void DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms) const;
+	void DAC_UpdateStartStop(BOOL bStart) const;
 	void DAC_FillBuffer(short* pDTbuf);
 	void SetCombostartoutput(int option);
 	
-	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
-	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
+	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain) const;
+	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain) const;
 
 	void SaveAndCloseFile();
 	BOOL OnStart();
@@ -177,7 +179,6 @@ protected:
 	BOOL ADC_DefineExperimentDlg() ;
 	void TransferFilesToDatabase();
 	void UpdateViewDataFinal();
-	void displayolDaErrorMessage(CHAR* errstr);
 
 // Overrides
 protected:

@@ -498,11 +498,10 @@ int CCyberAmp::SetWaveChanParms(CWaveChan * pchan)
 	SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pchan->am_csInputneg);
 	SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
 	SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-	double gain = double(pchan->am_gaintotal) / (double (pchan->am_gainheadstage)* double(pchan->am_gainAD));
-	SetGain(pchan->am_amplifierchan, (int)gain);
-	SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
-	int errorcode = C300_FlushCommandsAndAwaitResponse();
-	return errorcode;
+	const auto gain = double(pchan->am_gaintotal) / (double (pchan->am_gainheadstage)* double(pchan->am_gainAD));
+	SetGain(pchan->am_amplifierchan, int(gain));
+	SetLPFilter(pchan->am_amplifierchan, int(pchan->am_lowpass));
+	return C300_FlushCommandsAndAwaitResponse();
 }
 
 int CCyberAmp::GetWaveChanParms(CWaveChan * pchan)
