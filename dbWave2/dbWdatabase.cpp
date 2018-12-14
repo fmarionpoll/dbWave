@@ -242,17 +242,20 @@ BOOL CdbWdatabase::CreateRelationwithAssocTable(const LPCTSTR lpsz_foreign_table
 
 
 CString CdbWdatabase::GetDataBasePath() {
+	return m_databasePath;
+}
+
+void CdbWdatabase::SetDataBasePath() {
 	auto filename = GetName();
 	const auto last_slash = filename.ReverseFind('\\');
-	m_databasePath = filename.Left(last_slash+1);
+	m_databasePath = filename.Left(last_slash + 1);
 	m_databasePath.MakeLower();
-	return m_databasePath;
 }
 
 
 void CdbWdatabase::CreateTables()
 {
-	GetDataBasePath();
+	SetDataBasePath();
 
 	// create tables with indexes. These tables will contain categories entered by the user
 	m_insectSet.CreateIndextable	(_T("insectname"),		_T("insect"),	_T("insectID"),		100, this);
@@ -276,7 +279,7 @@ void CdbWdatabase::CreateTables()
 
 BOOL CdbWdatabase::OpenTables()
 {
-	GetDataBasePath();
+	SetDataBasePath();
 
 	// check format of table set
 	CDaoRecordset record_set(this);

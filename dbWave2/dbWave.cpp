@@ -211,10 +211,10 @@ int CdbWaveApp::ExitInstance()
 	SAFE_DELETE(m_pviewdataMemFile);
 	SAFE_DELETE(m_psf);
 
-	if (m_viewspkdParmsArray.GetSize() != NULL)	
+	if (viewspikesmemfile_ptr_array.GetSize() != NULL)	
 	{
-		for (int i=0; i< m_viewspkdParmsArray.GetSize(); i++)
-			delete (CMemFile*) m_viewspkdParmsArray.GetAt(i);
+		for (int i=0; i< viewspikesmemfile_ptr_array.GetSize(); i++)
+			delete (CMemFile*) viewspikesmemfile_ptr_array.GetAt(i);
 	}
 
 	SAFE_DELETE(m_pviewspikesMemFile);

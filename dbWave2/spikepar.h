@@ -83,15 +83,15 @@ public:
 	BOOL		bChanged;							// flag set TRUE if contents has changed
 	int			AddItem();							// add one parameter array item
 	int			RemoveItem(int i);
-	inline SPKDETECTPARM* GetItem(int i) {return (SPKDETECTPARM*) parmItems.GetAt(i);}
-	void		SetItem(int i, SPKDETECTPARM* pSD) {*((SPKDETECTPARM*) parmItems[i]) = *pSD;}
-	inline int	GetSize() {return parmItems.GetSize();}
+	inline SPKDETECTPARM* GetItem(int i) {return spkdetectparm_ptr_array.GetAt(i);}
+	void		SetItem(int i, SPKDETECTPARM* pSD) {*(spkdetectparm_ptr_array[i]) = *pSD;}
+	inline int	GetSize() {return spkdetectparm_ptr_array.GetSize();}
 	void		SetSize(int nitems);
 
 protected:
 	WORD		wversion;							// version number
 	void		DeleteArray();
-	CPtrArray	parmItems;							// array with SPKDETECTPARM objects
+	CArray < SPKDETECTPARM*, SPKDETECTPARM*> spkdetectparm_ptr_array;							// array with SPKDETECTPARM objects
 
 public :
 	CSpkDetectArray();

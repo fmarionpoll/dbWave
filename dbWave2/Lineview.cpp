@@ -62,27 +62,27 @@ END_MESSAGE_MAP()
 void CLineViewWnd::RemoveAllChanlistItems()
 {        
 	// suppress array and objects pointed by m_pEnvelopesArray
-	for (int i=m_pEnvelopesArray.GetUpperBound(); i>= 0; i--)
-		delete m_pEnvelopesArray[i];	
-	m_pEnvelopesArray.RemoveAll();
+	for (int i=envelope_ptr_array.GetUpperBound(); i>= 0; i--)
+		delete envelope_ptr_array[i];	
+	envelope_ptr_array.RemoveAll();
 
 	// suppress array and objects pointed by m_pChanlistItemArray
-	for (int i=m_pChanlistItemArray.GetUpperBound(); i>= 0; i--)
-		delete m_pChanlistItemArray[i];
-	m_pChanlistItemArray.RemoveAll();	
+	for (int i=chanlistitem_ptr_array.GetUpperBound(); i>= 0; i--)
+		delete chanlistitem_ptr_array[i];
+	chanlistitem_ptr_array.RemoveAll();	
 }
 
 int CLineViewWnd::AddChanlistItem(int ns, int mode)
 { 
 	// first time??	create Envelope(0) with abcissa series
-	if (m_pChanlistItemArray.GetSize() == 0)
+	if (chanlistitem_ptr_array.GetSize() == 0)
 	{
 		m_PolyPoints.SetSize(m_npixels*4);		// set size of polypoint array
 		m_scale.SetScale(m_npixels, m_lxSize);	// compute scale (this is first time)
 		m_dataperpixel = 2;
 		CEnvelope* pC = new CEnvelope(m_npixels*m_dataperpixel, m_dataperpixel, 0, -1, 0);
 		ASSERT(pC != NULL);
-		m_pEnvelopesArray.Add(pC);					// add item Ptr to array	
+		envelope_ptr_array.Add(pC);					// add item Ptr to array	
 		pC->FillEnvelopeWithAbcissa(m_npixels*m_dataperpixel, m_lxSize);
 	}
 
@@ -92,12 +92,12 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 		span = m_pDataFile->GetTransfDataSpan(mode);
 	CEnvelope* pY = new CEnvelope(m_npixels, m_dataperpixel, ns, mode, span);
 	ASSERT(pY != NULL);
-	int j = m_pEnvelopesArray.Add(pY);
+	int j = envelope_ptr_array.Add(pY);
 	
 	// create new chanlistitem with x=Envelope(0) and y=the new Envelope
-	CChanlistItem* pD = new CChanlistItem(m_pEnvelopesArray.GetAt(0), 0, pY, j);
+	CChanlistItem* pD = new CChanlistItem(envelope_ptr_array.GetAt(0), 0, pY, j);
 	ASSERT(pD != NULL);
-	int index_newchan = m_pChanlistItemArray.Add(pD);
+	int index_newchan = chanlistitem_ptr_array.Add(pD);
 
 	// init display parameters
 	pD->InitDisplayParms(1, RGB(0,0,0), 2048, 4096);
@@ -123,15 +123,15 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 
 int CLineViewWnd::RemoveChanlistItem(WORD i)
 {   
-	int j = m_pChanlistItemArray.GetSize();	// get size of chan array
+	int j = chanlistitem_ptr_array.GetSize();	// get size of chan array
 	if (j >0)	// delete Envelopes ordinates but make sure that it is not used
 	{
-		CEnvelope* pa = m_pChanlistItemArray[i]->pEnvelopeOrdinates;
+		CEnvelope* pa = chanlistitem_ptr_array[i]->pEnvelopeOrdinates;
 		// step 1: check that this envelope is not used by another channel
 		BOOL bUsedOnlyOnce = TRUE;
 		for (int lj= j; lj>=0; lj--)
 		{
-			CEnvelope* pb = m_pChanlistItemArray[i]->pEnvelopeOrdinates;
+			CEnvelope* pb = chanlistitem_ptr_array[i]->pEnvelopeOrdinates;
 			if (pa == pb && lj != i)
 			{
 				bUsedOnlyOnce = FALSE;	// the envelope is used by another channel
@@ -141,20 +141,20 @@ int CLineViewWnd::RemoveChanlistItem(WORD i)
 		// step 2: delete corresponding envelope only if envelope used only once.
 		if (bUsedOnlyOnce)
 		{
-			for (int k=m_pEnvelopesArray.GetUpperBound(); k>= 0; k--)
+			for (int k=envelope_ptr_array.GetUpperBound(); k>= 0; k--)
 			{
-				CEnvelope* pb = m_pEnvelopesArray[k];
+				CEnvelope* pb = envelope_ptr_array[k];
 				if (pa == pb)	// search where this Envelope was stored
 				{
 					delete pa;						// delete  object
-					m_pEnvelopesArray.RemoveAt(k);	// remove pointer from array
+					envelope_ptr_array.RemoveAt(k);	// remove pointer from array
 					break;		// object is found, stop loop and delete chanlist item
 				}
 			}
 		}
 		// step 3: delete channel
-		delete m_pChanlistItemArray[i];
-		m_pChanlistItemArray.RemoveAt(i);		
+		delete chanlistitem_ptr_array[i];
+		chanlistitem_ptr_array.RemoveAt(i);		
 	}
 	UpdateChanlistMaxSpan();
 	return j-1;
@@ -162,25 +162,25 @@ int CLineViewWnd::RemoveChanlistItem(WORD i)
 
 void CLineViewWnd::UpdateChanlistMaxSpan()
 {
-	if (m_pEnvelopesArray.GetSize() <= 1)
+	if (envelope_ptr_array.GetSize() <= 1)
 		return;
 	// get spanmax stored in Envelope(0)
 	int imax = 0;
-	for (int i = m_pEnvelopesArray.GetUpperBound(); i>0; i--)
+	for (int i = envelope_ptr_array.GetUpperBound(); i>0; i--)
 	{
-		int j = m_pEnvelopesArray[i]->GetDocbufferSpan();
+		int j = envelope_ptr_array[i]->GetDocbufferSpan();
 		if (j > imax) 
 			imax = j;
 	}
 	 // store imax
-	m_pEnvelopesArray[0]->SetDocbufferSpan(imax);	//store max
+	envelope_ptr_array[0]->SetDocbufferSpan(imax);	//store max
 }
 
 void CLineViewWnd::UpdateChanlistFromDoc()
 {
-	for (int i = m_pChanlistItemArray.GetUpperBound(); i>= 0; i--)
+	for (int i = chanlistitem_ptr_array.GetUpperBound(); i>= 0; i--)
 	{
-		CChanlistItem* pD =  m_pChanlistItemArray[i];
+		CChanlistItem* pD =  chanlistitem_ptr_array[i];
 		CEnvelope* pOrd = pD->pEnvelopeOrdinates;
 		int ns = pOrd->GetSourceChan();
 		int mode = pOrd->GetSourceMode();
@@ -197,7 +197,7 @@ void CLineViewWnd::UpdateChanlistFromDoc()
 
 void CLineViewWnd::UpdateGainSettings(int i)
 {
-	CChanlistItem* pD =  m_pChanlistItemArray[i];
+	CChanlistItem* pD =  chanlistitem_ptr_array[i];
 	CEnvelope* pOrd = pD->pEnvelopeOrdinates;
 	int ns = pOrd->GetSourceChan();
 	int mode = pOrd->GetSourceMode();
@@ -232,7 +232,7 @@ int CLineViewWnd::SetChanlistSourceChan(WORD i, int ns)
 			AddChanlistItem(j, 0);
 	}
 	// change channel
-	CChanlistItem* pD =  m_pChanlistItemArray[i];
+	CChanlistItem* pD =  chanlistitem_ptr_array[i];
 	CEnvelope* pOrd = pD->pEnvelopeOrdinates;
 	pOrd->SetSourceChan(ns);			// change data channel
 	int mode = pOrd->GetSourceMode();	// get transform mode
@@ -250,7 +250,7 @@ int CLineViewWnd::SetChanlistSourceChan(WORD i, int ns)
 void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 {
 	// change channel
-	CChanlistItem* pD =  m_pChanlistItemArray[i];	
+	CChanlistItem* pD =  chanlistitem_ptr_array[i];	
 	pD->SetOrdinatesSourceData(chan, transform);
 	// modify comment
 	CWaveChanArray* pchanArray = m_pDataFile->GetpWavechanArray();
@@ -270,14 +270,14 @@ void CLineViewWnd::SetChanlistVoltsExtent(int chan, float* pvalue)
 	if (chan < 0) 
 	{
 		ichanfirst = 0;
-		ichanlast = m_pChanlistItemArray.GetUpperBound();
+		ichanlast = chanlistitem_ptr_array.GetUpperBound();
 	}
 	float voltsextent = 0.f;
 	if (pvalue != nullptr)
 		voltsextent = *pvalue;
 	for (int i= ichanfirst; i<= ichanlast; i++)
 	{
-		CChanlistItem* pD =  m_pChanlistItemArray[i];
+		CChanlistItem* pD =  chanlistitem_ptr_array[i];
 		float yvoltsperbin = pD->GetVoltsperDataBin();
 		if (pvalue == nullptr) 
 			voltsextent = yvoltsperbin * pD->GetYextent();
@@ -294,7 +294,7 @@ void CLineViewWnd::SetChanlistVoltsZero(int chan, float* pvalue)
 	if (chan < 0)
 	{
 		ichanfirst = 0;
-		ichanlast = m_pChanlistItemArray.GetUpperBound();
+		ichanlast = chanlistitem_ptr_array.GetUpperBound();
 	}
 
 	float voltsextent = 0.f;
@@ -302,7 +302,7 @@ void CLineViewWnd::SetChanlistVoltsZero(int chan, float* pvalue)
 		voltsextent = *pvalue;
 	for (int i = ichanfirst; i <= ichanlast; i++)
 	{
-		CChanlistItem* pD = m_pChanlistItemArray[i];
+		CChanlistItem* pD = chanlistitem_ptr_array[i];
 		float yvoltsperbin = pD->GetVoltsperDataBin();
 		if (pvalue == nullptr)
 			voltsextent = yvoltsperbin * pD->GetDataBinZero();
@@ -323,7 +323,7 @@ int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 	}
 
 	// change transform mode
-	CChanlistItem* pD =  m_pChanlistItemArray[i];
+	CChanlistItem* pD =  chanlistitem_ptr_array[i];
 	CEnvelope* pOrd = pD->pEnvelopeOrdinates;
 	int ns = pOrd->GetSourceChan();
 	// change transform
@@ -450,16 +450,16 @@ int CLineViewWnd::ResizeChannels(int npixels, long lSize)
 	
 	ASSERT(npts > 0);
 
-	int nEnvelopes = m_pEnvelopesArray.GetSize();// loop through all Envelopes
+	int nEnvelopes = envelope_ptr_array.GetSize();// loop through all Envelopes
 	if (nEnvelopes > 0)
 	{
 		CEnvelope* pC;
 		for (int iEnvelope=0; iEnvelope< nEnvelopes; iEnvelope++)
 		{
-			pC = m_pEnvelopesArray.GetAt(iEnvelope);
+			pC = envelope_ptr_array.GetAt(iEnvelope);
 			pC->SetEnvelopeSize(npts, m_dataperpixel);
 		}
-		pC = m_pEnvelopesArray.GetAt(0);	
+		pC = envelope_ptr_array.GetAt(0);	
 		pC->FillEnvelopeWithAbcissa(m_npixels, m_lxSize);// store data series
 	}
 
@@ -496,7 +496,7 @@ BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* pDataFile, long lSize)
 
 	//Remove irrelevant Chanlist items;	
 	int docchanmax = m_pDataFile->GetpWaveFormat()->scan_count - 1;
-	int chanlistmax = m_pChanlistItemArray.GetUpperBound();
+	int chanlistmax = chanlistitem_ptr_array.GetUpperBound();
 	for (int i=chanlistmax; i>=0; i--)
 	{
 		if (GetChanlistSourceChan(i) > docchanmax)
@@ -504,15 +504,15 @@ BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* pDataFile, long lSize)
 	}
 
 	// Remove irrelevant Envelopes();
-	int nEnvelopes = m_pEnvelopesArray.GetUpperBound();
+	int nEnvelopes = envelope_ptr_array.GetUpperBound();
 	CEnvelope* pC;
 	for (int i=nEnvelopes; i> 0; i--) // ! Envelope(0)=abcissa
 	{
-		pC = m_pEnvelopesArray.GetAt(i);
+		pC = envelope_ptr_array.GetAt(i);
 		if (pC->GetSourceChan() > docchanmax)
 		{
 			delete pC; 
-			m_pEnvelopesArray.RemoveAt(i);
+			envelope_ptr_array.RemoveAt(i);
 		}
 	}
 
@@ -545,9 +545,9 @@ BOOL CLineViewWnd::GetDataFromDoc()
 	short* lpData;								// pointer used later
 
 	// max nb of points spanning around raw data pt stored in array(0)
-	if (m_pEnvelopesArray.GetSize() < 1)
+	if (envelope_ptr_array.GetSize() < 1)
 		return FALSE;
-	CEnvelope* pCont = m_pEnvelopesArray.GetAt(0);
+	CEnvelope* pCont = envelope_ptr_array.GetAt(0);
 	int nspan = pCont->GetDocbufferSpan();		// additional pts necessary
 
 	// loop through all pixels if data buffer is longer than data displayed 
@@ -579,9 +579,9 @@ BOOL CLineViewWnd::GetDataFromDoc()
 				break;
 
 			// loop over each envelope
-			for (int iEnvelope=m_pEnvelopesArray.GetUpperBound(); iEnvelope>0; iEnvelope--)
+			for (int iEnvelope=envelope_ptr_array.GetUpperBound(); iEnvelope>0; iEnvelope--)
 			{
-				pCont = m_pEnvelopesArray.GetAt(iEnvelope);
+				pCont = envelope_ptr_array.GetAt(iEnvelope);
 
 				int sourceChan = pCont->GetSourceChan();// get source channel
 				int itransf =  pCont->GetSourceMode();	// get transform mode
@@ -626,7 +626,7 @@ BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 	short* lpBuf= m_pDataFile->LoadRawDataParams(&nchans);
 	short* lpData;								// pointer used later
 	// max nb of points spanning around raw data pt stored in array(0)
-	CEnvelope* pCont = m_pEnvelopesArray.GetAt(0);
+	CEnvelope* pCont = envelope_ptr_array.GetAt(0);
 	int nspan = pCont->GetDocbufferSpan();		// additional pts necessary
 
 	// loop through all pixels if data buffer is longer than data displayed 
@@ -658,9 +658,9 @@ BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 				break;
 
 			// loop over each envelope
-			for (int iEnvelope=m_pEnvelopesArray.GetUpperBound(); iEnvelope>0; iEnvelope--)
+			for (int iEnvelope=envelope_ptr_array.GetUpperBound(); iEnvelope>0; iEnvelope--)
 			{
-				pCont = m_pEnvelopesArray.GetAt(iEnvelope);
+				pCont = envelope_ptr_array.GetAt(iEnvelope);
 
 				int sourceChan = pCont->GetSourceChan();// get source channel
 				int itransf =  pCont->GetSourceMode();	// get transform mode
@@ -766,12 +766,12 @@ void CLineViewWnd::ZoomData(CRect* r1, CRect* r2)
 	r1->NormalizeRect();
 	r2->NormalizeRect();	
 	
-	int i = m_pChanlistItemArray.GetUpperBound();
+	int i = chanlistitem_ptr_array.GetUpperBound();
 	// change gain & offset of all channels:
 	for (i; i>=0; i--)	// scan all channels
 	{
 		// display loop: load abcissa
-		CChanlistItem* pDL = m_pChanlistItemArray[i];
+		CChanlistItem* pDL = chanlistitem_ptr_array[i];
 		int extent = pDL->GetYextent();
 		int newext = MulDiv (extent, r2->Height(), r1->Height());
 		pDL->SetYextent (newext);
@@ -889,7 +889,7 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 	long* pPolypoints_Y = (long*) &m_PolyPoints[1];
 	long* pData=pPolypoints_X;
 	int nelements=0;
-	int ichan = m_pChanlistItemArray.GetUpperBound();
+	int ichan = chanlistitem_ptr_array.GetUpperBound();
 	int worg = -1;		// force origin
 	int wext = -1;		// force <= yextent
 	int yVE = m_displayRect.Height();
@@ -903,7 +903,7 @@ void CLineViewWnd::PlotDatatoDC(CDC* pDC)
 	for (ichan; ichan>=0; ichan--)	// scan all channels
 	{
 		// get pointer to display list item "i"
-		CChanlistItem* pDL = m_pChanlistItemArray[ichan];
+		CChanlistItem* pDL = chanlistitem_ptr_array[ichan];
 
 		// display: load new abcissa ?  -------------------------------------------
 		if (pX != pDL->pEnvelopeAbcissa)
@@ -1060,7 +1060,7 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	else
 		GetSmoothDataFromDoc(bCenterLine);
 
-	CEnvelope* pC = m_pEnvelopesArray.GetAt(0);
+	CEnvelope* pC = envelope_ptr_array.GetAt(0);
 	pC->FillEnvelopeWithAbcissaEx(xVO, xVE, m_lxSize);
 
 	// display all channels
@@ -1079,10 +1079,10 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	CPen* poldpen=pDC->SelectObject(&m_penTable[color]);
 
 	// display loop:
-	int ichan = m_pChanlistItemArray.GetUpperBound();	
+	int ichan = chanlistitem_ptr_array.GetUpperBound();	
 	for (ichan; ichan>=0; ichan--)	// scan all channels
 	{		
-		CChanlistItem* pDL = m_pChanlistItemArray[ichan];
+		CChanlistItem* pDL = chanlistitem_ptr_array[ichan];
 		if (pDL->GetflagPrintVisible() == FALSE)
 			continue;
 
@@ -1228,7 +1228,7 @@ BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 			code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("\r\n"));
 	
 			// data
-			if (m_pChanlistItemArray.GetSize() < 1)
+			if (chanlistitem_ptr_array.GetSize() < 1)
 			{		
 				code = StringCchPrintfEx(lpCopy, pcchRemaining, &lpCopy, &pcchRemaining, STRSAFE_NULL_ON_FAILURE, _T("No data to display"));
 			}
@@ -1263,15 +1263,15 @@ BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 LPTSTR CLineViewWnd::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 {
 	// time intervals
-	int ichans = m_pChanlistItemArray.GetUpperBound();		
-	int npoints = m_pEnvelopesArray.GetAt(0)->GetEnvelopeSize();
+	int ichans = chanlistitem_ptr_array.GetUpperBound();		
+	int npoints = envelope_ptr_array.GetAt(0)->GetEnvelopeSize();
 	// loop through all points	
 	for (int j=0; j<npoints; j++)
 	{
 		// loop through all channels
 		for (int i=0; i<=ichans; i++)	// scan all channels
 		{
-			CChanlistItem* pDL = m_pChanlistItemArray[i];			
+			CChanlistItem* pDL = chanlistitem_ptr_array[i];			
 			int k = (pDL->pEnvelopeOrdinates)->GetPointAt(j);
 			if (iunit == 1)
 			{
@@ -1293,15 +1293,15 @@ LPTSTR CLineViewWnd::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 LPTSTR CLineViewWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 {
 	// time intervals
-	int ichans = m_pChanlistItemArray.GetUpperBound();		
-	int npoints = m_pEnvelopesArray.GetAt(0)->GetEnvelopeSize();
+	int ichans = chanlistitem_ptr_array.GetUpperBound();		
+	int npoints = envelope_ptr_array.GetAt(0)->GetEnvelopeSize();
 	// loop through all points	
 	for (int j=0; j<npoints; j+= m_dataperpixel)
 	{
 		// loop through all channels
 		for (int i=0; i<=ichans; i++)	// scan all channels
 		{
-			CChanlistItem* pDL = m_pChanlistItemArray[i];			
+			CChanlistItem* pDL = chanlistitem_ptr_array[i];			
 			int k = (pDL->pEnvelopeOrdinates)->GetPointAt(j);
 			if (m_dataperpixel > 1)
 			{
@@ -1400,7 +1400,7 @@ void CLineViewWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			m_trackMode = TRACK_CURVE;		// flag: track curve
 
 			// modify polypoint and prepare for XORing curve tracked with mouse			
-			CChanlistItem* pDL = m_pChanlistItemArray[m_hitcurve];
+			CChanlistItem* pDL = chanlistitem_ptr_array[m_hitcurve];
 			CEnvelope* pX =  pDL->pEnvelopeAbcissa;		// display: load abcissa			
 			pX->GetMeantoPolypoints((long*) &m_PolyPoints[0]);
 			m_XORnelmts = pX->GetEnvelopeSize() /2;	// nb of elements
@@ -1422,7 +1422,7 @@ void CLineViewWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	// if horizontal cursor hit -- specific .. deal with variable gain
 	if (m_trackMode == TRACK_HZTAG)
 	{		
-		CChanlistItem* pDL = m_pChanlistItemArray[GetHZtagChan(m_HCtrapped)];
+		CChanlistItem* pDL = chanlistitem_ptr_array[GetHZtagChan(m_HCtrapped)];
 		m_yWE = pDL->GetYextent();				// store extent
 		m_yWO = pDL->GetYzero();					// store zero		
 	}
@@ -1457,7 +1457,7 @@ void CLineViewWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	case TRACK_CURVE:
 		{
 		XORcurve();	// (clear) necessary since XORcurve can draw outside client area
-		CChanlistItem* pDL = m_pChanlistItemArray[m_hitcurve];
+		CChanlistItem* pDL = chanlistitem_ptr_array[m_hitcurve];
 		pDL->SetYzero(m_zero);
 		m_trackMode = TRACK_OFF;
 		PostMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
@@ -1539,9 +1539,9 @@ void CLineViewWnd::OnLButtonUp(UINT nFlags, CPoint point)
 int CLineViewWnd::DoesCursorHitCurve(CPoint point)
 {
 	int chanfound=-1;						// output value
-	int ichans = m_pChanlistItemArray.GetUpperBound();
-	int npoints = m_pEnvelopesArray.GetAt(0)->GetEnvelopeSize();
-	CEnvelope* pC = m_pChanlistItemArray[0]->pEnvelopeAbcissa;
+	int ichans = chanlistitem_ptr_array.GetUpperBound();
+	int npoints = envelope_ptr_array.GetAt(0)->GetEnvelopeSize();
+	CEnvelope* pC = chanlistitem_ptr_array[0]->pEnvelopeAbcissa;
 	int xextent = pC->GetnElements();		// n elements stored in one Envelope	
 	int index1 = point.x -m_cxjitter;		// horizontal jitter backwards
 	int index2 = index1 + m_cxjitter;		// horiz jitter forwards
@@ -1566,7 +1566,7 @@ int CLineViewWnd::DoesCursorHitCurve(CPoint point)
 		int ijitter = MulDiv(m_cyjitter, GetChanlistYextent(chan), -m_yVE);
 		int valmax = ival+ijitter;			// mouse max
 		int valmin = ival-ijitter;			// mouse min
-		pC = m_pChanlistItemArray[chan]->pEnvelopeOrdinates;
+		pC = chanlistitem_ptr_array[chan]->pEnvelopeOrdinates;
 			
 		// loop around horizontal jitter...
 		for (int index=index1; index<index2 && chanfound<0; index++)
@@ -1607,7 +1607,7 @@ int CLineViewWnd::DoesCursorHitCurve(CPoint point)
 void CLineViewWnd::MoveHZtagtoVal(int i, int val)
 {	
 	int chan = GetHZtagChan(i);
-	CChanlistItem* pDL = m_pChanlistItemArray[chan];
+	CChanlistItem* pDL = chanlistitem_ptr_array[chan];
 	m_XORyext = pDL->GetYextent();			// store extent
 	m_zero = pDL->GetYzero();				// store zero	
 	m_ptLast.y = MulDiv(GetHZtagVal(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
@@ -1642,7 +1642,7 @@ void CLineViewWnd::HighlightData(CDC* pDC, int chan)
 	// loop to display data	
 
 	// pointer to descriptor
-	CChanlistItem* pDL = m_pChanlistItemArray[chan];
+	CChanlistItem* pDL = chanlistitem_ptr_array[chan];
 	long* pPolypoints_X = (long*) &m_PolyPoints[0];	// address first abcissa	
 	for (int i=3; i<m_pDWintervals->GetSize(); i++, i++)
 	{
@@ -1704,7 +1704,7 @@ void CLineViewWnd::ADdisplayStart(int chsamples)
 	// init parameters related to AD display
 	m_bADbuffers = TRUE;							// yes, display ADbuffers
 	m_lADbufferdone = 0;							// length of data already displayed
-	CEnvelope* pC = m_pEnvelopesArray.GetAt(0);	
+	CEnvelope* pC = envelope_ptr_array.GetAt(0);	
 	pC->FillEnvelopeWithAbcissaEx(1, m_displayRect.right-1, chsamples);
 	pC->ExportToPolyPts((long*) &m_PolyPoints[0]);
 	SetbUseDIB(FALSE); //TRUE);
@@ -1791,7 +1791,7 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 	pDC->FillSolidRect(&rect, m_parms.crScopeFill);
 
 	CPen *ppenOld = (CPen*) pDC->SelectStockObject(BLACK_PEN);
-	CChanlistItem* pDL = m_pChanlistItemArray[0];
+	CChanlistItem* pDL = chanlistitem_ptr_array[0];
 	pDC->SetMapMode (MM_ANISOTROPIC);		// display in anisotropic mode
 	pDC->SetViewportExt (m_xVE, m_yVE);
 	pDC->SetViewportOrg (m_xVO, m_yVO);
@@ -1799,10 +1799,10 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 	pDC->SetWindowOrg (0, 0);				//pDL->GetYzero());
 	int yVE = m_yVE;
 
-	for (int ichan = 0; ichan<m_pChanlistItemArray.GetSize(); ichan++)
+	for (int ichan = 0; ichan<chanlistitem_ptr_array.GetSize(); ichan++)
 	{
 		// load channel descriptors
-		pDL = m_pChanlistItemArray[ichan];
+		pDL = chanlistitem_ptr_array[ichan];
 		CPen tempPen;
 		tempPen.CreatePen(PS_SOLID, 0, m_colorTable[pDL->GetColor()]);	
 		pDC->SelectObject(&tempPen);
@@ -1889,16 +1889,16 @@ void CLineViewWnd::Serialize( CArchive& ar )
 		ar << m_lxLast;				// file index of last pt in the Envelopes
 		ar << m_npixels;			// nb pixels displayed horizontally	
 
-		int nenvelopes = m_pEnvelopesArray.GetSize();
+		int nenvelopes = envelope_ptr_array.GetSize();
 		ar << nenvelopes;
-		int nchanlistItems = m_pChanlistItemArray.GetSize();
+		int nchanlistItems = chanlistitem_ptr_array.GetSize();
 		ar << nchanlistItems;
 		
 		for (int i=0; i< nenvelopes; i++)
-			m_pEnvelopesArray[i]->Serialize(ar);
+			envelope_ptr_array[i]->Serialize(ar);
 
 		for (int i=0; i< nchanlistItems; i++)
-			m_pChanlistItemArray[i]->Serialize(ar);
+			chanlistitem_ptr_array[i]->Serialize(ar);
 	} 
 	else
 	{		
@@ -1917,44 +1917,44 @@ void CLineViewWnd::Serialize( CArchive& ar )
 		ar >> nchanlistItems;		
 
 		// CEnvelope array
-		if (m_pEnvelopesArray.GetSize() > nenvelopes)
+		if (envelope_ptr_array.GetSize() > nenvelopes)
 		{			
-			for (int i=m_pEnvelopesArray.GetUpperBound(); i>= nenvelopes; i--)
-				delete m_pEnvelopesArray[i];				
-			m_pEnvelopesArray.SetSize(nenvelopes);
+			for (int i=envelope_ptr_array.GetUpperBound(); i>= nenvelopes; i--)
+				delete envelope_ptr_array[i];				
+			envelope_ptr_array.SetSize(nenvelopes);
 		}
-		else if (m_pEnvelopesArray.GetSize() < nenvelopes)
+		else if (envelope_ptr_array.GetSize() < nenvelopes)
 		{
-			int nenvelope0 = m_pEnvelopesArray.GetSize();
-			m_pEnvelopesArray.SetSize(nenvelopes);
+			int nenvelope0 = envelope_ptr_array.GetSize();
+			envelope_ptr_array.SetSize(nenvelopes);
 			for (int i=nenvelope0; i < nenvelopes; i++)
-				m_pEnvelopesArray[i] = new CEnvelope; // (CEnvelope*)
+				envelope_ptr_array[i] = new CEnvelope; // (CEnvelope*)
 		}
 		for (int i=0; i< nenvelopes; i++)
-			m_pEnvelopesArray[i]->Serialize(ar);
+			envelope_ptr_array[i]->Serialize(ar);
 
 		// ChanList array
-		if (m_pChanlistItemArray.GetSize() > nchanlistItems)
+		if (chanlistitem_ptr_array.GetSize() > nchanlistItems)
 		{
-			for (int i=m_pChanlistItemArray.GetUpperBound(); i>= nchanlistItems; i--)
-				delete m_pChanlistItemArray[i];
-			m_pChanlistItemArray.SetSize(nchanlistItems);
+			for (int i=chanlistitem_ptr_array.GetUpperBound(); i>= nchanlistItems; i--)
+				delete chanlistitem_ptr_array[i];
+			chanlistitem_ptr_array.SetSize(nchanlistItems);
 			
 		}
-		else if (m_pChanlistItemArray.GetSize() < nchanlistItems)
+		else if (chanlistitem_ptr_array.GetSize() < nchanlistItems)
 		{
-			int nchanlistItems0 = m_pChanlistItemArray.GetSize();
-			m_pChanlistItemArray.SetSize(nchanlistItems);
+			int nchanlistItems0 = chanlistitem_ptr_array.GetSize();
+			chanlistitem_ptr_array.SetSize(nchanlistItems);
 			for (int i=nchanlistItems0; i < nchanlistItems; i++)
-				m_pChanlistItemArray[i] = new CChanlistItem; // (CChanlistItem*) 
+				chanlistitem_ptr_array[i] = new CChanlistItem; // (CChanlistItem*) 
 		}
 		int ix = 0;
 		int iy = 0;
 		for (int i=0; i< nchanlistItems; i++)
 		{
-			m_pChanlistItemArray[i]->Serialize(ar);
-			m_pChanlistItemArray[i]->GetEnvelopeArrayIndexes(ix, iy);
-			m_pChanlistItemArray[i]->SetEnvelopeArrays(m_pEnvelopesArray.GetAt(ix), ix, m_pEnvelopesArray.GetAt(iy), iy);
+			chanlistitem_ptr_array[i]->Serialize(ar);
+			chanlistitem_ptr_array[i]->GetEnvelopeArrayIndexes(ix, iy);
+			chanlistitem_ptr_array[i]->SetEnvelopeArrays(envelope_ptr_array.GetAt(ix), ix, envelope_ptr_array.GetAt(iy), iy);
 		}
 	}	
 

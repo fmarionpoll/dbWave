@@ -26,8 +26,8 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_DA_CHANNELS };
-	CArray <OUTPUTPARMS, OUTPUTPARMS> outputParmsArray;
-	CArray <CComboBox*, CComboBox*> m_pcombos;
+	CArray <OUTPUTPARMS, OUTPUTPARMS> outputparms_array;
+	CArray <CComboBox*, CComboBox*> combobox_ptr_array;
 	BOOL m_bChannel2;
 
 protected:

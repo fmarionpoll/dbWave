@@ -110,8 +110,10 @@ public:
 	inline CDaoRecordset* DBGetRecordset()			{ return &m_pDB->m_mainTableSet; }
 	inline void DBRefreshQuery()					{ if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery();}
 	void		DBDeleteCurrentRecord();
-	CString		DBGetCurrentDatFileName(BOOL bTest = FALSE);
-	CString		DBGetCurrentSpkFileName(BOOL bTest = FALSE);
+	CString		DBGetCurrentDatFileName(const BOOL bTest = FALSE);
+	BOOL		DBSetCurrentDatFileName(const BOOL b_test = FALSE);
+	CString		DBGetCurrentSpkFileName(const BOOL bTest = FALSE);
+	BOOL		DBSetCurrentSpkFileName(const BOOL bTest = FALSE);
 	CString		DBDefineCurrentSpikeFileName();
 	inline void DBSetDataLen(long len) { m_pDB->SetDataLen(len); }
 	long		DBGetDataLen();
@@ -125,11 +127,11 @@ public:
 	long		DBGetCurrentRecordPosition();
 	long		DBGetCurrentRecordID();
 	inline BOOL	DBSetCurrentRecordPosition(long ifile) { return m_pDB->SetIndexCurrentFile(ifile); }
-	inline BOOL	DBMoveToID(long recordID)			{ return m_pDB->MoveToID(recordID); }
-	inline BOOL DBMoveFirst()						{ return m_pDB->MoveRecord(ID_RECORD_FIRST); }
-	inline BOOL DBMoveNext()						{ return m_pDB->MoveRecord(ID_RECORD_NEXT); }
-	inline BOOL DBMovePrev()						{ return m_pDB->MoveRecord(ID_RECORD_PREV); }
-	inline BOOL DBMoveLast()						{ return m_pDB->MoveRecord(ID_RECORD_LAST); }
+	inline BOOL	DBMoveToID(long recordID)	{ return m_pDB->MoveToID(recordID); }
+	inline BOOL DBMoveFirst()				{ return m_pDB->MoveRecord(ID_RECORD_FIRST); }
+	inline BOOL DBMoveNext()				{ return m_pDB->MoveRecord(ID_RECORD_NEXT); }
+	inline BOOL DBMovePrev()				{ return m_pDB->MoveRecord(ID_RECORD_PREV); }
+	inline BOOL DBMoveLast()				{ return m_pDB->MoveRecord(ID_RECORD_LAST); }
 
 protected:
 	BOOL		OpenDatabase (LPCTSTR lpszPathName);

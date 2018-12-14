@@ -83,8 +83,8 @@ void ADIntervalsDlg::OnOK()
 	m_acqdef.buffersize = m_bufferWsize * m_acqdef.scan_count;
 	m_acqdef.bufferNitems = m_bufferNitems;
 	m_acqdef.sample_count = static_cast<long>(m_acqduration * m_acqdef.scan_count * m_adratechan);
-	m_acqdef.bOnlineDisplay = dynamic_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
-	m_acqdef.bADwritetofile= dynamic_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
+	m_acqdef.bOnlineDisplay = ((CButton*)GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
+	m_acqdef.bADwritetofile= ((CButton*)GetDlgItem(IDC_WRITETODISK))->GetCheck();
 	m_acqdef.data_flow = (GetCheckedRadioButton(IDC_CONTINUOUS, IDC_BURST)==IDC_CONTINUOUS)? 0: 1;
 	m_acqdef.duration = m_acqduration;
 
@@ -140,8 +140,8 @@ BOOL ADIntervalsDlg::OnInitDialog()
 	if (0.0f == m_ratemin) m_ratemin=0.1f;
 	if (0.0f == m_ratemax) m_ratemax=50000.f;
 
-	dynamic_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(m_acqdef.bOnlineDisplay);
-	dynamic_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(m_acqdef.bADwritetofile);
+	((CButton*)GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(m_acqdef.bOnlineDisplay);
+	((CButton*)GetDlgItem(IDC_WRITETODISK))->SetCheck(m_acqdef.bADwritetofile);
 	auto i_id = (m_acqdef.data_flow == 0)? IDC_CONTINUOUS: IDC_BURST;
 	CheckRadioButton(IDC_CONTINUOUS, IDC_BURST, i_id);
 

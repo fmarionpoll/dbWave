@@ -95,7 +95,7 @@ public:
 // Attributes
 protected:
 	CWnd*	m_parent;			// handle to window parent
-	CPtrArray m_props; 				// CCtrlProps props relative to resizable controls
+	CArray < CCtrlProp*, CCtrlProp*> ctrlprop_ptr_array; 				// CCtrlProps props relative to resizable controls
 	SIZE	m_DialogSize;			// current dialog size
 	SIZE	m_DlgMinSize;			// minimal dialog size
 	int 	m_BOTTOMBARHeight;		// height of system scrollbars

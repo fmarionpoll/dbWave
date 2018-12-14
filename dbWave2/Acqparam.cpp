@@ -567,11 +567,11 @@ CWaveChanArray::~CWaveChanArray()
 long CWaveChanArray::write(CFile *datafile)
 {
 	const auto p1 = datafile->GetPosition();
-	short array_size = m_chanArray.GetSize();
+	short array_size = wavechan_ptr_array.GetSize();
 	datafile->Write(&array_size, sizeof(short));
 	for (auto i = 0; i < array_size; i ++)
 	{
-		auto p_channel = m_chanArray[i];
+		auto p_channel = wavechan_ptr_array[i];
 		p_channel->Write(datafile);
 	}
 
@@ -592,12 +592,12 @@ BOOL CWaveChanArray::read(CFile *datafile)
 		channel_remove_all();					// erase existing data	
 		p_channel = new CWaveChan;
 		ASSERT(p_channel != NULL);
-		m_chanArray.Add(p_channel);
+		wavechan_ptr_array.Add(p_channel);
 		return FALSE;
 	}
 	
 	// same size, load data in the objects already created
-	if (m_chanArray.GetSize() == array_size)
+	if (wavechan_ptr_array.GetSize() == array_size)
 	{
 		do
 		{
@@ -617,7 +617,7 @@ BOOL CWaveChanArray::read(CFile *datafile)
 			ASSERT(p_channel != NULL);
 			if (!p_channel->Read(datafile))
 				return FALSE;
-			m_chanArray.Add(p_channel);
+			wavechan_ptr_array.Add(p_channel);
 			n++;		
 		} while (n < array_size);
 	}
@@ -632,7 +632,7 @@ CWaveChanArray& CWaveChanArray::operator = (const CWaveChanArray& arg)
 {
 	if (this != &arg) {
 
-		const auto n_items = arg.m_chanArray.GetSize();// source size
+		const auto n_items = arg.wavechan_ptr_array.GetSize();// source size
 		channel_remove_all();					// erase existing data
 		for (auto i = 0; i < n_items; i++)	// loop over n items
 		{
@@ -648,22 +648,22 @@ CWaveChanArray& CWaveChanArray::operator = (const CWaveChanArray& arg)
 
 CWaveChan* CWaveChanArray::get_p_channel(int i) const
 {	
-	return m_chanArray.GetAt(i);
+	return wavechan_ptr_array.GetAt(i);
 }
 
 void CWaveChanArray::channel_remove_all()
 {
-	for (auto i = 0; i < m_chanArray.GetSize(); i++)
+	for (auto i = 0; i < wavechan_ptr_array.GetSize(); i++)
 	{
-		const auto p = m_chanArray[i];
+		const auto p = wavechan_ptr_array[i];
 		delete p;
 	}	
-	m_chanArray.RemoveAll();
+	wavechan_ptr_array.RemoveAll();
 }
 
 int CWaveChanArray::channel_add(CWaveChan *arg)
 {
-	return m_chanArray.Add(arg);
+	return wavechan_ptr_array.Add(arg);
 }
 
 int CWaveChanArray::channel_add()
@@ -677,32 +677,32 @@ void CWaveChanArray::channel_insert(const int i)
 {
 	const auto p = new CWaveChan;
 	ASSERT(p != NULL);
-	m_chanArray.InsertAt(i, p, 1);
+	wavechan_ptr_array.InsertAt(i, p, 1);
 }
 
 void CWaveChanArray::channel_remove(const int i)
 {
-	const auto p = m_chanArray[i];
+	const auto p = wavechan_ptr_array[i];
 	delete p;
-	m_chanArray.RemoveAt(i);
+	wavechan_ptr_array.RemoveAt(i);
 }
 
 int CWaveChanArray::channel_get_number() const
 {
-	return m_chanArray.GetSize();
+	return wavechan_ptr_array.GetSize();
 }
 
 int CWaveChanArray::channel_set_number(const int i)
 {
-	if (i < m_chanArray.GetSize())
+	if (i < wavechan_ptr_array.GetSize())
 	{
-		for (auto j = m_chanArray.GetUpperBound(); j>= i; j--)
+		for (auto j = wavechan_ptr_array.GetUpperBound(); j>= i; j--)
 			channel_remove(j);
 	}
-	else if (i > m_chanArray.GetSize())
-		for (auto j = m_chanArray.GetSize(); j< i; j++)
+	else if (i > wavechan_ptr_array.GetSize())
+		for (auto j = wavechan_ptr_array.GetSize(); j< i; j++)
 			channel_add();
-	return m_chanArray.GetSize();
+	return wavechan_ptr_array.GetSize();
 }
 
 
@@ -713,13 +713,13 @@ void CWaveChanArray::Serialize(CArchive & ar)
 	{
 		version=1;
 		ar << version;				// save version number
-		const int n_items = m_chanArray.GetSize();
+		const int n_items = wavechan_ptr_array.GetSize();
 		ar << n_items;				// save number of items
 		if (n_items >0)				// loop to save each CWaveChan
 		{
 			for (auto i=0; i<n_items; i++)
 			{
-				auto* p_item = static_cast<CWaveChan*>(m_chanArray.GetAt(i));
+				auto* p_item = static_cast<CWaveChan*>(wavechan_ptr_array.GetAt(i));
 				p_item->Serialize(ar);
 			}
 		}
@@ -737,7 +737,7 @@ void CWaveChanArray::Serialize(CArchive & ar)
 				auto pItem = new CWaveChan;
 				ASSERT(pItem != NULL);
 				pItem->Serialize(ar);
-				m_chanArray.Add(pItem);
+				wavechan_ptr_array.Add(pItem);
 			}
 		}
 	}

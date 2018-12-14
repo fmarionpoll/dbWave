@@ -22,7 +22,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // parameters
 protected:
-	CPtrArray	m_pHistarray;	// array of DWord array containing histogram
+	CArray <CDWordArray*, CDWordArray*>	histogram_ptr_array;	// array of DWord array containing histogram
     CSpikeList* m_pSL;
 
 	long 	m_lFirst;			// time index of first pt displayed

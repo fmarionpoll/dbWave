@@ -58,7 +58,7 @@ public:
 
 	// Generated message map functions
 protected:
-	CArray <CDataListCtrlRowObject*, CDataListCtrlRowObject*> m_ptrArray;		// array of cached data
+	CArray <CDataListCtrlRowObject*, CDataListCtrlRowObject*> datalistctrlrowobject_prt_array;		// array of cached data
 	CImageList	m_imagelist;	// list of bitmap images
 	static int	m_icolwidth[NCOLS];
 	CUIntArray*	m_picolwidth;

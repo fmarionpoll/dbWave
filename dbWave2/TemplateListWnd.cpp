@@ -22,7 +22,7 @@ void CTemplateListWnd::operator = (const CTemplateListWnd& arg)
 {	
 	DeleteAllTemplates();
 	m_tpl0 = arg.m_tpl0;
-	for (int i=0; i< arg.m_ptpl.GetSize(); i++)
+	for (int i=0; i< arg.templatewnd_ptr_array.GetSize(); i++)
 	{
 		CTemplateWnd* pSource = arg.GetTemplateWnd(i);
 		InsertTemplate(i, 0);
@@ -63,10 +63,10 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 
 		// serialize templates
 		m_tpl0.Serialize(ar);
-		ar << m_ptpl.GetSize();
-		if (m_ptpl.GetSize() > 0)
+		ar << templatewnd_ptr_array.GetSize();
+		if (templatewnd_ptr_array.GetSize() > 0)
 		{
-			for (int i=0; i< m_ptpl.GetSize(); i++)
+			for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 			{
 				CTemplateWnd* pS = GetTemplateWnd(i);
 				pS->Serialize(ar);
@@ -135,12 +135,12 @@ CTemplateListWnd::CTemplateListWnd(): m_globaldist(0), m_iItemDrag(0), m_iItemDr
 
 CTemplateListWnd::~CTemplateListWnd()
 {
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 	{
-		CTemplateWnd* pS = (CTemplateWnd*) m_ptpl.GetAt(i);
+		CTemplateWnd* pS = templatewnd_ptr_array.GetAt(i);
 		delete pS;
 	}
-	m_ptpl.RemoveAll();
+	templatewnd_ptr_array.RemoveAll();
 }
 
 // ----------------------------------------------------------------------------
@@ -166,7 +166,7 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 
 	// store data
 	int index = i;
-	m_ptpl.InsertAt(index, pWnd, 1);
+	templatewnd_ptr_array.InsertAt(index, pWnd, 1);
 
 	// insert item if window was created
 	if (::IsWindow(m_hWnd))
@@ -186,7 +186,7 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 }
 void CTemplateListWnd::TransferTemplateData()
 {
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 	{		
 		LV_ITEM item;
 		item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
@@ -194,7 +194,7 @@ void CTemplateListWnd::TransferTemplateData()
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
 		item.pszText = nullptr;
-		item.lParam = (LPARAM) m_ptpl.GetAt(i);
+		item.lParam = (LPARAM) templatewnd_ptr_array.GetAt(i);
 		int index = InsertItem(&item);
 		ASSERT(index >= 0);
 	}
@@ -220,11 +220,11 @@ int CTemplateListWnd::InsertTemplateData(int i, int classID)
 	pWnd->m_globalstd = m_globalstd;
 
 	// store data
-	m_ptpl.InsertAt(i, pWnd, 1);
+	templatewnd_ptr_array.InsertAt(i, pWnd, 1);
 
 	// get item index
 	int index = -1;
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 	{
 		if (GetTemplateclassID(i) == classID)
 		{
@@ -241,16 +241,16 @@ BOOL CTemplateListWnd::DeleteAllTemplates()
 {
 	m_tpl0.tInit();
 	BOOL flag = TRUE;
-	if (m_ptpl.GetSize() > 0)
+	if (templatewnd_ptr_array.GetSize() > 0)
 	{
 		if (::IsWindow(m_hWnd))
 			DeleteAllItems();
-		for (int i=0; i< m_ptpl.GetSize(); i++)
+		for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 		{
-			CTemplateWnd* pS = (CTemplateWnd*) m_ptpl.GetAt(i);
+			CTemplateWnd* pS = templatewnd_ptr_array.GetAt(i);
 			delete pS;
 		}
-		m_ptpl.RemoveAll();
+		templatewnd_ptr_array.RemoveAll();
 	}
 
 	return flag;
@@ -259,13 +259,13 @@ BOOL CTemplateListWnd::DeleteAllTemplates()
 void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
 {
 	// sort m_ptpl
-	for (int i=0; i< m_ptpl.GetSize()-1; i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize()-1; i++)
 	{
 		int IDi = GetTemplateclassID(i);
 		int IDjmin = IDi;
 		int jmin = i;
 		BOOL bfound = FALSE;
-		for (int j=i+1; j <m_ptpl.GetSize(); j++)
+		for (int j=i+1; j <templatewnd_ptr_array.GetSize(); j++)
 		{
 			int IDj = GetTemplateclassID(j);
 			if (bUp)
@@ -290,13 +290,13 @@ void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
 		// exchange items in m_ptpl
 		if (bfound)
 		{
-			CTemplateWnd* pWnd = (CTemplateWnd*) m_ptpl.GetAt(i);
-			m_ptpl.SetAt(i, m_ptpl.GetAt(jmin));
-			m_ptpl.SetAt(jmin, pWnd);
+			CTemplateWnd* pWnd = templatewnd_ptr_array.GetAt(i);
+			templatewnd_ptr_array.SetAt(i, templatewnd_ptr_array.GetAt(jmin));
+			templatewnd_ptr_array.SetAt(jmin, pWnd);
 		}
 	}
 	// affect corresp pWnd to CListCtrl
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 	{
 		LVITEM item;
 		item.iItem=i;
@@ -309,7 +309,7 @@ void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
 		item.pszText = nullptr;
-		item.lParam = (LPARAM) m_ptpl.GetAt(i);
+		item.lParam = (LPARAM) templatewnd_ptr_array.GetAt(i);
 		SetItem(&item);
 	}
 }
@@ -317,17 +317,17 @@ void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
 void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClasses, int minclassnb)
 {
 	// sort m_ptpl
-	for (int i=0; i< m_ptpl.GetSize()-1; i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize()-1; i++)
 	{
-		CTemplateWnd* pWndi = (CTemplateWnd*) m_ptpl.GetAt(i);
+		CTemplateWnd* pWndi = templatewnd_ptr_array.GetAt(i);
 		CTemplateWnd* pWndjfound = pWndi;
 		int IDi = pWndi->GetNitems();	
 		int IDjfound = IDi;
 		int jfound = i;
 		BOOL bfound = FALSE;
-		for (int j=i+1; j <m_ptpl.GetSize(); j++)
+		for (int j=i+1; j <templatewnd_ptr_array.GetSize(); j++)
 		{
-			CTemplateWnd* pWndj = (CTemplateWnd*) m_ptpl.GetAt(j);
+			CTemplateWnd* pWndj = templatewnd_ptr_array.GetAt(j);
 			int IDj = pWndj->GetNitems();	
 			if (bUp)
 			{
@@ -353,8 +353,8 @@ void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClass
 		// exchange items in m_ptpl
 		if (bfound)
 		{			
-			m_ptpl.SetAt(i, pWndjfound);
-			m_ptpl.SetAt(jfound, pWndi);
+			templatewnd_ptr_array.SetAt(i, pWndjfound);
+			templatewnd_ptr_array.SetAt(jfound, pWndi);
 		}
 
 	}
@@ -362,15 +362,15 @@ void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClass
 
 	if (bUpdateClasses)
 	{
-		for (int i=0; i< m_ptpl.GetSize(); i++)
+		for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 		{
-			CTemplateWnd* pWndi = (CTemplateWnd*) m_ptpl.GetAt(i);
+			CTemplateWnd* pWndi = templatewnd_ptr_array.GetAt(i);
 			pWndi->m_classID = minclassnb + i;
 		}
 	}
 
 	// affect corresp pWnd to CListCtrl
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 	{
 		LVITEM item;
 		item.iItem=i;
@@ -382,7 +382,7 @@ void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClass
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
 		item.pszText = nullptr;
-		item.lParam = (LPARAM) m_ptpl.GetAt(i);
+		item.lParam = (LPARAM) templatewnd_ptr_array.GetAt(i);
 		SetItem(&item);
 	}
 }
@@ -399,7 +399,7 @@ BOOL CTemplateListWnd::DeleteItem(int idelete)
 	{
 		CTemplateWnd* pWnd = (CTemplateWnd* ) GetItemData(idelete);	
 		delete pWnd;
-		m_ptpl.RemoveAt(idelete);
+		templatewnd_ptr_array.RemoveAt(idelete);
 	}
 	return TRUE;
 }
@@ -462,9 +462,9 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		// search corresponding window
 		int item=-1;
-		for (int i=0; i< m_ptpl.GetSize(); i++)
+		for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 		{
-			if ((CTemplateWnd*) m_ptpl.GetAt(i) == pS)
+			if (templatewnd_ptr_array.GetAt(i) == pS)
 			{
 				item=i;
 				break;
@@ -472,7 +472,7 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 		pS->DestroyWindow();
 		delete pS;
-		m_ptpl.RemoveAt(item);
+		templatewnd_ptr_array.RemoveAt(item);
 		pNMListView->lParam = NULL;
 	}
 	*pResult = 0;
@@ -483,7 +483,7 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 void CTemplateListWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {	
 	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
-	RedrawItems(0, m_ptpl.GetSize()-1);
+	RedrawItems(0, templatewnd_ptr_array.GetSize()-1);
 }
 
 // ---------------------------------------------------------------------
@@ -491,7 +491,7 @@ void CTemplateListWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar
 void CTemplateListWnd::UpdateTemplateLegends(LPCSTR pszType)
 {
 	TCHAR szItem[20]; 
-	for (int i= m_ptpl.GetSize()-1; i>= 0; i--)
+	for (int i= templatewnd_ptr_array.GetSize()-1; i>= 0; i--)
 	{
 		CTemplateWnd* ptplWnd = GetTemplateWnd(i);
 		ptplWnd->m_csID = pszType;
@@ -504,11 +504,11 @@ void CTemplateListWnd::UpdateTemplateLegends(LPCSTR pszType)
 void CTemplateListWnd::UpdateTemplateBaseClassID(int inewlowestclassID)
 { 
 	// first, get lowest template class ID
-	if (m_ptpl.GetSize() <1)
+	if (templatewnd_ptr_array.GetSize() <1)
 		return;
 	CTemplateWnd* ptplWnd = GetTemplateWnd(0);
 	int lowestID = ptplWnd->m_classID;
-	for (int i= m_ptpl.GetSize()-1; i>= 0; i--)
+	for (int i= templatewnd_ptr_array.GetSize()-1; i>= 0; i--)
 	{
 		CTemplateWnd* ptplWnd = GetTemplateWnd(i);
 		if (lowestID > ptplWnd->m_classID)
@@ -517,7 +517,7 @@ void CTemplateListWnd::UpdateTemplateBaseClassID(int inewlowestclassID)
 	// now change the id of each template and update it's text
 	TCHAR szItem[20];
 	int delta = lowestID -inewlowestclassID;
-	for (int i= m_ptpl.GetSize()-1; i>= 0; i--)
+	for (int i= templatewnd_ptr_array.GetSize()-1; i>= 0; i--)
 	{
 		CTemplateWnd* ptplWnd = GetTemplateWnd(i);
 		ptplWnd->m_classID = ptplWnd->m_classID - delta; 
@@ -544,7 +544,7 @@ void CTemplateListWnd::SetTemplateclassID(int item, LPCTSTR pszType, int classID
 
 BOOL CTemplateListWnd::tInit(int i)
 {
-	BOOL flag = (i>= 0) && (i < m_ptpl.GetSize());
+	BOOL flag = (i>= 0) && (i < templatewnd_ptr_array.GetSize());
 	if (flag)
 		GetTemplateWnd(i)->tInit();
 	return flag;
@@ -561,7 +561,7 @@ BOOL CTemplateListWnd::tAdd(short* pSource)
 
 BOOL CTemplateListWnd::tAdd(int i, short* pSource)
 {
-	BOOL flag = (i>= 0) && (i < m_ptpl.GetSize());
+	BOOL flag = (i>= 0) && (i < templatewnd_ptr_array.GetSize());
 	if (flag)
 	{
 		GetTemplateWnd(i)->tAdd(pSource);		
@@ -573,7 +573,7 @@ BOOL CTemplateListWnd::tAdd(int i, short* pSource)
 
 BOOL CTemplateListWnd::tPower(int i, double* xpower)
 {
-	BOOL flag = (i>= 0) && (i < m_ptpl.GetSize());
+	BOOL flag = (i>= 0) && (i < templatewnd_ptr_array.GetSize());
 	if (flag)
 		*xpower = GetTemplateWnd(i)->tPower();
 	return flag;
@@ -583,7 +583,7 @@ BOOL CTemplateListWnd::tPower(int i, double* xpower)
 
 BOOL CTemplateListWnd::tWithin(int i, short* pSource)
 {
-	BOOL flag = (i>= 0) && (i < m_ptpl.GetSize());	
+	BOOL flag = (i>= 0) && (i < templatewnd_ptr_array.GetSize());	
 	if (flag)
 		flag = GetTemplateWnd(i)->tWithin(pSource, &m_hitrate);
 	return flag;
@@ -593,7 +593,7 @@ BOOL CTemplateListWnd::tWithin(int i, short* pSource)
 
 BOOL CTemplateListWnd::tMinDist(int i, short* pSource, int* poffsetmin, double* pdistmin)
 {
-	BOOL flag = (i>= 0) && (i < m_ptpl.GetSize());
+	BOOL flag = (i>= 0) && (i < templatewnd_ptr_array.GetSize());
 	if (flag)
 	{
 		*pdistmin = GetTemplateWnd(i)->tMinDist(pSource, poffsetmin);
@@ -606,7 +606,7 @@ BOOL CTemplateListWnd::tMinDist(int i, short* pSource, int* poffsetmin, double* 
 void CTemplateListWnd::tGlobalstats() 
 {
 	m_tpl0.tGlobalstats(&m_globalstd, &m_globaldist);
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 	{
 		GetTemplateWnd(i)->SetGlobalstd(&m_globalstd);
 	}
@@ -624,7 +624,7 @@ void CTemplateListWnd::SetTemplateLength(int spklen, int tpleft, int tpright)
 	
 	int len = tpright - tpleft +1;
 	m_tpllen = spklen;
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 		GetTemplateWnd(i)->SetTemplateLength(spklen, len, m_tpleft);
 	m_tpl0.SetTemplateLength(spklen, len, m_tpleft);
 	m_tpl0.tInit();
@@ -638,7 +638,7 @@ void CTemplateListWnd::SetHitRate_Tolerance(int* phitrate, float* ptolerance)
 	if (m_ktolerance != *ptolerance)
 	{
 		m_ktolerance = *ptolerance;
-		for (int i=0; i< m_ptpl.GetSize(); i++)
+		for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 			GetTemplateWnd(i)->SetkTolerance(&m_ktolerance);
 		m_tpl0.m_ktolerance = m_ktolerance;
 	}
@@ -650,7 +650,7 @@ void CTemplateListWnd::SetYWExtOrg(int extent, int zero)
 {
 	m_yextent = extent;
 	m_yzero = zero;
-	for (int i=0; i< m_ptpl.GetSize(); i++)
+	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 		GetTemplateWnd(i)->SetYWExtOrg(extent, zero);
 }
 

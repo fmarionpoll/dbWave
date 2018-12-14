@@ -3,7 +3,6 @@
 
 #include "StdAfx.h"
 #include "resource.h"
-#include "measureoptions.h"
 #include "MeasureProperties.h"
 
 #ifdef _DEBUG
@@ -22,10 +21,10 @@ CMeasureProperties::CMeasureProperties(CWnd* p_wnd_parent, const int select_acti
 	// active one is to call SetActivePage().
 
 	m_plineview = nullptr;
-	AddPage(&m_Page3);	// HZ edit
-	AddPage(&m_Page2);	// VT tags edit
-	AddPage(&m_Page1);	// measure options
-	AddPage(&m_Page4);	// measure results
+	AddPage(&m_measure_hz_tags_page);	// measure options
+	AddPage(&m_measure_vt_tags_page);	// VT tags edit
+	AddPage(&m_measure_options_page);	// HZ edit
+	AddPage(&m_measure_results_page);	// measure results
 	SetActivePage(select_active_page);
 }
 
@@ -44,30 +43,34 @@ END_MESSAGE_MAP()
 
 BOOL CMeasureProperties::OnInitDialog() 
 {
-	// vertical tags
-	m_Page2.m_plineview=m_plineview;
-	m_Page2.m_pMO = m_pMO;
-	m_Page2.m_samplingrate = m_samplingrate;
-	m_Page2.m_pdatDoc=m_pdatDoc;
-	m_Page2.m_pdbDoc=m_pdbDoc;
+	// all
+	m_measure_hz_tags_page.m_plineview = m_plineview;
+	m_measure_vt_tags_page.m_plineview = m_plineview;
+	m_measure_options_page.m_plineview = m_plineview;
+	m_measure_results_page.m_plineview = m_plineview;
+
+	m_measure_hz_tags_page.m_pMO = m_pMO;
+	m_measure_vt_tags_page.m_pMO = m_pMO;
+	m_measure_options_page.m_pMO = m_pMO;
+	m_measure_results_page.m_pMO = m_pMO;
+
+	m_measure_hz_tags_page.m_pdatDoc = m_pdatDoc;
+	m_measure_vt_tags_page.m_pdatDoc = m_pdatDoc;
+	m_measure_options_page.m_pdatDoc = m_pdatDoc;
+	m_measure_results_page.m_pdatDoc = m_pdatDoc;
+
+	m_measure_hz_tags_page.m_pdbDoc = m_pdbDoc;
+	m_measure_vt_tags_page.m_pdbDoc=m_pdbDoc;
+	m_measure_options_page.m_pdbDoc = m_pdbDoc;
+	m_measure_results_page.m_pdbDoc = m_pdbDoc;
 
 	// measure options
-	m_Page1.m_pMO = m_pMO;
-	m_Page1.m_plineview=m_plineview;	
-	m_Page1.m_pdatDoc=m_pdatDoc;
-	m_Page1.m_pdbDoc=m_pdbDoc;
+	// vertical tags
 
 	// HZ tags
-	m_Page3.m_plineview=m_plineview;	
-	m_Page3.m_pMO = m_pMO;
-	m_Page3.m_pdatDoc=m_pdatDoc;
-	m_Page3.m_pdbDoc=m_pdbDoc;
+	m_measure_vt_tags_page.m_samplingrate = m_samplingrate;
 
 	// measure
-	m_Page4.m_plineview= m_plineview;
-	m_Page4.m_pdatDoc=m_pdatDoc;
-	m_Page4.m_pdbDoc=m_pdbDoc;
-	m_Page4.m_pMO=m_pMO;
-	m_Page4.m_currentchan=m_currentchan;
+	m_measure_results_page.m_currentchan=m_currentchan;
 	return CPropertySheet::OnInitDialog();
 }

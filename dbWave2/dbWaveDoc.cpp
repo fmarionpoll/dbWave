@@ -358,6 +358,15 @@ CString CdbWaveDoc::DBGetCurrentDatFileName(const BOOL b_test)
 	return filename;	
 }
 
+BOOL CdbWaveDoc::DBSetCurrentDatFileName(const BOOL b_test)
+{
+	m_currentDatafileName = m_pDB->GetDatFilenameFromCurrentRecord();
+	BOOL flag = true;
+	if (b_test) 
+		flag = IsFilePresent(m_currentDatafileName);
+	return flag;
+}
+
 CString CdbWaveDoc::DBGetCurrentSpkFileName(const BOOL b_test)
 {
 	m_currentSpikefileName = m_pDB->GetSpkFilenameFromCurrentRecord();
@@ -365,6 +374,15 @@ CString CdbWaveDoc::DBGetCurrentSpkFileName(const BOOL b_test)
 	if (b_test && !IsFilePresent(file_name))
 		file_name.Empty();
 	return file_name;
+}
+
+BOOL CdbWaveDoc::DBSetCurrentSpkFileName(const BOOL b_test)
+{
+	m_currentSpikefileName = m_pDB->GetSpkFilenameFromCurrentRecord();
+	BOOL flag = true;
+	if (b_test)
+		flag = IsFilePresent(m_currentSpikefileName);
+	return flag;
 }
 
 /////////////////////////////////////////////////////////////////////////////

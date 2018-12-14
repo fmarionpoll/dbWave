@@ -63,11 +63,11 @@ CSpikeHistWnd::~CSpikeHistWnd()
 
 void CSpikeHistWnd::RemoveHistData()
 {
-	if (m_pHistarray.GetSize() >0)	// delete objects pointed by elements
+	if (histogram_ptr_array.GetSize() >0)	// delete objects pointed by elements
 	{							// of m_pHistarray
-		for (int i=	m_pHistarray.GetUpperBound(); i>= 0; i--)
-			delete ((CDWordArray*) m_pHistarray[i]);
-		m_pHistarray.RemoveAll();		
+		for (int i=	histogram_ptr_array.GetUpperBound(); i>= 0; i--)
+			delete histogram_ptr_array[i];
+		histogram_ptr_array.RemoveAll();		
 	}
 }
 
@@ -123,11 +123,11 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* pDC)
 
 	//loop to display all histograms (but not the selected one)
 	CRect RectHistog;
-	CDWordArray* pDW;
+	
 	int i;
-	for (int ihist=0; ihist<m_pHistarray.GetSize(); ihist++)
+	for (int ihist=0; ihist<histogram_ptr_array.GetSize(); ihist++)
 	{
-		pDW = (CDWordArray*) m_pHistarray.GetAt(ihist);
+		CDWordArray* pDW = histogram_ptr_array.GetAt(ihist);
 		if (0 == pDW->GetSize())
 			continue;
 
@@ -166,6 +166,7 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* pDC)
 	if (m_plotmode == PLOT_ONECLASS)
 	{
 		color = BLACK_COLOR; 
+		CDWordArray* pDW = nullptr;
 		GetClassArray(m_selclass, pDW);
 		if (pDW  != nullptr)
 		{
@@ -218,14 +219,15 @@ void CSpikeHistWnd::GetClassArray(int iclass, CDWordArray*& pDW)
 {
 	// test if pDW at 0 position is the right one
 	if ((nullptr != pDW) && ((int) pDW->GetAt(0) == iclass))
-			return;
+		return;
+
 	// not found, scan the array
 	pDW = nullptr;
-	for (int i=1; i<m_pHistarray.GetSize(); i++)
+	for (int i=1; i<histogram_ptr_array.GetSize(); i++)
 	{
-		if( (int) ((CDWordArray*)m_pHistarray[i])->GetAt(0) == iclass)
+		if( (int) (histogram_ptr_array[i])->GetAt(0) == iclass)
 		{
-			pDW = (CDWordArray*)m_pHistarray[i];
+			pDW = histogram_ptr_array[i];
 			break;
 		}
 	}
@@ -238,21 +240,21 @@ void CSpikeHistWnd::GetClassArray(int iclass, CDWordArray*& pDW)
 LPTSTR CSpikeHistWnd::ExportAscii(LPTSTR lp)
 {
 	// print all ordinates line-by-line, differnt classes on same line
-	lp += wsprintf(lp, _T("Histogram\nnbins=%i\nnclasses=%i"), m_nbins, m_pHistarray.GetSize());
+	lp += wsprintf(lp, _T("Histogram\nnbins=%i\nnclasses=%i"), m_nbins, histogram_ptr_array.GetSize());
 	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), m_abcissamaxval, m_abcissaminval);
 	// export classes & points
 	lp += wsprintf(lp, _T("classes;\n"));
 	int i, j;
-	for (i=0; i<m_pHistarray.GetSize(); i++)
-		lp += wsprintf(lp, _T("%i\t"), (int) ((CDWordArray*)m_pHistarray[i])->GetAt(0));
+	for (i=0; i<histogram_ptr_array.GetSize(); i++)
+		lp += wsprintf(lp, _T("%i\t"), (int) (histogram_ptr_array[i])->GetAt(0));
 	lp--;	// erase \t and replace with \n	
 		
 	// loop through all points	
 	lp += wsprintf(lp, _T("\nvalues;\n"));
 	for (j=1; j<=m_nbins; j++)
 	{
-		for (i=0; i<m_pHistarray.GetSize(); i++)
-			lp += wsprintf(lp, _T("%i\t"), (int) ((CDWordArray*)m_pHistarray[i])->GetAt(j));
+		for (i=0; i<histogram_ptr_array.GetSize(); i++)
+			lp += wsprintf(lp, _T("%i\t"), (int) (histogram_ptr_array[i])->GetAt(j));
 		lp--;	// erase \t and replace with \n
 		lp += wsprintf(lp, _T("\n"));
 	}
@@ -442,11 +444,11 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 	if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECLASSONLY)
 	{
 		// get array corresp to m_selclass as well as histogram index
-		for (int i=1; i<m_pHistarray.GetSize(); i++)
+		for (int i=1; i<histogram_ptr_array.GetSize(); i++)
 		{
-			if ((int) ((CDWordArray*)m_pHistarray[i])->GetAt(0) == m_selclass)
+			if ((int) (histogram_ptr_array[i])->GetAt(0) == m_selclass)
 			{
-				pDW = (CDWordArray*)m_pHistarray[i];
+				pDW = histogram_ptr_array[i];
 				ihist = i;
 				break;
 			}					
@@ -469,9 +471,9 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 	// test other histograms
 	if (m_plotmode != PLOT_ONECLASSONLY && hitspk < 0)
 	{
-		for (int ihist=1; ihist<m_pHistarray.GetSize() && hitspk<0; ihist++)
+		for (int ihist=1; ihist<histogram_ptr_array.GetSize() && hitspk<0; ihist++)
 		{
-			pDW = (CDWordArray*) m_pHistarray.GetAt(ihist);
+			pDW = histogram_ptr_array.GetAt(ihist);
 			if (m_plotmode == PLOT_ONECLASS && ((int) pDW->GetAt(0)) == m_selclass)
 				continue;			
 			for (int i=mouseX1; i<=mouseX2; i++)
@@ -518,14 +520,14 @@ void CSpikeHistWnd::GetExtents()
 void CSpikeHistWnd::GetHistogLimits(int ihist)
 {
 	// for some unknown reason, m_pHistarray is set at zero when arriving here
-	if (m_pHistarray.GetSize() <= 0)
+	if (histogram_ptr_array.GetSize() <= 0)
 	{
 		CDWordArray* pDW = new (CDWordArray);	// init array
 		ASSERT(pDW != NULL);
-		m_pHistarray.Add(pDW);					// save pointer to this new array
-		ASSERT(m_pHistarray.GetSize() > 0);
+		histogram_ptr_array.Add(pDW);					// save pointer to this new array
+		ASSERT(histogram_ptr_array.GetSize() > 0);
 	}
-	CDWordArray* pDW = (CDWordArray*) m_pHistarray[ihist];
+	CDWordArray* pDW = histogram_ptr_array[ihist];
 	if (pDW->GetSize() <= 1)
 		return;
 	// Recherche de l'indice min et max de l'histograme
@@ -576,10 +578,9 @@ void CSpikeHistWnd::ReSize_And_Clear_Histograms(int nbins, int max, int min)
 	m_abcissamaxval = min+nbins*m_binsize;	// set max
 	
 	m_nbins = nbins;
-	CDWordArray* pDW;
-	for (int j=m_pHistarray.GetUpperBound(); j>= 0; j--)
+	for (int j=histogram_ptr_array.GetUpperBound(); j>= 0; j--)
 	{
-		pDW = (CDWordArray*) m_pHistarray[j];		
+		CDWordArray* pDW = histogram_ptr_array[j];
 		pDW->SetSize(nbins+1);
 		// erase all data from histogram
 		for (int i=1; i<= nbins; i++)
@@ -619,14 +620,14 @@ void CSpikeHistWnd::BuildHistFromWordArray(
 		RemoveHistData();
 
 	// for some unknown reason, m_pHistarray is set at zero when arriving here
-	if (m_pHistarray.GetSize() <= 0)
+	if (histogram_ptr_array.GetSize() <= 0)
 	{
 		CDWordArray* pDW = new (CDWordArray);	// init array
 		ASSERT(pDW != NULL);
-		m_pHistarray.Add(pDW);					// save pointer to this new array
-		ASSERT(m_pHistarray.GetSize() > 0);
+		histogram_ptr_array.Add(pDW);					// save pointer to this new array
+		ASSERT(histogram_ptr_array.GetSize() > 0);
 	}
-	CDWordArray* pDW0 = (CDWordArray*) m_pHistarray[0];
+	CDWordArray* pDW0 = histogram_ptr_array[0];
 	if (nbins != m_nbins || pDW0->GetSize() != (nbins+1))
 		ReSize_And_Clear_Histograms (nbins, max, min);
 
@@ -660,7 +661,7 @@ void CSpikeHistWnd::BuildHistFromWordArray(
 			{
 				pDW = new (CDWordArray);	// init array
 				ASSERT(pDW != NULL);
-				m_pHistarray.Add(pDW);		// save pointer to this new array
+				histogram_ptr_array.Add(pDW);		// save pointer to this new array
 				pDW->SetSize(nbins+1);
 				for (int i=1; i<= nbins; i++)
 					pDW->SetAt(i, 0);

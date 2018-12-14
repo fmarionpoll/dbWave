@@ -105,9 +105,9 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 	m_stimarrayCtrl.SetImageList(m_pimagelist, LVSIL_SMALL );
 
 	// hide/display combo and load data into listbox
-	int nArrays = m_pIntervalArrays.GetSize();
+	int nArrays = intervalsandlevels_ptr_array.GetSize();
 	ASSERT(nArrays == 1);
-	m_pstim = (CIntervalsAndLevels*)m_pIntervalArrays.GetAt(0);
+	m_pstim = intervalsandlevels_ptr_array.GetAt(0);
 	TransferIntervalsArrayToDialogList(m_pstim);
 
 	// update paste button (disabled if stimsaved is empty

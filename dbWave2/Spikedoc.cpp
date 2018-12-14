@@ -26,7 +26,7 @@ CSpikeDoc::CSpikeDoc()
 	m_acqrate = 1.f;
 	m_acqsize = 0;	
 	m_newpath="";
-	m_spklistArray.SetSize(1);
+	spikelist_array.SetSize(1);
 	m_currspklist = -1; //0;
 }
 
@@ -38,8 +38,8 @@ void CSpikeDoc::ClearData()
 		m_stimIntervals.intervalsArray.RemoveAll();
 		m_stimIntervals.nitems=0;
 	}
-	m_spklistArray.SetSize(1);
-	m_spklistArray[0].EraseData();
+	spikelist_array.SetSize(1);
+	spikelist_array[0].EraseData();
 }
 
 BOOL CSpikeDoc::OnNewDocument()
@@ -102,10 +102,10 @@ void CSpikeDoc::Serialize(CArchive& ar)
 		ar << nitems;						// W11
 		m_stimIntervals.Serialize(ar);
 	
-		nitems = m_spklistArray.GetSize();	// added Aug 23, 2005
+		nitems = spikelist_array.GetSize();	// added Aug 23, 2005
 		ar << nitems;
 		for (int i=0; i< nitems; i++)
-			m_spklistArray[i].Serialize(ar);
+			spikelist_array[i].Serialize(ar);
 		m_spkclass.Serialize(ar);
 	}
 	else
@@ -183,9 +183,9 @@ void CSpikeDoc::ReadBeforeVersion6(CArchive& ar, WORD wwVersion)
 		}
 	}
 	// read stimulus and spike classes
-	m_spklistArray.RemoveAll();
-	m_spklistArray.SetSize(1);
-	m_spklistArray[0].Serialize(ar);
+	spikelist_array.RemoveAll();
+	spikelist_array.SetSize(1);
+	spikelist_array[0].Serialize(ar);
 	m_spkclass.Serialize(ar);
 }
 
@@ -216,9 +216,9 @@ void CSpikeDoc::ReadVersion6(CArchive& ar)
 	}
 
 	// read stimulus and spike classes
-	m_spklistArray.RemoveAll();
-	m_spklistArray.SetSize(1);
-	m_spklistArray[0].Serialize(ar);
+	spikelist_array.RemoveAll();
+	spikelist_array.SetSize(1);
+	spikelist_array[0].Serialize(ar);
 	SortStimArray();
 	m_spkclass.Serialize(ar);
 }
@@ -245,14 +245,14 @@ void CSpikeDoc::ReadVersion7(CArchive& ar)
 		m_stimIntervals.Serialize(ar);
 	SortStimArray();
 
-	m_spklistArray.RemoveAll();
+	spikelist_array.RemoveAll();
 	ar >> isize;
 	//if (isize > UINT_MAX / sizeof(CSpikeList))  //SIZE_T_MAX/sizeof(TYPE))
 	//	return;
 
-	m_spklistArray.SetSize(isize);
+	spikelist_array.SetSize(isize);
 	for (int i=0; i< isize; i++)
-		m_spklistArray[i].Serialize(ar);
+		spikelist_array[i].Serialize(ar);
 	m_spkclass.Serialize(ar);
 }
 
@@ -301,7 +301,7 @@ BOOL CSpikeDoc::OnSaveDocument (LPCTSTR pszPathName)
 			{
 				int i = docname.ReverseFind('\\')+1;
 				if (i != -1)
-					docname.Mid(i);
+					docname = docname.Mid(i);
 				docname = m_newpath + docname;
 			}
 
@@ -381,11 +381,11 @@ BOOL CSpikeDoc::OnOpenDocument (LPCTSTR pszPathName)
 			f.Close();
 			SetModifiedFlag(FALSE);	
 			// update nb of classes
-			for (int i=0; i< m_spklistArray.GetSize(); i++)
+			for (int i=0; i< spikelist_array.GetSize(); i++)
 			{
-				if (!m_spklistArray[i].IsClassListValid())	// if class list not valid:
+				if (!spikelist_array[i].IsClassListValid())	// if class list not valid:
 				{
-					m_spklistArray[i].UpdateClassList();	// rebuild list of classes
+					spikelist_array[i].UpdateClassList();	// rebuild list of classes
 					SetModifiedFlag();						// and set modified flag
 				}
 			}
@@ -453,7 +453,7 @@ CString CSpikeDoc::GetFileInfos()
 	csOut += _T("*** SPIKE LIST ***\r\n");	
 	// test if empty spike list
 	long lnspikes=0;
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 	if (pspklist->GetTotalSpikes() > 0)
 		lnspikes = pspklist->GetTotalSpikes();		
 	wsprintf( psz,_T("n spikes = %li\r\n"), lnspikes);
@@ -474,7 +474,7 @@ CString CSpikeDoc::GetFileInfos()
 void CSpikeDoc::_ExportSpkLatencies (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, CString csFileComment, int ispklist, int iclass)
 {
 	CString csDummy;
-	CSpikeList* pspklist= &m_spklistArray[ispklist];
+	CSpikeList* pspklist= &spikelist_array[ispklist];
 	int totalspikes = pspklist->GetTotalSpikes();
 
 	// export time of nintervals first spikes
@@ -505,7 +505,7 @@ void CSpikeDoc::ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, in
 	// spike class: -1(one:selected); 0(all); 1(all:splitted)
 	int class0=0;
 	int class1=0;
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	if ((vdS->spikeclassoption ==-1 
 		|| vdS->spikeclassoption==1) 
@@ -543,7 +543,7 @@ void CSpikeDoc::ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, in
 void CSpikeDoc::_ExportSpkPSTH (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, CString csFileComment, int ispklist, int iclass)
 {
 	CString csDummy;
-	CSpikeList* pspklist= &m_spklistArray[ispklist];
+	CSpikeList* pspklist= &spikelist_array[ispklist];
 	// compute how much bins we need and the boundaries
 	int nbins;
 	float tspan;
@@ -648,7 +648,7 @@ void CSpikeDoc::_ExportSpkPSTH (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long*
 void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, CString csFileComment)
 {	
 	CString csDummy;
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	// spike class: -1(one:selected); 0(all); 1(all:splitted)
 	int class0=0;
@@ -710,7 +710,7 @@ void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* p
 void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist0, CString csFileComment, int ispklist, int iclass)
 {
 	// ................................DATA
-	CSpikeList* pspklist= &m_spklistArray[ispklist];
+	CSpikeList* pspklist= &spikelist_array[ispklist];
 	CString csDummy;
 	// temp parameters for amplitudes histogram
 	int histampl_min = (int) (vdS->histampl_vmin / pspklist->GetAcqVoltsperBin());
@@ -805,7 +805,7 @@ void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 
 void CSpikeDoc::ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist0, CString csFileComment)
 {
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	// spike class: -1(one:selected); 0(all); 1(all:splitted)
 	int class0=0;
@@ -859,7 +859,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 
 
 	// ................................DATA
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	csDummy = _T("\r\ntime(s)\tclass"); 
 	float rate = pspklist->GetAcqSampRate();
@@ -1210,7 +1210,7 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	}
 
 	// number of spikes
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 		
 	if (vdS->btotalspikes)
 	{
@@ -1247,7 +1247,7 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 {
 	// ajust parameters
 	long N = 0;
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	int nspikes = pspklist->GetTotalSpikes();
 	if (nspikes <= 0)
@@ -1337,7 +1337,7 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 
 long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 {
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	float samprate = pspklist->GetAcqSampRate();		// sampling rate
 	long N = 0;
@@ -1429,7 +1429,7 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 {
 	long N=0;			// number of pivot spikes used to build autocorrelation
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	int nspikes = pspklist->GetTotalSpikes();		// number of spikes in that file
 	if (nspikes <= 0)			// exit if no spikes
@@ -1537,7 +1537,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 {
 	long N=0;					// number of 'pivot spikes'
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	int nspikes = pspklist->GetTotalSpikes();
 	if (nspikes <= 0)			// return if no spikes in that file
@@ -1649,7 +1649,7 @@ void CSpikeDoc::_ExportSpkAverageWave (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS
 {
 	double* pDoubl;
 	CString csDummy;
-	CSpikeList* pspklist= &m_spklistArray[ispklist];
+	CSpikeList* pspklist= &spikelist_array[ispklist];
 	// update offset
 	int iioffset0 = 0;
 	if (!vdS->babsolutetime && m_stimIntervals.nitems > 0) 
@@ -1733,7 +1733,7 @@ void CSpikeDoc::_ExportSpkAverageWave (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS
 
 void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, CString csFileComment)
 {
-	CSpikeList* pspklist= &m_spklistArray[m_currspklist];
+	CSpikeList* pspklist= &spikelist_array[m_currspklist];
 
 	// spike class: -1(one:selected); 0(all); 1(all:splitted)
 	int class0=0;
@@ -1782,12 +1782,12 @@ CSpikeList*	CSpikeDoc::SetSpkListCurrent (int ichan)
 		ichan = 0;
 
 	// if the list requested does not exist, return a NULL pointer
-	if (m_spklistArray.GetSize() > 0)
+	if (spikelist_array.GetSize() > 0)
 	{
 		// spike list requested exist, select it and return a pointer to it
-		if (ichan >= 0 && ichan < m_spklistArray.GetSize())
+		if (ichan >= 0 && ichan < spikelist_array.GetSize())
 		{
-			pspklist = &m_spklistArray[ichan];
+			pspklist = &spikelist_array[ichan];
 			m_currspklist = ichan;
 		}
 	}
@@ -1797,7 +1797,7 @@ CSpikeList*	CSpikeDoc::SetSpkListCurrent (int ichan)
 CSpikeList*	CSpikeDoc::GetSpkListCurrent()
 {
 	CSpikeList* pspklist= nullptr;
-	pspklist = &m_spklistArray[m_currspklist];
+	pspklist = &spikelist_array[m_currspklist];
 	ASSERT(pspklist);
 	return pspklist;
 }

@@ -72,7 +72,7 @@ CADInputParmsDlg::CADInputParmsDlg(CWnd* pParent /*=NULL*/)
 	m_postmessage = 0;
 	m_bchantype = OLx_CHNT_SINGLEENDED;
 	m_pAlligatorAmplifier = nullptr;
-	m_pAlligatorDevicePtrArray = nullptr;
+	p_alligatordevice_ptr_array = nullptr;
 	
 	m_rowADchannel = 0;
 	m_row_ADgain = 0;
@@ -125,12 +125,12 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	// display nb of available channels according to parameter
 	if (m_bchantype == OLx_CHNT_SINGLEENDED)
 	{
-		dynamic_cast<CButton*>(GetDlgItem(IDC_SINGLEENDED))->SetCheck(BST_CHECKED);
+		((CButton*)GetDlgItem(IDC_SINGLEENDED))->SetCheck(BST_CHECKED);
 		m_maxchans = m_numchansMAXSE;
 	}
 	else
 	{
-		dynamic_cast<CButton*>(GetDlgItem(IDC_DIFFERENTIAL))->SetCheck(BST_CHECKED);
+		((CButton*)GetDlgItem(IDC_DIFFERENTIAL))->SetCheck(BST_CHECKED);
 		m_maxchans = m_numchansMAXDI;
 	}
 
@@ -885,11 +885,11 @@ void CADInputParmsDlg::GetAmplifierParms(int col)
 
 	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
 	{
-		const auto nAlligatorDescriptors = m_pAlligatorDevicePtrArray->GetCount();
+		const auto nAlligatorDescriptors = p_alligatordevice_ptr_array->GetCount();
 		USBPxxPARAMETERS* p_device = nullptr;
 		for (auto i = 0; i < nAlligatorDescriptors; i++)
 		{
-			auto* ptr = static_cast<USBPxxPARAMETERS*>(m_pAlligatorDevicePtrArray->GetAt(i));
+			auto* ptr = p_alligatordevice_ptr_array->GetAt(i);
 			if (p_chan->am_amplifierchan == ptr->ChannelNumber) 
 			{
 				p_device = ptr;

@@ -69,15 +69,15 @@ void CDataListCtrl::OnDestroy()
 
 void CDataListCtrl::DeletePtrArray()
 {
-	if (m_ptrArray.GetSize() == NULL)
+	if (datalistctrlrowobject_prt_array.GetSize() == NULL)
 		return;
-	const auto imax = m_ptrArray.GetSize();
+	const auto imax = datalistctrlrowobject_prt_array.GetSize();
 	for (auto i=0; i< imax; i++)
 	{
-		auto* ptr = m_ptrArray.GetAt(i);
+		auto* ptr = datalistctrlrowobject_prt_array.GetAt(i);
 		SAFE_DELETE(ptr);
 	}
-	m_ptrArray.RemoveAll();
+	datalistctrlrowobject_prt_array.RemoveAll();
 }
 
 // change size of the array
@@ -85,32 +85,32 @@ void CDataListCtrl::DeletePtrArray()
 
 void CDataListCtrl::ResizePtrArray(int nitems)
 {
-	if (nitems == m_ptrArray.GetSize())
+	if (nitems == datalistctrlrowobject_prt_array.GetSize())
 		return;
 
 	// Resize m_imagelist CImageList
 	m_imagelist.SetImageCount(nitems);
 
 	// reduce size
-	if (m_ptrArray.GetSize() > nitems)
+	if (datalistctrlrowobject_prt_array.GetSize() > nitems)
 	{
-		for (int i=m_ptrArray.GetSize()-1; i>= nitems; i--)
-			delete m_ptrArray.GetAt(i);
-		m_ptrArray.SetSize(nitems);
+		for (int i=datalistctrlrowobject_prt_array.GetSize()-1; i>= nitems; i--)
+			delete datalistctrlrowobject_prt_array.GetAt(i);
+		datalistctrlrowobject_prt_array.SetSize(nitems);
 	}
 	// grow size
 	else
 	{
-		const auto lowernew = m_ptrArray.GetSize();
-		m_ptrArray.SetSize(nitems);
+		const auto lowernew = datalistctrlrowobject_prt_array.GetSize();
+		datalistctrlrowobject_prt_array.SetSize(nitems);
 		int index = 0;
 		if (lowernew > 0)
-			index = m_ptrArray.GetAt(lowernew-1)->index;
+			index = datalistctrlrowobject_prt_array.GetAt(lowernew-1)->index;
 		for (int i=lowernew; i< nitems; i++)
 		{
 			auto* ptr = new CDataListCtrlRowObject;
 			ASSERT(ptr != NULL);
-			m_ptrArray.SetAt(i, ptr);
+			datalistctrlrowobject_prt_array.SetAt(i, ptr);
 			index++;
 			ptr->index = index;
 		}
@@ -244,10 +244,10 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	// check if first if the requested line is stored into the buffer
 	auto ifirst_array = 0;
 	auto ilast_array = 0;
-	if (m_ptrArray.GetSize() > 0)
+	if (datalistctrlrowobject_prt_array.GetSize() > 0)
 	{
-		ifirst_array = m_ptrArray.GetAt(0)->index;
-		ilast_array = m_ptrArray.GetAt(m_ptrArray.GetUpperBound())->index;
+		ifirst_array = datalistctrlrowobject_prt_array.GetAt(0)->index;
+		ilast_array = datalistctrlrowobject_prt_array.GetAt(datalistctrlrowobject_prt_array.GetUpperBound())->index;
 	}
 
 	// is item within the cache?
@@ -270,7 +270,7 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 		ifirst_array = ilast_array - GetCountPerPage() +1;
 		UpdateCache(ifirst_array, ilast_array);
 	}
-	else if (m_ptrArray.GetSize() == 0)
+	else if (datalistctrlrowobject_prt_array.GetSize() == 0)
 		UpdateCache(ifirst_array, ilast_array);
 	
 	// now, the requested item is in the cache
@@ -279,12 +279,12 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	if (pdb_doc == nullptr)
 		return;
 
-	const int ifirstvisible = m_ptrArray.GetAt(0)->index;
+	const int ifirstvisible = datalistctrlrowobject_prt_array.GetAt(0)->index;
 	auto icache_index = i_item_index - ifirstvisible;
-	if (icache_index > (m_ptrArray.GetSize() -1))
-		icache_index = m_ptrArray.GetSize() -1;
+	if (icache_index > (datalistctrlrowobject_prt_array.GetSize() -1))
+		icache_index = datalistctrlrowobject_prt_array.GetSize() -1;
 
-	auto* ptr = m_ptrArray.GetAt(icache_index);
+	auto* ptr = datalistctrlrowobject_prt_array.GetAt(icache_index);
 
 	if (p_item->mask & LVIF_TEXT) //valid text buffer?
 	{
@@ -341,9 +341,9 @@ void CDataListCtrl::SetCurSel(int recposition)
 void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 {
 	auto ifirst_array = 0;
-	if (m_ptrArray.GetSize() > 0)
+	if (datalistctrlrowobject_prt_array.GetSize() > 0)
 	{
-		ifirst_array = m_ptrArray.GetAt(0)->index;
+		ifirst_array = datalistctrlrowobject_prt_array.GetAt(0)->index;
 	}
 
 	// adjust number of items in the array and adjust ifirst and ilast
@@ -363,10 +363,10 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 
 	// resize array if the number of visible records is different from the number of lines / listcontrol
 	auto b_forced_update = FALSE;
-	if (inb_visible != m_ptrArray.GetSize())
+	if (inb_visible != datalistctrlrowobject_prt_array.GetSize())
 	{
 		// if cache size increases, erase old information (set flag)
-		if (inb_visible > m_ptrArray.GetSize())
+		if (inb_visible > datalistctrlrowobject_prt_array.GetSize())
 			b_forced_update = TRUE;
 		// if cache size decreases, just delete extra rows
 		ResizePtrArray(inb_visible);
@@ -382,7 +382,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 	// conditions for out of range (renew all items)
 	auto idelta = 0;							// flag (copy forwards or backwards)
 	auto n_to_transfer = 0;					// number of items to copy
-	auto n_to_rebuild = m_ptrArray.GetSize();	// number of items to refresh
+	auto n_to_rebuild = datalistctrlrowobject_prt_array.GetSize();	// number of items to refresh
 	auto idest1 = 0;							// index first item to be exchg with source
 	auto isource1= 0;						// index first source item
 	auto inew1 = 0;
@@ -392,23 +392,23 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 	// scroll up (go forwards i.e. towards indexes of higher value)
 	if (!b_forced_update)
 	{
-		if (difference > 0 && difference < m_ptrArray.GetSize())
+		if (difference > 0 && difference < datalistctrlrowobject_prt_array.GetSize())
 		{
 			idelta = 1;							// copy forward
-			n_to_transfer = m_ptrArray.GetSize() - difference;
+			n_to_transfer = datalistctrlrowobject_prt_array.GetSize() - difference;
 			n_to_rebuild -= n_to_transfer;
 			isource1 = difference;;
 			idest1 = 0;
 			inew1 = n_to_transfer;
 		}
 		// scroll down (go backwards i.e. towards indexes of lower value)
-		else if (difference < 0 && -difference < m_ptrArray.GetSize())
+		else if (difference < 0 && -difference < datalistctrlrowobject_prt_array.GetSize())
 		{
 			idelta = -1;
-			n_to_transfer = m_ptrArray.GetSize() + difference;
+			n_to_transfer = datalistctrlrowobject_prt_array.GetSize() + difference;
 			n_to_rebuild -= n_to_transfer;
 			isource1 = n_to_transfer-1;
-			idest1 = m_ptrArray.GetSize() -1;
+			idest1 = datalistctrlrowobject_prt_array.GetSize() -1;
 			inew1 = 0;
 		}
 
@@ -420,10 +420,10 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 		while (n_to_transfer > 0)
 		{
 			// exchange objects 
-			auto* p_source = m_ptrArray.GetAt(isource);
-			const auto p_dest =  m_ptrArray.GetAt(idest);
-			m_ptrArray.SetAt(idest, p_source);
-			m_ptrArray.SetAt(isource, p_dest);
+			auto* p_source = datalistctrlrowobject_prt_array.GetAt(isource);
+			const auto p_dest =  datalistctrlrowobject_prt_array.GetAt(idest);
+			datalistctrlrowobject_prt_array.SetAt(idest, p_source);
+			datalistctrlrowobject_prt_array.SetAt(isource, p_dest);
 			m_imagelist.Copy(idest, isource, ILCF_SWAP);
 
 			// update indexes
@@ -446,7 +446,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 	while (n_to_rebuild > 0)	
 	{
 		// get data; create object if null
-		auto ptr = m_ptrArray.GetAt(index);
+		auto ptr = datalistctrlrowobject_prt_array.GetAt(index);
 
 		// create lineview and spike superposition
 		ptr->index = index+ifirst;
@@ -536,18 +536,18 @@ void CDataListCtrl::SetEmptyBitmap(const BOOL b_forced_update)
 
 void CDataListCtrl::RefreshDisplay()
 {
-	if (m_ptrArray.GetSize() == NULL)
+	if (datalistctrlrowobject_prt_array.GetSize() == NULL)
 		return;
-	const int ifirst_array =  m_ptrArray.GetAt(0)->index;
-	const int ilast_array = m_ptrArray.GetAt(m_ptrArray.GetUpperBound())->index;
+	const int ifirst_array =  datalistctrlrowobject_prt_array.GetAt(0)->index;
+	const int ilast_array = datalistctrlrowobject_prt_array.GetAt(datalistctrlrowobject_prt_array.GetUpperBound())->index;
 
 	// left, top, right, bottom
 	SetEmptyBitmap();
 
-	const auto nrows = m_ptrArray.GetSize();
+	const auto nrows = datalistctrlrowobject_prt_array.GetSize();
 	for (auto index = 0; index < nrows; index++)
 	{
-		auto* ptr = m_ptrArray.GetAt(index);
+		auto* ptr = datalistctrlrowobject_prt_array.GetAt(index);
 		if (ptr == nullptr)
 			continue;
 		switch (m_displaymode)
@@ -830,11 +830,11 @@ void CDataListCtrl::ResizeSignalColumn(int npixels)
 	m_cx = m_icolwidth[COL_CURVE];
 	m_imagelist.Create( m_cx, m_cy, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10 ); 
 	SetImageList( &m_imagelist, LVSIL_SMALL );
-	m_imagelist.SetImageCount(m_ptrArray.GetSize());
+	m_imagelist.SetImageCount(datalistctrlrowobject_prt_array.GetSize());
 
-	for (int i=0; i< m_ptrArray.GetSize(); i++)
+	for (int i=0; i< datalistctrlrowobject_prt_array.GetSize(); i++)
 	{
-		auto* ptr = m_ptrArray.GetAt(i);
+		auto* ptr = datalistctrlrowobject_prt_array.GetAt(i);
 		SAFE_DELETE(ptr->pdataWnd);
 		SAFE_DELETE(ptr->pspikeWnd);
 	}

@@ -59,7 +59,7 @@ public:
 	CdbMainTable*	m_pMainTable{};		// address of main table
 	CString			m_csColName;		// name of the column
 	CdbIndexTable*	m_pIndexTable{};		// address secondary table
-	CArray<long, long>*		m_pliIDArray{};		// address uiArray storing IDs
+	CArray<long, long>*	 m_pliIDArray{};		// address uiArray storing IDs
 	BOOL			m_bIndexTable;		// TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
 	CdbWaveDoc*		m_pdbDoc{};
 	/////////////////////////////////

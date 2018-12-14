@@ -213,9 +213,6 @@
     <ClCompile Include="MainFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeasureOptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MeasureProperties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -394,6 +391,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CUSBPxxS1Ctl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeasureVTtagsPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeasureResultsPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeasureHZtagsPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeasureOptionsPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -594,9 +603,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="measureoptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MeasureProperties.h">
@@ -864,6 +870,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CUSBPxxS1Ctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeasureVTtagsPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeasureResultsPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeasureHZtagsPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeasureOptionsPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

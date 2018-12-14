@@ -19,7 +19,7 @@
 #include "Vdseries.h"
 #include "Adinterv.h"
 #include "Dataseri.h"
-#include "measureoptions.h"
+
 #include "MeasureProperties.h"
 #include "Editctrl.h"
 #include "CyberAmp.h"
@@ -177,7 +177,8 @@ void CViewData::OnInitialUpdate()
 	UpdateFileParameters(TRUE);	// load file parameters
 	
 	m_VDlineview.m_parms = mdPM->viewdata;
-	OnClickedBias();			// init V bar mode: bias (push button)	
+	OnClickedBias();	
+	OnSplitCurves();
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_VDlineview.GetChanlistSize());
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE);

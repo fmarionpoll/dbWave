@@ -45,7 +45,7 @@ class CTagList : public CObject
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 protected:
-	CPtrArray 	m_array;                    // array of tags
+	CArray <CTag*, CTag*> tag_ptr_array;                    // array of tags
 	int			m_version;
 	int			InsertTag(CTag* pcur);
 

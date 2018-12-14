@@ -31,36 +31,36 @@ void CDAChannelsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
-	DDX_Check(pDX, IDC_CHECKCHAN0, outputParmsArray[0].bON);
-	DDX_Check(pDX, IDC_CHECKCHAN1, outputParmsArray[1].bON);
+	DDX_Check(pDX, IDC_CHECKCHAN0, outputparms_array[0].bON);
+	DDX_Check(pDX, IDC_CHECKCHAN1, outputparms_array[1].bON);
 	DDX_Check(pDX, IDC_CHECKDIGITAL, m_bChannel2);
 
-	DDX_Text(pDX, IDC_EDITAMPLITUDE0, outputParmsArray[0].dAmplitudeMaxV);
-	DDX_Text(pDX, IDC_EDITAMPLITUDELOW0, outputParmsArray[0].dAmplitudeMinV);
-	DDX_Text(pDX, IDC_EDITAMPLITUDE1, outputParmsArray[1].dAmplitudeMaxV);
-	DDX_Text(pDX, IDC_EDITAMPLITUDELOW1, outputParmsArray[1].dAmplitudeMinV);
+	DDX_Text(pDX, IDC_EDITAMPLITUDE0, outputparms_array[0].dAmplitudeMaxV);
+	DDX_Text(pDX, IDC_EDITAMPLITUDELOW0, outputparms_array[0].dAmplitudeMinV);
+	DDX_Text(pDX, IDC_EDITAMPLITUDE1, outputparms_array[1].dAmplitudeMaxV);
+	DDX_Text(pDX, IDC_EDITAMPLITUDELOW1, outputparms_array[1].dAmplitudeMinV);
 
-	DDX_Text(pDX, IDC_EDITFREQ0, outputParmsArray[0].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ1, outputParmsArray[1].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ2, outputParmsArray[2].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ3, outputParmsArray[3].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ4, outputParmsArray[4].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ5, outputParmsArray[5].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ6, outputParmsArray[6].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ7, outputParmsArray[7].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ8, outputParmsArray[8].dFrequency);
-	DDX_Text(pDX, IDC_EDITFREQ9, outputParmsArray[9].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ0, outputparms_array[0].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ1, outputparms_array[1].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ2, outputparms_array[2].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ3, outputparms_array[3].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ4, outputparms_array[4].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ5, outputparms_array[5].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ6, outputparms_array[6].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ7, outputparms_array[7].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ8, outputparms_array[8].dFrequency);
+	DDX_Text(pDX, IDC_EDITFREQ9, outputparms_array[9].dFrequency);
 
-	DDX_Control(pDX, IDC_COMBOSOURCE0, *m_pcombos[0]);
-	DDX_Control(pDX, IDC_COMBOSOURCE1, *m_pcombos[1]);
-	DDX_Control(pDX, IDC_COMBOSOURCE2, *m_pcombos[2]);
-	DDX_Control(pDX, IDC_COMBOSOURCE3, *m_pcombos[3]);
-	DDX_Control(pDX, IDC_COMBOSOURCE4, *m_pcombos[4]);
-	DDX_Control(pDX, IDC_COMBOSOURCE5, *m_pcombos[5]);
-	DDX_Control(pDX, IDC_COMBOSOURCE6, *m_pcombos[6]);
-	DDX_Control(pDX, IDC_COMBOSOURCE7, *m_pcombos[7]);
-	DDX_Control(pDX, IDC_COMBOSOURCE8, *m_pcombos[8]);
-	DDX_Control(pDX, IDC_COMBOSOURCE9, *m_pcombos[9]);
+	DDX_Control(pDX, IDC_COMBOSOURCE0, *combobox_ptr_array[0]);
+	DDX_Control(pDX, IDC_COMBOSOURCE1, *combobox_ptr_array[1]);
+	DDX_Control(pDX, IDC_COMBOSOURCE2, *combobox_ptr_array[2]);
+	DDX_Control(pDX, IDC_COMBOSOURCE3, *combobox_ptr_array[3]);
+	DDX_Control(pDX, IDC_COMBOSOURCE4, *combobox_ptr_array[4]);
+	DDX_Control(pDX, IDC_COMBOSOURCE5, *combobox_ptr_array[5]);
+	DDX_Control(pDX, IDC_COMBOSOURCE6, *combobox_ptr_array[6]);
+	DDX_Control(pDX, IDC_COMBOSOURCE7, *combobox_ptr_array[7]);
+	DDX_Control(pDX, IDC_COMBOSOURCE8, *combobox_ptr_array[8]);
+	DDX_Control(pDX, IDC_COMBOSOURCE9, *combobox_ptr_array[9]);
 }
 
 BEGIN_MESSAGE_MAP(CDAChannelsDlg, CDialogEx)
@@ -98,21 +98,21 @@ END_MESSAGE_MAP()
 void CDAChannelsDlg::OnBnClickedOk()
 {
 	int channel = 0;
-	outputParmsArray[channel].iChan = channel;
-	outputParmsArray[channel].bDigital = FALSE;
-	outputParmsArray[channel].iWaveform = m_pcombos[channel]->GetItemData(m_pcombos[channel]->GetCurSel());
+	outputparms_array[channel].iChan = channel;
+	outputparms_array[channel].bDigital = FALSE;
+	outputparms_array[channel].iWaveform = combobox_ptr_array[channel]->GetItemData(combobox_ptr_array[channel]->GetCurSel());
 
 	channel = 1;
-	outputParmsArray[channel].iChan = channel;
-	outputParmsArray[channel].bDigital = FALSE;
-	outputParmsArray[channel].iWaveform = m_pcombos[channel]->GetItemData(m_pcombos[channel]->GetCurSel());
+	outputparms_array[channel].iChan = channel;
+	outputparms_array[channel].bDigital = FALSE;
+	outputparms_array[channel].iWaveform = combobox_ptr_array[channel]->GetItemData(combobox_ptr_array[channel]->GetCurSel());
 
 	for (int ichannel = 2; ichannel < 10; ichannel++)
 	{
-		outputParmsArray[ichannel].bDigital = TRUE;
-		outputParmsArray[ichannel].iChan = ichannel - 2;
-		outputParmsArray[ichannel].bON = m_bChannel2;
-		outputParmsArray[ichannel].iWaveform = m_pcombos[ichannel]->GetItemData(m_pcombos[ichannel]->GetCurSel());
+		outputparms_array[ichannel].bDigital = TRUE;
+		outputparms_array[ichannel].iChan = ichannel - 2;
+		outputparms_array[ichannel].bON = m_bChannel2;
+		outputparms_array[ichannel].iWaveform = combobox_ptr_array[ichannel]->GetItemData(combobox_ptr_array[ichannel]->GetCurSel());
 	}
 
 	CDialogEx::OnOK();
@@ -123,7 +123,7 @@ DWORD	CDAChannelsDlg::comboVal[] = { DA_SEQUENCEWAVE, DA_SINEWAVE, DA_SQUAREWAVE
 
 void CDAChannelsDlg::FillCombo( int channel)
 {
-	CComboBox* pCombo = m_pcombos[channel];
+	CComboBox* pCombo = combobox_ptr_array[channel];
 	pCombo->ResetContent();
 	switch (channel)
 	{
@@ -159,8 +159,8 @@ void CDAChannelsDlg::FillCombo( int channel)
 
 void CDAChannelsDlg::SelectComboItemFromOutputParm(int ival)
 {
-	CComboBox* pCombo = m_pcombos[ival];
-	DWORD val = outputParmsArray[ival].iWaveform;
+	CComboBox* pCombo = combobox_ptr_array[ival];
+	DWORD val = outputparms_array[ival].iWaveform;
 	int isel = 0;
 	for (isel; isel < pCombo->GetCount(); isel++)
 	{
@@ -172,22 +172,22 @@ void CDAChannelsDlg::SelectComboItemFromOutputParm(int ival)
 
 BOOL CDAChannelsDlg::OnInitDialog()
 {
-	m_pcombos.SetSize(10);
-	m_pcombos[0] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE0);
-	m_pcombos[1] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE1);
-	m_pcombos[2] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE2);
-	m_pcombos[3] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE3);
-	m_pcombos[4] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE4);
-	m_pcombos[5] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE5);
-	m_pcombos[6] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE6);
-	m_pcombos[7] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE7);
-	m_pcombos[8] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE8);
-	m_pcombos[9] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE9);
+	combobox_ptr_array.SetSize(10);
+	combobox_ptr_array[0] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE0);
+	combobox_ptr_array[1] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE1);
+	combobox_ptr_array[2] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE2);
+	combobox_ptr_array[3] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE3);
+	combobox_ptr_array[4] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE4);
+	combobox_ptr_array[5] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE5);
+	combobox_ptr_array[6] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE6);
+	combobox_ptr_array[7] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE7);
+	combobox_ptr_array[8] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE8);
+	combobox_ptr_array[9] = (CComboBox*)GetDlgItem(IDC_COMBOSOURCE9);
 
 	CDialogEx::OnInitDialog();
 
-	if (outputParmsArray.GetSize() < 10)
-		outputParmsArray.SetSize(10);
+	if (outputparms_array.GetSize() < 10)
+		outputparms_array.SetSize(10);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -197,7 +197,7 @@ BOOL CDAChannelsDlg::OnInitDialog()
 	}
 	
 	for (int i = 2; i < 10; i++) {
-		if (outputParmsArray[i].bON) {
+		if (outputparms_array[i].bON) {
 			m_bChannel2 = TRUE;
 			break;
 		}
@@ -209,7 +209,7 @@ BOOL CDAChannelsDlg::OnInitDialog()
 void CDAChannelsDlg::OnBnClickedCheckchan0()
 {
 	UpdateData(TRUE);
-	BOOL bchan = outputParmsArray[0].bON;
+	BOOL bchan = outputparms_array[0].bON;
 	GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(bchan);
 	GetDlgItem(IDC_STATIC00)->EnableWindow(bchan);
 	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(bchan);
@@ -223,7 +223,7 @@ void CDAChannelsDlg::OnBnClickedCheckchan0()
 void CDAChannelsDlg::OnBnClickedCheckchan1()
 {
 	UpdateData(TRUE);
-	BOOL bchan = outputParmsArray[1].bON;
+	BOOL bchan = outputparms_array[1].bON;
 	GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(bchan);
 	GetDlgItem(IDC_STATIC10)->EnableWindow(bchan);
 	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(bchan);
@@ -266,10 +266,10 @@ void CDAChannelsDlg::EditSequence(int iID, int channel)
 		case DA_MSEQWAVE:		// M-seq
 		{
 			CEditDAMseqDlg dlg;
-			dlg.m_outDParms = outputParmsArray.GetAt(channel);
+			dlg.m_outDParms = outputparms_array.GetAt(channel);
 			if (IDOK == dlg.DoModal())
 			{
-				OUTPUTPARMS* pParms = &outputParmsArray.GetAt(channel);
+				OUTPUTPARMS* pParms = &outputparms_array.GetAt(channel);
 				*pParms = dlg.m_outDParms;
 				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 			}
@@ -279,13 +279,13 @@ void CDAChannelsDlg::EditSequence(int iID, int channel)
 		case DA_SEQUENCEWAVE:	// sequence
 		{
 			CEditStimArrayDlg dlg;
-			dlg.m_pIntervalArrays.RemoveAll();
-			dlg.m_pIntervalArrays.Add(&outputParmsArray.GetAt(channel).stimulussequence);
+			dlg.intervalsandlevels_ptr_array.RemoveAll();
+			dlg.intervalsandlevels_ptr_array.Add(&outputparms_array.GetAt(channel).stimulussequence);
 			dlg.m_pstimsaved = &m_stimsaved;
 			dlg.m_rate = m_samplingRate;
 			if (IDOK == dlg.DoModal())
 			{
-				OUTPUTPARMS* pParms = &outputParmsArray.GetAt(channel);
+				OUTPUTPARMS* pParms = &outputparms_array.GetAt(channel);
 				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
 			}
 		}
@@ -300,7 +300,7 @@ void CDAChannelsDlg::EditSequence(int iID, int channel)
 
 void CDAChannelsDlg::OnBnClickedButtonsource(int channel)
 {
-	CComboBox* pCombo = m_pcombos[channel];
+	CComboBox* pCombo = combobox_ptr_array[channel];
 	int isel = pCombo->GetCurSel();
 	EditSequence(pCombo->GetItemData(isel), channel);
 }
@@ -375,7 +375,7 @@ void CDAChannelsDlg::OnCbnSelchangeCombosource(int ival)
 	int IDAMPLITUDEHIGH = matrix[ival][2]; 
 	int IDAMPLITUDELOW = matrix[ival][3];;
 
-	CComboBox* pCombo = m_pcombos[ival];
+	CComboBox* pCombo = combobox_ptr_array[ival];
 	pCombo->EnableWindow(TRUE);
 	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
 	BOOL	bEnableFrequency = TRUE;

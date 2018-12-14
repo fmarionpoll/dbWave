@@ -35,7 +35,7 @@ public:
 	CIntervalsAndLevels		m_stimIntervals;			// stimulus array
 
 protected:
-	CArray				<CSpikeList, CSpikeList> m_spklistArray;
+	CArray<CSpikeList, CSpikeList> spikelist_array;
 
 // Operations
 public:
@@ -46,12 +46,12 @@ public:
 	inline 	CTime 		GetDate()					const {return m_detectiondate;}
 	inline 	CString		GetComment()				const {return m_comment;}
 
-	inline int			GetSpkListSize() const		{return m_spklistArray.GetSize();}
-	inline void			SetSpkListSize(int i)		{return m_spklistArray.SetSize(i);}
+	inline int			GetSpkListSize() const		{return spikelist_array.GetSize();}
+	inline void			SetSpkListSize(int i)		{return spikelist_array.SetSize(i);}
 	CSpikeList*			SetSpkListCurrent(int ichan);
 	CSpikeList*			GetSpkListCurrent();
 	inline int			GetSpkListCurrentIndex()	const {return m_currspklist;}
-	inline int			AddSpkList() {m_spklistArray.SetSize(GetSpkListSize()+1); return GetSpkListSize();}
+	inline int			AddSpkList() {spikelist_array.SetSize(GetSpkListSize()+1); return GetSpkListSize();}
 	
 	inline 	void		SetSourceFilename(CString cs)	{m_acqfile=cs;}
 	inline 	void		SetDetectionDate(CTime t)		{m_detectiondate=t;}

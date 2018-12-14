@@ -45,7 +45,7 @@ public:
 	BOOL				m_bADC_IsPresent;
 	BOOL				m_bDAC_IsPresent;
 	// Alligator amplifier
-	CPtrArray			m_AlligatorDevicePtrArray;
+	CArray < USBPxxPARAMETERS*, USBPxxPARAMETERS*>	alligatorparameters_ptr_array{};
 	CUSBPxxS1Ctl		m_Alligator;		// DDX
 	// Data Translation ActiveX
 	CDTAcq32			m_ADC_DTAcq32;		// DDX

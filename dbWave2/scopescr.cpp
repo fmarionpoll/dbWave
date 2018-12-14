@@ -1016,7 +1016,6 @@ int CScopeScreen::HitTestVTtagLong(long lx)
 	for (int i = 0; i<j; i++)	// loop through all cursors
 	{
 		long lval = m_VTtags.GetTagLVal(i);
-		//long lval = (long) m_vt_tags.GetTagVal(i);
 		if (lval <= lx+ m_liJitter && lval >= lx-m_liJitter)
 		{
 			chit = i;

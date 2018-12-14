@@ -455,12 +455,13 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="MainFrm.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="MeasureOptions.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="MeasureHZtagsPage.cpp" />
+    <ClCompile Include="MeasureOptionsPage.cpp" />
     <ClCompile Include="MeasureProperties.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="MeasureResultsPage.cpp" />
+    <ClCompile Include="MeasureVTtagsPage.cpp" />
     <ClCompile Include="NoteDoc.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -712,8 +713,11 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="Listbcla.h" />
     <ClInclude Include="Lsoption.h" />
     <ClInclude Include="MainFrm.h" />
-    <ClInclude Include="measureoptions.h" />
+    <ClInclude Include="MeasureHZtagsPage.h" />
+    <ClInclude Include="MeasureOptionsPage.h" />
     <ClInclude Include="MeasureProperties.h" />
+    <ClInclude Include="MeasureResultsPage.h" />
+    <ClInclude Include="MeasureVTtagsPage.h" />
     <ClInclude Include="NoteDoc.h" />
     <ClInclude Include="NotedocCntrItem.h" />
     <ClInclude Include="PanelFilter.h" />

@@ -102,7 +102,7 @@ BOOL CStretchControl::newProp(CWnd* pWnd, int iID, int xsizeMode, int ysizeMode)
 	ppC->m_rmaster0 = CRect(0, 0, 0, 0);
 	ppC->m_slaveorder = 0;
 
-	m_props.Add(ppC);
+	ctrlprop_ptr_array.Add(ppC);
 	return TRUE;
 }
 
@@ -123,11 +123,11 @@ BOOL CStretchControl::newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int 
 	// find idMASTER 
 	int imaster = -1;							// master index
 	CCtrlProp* propmaster= nullptr;					// pointer
-	if (m_props.GetUpperBound() >= 0)			// do we have masters?
+	if (ctrlprop_ptr_array.GetUpperBound() >= 0)			// do we have masters?
 	{		
-		for (int i = 0; i<= m_props.GetUpperBound(); i++) // loop
+		for (int i = 0; i<= ctrlprop_ptr_array.GetUpperBound(); i++) // loop
 		{
-			propmaster = (CCtrlProp*) m_props.GetAt(i); // get pointer to current master
+			propmaster = ctrlprop_ptr_array.GetAt(i); // get pointer to current master
 			if (propmaster->GetID() == idMASTER)		// same ID number??
 			{
 				imaster = i;					// yes: exit loop
@@ -162,7 +162,7 @@ BOOL CStretchControl::newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int 
 	if (m_slavemax < pb->m_slaveorder)
 		m_slavemax = pb->m_slaveorder;
 
-	m_props.Add(pb);
+	ctrlprop_ptr_array.Add(pb);
 	return TRUE;
 }
 
@@ -173,14 +173,14 @@ BOOL CStretchControl::newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int 
 CStretchControl::~CStretchControl()
 {
 	int i;
-	if (m_props.GetUpperBound() >= 0)
+	if (ctrlprop_ptr_array.GetUpperBound() >= 0)
 	{
-		for (i=m_props.GetUpperBound(); i>= 0; i--)
+		for (i=ctrlprop_ptr_array.GetUpperBound(); i>= 0; i--)
 		{
-			delete (CCtrlProp*) m_props[i];
-			m_props.RemoveAt(i);
+			delete ctrlprop_ptr_array[i];
+			ctrlprop_ptr_array.RemoveAt(i);
 		}	
-		m_props.RemoveAll();
+		ctrlprop_ptr_array.RemoveAll();
 	}
 }
 
@@ -192,7 +192,7 @@ CStretchControl::~CStretchControl()
 // --------------------------------------------------------------------------
 void CStretchControl::ResizeControls(UINT nType, int cx, int cy)
 {
-	if (m_props.GetSize() <= 0 || cx <= 0 || cy <= 0)
+	if (ctrlprop_ptr_array.GetSize() <= 0 || cx <= 0 || cy <= 0)
 		return;
 
 	cx = (cx < m_DlgMinSize.cx) ? m_DlgMinSize.cx: cx;	// no action if less than min size
@@ -202,20 +202,16 @@ void CStretchControl::ResizeControls(UINT nType, int cx, int cy)
 		return;
 
 	// prepare looping through all controls	
-	HDWP hDWP = ::BeginDeferWindowPos(m_props.GetSize());
+	HDWP hDWP = ::BeginDeferWindowPos(ctrlprop_ptr_array.GetSize());
 	if (hDWP == nullptr)		
 		return;		// exit if none available
 
 	// loop through all windows	
-	CCtrlProp* pa;		// pointer to properties
-	int i;				// counter
-
-	// first loop through master windows
 	for (int j=0; j<= m_slavemax; j++)
 	{
-		for (i=m_props.GetUpperBound(); i>=0; i--)
+		for (int i=ctrlprop_ptr_array.GetUpperBound(); i>=0; i--)
 		{
-			pa = (CCtrlProp*) m_props.GetAt(i);
+			CCtrlProp* pa = ctrlprop_ptr_array.GetAt(i);
 			if (pa->m_slaveorder != j)
 				continue;
 			CRect newRect = AlignControl(pa, cx, cy);
@@ -256,7 +252,7 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 
 	if (pa->GetMaster() >= 0)						// if slave, get ref from master
 	{
-		CCtrlProp* pb = (CCtrlProp*) m_props.GetAt(pa->GetMaster());
+		CCtrlProp* pb = ctrlprop_ptr_array.GetAt(pa->GetMaster());
 		refRect = pb->GetMasterRect();				// load already transformed rect
 		cx = refRect.Width();						// get width
 		cy = refRect.Height();						// and height
@@ -402,11 +398,11 @@ BOOL CStretchControl::DisplayVBarControls(BOOL bVisible)
 	m_bVBAR = bVisible;	            // set state
 	int showFlag = (m_bVBAR ? SW_SHOW: SW_HIDE);
 	int rectFlag = ((m_bHBAR && m_bVBAR) ? SW_SHOW: SW_HIDE);
-	CCtrlProp* pa;
+	
 	// loop through all controls and set visible state
-	for (int i=0; i<m_props.GetSize(); i++)
+	for (int i=0; i<ctrlprop_ptr_array.GetSize(); i++)
 		{
-		pa = (CCtrlProp*) m_props.GetAt(i);
+		CCtrlProp* pa = ctrlprop_ptr_array.GetAt(i);
 		if (pa->GetxSizeHow() == RIGHT_BAR)
 			{
 			if (pa->GetySizeHow() != BOTTOM_BAR)
@@ -432,9 +428,9 @@ BOOL CStretchControl::DisplayHBarControls(BOOL bVisible)
 	int rectFlag = ((m_bHBAR && m_bVBAR) ? SW_SHOW: SW_HIDE);
 	CCtrlProp* pa;
 	// loop through all controls and set visible state
-	for (int i=0; i<m_props.GetSize(); i++)
+	for (int i=0; i<ctrlprop_ptr_array.GetSize(); i++)
 		{
-		pa = (CCtrlProp*) m_props.GetAt(i);
+		pa = (CCtrlProp*) ctrlprop_ptr_array.GetAt(i);
 		if (pa->GetySizeHow() == BOTTOM_BAR)
 			{
 			if (pa->GetxSizeHow() != RIGHT_BAR)

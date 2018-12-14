@@ -138,7 +138,7 @@ class CWaveChanArray : public CObject
 {
 	DECLARE_SERIAL(CWaveChanArray);
 protected:
-	CArray <CWaveChan*, CWaveChan*>	m_chanArray;		// array of channels
+	CArray <CWaveChan*, CWaveChan*>	wavechan_ptr_array;		// array of channels
 
 public:
 	CWaveChanArray();				// create array

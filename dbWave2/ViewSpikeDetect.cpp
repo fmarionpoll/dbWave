@@ -329,7 +329,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 {	
 	// update spike doc and temporary spike list
 	CdbWaveDoc* pdbDoc = GetDocument();
-	pdbDoc->DBGetCurrentSpkFileName(FALSE);
+	pdbDoc->DBSetCurrentSpkFileName(FALSE);
 
 	// open the current spike file
 	if (!GetDocument()->OpenCurrentSpikeFile())
@@ -498,7 +498,7 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 	// load method combo box with content
 	// init chan list, select first detection channel
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetDocument();
-	pdbDoc->DBGetCurrentDatFileName();
+	pdbDoc->DBSetCurrentDatFileName();
 	if (!pdbDoc->OpenCurrentDataFile())
 		return;
 
@@ -2676,14 +2676,14 @@ void CViewSpikeDetection::SerializeWindowsState(BOOL bSave, int itab)
 	}
 
 	// adjust size of the array
-	if (pApp->m_viewspkdParmsArray.GetSize() == 0)
-		pApp->m_viewspkdParmsArray.SetSize(1);
+	if (pApp->viewspikesmemfile_ptr_array.GetSize() == 0)
+		pApp->viewspikesmemfile_ptr_array.SetSize(1);
 	
-	if (pApp->m_viewspkdParmsArray.GetSize() < m_tabCtrl.GetItemCount())
-		pApp->m_viewspkdParmsArray.SetSize(m_tabCtrl.GetItemCount());
+	if (pApp->viewspikesmemfile_ptr_array.GetSize() < m_tabCtrl.GetItemCount())
+		pApp->viewspikesmemfile_ptr_array.SetSize(m_tabCtrl.GetItemCount());
 	CMemFile* pMemFile = nullptr;
-	if (pApp->m_viewspkdParmsArray.GetSize() > 0 && pApp->m_viewspkdParmsArray.GetSize() > itab)
-		pMemFile = (CMemFile*) pApp->m_viewspkdParmsArray.GetAt(itab);
+	if (pApp->viewspikesmemfile_ptr_array.GetSize() > 0 && pApp->viewspikesmemfile_ptr_array.GetSize() > itab)
+		pMemFile = pApp->viewspikesmemfile_ptr_array.GetAt(itab);
 
 	// save display parameters
 	if (bSave)
@@ -2692,7 +2692,7 @@ void CViewSpikeDetection::SerializeWindowsState(BOOL bSave, int itab)
 		{
 			pMemFile = new CMemFile;
 			ASSERT(pMemFile != NULL);
-			pApp->m_viewspkdParmsArray.SetAt(itab, pMemFile);
+			pApp->viewspikesmemfile_ptr_array.SetAt(itab, pMemFile);
 		}
 		// save data into archive
 		CArchive ar(pMemFile, CArchive::store);
@@ -3426,8 +3426,8 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 	m_pspkDocVSD->SortStimArray();
 
 	CEditStimArrayDlg dlg;
-	dlg.m_pIntervalArrays.RemoveAll();
-	dlg.m_pIntervalArrays.Add(&m_pspkDocVSD->m_stimIntervals);
+	dlg.intervalsandlevels_ptr_array.RemoveAll();
+	dlg.intervalsandlevels_ptr_array.Add(&m_pspkDocVSD->m_stimIntervals);
 	dlg.m_rate = m_samplingRate;
 	dlg.m_pstimsaved = &GetDocument()->m_stimsaved;
 

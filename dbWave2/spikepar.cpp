@@ -102,8 +102,8 @@ CSpkDetectArray::CSpkDetectArray()
 	wversion = 4;
 	SPKDETECTPARM* pparm = new SPKDETECTPARM;
 	ASSERT(pparm != NULL);
-	parmItems.SetSize(0);
-	parmItems.Add(pparm);
+	spkdetectparm_ptr_array.SetSize(0);
+	spkdetectparm_ptr_array.Add(pparm);
 }
 
 CSpkDetectArray::~CSpkDetectArray()
@@ -113,27 +113,27 @@ CSpkDetectArray::~CSpkDetectArray()
 
 void CSpkDetectArray::DeleteArray()
 {
-	int isize= parmItems.GetSize();
+	int isize= spkdetectparm_ptr_array.GetSize();
 	for (int i=0; i<isize; i++)
 	{
-		SPKDETECTPARM* pparm = (SPKDETECTPARM*) parmItems[i];
+		SPKDETECTPARM* pparm = spkdetectparm_ptr_array[i];
 		delete pparm;
 	}
-	parmItems.RemoveAll();
+	spkdetectparm_ptr_array.RemoveAll();
 }
 
 void CSpkDetectArray::SetSize(int nitems)
 {
-	int isize = parmItems.GetSize();
+	int isize = spkdetectparm_ptr_array.GetSize();
 	// delete items
 	if (isize > nitems)
 	{
 		for (int i=isize-1; i>= nitems; i--)
 		{
-			SPKDETECTPARM* pparm = (SPKDETECTPARM*) parmItems[i];
+			SPKDETECTPARM* pparm = spkdetectparm_ptr_array[i];
 			delete pparm;		
 		}
-		parmItems.SetSize(nitems);
+		spkdetectparm_ptr_array.SetSize(nitems);
 	}
 	// add dummy items
 	else if (isize < nitems)
@@ -148,31 +148,31 @@ int CSpkDetectArray::AddItem()
 {
 	SPKDETECTPARM* pparm = new SPKDETECTPARM;
 	ASSERT(pparm != NULL);
-	parmItems.Add(pparm);
-	return parmItems.GetSize();
+	spkdetectparm_ptr_array.Add(pparm);
+	return spkdetectparm_ptr_array.GetSize();
 }
 
 // delete one parameter array item
 // return isize left
 int	CSpkDetectArray::RemoveItem(int ichan)
 {
-	int isize = parmItems.GetSize() - 1;
+	int isize = spkdetectparm_ptr_array.GetSize() - 1;
 	if (ichan > isize)
 		return -1;
 
-	SPKDETECTPARM* pparm = (SPKDETECTPARM*) parmItems[ichan];
+	SPKDETECTPARM* pparm = spkdetectparm_ptr_array[ichan];
 	delete pparm;
-	parmItems.RemoveAt(ichan);
+	spkdetectparm_ptr_array.RemoveAt(ichan);
 	return isize;
 }
 
 void CSpkDetectArray::operator = (const CSpkDetectArray& arg)
 {
 	//comment=arg.comment;
-	int nItems=arg.parmItems.GetSize();	// number of items
+	int nItems=arg.spkdetectparm_ptr_array.GetSize();	// number of items
 	SetSize(nItems);			// erase old data	
 	for (int i=0; i<nItems; i++)		// loop over nItems
-		*((SPKDETECTPARM*) parmItems[i])=*((SPKDETECTPARM*) arg.parmItems[i]);
+		*(spkdetectparm_ptr_array[i]) =*(arg.spkdetectparm_ptr_array[i]);
 }
 
 void CSpkDetectArray::Serialize(CArchive& ar)
@@ -180,10 +180,10 @@ void CSpkDetectArray::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{   
 		ar << wversion;
-		WORD nItems = parmItems.GetSize();
+		WORD nItems = spkdetectparm_ptr_array.GetSize();
 		ar << nItems;
 		for (int i=0; i<nItems; i++)
-			((SPKDETECTPARM*) parmItems[i])->Serialize(ar);	
+			spkdetectparm_ptr_array[i]->Serialize(ar);	
 	} 
 	else
 	{
@@ -199,7 +199,7 @@ void CSpkDetectArray::Serialize_Load(CArchive& ar, WORD wversion)
 	WORD nItems; ar >> nItems;
 	SetSize(nItems);		
 	for (int i=0; i<nItems; i++)
-		((SPKDETECTPARM*)parmItems[i])->Serialize(ar);
+		spkdetectparm_ptr_array[i]->Serialize(ar);
 	if (wversion > 1 && wversion < 3)
 	{
 		int dummy;

@@ -129,7 +129,7 @@ CTagList::~CTagList()
 //---------------------------------------------------------------------
 int CTagList::InsertTag(CTag* pcur)
 {
-	return m_array.Add(pcur);
+	return tag_ptr_array.Add(pcur);
 }
 
 int  CTagList::AddTag(CTag& arg)
@@ -159,21 +159,21 @@ int CTagList::AddLTag(long lval, int refchan)
 //---------------------------------------------------------------------
 int CTagList::RemoveTag(int itag)
 {   
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	delete pcur;				// delete object pointed at
-	m_array.RemoveAt(itag);
-	return m_array.GetSize();
+	tag_ptr_array.RemoveAt(itag);
+	return tag_ptr_array.GetSize();
 }
 
 //---------------------------------------------------------------------
 void CTagList::RemoveAllTags()
 {   
-	int pos=m_array.GetUpperBound();
+	int pos=tag_ptr_array.GetUpperBound();
 	if (pos >=0)
 	{
-		for (int pos=m_array.GetUpperBound(); pos>= 0; pos--)
-			delete (CTag*) m_array.GetAt(pos);
-		m_array.RemoveAll();
+		for (int pos=tag_ptr_array.GetUpperBound(); pos>= 0; pos--)
+			delete tag_ptr_array.GetAt(pos);
+		tag_ptr_array.RemoveAll();
 	}
 }
 
@@ -182,37 +182,36 @@ void CTagList::RemoveAllTags()
 
 int CTagList::RemoveChanTags(int refchan)
 {
-	CTag* pcur;
-	for (int i = m_array.GetUpperBound(); i>= 0; i--)
+	for (int i = tag_ptr_array.GetUpperBound(); i>= 0; i--)
 	{
-		pcur =  (CTag*)m_array.GetAt(i);
+		CTag* pcur = tag_ptr_array.GetAt(i);
 		if (pcur != nullptr && pcur->m_refchan == refchan)
 		{
 			delete pcur;				// delete object pointed at
-			m_array.RemoveAt(i);		// remove item			
+			tag_ptr_array.RemoveAt(i);		// remove item			
 		}
 	}
-	return m_array.GetSize();
+	return tag_ptr_array.GetSize();
 }
 
 //---------------------------------------------------------------------
 
 void CTagList::SetTagVal(int itag, int newval)
 {   
-	if (m_array.GetSize() <= itag)
+	if (tag_ptr_array.GetSize() <= itag)
 	{
-		for (int i=m_array.GetSize(); i <= itag; i++)
+		for (int i=tag_ptr_array.GetSize(); i <= itag; i++)
 			AddTag(0, 0);
-		ASSERT(m_array.GetSize() >= itag);
+		ASSERT(tag_ptr_array.GetSize() >= itag);
 	}
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_value=newval;
 }
 
 int CTagList::GetTagVal(int itag)
 {   
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_value;
 	else
@@ -224,7 +223,7 @@ int CTagList::GetTagVal(int itag)
 
 int CTagList::GetTagChan(int itag)
 {   
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_refchan;
 	else
@@ -233,7 +232,7 @@ int CTagList::GetTagChan(int itag)
 
 void CTagList::SetTagChan(int itag, int newchan)
 {   
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_refchan=newchan;
 }
@@ -242,14 +241,14 @@ void CTagList::SetTagChan(int itag, int newchan)
 
 void CTagList::SetTagPix(int itag, int newval)
 {   
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_pixel=newval;
 }
 
 int CTagList::GetTagPix(int itag)
 {   
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_pixel;
 	else
@@ -260,7 +259,7 @@ int CTagList::GetTagPix(int itag)
 
 void CTagList::SetTagLVal(int itag, long longval)
 {
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	// if the cursor exist change the m_value
 	if (pcur != nullptr)
 		pcur->m_lvalue=longval;
@@ -269,7 +268,7 @@ void CTagList::SetTagLVal(int itag, long longval)
 
 long CTagList::GetTagLVal(int itag)
 {
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= (CTag*)tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_lvalue;
 	else
@@ -280,7 +279,7 @@ long CTagList::GetTagLVal(int itag)
 
 void CTagList::SetTagComment(int itag, CString comment)
 {
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_csComment=comment;
 }
@@ -288,7 +287,7 @@ void CTagList::SetTagComment(int itag, CString comment)
 
 CString CTagList::GetTagComment(int itag)
 {
-	CTag* pcur= (CTag*)m_array.GetAt(itag);
+	CTag* pcur= tag_ptr_array.GetAt(itag);
 	CString cs;
 	if (pcur != nullptr)
 		cs= pcur->m_csComment;
@@ -298,14 +297,14 @@ CString CTagList::GetTagComment(int itag)
 //---------------------------------------------------------------------
 int CTagList::GetNTags()
 {
-	return m_array.GetSize();
+	return tag_ptr_array.GetSize();
 }
 
 //---------------------------------------------------------------------
 CTag* CTagList::GetTag(int itag)
 {
-	if (itag >= 0 && itag < m_array.GetSize()) 
-		return (CTag*) m_array.GetAt(itag);
+	if (itag >= 0 && itag < tag_ptr_array.GetSize()) 
+		return tag_ptr_array.GetAt(itag);
 	else
 		return nullptr;
 }
@@ -318,7 +317,7 @@ void CTagList::CopyTagList(CTagList* pTList)
 
 	//CPtrArray 	m_array;                              // array of cursors
 	RemoveAllTags();	
-	int nbtags = pTList->m_array.GetSize();
+	int nbtags = pTList->tag_ptr_array.GetSize();
 	for (int i=0; i<nbtags; i++)
 	{
 		CTag* ptag = pTList->GetTag(i);
@@ -340,14 +339,14 @@ long CTagList::Write(CFile* pdatafile)
 {	
 	long lSize = sizeof(int);
 	pdatafile->Write(&m_version, lSize);
-	int nelemts = m_array.GetSize();	
+	int nelemts = tag_ptr_array.GetSize();	
 	pdatafile->Write(&nelemts, lSize);
 	lSize += lSize;
 
 	CTag* ptag;
 	for (int i = 0; i < nelemts; i ++)
 	{
-		ptag = (CTag*) m_array.GetAt(i);
+		ptag = tag_ptr_array.GetAt(i);
 		lSize += ptag->Write(pdatafile);
 	}
 	return lSize;
@@ -359,13 +358,13 @@ BOOL CTagList::Read(CFile* pdatafile)
 	pdatafile->Read(&version, sizeof(int));
 	int nelemts;
 	pdatafile->Read(&nelemts, sizeof(int));	
-	CTag* ptag;
+	
 	for (int i=0; i<nelemts; i++)	
 	{
-		ptag = new CTag;
+		CTag* ptag = new CTag;
 		ASSERT(ptag != NULL);
 		ptag->Read(pdatafile);
-		m_array.Add(ptag);
+		tag_ptr_array.Add(ptag);
 	}
 	return TRUE;
 }

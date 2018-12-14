@@ -24,8 +24,8 @@ public:
 	BOOL	DeleteItem(int i);
 	void	SortTemplatesByClass(BOOL bUp);
 	void	SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClasses, int minclassnb);
-	inline	CTemplateWnd* GetTemplateWnd(int i) const {return (CTemplateWnd*) m_ptpl.GetAt(i);}
-	int		GetTemplateDataSize() const {return m_ptpl.GetSize();}
+	inline	CTemplateWnd* GetTemplateWnd(int i) const {return templatewnd_ptr_array.GetAt(i);}
+	int		GetTemplateDataSize() const {return templatewnd_ptr_array.GetSize();}
 
 	double	m_globalstd;
 	double	m_globaldist;
@@ -46,10 +46,10 @@ public:
 	void	UpdateTemplateLegends(LPCSTR pszType);
 	void	UpdateTemplateBaseClassID(int inewlowestclass);
 	void	SetTemplateclassID(int item, LPCTSTR pszType, int classID);
-	inline	int GetTemplateclassID(int item) const {return ((CTemplateWnd*) m_ptpl.GetAt(item))->m_classID;}
+	inline	int GetTemplateclassID(int item) const {return templatewnd_ptr_array.GetAt(item)->m_classID;}
 
 protected:
-	CPtrArray	m_ptpl;
+	CArray < CTemplateWnd*, CTemplateWnd*> templatewnd_ptr_array;
 	CTemplateWnd m_tpl0;
 	int			m_tpllen;
 	int			m_tpleft;

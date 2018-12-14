@@ -764,7 +764,7 @@ void CViewSpikes::UpdateFileParameters()
 {
 	// init data view
 	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) m_pDocument;
-	pdbDoc->DBGetCurrentSpkFileName(FALSE);
+	pdbDoc->DBSetCurrentSpkFileName(FALSE);
 	BOOL flag = GetDocument()->OpenCurrentSpikeFile();
 	m_pSpkDoc = pdbDoc->m_pSpk;
 

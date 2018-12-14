@@ -51,7 +51,7 @@ class CIntervalsAndWordsSeries : public CObject
 	virtual void Serialize(CArchive& ar);
 
 	void	EraseAllData();
-	inline long		GetSize() { return iistep.GetSize(); }
+	inline long		GetSize() { return intervalpoint_array.GetSize(); }
 	CIntervalPoint  GetIntervalPointAt(int i);
 
 	void	ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP=1, BOOL bcopyRate = TRUE);
@@ -59,7 +59,7 @@ class CIntervalsAndWordsSeries : public CObject
 	void	ExportIntervalsSeries(int chan, CIntervalsAndLevels* pOut);
 
 public:
-	CArray <CIntervalPoint, CIntervalPoint>  iistep;
+	CArray <CIntervalPoint, CIntervalPoint>  intervalpoint_array;
 	float	chrate;
 	int		version;
 };

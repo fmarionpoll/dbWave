@@ -1,6 +1,10 @@
 #pragma once
 #include "dbWaveDoc.h"
 #include "lineview.h"
+#include "MeasureHZtagsPage.h"
+#include "MeasureOptionsPage.h"
+#include "MeasureResultsPage.h"
+#include "MeasureVTtagsPage.h"
 
 // MeasureProperties.h : header file
 //
@@ -22,10 +26,10 @@ public:
 
 // Attributes
 public:
-	CMeasureOptionsPage m_Page1;
-	CMeasureVTtagsPage	m_Page2;
-	CMeasureHZtagsPage	m_Page3;
-	CMeasureResultsPage m_Page4;
+	CMeasureHZtagsPage	m_measure_hz_tags_page;
+	CMeasureOptionsPage m_measure_options_page;
+	CMeasureVTtagsPage	m_measure_vt_tags_page;
+	CMeasureResultsPage m_measure_results_page;
 
 	// CMeasureResults
 	CLineViewWnd*	m_plineview{};

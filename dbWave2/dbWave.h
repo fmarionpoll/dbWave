@@ -57,7 +57,7 @@ public:
 	OPTIONS_OUTPUTDATA		outD;
 
 	CMemFile*				m_pviewdataMemFile;
-	CPtrArray				m_viewspkdParmsArray;
+	CArray <CMemFile*, CMemFile*> viewspikesmemfile_ptr_array;
 	CMemFile*				m_pviewspikesMemFile;
 	CMemFile*				m_psort1spikesMemFile;
 	CStringArray			m_tempMDBfiles;

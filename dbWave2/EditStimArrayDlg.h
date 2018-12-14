@@ -12,7 +12,7 @@ public:
 	virtual ~CEditStimArrayDlg();
 
 	// data passed by caller
-	CPtrArray			m_pIntervalArrays;
+	CArray < CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
 	float				m_rate;
 	CIntervalsAndLevels*	m_pstimsaved;
 

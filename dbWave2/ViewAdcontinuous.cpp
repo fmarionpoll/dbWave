@@ -71,9 +71,9 @@ CViewADContinuous::CViewADContinuous()
 
 CViewADContinuous::~CViewADContinuous()
 {
-	for (int i = 0; i < m_AlligatorDevicePtrArray.GetSize(); i++)
+	for (int i = 0; i < alligatorparameters_ptr_array.GetSize(); i++)
 	{
-		USBPxxPARAMETERS* ptr = (USBPxxPARAMETERS*) m_AlligatorDevicePtrArray.GetAt(i);
+		USBPxxPARAMETERS* ptr = alligatorparameters_ptr_array.GetAt(i);
 		delete ptr;
 	}
 }
@@ -572,9 +572,9 @@ BOOL CViewADContinuous::DAC_InitSubSystem()
 		m_DACmsbit = (long)pow(2.0, (m_DAC_DTAcq32.GetResolution() - 1));
 		m_DAClRes  = (long) resolutionfactor - 1;
 
-		for (int i = 0; i <  m_pDAC_options->outputParmsArray.GetSize(); i++)
+		for (int i = 0; i <  m_pDAC_options->outputparms_array.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
+			OUTPUTPARMS* pParms = &m_pDAC_options->outputparms_array.GetAt(i);
 			if (pParms->bDigital)
 				continue;
 			pParms->ampUp = (double(pParms->dAmplitudeMaxV) *  resolutionfactor) / (double(m_DAC_DTAcq32.GetMaxRange()) - m_DAC_DTAcq32.GetMinRange());
@@ -600,9 +600,9 @@ int CViewADContinuous::DAC_GetNumberOfChans()
 	int ndigitalOutputs = 0;
 
 	// first pass: count number of channels requested
-	for (int i = 0; i < m_pDAC_options->outputParmsArray.GetSize(); i++)
+	for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
+		OUTPUTPARMS* pParms = &m_pDAC_options->outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 		if (pParms->bDigital)
@@ -628,9 +628,9 @@ int CViewADContinuous::DAC_SetChannelList()
 
 		int digitalOutput = 0;
 		int analogOutput = 0;
-		for (int i = 0; i < m_pDAC_options->outputParmsArray.GetSize(); i++)
+		for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
+			OUTPUTPARMS* pParms = &m_pDAC_options->outputparms_array.GetAt(i);
 			if (!pParms->bON)
 				continue;
 
@@ -700,9 +700,9 @@ void CViewADContinuous::DAC_DeclareAndFillBuffers()
 	m_DAC_chbuflen		= chsweeplength / nbuffers;
 	m_DAC_buflen		= m_DAC_chbuflen * m_DAClistsize; 
 
-	for (int i = 0; i < m_pDAC_options->outputParmsArray.GetSize(); i++)
+	for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* parmsChan = &(m_pDAC_options->outputParmsArray.GetAt(i));
+		OUTPUTPARMS* parmsChan = &(m_pDAC_options->outputparms_array.GetAt(i));
 		parmsChan->lastphase = 0;
 		parmsChan->lastamp = 0;
 		parmsChan->bStart = TRUE;
@@ -1082,11 +1082,11 @@ void CViewADContinuous::DAC_FillBuffer(short* pDTbuf)
 {
 	int janalog = 0;
 	m_DACdigitalfirst = 0;
-	int nchans = m_pDAC_options->outputParmsArray.GetSize();
+	int nchans = m_pDAC_options->outputparms_array.GetSize();
 	ASSERT(nchans == 10);
 	for (int i = 0; i <  nchans; i++)
 	{
-		OUTPUTPARMS* pParms = &m_pDAC_options->outputParmsArray.GetAt(i);
+		OUTPUTPARMS* pParms = &m_pDAC_options->outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 
@@ -1764,7 +1764,7 @@ void CViewADContinuous::ADC_OnHardwareChannelsDlg()
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
 	dlg.m_pAlligatorAmplifier = &m_Alligator;
-	dlg.m_pAlligatorDevicePtrArray = &m_AlligatorDevicePtrArray; 
+	dlg.p_alligatordevice_ptr_array = &alligatorparameters_ptr_array; 
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -2031,7 +2031,7 @@ BOOL CViewADContinuous::InitConnectionWithAmplifiers()
 		// test if Alligator selected
 		if (pchan->am_csamplifier.Find(_T("Alligator")) >= 0)
 		{
-			m_Alligator.SetWaveChanParms(pchan, (USBPxxPARAMETERS*) m_AlligatorDevicePtrArray.GetAt(0));
+			m_Alligator.SetWaveChanParms(pchan, (USBPxxPARAMETERS*) alligatorparameters_ptr_array.GetAt(0));
 		}
 	}
 	return bcyberPresent;
@@ -2301,19 +2301,19 @@ void CViewADContinuous::SetCombostartoutput(int option)
 void CViewADContinuous::DAC_OnBnClickedParameters2()
 {
 	CDAChannelsDlg dlg;
-	int isize = m_pDAC_options->outputParmsArray.GetSize();
+	int isize = m_pDAC_options->outputparms_array.GetSize();
 	if (isize < 10)
-		m_pDAC_options->outputParmsArray.SetSize(10);
-	dlg.outputParmsArray.SetSize(10);
+		m_pDAC_options->outputparms_array.SetSize(10);
+	dlg.outputparms_array.SetSize(10);
 	for (int i = 0; i < 10; i++)
-		dlg.outputParmsArray[i] = m_pDAC_options->outputParmsArray[i];
+		dlg.outputparms_array[i] = m_pDAC_options->outputparms_array[i];
 	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat);
 	dlg.m_samplingRate = pWFormat->chrate;
 	
 	if (IDOK == dlg.DoModal())
 	{
 		for (int i = 0; i < 10; i++)
-			m_pDAC_options->outputParmsArray[i] = dlg.outputParmsArray[i];
+			m_pDAC_options->outputparms_array[i] = dlg.outputparms_array[i];
 		int nchans = DAC_GetNumberOfChans();
 		GetDlgItem(IDC_STARTSTOP2)->EnableWindow(nchans > 0);
 	}
@@ -2419,9 +2419,9 @@ void CViewADContinuous::DeviceConnectedUsbpxxs1ctl1(long Handle)
 	m_Alligator.readAllParameters(Handle, &device1);
 
 	boolean flagNotFound = TRUE;
-	for (int i = 0; i < m_AlligatorDevicePtrArray.GetSize(); i++)
+	for (int i = 0; i < alligatorparameters_ptr_array.GetSize(); i++)
 	{
-		USBPxxPARAMETERS* ptr = (USBPxxPARAMETERS*)m_AlligatorDevicePtrArray.GetAt(i);
+		USBPxxPARAMETERS* ptr = (USBPxxPARAMETERS*)alligatorparameters_ptr_array.GetAt(i);
 		if (ptr->DeviceHandle == device1.DeviceHandle)
 		{
 			flagNotFound = FALSE;
@@ -2432,7 +2432,7 @@ void CViewADContinuous::DeviceConnectedUsbpxxs1ctl1(long Handle)
 	{
 		USBPxxPARAMETERS* ptrNew = new USBPxxPARAMETERS();
 		*ptrNew = device1;
-		m_AlligatorDevicePtrArray.Add(ptrNew);
+		alligatorparameters_ptr_array.Add(ptrNew);
 	}
 	//MessageBox(_T("Alligator amplifier detected"));
 }

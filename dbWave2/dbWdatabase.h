@@ -54,6 +54,7 @@ public:
 	void		UpdateTables();
 
 	CString		GetDataBasePath();
+	void		SetDataBasePath();
 	void		GetFilenamesFromCurrentRecord();
 	CString		GetDatFilenameFromCurrentRecord();
 	CString		GetSpkFilenameFromCurrentRecord();

@@ -1519,7 +1519,7 @@ OPTIONS_OUTPUTDATA::OPTIONS_OUTPUTDATA()
 	iDAnbuffers				=10;
 	iDATriggermode			=0;
 	dDAFrequency_perchan	=1000.;
-	outputParmsArray.SetSize(10);
+	outputparms_array.SetSize(10);
 }
 
 OPTIONS_OUTPUTDATA::~OPTIONS_OUTPUTDATA()
@@ -1537,11 +1537,11 @@ OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator = (const OPTIONS_OUTPUTDATA& ar
 		iDAnbuffers = arg.iDAnbuffers;
 		iDATriggermode = arg.iDATriggermode;
 		dDAFrequency_perchan = arg.dDAFrequency_perchan;
-		int nchannels = arg.outputParmsArray.GetSize();
-		outputParmsArray.SetSize(nchannels);
+		int nchannels = arg.outputparms_array.GetSize();
+		outputparms_array.SetSize(nchannels);
 
 		for (int i = 0; i < nchannels; i++) {
-			outputParmsArray[i] = arg.outputParmsArray[i];
+			outputparms_array[i] = arg.outputparms_array[i];
 		}
 	}
 	return *this;
@@ -1568,11 +1568,11 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 		ar << (WORD) 1;			// double
 		ar << dDAFrequency_perchan;
 
-		int nchannels = outputParmsArray.GetSize(); // OUTPUT_PARMS
+		int nchannels = outputparms_array.GetSize(); // OUTPUT_PARMS
 		ar << (WORD) nchannels;	
 		for (int i = 0; i < nchannels; i++) 
 		{
-			outputParmsArray.GetAt(i).Serialize(ar);
+			outputparms_array.GetAt(i).Serialize(ar);
 		}
 		ar << (WORD) 0;			// no more ...
 	} 
@@ -1607,10 +1607,10 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 
 		// output_parms
 		ar >> wn; n = wn;
-		if (n > outputParmsArray.GetSize())
-			outputParmsArray.SetSize(n);
+		if (n > outputparms_array.GetSize())
+			outputparms_array.SetSize(n);
 		for (int i = 0; i < n; i++) {
-			outputParmsArray.GetAt(i).Serialize(ar);
+			outputparms_array.GetAt(i).Serialize(ar);
 		}
 
 		// other?
