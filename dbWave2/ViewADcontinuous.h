@@ -14,9 +14,9 @@
 #include "ScrollBarEx.h"
 #include "afxwin.h"
 #include "dtacq32.h"
-#include <oltypes.h>
-#include <olerrors.h>
-#include <Olmem.h>
+#include "./include/OLTYPES.H"
+#include "./include/OLERRORS.H"
+#include "./include/Olmem.h"
 #include "CUSBPxxS1Ctl.h"
 
 // DT Openlayer board

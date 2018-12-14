@@ -13,8 +13,8 @@
 #include "scopescr.h"
 #include "Lineview.h"
 
-#include <Olxdadefs.h>
-#include <Olxdaapi.h>
+#include "./include/Olxdadefs.h"
+#include "./include/Olxdaapi.h"
 #include "ViewADcontinuous.h"
 #include "ChildFrm.h"
 #include "MainFrm.h"

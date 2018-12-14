@@ -55,10 +55,6 @@
 #include <stdio.h>
 #include <errno.h>
 #include <process.h>
-//#include <oltypes.h>
-//#include <olerrors.h>
-//#include <Olmem.h>
-//#include "dtacq32.h"
 #include "StretchControls.h"		// stretch controls
 
 #include "dbwave_constants.h"

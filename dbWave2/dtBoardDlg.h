@@ -1,9 +1,10 @@
 #pragma once
 
-#include <OLTYPES.H>
-#include <OLERRORS.H>
-#include <Olmem.h>
-#include <OLDAAPI.H>
+
+#include "./include/OLDAAPI.H"
+#include "./include/OLTYPES.H"
+#include "./include/OLERRORS.H"
+#include "./include/Olmem.h"
 #include "dtacq32.h"
 #include "afxwin.h"
 
