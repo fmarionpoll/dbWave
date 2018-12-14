@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include <Olxdadefs.h>
+#include "./include/Olxdadefs.h"
 #include "GridCtrl/GridCell.h"
 #include "GridCtrl/GridCellCombo_FMP.h"
 #include "GridCtrl/GridCellNumeric.h"

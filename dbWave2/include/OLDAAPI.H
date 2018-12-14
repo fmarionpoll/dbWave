@@ -14,11 +14,11 @@ ABSTRACT:
 10/13/92
 ---------------------------------------------------------------------------*/
 
-#include <oltypes.h>
-#include <oldadefs.h>
-#include <olerrors.h>
-#include <olmem.h>
-#include <TedsApi.h>
+#include "./include/oltypes.h"
+#include "./include/oldadefs.h"
+#include "./include/olerrors.h"
+#include "./include/olmem.h"
+#include "./include/TedsApi.h"
 
 #ifdef __cplusplus
 extern "C" {

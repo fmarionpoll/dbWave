@@ -32,8 +32,8 @@ ABSTRACT:
 9/12/96
 ---------------------------------------------------------------------------*/
                 
-#include "olmem.h"
-#include "olerrors.h"
+#include "./include/olmem.h"
+#include "./include/olerrors.h"
                 
 //string resources
 //note all error strings must be less then UNKNOWN_ERROR_STRING,

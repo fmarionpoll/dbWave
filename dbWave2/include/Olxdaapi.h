@@ -32,9 +32,9 @@ ABSTRACT:
 10/13/92
 ---------------------------------------------------------------------------*/
 
-#include <oltypes.h>
-#include <olmem.h>
-#include <olxdadefs.h>
+#include "./include/oltypes.h"
+#include "./include/olmem.h""
+#include "./include/olxdadefs.h"
 
 #ifdef WIN32
 #include <mmsystem.h>
