@@ -663,7 +663,7 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 	CString cs_file_comment = _T("Copy files");
 	CString cs_dummy;
 	//int indexcurrent = DBGetCurrentRecordPosition();
-	int nfiles = DBGetNRecords();
+	//int nfiles = DBGetNRecords();
 	
 	// read all data paths and create new array --------------------------
 	dlg.SetStatus(_T("Create destination directories..."));
@@ -789,11 +789,11 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 				old_names_array.Add(m_currentDatafileName);
 
 				const UINT uid = m_pDB->m_mainTableSet.m_path_ID;
-				auto i=0;
-				for (i=0; i< ui_id_array.GetSize(); i++)
+				auto j=0;
+				for (auto i=0; i< ui_id_array.GetSize(); i++, j++)
 					if (ui_id_array.GetAt(i) == uid)
 						break;
-				ui_id_new_path_array.Add(i);
+				ui_id_new_path_array.Add(j);
 				new_names_array.Add(m_pDB->m_mainTableSet.m_Filedat);
 			}
 			// spike file
@@ -801,11 +801,11 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 			{
 				old_names_array.Add(m_currentSpikefileName);
 				const UINT uid = m_pDB->m_mainTableSet.m_path2_ID;
-				auto i=0;
-				for (i = 0; i < ui_id_array.GetSize(); i++)
+				auto j=0;
+				for (auto i = 0; i < ui_id_array.GetSize(); i++, j++)
 					if (ui_id_array.GetAt(i) == uid)
 						break;
-				ui_id_new_path_array.Add(i);
+				ui_id_new_path_array.Add(j);
 				new_names_array.Add(m_pDB->m_mainTableSet.m_Filespk);
 			}
 			// move to next record
@@ -853,7 +853,7 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 
 	//-------------------------------------------------------
 	// memory allocated -- get pointer to it
-	nfiles = old_names_array.GetSize();
+	const auto nfiles = old_names_array.GetSize();
 	cs_dummy.Format(_T("n files (*.dat & *.spk) = %i\r\n\r\n"), nfiles);
 	
 	// loop over all files of the multi-document
@@ -2244,10 +2244,10 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 	dlg.SetRange(0, nfiles);
 	dlg.SetStep(1);
 	
-	CStringArray		deleted_names;
-	CStringArray		deleted_spk_names;
-	CStringArray		original_names;
-	CStringArray		all_names;
+	CStringArray deleted_names;
+	CStringArray deleted_spk_names;
+	CStringArray original_names;
+	CStringArray all_names;
 	CArray <CTime, CTime> o_time_array;
 	deleted_names.SetSize(nfiles);
 	deleted_spk_names.SetSize(nfiles);
@@ -2270,7 +2270,6 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 	auto kfile = 0;				// index nb of validated records
 	auto nduplicates = 0;		// nb records to suppress
 	auto ifile = 0;				// absolute index (kfile+nduplicates)
-	auto b_ok = TRUE;			// flag FALSE= suppress record
 
 	if (!m_pDB->m_mainTableSet.IsBOF())
 	{
@@ -2291,7 +2290,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 
 			// load file and read date and time of data acquisition
 			CTime o_time = 0;
-			b_ok = OpenCurrentDataFile();
+			BOOL b_ok = OpenCurrentDataFile();
 			auto ioriginalfile=-1;
 			if (b_ok)
 			{
@@ -2368,10 +2367,10 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 		if (!h_mem)
 			return;
 		h_mem = ::GlobalReAlloc(h_mem, dw_len, GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
-		if (!h_mem)
+		if (!h_mem) 
 			return;
-		auto p_source = new COleDataSource();
 
+		auto p_source = new COleDataSource();
 		p_source->CacheGlobalData(CF_TEXT, h_mem);		// CF_UNICODETEXT?
 		p_source->SetClipboard();
 		auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
@@ -2381,11 +2380,12 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 		auto* p_view = dynamic_cast<CViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
 		auto& p_edit = p_view->GetRichEditCtrl();
 		p_edit.Paste();
+
 		//---------------------------------------------
 		const auto id_response = AfxMessageBox(_T("Do you want to erase these files from the disk?"), MB_YESNO);
 		if(id_response == IDYES)
 		{
-			for (int i=0; i< nduplicates; i++)
+			for (auto i=0; i< nduplicates; i++)
 			{
 				// remove dat
 				auto cs_file_path = deleted_names.GetAt(i);

@@ -2,7 +2,6 @@
 //
 
 #include "StdAfx.h"
-#include "dataheader_Atlab.H"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,7 +26,6 @@ CDataFileX::CDataFileX()
 	m_idType=DOCTYPE_UNKNOWN;
 	m_csType= _T("UNKNOWN");
 }
-
 
 CDataFileX::~CDataFileX()
 {
@@ -58,11 +56,11 @@ void CDataFileX::Dump(CDumpContext& dc) const
 long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
 {
 	// seek and read CFile
-	LONGLONG lOff = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
-	Seek(lOff, CFile::begin);
-	long lSize = Read(pBuffer, nbpoints);
+	const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
+	Seek(l_off, CFile::begin);
+	const long l_size = Read(pBuffer, nbpoints);
 	// adjust dependent parameters
-	return lSize / sizeof(short);
+	return l_size / sizeof(short);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -94,9 +92,3 @@ BOOL CDataFileX::WriteHZtags(CTagList* ptags)
 BOOL CDataFileX::WriteVTtags(CTagList* ptags) 
 	{return FALSE;}
 
-CString	CDataFileX::GetFileType() 
-{ 
-	CString cstype;
-	cstype = CA2T(m_csType);
-	return cstype; 
-}

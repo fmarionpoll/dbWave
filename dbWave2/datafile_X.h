@@ -36,9 +36,6 @@ public:
 	virtual BOOL WriteHZtags(CTagList* ptags);
 	virtual BOOL WriteVTtags(CTagList* ptags);
 
-// helpers
-	CString	GetFileType();
-
 //data parameters
 	int			m_bHeaderSize;		// data header size
 	int			m_idType;			// file type 0=unknown; 1=atlab; 2=Asyst; 3=awave; ..
