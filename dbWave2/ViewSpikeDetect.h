@@ -8,7 +8,7 @@
 
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
-#include "Controls\cdxCRotBevelLine.h"
+#include "./Controls/cdxCRotBevelLine.h"
 
 class CViewSpikeDetection : public CDaoRecordView
 {

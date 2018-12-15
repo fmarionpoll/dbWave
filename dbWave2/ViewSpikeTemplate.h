@@ -1,4 +1,5 @@
 #pragma once
+#include "TemplateListWnd.h"
 
 // SpikeTemplateView.h : header file
 //

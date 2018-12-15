@@ -306,7 +306,7 @@ int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 {
 	// check if transform is allowed
 	if (!m_pDataFile->IsWBTransformAllowed(imode) ||	// ? is transform allowed
-		!m_pDataFile->InitWBTransformMode(imode)) 		// ? is init OK
+		!m_pDataFile->InitWBTransformBuffer()) 		// ? is init OK
 	{
 		AfxMessageBox(IDS_LNVERR02, MB_OK);
 		return -1;

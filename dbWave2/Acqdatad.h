@@ -125,10 +125,9 @@ public:
 	inline int		GetTransfDataSpan(int i) const			{return m_pWBuf->GetWBTransformSpan(i);}
 	inline WORD		GetTransfDataNTypes() const				{return m_pWBuf->GetWBNTypesofTransforms();}
 	inline CString	GetTransfDataName(int i) const			{return m_pWBuf->GetWBTransformsAllowed(i);}
-	inline BOOL		GetWBVoltsperBin(int chindex, float* VoltsperBin, int mode = 0) const
-															{return m_pWBuf->GetWBVoltsperBin(chindex, VoltsperBin, mode);}
+	inline BOOL		GetWBVoltsperBin(int chindex, float* VoltsperBin, int mode = 0) const {return m_pWBuf->GetWBVoltsperBin(chindex, VoltsperBin, mode);}
 	inline BOOL		IsWBTransformAllowed(int imode) const	{return m_pWBuf->IsWBTransformAllowed(imode);}
-	inline BOOL		InitWBTransformMode(int imode) const	{return m_pWBuf->InitWBTransformMode(imode);}
+	inline BOOL		InitWBTransformBuffer() const	{return m_pWBuf->InitWBTransformBuffer();}
 	inline BOOL		SetWBTransformSpan(int i, int ispan) const {return m_pWBuf->SetWBTransformSpan(i, ispan);}
 	inline int		IsWBSpanChangeAllowed(int i) const		{return m_pWBuf->IsWBSpanChangeAllowed(i);}
 

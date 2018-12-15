@@ -759,7 +759,7 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 	m_tBUFlast = l_last;
 
 	if (m_pWBuf->GetWBAdrTransfData() == nullptr)
-		m_pWBuf->InitWBTransformMode(transform_type);
+		m_pWBuf->InitWBTransformBuffer();
 
 	const auto i_span = m_pWBuf->GetWBTransformSpan(transform_type);
 	const auto l_span = static_cast<long>(i_span);
@@ -867,7 +867,7 @@ BOOL CAcqDataDoc::BuildTransfData(const int transform_type, const int source_cha
 {
 	// make sure that transform buffer is ready
 	if (m_pWBuf->GetWBAdrTransfData() == nullptr)
-		m_pWBuf->InitWBTransformMode(transform_type);
+		m_pWBuf->InitWBTransformBuffer();
 	auto flag = TRUE;
 
 	// init parameters

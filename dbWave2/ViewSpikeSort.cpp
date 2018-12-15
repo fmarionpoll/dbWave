@@ -6,11 +6,11 @@
 #include "dbWave.h"
 #include "resource.h"
 
-#include "Cscale.h"
+//#include "Cscale.h"
 #include "scopescr.h"
-#include "Lineview.h"
+//#include "Lineview.h"
 #include "Editctrl.h"
-#include "dbMainTable.h"
+//#include "dbMainTable.h"
 #include "dbWaveDoc.h"
 
 #include "Spikedoc.h"
@@ -21,7 +21,7 @@
 
 #include "Editspik.h"
 #include "MainFrm.h"
-#include "Copyasdl.h"
+//#include "Copyasdl.h"
 #include "ChildFrm.h"
 #include "ProgDlg.h"
 
@@ -164,13 +164,13 @@ END_MESSAGE_MAP()
 void CViewSpikeSort_Parameters::OnInitialUpdate()
 {
 	// attach set
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();    
-	CdbWaveDoc* pdbDoc = GetDocument();
+	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto pdb_doc = GetDocument();
 	CDaoRecordView::OnInitialUpdate();
 
 	// load user parameters
-	m_psC= &(pApp->spkC);		// spike classif parms	
-	mdPM = &(pApp->vdP);		// viewdata options
+	m_psC= &(p_app->spkC);		// spike classif parms	
+	mdPM = &(p_app->vdP);		// viewdata options
 
 	// assign controls to stretch
 	m_stretch.AttachParent(this);		// attach formview pointer
@@ -236,7 +236,7 @@ void CViewSpikeSort_Parameters::OnInitialUpdate()
 	m_spkBarView.m_parms = mdPM->spksort1bars;
 
 	// set bincrflagonsave
-	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(pApp->vdS.bincrflagonsave);
+	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->vdS.bincrflagonsave);
 
 	// display tag lines at proper places
 	m_spkformtagleft	= m_spkForm.AddVTtag(m_psC->ileft);		// first VTtag

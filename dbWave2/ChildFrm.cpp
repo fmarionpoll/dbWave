@@ -6,33 +6,23 @@
 #include "afxpriv.h"
 #include "dbWave.h"
 #include "dbWaveDoc.h"
-#include "dbIndexTable.h"
+//#include "dbIndexTable.h"
 
 #include "MainFrm.h"
-#include "dbMainTable.h"
+//#include "dbMainTable.h"
 
-#include "Cscale.h"
-#include "scopescr.h"
+//#include "Cscale.h"
+//#include "scopescr.h"
 #include "Lineview.h"
-#include "Spikebar.h"
-#include "spikeshape.h"
 #include "ViewdbWave.h"
-#include "Editctrl.h"
+//#include "Editctrl.h"
 #include "ViewData.h"
 #include "Browsefi.h"
 #include "Printmar.h"
 #include "Lsoption.h"
 
-#include "ViewSpikeDetect.h"
-#include "SpikeClassListBox.h"
-#include "ViewSpikes.h"
-#include "spikehistp.h"
-#include "spikexyp.h"
-#include "ViewSpikeSort.h"
-#include "TemplateWnd.h"
-#include "TemplateListWnd.h"
-#include "ViewSpikeTemplate.h"
-#include "ViewSpikeHist.h"
+//#include "TemplateWnd.h"
+//#include "TemplateListWnd.h"
 #include "NoteDoc.h"
 #include "ViewNotedoc.h"
 #include "Datacomm.h"
@@ -45,28 +35,39 @@
 #include "ImportFilesDlg.h"
 #include "DeleteRecordOptionsDlg.h"
 
-#include "ChildFrm.h"
-
-#include <process.h>
+//#include <process.h>
 #include "CApplication.h"
 #include "CPivotCell.h"
 #include "CPivotField.h"
-#include "CPivotFields.h"
-#include "CPivotItem.h"
-#include "CPivotItemList.h"
-#include "CPivotItems.h"
+//#include "CPivotFields.h"
+//#include "CPivotItem.h"
+//#include "CPivotItemList.h"
+//#include "CPivotItems.h"
 #include "CPivotTable.h"
-#include "CPivotTables.h"
+//#include "CPivotTables.h"
 #include "CRange.h"
 #include "CWorkbook.h"
 #include "CWorkbooks.h"
 #include "CWorksheet.h"
 #include "CWorksheets.h"
 #include "TransferFilesDlg.h"
-#include "afxdialogex.h" 
+//#include "afxdialogex.h" 
 #include "ExportDataDlg.h"
 #include "ViewADcontinuous.h"
-#include <process.h>
+
+#include "Spikebar.h"
+#include "spikeshape.h"
+#include "Spikebar.h"
+#include "spikeshape.h"
+#include "spikehistp.h"
+#include "spikexyp.h"
+#include "SpikeClassListBox.h"
+#include "ViewSpikeSort.h"
+#include "ViewSpikeDetect.h"
+#include "ViewSpikes.h"
+#include "ViewSpikeTemplate.h"
+#include "ViewSpikeHist.h"
+#include "ChildFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -219,7 +220,7 @@ void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI* pCmdUI)
 void CChildFrame::OnOptionsBrowsemode() 
 {
 	CBrowseFileDlg dlg;
-	dlg.mfBR = &(((CdbWaveApp*) AfxGetApp())->vdP);
+	dlg.mfBR = &(dynamic_cast<CdbWaveApp*> (AfxGetApp())->vdP);
 	dlg.DoModal();	
 }
 
@@ -227,7 +228,7 @@ void CChildFrame::OnOptionsBrowsemode()
 void CChildFrame::OnOptionsPrintmargins() 
 {
 	CPrintMarginsDlg dlg;	
-	OPTIONS_VIEWDATA* psource = &(((CdbWaveApp*) AfxGetApp())->vdP);    
+	OPTIONS_VIEWDATA* psource = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->vdP);
 	dlg.mdPM = psource;
 	dlg.DoModal();		
 }
@@ -238,11 +239,11 @@ void CChildFrame::OnOptionsLoadsaveoptions()
 	CLoadSaveOptionsDlg dlg;
 	if (IDOK == dlg.DoModal())
 	{
-		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-		CStringArray* pParmFiles=&(pApp->m_csParmFiles);
-		pParmFiles->RemoveAll();
-		for (int i=0; i<dlg.pFiles.GetSize(); i++)
-			pParmFiles->Add(dlg.pFiles.GetAt(i));
+		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+		auto p_parm_files=&(p_app->m_csParmFiles);
+		p_parm_files->RemoveAll();
+		for (auto i=0; i<dlg.pFiles.GetSize(); i++)
+			p_parm_files->Add(dlg.pFiles.GetAt(i));
 	}
 }
 
@@ -250,8 +251,8 @@ void CChildFrame::OnOptionsLoadsaveoptions()
 void CChildFrame::OnToolsExportdatacomments() 
 {
 	CDataCommentsDlg dlg;					// define dialog box
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	dlg.m_pvO = &(pApp->vdP);				// pass parameters address
+	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	dlg.m_pvO = &(p_app->vdP);				// pass parameters address
 	// open dialog box & action if OK
 	if (IDOK == dlg.DoModal())
 	{
@@ -264,10 +265,10 @@ void CChildFrame::OnToolsExportdatacomments()
 
 void CChildFrame::OnToolsExportnumberofspikes() 
 {
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	BOOL bDoit=FALSE;
+	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto b_doit=FALSE;
 	CExportSpikeInfosDlg dlg;		// create dialog
-	dlg.m_pvdS =  &(pApp->vdS);		// pass address of spike parameters
+	dlg.m_pvdS =  &(p_app->vdS);		// pass address of spike parameters
 
 	// open dialog & action if IDOK
 	if (IDOK == dlg.DoModal())
@@ -294,32 +295,31 @@ void CChildFrame::OnToolsExportdataAsText()
 void CChildFrame::ExportASCII(int option)
 {
 	CSharedFile sf(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
-	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) GetActiveDocument();
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	int nbcommentcolumns = 0;
-
+	auto* pdb_doc = (CdbWaveDoc*) GetActiveDocument();
+	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto nbcommentcolumns = 0;
 	switch (option)
 	{
 	case 0:			// export CAcqData
-		pdbDoc->ExportDataAsciiComments(&sf);
+		pdb_doc->ExportDataAsciiComments(&sf);
 		break;
 	case 1:
-		pdbDoc->ExportNumberofSpikes(&sf);
+		pdb_doc->ExportNumberofSpikes(&sf);
 		break;
 	default:
 		break;
 	}
 
-	DWORD dwLen = (DWORD) sf.GetLength();
+	auto dwLen = (DWORD) sf.GetLength();
 	HGLOBAL hMem = sf.Detach();
 	if (!hMem)
 		return;
 	hMem = ::GlobalReAlloc(hMem, dwLen, GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 	if (!hMem)
 		return;
-	COleDataSource* pSource = new COleDataSource();
-	pSource->CacheGlobalData(CF_UNICODETEXT, hMem);
-	pSource->SetClipboard();
+	auto* p_source = new COleDataSource();
+	p_source->CacheGlobalData(CF_UNICODETEXT, hMem);
+	p_source->SetClipboard();
 
 	//pass data to excel - if it does not work, paste to a new text document
 	switch (option)
@@ -327,11 +327,11 @@ void CChildFrame::ExportASCII(int option)
 	case 0:			// export CAcqData
 		{
 			BOOL flag = FALSE;
-			if (pApp->vdP.btoExcel) 
+			if (p_app->vdP.btoExcel) 
 				flag = ExportToExcel();
-			if (!pApp->vdP.btoExcel || !flag)
+			if (!p_app->vdP.btoExcel || !flag)
 			{
-				CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
+				CMultiDocTemplate* pTempl = p_app->m_pNoteViewTemplate;
 				CDocument* pdbDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pdbDocExport->GetFirstViewPosition();
 				CViewNoteDoc* pView = (CViewNoteDoc*)pdbDocExport->GetNextView(pos);
@@ -343,12 +343,12 @@ void CChildFrame::ExportASCII(int option)
 	case 1:
 		{
 			BOOL flag = FALSE;
-			if (pApp->vdS.bexporttoExcel) 
+			if (p_app->vdS.bexporttoExcel) 
 				flag = ExportToExcelAndBuildPivot(option);
 
-			if (!pApp->vdS.bexporttoExcel || !flag)
+			if (!p_app->vdS.bexporttoExcel || !flag)
 			{
-				CMultiDocTemplate* pTempl = pApp->m_pNoteViewTemplate;
+				CMultiDocTemplate* pTempl = p_app->m_pNoteViewTemplate;
 				CDocument* pdbDocExport = pTempl->OpenDocumentFile(nullptr);
 				POSITION pos = pdbDocExport->GetFirstViewPosition();
 				CViewNoteDoc* pView = (CViewNoteDoc*)pdbDocExport->GetNextView(pos);
@@ -403,19 +403,19 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_SHAREDMEMFILLED:
 		{
-			CdbWaveApp* pApp= (CdbWaveApp*) AfxGetApp();
-			if (pApp->m_psf != nullptr)
+			auto* p_app= dynamic_cast<CdbWaveApp*>(AfxGetApp());
+			if (p_app->m_psf != nullptr)
 			{
-				CMultiDocTemplate* pTempl = ((CdbWaveApp*) AfxGetApp())->m_pNoteViewTemplate;
-				CDocument* pDocExport = pTempl->OpenDocumentFile(nullptr);
-				POSITION pos = pDocExport->GetFirstViewPosition();
-				CViewNoteDoc* pView = (CViewNoteDoc*)pDocExport->GetNextView(pos);
-				CRichEditCtrl& pEdit = pView->GetRichEditCtrl();
+				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+				const auto pDocExport = p_templ->OpenDocumentFile(nullptr);
+				auto pos = pDocExport->GetFirstViewPosition();
+				auto* p_view = dynamic_cast<CViewNoteDoc*>(pDocExport->GetNextView(pos));
+				auto& p_edit = p_view->GetRichEditCtrl();
 				OpenClipboard();
 				EmptyClipboard();
-				SetClipboardData(CF_UNICODETEXT, (pApp->m_psf)->Detach());
+				SetClipboardData(CF_UNICODETEXT, (p_app->m_psf)->Detach());
 				CloseClipboard();
-				pEdit.Paste();
+				p_edit.Paste();
 			}
 		}
 		break;

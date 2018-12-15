@@ -165,7 +165,7 @@ BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 		return FALSE;
 
 	// We are over text - but are we over a URL?
-	bOverURL = FALSE;
+	//bOverURL = FALSE;
 	strURL = GetText();
 
 	// Use float, otherwise we get an incorrect letter from the point

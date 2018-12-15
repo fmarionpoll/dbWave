@@ -40,8 +40,8 @@ protected:
 	static URLStruct g_szURIprefixes[];
 
 protected:
-	COLORREF m_clrUrl;
-	BOOL     m_bLaunchUrl;
-	CRect    m_Rect;
+	COLORREF m_clrUrl {};
+	BOOL     m_bLaunchUrl {};
+	CRect    m_Rect {};
 };
 
