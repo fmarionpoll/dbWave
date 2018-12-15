@@ -9,8 +9,8 @@
 class CApplication : public COleDispatchDriver
 {
 public:
-	CApplication(){} // Calls COleDispatchDriver default constructor
-	CApplication(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
+	CApplication() = default; // Calls COleDispatchDriver default constructor
+	explicit CApplication(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {};
 	CApplication(const CApplication& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
 	// Attributes

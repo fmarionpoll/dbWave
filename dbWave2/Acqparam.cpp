@@ -59,8 +59,7 @@ CWaveFormat::CWaveFormat()
 }
 
 CWaveFormat::~CWaveFormat()
-{
-}
+= default;
 
 void CWaveFormat::Serialize(CArchive& ar)
 {
@@ -124,7 +123,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 			WORD w;
 			ar >> acqtime;						// 2
 			ar >> fullscale_Volts;				// 3
-			ar >> binspan;				// 4
+			ar >> binspan;						// 4
 			ar >> binzero;						// 5
 			ar >> w; mode_encoding	= static_cast<short>(w);	// 6         	    	
 			ar >> w; mode_clock		= static_cast<short>(w);	// 7    	    	
@@ -401,8 +400,7 @@ CWaveChan::CWaveChan(CWaveChan& arg)
 }
 
 CWaveChan::~CWaveChan()
-{
-}
+= default;
 
 CWaveChan& CWaveChan::operator = (const CWaveChan& arg)
 {
@@ -556,8 +554,7 @@ CString CWaveChan::GetCyberAmpInput(const int value)
 IMPLEMENT_SERIAL(CWaveChanArray, CObject, 0 /* schema number*/ )
 
 CWaveChanArray::CWaveChanArray()
-{
-}
+= default;
 
 CWaveChanArray::~CWaveChanArray()
 {

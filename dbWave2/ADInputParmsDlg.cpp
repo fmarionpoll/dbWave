@@ -8,6 +8,7 @@
 #include "GridCtrl/GridCellNumeric.h"
 #include "GridCtrl/GridCellCheck.h"
 #include "ADInputParmsDlg.h"
+#include "CyberAmp.h"
 
 
 #ifdef _DEBUG
@@ -82,8 +83,7 @@ CADInputParmsDlg::CADInputParmsDlg(CWnd* pParent /*=NULL*/)
 }
 
 CADInputParmsDlg::~CADInputParmsDlg()
-{
-}
+= default;
 
 void CADInputParmsDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -175,8 +175,8 @@ BOOL CADInputParmsDlg::OnInitDialog()
 			m_resolutionCombo.SetCurSel(i_found);
 
 		// select encoding mode according to parameter in waveFormat
-		auto i_current = 0;
-		for (i_current; i_current < m_encodingCombo.GetCount(); i_current++)
+		int i_current;
+		for (i_current=0; i_current < m_encodingCombo.GetCount(); i_current++)
 		{
 			if (m_encodingCombo.GetItemData(i_current) == static_cast<DWORD>(m_pwFormat->mode_encoding))
 				break;
@@ -425,7 +425,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszADGains[i]);
 			i++;
 		} while (pszADGains[i] != _T(""));
-		auto* p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto* p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); 
 		// init value
@@ -445,7 +445,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			cs_array_options.Add(pszAmplifier[i]);
 			i++;
 		} while (pszAmplifier[i] != _T(""));
-		auto* p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto* p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(cs_array_options);
 		p_cell->SetStyle(CBS_DROPDOWN); 
 		// init value
@@ -490,7 +490,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszHighPass[i]);
 			i++;
 		} while (pszHighPass[i] != _T(""));
-		auto p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
@@ -526,7 +526,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszProbeType[i]);
 			i++;
 		} while (pszProbeType[i] != _T(""));
-		auto p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
@@ -565,8 +565,7 @@ void CADInputParmsDlg::InitGridColumnReadOnlyFields(int col)
 {
 	// "Signal total gain" - read only / numeric
 	int row = m_row_readonly;
-	CString cs;
-	cs = m_Grid.GetItemText(m_row_ampgain, col);
+	CString cs = m_Grid.GetItemText(m_row_ampgain, col);
 	auto gain = _ttoi(cs);
 	cs = m_Grid.GetItemText(m_row_headstagegain, col);
 	gain *= _ttoi(cs);
@@ -646,7 +645,6 @@ void CADInputParmsDlg::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 void CADInputParmsDlg::OnCbnSelchangeResolution()
 {
 	CString cs;
-	auto current_sel = m_resolutionCombo.GetCurSel();
 	m_resolutionCombo.GetWindowText(cs);
 	const auto n_bits = _ttoi(cs);
 	const auto old_n_bins = m_iNBins;
@@ -855,7 +853,7 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 			return;
 
 		p_chan->am_csInputneg = pszHighPass[0];
-		auto error_code = cyber_amp.SetWaveChanParms(p_chan);
+		/*auto error_code = */cyber_amp.SetWaveChanParms(p_chan);
 	}
 
 	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0) 

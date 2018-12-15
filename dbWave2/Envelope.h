@@ -1,9 +1,23 @@
 #pragma once
 
 // envelope.h
+//#include "Cscale.h"
 
-#include "cscale.h"
+class CHighLight : public CObject
+{
+public:
+	CHighLight();				// protected constructor used by dynamic creation
+	DECLARE_SERIAL(CHighLight)
+	void Serialize(CArchive& ar) override;
+	CHighLight& operator = (const CHighLight& arg);	// operator redefinition
 
+public:
+	int					channel = 0;
+	COLORREF			color = RGB(255, 0, 0); // red
+	int					pensize = 1;
+	CArray <long, long> l_first;
+	CArray <long, long> l_last;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CEnvelope class
@@ -26,13 +40,16 @@ protected:
 	int		m_span;				// additionnal data pts necessary to compute transform
 	int		m_dataperpixel;		// 2=simple envelope, 1=raw data 
 	int		m_npixels;			// nb of valid elements in the array
-	CWordArray m_Envelope;		// Envelope array
+	CArray <short, short> m_Envelope;		// Envelope array
 	
 // Operations
 public:	
 	void	FillEnvelopeWithAbcissa (int npixels, int npoints);
 	void	FillEnvelopeWithAbcissaEx (int pixfirst, int pixlast, int ndatapoints);
-	void	GetMeantoPolypoints(long* array);
+	void	GetMeanToAbcissa(CArray<CPoint, CPoint> &dest);
+	void	GetMeanToOrdinates(CArray<CPoint, CPoint> &dest);
+	void	ExportToAbcissa(CArray<CPoint, CPoint> &dest);
+	void	ExportToOrdinates(CArray<CPoint, CPoint> &dest);
 
 // Helper functions
 public:
@@ -41,7 +58,7 @@ public:
 	inline void SetDocbufferSpan(int span) {m_span=span;}
 
     //----------Envelope array
-    inline short* GetElmtAdr(int i) {return (short*) &(m_Envelope[i]);}
+    inline short* GetElmtAdr(int i) {return &m_Envelope[i];}
     inline int	GetSourceMode()const {return m_sourceMode;}
 	inline int	GetSourceChan() const {return m_sourceChan;}
     inline int	GetEnvelopeSize() const {return m_Envelope.GetSize();}
@@ -50,9 +67,8 @@ public:
     inline void SetSourceMode(int n, int span) {m_sourceMode=n; m_span = span;}
 	inline void SetSourceChan(int n) {m_sourceChan=n;}
     inline void SetPointAt(int j, int val) {m_Envelope[j]=val;}
-	inline void SetSourceData(int chan, int transform) {m_sourceChan=chan; m_sourceMode=transform;}
-	inline void ExportToPolyPts(long* lpDest) {for (int i= 0; i< m_Envelope.GetSize(); i++, lpDest+= 2) *lpDest = m_Envelope[i]; }
-	inline short GetPointAt(int i) {return (short) m_Envelope[i];}
+	inline void SetSourceData(const int chan, const int transform) {m_sourceChan=chan; m_sourceMode=transform;}
+	inline short GetPointAt(const int i) {return short(m_Envelope[i]);}
 
 	void	SetEnvelopeSize(int npixels, int ndataperpixel);
 	void	FillEnvelopeWithMxMi(int ifirst, short* lpData, int nchans,  int nelmts, BOOL bNew);

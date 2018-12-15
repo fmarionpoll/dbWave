@@ -5,7 +5,7 @@
 #include "Editctrl.h"
 #include "resource.h"
 #include "scopescr.h"
-#include "Editctrl.h"
+//#include "Editctrl.h"
 #include "ScopeScreenPropsDlg.h"
 
 #ifdef _DEBUG
@@ -77,162 +77,162 @@ BOOL CScopeScreenPropsDlg::OnInitDialog()
 
 void CScopeScreenPropsDlg::OnEnChangeXCells() 
 {
-	if (!mm_xcells.m_bEntryDone)
-		return;
+	if (mm_xcells.m_bEntryDone) {
 
-	int xcells = m_xcells;
-	switch (mm_xcells.m_nChar)
-	{				// load data from edit controls
-	case VK_RETURN:
-		UpdateData(TRUE);
-		xcells = m_xcells;
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		xcells++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		xcells--;
-		break;
-	}
-	// check boundaries
-	if (xcells < 1) xcells = 1;
+		auto xcells = m_xcells;
+		switch (mm_xcells.m_nChar)
+		{				// load data from edit controls
+		case VK_RETURN:
+			UpdateData(TRUE);
+			xcells = m_xcells;
+			break;
+		case VK_UP:
+		case VK_PRIOR:
+			xcells++;
+			break;
+		case VK_DOWN:
+		case VK_NEXT:
+			xcells--;
+			break;
+		default:;
+		}
+		// check boundaries
+		if (xcells < 1) xcells = 1;
 
-	// change display if necessary
-	mm_xcells.m_bEntryDone=FALSE;	// clear flag
-	mm_xcells.m_nChar=0;			// empty buffer
-	mm_xcells.SetSel(0, -1);		// select all text
-	if (m_xcells != xcells)
-	{
-		m_pscope->m_parms.xScaleUnitValue = m_pscope->m_parms.xScaleUnitValue * m_xcells / xcells;
-		m_xcells=xcells;
-		m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
-		m_pscope->Invalidate();
+		// change display if necessary
+		mm_xcells.m_bEntryDone = FALSE;	// clear flag
+		mm_xcells.m_nChar = 0;			// empty buffer
+		mm_xcells.SetSel(0, -1);		// select all text
+		if (m_xcells != xcells)
+		{
+			m_pscope->m_parms.xScaleUnitValue = m_pscope->m_parms.xScaleUnitValue * m_xcells / xcells;
+			m_xcells = xcells;
+			m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
+			m_pscope->Invalidate();
+		}
+		UpdateData(FALSE);
 	}
-	UpdateData(FALSE);
-	return;
+	
 }
 
 void CScopeScreenPropsDlg::OnEnChangeXYTicks() 
 {
-	if (!mm_xyticks.m_bEntryDone)
-		return;
+	if (mm_xyticks.m_bEntryDone) {
 
-	int xyticks = m_xyticks;
-	switch (mm_xyticks.m_nChar)
-	{				// load data from edit controls
-	case VK_RETURN:
-		UpdateData(TRUE);
-		xyticks = m_xyticks;
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		xyticks++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		xyticks--;
-		break;
-	}
-	// check boundaries
-	if (xyticks < 0) xyticks = 0;
+		auto xyticks = m_xyticks;
+		switch (mm_xyticks.m_nChar)
+		{				// load data from edit controls
+		case VK_RETURN:
+			UpdateData(TRUE);
+			xyticks = m_xyticks;
+			break;
+		case VK_UP:
+		case VK_PRIOR:
+			xyticks++;
+			break;
+		case VK_DOWN:
+		case VK_NEXT:
+			xyticks--;
+			break;
+		default: ;
+		}
+		// check boundaries
+		if (xyticks < 0) xyticks = 0;
 
-	// change display if necessary
-	mm_xyticks.m_bEntryDone=FALSE;	// clear flag
-	mm_xyticks.m_nChar=0;			// empty buffer
-	mm_xyticks.SetSel(0, -1);		// select all text
-	if (m_xyticks != xyticks)
-	{
-		m_xyticks=xyticks;
-		if (m_xcells > 0)
-			m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
-		if (m_ycells > 0)
-			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
-		m_pscope->Invalidate();
+		// change display if necessary
+		mm_xyticks.m_bEntryDone = FALSE;	// clear flag
+		mm_xyticks.m_nChar = 0;			// empty buffer
+		mm_xyticks.SetSel(0, -1);		// select all text
+		if (m_xyticks != xyticks)
+		{
+			m_xyticks = xyticks;
+			if (m_xcells > 0)
+				m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
+			if (m_ycells > 0)
+				m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
+			m_pscope->Invalidate();
+		}
+		UpdateData(FALSE);
 	}
-	UpdateData(FALSE);
-	return;
 }
 
 void CScopeScreenPropsDlg::OnEnChangeXYTicksLine() 
 {
-	if (!mm_xytickline.m_bEntryDone)
-		return;
-
-	int xytickline = m_xytickline;
-	switch (mm_xytickline.m_nChar)
-	{				// load data from edit controls
-	case VK_RETURN:
-		UpdateData(TRUE);
-		xytickline = m_xytickline;
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		xytickline++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		xytickline--;
-		break;
-	}
-	// check boundaries
-	if (xytickline < 0)	xytickline = 0;
-
-	// change display if necessary
-	mm_xytickline.m_bEntryDone=FALSE;	// clear flag
-	mm_xytickline.m_nChar=0;			// empty buffer
-	mm_xytickline.SetSel(0, -1);		// select all text
-	if (m_xytickline != xytickline)
+	if (mm_xytickline.m_bEntryDone) 
 	{
-		m_xytickline = xytickline;
-		if (m_xcells > 0)
-			m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
-		if (m_ycells > 0)
-			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
-		m_pscope->Invalidate();
+		auto xytickline = m_xytickline;
+		switch (mm_xytickline.m_nChar)
+		{				// load data from edit controls
+		case VK_RETURN:
+			UpdateData(TRUE);
+			xytickline = m_xytickline;
+			break;
+		case VK_UP:
+		case VK_PRIOR:
+			xytickline++;
+			break;
+		case VK_DOWN:
+		case VK_NEXT:
+			xytickline--;
+			break;
+		}
+		// check boundaries
+		if (xytickline < 0)	xytickline = 0;
+
+		// change display if necessary
+		mm_xytickline.m_bEntryDone = FALSE;	// clear flag
+		mm_xytickline.m_nChar = 0;			// empty buffer
+		mm_xytickline.SetSel(0, -1);		// select all text
+		if (m_xytickline != xytickline)
+		{
+			m_xytickline = xytickline;
+			if (m_xcells > 0)
+				m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
+			if (m_ycells > 0)
+				m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
+			m_pscope->Invalidate();
+		}
+		UpdateData(FALSE);
 	}
-	UpdateData(FALSE);
-	return;
 }
 
 void CScopeScreenPropsDlg::OnEnChangeYCells() 
 {
-	if (!mm_ycells.m_bEntryDone)
-		return;
-
-	int ycells = m_ycells;
-	switch (mm_ycells.m_nChar)
-	{				// load data from edit controls
-	case VK_RETURN:
-		UpdateData(TRUE);
-		ycells = m_ycells;
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		ycells++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		ycells--;
-		break;
-	}
-	// check boundaries
-	if (ycells < 1) ycells = 1;
-
-	// change display if necessary
-	mm_ycells.m_bEntryDone=FALSE;	// clear flag
-	mm_ycells.m_nChar=0;			// empty buffer
-	mm_ycells.SetSel(0, -1);		// select all text
-	if (m_ycells != ycells)
+	if (mm_ycells.m_bEntryDone) 
 	{
-		m_pscope->m_parms.yScaleUnitValue = m_pscope->m_parms.yScaleUnitValue * m_ycells / ycells;
-		m_ycells=ycells;		
-		m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
-		m_pscope->Invalidate();
+		auto ycells = m_ycells;
+		switch (mm_ycells.m_nChar)
+		{				// load data from edit controls
+		case VK_RETURN:
+			UpdateData(TRUE);
+			ycells = m_ycells;
+			break;
+		case VK_UP:
+		case VK_PRIOR:
+			ycells++;
+			break;
+		case VK_DOWN:
+		case VK_NEXT:
+			ycells--;
+			break;
+		default:;
+		}
+		// check boundaries
+		if (ycells < 1) ycells = 1;
+
+		// change display if necessary
+		mm_ycells.m_bEntryDone = FALSE;	// clear flag
+		mm_ycells.m_nChar = 0;			// empty buffer
+		mm_ycells.SetSel(0, -1);		// select all text
+		if (m_ycells != ycells)
+		{
+			m_pscope->m_parms.yScaleUnitValue = m_pscope->m_parms.yScaleUnitValue * m_ycells / ycells;
+			m_ycells = ycells;
+			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
+			m_pscope->Invalidate();
+		}
+		UpdateData(FALSE);
 	}
-	UpdateData(FALSE);
-	return;
 }
 
 void CScopeScreenPropsDlg::OnBackgroundColor() 

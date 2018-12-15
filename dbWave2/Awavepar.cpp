@@ -48,8 +48,7 @@ SCOPESTRUCT::SCOPESTRUCT()
 }
 
 SCOPESTRUCT::~SCOPESTRUCT()
-{
-}
+= default;
 
 SCOPESTRUCT& SCOPESTRUCT::operator = (const SCOPESTRUCT& arg)
 {
@@ -235,8 +234,7 @@ OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
 }
 
 OPTIONS_VIEWDATA::~OPTIONS_VIEWDATA()
-{
-}
+= default;
 
 OPTIONS_VIEWDATA& OPTIONS_VIEWDATA::operator = (const OPTIONS_VIEWDATA& arg)
 {
@@ -559,7 +557,7 @@ void OPTIONS_VIEWDATA::Serialize(CArchive& ar)
 		}
 		else if (version >= 2)
 		{
-			WORD w1; ar >> w1; int nb_int_items = w1;
+			WORD ww1; ar >> ww1; int nb_int_items = ww1;
 			if (nb_int_items > 0)	ar >> hzResolution; nb_int_items--;
 			if (nb_int_items > 0) {
 				ar >> vtResolution;  nb_int_items--;
@@ -713,8 +711,7 @@ OPTIONS_VIEWSPIKES::OPTIONS_VIEWSPIKES(): bexporttoExcel(0), bincrflagonsave(0),
 }
 
 OPTIONS_VIEWSPIKES::~OPTIONS_VIEWSPIKES()
-{
-}
+= default;
 
 OPTIONS_VIEWSPIKES& OPTIONS_VIEWSPIKES::operator = (const OPTIONS_VIEWSPIKES& arg)
 {
@@ -837,8 +834,8 @@ void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
 		ar << crStimFill;							// 8
 		ar << crStimBorder;							// 9
 		ar << crChartArea;							// 10
-		for (int i=0; i< 18; i++)
-			ar << crScale[i];
+		for (unsigned long i : crScale)
+			ar << i;
 		ar << fScalemax ;							// 29
 
 	} 
@@ -972,8 +969,7 @@ OPTIONS_VIEWDATAMEASURE::OPTIONS_VIEWDATAMEASURE()
 }
 
 OPTIONS_VIEWDATAMEASURE::~OPTIONS_VIEWDATAMEASURE()
-{
-}
+= default;
 
 OPTIONS_VIEWDATAMEASURE& OPTIONS_VIEWDATAMEASURE::operator = (const OPTIONS_VIEWDATAMEASURE& arg)
 {
@@ -1344,8 +1340,7 @@ OPTIONS_ACQDATA::OPTIONS_ACQDATA()
 }
 
 OPTIONS_ACQDATA::~OPTIONS_ACQDATA()
-{
-}
+= default;
 
 OPTIONS_ACQDATA& OPTIONS_ACQDATA::operator = (const OPTIONS_ACQDATA& arg)
 {
@@ -1523,8 +1518,7 @@ OPTIONS_OUTPUTDATA::OPTIONS_OUTPUTDATA()
 }
 
 OPTIONS_OUTPUTDATA::~OPTIONS_OUTPUTDATA()
-{
-}
+= default;
 
 OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator = (const OPTIONS_OUTPUTDATA& arg)
 {
@@ -1655,8 +1649,7 @@ OUTPUTPARMS::OUTPUTPARMS(): bChanged(0), ampLow(0), lastamp(0), lastphase(0)
 }
 
 OUTPUTPARMS::~OUTPUTPARMS()
-{
-}
+= default;
 
 OUTPUTPARMS& OUTPUTPARMS::operator = (const OUTPUTPARMS& arg)
 {

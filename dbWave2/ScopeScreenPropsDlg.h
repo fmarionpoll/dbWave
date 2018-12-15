@@ -1,4 +1,5 @@
 #pragma once
+#include "Editctrl.h"
 
 // ScopeScreenPropsDlg.h : header file
 //
@@ -20,8 +21,8 @@ public:
 	int		m_ycells;
 
 	CScopeScreen* m_pscope;
-	COLORREF m_crScopeFill;
-	COLORREF m_crScopeGrid;
+	COLORREF	m_crScopeFill;
+	COLORREF	m_crScopeGrid;
 
 	CEditCtrl	mm_xcells;
 	CEditCtrl	mm_ycells;

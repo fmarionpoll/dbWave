@@ -4,9 +4,9 @@
 
 #include "StdAfx.h"
 #include "scopescr.h"
-#include "Lineview.h"
-#include "Editctrl.h"
-#include "NoteDoc.h"
+//#include "Lineview.h"
+//#include "Editctrl.h"
+//#include "NoteDoc.h"
 #include "dbWaveDoc.h"
 #include "resource.h"
 

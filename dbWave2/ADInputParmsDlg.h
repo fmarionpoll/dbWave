@@ -2,9 +2,9 @@
 
 // CADInputParmsDlg dialog
 
-#include "CyberAmp.h"
+//#include "CyberAmp.h"
 #include "CUSBPxxS1Ctl.h"
-#include "GridCtrl\GridCtrl.h"
+#include "./GridCtrl/GridCtrl.h"
 
 class CADInputParmsDlg : public CDialog
 {

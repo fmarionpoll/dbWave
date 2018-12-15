@@ -2,25 +2,17 @@
 //
 #pragma once
 
-////////////////////////////////////////////////////////////////////////
-// 
-// OPTIONS_VIEWDATA			version 1
-// OPTIONS_VIEWSPIKES		version 1
-// OPTIONS_VIEWDATAMEASURE	version 1
-// OPTIONS_IMPORT			version 1
-// OPTIONS_ACQDATA			version
-////////////////////////////////////////////////////////////////////////
 
 class SCOPESTRUCT : public CObject
 {
 	DECLARE_SERIAL(SCOPESTRUCT)
-	SCOPESTRUCT();		// constructor
-	~SCOPESTRUCT();		// destructor
-	SCOPESTRUCT& operator = (const SCOPESTRUCT& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);		// overridden for document i/o
+	SCOPESTRUCT();
+	~SCOPESTRUCT();
+	SCOPESTRUCT& operator = (const SCOPESTRUCT& arg);
+	virtual void Serialize(CArchive& ar);
 
 public:
-	WORD		wversion;			// version number
+	WORD		wversion;
 	int			iID;
 	int			iXCells;
 	int			iYCells;

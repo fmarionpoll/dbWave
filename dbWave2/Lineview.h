@@ -4,6 +4,7 @@
 #include "chanlistitem.h"
 #include "scopescr.h"
 #include "acqdatad.h"
+#include "Cscale.h"
 
 class CLineViewWnd : public CScopeScreen
 {
@@ -54,8 +55,8 @@ protected:
 	CAcqDataDoc*							m_pDataFile;		// pointer to data source file
 	CArray<CChanlistItem*, CChanlistItem*>	chanlistitem_ptr_array;	// list of display items (abcissa, Envelope, disp. parms)
 	CArray<CEnvelope*, CEnvelope*>			envelope_ptr_array;	// list of Envelopes
-	CDWordArray								m_PolyPoints;		// array with abcissa & ordinates
-	CDWordArray*							m_pDWintervals;		// intervals of highlighted data 
+	CArray <CPoint, CPoint>					m_PolyPoints;		// array with abcissa & ordinates
+	CHighLight								m_highlighted;
 	CScale 									m_scale;
 	
 	int		m_npixels;				// nb pixels displayed horizontally
@@ -100,8 +101,8 @@ public:
 	int				SetChanlistTransformMode(WORD i, int imode);
 	int				SetChanlistSourceChan(WORD i, int ns);	
 	void			SetChanlistOrdinates(WORD i, int chan, int transform);
-	void			SetChanlistVoltsExtent(int chan, float* pvalue);
-	void			SetChanlistVoltsZero(int chan, float * pvalue);
+	void			SetChanlistVoltsExtent(int chan, const float* pvalue);
+	void			SetChanlistVoltsZero(int chan, const float * pvalue);
 
 	inline CChanlistItem* GetChanlistItem(int i) const {return chanlistitem_ptr_array.GetAt(i); }
 	inline float	GetChanlistVoltsExtent(int chan) {return chanlistitem_ptr_array[chan]->GetDataVoltsSpan(); }
@@ -141,6 +142,7 @@ public:
 	void 	UpdateChanlistMaxSpan();
 	void 	UpdateGainSettings(int i);	
 	void	SetHighlightData(CDWordArray* pIntervals);
+	void	SetHighlightData(CHighLight& source);
 	void	SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, int trackchannel);
 	void 	MoveHZtagtoVal(int itag, int ival);	
 	void	UpdateXRuler();

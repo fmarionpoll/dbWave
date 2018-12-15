@@ -302,19 +302,18 @@ void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 	{
 		for (i = 0; i < p_s->GetSize(); i++)
 		{
-			CString cs = p_s->GetAt(i);
-			p_combo->AddString(cs);
+			p_combo->AddString(p_s->GetAt(i));
 		}
 	}
 	// no associated list -  insert provisional values in the table
 	else
 	{
-		int imax = i_sel + 10;
+		const auto imax = i_sel + 10;
 		CString cs;
 		for (i=0; i < imax; i++)
 		{
 			cs.Format(_T("%i"), i);
-			int j = p_combo->AddString(cs);
+			const auto j = p_combo->AddString(cs);
 			p_combo->SetItemData(j, i);
 		}
 	}

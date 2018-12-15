@@ -13,9 +13,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CAcqDataDoc document
 
-#include "wavebuf.h"		// data acquisition buffer
+#include "WaveBuf.h"		// data acquisition buffer
 #include "datafile_X.h"
-#include "awavepar.h"		// user parameters
+#include "Awavepar.h"		// user parameters
 
 class CAcqDataDoc : public CDocument
 {
@@ -34,7 +34,7 @@ public:
 	// Implementation
 	//---------------
 	BOOL 			OnSaveDocument (CString &sz_path_name) ;
-	BOOL 			OnOpenDocument (CString &sz_path_name);
+	BOOL 			OnOpenDocument (CString &sz_path_name) ;
 	BOOL 			OnNewDocument() override;
 
 protected:
@@ -114,26 +114,26 @@ public:
 	inline long		GetBUFchanIndex (long lPos) const		{return (lPos-m_lBUFchanFirst);}
 	inline long		GetBUFchanLength() const				{return m_lBUFchanSize;}
 
-	inline CWaveChanArray*	GetpWavechanArray()				{return &m_pWBuf->m_chanArray;}
-	inline CWaveFormat*		GetpWaveFormat()				{return &m_pWBuf->m_waveFormat;}
-	inline int		GetScanCount()							{return m_pWBuf->m_waveFormat.scan_count;}
+	inline CWaveChanArray*	GetpWavechanArray() const {return &m_pWBuf->m_chanArray;}
+	inline CWaveFormat*		GetpWaveFormat() const {return &m_pWBuf->m_waveFormat;}
+	inline int		GetScanCount() const {return m_pWBuf->m_waveFormat.scan_count;}
 	
-	inline short*	GetpRawDataBUF()						{return m_pWBuf->GetWBAdrRawDataBuf();}
-	inline short*	GetpRawDataElmt(int chan, int index)	{return m_pWBuf->GetWBAdrRawDataElmt(chan, index-m_lBUFchanFirst);}
-	inline short*	GetpTransfDataBUF()						{return m_pWBuf->GetWBAdrTransfData();}
-	inline short*	GetpTransfDataElmt(int index)			{return (m_pWBuf->GetWBAdrTransfData() + index);}
+	inline short*	GetpRawDataBUF() const {return m_pWBuf->GetWBAdrRawDataBuf();}
+	inline short*	GetpRawDataElmt(int chan, int index) const {return m_pWBuf->GetWBAdrRawDataElmt(chan, index-m_lBUFchanFirst);}
+	inline short*	GetpTransfDataBUF() const {return m_pWBuf->GetWBAdrTransfData();}
+	inline short*	GetpTransfDataElmt(int index) const {return (m_pWBuf->GetWBAdrTransfData() + index);}
 	inline int		GetTransfDataSpan(int i) const			{return m_pWBuf->GetWBTransformSpan(i);}
 	inline WORD		GetTransfDataNTypes() const				{return m_pWBuf->GetWBNTypesofTransforms();}
 	inline CString	GetTransfDataName(int i) const			{return m_pWBuf->GetWBTransformsAllowed(i);}
-	inline BOOL		GetWBVoltsperBin(int chindex, float* VoltsperBin, int mode = 0)
+	inline BOOL		GetWBVoltsperBin(int chindex, float* VoltsperBin, int mode = 0) const
 															{return m_pWBuf->GetWBVoltsperBin(chindex, VoltsperBin, mode);}
 	inline BOOL		IsWBTransformAllowed(int imode) const	{return m_pWBuf->IsWBTransformAllowed(imode);}
 	inline BOOL		InitWBTransformMode(int imode) const	{return m_pWBuf->InitWBTransformMode(imode);}
 	inline BOOL		SetWBTransformSpan(int i, int ispan) const {return m_pWBuf->SetWBTransformSpan(i, ispan);}
 	inline int		IsWBSpanChangeAllowed(int i) const		{return m_pWBuf->IsWBSpanChangeAllowed(i);}
 
-	inline void		SetbOffsetToData(ULONGLONG ulOffset)	{m_pXFile->m_ulOffsetData=ulOffset;}
-	inline void		SetbOffsetToHeader(ULONGLONG ulOffset)	{m_pXFile->m_ulOffsetHeader=ulOffset;}
+	inline void		SetbOffsetToData(ULONGLONG ulOffset) const {m_pXFile->m_ulOffsetData=ulOffset;}
+	inline void		SetbOffsetToHeader(ULONGLONG ulOffset) const {m_pXFile->m_ulOffsetHeader=ulOffset;}
 
 	inline ULONGLONG GetbOffsetToData() const				{return m_pXFile->m_ulOffsetData;}
 	inline ULONGLONG GetbOffsetToHeader() const				{return m_pXFile->m_ulOffsetHeader;}

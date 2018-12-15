@@ -9,19 +9,19 @@
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
 
-#include "Cscale.h"
+//#include "Cscale.h"
 #include "scopescr.h"
-#include "Lineview.h"
+//#include "Lineview.h"
 #include "Editctrl.h"
-#include "Spikebar.h"
-#include "spikeshape.h"
+//#include "Spikebar.h"
+//#include "spikeshape.h"
 #include "DataListCtrl.h"
 
 #include "MainFrm.h"
 #include "ChildFrm.h"
-#include "ProgDlg.h"
+//#include "ProgDlg.h"
 
-#include ".\ViewdbWave.h"
+#include "ViewdbWave.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -124,7 +124,7 @@ void CViewdbWave::OnInitialUpdate()
 	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 	m_binit = TRUE;
 
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp(); 
+	auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp()); 
 	mdPM = &pApp->vdP;
 	m_dataListCtrl.InitColumns(&mdPM->icolwidth);
 
@@ -150,8 +150,8 @@ void CViewdbWave::OnInitialUpdate()
 	m_dataListCtrl.SetAmplitudeAdjustMode(mdPM->bsetmVSpan);
 	
 	// adjust size of dataviewlistbox
-	UINT cyItemHeight = 50; // n pixels
-	int nIndex = 0;
+	//UINT cy_item_height = 50; // n pixels
+	//auto n_index = 0;
 	m_dataListCtrl.SetExtendedStyle
 		(m_dataListCtrl.GetExtendedStyle()
 		| LVS_EX_FULLROWSELECT 
@@ -258,26 +258,26 @@ void CViewdbWave::OnDestroy()
 /////////////////////////////////////////////////////////////////////////////
 // adapt the size of child windows when view is resized
 
-void CViewdbWave::OnSize(UINT nType, int cx, int cy)
+void CViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 {
 	// adapt size of resizeable controls
 	if (m_binit)
 	{
-		switch (nType)
+		switch (n_type)
 		{
 		case SIZE_MAXIMIZED:
 		case SIZE_RESTORED:
 			if (cx <= 0 || cy <= 0)
 				break;
 			// change size of windows declared to this m_stretch
-			m_stretch.ResizeControls(nType, cx, cy);
+			m_stretch.ResizeControls(n_type, cx, cy);
 			break;
 		default:
 			break;
 		}
 	}
 	// do other resizing
-	CDaoRecordView::OnSize(nType, cx, cy);
+	CDaoRecordView::OnSize(n_type, cx, cy);
 	if (::IsWindow(m_dataListCtrl.m_hWnd)) {
 		CRect rect;
 		m_dataListCtrl.GetClientRect(&rect);
@@ -300,10 +300,11 @@ void CViewdbWave::Dump(CDumpContext& dc) const
 	CDaoRecordView::Dump(dc);
 }
 
-CdbWaveDoc* CViewdbWave::GetDocument() // non-debug version is inline
+CdbWaveDoc* CViewdbWave::GetDocument() const
+// non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return (CdbWaveDoc*)m_pDocument;
+	return dynamic_cast<CdbWaveDoc*>(m_pDocument);
 }
 #endif //_DEBUG
 
@@ -320,22 +321,22 @@ CDaoRecordset* CViewdbWave::OnGetRecordset()
 // CViewdbWave message handlers
 void CViewdbWave::UpdateControls()
 {
-	CdbWaveDoc* pdbDoc = GetDocument();
+	auto pdb_doc = GetDocument();
 	CFileStatus status;
 
-	CString filename = pdbDoc->DBGetCurrentDatFileName();
+	auto filename = pdb_doc->DBGetCurrentDatFileName();
 	m_bvalidDat = CFile::GetStatus(filename, status);
-	filename = pdbDoc->DBGetCurrentSpkFileName(TRUE);
+	filename = pdb_doc->DBGetCurrentSpkFileName(TRUE);
 	m_bvalidSpk = CFile::GetStatus(filename, status);
-	
-	int ifile = pdbDoc->DBGetCurrentRecordPosition();
+
+	const int ifile = pdb_doc->DBGetCurrentRecordPosition();
 	m_dataListCtrl.SetCurSel(ifile);
 	m_dataListCtrl.EnsureVisible(ifile, FALSE);
 }
 
 BOOL CViewdbWave::OnMove(UINT nIDMoveCommand)
 {
-	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
+	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
@@ -368,22 +369,22 @@ void CViewdbWave::OnClickMedianFilter()
 
 void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
 {
-	CMainFrame* pmF = (CMainFrame*) AfxGetMainWnd();
+	auto* p_mainframe = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 	// activate view
 	if (bActivate)
 	{
 		// make sure the secondary toolbar is not visible
 		// (none is defined for the database)
-		if (pmF->m_pSecondToolBar != nullptr) 
-			pmF->ShowPane(pmF->m_pSecondToolBar, FALSE, FALSE, TRUE);
+		if (p_mainframe->m_pSecondToolBar != nullptr) 
+			p_mainframe->ShowPane(p_mainframe->m_pSecondToolBar, FALSE, FALSE, TRUE);
 		// load status
-		m_nStatus = ((CChildFrame*)pmF->MDIGetActive())->m_nStatus;
-		pmF->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATEVIEW, LPARAM(pActivateView->GetDocument()));
+		m_nStatus = ((CChildFrame*)p_mainframe->MDIGetActive())->m_nStatus;
+		p_mainframe->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATEVIEW, LPARAM(pActivateView->GetDocument()));
 	}
 	else
 	{
 		if (pActivateView != nullptr)
-			((CChildFrame*)pmF->MDIGetActive())->m_nStatus = m_nStatus; // save status
+			((CChildFrame*)p_mainframe->MDIGetActive())->m_nStatus = m_nStatus; // save status
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -392,8 +393,8 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 
 void CViewdbWave::FillListBox()
 {
-	CdbWaveDoc* pdbDoc = GetDocument();
-	int imax = pdbDoc->DBGetNRecords();
+	auto pdb_doc = GetDocument();
+	const int imax = pdb_doc->DBGetNRecords();
 	m_dataListCtrl.DeleteAllItems();
 	m_dataListCtrl.SetItemCountEx(imax);
 }
@@ -401,9 +402,9 @@ void CViewdbWave::FillListBox()
 void CViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	// get item clicked and select it
-	NMITEMACTIVATE* pItemActivate = (NMITEMACTIVATE*) pNMHDR;
-	if (pItemActivate->iItem >= 0)
-		GetDocument()->DBSetCurrentRecordPosition(pItemActivate->iItem);
+	const auto p_item_activate = (NMITEMACTIVATE*) pNMHDR;
+	if (p_item_activate->iItem >= 0)
+		GetDocument()->DBSetCurrentRecordPosition(p_item_activate->iItem);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	CDaoRecordView::OnInitialUpdate();
 
@@ -414,10 +415,7 @@ void CViewdbWave::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 	// quit the current view and load spike detection view
-	((CChildFrame*) GetParent())->PostMessage(
-			WM_COMMAND, 
-			(WPARAM) ID_VIEW_SPIKEDETECTION,
-			(LPARAM) NULL);
+	((CChildFrame*) GetParent())->PostMessage(WM_COMMAND, WPARAM(ID_VIEW_SPIKEDETECTION), LPARAM(NULL));
 }
 
 void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
@@ -429,20 +427,20 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 	case HINT_GETSELECTEDRECORDS:
 		{
-			CdbWaveDoc*	pDoc = GetDocument();
+			auto pDoc = GetDocument();
 			pDoc->m_selectedRecords.RemoveAll();
-			UINT uSelectedCount = m_dataListCtrl.GetSelectedCount();
+			const auto u_selected_count = m_dataListCtrl.GetSelectedCount();
 			
 			// Update all of the selected items.
-			if (uSelectedCount > 0)
+			if (u_selected_count > 0)
 			{
-				pDoc->m_selectedRecords.SetSize(uSelectedCount);
-				int nItem = -1;
-				for (UINT i=0; i < uSelectedCount; i++)
+				pDoc->m_selectedRecords.SetSize(u_selected_count);
+				auto n_item = -1;
+				for (UINT i=0; i < u_selected_count; i++)
 				{
-					nItem = m_dataListCtrl.GetNextItem(nItem, LVNI_SELECTED);
-					ASSERT(nItem != -1);
-					pDoc->m_selectedRecords.SetAt(i, nItem); 
+					n_item = m_dataListCtrl.GetNextItem(n_item, LVNI_SELECTED);
+					ASSERT(n_item != -1);
+					pDoc->m_selectedRecords.SetAt(i, n_item); 
 				}
 			}
 		}
@@ -450,28 +448,28 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 	case HINT_SETSELECTEDRECORDS:
 		{
-			CdbWaveDoc*	pDoc = GetDocument();
-			UINT uSelectedCount = pDoc->m_selectedRecords.GetSize();
+			const auto pDoc = GetDocument();
+			const UINT u_selected_count = pDoc->m_selectedRecords.GetSize();
 
 			// clear previous selection in the CListCtrl if any
-			int Item=-1;
-			Item = m_dataListCtrl.GetNextItem(Item, LVNI_SELECTED);
-			 while (Item != -1) 
+			auto item=-1;
+			item = m_dataListCtrl.GetNextItem(item, LVNI_SELECTED);
+			 while (item != -1) 
 			 {
-				m_dataListCtrl.SetItemState(Item, 0, LVIS_SELECTED);
-				Item = m_dataListCtrl.GetNextItem(Item, LVNI_SELECTED); 
+				m_dataListCtrl.SetItemState(item, 0, LVIS_SELECTED);
+				item = m_dataListCtrl.GetNextItem(item, LVNI_SELECTED); 
 			}
 			
 			// select items
-			if (uSelectedCount > 0)
+			if (u_selected_count > 0)
 			{
-				for (UINT i=0; i < uSelectedCount; i++)
+				for (UINT i=0; i < u_selected_count; i++)
 				{
-					Item = pDoc->m_selectedRecords.GetAt(i);
-					m_dataListCtrl.SetItemState(Item, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
+					item = pDoc->m_selectedRecords.GetAt(i);
+					m_dataListCtrl.SetItemState(item, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
 				}
 			}
-			m_dataListCtrl.EnsureVisible(Item, FALSE);
+			m_dataListCtrl.EnsureVisible(item, FALSE);
 		}
 		break;
 
@@ -494,13 +492,13 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 void CViewdbWave::DeleteRecords()
 {
 	// save index current file
-	long currentindex = GetDocument()->DBGetCurrentRecordPosition()-1;
+	auto currentindex = GetDocument()->DBGetCurrentRecordPosition()-1;
 	if (currentindex <0)
 		currentindex = 0;
 
 	// loop on Cdatalistctrl to delete all selected items
-	CdbWaveDoc* pdbDoc = GetDocument();
-	POSITION pos = m_dataListCtrl.GetFirstSelectedItemPosition();
+	auto pdb_doc = GetDocument();
+	auto pos = m_dataListCtrl.GetFirstSelectedItemPosition();
 	if (pos == nullptr)
 	{
 		AfxMessageBox(_T("No item selected: delete operation failed"));
@@ -509,13 +507,13 @@ void CViewdbWave::DeleteRecords()
 	else 
 	{
 		// assume that no one else accesses to the database at the same time
-		int ndel = 0;
+		auto ndel = 0;
 		// delete file names from database
 		while (pos)
 		{
-			int nItem = m_dataListCtrl.GetNextSelectedItem(pos);
-			pdbDoc->DBSetCurrentRecordPosition(nItem - ndel);
-			pdbDoc->DBDeleteCurrentRecord();
+			const auto n_item = m_dataListCtrl.GetNextSelectedItem(pos);
+			pdb_doc->DBSetCurrentRecordPosition(n_item - ndel);
+			pdb_doc->DBDeleteCurrentRecord();
 			ndel ++;
 	   }
 	}
@@ -526,27 +524,27 @@ void CViewdbWave::DeleteRecords()
 		m_pSet->SetFieldNull(NULL);
 	m_pSet->RefreshQuery();*/
 
-	pdbDoc->DBSetCurrentRecordPosition(currentindex);
-	pdbDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	pdb_doc->DBSetCurrentRecordPosition(currentindex);
+	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CViewdbWave::OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	CString filter0= m_pSet->GetSQL();
+	auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	auto filter0= m_pSet->GetSQL();
 	CString cs;
-	CdbWaveDoc* pdbDoc = GetDocument();
+	const auto pdb_doc = GetDocument();
 	switch(pNMLV->iSubItem)
 	{
-	case COL_CURVE:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_DATALEN].csColName; break;		// datalen
-	case COL_INDEX:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_ID].csColName; break;			// ID
-	case COL_SENSI:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName; break;	// sensillum_ID
-	case COL_STIM1:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_STIM_ID].csColName; break;		// stim_ID
-	case COL_CONC1:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_CONC_ID].csColName; break;		// conc_ID
-	case COL_STIM2:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_STIM2_ID].csColName; break;	// stim2_ID
-	case COL_CONC2:	cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_CONC2_ID].csColName; break;	// conc2_ID
-	case COL_NBSPK: cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_NSPIKES].csColName; break;		// nspikes
-	case COL_FLAG: cs = pdbDoc->m_pDB->m_mainTableSet.m_desc[CH_FLAG].csColName; break;			// flag
+	case COL_CURVE:	cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_DATALEN].csColName; break;		// datalen
+	case COL_INDEX:	cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_ID].csColName; break;			// ID
+	case COL_SENSI:	cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName; break;	// sensillum_ID
+	case COL_STIM1:	cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM_ID].csColName; break;		// stim_ID
+	case COL_CONC1:	cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC_ID].csColName; break;		// conc_ID
+	case COL_STIM2:	cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM2_ID].csColName; break;	// stim2_ID
+	case COL_CONC2:	cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC2_ID].csColName; break;	// conc2_ID
+	case COL_NBSPK: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_NSPIKES].csColName; break;		// nspikes
+	case COL_FLAG: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_FLAG].csColName; break;			// flag
 	default:
 		break;
 	}
@@ -576,19 +574,19 @@ void CViewdbWave::InitctrlTab()
 	m_tabCtrl.DeleteAllItems();
 
 	// load list of detection parameters 
-	int j = 0;
+	auto j = 0;
 	if (GetDocument() ->OpenCurrentSpikeFile())
 	{
-		int curr_listsize = GetDocument()->GetcurrentSpkListSize();
-		for (int i = 0; i< curr_listsize; i++)
+		const auto curr_listsize = GetDocument()->GetcurrentSpkListSize();
+		for (auto i = 0; i< curr_listsize; i++)
 		{
-			CSpikeList* pSL = GetDocument()->m_pSpk->SetSpkListCurrent(i);
+			auto pSL = GetDocument()->m_pSpk->SetSpkListCurrent(i);
 			if (!pSL)
 				continue;
 			CString cs;
 			if (pSL->GetdetectWhat() != 0)
 				continue;
-			cs.Format(_T("#%i %s"), i, (LPCTSTR) pSL->GetComment());
+			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(pSL->GetComment()));
 			m_tabCtrl.InsertItem(j, cs);
 			//m_tabCtrl.SetItemData(j, i);		// save list item
 			j++;
@@ -628,6 +626,7 @@ void CViewdbWave::OnEnChangeTimefirst()
 	case VK_NEXT:
 		m_timefirst--;
 		break;
+	default: ;
 	}
 
 	mm_timefirst.m_bEntryDone=FALSE;
@@ -658,6 +657,7 @@ void CViewdbWave::OnEnChangeTimelast()
 	case VK_NEXT:
 		m_timelast--;
 		break;
+	default: ;
 	}
 
 	mm_timelast.m_bEntryDone=FALSE;
@@ -673,13 +673,13 @@ void CViewdbWave::OnEnChangeAmplitudespan()
 	if (!mm_amplitudespan.m_bEntryDone)
 		return;
 
-	float y = m_amplitudespan;
+	auto y = m_amplitudespan;
 	CString cs;
 	switch (mm_amplitudespan.m_nChar)
 	{		
 	case VK_RETURN:			
 		mm_amplitudespan.GetWindowText(cs);
-		y = (float) _ttof (cs);
+		y = float(_ttof(cs));
 		break;
 	case VK_UP:
 	case VK_PRIOR:
@@ -689,6 +689,7 @@ void CViewdbWave::OnEnChangeAmplitudespan()
 	case VK_NEXT:
 		y--;
 		break;
+	default: ;
 	}
 	
 	// update the dialog control
@@ -712,7 +713,7 @@ void CViewdbWave::OnBnClickedCheckfilename()
 
 void CViewdbWave::OnHdnEndtrackListctrl(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
+	const auto phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
 	if (phdr->iItem == COL_CURVE)
 		m_dataListCtrl.ResizeSignalColumn(phdr->pitem->cxy);
 	*pResult = 0;
@@ -749,7 +750,7 @@ void CViewdbWave::OnBnClickedCheck1()
 
 void CViewdbWave::OnBnClickedRadioallclasses()
 {
-	(CWnd*)(GetDlgItem(IDC_SPIKECLASS))->EnableWindow(FALSE);
+	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 	mdPM->bDisplayAllClasses = TRUE;
 	m_dataListCtrl.SetSpikePlotMode(PLOT_BLACK, m_spikeclass);
 	m_dataListCtrl.RefreshDisplay();
@@ -757,7 +758,7 @@ void CViewdbWave::OnBnClickedRadioallclasses()
 
 void CViewdbWave::OnBnClickedRadiooneclass()
 {
-	(CWnd*)(GetDlgItem(IDC_SPIKECLASS))->EnableWindow(TRUE);
+	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
 	mdPM->bDisplayAllClasses = FALSE;
 	m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
 	m_dataListCtrl.RefreshDisplay();
@@ -802,7 +803,7 @@ void CViewdbWave::OnEnChangeSpikeclass()
 	if (!mm_spikeclass.m_bEntryDone)
 		return;
 
-	int spikeclassoption = m_spikeclass;
+	//auto spikeclassoption = m_spikeclass;
 	switch (mm_spikeclass.m_nChar)
 	{		
 	case VK_RETURN:			
@@ -816,6 +817,7 @@ void CViewdbWave::OnEnChangeSpikeclass()
 	case VK_NEXT:
 		m_spikeclass--;
 		break;
+	default: ;
 	}	
 	mm_spikeclass.m_bEntryDone=FALSE;
 	mm_spikeclass.m_nChar=0;
@@ -828,7 +830,7 @@ void CViewdbWave::OnEnChangeSpikeclass()
 
 void CViewdbWave::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	int icursel = m_tabCtrl.GetCurSel();
+	const auto icursel = m_tabCtrl.GetCurSel();
 	GetDocument()->SetcurrentSpkListIndex(icursel);
 	m_dataListCtrl.RefreshDisplay();
 	*pResult = 0;
@@ -836,7 +838,7 @@ void CViewdbWave::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CViewdbWave::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	int icursel = m_tabCtrl.GetCurSel();
+	auto icursel = m_tabCtrl.GetCurSel();
 	*pResult = 0;
 }
 

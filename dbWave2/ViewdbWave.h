@@ -26,7 +26,7 @@ public:
 
 // Attributes
 public:
-	CdbWaveDoc*		GetDocument();
+	CdbWaveDoc*		GetDocument() const;
 	CDataListCtrl	m_dataListCtrl;
 	BOOL			m_bvalidDat;
 	BOOL			m_bvalidSpk;

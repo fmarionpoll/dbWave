@@ -74,7 +74,7 @@ public :
 	CWaveFormat& operator = (const CWaveFormat& arg);	// operator redefinition
 	long Write(CFile* datafile);	
 	BOOL Read(CFile* datafile);
-	virtual void Serialize(CArchive& ar);
+	void Serialize(CArchive& ar) override;
 	CString GetComments(const CString& separator, BOOL bExplanations=FALSE) const;
 };
 
@@ -120,14 +120,14 @@ public :
 	virtual long Write(CFile *datafile);
 	virtual BOOL Read(CFile *datafile);
 	CWaveChan& operator = (const CWaveChan& arg); // redefinition operator = 	
-	virtual void Serialize(CArchive & ar);
+	void Serialize(CArchive & ar) override;
 
 protected:
 	WORD		am_version;
 	CString		am_csversion;
 	short		am_inputpos;	// values:GND(-1) DC(0) .1 1 10 30 100 300 Hz (*10)
 	short		am_inputneg;	// ibidem.
-	static CString		GetCyberAmpInput(int val);
+	static CString	GetCyberAmpInput(int value);
 };
 
 //////////////////////////////////////////////////////////////////////

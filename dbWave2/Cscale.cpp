@@ -1,4 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
 // CScale methods
 
 #include "StdAfx.h"
@@ -178,7 +177,7 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 
 	the second version of this routine involves an additional array "m_position"
 	in which these intervals are stored. 
-	The cost of this approach is memory (one more array of DWORDs). 
+	The cost of this approach is memory (one more array of DWORD). 
 	The benefit is simpler code and faster computation. It also allows a reduction
 	of the number of parameters passed (lFirst). However, the calling procedure
 	should care to pass lLast relative to zero (and not the real one). See 
@@ -187,50 +186,45 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 
 int CScale::HowManyIntervalsFit(const int first_pixel, long* l_last)
 {
-	int npixels = 0;	
-	
 	// assume that lFirst equal m_position[firstPixel-1]
-	DWORD lastpos = *l_last;						// end within m_position
-	int lastPixel = (int) (lastpos / m_intervals[first_pixel]); // guess
-	if (lastPixel >= m_nintervals)				// clip this guess
-		lastPixel = m_nintervals-1;				// to the max size of Scale array
+	const DWORD lastpos = *l_last;						// end within m_position
+	auto last_pixel = int(lastpos / m_intervals[first_pixel]); // guess
+	if (last_pixel >= m_nintervals)				// clip this guess
+		last_pixel = m_nintervals-1;				// to the max size of Scale array
 
-	int k1 = first_pixel-1;
-	if (k1 < 0) k1 = 0; 
-	
 	// 2 cases: CASE 1 = go backwards (estimation was too much)
 	// stop when lastPixel = 0
 	// or the first time that m_position[lastPixel-1] less than lLast
-	if (m_position[lastPixel] > lastpos)
+	if (m_position[last_pixel] > lastpos)
 	{
-		while (lastPixel > 0 && (m_position[lastPixel] > lastpos))
-			{ lastPixel--;} 
+		while (last_pixel > 0 && (m_position[last_pixel] > lastpos))
+			{ last_pixel--;} 
 	}
 	// 2 cases: CASE 2 = go forwards (estimation was too small)
-	else if (lastpos > m_position[lastPixel+1])
+	else if (lastpos > m_position[last_pixel+1])
 	{
-		while (lastPixel <= m_nintervals-1 && (lastpos > m_position[lastPixel+1]))
-			{ lastPixel++; }
+		while (last_pixel <= m_nintervals-1 && (lastpos > m_position[last_pixel+1]))
+			{ last_pixel++; }
 	}
 	
-	*l_last = m_position[lastPixel];
-	return (lastPixel-first_pixel+1);
+	*l_last = m_position[last_pixel];
+	return (last_pixel-first_pixel+1);
 }
 
 
 // --------------------------------------------------------------------------------------
 int CScale::GetWhichInterval(long lindex)
 {
-	DWORD llindex = lindex;
+	const DWORD llindex = lindex;
 	if (lindex < 0 || llindex > m_position[m_position.GetUpperBound()])
 		return -1;
 
-	int interval=-1;	// init value for error (interval not found)
-	int iguess = (int) (lindex/m_intervals[0]); // first guess
+	int interval;	// init value for error (interval not found)
+	const auto iguess = int(lindex / m_intervals[0]); // first guess
 	// lindex less than interval guessed    
 	if (llindex < m_position[iguess])			// index is less
 	{
-		int i=iguess;
+		int i;
 		for (i=iguess; i>= 0; i--)			// scan position backwards
 		{
 			if (llindex > m_position[i])		// exit loop if index is greater
@@ -241,7 +235,7 @@ int CScale::GetWhichInterval(long lindex)
 	// lindex greater or equal that interval guessed
 	else
 	{										// index is higher
-		int i=iguess;
+		int i;
 		for (i=iguess; i<= m_position.GetUpperBound(); i++)
 		{									// scan forward, exit if posit(i+1) is higher
 			if (llindex <= m_position[i])		// (but posit(i) is lower)

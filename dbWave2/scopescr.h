@@ -66,7 +66,7 @@ protected:
 	CString			m_csEmpty;
 	
 public:
-	SCOPESTRUCT		m_parms;
+	SCOPESTRUCT		m_parms {};
 
 // ---------------------------------------------------------------
 // Attributes

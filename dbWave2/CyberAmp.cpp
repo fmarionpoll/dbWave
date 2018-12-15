@@ -352,6 +352,8 @@ int CCyberAmp::SetGain( int nChannel, int nGainValue )
         break;
 
     default:
+		nPreAmp = 1;
+		nGainDivisor = 1;
         m_C300nLastError = C300_BADVALUE;
 	}
 

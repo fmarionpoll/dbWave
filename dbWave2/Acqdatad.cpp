@@ -176,7 +176,10 @@ BOOL CAcqDataDoc::OnOpenDocument(CString &sz_path_name)
 		}
 		catch( CFileException* pEx )
 		{
-			ATLTRACE2(_T("File %20s not found, cause = %20s\n"), sz_path_name, pEx->m_cause);
+			CString cs;
+			cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
+			cs = sz_path_name + cs;
+			ATLTRACE2(cs);
 			pEx->Delete();
 		}
 				
@@ -191,7 +194,10 @@ BOOL CAcqDataDoc::OnOpenDocument(CString &sz_path_name)
 		}
 		catch( CFileException* pEx )
 		{
-			ATLTRACE2(_T("File %20s not found, cause = %20s\n"), filename_old, pEx->m_cause);
+			CString cs;
+			cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
+			cs = sz_path_name + cs;
+			ATLTRACE2(cs);
 			pEx->Delete();
 		}
 		
@@ -366,7 +372,7 @@ CString CAcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 	auto cs_out = GetPathName();
 	cs_out.MakeLower();					// lower case
 
-	auto p_wave_format = GetpWaveFormat();
+	const auto p_wave_format = GetpWaveFormat();
 
 	// date and time
 	if (pVD->bacqdate)
@@ -420,7 +426,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
-	auto p_wave_format = GetpWaveFormat();
+	const auto p_wave_format = GetpWaveFormat();
 	// date and time
 	cs_out = (p_wave_format->acqtime).Format(_T("acqdate= %#d %B %Y"));
 	cs_out += sep;
@@ -604,7 +610,7 @@ BOOL CAcqDataDoc::AllocBUF()
 // and the number of interleaved channels
 short*	CAcqDataDoc::LoadRawDataParams(int* nb_channels) 
 {
-	*nb_channels = GetpWaveFormat()->scan_count; 
+	*nb_channels = GetScanCount(); 
 	return m_pWBuf->GetWBAdrRawDataBuf();
 }
 

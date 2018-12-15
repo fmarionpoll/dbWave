@@ -2,7 +2,7 @@
 #include "resource.h"
 #include "scopescr.h"
 
-#include "Editctrl.h"
+//#include "Editctrl.h"
 #include "ScopeScreenPropsDlg.h"
 #include <math.h>
 
@@ -35,26 +35,26 @@ HCURSOR CScopeScreen::m_cursor[NB_CURSORS];
 int		CScopeScreen::m_cursordragmode[NB_CURSORS];
 int		CScopeScreen::m_countcurs=0;
 
-static TCHAR csUnit[] = {_T("GM  mµpf  ")};		// units & corresp powers
-static int  dUnitsPower[] = { 9,6, 0, 0, -3, -6, -9, -12, 0}; 
+static TCHAR csUnit[]		= {_T("GM  mµpf  ")};		// units & corresp powers
+static int  dUnitsPower[]	= { 9,6, 0, 0, -3, -6, -9, -12, 0}; 
 static int	dmaxIndex		= 8;				// nb of elmts
-static int	dniceIntervals[] = {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, /*750, */
+static int	dniceIntervals[]= {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, /*750, */
 								/*600,*/ /*700,*//* 800, *//*900,*/
 								0};
 
 int CScopeScreen::FindColor(COLORREF ccolor)
 {
-	int icolor = -1;
-	for (int i = 0; i < NB_COLORS; i++)
+	auto icolor = -1;
+	for (auto i = 0; i < NB_COLORS; i++)
 		if (ccolor == m_colorTable[i])
 			icolor = i;
 	return icolor;
 }
 
-int CScopeScreen::NiceUnit(float xVal)
-{   
-	int i=0;
-	int ival = (int) xVal;	
+int CScopeScreen::NiceUnit(float x_val)
+{
+	auto i=0;
+	const auto ival = int(x_val);	
 	do	
 	{
 		if (ival <= dniceIntervals[i])
@@ -96,7 +96,7 @@ float CScopeScreen::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 		xVal = -xVal;
 	}
 	// get power of 10 of the value
-	short iprec= (short) log10(xVal);	// log10 of value (upper limit)
+	const auto iprec= short(log10(xVal));	// log10 of value (upper limit)
 	if (( iprec <=0) && (xVal < 1.))	// perform extra checking if iprec <= 0
 		i = 4-iprec/3;					// change equation if Units values change
 	else			      
@@ -106,7 +106,7 @@ float CScopeScreen::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 	else if (i<0)						// or clip to min index
 		i = 0;
 	// return data
-	*xScalefactor = (float) pow(10.0f, dUnitsPower[i]);		// convert & store
+	*xScalefactor = float(pow(10.0f, dUnitsPower[i]));		// convert & store
 	xUnit->SetAt(0, csUnit[i]);								// replace character corresp to unit
 	return xVal*isign / *xScalefactor;						// return value/scale_factor
 }
@@ -120,17 +120,16 @@ CScopeScreen::CScopeScreen()
 	{		
 		short j=0;
 		m_cursor[j] = ::LoadCursor(nullptr,IDC_ARROW);
-		m_cursordragmode[j] = 0;			// draw frame when changed
-		j++;								// catch object
+		m_cursordragmode[j] = 0;
+		j++;
 		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CZOOM);
 		m_cursordragmode[j] = 1; 
-		j++;								// draw inverted rectangle
+		j++;
 		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
 		m_cursordragmode[j] = 1; 
-		j++;								// add a spike
+		j++;
 		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
-		m_cursordragmode[j] = 1; 
-		j++;								// add a spike
+		m_cursordragmode[j] = 1;
 	}
 	m_countcurs++;
 
@@ -179,10 +178,8 @@ CScopeScreen::CScopeScreen()
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH|FF_ROMAN, _T("Arial"));
 	m_abcissaheight  = 10;
 	m_ordinateswidth = 25;
-
 	m_pXRulerBar = nullptr;
 	m_pYRulerBar = nullptr;
-
 	m_liFirst = 0;
 	m_liLast = 0;
 }
@@ -193,7 +190,7 @@ CScopeScreen::~CScopeScreen()
 	m_countcurs--;
 	if (m_countcurs == 0)
 	{
-		for (int i = 1; i<NB_CURSORS; i++)	// elmt 0: global object cursor
+		for (auto i = 1; i<NB_CURSORS; i++)	// elmt 0: global object cursor
 		{
 			if (nullptr != m_cursor[i]) 
 				::DestroyCursor(m_cursor[i]);
@@ -201,11 +198,11 @@ CScopeScreen::~CScopeScreen()
 	}
 	m_HZtags.RemoveAllTags();			// remove horizontal tags
 	m_VTtags.RemoveAllTags();			// remove vertical tags	
-	if (m_tempVTtag != nullptr) delete m_tempVTtag;
+	delete m_tempVTtag;
 
 	// delete array of pens
-	for (int i = 0; i < NB_COLORS; i++) 
-		m_penTable[i].DeleteObject();
+	for (auto& i : m_penTable)
+		i.DeleteObject();
 
 }
 
@@ -242,7 +239,7 @@ END_MESSAGE_MAP()
 
 BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
-	BOOL flag = CWnd::Create(nullptr, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+	const auto flag = CWnd::Create(nullptr, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 	if (flag != 0)
 		PreSubclassWindow();
 	return flag;
@@ -284,14 +281,13 @@ BOOL CScopeScreen::OnEraseBkgnd(CDC* pDC)
 	
 void CScopeScreen::PlotToBitmap(CDC *pDC)
 {
-	CBitmap* poldPlotBitmap = nullptr;
-	CBitmap bitmapPlot;
-	bitmapPlot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), nullptr);
+	CBitmap bitmap_plot;
+	bitmap_plot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), nullptr);
 	m_PlotDC.CreateCompatibleDC(pDC);
-	poldPlotBitmap = m_PlotDC.SelectObject(&bitmapPlot);
+	const auto pold_plot_bitmap = m_PlotDC.SelectObject(&bitmap_plot);
 	PlotDatatoDC(&m_PlotDC);
 	pDC->BitBlt(0, 0, m_displayRect.right, m_displayRect.bottom, &m_PlotDC,0,0, SRCCOPY);
-	m_PlotDC.SelectObject(poldPlotBitmap);
+	m_PlotDC.SelectObject(pold_plot_bitmap);
 }
 
 void CScopeScreen::OnPaint()
@@ -316,7 +312,7 @@ void CScopeScreen::EraseBkgnd(CDC* pDC)
 	// erase background around m_displayRect (assume only left and bottom areas)
 	if (m_bNiceGrid)
 	{
-		CRect rect = m_clientRect;
+		auto rect = m_clientRect;
 		rect.right = m_displayRect.left;
 		pDC->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
 		rect.top = m_displayRect.bottom;
@@ -327,11 +323,11 @@ void CScopeScreen::EraseBkgnd(CDC* pDC)
 	// erase display area
 	CBrush brush;
 	brush.CreateSolidBrush(m_parms.crScopeFill);
-	CBrush* pOldBrush = pDC->SelectObject(&brush);
-	CPen* pOldPen = (CPen*) pDC->SelectStockObject(BLACK_PEN);
+	const auto p_old_brush = pDC->SelectObject(&brush);
+	const auto p_old_pen = (CPen*) pDC->SelectStockObject(BLACK_PEN);
 	pDC->Rectangle(&m_displayRect);
-	pDC->SelectObject(pOldPen);
-	pDC->SelectObject(pOldBrush);
+	pDC->SelectObject(p_old_pen);
+	pDC->SelectObject(p_old_brush);
 
 	// display grid
 	DrawGrid(pDC);
@@ -339,43 +335,43 @@ void CScopeScreen::EraseBkgnd(CDC* pDC)
 
 void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
 {
-	CRect rect = m_displayRect;
+	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
 
 	// Standard grid is 8 high by 10 wide
-	CPen penScale(PS_SOLID, 1, m_parms.crScopeGrid);
-	CPen* ppenOld = pDC->SelectObject(&penScale);
-	int iXTicks = m_parms.iXCells * m_parms.iXTicks;
-	int iYTicks = m_parms.iYCells * m_parms.iYTicks;
-	int iTickWidth = 2;
-	int iTickHeight = 2; 
+	CPen pen_scale(PS_SOLID, 1, m_parms.crScopeGrid);
+	const auto ppen_old = pDC->SelectObject(&pen_scale);
+	const auto i_x_ticks = m_parms.iXCells * m_parms.iXTicks;
+	const auto i_y_ticks = m_parms.iYCells * m_parms.iYTicks;
+	const auto i_tick_width = 2;
+	const auto i_tick_height = 2; 
 
 	// do the grid lines
-	for (int i = 1; i < m_parms.iXCells; i++) 
+	for (auto i = 1; i < m_parms.iXCells; i++) 
 	{
 		pDC->MoveTo(i * rect.right / m_parms.iXCells, 0);
 		pDC->LineTo(i * rect.right / m_parms.iXCells, rect.bottom);
 	}	
-	for (int i = 1; i < m_parms.iYCells; i++) 
+	for (auto i = 1; i < m_parms.iYCells; i++) 
 	{
 		pDC->MoveTo(0, i * rect.bottom / m_parms.iYCells);
 		pDC->LineTo(rect.right, i * rect.bottom / m_parms.iYCells);
 	}
 
 	// Put tick marks on the axis lines
-	for (int i = 1; i < iXTicks; i++) 
+	for (auto i = 1; i < i_x_ticks; i++) 
 	{
-		int y = rect.bottom - rect.bottom * m_parms.iXTickLine / m_parms.iYCells;
-		pDC->MoveTo(i * rect.right / iXTicks, y - iTickWidth);
-		pDC->LineTo(i * rect.right / iXTicks, y + iTickWidth);
+		const int y = rect.bottom - rect.bottom * m_parms.iXTickLine / m_parms.iYCells;
+		pDC->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
+		pDC->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
 	}
-	for (int i = 1; i < iYTicks; i++) 
+	for (auto i = 1; i < i_y_ticks; i++) 
 	{
-		int x = rect.right * m_parms.iYTickLine / m_parms.iXCells;
-		pDC->MoveTo(x - iTickHeight, i * rect.bottom / iYTicks);
-		pDC->LineTo(x + iTickHeight, i * rect.bottom / iYTicks);
+		const int x = rect.right * m_parms.iYTickLine / m_parms.iXCells;
+		pDC->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
+		pDC->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
 	}
-	pDC->SelectObject(ppenOld);
+	pDC->SelectObject(ppen_old);
 
 	// if grids, draw scale text (dummy)
 	if (m_parms.iXCells  > 1 && m_parms.iYCells > 1)
@@ -383,7 +379,7 @@ void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
 		// convert value into text
 		CString cs;
 		cs.Format(_T("%.3f mV; %.3f ms"), m_parms.yScaleUnitValue, m_parms.xScaleUnitValue) ;
-		int textlen = cs.GetLength();
+		const auto textlen = cs.GetLength();
 		// plot text
 		pDC->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
 		rect.DeflateRect(1,1);
@@ -394,48 +390,48 @@ void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
 
 void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
 {
-	CRect rcClient = m_displayRect;
-	rcClient.DeflateRect(1, 1);
+	auto rc_client = m_displayRect;
+	rc_client.DeflateRect(1, 1);
 
 	// exit if length is not properly defined
 	if (pRuler->m_dlast == pRuler->m_dfirst)
 		return;
 
-	CPen aPen2;
-	aPen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
-	CPen* pOldPen = pDC->SelectObject(&aPen2);
+	CPen a_pen2;
+	a_pen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
+	const auto p_old_pen = pDC->SelectObject(&a_pen2);
 
 	// draw ticks and legends
-	int tickSmallHeight = 4;
+	//auto tick_small_height = 4;
 	int tickmax;
 	if (pRuler->m_bHorizontal)		// horizontal
-		tickmax = rcClient.Width();
+		tickmax = rc_client.Width();
 	else							// vertical
-		tickmax = rcClient.Height();
+		tickmax = rc_client.Height();
 
 	// draw scale
 	//double smallscaleinc = pRuler->m_dscaleinc / 5.;
-	double dpos = floor(pRuler->m_dscalefirst);
-	double dlen = pRuler->m_dlast - pRuler->m_dfirst;
+	auto dpos = floor(pRuler->m_dscalefirst);
+	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
 	pDC->SetBkMode(TRANSPARENT);
 
 	while (dpos <= pRuler->m_dlast)
 	{
-		int tickPos;
+		int tick_pos;
 		if (pRuler->m_bHorizontal)	// horizontal
 		{
-			tickPos = (int)(rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen) + rcClient.left;
-			if (tickPos >= 0 && tickPos <= tickmax) {
-				pDC->MoveTo(tickPos, rcClient.bottom - 1);	// line
-				pDC->LineTo(tickPos, rcClient.top    + 1);
+			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+			if (tick_pos >= 0 && tick_pos <= tickmax) {
+				pDC->MoveTo(tick_pos, rc_client.bottom - 1);	// line
+				pDC->LineTo(tick_pos, rc_client.top    + 1);
 			}
 		}
 		else						// vertical
 		{
-			tickPos = (int)(rcClient.Height() * (pRuler->m_dlast - dpos) / dlen) + rcClient.top;
-			if (tickPos >= 0 && tickPos <= tickmax) {
-				pDC->MoveTo(rcClient.left + 1, tickPos);	// line
-				pDC->LineTo(rcClient.right - 1, tickPos);
+			tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
+			if (tick_pos >= 0 && tick_pos <= tickmax) {
+				pDC->MoveTo(rc_client.left + 1, tick_pos);	// line
+				pDC->LineTo(rc_client.right - 1, tick_pos);
 			}
 		}
 		if( dpos != 0. && fabs(dpos) < 1E-10 )
@@ -443,97 +439,97 @@ void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
 		dpos += pRuler->m_dscaleinc;
 	}
 	// restore objects used in this routine
-	pDC->SelectObject(pOldPen);
+	pDC->SelectObject(p_old_pen);
 }
 
 void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 {
-	CRect rcClient = m_displayRect;
-	rcClient.DeflateRect(1, 1);
+	auto rc_client = m_displayRect;
+	rc_client.DeflateRect(1, 1);
 
 	// exit if length is not properly defined
 	if (pRuler->m_dlast == pRuler->m_dfirst)
 		return;
 
-	CPen aPen1, aPen2;
-	aPen1.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
-	CPen* pOldPen = pDC->SelectObject(&aPen1);
-	aPen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
-	CFont* pOldFont = pDC->SelectObject(&m_hFont);
+	CPen a_pen1;
+	CPen a_pen2;
+	a_pen1.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
+	const auto p_old_pen = pDC->SelectObject(&a_pen1);
+	a_pen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
+	/*auto p_old_font = */pDC->SelectObject(&m_hFont);
 	CString str;
 
 	// draw ticks and legends
-	int tickSmallHeight = 4;
+	const auto tick_small_height = 4;
 	int tickmax;
 	if (pRuler->m_bHorizontal)		// horizontal
-		tickmax = rcClient.Width();
+		tickmax = rc_client.Width();
 	else							// vertical
-		tickmax = rcClient.Height();
+		tickmax = rc_client.Height();
 
 	// draw scale
-	double smallscaleinc = pRuler->m_dscaleinc / 5.;
-	double dpos = floor(pRuler->m_dscalefirst);
-	double dlen = pRuler->m_dlast - pRuler->m_dfirst;
+	const auto smallscaleinc = pRuler->m_dscaleinc / 5.;
+	auto dpos = floor(pRuler->m_dscalefirst);
+	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
 	pDC->SetBkMode(TRANSPARENT);
 
 	while (dpos <= pRuler->m_dlast)
 	{
 		// display small tick marks
-		pDC->SelectObject(&aPen1);
-		double dsmallpos = dpos;
-		int tickPos;
-		for (int i = 0; i<4; i++)
+		pDC->SelectObject(&a_pen1);
+		auto dsmallpos = dpos;
+		int tick_pos;
+		for (auto i = 0; i<4; i++)
 		{
 			dsmallpos += smallscaleinc;
-			double ratio = (pRuler->m_dlast - dsmallpos) / dlen;
 			if (pRuler->m_bHorizontal) // ----------------------------- horizontal
 			{
-				tickPos = (int)(rcClient.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rcClient.left;
-				if (tickPos >= rcClient.left && tickPos <= tickmax)
+				tick_pos = int(rc_client.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+				if (tick_pos >= rc_client.left && tick_pos <= tickmax)
 				{
-					pDC->MoveTo(tickPos, rcClient.bottom - 1);
-					pDC->LineTo(tickPos, rcClient.bottom - tickSmallHeight);
+					pDC->MoveTo(tick_pos, rc_client.bottom - 1);
+					pDC->LineTo(tick_pos, rc_client.bottom - tick_small_height);
 				}
 			}
 			else // --------------------------------------------------- vertical
 			{
-				tickPos = (int)(rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rcClient.top;
-				if (tickPos >= rcClient.top && tickPos <= tickmax)
+				tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rc_client.top;
+				if (tick_pos >= rc_client.top && tick_pos <= tickmax)
 				{
-					pDC->MoveTo(rcClient.left + 1, tickPos);
-					pDC->LineTo(rcClient.left + tickSmallHeight, tickPos);
+					pDC->MoveTo(rc_client.left + 1, tick_pos);
+					pDC->LineTo(rc_client.left + tick_small_height, tick_pos);
 				}
 			}
 		}
 
 		// display large ticks and text
-		pDC->SelectObject(&aPen2);
+		pDC->SelectObject(&a_pen2);
 		if (pRuler->m_bHorizontal)	// horizontal
-			tickPos = (int)(rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen) + rcClient.left;
+			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 		else						// vertical
-			tickPos = (int)(rcClient.Height() * (pRuler->m_dlast - dpos) / dlen) + rcClient.top;
-		if (tickPos >= 0 && tickPos <= tickmax)
+			tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
+		if (tick_pos >= 0 && tick_pos <= tickmax)
 		{
 			str.Format(_T("%g"), dpos);
-			CSize size = pDC->GetTextExtent(str);
+			const auto size = pDC->GetTextExtent(str);
 			int x, y;
 			if (pRuler->m_bHorizontal)	// ----------- horizontal
 			{
-				pDC->MoveTo(tickPos, rcClient.bottom - 1);	// line
-				pDC->LineTo(tickPos, rcClient.top + 1);
-				x = tickPos - (size.cx / 2);					// text position (upper left)
+				pDC->MoveTo(tick_pos, rc_client.bottom - 1);	// line
+				pDC->LineTo(tick_pos, rc_client.top + 1);
+				x = tick_pos - (size.cx / 2);					// text position (upper left)
 				if (x < 0)
 					x = 0;
-				if (x + size.cx > rcClient.right)
-					x = rcClient.right - size.cx;
-				y = rcClient.bottom + 1; // - 1; //- size.cy
+				if (x + size.cx > rc_client.right)
+					x = rc_client.right - size.cx;
+				y = rc_client.bottom + 1; // - 1; //- size.cy
 			}
 			else // ---------------------------------- vertical
 			{
-				pDC->MoveTo(rcClient.left + 1, tickPos);	// line
-				pDC->LineTo(rcClient.right - 1, tickPos);
-				x = rcClient.left - size.cx - 2;			// text position (upper left)
-				y = tickPos - (size.cy / 2);
+				pDC->MoveTo(rc_client.left + 1, tick_pos);	// line
+				pDC->LineTo(rc_client.right - 1, tick_pos);
+				x = rc_client.left - size.cx - 2;			// text position (upper left)
+				y = tick_pos - (size.cy / 2);
 			}
 			pDC->TextOut(x, y, str);
 		}
@@ -543,7 +539,7 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 	}
 
 	// restore objects used in this routine
-	pDC->SelectObject(pOldPen);
+	pDC->SelectObject(p_old_pen);
 }
 
 void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
@@ -603,24 +599,17 @@ void CScopeScreen::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
 
 void CScopeScreen::SendMyMessage(int code, int codeparm)
 {
-	// see "awave32.h" for available messages
-	int iID = GetDlgCtrlID();
-	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, iID));
+	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
 void CScopeScreen::PostMyMessage(int code, int codeparm)
 {
-	// see "awave32.h" for available messages
-	int iID = GetDlgCtrlID();
-	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, iID));
+	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
 void CScopeScreen::PrepareDC(CDC* pDC, CPrintInfo* pInfo)
 {
-	// mapping mode is MM_ANISOTROPIC
 	pDC->SetMapMode(MM_ANISOTROPIC);
-
-	// not printing.............................
 	if (pInfo == nullptr)
 	{
 		pDC->SetViewportOrg (m_xVO, m_yVO);
@@ -648,9 +637,9 @@ int CScopeScreen::SetMouseCursorType(int cursorm)
 void CScopeScreen::CaptureCursor()
 {	
 	SetCapture();				// capture mouse
-	CRect rectLimit= m_displayRect;
-	ClientToScreen(rectLimit);	// convert coordinates
-	ClipCursor(rectLimit);		// tell mouse cursor what are the limits
+	auto rect_limit= m_displayRect;
+	ClientToScreen(rect_limit);	// convert coordinates
+	ClipCursor(rect_limit);		// tell mouse cursor what are the limits
 }
 
 void CScopeScreen::ReleaseCursor()
@@ -668,8 +657,7 @@ BOOL CScopeScreen::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void CScopeScreen::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	int cursor = m_cursorType+ 1;
-	PostMyMessage(HINT_SETMOUSECURSOR, cursor);
+	PostMyMessage(HINT_SETMOUSECURSOR, m_cursorType + 1);
 }
 
 //---------------------------------------------------------------------------
@@ -724,11 +712,11 @@ void CScopeScreen::OnLButtonDown(UINT nFlags, CPoint point)
 
 		// test VT tags - if OK, then track
 		if (!m_bVTtagsLONG)
-			m_HCtrapped = HitTestVTtagPix((int)point.x);
+			m_HCtrapped = HitTestVTtagPix(int(point.x));
 		else
 		{
-			m_liJitter = ((long) m_cxjitter) * (m_liLast-m_liFirst+1)/((long)m_displayRect.Width());
-			long lx = ((long)point.x)*(m_liLast-m_liFirst+1)/((long)m_displayRect.Width()) + m_liFirst;
+			m_liJitter = long(m_cxjitter) * (m_liLast-m_liFirst+1)/long(m_displayRect.Width());
+			const auto lx = long(point.x)*(m_liLast-m_liFirst+1)/long(m_displayRect.Width()) + m_liFirst;
 			m_HCtrapped = HitTestVTtagLong(lx);
 		}
 
@@ -737,7 +725,7 @@ void CScopeScreen::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 			m_trackMode = TRACK_VTTAG;
 			if (m_bVTtagsLONG)
-				m_ptLast.x= (int) ((m_VTtags.GetTagLVal(m_HCtrapped)-m_liFirst)*((long)m_displayRect.Width())/(m_liLast-m_liFirst+1));					
+				m_ptLast.x= int((m_VTtags.GetTagLVal(m_HCtrapped) - m_liFirst) * long(m_displayRect.Width()) / (m_liLast - m_liFirst + 1));					
 			else
 				m_ptLast.x=m_VTtags.GetTagPix(m_HCtrapped);
 			m_ptLast.y=0;
@@ -756,7 +744,7 @@ void CScopeScreen::OnLButtonDown(UINT nFlags, CPoint point)
 	case CURSOR_VERTICAL:
 		GetParent()->SendMessage(WM_MYMESSAGE, WM_LBUTTONDOWN, MAKELONG(point.x, point.y));
 		return;
-		break;
+
 
 	default:
 		break;
@@ -785,7 +773,7 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 		if (point.y != m_ptCurr.y)
 		{
 			m_ptCurr = point;
-			int val = MulDiv(point.y-m_yVO, m_yWE, m_yVE) + m_yWO;
+			const auto val = MulDiv(point.y-m_yVO, m_yWE, m_yVE) + m_yWO;
 			XorHZtag(point.y);			// move tag to new pixel
 			m_HZtags.SetTagVal(m_HCtrapped, val);
 			PostMyMessage(HINT_MOVEHZTAG, m_HCtrapped);	
@@ -801,12 +789,12 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 			m_VTtags.SetTagPix(m_HCtrapped, point.x);
 			if (!m_bVTtagsLONG)
 			{
-				int val = MulDiv(point.x-m_xVO, m_xWE, m_xVE) + m_xWO;
+				const auto val = MulDiv(point.x-m_xVO, m_xWE, m_xVE) + m_xWO;
 				m_VTtags.SetTagVal(m_HCtrapped, val);
 			}
 			else
 			{
-				long lval = ((long)point.x)*(m_liLast-m_liFirst+1)/((long)m_displayRect.Width()) + m_liFirst;
+				const auto lval = long(point.x)*(m_liLast-m_liFirst+1)/long(m_displayRect.Width()) + m_liFirst;
 				m_VTtags.SetTagLVal(m_HCtrapped, lval);
 			}
 			PostMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
@@ -893,18 +881,18 @@ void CScopeScreen::OnRButtonUp(UINT nFlags, CPoint point)
 		{
 		ReleaseCursor();
 		// skip too small a rectangle (5 pixels?)
-		CRect rectOut(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
+		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 		const short jitter = 3;
-		if (rectOut.Height()< jitter && rectOut.Width()< jitter)
+		if (rect_out.Height()< jitter && rect_out.Width()< jitter)
 		{
 			ZoomOut();
 		}
 		else
 		{
-			CRect rectIn = m_displayRect;
-			ZoomData(&rectOut, &rectIn);
-			m_ZoomFrom = rectOut;
-			m_ZoomTo   = rectIn;
+			auto rect_in = m_displayRect;
+			ZoomData(&rect_out, &rect_in);
+			m_ZoomFrom = rect_out;
+			m_ZoomTo   = rect_in;
 			m_iUndoZoom = -1;
 		}
 		}
@@ -918,17 +906,16 @@ void CScopeScreen::OnRButtonUp(UINT nFlags, CPoint point)
 		CWnd::OnRButtonUp(nFlags, point);
 		if (m_bAllowProps)
 		{
+			const auto parms_old = new SCOPESTRUCT();
+			*parms_old	= m_parms;
 			CScopeScreenPropsDlg dlg;
 			dlg.m_pscope = this;
-			// save parameters to restore it later if necessary
-			SCOPESTRUCT parms_old;
-			parms_old = m_parms;
 			m_bAllowProps=FALSE;		// inhibit properties
 
 			// if Cancel or Escape or anything else: restore previous values
 			if (IDOK != dlg.DoModal())
 			{
-				m_parms = parms_old;
+				m_parms = *parms_old;
 				Invalidate();				
 			}
 			else
@@ -964,8 +951,8 @@ void CScopeScreen::ZoomOut()
 		CClientDC dc(this);
 		m_ZoomTo		= m_displayRect;
 		m_ZoomFrom		= m_ZoomTo;
-		short yshrink	= m_ZoomTo.Height()/4;
-		short xshrink	= m_ZoomTo.Width()/4;
+		const auto yshrink	= m_ZoomTo.Height()/4;
+		const auto xshrink	= m_ZoomTo.Width()/4;
 		m_ZoomTo.InflateRect(xshrink, yshrink);
 		ZoomData(&m_ZoomFrom, &m_ZoomTo);
 		m_iUndoZoom		= -1;
@@ -981,8 +968,8 @@ void CScopeScreen::ZoomIn()
 		CClientDC dc(this);
 		m_ZoomTo		= m_displayRect;
 		m_ZoomFrom		= m_ZoomTo;
-		short yshrink	= -m_ZoomTo.Height()/4;
-		short xshrink	= -m_ZoomTo.Width()/4;
+		const auto yshrink	= -m_ZoomTo.Height()/4;
+		const auto xshrink	= -m_ZoomTo.Width()/4;
 		m_ZoomTo.InflateRect(xshrink, yshrink);
 		ZoomData(&m_ZoomFrom, &m_ZoomTo);
 		m_iUndoZoom = 1;
@@ -994,12 +981,12 @@ void CScopeScreen::ZoomIn()
 //---------------------------------------------------------------------------
 int CScopeScreen::HitTestHZtag(int y)
 {
-	int chit = -1;				// horizontal cursor hit
-	const int jitter = 3;		// jitter allowed: 5 pixels total		
-	int j = m_HZtags.GetNTags();
-	for (int i = 0; i<j; i++)	// loop through all cursors
+	auto chit = -1;				// horizontal cursor hit
+	const auto jitter = 3;		// jitter allowed: 5 pixels total		
+	const auto j = m_HZtags.GetNTags();
+	for (auto i = 0; i<j; i++)	// loop through all cursors
 	{
-		int val = m_HZtags.GetTagPix(i);	// get pixel value
+		const auto val = m_HZtags.GetTagPix(i);	// get pixel value
 		if (val <= y+ jitter && val >= y-jitter)
 		{
 			chit = i;
@@ -1011,11 +998,11 @@ int CScopeScreen::HitTestHZtag(int y)
 
 int CScopeScreen::HitTestVTtagLong(long lx)
 {
-	int chit = -1;				// horizontal cursor hit
-	int j = m_VTtags.GetNTags();
-	for (int i = 0; i<j; i++)	// loop through all cursors
+	auto chit = -1;				// horizontal cursor hit
+	const auto j = m_VTtags.GetNTags();
+	for (auto i = 0; i<j; i++)	// loop through all cursors
 	{
-		long lval = m_VTtags.GetTagLVal(i);
+		const auto lval = m_VTtags.GetTagLVal(i);
 		if (lval <= lx+ m_liJitter && lval >= lx-m_liJitter)
 		{
 			chit = i;
@@ -1027,12 +1014,12 @@ int CScopeScreen::HitTestVTtagLong(long lx)
 
 int CScopeScreen::HitTestVTtagPix(int x)
 {
-	int chit = -1;				// horizontal cursor hit
-	const int jitter = 3;		// jitter allowed: 5 pixels total
-	int j = m_VTtags.GetNTags();
-	for (int i = 0; i<j; i++)	// loop through all cursors
+	auto chit = -1;				// horizontal cursor hit
+	const auto jitter = 3;		// jitter allowed: 5 pixels total
+	const auto j = m_VTtags.GetNTags();
+	for (auto i = 0; i<j; i++)	// loop through all cursors
 	{
-		int val = m_VTtags.GetTagPix(i);
+		const auto val = m_VTtags.GetTagPix(i);
 		if (val <= x+ jitter && val >= x-jitter)
 		{
 			chit = i;
@@ -1045,49 +1032,49 @@ int CScopeScreen::HitTestVTtagPix(int x)
 void CScopeScreen::InvertTracker(CPoint point)
 {	
 	CClientDC dc(this);						// get dc to fbutton window	
-	CBrush* oldBrush = (CBrush*) dc.SelectStockObject(NULL_BRUSH);
-	int noldROP = dc.SetROP2(R2_NOTXORPEN);
-	CPen* oldPen = dc.SelectObject(&m_blackDottedPen);
+	const auto old_brush = (CBrush*) dc.SelectStockObject(NULL_BRUSH);
+	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);
+	const auto old_pen = dc.SelectObject(&m_blackDottedPen);
 	dc.Rectangle(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 	dc.Rectangle(m_ptFirst.x, m_ptFirst.y, point.x, point.y);
-	dc.SelectObject(oldPen);				// select old pen
+	dc.SelectObject(old_pen);				// select old pen
 
-	dc.SelectObject(oldBrush);				// select old brush	
-	dc.SetROP2(noldROP);					// select previous draw mode
+	dc.SelectObject(old_brush);				// select old brush	
+	dc.SetROP2(nold_rop);					// select previous draw mode
 	m_ptLast = point;						// update m_ptLast
 }
 
 void CScopeScreen::DisplayVTtags(CDC* pDC)
 {
 	// select pen and display mode 
-	int noldROP = pDC->SetROP2(R2_NOTXORPEN);
-	CPen* oldp =pDC->SelectObject(&m_blackDottedPen);
+	const auto nold_rop = pDC->SetROP2(R2_NOTXORPEN);
+	const auto oldp =pDC->SelectObject(&m_blackDottedPen);
 
 	// iterate through VT cursor list
-	int y0 = MulDiv(0-m_yVO, m_yWE, m_yVE) +m_yWO;
-	int y1 = MulDiv(m_displayRect.bottom-m_yVO, m_yWE, m_yVE) +m_yWO;
-	for (int j=GetNVTtags()-1; j>=0; j--)
+	const auto y0 = MulDiv(0-m_yVO, m_yWE, m_yVE) +m_yWO;
+	const auto y1 = MulDiv(m_displayRect.bottom-m_yVO, m_yWE, m_yVE) +m_yWO;
+	for (auto j=GetNVTtags()-1; j>=0; j--)
 	{
-		int k = GetVTtagVal(j);		// get val
+		const auto k = GetVTtagVal(j);		// get val
 		pDC->MoveTo(k,y0);			// set initial pt
 		pDC->LineTo(k,y1);			// VT line
 	}
 
 	pDC->SelectObject(oldp);
-	pDC->SetROP2(noldROP);			// restore old display mode
+	pDC->SetROP2(nold_rop);			// restore old display mode
 }
 
 void CScopeScreen::DisplayHZtags(CDC* pDC)
 {
 	// select pen and display mode 
-	CPen* pold = pDC->SelectObject(&m_blackDottedPen);
-	int noldROP = pDC->SetROP2(R2_NOTXORPEN);
+	const auto pold = pDC->SelectObject(&m_blackDottedPen);
+	const auto nold_rop = pDC->SetROP2(R2_NOTXORPEN);
 
 	// iterate through HZ cursor list		
-	int oldval = GetHZtagVal(GetNHZtags()-1)-1;
-	for (int i = GetNHZtags()-1; i>= 0; i--)
+	auto oldval = GetHZtagVal(GetNHZtags()-1)-1;
+	for (auto i = GetNHZtags()-1; i>= 0; i--)
 	{
-		int k = GetHZtagVal(i);		// get val
+		const auto k = GetHZtagVal(i);		// get val
 		if (k == oldval)			// skip if already displayed
 			continue;
 		pDC->MoveTo(m_xWO, k);		// set initial pt
@@ -1095,7 +1082,7 @@ void CScopeScreen::DisplayHZtags(CDC* pDC)
 		oldval = k;
 	}
 	pDC->SelectObject(pold);
-	pDC->SetROP2(noldROP);			// restore old display mode		
+	pDC->SetROP2(nold_rop);			// restore old display mode		
 }
 
 void CScopeScreen::XorHZtag(int ypoint)
@@ -1104,8 +1091,8 @@ void CScopeScreen::XorHZtag(int ypoint)
 		return;
 	CClientDC dc(this);
 
-	CPen* pOldPen = dc.SelectObject(&m_blackDottedPen);
-	int noldROP = dc.SetROP2(R2_NOTXORPEN);
+	const auto p_old_pen = dc.SelectObject(&m_blackDottedPen);
+	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);
 	dc.IntersectClipRect(&m_displayRect);	// clip drawing inside rectangle
 				
 	dc.MoveTo(m_displayRect.left,  m_ptLast.y);
@@ -1113,17 +1100,17 @@ void CScopeScreen::XorHZtag(int ypoint)
 	dc.MoveTo(m_displayRect.left,  ypoint);
 	dc.LineTo(m_displayRect.right, ypoint);
 
-	dc.SetROP2(noldROP);
-	dc.SelectObject(pOldPen);
+	dc.SetROP2(nold_rop);
+	dc.SelectObject(p_old_pen);
 	m_ptLast.y = ypoint;
 }
 
 void CScopeScreen::XorVTtag(int xpoint)
 {
 	CClientDC dc(this);
-	
-	CPen* pOldPen = dc.SelectObject(&m_blackDottedPen);
-	int noldROP = dc.SetROP2(R2_NOTXORPEN);    
+
+	const auto p_old_pen = dc.SelectObject(&m_blackDottedPen);
+	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);    
 	dc.IntersectClipRect(&m_clientRect);		// clip drawing inside rect
 
 	dc.MoveTo(m_ptLast.x, m_displayRect.top);
@@ -1132,8 +1119,8 @@ void CScopeScreen::XorVTtag(int xpoint)
 	dc.MoveTo(xpoint, m_displayRect.top);
 	dc.LineTo(xpoint, m_displayRect.bottom);
 
-	dc.SetROP2(noldROP);
-	dc.SelectObject(pOldPen);
+	dc.SetROP2(nold_rop);
+	dc.SelectObject(p_old_pen);
 	m_ptLast.x = xpoint;
 }
 
@@ -1150,12 +1137,12 @@ void CScopeScreen::XorTempVTtag(int xpoint)
 
 CTagList* CScopeScreen::GetHZtagList() 
 {
-	return (CTagList*) &m_HZtags;
+	return &m_HZtags;
 }
 
 CTagList* CScopeScreen::GetVTtagList()
 {
-	return (CTagList*) &m_VTtags;
+	return &m_VTtags;
 }
 
 // bsetPlot:   TRUE=use DIB array to draw curves FALSE: do not use it
@@ -1208,9 +1195,9 @@ void CScopeScreen::Serialize( CArchive& ar )
 void CScopeScreen::PlotToBitmap(CBitmap* pBitmap)
 {
 	CClientDC dc(this);
-	CDC memDC;
-	memDC.CreateCompatibleDC(&dc);
-	memDC.SelectObject(pBitmap);
-	PlotDatatoDC(&memDC);
+	CDC mem_dc;
+	mem_dc.CreateCompatibleDC(&dc);
+	mem_dc.SelectObject(pBitmap);
+	PlotDatatoDC(&mem_dc);
 }
 
