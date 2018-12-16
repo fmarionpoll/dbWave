@@ -22,8 +22,8 @@ END_MESSAGE_MAP()
 
 CSpikeBarWnd::CSpikeBarWnd()
 {
-	m_pSL= nullptr;
-	m_penvelope = nullptr;
+	p_spike_list_= nullptr;
+	p_envelope_ = nullptr;
 	m_lFirst = 0;
 	m_lLast = 0;
 	m_currentclass=-999;
@@ -35,16 +35,16 @@ CSpikeBarWnd::CSpikeBarWnd()
 	SetbUseDIB(FALSE);
 	m_csEmpty = "no \nspikes";
 	m_ballFiles = FALSE;
-	m_pDoc = nullptr;
+	p_dbwave_doc_ = nullptr;
 	m_spklast = 0;
 }  
 
 CSpikeBarWnd::~CSpikeBarWnd()
 {
-	if (m_penvelope != nullptr)
+	if (p_envelope_ != nullptr)
 	{
-		m_penvelope->RemoveAll();
-		delete m_penvelope;
+		p_envelope_->RemoveAll();
+		delete p_envelope_;
 	}
 }
 
@@ -68,28 +68,28 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 
 	// print text
 	pDC->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
-	CRect rect = m_displayRect;
+	auto rect = m_displayRect;
 	rect.DeflateRect(1,1);
 
 	long nfiles = 1;
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = m_pDoc->DBGetNRecords();
-		ncurrentfile = m_pDoc->DBGetCurrentRecordPosition();
+		nfiles = p_dbwave_doc_->DBGetNRecords();
+		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
 	}
 
 	for (long ifile=0; ifile < nfiles; ifile++)
 	{
 		if (m_ballFiles)
 		{
-			m_pDoc->DBSetCurrentRecordPosition(ifile);
-			m_pDoc->OpenCurrentSpikeFile();
-			m_pSL = (CSpikeList*) m_pDoc->m_pSpk->GetSpkListCurrent();
+			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
 		// test presence of data	
-		if (m_pSL == nullptr || m_pSL->GetTotalSpikes() == 0)
+		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
 		{
 			if (!m_ballFiles)
 			{
@@ -112,7 +112,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		if (m_yWE == 1)
 		{
 			int maxval, minval;
-			m_pSL->GetTotalMaxMin(TRUE, &maxval, &minval);
+			p_spike_list_->GetTotalMaxMin(TRUE, &maxval, &minval);
 			m_yWE = maxval - minval;
 			m_yWO = (maxval + minval) / 2;
 		}
@@ -129,7 +129,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		pDC->RestoreDC(nSavedDC);
 
 		// display stimulus
-		if (m_pSDoc->m_stimIntervals.nitems > 0)
+		if (p_spike_doc_->m_stimIntervals.nitems > 0)
 			DisplayStim(pDC, &m_displayRect);
 
 		// display vertical cursors
@@ -170,9 +170,9 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 
 	if (m_ballFiles)
 	{
-		m_pDoc->DBSetCurrentRecordPosition(ncurrentfile);
-		m_pDoc->OpenCurrentSpikeFile();
-		m_pSL = (CSpikeList*)m_pDoc->m_pSpk->GetSpkListCurrent();
+		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->OpenCurrentSpikeFile();
+		p_spike_list_ = (CSpikeList*)p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
 }
 
@@ -191,8 +191,8 @@ void CSpikeBarWnd::DisplayStim(CDC* pDC, CRect* rect)
 	long iiend = m_lLast; 
 	long iilen = iiend - iistart;
 	int i0 = 0;
-	while (i0 < m_pSDoc->m_stimIntervals.intervalsArray.GetSize() 
-			&& m_pSDoc->m_stimIntervals.intervalsArray.GetAt(i0) < iistart)
+	while (i0 < p_spike_doc_->m_stimIntervals.intervalsArray.GetSize() 
+			&& p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(i0) < iistart)
 		i0++;				// loop until found
 	int iix00 = 0;			// start looping from the first interval that meet the criteria
 	int istate =bottom;		// use this variable to keep track of pulse broken by display limits
@@ -201,11 +201,11 @@ void CSpikeBarWnd::DisplayStim(CDC* pDC, CRect* rect)
 		istate = top;
 	pDC->MoveTo(rect->left, istate); // iix00, istate);
 
-	int nsti = ((m_pSDoc->m_stimIntervals.intervalsArray.GetSize())/2)*2;
+	int nsti = ((p_spike_doc_->m_stimIntervals.intervalsArray.GetSize())/2)*2;
 	for (ii; ii< nsti; ii++, ii++)
 	{
 		// stim starts here
-		int iix0 = m_pSDoc->m_stimIntervals.intervalsArray.GetAt(ii) - iistart;
+		int iix0 = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(ii) - iistart;
 		if (iix0 >= iilen)				// first transition ON after last graph pt?
 			break;						// yes = exit loop
 
@@ -218,7 +218,7 @@ void CSpikeBarWnd::DisplayStim(CDC* pDC, CRect* rect)
 
 		// stim ends here
 		istate = bottom;				// after pulse, descend to bottom level
-		int iix1 = m_pSDoc->m_stimIntervals.intervalsArray.GetAt(ii+1) - iistart;
+		int iix1 = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(ii+1) - iistart;
 		if (iix1 > iilen)				// last transition off graph?
 		{
 			iix1 = iilen;				// yes = clip
@@ -250,7 +250,7 @@ void CSpikeBarWnd::DisplayBars(CDC* pDC, CRect* rect)
 	if (m_yWE == 1)
 	{		
 		int maxval, minval;
-		m_pSL->GetTotalMaxMin(TRUE, &maxval, &minval);
+		p_spike_list_->GetTotalMaxMin(TRUE, &maxval, &minval);
 		m_yWE = maxval - minval;  
 		m_yWO = (maxval + minval)/2;
 	}
@@ -260,13 +260,13 @@ void CSpikeBarWnd::DisplayBars(CDC* pDC, CRect* rect)
 	int yVE = -rect->Height(); 
 
 	// draw horizontal line
-	int BASELINE = MulDiv(m_pSL->GetAcqBinzero()-yzero, yVE, yextent) + yVO;
+	int BASELINE = MulDiv(p_spike_list_->GetAcqBinzero()-yzero, yVE, yextent) + yVO;
 	pDC->MoveTo(rect->left, BASELINE);
 	pDC->LineTo(rect->right, BASELINE);
 
 	// loop through all spikes of the list
 	int ifirst = 0;	
-	int ilast = m_pSL->GetTotalSpikes() -1;
+	int ilast = p_spike_list_->GetTotalSpikes() -1;
 	if (m_rangemode == RANGE_INDEX)
 	{
 		if (m_spklast > ilast) 
@@ -283,13 +283,13 @@ void CSpikeBarWnd::DisplayBars(CDC* pDC, CRect* rect)
 	for (int ispk=ilast; ispk >= ifirst; ispk--)
 	{
 		// skip spike if outside time range && option
-		long lSpikeTime = m_pSL->GetSpikeTime(ispk);
+		long lSpikeTime = p_spike_list_->GetSpikeTime(ispk);
 		if (m_rangemode == RANGE_TIMEINTERVALS
 			&& (lSpikeTime < m_lFirst || lSpikeTime > m_lLast))
 			continue;
 
 		// select correct pen
-		int wspkcla = m_pSL->GetSpikeClass(ispk);
+		int wspkcla = p_spike_list_->GetSpikeClass(ispk);
 		switch (m_plotmode)
 		{
 		case PLOT_ONECLASSONLY:
@@ -312,7 +312,7 @@ void CSpikeBarWnd::DisplayBars(CDC* pDC, CRect* rect)
 		// and draw spike: compute abcissa & draw from max to min     
 		float llk = (lSpikeTime - m_lFirst)*(float)(xextent) / len; //muldiv
 		int abcissa = (int) llk + rect->left;
-		m_pSL->GetSpikeExtrema(ispk, &max, &min);
+		p_spike_list_->GetSpikeExtrema(ispk, &max, &min);
 		max = MulDiv(max-yzero, yVE, yextent) + yVO;
 		min = MulDiv(min-yzero, yVE, yextent) + yVO;
 		pDC->MoveTo(abcissa, max);
@@ -329,7 +329,7 @@ void CSpikeBarWnd::DisplayBars(CDC* pDC, CRect* rect)
 	// display selected spike
 	if (m_selectedspike >= 0)
 		DisplaySpike(m_selectedspike, TRUE);
-	if (m_pSL->GetSpikeFlagArrayCount() > 0)
+	if (p_spike_list_->GetSpikeFlagArrayCount() > 0)
 		DisplayFlaggedSpikes(TRUE);
 
 	// restore old pen
@@ -360,10 +360,10 @@ void CSpikeBarWnd::DisplayFlaggedSpikes(BOOL bHighLight)
 	int color;
 
 	// loop over the array of flagged spikes
-	for (int i= m_pSL->GetSpikeFlagArrayCount()-1; i>=0; i--)
+	for (int i= p_spike_list_->GetSpikeFlagArrayCount()-1; i>=0; i--)
 	{
-		int nospike = m_pSL->GetSpikeFlagArrayAt(i);
-		int nospikeclass = m_pSL->GetSpikeClass(nospike);
+		int nospike = p_spike_list_->GetSpikeFlagArrayAt(i);
+		int nospikeclass = p_spike_list_->GetSpikeClass(nospike);
 		// skip spike if not valid in this display
 		if (PLOT_ONECLASSONLY == m_plotmode && nospikeclass != m_selclass)
 			continue;
@@ -414,12 +414,12 @@ void CSpikeBarWnd::DisplayFlaggedSpikes(BOOL bHighLight)
 		oldpen = (CPen*) dc.SelectObject(&newPen);
 
 		// display data
-		long lSpikeTime = m_pSL->GetSpikeTime(nospike);
+		long lSpikeTime = p_spike_list_->GetSpikeTime(nospike);
 		long len =  (m_lLast - m_lFirst + 1);
 		float llk = (lSpikeTime - m_lFirst)*(float)(m_xWE) / len; //muldiv		
 		int abcissa = (int)llk  + m_xWO;
 		int max, min;
-		m_pSL->GetSpikeExtrema(nospike, &max, &min);
+		p_spike_list_->GetSpikeExtrema(nospike, &max, &min);
 
 		// ------------------------------------------------
 		dc.MoveTo(abcissa, max);
@@ -457,13 +457,13 @@ void CSpikeBarWnd::DisplaySpike(int nospike, BOOL bselect)
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
 			color = BLACK_COLOR;
-			if (m_pSL->GetSpikeClass(nospike) != m_selclass)
+			if (p_spike_list_->GetSpikeClass(nospike) != m_selclass)
 				color = SILVER_COLOR;	
 			break;
 		case PLOT_CLASSCOLORS:
 			if (nospike == m_selectedspike)
 				HighlightOneBar(nospike, &dc);
-			color = m_pSL->GetSpikeClass(nospike) % NB_COLORS;
+			color = p_spike_list_->GetSpikeClass(nospike) % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		default:
@@ -478,7 +478,7 @@ void CSpikeBarWnd::DisplaySpike(int nospike, BOOL bselect)
 		{
 		case PLOT_CLASSCOLORS:
 			HighlightOneBar(nospike, &dc);
-			color = m_pSL->GetSpikeClass(nospike) % NB_COLORS;
+			color = p_spike_list_->GetSpikeClass(nospike) % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		case PLOT_ONECLASSONLY:
@@ -495,12 +495,12 @@ void CSpikeBarWnd::DisplaySpike(int nospike, BOOL bselect)
 	oldpen = (CPen*) dc.SelectObject(&newPen);
 
 	// display data
-	long lSpikeTime = m_pSL->GetSpikeTime(nospike);
+	long lSpikeTime = p_spike_list_->GetSpikeTime(nospike);
 	long len =  (m_lLast - m_lFirst + 1);
 	float llk = (lSpikeTime - m_lFirst)*(float)(m_xWE) / len; //muldiv
 	int abcissa = (int) llk + m_xWO;
 	int max, min;
-	m_pSL->GetSpikeExtrema(nospike, &max, &min);
+	p_spike_list_->GetSpikeExtrema(nospike, &max, &min);
 
 	// ------------------------------------------------
 	dc.MoveTo(abcissa, max);
@@ -516,19 +516,19 @@ void CSpikeBarWnd::DisplaySpike(int nospike, BOOL bselect)
 BOOL CSpikeBarWnd::IsSpikeWithinRange(int spikeno)
 {
 	BOOL bYes = TRUE;
-	if (m_spklast > m_pSL->GetTotalSpikes()-1) 
-		m_spklast = m_pSL->GetTotalSpikes()-1;
+	if (m_spklast > p_spike_list_->GetTotalSpikes()-1) 
+		m_spklast = p_spike_list_->GetTotalSpikes()-1;
 	if (m_spkfirst < 0) m_spkfirst = 0;
-	if (spikeno < 0 || spikeno > m_pSL->GetTotalSpikes()-1)
+	if (spikeno < 0 || spikeno > p_spike_list_->GetTotalSpikes()-1)
 		return FALSE;
 	
 	if (m_rangemode == RANGE_TIMEINTERVALS
-		&& (m_pSL->GetSpikeTime(spikeno) < m_lFirst || m_pSL->GetSpikeTime(spikeno) > m_lLast))
+		&& (p_spike_list_->GetSpikeTime(spikeno) < m_lFirst || p_spike_list_->GetSpikeTime(spikeno) > m_lLast))
 		return FALSE;
 	else if (m_rangemode == RANGE_INDEX
 		&& (spikeno>m_spklast || spikeno < m_spkfirst))
 		return FALSE;
-	if (m_plotmode == PLOT_ONECLASSONLY && m_pSL->GetSpikeClass(spikeno) != m_selclass)
+	if (m_plotmode == PLOT_ONECLASSONLY && p_spike_list_->GetSpikeClass(spikeno) != m_selclass)
 		return FALSE;
 	return TRUE;
 }
@@ -542,7 +542,7 @@ void CSpikeBarWnd::HighlightOneBar(int nospike, CDC* pDC)
 	int oldROP = pDC->GetROP2();
 	pDC->SetROP2(R2_NOTXORPEN);
 
-	long lSpikeTime = m_pSL->GetSpikeTime(nospike);
+	long lSpikeTime = p_spike_list_->GetSpikeTime(nospike);
 	long len =  (m_lLast - m_lFirst + 1);
 	float llk = (lSpikeTime - m_lFirst)*(float)(m_xWE) / len; //muldiv
 	int abcissa = (int) llk + m_xWO;
@@ -566,8 +566,6 @@ void CSpikeBarWnd::HighlightOneBar(int nospike, CDC* pDC)
 	pDC->SelectObject(oldpen);
 	pDC->SetROP2(oldROP);
 }
-
-
 
 //---------------------------------------------------------------------------
 
@@ -606,13 +604,13 @@ void CSpikeBarWnd::SelectSpikesWithinRect(CRect* pRect, UINT nFlags)
 	
 	// convert pixel coordinates into file index and into data values
 	long len =  (m_lLast - m_lFirst + 1);
-	long lFirst= MulDiv(pRect->left, len, m_displayRect.Width()) + m_lFirst;
-	long lLast= MulDiv(pRect->right, len, m_displayRect.Width()) + m_lFirst;
+	long l_first= MulDiv(pRect->left, len, m_displayRect.Width()) + m_lFirst;
+	long l_last= MulDiv(pRect->right, len, m_displayRect.Width()) + m_lFirst;
 	int vmin = MulDiv(pRect->bottom -m_yVO, m_yWE, m_yVE) + m_yWO;
 	int vmax = MulDiv(pRect->top -m_yVO, m_yWE, m_yVE) + m_yWO;
 	BOOL bFlag = FALSE;
 	bFlag = (nFlags & MK_SHIFT) || (nFlags & MK_CONTROL);
-	m_pSL->SelectSpikeswithinRect(vmin, vmax, lFirst, lLast, bFlag);
+	p_spike_list_->SelectSpikeswithinRect(vmin, vmax, l_first, l_last, bFlag);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -709,11 +707,11 @@ void CSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	rDest->NormalizeRect();
 	
 	// change y gain & y offset		
-	int yWE = m_yWE;				// save previous window extent
+	int y_we = m_yWE;				// save previous window extent
 	m_yWE = MulDiv (m_yWE, rDest->Height(), rFrom->Height());
 	m_yWO = m_yWO
 			-MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
-			+MulDiv(rDest->top - m_yVO, yWE, m_yVE);
+			+MulDiv(rDest->top - m_yVO, y_we, m_yVE);
 
 	// change index of first and last pt displayed	
 	long lSize = m_lLast-m_lFirst+1;
@@ -731,7 +729,7 @@ void CSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
 //---------------------------------------------------------------------------
 void CSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if ((m_selectedspike < 0 && m_pSL->GetSpikeFlagArrayCount () < 1)|| m_hitspk < 0)
+	if ((m_selectedspike < 0 && p_spike_list_->GetSpikeFlagArrayCount () < 1)|| m_hitspk < 0)
 		CScopeScreen::OnLButtonDblClk(nFlags, point);
 	else
 	{
@@ -778,7 +776,7 @@ int CSpikeBarWnd::DoesCursorHitCurve(CPoint point)
 	
 	// loop through all spikes
 	int ifirst = 0;
-	int ilast = m_pSL->GetTotalSpikes()-1;
+	int ilast = p_spike_list_->GetTotalSpikes()-1;
 	// loop over all spikes except if range mode is selected
 	if (m_rangemode == RANGE_INDEX)	
 	{
@@ -791,16 +789,16 @@ int CSpikeBarWnd::DoesCursorHitCurve(CPoint point)
 	// spikes displayed as a bar ----------------------------------
 	for (int ispk=ilast; ispk>=ifirst; ispk--)
 	{
-		long lSpikeTime = m_pSL->GetSpikeTime(ispk);
+		long lSpikeTime = p_spike_list_->GetSpikeTime(ispk);
 		if (lSpikeTime < lXmin || lSpikeTime > lXmax)
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& m_pSL->GetSpikeClass(ispk) != m_selclass)
+			&& p_spike_list_->GetSpikeClass(ispk) != m_selclass)
 			continue;
 
 		int max;
 		int min;
-		m_pSL->GetSpikeExtrema(ispk, &max, &min);
+		p_spike_list_->GetSpikeExtrema(ispk, &max, &min);
 		if (mouseY+deltay < max && mouseY-deltay > min)
 		{			
 			hitspk = ispk;
@@ -815,29 +813,29 @@ int CSpikeBarWnd::DoesCursorHitCurve(CPoint point)
 //---------------------------------------------------------------------------
 void CSpikeBarWnd::CenterCurve()
 {
-	if (m_pSL == nullptr || m_pSL->GetTotalSpikes() <= 0)
+	if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() <= 0)
 		return;
 	int max, min;		
-	m_pSL->GetTotalMaxMin(TRUE, &max, &min);
+	p_spike_list_->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWO = max/2 + min/2;
 }
 
 //---------------------------------------------------------------------------
 void CSpikeBarWnd::MaxGain()
 {
-	if (m_pSL == nullptr || m_pSL->GetTotalSpikes() <= 0)
+	if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() <= 0)
 		return;
 	int max, min;		
-	m_pSL->GetTotalMaxMin(TRUE, &max, &min);
+	p_spike_list_->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWE = MulDiv(max-min+1, 10, 8);
 }
 
 void CSpikeBarWnd::MaxCenter()
 {
-	if (m_pSL == nullptr || m_pSL->GetTotalSpikes() <= 0)
+	if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() <= 0)
 		return;
 	int max, min;		
-	m_pSL->GetTotalMaxMin(TRUE, &max, &min);
+	p_spike_list_->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWE = MulDiv(max-min+1, 10, 8);
 	m_yWO = max/2 + min/2;
 }
@@ -849,13 +847,13 @@ void CSpikeBarWnd::MaxCenter()
 void CSpikeBarWnd::Print(CDC* pDC, CRect* rect)
 {
 	// check if there are valid data to display
-	if (m_pSL == nullptr || m_pSL->GetTotalSpikes()== 0)
+	if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes()== 0)
 		return;		
 
 	// set mapping mode and viewport
 	int nSavedDC = pDC->SaveDC();				// save display context	
 	DisplayBars(pDC, rect);
-	if (m_pSDoc->m_stimIntervals.nitems > 0)	
+	if (p_spike_doc_->m_stimIntervals.nitems > 0)	
 		DisplayStim(pDC, rect);
 
 	pDC->RestoreDC(nSavedDC);	

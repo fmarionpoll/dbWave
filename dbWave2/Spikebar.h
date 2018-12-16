@@ -19,21 +19,21 @@ protected:
 	int			m_rangemode;		// display range	
 	long		m_lFirst;			// time index of first pt displayed
 	long		m_lLast;			// time index of last pt displayed
-	int			m_spkfirst{};			// index first spike
+	int			m_spkfirst{};		// index first spike
 	int			m_spklast;			// index last spike
 	int			m_currentclass;		// current class in case of displaying classes
 	int			m_selectedspike;	// selected spike (display differently)
 	int			m_hitspk;			// no of spike selected	
-	int			m_selclass{};			// index class selected	
+	int			m_selclass{};		// index class selected	
 	BOOL		m_btrackCurve;		// track curve ?
-	CSpikeList*	m_pSL;				// spike list (source data)	
-	CSpikeDoc*	m_pSDoc{};			// spike doc source (source data; stim)
 	BOOL		m_bDisplaySignal{};	// flag default:FALSE=bars; TRUE=spikes
-	CDWordArray* m_penvelope;		// data envelope (should be 4 times greater than size)
 	int			m_selpen{};
 	int			m_barheight;
 	BOOL		m_ballFiles;		// display data from all files in CdbWaveDoc*
-	CdbWaveDoc* m_pDoc;
+	CDWordArray* p_envelope_;		// data envelope (should be 4 times greater than size)
+	CSpikeList*	p_spike_list_ = nullptr;		// spike list (source data)	
+	CSpikeDoc*	p_spike_doc_ = nullptr;	// spike doc source (source data; stim)
+	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 	
 // Helpers
 public:
@@ -41,9 +41,9 @@ public:
 	inline void SetSelClass(int selclass) {m_selclass = selclass;}
 	inline void SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
 
-	inline void SetSourceData(CSpikeList* pSpkList, CSpikeDoc* pSpkDoc) {m_pSDoc = pSpkDoc; m_pSL = pSpkList; m_selectedspike=-1; }
-	inline void SetSpkList(CSpikeList* pSpkList) {m_pSL = pSpkList;}
-	inline void SetTimeIntervals(long lFirst, long lLast) {m_lFirst = lFirst; m_lLast = lLast;}
+	inline void SetSourceData(CSpikeList* p_spk_list, CSpikeDoc* p_spk_doc) {p_spike_doc_ = p_spk_doc; p_spike_list_ = p_spk_list; m_selectedspike=-1; }
+	inline void SetSpkList(CSpikeList* p_spk_list) {p_spike_list_ = p_spk_list;}
+	inline void SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first; m_lLast = l_last;}
 	inline void SetCurrentClass(int curcla) {m_currentclass=curcla;}
 	inline void SetSpkIndexes(int first, int last) {m_spkfirst=first, m_spklast=last;}
 
@@ -65,7 +65,7 @@ public:
 	void	MaxGain();
 	void	MaxCenter();
 
-	inline void	DisplayAllFiles(BOOL bON, CdbWaveDoc* pDoc) { m_ballFiles = bON; m_pDoc = pDoc; }
+	inline void	DisplayAllFiles(BOOL bON, CdbWaveDoc* pDoc) { m_ballFiles = bON; p_dbwave_doc_ = pDoc; }
 
 // implementation
 public:

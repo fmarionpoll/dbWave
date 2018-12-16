@@ -660,38 +660,38 @@ BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 	return TRUE;
 }
 
-BOOL CLineViewWnd::GetDataFromDoc(long lFirst)
+BOOL CLineViewWnd::GetDataFromDoc(long l_first)
 {	
-	if (lFirst == m_lxFirst)
+	if (l_first == m_lxFirst)
 		return TRUE;
-	m_lxFirst = lFirst;
+	m_lxFirst = l_first;
 	return GetDataFromDoc();	
 }
 
-BOOL CLineViewWnd::GetDataFromDoc(long lFirst, long lLast)
+BOOL CLineViewWnd::GetDataFromDoc(long l_first, long l_last)
 {
 	// check if size has changed
-	if (lFirst <0) 				// first check limits across document's
-		lFirst = 0;				// minimum
-	if (lLast > m_lxVeryLast)	// maximum
-		lLast = m_lxVeryLast;    
-	if ((lFirst > m_lxVeryLast) || (lLast < lFirst))
+	if (l_first <0) 				// first check limits across document's
+		l_first = 0;				// minimum
+	if (l_last > m_lxVeryLast)	// maximum
+		l_last = m_lxVeryLast;    
+	if ((l_first > m_lxVeryLast) || (l_last < l_first))
 	{							// shuffled intervals
-		lFirst = 0;
+		l_first = 0;
 		if (m_lxSize > m_lxVeryLast+1)
 			m_lxSize =	m_lxVeryLast+1;
-		lLast = lFirst + m_lxSize -1;
+		l_last = l_first + m_lxSize -1;
 	}
 
 	// requested size different from current one?
-	if (m_lxSize != (lLast - lFirst+1))
+	if (m_lxSize != (l_last - l_first+1))
 	{		
-		m_lxFirst = lFirst;
-		ResizeChannels(0, (lLast - lFirst+1));		// n pixels = m_npixels
+		m_lxFirst = l_first;
+		ResizeChannels(0, (l_last - l_first+1));		// n pixels = m_npixels
 	}
 	// load data
-	m_lxFirst = lFirst;
-	m_lxLast = lLast;
+	m_lxFirst = l_first;
+	m_lxLast = l_last;
 	return GetDataFromDoc();
 }
 

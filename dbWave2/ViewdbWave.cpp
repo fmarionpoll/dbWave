@@ -304,7 +304,7 @@ CdbWaveDoc* CViewdbWave::GetDocument() const
 // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return dynamic_cast<CdbWaveDoc*>(m_pDocument);
+	return (CdbWaveDoc*) m_pDocument;
 }
 #endif //_DEBUG
 
@@ -369,7 +369,7 @@ void CViewdbWave::OnClickMedianFilter()
 
 void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
 {
-	auto* p_mainframe = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	auto* p_mainframe = (CMainFrame*)AfxGetMainWnd();
 	// activate view
 	if (bActivate)
 	{

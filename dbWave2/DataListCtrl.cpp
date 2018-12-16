@@ -275,7 +275,7 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	
 	// now, the requested item is in the cache
 	// get data from database
-	const auto pdb_doc = dynamic_cast<CViewdbWave*>(GetParent())->GetDocument();
+	const auto pdb_doc =  ((CViewdbWave*) GetParent())->GetDocument();
 	if (pdb_doc == nullptr)
 		return;
 
@@ -373,7 +373,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 	}
 
 	// get data file pointer and pointer to database
-	auto pdbDoc = dynamic_cast<CViewdbWave*>(GetParent())->GetDocument();
+	auto pdbDoc = ((CViewdbWave*) GetParent())->GetDocument();
 	if (pdbDoc == nullptr)
 		return;
 	const int indexcurrentfile = pdbDoc->DBGetCurrentRecordPosition();	// save current file
@@ -574,10 +574,10 @@ void CDataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	switch (nSBCode)
 	{
 	case SB_LINEUP:
-		dynamic_cast<CDaoRecordView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		((CDaoRecordView*)GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case SB_LINEDOWN:
-		dynamic_cast<CDaoRecordView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		((CDaoRecordView*)GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 	default:
 		CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -597,10 +597,10 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		SendMessage(WM_VSCROLL, SB_PAGEDOWN, NULL);
 		break;
 	case VK_UP:
-		dynamic_cast<CDaoRecordView*>( GetParent())->OnMove(ID_RECORD_PREV);
+		((CDaoRecordView*)GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case VK_DOWN:
-		dynamic_cast<CDaoRecordView*>( GetParent())->OnMove(ID_RECORD_NEXT);
+		((CDaoRecordView*)GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 
 	default:
@@ -756,7 +756,7 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 	}
 
 	auto p_wnd = ptr->pspikeWnd;
-	const auto pdb_doc = dynamic_cast<CViewdbWave*>(GetParent())->GetDocument();
+	const auto pdb_doc = ((CViewdbWave*)GetParent())->GetDocument();
 
 	// open spike document
 	if (ptr->pspikeDoc == nullptr)

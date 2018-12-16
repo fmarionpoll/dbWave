@@ -28,9 +28,9 @@ protected:
 	
 	int		m_rwidth;			// dot width
 
-	CWordArray*  m_pparm;		// parameter value
-	CWordArray*  m_pclass;		// class value
-	CDWordArray* m_piitime;		// time index	
+	CArray<int, int>*  m_pparm;		// parameter value
+	CArray<int, int>*  m_pclass;		// class value
+	CArray<long, long>* m_piitime;		// time index	
 	CSpikeList*	m_pSL;				// spike list (source data)	
 	
 // Helpers and public procedures
@@ -38,10 +38,10 @@ public:
 	inline void SetRangeMode(int mode) {m_rangemode = mode;}
 	inline void SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
 	inline void SetSelClass(int selclass) {m_selclass = selclass;}
-	inline void SetTimeIntervals(long lFirst, long lLast) {m_lFirst = lFirst;m_lLast = lLast;}
+	inline void SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first;m_lLast = l_last;}
 	inline void SetCurrentClass(int curcla) {m_currentclass=curcla;}
 	inline void SetSpkIndexes(int first, int last) {m_spkfirst=first, m_spklast=last;}
-	inline void SetSpkList(CSpikeList* pSpkList) {m_pSL = pSpkList;}
+	inline void SetSpkList(CSpikeList* p_spk_list) {m_pSL = p_spk_list;}
 	
 	inline int  GetCurrentClass() const {return m_currentclass;}
 	inline long GetTimeFirst() const {return m_lFirst;}
@@ -49,7 +49,7 @@ public:
 	inline int	GetSelectedSpike() const {return m_selectedspike;}
 	inline int	GetHitSpike() const {return m_hitspk;}
 
-	void SetSourceData(CWordArray* pparms, CDWordArray* piitime, CWordArray* pclass, CSpikeList* pSpkList);
+	void SetSourceData(CArray <int, int>* pparms, CArray<long, long>* piitime, CArray<int, int>* pclass, CSpikeList* p_spk_list);
 	int	 SelectSpike(int spikeno);
 	void DisplaySpike(int nospike, BOOL bselect);	
 	BOOL IsSpikeWithinRange(int spikeno);

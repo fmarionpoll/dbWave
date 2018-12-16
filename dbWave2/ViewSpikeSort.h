@@ -78,19 +78,19 @@ protected:
 	float	m_tunit;				// 1=s, 1000f=ms, 1e6=us
 	float	m_vunit;				// 1=V, 1000f=mV, 1e6=uV
 	float	m_delta{};
-	int		m_parmmax{};				// max of array m_parm
-	int		m_parmmin{};				// min of array m_parm
+	int		m_parmmax{};			// max of array m_parm
+	int		m_parmmin{};			// min of array m_parm
 	BOOL	m_bvalidextrema;		// tells if m_parmmax & m_parmmin are valid
 	long	m_lFirst{};				// display first
 	long	m_lLast{};				// display last
 	BOOL	m_bMeasureDone;			// flag m_parm valid
 	int		m_divAmplitudeBy;		// value to adjust changes in amplitude / filter(s)
 
-	CWordArray  m_parm;				// parameter value
-	CDWordArray m_parm2;
-	CWordArray  m_class;			// spike class
-	CWordArray	m_nspkperfile;		// number of spikes per file
-	CDWordArray m_iitime;			// time index
+	CArray <int, int>	m_parm;				// parameter value
+	CArray<long, long>	m_parm2;
+	CArray<int, int>	m_class;			// spike class
+	CArray<int, int>	m_nspkperfile;		// number of spikes per file
+	CArray<long, long>	m_iitime;			// time index
 	SCROLLINFO	m_scrollFilePos_infos{};
 
 // Operations
@@ -129,7 +129,8 @@ protected:
 	void MeasureSpkParm4(BOOL bkeepOldData, int ioption, int currentfile);
 	void SelectSpike(int spikeno, BOOL bglobal=FALSE);
 	int  GlobalIndextoLocal(int index, int* filenb);
-	int	 LocalIndextoGlobal(int filenb, int index);	
+	inline int LocalIndextoGlobal(int filenb, int index_local) {return index_local + m_nspkperfile[filenb];
+	};
 	void UpdateGain();
 	void UpdateScrollBar();
 	void SelectSpkList(int icur);

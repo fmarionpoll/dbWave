@@ -282,10 +282,10 @@ public:
 	void			SetSingleSpikeFlag(int spikeno);
 	BOOL			GetSpikeFlag(int spikeno);
 	void			RemoveAllSpikeFlags() {m_bSpikeFlagArray.RemoveAll();}
-	void			FlagRangeOfSpikes(long lFirst, long lLast, BOOL bSet);
-	void			SelectSpikeswithinRect(int vmin, int vmax, long lFirst, long lLast, BOOL bAdd);
+	void			FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
+	void			SelectSpikeswithinRect(int vmin, int vmax, long l_first, long l_last, BOOL bAdd);
 
-	void			GetRangeOfSpikeFlagged(long& lFirst, long& lLast);
+	void			GetRangeOfSpikeFlagged(long& l_first, long& l_last);
 	BOOL			GetSpikeFlagArrayAt(int i) const {return (BOOL) m_bSpikeFlagArray.GetAt(i);}
 	inline int		GetSpikeFlagArrayCount() const {return m_bSpikeFlagArray.GetCount();}
 

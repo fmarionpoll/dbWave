@@ -41,7 +41,7 @@ protected:
 
 	void  MeasureWithinInterval(int ichan, int line, long l1, long l2);
 	void  MeasureBetweenHZ(int ichan, int line, int v1, int v2);
-	void  GetMaxMin(int chan, long lFirst, long lLast);
+	void  GetMaxMin(int chan, long l_first, long l_last);
 	short	m_max{};
 	long	m_imax{};
 	short	m_min{};

@@ -1434,7 +1434,7 @@ void CViewADContinuous::Dump(CDumpContext& dc) const
 CdbWaveDoc* CViewADContinuous::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return dynamic_cast<CdbWaveDoc*>(m_pDocument);
+	return ((CdbWaveDoc*) m_pDocument);
 }
 
 #endif //_DEBUG
@@ -1568,7 +1568,7 @@ void CViewADContinuous::OnActivateView( BOOL bActivate, CView* pActivateView, CV
 	{
 		auto pmf = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 		pmf->ActivatePropertyPane(FALSE);
-		dynamic_cast<CChildFrame*>(pmf->MDIGetActive())->m_cursorstate = 0;
+		((CChildFrame*)pmf->MDIGetActive())->m_cursorstate = 0;
 	}
 	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }

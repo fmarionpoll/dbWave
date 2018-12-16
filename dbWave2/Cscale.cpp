@@ -35,13 +35,13 @@ CScale::CScale(const int n_pixels) : m_lNdatapoints(0)
 // FUNCTION fscale (originally developped in Fortran)
 // (this function should belong to m_desc)
 //
-//	compute a series of indexes (lFirst to lLast; i*4) to display data
+//	compute a series of indexes (l_first to l_last; i*4) to display data
 //	in a smaller scale (1 to m_nintervals)
 //	store scale intervals into m_intervals CWordarray
 //
-//	ASSUME     lLast-lFirst >= m_nintervals; lLast>lFirst
+//	ASSUME     l_last-l_first >= m_nintervals; l_last>l_first
 //
-//	RETURN ERROR (FALSE) if lLast, lFirst <0, mem alloc,
+//	RETURN ERROR (FALSE) if l_last, l_first <0, mem alloc,
 //  RETURN nb data pt/interval
 //
 //	use modified run-length slice line drawing algorithm as described by:
@@ -155,17 +155,17 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 
 
 /**************************************************************************
- function:	HowManyIntervalsFit(int firstPixel, long lFirst, long lLast)
+ function:	HowManyIntervalsFit(int firstPixel, long l_first, long l_last)
  purpose:	count how many pixels fit in a RW buffer / given scale
 			m_intervals[] = nb pts / interval
 			m_position[]  = scale series; start from zero
 
  parameters:	firstPixel	index first pixel
-				lLast		index last point that might be displayed
+				l_last		index last point that might be displayed
 							(assuming that start of the data is zero)
 
  returns:		number of pixels fitting in interval
-				lLast 		index last pt of the intervals
+				l_last 		index last pt of the intervals
  comments:  note that between kd and kf (array index), 
 			there are kd+kf+1 intervals
  history:
@@ -179,14 +179,14 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 	in which these intervals are stored. 
 	The cost of this approach is memory (one more array of DWORD). 
 	The benefit is simpler code and faster computation. It also allows a reduction
-	of the number of parameters passed (lFirst). However, the calling procedure
-	should care to pass lLast relative to zero (and not the real one). See 
+	of the number of parameters passed (l_first). However, the calling procedure
+	should care to pass l_last relative to zero (and not the real one). See 
 	implementation and use of this in CLineViewWnd::GetDataForDisplay().
  **************************************************************************/
 
 int CScale::HowManyIntervalsFit(const int first_pixel, long* l_last)
 {
-	// assume that lFirst equal m_position[firstPixel-1]
+	// assume that l_first equal m_position[firstPixel-1]
 	const DWORD lastpos = *l_last;						// end within m_position
 	auto last_pixel = int(lastpos / m_intervals[first_pixel]); // guess
 	if (last_pixel >= m_nintervals)				// clip this guess
@@ -194,7 +194,7 @@ int CScale::HowManyIntervalsFit(const int first_pixel, long* l_last)
 
 	// 2 cases: CASE 1 = go backwards (estimation was too much)
 	// stop when lastPixel = 0
-	// or the first time that m_position[lastPixel-1] less than lLast
+	// or the first time that m_position[lastPixel-1] less than l_last
 	if (m_position[last_pixel] > lastpos)
 	{
 		while (last_pixel > 0 && (m_position[last_pixel] > lastpos))

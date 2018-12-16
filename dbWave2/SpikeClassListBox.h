@@ -46,7 +46,7 @@ public:
 	inline CSpikeList* GetSpkListCurrent() const {return m_pSList;};
 	inline CSpikeDoc* GetSpikeDoc() const {return m_pSDoc;};
 
-	void SetTimeIntervals(long lFirst, long lLast);
+	void SetTimeIntervals(long l_first, long l_last);
 	long GetTimeFirst() const {return m_lFirst;}
 	long GetTimeLast() const {return m_lLast;}
 
@@ -62,7 +62,7 @@ public:
 	inline int GetColsSeparatorWidth() const {return m_widthSeparator;}
 	float 	   GetExtent_mV();
 
-	void SetYzoom(int yWE, int yWO);
+	void SetYzoom(int y_we, int y_wo);
 	void SetXzoom(int xWE, int xWO);
 
 	int GetYWExtent();	// load display parameters

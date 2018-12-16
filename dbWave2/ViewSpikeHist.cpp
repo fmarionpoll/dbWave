@@ -1359,7 +1359,7 @@ void CViewSpikeHist::BuildData()
 //		m_pvdS->crStimFill
 //		m_pvdS->crStimBorder
 //		m_pSpkDoc->m_spklist
-//		pSpkList->GetAcqSampRate()
+//		p_spk_list->GetAcqSampRate()
 //
 // output (passed parameter):
 //		return max val of histogram
@@ -1515,8 +1515,8 @@ long CViewSpikeHist::PlotHistog(CDC* pDC, CRect* pdispRect, int nbinshistog, lon
 		// display stimulus
 		if (btype== 0 && m_pSpkDoc->m_stimIntervals.nitems > 0)
 		{	
-			CSpikeList* pSpkList = m_pSpkDoc->GetSpkListCurrent();
-			float samprate = pSpkList->GetAcqSampRate();
+			CSpikeList* p_spk_list = m_pSpkDoc->GetSpkListCurrent();
+			float samprate = p_spk_list->GetAcqSampRate();
 			int iioffset0 = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(m_pvdS->istimulusindex);
 			if (m_pvdS->babsolutetime )
 				iioffset0 = 0;
@@ -1653,12 +1653,12 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 		m_pSpkDoc->SetSpkListCurrent(pdbDoc->GetcurrentSpkListIndex());
 
 		// load pointers to spike file and spike list
-		CSpikeList* pSpkList = m_pSpkDoc->GetSpkListCurrent();
-		float samprate = pSpkList->GetAcqSampRate();
+		CSpikeList* p_spk_list = m_pSpkDoc->GetSpkListCurrent();
+		float samprate = p_spk_list->GetAcqSampRate();
 		const long iiFrameFirst = (long) (m_timefirst*samprate);
 		const long iiFrameLast = (long) (m_timelast*samprate);
 		const long iiFrameLength = iiFrameLast - iiFrameFirst;
-		int nspikes = pSpkList->GetTotalSpikes();
+		int nspikes = p_spk_list->GetTotalSpikes();
 
 		// display spikes and stimuli either on one line or on multiple lines
 		if (m_pvdS->babsolutetime)
@@ -1686,7 +1686,7 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 				int iitime0 = -1;
 				for (int i = ispikefirst; i<nspikes; i++)
 				{		
-					long iitime = pSpkList->GetSpikeTime(i) -iiFirst;
+					long iitime = p_spk_list->GetSpikeTime(i) -iiFirst;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
 					if (iitime < 0)
@@ -1698,7 +1698,7 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 					}
 					// check spike class
 					if (m_pvdS->spikeclassoption 
-						&& pSpkList->GetSpikeClass(i) != m_spikeclass)
+						&& p_spk_list->GetSpikeClass(i) != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
 					float spktime = iitime/samprate;
@@ -1754,7 +1754,7 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 				int iitime0 = -1;
 				for (int i = 0; i<nspikes; i++)
 				{		
-					long iitime = pSpkList->GetSpikeTime(i) -istart;
+					long iitime = p_spk_list->GetSpikeTime(i) -istart;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
 					if (iitime < 0)
@@ -1763,7 +1763,7 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 						break;
 					// check spike class
 					if (m_pvdS->spikeclassoption 
-						&& pSpkList->GetSpikeClass(i) != m_spikeclass)
+						&& p_spk_list->GetSpikeClass(i) != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
 					float spktime = iitime/samprate;
@@ -2167,7 +2167,7 @@ void CViewSpikeHist::DisplayPSTHAutoc(CDC* pDC, CRect* pRect)
 // assume:
 //	m_pvdS
 
-void CViewSpikeHist::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLast)
+void CViewSpikeHist::DisplayStim(CDC* pDC, CRect* pRect, long* l_first, long* l_last)
 {
 	// draw rectangle for stimulus
 	if (m_pSpkDoc->m_stimIntervals.nitems <= 0)
@@ -2178,8 +2178,8 @@ void CViewSpikeHist::DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLa
 	CPen* poldP = (CPen*) pDC->SelectObject(&bluepen);
 
 	// search first stimulus transition within interval
-	long iistart = *lFirst; 
-	long iiend = *lLast; 
+	long iistart = *l_first; 
+	long iiend = *l_last; 
 	long iilen = iiend - iistart;
 	int i0 = 0;
 	while (i0 < m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize() 

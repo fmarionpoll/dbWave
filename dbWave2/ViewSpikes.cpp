@@ -993,8 +993,8 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	if (m_spkClass.GetXWExtent() == 0)	// if no spike shape, return
 		return;
 	// save time frame to restore it on return
-	long lFirst = m_spkClass.GetTimeFirst();
-	long lLast = m_spkClass.GetTimeLast();
+	long l_first = m_spkClass.GetTimeFirst();
+	long l_last = m_spkClass.GetTimeLast();
 	
 	CSpikeEditDlg dlg;						// dialog box
 	dlg.m_yextent = m_spkClass.GetYWExtent();// load display parameters
@@ -1017,8 +1017,8 @@ void CViewSpikes::OnToolsEdittransformspikes()
 		SaveCurrentFileParms();
 		UpdateFileParameters();
 	}
-	m_lFirst = lFirst;
-	m_lLast = lLast;
+	m_lFirst = l_first;
+	m_lLast = l_last;
 	UpdateLegends(TRUE);
 	// display data
 	m_spkClass.Invalidate();
@@ -1074,19 +1074,19 @@ void CViewSpikes::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
 // return ascii string
 // ---------------------------------------------------------------------------------------
 
-CString CViewSpikes::PrintConvertFileIndex(long lFirst, long lLast)
+CString CViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
 {
 	CString csUnit= _T(" s");			// get time,  prepare time unit
 	TCHAR szValue[64];				// buffer to receive ascii represent of values
 	LPTSTR pszValue = szValue;
 	float xScaleFactor;				// scale factor returned by changeunit
 	float x = PrintChangeUnit( 
-		(float) lFirst / m_pSpkDoc->GetAcqRate(), &csUnit, &xScaleFactor);
+		(float) l_first / m_pSpkDoc->GetAcqRate(), &csUnit, &xScaleFactor);
 	int fraction = (int) ((x - ((int) x)) * (float) 1000.);	// separate fractional part
 	wsprintf(pszValue, _T("time = %i.%03.3i - "), (int) x, fraction); // print value
 	CString csComment = pszValue;	// save ascii to string
 
-	x = lLast / (m_pSpkDoc->GetAcqRate() * xScaleFactor);	// same operations for last interval
+	x = l_last / (m_pSpkDoc->GetAcqRate() * xScaleFactor);	// same operations for last interval
 	fraction = (int) ((x - ((int) x)) *  (float) 1000.);
 	wsprintf(pszValue, _T("%i.%03.3i %s"), (int) x, fraction, (LPCTSTR) csUnit);
 	csComment += pszValue;
@@ -1100,7 +1100,7 @@ CString CViewSpikes::PrintConvertFileIndex(long lFirst, long lLast)
 // parameters in:
 //	page : current printer page
 //	file : filelist index
-// returns lFirst = index first pt to display
+// returns l_first = index first pt to display
 // assume correct parameters:
 // 	m_lprintFirst
 // 	m_lprintLen
@@ -1112,7 +1112,7 @@ CString CViewSpikes::PrintConvertFileIndex(long lFirst, long lLast)
 
 long CViewSpikes::PrintGetFileSeriesIndexFromPage(int page, int* filenumber)
 {
-	long lFirst = m_lprintFirst;	
+	long l_first = m_lprintFirst;	
 
 	int maxrow=m_nbrowsperpage*page;	// row to get
 	int ifile = 0;						// file list index
@@ -1123,8 +1123,8 @@ long CViewSpikes::PrintGetFileSeriesIndexFromPage(int page, int* filenumber)
 	long veryLast= GetDocument()->DBGetDataLen()-1;
 	for (int row = 0; row <maxrow; row++)
 	{		
-		lFirst += m_lprintLen;			// end of row
-		if (lFirst >= veryLast)			// next file ?
+		l_first += m_lprintLen;			// end of row
+		if (l_first >= veryLast)			// next file ?
 		{			
 			ifile++;					// next file index
 			if  (ifile > m_nfiles)		// last file ??
@@ -1135,12 +1135,12 @@ long CViewSpikes::PrintGetFileSeriesIndexFromPage(int page, int* filenumber)
 			// update end-of-file
 			GetDocument()->DBMoveNext();
 			veryLast=GetDocument()->DBGetDataLen()-1;
-			lFirst = m_lprintFirst;
+			l_first = m_lprintFirst;
 		}
 	}
 	*filenumber = ifile;	// return index / file list
 	GetDocument()->DBSetCurrentRecordPosition(current);
-	return lFirst;			// return index first point / data file
+	return l_first;			// return index first point / data file
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1491,7 +1491,7 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 	// print only current selection - transform current page into file index
 	int filenumber;			   								// file number and file index
-	long lFirst = PrintGetFileSeriesIndexFromPage(curpage-1, &filenumber);
+	long l_first = PrintGetFileSeriesIndexFromPage(curpage-1, &filenumber);
 	GetDocument()->DBSetCurrentRecordPosition(filenumber);
 	UpdateFileParameters();									// update file parameters
 	long veryLast = m_pSpkDoc->GetAcqSize()-1;				// index last data point / current file
@@ -1552,12 +1552,12 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		
 		// bottom of the first rectangle
 		RWbars.bottom = RW2.top + rheight;
-		long lLast = lFirst + m_lprintLen;				// compute last pt to load
-		if (lLast > veryLast)							// check end across file length
-			lLast = veryLast;
-		if ((lLast-lFirst+1) <m_lprintLen)				// adjust rect to length of data
+		long l_last = l_first + m_lprintLen;				// compute last pt to load
+		if (l_last > veryLast)							// check end across file length
+			l_last = veryLast;
+		if ((l_last-l_first+1) <m_lprintLen)				// adjust rect to length of data
 		{
-			RWbars.right = MulDiv(RWbars.Width(), lLast-lFirst, m_lprintLen)
+			RWbars.right = MulDiv(RWbars.Width(), l_last-l_first, m_lprintLen)
 						+ RWbars.left;
 			ASSERT(RWbars.right > RWbars.left);
 		}
@@ -1571,7 +1571,7 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		{
 			if (mdPM->bClipRect)						// clip curve display ?
 				pDC->IntersectClipRect(&RWbars);		// yes
-			m_sourceView.GetDataFromDoc(lFirst, lLast);	// load data from file
+			m_sourceView.GetDataFromDoc(l_first, l_last);	// load data from file
 			m_sourceView.CenterChan(0);
 			m_sourceView.Print(pDC, &RWbars);			// print data
 			pDC->SelectClipRgn(nullptr);
@@ -1598,7 +1598,7 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		for (int icount = 0; icount < ncount; icount++)
 		{
-			m_spkClass.SetTimeIntervals(lFirst, lLast);
+			m_spkClass.SetTimeIntervals(l_first, l_last);
 			m_spkClass.PrintItem(pDC, &RWtext, &RWspikes, &RWbars, icount);
 			RWtext.OffsetRect(0, rheight);
 			RWspikes.OffsetRect(0, rheight);
@@ -1617,7 +1617,7 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 			bluepen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
 			CPen* ppen = (CPen*) pDC->SelectObject(&bluepen);
 
-			CSpikeList* pSpkList = m_pSpkDoc->GetSpkListCurrent();
+			CSpikeList* p_spk_list = m_pSpkDoc->GetSpkListCurrent();
 			RWspikes.bottom = RW2.bottom;	// define a rectangle for stimulus
 			RWspikes.top = RW2.bottom - rheight/10;
 
@@ -1630,15 +1630,15 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 				if ((ii+1)>=  m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize())
 					continue;
 				int iilast =  m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(ii+1);
-				if (iifirst > lLast || iilast < lFirst)
+				if (iifirst > l_last || iilast < l_first)
 					continue;
-				if (iifirst < lFirst)
-					iifirst = lFirst;
-				if (iilast > lLast)
-					iilast = lLast;
+				if (iifirst < l_first)
+					iifirst = l_first;
+				if (iilast > l_last)
+					iilast = l_last;
 
-				RWspikes.left = MulDiv(iifirst-lFirst, RWbars.Width(), lLast-lFirst) +RWbars.left;
-				RWspikes.right = MulDiv(iilast-lFirst, RWbars.Width(), lLast-lFirst) +RWbars.left;
+				RWspikes.left = MulDiv(iifirst-l_first, RWbars.Width(), l_last-l_first) +RWbars.left;
+				RWspikes.right = MulDiv(iilast-l_first, RWbars.Width(), l_last-l_first) +RWbars.left;
 				if (RWspikes.right <= RWspikes.left)
 					RWspikes.right = RWspikes.left + 1;
 				pDC->Rectangle(RWspikes);
@@ -1666,7 +1666,7 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// print comments according to row within file
 		CString csComment;
-		if (lFirst == m_lprintFirst)			// first row = full comment
+		if (l_first == m_lprintFirst)			// first row = full comment
 		{
 			csComment += PrintGetFileInfos();
 			csComment += PrintBars(pDC, &CommentRect);// bars and bar legends
@@ -1683,11 +1683,11 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		pDC->SetTextAlign(uiFlag);
 
 		// update file parameters for next row --------------------------------------------
-		lFirst += m_lprintLen;		
+		l_first += m_lprintLen;		
 		// next file? 
 		// if index next point is past the end of the file
 		// OR not entire record and not multirow display
-		if ((lFirst >= veryLast)
+		if ((l_first >= veryLast)
 			|| (!mdPM->bEntireRecord && 
 				!mdPM->bMultirowDisplay))
 		{
@@ -1700,7 +1700,7 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 			}
 			else
 				i = m_nbrowsperpage;			// YES: break
-			lFirst = m_lprintFirst;
+			l_first = m_lprintFirst;
 		}
 	}	// this is the end of a very long for loop.....................
 
@@ -1834,10 +1834,10 @@ void CViewSpikes::OnEnChangeTimefirst()
 	mm_timefirst.m_nChar=0;
 	mm_timefirst.SetSel(0, -1); 	//select all text
 
-	long lFirst = (long) (m_timefirst*m_pSpkDoc->GetAcqRate());
-	if (lFirst != m_lFirst)
+	long l_first = (long) (m_timefirst*m_pSpkDoc->GetAcqRate());
+	if (l_first != m_lFirst)
 	{
-		m_lFirst = lFirst;
+		m_lFirst = l_first;
 		UpdateLegends(FALSE);
 		// display data
 		m_spkClass.Invalidate();
@@ -1871,10 +1871,10 @@ void CViewSpikes::OnEnChangeTimelast()
 	mm_timelast.m_nChar=0;
 	mm_timelast.SetSel(0, -1); 	//select all text
 
-	long lLast = (long) (m_timelast*m_pSpkDoc->GetAcqRate());
-	if (lLast != m_lLast)
+	long l_last = (long) (m_timelast*m_pSpkDoc->GetAcqRate());
+	if (l_last != m_lLast)
 	{
-		m_lLast = lLast;
+		m_lLast = l_last;
 		UpdateLegends(FALSE);
 		// display data
 		m_spkClass.Invalidate();
@@ -1899,48 +1899,48 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	long sbScroll = MulDiv(pageScroll, 10, 100);
 	if (sbScroll == 0)
 		sbScroll = 1;
-	long lFirst = m_lFirst;
-	long lLast = m_lLast;	
+	long l_first = m_lFirst;
+	long l_last = m_lLast;	
 
 	switch (nSBCode)
 	{		
 	case SB_LEFT:		
-		lFirst = 0;	break;			// Scroll to far left.
+		l_first = 0;	break;			// Scroll to far left.
 	case SB_LINELEFT:	
-		lFirst -= sbScroll;	break;	// Scroll left.
+		l_first -= sbScroll;	break;	// Scroll left.
 	case SB_LINERIGHT:	
-		lFirst += sbScroll; break;	// Scroll right
+		l_first += sbScroll; break;	// Scroll right
 	case SB_PAGELEFT:	
-		lFirst -= pageScroll; break;// Scroll one page left
+		l_first -= pageScroll; break;// Scroll one page left
 	case SB_PAGERIGHT:	
-		lFirst += pageScroll; break;// Scroll one page right.
+		l_first += pageScroll; break;// Scroll one page right.
 	case SB_RIGHT:		
-		lFirst = totalScroll - pageScroll+1; 
+		l_first = totalScroll - pageScroll+1; 
 		break;
 	case SB_THUMBPOSITION:	// scroll to pos = nPos			
 	case SB_THUMBTRACK:		// drag scroll box -- pos = nPos
-		lFirst = (int) nPos;
+		l_first = (int) nPos;
 		break;
 	default:
 		return;
 		break;
 	}
 
-	if (lFirst < 0)
-		lFirst = 0;
-	lLast = lFirst + pageScroll;
+	if (l_first < 0)
+		l_first = 0;
+	l_last = l_first + pageScroll;
 
-	if (lLast >= totalScroll)
+	if (l_last >= totalScroll)
 	{
-		lLast = totalScroll - 1;
-		lFirst = lLast - pageScroll;
+		l_last = totalScroll - 1;
+		l_first = l_last - pageScroll;
 	}
 	
 	// adjust display
-	if (lFirst != m_lFirst)
+	if (l_first != m_lFirst)
 	{
-		m_lFirst = lFirst;
-		m_lLast = lLast;
+		m_lFirst = l_first;
+		m_lLast = l_last;
 		UpdateLegends(FALSE);
 		m_spkClass.Invalidate();
 		m_sourceView.Invalidate();

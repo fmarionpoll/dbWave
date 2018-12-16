@@ -530,11 +530,11 @@ void CSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	rDest->NormalizeRect();
 
 	// change y gain & y offset		
-	int yWE = m_yWE;				// save previous window extent
+	int y_we = m_yWE;				// save previous window extent
 	m_yWE = MulDiv (m_yWE, rDest->Height(), rFrom->Height());
 	m_yWO = m_yWO
 			-MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
-			+MulDiv(rDest->top - m_yVO, yWE, m_yVE);
+			+MulDiv(rDest->top - m_yVO, y_we, m_yVE);
 
 	// change index of first and last pt displayed	
 	int xWE = m_xWE;				// save previous window extent

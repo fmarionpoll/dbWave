@@ -89,12 +89,12 @@ protected:
 
 protected:
 	void 	PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);	
-	CString ConvertFileIndex(long lFirst, long lLast);
+	CString ConvertFileIndex(long l_first, long l_last);
 	void 	ComputePrinterPageSize();
 	CString GetFileInfos();
 	CString PrintBars(CDC* pDC, CRect* rect);
-	BOOL	GetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst);
-	BOOL	PrintGetNextRow(int &filenumber, long &lFirst, long &verylast);
+	BOOL	GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first);
+	BOOL	PrintGetNextRow(int &filenumber, long &l_first, long &verylast);
 	void	SaveModifiedFile();
 	void	UpdateFileParameters(BOOL bUpdateInterface=TRUE);	
 	void	UpdateChannelsDisplayParameters();

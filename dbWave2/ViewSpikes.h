@@ -140,7 +140,7 @@ protected:
 
 protected:
 	void 	PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);	
-	CString PrintConvertFileIndex(long lFirst, long lLast);
+	CString PrintConvertFileIndex(long l_first, long l_last);
 	void 	PrintComputePageSize();
 	CString PrintGetFileInfos();
 	CString PrintBars(CDC* pDC, CRect* rect);

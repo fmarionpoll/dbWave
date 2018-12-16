@@ -21,7 +21,7 @@ protected:
 
 public:
 	int			SetScale(int n_pixels, long n_points);
-	int			HowManyIntervalsFit(int fromIndex, long* lLast);
+	int			HowManyIntervalsFit(int fromIndex, long* l_last);
 	int			GetWhichInterval(long lindex);
 	inline int	GetnPixels() const {return m_npixels;}
 	inline int	GetnIntervals() const { return m_nintervals;}

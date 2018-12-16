@@ -409,7 +409,7 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
 				const auto pDocExport = p_templ->OpenDocumentFile(nullptr);
 				auto pos = pDocExport->GetFirstViewPosition();
-				auto* p_view = dynamic_cast<CViewNoteDoc*>(pDocExport->GetNextView(pos));
+				auto* p_view = (CViewNoteDoc*)(pDocExport->GetNextView(pos));
 				auto& p_edit = p_view->GetRichEditCtrl();
 				OpenClipboard();
 				EmptyClipboard();

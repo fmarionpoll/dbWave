@@ -221,7 +221,7 @@ void CViewSpikeDetection::OnActivateView(BOOL bActivate, CView* pActivateView, C
 	// activate view
 	if (bActivate)
 	{
-		auto p_main_frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+		auto p_main_frame = (CMainFrame*)AfxGetMainWnd();
 		p_main_frame->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	// exit view
@@ -310,7 +310,7 @@ void CViewSpikeDetection::SaveCurrentFileParms()
 		GetDocument()->Setnbspikeclasses(nbclasses);
 		m_bDetected=FALSE;
 
-		if (dynamic_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
+		if (((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
 		{
 			auto flag = GetDocument()->DBGetCurrentRecordFlag();
 			flag++;
@@ -494,7 +494,7 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 {
 	// load method combo box with content
 	// init chan list, select first detection channel
-	auto pdb_doc = dynamic_cast<CdbWaveDoc*>(GetDocument());
+	auto pdb_doc = GetDocument();
 	pdb_doc->DBSetCurrentDatFileName();
 	if (!pdb_doc->OpenCurrentDataFile())
 		return;
@@ -818,7 +818,7 @@ void CViewSpikeDetection::Dump(CDumpContext& dc) const
 
 CdbWaveDoc* CViewSpikeDetection::GetDocument()
 { 
-	return dynamic_cast<CdbWaveDoc*>(m_pDocument);
+	return (CdbWaveDoc*) m_pDocument;
 }
 
 #endif //_DEBUG
@@ -1178,12 +1178,12 @@ void CViewSpikeDetection::OnFormatSplitcurves()
 
 void CViewSpikeDetection::OnFormatAlldata()
 {
-	const auto lLast = GetDocument()->m_pDat->GetDOCchanLength(); 
-	m_displayDetect.ResizeChannels(0, lLast);
-	m_displayDetect.GetDataFromDoc(0, lLast);
+	const auto l_last = GetDocument()->m_pDat->GetDOCchanLength(); 
+	m_displayDetect.ResizeChannels(0, l_last);
+	m_displayDetect.GetDataFromDoc(0, l_last);
 
-	m_displayData.ResizeChannels(0, lLast);
-	m_displayData.GetDataFromDoc(0, lLast);
+	m_displayData.ResizeChannels(0, l_last);
+	m_displayData.GetDataFromDoc(0, l_last);
 
 	const auto x_we = m_pSpkListVSD->GetSpikeLength();
 	if (x_we != m_spkShapeView.GetXWExtent() || 0 != m_spkShapeView.GetXWOrg())
@@ -2389,7 +2389,7 @@ CString CViewSpikeDetection::PrintConvertFileIndex(const long l_first, const lon
 // parameters
 //	page : current printer page
 //	file : filelist index
-// returns lFirst = index first pt to display
+// returns l_first = index first pt to display
 // assume correct parameters:
 // 	m_lprintFirst
 // 	m_lprintLen
@@ -2399,11 +2399,11 @@ CString CViewSpikeDetection::PrintConvertFileIndex(const long l_first, const lon
 // exhausted
 // -----------------------------------------------------------------------------------
 
-BOOL CViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst)
+BOOL CViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first)
 {
 	// loop until we get all rows
 	const auto totalrows= m_nbrowsperpage*(page-1);
-	lFirst = m_lprintFirst;
+	l_first = m_lprintFirst;
 	filenumber = 0;						// file list index
 	if (mdPM->bPrintSelection)			// current file if selection only
 		filenumber = m_file0;
@@ -2416,7 +2416,7 @@ BOOL CViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int &filenum
 
 	for (auto row = 0; row <totalrows; row++)
 	{
-		if (!PrintGetNextRow(filenumber, lFirst, very_last))
+		if (!PrintGetNextRow(filenumber, l_first, very_last))
 			break;
 	}
 
@@ -2616,7 +2616,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 		}
 		
 		// display bar
-		const auto pOldBrush= dynamic_cast<CBrush*>(pDC->SelectStockObject(BLACK_BRUSH));
+		const auto p_old_brush= (CBrush*) pDC->SelectStockObject(BLACK_BRUSH);
 		if (k > 0)
 			z = static_cast<float>(k) / z;
 		const auto vert_bar = static_cast<int>(rect->Height() * z) / 2;
@@ -2629,7 +2629,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 		rect_vert_bar.top = rect->top + (rect->Height() - vert_bar)/2;
 		rect_vert_bar.bottom = rect_vert_bar.top + vert_bar;
 		pDC->Rectangle(&rect_vert_bar);
-		pDC->SelectObject(pOldBrush);
+		pDC->SelectObject(p_old_brush);
 	}
 
 	// spike duration 

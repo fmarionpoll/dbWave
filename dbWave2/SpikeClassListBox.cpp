@@ -105,9 +105,9 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEZOOM:
 		{
 		MYPTR* pptr = (MYPTR*) GetItemData(icursel);
-		int yWE = (pptr->pspkBars)->GetYWExtent();
-		int yWO = (pptr->pspkBars)->GetYWOrg();
-		SetYzoom(yWE, yWO);
+		int y_we = (pptr->pspkBars)->GetYWExtent();
+		int y_wo = (pptr->pspkBars)->GetYWOrg();
+		SetYzoom(y_we, y_wo);
 		}
 		break;
 
@@ -365,20 +365,20 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc)
 
 // --------------------------------------------------------------------------------
 
-void CSpikeClassListBox::SetTimeIntervals(long lFirst, long lLast)
+void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 {
-	m_lFirst=lFirst;
-	m_lLast=lLast;
+	m_lFirst=l_first;
+	m_lLast=l_last;
 	for (int i=0; i<GetCount(); i++)
 	{
 		MYPTR* pptr = (MYPTR*) GetItemData(i);
 		if (pptr->pspkShapes != nullptr)
 		{
 			(pptr->pspkShapes)->SetRangeMode(RANGE_TIMEINTERVALS);
-			(pptr->pspkShapes)->SetTimeIntervals(lFirst, lLast);
+			(pptr->pspkShapes)->SetTimeIntervals(l_first, l_last);
 		}
 		(pptr->pspkBars)->SetRangeMode(RANGE_TIMEINTERVALS);
-		(pptr->pspkBars)->SetTimeIntervals(lFirst, lLast);
+		(pptr->pspkBars)->SetTimeIntervals(l_first, l_last);
 	}
 }
 
@@ -492,14 +492,14 @@ void CSpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 
 // --------------------------------------------------------------------------------
 
-void CSpikeClassListBox::SetYzoom(int yWE, int yWO)
+void CSpikeClassListBox::SetYzoom(int y_we, int y_wo)
 {
 	for (int i=0; i<GetCount(); i++)
 	{
 		MYPTR* pptr = (MYPTR*) GetItemData(i);
 		if (pptr->pspkShapes != nullptr)
-			(pptr->pspkShapes)->SetYWExtOrg(yWE, yWO);
-		(pptr->pspkBars)->SetYWExtOrg(yWE, yWO);
+			(pptr->pspkShapes)->SetYWExtOrg(y_we, y_wo);
+		(pptr->pspkBars)->SetYWExtOrg(y_we, y_wo);
 	}
 }
 
@@ -638,10 +638,10 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	}
 	else
 	{
-		long lFirst = m_lFirst;
-		long lLast = m_lLast;
+		long l_first = m_lFirst;
+		long l_last = m_lLast;
 		SetSourceData(m_pSList, m_pSDoc);
-		SetTimeIntervals(lFirst, lLast);
+		SetTimeIntervals(l_first, l_last);
 		SelectSpike(spikeno);
 		return;
 	}
@@ -659,10 +659,10 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	// reset all if line ought to be added
 	if (irow >= GetCount())
 	{
-		long lFirst = m_lFirst;
-		long lLast = m_lLast;
+		long l_first = m_lFirst;
+		long l_last = m_lLast;
 		SetSourceData(m_pSList, m_pSDoc);
-		SetTimeIntervals(lFirst, lLast);
+		SetTimeIntervals(l_first, l_last);
 	}
 	else
 	{

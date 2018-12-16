@@ -586,15 +586,15 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 	m_pdatDoc->SetModifiedFlag(FALSE);	
 
 	// OPTION: display entire file				// (inactif si multirow)
-	long lFirst=0;								// first abcissa
-	long lLast = m_pdatDoc->GetDOCchanLength()-1;	// last abcissa	
+	long l_first=0;								// first abcissa
+	long l_last = m_pdatDoc->GetDOCchanLength()-1;	// last abcissa	
 
 	if (!mdPM->bEntireRecord || mdPM->bMultirowDisplay && !bFirstUpdate)
 	{
-		lFirst = (long) (m_timefirst*m_samplingRate);
-		lLast = (long) (m_timelast*m_samplingRate);
-		if (lLast > m_pdatDoc->GetDOCchanLength()-1)	// last OK?
-			lLast = m_pdatDoc->GetDOCchanLength()-1;	// clip to the end of the file
+		l_first = (long) (m_timefirst*m_samplingRate);
+		l_last = (long) (m_timelast*m_samplingRate);
+		if (l_last > m_pdatDoc->GetDOCchanLength()-1)	// last OK?
+			l_last = m_pdatDoc->GetDOCchanLength()-1;	// clip to the end of the file
 	}    
 	m_samplingRate = pwaveFormat->chrate;			// update sampling rate	
 
@@ -622,7 +622,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 	}
 
 	// load real data from file and update time parameters
-	m_VDlineview.GetDataFromDoc(lFirst, lLast);					// load data requested	
+	m_VDlineview.GetDataFromDoc(l_first, l_last);					// load data requested	
 	m_timefirst = m_VDlineview.GetDataFirst()/ m_samplingRate;	// update abcissa parameters
 	m_timelast = m_VDlineview.GetDataLast()/ m_samplingRate;	// first - end
 	m_ichanselected = 0;										// select chan 0
@@ -1178,18 +1178,18 @@ void CViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 
 	// trap messages from CScrollBarEx
-	int lFirst;
-	int lLast;
+	int l_first;
+	int l_last;
 	CString cs;
 	switch (nSBCode)
 	{
 	case SB_THUMBTRACK:
 		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL );
-		lFirst = m_filescroll_infos.nPos;
-		lLast = lFirst + m_filescroll_infos.nPage - 1;
-		m_timefirst = (float) lFirst / m_samplingRate;
-		m_timelast	= (float) lLast / m_samplingRate;
-		m_VDlineview.GetDataFromDoc(lFirst, lLast);
+		l_first = m_filescroll_infos.nPos;
+		l_last = l_first + m_filescroll_infos.nPage - 1;
+		m_timefirst = (float) l_first / m_samplingRate;
+		m_timelast	= (float) l_last / m_samplingRate;
+		m_VDlineview.GetDataFromDoc(l_first, l_last);
 		m_VDlineview.Invalidate();
 		cs.Format(_T("%.3f"), m_timefirst);
 		SetDlgItemText(IDC_TIMEFIRST, cs);
@@ -1199,9 +1199,9 @@ void CViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	case SB_THUMBPOSITION:
 		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL );
-		lFirst = m_filescroll_infos.nPos;
-		lLast = lFirst + m_filescroll_infos.nPage - 1;
-		if (m_VDlineview.GetDataFromDoc(lFirst, lLast))
+		l_first = m_filescroll_infos.nPos;
+		l_last = l_first + m_filescroll_infos.nPage - 1;
+		if (m_VDlineview.GetDataFromDoc(l_first, l_last))
 		{
 			UpdateLegends(UPD_ABCISSA);
 			UpdateData(FALSE);	// copy view object to controls
@@ -1333,30 +1333,30 @@ void CViewData::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
 	pDC->TextOut(mdPM->horzRes/2, mdPM->vertRes-57,	ch_date);
 }
 
-CString CViewData::ConvertFileIndex(long lFirst, long lLast)
+CString CViewData::ConvertFileIndex(long l_first, long l_last)
 {
 	CString csUnit= _T(" s");								// get time,  prepare time unit
 
 	TCHAR szValue[64];										// buffer to receive ascii represent of values
 	LPTSTR pszValue = szValue;
 	float xScaleFactor;										// scale factor returned by changeunit
-	float x = m_VDlineview.ChangeUnit( (float) lFirst / m_samplingRate, &csUnit, &xScaleFactor);
+	float x = m_VDlineview.ChangeUnit( (float) l_first / m_samplingRate, &csUnit, &xScaleFactor);
 	int fraction = (int) ((x - ((int) x)) * (float) 1000.);	// separate fractional part
 	wsprintf(pszValue, _T("time = %i.%03.3i - "), (int) x, fraction); // print value
 	CString csComment = pszValue;							// save ascii to string
 
-	x = lLast / (m_samplingRate * xScaleFactor);			// same operations for last interval
+	x = l_last / (m_samplingRate * xScaleFactor);			// same operations for last interval
 	fraction = (int) ((x - ((int) x)) *  (float) 1000.);
 	wsprintf(pszValue, _T("%i.%03.3i %s"), (int) x, fraction, (LPCTSTR) csUnit);
 	csComment += pszValue;
 	return csComment;
 }
 
-BOOL CViewData::GetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst)
+BOOL CViewData::GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first)
 {
 	// loop until we get all rows
 	int totalrows= m_nbrowsperpage*(page-1);
-	lFirst = m_lprintFirst;
+	l_first = m_lprintFirst;
 	filenumber = 0;						// file list index
 	if (mdPM->bPrintSelection)			// current file if selection only
 		filenumber = m_file0;
@@ -1369,7 +1369,7 @@ BOOL CViewData::GetFileSeriesIndexFromPage(int page, int &filenumber, long &lFir
 
 	for (int row = 0; row <totalrows; row++)
 	{
-		if (!PrintGetNextRow(filenumber, lFirst, veryLast))
+		if (!PrintGetNextRow(filenumber, l_first, veryLast))
 			break;
 	}
 
@@ -1657,11 +1657,11 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 	// --------------------- load data corresponding to the first row of current page	
 	int filenumber;    								// file number and file index
-	long lFirst;									// index first data point / first file
+	long l_first;									// index first data point / first file
 	long veryLast= m_lprintFirst + m_lprintLen;		// index last data point / current file
 	int curpage=pInfo->m_nCurPage;					// get current page number
-	GetFileSeriesIndexFromPage(curpage, filenumber, lFirst);
-	if (lFirst < GetDocument()->DBGetDataLen()-1)
+	GetFileSeriesIndexFromPage(curpage, filenumber, l_first);
+	if (l_first < GetDocument()->DBGetDataLen()-1)
 		UpdateFileParameters();
 	if (mdPM->bEntireRecord)
 		veryLast = GetDocument()->DBGetDataLen()-1;
@@ -1682,12 +1682,12 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// load data and adjust display rectangle ----------------------------------------
 		// reduce width to the size of the data
-		long lLast = lFirst + m_lprintLen;			// compute last pt to load
-		if (lFirst < GetDocument()->DBGetDataLen()-1)
+		long l_last = l_first + m_lprintLen;			// compute last pt to load
+		if (l_first < GetDocument()->DBGetDataLen()-1)
 		{
-			if (lLast > veryLast)					// check end across file length
-				lLast = veryLast;
-			m_VDlineview.GetDataFromDoc(lFirst, lLast);	// load data from file
+			if (l_last > veryLast)					// check end across file length
+				l_last = veryLast;
+			m_VDlineview.GetDataFromDoc(l_first, l_last);	// load data from file
 			UpdateChannelsDisplayParameters();
 			m_VDlineview.Print(pDC, &RWhere);			// print data	
 		}
@@ -1702,7 +1702,7 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// print comments according to row within file
 		CString csComment;
-		if (lFirst == m_lprintFirst)			// first row = full comment
+		if (l_first == m_lprintFirst)			// first row = full comment
 		{
 			csComment += GetFileInfos();
 			csComment += PrintBars(pDC, &CommentRect);// bars and bar legends
@@ -1722,7 +1722,7 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// update file parameters for next row --------------------------------------------
 		int ifile = filenumber;
-		if (!PrintGetNextRow(filenumber, lFirst, veryLast))
+		if (!PrintGetNextRow(filenumber, l_first, veryLast))
 		{
 			i = m_nbrowsperpage;
 			break;
@@ -1738,7 +1738,7 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	m_VDlineview.m_parms = oldparms;
 }
 
-BOOL CViewData::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
+BOOL CViewData::PrintGetNextRow(int &filenumber, long &l_first, long &veryLast)
 {
 	if (!mdPM->bMultirowDisplay || !mdPM->bEntireRecord)
 	{
@@ -1747,7 +1747,7 @@ BOOL CViewData::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
 			return FALSE;
 
 		GetDocument()->DBMoveNext();
-		if (lFirst < GetDocument()->DBGetDataLen()-1)
+		if (l_first < GetDocument()->DBGetDataLen()-1)
 		{
 			if (mdPM->bEntireRecord)
 				veryLast=GetDocument()->DBGetDataLen()-1;
@@ -1755,8 +1755,8 @@ BOOL CViewData::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
 	}
 	else
 	{
-		lFirst += m_lprintLen;
-		if (lFirst >= veryLast)
+		l_first += m_lprintLen;
+		if (l_first >= veryLast)
 		{
 			filenumber++;						// next index
 			if  (filenumber >= m_nfiles)		// last file ??
@@ -1764,7 +1764,7 @@ BOOL CViewData::PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast)
 
 			GetDocument()->DBMoveNext();
 			veryLast = GetDocument()->DBGetDataLen()-1;
-			lFirst = m_lprintFirst;
+			l_first = m_lprintFirst;
 		}
 	}
 	return TRUE;

@@ -615,15 +615,15 @@ short*	CAcqDataDoc::LoadRawDataParams(int* nb_channels)
 }
 
 /**************************************************************************
- function:		LoadRawData (long* lFirst, long* lLast, short n_span)
+ function:		LoadRawData (long* l_first, long* l_last, short n_span)
 
  purpose:		load data from file into memory buffer
  parameters:	
-	_ lFirst = file channel index of first pt (address of variable)
-	_ lLast = file channel index of last point (address of variable)
-	_ n_span = try having n_span points before lFirst and n_span after lLast
+	_ l_first = file channel index of first pt (address of variable)
+	_ l_last = file channel index of last point (address of variable)
+	_ n_span = try having n_span points before l_first and n_span after l_last
 			  (necessary for transforms)
- returns:		lFirst , lLast: chan file indexes of first and last pt 
+ returns:		l_first , l_last: chan file indexes of first and last pt 
 				buffer: data loaded from file
 				TRUE if no error
  comments:      load as much data as possible within buffer
@@ -649,10 +649,10 @@ BOOL CAcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 }
 
 /**************************************************************************
- function:	ReadDataBlock(long lFirst)
+ function:	ReadDataBlock(long l_first)
  purpose:	Read a data block from a given file offset
  parameters:
-	_ lFirst =
+	_ l_first =
  return:	FALSE if something is wrong;
 			TRUE & update m_lBUFchanFirst, m_lBUFchanLast
  comments: 
@@ -731,16 +731,16 @@ int CAcqDataDoc::BGetVal(const int channel, const long l_index)
 }
 
 /**************************************************************************
- function:		LoadTransfData (long* lFirst, long* lLast, short transformType, short chan)
+ function:		LoadTransfData (long* l_first, long* l_last, short transformType, short chan)
 
  purpose:		load data from file into memory buffer and store given transform
 				into transform buffer
- parameters:	lFirst = file channel index of first pt (address of variable)
-				lLast = file channel index of last point (address of variable)
+ parameters:	l_first = file channel index of first pt (address of variable)
+				l_last = file channel index of last point (address of variable)
 				transformType = index to transformation request
 				sourcechan = source channel
 
- returns:		lFirst , lLast: chan file indexes of first and last pt 
+ returns:		l_first , l_last: chan file indexes of first and last pt 
 				buffer: data loaded from file
 
  comments:      load as many data as possible within buffer
@@ -778,7 +778,7 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 	// call corresponding one-pass routine
 	auto lp_destination = m_pWBuf->GetWBAdrTransfData();
 
-	// check if source lFirst can be used
+	// check if source l_first can be used
 	const auto b_isLFirstLower = (l_first < l_span);
 	if (b_isLFirstLower)	// no: skip these data and erase later corresp transform
 	{
@@ -787,7 +787,7 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 		n_points -= i_span;
 	}
 
-	// check if source lLast can be used
+	// check if source l_last can be used
 	const auto b_isLLastGreater = (l_last > m_lDOCchanLength-l_span);
 	if (b_isLLastGreater)	// no: skip these data and erase later corresp transform
 	{

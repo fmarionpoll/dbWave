@@ -135,7 +135,7 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	}
 
 	// set spin  max list: dt9800 = up to 32 channels
-	dynamic_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_inputlistmax);
+	((CSpinButtonCtrl*)(GetDlgItem(IDC_SPIN1)))->SetRange(1, m_inputlistmax);
 	// load encoding combo with data
 	int i= 0;
 	do {
@@ -295,13 +295,13 @@ BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 	auto p_wnd = CWnd::FromHandle(h_wnd);
 	auto* p_translate = reinterpret_cast<CSize*>(lParam);
 
-	auto* pDlg = dynamic_cast<CADInputParmsDlg*>(p_wnd->GetParent());
-	if (!pDlg) return FALSE;
+	auto* p_dlg = (CADInputParmsDlg*)p_wnd->GetParent();
+	if (!p_dlg) return FALSE;
 
 	CRect rect;
 	p_wnd->GetWindowRect(rect);
-	pDlg->ScreenToClient(rect);
-	if (h_wnd == pDlg->m_Grid.GetSafeHwnd())
+	p_dlg->ScreenToClient(rect);
+	if (h_wnd == p_dlg->m_Grid.GetSafeHwnd())
 	{
 		// move grid
 		if (  ((rect.top >= 7 && p_translate->cy > 0) || rect.Height() > 20) && ((rect.left >= 7 && p_translate->cx > 0) || rect.Width() > 20)   )
@@ -328,7 +328,7 @@ BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 		break;
 		}
 	}
-	pDlg->Invalidate();
+	p_dlg->Invalidate();
 
 	return TRUE;
 }
@@ -364,7 +364,7 @@ void CADInputParmsDlg::InitADchannelCombo(int col, int iselect)
 	csArrayOptions.Add(_T("16 (Din)"));
 
 	// select cell and corresponding combo
-	auto p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(m_rowADchannel, col));
+	auto p_cell = (CGridCellCombo*)m_Grid.GetCell(m_rowADchannel, col);
 	if (p_cell != nullptr)
 	{
 		// if iselect negative, get current selection
@@ -425,7 +425,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszADGains[i]);
 			i++;
 		} while (pszADGains[i] != _T(""));
-		auto* p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto* p_cell = (CGridCellCombo*)m_Grid.GetCell(row, col);
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); 
 		// init value
@@ -445,7 +445,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			cs_array_options.Add(pszAmplifier[i]);
 			i++;
 		} while (pszAmplifier[i] != _T(""));
-		auto* p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto* p_cell = (CGridCellCombo*)m_Grid.GetCell(row, col);
 		p_cell->SetOptions(cs_array_options);
 		p_cell->SetStyle(CBS_DROPDOWN); 
 		// init value
@@ -490,7 +490,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszHighPass[i]);
 			i++;
 		} while (pszHighPass[i] != _T(""));
-		auto p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto p_cell = (CGridCellCombo*)m_Grid.GetCell(row, col);
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
@@ -526,7 +526,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 			csArrayOptions.Add(pszProbeType[i]);
 			i++;
 		} while (pszProbeType[i] != _T(""));
-		auto p_cell = dynamic_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto p_cell = (CGridCellCombo*)m_Grid.GetCell(row, col);
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
@@ -706,7 +706,7 @@ void CADInputParmsDlg::LoadChanData(int col)
 	m_Grid.SetItem(&item);
 	// amplifier notch filter
 	item.row++;
-	dynamic_cast<CGridCellCheck*>(m_Grid.GetCell(item.row, item.col))->SetCheck(p_chan->am_notchfilt);
+	((CGridCellCheck*) m_Grid.GetCell(item.row, item.col))->SetCheck(p_chan->am_notchfilt);
 	// IN+
 	item.row++;
 	item.strText=p_chan->am_csInputpos;

@@ -43,7 +43,7 @@ CSubfileItem::~CSubfileItem()
 
 ULONGLONG CSubfileItem::Write(CFile*  pfile)
 {
-	ULONGLONG lFirst = pfile->GetPosition();	// current file position
+	ULONGLONG l_first = pfile->GetPosition();	// current file position
 
 	pfile->Write(&m_rec.szLabel, (UINT) LABEL_LEN+1);
 	m_rec.ucEncoding = UL_MODE;
@@ -54,8 +54,8 @@ ULONGLONG CSubfileItem::Write(CFile*  pfile)
 	pfile->Write(&m_rec.ulLength,	(UINT) sizeof(ULONGLONG));
 	pfile->Write(&m_rec.itemnb,		(UINT) sizeof(int));
 	
-	ULONGLONG lLast = pfile->GetPosition();		// file position after writing
-	return (lLast - lFirst);					// return length of data written
+	ULONGLONG l_last = pfile->GetPosition();		// file position after writing
+	return (l_last - l_first);					// return length of data written
 }
 
 // void Read(CDataFile datafile)

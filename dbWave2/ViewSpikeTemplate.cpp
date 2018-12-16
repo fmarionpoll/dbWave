@@ -630,10 +630,10 @@ void CViewSpikeSort_Templates::OnEnChangeTimefirst()
 	mm_timefirst.m_nChar=0;
 	mm_timefirst.SetSel(0, -1); 	//select all text
 
-	long lFirst = (long) (m_timefirst*m_pSpkDoc->GetAcqRate());
-	if (lFirst != m_lFirst)
+	long l_first = (long) (m_timefirst*m_pSpkDoc->GetAcqRate());
+	if (l_first != m_lFirst)
 	{
-		m_lFirst = lFirst;
+		m_lFirst = l_first;
 		UpdateLegends();
 	}	
 }
@@ -664,10 +664,10 @@ void CViewSpikeSort_Templates::OnEnChangeTimelast()
 	mm_timelast.m_nChar=0;
 	mm_timelast.SetSel(0, -1); 	//select all text
 
-	long lLast = (long) (m_timelast*m_pSpkDoc->GetAcqRate());
-	if (lLast != m_lLast)
+	long l_last = (long) (m_timelast*m_pSpkDoc->GetAcqRate());
+	if (l_last != m_lLast)
 	{
-		m_lLast = lLast;
+		m_lLast = l_last;
 		UpdateLegends();
 	}
 }
@@ -689,42 +689,42 @@ void CViewSpikeSort_Templates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pS
 	long sbScroll = pageScroll /10;
 	if (sbScroll == 0)
 		sbScroll = 1;
-	long lFirst = m_lFirst;
-	long lLast = m_lLast;	
+	long l_first = m_lFirst;
+	long l_last = m_lLast;	
 
 	switch (nSBCode)
 	{		
-	case SB_LEFT:		lFirst = 0;	break;			// Scroll to far left.
-	case SB_LINELEFT:	lFirst -= sbScroll;	break;	// Scroll left.
-	case SB_LINERIGHT:	lFirst += sbScroll; break;	// Scroll right
-	case SB_PAGELEFT:	lFirst -= pageScroll; break;// Scroll one page left
-	case SB_PAGERIGHT:	lFirst += pageScroll; break;// Scroll one page right.
-	case SB_RIGHT:		lFirst = totalScroll - pageScroll+1; 
+	case SB_LEFT:		l_first = 0;	break;			// Scroll to far left.
+	case SB_LINELEFT:	l_first -= sbScroll;	break;	// Scroll left.
+	case SB_LINERIGHT:	l_first += sbScroll; break;	// Scroll right
+	case SB_PAGELEFT:	l_first -= pageScroll; break;// Scroll one page left
+	case SB_PAGERIGHT:	l_first += pageScroll; break;// Scroll one page right.
+	case SB_RIGHT:		l_first = totalScroll - pageScroll+1; 
 		break;
 	case SB_THUMBPOSITION:	// scroll to pos = nPos			
 	case SB_THUMBTRACK:		// drag scroll box -- pos = nPos
-		lFirst = (int) nPos;
+		l_first = (int) nPos;
 		break;
 	default:
 		return;
 		break;
 	}
 
-	if (lFirst < 0)
-		lFirst = 0;
+	if (l_first < 0)
+		l_first = 0;
 
-	lLast = lFirst + pageScroll;
-	if (lLast >= totalScroll)
+	l_last = l_first + pageScroll;
+	if (l_last >= totalScroll)
 	{
-		lLast = totalScroll - 1;
-		lFirst = lLast - pageScroll;
+		l_last = totalScroll - 1;
+		l_first = l_last - pageScroll;
 	}
 	
 	// adjust display
-	if (lFirst != m_lFirst)
+	if (l_first != m_lFirst)
 	{
-		m_lFirst = lFirst;
-		m_lLast = lLast;
+		m_lFirst = l_first;
+		m_lLast = l_last;
 		UpdateLegends();
 	}
 	else

@@ -105,7 +105,7 @@ protected:
 	void DisplayHistogram(CDC* pDC, CRect* pRect);
 	void DisplayDot(CDC* pDC, CRect* pRect);
 	void DisplayPSTHAutoc(CDC* pDC, CRect* pRect);
-	void DisplayStim(CDC* pDC, CRect* pRect, long* lFirst, long* lLast);
+	void DisplayStim(CDC* pDC, CRect* pRect, long* l_first, long* l_last);
 	void OnDisplay();
 	void ShowControls(int iselect);
 	void SelectSpkList(int icursel, BOOL bRefreshInterface=FALSE);

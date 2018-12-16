@@ -146,7 +146,7 @@ public:
 
 protected:
 	long			m_lDOCchanLength;	// n words in file / channels
-	BOOL			ReadDataBlock(long lFirst);
+	BOOL			ReadDataBlock(long l_first);
 };
 
 

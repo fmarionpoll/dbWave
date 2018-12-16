@@ -54,14 +54,14 @@ public:
 	inline void SetTextOption(BOOL bText) {m_bText=bText;}
 	inline BOOL GetTextOption() const {return m_bText;}
 
-	inline void SetSourceData(CSpikeList* pSpkList) {m_pSL = pSpkList; m_selectedspike=-1;}
-	inline void SetSpkList(CSpikeList* pSpkList) {m_pSL = pSpkList;}
+	inline void SetSourceData(CSpikeList* p_spk_list) {m_pSL = p_spk_list; m_selectedspike=-1;}
+	inline void SetSpkList(CSpikeList* p_spk_list) {m_pSL = p_spk_list;}
 
 	inline void SetCurrentClass(int curcla) {m_currentclass=curcla;}
 	inline int  GetCurrentClass() const {return m_currentclass;}
 	
-	inline void SetTimeIntervals(long lFirst, long lLast) 
-					{m_lFirst = lFirst;m_lLast = lLast;}
+	inline void SetTimeIntervals(long l_first, long l_last) 
+					{m_lFirst = l_first;m_lLast = l_last;}
 	inline long GetTimeFirst() const {return m_lFirst;}
 	inline long GetTimeLast() const {return m_lLast;}
 

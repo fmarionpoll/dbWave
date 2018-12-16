@@ -50,7 +50,7 @@ void CMeasureResultsPage::OnExport()
 	CMultiDocTemplate* p_template = p_app->m_pNoteViewTemplate;
 	const auto p_doc = p_template->OpenDocumentFile(nullptr);
 	auto pos = p_doc->GetFirstViewPosition();
-	const auto p_view = dynamic_cast<CRichEditView*>(p_doc->GetNextView(pos));
+	const auto p_view = (CRichEditView*) p_doc->GetNextView(pos);
 	CRichEditCtrl& pEdit = p_view->GetRichEditCtrl();	
 	pEdit.SetWindowText(csBuffer);		// copy content of window into CString
 }

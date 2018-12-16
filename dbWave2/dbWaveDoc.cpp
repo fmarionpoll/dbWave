@@ -70,7 +70,7 @@ void CdbWaveDoc::UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	CDocument::UpdateAllViews(pSender, lHint, pHint);
 	// passes message OnUpdate() to the mainframe and add a reference to the document that sends it
-	auto pmain = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	auto pmain =(CMainFrame*) AfxGetMainWnd();
 	pmain->OnUpdate(reinterpret_cast<CView*>(this), lHint, pHint);
 }
 
@@ -2395,7 +2395,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 		CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
 		const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
 		auto pos = pdb_doc_export->GetFirstViewPosition();
-		auto* p_view = dynamic_cast<CViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
+		auto* p_view = (CViewNoteDoc*)(pdb_doc_export->GetNextView(pos));
 		auto& p_edit = p_view->GetRichEditCtrl();
 		p_edit.Paste();
 

@@ -1287,7 +1287,7 @@ BOOL CSpikeList::GetSpikeFlag(int spikeno)
 }
 
 // flag, unflag all spikes from the list of spikes that fall within time boundaries
-void CSpikeList::FlagRangeOfSpikes(long lFirst, long lLast, BOOL bSet)
+void CSpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 {
 	// first clear flags of spikes within the flagged array which fall within limits
 	long lTime;
@@ -1295,7 +1295,7 @@ void CSpikeList::FlagRangeOfSpikes(long lFirst, long lLast, BOOL bSet)
 	{
 		int ispik= m_bSpikeFlagArray.GetAt(i);
 		lTime = GetSpikeTime(ispik);
-		if (lTime < lFirst || lTime > lLast)
+		if (lTime < l_first || lTime > l_last)
 			continue;
 		// found within boundaries= remove spike from array
 		m_bSpikeFlagArray.RemoveAt(i);
@@ -1308,20 +1308,20 @@ void CSpikeList::FlagRangeOfSpikes(long lFirst, long lLast, BOOL bSet)
 	for (int i=0; i < GetTotalSpikes(); i++)
 	{
 		lTime = GetSpikeTime(i);
-		if (lTime < lFirst || lTime > lLast)
+		if (lTime < l_first || lTime > l_last)
 			continue;
 		// found within boundaries= remove spike from array
 		m_bSpikeFlagArray.Add(i);
 	}
 }
-void CSpikeList::SelectSpikeswithinRect(int vmin, int vmax, long lFirst, long lLast, BOOL bAdd)
+void CSpikeList::SelectSpikeswithinRect(int vmin, int vmax, long l_first, long l_last, BOOL bAdd)
 {
 	if (!bAdd)
 		RemoveAllSpikeFlags();
 	for (int i=0; i < GetTotalSpikes(); i++)
 	{
 		long lTime = GetSpikeTime(i);
-		if (lTime < lFirst || lTime > lLast)
+		if (lTime < l_first || lTime > l_last)
 			continue;
 
 		int max, min;
@@ -1334,20 +1334,20 @@ void CSpikeList::SelectSpikeswithinRect(int vmin, int vmax, long lFirst, long lL
 }
 // get the range of spikes flagged within the array
 
-void CSpikeList::GetRangeOfSpikeFlagged(long& lFirst, long& lLast)
+void CSpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 {
 	// no spikes flagged, return dummy values
 	if (m_bSpikeFlagArray.GetCount() < 1)
 	{
-		lFirst = -1;
-		lLast = -1;
+		l_first = -1;
+		l_last = -1;
 		return;
 	}
 	// spikes flagged: init max and min to the first spike time
 	else
 	{
-		lFirst = GetSpikeTime(m_bSpikeFlagArray.GetAt(0));
-		lLast = lFirst;
+		l_first = GetSpikeTime(m_bSpikeFlagArray.GetAt(0));
+		l_last = l_first;
 	}
 	long lTime;
 
@@ -1355,10 +1355,10 @@ void CSpikeList::GetRangeOfSpikeFlagged(long& lFirst, long& lLast)
 	for (int i= m_bSpikeFlagArray.GetCount()-1; i >= 0 ; i--)
 	{
 		lTime = GetSpikeTime(m_bSpikeFlagArray.GetAt(i));
-		if (lTime < lFirst)
-			lFirst = lTime;
-		if (lTime > lLast)
-			lLast = lTime;
+		if (lTime < l_first)
+			l_first = lTime;
+		if (lTime > l_last)
+			l_last = lTime;
 	}
 }
 		

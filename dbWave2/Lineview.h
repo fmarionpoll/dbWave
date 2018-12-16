@@ -18,8 +18,8 @@ public:
 // data display operations    
 public:
 	BOOL GetDataFromDoc();							// load data from document
-	BOOL GetDataFromDoc(long lFirst);				// load data from doc, from index lFirst, same length
-	BOOL GetDataFromDoc(long lFirst, long lLast);	// load data from doc: lFirst to lLast
+	BOOL GetDataFromDoc(long l_first);				// load data from doc, from index l_first, same length
+	BOOL GetDataFromDoc(long l_first, long l_last);	// load data from doc: l_first to l_last
 	BOOL ScrollDataFromDoc(WORD nSBCode);			// load data relative to current data
 	BOOL GetSmoothDataFromDoc(int ioption);
 

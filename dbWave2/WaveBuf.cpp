@@ -664,7 +664,7 @@ void CWaveBuf::BMedian30(short* lp_source, short* lp_dest, const int cx)
 }
 
 // Compute median of a curve
-// lp_source = pointer to source data buffer (interleaved channels) [iitime = lFirst]
+// lp_source = pointer to source data buffer (interleaved channels) [iitime = l_first]
 // lp_dest = pointer to destination data buffer (only one channel)
 // nbspan = number of points to take into account on each side of each data point
 // assume: m_waveFormat set

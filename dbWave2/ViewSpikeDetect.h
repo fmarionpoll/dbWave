@@ -175,15 +175,15 @@ protected:
 
 protected:
 	void 		PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);
-	CString		PrintConvertFileIndex(long lFirst, long lLast);
+	CString		PrintConvertFileIndex(long l_first, long l_last);
 	void 		PrintComputePageSize();
 	
 	CString		PrintGetFileInfos();
 	CString		PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd, CRect* prect);
 	CString		PrintSpkShapeBars(CDC* pDC, CRect* prect, BOOL bAll);
 	void		PrintCreateFont();
-	BOOL		PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &lFirst);
-	BOOL		PrintGetNextRow(int &filenumber, long &lFirst, long &veryLast);
+	BOOL		PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first);
+	BOOL		PrintGetNextRow(int &filenumber, long &l_first, long &veryLast);
 	int			PrintGetNPages();
 	void		PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars);
 

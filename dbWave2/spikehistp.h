@@ -45,7 +45,7 @@ protected:
 public:	
 	inline void SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
 	
-	inline void SetTimeIntervals(long lFirst, long lLast) {m_lFirst = lFirst;m_lLast = lLast;}
+	inline void SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first;m_lLast = l_last;}
 	inline long GetTimeFirst() const {return m_lFirst;}
 	inline long GetTimeLast() const {return m_lLast;}	
 	
@@ -56,8 +56,8 @@ public:
 	inline int   GetHistMaxPos() const {return m_imax;}
 	inline DWORD GetHistMax() const {return m_lmax;}
 		
-	void BuildHistFromWordArray(CWordArray* pVal, CDWordArray* pTime, CWordArray* pspkclass,
-				long lFirst, long lLast, int max, int min, int nbins,
+	void BuildHistFromArrays(CArray<int, int>* pVal, CArray<long, long>* pTime, CArray<int, int>* pspkclass,
+				long l_first, long l_last, int max, int min, int nbins,
     			BOOL bNew=TRUE);
 
 	void RemoveHistData();
@@ -65,7 +65,7 @@ public:
 	void MoveVTtagtoVal(int itag, int ival);
 	void MoveHZtagtoVal(int itag, int ival);
 
-	inline void SetSpkList(CSpikeList* pSpkList) {m_pSL = pSpkList;}
+	inline void SetSpkList(CSpikeList* p_spk_list) {m_pSL = p_spk_list;}
 
 // implementation
 protected:
