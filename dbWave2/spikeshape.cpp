@@ -54,8 +54,6 @@ CSpikeShapeWnd::~CSpikeShapeWnd()
 // SelectSpike(n)
 ////////////////////////////////////////////////////////////////////////////////////
 
-// ---------------------------------------------------------------------------------
-
 void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 {
 	if (m_erasebkgnd)			// erase background
@@ -218,7 +216,6 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 		p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
 	}
 }
-// ---------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* pDC)
 {
@@ -252,8 +249,6 @@ void CSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* pDC)
 	// restore ressources
 	pDC->RestoreDC(n_saved_dc);	
 }
-
-// ---------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::DrawFlaggedSpikes(CDC* pDC0)
 {
@@ -297,8 +292,6 @@ void CSpikeShapeWnd::DisplayFlaggedSpikes (BOOL bHighLight)
 	Invalidate();
 }
 
-// ---------------------------------------------------------------------------------
-
 int	CSpikeShapeWnd::DisplayExData(short* pData, int color)
 {
 	// prepare array
@@ -321,8 +314,6 @@ int	CSpikeShapeWnd::DisplayExData(short* pData, int color)
 	return color;
 }
 
-// ---------------------------------------------------------------------------------
-
 BOOL CSpikeShapeWnd::IsSpikeWithinRange(int spikeno)
 {	
 	if (spikeno > p_spikelist_->GetTotalSpikes()-1)
@@ -339,9 +330,6 @@ BOOL CSpikeShapeWnd::IsSpikeWithinRange(int spikeno)
 	return TRUE;
 }
 
-
-
-// ------------------------------------------------------------------------------------
 
 int	CSpikeShapeWnd::SelectSpikeShape(int spikeno)
 {
@@ -361,7 +349,6 @@ int	CSpikeShapeWnd::SelectSpikeShape(int spikeno)
 	Invalidate();
 	return oldselected;	
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////
 // MOUSE OPERATIONS
@@ -445,9 +432,6 @@ void CSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-
-// ------------------------------------------------------------------------------------
-
 void CSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	m_bLmouseDown = TRUE;
@@ -478,8 +462,6 @@ void CSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			PostMyMessage(HINT_HITSPIKE, m_hitspk);		
 	}
 }
-
-// ------------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
@@ -524,8 +506,6 @@ void CSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	PostMyMessage(HINT_CHANGEZOOM, 0);
 }
 
-// ------------------------------------------------------------------------------------
-
 void CSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if ((m_selectedspike < 0 && p_spikelist_->GetSpikeFlagArrayCount () < 1)|| m_hitspk < 0)
@@ -544,9 +524,6 @@ void CSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 	}
 }
-
-
-// ------------------------------------------------------------------------------------
 
 int  CSpikeShapeWnd::DoesCursorHitCurve(CPoint point)
 {
@@ -585,8 +562,6 @@ int  CSpikeShapeWnd::DoesCursorHitCurve(CPoint point)
 	}	
 	return hitspk;
 }
-
-// ------------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::GetExtents()
 {
@@ -631,8 +606,6 @@ void CSpikeShapeWnd::GetExtents()
 	}
 }
 
-// ------------------------------------------------------------------------------------
-
 void CSpikeShapeWnd::InitPolypointAbcissa()
 {
 	const auto nelements = polypoints_.GetSize();
@@ -642,8 +615,6 @@ void CSpikeShapeWnd::InitPolypointAbcissa()
 	for (auto i = 0; i<nelements; i++)
 		polypoints_[i].x = i+1;
 }
-
-// ------------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 {
@@ -782,8 +753,6 @@ void CSpikeShapeWnd::Print(CDC* pDC, CRect* rect)
 	m_yVE = old_y_ve;
 }
 
-// ---------------------------------------------------------------------------------
-
 void CSpikeShapeWnd::PlotArraytoDC(CDC* pDC, short* pspk)
 {
 	const auto nelements = polypoints_.GetSize();
@@ -805,15 +774,11 @@ void CSpikeShapeWnd::PlotArraytoDC(CDC* pDC, short* pspk)
 	}
 }
 
-// ---------------------------------------------------------------------------------
-
 float CSpikeShapeWnd::GetDisplayMaxMv() 
 {
 	GetExtents();
 	return (p_spikelist_->GetAcqVoltsperBin()*1000.f*(m_yWE-m_yWO-p_spikelist_->GetAcqBinzero()));
 }
-
-// ---------------------------------------------------------------------------------
 
 float CSpikeShapeWnd::GetDisplayMinMv()
 {
@@ -823,8 +788,6 @@ float CSpikeShapeWnd::GetDisplayMinMv()
 	return (p_spikelist_->GetAcqVoltsperBin()*1000.f*(m_yWO-m_yWE-p_spikelist_->GetAcqBinzero()));
 }
 
-// ---------------------------------------------------------------------------------
-
 float CSpikeShapeWnd::GetExtent_mV()
 {
 	if (p_spikelist_ == nullptr)
@@ -832,8 +795,6 @@ float CSpikeShapeWnd::GetExtent_mV()
 	GetExtents();
 	return (p_spikelist_->GetAcqVoltsperBin()*m_yWE*1000.f);
 }
-
-// ---------------------------------------------------------------------------------
 
 float CSpikeShapeWnd::GetExtent_ms()
 {
@@ -843,8 +804,6 @@ float CSpikeShapeWnd::GetExtent_ms()
 	return (static_cast<float>(1000.0 * m_xWE)/p_spikelist_->GetAcqSampRate());
 }
 
-// ---------------------------------------------------------------------------------
-
 void CSpikeShapeWnd::MoveVTtrack(int itrack, int newval)
 {
 	CPoint point;
@@ -853,7 +812,6 @@ void CSpikeShapeWnd::MoveVTtrack(int itrack, int newval)
 	point.x=MulDiv(newval-m_xWO, m_xVE, m_xWE)+m_xVO;	// convert val into pixel	
 	XorVTtag(point.x);						// xor line
 }
-
 
 void CSpikeShapeWnd::Serialize( CArchive& ar )
 {
@@ -878,8 +836,7 @@ void CSpikeShapeWnd::Serialize( CArchive& ar )
 	else
 	{	
 		CScopeScreen::Serialize(ar);
-		//if (this->m_parms.wversion >= 3)
-			polypoints_.Serialize(ar);
+		polypoints_.Serialize(ar);
 
 		ar >> m_rangemode;			// display range (time OR storage index)
 		ar >> m_lFirst;				// time first (real time = index/sampling rate)
