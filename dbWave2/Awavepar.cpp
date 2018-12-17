@@ -73,9 +73,9 @@ void SCOPESTRUCT::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		wversion = 2;
+		wversion = 3;
 		ar << wversion;
-		int nints = 8;
+		const int nints = 8;
 		ar << nints;
 		ar << iID;
 		ar << iXCells;
@@ -85,12 +85,12 @@ void SCOPESTRUCT::Serialize(CArchive& ar)
 		ar << iXTickLine;
 		ar << iYTickLine;
 		ar << bDrawframe;
-		int ncolor_items = 2;
+		const int ncolor_items = 2;
 		ar << ncolor_items;
 		ar << crScopeFill;
 		ar << crScopeGrid;
 		// save scale values
-		int nfloats = 2;
+		const int nfloats = 2;
 		ar << nfloats;
 		ar << xScaleUnitValue;
 		ar << yScaleUnitValue;

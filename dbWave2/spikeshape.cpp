@@ -23,7 +23,6 @@ END_MESSAGE_MAP()
 
 CSpikeShapeWnd::CSpikeShapeWnd()
 {                                        
-	m_pSL= nullptr;
 	m_lFirst = 0;
 	m_lLast = 0;
 	m_currentclass=-999;
@@ -36,7 +35,8 @@ CSpikeShapeWnd::CSpikeShapeWnd()
 	SetbUseDIB(FALSE); 
 	m_csEmpty = "no \nspikes";	
 	m_ballFiles = FALSE;
-	m_pDoc = nullptr;
+	p_doc_ = nullptr;
+	p_spikelist_ = nullptr;
 }
 
 // ---------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 
 
 	// display data: trap error conditions
-	int nSavedDC = pDC->SaveDC();
+	const auto n_saved_dc = pDC->SaveDC();
 	GetExtents();
 	pDC->SetViewportOrg (m_displayRect.left, m_displayRect.Height()/2);
 	pDC->SetViewportExt (m_displayRect.right, -m_displayRect.Height());
@@ -73,28 +73,28 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = m_pDoc->DBGetNRecords();
-		ncurrentfile = m_pDoc->DBGetCurrentRecordPosition();
+		nfiles = p_doc_->DBGetNRecords();
+		ncurrentfile = p_doc_->DBGetCurrentRecordPosition();
 	}
 
 	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
 		if (m_ballFiles)
 		{
-			m_pDoc->DBSetCurrentRecordPosition(ifile);
-			m_pDoc->OpenCurrentSpikeFile();
-			m_pSL = (CSpikeList*)m_pDoc->m_pSpk->GetSpkListCurrent();
+			p_doc_->DBSetCurrentRecordPosition(ifile);
+			p_doc_->OpenCurrentSpikeFile();
+			p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
 		//test if data are there - if none, write it and exit
-		if (m_pSL == nullptr || m_pSL->GetTotalSpikes() == 0)
+		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
 		{
 			if (!m_ballFiles)
 			{
 				pDC->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-				CRect rect = m_displayRect;
+				auto rect = m_displayRect;
 				rect.DeflateRect(1, 1);
-				int textlen = m_csEmpty.GetLength();
+				const auto textlen = m_csEmpty.GetLength();
 				pDC->DrawText(m_csEmpty, textlen, rect, DT_LEFT); //|DT_WORDBREAK);
 				return;
 			}
@@ -102,44 +102,39 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 				continue;
 		}
 		// load resources and prepare context	
-		int taillespk = m_pSL->GetSpikeLength();
+		const auto taillespk = p_spikelist_->GetSpikeLength();
 		ASSERT(taillespk >0);
 
-		if (m_polypts.GetSize() != taillespk * 2)
+		if (polypoints_.GetSize() != taillespk)
 		{
-			m_polypts.SetSize(taillespk * 2, 2);
+			polypoints_.SetSize(taillespk, 2);
 			InitPolypointAbcissa();
 		}
 
 		// loop through all spikes of the list
 		short* lpspk;							// pointer to spk
-		long* lpDest = (long*)&m_polypts[0];	// pointer to array displayed
-		// prepare pen    
-		int oldcla = 0;							// old class displayed
-
-		// loop to display spikes
-		int ilast = m_pSL->GetTotalSpikes() - 1;
-		int ifirst = 0;
+		auto ilast = p_spikelist_->GetTotalSpikes() - 1;
+		auto ifirst = 0;
 		if (m_rangemode == RANGE_INDEX)
 		{
 			ilast = m_spklast;
 			ifirst = m_spkfirst;
 		}
-		int selpen = BLACK_COLOR;
+		auto selpen = BLACK_COLOR;
 		if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECOLOR)
 			selpen = SILVER_COLOR;
-		CPen* poldPen = pDC->SelectObject(&m_penTable[selpen]);
+		const auto pold_pen = pDC->SelectObject(&m_penTable[selpen]);
 
-		for (int ispk = ilast; ispk >= ifirst; ispk--)
+		for (auto ispk = ilast; ispk >= ifirst; ispk--)
 		{
 			// skip spike ?
 			if (m_rangemode == RANGE_TIMEINTERVALS
-				&& (m_pSL->GetSpikeTime(ispk) < m_lFirst
-					|| m_pSL->GetSpikeTime(ispk) > m_lLast))
+				&& (p_spikelist_->GetSpikeTime(ispk) < m_lFirst
+					|| p_spikelist_->GetSpikeTime(ispk) > m_lLast))
 				continue;
 
 			// select pen according to class
-			int wspkcla = m_pSL->GetSpikeClass(ispk);
+			const auto wspkcla = p_spikelist_->GetSpikeClass(ispk);
 			switch (m_plotmode)
 			{
 			case PLOT_ONECLASSONLY:
@@ -158,9 +153,9 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 			}
 
 			// display data
-			lpspk = m_pSL->GetpSpikeData(ispk);
+			lpspk = p_spikelist_->GetpSpikeData(ispk);
 			FillPolypointOrdinates(lpspk);
-			pDC->Polyline((LPPOINT)lpDest, taillespk);
+			pDC->Polyline(&polypoints_[0], taillespk);
 		}
 
 		if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECOLOR)
@@ -169,31 +164,31 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 			if (m_plotmode == PLOT_ONECOLOR)
 				selpen = m_selclass % NB_COLORS;
 			pDC->SelectObject(&m_penTable[selpen]);
-			for (int ispk = ilast; ispk >= ifirst; ispk--)
+			for (auto ispk = ilast; ispk >= ifirst; ispk--)
 			{
 				// skip spike ?
 				if (m_rangemode == RANGE_TIMEINTERVALS
-					&& (m_pSL->GetSpikeTime(ispk) < m_lFirst
-						|| m_pSL->GetSpikeTime(ispk) > m_lLast))
+					&& (p_spikelist_->GetSpikeTime(ispk) < m_lFirst
+					|| p_spikelist_->GetSpikeTime(ispk) > m_lLast))
 					continue;
 
 				// skip spikes with the wrong class
-				if (m_pSL->GetSpikeClass(ispk) != m_selclass)
+				if (p_spikelist_->GetSpikeClass(ispk) != m_selclass)
 					continue;
 				// display data
-				lpspk = m_pSL->GetpSpikeData(ispk);
+				lpspk = p_spikelist_->GetpSpikeData(ispk);
 				FillPolypointOrdinates(lpspk);
-				pDC->Polyline((LPPOINT)lpDest, taillespk);
+				pDC->Polyline(&polypoints_[0], taillespk);
 			}
 		}
 
 		// display selected spike
-		int iselect = -1;
+		auto iselect = -1;
 		if (m_selectedspike >= 0 && (IsSpikeWithinRange(m_selectedspike)))
 			iselect = m_selectedspike;
 		DrawSelectedSpike(iselect, pDC);
 
-		if (m_pSL->GetSpikeFlagArrayCount() > 0)
+		if (p_spikelist_->GetSpikeFlagArrayCount() > 0)
 			DrawFlaggedSpikes(pDC);
 
 		// display tags
@@ -204,8 +199,8 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 			DisplayVTtags(pDC);
 
 		// restore resources		
-		pDC->SelectObject(poldPen);
-		pDC->RestoreDC(nSavedDC);
+		pDC->SelectObject(pold_pen);
+		pDC->RestoreDC(n_saved_dc);
 
 		// display text
 		if (m_bText && m_plotmode == PLOT_ONECLASSONLY)
@@ -218,18 +213,17 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 	
 	if (m_ballFiles)
 	{
-		m_pDoc->DBSetCurrentRecordPosition(ncurrentfile);
-		m_pDoc->OpenCurrentSpikeFile();
-		m_pSL = (CSpikeList*)m_pDoc->m_pSpk->GetSpkListCurrent();
+		p_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_doc_->OpenCurrentSpikeFile();
+		p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
 	}
 }
 // ---------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* pDC)
 {
-	CBitmap* poldbitmap = nullptr;
-	int nSavedDC = pDC->SaveDC();
-	CRect rect = m_displayRect;
+	const auto n_saved_dc = pDC->SaveDC();
+	auto rect = m_displayRect;
 	pDC->DPtoLP(rect);
 	pDC->IntersectClipRect(&rect);
 	
@@ -243,62 +237,57 @@ void CSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* pDC)
 		pDC->SetViewportExt (m_displayRect.Width(), -m_displayRect.Height());
 		
 		// prepare pen and select pen
-		int pensize = 2;
-		CPen newPen(PS_SOLID, pensize, m_colorTable[m_colorselectedspike]);
-		CPen* poldpen = (CPen*) pDC->SelectObject(&newPen);
+		const auto pensize = 2;
+		CPen new_pen(PS_SOLID, pensize, m_colorTable[m_colorselectedspike]);
+		auto* poldpen = (CPen*) pDC->SelectObject(&new_pen);
 
 		// display data
-		short* lpspk = m_pSL->GetpSpikeData(nospike);
+		auto* lpspk = p_spikelist_->GetpSpikeData(nospike);
 		FillPolypointOrdinates(lpspk);
-		long* lpDest = (long*) &m_polypts[0];
-		pDC->Polyline((LPPOINT) lpDest, m_pSL->GetSpikeLength());
+		pDC->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 
 		// restore resources
 		pDC->SelectObject(poldpen);
 	}
 	// restore ressources
-	pDC->RestoreDC(nSavedDC);	
+	pDC->RestoreDC(n_saved_dc);	
 }
 
 // ---------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::DrawFlaggedSpikes(CDC* pDC0)
 {
-	CBitmap* poldbitmap = nullptr;
 	ASSERT (pDC0 != NULL);
-	CDC* pDC = pDC0;
-	int nSavedDC = pDC->SaveDC();	
+	auto p_dc = pDC0;
+	const auto n_saved_dc = p_dc->SaveDC();	
 
 	// change coordinate settings 
 	GetExtents();
-	PrepareDC(pDC);
-	pDC->SetViewportOrg (m_displayRect.left, m_displayRect.Height()/2);
-	pDC->SetViewportExt (m_displayRect.right, -m_displayRect.Height());
+	PrepareDC(p_dc);
+	p_dc->SetViewportOrg (m_displayRect.left, m_displayRect.Height()/2);
+	p_dc->SetViewportExt (m_displayRect.right, -m_displayRect.Height());
 
 	// prepare pen and select pen
-	int pensize = 1;
-	CPen newPen(PS_SOLID, pensize, m_colorTable[m_colorselectedspike]);
-	CPen* oldpen = (CPen*) pDC->SelectObject(&newPen);
+	const auto pensize = 1;
+	CPen new_pen(PS_SOLID, pensize, m_colorTable[m_colorselectedspike]);
+	const auto oldpen = (CPen*) p_dc->SelectObject(&new_pen);
 
 	// loop through all flagged spikes
-	for (int i= m_pSL->GetSpikeFlagArrayCount()-1; i>=0; i--)
+	for (auto i= p_spikelist_->GetSpikeFlagArrayCount()-1; i>=0; i--)
 	{
-		int nospike = m_pSL->GetSpikeFlagArrayAt(i);
-		int nospikeclass = m_pSL->GetSpikeClass(nospike);
+		const auto nospike = p_spikelist_->GetSpikeFlagArrayAt(i);
 		// skip spike if not valid in this display
 		if (!IsSpikeWithinRange(nospike))
 			continue;
 		//if (PLOT_ONECLASSONLY == m_plotmode && nospikeclass != m_selclass)
 		//	continue;
-		short* lpspk = m_pSL->GetpSpikeData(nospike);
-		FillPolypointOrdinates(lpspk);
-		long* lpDest = (long*) &m_polypts[0];
-		pDC->Polyline((LPPOINT) lpDest, m_pSL->GetSpikeLength());
+		FillPolypointOrdinates(p_spikelist_->GetpSpikeData(nospike));
+		p_dc->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 	}
 
 	// restore resources
-	pDC->SelectObject(oldpen);
-	pDC0->RestoreDC(nSavedDC);
+	p_dc->SelectObject(oldpen);
+	pDC0->RestoreDC(n_saved_dc);
 }
 
 void CSpikeShapeWnd::DisplayFlaggedSpikes (BOOL bHighLight)
@@ -313,32 +302,22 @@ void CSpikeShapeWnd::DisplayFlaggedSpikes (BOOL bHighLight)
 int	CSpikeShapeWnd::DisplayExData(short* pData, int color)
 {
 	// prepare array
-	int nelements = m_pSL->GetSpikeLength();
-	if (m_polypts.GetSize() != nelements *2)
+	const auto nelements = p_spikelist_->GetSpikeLength();
+	if (polypoints_.GetSize() != nelements)
 	{
-		m_polypts.SetSize(nelements *2, 2);
+		polypoints_.SetSize(nelements, 2);
 		InitPolypointAbcissa();	
 	}
-	
-	// prepare DC
+
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
 	PrepareDC(&dc);
-
-	// display data
-	CPen newPen(PS_SOLID, 0, m_colorTable[color]);
-	CPen* oldpen = (CPen*) dc.SelectObject(&newPen);
-
-	// display data
+	CPen new_pen(PS_SOLID, 0, m_colorTable[color]);
+	const auto oldpen = (CPen*) dc.SelectObject(&new_pen);
 	FillPolypointOrdinates(pData);
+	dc.Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 
-	// display data		
-	long* lpDest = (long*) &m_polypts[0];
-	dc.Polyline((LPPOINT) lpDest, m_pSL->GetSpikeLength());
-
-	// restore resources
 	dc.SelectObject(oldpen);
-
 	return color;
 }
 
@@ -346,16 +325,16 @@ int	CSpikeShapeWnd::DisplayExData(short* pData, int color)
 
 BOOL CSpikeShapeWnd::IsSpikeWithinRange(int spikeno)
 {	
-	if (spikeno > m_pSL->GetTotalSpikes()-1)
+	if (spikeno > p_spikelist_->GetTotalSpikes()-1)
 		return FALSE;
 	if (m_rangemode == RANGE_TIMEINTERVALS
-		&& (m_pSL->GetSpikeTime(spikeno) < m_lFirst || m_pSL->GetSpikeTime(spikeno) > m_lLast))
+		&& (p_spikelist_->GetSpikeTime(spikeno) < m_lFirst || p_spikelist_->GetSpikeTime(spikeno) > m_lLast))
 		return FALSE;
 	else if (m_rangemode == RANGE_INDEX
 		&& (spikeno>m_spklast || spikeno < m_spkfirst))
 		return FALSE;
 	if (m_plotmode == PLOT_ONECLASSONLY 
-		&& (m_pSL->GetSpikeClass(spikeno) != m_selclass))
+		&& (p_spikelist_->GetSpikeClass(spikeno) != m_selclass))
 		return FALSE;
 	return TRUE;
 }
@@ -367,9 +346,8 @@ BOOL CSpikeShapeWnd::IsSpikeWithinRange(int spikeno)
 int	CSpikeShapeWnd::SelectSpikeShape(int spikeno)
 {
 	// erase plane
-	int oldselected = m_selectedspike;
+	const auto oldselected = m_selectedspike;
 	m_selectedspike = spikeno;
-	
 	if (!m_bUseDIB)
 	{
 		CClientDC dc(this) ;
@@ -418,7 +396,7 @@ void CSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	// vertical tag was tracked
 		{
 		// convert pix into data value and back again
-		int val = MulDiv(point.x-m_xVO, m_xWE, m_xVE)+m_xWO;
+		const auto val = MulDiv(point.x-m_xVO, m_xWE, m_xVE)+m_xWO;
 		SetVTtagVal(m_HCtrapped, val);
 		point.x=MulDiv(val-m_xWO, m_xVE, m_xWE)+m_xVO;
 		XorVTtag(point.x);
@@ -432,9 +410,9 @@ void CSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 
 		// none of those: zoom data or  offset display
 		CScopeScreen::OnLButtonUp(nFlags, point);
-		CRect rectOut(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
-		const int jitter = 3;
-		if ((abs(rectOut.Height())< jitter) && (abs(rectOut.Width())< jitter))
+		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
+		const auto jitter = 3;
+		if ((abs(rect_out.Height())< jitter) && (abs(rect_out.Width())< jitter))
 		{		
 			if (m_cursorType != CURSOR_ZOOM)
 				PostMyMessage(HINT_HITAREA, NULL);
@@ -444,18 +422,18 @@ void CSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		}
 
 		// perform action according to cursor type
-		CRect rectIn= m_displayRect;
+			auto rect_in= m_displayRect;
 		switch (m_cursorType)
 		{
 		case 0:
-			rectOut = rectIn;
-			rectOut.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
+			rect_out = rect_in;
+			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
 			PostMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that val changed
 			break;
 		case CURSOR_ZOOM: 	// zoom operation
-			ZoomData(&rectIn, &rectOut);					
-			m_ZoomFrom = rectIn;
-			m_ZoomTo   = rectOut;					
+			ZoomData(&rect_in, &rect_out);					
+			m_ZoomFrom = rect_in;
+			m_ZoomTo   = rect_out;					
 			m_iUndoZoom = 1;
 			PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;				
@@ -473,11 +451,10 @@ void CSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 void CSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	m_bLmouseDown = TRUE;
-
 	// call base class to test for horiz cursor or XORing rectangle	
 	if (GetNVTtags() > 0)
 	{
-		for (int icur = GetNVTtags()-1; icur>=0; icur--)	// loop through all tags
+		for (auto icur = GetNVTtags()-1; icur>=0; icur--)	// loop through all tags
 			SetVTtagPix(icur, MulDiv(GetVTtagVal(icur)-m_xWO, m_xVE, m_xWE)+m_xVO);
 	}
 
@@ -499,7 +476,6 @@ void CSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 
 		else
 			PostMyMessage(HINT_HITSPIKE, m_hitspk);		
-		return;
 	}
 }
 
@@ -530,18 +506,18 @@ void CSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	rDest->NormalizeRect();
 
 	// change y gain & y offset		
-	int y_we = m_yWE;				// save previous window extent
+	const auto y_we = m_yWE;				// save previous window extent
 	m_yWE = MulDiv (m_yWE, rDest->Height(), rFrom->Height());
 	m_yWO = m_yWO
 			-MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
 			+MulDiv(rDest->top - m_yVO, y_we, m_yVE);
 
 	// change index of first and last pt displayed	
-	int xWE = m_xWE;				// save previous window extent
+	const auto x_we = m_xWE;				// save previous window extent
 	m_xWE = MulDiv (m_xWE, rDest->Width(), rFrom->Width());
 	m_xWO = m_xWO
 			-MulDiv(rFrom->left - m_xVO, m_xWE, m_xVE)
-			+MulDiv(rDest->left - m_xVO, xWE, m_xVE);
+			+MulDiv(rDest->left - m_xVO, x_we, m_xVE);
 
 	// display
 	Invalidate();
@@ -552,19 +528,17 @@ void CSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 
 void CSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if ((m_selectedspike < 0 && m_pSL->GetSpikeFlagArrayCount () < 1)|| m_hitspk < 0)
+	if ((m_selectedspike < 0 && p_spikelist_->GetSpikeFlagArrayCount () < 1)|| m_hitspk < 0)
 		CScopeScreen::OnLButtonDblClk(nFlags, point);
 	else
 	{
-		//single spike selected?
 		if (m_selectedspike >= 0)
 		{
 			PostMyMessage(HINT_DBLCLKSEL, m_selectedspike);
 		}
-		// multiple spikes selected - find the right one...
 		else
 		{
-			int iselectedspike = DoesCursorHitCurve(point);
+			const auto iselectedspike = DoesCursorHitCurve(point);
 			if (iselectedspike > 0)
 				PostMyMessage(HINT_DBLCLKSEL, iselectedspike);
 		}
@@ -576,36 +550,34 @@ void CSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 int  CSpikeShapeWnd::DoesCursorHitCurve(CPoint point)
 {
-	int hitspk = -1;
+	auto hitspk = -1;
 	// convert device coordinates into logical coordinates
-	int mouseX = MulDiv(point.x-m_xVO, m_xWE, m_xVE) + m_xWO;
-	if (mouseX <0 || mouseX > m_pSL->GetSpikeLength())
+	const auto mouse_x = MulDiv(point.x-m_xVO, m_xWE, m_xVE) + m_xWO;
+	if (mouse_x <0 || mouse_x > p_spikelist_->GetSpikeLength())
 		return hitspk;
-	int mouseY = MulDiv(point.y-m_yVO, m_yWE, m_yVE) + m_yWO;
-	int deltax = MulDiv(3, m_xWE, m_xVE);
-	int deltay = MulDiv(3, m_yWE, m_yVE);
+	const auto mouse_y = MulDiv(point.y-m_yVO, m_yWE, m_yVE) + m_yWO;
+	const auto deltay = MulDiv(3, m_yWE, m_yVE);
 
 	// loop through all spikes
-	int ilast = m_pSL->GetTotalSpikes()-1;
-	int ifirst = 0;
+	auto ilast = p_spikelist_->GetTotalSpikes()-1;
+	auto ifirst = 0;
 	if (m_rangemode == RANGE_INDEX)	
 	{
 		ilast = m_spklast;
 		ifirst = m_spkfirst;
 	}
-	for (int ispk=ilast; ispk>=ifirst; ispk--)
+	for (auto ispk=ilast; ispk>=ifirst; ispk--)
 	{
-		// skip spikes out of range or with not correct class
 		if (m_rangemode == RANGE_TIMEINTERVALS
-			&& (m_pSL->GetSpikeTime(ispk) < m_lFirst 
-			   || m_pSL->GetSpikeTime(ispk) > m_lLast))
+			&& (p_spikelist_->GetSpikeTime(ispk) < m_lFirst 
+			   || p_spikelist_->GetSpikeTime(ispk) > m_lLast))
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-		 && m_pSL->GetSpikeClass(ispk) != m_selclass)
+		 && p_spikelist_->GetSpikeClass(ispk) != m_selclass)
 			continue;
-		// if spike accepted, test value
-		int val = m_pSL->GetSpikeValAt(ispk, mouseX);
-		if (mouseY+deltay < val && mouseY-deltay > val)
+		
+		const auto val = p_spikelist_->GetSpikeValAt(ispk, mouse_x);
+		if (mouse_y+deltay < val && mouse_y-deltay > val)
 		{			
 			hitspk = ispk;
 			break;
@@ -622,30 +594,30 @@ void CSpikeShapeWnd::GetExtents()
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = m_pDoc->DBGetNRecords();
-		ncurrentfile = m_pDoc->DBGetCurrentRecordPosition();
+		nfiles = p_doc_->DBGetNRecords();
+		ncurrentfile = p_doc_->DBGetCurrentRecordPosition();
 	}
 
 	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
 		if (m_ballFiles)
 		{
-			m_pDoc->DBSetCurrentRecordPosition(ifile);
-			m_pDoc->OpenCurrentSpikeFile();
-			m_pSL = (CSpikeList*)m_pDoc->m_pSpk->GetSpkListCurrent();
+			p_doc_->DBSetCurrentRecordPosition(ifile);
+			p_doc_->OpenCurrentSpikeFile();
+			p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
 		if (m_yWE == 1 || m_yWE == 0) // && m_yWO == 0)
 		{
 			int maxval, minval;
-			m_pSL->GetTotalMaxMin(TRUE, &maxval, &minval);
+			p_spikelist_->GetTotalMaxMin(TRUE, &maxval, &minval);
 			m_yWE = MulDiv((maxval - minval), 10, 9) +1;	// avoid null ext
 			m_yWO = maxval / 2 + minval / 2;
 		}
 
 		if (m_xWE == 1) // && m_xWO == 0)
 		{
-			m_xWE = m_pSL->GetSpikeLength(); //+1;
+			m_xWE = p_spikelist_->GetSpikeLength(); //+1;
 			m_xWO = 0;
 		}
 	}
@@ -653,9 +625,9 @@ void CSpikeShapeWnd::GetExtents()
 	// exit
 	if (m_ballFiles)
 	{
-		m_pDoc->DBSetCurrentRecordPosition(ncurrentfile);
-		m_pDoc->OpenCurrentSpikeFile();
-		m_pSL = (CSpikeList*)m_pDoc->m_pSpk->GetSpkListCurrent();
+		p_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_doc_->OpenCurrentSpikeFile();
+		p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
 	}
 }
 
@@ -663,39 +635,29 @@ void CSpikeShapeWnd::GetExtents()
 
 void CSpikeShapeWnd::InitPolypointAbcissa()
 {
-	int nelements = (m_polypts.GetSize())/2;
+	const auto nelements = polypoints_.GetSize();
 	m_xWE = nelements +1;
 	ASSERT(nelements > 0);
-	long* lpDest = (long*) &m_polypts[0];	
-	for (int i = 1; i<=nelements; i++)
-	{
-		*lpDest = i;	// copy data
-		lpDest++;		// point to the next element, 2 positions after
-		lpDest++;		// (keep space for either abcissa or ordinates)		
-	}
+
+	for (auto i = 0; i<nelements; i++)
+		polypoints_[i].x = i+1;
 }
 
 // ------------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 {
-	int nelements = (m_polypts.GetSize())/2;
+	auto nelements = polypoints_.GetSize();
 	if (nelements == 0)
 	{
-		nelements = m_pSL->GetSpikeLength();
+		nelements = p_spikelist_->GetSpikeLength();
 		ASSERT(nelements > 0);
-		m_polypts.SetSize(nelements *2, 2);
+		polypoints_.SetSize(nelements, 2);
 		InitPolypointAbcissa();	
 	}
 
-	long* lpDest = (long*) &m_polypts[1];	// source data: an Envelope	
-	for (int i = 0; i<nelements; i++)
-	{
-		*lpDest = *lpSource;	// copy data
-		lpDest++;				// point to the next element, 2 positions after
-		lpDest++;				// (keep space for either abcissa or ordinates)
-		lpSource++;				// point to the next source element
-	}
+	for (auto i = 0; i<nelements; i++, lpSource++)
+		polypoints_[i].y  = *lpSource;
 }
 
 //---------------------------------------------------------------------------
@@ -705,158 +667,141 @@ void CSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 void CSpikeShapeWnd::Print(CDC* pDC, CRect* rect)
 {
 	// check if there are valid data to display
-	if (m_pSL == nullptr || m_pSL->GetTotalSpikes()== 0)
+	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes()== 0)
 		return;
 
-	int old_yVO = m_yVO;
-	int old_yVE = m_yVE;
-	int oldXextent = m_xWE;
-	int oldXorg = m_xWO;
+	const auto old_y_vo = m_yVO;
+	const auto old_y_ve = m_yVE;
+	const auto old_xextent = m_xWE;
+	const auto old_xorg = m_xWO;
 	
 	// size of the window
-	m_yVO = (int) (rect->Height()/2) + rect->top;
+	m_yVO = rect->Height()/2 + rect->top;
 	m_yVE = -rect->Height();
 
 	// check initial conditions
-	if (m_yWE == 1) // && m_yWO == 0)				// test window parms
+	if (m_yWE == 1) // && m_yWO == 0)
 	{
-		int maxval, minval;						// if not set, search max, min
-		m_pSL->GetTotalMaxMin(TRUE, &maxval, &minval);
-		m_yWE = maxval - minval +1;  				// center / ordinates origin
-		m_yWO = (maxval + minval)/2;			// extent and origin		
+		int maxval, minval;
+		p_spikelist_->GetTotalMaxMin(TRUE, &maxval, &minval);
+		m_yWE = maxval - minval +1; 
+		m_yWO = (maxval + minval)/2;	
 	}
 
 	m_xWO = rect->left;
 	m_xWE = rect->Width()-2;
 
-	int taillespk = m_pSL->GetSpikeLength();	// adjust horiz size
-	if (m_polypts.GetSize() != taillespk*2)
-		m_polypts.SetSize(taillespk*2, 2);
+	const auto taillespk = p_spikelist_->GetSpikeLength();
+	if (polypoints_.GetSize() != taillespk)
+		polypoints_.SetSize(taillespk, 2);
 
 	// set mapping mode and viewport
-	int nSavedDC = pDC->SaveDC();				// save display context	
+	const auto n_saved_dc = pDC->SaveDC();
+	for (auto i=0; i<taillespk; i++)
+		polypoints_[i].x = rect->left + MulDiv(i, rect->Width(), taillespk);
 
-	// init polypoint abcissa
-	for (int i=0; i<taillespk; i++)
-		m_polypts[i*2] = rect->left + MulDiv(i, rect->Width(), taillespk);
-
-	// loop through all spikes of the list
-		// prepare pen    
-	int selpen;								// index selected pen
-	int oldcla = 0;							// old class displayed
+ 	int selpen;	
 	switch (m_plotmode)
 	{
-		//case PLOT_BLACK:		selpen = BLACK_COLOR; break;
-		//case PLOT_ONECLASSONLY:	selpen = BLACK_COLOR; break;
-		case PLOT_ONECLASS:		selpen = m_colorbackgr; 
-								oldcla = m_selclass; break;
-		case PLOT_ALLGREY:		selpen = m_colorbackgr;	break;
-		default:				selpen = BLACK_COLOR; break;
+	//case PLOT_BLACK:			selpen = BLACK_COLOR; break;
+	//case PLOT_ONECLASSONLY:	selpen = BLACK_COLOR; break;
+	case PLOT_ONECLASS:		
+		selpen = m_colorbackgr;
+		break;
+	case PLOT_ALLGREY:		
+		selpen = m_colorbackgr;	
+		break;
+	default:				
+		selpen = BLACK_COLOR; 
+		break;
 	}
 
-	CPen* oldPen = pDC->SelectObject(&m_penTable[selpen]);
-
-	int ilast=m_pSL->GetTotalSpikes()-1;
-	int ifirst= 0;
+	const auto old_pen = pDC->SelectObject(&m_penTable[selpen]);
+	auto ilast=p_spikelist_->GetTotalSpikes()-1;
+	auto ifirst= 0;
 	if (m_rangemode == RANGE_INDEX)
 	{
 		ilast = m_spklast;
 		ifirst = m_spkfirst;
 	}
 
-	for (int ispk=ilast; ispk >= ifirst; ispk--)
+	for (auto ispk=ilast; ispk >= ifirst; ispk--)
 	{
-		// skip spike ?
 		if (m_rangemode == RANGE_INDEX && (ispk > m_spklast || ispk < m_spkfirst))
 			continue;
-		else if (m_rangemode == RANGE_TIMEINTERVALS)
+		if (m_rangemode == RANGE_TIMEINTERVALS)
 		{
-			if (m_pSL->GetSpikeTime(ispk) < m_lFirst)
+			if (p_spikelist_->GetSpikeTime(ispk) < m_lFirst)
 				continue;
-			if (m_pSL->GetSpikeTime(ispk) > m_lLast)
+			if (p_spikelist_->GetSpikeTime(ispk) > m_lLast)
 				continue;
 		}
-		
-		// select pen according to class
-		int spkcla = m_pSL->GetSpikeClass(ispk);
+
+		const auto spkcla = p_spikelist_->GetSpikeClass(ispk);
 		if (m_plotmode == PLOT_ONECLASSONLY && spkcla != m_selclass)
 			continue;
 		if (m_plotmode == PLOT_ONECLASS && spkcla == m_selclass)
 			continue;
 
-		// display data 
-		PlotArraytoDC(pDC, m_pSL->GetpSpikeData(ispk));
+		PlotArraytoDC(pDC, p_spikelist_->GetpSpikeData(ispk));
 	}
 
 	// display selected class if requested by option
 	if (m_plotmode == PLOT_ONECLASS)
 	{
 		pDC->SelectObject(&m_penTable[m_colorselected]);
-
-		// loop to display spikes			
-		for (int ispk=ilast; ispk >= ifirst; ispk--)
+		for (auto ispk=ilast; ispk >= ifirst; ispk--)
 		{
-			// skip spike ?
 			if (m_rangemode == RANGE_TIMEINTERVALS)
 			{
-				long ltime = m_pSL->GetSpikeTime(ispk);
+				const auto ltime = p_spikelist_->GetSpikeTime(ispk);
 				if (ltime < m_lFirst || ltime > m_lLast)
 					continue;
 			}
-			if ( m_pSL->GetSpikeClass(ispk) != m_selclass)
+			if ( p_spikelist_->GetSpikeClass(ispk) != m_selclass)
 				continue;
-
-			// display data 
-			PlotArraytoDC(pDC, m_pSL->GetpSpikeData(ispk));
+			PlotArraytoDC(pDC, p_spikelist_->GetpSpikeData(ispk));
 		}
 	}	
 
 	// display selected spike	
 	if (m_selectedspike >= 0 && IsSpikeWithinRange(m_selectedspike))
 	{
-		CPen newPen(PS_SOLID, 0, m_colorTable[m_colorselectedspike]);
-		pDC->SelectObject(&newPen);
-		PlotArraytoDC(pDC, m_pSL->GetpSpikeData(m_selectedspike));
+		CPen new_pen(PS_SOLID, 0, m_colorTable[m_colorselectedspike]);
+		pDC->SelectObject(&new_pen);
+		PlotArraytoDC(pDC, p_spikelist_->GetpSpikeData(m_selectedspike));
 	}
 
 	// restore resources
-	pDC->SelectObject(oldPen);	// restore pen
-	pDC->RestoreDC(nSavedDC);	// restore DC
+	pDC->SelectObject(old_pen);	// restore pen
+	pDC->RestoreDC(n_saved_dc);	// restore DC
 
-	m_xWE = oldXextent;			// restore old X extent
-	m_xWO = oldXorg;			// restore old X origin
-	m_yVO = old_yVO;			// same with Y
-	m_yVE = old_yVE;
+	m_xWE = old_xextent;		// restore old X extent
+	m_xWO = old_xorg;			// restore old X origin
+	m_yVO = old_y_vo;			// same with Y
+	m_yVE = old_y_ve;
 }
 
 // ---------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::PlotArraytoDC(CDC* pDC, short* pspk)
 {
-	// (1) transfer to polypoint & adjust amplitude
-	long* lpDest0 = (long*) &m_polypts[0];
-	long* lpDest = lpDest0 + 1;
-	int nelements = (m_polypts.GetSize())/2;
-	
-	// (2) scale all points and copy them into polypoint
-	for (int i = 0; i<nelements; i++, lpDest++, lpDest++, pspk++)
+	const auto nelements = polypoints_.GetSize();
+	for (auto i = 0; i<nelements; i++, pspk++)
 	{
-		short y = *pspk;							// read data
-		y = MulDiv(y-m_yWO, m_yVE, m_yWE) + m_yVO;	// scale it
-		*lpDest = y;								// copy it into polypoint
+		auto y = *pspk;	
+		y = MulDiv(y-m_yWO, m_yVE, m_yWE) + m_yVO;
+		polypoints_[i].y = y;
 	}
 
-	// (3) display polypoint
-	CPoint* pP = (CPoint*) lpDest0;	
-	BOOL bPolyLine = (pDC->m_hAttribDC == nullptr) 
-		|| (pDC->GetDeviceCaps(LINECAPS) && LC_POLYLINE);
-	if (bPolyLine)							// polypoint enabled
-		pDC->Polyline(pP, nelements);		// draw curve : polypoint
-	else									// no polypoint capabilities
+	if ( pDC->m_hAttribDC == nullptr 
+		|| (pDC->GetDeviceCaps(LINECAPS) & LC_POLYLINE))
+		pDC->Polyline(&polypoints_[0], nelements);
+	else									
 	{
-		pDC->MoveTo(*pP);					// move current position
-		for (int i=0; i<nelements; i++, pP++)	// loop to draw all points
-			pDC->LineTo(*pP);
+		pDC->MoveTo(polypoints_[0]);		
+		for (auto i=0; i<nelements; i++)
+			pDC->LineTo(polypoints_[i]);
 	}
 }
 
@@ -865,40 +810,37 @@ void CSpikeShapeWnd::PlotArraytoDC(CDC* pDC, short* pspk)
 float CSpikeShapeWnd::GetDisplayMaxMv() 
 {
 	GetExtents();
-	return (m_pSL->GetAcqVoltsperBin()*1000.f*(m_yWE-m_yWO-m_pSL->GetAcqBinzero()));
+	return (p_spikelist_->GetAcqVoltsperBin()*1000.f*(m_yWE-m_yWO-p_spikelist_->GetAcqBinzero()));
 }
 
 // ---------------------------------------------------------------------------------
 
 float CSpikeShapeWnd::GetDisplayMinMv()
 {
-	if (m_pSL == nullptr)
+	if (p_spikelist_ == nullptr)
 		return 1.f;
-
 	GetExtents();
-	return (m_pSL->GetAcqVoltsperBin()*1000.f*(m_yWO-m_yWE-m_pSL->GetAcqBinzero()));
+	return (p_spikelist_->GetAcqVoltsperBin()*1000.f*(m_yWO-m_yWE-p_spikelist_->GetAcqBinzero()));
 }
 
 // ---------------------------------------------------------------------------------
 
 float CSpikeShapeWnd::GetExtent_mV()
 {
-	if (m_pSL == nullptr)
+	if (p_spikelist_ == nullptr)
 		return 1.f;
-
 	GetExtents();
-	return (m_pSL->GetAcqVoltsperBin()*m_yWE*1000.f);
+	return (p_spikelist_->GetAcqVoltsperBin()*m_yWE*1000.f);
 }
 
 // ---------------------------------------------------------------------------------
 
 float CSpikeShapeWnd::GetExtent_ms()
 {
-	if (m_pSL == nullptr)
+	if (p_spikelist_ == nullptr)
 		return 1.f;
-
 	GetExtents();
-	return ((float)(1000.0*m_xWE)/m_pSL->GetAcqSampRate());
+	return (static_cast<float>(1000.0 * m_xWE)/p_spikelist_->GetAcqSampRate());
 }
 
 // ---------------------------------------------------------------------------------
@@ -915,11 +857,11 @@ void CSpikeShapeWnd::MoveVTtrack(int itrack, int newval)
 
 void CSpikeShapeWnd::Serialize( CArchive& ar )
 {
-	CScopeScreen::Serialize(ar);
-	m_polypts.Serialize(ar);		// points displayed with polyline
-
 	if (ar.IsStoring())
 	{
+		CScopeScreen::Serialize(ar);
+		polypoints_.Serialize(ar);
+
 		ar << m_rangemode;			// display range (time OR storage index)
 		ar << m_lFirst;				// time first (real time = index/sampling rate)
 		ar << m_lLast;				// time last
@@ -934,7 +876,11 @@ void CSpikeShapeWnd::Serialize( CArchive& ar )
 		ar << m_selclass;			// dummy
 	}
 	else
-	{		
+	{	
+		CScopeScreen::Serialize(ar);
+		//if (this->m_parms.wversion >= 3)
+			polypoints_.Serialize(ar);
+
 		ar >> m_rangemode;			// display range (time OR storage index)
 		ar >> m_lFirst;				// time first (real time = index/sampling rate)
 		ar >> m_lLast;				// time last

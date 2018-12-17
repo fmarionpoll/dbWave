@@ -32,12 +32,12 @@ protected:
 	int		m_selclass{};			// index class selected
 	BOOL 	m_btrackCurve;		// track curve ?
 	
-	CSpikeList*	m_pSL;			// spike list from which spikes are read
-	CDWordArray m_polypts;		// points displayed with polyline
 	BOOL	m_bText;			// allow text default false
 	int		m_ndisplayedspikes{};	// number of spikes displayed
 	BOOL		m_ballFiles;		// display data from all files in CdbWaveDoc*
-	CdbWaveDoc* m_pDoc;
+	CArray <CPoint, CPoint> polypoints_;		// points displayed with polyline
+	CSpikeList*	p_spikelist_ ;			// spike list from which spikes are read
+	CdbWaveDoc* p_doc_ ;
 
 // data helpers
 public:
@@ -54,8 +54,8 @@ public:
 	inline void SetTextOption(BOOL bText) {m_bText=bText;}
 	inline BOOL GetTextOption() const {return m_bText;}
 
-	inline void SetSourceData(CSpikeList* p_spk_list) {m_pSL = p_spk_list; m_selectedspike=-1;}
-	inline void SetSpkList(CSpikeList* p_spk_list) {m_pSL = p_spk_list;}
+	inline void SetSourceData(CSpikeList* p_spk_list) {p_spikelist_ = p_spk_list; m_selectedspike=-1;}
+	inline void SetSpkList(CSpikeList* p_spk_list) {p_spikelist_ = p_spk_list;}
 
 	inline void SetCurrentClass(int curcla) {m_currentclass=curcla;}
 	inline int  GetCurrentClass() const {return m_currentclass;}
@@ -78,7 +78,7 @@ public:
 	inline int	GetHitSpike() const {return m_hitspk;}
 	inline int	GetSelectedSpike() const {return m_selectedspike;}
 
-	inline void	DisplayAllFiles(BOOL bON, CdbWaveDoc* pDoc) { m_ballFiles = bON; m_pDoc = pDoc; }
+	inline void	DisplayAllFiles(BOOL bON, CdbWaveDoc* pDoc) { m_ballFiles = bON; p_doc_ = pDoc; }
 
 public:
 	void 		Print(CDC* pDC, CRect* rect);

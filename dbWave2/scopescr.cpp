@@ -1172,7 +1172,6 @@ void CScopeScreen::Serialize( CArchive& ar )
 		ar << m_xVE;
 		ar << m_yVO;
 		ar << m_yVE;
-
 	} 
 	else
 	{		
