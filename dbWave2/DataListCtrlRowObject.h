@@ -27,7 +27,7 @@ public:
 	UINT			index;
 	long			insectID;
 
-	CString			csComment;
+	CString			cs_comment;
 	CString			csDatafileName;
 	CString			csSpikefileName;
 	CString			csSensillumname;

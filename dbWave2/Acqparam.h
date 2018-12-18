@@ -46,7 +46,7 @@ public :
 
 	// comments
 	CString csADcardName;		// 1 I/O card name
-	CString csComment;			// 2 file annotation - used now as "csExpt"
+	CString cs_comment;			// 2 file annotation - used now as "csExpt"
 	CString csStimulus;			// 3 stimulation (chemical)
 	CString csConcentration;	// 4 stimulus concentration
 	CString csInsectname;		// 5 sensillum type

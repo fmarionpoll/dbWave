@@ -54,8 +54,8 @@ public:
 	BOOL			m_bEditMode;
 
 protected:	
-	int  SaveList(CComboBox* pCo, CStringArray* pS);
-	void LoadList(CComboBox* pCo, CStringArray* pS, int isel, CDaoRecordset* pmSet = nullptr);
+	int  SaveList(CComboBox* pCo, CStringArray* p_spike_element);
+	void LoadList(CComboBox* pCo, CStringArray* p_spike_element, int isel, CDaoRecordset* pmSet = nullptr);
 	void EditComboBox(CComboBox* pCo);
 
 	// Generated message map functions

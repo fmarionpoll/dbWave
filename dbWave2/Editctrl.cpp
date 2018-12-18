@@ -13,7 +13,7 @@
 //
 // lastly but not least, if the programmer wants that the edit control to be displayed
 // with a short vertical scrollbar, the original edit control only needs to be declared
-// (within the RC file or from within App studio's menu) as multiline and with a vertical
+// (within the rc file or from within App studio's menu) as multiline and with a vertical
 // scrollbar. CEditCtrl will trap scroll messages and forward them to the parent so
 // that the value of the edit control can be changed. Vertical scroll messages are sent to
 // the parent as VK_UP or VK_DOWN keys

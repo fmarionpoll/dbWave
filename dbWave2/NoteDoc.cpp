@@ -128,7 +128,7 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	if (fileList.IsEmpty())
 		return flag;
 	
-	// assume that filenames are separated either by "RC", "TAB", ";" or "LF"	
+	// assume that filenames are separated either by "rc", "TAB", ";" or "LF"	
 	CString newList = fileList;
 	TCHAR* pstring = fileList.GetBuffer(fileList.GetLength());
 	TCHAR* pnew = newList.GetBuffer(newList.GetLength());	
@@ -202,9 +202,9 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 			if (p_dbwave_doc->OnNewDocument(dbname))	// create table
 			{
 				p_dbwave_doc->ImportDescFromFileList(csArrayfiles);
-				CFrameWnd* pWF = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
-				ASSERT(pWF != NULL);
-				p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
+				CFrameWnd* p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
+				ASSERT(p_wave_format != NULL);
+				p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 			}
 		}
 	}

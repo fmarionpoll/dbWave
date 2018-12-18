@@ -25,7 +25,7 @@ protected:
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual void ActivateFrame(int nCmdShow = -1);
+	virtual void ActivateFrame(int n_cmd_show = -1);
 
 // Implementation
 public:

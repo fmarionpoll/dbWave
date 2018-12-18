@@ -1595,7 +1595,7 @@ void CViewSpikeSort_Parameters::SelectSpike(int spikeno, BOOL bglobal)
 		m_spkXYp.SelectSpike(ispike_global);
 
 	//long spk_first = 0;
-	//long spkLast = 0;
+	//long spk_last = 0;
 	m_spikenoclass = -1;
 	auto n_cmd_show = SW_HIDE;
 	if (ispike_local >= 0) //&& ispike_local < m_pSpkList->GetTotalSpikes())
@@ -1603,7 +1603,7 @@ void CViewSpikeSort_Parameters::SelectSpike(int spikeno, BOOL bglobal)
 		const auto spike_elemt = m_pSpkList->GetSpikeElemt(ispike_local);
 		m_spikenoclass = spike_elemt->GetSpikeClass();
 		//spkFirst = spike_list->GetSpikeTime() - m_pSpkList->GetSpikePretrig();
-		//spkLast = spkFirst + m_pSpkList->GetSpikeLength();
+		//spk_last = spkFirst + m_pSpkList->GetSpikeLength();
 		n_cmd_show= SW_SHOW;		
 	}
 	GetDlgItem(IDC_STATIC2)->ShowWindow(n_cmd_show);

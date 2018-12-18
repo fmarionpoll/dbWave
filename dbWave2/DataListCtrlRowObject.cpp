@@ -47,7 +47,7 @@ CDataListCtrlRowObject::~CDataListCtrlRowObject()
 	}
 	SAFE_DELETE(pdataDoc);
 	SAFE_DELETE(pspikeDoc);
-	csComment.Empty();
+	cs_comment.Empty();
 	csDatafileName.Empty();
 	csSpikefileName.Empty();
 	csSensillumname.Empty();
@@ -65,7 +65,7 @@ void CDataListCtrlRowObject::operator = (const CDataListCtrlRowObject& arg)
 	bInit = arg.bInit;
 	index = arg.index;
 	insectID = arg.insectID;
-	csComment = arg.csComment ;
+	cs_comment = arg.cs_comment ;
 	csDatafileName = arg.csDatafileName ;
 	csSpikefileName = arg.csSpikefileName ;
 	csSensillumname = arg.csSensillumname ;
@@ -96,7 +96,7 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 
 		int nstr = 8;
 		ar << nstr;
-		ar << csComment;
+		ar << cs_comment;
 		ar << csDatafileName;
 		ar << csSensillumname;
 		ar << csStim1;
@@ -120,7 +120,7 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 
 		int nstr;
 		ar >> nstr;
-		ar >> csComment; nstr--;
+		ar >> cs_comment; nstr--;
 		ar >> csDatafileName; nstr--;
 		ar >> csSensillumname; nstr--;
 		ar >> csStim1; nstr--;

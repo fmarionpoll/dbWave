@@ -88,7 +88,7 @@ public:
 	BOOL GetRecordItemValue(int icol,  DB_ITEMDESC* pdesc);
 	BOOL SetRecordItemValue(int icol,  DB_ITEMDESC* pdesc);
 	BOOL ImportRecordfromDatabase(CdbWdatabase* pdbW);
-	void TransferWaveFormatDataToRecord(CWaveFormat* pWF);
+	void TransferWaveFormatDataToRecord(CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbIndexTable* pIndexTable, int column1, int column2);
 

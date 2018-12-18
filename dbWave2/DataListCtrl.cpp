@@ -622,7 +622,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	CLineViewWnd* pWnd = ptr->pdataWnd;
 
 	// get data file descriptor
-	pWnd->SetString(ptr->csComment);
+	pWnd->SetString(ptr->cs_comment);
 
 	// open data document
 	if (ptr->pdataDoc == nullptr)
@@ -653,7 +653,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 
 		// display all channels : loop through all doc channels & add if necessary
 		CWaveFormat* pwaveFormat = ptr->pdataDoc->GetpWaveFormat();
-		ptr->csComment = pwaveFormat->GetComments(_T(" "));
+		ptr->cs_comment = pwaveFormat->GetComments(_T(" "));
 		const int ndocchans = pwaveFormat->scan_count;
 		auto lnvchans = pWnd->GetChanlistSize();
 		// add channels if value is zero 

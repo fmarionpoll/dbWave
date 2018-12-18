@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CSpikeEditDlg dialog
 #include "Lineview.h"
+#include "spikeshape.h"
 
 class CSpikeEditDlg : public CDialog
 {

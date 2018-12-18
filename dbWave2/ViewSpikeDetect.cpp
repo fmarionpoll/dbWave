@@ -2484,7 +2484,7 @@ CString CViewSpikeDetection::PrintGetFileInfos()
 
 	// document's main comment (print on multiple lines if necessary)
 	if (mdPM->bAcqComment)
-		str_comment += GetDocument()->ExportDatabaseData(); //pwaveFormat->GetComments(" ") +RC;
+		str_comment += GetDocument()->ExportDatabaseData(); //pwaveFormat->GetComments(" ") +rc;
 
 	return str_comment;
 }
@@ -2589,7 +2589,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 
 CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 {
-	const CString RC("\n");
+	const CString rc("\n");
 	CString str_comment;
 	CString cs_comment;
 	CString cs_unit;
@@ -2612,7 +2612,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 			else
 				_stprintf_s(m_szbuf, 64, _T("Vbar=%f.3 mV"), z);
 			cs_comment = m_szbuf;					// store val into comment
-			str_comment = cs_comment + RC;
+			str_comment = cs_comment + rc;
 		}
 		
 		// display bar
@@ -2644,7 +2644,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 		wsprintf(m_szbuf, _T("%i %s"), k, static_cast<LPCTSTR>(cs_unit));
 		cs_comment += m_szbuf;		// store val into comment
 		str_comment += cs_comment;
-		str_comment += RC;
+		str_comment += rc;
 	}
 
 	// number of spikes
@@ -2652,7 +2652,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 	wsprintf(m_szbuf, _T("n spk= %i"), k);
 	cs_comment = m_szbuf;
 	str_comment += cs_comment;
-	str_comment += RC;
+	str_comment += rc;
 
 	return str_comment;
 }
@@ -2985,7 +2985,7 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 			cs_comment = PrintConvertFileIndex(m_displayDetect.GetDataFirst(), m_displayDetect.GetDataLast());
 		}
 
-		// print comments stored into csComment				
+		// print comments stored into cs_comment				
 		comment_rect.OffsetRect(mdPM->textseparator + comment_rect.Width(), 0);
 		comment_rect.right = m_printRect.right;
 

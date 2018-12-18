@@ -40,7 +40,7 @@ protected:
 // Operations
 public:
 	CString				GetFileInfos();
-	void				InitSourceDoc(CAcqDataDoc* pDoc);
+	void				InitSourceDoc(CAcqDataDoc* p_document);
 
 	inline 	CString		GetSourceFilename()			const {return m_acqfile;}
 	inline 	CTime 		GetDate()					const {return m_detectiondate;}

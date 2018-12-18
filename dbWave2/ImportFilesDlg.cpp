@@ -446,7 +446,7 @@ BOOL CImportFilesDlg::GetExperimentParameters(CAcqDataDoc* pTo)
 		CWaveFormat* pwFDlg = &pacqD->waveFormat;
 
 		pwFTo->csADcardName= pwFDlg->csADcardName;
-		pwFTo->csComment= pwFDlg->csComment;
+		pwFTo->cs_comment= pwFDlg->cs_comment;
 		pwFTo->csStimulus= pwFDlg->csStimulus;
 		pwFTo->csConcentration= pwFDlg->csConcentration;
 		pwFTo->csInsectname= pwFDlg->csInsectname;

@@ -1115,7 +1115,7 @@ void CSpikeList::GetTotalMaxMin(BOOL bRecalc, int* max, int* min)
 function:      	BOOL InitSpikeList()
 purpose :		define source data before adding spikes
 				erase old list (if flag set)
-parameters 		CAcqDataDoc* pDoc
+parameters 		CAcqDataDoc* p_document
 				CFromChan* CFromChan
 return 			TRUE if OK
 modif 20-12-94 use of SPKDETECT & chan instead of CFromChan struct as param

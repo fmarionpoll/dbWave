@@ -404,14 +404,14 @@ BOOL CSpikeDoc::OnOpenDocument (LPCTSTR pszPathName)
 	return bRead;
 }
 
-void CSpikeDoc::InitSourceDoc(CAcqDataDoc* pDoc)
+void CSpikeDoc::InitSourceDoc(CAcqDataDoc* p_document)
 {
 	// load parameters from file	
-	CWaveFormat* pwaveFormat = pDoc->GetpWaveFormat();
+	CWaveFormat* pwaveFormat = p_document->GetpWaveFormat();
 	m_acqtime =			pwaveFormat->acqtime;
-	m_acqsize =			pDoc->GetDOCchanLength();
+	m_acqsize =			p_document->GetDOCchanLength();
 	m_acqrate =			pwaveFormat->chrate;
-	m_acqcomment =		pwaveFormat->csComment;
+	m_acqcomment =		pwaveFormat->cs_comment;
 	m_wformat =			*pwaveFormat;	
 }
 

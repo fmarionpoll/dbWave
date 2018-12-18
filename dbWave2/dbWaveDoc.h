@@ -74,9 +74,9 @@ public:
 	void			ExportDataAsciiComments(CSharedFile* pSF); //, OPTIONS_VIEWDATA* pVD);
 	void			ExportNumberofSpikes(CSharedFile* pSF);
 	CString			ExportDatabaseData(int ioption = 0);
-	void			ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* pSL, int kclass);
+	void			ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass);
 	void			SynchronizeSourceInfos(BOOL bAll);
-	BOOL			UpdateWaveFmtFromDatabase (CWaveFormat* pWF) const;
+	BOOL			UpdateWaveFmtFromDatabase (CWaveFormat* p_wave_format) const;
 
 	void			ExportDatafilesAsTXTfiles	();
 	BOOL			CopyAllFilesintoDirectory	(const CString& path);

@@ -105,7 +105,7 @@ CNoteDoc* CViewNoteDoc::GetDocument() // non-debug version is inline
 
 void CViewNoteDoc::OnToolsOpendatafiles() 
 {
-	CNoteDoc* pDoc = (CNoteDoc*) GetDocument();
-	CString csname = pDoc->GetPathName();
-	pDoc->OpenProjectFiles(csname);
+	CNoteDoc* p_document = (CNoteDoc*) GetDocument();
+	CString csname = p_document->GetPathName();
+	p_document->OpenProjectFiles(csname);
 }

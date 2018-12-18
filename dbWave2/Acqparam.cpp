@@ -17,7 +17,7 @@ IMPLEMENT_SERIAL(CWaveFormat, CObject, 0 /* schema number*/ )
 CWaveFormat::CWaveFormat()
 {
 	csADcardName	= _T("undefined");
-	csComment		= _T("");		// file annotation
+	cs_comment		= _T("");		// file annotation
 	csStimulus		= _T("");		// stimulation (chemical)
 	csConcentration = _T("");		// stimulus concentration
 	csStimulus2		= _T("");		// stimulation (chemical 2)
@@ -90,7 +90,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 		const int n_comments = 14;
 		ar << n_comments;
 		// save "CString"
-		ar << csComment;
+		ar << cs_comment;
 		ar << csStimulus;
 		ar << csConcentration;
 		ar << csInsectname;
@@ -143,7 +143,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 			int n_comments;
 			ar >> n_comments; 
 			ASSERT(n_comments == 14);
-			ar >> csComment;
+			ar >> cs_comment;
 			ar >> csStimulus;
 			ar >> csConcentration;
 			ar >> csInsectname;
@@ -201,7 +201,7 @@ void CWaveFormat::Read_v8_and_before(CArchive& ar, WORD version)
 
 	if (version >= 7)
 	{
-		ar >> csComment;
+		ar >> cs_comment;
 		ar >> csStimulus;
 		ar >> csConcentration;
 		ar >> csInsectname;
@@ -218,7 +218,7 @@ void CWaveFormat::Read_v8_and_before(CArchive& ar, WORD version)
 	}
 	else
 	{
-		ar >> csComment;
+		ar >> cs_comment;
 		ar >> csStimulus;
 		ar >> csConcentration;
 		ar >> csInsectname;
@@ -279,7 +279,7 @@ CWaveFormat& CWaveFormat::operator = (const CWaveFormat& arg)
 		bufferNitems = arg.bufferNitems;
 		buffersize = arg.buffersize;
 
-		csComment = arg.csComment;			// 1
+		cs_comment = arg.cs_comment;			// 1
 		csStimulus = arg.csStimulus;
 		csConcentration = arg.csConcentration;
 		csStimulus2 = arg.csStimulus2;
@@ -334,7 +334,7 @@ BOOL CWaveFormat::Read(CFile* datafile)
 CString CWaveFormat::GetComments (const CString& p_separator, const BOOL b_explanation) const
 {
 	CString cs_out;
-	cs_out += AddComments(p_separator, b_explanation, _T("comment1="),	csComment);
+	cs_out += AddComments(p_separator, b_explanation, _T("comment1="),	cs_comment);
 	cs_out += AddComments(p_separator, b_explanation, _T("stim1="),		csStimulus);
 	cs_out += AddComments(p_separator, b_explanation, _T("conc1= #"),	csConcentration);
 	cs_out += AddComments(p_separator, b_explanation, _T("stim2="),		csStimulus2);

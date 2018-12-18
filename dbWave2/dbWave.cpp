@@ -592,8 +592,8 @@ BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CS
 		fd.m_ofn.lpstrFile = lpText;			// attach local buffer to get file names
 		fd.m_ofn.nMaxFile = bufferSize /sizeof(TCHAR);	// declare max size of buffer
 		fd.m_ofn.nFilterIndex = *iFilterIndex;	// select filter item
-		CString csTitle(szTitle);
-		fd.m_ofn.lpstrTitle = csTitle;			// new title
+		CString cs_title(szTitle);
+		fd.m_ofn.lpstrTitle = cs_title;			// new title
 
 		// call dialog box and store filenames into cstring array
 		if ((IDOK == fd.DoModal()) && (0 != *lpText))// dialog box returned by CANCEL or no filename?
@@ -669,9 +669,9 @@ void CdbWaveApp::OnFileOpen()
 				if (p_dbwave_doc->OnNewDocument())	// create table
 				{
 					p_dbwave_doc->ImportDescFromFileList(filenames);
-					CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
-					ASSERT(pWF != NULL);
-					m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
+					CMDIFrameWnd* p_wave_format = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
+					ASSERT(p_wave_format != NULL);
+					m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 				}
 			}
 		}
@@ -722,9 +722,9 @@ void CdbWaveApp::OnFileNew()
 				{
 					if (p_dbwave_doc->OnNewDocument())	// create table
 					{
-						CMDIFrameWnd* pWF = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
-						ASSERT(pWF != NULL);
-						m_pNoteViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
+						CMDIFrameWnd* p_wave_format = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
+						ASSERT(p_wave_format != NULL);
+						m_pNoteViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 					}
 				}
 			}
@@ -737,9 +737,9 @@ void CdbWaveApp::OnFileNew()
 					p_dbwave_doc->SetClearMdbOnExit(FALSE);				// keep file on exit
 					if (p_dbwave_doc->OnNewDocument())					// create table
 					{
-						CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
-						ASSERT(pWF != NULL);
-						m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
+						CMDIFrameWnd* p_wave_format = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
+						ASSERT(p_wave_format != NULL);
+						m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 					}
 				}
 			}

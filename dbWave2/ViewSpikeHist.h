@@ -101,7 +101,7 @@ public:
 
 protected:
 	void BuildData();
-	void GetFileInfos(CString &strComment);
+	void GetFileInfos(CString &str_comment);
 	void DisplayHistogram(CDC* pDC, CRect* pRect);
 	void DisplayDot(CDC* pDC, CRect* pRect);
 	void DisplayPSTHAutoc(CDC* pDC, CRect* pRect);

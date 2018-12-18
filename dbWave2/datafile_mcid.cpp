@@ -103,7 +103,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	pWFormat->chrate = (float) (1. / mcidHeader.sample_interval);
 	pWFormat->sample_count = mcidHeader.number_of_samples;
 
-	pWFormat->csComment.Empty();
+	pWFormat->cs_comment.Empty();
 	pWFormat->csStimulus.Empty();
 	pWFormat->csConcentration.Empty();
 	pWFormat->csSensillum.Empty();		

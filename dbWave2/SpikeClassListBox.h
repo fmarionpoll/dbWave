@@ -42,7 +42,7 @@ protected:
 // Operations
 public:
 	void SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc);
-	void SetSpkList(CSpikeList* pSL);
+	void SetSpkList(CSpikeList* p_spike_list);
 	inline CSpikeList* GetSpkListCurrent() const {return m_pSList;};
 	inline CSpikeDoc* GetSpikeDoc() const {return m_pSDoc;};
 
@@ -63,7 +63,7 @@ public:
 	float 	   GetExtent_mV();
 
 	void SetYzoom(int y_we, int y_wo);
-	void SetXzoom(int xWE, int xWO);
+	void SetXzoom(int x_we, int x_wo);
 
 	int GetYWExtent();	// load display parameters
 	int GetYWOrg();		// ordinates

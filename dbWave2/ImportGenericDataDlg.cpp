@@ -626,10 +626,10 @@ void CImportGenericDataDlg::OnSetPreview()
 {
 	// get latest from controls
 	piivO->bPreview = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
-	int nCmdShow = SW_SHOW;
+	int n_cmd_show = SW_SHOW;
 	if (!piivO->bPreview)
-		nCmdShow = SW_HIDE;
-	GetDlgItem(IDC_DISPLAYSOURCE)->ShowWindow(nCmdShow);	
+		n_cmd_show = SW_HIDE;
+	GetDlgItem(IDC_DISPLAYSOURCE)->ShowWindow(n_cmd_show);	
 
 	// if preview OFF: hide display source
 	if (!piivO->bPreview && m_bpreviewON)
@@ -729,7 +729,7 @@ void CImportGenericDataDlg::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 	CWaveFormat* pwF = pDataF->GetpWaveFormat();
 
 	// define parameters within CWaveFormat
-	pwF->csComment = piivO->title;
+	pwF->cs_comment = piivO->title;
 	pwF->acqtime = rStatus.m_ctime;	// use CFile creation time
 	pwF->fullscale_Volts = piivO->voltageMax - piivO->voltageMin;
 	pwF->mode_encoding = piivO->encodingMode;

@@ -68,8 +68,8 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 		{
 			for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 			{
-				CTemplateWnd* pS = GetTemplateWnd(i);
-				pS->Serialize(ar);
+				CTemplateWnd* p_spike_element = GetTemplateWnd(i);
+				p_spike_element->Serialize(ar);
 			}
 		}
 	} 
@@ -137,8 +137,8 @@ CTemplateListWnd::~CTemplateListWnd()
 {
 	for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 	{
-		CTemplateWnd* pS = templatewnd_ptr_array.GetAt(i);
-		delete pS;
+		CTemplateWnd* p_spike_element = templatewnd_ptr_array.GetAt(i);
+		delete p_spike_element;
 	}
 	templatewnd_ptr_array.RemoveAll();
 }
@@ -247,8 +247,8 @@ BOOL CTemplateListWnd::DeleteAllTemplates()
 			DeleteAllItems();
 		for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 		{
-			CTemplateWnd* pS = templatewnd_ptr_array.GetAt(i);
-			delete pS;
+			CTemplateWnd* p_spike_element = templatewnd_ptr_array.GetAt(i);
+			delete p_spike_element;
 		}
 		templatewnd_ptr_array.RemoveAll();
 	}
@@ -437,14 +437,14 @@ void CTemplateListWnd::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	rect.top += 2;
 	rect.bottom -= 2;
 
-	CTemplateWnd* pS = (CTemplateWnd* ) GetItemData(item.iItem);
-	pS->SetbDrawframe((LVIS_SELECTED == GetItemState (item.iItem, LVIS_SELECTED)));
+	CTemplateWnd* p_spike_element = (CTemplateWnd* ) GetItemData(item.iItem);
+	p_spike_element->SetbDrawframe((LVIS_SELECTED == GetItemState (item.iItem, LVIS_SELECTED)));
 
 	CRect rect2;
-	pS->GetWindowRect(&rect2);
+	p_spike_element->GetWindowRect(&rect2);
 	ScreenToClient(&rect2);
 	if (rect2 != rect)
-		pS->MoveWindow(&rect);
+		p_spike_element->MoveWindow(&rect);
 
 	*pResult = 0;
 }
@@ -457,21 +457,21 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
 	// delete corresponding window object
-	CTemplateWnd* pS = (CTemplateWnd*) pNMListView->lParam;	
-	if (pS != nullptr)
+	CTemplateWnd* p_spike_element = (CTemplateWnd*) pNMListView->lParam;	
+	if (p_spike_element != nullptr)
 	{
 		// search corresponding window
 		int item=-1;
 		for (int i=0; i< templatewnd_ptr_array.GetSize(); i++)
 		{
-			if (templatewnd_ptr_array.GetAt(i) == pS)
+			if (templatewnd_ptr_array.GetAt(i) == p_spike_element)
 			{
 				item=i;
 				break;
 			}
 		}
-		pS->DestroyWindow();
-		delete pS;
+		p_spike_element->DestroyWindow();
+		delete p_spike_element;
 		templatewnd_ptr_array.RemoveAt(item);
 		pNMListView->lParam = NULL;
 	}

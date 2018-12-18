@@ -183,7 +183,7 @@ protected:
 	CString		PrintSpkShapeBars(CDC* pDC, CRect* prect, BOOL bAll);
 	void		PrintCreateFont();
 	BOOL		PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first);
-	BOOL		PrintGetNextRow(int &filenumber, long &l_first, long &veryLast);
+	BOOL		PrintGetNextRow(int &filenumber, long &l_first, long &very_last);
 	int			PrintGetNPages();
 	void		PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars);
 

@@ -1449,14 +1449,14 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 		cscomment.Format(_T("Processing file [%i / %i]"), ifile, nfiles);
 		dlg.SetStatus(cscomment);
 
-		CWaveFormat* pWF;
+		CWaveFormat* p_wave_format;
 		// process data file
 		if (!m_currentDatafileName.IsEmpty())
 		{
 			const auto bflag = OpenCurrentDataFile();
 			ASSERT(bflag == TRUE);
-			pWF = m_pDat->GetpWaveFormat();
-			if (UpdateWaveFmtFromDatabase(pWF))
+			p_wave_format = m_pDat->GetpWaveFormat();
+			if (UpdateWaveFmtFromDatabase(p_wave_format))
 				m_pDat->AcqSaveDataDescriptors();
 				//m_pDat->OnSaveDocument(m_currentDatafileName);
 		}
@@ -1465,8 +1465,8 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 		{
 			const auto bflag = OpenCurrentSpikeFile();
 			ASSERT(bflag == TRUE);
-			pWF = &(m_pSpk->m_wformat);
-			if (UpdateWaveFmtFromDatabase(pWF))
+			p_wave_format = &(m_pSpk->m_wformat);
+			if (UpdateWaveFmtFromDatabase(p_wave_format))
 				m_pSpk->OnSaveDocument(m_currentSpikefileName);
 		}
 		// move to next record
@@ -1487,112 +1487,112 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase (CWaveFormat* pWF) const
+BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase (CWaveFormat* p_wave_format) const
 {
 	auto b_changed = FALSE;
 	// long: experiment
 	if (m_pDB->m_exptSet.SeekID(m_pDB->m_mainTableSet.m_expt_ID))
 	{
-		b_changed = (pWF->csComment.Compare(m_pDB->m_exptSet.m_cs) != 0);
-		pWF->csComment = m_pDB->m_exptSet.m_cs;
+		b_changed = (p_wave_format->cs_comment.Compare(m_pDB->m_exptSet.m_cs) != 0);
+		p_wave_format->cs_comment = m_pDB->m_exptSet.m_cs;
 	}
 
 	// CString:	m_more;
-	b_changed |= (pWF->csMoreComment.Compare(m_pDB->m_mainTableSet.m_more) != 0); 
-	pWF->csMoreComment = m_pDB->m_mainTableSet.m_more;
+	b_changed |= (p_wave_format->csMoreComment.Compare(m_pDB->m_mainTableSet.m_more) != 0); 
+	p_wave_format->csMoreComment = m_pDB->m_mainTableSet.m_more;
 
 	// long:	m_operator_ID;
 	if (m_pDB->m_operatorSet.SeekID(m_pDB->m_mainTableSet.m_operator_ID))
 	{
-		b_changed |= (pWF->csOperator.Compare(m_pDB->m_operatorSet.m_cs) != 0);
-		pWF->csOperator = m_pDB->m_operatorSet.m_cs;
+		b_changed |= (p_wave_format->csOperator.Compare(m_pDB->m_operatorSet.m_cs) != 0);
+		p_wave_format->csOperator = m_pDB->m_operatorSet.m_cs;
 	}
 
 	// long:	m_insect_ID;
 	if (m_pDB->m_insectSet.SeekID(m_pDB->m_mainTableSet.m_insect_ID))
 	{
-		b_changed |= (pWF->csInsectname.Compare(m_pDB->m_insectSet.m_cs) != 0);
-		pWF->csInsectname= m_pDB->m_insectSet.m_cs;
+		b_changed |= (p_wave_format->csInsectname.Compare(m_pDB->m_insectSet.m_cs) != 0);
+		p_wave_format->csInsectname= m_pDB->m_insectSet.m_cs;
 	}
 
 	// long:	m_strain_ID;
 	if (m_pDB->m_strainSet.SeekID(m_pDB->m_mainTableSet.m_strain_ID))
 	{
-		b_changed |= (pWF->csStrain.Compare(m_pDB->m_strainSet.m_cs) != 0);
-		pWF->csStrain= m_pDB->m_strainSet.m_cs;
+		b_changed |= (p_wave_format->csStrain.Compare(m_pDB->m_strainSet.m_cs) != 0);
+		p_wave_format->csStrain= m_pDB->m_strainSet.m_cs;
 	}
 
 	// long:	m_expt_ID;
 	if (m_pDB->m_exptSet.SeekID(m_pDB->m_mainTableSet.m_expt_ID))
 	{
-		b_changed |= (pWF->csComment.Compare(m_pDB->m_exptSet.m_cs) != 0);
-		pWF->csComment= m_pDB->m_exptSet.m_cs;
+		b_changed |= (p_wave_format->cs_comment.Compare(m_pDB->m_exptSet.m_cs) != 0);
+		p_wave_format->cs_comment= m_pDB->m_exptSet.m_cs;
 	}
 
 	// long:	m_sex_ID;
 	if (m_pDB->m_sexSet.SeekID(m_pDB->m_mainTableSet.m_sex_ID))
 	{
-		b_changed |= (pWF->csSex.Compare(m_pDB->m_sexSet.m_cs) != 0);
-		pWF->csSex= m_pDB->m_sexSet.m_cs;
+		b_changed |= (p_wave_format->csSex.Compare(m_pDB->m_sexSet.m_cs) != 0);
+		p_wave_format->csSex= m_pDB->m_sexSet.m_cs;
 	}
 
 	// long	m_location_ID;
 	if (m_pDB->m_locationSet.SeekID(m_pDB->m_mainTableSet.m_location_ID))
 	{
-		b_changed |= (pWF->csLocation.Compare(m_pDB->m_locationSet.m_cs) != 0);
-		pWF->csLocation = m_pDB->m_locationSet.m_cs;
+		b_changed |= (p_wave_format->csLocation.Compare(m_pDB->m_locationSet.m_cs) != 0);
+		p_wave_format->csLocation = m_pDB->m_locationSet.m_cs;
 	}
 
 	// long	m_sensillum_ID;
 	if (m_pDB->m_sensillumSet.SeekID(m_pDB->m_mainTableSet.m_sensillum_ID))
 	{
-		b_changed |= (pWF->csSensillum.Compare(m_pDB->m_sensillumSet.m_cs) != 0);
-		pWF->csSensillum = m_pDB->m_sensillumSet.m_cs;
+		b_changed |= (p_wave_format->csSensillum.Compare(m_pDB->m_sensillumSet.m_cs) != 0);
+		p_wave_format->csSensillum = m_pDB->m_sensillumSet.m_cs;
 	}
 
 	//long	m_stim_ID;
 	if (m_pDB->m_stimSet.SeekID(m_pDB->m_mainTableSet.m_stim_ID))
 	{
-		b_changed |= (pWF->csStimulus.Compare(m_pDB->m_stimSet.m_cs) != 0); 
-		pWF->csStimulus = m_pDB->m_stimSet.m_cs;
+		b_changed |= (p_wave_format->csStimulus.Compare(m_pDB->m_stimSet.m_cs) != 0); 
+		p_wave_format->csStimulus = m_pDB->m_stimSet.m_cs;
 	}
 
 	// long	m_conc_ID;
 	if (m_pDB->m_concSet.SeekID(m_pDB->m_mainTableSet.m_conc_ID))
 	{
-		b_changed |= (pWF->csConcentration.Compare(m_pDB->m_concSet.m_cs) != 0);
-		pWF->csConcentration = m_pDB->m_concSet.m_cs;
+		b_changed |= (p_wave_format->csConcentration.Compare(m_pDB->m_concSet.m_cs) != 0);
+		p_wave_format->csConcentration = m_pDB->m_concSet.m_cs;
 	}
 
 	// long	m_stim2_ID;
 	if (m_pDB->m_stimSet.SeekID(m_pDB->m_mainTableSet.m_stim2_ID))
 	{
-		b_changed |= (pWF->csStimulus2.Compare(m_pDB->m_stimSet.m_cs) != 0); 
-		pWF->csStimulus2 = m_pDB->m_stimSet.m_cs;
+		b_changed |= (p_wave_format->csStimulus2.Compare(m_pDB->m_stimSet.m_cs) != 0); 
+		p_wave_format->csStimulus2 = m_pDB->m_stimSet.m_cs;
 	}
 
 	// long	m_conc2_ID;
 	if (m_pDB->m_concSet.SeekID(m_pDB->m_mainTableSet.m_conc2_ID))
 	{
-		b_changed |= (pWF->csConcentration2.Compare(m_pDB->m_concSet.m_cs) != 0);
-		pWF->csConcentration2 = m_pDB->m_concSet.m_cs;
+		b_changed |= (p_wave_format->csConcentration2.Compare(m_pDB->m_concSet.m_cs) != 0);
+		p_wave_format->csConcentration2 = m_pDB->m_concSet.m_cs;
 	}
 
-	b_changed |= (pWF->insectID != m_pDB->m_mainTableSet.m_IDinsect);
+	b_changed |= (p_wave_format->insectID != m_pDB->m_mainTableSet.m_IDinsect);
 	// long	m_insectnumber;
-	pWF->insectID = m_pDB->m_mainTableSet.m_IDinsect;
+	p_wave_format->insectID = m_pDB->m_mainTableSet.m_IDinsect;
 
-	b_changed |= (pWF->sensillumID != m_pDB->m_mainTableSet.m_IDsensillum);
+	b_changed |= (p_wave_format->sensillumID != m_pDB->m_mainTableSet.m_IDsensillum);
 	// long	m_IDsensillum;
-	pWF->sensillumID = m_pDB->m_mainTableSet.m_IDsensillum;
+	p_wave_format->sensillumID = m_pDB->m_mainTableSet.m_IDsensillum;
 
-	b_changed |= (pWF->repeat != m_pDB->m_mainTableSet.m_repeat);
+	b_changed |= (p_wave_format->repeat != m_pDB->m_mainTableSet.m_repeat);
 	// long	m_repeat;
-	pWF->repeat = m_pDB->m_mainTableSet.m_repeat;
+	p_wave_format->repeat = m_pDB->m_mainTableSet.m_repeat;
 
-	b_changed |= (pWF->repeat2 != m_pDB->m_mainTableSet.m_repeat2);
+	b_changed |= (p_wave_format->repeat2 != m_pDB->m_mainTableSet.m_repeat2);
 	// long	m_repeat2;
-	pWF->repeat2 = m_pDB->m_mainTableSet.m_repeat2;
+	p_wave_format->repeat2 = m_pDB->m_mainTableSet.m_repeat2;
 
 	const auto npercycle = static_cast<int>(m_pSpk->m_stimIntervals.nitems / 2.f
 		/ m_pSpk->GetAcqDuration() / 8.192f);
@@ -1604,7 +1604,7 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase (CWaveFormat* pWF) const
 
 
 /////////////////////////////////////////////////////////////////////////////
-void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* pSL, int kclass)
+void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass)
 {
 	CString cs_dummy;
 	CString cs_tab = _T("\t");
@@ -1626,9 +1626,9 @@ void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* pSL, int kcl
 	// number of spikes
 	if (options_viewspikes->btotalspikes)
 	{
-		cs_dummy.Format(_T("%s%i"), static_cast<LPCTSTR>(cs_tab), pSL->GetTotalSpikes());
+		cs_dummy.Format(_T("%s%i"), static_cast<LPCTSTR>(cs_tab), p_spike_list->GetTotalSpikes());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		cs_dummy.Format(_T("%s%i"), static_cast<LPCTSTR>(cs_tab), pSL->GetNbclasses());
+		cs_dummy.Format(_T("%s%i"), static_cast<LPCTSTR>(cs_tab), p_spike_list->GetNbclasses());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		const auto tduration = static_cast<float>(m_pSpk->GetAcqDuration());
 		cs_dummy.Format(_T("%s%.3f"), static_cast<LPCTSTR>(cs_tab), tduration);
@@ -1637,9 +1637,9 @@ void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* pSL, int kcl
 
 	// spike list item, spike class
 	if (options_viewspikes->spikeclassoption != 0)
-		cs_dummy.Format(_T("%s%i %s%s %s%i"), static_cast<LPCTSTR>(cs_tab), options_viewspikes->ichan, static_cast<LPCTSTR>(cs_tab), static_cast<LPCTSTR>(pSL->GetComment()), static_cast<LPCTSTR>(cs_tab), kclass);
+		cs_dummy.Format(_T("%s%i %s%s %s%i"), static_cast<LPCTSTR>(cs_tab), options_viewspikes->ichan, static_cast<LPCTSTR>(cs_tab), static_cast<LPCTSTR>(p_spike_list->GetComment()), static_cast<LPCTSTR>(cs_tab), kclass);
 	else
-		cs_dummy.Format(_T("%s%i %s%s \t(all)"), static_cast<LPCTSTR>(cs_tab), options_viewspikes->ichan, static_cast<LPCTSTR>(cs_tab), static_cast<LPCTSTR>(pSL->GetComment()));
+		cs_dummy.Format(_T("%s%i %s%s \t(all)"), static_cast<LPCTSTR>(cs_tab), options_viewspikes->ichan, static_cast<LPCTSTR>(cs_tab), static_cast<LPCTSTR>(p_spike_list->GetComment()));
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 

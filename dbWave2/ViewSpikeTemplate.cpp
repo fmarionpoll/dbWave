@@ -160,14 +160,14 @@ BOOL CViewSpikeSort_Templates::OnMove(UINT nIDMoveCommand)
 {
 	SaveCurrentSpkFile();	
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	CdbWaveDoc* pDoc = GetDocument();
-	if (pDoc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+	CdbWaveDoc* p_document = GetDocument();
+	if (p_document->DBGetCurrentSpkFileName(TRUE).IsEmpty())
 	{
 		((CChildFrame*)GetParent())->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 		return false;
 	}
 
-	pDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -368,11 +368,11 @@ void CViewSpikeSort_Templates::UpdateFileParameters()
 	int j = 0;
 	for (int i = 0; i< m_pSpkDoc->GetSpkListSize(); i++)
 	{
-		CSpikeList* pSL = m_pSpkDoc->SetSpkListCurrent(i);
+		CSpikeList* p_spike_list = m_pSpkDoc->SetSpkListCurrent(i);
 		CString cs;
-		if (pSL->GetdetectWhat() != 0)
+		if (p_spike_list->GetdetectWhat() != 0)
 			continue;
-		cs.Format(_T("#%i %s"), i, (LPCTSTR) pSL->GetComment());
+		cs.Format(_T("#%i %s"), i, (LPCTSTR) p_spike_list->GetComment());
 		m_tabCtrl.InsertItem(j, cs);
 		j++;
 	}
@@ -440,7 +440,7 @@ void CViewSpikeSort_Templates::SelectSpikeList(int icur)
 
 void CViewSpikeSort_Templates::UpdateTemplates()
 {
-	int nCmdShow = SW_HIDE;
+	int n_cmd_show = SW_HIDE;
 	if (m_templList.GetNtemplates() > 0)
 	{
 		if(m_templList.GetImageList(LVSIL_NORMAL) != &m_templList.m_imageList) //&m_ImListTpl)
@@ -454,10 +454,10 @@ void CViewSpikeSort_Templates::UpdateTemplates()
 		m_templList.SetYWExtOrg(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
 		m_templList.UpdateTemplateLegends("t");
 		m_templList.Invalidate();
-		nCmdShow = SW_SHOW;
+		n_cmd_show = SW_SHOW;
 	}
-	GetDlgItem(IDC_NTEMPLS)->ShowWindow(nCmdShow);
-	GetDlgItem(IDC_NTEMPLATES)->ShowWindow(nCmdShow);
+	GetDlgItem(IDC_NTEMPLS)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_NTEMPLATES)->ShowWindow(n_cmd_show);
 }
 
 //----------------------------------------------------------------------------
@@ -756,9 +756,9 @@ void CViewSpikeSort_Templates::OnFormatAlldata()
 	m_lFirst = 0;
 	m_lLast = m_pSpkDoc->GetAcqSize()-1;
 	// spikes: center spikes horizontally and adjust hz size of display	
-	short xWO = 0;
-	short xWE = m_pSpkList->GetSpikeLength();
-	m_spkForm.SetXWExtOrg(xWE, xWO);
+	short x_wo = 0;
+	short x_we = m_pSpkList->GetSpikeLength();
+	m_spkForm.SetXWExtOrg(x_we, x_wo);
 	UpdateLegends();	
 }
 
@@ -941,7 +941,7 @@ void CViewSpikeSort_Templates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPL
 	int lastfile = currentfile;			// index last file in the series
 	// make sure we have the correct spike list here
 	int currentlist = m_tabCtrl.GetCurSel();
-	CSpikeList* pS = m_pSpkDoc->SetSpkListCurrent(currentlist);
+	CSpikeList* p_spike_element = m_pSpkDoc->SetSpkListCurrent(currentlist);
 	
 	CString cscomment;
 	CString csfilecomment = _T("Analyze file: ");
@@ -1066,8 +1066,8 @@ void CViewSpikeSort_Templates::OnBuildTemplates()
 			m_pSpkDoc = p_dbwave_doc->m_pSpk;			
 		}
 
-		CSpikeList* pS = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		nspikes = pS->GetTotalSpikes();		
+		CSpikeList* p_spike_element = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		nspikes = p_spike_element->GetTotalSpikes();		
 		for (int i=0; i<nspikes; i++)
 			m_templList.tAdd(m_pSpkList->GetpSpikeData(i));
 	}
@@ -1095,8 +1095,8 @@ void CViewSpikeSort_Templates::OnBuildTemplates()
 			p_dbwave_doc->SetTitle(cs);			
 		}
 
-		CSpikeList* pS = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		nspikes = pS->GetTotalSpikes();
+		CSpikeList* p_spike_element = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		nspikes = p_spike_element->GetTotalSpikes();
 
 		// create template CListCtrl
 		for (int i=0; i<nspikes; i++)

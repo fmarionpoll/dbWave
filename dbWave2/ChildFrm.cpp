@@ -343,11 +343,11 @@ void CChildFrame::ExportASCII(int option)
 }
 
 
-void CChildFrame::ActivateFrame(int nCmdShow) 
+void CChildFrame::ActivateFrame(int n_cmd_show) 
 {
-	if (nCmdShow == -1)
-		nCmdShow = SW_SHOWMAXIMIZED;
-	CMDIChildWndEx::ActivateFrame(nCmdShow);
+	if (n_cmd_show == -1)
+		n_cmd_show = SW_SHOWMAXIMIZED;
+	CMDIChildWndEx::ActivateFrame(n_cmd_show);
 }
 
 // --------------------------------------------------------------------------

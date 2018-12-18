@@ -74,10 +74,10 @@ CMultiDocTemplate::Confidence CdbMultiDocTemplate::MatchDocType(LPCTSTR lpszPath
 	POSITION pos = GetFirstDocPosition();
 	while (pos != nullptr)
 	{
-		CDocument* pDoc = GetNextDoc(pos);
-		if (pDoc->GetPathName() == csPathName)
+		CDocument* p_document = GetNextDoc(pos);
+		if (p_document->GetPathName() == csPathName)
 		{		
-			rpDocMatch = pDoc;
+			rpDocMatch = p_document;
 			return yesAlreadyOpen;
 		}
 	}	// end while

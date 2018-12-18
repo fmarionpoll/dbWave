@@ -382,14 +382,14 @@ void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 	}
 }
 
-void CSpikeClassListBox::SetSpkList(CSpikeList* pSL)
+void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 {
-	m_pSList = pSL;
+	m_pSList = p_spike_list;
 	for (int i=0; i<GetCount(); i++)
 	{
 		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		(pptr->pspkShapes)->SetSpkList(pSL);
-		(pptr->pspkBars)->SetSpkList(pSL);
+		(pptr->pspkShapes)->SetSpkList(p_spike_list);
+		(pptr->pspkBars)->SetSpkList(p_spike_list);
 	}
 }
 
@@ -416,8 +416,8 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	// select spike
 	if (spikeno >= 0)
 	{	// get address of spike parms
-		CSpikeElemt* pS = m_pSList->GetSpikeElemt(spikeno);	
-		cla = pS->GetSpikeClass();
+		CSpikeElemt* p_spike_element = m_pSList->GetSpikeElemt(spikeno);	
+		cla = p_spike_element->GetSpikeClass();
 
 		// multiple selection
 		if (bMultipleSelection)
@@ -505,13 +505,13 @@ void CSpikeClassListBox::SetYzoom(int y_we, int y_wo)
 
 // --------------------------------------------------------------------------------
 
-void CSpikeClassListBox::SetXzoom(int xWE, int xWO)
+void CSpikeClassListBox::SetXzoom(int x_we, int x_wo)
 {
 	for (int i=0; i<GetCount(); i++)
 	{
 		MYPTR* pptr = (MYPTR*) GetItemData(i);
 		if (pptr->pspkShapes != nullptr)
-			(pptr->pspkShapes)->SetXWExtOrg(xWE, xWO);
+			(pptr->pspkShapes)->SetXWExtOrg(x_we, x_wo);
 	}
 }
 

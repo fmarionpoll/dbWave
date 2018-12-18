@@ -118,8 +118,8 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 			*(pcomment+i) = ' ';	// erase zeros
 	pcomment = pHeader + ACQCOM;						// restore pointer
 	CStringA ATLcomment = CStringA(pcomment, ACQCOM_LEN);	// load comment into string
-	pWFormat->csComment = ATLcomment;
-	pWFormat->csComment.TrimRight();
+	pWFormat->cs_comment = ATLcomment;
+	pWFormat->cs_comment.TrimRight();
 
 	// assume that comment is standardized and has the following fields
 	pWFormat->csStimulus		= ATLcomment.Mid( 0, 20);
@@ -128,7 +128,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	pWFormat->csConcentration.TrimRight();
 	pWFormat->csSensillum		= ATLcomment.Mid(30, 10);
 	pWFormat->csSensillum.TrimRight();
-	pWFormat->csComment.Empty();
+	pWFormat->cs_comment.Empty();
 
 	// convert acquisition time stamp (date & time) into a CTime variable	
 	char cdummy;

@@ -170,10 +170,10 @@ LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		CMDIChildWnd* pChild = pmain->MDIGetActive(&bMaximized);
 		if (!pChild) 
 			return NULL;
-		CDocument* pDoc = pChild->GetActiveDocument();
-		if (!pDoc || !pDoc->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+		CDocument* p_document = pChild->GetActiveDocument();
+		if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
 			return NULL;
-		m_pDoc = (CdbWaveDoc*)pDoc;
+		m_pDoc = (CdbWaveDoc*)p_document;
 		InitFilterList();
 		}
 		break;
@@ -243,7 +243,7 @@ void CFilterWnd::InitFilterList()
 	int i = 0;
 	pDB->m_mainTableSet.BuildAndSortIDArrays();
 
-	CString csComment;
+	CString cs_comment;
 	while (m_noCol[i] > 0)
 	{
 		int icol = m_noCol[i];
@@ -251,9 +251,9 @@ void CFilterWnd::InitFilterList()
 		m_htreeitem[i] = m_wndFilterView.InsertItem(pDB->m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
 		m_wndFilterView.SetItemData(m_htreeitem[i], m_noCol[i]);		// save table index into head of the list
 
-		csComment.Format(_T("Category %i: "), i);
-		csComment += pDB->m_desctab[icol].szDescriptor;
-		dlg.SetStatus(csComment);
+		cs_comment.Format(_T("Category %i: "), i);
+		cs_comment += pDB->m_desctab[icol].szDescriptor;
+		dlg.SetStatus(cs_comment);
 		
 		// collect data (array of unique descriptors)
 		switch (pdesc->typeLocal) 
@@ -279,8 +279,8 @@ void CFilterWnd::InitFilterList()
 		int nitems = 0;
 		for (int j = 0; j < pdesc->csElementsArray.GetSize(); j++)
 		{
-			csComment.Format(_T("Create subitem %i"), j);
-			dlg.SetStatus(csComment);
+			cs_comment.Format(_T("Create subitem %i"), j);
+			dlg.SetStatus(cs_comment);
 
 			htreeItem = m_wndFilterView.InsertItem(pdesc->csElementsArray.GetAt(j), m_htreeitem[i]);
 			bcheck = TVCS_CHECKED;

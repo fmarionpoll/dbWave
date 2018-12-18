@@ -427,20 +427,20 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 	case HINT_GETSELECTEDRECORDS:
 		{
-			auto pDoc = GetDocument();
-			pDoc->m_selectedRecords.RemoveAll();
+			auto p_document = GetDocument();
+			p_document->m_selectedRecords.RemoveAll();
 			const auto u_selected_count = m_dataListCtrl.GetSelectedCount();
 			
 			// Update all of the selected items.
 			if (u_selected_count > 0)
 			{
-				pDoc->m_selectedRecords.SetSize(u_selected_count);
+				p_document->m_selectedRecords.SetSize(u_selected_count);
 				auto n_item = -1;
 				for (UINT i=0; i < u_selected_count; i++)
 				{
 					n_item = m_dataListCtrl.GetNextItem(n_item, LVNI_SELECTED);
 					ASSERT(n_item != -1);
-					pDoc->m_selectedRecords.SetAt(i, n_item); 
+					p_document->m_selectedRecords.SetAt(i, n_item); 
 				}
 			}
 		}
@@ -448,8 +448,8 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 	case HINT_SETSELECTEDRECORDS:
 		{
-			const auto pDoc = GetDocument();
-			const UINT u_selected_count = pDoc->m_selectedRecords.GetSize();
+			const auto p_document = GetDocument();
+			const UINT u_selected_count = p_document->m_selectedRecords.GetSize();
 
 			// clear previous selection in the CListCtrl if any
 			auto item=-1;
@@ -465,7 +465,7 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			{
 				for (UINT i=0; i < u_selected_count; i++)
 				{
-					item = pDoc->m_selectedRecords.GetAt(i);
+					item = p_document->m_selectedRecords.GetAt(i);
 					m_dataListCtrl.SetItemState(item, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
 				}
 			}
@@ -580,13 +580,13 @@ void CViewdbWave::InitctrlTab()
 		const auto curr_listsize = GetDocument()->GetcurrentSpkListSize();
 		for (auto i = 0; i< curr_listsize; i++)
 		{
-			auto pSL = GetDocument()->m_pSpk->SetSpkListCurrent(i);
-			if (!pSL)
+			auto p_spike_list = GetDocument()->m_pSpk->SetSpkListCurrent(i);
+			if (!p_spike_list)
 				continue;
 			CString cs;
-			if (pSL->GetdetectWhat() != 0)
+			if (p_spike_list->GetdetectWhat() != 0)
 				continue;
-			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(pSL->GetComment()));
+			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(p_spike_list->GetComment()));
 			m_tabCtrl.InsertItem(j, cs);
 			//m_tabCtrl.SetItemData(j, i);		// save list item
 			j++;

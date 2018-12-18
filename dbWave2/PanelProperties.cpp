@@ -425,33 +425,33 @@ int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int ico
 		desc.typeLocal = pDB->m_mainTableSet.m_desc[idesctab].typeLocal;
 	
 		CMFCPropertyGridProperty* pProp;
-		CString csComment;
-		CString csTitle = pDB->m_desctab[idesctab].szDescriptor;
+		CString cs_comment;
+		CString cs_title = pDB->m_desctab[idesctab].szDescriptor;
 	
 		switch (desc.typeLocal) {
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
-			csComment = _T("Field indirect text");
-			pProp = new CMFCPropertyGridProperty(csTitle, desc.csVal, csComment, idesctab);
+			cs_comment = _T("Field indirect text");
+			pProp = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, idesctab);
 			break;
 		case FIELD_LONG:
-			csComment = _T("Field long");
-			pProp = new CMFCPropertyGridProperty(csTitle, desc.lVal, csComment, idesctab);
+			cs_comment = _T("Field long");
+			pProp = new CMFCPropertyGridProperty(cs_title, desc.lVal, cs_comment, idesctab);
 			break;
 		case FIELD_TEXT:
-			csComment = _T("Field text");
-			pProp = new CMFCPropertyGridProperty(csTitle, desc.csVal, csComment, idesctab);
+			cs_comment = _T("Field text");
+			pProp = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, idesctab);
 			break;
 		case FIELD_DATE:
 		case FIELD_DATE_HMS:
 		case FIELD_DATE_YMD:
-			csComment = _T("Field date");
-			pProp = new CMFCPropertyGridProperty(csTitle, desc.csVal, csComment, idesctab);
+			cs_comment = _T("Field date");
+			pProp = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, idesctab);
 			break;
 		default:
-			csComment = _T("Field type unknown");
-			CString csValue = csComment;
-			pProp = new CMFCPropertyGridProperty(csTitle, csValue, csComment, idesctab);
+			cs_comment = _T("Field type unknown");
+			CString csValue = cs_comment;
+			pProp = new CMFCPropertyGridProperty(cs_title, csValue, cs_comment, idesctab);
 			break;
 		}
 
@@ -548,10 +548,10 @@ LRESULT CPropertiesWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			BOOL bMaximized;
 			CMDIChildWnd* pChild = pmain->MDIGetActive(&bMaximized);
 			if (!pChild) return NULL;
-			CDocument* pDoc = pChild->GetActiveDocument();
-			if (!pDoc || !pDoc->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+			CDocument* p_document = pChild->GetActiveDocument();
+			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
 				return NULL;
-			m_pDoc = (CdbWaveDoc*) pDoc;
+			m_pDoc = (CdbWaveDoc*) p_document;
 			if (m_pDoc != m_pDocOld)
 			{
 				m_bUpdateCombos = TRUE;

@@ -403,10 +403,10 @@ void CViewData::OnEditCopy()
 			// create metafile
 			CMetaFileDC mDC;
 			CDC* pDCRef = GetDC();
-			CString csTitle = _T("dbWave\0") + m_pdatDoc->GetTitle();
-			csTitle +=_T("\0\0");
-			CRect rectBound (0, 0, 21000, 29700);  // dimensions in HIMETRIC units (in .01-millimeter increments)
-			BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rectBound, csTitle);
+			CString cs_title = _T("dbWave\0") + m_pdatDoc->GetTitle();
+			cs_title +=_T("\0\0");
+			CRect rect_bound (0, 0, 21000, 29700);  // dimensions in HIMETRIC units (in .01-millimeter increments)
+			BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rect_bound, cs_title);
 			ASSERT (hmDC != NULL);
 
 			// Draw document in metafile.
@@ -447,7 +447,7 @@ void CViewData::OnEditCopy()
 			ypxrow += lineheight;
 
 			// bars
-			CBrush* pOldBrush= (CBrush*) mDC.SelectStockObject(BLACK_BRUSH);
+			CBrush* p_old_brush= (CBrush*) mDC.SelectStockObject(BLACK_BRUSH);
 			// vertical bar
 			mDC.MoveTo(0,ypxrow);
 			int bottom = m_VDlineview.m_yRuler.GetScaleUnitPixels(rect.Height());
@@ -457,7 +457,7 @@ void CViewData::OnEditCopy()
 			int left = m_VDlineview.m_xRuler.GetScaleUnitPixels(rect.Width());
 			mDC.LineTo(left, ypxrow);
 
-			mDC.SelectObject(pOldBrush);
+			mDC.SelectObject(p_old_brush);
 			if (m_pOldFont != nullptr)
 				mDC.SelectObject(m_pOldFont);
 			m_fontPrint.DeleteObject();
@@ -714,24 +714,24 @@ void CViewData::UpdateChannelsDisplayParameters()
 
 void CViewData::SetCursorAssociatedWindows()
 {
-	int nCmdShow  = SW_HIDE;
+	int n_cmd_show  = SW_HIDE;
 	if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption ==1
 		&& m_VDlineview.GetNHZtags()>0)
-		nCmdShow = SW_SHOW;
+		n_cmd_show = SW_SHOW;
 
 	// change windows state: edit windows
-	GetDlgItem(IDC_STATIC1)->ShowWindow(nCmdShow);
-	GetDlgItem(IDC_STATIC2)->ShowWindow(nCmdShow);
-	GetDlgItem(IDC_STATIC3)->ShowWindow(nCmdShow);
-	GetDlgItem(IDC_EDIT1)->ShowWindow(nCmdShow);
-	GetDlgItem(IDC_EDIT2)->ShowWindow(nCmdShow);
-	GetDlgItem(IDC_EDIT3)->ShowWindow(nCmdShow);
+	GetDlgItem(IDC_STATIC1)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_STATIC2)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_STATIC3)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_EDIT1)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_EDIT2)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_EDIT3)->ShowWindow(n_cmd_show);
 
 	// hide other windows which occupy the same space
-	if (nCmdShow == SW_SHOW)
-		nCmdShow = SW_HIDE;
+	if (n_cmd_show == SW_SHOW)
+		n_cmd_show = SW_HIDE;
 	else
-		nCmdShow = SW_SHOW;
+		n_cmd_show = SW_SHOW;
 	// change cursors val
 	if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption ==1)
 		UpdateHZtagsVal();
@@ -1302,9 +1302,9 @@ void CViewData::ComputePrinterPageSize()
 
 	// GetPrinterDC returns a HDC so attach it
 	CDC dc;
-	HDC hDC= dlg.CreatePrinterDC();     // to delete at the end -- see doc!
-	ASSERT(hDC != NULL);
-	dc.Attach(hDC);
+	HDC h_dc= dlg.CreatePrinterDC();     // to delete at the end -- see doc!
+	ASSERT(h_dc != NULL);
+	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
 	mdPM->horzRes=dc.GetDeviceCaps(HORZRES);
@@ -1337,19 +1337,19 @@ CString CViewData::ConvertFileIndex(long l_first, long l_last)
 {
 	CString csUnit= _T(" s");								// get time,  prepare time unit
 
-	TCHAR szValue[64];										// buffer to receive ascii represent of values
-	LPTSTR pszValue = szValue;
-	float xScaleFactor;										// scale factor returned by changeunit
-	float x = m_VDlineview.ChangeUnit( (float) l_first / m_samplingRate, &csUnit, &xScaleFactor);
+	TCHAR sz_value[64];										// buffer to receive ascii represent of values
+	LPTSTR psz_value = sz_value;
+	float x_scale_factor;										// scale factor returned by changeunit
+	float x = m_VDlineview.ChangeUnit( (float) l_first / m_samplingRate, &csUnit, &x_scale_factor);
 	int fraction = (int) ((x - ((int) x)) * (float) 1000.);	// separate fractional part
-	wsprintf(pszValue, _T("time = %i.%03.3i - "), (int) x, fraction); // print value
-	CString csComment = pszValue;							// save ascii to string
+	wsprintf(psz_value, _T("time = %i.%03.3i - "), (int) x, fraction); // print value
+	CString cs_comment = psz_value;							// save ascii to string
 
-	x = l_last / (m_samplingRate * xScaleFactor);			// same operations for last interval
+	x = l_last / (m_samplingRate * x_scale_factor);			// same operations for last interval
 	fraction = (int) ((x - ((int) x)) *  (float) 1000.);
-	wsprintf(pszValue, _T("%i.%03.3i %s"), (int) x, fraction, (LPCTSTR) csUnit);
-	csComment += pszValue;
-	return csComment;
+	wsprintf(psz_value, _T("%i.%03.3i %s"), (int) x, fraction, (LPCTSTR) csUnit);
+	cs_comment += psz_value;
+	return cs_comment;
 }
 
 BOOL CViewData::GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first)
@@ -1363,13 +1363,13 @@ BOOL CViewData::GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_fi
 	else
 		GetDocument()->DBMoveFirst();
 
-	long veryLast = m_lprintFirst + m_lprintLen;
+	long very_last = m_lprintFirst + m_lprintLen;
 	if (mdPM->bEntireRecord)
-		veryLast= m_pdatDoc->GetDOCchanLength()-1;
+		very_last= m_pdatDoc->GetDOCchanLength()-1;
 
 	for (int row = 0; row <totalrows; row++)
 	{
-		if (!PrintGetNextRow(filenumber, l_first, veryLast))
+		if (!PrintGetNextRow(filenumber, l_first, very_last))
 			break;
 	}
 
@@ -1378,9 +1378,9 @@ BOOL CViewData::GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_fi
 
 CString CViewData::GetFileInfos()
 {
-	CString strComment;   					// scratch pad
-	CString Tab(_T("    "));					// use 4 spaces as tabulation character
-	CString RC(_T("\n"));						// next line
+	CString str_comment;   					// scratch pad
+	CString tab(_T("    "));					// use 4 spaces as tabulation character
+	CString rc(_T("\n"));						// next line
 
 	// document's name, date and time
 	CWaveFormat* pwaveFormat = m_pdatDoc->GetpWaveFormat();
@@ -1388,70 +1388,70 @@ CString CViewData::GetFileInfos()
 	{
 		if (mdPM->bDocName)					// print file name
 		{
-			strComment += GetDocument()->DBGetCurrentDatFileName() + Tab;
+			str_comment += GetDocument()->DBGetCurrentDatFileName() + tab;
 		}
 		if (mdPM->bAcqDateTime)				// print data acquisition date & time
 		{
 			CString date = (pwaveFormat->acqtime).Format(_T("%#d %B %Y %X")); //("%c");
-			strComment +=  date;
+			str_comment +=  date;
 		}
-		strComment += RC;   
+		str_comment += rc;   
 	}
 
 	// document's main comment (print on multiple lines if necessary)
 	if (mdPM->bAcqComment)
-		strComment += pwaveFormat->GetComments(_T(" ")) + RC;
+		str_comment += pwaveFormat->GetComments(_T(" ")) + rc;
 
-	return strComment;
+	return str_comment;
 }       
 
 CString CViewData::PrintBars(CDC* pDC, CRect* prect)
 {
-	CString strComment;
-	CString RC(_T("\n"));
-	CString Tab(_T("     "));
+	CString str_comment;
+	CString rc(_T("\n"));
+	CString tab(_T("     "));
 
-	CBrush* pOldBrush= (CBrush*) pDC->SelectStockObject(BLACK_BRUSH);
-	TCHAR szValue[64];
-	LPTSTR lpszVal = szValue;	
+	CBrush* p_old_brush= (CBrush*) pDC->SelectStockObject(BLACK_BRUSH);
+	TCHAR sz_value[64];
+	LPTSTR lpszVal = sz_value;	
 	CString csUnit;
-	CString csComment;
-	float xScaleFactor;
-	CPoint barOrigin(-10,-10);					// origine barre à 10,10 pts de coin inf gauche rectangle
-	barOrigin.x += prect->left;
-	barOrigin.y += prect->bottom;
-	CPoint xbarEnd = barOrigin;
-	CPoint ybarEnd = barOrigin;
+	CString cs_comment;
+	float x_scale_factor;
+	CPoint bar_origin(-10,-10);					// origine barre à 10,10 pts de coin inf gauche rectangle
+	bar_origin.x += prect->left;
+	bar_origin.y += prect->bottom;
+	CPoint xbarEnd = bar_origin;
+	CPoint ybarEnd = bar_origin;
 
 	// same len ratio as displayed on viewdata
-	int horzBar = m_VDlineview.m_xRuler.GetScaleUnitPixels(m_VDlineview.Width());
-	ASSERT(horzBar > 0);
-	int vertBar = m_VDlineview.m_yRuler.GetScaleUnitPixels(m_VDlineview.Height());
-	ASSERT(vertBar > 0);
+	int horz_bar = m_VDlineview.m_xRuler.GetScaleUnitPixels(m_VDlineview.Width());
+	ASSERT(horz_bar > 0);
+	int vert_bar = m_VDlineview.m_yRuler.GetScaleUnitPixels(m_VDlineview.Height());
+	ASSERT(vert_bar > 0);
 
 	///// time abcissa ///////////////////////////	
-	csComment = ConvertFileIndex(m_VDlineview.GetDataFirst(), m_VDlineview.GetDataLast());
+	cs_comment = ConvertFileIndex(m_VDlineview.GetDataFirst(), m_VDlineview.GetDataLast());
 
 	///// horizontal time bar ///////////////////////////	
 	if (mdPM->bTimeScaleBar)           
 	{
 		// print horizontal bar
-		xbarEnd.x	+= horzBar;
-		pDC->MoveTo(barOrigin);
+		xbarEnd.x	+= horz_bar;
+		pDC->MoveTo(bar_origin);
 		pDC->LineTo(xbarEnd);
 		
 		// read text from control edit
 		CString cs;
 		cs.Format(_T(" bar= %g"), m_VDlineview.m_xRuler.GetScaleIncrement());
-		csComment += cs;
-		strComment += csComment + RC;
+		cs_comment += cs;
+		str_comment += cs_comment + rc;
 	}
 
 	///// vertical voltage bars ///////////////////////////	
 	if (mdPM->bVoltageScaleBar)
 	{
-		ybarEnd.y -= vertBar;
-		pDC->MoveTo(barOrigin);
+		ybarEnd.y -= vert_bar;
+		pDC->MoveTo(bar_origin);
 		pDC->LineTo(ybarEnd);
 	}
 
@@ -1463,12 +1463,12 @@ CString CViewData::PrintBars(CDC* pDC, CRect* prect)
 		{
 			// boucler sur les commentaires de chan n a chan 0...		
 			wsprintf(lpszVal, _T("chan#%i "), ichan);	// channel number
-			csComment = lpszVal;
+			cs_comment = lpszVal;
 			if (mdPM->bVoltageScaleBar)				// bar scale value
 			{
 				csUnit = _T(" V");						// provisional unit				
 				float z= 	(float) m_VDlineview.Height()/5 * m_VDlineview.GetChanlistVoltsperPixel(ichan);
-				float x = m_VDlineview.ChangeUnit(z, &csUnit, &xScaleFactor); // convert
+				float x = m_VDlineview.ChangeUnit(z, &csUnit, &x_scale_factor); // convert
 
 				// approximate
 				int j = (int) x;					// get int val				
@@ -1481,21 +1481,21 @@ CString CViewData::PrintBars(CDC* pDC, CRect* prect)
 					j = k;
 				if (k >= 1000)
 				{
-					z = (float) k * xScaleFactor;
-					j = (int) m_VDlineview.ChangeUnit(z, &csUnit, &xScaleFactor); // convert
+					z = (float) k * x_scale_factor;
+					j = (int) m_VDlineview.ChangeUnit(z, &csUnit, &x_scale_factor); // convert
 				}
-				wsprintf(szValue, _T("bar = %i %s "), j, (LPCTSTR) csUnit);	// store val into comment
-				csComment += szValue;
+				wsprintf(sz_value, _T("bar = %i %s "), j, (LPCTSTR) csUnit);	// store val into comment
+				cs_comment += sz_value;
 			}
-			strComment += csComment;
+			str_comment += cs_comment;
 
 			// print chan comment 
 			if (mdPM->bChansComment)
 			{
-				strComment += Tab;
-				strComment += m_VDlineview.GetChanlistComment(ichan);
+				str_comment += tab;
+				str_comment += m_VDlineview.GetChanlistComment(ichan);
 			}
-			strComment += RC;
+			str_comment += rc;
 
 			// print amplifiers settings (gain & filter), next line			
 			if (mdPM->bChanSettings)
@@ -1506,13 +1506,13 @@ CString CViewData::PrintBars(CDC* pDC, CRect* prect)
 				CWaveChan* pChan = pchanArray->get_p_channel(channb);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), 
 					(LPCTSTR) pChan->am_csheadstage, pChan->am_gaintotal, (LPCTSTR) pChan->am_csInputpos, pChan->am_lowpass);
-				strComment += cs;
-				strComment += RC;
+				str_comment += cs;
+				str_comment += rc;
 			}
 		}
 	}	
-	pDC->SelectObject(pOldBrush);
-	return strComment;
+	pDC->SelectObject(p_old_brush);
+	return str_comment;
 }
 
 BOOL CViewData::OnPreparePrinting(CPrintInfo* pInfo)
@@ -1553,8 +1553,8 @@ BOOL CViewData::OnPreparePrinting(CPrintInfo* pInfo)
 int	CViewData::PrintGetNPages()
 {
 	// how many rows per page?
-	int sizeRow=mdPM->HeightDoc + mdPM->heightSeparator;
-	m_nbrowsperpage = m_printRect.Height()/sizeRow;
+	int size_row=mdPM->HeightDoc + mdPM->heightSeparator;
+	m_nbrowsperpage = m_printRect.Height()/size_row;
 	if (m_nbrowsperpage == 0)					// prevent zero pages
 		m_nbrowsperpage = 1;
 
@@ -1658,13 +1658,13 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	// --------------------- load data corresponding to the first row of current page	
 	int filenumber;    								// file number and file index
 	long l_first;									// index first data point / first file
-	long veryLast= m_lprintFirst + m_lprintLen;		// index last data point / current file
+	long very_last= m_lprintFirst + m_lprintLen;		// index last data point / current file
 	int curpage=pInfo->m_nCurPage;					// get current page number
 	GetFileSeriesIndexFromPage(curpage, filenumber, l_first);
 	if (l_first < GetDocument()->DBGetDataLen()-1)
 		UpdateFileParameters();
 	if (mdPM->bEntireRecord)
-		veryLast = GetDocument()->DBGetDataLen()-1;
+		very_last = GetDocument()->DBGetDataLen()-1;
 
 	SCOPESTRUCT oldparms;
 	oldparms = m_VDlineview.m_parms;
@@ -1672,7 +1672,7 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	m_VDlineview.m_parms.bClipRect	= mdPM->bClipRect;
 
 	// loop through all files	--------------------------------------------------------
-	int oldDC = pDC->SaveDC();						// save DC
+	int old_dc = pDC->SaveDC();						// save DC
 	for (int i = 0; i < m_nbrowsperpage; i++)
 	{
 		// first : set rectangle where data will be printed
@@ -1685,8 +1685,8 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		long l_last = l_first + m_lprintLen;			// compute last pt to load
 		if (l_first < GetDocument()->DBGetDataLen()-1)
 		{
-			if (l_last > veryLast)					// check end across file length
-				l_last = veryLast;
+			if (l_last > very_last)					// check end across file length
+				l_last = very_last;
 			m_VDlineview.GetDataFromDoc(l_first, l_last);	// load data from file
 			UpdateChannelsDisplayParameters();
 			m_VDlineview.Print(pDC, &RWhere);			// print data	
@@ -1701,28 +1701,28 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		pDC->SetViewportOrg(0, 0);				// org = 0,0        
 
 		// print comments according to row within file
-		CString csComment;
+		CString cs_comment;
 		if (l_first == m_lprintFirst)			// first row = full comment
 		{
-			csComment += GetFileInfos();
-			csComment += PrintBars(pDC, &CommentRect);// bars and bar legends
+			cs_comment += GetFileInfos();
+			cs_comment += PrintBars(pDC, &CommentRect);// bars and bar legends
 		}
 		else									// other rows: time intervals only
-			csComment = ConvertFileIndex(m_VDlineview.GetDataFirst(), m_VDlineview.GetDataLast());
+			cs_comment = ConvertFileIndex(m_VDlineview.GetDataFirst(), m_VDlineview.GetDataLast());
 
-		// print comments stored into csComment		
+		// print comments stored into cs_comment		
 		CommentRect.OffsetRect(mdPM->textseparator + CommentRect.Width(), 0);
 		CommentRect.right = m_printRect.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
 		UINT uiFlag = pDC->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
-		pDC->DrawText(csComment, csComment.GetLength(), CommentRect, 
+		pDC->DrawText(cs_comment, cs_comment.GetLength(), CommentRect, 
 				DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK);
 		pDC->SetTextAlign(uiFlag);
 
 		// update file parameters for next row --------------------------------------------
 		int ifile = filenumber;
-		if (!PrintGetNextRow(filenumber, l_first, veryLast))
+		if (!PrintGetNextRow(filenumber, l_first, very_last))
 		{
 			i = m_nbrowsperpage;
 			break;
@@ -1730,7 +1730,7 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		if (ifile != filenumber)
 			UpdateFileParameters(FALSE);
 	}
-	pDC->RestoreDC(oldDC);					// restore Display context	
+	pDC->RestoreDC(old_dc);					// restore Display context	
 
 	// end of file loop : restore initial conditions
 	if (m_pOldFont != nullptr)
@@ -1738,7 +1738,7 @@ void CViewData::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	m_VDlineview.m_parms = oldparms;
 }
 
-BOOL CViewData::PrintGetNextRow(int &filenumber, long &l_first, long &veryLast)
+BOOL CViewData::PrintGetNextRow(int &filenumber, long &l_first, long &very_last)
 {
 	if (!mdPM->bMultirowDisplay || !mdPM->bEntireRecord)
 	{
@@ -1750,20 +1750,20 @@ BOOL CViewData::PrintGetNextRow(int &filenumber, long &l_first, long &veryLast)
 		if (l_first < GetDocument()->DBGetDataLen()-1)
 		{
 			if (mdPM->bEntireRecord)
-				veryLast=GetDocument()->DBGetDataLen()-1;
+				very_last=GetDocument()->DBGetDataLen()-1;
 		}
 	}
 	else
 	{
 		l_first += m_lprintLen;
-		if (l_first >= veryLast)
+		if (l_first >= very_last)
 		{
 			filenumber++;						// next index
 			if  (filenumber >= m_nfiles)		// last file ??
 				return FALSE;
 
 			GetDocument()->DBMoveNext();
-			veryLast = GetDocument()->DBGetDataLen()-1;
+			very_last = GetDocument()->DBGetDataLen()-1;
 			l_first = m_lprintFirst;
 		}
 	}

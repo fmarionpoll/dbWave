@@ -66,10 +66,10 @@ END_MESSAGE_MAP()
 // --------------------------------------------------------------------------
 void CSpikeEditDlg::LoadSpikeParms()
 {
-	CSpikeElemt* pS = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms
-	m_spikeclass = pS->GetSpikeClass();		// class number
+	CSpikeElemt* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms
+	m_spikeclass = p_spike_element->GetSpikeClass();		// class number
 	m_bartefact = (m_spikeclass <0);
-	m_iitime = pS->GetSpikeTime();
+	m_iitime = p_spike_element->GetSpikeTime();
 		
 	m_spkForm.SelectSpikeShape(m_spikeno);
 
@@ -353,8 +353,8 @@ void CSpikeEditDlg::LoadSourceData()
 	if (m_dbDoc == nullptr)
 		return;
 
-	const auto pS = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms	
-	const auto l_first = pS->GetSpikeTime() - m_spkpretrig;	// change selection
+	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms	
+	const auto l_first = p_spike_element->GetSpikeTime() - m_spkpretrig;	// change selection
 	m_DWintervals.SetAt(3, l_first);						// store interval
 	const auto l_last = l_first + m_spklen;						// end interval
 	m_DWintervals.SetAt(4, l_last);						// store
@@ -370,17 +370,17 @@ void CSpikeEditDlg::LoadSourceData()
 		l_v_first = l_v_last - m_viewdatalen+1;
 	}
 	// get data from doc
-	m_spikeChan = pS->GetSpikeChannel();
+	m_spikeChan = p_spike_element->GetSpikeChannel();
 	m_sourceView.SetChanlistSourceChan(0, m_spikeChan);
 	m_sourceView.GetDataFromDoc(l_v_first, l_v_last);	// load data from file
 
 	// adjust offset (center spike) : use initial offset from spike	
-	m_sourceView.SetChanlistYzero(0, m_yzero+pS->GetSpikeAmplitudeOffset());
+	m_sourceView.SetChanlistYzero(0, m_yzero+p_spike_element->GetSpikeAmplitudeOffset());
 	m_sourceView.SetChanlistYextent(0, m_yextent);
 
 	if (m_pSpkList->GetcompensateBaseline())
 	{
-		m_sourceView.SetChanlistYzero(1,m_yzero+pS->GetSpikeAmplitudeOffset());
+		m_sourceView.SetChanlistYzero(1,m_yzero+p_spike_element->GetSpikeAmplitudeOffset());
 		m_sourceView.SetChanlistYextent(1, m_yextent);
 	}
 	m_sourceView.Invalidate();

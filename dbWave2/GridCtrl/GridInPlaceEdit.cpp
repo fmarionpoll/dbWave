@@ -38,7 +38,7 @@
 //         26 Jul 1998  Removed the ES_MULTILINE style - that fixed a few probs!
 //          6 Aug 1998  Added nID to the constructor param list
 //          6 Sep 1998  Space no longer clears selection when starting edit (Franco Bez)
-//         10 Apr 1999  Enter, Tab and Esc key prob fixed (Koay Kah Hoe)
+//         10 Apr 1999  Enter, tab and Esc key prob fixed (Koay Kah Hoe)
 //                      Workaround for bizzare "shrinking window" problem in CE
 //
 /////////////////////////////////////////////////////////////////////////////

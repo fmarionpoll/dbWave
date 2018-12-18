@@ -286,14 +286,14 @@ void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand) 
 {
 	BOOL flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	CdbWaveDoc* pDoc = GetDocument();
-	if (pDoc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+	CdbWaveDoc* p_document = GetDocument();
+	if (p_document->DBGetCurrentSpkFileName(TRUE).IsEmpty())
 	{
 		((CChildFrame*)GetParent())->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 		return false;
 	}
 
-	pDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	if (!m_pvdS->ballfiles)
 		OnDisplay();
 	SelectSpkList(GetDocument()->GetcurrentSpkListIndex(), TRUE);
@@ -595,16 +595,16 @@ void CViewSpikeHist::OnDraw(CDC* pDC)
 
 // -------------------------------------------------------------
 
-void CViewSpikeHist::GetFileInfos(CString &strComment)
+void CViewSpikeHist::GetFileInfos(CString &str_comment)
 {
 	if (m_nfiles==1)
 	{
-		CString Tab("    ");			// use 4 spaces as tabulation character
-		CString RC("\n");				// next line
-		strComment += "Title:";
+		CString tab("    ");			// use 4 spaces as tabulation character
+		CString rc("\n");				// next line
+		str_comment += "Title:";
 		m_pSpkDoc = GetDocument()->m_pSpk;
-		//strComment += m_pSpkDoc->GetAcqComment();
-		strComment += RC;
+		//str_comment += m_pSpkDoc->GetAcqComment();
+		str_comment += rc;
 		if (m_bPrint)				// print document's infos
 		{
 			if (mdPM->bDocName || mdPM->bAcqDateTime)// print doc infos?
@@ -612,14 +612,14 @@ void CViewSpikeHist::GetFileInfos(CString &strComment)
 				if (mdPM->bDocName)					// print file name
 				{
 					CString filename = GetDocument()->DBGetCurrentSpkFileName(FALSE);
-					strComment += filename + Tab;
+					str_comment += filename + tab;
 				}
 				if (mdPM->bAcqDateTime)				// print data acquisition date & time
 				{
 					CString date = (m_pSpkDoc->GetAcqTime()).Format("%#d %m %Y %X"); //("%c");
-					strComment +=  date;
+					str_comment +=  date;
 				}
-				strComment += RC;
+				str_comment += rc;
 			}
 		}		
 	}
@@ -872,18 +872,18 @@ void CViewSpikeHist::OnEditCopy()
 	CMetaFileDC mDC;
 	
 	// size of the window
-	CRect rectBound, rect;
+	CRect rect_bound, rect;
 	CWnd* pWnd= GetDlgItem(IDC_STATIC12);	// get pointer to display static control
 	pWnd->GetClientRect(&rect);	// get the final rect
-	rectBound = rect;
-	rectBound.right *= 32;		// HIMETRIC UNIT (0.01 mm increments)
-	rectBound.bottom *= 30;		// HIMETRIC UNIT (0.01 mm increments)
+	rect_bound = rect;
+	rect_bound.right *= 32;		// HIMETRIC UNIT (0.01 mm increments)
+	rect_bound.bottom *= 30;		// HIMETRIC UNIT (0.01 mm increments)
 
 	// DC for output and objects
 	CDC* pDCRef= pWnd->GetDC();
-	CString csTitle = _T("dbWave\0") + (GetDocument())->GetTitle();
-	csTitle += _T("\0\0");
-	BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rectBound, csTitle);
+	CString cs_title = _T("dbWave\0") + (GetDocument())->GetTitle();
+	cs_title += _T("\0\0");
+	BOOL hmDC = mDC.CreateEnhanced(pDCRef, nullptr, &rect_bound, cs_title);
 	ASSERT (hmDC != NULL);
 
 	// Draw document in metafile.
@@ -947,17 +947,17 @@ BOOL CViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 		CPrintDialog dlg(FALSE); // borrowed from VC++ sample\drawcli\drawdoc.cpp
 		VERIFY(AfxGetApp()->GetPrinterDeviceDefaults(&dlg.m_pd));
 		CDC dc;					// GetPrinterDC returns a HDC so attach it
-		HDC hDC= dlg.CreatePrinterDC();
-		ASSERT(hDC != NULL);
-		dc.Attach(hDC);
+		HDC h_dc= dlg.CreatePrinterDC();
+		ASSERT(h_dc != NULL);
+		dc.Attach(h_dc);
 		// Get the size of the page in pixels
 		mdPM->horzRes=dc.GetDeviceCaps(HORZRES);
 		mdPM->vertRes=dc.GetDeviceCaps(VERTRES);
 	}
 
 	// how many rows per page?
-	int sizeRow = mdPM->HeightDoc + mdPM->heightSeparator;
-	int nbrowsperpage = (mdPM->vertRes - 2*mdPM->topPageMargin) / sizeRow;
+	int size_row = mdPM->HeightDoc + mdPM->heightSeparator;
+	int nbrowsperpage = (mdPM->vertRes - 2*mdPM->topPageMargin) / size_row;
 	int nfiles = 1;
 	if (m_nfiles == 1)
 		nfiles = GetDocument()->DBGetNRecords();
@@ -1023,8 +1023,8 @@ void CViewSpikeHist::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	// prepare file loop
 	CdbWaveDoc* p_dbwave_doc = GetDocument();
 	int nfiles = p_dbwave_doc->DBGetNRecords();
-	int sizeRow=mdPM->HeightDoc + mdPM->heightSeparator;		// size of one row
-	int nbrowsperpage = pInfo->m_rectDraw.Height()/sizeRow;		// nb of rows per page
+	int size_row=mdPM->HeightDoc + mdPM->heightSeparator;		// size of one row
+	int nbrowsperpage = pInfo->m_rectDraw.Height()/size_row;		// nb of rows per page
 	if (nbrowsperpage == 0)
 		nbrowsperpage = 1;
 	int file1 = (pInfo->m_nCurPage-1)*nbrowsperpage;		// index first file
@@ -1583,15 +1583,15 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 
 	// output legends
 	int line=0;							// line nb (depend on title)
-	CString strComment;
-	GetFileInfos(strComment);			// title
+	CString str_comment;
+	GetFileInfos(str_comment);			// title
 
 	// histogram type and bin value
 	m_xfirst = m_timefirst;				// abcissa first
 	m_xlast = m_timelast;				// abcissa last
-	strComment += _T("Dot Display");		// Dot display
+	str_comment += _T("Dot Display");		// Dot display
 	UINT uiFlag = pDC->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
-	line = pDC->DrawText(strComment, strComment.GetLength(), commentRect, 
+	line = pDC->DrawText(str_comment, str_comment.GetLength(), commentRect, 
 			DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK);
 	pDC->SetTextAlign(uiFlag);
 	line = line / tm.tmHeight;
@@ -1851,8 +1851,8 @@ void CViewSpikeHist::DisplayHistogram(CDC* pDC, CRect* pRect)
 		commentRect.top -= tm.tmHeight* 2; // + tm.tmDescent;
 	
 	CSize left;						// store extent of a given char
-	CString strComment;   			// scratch pad
-	GetFileInfos(strComment);		// file comments
+	CString str_comment;   			// scratch pad
+	GetFileInfos(str_comment);		// file comments
 
 	// histogram type and bin value
 	float divisor=1.f;					// factor to normalize histograms
@@ -1862,19 +1862,19 @@ void CViewSpikeHist::DisplayHistogram(CDC* pDC, CRect* pRect)
 	switch(m_bhistType)
 	{
 	case 0:	// PSTH
-		strComment += _T("PSTH (");		 // PSTH
+		str_comment += _T("PSTH (");		 // PSTH
 		divisor = m_nPSTH * m_timebinms/t1000; // divide by the size of the bin
 		binms = m_timebinms;
 		break;
 	case 1:	// ISI
-		strComment += _T("ISI (");		// ISI
+		str_comment += _T("ISI (");		// ISI
 		divisor = m_timelast - m_timefirst;
 		m_xfirst = 0;
 		m_xlast = m_binISIms/t1000 * m_nbinsISI;
 		binms = m_binISIms;
 		break;
 	case 2:	// AUTOCORR
-		strComment += _T("AUTOCORR (");	
+		str_comment += _T("AUTOCORR (");	
 		divisor = m_timelast - m_timefirst;
 		m_xfirst = - m_binISIms/t1000 * m_nbinsISI/2;
 		m_xlast = -m_xfirst;
@@ -1885,12 +1885,12 @@ void CViewSpikeHist::DisplayHistogram(CDC* pDC, CRect* pRect)
 	}	
 	CString csT2;
 	csT2.Format(_T("bin:%1.1f ms)"), binms);		// bin size (ms)
-	strComment += csT2;
+	str_comment += csT2;
 
 	// display title (on 2 lines)
 	UINT uiFlag = pDC->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
-	pDC->DrawText(strComment, 
-			strComment.GetLength(), 
+	pDC->DrawText(str_comment, 
+			str_comment.GetLength(), 
 			commentRect, 
 			DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK);
 	pDC->SetTextAlign(uiFlag);
@@ -2098,12 +2098,12 @@ void CViewSpikeHist::DisplayPSTHAutoc(CDC* pDC, CRect* pRect)
 	else
 		commentRect.top -= tm.tmHeight* 2;
 
-	CString strComment;   			// scratch pad
-	GetFileInfos(strComment);		// file comments
-	strComment += _T("Peristimulus-Autocorrelation");
+	CString str_comment;   			// scratch pad
+	GetFileInfos(str_comment);		// file comments
+	str_comment += _T("Peristimulus-Autocorrelation");
 	UINT uiFlag = pDC->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
-	pDC->DrawText(strComment, 
-			strComment.GetLength(), 
+	pDC->DrawText(str_comment, 
+			str_comment.GetLength(), 
 			commentRect, 
 			DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK);
 	pDC->SetTextAlign(uiFlag);
@@ -2346,11 +2346,11 @@ void CViewSpikeHist::SelectSpkList(int icur, BOOL bRefreshInterface)
 		int j = 0;
 		for (int i = 0; i< m_pSpkDoc->GetSpkListSize(); i++)
 		{
-			CSpikeList* pSL = m_pSpkDoc->SetSpkListCurrent(i);
+			CSpikeList* p_spike_list = m_pSpkDoc->SetSpkListCurrent(i);
 			CString cs;
-			if (pSL->GetdetectWhat() != 0)
+			if (p_spike_list->GetdetectWhat() != 0)
 				continue;
-			cs.Format(_T("#%i %s"), i, (LPCTSTR) pSL->GetComment());
+			cs.Format(_T("#%i %s"), i, (LPCTSTR) p_spike_list->GetComment());
 			m_tabCtrl.InsertItem(j, cs);
 			j++;
 		}

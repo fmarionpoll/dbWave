@@ -103,7 +103,7 @@ void CPrintMarginsDlg::SketchPrinterPage()
 {	
 	CClientDC dc(this);
 
-	CBrush* pOldBrush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
+	CBrush* p_old_brush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
 	CPen*   pOldPen = (CPen*) dc.SelectStockObject(BLACK_PEN);
 
 	CWnd* pFWnd = GetDlgItem(IDC_RECT1);
@@ -116,7 +116,7 @@ void CPrintMarginsDlg::OnPaint()
 {
 	CPaintDC dc(this); 					// device context for painting
 
-	CBrush* pOldBrush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
+	CBrush* p_old_brush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
 	CPen*   pOldPen = (CPen*) dc.SelectStockObject(BLACK_PEN);
 
 	COLORREF pagebackground = RGB(192,192,192);
@@ -226,9 +226,9 @@ void CPrintMarginsDlg::GetPageSize()
 
 	// GetPrinterDC returns a HDC so attach it
 	CDC dc;
-	HDC hDC= dlg.CreatePrinterDC();     // to delete at the end -- see doc!	
-	ASSERT(hDC != NULL);
-	dc.Attach(hDC);
+	HDC h_dc= dlg.CreatePrinterDC();     // to delete at the end -- see doc!	
+	ASSERT(h_dc != NULL);
+	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
 	mdPM->horzRes=dc.GetDeviceCaps(HORZRES);

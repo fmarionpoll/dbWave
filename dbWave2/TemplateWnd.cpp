@@ -61,9 +61,9 @@ void CTemplateWnd::Serialize(CArchive& ar)
 		ar << m_globalstd;	// 1
 		ar << m_power;		// 2
 			
-		mytype*	pS = m_pSumArray;
-		for (int i=0; i< m_tpllen * 2; i++, pS++)
-			ar << *pS;
+		mytype*	p_spike_element = m_pSumArray;
+		for (int i=0; i< m_tpllen * 2; i++, p_spike_element++)
+			ar << *p_spike_element;
 	} 
 	else
 	{
@@ -89,9 +89,9 @@ void CTemplateWnd::Serialize(CArchive& ar)
 		ar >> m_globalstd;	// 1
 		ar >> m_power;		// 2
 	
-		mytype*	pS = m_pSumArray;
-		for (int i=0; i< m_tpllen * 2; i++, pS++)
-			ar >> *pS;
+		mytype*	p_spike_element = m_pSumArray;
+		for (int i=0; i< m_tpllen * 2; i++, p_spike_element++)
+			ar >> *p_spike_element;
 	}
 }
 

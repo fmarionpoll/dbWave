@@ -64,7 +64,7 @@ void CFormatHistogramDlg::OnPaint()
 {
 	CRect rect;							// rect variable
 	CPaintDC dc(this); 					// device context for painting
-	CBrush* pOldBrush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
+	CBrush* p_old_brush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
 	CPen*   pOldPen = (CPen*) dc.SelectStockObject(NULL_PEN);
 
 	// erase background

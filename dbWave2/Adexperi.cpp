@@ -160,7 +160,7 @@ void ADExperimentDlg::OnOK()
 		m_coSex.GetWindowText(				m_pwaveFormat->csSex);
 		m_coOperator.GetWindowText(			m_pwaveFormat->csOperator);
 		m_coInsect.GetWindowText(			m_pwaveFormat->csInsectname);
-		m_coExpt.GetWindowText(				m_pwaveFormat->csComment);
+		m_coExpt.GetWindowText(				m_pwaveFormat->cs_comment);
 
 		// save data into commons
 		m_pADC_options->icsA_concentration = SaveList(&m_coConcentration, &(m_pADC_options->csA_concentration));
@@ -248,7 +248,7 @@ BOOL ADExperimentDlg::OnInitDialog()
 		m_coSex.SetWindowText			(m_pwaveFormat->csSex);
 		m_coOperator.SetWindowText		(m_pwaveFormat->csOperator);
 		m_coInsect.SetWindowText		(m_pwaveFormat->csInsectname);
-		m_coExpt.SetWindowText			(m_pwaveFormat->csComment);
+		m_coExpt.SetWindowText			(m_pwaveFormat->cs_comment);
 
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_HIDE);

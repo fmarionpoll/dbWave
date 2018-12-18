@@ -78,7 +78,7 @@ public:
 	inline int	GetHitSpike() const {return m_hitspk;}
 	inline int	GetSelectedSpike() const {return m_selectedspike;}
 
-	inline void	DisplayAllFiles(BOOL bON, CdbWaveDoc* pDoc) { m_ballFiles = bON; p_doc_ = pDoc; }
+	inline void	DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_doc_ = p_document; }
 
 public:
 	void 		Print(CDC* pDC, CRect* rect);

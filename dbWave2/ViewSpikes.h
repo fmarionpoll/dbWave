@@ -186,8 +186,8 @@ protected:
 	afx_msg void OnRecordShiftright();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult) ;
+	//afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
+	//afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult) ;
 	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
 	CTabCtrl m_tabCtrl;

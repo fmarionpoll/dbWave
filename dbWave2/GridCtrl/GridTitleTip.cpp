@@ -199,12 +199,12 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 		if (crBackClr != CLR_DEFAULT)
 		{
 			CBrush backBrush(crBackClr);
-			CBrush* pOldBrush = dc.SelectObject(&backBrush);
+			CBrush* p_old_brush = dc.SelectObject(&backBrush);
 			CRect rect;
 			dc.GetClipBox(&rect);     // Erase the area needed 
 
 			dc.PatBlt(rect.left, rect.top, rect.Width(), rect.Height(),  PATCOPY);
-			dc.SelectObject(pOldBrush);
+			dc.SelectObject(p_old_brush);
 		}
 		// Set color
 		if (crTextClr != CLR_DEFAULT)//FNA

@@ -387,9 +387,9 @@ void CEditStimArrayDlg::OnBnClickedExport()
 	CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();
 
 	CMultiDocTemplate* pTempl = p_app->m_pNoteViewTemplate;
-	CDocument* pDoc = pTempl->OpenDocumentFile(nullptr);
-	POSITION pos = pDoc->GetFirstViewPosition();
-	CRichEditView* p_view = (CRichEditView*)pDoc->GetNextView(pos);
+	CDocument* p_document = pTempl->OpenDocumentFile(nullptr);
+	POSITION pos = p_document->GetFirstViewPosition();
+	CRichEditView* p_view = (CRichEditView*)p_document->GetNextView(pos);
 	CRichEditCtrl& pEdit = p_view->GetRichEditCtrl();
 	pEdit.SetWindowText(csBuffer);		// copy content of window into CString
 }

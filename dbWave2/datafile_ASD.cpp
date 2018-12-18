@@ -138,11 +138,11 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	ASSERT(wType == DT_ASCIITEXT);
 
 	// read comment
-	CString csComment;							// and now text comment
+	CString cs_comment;							// and now text comment
 	do
 	{
 		Read(&ch, sizeof(char));
-		if (ch != 0) csComment += ch;
+		if (ch != 0) cs_comment += ch;
 	} while (ch != 0);
 
 	Seek(lOffset1, CFile::begin);	// position pointer / beginning data
@@ -186,11 +186,11 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	// ---------------- ASD -- capture date and time
 
-	int strlen = csComment.GetLength();
+	int strlen = cs_comment.GetLength();
 	int ichar1 = 12;
 
 	// month
-	CString dummy = csComment.Mid(ichar1, 3);
+	CString dummy = cs_comment.Mid(ichar1, 3);
 	CString csmonth[] = 
 	{ 
 		_T("Jan"), _T("Feb"), _T("Mar"), _T("Apr"), _T("May"), _T("Jun"),
@@ -207,18 +207,18 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	// day
 	ichar1 += 4;
-	dummy = csComment.Mid(ichar1, 2);
+	dummy = cs_comment.Mid(ichar1, 2);
 	int iday = _ttoi(dummy);
 
 	// time
 	ichar1 += 3;	
-	int ihour = _ttoi(csComment.Mid(ichar1, 2));
+	int ihour = _ttoi(cs_comment.Mid(ichar1, 2));
 	ichar1 += 3;
-	int imin =  _ttoi(csComment.Mid(ichar1, 2));
+	int imin =  _ttoi(cs_comment.Mid(ichar1, 2));
 	ichar1 += 3;
-	int isec =  _ttoi(csComment.Mid(ichar1, 2));
+	int isec =  _ttoi(cs_comment.Mid(ichar1, 2));
 	ichar1 += 3;
-	int iyear = _ttoi(csComment.Mid(ichar1, 4));
+	int iyear = _ttoi(cs_comment.Mid(ichar1, 4));
 
 	pWFormat->acqtime = CTime(iyear, imonth, iday, ihour, imin, isec);
 
@@ -228,18 +228,18 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	// stimulus -> Uma 0.05g, 10% EtOH, 20mM NaCl
 
 	char od = 0xd;	
-	ichar1 = csComment.Find(_T("Pretrigger"));
-	ichar1 = csComment.Find(od, ichar1) +2;
-	short ichar2 = csComment.Find(od, ichar1) +1;
-	pWFormat->csInsectname = csComment.Mid(ichar1, ichar2 - ichar1 -1);
+	ichar1 = cs_comment.Find(_T("Pretrigger"));
+	ichar1 = cs_comment.Find(od, ichar1) +2;
+	short ichar2 = cs_comment.Find(od, ichar1) +1;
+	pWFormat->csInsectname = cs_comment.Mid(ichar1, ichar2 - ichar1 -1);
 	
 	ichar1=  ichar2 +1;
-	ichar2 = csComment.Find(od, ichar1) +1;
-	pWFormat->csSensillum = csComment.Mid(ichar1, ichar2 - ichar1 -1);
+	ichar2 = cs_comment.Find(od, ichar1) +1;
+	pWFormat->csSensillum = cs_comment.Mid(ichar1, ichar2 - ichar1 -1);
 
-	pWFormat->csStimulus = csComment.Mid(ichar2+1, strlen -1);
+	pWFormat->csStimulus = cs_comment.Mid(ichar2+1, strlen -1);
 
-	pWFormat->csComment.Empty();
+	pWFormat->cs_comment.Empty();
 	pWFormat->csConcentration.Empty();	
 
 	return DOCTYPE_ASDSYNTECH;
