@@ -12,14 +12,12 @@
 
 IMPLEMENT_SERIAL (CSpikeShapeWnd, CScopeScreen, 1)
 
-//////////////////////////////////////////////////////////////////////////////
 BEGIN_MESSAGE_MAP(CSpikeShapeWnd, CScopeScreen)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
-//////////////////////////////////////////////////////////////////////////////
 
 CSpikeShapeWnd::CSpikeShapeWnd()
 {                                        
@@ -39,20 +37,9 @@ CSpikeShapeWnd::CSpikeShapeWnd()
 	p_spikelist_ = nullptr;
 }
 
-// ---------------------------------------------------------------------------------
-
 CSpikeShapeWnd::~CSpikeShapeWnd()
 {
 }
-
-////////////////////////////////////////////////////////////////////////////////////
-// DISPLAY SPIKES
-//
-// Display(CDC*)
-// DisplaySpike(no)
-// XORtrackLine()
-// SelectSpike(n)
-////////////////////////////////////////////////////////////////////////////////////
 
 void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 {
@@ -292,7 +279,7 @@ void CSpikeShapeWnd::DisplayFlaggedSpikes (BOOL bHighLight)
 	Invalidate();
 }
 
-int	CSpikeShapeWnd::DisplayExData(short* pData, int color)
+int	CSpikeShapeWnd::DisplayExData(short* p_data, int color)
 {
 	// prepare array
 	const auto nelements = p_spikelist_->GetSpikeLength();
@@ -307,14 +294,14 @@ int	CSpikeShapeWnd::DisplayExData(short* pData, int color)
 	PrepareDC(&dc);
 	CPen new_pen(PS_SOLID, 0, m_colorTable[color]);
 	const auto oldpen = (CPen*) dc.SelectObject(&new_pen);
-	FillPolypointOrdinates(pData);
+	FillPolypointOrdinates(p_data);
 	dc.Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 
 	dc.SelectObject(oldpen);
 	return color;
 }
 
-BOOL CSpikeShapeWnd::IsSpikeWithinRange(int spikeno)
+BOOL CSpikeShapeWnd::IsSpikeWithinRange(int spikeno) const
 {	
 	if (spikeno > p_spikelist_->GetTotalSpikes()-1)
 		return FALSE;
@@ -329,7 +316,6 @@ BOOL CSpikeShapeWnd::IsSpikeWithinRange(int spikeno)
 		return FALSE;
 	return TRUE;
 }
-
 
 int	CSpikeShapeWnd::SelectSpikeShape(int spikeno)
 {
@@ -349,14 +335,6 @@ int	CSpikeShapeWnd::SelectSpikeShape(int spikeno)
 	Invalidate();
 	return oldselected;	
 }
-
-////////////////////////////////////////////////////////////////////////////////////
-// MOUSE OPERATIONS
-// OnLButtonUp()
-// OnLButtonDown(UINT nFlags, CPoint point)
-// OnMouseMove(UINT nFlags, CPoint point)
-// ZoomData(CRect* r1, CRect* r2)
-////////////////////////////////////////////////////////////////////////////////////
 
 void CSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
@@ -525,7 +503,7 @@ void CSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
-int  CSpikeShapeWnd::DoesCursorHitCurve(CPoint point)
+int  CSpikeShapeWnd::DoesCursorHitCurve(const CPoint point) const
 {
 	auto hitspk = -1;
 	// convert device coordinates into logical coordinates
@@ -630,10 +608,6 @@ void CSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 	for (auto i = 0; i<nelements; i++, lpSource++)
 		polypoints_[i].y  = *lpSource;
 }
-
-//---------------------------------------------------------------------------
-// Print()
-//---------------------------------------------------------------------------
 
 void CSpikeShapeWnd::Print(CDC* pDC, CRect* rect)
 {

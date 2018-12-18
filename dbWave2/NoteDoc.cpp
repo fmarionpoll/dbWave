@@ -170,21 +170,21 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 
 	// make sure the correct import options are selected
 	CImportOptionsDlg dlg;
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-	dlg.m_bAllowDuplicateFiles = pApp->ivO.bImportDuplicateFiles;
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
+	dlg.m_bAllowDuplicateFiles = p_app->ivO.bImportDuplicateFiles;
 	if (IDOK == dlg.DoModal())
 	{
-		pApp->ivO.bImportDuplicateFiles = dlg.m_bAllowDuplicateFiles;
+		p_app->ivO.bImportDuplicateFiles = dlg.m_bAllowDuplicateFiles;
 	}
 
 	// open data file
 	if (csArrayfiles.GetSize() > 0)
 	{
 		CFrameWnd* pFrameWnd = (CFrameWnd*) ((CRichEditView*)m_viewList.GetHead())->GetParent();
-		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
+		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
 		// create an empty document and then create a table with the same name as the project
-		CdbWaveDoc* pdbDoc = (CdbWaveDoc*) (pApp->m_pdbWaveViewTemplate)->CreateNewDocument();
-		if (pdbDoc != nullptr) 
+		CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) (p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
+		if (p_dbwave_doc != nullptr) 
 		{
 			flag = TRUE;
 			CString dbname;
@@ -199,12 +199,12 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 			int i2 = cspathname.ReverseFind('.');
 			dbname = cspathname.Mid(i1+1, i2-i1 -1);
 
-			if (pdbDoc->OnNewDocument(dbname))	// create table
+			if (p_dbwave_doc->OnNewDocument(dbname))	// create table
 			{
-				pdbDoc->ImportDescFromFileList(csArrayfiles);
-				CFrameWnd* pWF = (pApp->m_pdbWaveViewTemplate)->CreateNewFrame(pdbDoc, nullptr);
+				p_dbwave_doc->ImportDescFromFileList(csArrayfiles);
+				CFrameWnd* pWF = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
 				ASSERT(pWF != NULL);
-				pApp->m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
+				p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
 			}
 		}
 	}

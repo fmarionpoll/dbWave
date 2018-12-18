@@ -31,7 +31,7 @@ CChanlistItem::CChanlistItem(): dl_color(0), dl_datavoltspan(0)
 	dl_datavoltspbin = static_cast<float>(20.) / dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
 	dl_databinzero = 2048;
 	dl_databinspan = 4096;
-	dl_bprint = 1; // print OK (0=no print)
+	dl_bprint = 1; 
 	dl_bHZtagsPrint = FALSE; // do not print HZ tags
 	dl_indexabcissa = 0;
 	dl_indexordinates = 0;
@@ -63,10 +63,10 @@ void CChanlistItem::InitDisplayParms(WORD new_penwidth, WORD new_color, int new_
 	dl_yzero = new_zero;
 	dl_yextent = new_yextent;
 	dl_bprint = new_drawmode;	
-	dl_datavoltspbin=(float) 20./dl_yextent;// scale factor (1 unit (0-4095) -> y volts)
+	dl_datavoltspbin=static_cast<float>(20.)/dl_yextent;
 	dl_databinzero=2048;
 	dl_databinspan=4096;	
-	dl_bHZtagsPrint = FALSE;		// do not print HZ tags
+	dl_bHZtagsPrint = FALSE;
 	dl_datavoltspan = 0.0f;
 }
 
@@ -80,8 +80,8 @@ void CChanlistItem::Serialize (CArchive &ar)
 		ar << dl_color;			// color
 		ar << dl_bprint;		// draw mode 
 		ar << dl_datavoltspbin;	// scale factor (1 unit (0-4095) -> y volts)
-		ar << dl_databinzero;		// value of zero volts
-		ar << dl_databinspan;		// nb of bins encoding values within envelope
+		ar << dl_databinzero;	// value of zero volts
+		ar << dl_databinspan;	// nb of bins encoding values within envelope
 		ar << dl_bHZtagsPrint;	// print HZ tags flag
 		ar << dl_indexabcissa;
 		ar << dl_indexordinates;
@@ -102,7 +102,7 @@ void CChanlistItem::Serialize (CArchive &ar)
 	}
 }
 
-void CChanlistItem::GetEnvelopeArrayIndexes(int& ix, int& iy)
+void CChanlistItem::GetEnvelopeArrayIndexes(int& ix, int& iy) const
 {
 	ix = dl_indexabcissa;
 	iy = dl_indexordinates;

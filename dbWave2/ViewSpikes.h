@@ -1,10 +1,8 @@
 #pragma once
 
 // ViewSpikes.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpike form view
+#include "SpikeClassListBox.h"
 
 class CViewSpikes : public CDaoRecordView
 {

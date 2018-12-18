@@ -662,16 +662,16 @@ void CdbWaveApp::OnFileOpen()
 	case 2:	// dat
 	case 3:	// spk
 		{
-			CdbWaveDoc* pdbDoc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
-			if (pdbDoc != nullptr) 
+			CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
+			if (p_dbwave_doc != nullptr) 
 			{
-				pdbDoc->SetClearMdbOnExit(TRUE);
-				if (pdbDoc->OnNewDocument())	// create table
+				p_dbwave_doc->SetClearMdbOnExit(TRUE);
+				if (p_dbwave_doc->OnNewDocument())	// create table
 				{
-					pdbDoc->ImportDescFromFileList(filenames);
-					CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(pdbDoc, nullptr);
+					p_dbwave_doc->ImportDescFromFileList(filenames);
+					CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
 					ASSERT(pWF != NULL);
-					m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
+					m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
 				}
 			}
 		}
@@ -717,29 +717,29 @@ void CdbWaveApp::OnFileNew()
 		{
 		case 1: // ---------------------------------------create notebook document
 			{
-			CNoteDoc* pdbDoc = (CNoteDoc*) m_pNoteViewTemplate->CreateNewDocument();
-			if (pdbDoc != nullptr) 
+			CNoteDoc* p_dbwave_doc = (CNoteDoc*) m_pNoteViewTemplate->CreateNewDocument();
+			if (p_dbwave_doc != nullptr) 
 				{
-					if (pdbDoc->OnNewDocument())	// create table
+					if (p_dbwave_doc->OnNewDocument())	// create table
 					{
-						CMDIFrameWnd* pWF = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(pdbDoc, nullptr);
+						CMDIFrameWnd* pWF = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
 						ASSERT(pWF != NULL);
-						m_pNoteViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
+						m_pNoteViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
 					}
 				}
 			}
 			break;
 		default: // -------------------------------------- create database document
 			{
-			CdbWaveDoc* pdbDoc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
-			if (pdbDoc != nullptr) 
+			CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
+			if (p_dbwave_doc != nullptr) 
 				{
-					pdbDoc->SetClearMdbOnExit(FALSE);				// keep file on exit
-					if (pdbDoc->OnNewDocument())					// create table
+					p_dbwave_doc->SetClearMdbOnExit(FALSE);				// keep file on exit
+					if (p_dbwave_doc->OnNewDocument())					// create table
 					{
-						CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(pdbDoc, nullptr);
+						CMDIFrameWnd* pWF = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
 						ASSERT(pWF != NULL);
-						m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, pdbDoc, TRUE);
+						m_pdbWaveViewTemplate->InitialUpdateFrame(pWF, p_dbwave_doc, TRUE);
 					}
 				}
 			}

@@ -1271,7 +1271,7 @@ LPTSTR CLineViewWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 
 // XORcurve
 // in order to move a curve vertically with the cursor, a special envelope is
-// stored within the pData array and displayed using XOR mode.
+// stored within the p_data array and displayed using XOR mode.
 // this curve has 2 times less points (median) to speed up the display
 // Although CClientDC is claimed as attached to the client area of the button
 // ("this"), moving the curve along the vertical direction will draw outside of
@@ -1296,7 +1296,7 @@ void CLineViewWnd::XORcurve()
 	p_dc->SetWindowExt (m_XORxext, m_XORyext);
 	p_dc->SetWindowOrg (0, 0);
 	
-	// display envelope store into pData using XOR mode
+	// display envelope store into p_data using XOR mode
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	p_dc->MoveTo(m_PolyPoints[0]);
 	p_dc->Polyline(&m_PolyPoints[0], m_XORnelmts);

@@ -22,7 +22,7 @@ public:
 	CEnvelope*		pEnvelopeAbcissa;		// pointer to abcissa Envelope
 	CEnvelope*		pEnvelopeOrdinates;		// pointer to ordinates	Envelope
 	CString			dl_comment;				// comment (40 chars initially)
-	void			GetEnvelopeArrayIndexes(int& x, int& y);
+	void			GetEnvelopeArrayIndexes(int& x, int& y) const;
 	void			SetEnvelopeArrays(CEnvelope* px, int x, CEnvelope* py, int y);
 
 protected:	

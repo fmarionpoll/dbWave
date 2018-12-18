@@ -364,8 +364,8 @@ void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 DB_ITEMDESC* CdbEditRecordDlg::GetItemDescriptors(int IDC)
 {
 	DB_ITEMDESC* pdesc = nullptr;
-	CdbWaveDoc* pdbDoc = m_pdbDoc;
-	CdbWdatabase* pDB = pdbDoc->m_pDB;
+	CdbWaveDoc* p_dbwave_doc = m_pdbDoc;
+	CdbWdatabase* pDB = p_dbwave_doc->m_pDB;
 	int ich= 0;
 	switch (IDC)
 	{

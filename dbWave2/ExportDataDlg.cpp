@@ -98,9 +98,9 @@ BOOL CExportDataDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// extra initialization
-	CdbWaveApp* pApp;							// handle to the instance
-	pApp = (CdbWaveApp*) AfxGetApp();			// pointer to application
-	iivO= pApp->ivO;							// copy structure / options
+	CdbWaveApp* p_app;							// handle to the instance
+	p_app = (CdbWaveApp*) AfxGetApp();			// pointer to application
+	iivO= p_app->ivO;							// copy structure / options
 
 	// update dependent controls
 	m_ComboExportas.SetCurSel(iivO.exportType); // combo-box	
@@ -174,9 +174,9 @@ void CExportDataDlg::OnOK()
 {
 	UpdateStructFromControls();
 	// copy data into awave structure
-	CdbWaveApp* pApp;					// handle to the instance
-	pApp = (CdbWaveApp*) AfxGetApp();	// pointer to application
-	pApp->ivO= iivO;					// copy structure / options	
+	CdbWaveApp* p_app;					// handle to the instance
+	p_app = (CdbWaveApp*) AfxGetApp();	// pointer to application
+	p_app->ivO= iivO;					// copy structure / options	
 	
 	CDialog::OnOK();
 }
@@ -784,9 +784,9 @@ BOOL CExportDataDlg::ExportDataAsdbWaveFile()
 	}
 
 #define LEN 16384
-	short* pData = new short[LEN];
-	ASSERT(pData != NULL);
-	short* pdat = pData;
+	short* p_data = new short[LEN];
+	ASSERT(p_data != NULL);
+	short* pdat = p_data;
 
 	int datlen = 0;
 	pwFDest->sample_count = 0;
@@ -802,14 +802,14 @@ BOOL CExportDataDlg::ExportDataAsdbWaveFile()
 			pdat++;
 			if (datlen >= LEN)
 			{
-				pDatDest->AcqDoc_DataAppend(pData, datlen*2);
+				pDatDest->AcqDoc_DataAppend(p_data, datlen*2);
 				datlen = 0;
-				pdat = pData;
+				pdat = p_data;
 			}			
 		}
 	}
 	if (datlen > 0)	// save incomplete buffer
-		pDatDest->AcqDoc_DataAppend(pData, datlen*2);
+		pDatDest->AcqDoc_DataAppend(p_data, datlen*2);
 	
 	// stop appending data, update dependent struct
 	pDatDest->AcqDoc_DataAppendStop();
@@ -818,7 +818,7 @@ BOOL CExportDataDlg::ExportDataAsdbWaveFile()
 	pDatDest->AcqCloseFile();
 
 	delete pDatDest;
-	delete [] pData;
+	delete [] p_data;
 
 	// export file description in a separate text file
 	if (iivO.bSeparateComments)

@@ -155,8 +155,8 @@ void CViewSpikes::OnActivateView( BOOL bActivate, CView* pActivateView, CView* p
 {
 	if (bActivate)
 	{
-		CMainFrame* pmF = (CMainFrame*)AfxGetMainWnd();
-		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
+		CMainFrame* p_mainframe = (CMainFrame*)AfxGetMainWnd();
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	else
 	{
@@ -169,21 +169,21 @@ void CViewSpikes::OnActivateView( BOOL bActivate, CView* pActivateView, CView* p
 			m_psC->colspikes  = m_spkClass.GetColsSpikesWidth();
 			m_psC->coltext = m_spkClass.GetColsTextWidth();
 
-			CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-			if (pApp->m_pviewspikesMemFile == nullptr)
+			CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+			if (p_app->m_pviewspikesMemFile == nullptr)
 			{
-				pApp->m_pviewspikesMemFile = new CMemFile;
-				ASSERT(pApp->m_pviewspikesMemFile != NULL);
+				p_app->m_pviewspikesMemFile = new CMemFile;
+				ASSERT(p_app->m_pviewspikesMemFile != NULL);
 			}
 
-			CArchive ar(pApp->m_pviewspikesMemFile, CArchive::store);
-			pApp->m_pviewspikesMemFile->SeekToBegin();
+			CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
+			p_app->m_pviewspikesMemFile->SeekToBegin();
 			m_sourceView.Serialize(ar);
 			ar.Close();					// close archive
 		}
 		// set bincrflagonsave
-		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-		pApp->vdS.bincrflagonsave = ((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
+		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+		p_app->vdS.bincrflagonsave = ((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -357,17 +357,17 @@ BOOL CViewSpikes::AddSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 
 	// get parameters from document
 	int nchans;									// number of data chans / source buffer
-	short* pBuf = m_pDataDoc->LoadRawDataParams(&nchans);
+	short* p_buffer = m_pDataDoc->LoadRawDataParams(&nchans);
 	int nspan = m_pDataDoc->GetTransfDataSpan(method);	// nb pts to read before transf
 
 	long iitime0 = iitime - prethreshold;
-	long lRWFirst = iitime0 ;			// first point (eventually) needed
-	long lRWLast = iitime0 + spikelen;	// last pt needed
-	if (!m_pDataDoc->LoadRawData(&lRWFirst, &lRWLast, nspan))
+	long l_read_write_first = iitime0 ;			// first point (eventually) needed
+	long l_read_write_last = iitime0 + spikelen;	// last pt needed
+	if (!m_pDataDoc->LoadRawData(&l_read_write_first, &l_read_write_last, nspan))
 		return FALSE;					// exit if error
-	//short* pData = 
-	m_pDataDoc->LoadTransfData(lRWFirst, lRWLast, method, docChan);
-	short* pDataSpike0 = m_pDataDoc->GetpTransfDataElmt(iitime0 - lRWFirst);
+	//short* p_data = 
+	m_pDataDoc->LoadTransfData(l_read_write_first, l_read_write_last, method, docChan);
+	short* pDataSpike0 = m_pDataDoc->GetpTransfDataElmt(iitime0 - l_read_write_first);
 
 	// add a new spike if no spike is found around
 	int spikeindex;
@@ -526,7 +526,7 @@ void CViewSpikes::OnEnChangeNOspike()
 
 void CViewSpikes::OnInitialUpdate()
 {
-	CdbWaveDoc* pdbDoc = GetDocument();
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
 	CDaoRecordView::OnInitialUpdate();
 	
 	// attach controls
@@ -556,10 +556,10 @@ void CViewSpikes::OnInitialUpdate()
 	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE,(WPARAM)IMAGE_ICON,(LPARAM)(HANDLE)m_hZoom);
 
 	// load global parameters
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	mdPM = &(pApp->vdP);					// viewdata options
-	mdMO = &(pApp->vdM);					// measure options
-	m_psC= &(pApp->spkC);					// get address of spike classif parms	
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+	mdPM = &(p_app->vdP);					// viewdata options
+	mdMO = &(p_app->vdM);					// measure options
+	m_psC= &(p_app->spkC);					// get address of spike classif parms	
 	m_destclass = m_psC->vdestclass;
 	m_sourceclass = m_psC->vsourceclass;
 	m_bresetzoom = m_psC->bresetzoom;
@@ -607,7 +607,7 @@ void CViewSpikes::OnInitialUpdate()
 	// init relation with document, display data, adjust parameters
 	m_sourceView.m_parms = mdPM->spkviewdata;
 	// set bincrflagonsave
-	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(pApp->vdS.bincrflagonsave);
+	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->vdS.bincrflagonsave);
 
 	UpdateFileParameters();
 	UpdateLegends(TRUE);
@@ -763,10 +763,10 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 void CViewSpikes::UpdateFileParameters()
 {
 	// init data view
-	CdbWaveDoc* pdbDoc = (CdbWaveDoc*) m_pDocument;
-	pdbDoc->DBSetCurrentSpkFileName(FALSE);
+	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) m_pDocument;
+	p_dbwave_doc->DBSetCurrentSpkFileName(FALSE);
 	BOOL flag = GetDocument()->OpenCurrentSpikeFile();
-	m_pSpkDoc = pdbDoc->m_pSpk;
+	m_pSpkDoc = p_dbwave_doc->m_pSpk;
 
 	// init spike views
 	if (!flag)
@@ -942,8 +942,8 @@ void CViewSpikes::OnFormatCentercurve()
 	{
 		// loop over all spikes of the list 
 		int nspikes = m_pSpkList->GetTotalSpikes();
-		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();		// get pointer to application
-		SPKCLASSIF* m_psC= &(pApp->spkC);					// get address of spike classif parms
+		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();		// get pointer to application
+		SPKCLASSIF* m_psC= &(p_app->spkC);					// get address of spike classif parms
 		short it1 = m_psC->ileft;
 		short it2 = m_psC->iright;		
 		for (int ispike = 0; ispike < nspikes; ispike++)
@@ -1322,15 +1322,15 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		return FALSE;
 
 	// save current state of the windows
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	if (pApp->m_pviewspikesMemFile == nullptr)
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+	if (p_app->m_pviewspikesMemFile == nullptr)
 	{
-		pApp->m_pviewspikesMemFile = new CMemFile;
-		ASSERT(pApp->m_pviewspikesMemFile != NULL);
+		p_app->m_pviewspikesMemFile = new CMemFile;
+		ASSERT(p_app->m_pviewspikesMemFile != NULL);
 	}
 
-	CArchive ar(pApp->m_pviewspikesMemFile, CArchive::store);
-	pApp->m_pviewspikesMemFile->SeekToBegin();
+	CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
+	p_app->m_pviewspikesMemFile->SeekToBegin();
 	m_sourceView.Serialize(ar);
 	//m_spkBarView.Serialize(ar);
 	//m_spkShapeView.Serialize(ar);
@@ -1358,8 +1358,8 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 
 	// make sure the number of classes per file is known
 	int nnclasses = 0;			// store sum (nclasses from file (i=ifile0, ifile1))
-	CdbWaveDoc* pdbDoc = GetDocument();
-	m_file0 = pdbDoc->DBGetCurrentRecordPosition();
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	m_file0 = p_dbwave_doc->DBGetCurrentRecordPosition();
 	ASSERT(m_file0 >= 0);
 	m_printFirst = m_file0;
 	m_printLast = m_file0;
@@ -1368,21 +1368,21 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	if (!mdPM->bPrintSelection)
 	{
 		m_printFirst = 0;
-		m_nfiles = pdbDoc->DBGetNRecords();
+		m_nfiles = p_dbwave_doc->DBGetNRecords();
 		m_printLast = m_nfiles-1;
 	}
 
 	// update the nb of classes per file selected and add this number
 	m_maxclasses = 1;
-	pdbDoc->DBSetCurrentRecordPosition(m_printFirst);
+	p_dbwave_doc->DBSetCurrentRecordPosition(m_printFirst);
 	nbrect=0;										// total nb of rows
-	for (int i = m_printFirst; i<= m_printLast; i++, pdbDoc->DBMoveNext())
+	for (int i = m_printFirst; i<= m_printLast; i++, p_dbwave_doc->DBMoveNext())
 	{		
 		// get number of classes
-		if (pdbDoc->Getnbspikeclasses() <= 0)
+		if (p_dbwave_doc->Getnbspikeclasses() <= 0)
 		{
-			pdbDoc->OpenCurrentSpikeFile();
-			m_pSpkDoc = pdbDoc->m_pSpk;
+			p_dbwave_doc->OpenCurrentSpikeFile();
+			m_pSpkDoc = p_dbwave_doc->m_pSpk;
 			m_pSpkList = m_pSpkDoc->GetSpkListCurrent();	
 			if (!m_pSpkList->IsClassListValid())	// if class list not valid:
 			{
@@ -1394,16 +1394,16 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 			if (m_pSpkList->GetTotalSpikes() > 0)
 				nclasses = m_pSpkList->GetNbclasses();
 			ASSERT(nclasses > 0);
-			pdbDoc->Setnbspikeclasses(nclasses);
+			p_dbwave_doc->Setnbspikeclasses(nclasses);
 			nnclasses += nclasses;
 		}
 
-		if (pdbDoc->Getnbspikeclasses() > m_maxclasses)
-			m_maxclasses = pdbDoc->Getnbspikeclasses();
+		if (p_dbwave_doc->Getnbspikeclasses() > m_maxclasses)
+			m_maxclasses = p_dbwave_doc->Getnbspikeclasses();
 
 		if (mdPM->bMultirowDisplay)
 		{
-			long len = pdbDoc->DBGetDataLen()-m_lprintFirst;// file length
+			long len = p_dbwave_doc->DBGetDataLen()-m_lprintFirst;// file length
 			long nrows = len/m_lprintLen;	// how many rows for this file?
 			if (len > nrows*m_lprintLen)	// remainder?
 				nrows++;
@@ -1453,7 +1453,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		pInfo->SetMaxPage(npages);
 	}
 
-	pdbDoc->DBSetCurrentRecordPosition(m_file0);	
+	p_dbwave_doc->DBSetCurrentRecordPosition(m_file0);	
 	return flag; 
 }
 
@@ -1722,11 +1722,11 @@ void CViewSpikes::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 	m_spkClass.SetTimeIntervals(m_lFirst0, m_lLast0);
 	m_spkClass.Invalidate();
 	
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	if (pApp->m_pviewspikesMemFile != nullptr)
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+	if (p_app->m_pviewspikesMemFile != nullptr)
 	{
-		CArchive ar(pApp->m_pviewspikesMemFile, CArchive::load);
-		pApp->m_pviewspikesMemFile->SeekToBegin();
+		CArchive ar(p_app->m_pviewspikesMemFile, CArchive::load);
+		p_app->m_pviewspikesMemFile->SeekToBegin();
 		m_sourceView.Serialize(ar);
 		ar.Close();					// close archive
 	}

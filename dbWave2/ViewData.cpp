@@ -168,9 +168,9 @@ void CViewData::OnInitialUpdate()
 	m_binit = TRUE;
 
 	// init relation with document, display data, adjust parameters    
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-	mdPM = &(pApp->vdP);		// viewdata options
-	mdMO = &(pApp->vdM);		// measure options
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
+	mdPM = &(p_app->vdP);		// viewdata options
+	mdMO = &(p_app->vdM);		// measure options
 	
 	// set data file
 	CDaoRecordView::OnInitialUpdate();	
@@ -277,8 +277,8 @@ void CViewData::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDea
 {
 	if (bActivate)
 	{
-		CMainFrame* pmF = (CMainFrame*)AfxGetMainWnd();
-		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
+		CMainFrame* p_mainframe = (CMainFrame*)AfxGetMainWnd();
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -558,19 +558,19 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 {
 	// load parameters from document file: none yet loaded?
 	BOOL bFirstUpdate = (m_pdatDoc == nullptr);
-	CdbWaveDoc* pdbDoc = GetDocument();
-	CString csDatFile = pdbDoc->DBGetCurrentDatFileName();
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	CString csDatFile = p_dbwave_doc->DBGetCurrentDatFileName();
 	if (m_bvalidDoc = csDatFile.IsEmpty())
 		return;
 
 	// open data file
-	if (!pdbDoc->OpenCurrentDataFile())
+	if (!p_dbwave_doc->OpenCurrentDataFile())
 	{
 		MessageBox(_T("This data file could not be opened"), _T("The file might be missing, or inaccessible..."), MB_OK);
 		m_bvalidDoc = FALSE;
 		return;
 	}
-	m_pdatDoc = pdbDoc->m_pDat;
+	m_pdatDoc = p_dbwave_doc->m_pDat;
 	m_pdatDoc->ReadDataInfos();
 	CWaveFormat* pwaveFormat = m_pdatDoc->GetpWaveFormat();
 
@@ -1268,11 +1268,11 @@ void CViewData::ADC_OnHardwareDefineexperiment()
 	
 	if (IDOK == dlg.DoModal())
 	{
-		CdbWaveDoc* pdbDoc = GetDocument();
-		long recordID = pdbDoc->DBGetCurrentRecordID();;
+		CdbWaveDoc* p_dbwave_doc = GetDocument();
+		long recordID = p_dbwave_doc->DBGetCurrentRecordID();;
 		GetDocument()->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
-		pdbDoc->DBMoveToID(recordID);
-		pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_dbwave_doc->DBMoveToID(recordID);
+		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	}
 }
 
@@ -1560,7 +1560,7 @@ int	CViewData::PrintGetNPages()
 
 	int ntotalRows;								// number of rectangles -- or nb of rows
 	int npages;									// number of pages
-	CdbWaveDoc* pdbDoc = GetDocument();
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
 
 	// compute number of rows according to bmultirow & bentirerecord flag 
 	m_lprintFirst = m_VDlineview.GetDataFirst();
@@ -1573,7 +1573,7 @@ int	CViewData::PrintGetNPages()
 	if (!mdPM->bPrintSelection)
 	{
 		ifile0 = 0;
-		m_nfiles = pdbDoc->DBGetNRecords();
+		m_nfiles = p_dbwave_doc->DBGetNRecords();
 		ifile1 = m_nfiles;
 	}
 
@@ -1585,16 +1585,16 @@ int	CViewData::PrintGetNPages()
 	else
 	{
 		ntotalRows=0;
-		pdbDoc->DBSetCurrentRecordPosition(ifile0);
-		for (int i = ifile0; i<ifile1;	i++, pdbDoc->DBMoveNext())
+		p_dbwave_doc->DBSetCurrentRecordPosition(ifile0);
+		for (int i = ifile0; i<ifile1;	i++, p_dbwave_doc->DBMoveNext())
 		{
 			// get size of document for all files
-			long len = pdbDoc->DBGetDataLen();
+			long len = p_dbwave_doc->DBGetDataLen();
 			if (len <= 0)
 			{
-				pdbDoc->OpenCurrentDataFile();
+				p_dbwave_doc->OpenCurrentDataFile();
 				len = m_pdatDoc->GetDOCchanLength();
-				pdbDoc->DBSetDataLen(len);
+				p_dbwave_doc->DBSetDataLen(len);
 			}
 			len -= m_lprintFirst;
 			long nrows = len/m_lprintLen;			// how many rows for this file?
@@ -1608,8 +1608,8 @@ int	CViewData::PrintGetNPages()
 	{
 		try 
 		{
-			pdbDoc->DBSetCurrentRecordPosition(m_file0);
-			pdbDoc->OpenCurrentDataFile();
+			p_dbwave_doc->DBSetCurrentRecordPosition(m_file0);
+			p_dbwave_doc->OpenCurrentDataFile();
 		} 
 		catch(CDaoException* e) {DisplayDaoException(e, 2); e->Delete();}
 	}

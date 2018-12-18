@@ -373,10 +373,10 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 	}
 
 	// get data file pointer and pointer to database
-	auto pdbDoc = ((CViewdbWave*) GetParent())->GetDocument();
-	if (pdbDoc == nullptr)
+	auto p_dbwave_doc = ((CViewdbWave*) GetParent())->GetDocument();
+	if (p_dbwave_doc == nullptr)
 		return;
-	const int indexcurrentfile = pdbDoc->DBGetCurrentRecordPosition();	// save current file
+	const int indexcurrentfile = p_dbwave_doc->DBGetCurrentRecordPosition();	// save current file
 
 	// which update is necessary?
 	// conditions for out of range (renew all items)
@@ -450,10 +450,10 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 
 		// create lineview and spike superposition
 		ptr->index = index+ifirst;
-		pdbDoc->DBSetCurrentRecordPosition(ptr->index);		// select the other file
-		ptr->csDatafileName = pdbDoc->DBGetCurrentDatFileName(TRUE);
-		ptr->csSpikefileName = pdbDoc->DBGetCurrentSpkFileName(TRUE);
-		auto pDB = pdbDoc->m_pDB;
+		p_dbwave_doc->DBSetCurrentRecordPosition(ptr->index);		// select the other file
+		ptr->csDatafileName = p_dbwave_doc->DBGetCurrentDatFileName(TRUE);
+		ptr->csSpikefileName = p_dbwave_doc->DBGetCurrentSpkFileName(TRUE);
+		auto pDB = p_dbwave_doc->m_pDB;
 		pDB->GetRecordItemValue(CH_IDINSECT, &desc);
 		ptr->insectID = desc.lVal;
 
@@ -474,7 +474,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 		ptr->csFlag.Format(_T("%i"), desc.lVal);
 
 		// colum: number of spike = verify that spike file is defined, if yes, load nb spikes
-		if (pdbDoc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+		if (p_dbwave_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
 			ptr->csNspk.Empty();
 		else
 		{
@@ -505,7 +505,7 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 
 	// restore document conditions
 	if (indexcurrentfile >= 0)
-		pdbDoc->DBSetCurrentRecordPosition(indexcurrentfile);
+		p_dbwave_doc->DBSetCurrentRecordPosition(indexcurrentfile);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

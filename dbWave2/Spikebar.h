@@ -59,7 +59,7 @@ public:
 	void	DisplayFlaggedSpikes(BOOL bHighlight);
 	int		SelectSpike(int spikeno);
 
-	void	SelectSpikesWithinRect(CRect* pRect, UINT nFlags);
+	void	SelectSpikesWithinRect(CRect* pRect, UINT nFlags) const;
 	BOOL	IsSpikeWithinRange(int spikeno);
 	void	CenterCurve();
 	void	MaxGain();
@@ -79,8 +79,8 @@ protected:
 	int		DoesCursorHitCurve(CPoint point);
 
 	void 	DisplayBars(CDC* pDC, CRect* rect);
-	void	HighlightOneBar(int nospike, CDC* pDC);
-	void	DisplayStim(CDC* pDC, CRect* rect);
+	void	HighlightOneBar(int nospike, CDC* pDC) const;
+	void	DisplayStim(CDC* pDC, CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

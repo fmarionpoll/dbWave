@@ -1389,7 +1389,7 @@ int CViewSpikeDetection::DetectStim1(int ichan)
 	// get parameters from document
 	auto p_dat = GetDocument()->m_pDat;
 	//int nchans;										// number of data chans / source buffer
-	//short* pBuf = pDat->LoadRawDataParams(&nchans);	// get address of reading data buffer
+	//short* p_buffer = pDat->LoadRawDataParams(&nchans);	// get address of reading data buffer
 	const auto nspan = p_dat->GetTransfDataSpan(method);	// nb pts to read before transf
 
 	// set detection mode
@@ -1605,7 +1605,7 @@ int CViewSpikeDetection::DetectMethod1(WORD schan)
 					if (max < *p_data1)		// search max
 					{
 						max = *p_data1;
-						p_data = p_data1;		// pData = "center" of spike
+						p_data = p_data1;		// p_data = "center" of spike
 						iitime = i;			// iitime = time of spike
 					}
 				}
@@ -1625,7 +1625,7 @@ int CViewSpikeDetection::DetectMethod1(WORD schan)
 					if (min > *p_data1)
 					{
 						min = *p_data1;
-						p_data = p_data1;			// pData = "center" of spike
+						p_data = p_data1;			// p_data = "center" of spike
 						iitime = i;
 					}
 				}
@@ -3126,14 +3126,14 @@ void CViewSpikeDetection::UpdateGainScroll(int iID)
 
 void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 {
-	CLineViewWnd* pView = &m_displayDetect;
+	CLineViewWnd* p_view = &m_displayDetect;
 	int ichan = m_ichanselected;
 	if (iID == IDC_SCROLLY2)
 	{
-		pView = &m_displayData;
+		p_view = &m_displayData;
 		ichan = m_ichanselected2;
 	}
-	int lSize = pView->GetChanlistYextent(ichan);
+	int lSize = p_view->GetChanlistYextent(ichan);
 
 	// get corresponding data
 	switch (nSBCode)
@@ -3151,7 +3151,7 @@ void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 	// change y extent
 	if (lSize>0 ) //&& lSize<=YEXTENT_MAX)
 	{
-		pView->SetChanlistYextent(ichan, lSize);
+		p_view->SetChanlistYextent(ichan, lSize);
 		UpdateLegends();
 	}
 	// update scrollBar
@@ -3505,7 +3505,7 @@ void CViewSpikeDetection::OnCbnSelchangeTransform2()
 	const auto totalspikes = m_pSpkListVSD->GetTotalSpikes();
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
-		// make sure that source data are loaded and get pointer to it (pData)
+		// make sure that source data are loaded and get pointer to it (p_data)
 		iitime = m_pSpkListVSD->GetSpikeTime(ispk);
 		auto l_rw_first = iitime -spkpretrig;						// first point 
 		auto l_rw_last = l_rw_first + spikelen;						// last pt needed

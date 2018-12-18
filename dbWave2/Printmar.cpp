@@ -93,8 +93,8 @@ void CPrintMarginsDlg::OnPagemargins()
 
 void CPrintMarginsDlg::OnPrintersetup()
 {
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();	// load browse parameters	
-	pApp->FilePrintSetup();
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters	
+	p_app->FilePrintSetup();
 	GetPageSize();
 	SketchPrinterPage();
 }

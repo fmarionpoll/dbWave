@@ -454,12 +454,12 @@ BOOL CTemplateWnd::tWithin(short* pSource, int* hitrate)
 	int* pMean = m_pAvg + m_xWO;
 	int* pSup = m_pMax0 + m_xWO;
 	int* pInf = m_pMin0 + m_xWO;
-	short* pData = pSource + m_xWO;
+	short* p_data = pSource + m_xWO;
 	int nwithin = 0;
 
-	for (int i=m_xWO; i< last; i++, pData++, pSup++, pInf++)
+	for (int i=m_xWO; i< last; i++, p_data++, pSup++, pInf++)
 	{
-		if (*pData <= *pSup && *pData >= *pInf)
+		if (*p_data <= *pSup && *p_data >= *pInf)
 			nwithin++;
 	}
 
@@ -481,12 +481,12 @@ double CTemplateWnd::tDist(short* pSource)
 
 	int last = m_xWE + m_xWO;
 	int* pMean = m_pAvg + m_xWO;
-	short* pData = pSource + m_xWO;
+	short* p_data = pSource + m_xWO;
 	double ii=0;
 
-	for (int i=m_xWO; i< last; i++, pData++, pMean++)	
+	for (int i=m_xWO; i< last; i++, p_data++, pMean++)	
 	{
-		ii += abs(*pMean - *pData);
+		ii += abs(*pMean - *p_data);
 	}
 	double xdist = ii/m_power;
 	return xdist;
@@ -505,15 +505,15 @@ double CTemplateWnd::tMinDist(short* pSource, int* ioffsetmin, BOOL bJitter)
 		tSetdisplayData();		// and also correct power
 
 	int jitter= (bJitter ? 2 : 0);
-	short* pData = pSource-jitter;	
-	double xdist = tDist(pData);
+	short* p_data = pSource-jitter;	
+	double xdist = tDist(p_data);
 	double xmindist = xdist;
 	*ioffsetmin = -jitter;
-	pData++;	
+	p_data++;	
 
-	for (int i=-jitter+1; i<= jitter ; i++, pData++)
+	for (int i=-jitter+1; i<= jitter ; i++, p_data++)
 	{
-		xdist = tDist(pData);
+		xdist = tDist(p_data);
 		if (xdist < xmindist)
 		{
 			xmindist = xdist;

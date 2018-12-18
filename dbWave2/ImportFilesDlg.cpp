@@ -434,8 +434,8 @@ BOOL CImportFilesDlg::GetExperimentParameters(CAcqDataDoc* pTo)
 
 	ADExperimentDlg dlg;							// create dialog box
 	dlg.m_bFilename = FALSE;						// hide path name
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	OPTIONS_ACQDATA* pacqD= &(pApp->acqD);			// pointer to data acq options 
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+	OPTIONS_ACQDATA* pacqD= &(p_app->acqD);			// pointer to data acq options 
 	dlg.m_pADC_options = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
 	// ...	

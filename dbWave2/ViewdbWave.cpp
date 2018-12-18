@@ -108,8 +108,8 @@ BOOL CViewdbWave::PreCreateWindow(CREATESTRUCT& cs)
 void CViewdbWave::OnInitialUpdate()
 {	
 	// init document and DaoRecordView
-	CdbWaveDoc* pdbDoc = GetDocument();
-	m_pSet = &pdbDoc->m_pDB->m_mainTableSet;
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	m_pSet = &p_dbwave_doc->m_pDB->m_mainTableSet;
 	CDaoRecordView::OnInitialUpdate();
 	
 	// subclass display controls and attach them to stretch CFolderview
@@ -124,8 +124,8 @@ void CViewdbWave::OnInitialUpdate()
 	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 	m_binit = TRUE;
 
-	auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp()); 
-	mdPM = &pApp->vdP;
+	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp()); 
+	mdPM = &p_app->vdP;
 	m_dataListCtrl.InitColumns(&mdPM->icolwidth);
 
 	// set how data are displayed

@@ -148,9 +148,9 @@ void CViewSpikeHist::OnInitialUpdate()
 	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollPos(50);
 
 	// load stored parameters
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();    
-	m_pvdS= &(pApp->vdS);	// get address of spike display options
-	mdPM = &(pApp->vdP);	// printing options
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();    
+	m_pvdS= &(p_app->vdS);	// get address of spike display options
+	mdPM = &(p_app->vdP);	// printing options
 
 	// create local fonts
 	memset(&m_logFontDisp, 0, sizeof(LOGFONT));		// prepare font
@@ -205,14 +205,14 @@ void CViewSpikeHist::OnInitialUpdate()
 	// init database and load documents
 	CDaoRecordView::OnInitialUpdate();
 
-	CdbWaveDoc* pdbDoc = GetDocument();
-	if (pdbDoc->m_pSpk == nullptr)
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	if (p_dbwave_doc->m_pSpk == nullptr)
 	{
-		pdbDoc->m_pSpk = new CSpikeDoc;
-		ASSERT(pdbDoc->m_pSpk != NULL);
+		p_dbwave_doc->m_pSpk = new CSpikeDoc;
+		ASSERT(p_dbwave_doc->m_pSpk != NULL);
 	}
-	m_pSpkDoc = pdbDoc->m_pSpk;
-	m_pSpkDoc->SetSpkListCurrent(pdbDoc->GetcurrentSpkListIndex());
+	m_pSpkDoc = p_dbwave_doc->m_pSpk;
+	m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 	OnDisplay();
 	SelectSpkList(m_pSpkDoc->GetSpkListCurrentIndex(), TRUE);
 }
@@ -246,13 +246,13 @@ void CViewSpikeHist::OnActivateView( BOOL bActivate, CView* pActivateView, CView
 {
 	if (bActivate)
 	{
-		CMainFrame* pmF = (CMainFrame*) AfxGetMainWnd();
-		pmF->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
+		CMainFrame* p_mainframe = (CMainFrame*) AfxGetMainWnd();
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	else
 	{
-		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();    
-		pApp->vdS.ballfiles = ((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck();
+		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();    
+		p_app->vdS.ballfiles = ((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -1021,8 +1021,8 @@ void CViewSpikeHist::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 					rectPage.left+rWidth, rectPage.top+rHeight);	
 
 	// prepare file loop
-	CdbWaveDoc* pdbDoc = GetDocument();
-	int nfiles = pdbDoc->DBGetNRecords();
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	int nfiles = p_dbwave_doc->DBGetNRecords();
 	int sizeRow=mdPM->HeightDoc + mdPM->heightSeparator;		// size of one row
 	int nbrowsperpage = pInfo->m_rectDraw.Height()/sizeRow;		// nb of rows per page
 	if (nbrowsperpage == 0)
@@ -1031,8 +1031,8 @@ void CViewSpikeHist::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	int file2 = file1 + nbrowsperpage;						// index last file
 	if (m_nfiles != 1)										// special case: all together
 		file2 = file1+1;
-	if (file2 > pdbDoc->DBGetNRecords())
-		file2 = pdbDoc->DBGetNRecords();
+	if (file2 > p_dbwave_doc->DBGetNRecords())
+		file2 = p_dbwave_doc->DBGetNRecords();
 
 	// loop through all files
 	for (int ifile = file1; ifile<file2; ifile++)
@@ -1051,7 +1051,7 @@ void CViewSpikeHist::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		// refresh data if necessary
 		if (m_nfiles == 1) //??? (m_nfiles > 1)
 		{
-			pdbDoc->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
 			BuildData();
 		}
 		// print the histogram
@@ -1079,9 +1079,9 @@ void CViewSpikeHist::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	if (pOldFont != nullptr) 
 		pDC->SelectObject(pOldFont);
 
-	pdbDoc->DBSetCurrentRecordPosition(file0);
-	pdbDoc->OpenCurrentSpikeFile();
-	m_pSpkDoc = pdbDoc->m_pSpk;			
+	p_dbwave_doc->DBSetCurrentRecordPosition(file0);
+	p_dbwave_doc->OpenCurrentSpikeFile();
+	m_pSpkDoc = p_dbwave_doc->m_pSpk;			
 }
 
 // -------------------------------------------------------------
@@ -1228,8 +1228,8 @@ void CViewSpikeHist::BuildData()
 			*pLong = 0;
 	}
 
-	CdbWaveDoc* pdbDoc = GetDocument();
-	int currentfile = pdbDoc->DBGetCurrentRecordPosition(); // index current file
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	int currentfile = p_dbwave_doc->DBGetCurrentRecordPosition(); // index current file
 	int firstfile = currentfile;		// index first file in the series
 	int lastfile = currentfile;			// index last file in the series
 
@@ -1265,13 +1265,13 @@ void CViewSpikeHist::BuildData()
 		}
 
 		// select spike file
-		pdbDoc->DBSetCurrentRecordPosition(ifile);
-		pdbDoc->OpenCurrentSpikeFile();
-		m_pSpkDoc = pdbDoc->m_pSpk;
+		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		m_pSpkDoc = p_dbwave_doc->m_pSpk;
 		if (nullptr == m_pSpkDoc )
 			continue;
 
-		m_pSpkDoc->SetSpkListCurrent(pdbDoc->GetcurrentSpkListIndex());
+		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 		switch(m_bhistType)
 		{
@@ -1317,12 +1317,12 @@ void CViewSpikeHist::BuildData()
 		}
 	}
 
-	if (currentfile != pdbDoc->DBGetCurrentRecordPosition())
+	if (currentfile != p_dbwave_doc->DBGetCurrentRecordPosition())
 	{
-		pdbDoc->DBSetCurrentRecordPosition(currentfile);
-		pdbDoc->OpenCurrentSpikeFile();
-		m_pSpkDoc = pdbDoc->m_pSpk;
-		m_pSpkDoc->SetSpkListCurrent(pdbDoc->GetcurrentSpkListIndex());
+		p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 	}
 	SAFE_DELETE(pdlg);
 	return;
@@ -1343,7 +1343,7 @@ void CViewSpikeHist::BuildData()
 
 
 // input (internal parameters):
-//		pvdS		array with spike display parameters OPTIONS_VIEWSPIKES
+//		p_option_viewspikes		array with spike display parameters OPTIONS_VIEWSPIKES
 //		m_pvdS->crHistFill	histogram COLORREF fill color
 //		m_pvdS->crHistBorder histogram border color
 //		m_pvdS->crChartArea background plane color
@@ -1632,8 +1632,8 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 	int vtBottom	= dotlineheight - 2;
 
 	// prepare loop / files (stop when no more space is available)
-	CdbWaveDoc* pdbDoc = GetDocument();
-	int currentfile = pdbDoc->DBGetCurrentRecordPosition(); // index current file
+	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	int currentfile = p_dbwave_doc->DBGetCurrentRecordPosition(); // index current file
 	int firstfile = currentfile;		// index first file in the series
 	int lastfile = firstfile;			// index last file in the series
 	if (m_nfiles > 1)
@@ -1647,10 +1647,10 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 			ifile <= lastfile && row < dispRect.bottom; 
 			ifile++)
 	{
-		pdbDoc->DBSetCurrentRecordPosition(ifile);
-		pdbDoc->OpenCurrentSpikeFile();
-		m_pSpkDoc = pdbDoc->m_pSpk;
-		m_pSpkDoc->SetSpkListCurrent(pdbDoc->GetcurrentSpkListIndex());
+		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 		// load pointers to spike file and spike list
 		CSpikeList* p_spk_list = m_pSpkDoc->GetSpkListCurrent();
@@ -1797,10 +1797,10 @@ void CViewSpikeHist::DisplayDot(CDC* pDC, CRect* pRect)
 		row += dotlineheight;
 	}
 
-	pdbDoc->DBSetCurrentRecordPosition(currentfile);
-	pdbDoc->OpenCurrentSpikeFile();
-	m_pSpkDoc = pdbDoc->m_pSpk;
-	m_pSpkDoc->SetSpkListCurrent(pdbDoc->GetcurrentSpkListIndex());
+	p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
+	p_dbwave_doc->OpenCurrentSpikeFile();
+	m_pSpkDoc = p_dbwave_doc->m_pSpk;
+	m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 	pDC->SelectObject(poldPen);
 	pDC->SelectObject(poldBrush);

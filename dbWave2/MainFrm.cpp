@@ -236,8 +236,8 @@ CdbWaveDoc * CMainFrame::GetMDIActiveDocument()
 	CMDIChildWnd *pChild = MDIGetActive();
 	if (pChild == nullptr)
 		return nullptr;
-	CDaoRecordView *pView = (CDaoRecordView*)pChild->GetActiveView();
-	return (CdbWaveDoc*)pView->GetDocument();
+	CDaoRecordView *p_view = (CDaoRecordView*)pChild->GetActiveView();
+	return (CdbWaveDoc*)p_view->GetDocument();
 }
 
 BOOL CMainFrame::CreateOutlookBar()

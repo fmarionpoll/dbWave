@@ -1,10 +1,9 @@
 #pragma once
+#include "spikehistp.h"
+#include "spikexyp.h"
+#include "spikeshape.h"
 
 // spikesort1.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpikeSort_Parameters form view
 
 
 class CViewSpikeSort_Parameters : public CDaoRecordView

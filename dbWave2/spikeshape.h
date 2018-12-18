@@ -74,7 +74,7 @@ public:
 	float 		GetExtent_ms();	
 
 	int	 		SelectSpikeShape(int spikeno);
-	BOOL		IsSpikeWithinRange(int spikeno);
+	BOOL		IsSpikeWithinRange(int spikeno) const;
 	inline int	GetHitSpike() const {return m_hitspk;}
 	inline int	GetSelectedSpike() const {return m_selectedspike;}
 
@@ -82,7 +82,7 @@ public:
 
 public:
 	void 		Print(CDC* pDC, CRect* rect);
-	int			DisplayExData(short* pData, int color=9);
+	int			DisplayExData(short* p_data, int color=9);
 	void		DisplayFlaggedSpikes (BOOL bHighLight);
 	
 protected:	
@@ -91,7 +91,7 @@ protected:
 	void 		FillPolypointOrdinates(short* lpSource);
 	void		GetExtents();
 
-	int  		DoesCursorHitCurve(CPoint point);
+	int  		DoesCursorHitCurve(CPoint point) const;
 	void		DrawSelectedSpike(int nospike, CDC* pDC);
 	void		DrawFlaggedSpikes(CDC* pDC);
 	void		PlotArraytoDC(CDC* pDC, short* pspk);

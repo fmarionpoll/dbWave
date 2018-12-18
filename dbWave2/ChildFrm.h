@@ -15,7 +15,6 @@ public:
 public:
 	UINT			m_viewON;
 	int				m_previousviewON;
-	CMenu*			m_pMenu;
 	int				m_cursorstate;
 	int				m_nStatus;
 

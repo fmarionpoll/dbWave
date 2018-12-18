@@ -150,7 +150,7 @@ void CFilterWnd::OnUpdateTree()
 
 LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
-	CdbWaveApp* pApp = (CdbWaveApp*)AfxGetApp();
+	CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();
 	short lowp = LOWORD(lParam);
 	short highp = HIWORD(lParam);
 

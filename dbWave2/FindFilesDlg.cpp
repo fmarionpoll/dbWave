@@ -85,8 +85,8 @@ BOOL CFindFilesDlg::OnInitDialog()
 	else
 	// update numbering option
 	{
-		CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-		((CButton*) GetDlgItem(IDC_CHECKDISCARD))->SetCheck(pApp->ivO.bImportDuplicateFiles);
+		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
+		((CButton*) GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->ivO.bImportDuplicateFiles);
 	}
 	UpdateData(FALSE);
 	m_fileext.SetCurSel(m_selinit);			// select first item / file extensions
@@ -103,9 +103,9 @@ void CFindFilesDlg::OnOK()
 		OnSearch();
 	
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
-	CdbWaveApp* pApp = (CdbWaveApp*) AfxGetApp();
-	pApp->ivO.path = m_path;
-	pApp->ivO.bImportDuplicateFiles = ((CButton*) GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
+	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+	p_app->ivO.path = m_path;
+	p_app->ivO.bImportDuplicateFiles = ((CButton*) GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
 
 	CDialog::OnOK();
 }

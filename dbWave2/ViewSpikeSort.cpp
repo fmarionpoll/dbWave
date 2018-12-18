@@ -1821,7 +1821,7 @@ void CViewSpikeSort_Parameters::OnToolsAlignspikes()
 		iitime0 = m_pSpkList->GetSpikeTime(ispk);
 		iitime0 -= pretrig;						// offset beginning of spike
 
-		// make sure that source data are loaded and get pointer to it (pData)
+		// make sure that source data are loaded and get pointer to it (p_data)
 		auto l_rw_first = iitime0 - spikelen;	// first point (eventually) needed
 		auto l_rw_last = iitime0 + spikelen;	// last pt needed
 		if (iitime0 > m_lLast || iitime0 < m_lFirst)
@@ -1833,8 +1833,8 @@ void CViewSpikeSort_Parameters::OnToolsAlignspikes()
 		if (l_rw_first != l_rw_first0 || l_rw_last != l_rw_last0)
 		{
 			p_data = p_dat_doc->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
-			l_rw_last0 = l_rw_last;					// index las pt within pData
-			l_rw_first0 = l_rw_first;				// index first pt within pData
+			l_rw_last0 = l_rw_last;					// index las pt within p_data
+			l_rw_first0 = l_rw_first;				// index first pt within p_data
 		}
 		
 		// pointer to first point of spike

@@ -41,7 +41,7 @@ END_MESSAGE_MAP()
 // CTransferFilesDlg message handlers
 TCHAR szDir3[MAX_PATH];
 
-int CALLBACK BrowseCallbackProc3(HWND hwnd,UINT uMsg,LPARAM lp, LPARAM pData) 
+int CALLBACK BrowseCallbackProc3(HWND hwnd,UINT uMsg,LPARAM lp, LPARAM p_data) 
 {
 	switch(uMsg) 
 	{
