@@ -342,7 +342,7 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 	///////////////////////////////////
 	// convert
 	CString csCharBuf;
-	CString csDummy;
+	CString cs_dummy;
 
 	// LINE 1.......... data file name
 	// LINE 2.......... date
@@ -353,10 +353,10 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 	CWaveFormat*    pwaveFormat = m_pDat->GetpWaveFormat();
 
 	CString csdate = (pwaveFormat->acqtime).Format("%#d %B %Y %X");
-	csDummy.Format(_T("date :\t%s\r\n"), (LPCTSTR) csdate); 
-	csCharBuf += csDummy;
-	csDummy.Format(_T("comment :\t%s\r\n"), (LPCTSTR)pwaveFormat->GetComments(_T("\t")));
-	csCharBuf += csDummy;
+	cs_dummy.Format(_T("date :\t%s\r\n"), (LPCTSTR) csdate); 
+	csCharBuf += cs_dummy;
+	cs_dummy.Format(_T("comment :\t%s\r\n"), (LPCTSTR)pwaveFormat->GetComments(_T("\t")));
+	csCharBuf += cs_dummy;
 	dataDest.Write(csCharBuf,csCharBuf.GetLength() * sizeof(TCHAR));		// write data
 	csCharBuf.Empty();
 
@@ -373,35 +373,35 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 	// LINE 8.......... mV per bin for each channel
 
 	csCharBuf.Format(_T("Sampling rate (Hz):\t%f\r\n"), pwaveFormat->chrate);
-	csDummy.Format(_T("A/D channels :\r\n"));	// header for chans
-	csCharBuf += csDummy;
-	csDummy.Format(_T("mV per bin:"));		// line title
-	csCharBuf += csDummy;
+	cs_dummy.Format(_T("A/D channels :\r\n"));	// header for chans
+	csCharBuf += cs_dummy;
+	cs_dummy.Format(_T("mV per bin:"));		// line title
+	csCharBuf += cs_dummy;
 
 	int i=mm_firstchan;
 	for (i=mm_firstchan; i<= mm_lastchan; i++)	// loop through all chans
 	{
 		float VoltsperBin;							// declare float
 		m_pDat->GetWBVoltsperBin(i, &VoltsperBin, 0);// get value
-		csDummy.Format(_T("\t%f"), double(VoltsperBin)*1000.f);		// copy to buffer
-		csCharBuf += csDummy;
+		cs_dummy.Format(_T("\t%f"), double(VoltsperBin)*1000.f);		// copy to buffer
+		csCharBuf += cs_dummy;
 	}
 
 	// LINE 9.......... comment for each channel
 
-	csDummy.Format(_T("\r\ncomments"));
-	csCharBuf += csDummy;
+	cs_dummy.Format(_T("\r\ncomments"));
+	csCharBuf += cs_dummy;
 	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR));		// write data
 	csCharBuf.Empty();
 
 	for (i = mm_firstchan; i <= mm_lastchan; i++)
 	{
-		csDummy.Format(_T("\t%s"), (LPCTSTR)(pChanArray->get_p_channel(i)->am_csComment));
-		csCharBuf += csDummy;
+		cs_dummy.Format(_T("\t%s"), (LPCTSTR)(pChanArray->get_p_channel(i)->am_csComment));
+		csCharBuf += cs_dummy;
 	}
 
-	csDummy.Format(_T("\r\n"));			// add CRLF
-	csCharBuf += csDummy;
+	cs_dummy.Format(_T("\r\n"));			// add CRLF
+	csCharBuf += cs_dummy;
 	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR));		// write data
 	csCharBuf.Empty();
 	
@@ -412,17 +412,17 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 
 		if (iivO.bincludeTime)
 		{
-			csDummy.Format(_T("time (s)\t"));
-			csCharBuf += csDummy;
+			cs_dummy.Format(_T("time (s)\t"));
+			csCharBuf += cs_dummy;
 		}
 		for (i = mm_firstchan; i <= mm_lastchan; i++)
 		{
-			csDummy.Format(_T("chan_%i\t"), i);
-			csCharBuf += csDummy;
+			cs_dummy.Format(_T("chan_%i\t"), i);
+			csCharBuf += cs_dummy;
 		}
 		csCharBuf = csCharBuf.Left(csCharBuf.GetLength()-1);
-		csDummy.Format(_T("\r\n"));			// add CRLF
-		csCharBuf += csDummy;
+		cs_dummy.Format(_T("\r\n"));			// add CRLF
+		csCharBuf += cs_dummy;
 		dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR));		// write data
 		csCharBuf.Empty();
 
@@ -435,16 +435,16 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 		{
 			if (iivO.bincludeTime)					// add time stamp
 			{
-				csDummy.Format(_T("%li"), iitime);
-				csCharBuf += csDummy;
+				cs_dummy.Format(_T("%li"), iitime);
+				csCharBuf += cs_dummy;
 			}
 			for (i=mm_firstchan; i<= mm_lastchan; i++)// loop through all chans
 			{										// get value and convert into ascii
 				value = m_pDat->BGetVal(i, iitime) - mm_binzero;
-				csDummy.Format(_T("\t%i"), value);
-				csCharBuf += csDummy;
+				cs_dummy.Format(_T("\t%i"), value);
+				csCharBuf += cs_dummy;
 			}
-			csCharBuf += csDummy;
+			csCharBuf += cs_dummy;
 			dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR));		// write data
 			csCharBuf.Empty();
 		}

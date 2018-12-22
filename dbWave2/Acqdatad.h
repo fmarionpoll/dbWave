@@ -56,8 +56,8 @@ protected:
 
 	CDataFileX*		m_pXFile;			// data file /* CDataFileX* */
 	CWaveBuf*		m_pWBuf;			// CWaveBuffer
-	CTagList		m_hz_tags{};			// list of horizontal cursors
-	CTagList		m_vt_tags{};			// list of vertical tags
+	CTagList		m_hz_tags{};		// list of horizontal cursors
+	CTagList		m_vt_tags{};		// list of vertical tags
 	
 	long			m_lBUFmaxSize;		// constant (?) size of the buffer
 	long			m_lBUFchanFirst;	// file index of first word in RW buffer
@@ -65,7 +65,7 @@ protected:
 	int				m_DOCnbchans;		// nb channels / doc
 	int				m_iOffsetInt;		// offset in bytes
 	BOOL			m_bValidReadBuffer;	// flag / valid data into buffer
-									// set to FALSE to force reading data from file
+										// set to FALSE to force reading data from file
 	BOOL			m_bValidTransfBuffer;	// flag to tell that transform buffer is valid (check if really used?)
 	BOOL			m_bdefined;			// file that remain open
 	long			m_lBUFSize;			// buffer size (n channels * sizeof(word) * lRWSize
@@ -85,68 +85,68 @@ public:
 
 // Operations
 public:
-	int				CheckFileType(CFile* file) const;
-	int 			CheckFileTypeFromName(CString& sz_path_name);
-	int  			BGetVal(int chan, long l_index);
-	short* 			LoadTransfData (long l_first, long l_last, int transform_type, int source_channel);
-	BOOL			BuildTransfData(int transform_type, int ns);
-	BOOL			LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
-	short*			LoadRawDataParams(int* n_channels);
+	int		CheckFileType(CFile* file) const;
+	int 	CheckFileTypeFromName(CString& sz_path_name);
+	int  	BGetVal(int chan, long l_index);
+	short* 	LoadTransfData (long l_first, long l_last, int transform_type, int source_channel);
+	BOOL	BuildTransfData(int transform_type, int ns);
+	BOOL	LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
+	short*	LoadRawDataParams(int* n_channels);
 
 	// write data
-	BOOL			WriteHZtags(CTagList* ptags);
-	BOOL			WriteVTtags(CTagList* ptags);
-	BOOL			AcqDoc_DataAppendStart();
-	BOOL			AcqDoc_DataAppend(short* pBU, UINT uilbytesLength) const;
-	BOOL			AcqDoc_DataAppendStop();
-	void			AcqDeleteFile() const;
-	void			AcqCloseFile() const;
-	BOOL			AcqSaveDataDescriptors();
+	BOOL	WriteHZtags(CTagList* ptags);
+	BOOL	WriteVTtags(CTagList* ptags);
+	BOOL	AcqDoc_DataAppendStart();
+	BOOL	AcqDoc_DataAppend(short* pBU, UINT uilbytesLength) const;
+	BOOL	AcqDoc_DataAppendStop();
+	void	AcqDeleteFile() const;
+	void	AcqCloseFile() const;
+	BOOL	AcqSaveDataDescriptors();
 
 	// AwaveFile operations -- could add parameter to create other type
-	BOOL			CreateAcqFile(CString &csFileName);
-	BOOL			SaveAs(CString &sznewName, BOOL bCheckOverWrite=TRUE, int iType=0);
+	BOOL	CreateAcqFile(CString &csFileName);
+	BOOL	SaveAs(CString &sznewName, BOOL bCheckOverWrite=TRUE, int iType=0);
 
 // helpers
-	inline long		GetDOCchanLength() const				{return m_lDOCchanLength;}
-	inline long		GetDOCchanIndex (int kd) const			{return (m_lBUFchanFirst + kd -1);}
-	inline long		GetDOCchanIndexFirst() const			{return m_lBUFchanFirst;}
-	inline long		GetBUFchanIndex (long lPos) const		{return (lPos-m_lBUFchanFirst);}
-	inline long		GetBUFchanLength() const				{return m_lBUFchanSize;}
+	long	GetDOCchanLength() const				{return m_lDOCchanLength;}
+	long	GetDOCchanIndex (int kd) const			{return (m_lBUFchanFirst + kd -1);}
+	long	GetDOCchanIndexFirst() const			{return m_lBUFchanFirst;}
+	long	GetBUFchanIndex (long lPos) const		{return (lPos-m_lBUFchanFirst);}
+	long	GetBUFchanLength() const				{return m_lBUFchanSize;}
 
-	inline CWaveChanArray*	GetpWavechanArray() const {return &m_pWBuf->m_chanArray;}
-	inline CWaveFormat*		GetpWaveFormat() const {return &m_pWBuf->m_waveFormat;}
-	inline int		GetScanCount() const {return m_pWBuf->m_waveFormat.scan_count;}
+	CWaveChanArray*	GetpWavechanArray() const {return &m_pWBuf->m_chanArray;}
+	CWaveFormat*		GetpWaveFormat() const {return &m_pWBuf->m_waveFormat;}
+	int		GetScanCount() const {return m_pWBuf->m_waveFormat.scan_count;}
 	
-	inline short*	GetpRawDataBUF() const {return m_pWBuf->GetWBAdrRawDataBuf();}
-	inline short*	GetpRawDataElmt(int chan, int index) const {return m_pWBuf->GetWBAdrRawDataElmt(chan, index-m_lBUFchanFirst);}
-	inline short*	GetpTransfDataBUF() const {return m_pWBuf->GetWBAdrTransfData();}
-	inline short*	GetpTransfDataElmt(int index) const {return (m_pWBuf->GetWBAdrTransfData() + index);}
-	inline int		GetTransfDataSpan(int i) const			{return m_pWBuf->GetWBTransformSpan(i);}
-	inline WORD		GetTransfDataNTypes() const				{return m_pWBuf->GetWBNTypesofTransforms();}
-	inline CString	GetTransfDataName(int i) const			{return m_pWBuf->GetWBTransformsAllowed(i);}
-	inline BOOL		GetWBVoltsperBin(int chindex, float* VoltsperBin, int mode = 0) const {return m_pWBuf->GetWBVoltsperBin(chindex, VoltsperBin, mode);}
-	inline BOOL		IsWBTransformAllowed(int imode) const	{return m_pWBuf->IsWBTransformAllowed(imode);}
-	inline BOOL		InitWBTransformBuffer() const	{return m_pWBuf->InitWBTransformBuffer();}
-	inline BOOL		SetWBTransformSpan(int i, int ispan) const {return m_pWBuf->SetWBTransformSpan(i, ispan);}
-	inline int		IsWBSpanChangeAllowed(int i) const		{return m_pWBuf->IsWBSpanChangeAllowed(i);}
+	short*	GetpRawDataBUF() const {return m_pWBuf->GetWBAdrRawDataBuf();}
+	short*	GetpRawDataElmt(int chan, int index) const {return m_pWBuf->GetWBAdrRawDataElmt(chan, index-m_lBUFchanFirst);}
+	short*	GetpTransfDataBUF() const {return m_pWBuf->GetWBAdrTransfData();}
+	short*	GetpTransfDataElmt(int index) const {return (m_pWBuf->GetWBAdrTransfData() + index);}
+	int		GetTransfDataSpan(int i) const			{return m_pWBuf->GetWBTransformSpan(i);}
+	WORD	GetTransfDataNTypes() const				{return m_pWBuf->GetWBNTypesofTransforms();}
+	CString	GetTransfDataName(int i) const			{return m_pWBuf->GetWBTransformsAllowed(i);}
+	BOOL	GetWBVoltsperBin(int chindex, float* VoltsperBin, int mode = 0) const {return m_pWBuf->GetWBVoltsperBin(chindex, VoltsperBin, mode);}
+	BOOL	IsWBTransformAllowed(int imode) const	{return m_pWBuf->IsWBTransformAllowed(imode);}
+	BOOL	InitWBTransformBuffer() const	{return m_pWBuf->InitWBTransformBuffer();}
+	BOOL	SetWBTransformSpan(int i, int ispan) const {return m_pWBuf->SetWBTransformSpan(i, ispan);}
+	int		IsWBSpanChangeAllowed(int i) const		{return m_pWBuf->IsWBSpanChangeAllowed(i);}
 
-	inline void		SetbOffsetToData(ULONGLONG ulOffset) const {m_pXFile->m_ulOffsetData=ulOffset;}
-	inline void		SetbOffsetToHeader(ULONGLONG ulOffset) const {m_pXFile->m_ulOffsetHeader=ulOffset;}
+	void	SetbOffsetToData(ULONGLONG ulOffset) const {m_pXFile->m_ulOffsetData=ulOffset;}
+	void	SetbOffsetToHeader(ULONGLONG ulOffset) const {m_pXFile->m_ulOffsetHeader=ulOffset;}
 
-	inline ULONGLONG GetbOffsetToData() const				{return m_pXFile->m_ulOffsetData;}
-	inline ULONGLONG GetbOffsetToHeader() const				{return m_pXFile->m_ulOffsetHeader;}
-	inline int		GetbHeaderSize() const					{return m_pXFile->m_bHeaderSize;}
+	ULONGLONG GetbOffsetToData() const				{return m_pXFile->m_ulOffsetData;}
+	ULONGLONG GetbOffsetToHeader() const				{return m_pXFile->m_ulOffsetHeader;}
+	int		GetbHeaderSize() const					{return m_pXFile->m_bHeaderSize;}
 
-	inline  void	SetReadingBufferDirty()					{m_bValidReadBuffer = FALSE;}
+	 void	SetReadingBufferDirty()					{m_bValidReadBuffer = FALSE;}
 
-	BOOL			AllocBUF();
-	BOOL			AdjustBUF(int iNumElements);
-	void			ReadDataInfos();
+	BOOL	AllocBUF();
+	BOOL	AdjustBUF(int iNumElements);
+	void	ReadDataInfos();
 
 protected:
-	long			m_lDOCchanLength;	// n words in file / channels
-	BOOL			ReadDataBlock(long l_first);
+	long	m_lDOCchanLength;	// n words in file / channels
+	BOOL	ReadDataBlock(long l_first);
 };
 
 

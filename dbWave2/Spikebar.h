@@ -65,7 +65,7 @@ public:
 	void	MaxGain();
 	void	MaxCenter();
 
-	inline void	DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_dbwave_doc_ = p_document; }
+	void	DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_dbwave_doc_ = p_document; }
 
 // implementation
 public:

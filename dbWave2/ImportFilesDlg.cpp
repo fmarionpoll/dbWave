@@ -147,9 +147,9 @@ BOOL CImportFilesDlg::ImportATFFile()
 	BOOL flag = TRUE;
 
 	// get infos from the source file
-	CFileStatus rStatus;			// file status: time creation, ...
-	BOOL bFlagExist = CFile::GetStatus(m_filefrom, rStatus);
-	if (!bFlagExist || (rStatus.m_attribute & CFile::readOnly))
+	CFileStatus r_status;			// file status: time creation, ...
+	BOOL b_flag_exists = CFile::GetStatus(m_filefrom, r_status);
+	if (!b_flag_exists || (r_status.m_attribute & CFile::readOnly))
 	{
 		UpdateDlgItems();
 		return FALSE;
@@ -191,8 +191,8 @@ BOOL CImportFilesDlg::ImportATFFile()
 
 	// create data file object
 	// save data
-	bFlagExist = CFile::GetStatus(m_fileto, rStatus);
-	if (bFlagExist || (rStatus.m_attribute & CFile::readOnly))
+	b_flag_exists = CFile::GetStatus(m_fileto, r_status);
+	if (b_flag_exists || (r_status.m_attribute & CFile::readOnly))
 	{
 		UpdateDlgItems();
 		delete pFrom;

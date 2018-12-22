@@ -43,26 +43,24 @@ CSpikeShapeWnd::~CSpikeShapeWnd()
 
 void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 {
-	if (m_erasebkgnd)			// erase background
+	if (m_erasebkgnd)
 		EraseBkgnd(pDC);
-
-
+	
 	// display data: trap error conditions
 	const auto n_saved_dc = pDC->SaveDC();
 	GetExtents();
-	pDC->SetViewportOrg (m_displayRect.left, m_displayRect.Height()/2);
-	pDC->SetViewportExt (m_displayRect.right, -m_displayRect.Height());
-
 	PrepareDC(pDC);
-	long nfiles = 1;
-	long ncurrentfile = 0;
+	auto ncurrentfile = 0;
+	auto file_first = ncurrentfile;
+	auto file_last = ncurrentfile;
 	if (m_ballFiles)
 	{
-		nfiles = p_doc_->DBGetNRecords();
+		file_first = 0;
+		file_last = p_doc_->DBGetNRecords() -1;
 		ncurrentfile = p_doc_->DBGetCurrentRecordPosition();
 	}
 
-	for (long ifile = 0; ifile < nfiles; ifile++)
+	for (auto ifile = file_first; ifile <= file_last; ifile++)
 	{
 		if (m_ballFiles)
 		{
@@ -71,7 +69,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 			p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
-		//test if data are there - if none, write it and exit
+		//test if data are there - if none, display message and exit
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
 		{
 			if (!m_ballFiles)
@@ -83,13 +81,12 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 				pDC->DrawText(m_csEmpty, textlen, rect, DT_LEFT); //|DT_WORDBREAK);
 				return;
 			}
-			else
-				continue;
+			continue;
 		}
+		
 		// load resources and prepare context	
 		const auto taillespk = p_spikelist_->GetSpikeLength();
 		ASSERT(taillespk >0);
-
 		if (polypoints_.GetSize() != taillespk)
 		{
 			polypoints_.SetSize(taillespk, 2);
@@ -97,7 +94,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 		}
 
 		// loop through all spikes of the list
-		short* lpspk;							// pointer to spk
+		short* lpspk;
 		auto ilast = p_spikelist_->GetTotalSpikes() - 1;
 		auto ifirst = 0;
 		if (m_rangemode == RANGE_INDEX)
@@ -183,10 +180,6 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 		if (GetNVTtags() > 0)
 			DisplayVTtags(pDC);
 
-		// restore resources		
-		pDC->SelectObject(pold_pen);
-		pDC->RestoreDC(n_saved_dc);
-
 		// display text
 		if (m_bText && m_plotmode == PLOT_ONECLASSONLY)
 		{
@@ -194,8 +187,14 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* pDC)
 			wsprintf(num, _T("%i"), GetSelClass());
 			pDC->TextOut(1, 1, num);
 		}
+
+		// restore resource
+		pDC->SelectObject(pold_pen);
 	}
-	
+
+	// restore resources		
+	pDC->RestoreDC(n_saved_dc);
+
 	if (m_ballFiles)
 	{
 		p_doc_->DBSetCurrentRecordPosition(ncurrentfile);
@@ -543,44 +542,50 @@ int  CSpikeShapeWnd::DoesCursorHitCurve(const CPoint point) const
 
 void CSpikeShapeWnd::GetExtents()
 {
-	long nfiles = 1;
-	long ncurrentfile = 0;
-	if (m_ballFiles)
+	if (!m_ballFiles)
 	{
-		nfiles = p_doc_->DBGetNRecords();
-		ncurrentfile = p_doc_->DBGetCurrentRecordPosition();
+		GetExtentsCurrentSpkList();
+		return;
 	}
 
-	for (long ifile = 0; ifile < nfiles; ifile++)
-	{
-		if (m_ballFiles)
+	const auto ncurrentfile = p_doc_->DBGetCurrentRecordPosition();
+	const auto file_first = 0;
+	const auto file_last = p_doc_->DBGetNRecords();
+
+	if (m_yWE == 1 || m_yWE == 0) // && m_yWO == 0)
+	 {
+		for (auto ifile = file_first; ifile <= file_last; ifile++)
 		{
 			p_doc_->DBSetCurrentRecordPosition(ifile);
 			p_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
-		}
 
-		if (m_yWE == 1 || m_yWE == 0) // && m_yWO == 0)
-		{
-			int maxval, minval;
-			p_spikelist_->GetTotalMaxMin(TRUE, &maxval, &minval);
-			m_yWE = MulDiv((maxval - minval), 10, 9) +1;	// avoid null ext
-			m_yWO = maxval / 2 + minval / 2;
-		}
-
-		if (m_xWE == 1) // && m_xWO == 0)
-		{
-			m_xWE = p_spikelist_->GetSpikeLength(); //+1;
-			m_xWO = 0;
+			GetExtentsCurrentSpkList();
+			if (m_yWE != 0)
+				break;
 		}
 	}
 
 	// exit
-	if (m_ballFiles)
+	p_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+	p_doc_->OpenCurrentSpikeFile();
+	p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
+}
+
+void CSpikeShapeWnd::GetExtentsCurrentSpkList()
+{
+	if (m_yWE == 1 || m_yWE == 0)
 	{
-		p_doc_->DBSetCurrentRecordPosition(ncurrentfile);
-		p_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
+		int maxval, minval;
+		p_spikelist_->GetTotalMaxMin(TRUE, &maxval, &minval);
+		m_yWE = MulDiv((maxval - minval), 10, 9) + 1;
+		m_yWO = maxval / 2 + minval / 2;
+	}
+
+	if (m_xWE == 1)
+	{
+		m_xWE = p_spikelist_->GetSpikeLength();
+		m_xWO = 0;
 	}
 }
 
@@ -597,6 +602,7 @@ void CSpikeShapeWnd::InitPolypointAbcissa()
 void CSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 {
 	auto nelements = polypoints_.GetSize();
+	ASSERT(nelements > 0);
 	if (nelements == 0)
 	{
 		nelements = p_spikelist_->GetSpikeLength();

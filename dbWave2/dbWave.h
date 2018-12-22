@@ -64,8 +64,8 @@ public:
 	CSharedFile*			m_psf{};
 	BOOL					m_bADcardFound;
 
-	void	Defaultparameters(BOOL bRead);
-	BOOL	ParmFile(CString& filename, BOOL bRead);
+	void	Defaultparameters(BOOL b_read);
+	BOOL	ParmFile(CString& filename, BOOL b_read);
 	void	SetPrinterOrientation();
 	BOOL	GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames);
 	void	FilePrintSetup();

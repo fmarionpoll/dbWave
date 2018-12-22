@@ -582,6 +582,7 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 {
 	if ((ch_index >= m_waveFormat.scan_count)|| (ch_index <0))
 		return FALSE;
+
 	auto correction = 1.0f;
 	GetWBcorrectionFactor(mode, &correction);
 
@@ -599,9 +600,6 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 		m_chanArray.get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_Volts 
 					/float(m_chanArray.get_p_channel(ch_index)->am_gaintotal)
 					/float(m_waveFormat.binspan);
-		//auto binspan = m_waveFormat.binspan;
-		//auto fullscale_volts = m_waveFormat.fullscale_Volts;
-		//auto am_resolution_v = m_chanArray.get_p_channel(ch_index)->am_resolutionV;
 	}
 	*volts_per_bin = static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_resolutionV / correction);
 	return TRUE;
@@ -800,10 +798,10 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 		// case 1: search (and replace) towards higher values
 		if (newvalue > *(m_parraySorted + jj2))
 		{
-			auto j=jj2;
-			for (j; newvalue > *(m_parraySorted + j); j++)
+			auto j = jj2;
+			for (auto k=jj2; newvalue > *(m_parraySorted + k); k++, j++)
 			{								
-				if (j == m_parray_size)
+				if (k == m_parray_size)
 					break;
 				*(m_parraySorted+ j) = *(m_parraySorted + j + 1);
 			} 
@@ -814,7 +812,7 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 		else if (newvalue < *(m_parraySorted + jj2))
 		{
 			auto j=jj2;
-			for (j; newvalue < *(m_parraySorted + j); j--)
+			for (auto k = jj2; newvalue < *(m_parraySorted + k); k--, j--)
 			{
 				if (j == 0)
 				{

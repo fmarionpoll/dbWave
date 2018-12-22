@@ -721,8 +721,8 @@ void CImportGenericDataDlg::OnSapid3_5()
 
 void CImportGenericDataDlg::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 {
-	CFileStatus rStatus;			// file status: time creation, ..., length
-	pDataF->m_pXFile->GetStatus(rStatus);		// get status from file
+	CFileStatus r_status;			// file status: time creation, ..., length
+	pDataF->m_pXFile->GetStatus(r_status);		// get status from file
 	pDataF->SetbOffsetToData(m_skipNbytes);
 
 	pDataF->m_pWBuf->WBDatachanSetnum(piivO->nbChannels);
@@ -730,7 +730,7 @@ void CImportGenericDataDlg::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 
 	// define parameters within CWaveFormat
 	pwF->cs_comment = piivO->title;
-	pwF->acqtime = rStatus.m_ctime;	// use CFile creation time
+	pwF->acqtime = r_status.m_ctime;	// use CFile creation time
 	pwF->fullscale_Volts = piivO->voltageMax - piivO->voltageMin;
 	pwF->mode_encoding = piivO->encodingMode;
 	long binspan = 4096;
@@ -756,7 +756,7 @@ void CImportGenericDataDlg::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 	//			short	nbRuns;
 
 	// read data and copy into CDataFileAWAVE	
-	ULONGLONG lCompteur = rStatus.m_size - piivO->skipNbytes;	// get size of data
+	ULONGLONG lCompteur = r_status.m_size - piivO->skipNbytes;	// get size of data
 	if (piivO->bSapid3_5)					// special case SAPID
 	{
 		lCompteur -= 2;						// last word = sampling rate

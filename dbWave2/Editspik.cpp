@@ -108,7 +108,7 @@ BOOL CSpikeEditDlg::OnInitDialog()
 
 	// attach spike buffer
 	VERIFY(m_spkForm.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
-	m_spkForm.SetSourceData(m_pSpkList);	// source data: spike list
+	m_spkForm.SetSourceData(m_pSpkList);
 	if (m_spikeno < 0)						// select at least spike 0
 		m_spikeno = 0;
 

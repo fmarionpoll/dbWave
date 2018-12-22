@@ -48,7 +48,7 @@ protected:
 public:
 	void			ImportDescFromFileList(CStringArray& filename, BOOL bOnlygenuine=FALSE);
 	BOOL			IsDatFile(CString csFilename) const;
-	inline BOOL		IsFilePresent(CString csFilename) {CFileStatus rStatus; return CFile::GetStatus(csFilename, rStatus);}
+	inline BOOL		IsFilePresent(CString csFilename) {CFileStatus r_status; return CFile::GetStatus(csFilename, r_status);}
 	CWaveFormat*	GetWaveFormat(CString filename, BOOL bIsDatFile);
 	BOOL			ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
 	BOOL			ImportDatabase (CString &filename);

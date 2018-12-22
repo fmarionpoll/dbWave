@@ -369,7 +369,7 @@ void DisplayDaoException(CDaoException* e, int iID = 0)
 static TCHAR szVDS[] = _T("Default parameters");
 static TCHAR szFileEntry[] = _T("File%d");
 
-void CdbWaveApp::Defaultparameters(BOOL bRead)
+void CdbWaveApp::Defaultparameters(BOOL b_read)
 {	
 	TCHAR szPath[MAX_PATH];
 	CString cspath;
@@ -401,7 +401,7 @@ void CdbWaveApp::Defaultparameters(BOOL bRead)
 	CString csDefaultParmfile = cspath + "\\" + csExt;
 
 	// read data and copy into vdP
-	if (bRead)
+	if (b_read)
 	{
 		// get list of parameter files (others)
 		m_csParmFiles.RemoveAll();
@@ -419,7 +419,7 @@ void CdbWaveApp::Defaultparameters(BOOL bRead)
 		// get default parameter file and load data
 		if (m_csParmFiles.GetSize() <= 0)
 			m_csParmFiles.Add(csDefaultParmfile);		
-		ParmFile(m_csParmFiles[0], bRead);
+		ParmFile(m_csParmFiles[0], b_read);
 	}
 	// Save informations
 	else
@@ -427,10 +427,10 @@ void CdbWaveApp::Defaultparameters(BOOL bRead)
 		// save default parameter file		
 		if (m_csParmFiles.GetSize() <= 0)
 			m_csParmFiles.Add(csDefaultParmfile);
-		if (!ParmFile(m_csParmFiles[0], bRead))
+		if (!ParmFile(m_csParmFiles[0], b_read))
 		{
 			m_csParmFiles[0]=csDefaultParmfile;
-			ParmFile(m_csParmFiles[0], bRead);
+			ParmFile(m_csParmFiles[0], b_read);
 		}
 		// save profile with locations of parmfiles
 		for (int i = 0; i<m_csParmFiles.GetSize(); i++)
@@ -442,13 +442,13 @@ void CdbWaveApp::Defaultparameters(BOOL bRead)
 }
 
 
-BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL bRead)
+BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 {
 	CFile f;					// file object
 	CFileException fe;			// trap exceptions
 	BOOL bsuccess=TRUE;
 	
-	if (bRead)		// read informations ...........................
+	if (b_read)		// read informations ...........................
 	{
 		if (f.Open(csParmfile, CFile::modeReadWrite|CFile::shareDenyNone, &fe))
 		{

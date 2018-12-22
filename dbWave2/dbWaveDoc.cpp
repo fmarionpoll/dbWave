@@ -1107,9 +1107,9 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		}
 
 		// test  files
-		CFileStatus rStatus;
-		const auto b_dat_present = CFile::GetStatus(cs_dat_file, rStatus);
-		const auto b_spik_present = CFile::GetStatus(cs_spk_file, rStatus);
+		CFileStatus r_status;
+		const auto b_dat_present = CFile::GetStatus(cs_dat_file, r_status);
+		const auto b_spik_present = CFile::GetStatus(cs_spk_file, r_status);
 		if (b_dat_present)
 			cs_filename = cs_dat_file;
 		else if (b_spik_present)
@@ -1764,7 +1764,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 		|| options_viewspikes->exportdatatype == EXPORT_SPIKEPOINTS) /*|| parms->exportdatatype == EXPORT_INTERV*/
 	{
 		m_pSpk->ExportSpkFileComment      (pSF, options_viewspikes, 0, cs_file_desc);
-		m_pSpk->ExportSpkAttributesOneFile(pSF, options_viewspikes, cs_file_desc);
+		m_pSpk->ExportSpkAttributesOneFile(pSF, options_viewspikes);
 	}
 
 	// multiple file export operations: ISI, AUTOCORR, HISTAMPL, AVERAGE, INTERV, PSTH
@@ -1861,21 +1861,21 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 					switch (options_viewspikes->exportdatatype)
 					{	
 					case EXPORT_HISTAMPL:	// spike amplitude histogram
-						m_pSpk->_ExportSpkAmplitHistogram(pSF, options_viewspikes, p_hist0, cs_file_comment, ispikelist, kclass);
+						m_pSpk->_ExportSpkAmplitHistogram(pSF, options_viewspikes, p_hist0, ispikelist, kclass);
 						break;
 					case EXPORT_LATENCY:	// occurence time of the first 10 spikes
-						m_pSpk->_ExportSpkLatencies(pSF, options_viewspikes, 10, cs_file_comment, ispikelist, kclass);
+						m_pSpk->_ExportSpkLatencies(pSF, options_viewspikes, 10, ispikelist, kclass);
 						break;
 					case EXPORT_INTERV:		// feb 23, 2009 - occurence time of all spikes
-						m_pSpk->_ExportSpkLatencies(pSF, options_viewspikes, -1, cs_file_comment, ispikelist, kclass);
+						m_pSpk->_ExportSpkLatencies(pSF, options_viewspikes, -1, ispikelist, kclass);
 						break;
 					case EXPORT_AVERAGE:	// assume that all spikes have the same length
-						m_pSpk->_ExportSpkAverageWave(pSF, options_viewspikes, p_doubl, cs_file_comment, ispikelist, kclass);
+						m_pSpk->_ExportSpkAverageWave(pSF, options_viewspikes, p_doubl, ispikelist, kclass);
 						break;
 					case EXPORT_PSTH:		// PSTH
 					case EXPORT_ISI:		// ISI
 					case EXPORT_AUTOCORR:	// Autocorr
-						m_pSpk->_ExportSpkPSTH(pSF, options_viewspikes, p_hist0, cs_file_comment, ispikelist, kclass);
+						m_pSpk->_ExportSpkPSTH(pSF, options_viewspikes, p_hist0, ispikelist, kclass);
 						break;
 					default:
 						ATLTRACE2(_T("option selected not implemented: %i\n"), options_viewspikes->exportdatatype);

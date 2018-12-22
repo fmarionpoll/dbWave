@@ -43,15 +43,18 @@ STIMDETECT::~STIMDETECT()
 {
 }
 
-void STIMDETECT::operator = (const STIMDETECT& arg)
+STIMDETECT& STIMDETECT::operator = (const STIMDETECT& arg)
 {
-	//comment=arg.comment;	// CArchive
-	nItems=arg.nItems;			// number of items/line (nb of chans/detection) ?
-	SourceChan=arg.SourceChan;
-	TransformMethod=arg.TransformMethod;
-	DetectMethod=arg.DetectMethod;
-	Threshold1=arg.Threshold1;	
-	bMode = arg.bMode;
+	if (this != &arg) {
+		//comment=arg.comment;	// CArchive
+		nItems = arg.nItems;
+		SourceChan = arg.SourceChan;
+		TransformMethod = arg.TransformMethod;
+		DetectMethod = arg.DetectMethod;
+		Threshold1 = arg.Threshold1;
+		bMode = arg.bMode;
+	}
+	return *this;
 }
 
 void STIMDETECT::Serialize(CArchive& ar)
@@ -166,13 +169,15 @@ int	CSpkDetectArray::RemoveItem(int ichan)
 	return isize;
 }
 
-void CSpkDetectArray::operator = (const CSpkDetectArray& arg)
+CSpkDetectArray& CSpkDetectArray::operator = (const CSpkDetectArray& arg)
 {
-	//comment=arg.comment;
-	int nItems=arg.spkdetectparm_ptr_array.GetSize();	// number of items
-	SetSize(nItems);			// erase old data	
-	for (int i=0; i<nItems; i++)		// loop over nItems
-		*(spkdetectparm_ptr_array[i]) =*(arg.spkdetectparm_ptr_array[i]);
+	if (this != &arg) {
+		const auto n_items = arg.spkdetectparm_ptr_array.GetSize();
+		SetSize(n_items);	
+		for (auto i = 0; i < n_items; i++)
+			*(spkdetectparm_ptr_array[i]) = *(arg.spkdetectparm_ptr_array[i]);
+	}
+	return *this;
 }
 
 void CSpkDetectArray::Serialize(CArchive& ar)
@@ -225,13 +230,13 @@ SPKDETECTARRAY::~SPKDETECTARRAY()
 // erase all arrays of parmItems (and all parmItems within them)
 void SPKDETECTARRAY::DeleteAll()
 {
-	POSITION pos = chanArrayMap.GetStartPosition();
+	auto pos = chanArrayMap.GetStartPosition();
 	void* ptr = nullptr;
-	WORD wKey;
+	WORD w_key;
 	while (pos) 
 	{
-		chanArrayMap.GetNextAssoc(pos, wKey, ptr);
-		CSpkDetectArray* pspk = (CSpkDetectArray*) ptr;
+		chanArrayMap.GetNextAssoc(pos, w_key, ptr);
+		auto pspk = static_cast<CSpkDetectArray*>(ptr);
 		ASSERT_VALID(pspk);
 		delete pspk;
 		pspk = nullptr;
@@ -244,14 +249,13 @@ void SPKDETECTARRAY::DeleteAll()
 CSpkDetectArray* SPKDETECTARRAY::GetChanArray(int acqchan)
 {
 	void* ptr = nullptr;
-	BOOL flag = chanArrayMap.Lookup(acqchan, ptr);
-	if (!flag)
+	if (!chanArrayMap.Lookup(acqchan, ptr))
 	{
-		CSpkDetectArray* pspk = new CSpkDetectArray;
+		const auto pspk = new CSpkDetectArray;
 		ptr = pspk;
 		chanArrayMap.SetAt(acqchan, ptr);
 	}
-	return (CSpkDetectArray*) ptr;
+	return static_cast<CSpkDetectArray*>(ptr);
 }
 
 void SPKDETECTARRAY::SetChanArray(int acqchan, CSpkDetectArray* pspk)
@@ -266,16 +270,16 @@ void SPKDETECTARRAY::Serialize(CArchive& ar)
 	{   
 		wversion = 4;
 		ar << wversion;		// wversion = 4
-		int narrays = chanArrayMap.GetSize();
+		const auto narrays = chanArrayMap.GetSize();
 		ar << narrays;
-		POSITION pos = chanArrayMap.GetStartPosition();
+		auto pos = chanArrayMap.GetStartPosition();
 		void* ptr = nullptr;
-		WORD wKey;
+		WORD w_key;
 		while (pos) 
 		{
-			chanArrayMap.GetNextAssoc(pos, wKey, ptr);
-			ar << wKey;
-			CSpkDetectArray* pspk = (CSpkDetectArray*) ptr;
+			chanArrayMap.GetNextAssoc(pos, w_key, ptr);
+			ar << w_key;
+			auto* pspk = static_cast<CSpkDetectArray*>(ptr);
 			ASSERT_VALID(pspk);
 			pspk->Serialize(ar);
 		}
@@ -287,25 +291,24 @@ void SPKDETECTARRAY::Serialize(CArchive& ar)
 		// version 1 (11-2-96 FMP)
 		if (version < 4)
 		{
-			int narrays = 1;
-			CSpkDetectArray* parmItems = new CSpkDetectArray;
-			parmItems->Serialize_Load(ar, version);
-			WORD wKey = 1;
-			void* ptr = parmItems;
-			chanArrayMap.SetAt(wKey, ptr);
+			auto parm_items = new CSpkDetectArray;
+			parm_items->Serialize_Load(ar, version);
+			const WORD w_key = 1;
+			void* ptr = parm_items;
+			chanArrayMap.SetAt(w_key, ptr);
 		}
 		else if (version >= 4)
 		{
 			int narrays;
 			ar >> narrays;
-			for (int j=0; j < narrays; j++)
+			for (auto j=0; j < narrays; j++)
 			{
-				WORD wKey;
-				ar >> wKey;
-				CSpkDetectArray* pspk = new CSpkDetectArray;
+				WORD w_key;
+				ar >> w_key;
+				auto* pspk = new CSpkDetectArray;
 				pspk->Serialize(ar);
 				void* ptr = pspk;
-				chanArrayMap.SetAt(wKey, ptr);
+				chanArrayMap.SetAt(w_key, ptr);
 			}
 		}
 	}    	
@@ -337,22 +340,25 @@ SPKDETECTPARM::~SPKDETECTPARM()
 {
 }
 
-void SPKDETECTPARM::operator = (const SPKDETECTPARM& arg)
+SPKDETECTPARM& SPKDETECTPARM::operator = (const SPKDETECTPARM& arg)
 {
-	comment				=arg.comment;	
-	detectFrom	 		=arg.detectFrom;
-	detectChan 			=arg.detectChan;	
-	detectTransform 	=arg.detectTransform;
-	detectThreshold		=arg.detectThreshold;
-	compensateBaseline	=arg.compensateBaseline;
-	extractChan			=arg.extractChan;
-	extractTransform	=arg.extractTransform;
-	extractNpoints 		=arg.extractNpoints;
-	prethreshold 		=arg.prethreshold;
-	refractory			=arg.refractory;
-	detectThresholdmV   =arg.detectThresholdmV;
-	detectWhat			=arg.detectWhat;
-	detectMode			=arg.detectMode;
+	if (this != &arg) {
+		comment = arg.comment;
+		detectFrom = arg.detectFrom;
+		detectChan = arg.detectChan;
+		detectTransform = arg.detectTransform;
+		detectThreshold = arg.detectThreshold;
+		compensateBaseline = arg.compensateBaseline;
+		extractChan = arg.extractChan;
+		extractTransform = arg.extractTransform;
+		extractNpoints = arg.extractNpoints;
+		prethreshold = arg.prethreshold;
+		refractory = arg.refractory;
+		detectThresholdmV = arg.detectThresholdmV;
+		detectWhat = arg.detectWhat;
+		detectMode = arg.detectMode;
+	}
+	return *this;
 }
 
 void SPKDETECTPARM::ReadVersionlessthan6(CArchive& ar, int version)
@@ -521,45 +527,47 @@ SPKCLASSIF::SPKCLASSIF(): bChanged(0), nintparms(0), nfloatparms(0)
 SPKCLASSIF::~SPKCLASSIF()
 {
 	if (ptpl)
-		delete ((CTemplateListWnd*)ptpl);
+		delete static_cast<CTemplateListWnd*>(ptpl);
 }
 
-void SPKCLASSIF::operator = (const SPKCLASSIF& arg)
+SPKCLASSIF& SPKCLASSIF::operator = (const SPKCLASSIF& arg)
 {
-	dataTransform = arg.dataTransform;// transform mode
-	iparameter = arg.iparameter;	// type of parameter measured
-	ileft = arg.ileft;				// position of first cursor
-	iright = arg.iright;			// position of second cursor
-	ilower = arg.ilower;			// second threshold
-	iupper = arg.iupper;			// first threshold
-	ixyright= arg.ixyright;
-	ixyleft= arg.ixyleft;
-	sourceclass = arg.sourceclass;	// source class
-	destclass = arg.destclass;		// destination class
+	if (this != &arg) {
+		dataTransform = arg.dataTransform;// transform mode
+		iparameter = arg.iparameter;	// type of parameter measured
+		ileft = arg.ileft;				// position of first cursor
+		iright = arg.iright;			// position of second cursor
+		ilower = arg.ilower;			// second threshold
+		iupper = arg.iupper;			// first threshold
+		ixyright = arg.ixyright;
+		ixyleft = arg.ixyleft;
+		sourceclass = arg.sourceclass;	// source class
+		destclass = arg.destclass;		// destination class
 
-	hitrate = arg.hitrate;
-	hitratesort = arg.hitratesort;
-	ktolerance = arg.ktolerance;
-	kleft = arg.kleft;
-	kright = arg.kright;
-	rowheight = arg.rowheight;
-	coltext= arg.coltext;
-	colspikes= arg.colspikes;
-	colseparator= arg.colseparator;
-	vsourceclass = arg.vsourceclass;	// source class
-	vdestclass = arg.vdestclass;		// destination class
-	bresetzoom = arg.bresetzoom;
-	fjitter_ms = arg.fjitter_ms;
+		hitrate = arg.hitrate;
+		hitratesort = arg.hitratesort;
+		ktolerance = arg.ktolerance;
+		kleft = arg.kleft;
+		kright = arg.kright;
+		rowheight = arg.rowheight;
+		coltext = arg.coltext;
+		colspikes = arg.colspikes;
+		colseparator = arg.colseparator;
+		vsourceclass = arg.vsourceclass;	// source class
+		vdestclass = arg.vdestclass;		// destination class
+		bresetzoom = arg.bresetzoom;
+		fjitter_ms = arg.fjitter_ms;
 
-	mvmin = arg.mvmin;
-	mvmax = arg.mvmax;
-	
-	if (arg.ptpl != nullptr)
-	{
-		ptpl = new (CTemplateListWnd);
-		*((CTemplateListWnd*) ptpl) = *((CTemplateListWnd*) arg.ptpl);
+		mvmin = arg.mvmin;
+		mvmax = arg.mvmax;
+
+		if (arg.ptpl != nullptr)
+		{
+			ptpl = new (CTemplateListWnd);
+			*static_cast<CTemplateListWnd*>(ptpl) = *static_cast<CTemplateListWnd*>(arg.ptpl);
+		}
 	}
-
+	return *this;
 }
 
 void SPKCLASSIF::Serialize(CArchive& ar)

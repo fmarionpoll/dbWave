@@ -85,12 +85,12 @@ void CLoadSaveOptionsDlg::UpdateFileList()
 	// SAVE parameter file?
 	if (((CButton*)GetDlgItem(IDC_SAVE))->GetCheck())
 		((CdbWaveApp*) AfxGetApp())->ParmFile(dummy, FALSE);
-		// bRead=FALSE		
+		// b_read=FALSE		
 
 	// LOAD parameter file?
 	else
 		if (!((CdbWaveApp*) AfxGetApp())->ParmFile(dummy, TRUE))
-			// bRead=TRUE
+			// b_read=TRUE
 			AfxMessageBox(_T("Parameter file not found!"), MB_ICONSTOP | MB_OK);		
 
 	m_bcommentchanged=FALSE;
@@ -157,7 +157,7 @@ void CLoadSaveOptionsDlg::OnOK()
 
 void CLoadSaveOptionsDlg::OnCancel() 
 {
-	((CdbWaveApp*) AfxGetApp())->ParmFile(m_currentFile, TRUE);	// bRead=TRUE
+	((CdbWaveApp*) AfxGetApp())->ParmFile(m_currentFile, TRUE);	// b_read=TRUE
 	CDialog::OnCancel();	
 }
 
@@ -204,7 +204,7 @@ void CLoadSaveOptionsDlg::OnSelchangeNamelist()
 		m_CBnamelist.GetLBText(m_cursel, dummy);		
 		((CEdit*)GetDlgItem(IDC_COMMENT))->GetWindowText(m_ddxcomment);
 		*pcomment = m_ddxcomment;
-		((CdbWaveApp*) AfxGetApp())->ParmFile(dummy, FALSE); // bRead=FALSE
+		((CdbWaveApp*) AfxGetApp())->ParmFile(dummy, FALSE); // b_read=FALSE
 		m_bcommentchanged=FALSE;
 	}
 
@@ -214,7 +214,7 @@ void CLoadSaveOptionsDlg::OnSelchangeNamelist()
 	CString dummy;
 	m_cursel = m_CBnamelist.GetCurSel();
 	m_CBnamelist.GetLBText(m_cursel, dummy);
-	((CdbWaveApp*) AfxGetApp())->ParmFile(dummy, TRUE);	// bRead=TRUE
+	((CdbWaveApp*) AfxGetApp())->ParmFile(dummy, TRUE);	// b_read=TRUE
 	m_ddxcomment = *pcomment;		// load comment into string
 	UpdateData(FALSE);				// display changes
 }

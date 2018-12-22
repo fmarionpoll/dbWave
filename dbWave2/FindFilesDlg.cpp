@@ -184,24 +184,24 @@ void CFindFilesDlg::FindFiles (CString path)
 {
 	CFileFind finder;
 	CString strWildcard = path + _T("\\") + m_searchString;
-	CString csDummy;
+	CString cs_dummy;
 	BOOL bWorking = finder.FindFile(strWildcard);
 	while (bWorking)
 	{
 		bWorking = finder.FindNextFile();
-		csDummy = finder.GetFilePath();
-		if (1 != m_ioption && 0 == (csDummy.Right(3)).CompareNoCase(_T("del")) )
+		cs_dummy = finder.GetFilePath();
+		if (1 != m_ioption && 0 == (cs_dummy.Right(3)).CompareNoCase(_T("del")) )
 			continue;
 		if (m_bexcludecloud)
 		{
-			if (csDummy.Find(_T("\\Dropbox"), 0) >= 0)
+			if (cs_dummy.Find(_T("\\Dropbox"), 0) >= 0)
 				continue;
-			if (csDummy.Find(_T("\\Google"), 0) >= 0)
+			if (cs_dummy.Find(_T("\\Google"), 0) >= 0)
 				continue;
-			if (csDummy.Find(_T("\\Skydrive"), 0) >= 0)
+			if (cs_dummy.Find(_T("\\Skydrive"), 0) >= 0)
 				continue;
 		}
-		m_pfilenames->Add(csDummy);
+		m_pfilenames->Add(cs_dummy);
 		m_nfound++;
 	}
 }

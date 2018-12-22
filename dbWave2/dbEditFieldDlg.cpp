@@ -120,8 +120,8 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 			{
 				m_pIndexTable->GetFieldValue(0, varValue0);
 				m_pIndexTable->GetFieldValue(1, varValue1);
-				CString csDummy = varValue0.bstrVal;
-				int i = m_codictionary.AddString(csDummy);
+				CString cs_dummy = varValue0.bstrVal;
+				int i = m_codictionary.AddString(cs_dummy);
 				m_codictionary.SetItemData(i, varValue1.lVal);
 				m_pIndexTable->MoveNext();
 			}

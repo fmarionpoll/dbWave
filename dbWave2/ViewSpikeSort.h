@@ -39,10 +39,10 @@ public:
 protected:
 	CStretchControl m_stretch;		// array of properties associated with controls
 	BOOL			m_binit;
-	CSpikeHistWnd	m_spkHist;		// source data
-	CSpikeXYpWnd	m_spkXYp;		// bars with spike height
-	CSpikeShapeWnd	m_spkForm;		// all spikes in displayspikes
-	CSpikeBarWnd	m_spkBarView;	// bars with spike height
+	CSpikeHistWnd	spk_hist_wnd_;	// spike histogram
+	CSpikeXYpWnd	spk_xy_wnd_;	// bars with spike height
+	CSpikeShapeWnd	spk_shape_wnd_;	// spike shapes
+	CSpikeBarWnd	spk_bar_wnd_;	// bars with spike height
 
 	CEditCtrl	mm_t1;
 	CEditCtrl	mm_t2;
@@ -94,30 +94,30 @@ protected:
 
 // Operations
 public:
-	inline void SetViewMouseCursor(int cursormode) {
-					m_spkXYp.SetMouseCursorType(cursormode);
-					m_spkForm.SetMouseCursorType(cursormode);}
+	void SetViewMouseCursor(int cursormode) {
+					spk_xy_wnd_.SetMouseCursorType(cursormode);
+					spk_shape_wnd_.SetMouseCursorType(cursormode);}
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CViewData)
 	public:
-	virtual CDaoRecordset* OnGetRecordset();
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL OnMove(UINT nIDMoveCommand);
+	CDaoRecordset* OnGetRecordset() override;
+	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	BOOL OnMove(UINT nIDMoveCommand) override;
 	protected:
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);   	
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnInitialUpdate(); // called first time after construct
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);	    	
+	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	void OnInitialUpdate() override; // called first time after construct
+	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;	    	
 	//}}AFX_VIRTUAL
 
 	// Implementation
 protected:
 	virtual ~CViewSpikeSort_Parameters();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
 #endif
 
 	void UpdateFileParameters();
@@ -146,7 +146,7 @@ public:
 	afx_msg void OnEnChangeT1();
 	afx_msg void OnEnChangeT2();
 	afx_msg void OnSort();
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);	
+	afx_msg LRESULT OnMyMessage(WPARAM code, LPARAM lParam);	
 	afx_msg void OnMeasure();
 	afx_msg void OnFormatAlldata();
 	afx_msg void OnFormatCentercurve();
@@ -162,8 +162,6 @@ public:
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnEnChangeNOspike();
 	afx_msg void OnEnChangeSpikenoclass();
-	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult) ;
 	afx_msg void OnEnChangeEditleft2();
 	afx_msg void OnEnChangeEditright2();
 	

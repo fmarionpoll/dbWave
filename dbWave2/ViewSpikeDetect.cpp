@@ -1,7 +1,7 @@
 
 // * m_displayData   display source data (all channels)
 // * m_displayDetect holds a display of source data displayed as transformed for spike detection
-// * m_spkBarView display spikes detected
+// * spk_bar_wnd_ display spikes detected
 // * m_spkShapeView display spikes detected (superimposed)
 //
 // TODO
@@ -386,9 +386,9 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 	}
 
 	// 
-	m_spkBarView.SetSourceData(m_pSpkListVSD, m_pspkDocVSD);		// declare this file to bars view
+	m_spkBarView.SetSourceData(m_pSpkListVSD, m_pspkDocVSD);
 	m_spkBarView.SetPlotMode(PLOT_BLACK, 0);
-	m_spkShapeView.SetSourceData(m_pSpkListVSD);					// declare file to shape view
+	m_spkShapeView.SetSourceData(m_pSpkListVSD);
 	m_spkShapeView.SetPlotMode(PLOT_BLACK, 0);
 	UpdateVTtags();
 
@@ -1352,8 +1352,8 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 
 	// display data	
 	m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(ioldlist);
-	m_spkBarView.SetSourceData(m_pSpkListVSD, m_pspkDocVSD);	// attach spike buffer
-	m_spkShapeView.SetSourceData(m_pSpkListVSD);			// attach spike buffer
+	m_spkBarView.SetSourceData(m_pSpkListVSD, m_pspkDocVSD);
+	m_spkShapeView.SetSourceData(m_pSpkListVSD);
 
 	// center spikes, change nb spikes and update content of draw buttons
 	if (mdPM->bMaximizeGain
