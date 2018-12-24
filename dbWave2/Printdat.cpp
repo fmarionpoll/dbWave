@@ -9,10 +9,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDataOptionsDlg dialog
-
-
 CPrintDataOptionsDlg::CPrintDataOptionsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPrintDataOptionsDlg::IDD, pParent), m_bPrintSpkBars(0), mdPM(nullptr)
 {
@@ -37,13 +33,6 @@ void CPrintDataOptionsDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CPrintDataOptionsDlg, CDialog)
 
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDataOptionsDlg message handlers
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDataCommentsDlg dialog
-
 
 CPrintDataCommentsDlg::CPrintDataCommentsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPrintDataCommentsDlg::IDD, pParent)
@@ -73,10 +62,6 @@ void CPrintDataCommentsDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CPrintDataCommentsDlg, CDialog)
 
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDataCommentsDlg message handlers
 
 void CPrintDataCommentsDlg::OnOK()
 {

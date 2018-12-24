@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "DeleteRecordOptionsDlg.h"
 
 #ifdef _DEBUG

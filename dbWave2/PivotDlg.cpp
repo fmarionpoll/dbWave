@@ -2,13 +2,13 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "resource.h"
-#include "GridCtrl\GridCtrl.h"
-#include "GridCtrl\GridCell.h"
-#include "GridCtrl\GridCellCombo_FMP.h"
-#include "GridCtrl\GridCellNumeric.h"
-#include "GridCtrl\GridCellCheck.h"
+//#include "GridCtrl\GridCtrl.h"
+//#include "GridCtrl\GridCell.h"
+//#include "GridCtrl\GridCellCombo_FMP.h"
+//#include "GridCtrl\GridCellNumeric.h"
+//#include "GridCtrl\GridCellCheck.h"
 #include "afxdialogex.h"
 #include "PivotDlg.h"
 
@@ -74,37 +74,37 @@ bool CPivotDlg::VirtualCompare(int c1, int c2)
 }
 BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 {
-	CWnd* pWnd = CWnd::FromHandle(hwnd);
-	CSize* pTranslate = (CSize*) lParam;
+	auto p_wnd = CWnd::FromHandle(hwnd);
+	const auto p_translate = reinterpret_cast<CSize*>(lParam);
 
-	CPivotDlg* pDlg = (CPivotDlg*) pWnd->GetParent();
-	if (!pDlg) return FALSE;
+	auto p_dlg = (CPivotDlg*) p_wnd->GetParent();
+	if (!p_dlg) return FALSE;
 
 	CRect rect;
-	pWnd->GetWindowRect(rect);
+	p_wnd->GetWindowRect(rect);
 
-	pDlg->ScreenToClient(rect);
-	if (hwnd == pDlg->m_Grid.GetSafeHwnd())
+	p_dlg->ScreenToClient(rect);
+	if (hwnd == p_dlg->m_Grid.GetSafeHwnd())
 	{
-		if (  ((rect.top >= 7 && pTranslate->cy > 0) || rect.Height() > 20) &&
-			  ((rect.left >= 7 && pTranslate->cx > 0) || rect.Width() > 20)   )
-			pWnd->MoveWindow(rect.left, rect.top, 
-							 rect.Width()+pTranslate->cx, 
-							 rect.Height()+pTranslate->cy, FALSE);
+		if (  ((rect.top >= 7 && p_translate->cy > 0) || rect.Height() > 20) &&
+			  ((rect.left >= 7 && p_translate->cx > 0) || rect.Width() > 20)   )
+			p_wnd->MoveWindow(rect.left, rect.top, 
+							 rect.Width()+p_translate->cx, 
+							 rect.Height()+p_translate->cy, FALSE);
 		else
-			pWnd->MoveWindow(rect.left+pTranslate->cx, rect.top+pTranslate->cy, 
+			p_wnd->MoveWindow(rect.left+p_translate->cx, rect.top+p_translate->cy, 
 							 rect.Width(), rect.Height(), FALSE);
 	}
 
 	else 
 	{
-		if (pWnd->GetDlgCtrlID() == IDC_SIZEBOX)
-			pWnd->MoveWindow(rect.left+pTranslate->cx, rect.top+pTranslate->cy, 
+		if (p_wnd->GetDlgCtrlID() == IDC_SIZEBOX)
+			p_wnd->MoveWindow(rect.left+p_translate->cx, rect.top+p_translate->cy, 
 							 rect.Width(), rect.Height(), FALSE);
 		else
-			pWnd->MoveWindow(rect.left+pTranslate->cx, rect.top, rect.Width(), rect.Height(), FALSE);
+			p_wnd->MoveWindow(rect.left+p_translate->cx, rect.top, rect.Width(), rect.Height(), FALSE);
 	}
-	pDlg->Invalidate();
+	p_dlg->Invalidate();
 
 	return TRUE;
 }
@@ -116,10 +116,10 @@ void CPivotDlg::OnSize(UINT nType, int cx, int cy)
 	if (cx <= 1 || cy <= 1 ) 
 		return;
 
-	CSize Translate(cx - m_OldSize.cx, cy - m_OldSize.cy);
-	::EnumChildWindows(GetSafeHwnd(), EnumProc2, (LPARAM)&Translate);
+	CSize translate(cx - m_OldSize.cx, cy - m_OldSize.cy);
+	::EnumChildWindows(GetSafeHwnd(), EnumProc2, reinterpret_cast<LPARAM>(&translate));
 	m_OldSize = CSize(cx,cy);
-	CWnd *pWnd = GetDlgItem(IDC_SIZEBOX);
-	if (pWnd)
-		pWnd->ShowWindow( (nType == SIZE_MAXIMIZED)? SW_HIDE : SW_SHOW);
+	auto p_wnd = GetDlgItem(IDC_SIZEBOX);
+	if (p_wnd)
+		p_wnd->ShowWindow( (nType == SIZE_MAXIMIZED)? SW_HIDE : SW_SHOW);
 }

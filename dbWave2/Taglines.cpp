@@ -1,6 +1,3 @@
-///////////////////////////////////////////////////////////////////////
-// CTag & CTagList : Implementation file
-//
 
 #include "StdAfx.h"
 
@@ -8,13 +5,9 @@
 #define new DEBUG_NEW
 #endif
 
-///////////////////////////////////////////////////////////////////////
 // CTag : base element of CTagList
 
 IMPLEMENT_SERIAL(CTag, CObject, 0 /* schema number*/ )
-
-//---------------------------------------------------------------------
-// Constructors
 
 CTag::CTag()
 {
@@ -56,29 +49,29 @@ CTag::CTag(const CTag &hc)
 	m_csComment = hc.m_csComment;
 }
 
-//---------------------------------------------------------------------
-// Destructor
-
 CTag::~CTag()
 {
 }
 
-void CTag::operator = (const CTag& arg)
+CTag& CTag::operator = (const CTag& arg)
 {
-	m_refchan = arg.m_refchan;
-	m_pixel = arg.m_pixel;
-	m_value = arg.m_value;
-	m_lvalue = arg.m_lvalue;
-	m_csComment = arg.m_csComment;
+	if (this != &arg) {
+		m_refchan = arg.m_refchan;
+		m_pixel = arg.m_pixel;
+		m_value = arg.m_value;
+		m_lvalue = arg.m_lvalue;
+		m_csComment = arg.m_csComment;
+	}
+	return *this;
 }
 
 void CTag::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{   
-		ar << (WORD) m_refchan;
-		ar << (WORD) m_pixel;
-		ar << (WORD) m_value;
+		ar << static_cast<WORD>(m_refchan);
+		ar << static_cast<WORD>(m_pixel);
+		ar << static_cast<WORD>(m_value);
 		ar << m_lvalue;
 		ar << m_csComment;
 	} 
@@ -94,13 +87,13 @@ void CTag::Serialize(CArchive& ar)
 }
 
 long CTag::Write(CFile* datafile)
-{	
-	ULONGLONG p1 = datafile->GetPosition();
+{
+	const auto p1 = datafile->GetPosition();
 	CArchive ar(datafile, CArchive::store);
 	Serialize(ar);
 	ar.Close();
-	ULONGLONG p2 = datafile->GetPosition();
-	return (long) (p2-p1);
+	const auto p2 = datafile->GetPosition();
+	return static_cast<long>(p2 - p1);
 }
 
 BOOL CTag::Read(CFile* datafile)
@@ -111,11 +104,8 @@ BOOL CTag::Read(CFile* datafile)
 	return TRUE;
 }
 
-//////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////
 // Class CTagList implementation
-//
+
 CTagList::CTagList()
 {
 	m_version=1;	
@@ -126,7 +116,6 @@ CTagList::~CTagList()
 	RemoveAllTags();
 }
 
-//---------------------------------------------------------------------
 int CTagList::InsertTag(CTag* pcur)
 {
 	return tag_ptr_array.Add(pcur);
@@ -134,7 +123,7 @@ int CTagList::InsertTag(CTag* pcur)
 
 int  CTagList::AddTag(CTag& arg)
 {
-	CTag* pcur = new CTag;
+	const auto pcur = new CTag;
 	ASSERT(pcur != NULL);
 	*pcur = arg;
 	return InsertTag(pcur);
@@ -142,7 +131,7 @@ int  CTagList::AddTag(CTag& arg)
 
 int CTagList::AddTag(int val,int refChannel)
 {
-	CTag* pcur= new CTag(val,refChannel);
+	const auto pcur= new CTag(val,refChannel);
 	ASSERT(pcur != NULL);
 	return InsertTag(pcur);
 }
@@ -150,41 +139,35 @@ int CTagList::AddTag(int val,int refChannel)
 // Add a new cursor, with  value and attached channel
 int CTagList::AddLTag(long lval, int refchan)
 {
-	CTag* pcur= new CTag(lval,refchan);
+	const auto pcur= new CTag(lval,refchan);
 	ASSERT(pcur != NULL);
 	return InsertTag(pcur);
 }
 
-
-//---------------------------------------------------------------------
 int CTagList::RemoveTag(int itag)
 {   
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	delete pcur;				// delete object pointed at
 	tag_ptr_array.RemoveAt(itag);
 	return tag_ptr_array.GetSize();
 }
 
-//---------------------------------------------------------------------
 void CTagList::RemoveAllTags()
 {   
-	int pos=tag_ptr_array.GetUpperBound();
-	if (pos >=0)
+	const auto pos0=tag_ptr_array.GetUpperBound();
+	if (pos0 >=0)
 	{
-		for (int pos=tag_ptr_array.GetUpperBound(); pos>= 0; pos--)
+		for (auto pos=pos0; pos>= 0; pos--)
 			delete tag_ptr_array.GetAt(pos);
 		tag_ptr_array.RemoveAll();
 	}
 }
 
-//---------------------------------------------------------------------
-// remove all elements that are associated with one chan
-
 int CTagList::RemoveChanTags(int refchan)
 {
-	for (int i = tag_ptr_array.GetUpperBound(); i>= 0; i--)
+	for (auto i = tag_ptr_array.GetUpperBound(); i>= 0; i--)
 	{
-		CTag* pcur = tag_ptr_array.GetAt(i);
+		const auto pcur = tag_ptr_array.GetAt(i);
 		if (pcur != nullptr && pcur->m_refchan == refchan)
 		{
 			delete pcur;				// delete object pointed at
@@ -194,122 +177,103 @@ int CTagList::RemoveChanTags(int refchan)
 	return tag_ptr_array.GetSize();
 }
 
-//---------------------------------------------------------------------
-
 void CTagList::SetTagVal(int itag, int newval)
 {   
 	if (tag_ptr_array.GetSize() <= itag)
 	{
-		for (int i=tag_ptr_array.GetSize(); i <= itag; i++)
+		for (auto i=tag_ptr_array.GetSize(); i <= itag; i++)
 			AddTag(0, 0);
 		ASSERT(tag_ptr_array.GetSize() >= itag);
 	}
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_value=newval;
 }
 
 int CTagList::GetTagVal(int itag)
 {   
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_value;
-	else
-		return NULL;
+
+	return NULL;
 }
-
-
-//---------------------------------------------------------------------
 
 int CTagList::GetTagChan(int itag)
 {   
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_refchan;
-	else
-		return NULL;
+
+	return NULL;
 }
 
 void CTagList::SetTagChan(int itag, int newchan)
 {   
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_refchan=newchan;
 }
 
-//---------------------------------------------------------------------
-
 void CTagList::SetTagPix(int itag, int newval)
 {   
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_pixel=newval;
 }
 
 int CTagList::GetTagPix(int itag)
 {   
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_pixel;
-	else
-		return NULL;
+	return NULL;
 }
-
-//---------------------------------------------------------------------
 
 void CTagList::SetTagLVal(int itag, long longval)
 {
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	// if the cursor exist change the m_value
 	if (pcur != nullptr)
 		pcur->m_lvalue=longval;
 }
 
-
 long CTagList::GetTagLVal(int itag)
 {
-	CTag* pcur= (CTag*)tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
 		return pcur->m_lvalue;
-	else
-		return NULL;
+	return NULL;
 }
-
-//---------------------------------------------------------------------
 
 void CTagList::SetTagComment(int itag, CString comment)
 {
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)       // if the cursor exist change the m_value
 		pcur->m_csComment=comment;
 }
 
-
 CString CTagList::GetTagComment(int itag)
 {
-	CTag* pcur= tag_ptr_array.GetAt(itag);
+	const auto pcur= tag_ptr_array.GetAt(itag);
 	CString cs;
 	if (pcur != nullptr)
 		cs= pcur->m_csComment;
 	return cs;
 }
 
-//---------------------------------------------------------------------
 int CTagList::GetNTags()
 {
 	return tag_ptr_array.GetSize();
 }
 
-//---------------------------------------------------------------------
 CTag* CTagList::GetTag(int itag)
 {
 	if (itag >= 0 && itag < tag_ptr_array.GetSize()) 
 		return tag_ptr_array.GetAt(itag);
-	else
-		return nullptr;
+	return nullptr;
 }
 
-// copy list into current object; delete old objects
 void CTagList::CopyTagList(CTagList* pTList)
 {
 	if (pTList == this || pTList == nullptr)
@@ -317,13 +281,13 @@ void CTagList::CopyTagList(CTagList* pTList)
 
 	//CPtrArray 	m_array;                              // array of cursors
 	RemoveAllTags();	
-	int nbtags = pTList->tag_ptr_array.GetSize();
-	for (int i=0; i<nbtags; i++)
+	const auto nbtags = pTList->tag_ptr_array.GetSize();
+	for (auto i=0; i<nbtags; i++)
 	{
-		CTag* ptag = pTList->GetTag(i);
+		const auto ptag = pTList->GetTag(i);
 		if (ptag != nullptr)
 		{
-			CTag* pcur = new CTag;
+			const auto pcur = new CTag;
 			ASSERT(pcur != NULL);
 			pcur->m_refchan = ptag->m_refchan;
 			pcur->m_pixel = ptag->m_pixel;
@@ -332,24 +296,22 @@ void CTagList::CopyTagList(CTagList* pTList)
 			InsertTag(pcur);
 		}		
 	}
-	return;
 }
 
 long CTagList::Write(CFile* pdatafile)
 {	
-	long lSize = sizeof(int);
-	pdatafile->Write(&m_version, lSize);
-	int nelemts = tag_ptr_array.GetSize();	
-	pdatafile->Write(&nelemts, lSize);
-	lSize += lSize;
+	long l_size = sizeof(int);
+	pdatafile->Write(&m_version, l_size);
+	auto nelemts = tag_ptr_array.GetSize();	
+	pdatafile->Write(&nelemts, l_size);
+	l_size += l_size;
 
-	CTag* ptag;
-	for (int i = 0; i < nelemts; i ++)
+	for (auto i = 0; i < nelemts; i ++)
 	{
-		ptag = tag_ptr_array.GetAt(i);
-		lSize += ptag->Write(pdatafile);
+		auto ptag = tag_ptr_array.GetAt(i);
+		l_size += ptag->Write(pdatafile);
 	}
-	return lSize;
+	return l_size;
 }
 
 BOOL CTagList::Read(CFile* pdatafile)
@@ -359,9 +321,9 @@ BOOL CTagList::Read(CFile* pdatafile)
 	int nelemts;
 	pdatafile->Read(&nelemts, sizeof(int));	
 	
-	for (int i=0; i<nelemts; i++)	
+	for (auto i=0; i<nelemts; i++)	
 	{
-		CTag* ptag = new CTag;
+		auto ptag = new CTag;
 		ASSERT(ptag != NULL);
 		ptag->Read(pdatafile);
 		tag_ptr_array.Add(ptag);

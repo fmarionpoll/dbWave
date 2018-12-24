@@ -36,10 +36,6 @@ BEGIN_MESSAGE_MAP(CPrintPageMarginsDlg, CDialog)
 
 END_MESSAGE_MAP()
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintPageMarginsDlg message handlers
-
 BOOL CPrintPageMarginsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();

@@ -133,9 +133,9 @@ public:
 	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void	OnInitialUpdate(); // called first time after construct
 	virtual BOOL	OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void	OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void	OnPrint(CDC* pDC, CPrintInfo* pInfo);
-	virtual void	OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void	OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void	OnPrint(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void	OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
 	virtual void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 
 // Implementation
@@ -174,18 +174,18 @@ protected:
 	CRect			m_printRect;
 
 protected:
-	void 		PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);
+	void 		PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
 	CString		PrintConvertFileIndex(long l_first, long l_last);
 	void 		PrintComputePageSize();
 	
 	CString		PrintGetFileInfos();
-	CString		PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd, CRect* prect);
-	CString		PrintSpkShapeBars(CDC* pDC, CRect* prect, BOOL bAll);
+	CString		PrintDataBars(CDC* p_dc, CLineViewWnd* pLineViewWnd, CRect* prect);
+	CString		PrintSpkShapeBars(CDC* p_dc, CRect* prect, BOOL bAll);
 	void		PrintCreateFont();
 	BOOL		PrintGetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first);
 	BOOL		PrintGetNextRow(int &filenumber, long &l_first, long &very_last);
 	int			PrintGetNPages();
-	void		PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars);
+	void		PrintDataCartridge (CDC* p_dc, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars);
 
 	// gain and bias setting: data and functions
 	HICON		m_hBias{};

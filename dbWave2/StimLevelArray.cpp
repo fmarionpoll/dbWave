@@ -7,7 +7,6 @@
 #define new DEBUG_NEW
 #endif
 
-// ------------------------------------------------------
 
 IMPLEMENT_SERIAL(CIntervalsAndLevels, CObject, 0 )
 
@@ -28,25 +27,28 @@ CIntervalsAndLevels::~CIntervalsAndLevels()
 	intervalsArray.RemoveAll();
 }
 
-void CIntervalsAndLevels::operator = (const CIntervalsAndLevels& arg)
+CIntervalsAndLevels& CIntervalsAndLevels::operator = (const CIntervalsAndLevels& arg)
 {
-	iID			= arg.iID;						// ID number of the array
-	csDescriptor= arg.csDescriptor;				// descriptor of the array
-   	nitems		= arg.nitems;					// number of on/off events
-	intervalsArray.SetSize(arg.intervalsArray.GetSize());
+	if (this != &arg) {
+		iID = arg.iID;						// ID number of the array
+		csDescriptor = arg.csDescriptor;				// descriptor of the array
+		nitems = arg.nitems;					// number of on/off events
+		intervalsArray.SetSize(arg.intervalsArray.GetSize());
 
-	for (int i=0; i < arg.intervalsArray.GetSize(); i++)
-		intervalsArray.SetAt(i, arg.intervalsArray.GetAt(i)); 	// time on, time off
-	npercycle	= arg.npercycle;
-	chrate		= arg.chrate;
+		for (auto i = 0; i < arg.intervalsArray.GetSize(); i++)
+			intervalsArray.SetAt(i, arg.intervalsArray.GetAt(i)); 	// time on, time off
+		npercycle = arg.npercycle;
+		chrate = arg.chrate;
+	}
+	return *this;
 }
 
 void CIntervalsAndLevels::Serialize(CArchive& ar)
 {
-	int iversion = 2;
+	auto iversion = static_cast<int>(2);
 	if (ar.IsStoring())
 	{
-		int n=4; 
+		auto n= static_cast<int>(4);
 		ar << n;
 		ar << iID;
 		ar << nitems;	
@@ -148,9 +150,9 @@ CIntervalsAndWordsSeries::CIntervalsAndWordsSeries()
 
 CIntervalsAndWordsSeries::CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg): version(0)
 {
-	int nitems = arg.intervalpoint_array.GetSize();
+	const auto nitems = arg.intervalpoint_array.GetSize();
 	intervalpoint_array.SetSize(nitems);
-	for (int i = 0; i < nitems; i++)
+	for (auto i = 0; i < nitems; i++)
 		intervalpoint_array[i] = arg.intervalpoint_array.GetAt(i);
 	chrate = arg.chrate;
 }
@@ -161,10 +163,10 @@ CIntervalsAndWordsSeries::~CIntervalsAndWordsSeries()
 
 void CIntervalsAndWordsSeries::Serialize(CArchive & ar)
 {
-	int lversion = 2;
+	auto lversion = static_cast<int>(2);
 	if (ar.IsStoring())
 	{
-		int n = 1;
+		auto n = static_cast<int>(1);
 		ar << n;
 		ar << lversion;
 		n = 1;
@@ -188,17 +190,16 @@ void CIntervalsAndWordsSeries::Serialize(CArchive & ar)
 
 void CIntervalsAndWordsSeries::operator = (const CIntervalsAndWordsSeries & arg)
 {
-	int nitems = arg.intervalpoint_array.GetSize();
+	const auto nitems = arg.intervalpoint_array.GetSize();
 	intervalpoint_array.SetSize(nitems);
-	for (int i = 0; i < nitems; i++)
+	for (auto i = 0; i < nitems; i++)
 		intervalpoint_array[i] = arg.intervalpoint_array.GetAt(i);
 	chrate = arg.chrate;
 }
 
 CIntervalPoint  CIntervalsAndWordsSeries::GetIntervalPointAt(int i)
-{ 
-	CIntervalPoint pt = intervalpoint_array[i];
-	return pt; 
+{
+	return intervalpoint_array[i];
 }
 
 void CIntervalsAndWordsSeries::EraseAllData()
@@ -207,26 +208,26 @@ void CIntervalsAndWordsSeries::EraseAllData()
 }
 
 void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels * pIntervals, WORD valUP, BOOL bcopyRate)
-{	
-	float ichrate = pIntervals->chrate;
+{
+	const auto ichrate = pIntervals->chrate;
 	if (bcopyRate)
 		chrate = pIntervals->chrate;
-	double ratio = chrate / ichrate;
-	int nitems = pIntervals->GetSize();
+	const double ratio = chrate / ichrate;
+	const int nitems = pIntervals->GetSize();
 	intervalpoint_array.SetSize(nitems);
-	WORD wLOW = 0;
-	WORD wUP = valUP;
-	WORD wState = wUP;
-	CIntervalPoint dummy;
-	for (int i = 0; i < nitems; i++)
+	const WORD w_low = 0;
+	const auto w_up = valUP;
+	auto w_state = w_up;
+	CIntervalPoint dummy{};
+	for (auto i = 0; i < nitems; i++)
 	{
-		dummy.ii = (long) (pIntervals->GetiiTime(i) * ratio);
-		dummy.w = wState;
+		dummy.ii = static_cast<long>(pIntervals->GetiiTime(i) * ratio);
+		dummy.w = w_state;
 		intervalpoint_array[i] = dummy;
-		if (wState == wLOW)
-			wState = wUP;
+		if (w_state == w_low)
+			w_state = w_up;
 		else
-			wState = wLOW;
+			w_state = w_low;
 	}
 }
 
@@ -239,25 +240,25 @@ void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels * pInte
 void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceIntervals)
 {
 	intervalpoint_array.RemoveAll();
-	int nseries = pSourceIntervals->GetSize();
+	auto nseries = pSourceIntervals->GetSize();
 	if (nseries > 8)
 		nseries = 8;
-	int nintervals = 0;
+	auto nintervals = 0;
 	CArray < CIntervalsAndWordsSeries*, CIntervalsAndWordsSeries*> intervalsandwordseries_ptr_array;
 	intervalsandwordseries_ptr_array.SetSize(8);
 
 	// (1) transform series into CIntervalsAndWordSeries
-	int iseries = 0;
-	for (int i = 0; i < nseries; i++) 
+	auto iseries = 0;
+	for (auto i = 0; i < nseries; i++) 
 	{
 		// transform this series if not empty
-		CIntervalsAndLevels * pSource = (CIntervalsAndLevels *) pSourceIntervals->GetAt(i);
-		if (pSource->GetSize() == 0)
+		auto* p_source = (CIntervalsAndLevels *) pSourceIntervals->GetAt(i);
+		if (p_source->GetSize() == 0)
 			continue;
 
-		CIntervalsAndWordsSeries* pTransf = new CIntervalsAndWordsSeries();
-		WORD valUP = 2 << pSource->GetChan();
-		pTransf->ImportIntervalsSeries(pSource, valUP, FALSE);
+		auto pTransf = new CIntervalsAndWordsSeries();
+		const WORD val_up = 2 << p_source->GetChan();
+		pTransf->ImportIntervalsSeries(p_source, val_up, FALSE);
 		intervalsandwordseries_ptr_array[iseries] = pTransf;
 		nintervals += pTransf->GetSize();
 		iseries++;
@@ -266,44 +267,44 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	// (2) now ptrInter contains 8 channels with a list of ON/OFF states (with the proper bit set)
 	// merge the 8 channels
 
-	WORD outputState = 0;
-	for (int i = 0; i < iseries; i++)
+	WORD output_state = 0;
+	for (auto i = 0; i < iseries; i++)
 	{
-		CIntervalsAndWordsSeries* pTransf = intervalsandwordseries_ptr_array.GetAt(i);
-		if (pTransf == nullptr)
+		auto p_transf = intervalsandwordseries_ptr_array.GetAt(i);
+		if (p_transf == nullptr)
 			continue;
 
 		// loop over all intervals stored in this transformed series 
-		int k = 0;
-		for (int j = 0; j < pTransf->GetSize(); j++)
+		auto k = 0;
+		for (auto j = 0; j < p_transf->GetSize(); j++)
 		{
-			CIntervalPoint pt = pTransf->intervalpoint_array[j];
-			BOOL bFound = false;
+			auto pt = p_transf->intervalpoint_array[j];
+			BOOL b_found = false;
 
 			// loop over all intervals stored into the local array and merge output state
 			for (k; k < intervalpoint_array.GetSize(); k++)
 			{
 				if (pt.ii < intervalpoint_array.GetAt(k).ii)
 				{
-					pt.w = outputState & pt.w;	// merge with previous status
+					pt.w = output_state & pt.w;	// merge with previous status
 					intervalpoint_array.InsertAt(k, pt);
-					bFound = true;
+					b_found = true;
 					break;
 				}
 				else if (pt.ii == intervalpoint_array.GetAt(k).ii)
 				{
 					pt.w = intervalpoint_array.GetAt(k).w & pt.w;	// merge with current status
 					intervalpoint_array.SetAt(k, pt);
-					bFound = true;
+					b_found = true;
 					break;
 				}
-				outputState = intervalpoint_array.GetAt(k).w;		// update output and continue
+				output_state = intervalpoint_array.GetAt(k).w;		// update output and continue
 			}
 
 			// not found into existing intervals? add new interval
-			if (!bFound)
+			if (!b_found)
 			{
-				pt.w = outputState & pt.w;
+				pt.w = output_state & pt.w;
 				intervalpoint_array.Add(pt);
 			}
 		}
@@ -311,11 +312,11 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 
 	// (3) delete pTransf objects
 
-	for (int i = 0; i < 8; i++)
+	for (auto i = 0; i < 8; i++)
 	{
-		CIntervalsAndWordsSeries* pInterv = intervalsandwordseries_ptr_array.GetAt(i);
-		if (pInterv != nullptr)
-			delete pInterv;
+		const auto p_interv = intervalsandwordseries_ptr_array.GetAt(i);
+		if (p_interv != nullptr)
+			delete p_interv;
 	}
 	intervalsandwordseries_ptr_array.RemoveAll();
 }
@@ -323,9 +324,9 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 
 void CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan, CIntervalsAndLevels * pOut)
 {
-	WORD ifilter = 2 << chan;
+	const WORD ifilter = 2 << chan;
 	WORD istatus = 0;
-	for (int i = 0; i < intervalpoint_array.GetSize(); i++)
+	for (auto i = 0; i < intervalpoint_array.GetSize(); i++)
 	{
 		if ((ifilter & intervalpoint_array[i].w) != istatus)
 		{
@@ -334,5 +335,3 @@ void CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan, CIntervalsAndLeve
 		}
 	}
 }
-
-

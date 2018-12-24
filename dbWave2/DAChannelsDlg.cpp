@@ -97,7 +97,7 @@ END_MESSAGE_MAP()
 
 void CDAChannelsDlg::OnBnClickedOk()
 {
-	int channel = 0;
+	auto channel = 0;
 	outputparms_array[channel].iChan = channel;
 	outputparms_array[channel].bDigital = FALSE;
 	outputparms_array[channel].iWaveform = combobox_ptr_array[channel]->GetItemData(combobox_ptr_array[channel]->GetCurSel());
@@ -123,35 +123,35 @@ DWORD	CDAChannelsDlg::comboVal[] = { DA_SEQUENCEWAVE, DA_SINEWAVE, DA_SQUAREWAVE
 
 void CDAChannelsDlg::FillCombo( int channel)
 {
-	CComboBox* pCombo = combobox_ptr_array[channel];
-	pCombo->ResetContent();
+	auto p_combo = combobox_ptr_array[channel];
+	p_combo->ResetContent();
 	switch (channel)
 	{
 	case 0:
 	case 1:
-			for (int i = 0; i < 8; i++)
+			for (auto i = 0; i < 8; i++)
 			{
-				int j = pCombo->AddString(comboText[i]);
-				pCombo->SetItemData(j, comboVal[i]);
+				const auto j = p_combo->AddString(comboText[i]);
+				p_combo->SetItemData(j, comboVal[i]);
 			}
 			break;
 	default:
 		{
-			int i = 0;
-			int j = pCombo->AddString(comboText[i]);
-			pCombo->SetItemData(j, comboVal[i]);
+			auto i = 0;
+			auto j = p_combo->AddString(comboText[i]);
+			p_combo->SetItemData(j, comboVal[i]);
 			i = 2;
-			j = pCombo->AddString(comboText[i]);
-			pCombo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(comboText[i]);
+			p_combo->SetItemData(j, comboVal[i]);
 			i = 4;
-			j = pCombo->AddString(comboText[i]);
-			pCombo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(comboText[i]);
+			p_combo->SetItemData(j, comboVal[i]);
 			i = 8;
-			j = pCombo->AddString(comboText[i]);
-			pCombo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(comboText[i]);
+			p_combo->SetItemData(j, comboVal[i]);
 			i = 9;
-			j = pCombo->AddString(comboText[i]);
-			pCombo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(comboText[i]);
+			p_combo->SetItemData(j, comboVal[i]);
 		}
 		break;
 	}
@@ -159,15 +159,15 @@ void CDAChannelsDlg::FillCombo( int channel)
 
 void CDAChannelsDlg::SelectComboItemFromOutputParm(int ival)
 {
-	CComboBox* pCombo = combobox_ptr_array[ival];
-	DWORD val = outputparms_array[ival].iWaveform;
-	int isel = 0;
-	for (isel; isel < pCombo->GetCount(); isel++)
+	auto p_combo = combobox_ptr_array[ival];
+	const DWORD val = outputparms_array[ival].iWaveform;
+	auto isel = 0;
+	for (auto i =0; i < p_combo->GetCount(); i++, isel++)
 	{
-		if (val == pCombo->GetItemData(isel))
+		if (val == p_combo->GetItemData(isel))
 			break;
 	}
-	pCombo->SetCurSel(isel);
+	p_combo->SetCurSel(isel);
 }
 
 BOOL CDAChannelsDlg::OnInitDialog()
@@ -209,7 +209,7 @@ BOOL CDAChannelsDlg::OnInitDialog()
 void CDAChannelsDlg::OnBnClickedCheckchan0()
 {
 	UpdateData(TRUE);
-	BOOL bchan = outputparms_array[0].bON;
+	const auto bchan = outputparms_array[0].bON;
 	GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(bchan);
 	GetDlgItem(IDC_STATIC00)->EnableWindow(bchan);
 	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(bchan);
@@ -223,7 +223,7 @@ void CDAChannelsDlg::OnBnClickedCheckchan0()
 void CDAChannelsDlg::OnBnClickedCheckchan1()
 {
 	UpdateData(TRUE);
-	BOOL bchan = outputparms_array[1].bON;
+	const auto bchan = outputparms_array[1].bON;
 	GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(bchan);
 	GetDlgItem(IDC_STATIC10)->EnableWindow(bchan);
 	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(bchan);
@@ -237,7 +237,7 @@ void CDAChannelsDlg::OnBnClickedCheckchan1()
 void CDAChannelsDlg::OnBnClickedCheckchan2()
 {
 	UpdateData(TRUE);
-	BOOL bchan = m_bChannel2;
+	const auto bchan = m_bChannel2;
 	GetDlgItem(IDC_COMBOSOURCE2)->EnableWindow(bchan);
 	GetDlgItem(IDC_COMBOSOURCE3)->EnableWindow(bchan);
 	GetDlgItem(IDC_COMBOSOURCE4)->EnableWindow(bchan);
@@ -269,9 +269,9 @@ void CDAChannelsDlg::EditSequence(int iID, int channel)
 			dlg.m_outDParms = outputparms_array.GetAt(channel);
 			if (IDOK == dlg.DoModal())
 			{
-				OUTPUTPARMS* pParms = &outputparms_array.GetAt(channel);
-				*pParms = dlg.m_outDParms;
-				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
+				auto p_parms = &outputparms_array.GetAt(channel);
+				*p_parms = dlg.m_outDParms;
+				p_parms->sti.ImportIntervalsSeries(&p_parms->stimulussequence);
 			}
 		}
 		break;
@@ -285,8 +285,8 @@ void CDAChannelsDlg::EditSequence(int iID, int channel)
 			dlg.m_rate = m_samplingRate;
 			if (IDOK == dlg.DoModal())
 			{
-				OUTPUTPARMS* pParms = &outputparms_array.GetAt(channel);
-				pParms->sti.ImportIntervalsSeries(&pParms->stimulussequence);
+				auto p_parms = &outputparms_array.GetAt(channel);
+				p_parms->sti.ImportIntervalsSeries(&p_parms->stimulussequence);
 			}
 		}
 		break;
@@ -300,9 +300,9 @@ void CDAChannelsDlg::EditSequence(int iID, int channel)
 
 void CDAChannelsDlg::OnBnClickedButtonsource(int channel)
 {
-	CComboBox* pCombo = combobox_ptr_array[channel];
-	int isel = pCombo->GetCurSel();
-	EditSequence(pCombo->GetItemData(isel), channel);
+	const auto p_combo = combobox_ptr_array[channel];
+	const auto isel = p_combo->GetCurSel();
+	EditSequence(p_combo->GetItemData(isel), channel);
 }
 
 void CDAChannelsDlg::OnBnClickedButtonsource0()
@@ -370,54 +370,54 @@ static int matrix[10][4] = {
 
 void CDAChannelsDlg::OnCbnSelchangeCombosource(int ival)
 {
-	int IDBUTTON = matrix[ival][0]; 
-	int IDFREQ = matrix[ival][1];
-	int IDAMPLITUDEHIGH = matrix[ival][2]; 
-	int IDAMPLITUDELOW = matrix[ival][3];;
+	const auto idbutton = matrix[ival][0];
+	const auto idfreq = matrix[ival][1];
+	const auto idamplitudehigh = matrix[ival][2]; 
+	const auto idamplitudelow = matrix[ival][3];;
 
-	CComboBox* pCombo = combobox_ptr_array[ival];
-	pCombo->EnableWindow(TRUE);
-	DWORD isel = pCombo->GetItemData(pCombo->GetCurSel());
-	BOOL	bEnableFrequency = TRUE;
-	BOOL	bEnableButton = TRUE;
-	BOOL	bEnableAmplitudeHigh = TRUE;
-	BOOL	bEnableAmplitudeLow = TRUE;
+	auto p_combo = combobox_ptr_array[ival];
+	p_combo->EnableWindow(TRUE);
+	const auto isel = p_combo->GetItemData(p_combo->GetCurSel());
+	BOOL	b_enable_frequency;
+	BOOL	b_enable_button;
+	auto b_enable_amplitude_high = TRUE;
+	auto b_enable_amplitude_low = TRUE;
 
 	switch (isel) {
 	case DA_SINEWAVE:		// sinusoid
 	case DA_SQUAREWAVE:		// square
 	case DA_TRIANGLEWAVE:	// triangle
-		bEnableFrequency	= TRUE;
-		bEnableButton		= FALSE;
+		b_enable_frequency	= TRUE;
+		b_enable_button		= FALSE;
 		break;
 
 	case DA_SEQUENCEWAVE:	// sequence
 	case DA_MSEQWAVE:		// M-seq
-		bEnableFrequency	= FALSE;
-		bEnableButton		= TRUE;
+		b_enable_frequency	= FALSE;
+		b_enable_button		= TRUE;
 		break;
 
 	case DA_CONSTANT:
-		bEnableAmplitudeLow	= FALSE;
-		bEnableButton		= FALSE;
-		bEnableFrequency	= FALSE;
-		bEnableAmplitudeHigh= TRUE;
+		b_enable_amplitude_low	= FALSE;
+		b_enable_button		= FALSE;
+		b_enable_frequency	= FALSE;
+		b_enable_amplitude_high= TRUE;
 		break;
 
 	case DA_NOISEWAVE:		// Noise
 	case DA_FILEWAVE:		// data file
 	default:
-		bEnableFrequency	= FALSE;
-		bEnableButton		= FALSE;
-		bEnableAmplitudeHigh= FALSE;
-		bEnableAmplitudeLow = FALSE;
+		b_enable_frequency	= FALSE;
+		b_enable_button		= FALSE;
+		b_enable_amplitude_high= FALSE;
+		b_enable_amplitude_low = FALSE;
 		break;
 	}
-	GetDlgItem(IDBUTTON)->EnableWindow(bEnableButton);
-	GetDlgItem(IDFREQ)->EnableWindow(bEnableFrequency);
-	if (IDAMPLITUDEHIGH != 0) {
-		GetDlgItem(IDAMPLITUDEHIGH)->EnableWindow(bEnableAmplitudeHigh);
-		GetDlgItem(IDAMPLITUDELOW)->EnableWindow(bEnableAmplitudeLow);
+	GetDlgItem(idbutton)->EnableWindow(b_enable_button);
+	GetDlgItem(idfreq)->EnableWindow(b_enable_frequency);
+	if (idamplitudehigh != 0) {
+		GetDlgItem(idamplitudehigh)->EnableWindow(b_enable_amplitude_high);
+		GetDlgItem(idamplitudelow)->EnableWindow(b_enable_amplitude_low);
 	}
 }
 

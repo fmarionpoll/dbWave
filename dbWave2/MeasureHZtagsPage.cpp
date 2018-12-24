@@ -6,7 +6,7 @@
 #include "scopescr.h"
 #include "Lineview.h"
 #include "Editctrl.h"
-#include "NoteDoc.h"
+//#include "NoteDoc.h"
 #include "dbWaveDoc.h"
 #include "resource.h"
 #include "MeasureHZtagsPage.h"
@@ -16,9 +16,6 @@
 #endif
 
 IMPLEMENT_DYNCREATE(CMeasureHZtagsPage, CPropertyPage)
-
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureHZtagsPage property page
 
 CMeasureHZtagsPage::CMeasureHZtagsPage() : CPropertyPage(CMeasureHZtagsPage::IDD), m_pMO(nullptr), m_pdbDoc(nullptr),
                                            m_pdatDoc(nullptr)

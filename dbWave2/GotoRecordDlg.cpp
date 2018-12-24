@@ -58,10 +58,10 @@ void CGotoRecordDlg::SetOptions()
 		idisable = IDC_EDIT2;
 		iselect = IDC_EDIT1;
 	}
-	CEdit* pWnd = (CEdit*) GetDlgItem(iselect );
-	pWnd->EnableWindow(TRUE);
-	pWnd->SetFocus();
-	pWnd->SetSel(0, -1, FALSE);
+	CEdit* p_wnd = (CEdit*) GetDlgItem(iselect );
+	p_wnd->EnableWindow(TRUE);
+	p_wnd->SetFocus();
+	p_wnd->SetSel(0, -1, FALSE);
 	GetDlgItem(idisable)->EnableWindow(FALSE);
 }
 

@@ -94,9 +94,9 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CGridDropTarget message handlers
 
-DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint /*point*/)
+DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint /*point*/)
 {
-	if (m_pGridCtrl && ((pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())))
+	if (m_pGridCtrl && ((p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())))
     {
         if (dwKeyState & MK_CONTROL)
             return DROPEFFECT_COPY;
@@ -107,34 +107,34 @@ DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint /*
         return DROPEFFECT_NONE;
 }
 
-DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, 
+DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject, 
                                         DWORD dwKeyState, CPoint point)
 {
-    if ((m_pGridCtrl) && (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
+    if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
 		return m_pGridCtrl->OnDragEnter(pDataObject, dwKeyState, point);
 	else
 		return DROPEFFECT_NONE;
 }
 
-void CGridDropTarget::OnDragLeave(CWnd* pWnd)
+void CGridDropTarget::OnDragLeave(CWnd* p_wnd)
 {
-	if ((m_pGridCtrl) && (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
+	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
 		m_pGridCtrl->OnDragLeave();
 }
 
-DROPEFFECT CGridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, 
+DROPEFFECT CGridDropTarget::OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject, 
                                        DWORD dwKeyState, CPoint point)
 {
-	if ((m_pGridCtrl) && (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
+	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
 			return m_pGridCtrl->OnDragOver(pDataObject, dwKeyState, point);
 	else
 		return DROPEFFECT_NONE;
 }
 
-BOOL CGridDropTarget::OnDrop(CWnd* pWnd, COleDataObject* pDataObject,
+BOOL CGridDropTarget::OnDrop(CWnd* p_wnd, COleDataObject* pDataObject,
                              DROPEFFECT dropEffect, CPoint point)
 {
-    if ((m_pGridCtrl) && (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
+    if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
         return m_pGridCtrl->OnDrop(pDataObject, dropEffect, point);
     else
         return FALSE;

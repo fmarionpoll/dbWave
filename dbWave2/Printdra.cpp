@@ -9,10 +9,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDrawAreaDlg dialog
-
-
 CPrintDrawAreaDlg::CPrintDrawAreaDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPrintDrawAreaDlg::IDD, pParent)
 	, m_bFilterDat(FALSE)
@@ -39,10 +35,6 @@ void CPrintDrawAreaDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CPrintDrawAreaDlg, CDialog)
 
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDrawAreaDlg message handlers
 
 BOOL CPrintDrawAreaDlg::OnInitDialog()
 {

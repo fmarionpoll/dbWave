@@ -134,7 +134,7 @@ void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 /////////////////////////////////////////////////////////////////////////////
 // CGridInPlaceList
 
-CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 						   int nRow, int nColumn, 
 						   COLORREF crFore, COLORREF crBack,
 						   CStringArray& Items, CString sInitText, 
@@ -152,7 +152,7 @@ CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UI
 
 	// Create the combobox
 	DWORD dwComboStyle = WS_BORDER|WS_CHILD|WS_VISIBLE|WS_VSCROLL|
-						 CBS_AUTOHSCROLL | dwStyle;
+						 CBS_AUTOHSCROLL | dw_style;
 	int nHeight = rect.Height();
 	rect.bottom = rect.bottom + m_nNumLines*nHeight + ::GetSystemMetrics(SM_CYHSCROLL);
 	if (!Create(dwComboStyle, rect, pParent, nID)) return;
@@ -183,7 +183,7 @@ CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UI
 	ShowDropDown();
 
 	// Subclass the combobox edit control if style includes CBS_DROPDOWN
-	if ((dwStyle & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST)
+	if ((dw_style & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST)
 	{
 		m_comboedit.SubclassDlgItem(IDC_COMBOEDIT, this);
 		SetFocus();
@@ -366,12 +366,12 @@ void CGridInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CComboBox::OnKeyUp(nChar, nRepCnt, nFlags);
 }
 
-HBRUSH CGridInPlaceList::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/) 
+HBRUSH CGridInPlaceList::CtlColor(CDC* /*p_dc*/, UINT /*nCtlColor*/) 
 {
 	/*
 	static CBrush brush(m_crBackClr);
-	pDC->SetTextColor(m_crForeClr);
-	pDC->SetBkMode(TRANSPARENT);
+	p_dc->SetTextColor(m_crForeClr);
+	p_dc->SetBkMode(TRANSPARENT);
 	return (HBRUSH) brush.GetSafeHandle();
 	*/
 	
@@ -412,10 +412,10 @@ CWnd* CGridCellCombo::GetEditWnd() const
 }
 
 
-CSize CGridCellCombo::GetCellExtent(CDC* pDC)
+CSize CGridCellCombo::GetCellExtent(CDC* p_dc)
 {    
 	CSize sizeScroll (GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));    
-	CSize sizeCell (CGridCell::GetCellExtent(pDC));    
+	CSize sizeCell (CGridCell::GetCellExtent(p_dc));    
 	sizeCell.cx += sizeScroll.cx;    
 	sizeCell.cy = max(sizeCell.cy,sizeScroll.cy);    
 	return sizeCell;
@@ -429,10 +429,10 @@ void CGridCellCombo::EndEdit()
 }
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
-BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
+BOOL CGridCellCombo::Draw(CDC* p_dc, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
 {
 #ifdef _WIN32_WCE
-	return CGridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
+	return CGridCell::Draw(p_dc, nRow, nCol, rect,  bEraseBkgnd);
 #else
 	// Cell selected?
 	//if ( !IsFixed() && IsFocused())
@@ -450,7 +450,7 @@ BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bErase
 			ScrollRect.bottom = rect.top + sizeScroll.cy;
 
 			// Do the draw 
-			pDC->DrawFrameControl(ScrollRect, DFC_SCROLL, DFCS_SCROLLDOWN);
+			p_dc->DrawFrameControl(ScrollRect, DFC_SCROLL, DFCS_SCROLLDOWN);
 
 			// Adjust the remaining space in the cell
 			rect.right = ScrollRect.left;
@@ -462,7 +462,7 @@ BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bErase
 		SetText(_T(""));
 
 	// drop through and complete the cell drawing using the base class' method
-	BOOL bResult = CGridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
+	BOOL bResult = CGridCell::Draw(p_dc, nRow, nCol, rect,  bEraseBkgnd);
 
 	if (IsEditing())
 		SetText(strTempText);

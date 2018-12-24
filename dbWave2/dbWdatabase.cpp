@@ -148,7 +148,7 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 
 	// create the corresponding indexes
 	CDaoIndexFieldInfo index_field0;
-	index_field0.m_strName = m_mainTableSet.m_desc[CH_IDINSECT].csColName;			// insectID
+	//index_field0.m_strName = m_mainTableSet.m_desc[CH_IDINSECT].csColName;			// insectID
 	index_field0.m_bDescending = FALSE;
 
 	CDaoIndexInfo index_fd0;
@@ -346,7 +346,7 @@ BOOL CdbWdatabase::OpenTables()
 				table_def.CreateField(m_mainTableSet.m_desc[CH_LOCATION_ID].csColName, dbLong, 4, 0);	// locationID
 				// stage -> sensillumname
 				DeleteRelation(_T("table_stage"));									// delete relationship
-				table_def.DeleteField(CH_SENSILLUM_ID);							// delete field
+				table_def.DeleteField(CH_SENSILLUM_ID);								// delete field
 				table_def.CreateField(m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName, dbLong, 4, 0);	// sensillumID
 				table_def.Close();
 
@@ -374,7 +374,7 @@ BOOL CdbWdatabase::OpenTables()
 				// only 24 fields instead of 26
 			case 24:
 				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].csColName, dbLong, 4, 0);		// repeatID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].csColName, dbLong, 4, 0);	// repeatID
 				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].csColName, dbLong, 4, 0);	// repeat2ID
 				table_def.Close();
 
@@ -396,7 +396,6 @@ BOOL CdbWdatabase::OpenTables()
 
 			default:
 				return FALSE;
-				break;
 			}
 		}
 		// if not, we assume it is a not a valid dbWave database
@@ -539,7 +538,7 @@ CString CdbWdatabase::GetFilePath(const int i_id)
 }
 
 
-CString CdbWdatabase::GetRelativePathFromString(CString cs_path) 
+CString CdbWdatabase::GetRelativePathFromString(const CString& cs_path) 
 {
 	TCHAR sz_out[MAX_PATH] = _T("");
 	if (cs_path.IsEmpty())
@@ -556,7 +555,7 @@ CString CdbWdatabase::GetRelativePathFromString(CString cs_path)
 long CdbWdatabase::GetRelativePathFromID(const long i_id) 
 {
 	long inew_id = -1;
-	const CString cs_path = m_pathSet.GetStringFromID(i_id);
+	const auto cs_path = m_pathSet.GetStringFromID(i_id);
 	if (!IsRelativePath(cs_path))
 	{
 		auto cs_relative_path = GetRelativePathFromString(cs_path);
@@ -573,15 +572,15 @@ long CdbWdatabase::GetRelativePathFromID(const long i_id)
 
 void CdbWdatabase::ConvertPathtoRelativePath(const long i_col_path)
 {
-	COleVariant varValue;
-	m_mainTableSet.GetFieldValue(i_col_path, varValue);
-	const auto path_id = varValue.lVal;
+	COleVariant var_value;
+	m_mainTableSet.GetFieldValue(i_col_path, var_value);
+	const auto path_id = var_value.lVal;
 	const auto i_id = GetRelativePathFromID(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
 		m_mainTableSet.Edit();
-		varValue.lVal = i_id;
-		m_mainTableSet.SetFieldValue(i_col_path, varValue.lVal);
+		var_value.lVal = i_id;
+		m_mainTableSet.SetFieldValue(i_col_path, var_value.lVal);
 		m_mainTableSet.Update();
 	}
 }
@@ -737,7 +736,7 @@ CString CdbWdatabase::GetSpkFilenameFromCurrentRecord()
 BOOL CdbWdatabase::MoveRecord (UINT nIDMoveCommand)
 {
 	UpdateTables();
-	BOOL flag = TRUE;
+	auto flag = TRUE;
 	switch (nIDMoveCommand)
 	{
 		case ID_RECORD_PREV:
@@ -932,7 +931,6 @@ DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 		// if it comes here, the program must have crashed because pdesc is not defined...
 	default:
 		return nullptr;
-		break;
 	}
 	////////////
 
@@ -1006,7 +1004,7 @@ BOOL CdbWdatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_desc)
 		flag = FALSE;
 		break;
 	}
-	////////////
+	
 	return flag;
 }
 
@@ -1098,7 +1096,7 @@ BOOL CdbWdatabase::ImportRecordfromDatabase(CdbWdatabase* p_w_database)
 
 void CdbWdatabase::TransferWaveFormatDataToRecord(CWaveFormat * p_wf)
 {
-	// set time -- oTime
+	// set time -- o_time
 	COleDateTime o_time;
 	auto t = p_wf->acqtime;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());

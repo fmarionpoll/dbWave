@@ -15,9 +15,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
-#include "resource.h"
-#include "scopescr.h"
-#include "TemplateWnd.h"
+//#include "resource.h"
+//#include "scopescr.h"
+//#include "TemplateWnd.h"
 #include "TemplateListWnd.h"
 
 #ifdef _DEBUG
@@ -116,10 +116,10 @@ CSpkDetectArray::~CSpkDetectArray()
 
 void CSpkDetectArray::DeleteArray()
 {
-	int isize= spkdetectparm_ptr_array.GetSize();
-	for (int i=0; i<isize; i++)
+	const auto isize= spkdetectparm_ptr_array.GetSize();
+	for (auto i=0; i<isize; i++)
 	{
-		SPKDETECTPARM* pparm = spkdetectparm_ptr_array[i];
+		const auto pparm = spkdetectparm_ptr_array[i];
 		delete pparm;
 	}
 	spkdetectparm_ptr_array.RemoveAll();
@@ -127,13 +127,13 @@ void CSpkDetectArray::DeleteArray()
 
 void CSpkDetectArray::SetSize(int nitems)
 {
-	int isize = spkdetectparm_ptr_array.GetSize();
+	const auto isize = spkdetectparm_ptr_array.GetSize();
 	// delete items
 	if (isize > nitems)
 	{
-		for (int i=isize-1; i>= nitems; i--)
+		for (auto i=isize-1; i>= nitems; i--)
 		{
-			SPKDETECTPARM* pparm = spkdetectparm_ptr_array[i];
+			auto pparm = spkdetectparm_ptr_array[i];
 			delete pparm;		
 		}
 		spkdetectparm_ptr_array.SetSize(nitems);
@@ -141,7 +141,7 @@ void CSpkDetectArray::SetSize(int nitems)
 	// add dummy items
 	else if (isize < nitems)
 	{
-		for (int i=isize; i<nitems; i++)
+		for (auto i=isize; i<nitems; i++)
 			AddItem();
 	}	
 }
@@ -149,7 +149,7 @@ void CSpkDetectArray::SetSize(int nitems)
 // insert one parameter array item
 int CSpkDetectArray::AddItem()
 {
-	SPKDETECTPARM* pparm = new SPKDETECTPARM;
+	const auto pparm = new SPKDETECTPARM;
 	ASSERT(pparm != NULL);
 	spkdetectparm_ptr_array.Add(pparm);
 	return spkdetectparm_ptr_array.GetSize();
@@ -159,11 +159,11 @@ int CSpkDetectArray::AddItem()
 // return isize left
 int	CSpkDetectArray::RemoveItem(int ichan)
 {
-	int isize = spkdetectparm_ptr_array.GetSize() - 1;
+	const auto isize = spkdetectparm_ptr_array.GetSize() - 1;
 	if (ichan > isize)
 		return -1;
 
-	SPKDETECTPARM* pparm = spkdetectparm_ptr_array[ichan];
+	const auto pparm = spkdetectparm_ptr_array[ichan];
 	delete pparm;
 	spkdetectparm_ptr_array.RemoveAt(ichan);
 	return isize;
@@ -185,9 +185,9 @@ void CSpkDetectArray::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{   
 		ar << wversion;
-		WORD nItems = spkdetectparm_ptr_array.GetSize();
-		ar << nItems;
-		for (int i=0; i<nItems; i++)
+		const WORD n_items = spkdetectparm_ptr_array.GetSize();
+		ar << n_items;
+		for (auto i=0; i<n_items; i++)
 			spkdetectparm_ptr_array[i]->Serialize(ar);	
 	} 
 	else
@@ -201,9 +201,9 @@ void CSpkDetectArray::Serialize(CArchive& ar)
 void CSpkDetectArray::Serialize_Load(CArchive& ar, WORD wversion)
 {
 	ASSERT(ar.IsLoading());
-	WORD nItems; ar >> nItems;
-	SetSize(nItems);		
-	for (int i=0; i<nItems; i++)
+	WORD n_items; ar >> n_items;
+	SetSize(n_items);		
+	for (auto i=0; i<n_items; i++)
 		spkdetectparm_ptr_array[i]->Serialize(ar);
 	if (wversion > 1 && wversion < 3)
 	{
@@ -577,13 +577,13 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 	{
 		wversion = 2;
 		ar << wversion;
-		ar << (WORD) dataTransform;
-		ar << (WORD) iparameter;
-		ar << (WORD) ileft;
-		ar << (WORD) iright;
-		ar << (WORD) ilower;
-		ar << (WORD) iupper;
-		WORD dummy = 0;
+		ar << static_cast<WORD>(dataTransform);
+		ar << static_cast<WORD>(iparameter);
+		ar << static_cast<WORD>(ileft);
+		ar << static_cast<WORD>(iright);
+		ar << static_cast<WORD>(ilower);
+		ar << static_cast<WORD>(iupper);
+		const auto dummy = static_cast<WORD>(0);
 		ar << dummy;
 		ar << dummy;
 
@@ -601,7 +601,7 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 		ar << rowheight;		// 3
 		ar << hitrate;			// 4
 		ar << hitratesort;		// 5
-		btplIspresent = (ptpl != nullptr);	// test if templatelist is present
+		btplIspresent = ptpl != nullptr;	// test if templatelist is present
 		ar << btplIspresent;	// 6
 		ar << coltext;			// 7
 		ar << colspikes;		// 8

@@ -38,7 +38,7 @@ END_MESSAGE_MAP()
 // cdxCRotBevelLine misc stuff
 /////////////////////////////////////////////////////////////////////////////
 
-static inline CRect makeTextRect(const CRect & rectClient, const CSize & sz, DWORD dwType, int iAngle)
+static inline CRect makeTextRect(const CRect & rect_client, const CSize & sz, DWORD dwType, int iAngle)
 {
 	CRect	rectText;
 
@@ -47,67 +47,67 @@ static inline CRect makeTextRect(const CRect & rectClient, const CSize & sz, DWO
 		default:	
 			ASSERT(false);
 		case	0:
-			rectText.top	=	rectClient.top - sz.cy/2 - 2;
+			rectText.top	=	rect_client.top - sz.cy/2 - 2;
 			rectText.bottom	=	rectText.top + sz.cy;
 			switch(dwType)
 			{
 				default			:	
 					ASSERT(false);
 				case	SS_LEFT	:	
-					rectText.left	=	rectClient.left;
-					rectText.right	=	rectClient.left + sz.cx;
+					rectText.left	=	rect_client.left;
+					rectText.right	=	rect_client.left + sz.cx;
 					break;
 				case	SS_CENTER:	
-					rectText.left	=	rectClient.left + (rectClient.Width() - sz.cx) / 2;
+					rectText.left	=	rect_client.left + (rect_client.Width() - sz.cx) / 2;
 					rectText.right	=	rectText.left + sz.cx;
 					break;
 				case	SS_RIGHT	:	
-					rectText.left	=	rectClient.right - sz.cx;
-					rectText.right	=	rectClient.right;
+					rectText.left	=	rect_client.right - sz.cx;
+					rectText.right	=	rect_client.right;
 					break;
 			}
 			break;
 
 		case	90:
-			rectText.left		=	rectClient.left - sz.cy/2 - 1;
+			rectText.left		=	rect_client.left - sz.cy/2 - 1;
 			rectText.right		=	rectText.left + sz.cy;
 			switch(dwType)
 			{
 				default			:	
 					ASSERT(false);
 				case	SS_RIGHT	:	
-					rectText.top		=	rectClient.top;
-					rectText.bottom	=	rectClient.top + sz.cx;
+					rectText.top		=	rect_client.top;
+					rectText.bottom	=	rect_client.top + sz.cx;
 					break;
 				case	SS_CENTER:	
-					rectText.top		=	rectClient.top + (rectClient.Height() - sz.cx) / 2;
+					rectText.top		=	rect_client.top + (rect_client.Height() - sz.cx) / 2;
 					rectText.bottom	=	rectText.top + sz.cx;
 					break;
 				case	SS_LEFT	:
-					rectText.top		=	rectClient.bottom - sz.cx;
-					rectText.bottom	=	rectClient.bottom;
+					rectText.top		=	rect_client.bottom - sz.cx;
+					rectText.bottom	=	rect_client.bottom;
 					break;
 			}
 			break;
 
 		case	270:
-			rectText.left		=	rectClient.left - sz.cy/2 + 1;
+			rectText.left		=	rect_client.left - sz.cy/2 + 1;
 			rectText.right		=	rectText.left + sz.cy;
 			switch(dwType)
 			{
 				default			:	
 					ASSERT(false);
 				case	SS_LEFT	:	
-					rectText.top		=	rectClient.top;
-					rectText.bottom	=	rectClient.top + sz.cx;
+					rectText.top		=	rect_client.top;
+					rectText.bottom	=	rect_client.top + sz.cx;
 					break;
 				case	SS_CENTER:	
-					rectText.top		=	rectClient.top + (rectClient.Height() - sz.cx) / 2;
+					rectText.top		=	rect_client.top + (rect_client.Height() - sz.cx) / 2;
 					rectText.bottom	=	rectText.top + sz.cx;
 					break;
 				case	SS_RIGHT	:	
-					rectText.top		=	rectClient.bottom - sz.cx;
-					rectText.bottom	=	rectClient.bottom;
+					rectText.top		=	rect_client.bottom - sz.cx;
+					rectText.bottom	=	rect_client.bottom;
 					break;
 			}
 			break;
@@ -150,35 +150,35 @@ void cdxCRotBevelLine::OnPaint()
 
 	CPaintDC dc(this); // device context for painting
 	
-	CRect	rectClient;
-	GetClientRect(rectClient);
+	CRect	rect_client;
+	GetClientRect(rect_client);
 
 	COLORREF	oldBkCol		=	dc.GetBkColor();
 	CFont		*pOldFont		=	dc.SelectObject(GetFont());
 	COLORREF	hiCol			=	::GetSysColor(!m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
 	COLORREF	loCol			=	::GetSysColor(m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
 
-	dc.FillSolidRect(rectClient,::GetSysColor(COLOR_BTNFACE));
+	dc.FillSolidRect(rect_client,::GetSysColor(COLOR_BTNFACE));
 
 	// draw bevel
 
 	CRect		rectBevel;
 	bool		bHorz;
 
-	if(rectClient.Width() > rectClient.Height())
+	if(rect_client.Width() > rect_client.Height())
 	{
-		rectBevel.left		=	rectClient.left;
-		rectBevel.right		=	rectClient.right;
-		rectBevel.top		=	rectClient.top + rectClient.Height() / 2;
+		rectBevel.left		=	rect_client.left;
+		rectBevel.right		=	rect_client.right;
+		rectBevel.top		=	rect_client.top + rect_client.Height() / 2;
 		rectBevel.bottom	=	rectBevel.top + 2;
 		bHorz				=	true;
 	}
 	else
 	{
-		rectBevel.left		=	rectClient.left + rectClient.Width() / 2;
+		rectBevel.left		=	rect_client.left + rect_client.Width() / 2;
 		rectBevel.right		=	rectBevel.left + 2;
-		rectBevel.top		=	rectClient.top;
-		rectBevel.bottom	=	rectClient.bottom;
+		rectBevel.top		=	rect_client.top;
+		rectBevel.bottom	=	rect_client.bottom;
 		bHorz				=	false;
 	}
 
@@ -259,7 +259,7 @@ void cdxCRotBevelLine::OnEnable(BOOL bEnable)
 	Invalidate();
 }
 
-BOOL cdxCRotBevelLine::OnEraseBkgnd(CDC* pDC) 
+BOOL cdxCRotBevelLine::OnEraseBkgnd(CDC* p_dc) 
 {
 	return TRUE;
 }

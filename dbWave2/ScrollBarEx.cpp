@@ -116,7 +116,7 @@ void CScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
 		return;
 
 	m_scBarInfo_old = m_scBarInfo;
-	BOOL flag = GetScrollInfo(&m_scInfo, SIF_ALL);
+	const auto flag = GetScrollInfo(&m_scInfo, SIF_ALL);
 	ASSERT(flag);
 	m_scInfo_old = m_scInfo;
 

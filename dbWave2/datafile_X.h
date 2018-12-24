@@ -21,7 +21,7 @@ public:
 	DECLARE_DYNCREATE(CDataFileX)
 
 // Operations
-	virtual BOOL CheckFileType(CFile* pfile, int bSignatureOffset=0);
+	virtual BOOL CheckFileType(CFile* pfile);
 	virtual BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
 	virtual	long ReadData(long dataIndex, long nbpoints, short* pBuffer);
 	virtual BOOL ReadHZtags(CTagList* pHZtags);

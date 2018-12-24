@@ -12,9 +12,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CScopeScreenPropsDlg dialog
-
 
 CScopeScreenPropsDlg::CScopeScreenPropsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CScopeScreenPropsDlg::IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
@@ -26,7 +23,6 @@ CScopeScreenPropsDlg::CScopeScreenPropsDlg(CWnd* pParent /*=NULL*/)
 	m_crScopeGrid = 0;
 }
 
-
 void CScopeScreenPropsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -36,7 +32,6 @@ void CScopeScreenPropsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT6, m_ycells);
 }
 
-
 BEGIN_MESSAGE_MAP(CScopeScreenPropsDlg, CDialog)
 	ON_EN_CHANGE(IDC_EDIT3, OnEnChangeXCells)
 	ON_EN_CHANGE(IDC_EDIT4, OnEnChangeXYTicks)
@@ -45,9 +40,6 @@ BEGIN_MESSAGE_MAP(CScopeScreenPropsDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON1, OnBackgroundColor)
 	ON_BN_CLICKED(IDC_BUTTON2, OnGridColor)
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CScopeScreenPropsDlg message handlers
 
 BOOL CScopeScreenPropsDlg::OnInitDialog() 
 {
@@ -73,7 +65,6 @@ BOOL CScopeScreenPropsDlg::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 void CScopeScreenPropsDlg::OnEnChangeXCells() 
 {
@@ -175,6 +166,7 @@ void CScopeScreenPropsDlg::OnEnChangeXYTicksLine()
 		case VK_NEXT:
 			xytickline--;
 			break;
+		default: ;
 		}
 		// check boundaries
 		if (xytickline < 0)	xytickline = 0;

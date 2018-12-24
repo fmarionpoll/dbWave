@@ -111,7 +111,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	return TRUE;
 }
 
-BOOL CDataFileMCID::CheckFileType(CFile* f, int bOffsetHeader)
+BOOL CDataFileMCID::CheckFileType(CFile* f)
 {
 	// ------read bytes to make sure we are accessing the right file
 	BOOL flag = DOCTYPE_UNKNOWN;

@@ -9,19 +9,14 @@
 
 IMPLEMENT_SERIAL(CScale, CObject, 1 /* schema number*/ )
 
-// --------------------------------------------------------------------------
 // create CScale with zero points
-// --------------------------------------------------------------------------
 CScale::CScale(): m_lNdatapoints(0)
 {
 	m_nintervals = 0;
 	m_npixels = 1;
 }
 
-
-// --------------------------------------------------------------------------
 // create CScale with npoints
-// --------------------------------------------------------------------------
 CScale::CScale(const int n_pixels) : m_lNdatapoints(0)
 {
 	m_npixels = 1;
@@ -153,7 +148,6 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 	return TRUE;
 }
 
-
 /**************************************************************************
  function:	HowManyIntervalsFit(int firstPixel, long l_first, long l_last)
  purpose:	count how many pixels fit in a RW buffer / given scale
@@ -211,8 +205,6 @@ int CScale::HowManyIntervalsFit(const int first_pixel, long* l_last)
 	return (last_pixel-first_pixel+1);
 }
 
-
-// --------------------------------------------------------------------------------------
 int CScale::GetWhichInterval(long lindex)
 {
 	const DWORD llindex = lindex;

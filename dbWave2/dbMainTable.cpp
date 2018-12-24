@@ -20,7 +20,7 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_ID = 0; // 1
 	m_Filedat = _T(""); //
 	m_Filespk = _T(""); //
-	m_acq_date = (DATE)0; //
+	m_acq_date = static_cast<DATE>(0); //
 	m_acq_comment = _T(""); // 5
 	m_IDinsect = 0; //
 	m_IDsensillum = 0; //
@@ -43,8 +43,8 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_flag = 0; // 24
 	m_repeat = 0; // 25
 	m_repeat2 = 0; // 26
-	m_acqdate_day = (DATE)0; // 27
-	m_acqdate_time = (DATE)0; // 28
+	m_acqdate_day = static_cast<DATE>(0); // 27
+	m_acqdate_time = static_cast<DATE>(0); // 28
 	m_expt_ID = 0; // 29
 	m_nFields = 29;
 
@@ -79,8 +79,8 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_desc[CH_EXPT_ID].pdataItem = &m_expt_ID;
 
 	m_nDefaultType = dbOpenDynaset;
-	m_desc[CH_ACQDATE_DAY].otfilterParam1 = DATE(0); // 16
-	m_desc[CH_ACQDATE_TIME].otfilterParam1 = DATE(0); // 17
+	m_desc[CH_ACQDATE_DAY].otfilterParam1 = static_cast<DATE>(0); // 16
+	m_desc[CH_ACQDATE_TIME].otfilterParam1 = static_cast<DATE>(0); // 17
 	m_nParams = 18;
 
 	m_csdefaultSQL = _T("[table]");
@@ -115,7 +115,7 @@ CdbMainTable::~CdbMainTable()
 
 CString CdbMainTable::GetDefaultDBName()
 {
-	CString cs = m_defaultName;
+	auto cs = m_defaultName;
 	if (m_pDatabase->m_pDAODatabase != nullptr)
 		cs = m_pDatabase->GetName();
 	
@@ -211,7 +211,7 @@ BOOL CdbMainTable::SetLongValue (long iID, CString cscolname)
 	return TRUE;
 }
 
-BOOL CdbMainTable::SetValueNull (CString cscolname)
+BOOL CdbMainTable::SetValueNull (const CString cscolname)
 {
 	try {
 		Edit();
@@ -225,7 +225,7 @@ BOOL CdbMainTable::SetValueNull (CString cscolname)
 
 void CdbMainTable::GetAcqdateArray(CPtrArray * pacqdate)
 {
-	long nrecords = GetNRecords();
+	const auto nrecords = GetNRecords();
 	if (0 == nrecords)
 		return;
 
@@ -233,7 +233,7 @@ void CdbMainTable::GetAcqdateArray(CPtrArray * pacqdate)
 	MoveFirst();
 	while (!IsEOF())
 	{
-		COleDateTime* ptime = new COleDateTime;
+		const auto ptime = new COleDateTime;
 		*ptime = m_acq_date;
 		pacqdate->Add(ptime);
 
@@ -263,7 +263,7 @@ void CdbMainTable::GetMaxIDs()
 	max_insectID = -1;
 	max_sensillumID = -1;
 	max_ID = -1;
-	long nrecords = GetNRecords();
+	const auto nrecords = GetNRecords();
 	if (0 == nrecords)
 		return; 
 
@@ -288,15 +288,15 @@ BOOL CdbMainTable::FindIDinColumn(long iID, int icolumn)
 {
 	CString cs;		// to construct insect and sensillum number (for example)
 	CString str;	// to store FindFirst filter	
-	CString cscolhead = m_desc[icolumn].csColName;
-	str.Format(_T("%s=%li"), (LPCTSTR)cscolhead, iID);
-	BOOL flag = FALSE;
+	const auto cscolhead = m_desc[icolumn].csColName;
+	str.Format(_T("%s=%li"), static_cast<LPCTSTR>(cscolhead), iID);
+	auto flag = FALSE;
 
 	try {
-		COleVariant varCurrentPos = GetBookmark();
+		const auto var_current_pos = GetBookmark();
 		MoveFirst();
 		flag = FindFirst(str);
-		SetBookmark(varCurrentPos);
+		SetBookmark(var_current_pos);
 	}
 	catch (CDaoException* e) {
 		DisplayDaoException(e, 19);
@@ -329,14 +329,14 @@ void CdbMainTable::RefreshQuery()
 void CdbMainTable::BuildFilters()
 {
 	m_strFilter.Empty();
-	for (int ifield =0; ifield < m_nFields; ifield++)
+	for (auto ifield =0; ifield < m_nFields; ifield++)
 	{
 		if (m_desc[ifield].bFilter2 == TRUE)
 		{
 			if (!m_strFilter.IsEmpty())
 				m_strFilter += _T(" AND ");
 			CString cs;
-			cs.Format(_T("%s IN ("), (LPCTSTR) m_desc[ifield].csColNamewithBrackets);
+			cs.Format(_T("%s IN ("), static_cast<LPCTSTR>(m_desc[ifield].csColNamewithBrackets));
 			m_strFilter += cs;
 			switch (m_desc[ifield].typeLocal)
 			{
@@ -357,14 +357,14 @@ void CdbMainTable::BuildFilters()
 
 			case FIELD_DATE_YMD:
 				{
-					int i = 0;
-					COleDateTime oTime = m_desc[ifield].otfilterParam2.GetAt(i);
-					cs = oTime.Format(_T(" #%m/%d/%y#"));
+					auto i = 0;
+					auto o_time = m_desc[ifield].otfilterParam2.GetAt(i);
+					cs = o_time.Format(_T(" #%m/%d/%y#"));
 					m_strFilter += cs;
 					for (i = 1; i < m_desc[ifield].otfilterParam2.GetSize(); i++)
 					{
-						oTime = m_desc[ifield].otfilterParam2.GetAt(i);
-						cs = oTime.Format(_T(", #%m/%d/%y#"));
+						o_time = m_desc[ifield].otfilterParam2.GetAt(i);
+						cs = o_time.Format(_T(", #%m/%d/%y#"));
 						m_strFilter += cs;
 					}
 				}
@@ -388,7 +388,7 @@ void CdbMainTable::BuildFilters()
 
 void CdbMainTable::ClearFilters()
 {
-	for (int i = 0; i < m_nFields; i++)
+	for (auto i = 0; i < m_nFields; i++)
 		m_desc[i].bFilter1 = FALSE;
 	m_strFilter.Empty();
 	m_bFilterON =FALSE;
@@ -426,107 +426,106 @@ long CdbMainTable::GetNRecords()
 	return nrecords;
 }
 
-void CdbMainTable::AddDaytoDateArray(COleDateTime &oTime)
+void CdbMainTable::AddDaytoDateArray(COleDateTime &o_time)
 {
-	BOOL bFlag = FALSE;
-	COleDateTime dayTime;
-	COleDateTime ioTime;
-	dayTime.SetDateTime(oTime.GetYear(), oTime.GetMonth(), oTime.GetDay(), 0, 0, 0);
+	auto b_flag = FALSE;
+	COleDateTime day_time;
+	day_time.SetDateTime(o_time.GetYear(), o_time.GetMonth(), o_time.GetDay(), 0, 0, 0);
 
-	for (int i = 0; i < m_desc[CH_ACQDATE_DAY].tiArray.GetSize(); i++)
+	for (auto i = 0; i < m_desc[CH_ACQDATE_DAY].tiArray.GetSize(); i++)
 	{
-		ioTime = m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
+		auto io_time = m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
 		// element already exist? -- assume this is the most frequent case
-		if (dayTime == ioTime)
+		if (day_time == io_time)
 		{
-			bFlag = TRUE;
+			b_flag = TRUE;
 			break;
 		}
 		// insert element before current?
-		if (dayTime < ioTime)
+		if (day_time < io_time)
 		{
-			m_desc[CH_ACQDATE_DAY].tiArray.InsertAt(i, dayTime);
-			bFlag = TRUE;
+			m_desc[CH_ACQDATE_DAY].tiArray.InsertAt(i, day_time);
+			b_flag = TRUE;
 			break;
 		}
 		// element greater than current, loop to next
 	}
 
 	// no element found, add one at the end of the array
-	if (!bFlag)
+	if (!b_flag)
 	{
-		m_desc[CH_ACQDATE_DAY].tiArray.Add(dayTime);
+		m_desc[CH_ACQDATE_DAY].tiArray.Add(day_time);
 	}
 }
 
 // Add element only if new and insert it so that the array is sorted (low to high value)
 void CdbMainTable::AddtoliArray(int icol)
 {
-	COleVariant varValue;
-	GetFieldValue(m_desc[icol].csColName, varValue);
-	int lVal = varValue.lVal;
-	if (varValue.vt == VT_NULL)
-		lVal = 0;
+	COleVariant var_value;
+	GetFieldValue(m_desc[icol].csColName, var_value);
+	int l_val = var_value.lVal;
+	if (var_value.vt == VT_NULL)
+		l_val = 0;
 
-	CArray<long, long>* pliArray = &m_desc[icol].liArray;
-	BOOL bFlag = FALSE;
+	auto pli_array = &m_desc[icol].liArray;
+	auto b_flag = FALSE;
 	// val is greater than current val -> loop forwards
 
-	for (int i = 0; i <= pliArray->GetUpperBound(); i++)
+	for (auto i = 0; i <= pli_array->GetUpperBound(); i++)
 	{
 		// element already exist? -- assume this is the most frequent case
-		long icID = pliArray->GetAt(i);
-		if (lVal == icID)
+		const auto ic_id = pli_array->GetAt(i);
+		if (l_val == ic_id)
 		{
-			bFlag = TRUE;
+			b_flag = TRUE;
 			break;
 		}
 		// insert element before current?
-		if (lVal < icID)
+		if (l_val < ic_id)
 		{
-			pliArray->InsertAt(i, lVal);
-			bFlag = TRUE;
+			pli_array->InsertAt(i, l_val);
+			b_flag = TRUE;
 			break;
 		}
 		// element greater than current, loop to next
 	}
 	// no element found, add one at the end of the array
-	if (!bFlag)
-		pliArray->Add(lVal);
+	if (!b_flag)
+		pli_array->Add(l_val);
 }
 
 void CdbMainTable::AddtoIDArray(CUIntArray* puiIDArray, long iID)
 {
-	BOOL bFlag = FALSE;			
+	auto b_flag = FALSE;			
 	// val is greater than current val -> loop forwards
-	UINT uiID = (UINT) iID;
+	const auto ui_id = static_cast<UINT>(iID);
 
-	for (int i = 0; i <= puiIDArray->GetUpperBound(); i++)
+	for (auto i = 0; i <= puiIDArray->GetUpperBound(); i++)
 	{
 		// element already exist? -- assume this is the most frequent case
-		UINT ucID = puiIDArray->GetAt(i);
-		if (uiID == ucID)
+		const auto uc_id = puiIDArray->GetAt(i);
+		if (ui_id == uc_id)
 		{
-			bFlag = TRUE;
+			b_flag = TRUE;
 			break;
 		}
 		// insert element before current?
-		if (uiID < ucID)
+		if (ui_id < uc_id)
 		{
-			puiIDArray->InsertAt(i, uiID);
-			bFlag = TRUE;
+			puiIDArray->InsertAt(i, ui_id);
+			b_flag = TRUE;
 			break;
 		}
 		// element greater than current, loop to next
 	}
 	// no element found, add one at the end of the array
-	if (!bFlag)
-		puiIDArray->Add(uiID);
+	if (!b_flag)
+		puiIDArray->Add(ui_id);
 }
 
 void CdbMainTable::AddCurrentRecordtoIDArrays()
 {
-	COleVariant varValue;
+	COleVariant var_value;
 
 	AddtoliArray(CH_IDINSECT);
 	AddtoliArray(CH_IDSENSILLUM);
@@ -535,30 +534,30 @@ void CdbMainTable::AddCurrentRecordtoIDArrays()
 	AddtoliArray(CH_FLAG);
 
 	// look for date
-	GetFieldValue(m_desc[CH_ACQDATE_DAY].csColName, varValue);
-	if (varValue.vt == VT_NULL)
+	GetFieldValue(m_desc[CH_ACQDATE_DAY].csColName, var_value);
+	if (var_value.vt == VT_NULL)
 	{
 		// transfer date from field 1 and copy date and time in 2 separate columns
-		GetFieldValue(m_desc[CH_ACQDATE].csColName, varValue);
-		if (varValue.vt != VT_NULL)
+		GetFieldValue(m_desc[CH_ACQDATE].csColName, var_value);
+		if (var_value.vt != VT_NULL)
 		{
-			COleDateTime oTime = varValue.date;
+			COleDateTime o_time = var_value.date;
 			COleDateTime acqdate_day;
-			acqdate_day.SetDateTime(oTime.GetYear(), oTime.GetMonth(), oTime.GetDay(), 0, 0, 0);
-			COleDateTimeSpan acqdate_time = oTime - acqdate_day;
+			acqdate_day.SetDateTime(o_time.GetYear(), o_time.GetMonth(), o_time.GetDay(), 0, 0, 0);
+			const auto acqdate_time = o_time - acqdate_day;
 
 			Edit();
-			varValue = acqdate_time;
-			SetFieldValue(CH_ACQDATE_TIME, varValue.date);
+			var_value = acqdate_time;
+			SetFieldValue(CH_ACQDATE_TIME, var_value.date);
 			SetFieldValue(CH_ACQDATE_DAY, acqdate_day);
 			Update();
 		}
 	}
 
-	if (varValue.vt != VT_NULL)
+	if (var_value.vt != VT_NULL)
 	{
-		COleDateTime oTime = varValue.date;
-		AddDaytoDateArray(oTime);
+		COleDateTime o_time = var_value.date;
+		AddDaytoDateArray(o_time);
 	}
 }
 
@@ -573,12 +572,10 @@ void CdbMainTable::BuildAndSortIDArrays()
 {
 	if (IsBOF())
 		return;
-	// save current position into a bookmark	
-	COleVariant bookmarkCurrent;
-	bookmarkCurrent = GetBookmark();
+	const auto bookmark_current = GetBookmark();
 
 	// ID arrays will be ordered incrementally
-	int nrecords = GetNRecords();
+	const int nrecords = GetNRecords();
 	if (!m_desc[CH_IDINSECT].bFilter1 && !m_desc[CH_IDINSECT].bFilter2)
 		m_desc[CH_IDINSECT].liArray.SetSize(0, nrecords);		// resize array to the max possible
 	if (!m_desc[CH_IDSENSILLUM].bFilter1 && !m_desc[CH_IDSENSILLUM].bFilter2)
@@ -597,7 +594,7 @@ void CdbMainTable::BuildAndSortIDArrays()
 
 	// go to first record and browse the table
 	MoveFirst();
-	int i = 0;
+	auto i = 0;
 	while(!IsEOF()) 
 	{
 		AddCurrentRecordtoIDArrays();
@@ -612,7 +609,7 @@ void CdbMainTable::BuildAndSortIDArrays()
 	m_desc[CH_REPEAT2].liArray.FreeExtra();
 	m_desc[CH_FLAG].liArray.FreeExtra();
 	// restore current record
-	SetBookmark(bookmarkCurrent);
+	SetBookmark(bookmark_current);
 }
 
 // loop over the entire database and copy field m_math into m_path2
@@ -620,13 +617,11 @@ void CdbMainTable::CopyPathToPath2()
 {
 	if (IsBOF())
 		return;
-	// save current position into a bookmark	
-	COleVariant bookmarkCurrent;
-	bookmarkCurrent = GetBookmark();
+	const auto bookmark_current = GetBookmark();
 
 	// go to first record and browse the table
 	MoveFirst();
-	int i = 0;
+	auto i = 0;
 	while (!IsEOF())
 	{
 		Edit();
@@ -637,7 +632,7 @@ void CdbMainTable::CopyPathToPath2()
 	}
 
 	// restore current record
-	SetBookmark(bookmarkCurrent);
+	SetBookmark(bookmark_current);
 }
 
 

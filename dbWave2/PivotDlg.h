@@ -1,7 +1,6 @@
 #pragma once
 
-
-// CPivotDlg dialog
+#include "GridCtrl/GridCtrl.h"
 
 class CPivotDlg : public CDialogEx
 {

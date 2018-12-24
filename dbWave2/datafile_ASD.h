@@ -14,7 +14,7 @@ public:
 // Operations
 public:
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
-	BOOL CheckFileType(CFile* file, int bOffset=0);
+	BOOL CheckFileType(CFile* file);
 
 protected:
 	CString	m_csOldStringID;

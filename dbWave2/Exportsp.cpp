@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include ".\Exportsp.h"
+#include "Exportsp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -117,8 +117,8 @@ BOOL CExportSpikeInfosDlg::OnInitDialog()
 	if (m_iexportoptions <0)
 		m_iexportoptions = EXPORT_PSTH;
 	m_ispikeclassoptions = m_pvdS->spikeclassoption + 1;
-	int disphist=SW_HIDE;
-	int disphistampl=SW_HIDE;
+	auto disphist=SW_HIDE;
+	auto disphistampl=SW_HIDE;
 	switch (m_iexportoptions)
 	{
 	case EXPORT_PSTH:
@@ -227,7 +227,7 @@ void CExportSpikeInfosDlg::OnEnChangeBinsize()
 	UpdateData(TRUE);
 	if (m_timebin > 0 && m_iexportoptions == EXPORT_PSTH && m_brelation)
 	{
-		m_nbins	= (int) ((m_timeend-m_timestart)/m_timebin);
+		m_nbins	= static_cast<int>((m_timeend - m_timestart) / m_timebin);
 		UpdateData(FALSE);
 	}
 }

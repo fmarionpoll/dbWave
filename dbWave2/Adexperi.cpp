@@ -296,21 +296,18 @@ void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 {
 	// add string from the string array
 	p_combo->ResetContent();
-	int i;
 	// associated list available? yes
 	if (p_s != nullptr)
 	{
-		for (i = 0; i < p_s->GetSize(); i++)
-		{
+		for (auto i = 0; i < p_s->GetSize(); i++)
 			p_combo->AddString(p_s->GetAt(i));
-		}
 	}
 	// no associated list -  insert provisional values in the table
 	else
 	{
 		const auto imax = i_sel + 10;
 		CString cs;
-		for (i=0; i < imax; i++)
+		for (auto i=0; i < imax; i++)
 		{
 			cs.Format(_T("%i"), i);
 			const auto j = p_combo->AddString(cs);
@@ -325,15 +322,15 @@ void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 
 	if (pm_set->IsOpen() && !pm_set->IsBOF()) 
 	{
-		COleVariant varValue0;
+		COleVariant var_value1;
 		pm_set->MoveFirst();
 		while(!pm_set->IsEOF()) 
 		{
-			pm_set->GetFieldValue(0, varValue0);
-			CString csField = varValue0.bstrVal;;		// check if the conversion is correct
-			if (p_combo->FindStringExact(0, csField) == CB_ERR)
+			pm_set->GetFieldValue(0, var_value1);
+			CString cs_field = var_value1.bstrVal;;		// check if the conversion is correct
+			if (p_combo->FindStringExact(0, cs_field) == CB_ERR)
 			{
-				p_combo->AddString(csField);
+				p_combo->AddString(cs_field);
 				i_sel = 0;		// reset selection if a chain is added
 			}
 			pm_set->MoveNext();
@@ -350,8 +347,8 @@ void ADExperimentDlg::EditComboBox(CComboBox* pCo)
 	if (IDOK == dlg.DoModal())
 	{
 		pCo->ResetContent();
-		const int n_items = dlg.m_csArray.GetCount();
-		for (int i=0; i< n_items; i++)
+		const auto n_items = dlg.m_csArray.GetCount();
+		for (auto i=0; i< n_items; i++)
 		{
 			pCo->AddString(dlg.m_csArray.GetAt(i));
 		}
@@ -452,8 +449,8 @@ void ADExperimentDlg::OnEnKillfocusMfceditbrowse1()
 
 void ADExperimentDlg::OnBnClickedButtonNextid()
 {
-	auto pDB = m_pdbDoc->m_pDB;
-	pDB->m_mainTableSet.GetMaxIDs();
-	m_insectnumber = pDB->m_mainTableSet.max_insectID + 1;
+	auto p_database = m_pdbDoc->m_pDB;
+	p_database->m_mainTableSet.GetMaxIDs();
+	m_insectnumber = p_database->m_mainTableSet.max_insectID + 1;
 	UpdateData(FALSE);
 }

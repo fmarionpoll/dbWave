@@ -87,7 +87,7 @@ public:
 
 // Attributes
 public:
-	virtual void SetText(LPCTSTR /* szText */)              = 0 ;
+	virtual void SetText(LPCTSTR /* sz_text */)              = 0 ;
 	virtual void SetImage(int /* nImage */)                 = 0 ;
 	virtual void SetData(LPARAM /* lParam */)               = 0 ;
 	virtual void SetState(DWORD nState)                     { m_nState = nState; }
@@ -134,11 +134,11 @@ public:
 public:
 	virtual void Reset();
 
-	virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+	virtual BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
 	virtual BOOL GetTextRect( LPRECT pRect);    // i/o:  i=dims of cell rect; o=dims of text rect
 	virtual BOOL GetTipTextRect( LPRECT pRect) { return GetTextRect( pRect); }  // may override for btns, etc.
-	virtual CSize GetTextExtent(LPCTSTR str, CDC* pDC = nullptr);
-	virtual CSize GetCellExtent(CDC* pDC);
+	virtual CSize GetTextExtent(LPCTSTR str, CDC* p_dc = nullptr);
+	virtual CSize GetCellExtent(CDC* p_dc);
 
 	// Editing
 	virtual BOOL Edit( int /* nRow */, int /* nCol */, CRect /* rect */, CPoint /* point */, 
@@ -147,7 +147,7 @@ public:
 	virtual void EndEdit() {}
 
 	// EFW - Added to print cells properly
-	virtual BOOL PrintCell(CDC* pDC, int nRow, int nCol, CRect rect);
+	virtual BOOL PrintCell(CDC* p_dc, int nRow, int nCol, CRect rect);
 
 	// add additional protected grid members required of cells
 	LRESULT SendMessageToParent(int nRow, int nCol, int nMessage);

@@ -14,7 +14,7 @@ class CTemplateListWnd : public CListCtrl
 // Construction
 public:
 	CTemplateListWnd();
-	void operator = (const CTemplateListWnd& arg);	// operator redefinition
+	CTemplateListWnd& operator = (const CTemplateListWnd& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);			// overridden for document i/o
 
 // Attributes
@@ -22,7 +22,7 @@ public:
 	int		InsertTemplate(int i, int classID);
 	int		InsertTemplateData(int i, int classID);
 	void	TransferTemplateData();
-	BOOL	DeleteAllTemplates();
+	void	DeleteAllTemplates();
 	BOOL	DeleteItem(int i);
 	void	SortTemplatesByClass(BOOL bUp);
 	void	SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClasses, int minclassnb);
@@ -33,11 +33,11 @@ public:
 	double	m_globaldist;
 
 	BOOL	tInit(int i);
-	BOOL	tAdd(short* pSource);
-	BOOL	tAdd(int i, short* pSource);
+	BOOL	tAdd(short* p_source);
+	BOOL	tAdd(int i, short* p_source);
 	BOOL	tPower(int i, double* power);
-	BOOL	tWithin(int i, short* pSource);
-	BOOL	tMinDist(int i, short* pSource, int* offsetmin, double* distmin);
+	BOOL	tWithin(int i, short* p_source);
+	BOOL	tMinDist(int i, short* p_source, int* offsetmin, double* distmin);
 	void	tGlobalstats();
 
 	void	SetTemplateLength(int spklen, int tpleft, int tpright);

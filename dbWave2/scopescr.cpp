@@ -237,9 +237,9 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CScopeScreen message handlers
 
-BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
-	const auto flag = CWnd::Create(nullptr, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+	const auto flag = CWnd::Create(nullptr, lpszWindowName, dw_style, rect, pParentWnd, nID, pContext);
 	if (flag != 0)
 		PreSubclassWindow();
 	return flag;
@@ -268,7 +268,7 @@ void CScopeScreen::SetDisplayAreaSize(int cx, int cy)
 	m_yVE =-m_displayRect.Height();
 }
 
-BOOL CScopeScreen::OnEraseBkgnd(CDC* pDC)
+BOOL CScopeScreen::OnEraseBkgnd(CDC* p_dc)
 {
 	return TRUE; // say we handled it
 }
@@ -279,14 +279,14 @@ BOOL CScopeScreen::OnEraseBkgnd(CDC* pDC)
 //  CBitmap*	m_pbitmapPlot;		// main data
 //	CBitmap*	m_pbitmapSelect;	// data selected (displayed over bitmapplot)
 	
-void CScopeScreen::PlotToBitmap(CDC *pDC)
+void CScopeScreen::PlotToBitmap(CDC *p_dc)
 {
 	CBitmap bitmap_plot;
-	bitmap_plot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, pDC->GetDeviceCaps(PLANES), pDC->GetDeviceCaps(BITSPIXEL), nullptr);
-	m_PlotDC.CreateCompatibleDC(pDC);
+	bitmap_plot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, p_dc->GetDeviceCaps(PLANES), p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
+	m_PlotDC.CreateCompatibleDC(p_dc);
 	const auto pold_plot_bitmap = m_PlotDC.SelectObject(&bitmap_plot);
 	PlotDatatoDC(&m_PlotDC);
-	pDC->BitBlt(0, 0, m_displayRect.right, m_displayRect.bottom, &m_PlotDC,0,0, SRCCOPY);
+	p_dc->BitBlt(0, 0, m_displayRect.right, m_displayRect.bottom, &m_PlotDC,0,0, SRCCOPY);
 	m_PlotDC.SelectObject(pold_plot_bitmap);
 }
 
@@ -303,44 +303,44 @@ void CScopeScreen::OnPaint()
 		PlotToBitmap(&dc);
 }
 
-void CScopeScreen::PlotDatatoDC(CDC* pDC)
+void CScopeScreen::PlotDatatoDC(CDC* p_dc)
 {
 }
 
-void CScopeScreen::EraseBkgnd(CDC* pDC)
+void CScopeScreen::EraseBkgnd(CDC* p_dc)
 {
 	// erase background around m_displayRect (assume only left and bottom areas)
 	if (m_bNiceGrid)
 	{
 		auto rect = m_clientRect;
 		rect.right = m_displayRect.left;
-		pDC->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
+		p_dc->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
 		rect.top = m_displayRect.bottom;
 		rect.right = m_clientRect.right;
 		rect.left = m_displayRect.left;
-		pDC->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
+		p_dc->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
 	}
 	// erase display area
 	CBrush brush;
 	brush.CreateSolidBrush(m_parms.crScopeFill);
-	const auto p_old_brush = pDC->SelectObject(&brush);
-	const auto p_old_pen = (CPen*) pDC->SelectStockObject(BLACK_PEN);
-	pDC->Rectangle(&m_displayRect);
-	pDC->SelectObject(p_old_pen);
-	pDC->SelectObject(p_old_brush);
+	const auto p_old_brush = p_dc->SelectObject(&brush);
+	const auto p_old_pen = (CPen*) p_dc->SelectStockObject(BLACK_PEN);
+	p_dc->Rectangle(&m_displayRect);
+	p_dc->SelectObject(p_old_pen);
+	p_dc->SelectObject(p_old_brush);
 
 	// display grid
-	DrawGrid(pDC);
+	DrawGrid(p_dc);
 }
 
-void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
+void CScopeScreen::DrawGridEvenlySpaced(CDC *p_dc)
 {
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
 
 	// Standard grid is 8 high by 10 wide
 	CPen pen_scale(PS_SOLID, 1, m_parms.crScopeGrid);
-	const auto ppen_old = pDC->SelectObject(&pen_scale);
+	const auto ppen_old = p_dc->SelectObject(&pen_scale);
 	const auto i_x_ticks = m_parms.iXCells * m_parms.iXTicks;
 	const auto i_y_ticks = m_parms.iYCells * m_parms.iYTicks;
 	const auto i_tick_width = 2;
@@ -349,29 +349,29 @@ void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
 	// do the grid lines
 	for (auto i = 1; i < m_parms.iXCells; i++) 
 	{
-		pDC->MoveTo(i * rect.right / m_parms.iXCells, 0);
-		pDC->LineTo(i * rect.right / m_parms.iXCells, rect.bottom);
+		p_dc->MoveTo(i * rect.right / m_parms.iXCells, 0);
+		p_dc->LineTo(i * rect.right / m_parms.iXCells, rect.bottom);
 	}	
 	for (auto i = 1; i < m_parms.iYCells; i++) 
 	{
-		pDC->MoveTo(0, i * rect.bottom / m_parms.iYCells);
-		pDC->LineTo(rect.right, i * rect.bottom / m_parms.iYCells);
+		p_dc->MoveTo(0, i * rect.bottom / m_parms.iYCells);
+		p_dc->LineTo(rect.right, i * rect.bottom / m_parms.iYCells);
 	}
 
 	// Put tick marks on the axis lines
 	for (auto i = 1; i < i_x_ticks; i++) 
 	{
 		const int y = rect.bottom - rect.bottom * m_parms.iXTickLine / m_parms.iYCells;
-		pDC->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
-		pDC->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
+		p_dc->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
+		p_dc->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
 	}
 	for (auto i = 1; i < i_y_ticks; i++) 
 	{
 		const int x = rect.right * m_parms.iYTickLine / m_parms.iXCells;
-		pDC->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
-		pDC->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
+		p_dc->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
+		p_dc->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
 	}
-	pDC->SelectObject(ppen_old);
+	p_dc->SelectObject(ppen_old);
 
 	// if grids, draw scale text (dummy)
 	if (m_parms.iXCells  > 1 && m_parms.iYCells > 1)
@@ -381,14 +381,14 @@ void CScopeScreen::DrawGridEvenlySpaced(CDC *pDC)
 		cs.Format(_T("%.3f mV; %.3f ms"), m_parms.yScaleUnitValue, m_parms.xScaleUnitValue) ;
 		const auto textlen = cs.GetLength();
 		// plot text
-		pDC->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
+		p_dc->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
 		rect.DeflateRect(1,1);
-		pDC->SetTextColor(m_parms.crScopeGrid);
-		pDC->DrawText(cs, textlen, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE); 
+		p_dc->SetTextColor(m_parms.crScopeGrid);
+		p_dc->DrawText(cs, textlen, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE); 
 	}
 }
 
-void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
+void CScopeScreen::DrawGridFromRuler(CDC *p_dc, CRuler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -399,7 +399,7 @@ void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
 
 	CPen a_pen2;
 	a_pen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
-	const auto p_old_pen = pDC->SelectObject(&a_pen2);
+	const auto p_old_pen = p_dc->SelectObject(&a_pen2);
 
 	// draw ticks and legends
 	//auto tick_small_height = 4;
@@ -413,7 +413,7 @@ void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
 	//double smallscaleinc = pRuler->m_dscaleinc / 5.;
 	auto dpos = floor(pRuler->m_dscalefirst);
 	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
-	pDC->SetBkMode(TRANSPARENT);
+	p_dc->SetBkMode(TRANSPARENT);
 
 	while (dpos <= pRuler->m_dlast)
 	{
@@ -422,16 +422,16 @@ void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
 		{
 			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 			if (tick_pos >= 0 && tick_pos <= tickmax) {
-				pDC->MoveTo(tick_pos, rc_client.bottom - 1);	// line
-				pDC->LineTo(tick_pos, rc_client.top    + 1);
+				p_dc->MoveTo(tick_pos, rc_client.bottom - 1);	// line
+				p_dc->LineTo(tick_pos, rc_client.top    + 1);
 			}
 		}
 		else						// vertical
 		{
 			tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
 			if (tick_pos >= 0 && tick_pos <= tickmax) {
-				pDC->MoveTo(rc_client.left + 1, tick_pos);	// line
-				pDC->LineTo(rc_client.right - 1, tick_pos);
+				p_dc->MoveTo(rc_client.left + 1, tick_pos);	// line
+				p_dc->LineTo(rc_client.right - 1, tick_pos);
 			}
 		}
 		if( dpos != 0. && fabs(dpos) < 1E-10 )
@@ -439,10 +439,10 @@ void CScopeScreen::DrawGridFromRuler(CDC *pDC, CRuler* pRuler)
 		dpos += pRuler->m_dscaleinc;
 	}
 	// restore objects used in this routine
-	pDC->SelectObject(p_old_pen);
+	p_dc->SelectObject(p_old_pen);
 }
 
-void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
+void CScopeScreen::DrawScalefromRuler(CDC *p_dc, CRuler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -454,9 +454,9 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 	CPen a_pen1;
 	CPen a_pen2;
 	a_pen1.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
-	const auto p_old_pen = pDC->SelectObject(&a_pen1);
+	const auto p_old_pen = p_dc->SelectObject(&a_pen1);
 	a_pen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
-	/*auto p_old_font = */pDC->SelectObject(&m_hFont);
+	/*auto p_old_font = */p_dc->SelectObject(&m_hFont);
 	CString str;
 
 	// draw ticks and legends
@@ -471,12 +471,12 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 	const auto smallscaleinc = pRuler->m_dscaleinc / 5.;
 	auto dpos = floor(pRuler->m_dscalefirst);
 	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
-	pDC->SetBkMode(TRANSPARENT);
+	p_dc->SetBkMode(TRANSPARENT);
 
 	while (dpos <= pRuler->m_dlast)
 	{
 		// display small tick marks
-		pDC->SelectObject(&a_pen1);
+		p_dc->SelectObject(&a_pen1);
 		auto dsmallpos = dpos;
 		int tick_pos;
 		for (auto i = 0; i<4; i++)
@@ -487,8 +487,8 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 				tick_pos = int(rc_client.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 				if (tick_pos >= rc_client.left && tick_pos <= tickmax)
 				{
-					pDC->MoveTo(tick_pos, rc_client.bottom - 1);
-					pDC->LineTo(tick_pos, rc_client.bottom - tick_small_height);
+					p_dc->MoveTo(tick_pos, rc_client.bottom - 1);
+					p_dc->LineTo(tick_pos, rc_client.bottom - tick_small_height);
 				}
 			}
 			else // --------------------------------------------------- vertical
@@ -496,14 +496,14 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 				tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rc_client.top;
 				if (tick_pos >= rc_client.top && tick_pos <= tickmax)
 				{
-					pDC->MoveTo(rc_client.left + 1, tick_pos);
-					pDC->LineTo(rc_client.left + tick_small_height, tick_pos);
+					p_dc->MoveTo(rc_client.left + 1, tick_pos);
+					p_dc->LineTo(rc_client.left + tick_small_height, tick_pos);
 				}
 			}
 		}
 
 		// display large ticks and text
-		pDC->SelectObject(&a_pen2);
+		p_dc->SelectObject(&a_pen2);
 		if (pRuler->m_bHorizontal)	// horizontal
 			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 		else						// vertical
@@ -511,12 +511,12 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 		if (tick_pos >= 0 && tick_pos <= tickmax)
 		{
 			str.Format(_T("%g"), dpos);
-			const auto size = pDC->GetTextExtent(str);
+			const auto size = p_dc->GetTextExtent(str);
 			int x, y;
 			if (pRuler->m_bHorizontal)	// ----------- horizontal
 			{
-				pDC->MoveTo(tick_pos, rc_client.bottom - 1);	// line
-				pDC->LineTo(tick_pos, rc_client.top + 1);
+				p_dc->MoveTo(tick_pos, rc_client.bottom - 1);	// line
+				p_dc->LineTo(tick_pos, rc_client.top + 1);
 				x = tick_pos - (size.cx / 2);					// text position (upper left)
 				if (x < 0)
 					x = 0;
@@ -526,12 +526,12 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 			}
 			else // ---------------------------------- vertical
 			{
-				pDC->MoveTo(rc_client.left + 1, tick_pos);	// line
-				pDC->LineTo(rc_client.right - 1, tick_pos);
+				p_dc->MoveTo(rc_client.left + 1, tick_pos);	// line
+				p_dc->LineTo(rc_client.right - 1, tick_pos);
 				x = rc_client.left - size.cx - 2;			// text position (upper left)
 				y = tick_pos - (size.cy / 2);
 			}
-			pDC->TextOut(x, y, str);
+			p_dc->TextOut(x, y, str);
 		}
 		if (dpos != 0. && fabs(dpos) < 1E-10)
 			dpos = 0;
@@ -539,27 +539,27 @@ void CScopeScreen::DrawScalefromRuler(CDC *pDC, CRuler* pRuler)
 	}
 
 	// restore objects used in this routine
-	pDC->SelectObject(p_old_pen);
+	p_dc->SelectObject(p_old_pen);
 }
 
-void CScopeScreen::DrawGridNicelySpaced(CDC *pDC)
+void CScopeScreen::DrawGridNicelySpaced(CDC *p_dc)
 {
 	if (m_pXRulerBar == nullptr)
-		DrawScalefromRuler (pDC, &m_xRuler);
+		DrawScalefromRuler (p_dc, &m_xRuler);
 	else
 	{ 
 		m_pXRulerBar->DrawScalefromRuler(&m_xRuler);
 		m_pXRulerBar->Invalidate();
-		DrawGridFromRuler(pDC, &m_xRuler);
+		DrawGridFromRuler(p_dc, &m_xRuler);
 	}
 		
 	if (m_pYRulerBar == nullptr) 
-		DrawScalefromRuler (pDC, &m_yRuler);
+		DrawScalefromRuler (p_dc, &m_yRuler);
 	else
 	{
 		m_pYRulerBar->DrawScalefromRuler(&m_yRuler);
 		m_pYRulerBar->Invalidate(); 
-		DrawGridFromRuler(pDC, &m_yRuler);
+		DrawGridFromRuler(p_dc, &m_yRuler);
 	}
 }
 
@@ -575,12 +575,12 @@ void CScopeScreen::AdjustDisplayRect(CRect* pRect)
 	}
 }
 
-void CScopeScreen::DrawGrid(CDC* pDC)
+void CScopeScreen::DrawGrid(CDC* p_dc)
 {
 	if (m_bNiceGrid)
-		DrawGridNicelySpaced(pDC);
+		DrawGridNicelySpaced(p_dc);
 	else
-		DrawGridEvenlySpaced(pDC);
+		DrawGridEvenlySpaced(p_dc);
 }
 
 void CScopeScreen::SetNxScaleCells(int iCells, int iTicks, int iTickLine)
@@ -607,17 +607,17 @@ void CScopeScreen::PostMyMessage(int code, int codeparm)
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void CScopeScreen::PrepareDC(CDC* pDC, CPrintInfo* pInfo)
+void CScopeScreen::PrepareDC(CDC* p_dc, CPrintInfo* pInfo)
 {
-	pDC->SetMapMode(MM_ANISOTROPIC);
+	p_dc->SetMapMode(MM_ANISOTROPIC);
 	if (pInfo == nullptr)
 	{
-		pDC->SetViewportOrg (m_xVO, m_yVO);
-		pDC->SetViewportExt (m_xVE, m_yVE);
+		p_dc->SetViewportOrg (m_xVO, m_yVO);
+		p_dc->SetViewportExt (m_xVE, m_yVE);
 		if (m_yWE == 0)
 			m_yWE = 1024;
-		pDC->SetWindowExt (m_xWE, m_yWE);
-		pDC->SetWindowOrg (m_xWO, m_yWO);
+		p_dc->SetWindowExt (m_xWE, m_yWE);
+		p_dc->SetWindowOrg (m_xWO, m_yWO);
 	}
 }
 
@@ -649,7 +649,7 @@ void CScopeScreen::ReleaseCursor()
 	ClipCursor(nullptr);
 }
 
-BOOL CScopeScreen::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
+BOOL CScopeScreen::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) 
 {
 	::SetCursor(m_currCursor);
 	return TRUE;	
@@ -1044,11 +1044,11 @@ void CScopeScreen::InvertTracker(CPoint point)
 	m_ptLast = point;						// update m_ptLast
 }
 
-void CScopeScreen::DisplayVTtags(CDC* pDC)
+void CScopeScreen::DisplayVTtags(CDC* p_dc)
 {
 	// select pen and display mode 
-	const auto nold_rop = pDC->SetROP2(R2_NOTXORPEN);
-	const auto oldp =pDC->SelectObject(&m_blackDottedPen);
+	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+	const auto oldp =p_dc->SelectObject(&m_blackDottedPen);
 
 	// iterate through VT cursor list
 	const auto y0 = MulDiv(0-m_yVO, m_yWE, m_yVE) +m_yWO;
@@ -1056,19 +1056,19 @@ void CScopeScreen::DisplayVTtags(CDC* pDC)
 	for (auto j=GetNVTtags()-1; j>=0; j--)
 	{
 		const auto k = GetVTtagVal(j);		// get val
-		pDC->MoveTo(k,y0);			// set initial pt
-		pDC->LineTo(k,y1);			// VT line
+		p_dc->MoveTo(k,y0);			// set initial pt
+		p_dc->LineTo(k,y1);			// VT line
 	}
 
-	pDC->SelectObject(oldp);
-	pDC->SetROP2(nold_rop);			// restore old display mode
+	p_dc->SelectObject(oldp);
+	p_dc->SetROP2(nold_rop);			// restore old display mode
 }
 
-void CScopeScreen::DisplayHZtags(CDC* pDC)
+void CScopeScreen::DisplayHZtags(CDC* p_dc)
 {
 	// select pen and display mode 
-	const auto pold = pDC->SelectObject(&m_blackDottedPen);
-	const auto nold_rop = pDC->SetROP2(R2_NOTXORPEN);
+	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
+	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 
 	// iterate through HZ cursor list		
 	auto oldval = GetHZtagVal(GetNHZtags()-1)-1;
@@ -1077,12 +1077,12 @@ void CScopeScreen::DisplayHZtags(CDC* pDC)
 		const auto k = GetHZtagVal(i);		// get val
 		if (k == oldval)			// skip if already displayed
 			continue;
-		pDC->MoveTo(m_xWO, k);		// set initial pt
-		pDC->LineTo(m_xWE, k);		// HZ line
+		p_dc->MoveTo(m_xWO, k);		// set initial pt
+		p_dc->LineTo(m_xWE, k);		// HZ line
 		oldval = k;
 	}
-	pDC->SelectObject(pold);
-	pDC->SetROP2(nold_rop);			// restore old display mode		
+	p_dc->SelectObject(pold);
+	p_dc->SetROP2(nold_rop);			// restore old display mode		
 }
 
 void CScopeScreen::XorHZtag(int ypoint)

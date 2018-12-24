@@ -66,7 +66,7 @@ long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
 ////////////////////////////////////////////////////////////////////////
 // base class implementation of virtual functions
 
-BOOL CDataFileX::CheckFileType(CFile* pfile, int bSignatureOffset)
+BOOL CDataFileX::CheckFileType(CFile* pfile)
 	{return DOCTYPE_UNKNOWN;}
 BOOL CDataFileX::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	{return TRUE;}

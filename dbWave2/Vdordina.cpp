@@ -2,9 +2,8 @@
 //
 
 #include "StdAfx.h"
-
-#include "Cscale.h"
-#include "scopescr.h"
+//#include "Cscale.h"
+//#include "scopescr.h"
 #include "Lineview.h"
 
 #include "resource.h"
@@ -49,7 +48,6 @@
 //	min					1		0		1
 
 
-
 CDataViewOrdinatesDlg::CDataViewOrdinatesDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CDataViewOrdinatesDlg::IDD, pParent), m_plinev(nullptr), m_nChanmax(0), m_Channel(0), m_bChanged(0),
 	  m_p10(0), m_voltsperpixel(0), m_VoltsperBin(0)
@@ -84,35 +82,24 @@ BEGIN_MESSAGE_MAP(CDataViewOrdinatesDlg, CDialog)
 	ON_EN_KILLFOCUS(IDC_VERTMIN, OnKillfocusVertMxMi)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataViewOrdinatesDlg message handlers
-
-
-
-// --------------------------------------------------------------------------
-// OnInitDialog
-// --------------------------------------------------------------------------
 BOOL CDataViewOrdinatesDlg::OnInitDialog()
 {
 	// save extent and zero before calling base class 
 	// this is an awful patch. But necessary. For some reason really unclear to
 	// me, the parameters (zero and extent) of channel 0 / chanlist / lineview 
-	// are MODIFIED after calling the base class CDialog::OnInitDialog!!!!!!
-	// therefore, I save all parameters just before and restore then after...
+	// are MODIFIED after calling the base class CDialog::OnInitDialog
 	int i;
-	m_nChanmax = m_plinev->GetChanlistSize();		// nb of data channels
-	for (i=0; i < m_nChanmax; i++)					// browse through all chans
+	m_nChanmax = m_plinev->GetChanlistSize();			// nb of data channels
+	for (i=0; i < m_nChanmax; i++)						// browse through all chans
 	{
 		m_settings.Add(m_plinev->GetChanlistYzero(i));	// save zero
 		m_settings.Add(m_plinev->GetChanlistYextent(i));// save extent
 	}
-
-	// call to base class routine. Should be done in first according to Microsoft doc.
     CDialog::OnInitDialog();
 	
 	// load channel description CComboBox
-	int j = 0;														// index to restore parms
-	for (i=0; i < m_nChanmax; i++)									// browse through all chans again
+	int j = 0;											// index to restore parms
+	for (i=0; i < m_nChanmax; i++)						// browse through all chans again
 	{
 		m_plinev->SetChanlistYzero(i, m_settings.GetAt(j)); j++;		// restore zero
 		m_plinev->SetChanlistYextent(i, m_settings.GetAt(j)); j++;	// restore extent
@@ -120,77 +107,57 @@ BOOL CDataViewOrdinatesDlg::OnInitDialog()
 	}
     m_chanSelect.SetCurSel(m_Channel);				// select chan zero
     
-    // load chan data
     LoadChanlistData(m_Channel);					// compute data in volts
 	m_iUnit = 1;									// select "mV" as unit within combo box
 	((CComboBox*)GetDlgItem(IDC_VERTUNITS))->SetCurSel(m_iUnit);
     ChangeUnits(m_iUnit, TRUE);						// adapt data/volts -> mv and fill controls
-
-    // update content of the edit controls
-    UpdateData(FALSE);								// pass parameters to real controls
+    UpdateData(FALSE);
 	return TRUE;
 }
 
-
-// --------------------------------------------------------------------------
-// LoadChanData(int ID)
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::LoadChanlistData(int i)
 {
 	// compute max and min from zero and extent
 	m_VoltsperBin =  m_plinev->GetChanlistVoltsperDataBin(i);
-	float zero = (float) m_plinev->GetChanlistYzero(i);
-	float extent =  (float) m_plinev->GetChanlistYextent(i);
-	float binzero =  (float)0.0  /*m_plinev->GetChanlistBinZero(i)*/;
+	const auto zero = static_cast<float>(m_plinev->GetChanlistYzero(i));
+	const auto extent =  static_cast<float>(m_plinev->GetChanlistYextent(i));
+	//const auto binzero =  static_cast<float>(0.0)  /*m_plinev->GetChanlistBinZero(i)*/;
 
 	m_xcenter = (zero/*- binzero*/) * m_VoltsperBin / m_p10;
-	float xextent = (extent * m_VoltsperBin / m_p10)/2.f;
+	const auto xextent = (extent * m_VoltsperBin / m_p10)/2.f;
 	m_xmin = m_xcenter - xextent;
 	m_xmax = m_xcenter + xextent;
 
-	m_bChanged = FALSE;						// tell updatedata to not save new params
+	m_bChanged = FALSE;	
 }
 
-// --------------------------------------------------------------------------
-// SaveChanData(int ID)
-// convert dialog box params into lineview parameters, change corresp vals
-// in lineview, update curves display
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::SaveChanlistData(int indexlist)
 {
-	int bCheck = ((CButton*)GetDlgItem(IDC_CHECKALL))->GetCheck();
-	int indexfirst = indexlist;				// prepare for loop (first chan)
-	int indexlast = indexlist+1;			// ibid (ending chan)
+	const auto bCheck = ((CButton*)GetDlgItem(IDC_CHECKALL))->GetCheck();
+	auto indexfirst = indexlist;				// prepare for loop (first chan)
+	auto indexlast = indexlist+1;			// ibid (ending chan)
 	if (bCheck)								// if bCheck (TRUE) then
 	{
 		indexfirst = 0;						// loop through all channels
 		indexlast = m_nChanmax;				// 0 to max
 	}
 
-	for (int j = indexfirst; j<indexlast; j++)
+	for (auto j = indexfirst; j<indexlast; j++)
 	{
-		float VperBin =  m_plinev->GetChanlistVoltsperDataBin(j);
-		float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
-		float xextent = (m_xmax - m_xmin) * m_p10;
-		int i = (int) (xzero/VperBin) + m_plinev->GetChanlistBinZero(j);
+		const auto vper_bin =  m_plinev->GetChanlistVoltsperDataBin(j);
+		const auto xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
+		const auto xextent = (m_xmax - m_xmin) * m_p10;
+		auto i = static_cast<int>(xzero / vper_bin) + m_plinev->GetChanlistBinZero(j);
 		m_plinev->SetChanlistYzero(j,i);		// change zero
-		i = (int) (xextent /VperBin);
+		i = static_cast<int>(xextent / vper_bin);
 		m_plinev->SetChanlistYextent(j, i);	// change extent
 	}
 	m_plinev->Invalidate();
 }
 
-// --------------------------------------------------------------------------
-// ChangeUnits(int iUnit, BOOL bNew)
-// convert volts into unit chosen by the user
-//		iUnit = 0 (volts), 1 (mV), 2 (µV)
-//		bNew: TRUE=compute new m_p10; 
-//			  FALSE(default)= keep old, set new
-// save factor in m_p10
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::ChangeUnits(int iUnit, BOOL bNew)
 {
-	float newp10 = m_p10;
+	auto newp10 = m_p10;
 	if (bNew)
 	{
 		switch (iUnit)
@@ -212,11 +179,6 @@ void CDataViewOrdinatesDlg::ChangeUnits(int iUnit, BOOL bNew)
 	}
 }
 
-// --------------------------------------------------------------------------
-// ChangeSelect -- vertical units: center, extent, max, min
-// unit is V, mV or uV
-// get param and update all other controls
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::OnSelchangeVertunits()
 {
 	m_iUnit = ((CComboBox*)GetDlgItem(IDC_VERTUNITS))->GetCurSel();
@@ -224,30 +186,20 @@ void CDataViewOrdinatesDlg::OnSelchangeVertunits()
 	UpdateData(FALSE);
 }
 
-// --------------------------------------------------------------------------
-// ChangeSelect --  select another data channel
-// modify center, max, min 
-// PS:		no effect if "ALL" is checked
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::OnSelchangeChanselect()
 {
 	if (m_bChanged)
 		SaveChanlistData(m_Channel);	// save current data
-	int newIndex = ((CComboBox*)GetDlgItem(IDC_CHANSELECT))->GetCurSel();
-	m_Channel = newIndex;				// new chan selected
+	const auto new_index = ((CComboBox*)GetDlgItem(IDC_CHANSELECT))->GetCurSel();
+	m_Channel = new_index;				// new chan selected
 	LoadChanlistData(m_Channel);		// load new data from lineview
 	ChangeUnits(m_iUnit, FALSE);		// convert params
 	UpdateData(FALSE);	
 }
 
-// --------------------------------------------------------------------------
-// change center
-// modifies max and min
-// modif zero, extent unchanged
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::OnKillfocusVertcenter()
 {
-	float diff = m_xcenter;
+	auto diff = m_xcenter;
 	UpdateData(TRUE);
 	if (diff == m_xcenter)
 		return;
@@ -255,64 +207,49 @@ void CDataViewOrdinatesDlg::OnKillfocusVertcenter()
 	m_xmax += diff;
 	m_xmin += diff;
 	
-	float VperBin =  m_plinev->GetChanlistVoltsperDataBin(m_Channel);
-	float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;	
-	int zero = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(m_Channel);
-	m_plinev->SetChanlistYzero(m_Channel,zero);		// change zero
-
-	// convert into current volts units
+	const auto vper_bin =  m_plinev->GetChanlistVoltsperDataBin(m_Channel);
+	const auto xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
+	const auto zero = static_cast<int>(xzero / vper_bin) + 	m_plinev->GetChanlistBinZero(m_Channel);
+	m_plinev->SetChanlistYzero(m_Channel,zero);
 	m_bChanged = TRUE;
 	UpdateData(FALSE);	
 }
 
-// --------------------------------------------------------------------------
-// change max or min
-// modifies center
-// modif zero & extent
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::OnKillfocusVertMxMi()
 {
 	UpdateData(TRUE);
 
 	// save into lineview and reload to change scale and voltsperpixel
-	float VperBin =  m_plinev->GetChanlistVoltsperDataBin(m_Channel);
-	float xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
-	float xextent = (m_xmax - m_xmin) * m_p10;
-	int zero = (int) (xzero/VperBin) + 	m_plinev->GetChanlistBinZero(m_Channel);
-	int extent = (int) (xextent /VperBin);
+	const auto vper_bin =  m_plinev->GetChanlistVoltsperDataBin(m_Channel);
+	const auto xzero = ((m_xmax + m_xmin)/2.f) * m_p10;
+	const auto xextent = (m_xmax - m_xmin) * m_p10;
+	const auto zero = static_cast<int>(xzero / vper_bin) + 	m_plinev->GetChanlistBinZero(m_Channel);
+	const auto extent = static_cast<int>(xextent / vper_bin);
 
 	m_plinev->SetChanlistYzero(m_Channel, zero);
 	m_plinev->SetChanlistYextent(m_Channel, extent);
-	LoadChanlistData(m_Channel);	// reload params
-	ChangeUnits(m_iUnit, FALSE);	// convert into current volts units
+	LoadChanlistData(m_Channel);
+	ChangeUnits(m_iUnit, FALSE);
 
 	m_bChanged = TRUE;		
 	UpdateData(FALSE);
 }
 
-// --------------------------------------------------------------------------
-// OnCancel
-// restore all lineview parameters and exit
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::OnCancel()
 {
 	// restore extent of the channels
 	m_nChanmax = m_plinev->GetChanlistSize(); // nb of data channels
-	int j = 0;
-	for (int i = 0; i<m_nChanmax; i++)
+	auto j = 0;
+	for (auto i = 0; i<m_nChanmax; i++)
 	{
-		m_plinev->SetChanlistYzero(i, (int) m_settings[j]);
+		m_plinev->SetChanlistYzero(i, static_cast<int>(m_settings[j]));
 		j++;
-		m_plinev->SetChanlistYextent(i, (int) m_settings[j]);
+		m_plinev->SetChanlistYextent(i, static_cast<int>(m_settings[j]));
 		j++;
 	}	
 	CDialog::OnCancel();
 }
 
-// --------------------------------------------------------------------------
-// OnOK
-// save current settings and exit
-// --------------------------------------------------------------------------
 void CDataViewOrdinatesDlg::OnOK()
 {
 	// trap CR to validate current field
@@ -320,14 +257,13 @@ void CDataViewOrdinatesDlg::OnOK()
 	{
 		// select was on OK
 		case 1:
-			{
-			int bCheck = ((CButton*)GetDlgItem(IDC_CHECKALL))->GetCheck();
+		{
+			const auto b_check = ((CButton*)GetDlgItem(IDC_CHECKALL))->GetCheck();
 			// exit, do not store changes of current channel -- nothing was changed
-			if (m_bChanged || bCheck)
+			if (m_bChanged || b_check)
 				SaveChanlistData(m_Channel);
-				// save current channel before if bModif && checked...
-			}
-			CDialog::OnOK();
+			CDialog::OnOK(); 
+		}
 			break;
 		// trap return
 		case IDC_CHANSELECT:

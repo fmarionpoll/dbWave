@@ -20,17 +20,17 @@ public:
 		return clsid;
 	}
 	virtual BOOL Create(LPCTSTR lpszClassName,
-		LPCTSTR lpszWindowName, DWORD dwStyle,
+		LPCTSTR lpszWindowName, DWORD dw_style,
 		const RECT& rect,
 		CWnd* pParentWnd, UINT nID,
 		CCreateContext* pContext = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID); }
+	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID); }
 
-    BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle,
+    BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style,
 		const RECT& rect, CWnd* pParentWnd, UINT nID,
 		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
 		BSTR bstrLicKey = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID,
+	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID,
 		pPersist, bStorage, bstrLicKey); }
 
 // Attributes

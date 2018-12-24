@@ -140,7 +140,7 @@ protected:
 	void ADC_Transfer(short* pDTbuf);
 	void ADC_StopAndLiberateBuffers();
 	
-	BOOL DAC_OpenSubSystem(CString cardName);
+	BOOL DAC_OpenSubSystem(const CString& cardName);
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
@@ -212,7 +212,7 @@ public:
 	afx_msg void ADC_OnHardwareDefineexperiment();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg HBRUSH OnCtlColor(CDC* p_dc, CWnd* p_wnd, UINT nCtlColor);
 	afx_msg void ADC_OnBufferDone();
 	afx_msg void ADC_OnTriggerError();
 	afx_msg void ADC_OnOverrunError();

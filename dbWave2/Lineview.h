@@ -147,16 +147,16 @@ public:
 	void 	MoveHZtagtoVal(int itag, int ival);	
 	void	UpdateXRuler();
 	void	UpdateYRuler();
-	void	PlotDatatoDC(CDC* pDC);
+	void	PlotDatatoDC(CDC* p_dc);
 	void	ZoomData(CRect* prevRect, CRect* newRect);
 
 protected:
-	void	HighlightData(CDC* pDC, int chan);	
+	void	HighlightData(CDC* p_dc, int chan);	
 	int		DoesCursorHitCurve(CPoint point);	
 	void	XORcurve();
 
 public:	
-	void	Print(CDC* pDC, CRect* rect, BOOL bCenterline=FALSE);
+	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline=FALSE);
 
 protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

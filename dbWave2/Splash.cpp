@@ -10,9 +10,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-//   Splash Screen class
-
 BOOL CSplashWnd::m_bShowSplashWnd;
 CSplashWnd* CSplashWnd::m_pSplashWnd;
 
@@ -79,8 +76,7 @@ BOOL CSplashWnd::Create(CWnd* pParentWnd /*= NULL*/)
 		return FALSE;
 
 	BITMAP bm;
-	int idummy = m_bitmap.GetBitmap(&bm);
-
+	auto idummy = m_bitmap.GetBitmap(&bm);
 	return CreateEx(0,
 		AfxRegisterWndClass(0, AfxGetApp()->LoadStandardCursor(IDC_ARROW)),
 		nullptr, WS_POPUP | WS_VISIBLE, 0, 0, bm.bmWidth, bm.bmHeight, pParentWnd->GetSafeHwnd(), nullptr);
@@ -104,12 +100,8 @@ int CSplashWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	// Center the window.
 	CenterWindow();
-
-	// Set a timer to destroy the splash screen.
 	SetTimer(1, 2000, nullptr);
-
 	return 0;
 }
 
@@ -117,21 +109,18 @@ void CSplashWnd::OnPaint()
 {
 	CPaintDC dc(this);
 
-	CDC dcImage;
-	if (!dcImage.CreateCompatibleDC(&dc))
+	CDC dc_image;
+	if (!dc_image.CreateCompatibleDC(&dc))
 		return;
 
 	BITMAP bm;
 	m_bitmap.GetBitmap(&bm);
-
-	// Paint the image.
-	CBitmap* pOldBitmap = dcImage.SelectObject(&m_bitmap);
-	dc.BitBlt(0, 0, bm.bmWidth, bm.bmHeight, &dcImage, 0, 0, SRCCOPY);
-	dcImage.SelectObject(pOldBitmap);
+	const auto p_old_bitmap = dc_image.SelectObject(&m_bitmap);
+	dc.BitBlt(0, 0, bm.bmWidth, bm.bmHeight, &dc_image, 0, 0, SRCCOPY);
+	dc_image.SelectObject(p_old_bitmap);
 }
 
 void CSplashWnd::OnTimer(UINT nIDEvent)
 {
-	// Destroy the splash screen window.
 	HideSplashScreen();
 }

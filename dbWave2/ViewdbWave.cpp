@@ -227,23 +227,23 @@ BOOL CViewdbWave::OnPreparePrinting(CPrintInfo* pInfo)
 	return TRUE;
 }
 
-void CViewdbWave::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CViewdbWave::OnBeginPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add extra initialization before printing
 }
 
-void CViewdbWave::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CViewdbWave::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add cleanup after printing
 }
 
-void CViewdbWave::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+void CViewdbWave::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	// TODO: add customized printing code here
 	if(pInfo->m_bDocObject)
 		COleDocObjectItem::OnPrint(this, pInfo, TRUE);
 	else
-		CView::OnPrint(pDC, pInfo);
+		CView::OnPrint(p_dc, pInfo);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -308,17 +308,11 @@ CdbWaveDoc* CViewdbWave::GetDocument() const
 }
 #endif //_DEBUG
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewdbWave database support
 CDaoRecordset* CViewdbWave::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewdbWave message handlers
 void CViewdbWave::UpdateControls()
 {
 	auto pdb_doc = GetDocument();

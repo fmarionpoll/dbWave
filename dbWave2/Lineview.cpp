@@ -621,17 +621,17 @@ BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 
 		while (l_first <= l_last)
 		{
-			auto lBUFchanFirst= l_first;			// index very first pt within pixel
-			auto lBUFchanLast = l_last;			// index very last pixel
+			auto l_buf_chan_first= l_first;			// index very first pt within pixel
+			auto l_buf_chan_last = l_last;			// index very last pixel
 
 			 // ask document to read raw data, document returns index of data loaded within the buffer
-			if (!m_pDataFile->LoadRawData(&lBUFchanFirst, &lBUFchanLast, nspan))
+			if (!m_pDataFile->LoadRawData(&l_buf_chan_first, &l_buf_chan_last, nspan))
 				break;							// exit if error reported
 
 			// build Envelopes  .................
-			if (lBUFchanLast > l_last)
-				lBUFchanLast = l_last;
-			const int npoints = lBUFchanLast - l_first +1; 
+			if (l_buf_chan_last > l_last)
+				l_buf_chan_last = l_last;
+			const int npoints = l_buf_chan_last - l_first +1; 
 			if (npoints <= 0)
 				break;
 
@@ -644,7 +644,7 @@ BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 				const auto itransf =  p_cont->GetSourceMode();	// get transform mode
 				if (itransf>0)							// if transformation, compute transf
 				{										// and then build envelope
-					lp_data = m_pDataFile->LoadTransfData(l_first, lBUFchanLast, itransf, source_chan);
+					lp_data = m_pDataFile->LoadTransfData(l_first, l_buf_chan_last, itransf, source_chan);
 					p_cont->FillEnvelopeWithSmoothMxMi(ipixel, lp_data, 1, npoints, b_new, ioption);
 				}
 				else									// no transformation: compute max min
@@ -654,7 +654,7 @@ BOOL CLineViewWnd::GetSmoothDataFromDoc(int ioption)
 				}
 			}
 			b_new = FALSE;
-			l_first = lBUFchanLast + 1;
+			l_first = l_buf_chan_last + 1;
 		}	
 	}
 	return TRUE;
@@ -983,23 +983,23 @@ void CLineViewWnd::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
+void CLineViewWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 {	
 	// save DC & old client rect
-	const auto n_saved_dc = pDC->SaveDC();
+	const auto n_saved_dc = p_dc->SaveDC();
 	ASSERT(n_saved_dc != 0);
 	const auto old_rect = m_clientRect;
 
 	// prepare DC
-	const auto previousmapping = pDC->SetMapMode(MM_TEXT);	// change map mode to text (1 pixel = 1 logical point)
+	const auto previousmapping = p_dc->SetMapMode(MM_TEXT);	// change map mode to text (1 pixel = 1 logical point)
 	m_clientRect = *pRect; //CRect(0,0, pRect->Width(), pRect->Height());
 	AdjustDisplayRect(pRect); 
-	EraseBkgnd(pDC);
+	EraseBkgnd(p_dc);
 	// clip curves
 	if (m_parms.bClipRect)	
-		pDC->IntersectClipRect(m_displayRect);
+		p_dc->IntersectClipRect(m_displayRect);
 	else
-		pDC->SelectClipRgn(nullptr);
+		p_dc->SelectClipRgn(nullptr);
 
 	// adjust coordinates for anisotropic mode
 	const auto yVE = -m_displayRect.Height();
@@ -1010,7 +1010,7 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	// exit if no data defined
 	if (!IsDefined())
 	{
-		pDC->TextOut(10, 10, _T("No data"));
+		p_dc->TextOut(10, 10, _T("No data"));
 		return;
 	}
 
@@ -1027,9 +1027,9 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	// display all channels
 	auto nelements=0;
 	auto pX = chanlistitem_ptr_array[0]->pEnvelopeAbcissa;
-	const BOOL b_poly_line = (pDC->m_hAttribDC == nullptr) || (pDC->GetDeviceCaps(LINECAPS) & LC_POLYLINE);
+	const BOOL b_poly_line = (p_dc->m_hAttribDC == nullptr) || (p_dc->GetDeviceCaps(LINECAPS) & LC_POLYLINE);
 	auto color = BLACK_COLOR;
-	const auto poldpen=pDC->SelectObject(&m_penTable[color]);
+	const auto poldpen=p_dc->SelectObject(&m_penTable[color]);
 
 	// display loop:	
 	for (auto ichan = chanlistitem_ptr_array.GetUpperBound(); ichan>=0; ichan--)	// scan all channels
@@ -1055,7 +1055,7 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 		if (chanlist_item->GetColor() != color)	
 		{
 			color = chanlist_item->GetColor();			
-			pDC->SelectObject(&m_penTable[color]);
+			p_dc->SelectObject(&m_penTable[color]);
 		}
 		// transform ordinates ------------------------------------------------
 		for (auto j = 0; j<nelements; j++)
@@ -1065,12 +1065,12 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 		}
 		//  display points ----------------------------------------------------	
 		if (b_poly_line)
-			pDC->Polyline(&m_PolyPoints[0], nelements);		// draw curve
+			p_dc->Polyline(&m_PolyPoints[0], nelements);		// draw curve
 		else
 		{
-			pDC->MoveTo(m_PolyPoints[0]);					// move pen to first pair of coords
+			p_dc->MoveTo(m_PolyPoints[0]);					// move pen to first pair of coords
 			for (auto j = 0; j<nelements; j++)
-				pDC->LineTo(m_PolyPoints[j]);				// draw lines
+				p_dc->LineTo(m_PolyPoints[j]);				// draw lines
 		}
 
 		//display associated cursors ------------------------------------------
@@ -1078,7 +1078,7 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 		{
 			// select pen and display mode 
 			CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
-			const auto pold_pen = pDC->SelectObject(&ltgrey_pen);
+			const auto pold_pen = p_dc->SelectObject(&ltgrey_pen);
 			// iterate through HZ cursor list
 			const int x0 = pRect->left;
 			const int x1 = pRect->right;			
@@ -1088,13 +1088,13 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 					continue;					// current channel
 				auto k = GetHZtagVal(j);			// get value
 				k = MulDiv(k-yzero, yVE, yextent) + yVO;
-				pDC->MoveTo(x0,k);				// set initial pt
-				pDC->LineTo(x1,k);				// HZ line				
+				p_dc->MoveTo(x0,k);				// set initial pt
+				p_dc->LineTo(x1,k);				// HZ line				
 			}
-			pDC->SelectObject(pold_pen);
+			p_dc->SelectObject(pold_pen);
 		}
 		// highlight data ------------------------------------------------------
-		HighlightData(pDC, ichan);
+		HighlightData(p_dc, ichan);
 	}
 
 	// display vertical cursors ------------------------------------------------
@@ -1102,7 +1102,7 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 	{			
 		// select pen and display mode 
 		CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
-		const auto poldp =pDC->SelectObject(&ltgrey_pen);
+		const auto poldp =p_dc->SelectObject(&ltgrey_pen);
 		// iterate through VT cursor list	
 		const int y0		= pRect->top;
 		const int y1		= pRect->bottom;
@@ -1114,16 +1114,16 @@ void CLineViewWnd::Print(CDC* pDC, CRect* pRect, BOOL bCenterLine)
 			if (lk <m_lxFirst || lk > m_lxLast)
 				continue;
 			const int k= k0 + (lk-m_lxFirst)* ksize / (m_lxLast - m_lxFirst+1);
-			pDC->MoveTo(k,y0);			// set initial pt
-			pDC->LineTo(k,y1);			// VT line		
+			p_dc->MoveTo(k,y0);			// set initial pt
+			p_dc->LineTo(k,y1);			// VT line		
 		}		
-		pDC->SelectObject(poldp);
+		p_dc->SelectObject(poldp);
 	}
 
 	// restore DC ----------------------------------------------------------------
-	pDC->SelectObject(poldpen);			// restore old pen
-	pDC->RestoreDC(n_saved_dc);			// restore DC
-	pDC->SetMapMode (previousmapping);	// restore map mode
+	p_dc->SelectObject(poldpen);			// restore old pen
+	p_dc->RestoreDC(n_saved_dc);			// restore DC
+	p_dc->SetMapMode (previousmapping);	// restore map mode
 	m_clientRect = old_rect;
 	AdjustDisplayRect(&m_clientRect);
 }
@@ -1140,13 +1140,13 @@ BOOL CLineViewWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 		EmptyClipboard();							// prepare clipboard
 		const DWORD dw_len = 32768;	// 32 Kb
 		size_t  pcch_remaining = dw_len / sizeof(TCHAR);
-		const auto h_copy = (HANDLE) ::GlobalAlloc(GHND, dw_len);
+		const auto h_copy = static_cast<HANDLE>(::GlobalAlloc(GHND, dw_len));
 		const auto pwave_format = m_pDataFile->GetpWaveFormat();
 
 		if (h_copy != nullptr)
 		{
 			// memory allocated -- get pointer to it
-			auto lp_copy =(LPTSTR) ::GlobalLock((HGLOBAL) h_copy);
+			auto lp_copy =static_cast<LPTSTR>(::GlobalLock(h_copy));
 
 			// data file name, comment, header
 			const auto date = (pwave_format->acqtime).Format(_T("%#d %B %Y %X"));
@@ -1568,7 +1568,7 @@ void CLineViewWnd::SetHighlightData(CDWordArray* pDWintervals)
 		return;
 
 	m_highlighted.channel = pDWintervals->GetAt(0);
-	m_highlighted.color = (COLORREF)pDWintervals->GetAt(1);
+	m_highlighted.color = static_cast<COLORREF>(pDWintervals->GetAt(1));
 	m_highlighted.pensize = pDWintervals->GetAt(2);
 	m_highlighted.l_first.RemoveAll();
 	m_highlighted.l_last.RemoveAll();
@@ -1583,7 +1583,7 @@ void CLineViewWnd::SetHighlightData(CDWordArray* pDWintervals)
 	}
 }
 
-void CLineViewWnd::HighlightData(CDC* pDC, int chan)
+void CLineViewWnd::HighlightData(CDC* p_dc, int chan)
 {
 	// skip if not the correct chan
 	if (chan != m_highlighted.channel || m_highlighted.l_first.GetSize() < 2)
@@ -1592,9 +1592,9 @@ void CLineViewWnd::HighlightData(CDC* pDC, int chan)
 	// get color and pen size from array m_pDWintervals
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, m_highlighted.pensize, m_highlighted.color);
-	const auto poldpen = (CPen*)pDC->SelectObject(&new_pen);
-	const BOOL b_poly_line = (pDC->m_hAttribDC == nullptr)
-		|| (pDC->GetDeviceCaps(LINECAPS) & LC_POLYLINE);
+	const auto poldpen = static_cast<CPen*>(p_dc->SelectObject(&new_pen));
+	const BOOL b_poly_line = (p_dc->m_hAttribDC == nullptr)
+		|| (p_dc->GetDeviceCaps(LINECAPS) & LC_POLYLINE);
 
 	// loop to display data	
 
@@ -1630,17 +1630,17 @@ void CLineViewWnd::HighlightData(CDC* pDC, int chan)
 		// display data	
 		const auto nelements = ilast - ifirst;
 		if (b_poly_line)
-			pDC->Polyline(&m_PolyPoints[ifirst], nelements);
+			p_dc->Polyline(&m_PolyPoints[ifirst], nelements);
 		else
 		{
-			pDC->MoveTo(m_PolyPoints[ifirst]);
+			p_dc->MoveTo(m_PolyPoints[ifirst]);
 			for (auto j = 0; j < nelements; j++)
-				pDC->LineTo(m_PolyPoints[ifirst + j]);
+				p_dc->LineTo(m_PolyPoints[ifirst + j]);
 		}
 	}
 
 	// restore previous pen
-	pDC->SelectObject(poldpen);
+	p_dc->SelectObject(poldpen);
 }
 
 //---------------------------------------------------------------------------
@@ -1658,9 +1658,9 @@ void CLineViewWnd::ADdisplayStart(int chsamples)
 	// init parameters related to AD display
 	m_bADbuffers = TRUE;							// yes, display ADbuffers
 	m_lADbufferdone = 0;							// length of data already displayed
-	auto pC = envelope_ptr_array.GetAt(0);	
-	pC->FillEnvelopeWithAbcissaEx(1, m_displayRect.right-1, chsamples);
-	pC->ExportToAbcissa(m_PolyPoints);
+	auto envelope = envelope_ptr_array.GetAt(0);	
+	envelope->FillEnvelopeWithAbcissaEx(1, m_displayRect.right-1, chsamples);
+	envelope->ExportToAbcissa(m_PolyPoints);
 	SetbUseDIB(FALSE); 
 
 	// clear window before acquiring data
@@ -1717,9 +1717,9 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 	CBitmap bitmap_plot;
 	const auto poldbitmap = dc_mem.SelectObject(&bitmap_plot);
 	const auto isave_dc = dc_mem.SaveDC();			// save DC
-	CDC* pDC = &dc;
+	CDC* p_dc = &dc;
 	if (m_bUseDIB)
-		pDC = &dc_mem;
+		p_dc = &dc_mem;
 
 	// get first and last pixels of the interval to display
 	const auto ad_pixel_first = MulDiv(m_lADbufferdone, m_npixels, m_lxSize);
@@ -1741,16 +1741,16 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 	if (ad_pixel_first == 0)
 		rect.left = 1;
 	rect.DeflateRect(0, 1);
-	pDC->IntersectClipRect(rect);
-	pDC->FillSolidRect(&rect, m_parms.crScopeFill);
+	p_dc->IntersectClipRect(rect);
+	p_dc->FillSolidRect(&rect, m_parms.crScopeFill);
 
-	auto* ppen_old = (CPen*)pDC->SelectStockObject(BLACK_PEN);
+	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
-	pDC->SetMapMode (MM_ANISOTROPIC);		// display in anisotropic mode
-	pDC->SetViewportExt (m_xVE, m_yVE);
-	pDC->SetViewportOrg (m_xVO, m_yVO);
-	pDC->SetWindowExt (m_npixels, m_yVE);	//chanlist_item->GetYextent());
-	pDC->SetWindowOrg (0, 0);				//chanlist_item->GetYzero());
+	p_dc->SetMapMode (MM_ANISOTROPIC);		// display in anisotropic mode
+	p_dc->SetViewportExt (m_xVE, m_yVE);
+	p_dc->SetViewportOrg (m_xVO, m_yVO);
+	p_dc->SetWindowExt (m_npixels, m_yVE);	//chanlist_item->GetYextent());
+	p_dc->SetWindowOrg (0, 0);				//chanlist_item->GetYzero());
 	const auto yVE = m_yVE;
 
 	for (auto ichan = 0; ichan<chanlistitem_ptr_array.GetSize(); ichan++)
@@ -1759,7 +1759,7 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 		const auto chanlist_item = chanlistitem_ptr_array[ichan];
 		CPen temp_pen;
 		temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[chanlist_item->GetColor()]);	
-		pDC->SelectObject(&temp_pen);
+		p_dc->SelectObject(&temp_pen);
 		
 		// compute max min and plot array
 		auto ppt = p_polypoints;
@@ -1801,17 +1801,17 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 			for (auto i=0; i<npixels; i++, ppt++, p_data += n_doc_chans)
 				ppt->y = MulDiv(*p_data-worg, yVE, wext);
 		}
-		pDC->MoveTo(int(p_polypoints->x -2), int(p_polypoints->y));
-		pDC->PolylineTo(p_polypoints, npoints);
+		p_dc->MoveTo(int(p_polypoints->x -2), int(p_polypoints->y));
+		p_dc->PolylineTo(p_polypoints, npoints);
 		temp_pen.DeleteObject();	
 	}
 
 	// restore the old pen and exit	
-	pDC->SelectObject(ppen_old);	// select initial object
-	pDC->RestoreDC(isave_dc);		// restore DC
-	pDC->SetMapMode (MM_TEXT);
-	pDC->SetViewportOrg (0, 0);
-	pDC->SetWindowOrg (0, 0);
+	p_dc->SelectObject(ppen_old);	// select initial object
+	p_dc->RestoreDC(isave_dc);		// restore DC
+	p_dc->SetMapMode (MM_TEXT);
+	p_dc->SetViewportOrg (0, 0);
+	p_dc->SetWindowOrg (0, 0);
 
 	if (m_bUseDIB)
 		dc.BitBlt(rect.left, rect.top,
@@ -1900,9 +1900,9 @@ void CLineViewWnd::Serialize( CArchive& ar )
 			for (auto i=nchanlistItems0; i < nchanlistItems; i++)
 				chanlistitem_ptr_array[i] = new CChanlistItem; // (CChanlistItem*) 
 		}
-		int ix = 0;
-		int iy = 0;
-		for (int i=0; i< nchanlistItems; i++)
+		auto ix = 0;
+		auto iy = 0;
+		for (auto i=0; i< nchanlistItems; i++)
 		{
 			chanlistitem_ptr_array[i]->Serialize(ar);
 			chanlistitem_ptr_array[i]->GetEnvelopeArrayIndexes(ix, iy);

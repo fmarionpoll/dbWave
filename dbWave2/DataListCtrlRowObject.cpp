@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "DataListCtrlRowObject.h"
 
 #ifdef _DEBUG
@@ -60,26 +60,29 @@ CDataListCtrlRowObject::~CDataListCtrlRowObject()
 	csDate.Empty();
 }
 
-void CDataListCtrlRowObject::operator = (const CDataListCtrlRowObject& arg)
+CDataListCtrlRowObject& CDataListCtrlRowObject::operator = (const CDataListCtrlRowObject& arg)
 {
-	bInit = arg.bInit;
-	index = arg.index;
-	insectID = arg.insectID;
-	cs_comment = arg.cs_comment ;
-	csDatafileName = arg.csDatafileName ;
-	csSpikefileName = arg.csSpikefileName ;
-	csSensillumname = arg.csSensillumname ;
-	csStim1 = arg.csStim1;
-	csConc1 = arg.csConc1;
-	csStim2 = arg.csStim2;
-	csConc2 = arg.csConc2;
-	csNspk = arg.csNspk ;
-	csFlag = arg.csFlag ;
-	csDate = arg.csDate ;
-	pdataWnd = arg.pdataWnd;
-	pspikeWnd = arg.pspikeWnd;
-	pdataDoc = arg.pdataDoc;
-	pspikeDoc = arg.pspikeDoc;
+	if (this != &arg) {
+		bInit = arg.bInit;
+		index = arg.index;
+		insectID = arg.insectID;
+		cs_comment = arg.cs_comment;
+		csDatafileName = arg.csDatafileName;
+		csSpikefileName = arg.csSpikefileName;
+		csSensillumname = arg.csSensillumname;
+		csStim1 = arg.csStim1;
+		csConc1 = arg.csConc1;
+		csStim2 = arg.csStim2;
+		csConc2 = arg.csConc2;
+		csNspk = arg.csNspk;
+		csFlag = arg.csFlag;
+		csDate = arg.csDate;
+		pdataWnd = arg.pdataWnd;
+		pspikeWnd = arg.pspikeWnd;
+		pdataDoc = arg.pdataDoc;
+		pspikeDoc = arg.pspikeDoc;
+	}
+	return *this;
 }
 
 void CDataListCtrlRowObject::Serialize(CArchive& ar)
@@ -94,7 +97,7 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 		ar << wversion;
 		ar << index;
 
-		int nstr = 8;
+		const auto nstr = static_cast<int>(8);
 		ar << nstr;
 		ar << cs_comment;
 		ar << csDatafileName;
@@ -107,7 +110,7 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 		ar << csFlag;
 		ar << csDate;
 
-		int nobj = 3;
+		const auto nobj = static_cast<int>(3);
 		ar << nobj;
 		pdataWnd->Serialize(ar);
 		pspikeWnd->Serialize(ar);

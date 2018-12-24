@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "Datacomm.h"
 
 #ifdef _DEBUG

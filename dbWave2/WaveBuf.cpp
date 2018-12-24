@@ -580,8 +580,8 @@ void CWaveBuf::BDeri3f3(const short* lp_source, short* lp_dest, const int cx) co
 
 BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const int mode) const
 {
-	if ((ch_index >= m_waveFormat.scan_count)|| (ch_index <0))
-		return FALSE;
+	if ((ch_index >= m_waveFormat.scan_count) || (ch_index < 0))
+		return false;
 
 	auto correction = 1.0f;
 	GetWBcorrectionFactor(mode, &correction);
@@ -602,7 +602,7 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 					/float(m_waveFormat.binspan);
 	}
 	*volts_per_bin = static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_resolutionV / correction);
-	return TRUE;
+	return true;
 }
 
 /**************************************************************************

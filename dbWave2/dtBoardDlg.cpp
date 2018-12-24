@@ -21,8 +21,8 @@ CDataTranslationBoardDlg::CDataTranslationBoardDlg(CWnd* pParent /*=NULL*/)
 
 CDataTranslationBoardDlg::~CDataTranslationBoardDlg()
 {
-	UINT uiNumBoards = m_pDTAcq32->GetNumBoards();
-	if (uiNumBoards > 0) {
+	const UINT ui_num_boards = m_pDTAcq32->GetNumBoards();
+	if (ui_num_boards > 0) {
 		m_pAnalogIN->SetSubSysType(m_subssystemIN);
 	}
 }
@@ -55,13 +55,13 @@ BOOL CDataTranslationBoardDlg::OnInitDialog()
 BOOL CDataTranslationBoardDlg::FindDTOpenLayersBoards()
 {
 	m_cbBoard.ResetContent();
-	UINT uiNumBoards = m_pDTAcq32->GetNumBoards();
-	BOOL flag = (uiNumBoards > 0 ? TRUE : FALSE);
-	if (uiNumBoards == 0)
+	const UINT ui_num_boards = m_pDTAcq32->GetNumBoards();
+	const auto flag = (ui_num_boards > 0 ? TRUE : FALSE);
+	if (ui_num_boards == 0)
 		m_cbBoard.AddString(_T("No Board"));
 	else
 	{
-		for (UINT i = 0; i < uiNumBoards; i++)
+		for (UINT i = 0; i < ui_num_boards; i++)
 			m_cbBoard.AddString(m_pDTAcq32->GetBoardList(i));
 	}
 	m_cbBoard.SetCurSel(0);
@@ -71,7 +71,7 @@ BOOL CDataTranslationBoardDlg::FindDTOpenLayersBoards()
 
 void CDataTranslationBoardDlg::OnSelchangeBoard()
 {
-	int isel = m_cbBoard.GetCurSel();
+	const auto isel = m_cbBoard.GetCurSel();
 	m_cbBoard.GetLBText(isel, m_boardName);
 	m_nsubsystems = GetBoardCapabilities(); 
 }
@@ -89,27 +89,27 @@ int CDataTranslationBoardDlg::GetBoardCapabilities()
 		m_pDTAcq32->SetBoard(m_boardName);
 		m_listBoardCaps.ResetContent();
 
-		CString board_text;
 		nsubsystems = m_pDTAcq32->GetNumSubSystems();
 		
 		CString subsystem_text[SS_LIST_SIZE] = SS_TEXT;
 		int ss_list[SS_LIST_SIZE] = SS_LIST;
 
-		for (int i = 0; i < SS_LIST_SIZE; i++)
+		for (auto i = 0; i < SS_LIST_SIZE; i++)
 		{
-			int number = m_pDTAcq32->GetDevCaps(ss_list[i]);
+			const int number = m_pDTAcq32->GetDevCaps(ss_list[i]);
 			CString cs;
 			cs.Format(_T("\n  %i: "), number);
-			board_text = cs + subsystem_text[i];
+			auto board_text = cs + subsystem_text[i];
 			m_listBoardCaps.AddString(board_text);
 			m_listBoardCaps.SetItemData(i, number);
 		}
 	}
 	catch (COleDispatchException* e)
 	{
-		CString myError;
-		myError.Format(_T("DT-Open Layers Error: %i "), (int) e->m_scError); myError += e->m_strDescription;
-		AfxMessageBox(myError);
+		CString my_error;
+		my_error.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError)); 
+		my_error += e->m_strDescription;
+		AfxMessageBox(my_error);
 		e->Delete();
 		return nsubsystems;
 	}
@@ -120,23 +120,24 @@ int CDataTranslationBoardDlg::GetBoardCapabilities()
 void CDataTranslationBoardDlg::ChangeSubsystem(int index)
 {
 	int ss_codes[SS_LIST_SIZE] = SS_CODES;
-	DWORD ss_info = ss_codes[index];
-	int numitems= m_listBoardCaps.GetItemData(index);
-	DWORD OlSs = (ss_info & 0xffff);
-	UINT uiElement = (ss_info >> 16) & 0xff;
-	if (numitems > 0 && m_pDTAcq32->GetSubSysType() != OlSs) {
+	const DWORD ss_info = ss_codes[index];
+	const int numitems= m_listBoardCaps.GetItemData(index);
+	const auto ol_ss = (ss_info & 0xffff);
+	//UINT ui_element = (ss_info >> 16) & 0xff;
+	if (numitems > 0 && static_cast<unsigned long>(m_pDTAcq32->GetSubSysType()) != ol_ss) {
 		try {
-			if (OlSs == m_pAnalogOUT->GetSubSysType())
+			if (ol_ss == static_cast<unsigned long>(m_pAnalogOUT->GetSubSysType()))
 				m_pDTAcq32 = m_pAnalogOUT;
 			else
 				m_pDTAcq32 = m_pAnalogIN;
-			m_pDTAcq32->SetSubSysType((short)OlSs);
+			m_pDTAcq32->SetSubSysType(static_cast<short>(ol_ss));
 			m_pDTAcq32->SetSubSysElement(0);
 		}
 		catch (COleDispatchException* e)
 		{
 			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
+			myError.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError)); 
+			myError += e->m_strDescription;
 			AfxMessageBox(myError);
 			e->Delete();
 			return;
@@ -163,9 +164,9 @@ void CDataTranslationBoardDlg::GetSubsystemYNCapabilities(int numitems)
 		}
 		catch (COleDispatchException* e)
 		{
-			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
-			AfxMessageBox(myError);
+			CString my_error;
+			my_error.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); my_error += e->m_strDescription;
+			AfxMessageBox(my_error);
 			e->Delete();
 		}
 	}
@@ -185,7 +186,7 @@ void CDataTranslationBoardDlg::GetSubsystemNumericalCapabilities(int numitems)
 		try {
 			for (UINT i = 0; i < SS_NUM_COUNT; i++)
 			{
-				UINT capability = m_pDTAcq32->GetSSCaps(olssc_num[i]);
+				const UINT capability = m_pDTAcq32->GetSSCaps(olssc_num[i]);
 				if (capability != 0)
 				{
 					CString cs;
@@ -196,9 +197,9 @@ void CDataTranslationBoardDlg::GetSubsystemNumericalCapabilities(int numitems)
 		}
 		catch (COleDispatchException* e)
 		{
-			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); myError += e->m_strDescription;
-			AfxMessageBox(myError);
+			CString my_error;
+			my_error.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); my_error += e->m_strDescription;
+			AfxMessageBox(my_error);
 			e->Delete();
 		}
 	}
@@ -207,7 +208,7 @@ void CDataTranslationBoardDlg::GetSubsystemNumericalCapabilities(int numitems)
 
 void CDataTranslationBoardDlg::OnLbnSelchangeListBoardcaps()
 {
-	int isel = m_listBoardCaps.GetCurSel();
+	const auto isel = m_listBoardCaps.GetCurSel();
 	if (isel >= 0) {
 		ChangeSubsystem(isel);
 	}

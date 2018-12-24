@@ -18,7 +18,7 @@ public:
 	CTag(const CTag &hc);					// Constructeur par copie
 	~CTag();
 
-	void operator = (const CTag& arg);		// operator redefinition
+	CTag& operator = (const CTag& arg);		// operator redefinition
 	//CTag &operator = (CTag &arg);			// 
 	virtual void Serialize(CArchive& ar);	// overridden for document i/o
 	long Write(CFile* pdatafile);

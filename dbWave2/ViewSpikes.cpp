@@ -821,7 +821,7 @@ void CViewSpikes::OnFormatAlldata()
 	m_lLast = m_pSpkDoc->GetAcqSize()-1;
 	// spikes: center spikes horizontally and adjust hz size of display	
 	const short x_wo = 0;
-	short x_we = m_pSpkList->GetSpikeLength();
+	const short x_we = m_pSpkList->GetSpikeLength();
 	m_spkClass.SetXzoom(x_we, x_wo);
 
 	UpdateLegends(FALSE);
@@ -944,7 +944,7 @@ void CViewSpikes::PrintComputePageSize()
 	m_printRect.top = mdPM->topPageMargin;
 }
 
-void CViewSpikes::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikes::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
 {
 	auto t= CTime::GetCurrentTime();
 	CString ch;
@@ -952,8 +952,8 @@ void CViewSpikes::PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo)
 			pInfo->m_nCurPage, pInfo->GetMaxPage(),
 			t.GetDay(),	t.GetMonth(),t.GetYear());
 	const auto ch_date = GetDocument()->DBGetCurrentSpkFileName();
-	pDC->SetTextAlign(TA_CENTER);
-	pDC->TextOut(mdPM->horzRes/2, mdPM->vertRes-57,	ch_date);
+	p_dc->SetTextAlign(TA_CENTER);
+	p_dc->TextOut(mdPM->horzRes/2, mdPM->vertRes-57,	ch_date);
 }
 
 CString CViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
@@ -1040,12 +1040,12 @@ CString CViewSpikes::PrintGetFileInfos()
 	return str_comment;
 }
 
-CString CViewSpikes::PrintBars(CDC* pDC, CRect* rect)
+CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 {
 	CString str_comment;
 	const CString rc(_T("\n"));
 	CString tab(_T("     "));
-	const auto p_old_brush= (CBrush*) pDC->SelectStockObject(BLACK_BRUSH);
+	const auto p_old_brush= (CBrush*) p_dc->SelectStockObject(BLACK_BRUSH);
 
 	CString cs_unit;
 	CRect rect_horz_bar;
@@ -1070,7 +1070,7 @@ CString CViewSpikes::PrintBars(CDC* pDC, CRect* rect)
 		rect_horz_bar.right = rect_horz_bar.left + horz_bar;
 		rect_horz_bar.top = rect->bottom -bar_origin.y;
 		rect_horz_bar.bottom = rect_horz_bar.top - bar_size.cy;
-		pDC->Rectangle(&rect_horz_bar);
+		p_dc->Rectangle(&rect_horz_bar);
 		//get time equivalent of bar length
 		const auto iibar = MulDiv(iilast - iifirst, rect_horz_bar.Width(), rect->Width());
 		const auto xbar = float(iibar) / m_pSpkDoc->GetAcqRate();
@@ -1087,7 +1087,7 @@ CString CViewSpikes::PrintBars(CDC* pDC, CRect* rect)
 		rect_vert_bar.right = rect_vert_bar.left - bar_size.cx;
 		rect_vert_bar.bottom = rect->bottom -bar_origin.y;
 		rect_vert_bar.top = rect_vert_bar.bottom - vert_bar;
-		pDC->Rectangle(&rect_vert_bar);
+		p_dc->Rectangle(&rect_vert_bar);
 	}
 
 	// comments, bar value and chan settings for each channel	
@@ -1155,7 +1155,7 @@ CString CViewSpikes::PrintBars(CDC* pDC, CRect* rect)
 		}
 */
 	}	
-	pDC->SelectObject(p_old_brush);
+	p_dc->SelectObject(p_old_brush);
 	return str_comment;
 }
 
@@ -1298,7 +1298,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	return flag; 
 }
 
-void CViewSpikes::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_spkClass.GetTimeFirst();
@@ -1310,14 +1310,14 @@ void CViewSpikes::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	m_logFont.lfHeight = mdPM->fontsize;		// font height
 	m_pOldFont = nullptr;
 	m_fontPrint.CreateFontIndirect(&m_logFont);
-	pDC->SetBkMode (TRANSPARENT);
+	p_dc->SetBkMode (TRANSPARENT);
 }
 
-void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_pOldFont = pDC->SelectObject(&m_fontPrint);
-	pDC->SetMapMode(MM_TEXT);								// (1 pixel = 1 logical point)
-	PrintFileBottomPage(pDC,pInfo);							// print bottom - text, date, etc
+	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
+	p_dc->SetMapMode(MM_TEXT);								// (1 pixel = 1 logical point)
+	PrintFileBottomPage(p_dc,pInfo);							// print bottom - text, date, etc
 	const int curpage = pInfo->m_nCurPage;						// get current page number
 
 	// --------------------- load data corresponding to the first row of current page	
@@ -1339,22 +1339,22 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	{
 		// save conditions (Save/RestoreDC is mandatory!) --------------------------------
 		
-		const auto old_dc = pDC->SaveDC();						// save DC
+		const auto old_dc = p_dc->SaveDC();						// save DC
 
 		// set first rectangle where data will be printed
 
 		auto comment_rect = r_where;						// save RWhere for comments        
-		pDC->SetMapMode(MM_TEXT);						// 1 pixel = 1 logical unit
-		pDC->SetTextAlign(TA_LEFT); 					// set text align mode
+		p_dc->SetMapMode(MM_TEXT);						// 1 pixel = 1 logical unit
+		p_dc->SetTextAlign(TA_LEFT); 					// set text align mode
 		if (mdPM->bFrameRect)							// print rectangle if necessary
 		{
-			pDC->MoveTo(r_where.left,  r_where.top);
-			pDC->LineTo(r_where.right, r_where.top);		// top hz
-			pDC->LineTo(r_where.right, r_where.bottom);	// right vert
-			pDC->LineTo(r_where.left,  r_where.bottom);	// bottom hz
-			pDC->LineTo(r_where.left,  r_where.top);		// left vert
+			p_dc->MoveTo(r_where.left,  r_where.top);
+			p_dc->LineTo(r_where.right, r_where.top);		// top hz
+			p_dc->LineTo(r_where.right, r_where.bottom);	// right vert
+			p_dc->LineTo(r_where.left,  r_where.bottom);	// bottom hz
+			p_dc->LineTo(r_where.left,  r_where.top);		// left vert
 		}
-		pDC->SetViewportOrg(r_where.left, r_where.top);
+		p_dc->SetViewportOrg(r_where.left, r_where.top);
 
 		// load data and adjust display rectangle ----------------------------------------
 		// reduce width to the size of the data
@@ -1403,11 +1403,11 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		if (m_bDatDocExists)
 		{
 			if (mdPM->bClipRect)						// clip curve display ?
-				pDC->IntersectClipRect(&r_wbars);		// yes
+				p_dc->IntersectClipRect(&r_wbars);		// yes
 			m_sourceView.GetDataFromDoc(l_first, l_last);	// load data from file
 			m_sourceView.CenterChan(0);
-			m_sourceView.Print(pDC, &r_wbars);			// print data
-			pDC->SelectClipRgn(nullptr);
+			m_sourceView.Print(p_dc, &r_wbars);			// print data
+			p_dc->SelectClipRgn(nullptr);
 
 			iextent = m_sourceView.GetChanlistYextent(0);
 			//izero = m_sourceView.GetChanlistYzero(0);
@@ -1431,7 +1431,7 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		for (auto icount = 0; icount < ncount; icount++)
 		{
 			m_spkClass.SetTimeIntervals(l_first, l_last);
-			m_spkClass.PrintItem(pDC, &r_wtext, &rw_spikes, &r_wbars, icount);
+			m_spkClass.PrintItem(p_dc, &r_wtext, &rw_spikes, &r_wbars, icount);
 			r_wtext.OffsetRect(0, rheight);
 			rw_spikes.OffsetRect(0, rheight);
 			r_wbars.OffsetRect(0, rheight);
@@ -1443,11 +1443,11 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		{
 			CBrush bluebrush;	// create and select a solid blue brush
 			bluebrush.CreateSolidBrush(RGB(0, 0, 255));
-			const auto oldb = (CBrush*) pDC->SelectObject(&bluebrush);
+			const auto oldb = (CBrush*) p_dc->SelectObject(&bluebrush);
 
 			CPen bluepen;		// create and select a solid blue pen
 			bluepen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
-			const auto ppen = (CPen*) pDC->SelectObject(&bluepen);
+			const auto ppen = (CPen*) p_dc->SelectObject(&bluepen);
 
 			rw_spikes.bottom = rw2.bottom;	// define a rectangle for stimulus
 			rw_spikes.top = rw2.bottom - rheight/10;
@@ -1472,11 +1472,11 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 				rw_spikes.right = MulDiv(iilast-l_first, r_wbars.Width(), l_last-l_first) +r_wbars.left;
 				if (rw_spikes.right <= rw_spikes.left)
 					rw_spikes.right = rw_spikes.left + 1;
-				pDC->Rectangle(rw_spikes);
+				p_dc->Rectangle(rw_spikes);
 			}
 
-			pDC->SelectObject(oldb);
-			pDC->SelectObject(ppen);
+			p_dc->SelectObject(oldb);
+			p_dc->SelectObject(ppen);
 		}
 
 
@@ -1487,20 +1487,20 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// restore DC ------------------------------------------------------
 
-		pDC->RestoreDC(old_dc);					// restore Display context	
+		p_dc->RestoreDC(old_dc);					// restore Display context	
 
 		// print comments --------------------------------------------------
 
-		pDC->SetMapMode(MM_TEXT);				// 1 LP = 1 pixel
-		pDC->SelectClipRgn(nullptr);				// no more clipping
-		pDC->SetViewportOrg(0, 0);				// org = 0,0        
+		p_dc->SetMapMode(MM_TEXT);				// 1 LP = 1 pixel
+		p_dc->SelectClipRgn(nullptr);				// no more clipping
+		p_dc->SetViewportOrg(0, 0);				// org = 0,0        
 
 		// print comments according to row within file
 		CString cs_comment;
 		if (l_first == m_lprintFirst)			// first row = full comment
 		{
 			cs_comment += PrintGetFileInfos();
-			cs_comment += PrintBars(pDC, &comment_rect);// bars and bar legends
+			cs_comment += PrintBars(p_dc, &comment_rect);// bars and bar legends
 		}
 
 		// print comments stored into cs_comment		
@@ -1508,10 +1508,10 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		comment_rect.right = m_printRect.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
-		const auto ui_flag = pDC->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
-		pDC->DrawText(cs_comment, cs_comment.GetLength(), comment_rect, 
+		const auto ui_flag = p_dc->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
+		p_dc->DrawText(cs_comment, cs_comment.GetLength(), comment_rect, 
 				DT_NOPREFIX | /*DT_NOCLIP |*/ DT_LEFT | DT_WORDBREAK);
-		pDC->SetTextAlign(ui_flag);
+		p_dc->SetTextAlign(ui_flag);
 
 		// update file parameters for next row --------------------------------------------
 		l_first += m_lprintLen;		
@@ -1536,10 +1536,10 @@ void CViewSpikes::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	}	// this is the end of a very long for loop.....................
 
 	if (m_pOldFont != nullptr)
-		pDC->SelectObject(m_pOldFont);
+		p_dc->SelectObject(m_pOldFont);
 }
 
-void CViewSpikes::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	m_bIsPrinting = FALSE;

@@ -1,9 +1,6 @@
 // ASDFile.cpp : implementation file
 //
 
-// ASDFile.cpp : implementation file
-//
-
 #include "StdAfx.h"
 #include "dataheader_Atlab.H"
 #include "datafile_ASD.h"
@@ -74,96 +71,87 @@ void CDataFileASD::Dump(CDumpContext& dc) const
 				 - modify document classes from aWave
  **************************************************************************/
 
-BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
+BOOL CDataFileASD::ReadDataInfos(CWaveFormat* wave_format, CWaveChanArray* wavechan_array)
 {
 	Seek(29, CFile::begin);			// position pointer
-	CString csName;
-	char ch= ' ';
+	CString cs_name;
+	auto ch= ' ';
 	while (ch != 0)					// (1) signal name
 	{
 		Read(&ch, sizeof(char));
-		if (ch != 0) csName += ch;
+		if (ch != 0) cs_name += ch;
 	}
 
 	DWORD dw;
 	WORD  w;
-	DWORD recFactor;							// (3) external amplification factor
 	Read(&dw, sizeof(DWORD));
-	recFactor= SWAPLONG(dw);
-	short gainpost = (short) recFactor;			// max is 32768
-	short gainpre  = 1;
-	ASSERT(recFactor <= 32768);
+	const DWORD rec_factor = SWAPLONG(dw);
+	const auto gainpost = static_cast<short>(rec_factor);	// max is 32768
+	const auto gainpre  = 1;
+	ASSERT(rec_factor <= 32768);
 
-	double sampleRate;							// (4) sampling rate
 	Read(&dw, sizeof(DWORD));
-	sampleRate = (double) SWAPLONG(dw) / 1000.0;
+	const auto sample_rate = static_cast<double>(SWAPLONG(dw)) / 1000.0;
 
-	DWORD count;								// (5) number of correction factors
 	Read(&dw, sizeof(DWORD));
-	count= SWAPLONG(dw);
+	const DWORD count = SWAPLONG(dw);
 
-	DWORD index;
-	int percent;
-	long time;
-	for (index=0; index < count; index++)		// (6-7) percent and time
+	for (DWORD index = 0; index < count; index++)		// (6-7) percent and time
 	{
 		Read(&w, sizeof(WORD));
-		percent = SWAPWORD(w);
+		//int percent = SWAPWORD(w);
 		Read(&dw, sizeof(DWORD));
-		time = SWAPLONG(dw);
+		//auto time = SWAPLONG(dw);
 	}
 
-	UINT uicount=0;								// (8) number of record samples
 	Read(&dw, sizeof(DWORD));
-	uicount= SWAPLONG(dw);
+	const UINT uicount = SWAPLONG(dw);
 
-	ULONGLONG lOffset1 = GetPosition();			// start of data area
-	m_ulOffsetData = lOffset1+1;
-	ULONGLONG lOffset2 = ULONGLONG(uicount)*2;				// length of data area (in bytes)
-	Seek(lOffset2, CFile::current);				// position pointer
+	const auto l_offset1 = GetPosition();			// start of data area
+	m_ulOffsetData = l_offset1+1;
+	const auto l_offset2 = static_cast<ULONGLONG>(uicount)*2;	// length of data area (in bytes)
+	Seek(l_offset2, CFile::current);				// position pointer
 
-	WORD checkSum;								// data end
 	Read(&w, sizeof(WORD));
-	checkSum = SWAPWORD(w);
+	//auto check_sum = SWAPWORD(w);
 
-	// tag 0xAAAA
-	WORD wType;
 	Read(&w, sizeof(WORD));						// read type
-	wType = SWAPWORD(w);
-	ASSERT(wType == m_wID);
+	auto w_type = SWAPWORD(w);
+	ASSERT(w_type == m_wID);
 
 	// file subtype
 	Read(&w, sizeof(WORD));						// file subtype
-	wType = SWAPWORD(w);
-	ASSERT(wType == DT_ASCIITEXT);
+	w_type = SWAPWORD(w);
+	ASSERT(w_type == DT_ASCIITEXT);
 
 	// read comment
 	CString cs_comment;							// and now text comment
 	do
 	{
 		Read(&ch, sizeof(char));
-		if (ch != 0) cs_comment += ch;
+		if (ch != 0) 
+			cs_comment += ch;
 	} while (ch != 0);
 
-	Seek(lOffset1, CFile::begin);	// position pointer / beginning data
-	pWFormat->scan_count=1;			// assume 1 channel
+	Seek(l_offset1, CFile::begin);	// position pointer / beginning data
+	wave_format->scan_count=1;			// assume 1 channel
 
 	// ---------------- specifics from Syntech A/D card
-	pWFormat->fullscale_Volts = 10.0f;	// 10 mv full scale
-	pWFormat->binspan = 32768;			// 15 bits resolution
-	pWFormat->binzero = pWFormat->binspan/2 ;	// ?
+	wave_format->fullscale_Volts = 10.0f;	// 10 mv full scale
+	wave_format->binspan = 32768;			// 15 bits resolution
+	wave_format->binzero = wave_format->binspan/2 ;	// ?
 
-	pWFormat->mode_encoding = OLx_ENC_BINARY;
-	pWFormat->mode_clock = INTERNAL_CLOCK;
-	pWFormat->mode_trigger = INTERNAL_TRIGGER;    
-	pWFormat->chrate = (float) sampleRate;
-	pWFormat->sample_count = uicount;	
+	wave_format->mode_encoding = OLx_ENC_BINARY;
+	wave_format->mode_clock = INTERNAL_CLOCK;
+	wave_format->mode_trigger = INTERNAL_TRIGGER;    
+	wave_format->chrate = (float) sample_rate;
+	wave_format->sample_count = uicount;	
 
-	//for (i = 0; i<pWFormat->scan_count; i++)
+	//for (i = 0; i<wave_format->scan_count; i++)
 	//{
 	int i=0;
-	pArray->channel_add();
-	CWaveChan* pChan = (CWaveChan*) pArray->get_p_channel(i);
+	wavechan_array->channel_add();
+	CWaveChan* pChan = (CWaveChan*) wavechan_array->get_p_channel(i);
 	pChan->am_csComment=CString(" ");					// channel annotation
 	pChan->am_adchannel=0;								// channel scan list
 	pChan->am_gainAD=1;									// channel gain list
@@ -178,26 +166,26 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	pChan->am_offset= 0.0f;								// assume no offset compensation
 	pChan->am_csInputpos = "25";
 	pChan->am_csInputneg = "GND";
-	pChan->am_gainamplifier = (float) recFactor;
+	pChan->am_gainamplifier = (float) rec_factor;
 
 	pChan->am_gaintotal = pChan->am_gainamplifier * pChan->am_gainheadstage;		// total gain
-	pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_gaintotal / pWFormat->binspan;
+	pChan->am_resolutionV = wave_format->fullscale_Volts / pChan->am_gaintotal / wave_format->binspan;
 	//}
 
 	// ---------------- ASD -- capture date and time
 
-	int strlen = cs_comment.GetLength();
-	int ichar1 = 12;
+	const auto strlen = cs_comment.GetLength();
+	auto ichar1 = 12;
 
 	// month
-	CString dummy = cs_comment.Mid(ichar1, 3);
+	auto dummy = cs_comment.Mid(ichar1, 3);
 	CString csmonth[] = 
 	{ 
 		_T("Jan"), _T("Feb"), _T("Mar"), _T("Apr"), _T("May"), _T("Jun"),
 		_T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec")
 	};
 
-	int imonth=0;
+	int imonth;
 	for (imonth = 0; imonth< 12; imonth++)
 	{
 		if (dummy.CompareNoCase(csmonth[imonth]) == 0)
@@ -208,151 +196,141 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	// day
 	ichar1 += 4;
 	dummy = cs_comment.Mid(ichar1, 2);
-	int iday = _ttoi(dummy);
+	const auto iday = _ttoi(dummy);
 
 	// time
 	ichar1 += 3;	
-	int ihour = _ttoi(cs_comment.Mid(ichar1, 2));
+	auto const ihour = _ttoi(cs_comment.Mid(ichar1, 2));
 	ichar1 += 3;
-	int imin =  _ttoi(cs_comment.Mid(ichar1, 2));
+	auto const imin =  _ttoi(cs_comment.Mid(ichar1, 2));
 	ichar1 += 3;
-	int isec =  _ttoi(cs_comment.Mid(ichar1, 2));
+	auto const isec =  _ttoi(cs_comment.Mid(ichar1, 2));
 	ichar1 += 3;
-	int iyear = _ttoi(cs_comment.Mid(ichar1, 4));
+	auto const iyear = _ttoi(cs_comment.Mid(ichar1, 4));
 
-	pWFormat->acqtime = CTime(iyear, imonth, iday, ihour, imin, isec);
+	wave_format->acqtime = CTime(iyear, imonth, iday, ihour, imin, isec);
 
 	// Date  : Thu Nov 01 17:45:24 2001
 	// insect -> Jf#8 
 	// type -> 5th 2
 	// stimulus -> Uma 0.05g, 10% EtOH, 20mM NaCl
 
-	char od = 0xd;	
+	const char od = 0xd;	
 	ichar1 = cs_comment.Find(_T("Pretrigger"));
 	ichar1 = cs_comment.Find(od, ichar1) +2;
 	short ichar2 = cs_comment.Find(od, ichar1) +1;
-	pWFormat->csInsectname = cs_comment.Mid(ichar1, ichar2 - ichar1 -1);
+	wave_format->csInsectname = cs_comment.Mid(ichar1, ichar2 - ichar1 -1);
 	
 	ichar1=  ichar2 +1;
 	ichar2 = cs_comment.Find(od, ichar1) +1;
-	pWFormat->csSensillum = cs_comment.Mid(ichar1, ichar2 - ichar1 -1);
+	wave_format->csSensillum = cs_comment.Mid(ichar1, ichar2 - ichar1 -1);
 
-	pWFormat->csStimulus = cs_comment.Mid(ichar2+1, strlen -1);
+	wave_format->csStimulus = cs_comment.Mid(ichar2+1, strlen -1);
 
-	pWFormat->cs_comment.Empty();
-	pWFormat->csConcentration.Empty();	
+	wave_format->cs_comment.Empty();
+	wave_format->csConcentration.Empty();	
 
 	return DOCTYPE_ASDSYNTECH;
 }
 
 
-BOOL CDataFileASD::CheckFileType(CFile* f, int bOffsetHeader)
+BOOL CDataFileASD::CheckFileType(CFile* f)
 {
 	// position pointer to start of file
 	f->Seek(0L, CFile::begin);
 
 	// create archive to overload file operations
-	BOOL	flag = DOCTYPE_UNKNOWN;
-	WORD	wType;
+	auto flag = DOCTYPE_UNKNOWN;
 	
 	// (1) read data identification string
-	int		iLEN=32;
-	char	buf[32];
-	char*	pbuf;
-	pbuf= &buf[0];
-	int i = 0;
+	auto i_len=32;
+	char buf[32];
+	auto pbuf = &buf[0];
 	do
 	{
 		f->Read(pbuf, sizeof(char));
 		pbuf++;
-		iLEN--;
-	} while (*(pbuf-1) != 0 && iLEN > 0);
+		i_len--;
+	} while (*(pbuf-1) != 0 && i_len > 0);
 
 	// is it an ASD file?
 	if (buf != m_csOldStringID && buf != m_csStringID)
 		return flag;
 
 	// (2) file version number
-	f->Read(&wType, sizeof(WORD));				
-	wType = SWAPWORD(wType);
-	if (wType != 1)
+	WORD w;
+	f->Read(&w, sizeof(WORD));				
+	auto w_type2 = SWAPWORD(w);
+	if (w_type2 != 1)
 	{
 		AfxMessageBox(_T("Incorrect ID word in ASD file"));
 		return flag;
 	}
 
 	// browse file and get list of data type chunks
-	ULONGLONG filelength = f->GetLength() -1;
-	ULONGLONG offset = f->GetPosition();
+	const auto filelength = f->GetLength() -1;
+	//auto offset = f->GetPosition();
 	DWORD dw;
-	WORD  w;
 
 	while (f->GetPosition() < filelength) 
 		{
 
 		// read tag / "new data block"
-		f->Read(&wType, sizeof(WORD));
-		wType = SWAPWORD(wType);
-		ASSERT(wType == m_wID);			// assert tag = 0xAAAA
+		f->Read(&w, sizeof(WORD));
+		w_type2 = SWAPWORD(w);
+		ASSERT(w_type2 == m_wID);			// assert tag = 0xAAAA
 
 		// check file type
-		f->Read(&wType, sizeof(WORD));	// (4) file version number
-		wType = SWAPWORD(wType);
+		f->Read(&w, sizeof(WORD));	// (4) file version number
+		w_type2 = SWAPWORD(w);
 
-		switch (wType)
+		switch (w_type2)
 		{
 		case DT_WAVE:
 			{
-			flag = DOCTYPE_ASDSYNTECH;
-			m_ulOffsetHeader = f->GetPosition();
+				flag = DOCTYPE_ASDSYNTECH;
+				m_ulOffsetHeader = f->GetPosition();
 
-			// (1) signal name
-			CString csName;
-			char ch= ' ';
-			while (ch != 0)							
-			{
-				f->Read(&ch, sizeof(char));
-				if (ch != 0) csName += ch;
-			}
+				// (1) signal name
+				CString cs_name;
+					auto ch= ' ';
+				while (ch != 0)							
+				{
+					f->Read(&ch, sizeof(char));
+					if (ch != 0) cs_name += ch;
+				}
 
-			DWORD recFactor;						// (3) external amplification factor
-			f->Read(&dw, sizeof(DWORD));
-			recFactor= SWAPLONG(dw);
-			short gainpost = (short) recFactor;		// max is 32768
-			short gainpre  = 1;
-			ASSERT(recFactor <= 32768);
-
-			double sampleRate;						// (4) sampling rate
-			f->Read(&dw, sizeof(DWORD));
-			sampleRate = (double) SWAPLONG(dw) / 1000.0;
-
-			DWORD count;							// (5) number of correction factors
-			f->Read(&dw, sizeof(DWORD));
-			count= SWAPLONG(dw);
-
-			DWORD index;
-			int percent;
-			long time;
-			for (index=0; index < count; index++)	// (6-7) percent and time
-			{
-				f->Read(&w, sizeof(WORD));
-				percent = SWAPWORD(w);
 				f->Read(&dw, sizeof(DWORD));
-				time = SWAPLONG(dw);
-			}
+				const DWORD rec_factor = SWAPLONG(dw);
+				auto gainpost = static_cast<short>(rec_factor);		// max is 32768
+				short gainpre  = 1;
+				ASSERT(rec_factor <= 32768);
 
-			UINT uicount=0;							// (8) number of record samples
-			f->Read(&dw, sizeof(DWORD));
-			uicount= SWAPLONG(dw);
+				f->Read(&dw, sizeof(DWORD));
+				auto sample_rate = static_cast<double>(SWAPLONG(dw)) / 1000.0;
 
-			ULONGLONG lOffset1 = f->GetPosition();		// start of data area
-			m_ulOffsetData = lOffset1+1;
-			ULONGLONG lOffset2 = ULONGLONG(uicount)*2;				// length of data area (in bytes)
-			f->Seek(lOffset2, CFile::current);		// position pointer
+				f->Read(&dw, sizeof(DWORD));
+				const DWORD count = SWAPLONG(dw);
 
-			WORD checkSum;							// data end
-			f->Read(&w, sizeof(WORD));
-			checkSum = SWAPWORD(w);
+				for (DWORD index = 0; index < count; index++)	// (6-7) percent and time
+				{
+					f->Read(&w, sizeof(WORD));
+					int percent = SWAPWORD(w);
+					f->Read(&dw, sizeof(DWORD));
+					auto time = SWAPLONG(dw);
+				}
+
+				UINT uicount=0;							// (8) number of record samples
+				f->Read(&dw, sizeof(DWORD));
+				uicount= SWAPLONG(dw);
+
+				const auto l_offset1 = f->GetPosition();		// start of data area
+				m_ulOffsetData = l_offset1+1;
+				const auto l_offset2 = ULONGLONG(uicount)*2;				// length of data area (in bytes)
+				f->Seek(l_offset2, CFile::current);		// position pointer
+
+				f->Read(&w, sizeof(WORD));
+				auto check_sum = SWAPWORD(w);
 			}
 			break;
 
@@ -365,13 +343,13 @@ BOOL CDataFileASD::CheckFileType(CFile* f, int bOffsetHeader)
 				do
 				{
 					f->Read(&w, sizeof(WORD));
-					wType = SWAPWORD(w);
+					WORD w_type = SWAPWORD(w);
 				}
 				while (w != m_wID && f->GetPosition() < filelength);	
 				// 0xAAAA
 				if (w == m_wID)
 				{
-					LONGLONG lpos = f->GetPosition() - 2;
+					const LONGLONG lpos = f->GetPosition() - 2;
 					f->Seek(lpos, CFile::begin);
 				}
 			}

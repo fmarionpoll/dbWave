@@ -343,9 +343,9 @@ void CADInputParmsDlg::OnSize(UINT nType, int cx, int cy)
 	::EnumChildWindows(GetSafeHwnd(), EnumProc, (LPARAM)&Translate);
 	m_OldSize = CSize(cx,cy);
 
-	CWnd *pWnd = GetDlgItem(IDC_SIZEBOX);
-	if (pWnd)
-		pWnd->ShowWindow( (nType == SIZE_MAXIMIZED)? SW_HIDE : SW_SHOW);
+	CWnd *p_wnd = GetDlgItem(IDC_SIZEBOX);
+	if (p_wnd)
+		p_wnd->ShowWindow( (nType == SIZE_MAXIMIZED)? SW_HIDE : SW_SHOW);
 }
 
 //////////////////////////////////////////////////////

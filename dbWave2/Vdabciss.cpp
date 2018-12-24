@@ -9,10 +9,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataViewAbcissaDlg dialog
-
-//---------------------------------------------------------------------------
 CDataViewAbcissaDlg::CDataViewAbcissaDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CDataViewAbcissaDlg::IDD, pParent)
 {
@@ -26,7 +22,6 @@ CDataViewAbcissaDlg::CDataViewAbcissaDlg(CWnd* pParent /*=NULL*/)
 	m_veryLastAbcissa=1.0f;
 }
 
-//---------------------------------------------------------------------------
 BOOL CDataViewAbcissaDlg::OnInitDialog()
 {   
 	
@@ -36,7 +31,6 @@ BOOL CDataViewAbcissaDlg::OnInitDialog()
 	return FALSE;
 }
 
-//---------------------------------------------------------------------------	
 void CDataViewAbcissaDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -48,7 +42,6 @@ void CDataViewAbcissaDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_CENTERABCISSA, m_centerAbcissa);
 }
 
-//---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CDataViewAbcissaDlg, CDialog)
 	ON_CBN_SELCHANGE(IDC_ABCISSAUNITS, OnSelchangeAbcissaunits)
 	ON_EN_KILLFOCUS(IDC_FIRSTABCISSA, OnKillfocusAbcissa)
@@ -56,12 +49,6 @@ BEGIN_MESSAGE_MAP(CDataViewAbcissaDlg, CDialog)
 	ON_EN_KILLFOCUS(IDC_LASTABCISSA, OnKillfocusAbcissa)
 	ON_EN_KILLFOCUS(IDC_CENTERABCISSA, OnKillfocusCenter)
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataViewAbcissaDlg message handlers
-
-//---------------------------------------------------------------------------
-// CBN_SELCHANGE      CComboBox
 
 void CDataViewAbcissaDlg::OnSelchangeAbcissaunits()
 {
@@ -97,9 +84,6 @@ void CDataViewAbcissaDlg::OnSelchangeAbcissaunits()
 	UpdateData(FALSE);	
 }
 
-
-//---------------------------------------------------------------------------
-
 void CDataViewAbcissaDlg::OnOK()
 {	
 	// trap CR to validate current field        
@@ -120,25 +104,20 @@ void CDataViewAbcissaDlg::OnOK()
 		}
 }
 
-
-//---------------------------------------------------------------------------
-
 void CDataViewAbcissaDlg::OnKillfocusAbcissa()
 {
 	UpdateData(TRUE);	
 	CheckLimits();
 }                     
 
-//---------------------------------------------------------------------------
 void CDataViewAbcissaDlg::OnKillfocusDuration()
 {
 	UpdateData(TRUE);
 	m_lastAbcissa = m_firstAbcissa +m_frameDuration;
-	m_centerAbcissa = m_firstAbcissa + m_frameDuration/(float)2.;
+	m_centerAbcissa = m_firstAbcissa + m_frameDuration/static_cast<float>(2.);
 	CheckLimits();	
 }
 
-//---------------------------------------------------------------------------
 void CDataViewAbcissaDlg::OnKillfocusCenter()
 {
 	float deltaAbcissa = m_centerAbcissa;
@@ -149,7 +128,6 @@ void CDataViewAbcissaDlg::OnKillfocusCenter()
 	CheckLimits();
 }
 
-//---------------------------------------------------------------------------
 void CDataViewAbcissaDlg::CheckLimits()
 {
 	BOOL flag = FALSE;
@@ -166,6 +144,6 @@ void CDataViewAbcissaDlg::CheckLimits()
 	if (flag)
 		MessageBeep(MB_ICONEXCLAMATION);
 	m_frameDuration= m_lastAbcissa - m_firstAbcissa;
-	m_centerAbcissa = m_firstAbcissa + m_frameDuration/(float)2.;
+	m_centerAbcissa = m_firstAbcissa + m_frameDuration/static_cast<float>(2.);
 	UpdateData(FALSE);
 }

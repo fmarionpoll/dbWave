@@ -44,7 +44,7 @@ public:
 public:
 	USBPxxPARAMETERS();								// constructor
 	~USBPxxPARAMETERS();							// destructor
-	void operator = (const USBPxxPARAMETERS& arg);	// operator redefinition
+	USBPxxPARAMETERS & operator = (const USBPxxPARAMETERS& arg);	// operator redefinition
 	long Write(CFile* datafile);
 	BOOL Read(CFile* datafile);
 	virtual void Serialize(CArchive& ar);
@@ -70,17 +70,17 @@ public:
 	}
 
 	virtual BOOL Create(LPCTSTR lpszClassName, 
-		LPCTSTR lpszWindowName, DWORD dwStyle,
+		LPCTSTR lpszWindowName, DWORD dw_style,
 		const RECT& rect, 
 		CWnd* pParentWnd, UINT nID,
 		CCreateContext* pContext = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID);	}
+	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID);	}
 
-	BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle, 
+	BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, 
 		const RECT& rect, CWnd* pParentWnd, UINT nID, 
 		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
 		BSTR bstrLicKey = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID, pPersist, bStorage, bstrLicKey); }
+	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID, pPersist, bStorage, bstrLicKey); }
 
 // Attributes
 public:

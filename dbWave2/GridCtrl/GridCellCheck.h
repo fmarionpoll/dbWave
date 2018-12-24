@@ -46,14 +46,14 @@ public:
 	BOOL GetCheck();
 
 // Operations
-	virtual CSize GetCellExtent(CDC* pDC);
+	virtual CSize GetCellExtent(CDC* p_dc);
 	virtual void OnClick( CPoint PointCellRelative);
 	virtual BOOL GetTextRect( LPRECT pRect);
 
 protected:
 	CRect GetCheckPlacement();
 
-	virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+	virtual BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
 
 protected:
 	BOOL  m_bChecked;

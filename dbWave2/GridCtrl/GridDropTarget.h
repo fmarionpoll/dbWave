@@ -48,11 +48,11 @@ public:
     BOOL Register(CGridCtrl *pGridCtrl);
     virtual void Revoke();
 
-    BOOL        OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
-    DROPEFFECT  OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-    void        OnDragLeave(CWnd* pWnd);
-    DROPEFFECT  OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-    DROPEFFECT  OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint point);
+    BOOL        OnDrop(CWnd* p_wnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
+    DROPEFFECT  OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+    void        OnDragLeave(CWnd* p_wnd);
+    DROPEFFECT  OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+    DROPEFFECT  OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint point);
 
 // Overrides
 

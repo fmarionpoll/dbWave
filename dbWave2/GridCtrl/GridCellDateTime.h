@@ -23,13 +23,13 @@ class CGridCellDateTime : public CGridCell
 
 public:
 	CGridCellDateTime();
-	CGridCellDateTime(DWORD dwStyle);
+	CGridCellDateTime(DWORD dw_style);
 	virtual ~CGridCellDateTime();
-	virtual CSize GetCellExtent(CDC* pDC);
+	virtual CSize GetCellExtent(CDC* p_dc);
 
   // editing cells
 public:
-	void Init(DWORD dwStyle);
+	void Init(DWORD dw_style);
 	virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
 	virtual CWnd* GetEditWnd() const;
 	virtual void  EndEdit();
@@ -45,7 +45,7 @@ class CInPlaceDateTime : public CDateTimeCtrl
 public:
 	CInPlaceDateTime(CWnd* pParent,         // parent
 				   CRect& rect,           // dimensions & location
-				   DWORD dwStyle,         // window/combobox style
+				   DWORD dw_style,         // window/combobox style
 				   UINT nID,              // control ID
 				   int nRow, int nColumn, // row and column
 				   COLORREF crFore, COLORREF crBack,  // Foreground, background colour

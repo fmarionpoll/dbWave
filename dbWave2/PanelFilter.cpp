@@ -46,20 +46,18 @@ BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
 
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CWorkspaceBar message handlers
 
 int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	CRect rectDummy;
-	rectDummy.SetRectEmpty();
+	CRect rect_dummy;
+	rect_dummy.SetRectEmpty();
 
 	// Create view:
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS; 
-	if (!m_wndFilterView.Create(dwViewStyle, rectDummy, this, IDC_TREE1))
+	if (!m_wndFilterView.Create(dwViewStyle, rect_dummy, this, IDC_TREE1))
 		return -1;      // fail to create
 
 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
@@ -81,32 +79,32 @@ void CFilterWnd::OnSize(UINT nType, int cx, int cy)
 	AdjustLayout();
 }
 
-void CFilterWnd::OnContextMenu(CWnd* pWnd, CPoint point)
+void CFilterWnd::OnContextMenu(CWnd* p_wnd, CPoint point)
 {
-	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_wndFilterView;
-	ASSERT_VALID(pWndTree);
+	auto p_wnd_tree = (CTreeCtrl*) &m_wndFilterView;
+	ASSERT_VALID(p_wnd_tree);
 
-	if (pWnd != pWndTree)
+	if (p_wnd != p_wnd_tree)
 	{
-		CDockablePane::OnContextMenu(pWnd, point);
+		CDockablePane::OnContextMenu(p_wnd, point);
 		return;
 	}
 
 	if (point != CPoint(-1, -1))
 	{
 		// Select clicked item:
-		CPoint ptTree = point;
-		pWndTree->ScreenToClient(&ptTree);
+		auto pt_tree = point;
+		p_wnd_tree->ScreenToClient(&pt_tree);
 
 		UINT flags = 0;
-		HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-		if (hTreeItem != nullptr)
+		const auto h_tree_item = p_wnd_tree->HitTest(pt_tree, &flags);
+		if (h_tree_item != nullptr)
 		{
-			pWndTree->SelectItem(hTreeItem);
+			p_wnd_tree->SelectItem(h_tree_item);
 		}
 	}
 
-	pWndTree->SetFocus();
+	p_wnd_tree->SetFocus();
 	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
@@ -115,25 +113,25 @@ void CFilterWnd::AdjustLayout()
 	if (GetSafeHwnd() == nullptr)
 		return;
 
-	CRect rectClient;
-	GetClientRect(rectClient);
+	CRect rect_client;
+	GetClientRect(rect_client);
 
-	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	const int cy_tlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFilterView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndToolBar.SetWindowPos(nullptr, rect_client.left, rect_client.top, rect_client.Width(), cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndFilterView.SetWindowPos(nullptr, rect_client.left + 1, rect_client.top + cy_tlb + 1, rect_client.Width() - 2, rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFilterWnd::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
-	CRect rectTree;
-	m_wndFilterView.GetWindowRect(rectTree);
-	ScreenToClient(rectTree);
+	CRect rect_tree;
+	m_wndFilterView.GetWindowRect(rect_tree);
+	ScreenToClient(rect_tree);
 
-	rectTree.InflateRect(1, 1);
-	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
+	rect_tree.InflateRect(1, 1);
+	dc.Draw3dRect(rect_tree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
 void CFilterWnd::OnSetFocus(CWnd* pOldWnd)
@@ -150,31 +148,31 @@ void CFilterWnd::OnUpdateTree()
 
 LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
-	CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();
-	short lowp = LOWORD(lParam);
-	short highp = HIWORD(lParam);
+	//auto p_app = (CdbWaveApp*)AfxGetApp();
+	//short lowp = LOWORD(lParam);
+	//short highp = HIWORD(lParam);
 
 	switch (wParam)
 	{
 	case HINT_ACTIVATEVIEW:
 		//ATLTRACE2(_T("CPropDockPane: OnMyMessage ACTIVATEVIEW\n"));
-		m_pDoc = (CdbWaveDoc*)lParam;
+		m_pDoc = reinterpret_cast<CdbWaveDoc*>(lParam);
 		if (m_pDoc != m_pDocOld)
 			InitFilterList();
 		break;
 
 	case HINT_MDIACTIVATE:
 		{	//ATLTRACE2(_T("CPropDockPane: OnMyMessage HINT_MDIACTIVATE\n"));
-		CMainFrame* pmain = (CMainFrame*)AfxGetMainWnd();
-		BOOL bMaximized;
-		CMDIChildWnd* pChild = pmain->MDIGetActive(&bMaximized);
-		if (!pChild) 
-			return NULL;
-		CDocument* p_document = pChild->GetActiveDocument();
-		if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
-			return NULL;
-		m_pDoc = (CdbWaveDoc*)p_document;
-		InitFilterList();
+			auto* pmain = (CMainFrame*)AfxGetMainWnd();
+			BOOL b_maximized;
+			auto p_child = pmain->MDIGetActive(&b_maximized);
+			if (!p_child) 
+				return NULL;
+			const auto p_document = p_child->GetActiveDocument();
+			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+				return NULL;
+			m_pDoc = dynamic_cast<CdbWaveDoc*>(p_document);
+			InitFilterList();
 		}
 		break;
 
@@ -186,7 +184,7 @@ LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void CFilterWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	m_pDoc = (CdbWaveDoc*)pSender;
+	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
 	{
 	case HINT_CLOSEFILEMODIFIED:	// save current file parms 
@@ -211,48 +209,50 @@ void CFilterWnd::InitFilterList()
 		return;
 	m_pDocOld = m_pDoc;
 
-	CdbWdatabase* pDB = m_pDoc->m_pDB;
-	ASSERT(pDB);
+	auto p_db = m_pDoc->m_pDB;
+	ASSERT(p_db);
 
 	// setup dialog box
 	CProgressDlg dlg;
 	dlg.Create();
-	int istep = 0;
 	dlg.SetStep(1);
 	
 	// fill items of the combo (column heads to sort data)
 	dlg.SetStatus(_T("List categories available..."));
-	CMFCToolBarComboBoxButton* pCombo = (CMFCToolBarComboBoxButton*)m_wndToolBar.GetButton(3);
+	auto p_combo = (CMFCToolBarComboBoxButton*)m_wndToolBar.GetButton(3);
 	ASSERT(ID_RECORD_SORT == m_wndToolBar.GetItemID(3));
-	if (pCombo->GetCount() <= 0)
+	if (p_combo->GetCount() <= 0)
 	{
-		int k;
-		for (int i = 0; i < NTABLECOLS; i++)
-			k = pCombo->AddSortedItem(pDB->m_desctab[i].szDescriptor, i);
+		for (auto i = 0; i < NTABLECOLS; i++) {
+			//p_combo->AddSortedItem(p_db->m_desctab[i].szDescriptor, i);
+			p_combo->AddSortedItem(CdbWdatabase::m_desctab[i].szDescriptor, i);
+		}
 	}
-	int isel = pCombo->SelectItem(pDB->m_mainTableSet.m_strSort);
+	p_combo->SelectItem(p_db->m_mainTableSet.m_strSort);
 
 	// fill items of the tree
 	dlg.SetStatus(_T("Populate categories..."));
-	if (pDB->m_mainTableSet.IsBOF() && pDB->m_mainTableSet.IsEOF())
+	if (p_db->m_mainTableSet.IsBOF() && p_db->m_mainTableSet.IsEOF())
 		return;
 	m_wndFilterView.LockWindowUpdate();		// prevent screen upate (and flicker)
 	if (m_wndFilterView.GetCount() > 0)
 		m_wndFilterView.DeleteAllItems();
 
-	int i = 0;
-	pDB->m_mainTableSet.BuildAndSortIDArrays();
+	auto i = 0;
+	p_db->m_mainTableSet.BuildAndSortIDArrays();
 
 	CString cs_comment;
 	while (m_noCol[i] > 0)
 	{
-		int icol = m_noCol[i];
-		DB_ITEMDESC* pdesc = pDB->GetRecordItemDescriptor(icol);
-		m_htreeitem[i] = m_wndFilterView.InsertItem(pDB->m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
+		const auto icol = m_noCol[i];
+		const auto pdesc = p_db->GetRecordItemDescriptor(icol);
+		m_htreeitem[i] = m_wndFilterView.InsertItem(CdbWdatabase::m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
+		//m_htreeitem[i] = m_wndFilterView.InsertItem(p_db->m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
 		m_wndFilterView.SetItemData(m_htreeitem[i], m_noCol[i]);		// save table index into head of the list
 
 		cs_comment.Format(_T("Category %i: "), i);
-		cs_comment += pDB->m_desctab[icol].szDescriptor;
+		cs_comment += CdbWdatabase::m_desctab[icol].szDescriptor;
+		//cs_comment += p_db->m_desctab[icol].szDescriptor;
 		dlg.SetStatus(cs_comment);
 		
 		// collect data (array of unique descriptors)
@@ -273,24 +273,24 @@ void CFilterWnd::InitFilterList()
 		}
 
 		// create subitems
-		int isum = 0;
-		HTREEITEM htreeItem = nullptr;
-		TVCS_CHECKSTATE bcheck;
-		int nitems = 0;
-		for (int j = 0; j < pdesc->csElementsArray.GetSize(); j++)
+		auto isum = 0;
+		HTREEITEM htree_item = nullptr;
+		TVCS_CHECKSTATE bcheck = TVCS_UNCHECKED;
+		auto nitems = 0;
+		for (auto j = 0; j < pdesc->csElementsArray.GetSize(); j++)
 		{
 			cs_comment.Format(_T("Create subitem %i"), j);
 			dlg.SetStatus(cs_comment);
 
-			htreeItem = m_wndFilterView.InsertItem(pdesc->csElementsArray.GetAt(j), m_htreeitem[i]);
+			htree_item = m_wndFilterView.InsertItem(pdesc->csElementsArray.GetAt(j), m_htreeitem[i]);
 			bcheck = TVCS_CHECKED;
-			CString csElmtj = pdesc->csElementsArray.GetAt(j);
+			auto cs_elmtj = pdesc->csElementsArray.GetAt(j);
 			if (pdesc->bFilter2)
 			{
 				bcheck = TVCS_UNCHECKED;
-				for (int k = 0; k< pdesc->csfilterParam2.GetSize(); k++)
+				for (auto k = 0; k< pdesc->csfilterParam2.GetSize(); k++)
 				{
-					if (csElmtj.CompareNoCase(pdesc->csfilterParam2.GetAt(k)) == 0)
+					if (cs_elmtj.CompareNoCase(pdesc->csfilterParam2.GetAt(k)) == 0)
 					{
 						bcheck = TVCS_CHECKED;
 						break;
@@ -299,19 +299,19 @@ void CFilterWnd::InitFilterList()
 			}
 			else if (pdesc->bFilter1)
 			{
-				if (csElmtj.CompareNoCase(pdesc->csfilterParam1) != 0)
+				if (cs_elmtj.CompareNoCase(pdesc->csfilterParam1) != 0)
 					bcheck = TVCS_UNCHECKED;
 			}
-			m_wndFilterView.SetCheck(htreeItem, bcheck);
+			m_wndFilterView.SetCheck(htree_item, bcheck);
 			isum += bcheck;	// count number of positive checks (no check=0, check = 1)
 			nitems++;
 		}
 		// trick needed here because if the first item is checked and not the others, then the parent stays in the initial state
 		// namely "checked" (because at that moment it did not have other children)
-		if (isum == 1 && htreeItem != nullptr)
+		if (isum == 1 && htree_item != nullptr)
 		{
-			m_wndFilterView.SetCheck(htreeItem, TVCS_CHECKED);
-			m_wndFilterView.SetCheck(htreeItem, bcheck);
+			m_wndFilterView.SetCheck(htree_item, TVCS_CHECKED);
+			m_wndFilterView.SetCheck(htree_item, bcheck);
 		}
 		if (isum < nitems)
 			m_wndFilterView.Expand(m_htreeitem[i], TVE_EXPAND);
@@ -324,9 +324,9 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 {
 	CString cs;		// to construct insect and sensillum number (for example)
 	CString str;	// to store FindFirst filter
-	CdbMainTable* pSet = &m_pDoc->m_pDB->m_mainTableSet;
-	CString cscolhead = pdesc->csColName;
-	int arraySize = pdesc->liArray.GetSize();
+	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
+	const auto cscolhead = pdesc->csColName;
+	const auto array_size = pdesc->liArray.GetSize();
 	if (pdesc->bFilter2)
 	{
 		return;
@@ -338,19 +338,19 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 	else
 	{
 		pdesc->csElementsArray.RemoveAll();
-		for (int i = 0; i < arraySize; i++)
+		for (auto i = 0; i < array_size; i++)
 		{
-			long iID = pdesc->liArray.GetAt(i);
-			// add string only if found into pSet...
-			str.Format(_T("%s=%li"), (LPCTSTR) cscolhead, iID);
-			BOOL flag = pSet->FindFirst(str);
+			const auto i_id = pdesc->liArray.GetAt(i);
+			// add string only if found into p_maintable_set...
+			str.Format(_T("%s=%li"), static_cast<LPCTSTR>(cscolhead), i_id);
+			const auto flag = p_set->FindFirst(str);
 			if (flag != 0)
 			{
-				cs.Format(_T("%i"), iID);
+				cs.Format(_T("%i"), i_id);
 				pdesc->csElementsArray.Add(cs);
-				if (pdesc->bFilter1 && pdesc->lfilterParam1 != iID)
+				if (pdesc->bFilter1 && pdesc->lfilterParam1 != i_id)
 				{
-					pdesc->csfilterParam1.Format(_T("%i"), iID);
+					pdesc->csfilterParam1.Format(_T("%i"), i_id);
 				}
 			}
 		}
@@ -360,42 +360,41 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 {
 	CString cs;
-	CString str2 = pdesc->csColName;
+	auto str2 = pdesc->csColName;
 	ASSERT(!str2.IsEmpty());
 
-	CdbIndexTable* plinkedSet = pdesc->plinkedSet;
-	CdbMainTable* pSet = &m_pDoc->m_pDB->m_mainTableSet;
+	auto plinked_set = pdesc->plinkedSet;
+	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
 	if (pdesc->bFilter2)
-	{
 		return;
-	}
-	else if (pdesc->bFilter1)
+	
+	if (pdesc->bFilter1)
 	{
-		pdesc->csfilterParam1 = plinkedSet->GetStringFromID(pdesc->lfilterParam1);
+		pdesc->csfilterParam1 = plinked_set->GetStringFromID(pdesc->lfilterParam1);
 	}
 	else
 	{
 		// loop over the whole content of the attached table
 		pdesc->csElementsArray.RemoveAll();
 		pdesc->liArray.RemoveAll();
-		if (plinkedSet->IsOpen() && !plinkedSet->IsBOF())
+		if (plinked_set->IsOpen() && !plinked_set->IsBOF())
 		{
-			COleVariant varValue0, varValue1;
-			plinkedSet->MoveFirst();
-			while (!plinkedSet->IsEOF())
+			COleVariant var_value0, var_value1;
+			plinked_set->MoveFirst();
+			while (!plinked_set->IsEOF())
 			{
-				plinkedSet->GetFieldValue(0, varValue0);
-				plinkedSet->GetFieldValue(1, varValue1);
-				long iID = varValue1.lVal;
-				// add string only if found into pSet...
-				cs.Format(_T("%s=%li"), (LPCTSTR) pdesc->csColName, iID);
-				BOOL flag = pSet->FindFirst(cs);
+				plinked_set->GetFieldValue(0, var_value0);
+				plinked_set->GetFieldValue(1, var_value1);
+				const auto i_id = var_value1.lVal;
+				// add string only if found into p_maintable_set...
+				cs.Format(_T("%s=%li"), static_cast<LPCTSTR>(pdesc->csColName), i_id);
+				const auto flag = p_set->FindFirst(cs);
 				if (flag != 0)
 				{
-					InsertAlphabetic(varValue0.bstrVal, pdesc->csElementsArray);
-					pdesc->liArray.Add(iID);
+					InsertAlphabetic(var_value0.bstrVal, pdesc->csElementsArray);
+					pdesc->liArray.Add(i_id);
 				}
-				plinkedSet->MoveNext();
+				plinked_set->MoveNext();
 			}
 		}
 	}
@@ -404,10 +403,10 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 {
 	CString cs;		// to construct date
-	CString cscolhead = pdesc->csColName;
+	const auto cscolhead = pdesc->csColName;
 	CString str;	// to construct filter
-	CdbMainTable* pSet = &m_pDoc->m_pDB->m_mainTableSet;
-	int arraySize = pSet->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
+	auto p_maintable_set = &m_pDoc->m_pDB->m_mainTableSet;
+	const auto array_size = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
 	if (pdesc->bFilter2)
 	{
@@ -421,47 +420,47 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 	else
 	{
 		pdesc->csElementsArray.RemoveAll();
-		for (int i = 0; i < arraySize; i++)
+		for (auto i = 0; i < array_size; i++)
 		{
-			COleDateTime oTime = pSet->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
-			cs = oTime.Format(_T("%m/%d/%y"));		// filter needs to be constructed as month-day-year
-			str.Format(_T("%s=#%s#"), (LPCTSTR) cscolhead, (LPCTSTR) cs);
-			BOOL flag = pSet->FindFirst(str);
-			if (flag != 0)							// add string only if found into pSet...
+			auto o_time = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
+			cs = o_time.Format(_T("%m/%d/%y"));		// filter needs to be constructed as month-day-year
+			str.Format(_T("%s=#%s#"), static_cast<LPCTSTR>(cscolhead), static_cast<LPCTSTR>(cs));
+			const auto flag = p_maintable_set->FindFirst(str);
+			if (flag != 0)							// add string only if found into p_maintable_set...
 			{
-				cs = oTime.Format(VAR_DATEVALUEONLY);
+				cs = o_time.Format(VAR_DATEVALUEONLY);
 				pdesc->csElementsArray.Add(cs);
 			}
 		}
 	}
 }
 
-void  CFilterWnd::InsertAlphabetic(CString cs, CStringArray &csArray)
+void  CFilterWnd::InsertAlphabetic(const CString& cs, CStringArray &csArray)
 {
-	int i = 0;
-	for (i; i < csArray.GetSize(); i++)
+	auto k = 0;
+	for (auto i=0; i < csArray.GetSize(); i++, k++)
 	{
-		CString cscomp = csArray.GetAt(i);
-		int j = cs.CompareNoCase(cscomp);
+		const auto& cscomp = csArray.GetAt(k);
+		const auto j = cs.CompareNoCase(cscomp);
 		if (j < 0)
 			break;
 	}
-	csArray.InsertAt(i, cs);
+	csArray.InsertAt(k, cs);
 }
 
 void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
-	int i = 0;
-	for (HTREEITEM item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	auto i = 0;
+	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		TVCS_CHECKSTATE state = m_wndFilterView.GetCheck(item);
+		const auto state = m_wndFilterView.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
-			CString cs = m_wndFilterView.GetItemText(item);
-			for (int j = 0; j < pdesc->liArray.GetSize(); j++)
+			auto cs = m_wndFilterView.GetItemText(item);
+			for (auto j = 0; j < pdesc->liArray.GetSize(); j++)
 			{
-				long li = pdesc->liArray.GetAt(j);
-				CString str = pdesc->plinkedSet->GetStringFromID(li);
+				const auto li = pdesc->liArray.GetAt(j);
+				auto str = pdesc->plinkedSet->GetStringFromID(li);
 				if (str == cs)
 				{
 					pdesc->lfilterParam2.Add(li);
@@ -475,15 +474,14 @@ void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITE
 
 void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
-	
-	int i = 0;
-	for (HTREEITEM item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	auto i = 0;
+	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		TVCS_CHECKSTATE state = m_wndFilterView.GetCheck(item);
+		const auto state = m_wndFilterView.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
-			CString cs = m_wndFilterView.GetItemText(item);
-			long li = pdesc->liArray.GetAt(i);
+			auto cs = m_wndFilterView.GetItemText(item);
+			const auto li = pdesc->liArray.GetAt(i);
 			pdesc->lfilterParam2.Add(li);
 			pdesc->csfilterParam2.Add(cs);
 		}
@@ -492,17 +490,17 @@ void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 
 void CFilterWnd::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
-	int i = 0;
-	for (HTREEITEM item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	auto i = 0;
+	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		TVCS_CHECKSTATE state = m_wndFilterView.GetCheck(item);
+		const auto state = m_wndFilterView.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
-			CString csFilterChecked = m_wndFilterView.GetItemText(item);
-			COleDateTime oTime;
-			oTime.ParseDateTime(csFilterChecked);
-			pdesc->otfilterParam2.Add(oTime);
-			pdesc->csfilterParam2.Add(csFilterChecked);
+			auto cs_filter_checked = m_wndFilterView.GetItemText(item);
+			COleDateTime o_time;
+			o_time.ParseDateTime(cs_filter_checked);
+			pdesc->otfilterParam2.Add(o_time);
+			pdesc->csfilterParam2.Add(cs_filter_checked);
 		}
 	}
 }
@@ -511,19 +509,19 @@ void CFilterWnd::OnApplyFilter()
 {
 	if (!m_pDoc)
 		return;
-	CdbWdatabase* pDB = m_pDoc->m_pDB;
+	auto p_db = m_pDoc->m_pDB;
 
-	int i = 0;
+	auto i = 0;
 	while (m_noCol[i] > 0)
 	{
-		HTREEITEM hParent = m_htreeitem[i];
+		const auto h_parent = m_htreeitem[i];
 		i++;
 
-		int icol = m_wndFilterView.GetItemData(hParent);
-		DB_ITEMDESC* pdesc = pDB->GetRecordItemDescriptor(icol);
+		const int icol = m_wndFilterView.GetItemData(h_parent);
+		auto pdesc = p_db->GetRecordItemDescriptor(icol);
 		//if root is checked (or unchecked), it means no item is selected - remove flag
-		TVCS_CHECKSTATE stateRoot = m_wndFilterView.GetCheck(hParent);
-		if ((stateRoot == TVCS_CHECKED) || (stateRoot == TVCS_UNCHECKED))
+		const auto state_root = m_wndFilterView.GetCheck(h_parent);
+		if ((state_root == TVCS_CHECKED) || (state_root == TVCS_UNCHECKED))
 		{
 			pdesc->bFilter2 = FALSE;
 		}
@@ -534,18 +532,18 @@ void CFilterWnd::OnApplyFilter()
 			pdesc->lfilterParam2.RemoveAll();
 			pdesc->csfilterParam2.RemoveAll();
 			pdesc->otfilterParam2.RemoveAll();
-			HTREEITEM startItem = m_wndFilterView.GetNextItem(hParent, TVGN_CHILD);
+			const auto start_item = m_wndFilterView.GetNextItem(h_parent, TVGN_CHILD);
 			switch (pdesc->typeLocal)
 			{
 			case FIELD_IND_TEXT:
 			case FIELD_IND_FILEPATH:
-				BuildFilterItemIndirectionFromTree(pdesc, startItem);
+				BuildFilterItemIndirectionFromTree(pdesc, start_item);
 				break;
 			case FIELD_LONG:
-				BuildFilterItemLongFromTree(pdesc, startItem);
+				BuildFilterItemLongFromTree(pdesc, start_item);
 				break;
 			case FIELD_DATE_YMD:
-				BuildFilterItemDateFromTree(pdesc, startItem);
+				BuildFilterItemDateFromTree(pdesc, start_item);
 				break;
 			default:
 				ASSERT(false);
@@ -555,66 +553,64 @@ void CFilterWnd::OnApplyFilter()
 	}
 
 	// update recordset and tell other views...
-	pDB->m_mainTableSet.BuildFilters();
-	pDB->m_mainTableSet.RefreshQuery();
+	p_db->m_mainTableSet.BuildFilters();
+	p_db->m_mainTableSet.RefreshQuery();
 	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterWnd::OnSortRecords()
 {
-	CdbWdatabase* pDB = m_pDoc->m_pDB;
-	ASSERT(pDB);
-	CMFCToolBarComboBoxButton* pCombo = (CMFCToolBarComboBoxButton*)m_wndToolBar.GetButton(3);
+	auto p_database = m_pDoc->m_pDB;
+	ASSERT(p_database);
+	const auto p_combo = (CMFCToolBarComboBoxButton*)m_wndToolBar.GetButton(3);
 	ASSERT(ID_RECORD_SORT == m_wndToolBar.GetItemID(3));
 
-	int isel = pCombo->GetCurSel();
+	const auto isel = p_combo->GetCurSel();
 	ASSERT(isel != CB_ERR);
-	int i = pCombo->GetItemData(isel);
-	pDB->m_mainTableSet.m_strSort = pDB->m_desctab[i].szTableCol;
+	const int i = p_combo->GetItemData(isel);
+	p_database->m_mainTableSet.m_strSort = p_database->m_desctab[i].szTableCol;
 
-	pDB->m_mainTableSet.RefreshQuery();
+	p_database->m_mainTableSet.RefreshQuery();
 	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterWnd::SelectNext(BOOL bNext)
 {
-	CTreeCtrl* pTree = (CTreeCtrl*)&m_wndFilterView;
-	ASSERT_VALID(pTree);
-	HTREEITEM hItem = pTree->GetSelectedItem();
-	if (!pTree->ItemHasChildren(hItem))
-		hItem = pTree->GetParentItem(hItem);
-	if (hItem == nullptr)
+	const auto p_tree = (CTreeCtrl*)&m_wndFilterView;
+	ASSERT_VALID(p_tree);
+	auto h_item = p_tree->GetSelectedItem();
+	if (!p_tree->ItemHasChildren(h_item))
+		h_item = p_tree->GetParentItem(h_item);
+	if (h_item == nullptr)
 		return;
 
-	int count = 0;
-	int lastselected = -1;
+	auto count = 0;
 	HTREEITEM hlastselected = nullptr;
-	int nselected = 0;
-	HTREEITEM hKid = pTree->GetChildItem(hItem);
+	auto nselected = 0;
+	auto h_kid = p_tree->GetChildItem(h_item);
 	do
 	{
-		TVCS_CHECKSTATE state = ((CQuadStateTree*)pTree)->GetCheck(hKid);
+		const auto state = ((CQuadStateTree*)p_tree)->GetCheck(h_kid);
 		if (state == TVCS_CHECKED)
 		{
-			hlastselected = hKid;
-			lastselected = count;
+			hlastselected = h_kid;
 			nselected++;
 		}
 		count++;
-	} while (hKid = pTree->GetNextSiblingItem(hKid));
+	} while ((h_kid = p_tree->GetNextSiblingItem(h_kid)));
 
 	// if single selection select next item on the list and deselect current; update
 	if (nselected == 1)
 	{
-		HTREEITEM hNext;
+		HTREEITEM h_next;
 		if (bNext)
-			hNext = pTree->GetNextSiblingItem(hlastselected);
+			h_next = p_tree->GetNextSiblingItem(hlastselected);
 		else
-			hNext = pTree->GetPrevSiblingItem(hlastselected);
-		if (hNext == nullptr)
+			h_next = p_tree->GetPrevSiblingItem(hlastselected);
+		if (h_next == nullptr)
 			return;
-		BOOL  bcheck = ((CQuadStateTree*)pTree)->SetCheck(hNext, TVCS_CHECKED);
-		BOOL  bucheck = ((CQuadStateTree*)pTree)->SetCheck(hlastselected, TVCS_UNCHECKED);
+		((CQuadStateTree*)p_tree)->SetCheck(h_next, TVCS_CHECKED);
+		((CQuadStateTree*)p_tree)->SetCheck(hlastselected, TVCS_UNCHECKED);
 		OnApplyFilter();
 	}
 }

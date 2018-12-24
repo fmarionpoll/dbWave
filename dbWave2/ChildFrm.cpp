@@ -213,8 +213,8 @@ void CChildFrame::OnOptionsBrowsemode()
 
 void CChildFrame::OnOptionsPrintmargins() 
 {
-	CPrintMarginsDlg dlg;	
-	OPTIONS_VIEWDATA* psource = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->vdP);
+	CPrintMarginsDlg dlg;
+	const auto psource = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->vdP);
 	dlg.mdPM = psource;
 	dlg.DoModal();		
 }
@@ -291,7 +291,7 @@ void CChildFrame::ExportASCII(int option)
 	}
 
 	const auto dw_len = static_cast<SIZE_T>(sf.GetLength());
-	HGLOBAL h_mem = sf.Detach();
+	auto h_mem = sf.Detach();
 	if (!h_mem)
 		return;
 	h_mem = ::GlobalReAlloc(h_mem, dw_len, GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
@@ -322,7 +322,7 @@ void CChildFrame::ExportASCII(int option)
 		break;
 	case 1:
 		{
-			BOOL flag = FALSE;
+			auto flag = FALSE;
 			if (p_app->vdS.bexporttoExcel) 
 				flag = ExportToExcelAndBuildPivot(option);
 
@@ -427,11 +427,11 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
 		if (!pdb_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewSpikeSort_Parameters), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			ReplaceView(RUNTIME_CLASS(CViewSpikeSort), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 		if (!pdb_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewSpikeSort_Templates), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			ReplaceView(RUNTIME_CLASS(CViewSpikeTemplates), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
 		if (!pdb_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())

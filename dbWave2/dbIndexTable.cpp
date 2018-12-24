@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include <afxconv.h>           // For LPTSTR -> LPSTR macros
+//#include <afxconv.h>           // For LPTSTR -> LPSTR macros
 #include "dbWave.h"
 #include "dbIndexTable.h"
 
@@ -41,7 +41,7 @@ void CdbIndexTable::SetNames(CString defaultSQL, CString DFX_cs, CString DFX_ID)
 
 CString CdbIndexTable::GetDefaultDBName()
 {
-	CString cs = m_defaultName;
+	auto cs = m_defaultName;
 	if (m_pDatabase->m_pDAODatabase != nullptr) 
 		cs = m_pDatabase->GetName();
 
@@ -84,15 +84,15 @@ void CdbIndexTable::Dump(CDumpContext& dc) const
 // Parameters (out):
 //		iID			assoc table index or -1
 
-long CdbIndexTable::GetIDorCreateIDforString(CString cs) 
+long CdbIndexTable::GetIDorCreateIDforString(const CString& cs) 
 {
 	// string is empty - return nothing!
-	if (&cs == nullptr || cs.IsEmpty())
+	if (cs.IsEmpty())
 		return -1;
 
 	// record not found: add a new record - none found or empty
-	long iID = -1;
-	if (!GetIDFromString(cs, iID))
+	long i_id = -1;
+	if (!GetIDFromString(cs, i_id))
 	{
 		try { 
 			// add new record: pass the text, ID will be updated automatically
@@ -101,14 +101,14 @@ long CdbIndexTable::GetIDorCreateIDforString(CString cs)
 			Update();
 			SetBookmark(GetLastModifiedBookmark());
 			
-			COleVariant varValue;
-			GetFieldValue(1, varValue);
-			iID = varValue.lVal;
-			ASSERT(GetIDFromString(cs, iID));
+			COleVariant var_value;
+			GetFieldValue(1, var_value);
+			i_id = var_value.lVal;
+			ASSERT(GetIDFromString(cs, i_id));
 		}
 		catch(CDaoException* e) {DisplayDaoException(e, 711); e->Delete();}
 	}
-	return iID;
+	return i_id;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -120,12 +120,12 @@ long CdbIndexTable::GetIDorCreateIDforString(CString cs)
 //		BOOL	record found (TRUE) or not (FALSE)
 //		iID		record ID (if found in the table) or unchanged (if not found)
 
-BOOL CdbIndexTable::GetIDFromString (CString cs, long& iID)
+BOOL CdbIndexTable::GetIDFromString (CString cs, long& i_id)
 {
 	if (IsEOF() && IsBOF())
 		return FALSE;
 
-	BOOL bfound = FALSE;
+	auto bfound = FALSE;
 	try {
 		// seek record
 		SetCurrentIndex(_T("NORM_OrderByIndex"));
@@ -135,9 +135,9 @@ BOOL CdbIndexTable::GetIDFromString (CString cs, long& iID)
 		// record found: get ID
 		if (bfound)
 		{
-			COleVariant varValue1;
-			GetFieldValue(1, varValue1);
-			iID = varValue1.lVal;
+			COleVariant var_value1;
+			GetFieldValue(1, var_value1);
+			i_id = var_value1.lVal;
 		}
 	}
 	catch(CDaoException* e){ DisplayDaoException(e, 18); e->Delete();	}
@@ -148,7 +148,7 @@ BOOL CdbIndexTable::GetIDFromString (CString cs, long& iID)
 
 BOOL CdbIndexTable::SeekID (long iID)
 {
-	BOOL bfound = FALSE;
+	auto bfound = FALSE;
 	// find record with this ID and make it current
 	COleVariant id = iID;
 	try 
@@ -167,23 +167,23 @@ BOOL CdbIndexTable::SeekID (long iID)
 
 CString CdbIndexTable::GetStringFromID (long iID)
 {
-	BOOL bfound = SeekID(iID);
+	auto bfound = SeekID(iID);
 	CString cs;
 	if (bfound)
 	{
-		COleVariant varValue0;
-		GetFieldValue(0, varValue0);
-		cs = varValue0.bstrVal;
+		COleVariant var_value1;
+		GetFieldValue(0, var_value1);
+		cs = var_value1.bstrVal;
 	}
 	return cs;
 }
 
-void CdbIndexTable::CreateIndextable(CString cstablename, CString cscol1, CString csIDcol2, int textSize, CDaoDatabase* pDB)
+void CdbIndexTable::CreateIndextable(const CString& cstablename, const CString& cscol1, const CString& csIDcol2, int textSize, CDaoDatabase* p_db)
 {
 	SetNames(cstablename, cscol1, csIDcol2);		// change name of table, col1, col2
 
-	CDaoTableDef Tb (pDB);
-	Tb.Create(cstablename);
+	CDaoTableDef tb (p_db);
+	tb.Create(cstablename);
 
 	// create first field in the table
 	CDaoFieldInfo fd0;
@@ -201,7 +201,7 @@ void CdbIndexTable::CreateIndextable(CString cstablename, CString cscol1, CStrin
 	fd0.m_strValidationRule= _T("");	// All   
 	fd0.m_strValidationText= _T("");	// All
 	fd0.m_strDefaultValue= _T("");		// All
-	Tb.CreateField(fd0);
+	tb.CreateField(fd0);
 
 	// create first index
 	CDaoIndexFieldInfo indexfield0;
@@ -218,7 +218,7 @@ void CdbIndexTable::CreateIndextable(CString cstablename, CString cscol1, CStrin
 	indexfd0.m_bIgnoreNulls = FALSE;
 	indexfd0.m_bRequired = FALSE;
 	indexfd0.m_bForeign = FALSE;
-	Tb.CreateIndex(indexfd0);
+	tb.CreateIndex(indexfd0);
 
 	// create second field
 	fd0.m_strName = csIDcol2;
@@ -227,7 +227,7 @@ void CdbIndexTable::CreateIndextable(CString cstablename, CString cscol1, CStrin
 	fd0.m_lAttributes=dbAutoIncrField;	// Primary
 	fd0.m_nOrdinalPosition=2;			// Secondary
 	fd0.m_bRequired=TRUE;				// Secondary
-	Tb.CreateField(fd0);
+	tb.CreateField(fd0);
 
 	// create first index
 	indexfd0.m_pFieldInfos = &indexfield0;
@@ -238,24 +238,24 @@ void CdbIndexTable::CreateIndextable(CString cstablename, CString cscol1, CStrin
 	indexfd0.m_pFieldInfos = &indexfield0;
 	indexfd0.m_bPrimary = TRUE;
 	indexfd0.m_bRequired = TRUE;
-	Tb.CreateIndex(indexfd0);
+	tb.CreateIndex(indexfd0);
 
-	Tb.Append();
+	tb.Append();
 }
 
 int	CdbIndexTable::AddStringsFromCombo(CComboBox* pcombo)
 {
-	int nitems = pcombo->GetCount();
-	int nadded = 0;
-	long iID;
+	const auto nitems = pcombo->GetCount();
+	auto nadded = 0;
+	long i_id;
 	CString cs;
 	try {
-		for (int i=0; i< nitems; i++)
+		for (auto i=0; i< nitems; i++)
 		{
 			pcombo->GetLBText(i, cs);
-			if (!GetIDFromString(cs, iID))
+			if (!GetIDFromString(cs, i_id))
 			{
-				iID = GetIDorCreateIDforString(cs);
+				i_id = GetIDorCreateIDforString(cs);
 				nadded++;
 			}
 		}
@@ -269,15 +269,14 @@ int CdbIndexTable::RemoveStringsNotInCombo(CComboBox* pcombo)
 	if (IsBOF() && IsEOF())
 		return 0;
 
-	int ndeleted = 0;
-	COleVariant varValue0;
-	CString cs;
+	auto ndeleted = 0;
+	COleVariant var_value0;
 	MoveFirst();	
 	while(!IsEOF())
 	{
-		GetFieldValue(0, varValue0);
-		cs = varValue0.bstrVal;
-		int i =pcombo->FindStringExact(0, cs);
+		GetFieldValue(0, var_value0);
+		CString cs = var_value0.bstrVal;
+		const auto i =pcombo->FindStringExact(0, cs);
 		if (CB_ERR == i)
 		{
 			try {

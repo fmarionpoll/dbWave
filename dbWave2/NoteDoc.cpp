@@ -2,9 +2,7 @@
 //
 
 #include "StdAfx.h"
-
-
-#include "dbMainTable.h"
+//#include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "NotedocCntrItem.h"
 #include "NoteDoc.h"
@@ -12,9 +10,6 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CNoteDoc
 
 IMPLEMENT_DYNCREATE(CNoteDoc, CRichEditDoc)
 
@@ -25,8 +20,6 @@ BEGIN_MESSAGE_MAP(CNoteDoc, CRichEditDoc)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_OLE_VERB_FIRST, ID_OLE_VERB_LAST, CRichEditDoc::OnUpdateObjectVerbMenu)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CNoteDoc construction/destruction
 
 CNoteDoc::CNoteDoc()
 {
@@ -43,16 +36,12 @@ BOOL CNoteDoc::OnNewDocument()
 	if (!CRichEditDoc::OnNewDocument())
 		return FALSE;
 
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
-
 	return TRUE;
 }
 
 CRichEditCntrItem* CNoteDoc::CreateClientItem(REOBJECT* preo) const
 {
-	// cast away constness of this
-	return new CNotedocCntrItem(preo, (CNoteDoc*) this);
+	return new CNotedocCntrItem(preo, const_cast<CNoteDoc*>(this));
 }
 
 
@@ -62,14 +51,14 @@ CRichEditCntrItem* CNoteDoc::CreateClientItem(REOBJECT* preo) const
 
 void CNoteDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
-		// TODO: add storing code here
-	}
-	else
-	{
-		// TODO: add loading code here
-	}
+	//if (ar.IsStoring())
+	//{
+	//	// TODO: add storing code here
+	//}
+	//else
+	//{
+	//	// TODO: add loading code here
+	//}
 
 	// Calling the base class CRichEditDoc enables serialization
 	//  of the container document's COleClientItem objects.
@@ -121,56 +110,52 @@ BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName)
 BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 {
 	CWaitCursor wait;
-	BOOL flag = FALSE;					// pessimistic flag
-	CString fileList;					// load file list within this string
-	CRichEditCtrl& pEdit = ((CRichEditView*)m_viewList.GetHead())->GetRichEditCtrl();
-	pEdit.GetWindowText(fileList);		// copy content of window into CString
-	if (fileList.IsEmpty())
+	auto flag = FALSE;					// pessimistic flag
+	CString file_list;					// load file list within this string
+	auto& pEdit = static_cast<CRichEditView*>(m_viewList.GetHead())->GetRichEditCtrl();
+	pEdit.GetWindowText(file_list);		// copy content of window into CString
+	if (file_list.IsEmpty())
 		return flag;
 	
 	// assume that filenames are separated either by "rc", "TAB", ";" or "LF"	
-	CString newList = fileList;
-	TCHAR* pstring = fileList.GetBuffer(fileList.GetLength());
-	TCHAR* pnew = newList.GetBuffer(newList.GetLength());	
+	auto new_list = file_list;
+	const auto pstring = file_list.GetBuffer(file_list.GetLength());
+	const auto pnew = new_list.GetBuffer(new_list.GetLength());	
 	TCHAR seps[] = _T("\n\t;\r\f");
-	TCHAR* token;
 	TCHAR* next_token = nullptr;
-	CStringArray csArrayfiles;
+	CStringArray cs_arrayfiles;
 	
 	// loop through the string to extract data and build file names
-	BOOL bchanged = FALSE;
-	token = _tcstok_s(pstring, seps, &next_token);
+	auto bchanged = FALSE;
+	auto token = _tcstok_s(pstring, seps, &next_token);
 	while (token != nullptr)
 	{
 		CString filename = token;	// get filename into CString
 		CFileStatus status;	
-		// check if file is present 
 		if(!CFile::GetStatus(filename, status ))
 		{	// not found: replace the first letter with a question mark
 			*(pnew + (token - pstring)) = '?';
 			bchanged = TRUE;
 		}
-
-		// try to open the document if file was found
 		else
 		{
 			filename.MakeLower();
-			csArrayfiles.Add(filename);
+			cs_arrayfiles.Add(filename);
 		}
 		// scan next line
 		token = _tcstok_s(nullptr, seps, &next_token);
 	}
 	if (bchanged)
 	{
-		pEdit.SetWindowText(newList);	// copy content to window
+		pEdit.SetWindowText(new_list);	// copy content to window
 		AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
 	}
-	fileList.ReleaseBuffer();
-	newList.ReleaseBuffer();
+	file_list.ReleaseBuffer();
+	new_list.ReleaseBuffer();
 
 	// make sure the correct import options are selected
 	CImportOptionsDlg dlg;
-	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
+	auto p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
 	dlg.m_bAllowDuplicateFiles = p_app->ivO.bImportDuplicateFiles;
 	if (IDOK == dlg.DoModal())
 	{
@@ -178,31 +163,30 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	}
 
 	// open data file
-	if (csArrayfiles.GetSize() > 0)
+	if (cs_arrayfiles.GetSize() > 0)
 	{
-		CFrameWnd* pFrameWnd = (CFrameWnd*) ((CRichEditView*)m_viewList.GetHead())->GetParent();
-		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+		//auto p_frame_wnd = (CFrameWnd*) ((CRichEditView*)m_viewList.GetHead())->GetParent();
+		//auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		// create an empty document and then create a table with the same name as the project
-		CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) (p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
+		auto* p_dbwave_doc = (CdbWaveDoc*) (p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
 		if (p_dbwave_doc != nullptr) 
 		{
 			flag = TRUE;
-			CString dbname;
 			if (cspathname.IsEmpty())
 			{
 				cspathname = GetTitle();
 				if (cspathname.IsEmpty())
 					cspathname = "dummy.mdb";
 			}
-			
-			int i1 = cspathname.ReverseFind('\\');
-			int i2 = cspathname.ReverseFind('.');
-			dbname = cspathname.Mid(i1+1, i2-i1 -1);
+
+			const auto i1 = cspathname.ReverseFind('\\');
+			const auto i2 = cspathname.ReverseFind('.');
+			const auto dbname = cspathname.Mid(i1 + 1, i2 - i1 - 1);
 
 			if (p_dbwave_doc->OnNewDocument(dbname))	// create table
 			{
-				p_dbwave_doc->ImportDescFromFileList(csArrayfiles);
-				CFrameWnd* p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
+				p_dbwave_doc->ImportDescFromFileList(cs_arrayfiles);
+				auto p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
 				ASSERT(p_wave_format != NULL);
 				p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 			}

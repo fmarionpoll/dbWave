@@ -47,14 +47,14 @@ CSpikeBarWnd::~CSpikeBarWnd()
 }
 
 
-void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
+void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 {
 	// prepare display
 	if (m_erasebkgnd)			// erase background
-		EraseBkgnd(pDC);
+		EraseBkgnd(p_dc);
 
 	// print text
-	pDC->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
+	p_dc->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
 	rect.DeflateRect(1,1);
 
@@ -80,7 +80,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		{
 			if (!m_ballFiles)
 			{
-				pDC->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT); //|DT_WORDBREAK);
+				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT); //|DT_WORDBREAK);
 				return;
 			}
 			continue;
@@ -89,7 +89,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		// plot comment at the bottom
 		if (m_bBottomComment)
 		{
-			pDC->DrawText(m_csBottomComment, m_csBottomComment.GetLength(), rect, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+			p_dc->DrawText(m_csBottomComment, m_csBottomComment.GetLength(), rect, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
 		}
 
 		// display data: trap error conditions
@@ -107,21 +107,21 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 		}
 
 		// display data
-		const auto n_saved_dc = pDC->SaveDC();
-		pDC->IntersectClipRect(&m_clientRect);
-		DisplayBars(pDC, &m_displayRect);
-		pDC->RestoreDC(n_saved_dc);
+		const auto n_saved_dc = p_dc->SaveDC();
+		p_dc->IntersectClipRect(&m_clientRect);
+		DisplayBars(p_dc, &m_displayRect);
+		p_dc->RestoreDC(n_saved_dc);
 
 		// display stimulus
 		if (p_spike_doc_->m_stimIntervals.nitems > 0)
-			DisplayStim(pDC, &m_displayRect);
+			DisplayStim(p_dc, &m_displayRect);
 
 		// display vertical cursors
 		if (GetNVTtags() > 0)
 		{
 			// select pen and display mode 
-			const auto oldp = pDC->SelectObject(&m_blackDottedPen);
-			const auto nold_rop = pDC->SetROP2(R2_NOTXORPEN);
+			const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
+			const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 
 			// iterate through VT cursor list	
 			const auto y0 = 0;
@@ -132,22 +132,22 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* pDC)
 				if (lk <m_lFirst || lk > m_lLast)
 					continue;
 				const auto k = static_cast<int>((lk - m_lFirst)*static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));
-				pDC->MoveTo(k, y0);			// set initial pt
-				pDC->LineTo(k, y1);			// VT line		
+				p_dc->MoveTo(k, y0);			// set initial pt
+				p_dc->LineTo(k, y1);			// VT line		
 			}
-			pDC->SetROP2(nold_rop);			// restore old display mode		
-			pDC->SelectObject(oldp);
+			p_dc->SetROP2(nold_rop);			// restore old display mode		
+			p_dc->SelectObject(oldp);
 		}
 
 		// temp tag
 		if (m_hwndReflect != nullptr && m_tempVTtag != nullptr)
 		{
-			const auto oldp = pDC->SelectObject(&m_blackDottedPen);
-			const auto nold_rop = pDC->SetROP2(R2_NOTXORPEN);
-			pDC->MoveTo(m_tempVTtag->m_pixel, m_displayRect.top + 2);
-			pDC->LineTo(m_tempVTtag->m_pixel, m_displayRect.bottom - 2);
-			pDC->SetROP2(nold_rop);
-			pDC->SelectObject(oldp);
+			const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
+			const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+			p_dc->MoveTo(m_tempVTtag->m_pixel, m_displayRect.top + 2);
+			p_dc->LineTo(m_tempVTtag->m_pixel, m_displayRect.bottom - 2);
+			p_dc->SetROP2(nold_rop);
+			p_dc->SelectObject(oldp);
 		}
 	} 
 
@@ -752,19 +752,19 @@ void CSpikeBarWnd::MaxCenter()
 }
 
 
-void CSpikeBarWnd::Print(CDC* pDC, CRect* rect)
+void CSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 {
 	// check if there are valid data to display
 	if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes()== 0)
 		return;		
 
 	// set mapping mode and viewport
-	const auto n_saved_dc = pDC->SaveDC();				// save display context	
-	DisplayBars(pDC, rect);
+	const auto n_saved_dc = p_dc->SaveDC();				// save display context	
+	DisplayBars(p_dc, rect);
 	if (p_spike_doc_->m_stimIntervals.nitems > 0)	
-		DisplayStim(pDC, rect);
+		DisplayStim(p_dc, rect);
 
-	pDC->RestoreDC(n_saved_dc);	
+	p_dc->RestoreDC(n_saved_dc);	
 }
 
 

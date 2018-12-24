@@ -2,15 +2,17 @@
 #include "spikehistp.h"
 #include "spikexyp.h"
 #include "spikeshape.h"
+#include "dbWaveDoc.h"
+#include "Spikebar.h"
 
 // spikesort1.h : header file
 
 
-class CViewSpikeSort_Parameters : public CDaoRecordView
+class CViewSpikeSort : public CDaoRecordView
 {
-	DECLARE_DYNCREATE(CViewSpikeSort_Parameters)
+	DECLARE_DYNCREATE(CViewSpikeSort)
 protected:
-	CViewSpikeSort_Parameters();			// protected constructor used by dynamic creation
+	CViewSpikeSort();			// protected constructor used by dynamic creation
 
 // Form Data
 public:
@@ -114,7 +116,7 @@ public:
 
 	// Implementation
 protected:
-	virtual ~CViewSpikeSort_Parameters();
+	virtual ~CViewSpikeSort();
 #ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
@@ -172,6 +174,6 @@ public:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CViewSpikeSort_Parameters::GetDocument()
+	inline CdbWaveDoc* CViewSpikeSort::GetDocument()
 						{ return (CdbWaveDoc*)m_pDocument; }
 #endif

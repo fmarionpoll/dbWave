@@ -20,7 +20,7 @@ void CHighLight::Serialize(CArchive& ar)
 	{
 		const WORD version = 1;
 		ar << version;				// 1
-		const int nitems = 3;
+		const auto nitems = static_cast<int>(3);
 		ar << nitems;
 		ar << channel;
 		ar << color;
@@ -53,12 +53,8 @@ CHighLight & CHighLight::operator=(const CHighLight & arg)
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
-// CEnvelope
-// --------------------------------------------------------------------------
 IMPLEMENT_SERIAL(CEnvelope, CObject, 0 /* schema number*/ )
 
-// --------------------------------------------------------------------------
 CEnvelope::CEnvelope()
 {
 	m_sourceMode=0;			// operation on raw data (nop, deriv, ...)
@@ -68,10 +64,6 @@ CEnvelope::CEnvelope()
 	m_span=0;
 }
 
-
-// --------------------------------------------------------------------------
-// create Envelope with npoints
-// --------------------------------------------------------------------------
 CEnvelope::CEnvelope(WORD npixels)
 {
 	m_dataperpixel = 2;		// Envelope w. max/min
@@ -82,10 +74,6 @@ CEnvelope::CEnvelope(WORD npixels)
 	m_span=0;
 }
 
-
-// --------------------------------------------------------------------------
-// create Envelope with npoints
-// --------------------------------------------------------------------------
 CEnvelope::CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span)
 {
 	m_dataperpixel = dataperpixel;		// Envelope w. max/min
@@ -95,16 +83,6 @@ CEnvelope::CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span)
 	m_sourceChan = ns;
 	m_span=span;
 }
-
-
-// --------------------------------------------------------------------------
-// FillEnvelopeWithAbcissa
-//
-// init values to series (x abcissa)
-//	npixels		= number of pixelsindex last pixel
-//	lSize		= n pts to display
-// return nDataperPixel
-// --------------------------------------------------------------------------
 
 void CEnvelope::FillEnvelopeWithAbcissa (int npixels, int npoints)
 {	
@@ -138,16 +116,11 @@ void CEnvelope::FillEnvelopeWithAbcissa (int npixels, int npoints)
 	}
 }
 
-
-// --------------------------------------------------------------------------
-// FillEnvelopeWithAbcissaEx
-//
 // init values to series (x abcissa)
 //	lSize	= nb pts to display
 //  xfirst	= first abcissa
 //	xlast	= last abcissa
 // return nDataperPixel
-// --------------------------------------------------------------------------
 
 void CEnvelope::FillEnvelopeWithAbcissaEx (int pixfirst, int pixlast, int ndatapoints)
 {
@@ -186,10 +159,6 @@ void CEnvelope::ExportToOrdinates(CArray<CPoint, CPoint> &dest)
 		dest.GetAt(i).y = m_Envelope[i];
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// --------------------------------------------------------------------------
-// CEnvelope serialization
-// --------------------------------------------------------------------------
 void CEnvelope::Serialize(CArchive& ar)
 {
 	m_Envelope.Serialize(ar);	// Envelope array
@@ -212,12 +181,10 @@ void CEnvelope::Serialize(CArchive& ar)
 	}
 }
 
-
-// --------------------------------------------------------------------------
 // GetMeantoPolypoints()
 // copy average of 2 consecutive pts (ie (max + min)/2)
 // used by lineview to indicate where curves are dragged by the mouse
-// --------------------------------------------------------------------------
+
 void CEnvelope::GetMeanToAbcissa(CArray<CPoint, CPoint> &dest)
 {
 	auto lp_source = &m_Envelope[0];	// source data: a Envelope
@@ -242,9 +209,6 @@ void CEnvelope::GetMeanToOrdinates(CArray<CPoint, CPoint> &dest)
 	}
 }
 
-
-// --------------------------------------------------------------------------
-
 void CEnvelope::SetEnvelopeSize(int npixels, int ndataperpixel)
 {
 	m_dataperpixel= ndataperpixel;
@@ -252,18 +216,12 @@ void CEnvelope::SetEnvelopeSize(int npixels, int ndataperpixel)
 	m_Envelope.SetSize(m_npixels);
 }
 
-// --------------------------------------------------------------------------
-	// FillEnvelopeWithMxMi
-	//
 	// parameters:
 	// 		short 	ifirst		- index of first pixel to fill
 	// 		short* 	lpSource	- pointer to the first element of the raw data array
 	// 		short 	nchans		- number of interleaved channels in the raw data array
 	// 		short 	nelmts		- number of data to deal with
-	// 
-	// --------------------------------------------------------------------------
 
-	//
 void CEnvelope::FillEnvelopeWithMxMi(int ifirst, short* lp_data, int nchans, int nelmts, BOOL b_new)
 {
 	auto lp_envelope = &m_Envelope[ifirst*m_dataperpixel];
@@ -377,9 +335,7 @@ void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans
 	*lp_envelope = i_max;		// store min
 }
 
-// --------------------------------------------------------------------------
 // GetEnvelopeMaxMin
-// --------------------------------------------------------------------------
 
 void CEnvelope::GetEnvelopeMaxMin(int* max, int* min)
 {

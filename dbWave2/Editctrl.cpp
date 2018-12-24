@@ -98,9 +98,9 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 	{		
 	case VK_TAB:					// change selection with TAB
 		{
-		BOOL bNext = (GetKeyState(VK_SHIFT) & 0x8000);			
-		HWND hNext = ::GetNextDlgGroupItem(::GetParent(m_hWnd), m_hWnd, bNext);
-		::SetFocus(hNext);			// select next dlg item
+			const auto b_next = (GetKeyState(VK_SHIFT) & 0x8000);
+			const auto h_next = ::GetNextDlgGroupItem(::GetParent(m_hWnd), m_hWnd, b_next);
+			::SetFocus(h_next);			// select next dlg item
 		}
 		break;
 
@@ -111,13 +111,13 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 	case VK_NEXT:		// page down
 		m_bEntryDone=TRUE;
 		m_nChar=nChar;
-		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE),(LPARAM) m_hWnd);
+		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE),reinterpret_cast<LPARAM>(m_hWnd));
 		break;
 
 	default:
 		return FALSE;
 	}
-	// change select	
+
 	return TRUE;
 }
 //--------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void CEditCtrl::OnKillFocus(CWnd* pNewWnd)
 	{
 		m_bEntryDone = TRUE;
 		m_nChar = VK_RETURN;
-		GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), EN_CHANGE),(LPARAM) m_hWnd);
+		GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), EN_CHANGE),reinterpret_cast<LPARAM>(m_hWnd));
 	}
 	CWnd::OnKillFocus(pNewWnd);	
 }
@@ -157,6 +157,6 @@ void CEditCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	else
 		return; // nothing special
 	m_bEntryDone=TRUE;
-	GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), EN_CHANGE),(LPARAM) m_hWnd);
+	GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), EN_CHANGE),reinterpret_cast<LPARAM>(m_hWnd));
 }
 

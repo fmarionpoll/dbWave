@@ -39,20 +39,20 @@ CGridCellDateTime::CGridCellDateTime() : CGridCell()
 	m_cTime   = CTime::GetCurrentTime();
 }
 
-CGridCellDateTime::CGridCellDateTime(DWORD dwStyle) : CGridCell()
+CGridCellDateTime::CGridCellDateTime(DWORD dw_style) : CGridCell()
 {
 	m_dwStyle = 0;
-	Init(dwStyle);
+	Init(dw_style);
 }
 
 CGridCellDateTime::~CGridCellDateTime()
 {
 }
 
-CSize CGridCellDateTime::GetCellExtent(CDC* pDC)
+CSize CGridCellDateTime::GetCellExtent(CDC* p_dc)
 {    
 	CSize sizeScroll (GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));	
-	CSize sizeCell (CGridCell::GetCellExtent(pDC));	
+	CSize sizeCell (CGridCell::GetCellExtent(p_dc));	
 	sizeCell.cx += sizeScroll.cx;	
 	sizeCell.cy = max(sizeCell.cy,sizeScroll.cy);	
 	return sizeCell;
@@ -80,9 +80,9 @@ void CGridCellDateTime::EndEdit()
 	if (m_pEditWnd) ((CInPlaceDateTime*)m_pEditWnd)->EndEdit();
 }
 
-void CGridCellDateTime::Init(DWORD dwStyle)
+void CGridCellDateTime::Init(DWORD dw_style)
 {
-	m_dwStyle = dwStyle;
+	m_dwStyle = dw_style;
 
 	SetTime(CTime::GetCurrentTime());
 
@@ -128,7 +128,7 @@ void CGridCellDateTime::SetTime(CTime time)
 /////////////////////////////////////////////////////////////////////////////
 // CInPlaceDateTime
 
-CInPlaceDateTime::CInPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+CInPlaceDateTime::CInPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 								   int nRow, int nColumn, 
 								   COLORREF crFore, COLORREF crBack,
 								   CTime* pcTime,
@@ -142,7 +142,7 @@ CInPlaceDateTime::CInPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dwStyle, UI
 	m_bExitOnArrows = FALSE;
 	m_pcTime        = pcTime;
 
-	DWORD dwStl = WS_BORDER|WS_VISIBLE|WS_CHILD|dwStyle;
+	DWORD dwStl = WS_BORDER|WS_VISIBLE|WS_CHILD|dw_style;
 
 	if (!Create(dwStl, rect, pParent, nID)) {
 		return;

@@ -114,7 +114,6 @@ BEGIN_MESSAGE_MAP(CViewADContinuous, CFormView)
 END_MESSAGE_MAP()
 
 BEGIN_EVENTSINK_MAP(CViewADContinuous, CFormView)
-
 	ON_EVENT(CViewADContinuous, IDC_ANALOGTODIGIT, 1, CViewADContinuous::ADC_OnBufferDone, VTS_NONE)
 	ON_EVENT(CViewADContinuous, IDC_ANALOGTODIGIT, 2, CViewADContinuous::ADC_OnQueueDone, VTS_NONE)
 	ON_EVENT(CViewADContinuous, IDC_ANALOGTODIGIT, 4, CViewADContinuous::ADC_OnTriggerError, VTS_NONE)
@@ -191,7 +190,7 @@ BOOL CViewADContinuous::FindDTOpenLayersBoards()
 	}
 	
 	for(UINT i=0; i < ui_num_boards; i++)
-		m_ADcardCombo.AddString (m_ADC_DTAcq32.GetBoardList(i));
+		m_ADcardCombo.AddString (m_ADC_DTAcq32.GetBoardList(static_cast<short>(i)));
 
 	auto isel = 0;
 	// if name already defined, check if board present
@@ -241,10 +240,10 @@ BOOL CViewADContinuous::ADC_OpenSubSystem(const CString card_name)
 	try
 	{
 		m_ADC_DTAcq32.SetBoard(card_name);
-		const auto n_ad_elements = m_ADC_DTAcq32.GetDevCaps(OLDC_ADELEMENTS);		// make sure A/D is available
+		const auto n_ad_elements = m_ADC_DTAcq32.GetDevCaps(OLDC_ADELEMENTS);
 		if (n_ad_elements < 1)
 			return FALSE;
-		m_ADC_DTAcq32.SetSubSysType(OLSS_AD);						// select A/D system
+		m_ADC_DTAcq32.SetSubSysType(OLSS_AD);
 		m_ADC_DTAcq32.SetSubSysElement(0);
 		ASSERT(m_ADC_DTAcq32.GetHDass() != NULL);
 		m_bsimultaneousStartAD = m_ADC_DTAcq32.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
@@ -258,8 +257,8 @@ BOOL CViewADContinuous::ADC_OpenSubSystem(const CString card_name)
 	
 	// save parameters into CWaveFormat
 	const auto p_wave_format = &(m_pADC_options->waveFormat);
-	const auto max = m_ADC_DTAcq32.GetMaxRange();						// maximum input voltage
-	const auto min = m_ADC_DTAcq32.GetMinRange();						// minimum input voltage
+	const auto max = m_ADC_DTAcq32.GetMaxRange(); // maximum input voltage
+	const auto min = m_ADC_DTAcq32.GetMinRange(); // minimum input voltage
 	p_wave_format->fullscale_Volts = static_cast<float>(max - min);
 
 	// convert into bin scale (nb of divisions)
@@ -274,8 +273,7 @@ BOOL CViewADContinuous::ADC_OpenSubSystem(const CString card_name)
 		p_wave_format->binzero = 0;
 
 	// load infos concerning frequency, dma chans, programmable gains
-	m_freqmax	= m_ADC_DTAcq32.GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
-
+	m_freqmax	= m_ADC_DTAcq32.GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);
 	// TODO tell sourceview here under which format are data
 	// TODO save format of data into temp document
 	// float volts = (float) ((wave_format->fullscale_Volts) 
@@ -423,9 +421,9 @@ void CViewADContinuous::ADC_DeclareBuffers()
 		m_ADC_View.SetChanlistColor(i, i);
 		float doc_voltsperb;
 		m_inputDataFile.GetWBVoltsperBin(i, &doc_voltsperb);
-		auto pD = m_ADC_View.GetChanlistItem(i);
-		pD->SetDataBinFormat(wave_format->binzero, wave_format->binspan);
-		pD->SetDataVoltsFormat(doc_voltsperb, wave_format->fullscale_Volts);
+		auto chan_list = m_ADC_View.GetChanlistItem(i);
+		chan_list->SetDataBinFormat(wave_format->binzero, wave_format->binspan);
+		chan_list->SetDataVoltsFormat(doc_voltsperb, wave_format->fullscale_Volts);
 	}
 	m_ADC_View.Invalidate();
 	UpdateData(FALSE);
@@ -478,7 +476,7 @@ void CViewADContinuous::ADC_StopAndLiberateBuffers()
 	m_ADC_inprogress = FALSE;
 }
 
-BOOL CViewADContinuous::DAC_OpenSubSystem(const CString card_name)
+BOOL CViewADContinuous::DAC_OpenSubSystem(const CString& card_name)
 {
 	try
 	{
@@ -726,7 +724,7 @@ void CViewADContinuous::DAC_DeclareAndFillBuffers()
 
 void CViewADContinuous::DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, const int chan) const
 {
-		for (int i = chan; i< m_DAC_buflen; i += m_DAClistsize)
+	for (auto i = chan; i< m_DAC_buflen; i += m_DAClistsize)
 		*(pDTbuf + i) = WORD((*(pDTbuf + i) ^ m_DACmsbit) & m_DAClRes);
 }
 
@@ -1020,7 +1018,7 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_VAL(short* p_dt_buffer, const int
 void CViewADContinuous::DAC_Dig_FillBufferWith_SQUARE(short* p_dt_buffer, const int chan, OUTPUTPARMS* parms_chan) const
 {
 	auto phase = parms_chan->lastphase;
-	WORD	amp_up = 1;
+	WORD amp_up = 1;
 	amp_up = amp_up << parms_chan->iChan;
 	const WORD	amp_low = 0;
 	const auto freq = parms_chan->dFrequency / m_DAC_frequency;
@@ -1230,7 +1228,6 @@ void CViewADContinuous::SaveAndCloseFile()
 			m_csNameArray.Add(m_szFileName);
 		else
 			m_inputDataFile.AcqDeleteFile();
-		return;
 	}
 
 	// normal data acquisition mode --------------------------------------
@@ -1249,22 +1246,20 @@ void CViewADContinuous::SaveAndCloseFile()
 			m_inputDataFile.AcqDeleteFile();
 			return;
 		}
-		else
+		
+		// -----------------------------------------------------
+		// if current document name is the same, it means something happened and we have erased a previously existing file
+		// if so, skip
+		// otherwise add data file name to the database
+		auto pdb_doc = GetDocument();
+		if (m_szFileName.CompareNoCase(pdb_doc->DBGetCurrentDatFileName(FALSE)) != 0)
 		{
-			// -----------------------------------------------------
-			// if current document name is the same, it means something happened and we have erased a previously existing file
-			// if so, skip
-			// otherwise add data file name to the database
-			auto pdb_doc = GetDocument();
-			if (m_szFileName.CompareNoCase(pdb_doc->DBGetCurrentDatFileName(FALSE)) != 0)
-			{
-				// add document to database
-				m_csNameArray.Add(m_szFileName);
-				TransferFilesToDatabase();
-				UpdateViewDataFinal();
-				return;
-			}
+			// add document to database
+			m_csNameArray.Add(m_szFileName);
+			TransferFilesToDatabase();
+			UpdateViewDataFinal();
 		}
+		
 	}
 }
 
@@ -1434,7 +1429,7 @@ void CViewADContinuous::Dump(CDumpContext& dc) const
 CdbWaveDoc* CViewADContinuous::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return ((CdbWaveDoc*) m_pDocument);
+	return static_cast<CdbWaveDoc*>(m_pDocument);
 }
 
 #endif //_DEBUG
@@ -1501,7 +1496,7 @@ void CViewADContinuous::OnInitialUpdate()
 	// if current document does not exist, do nothing
 	if (pdb_doc->m_pDB->GetNRecords() > 0) {
 		pdb_doc->OpenCurrentDataFile();							// read data descriptors from current data file
-		auto p_dat = pdb_doc->m_pDat;						// get a pointer to the data file itself
+		const auto p_dat = pdb_doc->m_pDat;						// get a pointer to the data file itself
 		if (p_dat != nullptr) 
 		{
 			m_pADC_options->waveFormat = *(p_dat->GetpWaveFormat());	// read data header
@@ -1671,7 +1666,6 @@ void CViewADContinuous::ADC_UpdateStartStop(const BOOL b_start)
 		ASSERT( m_ADC_inprogress ==FALSE);
 	}
 	m_btnStartStop.SetCheck(m_ADC_inprogress);
-	// change display
 	m_ADC_View.Invalidate();
 }
 
@@ -1694,7 +1688,6 @@ BOOL CViewADContinuous::ADC_DefineExperimentDlg()
 		dlg.m_bhidesubsequent = m_bhidesubsequent;
 
 		// save here current file name and path
-		// ...	
 		if (IDOK == dlg.DoModal()) {
 			m_bhidesubsequent = dlg.m_bhidesubsequent;
 			csfilename = dlg.m_szFileName;
@@ -1749,8 +1742,6 @@ void CViewADContinuous::ADC_OnHardwareChannelsDlg()
 		OnStop(TRUE);
 
 	CADInputParmsDlg dlg;
-
-	// init dialog data
 	dlg.m_pwFormat = &(m_pADC_options->waveFormat);
 	dlg.m_pchArray = &(m_pADC_options->chanArray);
 	dlg.m_numchansMAXDI = m_ADC_DTAcq32.GetSSCaps(OLSSC_MAXDICHANS);
@@ -1761,7 +1752,6 @@ void CViewADContinuous::ADC_OnHardwareChannelsDlg()
 	dlg.m_pAlligatorAmplifier = &m_Alligator;
 	dlg.p_alligatordevice_ptr_array = &alligatorparameters_ptr_array; 
 
-	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
 		// make sure that buffer size is a multiple of the nb of chans
@@ -1778,11 +1768,9 @@ void CViewADContinuous::ADC_OnHardwareChannelsDlg()
 void CViewADContinuous::ADC_OnHardwareIntervalsDlg()
 {
 	if (m_ADC_inprogress)
-	{
 		OnStop(TRUE);
-	}
+
 	ADIntervalsDlg dlg;
-	// init dialog data 
 	const auto wave_format	=&(m_pADC_options->waveFormat);
 	dlg.m_pwaveFormat		=wave_format;
 	dlg.m_ratemin			=1.0f;
@@ -1810,20 +1798,19 @@ void CViewADContinuous::ADC_OnHardwareIntervalsDlg()
 
 void CViewADContinuous::ChainDialog(WORD iID)
 {
-	WORD menuID;
+	WORD menu_id;
 	switch (iID)
 	{
 	case IDC_ADINTERVALS:
-		menuID = ID_HARDWARE_ADINTERVALS;
+		menu_id = ID_HARDWARE_ADINTERVALS;
 		break;
 	case IDC_ADCHANNELS:
-		menuID = ID_HARDWARE_ADCHANNELS;
+		menu_id = ID_HARDWARE_ADCHANNELS;
 		break;
 	default:
 		return;
 	}
-	PostMessage(WM_COMMAND, menuID, NULL);
-	return;
+	PostMessage(WM_COMMAND, menu_id, NULL);
 }
 
 void CViewADContinuous::ADC_OnTriggerError() 
@@ -1875,17 +1862,15 @@ void CViewADContinuous::ADC_OnBufferDone()
 	if (m_ecode == OLNOERROR)
 	{
 		// update length of data acquired
-		ADC_Transfer(pDTbuf);										// transfer data into intermediary buffer
-
-		auto wave_format = m_inputDataFile.GetpWaveFormat();	// pointer to data descriptor
-		wave_format->sample_count += m_bytesweepRefresh/2;				// update total sample count
+		ADC_Transfer(pDTbuf);
+		auto wave_format = m_inputDataFile.GetpWaveFormat();
+		wave_format->sample_count += m_bytesweepRefresh/2;
 		const auto duration = wave_format->sample_count / m_fclockrate;
-
 		auto pdata_buf = m_inputDataFile.GetpRawDataBUF();
 		pdata_buf += (m_chsweep1 * wave_format->scan_count);
 
 		// first thing to do: save data to file
-		if (wave_format->bADwritetofile)								// write buffer to file
+		if (wave_format->bADwritetofile)
 		{
 			const auto flag = m_inputDataFile.AcqDoc_DataAppend(pdata_buf, m_bytesweepRefresh);
 			ASSERT(flag);
@@ -1902,7 +1887,6 @@ void CViewADContinuous::ADC_OnBufferDone()
 						if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
 							ADC_OnBufferDone();
 					}
-					return;
 				}
 				return;
 			}
@@ -2001,7 +1985,6 @@ BOOL CViewADContinuous::InitConnectionWithAmplifiers()
 {
 	CCyberAmp m_cyber;
 	auto bcyber_present = FALSE;
-
 	const auto nchans= (m_pADC_options->chanArray).channel_get_number();
 	for (auto i = 0; i < nchans; i++)
 	{
@@ -2082,26 +2065,16 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;			// TODO see which channel is selected
 	auto l_size = m_ADC_View.GetChanlistYextent(ichan);	
-
-	// get corresponding data
 	switch (nSBCode)
 	{
-	// .................scroll to the start
 	case SB_LEFT:		l_size = YEXTENT_MIN; break;
-	// .................scroll one line left
 	case SB_LINELEFT:	l_size -= l_size/10 +1; break;
-	// .................scroll one line right
 	case SB_LINERIGHT:	l_size += l_size/10 +1; break;
-	// .................scroll one page left
 	case SB_PAGELEFT:	l_size -= l_size/2+1; break;
-	// .................scroll one page right
 	case SB_PAGERIGHT:	l_size += l_size+1; break;
-	// .................scroll to end right
 	case SB_RIGHT:		l_size = YEXTENT_MAX; break;
-	// .................scroll to pos = nPos or drag scroll box -- pos = nPos
 	case SB_THUMBPOSITION:
 	case SB_THUMBTRACK:	l_size = MulDiv(nPos-50,YEXTENT_MAX,100); break;
-	// .................NOP: set position only
 	default:			break;			
 	}
 
@@ -2137,29 +2110,15 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT:			// scroll to the start
-		l_size = YZERO_MIN;
-		break;
-	case SB_LINELEFT:		// scroll one line left
-		l_size -= yextent/100+1;
-		break;
-	case SB_LINERIGHT:		// scroll one line right
-		l_size += yextent/100+1;
-		break;
-	case SB_PAGELEFT:		// scroll one page left
-		l_size -= yextent/10+1;
-		break;
-	case SB_PAGERIGHT:		// scroll one page right
-		l_size += yextent/10+1;
-		break;
-	case SB_RIGHT:			// scroll to end right
-		l_size = YZERO_MAX;
-		break;
-	case SB_THUMBPOSITION:	// scroll to pos = nPos			
-	case SB_THUMBTRACK:		// drag scroll box -- pos = nPos
-		l_size = (nPos-50)*(YZERO_SPAN/100);
-		break;
-	default:				// NOP: set position only
+	case SB_LEFT:		l_size = YZERO_MIN; break;
+	case SB_LINELEFT:	l_size -= yextent/100+1; break;
+	case SB_LINERIGHT:	l_size += yextent/100+1; break;
+	case SB_PAGELEFT:	l_size -= yextent/10+1; break;
+	case SB_PAGERIGHT:	l_size += yextent/10+1; break;
+	case SB_RIGHT:		l_size = YZERO_MAX; break;
+	case SB_THUMBPOSITION:		
+	case SB_THUMBTRACK:	l_size = (nPos-50)*(YZERO_SPAN/100); break;
+	default:
 		break;			
 	}
 
@@ -2200,6 +2159,7 @@ void CViewADContinuous::UpdateGainScroll()
 
 void CViewADContinuous::UpdateChanLegends(int chan) 
 {
+	// TODO
 	const auto ichan = 0;
 	auto yzero = m_ADC_View.GetChanlistYzero(ichan);
 	auto yextent = m_ADC_View.GetChanlistYextent(ichan);
@@ -2340,8 +2300,8 @@ void CViewADContinuous::OnBnClickedCardFeatures()
 	CDataTranslationBoardDlg dlg;
 	dlg.m_pAnalogIN = &m_ADC_DTAcq32;
 	dlg.m_pAnalogOUT = &m_DAC_DTAcq32;
-	int iout = dlg.DoModal();
-	iout++;
+	auto iout = dlg.DoModal();
+	//iout++;
 }
 
 void CViewADContinuous::DAC_OnBnClickedStartStop()

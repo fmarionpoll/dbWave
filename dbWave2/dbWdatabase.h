@@ -63,7 +63,7 @@ public:
 	BOOL		MoveToID	(long recordID);
 	CString		GetFilePath	(int ID);
 	inline BOOL IsRelativePath(CString cspath) { return (cspath[0] == '.'); }
-	CString		GetRelativePathFromString(CString csAbsolutePath);
+	CString		GetRelativePathFromString(const CString& csAbsolutePath);
 	long		GetRelativePathFromID(long iID);
 	void		ConvertPathtoRelativePath(long icol);
 	void		ConvertPathTabletoRelativePath();

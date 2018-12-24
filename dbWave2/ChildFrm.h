@@ -24,15 +24,15 @@ protected:
 
 // Overrides
 public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual void ActivateFrame(int n_cmd_show = -1);
+	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	void ActivateFrame(int n_cmd_show = -1) override;
 
 // Implementation
 public:
 	virtual ~CChildFrame();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
 #endif
 protected:
 	void ExportASCII(int option);

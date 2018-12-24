@@ -29,7 +29,7 @@ class CInPlaceEdit : public CEdit
 {
 // Construction
 public:
-    CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+    CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
                  int nRow, int nColumn, CString sInitText, UINT nFirstChar);
 
 // Attributes

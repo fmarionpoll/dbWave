@@ -93,26 +93,26 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnInitialUpdate(); // called first time after construct
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);	    	
-	virtual void OnDraw(CDC* pDC);
-	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnDraw(CDC* p_dc);
+	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
 
 protected:
 	void BuildData();
 	void GetFileInfos(CString &str_comment);
-	void DisplayHistogram(CDC* pDC, CRect* pRect);
-	void DisplayDot(CDC* pDC, CRect* pRect);
-	void DisplayPSTHAutoc(CDC* pDC, CRect* pRect);
-	void DisplayStim(CDC* pDC, CRect* pRect, long* l_first, long* l_last);
+	void DisplayHistogram(CDC* p_dc, CRect* pRect);
+	void DisplayDot(CDC* p_dc, CRect* pRect);
+	void DisplayPSTHAutoc(CDC* p_dc, CRect* pRect);
+	void DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last);
 	void OnDisplay();
 	void ShowControls(int iselect);
 	void SelectSpkList(int icursel, BOOL bRefreshInterface=FALSE);
 
 // Implementation
 protected:
-	long PlotHistog(CDC* pDC, CRect* dispRect, int nbins, long* phistog0, int orientation=0, int btype=0);
+	long PlotHistog(CDC* p_dc, CRect* dispRect, int nbins, long* phistog0, int orientation=0, int btype=0);
 
 	virtual ~CViewSpikeHist();
 #ifdef _DEBUG

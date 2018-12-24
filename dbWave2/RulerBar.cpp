@@ -4,7 +4,6 @@
 #include "StdAfx.h"
 #include "Lineview.h"
 #include "RulerBar.h"
-#include ".\RulerBar.h"
 
 #include <math.h>
 #include "resource.h"
@@ -35,7 +34,7 @@ void CRuler::SetRange (float* dfirst, float* dlast)
 	m_dlast  = *dlast;
 	if (m_dfirst > m_dlast)
 	{
-		double x = m_dfirst;
+		const auto x = m_dfirst;
 		m_dfirst = m_dlast;
 		m_dlast = x;
 	}
@@ -53,7 +52,7 @@ BOOL CRuler::AdjustScale()
 	// cf Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
 	// http://drdobbs.com/184401258
 
-	double range = m_dlast - m_dfirst;
+	const auto range = m_dlast - m_dfirst;
 
 	// deal with repeated values
 	if (range == 0)
@@ -65,11 +64,11 @@ BOOL CRuler::AdjustScale()
 	}
 
 	// compute increment
-	double exponent = ceil(log10(range / 10));
+	const auto exponent = ceil(log10(range / 10));
 	m_dscaleinc = pow(10, exponent);
 
 	// set min scale
-	m_dscalefirst = ((long) (m_dfirst / m_dscaleinc)) * m_dscaleinc;
+	m_dscalefirst = static_cast<long>(m_dfirst / m_dscaleinc) * m_dscaleinc;
 	if (m_dscalefirst > m_dfirst)
 		m_dscalefirst -= m_dscaleinc;
 	// set max scale
@@ -82,8 +81,8 @@ BOOL CRuler::AdjustScale()
 	while (m_dscalelast < m_dlast);
 
 	// adjust for too few tickmarks
-	int iTOOFEW = 5;
-	if (i < iTOOFEW)
+	const auto i_toofew = 5;
+	if (i < i_toofew)
 	{
 		m_dscaleinc /= 2;
 		if ((m_dscalefirst + m_dscaleinc) <= m_dfirst)
@@ -156,19 +155,19 @@ void CRulerBar::DrawScalefromRuler(CRuler * pRuler)
 		return;
 	}
 
-	CPen aPen;
-	aPen.CreatePen(PS_SOLID, 0, m_penColor);
-	CPen* pOldPen = dc.SelectObject(&aPen);	
-	CFont* pOldFont= dc.SelectObject(&m_hFont);
+	CPen a_pen;
+	a_pen.CreatePen(PS_SOLID, 0, m_penColor);
+	const auto p_old_pen = dc.SelectObject(&a_pen);
+	const auto p_old_font= dc.SelectObject(&m_hFont);
 	CString str;
 
 	// draw ticks and legends
-	int tickBigHeight, tickSmallHeight;
+	int tick_big_height;
 	if (!m_bHorizontal)
-		tickBigHeight = m_rcClient.Width() /2 -2;
+		tick_big_height = m_rcClient.Width() /2 -2;
 	else
-		tickBigHeight = m_rcClient.Height() /2 -2;
-	tickSmallHeight = tickBigHeight / 2;
+		tick_big_height = m_rcClient.Height() /2 -2;
+	const int tick_small_height = tick_big_height / 2;
 
 	// draw solid background
 	dc.IntersectClipRect(m_rcClient);
@@ -187,66 +186,66 @@ void CRulerBar::DrawScalefromRuler(CRuler * pRuler)
 	}
 
 	// draw scale
-	double dpos = floor(pRuler->m_dscalefirst); 
-	double dlen = pRuler->m_dlast - pRuler->m_dfirst;
-	double smallscaleinc = pRuler->m_dscaleinc / 5.;
+	auto dpos = floor(pRuler->m_dscalefirst);
+	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
+	const auto smallscaleinc = pRuler->m_dscaleinc / 5.;
 	dc.SetBkMode(TRANSPARENT);
 
 	while (dpos <= pRuler->m_dlast)									// =
 	{
 		// display small ticks
-		double dsmallpos = dpos;									// =
-		int tickPos;
-		for (int i= 0; i<4; i++)									// =
+		auto dsmallpos = dpos;									// =
+		int tick_pos;
+		for (auto i= 0; i<4; i++)									// =
 		{
 			dsmallpos += smallscaleinc;								// =
-			double ratio = (pRuler->m_dlast - dsmallpos) / dlen;	// =
+			auto ratio = (pRuler->m_dlast - dsmallpos) / dlen;	// =
 			if (!m_bHorizontal)
 			{
-				tickPos = (int)(m_rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen);
-				dc.MoveTo(m_rcClient.right, tickPos);
-				dc.LineTo(m_rcClient.right -tickSmallHeight, tickPos);
+				tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen);
+				dc.MoveTo(m_rcClient.right, tick_pos);
+				dc.LineTo(m_rcClient.right -tick_small_height, tick_pos);
 			}
 			else
 			{
-				tickPos = (int) (m_rcClient.Width() * (dsmallpos - pRuler->m_dfirst) / dlen);
-				dc.MoveTo(tickPos, m_rcClient.top);
-				dc.LineTo(tickPos, m_rcClient.top+tickSmallHeight);
+				tick_pos = static_cast<int>(m_rcClient.Width() * (dsmallpos - pRuler->m_dfirst) / dlen);
+				dc.MoveTo(tick_pos, m_rcClient.top);
+				dc.LineTo(tick_pos, m_rcClient.top+tick_small_height);
 			}
 		}
 
 		// display large ticks and text
 		if (!m_bHorizontal)
-			tickPos = (int) (m_rcClient.Height() * (pRuler->m_dlast - dpos) / dlen);
+			tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_dlast - dpos) / dlen);
 		else
-			tickPos = (int) (m_rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen);
+			tick_pos = static_cast<int>(m_rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen);
 
-		if (tickPos >= 0)											// =
+		if (tick_pos >= 0)											// =
 		{
 			str.Format(_T("%g"), dpos);								// =
-			CSize size = dc.GetTextExtent(str);						// =
+			const auto size = dc.GetTextExtent(str);						// =
 			int x, y;
 			if (!m_bHorizontal)
 			{
 				// tick
-				dc.MoveTo(m_rcClient.right, tickPos);
-				dc.LineTo(m_rcClient.right - tickBigHeight, tickPos);
+				dc.MoveTo(m_rcClient.right, tick_pos);
+				dc.LineTo(m_rcClient.right - tick_big_height, tick_pos);
 				// text
 				if( dpos != 0. && fabs(dpos) < 1E-10 )				// prevent "bad" zero
 				   dpos = 0 ;
-				x = m_rcClient.right - tickBigHeight - size.cx -2;
-				y = tickPos - (size.cy/2);
+				x = m_rcClient.right - tick_big_height - size.cx -2;
+				y = tick_pos - (size.cy/2);
 			}
 			else
 			{
-				dc.MoveTo(tickPos, m_rcClient.top);
-				dc.LineTo(tickPos, m_rcClient.top+tickBigHeight);
-				x = tickPos - (size.cx/2);
+				dc.MoveTo(tick_pos, m_rcClient.top);
+				dc.LineTo(tick_pos, m_rcClient.top+tick_big_height);
+				x = tick_pos - (size.cx/2);
 				if (x < 0) 
 					x = 0;
 				if (x + size.cx > m_rcClient.right)
 					x = m_rcClient.right - size.cx;
-				y = m_rcClient.top+tickBigHeight +1;
+				y = m_rcClient.top+tick_big_height +1;
 			}
 			dc.TextOut(x, y, str);									// = 
 		}
@@ -254,14 +253,14 @@ void CRulerBar::DrawScalefromRuler(CRuler * pRuler)
 	}
 
 	// restore objects used in this routine
-	dc.SelectObject(pOldPen);										// =
-	dc.SelectObject(pOldFont);										// =
+	dc.SelectObject(p_old_pen);										// =
+	dc.SelectObject(p_old_font);										// =
 }
 
-BOOL CRulerBar::OnEraseBkgnd(CDC* pDC)
+BOOL CRulerBar::OnEraseBkgnd(CDC* p_dc)
 {
 	return TRUE;
-	//return CWnd::OnEraseBkgnd(pDC);
+	//return CWnd::OnEraseBkgnd(p_dc);
 }
 
 void CRulerBar::OnSize(UINT nType, int cx, int cy)
@@ -281,11 +280,11 @@ void CRulerBar::PreSubclassWindow()
 	CWnd::PreSubclassWindow();
 }
 
-BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	if ((rect.right - rect.left)  < (rect.bottom - rect.top))
 		m_bHorizontal = FALSE;
-	return CWnd::Create(nullptr, _T("RulerBarWnd"), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(nullptr, _T("RulerBarWnd"), dw_style, rect, pParentWnd, nID);
 }
 
 BOOL CRulerBar::Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAxis, int dSize, UINT nID)
@@ -293,7 +292,7 @@ BOOL CRulerBar::Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAx
 	m_pLineViewWnd = pLineViewWnd;
 	CRect rect;
 	pLineViewWnd->GetWindowRect(&rect);
-	CRect rectthis = rect;
+	auto rectthis = rect;
 	if (bAsXAxis)
 	{
 		rectthis.top = rect.bottom - 1;
@@ -353,12 +352,12 @@ void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 		m_captureMode = 0;
 		ReleaseCapture();
 		newpt = point;
-		int delta = -(newpt.y - oldpt.y);
+		const int delta = -(newpt.y - oldpt.y);
 		if (m_pLineViewWnd != nullptr)
 		{
 			CRect prevrect;
 			m_pLineViewWnd->GetClientRect(prevrect);
-			CRect newrect = prevrect;
+			auto newrect = prevrect;
 			if (!m_bHorizontal) {
 				if (m_bBottom)
 					newrect.bottom -= delta;

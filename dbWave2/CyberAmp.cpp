@@ -54,7 +54,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CCyberAmp member functions
 
-int CCyberAmp::Initialize( void )
+int CCyberAmp::Initialize(  )
 {
 	C300_ResetParms();
 	if (m_hComm != nullptr)
@@ -131,32 +131,22 @@ int CCyberAmp::C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-////                                                                //////////
-////  Internal routine to add the necessary command prefix to the   //////////
-////  command string                                                //////////
-////                                                                //////////
-//////////////////////////////////////////////////////////////////////////////
+//  Internal routine to add the necessary command prefix to the   command string 
 
-void CCyberAmp::C300_INT_StartCommand( void )
+void CCyberAmp::C300_INT_StartCommand(  )
 {
-    char szBuffer[20];
+    char sz_buffer[20];
     strcat_s( m_C300szCommands,  4 * MAXCMDLEN, COMMANDPREFIX );
 
 	// If AXOBUS device numbers are in use, specify which device
     if (m_C300nDevNumber >= 0)
     {
-		sprintf_s( szBuffer, 19, "%d", m_C300nDevNumber );
-        strcat_s( m_C300szCommands,  4 * MAXCMDLEN, szBuffer );
+		sprintf_s( sz_buffer, 19, "%d", m_C300nDevNumber );
+        strcat_s( m_C300szCommands,  4 * MAXCMDLEN, sz_buffer );
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-////                                                                //////////
-////  Internal routine to append a command sequence to the current  //////////
-////  command string                                                //////////
-////                                                                //////////
-//////////////////////////////////////////////////////////////////////////////
+//  Internal routine to append a command sequence to the current  command string 
 
 void CCyberAmp::C300_INT_AddCommand( char *lpszCommandText )
 {
@@ -170,15 +160,15 @@ void CCyberAmp::C300_INT_AddCommand( char *lpszCommandText )
     }
 
     // Look for the last portion of the command string
-	char *lpszEndOfCommand = strrchr( m_C300szCommands, ENDCOMMAND );
-    if (lpszEndOfCommand  != nullptr)
-        ++lpszEndOfCommand;
+	auto lpsz_end_of_command = strrchr( m_C300szCommands, ENDCOMMAND );
+    if (lpsz_end_of_command  != nullptr)
+        ++lpsz_end_of_command;
     else 
-        lpszEndOfCommand = m_C300szCommands;
+        lpsz_end_of_command = m_C300szCommands;
 
     // If this command would overflow the maximum command length,
     //     start a new portion
-    if ( strlen( lpszEndOfCommand ) + strlen( lpszCommandText ) > MAXCMDLEN)
+    if ( strlen( lpsz_end_of_command ) + strlen( lpszCommandText ) > MAXCMDLEN)
     {
 		// Terminate the current command portion and start a new
         //    portion
@@ -188,18 +178,12 @@ void CCyberAmp::C300_INT_AddCommand( char *lpszCommandText )
     strcat_s( m_C300szCommands,  4 * MAXCMDLEN, lpszCommandText );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-////                                                                       ///
-////  This routine flushes any pending command portions one at a time      ///
-////  and awaits the response from the CyberAmp                            ///
-////                                                                       ///
-//////////////////////////////////////////////////////////////////////////////
-
-int CCyberAmp::C300_FlushCommandsAndAwaitResponse( void )
+//  Flushes any pending command portions one at a time and awaits the response from the CyberAmp
+int CCyberAmp::C300_FlushCommandsAndAwaitResponse(  )
 {
     char *lpszEndCommand;
 
-	char szText[szLEN+1];
+	char sz_text[szLEN+1];
 	char szRestOfCommand[szLEN+1];
 
 	// Clear the last error flag
@@ -211,36 +195,36 @@ int CCyberAmp::C300_FlushCommandsAndAwaitResponse( void )
 			if ((lpszEndCommand = strchr( m_C300szCommands, ENDCOMMAND ))
                      != nullptr)
             {           
-                // copy the first half of this string into szText
+                // copy the first half of this string into sz_text
                 //     and terminate it
 				*lpszEndCommand = '\0';
-                strcpy_s( szText, szLEN, m_C300szCommands );
+                strcpy_s( sz_text, szLEN, m_C300szCommands );
 
                 // copy the second half into szRestOfCommand
                 strcpy_s( szRestOfCommand, szLEN, lpszEndCommand + 1 );
                 strcpy_s( m_C300szCommands, szLEN, szRestOfCommand );
 			}
-            else 
+			else 
             {
-                strcpy_s( szText, szLEN, m_C300szCommands );
+                strcpy_s( sz_text, szLEN, m_C300szCommands );
                 *m_C300szCommands = '\0';
             }
 
 			// Add the required command terminator
-            C300_StringConcatChar( szText, ENDCOMMAND );
+            C300_StringConcatChar( sz_text, ENDCOMMAND );
 			
             // Send the string and wait for the response
 			if (ABUS_SetOutput(m_C300nOutputPort, m_C300nOutputSpeed) == ABUS_SUCCESS)
             {
-				if (ABUS_SendString(m_C300nOutputPort, &szText[0], m_C300fReceiveDelay) == ABUS_SUCCESS)
+				if (ABUS_SendString(m_C300nOutputPort, &sz_text[0], m_C300fReceiveDelay) == ABUS_SUCCESS)
                 {
-					if (ABUS_ReceiveString(m_C300nOutputPort, &m_C300szRcvText[0], TRUE, m_C300fReceiveDelay) == ABUS_SUCCESS)
+					if (ABUS_ReceiveString(&m_C300szRcvText[0], TRUE, m_C300fReceiveDelay) == ABUS_SUCCESS)
 					{
 						if (strlen( m_C300szRcvText ) > 0 && *m_C300szRcvText == '?')
 							m_C300nLastError = C300_BADCOMMAND;
                     }
                 }
-            else
+			else
                *m_C300szRcvText = '\0';
 			}
         }
@@ -252,7 +236,7 @@ int CCyberAmp::C300_FlushCommandsAndAwaitResponse( void )
 	{
 		CString csError;
 		csError.Format(_T("Error returned by CyberAmp= %i\n when issuing command:\n%s\noutput port: %i\noutput speed: %d\n"),
-				m_C300nLastError, (LPCTSTR) CA2T(szText), m_C300nOutputPort, m_C300nOutputSpeed
+				m_C300nLastError, static_cast<LPCTSTR>(CA2T(sz_text)), m_C300nOutputPort, m_C300nOutputSpeed
 				);
 			AfxMessageBox(csError, MB_OK);
 	}
@@ -260,20 +244,16 @@ int CCyberAmp::C300_FlushCommandsAndAwaitResponse( void )
 	return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-////////                                                            //////////
-////////  Function to return the status text for a single channel   //////////
-////////                                                            //////////
-//////////////////////////////////////////////////////////////////////////////
+//  Returns the status text for a single channel 
 
 int CCyberAmp::C300_GetChannelStatus( int nChannel, char *lpszStatusText )
 {
-	char szText[szLEN];
+	char sz_text[szLEN];
     if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
 	{
 		// Output the channel status command and flush it out
-        sprintf_s( szText, 99, "S%d", nChannel );
-        C300_INT_AddCommand( szText );
+        sprintf_s( sz_text, 99, "S%d", nChannel );
+        C300_INT_AddCommand( sz_text );
         if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
 			C300_GetLastReception( lpszStatusText );
 	}
@@ -281,18 +261,14 @@ int CCyberAmp::C300_GetChannelStatus( int nChannel, char *lpszStatusText )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-////////                                                             /////////
-////////  Function to set the AXOBUS device number of the CyberAmp   /////////
-////////                                                             /////////
-//////////////////////////////////////////////////////////////////////////////
+//  Set the AXOBUS device number of the CyberAmp 
 
 int CCyberAmp::C300_SetDeviceNumber( int nDevNum )
 {
     // Check the device number for validity
 	if ((nDevNum < 0 || nDevNum > 9) && nDevNum != C300_DEVICENULL)
         m_C300nLastError = C300_BADDEVICENUMBER;
-    else 
+	else 
     {
         m_C300nLastError = C300_SUCCESS;
 
@@ -306,15 +282,11 @@ int CCyberAmp::C300_SetDeviceNumber( int nDevNum )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-////////                                                 /////////////////////
-////////   Function to set the gain for a given channel  /////////////////////
-////////                                                 /////////////////////
-//////////////////////////////////////////////////////////////////////////////
+//   Set the gain for a given channel  
 
 int CCyberAmp::SetGain( int nChannel, int nGainValue )
 {
-	char szText[szLEN];
+	char sz_text[szLEN];
     int  nPreAmp, nGainDivisor;
 	 // Clear the last error flag
     m_C300nLastError = C300_SUCCESS;  
@@ -360,31 +332,26 @@ int CCyberAmp::SetGain( int nChannel, int nGainValue )
     // Add the current command to the command string
     if (m_C300nLastError == C300_SUCCESS)
     {
-		sprintf_s( szText, 99, "G%dP%dG%dO%d", nChannel, nPreAmp, nChannel, 
+		sprintf_s( sz_text, 99, "G%dP%dG%dO%d", nChannel, nPreAmp, nChannel, 
 			nGainValue / nGainDivisor );
-		C300_INT_AddCommand( szText );
+		C300_INT_AddCommand( sz_text );
     }
 
     // Return the most recent error flag
     return( m_C300nLastError );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-////////                                                             //////////
-////////   Function to separately set the pre-amp and output gains   //////////
-////////      for a given channel                                    //////////
-////////                                                             //////////
-///////////////////////////////////////////////////////////////////////////////
+//   Set the pre-amp and output gains 
 
 int CCyberAmp::C300_SetAmpGains( int nChannel, int nPreAmpGain, int nOutputGain )
 {
 	char szPreAmp[20], szOutput[20];
-	char szText[szLEN];
+	char sz_text[szLEN];
 
     // This buffer must be cleared here, as it will be 
     //     strcat()'ed below, and will not be initialized 
     //     properly
-    strcpy_s( szText, 99, "" );   
+    strcpy_s( sz_text, 99, "" );   
 
     // Clear the last error flag
     m_C300nLastError = C300_SUCCESS;  
@@ -403,7 +370,7 @@ int CCyberAmp::C300_SetAmpGains( int nChannel, int nPreAmpGain, int nOutputGain 
         case 10:
         case 100:
             sprintf_s( szPreAmp, 19, "G%dP%d", nChannel, nPreAmpGain );
-            strcat_s( szText, 99, szPreAmp );
+            strcat_s( sz_text, 99, szPreAmp );
             break;
 
         default:
@@ -425,7 +392,7 @@ int CCyberAmp::C300_SetAmpGains( int nChannel, int nPreAmpGain, int nOutputGain 
         case 100:
         case 200:
             sprintf_s( szOutput, 19, "G%dO%d", nChannel, nOutputGain );
-            strcat_s( szText, 99, szOutput );
+            strcat_s( sz_text, 99, szOutput );
             break;
 
         default:
@@ -434,23 +401,19 @@ int CCyberAmp::C300_SetAmpGains( int nChannel, int nPreAmpGain, int nOutputGain 
 	}
 
     // Add the current command to the command string
-    if (m_C300nLastError == C300_SUCCESS && strlen( szText ) > 0)
-        C300_INT_AddCommand( szText );
+    if (m_C300nLastError == C300_SUCCESS && strlen( sz_text ) > 0)
+        C300_INT_AddCommand( sz_text );
 
 
     // Return the most recent error flag
     return( m_C300nLastError );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-////////                                                            ///////////
-////////   Function to set the input coupling for a given channel   ///////////
-////////                                                            ///////////
-///////////////////////////////////////////////////////////////////////////////
+//   Set the input coupling for a given channel  
 
-int	CCyberAmp::SetHPFilter( int nChannel, int nInput, CString csCoupling )
+int	CCyberAmp::SetHPFilter( int nChannel, int nInput, const CString& cs_coupling )
 {
-	char szText[szLEN];
+	char sz_text[szLEN];
 
 	// Clear the last error flag 
     m_C300nLastError = C300_SUCCESS;  
@@ -459,35 +422,35 @@ int	CCyberAmp::SetHPFilter( int nChannel, int nInput, CString csCoupling )
         return( m_C300nLastError = C300_BADCHANNEL );
 
     // Build the coupling command and the channel number
-    sprintf_s( szText, 99, "C%d", nChannel );
+    sprintf_s( sz_text, 99, "C%d", nChannel );
     // Set the positive or negative input command
     if (nInput == C300_NEGINPUT)
-        strcat_s( szText, 99, "-");
+        strcat_s( sz_text, 99, "-");
     else 
-        strcat_s( szText, 99, "+");
+        strcat_s( sz_text, 99, "+");
 
 	// set filtering value
-	CStringA csACoupling(csCoupling);
-	strcat_s (szText, 99, csACoupling); 
+	const CStringA cs_a_coupling(cs_coupling);
+	strcat_s (sz_text, 99, cs_a_coupling); 
 
 	// list of valid commands
 	/*
 	switch (coupling)
 	{
-	case -10:	strcat( szText, "GND" );break;
-	case 0:		strcat( szText, "DC" ); break;		// DC
-	case 1:		strcat( szText, "0.1" ); break;		// 0.1 Hz
-	case 10:	strcat( szText, "1" ); break;		// 1 Hz
-	case 100:	strcat( szText, "10" ); break;		// 10 Hz
-	case 300:	strcat( szText, "30" ); break;		// 30 Hz
-	case 1000:	strcat( szText, "100" ); break;		// 100 Hz
-	case 3000:	strcat( szText, "300" ); break;		// 300 Hz
+	case -10:	strcat( sz_text, "GND" );break;
+	case 0:		strcat( sz_text, "DC" ); break;		// DC
+	case 1:		strcat( sz_text, "0.1" ); break;		// 0.1 Hz
+	case 10:	strcat( sz_text, "1" ); break;		// 1 Hz
+	case 100:	strcat( sz_text, "10" ); break;		// 10 Hz
+	case 300:	strcat( sz_text, "30" ); break;		// 30 Hz
+	case 1000:	strcat( sz_text, "100" ); break;		// 100 Hz
+	case 3000:	strcat( sz_text, "300" ); break;		// 300 Hz
 	default:	m_C300nLastError = C300_BADVALUE; break;
 	}
 	*/
 	// Add the current command to the command string
     if (m_C300nLastError == C300_SUCCESS)
-        C300_INT_AddCommand( szText );
+        C300_INT_AddCommand( sz_text );
 
 	// Return the most recent error flag
     return( m_C300nLastError );
@@ -520,15 +483,11 @@ int CCyberAmp::GetWaveChanParms(CWaveChan * pchan)
 	return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-///////                                                                ////////
-///////  Function to set the input offset for a given channel (in mV)  ////////
-///////                                                                ////////
-///////////////////////////////////////////////////////////////////////////////
+//  Set the input offset for a given channel (in mV)  
 
 int CCyberAmp::SetmVOffset( int nChannel, float fOffset )
 {
-	char szText[szLEN];
+	char sz_text[szLEN];
 
 	// Clear the last error flag
     m_C300nLastError = C300_SUCCESS;  
@@ -547,8 +506,8 @@ int CCyberAmp::SetmVOffset( int nChannel, float fOffset )
     // Check the offset for valid range
     if (fOffset >= -3000.0F && fOffset <= 3000.0F)
     {
-        sprintf_s( szText, 99, "D%d%.0f", nChannel, 1000000.0F * fOffset / 1000.0F );
-        C300_INT_AddCommand( szText );
+        sprintf_s( sz_text, 99, "D%d%.0f", nChannel, 1000000.0F * fOffset / 1000.0F );
+        C300_INT_AddCommand( sz_text );
         if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
 		{
             if (*m_C300szRcvText == 'D' && *(m_C300szRcvText + 3) == '!')
@@ -558,16 +517,11 @@ int CCyberAmp::SetmVOffset( int nChannel, float fOffset )
     else 
         m_C300nLastError = C300_BADVALUE;
 
-
     // Return the most recent error flag
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-///////////                                                   ////////////////
-///////////   Function to set the filter for a given channel  ////////////////
-///////////                                                   ////////////////
-//////////////////////////////////////////////////////////////////////////////
+//   Set the filter for a given channel 
 
 static int nFilterValueList[] = 
 {
@@ -584,8 +538,8 @@ static int nFilterValueList[] =
 
 int CCyberAmp::SetLPFilter( int nChannel, int nFilterValue )
 {
-	char szText[szLEN];
-    char szBuffer[20];
+	char sz_text[szLEN];
+    char sz_buffer[20];
 
 	// Clear the last error flag
     m_C300nLastError = C300_SUCCESS;  
@@ -595,7 +549,7 @@ int CCyberAmp::SetLPFilter( int nChannel, int nFilterValue )
         return( m_C300nLastError = C300_BADCHANNEL );
 
     // Build the filter command and the channel number
-    sprintf_s( szText, 99, "F%d", nChannel );
+    sprintf_s( sz_text, 99, "F%d", nChannel );
 
     // Add the filter value to the command
     //     If disabled, send out the disable command
@@ -603,15 +557,15 @@ int CCyberAmp::SetLPFilter( int nChannel, int nFilterValue )
     //     a match
     if (nFilterValue == C300_FILTERDISABLED)
     {
-        strcat_s( szText, 99, "-" );
-        C300_INT_AddCommand( szText );
+        strcat_s( sz_text, 99, "-" );
+        C300_INT_AddCommand( sz_text );
     }
     else if (C300_FoundListMatch( nFilterValue, nFilterValueList, NUM_ENTRIES) 
             != NOT_FOUND)
     {
-        sprintf_s( szBuffer, 19, "%d", nFilterValue );
-        strcat_s( szText, 99, szBuffer );
-        C300_INT_AddCommand( szText );
+        sprintf_s( sz_buffer, 19, "%d", nFilterValue );
+        strcat_s( sz_text, 99, sz_buffer );
+        C300_INT_AddCommand( sz_text );
     }
     else
         m_C300nLastError = C300_BADVALUE;
@@ -620,15 +574,11 @@ int CCyberAmp::SetLPFilter( int nChannel, int nFilterValue )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Function to set the notch filter ON or OFF for a given channel  //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Set the notch filter ON or OFF for a given channel 
 
 int CCyberAmp::SetNotchFilter( int nChannel, int nEnabled )
 {
-	char szText[szLEN];
+	char sz_text[szLEN];
 	// Clear the last error flag
     m_C300nLastError = C300_SUCCESS;  
 
@@ -638,27 +588,21 @@ int CCyberAmp::SetNotchFilter( int nChannel, int nEnabled )
 
     // Build the notch filter command and the channel number
 	if (nEnabled == C300_DISABLED)
-		sprintf_s( szText, 99, "N%d-", nChannel );
+		sprintf_s( sz_text, 99, "N%d-", nChannel );
 	else
-		sprintf_s( szText, 99, "N%d+", nChannel );
+		sprintf_s( sz_text, 99, "N%d+", nChannel );
 
-    C300_INT_AddCommand( szText );
+    C300_INT_AddCommand( sz_text );
 
     // Return the most recent error flag
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                        ////////////////
-//////  Function to zero the DC offset for a given channel.   ////////////////
-//////  Returns the actual offset (in mV).                    ////////////////
-//////                                                        ////////////////
-//////////////////////////////////////////////////////////////////////////////
-
+//  Zero the DC offset for a given channel.  Returns the actual offset (in mV)
 int CCyberAmp::C300_ZeroDCOffset( int nChannel, float *pfOffsetReturned )
 {
-    char *lpszOffset;
-	char szText[szLEN];
+    char *lpsz_offset;
+	char sz_text[szLEN];
     m_C300nLastError = C300_SUCCESS;  // Clear the last error flag
     // Check the channel number for validity
     if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
@@ -668,27 +612,27 @@ int CCyberAmp::C300_ZeroDCOffset( int nChannel, float *pfOffsetReturned )
     if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
 	{
 		// Build the zero command and the channel number
-        sprintf_s( szText, 99, "Z%d", nChannel );
+        sprintf_s( sz_text, 99, "Z%d", nChannel );
 
         // Append the command to the command string and flush it out
-        C300_INT_AddCommand( szText );
+        C300_INT_AddCommand( sz_text );
         if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
         {
 			// Check the returned text for any error.  Pick out the
             //    offset value and return it to the caller.
             if (*m_C300szRcvText == 'D' 
-                    && (lpszOffset = strchr( m_C300szRcvText, '=' )) != nullptr)
+                    && (lpsz_offset = strchr( m_C300szRcvText, '=' )) != nullptr)
             {
-				if (*(lpszOffset + 1) == '!')
-					if (C300_GetChannelStatus(nChannel, szText) == C300_SUCCESS)
+				if (*(lpsz_offset + 1) == '!')
+					if (C300_GetChannelStatus(nChannel, sz_text) == C300_SUCCESS)
                     {
-						*pfOffsetReturned = (float) atof( szText + 44 ) / 1000.0F;
+						*pfOffsetReturned = static_cast<float>(atof(sz_text + 44)) / 1000.0F;
 						SetmVOffset(nChannel, *pfOffsetReturned);
 					}
 					else
 						m_C300nLastError = C300_COULDNOTDO;
                 else
-                    *pfOffsetReturned = (float) atof( lpszOffset + 1 ) / 1000.0F;
+                    *pfOffsetReturned = (float) atof( lpsz_offset + 1 ) / 1000.0F;
 			}
             else 
 				m_C300nLastError = C300_BADVALUE;
@@ -699,12 +643,7 @@ int CCyberAmp::C300_ZeroDCOffset( int nChannel, float *pfOffsetReturned )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Function to cause the CyberAmp to reload the factory defaults   //////
-//////  for all settings.                                               //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Reload the factory defaults  for all settings
 
 int CCyberAmp::C300_LoadFactoryDefaults( void )
 {
@@ -718,12 +657,7 @@ int CCyberAmp::C300_LoadFactoryDefaults( void )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Function to cause the CyberAmp to save the current state        //////
-//////  in the EEPROM.                                                  //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  CyberAmp to save the current state in the EEPROM
 
 int CCyberAmp::C300_SaveCurrentState( void )
 {
@@ -734,12 +668,7 @@ int CCyberAmp::C300_SaveCurrentState( void )
     return( C300_FlushCommandsAndAwaitResponse());
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Function to cause the CyberAmp to enter or exit the             //////
-//////  electrode test mode.                                            //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Enter or exit the electrode test mode
 
 int CCyberAmp::C300_ElectrodeTest( int nEnabled )
 {
@@ -756,11 +685,7 @@ int CCyberAmp::C300_ElectrodeTest( int nEnabled )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Function to set the receive timeout value                       //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Set the receive timeout value
 
 int CCyberAmp::C300_SetReceiveTimeout(DWORD fTimeoutVal )
 {
@@ -774,16 +699,12 @@ int CCyberAmp::C300_SetReceiveTimeout(DWORD fTimeoutVal )
     return( m_C300nLastError = C300_SUCCESS );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Function to return the overload status of all channels          //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Return the overload status of all channels
 
 int CCyberAmp::C300_GetOverloadStatus( int *lpnChannelMask )
 {
-    char *lpszString, *lpszTemp;
-    int  nChannel;
+    char*lpsz_temp;
+    int  n_channel;
 
 	// Clear the last error flag
     m_C300nLastError = C300_SUCCESS;  
@@ -798,14 +719,14 @@ int CCyberAmp::C300_GetOverloadStatus( int *lpnChannelMask )
         C300_INT_AddCommand( "O" );
         if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
 		{
-            lpszString = m_C300szRcvText;
-	        while (sscanf_s( lpszString, "%d", &nChannel ) > 0)
+			auto lpsz_string = m_C300szRcvText;
+	        while (sscanf_s( lpsz_string, "%d", &n_channel ) > 0)
 			{
-                *lpnChannelMask |= (2 << (nChannel - 1));
-                if ((lpszTemp = strchr( lpszString, ' ' )) != nullptr)
-                    lpszString = lpszTemp + 1;
+                *lpnChannelMask |= (2 << (n_channel - 1));
+                if ((lpsz_temp = strchr( lpsz_string, ' ' )) != nullptr)
+                    lpsz_string = lpsz_temp + 1;
                 else 
-                    lpszString = m_C300szRcvText + strlen( m_C300szRcvText );
+                    lpsz_string = m_C300szRcvText + strlen( m_C300szRcvText );
 			}
 		}
 	}
@@ -813,12 +734,7 @@ int CCyberAmp::C300_GetOverloadStatus( int *lpnChannelMask )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Return the last error generated by a call to the CyberAmp 300   //////
-//////  support module.                                                 //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Return the last error generated by a call to the CyberAmp 300 support module
 
 int CCyberAmp::C300_GetLastError( void )
 {
@@ -826,130 +742,99 @@ int CCyberAmp::C300_GetLastError( void )
     return( m_C300nLastError );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Return the raw text from the last communication with the        //////
-//////  CyberAmp.                                                       //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Return the raw text from the last communication with theCyberAmp
 
 int CCyberAmp::C300_GetLastReception( char *lpszResultText )
 {
-	// search for "ENDCOMMAND" = 13
-	char* pCharend;
-	pCharend = strchr(m_C300szRcvText, ENDCOMMAND); 
-	// if found, add zero at the end
-	if (pCharend != nullptr)	
-		*(pCharend + 1) = '\0';
-	// if not found search for the end of the string
+	auto p_charend = strchr(m_C300szRcvText, ENDCOMMAND); 
+	if (p_charend != nullptr)	
+		*(p_charend + 1) = '\0';
 	else
 	{
-		pCharend = strchr(m_C300szRcvText, 0);
-		size_t lenRcv = strlen(m_C300szRcvText);
-		size_t lenRes = RCVBUFSIZE;
-		if (lenRcv > lenRes )
+		p_charend = strchr(m_C300szRcvText, 0);
+		const auto len_rcv = strlen(m_C300szRcvText);
+		const size_t len_res = RCVBUFSIZE;
+		if (len_rcv > len_res )
 		{ 
-			pCharend = &m_C300szRcvText[0] + lenRes -1;
-			*(pCharend + 1) = '\0';
+			p_charend = &m_C300szRcvText[0] + len_res -1;
+			*(p_charend + 1) = '\0';
 		}
 	}		
 
-	// copy received text into the results string
-	size_t ilen = RCVBUFSIZE;
+	const size_t ilen = RCVBUFSIZE;
     strcpy_s( lpszResultText, ilen, m_C300szRcvText );
-
-    // Return the success state
     return( m_C300nLastError = C300_SUCCESS );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////                                                                  //////
-//////  Return the library version number as a string                   //////
-//////                                                                  //////
-//////////////////////////////////////////////////////////////////////////////
+//  Return the library version number as a string
 
-int CCyberAmp::C300_GetLibraryVersion( char *szTxt )
+int CCyberAmp::C300_GetLibraryVersion( char *sz_txt )
 {
-    strcpy_s( szTxt, strlen (szTxt), VERSIONCYB);
-	 // Return the success state
+    strcpy_s( sz_txt, strlen (sz_txt), VERSIONCYB);
     return( m_C300nLastError = C300_SUCCESS );
 }
     
-//////////////////////////////////////////////////////////////////////////////
-////                                                              ////////////
-////  Internal routine to concatenate a single char to a string   ////////////
-////                                                              ////////////
-//////////////////////////////////////////////////////////////////////////////
+//  Internal routine to concatenate a single char to a string
 
-void CCyberAmp::C300_StringConcatChar( char *lpszString, int c )
+void CCyberAmp::C300_StringConcatChar( char *lpsz_string, int c )
 {
-    int     nLen;
-	nLen = strlen( lpszString );
-    lpszString[nLen++] = (char) c;
-    lpszString[nLen] = '\0';
+	int n_len = strlen(lpsz_string);
+    lpsz_string[n_len++] = static_cast<char>(c);
+    lpsz_string[n_len] = '\0';
 }
 
-//////////////////////////////////////////////////////////////////////////////
-////                                                              ////////////
-////  Internal routine which finds a match using a binary search  ////////////
-////                                                              ////////////
-//////////////////////////////////////////////////////////////////////////////
+//  Internal routine which finds a match using a binary search 
 
-int CCyberAmp::C300_FoundListMatch( int nFilterValue, int *lpnList, int nListItems )
+int CCyberAmp::C300_FoundListMatch( int nFilterValue, int *lpn_list, const int nListItems )
 {
-    int     nJump, nOffset;
-
 	// Test for a match with the 0 offset element of the list;  
 	//     the following algorithm will not find this entry
-    if (nFilterValue == *lpnList)
+    if (nFilterValue == *lpn_list)
         return( 0 );
 
 	// Find the smallest multiple of two greater than half the
     //     number of list items
-    nJump = 1;
-    while (nJump < nListItems / 2)
-		nJump <<= 1;
+	auto n_jump = 1;
+    while (n_jump < nListItems / 2)
+		n_jump <<= 1;
 
 	// Now search the list for a match
-    lpnList += nJump;
-    nOffset = nJump;
-	while (nFilterValue != *lpnList && nJump >= 1)
+    lpn_list += n_jump;
+	auto n_offset = n_jump;
+	while (nFilterValue != *lpn_list && n_jump >= 1)
 	{
-        nJump >>= 1;
-	    if (nFilterValue < *lpnList)
+        n_jump >>= 1;
+		if (nFilterValue < *lpn_list)
         {
-            lpnList -= nJump;
-            nOffset -= nJump;
-        }
-        else 
+            lpn_list -= n_jump;
+            n_offset -= n_jump;
+        }		else 
         {
-            while (nOffset + nJump > nListItems - 1)
-                nJump >>= 1;
+            while (n_offset + n_jump > nListItems - 1)
+                n_jump >>= 1;
 
-            lpnList += nJump;
-            nOffset += nJump;
+            lpn_list += n_jump;
+            n_offset += n_jump;
         }
 	}
 
-    if (nFilterValue == *lpnList)
-        return( nOffset );
-    else 
-        return( NOT_FOUND );
+    if (nFilterValue == *lpn_list)
+        return( n_offset );
+	return( NOT_FOUND );
 }
 
-//////////////////////////////////////////////////////////////////////////////
+// Initialize bus
 
-int	CCyberAmp::ABUS_Initialize( void )
+int	CCyberAmp::ABUS_Initialize(  )
 {
-	int error;
-	int iCOM4 = 4;
-	char szStatusText[RCVBUFSIZE+1];//512];
-	szStatusText[0] = '\0';
+	const auto iCOM4 = 4;
+	char sz_status_text[RCVBUFSIZE+1];//512];
+	sz_status_text[0] = '\0';
 	m_C300fReceiveDelay = 2;
 
-	for (int i= 1; i <= iCOM4; i++)
+	for (auto i= 1; i <= iCOM4; i++)
 	{
-		error= ABUS_SetOutput(i, 9600);
+		const auto error = ABUS_SetOutput(i, 9600);
 		if (error == 0 || m_hComm != INVALID_HANDLE_VALUE)
 		{
 			// get status of the amplifier
@@ -959,9 +844,9 @@ int	CCyberAmp::ABUS_Initialize( void )
 			// Output the general status command and flush it out
 			C300_INT_AddCommand( "S0" );
 			if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
-				C300_GetLastReception(szStatusText);
+				C300_GetLastReception(sz_status_text);
 
-			int ilen = strlen (szStatusText);
+			const int ilen = strlen (sz_status_text);
 			if (ilen == 0)
 				m_C300nLastError =C300_BADDEVICE;
 
@@ -973,10 +858,10 @@ int	CCyberAmp::ABUS_Initialize( void )
 					// Output the general status command and flush it out
 					C300_INT_AddCommand( "S0" );
 					if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
-						C300_GetLastReception(szStatusText);
+						C300_GetLastReception(sz_status_text);
 
-					int ilen = strlen (szStatusText);
-					if (ilen == 0)
+					const int ilen2 = strlen (sz_status_text);
+					if (ilen2 == 0)
 						m_C300nLastError =C300_BADDEVICE;
 
 					// Return the most recent error flag
@@ -1057,31 +942,31 @@ int CCyberAmp::ABUS_SendString(int nOutputPort, char*  lpszCmdString, DWORD fDel
 {
 	if (nOutputPort != m_C300nOutputPort)
 	{
-		int error = ABUS_SetOutput(nOutputPort, m_C300nOutputSpeed);
+		const auto error = ABUS_SetOutput(nOutputPort, m_C300nOutputSpeed);
 		if (error != 0)
 			return error;
 	}
 
-	DWORD dwWritten;
-	OVERLAPPED osWrite = {0};
-	int nbytes = strlen(lpszCmdString);
+	DWORD dw_written;
+	OVERLAPPED os_write = {0};
+	const int nbytes = strlen(lpszCmdString);
 	m_CommTimeOuts.WriteTotalTimeoutMultiplier= fDelay; 
     m_CommTimeOuts.WriteTotalTimeoutConstant= fDelay;
 	SetCommTimeouts(m_hComm, &m_CommTimeOuts);
 
-	WriteFile(m_hComm, lpszCmdString, nbytes, &dwWritten, &osWrite);
+	WriteFile(m_hComm, lpszCmdString, nbytes, &dw_written, &os_write);
 	return GetLastError();
 }
 
-int CCyberAmp::ABUS_ReceiveString(int nOutputPort, char*  lpszCmdString, int nWaitOK, DWORD fDelay)
+int CCyberAmp::ABUS_ReceiveString(char*  lpszCmdString, int nWaitOK, DWORD fDelay)
 {
-	DWORD dwNumberOfBytesRead;
-	int dwNumberOfBytesToRead = 256; //RCVBUFSIZE; //strlen(lpszCmdString);
-	DWORD delay = fDelay;
+	DWORD dw_number_of_bytes_read;
+	const auto dw_number_of_bytes_to_read = 256; //RCVBUFSIZE; //strlen(lpszCmdString);
+	auto delay = fDelay;
 	if (!nWaitOK)
 		delay = 0;
 
-	BOOL fsuccess = GetCommTimeouts(m_hComm, &m_CommTimeOuts);
+	auto fsuccess = GetCommTimeouts(m_hComm, &m_CommTimeOuts);
 	if (!fsuccess)
 	{
 		return GetLastError();
@@ -1091,11 +976,11 @@ int CCyberAmp::ABUS_ReceiveString(int nOutputPort, char*  lpszCmdString, int nWa
     m_CommTimeOuts.ReadTotalTimeoutConstant= delay;
 	SetCommTimeouts(m_hComm, &m_CommTimeOuts);
 	fsuccess = GetCommTimeouts(m_hComm, &m_CommTimeOuts);
-	
-	BOOL bSuccess = ReadFile(m_hComm, lpszCmdString, dwNumberOfBytesToRead, &dwNumberOfBytesRead, nullptr);	
-	if (bSuccess)
+
+	const auto b_success = ReadFile(m_hComm, lpszCmdString, dw_number_of_bytes_to_read, &dw_number_of_bytes_read, nullptr);	
+	if (b_success)
 	{
-		char* pchar = &lpszCmdString[dwNumberOfBytesRead];
+		const auto pchar = &lpszCmdString[dw_number_of_bytes_read];
 		*pchar = 0;
 	}
 
@@ -1116,7 +1001,7 @@ int CCyberAmp::ABUS_ReceiveString(int nOutputPort, char*  lpszCmdString, int nWa
 
 void CCyberAmp::ABUS_FlushReceiveBuffer(int nOutputPort, DWORD fDelay)
 {
-	DWORD flag = PURGE_RXABORT | PURGE_RXCLEAR;
+	const DWORD flag = PURGE_RXABORT | PURGE_RXCLEAR;
 
 //PURGE_TXABORT Terminates all outstanding overlapped write operations and returns immediately, even if the write operations have not been completed. 
 //PURGE_RXABORT Terminates all outstanding overlapped read operations and returns immediately, even if the read operations have not been completed. 

@@ -1,20 +1,17 @@
 #pragma once
 
 // viewdata.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
 
 
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
-#include "dbWave_constants.h"
+//#include "dbWave_constants.h"
 #include "afxwin.h"
+#include "Lineview.h"
+#include "Editctrl.h"
 
-class CdbWaveCntrItem;
-class CdbMainTable;
 
-/////////////////////////////////////////////////////////////////////////////
 class CViewData : public CDaoRecordView
 {
 protected:
@@ -88,11 +85,11 @@ protected:
 	OPTIONS_VIEWDATAMEASURE*	mdMO{};		// measure options
 
 protected:
-	void 	PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);	
+	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);	
 	CString ConvertFileIndex(long l_first, long l_last);
 	void 	ComputePrinterPageSize();
 	CString GetFileInfos();
-	CString PrintBars(CDC* pDC, CRect* rect);
+	CString PrintBars(CDC* p_dc, CRect* rect);
 	BOOL	GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first);
 	BOOL	PrintGetNextRow(int &filenumber, long &l_first, long &verylast);
 	void	SaveModifiedFile();
@@ -143,9 +140,9 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnInitialUpdate(); // called first time after construct
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 
 // Implementation

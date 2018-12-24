@@ -49,8 +49,8 @@ END_MESSAGE_MAP()
 // return -1 if filename not found
 int	CLoadSaveOptionsDlg::ParmFindString(CString& filename)
 {
-	int ifound=-1;
-	for (int i=0; i<= pFiles.GetUpperBound(); i++)
+	auto ifound=-1;
+	for (auto i=0; i<= pFiles.GetUpperBound(); i++)
 	{
 		if (filename.CompareNoCase(pFiles.GetAt(i)) == 0)
 		{
@@ -111,7 +111,7 @@ BOOL CLoadSaveOptionsDlg::OnInitDialog()
 	// load data into combobox
 	for (int i=0; i<pParmFiles->GetSize(); i++)	// browse through array
 	{
-		CString dummy = pParmFiles->GetAt(i);	// get string
+		auto dummy = pParmFiles->GetAt(i);	// get string
 		pFiles.Add(dummy);
 		m_CBnamelist.AddString(dummy);		// add string to list box of combo box
 	}
@@ -139,7 +139,7 @@ void CLoadSaveOptionsDlg::OnOK()
 	// save data from current selected parm file
 	CString dummy;
 	m_CBnamelist.GetWindowText(dummy);			// get content of edit control
-	int ifile = ParmFindString(dummy);			// find corresp file within parms
+	auto ifile = ParmFindString(dummy);			// find corresp file within parms
 	if (ifile < 0)
 	{
 		UpdateFileList();

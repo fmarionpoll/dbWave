@@ -43,18 +43,18 @@ protected:
 	
 // Helpers and public procedures
 public:	
-	inline void SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
+	void SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
 	
-	inline void SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first;m_lLast = l_last;}
-	inline long GetTimeFirst() const {return m_lFirst;}
-	inline long GetTimeLast() const {return m_lLast;}	
+	void SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first;m_lLast = l_last;}
+	long GetTimeFirst() const {return m_lFirst;}
+	long GetTimeLast() const {return m_lLast;}	
 	
-	inline int GetBinsize() const { return m_binsize;}
-	inline int GetBinMinval() const { return m_abcissaminval;}
-	inline int GetBinMaxVal() const { return m_abcissamaxval;}
-	inline int GetnBins() const {return m_nbins;}	
-	inline int   GetHistMaxPos() const {return m_imax;}
-	inline DWORD GetHistMax() const {return m_lmax;}
+	int GetBinsize() const { return m_binsize;}
+	int GetBinMinval() const { return m_abcissaminval;}
+	int GetBinMaxVal() const { return m_abcissamaxval;}
+	int GetnBins() const {return m_nbins;}	
+	int   GetHistMaxPos() const {return m_imax;}
+	DWORD GetHistMax() const {return m_lmax;}
 		
 	void BuildHistFromArrays(CArray<int, int>* pVal, CArray<long, long>* pTime, CArray<int, int>* pspkclass,
 				long l_first, long l_last, int max, int min, int nbins,
@@ -65,7 +65,7 @@ public:
 	void MoveVTtagtoVal(int itag, int ival);
 	void MoveHZtagtoVal(int itag, int ival);
 
-	inline void SetSpkList(CSpikeList* p_spk_list) {m_pSL = p_spk_list;}
+	void SetSpkList(CSpikeList* p_spk_list) {m_pSL = p_spk_list;}
 
 // implementation
 protected:
@@ -75,7 +75,7 @@ protected:
 	void GetHistogLimits(int ihist);
     void GetClassArray(int iclass, CDWordArray*& pDW);
 public:
-	void PlotDatatoDC(CDC* pDC);
+	void PlotDatatoDC(CDC* p_dc);
 protected:
 	void GetExtents();
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

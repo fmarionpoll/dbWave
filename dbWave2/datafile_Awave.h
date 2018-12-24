@@ -13,19 +13,19 @@ public:
 	CDataFileAWAVE(CFile* file);
 	virtual ~CDataFileAWAVE();
 
-	BOOL CheckFileType(CFile* pfile, int bSignatureOffset=0);
-	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
-	BOOL ReadHZtags(CTagList* pHZtags);
-	BOOL ReadVTtags(CTagList* pVTtags);
-	BOOL WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC);
-	BOOL WriteHZtags(CTagList* ptags);
-	BOOL WriteVTtags(CTagList* ptags);
+	BOOL CheckFileType(CFile* pfile) override;
+	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
+	BOOL ReadHZtags(CTagList* pHZtags) override;
+	BOOL ReadVTtags(CTagList* pVTtags) override;
+	BOOL WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC) override;
+	BOOL WriteHZtags(CTagList* ptags) override;
+	BOOL WriteVTtags(CTagList* ptags) override;
 
 	// I/O operations to be updated by Save
-	BOOL InitFile();	
-	BOOL DataAppendStart();
-	BOOL DataAppend(short* pBU, UINT bytesLength);
-	BOOL DataAppendStop();
+	BOOL InitFile() override;	
+	BOOL DataAppendStart() override;
+	BOOL DataAppend(short* pBU, UINT bytesLength) override;
+	BOOL DataAppendStop() override;
 	
 	// protected variables
 protected:

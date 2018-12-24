@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "resource.h"
 #include "TransferFilesDlg.h"
 #include "afxdialogex.h"
@@ -39,18 +39,17 @@ END_MESSAGE_MAP()
 
 
 // CTransferFilesDlg message handlers
-TCHAR szDir3[MAX_PATH];
+TCHAR sz_dir3[MAX_PATH];
 
 int CALLBACK BrowseCallbackProc3(HWND hwnd,UINT uMsg,LPARAM lp, LPARAM p_data) 
 {
 	switch(uMsg) 
 	{
-		case BFFM_INITIALIZED:
-			SendMessage(hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)szDir3);
-			  break;
-
-		default:
-		   break;
+	case BFFM_INITIALIZED:
+		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, reinterpret_cast<LPARAM>(sz_dir3));
+		  break;
+	default:
+	   break;
 	}
 	return 0;
 }
@@ -58,7 +57,7 @@ int CALLBACK BrowseCallbackProc3(HWND hwnd,UINT uMsg,LPARAM lp, LPARAM p_data)
 void CTransferFilesDlg::OnBnClickedButtonpath()
 {
 	UpdateData(TRUE);
-	lstrcpy(szDir3, m_csPathname);
+	lstrcpy(sz_dir3, m_csPathname);
 
 	LPMALLOC g_pMalloc;					// special alloc mode (shell)
 	 // Get the shell's allocator. 
@@ -66,42 +65,38 @@ void CTransferFilesDlg::OnBnClickedButtonpath()
 		return; // 1; 
 
 	BROWSEINFO bi;						// parameter array
-	LPTSTR lpBuffer;						// buffer
-	LPITEMIDLIST pidlBrowse;			// PIDL selected by user 
- 
+	LPTSTR lp_buffer;					// buffer
+
 	// Allocate a buffer to receive browse information. 
-	if ((lpBuffer = (LPTSTR) g_pMalloc->Alloc(MAX_PATH)) == nullptr) 
+	if ((lp_buffer = static_cast<LPTSTR>(g_pMalloc->Alloc(MAX_PATH))) == nullptr) 
 		return; 
  
 	// Fill in the BROWSEINFO structure. 
 	bi.hwndOwner = GetSafeHwnd();		// owner of the dlg is this dlg box
 	bi.pidlRoot = nullptr;				//pidlPrograms; ? 
 	bi.lpfn = BrowseCallbackProc3; 
-	bi.pszDisplayName = lpBuffer;		// output buffer
+	bi.pszDisplayName = lp_buffer;		// output buffer
 	bi.lpszTitle = _T("Choose a Folder"); 
 	bi.ulFlags = BIF_USENEWUI;			// see doc for flags
 	bi.lParam = 0; 
  
 	// Browse for a folder and return its PIDL. 
-	pidlBrowse = SHBrowseForFolder(&bi);
-	if (pidlBrowse != nullptr)				// check if a folder was chosen
+	const auto pidl_browse = SHBrowseForFolder(&bi);
+	if (pidl_browse != nullptr)			// check if a folder was chosen
 	{ 
- 
 		// Show the display name, title, and file system path. 
-		if (SHGetPathFromIDList(pidlBrowse, lpBuffer))
+		if (SHGetPathFromIDList(pidl_browse, lp_buffer))
 		{
-			m_csPathname = lpBuffer;	// load folder name
+			m_csPathname = lp_buffer;	// load folder name
 			if (m_csPathname.Right(1) != _T("\\"))
 				m_csPathname += _T("\\");
 		}
 		// Free the PIDL returned by SHBrowseForFolder. 
-		g_pMalloc->Free(pidlBrowse); 
+		g_pMalloc->Free(pidl_browse); 
 	} 
  
 	// Clean up.     
-	g_pMalloc->Free(lpBuffer);
-
-	// update dlg box
+	g_pMalloc->Free(lp_buffer);
 	UpdateData(FALSE);
 }
 

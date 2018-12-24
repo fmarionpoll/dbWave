@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////
+
 // spikehistp.cpp : implementation file
 //
 // Purpose:
@@ -12,7 +12,7 @@
 // 		CScopeScreen derived : FMP enriched control (mouse cursors, HZTags)
 // 		evolved from CLineviewButton
 //
-///////////////////////////////////////////////////////////////////////////
+
 #include "StdAfx.h"
 #include "scopescr.h"
 #include "Spikedoc.h"
@@ -22,18 +22,12 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
 BEGIN_MESSAGE_MAP(CSpikeHistWnd, CScopeScreen)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
-
-
-//**********************************************************************************
-// CSpikeHistWnd() init variables on creation
-//**********************************************************************************
 
 CSpikeHistWnd::CSpikeHistWnd() 
 {
@@ -52,10 +46,6 @@ CSpikeHistWnd::CSpikeHistWnd()
 	m_csEmpty = "no \nspikes";
 }
 
-//**********************************************************************************
-// ~CSpikeHistWnd()
-//**********************************************************************************
-
 CSpikeHistWnd::~CSpikeHistWnd()
 {
 	RemoveHistData();
@@ -71,17 +61,7 @@ void CSpikeHistWnd::RemoveHistData()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-// DISPLAY HISTOGRAMS
-//
-// PlotDatatoDC(CDC* pDC)
-// DisplaySpike(int nospike)
-////////////////////////////////////////////////////////////////////////////////////
-
-
-// ------------------------------------------------------------------------------------
-
-void CSpikeHistWnd::PlotDatatoDC(CDC* pDC)
+void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_displayRect.right <= 0 && m_displayRect.bottom <= 0)
 	{
@@ -90,26 +70,26 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* pDC)
 		OnSize(SIZE_RESTORED, r.Width(), r.Height());
 	}
 	if (m_erasebkgnd)		// erase background
-		EraseBkgnd(pDC);
+		EraseBkgnd(p_dc);
 
 	// load resources
 	GetExtents();
 	if (m_lmax == 0)
 	{
-		pDC->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
+		p_dc->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
 		auto rect = m_displayRect;
 		rect.DeflateRect(1,1);
 		const auto textlen = m_csEmpty.GetLength();
-		pDC->DrawText(m_csEmpty, textlen, rect, DT_LEFT); //|DT_WORDBREAK);
+		p_dc->DrawText(m_csEmpty, textlen, rect, DT_LEFT); //|DT_WORDBREAK);
 		return;
 	}
-	const int n_saved_dc = pDC->SaveDC();	
-	PrepareDC(pDC);
+	const int n_saved_dc = p_dc->SaveDC();	
+	PrepareDC(p_dc);
 	int color;
 	// save background color which is changed by later calls to FillSolidRect
 	// when doing so, pens created with PS_DOT pattern and with XOR_PEN do
 	// not work properly. Restoring the background color solves the pb.
-	const auto bkcolor = pDC->GetBkColor();
+	const auto bkcolor = p_dc->GetBkColor();
 	switch (m_plotmode)
 	{
 	case PLOT_BLACK:
@@ -156,8 +136,8 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* pDC)
 			rect_histog.top = static_cast<int>(p_dw->GetAt(i));
 			if (rect_histog.top > 0)
 			{
-				pDC->MoveTo(rect_histog.left, rect_histog.bottom);
-				pDC->FillSolidRect(rect_histog, m_colorTable[color]);
+				p_dc->MoveTo(rect_histog.left, rect_histog.bottom);
+				p_dc->FillSolidRect(rect_histog, m_colorTable[color]);
 			}
 		}		
 	}
@@ -180,23 +160,22 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* pDC)
 				rect_histog.top = static_cast<int>(p_dw->GetAt(i) /* /scale */);
 				if (rect_histog.top > 0)
 				{
-					pDC->MoveTo(rect_histog.left, rect_histog.bottom);
-					pDC->FillSolidRect(rect_histog, m_colorTable[color]);
+					p_dc->MoveTo(rect_histog.left, rect_histog.bottom);
+					p_dc->FillSolidRect(rect_histog, m_colorTable[color]);
 				}
 			}
 		}
 	}
 
 	// display cursors
-	pDC->SetBkColor(bkcolor);	// restore background color
+	p_dc->SetBkColor(bkcolor);	// restore background color
 	if (GetNHZtags() > 0)		// display horizontal tags
-		DisplayHZtags(pDC);
+		DisplayHZtags(p_dc);
 	if (GetNVTtags() > 0)		// display vertical tags
-		DisplayVTtags(pDC);	
-	pDC->RestoreDC(n_saved_dc);
+		DisplayVTtags(p_dc);	
+	p_dc->RestoreDC(n_saved_dc);
 }
 
-// ------------------------------------------------------------------------------------
 void CSpikeHistWnd::MoveHZtagtoVal(int i, int val)
 {
 	m_ptLast.y = MulDiv(GetHZtagVal(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
@@ -233,10 +212,6 @@ void CSpikeHistWnd::GetClassArray(int iclass, CDWordArray*& pDW)
 	}
 }
 
-//**********************************************************************************
-// export content of the histogram to the clipboard
-//**********************************************************************************
-
 LPTSTR CSpikeHistWnd::ExportAscii(LPTSTR lp)
 {
 	// print all ordinates line-by-line, differnt classes on same line
@@ -261,9 +236,6 @@ LPTSTR CSpikeHistWnd::ExportAscii(LPTSTR lp)
 	*lp = _T('\0');
 	return lp;
 }
-
-////////////////////////////////////////////////////////////////////////////////////
-// MOUSE related events
 
 void CSpikeHistWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
@@ -338,20 +310,19 @@ void CSpikeHistWnd::OnLButtonUp(UINT nFlags, CPoint point)
 }
 
 
-//---------------------------------------------------------------------------
 
 void CSpikeHistWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// compute pixel position of horizontal tags
-	if (GetNHZtags() > 0)								// exit if none
+	if (GetNHZtags() > 0)
 	{
-		for (int icur = GetNHZtags()-1; icur>=0; icur--)
+		for (auto icur = GetNHZtags()-1; icur>=0; icur--)
 			SetHZtagPix(icur, MulDiv(GetHZtagVal(icur)-m_yWO, m_yVE, m_yWE)+m_yVO);			
 	}
 	// compute pixel position of vertical tags
 	if (GetNVTtags() > 0)
 	{
-		for (int icur = GetNVTtags()-1; icur>=0; icur--)	// loop through all tags
+		for (auto icur = GetNVTtags()-1; icur>=0; icur--)	// loop through all tags
 			SetVTtagPix(icur, MulDiv(GetVTtagVal(icur)-m_xWO, m_xVE, m_xWE)+m_xVO);
 	}	
 	CScopeScreen::OnLButtonDown(nFlags, point);	
@@ -411,12 +382,11 @@ void CSpikeHistWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 		CScopeScreen::OnLButtonDblClk(nFlags, point);
 	else
 	{
-		GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),(LPARAM) m_hWnd);
+		GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),reinterpret_cast<LPARAM>(m_hWnd));
 	}
 }
 
 
-// -------------------------------------------------------------
 
 int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 {
@@ -490,8 +460,6 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 	return hitspk;
 }
 
-// ------------------------------------------------------------------------------------
-
 void CSpikeHistWnd::GetExtents()
 {
 	if (m_yWE == 1) // && m_yWO == 0)
@@ -509,14 +477,9 @@ void CSpikeHistWnd::GetExtents()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-// Histogram data
-																			   
 
-//*************************************************************************************
 // GetHistogLimits()
-// compute max, index max and index first and last interval with data
-//*************************************************************************************
+
 void CSpikeHistWnd::GetHistogLimits(int ihist)
 {
 	// for some unknown reason, m_pHistarray is set at zero when arriving here
@@ -556,7 +519,6 @@ void CSpikeHistWnd::GetHistogLimits(int ihist)
 	}
 }
 	
-//**********************************************************************************
 // 	BuildHistogFromDoc()
 // parameters
 //		CWordArray* pVal	- word array source data
@@ -567,8 +529,6 @@ void CSpikeHistWnd::GetHistogLimits(int ihist)
 //		int min				= minimum
 //		int nbins			= number of bins -> bin size
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
-//    
-//**********************************************************************************
 
 void CSpikeHistWnd::ReSize_And_Clear_Histograms(int nbins, int max, int min)
 {

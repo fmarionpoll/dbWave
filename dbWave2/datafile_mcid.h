@@ -64,7 +64,7 @@ public:
 // Operations
 public:
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
-	BOOL CheckFileType(CFile* file, int bOffset=0);
+	BOOL CheckFileType(CFile* file);
 
 // Implementation
 public:

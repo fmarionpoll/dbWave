@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include "Cscale.h"
+//#include "Cscale.h"
 #include "scopescr.h"
 #include "Lineview.h"
 #include "Dataseri.h"
@@ -54,22 +54,22 @@ void CDataSeriesFormatDlg::GetParams(int index)
 {
 	m_yzero = m_plineview->GetChanlistYzero(index);
 	m_yextent = m_plineview->GetChanlistYextent(index);
-	int color = m_plineview->GetChanlistColor(index);
+	const auto color = m_plineview->GetChanlistColor(index);
 	m_colorbutton.SetColor(color);
 	m_mVperbin= m_plineview->GetChanlistVoltsperDataBin(index)*1000.0f;
 	m_binzero = 0; // m_dbDoc->m_pDataFile->GetpWaveFormat()->binzero;
-	m_maxmv=( m_yextent/2 +m_yzero -m_binzero)*m_mVperbin;
-	m_minmv=(-m_yextent/2 +m_yzero -m_binzero)*m_mVperbin;
+	m_maxmv=( m_yextent/2.f +m_yzero -m_binzero)*m_mVperbin;
+	m_minmv=(-m_yextent/2.f +m_yzero -m_binzero)*m_mVperbin;
 }
 
-void CDataSeriesFormatDlg::SetParams(int index)
+void CDataSeriesFormatDlg::SetParams(const int index)
 {	
-	m_yzero = (int) ((m_maxmv+m_minmv)/(m_mVperbin*2.0f)) + m_binzero;
-	m_yextent = (int) ((m_maxmv - m_minmv)/m_mVperbin);
+	m_yzero = static_cast<int>((m_maxmv + m_minmv) / (m_mVperbin * 2.0f)) + m_binzero;
+	m_yextent = static_cast<int>((m_maxmv - m_minmv) / m_mVperbin);
 	m_plineview->SetChanlistYzero(index, m_yzero);
 	m_plineview->SetChanlistYextent(index, m_yextent);
-	COLORREF ccolor = m_colorbutton.GetColor();
-	int icolor = m_plineview->FindColor(ccolor);
+	const auto ccolor = m_colorbutton.GetColor();
+	auto icolor = m_plineview->FindColor(ccolor);
 	if (icolor < 0)
 	{
 		icolor = NB_COLORS - 1;
@@ -94,8 +94,8 @@ BOOL CDataSeriesFormatDlg::OnInitDialog()
 	*/
 
 	// load channel description CComboBox
-	int chanmax = m_plineview->GetChanlistSize();
-	for (int i = 0; i<chanmax; i++)
+	const auto chanmax = m_plineview->GetChanlistSize();
+	for (auto i = 0; i<chanmax; i++)
 		m_listseries.AddString(m_plineview->GetChanlistComment(i));
 
 	// select...    
@@ -109,7 +109,7 @@ BOOL CDataSeriesFormatDlg::OnInitDialog()
 void CDataSeriesFormatDlg::OnSelchangeListseries() 
 {
 	UpdateData(TRUE);                              // transfer data to controls
-	int listindex = m_listseries.GetCurSel();
+	const auto listindex = m_listseries.GetCurSel();
 	SetParams(m_listindex);
 	m_listindex = listindex;
 	GetParams(listindex);

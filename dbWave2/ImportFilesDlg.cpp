@@ -400,8 +400,8 @@ line 11-	0	141.144	0.0317383
 			}
 
 			// save data and update display
-			CWnd* pWnd = GetDlgItem(IDC_STATIC6);
-			pWnd->SetWindowText(csdummy2);
+			CWnd* p_wnd = GetDlgItem(IDC_STATIC6);
+			p_wnd->SetWindowText(csdummy2);
 			pTo->AcqDoc_DataAppend(pdataBUF0, compteur2*sizeof(short));
 		}
 

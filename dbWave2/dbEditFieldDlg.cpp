@@ -2,8 +2,8 @@
 //
 
 #include "StdAfx.h"
-#include <afxconv.h>           // For LPTSTR -> LPSTR macros
-#include "dbWave.h"
+//#include <afxconv.h>           // For LPTSTR -> LPSTR macros
+//#include "dbWave.h"
 #include "dbWaveDoc.h"
 #include "dbEditFieldDlg.h"
 #include "afxdialogex.h"
@@ -95,15 +95,15 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 	m_cosource.SetCurSel(1);		// only the current record
 
 	// load source value from the main table
-	COleVariant varValue;
-	m_pMainTable->GetFieldValue(m_csColName, varValue);
-	if (varValue.vt != VT_NULL)
+	COleVariant var_value;
+	m_pMainTable->GetFieldValue(m_csColName, var_value);
+	if (var_value.vt != VT_NULL)
 	{
-		m_initialID = varValue.lVal;
+		m_initialID = var_value.lVal;
 		if (m_bIndexTable)
-			m_csfieldvalue = m_pIndexTable->GetStringFromID(varValue.lVal);
+			m_csfieldvalue = m_pIndexTable->GetStringFromID(var_value.lVal);
 		else
-			m_csfieldvalue.Format( _T("%i"), varValue.lVal);
+			m_csfieldvalue.Format( _T("%i"), var_value.lVal);
 	}
 	else
 		m_csfieldvalue.Empty(); // = _T("undefined");
@@ -114,15 +114,15 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 	{
 		if (m_pIndexTable->IsOpen() && !m_pIndexTable->IsBOF()) 
 		{
-			COleVariant varValue0, varValue1;
+			COleVariant var_value0, var_value1;
 			m_pIndexTable->MoveFirst();
 			while(!m_pIndexTable->IsEOF()) 
 			{
-				m_pIndexTable->GetFieldValue(0, varValue0);
-				m_pIndexTable->GetFieldValue(1, varValue1);
-				CString cs_dummy = varValue0.bstrVal;
-				int i = m_codictionary.AddString(cs_dummy);
-				m_codictionary.SetItemData(i, varValue1.lVal);
+				m_pIndexTable->GetFieldValue(0, var_value0);
+				m_pIndexTable->GetFieldValue(1, var_value1);
+				CString cs_dummy = var_value0.bstrVal;
+				const auto i = m_codictionary.AddString(cs_dummy);
+				m_codictionary.SetItemData(i, var_value1.lVal);
 				m_pIndexTable->MoveNext();
 			}
 		}
@@ -130,19 +130,18 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 	// no linked field: fill CComboBox with uiArray stored into document file
 	else
 	{
-		COleVariant bookmarkCurrent;
-		bookmarkCurrent = m_pMainTable->GetBookmark();
-		for (int i = 0; i <= m_pliIDArray->GetUpperBound(); i++)
+		auto bookmark_current = m_pMainTable->GetBookmark();
+		for (auto i = 0; i <= m_pliIDArray->GetUpperBound(); i++)
 		{
 			CString cs;
-			long ucID = m_pliIDArray->GetAt(i);
-			cs.Format(_T("%i"), ucID);
-			int j = m_codictionary.FindStringExact(0, cs);
+			const auto uc_id = m_pliIDArray->GetAt(i);
+			cs.Format(_T("%i"), uc_id);
+			auto j = m_codictionary.FindStringExact(0, cs);
 			if (j == CB_ERR)
 			{
-				int k = m_codictionary.InsertString(i, cs);
+				const auto k = m_codictionary.InsertString(i, cs);
 				ASSERT( k != CB_ERR);;
-				m_codictionary.SetItemData(k, ucID);
+				m_codictionary.SetItemData(k, uc_id);
 			}
 		}
 	}
@@ -165,7 +164,7 @@ void CdbEditFieldDlg::DisplayElements()
 
 	GetDlgItem(IDC_COMBO1)->EnableWindow(m_destaction==CHGE_ID);
 	//if (m_bIndexTable)
-		GetDlgItem(IDC_BUTTON1)->EnableWindow(m_destaction==CHGE_ID);
+	GetDlgItem(IDC_BUTTON1)->EnableWindow(m_destaction==CHGE_ID);
 	GetDlgItem(IDC_EDIT3)->EnableWindow(m_destaction==CHGE_TXT);
 }
 
@@ -209,14 +208,14 @@ void CdbEditFieldDlg::OnBnClickedButton1()
 {
 	CEditListDlg dlg;
 	dlg.pCo = &m_codictionary;
-	int iresult = dlg.DoModal();
+	const auto iresult = dlg.DoModal();
 	if (IDOK == iresult)
 	{
 		m_codictionary.ResetContent();
-		int nitems = dlg.m_csArray.GetCount();
-		for (int i=0; i< nitems; i++)
+		const auto nitems = dlg.m_csArray.GetCount();
+		for (auto i=0; i< nitems; i++)
 		{
-			CString cs = dlg.m_csArray.GetAt(i);
+			auto cs = dlg.m_csArray.GetAt(i);
 			m_codictionary.AddString(cs);
 		}
 		m_codictionary.SetCurSel(dlg.m_selected);
@@ -289,67 +288,64 @@ void CdbEditFieldDlg::OnBnClickedOk()
 
 void CdbEditFieldDlg::ModifySelected()
 {
-	short iedit = m_pMainTable->GetEditMode();
+	const auto iedit = m_pMainTable->GetEditMode();
 	if (iedit != dbEditNone)
 		m_pMainTable->Update();
 
-	COleVariant bookmarkCurrent;
-	bookmarkCurrent = m_pMainTable->GetBookmark();
+	const auto bookmark_current = m_pMainTable->GetBookmark();
 
-	int uSelectedCount = m_pdbDoc->m_selectedRecords.GetSize();
-	ASSERT(uSelectedCount > 0);
+	const auto u_selected_count = m_pdbDoc->m_selectedRecords.GetSize();
+	ASSERT(u_selected_count > 0);
 	
-	for (int i =0; i< uSelectedCount; i++)
+	for (auto i =0; i< u_selected_count; i++)
 	{
-		long nItem = m_pdbDoc->m_selectedRecords.GetAt(i);
-		m_pMainTable->SetAbsolutePosition(nItem);
+		const long n_item = m_pdbDoc->m_selectedRecords.GetAt(i);
+		m_pMainTable->SetAbsolutePosition(n_item);
 		ModifyCurrent();
 	}
-	m_pMainTable->SetBookmark(bookmarkCurrent);
+	m_pMainTable->SetBookmark(bookmark_current);
 }
 
 void CdbEditFieldDlg::ModifyAll()
 {
-	short iedit = m_pMainTable->GetEditMode();
+	const auto iedit = m_pMainTable->GetEditMode();
 	if (iedit != dbEditNone)
 		m_pMainTable->Update();
 
-	COleVariant bookmarkCurrent;
-	bookmarkCurrent = m_pMainTable->GetBookmark();
-
+	const auto bookmark_current = m_pMainTable->GetBookmark();
 	m_pMainTable->MoveFirst();
 	while(!m_pMainTable->IsEOF()) 
 	{
 		ModifyCurrent();
 		m_pMainTable->MoveNext();
 	}
-	m_pMainTable->SetBookmark(bookmarkCurrent);
+	m_pMainTable->SetBookmark(bookmark_current);
 }
 
 void CdbEditFieldDlg::ModifyCurrent()
 {
-	long iIDcurrent = 0;								// ID of current record
-	int ifound = 0;
+	long id_current = 0;								// ID of current record
+	auto ifound = 0;
 	CString csvalue;
-	COleVariant varValue;
-	m_pMainTable->GetFieldValue(m_csColName, varValue);	// FALSE if field is null
-	BOOL bValid = (varValue.vt != VT_NULL);
-	if (bValid)
-		iIDcurrent = varValue.lVal;
+	COleVariant var_value;
+	m_pMainTable->GetFieldValue(m_csColName, var_value);	// FALSE if field is null
+	const BOOL b_valid = (var_value.vt != VT_NULL);
+	if (b_valid)
+		id_current = var_value.lVal;
 
 	// reject record?  if condition "==" : reject if iID != IDscope
 	switch (m_sourcecondition)
 	{
 	case COND_EQU: 
-		if (iIDcurrent != m_initialID)	//&& bValid)
+		if (id_current != m_initialID)	//&& bValid)
 			return;			// exit if current record is already correct or if record is not valid 
 		break;
 	case COND_SEARCH:
 		if (!m_bIndexTable)
 			break;
-		if (bValid)
+		if (b_valid)
 		{
-			csvalue = m_pIndexTable->GetStringFromID(iIDcurrent);
+			csvalue = m_pIndexTable->GetStringFromID(id_current);
 			if (!m_bCaseSensitive)
 				csvalue.MakeLower();
 			ifound = csvalue.Find(m_cstextsearch, 0);
@@ -376,14 +372,13 @@ void CdbEditFieldDlg::ModifyCurrent()
 		// indexed value
 		if (m_bIndexTable)
 		{
-			CString csnew;
-			csnew = csvalue.Left(ifound) 
+			const auto csnew = csvalue.Left(ifound)
 				+ m_cstextreplacewith
-				+ csvalue.Right(csvalue.GetLength() - (m_cstextsearch.GetLength()+ ifound));
-			long iIDNew = m_pIndexTable->GetIDorCreateIDforString(csnew);
-			if (iIDNew >= 0)
+				+ csvalue.Right(csvalue.GetLength() - (m_cstextsearch.GetLength() + ifound));
+			const auto id_new = m_pIndexTable->GetIDorCreateIDforString(csnew);
+			if (id_new >= 0)
 			{
-				m_pMainTable->SetLongValue(iIDNew, m_csColName);
+				m_pMainTable->SetLongValue(id_new, m_csColName);
 				// make sure that the new string is stored in the combobox
 				m_first = m_codictionary.FindStringExact(m_first, csnew);
 				if (CB_ERR == m_first)

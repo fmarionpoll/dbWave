@@ -2,7 +2,7 @@
 
 // TemplateWnd.h headerfile
 
-
+#include "scopescr.h"
 #if !defined mytype
 #define mytype	double
 #endif
@@ -17,7 +17,7 @@ class CTemplateWnd : public CScopeScreen
 //Construction
 public:	
 	CTemplateWnd();
-	void operator = (const CTemplateWnd& arg);	// operator redefinition
+	CTemplateWnd&  operator = (const CTemplateWnd& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);		// overridden for document i/o
 
 // Attributes
@@ -56,24 +56,24 @@ public:
 	void	SetTemplateLength(int len, int extent=-1, int org =-1);
 	void	tSetdisplayData();	// fill pMean data
 	void	tInit();			// init parameters, erase data pSum & pMean
-	void	tAdd(short* pSource);	// add a waveform to pSum
+	void	tAddSpikeToTemplate(short* p_source);	// add a waveform to pSum
 	double	tPower();				// compute power of pSum 
-	BOOL	tWithin(short* pSource, int* hitrate);
-	double	tMinDist(short* pSource, int* ioffsetmin, BOOL bJitter=FALSE);
+	BOOL	tGetNumberOfPointsWithin(short* p_source, int* hitrate);
+	double	tMinDist(short* p_source, int* ioffsetmin, BOOL bJitter=FALSE);
 	void	tGlobalstats(double* gstd, double* gdist);
 
 protected:
-	double	tDist(short* pSource);
+	double	tDist(short* p_source);
 	void	DeleteArrays();
 
 	// Implementation : display
 protected:
-	CDWordArray m_polypts;		// points displayed with polyline
+	CArray<CPoint, CPoint> m_polypts;		// points displayed with polyline
 	void 	InitPolypointAbcissa();
 	void 	FillOrdinatesAtscale(BOOL bScale);
     void	GetExtents();
 public:
-	void	PlotDatatoDC(CDC* pDC);
+	void	PlotDatatoDC(CDC* p_dc);
 
 
 
@@ -89,7 +89,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
 	DECLARE_MESSAGE_MAP()
 };
 

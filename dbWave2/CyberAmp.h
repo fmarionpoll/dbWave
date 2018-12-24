@@ -123,7 +123,7 @@ public:
 	int	SetmVOffset(int nChannel, float fOffset);
 	int	SetLPFilter(int nChannel, int nFilterValue);
 	int	SetNotchFilter(int nChannel, int nEnabled);
-	int	SetHPFilter(int nChannel, int nInput, CString csCoupling);
+	int	SetHPFilter(int nChannel, int nInput, const CString& csCoupling);
 
 	int SetWaveChanParms(CWaveChan* pchan);
 	int GetWaveChanParms(CWaveChan* pchan);
@@ -168,7 +168,7 @@ protected:
 
 	static void C300_ResetParms();
 
-	static void C300_StringConcatChar( char *lpszString, int c );
+	static void C300_StringConcatChar( char *lpsz_string, int c );
 	static int C300_FoundListMatch( int nFilterValue, int *lpnList, int nListItems );
 	int C300_INT_TranslateABUSError(int ABUSError);
 	int C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed,
@@ -179,7 +179,7 @@ protected:
 	int	ABUS_Initialize( void );
 	int	ABUS_SetOutput( int nWhichPort, int nWhichSpeed );
 	int ABUS_SendString(int nOutputPort, char*  lpszCmdString, DWORD fDelay);
-	int ABUS_ReceiveString(int nOutputPort, char*  lpszCmdString, int nWaitOK, DWORD fDelay);
+	int ABUS_ReceiveString(char*  lpszCmdString, int nWaitOK, DWORD fDelay);
     void ABUS_FlushReceiveBuffer(int nOutputPort, DWORD fDelay);
 
 };

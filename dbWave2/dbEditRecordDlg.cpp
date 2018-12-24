@@ -2,14 +2,14 @@
 //
 
 #include "StdAfx.h"
-#include <afxconv.h>           // For LPTSTR -> LPSTR macros
+//#include <afxconv.h>           // For LPTSTR -> LPSTR macros
 
 #include "dbWave.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "FindFilesDlg.h"
 #include "dbEditFieldDlg.h"
-#include "afxdialogex.h"
+//#include "FindFilesDlg.h"
+//#include "afxdialogex.h"
 
 #include "dbEditRecordDlg.h"
 
@@ -104,21 +104,21 @@ BOOL CdbEditRecordDlg::OnInitDialog()
 
 void CdbEditRecordDlg::PopulateControls()
 {
-	CdbWdatabase* pDB = m_pdbDoc->m_pDB;
+	auto p_db = m_pdbDoc->m_pDB;
 	// fill combo boxes associated with a secondary table
-	PopulateCombo_WithText(pDB->m_stimSet,		m_ctlstim,		m_pSet->m_stim_ID);
-	PopulateCombo_WithText(pDB->m_concSet,		m_ctlconc,		m_pSet->m_conc_ID);
-	PopulateCombo_WithText(pDB->m_stimSet,		m_ctlstim2,		m_pSet->m_stim2_ID);
-	PopulateCombo_WithText(pDB->m_concSet,		m_ctlconc2,		m_pSet->m_conc2_ID);
-	PopulateCombo_WithText(pDB->m_insectSet,	m_ctlinsect,	m_pSet->m_insect_ID);
-	PopulateCombo_WithText(pDB->m_strainSet,	m_ctlstrain,	m_pSet->m_strain_ID);
-	PopulateCombo_WithText(pDB->m_sexSet,		m_ctlsex,		m_pSet->m_sex_ID);
-	PopulateCombo_WithText(pDB->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
-	PopulateCombo_WithText(pDB->m_locationSet,	m_ctllocation,	m_pSet->m_location_ID);
-	PopulateCombo_WithText(pDB->m_operatorSet,	m_ctlOperator,	m_pSet->m_operator_ID);
-	PopulateCombo_WithText(pDB->m_pathSet,		m_ctlpathdat,	m_pSet->m_path_ID);
-	PopulateCombo_WithText(pDB->m_pathSet,		m_ctlpathspk,	m_pSet->m_path2_ID);
-	PopulateCombo_WithText(pDB->m_exptSet,		m_ctlexpt,		m_pSet->m_expt_ID);
+	PopulateCombo_WithText(p_db->m_stimSet,		m_ctlstim,		m_pSet->m_stim_ID);
+	PopulateCombo_WithText(p_db->m_concSet,		m_ctlconc,		m_pSet->m_conc_ID);
+	PopulateCombo_WithText(p_db->m_stimSet,		m_ctlstim2,		m_pSet->m_stim2_ID);
+	PopulateCombo_WithText(p_db->m_concSet,		m_ctlconc2,		m_pSet->m_conc2_ID);
+	PopulateCombo_WithText(p_db->m_insectSet,	m_ctlinsect,	m_pSet->m_insect_ID);
+	PopulateCombo_WithText(p_db->m_strainSet,	m_ctlstrain,	m_pSet->m_strain_ID);
+	PopulateCombo_WithText(p_db->m_sexSet,		m_ctlsex,		m_pSet->m_sex_ID);
+	PopulateCombo_WithText(p_db->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
+	PopulateCombo_WithText(p_db->m_locationSet,	m_ctllocation,	m_pSet->m_location_ID);
+	PopulateCombo_WithText(p_db->m_operatorSet,	m_ctlOperator,	m_pSet->m_operator_ID);
+	PopulateCombo_WithText(p_db->m_pathSet,		m_ctlpathdat,	m_pSet->m_path_ID);
+	PopulateCombo_WithText(p_db->m_pathSet,		m_ctlpathspk,	m_pSet->m_path2_ID);
+	PopulateCombo_WithText(p_db->m_exptSet,		m_ctlexpt,		m_pSet->m_expt_ID);
 	// ID combos
 	PopulateCombo_WithNumbers(m_ctlinsectID,	&m_pSet->m_desc[CH_IDINSECT].liArray,	m_pSet->m_IDinsect);
 	PopulateCombo_WithNumbers(m_ctlSensillumID,	&m_pSet->m_desc[CH_IDSENSILLUM].liArray,m_pSet->m_IDsensillum);
@@ -143,17 +143,15 @@ void CdbEditRecordDlg::PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, 
 	combo.ResetContent();
 	CString cs;
 
-	int arraySize = pIDarray->GetSize();
-	int isel = 0;
-	int i=0;
-
-	for (i=0; i< arraySize; i++)
+	const auto array_size = pIDarray->GetSize();
+	auto isel = 0;
+	for (auto i=0; i< array_size; i++)
 	{
-		unsigned int iID = pIDarray->GetAt(i);
-		cs.Format(_T("%i"), iID);
+		const auto i_id = pIDarray->GetAt(i);
+		cs.Format(_T("%i"), i_id);
 		combo.AddString(cs);
-		combo.SetItemData(i, iID);
-		if (iID == lvar)
+		combo.SetItemData(i, i_id);
+		if (i_id == lvar)
 			isel = i;
 	}
 	combo.SetCurSel(isel);
@@ -165,29 +163,28 @@ void CdbEditRecordDlg::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCo
 	// fill combo box
 	if (linkedtableSet.IsOpen() && !linkedtableSet.IsBOF()) 
 	{
-		COleVariant varValue0, varValue1;
+		COleVariant var_value0, var_value1;
 		linkedtableSet.MoveFirst();
-		CString cs;
 		while(!linkedtableSet.IsEOF()) 
 		{
-			linkedtableSet.GetFieldValue(0, varValue0);
-			linkedtableSet.GetFieldValue(1, varValue1);
-			long ID = varValue1.lVal;
-			cs =varValue0.bstrVal;
+			linkedtableSet.GetFieldValue(0, var_value0);
+			linkedtableSet.GetFieldValue(1, var_value1);
+			const auto id = var_value1.lVal;
+			CString cs = var_value0.bstrVal;
 			if (!cs.IsEmpty())
 			{
-				int i = combo.AddString(cs);
-				combo.SetItemData(i, ID);
+				const auto i = combo.AddString(cs);
+				combo.SetItemData(i, id);
 			}
 			linkedtableSet.MoveNext();
 		}
 	}
 
 	// search item which has value iID
-	int isel = -1;
-	for (int i=0; i < combo.GetCount(); i++)
+	auto isel = -1;
+	for (auto i=0; i < combo.GetCount(); i++)
 	{
-		if (iID == combo.GetItemData(i))
+		if (iID == static_cast<int>(combo.GetItemData(i)))
 		{
 			isel = i;
 			break;
@@ -203,18 +200,18 @@ void CdbEditRecordDlg::UpdateDatabaseFromDialog()
 	// update combo boxes associated with a secondary table
 	m_pSet->Edit();
 
-	CdbWdatabase* pDB = m_pdbDoc->m_pDB; 
-	UpdateSetFromCombo(pDB->m_stimSet,		m_ctlstim,		m_pSet->m_stim_ID);
-	UpdateSetFromCombo(pDB->m_concSet,		m_ctlconc,		m_pSet->m_conc_ID);
-	UpdateSetFromCombo(pDB->m_stimSet,		m_ctlstim2,		m_pSet->m_stim2_ID);
-	UpdateSetFromCombo(pDB->m_concSet,		m_ctlconc2,		m_pSet->m_conc2_ID);
-	UpdateSetFromCombo(pDB->m_insectSet,	m_ctlinsect,	m_pSet->m_insect_ID);
-	UpdateSetFromCombo(pDB->m_strainSet,	m_ctlstrain,	m_pSet->m_strain_ID);
-	UpdateSetFromCombo(pDB->m_sexSet,		m_ctlsex,		m_pSet->m_sex_ID);
-	UpdateSetFromCombo(pDB->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
-	UpdateSetFromCombo(pDB->m_locationSet,	m_ctllocation,	m_pSet->m_location_ID);
-	UpdateSetFromCombo(pDB->m_operatorSet,	m_ctlOperator,	m_pSet->m_operator_ID);
-	UpdateSetFromCombo(pDB->m_exptSet,		m_ctlexpt,		m_pSet->m_expt_ID);
+	CdbWdatabase* p_database = m_pdbDoc->m_pDB; 
+	UpdateSetFromCombo(p_database->m_stimSet,		m_ctlstim,		m_pSet->m_stim_ID);
+	UpdateSetFromCombo(p_database->m_concSet,		m_ctlconc,		m_pSet->m_conc_ID);
+	UpdateSetFromCombo(p_database->m_stimSet,		m_ctlstim2,		m_pSet->m_stim2_ID);
+	UpdateSetFromCombo(p_database->m_concSet,		m_ctlconc2,		m_pSet->m_conc2_ID);
+	UpdateSetFromCombo(p_database->m_insectSet,	m_ctlinsect,	m_pSet->m_insect_ID);
+	UpdateSetFromCombo(p_database->m_strainSet,	m_ctlstrain,	m_pSet->m_strain_ID);
+	UpdateSetFromCombo(p_database->m_sexSet,		m_ctlsex,		m_pSet->m_sex_ID);
+	UpdateSetFromCombo(p_database->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
+	UpdateSetFromCombo(p_database->m_locationSet,	m_ctllocation,	m_pSet->m_location_ID);
+	UpdateSetFromCombo(p_database->m_operatorSet,	m_ctlOperator,	m_pSet->m_operator_ID);
+	UpdateSetFromCombo(p_database->m_exptSet,		m_ctlexpt,		m_pSet->m_expt_ID);
 
 	//// save fixed parameters
 
@@ -244,27 +241,27 @@ void CdbEditRecordDlg::OnOK()
 void CdbEditRecordDlg::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBox& combo, long& iIDset)
 {
 	// search if content of edit window is listed in the combo
-	CString csCombo;
-	combo.GetWindowText(csCombo);
-	int nIndex = combo.FindStringExact(0, csCombo);
-	if (nIndex == CB_ERR )
+	CString cs_combo;
+	combo.GetWindowText(cs_combo);
+	const auto n_index = combo.FindStringExact(0, cs_combo);
+	if (n_index == CB_ERR )
 	{
 		// if new value, add a record in the linked table
-		if (!csCombo.IsEmpty())
+		if (!cs_combo.IsEmpty())
 		{
 			linkedtableSet.AddNew();
-			linkedtableSet.SetFieldValue(0, COleVariant(csCombo, VT_BSTRT));
+			linkedtableSet.SetFieldValue(0, COleVariant(cs_combo, VT_BSTRT));
 			try { linkedtableSet.Update();}
 			catch(CDaoException* e) {DisplayDaoException(e, 24); e->Delete();}
 
 			// get value and set the ID number in the main table
 			linkedtableSet.MoveLast();
-			COleVariant varValue0, varValue1;
-			linkedtableSet.GetFieldValue(0, varValue0);
-			linkedtableSet.GetFieldValue(1, varValue1);
-			CString cs = varValue0.bstrVal;
-			ASSERT(csCombo == cs);
-			iIDset = varValue1.lVal;				
+			COleVariant var_value0, var_value1;
+			linkedtableSet.GetFieldValue(0, var_value0);
+			linkedtableSet.GetFieldValue(1, var_value1);
+			const CString cs = var_value0.bstrVal;
+			ASSERT(cs_combo == cs);
+			iIDset = var_value1.lVal;				
 		}
 		// if empty string, set field to null in the main table
 		else
@@ -272,7 +269,7 @@ void CdbEditRecordDlg::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboB
 	}
 	else
 	{
-		int iID = combo.GetItemData(nIndex);
+		int iID = combo.GetItemData(n_index);
 		iIDset = iID;
 	}
 }
@@ -327,7 +324,7 @@ void CdbEditRecordDlg::EditChangeItem_IndirectField(int IDC)
 
 void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 {
-	DB_ITEMDESC* pdesc = GetItemDescriptors(IDC);
+	auto pdesc = GetItemDescriptors(IDC);
 	if (pdesc->pComboBox == nullptr)
 		return;
 
@@ -344,11 +341,11 @@ void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 		PopulateCombo_WithNumbers(*pdesc->pComboBox, &pdesc->liArray, *pdesc->pdataItem);
 
 		// find current selection and set combo to this position
-		unsigned int iID = *pdesc->pdataItem;
-		int icursel = 0;
-		for (int i = pdesc->liArray.GetUpperBound(); i>= 0; i--)
+		const auto i_id = *pdesc->pdataItem;
+		auto icursel = 0;
+		for (auto i = pdesc->liArray.GetUpperBound(); i>= 0; i--)
 		{
-			if (iID == pdesc->liArray.GetAt(i))
+			if (i_id == pdesc->liArray.GetAt(i))
 			{
 				icursel = i;
 				break;
@@ -364,9 +361,9 @@ void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 DB_ITEMDESC* CdbEditRecordDlg::GetItemDescriptors(int IDC)
 {
 	DB_ITEMDESC* pdesc = nullptr;
-	CdbWaveDoc* p_dbwave_doc = m_pdbDoc;
-	CdbWdatabase* pDB = p_dbwave_doc->m_pDB;
-	int ich= 0;
+	const auto p_dbwave_doc = m_pdbDoc;
+	auto p_db = p_dbwave_doc->m_pDB;
+	int ich;
 	switch (IDC)
 	{
 	case IDC_COMBO_EXPT2:
@@ -448,7 +445,7 @@ DB_ITEMDESC* CdbEditRecordDlg::GetItemDescriptors(int IDC)
 		break;
 	}
 	if (ich>= 0)
-		pdesc = pDB->GetRecordItemDescriptor(ich);
+		pdesc = p_db->GetRecordItemDescriptor(ich);
 
 	return pdesc;
 }

@@ -31,11 +31,11 @@ public:
 
 	// operations
 	void	SetNames(CString csdefaultSQL, CString DFX_cs, CString DFX_ID);
-	long	GetIDorCreateIDforString (CString cs);
+	long	GetIDorCreateIDforString (const CString& cs);
 	BOOL	GetIDFromString (CString cs, long& iID);
 	BOOL	SeekID(long iID);
 	CString GetStringFromID (long iID);
-	void	CreateIndextable(CString cstable, CString cs, CString csID, int textSize, CDaoDatabase* pDB);
+	void	CreateIndextable(const CString& cstable, const CString& cs, const CString& csID, int textSize, CDaoDatabase* p_database);
 	int		AddStringsFromCombo(CComboBox* pcombo);
 	int		RemoveStringsNotInCombo(CComboBox* pcombo);
 

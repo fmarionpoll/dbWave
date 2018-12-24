@@ -97,11 +97,11 @@ BOOL CTitleTip::Create(CWnd * pParentWnd)
 	if (m_bCreated)
 		return TRUE;
 
-	DWORD dwStyle = WS_BORDER | WS_POPUP; 
+	DWORD dw_style = WS_BORDER | WS_POPUP; 
 	DWORD dwExStyle = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 	m_pParentWnd = pParentWnd;
 
-	m_bCreated = CreateEx(dwExStyle, TITLETIP_CLASSNAME, nullptr, dwStyle, 
+	m_bCreated = CreateEx(dwExStyle, TITLETIP_CLASSNAME, nullptr, dw_style, 
 						  CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 						  nullptr, nullptr, nullptr );
 
@@ -236,18 +236,18 @@ void CTitleTip::OnMouseMove(UINT nFlags, CPoint point)
 		Hide();
 		// Forward the message
 		ClientToScreen( &point );
-		CWnd *pWnd = WindowFromPoint( point );
-		if (pWnd != nullptr)
+		CWnd *p_wnd = WindowFromPoint( point );
+		if (p_wnd != nullptr)
 		{
-			if (pWnd == this)
-				pWnd = m_pParentWnd;
-			int hittest = (int)pWnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y));
+			if (p_wnd == this)
+				p_wnd = m_pParentWnd;
+			int hittest = (int)p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y));
 			if (hittest == HTCLIENT) {
-				pWnd->ScreenToClient(&point);
-				pWnd->PostMessage(WM_MOUSEMOVE, nFlags, MAKELONG(point.x, point.y));
+				p_wnd->ScreenToClient(&point);
+				p_wnd->PostMessage(WM_MOUSEMOVE, nFlags, MAKELONG(point.x, point.y));
 			}
 			else {
-				pWnd->PostMessage(WM_NCMOUSEMOVE, hittest, MAKELONG(point.x, point.y));
+				p_wnd->PostMessage(WM_NCMOUSEMOVE, hittest, MAKELONG(point.x, point.y));
 			}
 		}
 	}
@@ -259,7 +259,7 @@ BOOL CTitleTip::PreTranslateMessage(MSG* pMsg)
 	DWORD dwTick=0;
 	BOOL bDoubleClick=FALSE;
 
-	CWnd *pWnd;
+	CWnd *p_wnd;
 	int hittest;
 	switch (pMsg->message)
 	{
@@ -281,18 +281,18 @@ BOOL CTitleTip::PreTranslateMessage(MSG* pMsg)
 		ClientToScreen( &point );
 		Hide();
 
-		pWnd = WindowFromPoint( point );
-		if (!pWnd)
+		p_wnd = WindowFromPoint( point );
+		if (!p_wnd)
 			return CWnd::PreTranslateMessage(pMsg);
 
-		if( pWnd->GetSafeHwnd() == GetSafeHwnd()) 
-			pWnd = m_pParentWnd;
+		if( p_wnd->GetSafeHwnd() == GetSafeHwnd()) 
+			p_wnd = m_pParentWnd;
 
-		hittest = (int)pWnd->SendMessage(WM_NCHITTEST,0,MAKELONG(point.x,point.y));
+		hittest = (int)p_wnd->SendMessage(WM_NCHITTEST,0,MAKELONG(point.x,point.y));
 
 		if (hittest == HTCLIENT) 
 		{
-			pWnd->ScreenToClient( &point );
+			p_wnd->ScreenToClient( &point );
 			pMsg->lParam = MAKELONG(point.x,point.y);
 		}
 		else 
@@ -315,7 +315,7 @@ BOOL CTitleTip::PreTranslateMessage(MSG* pMsg)
 
 		// If this is the 2nd WM_LBUTTONDOWN in x milliseconds,
 		// post a WM_LBUTTONDBLCLK message instead of a single click.
-		pWnd->PostMessage(  bDoubleClick ? WM_LBUTTONDBLCLK : pMsg->message,
+		p_wnd->PostMessage(  bDoubleClick ? WM_LBUTTONDBLCLK : pMsg->message,
 							pMsg->wParam,
 							pMsg->lParam);
 		return TRUE;

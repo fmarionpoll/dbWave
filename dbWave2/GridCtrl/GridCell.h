@@ -48,7 +48,7 @@ public:
 public:
     void operator=(const CGridCell& cell);
 
-    virtual void  SetText(LPCTSTR szText)        { m_strText = szText;  }                       
+    virtual void  SetText(LPCTSTR sz_text)        { m_strText = sz_text;  }                       
     virtual void  SetImage(int nImage)           { m_nImage = nImage;   }                        
     virtual void  SetData(LPARAM lParam)         { m_lParam = lParam;   }      
     virtual void  SetGrid(CGridCtrl* pGrid)      { m_pGrid = pGrid;     }                          
@@ -114,7 +114,7 @@ public:
 
 public:
     virtual DWORD GetStyle() const                      { return m_dwStyle;      }
-    virtual void  SetStyle(DWORD dwStyle)               { m_dwStyle = dwStyle;   }
+    virtual void  SetStyle(DWORD dw_style)               { m_dwStyle = dw_style;   }
     virtual int   GetWidth() const                      { return m_Size.cx;      }
     virtual int   GetHeight() const                     { return m_Size.cy;      }
     virtual void  SetWidth(int nWidth)                  { m_Size.cx = nWidth;    }

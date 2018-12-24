@@ -80,7 +80,7 @@ public:
 	BOOL		IsSpikeWithinRange(int spikeno) const;
 
 public:
-	void 		Print(CDC* pDC, CRect* rect);
+	void 		Print(CDC* p_dc, CRect* rect);
 	int			DisplayExData(short* p_data, int color=9);
 	void		DisplayFlaggedSpikes (BOOL bHighLight);
 	
@@ -92,11 +92,11 @@ protected:
 	void		GetExtentsCurrentSpkList();
 
 	int  		DoesCursorHitCurve(CPoint point) const;
-	void		DrawSelectedSpike(int nospike, CDC* pDC);
-	void		DrawFlaggedSpikes(CDC* pDC);
-	void		PlotArraytoDC(CDC* pDC, short* pspk);
+	void		DrawSelectedSpike(int nospike, CDC* p_dc);
+	void		DrawFlaggedSpikes(CDC* p_dc);
+	void		PlotArraytoDC(CDC* p_dc, short* pspk);
 public:
-	void		PlotDatatoDC(CDC* pDC);	
+	void		PlotDatatoDC(CDC* p_dc);	
 protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

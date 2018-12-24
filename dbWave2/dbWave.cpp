@@ -7,25 +7,24 @@
 
 #include "MainFrm.h"
 #include "ChildFrm.h"
-#include "dbMainTable.h"
+//#include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "Acqparam.h"
-#include "Taglines.h"
-#include "datafile_X.h"
+//#include "Acqparam.h"
+//#include "Taglines.h"
+//#include "datafile_X.h"
 #include "WaveBuf.h"
 #include "Awavepar.h"
-#include "Acqdatad.h"
-#include "Cscale.h"
-#include "scopescr.h"
-#include "Lineview.h"
-#include "Spikebar.h"
-#include "spikeshape.h"
+//#include "Acqdatad.h"
+//#include "Cscale.h"
+//#include "scopescr.h"
+//#include "Lineview.h"
+//#include "Spikebar.h"
+//#include "spikeshape.h"
 #include "NoteDoc.h"
 #include "Splash.h"
-#include "Editctrl.h"
-#include "SpikeClassListBox.h"
+//#include "Editctrl.h"
+//#include "SpikeClassListBox.h"
 #include "Fileversion.h"
-
 #include "ViewData.h"
 #include "ViewSpikes.h"
 #include "ViewdbWave.h"
@@ -100,9 +99,9 @@ BOOL CdbWaveApp::InitInstance()
 
 	// CG: The following block was added by the Splash Screen component.
 	{
-		CCommandLineInfo cmdInfo;
-		ParseCommandLine(cmdInfo);
-		CSplashWnd::EnableSplashScreen(cmdInfo.m_bShowSplash);
+		CCommandLineInfo cmd_info;
+		ParseCommandLine(cmd_info);
+		CSplashWnd::EnableSplashScreen(cmd_info.m_bShowSplash);
 		CSplashWnd::ShowSplashScreen();
 	}
 
@@ -120,9 +119,9 @@ BOOL CdbWaveApp::InitInstance()
 	InitKeyboardManager();
 
 	InitTooltipManager();
-	CMFCToolTipInfo ttParams;
-	ttParams.m_bVislManagerTheme = TRUE;
-	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+	CMFCToolTipInfo tt_params;
+	tt_params.m_bVislManagerTheme = TRUE;
+	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &tt_params);
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
@@ -170,21 +169,21 @@ BOOL CdbWaveApp::InitInstance()
 	AddDocTemplate(m_pNoteViewTemplate);
 
 	// create main MDI Frame window
-	CMainFrame* pMainFrame = new CMainFrame;
-	if (!pMainFrame || !pMainFrame->LoadFrame(IDR_MAINFRAME))
+	auto p_main_frame = new CMainFrame;
+	if (!p_main_frame || !p_main_frame->LoadFrame(IDR_MAINFRAME))
 	{
-		delete pMainFrame;
+		delete p_main_frame;
 		return FALSE;
 	}
-	m_pMainWnd = pMainFrame;
+	m_pMainWnd = p_main_frame;
 
 	m_pMainWnd->DragAcceptFiles();
 
 	// Parse command line for standard shell commands, DDE, file open
-	CCommandLineInfo cmdInfo;
-	ParseCommandLine(cmdInfo);
-	if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew) // actually none
-		cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
+	CCommandLineInfo cmd_info;
+	ParseCommandLine(cmd_info);
+	if (cmd_info.m_nShellCommand == CCommandLineInfo::FileNew) // actually none
+		cmd_info.m_nShellCommand = CCommandLineInfo::FileNothing;
 
 	// Enable DDE Execute open - this allow to open data files by double clicking on it
 	EnableShellOpen();
@@ -192,13 +191,13 @@ BOOL CdbWaveApp::InitInstance()
 
 	// Dispatch commands specified on the command line.  Will return FALSE if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
-	if (!ProcessShellCommand(cmdInfo))
+	if (!ProcessShellCommand(cmd_info))
 		return FALSE;
 
 	// The main window has been initialized, so show and update it.
 	m_nCmdShow = SW_SHOWNORMAL; //SW_SHOWMAXIMIZED;  // change into THIS to start dbwave maximized
-	pMainFrame->ShowWindow(m_nCmdShow);
-	pMainFrame->UpdateWindow();
+	p_main_frame->ShowWindow(m_nCmdShow);
+	p_main_frame->UpdateWindow();
 
 	return TRUE;
 }
@@ -213,18 +212,18 @@ int CdbWaveApp::ExitInstance()
 
 	if (viewspikesmemfile_ptr_array.GetSize() != NULL)	
 	{
-		for (int i=0; i< viewspikesmemfile_ptr_array.GetSize(); i++)
-			delete (CMemFile*) viewspikesmemfile_ptr_array.GetAt(i);
+		for (auto i=0; i< viewspikesmemfile_ptr_array.GetSize(); i++)
+			delete viewspikesmemfile_ptr_array.GetAt(i);
 	}
 
 	SAFE_DELETE(m_pviewspikesMemFile);
 	SAFE_DELETE(m_psort1spikesMemFile);
 
 	// erase temporary "mdb" files
-	int i0= m_tempMDBfiles.GetCount()-1;
-	for (int i=i0; i>= 0; i--)
+	const auto i0= m_tempMDBfiles.GetCount()-1;
+	for (auto i=i0; i>= 0; i--)
 	{
-		CString cs = m_tempMDBfiles.GetAt(i);
+		auto cs = m_tempMDBfiles.GetAt(i);
 		CFile::Remove(cs);
 	}
 
@@ -243,11 +242,11 @@ public:
 	enum { IDD = IDD_ABOUTBOXDLG };
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation
 protected:
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -266,8 +265,8 @@ END_MESSAGE_MAP()
 // App command to run the dialog
 void CdbWaveApp::OnAppAbout()
 {
-	CAboutDlg aboutDlg;
-	aboutDlg.DoModal();
+	CAboutDlg about_dlg;
+	about_dlg.DoModal();
 }
 
 BOOL CAboutDlg::OnInitDialog()
@@ -285,11 +284,11 @@ BOOL CAboutDlg::OnInitDialog()
 		e->ReportError(); e->Delete();
 	}
 
-	CFileVersion cFV;
-	CString csAppName = _T("dbwave2.exe");
-	cFV.Open(csAppName);
-	GetDlgItem(IDC_DBWAVEVERSION)->SetWindowText(cFV.GetProductVersion());
-	GetDlgItem(IDC_STATIC7)->SetWindowText(cFV.GetLegalCopyright());
+	CFileVersion c_fv;
+	const CString cs_app_name = _T("dbwave2.exe");
+	c_fv.Open(cs_app_name);
+	GetDlgItem(IDC_DBWAVEVERSION)->SetWindowText(c_fv.GetProductVersion());
+	GetDlgItem(IDC_STATIC7)->SetWindowText(c_fv.GetLegalCopyright());
 
 	return TRUE;
 }
@@ -298,14 +297,13 @@ BOOL CAboutDlg::OnInitDialog()
 
 void CdbWaveApp::PreLoadState()
 {
-	BOOL bNameValid;
-	CString strName;
-	bNameValid = strName.LoadString(IDS_EDIT_MENU);
-	ASSERT(bNameValid);
-	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
-	bNameValid = strName.LoadString(IDS_EXPLORER);
-	ASSERT(bNameValid);
-	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EXPLORER);
+	CString str_name;
+	auto b_name_valid = str_name.LoadString(IDS_EDIT_MENU);
+	ASSERT(b_name_valid);
+	GetContextMenuManager()->AddMenu(str_name, IDR_POPUP_EDIT);
+	b_name_valid = str_name.LoadString(IDS_EXPLORER);
+	ASSERT(b_name_valid);
+	GetContextMenuManager()->AddMenu(str_name, IDR_POPUP_EXPLORER);
 }
 
 void CdbWaveApp::LoadCustomState()
@@ -330,16 +328,16 @@ BOOL CdbWaveApp::PreTranslateMessage(MSG* pMsg)
 
 void DisplayDaoException(CDaoException* e, int iID = 0)
 {
-	CString strMsg;
+	CString str_msg;
 	if (e->m_pErrorInfo!= nullptr)
 	{
-		strMsg.Format(
+		str_msg.Format(
 			_T("%s   (%d) at line ID %i\n\n")
 			_T("Would you like to see help?"),
-			(LPCTSTR)e->m_pErrorInfo->m_strDescription,
+			static_cast<LPCTSTR>(e->m_pErrorInfo->m_strDescription),
 			e->m_pErrorInfo->m_lErrorCode, iID);
 
-		if (AfxMessageBox(strMsg, MB_YESNO) == IDYES)
+		if (AfxMessageBox(str_msg, MB_YESNO) == IDYES)
 		{
 			WinHelp(GetDesktopWindow(),
 					e->m_pErrorInfo->m_strHelpFile,
@@ -349,7 +347,7 @@ void DisplayDaoException(CDaoException* e, int iID = 0)
 	}
 	else
 	{
-		strMsg.Format(
+		str_msg.Format(
 			_T("ERROR:CDaoException\n\n")
 			_T("SCODE_CODE      =%d\n")
 			_T("SCODE_FACILITY  =%d\n")
@@ -359,32 +357,32 @@ void DisplayDaoException(CDaoException* e, int iID = 0)
 			SCODE_FACILITY  (e->m_scode),
 			SCODE_SEVERITY  (e->m_scode),
 			ResultFromScode (e->m_scode));
-		AfxMessageBox(strMsg);
+		AfxMessageBox(str_msg);
 	}
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
 
-static TCHAR szVDS[] = _T("Default parameters");
-static TCHAR szFileEntry[] = _T("File%d");
+static TCHAR sz_vds[] = _T("Default parameters");
+static TCHAR sz_file_entry[] = _T("File%d");
 
 void CdbWaveApp::Defaultparameters(BOOL b_read)
 {	
-	TCHAR szPath[MAX_PATH];
+	TCHAR sz_path[MAX_PATH];
 	CString cspath;
 	if(SUCCEEDED(SHGetFolderPath(NULL, 
 								CSIDL_PERSONAL|CSIDL_FLAG_CREATE, 
 								NULL, 
 								0, 
-								szPath))) 
+								sz_path))) 
 	{
 		// check that directory is present - otherwise create...
-		cspath = szPath; 
+		cspath = sz_path; 
 		cspath += _T("\\My dbWave Files");
 		// test if directory already present
-		BOOL bExist = PathFileExists(cspath);
-		if (!bExist)
+		const auto b_exist = PathFileExists(cspath);
+		if (!b_exist)
 		{
 			if (!CreateDirectory(cspath, nullptr))
 				AfxMessageBox(IDS_DIRECTORYFAILED);
@@ -394,31 +392,31 @@ void CdbWaveApp::Defaultparameters(BOOL b_read)
 	TCHAR szEntry[MAX_PATH];
 	unsigned long len=MAX_PATH;
 	GetUserName(&szEntry[0], &len);
-	CString csExt(szEntry);
-	if (csExt.IsEmpty())
-		csExt= _T("dbWave2");
-	csExt+= _T(".prefs2");
-	CString csDefaultParmfile = cspath + "\\" + csExt;
+	CString cs_ext(szEntry);
+	if (cs_ext.IsEmpty())
+		cs_ext= _T("dbWave2");
+	cs_ext+= _T(".prefs2");
+	const auto cs_default_parmfile = cspath + "\\" + cs_ext;
 
 	// read data and copy into vdP
 	if (b_read)
 	{
 		// get list of parameter files (others)
 		m_csParmFiles.RemoveAll();
-		int i=0;
+		auto i=0;
 		while (i >= 0)
 		{
-			wsprintf(&szEntry[0], szFileEntry, i+1);
-			CString dummy = GetProfileString(szVDS, &szEntry[0]);
+			wsprintf(&szEntry[0], sz_file_entry, i+1);
+			auto dummy = GetProfileString(sz_vds, &szEntry[0]);
 			if (dummy.IsEmpty())
 				break;
-			if (dummy.Find(csExt) > 0)
+			if (dummy.Find(cs_ext) > 0)
 				m_csParmFiles.Add(dummy);
 			i++;
 		}
 		// get default parameter file and load data
 		if (m_csParmFiles.GetSize() <= 0)
-			m_csParmFiles.Add(csDefaultParmfile);		
+			m_csParmFiles.Add(cs_default_parmfile);		
 		ParmFile(m_csParmFiles[0], b_read);
 	}
 	// Save informations
@@ -426,17 +424,17 @@ void CdbWaveApp::Defaultparameters(BOOL b_read)
 	{
 		// save default parameter file		
 		if (m_csParmFiles.GetSize() <= 0)
-			m_csParmFiles.Add(csDefaultParmfile);
+			m_csParmFiles.Add(cs_default_parmfile);
 		if (!ParmFile(m_csParmFiles[0], b_read))
 		{
-			m_csParmFiles[0]=csDefaultParmfile;
+			m_csParmFiles[0]=cs_default_parmfile;
 			ParmFile(m_csParmFiles[0], b_read);
 		}
 		// save profile with locations of parmfiles
-		for (int i = 0; i<m_csParmFiles.GetSize(); i++)
+		for (auto i = 0; i<m_csParmFiles.GetSize(); i++)
 		{
-			wsprintf(&szEntry[0], szFileEntry, i+1);
-			WriteProfileString(szVDS, &szEntry[0], m_csParmFiles[i]);
+			wsprintf(&szEntry[0], sz_file_entry, i+1);
+			WriteProfileString(sz_vds, &szEntry[0], m_csParmFiles[i]);
 		}
 	}
 }
@@ -446,7 +444,7 @@ BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 {
 	CFile f;					// file object
 	CFileException fe;			// trap exceptions
-	BOOL bsuccess=TRUE;
+	auto bsuccess=TRUE;
 	
 	if (b_read)		// read informations ...........................
 	{
@@ -475,7 +473,7 @@ BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 		if (f.Open(csParmfile, CFile::modeCreate|CFile::modeReadWrite|CFile::shareDenyNone, &fe))
 		{
 			CArchive ar(&f, CArchive::store);
-			ar << (WORD) 10;		// nb items
+			ar << static_cast<WORD>(10);		// nb items
 			ar << m_comment;		// 1 comment
 			stiD.Serialize(ar);		// 2 STIMDETECT
 			spkDA.Serialize(ar);	// 3 SPKDETECTARRAY			
@@ -519,37 +517,35 @@ void CdbWaveApp::SetPrinterOrientation()
 
 	// Get default printer settings.
 	PRINTDLG   pd;
-	pd.lStructSize = (DWORD) sizeof(PRINTDLG);
+	pd.lStructSize = static_cast<DWORD>(sizeof(PRINTDLG));
 	if (GetPrinterDeviceDefaults(&pd))
 	{
 		// Lock memory handle.
-		DEVMODE FAR* pDevMode = (DEVMODE FAR*)::GlobalLock(m_hDevMode);
-		LPDEVNAMES lpDevNames = nullptr;
-		LPTSTR lpszDriverName, lpszDeviceName, lpszPortName;
-		HANDLE hPrinter;
+		auto FAR* p_dev_mode = static_cast<DEVMODE FAR*>(::GlobalLock(m_hDevMode));
+		HANDLE h_printer;
 
-		if (pDevMode)
+		if (p_dev_mode)
 		{
 			// Change printer settings in here.
 			if (vdP.horzRes > vdP.vertRes)
-				pDevMode->dmOrientation = DMORIENT_LANDSCAPE;
+				p_dev_mode->dmOrientation = DMORIENT_LANDSCAPE;
 			else
-				pDevMode->dmOrientation = DMORIENT_PORTRAIT;
+				p_dev_mode->dmOrientation = DMORIENT_PORTRAIT;
 			// Unlock memory handle.
-			lpDevNames = (LPDEVNAMES)GlobalLock(pd.hDevNames);
-			if (nullptr != lpDevNames)
+			const auto lp_dev_names = static_cast<LPDEVNAMES>(GlobalLock(pd.hDevNames));
+			if (nullptr != lp_dev_names)
 			{
-				lpszDriverName = (LPTSTR)lpDevNames + lpDevNames->wDriverOffset;
-				lpszDeviceName = (LPTSTR)lpDevNames + lpDevNames->wDeviceOffset;
-				lpszPortName = (LPTSTR)lpDevNames + lpDevNames->wOutputOffset;
+				const auto lpszDeviceName = reinterpret_cast<LPTSTR>(lp_dev_names) + lp_dev_names->wDeviceOffset;
+				//auto lpsz_driver_name = reinterpret_cast<LPTSTR>(lp_dev_names) + lp_dev_names->wDriverOffset;
+				//auto lpsz_port_name = reinterpret_cast<LPTSTR>(lp_dev_names) + lp_dev_names->wOutputOffset;
 
 				// functions defined in winspool.h
-				OpenPrinter(lpszDeviceName, &hPrinter, nullptr);
-				DocumentProperties(nullptr, hPrinter, lpszDeviceName, pDevMode, pDevMode, DM_IN_BUFFER | DM_OUT_BUFFER);
+				OpenPrinter(lpszDeviceName, &h_printer, nullptr);
+				DocumentProperties(nullptr, h_printer, lpszDeviceName, p_dev_mode, p_dev_mode, DM_IN_BUFFER | DM_OUT_BUFFER);
 
 				// Sync the pDevMode.
 				// See SDK help for DocumentProperties for more info.
-				ClosePrinter(hPrinter);
+				ClosePrinter(h_printer);
 				GlobalUnlock(m_hDevNames);
 			}
 			GlobalUnlock(m_hDevMode);
@@ -568,50 +564,49 @@ void CdbWaveApp::SetPrinterOrientation()
 BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames)
 {
 	//---------------------------    open dialog
-	int iReturn = -1;
-	DWORD bufferSize = 16384*sizeof(TCHAR);				// buffer / file names
-	HGLOBAL hText = ::GlobalAlloc(GHND, bufferSize);// allocate memory for this buffer      
-	if (!hText)								// memory low conditions detection
+	const DWORD buffer_size = 16384*sizeof(TCHAR);				// buffer / file names
+	const auto h_text = ::GlobalAlloc(GHND, buffer_size);// allocate memory for this buffer      
+	if (!h_text)								// memory low conditions detection
 	{										// exit if buffer not be allocated
 		AfxMessageBox(IDS_AWAVEERR01, MB_ICONEXCLAMATION);
-		::GlobalFree(hText);				// liberate memory allocated
+		::GlobalFree(h_text);				// liberate memory allocated
 		return FALSE;						// exit import procedure
 	}
 
-	LPTSTR lpText = (LPTSTR) ::GlobalLock(hText);	// lock this buffer and get a pointer to it	
-	if (nullptr != lpText)
+	const auto lp_text = static_cast<LPTSTR>(::GlobalLock(h_text));	// lock this buffer and get a pointer to it	
+	if (nullptr != lp_text)
 	{
-		DWORD wflag = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
+		const DWORD wflag = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
 
 		// prepare dialog box
 		CString filedesc;						// load file description from resources	
-		BOOL flag = filedesc.LoadString(iIDS);	// title of dialog box
+		if (!filedesc.LoadString(iIDS))
+			AfxMessageBox(_T("error loading the title of message box"));
 
 		// call file open common dialog box
 		CFileDialog fd(TRUE, nullptr, nullptr, wflag, filedesc, nullptr);
-		fd.m_ofn.lpstrFile = lpText;			// attach local buffer to get file names
-		fd.m_ofn.nMaxFile = bufferSize /sizeof(TCHAR);	// declare max size of buffer
+		fd.m_ofn.lpstrFile = lp_text;			// attach local buffer to get file nameslp_texyt
+		fd.m_ofn.nMaxFile = buffer_size /sizeof(TCHAR);	// declare max size of buffer
 		fd.m_ofn.nFilterIndex = *iFilterIndex;	// select filter item
-		CString cs_title(szTitle);
+		const CString cs_title(szTitle);
 		fd.m_ofn.lpstrTitle = cs_title;			// new title
 
 		// call dialog box and store filenames into cstring array
-		if ((IDOK == fd.DoModal()) && (0 != *lpText))// dialog box returned by CANCEL or no filename?
+		if ((IDOK == fd.DoModal()) && (0 != *lp_text))// dialog box returned by CANCEL or no filename?
 		{
 			*iFilterIndex = fd.m_ofn.nFilterIndex;		// get filter item
-			POSITION pos = fd.GetStartPosition();		// get position of first name
-			CString file_a;					// declare dummy CString to receive file names
+			auto pos = fd.GetStartPosition();		// get position of first name
 			while (pos != nullptr)				// if "CMultidoc", load other names
 			{								// while name are in, read & store
-				file_a = fd.GetNextPathName(pos);
+				CString file_a = fd.GetNextPathName(pos);
 				file_a.MakeUpper();			// convert into uppercase characters
 				filenames->Add(file_a);		// add name to the list
 			}
 		}
 	}
 	// liberate memory used
-	::GlobalUnlock(hText);
-	::GlobalFree(hText);
+	::GlobalUnlock(h_text);
+	::GlobalFree(h_text);
 
 	return TRUE;
 }
@@ -621,13 +616,13 @@ BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CS
 
 CString CdbWaveApp::Get_MyDocuments_MydbWavePath()
 {
-	TCHAR szPath[MAX_PATH];
+	TCHAR sz_path[MAX_PATH];
 	CString cspath;
 	// get the path of My Documents (current user)
-	if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL|CSIDL_FLAG_CREATE, NULL, 0, szPath))) 
+	if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL|CSIDL_FLAG_CREATE, NULL, 0, sz_path))) 
 	{
 		// check that directory is present - otherwise create...
-		cspath = szPath; 
+		cspath = sz_path; 
 		cspath += _T("\\My dbWave Files");
 
 		// create directory if necessary
@@ -662,14 +657,14 @@ void CdbWaveApp::OnFileOpen()
 	case 2:	// dat
 	case 3:	// spk
 		{
-			CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
+			auto p_dbwave_doc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
 			if (p_dbwave_doc != nullptr) 
 			{
 				p_dbwave_doc->SetClearMdbOnExit(TRUE);
 				if (p_dbwave_doc->OnNewDocument())	// create table
 				{
 					p_dbwave_doc->ImportDescFromFileList(filenames);
-					CMDIFrameWnd* p_wave_format = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
+					auto p_wave_format = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
 					ASSERT(p_wave_format != NULL);
 					m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 				}
@@ -712,36 +707,36 @@ void CdbWaveApp::OnFileNew()
 	CFileNew1 dlg;
 	if (dlg.DoModal() == IDOK)
 	{
-		int iselect = dlg.m_icursel;
+		const auto iselect = dlg.m_icursel;
 		switch(iselect)
 		{
 		case 1: // ---------------------------------------create notebook document
 			{
-			CNoteDoc* p_dbwave_doc = (CNoteDoc*) m_pNoteViewTemplate->CreateNewDocument();
-			if (p_dbwave_doc != nullptr) 
-				{
-					if (p_dbwave_doc->OnNewDocument())	// create table
+				auto* p_dbwave_doc = (CNoteDoc*) m_pNoteViewTemplate->CreateNewDocument();
+				if (p_dbwave_doc != nullptr) 
 					{
-						CMDIFrameWnd* p_wave_format = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
-						ASSERT(p_wave_format != NULL);
-						m_pNoteViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+						if (p_dbwave_doc->OnNewDocument())	// create table
+						{
+							auto p_wave_format = (CMDIFrameWnd*) m_pNoteViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
+							ASSERT(p_wave_format != NULL);
+							m_pNoteViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+						}
 					}
-				}
 			}
 			break;
 		default: // -------------------------------------- create database document
 			{
-			CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
-			if (p_dbwave_doc != nullptr) 
-				{
-					p_dbwave_doc->SetClearMdbOnExit(FALSE);				// keep file on exit
-					if (p_dbwave_doc->OnNewDocument())					// create table
+				auto* p_dbwave_doc = (CdbWaveDoc*) m_pdataViewTemplate->CreateNewDocument();
+				if (p_dbwave_doc != nullptr) 
 					{
-						CMDIFrameWnd* p_wave_format = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
-						ASSERT(p_wave_format != NULL);
-						m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+						p_dbwave_doc->SetClearMdbOnExit(FALSE);				// keep file on exit
+						if (p_dbwave_doc->OnNewDocument())					// create table
+						{
+							auto* p_wave_format = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
+							ASSERT(p_wave_format != NULL);
+							m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+						}
 					}
-				}
 			}
 			break;
 		}

@@ -100,9 +100,9 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnInitialUpdate(); // called first time after construct
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);	    	
 	//}}AFX_VIRTUAL
 
@@ -137,11 +137,11 @@ protected:
 	SPKDETECTPARM*				m_pspkDP;		// spike detection parameters
 
 protected:
-	void 	PrintFileBottomPage(CDC* pDC, CPrintInfo* pInfo);	
+	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);	
 	CString PrintConvertFileIndex(long l_first, long l_last);
 	void 	PrintComputePageSize();
 	CString PrintGetFileInfos();
-	CString PrintBars(CDC* pDC, CRect* rect);
+	CString PrintBars(CDC* p_dc, CRect* rect);
 	long 	PrintGetFileSeriesIndexFromPage(int page, int* file);
 	float	PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 

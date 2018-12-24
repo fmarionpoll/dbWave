@@ -49,7 +49,7 @@ private:
 
 public:
 	virtual BOOL	Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, 
-						DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, 
+						DWORD dw_style, const RECT& rect, CWnd* pParentWnd, 
 						UINT nID, CCreateContext* pContext = nullptr);
 	BOOL			Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAxis, int dSize, UINT nID);
 	void			DrawScalefromRuler(CRuler* pRuler);
@@ -58,7 +58,7 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

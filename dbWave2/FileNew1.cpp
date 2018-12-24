@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "FileNew1.h"
 #include "afxdialogex.h"
 

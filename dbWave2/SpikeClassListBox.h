@@ -77,7 +77,7 @@ public:
 	void ResetBarsXortag ();
 	void ReflectBarsMouseMoveMessg(HWND hwnd);
 	
-	void PrintItem(CDC* pDC, CRect* prect1, CRect* prect2, CRect* prect3,int i );
+	void PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect* prect3,int i );
 
 protected:
 	void UpdateString(void* pptr, int iclass, int nbspikes);
@@ -94,7 +94,7 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);	
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
+	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()

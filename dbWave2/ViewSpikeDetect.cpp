@@ -1583,7 +1583,7 @@ int CViewSpikeDetection::DetectMethod1(WORD schan)
 		// DETECT SPIKES ---------------------------------------------------------------
 		// detect event if value above threshold
 		long iitime;
-		auto cx = l_data_first;
+		long cx;
 		for (cx = l_data_first; cx <= l_last; cx++)
 		{
 			// ........................................ SPIKE NOT DETECTED
@@ -2113,24 +2113,24 @@ void CViewSpikeDetection::OnToolsDataseries()
 	UpdateLegends();
 }
 
-void CViewSpikeDetection::PrintDataCartridge (CDC* pDC, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars)
+void CViewSpikeDetection::PrintDataCartridge (CDC* p_dc, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars)
 {
 	const auto b_draw_f = plineViewWnd->m_parms.bDrawframe;
 	plineViewWnd->m_parms.bDrawframe = TRUE;
-	plineViewWnd->Print(pDC, prect, (mdPM->bcontours == 1));
+	plineViewWnd->Print(p_dc, prect, (mdPM->bcontours == 1));
 	plineViewWnd->m_parms.bDrawframe = b_draw_f;
 
 	// data vertical and horizontal bars
 
-	const auto comments = PrintDataBars(pDC, plineViewWnd, prect);
+	const auto comments = PrintDataBars(p_dc, plineViewWnd, prect);
 
 	const int xcol = prect->left;
 	const int ypxrow = prect->top;
 	//const int lineheight = m_logFont.lfHeight + 5;
-	pDC->TextOut(xcol, ypxrow, comments);
+	p_dc->TextOut(xcol, ypxrow, comments);
 	//ypxrow += lineheight;
 
-	pDC->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
+	p_dc->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
 	//UINT n_format = DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK;
 	//auto rect_comment = *prect;
 	//rect_comment.top = ypxrow;
@@ -2491,12 +2491,12 @@ CString CViewSpikeDetection::PrintGetFileInfos()
 
 // -------------------------------------------------------------------------------
 // print scale bars and print comments concerning the signal characteristics
-CString CViewSpikeDetection::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd, CRect* rect)
+CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CLineViewWnd* pLineViewWnd, CRect* rect)
 {
 	CString cs;
 	const CString rc(_T("\r"));
 	const CString tab(_T("     "));
-	const auto p_old_brush= (CBrush*) pDC->SelectStockObject(BLACK_BRUSH);
+	const auto p_old_brush= (CBrush*) p_dc->SelectStockObject(BLACK_BRUSH);
 	CString cs_unit;									// string for voltage or time unit	
 	const CPoint	bar_origin(-10,-10);						// bar origin at 10,10 pts on the left lower corner of the rectangle
 	//CSize	barWidth = CSize(1,1);					// width of bars (5 pixels)
@@ -2522,8 +2522,8 @@ CString CViewSpikeDetection::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 		str_comment += cs + rc;
 		// draw horizontal line
 		ihorz_bar = MulDiv(ihorz_bar, rect->Width(), pLineViewWnd->Width());
-		pDC->MoveTo(rect->left + bar_origin.x,			 rect->bottom -bar_origin.y);
-		pDC->LineTo(rect->left + bar_origin.x + ihorz_bar, rect->bottom -bar_origin.y);		
+		p_dc->MoveTo(rect->left + bar_origin.x,			 rect->bottom -bar_origin.y);
+		p_dc->LineTo(rect->left + bar_origin.x + ihorz_bar, rect->bottom -bar_origin.y);		
 	}
 
 	///// vertical voltage bars ///////////////////////////	
@@ -2539,8 +2539,8 @@ CString CViewSpikeDetection::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 	if (mdPM->bVoltageScaleBar)
 	{
 		ivert_bar = MulDiv(ivert_bar, rect->Height(), pLineViewWnd->Height());
-		pDC->MoveTo(rect->left +bar_origin.x, rect->bottom -bar_origin.y);
-		pDC->LineTo(rect->left +bar_origin.x , rect->bottom -bar_origin.y - ivert_bar);
+		p_dc->MoveTo(rect->left +bar_origin.x, rect->bottom -bar_origin.y);
+		p_dc->LineTo(rect->left +bar_origin.x , rect->bottom -bar_origin.y - ivert_bar);
 	}
 
 	// comments, bar value and chan settings for each channel	
@@ -2583,11 +2583,11 @@ CString CViewSpikeDetection::PrintDataBars(CDC* pDC, CLineViewWnd* pLineViewWnd,
 			}
 		}
 	}	
-	pDC->SelectObject(p_old_brush);
+	p_dc->SelectObject(p_old_brush);
 	return str_comment;
 }
 
-CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
+CString CViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
 {
 	const CString rc("\n");
 	CString str_comment;
@@ -2616,7 +2616,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 		}
 		
 		// display bar
-		const auto p_old_brush= (CBrush*) pDC->SelectStockObject(BLACK_BRUSH);
+		const auto p_old_brush= (CBrush*) p_dc->SelectStockObject(BLACK_BRUSH);
 		if (k > 0)
 			z = static_cast<float>(k) / z;
 		const auto vert_bar = static_cast<int>(rect->Height() * z) / 2;
@@ -2628,8 +2628,8 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* pDC, CRect* rect, BOOL bAll)
 		rect_vert_bar.right = rect_vert_bar.left + bar_width.cx;
 		rect_vert_bar.top = rect->top + (rect->Height() - vert_bar)/2;
 		rect_vert_bar.bottom = rect_vert_bar.top + vert_bar;
-		pDC->Rectangle(&rect_vert_bar);
-		pDC->SelectObject(p_old_brush);
+		p_dc->Rectangle(&rect_vert_bar);
+		p_dc->SelectObject(p_old_brush);
 	}
 
 	// spike duration 
@@ -2836,14 +2836,14 @@ int	CViewSpikeDetection::PrintGetNPages()
 // (2) OnBeginPrinting
 /////////////////////////////////////////////////////////////////////////////
 
-void CViewSpikeDetection::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_displayDetect.GetDataFirst();
 	m_lLast0 = m_displayDetect.GetDataLast();
 	m_npixels0 = m_displayDetect.Width();
 	PrintCreateFont();
-	pDC->SetBkMode (TRANSPARENT);
+	p_dc->SetBkMode (TRANSPARENT);
 }	
 
 void CViewSpikeDetection::PrintCreateFont()
@@ -2860,9 +2860,9 @@ void CViewSpikeDetection::PrintCreateFont()
 //	(3) OnPrint() -- for each page
 /////////////////////////////////////////////////////////////////////////////
 
-void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_pOldFont = pDC->SelectObject(&m_fontPrint);
+	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
 
 		// --------------------- RWhere = rectangle/row in which we plot the data, rWidth = row width
 	const auto r_width = mdPM->WidthDoc;					// page margins
@@ -2893,8 +2893,8 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	if (!mdPM->bFilterDataSource)
 		m_displayDetect.SetChanlistTransformMode(0, 0);
 
-	pDC->SetMapMode(MM_TEXT);						// change map mode to text (1 pixel = 1 logical point)
-	PrintFileBottomPage(pDC, pInfo);				// print bottom - text, date, etc
+	p_dc->SetMapMode(MM_TEXT);						// change map mode to text (1 pixel = 1 logical point)
+	PrintFileBottomPage(p_dc, pInfo);				// print bottom - text, date, etc
 
 	// --------------------- load data corresponding to the first row of current page		
 	int filenumber;									// file number and file index
@@ -2910,12 +2910,12 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	// loop through all files	--------------------------------------------------------
 	for (auto i = 0; i<m_nbrowsperpage;	i++)
 	{
-		const auto old_dc = pDC->SaveDC();					// save DC		
+		const auto old_dc = p_dc->SaveDC();					// save DC		
 		
 		// first : set rectangle where data will be printed
 		auto comment_rect = r_where;					// save RWhere for comments		
-		pDC->SetMapMode(MM_TEXT);					// 1 pixel = 1 logical unit
-		pDC->SetTextAlign(TA_LEFT); 				// set text align mode				
+		p_dc->SetMapMode(MM_TEXT);					// 1 pixel = 1 logical unit
+		p_dc->SetTextAlign(TA_LEFT); 				// set text align mode				
 
 		// load data and adjust display rectangle ----------------------------------------
 		// set data rectangle to half height to the row height
@@ -2936,14 +2936,14 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 		// if option requested, clip output to rect
 		if (mdPM->bClipRect)							// clip curve display 
-			pDC->IntersectClipRect(&m_rData);			// (eventually)
+			p_dc->IntersectClipRect(&m_rData);			// (eventually)
 
 		// print detected channel only data
 		m_displayDetect.SetChanlistflagPrintVisible(0, chan0Drawmode);
 		m_displayDetect.ResizeChannels(m_rData.Width(), 0);
 		m_displayDetect.GetDataFromDoc(l_first, l_last);	// load data from file
-		m_displayDetect.Print(pDC, &m_rData);			// print data
-		pDC->SelectClipRgn(nullptr);						// no more clipping
+		m_displayDetect.Print(p_dc, &m_rData);			// print data
+		p_dc->SelectClipRgn(nullptr);						// no more clipping
 
 		// print spike bars ---------------------------------------------------------------
 		if (mdPM->bPrintSpkBars)
@@ -2954,7 +2954,7 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 			BarsRect.right= m_rData.right;
 
 			m_spkBarView.SetTimeIntervals(l_first, l_last);	// define time interval
-			m_spkBarView.Print(pDC, &BarsRect);			// print data
+			m_spkBarView.Print(p_dc, &BarsRect);			// print data
 		}
 
 		// print spkform within a square (same width as height) ---------------------------
@@ -2964,13 +2964,13 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		m_rSpike.bottom = m_rSpike.top + r_sp_kheight;	// legends
 
 		m_spkShapeView.SetTimeIntervals(l_first, l_last);
-		m_spkShapeView.Print(pDC, &m_rSpike);
+		m_spkShapeView.Print(p_dc, &m_rSpike);
 
 		// restore DC and print comments ---------------------------------------------------
-		pDC->RestoreDC(old_dc);						// restore Display context	
-		pDC->SetMapMode(MM_TEXT);					// 1 LP = 1 pixel
-		pDC->SelectClipRgn(nullptr);					// no more clipping
-		pDC->SetViewportOrg(0, 0);					// org = 0,0        
+		p_dc->RestoreDC(old_dc);						// restore Display context	
+		p_dc->SetMapMode(MM_TEXT);					// 1 LP = 1 pixel
+		p_dc->SelectClipRgn(nullptr);					// no more clipping
+		p_dc->SetViewportOrg(0, 0);					// org = 0,0        
 
 		// print data Bars & get comments according to row within file
 		CString cs_comment;
@@ -2978,7 +2978,7 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		if (b_all)									// first row = full comment
 		{
 			cs_comment += PrintGetFileInfos();		// describe file, intervals & comments /chan
-			cs_comment += PrintDataBars(pDC, &m_displayDetect, &m_rData);	// bars and bar legends
+			cs_comment += PrintDataBars(p_dc, &m_displayDetect, &m_rData);	// bars and bar legends
 		}
 		else
 		{	// other rows: time intervals only
@@ -2990,20 +2990,20 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		comment_rect.right = m_printRect.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
-		const auto ui_flag = pDC->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
+		const auto ui_flag = p_dc->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
 		const UINT n_format = DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK;
-		pDC->DrawText(cs_comment, cs_comment.GetLength(), comment_rect, n_format);
+		p_dc->DrawText(cs_comment, cs_comment.GetLength(), comment_rect, n_format);
 
 		// print comments & bar / spike shape
 		cs_comment.Empty();
 		m_rSpike.right	= m_rSpike.left + r_sp_kheight;
-		cs_comment		= PrintSpkShapeBars(pDC, &m_rSpike, b_all);
+		cs_comment		= PrintSpkShapeBars(p_dc, &m_rSpike, b_all);
 		m_rSpike.right	= m_rSpike.left + r_sp_kwidth;
 		m_rSpike.left	-= mdPM->textseparator;
 		m_rSpike.top	= m_rSpike.bottom;
 		m_rSpike.bottom += m_logFont.lfHeight * 3;
-		pDC->DrawText(cs_comment, cs_comment.GetLength(), m_rSpike, n_format);
-		pDC->SetTextAlign(ui_flag);
+		p_dc->DrawText(cs_comment, cs_comment.GetLength(), m_rSpike, n_format);
+		p_dc->SetTextAlign(ui_flag);
 //--_____________________________________________________________________--------
 //--|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||--------
 
@@ -3029,14 +3029,14 @@ void CViewSpikeDetection::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 		m_displayDetect.SetChanlistTransformMode(0, m_pDetectParms->detectTransform);
 
 	if (m_pOldFont != nullptr)
-		pDC->SelectObject(m_pOldFont);
+		p_dc->SelectObject(m_pOldFont);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 //	(4) OnEndPrinting() - lastly
 /////////////////////////////////////////////////////////////////////////////
 
-void CViewSpikeDetection::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
+void CViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	// restore file from index and display parameters

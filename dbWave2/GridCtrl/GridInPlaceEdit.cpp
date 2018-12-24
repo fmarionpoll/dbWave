@@ -58,7 +58,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CInPlaceEdit
 
-CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
                            int nRow, int nColumn, CString sInitText, 
                            UINT nFirstChar)
 {
@@ -72,7 +72,7 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
     m_Rect = rect;  // For bizarre CE bug.
     
     DWORD dwEditStyle = WS_BORDER|WS_CHILD|WS_VISIBLE| ES_AUTOHSCROLL //|ES_MULTILINE
-        | dwStyle;
+        | dw_style;
     if (!Create(dwEditStyle, rect, pParent, nID)) return;
     
     SetFont(pParent->GetFont());

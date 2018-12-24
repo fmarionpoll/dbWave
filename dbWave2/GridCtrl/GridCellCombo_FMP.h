@@ -48,19 +48,19 @@ public:
 
 // Operations
 public:
-	virtual CSize GetCellExtent(CDC* pDC);
+	virtual CSize GetCellExtent(CDC* p_dc);
 
 // CGridCellCombo specific calls
 public:
 	void  SetOptions(const CStringArray& ar);
-	void  SetStyle(DWORD dwStyle)           { m_dwStyle = dwStyle; }
+	void  SetStyle(DWORD dw_style)           { m_dwStyle = dw_style; }
 	DWORD GetStyle()                        { return m_dwStyle;    }
 	int	  SetCurSel(int sel);
 	int   GetCurSel();
 
 
 protected:
-	virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+	virtual BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
 
 	CStringArray m_Strings;
 	DWORD        m_dwStyle;
@@ -114,7 +114,7 @@ class CGridInPlaceList : public CComboBox
 public:
 	CGridInPlaceList(CWnd* pParent,         // parent
 				 CRect& rect,           // dimensions & location
-				 DWORD dwStyle,         // window/combobox style
+				 DWORD dw_style,         // window/combobox style
 				 UINT nID,              // control ID
 				 int nRow, int nColumn, // row and column
 				 COLORREF crFore, COLORREF crBack,  // Foreground, background colour
@@ -151,7 +151,7 @@ protected:
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnDropdown();
 	afx_msg UINT OnGetDlgCode();
-	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
+	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
 
 private:

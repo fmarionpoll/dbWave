@@ -177,17 +177,17 @@ BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
 	}  
 	else  
 	{   
-		DWORD dwStyle = ES_LEFT;
+		DWORD dw_style = ES_LEFT;
 		if (GetFormat() & DT_RIGHT) 
-			dwStyle = ES_RIGHT;
+			dw_style = ES_RIGHT;
 		else if (GetFormat() & DT_CENTER) 
-			dwStyle = ES_CENTER;
+			dw_style = ES_CENTER;
 		
 		m_bEditing = TRUE;
 		
 		// InPlaceEdit auto-deletes itself
 		CGridCtrl* pGrid = GetGrid();
-		m_pEditWnd = new CInPlaceEdit(pGrid, rect, dwStyle, nID, nRow, nCol, GetText(), nChar);
+		m_pEditWnd = new CInPlaceEdit(pGrid, rect, dw_style, nID, nRow, nCol, GetText(), nChar);
 	}
 	return TRUE;
 }
@@ -251,17 +251,17 @@ void CGridDefaultCell::SetFont(const LOGFONT* plf)
 	CGridCell::SetFont(plf);
 
 	// Get the font size and hence the default cell size
-	CDC* pDC = CDC::FromHandle(::GetDC(nullptr));
-	if (pDC)
+	CDC* p_dc = CDC::FromHandle(::GetDC(nullptr));
+	if (p_dc)
 	{
-		CFont* pOldFont = pDC->SelectObject(&m_Font);
+		CFont* pOldFont = p_dc->SelectObject(&m_Font);
 
-		SetMargin(pDC->GetTextExtent(_T(" "), 1).cx);
-		m_Size = pDC->GetTextExtent(_T(" XXXXXXXXXXXX "), 14);
+		SetMargin(p_dc->GetTextExtent(_T(" "), 1).cx);
+		m_Size = p_dc->GetTextExtent(_T(" XXXXXXXXXXXX "), 14);
 		m_Size.cy = (m_Size.cy * 3) / 2;
 
-		pDC->SelectObject(pOldFont);
-		ReleaseDC(nullptr, pDC->GetSafeHdc());
+		p_dc->SelectObject(pOldFont);
+		ReleaseDC(nullptr, p_dc->GetSafeHdc());
 	}
 	else
 	{

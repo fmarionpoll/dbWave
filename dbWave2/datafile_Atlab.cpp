@@ -51,18 +51,18 @@ void CDataFileATLAB::Dump(CDumpContext& dc) const
 BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 {
 	// Read file header
-	BOOL bflag = TRUE;
+	auto bflag = TRUE;
 	m_pWFormat = pWFormat;
 	m_pArray = pArray;
 
-	char* pHeader = new (char[m_bHeaderSize]);
-	ASSERT(pHeader != NULL);
+	auto const p_header = new char[m_bHeaderSize];
+	ASSERT(p_header != NULL);
 	Seek(m_ulOffsetHeader, CFile::begin);	// position pointer
-	Read(pHeader, m_bHeaderSize);			// read header
+	Read(p_header, m_bHeaderSize);			// read header
 
 	// get A/D card type		
-	char* pchar = pHeader + DEVID;
-	short devid = *( (short*) pchar);
+	auto pchar = p_header + DEVID;
+	const auto devid = *reinterpret_cast<short*>(pchar);
 	switch (devid)
 	{
 		case 1:		pWFormat->csADcardName= _T("DT2828");		break;
@@ -82,18 +82,18 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	//unsigned short devflags = (short) *(pHeader+DEVFLAGS);
 
 	// number of data acquisition channels	
-	pchar = pHeader + SCNCNT;
+	pchar = p_header + SCNCNT;
 	pWFormat->scan_count = *((short*)pchar);	
 
 	// check if file is not corrupted
-	pchar = pHeader + SAMCNT;
-	long* plong = (long*) pchar;
-	long len1 = (long) (GetLength() - m_bHeaderSize)/2;	
+	pchar = p_header + SAMCNT;
+	auto plong = reinterpret_cast<long*>(pchar);
+	const auto len1 = static_cast<long>(GetLength() - m_bHeaderSize)/2;	
 	if (len1 != *plong)
 	{
 		*plong=len1;
 		SeekToBegin();
-		Write(pHeader, m_bHeaderSize);
+		Write(p_header, m_bHeaderSize);
 		bflag = 2;			
 	}
 	pWFormat->sample_count = *plong;
@@ -111,68 +111,68 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	//DEV_FLAGS devflags = (DEV_FLAGS)((short) *(pHeader+DEVFLAGS));
 
 	// load data acquisition comment
-	char* pcomment = pHeader + ACQCOM;					// get pointer to acqcom
-	int i=0;
+	auto pcomment = p_header + ACQCOM;					// get pointer to acqcom
+	int i;
 	for (i=0; i<ACQCOM_LEN; i++)						// loop over acqcom (80 chars)
 		if (*(pcomment+i) == 0) 
 			*(pcomment+i) = ' ';	// erase zeros
-	pcomment = pHeader + ACQCOM;						// restore pointer
-	CStringA ATLcomment = CStringA(pcomment, ACQCOM_LEN);	// load comment into string
-	pWFormat->cs_comment = ATLcomment;
+	pcomment = p_header + ACQCOM;						// restore pointer
+	auto atl_comment = CStringA(pcomment, ACQCOM_LEN);	// load comment into string
+	pWFormat->cs_comment = atl_comment;
 	pWFormat->cs_comment.TrimRight();
 
 	// assume that comment is standardized and has the following fields
-	pWFormat->csStimulus		= ATLcomment.Mid( 0, 20);
+	pWFormat->csStimulus		= atl_comment.Mid( 0, 20);
 	pWFormat->csStimulus.TrimRight();
-	pWFormat->csConcentration	= ATLcomment.Mid(20, 10);
+	pWFormat->csConcentration	= atl_comment.Mid(20, 10);
 	pWFormat->csConcentration.TrimRight();
-	pWFormat->csSensillum		= ATLcomment.Mid(30, 10);
+	pWFormat->csSensillum		= atl_comment.Mid(30, 10);
 	pWFormat->csSensillum.TrimRight();
 	pWFormat->cs_comment.Empty();
 
-	// convert acquisition time stamp (date & time) into a CTime variable	
-	char cdummy;
-	char* pfirst = pHeader + ACQDATE;
-	char* plast = pfirst+2; cdummy = *plast; *plast = 0;
-	short month = atoi(pfirst);	*plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
-	short day = atoi(pfirst);	*plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
-	short year = 1900 + atoi(pfirst); *plast = cdummy;
+	auto pfirst = p_header + ACQDATE;
+	auto plast = pfirst+2; char cdummy = *plast; *plast = 0;
+	const short month = atoi(pfirst);	*plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
+	const short day = atoi(pfirst);	*plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
+	const short year = 1900 + atoi(pfirst); *plast = cdummy;
 	
 	// convert data acquisition time
-	pfirst = pHeader +ACQTIME; 
+	pfirst = p_header +ACQTIME; 
 	plast = pfirst+2; cdummy = *plast; *plast=0;
-	short hour = atoi(pfirst); *plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
-	short min = atoi(pfirst); *plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
-	short sec = atoi(pfirst); *plast = cdummy;
+	const short hour = atoi(pfirst); *plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
+	const short min = atoi(pfirst); *plast = cdummy; pfirst = plast+1; plast = pfirst+2; cdummy = *plast; *plast=0;
+	const short sec = atoi(pfirst); *plast = cdummy;
 	pWFormat->acqtime = CTime(year, month, day, hour, min, sec);
 	
 	// clock period, sampling rate/chan and file duration	
-	pchar = pHeader+ CLKPER; plong = (long*) pchar;	
-	float clock_rate = 4.0E6f/ ((float)*plong);
+	pchar = p_header+ CLKPER; plong = (long*) pchar;
+	const auto clock_rate = 4.0E6f/ ((float)*plong);
 	pWFormat->chrate = clock_rate / pWFormat->scan_count;
 	pWFormat->duration =  pWFormat->sample_count / clock_rate;
 
 	// fill channel description with minimal infos	
-	pchar = pHeader + CHANLST; short* pchanlist = (short*) pchar;
-	pchar = pHeader + GAINLST; short* pgainlist = (short*) pchar;
-	char*  pcomtlist = pHeader + CHANCOM;
-	pchar = pHeader + XGAIN;
-	float* pxgainlist= (float*) pchar;
+	pchar = p_header + CHANLST;
+	auto pchanlist = reinterpret_cast<short*>(pchar);
+	pchar = p_header + GAINLST;
+	auto pgainlist = reinterpret_cast<short*>(pchar);
+	const auto pcomtlist = p_header + CHANCOM;
+	pchar = p_header + XGAIN;
+	auto* pxgainlist= reinterpret_cast<float*>(pchar);
 	for (i = 0; i< pWFormat->scan_count; i++)
 	{
 		pArray->channel_add();
-		CWaveChan* pChan = (CWaveChan*) pArray->get_p_channel(i);
-		pChan->am_adchannel = *pchanlist; pchanlist++;	// acq chan
-		pChan->am_gainAD = *pgainlist; pgainlist++;		// gain on the A/D card
-		short j = (short) strlen(pcomtlist);
+		auto* p_chan = pArray->get_p_channel(i);
+		p_chan->am_adchannel = *pchanlist; pchanlist++;	// acq chan
+		p_chan->am_gainAD = *pgainlist; pgainlist++;		// gain on the A/D card
+		auto j = static_cast<short>(strlen(pcomtlist));
 		if (j > 40 || j <0)
 			j = 40;
-		pChan->am_csComment = CStringA(pcomtlist, j);			// chan comment
-		pChan->am_gainamplifier = *pxgainlist;				// total gain (ampli + A/D card)
-		pChan->am_gaintotal = pChan->am_gainamplifier *((float)pChan->am_gainAD);
+		p_chan->am_csComment = CStringA(pcomtlist, j);			// chan comment
+		p_chan->am_gainamplifier = *pxgainlist;				// total gain (ampli + A/D card)
+		p_chan->am_gaintotal = p_chan->am_gainamplifier *static_cast<float>(p_chan->am_gainAD);
 		// TODO: check if resolution is computed correctly
 		//pChan->am_resolutionV = 20. / (double) (pWFormat->binspan)  / pChan->am_gaintotal;
-		pChan->am_resolutionV = pWFormat->fullscale_Volts / pChan->am_gaintotal / pWFormat->binspan;
+		p_chan->am_resolutionV = pWFormat->fullscale_Volts / p_chan->am_gaintotal / pWFormat->binspan;
 		pgainlist++;		
 	}
 
@@ -181,59 +181,59 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 		InitDummyChansInfo(i);
 
 	// 2) version dependent parameters
-	pchar = pHeader + VERSION;
-	short version = *((short*) pchar);
-	pchar = pHeader+ CYBERA320;
-	CYBERAMP* pcyberA320= (CYBERAMP*) pchar;
+	pchar = p_header + VERSION;
+	const auto version = *reinterpret_cast<short*>(pchar);
+	pchar = p_header+ CYBERA320;
+	auto* pcyber_a320= reinterpret_cast<CYBERAMP*>(pchar);
 	short* pshort;	
 	switch (version)
 	{
 		case 0:	// version 0: transfer parms from xgain && cyber to channel_instrm
 			//AfxMessageBox("Atlab header version 0", MB_OK);
 
-			if (pcyberA320->ComSpeed == 0)	// cyberAmp??
+			if (pcyber_a320->ComSpeed == 0)	// cyberAmp??
 				break;
-			InitChansFromCyberA320(pHeader, version);
+			InitChansFromCyberA320(p_header, version);
 			pWFormat->trig_mode = 0; //OLx_TRG_SOFT;
-			pchar = pHeader+ TIMING;
-			pshort = (short*) pchar;
+			pchar = p_header+ TIMING;
+			pshort = reinterpret_cast<short*>(pchar);
 			if (*pshort & EXTERNAL_TRIGGER)
 				pWFormat->trig_mode = 1; //OLx_TRG_EXTERN;
 			bflag = 2;
 			break;
 
 		case 1:	// version 1: trig parameters explicitely set			
-			if (pcyberA320->ComSpeed == 0)	// cyberAmp??
+			if (pcyber_a320->ComSpeed == 0)	// cyberAmp??
 				break;
-			InitChansFromCyberA320(pHeader, version);
-			pchar = pHeader + TRIGGER_MODE; pshort = (short*) pchar;
+			InitChansFromCyberA320(p_header, version);
+			pchar = p_header + TRIGGER_MODE; pshort = (short*) pchar;
 			pWFormat->trig_mode = *pshort;
-			pchar = pHeader + TRIGGER_CHAN; pshort = (short*) pchar;
+			pchar = p_header + TRIGGER_CHAN; pshort = (short*) pchar;
 			pWFormat->trig_chan = *pshort;
-			pchar = pHeader + TRIGGER_THRESHOLD; pshort = (short*) pchar;
+			pchar = p_header + TRIGGER_THRESHOLD; pshort = (short*) pchar;
 			pWFormat->trig_threshold = *pshort;			
 			break;
 
 		default: // version before version 0
 			pWFormat->trig_mode = 0; //OLx_TRG_SOFT;
-			pchar = pHeader+ TIMING;
-			pshort = (short*) pchar;
+			pchar = p_header+ TIMING;
+			pshort = reinterpret_cast<short*>(pchar);
 			if (*pshort & EXTERNAL_TRIGGER)
 				pWFormat->trig_mode = 1; //OLx_TRG_EXTERN;
 			break;
 	}
 
 	// init additional parameters
-	delete [] pHeader;
+	delete [] p_header;
 	return bflag;
 }
 
 void CDataFileATLAB::InitChansFromCyberA320(char *pHeader, short version)
 {
 	char* pchar= pHeader+CYBER_1;
-	CYBERCHAN* pcyber1 = (CYBERCHAN*) pchar;
+	auto* pcyber1 = reinterpret_cast<CYBERCHAN*>(pchar);
 	pchar= pHeader+CYBER_2;
-	CYBERCHAN* pcyber2 = (CYBERCHAN*) pchar;
+	auto pcyber2 = reinterpret_cast<CYBERCHAN*>(pchar);
 
 	// ATLAB(fred) version 0 did not set chan_cyber properly...	
 	// if cyber_chanx equal on both channels, assume that parameters are not correctly set
@@ -251,9 +251,9 @@ void CDataFileATLAB::InitChansFromCyberA320(char *pHeader, short version)
 		{
 			short chan = pcyber1->acqchan-1;
 			if (chan < 0) chan = 0;
-			LoadChanFromCyber(chan, (char*) pcyber1);
-			if ((short)1 == m_pWFormat->scan_count)
-				pcyber2->acqchan= (unsigned char)255;
+			LoadChanFromCyber(chan, reinterpret_cast<char*>(pcyber1));
+			if (static_cast<short>(1) == m_pWFormat->scan_count)
+				pcyber2->acqchan= static_cast<unsigned char>(255);
 		}
 		if (0 <= pcyber2->acqchan && pcyber2->acqchan <= m_pWFormat->scan_count)
 		{
@@ -267,14 +267,14 @@ void CDataFileATLAB::InitChansFromCyberA320(char *pHeader, short version)
 
 void CDataFileATLAB::LoadChanFromCyber(short i, char* pcyberchan)
 {
-	CYBERCHAN* pcyb = (CYBERCHAN*) pcyberchan;
+	auto pcyb = reinterpret_cast<CYBERCHAN*>(pcyberchan);
 	// special case if probe == "none"	: exit
-	CStringA probe = CStringA(&(pcyb->probe[0]), 8);	
+	auto probe = CStringA(&(pcyb->probe[0]), 8);	
 	if ((  probe.CompareNoCase("none    ") == 0)
 	   || (probe.CompareNoCase("0       ") == 0))
-		return;		
-	CWaveChan* pChan = (CWaveChan*) m_pArray->get_p_channel(i);
-	pChan->am_csheadstage		= probe;
+		return;
+	auto pChan = m_pArray->get_p_channel(i);
+	pChan->am_csheadstage = probe;
 	pChan->am_gainheadstage	= pcyb->gainprobe;	
 	pChan->am_csamplifier	= CString (_T("CyberAmp"));
 	pChan->am_amplifierchan		= pcyb->acqchan;
@@ -286,7 +286,7 @@ void CDataFileATLAB::LoadChanFromCyber(short i, char* pcyberchan)
 	pChan->am_csInputpos= GetCyberA320filter(pcyb->inputpos);
 	pChan->am_csInputneg= GetCyberA320filter(pcyb->inputneg);
 	pChan->am_gainamplifier = 1.;
-	pChan->am_gaintotal = (double) pcyb->gainpre * (double) pcyb->gainpost * (double) pcyb->gainprobe * (double) pChan->am_gainAD;
+	pChan->am_gaintotal = static_cast<double>(pcyb->gainpre) * static_cast<double>(pcyb->gainpost) * static_cast<double>(pcyb->gainprobe) * static_cast<double>(pChan->am_gainAD);
 }
 
 
@@ -294,49 +294,49 @@ void CDataFileATLAB::LoadChanFromCyber(short i, char* pcyberchan)
 
 CString CDataFileATLAB::GetCyberA320filter(int ncode)
 {
-	CString csCoupling;
+	CString cs_coupling;
 	switch (ncode)
 	{
-	case -10:	csCoupling= _T("GND");break;
-	case 0:		csCoupling= _T("DC" ); break;		// DC
-	case 1:		csCoupling= _T("0.1"); break;		// 0.1 Hz
-	case 10:	csCoupling= _T("1" ); break;		// 1 Hz
-	case 100:	csCoupling= _T("10"); break;		// 10 Hz
-	case 300:	csCoupling= _T("30"); break;		// 30 Hz
-	case 1000:	csCoupling= _T("100"); break;		// 100 Hz
-	case 3000:	csCoupling= _T("300"); break;		// 300 Hz
-	default:	csCoupling= _T("undefined"); break;
+	case -10:	cs_coupling= _T("GND");break;
+	case 0:		cs_coupling= _T("DC" ); break;		// DC
+	case 1:		cs_coupling= _T("0.1"); break;		// 0.1 Hz
+	case 10:	cs_coupling= _T("1" ); break;		// 1 Hz
+	case 100:	cs_coupling= _T("10"); break;		// 10 Hz
+	case 300:	cs_coupling= _T("30"); break;		// 30 Hz
+	case 1000:	cs_coupling= _T("100"); break;		// 100 Hz
+	case 3000:	cs_coupling= _T("300"); break;		// 300 Hz
+	default:	cs_coupling= _T("undefined"); break;
 	}
-	return csCoupling;
+	return cs_coupling;
 }
 
 void CDataFileATLAB::InitDummyChansInfo(short chanlistindex)
 {
-	CWaveChan* pChan = (CWaveChan*) m_pArray->get_p_channel(chanlistindex);
-	pChan->am_csamplifier = CStringA("Unknown");
-	pChan->am_csheadstage = pChan->am_csamplifier;	
-	pChan->am_gainheadstage =1;
-	pChan->am_amplifierchan = 1;
-	pChan->am_gainpre =1;	// pre-filter amplification
-	pChan->am_gainpost=1;	// post-filter amplification
-	pChan->am_notchfilt=0;	// notch filter ON/off
-	pChan->am_lowpass=0;	// low pass filter 0=DC 4....30000
-	pChan->am_offset=0.0f;	// input offset
-	pChan->am_csInputpos= CStringA( "DC");
-	pChan->am_csInputneg= CStringA( "GND");
+	auto* p_chan = m_pArray->get_p_channel(chanlistindex);
+	p_chan->am_csamplifier = CStringA("Unknown");
+	p_chan->am_csheadstage = p_chan->am_csamplifier;	
+	p_chan->am_gainheadstage =1;
+	p_chan->am_amplifierchan = 1;
+	p_chan->am_gainpre =1;	// pre-filter amplification
+	p_chan->am_gainpost=1;	// post-filter amplification
+	p_chan->am_notchfilt=0;	// notch filter ON/off
+	p_chan->am_lowpass=0;	// low pass filter 0=DC 4....30000
+	p_chan->am_offset=0.0f;	// input offset
+	p_chan->am_csInputpos= CStringA( "DC");
+	p_chan->am_csInputneg= CStringA( "GND");
 }
 
 
-BOOL CDataFileATLAB::CheckFileType(CFile* f, int bfileoffset)
+BOOL CDataFileATLAB::CheckFileType(CFile* f)
 {
 	// ------lit octets testes pour determiner type de fichier
-	WORD wAtlab;			// struct for ATLab file
-	BOOL flag = DOCTYPE_UNKNOWN;	
+	WORD w_atlab;			// struct for ATLab file
+	auto flag = DOCTYPE_UNKNOWN;	
 	f->Seek(m_ulOffsetHeader, CFile::begin);	// position pointer to start of file
-	f->Read(&wAtlab, sizeof(wAtlab));		// Read data
+	f->Read(&w_atlab, sizeof(w_atlab));		// Read data
 
 	// test Atlab 
-	if (wAtlab == 0xAAAA) //	//&&( tab[2] == 0x07 || tab[2] == 0x06)	    	
+	if (w_atlab == 0xAAAA) //	//&&( tab[2] == 0x07 || tab[2] == 0x06)	    	
 		flag = m_idType;
 	return flag;
 }

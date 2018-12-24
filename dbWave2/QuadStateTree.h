@@ -42,10 +42,10 @@
 
 enum TVCS_CHECKSTATE                // Checkbox state codes, compatible with CTreeCtrl::SetCheck()
 {
-    TVCS_NONE          = -1,        // No checkbox associated with this item
-    TVCS_UNCHECKED     =  0,        // BST_UNCHECKED equivalent
-    TVCS_CHECKED       =  1,        // BST_CHECKED 
-    TVCS_INDETERMINATE =  2         // BST_INDETERMINATE
+    TVCS_NONE			= -1,        // No checkbox associated with this item
+	TVCS_UNCHECKED		=  0,        // BST_UNCHECKED equivalent
+    TVCS_CHECKED		=  1,        // BST_CHECKED 
+    TVCS_INDETERMINATE	=  2         // BST_INDETERMINATE
 };
 
 typedef struct tagTVNCHECK          // Information for the TVN_CHECK notification code
@@ -71,8 +71,8 @@ public:
     TVCS_CHECKSTATE GetCheck (HTREEITEM hTreeItem) const;
     BOOL            SetCheck (HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState = TVCS_CHECKED);
 
-    virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID);
-    virtual BOOL CreateEx(DWORD dwExStyle, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID);
+    virtual BOOL Create(DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
+    virtual BOOL CreateEx(DWORD dwExStyle, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
 
 private:
     void    BuildBitmap      ();

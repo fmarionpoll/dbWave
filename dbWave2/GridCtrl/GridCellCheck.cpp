@@ -53,11 +53,11 @@ CGridCellCheck::CGridCellCheck() : CGridCell()
 	//m_Rect.IsRectNull();
 }
 
-CSize CGridCellCheck::GetCellExtent(CDC* pDC)
+CSize CGridCellCheck::GetCellExtent(CDC* p_dc)
 {
 	// Using SM_CXHSCROLL as a guide to the size of the checkbox
 	int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2*GetMargin();	
-	CSize	cellSize = CGridCell::GetCellExtent(pDC);	
+	CSize	cellSize = CGridCell::GetCellExtent(p_dc);	
 	cellSize.cx += nWidth;	
 	cellSize.cy = max (cellSize.cy, nWidth);	
 	return  cellSize;
@@ -78,9 +78,9 @@ BOOL CGridCellCheck::GetTextRect( LPRECT pRect)
 }
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
-BOOL CGridCellCheck::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
+BOOL CGridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
 {
-	BOOL bResult = CGridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
+	BOOL bResult = CGridCell::Draw(p_dc, nRow, nCol, rect,  bEraseBkgnd);
 
 #ifndef _WIN32_WCE
 	// Store the cell's dimensions for later
@@ -93,7 +93,7 @@ BOOL CGridCellCheck::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bErase
 	// if (CheckRect.Width() < rect.Width() && CheckRect.Height() < rect.Height()) {
 
 	// Do the draw 
-	pDC->DrawFrameControl(GetCheckPlacement(), DFC_BUTTON, 
+	p_dc->DrawFrameControl(GetCheckPlacement(), DFC_BUTTON, 
 		(m_bChecked)? DFCS_BUTTONCHECK | DFCS_CHECKED : DFCS_BUTTONCHECK);
 
 	// }

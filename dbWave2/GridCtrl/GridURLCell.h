@@ -19,7 +19,7 @@ public:
 	CGridURLCell();
 	virtual ~CGridURLCell();
 
-	virtual BOOL     Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+	virtual BOOL     Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
 	virtual BOOL     Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
 	virtual LPCTSTR  GetTipText() { return nullptr; }
 	void SetAutoLaunchUrl(BOOL bLaunch = TRUE) { m_bLaunchUrl = bLaunch;	}

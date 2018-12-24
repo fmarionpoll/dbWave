@@ -9,8 +9,8 @@ class CIntervalsAndLevels : public CObject
 public :
 	CIntervalsAndLevels();	
 	virtual		~CIntervalsAndLevels();
-	virtual void Serialize(CArchive& ar);	
-	void operator = (const CIntervalsAndLevels& arg);
+	void Serialize(CArchive& ar) override;	
+	CIntervalsAndLevels& operator = (const CIntervalsAndLevels& arg);
 
 	inline long	GetiiTime(int i) { return intervalsArray.GetAt(i); };
 	inline void	SetiiTime(int i, long iitime) { intervalsArray.SetAt(i, iitime);};

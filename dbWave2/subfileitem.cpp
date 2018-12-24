@@ -43,18 +43,18 @@ CSubfileItem::~CSubfileItem()
 
 ULONGLONG CSubfileItem::Write(CFile*  pfile)
 {
-	ULONGLONG l_first = pfile->GetPosition();	// current file position
+	const auto l_first = pfile->GetPosition();	// current file position
 
-	pfile->Write(&m_rec.szLabel, (UINT) LABEL_LEN+1);
+	pfile->Write(&m_rec.szLabel, static_cast<UINT>(LABEL_LEN)+1);
 	m_rec.ucEncoding = UL_MODE;
-	pfile->Write(&m_rec.ucEncoding, (UINT) 1);
+	pfile->Write(&m_rec.ucEncoding, static_cast<UINT>(1));
 
-	pfile->Write(&m_rec.wCode,		(UINT) sizeof(WORD));
-	pfile->Write(&m_rec.ulOffset,	(UINT) sizeof(ULONGLONG));
-	pfile->Write(&m_rec.ulLength,	(UINT) sizeof(ULONGLONG));
-	pfile->Write(&m_rec.itemnb,		(UINT) sizeof(int));
-	
-	ULONGLONG l_last = pfile->GetPosition();		// file position after writing
+	pfile->Write(&m_rec.wCode,		static_cast<UINT>(sizeof(WORD)));
+	pfile->Write(&m_rec.ulOffset,	static_cast<UINT>(sizeof(ULONGLONG)));
+	pfile->Write(&m_rec.ulLength,	static_cast<UINT>(sizeof(ULONGLONG)));
+	pfile->Write(&m_rec.itemnb,		static_cast<UINT>(sizeof(int)));
+
+	const auto l_last = pfile->GetPosition();		// file position after writing
 	return (l_last - l_first);					// return length of data written
 }
 
@@ -64,41 +64,42 @@ ULONGLONG CSubfileItem::Write(CFile*  pfile)
 
 void CSubfileItem::Read(CFile* pfile)
 {
-	pfile->Read(&m_rec.szLabel, (UINT) LABEL_LEN+1);
-	UINT ucEncoding = 0;
-	pfile->Read(&ucEncoding, (UINT) 1);
+	pfile->Read(&m_rec.szLabel, static_cast<UINT>(LABEL_LEN)+1);
+	UINT uc_encoding = 0;
+	pfile->Read(&uc_encoding, static_cast<UINT>(1));
 
-	if (UL_MODE == ucEncoding)
+	if (UL_MODE == uc_encoding)
 	{
-		pfile->Read(&m_rec.wCode,		(UINT) sizeof(WORD));
-		pfile->Read(&m_rec.ulOffset,	(UINT) sizeof(ULONGLONG));
-		pfile->Read(&m_rec.ulLength,	(UINT) sizeof(ULONGLONG));
-		pfile->Read(&m_rec.itemnb,		(UINT) sizeof(int));	
+		pfile->Read(&m_rec.wCode,		static_cast<UINT>(sizeof(WORD)));
+		pfile->Read(&m_rec.ulOffset,	static_cast<UINT>(sizeof(ULONGLONG)));
+		pfile->Read(&m_rec.ulLength,	static_cast<UINT>(sizeof(ULONGLONG)));
+		pfile->Read(&m_rec.itemnb,		static_cast<UINT>(sizeof(int)));	
 	}
 	else
 	{
-		ASSERT(NORMAL_MODE == ucEncoding);
-		pfile->Read(&m_rec.wCode, (UINT) sizeof(WORD));
-		long lValue;
-		pfile->Read(&lValue, (UINT) sizeof(long));
-		m_rec.ulOffset = lValue;
-		pfile->Read(&lValue, (UINT) sizeof(long));
-		m_rec.ulLength = lValue;
-		pfile->Read(&m_rec.itemnb, (UINT) sizeof(int));	
+		ASSERT(NORMAL_MODE == uc_encoding);
+		pfile->Read(&m_rec.wCode, static_cast<UINT>(sizeof(WORD)));
+		long l_value;
+		pfile->Read(&l_value, static_cast<UINT>(sizeof(long)));
+		m_rec.ulOffset = l_value;
+		pfile->Read(&l_value, static_cast<UINT>(sizeof(long)));
+		m_rec.ulLength = l_value;
+		pfile->Read(&m_rec.itemnb, static_cast<UINT>(sizeof(int)));	
 	}
 }
 
 void CSubfileItem::SetLabel(char* pszLabel)
 {
-	char* plab = &m_rec.szLabel[0];
-	int i=0;
-	for (i=0; i< LABEL_LEN; i++, plab++, pszLabel++)
+	auto plab = &m_rec.szLabel[0];
+	auto i=0;
+	for (auto j=i; j< LABEL_LEN; j++, i++, plab++, pszLabel++)
 	{
 		if (*pszLabel == 0)
 			break;
 		*plab = *pszLabel;
 	}
-	for (i; i<LABEL_LEN;i++, plab++)
+
+	for (auto k=i; k<LABEL_LEN;k++, plab++)
 		*plab=' ';
 	m_rec.szLabel[LABEL_LEN]=0;
 }

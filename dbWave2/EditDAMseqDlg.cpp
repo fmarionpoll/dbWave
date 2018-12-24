@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "EditDAMseqDlg.h"
 #include "afxdialogex.h"
 
@@ -74,8 +74,8 @@ void CEditDAMseqDlg::OnBnClickedMseqRandomSeed()
 {
 	UpdateData(TRUE);
 
-	CTime theTime = CTime::GetCurrentTime();
-	UINT seed = ((theTime.GetSecond() << 8) + (theTime.GetMinute() << 4) + (theTime.GetHour())) * 10000000 & 0x7fffffff;
+	auto the_time = CTime::GetCurrentTime();
+	const UINT seed = ((the_time.GetSecond() << 8) + (the_time.GetMinute() << 4) + (the_time.GetHour())) * 10000000 & 0x7fffffff;
 	m_mSeqSeed = seed;
 	UpdateData(FALSE);
 }

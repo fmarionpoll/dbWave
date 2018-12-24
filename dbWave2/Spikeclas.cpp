@@ -8,14 +8,6 @@
 #define new DEBUG_NEW
 #endif
 
-/**************************************************************************
- function:  CSpikeClass()
- purpose:	constructor
- parameters:
- returns:	
- comments:
- **************************************************************************/
-
 CSpikeClass::CSpikeClass()
 {
 	m_NClass=-1;
@@ -26,13 +18,6 @@ CSpikeClass::CSpikeClass()
 	m_pEArray = nullptr;
 }
 
-/**************************************************************************
- function:  CSpikeClass()
- purpose:	constructor
- parameters:int SpikeSize Size of the Spike
- returns:	
- comments:
- **************************************************************************/
 CSpikeClass::CSpikeClass(int SpikeSize)
 {
 	m_NClass=-1;
@@ -43,13 +28,6 @@ CSpikeClass::CSpikeClass(int SpikeSize)
 	m_pEArray = nullptr;
 }
 
-/**************************************************************************
- function:  ~CSpikeClass()
- purpose:	destructor
- parameters:
- returns:	
- comments:
- **************************************************************************/
 CSpikeClass::~CSpikeClass()
 {
 	EraseData();
@@ -68,9 +46,6 @@ void CSpikeClass::EraseData()
 	m_EArraySize=NULL;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeClass serialization
-
 IMPLEMENT_SERIAL(CSpikeClass, CObject, 0 /* schema number*/ )
 
 void CSpikeClass::Serialize(CArchive& ar)
@@ -79,27 +54,31 @@ void CSpikeClass::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{   
 		// store attributes
-		ar << (WORD)m_NClass << (WORD)m_SpikeSize << m_BufferSize; 
+		ar << static_cast<WORD>(m_NClass);
+		ar << static_cast<WORD>(m_SpikeSize);
+		ar << m_BufferSize;
 		// store array
-		for (int i=0;i<m_NClass;i++)
-			ar << (WORD)*(m_pEArray+i);
+		for (auto i=0;i<m_NClass;i++)
+			ar << static_cast<WORD>(*(m_pEArray + i));
 		// store buffer
-		for (int i=0;i<(m_NClass*m_SpikeSize);i++)
-			ar << (WORD)*(m_pRWBuffer+i);
+		for (auto i=0;i<(m_NClass*m_SpikeSize);i++)
+			ar << static_cast<WORD>(*(m_pRWBuffer + i));
 	}
 	else
 	{   
 		// load attributes
-		ar >> w1 >> w2 >> m_BufferSize;
+		ar >> w1;
+		ar >> w2;
+		ar >> m_BufferSize;
 		SizeNclasses(w1, w2);
 		// load array
-		for (int i=0;i<m_NClass;i++)
+		for (auto i=0;i<m_NClass;i++)
 		{
 			ar >> w1;
 			*(m_pEArray+i) = w1;
 		}
 
-		for (int i=0;i<(m_NClass*m_SpikeSize);i++)
+		for (auto i=0;i<(m_NClass*m_SpikeSize);i++)
 		{
 			ar >> w1;
 			*(m_pRWBuffer+i) = w1;
@@ -112,31 +91,31 @@ BOOL CSpikeClass::SizeNclasses(int nclasses, int spikesize)
 	if (nclasses * spikesize == 0)
 		return FALSE;
 
-	BOOL bRet = FALSE;
-	size_t wsize = nclasses*spikesize * sizeof(short);
-	size_t isize = nclasses * sizeof(int);
-	short*	pRWBuffer = nullptr;
-	int*	pEArray = nullptr;
+	auto b_ret = FALSE;
+	const auto wsize = nclasses*spikesize * sizeof(short);
+	const auto isize = nclasses * sizeof(int);
+	short*	p_rw_buffer;
+	int*	p_e_array;
 
 	if (m_pRWBuffer == nullptr)
 	{
-		pRWBuffer = (short*)	malloc (wsize);
-		pEArray	= (int*)	malloc (isize);
+		p_rw_buffer = static_cast<short*>(malloc(wsize));
+		p_e_array	= static_cast<int*>(malloc(isize));
 	}
 	else
 	{
-		pRWBuffer = (short*)	realloc (m_pRWBuffer, wsize);
-		pEArray	= (int*)	realloc (m_pEArray, isize);
+		p_rw_buffer = static_cast<short*>(realloc(m_pRWBuffer, wsize));
+		p_e_array	= static_cast<int*>(realloc(m_pEArray, isize));
 	}
 
-	if (pRWBuffer != nullptr && pEArray != nullptr)
+	if (p_rw_buffer != nullptr && p_e_array != nullptr)
 	{
-		m_pRWBuffer = pRWBuffer;
-		m_pEArray = pEArray;
+		m_pRWBuffer = p_rw_buffer;
+		m_pEArray = p_e_array;
 		m_NClass=nclasses;
 		m_SpikeSize=spikesize;	
-		bRet = TRUE;
+		b_ret = TRUE;
 	}
 	
-	return bRet;
+	return b_ret;
 }

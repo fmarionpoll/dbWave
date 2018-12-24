@@ -38,9 +38,9 @@ public:
 	virtual void Serialize( CArchive& archive );
 
 public:
-	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);  	
-	void	EraseBkgnd(CDC *pDC);
-	void	PlotToBitmap(CDC *pDC);
+	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);  	
+	void	EraseBkgnd(CDC *p_dc);
+	void	PlotToBitmap(CDC *p_dc);
 	inline	COLORREF GetColor(int i) const {return m_colorTable[i];}
 	inline	void	SetColor(int i, COLORREF ccolor) { m_colorTable[i] = ccolor; }
 	inline	void	SetString(CString cs) {m_csEmpty =cs;}
@@ -109,13 +109,13 @@ public:
 	CRulerBar*	m_pYRulerBar;
 
 public:
-	void		DrawGrid(CDC *pDC);
+	void		DrawGrid(CDC *p_dc);
 	void		AdjustDisplayRect(CRect* rect);
 protected:
-	void		DrawGridEvenlySpaced(CDC *pDC);
-	void		DrawGridFromRuler(CDC * pDC, CRuler * pRuler);
-	void		DrawGridNicelySpaced(CDC *pDC);
-	void		DrawScalefromRuler(CDC *pDC, CRuler* scale);
+	void		DrawGridEvenlySpaced(CDC *p_dc);
+	void		DrawGridFromRuler(CDC * p_dc, CRuler * pRuler);
+	void		DrawGridNicelySpaced(CDC *p_dc);
+	void		DrawScalefromRuler(CDC *p_dc, CRuler* scale);
 
 	// tags ------------------------------------------------------------------------
 public:
@@ -213,8 +213,8 @@ protected:
 
 // Operations
 public:
-	void DisplayVTtags(CDC* pDC);
-	void DisplayHZtags(CDC* pDC);
+	void DisplayVTtags(CDC* p_dc);
+	void DisplayHZtags(CDC* p_dc);
 	void XorVTtag(int xpoint);		// xor vertical line at point.x	
 	void XorTempVTtag(int xpoint);
 	void XorHZtag(int ypoint);	// xor horizontal line at point.y	
@@ -223,7 +223,7 @@ public:
 	void PlotToBitmap(CBitmap* pBitmap);
 
 protected:
-	void		PrepareDC(CDC* pDC, CPrintInfo* pInfo = nullptr);
+	void		PrepareDC(CDC* p_dc, CPrintInfo* pInfo = nullptr);
 	void		CaptureCursor();
 	void		ReleaseCursor();
 	void		SendMyMessage(int code, int codeparm);
@@ -242,14 +242,14 @@ protected:
 	virtual void PreSubclassWindow( );
 
 public:
-	virtual void PlotDatatoDC(CDC* pDC);
+	virtual void PlotDatatoDC(CDC* p_dc);
 
 	// Generated message map functions
 protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg void OnPaint();
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

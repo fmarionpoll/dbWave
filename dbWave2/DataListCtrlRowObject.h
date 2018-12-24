@@ -44,7 +44,7 @@ public:
 	CAcqDataDoc*	pdataDoc;
 	CSpikeDoc*		pspikeDoc;
 
-	void operator = (const CDataListCtrlRowObject& arg);	// operator redefinition
+	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);					// overridden for document i/o
 };
 

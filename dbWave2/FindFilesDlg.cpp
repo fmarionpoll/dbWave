@@ -3,7 +3,7 @@
 
 #include "StdAfx.h"
 #include "FindFilesDlg.h"
-#include <shlobj.h>
+//#include <shlobj.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -103,7 +103,7 @@ void CFindFilesDlg::OnOK()
 		OnSearch();
 	
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
-	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
+	auto p_app = (CdbWaveApp*) AfxGetApp();
 	p_app->ivO.path = m_path;
 	p_app->ivO.bImportDuplicateFiles = ((CButton*) GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
 
@@ -126,20 +126,18 @@ void CFindFilesDlg::OnSearch()
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
 	m_ppath.Add(m_path);							// add at least one path (root)
-	int i=0;
-	int ilast = 0;
-
+	
 	// scan subdirectories
 	if (m_bSubtreeSearch)
 		TraverseDirectory(m_path);
 
 	// scan for files within the directories
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_SHOW);
-	for (i= 0; i<= m_ppath.GetUpperBound(); i++)
+	for (auto i= 0; i<= m_ppath.GetUpperBound(); i++)
 	{
-		CString csDir = m_ppath.GetAt(i);
-		GetDlgItem(IDC_STATIC3)->SetWindowText(csDir);
-		FindFiles(csDir);
+		auto cs_dir = m_ppath.GetAt(i);
+		GetDlgItem(IDC_STATIC3)->SetWindowText(cs_dir);
+		FindFiles(cs_dir);
 		DisplaynFound();
 	} 
 
@@ -158,24 +156,24 @@ void CFindFilesDlg::DisplaynFound()
 void CFindFilesDlg::TraverseDirectory (CString path)
 {
 	CFileFind finder;
-	CString strWildcard = path;
-	strWildcard += _T("\\*.*"); 
+	auto str_wildcard = path;
+	str_wildcard += _T("\\*.*"); 
 
    // start working for files
-   BOOL bWorking = finder.FindFile(strWildcard);
-   while (bWorking)
+	auto b_working = finder.FindFile(str_wildcard);
+   while (b_working)
    {
-	  bWorking = finder.FindNextFile();
-	  // skip . and .. files; otherwise, we'd recur infinitely!
-	  if (finder.IsDots())
+		b_working = finder.FindNextFile();
+		// skip . and .. files; otherwise, we'd recur infinitely!
+		if (finder.IsDots())
 		 continue;
-	  // if it's a directory, recursively search it
-	  if (finder.IsDirectory())
-	  {
-		 CString str = finder.GetFilePath();
-		 m_ppath.Add(str);
-		 TraverseDirectory(str);
-	  }
+		// if it's a directory, recursively search it
+		if (finder.IsDirectory())
+		{
+			auto str = finder.GetFilePath();
+			m_ppath.Add(str);
+			TraverseDirectory(str);
+		}
    }
 }
 
@@ -183,13 +181,12 @@ void CFindFilesDlg::TraverseDirectory (CString path)
 void CFindFilesDlg::FindFiles (CString path)
 {
 	CFileFind finder;
-	CString strWildcard = path + _T("\\") + m_searchString;
-	CString cs_dummy;
-	BOOL bWorking = finder.FindFile(strWildcard);
-	while (bWorking)
+	const auto str_wildcard = path + _T("\\") + m_searchString;
+	auto b_working = finder.FindFile(str_wildcard);
+	while (b_working)
 	{
-		bWorking = finder.FindNextFile();
-		cs_dummy = finder.GetFilePath();
+		b_working = finder.FindNextFile();
+		auto cs_dummy = finder.GetFilePath();
 		if (1 != m_ioption && 0 == (cs_dummy.Right(3)).CompareNoCase(_T("del")) )
 			continue;
 		if (m_bexcludecloud)

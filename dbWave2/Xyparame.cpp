@@ -2,18 +2,14 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "resource.h"
-#include "Editctrl.h"
+//#include "Editctrl.h"
 #include "Xyparame.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// XYParametersDlg dialog
-
 
 XYParametersDlg::XYParametersDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(XYParametersDlg::IDD, pParent)
@@ -28,7 +24,6 @@ XYParametersDlg::XYParametersDlg(CWnd* pParent /*=NULL*/)
 	m_xparam = TRUE;
 	m_yparam = TRUE;
 }
-
 
 void XYParametersDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -48,10 +43,6 @@ BEGIN_MESSAGE_MAP(XYParametersDlg, CDialog)
 	ON_EN_CHANGE(IDC_YEXTENT, OnEnChangeYextent)
 	ON_EN_CHANGE(IDC_YZERO, OnEnChangeYzero)
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// XYParametersDlg message handlers
 
 BOOL XYParametersDlg::OnInitDialog()
 {

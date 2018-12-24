@@ -65,8 +65,8 @@ public:
 	void				SortStimArray();
 	
 public: 	
-	void ExportSpkPSTH				(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, CString csFileComment);	// 0
-	void ExportSpkAmplitHistogram	(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, CString csFileComment);	// 4
+	void ExportSpkPSTH				(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString& csFileComment);	// 0
+	void ExportSpkAmplitHistogram	(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, const CString& csFileComment);	// 4
 	void ExportSpkAttributesOneFile	(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);					// 1,2,3
 	void ExportSpkFileComment		(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int iclass, const CString& csFileComment);
 	void ExportSpkLatencies			(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, CString csFileComment);

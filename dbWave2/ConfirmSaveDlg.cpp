@@ -1,7 +1,7 @@
 // ConfirmSaveDlg.cpp : implementation file
 //
 #include "StdAfx.h"
-#include "dbWave.h"
+//#include "dbWave.h"
 #include "ConfirmSaveDlg.h"
 
 #ifdef _DEBUG

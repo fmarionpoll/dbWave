@@ -1,4 +1,5 @@
 #pragma once
+#include "Editctrl.h"
 
 // xyparame.h : header file
 //

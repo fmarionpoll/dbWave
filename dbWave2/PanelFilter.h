@@ -34,7 +34,7 @@ protected:
 	void PopulateItemFromTableLong(DB_ITEMDESC* pdesc);
 	void PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc);
 	void PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc);
-	void InsertAlphabetic(CString cs, CStringArray &csArray);
+	void InsertAlphabetic(const CString& cs, CStringArray &csArray);
 	void BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem);
 	void BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem);
 	void BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem);
@@ -48,7 +48,7 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* p_wnd, CPoint point);
 	afx_msg void OnUpdateTree();
 	afx_msg void OnApplyFilter();
 	afx_msg void OnPaint();

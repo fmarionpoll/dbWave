@@ -31,44 +31,47 @@ USBPxxPARAMETERS::~USBPxxPARAMETERS()
 {
 }
 
-void USBPxxPARAMETERS::operator=(const USBPxxPARAMETERS & arg)
+USBPxxPARAMETERS & USBPxxPARAMETERS::operator=(const USBPxxPARAMETERS & arg)
 {
-	DeviceHandle = arg.DeviceHandle;
-	LPFc = arg.LPFc;
-	HPFc = arg.HPFc;
-	indexgain = arg.indexgain;
-	indexCoupling = arg.indexCoupling;
-	indexClockSource = arg.indexClockSource;
-	indexPClock = arg.indexPClock;
-	ChannelNumber = arg.ChannelNumber;
-	indexLPFilterType = arg.indexLPFilterType;
-	indexHPFilterType = arg.indexHPFilterType;
-	SerialNumber = arg.SerialNumber;
-	ProductID = arg.ProductID;
-	RevisionHigh = arg.RevisionHigh;
-	RevisionLow = arg.RevisionLow;
-	Description = arg.Description;
-	csCoupling = arg.csCoupling;
-	csClockSource = arg.csClockSource;
-	csPClock = arg.csPClock;
-	csLPFilterType = arg.csLPFilterType;
-	csHPFilterType = arg.csHPFilterType;
+	if (this != &arg) {
+		DeviceHandle = arg.DeviceHandle;
+		LPFc = arg.LPFc;
+		HPFc = arg.HPFc;
+		indexgain = arg.indexgain;
+		indexCoupling = arg.indexCoupling;
+		indexClockSource = arg.indexClockSource;
+		indexPClock = arg.indexPClock;
+		ChannelNumber = arg.ChannelNumber;
+		indexLPFilterType = arg.indexLPFilterType;
+		indexHPFilterType = arg.indexHPFilterType;
+		SerialNumber = arg.SerialNumber;
+		ProductID = arg.ProductID;
+		RevisionHigh = arg.RevisionHigh;
+		RevisionLow = arg.RevisionLow;
+		Description = arg.Description;
+		csCoupling = arg.csCoupling;
+		csClockSource = arg.csClockSource;
+		csPClock = arg.csPClock;
+		csLPFilterType = arg.csLPFilterType;
+		csHPFilterType = arg.csHPFilterType;
+	}
+	return *this;
 }
 
 long USBPxxPARAMETERS::Write(CFile * datafile)
 {
-	ULONGLONG p1 = datafile->GetPosition();
+	const auto p1 = datafile->GetPosition();
 	CArchive ar(datafile, CArchive::store);
 	Serialize(ar);
 	ar.Close();
-	ULONGLONG p2 = datafile->GetPosition();
-	return (long)(p2 - p1);
+	const auto p2 = datafile->GetPosition();
+	return static_cast<long>(p2 - p1);
 }
 
 BOOL USBPxxPARAMETERS::Read(CFile * datafile)
 {
 	CArchive ar(datafile, CArchive::load);
-	BOOL flag = TRUE;
+	auto flag = TRUE;
 	try
 	{
 		Serialize(ar);
@@ -86,7 +89,7 @@ void USBPxxPARAMETERS::Serialize(CArchive & ar)
 {
 	if (ar.IsStoring())
 	{
-		WORD wversion = 1;
+		const WORD wversion = 1;
 		ar << wversion;
 
 		int nitems = 2; ar << nitems;
@@ -169,8 +172,8 @@ IMPLEMENT_DYNCREATE(CUSBPxxS1Ctl, CWnd)
 
 // CUSBPxxS1Ctl properties
 //**************************************************************************************
-// Read LPFc - LPFc is the low pass filter corner frequency.  The InVal is not used.
-//   OutVal will contain the returned value after the call.
+// Read LPFc - LPFc is the low pass filter corner frequency.  The in_val is not used.
+//   out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPGF-S1
@@ -178,16 +181,16 @@ IMPLEMENT_DYNCREATE(CUSBPxxS1Ctl, CWnd)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readLPFC(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_LPFC, &InVal, &OutVal);
-	d->LPFc = OutVal.fltVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_LPFC, &in_val, &out_val);
+	d->LPFc = out_val.fltVal;
 }
 
 //**************************************************************************************
-// Read HPFc - HPFc is the high pass filter corner frequency.  The InVal is not used.
-//   OutVal will contain the returned value after the call.
+// Read HPFc - HPFc is the high pass filter corner frequency.  The in_val is not used.
+//   out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPHP-S1
@@ -195,11 +198,11 @@ void CUSBPxxS1Ctl::readLPFC(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readHPFC(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_HPFC, &InVal, &OutVal);
-	d->HPFc = OutVal.fltVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_HPFC, &in_val, &out_val);
+	d->HPFc = out_val.fltVal;
 }
 
 //**************************************************************************************
@@ -214,8 +217,8 @@ void CUSBPxxS1Ctl::readHPFC(USBPxxPARAMETERS *d)
 //		7 = 200x
 //		8 = 500x
 //		9 = 1000x
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPIA-S1
@@ -225,11 +228,11 @@ void CUSBPxxS1Ctl::readHPFC(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readGain(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_GAIN, &InVal, &OutVal);
-	d->indexgain = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_GAIN, &in_val, &out_val);
+	d->indexgain = out_val.lVal;
 	d->Gain = allig_Gain[d->indexgain];
 }
 
@@ -239,8 +242,8 @@ void CUSBPxxS1Ctl::readGain(USBPxxPARAMETERS *d)
 //		0 = DC coupling
 //		1 = AC coupling
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 // csCoupling will containe either DC or AC as a string
 //
 // Modules where this call is useful:
@@ -249,11 +252,11 @@ void CUSBPxxS1Ctl::readGain(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readCoupling(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_COUPLING, &InVal, &OutVal);
-	d->indexCoupling = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_COUPLING, &in_val, &out_val);
+	d->indexCoupling = out_val.lVal;
 	d->csCoupling = allig_Coupling[d->indexCoupling];
 }
 
@@ -266,8 +269,8 @@ void CUSBPxxS1Ctl::readCoupling(USBPxxPARAMETERS *d)
 //		0 = Internal
 //		1 = External
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPGF-S1
@@ -275,11 +278,11 @@ void CUSBPxxS1Ctl::readCoupling(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readClocksource(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_CLOCKSOURCE, &InVal, &OutVal);
-	d->indexClockSource = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_CLOCKSOURCE, &in_val, &out_val);
+	d->indexClockSource = out_val.lVal;
 	d->csClockSource = allig_ClockSource[d->indexClockSource];
 }
 
@@ -298,8 +301,8 @@ void CUSBPxxS1Ctl::readClocksource(USBPxxPARAMETERS *d)
 //		0 = Disabled
 //		1 = Enabled
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPGF-S1
@@ -307,19 +310,19 @@ void CUSBPxxS1Ctl::readClocksource(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readPClock(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_PCLOCK, &InVal, &OutVal);
-	d->indexPClock = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_PCLOCK, &in_val, &out_val);
+	d->indexPClock = out_val.lVal;
 	d->csPClock = allig_PClock[d->indexPClock];
 }
 //**************************************************************************************
 // Read ChannelNumber - The Channel Number is an identifier.  It does not affect the 
 //		function of the electronics.
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPIA-S1
@@ -329,11 +332,11 @@ void CUSBPxxS1Ctl::readPClock(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readChannelNumber(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_CHANNELNUMBER, &InVal, &OutVal);
-	d->ChannelNumber = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_CHANNELNUMBER, &in_val, &out_val);
+	d->ChannelNumber = out_val.lVal;
 }
 
 //**************************************************************************************
@@ -345,8 +348,8 @@ void CUSBPxxS1Ctl::readChannelNumber(USBPxxPARAMETERS *d)
 //		terminated.  To retrieve all of the characters in description string,
 //		send the ID_READ_DESCRIPTION until a NULL character is returned.
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPIA-S1
@@ -356,21 +359,19 @@ void CUSBPxxS1Ctl::readChannelNumber(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readDescription(USBPxxPARAMETERS *d)
 {
-	int	x = 30;
-	int index = 0;
-	long	PackedCharacter;
-	TCHAR	tc;
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	auto x = 30;
+	auto index = 0;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
 	d->Description.Empty();
 	while (x--)
 	{
-		InVal.lVal = index++ << 16;
-		USBPxxS1Command(d->DeviceHandle, ID_READ_DESCRIPTION, &InVal, &OutVal);
-		PackedCharacter = OutVal.lVal;
-		tc = PackedCharacter & 0x0000ffff;
-		if (tc > (TCHAR)0)
+		in_val.lVal = index++ << 16;
+		USBPxxS1Command(d->DeviceHandle, ID_READ_DESCRIPTION, &in_val, &out_val);
+		const auto packed_character = out_val.lVal;
+		const TCHAR tc = packed_character & 0x0000ffff;
+		if (tc > static_cast<TCHAR>(0))
 			d->Description += tc;
 		else
 			x = 0;
@@ -381,8 +382,8 @@ void CUSBPxxS1Ctl::readDescription(USBPxxPARAMETERS *d)
 // Read Low Pass Filter Type - This identifies which filter type is installed
 //		in the USBPxx-S1.
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPGF-S1
@@ -390,11 +391,11 @@ void CUSBPxxS1Ctl::readDescription(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readLowPassFilterType(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_LPFILTERTYPE, &InVal, &OutVal);
-	d->indexLPFilterType = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_LPFILTERTYPE, &in_val, &out_val);
+	d->indexLPFilterType = out_val.lVal;
 	d->csLPFilterType = allig_LPFilterType[d->indexLPFilterType];
 }
 
@@ -402,8 +403,8 @@ void CUSBPxxS1Ctl::readLowPassFilterType(USBPxxPARAMETERS *d)
 // Read High Pass Filter Type - This identifies which filter type is installed
 //		in the USBPxx-S1.
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPHP-S1
@@ -411,11 +412,11 @@ void CUSBPxxS1Ctl::readLowPassFilterType(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readHighPassFilterType(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_HPFILTERTYPE, &InVal, &OutVal);
-	d->indexHPFilterType = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_HPFILTERTYPE, &in_val, &out_val);
+	d->indexHPFilterType = out_val.lVal;
 	d->csHPFilterType = allig_HPFilterType[d->indexHPFilterType];
 }
 
@@ -423,8 +424,8 @@ void CUSBPxxS1Ctl::readHighPassFilterType(USBPxxPARAMETERS *d)
 // Read Serial Number - This number is registered with Alligator Technologies to help
 //		facilitate customer service.
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPIA-S1
@@ -434,18 +435,18 @@ void CUSBPxxS1Ctl::readHighPassFilterType(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readSerialNumber(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_SERIALNUMBER, &InVal, &OutVal);
-	d->SerialNumber = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_SERIALNUMBER, &in_val, &out_val);
+	d->SerialNumber = out_val.lVal;
 }
 
 //**************************************************************************************
 // Read Product ID - This number is associated with the product name.
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 // Modules where this call is useful:
 //  USBPIA-S1
@@ -455,18 +456,18 @@ void CUSBPxxS1Ctl::readSerialNumber(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readProductID(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_PRODUCTID, &InVal, &OutVal);
-	d->ProductID = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_PRODUCTID, &in_val, &out_val);
+	d->ProductID = out_val.lVal;
 }
 
 //**************************************************************************************
 // Read Revision - This number set of numbers is the Firmware revision code.
 //
-//  The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//  The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 //  The Revision is a set of numbers that is returned as a long integer.  It needs to 
 //	be unpacked to have meaning.  Here is structure is defined in the file 
@@ -480,12 +481,11 @@ void CUSBPxxS1Ctl::readProductID(USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::readRevision(USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
-	long	packed;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(d->DeviceHandle, ID_READ_REVISION, &InVal, &OutVal);
-	packed = OutVal.lVal;
+	USBPxxS1Command(d->DeviceHandle, ID_READ_REVISION, &in_val, &out_val);
+	const auto packed = out_val.lVal;
 	d->RevisionHigh = packed >> 16 & 0x0000ffff;
 	d->RevisionLow = packed & 0x0000ffff;
 }
@@ -494,8 +494,8 @@ void CUSBPxxS1Ctl::readRevision(USBPxxPARAMETERS *d)
 // Read Devices Connected - This number is a count of USBPxx units connected to the USB bus.
 //
 //	DeviceHandle is not used.
-//	The InVal is not used.
-//  OutVal will contain the returned value after the call.
+//	The in_val is not used.
+//  out_val will contain the returned value after the call.
 //
 //	This query asks the USB transport layer how many active units are connected
 //
@@ -507,12 +507,11 @@ void CUSBPxxS1Ctl::readRevision(USBPxxPARAMETERS *d)
 //**************************************************************************************
 long CUSBPxxS1Ctl::readNumberOfDevicesConnected()
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
-	long	packed;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	USBPxxS1Command(NULL, DCID_GET_TOTAL_CONNECTED_CHANNELS, &InVal, &OutVal);
-	packed = OutVal.lVal;
+	USBPxxS1Command(NULL, DCID_GET_TOTAL_CONNECTED_CHANNELS, &in_val, &out_val);
+	const auto packed = out_val.lVal;
 	return	packed;
 }
 
@@ -520,8 +519,8 @@ long CUSBPxxS1Ctl::readNumberOfDevicesConnected()
 // Read Device Handle - The Handle is used for identifying a connected device
 //
 //	DeviceHandle is not used.
-//	The InVal is set to Device Number.
-//  OutVal will contain the returned value after the call.
+//	The in_val is set to Device Number.
+//  out_val will contain the returned value after the call.
 //
 //	This query asks the USB transport layer what handle identifies the device
 //
@@ -533,13 +532,12 @@ long CUSBPxxS1Ctl::readNumberOfDevicesConnected()
 //**************************************************************************************
 long CUSBPxxS1Ctl::readHandleOfDevice(long device)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
-	long	packed;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.lVal = device;
-	USBPxxS1Command(NULL, DCID_GET_CHANNEL_HANDLE, &InVal, &OutVal);
-	packed = OutVal.lVal;
+	in_val.lVal = device;
+	USBPxxS1Command(NULL, DCID_GET_CHANNEL_HANDLE, &in_val, &out_val);
+	const auto packed = out_val.lVal;
 	return	packed;
 }
 
@@ -568,8 +566,8 @@ void CUSBPxxS1Ctl::readAllParameters(long handle, USBPxxPARAMETERS* pUSBPxxParms
 // CUSBPxxS1Ctl operations
 
 //**************************************************************************************
-// Write LPFc - LPFc is the low pass filter corner frequency.  The InVal is used to
-//		send the value.  OutVal will contain a status the indicates programmed success
+// Write LPFc - LPFc is the low pass filter corner frequency.  The in_val is used to
+//		send the value.  out_val will contain a status the indicates programmed success
 //		or if the value was out of range and not used.
 //
 //	EC_SUCCESSFUL = 0  operation was a success
@@ -581,16 +579,16 @@ void CUSBPxxS1Ctl::readAllParameters(long handle, USBPxxPARAMETERS* pUSBPxxParms
 //**************************************************************************************
 void CUSBPxxS1Ctl::writeLPFC (USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.fltVal = d->LPFc;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_LPFC, &InVal, &OutVal);
+	in_val.fltVal = d->LPFc;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_LPFC, &in_val, &out_val);
 }
 
 //**************************************************************************************
-// Write HPFc - HPFc is the high pass filter corner frequency.  The InVal is used to
-//		send the value.  OutVal will contain a status the indicates programmed success
+// Write HPFc - HPFc is the high pass filter corner frequency.  The in_val is used to
+//		send the value.  out_val will contain a status the indicates programmed success
 //		or if the value was out of range and not used.
 //
 //	EC_SUCCESSFUL = 0  operation was a success
@@ -602,11 +600,11 @@ void CUSBPxxS1Ctl::writeLPFC (USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::writeHPFC (USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.fltVal = d->HPFc;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_HPFC, &InVal, &OutVal);
+	in_val.fltVal = d->HPFc;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_HPFC, &in_val, &out_val);
 }
 
 //**************************************************************************************
@@ -621,7 +619,7 @@ void CUSBPxxS1Ctl::writeHPFC (USBPxxPARAMETERS *d)
 //		7 = 200x
 //		8 = 500x
 //		9 = 1000x
-//	The InVal is used to send the value.  OutVal will contain a status that
+//	The in_val is used to send the value.  out_val will contain a status that
 //	indicates programmed success or if the value was out of range and not used.
 //
 //	EC_SUCCESSFUL = 0 operation was a success
@@ -635,11 +633,11 @@ void CUSBPxxS1Ctl::writeHPFC (USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::writeGainIndex (USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.lVal = d->indexgain;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_GAIN,  &InVal, &OutVal);
+	in_val.lVal = d->indexgain;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_GAIN,  &in_val, &out_val);
 }
 
 //**************************************************************************************
@@ -648,7 +646,7 @@ void CUSBPxxS1Ctl::writeGainIndex (USBPxxPARAMETERS *d)
 //		0 = DC coupling
 //		1 = AC coupling
 //
-//		The InVal is used to send the value.  OutVal will contain a status the indicates
+//		The in_val is used to send the value.  out_val will contain a status the indicates
 //		programmed success or if the value was out of range and not used.  This
 //		function cannot fail because only the lowest bit is used to set the coupling
 //		switch.
@@ -661,11 +659,11 @@ void CUSBPxxS1Ctl::writeGainIndex (USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::writeCouplingIndex (USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.lVal = d->indexCoupling;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_COUPLING,  &InVal, &OutVal);
+	in_val.lVal = d->indexCoupling;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_COUPLING,  &in_val, &out_val);
 }
 
 //**************************************************************************************
@@ -677,7 +675,7 @@ void CUSBPxxS1Ctl::writeCouplingIndex (USBPxxPARAMETERS *d)
 //		0 = Internal
 //		1 = External
 //
-//		The InVal is used to send the value.  OutVal will contain a status the indicates
+//		The in_val is used to send the value.  out_val will contain a status the indicates
 //		programmed success or if the value was out of range and not used.  This
 //		function cannot fail because only the lowest bit is used to set the clock source
 //		switch.
@@ -688,11 +686,11 @@ void CUSBPxxS1Ctl::writeCouplingIndex (USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::writeClockSourceIndex (USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.lVal = d->indexClockSource;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_CLOCKSOURCE,  &InVal, &OutVal);
+	in_val.lVal = d->indexClockSource;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_CLOCKSOURCE,  &in_val, &out_val);
 }
 
 //**************************************************************************************
@@ -710,7 +708,7 @@ void CUSBPxxS1Ctl::writeClockSourceIndex (USBPxxPARAMETERS *d)
 //		0 = Disabled
 //		1 = Enabled
 //
-//		The InVal is used to send the value.  OutVal will contain a status the indicates
+//		The in_val is used to send the value.  out_val will contain a status the indicates
 //		programmed success or if the value was out of range and not used.  This
 //		function cannot fail because only the lowest bit is used to set the PClock output
 //		enable switch.
@@ -721,18 +719,18 @@ void CUSBPxxS1Ctl::writeClockSourceIndex (USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::writePClockIndex (USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.lVal = d->indexPClock;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_PCLOCK,  &InVal, &OutVal);
+	in_val.lVal = d->indexPClock;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_PCLOCK,  &in_val, &out_val);
 }
 
 //**************************************************************************************
 // Write Channel Number - The Channel Number is an identifier.  It does not affect the
 //		function of the electronics.
 //
-//		The InVal is used to send the value.  OutVal will contain a status the indicates
+//		The in_val is used to send the value.  out_val will contain a status the indicates
 //		programmed success or if the value was out of range and not used.  This
 //		function cannot fail.
 //
@@ -744,11 +742,11 @@ void CUSBPxxS1Ctl::writePClockIndex (USBPxxPARAMETERS *d)
 //**************************************************************************************
 void CUSBPxxS1Ctl::writeChannelNumber (USBPxxPARAMETERS *d)
 {
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	InVal.lVal = d->ChannelNumber;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_CHANNELNUMBER,  &InVal, &OutVal);
+	in_val.lVal = d->ChannelNumber;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_CHANNELNUMBER,  &in_val, &out_val);
 }
 
 //**************************************************************************************
@@ -759,7 +757,7 @@ void CUSBPxxS1Ctl::writeChannelNumber (USBPxxPARAMETERS *d)
 //		ID_WRITE_DESCRIPTION.  Repeat this until all characters in the description
 //		string are sent.
 //
-//		The InVal is used to send the value.  OutVal will contain a status the indicates
+//		The in_val is used to send the value.  out_val will contain a status the indicates
 //		programmed success or if the value was out of range and not used.  This
 //		function cannot fail.
 //
@@ -771,28 +769,25 @@ void CUSBPxxS1Ctl::writeChannelNumber (USBPxxPARAMETERS *d)
 //**************************************************************************************
 void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS *d)
 {
-	int	x = USBPxxS1_DESCRIPTION_SIZE_LIMIT;
-	int index = 0;
-	long	PackedCharacter;
-	unsigned int	Character;
-	VARIANT	InVal;
-	VARIANT	OutVal;
+	auto index = 0;
+	VARIANT	in_val;
+	VARIANT	out_val;
 
-	PackedCharacter = 0;
-	x = d->Description.GetLength();
+	long packed_character;
+	auto x = d->Description.GetLength();
 	while(x--)
 	{
-		Character = (unsigned int)d->Description.GetAt(index);
-		PackedCharacter = index++;
-		PackedCharacter <<= 16;
-		PackedCharacter += Character;
-		InVal.lVal = PackedCharacter;
-		USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &InVal, &OutVal);
+		const auto character = static_cast<unsigned int>(d->Description.GetAt(index));
+		packed_character = index++;
+		packed_character <<= 16;
+		packed_character += character;
+		in_val.lVal = packed_character;
+		USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &in_val, &out_val);
 	}
-	PackedCharacter = index;
-	PackedCharacter <<= 16;
-	InVal.lVal = PackedCharacter;
-	USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &InVal, &OutVal);
+	packed_character = index;
+	packed_character <<= 16;
+	in_val.lVal = packed_character;
+	USBPxxS1Command(d->DeviceHandle, ID_WRITE_DESCRIPTION,  &in_val, &out_val);
 }
 
 
@@ -808,7 +803,7 @@ BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice
 	
 	pdevice->indexgain = ConvertAbsoluteGainToIndexGain(pchan->am_amplifierchan);
 	writeGainIndex(pdevice);
-	pdevice->HPFc = (float) atof(CT2A(pchan->am_csInputpos));
+	pdevice->HPFc = static_cast<float>(atof(CT2A(pchan->am_csInputpos)));
 	writeHPFC(pdevice);
 	pdevice->LPFc = pchan->am_lowpass;
 	writeLPFC(pdevice);
@@ -837,7 +832,7 @@ BOOL CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan * pchan, USBPxxPARAMETERS* pdevice
 int CUSBPxxS1Ctl::ConvertAbsoluteGainToIndexGain(long gain)
 {
 	int i;
-	int imax = sizeof(allig_Gain)/sizeof(int);
+	const int imax = sizeof(allig_Gain)/sizeof(int);
 	for (i = 0; i < imax; i++)
 	{
 		if (gain <= allig_Gain[i])

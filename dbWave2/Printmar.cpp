@@ -12,10 +12,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CPrintMarginsDlg dialog
-
-
 CPrintMarginsDlg::CPrintMarginsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPrintMarginsDlg::IDD, pParent), m_viewtype(0), m_captureMode(0), m_icapturedBar(0)
 {
@@ -39,10 +35,6 @@ BEGIN_MESSAGE_MAP(CPrintMarginsDlg, CDialog)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintMarginsDlg message handlers
 
 BOOL CPrintMarginsDlg::OnInitDialog()
 {
@@ -103,11 +95,11 @@ void CPrintMarginsDlg::SketchPrinterPage()
 {	
 	CClientDC dc(this);
 
-	CBrush* p_old_brush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
-	CPen*   pOldPen = (CPen*) dc.SelectStockObject(BLACK_PEN);
+	/*auto p_old_brush = (CBrush*) */dc.SelectStockObject(WHITE_BRUSH);
+	/*auto pOldPen = (CPen*) */dc.SelectStockObject(BLACK_PEN);
 
-	CWnd* pFWnd = GetDlgItem(IDC_RECT1);
-	pFWnd->GetWindowRect(&m_rect);
+	const auto p_f_wnd = GetDlgItem(IDC_RECT1);
+	p_f_wnd->GetWindowRect(&m_rect);
 	ScreenToClient(&m_rect);
 	InvalidateRect(&m_rect, TRUE);	
 }
@@ -116,26 +108,26 @@ void CPrintMarginsDlg::OnPaint()
 {
 	CPaintDC dc(this); 					// device context for painting
 
-	CBrush* p_old_brush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
-	CPen*   pOldPen = (CPen*) dc.SelectStockObject(BLACK_PEN);
+	/*CBrush* p_old_brush = (CBrush*) */dc.SelectStockObject(WHITE_BRUSH);
+	const auto p_old_pen = (CPen*) dc.SelectStockObject(BLACK_PEN);
 
-	COLORREF pagebackground = RGB(192,192,192);
-	COLORREF commentarea = pagebackground; //RGB(  0, 128, 128);
+	const auto page_background = RGB(192,192,192);
+	const auto comment_area = page_background; //RGB(  0, 128, 128);
 
 	// erase background
-	CWnd* pFWnd = GetDlgItem(IDC_RECT1);
-	pFWnd->GetWindowRect(&m_rect);		// get window rectangle
+	const auto p_f_wnd = GetDlgItem(IDC_RECT1);
+	p_f_wnd->GetWindowRect(&m_rect);		// get window rectangle
 	ScreenToClient(&m_rect);			// convert  coordinates
-	dc.FillSolidRect(&m_rect, pagebackground);
+	dc.FillSolidRect(&m_rect, page_background);
 
 	CPoint center;						// center of the drawing area
 	center.x = (m_rect.right+m_rect.left)/2;
 	center.y = (m_rect.bottom+m_rect.top)/2;
-	int rectsize = min(m_rect.Width(), m_rect.Height());	// max size of the square
-	int maxresol = max(mdPM->vertRes, mdPM->horzRes);		// max resolution
+	const auto rectsize = min(m_rect.Width(), m_rect.Height());	// max size of the square
+	const auto maxresol = max(mdPM->vertRes, mdPM->horzRes);		// max resolution
 
 	// draw page area
-	int diff = MulDiv(mdPM->horzRes, rectsize, maxresol)/2;
+	auto diff = MulDiv(mdPM->horzRes, rectsize, maxresol)/2;
 	m_pagerect.left = center.x - diff;
 	m_pagerect.right = center.x + diff;
 	diff = MulDiv(mdPM->vertRes, rectsize, maxresol)/2;
@@ -143,7 +135,7 @@ void CPrintMarginsDlg::OnPaint()
 	m_pagerect.bottom = center.y + diff;
 	dc.Rectangle(&m_pagerect);
 
-	int i = MulDiv(mdPM->leftPageMargin, rectsize, maxresol);   // vertical lines
+	auto i = MulDiv(mdPM->leftPageMargin, rectsize, maxresol);   // vertical lines
 	m_bars[0] = CRect(m_pagerect.left+i, m_rect.top, m_pagerect.left+i, m_rect.bottom);
 
 	i = MulDiv(mdPM->rightPageMargin, rectsize, maxresol);
@@ -161,7 +153,7 @@ void CPrintMarginsDlg::OnPaint()
 	else
 		dc.SelectStockObject(WHITE_PEN);
 
-	int rowmax = m_pagerect.bottom-i;
+	const int rowmax = m_pagerect.bottom-i;
 	CRect docrect;
 	docrect.left = m_pagerect.left+MulDiv(mdPM->leftPageMargin, rectsize, maxresol);
 	docrect.right = docrect.left + MulDiv(mdPM->WidthDoc, rectsize, maxresol);
@@ -173,10 +165,10 @@ void CPrintMarginsDlg::OnPaint()
 		commtrect.right = commtrect.left + 10;
 
 	// draw comments
-	int rowheight = MulDiv(mdPM->HeightDoc, rectsize, maxresol);
-	int rowsep = MulDiv(mdPM->heightSeparator, rectsize, maxresol);
+	const auto rowheight = MulDiv(mdPM->HeightDoc, rectsize, maxresol);
+	const auto rowsep = MulDiv(mdPM->heightSeparator, rectsize, maxresol);
 	int toprow = m_pagerect.top + MulDiv(mdPM->topPageMargin, rectsize, maxresol);
-	int bottomrow = toprow + rowheight;
+	auto bottomrow = toprow + rowheight;
 
 	m_bars[4] = CRect(docrect.right, m_rect.top, docrect.right, m_rect.bottom);
 	m_bars[6] = CRect(commtrect.left, m_rect.top, commtrect.left, m_rect.bottom);
@@ -187,31 +179,31 @@ void CPrintMarginsDlg::OnPaint()
 	{
 		docrect.top = toprow;
 		docrect.bottom = bottomrow;
-		dc.FillSolidRect(&docrect, commentarea);
+		dc.FillSolidRect(&docrect, comment_area);
 
 		commtrect.top = docrect.top;
 		commtrect.bottom = docrect.bottom;
-		dc.FillSolidRect(&commtrect, commentarea);
+		dc.FillSolidRect(&commtrect, comment_area);
 		toprow = docrect.bottom + rowsep;
 		bottomrow = toprow + rowheight;
 	}    
 
 	// draw bars (resizable margins)
-	for (i=0; i< 8; i++)
-		DrawBar (&m_bars[i], &dc); 
+	for (auto& m_bar : m_bars)
+		DrawBar (&m_bar, &dc); 
 
-	dc.SelectObject(pOldPen);
+	dc.SelectObject(p_old_pen);
 }
 
 void CPrintMarginsDlg::DrawBar(CRect* bar, CDC* pdc)
 {
 	CPen penbars(PS_DOT, 1, RGB(0,0,255));
-	CPen*   pOldPen = (CPen*) pdc->SelectObject(&penbars);
+	const auto p_old_pen = (CPen*) pdc->SelectObject(&penbars);
 
 	pdc->MoveTo(bar->left, bar->top);
 	pdc->LineTo(bar->right, bar->bottom);
 
-	pdc->SelectObject(pOldPen);
+	pdc->SelectObject(p_old_pen);
 }
 
 void CPrintMarginsDlg::GetPageSize()
@@ -226,7 +218,7 @@ void CPrintMarginsDlg::GetPageSize()
 
 	// GetPrinterDC returns a HDC so attach it
 	CDC dc;
-	HDC h_dc= dlg.CreatePrinterDC();     // to delete at the end -- see doc!	
+	const auto h_dc= dlg.CreatePrinterDC();     // to delete at the end -- see doc!	
 	ASSERT(h_dc != NULL);
 	dc.Attach(h_dc);
 
@@ -243,20 +235,19 @@ void CPrintMarginsDlg::GetPageSize()
 
 void CPrintMarginsDlg::OnLButtonDown(UINT nFlags, CPoint point) 
 {
-	CRect rcClient;
-	GetClientRect(&rcClient);
-	CDC* pDC = GetDC();	
+	CRect rc_client;
+	GetClientRect(&rc_client);
+	const auto p_dc = GetDC();	
 
 	if (IsMouseOverAnyBar(&point) < 0)
 	{
-		ReleaseDC(pDC);
+		ReleaseDC(p_dc);
 		CDialog::OnLButtonDown(nFlags, point);
 		return;
 	}
 
 	SetCapture();
 	m_bCaptured = TRUE;
-
 	CDialog::OnLButtonDown(nFlags, point);
 }
 
@@ -267,8 +258,8 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		ReleaseCapture();
 		m_bCaptured = FALSE;
 
-		int rectsize = min(m_rect.Width(), m_rect.Height());	// max size of the square
-		int maxresol = max(mdPM->vertRes, mdPM->horzRes);		// max resolution
+		const auto rectsize = min(m_rect.Width(), m_rect.Height());	// max size of the square
+		const auto maxresol = max(mdPM->vertRes, mdPM->horzRes);		// max resolution
 
 		switch (m_icapturedBar)
 		{
@@ -381,10 +372,9 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 int CPrintMarginsDlg::IsMouseOverAnyBar(CPoint* point)
 {
-	CRect rect;
-	for (int barindex = 0; barindex < 8; barindex++)
+	for (auto barindex = 0; barindex < 8; barindex++)
 	{
-		rect = m_bars[barindex];
+		auto rect = m_bars[barindex];
 		rect.InflateRect (TRACKSIZE, TRACKSIZE);
 		if (rect.PtInRect(*point))
 		{
@@ -398,7 +388,7 @@ int CPrintMarginsDlg::IsMouseOverAnyBar(CPoint* point)
 
 void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point) 
 {
-	CDC* pDC = GetDC();
+	auto p_dc = GetDC();
 	// check if point is not out of limits	
 	if (point.x < m_rect.left || point.x > m_rect.right 
 		|| point.y < m_rect.top || point.y > m_rect.bottom)
@@ -420,10 +410,10 @@ void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 	else
 	{
 		// select display mode 
-		int noldROP = pDC->SetROP2(R2_NOTXORPEN); 
+		const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 		int cursor;
 		// erase old bar
-		DrawBar(&m_bars[m_icapturedBar], pDC);
+		DrawBar(&m_bars[m_icapturedBar], p_dc);
 
 		// compute new bar position and display
 		if ((m_icapturedBar % 2) > 0)
@@ -438,16 +428,16 @@ void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 			m_bars[m_icapturedBar].left = point.x;
 			m_bars[m_icapturedBar].right = point.x;
 		}
-		DrawBar(&m_bars[m_icapturedBar], pDC);
+		DrawBar(&m_bars[m_icapturedBar], p_dc);
 
 		// restore old display mode
-		pDC->SetROP2(noldROP);
+		p_dc->SetROP2(nold_rop);
 
 		// set mouse cursor
 		SetCursor(AfxGetApp()->LoadCursor(cursor));
 	}
 
-	ReleaseDC(pDC);
+	ReleaseDC(p_dc);
 	CDialog::OnMouseMove(nFlags, point);
 }
 

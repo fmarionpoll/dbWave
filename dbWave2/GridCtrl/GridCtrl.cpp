@@ -288,8 +288,8 @@ CGridCtrl::~CGridCtrl()
 
 #if !defined(GRIDCONTROL_NO_DRAGDROP) || !defined(GRIDCONTROL_NO_CLIPBOARD)
 	// BUG FIX - EFW
-	COleDataSource *pSource = COleDataSource::GetClipboardOwner();
-	if (pSource)
+	COleDataSource *p_source = COleDataSource::GetClipboardOwner();
+	if (p_source)
 		COleDataSource::FlushClipboard();
 #endif
 }
@@ -368,11 +368,11 @@ BOOL CGridCtrl::Initialize()
 }
 
 // creates the control - use like any other window create control
-BOOL CGridCtrl::Create(const RECT& rect, CWnd* pParentWnd, UINT nID, DWORD dwStyle)
+BOOL CGridCtrl::Create(const RECT& rect, CWnd* pParentWnd, UINT nID, DWORD dw_style)
 {
 	ASSERT(pParentWnd->GetSafeHwnd());
 
-	if (!CWnd::Create(GRIDCTRL_CLASSNAME, nullptr, dwStyle, rect, pParentWnd, nID))
+	if (!CWnd::Create(GRIDCTRL_CLASSNAME, nullptr, dw_style, rect, pParentWnd, nID))
 		return FALSE;
 
 	//Initialise(); - called in PreSubclassWnd
@@ -576,14 +576,14 @@ void CGridCtrl::OnPaint()
 	{
 		// CMemDC from afxcontrolbarutil.h
 		CMemDC memDC(dc, this);
-		CDC* pDC = &memDC.GetDC();
-		OnDraw(pDC);
+		CDC* p_dc = &memDC.GetDC();
+		OnDraw(p_dc);
 	}
 	else                    // Draw raw - this helps in debugging vis problems.
 		OnDraw(&dc);
 }
 
-BOOL CGridCtrl::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CGridCtrl::OnEraseBkgnd(CDC* /*p_dc*/)
 {
 	return TRUE;    // Don't erase the background.
 }
@@ -592,7 +592,7 @@ BOOL CGridCtrl::OnEraseBkgnd(CDC* /*pDC*/)
 // since we will (most likely) be using a memory DC to stop flicker. If we just
 // erase the background normally through OnEraseBkgnd, and didn't fill the memDC's
 // selected bitmap with colour, then all sorts of vis problems would occur
-void CGridCtrl::EraseBkgnd(CDC* pDC)
+void CGridCtrl::EraseBkgnd(CDC* p_dc)
 {
 	CRect  VisRect, ClipRect, rect;
 	CBrush FixedRowColBack(GetDefaultCell(TRUE, TRUE)->GetBackClr()),
@@ -602,7 +602,7 @@ void CGridCtrl::EraseBkgnd(CDC* pDC)
 	CBrush Back(GetGridBkColor());
 	//CBrush Back(GetTextBkColor());
 
-	if (pDC->GetClipBox(ClipRect) == ERROR)
+	if (p_dc->GetClipBox(ClipRect) == ERROR)
 		return;
 	GetVisibleNonFixedCellRange(VisRect);
 
@@ -611,20 +611,20 @@ void CGridCtrl::EraseBkgnd(CDC* pDC)
 
 	// Draw Fixed row/column background
 	if (ClipRect.left < nFixedColumnWidth && ClipRect.top < nFixedRowHeight)
-		pDC->FillRect(CRect(ClipRect.left, ClipRect.top,
+		p_dc->FillRect(CRect(ClipRect.left, ClipRect.top,
 			nFixedColumnWidth, nFixedRowHeight),
 			&FixedRowColBack);
 
 	// Draw Fixed columns background
 	if (ClipRect.left < nFixedColumnWidth && ClipRect.top < VisRect.bottom)
-		pDC->FillRect(CRect(ClipRect.left, ClipRect.top,
+		p_dc->FillRect(CRect(ClipRect.left, ClipRect.top,
 			nFixedColumnWidth, VisRect.bottom),
 			&FixedColBack);
 
 	// Draw Fixed rows background
 	if (ClipRect.top < nFixedRowHeight &&
 		ClipRect.right > nFixedColumnWidth && ClipRect.left < VisRect.right)
-		pDC->FillRect(CRect(nFixedColumnWidth - 1, ClipRect.top,
+		p_dc->FillRect(CRect(nFixedColumnWidth - 1, ClipRect.top,
 			VisRect.right, nFixedRowHeight),
 			&FixedRowBack);
 
@@ -634,18 +634,18 @@ void CGridCtrl::EraseBkgnd(CDC* pDC)
 		CRect CellRect(__max(nFixedColumnWidth, rect.left),
 			__max(nFixedRowHeight, rect.top),
 			rect.right, rect.bottom);
-		pDC->FillRect(CellRect, &TextBack);
+		p_dc->FillRect(CellRect, &TextBack);
 	}
 
 	// Draw right hand side of window outside grid
 	if (VisRect.right < ClipRect.right)
-		pDC->FillRect(CRect(VisRect.right, ClipRect.top,
+		p_dc->FillRect(CRect(VisRect.right, ClipRect.top,
 			ClipRect.right, ClipRect.bottom),
 			&Back);
 
 	// Draw bottom of window below grid
 	if (VisRect.bottom < ClipRect.bottom && ClipRect.left < VisRect.right)
-		pDC->FillRect(CRect(ClipRect.left, VisRect.bottom,
+		p_dc->FillRect(CRect(ClipRect.left, VisRect.bottom,
 			VisRect.right, ClipRect.bottom),
 			&Back);
 }
@@ -723,9 +723,9 @@ void CGridCtrl::OnSysColorChange()
 
 #ifndef _WIN32_WCE_NO_CURSOR
 // If we are drag-selecting cells, or drag and dropping, stop now
-void CGridCtrl::OnCaptureChanged(CWnd *pWnd)
+void CGridCtrl::OnCaptureChanged(CWnd *p_wnd)
 {
-	if (pWnd->GetSafeHwnd() == GetSafeHwnd())
+	if (p_wnd->GetSafeHwnd() == GetSafeHwnd())
 		return;
 
 	// kill timer if active
@@ -1555,16 +1555,16 @@ void CGridCtrl::OnVScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*
 /////////////////////////////////////////////////////////////////////////////
 // CGridCtrl implementation functions
 
-void CGridCtrl::OnDraw(CDC* pDC)
+void CGridCtrl::OnDraw(CDC* p_dc)
 {
 	if (!m_bAllowDraw)
 		return;
 
 	CRect clipRect;
-	if (pDC->GetClipBox(&clipRect) == ERROR)
+	if (p_dc->GetClipBox(&clipRect) == ERROR)
 		return;
 
-	EraseBkgnd(pDC);            // OnEraseBkgnd does nothing, so erase bkgnd here.
+	EraseBkgnd(p_dc);            // OnEraseBkgnd does nothing, so erase bkgnd here.
 	// This necessary since we may be using a Memory DC.
 
 #ifdef _DEBUG
@@ -1612,7 +1612,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
 			if (pCell)
 			{
 				pCell->SetCoords(row, col);
-				pCell->Draw(pDC, row, col, rect, FALSE);
+				pCell->Draw(p_dc, row, col, rect, FALSE);
 			}
 		}
 	}
@@ -1649,7 +1649,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
 			if (pCell)
 			{
 				pCell->SetCoords(row, col);
-				pCell->Draw(pDC, row, col, rect, FALSE);
+				pCell->Draw(p_dc, row, col, rect, FALSE);
 			}
 		}
 	}
@@ -1686,7 +1686,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
 			if (pCell)
 			{
 				pCell->SetCoords(row, col);
-				pCell->Draw(pDC, row, col, rect, FALSE);
+				pCell->Draw(p_dc, row, col, rect, FALSE);
 			}
 		}
 	}
@@ -1724,7 +1724,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
 			if (pCell)
 			{
 				pCell->SetCoords(row, col);
-				pCell->Draw(pDC, row, col, rect, FALSE);
+				pCell->Draw(p_dc, row, col, rect, FALSE);
 			}
 		}
 	}
@@ -1732,7 +1732,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
 
 	CPen pen;
 	pen.CreatePen(PS_SOLID, 0, m_crGridLineColour);
-	pDC->SelectObject(&pen);
+	p_dc->SelectObject(&pen);
 
 	// draw vertical lines (drawn at ends of cells)
 	if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_VERT)
@@ -1743,8 +1743,8 @@ void CGridCtrl::OnDraw(CDC* pDC)
 			if (GetColumnWidth(col) <= 0) continue;
 
 			x += GetColumnWidth(col);
-			pDC->MoveTo(x - 1, nFixedRowHeight);
-			pDC->LineTo(x - 1, VisRect.bottom);
+			p_dc->MoveTo(x - 1, nFixedRowHeight);
+			p_dc->LineTo(x - 1, VisRect.bottom);
 		}
 	}
 
@@ -1757,12 +1757,12 @@ void CGridCtrl::OnDraw(CDC* pDC)
 			if (GetRowHeight(row) <= 0) continue;
 
 			y += GetRowHeight(row);
-			pDC->MoveTo(nFixedColWidth, y - 1);
-			pDC->LineTo(VisRect.right, y - 1);
+			p_dc->MoveTo(nFixedColWidth, y - 1);
+			p_dc->LineTo(VisRect.right, y - 1);
 		}
 	}
 
-	pDC->SelectStockObject(NULL_PEN);
+	p_dc->SelectStockObject(NULL_PEN);
 
 	// Let parent know it can discard it's data if it needs to.
 	if (GetVirtualMode())
@@ -1818,12 +1818,12 @@ void CGridCtrl::SetRedraw(BOOL bAllowDraw, BOOL bResetScrollBars /* = FALSE */)
 
 // Forces a redraw of a cell immediately (using a direct DC construction,
 // or the supplied dc)
-BOOL CGridCtrl::RedrawCell(const CCellID& cell, CDC* pDC /* = NULL */)
+BOOL CGridCtrl::RedrawCell(const CCellID& cell, CDC* p_dc /* = NULL */)
 {
-	return RedrawCell(cell.row, cell.col, pDC);
+	return RedrawCell(cell.row, cell.col, p_dc);
 }
 
-BOOL CGridCtrl::RedrawCell(int nRow, int nCol, CDC* pDC /* = NULL */)
+BOOL CGridCtrl::RedrawCell(int nRow, int nCol, CDC* p_dc /* = NULL */)
 {
 	BOOL bResult = TRUE;
 	BOOL bMustReleaseDC = FALSE;
@@ -1835,44 +1835,44 @@ BOOL CGridCtrl::RedrawCell(int nRow, int nCol, CDC* pDC /* = NULL */)
 	if (!GetCellRect(nRow, nCol, rect))
 		return FALSE;
 
-	if (!pDC)
+	if (!p_dc)
 	{
-		pDC = GetDC();
-		if (pDC)
+		p_dc = GetDC();
+		if (p_dc)
 			bMustReleaseDC = TRUE;
 	}
 
-	if (pDC)
+	if (p_dc)
 	{
 		// Redraw cells directly
 		if (nRow < m_nFixedRows || nCol < m_nFixedCols)
 		{
 			CGridCellBase* pCell = GetCell(nRow, nCol);
 			if (pCell)
-				bResult = pCell->Draw(pDC, nRow, nCol, rect, TRUE);
+				bResult = pCell->Draw(p_dc, nRow, nCol, rect, TRUE);
 		}
 		else
 		{
 			CGridCellBase* pCell = GetCell(nRow, nCol);
 			if (pCell)
-				bResult = pCell->Draw(pDC, nRow, nCol, rect, TRUE);
+				bResult = pCell->Draw(p_dc, nRow, nCol, rect, TRUE);
 
 			// Since we have erased the background, we will need to redraw the gridlines
 			CPen pen;
 			pen.CreatePen(PS_SOLID, 0, m_crGridLineColour);
 
-			CPen* pOldPen = (CPen*)pDC->SelectObject(&pen);
+			CPen* pOldPen = (CPen*)p_dc->SelectObject(&pen);
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_HORZ)
 			{
-				pDC->MoveTo(rect.left, rect.bottom);
-				pDC->LineTo(rect.right + 1, rect.bottom);
+				p_dc->MoveTo(rect.left, rect.bottom);
+				p_dc->LineTo(rect.right + 1, rect.bottom);
 			}
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_VERT)
 			{
-				pDC->MoveTo(rect.right, rect.top);
-				pDC->LineTo(rect.right, rect.bottom + 1);
+				p_dc->MoveTo(rect.right, rect.top);
+				p_dc->LineTo(rect.right, rect.bottom + 1);
 			}
-			pDC->SelectObject(pOldPen);
+			p_dc->SelectObject(pOldPen);
 		}
 	}
 	else
@@ -1880,7 +1880,7 @@ BOOL CGridCtrl::RedrawCell(int nRow, int nCol, CDC* pDC /* = NULL */)
 	// and hope that OnPaint manages to get one
 
 	if (bMustReleaseDC)
-		ReleaseDC(pDC);
+		ReleaseDC(p_dc);
 
 	return bResult;
 }
@@ -1890,11 +1890,11 @@ BOOL CGridCtrl::RedrawRow(int row)
 {
 	BOOL bResult = TRUE;
 
-	CDC* pDC = GetDC();
+	CDC* p_dc = GetDC();
 	for (int col = 0; col < GetColumnCount(); col++)
-		bResult = RedrawCell(row, col, pDC) && bResult;
-	if (pDC)
-		ReleaseDC(pDC);
+		bResult = RedrawCell(row, col, p_dc) && bResult;
+	if (p_dc)
+		ReleaseDC(p_dc);
 
 	return bResult;
 }
@@ -1904,11 +1904,11 @@ BOOL CGridCtrl::RedrawColumn(int col)
 {
 	BOOL bResult = TRUE;
 
-	CDC* pDC = GetDC();
+	CDC* p_dc = GetDC();
 	for (int row = 0; row < GetRowCount(); row++)
-		bResult = RedrawCell(row, col, pDC) && bResult;
-	if (pDC)
-		ReleaseDC(pDC);
+		bResult = RedrawCell(row, col, p_dc) && bResult;
+	if (p_dc)
+		ReleaseDC(p_dc);
 
 	return bResult;
 }
@@ -1999,9 +1999,9 @@ void CGridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMax
 
 	CWaitCursor wait; // Thomas Haase 
 
-	CDC* pDC = nullptr;
+	CDC* p_dc = nullptr;
 	if (bForceRepaint)
-		pDC = GetDC();
+		p_dc = GetDC();
 
 	// Only redraw visible cells
 	CCellRange VisCellRange, FixedVisCellRange;
@@ -2050,8 +2050,8 @@ void CGridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMax
 
 				if ((VisCellRange.IsValid() && VisCellRange.InRange(cell)) || FixedVisCellRange.InRange(cell))
 				{
-					if (bForceRepaint && pDC)                    // Redraw NOW
-						RedrawCell(cell.row, cell.col, pDC);
+					if (bForceRepaint && p_dc)                    // Redraw NOW
+						RedrawCell(cell.row, cell.col, p_dc);
 					else
 						InvalidateCellRect(cell);                // Redraw at leisure
 				}
@@ -2087,8 +2087,8 @@ void CGridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMax
 				if ((VisCellRange.IsValid() && VisCellRange.InRange(cell)) || FixedVisCellRange.InRange(cell))
 				{
 					// Redraw (immediately or at leisure)
-					if (bForceRepaint && pDC)
-						RedrawCell(cell.row, cell.col, pDC);
+					if (bForceRepaint && p_dc)
+						RedrawCell(cell.row, cell.col, p_dc);
 					else
 						InvalidateCellRect(cell);
 				}
@@ -2119,15 +2119,15 @@ void CGridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMax
 				if ((VisCellRange.IsValid() && VisCellRange.InRange(row, col)) || FixedVisCellRange.InRange(row, col))
 				{
 					// Redraw (immediately or at leisure)
-					if (bForceRepaint && pDC)
-						RedrawCell(row, col, pDC);
+					if (bForceRepaint && p_dc)
+						RedrawCell(row, col, p_dc);
 					else
 						InvalidateCellRect(row, col);
 				}
 			}
 	}
-	if (pDC != nullptr)
-		ReleaseDC(pDC);
+	if (p_dc != nullptr)
+		ReleaseDC(p_dc);
 }
 
 // selects all cells
@@ -2363,10 +2363,10 @@ COleDataSource* CGridCtrl::CopyTextFromGrid()
 		return nullptr;
 
 	// Cache data
-	COleDataSource* pSource = new COleDataSource();
-	pSource->CacheGlobalData(CF_UNICODETEXT, hMem);		//mofified: CF_TEXT
+	COleDataSource* p_source = new COleDataSource();
+	p_source->CacheGlobalData(CF_UNICODETEXT, hMem);		//mofified: CF_TEXT
 
-	return pSource;
+	return p_source;
 }
 
 // Pastes text from the clipboard to the selected cells
@@ -2382,17 +2382,17 @@ BOOL CGridCtrl::PasteTextToGrid(CCellID cell, COleDataObject* pDataObject,
 
 	// CF_TEXT is ANSI text, so we need to allocate a char* buffer
 	// to hold this.
-	LPSTR szBuffer = new char[::GlobalSize(hmem)]; // FIX: Use LPSTR char here
-	if (!szBuffer)
+	LPSTR sz_buffer = new char[::GlobalSize(hmem)]; // FIX: Use LPSTR char here
+	if (!sz_buffer)
 		return FALSE;
 
-	sf.Read(szBuffer, (UINT)::GlobalSize(hmem));
+	sf.Read(sz_buffer, (UINT)::GlobalSize(hmem));
 	::GlobalUnlock(hmem);
 
 	// Now store in generic TCHAR form so we no longer have to deal with
 	// ANSI/UNICODE problems
-	CString strText(szBuffer);
-	delete[] szBuffer;
+	CString strText(sz_buffer);
+	delete[] sz_buffer;
 
 	// Parse text data and set in cells...
 	strText.LockBuffer();
@@ -2485,13 +2485,13 @@ BOOL CGridCtrl::PasteTextToGrid(CCellID cell, COleDataObject* pDataObject,
 // Start drag n drop
 void CGridCtrl::OnBeginDrag()
 {
-	COleDataSource* pSource = nullptr;
+	COleDataSource* p_source = nullptr;
 	if (!m_bAllowDragAndDrop && m_CurCol == -1)
 		return;
 
-	if (m_CurCol >= 0)	pSource = new COleDataSource();
-	if (!pSource && m_bAllowDragAndDrop) pSource = CopyTextFromGrid();
-	if (pSource)
+	if (m_CurCol >= 0)	p_source = new COleDataSource();
+	if (!p_source && m_bAllowDragAndDrop) p_source = CopyTextFromGrid();
+	if (p_source)
 	{
 		SendMessageToParent(GetSelectedCellRange().GetTopLeft().row,
 			GetSelectedCellRange().GetTopLeft().col,
@@ -2500,13 +2500,13 @@ void CGridCtrl::OnBeginDrag()
 		m_MouseMode = MOUSE_DRAGGING;
 		m_bLMouseButtonDown = FALSE;
 
-		DROPEFFECT dropEffect = pSource->DoDragDrop(DROPEFFECT_COPY | DROPEFFECT_MOVE);
+		DROPEFFECT dropEffect = p_source->DoDragDrop(DROPEFFECT_COPY | DROPEFFECT_MOVE);
 
 		if (dropEffect & DROPEFFECT_MOVE)
 			CutSelectedText();
 
-		if (pSource)
-			delete pSource;    // Did not pass source to clipboard, so must delete
+		if (p_source)
+			delete p_source;    // Did not pass source to clipboard, so must delete
 
 	}
 }
@@ -2682,21 +2682,21 @@ void CGridCtrl::OnEditCut()
 	if (!IsEditable())
 		return;
 
-	COleDataSource* pSource = CopyTextFromGrid();
-	if (!pSource)
+	COleDataSource* p_source = CopyTextFromGrid();
+	if (!p_source)
 		return;
 
-	pSource->SetClipboard();
+	p_source->SetClipboard();
 	CutSelectedText();
 }
 
 void CGridCtrl::OnEditCopy()
 {
-	COleDataSource* pSource = CopyTextFromGrid();
-	if (!pSource)
+	COleDataSource* p_source = CopyTextFromGrid();
+	if (!p_source)
 		return;
 
-	pSource->SetClipboard();
+	p_source->SetClipboard();
 }
 
 void CGridCtrl::OnEditPaste()
@@ -3415,7 +3415,7 @@ LRESULT CGridCtrl::OnGetFont(WPARAM /*wParam*/, LPARAM /*lParam*/)
 }
 
 #ifndef _WIN32_WCE_NO_CURSOR
-BOOL CGridCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+BOOL CGridCtrl::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message)
 {
 	if (nHitTest == HTCLIENT)
 	{
@@ -3450,7 +3450,7 @@ BOOL CGridCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 		return TRUE;
 	}
 
-	return CWnd::OnSetCursor(pWnd, nHitTest, message);
+	return CWnd::OnSetCursor(p_wnd, nHitTest, message);
 }
 #endif
 
@@ -4895,8 +4895,8 @@ BOOL CGridCtrl::AutoSizeColumn(int nCol, UINT nAutoSizeStyle /*=GVS_DEFAULT*/,
 		return FALSE;
 
 	CSize size;
-	CDC* pDC = GetDC();
-	if (!pDC)
+	CDC* p_dc = GetDC();
+	if (!p_dc)
 		return FALSE;
 
 	int nWidth = 0;
@@ -4915,7 +4915,7 @@ BOOL CGridCtrl::AutoSizeColumn(int nCol, UINT nAutoSizeStyle /*=GVS_DEFAULT*/,
 	{
 		CGridCellBase* pCell = GetCell(nRow, nCol);
 		if (pCell)
-			size = pCell->GetCellExtent(pDC);
+			size = pCell->GetCellExtent(p_dc);
 		if (size.cx > nWidth)
 			nWidth = size.cx;
 	}
@@ -4925,7 +4925,7 @@ BOOL CGridCtrl::AutoSizeColumn(int nCol, UINT nAutoSizeStyle /*=GVS_DEFAULT*/,
 
 	m_arColWidths[nCol] = nWidth;
 
-	ReleaseDC(pDC);
+	ReleaseDC(p_dc);
 	if (bResetScroll)
 		ResetScrollBars();
 
@@ -4943,8 +4943,8 @@ BOOL CGridCtrl::AutoSizeRow(int nRow, BOOL bResetScroll /*=TRUE*/)
 		return FALSE;
 
 	CSize size;
-	CDC* pDC = GetDC();
-	if (!pDC)
+	CDC* p_dc = GetDC();
+	if (!p_dc)
 		return FALSE;
 
 	int nHeight = 0;
@@ -4957,7 +4957,7 @@ BOOL CGridCtrl::AutoSizeRow(int nRow, BOOL bResetScroll /*=TRUE*/)
 	{
 		CGridCellBase* pCell = GetCell(nRow, nCol);
 		if (pCell)
-			size = pCell->GetCellExtent(pDC);
+			size = pCell->GetCellExtent(p_dc);
 		if (size.cy > nHeight)
 			nHeight = size.cy;
 	}
@@ -4966,7 +4966,7 @@ BOOL CGridCtrl::AutoSizeRow(int nRow, BOOL bResetScroll /*=TRUE*/)
 	if (GetVirtualMode())
 		SendCacheHintToParent(CCellRange(-1, -1, -1, -1));
 
-	ReleaseDC(pDC);
+	ReleaseDC(p_dc);
 	if (bResetScroll)
 		ResetScrollBars();
 
@@ -5001,8 +5001,8 @@ void CGridCtrl::AutoSizeRows()
 // faster than calling both AutoSizeColumns() and AutoSizeRows()
 void CGridCtrl::AutoSize(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
 {
-	CDC* pDC = GetDC();
-	if (!pDC)
+	CDC* p_dc = GetDC();
+	if (!p_dc)
 		return;
 
 	int nNumColumns = GetColumnCount();
@@ -5040,7 +5040,7 @@ void CGridCtrl::AutoSize(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
 				{
 					CGridCellBase* pCell = GetCell(nRow, nCol);
 					if (pCell)
-						size = pCell->GetCellExtent(pDC);
+						size = pCell->GetCellExtent(p_dc);
 					if (size.cx > (int)m_arColWidths[nCol])
 						m_arColWidths[nCol] = size.cx;
 					if (size.cy > (int)m_arRowHeights[nRow])
@@ -5053,7 +5053,7 @@ void CGridCtrl::AutoSize(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
 	if (GetVirtualMode())
 		SendCacheHintToParent(CCellRange(-1, -1, -1, -1));
 
-	ReleaseDC(pDC);
+	ReleaseDC(p_dc);
 
 	ResetScrollBars();
 	Refresh();
@@ -5784,33 +5784,33 @@ void CGridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 
 		case MOUSE_SIZING_COL:
 		{
-			CDC* pDC = GetDC();
-			if (!pDC)
+			CDC* p_dc = GetDC();
+			if (!p_dc)
 				break;
 
 			CRect oldInvertedRect(m_LastMousePoint.x, rect.top,
 				m_LastMousePoint.x + 2, rect.bottom);
-			pDC->InvertRect(&oldInvertedRect);
+			p_dc->InvertRect(&oldInvertedRect);
 			CRect newInvertedRect(point.x, rect.top,
 				point.x + 2, rect.bottom);
-			pDC->InvertRect(&newInvertedRect);
-			ReleaseDC(pDC);
+			p_dc->InvertRect(&newInvertedRect);
+			ReleaseDC(p_dc);
 		}
 		break;
 
 		case MOUSE_SIZING_ROW:
 		{
-			CDC* pDC = GetDC();
-			if (!pDC)
+			CDC* p_dc = GetDC();
+			if (!p_dc)
 				break;
 
 			CRect oldInvertedRect(rect.left, m_LastMousePoint.y,
 				rect.right, m_LastMousePoint.y + 2);
-			pDC->InvertRect(&oldInvertedRect);
+			p_dc->InvertRect(&oldInvertedRect);
 			CRect newInvertedRect(rect.left, point.y,
 				rect.right, point.y + 2);
-			pDC->InvertRect(&newInvertedRect);
-			ReleaseDC(pDC);
+			p_dc->InvertRect(&newInvertedRect);
+			ReleaseDC(p_dc);
 		}
 		break;
 
@@ -6143,11 +6143,11 @@ void CGridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 		GetClientRect(rect);
 		CRect invertedRect(point.x, rect.top, point.x + 2, rect.bottom);
 
-		CDC* pDC = GetDC();
-		if (pDC)
+		CDC* p_dc = GetDC();
+		if (p_dc)
 		{
-			pDC->InvertRect(&invertedRect);
-			ReleaseDC(pDC);
+			p_dc->InvertRect(&invertedRect);
+			ReleaseDC(p_dc);
 		}
 
 		// If we clicked to the right of the colimn divide, then reset the click-down cell
@@ -6234,11 +6234,11 @@ void CGridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 		GetClientRect(rect);
 		CRect invertedRect(rect.left, point.y, rect.right, point.y + 2);
 
-		CDC* pDC = GetDC();
-		if (pDC)
+		CDC* p_dc = GetDC();
+		if (p_dc)
 		{
-			pDC->InvertRect(&invertedRect);
-			ReleaseDC(pDC);
+			p_dc->InvertRect(&invertedRect);
+			ReleaseDC(p_dc);
 		}
 
 		// If we clicked below the row divide, then reset the click-down cell
@@ -6357,11 +6357,11 @@ void CGridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 		GetClientRect(rect);
 		CRect invertedRect(m_LastMousePoint.x, rect.top, m_LastMousePoint.x + 2, rect.bottom);
 
-		CDC* pDC = GetDC();
-		if (pDC)
+		CDC* p_dc = GetDC();
+		if (p_dc)
 		{
-			pDC->InvertRect(&invertedRect);
-			ReleaseDC(pDC);
+			p_dc->InvertRect(&invertedRect);
+			ReleaseDC(p_dc);
 		}
 
 		if (m_LeftClickDownPoint != point && (point.x != 0 || point.y != 0)) // 0 pt fix by email1@bierling.net
@@ -6383,11 +6383,11 @@ void CGridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 		GetClientRect(rect);
 		CRect invertedRect(rect.left, m_LastMousePoint.y, rect.right, m_LastMousePoint.y + 2);
 
-		CDC* pDC = GetDC();
-		if (pDC)
+		CDC* p_dc = GetDC();
+		if (p_dc)
 		{
-			pDC->InvertRect(&invertedRect);
-			ReleaseDC(pDC);
+			p_dc->InvertRect(&invertedRect);
+			ReleaseDC(p_dc);
 		}
 
 		if (m_LeftClickDownPoint != point && (point.x != 0 || point.y != 0)) // 0 pt fix by email1@bierling.net
@@ -6576,7 +6576,7 @@ void CGridCtrl::Print(CPrintDialog* pPrntDialog /*=NULL*/)
 
 // EFW - Various changes in the next few functions to support the
 // new print margins and a few other adjustments.
-void CGridCtrl::OnBeginPrinting(CDC *pDC, CPrintInfo *pInfo)
+void CGridCtrl::OnBeginPrinting(CDC *p_dc, CPrintInfo *pInfo)
 {
 	// OnBeginPrinting() is called after the user has committed to
 	// printing by OK'ing the Print dialog, and after the framework
@@ -6587,14 +6587,14 @@ void CGridCtrl::OnBeginPrinting(CDC *pDC, CPrintInfo *pInfo)
 	// fit on a page, so we can in turn determine how many printed
 	// pages represent the entire document.
 
-	ASSERT(pDC && pInfo);
-	if (!pDC || !pInfo) return;
+	ASSERT(p_dc && pInfo);
+	if (!p_dc || !pInfo) return;
 
 	// Get a DC for the current window (will be a screen DC for print previewing)
 	CDC *pCurrentDC = GetDC();        // will have dimensions of the client area
 	if (!pCurrentDC) return;
 
-	CSize PaperPixelsPerInch(pDC->GetDeviceCaps(LOGPIXELSX), pDC->GetDeviceCaps(LOGPIXELSY));
+	CSize PaperPixelsPerInch(p_dc->GetDeviceCaps(LOGPIXELSX), p_dc->GetDeviceCaps(LOGPIXELSY));
 	CSize ScreenPixelsPerInch(pCurrentDC->GetDeviceCaps(LOGPIXELSX), pCurrentDC->GetDeviceCaps(LOGPIXELSY));
 
 	// Create the printer font
@@ -6604,15 +6604,15 @@ void CGridCtrl::OnBeginPrinting(CDC *pDC, CPrintInfo *pInfo)
 		OUT_CHARACTER_PRECIS, CLIP_CHARACTER_PRECIS, DEFAULT_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, strFontName);
 
-	CFont *pOldFont = pDC->SelectObject(&m_PrinterFont);
+	CFont *pOldFont = p_dc->SelectObject(&m_PrinterFont);
 
 	// Get the average character width (in GridCtrl units) and hence the margins
-	m_CharSize = pDC->GetTextExtent(_T("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSATUVWXYZ"), 52);
+	m_CharSize = p_dc->GetTextExtent(_T("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSATUVWXYZ"), 52);
 	m_CharSize.cx /= 52;
 	int nMargins = (m_nLeftMargin + m_nRightMargin)*m_CharSize.cx;
 
 	// Get the page sizes (physical and logical)
-	m_PaperSize = CSize(pDC->GetDeviceCaps(HORZRES), pDC->GetDeviceCaps(VERTRES));
+	m_PaperSize = CSize(p_dc->GetDeviceCaps(HORZRES), p_dc->GetDeviceCaps(VERTRES));
 
 	if (m_bWysiwygPrinting)
 	{
@@ -6621,7 +6621,7 @@ void CGridCtrl::OnBeginPrinting(CDC *pDC, CPrintInfo *pInfo)
 	}
 	else
 	{
-		m_PaperSize = CSize(pDC->GetDeviceCaps(HORZRES), pDC->GetDeviceCaps(VERTRES));
+		m_PaperSize = CSize(p_dc->GetDeviceCaps(HORZRES), p_dc->GetDeviceCaps(VERTRES));
 
 		m_LogicalPageSize.cx = GetVirtualWidth() + nMargins;
 #ifdef _WIN32_WCE
@@ -6678,35 +6678,35 @@ void CGridCtrl::OnBeginPrinting(CDC *pDC, CPrintInfo *pInfo)
 	pInfo->m_nCurPage = 1;                        // start printing at page# 1
 
 	ReleaseDC(pCurrentDC);
-	pDC->SelectObject(pOldFont);
+	p_dc->SelectObject(pOldFont);
 }
 
-void CGridCtrl::OnPrint(CDC *pDC, CPrintInfo *pInfo)
+void CGridCtrl::OnPrint(CDC *p_dc, CPrintInfo *pInfo)
 {
-	if (!pDC || !pInfo)
+	if (!p_dc || !pInfo)
 		return;
 
 	//CRect rcPage(pInfo->m_rectDraw);
-	CFont *pOldFont = pDC->SelectObject(&m_PrinterFont);
+	CFont *pOldFont = p_dc->SelectObject(&m_PrinterFont);
 
 	// Set the page map mode to use GridCtrl units, and setup margin
-	pDC->SetMapMode(MM_ANISOTROPIC);
-	pDC->SetWindowExt(m_LogicalPageSize);
-	pDC->SetViewportExt(m_PaperSize);
-	pDC->SetWindowOrg(-m_nLeftMargin * m_CharSize.cx, 0);
+	p_dc->SetMapMode(MM_ANISOTROPIC);
+	p_dc->SetWindowExt(m_LogicalPageSize);
+	p_dc->SetViewportExt(m_PaperSize);
+	p_dc->SetWindowOrg(-m_nLeftMargin * m_CharSize.cx, 0);
 
 	// Header
 	pInfo->m_rectDraw.top = 0;
 	pInfo->m_rectDraw.left = 0;
 	pInfo->m_rectDraw.right = m_LogicalPageSize.cx - (m_nLeftMargin + m_nRightMargin) * m_CharSize.cx;
 	pInfo->m_rectDraw.bottom = m_nHeaderHeight * m_CharSize.cy;
-	PrintHeader(pDC, pInfo);
-	pDC->OffsetWindowOrg(0, -m_nHeaderHeight * m_CharSize.cy);
+	PrintHeader(p_dc, pInfo);
+	p_dc->OffsetWindowOrg(0, -m_nHeaderHeight * m_CharSize.cy);
 
 	// Gap between header and column headings
-	pDC->OffsetWindowOrg(0, -m_nGap * m_CharSize.cy);
+	p_dc->OffsetWindowOrg(0, -m_nGap * m_CharSize.cy);
 
-	pDC->OffsetWindowOrg(0, -GetFixedRowHeight());
+	p_dc->OffsetWindowOrg(0, -GetFixedRowHeight());
 
 	// We need to find out which row to start printing for this page.
 	int nTotalRowHeight = 0;
@@ -6767,7 +6767,7 @@ void CGridCtrl::OnPrint(CDC *pDC, CPrintInfo *pInfo)
 	}
 
 
-	PrintRowButtons(pDC, pInfo);   // print row buttons on each page
+	PrintRowButtons(p_dc, pInfo);   // print row buttons on each page
 	int iColumnOffset = 0;
 	for (i1 = 0; i1 < GetFixedColumnCount(); i1++)
 	{
@@ -6781,29 +6781,29 @@ void CGridCtrl::OnPrint(CDC *pDC, CPrintInfo *pInfo)
 	{
 		// have the column headings fcn draw the upper left fixed cells
 		//  for the very first columns, only
-		pDC->OffsetWindowOrg(0, +GetFixedRowHeight());
+		p_dc->OffsetWindowOrg(0, +GetFixedRowHeight());
 
 		m_nPageWidth += iColumnOffset;
 		m_nPrintColumn = 0;
-		PrintColumnHeadings(pDC, pInfo);
+		PrintColumnHeadings(p_dc, pInfo);
 		m_nPageWidth -= iColumnOffset;
 		m_nPrintColumn = GetFixedColumnCount();
 
-		pDC->OffsetWindowOrg(-iColumnOffset, -GetFixedRowHeight());
+		p_dc->OffsetWindowOrg(-iColumnOffset, -GetFixedRowHeight());
 	}
 	else
 	{
 		// changed all of this here to match above almost exactly same
-		pDC->OffsetWindowOrg(0, +GetFixedRowHeight());
+		p_dc->OffsetWindowOrg(0, +GetFixedRowHeight());
 
 		m_nPageWidth += iColumnOffset;
 
 		// print from column 0 ... last column that fits on the current page
-		PrintColumnHeadings(pDC, pInfo);
+		PrintColumnHeadings(p_dc, pInfo);
 
 		m_nPageWidth -= iColumnOffset;
 
-		pDC->OffsetWindowOrg(-iColumnOffset, -GetFixedRowHeight());
+		p_dc->OffsetWindowOrg(-iColumnOffset, -GetFixedRowHeight());
 	}
 
 
@@ -6839,26 +6839,26 @@ void CGridCtrl::OnPrint(CDC *pDC, CPrintInfo *pInfo)
 
 			CGridCellBase* pCell = GetCell(m_nCurrPrintRow, col);
 			if (pCell)
-				pCell->PrintCell(pDC, m_nCurrPrintRow, col, rect);
+				pCell->PrintCell(p_dc, m_nCurrPrintRow, col, rect);
 
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_HORZ)
 			{
 				int Overlap = (col == 0) ? 0 : 1;
-				pDC->MoveTo(rect.left - Overlap, rect.bottom);
-				pDC->LineTo(rect.right, rect.bottom);
+				p_dc->MoveTo(rect.left - Overlap, rect.bottom);
+				p_dc->LineTo(rect.right, rect.bottom);
 				if (m_nCurrPrintRow == 0) {
-					pDC->MoveTo(rect.left - Overlap, rect.top);
-					pDC->LineTo(rect.right, rect.top);
+					p_dc->MoveTo(rect.left - Overlap, rect.top);
+					p_dc->LineTo(rect.right, rect.top);
 				}
 			}
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_VERT)
 			{
 				int Overlap = (bFirstPrintedRow) ? 0 : 1;
-				pDC->MoveTo(rect.right, rect.top - Overlap);
-				pDC->LineTo(rect.right, rect.bottom);
+				p_dc->MoveTo(rect.right, rect.top - Overlap);
+				p_dc->LineTo(rect.right, rect.bottom);
 				if (col == 0) {
-					pDC->MoveTo(rect.left, rect.top - Overlap);
-					pDC->LineTo(rect.left, rect.bottom);
+					p_dc->MoveTo(rect.left, rect.top - Overlap);
+					p_dc->LineTo(rect.left, rect.bottom);
 				}
 			}
 
@@ -6870,20 +6870,20 @@ void CGridCtrl::OnPrint(CDC *pDC, CPrintInfo *pInfo)
 
 	// Footer
 	pInfo->m_rectDraw.bottom = m_nFooterHeight * m_CharSize.cy;
-	pDC->SetWindowOrg(-m_nLeftMargin * m_CharSize.cx,
+	p_dc->SetWindowOrg(-m_nLeftMargin * m_CharSize.cx,
 		-m_LogicalPageSize.cy + m_nFooterHeight * m_CharSize.cy);
-	PrintFooter(pDC, pInfo);
+	PrintFooter(p_dc, pInfo);
 
 	// SetWindowOrg back for next page
-	pDC->SetWindowOrg(0, 0);
+	p_dc->SetWindowOrg(0, 0);
 
-	pDC->SelectObject(pOldFont);
+	p_dc->SelectObject(pOldFont);
 }
 
 
 // added by M.Fletcher 12/17/00
 void CGridCtrl::PrintFixedRowCells(int nStartColumn, int nStopColumn, int& row, CRect& rect,
-	CDC *pDC, BOOL& bFirst)
+	CDC *p_dc, BOOL& bFirst)
 {
 	// print all cells from nStartColumn to nStopColumn on row
 	for (int col = nStartColumn; col < nStopColumn; col++)
@@ -6896,19 +6896,19 @@ void CGridCtrl::PrintFixedRowCells(int nStartColumn, int nStopColumn, int& row, 
 
 		CGridCellBase* pCell = GetCell(row, col);
 		if (pCell)
-			pCell->PrintCell(pDC, row, col, rect);
+			pCell->PrintCell(p_dc, row, col, rect);
 
 		if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_HORZ)
 		{
 			int Overlap = (col == 0) ? 0 : 1;
 
-			pDC->MoveTo(rect.left - Overlap, rect.bottom);
-			pDC->LineTo(rect.right, rect.bottom);
+			p_dc->MoveTo(rect.left - Overlap, rect.bottom);
+			p_dc->LineTo(rect.right, rect.bottom);
 
 			if (row == 0)
 			{
-				pDC->MoveTo(rect.left - Overlap, rect.top);
-				pDC->LineTo(rect.right, rect.top);
+				p_dc->MoveTo(rect.left - Overlap, rect.top);
+				p_dc->LineTo(rect.right, rect.top);
 			}
 		}
 
@@ -6916,13 +6916,13 @@ void CGridCtrl::PrintFixedRowCells(int nStartColumn, int nStopColumn, int& row, 
 		{
 			int Overlap = (row == 0) ? 0 : 1;
 
-			pDC->MoveTo(rect.right, rect.top - Overlap);
-			pDC->LineTo(rect.right, rect.bottom);
+			p_dc->MoveTo(rect.right, rect.top - Overlap);
+			p_dc->LineTo(rect.right, rect.bottom);
 
 			if (bFirst)
 			{
-				pDC->MoveTo(rect.left - 1, rect.top - Overlap);
-				pDC->LineTo(rect.left - 1, rect.bottom);
+				p_dc->MoveTo(rect.left - 1, rect.top - Overlap);
+				p_dc->LineTo(rect.left - 1, rect.bottom);
 				bFirst = FALSE;
 			}
 
@@ -6933,9 +6933,9 @@ void CGridCtrl::PrintFixedRowCells(int nStartColumn, int nStopColumn, int& row, 
 
 } // end of CGridCtrl::PrintFixedRowCells
 
-void CGridCtrl::PrintColumnHeadings(CDC *pDC, CPrintInfo* /*pInfo*/)
+void CGridCtrl::PrintColumnHeadings(CDC *p_dc, CPrintInfo* /*pInfo*/)
 {
-	CFont *pOldFont = pDC->SelectObject(&m_PrinterFont);
+	CFont *pOldFont = p_dc->SelectObject(&m_PrinterFont);
 
 	CRect rect;
 	rect.bottom = -1;
@@ -6959,16 +6959,16 @@ void CGridCtrl::PrintColumnHeadings(CDC *pDC, CPrintInfo* /*pInfo*/)
 		{
 			bOriginal = bFirst;
 			// lets print the missing fixed cells on left first out to last fixed column
-			PrintFixedRowCells(0, GetFixedColumnCount(), row, rect, pDC, bFirst);
+			PrintFixedRowCells(0, GetFixedColumnCount(), row, rect, p_dc, bFirst);
 			bFirst = bOriginal;
 		}
 
 		// now back to normal business print cells in heading after all fixed columns
-		PrintFixedRowCells(m_nPrintColumn, GetColumnCount(), row, rect, pDC, bFirst);
+		PrintFixedRowCells(m_nPrintColumn, GetColumnCount(), row, rect, p_dc, bFirst);
 
 	} // end of Row Loop
 
-	pDC->SelectObject(pOldFont);
+	p_dc->SelectObject(pOldFont);
 } // end of CGridCtrl::PrintColumnHeadings
 
 
@@ -6978,9 +6978,9 @@ Prints line of row buttons on each page of the printout.  Assumes that
 the window origin is setup before calling
 
 *****************************************************************************/
-void CGridCtrl::PrintRowButtons(CDC *pDC, CPrintInfo* /*pInfo*/)
+void CGridCtrl::PrintRowButtons(CDC *p_dc, CPrintInfo* /*pInfo*/)
 {
-	CFont *pOldFont = pDC->SelectObject(&m_PrinterFont);
+	CFont *pOldFont = p_dc->SelectObject(&m_PrinterFont);
 
 	CRect rect;
 	rect.right = -1;
@@ -7004,36 +7004,36 @@ void CGridCtrl::PrintRowButtons(CDC *pDC, CPrintInfo* /*pInfo*/)
 
 			CGridCellBase* pCell = GetCell(iRow, iCol);
 			if (pCell)
-				pCell->PrintCell(pDC, iRow, iCol, rect);
+				pCell->PrintCell(p_dc, iRow, iCol, rect);
 
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_HORZ)
 			{
 				int Overlap = (iCol == 0) ? 0 : 1;
-				pDC->MoveTo(rect.left - Overlap, rect.bottom);
-				pDC->LineTo(rect.right, rect.bottom);
+				p_dc->MoveTo(rect.left - Overlap, rect.bottom);
+				p_dc->LineTo(rect.right, rect.bottom);
 				if (bFirst) {
-					pDC->MoveTo(rect.left - Overlap, rect.top - 1);
-					pDC->LineTo(rect.right, rect.top - 1);
+					p_dc->MoveTo(rect.left - Overlap, rect.top - 1);
+					p_dc->LineTo(rect.right, rect.top - 1);
 					bFirst = FALSE;
 				}
 			}
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_VERT)
 			{
 				int Overlap = (iRow == 0) ? 0 : 1;
-				pDC->MoveTo(rect.right, rect.top - Overlap);
-				pDC->LineTo(rect.right, rect.bottom);
+				p_dc->MoveTo(rect.right, rect.top - Overlap);
+				p_dc->LineTo(rect.right, rect.bottom);
 				if (iCol == 0) {
-					pDC->MoveTo(rect.left, rect.top - Overlap);
-					pDC->LineTo(rect.left, rect.bottom);
+					p_dc->MoveTo(rect.left, rect.top - Overlap);
+					p_dc->LineTo(rect.left, rect.bottom);
 				}
 			}
 
 		}
 	}
-	pDC->SelectObject(pOldFont);
+	p_dc->SelectObject(pOldFont);
 }
 
-void CGridCtrl::PrintHeader(CDC *pDC, CPrintInfo *pInfo)
+void CGridCtrl::PrintHeader(CDC *p_dc, CPrintInfo *pInfo)
 {
 	// print App title on top right margin
 	CString strRight;
@@ -7058,27 +7058,27 @@ void CGridCtrl::PrintHeader(CDC *pDC, CPrintInfo *pInfo)
 	lf.lfWeight = FW_BOLD;
 	VERIFY(BoldFont.CreateFontIndirect(&lf));
 
-	CFont *pNormalFont = pDC->SelectObject(&BoldFont);
-	int nPrevBkMode = pDC->SetBkMode(TRANSPARENT);
+	CFont *pNormalFont = p_dc->SelectObject(&BoldFont);
+	int nPrevBkMode = p_dc->SetBkMode(TRANSPARENT);
 
 	CRect   rc(pInfo->m_rectDraw);
 	if (!strCenter.IsEmpty())
-		pDC->DrawText(strCenter, &rc, DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
+		p_dc->DrawText(strCenter, &rc, DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
 	if (!strRight.IsEmpty())
-		pDC->DrawText(strRight, &rc, DT_RIGHT | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
+		p_dc->DrawText(strRight, &rc, DT_RIGHT | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
 
-	pDC->SetBkMode(nPrevBkMode);
-	pDC->SelectObject(pNormalFont);
+	p_dc->SetBkMode(nPrevBkMode);
+	p_dc->SelectObject(pNormalFont);
 	BoldFont.DeleteObject();
 
 	// draw ruled-line across top
-	pDC->SelectStockObject(BLACK_PEN);
-	pDC->MoveTo(rc.left, rc.bottom);
-	pDC->LineTo(rc.right, rc.bottom);
+	p_dc->SelectStockObject(BLACK_PEN);
+	p_dc->MoveTo(rc.left, rc.bottom);
+	p_dc->LineTo(rc.right, rc.bottom);
 }
 
 //print footer with a line and date, and page number
-void CGridCtrl::PrintFooter(CDC *pDC, CPrintInfo *pInfo)
+void CGridCtrl::PrintFooter(CDC *p_dc, CPrintInfo *pInfo)
 {
 	// page numbering on left
 	CString strLeft;
@@ -7092,9 +7092,9 @@ void CGridCtrl::PrintFooter(CDC *pDC, CPrintInfo *pInfo)
 	CRect rc(pInfo->m_rectDraw);
 
 	// draw ruled line on bottom
-	pDC->SelectStockObject(BLACK_PEN);
-	pDC->MoveTo(rc.left, rc.top);
-	pDC->LineTo(rc.right, rc.top);
+	p_dc->SelectStockObject(BLACK_PEN);
+	p_dc->MoveTo(rc.left, rc.top);
+	p_dc->LineTo(rc.right, rc.top);
 
 	CFont BoldFont;
 	LOGFONT lf;
@@ -7104,24 +7104,24 @@ void CGridCtrl::PrintFooter(CDC *pDC, CPrintInfo *pInfo)
 	lf.lfWeight = FW_BOLD;
 	BoldFont.CreateFontIndirect(&lf);
 
-	CFont *pNormalFont = pDC->SelectObject(&BoldFont);
-	int nPrevBkMode = pDC->SetBkMode(TRANSPARENT);
+	CFont *pNormalFont = p_dc->SelectObject(&BoldFont);
+	int nPrevBkMode = p_dc->SetBkMode(TRANSPARENT);
 
 	// EFW - Bug fix - Force text color to black.  It doesn't always
 	// get set to a printable color when it gets here.
-	pDC->SetTextColor(RGB(0, 0, 0));
+	p_dc->SetTextColor(RGB(0, 0, 0));
 
 	if (!strLeft.IsEmpty())
-		pDC->DrawText(strLeft, &rc, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
+		p_dc->DrawText(strLeft, &rc, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
 	if (!strRight.IsEmpty())
-		pDC->DrawText(strRight, &rc, DT_RIGHT | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
+		p_dc->DrawText(strRight, &rc, DT_RIGHT | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);
 
-	pDC->SetBkMode(nPrevBkMode);
-	pDC->SelectObject(pNormalFont);
+	p_dc->SetBkMode(nPrevBkMode);
+	p_dc->SelectObject(pNormalFont);
 	BoldFont.DeleteObject();
 }
 
-void CGridCtrl::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CGridCtrl::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 {
 	m_PrinterFont.DeleteObject();
 }
@@ -7279,8 +7279,8 @@ BOOL CGridCtrl::Load(LPCTSTR filename, TCHAR chSeparator/*=_T(',')*/)
 // still cool code. :)
 CImageList* CGridCtrl::CreateDragImage(CPoint *pHotSpot)
 {
-	CDC* pDC = GetDC();
-	if (!pDC)
+	CDC* p_dc = GetDC();
+	if (!p_dc)
 		return nullptr;
 
 	CRect rect;
@@ -7306,8 +7306,8 @@ CImageList* CGridCtrl::CreateDragImage(CPoint *pHotSpot)
 	// Create mem DC and bitmap
 	CDC MemDC;
 	CBitmap bm;
-	MemDC.CreateCompatibleDC(pDC);
-	bm.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+	MemDC.CreateCompatibleDC(p_dc);
+	bm.CreateCompatibleBitmap(p_dc, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = MemDC.SelectObject(&bm);
 	MemDC.SetWindowOrg(0, 0);
 
@@ -7318,7 +7318,7 @@ CImageList* CGridCtrl::CreateDragImage(CPoint *pHotSpot)
 
 	// Clean up
 	MemDC.SelectObject(pOldBitmap);
-	ReleaseDC(pDC);
+	ReleaseDC(p_dc);
 
 	// Add the bitmap we just drew to the image list.
 	pList->Add(&bm, GetDefaultCell(FALSE, FALSE)->GetBackClr());

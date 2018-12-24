@@ -42,9 +42,9 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX); 
 	virtual void OnInitialUpdate(); 
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
+	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 

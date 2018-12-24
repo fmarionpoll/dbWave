@@ -8,7 +8,7 @@
 
 #include "StdAfx.h"
 
-#include "resource.h"
+//#include "resource.h"
 #include "scopescr.h"
 #include "TemplateWnd.h"
 #include <math.h>
@@ -19,50 +19,51 @@
 
 IMPLEMENT_SERIAL(CTemplateWnd, CScopeScreen, 0 /* schema number*/ )
 
-//////////////////////////////////////////////////////////////////////////////
-
-void CTemplateWnd::operator = (const CTemplateWnd& arg)
+CTemplateWnd&  CTemplateWnd::operator = (const CTemplateWnd& arg)
 {
-	m_nitems = arg.m_nitems;
-	m_classID = arg.m_classID;
-	m_csID = arg.m_csID;
-	m_ktolerance = arg.m_ktolerance;
-	m_globalstd = arg.m_globalstd;
-	m_power = arg.m_power;
-	SetTemplateLength(arg.m_tpllen);
-	memcpy(m_pSumArray, arg.m_pSumArray, m_tpllen*2*sizeof(mytype));
+	if (this != &arg) {
+		m_nitems = arg.m_nitems;
+		m_classID = arg.m_classID;
+		m_csID = arg.m_csID;
+		m_ktolerance = arg.m_ktolerance;
+		m_globalstd = arg.m_globalstd;
+		m_power = arg.m_power;
+		SetTemplateLength(arg.m_tpllen);
+		memcpy(m_pSumArray, arg.m_pSumArray, m_tpllen * 2 * sizeof(mytype));
 
-	m_bValid=FALSE;	
+		m_bValid = FALSE;
+	}
+	return *this;
 }
 
 void CTemplateWnd::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
-	{	
-		WORD wversion = 1;
+	{
+		const auto wversion = static_cast<WORD>(1);
 		ar << wversion;
 
-		int nstrings = 1;
+		const auto nstrings = static_cast<int>(1);
 		ar << nstrings;
 		ar << m_csID;		// 1
 
-		int nints = 3;
+		const auto nints = static_cast<int>(3);
 		ar << nints;
 		ar << m_tpllen;		// 1
 		ar << m_nitems;		// 2
 		ar << m_classID;	// 3
 
-		int nfloats = 1;
+		const auto nfloats = static_cast<int>(1);
 		ar << nfloats;
 		ar << m_ktolerance;	// 1
 
-		int ndoubles = 2;
+		const auto ndoubles = static_cast<int>(2);
 		ar << ndoubles;
 		ar << m_globalstd;	// 1
 		ar << m_power;		// 2
 			
 		mytype*	p_spike_element = m_pSumArray;
-		for (int i=0; i< m_tpllen * 2; i++, p_spike_element++)
+		for (auto i=0; i< m_tpllen * 2; i++, p_spike_element++)
 			ar << *p_spike_element;
 	} 
 	else
@@ -90,12 +91,10 @@ void CTemplateWnd::Serialize(CArchive& ar)
 		ar >> m_power;		// 2
 	
 		mytype*	p_spike_element = m_pSumArray;
-		for (int i=0; i< m_tpllen * 2; i++, p_spike_element++)
+		for (auto i=0; i< m_tpllen * 2; i++, p_spike_element++)
 			ar >> *p_spike_element;
 	}
 }
-
-//////////////////////////////////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CTemplateWnd, CScopeScreen)
 	ON_WM_LBUTTONDBLCLK()
@@ -106,8 +105,6 @@ BEGIN_MESSAGE_MAP(CTemplateWnd, CScopeScreen)
 	ON_WM_RBUTTONUP()
 	ON_WM_SETCURSOR()
 END_MESSAGE_MAP()
-
-//////////////////////////////////////////////////////////////////////////////
 
 CTemplateWnd::CTemplateWnd(): m_power(0), m_pMax0(nullptr), m_pMin0(nullptr)
 {
@@ -124,7 +121,6 @@ CTemplateWnd::CTemplateWnd(): m_power(0), m_pMax0(nullptr), m_pMin0(nullptr)
 	m_classID = 0;
 }
 
-// ---------------------------------------------------------------------------------
 
 CTemplateWnd::~CTemplateWnd()
 {	
@@ -133,10 +129,8 @@ CTemplateWnd::~CTemplateWnd()
 
 void CTemplateWnd::DeleteArrays()
 {
-	if (m_pSumArray != nullptr)
-		delete [] m_pSumArray;
-	if (m_pAvg != nullptr)
-		delete [] m_pAvg;
+	delete [] m_pSumArray;
+	delete [] m_pAvg;
 
 	m_pSumArray = nullptr;
 	m_pSUM0 = nullptr;
@@ -144,18 +138,10 @@ void CTemplateWnd::DeleteArrays()
 	m_pAvg = nullptr;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-// DISPLAY SPIKES
-//
-// Display(CDC*)
-////////////////////////////////////////////////////////////////////////////////////
-
-// ---------------------------------------------------------------------------------
-
-void CTemplateWnd::PlotDatatoDC(CDC* pDC)
+void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)		// erase background
-		EraseBkgnd(pDC);
+		EraseBkgnd(p_dc);
 
 	if (m_tpllen == 0)
 		return;
@@ -163,12 +149,12 @@ void CTemplateWnd::PlotDatatoDC(CDC* pDC)
 		tSetdisplayData();
 
 	// load resources and prepare context	
-	int nSavedDC = pDC->SaveDC();
-	pDC->SetViewportOrg (m_displayRect.left, m_displayRect.Height()/2);
-	pDC->SetViewportExt (m_displayRect.Width(), -m_displayRect.Height());
+	const auto n_saved_dc = p_dc->SaveDC();
+	p_dc->SetViewportOrg (m_displayRect.left, m_displayRect.Height()/2);
+	p_dc->SetViewportExt (m_displayRect.Width(), -m_displayRect.Height());
 	
 	GetExtents();
-	PrepareDC(pDC);
+	PrepareDC(p_dc);
 
 	if (m_polypts.GetSize() != m_tpllen*6)
 		InitPolypointAbcissa();
@@ -177,18 +163,18 @@ void CTemplateWnd::PlotDatatoDC(CDC* pDC)
 	FillOrdinatesAtscale(FALSE);
 
 	// plot area between max and min in grey
-	CPen* oldPen =pDC->SelectObject(&m_penTable[SILVER_COLOR]);
-	CBrush* poldB = (CBrush*) pDC->SelectStockObject(LTGRAY_BRUSH);
-	pDC->Polygon((CPoint*) &m_polypts[2*m_tpllen], m_tpllen*2+1);	
-	pDC->SelectObject(poldB);
+	const auto old_pen =p_dc->SelectObject(&m_penTable[SILVER_COLOR]);
+	const auto pold_b = (CBrush*) p_dc->SelectStockObject(LTGRAY_BRUSH);
+	p_dc->Polygon(&m_polypts[2*m_tpllen], m_tpllen*2+1);	
+	p_dc->SelectObject(pold_b);
 
 	// plot central curve
-	pDC->SelectStockObject(BLACK_PEN);	
-	pDC->Polyline((CPoint*) &m_polypts[0], m_tpllen);
+	p_dc->SelectStockObject(BLACK_PEN);	
+	p_dc->Polyline( &m_polypts[0], m_tpllen);
 
 	// restore resources		
-	pDC->SelectObject(oldPen);
-	pDC->RestoreDC(nSavedDC);
+	p_dc->SelectObject(old_pen);
+	p_dc->RestoreDC(n_saved_dc);
 }
 
 // ---------------------------------------------------------------------------------
@@ -197,15 +183,15 @@ void CTemplateWnd::GetExtents()
 {
 
 	if (m_yWE == 1) // && m_yWO == 0)
-	{		
-		int* pSup = m_pMax0;
-		int* pInf = m_pMin0;
-		int maxval = *pSup;
-		int minval = *pInf;
-		for (int i=0; i< m_tpllen; i++, pSup++, pInf++)
+	{
+		auto p_sup = m_pMax0;
+		auto p_inf = m_pMin0;
+		auto maxval = *p_sup;
+		auto minval = *p_inf;
+		for (auto i=0; i< m_tpllen; i++, p_sup++, p_inf++)
 		{
-			if (*pSup > maxval) maxval = *pSup;
-			if (*pInf < minval) minval = *pInf;
+			if (*p_sup > maxval) maxval = *p_sup;
+			if (*p_inf < minval) minval = *p_inf;
 		}
 		
 		m_yWE = maxval - minval+2;  
@@ -227,18 +213,23 @@ void CTemplateWnd::GetExtents()
 void CTemplateWnd::InitPolypointAbcissa()
 {
 	m_polypts.SetSize(m_tpllen*6+2);
-	long* pDest = (long*) &m_polypts[0];
-	long* pDest1 = (long*) &m_polypts[m_tpllen*2];
-	long* pDest2 = (long*) &m_polypts[m_polypts.GetUpperBound() -3];
+	auto i1 = m_tpllen;
+	auto i2 = i1 * 2;
+	//long* p_destination = (long*) &m_polypts[0];
+	//long* pDest1 = (long*) &m_polypts[m_tpllen*2];
+	//long* pDest2 = (long*) &m_polypts[m_polypts.GetUpperBound() -3];
 
-	for (int i = 1; i<=m_tpllen; i++)
+	for (auto i = 1; i<=m_tpllen; i++, i1++, i2++)
 	{
-		*pDest = i;	// copy data
-		pDest += 2;
-		*pDest1 = i;
-		pDest1 += 2;
-		*pDest2 = i;
-		pDest2 -= 2;		
+		//*p_destination = i;	// copy data
+		//p_destination += 2;
+		//*pDest1 = i;
+		//pDest1 += 2;
+		//*pDest2 = i;
+		//pDest2 -= 2;	
+		m_polypts[i].x = i;
+		m_polypts[i1].x = i;
+		m_polypts[i2].x = i;
 	}
 	m_polypts[m_polypts.GetUpperBound() -1] = m_polypts[m_tpllen*2];
 }
@@ -251,46 +242,51 @@ void CTemplateWnd::InitPolypointAbcissa()
 void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 {
 		// fill with average data
-	int* pAvg = m_pAvg;
-	int* pMax = m_pMax0;
-	int* pMin = m_pMin0;
+	auto p_avg = m_pAvg;
+	auto p_max = m_pMax0;
+	auto p_min = m_pMin0;
 
-	long* pDAvg = (long*) &m_polypts[1];
-	long* pDMx = (long*) &m_polypts[m_tpllen*2 + 1];
-	long* pDMi = (long*) &m_polypts[m_polypts.GetUpperBound()-2];
+	//long* pDAvg = (long*) &m_polypts[1];
+	//long* pDMx = (long*) &m_polypts[m_tpllen*2 + 1];
+	//long* pDMi = (long*) &m_polypts[m_polypts.GetUpperBound()-2];
+
+	auto i1 = m_tpllen;
+	auto i2 = i1 * 2;
 
 	if (!bScale)
 	{
-		for (int i = 0; i< m_tpllen; i++)
+		for (auto i = 0; i< m_tpllen; i++, i1++, i2++)
 		{
-			*pDAvg = *pAvg;
-			pAvg++;
-			pDAvg+= 2;
-
-			*pDMx = *pMax;
-			pMax++;
-			pDMx+= 2;
-
-			*pDMi = *pMin;
-			pMin++;
-			pDMi-= 2;
+			m_polypts[i].x = *p_avg;
+			m_polypts[i1].x = *p_max;
+			m_polypts[i2].x = *p_min;
+			//*pDAvg = *pAvg;
+			//*pDMx = *pMax;
+			//*pDMi = *pMin;
+			p_avg++;
+			p_max++;
+			p_min++;
+			//pDAvg+= 2;
+			//pDMx+= 2;
+			//pDMi-= 2;
 		}
 	}
 	else
 	{
-		for (int i = 0; i< m_tpllen; i++)
+		for (int i = 0; i< m_tpllen; i++, i1++, i2++)
 		{
-			*pDAvg = MulDiv(*pAvg -m_yWO, m_yVE, m_yWE) + m_yVO;
-			pAvg++;
-			pDAvg+= 2;
-
-			*pDMx = MulDiv(*pMax -m_yWO, m_yVE, m_yWE) + m_yVO;
-			pMax++;
-			pDMx+= 2;
-
-			*pDMi = MulDiv(*pMin -m_yWO, m_yVE, m_yWE) + m_yVO;
-			pMin++;
-			pDMi-= 2;
+			m_polypts[i].x = MulDiv(*p_avg - m_yWO, m_yVE, m_yWE) + m_yVO;;
+			m_polypts[i1].x = MulDiv(*p_max - m_yWO, m_yVE, m_yWE) + m_yVO;
+			m_polypts[i2].x = MulDiv(*p_min - m_yWO, m_yVE, m_yWE) + m_yVO;
+			//*pDAvg = MulDiv(*pAvg -m_yWO, m_yVE, m_yWE) + m_yVO;
+			//*pDMx = MulDiv(*pMax -m_yWO, m_yVE, m_yWE) + m_yVO;
+			//*pDMi = MulDiv(*pMin -m_yWO, m_yVE, m_yWE) + m_yVO;
+			p_avg++;
+			p_max++;
+			p_min++;
+			//pDAvg+= 2;
+			//pDMx+= 2;
+			//pDMi-= 2;
 		}
 	}
 	m_polypts[m_polypts.GetUpperBound()] = m_polypts[m_tpllen*2+1];
@@ -330,15 +326,6 @@ void CTemplateWnd::SetTemplateLength(int len, int extent, int org)
 	m_xWO = org;
 }
 
-// ---------------------------------------------------------------------------------
-
-// Data operations on template
-
-// ---------------------------------------------------------------------------------
-// tInit()
-//
-// erase all data, set data to zero and restore nb of elements to zero
-
 void CTemplateWnd::tInit()
 {
 	memset (m_pSumArray, 0, m_tpllen*2*sizeof(mytype));
@@ -346,67 +333,55 @@ void CTemplateWnd::tInit()
 	m_nitems=0;			// n elements
 }
 
-// ---------------------------------------------------------------------------------
-// tAdd
-//
-// add spike data to template
-// set flag to indicate that mean and limits are no longer valid
-
-void CTemplateWnd::tAdd(short* pSource)
+void CTemplateWnd::tAddSpikeToTemplate(short* p_source)
 {
-	mytype* pSUM = m_pSUM0;
-	mytype* pSUM2 = m_pSUM20;	
+	mytype* p_sum = m_pSUM0;
+	mytype* p_sum2 = m_pSUM20;	
 	m_nitems++;
 
-	for (int i=0; i< m_tpllen; i++, pSUM++, pSUM2++, pSource++)
+	for (auto i=0; i< m_tpllen; i++, p_sum++, p_sum2++, p_source++)
 	{
-		mytype x = (mytype) *pSource;
-		*pSUM += x;
-		*pSUM2 += (x*x);
+		const auto x = static_cast<mytype>(*p_source);
+		*p_sum += x;
+		*p_sum2 += (x*x);
 	}
 	// mark pMean data as not valid
 	m_bValid=FALSE;
 }
 
-// ---------------------------------------------------------------------------------
-// tSetdisplayData()
-//
-// compute center curve and upper and lower limits
-// set flag when done
-
 void CTemplateWnd::tSetdisplayData()
 {
-	int* pMean = m_pAvg;
-	int* pSup = m_pMax0;
-	int* pInf = m_pMin0;
+	auto p_mean = m_pAvg;
+	auto p_sup = m_pMax0;
+	auto p_inf = m_pMin0;
 
-	mytype* pSUM = m_pSUM0;
-	mytype* pSUM2 = m_pSUM20;
+	mytype* p_sum = m_pSUM0;
+	mytype* p_sum2 = m_pSUM20;
 	mytype ysum, ysum2;
-	mytype xn = (mytype) m_nitems;
+	const auto xn = static_cast<mytype>(m_nitems);
 
 	if (m_nitems < 5)
 	{
-		ysum2 = (mytype) (m_globalstd * m_ktolerance);
-		for (int i=0; i< m_tpllen; i++, pSUM++, pMean++, pSup++, pInf++)
+		ysum2 = static_cast<mytype>(m_globalstd * m_ktolerance);
+		for (auto i=0; i< m_tpllen; i++, p_sum++, p_mean++, p_sup++, p_inf++)
 		{
-			ysum = *pSUM / xn;
-			*pMean = (int) ysum;
-			*pInf = (int) (ysum - ysum2);
-			*pSup = (int) (ysum + ysum2);
+			ysum = *p_sum / xn;
+			*p_mean = static_cast<int>(ysum);
+			*p_inf = static_cast<int>(ysum - ysum2);
+			*p_sup = static_cast<int>(ysum + ysum2);
 		}
 
 	}
 	else
 	{
-		for (int i=0; i< m_tpllen; i++, pSUM++, pSUM2++, pMean++, pSup++, pInf++)
+		for (auto i=0; i< m_tpllen; i++, p_sum++, p_sum2++, p_mean++, p_sup++, p_inf++)
 		{
-			ysum = *pSUM;
-			ysum2 = (mytype)( sqrt((*pSUM2 - ysum*ysum/xn)/(xn-1.f)) * m_ktolerance);
+			ysum = *p_sum;
+			ysum2 = static_cast<mytype>(sqrt((*p_sum2 - ysum * ysum / xn) / (xn - 1.f)) * m_ktolerance);
 			ysum /= xn;			
-			*pMean = (int) ysum;
-			*pInf = (int) (ysum - ysum2);
-			*pSup = (int) (ysum + ysum2);
+			*p_mean = static_cast<int>(ysum);
+			*p_inf = static_cast<int>(ysum - ysum2);
+			*p_sup = static_cast<int>(ysum + ysum2);
 		}
 	}
 
@@ -422,14 +397,14 @@ void CTemplateWnd::tSetdisplayData()
 
 double CTemplateWnd::tPower()
 {
-	mytype* pSUM = m_pSUM0 + m_xWO;
+	mytype* p_sum = m_pSUM0 + m_xWO;
 	double xi;
 	double x = 0.f;
-	int last = m_xWE + m_xWO;
+	const auto last = m_xWE + m_xWO;
 
-	for (int i=m_xWO; i< last; i++, pSUM++)
+	for (auto i=m_xWO; i< last; i++, p_sum++)
 	{
-		xi = *pSUM;
+		xi = *p_sum;
 		x += xi*xi;
 	}
 	xi= m_nitems;
@@ -438,14 +413,14 @@ double CTemplateWnd::tPower()
 }
 
 // ---------------------------------------------------------------------------------
-// tWithin()
+// tGetNumberOfPointsWithin()
 //
 //	get number of points within limits of template
 //	template and current spike
 //	if (n points >= tpl_len*hitrate/100) iyes = 1
 //	if (n points <  tpl_len*hitrate/100) iyes = 0
 
-BOOL CTemplateWnd::tWithin(short* pSource, int* hitrate)
+BOOL CTemplateWnd::tGetNumberOfPointsWithin(short* p_source, int* hitrate)
 {
 	if (!m_bValid)				// we need valid limits..
 		tSetdisplayData();
@@ -454,7 +429,7 @@ BOOL CTemplateWnd::tWithin(short* pSource, int* hitrate)
 	int* pMean = m_pAvg + m_xWO;
 	int* pSup = m_pMax0 + m_xWO;
 	int* pInf = m_pMin0 + m_xWO;
-	short* p_data = pSource + m_xWO;
+	short* p_data = p_source + m_xWO;
 	int nwithin = 0;
 
 	for (int i=m_xWO; i< last; i++, p_data++, pSup++, pInf++)
@@ -473,7 +448,7 @@ BOOL CTemplateWnd::tWithin(short* pSource, int* hitrate)
 //	compute distance between template and current spike
 //	out: xdist = sum(abs(t(i)-x(i+tpkd-1)), i=1, tpl_len)/tpower(it)
 
-double CTemplateWnd::tDist(short* pSource)
+double CTemplateWnd::tDist(short* p_source)
 {
 	// assume power correctly set by calling routine tMinDist
 //	if (!m_bValid)				// we need valid limits..
@@ -481,7 +456,7 @@ double CTemplateWnd::tDist(short* pSource)
 
 	int last = m_xWE + m_xWO;
 	int* pMean = m_pAvg + m_xWO;
-	short* p_data = pSource + m_xWO;
+	short* p_data = p_source + m_xWO;
 	double ii=0;
 
 	for (int i=m_xWO; i< last; i++, p_data++, pMean++)	
@@ -499,13 +474,13 @@ double CTemplateWnd::tDist(short* pSource)
 //	jitter of -2/+2
 //	out: xdist = sum(abs(t(i)-x(i+tpkd-1)), i=1, tpl_len)/tpower(it) 
 
-double CTemplateWnd::tMinDist(short* pSource, int* ioffsetmin, BOOL bJitter)
+double CTemplateWnd::tMinDist(short* p_source, int* ioffsetmin, BOOL bJitter)
 {
 	if (!m_bValid)				// we need valid limits..
 		tSetdisplayData();		// and also correct power
 
 	int jitter= (bJitter ? 2 : 0);
-	short* p_data = pSource-jitter;	
+	short* p_data = p_source-jitter;	
 	double xdist = tDist(p_data);
 	double xmindist = xdist;
 	*ioffsetmin = -jitter;
@@ -595,7 +570,7 @@ void CTemplateWnd::OnRButtonUp(UINT nFlags, CPoint point)
 	GetParent()->PostMessage(WM_RBUTTONUP, nFlags, MAKELPARAM(point.x, point.y));
 }
 
-BOOL CTemplateWnd::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
+BOOL CTemplateWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) 
 {
 	return 0;
 }

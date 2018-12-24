@@ -5,7 +5,7 @@
 #include "StdAfx.h"
 #include "scopescr.h"
 #include "Lineview.h"
-#include "Editctrl.h"
+//#include "Editctrl.h"
 #include "NoteDoc.h"
 #include "dbWaveDoc.h"
 #include "resource.h"
@@ -51,8 +51,8 @@ void CMeasureResultsPage::OnExport()
 	const auto p_doc = p_template->OpenDocumentFile(nullptr);
 	auto pos = p_doc->GetFirstViewPosition();
 	const auto p_view = (CRichEditView*) p_doc->GetNextView(pos);
-	CRichEditCtrl& pEdit = p_view->GetRichEditCtrl();	
-	pEdit.SetWindowText(csBuffer);		// copy content of window into CString
+	auto& p_edit = p_view->GetRichEditCtrl();	
+	p_edit.SetWindowText(csBuffer);		// copy content of window into CString
 }
 
 void CMeasureResultsPage::OutputTitle()
@@ -62,7 +62,7 @@ void CMeasureResultsPage::OutputTitle()
 	
 	// column headers for vertical tags	
 	m_csTitle = _T("#");
-	CString csCols= _T("");	
+	CString cs_cols= _T("");	
 	m_nbdatacols=0;
 
 	switch (m_pMO->wOption)
@@ -71,32 +71,32 @@ void CMeasureResultsPage::OutputTitle()
 	case 0:
 		if (m_pMO->bDatalimits)
 		{			
-			if (!m_pMO->btime)	csCols += _T("\tt1(mV)\tt2(mV)");
-			else				csCols += _T("\tt1(mV)\tt1(s)\tt2(mV)\tt2(s)");
+			if (!m_pMO->btime)	cs_cols += _T("\tt1(mV)\tt2(mV)");
+			else				cs_cols += _T("\tt1(mV)\tt1(s)\tt2(mV)\tt2(s)");
 		}
 		if (m_pMO->bDiffDatalimits)
 		{
-			csCols += _T("\tt2-t1(mV)");
-			if (m_pMO->btime)	csCols += _T("\tt2-t1(s)");
+			cs_cols += _T("\tt2-t1(mV)");
+			if (m_pMO->btime)	cs_cols += _T("\tt2-t1(s)");
 		}
 		if (m_pMO->bExtrema)
 		{
-			if (!m_pMO->btime)	csCols += _T("\tMax(mV)\tmin(mV)");
-			else				csCols += _T("\tMax(mV)\tMax(s)\tmin(mV)\tmin(s)");
+			if (!m_pMO->btime)	cs_cols += _T("\tMax(mV)\tmin(mV)");
+			else				cs_cols += _T("\tMax(mV)\tMax(s)\tmin(mV)\tmin(s)");
 		}
 		if (m_pMO->bDiffExtrema)
 		{
-			csCols += _T("\tDiff(mV)");
-			if (m_pMO->btime)	csCols += _T("\tdiff(s)");
+			cs_cols += _T("\tDiff(mV)");
+			if (m_pMO->btime)	cs_cols += _T("\tdiff(s)");
 		}
-		if (m_pMO->bHalfrisetime)	csCols += _T("\t1/2rise(s)");
-		if (m_pMO->bHalfrecovery)	csCols += _T("\t1/2reco(s)");
+		if (m_pMO->bHalfrisetime)	cs_cols += _T("\t1/2rise(s)");
+		if (m_pMO->bHalfrecovery)	cs_cols += _T("\t1/2reco(s)");
 		break;
 
 	// ......................  horizontal cursors
 	case 1:
-		if (m_pMO->bDatalimits)		csCols += _T("\tv1(mV)\tv2(mV)");
-		if (m_pMO->bDiffDatalimits)	csCols += _T("\tv2-v1(mV)");
+		if (m_pMO->bDatalimits)		cs_cols += _T("\tv1(mV)\tv2(mV)");
+		if (m_pMO->bDiffDatalimits)	cs_cols += _T("\tv2-v1(mV)");
 		break;
 
 	// ......................  rectangle area
@@ -110,7 +110,7 @@ void CMeasureResultsPage::OutputTitle()
 	}
 
 	// now set columns - get nb of data channels CString
-	if (!csCols.IsEmpty())
+	if (!cs_cols.IsEmpty())
 	{
 		auto channel_first =0;									// assume all data channels
 		auto channel_last =m_plineview->GetChanlistSize()-1;	// requested
@@ -128,7 +128,7 @@ void CMeasureResultsPage::OutputTitle()
 		
 		for (auto channel=channel_first ; channel <= channel_last ; channel++)
 		{
-			auto cs = csCols;
+			auto cs = cs_cols;
 			auto p_string = cs.GetBuffer(cs.GetLength()+1);
 			p_string++;					// skip first tab
 			auto p_token = _tcstok_s(p_string, separators, &next_token);
@@ -150,7 +150,6 @@ void CMeasureResultsPage::OutputTitle()
 		}
 	}
 	m_csTitle += _T("\r\n");
-	return;
 }
 
 void CMeasureResultsPage::MeasureFromVTtags(const int channel)
@@ -186,13 +185,12 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 		const auto l1 = m_plineview->GetVTtagLval(tag_first);
 		MeasureWithinInterval(channel, line, l1, l1);	
 	}	
-	return;
 }
 
 void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long l_last)
 {
 	short* p_data;
-	int n_channels;							// n raw channels
+	int n_channels;	
 	const auto p_buf= m_pdatDoc->LoadRawDataParams(&n_channels);
 	const auto source_chan = m_plineview->GetChanlistSourceChan(channel);
 	const auto transform_mode = m_plineview->GetChanlistTransformMode(channel);
@@ -576,7 +574,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 
 		// export Ascii: end //////////////////////////////////////////////
 		m_CEditResults.SetWindowText(p_copy0);		
-		::GlobalUnlock((HGLOBAL) h_copy);
+		::GlobalUnlock(static_cast<HGLOBAL>(h_copy));
 		SetClipboardData (CF_TEXT, h_copy);				
 		CloseClipboard();		// close connect w.clipboard
 		delete p_vd;				// delete temporary object

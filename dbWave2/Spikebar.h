@@ -69,18 +69,18 @@ public:
 
 // implementation
 public:
-	void 	Print(CDC* pDC, CRect* rect);	
+	void 	Print(CDC* p_dc, CRect* rect);	
 
 protected:
 	virtual void ZoomData(CRect* prevRect, CRect* newRect);
 public:
-	virtual void PlotDatatoDC(CDC* pDC);
+	virtual void PlotDatatoDC(CDC* p_dc);
 protected:
 	int		DoesCursorHitCurve(CPoint point);
 
-	void 	DisplayBars(CDC* pDC, CRect* rect);
-	void	HighlightOneBar(int nospike, CDC* pDC) const;
-	void	DisplayStim(CDC* pDC, CRect* rect) const;
+	void 	DisplayBars(CDC* p_dc, CRect* rect);
+	void	HighlightOneBar(int nospike, CDC* p_dc) const;
+	void	DisplayStim(CDC* p_dc, CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

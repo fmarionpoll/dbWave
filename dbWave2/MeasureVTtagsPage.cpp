@@ -6,7 +6,7 @@
 #include "scopescr.h"
 #include "Lineview.h"
 #include "Editctrl.h"
-#include "NoteDoc.h"
+//#include "NoteDoc.h"
 #include "dbWaveDoc.h"
 #include "resource.h"
 #include "MeasureVTtagsPage.h"

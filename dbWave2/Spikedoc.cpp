@@ -456,7 +456,7 @@ void CSpikeDoc::ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, in
 	{
 		// search item index with correct class ID
 		auto i=pspklist->GetNbclasses()-1;
-		for (i; i>= 0; i--)
+		for (auto j = i; j>= 0; j--, i--)
 			if (pspklist->GetclassID(i) == vdS->classnb)
 				break;
 		class0 = i;
@@ -569,7 +569,8 @@ void CSpikeDoc::_ExportSpkPSTH (CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long*
 	}
 }
 
-void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, CString csFileComment)
+void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString&
+                              csFileComment)
 {	
 	CString cs_dummy;
 	CSpikeList* pspklist= &spikelist_array[m_currspklist];
@@ -585,8 +586,8 @@ void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* p
 	if (vdS->spikeclassoption ==-1)				// only 1 class selected
 	{
 		// search item index with correct class ID
-		int i=pspklist->GetNbclasses()-1;
-		for (i; i>= 0; i--)
+		auto i=pspklist->GetNbclasses()-1;
+		for (auto j=i; j>= 0; i--,j--)
 			if (pspklist->GetclassID(i) == vdS->classnb)
 				break;
 		// if none is found, export descriptor and exit
@@ -672,7 +673,7 @@ void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 
 		// export number of spikes / interval
 		// ------- count total spk/interval (given bspkclass&bartefacts)
-		long iitotal = 0;
+		//long iitotal = 0;
 		for (auto j=0; j<pspklist->GetTotalSpikes(); j++)
 		{
 			// skip intervals not requested
@@ -708,7 +709,7 @@ void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		if (y_n > 0)
 		{
 			const auto volts_per_bin = pspklist->GetAcqVoltsperBin()*1000.f;
-			cs_dummy.Format(_T("\t%.3lf\t%.3lf\t%i"), double(y_sum/y_n)*volts_per_bin, double(y_sum2)*volts_per_bin*volts_per_bin, y_n);
+			cs_dummy.Format(_T("\t%.3lf\t%.3lf\t%i"), (double(y_sum)/y_n)*volts_per_bin, double(y_sum2)*volts_per_bin*volts_per_bin, y_n);
 		}
 		else
 			cs_dummy= _T("\t\t\t0"); 
@@ -726,7 +727,8 @@ void CSpikeDoc::_ExportSpkAmplitHistogram (CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 	}
 }
 
-void CSpikeDoc::ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist0, CString csFileComment)
+void CSpikeDoc::ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist0, const CString&
+                                         csFileComment)
 {
 	auto pspklist= &spikelist_array[m_currspklist];
 
@@ -743,7 +745,7 @@ void CSpikeDoc::ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* v
 	{
 		// search item index with correct class ID
 		auto i=pspklist->GetNbclasses()-1;
-		for (i; i>= 0; i--)
+		for (auto j=i; j>= 0; i--,j--)
 			if (pspklist->GetclassID(i) == vdS->classnb)
 				break;
 		// if none is found, export descriptor and exit
@@ -1653,7 +1655,7 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	{
 		// search item index with correct class ID
 		auto i=pspklist->GetNbclasses()-1;
-		for (i; i>= 0; i--)
+		for (auto j=i; j>= 0; i--, j--)
 			if (pspklist->GetclassID(i) == vdS->classnb)
 				break;
 
@@ -1702,8 +1704,7 @@ CSpikeList*	CSpikeDoc::SetSpkListCurrent (int ichan)
 
 CSpikeList*	CSpikeDoc::GetSpkListCurrent()
 {
-	CSpikeList* pspklist= nullptr;
-	pspklist = &spikelist_array[m_currspklist];
+	auto pspklist = &spikelist_array[m_currspklist];
 	ASSERT(pspklist);
 	return pspklist;
 }

@@ -149,7 +149,7 @@ public:
 protected:
 	void	AddtoliArray	(int icol);
 	void	AddtoIDArray	(CUIntArray* pmIDArray, long uiID);
-	void	AddDaytoDateArray (COleDateTime &oTime);
+	void	AddDaytoDateArray (COleDateTime &o_time);
 	void	DeleteDateArray();
 
 // Overrides

@@ -2,8 +2,8 @@
 //
 
 #include "StdAfx.h"
-#include "dbWave.h"
-#include "resource.h"
+//#include "dbWave.h"
+//#include "resource.h"
 
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"
@@ -18,17 +18,13 @@
 #define new DEBUG_NEW
 #endif
 
-struct MYPTR
+struct myptr
 {	
 	CString*		pcs;
-	CSpikeShapeWnd* pspkShapes;
-	CSpikeBarWnd*	pspkBars;
+	CSpikeShapeWnd* pspk_shapes;
+	CSpikeBarWnd*	pspk_bars;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeClassListBox
-
-//////////////////////////////////////////////////////////////////////////////
 BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
 	ON_WM_SIZE()
 	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)	
@@ -37,7 +33,6 @@ BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
-//////////////////////////////////////////////////////////////////////////////
 
 CSpikeClassListBox::CSpikeClassListBox(): m_selspikeLB(0), m_oldsel(0), m_lFirst(0), m_lLast(0)
 {
@@ -60,21 +55,14 @@ CSpikeClassListBox::CSpikeClassListBox(): m_selspikeLB(0), m_oldsel(0), m_lFirst
 	m_hwndBarsReflect = nullptr;
 }
 
-
-// --------------------------------------------------------------------------------
-
 CSpikeClassListBox::~CSpikeClassListBox()
 {
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeClassListBox message handlers
-
 LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
-	int icursel = (int) HIWORD(lParam)/2; // why lParam/2???
-	int threshold = LOWORD(lParam);	// value associated	
+	auto icursel = static_cast<int>(HIWORD(lParam))/2; // why lParam/2???
+	const int threshold = LOWORD(lParam);	// value associated	
 	//// select row that received a hit
 	//if (GetSel(icursel) ==0)
 	//	SetCurSel(icursel);
@@ -87,12 +75,12 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_CHANGEHZLIMITS:		// abcissa have changed
-		{
-		MYPTR* pptr = (MYPTR*) GetItemData(icursel);
-		m_lFirst = (pptr->pspkBars)->GetTimeFirst();
-		m_lLast = (pptr->pspkBars)->GetTimeLast();
-		SetTimeIntervals(m_lFirst, m_lLast);
-		}
+	{
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(icursel));
+		m_lFirst = (pptr->pspk_bars)->GetTimeFirst();
+		m_lLast = (pptr->pspk_bars)->GetTimeLast();
+		SetTimeIntervals(m_lFirst, m_lLast); 
+	}
 		break;
 
 	case HINT_HITSPIKE:				// spike is selected
@@ -103,12 +91,12 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_CHANGEZOOM:
-		{
-		MYPTR* pptr = (MYPTR*) GetItemData(icursel);
-		int y_we = (pptr->pspkBars)->GetYWExtent();
-		int y_wo = (pptr->pspkBars)->GetYWOrg();
+	{
+		auto* pptr2 = reinterpret_cast<myptr*>(GetItemData(icursel));
+		const auto y_we = pptr2->pspk_bars->GetYWExtent();
+		const auto y_wo = pptr2->pspk_bars->GetYWOrg();
 		SetYzoom(y_we, y_wo);
-		}
+	}
 		break;
 
 	case HINT_DROPPED:	// HIWORD(lParam) = ID of control who have sent this message
@@ -153,52 +141,52 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	if (lpDIS->itemAction & ODA_DRAWENTIRE)
 	{
 		// get data
-		CRect rcText = lpDIS->rcItem;
-		rcText.right = rcText.left + m_widthText;
-		MYPTR* pptr = (MYPTR*) lpDIS->itemData;
+		CRect rc_text = lpDIS->rcItem;
+		rc_text.right = rc_text.left + m_widthText;
+		const auto pptr = reinterpret_cast<myptr*>(lpDIS->itemData);
 		
 		// display text
-		int textlen = (pptr->pcs)->GetLength();
-		dc.DrawText(*(pptr->pcs), textlen, rcText, DT_LEFT|DT_WORDBREAK);
+		const auto textlen = (pptr->pcs)->GetLength();
+		dc.DrawText(*(pptr->pcs), textlen, rc_text, DT_LEFT|DT_WORDBREAK);
 		
 		// display spikes
-		int col1 = m_widthText+m_widthSeparator;
-		int col2 = col1+m_widthSpikes+m_widthSeparator;
-		CRect rectSpikes = CRect(col1+1, lpDIS->rcItem.top+1, col1+m_widthSpikes, lpDIS->rcItem.bottom -1);
-		(pptr->pspkShapes)->MoveWindow(rectSpikes, FALSE);
+		const auto col1 = m_widthText+m_widthSeparator;
+		const auto col2 = col1+m_widthSpikes+m_widthSeparator;
+		auto rect_spikes = CRect(col1+1, lpDIS->rcItem.top+1, col1+m_widthSpikes, lpDIS->rcItem.bottom -1);
+		(pptr->pspk_shapes)->MoveWindow(rect_spikes, FALSE);
 		{
-			CDC dcMem;
-			CBitmap bmpMem;
-			CBitmap* pOldBmp= nullptr;
-			dcMem.CreateCompatibleDC(&dc);
-			bmpMem.CreateCompatibleBitmap(&dc, rectSpikes.Width(),rectSpikes.Height());
-			pOldBmp = dcMem.SelectObject(&bmpMem);
+			CDC dc_mem;
+			CBitmap bmp_mem;
+			CBitmap* p_old_bmp= nullptr;
+			dc_mem.CreateCompatibleDC(&dc);
+			bmp_mem.CreateCompatibleBitmap(&dc, rect_spikes.Width(),rect_spikes.Height());
+			p_old_bmp = dc_mem.SelectObject(&bmp_mem);
 			//draw data
-			(pptr->pspkShapes)->SetDisplayAreaSize(rectSpikes.Width(), rectSpikes.Height());
-			(pptr->pspkShapes)->PlotDatatoDC(&dcMem);
+			(pptr->pspk_shapes)->SetDisplayAreaSize(rect_spikes.Width(), rect_spikes.Height());
+			(pptr->pspk_shapes)->PlotDatatoDC(&dc_mem);
 			// transfer data to DC and clean the memory DC
-			dc.BitBlt(rectSpikes.left, rectSpikes.top, rectSpikes.Width(), rectSpikes.Height(), &dcMem, 0, 0, SRCCOPY);
-			dcMem.SelectObject(pOldBmp);
-			dcMem.DeleteDC();
+			dc.BitBlt(rect_spikes.left, rect_spikes.top, rect_spikes.Width(), rect_spikes.Height(), &dc_mem, 0, 0, SRCCOPY);
+			dc_mem.SelectObject(p_old_bmp);
+			dc_mem.DeleteDC();
 		}
 		
 		// display bars
-		CRect rectBars   = CRect(col2+1, lpDIS->rcItem.top+1, col2+m_widthBars, lpDIS->rcItem.bottom -1);
-		(pptr->pspkBars)->MoveWindow(rectBars, FALSE);
+		auto rect_bars   = CRect(col2+1, lpDIS->rcItem.top+1, col2+m_widthBars, lpDIS->rcItem.bottom -1);
+		(pptr->pspk_bars)->MoveWindow(rect_bars, FALSE);
 		{
-			CDC dcMem;
-			CBitmap bmpMem;
-			CBitmap* pOldBmp= nullptr;
-			dcMem.CreateCompatibleDC(&dc);
-			bmpMem.CreateCompatibleBitmap(&dc, rectBars.Width(),rectBars.Height());
-			pOldBmp = dcMem.SelectObject(&bmpMem);
+			CDC dc_mem;
+			CBitmap bmp_mem;
+			CBitmap* p_old_bmp= nullptr;
+			dc_mem.CreateCompatibleDC(&dc);
+			bmp_mem.CreateCompatibleBitmap(&dc, rect_bars.Width(),rect_bars.Height());
+			p_old_bmp = dc_mem.SelectObject(&bmp_mem);
 			// draw actual data
-			(pptr->pspkBars)->SetDisplayAreaSize(rectBars.Width(), rectBars.Height());
-			(pptr->pspkBars)->PlotDatatoDC(&dcMem);
+			(pptr->pspk_bars)->SetDisplayAreaSize(rect_bars.Width(), rect_bars.Height());
+			(pptr->pspk_bars)->PlotDatatoDC(&dc_mem);
 			// transfer data to DC and clean the memory DC
-			dc.BitBlt(rectBars.left, rectBars.top, rectBars.Width(), rectBars.Height(), &dcMem, 0, 0, SRCCOPY);
-			dcMem.SelectObject(pOldBmp);
-			dcMem.DeleteDC();
+			dc.BitBlt(rect_bars.left, rect_bars.top, rect_bars.Width(), rect_bars.Height(), &dc_mem, 0, 0, SRCCOPY);
+			dc_mem.SelectObject(p_old_bmp);
+			dc_mem.DeleteDC();
 		}
 	}
 
@@ -206,7 +194,7 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	if ((lpDIS->itemState & ODS_SELECTED) &&
 		(lpDIS->itemAction & (ODA_SELECT | ODA_DRAWENTIRE)))
 	{
-		COLORREF cr = RGB(  0,   0, 255);	// 2 Blue RGB(0,0,0);
+		const auto cr = RGB(  0,   0, 255);	// 2 Blue RGB(0,0,0);
 		CBrush br(cr);
 		dc.FrameRect(&(lpDIS->rcItem), &br);
 
@@ -225,19 +213,19 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 void CSpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
 {
-	MYPTR* pptr = (MYPTR*) lpDI->itemData;
-	CString* pcs =	pptr->pcs;
+	const auto pptr = reinterpret_cast<myptr*>(lpDI->itemData);
+	const auto pcs =	pptr->pcs;
 	delete pcs;
 
-	CSpikeShapeWnd* pspkShapes = pptr->pspkShapes;
-	if (pspkShapes != nullptr)
+	auto pspk_shapes = pptr->pspk_shapes;
+	if (pspk_shapes != nullptr)
 	{
-		pspkShapes->DestroyWindow();
-		delete pspkShapes;
+		pspk_shapes->DestroyWindow();
+		delete pspk_shapes;
 	}
-	CSpikeBarWnd* pspkBars = pptr->pspkBars;
-	pspkBars->DestroyWindow();
-	delete pspkBars;
+	auto pspk_bars = pptr->pspk_bars;
+	pspk_bars->DestroyWindow();
+	delete pspk_bars;
 
 	delete pptr;
 }
@@ -247,8 +235,8 @@ void CSpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
 void CSpikeClassListBox::SetRowHeight(int rowheight)
 {
 	m_rowheight = rowheight;
-	for (int nIndex=0; nIndex<GetCount(); nIndex++)
-		SetItemHeight(nIndex, rowheight);
+	for (auto n_index=0; n_index<GetCount(); n_index++)
+		SetItemHeight(n_index, rowheight);
 }
 
 // --------------------------------------------------------------------------------
@@ -274,11 +262,11 @@ void CSpikeClassListBox::SetColsWidth(int coltext, int colspikes, int colseparat
 
 int CSpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 {
-	MYPTR* pptr1 = (MYPTR*) lpCIS->itemData1;
-	MYPTR* pptr2 = (MYPTR*) lpCIS->itemData2;
-	int iresult = 1;		// value to return (default:clas1>clas2)
-	int clas1 = (pptr1->pspkBars)->GetSelClass();
-	int clas2 = (pptr2->pspkBars)->GetSelClass();
+	const auto pptr1 = reinterpret_cast<myptr*>(lpCIS->itemData1);
+	const auto pptr2 = reinterpret_cast<myptr*>(lpCIS->itemData2);
+	auto iresult = 1;		// value to return (default:clas1>clas2)
+	const auto clas1 = (pptr1->pspk_bars)->GetSelClass();
+	const auto clas2 = (pptr2->pspk_bars)->GetSelClass();
 	if (clas1 == clas2)
 		iresult=0;			// exact match
 	else if (clas1 < clas2)
@@ -304,19 +292,19 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc)
 		pSList->UpdateClassList();
 
 	// add as many window as necessary; store pointer into listbox	
-	int size = m_rowheight;
-	CRect rectSpikes = CRect(0,0,0,0); //CRect(0, 0, size, size);
-	CRect rectBars   = CRect(0,0,0,0); ; //CRect(size, 0, 3*size, size);
-	
-	int iID = 0;
-	int nspikes = pSList->GetTotalSpikes();	
-	int nbclasses =1;
+	//int size = m_rowheight;
+	const auto rect_spikes = CRect(0,0,0,0); //CRect(0, 0, size, size);
+	const auto rect_bars   = CRect(0,0,0,0); ; //CRect(size, 0, 3*size, size);
+
+	auto i_id = 0;
+	const auto nspikes = pSList->GetTotalSpikes();
+	auto nbclasses =1;
 	if (nspikes > 0)
 		nbclasses = pSList->GetNbclasses();
 
-	for (int i=0; i<nbclasses; i++)
+	for (auto i=0; i<nbclasses; i++)
 	{
-		int iclass = pSList->GetclassID(i);	//CSpikeList
+		const auto iclass = pSList->GetclassID(i);	//CSpikeList
 
 		// 1) create spike form button
 		CSpikeShapeWnd* pspkShapes = nullptr;
@@ -324,39 +312,39 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc)
 		{
 			pspkShapes = new (CSpikeShapeWnd);
 			ASSERT(pspkShapes != NULL);
-			pspkShapes->Create(_T(""), WS_CHILD|WS_VISIBLE, rectSpikes, this, iID);
+			pspkShapes->Create(_T(""), WS_CHILD|WS_VISIBLE, rect_spikes, this, i_id);
 
 			pspkShapes->SetSourceData(pSList);
 			pspkShapes->SetPlotMode(PLOT_ONECLASSONLY, iclass);
 			pspkShapes->SetRangeMode(RANGE_INDEX);
 			pspkShapes->SetSpkIndexes(0, nspikes-1);
 			pspkShapes->SetbDrawframe(TRUE); 
-			iID++;
+			i_id++;
 		}
 		
 		// 2) bars with spike height
-		CSpikeBarWnd* pspkBars = new (CSpikeBarWnd);
-		ASSERT(pspkBars != NULL);
-		pspkBars->Create(_T(""), WS_CHILD| WS_VISIBLE, rectBars, this, iID);
+		auto* pspk_bars = new (CSpikeBarWnd);
+		ASSERT(pspk_bars != NULL);
+		pspk_bars->Create(_T(""), WS_CHILD| WS_VISIBLE, rect_bars, this, i_id);
 
-		pspkBars->SetSourceData(pSList, pSDoc);
-		pspkBars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
-		pspkBars->SetRangeMode(RANGE_INDEX);
-		pspkBars->SetSpkIndexes(0, nspikes-1);
-		pspkBars->SetbDrawframe(TRUE); 
-		iID++;
+		pspk_bars->SetSourceData(pSList, pSDoc);
+		pspk_bars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
+		pspk_bars->SetRangeMode(RANGE_INDEX);
+		pspk_bars->SetSpkIndexes(0, nspikes-1);
+		pspk_bars->SetbDrawframe(TRUE); 
+		i_id++;
 		
 		// 3) create text
-		CString* pcs = new CString();		
+		auto* pcs = new CString();		
 		pcs->Format(_T("class %i\nn=%i"), iclass, (int) pSList->GetclassNbspk(i));
 		ASSERT(pcs != NULL);
 
 		// 4) create array of 3 pointers and pass it to the listbox
-		MYPTR* pptr = new(MYPTR);
+		const auto pptr = new(myptr);
 		ASSERT(pptr != NULL);
 		pptr->pcs= pcs;
-		pptr->pspkShapes=pspkShapes;
-		pptr->pspkBars=pspkBars;
+		pptr->pspk_shapes=pspkShapes;
+		pptr->pspk_bars=pspk_bars;
 		AddString(LPTSTR(pptr));
 	}
 	// exit: allow data redrawing
@@ -369,27 +357,27 @@ void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 {
 	m_lFirst=l_first;
 	m_lLast=l_last;
-	for (int i=0; i<GetCount(); i++)
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		if (pptr->pspkShapes != nullptr)
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		if (pptr->pspk_shapes != nullptr)
 		{
-			(pptr->pspkShapes)->SetRangeMode(RANGE_TIMEINTERVALS);
-			(pptr->pspkShapes)->SetTimeIntervals(l_first, l_last);
+			(pptr->pspk_shapes)->SetRangeMode(RANGE_TIMEINTERVALS);
+			(pptr->pspk_shapes)->SetTimeIntervals(l_first, l_last);
 		}
-		(pptr->pspkBars)->SetRangeMode(RANGE_TIMEINTERVALS);
-		(pptr->pspkBars)->SetTimeIntervals(l_first, l_last);
+		(pptr->pspk_bars)->SetRangeMode(RANGE_TIMEINTERVALS);
+		(pptr->pspk_bars)->SetTimeIntervals(l_first, l_last);
 	}
 }
 
 void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 {
 	m_pSList = p_spike_list;
-	for (int i=0; i<GetCount(); i++)
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		(pptr->pspkShapes)->SetSpkList(p_spike_list);
-		(pptr->pspkBars)->SetSpkList(p_spike_list);
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		(pptr->pspk_shapes)->SetSpkList(p_spike_list);
+		(pptr->pspk_bars)->SetSpkList(p_spike_list);
 	}
 }
 
@@ -410,19 +398,19 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	int spki=0;
 ;*/
 
-	BOOL bMultipleSelection = FALSE;
-	int cla = 0;
+	const auto b_multiple_selection = FALSE;
+	auto cla = 0;
 
 	// select spike
 	if (spikeno >= 0)
 	{	// get address of spike parms
-		CSpikeElemt* p_spike_element = m_pSList->GetSpikeElemt(spikeno);	
+		const auto p_spike_element = m_pSList->GetSpikeElemt(spikeno);	
 		cla = p_spike_element->GetSpikeClass();
 
 		// multiple selection
-		if (bMultipleSelection)
+		if (b_multiple_selection)
 		{
-			int nflaggedspikes = m_pSList->ToggleSpikeFlag(spikeno);
+			auto nflaggedspikes = m_pSList->ToggleSpikeFlag(spikeno);
 			if (m_pSList->GetSpikeFlagArrayCount() < 1)
 				spikeno=-1;
 		}
@@ -437,10 +425,10 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	// select corresponding row
 	if (spikeno >= 0) 
 	{
-		for (int i=0; i<GetCount(); i++)				// search row where this class is stored
+		for (auto i=0; i<GetCount(); i++)				// search row where this class is stored
 		{
-			MYPTR* pptr = (MYPTR*) GetItemData(i);		// get pointer to row objects
-			if ((pptr->pspkBars)->GetSelClass() == cla)
+			const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));		// get pointer to row objects
+			if ((pptr->pspk_bars)->GetSelClass() == cla)
 			{
 				SetCurSel(i);							// select corresponding row
 				break;
@@ -452,7 +440,7 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	Invalidate();
 
 	// return spike selected
-	int oldspk = 0;
+	auto oldspk = 0;
 	if (spikeno > 0)
 		oldspk = spikeno;
 	return oldspk;
@@ -462,13 +450,13 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 
 int CSpikeClassListBox::SetMouseCursorType(int cursorm)
 {
-	int oldcursor=0;
-	for (int i=0; i<GetCount(); i++)
+	auto oldcursor=0;
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		if (pptr->pspkShapes != nullptr)
-			(pptr->pspkShapes)->SetMouseCursorType(cursorm);
-		oldcursor = (pptr->pspkBars)->SetMouseCursorType(cursorm);
+		auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		if (pptr->pspk_shapes != nullptr)
+			(pptr->pspk_shapes)->SetMouseCursorType(cursorm);
+		oldcursor = (pptr->pspk_bars)->SetMouseCursorType(cursorm);
 	}
 	return oldcursor;
 }
@@ -480,13 +468,13 @@ void CSpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 	CListBox::OnSize(nType, cx, cy);
 	m_widthBars = cx - m_leftcolwidth;
 	// move all windows out of the way to prevent displaying old rows
-	for (int i=0; i<GetCount(); i++)
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
 		CRect rect(0,0,0,0);
-		if (pptr->pspkShapes != nullptr)
-			(pptr->pspkShapes)->MoveWindow(rect, FALSE);
-		(pptr->pspkBars)->	MoveWindow(rect, FALSE);
+		if (pptr->pspk_shapes != nullptr)
+			(pptr->pspk_shapes)->MoveWindow(rect, FALSE);
+		(pptr->pspk_bars)->	MoveWindow(rect, FALSE);
 	}
 }
 
@@ -494,12 +482,12 @@ void CSpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 
 void CSpikeClassListBox::SetYzoom(int y_we, int y_wo)
 {
-	for (int i=0; i<GetCount(); i++)
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		if (pptr->pspkShapes != nullptr)
-			(pptr->pspkShapes)->SetYWExtOrg(y_we, y_wo);
-		(pptr->pspkBars)->SetYWExtOrg(y_we, y_wo);
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		if (pptr->pspk_shapes != nullptr)
+			(pptr->pspk_shapes)->SetYWExtOrg(y_we, y_wo);
+		(pptr->pspk_bars)->SetYWExtOrg(y_we, y_wo);
 	}
 }
 
@@ -507,11 +495,11 @@ void CSpikeClassListBox::SetYzoom(int y_we, int y_wo)
 
 void CSpikeClassListBox::SetXzoom(int x_we, int x_wo)
 {
-	for (int i=0; i<GetCount(); i++)
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		if (pptr->pspkShapes != nullptr)
-			(pptr->pspkShapes)->SetXWExtOrg(x_we, x_wo);
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		if (pptr->pspk_shapes != nullptr)
+			(pptr->pspk_shapes)->SetXWExtOrg(x_we, x_wo);
 	}
 }
 
@@ -520,8 +508,8 @@ void CSpikeClassListBox::SetXzoom(int x_we, int x_wo)
 int CSpikeClassListBox::GetYWExtent()
 {
 	ASSERT(GetCount() >0);
-	MYPTR* pptr = (MYPTR*) GetItemData(0);
-	return (pptr->pspkBars)->GetYWExtent();
+	const auto pptr = reinterpret_cast<myptr*>(GetItemData(0));
+	return (pptr->pspk_bars)->GetYWExtent();
 }
 
 // --------------------------------------------------------------------------------
@@ -529,8 +517,8 @@ int CSpikeClassListBox::GetYWExtent()
 int CSpikeClassListBox::GetYWOrg()
 {
 	ASSERT(GetCount() >0);
-	MYPTR* pptr = (MYPTR*) GetItemData(0);
-	return (pptr->pspkBars)->GetYWOrg();
+	const auto pptr = reinterpret_cast<myptr*>(GetItemData(0));
+	return (pptr->pspk_bars)->GetYWOrg();
 }
 
 // --------------------------------------------------------------------------------
@@ -538,10 +526,10 @@ int CSpikeClassListBox::GetYWOrg()
 int CSpikeClassListBox::GetXWExtent()
 {
 	ASSERT(GetCount() >0);
-	MYPTR* pptr = (MYPTR*) GetItemData(0);
-	int i = 0;
-	if ((pptr->pspkShapes) != nullptr)
-		i = (pptr->pspkShapes)->GetXWExtent();
+	const auto pptr = reinterpret_cast<myptr*>(GetItemData(0));
+	auto i = 0;
+	if ((pptr->pspk_shapes) != nullptr)
+		i = (pptr->pspk_shapes)->GetXWExtent();
 	return i;
 }
 
@@ -550,10 +538,10 @@ int CSpikeClassListBox::GetXWExtent()
 int CSpikeClassListBox::GetXWOrg()
 {
 	ASSERT(GetCount() >0);
-	MYPTR* pptr = (MYPTR*) GetItemData(0);
-	int i = 0;
-	if ((pptr->pspkShapes) != nullptr)
-		i = (pptr->pspkShapes)->GetXWOrg();
+	const auto pptr = reinterpret_cast<myptr*>(GetItemData(0));
+	auto i = 0;
+	if ((pptr->pspk_shapes) != nullptr)
+		i = (pptr->pspk_shapes)->GetXWOrg();
 	return i;
 }
 
@@ -562,10 +550,10 @@ int CSpikeClassListBox::GetXWOrg()
 float CSpikeClassListBox::GetExtent_mV()
 {
 	ASSERT(GetCount() >0);
-	MYPTR* pptr = (MYPTR*) GetItemData(0);
-	float x = 0.f;
-	if ((pptr->pspkShapes) != nullptr)
-		x = (pptr->pspkShapes)->GetExtent_mV();
+	const auto pptr = reinterpret_cast<myptr*>(GetItemData(0));
+	auto x = 0.f;
+	if ((pptr->pspk_shapes) != nullptr)
+		x = (pptr->pspk_shapes)->GetExtent_mV();
 	return x;
 }
 
@@ -590,10 +578,10 @@ void CSpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 
 // --------------------------------------------------------------------------------
 
-HBRUSH CSpikeClassListBox::CtlColor(CDC* pDC, UINT nCtlColor) 
+HBRUSH CSpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor) 
 {
-	pDC->SetTextColor(m_clrText );	// text
-	pDC->SetBkColor(m_clrBkgnd );	// text bkgnd
+	p_dc->SetTextColor(m_clrText );	// text
+	p_dc->SetBkColor(m_clrBkgnd );	// text bkgnd
 	return m_brBkgnd;
 	// Return a non-NULL brush if the parent's handler should not be called
 }
@@ -608,28 +596,28 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	// ---------------- 1) old spike : deselect spike 
 	// ----------------    and remove from corresp line (destroy?)
 
-	int oldclass = m_pSList->GetSpikeClass(spikeno);
+	const auto oldclass = m_pSList->GetSpikeClass(spikeno);
 	m_pSList->SetSpikeClass(spikeno, newclass);
 
 	// get row corresponding to oldclass
-	MYPTR* pptr = nullptr;
-	int irow = 0;
+	myptr* pptr = nullptr;
+	int irow ;
 	for (irow = 0; irow < GetCount(); irow++)
 	{
-		pptr = (MYPTR*)GetItemData(irow);		// get pointer to row objects
-		if ((pptr->pspkBars)->GetSelClass() == oldclass)
+		pptr = reinterpret_cast<myptr*>(GetItemData(irow));		// get pointer to row objects
+		if ((pptr->pspk_bars)->GetSelClass() == oldclass)
 			break;
 	}
 	//ASSERT((pptr->pspkBars)->GetSelClass() == oldclass);
 	if (pptr != nullptr)
 	{
-		if (pptr->pspkShapes != nullptr)
-			(pptr->pspkShapes)->SelectSpikeShape(-1);	// de-select old spike / spike
-		(pptr->pspkBars)->SelectSpike(-1);				// de-select old spike / bars
+		if (pptr->pspk_shapes != nullptr)
+			(pptr->pspk_shapes)->SelectSpikeShape(-1);	// de-select old spike / spike
+		(pptr->pspk_bars)->SelectSpike(-1);				// de-select old spike / bars
 	}
 	// decrease total nb of spikes within class
 	CRect rect;
-	int nbspikes = m_pSList->GetclassNbspk(irow)-1;
+	auto nbspikes = m_pSList->GetclassNbspk(irow)-1;
 	// reset all if line ought to be suppressed
 	if (nbspikes > 0)
 	{
@@ -638,8 +626,8 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	}
 	else
 	{
-		long l_first = m_lFirst;
-		long l_last = m_lLast;
+		const auto l_first = m_lFirst;
+		const auto l_last = m_lLast;
 		SetSourceData(m_pSList, m_pSDoc);
 		SetTimeIntervals(l_first, l_last);
 		SelectSpike(spikeno);
@@ -652,15 +640,15 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	pptr = nullptr;
 	for (irow =0; irow <GetCount(); irow++)
 	{
-		pptr = (MYPTR*) GetItemData(irow);		// get pointer to row objects
-		if ((pptr->pspkBars)->GetSelClass() == newclass)
+		pptr = reinterpret_cast<myptr*>(GetItemData(irow));		// get pointer to row objects
+		if ((pptr->pspk_bars)->GetSelClass() == newclass)
 			break;
 	}
 	// reset all if line ought to be added
 	if (irow >= GetCount())
 	{
-		long l_first = m_lFirst;
-		long l_last = m_lLast;
+		const auto l_first = m_lFirst;
+		const auto l_last = m_lLast;
 		SetSourceData(m_pSList, m_pSDoc);
 		SetTimeIntervals(l_first, l_last);
 	}
@@ -670,7 +658,8 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 		m_pSList->SetclassNbspk(irow, nbspikes);
 		UpdateString(pptr, newclass, nbspikes);
 	}
-	GetItemRect( irow, &rect);
+	if (!GetItemRect(irow, &rect))
+		return;
 	SelectSpike(spikeno);
 }
 
@@ -679,39 +668,39 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 void CSpikeClassListBox::UpdateString(void* ptr, int iclass, int nbspikes)
 {
 	// create text
-	MYPTR* pptr = (MYPTR*) ptr;
-	delete ((CString*) pptr->pcs);
-	CString* pcs = new CString;
+	const auto pptr = static_cast<myptr*>(ptr);
+	delete pptr->pcs;
+	auto pcs = new CString;
 	ASSERT(pcs != NULL);
 	pcs->Format(_T("class %i\nn=%i"), iclass, nbspikes);
 	pptr->pcs= pcs;
 }
 
-void CSpikeClassListBox::PrintItem(CDC* pDC, CRect* prect1, CRect* prect2, CRect* prect3,int i )
+void CSpikeClassListBox::PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect* prect3,int i )
 {
 	if ((i< 0) || (i> GetCount()-1))
 		return;
-	MYPTR* pptr = (MYPTR*) GetItemData(i);
+	const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
 
 	// print text
-	int textlen = (pptr->pcs)->GetLength();
-	pDC->DrawText(*(pptr->pcs), textlen, prect1, DT_LEFT|DT_WORDBREAK);
+	const auto textlen = (pptr->pcs)->GetLength();
+	p_dc->DrawText(*(pptr->pcs), textlen, prect1, DT_LEFT|DT_WORDBREAK);
 
 	// spike shape
-	if (pptr->pspkShapes != nullptr)	
-		((CSpikeShapeWnd*) (pptr->pspkShapes))->Print(pDC, prect2);
+	if (pptr->pspk_shapes != nullptr)	
+		((CSpikeShapeWnd*) (pptr->pspk_shapes))->Print(p_dc, prect2);
 
 	// spike bars
-	if (pptr->pspkBars != nullptr) 
-		((CSpikeBarWnd*) (pptr->pspkBars))->Print(pDC, prect3);
+	if (pptr->pspk_bars != nullptr) 
+		((CSpikeBarWnd*) (pptr->pspk_bars))->Print(p_dc, prect3);
 }
 
 void CSpikeClassListBox::XorTempVTtag(int xpoint)
 {
-	for (int i=0; i<GetCount(); i++)
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		(pptr->pspkBars)->XorTempVTtag(xpoint);
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		pptr->pspk_bars->XorTempVTtag(xpoint);
 	}
 }
 
@@ -719,20 +708,20 @@ void CSpikeClassListBox::ResetBarsXortag()
 {
 	for (int i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		(pptr->pspkBars)->ResetXortag ();
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		pptr->pspk_bars->ResetXortag ();
 	}
 }
 
 void CSpikeClassListBox::ReflectBarsMouseMoveMessg(HWND hwnd)
 {
 	m_hwndBarsReflect = hwnd; 
-	for (int i=0; i<GetCount(); i++)
+	for (auto i=0; i<GetCount(); i++)
 	{
-		MYPTR* pptr = (MYPTR*) GetItemData(i);
-		(pptr->pspkBars)->ReflectMouseMoveMessg(hwnd);
+		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+		(pptr->pspk_bars)->ReflectMouseMoveMessg(hwnd);
 		if (hwnd != nullptr)
-			(pptr->pspkBars)->SetMouseCursorType(CURSOR_MEASURE);
+			pptr->pspk_bars->SetMouseCursorType(CURSOR_MEASURE);
 	}
 }
 

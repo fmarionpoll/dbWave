@@ -195,7 +195,7 @@ public:
 	CGridCtrl(int nRows = 0, int nCols = 0, int nFixedRows = 0, int nFixedCols = 0);
 
 	BOOL Create(const RECT& rect, CWnd* parent, UINT nID,
-				DWORD dwStyle = WS_CHILD | WS_BORDER | WS_TABSTOP | WS_VISIBLE);
+				DWORD dw_style = WS_CHILD | WS_BORDER | WS_TABSTOP | WS_VISIBLE);
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Attributes
@@ -439,8 +439,8 @@ public:
 	// SetRedraw stops/starts redraws on things like changing the # rows/columns
 	// and autosizing, but not for user-intervention such as resizes
 	void SetRedraw(BOOL bAllowDraw, BOOL bResetScrollBars = FALSE);
-	BOOL RedrawCell(int nRow, int nCol, CDC* pDC = nullptr);
-	BOOL RedrawCell(const CCellID& cell, CDC* pDC = nullptr);
+	BOOL RedrawCell(int nRow, int nCol, CDC* p_dc = nullptr);
+	BOOL RedrawCell(const CCellID& cell, CDC* p_dc = nullptr);
 	BOOL RedrawRow(int row);
 	BOOL RedrawColumn(int col);
 
@@ -530,9 +530,9 @@ public:
 // Printing overrides for derived classes
 ///////////////////////////////////////////////////////////////////////////////////
 public:
-	virtual void OnBeginPrinting(CDC *pDC, CPrintInfo *pInfo);
-	virtual void OnPrint(CDC *pDC, CPrintInfo *pInfo);
-	virtual void OnEndPrinting(CDC *pDC, CPrintInfo *pInfo);
+	virtual void OnBeginPrinting(CDC *p_dc, CPrintInfo *pInfo);
+	virtual void OnPrint(CDC *p_dc, CPrintInfo *pInfo);
+	virtual void OnEndPrinting(CDC *p_dc, CPrintInfo *pInfo);
 
 #endif // #if !defined(_WIN32_WCE_NO_PRINTING) && !defined(GRIDCONTROL_NO_PRINTING)
 
@@ -552,7 +552,7 @@ protected:
 	BOOL InvalidateCellRect(const int row, const int col);
 	BOOL InvalidateCellRect(const CCellID& cell);
 	BOOL InvalidateCellRect(const CCellRange& cellRange);
-	void EraseBkgnd(CDC* pDC);
+	void EraseBkgnd(CDC* p_dc);
 
 	BOOL GetCellRangeRect(const CCellRange& cellRange, LPRECT lpRect);
 
@@ -596,11 +596,11 @@ protected:
 #if !defined(_WIN32_WCE_NO_PRINTING) && !defined(GRIDCONTROL_NO_PRINTING)
 	// Printing
 	virtual void PrintFixedRowCells(int nStartColumn, int nStopColumn, int& row, CRect& rect,
-									CDC *pDC, BOOL& bFirst);
-	virtual void PrintColumnHeadings(CDC *pDC, CPrintInfo *pInfo);
-	virtual void PrintHeader(CDC *pDC, CPrintInfo *pInfo);
-	virtual void PrintFooter(CDC *pDC, CPrintInfo *pInfo);
-	virtual void PrintRowButtons(CDC *pDC, CPrintInfo* /*pInfo*/);
+									CDC *p_dc, BOOL& bFirst);
+	virtual void PrintColumnHeadings(CDC *p_dc, CPrintInfo *pInfo);
+	virtual void PrintHeader(CDC *p_dc, CPrintInfo *pInfo);
+	virtual void PrintFooter(CDC *p_dc, CPrintInfo *pInfo);
+	virtual void PrintRowButtons(CDC *p_dc, CPrintInfo* /*pInfo*/);
 #endif
 
 #ifndef GRIDCONTROL_NO_DRAGDROP
@@ -619,7 +619,7 @@ protected:
 	virtual void  EndEditing();
 
 	// Drawing
-	virtual void  OnDraw(CDC* pDC);
+	virtual void  OnDraw(CDC* p_dc);
 
 	// CGridCellBase Creation and Cleanup
 	virtual CGridCellBase* CreateCell(int nRow, int nCol);
@@ -746,11 +746,11 @@ protected:
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnUpdateEditSelectAll(CCmdUI* pCmdUI);
 #ifndef _WIN32_WCE_NO_CURSOR
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
 #endif
 #ifndef _WIN32_WCE
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
@@ -758,7 +758,7 @@ protected:
 	afx_msg void OnSysColorChange();
 #endif
 #ifndef _WIN32_WCE_NO_CURSOR
-	afx_msg void OnCaptureChanged(CWnd *pWnd);
+	afx_msg void OnCaptureChanged(CWnd *p_wnd);
 #endif
 #ifndef GRIDCONTROL_NO_CLIPBOARD
 	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI);

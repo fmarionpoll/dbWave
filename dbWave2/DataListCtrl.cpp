@@ -94,7 +94,7 @@ void CDataListCtrl::ResizePtrArray(int nitems)
 	// reduce size
 	if (datalistctrlrowobject_prt_array.GetSize() > nitems)
 	{
-		for (int i=datalistctrlrowobject_prt_array.GetSize()-1; i>= nitems; i--)
+		for (auto i=datalistctrlrowobject_prt_array.GetSize()-1; i>= nitems; i--)
 			delete datalistctrlrowobject_prt_array.GetAt(i);
 		datalistctrlrowobject_prt_array.SetSize(nitems);
 	}
@@ -103,10 +103,10 @@ void CDataListCtrl::ResizePtrArray(int nitems)
 	{
 		const auto lowernew = datalistctrlrowobject_prt_array.GetSize();
 		datalistctrlrowobject_prt_array.SetSize(nitems);
-		int index = 0;
+		auto index = 0;
 		if (lowernew > 0)
 			index = datalistctrlrowobject_prt_array.GetAt(lowernew-1)->index;
-		for (int i=lowernew; i< nitems; i++)
+		for (auto i=lowernew; i< nitems; i++)
 		{
 			auto* ptr = new CDataListCtrlRowObject;
 			ASSERT(ptr != NULL);
@@ -453,24 +453,24 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 		p_dbwave_doc->DBSetCurrentRecordPosition(ptr->index);		// select the other file
 		ptr->csDatafileName = p_dbwave_doc->DBGetCurrentDatFileName(TRUE);
 		ptr->csSpikefileName = p_dbwave_doc->DBGetCurrentSpkFileName(TRUE);
-		auto pDB = p_dbwave_doc->m_pDB;
-		pDB->GetRecordItemValue(CH_IDINSECT, &desc);
+		auto p_database = p_dbwave_doc->m_pDB;
+		p_database->GetRecordItemValue(CH_IDINSECT, &desc);
 		ptr->insectID = desc.lVal;
 
 		// column: stim, conc, type = load indirect data from database
-		pDB->GetRecordItemValue(CH_STIM_ID, &desc);
+		p_database->GetRecordItemValue(CH_STIM_ID, &desc);
 		ptr->csStim1 = desc.csVal; 
-		pDB->GetRecordItemValue(CH_CONC_ID, &desc);
+		p_database->GetRecordItemValue(CH_CONC_ID, &desc);
 		ptr->csConc1 = desc.csVal;
-		pDB->GetRecordItemValue(CH_STIM2_ID, &desc);
+		p_database->GetRecordItemValue(CH_STIM2_ID, &desc);
 		ptr->csStim2 = desc.csVal;
-		pDB->GetRecordItemValue(CH_CONC2_ID, &desc);
+		p_database->GetRecordItemValue(CH_CONC2_ID, &desc);
 		ptr->csConc2 = desc.csVal;
 
-		pDB->GetRecordItemValue(CH_SENSILLUM_ID, &desc);
+		p_database->GetRecordItemValue(CH_SENSILLUM_ID, &desc);
 		ptr->csSensillumname = desc.csVal;
 
-		pDB->GetRecordItemValue(CH_FLAG, &desc);
+		p_database->GetRecordItemValue(CH_FLAG, &desc);
 		ptr->csFlag.Format(_T("%i"), desc.lVal);
 
 		// colum: number of spike = verify that spike file is defined, if yes, load nb spikes
@@ -478,9 +478,9 @@ void CDataListCtrl::UpdateCache (int ifirst, int ilast)
 			ptr->csNspk.Empty();
 		else
 		{
-			pDB->GetRecordItemValue(CH_NSPIKES, &desc);
+			p_database->GetRecordItemValue(CH_NSPIKES, &desc);
 			const int nspikes = desc.lVal;
-			pDB->GetRecordItemValue(CH_NSPIKECLASSES, &desc);
+			p_database->GetRecordItemValue(CH_NSPIKECLASSES, &desc);
 			ptr->csNspk.Format(_T("%i (%i classes)"), nspikes, desc.lVal);
 		}
 
@@ -619,10 +619,10 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 		ptr->pdataWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, iImage*100);
 		ptr->pdataWnd->SetbUseDIB(FALSE); //(TRUE );
 	}
-	CLineViewWnd* pWnd = ptr->pdataWnd;
+	auto p_wnd = ptr->pdataWnd;
 
 	// get data file descriptor
-	pWnd->SetString(ptr->cs_comment);
+	p_wnd->SetString(ptr->cs_comment);
 
 	// open data document
 	if (ptr->pdataDoc == nullptr)
@@ -634,28 +634,28 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	// if not available: consider here that requested document is not reachable
 	// tell it to lineview and display "data not available"...
 	{
-		pWnd->RemoveAllChanlistItems();
+		p_wnd->RemoveAllChanlistItems();
 		auto comment = _T("File name: ") + ptr->csDatafileName;
 		comment += _T(" -- data not available");
-		pWnd->SetString(comment);
+		p_wnd->SetString(comment);
 	}
 	// if available, load data into CLineViewWnd object
 	else
 	{
 		//if (!TestIfSpikesWereDetected(ptr->csDatafileName))
 		if (ptr->csNspk.IsEmpty())
-			pWnd->m_parms.crScopeFill = pWnd->GetColor(2);
+			p_wnd->m_parms.crScopeFill = p_wnd->GetColor(2);
 		else 
-			pWnd->m_parms.crScopeFill = pWnd->GetColor(15);
+			p_wnd->m_parms.crScopeFill = p_wnd->GetColor(15);
 
 		ptr->pdataDoc->ReadDataInfos();
-		pWnd->AttachDataFile(ptr->pdataDoc, 0);
+		p_wnd->AttachDataFile(ptr->pdataDoc, 0);
 
 		// display all channels : loop through all doc channels & add if necessary
 		CWaveFormat* pwaveFormat = ptr->pdataDoc->GetpWaveFormat();
 		ptr->cs_comment = pwaveFormat->GetComments(_T(" "));
 		const int ndocchans = pwaveFormat->scan_count;
-		auto lnvchans = pWnd->GetChanlistSize();
+		auto lnvchans = p_wnd->GetChanlistSize();
 		// add channels if value is zero 
 		// channels were all removed if file was not found in an earlier round
 		for (auto jdocchan = 0; jdocchan < ndocchans; jdocchan++)
@@ -663,23 +663,23 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 			auto b_present=FALSE;				// pessimistic
 			for (auto j = lnvchans-1; j>= 0; j--)// check all channels / display list
 			{									// test if this data chan is present + no transf
-				if (pWnd->GetChanlistSourceChan(j) == jdocchan)			  
+				if (p_wnd->GetChanlistSourceChan(j) == jdocchan)			  
 				{
 					b_present = TRUE;			// the wanted chan is present: stop loopint through disp list
-					pWnd->SetChanlistTransformMode(j, m_dattransform);
+					p_wnd->SetChanlistTransformMode(j, m_dattransform);
 					break;						// and examine next doc channel
 				}
 			}
 			if (b_present == FALSE)				// no display chan contains that doc chan
 			{
-				pWnd->AddChanlistItem(jdocchan, m_dattransform);	// add: chan, transform
+				p_wnd->AddChanlistItem(jdocchan, m_dattransform);	// add: chan, transform
 				lnvchans++;
 			}
-			pWnd->SetChanlistColor(jdocchan, jdocchan);
+			p_wnd->SetChanlistColor(jdocchan, jdocchan);
 		}
 
 		// load real data from file and update time parameters
-		const auto npixels = pWnd->Width();
+		const auto npixels = p_wnd->Width();
 		const int doc_chan_len = ptr->pdataDoc->GetDOCchanLength();
 		long l_first = 0;
 		long l_last = doc_chan_len-1;
@@ -692,22 +692,22 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 			if (l_last == l_first)
 				l_last++;
 		}
-		pWnd->ResizeChannels(npixels, l_last - l_first +1);
-		pWnd->GetDataFromDoc(l_first, l_last);
+		p_wnd->ResizeChannels(npixels, l_last - l_first +1);
+		p_wnd->GetDataFromDoc(l_first, l_last);
 
 		// maximize gain & split curves
 		auto j = lnvchans-1;	
 		int max, min;
 		for (auto i=j; i>= 0; i--)
 		{
-			pWnd->GetChanlistMaxMin(i, &max, &min);
+			p_wnd->GetChanlistMaxMin(i, &max, &min);
 			auto ispan = max-min+1;
-			int iextent;// = pWnd->GetChanlistYextent(i);
-			int izero; // = pWnd->GetChanlistYzero(i);
+			int iextent;// = p_wnd->GetChanlistYextent(i);
+			int izero; // = p_wnd->GetChanlistYzero(i);
 			if(m_bsetmVSpan > 0.f)
 			{
-				ispan = pWnd->ConvertChanlistVoltstoDataBins(i, m_mVspan / 1000.f) ;
-				izero = pWnd->GetChanlistBinZero(i);
+				ispan = p_wnd->ConvertChanlistVoltstoDataBins(i, m_mVspan / 1000.f) ;
+				izero = p_wnd->GetChanlistBinZero(i);
 				iextent = ispan;
 			}
 			else
@@ -717,25 +717,25 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 				izero = (max+min)/2 - MulDiv(iextent, j, lnvchans*2);
 			}
 			j -= 2;
-			pWnd->SetChanlistYextent(i, iextent);
-			pWnd->SetChanlistYzero(i, izero);
+			p_wnd->SetChanlistYextent(i, iextent);
+			p_wnd->SetChanlistYzero(i, izero);
 		}
 	}
 
 	// plot data
-	pWnd->SetBottomComment(m_bDisplayFileName, ptr->csDatafileName);
+	p_wnd->SetBottomComment(m_bDisplayFileName, ptr->csDatafileName);
 	CRect client_rect;
-	pWnd->GetClientRect(&client_rect);
+	p_wnd->GetClientRect(&client_rect);
 
 	CBitmap bitmap_plot;
-	const auto p_dc = pWnd->GetDC();
+	const auto p_dc = p_wnd->GetDC();
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(p_dc));
 	bitmap_plot.CreateBitmap(client_rect.right, client_rect.bottom, p_dc->GetDeviceCaps(PLANES), p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 	mem_dc.SelectObject(&bitmap_plot);
 	mem_dc.SetMapMode(p_dc->GetMapMode());
 
-	pWnd->PlotDatatoDC(&mem_dc);
+	p_wnd->PlotDatatoDC(&mem_dc);
 	CPen pen;
 	pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
 	mem_dc.MoveTo(1, 0);

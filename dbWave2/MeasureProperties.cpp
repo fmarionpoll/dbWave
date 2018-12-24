@@ -9,9 +9,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureProperties
-
 IMPLEMENT_DYNAMIC(CMeasureProperties, CPropertySheet)
 
 CMeasureProperties::CMeasureProperties(CWnd* p_wnd_parent, const int select_active_page)
@@ -37,9 +34,6 @@ BEGIN_MESSAGE_MAP(CMeasureProperties, CPropertySheet)
 	
 END_MESSAGE_MAP()
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureProperties message handlers
 
 BOOL CMeasureProperties::OnInitDialog() 
 {
