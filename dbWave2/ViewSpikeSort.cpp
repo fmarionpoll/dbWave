@@ -6,6 +6,8 @@
 //#include "Cscale.h"
 //#include "Spikebar.h"
 //#include "Lineview.h"
+//#include "Copyasdl.h"
+//#include "ChildFrm.h"
 #include "Editctrl.h"
 #include "scopescr.h"
 #include "dbWaveDoc.h"
@@ -15,9 +17,6 @@
 #include "spikexyp.h"
 #include "Editspik.h"
 #include "MainFrm.h"
-#include "ViewSpikeSort.h"
-//#include "Copyasdl.h"
-//#include "ChildFrm.h"
 #include "ProgDlg.h"
 #include "ViewSpikeSort.h"
 
@@ -356,9 +355,9 @@ void CViewSpikeSort::UpdateFileParameters()
 	// reset parms ? flag = single file or file list has changed
 	if (  !m_bAllfiles)		
 	{
-		m_parm.SetSize(0);
-		m_class.SetSize(0);
-		m_iitime.SetSize(0);
+		m_measure_y1_.SetSize(0);
+		m_measure_class_.SetSize(0);
+		m_measure_t_.SetSize(0);
 		spk_hist_wnd_.RemoveHistData();
 	}
 
@@ -396,8 +395,9 @@ void CViewSpikeSort::UpdateFileParameters()
 		m_sourceclass = m_pSpkList->GetSpikeClass(spikeno);		
 		m_psC->sourceclass = m_sourceclass;
 	}
-	if (m_sourceclass > 32768)
-		m_sourceclass = 0;
+	ASSERT(m_sourceclass < 32768);
+	//if (m_sourceclass > 32768)
+	//	m_sourceclass = 0;
 
 	// display source spikes
 	spk_shape_wnd_.SetSourceData(m_pSpkList);
@@ -437,7 +437,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	// display & compute parameters
 	if (!m_bAllfiles || !m_bMeasureDone)
 	{
-		spk_xy_wnd_.SetSourceData(&m_parm, &m_iitime, &m_class, m_pSpkList);
+		spk_xy_wnd_.SetSourceData(&m_measure_y1_, &m_measure_t_, &m_measure_class_, m_pSpkList);
 		if (m_psC->iparameter != 4)
 		{
 			spk_xy_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
@@ -470,7 +470,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	spk_shape_wnd_.Invalidate();
 	spk_bar_wnd_.Invalidate();
 	UpdateScrollBar();
-	SelectSpike(spikeno, FALSE);
+	SelectSpike(spikeno);
 }
 
 void CViewSpikeSort::UpdateLegends()
@@ -586,19 +586,19 @@ void CViewSpikeSort::OnSort()
 		{
 			for (auto ispike = ifirst; ispike < ilast; ispike++)
 			{
-				if (m_class[ispike] != m_sourceclass)
+				if (m_measure_class_[ispike] != m_sourceclass)
 					continue;
-				if ( m_iitime[ispike] > m_lLast 
-					||  m_iitime[ispike] < m_lFirst)
+				if ( m_measure_t_[ispike] > m_lLast 
+					||  m_measure_t_[ispike] < m_lFirst)
 					continue;
-				const auto val = m_parm[ispike];
+				const auto val = m_measure_y1_[ispike];
 				if (val < m_psC->ilower || val > m_psC->iupper)
 					continue;
 
 				// change spike class
 				const auto ilocal = ispike - ifirst;	// local spike index
 				m_pSpkList->SetSpikeClass(ilocal, m_destinationclass);
-				m_class[ispike] = m_destinationclass;
+				m_measure_class_[ispike] = m_destinationclass;
 				flagchanged = TRUE;
 			}
 		}
@@ -607,24 +607,24 @@ void CViewSpikeSort::OnSort()
 		{
 			for (auto ispike = ifirst; ispike < ilast; ispike++)
 			{
-				if (m_class[ispike] != m_sourceclass)
+				if (m_measure_class_[ispike] != m_sourceclass)
 					continue;
-				if (m_iitime[ispike] > m_lLast 
-					|| m_iitime[ispike] < m_lFirst)
+				if (m_measure_t_[ispike] > m_lLast 
+					|| m_measure_t_[ispike] < m_lFirst)
 					continue;
 
-				const auto val = m_parm[ispike];
+				const auto val = m_measure_y1_[ispike];
 				if (val < m_psC->ilower || val > m_psC->iupper)
 					continue;
 
-				const auto lval = m_parm2[ispike];
+				const auto lval = m_measure_y2_[ispike];
 				if (lval < m_psC->ixyleft || lval > m_psC->ixyright)
 					continue;
 
 				// spike fits criteria - change class
 				const auto ilocal = ispike - ifirst;	// local spike index
 				m_pSpkList->SetSpikeClass(ilocal, m_destinationclass);
-				m_class[ispike] = m_destinationclass;
+				m_measure_class_[ispike] = m_destinationclass;
 				flagchanged = TRUE;
 			}
 		}
@@ -650,7 +650,7 @@ void CViewSpikeSort::OnSort()
 	spk_xy_wnd_.Invalidate();
 	spk_shape_wnd_.Invalidate();
 	spk_bar_wnd_.Invalidate();
-	spk_hist_wnd_.BuildHistFromArrays(&m_parm, &m_iitime, &m_class,
+	spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
 							m_lFirst, m_lLast,
 							m_parmmax, m_parmmin, 
 							spk_hist_wnd_.GetnBins(),
@@ -705,9 +705,9 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM) 
 			{
 				spikeno = spk_xy_wnd_.GetHitSpike();  // if m_bAllFiles, spikeno is global, otherwise it comes from a single file...
-				// TODO convert global spike nb into local + file (selected)
+				SelectFileFromGlobalSpikeIndex(spikeno);
 			}
-			SelectSpike (spikeno, (m_bAllfiles && HIWORD(lParam) == IDC_DISPLAYPARM));
+			SelectSpike (spikeno);
 		}
 		break;
 
@@ -726,7 +726,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				spikeno = spk_bar_wnd_.GetHitSpike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
 				spikeno = spk_xy_wnd_.GetHitSpike();  // if m_bAllFiles, spikeno is global, otherwise it comes from a single file...
-			SelectSpike(spikeno, (m_bAllfiles && HIWORD(lParam) == IDC_DISPLAYPARM));
+			SelectSpike(spikeno);
 			OnToolsEdittransformspikes();
 		}		
 		break;
@@ -756,15 +756,13 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			{
 				m_psC->ilower = spk_hist_wnd_.GetVTtagVal(m_spkhistlower);	// load new value
 				m_lower = m_psC->ilower*m_pSpkList->GetAcqVoltsperBin()*m_vunit;
-				mm_lower.m_bEntryDone = TRUE;
-				OnEnChangelower();
+				UpdateData(false);
 			}
 			else if (threshold == m_spkhistupper)	// second tag
 			{
 				m_psC->iupper = spk_hist_wnd_.GetVTtagVal(m_spkhistupper);	// load new value
 				m_upper = m_psC->iupper*m_pSpkList->GetAcqVoltsperBin()*m_vunit;
-				mm_upper.m_bEntryDone = TRUE;
-				OnEnChangeupper();
+				UpdateData(false);
 			}
 		}
 		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
@@ -848,7 +846,7 @@ void CViewSpikeSort::OnMeasure()
 		firstfile = currentfile;			// index first file in the series
 		lastfile = firstfile;				// index last file in the series
 	}
-	m_nspkperfile.SetSize(lastfile-firstfile+2);		// nb spk per file
+	m_nspkperfile_.SetSize(lastfile-firstfile+2);		// nb spk per file
 	auto flag = FALSE;						// flag to tell param routines to erase all data the first time they are called
 
 	// loop over all selected files (or only one file currently selected)	
@@ -858,7 +856,7 @@ void CViewSpikeSort::OnMeasure()
 		// check if user wants to continue
 		if (m_bAllfiles)
 		{
-			m_nspkperfile[ifile0-firstfile] = totalspikes; // store nb of spikes within array
+			m_nspkperfile_[ifile0-firstfile] = totalspikes; // store nb of spikes within array
 			pdb_doc->DBSetCurrentRecordPosition(ifile0);
 			pdb_doc->OpenCurrentSpikeFile();
 			m_pSpkDoc = pdb_doc->m_pSpk;
@@ -871,13 +869,13 @@ void CViewSpikeSort::OnMeasure()
 			continue;
 
 		totalspikes += m_pSpkList->GetTotalSpikes();
-		m_nspkperfile[ifile0-firstfile +1] = totalspikes;
+		m_nspkperfile_[ifile0-firstfile +1] = totalspikes;
 	}
 	const auto growby = static_cast<int>(16384);
-	m_parm.SetSize(totalspikes, growby);		// parameter value
-	m_parm2.SetSize(totalspikes, growby);
-	m_class.SetSize(totalspikes, growby);		// class value
-	m_iitime.SetSize(totalspikes, growby);		// time index
+	m_measure_y1_.SetSize(totalspikes, growby);		// parameter value
+	m_measure_y2_.SetSize(totalspikes, growby);
+	m_measure_class_.SetSize(totalspikes, growby);		// class value
+	m_measure_t_.SetSize(totalspikes, growby);		// time index
 
 	// loop over all selected files (or only one file currently selected)
 	for (auto ifile=firstfile; ifile <= lastfile; ifile++)
@@ -938,10 +936,10 @@ void CViewSpikeSort::OnMeasure()
 	}
 
 	// end of loop, select current file again if necessary
-	m_parm.FreeExtra();
-	m_parm2.FreeExtra();
-	m_class.FreeExtra();
-	m_iitime.FreeExtra();
+	m_measure_y1_.FreeExtra();
+	m_measure_y2_.FreeExtra();
+	m_measure_class_.FreeExtra();
+	m_measure_t_.FreeExtra();
 
 	if (m_bAllfiles)
 	{
@@ -976,11 +974,11 @@ void CViewSpikeSort::OnMeasure()
 	// tell display routine where data are (pass pointer)
 	if (m_psC->iparameter != 4)
 	{
-		spk_xy_wnd_.SetSourceData(&m_parm, &m_iitime, &m_class, m_pSpkList);		
+		spk_xy_wnd_.SetSourceData(&m_measure_y1_, &m_measure_t_, &m_measure_class_, m_pSpkList);		
 	}
 	else
 	{
-		spk_xy_wnd_.SetSourceData(&m_parm, &m_parm2, &m_class, m_pSpkList);
+		spk_xy_wnd_.SetSourceData(&m_measure_y1_, &m_measure_y2_, &m_measure_class_, m_pSpkList);
 		const auto x_we = m_pSpkList->GetSpikeLength()*2;
 		spk_xy_wnd_.SetXWExtOrg(x_we, 0);
 		spk_xy_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
@@ -1012,7 +1010,7 @@ void CViewSpikeSort::OnMeasure()
 	}
 	if (nbins > spk_hist_wnd_.Width()/2)
 		nbins = spk_hist_wnd_.Width()/2;
-	spk_hist_wnd_.BuildHistFromArrays(&m_parm, &m_iitime, &m_class,
+	spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
 							m_lFirst, m_lLast,
 							m_parmmax, m_parmmin, nbins,
 							TRUE);
@@ -1022,6 +1020,24 @@ void CViewSpikeSort::OnMeasure()
 
 	UpdateGain();
 	UpdateData(FALSE);
+}
+
+int CViewSpikeSort::SelectFileFromGlobalSpikeIndex(int spikeindex_global)
+{
+	// convert global index to local
+	auto ispike_local = spikeindex_global;		// always local index [/ current file]
+	if (spikeindex_global >= 0 && m_bAllfiles)		// then spikeno is global and we need to find ispike_local for spkForm and spkBarView
+	{
+		const int i_currentfile = GetDocument()->DBGetCurrentRecordPosition();
+		auto i_newfile = i_currentfile;
+		ispike_local = GlobalIndextoLocal(spikeindex_global, &i_newfile);
+		if (i_newfile != i_currentfile)
+		{
+			GetDocument()->DBSetCurrentRecordPosition(i_newfile);
+			UpdateFileParameters();
+		}
+	}
+	return ispike_local;
 }
 
 void CViewSpikeSort::UpdateGain()
@@ -1038,12 +1054,6 @@ void CViewSpikeSort::UpdateGain()
 	spk_hist_wnd_.Invalidate();
 }
  
-//	parm1 = Amplitude max-min (t1:t2)
-//	parm2 = Amplitude at offset t1 or t2
-//	parm3 = Time max-min (t1:t2)
-// ioption: 0= display max-min vs time; 1= display max-min vs tmax-tmin
-// assume m_pSpklist is valid
-
 BOOL CViewSpikeSort::MeasureSpkParm1(BOOL bkeepOldData, int ioption, int currentfile)
 {
 	auto b_changed = FALSE;
@@ -1091,8 +1101,8 @@ BOOL CViewSpikeSort::MeasureSpkParm1(BOOL bkeepOldData, int ioption, int current
 		
 	for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
 	{
-		m_iitime[pindex] = m_pSpkList->GetSpikeTime(ispike);
-		m_class[pindex] = m_pSpkList->GetSpikeClass(ispike);
+		m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
+		m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
 		auto* spike_element = m_pSpkList->GetSpikeElemt(ispike);
 
 		if (!b_valid_extrema)
@@ -1108,26 +1118,21 @@ BOOL CViewSpikeSort::MeasureSpkParm1(BOOL bkeepOldData, int ioption, int current
 		}
 
 		// store measure into parm and update max min
-		const auto diff = max-min;		// get parameter
-		m_parm[pindex] = diff;	// store parm value
+		const auto diff = max-min;
+		m_measure_y1_[pindex] = diff;
 		if (m_psC->iparameter == 4)
-			m_parm2[pindex] = dmaxmin; 
-		if (diff > m_parmmax)	// store max & min / array
+			m_measure_y2_[pindex] = dmaxmin; 
+		if (diff > m_parmmax)
 			m_parmmax = diff;
 		if (diff < m_parmmin)
 			m_parmmin = diff;
 	}
 
 	// exit
-	m_bvalidextrema = TRUE;
-	m_bMeasureDone=TRUE;
+	m_bvalidextrema =TRUE;
+	m_bMeasureDone =TRUE;
 	return b_changed;
 }
-
-// measurespkparm2 
-// ioption = 0: measure at t1 (default)
-// ioption = 1: measure at t2
-// assume m_pSpkList is valid
 
 void CViewSpikeSort::MeasureSpkParm2(BOOL bkeepOldData, int ioption, int currentfile)
 {
@@ -1156,14 +1161,14 @@ void CViewSpikeSort::MeasureSpkParm2(BOOL bkeepOldData, int ioption, int current
 
 	for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
 	{
-		m_iitime[pindex] = m_pSpkList->GetSpikeTime(ispike);
-		m_class[pindex] = m_pSpkList->GetSpikeClass(ispike);
+		m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
+		m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
 		const auto lp_buffer = m_pSpkList->GetpSpikeData(ispike) + indexoffset;
 		auto val= *lp_buffer;		//  value
 		if (ioption == 2)
 			val = *(m_pSpkList->GetpSpikeData(ispike)+m_psC->iright);
 
-		m_parm[pindex] = val;	// store parm value
+		m_measure_y1_[pindex] = val;	// store parm value
 		if (val > m_parmmax)	// store max & min / array
 			m_parmmax = val;
 		if (val < m_parmmin)
@@ -1212,7 +1217,7 @@ void CViewSpikeSort::OnFormatAlldata()
 		short nbins = m_parmmax-m_parmmin+1;
 		if (nbins > spk_hist_wnd_.Width()/2)
 			nbins = spk_hist_wnd_.Width()/2;
-		spk_hist_wnd_.BuildHistFromArrays(&m_parm, &m_iitime, &m_class,
+		spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
 					m_lFirst, m_lLast,
 					m_parmmax, m_parmmin, nbins,
 					TRUE);
@@ -1250,12 +1255,12 @@ void CViewSpikeSort::OnFormatGainadjust()
 	
 	// adjust gain for spk_hist_wnd_ and XYp: data = computed values
 	// search max min of parameter values
-	if (m_parm.GetSize() > 0)
-		max = m_parm[0];
+	if (m_measure_y1_.GetSize() > 0)
+		max = m_measure_y1_[0];
 	min = max;
-	for (auto i=0; i<m_parm.GetSize(); i++)
+	for (auto i=0; i<m_measure_y1_.GetSize(); i++)
 	{
-		const auto ival = m_parm[i];
+		const auto ival = m_measure_y1_[i];
 		if (ival > max)
 			max = ival;
 		if (ival < min)
@@ -1284,30 +1289,16 @@ void CViewSpikeSort::OnFormatGainadjust()
 	UpdateLegends();
 }
 
-void CViewSpikeSort::SelectSpike(int spikeno, BOOL bglobal)
+void CViewSpikeSort::SelectSpike(int spikeno)
 {
-	// convert global index to local
-	auto ispike_local = spikeno;		// always local index [/ current file]
-	const auto ispike_global = spikeno;	// global or local according to bglobal
-	if (spikeno >= 0 && bglobal)		// then spikeno is global and we need to find ispike_local for spkForm and spkBarView
-	{
-		const int i_currentfile = GetDocument()->DBGetCurrentRecordPosition();
-		auto i_newfile = i_currentfile;
-		ispike_local = GlobalIndextoLocal(spikeno, &i_newfile);
-
-		if (i_newfile != i_currentfile)
-		{
-			GetDocument()->DBSetCurrentRecordPosition(i_newfile);
-			UpdateFileParameters();
-		}
-	}
+	const auto ispike_local = SelectFileFromGlobalSpikeIndex(spikeno);
 
 	// indexes are computed, display corresponding spike
 	spk_shape_wnd_.SelectSpikeShape(ispike_local);
 	spk_bar_wnd_.SelectSpike(ispike_local);
 	m_pSpkList->m_selspike = ispike_local;
 	if (m_bMeasureDone)
-		spk_xy_wnd_.SelectSpike(ispike_global);
+		spk_xy_wnd_.SelectSpike(spikeno);
 
 	m_spikenoclass = -1;
 	auto n_cmd_show = SW_HIDE;
@@ -1321,7 +1312,7 @@ void CViewSpikeSort::SelectSpike(int spikeno, BOOL bglobal)
 	}
 	GetDlgItem(IDC_STATIC2)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_SPIKECLASS)->ShowWindow(n_cmd_show);
-	m_spikeno = ispike_global;
+	m_spikeno = spikeno;
 	UpdateData(FALSE);
 }
 
@@ -1360,11 +1351,11 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 		const auto spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
 		const auto nspikes = spike_list->GetTotalSpikes();
 		for (auto ispike=0; ispike< nspikes; ispike++)
-			m_class[ispike] = spike_list->GetSpikeClass(ispike);
+			m_measure_class_[ispike] = spike_list->GetSpikeClass(ispike);
 	}
 
 	if (!dlg.m_bartefact && m_spikeno != dlg.m_spikeno)
-		SelectSpike(dlg.m_spikeno, TRUE);
+		SelectSpike(dlg.m_spikeno);
 
 	UpdateLegends();			    			// update spkform & legends
 }
@@ -1380,14 +1371,14 @@ void CViewSpikeSort::OnSelectAllFiles()
 
 int CViewSpikeSort::GlobalIndextoLocal(int index_global, int* filenb)
 {
-	const auto nbfiles	= m_nspkperfile.GetSize();
+	const auto nbfiles	= m_nspkperfile_.GetSize();
 	auto index_local = 0;
 	int i;
 	for (i = 0; i < nbfiles; i++) 
 	{
-		if (index_global < m_nspkperfile[i])
+		if (index_global < m_nspkperfile_[i])
 			break;
-		index_local += m_nspkperfile[i];
+		index_local += m_nspkperfile_[i];
 	}
 	*filenb = i;
 	return index_global - index_local;
@@ -1692,8 +1683,8 @@ void CViewSpikeSort::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int current
 		{
 		for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
 		{
-			m_iitime[pindex] = m_pSpkList->GetSpikeTime(ispike);
-			m_class[pindex] = m_pSpkList->GetSpikeClass(ispike);
+			m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
+			m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
 			auto* lp_b = m_pSpkList->GetpSpikeData(ispike)+m_psC->ileft;
 
 			// loop over individual spike data to find total
@@ -1702,8 +1693,8 @@ void CViewSpikeSort::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int current
 				sum += abs(*lp_b - binzero);
 			sum /= npoints;
 
-			// store measure into parm and update max min
-			m_parm[pindex] = sum;	// store parm value
+			// store measure into array and update max min
+			m_measure_y1_[pindex] = sum;
 			if (m_parmmax < sum) m_parmmax = sum;
 			if (m_parmmin > sum) m_parmmin = sum;
 		}
@@ -1713,8 +1704,8 @@ void CViewSpikeSort::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int current
 		{
 			for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
 			{
-				m_iitime[pindex] = m_pSpkList->GetSpikeTime(ispike);
-				m_class[pindex] = m_pSpkList->GetSpikeClass(ispike);
+				m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
+				m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
 				auto* lp_b = m_pSpkList->GetpSpikeData(ispike)+m_psC->ileft;
 
 				// loop over individual spike data to find total
@@ -1728,8 +1719,8 @@ void CViewSpikeSort::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int current
 				}
 				//sum /= npoints;
 
-				// store measure into parm and update max min
-				m_parm[pindex] = sum;	// store parm value
+				// store measure into array and update max min
+				m_measure_y1_[pindex] = sum;
 				if (m_parmmax < sum) m_parmmax = sum;
 				if (m_parmmin > sum) m_parmmin = sum;
 			}
@@ -1740,8 +1731,8 @@ void CViewSpikeSort::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int current
 		{
 			for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
 			{
-				m_iitime[pindex] = m_pSpkList->GetSpikeTime(ispike);
-				m_class[pindex] = m_pSpkList->GetSpikeClass(ispike);
+				m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
+				m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
 				auto* lp_b = m_pSpkList->GetpSpikeData(ispike)+m_psC->ileft;
 
 				auto sum = abs(*(lp_b+1) - *(lp_b)) 
@@ -1758,8 +1749,8 @@ void CViewSpikeSort::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int current
 					if (oldval > sum)
 						sum = oldval;
 				}
-				// store measure into parm and update max min
-				m_parm[pindex] = sum;	// store parm value
+				// store measure into array and update max min
+				m_measure_y1_[pindex] = sum;
 				if (m_parmmax < sum) m_parmmax = sum;
 				if (m_parmmin > sum) m_parmmin = sum;
 			}
@@ -1835,12 +1826,12 @@ void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CViewSpikeSort::UpdateScrollBar()
 {
 	GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_SHOW);		
-	m_scrollFilePos_infos.fMask = SIF_ALL;
-	m_scrollFilePos_infos.nMin = 0;
-	m_scrollFilePos_infos.nMax = m_pSpkDoc->GetAcqSize()-1;
-	m_scrollFilePos_infos.nPos = m_lFirst;
-	m_scrollFilePos_infos.nPage = m_lLast-m_lFirst;
-	((CScrollBar*) GetDlgItem(IDC_SCROLLBAR1))->SetScrollInfo(&m_scrollFilePos_infos);
+	m_scroll_file_pos_infos_.fMask = SIF_ALL;
+	m_scroll_file_pos_infos_.nMin = 0;
+	m_scroll_file_pos_infos_.nMax = m_pSpkDoc->GetAcqSize()-1;
+	m_scroll_file_pos_infos_.nPos = m_lFirst;
+	m_scroll_file_pos_infos_.nPage = m_lLast-m_lFirst;
+	((CScrollBar*) GetDlgItem(IDC_SCROLLBAR1))->SetScrollInfo(&m_scroll_file_pos_infos_);
 }
 
 void CViewSpikeSort::SelectSpkList(int icursel)
@@ -2035,7 +2026,7 @@ void CViewSpikeSort::OnEnChangelower()
 	if (mm_lower.m_bEntryDone)
 	{
 		auto lower = m_lower;
-		if (!m_bAllfiles)
+		//if (!m_bAllfiles)
 			m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 		switch (mm_lower.m_nChar)
 		{				// load data from edit controls
@@ -2070,7 +2061,7 @@ void CViewSpikeSort::OnEnChangeupper()
 	if (mm_upper.m_bEntryDone)
 	{
 		auto upper = m_upper;
-		if (!m_bAllfiles)
+		//if (!m_bAllfiles)
 			m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 
 		switch (mm_upper.m_nChar)
@@ -2092,7 +2083,7 @@ void CViewSpikeSort::OnEnChangeupper()
 		// change display if necessary	
 		mm_upper.m_bEntryDone = FALSE;	// clear flag
 		mm_upper.m_nChar = 0;			// empty buffer
-		mm_upper.SetSel(0, -1);		// select all text
+		mm_upper.SetSel(0, -1);			// select all text
 		m_upper = upper;
 		m_psC->iupper = static_cast<int>(m_upper / m_delta);
 		if (m_psC->iupper != spk_xy_wnd_.GetHZtagVal(m_itagup))
@@ -2358,7 +2349,7 @@ void CViewSpikeSort::OnEnChangeNOspike()
 				}
 			}
 		}
-		SelectSpike(m_spikeno, m_bAllfiles);
+		SelectSpike(m_spikeno);
 	}
 }
 
@@ -2387,7 +2378,7 @@ void CViewSpikeSort::OnEnChangeSpikenoclass()
 			const auto currentlist = m_tabCtrl.GetCurSel();
 			auto* spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
 			spike_list->SetSpikeClass(m_spikeno, m_spikenoclass);
-			m_class[m_spikeno] = m_spikenoclass;
+			m_measure_class_[m_spikeno] = m_spikenoclass;
 			UpdateLegends();
 		}
 	}

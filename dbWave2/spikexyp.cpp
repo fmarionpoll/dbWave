@@ -494,8 +494,8 @@ int CSpikeXYpWnd::DoesCursorHitCurve(CPoint point)
 	time_max_ = m_lFirst + taille*(point.x + m_rwidth)/static_cast<long>(m_xVE);
 	time_min_ = m_lFirst + taille*(point.x - m_rwidth)/static_cast<long>(m_xVE);
 	// ordinates
-	value_max_ = MulDiv(point.y +m_rwidth -m_yVO, m_yWE, m_yVE) + m_yWO;
-	value_min_ = MulDiv(point.y -m_rwidth -m_yVO, m_yWE, m_yVE) + m_yWO;
+	value_max_ = MulDiv(point.y -m_rwidth -m_yVO, m_yWE, m_yVE) + m_yWO;
+	value_min_ = MulDiv(point.y +m_rwidth -m_yVO, m_yWE, m_yVE) + m_yWO;
 
 	// first look at black spikes (foreground)
 	int ispk;
@@ -524,13 +524,12 @@ int CSpikeXYpWnd::DoesCursorHitCurve(CPoint point)
 
 BOOL CSpikeXYpWnd::is_spike_within_limits(const int ispike)
 {
-	// skip spike ?
 	const auto l_spike_time = m_piitime->GetAt(ispike);
 	if (l_spike_time < time_min_ || l_spike_time > time_max_)
 		return false;
-	// test spike hit
+
 	const auto val = m_pparm->GetAt(ispike);
-	if (value_min_ >= val || value_max_ <= val)
+	if (val < value_min_ || val > value_max_ )
 		return false;
 	return true;
 }
