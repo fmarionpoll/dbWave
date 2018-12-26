@@ -1,7 +1,6 @@
 #pragma once
 
 // scopescr.h : header file
-//
 
 // display parameters: m_rangemode
 #define RANGE_ALL			0
@@ -24,7 +23,6 @@
 
 #include "RulerBar.h"
 
-/////////////////////////////////////////////////////////////////////////////
 // CScopeScreen window
 
 class CScopeScreen : public CWnd
@@ -35,16 +33,16 @@ public:
 	CScopeScreen();								// create assoc object
 	virtual ~CScopeScreen();					// delete assoc object
 	DECLARE_SERIAL( CScopeScreen )
-	virtual void Serialize( CArchive& archive );
+	void Serialize( CArchive& archive ) override;
 
 public:
 	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);  	
 	void	EraseBkgnd(CDC *p_dc);
 	void	PlotToBitmap(CDC *p_dc);
-	inline	COLORREF GetColor(int i) const {return m_colorTable[i];}
-	inline	void	SetColor(int i, COLORREF ccolor) { m_colorTable[i] = ccolor; }
-	inline	void	SetString(CString cs) {m_csEmpty =cs;}
-	int				FindColor(COLORREF ccolor);
+	COLORREF GetColor(int i) const {return m_colorTable[i];}
+	void	SetColor(int i, COLORREF ccolor) { m_colorTable[i] = ccolor; }
+	void	SetString(CString cs) {m_csEmpty =cs;}
+	int		FindColor(COLORREF ccolor);
 
 	float	ChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 	int		NiceUnit(float y);
@@ -71,31 +69,31 @@ public:
 // ---------------------------------------------------------------
 // Attributes
 public:
-	void SetbUseDIB(BOOL bsetPlot);				// use DIB or not
-	void SetDisplayAreaSize(int cx, int cy);	// set size of the display area
+	void	SetbUseDIB(BOOL bsetPlot);				// use DIB or not
+	void	SetDisplayAreaSize(int cx, int cy);		// set size of the display area
 
-	inline CSize Size() const						{return CSize(m_displayRect.Width()+1, m_displayRect.Height()+1);}
-	inline int	Height() const						{return m_displayRect.Height()+1;}
-	inline int	Width() const						{return m_displayRect.Width()+1;}
-	inline int	GetMouseCursorType() const			{return m_cursorType;}
+	CSize	GetRectSize() const					{return {m_displayRect.Width()+1, m_displayRect.Height()+1};}
+	int		GetRectHeight() const				{return m_displayRect.Height()+1;}
+	int		GetRectWidth() const				{return m_displayRect.Width()+1;}
+	int		GetMouseCursorType() const			{return m_cursorType;}
 	virtual int SetMouseCursorType(int cursormode);	// change mouse cursor on button
 
 	// scale
-	inline void SetYWExtOrg(int extent, int zero)	{m_yWE = extent;	m_yWO = zero;}
-	inline void SetXWExtOrg(int extent, int zero)	{m_xWE = extent;	m_xWO = zero;}
-	inline int  GetYWExtent() const					{return m_yWE;}
-	inline int  GetYWOrg() const					{return m_yWO;}
-	inline int  GetXWExtent() const					{return m_xWE;}
-	inline int  GetXWOrg() const					{return m_xWO;}
+	void	SetYWExtOrg(int extent, int zero)	{m_yWE = extent; m_yWO = zero;}
+	void	SetXWExtOrg(int extent, int zero)	{m_xWE = extent; m_xWO = zero;}
+	int		GetYWExtent() const					{return m_yWE;}
+	int		GetYWOrg() const					{return m_yWO;}
+	int		GetXWExtent() const					{return m_xWE;}
+	int		GetXWOrg() const					{return m_xWO;}
 
-	void		SetNxScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
-	void		SetNyScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
-	inline int  GetNxScaleCells()					{return m_parms.iXCells;}
-	inline int  GetNyScaleCells()					{return m_parms.iYCells;}
-	inline void SetxScaleUnitValue(float x)			{m_parms.xScaleUnitValue=x;}
-	inline void SetyScaleUnitValue(float y)			{m_parms.yScaleUnitValue=y;}
-	inline void	AttachExternalXRuler(CRulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
-	inline void	AttachExternalYRuler(CRulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
+	void	SetNxScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
+	void	SetNyScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
+	int		GetNxScaleCells()					{return m_parms.iXCells;}
+	int		GetNyScaleCells()					{return m_parms.iYCells;}
+	void	SetxScaleUnitValue(float x)			{m_parms.xScaleUnitValue=x;}
+	void	SetyScaleUnitValue(float y)			{m_parms.yScaleUnitValue=y;}
+	void	AttachExternalXRuler(CRulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
+	void	AttachExternalYRuler(CRulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
 	// new x scale -----------------------------------------------------------------
 public:
@@ -119,43 +117,43 @@ protected:
 
 	// tags ------------------------------------------------------------------------
 public:
-	inline int  GetHZtagVal(int i) 					{return m_HZtags.GetTagVal(i);}
-	inline int  GetHZtagChan(int i) 				{return m_HZtags.GetTagChan(i);}
-	inline int  GetHZtagPix(int i) 					{return m_HZtags.GetTagPix(i);}	
-		   int  GetNHZtags();
-	inline int  AddHZtag(int val, int chan)			{return m_HZtags.AddTag(val, chan);}
-	inline int  DelHZtag(int index) 				{return m_HZtags.RemoveTag(index);}
-	inline void DelAllHZtags()						{m_HZtags.RemoveAllTags();}
+	int		GetHZtagVal(int i) 					{return m_HZtags.GetTagVal(i);}
+	int		GetHZtagChan(int i) 				{return m_HZtags.GetTagChan(i);}
+	int		GetHZtagPix(int i) 					{return m_HZtags.GetTagPix(i);}	
+	int		GetNHZtags();
+	int		AddHZtag(int val, int chan)			{return m_HZtags.AddTag(val, chan);}
+	int		DelHZtag(int index) 				{return m_HZtags.RemoveTag(index);}
+	void	DelAllHZtags()						{m_HZtags.RemoveAllTags();}
 
-	inline void SetHZtagVal(int i, int val)			{m_HZtags.SetTagVal(i, val);}
-	inline void SetHZtagPix(int i, int val)			{m_HZtags.SetTagPix(i, val);}
-	inline void SetHZtagChan(int i, int chan)		{m_HZtags.SetTagChan(i, chan);}
+	void	SetHZtagVal(int i, int val)			{m_HZtags.SetTagVal(i, val);}
+	void	SetHZtagPix(int i, int val)			{m_HZtags.SetTagPix(i, val);}
+	void	SetHZtagChan(int i, int chan)		{m_HZtags.SetTagChan(i, chan);}
 
-	inline int	AddVTtag(int val)					{return m_VTtags.AddTag(val, 0);}
-	inline int	AddVTLtag(long lval)				{return m_VTtags.AddLTag(lval, 0);}
-	inline int	DelVTtag(int index) 				{return m_VTtags.RemoveTag(index);}
-	inline void DelAllVTtags()						{m_VTtags.RemoveAllTags();}
-	inline int	GetVTtagVal(int itag) 				{return m_VTtags.GetTagVal(itag);}	
-	inline int	GetVTtagPix(int itag) 				{return m_VTtags.GetTagPix(itag);}	
-		   int	GetNVTtags();
-	inline void SetVTtagVal(int itag, int val)		{m_VTtags.SetTagVal(itag, val);}
-	inline void SetVTtagPix(int itag, int val)		{m_VTtags.SetTagPix(itag, val);}
+	int		AddVTtag(int val)					{return m_VTtags.AddTag(val, 0);}
+	int		AddVTLtag(long lval)				{return m_VTtags.AddLTag(lval, 0);}
+	int		DelVTtag(int index) 				{return m_VTtags.RemoveTag(index);}
+	void	DelAllVTtags()						{m_VTtags.RemoveAllTags();}
+	int		GetVTtagVal(int itag) 				{return m_VTtags.GetTagVal(itag);}	
+	int		GetVTtagPix(int itag) 				{return m_VTtags.GetTagPix(itag);}	
+	int		GetNVTtags();
+	void	SetVTtagVal(int itag, int val)		{m_VTtags.SetTagVal(itag, val);}
+	void	SetVTtagPix(int itag, int val)		{m_VTtags.SetTagPix(itag, val);}
 
-	inline void SetVTtagLval(int itag, long lval)	{m_VTtags.SetTagLVal(itag, lval);}
-	inline long GetVTtagLval(int itag) 				{return m_VTtags.GetTagLVal(itag);}
+	void	SetVTtagLval(int itag, long lval)	{m_VTtags.SetTagLVal(itag, lval);}
+	long	GetVTtagLval(int itag) 				{return m_VTtags.GetTagLVal(itag);}
 
-	inline BOOL GetbDrawframe() const				{return m_parms.bDrawframe;}
-	inline void SetbDrawframe(BOOL flag)			{m_parms.bDrawframe=flag;}
-	inline CRect GetDefinedRect()					{return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);}
+	BOOL	GetbDrawframe() const				{return m_parms.bDrawframe;}
+	void	SetbDrawframe(BOOL flag)			{m_parms.bDrawframe=flag;}
+	CRect	GetDefinedRect()					{return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);}
 
-	inline void SetVTtagList(CTagList* pList)		{m_VTtags.CopyTagList(pList);}
-	inline void SetHZtagList(CTagList* pList)		{m_HZtags.CopyTagList(pList);}
+	void	SetVTtagList(CTagList* pList)		{m_VTtags.CopyTagList(pList);}
+	void	SetHZtagList(CTagList* pList)		{m_HZtags.CopyTagList(pList);}
 	CTagList*	GetVTtagList();
 	CTagList*	GetHZtagList();	
 
 	CString		m_csBottomComment;
 	BOOL		m_bBottomComment;
-	inline void SetBottomComment(BOOL flag, CString cs) {m_csBottomComment=cs; m_bBottomComment=flag;}
+	void SetBottomComment(BOOL flag, CString cs) {m_csBottomComment=cs; m_bBottomComment=flag;}
 
 protected:
 	int		m_plotmode;
@@ -232,13 +230,11 @@ protected:
 	int			HitTestHZtag(int y);			// test if point is on an horizontal tag line
 	int			HitTestVTtagPix(int x);		// test if point is on a vertical tag line
 	int			HitTestVTtagLong(long lx); 	// test if point is on a vertical tag line
-	virtual void ZoomData(CRect* prevRect, CRect* newRect);	// zoom display	
 	void		ZoomIn();
 	void		ZoomOut();
 	void		ZoomPop();	
 	
-// overloaded functions	
-protected:
+	virtual void ZoomData(CRect* prevRect, CRect* newRect);	// zoom display	
 	virtual void PreSubclassWindow( );
 
 public:

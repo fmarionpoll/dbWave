@@ -1211,7 +1211,7 @@ void CViewADContinuous::OnStop(const BOOL b_display_error_msg)
 		// update view data	
 		const auto lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
 		m_ADC_View.AttachDataFile(&m_inputDataFile, lsizeDOCchan);
-		m_ADC_View.ResizeChannels(m_ADC_View.Width(), lsizeDOCchan);
+		m_ADC_View.ResizeChannels(m_ADC_View.GetRectWidth(), lsizeDOCchan);
 		m_ADC_View.GetDataFromDoc(0, lsizeDOCchan);
 	}
 }
@@ -1277,7 +1277,7 @@ void CViewADContinuous::UpdateViewDataFinal()
 	p_doc_dat->ReadDataInfos();
 	const auto size_doc_channel = p_doc_dat->GetDOCchanLength();
 	m_ADC_View.AttachDataFile(p_doc_dat, size_doc_channel);
-	m_ADC_View.ResizeChannels(m_ADC_View.Width(), size_doc_channel);
+	m_ADC_View.ResizeChannels(m_ADC_View.GetRectWidth(), size_doc_channel);
 	m_ADC_View.GetDataFromDoc(0, size_doc_channel);
 }
 

@@ -223,7 +223,7 @@ CGridCtrl::CGridCtrl(int nRows, int nCols, int nFixedRows, int nFixedCols)
 	m_bWysiwygPrinting = FALSE;      // use size-to-width printing
 
 	m_bHiddenColUnhide = TRUE;       // 0-width columns can be expanded via mouse
-	m_bHiddenRowUnhide = TRUE;       // 0-Height rows can be expanded via mouse
+	m_bHiddenRowUnhide = TRUE;       // 0-GetRectHeight rows can be expanded via mouse
 
 	m_bAllowColHide = TRUE;       // Columns can be contracted to 0-width via mouse
 	m_bAllowRowHide = TRUE;       // Rows can be contracted to 0-height via mouse
@@ -3249,9 +3249,9 @@ void CGridCtrl::ResetScrollBars()
 	SCROLLINFO si;
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_PAGE;
-	si.nPage = (m_nHScrollMax>0)? VisibleRect.Width() : 0;
+	si.nPage = (m_nHScrollMax>0)? VisibleRect.GetRectWidth() : 0;
 	SetScrollInfo(SB_HORZ, &si, FALSE);
-	si.nPage = (m_nVScrollMax>0)? VisibleRect.Height() : 0;
+	si.nPage = (m_nVScrollMax>0)? VisibleRect.GetRectHeight() : 0;
 	SetScrollInfo(SB_VERT, &si, FALSE);
 
 	SetScrollRange(SB_VERT, 0, m_nVScrollMax, TRUE);
@@ -5149,7 +5149,7 @@ void CGridCtrl::ExpandLastColumn()
 
 	if (nDifference > 0)
 	{
-		//if (GetVirtualHeight() > rect.Height())
+		//if (GetVirtualHeight() > rect.GetRectHeight())
 		//    nDifference -= GetSystemMetrics(SM_CXVSCROLL);
 
 		m_arColWidths[nLastColumn] += nDifference;

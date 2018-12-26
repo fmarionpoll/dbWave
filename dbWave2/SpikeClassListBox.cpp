@@ -390,7 +390,7 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	int cla = 0;
 	if (spikeno >= 0)
 	{
-		cla = m_pSList->GetSpikeClass(spikeno);		// load spike class
+		cla = m_pSList->get_class(spikeno);		// load spike class
 		bAll = FALSE;
 	}
 
@@ -405,7 +405,7 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	if (spikeno >= 0)
 	{	// get address of spike parms
 		const auto p_spike_element = m_pSList->GetSpikeElemt(spikeno);	
-		cla = p_spike_element->GetSpikeClass();
+		cla = p_spike_element->get_class();
 
 		// multiple selection
 		if (b_multiple_selection)

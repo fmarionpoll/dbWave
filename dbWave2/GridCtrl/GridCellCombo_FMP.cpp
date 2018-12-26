@@ -166,7 +166,7 @@ CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, U
 
 	int nMaxLength = GetCorrectDropWidth();
 	/*
-	if (nMaxLength > rect.Width())
+	if (nMaxLength > rect.GetRectWidth())
 		rect.right = rect.left + nMaxLength;
 	// Resize the edit window and the drop down window
 	MoveWindow(rect);

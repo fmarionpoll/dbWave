@@ -389,7 +389,7 @@ void CViewData::OnEditCopy()
 			m_VDlineview.GetWindowRect(&old_rect);
 
 			CRect rect(0,0, mdPM->hzResolution, mdPM->vtResolution);
-			m_npixels0 = m_VDlineview.Width();
+			m_npixels0 = m_VDlineview.GetRectWidth();
 
 			// create metafile
 			CMetaFileDC m_dc;
@@ -1065,7 +1065,7 @@ void CViewData::OnGainAdjustCurve()
 void CViewData::OnSplitCurves()
 {
 	const auto nchans = m_VDlineview.GetChanlistSize();		// nb of data channels
-	const auto pxheight = m_VDlineview.Height();				// height of the display area
+	const auto pxheight = m_VDlineview.GetRectHeight();				// height of the display area
 	const auto pxoffset = pxheight/nchans;						// height for each channel
 	auto pxzero = (pxheight - pxoffset)/2;				// center first curve at
 
@@ -1374,9 +1374,9 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 	auto ybar_end = bar_origin;
 
 	// same len ratio as displayed on viewdata
-	const auto horz_bar = m_VDlineview.m_xRuler.GetScaleUnitPixels(m_VDlineview.Width());
+	const auto horz_bar = m_VDlineview.m_xRuler.GetScaleUnitPixels(m_VDlineview.GetRectWidth());
 	ASSERT(horz_bar > 0);
-	const auto vert_bar = m_VDlineview.m_yRuler.GetScaleUnitPixels(m_VDlineview.Height());
+	const auto vert_bar = m_VDlineview.m_yRuler.GetScaleUnitPixels(m_VDlineview.GetRectHeight());
 	ASSERT(vert_bar > 0);
 
 	auto cs_comment = ConvertFileIndex(m_VDlineview.GetDataFirst(), m_VDlineview.GetDataLast());
@@ -1413,7 +1413,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (mdPM->bVoltageScaleBar)				// bar scale value
 			{
 				cs_unit = _T(" V");						// provisional unit				
-				auto z= 	static_cast<float>(m_VDlineview.Height())/5 * m_VDlineview.GetChanlistVoltsperPixel(ichan);
+				auto z= 	static_cast<float>(m_VDlineview.GetRectHeight())/5 * m_VDlineview.GetChanlistVoltsperPixel(ichan);
 				auto x = m_VDlineview.ChangeUnit(z, &cs_unit, &x_scale_factor); // convert
 
 				// approximate
@@ -1570,7 +1570,7 @@ void CViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_VDlineview.GetDataFirst();
 	m_lLast0 = m_VDlineview.GetDataLast();
-	m_npixels0 = m_VDlineview.Width();
+	m_npixels0 = m_VDlineview.GetRectWidth();
 
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font

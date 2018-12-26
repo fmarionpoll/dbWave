@@ -67,9 +67,9 @@ END_MESSAGE_MAP()
 void CSpikeEditDlg::LoadSpikeParms()
 {
 	CSpikeElemt* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms
-	m_spikeclass = p_spike_element->GetSpikeClass();		// class number
+	m_spikeclass = p_spike_element->get_class();		// class number
 	m_bartefact = (m_spikeclass <0);
-	m_iitime = p_spike_element->GetSpikeTime();
+	m_iitime = p_spike_element->get_time();
 		
 	m_spkForm.SelectSpikeShape(m_spikeno);
 
@@ -120,7 +120,7 @@ BOOL CSpikeEditDlg::OnInitDialog()
 		VERIFY(m_sourceView.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
 		m_sourceView.SetbUseDIB(FALSE);
 		m_sourceView.AttachDataFile(m_dbDoc, m_dbDoc->GetDOCchanLength());
-		const auto lvSize = m_sourceView.Size();
+		const auto lvSize = m_sourceView.GetRectSize();
 		m_sourceView.ResizeChannels(lvSize.cx, 0);// change nb of pixels	
 		m_sourceView.RemoveAllChanlistItems();
 		m_sourceView.AddChanlistItem(m_pSpkList->GetextractChan(), m_pSpkList->GetextractTransform()); 
@@ -354,7 +354,7 @@ void CSpikeEditDlg::LoadSourceData()
 		return;
 
 	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms	
-	const auto l_first = p_spike_element->GetSpikeTime() - m_spkpretrig;	// change selection
+	const auto l_first = p_spike_element->get_time() - m_spkpretrig;	// change selection
 	m_DWintervals.SetAt(3, l_first);						// store interval
 	const auto l_last = l_first + m_spklen;						// end interval
 	m_DWintervals.SetAt(4, l_last);						// store
@@ -370,17 +370,17 @@ void CSpikeEditDlg::LoadSourceData()
 		l_v_first = l_v_last - m_viewdatalen+1;
 	}
 	// get data from doc
-	m_spikeChan = p_spike_element->GetSpikeChannel();
+	m_spikeChan = p_spike_element->get_source_channel();
 	m_sourceView.SetChanlistSourceChan(0, m_spikeChan);
 	m_sourceView.GetDataFromDoc(l_v_first, l_v_last);	// load data from file
 
 	// adjust offset (center spike) : use initial offset from spike	
-	m_sourceView.SetChanlistYzero(0, m_yzero+p_spike_element->GetSpikeAmplitudeOffset());
+	m_sourceView.SetChanlistYzero(0, m_yzero+p_spike_element->get_amplitude_offset());
 	m_sourceView.SetChanlistYextent(0, m_yextent);
 
 	if (m_pSpkList->GetcompensateBaseline())
 	{
-		m_sourceView.SetChanlistYzero(1,m_yzero+p_spike_element->GetSpikeAmplitudeOffset());
+		m_sourceView.SetChanlistYzero(1,m_yzero+p_spike_element->get_amplitude_offset());
 		m_sourceView.SetChanlistYextent(1, m_yextent);
 	}
 	m_sourceView.Invalidate();
@@ -409,14 +409,14 @@ void CSpikeEditDlg::LoadSpikeFromData(int shift)
 			auto lp_source = m_dbDoc->LoadRawDataParams(&nchans);
 			lp_source += ((l_first - m_dbDoc->GettBUFfirst())*nchans
 				+ m_spikeChan);
-			m_pSpkList->SetSpikeData(m_spikeno, lp_source, nchans);
+			m_pSpkList->TransferDataToSpikeBuffer(m_spikeno, lp_source, nchans);
 		}
 		else
 		{
 			m_dbDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
 			auto p_data = m_dbDoc->GetpTransfDataBUF();
 			p_data += (l_first - m_dbDoc->GettBUFfirst());
-			m_pSpkList->SetSpikeData(m_spikeno, p_data, 1);
+			m_pSpkList->TransferDataToSpikeBuffer(m_spikeno, p_data, 1);
 		}
 
 		// copy data to spike buffer

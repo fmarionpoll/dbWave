@@ -130,7 +130,7 @@ public:
     virtual CFont*   GetFontObject() const;
 
 protected:
-    CSize m_Size;       // Default Size
+    CSize m_Size;       // Default GetRectSize
     CFont m_Font;       // Cached font
     DWORD m_dwStyle;    // Cell Style - unused
 };

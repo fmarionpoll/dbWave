@@ -639,7 +639,7 @@ void CTemplateListWnd::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 				ifirst = nimage;
 			// CImageList
 			auto h_i = p_i->m_hImageList;
-			//for (int i=ifirst; i<m_ptpl.GetSize(); i++)
+			//for (int i=ifirst; i<m_ptpl.GetRectSize(); i++)
 			//{
 			//	//int ii = ImageList_Add(hI, GetTemplateWnd(i)->GetBitmapPlotHandle(), NULL);
 			//	int ii = ImageList_Add(hI, NULL, NULL);

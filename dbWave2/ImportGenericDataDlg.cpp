@@ -599,7 +599,7 @@ void CImportGenericDataDlg::UpdatePreview()
 
 	int ndocchans = m_AcqDataFile.GetpWaveFormat()->scan_count;
 	m_lineview.AttachDataFile(&m_AcqDataFile, 10);
-	CSize lsize = m_lineview.Size();
+	CSize lsize = m_lineview.GetRectSize();
 	m_lineview.ResizeChannels(lsize.cx, m_AcqDataFile.GetDOCchanLength());
 	if (m_lineview.GetChanlistSize() < ndocchans)	// add envelopes if necessary
 	{

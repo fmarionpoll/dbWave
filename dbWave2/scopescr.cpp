@@ -203,7 +203,6 @@ CScopeScreen::~CScopeScreen()
 	// delete array of pens
 	for (auto& i : m_penTable)
 		i.DeleteObject();
-
 }
 
 // trap call to presubclass in order to get source window size..
@@ -234,8 +233,6 @@ BEGIN_MESSAGE_MAP(CScopeScreen, CWnd)
 	ON_WM_RBUTTONDOWN()	
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CScopeScreen message handlers
 
 BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
@@ -273,12 +270,6 @@ BOOL CScopeScreen::OnEraseBkgnd(CDC* p_dc)
 	return TRUE; // say we handled it
 }
 
-//-----------------------------------------
-// PlotToBitmap()
-// two bitmaps are used to display data
-//  CBitmap*	m_pbitmapPlot;		// main data
-//	CBitmap*	m_pbitmapSelect;	// data selected (displayed over bitmapplot)
-	
 void CScopeScreen::PlotToBitmap(CDC *p_dc)
 {
 	CBitmap bitmap_plot;
@@ -482,7 +473,7 @@ void CScopeScreen::DrawScalefromRuler(CDC *p_dc, CRuler* pRuler)
 		for (auto i = 0; i<4; i++)
 		{
 			dsmallpos += smallscaleinc;
-			if (pRuler->m_bHorizontal) // ----------------------------- horizontal
+			if (pRuler->m_bHorizontal) // ---------------------------- horizontal
 			{
 				tick_pos = int(rc_client.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 				if (tick_pos >= rc_client.left && tick_pos <= tickmax)
@@ -660,11 +651,6 @@ void CScopeScreen::OnLButtonDblClk(UINT nFlags, CPoint point)
 	PostMyMessage(HINT_SETMOUSECURSOR, m_cursorType + 1);
 }
 
-//---------------------------------------------------------------------------
-// MOUSE left button down
-// check if: HZ or VT tag hit, if yes, start tracking
-//---------------------------------------------------------------------------
-
 void CScopeScreen::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_hwndReflect != nullptr)
@@ -755,10 +741,6 @@ void CScopeScreen::OnLButtonDown(UINT nFlags, CPoint point)
 	return;
 }
 
-//---------------------------------------------------------------------------
-// OnMouseMove() update XORed-rectangle if mouse is captured
-//---------------------------------------------------------------------------
-
 void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 {	
 	// track rectangle : update rectangle size
@@ -818,9 +800,6 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 	}
 }
 
-//---------------------------------------------------------------------------
-// OnLButtonUp
-//---------------------------------------------------------------------------
 void CScopeScreen::OnLButtonUp(UINT nFlags, CPoint point) 
 {	
 	if (m_trackMode != TRACK_OFF)
@@ -845,10 +824,6 @@ void CScopeScreen::OnLButtonUp(UINT nFlags, CPoint point)
 	m_bLmouseDown=FALSE;
 }
 
-//---------------------------------------------------------------------------
-// MOUSE right button down
-// either capture mouse (cursor mode = ZOOM) or nothing
-//---------------------------------------------------------------------------
 void CScopeScreen::OnRButtonDown(UINT nFlags, CPoint point) 
 {	
 	switch (m_cursorType)
@@ -868,11 +843,6 @@ void CScopeScreen::OnRButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-//---------------------------------------------------------------------------
-// MOUSE right button up
-// either - unzoom area (special case: only if cursor=ZOOM)
-// or     - start properties dialog box
-//---------------------------------------------------------------------------
 void CScopeScreen::OnRButtonUp(UINT nFlags, CPoint point) 
 {
 	switch (m_trackMode)
@@ -976,9 +946,6 @@ void CScopeScreen::ZoomIn()
 	}
 }
 
-//---------------------------------------------------------------------------
-// HitTest.. -HZtag; -VTtagLong; -VTtagPix
-//---------------------------------------------------------------------------
 int CScopeScreen::HitTestHZtag(int y)
 {
 	auto chit = -1;				// horizontal cursor hit

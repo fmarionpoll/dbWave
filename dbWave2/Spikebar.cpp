@@ -46,7 +46,6 @@ CSpikeBarWnd::~CSpikeBarWnd()
 	}
 }
 
-
 void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 {
 	// prepare display
@@ -79,10 +78,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
 		{
 			if (!m_ballFiles)
-			{
-				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT); //|DT_WORDBREAK);
-				return;
-			}
+				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT); 
 			continue;
 		}
 
@@ -166,7 +162,7 @@ void CSpikeBarWnd::DisplayStim(CDC* p_dc, CRect* rect) const
 	const auto pold_p = (CPen*) p_dc->SelectObject(&bluepen);
 	const int top = rect->bottom - m_barheight +2;; // m_clientRect.bottom - m_barheight +2;
 	const int bottom = rect->bottom-3; //m_clientRect.bottom - 3;
-	const auto displen = rect->Width(); //m_clientRect.Width();
+	const auto displen = rect->Width(); //m_clientRect.GetRectWidth();
 		
 	// search first stimulus transition within interval
 	const auto iistart = m_lFirst;
@@ -212,7 +208,6 @@ void CSpikeBarWnd::DisplayStim(CDC* p_dc, CRect* rect) const
 	p_dc->LineTo(rect->left + displen, istate);		// end of loop - draw the rest
 	p_dc->SelectObject(pold_p);
 }
-
 
 void CSpikeBarWnd::DisplayBars(CDC* p_dc, CRect* rect)
 {
@@ -309,7 +304,6 @@ void CSpikeBarWnd::DisplayBars(CDC* p_dc, CRect* rect)
 
 	p_dc->SelectObject(pold_pen);
 }
-
 
 void CSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 {
@@ -464,7 +458,6 @@ BOOL CSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 	return TRUE;
 }
 
-
 void CSpikeBarWnd::HighlightOneBar(const int nospike, CDC* p_dc) const
 {
 	const auto old_rop = p_dc->GetROP2();
@@ -493,8 +486,6 @@ void CSpikeBarWnd::HighlightOneBar(const int nospike, CDC* p_dc) const
 	p_dc->SetROP2(old_rop);
 }
 
-//---------------------------------------------------------------------------
-
 int	CSpikeBarWnd::SelectSpike(const int spikeno)
 {
 	// erase old selected spike
@@ -508,9 +499,7 @@ int	CSpikeBarWnd::SelectSpike(const int spikeno)
 	return oldselected;
 }
 
-//-----------------------------------------------------------------------------
 // flag all spikes within a rectangle in screen coordinates
-
 void CSpikeBarWnd::SelectSpikesWithinRect(CRect* p_rect, const UINT n_flags) const
 {
 	// make sure that the rectangle is ok
@@ -536,7 +525,6 @@ void CSpikeBarWnd::SelectSpikesWithinRect(CRect* p_rect, const UINT n_flags) con
 	const auto b_flag = (n_flags & MK_SHIFT) || (n_flags & MK_CONTROL);
 	p_spike_list_->SelectSpikeswithinRect(vmin, vmax, l_first, l_last, b_flag);
 }
-
 
 void CSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point) 
 {		
@@ -608,7 +596,6 @@ void CSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
 	CScopeScreen::OnLButtonDown(nFlags, point);	
 }
 
-
 //---------------------------------------------------------------------------
 // ZoomData()
 // convert pixels to logical pts and reverse to adjust curve to the
@@ -616,7 +603,7 @@ void CSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
 // lp to dp: d = (l -wo)*ve/we + vo
 // dp to lp: l = (d -vo)*we/ve + wo
 // wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
-// with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.Height()/2
+// with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 
 void CSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
@@ -661,8 +648,6 @@ void CSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 	}
 }
-
-//---------------------------------------------------------------------------
 
 int CSpikeBarWnd::DoesCursorHitCurve(const CPoint point)
 {
@@ -721,7 +706,6 @@ int CSpikeBarWnd::DoesCursorHitCurve(const CPoint point)
 	return hitspk;
 }
 
-
 void CSpikeBarWnd::CenterCurve()
 {
 	if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() <= 0)
@@ -730,7 +714,6 @@ void CSpikeBarWnd::CenterCurve()
 	p_spike_list_->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWO = max/2 + min/2;
 }
-
 
 void CSpikeBarWnd::MaxGain()
 {
@@ -751,7 +734,6 @@ void CSpikeBarWnd::MaxCenter()
 	m_yWO = max/2 + min/2;
 }
 
-
 void CSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 {
 	// check if there are valid data to display
@@ -766,7 +748,6 @@ void CSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 
 	p_dc->RestoreDC(n_saved_dc);	
 }
-
 
 void CSpikeBarWnd::Serialize( CArchive& ar )
 {

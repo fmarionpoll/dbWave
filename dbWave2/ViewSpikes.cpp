@@ -420,9 +420,9 @@ void CViewSpikes::SelectSpike(int spikeno)
 	{
 		// get address of spike parms
 		const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);
-		m_spikenoclass = p_spike_element->GetSpikeClass();
+		m_spikenoclass = p_spike_element->get_class();
 		m_bartefact = (m_spikenoclass < 0);
-		const auto spk_first = p_spike_element->GetSpikeTime() - m_pSpkList->GetSpikePretrig();
+		const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetSpikePretrig();
 		const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 		n_cmd_show = SW_SHOW;
 		if (m_bDatDocExists)
@@ -614,7 +614,7 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 			}
 			else
 			{
-				m_sourceView.ResizeChannels(m_sourceView.Width(), m_lLast - m_lFirst);
+				m_sourceView.ResizeChannels(m_sourceView.GetRectWidth(), m_lLast - m_lFirst);
 				m_sourceView.GetDataFromDoc(m_lFirst, m_lLast);
 				if (m_bInitSourceView)
 				{
@@ -771,7 +771,7 @@ void CViewSpikes::SelectSpkList(int icursel)
 	// data are ok
 	else
 	{
-		m_sourceView.ResizeChannels(m_sourceView.Width(), m_lLast - m_lFirst);
+		m_sourceView.ResizeChannels(m_sourceView.GetRectWidth(), m_lLast - m_lFirst);
 		m_sourceView.GetDataFromDoc(m_lFirst, m_lLast);
 		int max, min;
 		m_sourceView.GetChanlistMaxMin(0, &max, &min);
@@ -1103,7 +1103,7 @@ CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 			if (mdPM->bVoltageScaleBar)				// bar scale value
 			{
 				csUnit = " V";						// provisional unit				
-				float z= 	(float) m_yscalebar.Height()* m_sourceView.GetChanlistVoltsperPixel(ichan);
+				float z= 	(float) m_yscalebar.GetRectHeight()* m_sourceView.GetChanlistVoltsperPixel(ichan);
 				float x = PrintChangeUnit(z, &csUnit, &x_scale_factor); // convert
 
 				// approximate
@@ -1632,7 +1632,7 @@ void CViewSpikes::OnEnChangeNOspike()
 			{
 				// test if spike visible in the current time interval
 				const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);
-				const auto spk_first = p_spike_element->GetSpikeTime() - m_pSpkList->GetSpikePretrig();
+				const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetSpikePretrig();
 				const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 				const auto lcenter = (spk_last + spk_first) / 2;
 
@@ -2010,10 +2010,10 @@ void CViewSpikes::OnEditCopy()
 /*
 		// display curves : data
 		CRect rectdata = rect;
-		int rspkwidth = MulDiv(m_spkShapeView.Width(), rect.Width(),
-			m_spkShapeView.Width() + m_sourceView.Width());
-		int rdataheight = MulDiv(m_sourceView.Height(), rect.Height(),
-			m_sourceView.Height() + spk_bar_wnd_.Height());
+		int rspkwidth = MulDiv(m_spkShapeView.GetRectWidth(), rect.GetRectWidth(),
+			m_spkShapeView.GetRectWidth() + m_sourceView.GetRectWidth());
+		int rdataheight = MulDiv(m_sourceView.GetRectHeight(), rect.GetRectHeight(),
+			m_sourceView.GetRectHeight() + spk_bar_wnd_.GetRectHeight());
 		int separator = rspkwidth / 10;
 		rectdata.bottom = rect.top + rdataheight - separator/2;
 		rectdata.left = rect.left + rspkwidth + separator;
@@ -2054,7 +2054,7 @@ void CViewSpikes::OnEditCopy()
 		rectspk.left += separator;
 		rectspk.right = rect.left + rspkwidth;
 		rectspk.bottom = rect.bottom -2*lineheight;
-		rectspk.top = rectspk.bottom - rectbars.Height();
+		rectspk.top = rectspk.bottom - rectbars.GetRectHeight();
 		m_spkShapeView.Print(&mDC, &rectspk);
 		comments = PrintSpkShapeBars(&mDC, &rectspk, TRUE);
 		rectComment.top = rectspk.bottom;
@@ -2096,7 +2096,7 @@ void CViewSpikes::OnEditCopy()
 	if (m_bDatDocExists)
 	{
 		m_sourceView.GetDataFromDoc(m_lFirst, m_lLast);
-		m_sourceView.ResizeChannels(m_sourceView.Width(), m_lLast - m_lFirst);
+		m_sourceView.ResizeChannels(m_sourceView.GetRectWidth(), m_lLast - m_lFirst);
 		m_sourceView.Invalidate();
 	}
 }

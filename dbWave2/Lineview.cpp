@@ -992,7 +992,7 @@ void CLineViewWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 
 	// prepare DC
 	const auto previousmapping = p_dc->SetMapMode(MM_TEXT);	// change map mode to text (1 pixel = 1 logical point)
-	m_clientRect = *pRect; //CRect(0,0, pRect->Width(), pRect->Height());
+	m_clientRect = *pRect; //CRect(0,0, pRect->GetRectWidth(), pRect->GetRectHeight());
 	AdjustDisplayRect(pRect); 
 	EraseBkgnd(p_dc);
 	// clip curves
@@ -1292,7 +1292,7 @@ void CLineViewWnd::XORcurve()
 
 	p_dc->SetMapMode (MM_ANISOTROPIC);	// prepare display with appropriate
 	p_dc->SetViewportOrg (m_displayRect.left, m_yVO);		// scaling
-	p_dc->SetViewportExt (Width(), m_yVE);
+	p_dc->SetViewportExt (GetRectWidth(), m_yVE);
 	p_dc->SetWindowExt (m_XORxext, m_XORyext);
 	p_dc->SetWindowOrg (0, 0);
 	
@@ -1486,7 +1486,7 @@ int CLineViewWnd::DoesCursorHitCurve(CPoint point)
 	int index1 = point.x -m_cxjitter;		// horizontal jitter backwards
 	auto index2 = index1 + m_cxjitter;		// horiz jitter forwards
 	if (index1 <0) index1 = 0;				// clip to windows limits
-	if (index2 > (Width()-1)) index2 = Width()-1;
+	if (index2 > (GetRectWidth()-1)) index2 = GetRectWidth()-1;
 	// convert index1 into Envelope indexes
 	index1 = index1*m_dataperpixel;		// start from
 	index2 = (index2+1)*m_dataperpixel;	// stop at

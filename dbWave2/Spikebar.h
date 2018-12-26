@@ -9,13 +9,11 @@ public:
 	CSpikeBarWnd();
 	virtual ~CSpikeBarWnd();
 	DECLARE_SERIAL( CSpikeBarWnd )
-	virtual void Serialize( CArchive& archive );
+	void Serialize( CArchive& archive ) override;
 
-/////////////////////////////////////////////////////////////////
 // parameters
 
 protected:
-	
 	int			m_rangemode;		// display range	
 	long		m_lFirst;			// time index of first pt displayed
 	long		m_lLast;			// time index of last pt displayed
@@ -37,23 +35,23 @@ protected:
 	
 // Helpers
 public:
-	inline void SetRangeMode(int mode) {m_rangemode = mode;}
-	inline void SetSelClass(int selclass) {m_selclass = selclass;}
-	inline void SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
+	void	SetRangeMode(int mode)				{m_rangemode = mode;}
+	void	SetSelClass(int selclass)			{m_selclass = selclass;}
+	void	SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
 
-	inline void SetSourceData(CSpikeList* p_spk_list, CSpikeDoc* p_spk_doc) {p_spike_doc_ = p_spk_doc; p_spike_list_ = p_spk_list; m_selectedspike=-1; }
-	inline void SetSpkList(CSpikeList* p_spk_list) {p_spike_list_ = p_spk_list;}
-	inline void SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first; m_lLast = l_last;}
-	inline void SetCurrentClass(int curcla) {m_currentclass=curcla;}
-	inline void SetSpkIndexes(int first, int last) {m_spkfirst=first, m_spklast=last;}
+	void	SetSourceData(CSpikeList* p_spk_list, CSpikeDoc* p_spk_doc) {p_spike_doc_ = p_spk_doc; p_spike_list_ = p_spk_list; m_selectedspike=-1; }
+	void	SetSpkList(CSpikeList* p_spk_list) {p_spike_list_ = p_spk_list;}
+	void	SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first; m_lLast = l_last;}
+	void	SetCurrentClass(int curcla)		{m_currentclass=curcla;}
+	void	SetSpkIndexes(int first, int last) {m_spkfirst=first, m_spklast=last;}
 
-	inline int  GetCurrentClass() {return m_currentclass;}
-	inline long GetTimeFirst() const {return m_lFirst;}
-	inline long GetTimeLast() const {return m_lLast;}
-	inline int  GetSelClass() const {return m_selclass;}
-	inline int  GetPlotMode() const {return m_plotmode;}
-	inline int	GetSelectedSpike() const {return m_selectedspike;}
-	inline int	GetHitSpike() const {return m_hitspk;}
+	int		GetCurrentClass()	{return m_currentclass;}
+	long	GetTimeFirst()		const {return m_lFirst;}
+	long	GetTimeLast()		const {return m_lLast;}
+	int		GetSelClass()		const {return m_selclass;}
+	int		GetPlotMode()		const {return m_plotmode;}
+	int		GetSelectedSpike()	const {return m_selectedspike;}
+	int		GetHitSpike()		const {return m_hitspk;}
 
 	void	DisplaySpike(int nospike, BOOL bselect);
 	void	DisplayFlaggedSpikes(BOOL bHighlight);
@@ -67,15 +65,11 @@ public:
 
 	void	DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_dbwave_doc_ = p_document; }
 
-// implementation
-public:
-	void 	Print(CDC* p_dc, CRect* rect);	
+	void 	Print(CDC* p_dc, CRect* rect);
+	void	PlotDatatoDC(CDC* p_dc) override;
 
 protected:
-	virtual void ZoomData(CRect* prevRect, CRect* newRect);
-public:
-	virtual void PlotDatatoDC(CDC* p_dc);
-protected:
+	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 	int		DoesCursorHitCurve(CPoint point);
 
 	void 	DisplayBars(CDC* p_dc, CRect* rect);
@@ -86,6 +80,5 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
-	
 };
 

@@ -679,7 +679,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 		}
 
 		// load real data from file and update time parameters
-		const auto npixels = p_wnd->Width();
+		const auto npixels = p_wnd->GetRectWidth();
 		const int doc_chan_len = ptr->pdataDoc->GetDOCchanLength();
 		long l_first = 0;
 		long l_last = doc_chan_len-1;

@@ -263,7 +263,7 @@ void CViewSpikeSort::ActivateMode4()
 	spk_xy_wnd_.Invalidate();
 }
 
-void CViewSpikeSort::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -437,7 +437,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	// display & compute parameters
 	if (!m_bAllfiles || !m_bMeasureDone)
 	{
-		spk_xy_wnd_.SetSourceData(&m_measure_y1_, &m_measure_t_, &m_measure_class_, m_pSpkList);
+		spk_xy_wnd_.SetSourceData(m_pSpkList);
 		if (m_psC->iparameter != 4)
 		{
 			spk_xy_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
@@ -691,12 +691,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	case HINT_HITSPIKE:			// -------------  spike is selected or deselected
 		{
 			if (m_pSpkList->GetSpikeFlagArrayCount() > 0)
-			{
-				m_pSpkList->RemoveAllSpikeFlags();
-				spk_xy_wnd_.Invalidate();
-				spk_shape_wnd_.Invalidate();
-				spk_bar_wnd_.Invalidate();
-			}
+				UnflagAllSpikes();
 			auto spikeno=0;
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
 				spikeno = spk_shape_wnd_.GetHitSpike();
@@ -704,8 +699,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				spikeno = spk_bar_wnd_.GetHitSpike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM) 
 			{
-				spikeno = spk_xy_wnd_.GetHitSpike();  // if m_bAllFiles, spikeno is global, otherwise it comes from a single file...
-				SelectFileFromGlobalSpikeIndex(spikeno);
+				spikeno = spk_xy_wnd_.GetHitSpike();
 			}
 			SelectSpike (spikeno);
 		}
@@ -823,6 +817,28 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	}
 	return 0L;
 }
+void CViewSpikeSort::UnflagAllSpikes()
+{
+	if (m_bAllfiles) {
+		auto pdb_doc = GetDocument();
+		for (auto ifile = 0; ifile < pdb_doc->DBGetNRecords(); ifile++)
+		{
+			pdb_doc->DBSetCurrentRecordPosition(ifile);
+			pdb_doc->OpenCurrentSpikeFile();
+			m_pSpkDoc = pdb_doc->m_pSpk;
+
+			for (auto j = 0; j < m_pSpkDoc->GetSpkListSize(); j++) {
+				m_pSpkList = m_pSpkDoc->SetSpkListCurrent(j);
+				m_pSpkList->RemoveAllSpikeFlags();
+			}
+		}
+	}
+	else
+		m_pSpkList->RemoveAllSpikeFlags();
+	spk_xy_wnd_.Invalidate();
+	spk_shape_wnd_.Invalidate();
+	spk_bar_wnd_.Invalidate();
+}
 
 void CViewSpikeSort::OnMeasure() 
 {
@@ -893,6 +909,7 @@ void CViewSpikeSort::OnMeasure()
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
 		if (m_pSpkList == nullptr)
 			continue;
+
 		const auto nspikes = m_pSpkList->GetTotalSpikes();
 		if (nspikes <= 0 ||  m_pSpkList->GetSpikeLength() == 0)
 			continue;
@@ -974,11 +991,11 @@ void CViewSpikeSort::OnMeasure()
 	// tell display routine where data are (pass pointer)
 	if (m_psC->iparameter != 4)
 	{
-		spk_xy_wnd_.SetSourceData(&m_measure_y1_, &m_measure_t_, &m_measure_class_, m_pSpkList);		
+		m_pSpkList->SetAllSpikesPParmAndClass(m_measure_y1_, m_measure_t_, m_measure_class_);	
 	}
 	else
 	{
-		spk_xy_wnd_.SetSourceData(&m_measure_y1_, &m_measure_y2_, &m_measure_class_, m_pSpkList);
+		m_pSpkList->SetAllSpikesPParmAndClass(m_measure_y1_, m_measure_y2_, m_measure_class_);
 		const auto x_we = m_pSpkList->GetSpikeLength()*2;
 		spk_xy_wnd_.SetXWExtOrg(x_we, 0);
 		spk_xy_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
@@ -1004,12 +1021,12 @@ void CViewSpikeSort::OnMeasure()
 	auto nbins = m_parmmax-m_parmmin+1;
 	if (nbins < 0)		// no values...
 	{
-		nbins = spk_hist_wnd_.Width()/2;
+		nbins = spk_hist_wnd_.GetRectWidth()/2;
 		m_parmmax = 0;
 		m_parmmin = 0;
 	}
-	if (nbins > spk_hist_wnd_.Width()/2)
-		nbins = spk_hist_wnd_.Width()/2;
+	if (nbins > spk_hist_wnd_.GetRectWidth()/2)
+		nbins = spk_hist_wnd_.GetRectWidth()/2;
 	spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
 							m_lFirst, m_lLast,
 							m_parmmax, m_parmmin, nbins,
@@ -1215,8 +1232,8 @@ void CViewSpikeSort::OnFormatAlldata()
 	if (build_histogram)
 	{
 		short nbins = m_parmmax-m_parmmin+1;
-		if (nbins > spk_hist_wnd_.Width()/2)
-			nbins = spk_hist_wnd_.Width()/2;
+		if (nbins > spk_hist_wnd_.GetRectWidth()/2)
+			nbins = spk_hist_wnd_.GetRectWidth()/2;
 		spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
 					m_lFirst, m_lLast,
 					m_parmmax, m_parmmin, nbins,
@@ -1305,8 +1322,8 @@ void CViewSpikeSort::SelectSpike(int spikeno)
 	if (ispike_local >= 0) //&& ispike_local < m_pSpkList->GetTotalSpikes())
 	{
 		const auto spike_elemt = m_pSpkList->GetSpikeElemt(ispike_local);
-		m_spikenoclass = spike_elemt->GetSpikeClass();
-		//spkFirst = spike_list->GetSpikeTime() - m_pSpkList->GetSpikePretrig();
+		m_spikenoclass = spike_elemt->get_class();
+		//spkFirst = spike_list->get_time() - m_pSpkList->GetSpikePretrig();
 		//spk_last = spkFirst + m_pSpkList->GetSpikeLength();
 		n_cmd_show= SW_SHOW;		
 	}
@@ -1572,7 +1589,7 @@ void CViewSpikeSort::OnToolsAlignspikes()
 		if (jdecal != 0)
 		{
 			p_data_spike0 = p_data + static_cast<WORD>(iitime0 + jdecal - l_rw_first)*offset + doc_chan;
-			m_pSpkList->SetSpikeData(ispk, p_data_spike0, nchans);
+			m_pSpkList->TransferDataToSpikeBuffer(ispk, p_data_spike0, nchans);
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			m_pSpkList->SetSpikeTime(ispk, iitime0 +spkpretrig);
 		}
@@ -2336,7 +2353,7 @@ void CViewSpikeSort::OnEnChangeNOspike()
 			{
 				// test if spike visible in the current time interval
 				const auto spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);
-				const auto spk_first = spike_element->GetSpikeTime() - m_pSpkList->GetSpikePretrig();
+				const auto spk_first = spike_element->get_time() - m_pSpkList->GetSpikePretrig();
 				const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 
 				if (spk_first < m_lFirst || spk_last > m_lLast)

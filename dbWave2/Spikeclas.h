@@ -15,7 +15,7 @@ class CSpikeClass :  public CObject
 protected :
 	int 	m_NClass;			// Number of different classes of spikes
 	int 	m_SpikeSize;		// size of spike
-	long    m_BufferSize;		// Size of the buffer 	
+	long    m_BufferSize;		// GetRectSize of the buffer 	
 	short* 	m_pRWBuffer;		// pointer to the buffer
 	int		m_EArraySize;
 	int*	m_pEArray;			// array of class elemt

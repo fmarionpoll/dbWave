@@ -349,7 +349,7 @@ void CSpikeHistWnd::OnLButtonDown(UINT nFlags, CPoint point)
 // lp to dp: d = (l -wo)*ve/we + vo
 // dp to lp: l = (d -vo)*we/ve + wo
 // wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
-// with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.Height()/2
+// with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 
 void CSpikeHistWnd::ZoomData(CRect* rFrom, CRect* rDest)

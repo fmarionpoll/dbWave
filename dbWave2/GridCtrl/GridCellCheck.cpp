@@ -90,7 +90,7 @@ BOOL CGridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect,  BOOL bEras
 	rect.left = CheckRect.right;
 
 	// enough room to draw?
-	// if (CheckRect.Width() < rect.Width() && CheckRect.Height() < rect.Height()) {
+	// if (CheckRect.GetRectWidth() < rect.GetRectWidth() && CheckRect.GetRectHeight() < rect.GetRectHeight()) {
 
 	// Do the draw 
 	p_dc->DrawFrameControl(GetCheckPlacement(), DFC_BUTTON, 
@@ -152,13 +152,13 @@ CRect CGridCellCheck::GetCheckPlacement()
 	place.bottom = place.top + nWidth;
 
 	/* for centering
-	int nDiff = (place.Width() - nWidth)/2;
+	int nDiff = (place.GetRectWidth() - nWidth)/2;
 	if (nDiff > 0)
 	{
 		place.left += nDiff;
 		place.right = place.left + nWidth;
 	}
-	nDiff = (place.Height() - nWidth)/2;
+	nDiff = (place.GetRectHeight() - nWidth)/2;
 	if (nDiff > 0)
 	{
 		place.top += nDiff;

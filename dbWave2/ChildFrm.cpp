@@ -507,8 +507,8 @@ void CChildFrame::ReplaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	CSize size;
 	CRect rect;
 	p_current_view->GetClientRect(rect);
-	size.cx = rect.right;	// or: rect.Width()
-	size.cy = rect.bottom;	// or: rect.Height()
+	size.cx = rect.right;	// or: rect.GetRectWidth()
+	size.cy = rect.bottom;	// or: rect.GetRectHeight()
 
 	// delete old view without deleting document
 	const auto bautodel	= p_dbwave_doc->m_bAutoDelete;

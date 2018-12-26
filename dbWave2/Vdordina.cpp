@@ -37,7 +37,7 @@
 // zero = ((m_max+m_min)/2) / voltsperbin + 2048 
 //				(2048 = 4096(full scale)/2: 12 bits encoding)
 // extent = (max-min) / voltsperbin
-// voltsperpixel = extent * voltsperbin / lineview.Height()
+// voltsperpixel = extent * voltsperbin / lineview.GetRectHeight()
 //
 // therefore when one parameter is changed, others are modified accordingly:
 // (0=unchanged, 1=changed)

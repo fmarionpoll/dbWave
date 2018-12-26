@@ -112,7 +112,7 @@ public:
 	inline int 		GetChanlistYzero(WORD i) {return chanlistitem_ptr_array[i]->GetYzero();}
 
 	inline float 	GetChanlistVoltsperPixel(WORD i) {return ((float)chanlistitem_ptr_array[i]->GetYextent() * chanlistitem_ptr_array[i]->GetVoltsperDataBin() / -m_yVE);}
-	inline float 	GetTimeperPixel() {return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)Width();}
+	inline float 	GetTimeperPixel() {return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)GetRectWidth();}
 	inline int		GetChanlistColor(WORD i) {return chanlistitem_ptr_array[i]->GetColor();}
 	inline WORD		GetChanlistPenWidth(WORD i) {return chanlistitem_ptr_array[i]->GetPenWidth();}
 	inline int		GetChanlistYsource(WORD i) {return chanlistitem_ptr_array[i]->pEnvelopeOrdinates->GetSourceChan();}

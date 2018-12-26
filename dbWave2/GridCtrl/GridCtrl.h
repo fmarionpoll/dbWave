@@ -134,9 +134,9 @@ typedef BOOL (CALLBACK* GRIDCALLBACK)(GV_DISPINFO *, LPARAM);
 
 // Autosizing option
 #define GVS_DEFAULT             0
-#define GVS_HEADER              1       // Size using column fixed cells data only
-#define GVS_DATA                2       // Size using column non-fixed cells data only
-#define GVS_BOTH                3       // Size using column fixed and non-fixed
+#define GVS_HEADER              1       // GetRectSize using column fixed cells data only
+#define GVS_DATA                2       // GetRectSize using column non-fixed cells data only
+#define GVS_BOTH                3       // GetRectSize using column fixed and non-fixed
 
 // Cell Searching options
 #define GVNI_FOCUSED            0x0001

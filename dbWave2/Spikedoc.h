@@ -1,14 +1,9 @@
 #pragma once
-// spikedoc.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeDoc document
 
 #include "StimLevelArray.h"
-#include "spikepar.h"		// spike parameters options
-#include "spikelist.h"		// list of spikes
-#include "spikeclas.h"		// spike classes
+//#include "spikepar.h"		// spike parameters options
+#include "Spikelist.h"		// list of spikes
+#include "Spikeclas.h"		// spike classes
 
 class CSpikeDoc : public CDocument
 {
@@ -39,30 +34,30 @@ protected:
 
 // Operations
 public:
-	CString				GetFileInfos();
-	void				InitSourceDoc(CAcqDataDoc* p_document);
+	CString		GetFileInfos();
+	void		InitSourceDoc(CAcqDataDoc* p_document);
 
-	inline 	CString		GetSourceFilename()			const {return m_acqfile;}
-	inline 	CTime 		GetDate()					const {return m_detectiondate;}
-	inline 	CString		GetComment()				const {return m_comment;}
+	CString		GetSourceFilename()			const {return m_acqfile;}
+	CTime 		GetDate()					const {return m_detectiondate;}
+	CString		GetComment()				const {return m_comment;}
 
-	inline int			GetSpkListSize() const		{return spikelist_array.GetSize();}
-	inline void			SetSpkListSize(int i)		{return spikelist_array.SetSize(i);}
-	CSpikeList*			SetSpkListCurrent(int ichan);
-	CSpikeList*			GetSpkListCurrent();
-	inline int			GetSpkListCurrentIndex()	const {return m_currspklist;}
-	inline int			AddSpkList() {spikelist_array.SetSize(GetSpkListSize()+1); return GetSpkListSize();}
+	int			GetSpkListSize() const		{return spikelist_array.GetSize();}
+	void		SetSpkListSize(int i)		{return spikelist_array.SetSize(i);}
+	CSpikeList*	SetSpkListCurrent(int ichan);
+	CSpikeList*	GetSpkListCurrent();
+	int			GetSpkListCurrentIndex()	const {return m_currspklist;}
+	int			AddSpkList() {spikelist_array.SetSize(GetSpkListSize()+1); return GetSpkListSize();}
 	
-	inline 	void		SetSourceFilename(CString cs)	{m_acqfile=cs;}
-	inline 	void		SetDetectionDate(CTime t)		{m_detectiondate=t;}
-	inline 	void		SetComment(CString cs)			{m_comment=cs;}
+	void		SetSourceFilename(CString cs)	{m_acqfile=cs;}
+	void		SetDetectionDate(CTime t)		{m_detectiondate=t;}
+	void		SetComment(CString cs)			{m_comment=cs;}
 
-	inline 	CTime		GetAcqTime()		const {return m_acqtime;}
-	inline  float 		GetAcqDuration()	const {return m_acqsize/m_acqrate;}
-	inline  long		GetAcqSize()		const {return m_acqsize;}
-	inline  float		GetAcqRate()		const {return m_acqrate;}
+	CTime		GetAcqTime()		const {return m_acqtime;}
+	float 		GetAcqDuration()	const {return m_acqsize/m_acqrate;}
+	long		GetAcqSize()		const {return m_acqsize;}
+	float		GetAcqRate()		const {return m_acqrate;}
 
-	void				SortStimArray();
+	void		SortStimArray();
 	
 public: 	
 	void ExportSpkPSTH				(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString& csFileComment);	// 0

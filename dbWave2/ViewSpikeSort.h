@@ -148,7 +148,8 @@ public:
 	afx_msg void OnEnChangeT1();
 	afx_msg void OnEnChangeT2();
 	afx_msg void OnSort();
-	afx_msg LRESULT OnMyMessage(WPARAM code, LPARAM lParam);	
+	afx_msg LRESULT OnMyMessage(WPARAM code, LPARAM lParam);
+	void UnflagAllSpikes();
 	afx_msg void OnMeasure();
 	afx_msg void OnFormatAlldata();
 	afx_msg void OnFormatCentercurve();

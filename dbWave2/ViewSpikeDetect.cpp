@@ -255,7 +255,7 @@ void CViewSpikeDetection::UpdateLegends()
 	if (m_spikeno > 0)
 	{
 		const auto p_s = m_pSpkListVSD->GetSpikeElemt(m_spikeno);
-		m_bartefact = (p_s->GetSpikeClass() <0);	
+		m_bartefact = (p_s->get_class() <0);	
 	}
 	else
 	{
@@ -433,7 +433,7 @@ void CViewSpikeDetection::HighlightSpikes(BOOL flag)
 		for (auto i = 0; i < max; i++)
 		{
 			const auto p_s = m_pSpkListVSD->GetSpikeElemt(i);
-			const auto l_first = p_s->GetSpikeTime() - spkpretrig;
+			const auto l_first = p_s->get_time() - spkpretrig;
 			m_DWintervals.SetAt(jindex, l_first);
 			jindex++;
 			m_DWintervals.SetAt(jindex, l_first + spklen);
@@ -1959,7 +1959,7 @@ void CViewSpikeDetection::SelectSpikeNo(int spikeno, BOOL bMultipleSelection)
 	if (spikeno >= 0)
 	{	// get address of spike parms
 		const auto p_spike_element = m_pSpkListVSD->GetSpikeElemt(spikeno);		
-		m_bartefact = (p_spike_element->GetSpikeClass() <0);
+		m_bartefact = (p_spike_element->get_class() <0);
 		if (bMultipleSelection)	// TRUE= multiple selection
 		{
 			/*auto nflaggedspikes =*/ m_pSpkListVSD->ToggleSpikeFlag(spikeno);
@@ -2167,7 +2167,7 @@ void CViewSpikeDetection::OnEditCopy()
 			m_displayData.GetWindowRect(&old_rect2);
 
 			const CRect rect(0,0, mdPM->hzResolution, mdPM->vtResolution);
-			m_npixels0 = m_displayDetect.Width();
+			m_npixels0 = m_displayDetect.GetRectWidth();
 
 			// create metafile
 			CMetaFileDC m_dc;
@@ -2218,8 +2218,8 @@ void CViewSpikeDetection::OnEditCopy()
 			// define display sizes - dataview & datadetect are same, spkshape & spkbar = as on screen
 			auto rectdata = rect;
 			rectdata.top	-= - 3*lineheight;
-			const auto rspkwidth	= MulDiv(m_spkShapeView.Width(), rectdata.Width(), m_spkShapeView.Width() + m_displayDetect.Width());
-			const auto rdataheight = MulDiv(m_displayDetect.Height(), rectdata.Height(), m_displayDetect.Height()*2 + m_spkBarView.Height());
+			const auto rspkwidth	= MulDiv(m_spkShapeView.GetRectWidth(), rectdata.Width(), m_spkShapeView.GetRectWidth() + m_displayDetect.GetRectWidth());
+			const auto rdataheight = MulDiv(m_displayDetect.GetRectHeight(), rectdata.Height(), m_displayDetect.GetRectHeight()*2 + m_spkBarView.GetRectHeight());
 			const auto separator = rspkwidth / 10;
 
 			// display curves : data
@@ -2500,8 +2500,8 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CLineViewWnd* pLineViewWnd
 	CString cs_unit;									// string for voltage or time unit	
 	const CPoint	bar_origin(-10,-10);						// bar origin at 10,10 pts on the left lower corner of the rectangle
 	//CSize	barWidth = CSize(1,1);					// width of bars (5 pixels)
-	auto ihorz_bar = pLineViewWnd->Width()/10;	// initial horz bar length 1/10th of display rect
-	auto ivert_bar = pLineViewWnd->Height()/3;	// initial vert bar height 1/3rd  of display rect
+	auto ihorz_bar = pLineViewWnd->GetRectWidth()/10;	// initial horz bar length 1/10th of display rect
+	auto ivert_bar = pLineViewWnd->GetRectHeight()/3;	// initial vert bar height 1/3rd  of display rect
 
 	///// time abscissa ///////////////////////////	
 	auto str_comment = PrintConvertFileIndex(pLineViewWnd->GetDataFirst(), pLineViewWnd->GetDataLast());
@@ -2521,7 +2521,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CLineViewWnd* pLineViewWnd
 		cs.Format( _T("horz bar = %i %s"), k, static_cast<LPCTSTR>(cs_unit));
 		str_comment += cs + rc;
 		// draw horizontal line
-		ihorz_bar = MulDiv(ihorz_bar, rect->Width(), pLineViewWnd->Width());
+		ihorz_bar = MulDiv(ihorz_bar, rect->Width(), pLineViewWnd->GetRectWidth());
 		p_dc->MoveTo(rect->left + bar_origin.x,			 rect->bottom -bar_origin.y);
 		p_dc->LineTo(rect->left + bar_origin.x + ihorz_bar, rect->bottom -bar_origin.y);		
 	}
@@ -2538,7 +2538,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CLineViewWnd* pLineViewWnd
  
 	if (mdPM->bVoltageScaleBar)
 	{
-		ivert_bar = MulDiv(ivert_bar, rect->Height(), pLineViewWnd->Height());
+		ivert_bar = MulDiv(ivert_bar, rect->Height(), pLineViewWnd->GetRectHeight());
 		p_dc->MoveTo(rect->left +bar_origin.x, rect->bottom -bar_origin.y);
 		p_dc->LineTo(rect->left +bar_origin.x , rect->bottom -bar_origin.y - ivert_bar);
 	}
@@ -2841,7 +2841,7 @@ void CViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_displayDetect.GetDataFirst();
 	m_lLast0 = m_displayDetect.GetDataLast();
-	m_npixels0 = m_displayDetect.Width();
+	m_npixels0 = m_displayDetect.GetRectWidth();
 	PrintCreateFont();
 	p_dc->SetBkMode (TRANSPARENT);
 }	
@@ -3319,7 +3319,7 @@ void CViewSpikeDetection::OnBnClickedLocatebttn()
 // load detection parameters from current parameters array
 // and update interface elements
 
-// if iSelParms > m_parmsCurrent.GetSize(): TRANSFER ALL DATA FROM SPKFILE -> PARMS
+// if iSelParms > m_parmsCurrent.GetRectSize(): TRANSFER ALL DATA FROM SPKFILE -> PARMS
 // then TRANSFER ALL DATA FROM PARMS TO FILE
 
 void CViewSpikeDetection::UpdateDetectionSettings(int iSelParms)
@@ -3514,7 +3514,7 @@ void CViewSpikeDetection::OnCbnSelchangeTransform2()
 
 		p_data = p_dat_doc->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
 		const auto p_data_spike0 = p_data +(iitime -spkpretrig -l_rw_first)*offset;
-		m_pSpkListVSD->SetSpikeData(ispk, p_data_spike0, offset);  // nchans should be 1 if they come from the transform buffer as data are not interleaved...
+		m_pSpkListVSD->TransferDataToSpikeBuffer(ispk, p_data_spike0, offset);  // nchans should be 1 if they come from the transform buffer as data are not interleaved...
 		m_pSpkListVSD->CenterSpikeAmplitude(ispk, 0, spikelen, 1); // 1=center average
 	}
 	m_pspkDocVSD->SetModifiedFlag(TRUE);
