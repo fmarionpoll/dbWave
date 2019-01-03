@@ -93,11 +93,13 @@ void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, m_timeLast);
 	DDX_Text(pDX, IDC_EDIT6, m_mVMax);
 	DDX_Text(pDX, IDC_EDIT7, m_mVMin);
+	DDX_Text(pDX, IDC_BINMV, m_mVbin);
 	DDX_Check(pDX, IDC_CHECK1, m_bAllfiles);
 	DDX_Text(pDX, IDC_NSPIKES, m_spikeno);
 	DDX_Text(pDX, IDC_SPIKECLASS, m_spikenoclass);
 	DDX_Text(pDX, IDC_EDITRIGHT2, m_txyright);
 	DDX_Text(pDX, IDC_EDITLEFT2, m_txyleft);
+
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
@@ -132,6 +134,7 @@ BEGIN_MESSAGE_MAP(CViewSpikeSort, CDaoRecordView)
 	ON_EN_CHANGE(IDC_NSPIKES,				OnEnChangeNOspike)
 	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM,	OnToolsEdittransformspikes)
 	ON_EN_CHANGE(IDC_SPIKECLASS,			OnEnChangeSpikenoclass)
+	ON_EN_CHANGE(IDC_BINMV, OnEnChangeNBins)
 	
 	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeSort::OnNMClickTab1)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeSort::OnTcnSelchangeTab1)
@@ -149,8 +152,9 @@ void CViewSpikeSort::OnInitialUpdate()
 	m_stretch.AttachParent(this);		// attach formview pointer
 
 	m_stretch.newProp(IDC_HISTOGRAM,	SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_EDIT6,		SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_EDIT7,		SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_BINMV,		SZEQ_XLEQ, SZEQ_YBEQ);
+
 	m_stretch.newProp(IDC_TAB1,			XLEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_LIMITLOWER,	SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_LIMITUPPER,	SZEQ_XLEQ, SZEQ_YBEQ);
@@ -161,7 +165,11 @@ void CViewSpikeSort::OnInitialUpdate()
 	m_stretch.newProp(IDC_SCROLLBAR1,	XLEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_EDIT3,		SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_STATICRIGHT,	SZEQ_XREQ, SZEQ_YBEQ);
+
 	m_stretch.newProp(IDC_STATICLEFT,	SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_EDITLEFT2, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
 
 	// subclass some controls
 	VERIFY(spk_hist_wnd_.SubclassDlgItem(IDC_HISTOGRAM, this));
@@ -180,6 +188,7 @@ void CViewSpikeSort::OnInitialUpdate()
 	VERIFY(spk_bar_wnd_.SubclassDlgItem(IDC_DISPLAYBARS, this));
 	VERIFY(mm_txyright.SubclassDlgItem(IDC_EDITRIGHT2, this));
 	VERIFY(mm_txyleft.SubclassDlgItem(IDC_EDITLEFT2, this));
+	VERIFY(mm_mVbin.SubclassDlgItem(IDC_BINMV, this));
 
 	VERIFY(mm_spikeno.SubclassDlgItem(IDC_NSPIKES, this));
 	mm_spikeno.ShowScrollBar(SB_VERT);
@@ -212,7 +221,7 @@ void CViewSpikeSort::OnInitialUpdate()
 	((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->SetCheck(p_app->vdS.bincrflagonsave);
 
 	// display tag lines at proper places
-	m_spkformtagleft	= spk_shape_wnd_.AddVTtag(m_psC->ileft);		// first VTtag
+	m_spkformtagleft	= spk_shape_wnd_.AddVTtag(m_psC->ileft);	// first VTtag
 	m_spkformtagright	= spk_shape_wnd_.AddVTtag(m_psC->iright);	// second VTtag
 	m_itagup			= spk_xy_wnd_.AddHZtag(m_psC->iupper, 0);	// first HZ tag
 	m_itaglow			= spk_xy_wnd_.AddHZtag(m_psC->ilower, 0);	// second HZ tag
@@ -220,15 +229,23 @@ void CViewSpikeSort::OnInitialUpdate()
 	m_spkhistlower		= spk_hist_wnd_.AddVTtag(m_psC->ilower);
 
 	UpdateFileParameters();
+	if (m_pSpkList != nullptr) {
+		m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
+		m_lower = m_psC->ilower*m_delta;
+		m_upper = m_psC->iupper*m_delta;
+		UpdateData(false);
+	}
+
 	ActivateMode4();
 	m_binit = TRUE;
 }
 
 void CViewSpikeSort::ActivateMode4()
 {
-	auto n_cmd_show = SW_SHOW;
+	auto n_cmd_show = SW_HIDE;
 	if (m_psC->iparameter == 4)
 	{
+		n_cmd_show = SW_SHOW;
 		if (spk_xy_wnd_.GetNVTtags() <1)
 		{
 			m_ixyright = spk_xy_wnd_.AddVTtag(m_psC->ixyright);
@@ -252,16 +269,12 @@ void CViewSpikeSort::ActivateMode4()
 	}
 	else
 	{
-		n_cmd_show = SW_HIDE;
-		
 		spk_xy_wnd_.DelAllVTtags();
 		spk_xy_wnd_.SetNxScaleCells(0, 0, 0);
 	}
 	GetDlgItem(IDC_STATICRIGHT)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_STATICLEFT)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_STATIC12)->ShowWindow(n_cmd_show);
-	GetDlgItem(IDC_STATICLEFT2)->ShowWindow(n_cmd_show);
-	GetDlgItem(IDC_STATICRIGHT2)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_EDITRIGHT2)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_EDITLEFT2)->ShowWindow(n_cmd_show);
 	spk_xy_wnd_.Invalidate();
@@ -494,7 +507,7 @@ void CViewSpikeSort::UpdateLegends()
 	spk_shape_wnd_.Invalidate();
 	spk_bar_wnd_.Invalidate();
 	spk_hist_wnd_.Invalidate();
-	
+
 	UpdateData(FALSE);	// copy view object to controls	
 }
 
@@ -526,9 +539,9 @@ void CViewSpikeSort::OnSort()
 	
 	// set file indexes - assume only one file selected
 	auto pdb_doc = GetDocument();
-	const int currentfile = pdb_doc->DBGetCurrentRecordPosition(); // index current file
-	auto firstfile = currentfile;				// index first file in the series
-	auto lastfile = firstfile;					// index last file in the series
+	const int currentfile = pdb_doc->DBGetCurrentRecordPosition(); 
+	auto firstfile = currentfile;
+	auto lastfile = firstfile;
 	const auto nfiles = pdb_doc->DBGetNRecords();
 	const auto currentlist = m_pSpkDoc->GetSpkListCurrentIndex();
 	
@@ -577,18 +590,17 @@ void CViewSpikeSort::OnSort()
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
 		if ((m_pSpkList == nullptr) || (m_pSpkList->GetSpikeLength() == 0))
 			continue;
-		const auto nspikes = m_pSpkList->GetTotalSpikes();
 
 		// loop over all spikes of the list and compare to a single parameter
 		const CSize limits1(m_psC->ilower, m_psC->iupper);
 		const CSize fromclass_toclass(m_sourceclass, m_destinationclass);
 		const CSize timewindow(m_lFirst, m_lLast);
+		// sort on 1 parameter
 		if (m_psC->iparameter != 4)
 		{
-			
 			flagchanged = m_pSpkList->SortSpikeWithY1(fromclass_toclass, timewindow, limits1);
 		}
-		// sort option with 2 boudaries
+		// sort on 2 parameters
 		else 
 		{
 			const CSize limits2(m_psC->ixyleft, m_psC->ixyright);
@@ -598,7 +610,7 @@ void CViewSpikeSort::OnSort()
 		if (flagchanged)
 		{
 			m_pSpkDoc->OnSaveDocument(pdb_doc->DBGetCurrentSpkFileName(FALSE));
-			pdb_doc->Setnbspikes(nspikes);
+			pdb_doc->Setnbspikes(m_pSpkList->GetTotalSpikes());
 		}
 	}
 
@@ -616,11 +628,13 @@ void CViewSpikeSort::OnSort()
 	spk_xy_wnd_.Invalidate();
 	spk_shape_wnd_.Invalidate();
 	spk_bar_wnd_.Invalidate();
-	spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
-							m_lFirst, m_lLast,
-							m_parmmax, m_parmmin, 
-							spk_hist_wnd_.GetnBins(),
-							TRUE);
+
+	BuildHistogram();
+	//spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
+	//	m_lFirst, m_lLast,
+	//	m_parmmax, m_parmmin,
+	//	spk_hist_wnd_.GetnBins(),
+	//	TRUE);
 	spk_hist_wnd_.Invalidate();
 	SelectSpike(-1);
 	m_pSpkDoc->SetModifiedFlag(TRUE); // set flag: document has changed
@@ -714,7 +728,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (threshold == m_spkhistlower)		// first tag
 			{
-				m_psC->ilower = spk_hist_wnd_.GetVTtagVal(m_spkhistlower);	// load new value
+				m_psC->ilower = spk_hist_wnd_.GetVTtagVal(m_spkhistlower);
 				m_lower = m_psC->ilower*m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 				UpdateData(false);
 			}
@@ -814,9 +828,8 @@ void CViewSpikeSort::OnMeasure()
 	int currentfile = pdb_doc->DBGetCurrentRecordPosition(); // index current file	
 	const int nfiles		= pdb_doc->DBGetNRecords();
 	const auto currentlist = m_pSpkDoc->GetSpkListCurrentIndex();
-	int firstfile;							// index first file in the series
-	int lastfile ;							// index last file in the series
-	
+	int firstfile = currentfile;
+	int lastfile = currentfile;
 	// change size of arrays and prepare temporary dialog
 	SelectSpike(-1);
 	if (m_bAllfiles)
@@ -824,12 +837,6 @@ void CViewSpikeSort::OnMeasure()
 		firstfile = 0;						// index first file
 		lastfile = nfiles-1;				// index last file
 	}
-	else
-	{
-		firstfile = currentfile;			// index first file in the series
-		lastfile = firstfile;				// index last file in the series
-	}
-
 
 	// loop over all selected files (or only one file currently selected)
 	for (auto ifile=firstfile; ifile <= lastfile; ifile++)
@@ -881,7 +888,7 @@ void CViewSpikeSort::OnMeasure()
 
 	if (m_bAllfiles)
 	{
-		currentfile = pdb_doc->DBGetCurrentRecordPosition(); // index current file	
+		currentfile = pdb_doc->DBGetCurrentRecordPosition(); 
 		pdb_doc->DBSetCurrentRecordPosition(currentfile);
 		pdb_doc->OpenCurrentSpikeFile();
 		m_pSpkDoc = pdb_doc->m_pSpk;
@@ -889,67 +896,10 @@ void CViewSpikeSort::OnMeasure()
 		spk_shape_wnd_.SetSourceData(m_pSpkList);
 	}
 			
-	// adjust display (search max & min), modify tags
- 	if (m_parmmax < m_parmmin)		// make sure that max > min
-	{
-		const auto i = m_parmmax;
-		m_parmmax = m_parmmin;
-		m_parmmin = i;
-	}
-
-	if (m_psC->ilower ==0 && m_psC->iupper ==0)	// make sure that HZ tags are defined
-	{
-		m_psC->ilower = m_parmmin;
-		m_psC->iupper = m_parmmax;
-	}
-	auto max = m_parmmax;			// set limits to include tags
-	if (max < m_psC->iupper)
-		max = m_psC->iupper;
-	auto min = m_parmmin;
-	if (min > m_psC->ilower)
-		min = m_psC->ilower;
-
-	// tell display routine where data are (pass pointer)
-	if (m_psC->iparameter == 4)
-	{
-		const auto x_we = m_pSpkList->GetSpikeLength()*2;
-		spk_xy_wnd_.SetXWExtOrg(x_we, 0);
-		spk_xy_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
-	}
-
-	// adapt the gain
-	const auto delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
-	
-	if (mdPM->bMaximizeGain)
-	{
-		const auto y_we = static_cast<float> (MulDiv(max - min, 10, 8));	// get extension and origin
-		const auto y_wo = static_cast<float>(max + min) / 2.f;
-		m_mVMin = ( y_wo - y_we / 2.f)*delta;
-		m_mVMax = (y_wo + y_we / 2.f)*delta;
-	}
-
-	m_lower = m_psC->ilower*delta;
-	m_upper = m_psC->iupper*delta;
-	spk_xy_wnd_.SetHZtagVal(m_itaglow, m_psC->ilower);		// set HZ tags
+	spk_xy_wnd_.SetHZtagVal(m_itaglow, m_psC->ilower);
 	spk_xy_wnd_.SetHZtagVal(m_itagup, m_psC->iupper);
 
-	// compute histogram
-	auto nbins = m_parmmax-m_parmmin+1;
-	if (nbins < 0)		// no values...
-	{
-		nbins = spk_hist_wnd_.GetRectWidth()/2;
-		m_parmmax = 0;
-		m_parmmin = 0;
-	}
-	if (nbins > spk_hist_wnd_.GetRectWidth()/2)
-		nbins = spk_hist_wnd_.GetRectWidth()/2;
-
-	// TODO: create histogram from list of files, using spikeList / SpikeElement
-	spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
-							m_lFirst, m_lLast,
-							m_parmmax, m_parmmin, nbins,
-							TRUE);
-
+	BuildHistogram();
 	spk_hist_wnd_.SetVTtagVal(m_itaglow, m_psC->ilower);
 	spk_hist_wnd_.SetVTtagVal(m_itagup, m_psC->iupper);	
 
@@ -957,36 +907,20 @@ void CViewSpikeSort::OnMeasure()
 	UpdateData(FALSE);
 }
 
-int CViewSpikeSort::SelectFileFromGlobalSpikeIndex(int spikeindex_global)
-{
-	// convert global index to local
-	auto ispike_local = spikeindex_global;		// always local index [/ current file]
-	if (spikeindex_global >= 0 && m_bAllfiles)		// then spikeno is global and we need to find ispike_local for spkForm and spkBarView
-	{
-		const int i_currentfile = GetDocument()->DBGetCurrentRecordPosition();
-		auto i_newfile = i_currentfile;
-		ispike_local = GlobalIndextoLocal(spikeindex_global, &i_newfile);
-		if (i_newfile != i_currentfile)
-		{
-			GetDocument()->DBSetCurrentRecordPosition(i_newfile);
-			UpdateFileParameters();
-		}
-	}
-	return ispike_local;
-}
-
 void CViewSpikeSort::UpdateGain()
 {
 	const auto delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
-
 	const auto max = int (m_mVMax / delta);
 	const auto min = int (m_mVMin / delta);
 	const auto y_we = max-min;
 	const auto y_wo = (max+min)/2;
+	ASSERT(y_we != 0);
 	spk_xy_wnd_.SetYWExtOrg(y_we, y_wo);
 	spk_xy_wnd_.Invalidate();
-	spk_hist_wnd_.SetXWExtOrg(y_we, y_wo-y_we/2);
-	spk_hist_wnd_.Invalidate();
+	if (y_we != 0) {
+		spk_hist_wnd_.SetXWExtOrg(y_we, y_wo - y_we / 2);
+		spk_hist_wnd_.Invalidate();
+	}
 }
  
 void CViewSpikeSort::OnFormatAlldata() 
@@ -1023,15 +957,25 @@ void CViewSpikeSort::OnFormatAlldata()
 	// change spk_hist_wnd_
 	if (build_histogram)
 	{
-		short nbins = m_parmmax-m_parmmin+1;
-		if (nbins > spk_hist_wnd_.GetRectWidth()/2)
-			nbins = spk_hist_wnd_.GetRectWidth()/2;
-		spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
-					m_lFirst, m_lLast,
-					m_parmmax, m_parmmin, nbins,
-					TRUE);
+		BuildHistogram();
 	}
 	UpdateLegends();
+}
+
+void CViewSpikeSort::BuildHistogram()
+{
+	auto pdb_doc = GetDocument();
+	if (pdb_doc == nullptr)
+		return;
+
+	const auto delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
+	m_parmmax = static_cast<int> (m_mVMax / delta);
+	m_parmmin = static_cast<int> (m_mVMin / delta);
+	int nbins = static_cast<int> ((m_mVMax - m_mVMin) / m_mVbin);
+	if (nbins <= 0)
+		return;
+
+	spk_hist_wnd_.BuildHistFromDocument(pdb_doc, m_bAllfiles, m_lFirst, m_lLast, m_parmmax, m_parmmin, nbins, TRUE);
 }
 
 void CViewSpikeSort::OnFormatCentercurve() 
@@ -1064,17 +1008,9 @@ void CViewSpikeSort::OnFormatGainadjust()
 	
 	// adjust gain for spk_hist_wnd_ and XYp: data = computed values
 	// search max min of parameter values
-	if (m_measure_y1_.GetSize() > 0)
-		max = m_measure_y1_[0];
-	min = max;
-	for (auto i=0; i<m_measure_y1_.GetSize(); i++)
-	{
-		const auto ival = m_measure_y1_[i];
-		if (ival > max)
-			max = ival;
-		if (ival < min)
-			min = ival;
-	}
+	CSize measure = GetDocument()->GetSpkMaxMin_y1(m_bAllfiles);
+	max = measure.cx;
+	min = measure.cy;
 
 	const auto delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 	const auto max2 = static_cast<int>(m_upper / delta);
@@ -1095,12 +1031,14 @@ void CViewSpikeSort::OnFormatGainadjust()
 	// update edit controls
 	m_mVMax = static_cast<float>(max)* delta;
 	m_mVMin = static_cast<float>(min)* delta;
+	BuildHistogram();
 	UpdateLegends();
 }
 
 void CViewSpikeSort::SelectSpike(int spikeno)
 {
-	const auto ispike_local = SelectFileFromGlobalSpikeIndex(spikeno);
+	//const auto ispike_local = SelectFileFromGlobalSpikeIndex(spikeno);
+	const auto ispike_local = spikeno;
 
 	// indexes are computed, display corresponding spike
 	spk_shape_wnd_.SelectSpikeShape(ispike_local);
@@ -1115,8 +1053,6 @@ void CViewSpikeSort::SelectSpike(int spikeno)
 	{
 		const auto spike_elemt = m_pSpkList->GetSpikeElemt(ispike_local);
 		m_spikenoclass = spike_elemt->get_class();
-		//spkFirst = spike_list->get_time() - m_pSpkList->GetSpikePretrig();
-		//spk_last = spkFirst + m_pSpkList->GetSpikeLength();
 		n_cmd_show= SW_SHOW;		
 	}
 	GetDlgItem(IDC_STATIC2)->ShowWindow(n_cmd_show);
@@ -1127,32 +1063,31 @@ void CViewSpikeSort::SelectSpike(int spikeno)
 
 void CViewSpikeSort::OnToolsEdittransformspikes() 
 {
-	CSpikeEditDlg dlg;							// dialog box
-	dlg.m_yextent = spk_shape_wnd_.GetYWExtent();	// load display parameters
-	dlg.m_yzero = spk_shape_wnd_.GetYWOrg();			// ordinates
-	dlg.m_xextent = spk_shape_wnd_.GetXWExtent();	// and
-	dlg.m_xzero = spk_shape_wnd_.GetXWOrg();			// abcissa
-	dlg.m_spikeno = m_spikeno;					// load index of selected spike	
+	CSpikeEditDlg dlg;
+	dlg.m_yextent = spk_shape_wnd_.GetYWExtent();
+	dlg.m_yzero = spk_shape_wnd_.GetYWOrg();	
+	dlg.m_xextent = spk_shape_wnd_.GetXWExtent();
+	dlg.m_xzero = spk_shape_wnd_.GetXWOrg();
+	dlg.m_spikeno = m_spikeno;
 	dlg.m_parent = this;
-	dlg.m_pSpkList = m_pSpkList;				// pass spike list
+	dlg.m_pSpkList = m_pSpkList;
 
 	// refresh pointer to data file because it not used elsewhere in the view
 	auto docname = GetDocument()->DBGetCurrentDatFileName();
-	auto b_doc_exists = FALSE;					// assume it is not found
-	if (!docname.IsEmpty())						// no name ? test if any file exist..
+	auto b_doc_exists = FALSE;	
+	if (!docname.IsEmpty())	
 	{
-		CFileStatus r_status;					// file status: time creation, ...
+		CFileStatus r_status;
 		b_doc_exists = CFile::GetStatus(docname, r_status);
 	}
 	if (b_doc_exists) {
 		const auto flag = GetDocument()->OpenCurrentDataFile();
 		ASSERT(flag);
 	}
-	dlg.m_dbDoc = GetDocument()->m_pDat;			// pass pointer to parent	
+	dlg.m_dbDoc = GetDocument()->m_pDat;	
 
 	// run dialog box
 	dlg.DoModal();
-
 	if (dlg.m_bchanged)
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
@@ -1164,7 +1099,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	if (!dlg.m_bartefact && m_spikeno != dlg.m_spikeno)
 		SelectSpike(dlg.m_spikeno);
 
-	UpdateLegends();			    			// update spkform & legends
+	UpdateLegends();
 }
 
 void CViewSpikeSort::OnSelectAllFiles() 
@@ -1696,8 +1631,7 @@ void CViewSpikeSort::OnEnChangeupper()
 	if (mm_upper.m_bEntryDone)
 	{
 		auto upper = m_upper;
-		//if (!m_bAllfiles)
-			m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
+		m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 
 		switch (mm_upper.m_nChar)
 		{				// load data from edit controls
@@ -1715,6 +1649,7 @@ void CViewSpikeSort::OnEnChangeupper()
 			upper = 0;
 		if (upper <= m_lower)
 			upper = m_lower + m_delta * 10.f;
+		
 		// change display if necessary	
 		mm_upper.m_bEntryDone = FALSE;	// clear flag
 		mm_upper.m_nChar = 0;			// empty buffer
@@ -1844,7 +1779,7 @@ void CViewSpikeSort::OnEnChangetimeFirst()
 		mm_timeFirst.m_nChar = 0;
 		mm_timeFirst.SetSel(0, -1);
 		m_timeFirst = time_first;
-		m_lFirst = long(m_timeFirst * m_pSpkList->GetAcqSampRate());
+		m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->GetAcqSampRate());
 		UpdateLegends();
 	}
 }
@@ -1873,7 +1808,7 @@ void CViewSpikeSort::OnEnChangetimeLast()
 		mm_timeLast.m_nChar = 0;
 		mm_timeLast.SetSel(0, -1);
 		m_timeLast = time_last;
-		m_lLast = long(m_timeLast * m_pSpkList->GetAcqSampRate());
+		m_lLast = static_cast <long> (m_timeLast * m_pSpkList->GetAcqSampRate());
 		UpdateLegends();
 	}
 }
@@ -2013,6 +1948,35 @@ void CViewSpikeSort::OnEnChangeSpikenoclass()
 			const auto currentlist = m_tabCtrl.GetCurSel();
 			auto* spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
 			spike_list->SetSpikeClass(m_spikeno, m_spikenoclass);
+			UpdateLegends();
+		}
+	}
+}
+
+void CViewSpikeSort::OnEnChangeNBins()
+{
+	if (mm_mVbin.m_bEntryDone)
+	{
+		auto mVbin = m_mVbin;
+		const auto delta = (m_mVMax - m_mVMin) / 10.f;
+		switch (mm_mVbin.m_nChar)
+		{
+		case VK_RETURN:	UpdateData(TRUE); mVbin = m_mVbin; break;
+		case VK_UP:
+		case VK_PRIOR:	mVbin += delta;	break;
+		case VK_DOWN:
+		case VK_NEXT:   mVbin -= delta;	break;
+		default:;
+		}
+
+		mm_mVbin.m_bEntryDone = FALSE;
+		mm_mVbin.m_nChar = 0;
+		mm_mVbin.SetSel(0, -1);
+
+		if (m_mVbin != mVbin)
+		{
+			m_mVbin = mVbin;
+			BuildHistogram();
 			UpdateLegends();
 		}
 	}

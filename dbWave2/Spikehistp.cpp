@@ -570,7 +570,7 @@ void CSpikeHistWnd::OnSize(UINT nType, int cx, int cy)
 //		bNew	- yes: erase old data, no: add new data to the current ones
 
 void CSpikeHistWnd::BuildHistFromArrays(
-			CArray<int, int>* pVal, CArray<long, long>* piiTime, CArray<int, int>* pClass,
+			CArray<int, int>* pY1, CArray<long, long>* piiTime, CArray<int, int>* pClass,
 			long l_first, long l_last, int max, int min, int nbins,
 			BOOL bNew)
 {
@@ -592,13 +592,13 @@ void CSpikeHistWnd::BuildHistFromArrays(
 
 	CDWordArray* p_dw = nullptr;
 
-	for (auto i=pVal->GetUpperBound(); i>=0; i--)	
+	for (auto i=pY1->GetUpperBound(); i>=0; i--)	
 	{
 		// check that the corresp spike fits within the time limits requested
 		const auto iitime = piiTime->GetAt(i);		// get spike time
 		if (iitime < l_first || iitime > l_last)	// check if within requested interval
 			continue;							// no: skip this spike
-		auto index = pVal->GetAt(i);				// get spike parameter value
+		auto index = pY1->GetAt(i);				// get spike parameter value
 		if (index > m_abcissamaxval || index < m_abcissaminval)
 			continue;
 
@@ -613,15 +613,7 @@ void CSpikeHistWnd::BuildHistFromArrays(
 			const auto spike_class = pClass->GetAt(i);
 			GetClassArray(spike_class, p_dw);
 			if (p_dw == nullptr)
-			{
-				p_dw = new (CDWordArray);	// init array
-				ASSERT(p_dw != NULL);
-				histogram_ptr_array.Add(p_dw);		// save pointer to this new array
-				p_dw->SetSize(nbins+1);
-				for (auto j=1; j<= nbins; j++)
-					p_dw->SetAt(j, 0);
-				p_dw->SetAt(0, spike_class);
-			}
+				p_dw = InitClassArray(nbins, spike_class);
 		}
 		if (p_dw != nullptr)
 		{ 
@@ -631,3 +623,109 @@ void CSpikeHistWnd::BuildHistFromArrays(
 	}
 	GetHistogLimits(0);    
 }
+
+CDWordArray* CSpikeHistWnd::InitClassArray(int nbins, int spike_class) {
+	
+	CDWordArray* p_dw = new (CDWordArray);	// init array
+	ASSERT(p_dw != NULL);
+	histogram_ptr_array.Add(p_dw);		// save pointer to this new array
+	p_dw->SetSize(nbins + 1);
+	for (auto j = 1; j <= nbins; j++)
+		p_dw->SetAt(j, 0);
+	p_dw->SetAt(0, spike_class);
+	return p_dw;
+}
+
+void CSpikeHistWnd::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
+{
+	// erase data and arrays if bnew:
+	if (bNew)
+		RemoveHistData();
+
+	if (histogram_ptr_array.GetSize() <= 0)
+	{
+		const auto p_dword_array = new (CDWordArray);
+		ASSERT(p_dword_array != NULL);
+		histogram_ptr_array.Add(p_dword_array);
+		ASSERT(histogram_ptr_array.GetSize() > 0);
+	}
+	auto* p_dword_array = histogram_ptr_array[0];
+	if (nbins == 0) {
+		return;
+	}
+
+	if (nbins != m_nbins || p_dword_array->GetSize() != (nbins + 1))
+		ReSize_And_Clear_Histograms(nbins, max, min);
+	
+	CDWordArray* p_dw = nullptr;
+	auto nspikes = p_spk_list->GetTotalSpikes();
+	for (auto ispk = 0; ispk < nspikes; ispk++)
+	{
+		const auto spike_element = p_spk_list->GetSpikeElemt(ispk);
+
+		// check that the corresp spike fits within the time limits requested
+		const auto iitime = spike_element->get_time();
+		if (iitime < l_first || iitime > l_last)
+			continue;
+		auto y1 = spike_element->get_y1();
+		if (y1 > m_abcissamaxval || y1 < m_abcissaminval)
+			continue;
+
+		// increment corresponding histogram interval into the first histogram (general, displayed in grey)
+		const auto index = (y1 - m_abcissaminval) / m_binsize + 1;
+		auto dw_data = p_dword_array->GetAt(index) + 1;
+		p_dword_array->SetAt(index, dw_data);
+
+		// dispatch into corresp class histogram (create one if necessary)
+		const auto spike_class = spike_element->get_class();
+		GetClassArray(spike_class, p_dw);
+		if (p_dw == nullptr)
+			p_dw = InitClassArray(nbins, spike_class);
+		
+		if (p_dw != nullptr)
+		{
+			dw_data = p_dw->GetAt(index) + 1;
+			p_dw->SetAt(index, dw_data);
+		}
+	}
+	GetHistogLimits(0);
+}
+
+void CSpikeHistWnd::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles,long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
+{
+	// erase data and arrays if bnew:
+	if (bNew) 
+	{
+		RemoveHistData();
+		bNew = false;
+	}
+
+	auto ncurrentfile = 0;
+	auto file_first = ncurrentfile;
+	auto file_last = ncurrentfile;
+	if (ballFiles)
+	{
+		file_first = 0;
+		file_last = p_doc->DBGetNRecords() - 1;
+		ncurrentfile = p_doc->DBGetCurrentRecordPosition();
+	}
+	
+	for (auto ifile = file_first; ifile <= file_last; ifile++)
+	{
+		if(ballFiles)
+		{
+			p_doc->DBSetCurrentRecordPosition(ifile);
+			p_doc->OpenCurrentSpikeFile();
+		}
+		CSpikeList* p_spikelist = p_doc->m_pSpk->GetSpkListCurrent();
+		if (p_spikelist != nullptr && p_spikelist->GetTotalSpikes() > 0)
+			BuildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
+	}
+	
+	if (ballFiles)
+	{
+		p_doc->DBSetCurrentRecordPosition(ncurrentfile);
+		p_doc->OpenCurrentSpikeFile();
+	}
+}
+

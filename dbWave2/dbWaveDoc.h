@@ -65,9 +65,11 @@ public:
 	long			Getnbspikeclasses();
 	void			Setnbspikeclasses(long nclasses);
 	void			GetAllSpkMaxMin(BOOL bAll, BOOL bRecalc, int* max, int* min);
-	inline int		GetcurrentSpkListIndex() const {return m_icurSpkList;}
-	inline void		SetcurrentSpkListIndex(int icur) {m_icurSpkList = icur;}
-	inline int		GetcurrentSpkListSize() const {return m_pSpk->GetSpkListSize();}
+	CSize			GetSpkMaxMin_y1(BOOL bAll);
+
+	int		GetcurrentSpkListIndex() const {return m_icurSpkList;}
+	void	SetcurrentSpkListIndex(int icur) {m_icurSpkList = icur;}
+	int		GetcurrentSpkListSize() const {return m_pSpk->GetSpkListSize();}
 
 	inline void		SetClearMdbOnExit(BOOL bClear) {m_bClearMdbOnExit = bClear;}
 	

@@ -146,12 +146,14 @@ public:
 	void Measure_case1_AmplitudeAtT(int t);
 	void Measure_case2_AmplitudeAtT2MinusAtT1(int t1, int t2);
 
+	CSize Measure_Y1_MaxMin();
+
 	BOOL SortSpikeWithY1(CSize fromclass_toclass, CSize timewindow, CSize limits);
 	BOOL SortSpikeWithY1AndY2(CSize fromclass_toclass, CSize timewindow, CSize limits1, CSize limits2);
 
 	// deal with list of spikes flagged
 protected:
-	CArray <int, int>	m_spike_flagged;	// store spike number in this array
+	CArray <int, int> m_spike_flagged;	// store spike number in this array
 
 public:
 	int		SetSpikeFlag(int spikeno, BOOL bFlag);
@@ -169,7 +171,7 @@ public:
 protected:	
 // Implementation
 	void	ReadfileVersion1(CArchive& ar);
-	void RemoveArtefacts();
+	void	RemoveArtefacts();
 	void	ReadfileVersion_before5(CArchive& ar, int iversion);
 	void	ReadfileVersion5(CArchive& ar);
 	void	ReadfileVersion6(CArchive& ar);

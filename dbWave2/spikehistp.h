@@ -12,6 +12,8 @@
 //		index 0 = "class" index (int)
 //		index 1 to nbins = data
 
+#include "dbWaveDoc.h"
+
 class CSpikeHistWnd : public CScopeScreen
 {
 // Construction
@@ -60,6 +62,8 @@ public:
 				long l_first, long l_last, int max, int min, int nbins,
     			BOOL bNew=TRUE);
 
+	void BuildHistFromDocument(CdbWaveDoc * p_document, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+
 	void RemoveHistData();
 	LPTSTR ExportAscii(LPTSTR lp);					// export ascii data
 	void MoveVTtagtoVal(int itag, int ival);
@@ -74,6 +78,9 @@ protected:
 	void ReSize_And_Clear_Histograms(int nbins, int max, int min);
 	void GetHistogLimits(int ihist);
     void GetClassArray(int iclass, CDWordArray*& pDW);
+	CDWordArray * InitClassArray(int nbins, int spike_class);
+	void BuildHistFromSpikeList(CSpikeList * p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+
 public:
 	void PlotDatatoDC(CDC* p_dc);
 protected:

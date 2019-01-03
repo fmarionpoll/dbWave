@@ -471,6 +471,52 @@ void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* mi
 	}
 }
 
+CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll) 
+{
+	long nfiles = 1;
+	long ncurrentfile = 0;
+	if (bAll)
+	{
+		nfiles = DBGetNRecords();
+		ncurrentfile = DBGetCurrentRecordPosition();
+	}
+
+	CSize dummy(0, 0); 
+	BOOL initialized = false;
+	for (long ifile = 0; ifile < nfiles; ifile++)
+	{
+		if (bAll)
+		{
+			DBSetCurrentRecordPosition(ifile);
+			OpenCurrentSpikeFile();
+			m_pSpk->SetSpkListCurrent(0);
+		}
+		auto p_spk_list = m_pSpk->GetSpkListCurrent();
+		if (p_spk_list->GetTotalSpikes() == 0)
+			continue;
+
+		CSize measure = p_spk_list->Measure_Y1_MaxMin();
+		if (initialized) {
+			if (dummy.cx < measure.cx) dummy.cx = measure.cx;
+			if (dummy.cy > measure.cy) dummy.cy = measure.cy;
+		}
+		else {
+			initialized = true;
+			dummy.cx = measure.cx;
+			dummy.cy = measure.cy;
+		}
+	}
+
+	if (bAll)
+	{
+		DBSetCurrentRecordPosition(ncurrentfile);
+		OpenCurrentSpikeFile();
+		m_pSpk->SetSpkListCurrent(0);
+	}
+
+	return dummy;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 long CdbWaveDoc::DBGetCurrentRecordPosition()

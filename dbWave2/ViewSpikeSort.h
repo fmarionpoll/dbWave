@@ -34,6 +34,7 @@ public:
 	int		m_spikenoclass;
 	float	m_txyright;
 	float	m_txyleft;
+	float   m_mVbin = .1f;
 
 	CdbWaveDoc*	GetDocument();
 
@@ -60,11 +61,14 @@ protected:
 	CEditCtrl	mm_spikenoclass;
 	CEditCtrl	mm_txyright;
 	CEditCtrl	mm_txyleft;	
+	CEditCtrl   mm_mVbin;
 
 	CSpikeDoc*	m_pSpkDoc;	
 	CSpikeList*	m_pSpkList;	
 	SPKCLASSIF*	m_psC{};
 	OPTIONS_VIEWDATA*  mdPM{};
+	CTabCtrl m_tabCtrl;
+
 
 	int		m_itaglow{};
 	int		m_itagup{};
@@ -87,11 +91,6 @@ protected:
 	BOOL	m_bMeasureDone;			// flag m_measure_y1 valid
 	int		m_divAmplitudeBy;		// value to adjust changes in amplitude / filter(s)
 
-	//CArray<int, int>	m_measure_y1_;		// measure: amplitude t2-t1, val at t1, etc
-	//CArray<long, long>	m_measure_y2_;		// measure of a second parameter
-	//CArray<int, int>	m_measure_class_;	// spike class
-	//CArray<int, int>	m_nspkperfile_;		// number of spikes per file
-	//CArray<long, long>	m_measure_t_;		// time index
 	SCROLLINFO	m_scroll_file_pos_infos_{};
 
 // Operations
@@ -127,49 +126,51 @@ protected:
 	void SaveCurrentFileParms();
 
 	void SelectSpike(int spikeno);
-	int  GlobalIndextoLocal(int index_global, int* filenb);
-	int LocalIndextoGlobal(int filenb, int index_local) {return index_local + m_nspkperfile_[filenb];};
-	int SelectFileFromGlobalSpikeIndex(int global_index);
 	void UpdateGain();
 	void UpdateScrollBar();
 	void SelectSpkList(int icursel);
 	void ActivateMode4();
+	void BuildHistogram();
+	void UnflagAllSpikes();
 
 	// Generated message map functions
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnEnChangeSourceclass();
-	afx_msg void OnEnChangeDestinationclass();
 	afx_msg void OnSelchangeParameter();
-	afx_msg void OnEnChangelower();
-	afx_msg void OnEnChangeupper();
-	afx_msg void OnEnChangeT1();
-	afx_msg void OnEnChangeT2();
 	afx_msg void OnSort();
 	afx_msg LRESULT OnMyMessage(WPARAM code, LPARAM lParam);
-	void UnflagAllSpikes();
 	afx_msg void OnMeasure();
 	afx_msg void OnFormatAlldata();
+	
 	afx_msg void OnFormatCentercurve();
 	afx_msg void OnFormatGainadjust();
 	afx_msg void OnToolsEdittransformspikes();
 	afx_msg void OnSelectAllFiles();
 	afx_msg void OnToolsAlignspikes();
 	afx_msg void OnDestroy();
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	
+	afx_msg void OnEnChangelower();
+	afx_msg void OnEnChangeupper();
+	afx_msg void OnEnChangeT1();
+	afx_msg void OnEnChangeT2();
+	afx_msg void OnEnChangeSourceclass();
+	afx_msg void OnEnChangeDestinationclass();
 	afx_msg void OnEnChangetimeFirst();
 	afx_msg void OnEnChangetimeLast();
 	afx_msg void OnEnChangemVMin();
 	afx_msg void OnEnChangemVMax();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnEnChangeNOspike();
 	afx_msg void OnEnChangeSpikenoclass();
 	afx_msg void OnEnChangeEditleft2();
 	afx_msg void OnEnChangeEditright2();
+	afx_msg void OnEnChangeNBins();
 	
-	DECLARE_MESSAGE_MAP()
-	CTabCtrl m_tabCtrl;
 	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+
+	DECLARE_MESSAGE_MAP()
+
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

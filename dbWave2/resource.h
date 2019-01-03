@@ -613,6 +613,7 @@
 #define IDC_EDITLOCKONSTIM              1222
 #define IDC_STATIC8                     1223
 #define IDC_STATIC9                     1224
+#define IDC_STATIC17                    1225
 #define IDC_CHECKAVERAGE                1227
 #define IDC_STATICFILENAME              1228
 #define IDC_CHECKCASESENSITIV           1229
@@ -801,6 +802,7 @@
 #define IDC_COMBOCHANDIGITAL            1508
 #define IDC_BUTTON_NEXTID               1509
 #define IDC_USBPXXS1CTL                 1510
+#define IDC_BINMV                       1512
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -927,7 +929,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        575
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1512
+#define _APS_NEXT_CONTROL_VALUE         1513
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

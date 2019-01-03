@@ -1099,6 +1099,21 @@ void CSpikeList::Measure_case2_AmplitudeAtT2MinusAtT1(const int t1, const int t2
 	}
 }
 
+CSize CSpikeList::Measure_Y1_MaxMin()
+{
+	const auto nspikes = GetTotalSpikes();
+	int max = GetSpikeElemt(0)->get_y1() ;
+	int min = max;
+	for (auto ispike = 0; ispike < nspikes; ispike++)
+	{
+		const auto val = GetSpikeElemt(ispike)->get_y1();
+		if (val > max) max = val;
+		if (val < min) min = val;
+	}
+
+	return CSize(max, min);
+}
+
 BOOL CSpikeList::SortSpikeWithY1(const CSize fromclass_toclass, const CSize timewindow, const CSize limits)
 {
 	const auto nspikes = GetTotalSpikes();

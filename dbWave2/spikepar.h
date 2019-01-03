@@ -168,11 +168,12 @@ public:
 	float	ktolerance;
 	float	mvmin;			// display limits
 	float	mvmax;
+
 	void*	ptpl;
 
 public :
-	SPKCLASSIF();	// constructor
-	~SPKCLASSIF();	// destructor
+	SPKCLASSIF();
+	~SPKCLASSIF();
 	SPKCLASSIF& operator = (const SPKCLASSIF& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);	// overridden for document i/o
 	void CreateTPL();	
