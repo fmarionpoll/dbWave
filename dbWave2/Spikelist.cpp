@@ -1,326 +1,12 @@
-/////////////////////////////////////////////////////////////////////////////
-// spiklist.cpp : implementation file
-//
-// CFromChan
-// CSpikeElement
-// CSpikeList
 
 #include "StdAfx.h"
 #include "Acqdatad.h"
+#include "SpikeFromChan.h"
 #include "Spikelist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-// CFromChan
-
-CFromChan::CFromChan(): encoding(0), binzero(0), samprate(0), voltsperbin(0)
-{
-	wversion = 5;
-}
-
-CFromChan::~CFromChan()
-{
-}
-
-IMPLEMENT_SERIAL(CFromChan, CObject, 0 /* schema number*/ )
-
-void CFromChan::Serialize(CArchive& ar)
-{
-	// store elements
-	if (ar.IsStoring())
-	{
-		ar << wversion;
-		ar << binzero;
-		ar << encoding;
-		ar << voltsperbin;
-		ar << samprate;
-		parm.Serialize(ar);
-		const int nitems = 1;
-		ar << nitems;
-		ar << comment;
-	}
-	// load data
-	else
-	{
-		WORD w; 
-		WORD version;
-		ar >> version;				// version number
-		if (version < 5)
-		{
-			ar >> w; binzero = w;
-		}
-		else
-			ar >> binzero;			// long (instead of word)
-		if (version < 3)
-		{
-			ar >> w; parm.extractChan = w;
-		}
-		ar >> encoding;
-		ar >> voltsperbin;
-		ar >> samprate;
-		if (version < 3)
-		{
-			ar >> w; parm.detectTransform=w;
-			ar >> w; parm.detectFrom=w;
-			ar >> w; parm.detectThreshold=w;
-			ar >> w;	// unused parameter, removed at version 3
-			ar >> w; parm.extractNpoints = w;
-			ar >> w; parm.prethreshold=w;
-			ar >> w; parm.refractory=w;
-		}
-		else
-		{
-			parm.Serialize(ar);
-		}
-		if (version >3)
-		{
-			int nitems;
-			ar >> nitems;
-			ar >> comment;
-		}
-	}
-}
-
-CFromChan& CFromChan::operator =(const CFromChan& arg)
-{
-	if (&arg != this) {
-		wversion = arg.wversion;
-		binzero = arg.binzero;
-		encoding = arg.encoding;
-		samprate = arg.samprate;
-		voltsperbin = arg.voltsperbin;
-		parm = arg.parm;
-		comment = arg.comment;
-	}
-	return *this;
-}
-
-// CSpikeBuffer
-
-IMPLEMENT_SERIAL(CSpikeBuffer, CObject, 0 /* schema number*/ )
-
-CSpikeBuffer::CSpikeBuffer()
-{
-	m_spikedata_buffer= nullptr;
-	m_binzero = 2048;
-	SetSpklen(1);	// init with spike len = 1	
-	m_spikedata_positions.SetSize(0, 128);
-}
-
-CSpikeBuffer::CSpikeBuffer(int lenspk)
-{
-	m_spikedata_buffer= nullptr;
-	m_binzero = 2048;
-	SetSpklen(lenspk);
-	m_spikedata_positions.SetSize(0, 128);
-}
-
-CSpikeBuffer::~CSpikeBuffer()
-{
-	DeleteAllSpikes();
-}
-
-void CSpikeBuffer::Serialize(CArchive& ar)
-{
-	// store elements
-	if (ar.IsStoring())
-	{   
-	}
-	// load data
-	else
-	{
-	}
-}
-
-void CSpikeBuffer::SetSpklen(int lenspik)
-{
-	m_lenspk = lenspik;
-	DeleteAllSpikes();
-	if (m_lenspk > 0) {
-		// allocate memory by 64 Kb chunks
-		m_spkbufferincrement = static_cast<WORD>(32767);
-		m_spkbufferincrement = (m_spkbufferincrement / m_lenspk)*m_lenspk;
-		m_spkbufferlength = m_spkbufferincrement;
-		m_spikedata_buffer = static_cast<short*>(malloc(sizeof(short) * m_spkbufferlength));
-		ASSERT(m_spikedata_buffer != NULL);
-		m_nextindex = 0;
-		m_lastindex = m_spkbufferlength / m_lenspk - 1;
-	}
-}
-
-short* CSpikeBuffer::AllocateSpaceForSpikeAt(int spkindex)
-{
-	// get pointer to next available buffer area for this spike
-	// CAUTION: spkindex != m_nextindex
-	if (m_nextindex > m_lastindex)
-	{
-		m_spkbufferlength += m_spkbufferincrement;
-		auto* pspkbuffer = static_cast<short*>(realloc(m_spikedata_buffer, sizeof(short) * m_spkbufferlength));
-		if (pspkbuffer != nullptr)
-			m_spikedata_buffer = pspkbuffer;
-		m_lastindex = m_spkbufferlength/m_lenspk -1;
-	}
-
-	// compute destination address
-	const auto offset = m_nextindex*m_lenspk;
-	const auto lp_dest = m_spikedata_buffer + offset;
-	m_spikedata_positions.InsertAt(spkindex, offset);
-	m_nextindex++;	
-	return lp_dest;
-}
-
-short*	CSpikeBuffer::AllocateSpaceForSeveralSpikes(int nspikes)
-{
-	// get pointer to next available buffer area for these spikes
-	const auto currentindex = m_nextindex;
-	m_nextindex += nspikes;
-	while (m_nextindex > m_lastindex)
-	{
-		m_spkbufferlength += m_spkbufferincrement;
-		const auto pspkbuffer = static_cast<short*>(realloc(m_spikedata_buffer, sizeof(short) * m_spkbufferlength));
-		if (pspkbuffer != nullptr)
-			m_spikedata_buffer = pspkbuffer;
-		m_lastindex = m_spkbufferlength/m_lenspk -1;
-	}
-
-	// compute destination address
-	const auto lp_dest = m_spikedata_buffer + (currentindex*m_lenspk);
-	auto ioffset = currentindex*m_lenspk;
-	for (auto i=currentindex; i<m_nextindex; i++)
-	{
-		m_spikedata_positions.InsertAt(i, ioffset);
-		ioffset += m_lenspk;
-	}
-	return lp_dest;
-}
-
-void CSpikeBuffer::DeleteAllSpikes()
-{
-	// delete handle array and liberate corresponding memory
-	if (m_spikedata_buffer != nullptr)
-		free(m_spikedata_buffer);
-	m_spikedata_buffer = nullptr;
-
-	// delete array of pointers
-	m_spikedata_positions.RemoveAll();
-	m_nextindex = 0;
-}
-
-BOOL CSpikeBuffer::DeleteSpike(int spkindex)
-{
-	if (spkindex > m_spikedata_positions.GetUpperBound() || spkindex <0)
-		return FALSE;
-	m_spikedata_positions.RemoveAt(spkindex);
-	return TRUE;
-}
-
-BOOL CSpikeBuffer::ExchangeSpikes(int spk1, int spk2)
-{
-	if (spk1 > m_spikedata_positions.GetUpperBound() || spk1 <0
-	||  spk2 > m_spikedata_positions.GetUpperBound() || spk2 <0)
-		return FALSE;
-	const DWORD dummy =	m_spikedata_positions[spk1];
-	m_spikedata_positions[spk1] = m_spikedata_positions[spk2];
-	m_spikedata_positions[spk2] = dummy;
-	return TRUE;
-}
-
-// CSpikeElemt
-
-CSpikeElemt::CSpikeElemt()
-{
-	m_iitime=0;
-	m_class=0;
-	m_chanparm=0;
-	m_min = 0;
-	m_max = 4096;
-	m_offset = 2048;
-	m_dmaxmin = 0;
-}
-
-CSpikeElemt::CSpikeElemt( long time, WORD channel)
-{
-	m_iitime=time;
-	m_chanparm=channel;
-	m_class=0;
-	m_min = 0;
-	m_max = 4096;
-	m_offset = 2048;
-	m_dmaxmin =0;
-}
-
-CSpikeElemt::CSpikeElemt(LONG time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin)
-{
-	m_iitime=time;
-	m_chanparm=channel;
-	m_min = min;
-	m_max = max;
-	m_offset = offset;
-	m_class= iclass;
-	m_dmaxmin = dmaxmin;
-}
-
-CSpikeElemt::~CSpikeElemt()
-{
-}
-
-IMPLEMENT_SERIAL(CSpikeElemt, CObject, 0 /* schema number*/ )
-
-void CSpikeElemt::Serialize(CArchive& ar)
-{
-	WORD w1;
-	WORD wVersion = 2;
-
-	if (ar.IsStoring())
-	{
-		ar << wVersion;
-		ar << m_iitime;
-		ar << static_cast<WORD>(m_class);
-		ar << static_cast<WORD>(m_chanparm);
-		ar << static_cast<WORD> (m_max);
-		ar << static_cast<WORD> (m_min);
-		ar << static_cast<WORD> (m_offset);
-		ar << static_cast<WORD> (m_dmaxmin);
-		ar << static_cast<WORD>(2);
-		ar << y_;
-		ar << x_;
-	}
-	else
-	{
-		ar >> wVersion;
-		ar >> m_iitime; 
-		ar >> w1; m_class		= static_cast<int>(w1);
-		ar >> w1; m_chanparm	= static_cast<int>(w1);
-		ar >> w1; m_max			= static_cast<short>(w1);
-		ar >> w1; m_min			= static_cast<short>(w1);
-		ar >> w1; m_offset		= static_cast<short>(w1);
-		ar >> w1; m_dmaxmin		= static_cast<short>(w1);
-		if (wVersion >1)
-		{
-			WORD nitems = 0; ar >> nitems;
-			ar >> y_; nitems--;
-			ar >> x_; nitems--;
-			ASSERT(nitems == 0);
-		}
-	}
-}
-
-void CSpikeElemt::Read0(CArchive& ar)
-{
-	WORD w1;
-	
-	ASSERT(ar.IsStoring() == FALSE);
-	
-	ar >> m_iitime; 
-	ar >> w1; m_class	 = static_cast<int>(w1);
-	ar >> w1; m_chanparm = static_cast<int>(w1);
-	ar >> w1; m_max		=  static_cast<short>(w1);
-	ar >> w1; m_min		 = static_cast<short>(w1);
-	ar >> w1; m_offset	 = static_cast<short>(w1);
-	m_dmaxmin = 0;
-}
 
 // CSpikeList
 
@@ -602,7 +288,7 @@ void CSpikeList::ReadfileVersion_before5(CArchive& ar, int iversion)
 	// (1) version ID already loaded
 	
 	// (2) load parameters associated to data acquisition
-	auto* pf_c = new CFromChan;
+	auto* pf_c = new CSpikeFromChan;
 	auto iobjects=1;
 	if (iversion == 4)
 		ar >> iobjects;
@@ -909,13 +595,13 @@ void CSpikeList::MeasureSpikeMaxThenMin(const int index, int* max, int* imax, in
 void CSpikeList::MeasureSpikeMaxMinEx(const int index, int* max, int* imax, int* min, int* imin, const int ifirst,
                                       const int ilast)
 {
-	short* lp_buffer = m_spikebuffer.GetSpike(index);
+	auto lp_buffer = m_spikebuffer.GetSpike(index);
 	lp_buffer += ifirst;					// get pointer to buffer
 	int val = *lp_buffer;
 	*max = val;						// assume offset between points = 1 (short)
 	*min = *max;					// init max and min val
 	*imin = *imax = ifirst;
-	for (int i = ifirst+1; i <= ilast; i++)	// loop to scan data
+	for (auto i = ifirst+1; i <= ilast; i++)	// loop to scan data
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -935,15 +621,15 @@ void CSpikeList::MeasureSpikeMaxMinEx(const int index, int* max, int* imax, int*
 void CSpikeList::MeasureSpikeMaxThenMinEx(const int index, int* max, int* imax, int* min, int* imin, const int ifirst,
                                           const int ilast)
 {
-	short* lp_buffer = m_spikebuffer.GetSpike(index);
+	auto lp_buffer = m_spikebuffer.GetSpike(index);
 	lp_buffer += ifirst;					// get pointer to buffer
-	short* lpBmax = lp_buffer;
+	auto lp_bmax = lp_buffer;
 	int val = *lp_buffer;
 	*max = val;						// assume offset between points = 1 (short)
 	*imax = ifirst;
 
 	// first search for max
-	for (int i = ifirst+1; i <= ilast; i++)	// loop to scan data
+	for (auto i = ifirst+1; i <= ilast; i++)	// loop to scan data
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -951,12 +637,12 @@ void CSpikeList::MeasureSpikeMaxThenMinEx(const int index, int* max, int* imax, 
 		{
 			*max = val;				// change max and imax
 			*imax = i;
-			lpBmax = lp_buffer;
+			lp_bmax = lp_buffer;
 		}			
 	}
 
 	// search for min
-	lp_buffer = lpBmax;
+	lp_buffer = lp_bmax;
 	*min = *max;
 	*imin = *imax;
 	for (int i = *imin+1; i <= ilast; i++)	// loop to scan data
@@ -1349,19 +1035,132 @@ void CSpikeList::ChangeSpikeClassID(int oldclaID, int newclaID)
 	}	
 }
 
-void CSpikeList::SetAllSpikesPParmAndClass(CArray<int, int>& measure_y1, CArray<long, long>& measure_t,
-                                           CArray<int, int>& measure_class)
+void CSpikeList::Measure_case0_AmplitudeMinToMax(const int t1, const int t2)
 {
 	const auto nspikes = GetTotalSpikes();
-	ASSERT(nspikes == measure_y1.GetSize());
-	ASSERT(nspikes == measure_class.GetSize());
 
-	// loop over all spikes of the list
-	for (auto i = 1; i < nspikes; i++)
+	for (auto ispike = 0; ispike < nspikes; ispike++)
 	{
-		const auto spike_element = GetSpikeElemt(i);
-		spike_element->set_y(measure_y1[i]);
-		spike_element->set_class(measure_class[i]);
-		spike_element->set_x(measure_t[i]);
+		const auto spike_element = GetSpikeElemt(ispike);
+		auto lp_buffer = m_spikebuffer.GetSpike(ispike);
+		lp_buffer += t1;
+		int val = *lp_buffer;
+		auto max = val;	
+		auto min = val;	
+		auto imin = t1;
+		auto imax = t1;
+		for (auto i = t1 + 1; i <= t2; i++)	
+		{
+			lp_buffer++;
+			val = *lp_buffer;
+			if (val > max)
+			{
+				max = val;
+				imax = i;
+			}
+			else if (val < min)	
+			{
+				min = val;
+				imin = i;
+			}
+		}
+
+		spike_element->SetSpikeMaxMin(max, min, imin - imax);
+		spike_element->set_y1(max - min);
 	}
 }
+
+
+void CSpikeList::Measure_case1_AmplitudeAtT(const int t)
+{
+	const auto nspikes = GetTotalSpikes();
+
+	for (auto ispike = 0; ispike < nspikes; ispike++)
+	{
+		const auto spike_element = GetSpikeElemt(ispike);
+		auto lp_buffer = m_spikebuffer.GetSpike(ispike);
+		lp_buffer += t;
+		const int val = *lp_buffer;
+		spike_element->set_y1(val);
+	}
+}
+
+void CSpikeList::Measure_case2_AmplitudeAtT2MinusAtT1(const int t1, const int t2)
+{
+	const auto nspikes = GetTotalSpikes();
+
+	for (auto ispike = 0; ispike < nspikes; ispike++)
+	{
+		const auto spike_element = GetSpikeElemt(ispike);
+		const auto lp_buffer = m_spikebuffer.GetSpike(ispike);
+		const int val1 = *(lp_buffer + t1);
+		const int val2 = *(lp_buffer + t2);
+		spike_element->set_y1(val2-val1);
+	}
+}
+
+BOOL CSpikeList::SortSpikeWithY1(const CSize fromclass_toclass, const CSize timewindow, const CSize limits)
+{
+	const auto nspikes = GetTotalSpikes();
+
+	const auto from_class = fromclass_toclass.cx;
+	const auto to_class = fromclass_toclass.cy;
+	const auto first = timewindow.cx;
+	const auto last = timewindow.cy;
+	const int upper = limits.cy;
+	const int lower = limits.cx;
+	BOOL bchanged = false;
+
+	for (auto ispike = 0; ispike < nspikes; ispike++)
+	{
+		const auto spike_element = GetSpikeElemt(ispike);
+		if (spike_element->get_class() != from_class)
+			continue;
+		const auto iitime = spike_element->get_time();
+		if (iitime < first || iitime > last)
+			continue;
+		const auto value = spike_element->get_y1();
+		if (value >= lower && value <= upper) {
+			spike_element->set_class(to_class);
+			bchanged = true;
+		}
+	}
+
+	return bchanged;
+}
+
+BOOL CSpikeList::SortSpikeWithY1AndY2(const CSize fromclass_toclass, const CSize timewindow, const CSize limits1,
+                                      const CSize limits2)
+{
+	const auto nspikes = GetTotalSpikes();
+
+	const auto from_class = fromclass_toclass.cx;
+	const auto to_class = fromclass_toclass.cy;
+	const auto first = timewindow.cx;
+	const auto last = timewindow.cy;
+	const int upper1 = limits1.cy;
+	const int lower1 = limits1.cx;
+	const int upper2 = limits2.cy;
+	const int lower2 = limits2.cx;
+	BOOL bchanged = false;
+
+	for (auto ispike = 0; ispike < nspikes; ispike++)
+	{
+		const auto spike_element = GetSpikeElemt(ispike);
+		if (spike_element->get_class() != from_class)
+			continue;
+		const auto iitime = spike_element->get_time();
+		if (iitime < first || iitime > last)
+			continue;
+		const auto value1 = spike_element->get_y1();
+		const auto value2 = spike_element->get_y2();
+		if ((value1 >= lower1 && value1 <= upper1) && (value2 >= lower2 && value2 <= upper2))
+		{
+			spike_element->set_class(to_class);
+			bchanged = true;
+		}
+	}
+
+	return bchanged;
+}
+

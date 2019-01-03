@@ -29,8 +29,8 @@ protected:
 	int			m_barheight;
 	BOOL		m_ballFiles;		// display data from all files in CdbWaveDoc*
 	CDWordArray* p_envelope_;		// data envelope (should be 4 times greater than size)
-	CSpikeList*	p_spike_list_ = nullptr;		// spike list (source data)	
-	CSpikeDoc*	p_spike_doc_ = nullptr;	// spike doc source (source data; stim)
+	CSpikeList*	p_spike_list_ = nullptr;	// spike list (source data)	
+	CSpikeDoc*	p_spike_doc_ = nullptr;		// spike doc source (source data; stim)
 	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 	
 // Helpers
@@ -74,7 +74,7 @@ protected:
 
 	void 	DisplayBars(CDC* p_dc, CRect* rect);
 	void	HighlightOneBar(int nospike, CDC* p_dc) const;
-	void	DisplayStim(CDC* p_dc, CRect* rect) const;
+	void	DisplayStimulus(CDC* p_dc, CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

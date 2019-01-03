@@ -26,6 +26,8 @@
 
 IMPLEMENT_DYNCREATE(CViewSpikeSort, CDaoRecordView)
 
+// TODO limit size of measure array to nbspikes within currently selected spikelist
+
 CViewSpikeSort::CViewSpikeSort()
 	: CDaoRecordView(CViewSpikeSort::IDD)
 {
@@ -194,6 +196,8 @@ void CViewSpikeSort::OnInitialUpdate()
 	m_sourceclass=m_psC->sourceclass;
 	m_destinationclass = m_psC->destclass;
 	spk_shape_wnd_.DisplayAllFiles(false, GetDocument());
+	spk_xy_wnd_.DisplayAllFiles(false, GetDocument());
+	spk_bar_wnd_.DisplayAllFiles(false, GetDocument());
 	spk_shape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);	
 	spk_xy_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	spk_bar_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
@@ -355,9 +359,6 @@ void CViewSpikeSort::UpdateFileParameters()
 	// reset parms ? flag = single file or file list has changed
 	if (  !m_bAllfiles)		
 	{
-		m_measure_y1_.SetSize(0);
-		m_measure_class_.SetSize(0);
-		m_measure_t_.SetSize(0);
 		spk_hist_wnd_.RemoveHistData();
 	}
 
@@ -545,13 +546,12 @@ void CViewSpikeSort::OnSort()
 	}
 
 	// loop over all selected files (or only one file currently selected)
-	auto ilast = 0;
 	pdb_doc->DBSetCurrentRecordPosition(firstfile);
 
 	for (auto ifile=firstfile; ifile <= lastfile; ifile++)
 	{
 		// load spike file
-		auto flagchanged = FALSE;
+		BOOL flagchanged;
 		pdb_doc->DBSetCurrentRecordPosition(ifile);
 		pdb_doc->OpenCurrentSpikeFile();
 		m_pSpkDoc = pdb_doc->m_pSpk;
@@ -578,55 +578,21 @@ void CViewSpikeSort::OnSort()
 		if ((m_pSpkList == nullptr) || (m_pSpkList->GetSpikeLength() == 0))
 			continue;
 		const auto nspikes = m_pSpkList->GetTotalSpikes();
-		const auto ifirst = ilast;		// global index of first spike, file "ifile"
-		ilast += nspikes;				// global index +1 of last spike, file "ifile"
 
 		// loop over all spikes of the list and compare to a single parameter
+		const CSize limits1(m_psC->ilower, m_psC->iupper);
+		const CSize fromclass_toclass(m_sourceclass, m_destinationclass);
+		const CSize timewindow(m_lFirst, m_lLast);
 		if (m_psC->iparameter != 4)
 		{
-			for (auto ispike = ifirst; ispike < ilast; ispike++)
-			{
-				if (m_measure_class_[ispike] != m_sourceclass)
-					continue;
-				if ( m_measure_t_[ispike] > m_lLast 
-					||  m_measure_t_[ispike] < m_lFirst)
-					continue;
-				const auto val = m_measure_y1_[ispike];
-				if (val < m_psC->ilower || val > m_psC->iupper)
-					continue;
-
-				// change spike class
-				const auto ilocal = ispike - ifirst;	// local spike index
-				m_pSpkList->SetSpikeClass(ilocal, m_destinationclass);
-				m_measure_class_[ispike] = m_destinationclass;
-				flagchanged = TRUE;
-			}
+			
+			flagchanged = m_pSpkList->SortSpikeWithY1(fromclass_toclass, timewindow, limits1);
 		}
 		// sort option with 2 boudaries
 		else 
 		{
-			for (auto ispike = ifirst; ispike < ilast; ispike++)
-			{
-				if (m_measure_class_[ispike] != m_sourceclass)
-					continue;
-				if (m_measure_t_[ispike] > m_lLast 
-					|| m_measure_t_[ispike] < m_lFirst)
-					continue;
-
-				const auto val = m_measure_y1_[ispike];
-				if (val < m_psC->ilower || val > m_psC->iupper)
-					continue;
-
-				const auto lval = m_measure_y2_[ispike];
-				if (lval < m_psC->ixyleft || lval > m_psC->ixyright)
-					continue;
-
-				// spike fits criteria - change class
-				const auto ilocal = ispike - ifirst;	// local spike index
-				m_pSpkList->SetSpikeClass(ilocal, m_destinationclass);
-				m_measure_class_[ispike] = m_destinationclass;
-				flagchanged = TRUE;
-			}
+			const CSize limits2(m_psC->ixyleft, m_psC->ixyright);
+			flagchanged = m_pSpkList->SortSpikeWithY1AndY2(fromclass_toclass, timewindow, limits1, limits2);
 		}
 
 		if (flagchanged)
@@ -817,6 +783,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	}
 	return 0L;
 }
+
 void CViewSpikeSort::UnflagAllSpikes()
 {
 	if (m_bAllfiles) {
@@ -862,36 +829,7 @@ void CViewSpikeSort::OnMeasure()
 		firstfile = currentfile;			// index first file in the series
 		lastfile = firstfile;				// index last file in the series
 	}
-	m_nspkperfile_.SetSize(lastfile-firstfile+2);		// nb spk per file
-	auto flag = FALSE;						// flag to tell param routines to erase all data the first time they are called
 
-	// loop over all selected files (or only one file currently selected)	
-	auto totalspikes = 0;
-	for (auto ifile0=firstfile; ifile0 <= lastfile; ifile0++)
-	{
-		// check if user wants to continue
-		if (m_bAllfiles)
-		{
-			m_nspkperfile_[ifile0-firstfile] = totalspikes; // store nb of spikes within array
-			pdb_doc->DBSetCurrentRecordPosition(ifile0);
-			pdb_doc->OpenCurrentSpikeFile();
-			m_pSpkDoc = pdb_doc->m_pSpk;
-		}
-		// check if this file is ok
-		if (m_pSpkDoc == nullptr)
-			continue;
-		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		if (m_pSpkList == nullptr)
-			continue;
-
-		totalspikes += m_pSpkList->GetTotalSpikes();
-		m_nspkperfile_[ifile0-firstfile +1] = totalspikes;
-	}
-	const auto growby = static_cast<int>(16384);
-	m_measure_y1_.SetSize(totalspikes, growby);		// parameter value
-	m_measure_y2_.SetSize(totalspikes, growby);
-	m_measure_class_.SetSize(totalspikes, growby);		// class value
-	m_measure_t_.SetSize(totalspikes, growby);		// time index
 
 	// loop over all selected files (or only one file currently selected)
 	for (auto ifile=firstfile; ifile <= lastfile; ifile++)
@@ -914,49 +852,32 @@ void CViewSpikeSort::OnMeasure()
 		if (nspikes <= 0 ||  m_pSpkList->GetSpikeLength() == 0)
 			continue;
 
-		auto b_changed = FALSE;
 		switch(m_psC->iparameter)
 		{
-		case 0:		// max - min between t1 and t2
-			b_changed = MeasureSpkParm1(flag, 0, ifile);
-			break;
 		case 1:		// value at t1 
-			MeasureSpkParm2(flag, 0, ifile);
+			m_pSpkList->Measure_case1_AmplitudeAtT(m_psC->ileft);
+			m_bMeasureDone = TRUE;
 			break;
 		case 2:		// value at t2
-			MeasureSpkParm2(flag, 1, ifile);
+			m_pSpkList->Measure_case1_AmplitudeAtT(m_psC->iright);
+			m_bMeasureDone = TRUE;
 			break;
-		case 3:		// value t2-t1
-			MeasureSpkParm2(flag, 2, ifile);
+
+		case 3:		// value at t2- value at t1
+			m_pSpkList->Measure_case2_AmplitudeAtT2MinusAtT1(m_psC->ileft, m_psC->iright);
+			m_bMeasureDone = TRUE;
 			break;
+
+		case 0:		// max - min between t1 and t2
 		case 4:		// max-min vs tmax-tmin
-			b_changed = MeasureSpkParm1(flag, 1, ifile);
-			break;
-		case 5:
-			MeasureSpkParm4(flag, 1, ifile);
-			break;
-		case 6:
-			MeasureSpkParm4(flag, 2, ifile);
-			break;
-		case 7:
-			MeasureSpkParm4(flag, 3, ifile);
-			break;
 		default:
-			b_changed = MeasureSpkParm1(flag, 0, ifile);
+			m_pSpkList->Measure_case0_AmplitudeMinToMax(m_psC->ileft, m_psC->iright);
 			break;
 		}
 
 		//save only if changed?
-		if (b_changed)
-			m_pSpkDoc->OnSaveDocument(pdb_doc->DBGetCurrentSpkFileName(FALSE));
-		flag = TRUE;		
+		m_pSpkDoc->OnSaveDocument(pdb_doc->DBGetCurrentSpkFileName(FALSE));		
 	}
-
-	// end of loop, select current file again if necessary
-	m_measure_y1_.FreeExtra();
-	m_measure_y2_.FreeExtra();
-	m_measure_class_.FreeExtra();
-	m_measure_t_.FreeExtra();
 
 	if (m_bAllfiles)
 	{
@@ -989,13 +910,8 @@ void CViewSpikeSort::OnMeasure()
 		min = m_psC->ilower;
 
 	// tell display routine where data are (pass pointer)
-	if (m_psC->iparameter != 4)
+	if (m_psC->iparameter == 4)
 	{
-		m_pSpkList->SetAllSpikesPParmAndClass(m_measure_y1_, m_measure_t_, m_measure_class_);	
-	}
-	else
-	{
-		m_pSpkList->SetAllSpikesPParmAndClass(m_measure_y1_, m_measure_y2_, m_measure_class_);
 		const auto x_we = m_pSpkList->GetSpikeLength()*2;
 		spk_xy_wnd_.SetXWExtOrg(x_we, 0);
 		spk_xy_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
@@ -1027,6 +943,8 @@ void CViewSpikeSort::OnMeasure()
 	}
 	if (nbins > spk_hist_wnd_.GetRectWidth()/2)
 		nbins = spk_hist_wnd_.GetRectWidth()/2;
+
+	// TODO: create histogram from list of files, using spikeList / SpikeElement
 	spk_hist_wnd_.BuildHistFromArrays(&m_measure_y1_, &m_measure_t_, &m_measure_class_,
 							m_lFirst, m_lLast,
 							m_parmmax, m_parmmin, nbins,
@@ -1071,132 +989,6 @@ void CViewSpikeSort::UpdateGain()
 	spk_hist_wnd_.Invalidate();
 }
  
-BOOL CViewSpikeSort::MeasureSpkParm1(BOOL bkeepOldData, int ioption, int currentfile)
-{
-	auto b_changed = FALSE;
-	const auto nspikes = m_pSpkList->GetTotalSpikes(); //m_nspkperfile[currentfile];
-	// index first spike within array
-	auto pindex = 0;
-	if (m_bAllfiles)
-		pindex = LocalIndextoGlobal(currentfile, 0);
-
-	//	parm1 = Amplitude max-min (t1:t2)
-	if (m_psC->ileft <0)
-		m_psC->ileft = 0;
-	if (m_psC->iright > m_pSpkList->GetSpikeLength()-1)
-		m_psC->iright = m_pSpkList->GetSpikeLength()-1;
-	if (m_psC->ileft > m_psC->iright)
-		m_psC->ileft = m_psC->iright;
-	
-	if (!bkeepOldData)
-	{
-		m_parmmax = 0;
-		m_parmmin = 8192;
-	}
-
-	// loop over all spikes of the list
-	
-	// look if parameters have changed - if not, then go on to the next file ...
-	auto b_valid_extrema = FALSE;
-	if (m_pSpkList->m_imaxmin1SL == m_psC->ileft && m_pSpkList->m_imaxmin2SL == m_psC->iright)
-	{
-		if (m_psC->iparameter != 4) // then, we need imax imin ...
-			b_valid_extrema = TRUE;
-	}
-	else
-	{
-		m_pSpkList->m_imaxmin1SL = m_psC->ileft;
-		m_pSpkList->m_imaxmin2SL = m_psC->iright;
-		b_changed = TRUE;
-	}
-
-	int max;
-	int min;
-	int dmaxmin;
-	auto imax= m_psC->ileft;
-	auto imin= m_psC->iright;
-		
-	for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
-	{
-		m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
-		m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
-		auto* spike_element = m_pSpkList->GetSpikeElemt(ispike);
-
-		if (!b_valid_extrema)
-		{
-			m_pSpkList->MeasureSpikeMaxMinEx(ispike, &max, &imax, &min, &imin, m_psC->ileft, m_psC->iright);
-			dmaxmin = imin - imax;
-			spike_element->SetSpikeMaxMin(max, min, dmaxmin);
-			b_changed = TRUE;
-		}
-		else
-		{
-			spike_element->GetSpikeMaxMin  (&max, &min, &dmaxmin) ;	
-		}
-
-		// store measure into parm and update max min
-		const auto diff = max-min;
-		m_measure_y1_[pindex] = diff;
-		if (m_psC->iparameter == 4)
-			m_measure_y2_[pindex] = dmaxmin; 
-		if (diff > m_parmmax)
-			m_parmmax = diff;
-		if (diff < m_parmmin)
-			m_parmmin = diff;
-	}
-
-	// exit
-	m_bvalidextrema =TRUE;
-	m_bMeasureDone =TRUE;
-	return b_changed;
-}
-
-void CViewSpikeSort::MeasureSpkParm2(BOOL bkeepOldData, int ioption, int currentfile)
-{
-	const auto nspikes = m_pSpkList->GetTotalSpikes(); //m_nspkperfile[currentfile];
-	// index first spike within array
-	auto pindex = 0;
-	if (m_bAllfiles)
-		pindex = LocalIndextoGlobal(currentfile, 0);
-
-	if (m_psC->ileft <0)
-		m_psC->ileft = 0;
-	if (m_psC->iright > m_pSpkList->GetSpikeLength()-1)
-		m_psC->iright = m_pSpkList->GetSpikeLength()-1;
-	if (m_psC->ileft > m_psC->iright)
-		m_psC->ileft = m_psC->iright;
-	if (!bkeepOldData)
-	{
-		m_parmmax = 0;
-		m_parmmin = 8192;
-	}
-
-	// loop over all spikes of the list
-	auto indexoffset = m_psC->ileft;
-	if (ioption == 1)
-		indexoffset = m_psC->iright;
-
-	for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
-	{
-		m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
-		m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
-		const auto lp_buffer = m_pSpkList->GetpSpikeData(ispike) + indexoffset;
-		auto val= *lp_buffer;		//  value
-		if (ioption == 2)
-			val = *(m_pSpkList->GetpSpikeData(ispike)+m_psC->iright);
-
-		m_measure_y1_[pindex] = val;	// store parm value
-		if (val > m_parmmax)	// store max & min / array
-			m_parmmax = val;
-		if (val < m_parmmin)
-			m_parmmin = val;
-	}
-
-	// exit
-	m_bvalidextrema = TRUE;
-	m_bMeasureDone=TRUE;
-}
-
 void CViewSpikeSort::OnFormatAlldata() 
 {
 	// build new histogram only if necessary
@@ -1367,8 +1159,6 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 		const auto currentlist = m_tabCtrl.GetCurSel();
 		const auto spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
 		const auto nspikes = spike_list->GetTotalSpikes();
-		for (auto ispike=0; ispike< nspikes; ispike++)
-			m_measure_class_[ispike] = spike_list->GetSpikeClass(ispike);
 	}
 
 	if (!dlg.m_bartefact && m_spikeno != dlg.m_spikeno)
@@ -1383,22 +1173,8 @@ void CViewSpikeSort::OnSelectAllFiles()
 	m_bMeasureDone=FALSE;
 	spk_bar_wnd_.DisplayAllFiles(m_bAllfiles, GetDocument());
 	spk_shape_wnd_.DisplayAllFiles(m_bAllfiles, GetDocument());
+	spk_xy_wnd_.DisplayAllFiles(m_bAllfiles, GetDocument());
 	OnMeasure();
-}
-
-int CViewSpikeSort::GlobalIndextoLocal(int index_global, int* filenb)
-{
-	const auto nbfiles	= m_nspkperfile_.GetSize();
-	auto index_local = 0;
-	int i;
-	for (i = 0; i < nbfiles; i++) 
-	{
-		if (index_global < m_nspkperfile_[i])
-			break;
-		index_local += m_nspkperfile_[i];
-	}
-	*filenb = i;
-	return index_global - index_local;
 }
 
 void CViewSpikeSort::SaveCurrentFileParms()
@@ -1620,164 +1396,6 @@ void CViewSpikeSort::OnToolsAlignspikes()
 	delete [] p_dummy0;
 
 	OnMeasure();
-}
-
-void CViewSpikeSort::MeasureSpkParm4(BOOL bkeepOldData, int ioption, int currentfile)
-{
-	const auto nspikes = m_pSpkList->GetTotalSpikes(); 
-	
-	// index first spike within array
-	auto pindex = 0;
-	if (m_bAllfiles)
-		pindex = LocalIndextoGlobal(currentfile, 0);
-
-	//	parm1 = sum (t1:t2)
-	if (m_psC->ileft <0)
-		m_psC->ileft = 0;
-	if (m_psC->iright > m_pSpkList->GetSpikeLength()-1)
-		m_psC->iright = m_pSpkList->GetSpikeLength()-1;
-	if (m_psC->ileft > m_psC->iright)
-		m_psC->ileft = m_psC->iright;
-
-	const auto binzero = m_pSpkList->GetAcqBinzero();
-	const auto npoints = m_psC->iright - m_psC->ileft;
-	if (!bkeepOldData)
-	{
-		// compute initial max and min
-		auto* lp_b = m_pSpkList->GetpSpikeData(0)+m_psC->ileft;
-		auto sum = 0;
-		switch (ioption)
-		{
-		case 1:
-		default:
-			{
-			for (auto i = m_psC->ileft; i <= m_psC->iright; i++, lp_b++)
-				sum += abs(*lp_b - binzero);
-			}
-			sum /= npoints;
-			break;
-		case 2:
-			{
-			int oldval = *lp_b;
-			lp_b++;
-			for (auto i = m_psC->ileft+1; i <= m_psC->iright; i++, lp_b++)
-			{
-				const auto newval = *lp_b;
-				sum += abs(newval - oldval);
-				oldval = newval;
-			}
-			//sum /= npoints;
-			}
-			break;
-		case 3:
-			{
-				sum = abs(*(lp_b+1) - *(lp_b)) 
-							+ abs(*(lp_b+2) - *(lp_b+1)) 
-							+ abs(*(lp_b+3) - *(lp_b+2)) 
-							//+ abs(*(lp_buffer+4) - *(lp_buffer+3)) 
-							;
-			lp_b++;
-			for (auto i = m_psC->ileft+1; i <= m_psC->iright; i++, lp_b++)
-			{
-				const auto oldval = abs(*(lp_b + 1) - *(lp_b))
-					+ abs(*(lp_b + 2) - *(lp_b + 1))
-					+ abs(*(lp_b + 3) - *(lp_b + 2));
-				if (oldval > sum)
-					sum = oldval;
-			}
-			}
-			break;
-		}
-		m_parmmax = sum;
-		m_parmmin = sum;
-	}
-
-	// loop over all spikes of the list
-	switch (ioption)
-	{
-	case 1:
-	default:
-		{
-		for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
-		{
-			m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
-			m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
-			auto* lp_b = m_pSpkList->GetpSpikeData(ispike)+m_psC->ileft;
-
-			// loop over individual spike data to find total
-			auto sum=0;
-			for (auto i = m_psC->ileft; i <= m_psC->iright; i++, lp_b++)
-				sum += abs(*lp_b - binzero);
-			sum /= npoints;
-
-			// store measure into array and update max min
-			m_measure_y1_[pindex] = sum;
-			if (m_parmmax < sum) m_parmmax = sum;
-			if (m_parmmin > sum) m_parmmin = sum;
-		}
-		}
-		break;
-	case 2:
-		{
-			for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
-			{
-				m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
-				m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
-				auto* lp_b = m_pSpkList->GetpSpikeData(ispike)+m_psC->ileft;
-
-				// loop over individual spike data to find total
-				auto sum=0;
-				int oldval = *lp_b;
-				lp_b++;
-				for (auto i = m_psC->ileft+1; i <= m_psC->iright; i++, lp_b++)
-				{
-					sum += abs(*lp_b - oldval);
-					oldval = *lp_b;
-				}
-				//sum /= npoints;
-
-				// store measure into array and update max min
-				m_measure_y1_[pindex] = sum;
-				if (m_parmmax < sum) m_parmmax = sum;
-				if (m_parmmin > sum) m_parmmin = sum;
-			}
-		}
-		break;
-
-	case 3:
-		{
-			for (auto ispike = 0; ispike < nspikes; ispike++, pindex++)
-			{
-				m_measure_t_[pindex] = m_pSpkList->GetSpikeTime(ispike);
-				m_measure_class_[pindex] = m_pSpkList->GetSpikeClass(ispike);
-				auto* lp_b = m_pSpkList->GetpSpikeData(ispike)+m_psC->ileft;
-
-				auto sum = abs(*(lp_b+1) - *(lp_b)) 
-								+ abs(*(lp_b+2) - *(lp_b+1)) 
-								+ abs(*(lp_b+3) - *(lp_b+2)) 
-								//+ abs(*(lp_buffer+4) - *(lp_buffer+3)) 
-								;
-				lp_b++;
-				for (auto i = m_psC->ileft+1; i <= m_psC->iright; i++, lp_b++)
-				{
-					const auto oldval = abs(*(lp_b + 1) - *(lp_b))
-						+ abs(*(lp_b + 2) - *(lp_b + 1))
-						+ abs(*(lp_b + 3) - *(lp_b + 2));
-					if (oldval > sum)
-						sum = oldval;
-				}
-				// store measure into array and update max min
-				m_measure_y1_[pindex] = sum;
-				if (m_parmmax < sum) m_parmmax = sum;
-				if (m_parmmin > sum) m_parmmin = sum;
-			}
-		}
-		break;
-	}
-
-	// exit
-	m_bvalidextrema = TRUE;
-	m_bMeasureDone=TRUE;
 }
 
 void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
@@ -2395,7 +2013,6 @@ void CViewSpikeSort::OnEnChangeSpikenoclass()
 			const auto currentlist = m_tabCtrl.GetCurSel();
 			auto* spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
 			spike_list->SetSpikeClass(m_spikeno, m_spikenoclass);
-			m_measure_class_[m_spikeno] = m_spikenoclass;
 			UpdateLegends();
 		}
 	}

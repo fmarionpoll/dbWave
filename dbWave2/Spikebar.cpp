@@ -10,6 +10,8 @@
 #define new DEBUG_NEW
 #endif
 
+// TODO loop through files when m_ballfiles is true: spike hit
+
 IMPLEMENT_SERIAL (CSpikeBarWnd, CScopeScreen, 1)
 
 BEGIN_MESSAGE_MAP(CSpikeBarWnd, CScopeScreen)
@@ -48,14 +50,17 @@ CSpikeBarWnd::~CSpikeBarWnd()
 
 void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 {
-	// prepare display
-	if (m_erasebkgnd)			// erase background
+	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
 
-	// print text
 	p_dc->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
 	rect.DeflateRect(1,1);
+
+	// save context
+	const auto n_saved_dc = p_dc->SaveDC();
+	const auto bkcolor = p_dc->GetBkColor();
+	p_dc->IntersectClipRect(&m_clientRect);
 
 	long nfiles = 1;
 	long ncurrentfile = 0;
@@ -102,15 +107,9 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			m_xWO = m_displayRect.left;
 		}
 
-		// display data
-		const auto n_saved_dc = p_dc->SaveDC();
-		p_dc->IntersectClipRect(&m_clientRect);
 		DisplayBars(p_dc, &m_displayRect);
-		p_dc->RestoreDC(n_saved_dc);
-
-		// display stimulus
 		if (p_spike_doc_->m_stimIntervals.nitems > 0)
-			DisplayStim(p_dc, &m_displayRect);
+			DisplayStimulus(p_dc, &m_displayRect);
 
 		// display vertical cursors
 		if (GetNVTtags() > 0)
@@ -145,7 +144,9 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			p_dc->SetROP2(nold_rop);
 			p_dc->SelectObject(oldp);
 		}
-	} 
+	}
+
+	p_dc->RestoreDC(n_saved_dc);
 
 	if (m_ballFiles)
 	{
@@ -155,7 +156,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 	}
 }
 
-void CSpikeBarWnd::DisplayStim(CDC* p_dc, CRect* rect) const
+void CSpikeBarWnd::DisplayStimulus(CDC* p_dc, CRect* rect) const
 {
 	CPen bluepen;
 	bluepen.CreatePen(PS_SOLID, 0, RGB(0,0,255));
@@ -744,7 +745,7 @@ void CSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 	const auto n_saved_dc = p_dc->SaveDC();				// save display context	
 	DisplayBars(p_dc, rect);
 	if (p_spike_doc_->m_stimIntervals.nitems > 0)	
-		DisplayStim(p_dc, rect);
+		DisplayStimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);	
 }

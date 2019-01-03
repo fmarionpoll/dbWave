@@ -3,134 +3,9 @@
 // spikelist.h : header file
 
 #include "Acqparam.h"		// data acquisition struct: wave format, wave chans
-//#include "Taglines.h"		// tags
-//#include "datafile_X.h"		// generic data file
 #include "WaveBuf.h"		// data acquisition buffer
-//#include "awavepar.h"		// user parameters
-//#include "Acqdatad.h"
-
-
-// CFromChan structure
-// parameters used for detection of spikes from data acquisition
-
-class CFromChan : public CObject
-{
-	DECLARE_SERIAL(CFromChan)
-public :
-	CFromChan();
-public:
-	WORD			wversion;		// version number of the structure    
-	WORD  			encoding;		// data encoding mode  
-	long  			binzero;		// 2048
-	float 			samprate;		// data acq sampling rate (Hz)
-	float 			voltsperbin;	// nb volts per bin (data)
-	CString			comment;		// spike channel descriptor
-
-	SPKDETECTPARM	parm;			// detection parameters
-
-// Implementation
-public:
-	virtual ~CFromChan();
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
-	CFromChan& operator= (const CFromChan& arg);	// redefinition operator =
-};
-
-// CSpikeBuffer stores data collected from data acquisition files
-
-class CSpikeBuffer : public CObject
-{   
-	DECLARE_SERIAL(CSpikeBuffer)
-public:
-	CSpikeBuffer();
-	CSpikeBuffer(int lenspik);
-	virtual ~CSpikeBuffer();
-
-// Attributes
-public:
-	int			m_lenspk{};				// length of one spike
-	int			m_spkbufferincrement{};	//
-	int			m_spkbufferlength{};	// current buffer length	
-	int			m_nextindex{};			// next available index	
-	int			m_lastindex{};			// index last free space for spike data
-	int			m_binzero = 2048;		// zero (if 12 bits scale = 0-4095)
-	int			m_currentfilter{};		// ID of last transform
-	short*				m_spikedata_buffer = nullptr;	// buffer address
-	CArray <int, int>	m_spikedata_positions;	// offsets to individual spike data - used to exchange, add, remove spikes without modifying buffer
-	
-// Operations
-public:
-	void 		SetSpklen(int lenspik);
-	inline int 	GetSpklen() const {return m_lenspk;}
-
-// Implementation
-public:
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o    
-	void 	DeleteAllSpikes();
-	short* 	AllocateSpaceForSpikeAt(int spkindex);
-	short*	AllocateSpaceForSeveralSpikes(int spkindex);
-	BOOL  	DeleteSpike(int spkindex);
-	BOOL  	ExchangeSpikes(int spk1, int spk2);
-	short*	GetSpike(int index) const {return (m_spikedata_buffer +m_spikedata_positions[index]);}
-
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeElemt CObject
-// this object is a serialized structure containing parameters associated to
-// each spike detected from a data document
-// stores:  time of occurence, initial data acq chan and a modifiable parameter
-// the class
-// this basic object is part of a CSpikelist object that stores parameters 
-// concerning the source document (file, date, acq rate and parms, etc) and
-// eventually the source data extracted from the data file
-// real data are stored in a separate object managing data buffers
-
-class CSpikeElemt : public CObject
-{
-	DECLARE_SERIAL(CSpikeElemt)
-public :
-	CSpikeElemt();	
-	CSpikeElemt(LONG time, WORD channel);
-	CSpikeElemt(LONG time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin);
-
-// Attributes
-private:
-	long	m_iitime;		// occurence time - multiply by rate to get time in seconds
-	int		m_class;		// spike class - init to zero at first
-	int		m_chanparm;		// spike detection array index
-	int		m_max;			// spike max	(used to scan rapidly to adjust display)
-	int		m_min;			// min val		(used to scan rapidly to adjust display)
-	int		m_dmaxmin;
-	int		m_offset;		// offset voltage pt 1
-	int		y_ =0;			// parameter measured and stored
-	long	x_ = 0;
-
-// Operations set/change elements of spikeele
-public:
-	long	get_time() const				{return m_iitime;}
-	int		get_class() const				{return m_class;}
-	int		get_source_channel() const		{return m_chanparm;}
-	short	get_maximum() const				{return m_max;}
-	short	get_minimum() const				{return m_min;}
-	int		get_amplitude_offset() const	{return m_offset;}
-	void	GetSpikeMaxMin  (int *max, int *min, int *dmaxmin) {*max = m_max; *min = m_min; *dmaxmin= m_dmaxmin;}
-	void	GetSpikeExtrema (int *max, int *min)	{*max = m_max; *min = m_min;}
-	int		get_y() const { return y_; }
-	long	get_x() const { return x_; }
-
-	void	set_time(long ii)				{m_iitime=ii;}
-	void	set_class(int cl)				{m_class=cl; }
-	void	SetSpikeMaxMin(int max, int min, int dmaxmin)	{m_max=max; m_min=min; m_dmaxmin=dmaxmin;}
-	void	SetSpikeAmplitudeOffset(int offset) {m_offset= offset;}
-	void	set_y(int y) { y_ = y; }
-	void	set_x(long x) { x_ = x; }
-		
-// Implementation
-public:
-	virtual ~CSpikeElemt();
-	void	Serialize(CArchive& ar) override;	// overridden for document i/o
-	void	Read0(CArchive& ar);
-};
+#include "SpikeBuffer.h"
+#include "SpikeElement.h"
 
 // CSpikeList CObject
 // this object stores spikes from one data acquisition channel
@@ -266,8 +141,13 @@ public:
 	void	EraseData();
 	void	ChangeSpikeClassID(int oldclaID, int newclaID);
 
-	void SetAllSpikesPParmAndClass(CArray<int, int>& measure_y1, CArray<long, long>& measure_t,
-	                               CArray<int, int>& measure_class);
+	// measure parameters
+	void Measure_case0_AmplitudeMinToMax(int t1, int t2);
+	void Measure_case1_AmplitudeAtT(int t);
+	void Measure_case2_AmplitudeAtT2MinusAtT1(int t1, int t2);
+
+	BOOL SortSpikeWithY1(CSize fromclass_toclass, CSize timewindow, CSize limits);
+	BOOL SortSpikeWithY1AndY2(CSize fromclass_toclass, CSize timewindow, CSize limits1, CSize limits2);
 
 	// deal with list of spikes flagged
 protected:

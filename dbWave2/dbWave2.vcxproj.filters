@@ -405,6 +405,15 @@
     <ClCompile Include="MeasureOptionsPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpikeElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpikeBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpikeFromChan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -882,6 +891,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MeasureOptionsPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikeElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikeBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikeFromChan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

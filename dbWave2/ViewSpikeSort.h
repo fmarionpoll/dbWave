@@ -87,11 +87,11 @@ protected:
 	BOOL	m_bMeasureDone;			// flag m_measure_y1 valid
 	int		m_divAmplitudeBy;		// value to adjust changes in amplitude / filter(s)
 
-	CArray<int, int>	m_measure_y1_;		// measure: amplitude t2-t1, val at t1, etc
-	CArray<long, long>	m_measure_y2_;		// measure of a second parameter
-	CArray<int, int>	m_measure_class_;	// spike class
-	CArray<int, int>	m_nspkperfile_;		// number of spikes per file
-	CArray<long, long>	m_measure_t_;		// time index
+	//CArray<int, int>	m_measure_y1_;		// measure: amplitude t2-t1, val at t1, etc
+	//CArray<long, long>	m_measure_y2_;		// measure of a second parameter
+	//CArray<int, int>	m_measure_class_;	// spike class
+	//CArray<int, int>	m_nspkperfile_;		// number of spikes per file
+	//CArray<long, long>	m_measure_t_;		// time index
 	SCROLLINFO	m_scroll_file_pos_infos_{};
 
 // Operations
@@ -125,9 +125,7 @@ protected:
 	void UpdateFileParameters();
 	void UpdateLegends();
 	void SaveCurrentFileParms();
-	BOOL MeasureSpkParm1(BOOL bkeepOldData, int ioption, int currentfile);
-	void MeasureSpkParm2(BOOL bkeepOldData, int ioption, int currentfile);
-	void MeasureSpkParm4(BOOL bkeepOldData, int ioption, int currentfile);
+
 	void SelectSpike(int spikeno);
 	int  GlobalIndextoLocal(int index_global, int* filenb);
 	int LocalIndextoGlobal(int filenb, int index_local) {return index_local + m_nspkperfile_[filenb];};

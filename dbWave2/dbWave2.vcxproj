@@ -513,6 +513,7 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="Spikebar.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SpikeBuffer.cpp" />
     <ClCompile Include="Spikeclas.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -525,6 +526,8 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="Spikedoc.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SpikeElement.cpp" />
+    <ClCompile Include="SpikeFromChan.cpp" />
     <ClCompile Include="Spikehistp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -739,10 +742,13 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="ScopeScreenPropsDlg.h" />
     <ClInclude Include="ScrollBarEx.h" />
     <ClInclude Include="Spikebar.h" />
+    <ClInclude Include="SpikeBuffer.h" />
     <ClInclude Include="Spikeclas.h" />
     <ClInclude Include="SpikeClassListBox.h" />
     <ClInclude Include="Spikedetec.h" />
     <ClInclude Include="Spikedoc.h" />
+    <ClInclude Include="SpikeElement.h" />
+    <ClInclude Include="SpikeFromChan.h" />
     <ClInclude Include="spikehistp.h" />
     <ClInclude Include="Spikelist.h" />
     <ClInclude Include="spikepar.h" />

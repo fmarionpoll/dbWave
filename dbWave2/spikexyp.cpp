@@ -9,6 +9,8 @@
 #define new DEBUG_NEW
 #endif
 
+// TODO loop through files when m_ballfiles is true: display and spike hit
+
 BEGIN_MESSAGE_MAP(CSpikeXYpWnd, CScopeScreen)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
@@ -27,17 +29,15 @@ CSpikeXYpWnd::CSpikeXYpWnd()
 	m_rangemode = RANGE_TIMEINTERVALS;
 	SetbUseDIB(FALSE);
 	m_csEmpty = "no \nspikes";
-	m_pspikelist_ = nullptr;
+	p_spike_list_ = nullptr;
 }  
-
 
 CSpikeXYpWnd::~CSpikeXYpWnd()
 = default;
 
-
 void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 {
-	if (m_erasebkgnd)			// erase background
+	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
 
 	p_dc->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
@@ -45,7 +45,7 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 	rect.DeflateRect(1,1);
 		
 	// save context
-	const auto n_saved_dc = p_dc->SaveDC();	// save device context
+	const auto n_saved_dc = p_dc->SaveDC();	
 	const auto bkcolor = p_dc->GetBkColor();
 
 	// display data: trap error conditions
@@ -61,130 +61,164 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 	width = m_rwidth*2/3;
 	const CRect rect1(-width, -width, width, width);
 	CRect recti;
-	auto ilast= m_pspikelist_->GetTotalSpikes()-1;
-	auto ifirst= 0;
-	if (m_rangemode == RANGE_INDEX)
+
+	long nfiles = 1;
+	long ncurrentfile = 0;
+	if (m_ballFiles)
 	{
-		if (m_spklast > ilast) 
-			m_spklast = ilast;
-		if (m_spkfirst < 0) 
-			m_spkfirst = 0;		
-		ilast = m_spklast;
-		ifirst = m_spkfirst;
+		nfiles = p_dbwave_doc_->DBGetNRecords();
+		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
 	}
 
-	// loop over all spikes
-	for (auto ispk=ilast; ispk>=ifirst; ispk--)
+	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
-		// check that spike fits within time limits of the display
-		const auto spike_element = m_pspikelist_->GetSpikeElemt(ispk);
-		const auto l_spike_time =spike_element->get_time();
-		if (m_rangemode == RANGE_TIMEINTERVALS
-			&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
+		if (m_ballFiles)
+		{
+			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		}
+
+		// test presence of data	
+		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
+		{
+			if (!m_ballFiles)
+				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 			continue;
+		}
 
-		// select correct brush
-		const auto wspkcla = spike_element->get_class();
-		switch (m_plotmode)
+		auto ilast = p_spike_list_->GetTotalSpikes() - 1;
+		auto ifirst = 0;
+		if (m_rangemode == RANGE_INDEX)
 		{
-		case PLOT_ONECLASSONLY:
-			if (wspkcla != m_selclass)
+			if (m_spklast > ilast)
+				m_spklast = ilast;
+			if (m_spkfirst < 0)
+				m_spkfirst = 0;
+			ilast = m_spklast;
+			ifirst = m_spkfirst;
+		}
+
+		// loop over all spikes
+		for (auto ispk = ilast; ispk >= ifirst; ispk--)
+		{
+			// check that spike fits within time limits of the display
+			const auto spike_element = p_spike_list_->GetSpikeElemt(ispk);
+			const auto l_spike_time = spike_element->get_time();
+			if (m_rangemode == RANGE_TIMEINTERVALS
+				&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
 				continue;
-			break;
-		case PLOT_CLASSCOLORS:
-			selbrush = wspkcla % NB_COLORS;
-			break;
-		case PLOT_ONECLASS:
-			if (wspkcla != m_selclass)
-				selbrush= SILVER_COLOR;
+
+			// select correct brush
+			const auto wspkcla = spike_element->get_class();
+			switch (m_plotmode)
+			{
+			case PLOT_ONECLASSONLY:
+				if (wspkcla != m_selclass)
+					continue;
+				break;
+			case PLOT_CLASSCOLORS:
+				selbrush = wspkcla % NB_COLORS;
+				break;
+			case PLOT_ONECLASS:
+				if (wspkcla != m_selclass)
+					selbrush = SILVER_COLOR;
+				else
+					selbrush = m_colorselected;
+			default:
+				break;
+			}
+			// adjust rectangle size
+			if (wspkcla == m_selclass)
+				recti = rect1;
 			else
-				selbrush = m_colorselected;
-		default:
-			break;
+				recti = rect;
+
+			// draw point
+			const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
+			const auto y1 = MulDiv(spike_element->get_y1() - m_yWO, m_yVE, m_yWE) + m_yVO;
+			recti.OffsetRect(x1, y1);
+			p_dc->MoveTo(x1, y1);
+			p_dc->FillSolidRect(&recti, m_colorTable[selbrush]);
 		}
-		// adjust rectangle size
-		if (wspkcla == m_selclass)
-			recti = rect1;
-		else
-			recti = rect;	
-			
-		// draw point
-		const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
-		const auto y1 = MulDiv(spike_element->get_y() -m_yWO, m_yVE, m_yWE) + m_yVO;
-		recti.OffsetRect(x1, y1);
-		p_dc->MoveTo(x1, y1);
-		p_dc->FillSolidRect(&recti, m_colorTable[selbrush]); 
-	}
-	p_dc->SetBkColor(bkcolor);		// restore background color
+		p_dc->SetBkColor(bkcolor);		// restore background color
 
-	// display spike selected
-	if (m_selectedspike >= 0)
-		HighlightOnePoint(m_selectedspike, p_dc);
+		// display spike selected
+		if (m_selectedspike >= 0)
+			HighlightOnePoint(m_selectedspike, p_dc);
 
-	if (m_pspikelist_->GetSpikeFlagArrayCount() > 0)
-	{
-		// loop over the array of flagged spikes
-		for (auto i= m_pspikelist_->GetSpikeFlagArrayCount()-1; i>=0; i--)
+		if (p_spike_list_->GetSpikeFlagArrayCount() > 0)
 		{
-			const auto nospike = m_pspikelist_->GetSpikeFlagArrayAt(i);
-			HighlightOnePoint(nospike, p_dc);
+			// loop over the array of flagged spikes
+			for (auto i = p_spike_list_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
+			{
+				const auto nospike = p_spike_list_->GetSpikeFlagArrayAt(i);
+				HighlightOnePoint(nospike, p_dc);
+			}
 		}
-	}
 
-	//display HZ cursors
-	if (GetNHZtags() > 0)
-	{
-		//DisplayHZtags(p_dc);
-		// select pen and display mode 
-		const auto pold = p_dc->SelectObject(&m_blackDottedPen);
-		const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-
-		// iterate through HZ cursor list	
-		const auto x1 = m_displayRect.left;
-		const auto x2 = m_displayRect.right;
-		for (auto i = GetNHZtags()-1; i>= 0; i--)
+		//display HZ cursors
+		if (GetNHZtags() > 0)
 		{
-			const auto k = GetHZtagVal(i);		// get val
-			const auto y1 = MulDiv(k -m_yWO, m_yVE, m_yWE) + m_yVO;
-			p_dc->MoveTo(x1, y1);		// set initial pt
-			p_dc->LineTo(x2, y1);		// HZ line
+			//DisplayHZtags(p_dc);
+			// select pen and display mode 
+			const auto pold = p_dc->SelectObject(&m_blackDottedPen);
+			const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 
+			// iterate through HZ cursor list	
+			const auto x1 = m_displayRect.left;
+			const auto x2 = m_displayRect.right;
+			for (auto i = GetNHZtags() - 1; i >= 0; i--)
+			{
+				const auto k = GetHZtagVal(i);		// get val
+				const auto y1 = MulDiv(k - m_yWO, m_yVE, m_yWE) + m_yVO;
+				p_dc->MoveTo(x1, y1);		// set initial pt
+				p_dc->LineTo(x2, y1);		// HZ line
+
+			}
+			p_dc->SelectObject(pold);
+			p_dc->SetROP2(nold_rop);			// restore old display mode	
 		}
-		p_dc->SelectObject(pold);
-		p_dc->SetROP2(nold_rop);			// restore old display mode	
-	}
 
-	// display VT cursors
-	if (GetNVTtags() > 0)		// display vertical tags
-	{
-		// select pen and display mode 
-		const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-		const auto oldp =p_dc->SelectObject(&m_blackDottedPen);
-		m_xWO= m_lFirst;
-		m_xWE = m_lLast - m_lFirst + 1;
-
-		// iterate through VT cursor list
-		const auto y0 = m_displayRect.top;
-		const auto y1 = m_displayRect.bottom;
-		for (auto j=GetNVTtags()-1; j>=0; j--)
+		// display VT cursors
+		if (GetNVTtags() > 0)		// display vertical tags
 		{
-			const auto val = GetVTtagVal(j);			// get val
-			const auto pix_x = MulDiv(val-m_xWO, m_xVE, m_xWE)+m_xVO;
-			p_dc->MoveTo(pix_x, y0);			// set initial pt
-			p_dc->LineTo(pix_x, y1);			// VT line
+			// select pen and display mode 
+			const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+			const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
+			m_xWO = m_lFirst;
+			m_xWE = m_lLast - m_lFirst + 1;
+
+			// iterate through VT cursor list
+			const auto y0 = m_displayRect.top;
+			const auto y1 = m_displayRect.bottom;
+			for (auto j = GetNVTtags() - 1; j >= 0; j--)
+			{
+				const auto val = GetVTtagVal(j);			// get val
+				const auto pix_x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
+				p_dc->MoveTo(pix_x, y0);			// set initial pt
+				p_dc->LineTo(pix_x, y1);			// VT line
+			}
+			p_dc->SelectObject(oldp);
+			p_dc->SetROP2(nold_rop);
 		}
-		p_dc->SelectObject(oldp);
-		p_dc->SetROP2(nold_rop);
+
 	}
 
 	// restore resources
 	p_dc->RestoreDC(n_saved_dc);
+	// restore selection to initial file
+	if (m_ballFiles)
+	{
+		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->OpenCurrentSpikeFile();
+		p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+	}
 }
-
 
 BOOL CSpikeXYpWnd::IsSpikeWithinRange(int spikeno)
 {
-	const auto spike_element = m_pspikelist_->GetSpikeElemt(spikeno);
+	const auto spike_element = p_spike_list_->GetSpikeElemt(spikeno);
 	const auto iitime = spike_element->get_time();
 	if (m_rangemode == RANGE_TIMEINTERVALS
 		&& (iitime < m_lFirst  || iitime > m_lLast))
@@ -208,7 +242,7 @@ void CSpikeXYpWnd::DisplaySpike(int spikeno, BOOL bselect)
 
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	const auto spike_element = m_pspikelist_->GetSpikeElemt(spikeno);
+	const auto spike_element = p_spike_list_->GetSpikeElemt(spikeno);
 	const auto spike_class = spike_element->get_class();
 	int color;
 	if (!bselect)
@@ -256,11 +290,11 @@ void CSpikeXYpWnd::DisplaySpike(int spikeno, BOOL bselect)
 void CSpikeXYpWnd::HighlightOnePoint(int nospike, CDC* p_dc)
 {
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto spike_element = m_pspikelist_->GetSpikeElemt(nospike);
+	const auto spike_element = p_spike_list_->GetSpikeElemt(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration =  m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv (l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
-	const auto y1 = MulDiv(spike_element->get_y() -m_yWO, m_yVE, m_yWE) + m_yVO;
+	const auto y1 = MulDiv(spike_element->get_y1() -m_yWO, m_yVE, m_yWE) + m_yVO;
 	
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, 1, RGB(196,   2,  51)); //RGB(255, 255, 255));
@@ -282,11 +316,11 @@ void CSpikeXYpWnd::HighlightOnePoint(int nospike, CDC* p_dc)
 
 void CSpikeXYpWnd::DrawSelectedSpike(int nospike, int color, CDC* p_dc)
 {
-	const auto spike_element = m_pspikelist_->GetSpikeElemt(nospike);
+	const auto spike_element = p_spike_list_->GetSpikeElemt(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration =  m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv(l_spike_time - m_lFirst,  m_xVE, windowduration) + m_xVO;
-	const auto y1 = MulDiv(spike_element->get_y() -m_yWO, m_yVE, m_yWE) + m_yVO;
+	const auto y1 = MulDiv(spike_element->get_y1() -m_yWO, m_yVE, m_yWE) + m_yVO;
 	CRect rect(0, 0, m_rwidth, m_rwidth);
 	rect.OffsetRect(x1-m_rwidth/2, y1-m_rwidth/2);
 
@@ -484,13 +518,13 @@ int CSpikeXYpWnd::DoesCursorHitCurve(CPoint point)
 
 	// first look at black spikes (foreground)
 	int ispk;
-	const auto upperbound = m_pspikelist_->GetTotalSpikes() - 1;
+	const auto upperbound = p_spike_list_->GetTotalSpikes() - 1;
 	if (m_plotmode == PLOT_ONECLASS)
 	{
 		for (ispk=upperbound; ispk>=0; ispk--)
 		{
 			// skip non selected class
-			const auto spike_element = m_pspikelist_->GetSpikeElemt(ispk);
+			const auto spike_element = p_spike_list_->GetSpikeElemt(ispk);
 			if (spike_element->get_class() != m_selclass)
 				continue;
 			if (is_spike_within_limits(ispk))
@@ -511,12 +545,12 @@ int CSpikeXYpWnd::DoesCursorHitCurve(CPoint point)
 
 BOOL CSpikeXYpWnd::is_spike_within_limits(const int ispike)
 {
-	const auto spike_element = m_pspikelist_->GetSpikeElemt(ispike);
+	const auto spike_element = p_spike_list_->GetSpikeElemt(ispike);
 	const auto l_spike_time = spike_element->get_time();
 	if (l_spike_time < time_min_ || l_spike_time > time_max_)
 		return false;
 
-	const auto val =spike_element->get_y();
+	const auto val =spike_element->get_y1();
 	if (val < value_min_ || val > value_max_ )
 		return false;
 	return true;
@@ -528,14 +562,14 @@ void CSpikeXYpWnd::GetExtents()
 	{
 		auto maxval=4096;
 		auto minval=0;
-		if (m_pspikelist_ != nullptr)
+		if (p_spike_list_ != nullptr)
 		{
-			const auto upperbound = m_pspikelist_->GetTotalSpikes()-1;
-			maxval = m_pspikelist_->GetSpikeElemt(upperbound)->get_y();
+			const auto upperbound = p_spike_list_->GetTotalSpikes()-1;
+			maxval = p_spike_list_->GetSpikeElemt(upperbound)->get_y1();
 			minval = maxval;
 			for (auto i = upperbound; i>= 0; i--)
 			{
-				const auto val = m_pspikelist_->GetSpikeElemt(i)->get_y();
+				const auto val = p_spike_list_->GetSpikeElemt(i)->get_y1();
 				if (val > maxval) maxval = val;
 				if (val < minval) minval = val;
 			}
@@ -559,6 +593,6 @@ void CSpikeXYpWnd::GetExtents()
 void CSpikeXYpWnd::SetSourceData(CSpikeList* p_spk_list)
 {
 	m_selectedspike=-1;
-	m_pspikelist_ = p_spk_list;
+	p_spike_list_ = p_spk_list;
 }
 	

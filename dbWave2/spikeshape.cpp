@@ -10,6 +10,8 @@
 #define new DEBUG_NEW
 #endif
 
+// TODO loop through files when m_ballfiles is true: spike hit
+
 IMPLEMENT_SERIAL (CSpikeShapeWnd, CScopeScreen, 1)
 
 BEGIN_MESSAGE_MAP(CSpikeShapeWnd, CScopeScreen)
