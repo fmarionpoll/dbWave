@@ -29,7 +29,7 @@ CSpikeXYpWnd::CSpikeXYpWnd()
 	m_rangemode = RANGE_TIMEINTERVALS;
 	SetbUseDIB(FALSE);
 	m_csEmpty = "no \nspikes";
-	p_spike_list_ = nullptr;
+	p_spikelist_ = nullptr;
 }  
 
 CSpikeXYpWnd::~CSpikeXYpWnd()
@@ -76,18 +76,18 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 		{
 			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
 		// test presence of data	
-		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
+		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
 		{
 			if (!m_ballFiles)
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 			continue;
 		}
 
-		auto ilast = p_spike_list_->GetTotalSpikes() - 1;
+		auto ilast = p_spikelist_->GetTotalSpikes() - 1;
 		auto ifirst = 0;
 		if (m_rangemode == RANGE_INDEX)
 		{
@@ -103,7 +103,7 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 		for (auto ispk = ilast; ispk >= ifirst; ispk--)
 		{
 			// check that spike fits within time limits of the display
-			const auto spike_element = p_spike_list_->GetSpikeElemt(ispk);
+			const auto spike_element = p_spikelist_->GetSpikeElemt(ispk);
 			const auto l_spike_time = spike_element->get_time();
 			if (m_rangemode == RANGE_TIMEINTERVALS
 				&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
@@ -147,12 +147,12 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 		if (m_selectedspike >= 0)
 			HighlightOnePoint(m_selectedspike, p_dc);
 
-		if (p_spike_list_->GetSpikeFlagArrayCount() > 0)
+		if (p_spikelist_->GetSpikeFlagArrayCount() > 0)
 		{
 			// loop over the array of flagged spikes
-			for (auto i = p_spike_list_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
+			for (auto i = p_spikelist_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
 			{
-				const auto nospike = p_spike_list_->GetSpikeFlagArrayAt(i);
+				const auto nospike = p_spikelist_->GetSpikeFlagArrayAt(i);
 				HighlightOnePoint(nospike, p_dc);
 			}
 		}
@@ -212,13 +212,13 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 	{
 		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
 }
 
 BOOL CSpikeXYpWnd::IsSpikeWithinRange(int spikeno)
 {
-	const auto spike_element = p_spike_list_->GetSpikeElemt(spikeno);
+	const auto spike_element = p_spikelist_->GetSpikeElemt(spikeno);
 	const auto iitime = spike_element->get_time();
 	if (m_rangemode == RANGE_TIMEINTERVALS
 		&& (iitime < m_lFirst  || iitime > m_lLast))
@@ -242,7 +242,7 @@ void CSpikeXYpWnd::DisplaySpike(int spikeno, BOOL bselect)
 
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	const auto spike_element = p_spike_list_->GetSpikeElemt(spikeno);
+	const auto spike_element = p_spikelist_->GetSpikeElemt(spikeno);
 	const auto spike_class = spike_element->get_class();
 	int color;
 	if (!bselect)
@@ -290,7 +290,7 @@ void CSpikeXYpWnd::DisplaySpike(int spikeno, BOOL bselect)
 void CSpikeXYpWnd::HighlightOnePoint(int nospike, CDC* p_dc)
 {
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto spike_element = p_spike_list_->GetSpikeElemt(nospike);
+	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration =  m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv (l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
@@ -316,7 +316,7 @@ void CSpikeXYpWnd::HighlightOnePoint(int nospike, CDC* p_dc)
 
 void CSpikeXYpWnd::DrawSelectedSpike(int nospike, int color, CDC* p_dc)
 {
-	const auto spike_element = p_spike_list_->GetSpikeElemt(nospike);
+	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration =  m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv(l_spike_time - m_lFirst,  m_xVE, windowduration) + m_xVO;
@@ -518,13 +518,13 @@ int CSpikeXYpWnd::DoesCursorHitCurve(CPoint point)
 
 	// first look at black spikes (foreground)
 	int ispk;
-	const auto upperbound = p_spike_list_->GetTotalSpikes() - 1;
+	const auto upperbound = p_spikelist_->GetTotalSpikes() - 1;
 	if (m_plotmode == PLOT_ONECLASS)
 	{
 		for (ispk=upperbound; ispk>=0; ispk--)
 		{
 			// skip non selected class
-			const auto spike_element = p_spike_list_->GetSpikeElemt(ispk);
+			const auto spike_element = p_spikelist_->GetSpikeElemt(ispk);
 			if (spike_element->get_class() != m_selclass)
 				continue;
 			if (is_spike_within_limits(ispk))
@@ -545,7 +545,7 @@ int CSpikeXYpWnd::DoesCursorHitCurve(CPoint point)
 
 BOOL CSpikeXYpWnd::is_spike_within_limits(const int ispike)
 {
-	const auto spike_element = p_spike_list_->GetSpikeElemt(ispike);
+	const auto spike_element = p_spikelist_->GetSpikeElemt(ispike);
 	const auto l_spike_time = spike_element->get_time();
 	if (l_spike_time < time_min_ || l_spike_time > time_max_)
 		return false;
@@ -562,14 +562,14 @@ void CSpikeXYpWnd::GetExtents()
 	{
 		auto maxval=4096;
 		auto minval=0;
-		if (p_spike_list_ != nullptr)
+		if (p_spikelist_ != nullptr)
 		{
-			const auto upperbound = p_spike_list_->GetTotalSpikes()-1;
-			maxval = p_spike_list_->GetSpikeElemt(upperbound)->get_y1();
+			const auto upperbound = p_spikelist_->GetTotalSpikes()-1;
+			maxval = p_spikelist_->GetSpikeElemt(upperbound)->get_y1();
 			minval = maxval;
 			for (auto i = upperbound; i>= 0; i--)
 			{
-				const auto val = p_spike_list_->GetSpikeElemt(i)->get_y1();
+				const auto val = p_spikelist_->GetSpikeElemt(i)->get_y1();
 				if (val > maxval) maxval = val;
 				if (val < minval) minval = val;
 			}
@@ -590,9 +590,4 @@ void CSpikeXYpWnd::GetExtents()
 	}
 }
 
-void CSpikeXYpWnd::SetSourceData(CSpikeList* p_spk_list)
-{
-	m_selectedspike=-1;
-	p_spike_list_ = p_spk_list;
-}
 	

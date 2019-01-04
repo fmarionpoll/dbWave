@@ -21,9 +21,9 @@ public:
 	virtual ~CDataListCtrlRowObject();
 
 	BOOL			bChanged;			// flag set TRUE if contents has changed
-	WORD			wversion;			// version number
+	WORD			wversion = 0;		// version number
 
-	BOOL			bInit;
+	BOOL			bInit = false;
 	UINT			index;
 	long			insectID;
 
@@ -39,10 +39,11 @@ public:
 	CString			csFlag;
 	CString			csDate;
 
-	CLineViewWnd*   pdataWnd;
-	CSpikeBarWnd*	pspikeWnd;
-	CAcqDataDoc*	pdataDoc;
-	CSpikeDoc*		pspikeDoc;
+	CLineViewWnd*   pdataWnd = nullptr;
+	CSpikeBarWnd*	pspikeWnd = nullptr;
+	CdbWaveDoc*		pdbWaveDoc = nullptr;
+	CAcqDataDoc*	pdataDoc = nullptr;
+	CSpikeDoc*		pspikeDoc = nullptr;
 
 	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);	// operator redefinition
 	virtual void Serialize(CArchive& ar);					// overridden for document i/o

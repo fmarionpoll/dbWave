@@ -395,7 +395,7 @@ long CdbWaveDoc::DBGetDataLen()
 // Open current data file
 // return TRUE if OK, FALSE if a problem occurred and the operation has aborted
 
-BOOL CdbWaveDoc::OpenCurrentDataFile()
+CAcqDataDoc* CdbWaveDoc::OpenCurrentDataFile()
 {
 	// data doc to read data files
 	if (m_pDat == nullptr)
@@ -410,17 +410,16 @@ BOOL CdbWaveDoc::OpenCurrentDataFile()
 	{
 		delete m_pDat;
 		m_pDat = nullptr;
-		return FALSE;
 	}
-	
-	m_pDat->SetPathName(m_currentDatafileName, FALSE);
-	return TRUE;
+	else
+		m_pDat->SetPathName(m_currentDatafileName, FALSE);
+	return m_pDat;
 }
 
 // Open current spike file
 // return TRUE if OK and FALSE if operation has aborted
 
-BOOL CdbWaveDoc::OpenCurrentSpikeFile()
+CSpikeDoc* CdbWaveDoc::OpenCurrentSpikeFile()
 {
 	// spike doc to read data files
 	if (m_pSpk == nullptr)
@@ -434,11 +433,10 @@ BOOL CdbWaveDoc::OpenCurrentSpikeFile()
 	{
 		delete m_pSpk;
 		m_pSpk = nullptr;
-		return FALSE;
 	}
-
-	m_pSpk->SetPathName(m_currentSpikefileName, FALSE);
-	return TRUE;
+	else
+		m_pSpk->SetPathName(m_currentSpikefileName, FALSE);
+	return m_pSpk;
 }
 
 void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* min)
@@ -638,7 +636,7 @@ void CdbWaveDoc::ExportDataAsciiComments(CSharedFile* p_shared_file)
 		dlg.SetStatus(cscomment);
 
 		cs_dummy.Empty();
-		if (OpenCurrentDataFile())
+		if (OpenCurrentDataFile() != nullptr)
 		{
 			cs_dummy += m_pDat->GetDataFileInfos(p_view_data_options);	// get infos
 			if (p_view_data_options->bdatabasecols)
@@ -1427,17 +1425,17 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 		// process data file
 		if (!m_currentDatafileName.IsEmpty())
 		{
-			const auto bflag = OpenCurrentDataFile();
-			ASSERT(bflag == TRUE);
-			wave_format = m_pDat->GetpWaveFormat();
+			const auto pDat = OpenCurrentDataFile();
+			ASSERT(pDat != nullptr);
+			wave_format = pDat->GetpWaveFormat();
 			if (UpdateWaveFmtFromDatabase(wave_format))
-				m_pDat->AcqSaveDataDescriptors();
+				pDat->AcqSaveDataDescriptors();
 		}
 		// process spike file
 		if (!m_currentSpikefileName.IsEmpty())
 		{
-			const auto bflag = OpenCurrentSpikeFile();
-			ASSERT(bflag == TRUE);
+			const auto pSpk = OpenCurrentSpikeFile();
+			ASSERT(pSpk != nullptr);
 			wave_format = &(m_pSpk->m_wformat);
 			if (UpdateWaveFmtFromDatabase(wave_format))
 				m_pSpk->OnSaveDocument(m_currentSpikefileName);
@@ -1472,8 +1470,8 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 		// process data file
 		if (!m_currentDatafileName.IsEmpty())
 		{
-			const auto bflag = OpenCurrentDataFile();
-			ASSERT(bflag == TRUE);
+			const auto pDat = OpenCurrentDataFile();
+			ASSERT(pDat != nullptr);
 			p_wave_format = m_pDat->GetpWaveFormat();
 			if (UpdateWaveFmtFromDatabase(p_wave_format))
 				m_pDat->AcqSaveDataDescriptors();
@@ -1481,8 +1479,8 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 		// process spike file
 		if (!m_currentSpikefileName.IsEmpty())
 		{
-			const auto bflag = OpenCurrentSpikeFile();
-			ASSERT(bflag == TRUE);
+			const auto pSpk = OpenCurrentSpikeFile();
+			ASSERT(pSpk != nullptr);
 			p_wave_format = &(m_pSpk->m_wformat);
 			if (UpdateWaveFmtFromDatabase(p_wave_format))
 				m_pSpk->OnSaveDocument(m_currentSpikefileName);
@@ -1857,7 +1855,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 				pSF->Write(cs_file_comment, cs_file_comment.GetLength() * sizeof(TCHAR));
 				continue;
 			}
-			const auto flag= OpenCurrentSpikeFile();
+			const auto flag= (OpenCurrentSpikeFile() != nullptr);
 			ASSERT(flag);
 
 			// loop over the spike lists stored in that file
@@ -1923,7 +1921,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 
 	// restore initial file name and channel
 	DBSetCurrentRecordPosition(ioldindex);
-	if (OpenCurrentSpikeFile())
+	if (OpenCurrentSpikeFile() != nullptr)
 		m_pSpk->SetSpkListCurrent(ioldlist);
 	UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
@@ -2329,7 +2327,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 
 			// load file and read date and time of data acquisition
 			CTime o_time = 0;
-			auto b_ok = OpenCurrentDataFile();
+			auto b_ok = (OpenCurrentDataFile() != nullptr);
 			auto ioriginalfile=-1;
 			if (b_ok)
 			{
@@ -2665,8 +2663,8 @@ void CdbWaveDoc::ExportDatafilesAsTXTfiles()
 		if (!m_currentDatafileName.IsEmpty())
 		{
 			// open file
-			const auto bflag = OpenCurrentDataFile();
-			ASSERT(bflag == TRUE);
+			const auto pDat = OpenCurrentDataFile();
+			ASSERT(pDat != nullptr);
 			
 			// create text file on disk with the same name as the data file_with dat
 			CStdioFile data_dest;								// destination file object

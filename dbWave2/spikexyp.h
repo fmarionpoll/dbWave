@@ -23,12 +23,12 @@ protected:
 	int		m_selclass{};		// index class selected
 	BOOL 	m_btrackCurve;		// track curve ?	
 	int		m_rwidth;			// dot width
-	BOOL	m_ballFiles=false;		// display data from all files in CdbWaveDoc*
+	BOOL	m_ballFiles = false;	// display data from all files in CdbWaveDoc*
 
 
-	CSpikeList*	p_spike_list_	=nullptr;				// spike list (source data)	
-	CSpikeDoc*	p_spike_doc_	=nullptr;		// spike doc source (source data; stim)
-	CdbWaveDoc* p_dbwave_doc_	=nullptr;
+	CSpikeList*	p_spikelist_	= nullptr;
+	CSpikeDoc*	p_spike_doc_	= nullptr;
+	CdbWaveDoc* p_dbwave_doc_	= nullptr;
 
 	long time_max_	=0;
 	long time_min_	=0;
@@ -43,7 +43,6 @@ public:
 	void	SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first;m_lLast = l_last;}
 	void	SetCurrentClass(int curcla) {m_currentclass=curcla;}
 	void	SetSpkIndexes(int first, int last) {m_spkfirst=first, m_spklast=last;}
-	void	SetSpkList(CSpikeList* p_spk_list) {p_spike_list_ = p_spk_list;}
 	
 	int		GetCurrentClass() const {return m_currentclass;}
 	long	GetTimeFirst() const {return m_lFirst;}
@@ -51,7 +50,9 @@ public:
 	int		GetSelectedSpike() const {return m_selectedspike;}
 	int		GetHitSpike() const {return m_hitspk;}
 
-	void	SetSourceData(CSpikeList* p_spk_list);
+	void SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document) { p_dbwave_doc_ = p_document; p_spikelist_ = p_spk_list; m_selectedspike = -1; }
+	void SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+
 	int		SelectSpike(int spikeno);
 	void	DisplaySpike(int nospike, BOOL bselect);	
 	BOOL	IsSpikeWithinRange(int spikeno);

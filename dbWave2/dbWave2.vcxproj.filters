@@ -414,6 +414,9 @@
     <ClCompile Include="SpikeFromChan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WndVerticalHistogram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -900,6 +903,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeFromChan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WndVerticalHistogram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

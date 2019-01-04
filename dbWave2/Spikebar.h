@@ -29,8 +29,9 @@ protected:
 	int			m_barheight;
 	BOOL		m_ballFiles;		// display data from all files in CdbWaveDoc*
 	CDWordArray* p_envelope_;		// data envelope (should be 4 times greater than size)
-	CSpikeList*	p_spike_list_ = nullptr;	// spike list (source data)	
-	CSpikeDoc*	p_spike_doc_ = nullptr;		// spike doc source (source data; stim)
+
+	CSpikeList*	p_spikelist_ = nullptr;
+	//CSpikeDoc*	p_spike_doc_ = nullptr;
 	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 	
 // Helpers
@@ -39,13 +40,14 @@ public:
 	void	SetSelClass(int selclass)			{m_selclass = selclass;}
 	void	SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
 
-	void	SetSourceData(CSpikeList* p_spk_list, CSpikeDoc* p_spk_doc) {p_spike_doc_ = p_spk_doc; p_spike_list_ = p_spk_list; m_selectedspike=-1; }
-	void	SetSpkList(CSpikeList* p_spk_list) {p_spike_list_ = p_spk_list;}
+	void	SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document) { p_dbwave_doc_ = p_document; p_spikelist_ = p_spk_list; m_selectedspike = -1; }
+	void	SetSpkList(CSpikeList* p_spk_list) {p_spikelist_ = p_spk_list;}
+
 	void	SetTimeIntervals(long l_first, long l_last) {m_lFirst = l_first; m_lLast = l_last;}
 	void	SetCurrentClass(int curcla)		{m_currentclass=curcla;}
 	void	SetSpkIndexes(int first, int last) {m_spkfirst=first, m_spklast=last;}
 
-	int		GetCurrentClass()	{return m_currentclass;}
+	int		GetCurrentClass()	const {return m_currentclass;}
 	long	GetTimeFirst()		const {return m_lFirst;}
 	long	GetTimeLast()		const {return m_lLast;}
 	int		GetSelClass()		const {return m_selclass;}

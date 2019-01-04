@@ -315,8 +315,7 @@ void CViewSpikeTemplates::OnInitialUpdate()
 void CViewSpikeTemplates::UpdateFileParameters()
 {
 	// init views
-	GetDocument()->OpenCurrentSpikeFile();
-	m_pSpkDoc = GetDocument()->m_pSpk;
+	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 	m_pSpkDoc->SetSpkListCurrent(GetDocument()->GetcurrentSpkListIndex());
 	const auto icur = m_pSpkDoc->GetSpkListCurrentIndex();
 
@@ -370,7 +369,7 @@ void CViewSpikeTemplates::SelectSpikeList(int icur)
 		m_spikenoclass = 0;
 
 	// prepare display source spikes
-	m_spkForm.SetSourceData(m_pSpkList);
+	m_spkForm.SetSourceData(m_pSpkList, GetDocument());
 	if (m_psC->kleft==0 && m_psC->kright==0)
 	{
 		m_psC->kleft = m_pSpkList->GetSpikePretrig();
@@ -879,13 +878,13 @@ void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	{
 		// load file
 		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-		if (!p_dbwave_doc->OpenCurrentSpikeFile())
+		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
+		if (m_pSpkDoc == nullptr)
 			continue;
 		CString cs;
 		cs.Format(_T("%i/%i - "), ifile, lastfile);
 		cs += p_dbwave_doc->DBGetCurrentSpkFileName(FALSE);
 		p_dbwave_doc->SetTitle(cs);
-		m_pSpkDoc = p_dbwave_doc->m_pSpk;
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 	
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist); // load pointer to spike list
@@ -931,8 +930,7 @@ void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	if (ballfiles)
 	{
 		p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-		p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 	
@@ -976,8 +974,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 		if (m_ballfiles)
 		{
 			p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-			p_dbwave_doc->OpenCurrentSpikeFile();
-			m_pSpkDoc = p_dbwave_doc->m_pSpk;			
+			m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		}
 
 		const auto spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
@@ -1076,8 +1073,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 	if (m_ballfiles)
 	{
 		p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-		p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
@@ -1114,12 +1110,11 @@ void CViewSpikeTemplates::SortSpikes()
 		if (m_ballfiles)
 		{
 			p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-			p_dbwave_doc->OpenCurrentSpikeFile();
+			m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 			CString cs;
 			cs.Format(_T("%i/%i - "), ifile, lastfile);
 			cs += p_dbwave_doc->DBGetCurrentSpkFileName(FALSE);
 			p_dbwave_doc->SetTitle(cs);
-			m_pSpkDoc = p_dbwave_doc->m_pSpk;
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 			
 			m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist); // load pointer to spike list
@@ -1208,15 +1203,14 @@ void CViewSpikeTemplates::SortSpikes()
 	if (m_ballfiles)
 	{
 		p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-		p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
 	// update display: average and spk form
 	DisplayAvg(FALSE, &m_avgList);
 	m_pSpkList = m_pSpkDoc->GetSpkListCurrent();
-	m_spkForm.SetSourceData(m_pSpkList); 
+	m_spkForm.SetSourceData(m_pSpkList, GetDocument());
 	m_spkForm.Invalidate();
 }
 
@@ -1317,12 +1311,11 @@ void CViewSpikeTemplates::EditSpikeClass(int controlID, int controlItem)
 				if (b_all_files)
 				{
 					p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-					p_dbwave_doc->OpenCurrentSpikeFile();
+					m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 					CString cs;
 					cs.Format(_T("%i/%i - "), ifile, lastfile);
 					cs += p_dbwave_doc->DBGetCurrentSpkFileName(FALSE);
 					p_dbwave_doc->SetTitle(cs);
-					m_pSpkDoc = p_dbwave_doc->m_pSpk;
 					m_pSpkDoc->SetModifiedFlag(FALSE);
 					m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
 				}
@@ -1347,8 +1340,7 @@ void CViewSpikeTemplates::EditSpikeClass(int controlID, int controlItem)
 			if (b_all_files)
 			{
 				p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-				p_dbwave_doc->OpenCurrentSpikeFile();
-				m_pSpkDoc = p_dbwave_doc->m_pSpk;
+				m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 				p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 			}
 		}

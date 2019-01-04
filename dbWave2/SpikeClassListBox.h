@@ -37,11 +37,12 @@ protected:
 	long		m_lLast;
 	CSpikeList* m_pSList;
 	CSpikeDoc*	m_pSDoc;
+	CdbWaveDoc* m_pdbDoc;
 	HWND		m_hwndBarsReflect;
 
 // Operations
 public:
-	void SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc);
+	void SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc);
 	void SetSpkList(CSpikeList* p_spike_list);
 	inline CSpikeList* GetSpkListCurrent() const {return m_pSList;};
 	inline CSpikeDoc* GetSpikeDoc() const {return m_pSDoc;};

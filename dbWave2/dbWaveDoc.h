@@ -53,8 +53,9 @@ public:
 	BOOL			ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
 	BOOL			ImportDatabase (CString &filename);
 	BOOL			OnNewDocument(LPCTSTR lpszPathName);
-	BOOL			OpenCurrentDataFile();
-	BOOL			OpenCurrentSpikeFile();
+	CAcqDataDoc*	OpenCurrentDataFile();
+	CSpikeDoc*		OpenCurrentSpikeFile();
+
 	void			RemoveDuplicateFiles();
 	void			RemoveMissingFiles();
 	void			RemoveFalseSpkFiles();

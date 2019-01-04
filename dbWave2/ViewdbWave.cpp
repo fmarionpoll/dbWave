@@ -569,7 +569,7 @@ void CViewdbWave::InitctrlTab()
 
 	// load list of detection parameters 
 	auto j = 0;
-	if (GetDocument() ->OpenCurrentSpikeFile())
+	if (GetDocument() ->OpenCurrentSpikeFile() != nullptr)
 	{
 		const auto curr_listsize = GetDocument()->GetcurrentSpkListSize();
 		for (auto i = 0; i< curr_listsize; i++)

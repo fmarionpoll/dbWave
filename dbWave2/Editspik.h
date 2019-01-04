@@ -15,19 +15,18 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_EDITSPIKE };
-	int		m_spikeclass;
-	int		m_spikeno;
-	BOOL	m_bartefact;
-	int		m_displayratio;
-	int		m_yvextent;
+	int				m_spikeclass;
+	int				m_spikeno;
+	BOOL			m_bartefact;
+	int				m_displayratio;
+	int				m_yvextent;
 
-	CEditCtrl mm_spikeno;
-	CEditCtrl mm_spikeclass;
-	CEditCtrl mm_displayratio;
-	CEditCtrl mm_yvextent;
+	CEditCtrl		mm_spikeno;
+	CEditCtrl		mm_spikeclass;
+	CEditCtrl		mm_displayratio;
+	CEditCtrl		mm_yvextent;
 		
-	CSpikeList*		m_pSpkList;		// spike list
-	CAcqDataDoc*	m_dbDoc;			// source data doc cDocument
+	CdbWaveDoc*		m_pdbWaveDoc = nullptr;
 	int				m_spikeChan;	// source channel
 	CWnd* 			m_parent;		// post messages to parent
 	int				m_xextent;
@@ -37,6 +36,8 @@ public:
 	BOOL 			m_bchanged;
 
 protected:
+	CSpikeList*		m_pSpkList	 = nullptr;		// spike list
+	CAcqDataDoc*	m_pAcqDatDoc = nullptr;		// source data doc cDocument
 	int				m_spkpretrig;
 	int				m_spklen;
 	int				m_viewdatalen;

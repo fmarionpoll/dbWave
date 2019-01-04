@@ -330,7 +330,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 	pdb_doc->DBSetCurrentSpkFileName(FALSE);
 
 	// open the current spike file
-	if (!GetDocument()->OpenCurrentSpikeFile())
+	if (pdb_doc->OpenCurrentSpikeFile() == nullptr)
 	{
 		// file not found: create new object, and create file
 		auto* pspk = new CSpikeDoc;
@@ -344,7 +344,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 	}
 	else
 	{
-		m_pspkDocVSD = GetDocument()->m_pSpk;
+		m_pspkDocVSD = pdb_doc->m_pSpk;
 		m_pspkDocVSD->SetModifiedFlag(FALSE);
 		m_pspkDocVSD->SetPathName(GetDocument()->DBGetCurrentSpkFileName(FALSE), FALSE);		// init source doc name	
 	}
@@ -386,9 +386,9 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 	}
 
 	// 
-	m_spkBarView.SetSourceData(m_pSpkListVSD, m_pspkDocVSD);
+	m_spkBarView.SetSourceData(m_pSpkListVSD, pdb_doc);
 	m_spkBarView.SetPlotMode(PLOT_BLACK, 0);
-	m_spkShapeView.SetSourceData(m_pSpkListVSD);
+	m_spkShapeView.SetSourceData(m_pSpkListVSD, pdb_doc);
 	m_spkShapeView.SetPlotMode(PLOT_BLACK, 0);
 	UpdateVTtags();
 
@@ -443,10 +443,6 @@ void CViewSpikeDetection::HighlightSpikes(BOOL flag)
 	m_displayDetect.SetHighlightData(p_d_wintervals); // tell sourceview to highlight spk
 }
 
-//---------------------------------------------------------------------------
-// UpdateFileParameters()
-//---------------------------------------------------------------------------
-
 void CViewSpikeDetection::UpdateFileParameters(BOOL bUpdateInterface)
 {
 	UpdateDataFile(bUpdateInterface);	// update data file
@@ -496,7 +492,7 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 	// init chan list, select first detection channel
 	auto pdb_doc = GetDocument();
 	pdb_doc->DBSetCurrentDatFileName();
-	if (!pdb_doc->OpenCurrentDataFile())
+	if (pdb_doc->OpenCurrentDataFile() != nullptr)
 		return;
 
 	// set a local pointer to the datafile into the dat document
@@ -660,10 +656,6 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 	}
 }
 
-//---------------------------------------------------------------------------
-// OnInitialUpdate()
-//---------------------------------------------------------------------------
-
 void CViewSpikeDetection::OnInitialUpdate()
 {
 	// load spike detection parameters from .INI file
@@ -772,16 +764,10 @@ void CViewSpikeDetection::OnInitialUpdate()
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// remove objects
 void CViewSpikeDetection::OnDestroy() 
 {
 	CDaoRecordView::OnDestroy();
 }
-
-// --------------------------------------------------------------------------
-// OnSize
-// --------------------------------------------------------------------------
 
 void CViewSpikeDetection::OnSize(UINT nType, int cx, int cy)
 {	
@@ -802,9 +788,6 @@ void CViewSpikeDetection::OnSize(UINT nType, int cx, int cy)
 	CDaoRecordView::OnSize(nType, cx, cy);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpikeDetection diagnostics
-
 #ifdef _DEBUG
 void CViewSpikeDetection::AssertValid() const
 {
@@ -823,21 +806,10 @@ CdbWaveDoc* CViewSpikeDetection::GetDocument()
 
 #endif //_DEBUG
 
-/////////////////////////////////////////////////////////////////////////////
-// CViewdbWave database support
-
 CDaoRecordset* CViewSpikeDetection::OnGetRecordset()
 {
 	return GetDocument()->DBGetRecordset();
 }
-
-////////////////////////////////////////////////////////////////////////////
-// controls notifications
-
-// --------------------------------------------------------------------------
-// "Mymessage" handler - message sent by CScopeWnd derived controls
-//	i.e. source data, spike bars, spike forms
-// --------------------------------------------------------------------------
 
 LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
@@ -1022,9 +994,6 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// OnFormat procedures
-
 void CViewSpikeDetection::OnFirstFrame()
 {
 	OnFileScroll(SB_LEFT, 1L);
@@ -1081,10 +1050,6 @@ void CViewSpikeDetection::UpdateFileScroll()
 	m_filescroll_infos.nPage = m_displayDetect.GetDataLast()-m_displayDetect.GetDataFirst()+1;
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
-
-// --------------------------------------------------------------------------
-// OnFileScroll()
-// --------------------------------------------------------------------------
 
 void CViewSpikeDetection::OnFileScroll(UINT nSBCode, UINT nPos)
 {
@@ -1149,14 +1114,6 @@ void CViewSpikeDetection::OnFormatYscaleGainadjust()
 	m_spkShapeView.Invalidate();
 }
 
-// --------------------------------------------------------------------------
-// OnSplitcurves()
-// adjust position of each channel when new document is loaded for ex
-// get nb of channels in the display list
-// loop through all channels to get max min and center / adjust gain
-// to display all signals on separate lines
-// --------------------------------------------------------------------------
-
 void CViewSpikeDetection::OnFormatSplitcurves()
 {
 	m_displayDetect.SplitChans();
@@ -1194,10 +1151,6 @@ void CViewSpikeDetection::OnFormatAlldata()
 	UpdateLegends();
 }
 
-// --------------------------------------------------------------------------
-// OnToolsDetectionparameters()
-// method 1
-// --------------------------------------------------------------------------
 void CViewSpikeDetection::UpdateDetectionParameters()
 {
 	// refresh pointer to spike detection array
@@ -1352,8 +1305,8 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 
 	// display data	
 	m_pSpkListVSD = m_pspkDocVSD->SetSpkListCurrent(ioldlist);
-	m_spkBarView.SetSourceData(m_pSpkListVSD, m_pspkDocVSD);
-	m_spkShapeView.SetSourceData(m_pSpkListVSD);
+	m_spkBarView.SetSourceData(m_pSpkListVSD, GetDocument());
+	m_spkShapeView.SetSourceData(m_pSpkListVSD, GetDocument());
 
 	// center spikes, change nb spikes and update content of draw buttons
 	if (mdPM->bMaximizeGain
@@ -1372,11 +1325,6 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 	UpdateLegends();
 	UpdateTabs();
 }
-
-// --------------------------------------------------------------------------
-// DetectStim1()
-// detect stimulus; returns the nb of events detected (ON/OFF)
-// --------------------------------------------------------------------------
 
 int CViewSpikeDetection::DetectStim1(int ichan)
 {
@@ -1517,12 +1465,7 @@ int CViewSpikeDetection::DetectStim1(int ichan)
 	return m_pspkDocVSD->m_stimIntervals.nitems;
 }
 
-// --------------------------------------------------------------------------
-// DetectMethod1()
 // detect spikes using 1 threshold and add spikes to the buffer
-// scan doc data from lfirst to llast
-// returns the nb of spikes detected
-// --------------------------------------------------------------------------
 
 int CViewSpikeDetection::DetectMethod1(WORD schan)
 {
@@ -1535,20 +1478,19 @@ int CViewSpikeDetection::DetectMethod1(WORD schan)
 	}
 
 	// set parameters (copy array into local parms)	
-	const short threshold	= pspkDP->detectThreshold;				// threshold value
-	const auto method		= pspkDP->detectTransform;				// how source data are transformed
-	const auto sourcechan	= pspkDP->detectChan;					// source channel
-	const auto prethreshold= pspkDP->prethreshold;					// pts before threshold
-	const auto refractory	= pspkDP->refractory;					// refractory period
+	const short threshold	= pspkDP->detectThreshold;			// threshold value
+	const auto method		= pspkDP->detectTransform;			// how source data are transformed
+	const auto sourcechan	= pspkDP->detectChan;				// source channel
+	const auto prethreshold= pspkDP->prethreshold;				// pts before threshold
+	const auto refractory	= pspkDP->refractory;				// refractory period
 	const auto postthreshold = pspkDP->extractNpoints - prethreshold;
 
 	// get parameters from document
 	auto p_dat = GetDocument()->m_pDat;
-	int nchans;												// number of data chans / source buffer
+	int nchans;													// number of data chans / source buffer
 	const auto p_buf = p_dat->LoadRawDataParams(&nchans);
-	const auto nspan = p_dat->GetTransfDataSpan(method);			// nb pts to read before transf
-	//int nspikes = 0;										// no spikes detected yet
-
+	const auto nspan = p_dat->GetTransfDataSpan(method);		// nb pts to read before transf
+	
 	// adjust detection method: if threshold lower than data zero detect lower crossing
 	auto b_cross_upw = TRUE;
 	if (threshold < 0)
@@ -1568,9 +1510,9 @@ int CViewSpikeDetection::DetectMethod1(WORD schan)
 		auto l_rw_first= l_data_first - prethreshold;			// index very first pt within buffers
 		auto l_rw_last = l_data_last;							// index very last pt within buffers
 		if (!p_dat->LoadRawData(&l_rw_first, &l_rw_last, nspan))	// load data from file
-			break;											// exit if error reported
+			break;												// exit if error reported
 		if (!p_dat->BuildTransfData(method, sourcechan))		// transfer data into a buffer with a single channel
-			break;											// exit if fail
+			break;												// exit if fail
 
 		// load a chunk of data and see if any spikes are detected within it
 		// compute initial offset (address of first point
@@ -1592,7 +1534,7 @@ int CViewSpikeDetection::DetectMethod1(WORD schan)
 			// detect > threshold ......... if found, search for max
 			if (b_cross_upw)
 			{
-				if (*p_data < threshold)		// test if a spike is present
+				if (*p_data < threshold)	// test if a spike is present
 					continue;				// no: loop to next point
 
 				// search max and threshold crossing
@@ -1665,8 +1607,7 @@ void CViewSpikeDetection::OnToolsEdittransformspikes()
 	dlg.m_xzero = m_spkShapeView.GetXWOrg();	// abcissa
 	dlg.m_spikeno = m_spikeno;					// load index of selected spike
 	m_pSpkListVSD->RemoveAllSpikeFlags();	
-	dlg.m_dbDoc = GetDocument()->m_pDat;			// pass document dat pointer
-	dlg.m_pSpkList = m_pSpkListVSD;				// pass spike list
+	dlg.m_pdbWaveDoc = GetDocument();
 	dlg.m_parent = this;
 	
 	// open dialog box and wait for response
@@ -1750,7 +1691,7 @@ void CViewSpikeDetection::OnBnClickedClearall()
 	ASSERT(m_pSpkListVSD != NULL);
 
 	HighlightSpikes(FALSE);				// remove display of spikes
-	m_spkShapeView.SetSourceData(m_pSpkListVSD);
+	m_spkShapeView.SetSourceData(m_pSpkListVSD, GetDocument());
 	m_pspkDocVSD->m_stimIntervals.nitems=0;		// zero stimuli
 	m_pspkDocVSD->m_stimIntervals.intervalsArray.RemoveAll();
 

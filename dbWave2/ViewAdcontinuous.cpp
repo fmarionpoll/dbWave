@@ -1267,13 +1267,13 @@ void CViewADContinuous::UpdateViewDataFinal()
 {
 	// update view data	
 	auto pdb_doc = GetDocument();
-	const auto flag = pdb_doc->OpenCurrentDataFile();
-	if (!flag)
+	auto p_doc_dat = pdb_doc->OpenCurrentDataFile();
+	if (p_doc_dat == nullptr)
 	{
 		ATLTRACE2(_T("error reading current document"));
 		return;
 	}
-	auto p_doc_dat = pdb_doc->m_pDat;
+
 	p_doc_dat->ReadDataInfos();
 	const auto size_doc_channel = p_doc_dat->GetDOCchanLength();
 	m_ADC_View.AttachDataFile(p_doc_dat, size_doc_channel);
@@ -1477,15 +1477,15 @@ void CViewADContinuous::OnInitialUpdate()
 
 	// CFormView init CFile
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	m_pADC_options = &(p_app->acqD);								// address of data acquisition parameters
-	m_pDAC_options = &(p_app->outD);								// address of data output parameters
+	m_pADC_options = &(p_app->acqD);							// address of data acquisition parameters
+	m_pDAC_options = &(p_app->outD);							// address of data output parameters
 	m_bFoundDTOPenLayerDLL = FALSE;								// assume there is no card
 	m_bADwritetofile = m_pADC_options->waveFormat.bADwritetofile;
 	m_bStartOutPutMode = m_pDAC_options->bAllowDA;
 	((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(m_bStartOutPutMode);
 	
 	// open document and remove database filters
-	auto pdb_doc = GetDocument();							// data document with database
+	auto pdb_doc = GetDocument();								// data document with database
 	m_ptableSet = &pdb_doc->m_pDB->m_mainTableSet;				// database itself
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
@@ -1495,8 +1495,7 @@ void CViewADContinuous::OnInitialUpdate()
 	// if current document, load parameters from current document into the local set of parameters
 	// if current document does not exist, do nothing
 	if (pdb_doc->m_pDB->GetNRecords() > 0) {
-		pdb_doc->OpenCurrentDataFile();							// read data descriptors from current data file
-		const auto p_dat = pdb_doc->m_pDat;						// get a pointer to the data file itself
+		const auto p_dat = pdb_doc->OpenCurrentDataFile();				// read data descriptors from current data file
 		if (p_dat != nullptr) 
 		{
 			m_pADC_options->waveFormat = *(p_dat->GetpWaveFormat());	// read data header

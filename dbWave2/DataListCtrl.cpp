@@ -775,7 +775,7 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 	else
 	{
 		const auto pspk_list = ptr->pspikeDoc->SetSpkListCurrent(pdb_doc->GetcurrentSpkListIndex());
-		p_wnd->SetSourceData(pspk_list, ptr->pspikeDoc);
+		p_wnd->SetSourceData(pspk_list, ((CViewdbWave*)GetParent())->GetDocument());
 		p_wnd->SetPlotMode(m_spikeplotmode, m_selclass);
 		long l_first = 0;
 		auto l_last = ptr->pspikeDoc->GetAcqSize();

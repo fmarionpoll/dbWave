@@ -121,17 +121,12 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;	
 }
 
-// --------------------------------------------------------------------------------
-
 void CSpikeClassListBox::MeasureItem(LPMEASUREITEMSTRUCT lpMIS)
 {
 	// all items are of fixed size
 	// must use LBS_OWNERDRAWVARIABLE for this to work
 	lpMIS->itemHeight = m_rowheight;	
 }
-
-
-// --------------------------------------------------------------------------------
 
 void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 {
@@ -209,8 +204,6 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	dc.Detach();
 }
 
-// --------------------------------------------------------------------------------
-
 void CSpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
 {
 	const auto pptr = reinterpret_cast<myptr*>(lpDI->itemData);
@@ -230,8 +223,6 @@ void CSpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
 	delete pptr;
 }
 
-// --------------------------------------------------------------------------------
-
 void CSpikeClassListBox::SetRowHeight(int rowheight)
 {
 	m_rowheight = rowheight;
@@ -239,14 +230,10 @@ void CSpikeClassListBox::SetRowHeight(int rowheight)
 		SetItemHeight(n_index, rowheight);
 }
 
-// --------------------------------------------------------------------------------
-
 void CSpikeClassListBox::SetLeftColWidth(int leftwidth)
 {
 	m_leftcolwidth = leftwidth;	
 }
-
-// --------------------------------------------------------------------------------
 
 void CSpikeClassListBox::SetColsWidth(int coltext, int colspikes, int colseparator)
 {	
@@ -257,8 +244,6 @@ void CSpikeClassListBox::SetColsWidth(int coltext, int colspikes, int colseparat
 	GetClientRect (rect);
 	m_widthBars = rect.Width() - m_leftcolwidth;
 }
-
-// --------------------------------------------------------------------------------
 
 int CSpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 {
@@ -275,17 +260,16 @@ int CSpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 	return iresult;
 }
 
-// --------------------------------------------------------------------------------
-
-void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc)
+void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 {
 	// erase content of the list box
 	SetRedraw(FALSE);	// prevent redrawing
 	ResetContent();		// clear content
 	m_pSList = pSList;
-	m_pSDoc  = pSDoc;
-	if (pSList == nullptr || pSDoc == nullptr)
+	m_pdbDoc = pdbDoc;
+	if (pSList == nullptr || pdbDoc == nullptr)
 		return;
+	m_pSDoc = pdbDoc->m_pSpk;
 	
 	// get list of classes
 	if (!pSList->IsClassListValid())
@@ -314,7 +298,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc)
 			ASSERT(pspkShapes != NULL);
 			pspkShapes->Create(_T(""), WS_CHILD|WS_VISIBLE, rect_spikes, this, i_id);
 
-			pspkShapes->SetSourceData(pSList);
+			pspkShapes->SetSourceData(pSList, pdbDoc);
 			pspkShapes->SetPlotMode(PLOT_ONECLASSONLY, iclass);
 			pspkShapes->SetRangeMode(RANGE_INDEX);
 			pspkShapes->SetSpkIndexes(0, nspikes-1);
@@ -327,7 +311,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc)
 		ASSERT(pspk_bars != NULL);
 		pspk_bars->Create(_T(""), WS_CHILD| WS_VISIBLE, rect_bars, this, i_id);
 
-		pspk_bars->SetSourceData(pSList, pSDoc);
+		pspk_bars->SetSourceData(pSList, pdbDoc);
 		pspk_bars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
 		pspk_bars->SetRangeMode(RANGE_INDEX);
 		pspk_bars->SetSpkIndexes(0, nspikes-1);
@@ -350,8 +334,6 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CSpikeDoc* pSDoc)
 	// exit: allow data redrawing
 	SetRedraw(TRUE);
 }
-
-// --------------------------------------------------------------------------------
 
 void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 {
@@ -380,8 +362,6 @@ void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 		(pptr->pspk_bars)->SetSpkList(p_spike_list);
 	}
 }
-
-// --------------------------------------------------------------------------------
 
 int CSpikeClassListBox::SelectSpike(int spikeno)
 {
@@ -446,8 +426,6 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	return oldspk;
 }
 
-// --------------------------------------------------------------------------------
-
 int CSpikeClassListBox::SetMouseCursorType(int cursorm)
 {
 	auto oldcursor=0;
@@ -460,8 +438,6 @@ int CSpikeClassListBox::SetMouseCursorType(int cursorm)
 	}
 	return oldcursor;
 }
-
-// --------------------------------------------------------------------------------
 
 void CSpikeClassListBox::OnSize(UINT nType, int cx, int cy) 
 {
@@ -478,8 +454,6 @@ void CSpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-// --------------------------------------------------------------------------------
-
 void CSpikeClassListBox::SetYzoom(int y_we, int y_wo)
 {
 	for (auto i=0; i<GetCount(); i++)
@@ -490,9 +464,6 @@ void CSpikeClassListBox::SetYzoom(int y_we, int y_wo)
 		(pptr->pspk_bars)->SetYWExtOrg(y_we, y_wo);
 	}
 }
-
-// --------------------------------------------------------------------------------
-
 void CSpikeClassListBox::SetXzoom(int x_we, int x_wo)
 {
 	for (auto i=0; i<GetCount(); i++)
@@ -503,8 +474,6 @@ void CSpikeClassListBox::SetXzoom(int x_we, int x_wo)
 	}
 }
 
-// --------------------------------------------------------------------------------
-
 int CSpikeClassListBox::GetYWExtent()
 {
 	ASSERT(GetCount() >0);
@@ -512,16 +481,12 @@ int CSpikeClassListBox::GetYWExtent()
 	return (pptr->pspk_bars)->GetYWExtent();
 }
 
-// --------------------------------------------------------------------------------
-
 int CSpikeClassListBox::GetYWOrg()
 {
 	ASSERT(GetCount() >0);
 	const auto pptr = reinterpret_cast<myptr*>(GetItemData(0));
 	return (pptr->pspk_bars)->GetYWOrg();
 }
-
-// --------------------------------------------------------------------------------
 
 int CSpikeClassListBox::GetXWExtent()
 {
@@ -533,8 +498,6 @@ int CSpikeClassListBox::GetXWExtent()
 	return i;
 }
 
-// --------------------------------------------------------------------------------
-
 int CSpikeClassListBox::GetXWOrg()
 {
 	ASSERT(GetCount() >0);
@@ -545,8 +508,6 @@ int CSpikeClassListBox::GetXWOrg()
 	return i;
 }
 
-// --------------------------------------------------------------------------------
-
 float CSpikeClassListBox::GetExtent_mV()
 {
 	ASSERT(GetCount() >0);
@@ -556,8 +517,6 @@ float CSpikeClassListBox::GetExtent_mV()
 		x = (pptr->pspk_shapes)->GetExtent_mV();
 	return x;
 }
-
-// --------------------------------------------------------------------------------
 
 void CSpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point) 
 {	
@@ -576,8 +535,6 @@ void CSpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-// --------------------------------------------------------------------------------
-
 HBRUSH CSpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor) 
 {
 	p_dc->SetTextColor(m_clrText );	// text
@@ -585,8 +542,6 @@ HBRUSH CSpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor)
 	return m_brBkgnd;
 	// Return a non-NULL brush if the parent's handler should not be called
 }
-
-// --------------------------------------------------------------------------------
 
 void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 {
@@ -628,7 +583,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
-		SetSourceData(m_pSList, m_pSDoc);
+		SetSourceData(m_pSList, m_pdbDoc);
 		SetTimeIntervals(l_first, l_last);
 		SelectSpike(spikeno);
 		return;
@@ -649,7 +604,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
-		SetSourceData(m_pSList, m_pSDoc);
+		SetSourceData(m_pSList, m_pdbDoc);
 		SetTimeIntervals(l_first, l_last);
 	}
 	else
@@ -662,8 +617,6 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 		return;
 	SelectSpike(spikeno);
 }
-
-// --------------------------------------------------------------------------------
 
 void CSpikeClassListBox::UpdateString(void* ptr, int iclass, int nbspikes)
 {

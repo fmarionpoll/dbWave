@@ -611,6 +611,7 @@ if %ERRORLEVEL%==1 (
     <ClCompile Include="WaveBuf.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WndVerticalHistogram.cpp" />
     <ClCompile Include="Xyparame.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -777,6 +778,7 @@ if %ERRORLEVEL%==1 (
     <ClInclude Include="ViewSpikeSort.h" />
     <ClInclude Include="ViewSpikeTemplate.h" />
     <ClInclude Include="WaveBuf.h" />
+    <ClInclude Include="WndVerticalHistogram.h" />
     <ClInclude Include="Xyparame.h" />
     <CustomBuild Include="Resource.h">
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Help\HTMLDefines.h;%(Outputs)</Outputs>

@@ -15,19 +15,19 @@ public:
 	
 // Attributes
 public:
-	WORD				m_wVersion;		//
-	CTime 				m_detectiondate; // date of creation
-	CString 			m_comment;		// spike comments
-	CString 			m_acqfile;		// data source file
+	WORD				m_wVersion;	
+	CTime 				m_detectiondate;	// date of creation
+	CString 			m_comment;			// spike comments
+	CString 			m_acqfile;			// data source file
 	CString				m_newpath;
-	CString				m_acqcomment;	// data acquisition comment	
+	CString				m_acqcomment;		// data acquisition comment	
 	CWaveFormat			m_wformat;
-	CTime				m_acqtime;		// data acquisition time
-	float				m_acqrate;		// acquisition sampling rate
-	long				m_acqsize;		// duration (nb of pts/chan)
-	CSpikeClass			m_spkclass;		// list of templates
+	CTime				m_acqtime;			// data acquisition time
+	float				m_acqrate;			// acquisition sampling rate
+	long				m_acqsize;			// duration (nb of pts/chan)
+	CSpikeClass			m_spkclass;			// list of templates
 	int					m_currspklist;
-	CIntervalsAndLevels		m_stimIntervals;			// stimulus array
+	CIntervalsAndLevels	m_stimIntervals;	// stimulus array
 
 protected:
 	CArray<CSpikeList, CSpikeList> spikelist_array;

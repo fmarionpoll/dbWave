@@ -863,7 +863,7 @@ BEGIN
     EDITTEXT        IDC_EDIT3,431,95,40,12,NOT WS_BORDER,WS_EX_STATICEDGE
     CONTROL         "IDC_DISPLAYSPIKE",IDC_DISPLAYSPIKE,"Button",BS_OWNERDRAW | WS_TABSTOP,63,32,74,61
     CONTROL         "IDC_DISPLAYPARM",IDC_DISPLAYPARM,"Button",BS_OWNERDRAW | WS_TABSTOP,178,109,293,79
-    CONTROL         "IDC_HISTOGRAM",IDC_HISTOGRAM,"Button",BS_OWNERDRAW | WS_TABSTOP,40,110,97,78
+    CONTROL         "IDC_HISTOGRAM",IDC_HISTOGRAM,"Button",BS_OWNERDRAW | WS_TABSTOP,11,110,126,78
     CONTROL         "IDC_DISPLAYBARS",IDC_DISPLAYBARS,"Button",BS_OWNERDRAW | WS_TABSTOP,177,32,294,61
     SCROLLBAR       IDC_SCROLLBAR1,216,95,214,12
     LTEXT           "spike",IDC_STATIC3,6,36,18,8
@@ -2347,8 +2347,8 @@ IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,2018,12,15
- PRODUCTVERSION 4,2018,12,15
+ FILEVERSION 4,2019,1,4
+ PRODUCTVERSION 4,2019,1,4
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2365,12 +2365,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "AgroParisTech - EGCE UMR 9191 (CNRS-Paris Sud-IRD)"
             VALUE "FileDescription", "Database-oriented  data acquisition and analysis for extracellular electrophysiology"
-            VALUE "FileVersion", "4.2018.12.15"
+            VALUE "FileVersion", "4.2019.1.4"
             VALUE "InternalName", "dbWave2"
             VALUE "LegalCopyright", "Copyright (C) 2018-2022"
             VALUE "OriginalFilename", "dbWave2.exe"
             VALUE "ProductName", " dbWave Application"
-            VALUE "ProductVersion", "4.2018.12.15"
+            VALUE "ProductVersion", "4.2019.1.4"
         END
     END
     BLOCK "VarFileInfo"

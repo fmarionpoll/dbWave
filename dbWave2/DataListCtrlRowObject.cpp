@@ -15,22 +15,12 @@ IMPLEMENT_SERIAL(CDataListCtrlRowObject, CObject, 0 /* schema number*/ )
 
 CDataListCtrlRowObject::CDataListCtrlRowObject(): bChanged(0), insectID(0)
 {
-	bInit = FALSE;
 	index = 0;
-	pdataWnd = nullptr;
-	pspikeWnd = nullptr;
-	pdataDoc = nullptr;
-	pspikeDoc = nullptr;
-	wversion = 0;
 }
 
 CDataListCtrlRowObject::CDataListCtrlRowObject(int i): bChanged(0), insectID(0), pdataDoc(nullptr), pspikeDoc(nullptr)
 {
-	bInit = FALSE;
 	index = i;
-	pdataWnd = nullptr;
-	pspikeWnd = nullptr;
-	wversion = 0;
 }
 
 CDataListCtrlRowObject::~CDataListCtrlRowObject()
@@ -81,6 +71,7 @@ CDataListCtrlRowObject& CDataListCtrlRowObject::operator = (const CDataListCtrlR
 		pspikeWnd = arg.pspikeWnd;
 		pdataDoc = arg.pdataDoc;
 		pspikeDoc = arg.pspikeDoc;
+		pdbWaveDoc = arg.pdbWaveDoc;
 	}
 	return *this;
 }

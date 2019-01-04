@@ -32,7 +32,7 @@ CSpikeEditDlg::CSpikeEditDlg(CWnd* pParent /*=NULL*/)
 	m_displayratio = 0;
 	m_yvextent = 0;
 	m_pSpkList = nullptr; // spike list
-	m_dbDoc = nullptr; // source data doc cDocument
+	m_pAcqDatDoc = nullptr; // source data doc cDocument
 	m_spikeChan = 0;
 }
 
@@ -107,19 +107,21 @@ BOOL CSpikeEditDlg::OnInitDialog()
 	mm_spikeno.ShowScrollBar(SB_VERT);
 
 	// attach spike buffer
+	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
+	m_pSpkList = m_pdbWaveDoc->m_pSpk->GetSpkListCurrent();
 	VERIFY(m_spkForm.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
-	m_spkForm.SetSourceData(m_pSpkList);
+	m_spkForm.SetSourceData(m_pSpkList, m_pdbWaveDoc);
 	if (m_spikeno < 0)						// select at least spike 0
 		m_spikeno = 0;
 
 	m_spkForm.SetRangeMode(RANGE_ALL);		// display mode (lines)
-	m_spkForm.SetPlotMode(PLOT_BLACK, 0);// display also artefacts
+	m_spkForm.SetPlotMode(PLOT_BLACK, 0);	// display also artefacts
 
-	if (m_dbDoc != nullptr)
+	if (m_pAcqDatDoc != nullptr)
 	{
 		VERIFY(m_sourceView.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
 		m_sourceView.SetbUseDIB(FALSE);
-		m_sourceView.AttachDataFile(m_dbDoc, m_dbDoc->GetDOCchanLength());
+		m_sourceView.AttachDataFile(m_pAcqDatDoc, m_pAcqDatDoc->GetDOCchanLength());
 		const auto lvSize = m_sourceView.GetRectSize();
 		m_sourceView.ResizeChannels(lvSize.cx, 0);// change nb of pixels	
 		m_sourceView.RemoveAllChanlistItems();
@@ -350,7 +352,7 @@ void CSpikeEditDlg::OnEnChangeYextent()
 
 void CSpikeEditDlg::LoadSourceData()
 {
-	if (m_dbDoc == nullptr)
+	if (m_pAcqDatDoc == nullptr)
 		return;
 
 	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms	
@@ -392,7 +394,7 @@ void CSpikeEditDlg::LoadSourceData()
 
 void CSpikeEditDlg::LoadSpikeFromData(int shift)
 {
-	if (m_dbDoc != nullptr) {
+	if (m_pAcqDatDoc != nullptr) {
 		auto offset = m_pSpkList->GetSpikeAmplitudeOffset(m_spikeno);
 		m_iitime += shift;
 		m_pSpkList->SetSpikeTime(m_spikeno, m_iitime);
@@ -406,16 +408,16 @@ void CSpikeEditDlg::LoadSpikeFromData(int shift)
 		if (method == 0)
 		{
 			int nchans;						// get buffer address and structure
-			auto lp_source = m_dbDoc->LoadRawDataParams(&nchans);
-			lp_source += ((l_first - m_dbDoc->GettBUFfirst())*nchans
+			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&nchans);
+			lp_source += ((l_first - m_pAcqDatDoc->GettBUFfirst())*nchans
 				+ m_spikeChan);
 			m_pSpkList->TransferDataToSpikeBuffer(m_spikeno, lp_source, nchans);
 		}
 		else
 		{
-			m_dbDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
-			auto p_data = m_dbDoc->GetpTransfDataBUF();
-			p_data += (l_first - m_dbDoc->GettBUFfirst());
+			m_pAcqDatDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
+			auto p_data = m_pAcqDatDoc->GetpTransfDataBUF();
+			p_data += (l_first - m_pAcqDatDoc->GettBUFfirst());
 			m_pSpkList->TransferDataToSpikeBuffer(m_spikeno, p_data, 1);
 		}
 

@@ -546,7 +546,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 		return;
 
 	// open data file
-	if (!p_dbwave_doc->OpenCurrentDataFile())
+	if (p_dbwave_doc->OpenCurrentDataFile() == nullptr)
 	{
 		MessageBox(_T("This data file could not be opened"), _T("The file might be missing, or inaccessible..."), MB_OK);
 		m_bvalidDoc = FALSE;

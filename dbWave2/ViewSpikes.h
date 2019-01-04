@@ -27,7 +27,7 @@ public:
 
 // Attributes
 protected:
-	CSpikeClassListBox m_spkClass;		// listbox of spike classes
+	CSpikeClassListBox m_spkClassListBox;	// listbox of spike classes
 	CLineViewWnd	m_sourceView;		// data display
 	CEditCtrl		mm_spikeno;
 	CEditCtrl		mm_spikenoclass;

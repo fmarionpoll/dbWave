@@ -1012,8 +1012,7 @@ void CViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		p_dc->SelectObject(p_old_font);
 
 	p_dbwave_doc->DBSetCurrentRecordPosition(file0);
-	p_dbwave_doc->OpenCurrentSpikeFile();
-	m_pSpkDoc = p_dbwave_doc->m_pSpk;			
+	m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();			
 }
 
 void CViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) 
@@ -1188,8 +1187,7 @@ void CViewSpikeHist::BuildData()
 
 		// select spike file
 		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-		p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		if (nullptr == m_pSpkDoc )
 			continue;
 
@@ -1242,8 +1240,7 @@ void CViewSpikeHist::BuildData()
 	if (currentfile != p_dbwave_doc->DBGetCurrentRecordPosition())
 	{
 		p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-		p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 	}
 	SAFE_DELETE(pdlg);
@@ -1563,8 +1560,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 			ifile++)
 	{
 		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-		p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc = p_dbwave_doc->m_pSpk;
+		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 		// load pointers to spike file and spike list
@@ -1712,8 +1708,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 	}
 
 	p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-	p_dbwave_doc->OpenCurrentSpikeFile();
-	m_pSpkDoc = p_dbwave_doc->m_pSpk;
+	m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 	m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 	p_dc->SelectObject(pold_pen);

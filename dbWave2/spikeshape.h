@@ -34,8 +34,9 @@ protected:
 	int		m_ndisplayedspikes{};	// number of spikes displayed
 	BOOL	m_ballFiles;		// display data from all files in CdbWaveDoc*
 	CArray <CPoint, CPoint> polypoints_;		// points displayed with polyline
-	CSpikeList*	p_spikelist_ ;	// spike list from which spikes are read
-	CdbWaveDoc* p_doc_ ;
+
+	CSpikeList*	p_spikelist_ ;
+	CdbWaveDoc* p_dbwave_doc_ ;
 
 // Helpers
 public:
@@ -51,7 +52,7 @@ public:
 	void SetTextOption(BOOL bText) {m_bText=bText;}
 	BOOL GetTextOption() const {return m_bText;}
 
-	void SetSourceData(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; m_selectedspike = -1; }
+	void SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document) { p_dbwave_doc_ = p_document; p_spikelist_ = p_spk_list; m_selectedspike = -1; }
 	void SetSpkList(CSpikeList* p_spk_list) {p_spikelist_ = p_spk_list;}
 
 	void SetCurrentClass(int curcla) {m_currentclass=curcla;}
@@ -64,7 +65,7 @@ public:
 	void SetSpkIndexes(int first, int last) 	{m_spkfirst=first, m_spklast=last;}
 	int	GetHitSpike() const { return m_hitspk; }
 	int	GetSelectedSpike() const { return m_selectedspike; }
-	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_doc_ = p_document; }
+	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_dbwave_doc_ = p_document; }
 
 	// non-inline functions
 	void		MoveVTtrack(int itrack, int newval);
