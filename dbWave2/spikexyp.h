@@ -66,6 +66,7 @@ protected:
 	void	DrawSelectedSpike(int nospike, int color, CDC* p_dc);
 	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 	int		DoesCursorHitCurve(CPoint point);
+	int		DoesCursorHitCurveInDoc(CPoint point);
 	BOOL	is_spike_within_limits(int ispike);
 	void	GetExtents();
 	void	HighlightOnePoint(int nospike, CDC* p_dc);
@@ -73,6 +74,7 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	
 DECLARE_MESSAGE_MAP()
 };
 

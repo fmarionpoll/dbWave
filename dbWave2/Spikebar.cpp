@@ -655,6 +655,45 @@ void CSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
+int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
+{
+	long nfiles = 1;
+	long ncurrentfile = 0;
+	if (m_ballFiles)
+	{
+		nfiles = p_dbwave_doc_->DBGetNRecords();
+		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+	}
+
+	int result = -1;
+	for (long ifile = 0; ifile < nfiles; ifile++)
+	{
+		if (m_ballFiles)
+		{
+			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		}
+
+		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
+		{
+			continue;
+		}
+		result = DoesCursorHitCurve(point);
+		if (result >= 0)
+			break;
+	}
+
+	if (m_ballFiles && result < 0)
+	{
+		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->OpenCurrentSpikeFile();
+		p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+	}
+
+	return result;
+}
+
 int CSpikeBarWnd::DoesCursorHitCurve(const CPoint point)
 {
 	auto hitspk = -1;

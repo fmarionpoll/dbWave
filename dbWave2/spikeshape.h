@@ -91,6 +91,7 @@ protected:
 	void		GetExtentsCurrentSpkList();
 
 	int  		DoesCursorHitCurve(CPoint point) const;
+	int			DoesCursorHitCurveInDoc(CPoint point);
 	void		DrawSelectedSpike(int nospike, CDC* p_dc);
 	void		DrawFlaggedSpikes(CDC* p_dc);
 	void		PlotArraytoDC(CDC* p_dc, short* pspk);
