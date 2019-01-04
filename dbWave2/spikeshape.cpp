@@ -428,7 +428,7 @@ void CSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	
 	// test if mouse hit one spike
 	// if hit, then tell parent to select corresp spike
-	m_hitspk = DoesCursorHitCurve(point);
+	m_hitspk = DoesCursorHitCurveInDoc(point);
 	if (m_hitspk >= 0)
 	{
 		// cancel track rect mode
@@ -502,6 +502,45 @@ void CSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 				PostMyMessage(HINT_DBLCLKSEL, iselectedspike);
 		}
 	}
+}
+
+int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
+{
+	long nfiles = 1;
+	long ncurrentfile = 0;
+	if (m_ballFiles)
+	{
+		nfiles = p_doc_->DBGetNRecords();
+		ncurrentfile = p_doc_->DBGetCurrentRecordPosition();
+	}
+
+	int result = -1;
+	for (long ifile = 0; ifile < nfiles; ifile++)
+	{
+		if (m_ballFiles)
+		{
+			p_doc_->DBSetCurrentRecordPosition(ifile);
+			p_doc_->OpenCurrentSpikeFile();
+			p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
+		}
+
+		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+		{
+			continue;
+		}
+		result = DoesCursorHitCurve(point);
+		if (result >= 0)
+			break;
+	}
+
+	if (m_ballFiles && result < 0)
+	{
+		p_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_doc_->OpenCurrentSpikeFile();
+		p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
+	}
+
+	return result;
 }
 
 int  CSpikeShapeWnd::DoesCursorHitCurve(const CPoint point) const

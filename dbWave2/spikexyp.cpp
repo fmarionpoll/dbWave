@@ -452,7 +452,7 @@ void CSpikeXYpWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	
 	// test if mouse hit a spike   
-	m_hitspk = DoesCursorHitCurve(point);
+	m_hitspk = DoesCursorHitCurveInDoc(point);
 	if (m_hitspk >= 0)
 	{
 		// cancel track rect mode
@@ -504,6 +504,45 @@ void CSpikeXYpWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 		CScopeScreen::OnLButtonDblClk(nFlags, point);
 	else
 		GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),reinterpret_cast<LPARAM>(m_hWnd));
+}
+
+int CSpikeXYpWnd::DoesCursorHitCurveInDoc(CPoint point) 
+{
+	long nfiles = 1;
+	long ncurrentfile = 0;
+	if (m_ballFiles)
+	{
+		nfiles = p_dbwave_doc_->DBGetNRecords();
+		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+	}
+
+	int result = -1;
+	for (long ifile = 0; ifile < nfiles; ifile++)
+	{
+		if (m_ballFiles)
+		{
+			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		}
+
+		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
+		{
+			continue;
+		}
+		result = DoesCursorHitCurve(point);
+		if (result >= 0)
+			break;
+	}
+
+	if (m_ballFiles && result < 0)
+	{
+		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->OpenCurrentSpikeFile();
+		p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+	}
+
+	return result;
 }
 
 int CSpikeXYpWnd::DoesCursorHitCurve(CPoint point)

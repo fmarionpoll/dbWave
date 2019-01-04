@@ -71,7 +71,7 @@ public:
 protected:
 	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 	int		DoesCursorHitCurve(CPoint point);
-
+	int		DoesCursorHitCurveInDoc(CPoint point);
 	void 	DisplayBars(CDC* p_dc, CRect* rect);
 	void	HighlightOneBar(int nospike, CDC* p_dc) const;
 	void	DisplayStimulus(CDC* p_dc, CRect* rect) const;
