@@ -31,7 +31,7 @@ END_MESSAGE_MAP()
 
 CSpikeHistWnd::CSpikeHistWnd() 
 {
-	m_pSL = nullptr;			// source spk list
+	p_spikelist_ = nullptr;			// source spk list
 	m_lFirst = 0;				// source data intervals
 	m_lLast = 0;				// last interval
 	m_selclass = 0;				// selected class
@@ -102,9 +102,6 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 	}
 
 	//loop to display all histograms (but not the selected one)
-	CRect rect_histog;
-	
-	int i;
 	for (auto ihist=0; ihist<histogram_ptr_array.GetSize(); ihist++)
 	{
 		const auto p_dw = histogram_ptr_array.GetAt(ihist);
@@ -126,46 +123,22 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 				continue;
 			}
 		}
-		rect_histog.left = m_abcissaminval-m_binsize;
-		rect_histog.right = m_abcissaminval;
-		rect_histog.bottom = 0;		
-		for (i=1; i<p_dw->GetSize(); i++)
-		{
-			rect_histog.left+= m_binsize;
-			rect_histog.right+= m_binsize;
-			rect_histog.top = static_cast<int>(p_dw->GetAt(i));
-			if (rect_histog.top > 0)
-			{
-				p_dc->MoveTo(rect_histog.left, rect_histog.bottom);
-				p_dc->FillSolidRect(rect_histog, m_colorTable[color]);
-			}
-		}		
+
+		PlotHistogram(p_dc, p_dw, color);
 	}
 
 	// plot selected class (one histogram)
 	if (m_plotmode == PLOT_ONECLASS)
 	{
-		color = BLACK_COLOR; 
+		color = BLACK_COLOR;
 		CDWordArray* p_dw = nullptr;
 		GetClassArray(m_selclass, p_dw);
-		if (p_dw  != nullptr)
+		if (p_dw != nullptr)
 		{
-			rect_histog.left = m_abcissaminval- m_binsize;
-			rect_histog.right = m_abcissaminval;
-			rect_histog.bottom = 0;
-			for (i=1; i<p_dw->GetSize(); i++)
-			{
-				rect_histog.left+= m_binsize;
-				rect_histog.right+= m_binsize;
-				rect_histog.top = static_cast<int>(p_dw->GetAt(i) /* /scale */);
-				if (rect_histog.top > 0)
-				{
-					p_dc->MoveTo(rect_histog.left, rect_histog.bottom);
-					p_dc->FillSolidRect(rect_histog, m_colorTable[color]);
-				}
-			}
+			PlotHistogram(p_dc, p_dw, color);
 		}
 	}
+
 
 	// display cursors
 	p_dc->SetBkColor(bkcolor);	// restore background color
@@ -174,6 +147,25 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 	if (GetNVTtags() > 0)		// display vertical tags
 		DisplayVTtags(p_dc);	
 	p_dc->RestoreDC(n_saved_dc);
+}
+
+void CSpikeHistWnd::PlotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
+{
+	CRect rect_histog;
+	rect_histog.left = m_abcissaminval - m_binsize;
+	rect_histog.right = m_abcissaminval;
+	rect_histog.bottom = 0;
+	for (auto i = 1; i < p_dw->GetSize(); i++)
+	{
+		rect_histog.left += m_binsize;
+		rect_histog.right += m_binsize;
+		rect_histog.top = static_cast<int>(p_dw->GetAt(i));
+		if (rect_histog.top > 0)
+		{
+			p_dc->MoveTo(rect_histog.left, rect_histog.bottom);
+			p_dc->FillSolidRect(rect_histog, m_colorTable[color]);
+		}
+	}
 }
 
 void CSpikeHistWnd::MoveHZtagtoVal(int i, int val)
@@ -191,9 +183,6 @@ void CSpikeHistWnd::MoveVTtagtoVal(int itag, int ival)
 	XorVTtag(j);
 	SetVTtagVal(itag, ival);
 }
-
-// check if any histogram array has been created for class "iclass"
-// (actually, this parameter is stored in the first item of the array)
 
 void CSpikeHistWnd::GetClassArray(int iclass, CDWordArray*& pDW)
 {
@@ -341,7 +330,6 @@ void CSpikeHistWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-//---------------------------------------------------------------------------
 // ZoomData
 // convert pixels to logical pts and reverse to adjust curve to the
 // rectangle selected
@@ -349,7 +337,6 @@ void CSpikeHistWnd::OnLButtonDown(UINT nFlags, CPoint point)
 // dp to lp: l = (d -vo)*we/ve + wo
 // wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
 // with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
-//---------------------------------------------------------------------------
 
 void CSpikeHistWnd::ZoomData(CRect* rFrom, CRect* rDest)
 {
@@ -513,17 +500,6 @@ void CSpikeHistWnd::GetHistogLimits(int ihist)
 	}
 }
 	
-// 	BuildHistogFromDoc()
-// parameters
-//		CWordArray* pVal	- word array source data
-//		CDWordArray	pTime	- dword array with time intervals assoc with pVal
-//		long l_first			= index first pt from file
-//		long l_last 			= index last pt from file
-//		int max				= maximum
-//		int min				= minimum
-//		int nbins			= number of bins -> bin size
-//		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
-
 void CSpikeHistWnd::ReSize_And_Clear_Histograms(int nbins, int max, int min)
 {
 	m_binsize = (max-min+1)/nbins+1;		// set bin size
@@ -547,78 +523,8 @@ void CSpikeHistWnd::OnSize(UINT nType, int cx, int cy)
 	m_yVO=cy;
 }
 
-// BuildHistFromArrays
-// parameters:
-// 1) data arrays
-//		pVal	- array of words storing the parameters measured on the spikes; size: nspikes.
-//		piiTime	- array of spike occurence time; size: nspikes.
-//		pClass	- array of class values; ; size: nspikes.
-// 2) boundaries:
-//		l_first	- first time interval that is ok
-//		l_last	- last time interval that is ok
-//		max		- maximum value of "pVal" taken into account
-//		min		- minimum value of "pVal"
-//		nbins	- number of bins in the histogram
-// 3) afresh?
-//		bNew	- yes: erase old data, no: add new data to the current ones
-
-void CSpikeHistWnd::BuildHistFromArrays(
-			CArray<int, int>* pY1, CArray<long, long>* piiTime, CArray<int, int>* pClass,
-			long l_first, long l_last, int max, int min, int nbins,
-			BOOL bNew)
+CDWordArray* CSpikeHistWnd::InitClassArray(int nbins, int spike_class) 
 {
-	// erase data and arrays if bnew:
-	if (bNew)
-		RemoveHistData();
-
-	// for some unknown reason, m_pHistarray is set at zero when arriving here
-	if (histogram_ptr_array.GetSize() <= 0)
-	{
-		const auto p_dword_array = new (CDWordArray);	// init array
-		ASSERT(p_dword_array != NULL);
-		histogram_ptr_array.Add(p_dword_array);					// save pointer to this new array
-		ASSERT(histogram_ptr_array.GetSize() > 0);
-	}
-	auto* p_dword_array = histogram_ptr_array[0];
-	if (nbins != m_nbins || p_dword_array->GetSize() != (nbins+1))
-		ReSize_And_Clear_Histograms (nbins, max, min);
-
-	CDWordArray* p_dw = nullptr;
-
-	for (auto i=pY1->GetUpperBound(); i>=0; i--)	
-	{
-		// check that the corresp spike fits within the time limits requested
-		const auto iitime = piiTime->GetAt(i);		// get spike time
-		if (iitime < l_first || iitime > l_last)	// check if within requested interval
-			continue;							// no: skip this spike
-		auto index = pY1->GetAt(i);				// get spike parameter value
-		if (index > m_abcissamaxval || index < m_abcissaminval)
-			continue;
-
-		// increment corresponding histogram interval into the first histogram (general, displayed in grey)
-		index = (index-m_abcissaminval)/m_binsize +1;
-		auto dw_data = p_dword_array->GetAt(index) + 1;
-		p_dword_array->SetAt(index, dw_data);
-
-		// dispatch into corresp class histogram (create one if necessary)
-		if (pClass->GetSize() > 0 )
-		{
-			const auto spike_class = pClass->GetAt(i);
-			GetClassArray(spike_class, p_dw);
-			if (p_dw == nullptr)
-				p_dw = InitClassArray(nbins, spike_class);
-		}
-		if (p_dw != nullptr)
-		{ 
-			dw_data = p_dw->GetAt(index)+1;
-			p_dw->SetAt(index, dw_data);
-		}
-	}
-	GetHistogLimits(0);    
-}
-
-CDWordArray* CSpikeHistWnd::InitClassArray(int nbins, int spike_class) {
-	
 	CDWordArray* p_dw = new (CDWordArray);	// init array
 	ASSERT(p_dw != NULL);
 	histogram_ptr_array.Add(p_dw);		// save pointer to this new array
@@ -684,7 +590,18 @@ void CSpikeHistWnd::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first,
 	GetHistogLimits(0);
 }
 
-void CSpikeHistWnd::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles,long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
+// 	BuildHistFromDocument()
+// parameters
+//		CdbWaveDoc* p_doc	- dbWave document
+//		BOOL ballFiles		- if false, compute only from current spikelist, otherwise compute over the whole document
+//		long l_first		= index first pt from file
+//		long l_last 		= index last pt from file
+//		int max				= maximum
+//		int min				= minimum
+//		int nbins			= number of bins -> bin size
+//		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
+
+void CSpikeHistWnd::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
 {
 	// erase data and arrays if bnew:
 	if (bNew) 

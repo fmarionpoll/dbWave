@@ -87,7 +87,7 @@ public:
 	BOOL			CreateDirectories			(CString path);
 
 protected:
-	BOOL			TransposeFile(CSharedFile* pSF);
+	BOOL			TransposeFileForExcel(CSharedFile* pSF);
 	int				CheckifFilesCanbeOpened (CStringArray& filenames, CSharedFile* psf);
 
 // Overrides
@@ -114,9 +114,7 @@ public:
 	inline void DBRefreshQuery()					{ if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery();}
 	void		DBDeleteCurrentRecord();
 	CString		DBGetCurrentDatFileName(const BOOL bTest = FALSE);
-	BOOL		DBSetCurrentDatFileName(const BOOL b_test = FALSE);
 	CString		DBGetCurrentSpkFileName(const BOOL bTest = FALSE);
-	BOOL		DBSetCurrentSpkFileName(const BOOL bTest = FALSE);
 	CString		DBDefineCurrentSpikeFileName();
 	inline void DBSetDataLen(long len) { m_pDB->SetDataLen(len); }
 	long		DBGetDataLen();

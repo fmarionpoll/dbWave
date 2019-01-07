@@ -35,17 +35,17 @@ protected:
 
 	long		m_lFirst;
 	long		m_lLast;
-	CSpikeList* m_pSList;
-	CSpikeDoc*	m_pSDoc;
-	CdbWaveDoc* m_pdbDoc;
+	CSpikeList* p_spikelist_	= nullptr;
+	CSpikeDoc*	p_spike_doc_	= nullptr;
+	CdbWaveDoc* p_dbwave_doc_	= nullptr;
 	HWND		m_hwndBarsReflect;
 
 // Operations
 public:
 	void SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc);
 	void SetSpkList(CSpikeList* p_spike_list);
-	inline CSpikeList* GetSpkListCurrent() const {return m_pSList;};
-	inline CSpikeDoc* GetSpikeDoc() const {return m_pSDoc;};
+	inline CSpikeList* GetSpkListCurrent() const {return p_spikelist_;};
+	inline CSpikeDoc* GetSpikeDoc() const {return p_spike_doc_;};
 
 	void SetTimeIntervals(long l_first, long l_last);
 	long GetTimeFirst() const {return m_lFirst;}

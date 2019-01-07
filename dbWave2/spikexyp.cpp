@@ -218,6 +218,9 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC* p_dc)
 
 BOOL CSpikeXYpWnd::IsSpikeWithinRange(int spikeno)
 {
+	if (p_spikelist_->GetTotalSpikes() < 1)
+		return FALSE;
+
 	const auto spike_element = p_spikelist_->GetSpikeElemt(spikeno);
 	const auto iitime = spike_element->get_time();
 	if (m_rangemode == RANGE_TIMEINTERVALS
@@ -268,18 +271,11 @@ void CSpikeXYpWnd::DisplaySpike(int spikeno, BOOL bselect)
 	}
 	else
 	{
-		switch (m_plotmode)
+		color = RED_COLOR;
+		if (m_plotmode == PLOT_CLASSCOLORS)
 		{
-		case PLOT_CLASSCOLORS:
 			HighlightOnePoint(spikeno, &dc);
 			color = spike_class % 8;
-			break;
-		case PLOT_BLACK:
-		case PLOT_ONECLASSONLY:
-		case PLOT_ONECLASS:
-		default:
-			color = RED_COLOR;		// Red
-			break;
 		}
 	}
 
@@ -523,10 +519,10 @@ int CSpikeXYpWnd::DoesCursorHitCurveInDoc(CPoint point)
 		{
 			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
-		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
+		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
 		{
 			continue;
 		}
@@ -539,7 +535,7 @@ int CSpikeXYpWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
 
 	return result;

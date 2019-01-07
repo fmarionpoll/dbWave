@@ -38,8 +38,6 @@ CSpikeClassListBox::CSpikeClassListBox(): m_selspikeLB(0), m_oldsel(0), m_lFirst
 {
 	m_rowheight = 20;
 	m_leftcolwidth = 20;
-	m_pSList = nullptr;
-	m_pSDoc = nullptr;
 	m_bText = TRUE;
 	m_bSpikes = TRUE;
 	m_bBars = TRUE;
@@ -107,7 +105,7 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			// patch: when we displace a spike to line 0, the line nb is not correct (shadow window intercepting mouse?)
 			if (icursel <0 || icursel > GetCount())
 				icursel = 0;
-			ChangeSpikeClass(m_selspikeLB, m_pSList->GetclassID(icursel));
+			ChangeSpikeClass(m_selspikeLB, p_spikelist_->GetclassID(icursel));
 		}
 		m_bHitspk=FALSE;
 		break;
@@ -265,11 +263,11 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 	// erase content of the list box
 	SetRedraw(FALSE);	// prevent redrawing
 	ResetContent();		// clear content
-	m_pSList = pSList;
-	m_pdbDoc = pdbDoc;
+	p_spikelist_ = pSList;
+	p_dbwave_doc_ = pdbDoc;
 	if (pSList == nullptr || pdbDoc == nullptr)
 		return;
-	m_pSDoc = pdbDoc->m_pSpk;
+	p_spike_doc_ = pdbDoc->m_pSpk;
 	
 	// get list of classes
 	if (!pSList->IsClassListValid())
@@ -354,7 +352,7 @@ void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 
 void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 {
-	m_pSList = p_spike_list;
+	p_spikelist_ = p_spike_list;
 	for (auto i=0; i<GetCount(); i++)
 	{
 		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
@@ -384,23 +382,23 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	// select spike
 	if (spikeno >= 0)
 	{	// get address of spike parms
-		const auto p_spike_element = m_pSList->GetSpikeElemt(spikeno);	
+		const auto p_spike_element = p_spikelist_->GetSpikeElemt(spikeno);	
 		cla = p_spike_element->get_class();
 
 		// multiple selection
 		if (b_multiple_selection)
 		{
-			auto nflaggedspikes = m_pSList->ToggleSpikeFlag(spikeno);
-			if (m_pSList->GetSpikeFlagArrayCount() < 1)
+			auto nflaggedspikes = p_spikelist_->ToggleSpikeFlag(spikeno);
+			if (p_spikelist_->GetSpikeFlagArrayCount() < 1)
 				spikeno=-1;
 		}
 		// single selection
 		else
-			m_pSList->SetSingleSpikeFlag(spikeno);
+			p_spikelist_->SetSingleSpikeFlag(spikeno);
 	}
 	// un-select all spikes
 	else
-		m_pSList->RemoveAllSpikeFlags();
+		p_spikelist_->RemoveAllSpikeFlags();
 
 	// select corresponding row
 	if (spikeno >= 0) 
@@ -551,8 +549,8 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	// ---------------- 1) old spike : deselect spike 
 	// ----------------    and remove from corresp line (destroy?)
 
-	const auto oldclass = m_pSList->GetSpikeClass(spikeno);
-	m_pSList->SetSpikeClass(spikeno, newclass);
+	const auto oldclass = p_spikelist_->GetSpikeClass(spikeno);
+	p_spikelist_->SetSpikeClass(spikeno, newclass);
 
 	// get row corresponding to oldclass
 	myptr* pptr = nullptr;
@@ -572,18 +570,18 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	}
 	// decrease total nb of spikes within class
 	CRect rect;
-	auto nbspikes = m_pSList->GetclassNbspk(irow)-1;
+	auto nbspikes = p_spikelist_->GetclassNbspk(irow)-1;
 	// reset all if line ought to be suppressed
 	if (nbspikes > 0)
 	{
-		m_pSList->SetclassNbspk(irow, nbspikes);
+		p_spikelist_->SetclassNbspk(irow, nbspikes);
 		UpdateString(pptr, oldclass, nbspikes);
 	}
 	else
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
-		SetSourceData(m_pSList, m_pdbDoc);
+		SetSourceData(p_spikelist_, p_dbwave_doc_);
 		SetTimeIntervals(l_first, l_last);
 		SelectSpike(spikeno);
 		return;
@@ -604,13 +602,13 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
-		SetSourceData(m_pSList, m_pdbDoc);
+		SetSourceData(p_spikelist_, p_dbwave_doc_);
 		SetTimeIntervals(l_first, l_last);
 	}
 	else
 	{
-		nbspikes = m_pSList->GetclassNbspk(irow)+1;
-		m_pSList->SetclassNbspk(irow, nbspikes);
+		nbspikes = p_spikelist_->GetclassNbspk(irow)+1;
+		p_spikelist_->SetclassNbspk(irow, nbspikes);
 		UpdateString(pptr, newclass, nbspikes);
 	}
 	if (!GetItemRect(irow, &rect))

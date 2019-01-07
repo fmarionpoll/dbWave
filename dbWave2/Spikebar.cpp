@@ -447,6 +447,9 @@ void CSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 
 BOOL CSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 {
+	if (p_spikelist_->GetTotalSpikes() < 1)
+		return false;
+
 	if (m_spklast > p_spikelist_->GetTotalSpikes()-1) 
 		m_spklast = p_spikelist_->GetTotalSpikes()-1;
 	if (m_spkfirst < 0) m_spkfirst = 0;
@@ -672,10 +675,10 @@ int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 		{
 			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
-		if (p_spike_list_ == nullptr || p_spike_list_->GetTotalSpikes() == 0)
+		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
 		{
 			continue;
 		}
@@ -688,7 +691,7 @@ int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spike_list_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
 
 	return result;

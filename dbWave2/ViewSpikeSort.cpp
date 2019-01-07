@@ -1031,8 +1031,7 @@ void CViewSpikeSort::SelectSpikeFromCurrentList(int spikeno)
 
 	spikeshape_wnd_.SelectSpikeShape(ispike_local);
 	spikebars_wnd_.SelectSpike(ispike_local);
-	if (m_bMeasureDone)
-		xygraph_wnd_.SelectSpike(ispike_local);
+	xygraph_wnd_.SelectSpike(ispike_local);
 	m_pSpkList->m_selspike = ispike_local;
 
 	m_spikenoclass = -1;

@@ -29,9 +29,6 @@ BEGIN_MESSAGE_MAP(CdbWaveDoc, COleDocument)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_OLE_VERB_FIRST, ID_OLE_VERB_LAST, COleDocument::OnUpdateObjectVerbMenu)
 END_MESSAGE_MAP()
 
-
-// CdbWaveDoc construction/destruction
-
 CdbWaveDoc::CdbWaveDoc()
 {
 	m_pDB = nullptr;
@@ -162,9 +159,6 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 	return m_validTables;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbWaveDoc serialization
-
 void CdbWaveDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
@@ -177,8 +171,6 @@ void CdbWaveDoc::Serialize(CArchive& ar)
 	}
 }
 
-// CdbWaveDoc diagnostics
-
 #ifdef _DEBUG
 void CdbWaveDoc::AssertValid() const
 {
@@ -190,8 +182,6 @@ void CdbWaveDoc::Dump(CDumpContext& dc) const
 	COleDocument::Dump(dc);
 }
 #endif //_DEBUG
-
-// CdbWaveDoc commands
 
 BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName) 
 {
@@ -233,8 +223,6 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	return FALSE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 BOOL CdbWaveDoc::OpenDatabase (LPCTSTR lpszPathName) 
 {
 	auto tmp_db = new CdbWdatabase;
@@ -272,8 +260,6 @@ BOOL CdbWaveDoc::OpenDatabase (LPCTSTR lpszPathName)
 	return m_validTables;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 BOOL CdbWaveDoc::OnSaveDocument(LPCTSTR lpszPathName) 
 {
 	// now duplicate file
@@ -306,8 +292,6 @@ BOOL CdbWaveDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	return TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 CString CdbWaveDoc::DBDefineCurrentSpikeFileName() {
 
 	if (!DBGetCurrentSpkFileName(TRUE).IsEmpty())
@@ -338,7 +322,6 @@ CString CdbWaveDoc::DBDefineCurrentSpikeFileName() {
 	return m_currentSpikefileName;
 }
 
-
 CString CdbWaveDoc::DBGetCurrentDatFileName(const BOOL b_test)
 {
 	m_currentDatafileName = m_pDB->GetDatFilenameFromCurrentRecord();
@@ -346,15 +329,6 @@ CString CdbWaveDoc::DBGetCurrentDatFileName(const BOOL b_test)
 	if (b_test && !IsFilePresent(filename))
 		filename.Empty();
 	return filename;	
-}
-
-BOOL CdbWaveDoc::DBSetCurrentDatFileName(const BOOL b_test)
-{
-	m_currentDatafileName = m_pDB->GetDatFilenameFromCurrentRecord();
-	BOOL flag = true;
-	if (b_test) 
-		flag = IsFilePresent(m_currentDatafileName);
-	return flag;
 }
 
 CString CdbWaveDoc::DBGetCurrentSpkFileName(const BOOL b_test)
@@ -365,17 +339,6 @@ CString CdbWaveDoc::DBGetCurrentSpkFileName(const BOOL b_test)
 		file_name.Empty();
 	return file_name;
 }
-
-BOOL CdbWaveDoc::DBSetCurrentSpkFileName(const BOOL b_test)
-{
-	m_currentSpikefileName = m_pDB->GetSpkFilenameFromCurrentRecord();
-	BOOL flag = true;
-	if (b_test)
-		flag = IsFilePresent(m_currentSpikefileName);
-	return flag;
-}
-
-/////////////////////////////////////////////////////////////////////////////
 
 long CdbWaveDoc::DBGetDataLen()
 {
@@ -389,11 +352,6 @@ long CdbWaveDoc::DBGetDataLen()
 
 	return datalen;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-
-// Open current data file
-// return TRUE if OK, FALSE if a problem occurred and the operation has aborted
 
 CAcqDataDoc* CdbWaveDoc::OpenCurrentDataFile()
 {
@@ -415,9 +373,6 @@ CAcqDataDoc* CdbWaveDoc::OpenCurrentDataFile()
 		m_pDat->SetPathName(m_currentDatafileName, FALSE);
 	return m_pDat;
 }
-
-// Open current spike file
-// return TRUE if OK and FALSE if operation has aborted
 
 CSpikeDoc* CdbWaveDoc::OpenCurrentSpikeFile()
 {
@@ -515,8 +470,6 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 	return dummy;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 long CdbWaveDoc::DBGetCurrentRecordPosition()
 {
 	long ifile = -1;
@@ -583,7 +536,6 @@ long CdbWaveDoc::Getnbspikes()
 {
 	return m_pDB->m_mainTableSet.m_nspikes;
 }
-
 
 long CdbWaveDoc::Getnbspikeclasses()
 {
@@ -963,7 +915,6 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 	return true;
 }
 
-//This function uses CFile to copy binary files.
 bool CdbWaveDoc::BinaryFileCopy(const LPCTSTR pszSource, LPCTSTR pszDest)
 {
    // check that destfile does not exist
@@ -1034,14 +985,10 @@ bool CdbWaveDoc::BinaryFileCopy(const LPCTSTR pszSource, LPCTSTR pszDest)
    return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 HMENU CdbWaveDoc::GetDefaultMenu()
 {
 	return m_hMyMenu;    // just use original default
 }
-
-/////////////////////////////////////////////////////////////////////////////
 
 // import description from a list of data files. The descriptions saved
 // into each of the datafiles are extracted and into the database 
@@ -1400,7 +1347,6 @@ BOOL CdbWaveDoc::ImportDatabase(CString &filename)
 	return TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 {
 	// save current index position - restore on exit
@@ -1500,8 +1446,6 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 	// restore current data position
 	DBSetCurrentRecordPosition(currentfile);
 }
-
-/////////////////////////////////////////////////////////////////////////////
 
 BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase (CWaveFormat* p_wave_format) const
 {
@@ -1618,8 +1562,6 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase (CWaveFormat* p_wave_format) const
 	return b_changed;
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
 void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass)
 {
 	CString cs_dummy;
@@ -1741,7 +1683,6 @@ CString CdbWaveDoc::ExportDatabaseData(const int ioption)
 	return cs_file_comment;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 // exports spike data on consecutive rows (except for a few options)
 // returns nb columns of comments
 
@@ -1917,7 +1858,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 
 	// transpose file
 	if (m_bTranspose)
-		TransposeFile(pSF);
+		TransposeFileForExcel(pSF);
 
 	// restore initial file name and channel
 	DBSetCurrentRecordPosition(ioldindex);
@@ -1928,7 +1869,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 
 // called when we export data to Excel
 
-BOOL CdbWaveDoc::TransposeFile (CSharedFile *pSF)
+BOOL CdbWaveDoc::TransposeFileForExcel (CSharedFile *pSF)
 {
 	// create dummy file on disk that duplicates the memory file
 	CStdioFile data_dest;								// destination file object
@@ -2245,6 +2186,7 @@ void CdbWaveDoc::DeleteErasedFiles()
 
 // delete record: change data and spike file extensions and copy record to table_deleted
 // remove corresponding records from table_deleted
+
 void CdbWaveDoc::DBDeleteCurrentRecord()
 {
 	// save data & spike file names, together with their full access path
@@ -2265,7 +2207,6 @@ void CdbWaveDoc::DBDeleteCurrentRecord()
 	// exit 
 	return;
 }
-
 
 void CdbWaveDoc::RemoveDuplicateFiles()
 {
@@ -2526,7 +2467,6 @@ void CdbWaveDoc::RemoveMissingFiles()
 	m_pDB->m_mainTableSet.Requery();
 }
 
-// --------------------
 void CdbWaveDoc::RemoveFalseSpkFiles()
 {
 	CProgressDlg dlg;

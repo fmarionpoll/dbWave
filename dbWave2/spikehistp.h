@@ -23,7 +23,7 @@ public:
 
 protected:
 	CArray <CDWordArray*, CDWordArray*>	histogram_ptr_array;	// array of DWord array containing histogram
-    CSpikeList* m_pSL;
+    CSpikeList* p_spikelist_;
 
 	long 	m_lFirst;			// time index of first pt displayed
 	long 	m_lLast;			// time index of last pt displayed
@@ -39,8 +39,7 @@ protected:
 	int  	m_imax{};				// index max
 	int  	m_ifirst{};			// index first interval with data
 	int  	m_ilast{};			// index last interval with data
-	
-	
+		
 public:	
 	void SetPlotMode(int mode, int selclass) {m_plotmode = mode; m_selclass = selclass;}
 	
@@ -54,10 +53,6 @@ public:
 	int GetnBins() const {return m_nbins;}	
 	int   GetHistMaxPos() const {return m_imax;}
 	DWORD GetHistMax() const {return m_lmax;}
-		
-	void BuildHistFromArrays(CArray<int, int>* pVal, CArray<long, long>* pTime, CArray<int, int>* pspkclass,
-				long l_first, long l_last, int max, int min, int nbins,
-    			BOOL bNew=TRUE);
 
 	void BuildHistFromDocument(CdbWaveDoc * p_document, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
 
@@ -66,7 +61,7 @@ public:
 	void MoveVTtagtoVal(int itag, int ival);
 	void MoveHZtagtoVal(int itag, int ival);
 
-	void SetSpkList(CSpikeList* p_spk_list) {m_pSL = p_spk_list;}
+	void SetSpkList(CSpikeList* p_spk_list) {p_spikelist_ = p_spk_list;}
 
 // implementation
 protected:
@@ -74,14 +69,17 @@ protected:
 	int  DoesCursorHitCurve(CPoint point);
 	void ReSize_And_Clear_Histograms(int nbins, int max, int min);
 	void GetHistogLimits(int ihist);
+	void GetExtents();
+	void PlotHistogram(CDC * p_dc, CDWordArray * p_dw, int color);
+
     void GetClassArray(int iclass, CDWordArray*& pDW);
 	CDWordArray * InitClassArray(int nbins, int spike_class);
 	void BuildHistFromSpikeList(CSpikeList * p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
 
 public:
 	void PlotDatatoDC(CDC* p_dc);
+	
 protected:
-	void GetExtents();
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);

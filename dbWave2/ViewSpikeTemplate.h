@@ -37,8 +37,8 @@ protected:
 	CEditCtrl	mm_hitratesort;
 	CEditCtrl	mm_ktolerance;
 	CEditCtrl	mm_spikenoclass;
-	CEditCtrl	mm_timefirst;		// first abcissa value
-	CEditCtrl	mm_timelast;		// last abcissa value
+	CEditCtrl	mm_timefirst;			// first abcissa value
+	CEditCtrl	mm_timelast;			// last abcissa value
 	CEditCtrl	mm_ifirstsortedclass;
 
 	CTemplateListWnd	m_avgList;
@@ -53,10 +53,10 @@ protected:
 	CSpikeList*		m_pSpkList;			// temporary spike list	
 	int				m_lFirst;
 	int				m_lLast;
-	OPTIONS_VIEWDATA*			mdPM;		// view data options
-	OPTIONS_VIEWDATAMEASURE*	mdMO;		// measure options
-	SPKCLASSIF*		m_psC;					// sort parameters
-	int				m_ktagleft;				// VT tags
+	OPTIONS_VIEWDATA*			mdPM;	// view data options
+	OPTIONS_VIEWDATAMEASURE*	mdMO;	// measure options
+	SPKCLASSIF*		m_psC;				// sort parameters
+	int				m_ktagleft;			// VT tags
 	int				m_ktagright;
 	SCROLLINFO		m_scrollFilePos_infos;
 	int				m_spikeno;

@@ -12,7 +12,6 @@
 
 class CViewSpikeDetection : public CDaoRecordView
 {
-
 protected:
 	DECLARE_DYNCREATE(CViewSpikeDetection)
 	CViewSpikeDetection();
@@ -41,11 +40,10 @@ public:
 	
 // form variables
 protected:
-	CdbWaveDoc*		m_dbDoc;			// master source document
-	int				m_scancount_doc;	// number of channels in the data document
-	CSpikeDoc*		m_pspkDocVSD;		// destination data doc
-	CSpikeList*		m_pSpkListVSD;		// temporary spike list	
-	CDWordArray 	m_DWintervals;		// intervals to draw detected spikes
+	int				m_scancount_doc=1;		// number of channels in the data document
+	CSpikeDoc*		p_spike_doc_=nullptr;	// destination data doc
+	CSpikeList*		p_spikelist_=nullptr;	// temporary spike list	
+	CDWordArray 	m_DWintervals;			// intervals to draw detected spikes
 
 	CLineViewWnd	m_displayDetect;	// source data
 	CLineViewWnd	m_displayData;
@@ -84,13 +82,11 @@ protected:
 	int				DetectStim1(int i);				// stimulus detection
 	void			SerializeWindowsState(BOOL bSave, int itab = -1);
 
-// CStretchControl: changing size of client moves children
+// changing size of client moves children
 	CStretchControl m_stretch;
 	BOOL			m_binit;
 
-////////////////////////////////////////////////////////////////////////////////
 // cursor
-protected:
 	int				m_cursorstate;
 public:
 	inline void		SetViewMouseCursor(int cursormode) { 
@@ -114,7 +110,6 @@ protected:
 	void			UpdateFileParameters(BOOL bUpdateInterface=TRUE);
 	void			UpdateDataFile(BOOL bUpdateInterface);
 	void			UpdateSpikeFile(BOOL bUpdateInterface=TRUE);
-	
 	void			UpdateFileScroll();					// adjust horiz position of scroll bar
 	void			UpdateLegends();
 	void			UpdateSpkShapeWndScale(BOOL bSetFromControls=TRUE);
@@ -146,7 +141,6 @@ public:
 	virtual void	Dump(CDumpContext& dc) const;
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
 // print view
 protected:
 	CRect			m_Margin;			// margins (pixels)

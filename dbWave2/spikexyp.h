@@ -25,7 +25,6 @@ protected:
 	int		m_rwidth;			// dot width
 	BOOL	m_ballFiles = false;	// display data from all files in CdbWaveDoc*
 
-
 	CSpikeList*	p_spikelist_	= nullptr;
 	CSpikeDoc*	p_spike_doc_	= nullptr;
 	CdbWaveDoc* p_dbwave_doc_	= nullptr;

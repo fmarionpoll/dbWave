@@ -52,7 +52,7 @@ CViewSpikeHist::CViewSpikeHist()
 	t1000 = 1000.f;
 	m_bPrint = FALSE;
 	m_rectratio = 100;
-	m_pSpkDoc = nullptr;
+	p_spike_doc_ = nullptr;
 	m_binit = FALSE;
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -198,10 +198,10 @@ void CViewSpikeHist::OnInitialUpdate()
 		p_dbwave_doc->m_pSpk = new CSpikeDoc;
 		ASSERT(p_dbwave_doc->m_pSpk != NULL);
 	}
-	m_pSpkDoc = p_dbwave_doc->m_pSpk;
-	m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
+	p_spike_doc_ = p_dbwave_doc->m_pSpk;
+	p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 	OnDisplay();
-	SelectSpkList(m_pSpkDoc->GetSpkListCurrentIndex(), TRUE);
+	SelectSpkList(p_spike_doc_->GetSpkListCurrentIndex(), TRUE);
 }
 
 void CViewSpikeHist::OnSize(UINT nType, int cx, int cy) 
@@ -561,7 +561,7 @@ void CViewSpikeHist::GetFileInfos(CString &str_comment)
 		const CString tab("    ");			// use 4 spaces as tabulation character
 		const CString rc("\n");				// next line
 		str_comment += "Title:";
-		m_pSpkDoc = GetDocument()->m_pSpk;
+		p_spike_doc_ = GetDocument()->m_pSpk;
 		//str_comment += m_pSpkDoc->GetAcqComment();
 		str_comment += rc;
 		if (m_bPrint)				// print document's infos
@@ -575,7 +575,7 @@ void CViewSpikeHist::GetFileInfos(CString &str_comment)
 				}
 				if (mdPM->bAcqDateTime)				// print data acquisition date & time
 				{
-					const auto date = (m_pSpkDoc->GetAcqTime()).Format("%#d %m %Y %X"); //("%c");
+					const auto date = (p_spike_doc_->GetAcqTime()).Format("%#d %m %Y %X"); //("%c");
 					str_comment +=  date;
 				}
 				str_comment += rc;
@@ -1012,7 +1012,7 @@ void CViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		p_dc->SelectObject(p_old_font);
 
 	p_dbwave_doc->DBSetCurrentRecordPosition(file0);
-	m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();			
+	p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();			
 }
 
 void CViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) 
@@ -1187,11 +1187,11 @@ void CViewSpikeHist::BuildData()
 
 		// select spike file
 		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
-		if (nullptr == m_pSpkDoc )
+		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
+		if (nullptr == p_spike_doc_ )
 			continue;
 
-		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
+		p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 		switch(m_bhistType)
 		{
@@ -1201,7 +1201,7 @@ void CViewSpikeHist::BuildData()
 			// m_pvdS->timestart, m_pvdS->timeend
 			// m_pvdS->timebin, m_pvdS->nbins
 			case 0: 
-				m_nPSTH += m_pSpkDoc->BuildPSTH(m_pvdS, m_pPSTH, m_spikeclass); 
+				m_nPSTH += p_spike_doc_->BuildPSTH(m_pvdS, m_pPSTH, m_spikeclass); 
 				break;
 			// -------------------------------------------------------------
 			// INTER-SPIKES INTERVALS HISTOGRAM
@@ -1209,7 +1209,7 @@ void CViewSpikeHist::BuildData()
 			// m_pvdS->timestart, m_pvdS->timeend
 			// m_pvdS->nbinsISI, m_pvdS->binISI
 			case 1: 
-				m_nISI += m_pSpkDoc->BuildISI(m_pvdS, m_pISI, m_spikeclass); 
+				m_nISI += p_spike_doc_->BuildISI(m_pvdS, m_pISI, m_spikeclass); 
 				break;
 			// -------------------------------------------------------------
 			// AUTOCORRELATION
@@ -1217,7 +1217,7 @@ void CViewSpikeHist::BuildData()
 			// m_pvdS->timestart, m_pvdS->timeend
 			// m_pvdS->nbinsISI, m_pvdS->binISI
 			case 2: 
-				m_nISI += m_pSpkDoc->BuildAUTOCORR(m_pvdS, m_pISI, m_spikeclass);
+				m_nISI += p_spike_doc_->BuildAUTOCORR(m_pvdS, m_pISI, m_spikeclass);
 				break;
 			// -------------------------------------------------------------
 			// PSTH-AUTOCORRELATION DENSITY 
@@ -1227,9 +1227,9 @@ void CViewSpikeHist::BuildData()
 			// m_pvdS->timebin, m_pvdS->nbins
 			case 4: 
 				{
-					m_nPSTH += m_pSpkDoc->BuildPSTH(m_pvdS, m_pPSTH, m_spikeclass);
-					m_pSpkDoc->BuildAUTOCORR(m_pvdS, m_pISI, m_spikeclass);
-					m_pSpkDoc->BuildPSTHAUTOCORR(m_pvdS, m_parrayISI, m_spikeclass);					
+					m_nPSTH += p_spike_doc_->BuildPSTH(m_pvdS, m_pPSTH, m_spikeclass);
+					p_spike_doc_->BuildAUTOCORR(m_pvdS, m_pISI, m_spikeclass);
+					p_spike_doc_->BuildPSTHAUTOCORR(m_pvdS, m_parrayISI, m_spikeclass);					
 				}
 				break;
 			default:
@@ -1240,8 +1240,8 @@ void CViewSpikeHist::BuildData()
 	if (currentfile != p_dbwave_doc->DBGetCurrentRecordPosition())
 	{
 		p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
+		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 	}
 	SAFE_DELETE(pdlg);
 }
@@ -1428,11 +1428,11 @@ long CViewSpikeHist::PlotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, lo
 		rectmax = MulDiv(pdispRect->Height(), m_rectratio, 100);
 
 		// display stimulus
-		if (btype== 0 && m_pSpkDoc->m_stimIntervals.nitems > 0)
+		if (btype== 0 && p_spike_doc_->m_stimIntervals.nitems > 0)
 		{
-			const auto p_spk_list = m_pSpkDoc->GetSpkListCurrent();
+			const auto p_spk_list = p_spike_doc_->GetSpkListCurrent();
 			const auto samprate = p_spk_list->GetAcqSampRate();
-			int iioffset0 = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(m_pvdS->istimulusindex);
+			int iioffset0 = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(m_pvdS->istimulusindex);
 			if (m_pvdS->babsolutetime )
 				iioffset0 = 0;
 	
@@ -1560,11 +1560,11 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 			ifile++)
 	{
 		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
-		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
-		m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
+		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 		// load pointers to spike file and spike list
-		const auto p_spk_list = m_pSpkDoc->GetSpkListCurrent();
+		const auto p_spk_list = p_spike_doc_->GetSpkListCurrent();
 		const auto samprate = p_spk_list->GetAcqSampRate();
 		const auto ii_frame_first = static_cast<long>(m_timefirst * samprate);
 		const auto ii_frame_last = static_cast<long>(m_timelast * samprate);
@@ -1577,8 +1577,8 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 			auto nrows = 1;
 			if (mdPM->bMultirowDisplay)
 			{
-				nrows = m_pSpkDoc->GetAcqSize() / ii_frame_length;
-				if (nrows*ii_frame_length < m_pSpkDoc->GetAcqSize())
+				nrows = p_spike_doc_->GetAcqSize() / ii_frame_length;
+				if (nrows*ii_frame_length < p_spike_doc_->GetAcqSize())
 					nrows++;
 			}
 			auto ii_first = ii_frame_first;
@@ -1587,7 +1587,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 			for (auto irow = 0; irow < nrows; irow++)
 			{
 				// display stimuli
-				if (m_pSpkDoc->m_stimIntervals.nitems > 0) 
+				if (p_spike_doc_->m_stimIntervals.nitems > 0) 
 				{
 					CRect rect(rcleft, row + vt_bottom, 
 							rectlen + rcleft, row + vt_top);
@@ -1639,13 +1639,13 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 			// if bCycleHist - one line per stimulus (or group of stimuli)
 			if (m_pvdS->bCycleHist)
 			{
-				last_stim = m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize();
+				last_stim = p_spike_doc_->m_stimIntervals.intervalsArray.GetSize();
 				if (last_stim == 0)
 					last_stim = 1;
 				increment = m_pvdS->nstipercycle;
-				if (m_pSpkDoc->m_stimIntervals.npercycle > 1 
-					&& increment > m_pSpkDoc->m_stimIntervals.npercycle)
-					increment = m_pSpkDoc->m_stimIntervals.npercycle;
+				if (p_spike_doc_->m_stimIntervals.npercycle > 1 
+					&& increment > p_spike_doc_->m_stimIntervals.npercycle)
+					increment = p_spike_doc_->m_stimIntervals.npercycle;
 				increment *= 2;
 			}
 
@@ -1654,8 +1654,8 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 			{
 				// compute temp parameters
 				long istart;
-				if (m_pSpkDoc->m_stimIntervals.nitems > 0)
-					istart = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(istim);
+				if (p_spike_doc_->m_stimIntervals.nitems > 0)
+					istart = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(istim);
 				else
 					istart = static_cast<long>(-(m_pvdS->timestart * samprate));
 				
@@ -1690,10 +1690,10 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 				row += dotlineheight;
 			}
 
-			if (m_pSpkDoc->m_stimIntervals.nitems > 1) 
+			if (p_spike_doc_->m_stimIntervals.nitems > 1) 
 			{
 				// stimulus
-				auto istart = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(m_pvdS->istimulusindex);
+				auto istart = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(m_pvdS->istimulusindex);
 				auto iend = ii_frame_last+istart;
 				istart = ii_frame_first + istart;
 
@@ -1708,8 +1708,8 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 	}
 
 	p_dbwave_doc->DBSetCurrentRecordPosition(currentfile);
-	m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
-	m_pSpkDoc->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
+	p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
+	p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkListIndex());
 
 	p_dc->SelectObject(pold_pen);
 	p_dc->SelectObject(pold_brush);
@@ -2065,7 +2065,7 @@ void CViewSpikeHist::DisplayPSTHAutoc(CDC* p_dc, CRect* pRect)
 void CViewSpikeHist::DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last)
 {
 	// draw rectangle for stimulus
-	if (m_pSpkDoc->m_stimIntervals.nitems <= 0)
+	if (p_spike_doc_->m_stimIntervals.nitems <= 0)
 		return;
 
 	CPen bluepen;
@@ -2077,8 +2077,8 @@ void CViewSpikeHist::DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l
 	const auto iiend = *l_last;
 	const auto iilen = iiend - iistart;
 	auto i0 = 0;
-	while (i0 < m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize() 
-			&& m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(i0) < iistart)
+	while (i0 < p_spike_doc_->m_stimIntervals.intervalsArray.GetSize() 
+			&& p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(i0) < iistart)
 		i0++;				// loop until found
 
 	const auto displen = pRect->Width();
@@ -2101,10 +2101,10 @@ void CViewSpikeHist::DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l
 		istate = top;
 	p_dc->MoveTo(pRect->left, istate);
 
-	for (ii; ii< m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize(); ii++, ii++)
+	for (ii; ii< p_spike_doc_->m_stimIntervals.intervalsArray.GetSize(); ii++, ii++)
 	{
 		// stim starts here
-		int iix0 = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(ii) - iistart;
+		int iix0 = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(ii) - iistart;
 		if (iix0 >= iilen)				// first transition ON after last graph pt?
 			break;						// yes = exit loop
 
@@ -2118,8 +2118,8 @@ void CViewSpikeHist::DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l
 		// stim ends here
 		istate = bottom;				// after pulse, descend to bottom level
 		int iix1 = iilen;
-		if (ii < m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize()-1)
-			iix1 = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(ii+1) - iistart;
+		if (ii < p_spike_doc_->m_stimIntervals.intervalsArray.GetSize()-1)
+			iix1 = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(ii+1) - iistart;
 		if (iix1 > iilen)				// last transition off graph?
 		{
 			iix1 = iilen;				// yes = clip
@@ -2154,13 +2154,13 @@ void CViewSpikeHist::OnEnChangeEditnstipercycle()
 
 void CViewSpikeHist::OnEnChangeEditlockonstim() 
 {
-	if (m_pSpkDoc == nullptr)
+	if (p_spike_doc_ == nullptr)
 		return;
 	int ilock = GetDlgItemInt(IDC_EDITLOCKONSTIM);
 	if (ilock != m_pvdS->istimulusindex)
 	{
-		if (ilock >= m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize())
-			ilock = m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize()-1;
+		if (ilock >= p_spike_doc_->m_stimIntervals.intervalsArray.GetSize())
+			ilock = p_spike_doc_->m_stimIntervals.intervalsArray.GetSize()-1;
 		if (ilock <0)
 			ilock = 0;
 		m_pvdS->istimulusindex = ilock;
@@ -2232,9 +2232,9 @@ void CViewSpikeHist::SelectSpkList(int icur, BOOL bRefreshInterface)
 		m_tabCtrl.DeleteAllItems();
 		// load list of detection parameters 
 		auto j = 0;
-		for (auto i = 0; i< m_pSpkDoc->GetSpkListSize(); i++)
+		for (auto i = 0; i< p_spike_doc_->GetSpkListSize(); i++)
 		{
-			const auto p_spike_list = m_pSpkDoc->SetSpkListCurrent(i);
+			const auto p_spike_list = p_spike_doc_->SetSpkListCurrent(i);
 			CString cs;
 			if (p_spike_list->GetdetectWhat() != 0)
 				continue;

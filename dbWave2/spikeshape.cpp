@@ -447,7 +447,6 @@ void CSpikeShapeWnd::OnMouseMove(UINT nFlags, CPoint point)
 	CScopeScreen::OnMouseMove(nFlags, point);
 }
 
-// ------------------------------------------------------------------------------------
 // ZoomData(CRect* rFrom, CRect* rDest)
 //
 // max and min of rFrom should fit in rDest (same logical coordinates)
@@ -459,7 +458,6 @@ void CSpikeShapeWnd::OnMouseMove(UINT nFlags, CPoint point)
 // LPMax = (rDest.(bottom, right) - VO) * WE2 / VE + WO2	(4)
 // from (1)-(2) = (3)-(4) one get WE2
 // from (1)=(3)               get WO2
-// ------------------------------------------------------------------------------------
 
 void CSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 {
@@ -510,8 +508,8 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = p_doc_->DBGetNRecords();
-		ncurrentfile = p_doc_->DBGetCurrentRecordPosition();
+		nfiles = p_dbwave_doc_->DBGetNRecords();
+		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
 	}
 
 	int result = -1;
@@ -519,9 +517,9 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		if (m_ballFiles)
 		{
-			p_doc_->DBSetCurrentRecordPosition(ifile);
-			p_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
+			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
 
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
@@ -535,9 +533,9 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 
 	if (m_ballFiles && result < 0)
 	{
-		p_doc_->DBSetCurrentRecordPosition(ncurrentfile);
-		p_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_doc_->m_pSpk->GetSpkListCurrent();
+		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->OpenCurrentSpikeFile();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
 
 	return result;

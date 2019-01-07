@@ -28,6 +28,7 @@ public:
 	float	m_timebinms;
 
 	CdbWaveDoc*	GetDocument();
+	CSpikeDoc* p_spike_doc_;			// pointer to document
 
 // Attributes
 protected:
@@ -46,8 +47,6 @@ protected:
 	OPTIONS_VIEWDATA*  mdPM;		// view data options
 	int			m_bhistType;
 	SCROLLINFO m_scrollFilePos_infos;
-
-	CSpikeDoc* m_pSpkDoc;			// pointer to document
 
 	long*	m_pPSTH;				// histogram data (pointer to array)
 	int		m_sizepPSTH;			// nbins within histogram
@@ -76,8 +75,6 @@ protected:
 
 	LOGFONT	m_logFontDisp;			// onbegin/onendPrinting
 	CFont	m_fontDisp;				// display font	
-
-public:
 
 // Operations
 // public interface to view

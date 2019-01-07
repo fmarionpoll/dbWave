@@ -668,7 +668,7 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 void CViewSpikes::UpdateFileParameters()
 {
 	// init data view
-	GetDocument()->DBSetCurrentSpkFileName(FALSE);
+	GetDocument()->DBGetCurrentSpkFileName(FALSE);
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 
 	// init spike views

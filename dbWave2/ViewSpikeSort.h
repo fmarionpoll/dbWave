@@ -44,7 +44,7 @@ protected:
 	CStretchControl m_stretch;
 	BOOL			m_binit;
 
-	CWndVerticalHistogram	yhistogram_wnd_;	// spike histogram
+	CSpikeHistWnd	yhistogram_wnd_;	// spike histogram
 	CSpikeXYpWnd	xygraph_wnd_;		// bars with spike height
 	CSpikeShapeWnd	spikeshape_wnd_;	// spike shapes
 	CSpikeBarWnd	spikebars_wnd_;		// bars with spike height
