@@ -331,6 +331,24 @@ int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 	return imode;
 }
 
+SCOPESTRUCT * CLineViewWnd::GetScopeParameters()
+{
+	auto nchannels =  chanlistitem_ptr_array.GetSize();
+	m_scopestruct.channels.SetSize(nchannels);
+	for (auto i = 0; i < nchannels; i++)
+	{
+		auto p_chanlist_item = chanlistitem_ptr_array[i];
+		m_scopestruct.channels[i].izero = p_chanlist_item->GetYzero();
+		m_scopestruct.channels[i].iextent = p_chanlist_item->GetYextent();
+	}
+
+	return &m_scopestruct;
+}
+
+void CLineViewWnd::SetScopeParameters(SCOPESTRUCT * pStruct)
+{
+}
+
 void CLineViewWnd::AutoZoomChan(int j)
 {
 	auto i1 = j;
@@ -996,7 +1014,7 @@ void CLineViewWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	AdjustDisplayRect(pRect); 
 	EraseBkgnd(p_dc);
 	// clip curves
-	if (m_parms.bClipRect)	
+	if (m_scopestruct.bClipRect)	
 		p_dc->IntersectClipRect(m_displayRect);
 	else
 		p_dc->SelectClipRgn(nullptr);
@@ -1742,7 +1760,7 @@ void CLineViewWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 		rect.left = 1;
 	rect.DeflateRect(0, 1);
 	p_dc->IntersectClipRect(rect);
-	p_dc->FillSolidRect(&rect, m_parms.crScopeFill);
+	p_dc->FillSolidRect(&rect, m_scopestruct.crScopeFill);
 
 	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 

@@ -496,7 +496,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		BeginWaitCursor();
 		OutputTitle();
 		m_pdbDoc->DBSetCurrentRecordPosition(i_first);
-		m_pdbDoc->DBGetCurrentDatFileName();
+		const CString filename = m_pdbDoc->DBGetCurrentDatFileName();
 		auto* p_vd = new OPTIONS_VIEWDATA;
 		ASSERT(p_vd != NULL);
 		const CString cs_out=_T("**filename\tdate\ttime\tcomment\tchannel\r\n");
@@ -568,7 +568,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 
 		*p_copy = 0;
 		m_pdbDoc->DBSetCurrentRecordPosition(current_file_index );
-		m_pdbDoc->DBGetCurrentDatFileName();
+		CString filename2 = m_pdbDoc->DBGetCurrentDatFileName();
 		m_pdbDoc->OpenCurrentDataFile();
 		EndWaitCursor();     // it's done
 

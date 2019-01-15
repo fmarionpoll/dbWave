@@ -156,10 +156,10 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	// make sure the correct import options are selected
 	CImportOptionsDlg dlg;
 	auto p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-	dlg.m_bAllowDuplicateFiles = p_app->ivO.bImportDuplicateFiles;
+	dlg.m_bAllowDuplicateFiles = p_app->options_import.bImportDuplicateFiles;
 	if (IDOK == dlg.DoModal())
 	{
-		p_app->ivO.bImportDuplicateFiles = dlg.m_bAllowDuplicateFiles;
+		p_app->options_import.bImportDuplicateFiles = dlg.m_bAllowDuplicateFiles;
 	}
 
 	// open data file

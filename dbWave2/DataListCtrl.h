@@ -1,8 +1,5 @@
 #pragma once
 
-// DataListCtrl.h : header file
-//
-
 #include "scopescr.h"
 #include "Envelope.h" 
 #include "chanlistitem.h"
@@ -20,10 +17,6 @@
 #define COL_NBSPK		COL_INDEX+8
 #define COL_FLAG		COL_INDEX+9
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataListCtrl window
-class CAcqDataDoc;
-
 class CDataListCtrl : public CListCtrl
 {
 // Construction
@@ -40,21 +33,23 @@ public:
 	void	ResizeSignalColumn(int npixels);
 	void	FitColumnsToSize(int npixels);
 
-	inline void		SetTransformMode(int imode) {m_dattransform = imode;}
-	inline void		SetDisplayMode(int imode) {m_displaymode = imode;}
-	inline void		SetTimeIntervals(float tfirst, float tlast) {m_tFirst=tfirst; m_tLast=tlast;}
-	inline void		SetAmplitudeSpan(float vspan) {m_mVspan = vspan;}
-	inline void		SetDisplayFileName(BOOL flag) {m_bDisplayFileName = flag;}
-	inline void		SetAmplitudeAdjustMode(BOOL flag) {m_bsetmVSpan = flag;}
-	inline void		SetTimespanAdjustMode(BOOL flag) { m_bsetTimeSpan = flag;}
-	inline void		SetSpikePlotMode(int imode, int iclass) {m_spikeplotmode = imode; m_selclass=iclass;}
+	void	SetTransformMode(int imode)			{m_dattransform = imode;}
+	void	SetDisplayMode(int imode)			{m_displaymode = imode;}
+	void	SetTimeIntervals(float tfirst, float tlast) {m_tFirst=tfirst; m_tLast=tlast;}
+	void	SetAmplitudeSpan(float vspan)		{m_mVspan = vspan;} // TODO ; get extent, mode from current line
+	void	SetDisplayFileName(BOOL flag)		{m_bDisplayFileName = flag;}
+	void	SetAmplitudeAdjustMode(BOOL flag)	{m_bsetmVSpan = flag;}
+	void	SetTimespanAdjustMode(BOOL flag)	{ m_bsetTimeSpan = flag;}
+	void	SetSpikePlotMode(int imode, int iclass) {m_spikeplotmode = imode; m_selclass=iclass;}
 	
-	inline int		GetDisplayMode() const {return m_displaymode;}
-	inline float	GetTimeFirst() const {return m_tFirst;}
-	inline float	GetTimeLast() const {return m_tLast;}
-	inline float	GetAmplitudeSpan() const {return m_mVspan;}
-	inline int		GetSpikePlotMode() const {return m_spikeplotmode;}
-	inline int		GetSpikeClass() const {return m_selclass;}
+	int		GetDisplayMode()		const {return m_displaymode;}
+	float	GetTimeFirst()			const {return m_tFirst;}
+	float	GetTimeLast()			const {return m_tLast;}
+	float	GetAmplitudeSpan()		const {return m_mVspan;}
+	int		GetSpikePlotMode()		const {return m_spikeplotmode;}
+	int		GetSpikeClass()			const {return m_selclass;}
+
+	CLineViewWnd* GetDataViewCurrentRecord(); // const {return datalistctrlrowobject_prt_array->GetAt(GetCurSel())->pdataWnd; }
 
 	// Generated message map functions
 protected:
@@ -86,7 +81,6 @@ protected:
 	BOOL		m_bDisplayFileName;
 	
 	// Generated message map functions
-protected:
 	afx_msg void OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDestroy();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);

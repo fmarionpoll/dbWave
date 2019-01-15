@@ -62,7 +62,7 @@ BOOL CFindFilesDlg::OnInitDialog()
 	// assume user wants to explore subfolders
 	((CButton*) GetDlgItem(IDC_CHECK1))->SetCheck(1);
 
-	m_path = ((CdbWaveApp*) AfxGetApp())->ivO.path;
+	m_path = ((CdbWaveApp*) AfxGetApp())->options_import.path;
 	if (m_pdbDoc)
 		m_path = m_pdbDoc->m_ProposedDataPathName;
 	m_mfcbrowsecontrol.SetWindowTextW(m_path);
@@ -86,7 +86,7 @@ BOOL CFindFilesDlg::OnInitDialog()
 	// update numbering option
 	{
 		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-		((CButton*) GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->ivO.bImportDuplicateFiles);
+		((CButton*) GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bImportDuplicateFiles);
 	}
 	UpdateData(FALSE);
 	m_fileext.SetCurSel(m_selinit);			// select first item / file extensions
@@ -104,8 +104,8 @@ void CFindFilesDlg::OnOK()
 	
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
 	auto p_app = (CdbWaveApp*) AfxGetApp();
-	p_app->ivO.path = m_path;
-	p_app->ivO.bImportDuplicateFiles = ((CButton*) GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
+	p_app->options_import.path = m_path;
+	p_app->options_import.bImportDuplicateFiles = ((CButton*) GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
 
 	CDialog::OnOK();
 }

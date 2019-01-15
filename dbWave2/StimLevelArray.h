@@ -9,7 +9,8 @@ class CIntervalsAndLevels : public CObject
 public :
 	CIntervalsAndLevels();	
 	virtual		~CIntervalsAndLevels();
-	void Serialize(CArchive& ar) override;	
+	void Serialize(CArchive& ar) override;
+
 	CIntervalsAndLevels& operator = (const CIntervalsAndLevels& arg);
 
 	inline long	GetiiTime(int i) { return intervalsArray.GetAt(i); };
@@ -48,7 +49,7 @@ class CIntervalsAndWordsSeries : public CObject
 	CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg);
 	~CIntervalsAndWordsSeries();
 	void operator = (const CIntervalsAndWordsSeries& arg);
-	virtual void Serialize(CArchive& ar);
+	void Serialize(CArchive& ar) override;
 
 	void	EraseAllData();
 	inline long		GetSize() { return intervalpoint_array.GetSize(); }

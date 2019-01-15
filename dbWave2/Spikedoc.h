@@ -87,7 +87,8 @@ public:
 	long BuildPSTHAUTOCORR	(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
 
 protected:
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+	void Serialize(CArchive& ar) override;
+	
 	void ReadBeforeVersion6(CArchive& ar, WORD wwVersion);
 	void ReadVersion6(CArchive& ar);
 	void ReadVersion7(CArchive& ar);

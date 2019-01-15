@@ -145,11 +145,11 @@ void CViewSpikeSort::OnInitialUpdate()
 	// attach set
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	CDaoRecordView::OnInitialUpdate();
-	m_psC= &(p_app->spkC);		// spike classif parms	
-	mdPM = &(p_app->vdP);		// viewdata options
+	m_psC= &(p_app->spkC);
+	mdPM = &(p_app->options_viewdata);
 
 	// assign controls to stretch
-	m_stretch.AttachParent(this);		// attach formview pointer
+	m_stretch.AttachParent(this);
 
 	m_stretch.newProp(IDC_HISTOGRAM,	SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_EDIT7,		SZEQ_XLEQ, SZEQ_YBEQ);
@@ -214,13 +214,13 @@ void CViewSpikeSort::OnInitialUpdate()
 	spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 
-	spikeshape_wnd_.m_parms = mdPM->spksort1spk;
-	xygraph_wnd_.m_parms = mdPM->spksort1parms;
-	yhistogram_wnd_.m_parms = mdPM->spksort1hist;
-	spikebars_wnd_.m_parms = mdPM->spksort1bars;
+	*spikeshape_wnd_.GetScopeParameters() = mdPM->spksort1spk;
+	*xygraph_wnd_.GetScopeParameters() = mdPM->spksort1parms;
+	*yhistogram_wnd_.GetScopeParameters() = mdPM->spksort1hist;
+	*spikebars_wnd_.GetScopeParameters() = mdPM->spksort1bars;
 
 	// set bincrflagonsave
-	((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->SetCheck(p_app->vdS.bincrflagonsave);
+	((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// display tag lines at proper places
 	m_spkformtagleft	= spikeshape_wnd_.AddVTtag(m_psC->ileft);	// first VTtag
@@ -257,7 +257,7 @@ void CViewSpikeSort::ActivateMode4()
 			m_txyleft = static_cast<float>(m_psC->ixyleft) /delta ;
 		}
 		xygraph_wnd_.SetNxScaleCells(2, 0, 0);
-		xygraph_wnd_.m_parms.crScopeGrid= RGB(128,   128, 128);
+		xygraph_wnd_.GetScopeParameters()->crScopeGrid= RGB(128,   128, 128);
 		
 		if (m_pSpkList != nullptr)
 		{
@@ -301,7 +301,7 @@ void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 		CArchive ar(p_app->m_psort1spikesMemFile, CArchive::store);
 		p_app->m_psort1spikesMemFile->SeekToBegin();
 		ar.Close();	
-		p_app->vdS.bincrflagonsave = ((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->GetCheck();
+		p_app->options_viewspikes.bincrflagonsave = ((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -776,10 +776,10 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		mdPM->spksort1spk = spikeshape_wnd_.m_parms;
-		mdPM->spksort1parms = xygraph_wnd_.m_parms;
-		mdPM->spksort1hist = yhistogram_wnd_.m_parms;
-		mdPM->spksort1bars = spikebars_wnd_.m_parms;
+		mdPM->spksort1spk = *spikeshape_wnd_.GetScopeParameters();
+		mdPM->spksort1parms = *xygraph_wnd_.GetScopeParameters();
+		mdPM->spksort1hist = *yhistogram_wnd_.GetScopeParameters();
+		mdPM->spksort1bars = *spikebars_wnd_.GetScopeParameters();
 		break;
 
 	default:

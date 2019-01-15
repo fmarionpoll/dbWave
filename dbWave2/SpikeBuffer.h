@@ -29,7 +29,8 @@ public:
 
 	// Implementation
 public:
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o    
+	void Serialize(CArchive& ar) override;
+
 	void 	DeleteAllSpikes();
 	short* 	AllocateSpaceForSpikeAt(int spkindex);
 	short*	AllocateSpaceForSeveralSpikes(int spkindex);

@@ -150,7 +150,7 @@ BOOL CAcqDataDoc::OnOpenDocument(CString &sz_path_name)
 		p_dlg->m_pfilenameArray = cs_array;			// pass address of array
 		p_dlg->bConvert = TRUE;						// tell that conversion is allowed
 		auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());	// get pointer to application
-		p_dlg->piivO= &(p_app->ivO);
+		p_dlg->piivO= &(p_app->options_import);
 		m_pXFile->Close();							// close file
 		SAFE_DELETE(m_pXFile);						// delete object
 		

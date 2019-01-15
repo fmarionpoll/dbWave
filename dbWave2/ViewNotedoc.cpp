@@ -1,6 +1,3 @@
-// NotedocView.cpp : implementation of the CViewNoteDoc class
-//
-
 #include "StdAfx.h"
 #include "resource.h"
 #include "NoteDoc.h"
@@ -9,9 +6,6 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewNoteDoc
 
 IMPLEMENT_DYNCREATE(CViewNoteDoc, CRichEditView)
 
@@ -22,9 +16,6 @@ BEGIN_MESSAGE_MAP(CViewNoteDoc, CRichEditView)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CRichEditView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CRichEditView::OnFilePrintPreview)
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewNoteDoc construction/destruction
 
 CViewNoteDoc::CViewNoteDoc()
 {
@@ -52,15 +43,11 @@ void CViewNoteDoc::OnInitialUpdate()
 	SetMargins(CRect(720, 720, 720, 720));
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CViewNoteDoc printing
-
 BOOL CViewNoteDoc::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// default preparation
 	return DoPreparePrinting(pInfo);
 }
-
 
 void CViewNoteDoc::OnDestroy()
 {
@@ -77,10 +64,6 @@ void CViewNoteDoc::OnDestroy()
 	  ASSERT(GetDocument()->GetInPlaceActiveItem(this) == NULL);
    }*/
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewNoteDoc diagnostics
 
 #ifdef _DEBUG
 void CViewNoteDoc::AssertValid() const
@@ -99,9 +82,6 @@ CNoteDoc* CViewNoteDoc::GetDocument() // non-debug version is inline
 	return (CNoteDoc*)m_pDocument;
 }
 #endif //_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewNoteDoc message handlers
 
 void CViewNoteDoc::OnToolsOpendatafiles() 
 {

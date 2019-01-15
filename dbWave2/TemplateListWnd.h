@@ -15,7 +15,7 @@ class CTemplateListWnd : public CListCtrl
 public:
 	CTemplateListWnd();
 	CTemplateListWnd& operator = (const CTemplateListWnd& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+	void Serialize(CArchive& ar) override;
 
 // Attributes
 public:

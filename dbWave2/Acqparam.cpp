@@ -1,6 +1,5 @@
 // aqcparam.cpp    implementation file
-//
-//////////////////////////////////////////////////////////////////////
+
 #include "StdAfx.h"
 #include "dataheader_Atlab.H"
 #include "Acqparam.h"

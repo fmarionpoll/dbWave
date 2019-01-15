@@ -1477,8 +1477,8 @@ void CViewADContinuous::OnInitialUpdate()
 
 	// CFormView init CFile
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	m_pADC_options = &(p_app->acqD);							// address of data acquisition parameters
-	m_pDAC_options = &(p_app->outD);							// address of data output parameters
+	m_pADC_options = &(p_app->options_acqdata);							// address of data acquisition parameters
+	m_pDAC_options = &(p_app->options_outputdata);							// address of data output parameters
 	m_bFoundDTOPenLayerDLL = FALSE;								// assume there is no card
 	m_bADwritetofile = m_pADC_options->waveFormat.bADwritetofile;
 	m_bStartOutPutMode = m_pDAC_options->bAllowDA;

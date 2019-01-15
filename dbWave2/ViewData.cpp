@@ -81,7 +81,7 @@ CViewData::CViewData()
 	: CDaoRecordView(CViewData::IDD), m_v1(0), m_v2(0), m_diff(0), m_hBias(nullptr), m_hZoom(nullptr), scan_count(0),
 	  chrate(0), m_file0(0), m_lFirst0(0), m_lLast0(0), m_npixels0(0), m_nfiles(0), m_nbrowsperpage(0),
 	  m_lprintFirst(0), m_lprintLen(0), m_printFirst(0), m_printLast(0), m_tMetric(), m_logFont(), m_pOldFont(nullptr),
-	  mdPM(nullptr), mdMO(nullptr), m_bCommonScale(0), m_filescroll_infos(), m_VBarMode(0)
+	  options_viewdata(nullptr), mdMO(nullptr), m_bCommonScale(0), m_filescroll_infos(), m_VBarMode(0)
 {
 	m_ichanselected = 0;
 	m_timefirst = 0.0f;
@@ -168,20 +168,25 @@ void CViewData::OnInitialUpdate()
 	m_binit = TRUE;
 
 	// init relation with document, display data, adjust parameters    
-	auto p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-	mdPM = &(p_app->vdP);		// viewdata options
-	mdMO = &(p_app->vdM);		// measure options
+	auto p_app = (CdbWaveApp*) AfxGetApp();
+	options_viewdata = &(p_app->options_viewdata);
+	mdMO = &(p_app->options_viewdata_measure);	
 	
 	// set data file
 	CDaoRecordView::OnInitialUpdate();	
 	UpdateFileParameters(TRUE);	// load file parameters
-	
-	m_VDlineview.m_parms = mdPM->viewdata;
-	OnClickedBias();	
-	OnSplitCurves();
+	*(m_VDlineview.GetScopeParameters()) = options_viewdata->viewdata;
+	int ioperation = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES;
+	OnClickedBias();
+	if (options_viewdata->viewdata.channels.GetSize() == 0)
+	{
+		OnSplitCurves();
+	}
+	else
+		ioperation |= CHG_YSCALE;
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_VDlineview.GetChanlistSize());
-	UpdateLegends(UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE);
+	UpdateLegends(ioperation);
 }
 
 void CViewData::OnDestroy() 
@@ -366,20 +371,20 @@ void CViewData::OnToolsDataseries()
 void CViewData::OnEditCopy()
 {	
 	CCopyAsDlg dlg;
-	dlg.m_nabcissa	= mdPM->hzResolution;
-	dlg.m_nordinates= mdPM->vtResolution;
-	dlg.m_bgraphics	= mdPM->bgraphics;
-	dlg.m_ioption	= mdPM->bcontours;
-	dlg.m_iunit		= mdPM->bunits;
+	dlg.m_nabcissa	= options_viewdata->hzResolution;
+	dlg.m_nordinates= options_viewdata->vtResolution;
+	dlg.m_bgraphics	= options_viewdata->bgraphics;
+	dlg.m_ioption	= options_viewdata->bcontours;
+	dlg.m_iunit		= options_viewdata->bunits;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		mdPM->bgraphics		= dlg.m_bgraphics;
-		mdPM->bcontours		= dlg.m_ioption;
-		mdPM->bunits		= dlg.m_iunit;
-		mdPM->hzResolution	= dlg.m_nabcissa;
-		mdPM->vtResolution	= dlg.m_nordinates;
+		options_viewdata->bgraphics		= dlg.m_bgraphics;
+		options_viewdata->bcontours		= dlg.m_ioption;
+		options_viewdata->bunits		= dlg.m_iunit;
+		options_viewdata->hzResolution	= dlg.m_nabcissa;
+		options_viewdata->vtResolution	= dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
 			m_VDlineview.CopyAsText(dlg.m_ioption, dlg.m_iunit, dlg.m_nabcissa);
@@ -388,7 +393,7 @@ void CViewData::OnEditCopy()
 			CRect old_rect;
 			m_VDlineview.GetWindowRect(&old_rect);
 
-			CRect rect(0,0, mdPM->hzResolution, mdPM->vtResolution);
+			CRect rect(0,0, options_viewdata->hzResolution, options_viewdata->vtResolution);
 			m_npixels0 = m_VDlineview.GetRectWidth();
 
 			// create metafile
@@ -405,11 +410,12 @@ void CViewData::OnEditCopy()
 			m_dc.SetAttribDC(attrib_dc.GetSafeHdc()) ;		// from current screen
 
 			const auto oldparms = new SCOPESTRUCT();
-			*oldparms = m_VDlineview.m_parms;
-			m_VDlineview.m_parms.bDrawframe = mdPM->bFrameRect;
-			m_VDlineview.m_parms.bClipRect	= mdPM->bClipRect;
+			SCOPESTRUCT* p_newparms = m_VDlineview.GetScopeParameters();
+			*oldparms = *p_newparms;
+			p_newparms->bDrawframe = options_viewdata->bFrameRect;
+			p_newparms->bClipRect	= options_viewdata->bClipRect;
 			m_VDlineview.Print(&m_dc, &rect);
-			m_VDlineview.m_parms = *oldparms;
+			*p_newparms = *oldparms;
 
 			// print comments : set font
 			memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font
@@ -571,7 +577,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 	long l_first=0;								// first abcissa
 	long l_last = m_pdatDoc->GetDOCchanLength()-1;	// last abcissa	
 
-	if (!mdPM->bEntireRecord || mdPM->bMultirowDisplay && !b_first_update)
+	if (!options_viewdata->bEntireRecord || options_viewdata->bMultirowDisplay && !b_first_update)
 	{
 		l_first = static_cast<long>(m_timefirst * m_samplingRate);
 		l_last = static_cast<long>(m_timelast * m_samplingRate);
@@ -585,7 +591,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 	const int ndocchans = pwave_format->scan_count;
 	
 	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
-	if (mdPM->bAllChannels || lnvchans == 0)
+	if (options_viewdata->bAllChannels || lnvchans == 0)
 	{		
 		for (auto jdocchan = 0; jdocchan < ndocchans; jdocchan++)
 		{
@@ -640,22 +646,22 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 
 void CViewData::UpdateChannelsDisplayParameters()
 {
-	const auto lnvchans = m_VDlineview.GetChanlistSize();
+	const auto n_lineview_chans = m_VDlineview.GetChanlistSize();
 	int max;
 	int min;
 	if (!m_bCommonScale) 
 	{
-		for (auto i = 0; i < lnvchans; i++)
+		for (auto i = 0; i < n_lineview_chans; i++)
 		{
 			// keep final gain constant even if ampli gain changed
 			m_VDlineview.GetChanlistMaxMin(i, &max, &min);
 			auto iextent = m_VDlineview.GetChanlistYextent(i);
 			auto izero = m_VDlineview.GetChanlistYzero(i);
 			
-			if (mdPM->bMaximizeGain)
+			if (options_viewdata->bMaximizeGain)
 				iextent = MulDiv(max - min + 1, 11, 10);
 			// center curve
-			if (mdPM->bCenterCurves)
+			if (options_viewdata->bCenterCurves)
 				izero = (max + min) / 2;
 
 			UpdateYExtent(i, iextent);
@@ -667,11 +673,11 @@ void CViewData::UpdateChannelsDisplayParameters()
 		const auto ichan = 0;
 		auto iextent = m_VDlineview.GetChanlistYextent(ichan);
 		auto izero = m_VDlineview.GetChanlistYzero(ichan);
-		if (mdPM->bMaximizeGain) 
+		if (options_viewdata->bMaximizeGain) 
 		{
 			float vmax = 0.;
 			float vmin = 0.;
-			for (auto i = 0; i < lnvchans; i++)
+			for (auto i = 0; i < n_lineview_chans; i++)
 			{
 				// keep final gain constant even if ampli gain changed
 				m_VDlineview.GetChanlistMaxMin(i, &max, &min);
@@ -690,6 +696,7 @@ void CViewData::UpdateChannelsDisplayParameters()
 		UpdateYExtent (ichan, iextent);
 		UpdateYZero (ichan, izero);
 	}
+	m_VDlineview.Invalidate();
 }
 
 void CViewData::SetCursorAssociatedWindows()
@@ -858,7 +865,7 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		mdPM->viewdata = m_VDlineview.m_parms;
+		options_viewdata->viewdata = *(m_VDlineview.GetScopeParameters());
 		break;
 	default:
 		break;
@@ -1065,9 +1072,9 @@ void CViewData::OnGainAdjustCurve()
 void CViewData::OnSplitCurves()
 {
 	const auto nchans = m_VDlineview.GetChanlistSize();		// nb of data channels
-	const auto pxheight = m_VDlineview.GetRectHeight();				// height of the display area
-	const auto pxoffset = pxheight/nchans;						// height for each channel
-	auto pxzero = (pxheight - pxoffset)/2;				// center first curve at
+	const auto pxheight = m_VDlineview.GetRectHeight();		// height of the display area
+	const auto pxoffset = pxheight/nchans;					// height for each channel
+	auto pxzero = (pxheight - pxoffset)/2;					// center first curve at
 
 	// split display area	
 	int  max, min;
@@ -1258,14 +1265,14 @@ void CViewData::ComputePrinterPageSize()
 	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
-	mdPM->horzRes=dc.GetDeviceCaps(HORZRES);
-	mdPM->vertRes=dc.GetDeviceCaps(VERTRES);	
+	options_viewdata->horzRes=dc.GetDeviceCaps(HORZRES);
+	options_viewdata->vertRes=dc.GetDeviceCaps(VERTRES);	
 
 	// margins (pixels)
-	m_printRect.right = mdPM->horzRes-mdPM->rightPageMargin;
-	m_printRect.bottom = mdPM->vertRes-mdPM->bottomPageMargin;
-	m_printRect.left = mdPM->leftPageMargin;
-	m_printRect.top = mdPM->topPageMargin;
+	m_printRect.right = options_viewdata->horzRes-options_viewdata->rightPageMargin;
+	m_printRect.bottom = options_viewdata->vertRes-options_viewdata->bottomPageMargin;
+	m_printRect.left = options_viewdata->leftPageMargin;
+	m_printRect.top = options_viewdata->topPageMargin;
 }
 
 void CViewData::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
@@ -1281,7 +1288,7 @@ void CViewData::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
 	auto ch_date = cs_dat_file.Left(icount);
 	ch_date = ch_date.Left(ch_date.GetLength() -1)+ ch;
 	p_dc->SetTextAlign(TA_CENTER);
-	p_dc->TextOut(mdPM->horzRes/2, mdPM->vertRes-57,	ch_date);
+	p_dc->TextOut(options_viewdata->horzRes/2, options_viewdata->vertRes-57,	ch_date);
 }
 
 CString CViewData::ConvertFileIndex(long l_first, long l_last)
@@ -1309,13 +1316,13 @@ BOOL CViewData::GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_fi
 	const auto totalrows= m_nbrowsperpage*(page-1);
 	l_first = m_lprintFirst;
 	filenumber = 0;						// file list index
-	if (mdPM->bPrintSelection)			// current file if selection only
+	if (options_viewdata->bPrintSelection)			// current file if selection only
 		filenumber = m_file0;
 	else
 		GetDocument()->DBMoveFirst();
 
 	auto very_last = m_lprintFirst + m_lprintLen;
-	if (mdPM->bEntireRecord)
+	if (options_viewdata->bEntireRecord)
 		very_last= m_pdatDoc->GetDOCchanLength()-1;
 
 	for (auto row = 0; row <totalrows; row++)
@@ -1335,13 +1342,13 @@ CString CViewData::GetFileInfos()
 
 	// document's name, date and time
 	const auto pwave_format = m_pdatDoc->GetpWaveFormat();
-	if (mdPM->bDocName || mdPM->bAcqDateTime)// print doc infos?
+	if (options_viewdata->bDocName || options_viewdata->bAcqDateTime)// print doc infos?
 	{
-		if (mdPM->bDocName)					// print file name
+		if (options_viewdata->bDocName)					// print file name
 		{
 			str_comment += GetDocument()->DBGetCurrentDatFileName() + tab;
 		}
-		if (mdPM->bAcqDateTime)				// print data acquisition date & time
+		if (options_viewdata->bAcqDateTime)				// print data acquisition date & time
 		{
 			const auto date = pwave_format->acqtime.Format(_T("%#d %B %Y %X")); //("%c");
 			str_comment +=  date;
@@ -1350,7 +1357,7 @@ CString CViewData::GetFileInfos()
 	}
 
 	// document's main comment (print on multiple lines if necessary)
-	if (mdPM->bAcqComment)
+	if (options_viewdata->bAcqComment)
 		str_comment += pwave_format->GetComments(_T(" ")) + rc;
 
 	return str_comment;
@@ -1380,7 +1387,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 	ASSERT(vert_bar > 0);
 
 	auto cs_comment = ConvertFileIndex(m_VDlineview.GetDataFirst(), m_VDlineview.GetDataLast());
-	if (mdPM->bTimeScaleBar)           
+	if (options_viewdata->bTimeScaleBar)           
 	{
 		// print horizontal bar
 		xbar_end.x	+= horz_bar;
@@ -1394,7 +1401,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 		str_comment += cs_comment + rc;
 	}
 
-	if (mdPM->bVoltageScaleBar)
+	if (options_viewdata->bVoltageScaleBar)
 	{
 		ybar_end.y -= vert_bar;
 		p_dc->MoveTo(bar_origin);
@@ -1402,7 +1409,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 	}
 
 	// comments, bar value and chan settings for each channel	
-	if (mdPM->bChansComment || mdPM->bVoltageScaleBar || mdPM->bChanSettings)
+	if (options_viewdata->bChansComment || options_viewdata->bVoltageScaleBar || options_viewdata->bChanSettings)
 	{
 		const auto imax = m_VDlineview.GetChanlistSize();	// number of data channels
 		for (auto ichan=0; ichan< imax; ichan++)		// loop
@@ -1410,7 +1417,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 			// boucler sur les commentaires de chan n a chan 0...		
 			wsprintf(lpsz_val, _T("chan#%i "), ichan);	// channel number
 			cs_comment = lpsz_val;
-			if (mdPM->bVoltageScaleBar)				// bar scale value
+			if (options_viewdata->bVoltageScaleBar)				// bar scale value
 			{
 				cs_unit = _T(" V");						// provisional unit				
 				auto z= 	static_cast<float>(m_VDlineview.GetRectHeight())/5 * m_VDlineview.GetChanlistVoltsperPixel(ichan);
@@ -1436,7 +1443,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 			str_comment += cs_comment;
 
 			// print chan comment 
-			if (mdPM->bChansComment)
+			if (options_viewdata->bChansComment)
 			{
 				str_comment += tab;
 				str_comment += m_VDlineview.GetChanlistComment(ichan);
@@ -1444,7 +1451,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 			str_comment += rc;
 
 			// print amplifiers settings (gain & filter), next line			
-			if (mdPM->bChanSettings)
+			if (options_viewdata->bChanSettings)
 			{
 				CString cs;
 				const WORD channb = m_VDlineview.GetChanlistSourceChan(ichan);
@@ -1464,10 +1471,10 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 BOOL CViewData::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// printing margins	
-	if (  mdPM->vertRes <= 0						// vertical resolution defined ?
-		||mdPM->horzRes <= 0						// horizontal resolution defined?
-		||mdPM->horzRes !=  pInfo->m_rectDraw.Width()	// same as infos provided
-		||mdPM->vertRes != pInfo->m_rectDraw.Height())	// by caller?
+	if (  options_viewdata->vertRes <= 0						// vertical resolution defined ?
+		||options_viewdata->horzRes <= 0						// horizontal resolution defined?
+		||options_viewdata->horzRes !=  pInfo->m_rectDraw.Width()	// same as infos provided
+		||options_viewdata->vertRes != pInfo->m_rectDraw.Height())	// by caller?
 		ComputePrinterPageSize();
 
 	auto npages = PrintGetNPages();
@@ -1475,7 +1482,7 @@ BOOL CViewData::OnPreparePrinting(CPrintInfo* pInfo)
 	pInfo->m_nNumPreviewPages = 1;  				// preview 1 pages at a time
 	pInfo->m_pPD->m_pd.Flags &= ~PD_NOSELECTION;	// allow print only selection
 
-	if(mdPM->bPrintSelection)
+	if(options_viewdata->bPrintSelection)
 		pInfo->m_pPD->m_pd.Flags |= PD_SELECTION;	// set button to selection
 
 	if (!CView::DoPreparePrinting(pInfo))
@@ -1484,9 +1491,9 @@ BOOL CViewData::OnPreparePrinting(CPrintInfo* pInfo)
 	if (!COleDocObjectItem::OnPreparePrinting(this, pInfo))
 		return FALSE;
 
-	if (mdPM->bPrintSelection != pInfo->m_pPD->PrintSelection())
+	if (options_viewdata->bPrintSelection != pInfo->m_pPD->PrintSelection())
 	{
-		mdPM->bPrintSelection = pInfo->m_pPD->PrintSelection();
+		options_viewdata->bPrintSelection = pInfo->m_pPD->PrintSelection();
 		npages = PrintGetNPages();
 		pInfo->SetMaxPage(npages);
 	}
@@ -1497,7 +1504,7 @@ BOOL CViewData::OnPreparePrinting(CPrintInfo* pInfo)
 int	CViewData::PrintGetNPages()
 {
 	// how many rows per page?
-	const auto size_row=mdPM->HeightDoc + mdPM->heightSeparator;
+	const auto size_row=options_viewdata->HeightDoc + options_viewdata->heightSeparator;
 	m_nbrowsperpage = m_printRect.Height()/size_row;
 	if (m_nbrowsperpage == 0)					// prevent zero pages
 		m_nbrowsperpage = 1;
@@ -1513,7 +1520,7 @@ int	CViewData::PrintGetNPages()
 	m_nfiles = 1;
 	auto ifile0 = m_file0;
 	auto ifile1 = m_file0;
-	if (!mdPM->bPrintSelection)
+	if (!options_viewdata->bPrintSelection)
 	{
 		ifile0 = 0;
 		m_nfiles = p_dbwave_doc->DBGetNRecords();
@@ -1521,7 +1528,7 @@ int	CViewData::PrintGetNPages()
 	}
 
 	// only one row per file
-	if (!mdPM->bMultirowDisplay || !mdPM->bEntireRecord)
+	if (!options_viewdata->bMultirowDisplay || !options_viewdata->bEntireRecord)
 		ntotal_rows = m_nfiles;
 
 	// multirows per file
@@ -1575,7 +1582,7 @@ void CViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial"));			// Arial font
-	m_logFont.lfHeight = mdPM->fontsize;			// font height
+	m_logFont.lfHeight = options_viewdata->fontsize;			// font height
 	m_pOldFont = nullptr;
 	/*BOOL flag = */m_fontPrint.CreateFontIndirect(&m_logFont);
 	p_dc->SetBkMode (TRANSPARENT);
@@ -1586,8 +1593,8 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
 
 	// --------------------- RWhere = rectangle/row in which we plot the data, rWidth = row width
-	const auto r_width = mdPM->WidthDoc;					// margins
-	const auto r_height = mdPM->HeightDoc;					// margins
+	const auto r_width = options_viewdata->WidthDoc;					// margins
+	const auto r_height = options_viewdata->HeightDoc;					// margins
 	CRect r_where (	m_printRect.left, 				// printing rectangle for data
 					m_printRect.top, 
 					m_printRect.left+r_width, 
@@ -1606,13 +1613,14 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	GetFileSeriesIndexFromPage(curpage, filenumber, l_first);
 	if (l_first < GetDocument()->DBGetDataLen()-1)
 		UpdateFileParameters();
-	if (mdPM->bEntireRecord)
+	if (options_viewdata->bEntireRecord)
 		very_last = GetDocument()->DBGetDataLen()-1;
 
 	SCOPESTRUCT oldparms;
-	oldparms = m_VDlineview.m_parms;
-	m_VDlineview.m_parms.bDrawframe = mdPM->bFrameRect;
-	m_VDlineview.m_parms.bClipRect	= mdPM->bClipRect;
+	SCOPESTRUCT* p_newparms = m_VDlineview.GetScopeParameters();
+	oldparms = *p_newparms;
+	p_newparms->bDrawframe = options_viewdata->bFrameRect;
+	p_newparms->bClipRect	= options_viewdata->bClipRect;
 
 	// loop through all files	--------------------------------------------------------
 	const int old_dc = p_dc->SaveDC();						// save DC
@@ -1636,7 +1644,7 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		}
 
 		// update display rectangle for next row
-		r_where.OffsetRect(0, r_height+mdPM->heightSeparator);
+		r_where.OffsetRect(0, r_height+options_viewdata->heightSeparator);
 
 		// restore DC and print comments --------------------------------------------------
 		p_dc->SetMapMode(MM_TEXT);				// 1 LP = 1 pixel
@@ -1654,7 +1662,7 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			cs_comment = ConvertFileIndex(m_VDlineview.GetDataFirst(), m_VDlineview.GetDataLast());
 
 		// print comments stored into cs_comment		
-		comment_rect.OffsetRect(mdPM->textseparator + comment_rect.Width(), 0);
+		comment_rect.OffsetRect(options_viewdata->textseparator + comment_rect.Width(), 0);
 		comment_rect.right = m_printRect.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
@@ -1678,12 +1686,12 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// end of file loop : restore initial conditions
 	if (m_pOldFont != nullptr)
 		p_dc->SelectObject(m_pOldFont);
-	m_VDlineview.m_parms = oldparms;
+	*p_newparms = oldparms;
 }
 
 BOOL CViewData::PrintGetNextRow(int &filenumber, long &l_first, long &very_last)
 {
-	if (!mdPM->bMultirowDisplay || !mdPM->bEntireRecord)
+	if (!options_viewdata->bMultirowDisplay || !options_viewdata->bEntireRecord)
 	{
 		filenumber++;
 		if  (filenumber >= m_nfiles)
@@ -1692,7 +1700,7 @@ BOOL CViewData::PrintGetNextRow(int &filenumber, long &l_first, long &very_last)
 		GetDocument()->DBMoveNext();
 		if (l_first < GetDocument()->DBGetDataLen()-1)
 		{
-			if (mdPM->bEntireRecord)
+			if (options_viewdata->bEntireRecord)
 				very_last=GetDocument()->DBGetDataLen()-1;
 		}
 	}
@@ -1815,7 +1823,6 @@ void CViewData::UpdateYExtent(int ichan, int yextent)
 		const auto yVoltsextent = m_VDlineview.GetChanlistVoltsperDataBin(ichan) * yextent;
 		m_VDlineview.SetChanlistVoltsExtent(-1, &yVoltsextent);
 	}
-	m_VDlineview.Invalidate();
 }
 
 void CViewData::UpdateYZero(int ichan, int ybias)
@@ -1826,5 +1833,4 @@ void CViewData::UpdateYZero(int ichan, int ybias)
 		const auto yVoltsextent = m_VDlineview.GetChanlistVoltsperDataBin(ichan) * ybias;
 		m_VDlineview.SetChanlistVoltsZero(-1, &yVoltsextent);
 	}
-	m_VDlineview.Invalidate();
 }

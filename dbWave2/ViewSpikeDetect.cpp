@@ -230,7 +230,7 @@ void CViewSpikeDetection::OnActivateView(BOOL bActivate, CView* pActivateView, C
 		SaveCurrentFileParms();	 		// save current options so that we can restore them when we return
 		SerializeWindowsState(BSAVE);	// set bincrflagonsave
 		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-		p_app->vdS.bincrflagonsave = ((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
+		p_app->options_viewspikes.bincrflagonsave = ((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -327,7 +327,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 {	
 	// update spike doc and temporary spike list
 	auto pdb_doc = GetDocument();
-	pdb_doc->DBGetCurrentSpkFileName(FALSE);
+	CString filename = pdb_doc->DBGetCurrentSpkFileName(FALSE);
 
 	// open the current spike file
 	if (pdb_doc->OpenCurrentSpikeFile() == nullptr)
@@ -486,7 +486,7 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 	// load method combo box with content
 	// init chan list, select first detection channel
 	auto pdb_doc = GetDocument();
-	pdb_doc->DBGetCurrentDatFileName();
+	CString filename = pdb_doc->DBGetCurrentDatFileName();
 	if (pdb_doc->OpenCurrentDataFile() == nullptr)
 		return;
 
@@ -656,7 +656,7 @@ void CViewSpikeDetection::OnInitialUpdate()
 	// load spike detection parameters from .INI file
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_pArrayFromApp = &(p_app->spkDA);		// get address of spike detection array parms
-	mdPM= &(p_app->vdP);						// get address of browse/print parms
+	mdPM= &(p_app->options_viewdata);						// get address of browse/print parms
 	
 	// top right ----------------------------------------
 	m_stretch.AttachParent(this);				// attach formview pointer
@@ -744,7 +744,7 @@ void CViewSpikeDetection::OnInitialUpdate()
 	GetDlgItem(IDC_GAIN2)->PostMessage(BM_SETIMAGE,(WPARAM)IMAGE_ICON,(LPARAM)(HANDLE)m_hZoom2);
 
 	// set bin_cr_flag_on_save
-	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->vdS.bincrflagonsave);
+	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// load data file parameters and build curves
 	CDaoRecordView::OnInitialUpdate();
@@ -871,10 +871,10 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		mdPM->viewspkdetectfiltered = m_displayDetect.m_parms;
-		mdPM->viewspkdetectdata = m_displayData.m_parms;
-		mdPM->viewspkdetectspk = m_spkBarView.m_parms;
-		mdPM->viewspkdetectbars = m_spkShapeView.m_parms;
+		mdPM->viewspkdetectfiltered = *m_displayDetect.GetScopeParameters();
+		mdPM->viewspkdetectdata = *m_displayData.GetScopeParameters();
+		mdPM->viewspkdetectspk = *m_spkBarView.GetScopeParameters();
+		mdPM->viewspkdetectbars = *m_spkShapeView.GetScopeParameters();
 		break;
 
 	case HINT_DEFINEDRECT:
@@ -2050,10 +2050,11 @@ void CViewSpikeDetection::OnToolsDataseries()
 
 void CViewSpikeDetection::PrintDataCartridge (CDC* p_dc, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars)
 {
-	const auto b_draw_f = plineViewWnd->m_parms.bDrawframe;
-	plineViewWnd->m_parms.bDrawframe = TRUE;
+	SCOPESTRUCT* pStruct = plineViewWnd->GetScopeParameters();
+	const auto b_draw_f = pStruct->bDrawframe;
+	pStruct->bDrawframe = TRUE;
 	plineViewWnd->Print(p_dc, prect, (mdPM->bcontours == 1));
-	plineViewWnd->m_parms.bDrawframe = b_draw_f;
+	pStruct->bDrawframe = b_draw_f;
 
 	// data vertical and horizontal bars
 
@@ -2647,10 +2648,10 @@ void CViewSpikeDetection::SerializeWindowsState(BOOL bSave, int itab)
 		}
 		else
 		{
-			m_displayData.m_parms = mdPM->viewspkdetectdata;
-			m_displayDetect.m_parms = mdPM->viewspkdetectfiltered;
-			m_spkBarView.m_parms = mdPM->viewspkdetectspk;
-			m_spkShapeView.m_parms = mdPM->viewspkdetectbars;
+			*m_displayData.GetScopeParameters() = mdPM->viewspkdetectdata;
+			*m_displayDetect.GetScopeParameters() = mdPM->viewspkdetectfiltered;
+			*m_spkBarView.GetScopeParameters() = mdPM->viewspkdetectspk;
+			*m_spkShapeView.GetScopeParameters() = mdPM->viewspkdetectbars;
 			OnFormatSplitcurves();
 		}
 	}

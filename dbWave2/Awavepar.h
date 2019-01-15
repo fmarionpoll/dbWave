@@ -1,7 +1,17 @@
 //  awavepar.h  acquisition parameters
 //
 #pragma once
+class display: public CObject
+{
+	DECLARE_SERIAL(display)
+	display();
+	~display();
+	display& operator = (const display& arg);
+	void Serialize(CArchive& ar) override;
 
+	int iextent = 2048;
+	int izero = 0;
+};
 
 class SCOPESTRUCT : public CObject
 {
@@ -9,7 +19,7 @@ class SCOPESTRUCT : public CObject
 	SCOPESTRUCT();
 	~SCOPESTRUCT();
 	SCOPESTRUCT& operator = (const SCOPESTRUCT& arg);
-	virtual void Serialize(CArchive& ar);
+	void Serialize(CArchive& ar) override;
 
 public:
 	WORD		wversion;
@@ -28,18 +38,19 @@ public:
 	float		yScaleUnitValue;
 	float		xScaleSpan_s;
 	float		yScaleSpan_v;
+
+	CArray <display, display> channels;
 };
 
-// ---------------------------------------------------------------------
 // view data options - version 1 (20-4-96)
 
 class OPTIONS_VIEWDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_VIEWDATA)
-	OPTIONS_VIEWDATA();								// constructor
-	~OPTIONS_VIEWDATA();							// destructor
-	OPTIONS_VIEWDATA& operator = (const OPTIONS_VIEWDATA& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);			// document i/o
+	OPTIONS_VIEWDATA();
+	~OPTIONS_VIEWDATA();
+	OPTIONS_VIEWDATA& operator = (const OPTIONS_VIEWDATA& arg);
+	void Serialize(CArchive& ar) override;
 
 public:
 	BOOL bChanged;			// flag set TRUE if contents has changed
@@ -78,7 +89,7 @@ public:
 	BOOL bAllChannels;		// display all channels
 	BOOL bEntireRecord;		// display entire record
 	BOOL bMultirowDisplay;	// display one record on consecutive lines
-	BOOL bSplitCurves;		// arrange curves so that they are splitted vertically
+	BOOL bSplitCurves;		// arrange curves so that they are distributed vertically
 	BOOL bMaximizeGain;		// maximize gain
 	BOOL bCenterCurves;		// center curves
 	BOOL bKeepForEachFile;	// keep parameters for each file
@@ -103,6 +114,7 @@ public:
 	BOOL bgraphics;			// TRUE=graphics (enh metafile), FALSE=ASCII
 	BOOL bdatabasecols;		// TRUE= export content of database columns
 	BOOL btoExcel;
+
 	int	 hzResolution;		// int item #1: horizontal size of exported data (points)
 	int  vtResolution;		// vertical size of exported data (points)
 	int	 unitMode;			// provisional
@@ -150,6 +162,7 @@ public:
 
 // ---------------------------------------------------------------------
 // view spikes options 
+
 #define EXPORT_PSTH			0
 #define EXPORT_ISI			1
 #define EXPORT_AUTOCORR		2
@@ -164,10 +177,10 @@ public:
 class OPTIONS_VIEWSPIKES : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_VIEWSPIKES)
-	OPTIONS_VIEWSPIKES();		// constructor
-	~OPTIONS_VIEWSPIKES();		// destructor
-	OPTIONS_VIEWSPIKES& operator = (const OPTIONS_VIEWSPIKES& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o	
+	OPTIONS_VIEWSPIKES();
+	~OPTIONS_VIEWSPIKES();
+	OPTIONS_VIEWSPIKES& operator = (const OPTIONS_VIEWSPIKES& arg);
+	void Serialize(CArchive& ar) override;
 
 public:
 	BOOL bChanged;				// flag set TRUE if contents has changed
@@ -241,10 +254,10 @@ public:
 class OPTIONS_VIEWDATAMEASURE : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_VIEWDATAMEASURE)
-	OPTIONS_VIEWDATAMEASURE();	// constructor
-	~OPTIONS_VIEWDATAMEASURE();	// destructor
-	OPTIONS_VIEWDATAMEASURE& operator = (const OPTIONS_VIEWDATAMEASURE& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+	OPTIONS_VIEWDATAMEASURE();
+	~OPTIONS_VIEWDATAMEASURE();
+	OPTIONS_VIEWDATAMEASURE& operator = (const OPTIONS_VIEWDATAMEASURE& arg);
+	void Serialize(CArchive& ar) override;
 
 public:
 	BOOL bChanged;			// flag set TRUE if contents has changed
@@ -293,7 +306,7 @@ class OPTIONS_IMPORT : public CObject
 	OPTIONS_IMPORT();
 	virtual ~OPTIONS_IMPORT();
 	OPTIONS_IMPORT& operator = (const OPTIONS_IMPORT& arg);
-	virtual void Serialize(CArchive& ar);
+	void Serialize(CArchive& ar) override;
 
 public:
 	BOOL  bChanged;					// flag set TRUE if contents has changed
@@ -342,10 +355,10 @@ public:
 class OPTIONS_ACQDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_ACQDATA)
-	OPTIONS_ACQDATA();								// constructor
-	~OPTIONS_ACQDATA();								// destructor
-	OPTIONS_ACQDATA& operator = (const OPTIONS_ACQDATA& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+	OPTIONS_ACQDATA();
+	~OPTIONS_ACQDATA();
+	OPTIONS_ACQDATA& operator = (const OPTIONS_ACQDATA& arg);
+	void Serialize(CArchive& ar) override;
 
 public:
 	BOOL			bChanged;						// flag set TRUE if contents has changed
@@ -397,10 +410,10 @@ public:
 class OUTPUTPARMS : public CObject
 {
 	DECLARE_SERIAL(OUTPUTPARMS)
-	OUTPUTPARMS();									// constructor
-	~OUTPUTPARMS();									// destructor
-	OUTPUTPARMS& operator = (const OUTPUTPARMS& arg);		// operator redefinition
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+	OUTPUTPARMS();
+	~OUTPUTPARMS();
+	OUTPUTPARMS& operator = (const OUTPUTPARMS& arg);
+	void Serialize(CArchive& ar) override;
 
 public:
 	BOOL	bChanged{};								// flag set TRUE if contents has changed
@@ -443,10 +456,10 @@ public:
 class OPTIONS_OUTPUTDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_OUTPUTDATA)
-	OPTIONS_OUTPUTDATA();							// constructor
-	~OPTIONS_OUTPUTDATA();							// destructor
-	OPTIONS_OUTPUTDATA& operator = (const OPTIONS_OUTPUTDATA& arg);// operator redefinition
-	virtual void Serialize(CArchive& ar);			// overridden for document i/o
+	OPTIONS_OUTPUTDATA();
+	~OPTIONS_OUTPUTDATA();
+	OPTIONS_OUTPUTDATA& operator = (const OPTIONS_OUTPUTDATA& arg);
+	void Serialize(CArchive& ar) override;
 
 public:
 	BOOL	bChanged;								// flag set TRUE if contents has changed

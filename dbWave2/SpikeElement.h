@@ -57,6 +57,7 @@ public:
 	// Implementation
 public:
 	virtual ~CSpikeElemt();
-	void	Serialize(CArchive& ar) override;	// overridden for document i/o
 	void	Read0(CArchive& ar);
+	void Serialize(CArchive& ar) override;
+
 };

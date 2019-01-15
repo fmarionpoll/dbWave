@@ -180,7 +180,7 @@ void CViewSpikes::OnActivateView( BOOL bActivate, CView* pActivateView, CView* p
 		}
 		// set bincrflagonsave
 		auto p_app = (CdbWaveApp*) AfxGetApp();
-		p_app->vdS.bincrflagonsave = ((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
+		p_app->options_viewspikes.bincrflagonsave = ((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -320,7 +320,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		mdPM->spkviewdata = m_sourceView.m_parms;
+		mdPM->spkviewdata = *m_sourceView.GetScopeParameters();
 		break;
 
 	case HINT_HITSPIKE_SHIFT:
@@ -482,8 +482,8 @@ void CViewSpikes::OnInitialUpdate()
 
 	// load global parameters
 	auto* p_app = (CdbWaveApp*) AfxGetApp();
-	mdPM = &(p_app->vdP);					// viewdata options
-	mdMO = &(p_app->vdM);					// measure options
+	mdPM = &(p_app->options_viewdata);					// viewdata options
+	mdMO = &(p_app->options_viewdata_measure);					// measure options
 	m_psC= &(p_app->spkC);					// get address of spike classif parms	
 	m_destclass = m_psC->vdestclass;
 	m_sourceclass = m_psC->vsourceclass;
@@ -529,9 +529,9 @@ void CViewSpikes::OnInitialUpdate()
 	m_binit = TRUE;
 
 	// init relation with document, display data, adjust parameters
-	m_sourceView.m_parms = mdPM->spkviewdata;
+	*m_sourceView.GetScopeParameters() = mdPM->spkviewdata;
 	// set bincrflagonsave
-	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->vdS.bincrflagonsave);
+	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	UpdateFileParameters();
 	UpdateLegends(TRUE);
@@ -668,7 +668,7 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 void CViewSpikes::UpdateFileParameters()
 {
 	// init data view
-	GetDocument()->DBGetCurrentSpkFileName(FALSE);
+	CString filename = GetDocument()->DBGetCurrentSpkFileName(FALSE);
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 
 	// init spike views

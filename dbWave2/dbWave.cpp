@@ -1,42 +1,36 @@
-// dbWave.cpp : Defines the class behaviors for the application.
-//
-
 #include "StdAfx.h"
-#include <winspool.h>		// get access to some printer functions
-//#include "dbWave.h"
-
+#include <winspool.h>
+#include "Fileversion.h"
 #include "MainFrm.h"
 #include "ChildFrm.h"
-//#include "dbMainTable.h"
+#include "ViewData.h"
+#include "ViewSpikes.h"
+#include "ViewdbWave.h"
+#include "ViewADcontinuous.h"
+#include "ViewNotedoc.h"
 #include "dbWaveDoc.h"
+#include "NoteDoc.h"
+#include "WaveBuf.h"
+#include "Awavepar.h"
+#include "Splash.h"
+#include "AboutDlg.h"
+//#include "dbWave.h"
+//#include "dbMainTable.h"
 //#include "Acqparam.h"
 //#include "Taglines.h"
 //#include "datafile_X.h"
-#include "WaveBuf.h"
-#include "Awavepar.h"
 //#include "Acqdatad.h"
 //#include "Cscale.h"
 //#include "scopescr.h"
 //#include "Lineview.h"
 //#include "Spikebar.h"
 //#include "spikeshape.h"
-#include "NoteDoc.h"
-#include "Splash.h"
 //#include "Editctrl.h"
 //#include "SpikeClassListBox.h"
-#include "Fileversion.h"
-#include "ViewData.h"
-#include "ViewSpikes.h"
-#include "ViewdbWave.h"
-#include "ViewADcontinuous.h"
-#include "ViewNotedoc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CdbWaveApp
 
 BEGIN_MESSAGE_MAP(CdbWaveApp, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &CdbWaveApp::OnAppAbout)
@@ -45,9 +39,44 @@ BEGIN_MESSAGE_MAP(CdbWaveApp, CWinAppEx)
 	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinAppEx::OnFilePrintSetup)
 END_MESSAGE_MAP()
 
+CdbWaveApp theApp;
+static TCHAR sz_vds[] = _T("Default parameters");
+static TCHAR sz_file_entry[] = _T("File%d");
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbWaveApp construction
+void DisplayDaoException(CDaoException* e, int iID = 0)
+{
+	CString str_msg;
+	if (e->m_pErrorInfo != nullptr)
+	{
+		str_msg.Format(
+			_T("%s   (%d) at line ID %i\n\n")
+			_T("Would you like to see help?"),
+			static_cast<LPCTSTR>(e->m_pErrorInfo->m_strDescription),
+			e->m_pErrorInfo->m_lErrorCode, iID);
+
+		if (AfxMessageBox(str_msg, MB_YESNO) == IDYES)
+		{
+			WinHelp(GetDesktopWindow(),
+				e->m_pErrorInfo->m_strHelpFile,
+				HELP_CONTEXT,
+				e->m_pErrorInfo->m_lHelpContext);
+		}
+	}
+	else
+	{
+		str_msg.Format(
+			_T("ERROR:CDaoException\n\n")
+			_T("SCODE_CODE      =%d\n")
+			_T("SCODE_FACILITY  =%d\n")
+			_T("SCODE_SEVERITY  =%d\n")
+			_T("ResultFromScode =%d\n"),
+			SCODE_CODE(e->m_scode),
+			SCODE_FACILITY(e->m_scode),
+			SCODE_SEVERITY(e->m_scode),
+			ResultFromScode(e->m_scode));
+		AfxMessageBox(str_msg);
+	}
+}
 
 CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 {
@@ -55,7 +84,7 @@ CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 	m_bHiColorIcons = TRUE;
 
 	// support Restart Manager: yes
-	 m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_ALL_ASPECTS;
+	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_ALL_ASPECTS;
 #ifdef _MANAGED
 	// If the application is built using Common Language Runtime support (/clr):
 	//     1) This additional setting is needed for Restart Manager support to work properly.
@@ -63,18 +92,14 @@ CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 	System::Windows::Forms::Application::SetUnhandledExceptionMode(System::Windows::Forms::UnhandledExceptionMode::ThrowException);
 #endif
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
-	SetAppID(_T("FMP.dbWave2.VS2017.Aug-2017"));
+	SetAppID(_T("FMP.dbWave2.VS2019.Jan-2019"));
 
-	m_pviewdataMemFile		= nullptr;
-	m_pviewspikesMemFile	= nullptr;
-	m_psort1spikesMemFile	= nullptr;
-	m_bADcardFound			= TRUE;
+	m_pviewdataMemFile = nullptr;
+	m_pviewspikesMemFile = nullptr;
+	m_psort1spikesMemFile = nullptr;
+	m_bADcardFound = TRUE;
 	m_pdbWaveViewTemplate = nullptr;
 }
-
-
-CdbWaveApp theApp;
-
 
 BOOL CdbWaveApp::InitInstance()
 {
@@ -230,39 +255,6 @@ int CdbWaveApp::ExitInstance()
 	return CWinAppEx::ExitInstance();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CAboutDlg dialog used for App About
-
-class CAboutDlg : public CDialogEx
-{
-public:
-	CAboutDlg();
-
-// Dialog Data
-	enum { IDD = IDD_ABOUTBOXDLG };
-
-	protected:
-	void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-// Implementation
-protected:
-	BOOL OnInitDialog() override;
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
-{
-}
-
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialogEx::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-END_MESSAGE_MAP()
-
-// App command to run the dialog
 void CdbWaveApp::OnAppAbout()
 {
 	CAboutDlg about_dlg;
@@ -293,8 +285,6 @@ BOOL CAboutDlg::OnInitDialog()
 	return TRUE;
 }
 
-// CMFCApplication1App customization load/save methods
-
 void CdbWaveApp::PreLoadState()
 {
 	CString str_name;
@@ -314,58 +304,12 @@ void CdbWaveApp::SaveCustomState()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbWaveApp message handlers
-
-
 BOOL CdbWaveApp::PreTranslateMessage(MSG* pMsg)
 {
 	if (CSplashWnd::PreTranslateAppMessage(pMsg))
 	  return TRUE;
 	return CWinAppEx::PreTranslateMessage(pMsg);
 }
-
-
-void DisplayDaoException(CDaoException* e, int iID = 0)
-{
-	CString str_msg;
-	if (e->m_pErrorInfo!= nullptr)
-	{
-		str_msg.Format(
-			_T("%s   (%d) at line ID %i\n\n")
-			_T("Would you like to see help?"),
-			static_cast<LPCTSTR>(e->m_pErrorInfo->m_strDescription),
-			e->m_pErrorInfo->m_lErrorCode, iID);
-
-		if (AfxMessageBox(str_msg, MB_YESNO) == IDYES)
-		{
-			WinHelp(GetDesktopWindow(),
-					e->m_pErrorInfo->m_strHelpFile,
-					HELP_CONTEXT,
-					e->m_pErrorInfo->m_lHelpContext);
-		}
-	}
-	else
-	{
-		str_msg.Format(
-			_T("ERROR:CDaoException\n\n")
-			_T("SCODE_CODE      =%d\n")
-			_T("SCODE_FACILITY  =%d\n")
-			_T("SCODE_SEVERITY  =%d\n")
-			_T("ResultFromScode =%d\n"),
-			SCODE_CODE      (e->m_scode),
-			SCODE_FACILITY  (e->m_scode),
-			SCODE_SEVERITY  (e->m_scode),
-			ResultFromScode (e->m_scode));
-		AfxMessageBox(str_msg);
-	}
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-static TCHAR sz_vds[] = _T("Default parameters");
-static TCHAR sz_file_entry[] = _T("File%d");
 
 void CdbWaveApp::Defaultparameters(BOOL b_read)
 {	
@@ -439,7 +383,6 @@ void CdbWaveApp::Defaultparameters(BOOL b_read)
 	}
 }
 
-
 BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 {
 	CFile f;					// file object
@@ -456,13 +399,13 @@ BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 			ar >> m_comment; // comment
 			n--; if (n > 0) stiD.Serialize(ar);	// STIMDETECT
 			n--; if (n > 0) spkDA.Serialize(ar);// SPKDETECTARRAY
-			n--; if (n > 0) vdP.Serialize(ar);	// OPTIONS_VIEWDATA
-			n--; if (n > 0) vdS.Serialize(ar);	// OPTIONS_VIEWSPIKES
+			n--; if (n > 0) options_viewdata.Serialize(ar);	// OPTIONS_VIEWDATA
+			n--; if (n > 0) options_viewspikes.Serialize(ar);	// OPTIONS_VIEWSPIKES
 			n--; if (n > 0) spkC.Serialize(ar);	// SPKCLASSIF
-			n--; if (n > 0) vdM.Serialize(ar);	// OPTIONS_VIEWDATAMEASURE
-			n--; if (n > 0) ivO.Serialize(ar);	// OPTIONS_IMPORT
-			n--; if (n > 0) acqD.Serialize(ar);	// OPTIONS_ACQDATA
-			n--; if (n > 0) outD.Serialize(ar);	//OPTIONS_OUTPUTDATA
+			n--; if (n > 0) options_viewdata_measure.Serialize(ar);	// OPTIONS_VIEWDATAMEASURE
+			n--; if (n > 0) options_import.Serialize(ar);	// OPTIONS_IMPORT
+			n--; if (n > 0) options_acqdata.Serialize(ar);	// OPTIONS_ACQDATA
+			n--; if (n > 0) options_outputdata.Serialize(ar);	//OPTIONS_OUTPUTDATA
 
 			ar.Close();					// close archive
 			f.Close();					// close file
@@ -477,13 +420,13 @@ BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 			ar << m_comment;		// 1 comment
 			stiD.Serialize(ar);		// 2 STIMDETECT
 			spkDA.Serialize(ar);	// 3 SPKDETECTARRAY			
-			vdP.Serialize(ar);		// 4 OPTIONS_VIEWDATA
-			vdS.Serialize(ar);		// 5 OPTIONS_VIEWSPIKES
+			options_viewdata.Serialize(ar);		// 4 OPTIONS_VIEWDATA
+			options_viewspikes.Serialize(ar);		// 5 OPTIONS_VIEWSPIKES
 			spkC.Serialize(ar);		// 6 SPKCLASSIF
-			vdM.Serialize(ar);		// 7 OPTIONS_VIEWDATAMEASURE
-			ivO.Serialize(ar);		// 8 OPTIONS_IMPORT
-			acqD.Serialize(ar);		// 9 OPTIONS_ACQDATA
-			outD.Serialize(ar);		// 10 OPTIONS_OUTPUTDATA
+			options_viewdata_measure.Serialize(ar);		// 7 OPTIONS_VIEWDATAMEASURE
+			options_import.Serialize(ar);		// 8 OPTIONS_IMPORT
+			options_acqdata.Serialize(ar);		// 9 OPTIONS_ACQDATA
+			options_outputdata.Serialize(ar);		// 10 OPTIONS_OUTPUTDATA
 			ar.Close();
 			f.Close();
 		}
@@ -496,23 +439,9 @@ BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 	return bsuccess;
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-
-// ** cf How to change default printer settings in an MFC application
-// Microsoft Developer Network July 1996
-// PSS ID Number: Q126897  Article last modified on 01-21-1996
-//
-// SUMMARY
-// =======
-// 
-// To change the default printer settings in an MFC application, you must
-// retrieve the system default settings in a CWinAppEx derived object and
-// modify those defaults before a print job is invoked.
-
 void CdbWaveApp::SetPrinterOrientation()
 {
-	if (vdP.horzRes <= 0 || vdP.vertRes <= 0)
+	if (options_viewdata.horzRes <= 0 || options_viewdata.vertRes <= 0)
 		return;
 
 	// Get default printer settings.
@@ -527,7 +456,7 @@ void CdbWaveApp::SetPrinterOrientation()
 		if (p_dev_mode)
 		{
 			// Change printer settings in here.
-			if (vdP.horzRes > vdP.vertRes)
+			if (options_viewdata.horzRes > options_viewdata.vertRes)
 				p_dev_mode->dmOrientation = DMORIENT_LANDSCAPE;
 			else
 				p_dev_mode->dmOrientation = DMORIENT_PORTRAIT;
@@ -552,14 +481,6 @@ void CdbWaveApp::SetPrinterOrientation()
 		}
 	}
 }
-
-
-// call file selection dialog box
-// input:	int number corresponding to file filter strings
-//			string with title for the dialog box
-//			pointer to index of filters chosen by user (to keep track of last choices)
-//			address for a string array where file names selected will be stored
-// output:	string array with file names found
 
 BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames)
 {
@@ -645,11 +566,11 @@ void CdbWaveApp::OnFileOpen()
 	//Spikes (*.spk)|*.spk|
 	//Text (*.txt)|*.txt|
 	//Project (*.prj)|*.prj|
-	GetFilenamesDlg(IDS_FILEDESCRIP, nullptr, &vdP.nfilterindex, &filenames);
+	GetFilenamesDlg(IDS_FILEDESCRIP, nullptr, &options_viewdata.nfilterindex, &filenames);
 	if (filenames.GetSize() == 0)
 		return;
 
-	switch (vdP.nfilterindex)
+	switch (options_viewdata.nfilterindex)
 	{
 	case 1: // mdb
 		OpenDocumentFile(filenames[0]);

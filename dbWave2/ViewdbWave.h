@@ -1,18 +1,17 @@
 #pragma once
 
-// dbWaveView.h : interface of the CViewdbWave class
-//
-/////////////////////////////////////////////////////////////////////////////
-
 #include "DataListCtrl.h"
+#include "dbMainTable.h"
+#include "Lineview.h"
+#include "Spikebar.h"
+#include "spikeshape.h"
 #include "Editctrl.h"
 
 //class CdbWaveCntrItem;
-class CdbMainTable;
-class CLineViewWnd;
-class CSpikeBarWnd;
-class CSpikeShapeWnd;
-class CDataListCtrl;
+//class CdbMainTable;
+//class CLineViewWnd;
+//class CSpikeBarWnd;
+//class CSpikeShapeWnd;
 
 class CViewdbWave : public CDaoRecordView
 {
@@ -58,20 +57,20 @@ public:
 #endif
 
 protected:
+	BOOL				m_binit;
 	BOOL				m_bAddMode;
 	BOOL				m_bFilterON;
 	int					m_dattransform;
-	CEditCtrl			mm_timefirst;		// first abcissa value
-	CEditCtrl			mm_timelast;		// last abcissa value
-	CEditCtrl			mm_amplitudespan;	// amplitude
+	CEditCtrl			mm_spikeclass;		// selected spike class
 	float				m_timefirst;
 	float				m_timelast;
 	float				m_amplitudespan;
-	CEditCtrl			mm_spikeclass;		// selected spike class
 	int					m_spikeclass;
+	CEditCtrl			mm_timefirst;		// first abcissa value
+	CEditCtrl			mm_timelast;		// last abcissa value
+	CEditCtrl			mm_amplitudespan;	// amplitude
 	CStretchControl		m_stretch;			// properties for controls
-	BOOL				m_binit;
-	OPTIONS_VIEWDATA*	mdPM;
+	OPTIONS_VIEWDATA*	m_options_viewdata;
 	CTabCtrl			m_tabCtrl;
 
 	// internal functions

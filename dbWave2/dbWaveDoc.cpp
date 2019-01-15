@@ -563,7 +563,7 @@ void CdbWaveDoc::ExportDataAsciiComments(CSharedFile* p_shared_file)
 	CString csfilecomment = _T("Analyze file: ");
 	CString cs_dummy;
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	const auto p_view_data_options = &(p_app->vdP);
+	const auto p_view_data_options = &(p_app->options_viewdata);
 	const int index_current = DBGetCurrentRecordPosition();
 	const int n_files = DBGetNRecords();
 
@@ -1093,7 +1093,7 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		COleDateTime o_time;
 		auto t = p_wave_format->acqtime;
 		o_time.SetDateTime( t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
-		if (!dynamic_cast<CdbWaveApp*>(AfxGetApp())->ivO.bImportDuplicateFiles)
+		if (!dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import.bImportDuplicateFiles)
 		{
 			if (!m_pDB->m_mainTableSet.CheckIfAcqDateTimeIsUnique(&o_time))
 				continue;
@@ -1568,7 +1568,7 @@ void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list
 	CString cs_tab = _T("\t");
 
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->vdS);
+	const auto options_viewspikes = &(p_app->options_viewspikes);
 
 	auto cs_file_comment = _T("\r\n") + ExportDatabaseData();
 	pSF->Write(cs_file_comment, cs_file_comment.GetLength() * sizeof(TCHAR));
@@ -1607,7 +1607,7 @@ void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list
 CString CdbWaveDoc::ExportDatabaseData(const int ioption)
 {
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->vdS);
+	const auto options_viewspikes = &(p_app->options_viewspikes);
 	CString separator = _T("\t");
 	if (ioption == 1)
 		separator = _T(" | ");
@@ -1706,7 +1706,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 	}
 
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->vdS);
+	const auto options_viewspikes = &(p_app->options_viewspikes);
 
 	const auto ioldlist = m_pSpk->GetSpkListCurrentIndex(); 
 	m_pSpk->ExportTableTitle(pSF, options_viewspikes, nfiles);

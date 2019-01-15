@@ -100,7 +100,7 @@ BOOL CExportDataDlg::OnInitDialog()
 	// extra initialization
 	CdbWaveApp* p_app;							// handle to the instance
 	p_app = (CdbWaveApp*) AfxGetApp();			// pointer to application
-	iivO= p_app->ivO;							// copy structure / options
+	iivO= p_app->options_import;							// copy structure / options
 
 	// update dependent controls
 	m_ComboExportas.SetCurSel(iivO.exportType); // combo-box	
@@ -176,7 +176,7 @@ void CExportDataDlg::OnOK()
 	// copy data into awave structure
 	CdbWaveApp* p_app;					// handle to the instance
 	p_app = (CdbWaveApp*) AfxGetApp();	// pointer to application
-	p_app->ivO= iivO;					// copy structure / options	
+	p_app->options_import= iivO;					// copy structure / options	
 	
 	CDialog::OnOK();
 }

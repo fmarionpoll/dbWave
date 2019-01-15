@@ -207,14 +207,14 @@ void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI* pCmdUI)
 void CChildFrame::OnOptionsBrowsemode() 
 {
 	CBrowseFileDlg dlg;
-	dlg.mfBR = &(dynamic_cast<CdbWaveApp*> (AfxGetApp())->vdP);
+	dlg.mfBR = &(dynamic_cast<CdbWaveApp*> (AfxGetApp())->options_viewdata);
 	dlg.DoModal();	
 }
 
 void CChildFrame::OnOptionsPrintmargins() 
 {
 	CPrintMarginsDlg dlg;
-	const auto psource = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->vdP);
+	const auto psource = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
 	dlg.mdPM = psource;
 	dlg.DoModal();		
 }
@@ -238,7 +238,7 @@ void CChildFrame::OnToolsExportdatacomments()
 {
 	CDataCommentsDlg dlg;
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	dlg.m_pvO = &(p_app->vdP);	
+	dlg.m_pvO = &(p_app->options_viewdata);	
 	if (IDOK == dlg.DoModal())
 	{
 		UpdateWindow();
@@ -252,7 +252,7 @@ void CChildFrame::OnToolsExportnumberofspikes()
 {
 	CExportSpikeInfosDlg dlg;
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	dlg.m_pvdS =  &p_app->vdS;
+	dlg.m_pvdS =  &p_app->options_viewspikes;
 	if (IDOK == dlg.DoModal())
 	{
 		UpdateWindow();
@@ -307,9 +307,9 @@ void CChildFrame::ExportASCII(int option)
 	case 0:			// export CAcqData
 		{
 			auto flag = FALSE;
-			if (p_app->vdP.btoExcel) 
+			if (p_app->options_viewdata.btoExcel) 
 				flag = ExportToExcel();
-			if (!p_app->vdP.btoExcel || !flag)
+			if (!p_app->options_viewdata.btoExcel || !flag)
 			{
 				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
 				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
@@ -323,10 +323,10 @@ void CChildFrame::ExportASCII(int option)
 	case 1:
 		{
 			auto flag = FALSE;
-			if (p_app->vdS.bexporttoExcel) 
+			if (p_app->options_viewspikes.bexporttoExcel) 
 				flag = ExportToExcelAndBuildPivot(option);
 
-			if (!p_app->vdS.bexporttoExcel || !flag)
+			if (!p_app->options_viewspikes.bexporttoExcel || !flag)
 			{
 				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
 				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
@@ -731,11 +731,11 @@ void CChildFrame::OnRecordGotorecord()
 	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
 	dlg.m_recordPos = p_dbwave_doc->DBGetCurrentRecordPosition();
 	dlg.m_recordID = p_dbwave_doc->DBGetCurrentRecordID();
-	dlg.m_bGotoRecordID = ((CdbWaveApp*) AfxGetApp())->vdP.bGotoRecordID;
+	dlg.m_bGotoRecordID = ((CdbWaveApp*) AfxGetApp())->options_viewdata.bGotoRecordID;
 
 	if (IDOK == dlg.DoModal())
 	{
-		((CdbWaveApp*) AfxGetApp())->vdP.bGotoRecordID = dlg.m_bGotoRecordID;		
+		((CdbWaveApp*) AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;		
 		if (!dlg.m_bGotoRecordID)
 			p_dbwave_doc->DBSetCurrentRecordPosition(dlg.m_recordPos);
 		else
@@ -939,7 +939,7 @@ BOOL CChildFrame::ExportToExcelAndBuildPivot(int option)
 		cs1 = cs2 + _T("!") + cs1;
 
 		auto* p_app = (CdbWaveApp*) AfxGetApp();
-		if (p_app->vdS.bexportPivot) 
+		if (p_app->options_viewspikes.bexportPivot) 
 		{
 			CString cs_bin;
 			BuildPivot(&o_app, &odata_sheet, cs1, _T("pivot_cnt"), static_cast<short>(-4112), col2);
@@ -991,7 +991,7 @@ void CChildFrame::BuildPivot(void* poApp, void* podataSheet, CString csSourceDat
 
 	// get options
 	auto* p_app = (CdbWaveApp*) AfxGetApp();
-	const auto p_option_viewspikes = &(p_app->vdS);
+	const auto p_option_viewspikes = &(p_app->options_viewspikes);
 
 	// add fields to pivottable
 	if (p_option_viewspikes->bacqcomments)

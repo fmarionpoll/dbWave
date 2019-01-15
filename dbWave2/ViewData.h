@@ -81,7 +81,7 @@ protected:
 
 	// page format printing parameters (pixel unit)    
 	CRect						m_printRect;
-	OPTIONS_VIEWDATA*			mdPM{};		// view data options
+	OPTIONS_VIEWDATA*			options_viewdata{};		// view data options
 	OPTIONS_VIEWDATAMEASURE*	mdMO{};		// measure options
 
 protected:

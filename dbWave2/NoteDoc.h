@@ -21,9 +21,9 @@ public:
 // Overrides
 	public:
 	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	void Serialize(CArchive& ar) override;
 
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual CRichEditCntrItem* CreateClientItem(REOBJECT* preo) const;
 	BOOL OpenProjectFiles(CString& cspathname);
 

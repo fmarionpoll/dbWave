@@ -8,10 +8,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CBrowseFileDlg dialog
-
-
 CBrowseFileDlg::CBrowseFileDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CBrowseFileDlg::IDD, pParent)
 {
@@ -40,10 +36,6 @@ void CBrowseFileDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CBrowseFileDlg, CDialog)
 
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CBrowseFileDlg message handlers
 
 BOOL CBrowseFileDlg::OnInitDialog()
 {

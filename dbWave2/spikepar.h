@@ -1,16 +1,5 @@
 #pragma once
 
-//  spikepar.h  acquisition parameters
-//
-
-////////////////////////////////////////////////////////////////////////
-// STIMDETECT				version 1
-// SPKDETECTPARM			version 1
-// SPKDETECTARRAY			version 1
-// SPKCLASSIF				version 1
-////////////////////////////////////////////////////////////////////////
-
-// ---------------------------------------------------------------------
 // stimulus detection
 
 class STIMDETECT : public CObject
@@ -28,13 +17,12 @@ public:
 	int	 bMode;				// 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down); 
 
 public :
-	STIMDETECT();			// constructor
-	~STIMDETECT();			// destructor
-	STIMDETECT& operator = (const STIMDETECT& arg);// operator redefinition
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+	STIMDETECT();
+	~STIMDETECT();
+	STIMDETECT& operator = (const STIMDETECT& arg);
+	void Serialize(CArchive& ar) override;
 };
 
-// ---------------------------------------------------------------------
 // spike detection parameters
 
 class SPKDETECTPARM : public CObject
@@ -70,11 +58,11 @@ public :
 	SPKDETECTPARM();
 	~SPKDETECTPARM();
 	SPKDETECTPARM& operator = (const SPKDETECTPARM& arg);
-	virtual void Serialize(CArchive& ar);
+	void Serialize(CArchive& ar) override;
+
 };
 
-// ---------------------------------------------------------------------
-// spike detection parameters
+// Array of spike detection parameters
 
 class CSpkDetectArray : public CObject
 {
@@ -96,12 +84,12 @@ protected:
 public :
 	CSpkDetectArray();
 	virtual			~CSpkDetectArray();
-	CSpkDetectArray& operator	= (const CSpkDetectArray& arg);	// operator redefinition
-	virtual void	Serialize(CArchive& ar);		// overridden for document i/o
+	CSpkDetectArray& operator	= (const CSpkDetectArray& arg);
+	void Serialize(CArchive& ar) override;
+
 	void			Serialize_Load(CArchive& ar, WORD wversion);
 };
 
-// ---------------------------------------------------------------------
 // array of spike detection parameters
 // 2 dimensions
 
@@ -121,11 +109,10 @@ protected:
 public :
 	SPKDETECTARRAY();
 	virtual		~SPKDETECTARRAY();
-	virtual void Serialize(CArchive& ar);				// overridden for document i/o
+	void Serialize(CArchive& ar) override;
+
 };
 
-
-// ---------------------------------------------------------------------
 // spike classification parameters
 
 class SPKCLASSIF : public CObject
@@ -175,6 +162,7 @@ public :
 	SPKCLASSIF();
 	~SPKCLASSIF();
 	SPKCLASSIF& operator = (const SPKCLASSIF& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+	void Serialize(CArchive& ar) override;
+
 	void CreateTPL();	
 };

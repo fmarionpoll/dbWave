@@ -609,6 +609,23 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
+CLineViewWnd* CDataListCtrl::GetDataViewCurrentRecord()  
+{ 
+	UINT uSelectedCount = GetSelectedCount();
+	int  nItem = -1;
+	CLineViewWnd* ptr = nullptr;
+
+	// Update all of the selected items.
+	if (uSelectedCount > 0)
+	{
+		nItem = GetNextItem(nItem, LVNI_SELECTED);
+		ASSERT(nItem != -1);
+		ptr = datalistctrlrowobject_prt_array.GetAt(nItem)->pdataWnd;
+	}
+	return ptr; 
+}
+
+
 void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
 	// create objects if necessary : CLineView and CAcqDataDoc
@@ -617,7 +634,7 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 		ptr->pdataWnd = new CLineViewWnd;
 		ASSERT(ptr->pdataWnd != NULL);
 		ptr->pdataWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, iImage*100);
-		ptr->pdataWnd->SetbUseDIB(FALSE); //(TRUE );
+		ptr->pdataWnd->SetbUseDIB(FALSE);
 	}
 	auto p_wnd = ptr->pdataWnd;
 
@@ -642,11 +659,10 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	// if available, load data into CLineViewWnd object
 	else
 	{
-		//if (!TestIfSpikesWereDetected(ptr->csDatafileName))
 		if (ptr->csNspk.IsEmpty())
-			p_wnd->m_parms.crScopeFill = p_wnd->GetColor(2);
+			p_wnd->GetScopeParameters()->crScopeFill = p_wnd->GetColor(2);
 		else 
-			p_wnd->m_parms.crScopeFill = p_wnd->GetColor(15);
+			p_wnd->GetScopeParameters()->crScopeFill = p_wnd->GetColor(15);
 
 		ptr->pdataDoc->ReadDataInfos();
 		p_wnd->AttachDataFile(ptr->pdataDoc, 0);
@@ -702,8 +718,8 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 		{
 			p_wnd->GetChanlistMaxMin(i, &max, &min);
 			auto ispan = max-min+1;
-			int iextent;// = p_wnd->GetChanlistYextent(i);
-			int izero; // = p_wnd->GetChanlistYzero(i);
+			int iextent;
+			int izero;
 			if(m_bsetmVSpan > 0.f)
 			{
 				ispan = p_wnd->ConvertChanlistVoltstoDataBins(i, m_mVspan / 1000.f) ;

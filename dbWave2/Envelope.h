@@ -9,6 +9,7 @@ public:
 	CHighLight();				// protected constructor used by dynamic creation
 	DECLARE_SERIAL(CHighLight)
 	void Serialize(CArchive& ar) override;
+
 	CHighLight& operator = (const CHighLight& arg);	// operator redefinition
 
 public:
@@ -31,7 +32,7 @@ public:
 public:
 	CEnvelope(WORD npixels);	// create Envelope with npoints	
 	CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span);
-	virtual void Serialize(CArchive& ar);
+	void Serialize(CArchive& ar) override;
 
 // Attributes
 protected:

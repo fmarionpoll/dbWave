@@ -29,5 +29,6 @@ public :
 	CSpikeClass();
 	CSpikeClass(int SpikeSize);
 	virtual ~CSpikeClass();
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+	void Serialize(CArchive& ar) override;
+
 };

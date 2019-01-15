@@ -47,10 +47,7 @@ public:
 	USBPxxPARAMETERS & operator = (const USBPxxPARAMETERS& arg);	// operator redefinition
 	long Write(CFile* datafile);
 	BOOL Read(CFile* datafile);
-	virtual void Serialize(CArchive& ar);
-
-
-
+	void Serialize(CArchive& ar) override;
 };
 
 /////////////////////////////////////////////////////////////////////////////

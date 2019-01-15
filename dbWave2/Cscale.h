@@ -10,7 +10,7 @@ public:
 	CScale();				// protected constructor used by dynamic creation
 	CScale (int npixels);	// create Envelope with npoints	
 	DECLARE_SERIAL(CScale)
-	virtual void Serialize(CArchive& ar);
+	void Serialize(CArchive& ar) override;
 
 protected:
 	int m_npixels;			// scale built for n pixels	

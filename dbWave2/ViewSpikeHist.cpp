@@ -136,8 +136,8 @@ void CViewSpikeHist::OnInitialUpdate()
 
 	// load stored parameters
 	auto p_app = (CdbWaveApp*) AfxGetApp();    
-	m_pvdS= &(p_app->vdS);	// get address of spike display options
-	mdPM = &(p_app->vdP);	// printing options
+	m_pvdS= &(p_app->options_viewspikes);	// get address of spike display options
+	mdPM = &(p_app->options_viewdata);		// printing options
 
 	// create local fonts
 	memset(&m_logFontDisp, 0, sizeof(LOGFONT));		// prepare font
@@ -233,7 +233,7 @@ void CViewSpikeHist::OnActivateView( BOOL bActivate, CView* pActivateView, CView
 	else
 	{
 		auto* p_app = (CdbWaveApp*) AfxGetApp();    
-		p_app->vdS.ballfiles = ((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck();
+		p_app->options_viewspikes.ballfiles = ((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }

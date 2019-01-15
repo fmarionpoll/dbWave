@@ -19,8 +19,8 @@ public:
 	~CTag();
 
 	CTag& operator = (const CTag& arg);		// operator redefinition
-	//CTag &operator = (CTag &arg);			// 
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+	void Serialize(CArchive& ar) override;
+
 	long Write(CFile* pdatafile);
 	BOOL Read(CFile* pdatafile);
 	

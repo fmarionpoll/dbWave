@@ -44,11 +44,11 @@ END_MESSAGE_MAP()
 BOOL CScopeScreenPropsDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-
-	m_xcells = m_pscope->m_parms.iXCells;
-	m_ycells = m_pscope->m_parms.iYCells;
-	m_xyticks = m_pscope->m_parms.iXTicks;
-	m_xytickline = m_pscope->m_parms.iXTickLine;
+	SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
+	m_xcells = pStruct->iXCells;
+	m_ycells = pStruct->iYCells;
+	m_xyticks = pStruct->iXTicks;
+	m_xytickline = pStruct->iXTickLine;
 
 	VERIFY(mm_xcells.SubclassDlgItem(IDC_EDIT3, this));
 	VERIFY(mm_ycells.SubclassDlgItem(IDC_EDIT6, this));
@@ -96,7 +96,8 @@ void CScopeScreenPropsDlg::OnEnChangeXCells()
 		mm_xcells.SetSel(0, -1);		// select all text
 		if (m_xcells != xcells)
 		{
-			m_pscope->m_parms.xScaleUnitValue = m_pscope->m_parms.xScaleUnitValue * m_xcells / xcells;
+			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
+			pStruct->xScaleUnitValue = pStruct->xScaleUnitValue * m_xcells / xcells;
 			m_xcells = xcells;
 			m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
@@ -218,7 +219,8 @@ void CScopeScreenPropsDlg::OnEnChangeYCells()
 		mm_ycells.SetSel(0, -1);		// select all text
 		if (m_ycells != ycells)
 		{
-			m_pscope->m_parms.yScaleUnitValue = m_pscope->m_parms.yScaleUnitValue * m_ycells / ycells;
+			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
+			pStruct->yScaleUnitValue = pStruct->yScaleUnitValue * m_ycells / ycells;
 			m_ycells = ycells;
 			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
@@ -232,7 +234,7 @@ void CScopeScreenPropsDlg::OnBackgroundColor()
 	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, nullptr);
 	if(IDOK != dlg.DoModal())
 		return;
-	m_pscope->m_parms.crScopeFill= dlg.GetColor();
+	(m_pscope->GetScopeParameters())->crScopeFill= dlg.GetColor();
 	m_pscope->Invalidate();
 	
 }
@@ -242,7 +244,7 @@ void CScopeScreenPropsDlg::OnGridColor()
 	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, nullptr);
 	if(IDOK != dlg.DoModal())
 		return;
-	m_pscope->m_parms.crScopeGrid= dlg.GetColor();
+	(m_pscope->GetScopeParameters())->crScopeGrid= dlg.GetColor();
 	m_pscope->Invalidate();
 }
 

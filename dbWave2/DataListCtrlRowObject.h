@@ -45,8 +45,8 @@ public:
 	CAcqDataDoc*	pdataDoc = nullptr;
 	CSpikeDoc*		pspikeDoc = nullptr;
 
-	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);					// overridden for document i/o
+	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);	
+	void Serialize(CArchive& ar) override;
 };
 
 

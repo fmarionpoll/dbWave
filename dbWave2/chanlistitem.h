@@ -1,13 +1,3 @@
-// chanlistitem.h
-/////////////////////////////////////////////////////////////////////////////
-//	CChanlistItem
-//
-// lineview keeps a list of channels to be displayed in a list
-// each item of this list group together the parameters necessary to
-// display the channel, ie color, etc and a pointer to structures
-// describing the abcissa and the ordinates
-/////////////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 class CChanlistItem : public CObject
@@ -16,7 +6,8 @@ public:
 	CChanlistItem();
 	CChanlistItem(CEnvelope* pX, int iX, CEnvelope* pY, int iY);
 	DECLARE_SERIAL(CChanlistItem)
-	virtual void	Serialize (CArchive &ar);
+	void Serialize(CArchive& ar) override;
+
 	void			InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent, WORD new_drawmode=1);
 public:
 	CEnvelope*		pEnvelopeAbcissa;		// pointer to abcissa Envelope

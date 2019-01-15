@@ -13,7 +13,7 @@ public:
 	CSpikeShapeWnd();
 	virtual ~CSpikeShapeWnd();
 	DECLARE_SERIAL( CSpikeShapeWnd)
-	void Serialize( CArchive& archive ) override;
+	void Serialize(CArchive& ar) override;
 
 // parameters
 

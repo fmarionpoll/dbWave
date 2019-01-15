@@ -313,7 +313,7 @@ void CScopeScreen::EraseBkgnd(CDC* p_dc)
 	}
 	// erase display area
 	CBrush brush;
-	brush.CreateSolidBrush(m_parms.crScopeFill);
+	brush.CreateSolidBrush(m_scopestruct.crScopeFill);
 	const auto p_old_brush = p_dc->SelectObject(&brush);
 	const auto p_old_pen = (CPen*) p_dc->SelectStockObject(BLACK_PEN);
 	p_dc->Rectangle(&m_displayRect);
@@ -330,51 +330,51 @@ void CScopeScreen::DrawGridEvenlySpaced(CDC *p_dc)
 	rect.DeflateRect(1, 1);
 
 	// Standard grid is 8 high by 10 wide
-	CPen pen_scale(PS_SOLID, 1, m_parms.crScopeGrid);
+	CPen pen_scale(PS_SOLID, 1, m_scopestruct.crScopeGrid);
 	const auto ppen_old = p_dc->SelectObject(&pen_scale);
-	const auto i_x_ticks = m_parms.iXCells * m_parms.iXTicks;
-	const auto i_y_ticks = m_parms.iYCells * m_parms.iYTicks;
+	const auto i_x_ticks = m_scopestruct.iXCells * m_scopestruct.iXTicks;
+	const auto i_y_ticks = m_scopestruct.iYCells * m_scopestruct.iYTicks;
 	const auto i_tick_width = 2;
 	const auto i_tick_height = 2; 
 
 	// do the grid lines
-	for (auto i = 1; i < m_parms.iXCells; i++) 
+	for (auto i = 1; i < m_scopestruct.iXCells; i++) 
 	{
-		p_dc->MoveTo(i * rect.right / m_parms.iXCells, 0);
-		p_dc->LineTo(i * rect.right / m_parms.iXCells, rect.bottom);
+		p_dc->MoveTo(i * rect.right / m_scopestruct.iXCells, 0);
+		p_dc->LineTo(i * rect.right / m_scopestruct.iXCells, rect.bottom);
 	}	
-	for (auto i = 1; i < m_parms.iYCells; i++) 
+	for (auto i = 1; i < m_scopestruct.iYCells; i++) 
 	{
-		p_dc->MoveTo(0, i * rect.bottom / m_parms.iYCells);
-		p_dc->LineTo(rect.right, i * rect.bottom / m_parms.iYCells);
+		p_dc->MoveTo(0, i * rect.bottom / m_scopestruct.iYCells);
+		p_dc->LineTo(rect.right, i * rect.bottom / m_scopestruct.iYCells);
 	}
 
 	// Put tick marks on the axis lines
 	for (auto i = 1; i < i_x_ticks; i++) 
 	{
-		const int y = rect.bottom - rect.bottom * m_parms.iXTickLine / m_parms.iYCells;
+		const int y = rect.bottom - rect.bottom * m_scopestruct.iXTickLine / m_scopestruct.iYCells;
 		p_dc->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
 		p_dc->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
 	}
 	for (auto i = 1; i < i_y_ticks; i++) 
 	{
-		const int x = rect.right * m_parms.iYTickLine / m_parms.iXCells;
+		const int x = rect.right * m_scopestruct.iYTickLine / m_scopestruct.iXCells;
 		p_dc->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
 		p_dc->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
 	}
 	p_dc->SelectObject(ppen_old);
 
 	// if grids, draw scale text (dummy)
-	if (m_parms.iXCells  > 1 && m_parms.iYCells > 1)
+	if (m_scopestruct.iXCells  > 1 && m_scopestruct.iYCells > 1)
 	{
 		// convert value into text
 		CString cs;
-		cs.Format(_T("%.3f mV; %.3f ms"), m_parms.yScaleUnitValue, m_parms.xScaleUnitValue) ;
+		cs.Format(_T("%.3f mV; %.3f ms"), m_scopestruct.yScaleUnitValue, m_scopestruct.xScaleUnitValue) ;
 		const auto textlen = cs.GetLength();
 		// plot text
 		p_dc->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
 		rect.DeflateRect(1,1);
-		p_dc->SetTextColor(m_parms.crScopeGrid);
+		p_dc->SetTextColor(m_scopestruct.crScopeGrid);
 		p_dc->DrawText(cs, textlen, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE); 
 	}
 }
@@ -389,7 +389,7 @@ void CScopeScreen::DrawGridFromRuler(CDC *p_dc, CRuler* pRuler)
 		return;
 
 	CPen a_pen2;
-	a_pen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
+	a_pen2.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
 	const auto p_old_pen = p_dc->SelectObject(&a_pen2);
 
 	// draw ticks and legends
@@ -444,9 +444,9 @@ void CScopeScreen::DrawScalefromRuler(CDC *p_dc, CRuler* pRuler)
 
 	CPen a_pen1;
 	CPen a_pen2;
-	a_pen1.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
+	a_pen1.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
 	const auto p_old_pen = p_dc->SelectObject(&a_pen1);
-	a_pen2.CreatePen(PS_SOLID, 1, m_parms.crScopeGrid);
+	a_pen2.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
 	/*auto p_old_font = */p_dc->SelectObject(&m_hFont);
 	CString str;
 
@@ -576,16 +576,16 @@ void CScopeScreen::DrawGrid(CDC* p_dc)
 
 void CScopeScreen::SetNxScaleCells(int iCells, int iTicks, int iTickLine)
 { 
-	m_parms.iXCells		= iCells; 
-	m_parms.iXTicks		= iTicks;  
-	m_parms.iXTickLine	= iTickLine;
+	m_scopestruct.iXCells		= iCells; 
+	m_scopestruct.iXTicks		= iTicks;  
+	m_scopestruct.iXTickLine	= iTickLine;
 }
 
 void CScopeScreen::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
 { 
-	m_parms.iYCells = iCells; 
-	m_parms.iYTicks = iTicks; 
-	m_parms.iYTickLine = iTickLine;
+	m_scopestruct.iYCells = iCells; 
+	m_scopestruct.iYTicks = iTicks; 
+	m_scopestruct.iYTickLine = iTickLine;
 }
 
 void CScopeScreen::SendMyMessage(int code, int codeparm)
@@ -877,7 +877,7 @@ void CScopeScreen::OnRButtonUp(UINT nFlags, CPoint point)
 		if (m_bAllowProps)
 		{
 			const auto parms_old = new SCOPESTRUCT();
-			*parms_old	= m_parms;
+			*parms_old	= m_scopestruct;
 			CScopeScreenPropsDlg dlg;
 			dlg.m_pscope = this;
 			m_bAllowProps=FALSE;		// inhibit properties
@@ -885,7 +885,7 @@ void CScopeScreen::OnRButtonUp(UINT nFlags, CPoint point)
 			// if Cancel or Escape or anything else: restore previous values
 			if (IDOK != dlg.DoModal())
 			{
-				m_parms = *parms_old;
+				m_scopestruct = *parms_old;
 				Invalidate();				
 			}
 			else
@@ -1112,6 +1112,16 @@ CTagList* CScopeScreen::GetVTtagList()
 	return &m_VTtags;
 }
 
+SCOPESTRUCT * CScopeScreen::GetScopeParameters()
+{
+	return &m_scopestruct;
+}
+
+void CScopeScreen::SetScopeParameters(SCOPESTRUCT * pStruct)
+{
+	m_scopestruct = *pStruct;
+}
+
 // bsetPlot:   TRUE=use DIB array to draw curves FALSE: do not use it
 // bsetSelect: TRUE=use a separate bitmap to draw selected curve
 void CScopeScreen::SetbUseDIB(BOOL bsetPlot)
@@ -1155,7 +1165,7 @@ void CScopeScreen::Serialize( CArchive& ar )
 		ar >> m_yVO;
 		ar >> m_yVE;
 	}
-	m_parms.Serialize(ar);
+	m_scopestruct.Serialize(ar);
 }
 
 void CScopeScreen::PlotToBitmap(CBitmap* pBitmap)

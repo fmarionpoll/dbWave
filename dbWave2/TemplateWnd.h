@@ -17,8 +17,8 @@ class CTemplateWnd : public CScopeScreen
 //Construction
 public:	
 	CTemplateWnd();
-	CTemplateWnd&  operator = (const CTemplateWnd& arg);	// operator redefinition
-	virtual void Serialize(CArchive& ar);		// overridden for document i/o
+	CTemplateWnd&  operator = (const CTemplateWnd& arg);
+	void Serialize(CArchive& ar) override;
 
 // Attributes
 public:

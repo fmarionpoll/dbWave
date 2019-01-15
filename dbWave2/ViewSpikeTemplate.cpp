@@ -104,7 +104,7 @@ void CViewSpikeTemplates::OnActivateView(BOOL bActivate, CView* pActivateView, C
 	}
 	else
 	{
-		((CdbWaveApp*) AfxGetApp())->vdS.bincrflagonsave = ((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
+		((CdbWaveApp*) AfxGetApp())->options_viewspikes.bincrflagonsave = ((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -264,8 +264,8 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	mm_ifirstsortedclass.ShowScrollBar(SB_VERT);
 
 	const auto p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-	mdPM = &(p_app->vdP);					// viewdata options
-	mdMO = &(p_app->vdM);					// measure options
+	mdPM = &(p_app->options_viewdata);					// viewdata options
+	mdMO = &(p_app->options_viewdata_measure);					// measure options
 	m_psC= &(p_app->spkC);					// get address of spike classif parms
 	if (m_psC->ptpl != nullptr)
 		m_templList =  *((CTemplateListWnd*) m_psC->ptpl);
@@ -273,7 +273,7 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	const auto p_dbwave_doc = GetDocument();
 	
 	// set bincrflagonsave
-	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->vdS.bincrflagonsave);
+	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	CDaoRecordView::OnInitialUpdate();
 

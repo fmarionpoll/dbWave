@@ -1,9 +1,5 @@
 #pragma once
 
-// dbWaveDoc.h : interface of the CdbWaveDoc class
-//
-/////////////////////////////////////////////////////////////////////////////
-
 #include "dbIndexTable.h"
 #include "dbMainTable.h"
 #include "dbWdatabase.h"
@@ -12,7 +8,6 @@
 #include "Spikeclas.h"		// spike classes
 #include "Spikedoc.h"
 #include "Acqdatad.h"
-
 
 class CdbWaveDoc : public COleDocument
 {
@@ -92,8 +87,9 @@ protected:
 
 // Overrides
 public:
+	void Serialize(CArchive& ar) override;
+	
 	virtual BOOL	OnNewDocument();
-	virtual void	Serialize(CArchive& ar);
 	virtual BOOL	OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL	OnSaveDocument(LPCTSTR lpszPathName);
 	virtual HMENU	GetDefaultMenu(); // get menu depending on state
@@ -140,6 +136,5 @@ protected:
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
-
 };
 

@@ -21,6 +21,7 @@ public:
 // Implementation
 public:
 	virtual ~CSpikeFromChan();
-	virtual void Serialize(CArchive& ar);	// overridden for document i/o
+	void Serialize(CArchive& ar) override;
+
 	CSpikeFromChan& operator= (const CSpikeFromChan& arg);	// redefinition operator =
 };

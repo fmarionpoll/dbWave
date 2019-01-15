@@ -23,6 +23,45 @@
 #define new DEBUG_NEW
 #endif
 
+//------------------ class display ---------------------------------
+IMPLEMENT_SERIAL(display, CObject, 0 /* schema number*/)
+
+display::display()
+{
+}
+
+display::~display()
+{
+}
+
+display& display::operator=(const display & arg)
+{
+	if (this != &arg)
+	{
+		iextent = arg.iextent;
+		izero = arg.izero;
+	}
+	return *this;
+}
+
+void display::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{
+		int version = 1;
+		ar << version;
+		ar << iextent;
+		ar << izero;
+	}
+	else
+	{
+		int version;  
+		ar >> version;
+		ar >> iextent;
+		ar >> izero;
+	}
+}
+
 //------------------ class SCOPESTRUCT ---------------------------------
 
 IMPLEMENT_SERIAL(SCOPESTRUCT, CObject, 0 /* schema number*/ )
@@ -65,6 +104,10 @@ SCOPESTRUCT& SCOPESTRUCT::operator = (const SCOPESTRUCT& arg)
 		bDrawframe = arg.bDrawframe;
 		xScaleUnitValue = arg.xScaleUnitValue;
 		yScaleUnitValue = arg.yScaleUnitValue;
+
+		channels.SetSize(arg.channels.GetSize());
+		for (int i = 0; i < arg.channels.GetSize(); i++) 
+			channels[i] = arg.channels[i];
 	}
 	return *this;
 }
@@ -376,7 +419,6 @@ void OPTIONS_VIEWDATA::Serialize(CArchive& ar)
 		wMult += wMult; wBrowseFlags += bsetTimeSpan	* wMult;	//4096
 		wMult += wMult; wBrowseFlags += bsetmVSpan		* wMult;	//8192
 		wMult += wMult; wBrowseFlags += bDisplayAllClasses * wMult;	//16384
-		
 		ar << wBrowseFlags;
 
 		// export infos from data files
@@ -1766,7 +1808,4 @@ void OUTPUTPARMS::Serialize(CArchive& ar)
 		ASSERT(n==0);
 	}
 }
-
-
-
 

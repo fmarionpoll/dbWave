@@ -62,9 +62,11 @@ protected:
 	CWordArray		m_arrayMark;
 	CPen			m_blackDottedPen;
 	CString			m_csEmpty;
+	SCOPESTRUCT		m_scopestruct{};
 	
 public:
-	SCOPESTRUCT		m_parms {};
+	virtual SCOPESTRUCT*	GetScopeParameters();
+	virtual void			SetScopeParameters(SCOPESTRUCT*	pStruct);
 
 // ---------------------------------------------------------------
 // Attributes
@@ -88,10 +90,10 @@ public:
 
 	void	SetNxScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
 	void	SetNyScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
-	int		GetNxScaleCells()					{return m_parms.iXCells;}
-	int		GetNyScaleCells()					{return m_parms.iYCells;}
-	void	SetxScaleUnitValue(float x)			{m_parms.xScaleUnitValue=x;}
-	void	SetyScaleUnitValue(float y)			{m_parms.yScaleUnitValue=y;}
+	int		GetNxScaleCells()					{return m_scopestruct.iXCells;}
+	int		GetNyScaleCells()					{return m_scopestruct.iYCells;}
+	void	SetxScaleUnitValue(float x)			{m_scopestruct.xScaleUnitValue=x;}
+	void	SetyScaleUnitValue(float y)			{m_scopestruct.yScaleUnitValue=y;}
 	void	AttachExternalXRuler(CRulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
 	void	AttachExternalYRuler(CRulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
@@ -142,8 +144,8 @@ public:
 	void	SetVTtagLval(int itag, long lval)	{m_VTtags.SetTagLVal(itag, lval);}
 	long	GetVTtagLval(int itag) 				{return m_VTtags.GetTagLVal(itag);}
 
-	BOOL	GetbDrawframe() const				{return m_parms.bDrawframe;}
-	void	SetbDrawframe(BOOL flag)			{m_parms.bDrawframe=flag;}
+	BOOL	GetbDrawframe() const				{return m_scopestruct.bDrawframe;}
+	void	SetbDrawframe(BOOL flag)			{m_scopestruct.bDrawframe=flag;}
 	CRect	GetDefinedRect()					{return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);}
 
 	void	SetVTtagList(CTagList* pList)		{m_VTtags.CopyTagList(pList);}

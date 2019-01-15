@@ -1,10 +1,4 @@
 #pragma once
-// dbWave.h : main header file for the DBWAVE application
-
-/////////////////////////////////////////////////////////////////////////////
-// CdbWaveApp:
-// See dbWave.cpp for the implementation of this class
-//
 
 #ifndef __AFXWIN_H__
 #error "include 'stdafx.h' before including this file for PCH"
@@ -49,12 +43,13 @@ public:
 	STIMDETECT 				stiD;
 	SPKDETECTARRAY			spkDA;
 	SPKCLASSIF				spkC;
-	OPTIONS_VIEWDATA 		vdP;
-	OPTIONS_VIEWSPIKES 		vdS;
-	OPTIONS_VIEWDATAMEASURE	vdM;
-	OPTIONS_IMPORT			ivO;
-	OPTIONS_ACQDATA			acqD;
-	OPTIONS_OUTPUTDATA		outD;
+
+	OPTIONS_VIEWDATA 		options_viewdata;
+	OPTIONS_VIEWSPIKES 		options_viewspikes;
+	OPTIONS_VIEWDATAMEASURE	options_viewdata_measure;
+	OPTIONS_IMPORT			options_import;
+	OPTIONS_ACQDATA			options_acqdata;
+	OPTIONS_OUTPUTDATA		options_outputdata;
 
 	CMemFile*				m_pviewdataMemFile;
 	CArray <CMemFile*, CMemFile*> viewspikesmemfile_ptr_array;
@@ -78,4 +73,5 @@ public:
 };
 
 extern CdbWaveApp theApp;
+
 void DisplayDaoException(CDaoException* e, int iID);
