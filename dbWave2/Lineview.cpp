@@ -345,8 +345,18 @@ SCOPESTRUCT * CLineViewWnd::GetScopeParameters()
 	return &m_scopestruct;
 }
 
-void CLineViewWnd::SetScopeParameters(SCOPESTRUCT * pStruct)
+void CLineViewWnd::SetScopeParameters(SCOPESTRUCT* pStruct)
 {
+	auto nchannels_struct = pStruct->channels.GetSize();
+	auto nchannels_chanlist = chanlistitem_ptr_array.GetSize();
+	for (auto i = 0; i < nchannels_struct; i++)
+	{
+		if (i == nchannels_chanlist)
+			break;
+		auto p_chanlist_item = chanlistitem_ptr_array[i];
+		p_chanlist_item->SetYzero(pStruct->channels[i].izero);
+		p_chanlist_item->SetYextent(pStruct->channels[i].iextent);
+	}
 }
 
 void CLineViewWnd::AutoZoomChan(int j)

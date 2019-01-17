@@ -175,15 +175,9 @@ void CViewData::OnInitialUpdate()
 	// set data file
 	CDaoRecordView::OnInitialUpdate();	
 	UpdateFileParameters(TRUE);	// load file parameters
-	*(m_VDlineview.GetScopeParameters()) = options_viewdata->viewdata;
-	int ioperation = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES;
-	OnClickedBias();
-	if (options_viewdata->viewdata.channels.GetSize() == 0)
-	{
-		OnSplitCurves();
-	}
-	else
-		ioperation |= CHG_YSCALE;
+
+	m_VDlineview.SetScopeParameters(&(options_viewdata->viewdata));
+	int ioperation = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_VDlineview.GetChanlistSize());
 	UpdateLegends(ioperation);

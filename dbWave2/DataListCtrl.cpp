@@ -686,9 +686,9 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 					break;						// and examine next doc channel
 				}
 			}
-			if (b_present == FALSE)				// no display chan contains that doc chan
+			if (b_present == FALSE)
 			{
-				p_wnd->AddChanlistItem(jdocchan, m_dattransform);	// add: chan, transform
+				p_wnd->AddChanlistItem(jdocchan, m_dattransform);
 				lnvchans++;
 			}
 			p_wnd->SetChanlistColor(jdocchan, jdocchan);
