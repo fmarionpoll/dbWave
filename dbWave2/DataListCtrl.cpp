@@ -620,6 +620,7 @@ CLineViewWnd* CDataListCtrl::GetDataViewCurrentRecord()
 	{
 		nItem = GetNextItem(nItem, LVNI_SELECTED);
 		ASSERT(nItem != -1);
+		nItem -= GetTopIndex();
 		ptr = datalistctrlrowobject_prt_array.GetAt(nItem)->pdataWnd;
 	}
 	return ptr; 

@@ -1,12 +1,8 @@
 #pragma once
 
-// viewdata.h : header file
-
-
 
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
-//#include "dbWave_constants.h"
 #include "afxwin.h"
 #include "Lineview.h"
 #include "Editctrl.h"
@@ -30,7 +26,7 @@ public:
 	float	m_timelast;
 
 	// subclassed controls within CDaoRecordView
-	CLineViewWnd	m_VDlineview;	// data display
+	CLineViewWnd	m_displayDataFile;	// data display
 	float		m_floatNDigits; 	// 10(000) -> n digits displayed
 	CEditCtrl	mm_v1;				// first HZ cursor
 	CEditCtrl	mm_v2;				// second HZ cursor
@@ -81,7 +77,7 @@ protected:
 
 	// page format printing parameters (pixel unit)    
 	CRect						m_printRect;
-	OPTIONS_VIEWDATA*			options_viewdata{};		// view data options
+	OPTIONS_VIEWDATA*			options_viewdata{};	
 	OPTIONS_VIEWDATAMEASURE*	mdMO{};		// measure options
 
 protected:
@@ -98,19 +94,17 @@ protected:
 	void	ChainDialog(WORD iID);
 	int		PrintGetNPages();	
 		
-protected:
 	CStretchControl m_stretch;
 	BOOL	m_binit;
 	BOOL	m_bCommonScale{};
 
 //public:
 protected:
-	CScrollBarEx	m_filescroll;		// data position within file
+	CScrollBarEx	m_filescroll;			// data position within file
 	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
 	int				m_VBarMode{};			// flag V scrollbar state
-	CScrollBar 		m_scrolly;			// V scrollbar
+	CScrollBar 		m_scrolly;				// V scrollbar
 
-protected:
 	void	OnFileScroll(UINT nSBCode, UINT nPos);
 	void	OnGainScroll(UINT nSBCode, UINT nPos);
 	void	UpdateYExtent(int ichan, int yextent);
@@ -124,26 +118,25 @@ protected:
 	void	UpdateHZtagsVal();
 	void	SetCursorAssociatedWindows();
 	void	UpdateChannel(int channel);
-
-////////////////////////////////////////////////////////////////////////////////
-// conversions Helper functions
-protected:
-	void MeasureProperties(int item);
+	void	MeasureProperties(int item);
 	
 	// Overrides
 public:
-	virtual CDaoRecordset* OnGetRecordset();
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL OnMove(UINT nIDMoveCommand);
+	CDaoRecordset* OnGetRecordset() override;
+	BOOL PreCreateWindow(CREATESTRUCT& cs)  override;
+	BOOL OnMove(UINT nIDMoveCommand)  override;
 protected:
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);   	
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnInitialUpdate(); // called first time after construct
-	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
+	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void DoDataExchange(CDataExchange* pDX) override; 
+	void OnInitialUpdate() override;
+	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
+	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+
+	void DefineSubClassedItems();
+	void DefineStretchParameters();
 
 // Implementation
 public:
@@ -153,7 +146,6 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-public:
 	DECLARE_MESSAGE_MAP()
 	// Generated message map functions
 	afx_msg void OnSize(UINT nType, int cx, int cy);

@@ -13,60 +13,60 @@ protected:
 // Form Data
 public:
 	enum { IDD = IDD_VIEWSPIKES };
-	float			m_timefirst;
-	float			m_timelast;
-	int				m_spikeno;
-	int				m_spikenoclass;
-	float			m_zoom;
-	int				m_sourceclass;
-	int				m_destclass;
-	BOOL			m_bresetzoom;
-	BOOL			m_bartefact;
-	float			m_jitter_ms;
+	float			m_timefirst = 0.f;
+	float			m_timelast = 0.f;
+	int				m_spikeno = -1;
+	int				m_spikenoclass = 0;
+	float			m_zoom = .2f;
+	int				m_sourceclass = 0;
+	int				m_destclass = 1;
+	BOOL			m_bresetzoom = true;
+	BOOL			m_bartefact = false;
+	float			m_jitter_ms = 1.f;
 	CdbWaveDoc*		GetDocument();
 
 // Attributes
 protected:
 	CSpikeClassListBox m_spkClassListBox;	// listbox of spike classes
-	CLineViewWnd	m_sourceView;		// data display
+	CLineViewWnd	m_displayDataFile;		// data display
 	CEditCtrl		mm_spikeno;
 	CEditCtrl		mm_spikenoclass;
-	CEditCtrl		mm_timefirst;		// first abcissa value
-	CEditCtrl		mm_timelast;		// last abcissa value
-	CEditCtrl		mm_zoom;			// zoom factor
+	CEditCtrl		mm_timefirst;			// first abcissa value
+	CEditCtrl		mm_timelast;			// last abcissa value
+	CEditCtrl		mm_zoom;				// zoom factor
 	CEditCtrl		mm_sourceclass;
 	CEditCtrl		mm_destclass;
 	CEditCtrl		mm_jitter_ms;
 
-	int				m_zoominteger;		// zoom length (nb data acq points)
-	HICON			m_hBias;
-	HICON			m_hZoom;
-	float			m_yscaleFactor;		// div factor for y bar 
-	int				m_VBarMode;			// flag V scrollbar state
-	CScrollBar 		m_scrolly;			// V scrollbar
+	int				m_zoominteger=1;		// zoom length (nb data acq points)
+	HICON			m_hBias = nullptr;
+	HICON			m_hZoom = nullptr;
+	float			m_yscaleFactor = 0.f;	// div factor for y bar 
+	int				m_VBarMode = 0;			// flag V scrollbar state
+	CScrollBar 		m_scrolly;				// V scrollbar
 
-	CStretchControl m_stretch;			// clamp controls to sides of the formview area
-	BOOL			m_binit;
+	CStretchControl m_stretch;				// clamp controls to sides of the formview area
+	BOOL			m_binit= false;
 
-	CdbWaveDoc*		m_dbDoc;			// master source document
-	CSpikeDoc*		m_pSpkDoc;			// destination data doc
-	CSpikeList*		m_pSpkList;			// temporary spike list	
-	CAcqDataDoc*	m_pDataDoc;				// data document pointer
-	BOOL			m_bDatDocExists;
-	BOOL			m_bSpkDocExists;
-	BOOL			m_bInitSourceView;
-	int				m_lFirst;
-	int				m_lLast;
-	SCROLLINFO		m_scrollFilePos_infos;
-	CDWordArray		m_DWintervals;		// intervals to highlight spikes
-	BOOL			m_baddspikemode;	
+	CdbWaveDoc*		m_dbDoc = nullptr;		// master source document
+	CSpikeDoc*		m_pSpkDoc = nullptr;	// destination data doc
+	CSpikeList*		m_pSpkList = nullptr;	// temporary spike list	
+	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
+	BOOL			m_bDatDocExists = false;
+	BOOL			m_bSpkDocExists = false;
+	BOOL			m_bInitSourceView = true;
+	int				m_lFirst=0;
+	int				m_lLast=-1;
+	SCROLLINFO		m_scrollFilePos_infos{};
+	CDWordArray		m_DWintervals;			// intervals to highlight spikes
+	BOOL			m_baddspikemode = false;	
 
-	int				m_yWE;		// offset and gain to display spikes
-	int				m_yWO;
-	int				m_ptVT;
-	CRect			m_rectVTtrack;
-	float			m_jitter;
-	BOOL			m_bdummy;
+	int				m_yWE=1;				// offset and gain to display spikes
+	int				m_yWO=0;
+	int				m_ptVT=-1;
+	CRect			m_rectVTtrack = CRect(0, 0, 0, 0);
+	float			m_jitter = 0.f;
+	BOOL			m_bdummy=true;
 
 // Implementation
 protected:
@@ -74,6 +74,8 @@ protected:
 	void UpdateFileParameters();		// update parms when file has changed	
 	void SaveCurrentFileParms();		// save spike file if modified
 	void SelectSpike(int spikeno);
+	void DefineSubClassedItems();
+	void DefineStretchParameters();
 	void UpdateScrollBar();
 	void ZoomOnPresetInterval(int iistart);
 	void OnGainScroll(UINT nSBCode, UINT nPos);
@@ -116,25 +118,25 @@ protected:
 		
 	int		m_nfiles{};				// nb of files in doc
 	int 	m_nbrowsperpage{};		// USER: nb files/page
-	long 	m_lprintFirst{};			// file index of first pt
+	long 	m_lprintFirst{};		// file index of first pt
 	long 	m_lprintLen{};			// nb pts per line
 	int 	m_printFirst{};
 	int 	m_printLast{};
-	int		m_maxclasses;
+	int		m_maxclasses=1;
 	BOOL	m_bIsPrinting{};
 	
 	// specific printer parameters
 	TEXTMETRIC m_tMetric{};			// onbegin/onendPrinting
-	LOGFONT	m_logFont{};				// onbegin/onendPrinting
-	CFont*	m_pOldFont{};				// onbegin/onendPrinting
+	LOGFONT	m_logFont{};			// onbegin/onendPrinting
+	CFont*	m_pOldFont{};			// onbegin/onendPrinting
 	CFont	m_fontPrint;			// onbegin/onendPrinting    
 
 	// page format printing parameters (pixel unit)    
 	CRect						m_printRect;
-	OPTIONS_VIEWDATA*			mdPM;			// view data options
-	OPTIONS_VIEWDATAMEASURE*	mdMO;			// measure options
-	SPKCLASSIF*					m_psC;
-	SPKDETECTPARM*				m_pspkDP;		// spike detection parameters
+	OPTIONS_VIEWDATA*			options_viewdata = nullptr;	// view data options
+	OPTIONS_VIEWDATAMEASURE*	mdMO = nullptr;			// measure options
+	SPKCLASSIF*					m_psC = nullptr;
+	SPKDETECTPARM*				m_pspkDP = nullptr;		// spike detection parameters
 
 protected:
 	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);	

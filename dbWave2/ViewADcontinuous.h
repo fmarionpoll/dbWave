@@ -54,7 +54,7 @@ public:
 
 
 protected:
-	CLineViewWnd		m_ADC_View;			// source data display button
+	CLineViewWnd		m_displayDataFile;			// source data display button
 	int 				m_cursorstate;		// source data cursor state	
 	float				m_sweepduration;
 	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed	

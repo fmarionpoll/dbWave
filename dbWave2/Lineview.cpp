@@ -14,26 +14,11 @@ IMPLEMENT_SERIAL (CLineViewWnd, CScopeScreen, 1)
 
 CLineViewWnd::CLineViewWnd()
 {
-	m_lxFirst = 0;
-	m_lxLast  = 1024;
-	m_lxVeryLast = 1024;
-	m_lxSize = 1024;		// data size NULL
-	m_cursorType =0;		// standard cursor until de-selected
-	m_npixels = 100;		// width = 10 pixel
-	m_dataperpixel=1;
 	m_bVTtagsLONG=TRUE;		// VT tags defined as long
-	m_btrackCurve = FALSE;
-	m_btrackspike = FALSE;	// when mouse down, track spike / channel
-	m_tracklen = 60;
-	m_trackoffset = 20;
-	m_trackchannel = 0;
 
 	// init arrays for cool display of empty data
-	m_pDataFile = nullptr;
-	m_bADbuffers = FALSE;
 	AddChanlistItem(0, 0);
 	ResizeChannels(m_npixels, 1024);
-
 	m_csEmpty = _T("no data");
 }
 
@@ -49,11 +34,6 @@ BEGIN_MESSAGE_MAP(CLineViewWnd, CScopeScreen)
 	ON_WM_SIZE()
 	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// lineview operations on chanlist items
-// changes to list or list contents
-/////////////////////////////////////////////////////////////////////////////
 
 void CLineViewWnd::RemoveAllChanlistItems()
 {        
@@ -326,7 +306,7 @@ int CLineViewWnd::SetChanlistTransformMode(WORD i, int imode)
 	if (imode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(imode)).Left(8) 
 							+ _T(": ") + p_chanlist_item->dl_comment;
-	UpdateGainSettings(i);	// keep physical value of yextent and zero constant
+	UpdateGainSettings(i);
 	UpdateChanlistMaxSpan();
 	return imode;
 }
@@ -351,7 +331,7 @@ void CLineViewWnd::SetScopeParameters(SCOPESTRUCT* pStruct)
 	auto nchannels_chanlist = chanlistitem_ptr_array.GetSize();
 	for (auto i = 0; i < nchannels_struct; i++)
 	{
-		if (i == nchannels_chanlist)
+		if (i > nchannels_chanlist)
 			break;
 		auto p_chanlist_item = chanlistitem_ptr_array[i];
 		p_chanlist_item->SetYzero(pStruct->channels[i].izero);
@@ -1592,14 +1572,14 @@ void CLineViewWnd::SetHighlightData(CHighLight& source)
 
 void CLineViewWnd::SetHighlightData(CDWordArray* pDWintervals)
 {
+	m_highlighted.l_first.RemoveAll();
+	m_highlighted.l_last.RemoveAll();
 	if (pDWintervals == nullptr)
 		return;
 
 	m_highlighted.channel = pDWintervals->GetAt(0);
 	m_highlighted.color = static_cast<COLORREF>(pDWintervals->GetAt(1));
 	m_highlighted.pensize = pDWintervals->GetAt(2);
-	m_highlighted.l_first.RemoveAll();
-	m_highlighted.l_last.RemoveAll();
 	const auto size = (pDWintervals->GetSize() - 3) / 2;
 	m_highlighted.l_first.SetSize(size);
 	m_highlighted.l_last.SetSize(size);

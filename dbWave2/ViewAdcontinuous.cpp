@@ -12,7 +12,6 @@
 //#include "Cscale.h"
 #include "scopescr.h"
 #include "Lineview.h"
-
 #include "./include/DataTranslation/Olxdadefs.h"
 #include "./include/DataTranslation/Olxdaapi.h"
 #include "ViewADcontinuous.h"
@@ -64,7 +63,7 @@ CViewADContinuous::CViewADContinuous()
 	m_bEnableActiveAccessibility = FALSE;
 	m_bsimultaneousStartAD = FALSE;
 	m_bsimultaneousStartDA = FALSE;
-	m_ADC_yRulerBar.AttachScopeWnd(&m_ADC_View, FALSE);
+	m_ADC_yRulerBar.AttachScopeWnd(&m_displayDataFile, FALSE);
 	m_bADC_IsPresent = FALSE;
 	m_bDAC_IsPresent = FALSE;
 }
@@ -397,35 +396,22 @@ void CViewADContinuous::ADC_DeclareBuffers()
 	*(m_inputDataFile.GetpWaveFormat()) = *wave_format;	// save settings into data file	
 
 														// update display length (and also the text - abcissa)	
-	m_ADC_View.AttachDataFile(&m_inputDataFile, 0);
-	m_ADC_View.ResizeChannels(0, m_chsweeplength);
-	if (m_ADC_View.GetChanlistSize() != wave_format->scan_count)
+	m_displayDataFile.AttachDataFile(&m_inputDataFile, 0);
+	m_displayDataFile.ResizeChannels(0, m_chsweeplength);
+	if (m_displayDataFile.GetChanlistSize() != wave_format->scan_count)
 	{
-		m_ADC_View.RemoveAllChanlistItems();
+		m_displayDataFile.RemoveAllChanlistItems();
 		for (auto j = 0; j < wave_format->scan_count; j++)
 		{
-			m_ADC_View.AddChanlistItem(j, 0);
+			m_displayDataFile.AddChanlistItem(j, 0);
 		}
 	}
 
 	// adapt source view 
-	int iextent = MulDiv(wave_format->binspan, 12, 10);
-	if (m_pADC_options->izoomCursel != 0)
-		iextent = m_pADC_options->izoomCursel;
-	const auto ioffset = 0;
-
-	for (auto i = 0; i < wave_format->scan_count; i++)
-	{
-		m_ADC_View.SetChanlistYzero(i, ioffset);
-		m_ADC_View.SetChanlistYextent(i, iextent);
-		m_ADC_View.SetChanlistColor(i, i);
-		float doc_voltsperb;
-		m_inputDataFile.GetWBVoltsperBin(i, &doc_voltsperb);
-		auto chan_list = m_ADC_View.GetChanlistItem(i);
-		chan_list->SetDataBinFormat(wave_format->binzero, wave_format->binspan);
-		chan_list->SetDataVoltsFormat(doc_voltsperb, wave_format->fullscale_Volts);
-	}
-	m_ADC_View.Invalidate();
+	auto p_app = (CdbWaveApp*)AfxGetApp();
+	auto options_viewdata = &(p_app->options_viewdata);
+	m_displayDataFile.SetScopeParameters(&(options_viewdata->viewdata));
+	m_displayDataFile.Invalidate();
 	UpdateData(FALSE);
 }
 
@@ -463,7 +449,7 @@ void CViewADContinuous::ADC_StopAndLiberateBuffers()
 			hBuf = HBUF(m_ADC_DTAcq32.GetQueue());
 			if (hBuf != nullptr) m_ADC_DTAcq32.SetQueue(long(hBuf));
 		} while (hBuf != nullptr);
-		m_ADC_View.ADdisplayStop();
+		m_displayDataFile.ADdisplayStop();
 		m_bchanged = TRUE;
 	}
 	catch (COleDispatchException* e)
@@ -1210,9 +1196,9 @@ void CViewADContinuous::OnStop(const BOOL b_display_error_msg)
 		SaveAndCloseFile();
 		// update view data	
 		const auto lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
-		m_ADC_View.AttachDataFile(&m_inputDataFile, lsizeDOCchan);
-		m_ADC_View.ResizeChannels(m_ADC_View.GetRectWidth(), lsizeDOCchan);
-		m_ADC_View.GetDataFromDoc(0, lsizeDOCchan);
+		m_displayDataFile.AttachDataFile(&m_inputDataFile, lsizeDOCchan);
+		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), lsizeDOCchan);
+		m_displayDataFile.GetDataFromDoc(0, lsizeDOCchan);
 	}
 }
 
@@ -1276,9 +1262,9 @@ void CViewADContinuous::UpdateViewDataFinal()
 
 	p_doc_dat->ReadDataInfos();
 	const auto size_doc_channel = p_doc_dat->GetDOCchanLength();
-	m_ADC_View.AttachDataFile(p_doc_dat, size_doc_channel);
-	m_ADC_View.ResizeChannels(m_ADC_View.GetRectWidth(), size_doc_channel);
-	m_ADC_View.GetDataFromDoc(0, size_doc_channel);
+	m_displayDataFile.AttachDataFile(p_doc_dat, size_doc_channel);
+	m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), size_doc_channel);
+	m_displayDataFile.GetDataFromDoc(0, size_doc_channel);
 }
 
 void CViewADContinuous::TransferFilesToDatabase()
@@ -1313,7 +1299,7 @@ BOOL CViewADContinuous::OnStart()
 	// start AD display
 	m_chsweep1 = 0;
 	m_chsweep2 = -1;
-	m_ADC_View.ADdisplayStart(m_chsweeplength);
+	m_displayDataFile.ADdisplayStart(m_chsweeplength);
 	auto wave_format = m_inputDataFile.GetpWaveFormat();
 	wave_format->sample_count = 0;							// no samples yet
 	wave_format->chrate	= wave_format->chrate/m_pADC_options->iundersample;
@@ -1442,14 +1428,14 @@ CDaoRecordset* CViewADContinuous::OnGetRecordset()
 void CViewADContinuous::OnInitialUpdate()
 {
 	// attach controls
-	VERIFY(m_ADC_View.SubclassDlgItem(IDC_DISPLAYDATA, this));
+	VERIFY(m_displayDataFile.SubclassDlgItem(IDC_DISPLAYDATA, this));
 	VERIFY(m_ADC_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
 	VERIFY(m_ADC_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
-	m_ADC_yRulerBar.AttachScopeWnd(&m_ADC_View, FALSE);
-	m_ADC_xRulerBar.AttachScopeWnd(&m_ADC_View, TRUE);
-	m_ADC_View.AttachExternalXRuler(&m_ADC_xRulerBar);
-	m_ADC_View.AttachExternalYRuler(&m_ADC_yRulerBar);
-	m_ADC_View.m_bNiceGrid = TRUE;
+	m_ADC_yRulerBar.AttachScopeWnd(&m_displayDataFile, FALSE);
+	m_ADC_xRulerBar.AttachScopeWnd(&m_displayDataFile, TRUE);
+	m_displayDataFile.AttachExternalXRuler(&m_ADC_xRulerBar);
+	m_displayDataFile.AttachExternalYRuler(&m_ADC_yRulerBar);
+	m_displayDataFile.m_bNiceGrid = TRUE;
 
 	m_stretch.AttachParent(this);
 	m_stretch.newProp(IDC_DISPLAYDATA,		XLEQ_XREQ, YTEQ_YBEQ);
@@ -1511,7 +1497,7 @@ void CViewADContinuous::OnInitialUpdate()
 	*(m_inputDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;	// copy data formats into this file
 	m_pADC_options->chanArray.channel_set_number(m_pADC_options->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
-	m_ADC_View.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
+	m_displayDataFile.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
 
 	// init communication with Alligator
 	m_Alligator.USBPxxS1Command(0, ID_INITIALIZE, nullptr, nullptr);
@@ -1551,7 +1537,7 @@ void CViewADContinuous::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	if (pSender == this)
 	{
 		ASSERT(GetDocument() != NULL);
-		m_ADC_View.Invalidate();		// display data
+		m_displayDataFile.Invalidate();		// display data
 	}
 }
 
@@ -1605,7 +1591,7 @@ LRESULT CViewADContinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_SETMOUSECURSOR:
 		if (lowp > CURSOR_ZOOM) 
 			lowp = 0;
-		m_cursorstate = m_ADC_View.SetMouseCursorType(lowp);
+		m_cursorstate = m_displayDataFile.SetMouseCursorType(lowp);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 		break;			
 
@@ -1665,7 +1651,7 @@ void CViewADContinuous::ADC_UpdateStartStop(const BOOL b_start)
 		ASSERT( m_ADC_inprogress ==FALSE);
 	}
 	m_btnStartStop.SetCheck(m_ADC_inprogress);
-	m_ADC_View.Invalidate();
+	m_displayDataFile.Invalidate();
 }
 
 void CViewADContinuous::ADC_OnHardwareDefineexperiment()
@@ -1899,7 +1885,7 @@ void CViewADContinuous::ADC_OnBufferDone()
 
 		// then: display acqDataDoc buffer
 		if (wave_format->bOnlineDisplay)								// display data if requested
-			m_ADC_View.ADdisplayBuffer(pdata_buf, m_chsweepRefresh);
+			m_displayDataFile.ADdisplayBuffer(pdata_buf, m_chsweepRefresh);
 		CString cs;
 		cs.Format(_T("%.3lf"), duration);							// update total time on the screen
 		SetDlgItemText(IDC_STATIC1, cs);							// update time elapsed
@@ -2063,7 +2049,7 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;			// TODO see which channel is selected
-	auto l_size = m_ADC_View.GetChanlistYextent(ichan);	
+	auto l_size = m_displayDataFile.GetChanlistYextent(ichan);	
 	switch (nSBCode)
 	{
 	case SB_LEFT:		l_size = YEXTENT_MIN; break;
@@ -2086,8 +2072,8 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 		const auto ichanlast = wave_format->scan_count-1;
 
 		for (auto i = ichanfirst; i <= ichanlast; i++)
-			m_ADC_View.SetChanlistYextent(i, l_size);
-		m_ADC_View.Invalidate();
+			m_displayDataFile.SetChanlistYextent(i, l_size);
+		m_displayDataFile.Invalidate();
 		UpdateChanLegends(0);
 		m_pADC_options->izoomCursel = l_size;
 	}
@@ -2104,8 +2090,8 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;			// TODO: see which channel is selected
-	auto l_size =  m_ADC_View.GetChanlistYzero(ichan) - m_ADC_View.GetChanlistBinZero(ichan);
-	const auto yextent = m_ADC_View.GetChanlistYextent(ichan);
+	auto l_size =  m_displayDataFile.GetChanlistYzero(ichan) - m_displayDataFile.GetChanlistBinZero(ichan);
+	const auto yextent = m_displayDataFile.GetChanlistYextent(ichan);
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -2128,8 +2114,8 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 		const auto ichanfirst = 0;
 		const auto ichanlast = wave_format->scan_count-1;
 		for (auto i = ichanfirst; i <= ichanlast; i++)
-			m_ADC_View.SetChanlistYzero(i, l_size+ m_ADC_View.GetChanlistBinZero(i));
-		m_ADC_View.Invalidate();
+			m_displayDataFile.SetChanlistYzero(i, l_size+ m_displayDataFile.GetChanlistBinZero(i));
+		m_displayDataFile.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_BIAS)
@@ -2144,7 +2130,7 @@ void CViewADContinuous::UpdateBiasScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;			// TODO see which channel is selected
-	const auto i_pos = int((m_ADC_View.GetChanlistYzero(ichan) - m_ADC_View.GetChanlistBinZero(ichan))
+	const auto i_pos = int((m_displayDataFile.GetChanlistYzero(ichan) - m_displayDataFile.GetChanlistBinZero(ichan))
 		* 100 / int(YZERO_SPAN))+int(50);
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 }
@@ -2153,16 +2139,16 @@ void CViewADContinuous::UpdateGainScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;
-	m_scrolly.SetScrollPos(MulDiv(m_ADC_View.GetChanlistYextent(ichan),  100, YEXTENT_MAX)+50, TRUE);
+	m_scrolly.SetScrollPos(MulDiv(m_displayDataFile.GetChanlistYextent(ichan),  100, YEXTENT_MAX)+50, TRUE);
 }
 
 void CViewADContinuous::UpdateChanLegends(int chan) 
 {
 	// TODO
 	const auto ichan = 0;
-	auto yzero = m_ADC_View.GetChanlistYzero(ichan);
-	auto yextent = m_ADC_View.GetChanlistYextent(ichan);
-	auto mv_per_bin= m_ADC_View.GetChanlistVoltsperDataBin(ichan)*1000.0f;
+	auto yzero = m_displayDataFile.GetChanlistYzero(ichan);
+	auto yextent = m_displayDataFile.GetChanlistYextent(ichan);
+	auto mv_per_bin= m_displayDataFile.GetChanlistVoltsperDataBin(ichan)*1000.0f;
 	//auto binzero = 0;
 }
 

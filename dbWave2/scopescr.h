@@ -196,7 +196,7 @@ protected:
 	CRect	m_clientRect;
 	CRect	m_displayRect;
 
-	int		m_cursorType;		// current cursor
+	int		m_cursorType=0;		// current cursor
 	int		m_oldcursorType;
 	HCURSOR m_currCursor;		// handle to current cursor
 	int		m_currCursorMode;   // current cursor drag mode

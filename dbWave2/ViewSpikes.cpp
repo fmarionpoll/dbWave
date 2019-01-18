@@ -12,63 +12,24 @@
 #include "Editctrl.h"
 //#include "dbMainTable.h"
 #include "dbWaveDoc.h"
-
 #include "Spikedoc.h"
 //#include "Spikebar.h"
 //#include "spikeshape.h"
 #include "SpikeClassListBox.h"
-
 #include "Editspik.h"
 #include "MainFrm.h"
 #include "Copyasdl.h"
 #include "ChildFrm.h"
-
 #include "ViewSpikes.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpike
-
 IMPLEMENT_DYNCREATE(CViewSpikes, CDaoRecordView)
 
-CViewSpikes::CViewSpikes()
-	: CDaoRecordView(CViewSpikes::IDD), m_hBias(nullptr), m_hZoom(nullptr), m_yscaleFactor(0), m_VBarMode(0),
-	  m_dbDoc(nullptr), m_pSpkList(nullptr), m_scrollFilePos_infos(), m_jitter(0)
+CViewSpikes::CViewSpikes() : CDaoRecordView(CViewSpikes::IDD)
 {
-	m_timefirst = 0.0f;
-	m_timelast = 0.0f;
-	m_spikeno = -1;
-	m_spikenoclass = 0;
-	m_zoom = 0.2f;
-	m_sourceclass = 0;
-	m_destclass = 1;
-	m_bresetzoom = TRUE;
-	m_bartefact = FALSE;
-	m_jitter_ms = 1.0f;
-	m_baddspikemode = FALSE;
-	m_bInitSourceView = TRUE;
-	m_bDatDocExists = FALSE;
-	m_bSpkDocExists = FALSE;
-	m_lFirst = 0;
-	m_lLast = -1;
-	m_maxclasses = 1;
-	m_binit = FALSE;
-	m_yWE = 1;
-	m_yWO = 0;
-	m_zoominteger = 1;
-	m_ptVT = -1;
-	m_rectVTtrack = CRect(0, 0, 0, 0);
-	m_pSpkDoc = nullptr;
-	m_pDataDoc = nullptr;
-	m_bdummy = TRUE;
-	mdPM = nullptr; // view data options
-	mdMO = nullptr; // measure options
-	m_psC = nullptr;
-	m_pspkDP = nullptr; // spike detection parameters
-
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
@@ -146,8 +107,6 @@ void CViewSpikes::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpike message handlers
 void CViewSpikes::OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
@@ -175,12 +134,14 @@ void CViewSpikes::OnActivateView( BOOL bActivate, CView* pActivateView, CView* p
 
 			CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
 			p_app->m_pviewspikesMemFile->SeekToBegin();
-			m_sourceView.Serialize(ar);
+			m_displayDataFile.Serialize(ar);
 			ar.Close();					// close archive
 		}
 		// set bincrflagonsave
 		auto p_app = (CdbWaveApp*) AfxGetApp();
 		p_app->options_viewspikes.bincrflagonsave = ((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
+		// save zoom dataview
+		((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(m_displayDataFile.GetScopeParameters());
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -204,7 +165,7 @@ void CViewSpikes::OnSize(UINT nType, int cx, int cy)
 		// set track rectangle
 		CRect rect0, rect1, rect2;
 		GetWindowRect(&rect0);
-		m_sourceView.GetWindowRect(&rect1);
+		m_displayDataFile.GetWindowRect(&rect1);
 		m_spkClassListBox.GetWindowRect(&rect2);
 		m_rectVTtrack.top = rect1.top - rect0.top;
 		m_rectVTtrack.bottom = rect2.bottom - rect0.top;
@@ -260,27 +221,27 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_SETMOUSECURSOR:
 		if (threshold > CURSOR_MEASURE)	 // clip cursor shape to max 2
 			threshold = 0;
-		if (m_sourceView.GetMouseCursorType() != threshold)
+		if (m_displayDataFile.GetMouseCursorType() != threshold)
 			SetAddspikesMode(threshold);
-		m_sourceView.SetMouseCursorType(threshold);
+		m_displayDataFile.SetMouseCursorType(threshold);
 		m_spkClassListBox.SetMouseCursorType(threshold);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(threshold, 0));
 		break;
 	
 	case HINT_DEFINEDRECT:
-		if (m_sourceView.GetMouseCursorType() == CURSOR_MEASURE)
+		if (m_displayDataFile.GetMouseCursorType() == CURSOR_MEASURE)
 		{
-			const auto rect = m_sourceView.GetDefinedRect();
-			const auto left = m_sourceView.GetDataOffsetfromPixel(rect.left);
-			const auto right = m_sourceView.GetDataOffsetfromPixel(rect.right);
+			const auto rect = m_displayDataFile.GetDefinedRect();
+			const auto left = m_displayDataFile.GetDataOffsetfromPixel(rect.left);
+			const auto right = m_displayDataFile.GetDataOffsetfromPixel(rect.right);
 			// set a tag in the center of the rectangle
-			m_sourceView.AddVTLtag((left+right)/2);
-			m_sourceView.Invalidate();
+			m_displayDataFile.AddVTLtag((left+right)/2);
+			m_displayDataFile.Invalidate();
 		}
 		break;
 
 	case HINT_SELECTSPIKES:
-		m_sourceView.Invalidate();
+		m_displayDataFile.Invalidate();
 		m_spkClassListBox.Invalidate();
 		break;
 
@@ -291,8 +252,8 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_VIEWSIZECHANGED:		// change zoom
 		if (HIWORD(lParam) == IDC_BUTTON1)
 		{
-			m_lFirst = m_sourceView.GetDataFirst();
-			m_lLast = m_sourceView.GetDataLast();
+			m_lFirst = m_displayDataFile.GetDataFirst();
+			m_lLast = m_displayDataFile.GetDataLast();
 		}		
 		else if (HIWORD(lParam) == IDC_LISTCLASSES) //[ne marche pas! HIWORD(lParam)==1]
 		{
@@ -320,7 +281,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		mdPM->spkviewdata = *m_sourceView.GetScopeParameters();
+		options_viewdata->spkviewdata = *m_displayDataFile.GetScopeParameters();
 		break;
 
 	case HINT_HITSPIKE_SHIFT:
@@ -429,8 +390,8 @@ void CViewSpikes::SelectSpike(int spikeno)
 		{
 			m_DWintervals.SetAt(3, spk_first);
 			m_DWintervals.SetAt(4, spk_last);
-			m_sourceView.SetHighlightData(&m_DWintervals);
-			m_sourceView.Invalidate();
+			m_displayDataFile.SetHighlightData(&m_DWintervals);
+			m_displayDataFile.Invalidate();
 		}		
 	}
 	else
@@ -444,16 +405,8 @@ void CViewSpikes::SelectSpike(int spikeno)
 	UpdateData(FALSE);
 }
 
-// --------------------------------------------------------------------------
-// OnEnChangeSpikeno
-// update edit control and update all infos displayed (check boundaries)
-// spikeno = spike index displayed
-// --------------------------------------------------------------------------
-
-void CViewSpikes::OnInitialUpdate()
+void CViewSpikes::DefineSubClassedItems()
 {
-	CDaoRecordView::OnInitialUpdate();
-	
 	// attach controls
 	VERIFY(mm_spikeno.SubclassDlgItem(IDC_NSPIKES, this));
 	mm_spikeno.ShowScrollBar(SB_VERT);
@@ -462,27 +415,53 @@ void CViewSpikes::OnInitialUpdate()
 	VERIFY(m_spkClassListBox.SubclassDlgItem(IDC_LISTCLASSES, this));
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
-	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100,FALSE);
-	VERIFY(m_sourceView.SubclassDlgItem(IDC_BUTTON1, this));
+	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100, FALSE);
+	VERIFY(m_displayDataFile.SubclassDlgItem(IDC_BUTTON1, this));
 	VERIFY(mm_zoom.SubclassDlgItem(IDC_EDIT3, this));
 	mm_zoom.ShowScrollBar(SB_VERT);
 	VERIFY(mm_sourceclass.SubclassDlgItem(IDC_EDIT4, this));
 	mm_sourceclass.ShowScrollBar(SB_VERT);
 	VERIFY(mm_destclass.SubclassDlgItem(IDC_EDIT5, this));
 	mm_destclass.ShowScrollBar(SB_VERT);
-	VERIFY(mm_jitter_ms.SubclassDlgItem(IDC_JITTER, this));	
+	VERIFY(mm_jitter_ms.SubclassDlgItem(IDC_JITTER, this));
 
 	// left scrollbar and button
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
 	m_scrolly.SetScrollRange(0, 100);
-	m_hBias=AfxGetApp()->LoadIcon(IDI_BIAS);
-	m_hZoom=AfxGetApp()->LoadIcon(IDI_ZOOM);
-	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE,static_cast<WPARAM>(IMAGE_ICON),(LPARAM)(HANDLE)m_hBias);
-	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE,static_cast<WPARAM>(IMAGE_ICON),(LPARAM)(HANDLE)m_hZoom);
+	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
+	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
+	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), (LPARAM)(HANDLE)m_hBias);
+	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), (LPARAM)(HANDLE)m_hZoom);
+}
+
+void CViewSpikes::DefineStretchParameters()
+{
+	m_stretch.AttachParent(this);		// attach formview pointer
+	m_stretch.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+
+	m_stretch.newProp(IDC_BUTTON1, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_TIMEINTERVALS, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_SCROLLBAR1, XLEQ_XREQ, SZEQ_YBEQ);
+
+	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, SZEQ_YTEQ);
+
+	m_binit = TRUE;
+}
+
+void CViewSpikes::OnInitialUpdate()
+{
+	CDaoRecordView::OnInitialUpdate();
+	DefineSubClassedItems();
+	DefineStretchParameters();
 
 	// load global parameters
 	auto* p_app = (CdbWaveApp*) AfxGetApp();
-	mdPM = &(p_app->options_viewdata);					// viewdata options
+	options_viewdata = &(p_app->options_viewdata);					// viewdata options
 	mdMO = &(p_app->options_viewdata_measure);					// measure options
 	m_psC= &(p_app->spkC);					// get address of spike classif parms	
 	m_destclass = m_psC->vdestclass;
@@ -512,24 +491,8 @@ void CViewSpikes::OnInitialUpdate()
 	m_psC->coltext = leftcolwidth - m_psC->colspikes - 2*m_psC->colseparator;
 	m_spkClassListBox.SetColsWidth(m_psC->coltext, m_psC->colspikes, m_psC->colseparator);	
 
-	m_stretch.AttachParent(this);		// attach formview pointer
-	m_stretch.newProp(IDC_LISTCLASSES, 		XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_TAB1,				XLEQ_XREQ, SZEQ_YBEQ);
-	
-	m_stretch.newProp(IDC_BUTTON1, 			XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_TIMEINTERVALS,	SZEQ_XLEQ, SZEQ_YBEQ); 
-	m_stretch.newProp(IDC_TIMEFIRST,  		SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_TIMELAST,  		SZEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_SCROLLBAR1, 		XLEQ_XREQ, SZEQ_YBEQ);
-
-	m_stretch.newProp(IDC_GAIN_button, 		SZEQ_XREQ, SZEQ_YTEQ);	
-	m_stretch.newProp(IDC_BIAS_button,		SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_SCROLLY_scrollbar,SZEQ_XREQ, SZEQ_YTEQ);
-
-	m_binit = TRUE;
-
 	// init relation with document, display data, adjust parameters
-	*m_sourceView.GetScopeParameters() = mdPM->spkviewdata;
+	m_displayDataFile.SetScopeParameters(&(options_viewdata->viewdata));
 	// set bincrflagonsave
 	((CButton*) GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
@@ -538,7 +501,7 @@ void CViewSpikes::OnInitialUpdate()
 	if (m_baddspikemode)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
-		m_sourceView.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);		
+		m_displayDataFile.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);		
 	}
 }
 
@@ -588,8 +551,8 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 		if (m_bDatDocExists)
 		{
 			GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_SHOW);
-			m_sourceView.SetbUseDIB(FALSE);
-			m_sourceView.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
+			m_displayDataFile.SetbUseDIB(FALSE);
+			m_displayDataFile.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
 
 			int isourceview = m_pSpkList->GetextractChan();
 			if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
@@ -608,23 +571,23 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 			}
 
 			// set detection channel
-			if (m_sourceView.SetChanlistSourceChan(0, isourceview) < 0)
+			if (m_displayDataFile.SetChanlistSourceChan(0, isourceview) < 0)
 			{
-				m_sourceView.RemoveAllChanlistItems();
+				m_displayDataFile.RemoveAllChanlistItems();
 			}
 			else
 			{
-				m_sourceView.ResizeChannels(m_sourceView.GetRectWidth(), m_lLast - m_lFirst);
-				m_sourceView.GetDataFromDoc(m_lFirst, m_lLast);
+				m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
+				m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
 				if (m_bInitSourceView)
 				{
 					m_bInitSourceView=FALSE;
 					int max, min;
-					m_sourceView.GetChanlistMaxMin(0, &max, &min);
+					m_displayDataFile.GetChanlistMaxMin(0, &max, &min);
 					const auto iextent = MulDiv(max-min+1, 11, 10);
 					const auto izero = (max+min)/2;
-					m_sourceView.SetChanlistYextent(0, iextent);
-					m_sourceView.SetChanlistYzero(0, izero);
+					m_displayDataFile.SetChanlistYextent(0, iextent);
+					m_displayDataFile.SetChanlistYzero(0, izero);
 				}
 			}
 			m_DWintervals.SetSize(3+2);					// total size
@@ -642,9 +605,9 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 	auto hwnd = GetSafeHwnd();	
 	if (!m_baddspikemode)
 		hwnd = nullptr;
-	m_sourceView.ReflectMouseMoveMessg(hwnd);
+	m_displayDataFile.ReflectMouseMoveMessg(hwnd);
 	m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-	m_sourceView.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
+	m_displayDataFile.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
 
 	// update spike bars & forms CListBox
 	if (m_lFirst != m_spkClassListBox.GetTimeFirst() 
@@ -654,7 +617,7 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 	// update text abcissa and horizontal scroll position
 	m_timefirst = m_lFirst/m_pSpkDoc->GetAcqRate();
 	m_timelast = (m_lLast+1)/m_pSpkDoc->GetAcqRate();	
-	m_sourceView.GetDataFromDoc(m_lFirst, m_lLast);
+	m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
 
 	// store current file settings
 	m_pSpkList->m_lFirstSL = m_lFirst;
@@ -763,23 +726,23 @@ void CViewSpikes::SelectSpkList(int icursel)
 		isourceview = m_pSpkList->GetdetectChan();
 
 	// no data available
-	if (m_sourceView.SetChanlistSourceChan(0, isourceview) <0)
+	if (m_displayDataFile.SetChanlistSourceChan(0, isourceview) <0)
 	{
-		m_sourceView.RemoveAllChanlistItems();
+		m_displayDataFile.RemoveAllChanlistItems();
 	}
 	// data are ok
 	else
 	{
-		m_sourceView.ResizeChannels(m_sourceView.GetRectWidth(), m_lLast - m_lFirst);
-		m_sourceView.GetDataFromDoc(m_lFirst, m_lLast);
+		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
+		m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
 		int max, min;
-		m_sourceView.GetChanlistMaxMin(0, &max, &min);
+		m_displayDataFile.GetChanlistMaxMin(0, &max, &min);
 		const auto iextent = MulDiv(max-min+1, 11, 10);
 		const auto izero = (max+min)/2;
-		m_sourceView.SetChanlistYextent(0, iextent);
-		m_sourceView.SetChanlistYzero(0, izero);
+		m_displayDataFile.SetChanlistYextent(0, iextent);
+		m_displayDataFile.SetChanlistYzero(0, izero);
 	}
-	m_sourceView.Invalidate();
+	m_displayDataFile.Invalidate();
 }
 
 void CViewSpikes::SaveCurrentFileParms()
@@ -826,7 +789,7 @@ void CViewSpikes::OnFormatAlldata()
 	UpdateLegends(FALSE);
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_sourceView.Invalidate();
+	m_displayDataFile.Invalidate();
 }
 
 void CViewSpikes::OnFormatCentercurve() 
@@ -850,12 +813,12 @@ void CViewSpikes::OnFormatCentercurve()
 	}
 	*/
 	if (m_bDatDocExists)
-		m_sourceView.CenterChan(0);
+		m_displayDataFile.CenterChan(0);
 
 	UpdateLegends(FALSE);
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_sourceView.Invalidate();
+	m_displayDataFile.Invalidate();
 }
 
 void CViewSpikes::OnFormatGainadjust() 
@@ -870,11 +833,11 @@ void CViewSpikes::OnFormatGainadjust()
 		m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
 	}
 	if (m_bDatDocExists)
-		m_sourceView.MaxgainChan(0);
+		m_displayDataFile.MaxgainChan(0);
 	UpdateLegends(FALSE);
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_sourceView.Invalidate();
+	m_displayDataFile.Invalidate();
 }
 
 void CViewSpikes::OnToolsEdittransformspikes()
@@ -911,7 +874,7 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	UpdateLegends(TRUE);
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_sourceView.Invalidate();
+	m_displayDataFile.Invalidate();
 }
 
 //-----------------------------------------------------------------------
@@ -932,14 +895,14 @@ void CViewSpikes::PrintComputePageSize()
 	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
-	mdPM->horzRes=dc.GetDeviceCaps(HORZRES);
-	mdPM->vertRes=dc.GetDeviceCaps(VERTRES);	
+	options_viewdata->horzRes=dc.GetDeviceCaps(HORZRES);
+	options_viewdata->vertRes=dc.GetDeviceCaps(VERTRES);	
 
 	// margins (pixels)
-	m_printRect.right = mdPM->horzRes-mdPM->rightPageMargin;
-	m_printRect.bottom = mdPM->vertRes-mdPM->bottomPageMargin;
-	m_printRect.left = mdPM->leftPageMargin;
-	m_printRect.top = mdPM->topPageMargin;
+	m_printRect.right = options_viewdata->horzRes-options_viewdata->rightPageMargin;
+	m_printRect.bottom = options_viewdata->vertRes-options_viewdata->bottomPageMargin;
+	m_printRect.left = options_viewdata->leftPageMargin;
+	m_printRect.top = options_viewdata->topPageMargin;
 }
 
 void CViewSpikes::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
@@ -951,7 +914,7 @@ void CViewSpikes::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
 			t.GetDay(),	t.GetMonth(),t.GetYear());
 	const auto ch_date = GetDocument()->DBGetCurrentSpkFileName();
 	p_dc->SetTextAlign(TA_CENTER);
-	p_dc->TextOut(mdPM->horzRes/2, mdPM->vertRes-57,	ch_date);
+	p_dc->TextOut(options_viewdata->horzRes/2, options_viewdata->vertRes-57,	ch_date);
 }
 
 CString CViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
@@ -979,7 +942,7 @@ long CViewSpikes::PrintGetFileSeriesIndexFromPage(int page, int* filenumber)
 
 	const auto maxrow=m_nbrowsperpage*page;	// row to get
 	auto ifile = 0;						// file list index
-	if (mdPM->bPrintSelection)			// current file if selection only
+	if (options_viewdata->bPrintSelection)			// current file if selection only
 		ifile = m_file0;
 	const auto current = GetDocument()->DBGetCurrentRecordPosition();
 	GetDocument()->DBSetCurrentRecordPosition(ifile);	
@@ -1014,11 +977,11 @@ CString CViewSpikes::PrintGetFileInfos()
 	const auto p_wave_format = &m_pSpkDoc->m_wformat;	// get data description
 
 	// document's name, date and time
-	if (mdPM->bDocName || mdPM->bAcqDateTime)// print doc infos?
+	if (options_viewdata->bDocName || options_viewdata->bAcqDateTime)// print doc infos?
 	{
-		if (mdPM->bDocName)					// print file name
+		if (options_viewdata->bDocName)					// print file name
 			str_comment += GetDocument()->DBGetCurrentSpkFileName(FALSE) + tab;
-		if (mdPM->bAcqDateTime)				// print data acquisition date & time
+		if (options_viewdata->bAcqDateTime)				// print data acquisition date & time
 		{
 			auto acqtime = m_pSpkDoc->GetAcqTime();
 			const auto date = acqtime.Format(_T("%#d %m %Y %X")); //("%x %X");
@@ -1029,7 +992,7 @@ CString CViewSpikes::PrintGetFileInfos()
 	}
 
 	// document's main comment (print on multiple lines if necessary)
-	if (mdPM->bAcqComment)
+	if (options_viewdata->bAcqComment)
 	{
 		str_comment += p_wave_format->GetComments(_T(" "));// cs_comment 
 		str_comment += rc;
@@ -1061,7 +1024,7 @@ CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 	auto cs_comment = PrintConvertFileIndex(iifirst, iilast); 
 
 	///// horizontal time bar ///////////////////////////	
-	if (mdPM->bTimeScaleBar)
+	if (options_viewdata->bTimeScaleBar)
 	{
 		// print horizontal bar
 		rect_horz_bar.left = rect->left + bar_origin.x;
@@ -1079,7 +1042,7 @@ CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 	}
 
 	///// vertical voltage bars ///////////////////////////	
-	if (mdPM->bVoltageScaleBar)
+	if (options_viewdata->bVoltageScaleBar)
 	{
 		rect_vert_bar.left = rect->left + bar_origin.x;
 		rect_vert_bar.right = rect_vert_bar.left - bar_size.cx;
@@ -1089,7 +1052,7 @@ CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 	}
 
 	// comments, bar value and chan settings for each channel	
-	if (mdPM->bChansComment || mdPM->bVoltageScaleBar || mdPM->bChanSettings)
+	if (options_viewdata->bChansComment || options_viewdata->bVoltageScaleBar || options_viewdata->bChanSettings)
 	{
 /*
 		int imax = m_sourceView.GetChanlistSize();	// number of data channels
@@ -1175,19 +1138,19 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 
 	CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
 	p_app->m_pviewspikesMemFile->SeekToBegin();
-	m_sourceView.Serialize(ar);
+	m_displayDataFile.Serialize(ar);
 	//spk_bar_wnd_.Serialize(ar);
 	//m_spkShapeView.Serialize(ar);
 	ar.Close();					// close archive
 
 	// printing margins	
-	if (mdPM->vertRes <= 0 ||mdPM->horzRes <= 0
-		||mdPM->horzRes !=  pInfo->m_rectDraw.Width()
-		||mdPM->vertRes != pInfo->m_rectDraw.Height())
+	if (options_viewdata->vertRes <= 0 ||options_viewdata->horzRes <= 0
+		||options_viewdata->horzRes !=  pInfo->m_rectDraw.Width()
+		||options_viewdata->vertRes != pInfo->m_rectDraw.Height())
 		PrintComputePageSize();
 
 	// how many rows per page?
-	const auto size_row=mdPM->HeightDoc + mdPM->heightSeparator;
+	const auto size_row=options_viewdata->HeightDoc + options_viewdata->heightSeparator;
 	m_nbrowsperpage = m_printRect.Height()/size_row;
 	if (m_nbrowsperpage == 0)			// prevent zero pages
 		m_nbrowsperpage = 1;
@@ -1205,7 +1168,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	m_printLast = m_file0;
 	m_nfiles = 1;
 	
-	if (!mdPM->bPrintSelection)
+	if (!options_viewdata->bPrintSelection)
 	{
 		m_printFirst = 0;
 		m_nfiles = p_dbwave_doc->DBGetNRecords();
@@ -1240,7 +1203,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		if (p_dbwave_doc->Getnbspikeclasses() > m_maxclasses)
 			m_maxclasses = p_dbwave_doc->Getnbspikeclasses();
 
-		if (mdPM->bMultirowDisplay)
+		if (options_viewdata->bMultirowDisplay)
 		{
 			const auto len = p_dbwave_doc->DBGetDataLen()-m_lprintFirst;// file length
 			auto nrows = len/m_lprintLen;	// how many rows for this file?
@@ -1251,7 +1214,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	}
 
 	// multiple rows?
-	if (!mdPM->bMultirowDisplay)
+	if (!options_viewdata->bMultirowDisplay)
 		nbrect = m_nfiles;
 
 	// npages
@@ -1264,18 +1227,18 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	pInfo->m_nNumPreviewPages = 1;  	// preview 1 pages at a time
 	pInfo->m_pPD->m_pd.Flags &= ~PD_NOSELECTION; // allow print only selection
 
-	if(mdPM->bPrintSelection)
+	if(options_viewdata->bPrintSelection)
 		pInfo->m_pPD->m_pd.Flags |= PD_SELECTION;	// set button to selection
 	
 	// call dialog box
 	const auto flag = DoPreparePrinting(pInfo);
 	// set max nb of pages according to selection
-	mdPM->bPrintSelection = pInfo->m_pPD->PrintSelection();
-	if (mdPM->bPrintSelection)
+	options_viewdata->bPrintSelection = pInfo->m_pPD->PrintSelection();
+	if (options_viewdata->bPrintSelection)
 	{		
 		npages = 1;
 		m_nfiles = 1;
-		if (mdPM->bMultirowDisplay)
+		if (options_viewdata->bMultirowDisplay)
 		{
 			const auto l_first0 = m_spkClassListBox.GetTimeFirst();
 			const auto l_last0 = m_spkClassListBox.GetTimeLast();
@@ -1304,7 +1267,7 @@ void CViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT));		// prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial"));		// Arial font
-	m_logFont.lfHeight = mdPM->fontsize;		// font height
+	m_logFont.lfHeight = options_viewdata->fontsize;		// font height
 	m_pOldFont = nullptr;
 	m_fontPrint.CreateFontIndirect(&m_logFont);
 	p_dc->SetBkMode (TRANSPARENT);
@@ -1328,8 +1291,8 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 	CRect r_where (	m_printRect.left, 						// left
 					m_printRect.top,						// top
-					m_printRect.left + mdPM->WidthDoc,		// right ( and bottom next line)
-					m_printRect.top + mdPM->HeightDoc);
+					m_printRect.left + options_viewdata->WidthDoc,		// right ( and bottom next line)
+					m_printRect.top + options_viewdata->HeightDoc);
 
 	// loop through all files	--------------------------------------------------------
 	for (int i = 0; i<m_nbrowsperpage; i++)
@@ -1343,7 +1306,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		auto comment_rect = r_where;						// save RWhere for comments        
 		p_dc->SetMapMode(MM_TEXT);						// 1 pixel = 1 logical unit
 		p_dc->SetTextAlign(TA_LEFT); 					// set text align mode
-		if (mdPM->bFrameRect)							// print rectangle if necessary
+		if (options_viewdata->bFrameRect)							// print rectangle if necessary
 		{
 			p_dc->MoveTo(r_where.left,  r_where.top);
 			p_dc->LineTo(r_where.right, r_where.top);		// top hz
@@ -1399,14 +1362,14 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		if (m_bDatDocExists)
 		{
-			if (mdPM->bClipRect)						// clip curve display ?
+			if (options_viewdata->bClipRect)						// clip curve display ?
 				p_dc->IntersectClipRect(&r_wbars);		// yes
-			m_sourceView.GetDataFromDoc(l_first, l_last);	// load data from file
-			m_sourceView.CenterChan(0);
-			m_sourceView.Print(p_dc, &r_wbars);			// print data
+			m_displayDataFile.GetDataFromDoc(l_first, l_last);	// load data from file
+			m_displayDataFile.CenterChan(0);
+			m_displayDataFile.Print(p_dc, &r_wbars);			// print data
 			p_dc->SelectClipRgn(nullptr);
 
-			iextent = m_sourceView.GetChanlistYextent(0);
+			iextent = m_displayDataFile.GetChanlistYextent(0);
 			//izero = m_sourceView.GetChanlistYzero(0);
 			r_wbars.top = r_wbars.bottom;
 		}
@@ -1480,7 +1443,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		// ------------------------ print stimulus
 
 		// update display rectangle for next row
-		r_where.OffsetRect(0, mdPM->HeightDoc + mdPM->heightSeparator);
+		r_where.OffsetRect(0, options_viewdata->HeightDoc + options_viewdata->heightSeparator);
 
 		// restore DC ------------------------------------------------------
 
@@ -1501,7 +1464,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		}
 
 		// print comments stored into cs_comment		
-		comment_rect.OffsetRect(mdPM->textseparator + comment_rect.Width(), 0);
+		comment_rect.OffsetRect(options_viewdata->textseparator + comment_rect.Width(), 0);
 		comment_rect.right = m_printRect.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
@@ -1516,8 +1479,8 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		// if index next point is past the end of the file
 		// OR not entire record and not multirow display
 		if ((l_first >= very_last)
-			|| (!mdPM->bEntireRecord && 
-				!mdPM->bMultirowDisplay))
+			|| (!options_viewdata->bEntireRecord && 
+				!options_viewdata->bMultirowDisplay))
 		{
 			filenumber++;						// next index
 			if  (filenumber < m_nfiles)			// last file ??
@@ -1551,7 +1514,7 @@ void CViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	{
 		CArchive ar(p_app->m_pviewspikesMemFile, CArchive::load);
 		p_app->m_pviewspikesMemFile->SeekToBegin();
-		m_sourceView.Serialize(ar);
+		m_displayDataFile.Serialize(ar);
 		ar.Close();					// close archive
 	}
 }
@@ -1641,12 +1604,12 @@ void CViewSpikes::OnEnChangeNOspike()
 					UpdateLegends(FALSE);
 				}
 				// center curve vertically
-				const auto ixpixel = MulDiv(lcenter - m_lFirst, m_sourceView.GetNxPixels(), m_lLast - m_lFirst);
-				const auto ival = m_sourceView.GetChanlistBinAt(0, ixpixel);
-				m_sourceView.SetChanlistYzero(0, ival);
+				const auto ixpixel = MulDiv(lcenter - m_lFirst, m_displayDataFile.GetNxPixels(), m_lLast - m_lFirst);
+				const auto ival = m_displayDataFile.GetChanlistBinAt(0, ixpixel);
+				m_displayDataFile.SetChanlistYzero(0, ival);
 				// display data
 				m_spkClassListBox.Invalidate();
-				m_sourceView.Invalidate();
+				m_displayDataFile.Invalidate();
 			}
 		}
 		else
@@ -1680,7 +1643,7 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		UpdateLegends(FALSE);
 		m_spkClassListBox.Invalidate();
-		m_sourceView.Invalidate();
+		m_displayDataFile.Invalidate();
 	}
 }
 
@@ -1715,7 +1678,7 @@ void CViewSpikes::OnEnChangeTimefirst()
 			m_lFirst = l_first;
 			UpdateLegends(FALSE);
 			m_spkClassListBox.Invalidate();
-			m_sourceView.Invalidate();
+			m_displayDataFile.Invalidate();
 		}
 	}
 }
@@ -1749,7 +1712,7 @@ void CViewSpikes::OnEnChangeTimelast()
 			m_lLast = l_last;
 			UpdateLegends(FALSE);
 			m_spkClassListBox.Invalidate();
-			m_sourceView.Invalidate();
+			m_displayDataFile.Invalidate();
 		}
 	}
 }
@@ -1884,12 +1847,12 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_lLast = l_last;
 		UpdateLegends(FALSE);
 		m_spkClassListBox.Invalidate();
-		m_sourceView.Invalidate();
+		m_displayDataFile.Invalidate();
 	}
 	else
 		UpdateScrollBar();
 	if (m_bDatDocExists)
-		m_sourceView.CenterChan(0);
+		m_displayDataFile.CenterChan(0);
 }
 
 void CViewSpikes::UpdateScrollBar()
@@ -1907,23 +1870,23 @@ void CViewSpikes::UpdateScrollBar()
 void CViewSpikes::OnEditCopy() 
 {
 	CCopyAsDlg dlg;
-	dlg.m_nabcissa=mdPM->hzResolution;
-	dlg.m_nordinates=mdPM->vtResolution;
-	dlg.m_bgraphics=mdPM->bgraphics;
-	dlg.m_ioption=mdPM->bcontours;
-	dlg.m_iunit=mdPM->bunits;
+	dlg.m_nabcissa=options_viewdata->hzResolution;
+	dlg.m_nordinates=options_viewdata->vtResolution;
+	dlg.m_bgraphics=options_viewdata->bgraphics;
+	dlg.m_ioption=options_viewdata->bcontours;
+	dlg.m_iunit=options_viewdata->bunits;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		mdPM->bgraphics= dlg.m_bgraphics;
-		mdPM->bcontours= dlg.m_ioption;
-		mdPM->bunits= dlg.m_iunit;
-		mdPM->hzResolution=dlg.m_nabcissa;
-		mdPM->vtResolution=dlg.m_nordinates;
+		options_viewdata->bgraphics= dlg.m_bgraphics;
+		options_viewdata->bcontours= dlg.m_ioption;
+		options_viewdata->bunits= dlg.m_iunit;
+		options_viewdata->hzResolution=dlg.m_nabcissa;
+		options_viewdata->vtResolution=dlg.m_nordinates;
 
 		// output rectangle requested by user
-		CRect rect(0,0, mdPM->hzResolution, mdPM->vtResolution);
+		CRect rect(0,0, options_viewdata->hzResolution, options_viewdata->vtResolution);
 
 		// create metafile
 		CMetaFileDC mDC;
@@ -1948,16 +1911,16 @@ void CViewSpikes::OnEditCopy()
 
 		// print comments : set font
 		m_pOldFont = nullptr;
-		const auto oldsize = mdPM->fontsize;
-		mdPM->fontsize = 10;
+		const auto oldsize = options_viewdata->fontsize;
+		options_viewdata->fontsize = 10;
 		memset(&m_logFont, 0, sizeof(LOGFONT));		// prepare font
 		lstrcpy(m_logFont.lfFaceName, _T("Arial"));		// Arial font
-		m_logFont.lfHeight = mdPM->fontsize;		// font height
+		m_logFont.lfHeight = options_viewdata->fontsize;		// font height
 		m_pOldFont = nullptr;
 		m_fontPrint.CreateFontIndirect(&m_logFont);
 		mDC.SetBkMode (TRANSPARENT);
 
-		mdPM->fontsize = oldsize;
+		options_viewdata->fontsize = oldsize;
 		m_pOldFont = mDC.SelectObject(&m_fontPrint);
 
 		CString comments;
@@ -1979,10 +1942,10 @@ void CViewSpikes::OnEditCopy()
 		// display data	if data file was found
 		if (m_bDatDocExists)
 		{
-			m_sourceView.CenterChan(0);
-			m_sourceView.Print(&mDC, &rw_bars);
+			m_displayDataFile.CenterChan(0);
+			m_displayDataFile.Print(&mDC, &rw_bars);
 
-			iextent = m_sourceView.GetChanlistYextent(0);
+			iextent = m_displayDataFile.GetChanlistYextent(0);
 			rw_spikes.OffsetRect(0, rheight);
 			rw_bars.OffsetRect(0, rheight);
 			rw_text.OffsetRect(0, rheight);
@@ -2092,9 +2055,9 @@ void CViewSpikes::OnEditCopy()
 	m_spkClassListBox.Invalidate();
 	if (m_bDatDocExists)
 	{
-		m_sourceView.GetDataFromDoc(m_lFirst, m_lLast);
-		m_sourceView.ResizeChannels(m_sourceView.GetRectWidth(), m_lLast - m_lFirst);
-		m_sourceView.Invalidate();
+		m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
+		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
+		m_displayDataFile.Invalidate();
 	}
 }
 
@@ -2113,7 +2076,7 @@ void CViewSpikes::ZoomOnPresetInterval(int iistart)
 	UpdateLegends(FALSE);
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_sourceView.Invalidate();
+	m_displayDataFile.Invalidate();
 }
 
 void CViewSpikes::OnFormatPreviousframe() 
@@ -2164,7 +2127,7 @@ void CViewSpikes::SetVBarMode (short bMode)
 void CViewSpikes::UpdateGainScroll()
 {
 	m_scrolly.SetScrollPos(
-		MulDiv(m_sourceView.GetChanlistYextent(0), 
+		MulDiv(m_displayDataFile.GetChanlistYextent(0), 
 			100, 
 			YEXTENT_MAX)
 		+50, 
@@ -2176,7 +2139,7 @@ void CViewSpikes::UpdateGainScroll()
 // --------------------------------------------------------------------------
 void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	int lSize = m_sourceView.GetChanlistYextent(0);
+	int lSize = m_displayDataFile.GetChanlistYextent(0);
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -2202,9 +2165,9 @@ void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 	// change y extent
 	if (lSize>0 ) //&& lSize<=YEXTENT_MAX)
 	{
-		m_sourceView.SetChanlistYextent(0, lSize);
+		m_displayDataFile.SetChanlistYextent(0, lSize);
 		UpdateLegends(FALSE);
-		m_sourceView.Invalidate();
+		m_displayDataFile.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_GAIN)
@@ -2218,8 +2181,8 @@ void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 
 void CViewSpikes::UpdateBiasScroll()
 {
-	const auto i_pos = static_cast<int>((m_sourceView.GetChanlistYzero(0)
-			- m_sourceView.GetChanlistBinZero(0))
+	const auto i_pos = static_cast<int>((m_displayDataFile.GetChanlistYzero(0)
+			- m_displayDataFile.GetChanlistBinZero(0))
 		* 100 / static_cast<int>(YZERO_SPAN))+static_cast<int>(50);
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 }
@@ -2230,8 +2193,8 @@ void CViewSpikes::UpdateBiasScroll()
 
 void CViewSpikes::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
-	auto l_size =  m_sourceView.GetChanlistYzero(0) - m_sourceView.GetChanlistBinZero(0);
-	const auto yextent = m_sourceView.GetChanlistYextent(0);
+	auto l_size =  m_displayDataFile.GetChanlistYzero(0) - m_displayDataFile.GetChanlistBinZero(0);
+	const auto yextent = m_displayDataFile.GetChanlistYextent(0);
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -2264,8 +2227,8 @@ void CViewSpikes::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (l_size>YZERO_MIN && l_size<YZERO_MAX)
 	{		
-		m_sourceView.SetChanlistYzero(0, l_size+ m_sourceView.GetChanlistBinZero(0));
-		m_sourceView.Invalidate();
+		m_displayDataFile.SetChanlistYzero(0, l_size+ m_displayDataFile.GetChanlistBinZero(0));
+		m_displayDataFile.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_BIAS)
@@ -2317,9 +2280,9 @@ void CViewSpikes::SetAddspikesMode(int mousecursorType)
 	auto hwnd = GetSafeHwnd();	
 	if (!m_baddspikemode)
 		hwnd = nullptr;
-	m_sourceView.ReflectMouseMoveMessg(hwnd);
+	m_displayDataFile.ReflectMouseMoveMessg(hwnd);
 	m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-	m_sourceView.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
+	m_displayDataFile.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
 
 	// display or not controls used when add_spike_mode is selected
 	GetDlgItem(IDC_SOURCECLASS)->ShowWindow(n_cmd_show);
@@ -2387,7 +2350,7 @@ void CViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		else
 			m_ptVT = -1;				
 		m_bdummy = TRUE;
-		m_sourceView.XorTempVTtag(m_ptVT);
+		m_displayDataFile.XorTempVTtag(m_ptVT);
 		m_spkClassListBox.XorTempVTtag(m_ptVT);
 	}
 	// pass message to parent
@@ -2399,7 +2362,7 @@ void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 	ReleaseCapture();
 	if (m_rectVTtrack.PtInRect(point))
 	{
-		const int iitime = m_sourceView.GetDataOffsetfromPixel(point.x - m_rectVTtrack.left);
+		const int iitime = m_displayDataFile.GetDataOffsetfromPixel(point.x - m_rectVTtrack.left);
 		m_jitter = m_jitter_ms;
 		auto b_check = TRUE;
 		if (nFlags & MK_CONTROL)

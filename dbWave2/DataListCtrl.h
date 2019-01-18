@@ -49,11 +49,12 @@ public:
 	int		GetSpikePlotMode()		const {return m_spikeplotmode;}
 	int		GetSpikeClass()			const {return m_selclass;}
 
-	CLineViewWnd* GetDataViewCurrentRecord(); // const {return datalistctrlrowobject_prt_array->GetAt(GetCurSel())->pdataWnd; }
+	CLineViewWnd* GetDataViewCurrentRecord(); 
+	// const {return datalistctrlrowobject_prt_array->GetAt(GetCurSel())->pdataWnd; }
 
 	// Generated message map functions
 protected:
-	CArray <CDataListCtrlRowObject*, CDataListCtrlRowObject*> datalistctrlrowobject_prt_array;		// array of cached data
+	CArray <CDataListCtrlRowObject*, CDataListCtrlRowObject*> datalistctrlrowobject_prt_array;
 	CImageList	m_imagelist;	// list of bitmap images
 	static int	m_icolwidth[NCOLS];
 	CUIntArray*	m_picolwidth;

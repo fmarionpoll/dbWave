@@ -52,38 +52,38 @@ public:
 // Attributes
 protected:
 	// these variables define the curves displayed on the screen (data from doc)
-	CAcqDataDoc*							m_pDataFile;		// pointer to data source file
+	CAcqDataDoc*							m_pDataFile=nullptr;	// pointer to data source file
 	CArray<CChanlistItem*, CChanlistItem*>	chanlistitem_ptr_array;	// list of display items (abcissa, Envelope, disp. parms)
 	CArray<CEnvelope*, CEnvelope*>			envelope_ptr_array;	// list of Envelopes
 	CArray <CPoint, CPoint>					m_PolyPoints;		// array with abcissa & ordinates
 	CHighLight								m_highlighted;
 	CScale 									m_scale;
 	
-	int		m_npixels;				// nb pixels displayed horizontally
-	int		m_dataperpixel;			// nb of data point per pixel	
+	int		m_npixels=1;			// nb pixels displayed horizontally
+	int		m_dataperpixel=1;		// nb of data point per pixel	
 	long	m_lxVeryLast;			// end of document
 	long	m_lxPage{};				// size of page increment / file index
 	long	m_lxLine{};				// size of line increment / file index
-	long	m_lxSize;				// nb of data pts represented in a Envelope
-	long	m_lxFirst;				// file index of 1rst pt in the Envelopes
-	long	m_lxLast;				// file index of last pt in the Envelopes
+	long	m_lxSize=1;				// nb of data pts represented in a Envelope
+	long	m_lxFirst=0;			// file index of 1rst pt in the Envelopes
+	long	m_lxLast=1;				// file index of last pt in the Envelopes
 	float	m_samplingrate{};
-	BOOL	m_btrackCurve;			// track curve if hit	
+	BOOL	m_btrackCurve=false;			// track curve if hit	
 
 	int		m_XORnelmts{};			// curve tracking parameters
-	int		m_hitcurve{};				// ibid  which curve was hitted if any
-	int		m_XORxext{};				// ibid  x extent
-	int		m_XORyext{};				// ibid  y extent
-	int		m_zero{};					// ibid. zero
+	int		m_hitcurve{};			// ibid  which curve was hitted if any
+	int		m_XORxext{};			// ibid  x extent
+	int		m_XORyext{};			// ibid  y extent
+	int		m_zero{};				// ibid. zero
 
-	BOOL	m_bADbuffers;			// flag when AD buffers are in displayed
+	BOOL	m_bADbuffers=false;			// flag when AD buffers are in displayed
 	long	m_lADbufferdone{};		// position of incoming data along m_lxSize
 
 	BOOL	m_bPrintHZcursor{};		// default=FALSE
-	BOOL	m_btrackspike;			// track spike with vertic cursor
-	int		m_tracklen;				// length of waveform to track
-	int		m_trackoffset;			// offset of waveform from cursor
-	int		m_trackchannel;			// lineview channel	
+	BOOL	m_btrackspike=false;	// track spike with vertic cursor
+	int		m_tracklen=60;			// length of waveform to track
+	int		m_trackoffset=20;		// offset of waveform from cursor
+	int		m_trackchannel=0;		// lineview channel	
 
 // ChanList operations
 public:
