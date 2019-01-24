@@ -61,7 +61,7 @@ protected:
 	
 	int		m_npixels=1;			// nb pixels displayed horizontally
 	int		m_dataperpixel=1;		// nb of data point per pixel	
-	long	m_lxVeryLast;			// end of document
+	long	m_lxVeryLast=1;			// end of document
 	long	m_lxPage{};				// size of page increment / file index
 	long	m_lxLine{};				// size of line increment / file index
 	long	m_lxSize=1;				// nb of data pts represented in a Envelope
