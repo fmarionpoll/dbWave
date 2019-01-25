@@ -67,7 +67,7 @@
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
-    <LibraryPath>C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\fred\source\repos\dbWave2\dbWave2\include\office;C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath);$(ProgramFiles)\HTML Help Workshop\redist\</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
