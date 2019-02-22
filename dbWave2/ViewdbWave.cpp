@@ -280,7 +280,7 @@ void CViewdbWave::Dump(CDumpContext& dc) const
 	CDaoRecordView::Dump(dc);
 }
 
-CdbWaveDoc* CViewdbWave::GetDocument() const
+CdbWaveDoc* CViewdbWave::GetDocument()
 // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));

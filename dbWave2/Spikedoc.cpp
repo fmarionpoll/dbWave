@@ -622,10 +622,11 @@ void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* p
 		// export the comments
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
 		// test if we should continue
-		if ((FALSE == vdS->bexportzero) && (nbspk_for_thisclass == 0))
-			continue;
-		/// export the measures
-		_ExportSpkPSTH (pSF, vdS, plSum0, m_currspklist, iclass);
+		if (!(FALSE == vdS->bexportzero) && (nbspk_for_thisclass == 0))
+			_ExportSpkPSTH (pSF, vdS, plSum0, m_currspklist, iclass);
+
+		cs_dummy = _T("\r\n");
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 }
 
@@ -1070,8 +1071,7 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	// spike file
 	if (csFileComment.IsEmpty())
 	{
-		cs_dummy = _T("\r\n");
-		cs_dummy += GetPathName(); 
+		cs_dummy = GetPathName(); 
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
 		// source data file items
