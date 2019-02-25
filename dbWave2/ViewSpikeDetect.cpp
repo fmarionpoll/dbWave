@@ -1003,11 +1003,11 @@ void CViewSpikeDetection::OnFileScroll(UINT nSBCode, UINT nPos)
 	case SB_PAGELEFT:		// scroll one page left
 	case SB_PAGERIGHT:		// scroll one page right
 	case SB_RIGHT:			// scroll to end right
-		b_result = m_displayData_Detect.ScrollDataFromDoc(nSBCode);
+		b_result = m_displayData_Source.ScrollDataFromDoc(nSBCode);
 		break;
 	case SB_THUMBPOSITION:	// scroll to pos = nPos			
 	case SB_THUMBTRACK:		// drag scroll box -- pos = nPos
-		b_result = m_displayData_Detect.GetDataFromDoc(long(nPos)*(m_displayData_Detect.GetDocumentLast())/long(100));
+		b_result = m_displayData_Source.GetDataFromDoc(long(nPos)*(m_displayData_Source.GetDocumentLast()) / long(100));
 		break;					
 	default:				// NOP: set position only
 		break;			
