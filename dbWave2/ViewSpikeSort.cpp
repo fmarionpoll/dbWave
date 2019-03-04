@@ -530,12 +530,6 @@ void CViewSpikeSort::OnSize(UINT nType, int cx, int cy)
 
 void CViewSpikeSort::OnSort()
 {
-	if (!m_bMeasureDone)
-	{
-		AfxMessageBox(_T("Evaluate parameters first!\nHit ""Measure"" "));
-		return;
-	}
-	
 	// set file indexes - assume only one file selected
 	auto pdb_doc = GetDocument();
 	const int currentfile = pdb_doc->DBGetCurrentRecordPosition(); 

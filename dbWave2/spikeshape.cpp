@@ -641,7 +641,6 @@ void CSpikeShapeWnd::InitPolypointAbcissa()
 void CSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 {
 	auto nelements = polypoints_.GetSize();
-	ASSERT(nelements > 0);
 	if (nelements == 0)
 	{
 		nelements = p_spikelist_->GetSpikeLength();
