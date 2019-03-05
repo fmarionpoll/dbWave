@@ -33,14 +33,11 @@ COLORREF CScopeScreen::m_colorTable[] =
 
 HCURSOR CScopeScreen::m_cursor[NB_CURSORS];
 int		CScopeScreen::m_cursordragmode[NB_CURSORS];
-int		CScopeScreen::m_countcurs=0;
 
-static TCHAR csUnit[]		= {_T("GM  mµpf  ")};		// units & corresp powers
-static int  dUnitsPower[]	= { 9,6, 0, 0, -3, -6, -9, -12, 0}; 
-static int	dmaxIndex		= 8;				// nb of elmts
-static int	dniceIntervals[]= {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, /*750, */
-								/*600,*/ /*700,*//* 800, *//*900,*/
-								0};
+TCHAR CScopeScreen::csUnit[]		= {_T("GM  mµpf  ")};		// units & corresp powers
+int  CScopeScreen::dUnitsPower[]	= { 9,6, 0, 0, -3, -6, -9, -12, 0};
+int	CScopeScreen::dmaxIndex		= 8;				// nb of elmts
+int	CScopeScreen::dniceIntervals[]= {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, 0};
 
 int CScopeScreen::FindColor(COLORREF ccolor)
 {
@@ -135,53 +132,20 @@ CScopeScreen::CScopeScreen()
 
 	m_currCursor = m_cursor[0];			// standard cursor: arrow
 	m_currCursorMode = m_cursordragmode[0];
-	m_cursorType = 0;					// standard cursor until de-selected
-	m_oldcursorType = 0;
-	
-	m_iUndoZoom = 0;					// no undo stored yet
 	m_clientRect = CRect(0,0, 10, 10);	// minimal size of the button
 	AdjustDisplayRect(&m_clientRect);
-	m_trackMode = TRACK_OFF;
-	m_bVTtagsLONG = FALSE;				// VT tags are defined as int
-	m_yWE = 1;							// initial parameters for
-	m_yWO = 0;							// y and  x axis extent and
-	m_xWE = 1;							// origin when data displayed
-	m_xWO = 0;							// under 
-	m_xVE = 1;
-	m_xVO = 0;
-	m_yVE = 1;
-	m_yVO = 0;
 
-	m_plotmode=0;
 	m_cxjitter = GetSystemMetrics(SM_CXDOUBLECLK);
 	m_cyjitter = GetSystemMetrics(SM_CYDOUBLECLK);
-	m_erasebkgnd=TRUE;	
-	
-	m_bUseDIB=FALSE;
-	m_bAllowProps=TRUE;
-	m_bLmouseDown=FALSE;
-	m_hwndReflect = nullptr;
-	m_tempVTtag = nullptr;
-
-	m_bBottomComment = FALSE;
 	m_blackDottedPen.CreatePen(PS_DOT, 0, m_colorTable[BLACK_COLOR]);
-	m_colorbackgr=SILVER_COLOR;
-	m_colorselected=BLACK_COLOR;
 
 	// set colored CPen objects
 	for (int i = 0; i < NB_COLORS; i++) 
 		m_penTable[i].CreatePen(PS_SOLID, 0, m_colorTable[i]);
 
-	m_bNiceGrid				= FALSE;
 	m_xRuler.m_bHorizontal	= TRUE;
 	m_yRuler.m_bHorizontal	= FALSE;
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH|FF_ROMAN, _T("Arial"));
-	m_abcissaheight  = 10;
-	m_ordinateswidth = 25;
-	m_pXRulerBar = nullptr;
-	m_pYRulerBar = nullptr;
-	m_liFirst = 0;
-	m_liLast = 0;
 }
 
 CScopeScreen::~CScopeScreen()

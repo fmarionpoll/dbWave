@@ -12,17 +12,17 @@ public:
 
 // parameters
 protected:
-	int		m_rangemode;		// display range
-	long 	m_lFirst;			// time index of first pt displayed
-	long 	m_lLast;			// time index of last pt displayed
+	int		m_rangemode = RANGE_TIMEINTERVALS;		// display range
+	long 	m_lFirst =0;			// time index of first pt displayed
+	long 	m_lLast = 0;			// time index of last pt displayed
 	int		m_spkfirst{};		// index first spike
 	int		m_spklast{};		// index last spike
-	int  	m_currentclass;		// current class in case of displaying classes
-	int  	m_selectedspike;	// selected spike (display differently)
-	int  	m_hitspk;			// no of spike selected
+	int  	m_currentclass=0;		// current class in case of displaying classes
+	int  	m_selectedspike=-1;	// selected spike (display differently)
+	int  	m_hitspk=-1;			// no of spike selected
 	int		m_selclass{};		// index class selected
-	BOOL 	m_btrackCurve;		// track curve ?	
-	int		m_rwidth;			// dot width
+	BOOL 	m_btrackCurve=false;		// track curve ?	
+	int		m_rwidth=6;			// dot width
 	BOOL	m_ballFiles = false;	// display data from all files in CdbWaveDoc*
 
 	CSpikeList*	p_spikelist_	= nullptr;

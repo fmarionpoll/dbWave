@@ -33,7 +33,7 @@ CSpikeShapeWnd::CSpikeShapeWnd()
 	m_colorselectedspike = RED_COLOR;
 	m_bText = FALSE;
 	SetbUseDIB(FALSE); 
-	m_csEmpty = "no \nspikes";	
+	m_csEmpty = _T("no spikes (spikeshape)");	
 	m_ballFiles = FALSE;
 	p_dbwave_doc_ = nullptr;
 	p_spikelist_ = nullptr;

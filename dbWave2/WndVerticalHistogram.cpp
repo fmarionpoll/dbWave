@@ -44,7 +44,7 @@ CWndVerticalHistogram::CWndVerticalHistogram()
 	m_abcissaminval = 0;			// first abcissa
 	m_abcissamaxval = 0;			// last abbcissa
 	m_lmax = 0;					// histogram max
-	m_csEmpty = "no \nspikes";
+	m_csEmpty = _T("no spikes (WndVerticalHistogram)");
 }
 
 CWndVerticalHistogram::~CWndVerticalHistogram()

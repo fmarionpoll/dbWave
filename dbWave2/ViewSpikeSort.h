@@ -20,29 +20,29 @@ public:
 	enum { IDD = IDD_VIEWSPKSORT1 };
 	CComboBox		m_CBparameter;
 	
-	float	m_t1;
-	float	m_t2;
-	float	m_lower;
-	float	m_upper;
-	int		m_sourceclass;
-	int		m_destinationclass;
-	float	m_timeFirst;
-	float	m_timeLast;
-	float	m_mVMax;
-	float	m_mVMin;
-	BOOL	m_bAllfiles;
-	int		m_spikeno;
-	int		m_spikenoclass;
-	float	m_txyright;
-	float	m_txyleft;
+	float	m_t1 = 0.f;
+	float	m_t2 = 0.f;
+	float	m_lower = 0.f;
+	float	m_upper = 0.f;
+	int		m_sourceclass = 0;
+	int		m_destinationclass = 0;
+	float	m_timeFirst = 0.f;
+	float	m_timeLast = 0.f;
+	float	m_mVMax = 0.f;
+	float	m_mVMin = 0.f;
+	BOOL	m_bAllfiles = false;
+	int		m_spikeno = -1;
+	int		m_spikenoclass = 0;
+	float	m_txyright = 1.f;
+	float	m_txyleft = 0.f;
 	float   m_mVbin = .1f;
 
 	CdbWaveDoc*	GetDocument();
 
 // Attributes
 protected:
-	CStretchControl m_stretch;
-	BOOL			m_binit;
+	CStretchControl m_stretch{};
+	BOOL			m_binit = false;
 
 	CSpikeHistWnd	yhistogram_wnd_;	// spike histogram
 	CSpikeXYpWnd	xygraph_wnd_;		// bars with spike height
@@ -65,12 +65,11 @@ protected:
 	CEditCtrl	mm_txyleft;	
 	CEditCtrl   mm_mVbin;
 
-	CSpikeDoc*	m_pSpkDoc;	
-	CSpikeList*	m_pSpkList;	
+	CSpikeDoc*	m_pSpkDoc = nullptr;	
+	CSpikeList*	m_pSpkList = nullptr;	
 	SPKCLASSIF*	m_psC{};
 	OPTIONS_VIEWDATA*  mdPM{};
-	CTabCtrl m_tabCtrl;
-
+	CTabCtrl m_tabCtrl{};
 
 	int		m_itaglow{};
 	int		m_itagup{};
@@ -82,16 +81,16 @@ protected:
 	int		m_spkformtagleft{};
 	int		m_spkformtagright{};
 	
-	float	m_tunit;				// 1=s, 1000f=ms, 1e6=us
-	float	m_vunit;				// 1=V, 1000f=mV, 1e6=uV
+	float	m_tunit = 1000.f;		// 1=s, 1000f=ms, 1e6=us
+	float	m_vunit = 1000.f;		// 1=V, 1000f=mV, 1e6=uV
 	float	m_delta{};
 	int		m_parmmax{};			// max of array m_measure_y1
 	int		m_parmmin{};			// min of array m_measure_y1
-	BOOL	m_bvalidextrema;		// tells if m_parmmax & m_parmmin are valid
+	BOOL	m_bvalidextrema=false;		// tells if m_parmmax & m_parmmin are valid
 	long	m_lFirst{};				// display first
 	long	m_lLast{};				// display last
-	BOOL	m_bMeasureDone;			// flag m_measure_y1 valid
-	int		m_divAmplitudeBy;		// value to adjust changes in amplitude / filter(s)
+	BOOL	m_bMeasureDone=false;			// flag m_measure_y1 valid
+	int		m_divAmplitudeBy=1;		// value to adjust changes in amplitude / filter(s)
 
 	SCROLLINFO	m_scroll_file_pos_infos_{};
 
@@ -110,8 +109,8 @@ public:
 	BOOL OnMove(UINT nIDMoveCommand) override;
 protected:
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	void OnInitialUpdate() override; // called first time after construct
+	void DoDataExchange(CDataExchange* pDX) override;
+	void OnInitialUpdate() override; 
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;	    	
 	//}}AFX_VIRTUAL
 

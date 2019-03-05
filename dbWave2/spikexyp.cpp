@@ -19,16 +19,8 @@ END_MESSAGE_MAP()
 
 CSpikeXYpWnd::CSpikeXYpWnd()
 {   
-	m_lFirst = 0;
-	m_lLast = 0;
-	m_currentclass=-999;
-	m_btrackCurve = FALSE;
-	m_hitspk=-1;
-	m_selectedspike=-1;
-	m_rwidth = 6;
-	m_rangemode = RANGE_TIMEINTERVALS;
 	SetbUseDIB(FALSE);
-	m_csEmpty = "no \nspikes";
+	m_csEmpty = _T("no spikes (spikexp)");
 	p_spikelist_ = nullptr;
 }  
 

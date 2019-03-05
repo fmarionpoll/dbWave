@@ -19,7 +19,7 @@ CLineViewWnd::CLineViewWnd()
 	// init arrays for cool display of empty data
 	AddChanlistItem(0, 0);
 	ResizeChannels(m_npixels, 1024);
-	m_csEmpty = _T("no data");
+	m_csEmpty = _T("no data (lineview)");
 }
 
 CLineViewWnd::~CLineViewWnd()

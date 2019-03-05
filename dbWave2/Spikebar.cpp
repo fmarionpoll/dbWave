@@ -33,7 +33,7 @@ CSpikeBarWnd::CSpikeBarWnd()
 	m_rangemode = RANGE_TIMEINTERVALS;
 	m_barheight = 10;
 	SetbUseDIB(FALSE);
-	m_csEmpty = "no \nspikes";
+	m_csEmpty = _T("no spikes (spikebar)");
 	m_ballFiles = FALSE;
 	p_dbwave_doc_ = nullptr;
 	m_spklast = 0;

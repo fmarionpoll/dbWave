@@ -31,30 +31,6 @@ IMPLEMENT_DYNCREATE(CViewSpikeSort, CDaoRecordView)
 CViewSpikeSort::CViewSpikeSort()
 	: CDaoRecordView(CViewSpikeSort::IDD)
 {
-	m_t1 = 0.0f;
-	m_t2 = 0.0f;
-	m_lower = 0.0f;
-	m_upper = 0.0f;
-	m_sourceclass = 0;
-	m_destinationclass = 0;
-	m_timeFirst = 0.0f;
-	m_timeLast = 2.6f;
-	m_mVMax = 1.0f;
-	m_mVMin = 0.0f;
-	m_bAllfiles = FALSE;
-	m_spikeno = 0;
-	m_spikenoclass = 0;
-	m_txyright = 1.;
-	m_txyleft = 0.;
-	m_tunit = 1000.0f;		// time unit (ms=1000, us=1E6)
-	m_vunit = m_tunit;		// volt unit (mv)
-	m_bMeasureDone=FALSE;	// no measure done yet
-	m_bvalidextrema=FALSE;	// extrema are not valid
-	m_spikeno = -1;			// spike currently selected
-	m_pSpkDoc= nullptr;
-	m_pSpkList= nullptr;
-	m_divAmplitudeBy = 1;
-	m_binit = FALSE;
 	m_bEnableActiveAccessibility=FALSE; // workaround to crash / accessibility
 }
 
@@ -231,7 +207,7 @@ void CViewSpikeSort::OnInitialUpdate()
 	m_spkhistlower		= yhistogram_wnd_.AddVTtag(m_psC->ilower);
 
 	UpdateFileParameters();
-	if (m_pSpkList != nullptr) {
+	if (nullptr != m_pSpkList) {
 		m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 		m_lower = m_psC->ilower*m_delta;
 		m_upper = m_psC->iupper*m_delta;
@@ -245,10 +221,10 @@ void CViewSpikeSort::OnInitialUpdate()
 void CViewSpikeSort::ActivateMode4()
 {
 	auto n_cmd_show = SW_HIDE;
-	if (m_psC->iparameter == 4)
+	if (4 == m_psC->iparameter)
 	{
 		n_cmd_show = SW_SHOW;
-		if (xygraph_wnd_.GetNVTtags() <1)
+		if (1 > xygraph_wnd_.GetNVTtags())
 		{
 			m_ixyright = xygraph_wnd_.AddVTtag(m_psC->ixyright);
 			m_ixyleft = xygraph_wnd_.AddVTtag(m_psC->ixyleft);
@@ -259,7 +235,7 @@ void CViewSpikeSort::ActivateMode4()
 		xygraph_wnd_.SetNxScaleCells(2, 0, 0);
 		xygraph_wnd_.GetScopeParameters()->crScopeGrid= RGB(128,   128, 128);
 		
-		if (m_pSpkList != nullptr)
+		if (nullptr != m_pSpkList)
 		{
 			const auto spikelen_ms = (m_pSpkList->GetSpikeLength()* m_tunit) / m_pSpkList->GetAcqSampRate() ;
 			CString cs_dummy;
@@ -293,7 +269,7 @@ void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 	{
 		SaveCurrentFileParms();
 		auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-		if (p_app->m_psort1spikesMemFile == nullptr)
+		if (nullptr == p_app->m_psort1spikesMemFile)
 		{
 			p_app->m_psort1spikesMemFile = new CMemFile;
 			ASSERT(p_app->m_psort1spikesMemFile != NULL);
@@ -372,7 +348,7 @@ CDaoRecordset* CViewSpikeSort::OnGetRecordset()
 void CViewSpikeSort::UpdateFileParameters()
 {
 	// reset parms ? flag = single file or file list has changed
-	if (  !m_bAllfiles)		
+	if (!m_bAllfiles)		
 	{
 		yhistogram_wnd_.RemoveHistData();
 	}
@@ -381,7 +357,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
 	auto pdb_doc = GetDocument();
 	m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
-	if (m_pSpkDoc == nullptr)
+	if (nullptr == m_pSpkDoc)
 		return;
 
 	// reset tab control
@@ -403,7 +379,7 @@ void CViewSpikeSort::UpdateFileParameters()
 
 	// spike and classes
 	auto spikeno = m_pSpkList->m_selspike;
-	if (spikeno > m_pSpkList->GetTotalSpikes()-1 || spikeno < 0)
+	if (m_pSpkList->GetTotalSpikes() < spikeno || 0 > spikeno)
 		spikeno = -1;
 	else	
 	{	// set source class to the class of the selected spike
@@ -416,7 +392,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	spikebars_wnd_.SetSourceData(m_pSpkList, GetDocument());
 
-	if (m_psC->ileft==0 && m_psC->iright==0)
+	if (0 == m_psC->ileft && 0 == m_psC->iright)
 	{
 		m_psC->ileft = m_pSpkList->GetSpikePretrig();
 		m_psC->iright = m_psC->ileft +  m_pSpkList->GetSpikeRefractory();
@@ -451,7 +427,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	if (!m_bAllfiles || !m_bMeasureDone)
 	{
 		xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument());
-		if (m_psC->iparameter != 4)
+		if (4 != m_psC->iparameter)
 		{
 			xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
 			if(xygraph_wnd_.GetNVTtags() >0)
@@ -463,7 +439,7 @@ void CViewSpikeSort::UpdateFileParameters()
 		else
 		{
 			xygraph_wnd_.SetTimeIntervals(- m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
-			if (xygraph_wnd_.GetNVTtags() <1)
+			if (1 > xygraph_wnd_.GetNVTtags())
 			{
 				m_ixyright = xygraph_wnd_.AddVTtag(m_psC->ixyright);	
 				m_ixyleft = xygraph_wnd_.AddVTtag(m_psC->ixyleft);
@@ -495,7 +471,7 @@ void CViewSpikeSort::UpdateLegends()
 	m_timeLast  = m_lLast  / m_pSpkList->GetAcqSampRate();
 	UpdateScrollBar();
 
-	if (m_psC->iparameter != 4)
+	if (4 != m_psC->iparameter)
 		xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
 	else
 		xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
@@ -551,16 +527,13 @@ void CViewSpikeSort::OnSort()
 		pdlg->SetStep (1);
 	}
 
-	// loop over all selected files (or only one file currently selected)
-	pdb_doc->DBSetCurrentRecordPosition(firstfile);
-
 	for (auto ifile=firstfile; ifile <= lastfile; ifile++)
 	{
 		// load spike file
 		BOOL flagchanged;
 		pdb_doc->DBSetCurrentRecordPosition(ifile);
 		m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
-		if (m_pSpkDoc == nullptr)
+		if (nullptr == m_pSpkDoc)
 			continue;
 		
 		// update screen if multi-file requested 
@@ -580,7 +553,7 @@ void CViewSpikeSort::OnSort()
 
 		// load spike list
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		if ((m_pSpkList == nullptr) || (m_pSpkList->GetSpikeLength() == 0))
+		if ((nullptr == m_pSpkList ) || (0 == m_pSpkList->GetSpikeLength()))
 			continue;
 
 		// loop over all spikes of the list and compare to a single parameter
@@ -588,7 +561,7 @@ void CViewSpikeSort::OnSort()
 		const CSize fromclass_toclass(m_sourceclass, m_destinationclass);
 		const CSize timewindow(m_lFirst, m_lLast);
 		// sort on 1 parameter
-		if (m_psC->iparameter != 4)
+		if (4 != m_psC->iparameter)
 		{
 			flagchanged = m_pSpkList->SortSpikeWithY1(fromclass_toclass, timewindow, limits1);
 		}
@@ -616,13 +589,14 @@ void CViewSpikeSort::OnSort()
 	}
 
 	// refresh data windows
+	BuildHistogram();
+
 	xygraph_wnd_.Invalidate();
 	spikeshape_wnd_.Invalidate();
 	spikebars_wnd_.Invalidate();
-	BuildHistogram();
 	yhistogram_wnd_.Invalidate();
-	SelectSpikeFromCurrentList(-1);
-	m_pSpkDoc->SetModifiedFlag(TRUE); // set flag: document has changed
+
+	m_pSpkDoc->SetModifiedFlag(TRUE);
 }
 
 LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
@@ -633,14 +607,14 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	switch (code)
 	{
 	case HINT_SETMOUSECURSOR:	// ------------- change mouse cursor (all 3 items)	
-		if (threshold >CURSOR_ZOOM)		// clip cursor shape to max
+		if (CURSOR_ZOOM < threshold )		// clip cursor shape to max
 			threshold = 0;
 		SetViewMouseCursor(threshold);	// change cursor val in the other button
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(threshold, 0));
 		break;	
 
 	case HINT_CHANGEHZLIMITS:	// -------------  abcissa have changed
-		if (m_psC->iparameter != 4)
+		if (4 != m_psC->iparameter)
 		{
 			m_lFirst = xygraph_wnd_.GetTimeFirst();
 			m_lLast = xygraph_wnd_.GetTimeLast();
@@ -1579,8 +1553,7 @@ void CViewSpikeSort::OnEnChangelower()
 	if (mm_lower.m_bEntryDone)
 	{
 		auto lower = m_lower;
-		//if (!m_bAllfiles)
-			m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
+		m_delta = m_pSpkList->GetAcqVoltsperBin()*m_vunit;
 		switch (mm_lower.m_nChar)
 		{				// load data from edit controls
 		case VK_RETURN:

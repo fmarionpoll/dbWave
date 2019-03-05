@@ -28,72 +28,78 @@
 class CScopeScreen : public CWnd
 {
 
-// Implementation
+	// Implementation
 public:
 	CScopeScreen();								// create assoc object
 	virtual ~CScopeScreen();					// delete assoc object
-	DECLARE_SERIAL( CScopeScreen )
-	void Serialize( CArchive& archive ) override;
+	DECLARE_SERIAL(CScopeScreen)
+	void Serialize(CArchive& archive) override;
 
 public:
-	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);  	
+	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
 	void	EraseBkgnd(CDC *p_dc);
 	void	PlotToBitmap(CDC *p_dc);
-	COLORREF GetColor(int i) const {return m_colorTable[i];}
+	COLORREF GetColor(int i) const { return m_colorTable[i]; }
 	void	SetColor(int i, COLORREF ccolor) { m_colorTable[i] = ccolor; }
-	void	SetString(CString cs) {m_csEmpty =cs;}
+	void	SetString(CString cs) { m_csEmpty = cs; }
 	int		FindColor(COLORREF ccolor);
 
 	float	ChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 	int		NiceUnit(float y);
-	
+
 	// Implementation
 protected:
 	// statics : created only once - associated with a counter
-	static int		m_countcurs;					// objects counter
+	int		m_countcurs = 0;							// objects counter
 #define NB_CURSORS 4								// nb of cursors loaded
-	static HCURSOR	m_cursor		[NB_CURSORS];	// array with cursor handles
+	static HCURSOR	m_cursor[NB_CURSORS];	// array with cursor handles
 	static int		m_cursordragmode[NB_CURSORS];	// cursor mode: 0=invert rect; 1=catch object	
-	static COLORREF m_colorTable	[NB_COLORS];	// array with colorref
-	CPen			m_penTable		[NB_COLORS];	// table with CPen objects (same colors as color table
-	BOOL			m_bLmouseDown;
-	BOOL			m_bUseDIB;	
-	CDC				m_PlotDC;
-	CWordArray		m_arrayMark;
-	CPen			m_blackDottedPen;
+	static COLORREF m_colorTable[NB_COLORS];	// array with colorref
+	static TCHAR	csUnit[];
+	static int  dUnitsPower[];
+	static int	dmaxIndex;
+	static int	dniceIntervals[];
+
+
+	CPen			m_penTable[NB_COLORS];	// table with CPen objects (same colors as color table
+	BOOL			m_bLmouseDown = false;
+	BOOL			m_bUseDIB = false;
+	CDC				m_PlotDC{};
+	CWordArray		m_arrayMark{};
+	CPen			m_blackDottedPen{};
 	CString			m_csEmpty;
 	SCOPESTRUCT		m_scopestruct{};
-	
+
 public:
 	virtual SCOPESTRUCT*	GetScopeParameters();
 	virtual void			SetScopeParameters(SCOPESTRUCT*	pStruct);
 
-// ---------------------------------------------------------------
-// Attributes
+	// ---------------------------------------------------------------
+	// Attributes
 public:
 	void	SetbUseDIB(BOOL bsetPlot);				// use DIB or not
 	void	SetDisplayAreaSize(int cx, int cy);		// set size of the display area
 
-	CSize	GetRectSize() const					{return {m_displayRect.Width()+1, m_displayRect.Height()+1};}
-	int		GetRectHeight() const				{return m_displayRect.Height()+1;}
-	int		GetRectWidth() const				{return m_displayRect.Width()+1;}
-	int		GetMouseCursorType() const			{return m_cursorType;}
+	CSize	GetRectSize() const { return { m_displayRect.Width() + 1, m_displayRect.Height() + 1 }; }
+	int		GetRectHeight() const { return m_displayRect.Height() + 1; }
+	int		GetRectWidth() const { return m_displayRect.Width() + 1; }
+	int		GetMouseCursorType() const { return m_cursorType; }
 	virtual int SetMouseCursorType(int cursormode);	// change mouse cursor on button
 
 	// scale
-	void	SetYWExtOrg(int extent, int zero)	{m_yWE = extent; m_yWO = zero;}
-	void	SetXWExtOrg(int extent, int zero)	{m_xWE = extent; m_xWO = zero;}
-	int		GetYWExtent() const					{return m_yWE;}
-	int		GetYWOrg() const					{return m_yWO;}
-	int		GetXWExtent() const					{return m_xWE;}
-	int		GetXWOrg() const					{return m_xWO;}
+	void	SetYWExtOrg(int extent, int zero) { m_yWE = extent; m_yWO = zero; }
+	void	SetXWExtOrg(int extent, int zero) { m_xWE = extent; m_xWO = zero; }
+	int		GetYWExtent() const { return m_yWE; }
+	int		GetYWOrg() const { return m_yWO; }
+	int		GetXWExtent() const { return m_xWE; }
+	int		GetXWOrg() const { return m_xWO; }
 
 	void	SetNxScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
 	void	SetNyScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
-	int		GetNxScaleCells()					{return m_scopestruct.iXCells;}
-	int		GetNyScaleCells()					{return m_scopestruct.iYCells;}
-	void	SetxScaleUnitValue(float x)			{m_scopestruct.xScaleUnitValue=x;}
-	void	SetyScaleUnitValue(float y)			{m_scopestruct.yScaleUnitValue=y;}
+	int		GetNxScaleCells() { return m_scopestruct.iXCells; }
+	int		GetNyScaleCells() { return m_scopestruct.iYCells; }
+	void	SetxScaleUnitValue(float x) { m_scopestruct.xScaleUnitValue = x; }
+	void	SetyScaleUnitValue(float y) { m_scopestruct.yScaleUnitValue = y; }
 	void	AttachExternalXRuler(CRulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
 	void	AttachExternalYRuler(CRulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
@@ -102,11 +108,11 @@ public:
 	CRuler		m_xRuler;
 	CRuler		m_yRuler;
 	CFont		m_hFont;
-	BOOL		m_bNiceGrid;
-	int			m_abcissaheight;
-	int			m_ordinateswidth;
-	CRulerBar*	m_pXRulerBar;
-	CRulerBar*	m_pYRulerBar;
+	BOOL		m_bNiceGrid = false;
+	int			m_abcissaheight = 10;
+	int			m_ordinateswidth = 25;
+	CRulerBar*	m_pXRulerBar =nullptr;
+	CRulerBar*	m_pYRulerBar = nullptr;
 
 public:
 	void		DrawGrid(CDC *p_dc);
@@ -119,54 +125,54 @@ protected:
 
 	// tags ------------------------------------------------------------------------
 public:
-	int		GetHZtagVal(int i) 					{return m_HZtags.GetTagVal(i);}
-	int		GetHZtagChan(int i) 				{return m_HZtags.GetTagChan(i);}
-	int		GetHZtagPix(int i) 					{return m_HZtags.GetTagPix(i);}	
+	int		GetHZtagVal(int i) { return m_HZtags.GetTagVal(i); }
+	int		GetHZtagChan(int i) { return m_HZtags.GetTagChan(i); }
+	int		GetHZtagPix(int i) { return m_HZtags.GetTagPix(i); }
 	int		GetNHZtags();
-	int		AddHZtag(int val, int chan)			{return m_HZtags.AddTag(val, chan);}
-	int		DelHZtag(int index) 				{return m_HZtags.RemoveTag(index);}
-	void	DelAllHZtags()						{m_HZtags.RemoveAllTags();}
+	int		AddHZtag(int val, int chan) { return m_HZtags.AddTag(val, chan); }
+	int		DelHZtag(int index) { return m_HZtags.RemoveTag(index); }
+	void	DelAllHZtags() { m_HZtags.RemoveAllTags(); }
 
-	void	SetHZtagVal(int i, int val)			{m_HZtags.SetTagVal(i, val);}
-	void	SetHZtagPix(int i, int val)			{m_HZtags.SetTagPix(i, val);}
-	void	SetHZtagChan(int i, int chan)		{m_HZtags.SetTagChan(i, chan);}
+	void	SetHZtagVal(int i, int val) { m_HZtags.SetTagVal(i, val); }
+	void	SetHZtagPix(int i, int val) { m_HZtags.SetTagPix(i, val); }
+	void	SetHZtagChan(int i, int chan) { m_HZtags.SetTagChan(i, chan); }
 
-	int		AddVTtag(int val)					{return m_VTtags.AddTag(val, 0);}
-	int		AddVTLtag(long lval)				{return m_VTtags.AddLTag(lval, 0);}
-	int		DelVTtag(int index) 				{return m_VTtags.RemoveTag(index);}
-	void	DelAllVTtags()						{m_VTtags.RemoveAllTags();}
-	int		GetVTtagVal(int itag) 				{return m_VTtags.GetTagVal(itag);}	
-	int		GetVTtagPix(int itag) 				{return m_VTtags.GetTagPix(itag);}	
+	int		AddVTtag(int val) { return m_VTtags.AddTag(val, 0); }
+	int		AddVTLtag(long lval) { return m_VTtags.AddLTag(lval, 0); }
+	int		DelVTtag(int index) { return m_VTtags.RemoveTag(index); }
+	void	DelAllVTtags() { m_VTtags.RemoveAllTags(); }
+	int		GetVTtagVal(int itag) { return m_VTtags.GetTagVal(itag); }
+	int		GetVTtagPix(int itag) { return m_VTtags.GetTagPix(itag); }
 	int		GetNVTtags();
-	void	SetVTtagVal(int itag, int val)		{m_VTtags.SetTagVal(itag, val);}
-	void	SetVTtagPix(int itag, int val)		{m_VTtags.SetTagPix(itag, val);}
+	void	SetVTtagVal(int itag, int val) { m_VTtags.SetTagVal(itag, val); }
+	void	SetVTtagPix(int itag, int val) { m_VTtags.SetTagPix(itag, val); }
 
-	void	SetVTtagLval(int itag, long lval)	{m_VTtags.SetTagLVal(itag, lval);}
-	long	GetVTtagLval(int itag) 				{return m_VTtags.GetTagLVal(itag);}
+	void	SetVTtagLval(int itag, long lval) { m_VTtags.SetTagLVal(itag, lval); }
+	long	GetVTtagLval(int itag) { return m_VTtags.GetTagLVal(itag); }
 
-	BOOL	GetbDrawframe() const				{return m_scopestruct.bDrawframe;}
-	void	SetbDrawframe(BOOL flag)			{m_scopestruct.bDrawframe=flag;}
-	CRect	GetDefinedRect()					{return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);}
+	BOOL	GetbDrawframe() const { return m_scopestruct.bDrawframe; }
+	void	SetbDrawframe(BOOL flag) { m_scopestruct.bDrawframe = flag; }
+	CRect	GetDefinedRect() { return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y); }
 
-	void	SetVTtagList(CTagList* pList)		{m_VTtags.CopyTagList(pList);}
-	void	SetHZtagList(CTagList* pList)		{m_HZtags.CopyTagList(pList);}
+	void	SetVTtagList(CTagList* pList) { m_VTtags.CopyTagList(pList); }
+	void	SetHZtagList(CTagList* pList) { m_HZtags.CopyTagList(pList); }
 	CTagList*	GetVTtagList();
-	CTagList*	GetHZtagList();	
+	CTagList*	GetHZtagList();
 
 	CString		m_csBottomComment;
-	BOOL		m_bBottomComment;
-	void SetBottomComment(BOOL flag, CString cs) {m_csBottomComment=cs; m_bBottomComment=flag;}
+	BOOL		m_bBottomComment = false;
+	void SetBottomComment(BOOL flag, CString cs) { m_csBottomComment = cs; m_bBottomComment = flag; }
 
 protected:
-	int		m_plotmode;
-	int		m_colorbackgr;
-	int		m_colorselected;
-	BOOL	m_erasebkgnd;		// erase backgroung (flag)
-	CTagList m_HZtags;			// List of horizontal tag lines
-	CTagList m_VTtags;			// List of vertical tag lines
-	BOOL	m_bVTtagsLONG;		// flag: TRUE if VTtags are defined as long
-	long	m_liFirst;			// file position of first left pixel
-	long	m_liLast;			// file position of last right pixel
+	int		m_plotmode = 0;
+	int		m_colorbackgr = SILVER_COLOR;
+	int		m_colorselected = BLACK_COLOR;
+	BOOL	m_erasebkgnd = true;	// erase backgroung (flag)
+	CTagList m_HZtags{};			// List of horizontal tag lines
+	CTagList m_VTtags{};			// List of vertical tag lines
+	BOOL	m_bVTtagsLONG =false;	// flag: TRUE if VTtags are defined as long
+	long	m_liFirst = 0;			// file position of first left pixel
+	long	m_liLast = 0;			// file position of last right pixel
 	long	m_liJitter{};			// file position range corresponding mouse jitter
 
 	// plotting options - parameters for PLOT_WITHINBOUNDS
@@ -178,16 +184,16 @@ protected:
 
 	// mouse tracking modes
 	int		m_HCtrapped{};		// cursor index trapped by the mouse
-	int		m_trackMode;
+	int		m_trackMode = TRACK_OFF;
 
-	int 	m_xWO;				// x origin, extent / window & view
-	int		m_xWE;
-	int		m_xVO;
-	int		m_xVE;
-	int 	m_yWO;				// y origin, extent / window & view
-	int		m_yWE;
-	int		m_yVO;
-	int		m_yVE;
+	int 	m_xWO = 0;				// x origin, extent / window & view
+	int		m_xWE = 1;
+	int		m_xVO =0;
+	int		m_xVE = 1;
+	int 	m_yWO = 0;				// y origin, extent / window & view
+	int		m_yWE = 1;
+	int		m_yVO = 0;
+	int		m_yVE = 1;
 
 	int 	m_curTrack{};			// threshold  tracked
 	CPoint	m_ptFirst;
@@ -196,8 +202,8 @@ protected:
 	CRect	m_clientRect;
 	CRect	m_displayRect;
 
-	int		m_cursorType=0;		// current cursor
-	int		m_oldcursorType;
+	int		m_cursorType = 0;		// current cursor
+	int		m_oldcursorType = 0;
 	HCURSOR m_currCursor;		// handle to current cursor
 	int		m_currCursorMode;   // current cursor drag mode
 
@@ -205,11 +211,11 @@ protected:
 	int		m_cyjitter;			// mouse vertical jitter
 	CRect	m_ZoomFrom;			// temp rect
 	CRect	m_ZoomTo;			// temp rect
-	int		m_iUndoZoom;		// 1: rect+ stored; -1: rect- stored; 0: none stored
+	int		m_iUndoZoom = 0;		// 1: rect+ stored; -1: rect- stored; 0: none stored (not implemented)
 
-	BOOL	m_bAllowProps;
-	HWND	m_hwndReflect;
-	CTag*	m_tempVTtag;
+	BOOL	m_bAllowProps = true;
+	HWND	m_hwndReflect = nullptr;
+	CTag*	m_tempVTtag = nullptr;
 
 // Operations
 public:
