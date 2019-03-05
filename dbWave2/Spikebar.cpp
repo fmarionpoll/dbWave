@@ -652,7 +652,7 @@ void CSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 		else
 		{
 			const auto iselectedspike = DoesCursorHitCurve(point);
-			if (iselectedspike > 0)
+			if (iselectedspike >= 0)
 				PostMyMessage(HINT_DBLCLKSEL, iselectedspike);
 		}
 	}

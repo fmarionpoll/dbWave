@@ -1549,13 +1549,10 @@ void CViewSpikeDetection::OnToolsEdittransformspikes()
 	
 	// open dialog box and wait for response
 	dlg.DoModal();
-	if (m_spikeno != dlg.m_spikeno)
-	{
-		m_spikeno = dlg.m_spikeno;
-		SelectSpikeNo(m_spikeno, FALSE);
-		UpdateSpikeDisplay();
-	}
 
+	m_spikeno = dlg.m_spikeno;
+	SelectSpikeNo(m_spikeno, FALSE);
+	UpdateSpikeDisplay();
 	if (dlg.m_bchanged)
 		p_spike_doc_->SetModifiedFlag(TRUE);
 

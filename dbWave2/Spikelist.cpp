@@ -14,26 +14,8 @@ IMPLEMENT_SERIAL(CSpikeList,CObject,0)
 
 CSpikeList::CSpikeList()
 {
-	m_bsaveartefacts = FALSE;
-	m_nbclasses = 1;
-	m_bvalidclasslist = FALSE; // default: no valid array
-	//m_classArray.SetSize(2);	// default size - some functions
-	//m_classArray.SetAt(0,0);	// access this array anyway so provide dummy value
-	//m_classArray.SetAt(1,0);	// access this array anyway so provide dummy value
-	m_IDstring = "Awave Spike file v";
-	m_selspike = -1;
-	m_lFirstSL = 0;
-	m_lLastSL = 0;
-	m_bextrema = FALSE;
-	m_totalmin = 2048;
-	m_totalmax = 2100;
-	m_jitterSL = 2;
-	m_icenter1SL = 0;
-	m_icenter2SL = 60;
-	m_imaxmin1SL = 0;
-	m_imaxmin2SL = 60;
-	m_spkelmts.SetSize(0, 128);
-	m_classArray.SetSize(0, 128);
+	//m_spkelmts.SetSize(0, 128);
+	//m_classArray.SetSize(0, 128);
 }
 
 CSpikeList::~CSpikeList()

@@ -29,49 +29,50 @@ public:
 	CSpikeList();
 	~CSpikeList();
 	
-	int				m_selspike;
-	long			m_lFirstSL;
-	long			m_lLastSL;
-	int				m_jitterSL;
-	int				m_icenter1SL;
-	int				m_icenter2SL;
-	int				m_imaxmin1SL;
-	int				m_imaxmin2SL;
+	int				m_selspike		=-1;
+	long			m_lFirstSL		=0;
+	long			m_lLastSL		=0;
+	int				m_jitterSL		=2;
+	int				m_icenter1SL	=0;
+	int				m_icenter2SL	=60;
+	int				m_imaxmin1SL	=0;
+	int				m_imaxmin2SL	=60;
 	
 // Description 
 protected:
 // (0) ---------------infos about file version and ID
 	WORD			m_wversion{};
-	CString			m_IDstring;
+	CString			m_IDstring= _T("Awave Spike file v");
 
 // (1) ---------------infos about data acquisition and spike detection ------------------
-	CWaveChan		m_acqchan;			// description acquisition channel
+	CWaveChan		m_acqchan{};		// description acquisition channel
 	WORD  			m_encoding{};		// data encoding mode  
 	long  			m_binzero{};		// 2048
 	float 			m_samprate{};		// data acq sampling rate (Hz)
 	float 			m_voltsperbin{};	// nb volts per bin (data)
-	SPKDETECTPARM	m_parm;				// detection parameters
-	CString			m_cscomment;		// spike channel descriptor (unused)
+	SPKDETECTPARM	m_parm{};			// detection parameters
+	CString			m_cscomment;		// spike channel descriptor (unused but archived)
 
 // (2) -------------ordered spike list with class, time, etc-----------------------------
 
-	BOOL			m_bextrema;			// extrema valid / no
-	int				m_totalmin;			// min of all spikes
-	int				m_totalmax;			// max of all spikes
-	CArray<CSpikeElemt*, CSpikeElemt*>	m_spkelmts;	// array of SpikeElemts
+	BOOL			m_bextrema=false;			// extrema valid / no
+	int				m_totalmin=0;			// min of all spikes
+	int				m_totalmax=0;			// max of all spikes
+	CArray<CSpikeElemt*, CSpikeElemt*>	m_spkelmts{};	// array of SpikeElemts
 
 // (3) -------------unordered data buffers with spikes extracted from acq data-----------
 
-	CSpikeBuffer	m_spikebuffer;		// spike data buffer
+	CSpikeBuffer	m_spikebuffer{};		// spike data buffer
 
 // (4) miscellaneous
 
-	BOOL			m_bsaveartefacts;	// save (yes/no) artefacts - default = FALSE
-	BOOL 			m_bvalidclasslist;	// class list (array with classnb & nb spikes/class)
-	int				m_nbclasses;		//
-	CArray <int, int>	m_classArray;		// CWordArray describing classes found and nb of spikes within them	
-
-// Operations
+	BOOL			m_bsaveartefacts=false;		// save (yes/no) artefacts - default = FALSE
+	BOOL 			m_bvalidclasslist=false;	// class list (array with classnb & nb spikes/class)
+	int				m_nbclasses=0;				//
+	CArray <int, int>	m_classArray{};			// CWordArray describing classes found and nb of spikes within them	
+	// TODO enrich class to make use of indexes et al apparent into a class
+	
+	// Operations
 public:
 	WORD	GetVersion()			const {return m_wversion;}
 	BOOL	IsClassListValid()		const {return m_bvalidclasslist;}
