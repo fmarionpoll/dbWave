@@ -23,20 +23,10 @@ END_MESSAGE_MAP()
 CSpikeBarWnd::CSpikeBarWnd()
 {
 	p_spikelist_= nullptr;
+	p_dbwave_doc_ = nullptr;
 	p_envelope_ = nullptr;
-	m_lFirst = 0;
-	m_lLast = 0;
-	m_currentclass=-999;
-	m_btrackCurve = FALSE;
-	m_hitspk=-1;	
-	m_selectedspike=-1;
-	m_rangemode = RANGE_TIMEINTERVALS;
-	m_barheight = 10;
 	SetbUseDIB(FALSE);
 	m_csEmpty = _T("no spikes (spikebar)");
-	m_ballFiles = FALSE;
-	p_dbwave_doc_ = nullptr;
-	m_spklast = 0;
 }  
 
 CSpikeBarWnd::~CSpikeBarWnd()
@@ -76,8 +66,8 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 		{
 			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 
 		// test presence of data	
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)

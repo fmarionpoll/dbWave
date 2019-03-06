@@ -34,10 +34,10 @@ COLORREF CScopeScreen::m_colorTable[] =
 HCURSOR CScopeScreen::m_cursor[NB_CURSORS];
 int		CScopeScreen::m_cursordragmode[NB_CURSORS];
 
-TCHAR CScopeScreen::csUnit[]		= {_T("GM  mµpf  ")};		// units & corresp powers
+TCHAR CScopeScreen::csUnit[]		= {_T("GM  mµpf  ")};
 int  CScopeScreen::dUnitsPower[]	= { 9,6, 0, 0, -3, -6, -9, -12, 0};
-int	CScopeScreen::dmaxIndex		= 8;				// nb of elmts
-int	CScopeScreen::dniceIntervals[]= {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, 0};
+int	CScopeScreen::dmaxIndex = 8;
+int	CScopeScreen::dniceIntervals[]	= {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, 0};
 
 int CScopeScreen::FindColor(COLORREF ccolor)
 {
@@ -631,8 +631,8 @@ void CScopeScreen::OnLButtonDown(UINT nFlags, CPoint point)
 		return;
 	}
 
-	m_ptFirst = point;					// store mouse
-	m_ptLast = point;					// initial coordinates	
+	m_ptFirst = point;
+	m_ptLast = point;
 	m_ptCurr = point;
 
 	// take action according to cursor mode
@@ -759,6 +759,15 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 			::SendMessage(m_hwndReflect, WM_MOUSEMOVE, nFlags, 
 				MAKELPARAM(point.x + (rect1.left-rect0.left), 
 				point.y + (rect1.top-rect0.top)));
+		}
+		else
+		{
+			CRect rect;
+			GetWindowRect(rect);
+			if ( (point.x > = rect.Width() - SPLITSIZE - TRACKSIZE )
+				//|| (point.x >= m_scBarInfo.xyThumbBottom - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbBottom + SPLITSIZE + TRACKSIZE))
+				)
+				SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
 		}
 		break;
 	}

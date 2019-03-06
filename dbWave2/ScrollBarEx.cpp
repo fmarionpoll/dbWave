@@ -6,16 +6,6 @@
 #include "resource.h"
 #include "ScrollBarEx.h"
 
-#define SPLITSIZE 1
-#define TRACKSIZE 3
-
-#define MOVERIGHT	1
-#define MOVEBOTTOM  1
-#define	MOVELEFT	2
-#define MOVETOP     2
-#define	MOVEBOTH	3
-#define	RESIZE		4
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

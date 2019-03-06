@@ -68,8 +68,8 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 		{
 			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 
 		//test if data are there - if none, display message and exit
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)

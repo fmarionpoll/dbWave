@@ -249,9 +249,6 @@
     <ClCompile Include="ScopeScreenPropsDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScrollBarEx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Spikebar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -419,6 +416,9 @@
     </ClCompile>
     <ClCompile Include="AboutDlg.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollBarEx.cpp">
+      <Filter>customctrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -654,9 +654,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScopeScreenPropsDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScrollBarEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spikebar.h">
@@ -913,6 +910,9 @@
     </ClInclude>
     <ClInclude Include="AboutDlg.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBarEx.h">
+      <Filter>customctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

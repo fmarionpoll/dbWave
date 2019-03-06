@@ -31,18 +31,8 @@ END_MESSAGE_MAP()
 
 CSpikeHistWnd::CSpikeHistWnd() 
 {
-	p_spikelist_ = nullptr;			// source spk list
-	m_lFirst = 0;				// source data intervals
-	m_lLast = 0;				// last interval
-	m_selclass = 0;				// selected class
-	m_hitspk=-1;				// hit spike?
+	p_spikelist_ = nullptr;		// source spk list
 	SetbUseDIB(FALSE);
-
-	// set bin size initial conditions
-	m_nbins = 0;				// with 0 bins
-	m_abcissaminval=0;			// first abcissa
-	m_abcissamaxval=0;			// last abbcissa
-	m_lmax=0;					// histogram max
 	m_csEmpty = _T("no \nspikes (spikehist)");
 }
 
@@ -73,6 +63,10 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 		EraseBkgnd(p_dc);
 
 	// load resources
+	CRect rect;
+	GetWindowRect(rect);
+	m_yVO = rect.Height();
+
 	GetExtents();
 	if (m_lmax == 0)
 	{

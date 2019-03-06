@@ -120,3 +120,14 @@
 #define YEXTENT_MIN 1
 #define YEXTENT_MAX 65535
 
+// constants to use splitted cursor
+#define SPLITSIZE 1
+#define TRACKSIZE 3
+
+#define MOVERIGHT	1
+#define MOVEBOTTOM  1
+#define	MOVELEFT	2
+#define MOVETOP     2
+#define	MOVEBOTH	3
+#define	RESIZE		4
+

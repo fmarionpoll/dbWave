@@ -25,15 +25,15 @@ protected:
 	CArray <CDWordArray*, CDWordArray*>	histogram_ptr_array;	// array of DWord array containing histogram
     CSpikeList* p_spikelist_;
 
-	long 	m_lFirst;			// time index of first pt displayed
-	long 	m_lLast;			// time index of last pt displayed
-	int  	m_hitspk;			// no of spike selected
-	int		m_selclass;			// index class selected
+	long 	m_lFirst=0;			// time index of first pt displayed
+	long 	m_lLast=0;			// time index of last pt displayed
+	int  	m_hitspk=-1;		// no of spike selected
+	int		m_selclass=0;		// index class selected
 	
-    int  	m_binsize{};			// size of one bin
-    int 	m_abcissaminval;	// minimum value from which histogram is built (abcissa)
-    int 	m_abcissamaxval;	// maximum value (abcissa max)
-    int  	m_nbins;			// n bins within histogram    
+    int  	m_binsize{};		// size of one bin
+    int 	m_abcissaminval=0;	// minimum value from which histogram is built (abcissa)
+    int 	m_abcissamaxval=0;	// maximum value (abcissa max)
+    int  	m_nbins=0;			// n bins within histogram    
 
    	DWORD 	m_lmax;				// value max   	
 	int  	m_imax{};				// index max

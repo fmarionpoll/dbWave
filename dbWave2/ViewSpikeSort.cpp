@@ -86,30 +86,30 @@ BEGIN_MESSAGE_MAP(CViewSpikeSort, CDaoRecordView)
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()	
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_SOURCECLASS,			OnEnChangeSourceclass)
-	ON_EN_CHANGE(IDC_DESTINATIONCLASS,		OnEnChangeDestinationclass)
-	ON_CBN_SELCHANGE(IDC_PARAMETER,			OnSelchangeParameter)
-	ON_EN_CHANGE(IDC_LIMITLOWER,			OnEnChangelower)
-	ON_EN_CHANGE(IDC_LIMITUPPER,			OnEnChangeupper)
-	ON_EN_CHANGE(IDC_T1,					OnEnChangeT1)
-	ON_EN_CHANGE(IDC_T2,					OnEnChangeT2)
-	ON_BN_CLICKED(IDC_EXECUTE,				OnSort)
-	ON_BN_CLICKED(IDC_MEASURE,				OnMeasure)
-	ON_BN_CLICKED(IDC_CHECK1,				OnSelectAllFiles)
-	ON_COMMAND(ID_FORMAT_ALLDATA,			OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE,		OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST,		OnFormatGainadjust)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES,			OnToolsEdittransformspikes)
-	ON_COMMAND(ID_TOOLS_ALIGNSPIKES,		OnToolsAlignspikes)
-	ON_EN_CHANGE(IDC_EDIT2,					OnEnChangetimeFirst)
-	ON_EN_CHANGE(IDC_EDIT3,					OnEnChangetimeLast)
-	ON_EN_CHANGE(IDC_EDIT7,					OnEnChangemVMin)
-	ON_EN_CHANGE(IDC_EDIT6,					OnEnChangemVMax)
-	ON_EN_CHANGE(IDC_EDITLEFT2,				&CViewSpikeSort::OnEnChangeEditleft2)
-	ON_EN_CHANGE(IDC_EDITRIGHT2,			&CViewSpikeSort::OnEnChangeEditright2)
-	ON_EN_CHANGE(IDC_NSPIKES,				OnEnChangeNOspike)
-	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM,	OnToolsEdittransformspikes)
-	ON_EN_CHANGE(IDC_SPIKECLASS,			OnEnChangeSpikenoclass)
+	ON_EN_CHANGE(IDC_SOURCECLASS, &CViewSpikeSort::OnEnChangeSourceclass)
+	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &CViewSpikeSort::OnEnChangeDestinationclass)
+	ON_CBN_SELCHANGE(IDC_PARAMETER, &CViewSpikeSort::OnSelchangeParameter)
+	ON_EN_CHANGE(IDC_LIMITLOWER, &CViewSpikeSort::OnEnChangelower)
+	ON_EN_CHANGE(IDC_LIMITUPPER, &CViewSpikeSort::OnEnChangeupper)
+	ON_EN_CHANGE(IDC_T1, &CViewSpikeSort::OnEnChangeT1)
+	ON_EN_CHANGE(IDC_T2, &CViewSpikeSort::OnEnChangeT2)
+	ON_BN_CLICKED(IDC_EXECUTE, &CViewSpikeSort::OnSort)
+	ON_BN_CLICKED(IDC_MEASURE, &CViewSpikeSort::OnMeasure)
+	ON_BN_CLICKED(IDC_CHECK1, &CViewSpikeSort::OnSelectAllFiles)
+	ON_COMMAND(ID_FORMAT_ALLDATA, &CViewSpikeSort::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE, &CViewSpikeSort::OnFormatCentercurve)
+	ON_COMMAND(ID_FORMAT_GAINADJUST, &CViewSpikeSort::OnFormatGainadjust)
+	ON_COMMAND(ID_TOOLS_EDITSPIKES, &CViewSpikeSort::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &CViewSpikeSort::OnToolsAlignspikes)
+	ON_EN_CHANGE(IDC_EDIT2, &CViewSpikeSort::OnEnChangetimeFirst)
+	ON_EN_CHANGE(IDC_EDIT3, &CViewSpikeSort::OnEnChangetimeLast)
+	ON_EN_CHANGE(IDC_EDIT7, &CViewSpikeSort::OnEnChangemVMin)
+	ON_EN_CHANGE(IDC_EDIT6, &CViewSpikeSort::OnEnChangemVMax)
+	ON_EN_CHANGE(IDC_EDITLEFT2,	&CViewSpikeSort::OnEnChangeEditleft2)
+	ON_EN_CHANGE(IDC_EDITRIGHT2, &CViewSpikeSort::OnEnChangeEditright2)
+	ON_EN_CHANGE(IDC_NSPIKES, &CViewSpikeSort::OnEnChangeNOspike)
+	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &CViewSpikeSort::OnToolsEdittransformspikes)
+	ON_EN_CHANGE(IDC_SPIKECLASS, &CViewSpikeSort::OnEnChangeSpikenoclass)
 	ON_EN_CHANGE(IDC_BINMV, OnEnChangeNBins)
 	
 	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeSort::OnNMClickTab1)
@@ -127,15 +127,15 @@ void CViewSpikeSort::OnInitialUpdate()
 	// assign controls to stretch
 	m_stretch.AttachParent(this);
 
-	m_stretch.newProp(IDC_HISTOGRAM,	SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_EDIT7,		SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_BINMV,		SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_HISTOGRAM, SZEQ_XLEQ, YTEQ_YBEQ);
+	//m_stretch.newProp(IDC_BINMV,		SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_LIMITLOWER,	SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_LIMITUPPER,	SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_STATICLOWER,SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_STATICUPPER2, SZEQ_XLEQ, SZEQ_YBEQ);
 
+	m_stretch.newProp(IDC_EDIT7, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_TAB1,			XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_LIMITLOWER,	SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_LIMITUPPER,	SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_STATICLOWER,	SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_STATICUPPER2, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_DISPLAYPARM,	XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_DISPLAYBARS,	XLEQ_XREQ, SZEQ_YTEQ);	
 	m_stretch.newProp(IDC_SCROLLBAR1,	XLEQ_XREQ, SZEQ_YTEQ);

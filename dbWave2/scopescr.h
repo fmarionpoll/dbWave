@@ -27,11 +27,9 @@
 
 class CScopeScreen : public CWnd
 {
-
-	// Implementation
 public:
-	CScopeScreen();								// create assoc object
-	virtual ~CScopeScreen();					// delete assoc object
+	CScopeScreen();
+	virtual ~CScopeScreen();
 	DECLARE_SERIAL(CScopeScreen)
 	void Serialize(CArchive& archive) override;
 
@@ -50,16 +48,15 @@ public:
 	// Implementation
 protected:
 	// statics : created only once - associated with a counter
-	int		m_countcurs = 0;							// objects counter
+	int		m_countcurs = 0;						// objects counter
 #define NB_CURSORS 4								// nb of cursors loaded
-	static HCURSOR	m_cursor[NB_CURSORS];	// array with cursor handles
+	static HCURSOR	m_cursor[NB_CURSORS];			// array with cursor handles
 	static int		m_cursordragmode[NB_CURSORS];	// cursor mode: 0=invert rect; 1=catch object	
-	static COLORREF m_colorTable[NB_COLORS];	// array with colorref
+	static COLORREF m_colorTable[NB_COLORS];		// array with colorref
 	static TCHAR	csUnit[];
-	static int  dUnitsPower[];
-	static int	dmaxIndex;
-	static int	dniceIntervals[];
-
+	static int		dUnitsPower[];
+	static int		dmaxIndex;
+	static int		dniceIntervals[];
 
 	CPen			m_penTable[NB_COLORS];	// table with CPen objects (same colors as color table
 	BOOL			m_bLmouseDown = false;

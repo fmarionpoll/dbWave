@@ -55,8 +55,9 @@
 #include <stdio.h>
 #include <errno.h>
 #include <process.h>
-#include "StretchControls.h"		// stretch controls
+#include <afxdisp.h>
 
+#include "StretchControls.h"		// stretch controls
 #include "dbwave_constants.h"
 #include "Acqparam.h"		// structures describing data acquisition parameters
 #include "Taglines.h"		// tag structures
@@ -69,8 +70,8 @@
 #pragma warning(disable : 4995)
 #include "dbwave.h"
 #include "resource.h"
-#include <afxdisp.h>
-#include <afxdisp.h>
+
+
 
 #define SAFE_DELETE(ptr) if (ptr) { delete ptr; ptr = NULL; }
 #define SAFE_DELETE_ARRAY(p) if(p) {delete [] p ;p = NULL ;}
