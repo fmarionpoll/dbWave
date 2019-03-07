@@ -3,23 +3,24 @@
 // scopescr.h : header file
 
 // display parameters: m_rangemode
-#define RANGE_ALL			0
-#define RANGE_TIMEINTERVALS 1
-#define RANGE_INDEX			2
+constexpr auto RANGE_ALL = 0;
+constexpr auto RANGE_TIMEINTERVALS = 1;
+constexpr auto RANGE_INDEX = 2;
 // display parameters: m_plotmode
-#define PLOT_BLACK			0
-#define PLOT_ONECLASSONLY	1
-#define PLOT_ONECLASS 		2
-#define PLOT_CLASSCOLORS	3
-#define PLOT_SINGLESPIKE	4
-#define PLOT_ALLGREY		5
-#define PLOT_WITHINBOUNDS	6
-#define PLOT_ONECOLOR		7
+constexpr auto PLOT_BLACK = 0;
+constexpr auto PLOT_ONECLASSONLY = 1;
+constexpr auto PLOT_ONECLASS = 2;
+constexpr auto PLOT_CLASSCOLORS = 3;
+constexpr auto PLOT_SINGLESPIKE = 4;
+constexpr auto PLOT_ALLGREY = 5;
+constexpr auto PLOT_WITHINBOUNDS = 6;
+constexpr auto PLOT_ONECOLOR = 7;
+constexpr auto NB_COLORS = 17;
+constexpr auto BLACK_COLOR = 0;
+constexpr auto SILVER_COLOR = 2;
+constexpr auto RED_COLOR = 4;
 
-#define NB_COLORS			17
-#define BLACK_COLOR			0
-#define SILVER_COLOR		2
-#define RED_COLOR			4
+constexpr auto NB_CURSORS = 6;
 
 #include "RulerBar.h"
 
@@ -48,10 +49,14 @@ public:
 	// Implementation
 protected:
 	// statics : created only once - associated with a counter
-	int		m_countcurs = 0;						// objects counter
-#define NB_CURSORS 6								// nb of cursors loaded
+	static int		m_countcurs;					// objects counter
 	static HCURSOR	m_cursor[NB_CURSORS];			// array with cursor handles
 	static int		m_cursordragmode[NB_CURSORS];	// cursor mode: 0=invert rect; 1=catch object	
+	int				m_cursorType = 0;				// current cursor
+	int				m_oldcursorType = 0;
+	HCURSOR			m_currCursor{};					// handle to current cursor
+	int				m_currCursorMode = 0;			// current cursor drag mode
+
 	static COLORREF m_colorTable[NB_COLORS];		// array with colorref
 	static TCHAR	csUnit[];
 	static int		dUnitsPower[];
@@ -82,6 +87,7 @@ public:
 	int		GetRectWidth() const { return m_displayRect.Width() + 1; }
 	int		GetMouseCursorType() const { return m_cursorType; }
 	virtual int SetMouseCursorType(int cursormode);	// change mouse cursor on button
+	void	SetMouseCursor(int cursorm);
 
 	// scale
 	void	SetYWExtOrg(int extent, int zero) { m_yWE = extent; m_yWO = zero; }
@@ -199,15 +205,10 @@ protected:
 	CRect	m_clientRect;
 	CRect	m_displayRect;
 
-	int		m_cursorType = 0;		// current cursor
-	int		m_oldcursorType = 0;
-	HCURSOR m_currCursor;		// handle to current cursor
-	int		m_currCursorMode;   // current cursor drag mode
-
-	int 	m_cxjitter;			// mouse horizontal hitter
-	int		m_cyjitter;			// mouse vertical jitter
-	CRect	m_ZoomFrom;			// temp rect
-	CRect	m_ZoomTo;			// temp rect
+	int 	m_cxjitter;				// mouse horizontal hitter
+	int		m_cyjitter;				// mouse vertical jitter
+	CRect	m_ZoomFrom;				// temp rect
+	CRect	m_ZoomTo;				// temp rect
 	int		m_iUndoZoom = 0;		// 1: rect+ stored; -1: rect- stored; 0: none stored (not implemented)
 
 	BOOL	m_bAllowProps = true;

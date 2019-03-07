@@ -32,12 +32,14 @@ COLORREF CScopeScreen::m_colorTable[] =
 };
 
 HCURSOR CScopeScreen::m_cursor[NB_CURSORS];
-int		CScopeScreen::m_cursordragmode[NB_CURSORS];
+int	CScopeScreen::m_cursordragmode[NB_CURSORS];
+int CScopeScreen::m_countcurs = 0;
 
 TCHAR CScopeScreen::csUnit[]		= {_T("GM  mµpf  ")};
 int  CScopeScreen::dUnitsPower[]	= { 9,6, 0, 0, -3, -6, -9, -12, 0};
 int	CScopeScreen::dmaxIndex = 8;
 int	CScopeScreen::dniceIntervals[]	= {1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, 0};
+
 
 int CScopeScreen::FindColor(COLORREF ccolor)
 {
@@ -137,8 +139,8 @@ CScopeScreen::CScopeScreen()
 	}
 	m_countcurs++;
 
-	m_currCursor = m_cursor[0];			// standard cursor: arrow
-	m_currCursorMode = m_cursordragmode[0];
+	SetMouseCursor(0);
+
 	m_clientRect = CRect(0,0, 10, 10);	// minimal size of the button
 	AdjustDisplayRect(&m_clientRect);
 
@@ -203,7 +205,6 @@ BEGIN_MESSAGE_MAP(CScopeScreen, CWnd)
 	ON_WM_RBUTTONUP()
 	ON_WM_RBUTTONDOWN()	
 END_MESSAGE_MAP()
-
 
 BOOL CScopeScreen::Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
@@ -586,14 +587,17 @@ void CScopeScreen::PrepareDC(CDC* p_dc, CPrintInfo* pInfo)
 int CScopeScreen::SetMouseCursorType(int cursorm)
 {
 	m_oldcursorType = m_cursorType;
-	if (cursorm <0)
-		cursorm = 0;
-	if (cursorm > NB_CURSORS-1)
-		cursorm = NB_CURSORS-1;
+	ASSERT(NB_CURSORS > cursorm);
+	ASSERT(0 <= cursorm);
 	m_cursorType = cursorm;
-	m_currCursor = m_cursor[m_cursorType];	
+	m_currCursor = m_cursor[m_cursorType];
 	m_currCursorMode = m_cursordragmode[m_cursorType];
 	return cursorm;
+}
+
+void CScopeScreen::SetMouseCursor(int cursorm) {
+	SetMouseCursorType(cursorm);
+	SetCursor(m_currCursor);
 }
 
 void CScopeScreen::CaptureCursor()
@@ -763,7 +767,9 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 			::GetWindowRect(m_hwndReflect, & rect0);
 
 			// reflect mouse move message
-			::SendMessage(m_hwndReflect, WM_MOUSEMOVE, nFlags, 
+			::SendMessage(m_hwndReflect, 
+				WM_MOUSEMOVE, 
+				nFlags, 
 				MAKELPARAM(point.x + (rect1.left-rect0.left), 
 				point.y + (rect1.top-rect0.top)));
 		}
@@ -771,12 +777,12 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			CRect rect;
 			GetWindowRect(rect);
-			if ( (point.x > (rect.Width() - SPLITSIZE - TRACKSIZE )) 
-				|| (point.x < SPLITSIZE + TRACKSIZE) )
-				SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
-			else if ((point.y < (rect.Height() - SPLITSIZE - TRACKSIZE))
-				|| (point.y > SPLITSIZE + TRACKSIZE))
-				SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL));
+			if ((point.x > (rect.Width() - (SPLITSIZE + TRACKSIZE))) || (point.x < (SPLITSIZE + TRACKSIZE)))
+				SetMouseCursor(CURSOR_RESIZE_HZ);
+			else if ((point.y > (rect.Height() - (SPLITSIZE + TRACKSIZE))) || (point.y < (SPLITSIZE + TRACKSIZE)))
+				SetMouseCursor(CURSOR_RESIZE_VERT);
+			else
+				SetMouseCursor(CURSOR_ARROW);
 		}
 		break;
 	}

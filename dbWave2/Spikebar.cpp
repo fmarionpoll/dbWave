@@ -22,9 +22,6 @@ END_MESSAGE_MAP()
 
 CSpikeBarWnd::CSpikeBarWnd()
 {
-	p_spikelist_= nullptr;
-	p_dbwave_doc_ = nullptr;
-	p_envelope_ = nullptr;
 	SetbUseDIB(FALSE);
 	m_csEmpty = _T("no spikes (spikebar)");
 }  
@@ -65,9 +62,11 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 		if (m_ballFiles)
 		{
 			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
-			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_spike_doc_ = p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_spikelist_ = nullptr;
+			if (p_dbwave_doc_->m_pSpk != nullptr)
+				p_spikelist_ = p_spike_doc_->GetSpkListCurrent();
 		}
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 
 		// test presence of data	
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
@@ -99,7 +98,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 		}
 
 		DisplayBars(p_dc, &m_displayRect);
-		CIntervalsAndLevels* pintervals = &(p_dbwave_doc_->m_pSpk->m_stimIntervals);
+		CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
 
 		if (pintervals->nitems > 0)
 			DisplayStimulus(p_dc, &m_displayRect);

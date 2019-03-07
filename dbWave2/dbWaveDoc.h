@@ -66,6 +66,7 @@ public:
 	int		GetcurrentSpkListIndex() const {return m_icurSpkList;}
 	void	SetcurrentSpkListIndex(int icur) {m_icurSpkList = icur;}
 	int		GetcurrentSpkListSize() const {return m_pSpk->GetSpkListSize();}
+	CSpikeDoc* GetcurrentSpkDocument() const { return m_pSpk; }
 
 	inline void		SetClearMdbOnExit(BOOL bClear) {m_bClearMdbOnExit = bClear;}
 	

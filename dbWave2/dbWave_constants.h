@@ -15,23 +15,25 @@
 #define WM_MYMESSAGE WM_USER+1000
 
 // constants
-#define DOC_UNID				0
-#define DOC_TEXT				1
-#define DOC_DATA				2
-#define DOC_SPIKE				4
+constexpr auto DOC_UNID = 0;
+constexpr auto DOC_TEXT = 1;
+constexpr auto DOC_DATA = 2;
+constexpr auto DOC_SPIKE = 4;
 
-#define CURSOR_ARROW			0	// m_cursorType
-#define CURSOR_ZOOM				1
-#define CURSOR_MEASURE			2
-#define CURSOR_VERTICAL			3
+constexpr auto CURSOR_ARROW = 0;	// m_cursorType;
+constexpr auto CURSOR_ZOOM = 1;
+constexpr auto CURSOR_MEASURE = 2;
+constexpr auto CURSOR_VERTICAL = 3;
+constexpr auto CURSOR_RESIZE_HZ = 4;
+constexpr auto CURSOR_RESIZE_VERT = 5;
 
-#define TRACK_OFF				0	// m_trackmode
-#define TRACK_HZTAG				1
-#define TRACK_VTTAG				2
-#define TRACK_RECT				3
-#define TRACK_CURVE				4
-#define TRACK_SPIKE				5
-#define TRACK_BASELINE			6
+constexpr auto TRACK_OFF = 0;	// m_trackmode
+constexpr auto TRACK_HZTAG = 1;
+constexpr auto TRACK_VTTAG = 2;
+constexpr auto TRACK_RECT = 3;
+constexpr auto TRACK_CURVE = 4;
+constexpr auto TRACK_SPIKE = 5;
+constexpr auto TRACK_BASELINE = 6;
 
 // hint used with MY_MESSAGE
 
@@ -108,9 +110,6 @@
 #define UPD_YSCALE		64		// update y scale
 #define CHG_YBAR		128		// change bar height
 
-// number of digits used when printing
-#define FLT_DIG     6     /* # of decimal digits of precision */	
-
 // default values used to update bias scroll 
 #define YZERO_MIN -16350
 #define YZERO_MAX 16350
@@ -121,13 +120,12 @@
 #define YEXTENT_MAX 65535
 
 // constants to use splitted cursor
-#define SPLITSIZE 1
-#define TRACKSIZE 3
+constexpr auto SPLITSIZE = 1;
+constexpr auto TRACKSIZE = 3;
 
-#define MOVERIGHT	1
-#define MOVEBOTTOM  1
-#define	MOVELEFT	2
-#define MOVETOP     2
-#define	MOVEBOTH	3
-#define	RESIZE		4
-
+constexpr auto MOVERIGHT = 1;
+constexpr auto MOVEBOTTOM = 1;
+constexpr auto MOVELEFT = 2;
+constexpr auto MOVETOP = 2;
+constexpr auto MOVEBOTH = 3;
+constexpr auto RESIZE = 4;

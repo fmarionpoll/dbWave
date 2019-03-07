@@ -238,7 +238,6 @@ LVCF_IMAGE		Version 4.70. The iImage member is valid.
 	//ASSERT(NULL != pHeaderCtrl);
 }
 
-
 void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	// check if first if the requested line is stored into the buffer
@@ -313,7 +312,6 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 		&& p_item->iSubItem == COL_CURVE)
 		p_item->iImage = icache_index;
 }
-
 
 void CDataListCtrl::SetCurSel(int recposition)
 {
@@ -533,7 +531,6 @@ void CDataListCtrl::SetEmptyBitmap(const BOOL b_forced_update)
 	mem_dc.Rectangle(&rect_data);
 }
 
-
 void CDataListCtrl::RefreshDisplay()
 {
 	if (datalistctrlrowobject_prt_array.GetSize() == NULL)
@@ -568,7 +565,6 @@ void CDataListCtrl::RefreshDisplay()
 	UpdateWindow();
 }
 
-
 void CDataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	switch (nSBCode)
@@ -584,7 +580,6 @@ void CDataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		break;
 	}
 }
-
 
 void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
@@ -621,11 +616,11 @@ CLineViewWnd* CDataListCtrl::GetDataViewCurrentRecord()
 		nItem = GetNextItem(nItem, LVNI_SELECTED);
 		ASSERT(nItem != -1);
 		nItem -= GetTopIndex();
-		ptr = datalistctrlrowobject_prt_array.GetAt(nItem)->pdataWnd;
+		if (nItem >= 0)
+			ptr = datalistctrlrowobject_prt_array.GetAt(nItem)->pdataWnd;
 	}
 	return ptr; 
 }
-
 
 void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
@@ -638,8 +633,6 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 		ptr->pdataWnd->SetbUseDIB(FALSE);
 	}
 	auto p_wnd = ptr->pdataWnd;
-
-	// get data file descriptor
 	p_wnd->SetString(ptr->cs_comment);
 
 	// open data document
@@ -648,16 +641,13 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 		ptr->pdataDoc = new CAcqDataDoc;
 		ASSERT(ptr->pdataDoc != NULL);
 	}
-	if (!ptr->pdataDoc->OnOpenDocument(ptr->csDatafileName))
-	// if not available: consider here that requested document is not reachable
-	// tell it to lineview and display "data not available"...
+	if (ptr->csDatafileName.IsEmpty() || !ptr->pdataDoc->OnOpenDocument(ptr->csDatafileName))
 	{
 		p_wnd->RemoveAllChanlistItems();
 		auto comment = _T("File name: ") + ptr->csDatafileName;
 		comment += _T(" -- data not available");
 		p_wnd->SetString(comment);
 	}
-	// if available, load data into CLineViewWnd object
 	else
 	{
 		if (ptr->csNspk.IsEmpty())
@@ -760,7 +750,6 @@ void CDataListCtrl::DisplayDataWnd (CDataListCtrlRowObject* ptr, int iImage)
 	m_imagelist.Replace(iImage, &bitmap_plot, nullptr);
 }
 
-
 void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
 	// create spike window and spike document if necessary
@@ -769,9 +758,8 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 		ptr->pspikeWnd = new CSpikeBarWnd;
 		ASSERT(ptr->pspikeWnd != NULL);
 		ptr->pspikeWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, ptr->index*1000);
-		ptr->pspikeWnd->SetbUseDIB(FALSE); //(TRUE);
+		ptr->pspikeWnd->SetbUseDIB(FALSE);
 	}
-
 	auto p_wnd = ptr->pspikeWnd;
 	const auto pdb_doc = ((CViewdbWave*)GetParent())->GetDocument();
 
@@ -781,18 +769,16 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 		ptr->pspikeDoc = new CSpikeDoc;
 		ASSERT(ptr->pspikeDoc != NULL);
 	}
-	auto cs_spike_name (ptr->csSpikefileName);
-	const LPCTSTR pcs_spike_name = cs_spike_name;
-	if (cs_spike_name.IsEmpty() || !ptr->pspikeDoc->OnOpenDocument(pcs_spike_name))
-	// consider here that requested,document is not reachable
-	// tell it to spikeview and display "data not available"...
+
+	if (ptr->csSpikefileName.IsEmpty() || !ptr->pspikeDoc->OnOpenDocument(ptr->csSpikefileName))
 	{
 		m_imagelist.Replace(iImage, m_pEmptyBitmap, nullptr);
 	}
 	else
 	{
-		const auto pspk_list = ptr->pspikeDoc->SetSpkListCurrent(pdb_doc->GetcurrentSpkListIndex());
-		p_wnd->SetSourceData(pspk_list, ((CViewdbWave*)GetParent())->GetDocument());
+		const auto spklist_current = pdb_doc->GetcurrentSpkListIndex(); // 0;
+		const auto pspk_list = ptr->pspikeDoc->SetSpkListCurrent(spklist_current);
+		p_wnd->SetSourceData(pspk_list, ptr->pspikeDoc);
 		p_wnd->SetPlotMode(m_spikeplotmode, m_selclass);
 		long l_first = 0;
 		auto l_last = ptr->pspikeDoc->GetAcqSize();
@@ -833,12 +819,10 @@ void CDataListCtrl::DisplaySpikeWnd (CDataListCtrlRowObject* ptr, int iImage)
 	}
 }
 
-
 void CDataListCtrl::DisplayEmptyWnd (CDataListCtrlRowObject* ptr, int iImage)
 {
 	m_imagelist.Replace(iImage, m_pEmptyBitmap, nullptr);
 }
-
 
 void CDataListCtrl::ResizeSignalColumn(int npixels)
 {
