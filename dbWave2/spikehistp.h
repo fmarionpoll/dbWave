@@ -35,8 +35,8 @@ protected:
     int 	m_abcissamaxval=0;	// maximum value (abcissa max)
     int  	m_nbins=0;			// n bins within histogram    
 
-   	DWORD 	m_lmax;				// value max   	
-	int  	m_imax{};				// index max
+	DWORD 	m_lmax{};			// value max   	
+	int  	m_imax{};			// index max
 	int  	m_ifirst{};			// index first interval with data
 	int  	m_ilast{};			// index last interval with data
 		

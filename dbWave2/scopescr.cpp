@@ -127,6 +127,13 @@ CScopeScreen::CScopeScreen()
 		j++;
 		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
 		m_cursordragmode[j] = 1;
+
+		j++;
+		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL);
+		m_cursordragmode[j] = 1;
+		j++;
+		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL);
+		m_cursordragmode[j] = 1;
 	}
 	m_countcurs++;
 
@@ -764,10 +771,12 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			CRect rect;
 			GetWindowRect(rect);
-			if ( (point.x > = rect.Width() - SPLITSIZE - TRACKSIZE )
-				//|| (point.x >= m_scBarInfo.xyThumbBottom - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbBottom + SPLITSIZE + TRACKSIZE))
-				)
+			if ( (point.x > (rect.Width() - SPLITSIZE - TRACKSIZE )) 
+				|| (point.x < SPLITSIZE + TRACKSIZE) )
 				SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
+			else if ((point.y < (rect.Height() - SPLITSIZE - TRACKSIZE))
+				|| (point.y > SPLITSIZE + TRACKSIZE))
+				SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL));
 		}
 		break;
 	}

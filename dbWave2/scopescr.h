@@ -49,7 +49,7 @@ public:
 protected:
 	// statics : created only once - associated with a counter
 	int		m_countcurs = 0;						// objects counter
-#define NB_CURSORS 4								// nb of cursors loaded
+#define NB_CURSORS 6								// nb of cursors loaded
 	static HCURSOR	m_cursor[NB_CURSORS];			// array with cursor handles
 	static int		m_cursordragmode[NB_CURSORS];	// cursor mode: 0=invert rect; 1=catch object	
 	static COLORREF m_colorTable[NB_COLORS];		// array with colorref
