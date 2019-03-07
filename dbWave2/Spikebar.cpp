@@ -98,6 +98,9 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 		}
 
 		DisplayBars(p_dc, &m_displayRect);
+
+		if (p_spike_doc_ == nullptr)
+			p_spike_doc_ = p_dbwave_doc_->m_pSpk;
 		CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
 
 		if (pintervals->nitems > 0)

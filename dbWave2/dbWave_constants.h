@@ -91,33 +91,33 @@ constexpr auto TRACK_BASELINE = 6;
 #define HINT_REPLACEVIEW		203	// 0=dat; 1 = spk
 #define HINT_GETSELECTEDRECORDS 204 // get currently selected records (from a CListCtrl)
 #define HINT_SETSELECTEDRECORDS 205	// select records (in a CListCtrl)
-#define HINT_MDIACTIVATE		206	// MDI activate (to send to PropertiesListWnd)
-#define HINT_RECORDMODE			207	// tells if we enter into record mode (then hide properties)
-#define HINT_ACTIVATEVIEW		208	// message sent when view is activated
+constexpr auto HINT_MDIACTIVATE = 206;	// MDI activate (to send to PropertiesListWnd);
+constexpr auto HINT_RECORDMODE = 207;	// tells if we enter into record mode (then hide properties);
+constexpr auto HINT_ACTIVATEVIEW = 208;	// message sent when view is activated;
 
 // parameters used to control bars
-#define BAR_BIAS		1
-#define BAR_GAIN		4
+constexpr auto BAR_BIAS = 1;
+constexpr auto BAR_GAIN = 4;
 
 // parameters used with UpdateLegends()
-#define	UPD_ABCISSA		1		// update abcissa (1st, last pt)
-#define CHG_XSCALE		2		// change scale bar channel
-#define UPD_XSCALE		4		// update x scale
-#define CHG_XBAR 		8		// change bar length
+constexpr auto 	UPD_ABCISSA = 1;		// update abcissa (1st, last pt)
+constexpr auto  CHG_XSCALE = 2;		// change scale bar channel
+constexpr auto  UPD_XSCALE = 4;		// update x scale
+constexpr auto  CHG_XBAR = 8;		// change bar length
 
-#define UPD_ORDINATES 	16		// update ordinates (not implemented yet)
-#define CHG_YSCALE		32		// change scale bar channel
-#define UPD_YSCALE		64		// update y scale
-#define CHG_YBAR		128		// change bar height
+constexpr auto UPD_ORDINATES = 16;		// update ordinates (not implemented yet);
+constexpr auto CHG_YSCALE = 32;		// change scale bar channel;
+constexpr auto UPD_YSCALE = 64;		// update y scale;
+constexpr auto CHG_YBAR = 128;		// change bar height;
 
 // default values used to update bias scroll 
-#define YZERO_MIN -16350
-#define YZERO_MAX 16350
-#define YZERO_LINE 32
-#define YZERO_PAGE 320
-#define YZERO_SPAN 32700
-#define YEXTENT_MIN 1
-#define YEXTENT_MAX 65535
+constexpr auto YZERO_MIN = -16350;
+constexpr auto YZERO_MAX = 16350;
+constexpr auto YZERO_LINE = 32;
+constexpr auto YZERO_PAGE = 320;
+constexpr auto YZERO_SPAN = 32700;
+constexpr auto YEXTENT_MIN = 1;
+constexpr auto YEXTENT_MAX = 65535;
 
 // constants to use splitted cursor
 constexpr auto SPLITSIZE = 1;
