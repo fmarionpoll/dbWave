@@ -773,17 +773,17 @@ void CScopeScreen::OnMouseMove(UINT nFlags, CPoint point)
 				MAKELPARAM(point.x + (rect1.left-rect0.left), 
 				point.y + (rect1.top-rect0.top)));
 		}
-		else
-		{
-			CRect rect;
-			GetWindowRect(rect);
-			if ((point.x > (rect.Width() - (SPLITSIZE + TRACKSIZE))) || (point.x < (SPLITSIZE + TRACKSIZE)))
-				SetMouseCursor(CURSOR_RESIZE_HZ);
-			else if ((point.y > (rect.Height() - (SPLITSIZE + TRACKSIZE))) || (point.y < (SPLITSIZE + TRACKSIZE)))
-				SetMouseCursor(CURSOR_RESIZE_VERT);
-			else
-				SetMouseCursor(CURSOR_ARROW);
-		}
+		//else
+		//{
+		//	CRect rect;
+		//	GetWindowRect(rect);
+		//	if ((point.x > (rect.Width() - (SPLITSIZE + TRACKSIZE))) || (point.x < (SPLITSIZE + TRACKSIZE)))
+		//		SetMouseCursor(CURSOR_RESIZE_HZ);
+		//	else if ((point.y > (rect.Height() - (SPLITSIZE + TRACKSIZE +12))) || (point.y < (SPLITSIZE + TRACKSIZE +12)))
+		//		SetMouseCursor(CURSOR_RESIZE_VERT);
+		//	else
+		//		SetMouseCursor(CURSOR_ARROW);
+		//}
 		break;
 	}
 }
