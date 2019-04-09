@@ -1770,11 +1770,11 @@ void CViewSpikes::OnEnChangeSourceclass()
 
 void CViewSpikes::OnEnChangeDestclass()
 {
-	if (!mm_destclass.m_bEntryDone)
+	if (mm_destclass.m_bEntryDone)
 	{
 		switch (mm_destclass.m_nChar)
 		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		case VK_RETURN:	UpdateData(TRUE); break;
 		case VK_UP:
 		case VK_PRIOR:	m_destclass++;	break;
 		case VK_DOWN:
