@@ -20,11 +20,10 @@ BEGIN_MESSAGE_MAP(CNoteDoc, CRichEditDoc)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_OLE_VERB_FIRST, ID_OLE_VERB_LAST, CRichEditDoc::OnUpdateObjectVerbMenu)
 END_MESSAGE_MAP()
 
-
 CNoteDoc::CNoteDoc()
 {
 	// add one-time construction code here
-	m_bRTF=FALSE;
+	m_bRTF = FALSE;
 }
 
 CNoteDoc::~CNoteDoc()
@@ -43,8 +42,6 @@ CRichEditCntrItem* CNoteDoc::CreateClientItem(REOBJECT* preo) const
 {
 	return new CNotedocCntrItem(preo, const_cast<CNoteDoc*>(this));
 }
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CNoteDoc serialization
@@ -85,7 +82,7 @@ void CNoteDoc::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CNoteDoc commands
 
-BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName) 
+BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 	if (!CRichEditDoc::OnOpenDocument(lpszPathName))
 		return FALSE;
@@ -93,7 +90,7 @@ BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// load project file and corresponding data
 	CString cspathname = lpszPathName;
 	cspathname.MakeLower();
-	if (cspathname.Find(_T(".prj")) >0)
+	if (cspathname.Find(_T(".prj")) > 0)
 		OpenProjectFiles(cspathname);
 
 	m_bRTF = FALSE;
@@ -116,23 +113,23 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	pEdit.GetWindowText(file_list);		// copy content of window into CString
 	if (file_list.IsEmpty())
 		return flag;
-	
-	// assume that filenames are separated either by "rc", "TAB", ";" or "LF"	
+
+	// assume that filenames are separated either by "rc", "TAB", ";" or "LF"
 	auto new_list = file_list;
 	const auto pstring = file_list.GetBuffer(file_list.GetLength());
-	const auto pnew = new_list.GetBuffer(new_list.GetLength());	
+	const auto pnew = new_list.GetBuffer(new_list.GetLength());
 	TCHAR seps[] = _T("\n\t;\r\f");
 	TCHAR* next_token = nullptr;
 	CStringArray cs_arrayfiles;
-	
+
 	// loop through the string to extract data and build file names
 	auto bchanged = FALSE;
 	auto token = _tcstok_s(pstring, seps, &next_token);
 	while (token != nullptr)
 	{
 		CString filename = token;	// get filename into CString
-		CFileStatus status;	
-		if(!CFile::GetStatus(filename, status ))
+		CFileStatus status;
+		if (!CFile::GetStatus(filename, status))
 		{	// not found: replace the first letter with a question mark
 			*(pnew + (token - pstring)) = '?';
 			bchanged = TRUE;
@@ -155,7 +152,7 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 
 	// make sure the correct import options are selected
 	CImportOptionsDlg dlg;
-	auto p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
+	auto p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
 	dlg.m_bAllowDuplicateFiles = p_app->options_import.bImportDuplicateFiles;
 	if (IDOK == dlg.DoModal())
 	{
@@ -168,8 +165,8 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 		//auto p_frame_wnd = (CFrameWnd*) ((CRichEditView*)m_viewList.GetHead())->GetParent();
 		//auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		// create an empty document and then create a table with the same name as the project
-		auto* p_dbwave_doc = (CdbWaveDoc*) (p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
-		if (p_dbwave_doc != nullptr) 
+		auto* p_dbwave_doc = (CdbWaveDoc*)(p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
+		if (p_dbwave_doc != nullptr)
 		{
 			flag = TRUE;
 			if (cspathname.IsEmpty())

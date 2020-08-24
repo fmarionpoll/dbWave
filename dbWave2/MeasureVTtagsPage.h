@@ -11,12 +11,12 @@ class CMeasureVTtagsPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CMeasureVTtagsPage)
 
-// Construction
+	// Construction
 public:
 	CMeasureVTtagsPage();
 	~CMeasureVTtagsPage();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_PROPPAGE2 };
 	int		m_index;
 	int		m_nbtags;
@@ -28,11 +28,11 @@ public:
 
 	// input parameters
 	OPTIONS_VIEWDATAMEASURE* m_pMO;	// init on call
-	CdbWaveDoc* 	m_pdbDoc;	
-	CAcqDataDoc* 	m_pdatDoc;	
-	CLineViewWnd*	m_plineview;
+	CdbWaveDoc* m_pdbDoc;
+	CAcqDataDoc* m_pdatDoc;
+	CLineViewWnd* m_plineview;
 	float	m_samplingrate;
-	float	m_verylast;	
+	float	m_verylast;
 
 	// locals
 	CEditCtrl mm_index;
@@ -43,11 +43,11 @@ public:
 	CEditCtrl mm_nperiods;
 	CEditCtrl mm_timeshift;
 
-// Overrides
-	public:
+	// Overrides
+public:
 	virtual void OnCancel();
 	virtual void OnOK();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation
@@ -71,5 +71,4 @@ protected:
 	afx_msg void OnDeleteSeries();
 	afx_msg void OnDeleteAll();
 	DECLARE_MESSAGE_MAP()
-
 };

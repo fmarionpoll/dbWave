@@ -1,4 +1,3 @@
-
 #include "StdAfx.h"
 #include "Acqdatad.h"
 #include "SpikeFromChan.h"

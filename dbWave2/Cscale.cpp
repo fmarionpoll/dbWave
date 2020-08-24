@@ -7,10 +7,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_SERIAL(CScale, CObject, 1 /* schema number*/ )
+IMPLEMENT_SERIAL(CScale, CObject, 1 /* schema number*/)
 
 // create CScale with zero points
-CScale::CScale(): m_lNdatapoints(0)
+CScale::CScale() : m_lNdatapoints(0)
 {
 	m_nintervals = 0;
 	m_npixels = 1;
@@ -21,7 +21,7 @@ CScale::CScale(const int n_pixels) : m_lNdatapoints(0)
 {
 	m_npixels = 1;
 	m_intervals.SetSize(n_pixels);
-	m_position.SetSize(n_pixels+1);
+	m_position.SetSize(n_pixels + 1);
 	m_nintervals = 0;
 }
 
@@ -61,65 +61,65 @@ CScale::CScale(const int n_pixels) : m_lNdatapoints(0)
 
 int CScale::SetScale(const int n_pixels, const long n_data_points)
 {
-	ASSERT (n_data_points != 0);
+	ASSERT(n_data_points != 0);
 	m_npixels = n_pixels;
 
 	// how many invervals in the scale?
 	m_lNdatapoints = n_data_points;
-	if (n_data_points >= static_cast<long>(n_pixels)) 
+	if (n_data_points >= static_cast<long>(n_pixels))
 		m_nintervals = n_pixels;
 	else
 		m_nintervals = static_cast<int>(n_data_points);
 
-	// adjust size of the array	
+	// adjust size of the array
 	m_intervals.SetSize(m_nintervals);
-	m_position.SetSize(m_nintervals+1);
+	m_position.SetSize(m_nintervals + 1);
 
 	int i;
-	long l_position=-1; // store last intervals
+	long l_position = -1; // store last intervals
 
 //     ---------------- UNITY INTERVALS -------------------------------------
 	if (n_data_points < static_cast<long>(n_pixels))		// dest scale < source
 	{
-		for (i=0; i<m_nintervals; i++)
+		for (i = 0; i < m_nintervals; i++)
 		{
 			m_intervals[i] = 1;
-			l_position ++;
-			m_position[i]= l_position;
+			l_position++;
+			m_position[i] = l_position;
 		}
-		ASSERT(l_position == n_data_points-1);
+		ASSERT(l_position == n_data_points - 1);
 	}
 
-//     ---------------- MORE THAN 1 DATA PT PER "PIXEL" ---------------------
+	//     ---------------- MORE THAN 1 DATA PT PER "PIXEL" ---------------------
 	else
 	{
-//		type of scale?
+		//		type of scale?
 		const auto l_x_delta = n_data_points; 		// horizontal move (source interval)
-		const auto i_y_delta = n_pixels;     	// vertical move (destination)	
+		const auto i_y_delta = n_pixels;     	// vertical move (destination)
 		const auto l_temp = l_x_delta / static_cast<long>(i_y_delta);  // minimum of steps in an Y interval
 		const auto i_whole_step = static_cast<int>(l_temp);
 
-//     ---------------- EQUAL INTERVALS -------------------------------------	
+		//     ---------------- EQUAL INTERVALS -------------------------------------
 
-		if (l_x_delta*l_temp == i_y_delta)
+		if (l_x_delta * l_temp == i_y_delta)
 		{
-			for (i=0; i< i_y_delta; i++)	// loop (YDelta+1?)
+			for (i = 0; i < i_y_delta; i++)	// loop (YDelta+1?)
 			{
 				m_intervals[i] = i_whole_step;// fills array with intervals
 				l_position += i_whole_step;
-				m_position[i] = l_position;		// absolute					
+				m_position[i] = l_position;		// absolute
 			}
-			ASSERT(l_position == n_data_points-1);
+			ASSERT(l_position == n_data_points - 1);
 		}
 
-//     ---------------- UNEQUAL INTERVALS -----------------------------------
+		//     ---------------- UNEQUAL INTERVALS -----------------------------------
 		else
 		{
-			const auto adj_up = ldiv (l_x_delta, i_y_delta);
+			const auto adj_up = ldiv(l_x_delta, i_y_delta);
 			const auto i_adj_up = static_cast<int>(adj_up.rem) * 2;
 			const auto i_adj_down = i_y_delta * 2;
 			auto i_error_term = 0;
-			for (i=0; i< i_y_delta; i++)
+			for (i = 0; i < i_y_delta; i++)
 			{
 				int i_run_length = i_whole_step;// run at least this long
 				i_error_term += i_adj_up;	// update error term
@@ -130,21 +130,21 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 				}
 				m_intervals[i] = i_run_length;// store step
 				l_position += i_run_length;
-				m_position[i]= l_position;
+				m_position[i] = l_position;
 			}
-			ASSERT(l_position == n_data_points-1);
+			ASSERT(l_position == n_data_points - 1);
 		}
 	}
 
-	ASSERT (m_nintervals > 0);	
-	if (m_position[m_nintervals-1] > static_cast<DWORD>(n_data_points))
+	ASSERT(m_nintervals > 0);
+	if (m_position[m_nintervals - 1] > static_cast<DWORD>(n_data_points))
 	{
-		const auto interval = m_nintervals-1;
+		const auto interval = m_nintervals - 1;
 		m_intervals[interval] = m_intervals[interval] - static_cast<int>(m_position[interval] - static_cast<DWORD>(n_data_points));
 		m_position[interval] = static_cast<DWORD>(n_data_points);
 	}
 
-	m_position[m_nintervals]= m_position[m_nintervals-1];
+	m_position[m_nintervals] = m_position[m_nintervals - 1];
 	return TRUE;
 }
 
@@ -160,7 +160,7 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 
  returns:		number of pixels fitting in interval
 				l_last 		index last pt of the intervals
- comments:  note that between kd and kf (array index), 
+ comments:  note that between kd and kf (array index),
 			there are kd+kf+1 intervals
  history:
 	the initial version used only one array with nb of data points in each
@@ -170,11 +170,11 @@ int CScale::SetScale(const int n_pixels, const long n_data_points)
 	intervals from start to the end searched.
 
 	the second version of this routine involves an additional array "m_position"
-	in which these intervals are stored. 
-	The cost of this approach is memory (one more array of DWORD). 
+	in which these intervals are stored.
+	The cost of this approach is memory (one more array of DWORD).
 	The benefit is simpler code and faster computation. It also allows a reduction
 	of the number of parameters passed (l_first). However, the calling procedure
-	should care to pass l_last relative to zero (and not the real one). See 
+	should care to pass l_last relative to zero (and not the real one). See
 	implementation and use of this in CLineViewWnd::GetDataForDisplay().
  **************************************************************************/
 
@@ -184,7 +184,7 @@ int CScale::HowManyIntervalsFit(const int first_pixel, long* l_last)
 	const DWORD lastpos = *l_last;						// end within m_position
 	auto last_pixel = int(lastpos / m_intervals[first_pixel]); // guess
 	if (last_pixel >= m_nintervals)				// clip this guess
-		last_pixel = m_nintervals-1;				// to the max size of Scale array
+		last_pixel = m_nintervals - 1;				// to the max size of Scale array
 
 	// 2 cases: CASE 1 = go backwards (estimation was too much)
 	// stop when lastPixel = 0
@@ -192,17 +192,21 @@ int CScale::HowManyIntervalsFit(const int first_pixel, long* l_last)
 	if (m_position[last_pixel] > lastpos)
 	{
 		while (last_pixel > 0 && (m_position[last_pixel] > lastpos))
-			{ last_pixel--;} 
+		{
+			last_pixel--;
+		}
 	}
 	// 2 cases: CASE 2 = go forwards (estimation was too small)
-	else if (lastpos > m_position[last_pixel+1])
+	else if (lastpos > m_position[last_pixel + 1])
 	{
-		while (last_pixel <= m_nintervals-1 && (lastpos > m_position[last_pixel+1]))
-			{ last_pixel++; }
+		while (last_pixel <= m_nintervals - 1 && (lastpos > m_position[last_pixel + 1]))
+		{
+			last_pixel++;
+		}
 	}
-	
+
 	*l_last = m_position[last_pixel];
-	return (last_pixel-first_pixel+1);
+	return (last_pixel - first_pixel + 1);
 }
 
 int CScale::GetWhichInterval(long lindex)
@@ -213,25 +217,25 @@ int CScale::GetWhichInterval(long lindex)
 
 	int interval;	// init value for error (interval not found)
 	const auto iguess = int(lindex / m_intervals[0]); // first guess
-	// lindex less than interval guessed    
+	// lindex less than interval guessed
 	if (llindex < m_position[iguess])			// index is less
 	{
 		int i;
-		for (i=iguess; i>= 0; i--)			// scan position backwards
+		for (i = iguess; i >= 0; i--)			// scan position backwards
 		{
 			if (llindex > m_position[i])		// exit loop if index is greater
-				break;							// than position(i)    			
+				break;							// than position(i)
 		}
-		interval = i+1;							// set position to i
+		interval = i + 1;							// set position to i
 	}
 	// lindex greater or equal that interval guessed
 	else
 	{										// index is higher
 		int i;
-		for (i=iguess; i<= m_position.GetUpperBound(); i++)
+		for (i = iguess; i <= m_position.GetUpperBound(); i++)
 		{									// scan forward, exit if posit(i+1) is higher
 			if (llindex <= m_position[i])		// (but posit(i) is lower)
-				break;    			
+				break;
 		}
 		interval = i;							// set final position to i
 	}
@@ -242,22 +246,20 @@ void CScale::Serialize(CArchive& ar)
 {
 	m_intervals.Serialize(ar);	// scale array: npts within each interval
 	m_position.Serialize(ar);	// interval array: consecutive file index (long)
-	int idummy=0;
+	int idummy = 0;
 
 	if (ar.IsStoring())
 	{
-		ar << m_npixels;		// scale built for n pixels	
+		ar << m_npixels;		// scale built for n pixels
 		ar << m_nintervals;		// nb of elements within Scale
 		ar << idummy;
 		ar << m_lNdatapoints;	// Ndatapoints are mapped to m_nintervals
 	}
 	else
 	{
-		ar >> m_npixels;		// scale built for n pixels	
+		ar >> m_npixels;		// scale built for n pixels
 		ar >> m_nintervals;		// nb of elements within Scale
 		ar >> idummy;
 		ar >> m_lNdatapoints;	// Ndatapoints are mapped to m_nintervals
 	}
 }
-
-	

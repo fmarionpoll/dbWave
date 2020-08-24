@@ -17,7 +17,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CImportGenericDataDlg dialog
 
-
 CImportGenericDataDlg::CImportGenericDataDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CImportGenericDataDlg::IDD, pParent), m_pfilenameArray(nullptr)
 {
@@ -40,7 +39,6 @@ CImportGenericDataDlg::CImportGenericDataDlg(CWnd* pParent /*=NULL*/)
 	piivO = nullptr;
 }
 
-
 void CImportGenericDataDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -58,7 +56,6 @@ void CImportGenericDataDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FILETITLE, m_csFileTitle);
 	DDX_Check(pDX, IDC_CHECK1, m_bpreviewON);
 }
-
 
 BEGIN_MESSAGE_MAP(CImportGenericDataDlg, CDialog)
 	ON_CBN_SELCHANGE(IDC_PRECISION, OnSelchangePrecision)
@@ -87,11 +84,11 @@ END_MESSAGE_MAP()
 // hide controls when the dialog box is called only to adjust parameters
 // otherwise, copy list of files into comboBox
 
-BOOL CImportGenericDataDlg::OnInitDialog() 
+BOOL CImportGenericDataDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();			// normal initialization CSpinButtonCtrl
-	
-	// subclass edit control	
+
+	// subclass edit control
 	VERIFY(mm_nbADchannels.SubclassDlgItem(IDC_NUMBEROFCHANNELS, this));
 	VERIFY(mm_adChannelChan.SubclassDlgItem(IDC_CHANNELNO, this));
 	VERIFY(mm_skipNbytes.SubclassDlgItem(IDC_SKIPNBYTES, this));
@@ -112,22 +109,22 @@ BOOL CImportGenericDataDlg::OnInitDialog()
 	else
 	{
 		// transfer file names into CComboBox
-		int lastindex = m_pfilenameArray->GetSize();		
-		for (int i = 0; i< lastindex; i++)
+		int lastindex = m_pfilenameArray->GetSize();
+		for (int i = 0; i < lastindex; i++)
 		{
-			CString filename = m_pfilenameArray->GetAt(i);			
-			int icount = filename.GetLength() - filename.ReverseFind('\\')-1;
+			CString filename = m_pfilenameArray->GetAt(i);
+			int icount = filename.GetLength() - filename.ReverseFind('\\') - 1;
 			m_filedroplist.AddString(filename.Right(icount));
 			m_filedroplist.SetItemData(i, i);
 		}
 		m_filedroplist.SetCurSel(0);	// select first item in the list
 		nIDFocus = IDC_IMPORT;
-		((CButton*)GetDlgItem(IDC_CHECKSAPID))->SetCheck(piivO->bSapid3_5);		
+		((CButton*)GetDlgItem(IDC_CHECKSAPID))->SetCheck(piivO->bSapid3_5);
 		if (!piivO->bPreview)
 			GetDlgItem(IDC_DISPLAYSOURCE)->ShowWindow(SW_HIDE);
-	}	
+	}
 
-	// copy relevant data into controls	
+	// copy relevant data into controls
 	m_adChannelChan = 1;
 	UpdateControlsFromStruct();
 	// convert selected file if options say so
@@ -139,19 +136,19 @@ BOOL CImportGenericDataDlg::OnInitDialog()
 		SetFileNames(0);
 		UpdatePreview();
 	}
-	
+
 	GetDlgItem(nIDFocus)->SetFocus();
 	return FALSE;	// return TRUE unless you set the focus to a control
 					// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-// when user check "multiple runs", enable dependent controls: "nbruns" and 
+// when user check "multiple runs", enable dependent controls: "nbruns" and
 // corresponding edit control
 // otherwise disable them
 
 void CImportGenericDataDlg::EnableRunParameters()
 {
-	int IDC_button=IDC_SINGLERUN;		// check button concerning structure of	
+	int IDC_button = IDC_SINGLERUN;		// check button concerning structure of
 	if (!piivO->bSingleRun)				// file; either a single acquisition bout
 		IDC_button = IDC_MULTIPLERUNS;	// or more than one
 	CheckRadioButton(IDC_SINGLERUN, IDC_MULTIPLERUNS, IDC_button);
@@ -186,23 +183,23 @@ void CImportGenericDataDlg::UpdateControlsFromStruct()
 	else if (piivO->bitsPrecision == 8)		// 8 bits = initial position
 		precisionindex = 0;
 	else if (piivO->bitsPrecision == 24)	// 24 bits
-		precisionindex=3;
+		precisionindex = 3;
 	else if (piivO->bitsPrecision == 32)	// 32 bits
-		precisionindex=4;
+		precisionindex = 4;
 	m_ComboPrecision.SetCurSel(precisionindex);
 
 	m_voltageMax = piivO->voltageMax;		// set voltage max
 	m_voltageMin = piivO->voltageMin;		// set voltage min
 	m_skipNbytes = piivO->skipNbytes;		// set "skip n bytes"
 	m_csFileTitle = piivO->title;			// file global comment
-	CWaveChan* pChannel = piivO->pwaveChanArray->get_p_channel(m_adChannelChan-1);
-	m_adChannelGain = (float) pChannel->am_gaintotal;	// set gain
+	CWaveChan* pChannel = piivO->pwaveChanArray->get_p_channel(m_adChannelChan - 1);
+	m_adChannelGain = (float)pChannel->am_gaintotal;	// set gain
 	m_adChannelComment = pChannel->am_csComment;		// and comment
 
 	// set limits associated spin controls
-	((CSpinButtonCtrl *) GetDlgItem(IDC_SPIN2))->SetRange(1, 1024);
-	((CSpinButtonCtrl *) GetDlgItem(IDC_SPIN1))->SetRange(1, m_nbADchannels);
-	((CSpinButtonCtrl *) GetDlgItem(IDC_SPIN3))->SetRange(1, 32767);
+	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN2))->SetRange(1, 1024);
+	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN1))->SetRange(1, m_nbADchannels);
+	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN3))->SetRange(1, 32767);
 
 	UpdateData(FALSE);						// refresh controls
 	m_bChanged = FALSE;
@@ -223,7 +220,7 @@ void CImportGenericDataDlg::UpdateStructFromControls()
 		piivO->nbRuns = m_nbRuns;
 	}
 	piivO->samplingRate = m_samplingrate;	// sampling rate per channel (in Herz)
-	piivO->nbChannels= m_nbADchannels;		// number of data acquisition channels
+	piivO->nbChannels = m_nbADchannels;		// number of data acquisition channels
 	// encoding
 	if (IsDlgButtonChecked(IDC_OFFSETBINARY))
 		piivO->encodingMode = OLx_ENC_BINARY;
@@ -232,19 +229,19 @@ void CImportGenericDataDlg::UpdateStructFromControls()
 
 	// precision is updated when a change is made
 
-	piivO->voltageMax= m_voltageMax;		// set voltage max
-	piivO->voltageMin= m_voltageMin;		// set voltage min
+	piivO->voltageMax = m_voltageMax;		// set voltage max
+	piivO->voltageMin = m_voltageMin;		// set voltage min
 	piivO->skipNbytes = m_skipNbytes;		// set "skip n bytes"
-	piivO->title= m_csFileTitle;			// file global comment
+	piivO->title = m_csFileTitle;			// file global comment
 
-	CWaveChan* pChannel = piivO->pwaveChanArray->get_p_channel(m_adChannelChan-1);
-	pChannel->am_gaintotal= m_adChannelGain;	// set gain
+	CWaveChan* pChannel = piivO->pwaveChanArray->get_p_channel(m_adChannelChan - 1);
+	pChannel->am_gaintotal = m_adChannelGain;	// set gain
 	pChannel->am_gainamplifier = pChannel->am_gaintotal;
 	pChannel->am_gainAD = 1;
 	pChannel->am_gainpre = 1;
 	pChannel->am_gainpost = 1;
 	pChannel->am_gainheadstage = 1;
-	pChannel->am_csComment= m_adChannelComment;	// and comment
+	pChannel->am_csComment = m_adChannelComment;	// and comment
 
 	// adjust size of chan descriptors array
 	piivO->pwaveChanArray->channel_set_number(m_nbADchannels);
@@ -256,7 +253,7 @@ void CImportGenericDataDlg::UpdateStructFromControls()
 // save iivO parameters
 // copy names of the files converted back into the name array
 
-void CImportGenericDataDlg::OnOK() 
+void CImportGenericDataDlg::OnOK()
 {
 	if (m_bChanged)
 		UpdateStructFromControls();		// update structures with options
@@ -265,7 +262,7 @@ void CImportGenericDataDlg::OnOK()
 	if (bConvert)
 	{
 		int lastindex = m_pfilenameArray->GetUpperBound();
-		for (int i = lastindex; i>=0 ; i--)	// loop backwards
+		for (int i = lastindex; i >= 0; i--)	// loop backwards
 		{
 			CString filename = m_pfilenameArray->GetAt(i);
 			int icount = filename.Find(_T("AW_"));
@@ -280,7 +277,7 @@ void CImportGenericDataDlg::OnOK()
 // change parameter describing the precision of the data
 // convert CCombobox selection into a number of bits, store result into iivO
 
-void CImportGenericDataDlg::OnSelchangePrecision() 
+void CImportGenericDataDlg::OnSelchangePrecision()
 {
 	UpdateData(TRUE);			// load data from controls
 	// set precision combox box
@@ -306,7 +303,7 @@ void CImportGenericDataDlg::OnSelchangePrecision()
 
 // On check : set flag single / multiple run
 
-void CImportGenericDataDlg::OnMultipleruns() 
+void CImportGenericDataDlg::OnMultipleruns()
 {
 	if (IsDlgButtonChecked(IDC_MULTIPLERUNS)
 		&& piivO->bSingleRun != FALSE)
@@ -318,7 +315,7 @@ void CImportGenericDataDlg::OnMultipleruns()
 	m_bChanged = TRUE;
 }
 
-void CImportGenericDataDlg::OnSinglerun() 
+void CImportGenericDataDlg::OnSinglerun()
 {
 	if (IsDlgButtonChecked(IDC_SINGLERUN)
 		&& piivO->bSingleRun != TRUE)
@@ -332,7 +329,7 @@ void CImportGenericDataDlg::OnSinglerun()
 
 // change the number of data acquisition channels
 //
-// this value has an impact on the channel descriptors, an array, which 
+// this value has an impact on the channel descriptors, an array, which
 // size should be modified accordingly
 // the edit control that maintain this value is subclassed by a CEditCtrl
 // which traps and filter keyboard hits. The associated spin control does not
@@ -340,7 +337,7 @@ void CImportGenericDataDlg::OnSinglerun()
 // this routine get the data from the edit control, evaluate the result and
 // restore flags to enable CEditCtrl to receive new data
 
-void CImportGenericDataDlg::OnEnChangeNumberofchannels() 
+void CImportGenericDataDlg::OnEnChangeNumberofchannels()
 {
 	if (!mm_nbADchannels.m_bEntryDone)
 		return;
@@ -361,8 +358,8 @@ void CImportGenericDataDlg::OnEnChangeNumberofchannels()
 		break;
 	}
 
-	mm_nbADchannels.m_bEntryDone=FALSE;
-	mm_nbADchannels.m_nChar=0;
+	mm_nbADchannels.m_bEntryDone = FALSE;
+	mm_nbADchannels.m_nChar = 0;
 	mm_nbADchannels.SetSel(0, -1); 	//select all text
 
 	// modif limit max of chan parameters
@@ -374,10 +371,10 @@ void CImportGenericDataDlg::OnEnChangeNumberofchannels()
 	{
 		piivO->nbChannels = m_nbADchannels;
 		piivO->pwaveChanArray->channel_set_number(m_nbADchannels);
-		((CSpinButtonCtrl *) GetDlgItem(IDC_SPIN1))->SetRange(1, m_nbADchannels);
+		((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN1))->SetRange(1, m_nbADchannels);
 		if (m_adChannelChan > m_nbADchannels)	// and update dependent chan no
 		{
-			m_adChannelChan = m_nbADchannels;			
+			m_adChannelChan = m_nbADchannels;
 			UpdateData(FALSE);
 		}
 		UpdatePreview();
@@ -389,7 +386,7 @@ void CImportGenericDataDlg::OnEnChangeNumberofchannels()
 // change channel number
 //
 // each data acquisition channel is associated with descriptors
-// which can be modified by the user. This control allow the selection 
+// which can be modified by the user. This control allow the selection
 // of one descriptor
 // same comments as with OnEnChangeNumberofchannels()
 // operations:
@@ -397,15 +394,15 @@ void CImportGenericDataDlg::OnEnChangeNumberofchannels()
 // - save current parameters
 // - load parameters for new channel
 
-void CImportGenericDataDlg::OnEnChangeChannelno() 
+void CImportGenericDataDlg::OnEnChangeChannelno()
 {
 	if (!mm_adChannelChan.m_bEntryDone)
 		return;
 
 	UINT previouschan = m_adChannelChan;
 	switch (mm_adChannelChan.m_nChar)
-	{		
-	case VK_RETURN:			
+	{
+	case VK_RETURN:
 		UpdateData(TRUE);		// load data from edit controls
 		break;
 	case VK_UP:
@@ -429,22 +426,22 @@ void CImportGenericDataDlg::OnEnChangeChannelno()
 		previouschan = m_adChannelChan;
 		UpdateData(TRUE);			// load data from controls
 		m_adChannelChan = previouschan;
-		CWaveChan* pChannel = piivO->pwaveChanArray->get_p_channel(previouschan-1);
-		pChannel->am_gaintotal= m_adChannelGain;		// set gain
+		CWaveChan* pChannel = piivO->pwaveChanArray->get_p_channel(previouschan - 1);
+		pChannel->am_gaintotal = m_adChannelGain;		// set gain
 		pChannel->am_gainamplifier = pChannel->am_gaintotal;
-		pChannel->am_csComment= m_adChannelComment;	// and comment
+		pChannel->am_csComment = m_adChannelComment;	// and comment
 		// point to new channel: add new descriptors if necessary
 		piivO->pwaveChanArray->channel_set_number(m_nbADchannels);
 
 		// load data from new current channel
-		pChannel = piivO->pwaveChanArray->get_p_channel(m_adChannelChan-1);
-		m_adChannelGain = (float) pChannel->am_gaintotal;	// set gain
+		pChannel = piivO->pwaveChanArray->get_p_channel(m_adChannelChan - 1);
+		m_adChannelGain = (float)pChannel->am_gaintotal;	// set gain
 		m_adChannelComment = pChannel->am_csComment;		// and comment
 		UpdateData(FALSE);
 	}
 
-	mm_adChannelChan.m_bEntryDone=FALSE;
-	mm_adChannelChan.m_nChar=0;	
+	mm_adChannelChan.m_bEntryDone = FALSE;
+	mm_adChannelChan.m_nChar = 0;
 	mm_adChannelChan.SetSel(0, -1); 	//select all text
 	m_bChanged = TRUE;
 	return;
@@ -452,7 +449,7 @@ void CImportGenericDataDlg::OnEnChangeChannelno()
 
 // change size of data header... ie offset from start of file to data
 
-void CImportGenericDataDlg::OnEnChangeSkipnbytes() 
+void CImportGenericDataDlg::OnEnChangeSkipnbytes()
 {
 	if (!mm_skipNbytes.m_bEntryDone)
 		return;
@@ -460,7 +457,7 @@ void CImportGenericDataDlg::OnEnChangeSkipnbytes()
 	UINT skipNbytes = m_skipNbytes;
 	switch (mm_skipNbytes.m_nChar)
 	{
-	case VK_RETURN:			
+	case VK_RETURN:
 		UpdateData(TRUE);		// load data from edit controls
 		break;
 	case VK_UP:
@@ -483,8 +480,8 @@ void CImportGenericDataDlg::OnEnChangeSkipnbytes()
 		piivO->skipNbytes = m_skipNbytes;
 		UpdatePreview();
 	}
-	mm_skipNbytes.m_bEntryDone=FALSE;
-	mm_skipNbytes.m_nChar=0;	
+	mm_skipNbytes.m_bEntryDone = FALSE;
+	mm_skipNbytes.m_nChar = 0;
 	mm_skipNbytes.SetSel(0, -1); 	//select all text
 	m_bChanged = TRUE;
 	return;
@@ -493,13 +490,13 @@ void CImportGenericDataDlg::OnEnChangeSkipnbytes()
 // spin control associated with Edit control "nb of data channels"
 // convert notification message into flags adapted to the CEditCtrl
 
-void CImportGenericDataDlg::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pResult) 
+void CImportGenericDataDlg::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
-	if (pNMUpDown->iDelta >0)	
+	if (pNMUpDown->iDelta > 0)
 		mm_nbADchannels.m_nChar = VK_UP;
 	else
-		mm_nbADchannels.m_nChar = VK_DOWN;	
+		mm_nbADchannels.m_nChar = VK_DOWN;
 	mm_nbADchannels.m_bEntryDone = TRUE;
 	*pResult = 0;
 }
@@ -507,31 +504,30 @@ void CImportGenericDataDlg::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pRe
 // spin control associated with channel no
 // same remarks as above
 
-void CImportGenericDataDlg::OnDeltaposSpinNoChan(NMHDR* pNMHDR, LRESULT* pResult) 
-{	
+void CImportGenericDataDlg::OnDeltaposSpinNoChan(NMHDR* pNMHDR, LRESULT* pResult)
+{
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
-	if (pNMUpDown->iDelta >0)
+	if (pNMUpDown->iDelta > 0)
 		mm_adChannelChan.m_nChar = VK_UP;
 	else
-		mm_adChannelChan.m_nChar = VK_DOWN;	
-	mm_adChannelChan.m_bEntryDone = TRUE;	
+		mm_adChannelChan.m_nChar = VK_DOWN;
+	mm_adChannelChan.m_bEntryDone = TRUE;
 	*pResult = 0;
 }
 
-void CImportGenericDataDlg::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult) 
+void CImportGenericDataDlg::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
-	if (pNMUpDown->iDelta >0)
+	if (pNMUpDown->iDelta > 0)
 		mm_skipNbytes.m_nChar = VK_UP;
 	else
-		mm_skipNbytes.m_nChar = VK_DOWN;	
+		mm_skipNbytes.m_nChar = VK_DOWN;
 	mm_skipNbytes.m_bEntryDone = TRUE;
 	*pResult = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // functions  related to file browse and management
-
 
 // import a single file (the one that is currently selected)
 // - read filename array index from control
@@ -541,7 +537,7 @@ void CImportGenericDataDlg::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult
 // - select next item
 // if combobox is empty, exit dialog.
 
-void CImportGenericDataDlg::OnImport() 
+void CImportGenericDataDlg::OnImport()
 {
 	if (!m_bimportall)
 		UpdateStructFromControls();
@@ -566,25 +562,23 @@ void CImportGenericDataDlg::OnImport()
 		OnOK();
 }
 
-
 // import all files at once: loop through all members of the combo box
 
-void CImportGenericDataDlg::OnImportall() 
+void CImportGenericDataDlg::OnImportall()
 {
 	m_bimportall = TRUE;
 	UpdateStructFromControls();
 	int nbitems = m_filedroplist.GetCount();
-	for (int i=0; i<nbitems; i++)
+	for (int i = 0; i < nbitems; i++)
 		OnImport();
 	m_bimportall = FALSE;
 }
-
 
 // update preview file
 
 void CImportGenericDataDlg::UpdatePreview()
 {
-	// convert data	
+	// convert data
 	if (m_filesource != m_fileold)
 	{
 		m_AcqDataFile.OpenAcqFile(m_filesource);
@@ -603,24 +597,23 @@ void CImportGenericDataDlg::UpdatePreview()
 	m_lineview.ResizeChannels(lsize.cx, m_AcqDataFile.GetDOCchanLength());
 	if (m_lineview.GetChanlistSize() < ndocchans)	// add envelopes if necessary
 	{
-		for (int jdocchan = 1; jdocchan<ndocchans; jdocchan++)
+		for (int jdocchan = 1; jdocchan < ndocchans; jdocchan++)
 			m_lineview.AddChanlistItem(jdocchan, 0);
 	}
 	// load data from document and adjust display
-	m_lineview.GetDataFromDoc(0, m_AcqDataFile.GetDOCchanLength()-1);
-	for (int i=0; i<ndocchans; i++)
+	m_lineview.GetDataFromDoc(0, m_AcqDataFile.GetDOCchanLength() - 1);
+	for (int i = 0; i < ndocchans; i++)
 	{
-		int max, min;		
+		int max, min;
 		m_lineview.GetChanlistMaxMin(i, &max, &min);
 		// split curves if requested by options
-		int iextent = MulDiv(max-min+1, 11, 10);
-		int izero = (max+min)/2;
+		int iextent = MulDiv(max - min + 1, 11, 10);
+		int izero = (max + min) / 2;
 		m_lineview.SetChanlistYextent(i, iextent);
 		m_lineview.SetChanlistYzero(i, izero);
 	}
 	m_lineview.Invalidate();
 }
-
 
 void CImportGenericDataDlg::OnSetPreview()
 {
@@ -629,18 +622,18 @@ void CImportGenericDataDlg::OnSetPreview()
 	int n_cmd_show = SW_SHOW;
 	if (!piivO->bPreview)
 		n_cmd_show = SW_HIDE;
-	GetDlgItem(IDC_DISPLAYSOURCE)->ShowWindow(n_cmd_show);	
+	GetDlgItem(IDC_DISPLAYSOURCE)->ShowWindow(n_cmd_show);
 
 	// if preview OFF: hide display source
 	if (!piivO->bPreview && m_bpreviewON)
-	{		
-		m_bpreviewON=FALSE;
+	{
+		m_bpreviewON = FALSE;
 	}
 	else if (piivO->bPreview && !m_bpreviewON)
-	{		
-		// build current file		
+	{
+		// build current file
 		SetFileNames(m_filedroplist.GetItemData(m_filedroplist.GetCurSel()));
-		m_bpreviewON=TRUE;
+		m_bpreviewON = TRUE;
 		UpdatePreview();
 	}
 }
@@ -657,7 +650,7 @@ void CImportGenericDataDlg::OnSelchangeFilelist()
 	}
 }
 
-void CImportGenericDataDlg::OnOffsetbinary() 
+void CImportGenericDataDlg::OnOffsetbinary()
 {
 	UINT state = IsDlgButtonChecked(IDC_OFFSETBINARY);
 	if (state == 1
@@ -669,7 +662,7 @@ void CImportGenericDataDlg::OnOffsetbinary()
 	m_bChanged = TRUE;
 }
 
-void CImportGenericDataDlg::OnTwoscomplement() 
+void CImportGenericDataDlg::OnTwoscomplement()
 {
 	UINT state = IsDlgButtonChecked(IDC_TWOSCOMPLEMENT);
 	if (state == 1
@@ -681,30 +674,29 @@ void CImportGenericDataDlg::OnTwoscomplement()
 	m_bChanged = TRUE;
 }
 
-
-void CImportGenericDataDlg::SetFileNames (int index)
+void CImportGenericDataDlg::SetFileNames(int index)
 {
 	m_filesource = m_pfilenameArray->GetAt(index);
-	int icount = m_filesource.ReverseFind('\\')+1;
-	CString csPath = m_filesource.Left(icount);	
-	int icount2 = m_filesource.Find('.') - icount +1;	
-	m_filedest = _T("AW_")+ m_filesource.Mid(icount, icount2);
+	int icount = m_filesource.ReverseFind('\\') + 1;
+	CString csPath = m_filesource.Left(icount);
+	int icount2 = m_filesource.Find('.') - icount + 1;
+	m_filedest = _T("AW_") + m_filesource.Mid(icount, icount2);
 	m_filedest = csPath + m_filedest;
 	m_filedest += _T("dat");
 }
 
-void CImportGenericDataDlg::OnSapid3_5() 
+void CImportGenericDataDlg::OnSapid3_5()
 {
-	// get latest from controls	
+	// get latest from controls
 	if (piivO->bSapid3_5 != ((CButton*)GetDlgItem(IDC_CHECKSAPID))->GetCheck())
 	{
-		piivO->bSapid3_5 = ((CButton*)GetDlgItem(IDC_CHECKSAPID))->GetCheck();		
+		piivO->bSapid3_5 = ((CButton*)GetDlgItem(IDC_CHECKSAPID))->GetCheck();
 		if (piivO->bSapid3_5)
 		{
 			piivO->bSingleRun = TRUE;
-			piivO->bitsPrecision=12;
-			piivO->skipNbytes=7;
-			piivO->nbChannels=1;
+			piivO->bitsPrecision = 12;
+			piivO->skipNbytes = 7;
+			piivO->nbChannels = 1;
 			UpdateControlsFromStruct();
 		}
 		GetDlgItem(IDC_SAMPLINGRATE)->EnableWindow(!piivO->bSapid3_5);
@@ -712,7 +704,6 @@ void CImportGenericDataDlg::OnSapid3_5()
 	}
 	m_bChanged = TRUE;
 }
-
 
 // UpdateWaveDescriptors()
 //
@@ -739,34 +730,34 @@ void CImportGenericDataDlg::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 	case 8:		binspan = 256;		break;
 	case 12:	binspan = 4096;	break;
 	case 16:
-	case 24:		
-	case 32:	binspan = 65536;	break;	
+	case 24:
+	case 32:	binspan = 65536;	break;
 	default:	break;
 	}
 	pwF->binspan = binspan;
 	pwF->binzero = 0;
 	if (piivO->encodingMode == 0)	// OLx_ENC_BINARY
-		pwF->binzero = binspan/2;
+		pwF->binzero = binspan / 2;
 
-	// copy ACQCHAN directly from iivO	
+	// copy ACQCHAN directly from iivO
 	*(pDataF->GetpWavechanArray()) = *(piivO->pwaveChanArray);
 
-	// UNUSED PARAMETERS FROM iivO : 
+	// UNUSED PARAMETERS FROM iivO :
 	//			BOOL	bSingleRun;
 	//			short	nbRuns;
 
-	// read data and copy into CDataFileAWAVE	
+	// read data and copy into CDataFileAWAVE
 	ULONGLONG lCompteur = r_status.m_size - piivO->skipNbytes;	// get size of data
 	if (piivO->bSapid3_5)					// special case SAPID
 	{
 		lCompteur -= 2;						// last word = sampling rate
 		WORD wrate;							// get rate from source file
 		pDataF->m_pXFile->Seek(-2, CFile::end);		// position and read
-		pDataF->m_pXFile->Read(&wrate, (UINT) sizeof(WORD));
+		pDataF->m_pXFile->Read(&wrate, (UINT)sizeof(WORD));
 		piivO->samplingRate = wrate;		// transfer rate
 	}
-	pwF->chrate = piivO->samplingRate;	
-	pwF->sample_count = (long) (lCompteur/2);
+	pwF->chrate = piivO->samplingRate;
+	pwF->sample_count = (long)(lCompteur / 2);
 	m_AcqDataFile.ReadDataInfos();
 }
 
@@ -778,7 +769,7 @@ void CImportGenericDataDlg::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 // - transfer data from source file into destination
 // - close file and delete CDataFileAWAVE object
 
-void CImportGenericDataDlg::OnEnChangeChannelcomment() 
+void CImportGenericDataDlg::OnEnChangeChannelcomment()
 {
 	m_bChanged = TRUE;
 }

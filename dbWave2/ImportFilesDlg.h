@@ -15,17 +15,17 @@ public:
 	CImportFilesDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CImportFilesDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_IMPORTFILESDLG };
 
-// values passed by caller
+	// values passed by caller
 public:
-	CStringArray*	m_pfilenameArray;
-	CStringArray*	m_pconvertedFiles;
-	CdbWaveDoc*		m_pdbDoc;
+	CStringArray* m_pfilenameArray;
+	CStringArray* m_pconvertedFiles;
+	CdbWaveDoc* m_pdbDoc;
 	int				m_option;
 
-// Implementation
+	// Implementation
 protected:
 	BOOL		m_bconvert;
 	CString		m_ext;
@@ -33,7 +33,7 @@ protected:
 	int			m_nfiles;	// number of files
 	CString		m_filefrom;
 	CString		m_fileto;
-	
+
 	int			m_scan_count;
 	double		m_xinstgain;
 	double		m_xrate;
@@ -47,7 +47,7 @@ protected:
 	BOOL		GetAcquisitionParameters(CAcqDataDoc* pTo);
 	BOOL		GetExperimentParameters(CAcqDataDoc* pTo);
 	BOOL		ImportATFFile();
-	
+
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();

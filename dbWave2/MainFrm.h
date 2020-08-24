@@ -18,20 +18,20 @@ class CMainFrame : public CMDIFrameWndEx
 public:
 	CMainFrame();
 
-// Attributes
+	// Attributes
 public:
 	UINT			m_SecondToolBarID;
-	CMFCToolBar*	m_pSecondToolBar;
+	CMFCToolBar* m_pSecondToolBar;
 	void		ActivatePropertyPane(BOOL bDisplay);
 	void		ActivateFilterPane(BOOL bDisplay);
 
-// Overrides
+	// Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, 
+	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
 		CWnd* pParentWnd = nullptr, CCreateContext* pContext = nullptr);
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CMainFrame();
 #ifdef _DEBUG
@@ -46,7 +46,7 @@ protected:  // control bar embedded members
 	CMFCRibbonStatusBar	m_wndStatusBar;
 	CMFCRibbonBar		m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
-	CMFCToolBarImages	m_UserImages;	
+	CMFCToolBarImages	m_UserImages;
 	CPropertiesWnd		m_wndProperties;
 	CFilterWnd			m_wndFilter;
 	CMFCOutlookBar		m_wndOutlookBar;
@@ -55,9 +55,9 @@ protected:  // control bar embedded members
 	BOOL				CreateOutlookBar();
 	BOOL				CreateDockingPropertiesPanes();
 	void				SetDockingPropertiesPanesIcons(BOOL bHiColorIcons);
-	CdbWaveDoc*			GetMDIActiveDocument();
+	CdbWaveDoc* GetMDIActiveDocument();
 
-// Generated message map functions
+	// Generated message map functions
 	DECLARE_MESSAGE_MAP()
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -77,9 +77,7 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	afx_msg void OnCheckFilterpane();
-	afx_msg void OnUpdateCheckFilterpane(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateCheckFilterpane(CCmdUI* pCmdUI);
 	afx_msg void OnCheckPropertiespane();
-	afx_msg void OnUpdateCheckPropertiespane(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateCheckPropertiespane(CCmdUI* pCmdUI);
 };
-
-

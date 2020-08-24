@@ -34,9 +34,8 @@
 #include <afxdtctl.h>       // MFC support for Internet Explorer 4 Common Controls
 #endif
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>         // MFC support for Windows Common Controls  
+#include <afxcmn.h>         // MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
-
 
 #ifdef _UNICODE
 #if defined _M_IX86
@@ -70,8 +69,6 @@
 #pragma warning(disable : 4995)
 #include "dbwave.h"
 #include "resource.h"
-
-
 
 #define SAFE_DELETE(ptr) if (ptr) { delete ptr; ptr = NULL; }
 #define SAFE_DELETE_ARRAY(p) if(p) {delete [] p ;p = NULL ;}

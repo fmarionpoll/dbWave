@@ -15,7 +15,6 @@
 #define DA_ZERO			9
 #define DA_ONE			10
 
-
 class CDAChannelsDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CDAChannelsDlg)
@@ -24,7 +23,7 @@ public:
 	CDAChannelsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDAChannelsDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_DA_CHANNELS };
 	CArray <OUTPUTPARMS, OUTPUTPARMS> outputparms_array;
 	CArray <CComboBox*, CComboBox*> combobox_ptr_array;
@@ -50,12 +49,12 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnBnClickedOk();
-	
+
 	afx_msg void OnBnClickedCheckchan0();
 	afx_msg void OnBnClickedCheckchan1();
 	afx_msg void OnBnClickedCheckchan2();
 
-	afx_msg void OnCbnSelchangeCombosource0(); 
+	afx_msg void OnCbnSelchangeCombosource0();
 	afx_msg void OnCbnSelchangeCombosource1();
 	afx_msg void OnCbnSelchangeCombosource2();
 

@@ -4,7 +4,7 @@
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
 #include "scopescr.h"
-#include "Envelope.h" 
+#include "Envelope.h"
 #include "chanlistitem.h"
 #include "Lineview.h"
 #include "Spikedoc.h"
@@ -39,14 +39,12 @@ public:
 	CString			csFlag;
 	CString			csDate;
 
-	CLineViewWnd*   pdataWnd = nullptr;
-	CSpikeBarWnd*	pspikeWnd = nullptr;
-	CdbWaveDoc*		pdbWaveDoc = nullptr;
-	CAcqDataDoc*	pdataDoc = nullptr;
-	CSpikeDoc*		pspikeDoc = nullptr;
+	CLineViewWnd* pdataWnd = nullptr;
+	CSpikeBarWnd* pspikeWnd = nullptr;
+	CdbWaveDoc* pdbWaveDoc = nullptr;
+	CAcqDataDoc* pdataDoc = nullptr;
+	CSpikeDoc* pspikeDoc = nullptr;
 
-	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);	
+	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);
 	void Serialize(CArchive& ar) override;
 };
-
-

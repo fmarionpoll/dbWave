@@ -1,5 +1,5 @@
 #pragma once
-// subfileitem.h 
+// subfileitem.h
 
 // Definition of Awave files and I/O functions
 
@@ -7,7 +7,7 @@
 // Proprietary data file
 ///////////////////////////////////////////////////////////////////
 
-// CSubfileItem 
+// CSubfileItem
 // subfile description item: ID, label, subfile offset, length, encoding mode
 //
 // Subfile identifiers
@@ -38,7 +38,7 @@ struct SUBF_DESCRIP
 	WORD			wCode;					// Subfile type identifier
 	int				itemnb;					// index current item
 	unsigned char	ucEncoding;				// Encoding mode of the subfile
-	char			szLabel[LABEL_LEN+1];	// Subfile type label
+	char			szLabel[LABEL_LEN + 1];	// Subfile type label
 	ULONGLONG		ulOffset;				// pointer to the beginning of the subfile (long)
 	ULONGLONG		ulLength;				// length of the subfile
 };
@@ -51,26 +51,26 @@ protected:
 
 	SUBF_DESCRIP m_rec;
 
-public:		
-	CSubfileItem();	
+public:
+	CSubfileItem();
 	CSubfileItem(unsigned char ucCode, char* csLabel, ULONGLONG ulOffset,
-			   ULONGLONG ulLength, unsigned char ucEncoding, int itemnb=0);
+		ULONGLONG ulLength, unsigned char ucEncoding, int itemnb = 0);
 	~CSubfileItem();
 
 	// Helpers
-	WORD		GetCode() const {return m_rec.wCode;}
-	CStringA	GetLabel() const {return m_rec.szLabel;}
-	unsigned char GetDataEncoding() const {return m_rec.ucEncoding;};
-	int		GetItemnb() const {return m_rec.itemnb;}
-	ULONGLONG GetDataOffset() const {return m_rec.ulOffset;}
-	ULONGLONG GetDataLength() const {return m_rec.ulLength;}
+	WORD		GetCode() const { return m_rec.wCode; }
+	CStringA	GetLabel() const { return m_rec.szLabel; }
+	unsigned char GetDataEncoding() const { return m_rec.ucEncoding; };
+	int		GetItemnb() const { return m_rec.itemnb; }
+	ULONGLONG GetDataOffset() const { return m_rec.ulOffset; }
+	ULONGLONG GetDataLength() const { return m_rec.ulLength; }
 
-	void SetCode(unsigned char ucCode) {m_rec.wCode = ucCode;}
+	void SetCode(unsigned char ucCode) { m_rec.wCode = ucCode; }
 	void SetLabel(char* pszLabel);
-	void SetDataEncoding(unsigned char ucEncoding) {m_rec.ucEncoding = ucEncoding;}
-	void SetItemnb(int item) {m_rec.itemnb = item;}
-	void SetDataOffset(ULONGLONG ulOffset) {m_rec.ulOffset = ulOffset;}
-	void SetDataLength(ULONGLONG ulLength) {m_rec.ulLength = ulLength;}
+	void SetDataEncoding(unsigned char ucEncoding) { m_rec.ucEncoding = ucEncoding; }
+	void SetItemnb(int item) { m_rec.itemnb = item; }
+	void SetDataOffset(ULONGLONG ulOffset) { m_rec.ulOffset = ulOffset; }
+	void SetDataLength(ULONGLONG ulLength) { m_rec.ulLength = ulLength; }
 
 	// I/O Operations
 	void Read(CFile* pdatafile);

@@ -18,7 +18,7 @@
 IMPLEMENT_DYNCREATE(CMeasureHZtagsPage, CPropertyPage)
 
 CMeasureHZtagsPage::CMeasureHZtagsPage() : CPropertyPage(CMeasureHZtagsPage::IDD), m_pMO(nullptr), m_pdbDoc(nullptr),
-                                           m_pdatDoc(nullptr)
+m_pdatDoc(nullptr)
 {
 	m_datachannel = 0;
 	m_index = 0;
@@ -52,50 +52,49 @@ END_MESSAGE_MAP()
 
 BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 {
-	const BOOL flag = (m_nbcursors > 0 && index < m_nbcursors && index >= 0);
+	const BOOL flag = (m_nbcursors > 0 && index < m_nbcursors&& index >= 0);
 	GetDlgItem(IDC_ADJUST)->EnableWindow(flag);
 	GetDlgItem(IDC_CENTER)->EnableWindow(flag);
 	GetDlgItem(IDC_REMOVE)->EnableWindow(flag);
-	
+
 	if (index < 0 || index >= m_nbcursors)
 		return FALSE;
-	m_index=index;
-	m_datachannel=m_plineview->GetHZtagChan(index);
+	m_index = index;
+	m_datachannel = m_plineview->GetHZtagChan(index);
 	int k = m_plineview->GetHZtagVal(m_index);
 	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, k);
-	
+
 	return TRUE;
 }
 
-void CMeasureHZtagsPage::OnCenter() 
+void CMeasureHZtagsPage::OnCenter()
 {
 	int max, min;
 	m_plineview->GetChanlistMaxMin(m_datachannel, &max, &min);
-	const auto val = (max+min)/2;
+	const auto val = (max + min) / 2;
 	m_plineview->SetHZtagVal(m_index, val);
 	m_plineview->Invalidate();
 	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
 
-void CMeasureHZtagsPage::OnRemove() 
+void CMeasureHZtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbcursors)
 	{
-		m_plineview->DelHZtag(m_index);    
+		m_plineview->DelHZtag(m_index);
 		m_nbcursors--;
 	}
-	if (m_index > m_nbcursors-1)
+	if (m_index > m_nbcursors - 1)
 		m_index = m_nbcursors;
 	GetHZcursorVal(m_index);
 	m_plineview->Invalidate();
 	UpdateData(FALSE);
 }
 
-void CMeasureHZtagsPage::OnEnChangeDatachannel() 
+void CMeasureHZtagsPage::OnEnChangeDatachannel()
 {
 	if (mm_datachannel.m_bEntryDone) {
-
 		switch (mm_datachannel.m_nChar)
 		{				// load data from edit controls
 		case VK_RETURN:	UpdateData(TRUE);	break;
@@ -103,11 +102,11 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 		case VK_PRIOR:	m_datachannel++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_datachannel--;	break;
-		default: ;
+		default:;
 		}
 		mm_datachannel.m_bEntryDone = FALSE;	// clear flag
 		mm_datachannel.m_nChar = 0;			// empty buffer
-		mm_datachannel.SetSel(0, -1);		// select all text    
+		mm_datachannel.SetSel(0, -1);		// select all text
 
 		// update dependent parameters
 		if (m_datachannel < 0)
@@ -120,13 +119,12 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 			m_plineview->Invalidate();
 		}
 		UpdateData(FALSE);
-	}	
+	}
 }
 
-void CMeasureHZtagsPage::OnEnChangeIndex() 
+void CMeasureHZtagsPage::OnEnChangeIndex()
 {
 	if (mm_index.m_bEntryDone) {
-
 		switch (mm_index.m_nChar)
 		{				// load data from edit controls
 		case VK_RETURN:	UpdateData(TRUE);	break;
@@ -134,11 +132,11 @@ void CMeasureHZtagsPage::OnEnChangeIndex()
 		case VK_PRIOR:	m_index++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_index--;	break;
-		default: ;
+		default:;
 		}
 		mm_index.m_bEntryDone = FALSE;	// clear flag
 		mm_index.m_nChar = 0;			// empty buffer
-		mm_index.SetSel(0, -1);		// select all text    
+		mm_index.SetSel(0, -1);		// select all text
 		// update dependent parameters
 		if (m_index >= m_nbcursors)
 			m_index = m_nbcursors - 1;
@@ -149,10 +147,9 @@ void CMeasureHZtagsPage::OnEnChangeIndex()
 	}
 }
 
-void CMeasureHZtagsPage::OnEnChangeMvlevel() 
+void CMeasureHZtagsPage::OnEnChangeMvlevel()
 {
 	if (mm_mvlevel.m_bEntryDone) {
-
 		switch (mm_mvlevel.m_nChar)
 		{				// load data from edit controls
 		case VK_RETURN:	UpdateData(TRUE);	break;
@@ -160,13 +157,13 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 		case VK_PRIOR:	m_mvlevel++;	break;
 		case VK_DOWN:
 		case VK_NEXT:   m_mvlevel--;	break;
-		default: ;
+		default:;
 		}
 		mm_mvlevel.m_bEntryDone = FALSE;	// clear flag
 		mm_mvlevel.m_nChar = 0;			// empty buffer
-		mm_mvlevel.SetSel(0, -1);		// select all text    
+		mm_mvlevel.SetSel(0, -1);		// select all text
 
-		// update dependent parameters	
+		// update dependent parameters
 		UpdateData(FALSE);
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
@@ -177,13 +174,13 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 	}
 }
 
-void CMeasureHZtagsPage::OnAdjust() 
+void CMeasureHZtagsPage::OnAdjust()
 {
 	int max, min;
 	m_plineview->GetChanlistMaxMin(m_datachannel, &max, &min);
 	// get nb cursors / m_datachannel
-	auto n_cursors=0;
-	for (auto i= m_nbcursors-1; i>= 0; i--)
+	auto n_cursors = 0;
+	for (auto i = m_nbcursors - 1; i >= 0; i--)
 		if (m_plineview->GetHZtagChan(i) == m_datachannel)
 			n_cursors++;
 
@@ -194,14 +191,14 @@ void CMeasureHZtagsPage::OnAdjust()
 		return;
 	}
 
-	const auto dv = (max-min)/(n_cursors-1);
+	const auto dv = (max - min) / (n_cursors - 1);
 	auto val = min;
-	for (auto i= 0; i< m_nbcursors; i++)
+	for (auto i = 0; i < m_nbcursors; i++)
 	{
 		if (m_plineview->GetHZtagChan(i) == m_datachannel)
 		{
 			m_plineview->SetHZtagVal(i, val);
-			val+= dv;
+			val += dv;
 		}
 	}
 	m_plineview->Invalidate();
@@ -210,11 +207,11 @@ void CMeasureHZtagsPage::OnAdjust()
 	UpdateData(FALSE);
 }
 
-void CMeasureHZtagsPage::OnOK() 
+void CMeasureHZtagsPage::OnOK()
 {
 	auto p_tags_list = m_pdatDoc->GetpHZtags();
 	p_tags_list->CopyTagList(m_plineview->GetHZtagList());
-	m_pMO->bChanged=TRUE;
+	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 1)
 	{
 		m_plineview->DelAllHZtags();
@@ -224,7 +221,7 @@ void CMeasureHZtagsPage::OnOK()
 	CPropertyPage::OnOK();
 }
 
-void CMeasureHZtagsPage::OnCancel() 
+void CMeasureHZtagsPage::OnCancel()
 {
 	// restore initial state of HZcursors
 	if (m_pMO->wOption != 1)
@@ -239,14 +236,14 @@ void CMeasureHZtagsPage::OnCancel()
 	CPropertyPage::OnCancel();
 }
 
-BOOL CMeasureHZtagsPage::OnInitDialog() 
+BOOL CMeasureHZtagsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
 	m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
 	m_plineview->DelAllVTtags();
 	m_plineview->Invalidate();
-	m_nbcursors=m_plineview->GetNHZtags();
+	m_nbcursors = m_plineview->GetNHZtags();
 	GetHZcursorVal(0);
 
 	// sublassed edits
@@ -259,11 +256,11 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CMeasureHZtagsPage::OnDeleteAll() 
+void CMeasureHZtagsPage::OnDeleteAll()
 {
 	m_plineview->DelAllHZtags();
 	m_plineview->Invalidate();
-	m_nbcursors=0;
+	m_nbcursors = 0;
 	GetHZcursorVal(0);
 	UpdateData(FALSE);
 }

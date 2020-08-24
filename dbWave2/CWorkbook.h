@@ -8,7 +8,7 @@
 class CWorkbook : public COleDispatchDriver
 {
 public:
-	CWorkbook(){} // Calls COleDispatchDriver default constructor
+	CWorkbook() {} // Calls COleDispatchDriver default constructor
 	CWorkbook(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CWorkbook(const CWorkbook& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// _Workbook methods
 public:
@@ -47,7 +46,7 @@ public:
 	}
 	void put_AcceptLabelsInFormulas(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5a1, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void Activate()
@@ -74,7 +73,7 @@ public:
 	}
 	void put_Author(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x23e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_AutoUpdateFrequency()
@@ -85,7 +84,7 @@ public:
 	}
 	void put_AutoUpdateFrequency(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x5a2, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_AutoUpdateSaveChanges()
@@ -96,7 +95,7 @@ public:
 	}
 	void put_AutoUpdateSaveChanges(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5a3, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_ChangeHistoryDuration()
@@ -107,7 +106,7 @@ public:
 	}
 	void put_ChangeHistoryDuration(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x5a4, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_BuiltinDocumentProperties()
@@ -118,12 +117,12 @@ public:
 	}
 	void ChangeFileAccess(long Mode, VARIANT& WritePassword, VARIANT& Notify)
 	{
-		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x3dd, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Mode, &WritePassword, &Notify);
 	}
 	void ChangeLink(LPCTSTR Name, LPCTSTR NewName, long Type)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_BSTR VTS_I4 ;
+		static BYTE parms[] = VTS_BSTR VTS_BSTR VTS_I4;
 		InvokeHelper(0x322, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Name, NewName, Type);
 	}
 	LPDISPATCH get_Charts()
@@ -134,7 +133,7 @@ public:
 	}
 	void Close(VARIANT& SaveChanges, VARIANT& Filename, VARIANT& RouteWorkbook)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x115, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &SaveChanges, &Filename, &RouteWorkbook);
 	}
 	CString get_CodeName()
@@ -151,19 +150,19 @@ public:
 	}
 	void put__CodeName(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x80010000, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_Colors(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x11e, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
 	void put_Colors(VARIANT& Index, VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x11e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &Index, &newValue);
 	}
 	LPDISPATCH get_CommandBars()
@@ -180,7 +179,7 @@ public:
 	}
 	void put_Comments(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x23f, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_ConflictResolution()
@@ -191,7 +190,7 @@ public:
 	}
 	void put_ConflictResolution(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x497, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_Container()
@@ -220,12 +219,12 @@ public:
 	}
 	void put_Date1904(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x193, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void DeleteNumberFormat(LPCTSTR NumberFormat)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x18d, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, NumberFormat);
 	}
 	LPDISPATCH get_DialogSheets()
@@ -242,7 +241,7 @@ public:
 	}
 	void put_DisplayDrawingObjects(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x194, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL ExclusiveAccess()
@@ -275,7 +274,7 @@ public:
 	}
 	void put_HasMailer(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x3d0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_HasPassword()
@@ -292,7 +291,7 @@ public:
 	}
 	void put_HasRoutingSlip(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x3b6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_IsAddin()
@@ -303,7 +302,7 @@ public:
 	}
 	void put_IsAddin(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5a5, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_Keywords()
@@ -314,20 +313,20 @@ public:
 	}
 	void put_Keywords(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x241, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT LinkInfo(LPCTSTR Name, long LinkInfo, VARIANT& Type, VARIANT& EditionRef)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_BSTR VTS_I4 VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_I4 VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x327, DISPATCH_METHOD, VT_VARIANT, (void*)&result, parms, Name, LinkInfo, &Type, &EditionRef);
 		return result;
 	}
 	VARIANT LinkSources(VARIANT& Type)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x328, DISPATCH_METHOD, VT_VARIANT, (void*)&result, parms, &Type);
 		return result;
 	}
@@ -339,7 +338,7 @@ public:
 	}
 	void MergeWorkbook(VARIANT& Filename)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x5a6, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Filename);
 	}
 	LPDISPATCH get_Modules()
@@ -380,7 +379,7 @@ public:
 	}
 	void put_OnSave(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x49a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_OnSheetActivate()
@@ -391,7 +390,7 @@ public:
 	}
 	void put_OnSheetActivate(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x407, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_OnSheetDeactivate()
@@ -402,12 +401,12 @@ public:
 	}
 	void put_OnSheetDeactivate(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x439, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void OpenLinks(LPCTSTR Name, VARIANT& ReadOnly, VARIANT& Type)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x323, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Name, &ReadOnly, &Type);
 	}
 	CString get_Path()
@@ -424,7 +423,7 @@ public:
 	}
 	void put_PersonalViewListSettings(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5a7, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_PersonalViewPrintSettings()
@@ -435,7 +434,7 @@ public:
 	}
 	void put_PersonalViewPrintSettings(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5a8, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH PivotCaches()
@@ -446,7 +445,7 @@ public:
 	}
 	void Post(VARIANT& DestName)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x48e, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &DestName);
 	}
 	BOOL get_PrecisionAsDisplayed()
@@ -457,27 +456,27 @@ public:
 	}
 	void put_PrecisionAsDisplayed(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x195, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void __PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x389, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate);
 	}
 	void PrintPreview(VARIANT& EnableChanges)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x119, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &EnableChanges);
 	}
 	void _Protect(VARIANT& Password, VARIANT& Structure, VARIANT& Windows)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x11a, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Password, &Structure, &Windows);
 	}
 	void _ProtectSharing(VARIANT& Filename, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& ReadOnlyRecommended, VARIANT& CreateBackup, VARIANT& SharingPassword)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x5aa, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Filename, &Password, &WriteResPassword, &ReadOnlyRecommended, &CreateBackup, &SharingPassword);
 	}
 	BOOL get_ProtectStructure()
@@ -518,7 +517,7 @@ public:
 	}
 	void RemoveUser(long Index)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x5ad, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Index);
 	}
 	long get_RevisionNumber()
@@ -545,7 +544,7 @@ public:
 	}
 	void RunAutoMacros(long Which)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x27a, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Which);
 	}
 	void Save()
@@ -554,12 +553,12 @@ public:
 	}
 	void _SaveAs(VARIANT& Filename, VARIANT& FileFormat, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& ReadOnlyRecommended, VARIANT& CreateBackup, long AccessMode, VARIANT& ConflictResolution, VARIANT& AddToMru, VARIANT& TextCodepage, VARIANT& TextVisualLayout)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x11c, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Filename, &FileFormat, &Password, &WriteResPassword, &ReadOnlyRecommended, &CreateBackup, AccessMode, &ConflictResolution, &AddToMru, &TextCodepage, &TextVisualLayout);
 	}
 	void SaveCopyAs(VARIANT& Filename)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaf, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Filename);
 	}
 	BOOL get_Saved()
@@ -570,7 +569,7 @@ public:
 	}
 	void put_Saved(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x12a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_SaveLinkValues()
@@ -581,22 +580,22 @@ public:
 	}
 	void put_SaveLinkValues(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x196, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void SendMail(VARIANT& Recipients, VARIANT& Subject, VARIANT& ReturnReceipt)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x3b3, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Recipients, &Subject, &ReturnReceipt);
 	}
 	void SendMailer(VARIANT& FileFormat, long Priority)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_I4 ;
+		static BYTE parms[] = VTS_VARIANT VTS_I4;
 		InvokeHelper(0x3d4, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &FileFormat, Priority);
 	}
 	void SetLinkOnData(LPCTSTR Name, VARIANT& Procedure)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT;
 		InvokeHelper(0x329, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Name, &Procedure);
 	}
 	LPDISPATCH get_Sheets()
@@ -613,7 +612,7 @@ public:
 	}
 	void put_ShowConflictHistory(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x493, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_Styles()
@@ -630,7 +629,7 @@ public:
 	}
 	void put_Subject(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x3b9, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_Title()
@@ -641,17 +640,17 @@ public:
 	}
 	void put_Title(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0xc7, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void Unprotect(VARIANT& Password)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x11d, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Password);
 	}
 	void UnprotectSharing(VARIANT& SharingPassword)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x5af, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &SharingPassword);
 	}
 	void UpdateFromFile()
@@ -660,7 +659,7 @@ public:
 	}
 	void UpdateLink(VARIANT& Name, VARIANT& Type)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x324, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Name, &Type);
 	}
 	BOOL get_UpdateRemoteReferences()
@@ -671,7 +670,7 @@ public:
 	}
 	void put_UpdateRemoteReferences(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x19b, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_UserControl()
@@ -682,7 +681,7 @@ public:
 	}
 	void put_UserControl(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x4ba, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_UserStatus()
@@ -741,12 +740,12 @@ public:
 	}
 	void put_TemplateRemoveExtData(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5b1, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void HighlightChangesOptions(VARIANT& When, VARIANT& Who, VARIANT& Where)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x5b2, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &When, &Who, &Where);
 	}
 	BOOL get_HighlightChangesOnScreen()
@@ -757,7 +756,7 @@ public:
 	}
 	void put_HighlightChangesOnScreen(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5b5, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_KeepChangeHistory()
@@ -768,7 +767,7 @@ public:
 	}
 	void put_KeepChangeHistory(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5b6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_ListChangesOnNewSheet()
@@ -779,27 +778,27 @@ public:
 	}
 	void put_ListChangesOnNewSheet(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5b7, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void PurgeChangeHistoryNow(long Days, VARIANT& SharingPassword)
 	{
-		static BYTE parms[] = VTS_I4 VTS_VARIANT ;
+		static BYTE parms[] = VTS_I4 VTS_VARIANT;
 		InvokeHelper(0x5b8, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Days, &SharingPassword);
 	}
 	void AcceptAllChanges(VARIANT& When, VARIANT& Who, VARIANT& Where)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x5ba, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &When, &Who, &Where);
 	}
 	void RejectAllChanges(VARIANT& When, VARIANT& Who, VARIANT& Where)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x5bb, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &When, &Who, &Where);
 	}
 	void PivotTableWizard(VARIANT& SourceType, VARIANT& SourceData, VARIANT& TableDestination, VARIANT& TableName, VARIANT& RowGrand, VARIANT& ColumnGrand, VARIANT& SaveData, VARIANT& HasAutoFormat, VARIANT& AutoPage, VARIANT& Reserved, VARIANT& BackgroundQuery, VARIANT& OptimizeCache, VARIANT& PageFieldOrder, VARIANT& PageFieldWrapCount, VARIANT& ReadData, VARIANT& Connection)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x2ac, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &SourceType, &SourceData, &TableDestination, &TableName, &RowGrand, &ColumnGrand, &SaveData, &HasAutoFormat, &AutoPage, &Reserved, &BackgroundQuery, &OptimizeCache, &PageFieldOrder, &PageFieldWrapCount, &ReadData, &Connection);
 	}
 	void ResetColors()
@@ -814,7 +813,7 @@ public:
 	}
 	void FollowHyperlink(LPCTSTR Address, VARIANT& SubAddress, VARIANT& NewWindow, VARIANT& AddHistory, VARIANT& ExtraInfo, VARIANT& Method, VARIANT& HeaderInfo)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x5be, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Address, &SubAddress, &NewWindow, &AddHistory, &ExtraInfo, &Method, &HeaderInfo);
 	}
 	void AddToFavorites()
@@ -829,7 +828,7 @@ public:
 	}
 	void _PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x6ec, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate, &PrToFileName);
 	}
 	void WebPagePreview()
@@ -850,7 +849,7 @@ public:
 	}
 	void ReloadAs(long Encoding)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x71d, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Encoding);
 	}
 	LPDISPATCH get_HTMLProject()
@@ -867,7 +866,7 @@ public:
 	}
 	void put_EnvelopeVisible(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x720, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_CalculationVersion()
@@ -878,12 +877,12 @@ public:
 	}
 	void Dummy17(long calcid)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x7fc, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, calcid);
 	}
 	void sblt(LPCTSTR s)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x722, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, s);
 	}
 	BOOL get_VBASigned()
@@ -900,7 +899,7 @@ public:
 	}
 	void put_ShowPivotTableFieldList(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x7fe, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_UpdateLinks()
@@ -911,12 +910,12 @@ public:
 	}
 	void put_UpdateLinks(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x360, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void BreakLink(LPCTSTR Name, long Type)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_I4 ;
+		static BYTE parms[] = VTS_BSTR VTS_I4;
 		InvokeHelper(0x7ff, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Name, Type);
 	}
 	void Dummy16()
@@ -925,7 +924,7 @@ public:
 	}
 	void SaveAs(VARIANT& Filename, VARIANT& FileFormat, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& ReadOnlyRecommended, VARIANT& CreateBackup, long AccessMode, VARIANT& ConflictResolution, VARIANT& AddToMru, VARIANT& TextCodepage, VARIANT& TextVisualLayout, VARIANT& Local)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x785, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Filename, &FileFormat, &Password, &WriteResPassword, &ReadOnlyRecommended, &CreateBackup, AccessMode, &ConflictResolution, &AddToMru, &TextCodepage, &TextVisualLayout, &Local);
 	}
 	BOOL get_EnableAutoRecover()
@@ -936,7 +935,7 @@ public:
 	}
 	void put_EnableAutoRecover(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x801, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_RemovePersonalInformation()
@@ -947,7 +946,7 @@ public:
 	}
 	void put_RemovePersonalInformation(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x802, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_FullNameURLEncoded()
@@ -958,7 +957,7 @@ public:
 	}
 	void CheckIn(VARIANT& SaveChanges, VARIANT& Comments, VARIANT& MakePublic)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x803, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &SaveChanges, &Comments, &MakePublic);
 	}
 	BOOL CanCheckIn()
@@ -969,12 +968,12 @@ public:
 	}
 	void SendForReview(VARIANT& Recipients, VARIANT& Subject, VARIANT& ShowMessage, VARIANT& IncludeAttachment)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x806, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Recipients, &Subject, &ShowMessage, &IncludeAttachment);
 	}
 	void ReplyWithChanges(VARIANT& ShowMessage)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x809, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &ShowMessage);
 	}
 	void EndReview()
@@ -989,7 +988,7 @@ public:
 	}
 	void put_Password(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x1ad, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_WritePassword()
@@ -1000,7 +999,7 @@ public:
 	}
 	void put_WritePassword(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x468, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_PasswordEncryptionProvider()
@@ -1023,7 +1022,7 @@ public:
 	}
 	void SetPasswordEncryptionOptions(VARIANT& PasswordEncryptionProvider, VARIANT& PasswordEncryptionAlgorithm, VARIANT& PasswordEncryptionKeyLength, VARIANT& PasswordEncryptionFileProperties)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x80e, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &PasswordEncryptionProvider, &PasswordEncryptionAlgorithm, &PasswordEncryptionKeyLength, &PasswordEncryptionFileProperties);
 	}
 	BOOL get_PasswordEncryptionFileProperties()
@@ -1040,12 +1039,12 @@ public:
 	}
 	void put_ReadOnlyRecommended(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x7d5, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void Protect(VARIANT& Password, VARIANT& Structure, VARIANT& Windows)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x7ed, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Password, &Structure, &Windows);
 	}
 	LPDISPATCH get_SmartTagOptions()
@@ -1078,7 +1077,7 @@ public:
 	}
 	void SendFaxOverInternet(VARIANT& Recipients, VARIANT& Subject, VARIANT& ShowMessage)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x8db, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Recipients, &Subject, &ShowMessage);
 	}
 	LPDISPATCH get_XmlNamespaces()
@@ -1093,10 +1092,10 @@ public:
 		InvokeHelper(0x8dd, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, nullptr);
 		return result;
 	}
-	long XmlImport(LPCTSTR Url, LPDISPATCH * ImportMap, VARIANT& Overwrite, VARIANT& Destination)
+	long XmlImport(LPCTSTR Url, LPDISPATCH* ImportMap, VARIANT& Overwrite, VARIANT& Destination)
 	{
 		long result;
-		static BYTE parms[] = VTS_BSTR VTS_PDISPATCH VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_PDISPATCH VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x8de, DISPATCH_METHOD, VT_I4, (void*)&result, parms, Url, ImportMap, &Overwrite, &Destination);
 		return result;
 	}
@@ -1120,7 +1119,7 @@ public:
 	}
 	void put_InactiveListBorderVisible(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x8e3, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DisplayInkComments()
@@ -1131,19 +1130,19 @@ public:
 	}
 	void put_DisplayInkComments(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x8e4, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
-	long XmlImportXml(LPCTSTR Data, LPDISPATCH * ImportMap, VARIANT& Overwrite, VARIANT& Destination)
+	long XmlImportXml(LPCTSTR Data, LPDISPATCH* ImportMap, VARIANT& Overwrite, VARIANT& Destination)
 	{
 		long result;
-		static BYTE parms[] = VTS_BSTR VTS_PDISPATCH VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_PDISPATCH VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x8e5, DISPATCH_METHOD, VT_I4, (void*)&result, parms, Data, ImportMap, &Overwrite, &Destination);
 		return result;
 	}
 	void SaveAsXMLData(LPCTSTR Filename, LPDISPATCH Map)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_DISPATCH ;
+		static BYTE parms[] = VTS_BSTR VTS_DISPATCH;
 		InvokeHelper(0x8e6, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Filename, Map);
 	}
 	void ToggleFormsDesign()
@@ -1164,7 +1163,7 @@ public:
 	}
 	void RemoveDocumentInformation(long RemoveDocInfoType)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x9d2, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, RemoveDocInfoType);
 	}
 	LPDISPATCH get_Signatures()
@@ -1175,7 +1174,7 @@ public:
 	}
 	void CheckInWithVersion(VARIANT& SaveChanges, VARIANT& Comments, VARIANT& MakePublic, VARIANT& VersionType)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x9d5, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &SaveChanges, &Comments, &MakePublic, &VersionType);
 	}
 	LPDISPATCH get_ServerPolicy()
@@ -1208,7 +1207,7 @@ public:
 	}
 	void PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName, VARIANT& IgnorePrintAreas)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x939, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate, &PrToFileName, &IgnorePrintAreas);
 	}
 	LPDISPATCH get_ServerViewableItems()
@@ -1231,7 +1230,7 @@ public:
 	}
 	void put_DefaultTableStyle(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x9de, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_DefaultPivotTableStyle()
@@ -1242,7 +1241,7 @@ public:
 	}
 	void put_DefaultPivotTableStyle(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x9df, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	BOOL get_CheckCompatibility()
@@ -1253,7 +1252,7 @@ public:
 	}
 	void put_CheckCompatibility(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x9e0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_HasVBProject()
@@ -1276,7 +1275,7 @@ public:
 	}
 	void put_Final(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x9e3, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_Research()
@@ -1293,7 +1292,7 @@ public:
 	}
 	void ApplyTheme(LPCTSTR Filename)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x9e6, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Filename);
 	}
 	BOOL get_Excel8CompatibilityMode()
@@ -1320,12 +1319,12 @@ public:
 	}
 	void put_ShowPivotChartActiveFields(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x9ea, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void ExportAsFixedFormat(long Type, VARIANT& Filename, VARIANT& Quality, VARIANT& IncludeDocProperties, VARIANT& IgnorePrintAreas, VARIANT& From, VARIANT& To, VARIANT& OpenAfterPublish, VARIANT& FixedFormatExtClassPtr)
 	{
-		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x9bd, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Type, &Filename, &Quality, &IncludeDocProperties, &IgnorePrintAreas, &From, &To, &OpenAfterPublish, &FixedFormatExtClassPtr);
 	}
 	LPDISPATCH get_IconSets()
@@ -1342,7 +1341,7 @@ public:
 	}
 	void put_EncryptionProvider(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x9ec, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DoNotPromptForConvert()
@@ -1353,7 +1352,7 @@ public:
 	}
 	void put_DoNotPromptForConvert(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x9ed, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_ForceFullCalculation()
@@ -1364,12 +1363,12 @@ public:
 	}
 	void put_ForceFullCalculation(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x9ee, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void ProtectSharing(VARIANT& Filename, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& ReadOnlyRecommended, VARIANT& CreateBackup, VARIANT& SharingPassword, VARIANT& FileFormat)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x9ef, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Filename, &Password, &WriteResPassword, &ReadOnlyRecommended, &CreateBackup, &SharingPassword, &FileFormat);
 	}
 	LPDISPATCH get_SlicerCaches()
@@ -1392,7 +1391,7 @@ public:
 	}
 	void put_DefaultSlicerStyle(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xb34, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	void Dummy26()
@@ -1411,11 +1410,10 @@ public:
 	}
 	void put_AccuracyVersion(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0xb37, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 
 	// _Workbook properties
 public:
-
 };

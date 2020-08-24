@@ -54,13 +54,13 @@ BOOL CBrowseFileDlg::OnInitDialog()
 }
 
 void CBrowseFileDlg::OnOK()
-{   
+{
 	UpdateData(TRUE);
 	mfBR->bAllChannels = m_allchannels;
 	mfBR->bCenterCurves = m_centercurves;
 	mfBR->bEntireRecord = m_completefile;
 	mfBR->bSplitCurves = m_splitcurves;
-	mfBR->bMaximizeGain = m_maximizegain;	
+	mfBR->bMaximizeGain = m_maximizegain;
 	mfBR->bMultirowDisplay = m_multirowdisplay;
 	mfBR->bKeepForEachFile = m_keepforeachfile;
 	mfBR->bChanged = TRUE;

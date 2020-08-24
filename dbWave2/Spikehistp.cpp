@@ -1,4 +1,3 @@
-
 // spikehistp.cpp : implementation file
 //
 // Purpose:
@@ -29,7 +28,7 @@ BEGIN_MESSAGE_MAP(CSpikeHistWnd, CScopeScreen)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-CSpikeHistWnd::CSpikeHistWnd() 
+CSpikeHistWnd::CSpikeHistWnd()
 {
 	p_spikelist_ = nullptr;		// source spk list
 	SetbUseDIB(FALSE);
@@ -43,11 +42,11 @@ CSpikeHistWnd::~CSpikeHistWnd()
 
 void CSpikeHistWnd::RemoveHistData()
 {
-	if (histogram_ptr_array.GetSize() >0)	// delete objects pointed by elements
+	if (histogram_ptr_array.GetSize() > 0)	// delete objects pointed by elements
 	{							// of m_pHistarray
-		for (auto i= histogram_ptr_array.GetUpperBound(); i>= 0; i--)
+		for (auto i = histogram_ptr_array.GetUpperBound(); i >= 0; i--)
 			delete histogram_ptr_array[i];
-		histogram_ptr_array.RemoveAll();		
+		histogram_ptr_array.RemoveAll();
 	}
 }
 
@@ -70,14 +69,14 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 	GetExtents();
 	if (m_lmax == 0)
 	{
-		p_dc->SelectObject (GetStockObject (DEFAULT_GUI_FONT));
+		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 		auto rect = m_displayRect;
-		rect.DeflateRect(1,1);
+		rect.DeflateRect(1, 1);
 		const auto textlen = m_csEmpty.GetLength();
 		p_dc->DrawText(m_csEmpty, textlen, rect, DT_LEFT); //|DT_WORDBREAK);
 		return;
 	}
-	const int n_saved_dc = p_dc->SaveDC();	
+	const int n_saved_dc = p_dc->SaveDC();
 	PrepareDC(p_dc);
 	int color;
 	// save background color which is changed by later calls to FillSolidRect
@@ -88,15 +87,15 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 	{
 	case PLOT_BLACK:
 	case PLOT_ONECLASSONLY:
-		color = BLACK_COLOR; 
+		color = BLACK_COLOR;
 		break;
 	default:
-		color = SILVER_COLOR; 
+		color = SILVER_COLOR;
 		break;
 	}
 
 	//loop to display all histograms (but not the selected one)
-	for (auto ihist=0; ihist<histogram_ptr_array.GetSize(); ihist++)
+	for (auto ihist = 0; ihist < histogram_ptr_array.GetSize(); ihist++)
 	{
 		const auto p_dw = histogram_ptr_array.GetAt(ihist);
 		if (0 == p_dw->GetSize())
@@ -106,14 +105,14 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 		if (ihist > 0)
 		{
 			const auto spkcla = static_cast<int>(p_dw->GetAt(0));
-			color = BLACK_COLOR; 
+			color = BLACK_COLOR;
 			if (PLOT_ONECLASSONLY == m_plotmode && spkcla != m_selclass)
 				continue;
 			else if (PLOT_CLASSCOLORS == m_plotmode)
 				color = spkcla % NB_COLORS;
 			else if (m_plotmode == PLOT_ONECLASS && spkcla == m_selclass)
 			{
-				color = BLACK_COLOR ;
+				color = BLACK_COLOR;
 				continue;
 			}
 		}
@@ -133,13 +132,12 @@ void CSpikeHistWnd::PlotDatatoDC(CDC* p_dc)
 		}
 	}
 
-
 	// display cursors
 	p_dc->SetBkColor(bkcolor);	// restore background color
 	if (GetNHZtags() > 0)		// display horizontal tags
 		DisplayHZtags(p_dc);
 	if (GetNVTtags() > 0)		// display vertical tags
-		DisplayVTtags(p_dc);	
+		DisplayVTtags(p_dc);
 	p_dc->RestoreDC(n_saved_dc);
 }
 
@@ -186,9 +184,9 @@ void CSpikeHistWnd::GetClassArray(int iclass, CDWordArray*& pDW)
 
 	// not found, scan the array
 	pDW = nullptr;
-	for (auto i=1; i<histogram_ptr_array.GetSize(); i++)
+	for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
 	{
-		if( static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == iclass)
+		if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == iclass)
 		{
 			pDW = histogram_ptr_array[i];
 			break;
@@ -204,15 +202,15 @@ LPTSTR CSpikeHistWnd::ExportAscii(LPTSTR lp)
 	// export classes & points
 	lp += wsprintf(lp, _T("classes;\n"));
 	int i;
-	for (i=0; i<histogram_ptr_array.GetSize(); i++)
+	for (i = 0; i < histogram_ptr_array.GetSize(); i++)
 		lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array[i])->GetAt(0)));
-	lp--;	// erase \t and replace with \n	
-		
-	// loop through all points	
+	lp--;	// erase \t and replace with \n
+
+	// loop through all points
 	lp += wsprintf(lp, _T("\nvalues;\n"));
-	for (auto j = 1; j<=m_nbins; j++)
+	for (auto j = 1; j <= m_nbins; j++)
 	{
-		for (i=0; i<histogram_ptr_array.GetSize(); i++)
+		for (i = 0; i < histogram_ptr_array.GetSize(); i++)
 			lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array[i])->GetAt(j)));
 		lp--;	// erase \t and replace with \n
 		lp += wsprintf(lp, _T("\n"));
@@ -227,67 +225,67 @@ void CSpikeHistWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_HZTAG:
-		{
+	{
 		// convert pix into data value
-		const auto val = MulDiv(m_ptLast.y-m_yVO, m_yWE, m_yVE)+m_yWO;
-		SetHZtagVal(m_HCtrapped,val);				// change cursor value		
-		point.y = MulDiv(val-m_yWO, m_yVE, m_yWE)+m_yVO;
+		const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
+		SetHZtagVal(m_HCtrapped, val);				// change cursor value
+		point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 		XorHZtag(point.y);
 		CScopeScreen::OnLButtonUp(nFlags, point);
-		PostMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);		
-		}
-		break;
+		PostMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
+	}
+	break;
 
 	case TRACK_VTTAG:
 		// vertical tag was tracked
-		{
+	{
 		// convert pix into data value and back again
-		const auto val = MulDiv(point.x-m_xVO, m_xWE, m_xVE)+m_xWO;
+		const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
 		SetVTtagVal(m_HCtrapped, val);
-		point.x=MulDiv(val-m_xWO, m_xVE, m_xWE)+m_xVO;
+		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CScopeScreen::OnLButtonUp(nFlags, point);
 		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
-		}
-		break;
+	}
+	break;
 
 	case TRACK_RECT:
-		{
-			CScopeScreen::OnLButtonUp(nFlags, point);  // else release mouse
+	{
+		CScopeScreen::OnLButtonUp(nFlags, point);  // else release mouse
 
-			// none: zoom data or offset display
-			CScopeScreen::OnLButtonUp(nFlags, point);
-			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
-			const int jitter = 3;
-			if ((abs(rect_out.Height())< jitter) && (abs(rect_out.Width())< jitter))
-			{
-				if (m_cursorType != CURSOR_ZOOM)
-					PostMyMessage(HINT_HITAREA, NULL);
-				else
-					ZoomIn();
-				break;					// exit: mouse movement was too small
-			}
-		
-			// perform action according to cursor type
-			auto rect_in = m_displayRect;
-			switch (m_cursorType)
-			{			
-			case 0:
-				rect_out = rect_in;
-				rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-				ZoomData(&rect_in, &rect_out);
-				break;
-			case CURSOR_ZOOM: 	// zoom operation
-				ZoomData(&rect_in, &rect_out);
-				m_ZoomFrom = rect_in;
-				m_ZoomTo   = rect_out;					
-				m_iUndoZoom = 1;
-				break;				
-			default:
-				break;
-			}	
+		// none: zoom data or offset display
+		CScopeScreen::OnLButtonUp(nFlags, point);
+		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
+		const int jitter = 3;
+		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
+		{
+			if (m_cursorType != CURSOR_ZOOM)
+				PostMyMessage(HINT_HITAREA, NULL);
+			else
+				ZoomIn();
+			break;					// exit: mouse movement was too small
 		}
-		break;
+
+		// perform action according to cursor type
+		auto rect_in = m_displayRect;
+		switch (m_cursorType)
+		{
+		case 0:
+			rect_out = rect_in;
+			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
+			ZoomData(&rect_in, &rect_out);
+			break;
+		case CURSOR_ZOOM: 	// zoom operation
+			ZoomData(&rect_in, &rect_out);
+			m_ZoomFrom = rect_in;
+			m_ZoomTo = rect_out;
+			m_iUndoZoom = 1;
+			break;
+		default:
+			break;
+		}
+	}
+	break;
 	default:
 		break;
 	}
@@ -298,19 +296,19 @@ void CSpikeHistWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	// compute pixel position of horizontal tags
 	if (GetNHZtags() > 0)
 	{
-		for (auto icur = GetNHZtags()-1; icur>=0; icur--)
-			SetHZtagPix(icur, MulDiv(GetHZtagVal(icur)-m_yWO, m_yVE, m_yWE)+m_yVO);			
+		for (auto icur = GetNHZtags() - 1; icur >= 0; icur--)
+			SetHZtagPix(icur, MulDiv(GetHZtagVal(icur) - m_yWO, m_yVE, m_yWE) + m_yVO);
 	}
 	// compute pixel position of vertical tags
 	if (GetNVTtags() > 0)
 	{
-		for (auto icur = GetNVTtags()-1; icur>=0; icur--)	// loop through all tags
-			SetVTtagPix(icur, MulDiv(GetVTtagVal(icur)-m_xWO, m_xVE, m_xWE)+m_xVO);
-	}	
-	CScopeScreen::OnLButtonDown(nFlags, point);	
-	if (m_currCursorMode!=0 || m_HCtrapped >= 0)// do nothing else if mode != 0
-		return;	 								// or any tag hit (VT, HZ) detected	
-	
+		for (auto icur = GetNVTtags() - 1; icur >= 0; icur--)	// loop through all tags
+			SetVTtagPix(icur, MulDiv(GetVTtagVal(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
+	}
+	CScopeScreen::OnLButtonDown(nFlags, point);
+	if (m_currCursorMode != 0 || m_HCtrapped >= 0)// do nothing else if mode != 0
+		return;	 								// or any tag hit (VT, HZ) detected
+
 	// test if mouse hit one histogram
 	// if hit, then tell parent to select corresp histogram (spike)
 	m_hitspk = DoesCursorHitCurve(point);
@@ -319,7 +317,7 @@ void CSpikeHistWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF;		// flag trackrect
 		ReleaseCursor();				// release cursor capture
-		PostMyMessage(HINT_HITSPIKE, m_hitspk);		
+		PostMyMessage(HINT_HITSPIKE, m_hitspk);
 		return;
 	}
 }
@@ -336,33 +334,33 @@ void CSpikeHistWnd::ZoomData(CRect* rFrom, CRect* rDest)
 {
 	rFrom->NormalizeRect();
 	rDest->NormalizeRect();
-	
-	// change y gain & y offset		
-	const auto y_we = m_yWE;				// save previous window extent
-	m_yWE = MulDiv (m_yWE, rDest->Height(), rFrom->Height());
-	m_yWO = m_yWO
-			-MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
-			+MulDiv(rDest->top - m_yVO, y_we, m_yVE);
 
-	// change index of first and last pt displayed	
+	// change y gain & y offset
+	const auto y_we = m_yWE;				// save previous window extent
+	m_yWE = MulDiv(m_yWE, rDest->Height(), rFrom->Height());
+	m_yWO = m_yWO
+		- MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
+		+ MulDiv(rDest->top - m_yVO, y_we, m_yVE);
+
+	// change index of first and last pt displayed
 	const auto x_we = m_xWE;				// save previous window extent
-	m_xWE = MulDiv (m_xWE, rDest->Width(), rFrom->Width());
+	m_xWE = MulDiv(m_xWE, rDest->Width(), rFrom->Width());
 	m_xWO = m_xWO
-			-MulDiv(rFrom->left - m_xVO, m_xWE, m_xVE)
-			+MulDiv(rDest->left - m_xVO, x_we, m_xVE);
+		- MulDiv(rFrom->left - m_xVO, m_xWE, m_xVE)
+		+ MulDiv(rDest->left - m_xVO, x_we, m_xVE);
 
 	// display
 	Invalidate();
 	PostMyMessage(HINT_CHANGEZOOM, 0);
 }
 
-void CSpikeHistWnd::OnLButtonDblClk(UINT nFlags, CPoint point) 
+void CSpikeHistWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if ( m_hitspk < 0)
+	if (m_hitspk < 0)
 		CScopeScreen::OnLButtonDblClk(nFlags, point);
 	else
 	{
-		GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),reinterpret_cast<LPARAM>(m_hWnd));
+		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 	}
 }
 
@@ -371,9 +369,9 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 	auto hitspk = -1;
 	// convert device coordinates into logical coordinates
 	const auto deltax = MulDiv(3, m_xWE, m_xVE);
-	const auto mouse_x = MulDiv(point.x-m_xVO, m_xWE, m_xVE) + m_xWO;
+	const auto mouse_x = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
 	auto mouse_x1 = mouse_x - deltax;
-	auto mouse_x2 = mouse_x-deltax;
+	auto mouse_x2 = mouse_x - deltax;
 	if (mouse_x1 < 1)
 		mouse_x1 = 1;
 	if (mouse_x1 > m_nbins)
@@ -384,27 +382,27 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 		mouse_x2 = m_nbins;
 
 	const auto deltay = MulDiv(3, m_yWE, m_yVE);
-	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_yVO, m_yWE, m_yVE)) + m_yWO + deltay;	
-	
+	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_yVO, m_yWE, m_yVE)) + m_yWO + deltay;
+
 	// test selected histogram first (foreground)
-	auto ihist =1;
+	auto ihist = 1;
 	CDWordArray* pDW = nullptr;
 	if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECLASSONLY)
 	{
 		// get array corresp to m_selclass as well as histogram index
-		for (auto i=1; i<histogram_ptr_array.GetSize(); i++)
+		for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
 		{
 			if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == m_selclass)
 			{
 				pDW = histogram_ptr_array[i];
 				ihist = i;
 				break;
-			}					
+			}
 		}
 		//
 		if (pDW != nullptr)
-		{ 
-			for (auto i = mouse_x1; i<mouse_x2; i++)
+		{
+			for (auto i = mouse_x1; i < mouse_x2; i++)
 			{
 				const auto iww = pDW->GetAt(i - 1);
 				if (mouse_y <= iww)
@@ -419,20 +417,20 @@ int CSpikeHistWnd::DoesCursorHitCurve(CPoint point)
 	// test other histograms
 	if (m_plotmode != PLOT_ONECLASSONLY && hitspk < 0)
 	{
-		for (auto jhist=1; jhist<histogram_ptr_array.GetSize() && hitspk<0; jhist++)
+		for (auto jhist = 1; jhist < histogram_ptr_array.GetSize() && hitspk < 0; jhist++)
 		{
 			pDW = histogram_ptr_array.GetAt(jhist);
 			if (m_plotmode == PLOT_ONECLASS && static_cast<int>(pDW->GetAt(0)) == m_selclass)
-				continue;			
-			for (auto i=mouse_x1; i<=mouse_x2; i++)
+				continue;
+			for (auto i = mouse_x1; i <= mouse_x2; i++)
 			{
-				const auto iww = pDW->GetAt(i-1);
+				const auto iww = pDW->GetAt(i - 1);
 				if (mouse_y <= iww)
-				{			
+				{
 					hitspk = jhist;
 					break;
 				}
-			}			
+			}
 		}
 	}
 	return hitspk;
@@ -442,15 +440,15 @@ void CSpikeHistWnd::GetExtents()
 {
 	if (m_yWE == 1) // && m_yWO == 0)
 	{
-		if (m_lmax==0)
-			GetHistogLimits(0);		
+		if (m_lmax == 0)
+			GetHistogLimits(0);
 		m_yWE = static_cast<int>(m_lmax);
 		m_yWO = 0;
 	}
 
 	if (m_xWE == 1) // && m_xWO == 0)
 	{
-		m_xWE = m_abcissamaxval-m_abcissaminval+1;
+		m_xWE = m_abcissamaxval - m_abcissaminval + 1;
 		m_xWO = m_abcissaminval;
 	}
 }
@@ -473,51 +471,51 @@ void CSpikeHistWnd::GetHistogLimits(int ihist)
 	// à zéro. Au dela de max toute les cases du tableau sont à zéro.
 
 	m_ifirst = 1;		// search first interval with data
-	while( m_ifirst <=m_nbins && p_dw->GetAt(m_ifirst) == 0)
-		m_ifirst++;		
+	while (m_ifirst <= m_nbins && p_dw->GetAt(m_ifirst) == 0)
+		m_ifirst++;
 
 	m_ilast = m_nbins;	// search last interval with data
-	while( p_dw->GetAt(m_ilast) == 0 && m_ilast > m_ifirst)
-		m_ilast--;		
+	while (p_dw->GetAt(m_ilast) == 0 && m_ilast > m_ifirst)
+		m_ilast--;
 
 	// Récuperation de l'indice du maximum
 	m_imax = m_ifirst;          // index first pt
-	m_lmax=0;					// max	
-	for (auto i=m_ifirst; i<=m_ilast; i++)
+	m_lmax = 0;					// max
+	for (auto i = m_ifirst; i <= m_ilast; i++)
 	{
 		const auto dwitem = p_dw->GetAt(i);
-		if ( dwitem > m_lmax)
+		if (dwitem > m_lmax)
 		{
 			m_imax = i;
 			m_lmax = p_dw->GetAt(i);
 		}
 	}
 }
-	
+
 void CSpikeHistWnd::ReSize_And_Clear_Histograms(int nbins, int max, int min)
 {
-	m_binsize = (max-min+1)/nbins+1;		// set bin size
+	m_binsize = (max - min + 1) / nbins + 1;		// set bin size
 	m_abcissaminval = min;					// set min
-	m_abcissamaxval = min+nbins*m_binsize;	// set max
-	
+	m_abcissamaxval = min + nbins * m_binsize;	// set max
+
 	m_nbins = nbins;
-	for (auto j=histogram_ptr_array.GetUpperBound(); j>= 0; j--)
+	for (auto j = histogram_ptr_array.GetUpperBound(); j >= 0; j--)
 	{
 		auto p_dw = histogram_ptr_array[j];
-		p_dw->SetSize(nbins+1);
+		p_dw->SetSize(nbins + 1);
 		// erase all data from histogram
-		for (auto i=1; i<= nbins; i++)
+		for (auto i = 1; i <= nbins; i++)
 			p_dw->SetAt(i, 0);
 	}
 }
 
-void CSpikeHistWnd::OnSize(UINT nType, int cx, int cy) 
+void CSpikeHistWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CScopeScreen::OnSize(nType, cx, cy);
-	m_yVO=cy;
+	m_yVO = cy;
 }
 
-CDWordArray* CSpikeHistWnd::InitClassArray(int nbins, int spike_class) 
+CDWordArray* CSpikeHistWnd::InitClassArray(int nbins, int spike_class)
 {
 	CDWordArray* p_dw = new (CDWordArray);	// init array
 	ASSERT(p_dw != NULL);
@@ -549,7 +547,7 @@ void CSpikeHistWnd::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first,
 
 	if (nbins != m_nbins || p_dword_array->GetSize() != (nbins + 1))
 		ReSize_And_Clear_Histograms(nbins, max, min);
-	
+
 	CDWordArray* p_dw = nullptr;
 	auto nspikes = p_spk_list->GetTotalSpikes();
 	for (auto ispk = 0; ispk < nspikes; ispk++)
@@ -574,7 +572,7 @@ void CSpikeHistWnd::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first,
 		GetClassArray(spike_class, p_dw);
 		if (p_dw == nullptr)
 			p_dw = InitClassArray(nbins, spike_class);
-		
+
 		if (p_dw != nullptr)
 		{
 			dw_data = p_dw->GetAt(index) + 1;
@@ -598,7 +596,7 @@ void CSpikeHistWnd::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first,
 void CSpikeHistWnd::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
 {
 	// erase data and arrays if bnew:
-	if (bNew) 
+	if (bNew)
 	{
 		RemoveHistData();
 		bNew = false;
@@ -613,10 +611,10 @@ void CSpikeHistWnd::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles, lon
 		file_last = p_doc->DBGetNRecords() - 1;
 		ncurrentfile = p_doc->DBGetCurrentRecordPosition();
 	}
-	
+
 	for (auto ifile = file_first; ifile <= file_last; ifile++)
 	{
-		if(ballFiles)
+		if (ballFiles)
 		{
 			p_doc->DBSetCurrentRecordPosition(ifile);
 			p_doc->OpenCurrentSpikeFile();
@@ -625,7 +623,7 @@ void CSpikeHistWnd::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles, lon
 		if (p_spikelist != nullptr && p_spikelist->GetTotalSpikes() > 0)
 			BuildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
 	}
-	
+
 	if (ballFiles)
 	{
 		p_doc->DBSetCurrentRecordPosition(ncurrentfile);

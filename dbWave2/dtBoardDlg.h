@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "./include/DataTranslation/OLDAAPI.H"
 #include "./include/DataTranslation/OLTYPES.H"
 #include "./include/DataTranslation/OLERRORS.H"
@@ -15,13 +14,13 @@ class CDataTranslationBoardDlg : public CDialog
 public:
 	CDataTranslationBoardDlg(CWnd* pParent = nullptr);
 	virtual ~CDataTranslationBoardDlg();
-	enum {IDD= IDD_DTBOARD_DLG};
+	enum { IDD = IDD_DTBOARD_DLG };
 
-	CDTAcq32*	m_pAnalogIN;
+	CDTAcq32* m_pAnalogIN;
 	short		m_subssystemIN;
 	short		m_subsystemelementIN;
-	CDTAcq32*	m_pAnalogOUT;
-	CDTAcq32*	m_pDTAcq32;
+	CDTAcq32* m_pAnalogOUT;
+	CDTAcq32* m_pDTAcq32;
 
 private:
 	UINT		m_atodCount;
@@ -48,6 +47,4 @@ public:
 	CListBox	m_listBoardCaps;
 	CListBox	m_listSSNumCaps;
 	CListBox	m_listSSYNCaps;
-	
 };
-

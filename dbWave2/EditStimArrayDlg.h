@@ -14,27 +14,27 @@ public:
 	// data passed by caller
 	CArray < CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
 	float				m_rate;
-	CIntervalsAndLevels*	m_pstimsaved;
+	CIntervalsAndLevels* m_pstimsaved;
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
 
 protected:
 	CIntervalsAndLevels* m_pstim;
 
 	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	CImageList*		m_pimagelist;
+	CImageList* m_pimagelist;
 	CStretchControl m_stretch;
 	BOOL			m_binit;
 	CEdit			m_csEdit;		// IDC_EDIT1
 	float			m_value;		// IDC_EDIT1
 	int				m_iItem;
-	CListCtrl		m_stimarrayCtrl;// IDC_LISTSTIM	
+	CListCtrl		m_stimarrayCtrl;// IDC_LISTSTIM
 
 	void			SelectItem(int i);
 	void			ResetListOrder();
 	void			TransferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
-	
+
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();

@@ -19,10 +19,10 @@ IMPLEMENT_DYNAMIC(CdbEditFieldDlg, CDialogEx)
 
 CdbEditFieldDlg::CdbEditFieldDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CdbEditFieldDlg::IDD, pParent)
-	  , m_destID(0), m_csfieldvalue(_T(""))
-	  , m_cstextsearch(_T(""))
-	  , m_cstextreplacewith(_T("")), m_pMainTable(nullptr), m_pIndexTable(nullptr), m_pliIDArray(nullptr),
-	  m_pdbDoc(nullptr)
+	, m_destID(0), m_csfieldvalue(_T(""))
+	, m_cstextsearch(_T(""))
+	, m_cstextreplacewith(_T("")), m_pMainTable(nullptr), m_pIndexTable(nullptr), m_pliIDArray(nullptr),
+	m_pdbDoc(nullptr)
 {
 	m_sourceselect = REC_CURRENT;
 	m_sourcecondition = COND_EQU;
@@ -57,7 +57,7 @@ BEGIN_MESSAGE_MAP(CdbEditFieldDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO4, &CdbEditFieldDlg::OnBnClickedRadio4)
 	ON_BN_CLICKED(IDC_RADIO5, &CdbEditFieldDlg::OnBnClickedRadio5)
 	ON_BN_CLICKED(IDC_RADIO6, &CdbEditFieldDlg::OnBnClickedRadio6)
-	ON_BN_CLICKED(IDC_BUTTON1,&CdbEditFieldDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON1, &CdbEditFieldDlg::OnBnClickedButton1)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDOK, &CdbEditFieldDlg::OnBnClickedOk)
 	ON_CBN_SELCHANGE(IDC_COMBO3, &CdbEditFieldDlg::OnCbnSelchangeCombo3)
@@ -72,13 +72,13 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 	// disable items not used here and enable only numeric input into edit boxes
 	if (m_pIndexTable == nullptr)
 		m_bIndexTable = FALSE;
-	else 
+	else
 		m_bIndexTable = TRUE;
 	if (!m_bIndexTable)
 	{
-		((CEdit*) GetDlgItem(IDC_EDIT1))->ModifyStyle(NULL, ES_NUMBER);
-		((CEdit*) GetDlgItem(IDC_EDIT2))->ModifyStyle(NULL, ES_NUMBER);
-		((CEdit*) GetDlgItem(IDC_EDIT3))->ModifyStyle(NULL, ES_NUMBER);
+		((CEdit*)GetDlgItem(IDC_EDIT1))->ModifyStyle(NULL, ES_NUMBER);
+		((CEdit*)GetDlgItem(IDC_EDIT2))->ModifyStyle(NULL, ES_NUMBER);
+		((CEdit*)GetDlgItem(IDC_EDIT3))->ModifyStyle(NULL, ES_NUMBER);
 		GetDlgItem(IDC_CHECKCASESENSITIV)->EnableWindow(FALSE);
 		GetDlgItem(IDC_BUTTON1)->EnableWindow(FALSE);
 		GetDlgItem(IDC_RADIO2)->EnableWindow(FALSE);
@@ -87,8 +87,8 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 	}
 
 	// Add extra initialization here
-	((CButton*) GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
-	((CButton*) GetDlgItem(IDC_RADIO4))->SetCheck(BST_CHECKED);
+	((CButton*)GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
+	((CButton*)GetDlgItem(IDC_RADIO4))->SetCheck(BST_CHECKED);
 	DisplayElements();
 
 	// fill source type
@@ -103,7 +103,7 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 		if (m_bIndexTable)
 			m_csfieldvalue = m_pIndexTable->GetStringFromID(var_value.lVal);
 		else
-			m_csfieldvalue.Format( _T("%i"), var_value.lVal);
+			m_csfieldvalue.Format(_T("%i"), var_value.lVal);
 	}
 	else
 		m_csfieldvalue.Empty(); // = _T("undefined");
@@ -112,11 +112,11 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 	m_codictionary.ResetContent();
 	if (m_bIndexTable)
 	{
-		if (m_pIndexTable->IsOpen() && !m_pIndexTable->IsBOF()) 
+		if (m_pIndexTable->IsOpen() && !m_pIndexTable->IsBOF())
 		{
 			COleVariant var_value0, var_value1;
 			m_pIndexTable->MoveFirst();
-			while(!m_pIndexTable->IsEOF()) 
+			while (!m_pIndexTable->IsEOF())
 			{
 				m_pIndexTable->GetFieldValue(0, var_value0);
 				m_pIndexTable->GetFieldValue(1, var_value1);
@@ -140,7 +140,7 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 			if (j == CB_ERR)
 			{
 				const auto k = m_codictionary.InsertString(i, cs);
-				ASSERT( k != CB_ERR);;
+				ASSERT(k != CB_ERR);;
 				m_codictionary.SetItemData(k, uc_id);
 			}
 		}
@@ -158,14 +158,14 @@ BOOL CdbEditFieldDlg::OnInitDialog()
 
 void CdbEditFieldDlg::DisplayElements()
 {
-	GetDlgItem(IDC_EDIT1)->EnableWindow(m_sourcecondition==COND_EQU);
-	GetDlgItem(IDC_EDIT2)->EnableWindow(m_sourcecondition==COND_SEARCH);
-	GetDlgItem(IDC_CHECKCASESENSITIV)->EnableWindow(m_sourcecondition==COND_SEARCH);
+	GetDlgItem(IDC_EDIT1)->EnableWindow(m_sourcecondition == COND_EQU);
+	GetDlgItem(IDC_EDIT2)->EnableWindow(m_sourcecondition == COND_SEARCH);
+	GetDlgItem(IDC_CHECKCASESENSITIV)->EnableWindow(m_sourcecondition == COND_SEARCH);
 
-	GetDlgItem(IDC_COMBO1)->EnableWindow(m_destaction==CHGE_ID);
+	GetDlgItem(IDC_COMBO1)->EnableWindow(m_destaction == CHGE_ID);
 	//if (m_bIndexTable)
-	GetDlgItem(IDC_BUTTON1)->EnableWindow(m_destaction==CHGE_ID);
-	GetDlgItem(IDC_EDIT3)->EnableWindow(m_destaction==CHGE_TXT);
+	GetDlgItem(IDC_BUTTON1)->EnableWindow(m_destaction == CHGE_ID);
+	GetDlgItem(IDC_EDIT3)->EnableWindow(m_destaction == CHGE_TXT);
 }
 
 void CdbEditFieldDlg::OnCbnSelchangeCombo3()
@@ -175,32 +175,32 @@ void CdbEditFieldDlg::OnCbnSelchangeCombo3()
 }
 void CdbEditFieldDlg::OnBnClickedRadio1()
 {
-	m_sourcecondition=COND_EQU;
+	m_sourcecondition = COND_EQU;
 	DisplayElements();
 }
 void CdbEditFieldDlg::OnBnClickedRadio2()
 {
-	m_sourcecondition=COND_SEARCH;
+	m_sourcecondition = COND_SEARCH;
 	DisplayElements();
 }
 void CdbEditFieldDlg::OnBnClickedRadio3()
 {
-	m_sourcecondition=COND_NONE;
+	m_sourcecondition = COND_NONE;
 	DisplayElements();
 }
 void CdbEditFieldDlg::OnBnClickedRadio4()
 {
-	m_destaction=CHGE_ID;
+	m_destaction = CHGE_ID;
 	DisplayElements();
 }
 void CdbEditFieldDlg::OnBnClickedRadio5()
 {
-	m_destaction=CHGE_TXT;
+	m_destaction = CHGE_TXT;
 	DisplayElements();
 }
 void CdbEditFieldDlg::OnBnClickedRadio6()
 {
-	m_destaction=CHGE_CLEAR;
+	m_destaction = CHGE_CLEAR;
 	DisplayElements();
 }
 
@@ -213,7 +213,7 @@ void CdbEditFieldDlg::OnBnClickedButton1()
 	{
 		m_codictionary.ResetContent();
 		const auto nitems = dlg.m_csArray.GetCount();
-		for (auto i=0; i< nitems; i++)
+		for (auto i = 0; i < nitems; i++)
 		{
 			auto cs = dlg.m_csArray.GetAt(i);
 			m_codictionary.AddString(cs);
@@ -244,7 +244,7 @@ void CdbEditFieldDlg::OnBnClickedOk()
 			ASSERT(m_pIndexTable->GetIDFromString(cs, m_destID));
 		}
 		if (m_sourcecondition == COND_SEARCH && !m_bCaseSensitive)
-			m_cstextsearch.MakeLower();			// change case of search string if case-sensitive is not checked		
+			m_cstextsearch.MakeLower();			// change case of search string if case-sensitive is not checked
 	}
 	// numeric field only - value in the main table
 	else
@@ -296,8 +296,8 @@ void CdbEditFieldDlg::ModifySelected()
 
 	const auto u_selected_count = m_pdbDoc->m_selectedRecords.GetSize();
 	ASSERT(u_selected_count > 0);
-	
-	for (auto i =0; i< u_selected_count; i++)
+
+	for (auto i = 0; i < u_selected_count; i++)
 	{
 		const long n_item = m_pdbDoc->m_selectedRecords.GetAt(i);
 		m_pMainTable->SetAbsolutePosition(n_item);
@@ -314,7 +314,7 @@ void CdbEditFieldDlg::ModifyAll()
 
 	const auto bookmark_current = m_pMainTable->GetBookmark();
 	m_pMainTable->MoveFirst();
-	while(!m_pMainTable->IsEOF()) 
+	while (!m_pMainTable->IsEOF())
 	{
 		ModifyCurrent();
 		m_pMainTable->MoveNext();
@@ -336,9 +336,9 @@ void CdbEditFieldDlg::ModifyCurrent()
 	// reject record?  if condition "==" : reject if iID != IDscope
 	switch (m_sourcecondition)
 	{
-	case COND_EQU: 
+	case COND_EQU:
 		if (id_current != m_initialID)	//&& bValid)
-			return;			// exit if current record is already correct or if record is not valid 
+			return;			// exit if current record is already correct or if record is not valid
 		break;
 	case COND_SEARCH:
 		if (!m_bIndexTable)
@@ -364,10 +364,10 @@ void CdbEditFieldDlg::ModifyCurrent()
 	case CHGE_ID:				// change ID
 		m_pMainTable->SetLongValue(m_destID, m_csColName);
 		break;
-	case CHGE_CLEAR:			// erase iID 
+	case CHGE_CLEAR:			// erase iID
 		m_pMainTable->SetValueNull(m_csColName);
 		break;
-	// replace text within current record with new text
+		// replace text within current record with new text
 	case CHGE_TXT:
 		// indexed value
 		if (m_bIndexTable)
@@ -393,4 +393,3 @@ void CdbEditFieldDlg::ModifyCurrent()
 		break;
 	}
 }
-

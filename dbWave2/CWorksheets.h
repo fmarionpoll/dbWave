@@ -10,7 +10,7 @@
 class CWorksheets : public COleDispatchDriver
 {
 public:
-	CWorksheets(){} // Calls COleDispatchDriver default constructor
+	CWorksheets() {} // Calls COleDispatchDriver default constructor
 	CWorksheets(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CWorksheets(const CWorksheets& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -19,7 +19,6 @@ public:
 
 	// Operations
 public:
-
 
 	// Worksheets methods
 public:
@@ -44,13 +43,13 @@ public:
 	LPDISPATCH Add(VARIANT& Before, VARIANT& After, VARIANT& Count, VARIANT& Type)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0xb5, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, &Before, &After, &Count, &Type);
 		return result;
 	}
 	void Copy(VARIANT& Before, VARIANT& After)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x227, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Before, &After);
 	}
 	long get_Count()
@@ -65,19 +64,19 @@ public:
 	}
 	void FillAcrossSheets(LPDISPATCH Range, long Type)
 	{
-		static BYTE parms[] = VTS_DISPATCH VTS_I4 ;
+		static BYTE parms[] = VTS_DISPATCH VTS_I4;
 		InvokeHelper(0x1d5, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Range, Type);
 	}
 	LPDISPATCH get_Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	void Move(VARIANT& Before, VARIANT& After)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x27d, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Before, &After);
 	}
 	LPUNKNOWN get__NewEnum()
@@ -88,17 +87,17 @@ public:
 	}
 	void __PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x389, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate);
 	}
 	void PrintPreview(VARIANT& EnableChanges)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x119, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &EnableChanges);
 	}
 	void Select(VARIANT& Replace)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xeb, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &Replace);
 	}
 	LPDISPATCH get_HPageBreaks()
@@ -121,28 +120,27 @@ public:
 	}
 	void put_Visible(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x22e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH get__Default(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	void _PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x6ec, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate, &PrToFileName);
 	}
 	void PrintOut(VARIANT& From, VARIANT& To, VARIANT& Copies, VARIANT& Preview, VARIANT& ActivePrinter, VARIANT& PrintToFile, VARIANT& Collate, VARIANT& PrToFileName, VARIANT& IgnorePrintAreas)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x939, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &From, &To, &Copies, &Preview, &ActivePrinter, &PrintToFile, &Collate, &PrToFileName, &IgnorePrintAreas);
 	}
 
 	// Worksheets properties
 public:
-
 };

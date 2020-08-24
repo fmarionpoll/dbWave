@@ -4,7 +4,6 @@
 #include "Lineview.h"
 #include "Editctrl.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CMeasureResultsPage dialog
 
@@ -12,20 +11,20 @@ class CMeasureResultsPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CMeasureResultsPage)
 
-// Construction
+	// Construction
 public:
 	CMeasureResultsPage();
 	~CMeasureResultsPage();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_PROPPAGE4 };
 	CEdit	m_CEditResults;
 	CListCtrl m_listResults;
 
 	// input parameters
-	CLineViewWnd*			m_plineview;
-	CdbWaveDoc* 			m_pdbDoc;	
-	CAcqDataDoc* 			m_pdatDoc{};	
+	CLineViewWnd* m_plineview;
+	CdbWaveDoc* m_pdbDoc;
+	CAcqDataDoc* m_pdatDoc{};
 	OPTIONS_VIEWDATAMEASURE* m_pMO{};
 	int	m_currentchan{};
 
@@ -37,7 +36,7 @@ protected:
 	void  MeasureFromRect(int ichan);
 	void  MeasureFromStim(int ichan);
 	void  OutputTitle();
-	//LPSTR OutputFileName(LPSTR lpCopy);	
+	//LPSTR OutputFileName(LPSTR lpCopy);
 
 	void  MeasureWithinInterval(int ichan, int line, long l1, long l2);
 	void  MeasureBetweenHZ(int ichan, int line, int v1, int v2);
@@ -54,11 +53,11 @@ protected:
 	int		m_col{};
 	CString	m_csTitle;
 
-// Overrides
-	public:
+	// Overrides
+public:
 	virtual void OnOK();
 	virtual BOOL OnSetActive();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation

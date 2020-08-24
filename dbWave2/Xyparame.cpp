@@ -50,14 +50,14 @@ BOOL XYParametersDlg::OnInitDialog()
 	if (!m_xparam)	// x parameters are not valid
 	{
 		GetDlgItem(IDC_XZERO)->EnableWindow(FALSE);
-		GetDlgItem(IDC_XEXTENT)->EnableWindow(FALSE);		
+		GetDlgItem(IDC_XEXTENT)->EnableWindow(FALSE);
 		GetDlgItem(IDC_YZERO)->SetFocus();
 	}
 	if (!m_yparam)
 	{
 		GetDlgItem(IDC_YZERO)->EnableWindow(FALSE);
-		GetDlgItem(IDC_YEXTENT)->EnableWindow(FALSE);		
-		GetDlgItem(IDC_XZERO)->SetFocus();		
+		GetDlgItem(IDC_YEXTENT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_XZERO)->SetFocus();
 	}
 	// subclass edit controls
 	VERIFY(mm_xextent.SubclassDlgItem(IDC_XEXTENT, this));
@@ -69,22 +69,22 @@ BOOL XYParametersDlg::OnInitDialog()
 	//return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void XYParametersDlg::OnEnChangeXextent() 
+void XYParametersDlg::OnEnChangeXextent()
 {
 	// TODO: Add your control notification handler code here
 }
 
-void XYParametersDlg::OnEnChangeXzero() 
+void XYParametersDlg::OnEnChangeXzero()
 {
 	// TODO: Add your control notification handler code here
 }
 
-void XYParametersDlg::OnEnChangeYextent() 
+void XYParametersDlg::OnEnChangeYextent()
 {
 	// TODO: Add your control notification handler code here
 }
 
-void XYParametersDlg::OnEnChangeYzero() 
+void XYParametersDlg::OnEnChangeYzero()
 {
 	// TODO: Add your control notification handler code here
 }

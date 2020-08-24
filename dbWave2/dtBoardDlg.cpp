@@ -11,7 +11,7 @@ IMPLEMENT_DYNAMIC(CDataTranslationBoardDlg, CDialog)
 
 CDataTranslationBoardDlg::CDataTranslationBoardDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CDataTranslationBoardDlg::IDD, pParent), m_subssystemIN(0), m_subsystemelementIN(0), m_atodCount(0),
-	  m_dtoaCount(0)
+	m_dtoaCount(0)
 {
 	m_pDTAcq32 = nullptr;
 	m_pAnalogIN = nullptr;
@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 BOOL CDataTranslationBoardDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_subssystemIN			= m_pAnalogIN->GetSubSysType();
+	m_subssystemIN = m_pAnalogIN->GetSubSysType();
 
 	m_pDTAcq32 = m_pAnalogIN;
 	FindDTOpenLayersBoards();
@@ -68,12 +68,11 @@ BOOL CDataTranslationBoardDlg::FindDTOpenLayersBoards()
 	return flag;
 }
 
-
 void CDataTranslationBoardDlg::OnSelchangeBoard()
 {
 	const auto isel = m_cbBoard.GetCurSel();
 	m_cbBoard.GetLBText(isel, m_boardName);
-	m_nsubsystems = GetBoardCapabilities(); 
+	m_nsubsystems = GetBoardCapabilities();
 }
 
 #define SS_LIST_SIZE 6
@@ -84,13 +83,13 @@ void CDataTranslationBoardDlg::OnSelchangeBoard()
 int CDataTranslationBoardDlg::GetBoardCapabilities()
 {
 	int nsubsystems = 0;
-	
+
 	try {
 		m_pDTAcq32->SetBoard(m_boardName);
 		m_listBoardCaps.ResetContent();
 
 		nsubsystems = m_pDTAcq32->GetNumSubSystems();
-		
+
 		CString subsystem_text[SS_LIST_SIZE] = SS_TEXT;
 		int ss_list[SS_LIST_SIZE] = SS_LIST;
 
@@ -107,7 +106,7 @@ int CDataTranslationBoardDlg::GetBoardCapabilities()
 	catch (COleDispatchException* e)
 	{
 		CString my_error;
-		my_error.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError)); 
+		my_error.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError));
 		my_error += e->m_strDescription;
 		AfxMessageBox(my_error);
 		e->Delete();
@@ -116,12 +115,11 @@ int CDataTranslationBoardDlg::GetBoardCapabilities()
 	return nsubsystems;
 }
 
-
 void CDataTranslationBoardDlg::ChangeSubsystem(int index)
 {
 	int ss_codes[SS_LIST_SIZE] = SS_CODES;
 	const DWORD ss_info = ss_codes[index];
-	const int numitems= m_listBoardCaps.GetItemData(index);
+	const int numitems = m_listBoardCaps.GetItemData(index);
 	const auto ol_ss = (ss_info & 0xffff);
 	//UINT ui_element = (ss_info >> 16) & 0xff;
 	if (numitems > 0 && static_cast<unsigned long>(m_pDTAcq32->GetSubSysType()) != ol_ss) {
@@ -136,7 +134,7 @@ void CDataTranslationBoardDlg::ChangeSubsystem(int index)
 		catch (COleDispatchException* e)
 		{
 			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError)); 
+			myError.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError));
 			myError += e->m_strDescription;
 			AfxMessageBox(myError);
 			e->Delete();

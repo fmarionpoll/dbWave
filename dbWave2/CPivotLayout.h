@@ -8,7 +8,7 @@
 class CPivotLayout : public COleDispatchDriver
 {
 public:
-	CPivotLayout(){} // Calls COleDispatchDriver default constructor
+	CPivotLayout() {} // Calls COleDispatchDriver default constructor
 	CPivotLayout(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotLayout(const CPivotLayout& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotLayout methods
 public:
@@ -42,49 +41,49 @@ public:
 	LPDISPATCH get_ColumnFields(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2c9, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	LPDISPATCH get_DataFields(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2cb, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	LPDISPATCH get_PageFields(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2ca, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	LPDISPATCH get_RowFields(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2c8, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	LPDISPATCH get_HiddenFields(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2c7, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	LPDISPATCH get_VisibleFields(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2c6, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	LPDISPATCH get_PivotFields(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2ce, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -114,16 +113,15 @@ public:
 	}
 	void put_InnerDetail(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x2ba, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void AddFields(VARIANT& RowFields, VARIANT& ColumnFields, VARIANT& PageFields, VARIANT& AppendField)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x2c4, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, &RowFields, &ColumnFields, &PageFields, &AppendField);
 	}
 
 	// PivotLayout properties
 public:
-
 };

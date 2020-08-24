@@ -22,7 +22,7 @@ IMPLEMENT_DYNCREATE(CMeasureOptionsPage, CPropertyPage)
 // CMeasureOptionsPage property page
 
 CMeasureOptionsPage::CMeasureOptionsPage() : CPropertyPage(CMeasureOptionsPage::IDD), m_wSourcechan(0), m_pMO(nullptr),
-                                             m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_plineview(nullptr)
+m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_plineview(nullptr)
 {
 	m_bExtrema = FALSE;
 	m_bDiffExtrema = FALSE;
@@ -82,17 +82,17 @@ void CMeasureOptionsPage::ShowChanParm(const BOOL b_show)
 	GetDlgItem(IDC_SOURCECHANNEL)->EnableWindow(b_show);
 }
 
-void CMeasureOptionsPage::OnAllchannels() 
+void CMeasureOptionsPage::OnAllchannels()
 {
 	ShowChanParm(FALSE);
 }
 
-void CMeasureOptionsPage::OnSinglechannel() 
+void CMeasureOptionsPage::OnSinglechannel()
 {
 	ShowChanParm(TRUE);
 }
 
-void CMeasureOptionsPage::OnVerticaltags() 
+void CMeasureOptionsPage::OnVerticaltags()
 {
 	m_plineview->DelAllHZtags();
 	m_plineview->SetVTtagList(m_pdatDoc->GetpVTtags());
@@ -100,7 +100,7 @@ void CMeasureOptionsPage::OnVerticaltags()
 	ShowLimitsParms(FALSE);
 }
 
-void CMeasureOptionsPage::OnHorizontaltags() 
+void CMeasureOptionsPage::OnHorizontaltags()
 {
 	m_plineview->DelAllVTtags();
 	m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
@@ -108,7 +108,7 @@ void CMeasureOptionsPage::OnHorizontaltags()
 	ShowLimitsParms(FALSE);
 }
 
-void CMeasureOptionsPage::OnStimulustag() 
+void CMeasureOptionsPage::OnStimulustag()
 {
 	ShowLimitsParms(TRUE);
 }
@@ -116,18 +116,18 @@ void CMeasureOptionsPage::OnStimulustag()
 // save options
 void CMeasureOptionsPage::SaveOptions()
 {
-	m_pMO->bExtrema= m_bExtrema;
-	m_pMO->bDiffExtrema= m_bDiffExtrema;
-	m_pMO->bDiffDatalimits= m_bDiffDatalimits;
-	m_pMO->bHalfrisetime= m_bHalfrisetime;
-	m_pMO->bHalfrecovery= m_bHalfrecovery;
-	m_pMO->bDatalimits= m_bDatalimits;
-	m_pMO->wSourceChan= m_uiSourceChan;
-	m_pMO->wStimulusthresh= m_uiStimulusThreshold;
-	m_pMO->wStimuluschan= m_uiStimuluschan;
-	m_pMO->fStimulusoffset =m_fStimulusoffset;
-	m_pMO->bAllFiles=m_bAllFiles;
-	m_pMO->btime=((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_pMO->bExtrema = m_bExtrema;
+	m_pMO->bDiffExtrema = m_bDiffExtrema;
+	m_pMO->bDiffDatalimits = m_bDiffDatalimits;
+	m_pMO->bHalfrisetime = m_bHalfrisetime;
+	m_pMO->bHalfrecovery = m_bHalfrecovery;
+	m_pMO->bDatalimits = m_bDatalimits;
+	m_pMO->wSourceChan = m_uiSourceChan;
+	m_pMO->wStimulusthresh = m_uiStimulusThreshold;
+	m_pMO->wStimuluschan = m_uiStimuluschan;
+	m_pMO->fStimulusoffset = m_fStimulusoffset;
+	m_pMO->bAllFiles = m_bAllFiles;
+	m_pMO->btime = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
 
 	auto i_id = GetCheckedRadioButton(IDC_VERTICALTAGS, IDC_STIMULUSTAG);
 	switch (i_id)
@@ -146,42 +146,42 @@ void CMeasureOptionsPage::SaveOptions()
 	case IDC_STIMULUSTAG:		i_id = 3; break;
 	default:					i_id = 2; break;
 	}
-	m_pMO->wOption = i_id;	
+	m_pMO->wOption = i_id;
 	m_pMO->bAllChannels = ((CButton*)GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
-	m_pMO->bChanged=TRUE;
+	m_pMO->bChanged = TRUE;
 }
 
-BOOL CMeasureOptionsPage::OnKillActive() 
+BOOL CMeasureOptionsPage::OnKillActive()
 {
 	UpdateData(TRUE);
 	SaveOptions();
 	return CPropertyPage::OnKillActive();
 }
 
-void CMeasureOptionsPage::OnOK() 
+void CMeasureOptionsPage::OnOK()
 {
 	UpdateData(TRUE);
 	SaveOptions();
 	CPropertyPage::OnOK();
 }
 
-BOOL CMeasureOptionsPage::OnInitDialog() 
+BOOL CMeasureOptionsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
-	m_bExtrema =m_pMO->bExtrema;
-	m_bDiffExtrema =m_pMO->bDiffExtrema;
+
+	m_bExtrema = m_pMO->bExtrema;
+	m_bDiffExtrema = m_pMO->bDiffExtrema;
 	m_bDiffDatalimits = m_pMO->bDiffDatalimits;
-	m_bHalfrisetime =m_pMO->bHalfrisetime;
-	m_bHalfrecovery =m_pMO->bHalfrecovery;
-	m_bDatalimits =m_pMO->bDatalimits;
-	m_uiSourceChan =m_pMO->wSourceChan;
-	m_uiStimulusThreshold =m_pMO->wStimulusthresh;
-	m_uiStimuluschan =m_pMO->wStimuluschan;
-	m_fStimulusoffset =m_pMO->fStimulusoffset;
-	m_bAllFiles =m_pMO->bAllFiles;
+	m_bHalfrisetime = m_pMO->bHalfrisetime;
+	m_bHalfrecovery = m_pMO->bHalfrecovery;
+	m_bDatalimits = m_pMO->bDatalimits;
+	m_uiSourceChan = m_pMO->wSourceChan;
+	m_uiStimulusThreshold = m_pMO->wStimulusthresh;
+	m_uiStimuluschan = m_pMO->wStimuluschan;
+	m_fStimulusoffset = m_pMO->fStimulusoffset;
+	m_bAllFiles = m_pMO->bAllFiles;
 	int i_id;
-	auto flag = FALSE;	
+	auto flag = FALSE;
 	switch (m_pMO->wOption)
 	{
 	case 0:		i_id = IDC_VERTICALTAGS; break;
@@ -196,18 +196,18 @@ BOOL CMeasureOptionsPage::OnInitDialog()
 	flag = FALSE;
 	if (!m_pMO->bAllChannels)
 	{
-		i_id1=IDC_SINGLECHANNEL;
-		flag =TRUE;
+		i_id1 = IDC_SINGLECHANNEL;
+		flag = TRUE;
 	}
 	ShowChanParm(flag);
 
 	CheckRadioButton(IDC_ALLCHANNELS, IDC_SINGLECHANNEL, i_id1);
 	CheckRadioButton(IDC_VERTICALTAGS, IDC_STIMULUSTAG, i_id);
-	
+
 	GetDlgItem(IDC_CHECKRISETIME)->EnableWindow(FALSE);
 	GetDlgItem(IDC_CHECKRECOVERYTIME)->EnableWindow(FALSE);
-	((CButton*) GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->btime);
-	
+	((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->btime);
+
 	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control

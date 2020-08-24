@@ -11,13 +11,13 @@ class CTemplateListWnd : public CListCtrl
 {
 	DECLARE_SERIAL(CTemplateListWnd)
 
-// Construction
+	// Construction
 public:
 	CTemplateListWnd();
 	CTemplateListWnd& operator = (const CTemplateListWnd& arg);	// operator redefinition
 	void Serialize(CArchive& ar) override;
 
-// Attributes
+	// Attributes
 public:
 	int		InsertTemplate(int i, int classID);
 	int		InsertTemplateData(int i, int classID);
@@ -26,8 +26,8 @@ public:
 	BOOL	DeleteItem(int i);
 	void	SortTemplatesByClass(BOOL bUp);
 	void	SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClasses, int minclassnb);
-	inline	CTemplateWnd* GetTemplateWnd(int i) const {return templatewnd_ptr_array.GetAt(i);}
-	int		GetTemplateDataSize() const {return templatewnd_ptr_array.GetSize();}
+	inline	CTemplateWnd* GetTemplateWnd(int i) const { return templatewnd_ptr_array.GetAt(i); }
+	int		GetTemplateDataSize() const { return templatewnd_ptr_array.GetSize(); }
 
 	double	m_globalstd;
 	double	m_globaldist;
@@ -42,13 +42,13 @@ public:
 
 	void	SetTemplateLength(int spklen, int tpleft, int tpright);
 	void	SetHitRate_Tolerance(int* phitrate, float* ptolerance);
-	inline int GetTemplateLength() const {return m_tpllen;}
-	inline int GetNtemplates() const {return GetItemCount();}
+	inline int GetTemplateLength() const { return m_tpllen; }
+	inline int GetNtemplates() const { return GetItemCount(); }
 	void	SetYWExtOrg(int extent, int zero);
 	void	UpdateTemplateLegends(LPCSTR pszType);
 	void	UpdateTemplateBaseClassID(int inewlowestclass);
 	void	SetTemplateclassID(int item, LPCTSTR pszType, int classID);
-	inline	int GetTemplateclassID(int item) const {return templatewnd_ptr_array.GetAt(item)->m_classID;}
+	inline	int GetTemplateclassID(int item) const { return templatewnd_ptr_array.GetAt(item)->m_classID; }
 
 protected:
 	CArray < CTemplateWnd*, CTemplateWnd*> templatewnd_ptr_array;
@@ -57,7 +57,7 @@ protected:
 	int			m_tpleft;
 	int			m_tpright;
 	float		m_ktolerance;
-	int			m_hitrate;	
+	int			m_hitrate;
 
 	int			m_yextent;
 	int			m_yzero;
@@ -67,18 +67,18 @@ protected:
 	CPoint		m_ptHotSpot;
 	CPoint		m_ptOrigin;
 	CSize		m_sizeDelta;
-	CImageList*	m_pimageListDrag;
+	CImageList* m_pimageListDrag;
 
 	void OnButtonUp(CPoint point);
 
-// Operations
+	// Operations
 public:
 	CImageList	m_imageList;
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CTemplateListWnd();
-	
+
 protected:
 
 	// Generated message map functions
@@ -94,4 +94,3 @@ protected:
 public:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 };
-

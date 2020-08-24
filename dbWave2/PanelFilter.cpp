@@ -1,4 +1,3 @@
-
 #include "StdAfx.h"
 
 #include "MainFrm.h"
@@ -14,15 +13,15 @@
 // CFilterPanel
 
 // the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameteres
-int CFilterWnd::m_noCol[] = { 
-	CH_EXPT_ID,	
-	CH_IDINSECT, CH_IDSENSILLUM, CH_INSECT_ID, CH_SENSILLUM_ID, 
+int CFilterWnd::m_noCol[] = {
+	CH_EXPT_ID,
+	CH_IDINSECT, CH_IDSENSILLUM, CH_INSECT_ID, CH_SENSILLUM_ID,
 	CH_LOCATION_ID, CH_STRAIN_ID, CH_SEX_ID, CH_OPERATOR_ID,
 	CH_STIM_ID, CH_CONC_ID,	CH_REPEAT, CH_STIM2_ID, CH_CONC2_ID, CH_REPEAT2,
-	CH_FLAG, CH_ACQDATE_DAY, -1 
-};		
+	CH_FLAG, CH_ACQDATE_DAY, -1
+};
 
-CFilterWnd::CFilterWnd(): m_pDocOld(nullptr), m_htreeitem{}
+CFilterWnd::CFilterWnd() : m_pDocOld(nullptr), m_htreeitem{}
 {
 	m_pDoc = nullptr;
 }
@@ -46,7 +45,6 @@ BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
 
 END_MESSAGE_MAP()
 
-
 int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
@@ -56,7 +54,7 @@ int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rect_dummy.SetRectEmpty();
 
 	// Create view:
-	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS; 
+	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
 	if (!m_wndFilterView.Create(dwViewStyle, rect_dummy, this, IDC_TREE1))
 		return -1;      // fail to create
 
@@ -81,7 +79,7 @@ void CFilterWnd::OnSize(UINT nType, int cx, int cy)
 
 void CFilterWnd::OnContextMenu(CWnd* p_wnd, CPoint point)
 {
-	auto p_wnd_tree = (CTreeCtrl*) &m_wndFilterView;
+	auto p_wnd_tree = (CTreeCtrl*)&m_wndFilterView;
 	ASSERT_VALID(p_wnd_tree);
 
 	if (p_wnd != p_wnd_tree)
@@ -162,19 +160,19 @@ LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_MDIACTIVATE:
-		{	//ATLTRACE2(_T("CPropDockPane: OnMyMessage HINT_MDIACTIVATE\n"));
-			auto* pmain = (CMainFrame*)AfxGetMainWnd();
-			BOOL b_maximized;
-			auto p_child = pmain->MDIGetActive(&b_maximized);
-			if (!p_child) 
-				return NULL;
-			const auto p_document = p_child->GetActiveDocument();
-			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
-				return NULL;
-			m_pDoc = dynamic_cast<CdbWaveDoc*>(p_document);
-			InitFilterList();
-		}
-		break;
+	{	//ATLTRACE2(_T("CPropDockPane: OnMyMessage HINT_MDIACTIVATE\n"));
+		auto* pmain = (CMainFrame*)AfxGetMainWnd();
+		BOOL b_maximized;
+		auto p_child = pmain->MDIGetActive(&b_maximized);
+		if (!p_child)
+			return NULL;
+		const auto p_document = p_child->GetActiveDocument();
+		if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+			return NULL;
+		m_pDoc = dynamic_cast<CdbWaveDoc*>(p_document);
+		InitFilterList();
+	}
+	break;
 
 	default:
 		break;
@@ -187,7 +185,7 @@ void CFilterWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
 	{
-	case HINT_CLOSEFILEMODIFIED:	// save current file parms 
+	case HINT_CLOSEFILEMODIFIED:	// save current file parms
 		//m_pDocOld = NULL;
 		break;
 
@@ -216,7 +214,7 @@ void CFilterWnd::InitFilterList()
 	CProgressDlg dlg;
 	dlg.Create();
 	dlg.SetStep(1);
-	
+
 	// fill items of the combo (column heads to sort data)
 	dlg.SetStatus(_T("List categories available..."));
 	auto p_combo = (CMFCToolBarComboBoxButton*)m_wndToolBar.GetButton(3);
@@ -254,22 +252,22 @@ void CFilterWnd::InitFilterList()
 		cs_comment += CdbWdatabase::m_desctab[icol].szDescriptor;
 		//cs_comment += p_db->m_desctab[icol].szDescriptor;
 		dlg.SetStatus(cs_comment);
-		
+
 		// collect data (array of unique descriptors)
-		switch (pdesc->typeLocal) 
+		switch (pdesc->typeLocal)
 		{
-			case FIELD_IND_TEXT:
-			case FIELD_IND_FILEPATH:
-				PopulateItemFromLinkedTable(pdesc);
-				break;
-			case FIELD_LONG:
-				PopulateItemFromTableLong(pdesc);
-				break;
-			case FIELD_DATE_YMD:
-				PopulateItemFromTablewithDate(pdesc);
-				break;
-			default:
-				break;
+		case FIELD_IND_TEXT:
+		case FIELD_IND_FILEPATH:
+			PopulateItemFromLinkedTable(pdesc);
+			break;
+		case FIELD_LONG:
+			PopulateItemFromTableLong(pdesc);
+			break;
+		case FIELD_DATE_YMD:
+			PopulateItemFromTablewithDate(pdesc);
+			break;
+		default:
+			break;
 		}
 
 		// create subitems
@@ -288,7 +286,7 @@ void CFilterWnd::InitFilterList()
 			if (pdesc->bFilter2)
 			{
 				bcheck = TVCS_UNCHECKED;
-				for (auto k = 0; k< pdesc->csfilterParam2.GetSize(); k++)
+				for (auto k = 0; k < pdesc->csfilterParam2.GetSize(); k++)
 				{
 					if (cs_elmtj.CompareNoCase(pdesc->csfilterParam2.GetAt(k)) == 0)
 					{
@@ -367,7 +365,7 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
 	if (pdesc->bFilter2)
 		return;
-	
+
 	if (pdesc->bFilter1)
 	{
 		pdesc->csfilterParam1 = plinked_set->GetStringFromID(pdesc->lfilterParam1);
@@ -435,10 +433,10 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 	}
 }
 
-void  CFilterWnd::InsertAlphabetic(const CString& cs, CStringArray &csArray)
+void  CFilterWnd::InsertAlphabetic(const CString& cs, CStringArray& csArray)
 {
 	auto k = 0;
-	for (auto i=0; i < csArray.GetSize(); i++, k++)
+	for (auto i = 0; i < csArray.GetSize(); i++, k++)
 	{
 		const auto& cscomp = csArray.GetAt(k);
 		const auto j = cs.CompareNoCase(cscomp);
@@ -525,7 +523,7 @@ void CFilterWnd::OnApplyFilter()
 		{
 			pdesc->bFilter2 = FALSE;
 		}
-		// else if foot is undeterminate build filter 
+		// else if foot is undeterminate build filter
 		else
 		{
 			pdesc->bFilter2 = TRUE;

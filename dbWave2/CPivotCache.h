@@ -8,7 +8,7 @@
 class CPivotCache : public COleDispatchDriver
 {
 public:
-	CPivotCache(){} // Calls COleDispatchDriver default constructor
+	CPivotCache() {} // Calls COleDispatchDriver default constructor
 	CPivotCache(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotCache(const CPivotCache& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotCache methods
 public:
@@ -47,7 +46,7 @@ public:
 	}
 	void put_BackgroundQuery(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x593, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_Connection()
@@ -58,7 +57,7 @@ public:
 	}
 	void put_Connection(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x598, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	BOOL get_EnableRefresh()
@@ -69,7 +68,7 @@ public:
 	}
 	void put_EnableRefresh(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5c5, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_Index()
@@ -92,7 +91,7 @@ public:
 	}
 	void put_OptimizeCache(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x594, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_RecordCount()
@@ -125,7 +124,7 @@ public:
 	}
 	void put_RefreshOnFileOpen(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5c7, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_Sql()
@@ -136,7 +135,7 @@ public:
 	}
 	void put_Sql(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x5c8, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	BOOL get_SavePassword()
@@ -147,7 +146,7 @@ public:
 	}
 	void put_SavePassword(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5c9, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_SourceData()
@@ -158,7 +157,7 @@ public:
 	}
 	void put_SourceData(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2ae, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_CommandText()
@@ -169,7 +168,7 @@ public:
 	}
 	void put_CommandText(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x725, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	long get_CommandType()
@@ -180,7 +179,7 @@ public:
 	}
 	void put_CommandType(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x726, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_QueryType()
@@ -197,7 +196,7 @@ public:
 	}
 	void put_MaintainConnection(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x728, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_RefreshPeriod()
@@ -208,7 +207,7 @@ public:
 	}
 	void put_RefreshPeriod(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x729, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_Recordset()
@@ -219,7 +218,7 @@ public:
 	}
 	void putref_Recordset(LPDISPATCH newValue)
 	{
-		static BYTE parms[] = VTS_DISPATCH ;
+		static BYTE parms[] = VTS_DISPATCH;
 		InvokeHelper(0x48d, DISPATCH_PROPERTYPUTREF, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void ResetTimer()
@@ -234,13 +233,13 @@ public:
 	}
 	void put_LocalConnection(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x72b, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH CreatePivotTable(VARIANT& TableDestination, VARIANT& TableName, VARIANT& ReadData, VARIANT& DefaultVersion)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x72c, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, &TableDestination, &TableName, &ReadData, &DefaultVersion);
 		return result;
 	}
@@ -252,7 +251,7 @@ public:
 	}
 	void put_UseLocalConnection(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x72d, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_ADOConnection()
@@ -291,7 +290,7 @@ public:
 	}
 	void put_MissingItemsLimit(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x81e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_SourceConnectionFile()
@@ -302,7 +301,7 @@ public:
 	}
 	void put_SourceConnectionFile(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x81f, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_SourceDataFile()
@@ -319,12 +318,12 @@ public:
 	}
 	void put_RobustConnect(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x821, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void SaveAsODC(LPCTSTR ODCFileName, VARIANT& Description, VARIANT& Keywords)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x822, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, ODCFileName, &Description, &Keywords);
 	}
 	LPDISPATCH get_WorkbookConnection()
@@ -347,11 +346,10 @@ public:
 	}
 	void put_UpgradeOnRefresh(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x9f1, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 
 	// PivotCache properties
 public:
-
 };

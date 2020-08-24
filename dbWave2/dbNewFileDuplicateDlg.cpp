@@ -10,22 +10,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // CdbNewFileDuplicateDlg dialog
 
-
 CdbNewFileDuplicateDlg::CdbNewFileDuplicateDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CdbNewFileDuplicateDlg::IDD, pParent)
 {
 	m_option = -1;
-	m_pfilein= nullptr;
+	m_pfilein = nullptr;
 	m_csExt.Empty();
 }
-
 
 void CdbNewFileDuplicateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Radio(pDX, IDC_RADIO1, m_option);
 }
-
 
 BEGIN_MESSAGE_MAP(CdbNewFileDuplicateDlg, CDialog)
 	ON_BN_CLICKED(IDC_RADIO3, OnRadio3)
@@ -34,11 +31,11 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CdbNewFileDuplicateDlg message handlers
 
-BOOL CdbNewFileDuplicateDlg::OnInitDialog() 
+BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
-	((CButton*) GetDlgItem(IDC_RADIO3))->SetCheck(TRUE);
+
+	((CButton*)GetDlgItem(IDC_RADIO3))->SetCheck(TRUE);
 
 	// check if file requested is already there
 	CString csnew = m_pfilein;
@@ -46,9 +43,9 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 	const auto b_exist = CFile::GetStatus(csnew, status);
 
 	// decompose name
-	const auto icount = csnew.ReverseFind('\\')+1;
+	const auto icount = csnew.ReverseFind('\\') + 1;
 	m_csPath = csnew.Left(icount);
-	m_csName = csnew.Right(csnew.GetLength()-icount);
+	m_csName = csnew.Right(csnew.GetLength() - icount);
 	GetDlgItem(IDC_STATIC1)->SetWindowText(m_csName);
 	GetDlgItem(IDC_STATIC14)->SetWindowText(m_csPath);
 
@@ -57,15 +54,15 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 	if (b_exist)
 	{
 		CString cs_root;	// root name of the file series
-		
+
 		// extract name without extension
 		csnew = m_csName;
 		const auto i = csnew.ReverseFind('.');
-		ASSERT(i>0);
+		ASSERT(i > 0);
 		if (i > 0)
 		{
 			m_csExt = csnew.Right(csnew.GetLength() - i);
-			cs_root = csnew.Left(i);		
+			cs_root = csnew.Left(i);
 		}
 		else
 			cs_root = csnew;
@@ -74,7 +71,7 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 		const auto j = cs_root.FindOneOf(_T("0123456789"));	// find the first numerical character
 		// no numerical character is found, assume it is the first and add "1"
 		if (j < 0)
-			csnew = cs_root +_T("1");
+			csnew = cs_root + _T("1");
 
 		// numerical character found - iterate until a file name is found that is not used
 		else
@@ -88,11 +85,11 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 			while (b_exist2 && (jiterations > 0))
 			{
 				nb++;
-				csnb.Format(_T("%i"),nb);
+				csnb.Format(_T("%i"), nb);
 				auto csdummy = m_csPath + cs_root + csnb;
 				csdummy += m_csExt;
 				b_exist2 = CFile::GetStatus(csdummy, status);
-				jiterations--;			
+				jiterations--;
 			}
 			csnew = cs_root + csnb;
 		}
@@ -101,10 +98,10 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 	// tentative name defined - display it and exit
 	GetDlgItem(IDC_EDIT1)->SetWindowText(csnew);
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CdbNewFileDuplicateDlg::OnOK() 
+void CdbNewFileDuplicateDlg::OnOK()
 {
 	UpdateData(TRUE);
 	GetDlgItem(IDC_EDIT1)->GetWindowText(m_csName);
@@ -116,7 +113,7 @@ void CdbNewFileDuplicateDlg::OnOK()
 	CDialog::OnOK();
 }
 
-void CdbNewFileDuplicateDlg::OnRadio3() 
+void CdbNewFileDuplicateDlg::OnRadio3()
 {
-	GetDlgItem(IDC_EDIT1)->EnableWindow(((CButton*) GetDlgItem(IDC_RADIO3))->GetCheck());
+	GetDlgItem(IDC_EDIT1)->EnableWindow(((CButton*)GetDlgItem(IDC_RADIO3))->GetCheck());
 }

@@ -12,7 +12,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CRejectRecordDlg dialog
 
-
 CRejectRecordDlg::CRejectRecordDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CRejectRecordDlg::IDD, pParent)
 {
@@ -22,7 +21,6 @@ CRejectRecordDlg::CRejectRecordDlg(CWnd* pParent /*=NULL*/)
 	m_flag = 1;
 }
 
-
 void CRejectRecordDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -31,7 +29,6 @@ void CRejectRecordDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT2, m_jitter);
 	DDX_Text(pDX, IDC_EDIT3, m_flag);
 }
-
 
 BEGIN_MESSAGE_MAP(CRejectRecordDlg, CDialog)
 

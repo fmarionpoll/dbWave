@@ -12,7 +12,7 @@
 
 class CSpikeDetectDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CSpikeDetectDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -20,17 +20,17 @@ public:
 	enum { IDD = IDD_SPKDETECTPARM };
 
 	CSpkDetectArray* m_pDetectSettingsArray;			// parameter set by caller
-	CAcqDataDoc* 	m_dbDoc;							// parameter set by caller
+	CAcqDataDoc* m_dbDoc;							// parameter set by caller
 	int 			m_iDetectParmsDlg;					// parameter set by caller
-	OPTIONS_VIEWDATA*  mdPM;						// browse options
-	CLineViewWnd*	m_pdisplayDetect;
-	CLineViewWnd*	m_pdisplayData;
+	OPTIONS_VIEWDATA* mdPM;						// browse options
+	CLineViewWnd* m_pdisplayDetect;
+	CLineViewWnd* m_pdisplayData;
 
-protected:    
-	SPKDETECTPARM*	m_pspkD;
+protected:
+	SPKDETECTPARM* m_pspkD;
 	int				m_scancount;
 
-// Implementation 
+	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	void LoadChanParameters(int chan);
@@ -50,7 +50,7 @@ protected:
 
 public:
 	CTabCtrl m_cParameterTabCtrl;
-	afx_msg void OnTcnSelchangeParameterstab(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTcnSelchangeParameterstab(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedSpikesradio();
 	afx_msg void OnBnClickedStimradio();
 	afx_msg void OnBnClickedAddparambttn();
@@ -58,7 +58,7 @@ public:
 	afx_msg void OnEnChangeDetectthreshold();
 	afx_msg void OnCbnSelchangeDetectchan();
 	afx_msg void OnCbnSelchangeDetecttransform();
-	afx_msg void OnDeltaposSpin1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeExtractchan();
 	afx_msg void OnEnChangeComment();
 	afx_msg void OnBnClickedShiftright();

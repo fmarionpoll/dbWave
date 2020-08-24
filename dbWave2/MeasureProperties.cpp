@@ -12,9 +12,9 @@
 IMPLEMENT_DYNAMIC(CMeasureProperties, CPropertySheet)
 
 CMeasureProperties::CMeasureProperties(CWnd* p_wnd_parent, const int select_active_page)
-	 : CPropertySheet(IDS_PROPSHT_CAPTION, p_wnd_parent)
+	: CPropertySheet(IDS_PROPSHT_CAPTION, p_wnd_parent)
 {
-	// One way to make a different property page the 
+	// One way to make a different property page the
 	// active one is to call SetActivePage().
 
 	m_plineview = nullptr;
@@ -29,13 +29,11 @@ CMeasureProperties::~CMeasureProperties()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CMeasureProperties, CPropertySheet)
-	
+
 END_MESSAGE_MAP()
 
-
-BOOL CMeasureProperties::OnInitDialog() 
+BOOL CMeasureProperties::OnInitDialog()
 {
 	// all
 	m_measure_hz_tags_page.m_plineview = m_plineview;
@@ -54,7 +52,7 @@ BOOL CMeasureProperties::OnInitDialog()
 	m_measure_results_page.m_pdatDoc = m_pdatDoc;
 
 	m_measure_hz_tags_page.m_pdbDoc = m_pdbDoc;
-	m_measure_vt_tags_page.m_pdbDoc=m_pdbDoc;
+	m_measure_vt_tags_page.m_pdbDoc = m_pdbDoc;
 	m_measure_options_page.m_pdbDoc = m_pdbDoc;
 	m_measure_results_page.m_pdbDoc = m_pdbDoc;
 
@@ -65,6 +63,6 @@ BOOL CMeasureProperties::OnInitDialog()
 	m_measure_vt_tags_page.m_samplingrate = m_samplingrate;
 
 	// measure
-	m_measure_results_page.m_currentchan=m_currentchan;
+	m_measure_results_page.m_currentchan = m_currentchan;
 	return CPropertySheet::OnInitDialog();
 }

@@ -36,8 +36,8 @@ public:
 
 public:
 	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
-	void	EraseBkgnd(CDC *p_dc);
-	void	PlotToBitmap(CDC *p_dc);
+	void	EraseBkgnd(CDC* p_dc);
+	void	PlotToBitmap(CDC* p_dc);
 	COLORREF GetColor(int i) const { return m_colorTable[i]; }
 	void	SetColor(int i, COLORREF ccolor) { m_colorTable[i] = ccolor; }
 	void	SetString(CString cs) { m_csEmpty = cs; }
@@ -51,7 +51,7 @@ protected:
 	// statics : created only once - associated with a counter
 	static int		m_countcurs;					// objects counter
 	static HCURSOR	m_cursor[NB_CURSORS];			// array with cursor handles
-	static int		m_cursordragmode[NB_CURSORS];	// cursor mode: 0=invert rect; 1=catch object	
+	static int		m_cursordragmode[NB_CURSORS];	// cursor mode: 0=invert rect; 1=catch object
 	int				m_cursorType = 0;				// current cursor
 	int				m_oldcursorType = 0;
 	HCURSOR			m_currCursor{};					// handle to current cursor
@@ -73,8 +73,8 @@ protected:
 	SCOPESTRUCT		m_scopestruct{};
 
 public:
-	virtual SCOPESTRUCT*	GetScopeParameters();
-	virtual void			SetScopeParameters(SCOPESTRUCT*	pStruct);
+	virtual SCOPESTRUCT* GetScopeParameters();
+	virtual void			SetScopeParameters(SCOPESTRUCT* pStruct);
 
 	// ---------------------------------------------------------------
 	// Attributes
@@ -114,17 +114,17 @@ public:
 	BOOL		m_bNiceGrid = false;
 	int			m_abcissaheight = 10;
 	int			m_ordinateswidth = 25;
-	CRulerBar*	m_pXRulerBar =nullptr;
-	CRulerBar*	m_pYRulerBar = nullptr;
+	CRulerBar* m_pXRulerBar = nullptr;
+	CRulerBar* m_pYRulerBar = nullptr;
 
 public:
-	void		DrawGrid(CDC *p_dc);
+	void		DrawGrid(CDC* p_dc);
 	void		AdjustDisplayRect(CRect* rect);
 protected:
-	void		DrawGridEvenlySpaced(CDC *p_dc);
-	void		DrawGridFromRuler(CDC * p_dc, CRuler * pRuler);
-	void		DrawGridNicelySpaced(CDC *p_dc);
-	void		DrawScalefromRuler(CDC *p_dc, CRuler* scale);
+	void		DrawGridEvenlySpaced(CDC* p_dc);
+	void		DrawGridFromRuler(CDC* p_dc, CRuler* pRuler);
+	void		DrawGridNicelySpaced(CDC* p_dc);
+	void		DrawScalefromRuler(CDC* p_dc, CRuler* scale);
 
 	// tags ------------------------------------------------------------------------
 public:
@@ -159,8 +159,8 @@ public:
 
 	void	SetVTtagList(CTagList* pList) { m_VTtags.CopyTagList(pList); }
 	void	SetHZtagList(CTagList* pList) { m_HZtags.CopyTagList(pList); }
-	CTagList*	GetVTtagList();
-	CTagList*	GetHZtagList();
+	CTagList* GetVTtagList();
+	CTagList* GetHZtagList();
 
 	CString		m_csBottomComment;
 	BOOL		m_bBottomComment = false;
@@ -173,7 +173,7 @@ protected:
 	BOOL	m_erasebkgnd = true;	// erase backgroung (flag)
 	CTagList m_HZtags{};			// List of horizontal tag lines
 	CTagList m_VTtags{};			// List of vertical tag lines
-	BOOL	m_bVTtagsLONG =false;	// flag: TRUE if VTtags are defined as long
+	BOOL	m_bVTtagsLONG = false;	// flag: TRUE if VTtags are defined as long
 	long	m_liFirst = 0;			// file position of first left pixel
 	long	m_liLast = 0;			// file position of last right pixel
 	long	m_liJitter{};			// file position range corresponding mouse jitter
@@ -191,7 +191,7 @@ protected:
 
 	int 	m_xWO = 0;				// x origin, extent / window & view
 	int		m_xWE = 1;
-	int		m_xVO =0;
+	int		m_xVO = 0;
 	int		m_xVE = 1;
 	int 	m_yWO = 0;				// y origin, extent / window & view
 	int		m_yWE = 1;
@@ -213,17 +213,17 @@ protected:
 
 	BOOL	m_bAllowProps = true;
 	HWND	m_hwndReflect = nullptr;
-	CTag*	m_tempVTtag = nullptr;
+	CTag* m_tempVTtag = nullptr;
 
-// Operations
+	// Operations
 public:
 	void DisplayVTtags(CDC* p_dc);
 	void DisplayHZtags(CDC* p_dc);
-	void XorVTtag(int xpoint);		// xor vertical line at point.x	
+	void XorVTtag(int xpoint);		// xor vertical line at point.x
 	void XorTempVTtag(int xpoint);
-	void XorHZtag(int ypoint);	// xor horizontal line at point.y	
-	void ResetXortag() {m_ptLast.x = -1; m_ptLast.y = -1;}
-	void ReflectMouseMoveMessg(HWND hwnd) {m_hwndReflect = hwnd;}
+	void XorHZtag(int ypoint);	// xor horizontal line at point.y
+	void ResetXortag() { m_ptLast.x = -1; m_ptLast.y = -1; }
+	void ReflectMouseMoveMessg(HWND hwnd) { m_hwndReflect = hwnd; }
 	void PlotToBitmap(CBitmap* pBitmap);
 
 protected:
@@ -238,10 +238,10 @@ protected:
 	int			HitTestVTtagLong(long lx); 	// test if point is on a vertical tag line
 	void		ZoomIn();
 	void		ZoomOut();
-	void		ZoomPop();	
-	
-	virtual void ZoomData(CRect* prevRect, CRect* newRect);	// zoom display	
-	virtual void PreSubclassWindow( );
+	void		ZoomPop();
+
+	virtual void ZoomData(CRect* prevRect, CRect* newRect);	// zoom display
+	virtual void PreSubclassWindow();
 
 public:
 	virtual void PlotDatatoDC(CDC* p_dc);
@@ -257,6 +257,6 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);	
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };

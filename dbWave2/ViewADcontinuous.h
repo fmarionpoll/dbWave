@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CViewADContinuous form view
 
-
 #ifndef __AFXEXT_H__
 #include <afxext.h>
 #endif
@@ -22,20 +21,19 @@
 
 // DT Openlayer board
 
-#define STRLEN 80        // string size 
+#define STRLEN 80        // string size
 
 ///////////////////////////////////////////////////////////////////////////////
 class CViewADContinuous : public CFormView
 {
-
 protected:
 	CViewADContinuous();		// protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CViewADContinuous)
 
-// Form Data
+	// Form Data
 public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
-	CdbMainTable*		m_ptableSet;
+	CdbMainTable* m_ptableSet;
 	CString				m_boardName;
 	CRulerBar			m_ADC_xRulerBar;
 	CRulerBar			m_ADC_yRulerBar;
@@ -52,20 +50,19 @@ public:
 	CDTAcq32			m_ADC_DTAcq32;		// DDX
 	CDTAcq32			m_DAC_DTAcq32;		// DDX
 
-
 protected:
 	CLineViewWnd		m_displayDataFile;			// source data display button
-	int 				m_cursorstate;		// source data cursor state	
+	int 				m_cursorstate;		// source data cursor state
 	float				m_sweepduration;
-	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed	
+	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed
 	CEditCtrl			mm_ylower;			// edit control for min amplitude displayed
 	CStretchControl		m_stretch;			// array of properties associated with controls
 	HICON				m_hBias;
 	HICON				m_hZoom;
-	float				m_yscaleFactor;		// div factor for y bar 
+	float				m_yscaleFactor;		// div factor for y bar
 	int					m_VBarMode;			// flag V scrollbar state
 	CScrollBar 			m_scrolly;			// V scrollbar
-	CBrush*				m_pEditBkBrush;
+	CBrush* m_pEditBkBrush;
 	COLORREF			m_BkColor;
 
 	void OnGainScroll(UINT nSBCode, UINT nPos);
@@ -90,7 +87,7 @@ protected:
 	CString				m_szFileName;		// data filename
 
 	BOOL 				m_bAskErase;		// ask erase when data may be lost (default = FALSE)
-	BOOL				m_bchanged;			// flag: save data or not	
+	BOOL				m_bchanged;			// flag: save data or not
 	double 				m_freqmax;			// maximum sampling frequency (Hz)
 	int					m_numchansMAX;
 
@@ -98,14 +95,14 @@ protected:
 	ECODE				m_ecode;
 
 	// DT buffer
-	OPTIONS_ACQDATA*	m_pADC_options;		// pointer to data acq options 
+	OPTIONS_ACQDATA* m_pADC_options;		// pointer to data acq options
 	BOOL				m_ADC_inprogress;	// A/D is in progress (used by OnStop/OnStart)
 	HBUF				m_ADC_bufhandle;
 	long				m_ADC_buflen;		// nb of acq sample per DT buffer
 	long				m_ADC_chbuflen;		// nb pts for one chan in DT buffer
 	BOOL				m_bsimultaneousStartAD;
 
-	OPTIONS_OUTPUTDATA*	m_pDAC_options;		// pointer to data output options
+	OPTIONS_OUTPUTDATA* m_pDAC_options;		// pointer to data output options
 	int					m_DACdigitalchannel;
 	BOOL				m_DACdigitalfirst;
 	int					m_DAClistsize;
@@ -119,7 +116,7 @@ protected:
 	BOOL				m_bsimultaneousStartDA;
 	long				m_DAC_nBuffersFilledSinceStart;
 	double				m_DAC_frequency;
-	
+
 	// sweep
 	long				m_chsweeplength;	// sweep length (per channel)
 	long				m_sweeplength;		// sweep length (all channels)
@@ -132,14 +129,14 @@ protected:
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
 	BOOL SelectDTOpenLayersBoard(const CString& cardName);
-	
+
 	BOOL ADC_OpenSubSystem(CString cardName);
 	BOOL ADC_InitSubSystem();
 	void ADC_DeleteBuffers();
 	void ADC_DeclareBuffers();
 	void ADC_Transfer(short* pDTbuf);
 	void ADC_StopAndLiberateBuffers();
-	
+
 	BOOL DAC_OpenSubSystem(const CString& cardName);
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
@@ -149,23 +146,23 @@ protected:
 	BOOL DAC_ClearAllOutputs();
 	int	 DAC_SetChannelList();
 	int  DAC_GetNumberOfChans();
-	void DAC_FillBufferWith_SINUSOID(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_TRIANGLE(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_RAMP(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_CONSTANT(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
-	static void DAC_MSequence(OUTPUTPARMS * parmsChan);
-	void DAC_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	static void DAC_MSequence(OUTPUTPARMS* parmsChan);
+	void DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan) const;
-	void DAC_Dig_FillBufferWith_SQUARE(short * pDTbuf, int chan, OUTPUTPARMS* pParms) const;
-	void DAC_Dig_FillBufferWith_ONOFFSeq(short * pDTbuf, int chan, OUTPUTPARMS* pParms) const;
-	void DAC_Dig_FillBufferWith_VAL(short * pDTbuf, int chan, OUTPUTPARMS * parmsChan, BOOL bVal) const;
-	void DAC_Dig_FillBufferWith_MSEQ(short * pDTbuf, int chan, OUTPUTPARMS* pParms) const;
+	void DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* pParms) const;
+	void DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* pParms) const;
+	void DAC_Dig_FillBufferWith_VAL(short* pDTbuf, int chan, OUTPUTPARMS* parmsChan, BOOL bVal) const;
+	void DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* pParms) const;
 	void DAC_UpdateStartStop(BOOL bStart) const;
 	void DAC_FillBuffer(short* pDTbuf);
 	void SetCombostartoutput(int option);
-	
+
 	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain) const;
 	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain) const;
 
@@ -176,18 +173,18 @@ protected:
 	void DAC_Stop();
 
 	BOOL InitConnectionWithAmplifiers();
-	BOOL ADC_DefineExperimentDlg() ;
+	BOOL ADC_DefineExperimentDlg();
 	void TransferFilesToDatabase();
 	void UpdateViewDataFinal();
 
-// Overrides
+	// Overrides
 protected:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void	OnInitialUpdate();
 	virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	virtual			~CViewADContinuous();
-	virtual	void	OnActivateView( BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
+	virtual	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	void			ChainDialog(WORD iID);
 
 #ifdef _DEBUG
@@ -196,10 +193,12 @@ protected:
 #endif
 
 #ifndef _DEBUG  // debug version in dbWaveView.cpp
-inline CdbWaveDoc* CViewADContinuous::GetDocument()
-   { return (CdbWaveDoc*)m_pDocument; }
+	inline CdbWaveDoc* CViewADContinuous::GetDocument()
+	{
+		return (CdbWaveDoc*)m_pDocument;
+	}
 #else
-	CdbWaveDoc*	GetDocument();
+	CdbWaveDoc* GetDocument();
 #endif
 
 	// Generated message map functions

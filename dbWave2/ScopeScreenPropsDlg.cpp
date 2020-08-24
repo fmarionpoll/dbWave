@@ -12,7 +12,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 CScopeScreenPropsDlg::CScopeScreenPropsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CScopeScreenPropsDlg::IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
 {
@@ -41,7 +40,7 @@ BEGIN_MESSAGE_MAP(CScopeScreenPropsDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON2, OnGridColor)
 END_MESSAGE_MAP()
 
-BOOL CScopeScreenPropsDlg::OnInitDialog() 
+BOOL CScopeScreenPropsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
@@ -66,10 +65,9 @@ BOOL CScopeScreenPropsDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CScopeScreenPropsDlg::OnEnChangeXCells() 
+void CScopeScreenPropsDlg::OnEnChangeXCells()
 {
 	if (mm_xcells.m_bEntryDone) {
-
 		auto xcells = m_xcells;
 		switch (mm_xcells.m_nChar)
 		{				// load data from edit controls
@@ -104,13 +102,11 @@ void CScopeScreenPropsDlg::OnEnChangeXCells()
 		}
 		UpdateData(FALSE);
 	}
-	
 }
 
-void CScopeScreenPropsDlg::OnEnChangeXYTicks() 
+void CScopeScreenPropsDlg::OnEnChangeXYTicks()
 {
 	if (mm_xyticks.m_bEntryDone) {
-
 		auto xyticks = m_xyticks;
 		switch (mm_xyticks.m_nChar)
 		{				// load data from edit controls
@@ -126,7 +122,7 @@ void CScopeScreenPropsDlg::OnEnChangeXYTicks()
 		case VK_NEXT:
 			xyticks--;
 			break;
-		default: ;
+		default:;
 		}
 		// check boundaries
 		if (xyticks < 0) xyticks = 0;
@@ -148,9 +144,9 @@ void CScopeScreenPropsDlg::OnEnChangeXYTicks()
 	}
 }
 
-void CScopeScreenPropsDlg::OnEnChangeXYTicksLine() 
+void CScopeScreenPropsDlg::OnEnChangeXYTicksLine()
 {
-	if (mm_xytickline.m_bEntryDone) 
+	if (mm_xytickline.m_bEntryDone)
 	{
 		auto xytickline = m_xytickline;
 		switch (mm_xytickline.m_nChar)
@@ -167,7 +163,7 @@ void CScopeScreenPropsDlg::OnEnChangeXYTicksLine()
 		case VK_NEXT:
 			xytickline--;
 			break;
-		default: ;
+		default:;
 		}
 		// check boundaries
 		if (xytickline < 0)	xytickline = 0;
@@ -189,9 +185,9 @@ void CScopeScreenPropsDlg::OnEnChangeXYTicksLine()
 	}
 }
 
-void CScopeScreenPropsDlg::OnEnChangeYCells() 
+void CScopeScreenPropsDlg::OnEnChangeYCells()
 {
-	if (mm_ycells.m_bEntryDone) 
+	if (mm_ycells.m_bEntryDone)
 	{
 		auto ycells = m_ycells;
 		switch (mm_ycells.m_nChar)
@@ -229,23 +225,20 @@ void CScopeScreenPropsDlg::OnEnChangeYCells()
 	}
 }
 
-void CScopeScreenPropsDlg::OnBackgroundColor() 
+void CScopeScreenPropsDlg::OnBackgroundColor()
 {
 	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, nullptr);
-	if(IDOK != dlg.DoModal())
+	if (IDOK != dlg.DoModal())
 		return;
-	(m_pscope->GetScopeParameters())->crScopeFill= dlg.GetColor();
+	(m_pscope->GetScopeParameters())->crScopeFill = dlg.GetColor();
 	m_pscope->Invalidate();
-	
 }
 
-void CScopeScreenPropsDlg::OnGridColor() 
+void CScopeScreenPropsDlg::OnGridColor()
 {
 	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, nullptr);
-	if(IDOK != dlg.DoModal())
+	if (IDOK != dlg.DoModal())
 		return;
-	(m_pscope->GetScopeParameters())->crScopeGrid= dlg.GetColor();
+	(m_pscope->GetScopeParameters())->crScopeGrid = dlg.GetColor();
 	m_pscope->Invalidate();
 }
-
-

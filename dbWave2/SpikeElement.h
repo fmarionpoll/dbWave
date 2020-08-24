@@ -6,7 +6,7 @@
 // each spike detected from a data document
 // stores:  time of occurence, initial data acq chan and a modifiable parameter
 // the class
-// this basic object is part of a CSpikelist object that stores parameters 
+// this basic object is part of a CSpikelist object that stores parameters
 // concerning the source document (file, date, acq rate and parms, etc) and
 // eventually the source data extracted from the data file
 // real data are stored in a separate object managing data buffers
@@ -40,8 +40,8 @@ public:
 	short	get_maximum() const { return m_max; }
 	short	get_minimum() const { return m_min; }
 	int		get_amplitude_offset() const { return m_offset; }
-	void	GetSpikeMaxMin(int *max, int *min, int *dmaxmin) { *max = m_max; *min = m_min; *dmaxmin = m_dmaxmin; }
-	void	GetSpikeExtrema(int *max, int *min) { *max = m_max; *min = m_min; }
+	void	GetSpikeMaxMin(int* max, int* min, int* dmaxmin) { *max = m_max; *min = m_min; *dmaxmin = m_dmaxmin; }
+	void	GetSpikeExtrema(int* max, int* min) { *max = m_max; *min = m_min; }
 	int		get_y1() const { return y1_; }
 	int		get_y2() const { return y2_; }
 	int		get_dt() const { return dt_; }
@@ -59,5 +59,4 @@ public:
 	virtual ~CSpikeElemt();
 	void	Read0(CArchive& ar);
 	void Serialize(CArchive& ar) override;
-
 };

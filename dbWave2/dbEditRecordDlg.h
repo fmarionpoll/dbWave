@@ -13,12 +13,12 @@ public:
 	CdbEditRecordDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CdbEditRecordDlg();
 
-	CdbWaveDoc*		m_pdbDoc;
-	CdbMainTable*	m_pSet;
+	CdbWaveDoc* m_pdbDoc;
+	CdbMainTable* m_pSet;
 	BOOL			m_bshowIDC_NEXT;
 	BOOL			m_bshowIDC_PREVIOUS;
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_EDITRECORDDLG };
 
 protected:
@@ -56,11 +56,11 @@ public:
 	CComboBox m_ctlrepeat;
 	CComboBox m_ctlrepeat2;
 	CComboBox m_ctlflag;
-	
+
 	CString m_cs_more;
 	CString m_csnameDat;
 	CString m_csnameSpk;
-	
+
 	afx_msg void OnBnClickedButtoninsectid();
 	afx_msg void OnBnClickedButtonsensillumid();
 	afx_msg void OnBnClickedButtonstimulus();

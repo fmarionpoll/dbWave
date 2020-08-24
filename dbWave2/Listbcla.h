@@ -8,7 +8,7 @@
 
 class CListBClaSizeDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CListBClaSizeDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -19,7 +19,7 @@ public:
 	int		m_textcol;
 	int		m_intercolspace;
 
-// Overrides
+	// Overrides
 public:
 
 protected:

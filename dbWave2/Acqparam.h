@@ -14,14 +14,14 @@
 ////////////////////////////////////////////////////////////////////////
 
 class CWaveFormat : public CObject
-{  
+{
 	DECLARE_SERIAL(CWaveFormat);
-	
-public :
+
+public:
 	WORD	wversion;			// header version number
 
 	CTime	acqtime;
-	float	fullscale_Volts;	// volts full scale, gain 1	
+	float	fullscale_Volts;	// volts full scale, gain 1
 	long	binspan;			// 2^12, 2^16
 	long	binzero;			// 2048, 32768 (0 if 2's complement)
 
@@ -55,7 +55,7 @@ public :
 	CString csStrain;			// 8 name of the strain
 	CString csOperator;			// 9 name of the operator
 	CString csMoreComment;		// 10 free comment space
-	CString csStimulus2;		// 11 stimulus 2 
+	CString csStimulus2;		// 11 stimulus 2
 	CString csConcentration2;	// 12 concentration of stimulus 2
 	CString csSex;				// 13 sex
 	long	insectID;
@@ -68,16 +68,15 @@ protected:
 	static CString AddComments(const CString& p_separator, BOOL bExpl, const CString& csExpl, const CString& cscomment);
 	void Read_v8_and_before(CArchive& ar, WORD version);
 
-public :
+public:
 	CWaveFormat();	// constructor
 	~CWaveFormat();	// destructor
 	CWaveFormat& operator = (const CWaveFormat& arg);	// operator redefinition
-	long Write(CFile* datafile);	
+	long Write(CFile* datafile);
 	BOOL Read(CFile* datafile);
 	void Serialize(CArchive& ar) override;
-	CString GetComments(const CString& separator, BOOL bExplanations=FALSE) const;
+	CString GetComments(const CString& separator, BOOL bExplanations = FALSE) const;
 };
-
 
 ////////////////////////////////////////////////////////////////////////
 // CWaveChan
@@ -89,12 +88,12 @@ public :
 // parameters in CWaveFormat structure
 ////////////////////////////////////////////////////////////////////////
 class CWaveChan : public CObject
-{     
+{
 	DECLARE_SERIAL(CWaveChan);
-public :
+public:
 	CString		am_csComment;		// channel annotation
-	short		am_adchannel{};		// channel A/D 
-	short		am_gainAD{};			// channel A/D gain 
+	short		am_adchannel{};		// channel A/D
+	short		am_gainAD{};			// channel A/D gain
 
 	CString		am_csheadstage;   	// headstage type (ASCII)
 	short		am_gainheadstage{};	// amplification factor at headstage level
@@ -105,22 +104,22 @@ public :
 	short		am_gainpost{};		// post-filter amplification
 	short		am_notchfilt{};		// notch filter ON/off
 	short		am_lowpass{};			// low pass filter 0=DC 4....30000
-	float		am_offset{};			// input offset	
+	float		am_offset{};			// input offset
 	CString		am_csInputpos;		// in+ filter settings GND= inactive input
 	CString		am_csInputneg;		// in- filter settings GND= inactive input
 
-	double		am_gainamplifier{};	// double value to allow fractional gain 
+	double		am_gainamplifier{};	// double value to allow fractional gain
 	double		am_gaintotal{};		// total gain as double
 	double		am_resolutionV{};		// resolution
 
-public :
+public:
 	CWaveChan();					//constructor
 	CWaveChan(CWaveChan& arg);
 	~CWaveChan();					//destructor
-	virtual long Write(CFile *datafile);
-	virtual BOOL Read(CFile *datafile);
-	CWaveChan& operator = (const CWaveChan& arg); // redefinition operator = 	
-	void Serialize(CArchive & ar) override;
+	virtual long Write(CFile* datafile);
+	virtual BOOL Read(CFile* datafile);
+	CWaveChan& operator = (const CWaveChan& arg); // redefinition operator =
+	void Serialize(CArchive& ar) override;
 
 protected:
 	WORD		am_version;
@@ -143,8 +142,8 @@ protected:
 public:
 	CWaveChanArray();				// create array
 	~CWaveChanArray();				// delete array
-	long write(CFile *datafile);	// binary write
-	BOOL read(CFile *datafile);		// binary read
+	long write(CFile* datafile);	// binary write
+	BOOL read(CFile* datafile);		// binary read
 
 	CWaveChanArray& operator = (const CWaveChanArray& arg);
 	CWaveChan* get_p_channel(int i) const;
@@ -156,5 +155,5 @@ public:
 	void	channel_remove(int i);
 	void	channel_remove_all();
 	int		channel_get_number() const;
-	void Serialize(CArchive & ar) override;
+	void Serialize(CArchive& ar) override;
 };

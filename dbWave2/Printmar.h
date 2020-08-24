@@ -8,7 +8,7 @@
 
 class CPrintMarginsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CPrintMarginsDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -16,8 +16,8 @@ public:
 	enum { IDD = IDD_PRINTMARGINS };
 	OPTIONS_VIEWDATA* mdPM;
 	int	m_viewtype;
-	
-// Implementation
+
+	// Implementation
 protected:
 	void	SketchPrinterPage();
 	void	GetPageSize();

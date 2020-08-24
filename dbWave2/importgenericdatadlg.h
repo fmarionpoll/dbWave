@@ -16,13 +16,13 @@ class CImportGenericDataDlg : public CDialog
 {
 	friend class CAcqDataDoc;
 
-// Construction
+	// Construction
 public:
 	CImportGenericDataDlg(CWnd* pParent = nullptr);   // standard constructor
 
-	OPTIONS_IMPORT*	piivO;				// from caller
+	OPTIONS_IMPORT* piivO;				// from caller
 	BOOL			bConvert;
-	CStringArray*	m_pfilenameArray;
+	CStringArray* m_pfilenameArray;
 	CEditCtrl		mm_nbADchannels;
 	CEditCtrl		mm_adChannelChan;
 	CEditCtrl		mm_skipNbytes;
@@ -33,9 +33,8 @@ public:
 	CString			m_fileold;
 	BOOL			m_bChanged;			// one parameter was changed
 	BOOL			m_bimportall;
-	
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_IMPORTGENERICDATAFILE };
 	CComboBox	m_filedroplist;
 	CComboBox	m_ComboPrecision;
@@ -50,10 +49,10 @@ public:
 	float	m_voltageMin;
 	CString	m_csFileTitle;
 	BOOL	m_bpreviewON;
-	
-// Overrides
-	public:
-	protected:
+
+	// Overrides
+public:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV supportTUAL
 
 // Implementation

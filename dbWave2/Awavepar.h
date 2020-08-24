@@ -1,7 +1,7 @@
 //  awavepar.h  acquisition parameters
 //
 #pragma once
-class display: public CObject
+class display : public CObject
 {
 	DECLARE_SERIAL(display)
 	display();
@@ -55,7 +55,7 @@ class OPTIONS_VIEWDATA : public CObject
 public:
 	BOOL bChanged;			// flag set TRUE if contents has changed
 	WORD m_wversion;		// version number
-	
+
 	// print options
 	BOOL bAcqComment;		// print data acquisition comments
 	BOOL bAcqDateTime;		// data acquisition date and time
@@ -70,7 +70,7 @@ public:
 	BOOL bPrintSpkBars;		// for viewspkd view, print bars or not
 	BOOL bFilterDataSource;	// display source data filtered
 
-	// print parameters	
+	// print parameters
 	int	 horzRes;			// horizontal printer resolution
 	int  vertRes;			// vertical printer resolution
 	int	 HeightDoc;			// height of one document
@@ -161,7 +161,7 @@ public:
 };
 
 // ---------------------------------------------------------------------
-// view spikes options 
+// view spikes options
 
 #define EXPORT_PSTH			0
 #define EXPORT_ISI			1
@@ -198,7 +198,7 @@ public:
 	int  classnb;				// class nb
 	int  classnb2;
 	int	 istimulusindex;
-	int	 exportdatatype;		// export 0=psth, 1=isi, 2=autocorr, 3=intervals, 4=extrema, 5=max-min, 6=hist ampl	
+	int	 exportdatatype;		// export 0=psth, 1=isi, 2=autocorr, 3=intervals, 4=extrema, 5=max-min, 6=hist ampl
 	int	 spikeclassoption;		// spike class: -1(one:selected); 0(all); 1(all:splitted)
 
 	BOOL bacqcomments;			// source data comments
@@ -223,7 +223,7 @@ public:
 	int  heightSeparator;		// separator height betw classes
 	WORD wBoolParms;
 	BOOL bdisplayBars;			// default(TRUE)
-	BOOL bdisplayShapes;		// default(TRUE)	
+	BOOL bdisplayShapes;		// default(TRUE)
 	BOOL bsplitClasses;			// separate classes
 	BOOL ballChannels;			// all spike channels (FALSE: only current)
 
@@ -262,7 +262,7 @@ class OPTIONS_VIEWDATAMEASURE : public CObject
 public:
 	BOOL bChanged;			// flag set TRUE if contents has changed
 	WORD wversion;			// version number
-	
+
 	// parameters to measure
 	BOOL bExtrema;			// 1- measure max and min (val, time)
 	BOOL bDiffExtrema;		// 2- difference between extrema (val, time)
@@ -420,7 +420,7 @@ public:
 	WORD	wversion{};								// version number
 
 	BOOL	bON;									// channel authorized or not
-	int		iChan;									// chan 
+	int		iChan;									// chan
 	BOOL	bDigital;								// digital or Analog
 	double	dAmplitudeMaxV;							// maximum amplitude of the signal
 	double	dAmplitudeMinV;							// minimum amplitude of the signal
@@ -429,7 +429,7 @@ public:
 	CString	csFilename;								// filename to output
 	CIntervalsAndLevels				stimulussequence;
 	CIntervalsAndWordsSeries	sti;
-	
+
 	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval
 	int		mseq_iDelay;							// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples
 	int		mseq_iSeed;								// m_mSeqSeed;		// Sequence seed or zero=random seed
@@ -443,7 +443,7 @@ public:
 	double	ampUp{};
 	double	ampLow{};
 
-	double	noise_dAmplitV;	
+	double	noise_dAmplitV;
 	double	noise_dFactor;
 	double	noise_dOffsetV;
 	int		noise_iDelay;

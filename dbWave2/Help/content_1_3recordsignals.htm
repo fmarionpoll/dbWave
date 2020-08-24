@@ -1,48 +1,59 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <HTML>
 <HEAD>
-<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
-<Title>Record signals</Title>
+    <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+    <Title>Record signals</Title>
 </HEAD>
 <BODY>
-<h1>Record signals</h1>
-    <p>In order to record signals, you need to connect your computer to a data acquisition card and to a signal acquisition setup adapted to your preparation. 
+    <h1>Record signals</h1>
+    <p>
+        In order to record signals, you need to connect your computer to a data acquisition card and to a signal acquisition setup adapted to your preparation.
     </p>
-       
+
     <p>In order to record from taste or olfactory sensilla, you need to derive signals from a grounded insect with a microelectrode connected to a probe and to an amplifier.</p>
     <p>To record data, you will need to define a few parameters:</p>
     <ul>
-        <li>Data acquisition parameters of the data acquisition card:<ul>
-            <li>how many channels</li>
-            <li>sampling rate per channel</li>
-            <li>amplification factor on the card (DT cards can amplify signals from x1 to x8) 
-                for each channel. Typically: x1.</li>
+        <li>
+            Data acquisition parameters of the data acquisition card:<ul>
+                <li>how many channels</li>
+                <li>sampling rate per channel</li>
+                <li>
+                    amplification factor on the card (DT cards can amplify signals from x1 to x8)
+                    for each channel. Typically: x1.
+                </li>
             </ul>
         </li>
-        <li>Amplifier settings for each channel:<ul>
-            <li>Amplification gain </li>
-            <li>Low pass filter settings (typically 2800 Hz).</li>
-            <li>High pass filter settings (from DC to 10 Hz typically).</li>
+        <li>
+            Amplifier settings for each channel:<ul>
+                <li>Amplification gain </li>
+                <li>Low pass filter settings (typically 2800 Hz).</li>
+                <li>High pass filter settings (from DC to 10 Hz typically).</li>
             </ul>
         </li>
-        <li>Pre-amplifier parameters:<ul>
-            <li>amplification gain</li>
+        <li>
+            Pre-amplifier parameters:<ul>
+                <li>amplification gain</li>
             </ul>
         </li>
     </ul>
     <p>
-        These parameters will be used to convert the data acquired by your board into 
-        real number by a simple formula: voltage = (16 bits number)* 20 V / (A/D gain * 
-        amplifier gain * preampli gain).</p>
+        These parameters will be used to convert the data acquired by your board into
+        real number by a simple formula: voltage = (16 bits number)* 20 V / (A/D gain *
+        amplifier gain * preampli gain).
+    </p>
     <p>
-        You will also need to define:</p>
+        You will also need to define:
+    </p>
     <ul>
         <li>during how long data will be recorded and saved on disk</li>
-        <li>how the data acquisition bout should stard (immediately, after pressing a key, 
-            or when detecting a TTL pulse)</li>
-        <li>and a few other parameters which describe the experiment and the content of that 
-            data acquisition bout.</li>
+        <li>
+            how the data acquisition bout should stard (immediately, after pressing a key,
+            or when detecting a TTL pulse)
+        </li>
+        <li>
+            and a few other parameters which describe the experiment and the content of that
+            data acquisition bout.
+        </li>
     </ul>
-
 </BODY>
 </HTML>

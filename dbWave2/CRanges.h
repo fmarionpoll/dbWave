@@ -10,7 +10,7 @@
 class CRanges : public COleDispatchDriver
 {
 public:
-	CRanges(){} // Calls COleDispatchDriver default constructor
+	CRanges() {} // Calls COleDispatchDriver default constructor
 	CRanges(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CRanges(const CRanges& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -19,7 +19,6 @@ public:
 
 	// Operations
 public:
-
 
 	// Ranges methods
 public:
@@ -44,7 +43,7 @@ public:
 	LPDISPATCH get__Default(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -57,7 +56,7 @@ public:
 	LPDISPATCH get_Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -70,5 +69,4 @@ public:
 
 	// Ranges properties
 public:
-
 };

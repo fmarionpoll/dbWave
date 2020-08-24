@@ -2,7 +2,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 class CChildFrame : public CMDIChildWndEx
@@ -11,7 +10,7 @@ class CChildFrame : public CMDIChildWndEx
 public:
 	CChildFrame();
 
-// Attributes
+	// Attributes
 public:
 	UINT			m_viewON;
 	int				m_previousviewON;
@@ -22,12 +21,12 @@ protected:
 	BOOL			m_bDeleteFile;
 	BOOL			m_bKeepChoice;
 
-// Overrides
+	// Overrides
 public:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	void ActivateFrame(int n_cmd_show = -1) override;
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CChildFrame();
 #ifdef _DEBUG
@@ -42,7 +41,7 @@ protected:
 	BOOL ExportToExcelAndBuildPivot(int option);
 	void BuildPivot(void* oApp, void* odataSheet, CString csSourceDataAddress, CString csNameSheet, short XlConsolidationFunction, int col2);
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	afx_msg void OnViewCursormodeNormal();
 	afx_msg void OnUpdateViewCursormodeNormal(CCmdUI* pCmdUI);
@@ -57,7 +56,7 @@ protected:
 	afx_msg void OnToolsExportdataAsText();
 	afx_msg void OnToolsExportnumberofspikes();
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void ReplaceViewIndex(UINT nID );
+	afx_msg void ReplaceViewIndex(UINT nID);
 	afx_msg void OnUpdateViewmenu(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 public:
@@ -88,4 +87,3 @@ public:
 	afx_msg void OnToolsGarbage();
 	afx_msg void OnToolsCompactdatabase();
 };
-

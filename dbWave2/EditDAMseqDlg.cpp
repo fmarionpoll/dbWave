@@ -3,8 +3,6 @@
 #include "EditDAMseqDlg.h"
 #include "afxdialogex.h"
 
-
-
 // CEditDAMseqDlg dialog
 
 IMPLEMENT_DYNAMIC(CEditDAMseqDlg, CDialogEx)
@@ -33,30 +31,26 @@ void CEditDAMseqDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MSEQ_RANDOM_SEED, m_mSeqRandomSeed);
 }
 
-
 BEGIN_MESSAGE_MAP(CEditDAMseqDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDC_MSEQ_RANDOM_SEED, &CEditDAMseqDlg::OnBnClickedMseqRandomSeed)
 
 END_MESSAGE_MAP()
 
-
 // CEditDAMseqDlg message handlers
-
 
 BOOL CEditDAMseqDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_mSeqRatio		= m_outDParms.mseq_iRatio;
-	m_mSeqDelay		= m_outDParms.mseq_iDelay;
-	m_mSeqSeed		= m_outDParms.mseq_iSeed;
+	m_mSeqRatio = m_outDParms.mseq_iRatio;
+	m_mSeqDelay = m_outDParms.mseq_iDelay;
+	m_mSeqSeed = m_outDParms.mseq_iSeed;
 
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 void CEditDAMseqDlg::OnOK()
 {
@@ -68,7 +62,6 @@ void CEditDAMseqDlg::OnOK()
 
 	CDialogEx::OnOK();
 }
-
 
 void CEditDAMseqDlg::OnBnClickedMseqRandomSeed()
 {

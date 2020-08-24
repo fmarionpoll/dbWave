@@ -9,7 +9,7 @@
 
 class CScopeScreenPropsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CScopeScreenPropsDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -28,10 +28,10 @@ public:
 	CEditCtrl	mm_ycells;
 	CEditCtrl	mm_xyticks;
 	CEditCtrl	mm_xytickline;
-	
-// Overrides
 
-	protected:
+	// Overrides
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation

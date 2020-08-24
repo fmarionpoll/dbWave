@@ -12,14 +12,14 @@ protected: // create from serialization only
 	CNoteDoc();
 	DECLARE_DYNCREATE(CNoteDoc)
 
-// Attributes
+	// Attributes
 public:
 
-// Operations
+	// Operations
 public:
 
-// Overrides
-	public:
+	// Overrides
+public:
 	virtual BOOL OnNewDocument();
 	void Serialize(CArchive& ar) override;
 
@@ -27,8 +27,7 @@ public:
 	virtual CRichEditCntrItem* CreateClientItem(REOBJECT* preo) const;
 	BOOL OpenProjectFiles(CString& cspathname);
 
-
-// Implementation
+	// Implementation
 public:
 	virtual ~CNoteDoc();
 #ifdef _DEBUG
@@ -38,9 +37,8 @@ public:
 
 protected:
 
-// Generated message map functions
+	// Generated message map functions
 protected:
-	
+
 	DECLARE_MESSAGE_MAP()
 };
-

@@ -8,7 +8,7 @@
 
 class CPrintDrawAreaDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CPrintDrawAreaDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -21,7 +21,7 @@ public:
 	int		m_spkwidth;
 	OPTIONS_VIEWDATA* mdPM;
 
-// Implementation
+	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	virtual BOOL OnInitDialog();

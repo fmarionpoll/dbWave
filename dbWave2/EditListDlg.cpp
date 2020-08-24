@@ -15,7 +15,7 @@ IMPLEMENT_DYNAMIC(CEditListDlg, CDialog)
 
 CEditListDlg::CEditListDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CEditListDlg::IDD, pParent)
-	  , m_csNewString(_T("")), m_selected(0)
+	, m_csNewString(_T("")), m_selected(0)
 {
 	pCo = nullptr;
 }
@@ -36,30 +36,30 @@ BEGIN_MESSAGE_MAP(CEditListDlg, CDialog)
 	ON_BN_CLICKED(IDC_DELETE, &CEditListDlg::OnBnClickedDelete)
 	ON_BN_CLICKED(IDC_ADDITEM, &CEditListDlg::OnBnClickedAdditem)
 	ON_WM_SIZE()
-//	ON_BN_CLICKED(IDC_BUTTON1, &CEditListDlg::OnBnClickedButton1)
+	//	ON_BN_CLICKED(IDC_BUTTON1, &CEditListDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 // CEditListDlg message handlers
-BOOL CEditListDlg::OnInitDialog() 
+BOOL CEditListDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	const auto nitems = pCo->GetCount();
 	CString csdummy;
-	for (auto i = 0; i< nitems; i++)
+	for (auto i = 0; i < nitems; i++)
 	{
-		pCo->GetLBText(i, csdummy);		
+		pCo->GetLBText(i, csdummy);
 		m_clStrings.AddString(csdummy);
 	}
 	return TRUE;
 }
 
-void CEditListDlg::OnOK() 
+void CEditListDlg::OnOK()
 {
 	m_selected = m_clStrings.GetCurSel();
 	const auto nitems = m_clStrings.GetCount();
 	CString csdummy;
-	for (auto i=0; i< nitems; i++)
+	for (auto i = 0; i < nitems; i++)
 	{
 		m_clStrings.GetText(i, csdummy);
 		if (!csdummy.IsEmpty())
@@ -73,16 +73,16 @@ void CEditListDlg::OnBnClickedDelete()
 	const auto ncount = m_clStrings.GetSelCount();
 	if (0 == ncount)
 		return;
-	const auto sel_index = new int [ncount];
+	const auto sel_index = new int[ncount];
 	m_clStrings.GetSelItems(ncount, sel_index);
 
-	for (auto i= ncount; i>0; i--)
-		m_clStrings.DeleteString(sel_index[i-1]);
-	delete [] sel_index;
+	for (auto i = ncount; i > 0; i--)
+		m_clStrings.DeleteString(sel_index[i - 1]);
+	delete[] sel_index;
 
 	const auto nitems = m_clStrings.GetCount();
 	CString csdummy;
-	for (auto i = nitems-1; i>= 0; i--)
+	for (auto i = nitems - 1; i >= 0; i--)
 	{
 		m_clStrings.GetText(i, csdummy);
 		if (csdummy.IsEmpty())

@@ -85,14 +85,14 @@ void CPrintMarginsDlg::OnPagemargins()
 
 void CPrintMarginsDlg::OnPrintersetup()
 {
-	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters	
+	CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
 	p_app->FilePrintSetup();
 	GetPageSize();
 	SketchPrinterPage();
 }
 
 void CPrintMarginsDlg::SketchPrinterPage()
-{	
+{
 	CClientDC dc(this);
 
 	/*auto p_old_brush = (CBrush*) */dc.SelectStockObject(WHITE_BRUSH);
@@ -101,7 +101,7 @@ void CPrintMarginsDlg::SketchPrinterPage()
 	const auto p_f_wnd = GetDlgItem(IDC_RECT1);
 	p_f_wnd->GetWindowRect(&m_rect);
 	ScreenToClient(&m_rect);
-	InvalidateRect(&m_rect, TRUE);	
+	InvalidateRect(&m_rect, TRUE);
 }
 
 void CPrintMarginsDlg::OnPaint()
@@ -109,9 +109,9 @@ void CPrintMarginsDlg::OnPaint()
 	CPaintDC dc(this); 					// device context for painting
 
 	/*CBrush* p_old_brush = (CBrush*) */dc.SelectStockObject(WHITE_BRUSH);
-	const auto p_old_pen = (CPen*) dc.SelectStockObject(BLACK_PEN);
+	const auto p_old_pen = (CPen*)dc.SelectStockObject(BLACK_PEN);
 
-	const auto page_background = RGB(192,192,192);
+	const auto page_background = RGB(192, 192, 192);
 	const auto comment_area = page_background; //RGB(  0, 128, 128);
 
 	// erase background
@@ -121,31 +121,31 @@ void CPrintMarginsDlg::OnPaint()
 	dc.FillSolidRect(&m_rect, page_background);
 
 	CPoint center;						// center of the drawing area
-	center.x = (m_rect.right+m_rect.left)/2;
-	center.y = (m_rect.bottom+m_rect.top)/2;
+	center.x = (m_rect.right + m_rect.left) / 2;
+	center.y = (m_rect.bottom + m_rect.top) / 2;
 	const auto rectsize = min(m_rect.Width(), m_rect.Height());	// max size of the square
 	const auto maxresol = max(mdPM->vertRes, mdPM->horzRes);		// max resolution
 
 	// draw page area
-	auto diff = MulDiv(mdPM->horzRes, rectsize, maxresol)/2;
+	auto diff = MulDiv(mdPM->horzRes, rectsize, maxresol) / 2;
 	m_pagerect.left = center.x - diff;
 	m_pagerect.right = center.x + diff;
-	diff = MulDiv(mdPM->vertRes, rectsize, maxresol)/2;
+	diff = MulDiv(mdPM->vertRes, rectsize, maxresol) / 2;
 	m_pagerect.top = center.y - diff;
 	m_pagerect.bottom = center.y + diff;
 	dc.Rectangle(&m_pagerect);
 
 	auto i = MulDiv(mdPM->leftPageMargin, rectsize, maxresol);   // vertical lines
-	m_bars[0] = CRect(m_pagerect.left+i, m_rect.top, m_pagerect.left+i, m_rect.bottom);
+	m_bars[0] = CRect(m_pagerect.left + i, m_rect.top, m_pagerect.left + i, m_rect.bottom);
 
 	i = MulDiv(mdPM->rightPageMargin, rectsize, maxresol);
-	m_bars[2] = CRect(m_pagerect.right-i, m_rect.top, m_pagerect.right-i, m_rect.bottom);
-	
+	m_bars[2] = CRect(m_pagerect.right - i, m_rect.top, m_pagerect.right - i, m_rect.bottom);
+
 	i = MulDiv(mdPM->topPageMargin, rectsize, maxresol);
-	m_bars[1] = CRect(m_rect.left, m_pagerect.top+i, m_rect.right, m_pagerect.top+i);
-	
+	m_bars[1] = CRect(m_rect.left, m_pagerect.top + i, m_rect.right, m_pagerect.top + i);
+
 	i = MulDiv(mdPM->bottomPageMargin, rectsize, maxresol);
-	m_bars[3] = CRect(m_rect.left, m_pagerect.bottom-i, m_rect.right, m_pagerect.bottom-i);
+	m_bars[3] = CRect(m_rect.left, m_pagerect.bottom - i, m_rect.right, m_pagerect.bottom - i);
 
 	// draw drawing area
 	if (mdPM->bFrameRect)
@@ -153,14 +153,14 @@ void CPrintMarginsDlg::OnPaint()
 	else
 		dc.SelectStockObject(WHITE_PEN);
 
-	const int rowmax = m_pagerect.bottom-i;
+	const int rowmax = m_pagerect.bottom - i;
 	CRect docrect;
-	docrect.left = m_pagerect.left+MulDiv(mdPM->leftPageMargin, rectsize, maxresol);
+	docrect.left = m_pagerect.left + MulDiv(mdPM->leftPageMargin, rectsize, maxresol);
 	docrect.right = docrect.left + MulDiv(mdPM->WidthDoc, rectsize, maxresol);
 
 	CRect commtrect;
 	commtrect.left = docrect.right + MulDiv(mdPM->textseparator, rectsize, maxresol);
-	commtrect.right = m_pagerect.right-MulDiv(mdPM->rightPageMargin, rectsize, maxresol);
+	commtrect.right = m_pagerect.right - MulDiv(mdPM->rightPageMargin, rectsize, maxresol);
 	if (commtrect.right < commtrect.left)
 		commtrect.right = commtrect.left + 10;
 
@@ -173,9 +173,9 @@ void CPrintMarginsDlg::OnPaint()
 	m_bars[4] = CRect(docrect.right, m_rect.top, docrect.right, m_rect.bottom);
 	m_bars[6] = CRect(commtrect.left, m_rect.top, commtrect.left, m_rect.bottom);
 	m_bars[5] = CRect(m_rect.left, bottomrow, m_rect.right, bottomrow);
-	m_bars[7] = CRect(m_rect.left, bottomrow+ rowsep, m_rect.right, bottomrow+ rowsep);
- 
-	while(bottomrow < rowmax)
+	m_bars[7] = CRect(m_rect.left, bottomrow + rowsep, m_rect.right, bottomrow + rowsep);
+
+	while (bottomrow < rowmax)
 	{
 		docrect.top = toprow;
 		docrect.bottom = bottomrow;
@@ -186,19 +186,19 @@ void CPrintMarginsDlg::OnPaint()
 		dc.FillSolidRect(&commtrect, comment_area);
 		toprow = docrect.bottom + rowsep;
 		bottomrow = toprow + rowheight;
-	}    
+	}
 
 	// draw bars (resizable margins)
 	for (auto& m_bar : m_bars)
-		DrawBar (&m_bar, &dc); 
+		DrawBar(&m_bar, &dc);
 
 	dc.SelectObject(p_old_pen);
 }
 
 void CPrintMarginsDlg::DrawBar(CRect* bar, CDC* pdc)
 {
-	CPen penbars(PS_DOT, 1, RGB(0,0,255));
-	const auto p_old_pen = (CPen*) pdc->SelectObject(&penbars);
+	CPen penbars(PS_DOT, 1, RGB(0, 0, 255));
+	const auto p_old_pen = (CPen*)pdc->SelectObject(&penbars);
 
 	pdc->MoveTo(bar->left, bar->top);
 	pdc->LineTo(bar->right, bar->bottom);
@@ -208,7 +208,7 @@ void CPrintMarginsDlg::DrawBar(CRect* bar, CDC* pdc)
 
 void CPrintMarginsDlg::GetPageSize()
 {
-	CPrintDialog dlg(FALSE);	
+	CPrintDialog dlg(FALSE);
 	if (!AfxGetApp()->GetPrinterDeviceDefaults(&dlg.m_pd))
 	{
 		AfxMessageBox(_T("Printer functions not available:\nundefined printer"));
@@ -218,26 +218,26 @@ void CPrintMarginsDlg::GetPageSize()
 
 	// GetPrinterDC returns a HDC so attach it
 	CDC dc;
-	const auto h_dc= dlg.CreatePrinterDC();     // to delete at the end -- see doc!	
+	const auto h_dc = dlg.CreatePrinterDC();     // to delete at the end -- see doc!
 	ASSERT(h_dc != NULL);
 	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
-	mdPM->horzRes=dc.GetDeviceCaps(HORZRES);
-	mdPM->vertRes=dc.GetDeviceCaps(VERTRES);
+	mdPM->horzRes = dc.GetDeviceCaps(HORZRES);
+	mdPM->vertRes = dc.GetDeviceCaps(VERTRES);
 
 	CString csResolut;
 	csResolut.Format(_T("%i"), mdPM->vertRes);
 	SetDlgItemText(IDC_PAGEHEIGHT, csResolut);
 	csResolut.Format(_T("%i"), mdPM->horzRes);
-	SetDlgItemText(IDC_PAGEWIDTH, csResolut);	
+	SetDlgItemText(IDC_PAGEWIDTH, csResolut);
 }
 
-void CPrintMarginsDlg::OnLButtonDown(UINT nFlags, CPoint point) 
+void CPrintMarginsDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CRect rc_client;
 	GetClientRect(&rc_client);
-	const auto p_dc = GetDC();	
+	const auto p_dc = GetDC();
 
 	if (IsMouseOverAnyBar(&point) < 0)
 	{
@@ -251,7 +251,7 @@ void CPrintMarginsDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	CDialog::OnLButtonDown(nFlags, point);
 }
 
-void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point) 
+void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_bCaptured)
 	{
@@ -264,56 +264,56 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		switch (m_icapturedBar)
 		{
 		case 0:	// left page margin
-			if (m_bars[0].left < m_pagerect.left) 
+			if (m_bars[0].left < m_pagerect.left)
 			{
-				m_bars[0].left= m_pagerect.left; 
-				m_bars[0].right= m_pagerect.left;
+				m_bars[0].left = m_pagerect.left;
+				m_bars[0].right = m_pagerect.left;
 			}
-			if (m_bars[0].left >  m_pagerect.right)
-			{ 
-				m_bars[0].left= m_pagerect.right; 
-				m_bars[0].right= m_pagerect.right;
+			if (m_bars[0].left > m_pagerect.right)
+			{
+				m_bars[0].left = m_pagerect.right;
+				m_bars[0].right = m_pagerect.right;
 			}
 			mdPM->leftPageMargin = MulDiv(m_bars[0].right - m_pagerect.left, maxresol, rectsize);
 			break;
 
 		case 1:	// top page margin
-			if (m_bars[1].top < m_pagerect.top) 
-			{ 
-				m_bars[1].top= m_pagerect.top; 
-				m_bars[1].bottom= m_pagerect.top;
+			if (m_bars[1].top < m_pagerect.top)
+			{
+				m_bars[1].top = m_pagerect.top;
+				m_bars[1].bottom = m_pagerect.top;
 			}
-			if (m_bars[1].top >  m_pagerect.bottom)
-			{ 
-				m_bars[1].top= m_pagerect.bottom; 
+			if (m_bars[1].top > m_pagerect.bottom)
+			{
+				m_bars[1].top = m_pagerect.bottom;
 				m_bars[1].bottom = m_pagerect.bottom;
 			}
 			mdPM->topPageMargin = MulDiv(m_bars[1].top - m_pagerect.top, maxresol, rectsize);
 			break;
 
 		case 2:	// right page margin
-			if (m_bars[2].left < m_pagerect.left) 
-			{ 
-				m_bars[2].left= m_pagerect.left; 
-				m_bars[2].right= m_pagerect.left;
+			if (m_bars[2].left < m_pagerect.left)
+			{
+				m_bars[2].left = m_pagerect.left;
+				m_bars[2].right = m_pagerect.left;
 			}
-			if (m_bars[2].left >  m_pagerect.right)
-			{ 
-				m_bars[2].left= m_pagerect.right; 
-				m_bars[2].right= m_pagerect.right;
+			if (m_bars[2].left > m_pagerect.right)
+			{
+				m_bars[2].left = m_pagerect.right;
+				m_bars[2].right = m_pagerect.right;
 			}
 			mdPM->rightPageMargin = MulDiv((m_pagerect.right - m_bars[2].right), maxresol, rectsize);
 			break;
 
 		case 3: //bottom page margin
-			if (m_bars[3].top < m_pagerect.top) 
-			{ 
-				m_bars[3].top= m_pagerect.top; 
-				m_bars[3].bottom= m_pagerect.top;
+			if (m_bars[3].top < m_pagerect.top)
+			{
+				m_bars[3].top = m_pagerect.top;
+				m_bars[3].bottom = m_pagerect.top;
 			}
-			if (m_bars[3].top >  m_pagerect.bottom)
-			{ 
-				m_bars[3].top= m_pagerect.bottom; 
+			if (m_bars[3].top > m_pagerect.bottom)
+			{
+				m_bars[3].top = m_pagerect.bottom;
 				m_bars[3].bottom = m_pagerect.bottom;
 			}
 			mdPM->bottomPageMargin = MulDiv((m_pagerect.bottom - m_bars[3].top), maxresol, rectsize);
@@ -322,24 +322,24 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		case 4:	// signal right
 			if ((m_bars[4].right - m_bars[0].right) < 0)
 			{
-				m_bars[4].right = m_bars[0].left; 
+				m_bars[4].right = m_bars[0].left;
 				m_bars[4].left = m_bars[0].left;
 			}
-			mdPM->WidthDoc = MulDiv( (m_bars[4].right - m_bars[0].right), maxresol, rectsize);
+			mdPM->WidthDoc = MulDiv((m_bars[4].right - m_bars[0].right), maxresol, rectsize);
 			break;
 
 		case 5:	// signal band width
 			if ((m_bars[5].top - m_bars[1].top) < 0)
 			{
-				m_bars[5].top = m_bars[1].top; 
+				m_bars[5].top = m_bars[1].top;
 				m_bars[5].bottom = m_bars[1].top;
 			}
 			if ((m_bars[5].top - m_bars[3].top) > 0)
 			{
-				m_bars[5].top = m_bars[3].top; 
+				m_bars[5].top = m_bars[3].top;
 				m_bars[5].bottom = m_bars[3].top;
 			}
-			mdPM->HeightDoc = MulDiv((m_bars[5].top - m_bars[1].top), maxresol, rectsize);			    
+			mdPM->HeightDoc = MulDiv((m_bars[5].top - m_bars[1].top), maxresol, rectsize);
 			break;
 
 		case 6:	// horizontal separator between signal and comment area
@@ -354,16 +354,16 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		case 7: // separator beween consecutive bands
 			if ((m_bars[7].top - m_bars[5].top) < 0)
 			{
-				m_bars[7].top = m_bars[5].top; 
+				m_bars[7].top = m_bars[5].top;
 				m_bars[7].bottom = m_bars[5].top;
 			}
-			mdPM->heightSeparator = MulDiv((m_bars[7].top - m_bars[5].top),  maxresol, rectsize);
+			mdPM->heightSeparator = MulDiv((m_bars[7].top - m_bars[5].top), maxresol, rectsize);
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 	CDialog::OnLButtonUp(nFlags, point);
 	Invalidate();
 }
@@ -375,7 +375,7 @@ int CPrintMarginsDlg::IsMouseOverAnyBar(CPoint* point)
 	for (auto barindex = 0; barindex < 8; barindex++)
 	{
 		auto rect = m_bars[barindex];
-		rect.InflateRect (TRACKSIZE, TRACKSIZE);
+		rect.InflateRect(TRACKSIZE, TRACKSIZE);
 		if (rect.PtInRect(*point))
 		{
 			m_icapturedBar = barindex;
@@ -386,11 +386,11 @@ int CPrintMarginsDlg::IsMouseOverAnyBar(CPoint* point)
 	return -1;
 }
 
-void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point) 
+void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	auto p_dc = GetDC();
-	// check if point is not out of limits	
-	if (point.x < m_rect.left || point.x > m_rect.right 
+	// check if point is not out of limits
+	if (point.x < m_rect.left || point.x > m_rect.right
 		|| point.y < m_rect.top || point.y > m_rect.bottom)
 		return;
 
@@ -409,7 +409,7 @@ void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 	// change mouse cursor and replot if one bar is selected
 	else
 	{
-		// select display mode 
+		// select display mode
 		const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 		int cursor;
 		// erase old bar
@@ -420,7 +420,7 @@ void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			cursor = IDC_SPLITHORIZONTAL;
 			m_bars[m_icapturedBar].top = point.y;
-			m_bars[m_icapturedBar].bottom = point.y;			
+			m_bars[m_icapturedBar].bottom = point.y;
 		}
 		else
 		{
@@ -440,4 +440,3 @@ void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 	ReleaseDC(p_dc);
 	CDialog::OnMouseMove(nFlags, point);
 }
-

@@ -9,14 +9,13 @@
  DEV_FLAGS
  AL_CONFIGURATION
  CYBERAMP
- CYBERCHAN 
+ CYBERCHAN
  ATLABHEADER
  DATAPROP
 */
 // ============================================================
 
-// ATLAB data file acquisition information structure 
-
+// ATLAB data file acquisition information structure
 
 //	unsigned	DMA_mode		: 2;
 #define		PROGRAMMED_IO		0
@@ -31,33 +30,32 @@
 #define 	EXTERNAL_TRIGGER	2
 #define 	TRIGGERED_SCAN		4
 
-
-// device flags bit field definitions 
+// device flags bit field definitions
 
 #pragma pack (FORTRAN_ALIGN)
 typedef struct {
-	short DMA_mode		: 2;
-	short SE_DI			: 1;												  
-	short unipolar		: 1;
-	short encoding		: 2;
-	short sign_extended	: 1;
+	short DMA_mode : 2;
+	short SE_DI : 1;
+	short unipolar : 1;
+	short encoding : 2;
+	short sign_extended : 1;
 	//unsigned 				: 9;
-	} DEV_FLAGS;
+} DEV_FLAGS;
 #pragma pack ()
 
 // definition of the information returned by AL_GET_CONFIGURATION
 
 #pragma pack (FORTRAN_ALIGN)
 typedef struct {
-	short	base_address;		// base I/O address of the device 
-	short	device_id;			// DT28xx device identifier 
-	DEV_FLAGS device_flags;		// configuration options (bit definitions)							
-	short	scan_count;			// number of channels in scan list 
-	short	channel_count;		// number of A/D channels 
-	short	reserved[11];		// reserved for future use 
-	} AL_CONFIGURATION;
+	short	base_address;		// base I/O address of the device
+	short	device_id;			// DT28xx device identifier
+	DEV_FLAGS device_flags;		// configuration options (bit definitions)
+	short	scan_count;			// number of channels in scan list
+	short	channel_count;		// number of A/D channels
+	short	reserved[11];		// reserved for future use
+} AL_CONFIGURATION;
 #pragma pack ()
-																	 
+
 // definitions for Axon Instrument amplifier settings
 
 #pragma pack (FORTRAN_ALIGN)
@@ -67,7 +65,7 @@ typedef struct {           // CyberAmp common settings
 	short DevNumb;         // device number (identifier)
 	short nbChans;         // nb of channels in the amplifier
 //    short overload;        // overload status (0=none)
-	} CYBERAMP;
+} CYBERAMP;
 #pragma pack ()
 
 // atlab data file header
@@ -83,18 +81,18 @@ typedef struct {      	// Cyber amplifier definition
 	short	inputpos;   // values:GND(-1) DC(0) .1 1 10 30 100 300
 	short	inputneg;   // (*10)
 	char	probe[8];   // probe type (ASCII)
-	short	gainprobe;	// amplification factor at probe level      
-	} CYBERCHAN;
+	short	gainprobe;	// amplification factor at probe level
+} CYBERCHAN;
 #pragma pack ()
 
 #pragma pack (FORTRAN_ALIGN)
 typedef struct {
 	char	amplifier[12];
 	CYBERCHAN cyber;
-	} INSTRUMPARM;
+} INSTRUMPARM;
 #pragma pack ()
 
-/*                  
+/*
 // data file header definitions - ATLAB
 
 typedef struct tagATLABHEADER {		// index
@@ -102,7 +100,7 @@ typedef struct tagATLABHEADER {		// index
 	short		device_id;			// 2  DT28xx device identifier
 	DEV_FLAGS 	device_flags;		// 3  configuration options(defs below)
 	short		scan_count;			// 4  number of channels in scan list
-	short		channel_list[8];	// 5  channel scan list	
+	short		channel_list[8];	// 5  channel scan list
 	short		trigger_mode;		// 13 soft, keyboard, trig_ext, input+, input-
 	short		trigger_chan;		// 14 (trig_mode=input) A/D channel input
 	short		trigger_threshold;	// 15 (trig_mode=input) A/D channel input threshold value
@@ -121,7 +119,7 @@ typedef struct tagATLABHEADER {		// index
 	long		read_count;			// 373 samples read so far
 	char		acq_comment[80];	// 375 file annotation
 	short		version;			// 415 header version number
-	CYBERAMP	cyberA320;			// 416 Cyber amp general settings	
+	CYBERAMP	cyberA320;			// 416 Cyber amp general settings
 	CYBERCHAN	cyber1;				// 421 Cyber channel 1
 	CYBERCHAN	cyber2;             // 435
 	char 		free_4[14];			// ...................................
@@ -158,7 +156,6 @@ typedef struct tagATLABHEADER {		// index
 
 #define	ACQCOM_LEN			80
 
-
 /* A/D trigger property             */
 
 #define OLx_TRG_SOFT                 0
@@ -174,5 +171,3 @@ typedef struct tagATLABHEADER {		// index
 
 #define OLx_ENC_BINARY               0
 #define OLx_ENC_2SCOMP               1
-
-

@@ -6,7 +6,7 @@ class CEditDAMseqDlg : public CDialogEx
 	DECLARE_DYNAMIC(CEditDAMseqDlg)
 
 public:
-	CEditDAMseqDlg (CWnd* pParent = nullptr);   // standard constructor
+	CEditDAMseqDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditDAMseqDlg();
 
 	// Dialog Data
@@ -19,7 +19,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	CWnd*		m_pParent;
+	CWnd* m_pParent;
 
 	DECLARE_MESSAGE_MAP()
 public:

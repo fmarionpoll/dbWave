@@ -14,12 +14,12 @@ class CMeasureOptionsPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CMeasureOptionsPage)
 
-// Construction
+	// Construction
 public:
 	CMeasureOptionsPage();
 	~CMeasureOptionsPage();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_PROPPAGE1 };
 	BOOL	m_bExtrema;
 	BOOL	m_bDiffExtrema;
@@ -37,16 +37,16 @@ public:
 	UINT	m_uiStimulusThreshold;
 	UINT	m_uiStimuluschan;
 	// input parameters
-	OPTIONS_VIEWDATAMEASURE* m_pMO {};
-	CdbWaveDoc* 	m_pdbDoc {};	
-	CAcqDataDoc* 	m_pdatDoc {};	
-	CLineViewWnd*	m_plineview {};
+	OPTIONS_VIEWDATAMEASURE* m_pMO{};
+	CdbWaveDoc* m_pdbDoc{};
+	CAcqDataDoc* m_pdatDoc{};
+	CLineViewWnd* m_plineview{};
 
-// Overrides
-	public:
+	// Overrides
+public:
 	virtual void OnOK();
 	virtual BOOL OnKillActive();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation
@@ -54,16 +54,13 @@ protected:
 	void ShowLimitsParms(BOOL bShow);
 	void ShowChanParm(BOOL b_show);
 	void SaveOptions();
-	
+
 	// Generated message map functions
 	afx_msg void OnAllchannels();
 	afx_msg void OnSinglechannel();
 	afx_msg void OnVerticaltags();
 	afx_msg void OnHorizontaltags();
-	afx_msg void OnStimulustag();	
+	afx_msg void OnStimulustag();
 	virtual BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
-
 };
-
-

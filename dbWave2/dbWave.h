@@ -25,12 +25,12 @@ public:
 	HMENU	m_hBrowseView{};
 	HMENU	m_hAcqView{};
 
-// Overrides
+	// Overrides
 public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
-// Implementation
+	// Implementation
 	UINT  m_nAppLook{};
 	BOOL  m_bHiColorIcons;
 
@@ -51,12 +51,12 @@ public:
 	OPTIONS_ACQDATA			options_acqdata;
 	OPTIONS_OUTPUTDATA		options_outputdata;
 
-	CMemFile*				m_pviewdataMemFile;
+	CMemFile* m_pviewdataMemFile;
 	CArray <CMemFile*, CMemFile*> viewspikesmemfile_ptr_array;
-	CMemFile*				m_pviewspikesMemFile;
-	CMemFile*				m_psort1spikesMemFile;
+	CMemFile* m_pviewspikesMemFile;
+	CMemFile* m_psort1spikesMemFile;
 	CStringArray			m_tempMDBfiles;
-	CSharedFile*			m_psf{};
+	CSharedFile* m_psf{};
 	BOOL					m_bADcardFound;
 
 	void	Defaultparameters(BOOL b_read);
@@ -65,7 +65,7 @@ public:
 	BOOL	GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames);
 	void	FilePrintSetup();
 	CString Get_MyDocuments_MydbWavePath();
-	
+
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnAppAbout();
 	afx_msg void OnFileOpen();

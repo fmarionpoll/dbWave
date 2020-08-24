@@ -1,4 +1,3 @@
-
 #pragma once
 #include "afxeditbrowsectrl.h"
 #include "dbWaveDoc.h"
@@ -11,7 +10,7 @@
 
 class CFindFilesDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CFindFilesDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -23,14 +22,14 @@ public:
 
 	int					m_nfound;
 	int					m_selinit;
-	CStringArray*		m_pfilenames;
+	CStringArray* m_pfilenames;
 	BOOL				m_ioption;
 	BOOL				m_banyformat;
 	BOOL				m_bexcludecloud;
-	
-	CdbWaveDoc*			m_pdbDoc;
 
-// Overrides
+	CdbWaveDoc* m_pdbDoc;
+
+	// Overrides
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -38,12 +37,12 @@ protected:
 protected:
 	CString			m_searchString;
 	BOOL			m_bSubtreeSearch;
-	CStringArray	m_ppath;	
+	CStringArray	m_ppath;
 	CString			m_csrootSearch;
 
-	void TraverseDirectory (CString path);
+	void TraverseDirectory(CString path);
 	void DisplaynFound();
-	void FindFiles (CString path);
+	void FindFiles(CString path);
 
 	// Generated message map functions
 	virtual void OnOK();

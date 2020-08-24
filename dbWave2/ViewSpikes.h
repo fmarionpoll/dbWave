@@ -23,9 +23,9 @@ public:
 	BOOL			m_bresetzoom = true;
 	BOOL			m_bartefact = false;
 	float			m_jitter_ms = 1.f;
-	CdbWaveDoc*		GetDocument();
+	CdbWaveDoc* GetDocument();
 
-// Attributes
+	// Attributes
 protected:
 	CSpikeClassListBox m_spkClassListBox;	// listbox of spike classes
 	CLineViewWnd	m_displayDataFile;		// data display
@@ -38,40 +38,40 @@ protected:
 	CEditCtrl		mm_destclass;
 	CEditCtrl		mm_jitter_ms;
 
-	int				m_zoominteger=1;		// zoom length (nb data acq points)
+	int				m_zoominteger = 1;		// zoom length (nb data acq points)
 	HICON			m_hBias = nullptr;
 	HICON			m_hZoom = nullptr;
-	float			m_yscaleFactor = 0.f;	// div factor for y bar 
+	float			m_yscaleFactor = 0.f;	// div factor for y bar
 	int				m_VBarMode = 0;			// flag V scrollbar state
 	CScrollBar 		m_scrolly;				// V scrollbar
 
 	CStretchControl m_stretch;				// clamp controls to sides of the formview area
-	BOOL			m_binit= false;
+	BOOL			m_binit = false;
 
-	CdbWaveDoc*		m_dbDoc = nullptr;		// master source document
-	CSpikeDoc*		m_pSpkDoc = nullptr;	// destination data doc
-	CSpikeList*		m_pSpkList = nullptr;	// temporary spike list	
-	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
+	CdbWaveDoc* m_dbDoc = nullptr;		// master source document
+	CSpikeDoc* m_pSpkDoc = nullptr;	// destination data doc
+	CSpikeList* m_pSpkList = nullptr;	// temporary spike list
+	CAcqDataDoc* m_pDataDoc = nullptr;	// data document pointer
 	BOOL			m_bDatDocExists = false;
 	BOOL			m_bSpkDocExists = false;
 	BOOL			m_bInitSourceView = true;
-	int				m_lFirst=0;
-	int				m_lLast=-1;
+	int				m_lFirst = 0;
+	int				m_lLast = -1;
 	SCROLLINFO		m_scrollFilePos_infos{};
 	CDWordArray		m_DWintervals;			// intervals to highlight spikes
-	BOOL			m_baddspikemode = false;	
+	BOOL			m_baddspikemode = false;
 
-	int				m_yWE=1;				// offset and gain to display spikes
-	int				m_yWO=0;
-	int				m_ptVT=-1;
+	int				m_yWE = 1;				// offset and gain to display spikes
+	int				m_yWO = 0;
+	int				m_ptVT = -1;
 	CRect			m_rectVTtrack = CRect(0, 0, 0, 0);
 	float			m_jitter = 0.f;
-	BOOL			m_bdummy=true;
+	BOOL			m_bdummy = true;
 
-// Implementation
+	// Implementation
 protected:
 	void UpdateLegends(BOOL bFirst);	// update legends
-	void UpdateFileParameters();		// update parms when file has changed	
+	void UpdateFileParameters();		// update parms when file has changed
 	void SaveCurrentFileParms();		// save spike file if modified
 	void SelectSpike(int spikeno);
 	void DefineSubClassedItems();
@@ -84,30 +84,29 @@ protected:
 	void UpdateBiasScroll();
 	void SetVBarMode(short bMode);
 	BOOL AddSpiketoList(long iitime, BOOL bcheck_if_otheraround);
-	void SetAddspikesMode (int mousecursorType);
+	void SetAddspikesMode(int mousecursorType);
 	void SelectSpkList(int icursel);
 
-// public interface to view
+	// public interface to view
 public:
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CViewData)
-	public:
+public:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnMove(UINT nIDMoveCommand);
-	protected:
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);   	
+protected:
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnInitialUpdate(); // called first time after construct
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
 	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);	    	
+	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	//}}AFX_VIRTUAL
-
 
 // VIEWPRNT.CPP: print view
 protected:
@@ -115,31 +114,31 @@ protected:
 	int		m_file0{};				// current file
 	long	m_lFirst0{};
 	long	m_lLast0{};
-		
+
 	int		m_nfiles{};				// nb of files in doc
 	int 	m_nbrowsperpage{};		// USER: nb files/page
 	long 	m_lprintFirst{};		// file index of first pt
 	long 	m_lprintLen{};			// nb pts per line
 	int 	m_printFirst{};
 	int 	m_printLast{};
-	int		m_maxclasses=1;
+	int		m_maxclasses = 1;
 	BOOL	m_bIsPrinting{};
-	
+
 	// specific printer parameters
 	TEXTMETRIC m_tMetric{};			// onbegin/onendPrinting
 	LOGFONT	m_logFont{};			// onbegin/onendPrinting
-	CFont*	m_pOldFont{};			// onbegin/onendPrinting
-	CFont	m_fontPrint;			// onbegin/onendPrinting    
+	CFont* m_pOldFont{};			// onbegin/onendPrinting
+	CFont	m_fontPrint;			// onbegin/onendPrinting
 
-	// page format printing parameters (pixel unit)    
+	// page format printing parameters (pixel unit)
 	CRect						m_printRect;
-	OPTIONS_VIEWDATA*			options_viewdata = nullptr;	// view data options
-	OPTIONS_VIEWDATAMEASURE*	mdMO = nullptr;			// measure options
-	SPKCLASSIF*					m_psC = nullptr;
-	SPKDETECTPARM*				m_pspkDP = nullptr;		// spike detection parameters
+	OPTIONS_VIEWDATA* options_viewdata = nullptr;	// view data options
+	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;			// measure options
+	SPKCLASSIF* m_psC = nullptr;
+	SPKDETECTPARM* m_pspkDP = nullptr;		// spike detection parameters
 
 protected:
-	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);	
+	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
 	CString PrintConvertFileIndex(long l_first, long l_last);
 	void 	PrintComputePageSize();
 	CString PrintGetFileInfos();
@@ -147,7 +146,7 @@ protected:
 	long 	PrintGetFileSeriesIndexFromPage(int page, int* file);
 	float	PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CViewSpikes();
 #ifdef _DEBUG
@@ -178,7 +177,7 @@ protected:
 	afx_msg void OnGAINbutton();
 	afx_msg void OnBIASbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-//	afx_msg void OnExchangeSourceAndDest();
+	//	afx_msg void OnExchangeSourceAndDest();
 	afx_msg void OnArtefact();
 	afx_msg void OnEnChangeJitter();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -190,12 +189,14 @@ protected:
 public:
 	//afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
 	//afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult) ;
-	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	CTabCtrl m_tabCtrl;
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CViewSpikes::GetDocument()
-						{ return (CdbWaveDoc*)m_pDocument; }
+inline CdbWaveDoc* CViewSpikes::GetDocument()
+{
+	return (CdbWaveDoc*)m_pDocument;
+}
 #endif

@@ -13,16 +13,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // CFormatHistogramDlg dialog
 
-
 CFormatHistogramDlg::CFormatHistogramDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CFormatHistogramDlg::IDD, pParent), m_bYmaxAuto(0), m_crHistFill(0), m_crHistBorder(0), m_crStimFill(0),
-	  m_crStimBorder(0), m_crChartArea(0)
+	m_crStimBorder(0), m_crChartArea(0)
 {
 	m_Ymax = 0.0f;
 	m_xfirst = 0.0f;
 	m_xlast = 0.0f;
 }
-
 
 void CFormatHistogramDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -31,7 +29,6 @@ void CFormatHistogramDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT2, m_xfirst);
 	DDX_Text(pDX, IDC_EDIT3, m_xlast);
 }
-
 
 BEGIN_MESSAGE_MAP(CFormatHistogramDlg, CDialog)
 	ON_BN_CLICKED(IDC_CHECK1, OnCheckbYmaxAuto)
@@ -46,43 +43,42 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CFormatHistogramDlg message handlers
 
-void CFormatHistogramDlg::OnCheckbYmaxAuto() 
+void CFormatHistogramDlg::OnCheckbYmaxAuto()
 {
-	m_bYmaxAuto = ((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_bYmaxAuto = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
 	if (!m_bYmaxAuto)
 	{
-		((CWnd*) GetDlgItem(IDC_EDIT1))->EnableWindow(FALSE);
+		((CWnd*)GetDlgItem(IDC_EDIT1))->EnableWindow(FALSE);
 	}
 	else
 	{
-		((CWnd*) GetDlgItem(IDC_EDIT1))->EnableWindow(TRUE);
+		((CWnd*)GetDlgItem(IDC_EDIT1))->EnableWindow(TRUE);
 	}
 }
 
-
-void CFormatHistogramDlg::OnPaint() 
+void CFormatHistogramDlg::OnPaint()
 {
 	CRect rect;							// rect variable
 	CPaintDC dc(this); 					// device context for painting
-	CBrush* p_old_brush = (CBrush*) dc.SelectStockObject(WHITE_BRUSH);
-	CPen*   pOldPen = (CPen*) dc.SelectStockObject(NULL_PEN);
+	CBrush* p_old_brush = (CBrush*)dc.SelectStockObject(WHITE_BRUSH);
+	CPen* pOldPen = (CPen*)dc.SelectStockObject(NULL_PEN);
 
 	// erase background
 	CWnd* pFWnd = GetDlgItem(IDC_STATIC10);
 	pFWnd->GetWindowRect(&rect);		// get window rectangle
 	ScreenToClient(&rect);				// convert  coordinates
 	dc.Rectangle(&rect);
-	
+
 	// display abcissa
-	int binlen= rect.Width()/8;
-	int baseline= rect.Height()/8;
+	int binlen = rect.Width() / 8;
+	int baseline = rect.Height() / 8;
 	CRect rect0 = rect;
 	rect0.DeflateRect(binlen, baseline);
 	dc.FillSolidRect(&rect0, m_crChartArea);
 
 	dc.SelectStockObject(BLACK_PEN);
-	dc.MoveTo(rect.left+binlen/2, rect.bottom - baseline);
-	dc.LineTo(rect.right-binlen/2, rect.bottom - baseline);
+	dc.MoveTo(rect.left + binlen / 2, rect.bottom - baseline);
+	dc.LineTo(rect.right - binlen / 2, rect.bottom - baseline);
 
 	// display stim
 	CBrush sbHist;
@@ -92,10 +88,10 @@ void CFormatHistogramDlg::OnPaint()
 	dc.SelectObject(&sbHist);
 	dc.SelectObject(&spHist);
 
-	CRect rstim(rect.left+(3*binlen + binlen/2), rect.top + baseline, 
-				rect.left+(5*binlen+ binlen/2), rect.bottom - baseline);
-	dc.Rectangle(&rstim);		// 1	
-	
+	CRect rstim(rect.left + (3 * binlen + binlen / 2), rect.top + baseline,
+		rect.left + (5 * binlen + binlen / 2), rect.bottom - baseline);
+	dc.Rectangle(&rstim);		// 1
+
 	// display histogram
 	CBrush BHist;
 	BHist.CreateSolidBrush(m_crHistFill);
@@ -104,72 +100,72 @@ void CFormatHistogramDlg::OnPaint()
 	dc.SelectObject(&BHist);
 	dc.SelectObject(&PHist);
 
-	CRect rhist(rect.left+binlen, rect.bottom - 2*baseline, 
-				rect.left+2*binlen, rect.bottom - baseline);
+	CRect rhist(rect.left + binlen, rect.bottom - 2 * baseline,
+		rect.left + 2 * binlen, rect.bottom - baseline);
 	dc.Rectangle(&rhist);		// 1
 	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 3*baseline;
+	rhist.top = rect.bottom - 3 * baseline;
 	dc.Rectangle(&rhist);		// 2
 	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 6*baseline;
+	rhist.top = rect.bottom - 6 * baseline;
 	dc.Rectangle(&rhist);		// 3
 	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 4*baseline;
+	rhist.top = rect.bottom - 4 * baseline;
 	dc.Rectangle(&rhist);		// 4
 	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 5*baseline;
+	rhist.top = rect.bottom - 5 * baseline;
 	dc.Rectangle(&rhist);		// 5
 	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 2*baseline;
+	rhist.top = rect.bottom - 2 * baseline;
 	dc.Rectangle(&rhist);		// 6
 }
 
-void CFormatHistogramDlg::OnHistBordercolor() 
+void CFormatHistogramDlg::OnHistBordercolor()
 {
 	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, nullptr);
-	if(IDOK == dlg.DoModal() != IDOK)
+	if (IDOK == dlg.DoModal() != IDOK)
 	{
-		m_crHistBorder=dlg.GetColor();
+		m_crHistBorder = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void CFormatHistogramDlg::OnStimulusFillcolor() 
+void CFormatHistogramDlg::OnStimulusFillcolor()
 {
 	CColorDialog dlg(m_crStimFill, CC_RGBINIT, nullptr);
-	if(IDOK == dlg.DoModal())
+	if (IDOK == dlg.DoModal())
 	{
-		m_crStimFill=dlg.GetColor();
+		m_crStimFill = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void CFormatHistogramDlg::OnStimulusBordercolor() 
+void CFormatHistogramDlg::OnStimulusBordercolor()
 {
 	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, nullptr);
-	if(IDOK == dlg.DoModal())
+	if (IDOK == dlg.DoModal())
 	{
-		m_crStimBorder=dlg.GetColor();
+		m_crStimBorder = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void CFormatHistogramDlg::OnButtonHistFill() 
+void CFormatHistogramDlg::OnButtonHistFill()
 {
 	CColorDialog dlg(m_crHistFill, CC_RGBINIT, nullptr);
-	if(IDOK == dlg.DoModal())
+	if (IDOK == dlg.DoModal())
 	{
-		m_crHistFill=dlg.GetColor();
+		m_crHistFill = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void CFormatHistogramDlg::OnBackgroundcolor() 
+void CFormatHistogramDlg::OnBackgroundcolor()
 {
 	CColorDialog dlg(m_crChartArea, CC_RGBINIT, nullptr);
-	if(IDOK == dlg.DoModal())
+	if (IDOK == dlg.DoModal())
 	{
-		m_crChartArea=dlg.GetColor();
+		m_crChartArea = dlg.GetColor();
 		Invalidate();
 	}
 }

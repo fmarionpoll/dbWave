@@ -7,7 +7,7 @@
 
 class CExportSpikeInfosDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CExportSpikeInfosDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -39,7 +39,7 @@ public:
 	BOOL	m_bhist;
 	BOOL	m_bhistampl;
 
-// Overrides
+	// Overrides
 public:
 
 protected:
@@ -47,7 +47,7 @@ protected:
 	void DisplayHistAmplParms(int bdisplay);
 	void DisplayHistParms(int bdisplay);
 
-// Implementation
+	// Implementation
 protected:
 
 	// Generated message map functions

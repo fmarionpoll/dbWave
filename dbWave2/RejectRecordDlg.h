@@ -8,7 +8,7 @@
 
 class CRejectRecordDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CRejectRecordDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -19,8 +19,8 @@ public:
 	int		m_jitter;
 	int		m_flag;
 
-// Overrides
-	protected:
+	// Overrides
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation

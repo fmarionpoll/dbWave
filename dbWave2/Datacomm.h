@@ -8,7 +8,7 @@
 
 class CDataCommentsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CDataCommentsDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -24,7 +24,7 @@ public:
 	BOOL	m_btoExcel;
 	OPTIONS_VIEWDATA* m_pvO;
 
-// Overrides
+	// Overrides
 public:
 
 protected:

@@ -15,7 +15,7 @@ public:
 	CStringArray m_csArray;
 	int			m_selected;
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_EDITLISTDLG };
 
 protected:
@@ -28,5 +28,5 @@ public:
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedAdditem();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-//	afx_msg void OnBnClickedButton1();
+	//	afx_msg void OnBnClickedButton1();
 };

@@ -10,10 +10,10 @@
 
 class CViewSpikeHist : public CDaoRecordView
 {
-	DECLARE_DYNCREATE(CViewSpikeHist)	
+	DECLARE_DYNCREATE(CViewSpikeHist)
 protected:
 	CViewSpikeHist();           // protected constructor used by dynamic creation
-	
+
 // Form Data
 public:
 	enum { IDD = IDD_VIEWSPKTIMESERIES };
@@ -27,7 +27,7 @@ public:
 	int		m_nbinsISI;
 	float	m_timebinms;
 
-	CdbWaveDoc*	GetDocument();
+	CdbWaveDoc* GetDocument();
 	CSpikeDoc* p_spike_doc_;			// pointer to document
 
 // Attributes
@@ -44,17 +44,17 @@ protected:
 	CEditCtrl	mm_dotheight;		// dot height
 	CEditCtrl	mm_rowheight;		// row height
 	OPTIONS_VIEWSPIKES* m_pvdS;		// histogram options
-	OPTIONS_VIEWDATA*  mdPM;		// view data options
+	OPTIONS_VIEWDATA* mdPM;		// view data options
 	int			m_bhistType;
 	SCROLLINFO m_scrollFilePos_infos;
 
-	long*	m_pPSTH;				// histogram data (pointer to array)
+	long* m_pPSTH;				// histogram data (pointer to array)
 	int		m_sizepPSTH;			// nbins within histogram
 	long	m_nPSTH;
-	long*	m_pISI;
+	long* m_pISI;
 	int		m_sizepISI;
 	long	m_nISI;
-	long*	m_parrayISI;
+	long* m_parrayISI;
 	int		m_sizeparrayISI;
 
 	CRect	m_displayRect;			// display area
@@ -74,22 +74,22 @@ protected:
 	float	m_xlast;
 
 	LOGFONT	m_logFontDisp;			// onbegin/onendPrinting
-	CFont	m_fontDisp;				// display font	
+	CFont	m_fontDisp;				// display font
 
 // Operations
 // public interface to view
 public:
 
-// Overrides
-	public:
+	// Overrides
+public:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnMove(UINT nIDMoveCommand);
-	protected:
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);   	
+protected:
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnInitialUpdate(); // called first time after construct
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);	    	
+	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	virtual void OnDraw(CDC* p_dc);
 	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
@@ -98,18 +98,18 @@ public:
 
 protected:
 	void BuildData();
-	void GetFileInfos(CString &str_comment);
+	void GetFileInfos(CString& str_comment);
 	void DisplayHistogram(CDC* p_dc, CRect* pRect);
 	void DisplayDot(CDC* p_dc, CRect* pRect);
 	void DisplayPSTHAutoc(CDC* p_dc, CRect* pRect);
 	void DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last);
 	void OnDisplay();
 	void ShowControls(int iselect);
-	void SelectSpkList(int icursel, BOOL bRefreshInterface=FALSE);
+	void SelectSpkList(int icursel, BOOL bRefreshInterface = FALSE);
 
-// Implementation
+	// Implementation
 protected:
-	long PlotHistog(CDC* p_dc, CRect* dispRect, int nbins, long* phistog0, int orientation=0, int btype=0);
+	long PlotHistog(CDC* p_dc, CRect* dispRect, int nbins, long* phistog0, int orientation = 0, int btype = 0);
 
 	virtual ~CViewSpikeHist();
 #ifdef _DEBUG
@@ -133,7 +133,7 @@ protected:
 	afx_msg void OnEnChangenbins();
 	afx_msg void OnEnChangerowheight();
 	afx_msg void OnEnChangeDotheight();
-	afx_msg void OnFormatHistogram();	
+	afx_msg void OnFormatHistogram();
 	afx_msg void OnClickCycleHist();
 	afx_msg void OnEditCopy();
 	afx_msg void OnSelchangeHistogramtype();
@@ -143,11 +143,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CTabCtrl m_tabCtrl;
-	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CViewSpikeHist::GetDocument()
-						{ return (CdbWaveDoc*)m_pDocument; }
+inline CdbWaveDoc* CViewSpikeHist::GetDocument()
+{
+	return (CdbWaveDoc*)m_pDocument;
+}
 #endif

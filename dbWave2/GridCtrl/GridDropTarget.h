@@ -7,12 +7,12 @@
 // Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
-// file may be redistributed unmodified by any means PROVIDING it is 
-// not sold for profit without the authors written consent, and 
-// providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// file may be redistributed unmodified by any means PROVIDING it is
+// not sold for profit without the authors written consent, and
+// providing that this notice and the authors name and all copyright
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -21,7 +21,6 @@
 // For use with CGridCtrl v2.10+
 //
 //////////////////////////////////////////////////////////////////////
-
 
 #pragma once
 
@@ -35,30 +34,29 @@ class CGridCtrl;
 class CGridDropTarget : public COleDropTarget
 {
 public:
-    CGridDropTarget();
-    virtual ~CGridDropTarget();
+	CGridDropTarget();
+	virtual ~CGridDropTarget();
 
-// Attributes
+	// Attributes
 public:
-    CGridCtrl* m_pGridCtrl;
-    BOOL       m_bRegistered;
+	CGridCtrl* m_pGridCtrl;
+	BOOL       m_bRegistered;
 
-// Operations
+	// Operations
 public:
-    BOOL Register(CGridCtrl *pGridCtrl);
-    virtual void Revoke();
+	BOOL Register(CGridCtrl* pGridCtrl);
+	virtual void Revoke();
 
-    BOOL        OnDrop(CWnd* p_wnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
-    DROPEFFECT  OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-    void        OnDragLeave(CWnd* p_wnd);
-    DROPEFFECT  OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-    DROPEFFECT  OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint point);
+	BOOL        OnDrop(CWnd* p_wnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
+	DROPEFFECT  OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+	void        OnDragLeave(CWnd* p_wnd);
+	DROPEFFECT  OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+	DROPEFFECT  OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint point);
 
-// Overrides
+	// Overrides
 
-// Implementation
+	// Implementation
 protected:
 
-    DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 };
-

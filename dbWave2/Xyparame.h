@@ -9,7 +9,7 @@
 
 class XYParametersDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	XYParametersDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -30,7 +30,7 @@ public:
 	CEditCtrl mm_yextent;
 	CEditCtrl mm_yzero;
 
-// Overrides
+	// Overrides
 public:
 
 protected:

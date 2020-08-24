@@ -8,7 +8,7 @@
 class CPivotField : public COleDispatchDriver
 {
 public:
-	CPivotField(){} // Calls COleDispatchDriver default constructor
+	CPivotField() {} // Calls COleDispatchDriver default constructor
 	CPivotField(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotField(const CPivotField& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotField methods
 public:
@@ -47,7 +46,7 @@ public:
 	}
 	void put_Calculation(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x13c, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_ChildField()
@@ -59,7 +58,7 @@ public:
 	VARIANT get_ChildItems(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2da, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -71,7 +70,7 @@ public:
 	}
 	void put_CurrentPage(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2e2, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH get_DataRange()
@@ -94,7 +93,7 @@ public:
 	}
 	void put__Default(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_Function()
@@ -105,7 +104,7 @@ public:
 	}
 	void put_Function(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x383, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_GroupLevel()
@@ -117,7 +116,7 @@ public:
 	VARIANT get_HiddenItems(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2d8, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -135,7 +134,7 @@ public:
 	}
 	void put_Name(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x6e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_NumberFormat()
@@ -146,7 +145,7 @@ public:
 	}
 	void put_NumberFormat(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0xc1, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_Orientation()
@@ -157,7 +156,7 @@ public:
 	}
 	void put_Orientation(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x86, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_ShowAllItems()
@@ -168,7 +167,7 @@ public:
 	}
 	void put_ShowAllItems(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x1c4, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_ParentField()
@@ -180,14 +179,14 @@ public:
 	VARIANT get_ParentItems(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2d9, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
 	VARIANT PivotItems(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2e1, DISPATCH_METHOD, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -199,7 +198,7 @@ public:
 	}
 	void put_Position(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x85, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	CString get_SourceName()
@@ -211,13 +210,13 @@ public:
 	VARIANT get_Subtotals(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2dd, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
 	void put_Subtotals(VARIANT& Index, VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x2dd, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &Index, &newValue);
 	}
 	VARIANT get_BaseField()
@@ -228,7 +227,7 @@ public:
 	}
 	void put_BaseField(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2de, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_BaseItem()
@@ -239,7 +238,7 @@ public:
 	}
 	void put_BaseItem(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2df, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	VARIANT get_TotalLevels()
@@ -256,13 +255,13 @@ public:
 	}
 	void put_Value(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_VisibleItems(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2d7, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -284,7 +283,7 @@ public:
 	}
 	void put_DragToColumn(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5e4, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DragToHide()
@@ -295,7 +294,7 @@ public:
 	}
 	void put_DragToHide(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5e5, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DragToPage()
@@ -306,7 +305,7 @@ public:
 	}
 	void put_DragToPage(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5e6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DragToRow()
@@ -317,7 +316,7 @@ public:
 	}
 	void put_DragToRow(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5e7, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DragToData()
@@ -328,7 +327,7 @@ public:
 	}
 	void put_DragToData(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x734, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_Formula()
@@ -339,7 +338,7 @@ public:
 	}
 	void put_Formula(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x105, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_IsCalculated()
@@ -362,17 +361,17 @@ public:
 	}
 	void put_ServerBased(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x5e9, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void _AutoSort(long Order, LPCTSTR Field)
 	{
-		static BYTE parms[] = VTS_I4 VTS_BSTR ;
+		static BYTE parms[] = VTS_I4 VTS_BSTR;
 		InvokeHelper(0xa13, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Order, Field);
 	}
 	void AutoShow(long Type, long Range, long Count, LPCTSTR Field)
 	{
-		static BYTE parms[] = VTS_I4 VTS_I4 VTS_I4 VTS_BSTR ;
+		static BYTE parms[] = VTS_I4 VTS_I4 VTS_I4 VTS_BSTR;
 		InvokeHelper(0x5eb, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Type, Range, Count, Field);
 	}
 	long get_AutoSortOrder()
@@ -419,7 +418,7 @@ public:
 	}
 	void put_LayoutBlankLine(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x735, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_LayoutSubtotalLocation()
@@ -430,7 +429,7 @@ public:
 	}
 	void put_LayoutSubtotalLocation(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x736, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_LayoutPageBreak()
@@ -441,7 +440,7 @@ public:
 	}
 	void put_LayoutPageBreak(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x737, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_LayoutForm()
@@ -452,7 +451,7 @@ public:
 	}
 	void put_LayoutForm(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x738, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_SubtotalName()
@@ -463,7 +462,7 @@ public:
 	}
 	void put_SubtotalName(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x739, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_Caption()
@@ -474,7 +473,7 @@ public:
 	}
 	void put_Caption(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x8b, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DrilledDown()
@@ -485,7 +484,7 @@ public:
 	}
 	void put_DrilledDown(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x73a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_CubeField()
@@ -502,7 +501,7 @@ public:
 	}
 	void put_CurrentPageName(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x73c, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_StandardFormula()
@@ -513,7 +512,7 @@ public:
 	}
 	void put_StandardFormula(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x824, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_HiddenItemsList()
@@ -524,7 +523,7 @@ public:
 	}
 	void put_HiddenItemsList(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x85b, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	BOOL get_DatabaseSort()
@@ -535,7 +534,7 @@ public:
 	}
 	void put_DatabaseSort(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x85c, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_IsMemberProperty()
@@ -558,7 +557,7 @@ public:
 	}
 	void put_PropertyOrder(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x85f, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_EnableItemSelection()
@@ -569,7 +568,7 @@ public:
 	}
 	void put_EnableItemSelection(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x860, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_CurrentPageList()
@@ -580,12 +579,12 @@ public:
 	}
 	void put_CurrentPageList(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x861, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	void AddPageItem(LPCTSTR Item, VARIANT& ClearList)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT;
 		InvokeHelper(0x862, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Item, &ClearList);
 	}
 	BOOL get_Hidden()
@@ -596,12 +595,12 @@ public:
 	}
 	void put_Hidden(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x10c, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void DrillTo(LPCTSTR Field)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0xa14, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Field);
 	}
 	BOOL get_UseMemberPropertyAsCaption()
@@ -612,7 +611,7 @@ public:
 	}
 	void put_UseMemberPropertyAsCaption(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0xa15, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_MemberPropertyCaption()
@@ -623,7 +622,7 @@ public:
 	}
 	void put_MemberPropertyCaption(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0xa16, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DisplayAsTooltip()
@@ -634,7 +633,7 @@ public:
 	}
 	void put_DisplayAsTooltip(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0xa17, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DisplayInReport()
@@ -645,7 +644,7 @@ public:
 	}
 	void put_DisplayInReport(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0xa18, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DisplayAsCaption()
@@ -662,7 +661,7 @@ public:
 	}
 	void put_LayoutCompactRow(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0xa1a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_IncludeNewItemsInFilter()
@@ -673,7 +672,7 @@ public:
 	}
 	void put_IncludeNewItemsInFilter(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0xa1b, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_VisibleItemsList()
@@ -684,7 +683,7 @@ public:
 	}
 	void put_VisibleItemsList(VARIANT& newValue)
 	{
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xa1c, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, &newValue);
 	}
 	LPDISPATCH get_PivotFilters()
@@ -719,7 +718,7 @@ public:
 	}
 	void put_EnableMultiplePageItems(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x888, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_AllItemsVisible()
@@ -746,7 +745,7 @@ public:
 	}
 	void AutoSort(long Order, LPCTSTR Field, VARIANT& PivotLine, VARIANT& CustomSubtotal)
 	{
-		static BYTE parms[] = VTS_I4 VTS_BSTR VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_I4 VTS_BSTR VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x5ea, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Order, Field, &PivotLine, &CustomSubtotal);
 	}
 	CString get_SourceCaption()
@@ -763,7 +762,7 @@ public:
 	}
 	void put_ShowDetail(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x249, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_RepeatLabels()
@@ -774,11 +773,10 @@ public:
 	}
 	void put_RepeatLabels(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0xb45, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 
 	// PivotField properties
 public:
-
 };

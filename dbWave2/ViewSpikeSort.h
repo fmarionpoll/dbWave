@@ -8,7 +8,6 @@
 
 // spikesort1.h : header file
 
-
 class CViewSpikeSort : public CDaoRecordView
 {
 	DECLARE_DYNCREATE(CViewSpikeSort)
@@ -19,7 +18,7 @@ protected:
 public:
 	enum { IDD = IDD_VIEWSPKSORT1 };
 	CComboBox		m_CBparameter;
-	
+
 	float	m_t1 = 0.f;
 	float	m_t2 = 0.f;
 	float	m_lower = 0.f;
@@ -37,9 +36,9 @@ public:
 	float	m_txyleft = 0.f;
 	float   m_mVbin = .1f;
 
-	CdbWaveDoc*	GetDocument();
+	CdbWaveDoc* GetDocument();
 
-// Attributes
+	// Attributes
 protected:
 	CStretchControl m_stretch{};
 	BOOL			m_binit = false;
@@ -62,43 +61,44 @@ protected:
 	CEditCtrl	mm_spikeno;
 	CEditCtrl	mm_spikenoclass;
 	CEditCtrl	mm_txyright;
-	CEditCtrl	mm_txyleft;	
+	CEditCtrl	mm_txyleft;
 	CEditCtrl   mm_mVbin;
 
-	CSpikeDoc*	m_pSpkDoc = nullptr;	
-	CSpikeList*	m_pSpkList = nullptr;	
-	SPKCLASSIF*	m_psC{};
-	OPTIONS_VIEWDATA*  mdPM{};
+	CSpikeDoc* m_pSpkDoc = nullptr;
+	CSpikeList* m_pSpkList = nullptr;
+	SPKCLASSIF* m_psC{};
+	OPTIONS_VIEWDATA* mdPM{};
 	CTabCtrl m_tabCtrl{};
 
 	int		m_itaglow{};
 	int		m_itagup{};
 	int		m_ixyright{};
 	int		m_ixyleft{};
-	
+
 	int		m_spkhistupper{};
-	int		m_spkhistlower{};	
+	int		m_spkhistlower{};
 	int		m_spkformtagleft{};
 	int		m_spkformtagright{};
-	
+
 	float	m_tunit = 1000.f;		// 1=s, 1000f=ms, 1e6=us
 	float	m_vunit = 1000.f;		// 1=V, 1000f=mV, 1e6=uV
 	float	m_delta{};
 	int		m_parmmax{};			// max of array m_measure_y1
 	int		m_parmmin{};			// min of array m_measure_y1
-	BOOL	m_bvalidextrema=false;		// tells if m_parmmax & m_parmmin are valid
+	BOOL	m_bvalidextrema = false;		// tells if m_parmmax & m_parmmin are valid
 	long	m_lFirst{};				// display first
 	long	m_lLast{};				// display last
-	BOOL	m_bMeasureDone=false;			// flag m_measure_y1 valid
-	int		m_divAmplitudeBy=1;		// value to adjust changes in amplitude / filter(s)
+	BOOL	m_bMeasureDone = false;			// flag m_measure_y1 valid
+	int		m_divAmplitudeBy = 1;		// value to adjust changes in amplitude / filter(s)
 
 	SCROLLINFO	m_scroll_file_pos_infos_{};
 
-// Operations
+	// Operations
 public:
 	void SetViewMouseCursor(int cursormode) {
-					xygraph_wnd_.SetMouseCursorType(cursormode);
-					spikeshape_wnd_.SetMouseCursorType(cursormode);}
+		xygraph_wnd_.SetMouseCursorType(cursormode);
+		spikeshape_wnd_.SetMouseCursorType(cursormode);
+	}
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
@@ -110,8 +110,8 @@ public:
 protected:
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
-	void OnInitialUpdate() override; 
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;	    	
+	void OnInitialUpdate() override;
+	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 	//}}AFX_VIRTUAL
 
 	// Implementation
@@ -142,7 +142,7 @@ public:
 	afx_msg LRESULT OnMyMessage(WPARAM code, LPARAM lParam);
 	afx_msg void OnMeasure();
 	afx_msg void OnFormatAlldata();
-	
+
 	afx_msg void OnFormatCentercurve();
 	afx_msg void OnFormatGainadjust();
 	afx_msg void OnToolsEdittransformspikes();
@@ -150,7 +150,7 @@ public:
 	afx_msg void OnToolsAlignspikes();
 	afx_msg void OnDestroy();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	
+
 	afx_msg void OnEnChangelower();
 	afx_msg void OnEnChangeupper();
 	afx_msg void OnEnChangeT1();
@@ -166,15 +166,16 @@ public:
 	afx_msg void OnEnChangeEditleft2();
 	afx_msg void OnEnChangeEditright2();
 	afx_msg void OnEnChangeNBins();
-	
-	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+
+	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
-
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CViewSpikeSort::GetDocument()
-						{ return (CdbWaveDoc*)m_pDocument; }
+inline CdbWaveDoc* CViewSpikeSort::GetDocument()
+{
+	return (CdbWaveDoc*)m_pDocument;
+}
 #endif

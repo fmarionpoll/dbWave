@@ -12,7 +12,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CPrintPageMarginsDlg dialog
 
-
 CPrintPageMarginsDlg::CPrintPageMarginsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPrintPageMarginsDlg::IDD, pParent)
 {
@@ -43,8 +42,8 @@ BOOL CPrintPageMarginsDlg::OnInitDialog()
 	m_leftPageMargin = mdPM->leftPageMargin;
 	m_bottomPageMargin = mdPM->bottomPageMargin;
 	m_rightPageMargin = mdPM->rightPageMargin;
-	m_topPageMargin = mdPM->topPageMargin;	
-    UpdateData(FALSE);
+	m_topPageMargin = mdPM->topPageMargin;
+	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

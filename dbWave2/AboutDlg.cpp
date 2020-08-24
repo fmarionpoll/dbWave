@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "AboutDlg.h"
 
-
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
 {
 }

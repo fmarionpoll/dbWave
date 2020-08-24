@@ -13,7 +13,7 @@ protected:
 	CViewSpikeTemplates();           // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CViewSpikeTemplates)
 
-// Form Data
+	// Form Data
 public:
 
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
@@ -30,7 +30,7 @@ public:
 	BOOL	m_ballSort;
 	CTabCtrl m_tab1Ctrl;
 
-	CdbWaveDoc*	GetDocument();
+	CdbWaveDoc* GetDocument();
 
 protected:
 	CEditCtrl	mm_hitrate;
@@ -49,27 +49,27 @@ protected:
 	CStretchControl		m_stretch;		// array of properties associated with controls
 	BOOL				m_binit;
 
-	CSpikeDoc*		m_pSpkDoc;			// destination data doc
-	CSpikeList*		m_pSpkList;			// temporary spike list	
+	CSpikeDoc* m_pSpkDoc;			// destination data doc
+	CSpikeList* m_pSpkList;			// temporary spike list
 	int				m_lFirst;
 	int				m_lLast;
-	OPTIONS_VIEWDATA*			mdPM;	// view data options
-	OPTIONS_VIEWDATAMEASURE*	mdMO;	// measure options
-	SPKCLASSIF*		m_psC;				// sort parameters
+	OPTIONS_VIEWDATA* mdPM;	// view data options
+	OPTIONS_VIEWDATAMEASURE* mdMO;	// measure options
+	SPKCLASSIF* m_psC;				// sort parameters
 	int				m_ktagleft;			// VT tags
 	int				m_ktagright;
 	SCROLLINFO		m_scrollFilePos_infos;
 	int				m_spikeno;
 	BOOL			m_ballclasses;
 
-// Attributes
+	// Attributes
 public:
-	inline void SetViewMouseCursor(int cursormode) {m_spkForm.SetMouseCursorType(cursormode);}
+	inline void SetViewMouseCursor(int cursormode) { m_spkForm.SetMouseCursorType(cursormode); }
 
-// Operations
+	// Operations
 public:
 
-// Overrides
+	// Overrides
 public:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -80,7 +80,7 @@ protected:
 	virtual void OnInitialUpdate();
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CViewSpikeTemplates();
 #ifdef _DEBUG
@@ -93,7 +93,7 @@ protected:
 	void UpdateTemplates();
 	void UpdateLegends();
 	void SelectSpike(short spikeno);
-	void UpdateScrollBar();	
+	void UpdateScrollBar();
 	void SelectSpikeList(int icur);
 	void EditSpikeClass(int controlID, int controlItem);
 	void DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList); //, CImageList* pImList);
@@ -107,7 +107,7 @@ public:
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);	
+	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnFormatAlldata();
 	afx_msg void OnFormatGainadjust();
 	afx_msg void OnFormatCentercurve();
@@ -124,20 +124,21 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult) ;
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedSort();
 	afx_msg void OnBnClickedDisplay();
 	afx_msg void OnEnChangeIfirstsortedclass();
 	CTabCtrl m_tabCtrl;
-	afx_msg void OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMClickTab2(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult);
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-	inline CdbWaveDoc* CViewSpikeTemplates::GetDocument()
-						{ return (CdbWaveDoc*)m_pDocument; }
+inline CdbWaveDoc* CViewSpikeTemplates::GetDocument()
+{
+	return (CdbWaveDoc*)m_pDocument;
+}
 #endif
-

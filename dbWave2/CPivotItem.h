@@ -8,7 +8,7 @@
 class CPivotItem : public COleDispatchDriver
 {
 public:
-	CPivotItem(){} // Calls COleDispatchDriver default constructor
+	CPivotItem() {} // Calls COleDispatchDriver default constructor
 	CPivotItem(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotItem(const CPivotItem& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotItem methods
 public:
@@ -42,7 +41,7 @@ public:
 	VARIANT get_ChildItems(VARIANT& Index)
 	{
 		VARIANT result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x2da, DISPATCH_PROPERTYGET, VT_VARIANT, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -60,7 +59,7 @@ public:
 	}
 	void put__Default(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_LabelRange()
@@ -77,7 +76,7 @@ public:
 	}
 	void put_Name(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x6e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	LPDISPATCH get_ParentItem()
@@ -100,7 +99,7 @@ public:
 	}
 	void put_Position(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x85, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_ShowDetail()
@@ -111,7 +110,7 @@ public:
 	}
 	void put_ShowDetail(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x249, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	VARIANT get_SourceName()
@@ -128,7 +127,7 @@ public:
 	}
 	void put_Value(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_Visible()
@@ -139,7 +138,7 @@ public:
 	}
 	void put_Visible(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x22e, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	void Delete()
@@ -166,7 +165,7 @@ public:
 	}
 	void put_Formula(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x105, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_Caption()
@@ -177,7 +176,7 @@ public:
 	}
 	void put_Caption(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x8b, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	BOOL get_DrilledDown()
@@ -188,7 +187,7 @@ public:
 	}
 	void put_DrilledDown(BOOL newValue)
 	{
-		static BYTE parms[] = VTS_BOOL ;
+		static BYTE parms[] = VTS_BOOL;
 		InvokeHelper(0x73a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_StandardFormula()
@@ -199,7 +198,7 @@ public:
 	}
 	void put_StandardFormula(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x824, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_SourceNameStandard()
@@ -210,11 +209,10 @@ public:
 	}
 	void DrillTo(LPCTSTR Field)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0xa14, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Field);
 	}
 
 	// PivotItem properties
 public:
-
 };

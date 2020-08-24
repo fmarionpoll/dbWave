@@ -1,4 +1,3 @@
-
 #include "StdAfx.h"
 #include "SpikeBuffer.h"
 
@@ -14,7 +13,7 @@ CSpikeBuffer::CSpikeBuffer()
 {
 	m_spikedata_buffer = nullptr;
 	m_binzero = 2048;
-	SetSpklen(1);	// init with spike len = 1	
+	SetSpklen(1);	// init with spike len = 1
 	m_spikedata_positions.SetSize(0, 128);
 }
 
@@ -50,7 +49,7 @@ void CSpikeBuffer::SetSpklen(int lenspik)
 	if (m_lenspk > 0) {
 		// allocate memory by 64 Kb chunks
 		m_spkbufferincrement = static_cast<WORD>(32767);
-		m_spkbufferincrement = (m_spkbufferincrement / m_lenspk)*m_lenspk;
+		m_spkbufferincrement = (m_spkbufferincrement / m_lenspk) * m_lenspk;
 		m_spkbufferlength = m_spkbufferincrement;
 		m_spikedata_buffer = static_cast<short*>(malloc(sizeof(short) * m_spkbufferlength));
 		ASSERT(m_spikedata_buffer != NULL);
@@ -80,7 +79,7 @@ short* CSpikeBuffer::AllocateSpaceForSpikeAt(int spkindex)
 	return lp_dest;
 }
 
-short*	CSpikeBuffer::AllocateSpaceForSeveralSpikes(int nspikes)
+short* CSpikeBuffer::AllocateSpaceForSeveralSpikes(int nspikes)
 {
 	// get pointer to next available buffer area for these spikes
 	const auto currentindex = m_nextindex;
@@ -95,7 +94,7 @@ short*	CSpikeBuffer::AllocateSpaceForSeveralSpikes(int nspikes)
 	}
 
 	// compute destination address
-	const auto lp_dest = m_spikedata_buffer + (currentindex*m_lenspk);
+	const auto lp_dest = m_spikedata_buffer + (currentindex * m_lenspk);
 	auto ioffset = currentindex * m_lenspk;
 	for (auto i = currentindex; i < m_nextindex; i++)
 	{
@@ -135,4 +134,3 @@ BOOL CSpikeBuffer::ExchangeSpikes(int spk1, int spk2)
 	m_spikedata_positions[spk2] = dummy;
 	return TRUE;
 }
-

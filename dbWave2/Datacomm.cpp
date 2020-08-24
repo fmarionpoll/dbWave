@@ -12,7 +12,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDataCommentsDlg dialog
 
-
 CDataCommentsDlg::CDataCommentsDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CDataCommentsDlg::IDD, pParent), m_pvO(nullptr)
 {
@@ -25,7 +24,6 @@ CDataCommentsDlg::CDataCommentsDlg(CWnd* pParent /*=NULL*/)
 	m_btoExcel = FALSE;
 	m_bdatabasecols = false;
 }
-
 
 void CDataCommentsDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -44,15 +42,13 @@ BEGIN_MESSAGE_MAP(CDataCommentsDlg, CDialog)
 
 END_MESSAGE_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CDataCommentsDlg message handlers
-
 
 BOOL CDataCommentsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_bacqchans = m_pvO->bacqchcomment;		// copy parms into
 	m_bacqchsetting = m_pvO->bacqchsetting;	// dlg parms
 	m_bacqcomments = m_pvO->bacqcomments;
@@ -63,30 +59,30 @@ BOOL CDataCommentsDlg::OnInitDialog()
 	m_bdatabasecols = m_pvO->bdatabasecols;
 
 	UpdateData(FALSE);
-	
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 void CDataCommentsDlg::OnOK()
 {
 	UpdateData(TRUE);
-	if (m_pvO->bacqchcomment		!= m_bacqchans
-		||  m_pvO->bacqchsetting	!= m_bacqchsetting
-		||  m_pvO->bacqcomments		!= m_bacqcomments
-		||  m_pvO->bacqdate 		!= m_bacqdate
-		||  m_pvO->bacqtime 		!= m_bacqtime
-		||  m_pvO->bfilesize		!= m_bfilesize
-		||  m_pvO->btoExcel			!= m_btoExcel
-		||	m_pvO->bdatabasecols	!= m_bdatabasecols)
-	{			
-		m_pvO->bacqchcomment 	= m_bacqchans;
-		m_pvO->bacqchsetting 	= m_bacqchsetting;
-		m_pvO->bacqcomments 	= m_bacqcomments;
-		m_pvO->bacqdate 		= m_bacqdate;
-		m_pvO->bacqtime 		= m_bacqtime;
-		m_pvO->bfilesize 		= m_bfilesize;
-		m_pvO->btoExcel			= m_btoExcel;
-		m_pvO->bdatabasecols	= m_bdatabasecols;
+	if (m_pvO->bacqchcomment != m_bacqchans
+		|| m_pvO->bacqchsetting != m_bacqchsetting
+		|| m_pvO->bacqcomments != m_bacqcomments
+		|| m_pvO->bacqdate != m_bacqdate
+		|| m_pvO->bacqtime != m_bacqtime
+		|| m_pvO->bfilesize != m_bfilesize
+		|| m_pvO->btoExcel != m_btoExcel
+		|| m_pvO->bdatabasecols != m_bdatabasecols)
+	{
+		m_pvO->bacqchcomment = m_bacqchans;
+		m_pvO->bacqchsetting = m_bacqchsetting;
+		m_pvO->bacqcomments = m_bacqcomments;
+		m_pvO->bacqdate = m_bacqdate;
+		m_pvO->bacqtime = m_bacqtime;
+		m_pvO->bfilesize = m_bfilesize;
+		m_pvO->btoExcel = m_btoExcel;
+		m_pvO->bdatabasecols = m_bdatabasecols;
 		m_pvO->bChanged = TRUE;	// save new params in app array
 	}
 	CDialog::OnOK();

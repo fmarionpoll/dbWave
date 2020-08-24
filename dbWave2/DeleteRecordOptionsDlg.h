@@ -1,6 +1,5 @@
 #pragma once
 
-
 // CDeleteRecordOptionsDlg dialog
 
 class CDeleteRecordOptionsDlg : public CDialog
@@ -11,7 +10,7 @@ public:
 	CDeleteRecordOptionsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDeleteRecordOptionsDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_DELRECORDOPTIONS };
 
 protected:

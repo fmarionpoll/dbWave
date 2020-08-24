@@ -8,7 +8,7 @@
 
 class CDataViewOrdinatesDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CDataViewOrdinatesDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -19,12 +19,12 @@ public:
 	float	m_xcenter;
 	float	m_xmax;
 	float	m_xmin;
-    
-	CLineViewWnd*	m_plinev;	// data Envelopes
+
+	CLineViewWnd* m_plinev;	// data Envelopes
 	int				m_nChanmax;	// (global?) max nb of channels
 	int				m_Channel;	// current channel
 	BOOL			m_bChanged;	// a factor from current channel was changed
-	 
+
 protected:
 	float m_p10;			// power of ten (multiplication factor to all parms)
 	float m_voltsperpixel;	// nb of volts per pixels, given current gain
@@ -48,4 +48,3 @@ protected:
 	afx_msg void OnKillfocusVertcenter();
 	DECLARE_MESSAGE_MAP()
 };
-

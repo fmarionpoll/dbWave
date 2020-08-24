@@ -1,4 +1,3 @@
-
 #pragma once
 
 // FormatHistogram.h : header file
@@ -9,7 +8,7 @@
 
 class CFormatHistogramDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CFormatHistogramDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -25,8 +24,8 @@ public:
 	COLORREF m_crStimBorder;
 	COLORREF m_crChartArea;
 
-// Overrides
-	protected:
+	// Overrides
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation

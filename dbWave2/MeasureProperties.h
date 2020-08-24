@@ -8,23 +8,21 @@
 
 // MeasureProperties.h : header file
 //
-// This class defines custom modal property sheet 
+// This class defines custom modal property sheet
 // CMeasureProperties.
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CMeasureProperties
-
 
 class CMeasureProperties : public CPropertySheet
 {
 	DECLARE_DYNAMIC(CMeasureProperties)
 
-// Construction
+	// Construction
 public:
-	CMeasureProperties(CWnd* pParentWnd = nullptr, int iselect=0);
+	CMeasureProperties(CWnd* pParentWnd = nullptr, int iselect = 0);
 
-// Attributes
+	// Attributes
 public:
 	CMeasureHZtagsPage	m_measure_hz_tags_page;
 	CMeasureOptionsPage m_measure_options_page;
@@ -32,28 +30,27 @@ public:
 	CMeasureResultsPage m_measure_results_page;
 
 	// CMeasureResults
-	CLineViewWnd*	m_plineview{};
-	CdbWaveDoc* 	m_pdbDoc{};	
-	CAcqDataDoc* 	m_pdatDoc{};	
+	CLineViewWnd* m_plineview{};
+	CdbWaveDoc* m_pdbDoc{};
+	CAcqDataDoc* m_pdatDoc{};
 
 	OPTIONS_VIEWDATAMEASURE* m_pMO{};
 	int				m_currentchan{};
 	float			m_samplingrate{};
 
-// Operations
+	// Operations
 public:
 
-// Overrides
-	public:
+	// Overrides
+public:
 	virtual BOOL OnInitDialog();
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CMeasureProperties();
 
-// Generated message map functions
+	// Generated message map functions
 protected:
-	
+
 	DECLARE_MESSAGE_MAP()
 };
-

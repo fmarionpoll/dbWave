@@ -7,7 +7,7 @@
 
 class CDataViewAbcissaDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CDataViewAbcissaDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -22,7 +22,7 @@ public:
 	float	m_veryLastAbcissa;
 	int		m_previousIndex;
 
-// Implementation
+	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	virtual BOOL OnInitDialog();
@@ -36,4 +36,3 @@ protected:
 	afx_msg void OnKillfocusCenter();
 	DECLARE_MESSAGE_MAP()
 };
-

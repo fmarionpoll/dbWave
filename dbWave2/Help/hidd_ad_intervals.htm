@@ -1,263 +1,314 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
-<TITLE>Define time parameters for data acquisition</TITLE>
+    <META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+    <TITLE>Define time parameters for data acquisition</TITLE>
     <style type="text/css">
 
-        .style4
-        {
+        .style4 {
             width: 473px;
             height: 321px;
         }
-        .style5
-        {
+
+        .style5 {
             width: 100%;
         }
-        .style6
-        {
+
+        .style6 {
             width: 163px;
             background-color: #99CCFF;
         }
-        .style13
-        {
+
+        .style13 {
             width: 207px;
             color: #FFFFFF;
             background-color: #000099;
             font-weight: bold;
         }
-        .style12
-        {
+
+        .style12 {
             color: #FFFFFF;
             background-color: #000099;
             font-weight: bold;
         }
-        .style14
-        {
+
+        .style14 {
             color: #FF0000;
         }
-        .style17
-        {
+
+        .style17 {
             width: 163px;
             background-color: #FFFFFF;
             font-weight: 700;
         }
-        .style15
-        {
+
+        .style15 {
             width: 163px;
             background-color: #99CCFF;
             text-align: left;
         }
-        </style>
+    </style>
 </HEAD>
 <BODY>
-<h1><A NAME="AFX_HIDD_AD_INTERVALS"></A><B>Define time parameters for data acquisition</B></h1>
+    <h1><A NAME="AFX_HIDD_AD_INTERVALS"></A><B>Define time parameters for data acquisition</B></h1>
     <p>
-        <img alt="Sampling mode settings" class="style4" 
-            src="Images/scratch_samplingmode.jpg" /></p>
+        <img alt="Sampling mode settings" class="style4"
+             src="Images/scratch_samplingmode.jpg" />
+    </p>
     <p>
-        This dialog box let you define how signals are acquired (at which temporal 
-        resolution), what they will become, and how the data acquisition will start. It 
-        displays 3 types of settings. </p>
+        This dialog box let you define how signals are acquired (at which temporal
+        resolution), what they will become, and how the data acquisition will start. It
+        displays 3 types of settings.
+    </p>
     <table class="style5">
         <tr>
             <td class="style13">
-                Interface element</td>
+                Interface element
+            </td>
             <td class="style12">
-                Function</td>
+                Function
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                <strong>A/D card parameters</strong></td>
+                <strong>A/D card parameters</strong>
+            </td>
             <td>
-        This set of parameters defines how fast you will sample incoming data.&nbsp; These 
-                parameters are critical if your memory resources are limited and if the 
+                This set of parameters defines how fast you will sample incoming data.&nbsp; These
+                parameters are critical if your memory resources are limited and if the
                 computing resources are limited. <br />
                 The 4 parameters in this box are related by the following formula:<br />
                 <span class="style14">sweep_len = n_words * n_buffers / rate</span><br />
-                For the same sweep length, if you have small buffers, the screen will be 
-                refreshed quickly and by small increments; if you define large buffers, you will 
-                have less buffers and the screen will be refreshed less frequently. Typically, 
-                we use 1 s = 1000 words x 10 buffers / 10 000 Hz.</td>
+                For the same sweep length, if you have small buffers, the screen will be
+                refreshed quickly and by small increments; if you define large buffers, you will
+                have less buffers and the screen will be refreshed less frequently. Typically,
+                we use 1 s = 1000 words x 10 buffers / 10 000 Hz.
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                Rate/channel (Hz)</td>
+                Rate/channel (Hz)
+            </td>
             <td>
-                Typical: 10 000 Hz (<span class="style14">rate</span>). Check the 
-                technical specifications of your A/D card. For many cards, the maximum sampling 
-                rate is given as the total number of data points that can be acquired per 
-                second. If you acquire data on 2 channels, the maximum sampling rate is divided 
-                by 2.</td>
+                Typical: 10 000 Hz (<span class="style14">rate</span>). Check the
+                technical specifications of your A/D card. For many cards, the maximum sampling
+                rate is given as the total number of data points that can be acquired per
+                second. If you acquire data on 2 channels, the maximum sampling rate is divided
+                by 2.
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                Sweep size (s)</td>
+                Sweep size (s)
+            </td>
             <td>
-                Length of the signal which is updated on the screen (<span class="style14">sweep_len</span>).</td>
+                Length of the signal which is updated on the screen (<span class="style14">sweep_len</span>).
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                Buffer size (words)</td>
+                Buffer size (words)
+            </td>
             <td>
-                Size of an individual buffer (<span class="style14">n_words</span>)</td>
+                Size of an individual buffer (<span class="style14">n_words</span>)
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                Number of buffers</td>
+                Number of buffers
+            </td>
             <td>
-                Number of buffers available (<span class="style14">n buffers</span>)</td>
+                Number of buffers available (<span class="style14">n buffers</span>)
+            </td>
         </tr>
         <tr>
             <td>
-                &nbsp;</td>
+                &nbsp;
+            </td>
             <td>
-                &nbsp;</td>
-        </tr>
-        <tr>
-            <td class="style6">
-                <strong>
-                <br />
-                Data flow</strong></td>
-            <td>
-                <br />
-        This defines mainly how long data will be stored when you decide to save them on 
-        the disk. </td>
-        </tr>
-        <tr>
-            <td class="style6">
-                Continuous/Limited</td>
-            <td>
-                Select limited if you wish that the acquisition stops after a predefined time 
-                (in the current implementation, this option is the only available).</td>
-        </tr>
-        <tr>
-            <td class="style6">
-                Duration (s)</td>
-            <td>
-                Time duration in seconds of the acquisition (when the option &quot;limited&quot; is 
-                checked).</td>
-        </tr>
-        <tr>
-            <td class="style6">
-                Undersample factor</td>
-            <td>
-                1=no undersampling; n= each data point is the average of n consecutive points 
-                and the final sampling frequency is rate / n. This operation is done 
-                &quot;on-the-fly&quot;.</td>
-        </tr>
-        <tr>
-            <td class="style6">
-                Online display</td>
-            <td>
-                Display (or not) data during the data acquisition. Unchecking this option may 
-                help to avoid loosing data if your sampling rate is too high for the computer to 
-                let it refresh the screen.</td>
-        </tr>
-        <tr>
-            <td class="style6">
-                Write to disk</td>
-            <td>
-                Save data to disk.</td>
-        </tr>
-        <tr>
-            <td class="style6">
-                Audible notification</td>
-            <td>
-                Emit a beep at the end of a fixed time data acquisition.</td>
-        </tr>
-        <tr>
-            <td >
-                &nbsp;</td>
-            <td>
-                &nbsp;</td>
+                &nbsp;
+            </td>
         </tr>
         <tr>
             <td class="style6">
                 <strong>
-                <br />
-                Trigger</strong></td>
+                    <br />
+                    Data flow
+                </strong>
+            </td>
             <td>
                 <br />
-                These parameters define how the acquisition will start. </td>
+                This defines mainly how long data will be stored when you decide to save them on
+                the disk.
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                Software</td>
+                Continuous/Limited
+            </td>
             <td>
-                Start acquisition as soon as the button &quot;Start&quot; is depressed (and the experiment 
-                defined).</td>
+                Select limited if you wish that the acquisition stops after a predefined time
+                (in the current implementation, this option is the only available).
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                Keyboard</td>
+                Duration (s)
+            </td>
             <td>
-                Start acquisition when the user press &quot;ok&quot; button.</td>
+                Time duration in seconds of the acquisition (when the option &quot;limited&quot; is
+                checked).
+            </td>
         </tr>
         <tr>
             <td class="style6">
-                External trigger</td>
+                Undersample factor
+            </td>
             <td>
-                Start acquisition when the card received a positive or negative TTL signal. Look 
-                at the technical documentation of your A/D card to find the correct 
-                specifications of this signal. On Data Translation cards, there is an input 
-                channel labled as A/D TRIG which is monitored by the card and which enables the 
-                data acquisition.</td>
+                1=no undersampling; n= each data point is the average of n consecutive points
+                and the final sampling frequency is rate / n. This operation is done
+                &quot;on-the-fly&quot;.
+            </td>
+        </tr>
+        <tr>
+            <td class="style6">
+                Online display
+            </td>
+            <td>
+                Display (or not) data during the data acquisition. Unchecking this option may
+                help to avoid loosing data if your sampling rate is too high for the computer to
+                let it refresh the screen.
+            </td>
+        </tr>
+        <tr>
+            <td class="style6">
+                Write to disk
+            </td>
+            <td>
+                Save data to disk.
+            </td>
+        </tr>
+        <tr>
+            <td class="style6">
+                Audible notification
+            </td>
+            <td>
+                Emit a beep at the end of a fixed time data acquisition.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+            <td>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td class="style6">
+                <strong>
+                    <br />
+                    Trigger
+                </strong>
+            </td>
+            <td>
+                <br />
+                These parameters define how the acquisition will start.
+            </td>
+        </tr>
+        <tr>
+            <td class="style6">
+                Software
+            </td>
+            <td>
+                Start acquisition as soon as the button &quot;Start&quot; is depressed (and the experiment
+                defined).
+            </td>
+        </tr>
+        <tr>
+            <td class="style6">
+                Keyboard
+            </td>
+            <td>
+                Start acquisition when the user press &quot;ok&quot; button.
+            </td>
+        </tr>
+        <tr>
+            <td class="style6">
+                External trigger
+            </td>
+            <td>
+                Start acquisition when the card received a positive or negative TTL signal. Look
+                at the technical documentation of your A/D card to find the correct
+                specifications of this signal. On Data Translation cards, there is an input
+                channel labled as A/D TRIG which is monitored by the card and which enables the
+                data acquisition.
+            </td>
         </tr>
         <tr>
             <td class="style17">
-                &nbsp;</td>
+                &nbsp;
+            </td>
             <td>
-                &nbsp;</td>
+                &nbsp;
+            </td>
         </tr>
         <tr>
             <td class="style17">
-                Buttons</td>
+                Buttons
+            </td>
             <td>
-                &nbsp;</td>
+                &nbsp;
+            </td>
         </tr>
         <tr>
             <td class="style15">
-                OK / Cancel</td>
+                OK / Cancel
+            </td>
             <td>
-                OK will confirm and save the current settings</td>
+                OK will confirm and save the current settings
+            </td>
         </tr>
         <tr>
             <td class="style15">
-                Channels...</td>
+                Channels...
+            </td>
             <td>
-                <a href="hidd_ad_inputparmsdlg.htm">Jump to the companion dialog box</a> which 
-                defines sampling intervals</td>
+                <a href="hidd_ad_inputparmsdlg.htm">Jump to the companion dialog box</a> which
+                defines sampling intervals
+            </td>
         </tr>
         <tr>
             <td class="style15">
-                Sampling...</td>
+                Sampling...
+            </td>
             <td>
-                (greyed - it refers to the companion Dialog box where the same button is active)</td>
+                (greyed - it refers to the companion Dialog box where the same button is active)
+            </td>
         </tr>
     </table>
     <p>
         <br />
     </p>
     <p>
-        <strong>Notes:</strong></p>
+        <strong>Notes:</strong>
+    </p>
     <p>
-        In this dialog box, make sure that &quot;software trigger&quot; or &quot;keyboard trigger&quot; are 
-        selected.</p>
+        In this dialog box, make sure that &quot;software trigger&quot; or &quot;keyboard trigger&quot; are
+        selected.
+    </p>
     <p>
         If you hit <a href="content_2_1startfromscratch_2.htm">OK</a>, you return to the
-        previous screen, if you hit &quot;<a href="content_2_1startfromscratch_3.htm">Channels...</a>&quot;, 
-        you will return to the amplifier settings dialog box.</p>
+        previous screen, if you hit &quot;<a href="content_2_1startfromscratch_3.htm">Channels...</a>&quot;,
+        you will return to the amplifier settings dialog box.
+    </p>
     <p>
-        These parameters will be saved when you exit the program. However, if you go to 
-        &quot;database&quot; and return to &quot;Record&quot;, the program will load the data acquisition 
-        parameters of the record that was selected in the database and erase your 
-        current parameters.</p>
-    
+        These parameters will be saved when you exit the program. However, if you go to
+        &quot;database&quot; and return to &quot;Record&quot;, the program will load the data acquisition
+        parameters of the record that was selected in the database and erase your
+        current parameters.
+    </p>
 
     <P>&nbsp;</P>
-
-
-
 </BODY>
 </HTML>

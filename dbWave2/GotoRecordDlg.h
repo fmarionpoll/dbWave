@@ -1,4 +1,3 @@
-
 #pragma once
 
 // GotoRecordDlg.h : header file
@@ -9,7 +8,7 @@
 
 class CGotoRecordDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CGotoRecordDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -19,8 +18,8 @@ public:
 	int		m_recordPos;
 	BOOL	m_bGotoRecordID;
 
-// Overrides)
-	protected:
+	// Overrides)
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation

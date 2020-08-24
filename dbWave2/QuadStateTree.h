@@ -42,21 +42,21 @@
 
 enum TVCS_CHECKSTATE                // Checkbox state codes, compatible with CTreeCtrl::SetCheck()
 {
-    TVCS_NONE			= -1,        // No checkbox associated with this item
-	TVCS_UNCHECKED		=  0,        // BST_UNCHECKED equivalent
-    TVCS_CHECKED		=  1,        // BST_CHECKED 
-    TVCS_INDETERMINATE	=  2         // BST_INDETERMINATE
+	TVCS_NONE = -1,        // No checkbox associated with this item
+	TVCS_UNCHECKED = 0,        // BST_UNCHECKED equivalent
+	TVCS_CHECKED = 1,        // BST_CHECKED
+	TVCS_INDETERMINATE = 2         // BST_INDETERMINATE
 };
 
 typedef struct tagTVNCHECK          // Information for the TVN_CHECK notification code
 {
-    NMHDR			hdr;            // Standard NMHDR structure
-    HTREEITEM		hTreeItem;      // Handle to the tree item that is changing
-    LPARAM			lParam;         // Extra data associated with the tree item
-    TVCS_CHECKSTATE OldCheckState;  // Old Checkbox state
-    TVCS_CHECKSTATE NewCheckState;  // New checkbox state
-    HTREEITEM		hTriggerItem;   // Handle of the tree item that was initially triggered
-} NMTVNCHECK, *LPNMTVNCHECK;
+	NMHDR			hdr;            // Standard NMHDR structure
+	HTREEITEM		hTreeItem;      // Handle to the tree item that is changing
+	LPARAM			lParam;         // Extra data associated with the tree item
+	TVCS_CHECKSTATE OldCheckState;  // Old Checkbox state
+	TVCS_CHECKSTATE NewCheckState;  // New checkbox state
+	HTREEITEM		hTriggerItem;   // Handle of the tree item that was initially triggered
+} NMTVNCHECK, * LPNMTVNCHECK;
 
 // CQuadStateTree
 class CQuadStateTree : public CTreeCtrl
@@ -65,37 +65,36 @@ class CQuadStateTree : public CTreeCtrl
 	DECLARE_MESSAGE_MAP()
 
 public:
-    CQuadStateTree();
-    virtual ~CQuadStateTree();
+	CQuadStateTree();
+	virtual ~CQuadStateTree();
 
-    TVCS_CHECKSTATE GetCheck (HTREEITEM hTreeItem) const;
-    BOOL            SetCheck (HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState = TVCS_CHECKED);
+	TVCS_CHECKSTATE GetCheck(HTREEITEM hTreeItem) const;
+	BOOL            SetCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState = TVCS_CHECKED);
 
-    virtual BOOL Create(DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
-    virtual BOOL CreateEx(DWORD dwExStyle, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
+	virtual BOOL Create(DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
+	virtual BOOL CreateEx(DWORD dwExStyle, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
 
 private:
-    void    BuildBitmap      ();
-    void    ToggleCheck      (HTREEITEM hTreeItem);
-    void    SetTriggerItem   (HTREEITEM hTreeItem);
-    BOOL    SetCheckInternal (HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState);
-    LRESULT SendTVNCheck     (HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState, TVCS_CHECKSTATE OldCheckState);
+	void    BuildBitmap();
+	void    ToggleCheck(HTREEITEM hTreeItem);
+	void    SetTriggerItem(HTREEITEM hTreeItem);
+	BOOL    SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState);
+	LRESULT SendTVNCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState, TVCS_CHECKSTATE OldCheckState);
 
-    CBitmap    m_Bitmap;
-    CImageList m_ImageList;
-    bool       m_bIgnoreIndeterminateState;
-    bool       m_bTvnCheckReturnedNonzero;
-    bool       m_bSettingChildItems;
-    HTREEITEM  m_hTriggerItem;
+	CBitmap    m_Bitmap;
+	CImageList m_ImageList;
+	bool       m_bIgnoreIndeterminateState;
+	bool       m_bTvnCheckReturnedNonzero;
+	bool       m_bSettingChildItems;
+	HTREEITEM  m_hTriggerItem;
 
 public:
-    afx_msg BOOL    OnNMClick                (NMHDR *pNMHDR, LRESULT *pResult);
-    afx_msg BOOL    OnNMTvStateImageChanging (NMHDR *pNMHDR, LRESULT *pResult);
-    afx_msg BOOL    OnTvnKeydown             (NMHDR *pNMHDR, LRESULT *pResult);
-    afx_msg BOOL    OnTvnItemchanged         (NMHDR *pNMHDR, LRESULT *pResult);
-    afx_msg LRESULT OnTvmSetitem             (WPARAM wp,     LPARAM lp);
+	afx_msg BOOL    OnNMClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg BOOL    OnNMTvStateImageChanging(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg BOOL    OnTvnKeydown(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg BOOL    OnTvnItemchanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnTvmSetitem(WPARAM wp, LPARAM lp);
 
 protected:
-    virtual void PreSubclassWindow();
+	virtual void PreSubclassWindow();
 };
-

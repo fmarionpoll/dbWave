@@ -9,14 +9,12 @@
 #define new DEBUG_NEW
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CFindFilesDlg dialog
 
-
 CFindFilesDlg::CFindFilesDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CFindFilesDlg::IDD, pParent)
-	  , m_pfilenames(nullptr), m_banyformat(FALSE), m_bexcludecloud(TRUE), m_bSubtreeSearch(0)
+	, m_pfilenames(nullptr), m_banyformat(FALSE), m_bexcludecloud(TRUE), m_bSubtreeSearch(0)
 {
 	m_path = _T("");
 	m_selinit = 0;
@@ -49,10 +47,9 @@ END_MESSAGE_MAP()
 
 // browse directories - get root path
 
-
 // -----------------------------------------------------------------------------
 
-BOOL CFindFilesDlg::OnInitDialog() 
+BOOL CFindFilesDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();				// call class original routine
 
@@ -60,9 +57,9 @@ BOOL CFindFilesDlg::OnInitDialog()
 	m_nfound = 0;							// no file found yet
 
 	// assume user wants to explore subfolders
-	((CButton*) GetDlgItem(IDC_CHECK1))->SetCheck(1);
+	((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(1);
 
-	m_path = ((CdbWaveApp*) AfxGetApp())->options_import.path;
+	m_path = ((CdbWaveApp*)AfxGetApp())->options_import.path;
 	if (m_pdbDoc)
 		m_path = m_pdbDoc->m_ProposedDataPathName;
 	m_mfcbrowsecontrol.SetWindowTextW(m_path);
@@ -83,10 +80,10 @@ BOOL CFindFilesDlg::OnInitDialog()
 		m_fileext.AddString(_T("*.spkdel"));
 	}
 	else
-	// update numbering option
+		// update numbering option
 	{
-		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();	// load browse parameters
-		((CButton*) GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bImportDuplicateFiles);
+		CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
+		((CButton*)GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bImportDuplicateFiles);
 	}
 	UpdateData(FALSE);
 	m_fileext.SetCurSel(m_selinit);			// select first item / file extensions
@@ -97,22 +94,22 @@ BOOL CFindFilesDlg::OnInitDialog()
 
 // -----------------------------------------------------------------------------
 
-void CFindFilesDlg::OnOK() 
+void CFindFilesDlg::OnOK()
 {
 	if (m_pfilenames->GetSize() == 0)
 		OnSearch();
-	
+
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
-	auto p_app = (CdbWaveApp*) AfxGetApp();
+	auto p_app = (CdbWaveApp*)AfxGetApp();
 	p_app->options_import.path = m_path;
-	p_app->options_import.bImportDuplicateFiles = ((CButton*) GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
+	p_app->options_import.bImportDuplicateFiles = ((CButton*)GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
 
 	CDialog::OnOK();
 }
 
 // -----------------------------------------------------------------------------
 
-void CFindFilesDlg::OnSearch() 
+void CFindFilesDlg::OnSearch()
 {
 	UpdateData(TRUE);		// update m_path
 
@@ -121,27 +118,27 @@ void CFindFilesDlg::OnSearch()
 	m_nfound = 0;									// reset nb of files found
 	m_fileext.GetWindowText(m_searchString);		// get search string (filter)
 
-	m_bSubtreeSearch = ((CButton*) GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_bSubtreeSearch = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
 	m_ppath.Add(m_path);							// add at least one path (root)
-	
+
 	// scan subdirectories
 	if (m_bSubtreeSearch)
 		TraverseDirectory(m_path);
 
 	// scan for files within the directories
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_SHOW);
-	for (auto i= 0; i<= m_ppath.GetUpperBound(); i++)
+	for (auto i = 0; i <= m_ppath.GetUpperBound(); i++)
 	{
 		auto cs_dir = m_ppath.GetAt(i);
 		GetDlgItem(IDC_STATIC3)->SetWindowText(cs_dir);
 		FindFiles(cs_dir);
 		DisplaynFound();
-	} 
+	}
 
-	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);	
+	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 }
 
 // -----------------------------------------------------------------------------
@@ -149,24 +146,24 @@ void CFindFilesDlg::DisplaynFound()
 {
 	TCHAR sz[50];
 	wsprintf(sz, _T("n found = %i"), m_nfound);
-	GetDlgItem(IDC_STATIC1)->SetWindowText(sz);	
+	GetDlgItem(IDC_STATIC1)->SetWindowText(sz);
 }
 
 // -----------------------------------------------------------------------------
-void CFindFilesDlg::TraverseDirectory (CString path)
+void CFindFilesDlg::TraverseDirectory(CString path)
 {
 	CFileFind finder;
 	auto str_wildcard = path;
-	str_wildcard += _T("\\*.*"); 
+	str_wildcard += _T("\\*.*");
 
-   // start working for files
+	// start working for files
 	auto b_working = finder.FindFile(str_wildcard);
-   while (b_working)
-   {
+	while (b_working)
+	{
 		b_working = finder.FindNextFile();
 		// skip . and .. files; otherwise, we'd recur infinitely!
 		if (finder.IsDots())
-		 continue;
+			continue;
 		// if it's a directory, recursively search it
 		if (finder.IsDirectory())
 		{
@@ -174,11 +171,11 @@ void CFindFilesDlg::TraverseDirectory (CString path)
 			m_ppath.Add(str);
 			TraverseDirectory(str);
 		}
-   }
+	}
 }
 
 // -----------------------------------------------------------------------------
-void CFindFilesDlg::FindFiles (CString path)
+void CFindFilesDlg::FindFiles(CString path)
 {
 	CFileFind finder;
 	const auto str_wildcard = path + _T("\\") + m_searchString;
@@ -187,7 +184,7 @@ void CFindFilesDlg::FindFiles (CString path)
 	{
 		b_working = finder.FindNextFile();
 		auto cs_dummy = finder.GetFilePath();
-		if (1 != m_ioption && 0 == (cs_dummy.Right(3)).CompareNoCase(_T("del")) )
+		if (1 != m_ioption && 0 == (cs_dummy.Right(3)).CompareNoCase(_T("del")))
 			continue;
 		if (m_bexcludecloud)
 		{

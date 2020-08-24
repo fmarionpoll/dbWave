@@ -23,23 +23,23 @@ public:
 	enum { IDD = IDD_VIEWDBWAVE };
 	CdbMainTable* m_pSet;
 
-// Attributes
+	// Attributes
 public:
-	CdbWaveDoc*		GetDocument();
+	CdbWaveDoc* GetDocument();
 	CDataListCtrl	m_dataListCtrl;
 	BOOL			m_bvalidDat;
 	BOOL			m_bvalidSpk;
 
-// Operations
-	
-// Overrides
+	// Operations
+
+	// Overrides
 public:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnMove(UINT nIDMoveCommand);
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX); 
-	virtual void OnInitialUpdate(); 
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void OnInitialUpdate();
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
@@ -47,7 +47,7 @@ protected:
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CViewdbWave();
 
@@ -70,7 +70,7 @@ protected:
 	CEditCtrl			mm_timelast;		// last abcissa value
 	CEditCtrl			mm_amplitudespan;	// amplitude
 	CStretchControl		m_stretch;			// properties for controls
-	OPTIONS_VIEWDATA*	m_options_viewdata;
+	OPTIONS_VIEWDATA* m_options_viewdata;
 	CTabCtrl			m_tabCtrl;
 
 	// internal functions
@@ -79,7 +79,7 @@ protected:
 public:
 	void		DeleteRecords();
 	void		InitctrlTab();
-// Generated message map functions
+	// Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnDestroy();
@@ -89,8 +89,8 @@ protected:
 	afx_msg void OnClickMedianFilter();
 	afx_msg void OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult);
-public:	
-	afx_msg void OnLvnColumnclickListctrl(NMHDR *pNMHDR, LRESULT *pResult);
+public:
+	afx_msg void OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedRadio3();
@@ -98,20 +98,20 @@ public:
 	afx_msg void OnEnChangeTimelast();
 	afx_msg void OnEnChangeAmplitudespan();
 	afx_msg void OnBnClickedCheckfilename();
-	afx_msg void OnHdnEndtrackListctrl(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnHdnEndtrackListctrl(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedCheck2();
 	afx_msg void OnBnClickedCheck1();
 	afx_msg void OnBnClickedRadioallclasses();
 	afx_msg void OnBnClickedRadiooneclass();
 	afx_msg void OnEnChangeSpikeclass();
-	
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult);
+
+	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 };
 
 #ifndef _DEBUG  // debug version in dbWaveView.cpp
-	inline CdbWaveDoc* CViewdbWave::GetDocument()
-	{ 
-		return (CdbWaveDoc*)m_pDocument; 
-	}
+inline CdbWaveDoc* CViewdbWave::GetDocument()
+{
+	return (CdbWaveDoc*)m_pDocument;
+}
 #endif

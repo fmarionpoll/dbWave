@@ -8,7 +8,7 @@
 
 class CdbNewFileDuplicateDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CdbNewFileDuplicateDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -18,8 +18,8 @@ public:
 	LPCTSTR 	m_pfilein;
 	CString		m_fileout;
 
-// Overrides
-	protected:
+	// Overrides
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation
@@ -34,4 +34,3 @@ protected:
 	afx_msg void OnRadio3();
 	DECLARE_MESSAGE_MAP()
 };
-

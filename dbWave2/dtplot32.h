@@ -24,16 +24,20 @@ public:
 		const RECT& rect,
 		CWnd* pParentWnd, UINT nID,
 		CCreateContext* pContext = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID); }
+	{
+		return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID);
+	}
 
-    BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style,
+	BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style,
 		const RECT& rect, CWnd* pParentWnd, UINT nID,
 		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
 		BSTR bstrLicKey = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID,
-		pPersist, bStorage, bstrLicKey); }
+	{
+		return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID,
+			pPersist, bStorage, bstrLicKey);
+	}
 
-// Attributes
+	// Attributes
 public:
 	unsigned long GetBackColor();
 	void SetBackColor(unsigned long);
@@ -118,7 +122,7 @@ public:
 	BOOL GetForceRepaint();
 	void SetForceRepaint(BOOL);
 
-// Operations
+	// Operations
 public:
 	unsigned long GetPalette(short index);
 	void SetPalette(short index, unsigned long newValue);
@@ -128,4 +132,3 @@ public:
 	void SetMarkerV2Data(short index, float newValue);
 	void AboutBox();
 };
-

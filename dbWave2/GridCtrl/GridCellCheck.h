@@ -14,12 +14,12 @@
 // Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
-// file may be redistributed unmodified by any means PROVIDING it is 
-// not sold for profit without the authors written consent, and 
-// providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// file may be redistributed unmodified by any means PROVIDING it is
+// not sold for profit without the authors written consent, and
+// providing that this notice and the authors name and all copyright
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -29,9 +29,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include "GridCell.h"
-
 
 class CGridCellCheck : public CGridCell
 {
@@ -45,10 +43,10 @@ public:
 	BOOL SetCheck(BOOL bChecked = TRUE);
 	BOOL GetCheck();
 
-// Operations
+	// Operations
 	virtual CSize GetCellExtent(CDC* p_dc);
-	virtual void OnClick( CPoint PointCellRelative);
-	virtual BOOL GetTextRect( LPRECT pRect);
+	virtual void OnClick(CPoint PointCellRelative);
+	virtual BOOL GetTextRect(LPRECT pRect);
 
 protected:
 	CRect GetCheckPlacement();

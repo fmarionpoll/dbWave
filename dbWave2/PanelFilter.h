@@ -1,4 +1,3 @@
-
 #pragma once
 #include "QuadStateTree.h"
 
@@ -6,7 +5,7 @@ class CFilterToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
-		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*) GetOwner(), bDisableIfNoHndler);
+		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*)GetOwner(), bDisableIfNoHndler);
 	}
 
 	virtual BOOL AllowShowOnList() const { return FALSE; }
@@ -14,18 +13,18 @@ class CFilterToolBar : public CMFCToolBar
 
 class CFilterWnd : public CDockablePane
 {
-// Construction
+	// Construction
 public:
 	CFilterWnd();
 	void AdjustLayout();
 
-// Attributes
+	// Attributes
 protected:
 	CQuadStateTree		m_wndFilterView;
 	CFilterToolBar		m_wndToolBar;
 
-	CdbWaveDoc*			m_pDoc;
-	CdbWaveDoc*			m_pDocOld;
+	CdbWaveDoc* m_pDoc;
+	CdbWaveDoc* m_pDocOld;
 	static int			m_noCol[];			// [26] succession of fields that can be filtered
 	HTREEITEM			m_htreeitem[26];
 
@@ -34,13 +33,13 @@ protected:
 	void PopulateItemFromTableLong(DB_ITEMDESC* pdesc);
 	void PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc);
 	void PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc);
-	void InsertAlphabetic(const CString& cs, CStringArray &csArray);
+	void InsertAlphabetic(const CString& cs, CStringArray& csArray);
 	void BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem);
 	void BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem);
 	void BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem);
 	void SelectNext(BOOL bNext);
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CFilterWnd();
 
@@ -60,6 +59,4 @@ protected:
 public:
 	afx_msg void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-
 };
-

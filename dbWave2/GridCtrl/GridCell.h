@@ -7,12 +7,12 @@
 // Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
-// file may be redistributed unmodified by any means PROVIDING it is 
-// not sold for profit without the authors written consent, and 
-// providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// file may be redistributed unmodified by any means PROVIDING it is
+// not sold for profit without the authors written consent, and
+// providing that this notice and the authors name and all copyright
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -21,7 +21,6 @@
 // For use with CGridCtrl v2.20+
 //
 //////////////////////////////////////////////////////////////////////
-
 
 #if _MSC_VER >= 1000
 #pragma once
@@ -36,103 +35,101 @@ class CGridCtrl;
 
 class CGridCell : public CGridCellBase
 {
-    friend class CGridCtrl;
-    DECLARE_DYNCREATE(CGridCell)
+	friend class CGridCtrl;
+	DECLARE_DYNCREATE(CGridCell)
 
-// Construction/Destruction
+	// Construction/Destruction
 public:
-    CGridCell();
-    virtual ~CGridCell();
+	CGridCell();
+	virtual ~CGridCell();
 
-// Attributes
+	// Attributes
 public:
-    void operator=(const CGridCell& cell);
+	void operator=(const CGridCell& cell);
 
-    virtual void  SetText(LPCTSTR sz_text)        { m_strText = sz_text;  }                       
-    virtual void  SetImage(int nImage)           { m_nImage = nImage;   }                        
-    virtual void  SetData(LPARAM lParam)         { m_lParam = lParam;   }      
-    virtual void  SetGrid(CGridCtrl* pGrid)      { m_pGrid = pGrid;     }                          
-    // virtual void SetState(const DWORD nState);  -  use base class version   
-    virtual void  SetFormat(DWORD nFormat)       { m_nFormat = nFormat; }                      
-    virtual void  SetTextClr(COLORREF clr)       { m_crFgClr = clr;     }                          
-    virtual void  SetBackClr(COLORREF clr)       { m_crBkClr = clr;     }                          
-    virtual void  SetFont(const LOGFONT* plf);
-    virtual void  SetMargin(UINT nMargin)        { m_nMargin = nMargin; }
-    virtual CWnd* GetEditWnd() const             { return m_pEditWnd;   }
-    virtual void  SetCoords(int /*nRow*/, int /*nCol*/) {}  // don't need to know the row and
-                                                            // column for base implementation
+	virtual void  SetText(LPCTSTR sz_text) { m_strText = sz_text; }
+	virtual void  SetImage(int nImage) { m_nImage = nImage; }
+	virtual void  SetData(LPARAM lParam) { m_lParam = lParam; }
+	virtual void  SetGrid(CGridCtrl* pGrid) { m_pGrid = pGrid; }
+	// virtual void SetState(const DWORD nState);  -  use base class version
+	virtual void  SetFormat(DWORD nFormat) { m_nFormat = nFormat; }
+	virtual void  SetTextClr(COLORREF clr) { m_crFgClr = clr; }
+	virtual void  SetBackClr(COLORREF clr) { m_crBkClr = clr; }
+	virtual void  SetFont(const LOGFONT* plf);
+	virtual void  SetMargin(UINT nMargin) { m_nMargin = nMargin; }
+	virtual CWnd* GetEditWnd() const { return m_pEditWnd; }
+	virtual void  SetCoords(int /*nRow*/, int /*nCol*/) {}  // don't need to know the row and
+															// column for base implementation
 
-    virtual LPCTSTR     GetText() const             { return (m_strText.IsEmpty())? _T("") : LPCTSTR(m_strText); }
-    virtual int         GetImage() const            { return m_nImage;  }
-    virtual LPARAM      GetData() const             { return m_lParam;  }
-    virtual CGridCtrl*  GetGrid() const             { return m_pGrid;   }
-    // virtual DWORD    GetState() const - use base class
-    virtual DWORD       GetFormat() const;
-    virtual COLORREF    GetTextClr() const          { return m_crFgClr; } // TODO: change to use default cell
-    virtual COLORREF    GetBackClr() const          { return m_crBkClr; }
-    virtual LOGFONT*    GetFont() const;
-    virtual CFont*      GetFontObject() const;
-    virtual UINT        GetMargin() const;
+	virtual LPCTSTR     GetText() const { return (m_strText.IsEmpty()) ? _T("") : LPCTSTR(m_strText); }
+	virtual int         GetImage() const { return m_nImage; }
+	virtual LPARAM      GetData() const { return m_lParam; }
+	virtual CGridCtrl* GetGrid() const { return m_pGrid; }
+	// virtual DWORD    GetState() const - use base class
+	virtual DWORD       GetFormat() const;
+	virtual COLORREF    GetTextClr() const { return m_crFgClr; } // TODO: change to use default cell
+	virtual COLORREF    GetBackClr() const { return m_crBkClr; }
+	virtual LOGFONT* GetFont() const;
+	virtual CFont* GetFontObject() const;
+	virtual UINT        GetMargin() const;
 
-    virtual BOOL        IsEditing() const           { return m_bEditing; }
-    virtual BOOL        IsDefaultFont() const       { return (m_plfFont == nullptr); }
-    virtual void        Reset();
+	virtual BOOL        IsEditing() const { return m_bEditing; }
+	virtual BOOL        IsDefaultFont() const { return (m_plfFont == nullptr); }
+	virtual void        Reset();
 
-// editing cells
+	// editing cells
 public:
-    virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-    virtual void EndEdit();
+	virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
+	virtual void EndEdit();
 protected:
-    virtual void OnEndEdit();
+	virtual void OnEndEdit();
 
 protected:
-    CString    m_strText{};      // Cell text (or binary data if you wish...)
-    LPARAM     m_lParam{};       // 32-bit value to associate with item
-    int        m_nImage;       // Index of the list view item’s icon
-    DWORD      m_nFormat{};
-    COLORREF   m_crFgClr{};
-    COLORREF   m_crBkClr{};
-    LOGFONT*   m_plfFont{};
-    UINT       m_nMargin{};
+	CString    m_strText{};      // Cell text (or binary data if you wish...)
+	LPARAM     m_lParam{};       // 32-bit value to associate with item
+	int        m_nImage;       // Index of the list view item’s icon
+	DWORD      m_nFormat{};
+	COLORREF   m_crFgClr{};
+	COLORREF   m_crBkClr{};
+	LOGFONT* m_plfFont{};
+	UINT       m_nMargin{};
 
-    BOOL       m_bEditing{};     // Cell being edited?
+	BOOL       m_bEditing{};     // Cell being edited?
 
-    CGridCtrl* m_pGrid{};        // Parent grid control
-    CWnd*      m_pEditWnd{};
+	CGridCtrl* m_pGrid{};        // Parent grid control
+	CWnd* m_pEditWnd{};
 };
 
 // This class is for storing grid default values. It's a little heavy weight, so
-// don't use it in bulk 
+// don't use it in bulk
 class CGridDefaultCell : public CGridCell
 {
-    DECLARE_DYNCREATE(CGridDefaultCell)
+	DECLARE_DYNCREATE(CGridDefaultCell)
 
-// Construction/Destruction
+	// Construction/Destruction
 public:
-    CGridDefaultCell();
-    virtual ~CGridDefaultCell();
+	CGridDefaultCell();
+	virtual ~CGridDefaultCell();
 
 public:
-    virtual DWORD GetStyle() const                      { return m_dwStyle;      }
-    virtual void  SetStyle(DWORD dw_style)               { m_dwStyle = dw_style;   }
-    virtual int   GetWidth() const                      { return m_Size.cx;      }
-    virtual int   GetHeight() const                     { return m_Size.cy;      }
-    virtual void  SetWidth(int nWidth)                  { m_Size.cx = nWidth;    }
-    virtual void  SetHeight(int nHeight)                { m_Size.cy = nHeight;   }
+	virtual DWORD GetStyle() const { return m_dwStyle; }
+	virtual void  SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
+	virtual int   GetWidth() const { return m_Size.cx; }
+	virtual int   GetHeight() const { return m_Size.cy; }
+	virtual void  SetWidth(int nWidth) { m_Size.cx = nWidth; }
+	virtual void  SetHeight(int nHeight) { m_Size.cy = nHeight; }
 
-    // Disable these properties
-    virtual void     SetData(LPARAM /*lParam*/)             { ASSERT(FALSE);         }      
-    virtual void     SetState(DWORD /*nState*/)             { ASSERT(FALSE);         }
-    virtual DWORD    GetState() const                       { return CGridCell::GetState()|GVIS_READONLY; }
-    virtual void     SetCoords( int /*row*/, int /*col*/)   { ASSERT(FALSE);         }
-    virtual void     SetFont(const LOGFONT* /*plf*/);
-    virtual LOGFONT* GetFont() const;   
-    virtual CFont*   GetFontObject() const;
+	// Disable these properties
+	virtual void     SetData(LPARAM /*lParam*/) { ASSERT(FALSE); }
+	virtual void     SetState(DWORD /*nState*/) { ASSERT(FALSE); }
+	virtual DWORD    GetState() const { return CGridCell::GetState() | GVIS_READONLY; }
+	virtual void     SetCoords(int /*row*/, int /*col*/) { ASSERT(FALSE); }
+	virtual void     SetFont(const LOGFONT* /*plf*/);
+	virtual LOGFONT* GetFont() const;
+	virtual CFont* GetFontObject() const;
 
 protected:
-    CSize m_Size;       // Default GetRectSize
-    CFont m_Font;       // Cached font
-    DWORD m_dwStyle;    // Cell Style - unused
+	CSize m_Size;       // Default GetRectSize
+	CFont m_Font;       // Cached font
+	DWORD m_dwStyle;    // Cell Style - unused
 };
-
-

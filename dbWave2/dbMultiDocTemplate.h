@@ -8,26 +8,26 @@
 
 class CdbMultiDocTemplate : public CMultiDocTemplate
 {
-// Construction
+	// Construction
 public:
 	CdbMultiDocTemplate(UINT nIDResource, CRuntimeClass* pDocClass,
 		CRuntimeClass* pFrameClass, CRuntimeClass* pViewClass);
 
-// Attributes
+	// Attributes
 public:
 
-// Operations
+	// Operations
 public:
 	BOOL GetDocString(CString& rString,
 		enum DocStringIndex index) const; // get one of the info strings
 	CMultiDocTemplate::Confidence MatchDocType(LPCTSTR lpszPathName,
-					CDocument*& rpDocMatch);
+		CDocument*& rpDocMatch);
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CdbMultiDocTemplate)
-	public:
-	protected:	
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CdbMultiDocTemplate)
+public:
+protected:
 	//}}AFX_VIRTUAL
 
 // Implementation

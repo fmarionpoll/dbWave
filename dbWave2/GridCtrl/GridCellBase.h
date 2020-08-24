@@ -7,12 +7,12 @@
 // Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
-// file may be redistributed unmodified by any means PROVIDING it is 
-// not sold for profit without the authors written consent, and 
-// providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// file may be redistributed unmodified by any means PROVIDING it is
+// not sold for profit without the authors written consent, and
+// providing that this notice and the authors name and all copyright
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -56,20 +56,19 @@ class CGridCtrl;
 
 // Used for Get/SetItem calls.
 typedef struct _GV_ITEM {
-	int			row=0;
-	int			col=0;     // Row and Column of item
-	UINT		mask=0;        // Mask for use in getting/setting cell data
-	UINT		nState=0;      // cell state (focus/hilighted etc)
-	DWORD		nFormat=0;     // Format of cell
-	int			iImage=0;      // index of the list view item’s icon
+	int			row = 0;
+	int			col = 0;     // Row and Column of item
+	UINT		mask = 0;        // Mask for use in getting/setting cell data
+	UINT		nState = 0;      // cell state (focus/hilighted etc)
+	DWORD		nFormat = 0;     // Format of cell
+	int			iImage = 0;      // index of the list view item’s icon
 	COLORREF	crBkClr;     // Background colour (or CLR_DEFAULT)
 	COLORREF	crFgClr;     // Forground colour (or CLR_DEFAULT)
 	LPARAM		lParam;      // 32-bit value to associate with item
 	LOGFONT		lfFont{};      // Cell font
-	UINT		nMargin=0;     // Internal cell margin
+	UINT		nMargin = 0;     // Internal cell margin
 	CString		strText;     // Text in cell
 } GV_ITEM;
-
 
 // Each cell contains one of these. Fields "row" and "column" are not stored since we
 // will usually have acces to them in other ways, and they are an extra 8 bytes per
@@ -80,69 +79,71 @@ class CGridCellBase : public CObject
 	friend class CGridCtrl;
 	DECLARE_DYNAMIC(CGridCellBase)
 
-// Construction/Destruction
+	// Construction/Destruction
 public:
 	CGridCellBase();
 	virtual ~CGridCellBase();
 
-// Attributes
+	// Attributes
 public:
-	virtual void SetText(LPCTSTR /* sz_text */)              = 0 ;
-	virtual void SetImage(int /* nImage */)                 = 0 ;
-	virtual void SetData(LPARAM /* lParam */)               = 0 ;
-	virtual void SetState(DWORD nState)                     { m_nState = nState; }
-	virtual void SetFormat(DWORD /* nFormat */)             = 0 ;
-	virtual void SetTextClr(COLORREF /* clr */)             = 0 ;
-	virtual void SetBackClr(COLORREF /* clr */)             = 0 ;
-	virtual void SetFont(const LOGFONT* /* plf */)          = 0 ;
-	virtual void SetMargin( UINT /* nMargin */)             = 0 ;
-	virtual void SetGrid(CGridCtrl* /* pGrid */)            = 0 ;
-	virtual void SetCoords( int /* nRow */, int /* nCol */) = 0 ;
+	virtual void SetText(LPCTSTR /* sz_text */) = 0;
+	virtual void SetImage(int /* nImage */) = 0;
+	virtual void SetData(LPARAM /* lParam */) = 0;
+	virtual void SetState(DWORD nState) { m_nState = nState; }
+	virtual void SetFormat(DWORD /* nFormat */) = 0;
+	virtual void SetTextClr(COLORREF /* clr */) = 0;
+	virtual void SetBackClr(COLORREF /* clr */) = 0;
+	virtual void SetFont(const LOGFONT* /* plf */) = 0;
+	virtual void SetMargin(UINT /* nMargin */) = 0;
+	virtual void SetGrid(CGridCtrl* /* pGrid */) = 0;
+	virtual void SetCoords(int /* nRow */, int /* nCol */) = 0;
 
-	virtual LPCTSTR    GetText()       const                = 0 ;
-	virtual LPCTSTR    GetTipText()    const                { return GetText(); } // may override TitleTip return
-	virtual int        GetImage()      const                = 0 ;
-	virtual LPARAM     GetData()       const                = 0 ;
-	virtual DWORD      GetState()      const                { return m_nState;  }
-	virtual DWORD      GetFormat()     const                = 0 ;
-	virtual COLORREF   GetTextClr()    const                = 0 ;
-	virtual COLORREF   GetBackClr()    const                = 0 ;
-	virtual LOGFONT  * GetFont()       const                = 0 ;
-	virtual CFont    * GetFontObject() const                = 0 ;
-	virtual CGridCtrl* GetGrid()       const                = 0 ;
-	virtual CWnd     * GetEditWnd()    const                = 0 ;
-	virtual UINT       GetMargin()     const                = 0 ;
+	virtual LPCTSTR    GetText()       const = 0;
+	virtual LPCTSTR    GetTipText()    const { return GetText(); } // may override TitleTip return
+	virtual int        GetImage()      const = 0;
+	virtual LPARAM     GetData()       const = 0;
+	virtual DWORD      GetState()      const { return m_nState; }
+	virtual DWORD      GetFormat()     const = 0;
+	virtual COLORREF   GetTextClr()    const = 0;
+	virtual COLORREF   GetBackClr()    const = 0;
+	virtual LOGFONT* GetFont()       const = 0;
+	virtual CFont* GetFontObject() const = 0;
+	virtual CGridCtrl* GetGrid()       const = 0;
+	virtual CWnd* GetEditWnd()    const = 0;
+	virtual UINT       GetMargin()     const = 0;
 
 	virtual CGridCellBase* GetDefaultCell() const;
 
-	virtual BOOL IsDefaultFont()       const                = 0 ;
-	virtual BOOL IsEditing()           const                = 0 ;
-	virtual BOOL IsFocused()           const                { return (m_nState & GVIS_FOCUSED);  }
-	virtual BOOL IsFixed()             const                { return (m_nState & GVIS_FIXED);    }
-	virtual BOOL IsFixedCol()          const                { return (m_nState & GVIS_FIXEDCOL); }
-	virtual BOOL IsFixedRow()          const                { return (m_nState & GVIS_FIXEDROW); }
-	virtual BOOL IsSelected()          const                { return (m_nState & GVIS_SELECTED); }
-	virtual BOOL IsReadOnly()          const                { return (m_nState & GVIS_READONLY); }
-	virtual BOOL IsModified()          const                { return (m_nState & GVIS_MODIFIED); }
-	virtual BOOL IsDropHighlighted()   const                { return (m_nState & GVIS_DROPHILITED); }
+	virtual BOOL IsDefaultFont()       const = 0;
+	virtual BOOL IsEditing()           const = 0;
+	virtual BOOL IsFocused()           const { return (m_nState & GVIS_FOCUSED); }
+	virtual BOOL IsFixed()             const { return (m_nState & GVIS_FIXED); }
+	virtual BOOL IsFixedCol()          const { return (m_nState & GVIS_FIXEDCOL); }
+	virtual BOOL IsFixedRow()          const { return (m_nState & GVIS_FIXEDROW); }
+	virtual BOOL IsSelected()          const { return (m_nState & GVIS_SELECTED); }
+	virtual BOOL IsReadOnly()          const { return (m_nState & GVIS_READONLY); }
+	virtual BOOL IsModified()          const { return (m_nState & GVIS_MODIFIED); }
+	virtual BOOL IsDropHighlighted()   const { return (m_nState & GVIS_DROPHILITED); }
 
-// Operators
+	// Operators
 public:
 	virtual void operator=(const CGridCellBase& cell);
 
-// Operations
+	// Operations
 public:
 	virtual void Reset();
 
 	virtual BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
-	virtual BOOL GetTextRect( LPRECT pRect);    // i/o:  i=dims of cell rect; o=dims of text rect
-	virtual BOOL GetTipTextRect( LPRECT pRect) { return GetTextRect( pRect); }  // may override for btns, etc.
+	virtual BOOL GetTextRect(LPRECT pRect);    // i/o:  i=dims of cell rect; o=dims of text rect
+	virtual BOOL GetTipTextRect(LPRECT pRect) { return GetTextRect(pRect); }  // may override for btns, etc.
 	virtual CSize GetTextExtent(LPCTSTR str, CDC* p_dc = nullptr);
 	virtual CSize GetCellExtent(CDC* p_dc);
 
 	// Editing
-	virtual BOOL Edit( int /* nRow */, int /* nCol */, CRect /* rect */, CPoint /* point */, 
-					   UINT /* nID */, UINT /* nChar */) { ASSERT( FALSE); return FALSE;}
+	virtual BOOL Edit(int /* nRow */, int /* nCol */, CRect /* rect */, CPoint /* point */,
+		UINT /* nID */, UINT /* nChar */) {
+		ASSERT(FALSE); return FALSE;
+	}
 	virtual BOOL ValidateEdit(LPCTSTR str);
 	virtual void EndEdit() {}
 
@@ -157,10 +158,10 @@ protected:
 	virtual void OnMouseEnter();
 	virtual void OnMouseOver();
 	virtual void OnMouseLeave();
-	virtual void OnClick( CPoint PointCellRelative);
-	virtual void OnClickDown( CPoint PointCellRelative);
-	virtual void OnRClick( CPoint PointCellRelative);
-	virtual void OnDblClick( CPoint PointCellRelative);
+	virtual void OnClick(CPoint PointCellRelative);
+	virtual void OnClickDown(CPoint PointCellRelative);
+	virtual void OnRClick(CPoint PointCellRelative);
+	virtual void OnDblClick(CPoint PointCellRelative);
 	virtual BOOL OnSetCursor();
 
 protected:

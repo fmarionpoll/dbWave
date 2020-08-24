@@ -8,7 +8,7 @@
 class CPivotTables : public COleDispatchDriver
 {
 public:
-	CPivotTables(){} // Calls COleDispatchDriver default constructor
+	CPivotTables() {} // Calls COleDispatchDriver default constructor
 	CPivotTables(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotTables(const CPivotTables& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotTables methods
 public:
@@ -48,7 +47,7 @@ public:
 	LPDISPATCH Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -61,12 +60,11 @@ public:
 	LPDISPATCH Add(LPDISPATCH PivotCache, VARIANT& TableDestination, VARIANT& TableName, VARIANT& ReadData, VARIANT& DefaultVersion)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_DISPATCH VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_DISPATCH VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0xb5, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, PivotCache, &TableDestination, &TableName, &ReadData, &DefaultVersion);
 		return result;
 	}
 
 	// PivotTables properties
 public:
-
 };

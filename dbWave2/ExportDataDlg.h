@@ -8,12 +8,12 @@
 
 class CExportDataDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CExportDataDlg(CWnd* pParent = nullptr);   // standard constructor
 
 	OPTIONS_IMPORT	iivO;					// import options
-	CdbWaveDoc* m_dbDoc;					// (source) data document(s)	
+	CdbWaveDoc* m_dbDoc;					// (source) data document(s)
 	CString		m_filesource;
 	CString		m_filedest;
 	CString		m_filetemp;
@@ -31,7 +31,7 @@ public:
 	int		mm_binzero;
 	CAcqDataDoc* m_pDat;
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_EXPORTDATAFILE };
 	CComboBox	m_ComboExportas;
 	CComboBox	m_filedroplist;
@@ -40,12 +40,12 @@ public:
 	int		m_channelnumber;
 	int		m_iundersample;
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CExportDataDlg)
-	public:
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CExportDataDlg)
+public:
 	virtual BOOL DestroyWindow();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
@@ -56,8 +56,8 @@ protected:
 	BOOL ExportDataAsdbWaveFile();
 	BOOL ExportDataAsTextFile();
 	BOOL ExportDataAsSapidFile();
-	BOOL ExportDataAsExcelFile();	
-	void save_BIFF(CFile* fp, int type, int row, int col, char *data);
+	BOOL ExportDataAsExcelFile();
+	void save_BIFF(CFile* fp, int type, int row, int col, char* data);
 	void saveCString_BIFF(CFile* fp, int row, int col, CString& data);
 
 	// Generated message map functions

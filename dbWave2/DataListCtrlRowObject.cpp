@@ -9,23 +9,23 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_SERIAL(CDataListCtrlRowObject, CObject, 0 /* schema number*/ )
+IMPLEMENT_SERIAL(CDataListCtrlRowObject, CObject, 0 /* schema number*/)
 
 // CDataListCtrlRowObject
 
-CDataListCtrlRowObject::CDataListCtrlRowObject(): bChanged(0), insectID(0)
+CDataListCtrlRowObject::CDataListCtrlRowObject() : bChanged(0), insectID(0)
 {
 	index = 0;
 }
 
-CDataListCtrlRowObject::CDataListCtrlRowObject(int i): bChanged(0), insectID(0), pdataDoc(nullptr), pspikeDoc(nullptr)
+CDataListCtrlRowObject::CDataListCtrlRowObject(int i) : bChanged(0), insectID(0), pdataDoc(nullptr), pspikeDoc(nullptr)
 {
 	index = i;
 }
 
 CDataListCtrlRowObject::~CDataListCtrlRowObject()
 {
-	if (pdataWnd != nullptr)	
+	if (pdataWnd != nullptr)
 	{
 		pdataWnd->DestroyWindow();
 		delete pdataWnd;
@@ -78,7 +78,7 @@ CDataListCtrlRowObject& CDataListCtrlRowObject::operator = (const CDataListCtrlR
 
 void CDataListCtrlRowObject::Serialize(CArchive& ar)
 {
-	// not serialized: 
+	// not serialized:
 	// CAcqDataDoc*	pdataDoc;
 	// CSpikeDoc*	pspikeDoc;
 
@@ -106,7 +106,7 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 		pdataWnd->Serialize(ar);
 		pspikeWnd->Serialize(ar);
 		ar << insectID;
-	} 
+	}
 	else
 	{
 		ar >> wversion;
@@ -134,6 +134,6 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 		pdataWnd->Serialize(ar);
 		pspikeWnd->Serialize(ar);
 		nobj -= 2;
-		nobj--; if (nobj>0)  ar >> insectID;
+		nobj--; if (nobj > 0)  ar >> insectID;
 	}
 }

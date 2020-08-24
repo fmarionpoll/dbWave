@@ -7,36 +7,35 @@
 #define new DEBUG_NEW
 #endif
 
-
 IMPLEMENT_DYNCREATE(CCtrlProp, CObject)
 
 CCtrlProp::CCtrlProp()
 {
-	m_xSizeHow	= SZEQ_XLEQ;	
-	m_ySizeHow	= SZEQ_XLEQ; 
-	m_rect		= CRect(0,0,0,0); 
-	m_ctrlID	= NULL; 
-	m_bVisible	= TRUE;
-	m_master	= -1;
-	m_hWnd		= nullptr;
+	m_xSizeHow = SZEQ_XLEQ;
+	m_ySizeHow = SZEQ_XLEQ;
+	m_rect = CRect(0, 0, 0, 0);
+	m_ctrlID = NULL;
+	m_bVisible = TRUE;
+	m_master = -1;
+	m_hWnd = nullptr;
 	m_slaveorder = 0;
 }
 
 CCtrlProp::CCtrlProp(int iID, HWND hC, int xSizeHow, int ySizeHow, CRect* rect)
 {
-	m_ctrlID	= iID; 
-	m_hWnd		= hC; 
-	m_xSizeHow	= xSizeHow; 
-	m_ySizeHow	= ySizeHow; 
-	m_rect		= *rect;
-	m_bVisible	= TRUE;
-	m_master	= -1;
+	m_ctrlID = iID;
+	m_hWnd = hC;
+	m_xSizeHow = xSizeHow;
+	m_ySizeHow = ySizeHow;
+	m_rect = *rect;
+	m_bVisible = TRUE;
+	m_master = -1;
 	m_slaveorder = 0;
 }
-	
+
 IMPLEMENT_DYNCREATE(CStretchControl, CObject)
 
-CStretchControl::CStretchControl(): m_parent(nullptr), m_DialogSize(), m_DlgMinSize(), m_bHBAR(0), m_bVBAR(0)
+CStretchControl::CStretchControl() : m_parent(nullptr), m_DialogSize(), m_DlgMinSize(), m_bHBAR(0), m_bVBAR(0)
 {
 	m_BOTTOMBARHeight = 0; //::GetSystemMetrics(SM_CYHSCROLL);	// standard height
 	m_RIGHTBARWidth = 0; //::GetSystemMetrics(SM_CXHSCROLL);	// std width/scrollbar
@@ -47,7 +46,7 @@ void CStretchControl::AttachParent(CFormView* pF)
 {
 	m_parent = pF;
 	// save pointer to parent
-	m_DlgMinSize = pF->GetTotalSize();						// get size of dialog	
+	m_DlgMinSize = pF->GetTotalSize();						// get size of dialog
 	m_DialogSize.cy = m_DlgMinSize.cy - m_BOTTOMBARHeight;	// reduce client area
 	m_DialogSize.cx = m_DlgMinSize.cx - m_RIGHTBARWidth;	// by this value
 	m_slavemax = 0;
@@ -60,20 +59,19 @@ void CStretchControl::AttachDialogParent(CDialog* p_wnd)
 	p_wnd->GetClientRect(rect);
 	m_DlgMinSize = CSize(rect.Width(), rect.Height());
 	m_DialogSize = m_DlgMinSize;
-
 }
 
 void CStretchControl::ChangeBarSizes(int RIGHTwidth, int BOTTOMheight)
 {
 	m_BOTTOMBARHeight = RIGHTwidth;		// height/scrollbar
-	m_RIGHTBARWidth   = BOTTOMheight;	// width/scrollbar
+	m_RIGHTBARWidth = BOTTOMheight;	// width/scrollbar
 	m_DialogSize.cy = m_DlgMinSize.cy - m_BOTTOMBARHeight;	// reduce client area
 	m_DialogSize.cx = m_DlgMinSize.cx - m_RIGHTBARWidth;	// by this value
 }
 
 BOOL CStretchControl::newProp(int iID, int xsizeMode, int ysizeMode)
 {
-	CWnd* pC = m_parent->GetDlgItem(iID);	
+	CWnd* pC = m_parent->GetDlgItem(iID);
 	return newProp(pC, iID, xsizeMode, ysizeMode);
 }
 
@@ -112,44 +110,44 @@ BOOL CStretchControl::newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int 
 	p_c->GetWindowRect(&rectmaster);				// get screen window coordinates
 	m_parent->ScreenToClient(&rectmaster);		// convert in client coordinates
 	const auto rectmaster0 = rectmaster;
-	
-	// find idMASTER 
+
+	// find idMASTER
 	auto imaster = -1;							// master index
-	CCtrlProp* propmaster= nullptr;					// pointer
+	CCtrlProp* propmaster = nullptr;					// pointer
 	if (ctrlprop_ptr_array.GetUpperBound() >= 0)			// do we have masters?
-	{		
-		for (int i = 0; i<= ctrlprop_ptr_array.GetUpperBound(); i++) // loop
+	{
+		for (int i = 0; i <= ctrlprop_ptr_array.GetUpperBound(); i++) // loop
 		{
 			propmaster = ctrlprop_ptr_array.GetAt(i); // get pointer to current master
 			if (propmaster->GetID() == idMASTER)		// same ID number??
 			{
 				imaster = i;					// yes: exit loop
 				break;							// omit considering size modes
-			}			
+			}
 		}
 	}
 	// not found: exit with error
 	if (imaster < 0)
 		return FALSE;
-	
+
 	// create slave
 	CRect rect;
-	p_c = m_parent->GetDlgItem(iID); 	// get handle of control	
+	p_c = m_parent->GetDlgItem(iID); 	// get handle of control
 	p_c->GetWindowRect(&rect);			// get screen window coordinates
 	m_parent->ScreenToClient(&rect);	// convert in client coordinates
 	const auto rect0 = rect;
-	rect.left 	= rect.left		- rectmaster0.left;
-	rect.right 	= rect.right 	- rectmaster0.right;
-	rect.top 	= rect.top 		- rectmaster0.top;
-	rect.bottom = rect.bottom 	- rectmaster0.bottom;
+	rect.left = rect.left - rectmaster0.left;
+	rect.right = rect.right - rectmaster0.right;
+	rect.top = rect.top - rectmaster0.top;
+	rect.bottom = rect.bottom - rectmaster0.bottom;
 
 	auto* pb = new CCtrlProp(iID, p_c->m_hWnd, xsizeSlave, ysizeSlave, &rect);
 	ASSERT(pb != NULL);
-	pb->SetMaster(imaster);	
+	pb->SetMaster(imaster);
 	pb->m_rect0 = rect0;
 	pb->m_rmaster0 = rectmaster0;
 	pb->m_slaveorder = 1;
-	if(propmaster != nullptr)
+	if (propmaster != nullptr)
 		pb->m_slaveorder = propmaster->m_slaveorder + 1;
 
 	if (m_slavemax < pb->m_slaveorder)
@@ -163,11 +161,11 @@ CStretchControl::~CStretchControl()
 {
 	if (ctrlprop_ptr_array.GetUpperBound() >= 0)
 	{
-		for (auto i=ctrlprop_ptr_array.GetUpperBound(); i>= 0; i--)
+		for (auto i = ctrlprop_ptr_array.GetUpperBound(); i >= 0; i--)
 		{
 			delete ctrlprop_ptr_array[i];
 			ctrlprop_ptr_array.RemoveAt(i);
-		}	
+		}
 		ctrlprop_ptr_array.RemoveAll();
 	}
 }
@@ -183,33 +181,33 @@ void CStretchControl::ResizeControls(UINT nType, int cx, int cy)
 	if (ctrlprop_ptr_array.GetSize() <= 0 || cx <= 0 || cy <= 0)
 		return;
 
-	cx = (cx < m_DlgMinSize.cx) ? m_DlgMinSize.cx: cx;	// no action if less than min size
-	cy = (cy < m_DlgMinSize.cy) ? m_DlgMinSize.cy: cy;	// no action if less than min size
+	cx = (cx < m_DlgMinSize.cx) ? m_DlgMinSize.cx : cx;	// no action if less than min size
+	cy = (cy < m_DlgMinSize.cy) ? m_DlgMinSize.cy : cy;	// no action if less than min size
 	AreaLeftbyControls(&cx, &cy);
 	if (cx == m_DialogSize.cx && cy == m_DialogSize.cy)
 		return;
 
-	// prepare looping through all controls	
+	// prepare looping through all controls
 	auto h_dwp = ::BeginDeferWindowPos(ctrlprop_ptr_array.GetSize());
-	if (h_dwp == nullptr)		
+	if (h_dwp == nullptr)
 		return;		// exit if none available
 
-	// loop through all windows	
-	for (auto j=0; j<= m_slavemax; j++)
+	// loop through all windows
+	for (auto j = 0; j <= m_slavemax; j++)
 	{
-		for (auto i=ctrlprop_ptr_array.GetUpperBound(); i>=0; i--)
+		for (auto i = ctrlprop_ptr_array.GetUpperBound(); i >= 0; i--)
 		{
 			auto pa = ctrlprop_ptr_array.GetAt(i);
 			if (pa->m_slaveorder != j)
 				continue;
 			const auto new_rect = AlignControl(pa, cx, cy);
 			pa->SetMasterRect(new_rect);
-			h_dwp = ::DeferWindowPos(h_dwp, pa->GetHWnd(), nullptr, 
-				new_rect.left, 
-				new_rect.top, 
-				new_rect.right - new_rect.left, 
+			h_dwp = ::DeferWindowPos(h_dwp, pa->GetHWnd(), nullptr,
+				new_rect.left,
+				new_rect.top,
+				new_rect.right - new_rect.left,
 				new_rect.bottom - new_rect.top,
-				SWP_NOACTIVATE|SWP_NOZORDER);
+				SWP_NOACTIVATE | SWP_NOZORDER);
 		}
 	}
 
@@ -242,7 +240,7 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 		ref_rect = pb->GetMasterRect();				// load already transformed rect
 		cx = ref_rect.Width();						// get width
 		cy = ref_rect.Height();						// and height
-		ref_size = CSize (cx, cy);
+		ref_size = CSize(cx, cy);
 	}
 	// set ref rectangle from dialog box
 	else
@@ -250,15 +248,15 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 		ref_rect.left = ref_rect.top = 0;				// otherwise fill refRect with
 		ref_rect.right = cx;							// dialog coordinates
 		ref_rect.bottom = cy;
-	}	
+	}
 
 	// change size according to the flags associated with x and y directions
-	
-	// align along the horizontal direction	
+
+	// align along the horizontal direction
 	int diff;										// volatile variable
 	switch (pa->GetxSizeHow())
 	{
-	case SZEQ_XLEQ:								// x left== - no action    	
+	case SZEQ_XLEQ:								// x left== - no action
 		diff = new_rect.Width();					// size of the control (fixed)
 		new_rect.left = ref_rect.left + pa->m_rect.left;
 		new_rect.right = new_rect.left + diff;
@@ -266,7 +264,7 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 	case SZEQ_XREQ:								// x right== && same size
 		diff = new_rect.Width();					// size of the control (fixed)
 		new_rect.right = ref_rect.right + pa->m_rect.right; // offset from right side
-		new_rect.left  = new_rect.right - diff;	// -> left
+		new_rect.left = new_rect.right - diff;	// -> left
 		break;
 	case XLEQ_XREQ:								// x left== && x right== (change size)
 		new_rect.left = ref_rect.left + pa->m_rect.left;   // constant offset from left side
@@ -283,7 +281,7 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 		new_rect.left = new_rect.right - diff;	// left
 		break;
 	case XLPR_XRPR:								// x left% && x right%		size changes
-		new_rect.right = cx+ MulDiv(pa->m_rect.right, cx, m_DlgMinSize.cx);
+		new_rect.right = cx + MulDiv(pa->m_rect.right, cx, m_DlgMinSize.cx);
 		new_rect.left = MulDiv(pa->m_rect.left, cx, m_DlgMinSize.cx);
 		break;
 	case SZPR_XLEQ:								// x left== && size prop
@@ -294,19 +292,19 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 	case SZPR_XREQ:
 		diff = MulDiv(new_rect.Width(), cx, ref_size.cx); // get size
 		new_rect.right = ref_rect.right + pa->m_rect.right;	// clip right to the right side
-		new_rect.left = new_rect.right - diff;	// left position			
+		new_rect.left = new_rect.right - diff;	// left position
 		break;
 	case RIGHT_BAR:								// clip to the right, outside the area
 		new_rect.left = ref_rect.right;			// left= window size
-		new_rect.right = new_rect.left+m_RIGHTBARWidth;
+		new_rect.right = new_rect.left + m_RIGHTBARWidth;
 		break;
 	default:
 		break;
 	}
 
-	// align along the vertical direction		
+	// align along the vertical direction
 	switch (pa->GetySizeHow())
-	{   
+	{
 	case SZEQ_YTEQ:		// y top== - no action
 		diff = new_rect.Height();
 		new_rect.top = ref_rect.top + pa->m_rect.top;
@@ -315,7 +313,7 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 	case SZEQ_YBEQ:		// y bottom==
 		diff = new_rect.Height();
 		new_rect.bottom = ref_rect.bottom + pa->m_rect.bottom;
-		new_rect.top  = new_rect.bottom - diff;
+		new_rect.top = new_rect.bottom - diff;
 		break;
 	case YTEQ_YBEQ:		// ytop== && ybottom==
 		new_rect.top = ref_rect.top + pa->m_rect.top;
@@ -324,14 +322,14 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 	case SZEQ_YTPR:		// y top%
 		diff = new_rect.Height();
 		new_rect.top = ref_rect.top + MulDiv(pa->m_rect.top, cy, ref_size.cy);
-		new_rect.bottom= new_rect.top + diff;			
-		break;			
+		new_rect.bottom = new_rect.top + diff;
+		break;
 	case SZEQ_YBPR:		// y bottom%
 		diff = new_rect.Height();
 		new_rect.bottom = ref_rect.bottom + MulDiv(pa->m_rect.bottom, cy, ref_size.cy);
 		new_rect.top = new_rect.bottom - diff;
 		break;
-	case YTPR_YBPR:		// proportional distance from both borders -- size accordingly		
+	case YTPR_YBPR:		// proportional distance from both borders -- size accordingly
 		new_rect.top = MulDiv(pa->m_rect.top, cy, m_DlgMinSize.cy);
 		new_rect.bottom = cy + MulDiv(pa->m_rect.bottom, cy, m_DlgMinSize.cy);
 		break;
@@ -360,13 +358,13 @@ CRect CStretchControl::AlignControl(CCtrlProp* pa, int cx, int cy)
 		new_rect.bottom = new_rect.top + m_BOTTOMBARHeight;
 		break;
 	default:
-		break;		
-	}	
+		break;
+	}
 	return new_rect;
 }
 
-void CStretchControl::AreaLeftbyControls(int* cx, int *cy)
-{	
+void CStretchControl::AreaLeftbyControls(int* cx, int* cy)
+{
 	if (GetbVBarControls())
 		*cx -= m_RIGHTBARWidth;
 	if (GetbHBarControls())
@@ -382,21 +380,21 @@ BOOL CStretchControl::DisplayVBarControls(BOOL bVisible)
 {
 	const auto b_prev_state = m_bVBAR;		// previous state of bar
 	m_bVBAR = bVisible;	            // set state
-	const auto show_flag = (m_bVBAR ? SW_SHOW: SW_HIDE);
-	const auto rect_flag = ((m_bHBAR && m_bVBAR) ? SW_SHOW: SW_HIDE);
-	
+	const auto show_flag = (m_bVBAR ? SW_SHOW : SW_HIDE);
+	const auto rect_flag = ((m_bHBAR && m_bVBAR) ? SW_SHOW : SW_HIDE);
+
 	// loop through all controls and set visible state
-	for (auto i=0; i<ctrlprop_ptr_array.GetSize(); i++)
-		{
-			auto pa = ctrlprop_ptr_array.GetAt(i);
+	for (auto i = 0; i < ctrlprop_ptr_array.GetSize(); i++)
+	{
+		auto pa = ctrlprop_ptr_array.GetAt(i);
 		if (pa->GetxSizeHow() == RIGHT_BAR)
-			{
+		{
 			if (pa->GetySizeHow() != BOTTOM_BAR)
 				::ShowWindow(pa->GetHWnd(), show_flag);
 			else
 				::ShowWindow(pa->GetHWnd(), rect_flag);
-			}
-		}	
+		}
+	}
 	UpdateClientControls();
 	return b_prev_state;
 }
@@ -407,23 +405,23 @@ BOOL CStretchControl::DisplayVBarControls(BOOL bVisible)
 // --------------------------------------------------------------------------
 
 BOOL CStretchControl::DisplayHBarControls(BOOL bVisible)
-{	
+{
 	const auto b_prev_state = m_bHBAR;		// previous state of bar
 	m_bHBAR = bVisible;	            // set state
-	const auto show_flag = (m_bHBAR ? SW_SHOW: SW_HIDE);
-	const auto rect_flag = ((m_bHBAR && m_bVBAR) ? SW_SHOW: SW_HIDE);
+	const auto show_flag = (m_bHBAR ? SW_SHOW : SW_HIDE);
+	const auto rect_flag = ((m_bHBAR && m_bVBAR) ? SW_SHOW : SW_HIDE);
 	// loop through all controls and set visible state
-	for (auto i=0; i<ctrlprop_ptr_array.GetSize(); i++)
+	for (auto i = 0; i < ctrlprop_ptr_array.GetSize(); i++)
+	{
+		auto pa = (CCtrlProp*)ctrlprop_ptr_array.GetAt(i);
+		if (pa->GetySizeHow() == BOTTOM_BAR)
 		{
-			auto pa = (CCtrlProp*)ctrlprop_ptr_array.GetAt(i);
-			if (pa->GetySizeHow() == BOTTOM_BAR)
-				{
-				if (pa->GetxSizeHow() != RIGHT_BAR)
-					::ShowWindow(pa->GetHWnd(), show_flag);
-				else
-					::ShowWindow(pa->GetHWnd(), rect_flag);
-				}
-		}	
+			if (pa->GetxSizeHow() != RIGHT_BAR)
+				::ShowWindow(pa->GetHWnd(), show_flag);
+			else
+				::ShowWindow(pa->GetHWnd(), rect_flag);
+		}
+	}
 	UpdateClientControls();
 	return b_prev_state;
 }
@@ -432,9 +430,9 @@ void CStretchControl::UpdateClientControls()
 {
 	RECT client_rect;
 	m_parent->GetClientRect(&client_rect);
-	// force resizing	
-	::SendMessage(m_parent->m_hWnd,  //::PostMessage(m_parent->m_hWnd, 
-			WM_SIZE, 
-			0, 
-			MAKELPARAM(client_rect.right, client_rect.bottom));
+	// force resizing
+	::SendMessage(m_parent->m_hWnd,  //::PostMessage(m_parent->m_hWnd,
+		WM_SIZE,
+		0,
+		MAKELPARAM(client_rect.right, client_rect.bottom));
 }

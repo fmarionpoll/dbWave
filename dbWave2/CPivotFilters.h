@@ -8,7 +8,7 @@
 class CPivotFilters : public COleDispatchDriver
 {
 public:
-	CPivotFilters(){} // Calls COleDispatchDriver default constructor
+	CPivotFilters() {} // Calls COleDispatchDriver default constructor
 	CPivotFilters(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotFilters(const CPivotFilters& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotFilters methods
 public:
@@ -42,7 +41,7 @@ public:
 	LPDISPATCH get__Default(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -55,7 +54,7 @@ public:
 	LPDISPATCH get_Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -68,12 +67,11 @@ public:
 	LPDISPATCH Add(long Type, VARIANT& DataField, VARIANT& Value1, VARIANT& Value2, VARIANT& Order, VARIANT& Name, VARIANT& Description, VARIANT& MemberPropertyField)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0xb5, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, Type, &DataField, &Value1, &Value2, &Order, &Name, &Description, &MemberPropertyField);
 		return result;
 	}
 
 	// PivotFilters properties
 public:
-
 };

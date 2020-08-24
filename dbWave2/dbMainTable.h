@@ -4,7 +4,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
 #define CH_ID				0
 #define CH_ACQDATE			1
 #define CH_FILENAME			2
@@ -64,31 +63,30 @@ typedef struct _DB_ITEMDESC {
 	BOOL								bFilter1 = false;				// if TRUE, it means only 1 value is selected - the value of which is stored in lfilterParam1
 	long								lfilterParam1 = 0;
 	COleDateTime						otfilterParam1;
-	CString								csfilterParam1= 0;
+	CString								csfilterParam1 = 0;
 
-	BOOL								bFilter2= false;				// if TRUE, it means the values in lfilterParam2 are selected; 
+	BOOL								bFilter2 = false;				// if TRUE, it means the values in lfilterParam2 are selected;
 	CArray<long, long>					lfilterParam2;
 	CArray<COleDateTime, COleDateTime>	otfilterParam2;
 	CStringArray						csfilterParam2;
 
 	// ------------------value of current record parameter
-	long								lVal=0;
+	long								lVal = 0;
 	CString								csVal;
 	COleDateTime						oVal;
-	BOOL								bIsFieldNull=false;
+	BOOL								bIsFieldNull = false;
 
 	// helpers
-	int									typeLocal= FIELD_LONG;		// field type (FIELD_IND_TEXT, FIELD_LONG, FIELD_TEXT, FIELD_DATE, FIELD_IND_FILEPATH)
+	int									typeLocal = FIELD_LONG;		// field type (FIELD_IND_TEXT, FIELD_LONG, FIELD_TEXT, FIELD_DATE, FIELD_IND_FILEPATH)
 	CArray<long, long>					liArray;		// array storing the different elements of this field (if long or indirection)
 	CArray<COleDateTime, COleDateTime>	tiArray;		// array storing the different elements of this field (if date(day))
 	CStringArray						csElementsArray;	// string version of the list different elements (to compare with filter - either csfilterParam1, or csFilterParam2)
 
 	// --------------------temporary pointers
-	long*								pdataItem=nullptr;		// x - address of the field in the main table
-	CdbIndexTable*						plinkedSet=nullptr;		// x - address of the linked table (indirection)
-	CComboBox*							pComboBox=nullptr;		// address of combobox associated with the item
+	long* pdataItem = nullptr;		// x - address of the field in the main table
+	CdbIndexTable* plinkedSet = nullptr;		// x - address of the linked table (indirection)
+	CComboBox* pComboBox = nullptr;		// address of combobox associated with the item
 } DB_ITEMDESC;
-
 
 ////////////////////////////////////////////////
 #pragma warning(disable : 4995)
@@ -99,7 +97,7 @@ public:
 	CdbMainTable(CDaoDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CdbMainTable)
 
-// Field/Param Data - these parameters are equivalent to column headers in a table, where each row is a record
+	// Field/Param Data - these parameters are equivalent to column headers in a table, where each row is a record
 
 	long			m_ID;						// 1
 	CString			m_Filedat;					// 2
@@ -136,7 +134,7 @@ public:
 	DB_ITEMDESC		m_desc[NCOLUMNS];
 	CString			m_csdefaultSQL;
 
-	// temp values 
+	// temp values
 	long	max_insectID;
 	long	max_sensillumID;
 	long	max_ID;
@@ -147,12 +145,12 @@ public:
 	void	CopyPathToPath2();
 	void	AddCurrentRecordtoIDArrays();
 protected:
-	void	AddtoliArray	(int icol);
-	void	AddtoIDArray	(CUIntArray* pmIDArray, long uiID);
-	void	AddDaytoDateArray (COleDateTime &o_time);
+	void	AddtoliArray(int icol);
+	void	AddtoIDArray(CUIntArray* pmIDArray, long uiID);
+	void	AddDaytoDateArray(COleDateTime& o_time);
 	void	DeleteDateArray();
 
-// Overrides
+	// Overrides
 public:
 	virtual CString GetDefaultDBName();
 	virtual CString GetDefaultSQL(); 							// default SQL for Recordset
@@ -165,8 +163,8 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 	long	GetNRecords();
-	BOOL	SetLongValue (long iID, CString cscolname);
-	BOOL	SetValueNull (CString cscolname);
+	BOOL	SetLongValue(long iID, CString cscolname);
+	BOOL	SetValueNull(CString cscolname);
 	void	GetAcqdateArray(CPtrArray* pacqdate);
 	BOOL	CheckIfAcqDateTimeIsUnique(COleDateTime* ptime);
 	void	GetMaxIDs();
@@ -177,6 +175,8 @@ public:
 	void	ClearFilters();
 	void	RefreshQuery();
 	void	SetDataLen(long datalen);
-	inline void SetFilterSingleItem(DB_ITEMDESC* pdesc) 
-			{m_desc[pdesc->icol].bFilter1 = pdesc->bFilter1; m_desc[pdesc->icol].lfilterParam1 = pdesc->lfilterParam1 ;}
+	inline void SetFilterSingleItem(DB_ITEMDESC* pdesc)
+	{
+		m_desc[pdesc->icol].bFilter1 = pdesc->bFilter1; m_desc[pdesc->icol].lfilterParam1 = pdesc->lfilterParam1;
+	}
 };

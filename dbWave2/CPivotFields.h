@@ -8,7 +8,7 @@
 class CPivotFields : public COleDispatchDriver
 {
 public:
-	CPivotFields(){} // Calls COleDispatchDriver default constructor
+	CPivotFields() {} // Calls COleDispatchDriver default constructor
 	CPivotFields(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotFields(const CPivotFields& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotFields methods
 public:
@@ -48,7 +47,7 @@ public:
 	LPDISPATCH Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -61,5 +60,4 @@ public:
 
 	// PivotFields properties
 public:
-
 };

@@ -18,7 +18,6 @@ CDeleteRecordOptionsDlg::CDeleteRecordOptionsDlg(CWnd* pParent /*=NULL*/)
 	, m_bKeepChoice(FALSE)
 	, m_bDeleteFile(FALSE)
 {
-
 }
 
 CDeleteRecordOptionsDlg::~CDeleteRecordOptionsDlg()
@@ -32,9 +31,7 @@ void CDeleteRecordOptionsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK2, m_bDeleteFile);
 }
 
-
 BEGIN_MESSAGE_MAP(CDeleteRecordOptionsDlg, CDialog)
 END_MESSAGE_MAP()
-
 
 // CDeleteRecordOptionsDlg message handlers

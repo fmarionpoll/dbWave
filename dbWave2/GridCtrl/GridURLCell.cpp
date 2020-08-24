@@ -13,7 +13,7 @@ HCURSOR CGridURLCell::g_hLinkCursor = nullptr;
 #endif
 
 // Possible prefixes that indicate a hyperlink
-URLStruct CGridURLCell::g_szURIprefixes[] = { 
+URLStruct CGridURLCell::g_szURIprefixes[] = {
 	{ _T("www."),    _tcslen(_T("www."))    },
 	{ _T("http:"),   _tcslen(_T("http:"))   },
 	{ _T("mailto:"), _tcslen(_T("mailto:")) },
@@ -106,10 +106,10 @@ HCURSOR CGridURLCell::GetHandCursor()
 		strWndDir += _T("\\winhlp32.exe");
 		// This retrieves cursor #106 from winhlp32.exe, which is a hand pointer
 		HMODULE hModule = LoadLibrary(strWndDir);
-		if( hModule )
+		if (hModule)
 		{
 			HCURSOR hHandCursor = ::LoadCursor(hModule, MAKEINTRESOURCE(106));
-			if( hHandCursor )
+			if (hHandCursor)
 			{
 				g_hLinkCursor = CopyCursor(hHandCursor);
 			}
@@ -150,9 +150,9 @@ BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 	if ((m_nFormat & DT_RIGHT) && pt.x >= (m_Rect.right - size.cx))
 	{
 		bOverURL = TRUE;
-	}	
-	else if ((m_nFormat & DT_CENTER) && 
-			 ((center.x - (size.cx/2)) <= pt.x) && (pt.x <= (center.x + (size.cx/2))) )
+	}
+	else if ((m_nFormat & DT_CENTER) &&
+		((center.x - (size.cx / 2)) <= pt.x) && (pt.x <= (center.x + (size.cx / 2))))
 	{
 		bOverURL = TRUE;
 	}
@@ -169,9 +169,9 @@ BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 	strURL = GetText();
 
 	// Use float, otherwise we get an incorrect letter from the point
-	float width = (float)size.cx/(float)strURL.GetLength();
+	float width = (float)size.cx / (float)strURL.GetLength();
 
-	// remove left of cell so we have original point again 
+	// remove left of cell so we have original point again
 	pt.x -= m_Rect.left;
 	if (m_nFormat & DT_RIGHT)
 	{
@@ -184,18 +184,18 @@ BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 	if (m_nFormat & DT_CENTER)
 	{
 		int wide = m_Rect.Width() - size.cx;
-		pt.x -= (wide/2);
-		if (pt.x <= 0 || pt.x > (size.cx + (wide/2)))
+		pt.x -= (wide / 2);
+		if (pt.x <= 0 || pt.x > (size.cx + (wide / 2)))
 			return FALSE;
 	}
 
 	// Turn point into a letter
-	int ltrs = (int)((float)pt.x/width);
+	int ltrs = (int)((float)pt.x / width);
 #if  !defined(_WIN32_WCE) || (_WIN32_WCE > 210)
 	// Find spaces before and after letter, process text between
 	int endSpace = strURL.Find(_T(' '), ltrs);
 	if (endSpace != -1)
-		strURL.Delete(endSpace, strURL.GetLength()-endSpace);
+		strURL.Delete(endSpace, strURL.GetLength() - endSpace);
 
 	int beginSpace = strURL.ReverseFind(_T(' '));
 	if (beginSpace != -1)
@@ -205,4 +205,3 @@ BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 	// Does text have url
 	return HasUrl(strURL);
 }
-

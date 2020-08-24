@@ -14,17 +14,17 @@ CProgressDlg::CProgressDlg(UINT nCaptionID)
 	m_nCaptionID = IDP_PROGRESS_CAPTION;
 	if (nCaptionID != 0)
 		m_nCaptionID = nCaptionID;
-	m_bCancel=FALSE;
-	m_nLower=0;
-	m_nUpper=100;
-	m_nStep=10;
+	m_bCancel = FALSE;
+	m_nLower = 0;
+	m_nUpper = 100;
+	m_nStep = 10;
 	m_bParentDisabled = FALSE;
 }
 
 CProgressDlg::~CProgressDlg()
 {
-	if(m_hWnd!= nullptr)
-	  DestroyWindow();
+	if (m_hWnd != nullptr)
+		DestroyWindow();
 }
 
 BOOL CProgressDlg::DestroyWindow()
@@ -35,12 +35,12 @@ BOOL CProgressDlg::DestroyWindow()
 
 void CProgressDlg::ReEnableParent()
 {
-	if(m_bParentDisabled && (m_pParentWnd!= nullptr))
-	  m_pParentWnd->EnableWindow(TRUE);
-	m_bParentDisabled=FALSE;
+	if (m_bParentDisabled && (m_pParentWnd != nullptr))
+		m_pParentWnd->EnableWindow(TRUE);
+	m_bParentDisabled = FALSE;
 }
 
-BOOL CProgressDlg::Create(CWnd *pParent)
+BOOL CProgressDlg::Create(CWnd* pParent)
 {
 	// Get the true parent of the dialog
 	m_pParentWnd = CWnd::GetSafeOwner(pParent);
@@ -49,16 +49,16 @@ BOOL CProgressDlg::Create(CWnd *pParent)
 	// when the dialog is destroyed. So we don't want to set
 	// it to TRUE unless the parent was already enabled.
 
-	if((m_pParentWnd!= nullptr) && m_pParentWnd->IsWindowEnabled())
+	if ((m_pParentWnd != nullptr) && m_pParentWnd->IsWindowEnabled())
 	{
-	  m_pParentWnd->EnableWindow(FALSE);
-	  m_bParentDisabled = TRUE;
+		m_pParentWnd->EnableWindow(FALSE);
+		m_bParentDisabled = TRUE;
 	}
 
-	if(!CDialog::Create(CProgressDlg::IDD,pParent))
+	if (!CDialog::Create(CProgressDlg::IDD, pParent))
 	{
-	  ReEnableParent();
-	  return FALSE;
+		ReEnableParent();
+		return FALSE;
 	}
 
 	return TRUE;
@@ -81,22 +81,22 @@ void CProgressDlg::SetStatus(LPCTSTR lpszMessage)
 	auto p_wnd_status = GetDlgItem(CG_IDC_PROGDLG_STATUS);
 
 	// Verify that the static text control exists
-	ASSERT(p_wnd_status!=NULL);
+	ASSERT(p_wnd_status != NULL);
 	p_wnd_status->SetWindowText(lpszMessage);
 }
 
 void CProgressDlg::OnCancel()
 {
-	m_bCancel=TRUE;
+	m_bCancel = TRUE;
 }
 
-void CProgressDlg::SetRange(int nLower,int nUpper)
+void CProgressDlg::SetRange(int nLower, int nUpper)
 {
 	m_nLower = nLower;
 	m_nUpper = nUpper;
-	m_Progress.SetRange(nLower,nUpper);
+	m_Progress.SetRange(nLower, nUpper);
 }
-  
+
 int CProgressDlg::SetPos(int nPos)
 {
 	PumpMessages();
@@ -115,7 +115,7 @@ int CProgressDlg::OffsetPos(int nPos)
 {
 	PumpMessages();
 	const auto i_result = m_Progress.OffsetPos(nPos);
-	UpdatePercent(i_result+nPos);
+	UpdatePercent(i_result + nPos);
 	return i_result;
 }
 
@@ -123,24 +123,24 @@ int CProgressDlg::StepIt()
 {
 	PumpMessages();
 	const auto i_result = m_Progress.StepIt();
-	UpdatePercent(i_result+m_nStep);
+	UpdatePercent(i_result + m_nStep);
 	return i_result;
 }
 
 void CProgressDlg::PumpMessages()
 {
 	// Must call Create() before using the dialog
-	ASSERT(m_hWnd!=NULL);
+	ASSERT(m_hWnd != NULL);
 
 	MSG msg;
 	// Handle dialog messages
-	while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
-	  if(!IsDialogMessage(&msg))
-	  {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);  
-	  }
+		if (!IsDialogMessage(&msg))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 }
 
@@ -167,21 +167,21 @@ void CProgressDlg::UpdatePercent(int nNewPos)
 	auto p_wnd_percent = GetDlgItem(CG_IDC_PROGDLG_PERCENT);
 
 	const auto n_divisor = m_nUpper - m_nLower;
-	ASSERT(n_divisor>0);  // m_nLower should be smaller than m_nUpper
+	ASSERT(n_divisor > 0);  // m_nLower should be smaller than m_nUpper
 
 	const auto n_dividend = (nNewPos - m_nLower);
-	ASSERT(n_dividend>=0);   // Current position should be greater than m_nLower
+	ASSERT(n_dividend >= 0);   // Current position should be greater than m_nLower
 
 	auto n_percent = n_dividend * 100 / n_divisor;
 
 	// Since the Progress Control wraps, we will wrap the percentage
 	// along with it. However, don't reset 100% back to 0%
-	if(n_percent!=100)
-	  n_percent %= 100;
+	if (n_percent != 100)
+		n_percent %= 100;
 
 	// Display the percentage
 	CString str_buf;
-	str_buf.Format(_T("%d%c"),n_percent,_T('%'));
+	str_buf.Format(_T("%d%c"), n_percent, _T('%'));
 
 	CString str_cur; // get current percentage
 	p_wnd_percent->GetWindowText(str_cur);
@@ -189,14 +189,14 @@ void CProgressDlg::UpdatePercent(int nNewPos)
 	if (str_cur != str_buf)
 		p_wnd_percent->SetWindowText(str_buf);
 }
-	
+
 /////////////////////////////////////////////////////////////////////////////
 // CProgressDlg message handlers
 
-BOOL CProgressDlg::OnInitDialog() 
+BOOL CProgressDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_Progress.SetRange(m_nLower,m_nUpper);
+	m_Progress.SetRange(m_nLower, m_nUpper);
 	m_Progress.SetStep(m_nStep);
 	m_Progress.SetPos(m_nLower);
 
@@ -204,5 +204,5 @@ BOOL CProgressDlg::OnInitDialog()
 	VERIFY(str_caption.LoadString(m_nCaptionID));
 	SetWindowText(str_caption);
 
-	return TRUE;  
+	return TRUE;
 }

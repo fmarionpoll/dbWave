@@ -7,7 +7,7 @@
 
 class CCopyAsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CCopyAsDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -19,7 +19,7 @@ public:
 	int m_iunit;
 	BOOL m_bgraphics;
 
-// Implementation
+	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 

@@ -3,7 +3,6 @@
 
 #include "StdAfx.h"
 
-
 #include "NotedocCntrItem.h"
 #include "NoteDoc.h"
 //#include "ViewNotedoc.h"
@@ -21,13 +20,11 @@ CNotedocCntrItem::CNotedocCntrItem(REOBJECT* preo, CNoteDoc* pContainer)
 	: CRichEditCntrItem(preo, pContainer)
 {
 	// TODO: add one-time construction code here
-	
 }
 
 CNotedocCntrItem::~CNotedocCntrItem()
 {
 	// TODO: add cleanup code here
-	
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,7 @@ public:
 	CPivotDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CPivotDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_PIVOTDLG };
 	int		m_nFixCols;
 	int		m_nFixRows;

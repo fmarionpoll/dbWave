@@ -10,7 +10,7 @@ public:
 	CConfirmSaveDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CConfirmSaveDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_CONFIRMDIALOG };
 
 protected:

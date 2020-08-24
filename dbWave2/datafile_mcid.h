@@ -9,19 +9,19 @@
 
 #define MAX_MCID_CHANNELS	10	// Hopefully gross overkill!
 #define MAX_PROG_NAME		20	// Ditto
-enum	SPIKE_MODE	{
-					HISTO_MODE,	// just count the spikes into bins
-					SINC_MODE,		// convolve each spike with sin(x)/x
-					MECH_MODE,		// Use MCID info to make pulses
-					RATE_MODE,		// Convert spikes to spikes/second
-					TIMING_MODE,	// Output just spike times
-					FILTER_MODE,	// Filter the whole thing
-					MAX_SPIKE_MODE};
+enum	SPIKE_MODE {
+	HISTO_MODE,	// just count the spikes into bins
+	SINC_MODE,		// convolve each spike with sin(x)/x
+	MECH_MODE,		// Use MCID info to make pulses
+	RATE_MODE,		// Convert spikes to spikes/second
+	TIMING_MODE,	// Output just spike times
+	FILTER_MODE,	// Filter the whole thing
+	MAX_SPIKE_MODE
+};
 
 #define	SPIKE_MODES	{"Histogram",	"Sin(x)/x",	"Mechanical", "Spikes/sec",	"Spike timing",	"Filter"}
-enum	IO_MODE		{IO_UPPER_LOWER,				IO_UPPER_SPIKES,				IO_LOWER_SPIKES,	MAX_IO_MODE};
+enum	IO_MODE { IO_UPPER_LOWER, IO_UPPER_SPIKES, IO_LOWER_SPIKES, MAX_IO_MODE };
 #define IO_MODES	{"Input upper, Output lower",	"Input upper, Output spikes",	"Input lower, Output spikes"};
-
 
 typedef struct {
 	char	program_name[MAX_PROG_NAME];	// Zero-terminated
@@ -54,19 +54,18 @@ typedef struct {
 	double		count_time;			// spikes/s count interval (s)
 } SINC1_MCID_HEADER_1;
 
-
 class CDataFileMCID : public CDataFileX
 {
 public:
 	CDataFileMCID();           // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CDataFileMCID)
 
-// Operations
+	// Operations
 public:
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
 	BOOL CheckFileType(CFile* file);
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CDataFileMCID();
 #ifdef _DEBUG
@@ -76,5 +75,4 @@ public:
 
 	// Generated message map functions
 protected:
-
 };

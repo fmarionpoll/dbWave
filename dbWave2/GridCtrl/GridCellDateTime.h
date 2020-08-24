@@ -9,17 +9,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include "GridCell.h"
 #include "afxdtctl.h"	// for CDateTimeCtrl
 
-class CGridCellDateTime : public CGridCell  
+class CGridCellDateTime : public CGridCell
 {
-  friend class CGridCtrl;
-  DECLARE_DYNCREATE(CGridCellDateTime)
+	friend class CGridCtrl;
+	DECLARE_DYNCREATE(CGridCellDateTime)
 
-  CTime m_cTime;
-  DWORD m_dwStyle;
+	CTime m_cTime;
+	DWORD m_dwStyle;
 
 public:
 	CGridCellDateTime();
@@ -27,41 +26,40 @@ public:
 	virtual ~CGridCellDateTime();
 	virtual CSize GetCellExtent(CDC* p_dc);
 
-  // editing cells
+	// editing cells
 public:
 	void Init(DWORD dw_style);
 	virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
 	virtual CWnd* GetEditWnd() const;
 	virtual void  EndEdit();
 
-
-	CTime* GetTime() {return &m_cTime;};
+	CTime* GetTime() { return &m_cTime; };
 	void   SetTime(CTime time);
 };
 
 class CInPlaceDateTime : public CDateTimeCtrl
 {
-// Construction
+	// Construction
 public:
 	CInPlaceDateTime(CWnd* pParent,         // parent
-				   CRect& rect,           // dimensions & location
-				   DWORD dw_style,         // window/combobox style
-				   UINT nID,              // control ID
-				   int nRow, int nColumn, // row and column
-				   COLORREF crFore, COLORREF crBack,  // Foreground, background colour
-				   CTime* pcTime,
-				   UINT nFirstChar);      // first character to pass to control
+		CRect& rect,           // dimensions & location
+		DWORD dw_style,         // window/combobox style
+		UINT nID,              // control ID
+		int nRow, int nColumn, // row and column
+		COLORREF crFore, COLORREF crBack,  // Foreground, background colour
+		CTime* pcTime,
+		UINT nFirstChar);      // first character to pass to control
 
 // Overrides
-	protected:
+protected:
 	virtual void PostNcDestroy();
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CInPlaceDateTime();
 	void EndEdit();
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -71,10 +69,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CTime*   m_pcTime;
+	CTime* m_pcTime;
 	int		 m_nRow;
 	int		 m_nCol;
-	UINT     m_nLastChar; 
-	BOOL	 m_bExitOnArrows; 
+	UINT     m_nLastChar;
+	BOOL	 m_bExitOnArrows;
 	COLORREF m_crForeClr, m_crBackClr;
 };

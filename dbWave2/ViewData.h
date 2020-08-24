@@ -1,12 +1,10 @@
 #pragma once
 
-
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "afxwin.h"
 #include "Lineview.h"
 #include "Editctrl.h"
-
 
 class CViewData : public CDaoRecordView
 {
@@ -15,13 +13,13 @@ protected:
 	CViewData();					// protected constructor used by dynamic creation
 
 // Form Data
-public:	
+public:
 	enum { IDD = IDD_VIEWDATA };
-	
+
 	int		m_ichanselected;
 	float	m_v1;
 	float	m_v2;
-	float	m_diff;	
+	float	m_diff;
 	float	m_timefirst;
 	float	m_timelast;
 
@@ -37,15 +35,15 @@ public:
 	CRulerBar	m_ADC_yRulerBar;
 	CRulerBar	m_ADC_xRulerBar;
 
-	BOOL		m_bInitComment;	
-	CdbWaveDoc*	GetDocument();
-	
-protected:	
-	// parameters related to data display and to document	
+	BOOL		m_bInitComment;
+	CdbWaveDoc* GetDocument();
+
+protected:
+	// parameters related to data display and to document
 	CAcqDataDoc* m_pdatDoc;			// document pointer
 	BOOL	m_bvalidDoc;
 	float	m_samplingRate;
-	int 	m_cursorstate;			// lineview cursor 
+	int 	m_cursorstate;			// lineview cursor
 	int		m_VBarpixelratio;		// vertical bar pixel ratio
 	int		m_HBarpixelratio;		// horizontal bar pixel ratio
 	int		m_currentfileindex;
@@ -54,13 +52,13 @@ protected:
 	HICON	m_hZoom;
 	int		scan_count;
 	float	chrate;
-	
+
 	CRect 	m_Margin;				// margins (pixels)
 	int		m_file0;				// current file
 	long	m_lFirst0;
 	long	m_lLast0;
 	int		m_npixels0;
-		
+
 	int		m_nfiles;				// nb of files in doc
 	int 	m_nbrowsperpage;		// USER: nb files/page
 	long 	m_lprintFirst;			// file index of first pt
@@ -72,33 +70,33 @@ protected:
 	// specific printer parameters
 	TEXTMETRIC m_tMetric{};			// onbegin/onendPrinting
 	LOGFONT	m_logFont{};				// onbegin/onendPrinting
-	CFont*	m_pOldFont{};				// onbegin/onendPrinting
-	CFont	m_fontPrint;			// onbegin/onendPrinting    
+	CFont* m_pOldFont{};				// onbegin/onendPrinting
+	CFont	m_fontPrint;			// onbegin/onendPrinting
 
-	// page format printing parameters (pixel unit)    
+	// page format printing parameters (pixel unit)
 	CRect						m_printRect;
-	OPTIONS_VIEWDATA*			options_viewdata{};	
-	OPTIONS_VIEWDATAMEASURE*	mdMO{};		// measure options
+	OPTIONS_VIEWDATA* options_viewdata{};
+	OPTIONS_VIEWDATAMEASURE* mdMO{};		// measure options
 
 protected:
-	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);	
+	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
 	CString ConvertFileIndex(long l_first, long l_last);
 	void 	ComputePrinterPageSize();
 	CString GetFileInfos();
 	CString PrintBars(CDC* p_dc, CRect* rect);
-	BOOL	GetFileSeriesIndexFromPage(int page, int &filenumber, long &l_first);
-	BOOL	PrintGetNextRow(int &filenumber, long &l_first, long &verylast);
+	BOOL	GetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
+	BOOL	PrintGetNextRow(int& filenumber, long& l_first, long& verylast);
 	void	SaveModifiedFile();
-	void	UpdateFileParameters(BOOL bUpdateInterface=TRUE);	
+	void	UpdateFileParameters(BOOL bUpdateInterface = TRUE);
 	void	UpdateChannelsDisplayParameters();
 	void	ChainDialog(WORD iID);
-	int		PrintGetNPages();	
-		
+	int		PrintGetNPages();
+
 	CStretchControl m_stretch;
 	BOOL	m_binit;
 	BOOL	m_bCommonScale{};
 
-//public:
+	//public:
 protected:
 	CScrollBarEx	m_filescroll;			// data position within file
 	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
@@ -119,7 +117,7 @@ protected:
 	void	SetCursorAssociatedWindows();
 	void	UpdateChannel(int channel);
 	void	MeasureProperties(int item);
-	
+
 	// Overrides
 public:
 	CDaoRecordset* OnGetRecordset() override;
@@ -127,7 +125,7 @@ public:
 	BOOL OnMove(UINT nIDMoveCommand)  override;
 protected:
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void DoDataExchange(CDataExchange* pDX) override; 
+	void DoDataExchange(CDataExchange* pDX) override;
 	void OnInitialUpdate() override;
 	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
 	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
@@ -138,7 +136,7 @@ protected:
 	void DefineSubClassedItems();
 	void DefineStretchParameters();
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CViewData();
 #ifdef _DEBUG
@@ -183,6 +181,7 @@ public:
 
 #ifndef _DEBUG  // debug version in dataView.cpp
 inline CdbWaveDoc* CViewData::GetDocument()
-   { return (CdbWaveDoc*)m_pDocument; }
+{
+	return (CdbWaveDoc*)m_pDocument;
+}
 #endif
-

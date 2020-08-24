@@ -24,16 +24,20 @@ public:
 		const RECT& rect,
 		CWnd* pParentWnd, UINT nID,
 		CCreateContext* pContext = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID); }
+	{
+		return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID);
+	}
 
 	BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style,
 		const RECT& rect, CWnd* pParentWnd, UINT nID,
 		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
 		BSTR bstrLicKey = nullptr)
-	{ return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID,
-		pPersist, bStorage, bstrLicKey); }
+	{
+		return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID,
+			pPersist, bStorage, bstrLicKey);
+	}
 
-// Attributes
+	// Attributes
 public:
 	CString GetBoard();
 	CString GetCaption();
@@ -130,7 +134,7 @@ public:
 	void	SetTriggeredScan(short);
 	void	SetWrapMode(short);
 
-// Operations
+	// Operations
 public:
 	void	Abort();
 	void	AboutBox();

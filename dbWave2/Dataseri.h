@@ -4,13 +4,12 @@
 
 #include "afxcolorbutton.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CDataSeriesFormatDlg dialog
 
 class CDataSeriesFormatDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CDataSeriesFormatDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -19,8 +18,8 @@ public:
 	CListBox	m_listseries;
 	float	m_maxmv;
 	float	m_minmv;
-	CLineViewWnd*	m_plineview;	// data contours
-	CAcqDataDoc*	m_pdbDoc;		// data document
+	CLineViewWnd* m_plineview;	// data contours
+	CAcqDataDoc* m_pdbDoc;		// data document
 	int 	m_listindex;        	// same as lineview:Chanlist
 	int		m_yzero;
 	int		m_yextent;
@@ -28,7 +27,7 @@ public:
 	int		m_binzero;
 	CMFCColorButton m_colorbutton;
 
-// Overrides
+	// Overrides
 public:
 
 protected:
@@ -36,7 +35,7 @@ protected:
 	void GetParams(int index);
 	void SetParams(int index);
 
-// Implementation
+	// Implementation
 protected:
 
 	// Generated message map functions
@@ -46,4 +45,3 @@ protected:
 	afx_msg void OnSelchangeListseries();
 	DECLARE_MESSAGE_MAP()
 };
-

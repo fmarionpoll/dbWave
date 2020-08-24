@@ -1,16 +1,15 @@
 #pragma once
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CSpikeClassListBox window
 
 class CSpikeClassListBox : public CListBox
 {
-// Construction
+	// Construction
 public:
 	CSpikeClassListBox();
 
-// Attributes
+	// Attributes
 public:
 
 protected:
@@ -35,32 +34,32 @@ protected:
 
 	long		m_lFirst;
 	long		m_lLast;
-	CSpikeList* p_spikelist_	= nullptr;
-	CSpikeDoc*	p_spike_doc_	= nullptr;
-	CdbWaveDoc* p_dbwave_doc_	= nullptr;
+	CSpikeList* p_spikelist_ = nullptr;
+	CSpikeDoc* p_spike_doc_ = nullptr;
+	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 	HWND		m_hwndBarsReflect;
 
-// Operations
+	// Operations
 public:
 	void SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc);
 	void SetSpkList(CSpikeList* p_spike_list);
-	inline CSpikeList* GetSpkListCurrent() const {return p_spikelist_;};
-	inline CSpikeDoc* GetSpikeDoc() const {return p_spike_doc_;};
+	inline CSpikeList* GetSpkListCurrent() const { return p_spikelist_; };
+	inline CSpikeDoc* GetSpikeDoc() const { return p_spike_doc_; };
 
 	void SetTimeIntervals(long l_first, long l_last);
-	long GetTimeFirst() const {return m_lFirst;}
-	long GetTimeLast() const {return m_lLast;}
+	long GetTimeFirst() const { return m_lFirst; }
+	long GetTimeLast() const { return m_lLast; }
 
 	void SetRowHeight(int rowheight);
 	void SetLeftColWidth(int rowwidth);
 	void SetColsWidth(int coltext, int colspikes, int colseparator);
 
-	inline int GetRowHeight() const {return m_rowheight;}
-	inline int GetLeftColWidth() const {return m_leftcolwidth;}
-	inline int GetColsTextWidth() const {return m_widthText;}
-	inline int GetColsSpikesWidth() const {return m_widthSpikes;}
-	inline int GetColsTimeWidth() const {return m_widthBars;}
-	inline int GetColsSeparatorWidth() const {return m_widthSeparator;}
+	inline int GetRowHeight() const { return m_rowheight; }
+	inline int GetLeftColWidth() const { return m_leftcolwidth; }
+	inline int GetColsTextWidth() const { return m_widthText; }
+	inline int GetColsSpikesWidth() const { return m_widthSpikes; }
+	inline int GetColsTimeWidth() const { return m_widthBars; }
+	inline int GetColsSeparatorWidth() const { return m_widthSeparator; }
 	float 	   GetExtent_mV();
 
 	void SetYzoom(int y_we, int y_wo);
@@ -70,22 +69,22 @@ public:
 	int GetYWOrg();		// ordinates
 	int GetXWExtent();	// and
 	int GetXWOrg();		// abcissa
-	
+
 	int	 SelectSpike(int spikeno);
 	void ChangeSpikeClass(int spikeno, int newclass);
 	int  SetMouseCursorType(int cursorm);
 	void XorTempVTtag(int xpoint);
-	void ResetBarsXortag ();
+	void ResetBarsXortag();
 	void ReflectBarsMouseMoveMessg(HWND hwnd);
-	
-	void PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect* prect3,int i );
+
+	void PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect* prect3, int i);
 
 protected:
 	void UpdateString(void* pptr, int iclass, int nbspikes);
 
-// Overrides
+	// Overrides
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CSpikeClassListBox();
 	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMIS);
@@ -93,11 +92,10 @@ public:
 	virtual int CompareItem(LPCOMPAREITEMSTRUCT lpCIS);
 	virtual void DeleteItem(LPDELETEITEMSTRUCT lpDI);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);	
+	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };
-

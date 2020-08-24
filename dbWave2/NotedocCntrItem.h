@@ -12,23 +12,26 @@ class CNotedocCntrItem : public CRichEditCntrItem
 {
 	DECLARE_SERIAL(CNotedocCntrItem)
 
-// Constructors
+	// Constructors
 public:
 	CNotedocCntrItem(REOBJECT* preo = nullptr, CNoteDoc* pContainer = nullptr);
-		// Note: pContainer is allowed to be NULL to enable IMPLEMENT_SERIALIZE.
-		//  IMPLEMENT_SERIALIZE requires the class have a constructor with
-		//  zero arguments.  Normally, OLE items are constructed with a
-		//  non-NULL document pointer.
+	// Note: pContainer is allowed to be NULL to enable IMPLEMENT_SERIALIZE.
+	//  IMPLEMENT_SERIALIZE requires the class have a constructor with
+	//  zero arguments.  Normally, OLE items are constructed with a
+	//  non-NULL document pointer.
 
 // Attributes
 public:
 	CNoteDoc* GetDocument()
-		{ return (CNoteDoc*)CRichEditCntrItem::GetDocument(); }
+	{
+		return (CNoteDoc*)CRichEditCntrItem::GetDocument();
+	}
 	CViewNoteDoc* GetActiveView()
-		{ return (CViewNoteDoc*)CRichEditCntrItem::GetActiveView(); }
+	{
+		return (CViewNoteDoc*)CRichEditCntrItem::GetActiveView();
+	}
 
-
-// Implementation
+	// Implementation
 public:
 	~CNotedocCntrItem();
 #ifdef _DEBUG

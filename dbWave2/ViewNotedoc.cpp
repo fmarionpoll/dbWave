@@ -20,7 +20,7 @@ END_MESSAGE_MAP()
 CViewNoteDoc::CViewNoteDoc()
 {
 	// TODO: add construction code here
-	m_bEnableActiveAccessibility=FALSE;
+	m_bEnableActiveAccessibility = FALSE;
 }
 
 CViewNoteDoc::~CViewNoteDoc()
@@ -53,16 +53,16 @@ void CViewNoteDoc::OnDestroy()
 {
 	// Deactivate the item on destruction; this is important
 	// when a splitter view is being used.
-   CRichEditView::OnDestroy();
+	CRichEditView::OnDestroy();
 
-   /*
-   // the following lines throw an exception on exit
-   COleClientItem* pActiveItem = GetDocument()->GetInPlaceActiveItem(this);
-   if (pActiveItem != NULL && pActiveItem->GetActiveView() == this)
-   {
-	  pActiveItem->Deactivate();
-	  ASSERT(GetDocument()->GetInPlaceActiveItem(this) == NULL);
-   }*/
+	/*
+	// the following lines throw an exception on exit
+	COleClientItem* pActiveItem = GetDocument()->GetInPlaceActiveItem(this);
+	if (pActiveItem != NULL && pActiveItem->GetActiveView() == this)
+	{
+	   pActiveItem->Deactivate();
+	   ASSERT(GetDocument()->GetInPlaceActiveItem(this) == NULL);
+	}*/
 }
 
 #ifdef _DEBUG
@@ -83,9 +83,9 @@ CNoteDoc* CViewNoteDoc::GetDocument() // non-debug version is inline
 }
 #endif //_DEBUG
 
-void CViewNoteDoc::OnToolsOpendatafiles() 
+void CViewNoteDoc::OnToolsOpendatafiles()
 {
-	CNoteDoc* p_document = (CNoteDoc*) GetDocument();
+	CNoteDoc* p_document = (CNoteDoc*)GetDocument();
 	CString csname = p_document->GetPathName();
 	p_document->OpenProjectFiles(csname);
 }

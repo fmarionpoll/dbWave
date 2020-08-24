@@ -118,7 +118,7 @@ CString CdbMainTable::GetDefaultDBName()
 	auto cs = m_defaultName;
 	if (m_pDatabase->m_pDAODatabase != nullptr)
 		cs = m_pDatabase->GetName();
-	
+
 	return cs;
 }
 
@@ -130,36 +130,35 @@ CString CdbMainTable::GetDefaultSQL()
 void CdbMainTable::DoFieldExchange(CDaoFieldExchange* pFX)
 {
 	pFX->SetFieldType(CDaoFieldExchange::outputColumn);
-	DFX_Text(pFX,	m_desc[CH_FILENAME].csColNamewithBrackets,		m_Filedat);
-	DFX_Text(pFX,	m_desc[CH_FILESPK].csColNamewithBrackets,		m_Filespk);
-	DFX_Text(pFX,	m_desc[CH_ACQ_COMMENTS].csColNamewithBrackets,	m_acq_comment);
-	DFX_Text(pFX,	m_desc[CH_MORE].csColNamewithBrackets,			m_more);
-	DFX_Long(pFX,	m_desc[CH_ID].csColNamewithBrackets,			m_ID);
-	DFX_Long(pFX,	m_desc[CH_IDINSECT].csColNamewithBrackets,		m_IDinsect);
-	DFX_Long(pFX,	m_desc[CH_IDSENSILLUM].csColNamewithBrackets,	m_IDsensillum);
-	DFX_Long(pFX,	m_desc[CH_DATALEN].csColNamewithBrackets,		m_datalen);
-	DFX_Long(pFX,	m_desc[CH_NSPIKES].csColNamewithBrackets,		m_nspikes);
-	DFX_Long(pFX,	m_desc[CH_NSPIKECLASSES].csColNamewithBrackets,	m_nspikeclasses);
-	DFX_Long(pFX,	m_desc[CH_FLAG].csColNamewithBrackets,			m_flag);
-	DFX_Long(pFX,	m_desc[CH_INSECT_ID].csColNamewithBrackets,		m_insect_ID);
-	DFX_Long(pFX,	m_desc[CH_SENSILLUM_ID].csColNamewithBrackets,	m_sensillum_ID);
-	DFX_Long(pFX,	m_desc[CH_OPERATOR_ID].csColNamewithBrackets,	m_operator_ID);
-	DFX_Long(pFX,	m_desc[CH_STIM_ID].csColNamewithBrackets,		m_stim_ID);
-	DFX_Long(pFX,	m_desc[CH_CONC_ID].csColNamewithBrackets,		m_conc_ID);
-	DFX_Long(pFX,	m_desc[CH_LOCATION_ID].csColNamewithBrackets,	m_location_ID);
-	DFX_Long(pFX,	m_desc[CH_PATH_ID].csColNamewithBrackets,		m_path_ID);
-	DFX_Long(pFX,	m_desc[CH_PATH2_ID].csColNamewithBrackets,		m_path2_ID);
-	DFX_Long(pFX,	m_desc[CH_STIM2_ID].csColNamewithBrackets,		m_stim2_ID);
-	DFX_Long(pFX,	m_desc[CH_CONC2_ID].csColNamewithBrackets,		m_conc2_ID);
-	DFX_Long(pFX,	m_desc[CH_STRAIN_ID].csColNamewithBrackets,		m_strain_ID);
-	DFX_Long(pFX,	m_desc[CH_SEX_ID].csColNamewithBrackets,		m_sex_ID);
-	DFX_Long(pFX,	m_desc[CH_REPEAT].csColNamewithBrackets,		m_repeat);
-	DFX_Long(pFX,	m_desc[CH_REPEAT2].csColNamewithBrackets,		m_repeat2);
-	DFX_Long(pFX,	m_desc[CH_EXPT_ID].csColNamewithBrackets,		m_expt_ID);
-	DFX_DateTime(pFX, m_desc[CH_ACQDATE].csColNamewithBrackets,		m_acq_date);
-	DFX_DateTime(pFX, m_desc[CH_ACQDATE_DAY].csColNamewithBrackets,	m_acqdate_day);
-	DFX_DateTime(pFX, m_desc[CH_ACQDATE_TIME].csColNamewithBrackets,m_acqdate_time);
-	
+	DFX_Text(pFX, m_desc[CH_FILENAME].csColNamewithBrackets, m_Filedat);
+	DFX_Text(pFX, m_desc[CH_FILESPK].csColNamewithBrackets, m_Filespk);
+	DFX_Text(pFX, m_desc[CH_ACQ_COMMENTS].csColNamewithBrackets, m_acq_comment);
+	DFX_Text(pFX, m_desc[CH_MORE].csColNamewithBrackets, m_more);
+	DFX_Long(pFX, m_desc[CH_ID].csColNamewithBrackets, m_ID);
+	DFX_Long(pFX, m_desc[CH_IDINSECT].csColNamewithBrackets, m_IDinsect);
+	DFX_Long(pFX, m_desc[CH_IDSENSILLUM].csColNamewithBrackets, m_IDsensillum);
+	DFX_Long(pFX, m_desc[CH_DATALEN].csColNamewithBrackets, m_datalen);
+	DFX_Long(pFX, m_desc[CH_NSPIKES].csColNamewithBrackets, m_nspikes);
+	DFX_Long(pFX, m_desc[CH_NSPIKECLASSES].csColNamewithBrackets, m_nspikeclasses);
+	DFX_Long(pFX, m_desc[CH_FLAG].csColNamewithBrackets, m_flag);
+	DFX_Long(pFX, m_desc[CH_INSECT_ID].csColNamewithBrackets, m_insect_ID);
+	DFX_Long(pFX, m_desc[CH_SENSILLUM_ID].csColNamewithBrackets, m_sensillum_ID);
+	DFX_Long(pFX, m_desc[CH_OPERATOR_ID].csColNamewithBrackets, m_operator_ID);
+	DFX_Long(pFX, m_desc[CH_STIM_ID].csColNamewithBrackets, m_stim_ID);
+	DFX_Long(pFX, m_desc[CH_CONC_ID].csColNamewithBrackets, m_conc_ID);
+	DFX_Long(pFX, m_desc[CH_LOCATION_ID].csColNamewithBrackets, m_location_ID);
+	DFX_Long(pFX, m_desc[CH_PATH_ID].csColNamewithBrackets, m_path_ID);
+	DFX_Long(pFX, m_desc[CH_PATH2_ID].csColNamewithBrackets, m_path2_ID);
+	DFX_Long(pFX, m_desc[CH_STIM2_ID].csColNamewithBrackets, m_stim2_ID);
+	DFX_Long(pFX, m_desc[CH_CONC2_ID].csColNamewithBrackets, m_conc2_ID);
+	DFX_Long(pFX, m_desc[CH_STRAIN_ID].csColNamewithBrackets, m_strain_ID);
+	DFX_Long(pFX, m_desc[CH_SEX_ID].csColNamewithBrackets, m_sex_ID);
+	DFX_Long(pFX, m_desc[CH_REPEAT].csColNamewithBrackets, m_repeat);
+	DFX_Long(pFX, m_desc[CH_REPEAT2].csColNamewithBrackets, m_repeat2);
+	DFX_Long(pFX, m_desc[CH_EXPT_ID].csColNamewithBrackets, m_expt_ID);
+	DFX_DateTime(pFX, m_desc[CH_ACQDATE].csColNamewithBrackets, m_acq_date);
+	DFX_DateTime(pFX, m_desc[CH_ACQDATE_DAY].csColNamewithBrackets, m_acqdate_day);
+	DFX_DateTime(pFX, m_desc[CH_ACQDATE_TIME].csColNamewithBrackets, m_acqdate_time);
 
 	pFX->SetFieldType(CDaoFieldExchange::param);
 	int i;
@@ -199,31 +198,35 @@ void CdbMainTable::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 // TODO: remove
-BOOL CdbMainTable::SetLongValue (long iID, CString cscolname)
+BOOL CdbMainTable::SetLongValue(long iID, CString cscolname)
 {
 	try {
 		Edit();
 		SetFieldValue(cscolname, COleVariant(iID, VT_I4));
 		Update();
 	}
-	catch(CDaoException* e) 
-		{DisplayDaoException(e, 24); e->Delete(); return FALSE;}
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 24); e->Delete(); return FALSE;
+	}
 	return TRUE;
 }
 
-BOOL CdbMainTable::SetValueNull (const CString cscolname)
+BOOL CdbMainTable::SetValueNull(const CString cscolname)
 {
 	try {
 		Edit();
 		SetFieldValueNull(cscolname);
 		Update();
 	}
-	catch(CDaoException* e) 
-		{DisplayDaoException(e, 24); e->Delete(); return FALSE;}
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 24); e->Delete(); return FALSE;
+	}
 	return TRUE;
 }
 
-void CdbMainTable::GetAcqdateArray(CPtrArray * pacqdate)
+void CdbMainTable::GetAcqdateArray(CPtrArray* pacqdate)
 {
 	const auto nrecords = GetNRecords();
 	if (0 == nrecords)
@@ -241,8 +244,7 @@ void CdbMainTable::GetAcqdateArray(CPtrArray * pacqdate)
 	}
 }
 
-
-BOOL CdbMainTable::CheckIfAcqDateTimeIsUnique(COleDateTime * ptimeNewVal)
+BOOL CdbMainTable::CheckIfAcqDateTimeIsUnique(COleDateTime* ptimeNewVal)
 {
 	if (IsBOF() && IsEOF())
 		return TRUE;
@@ -257,7 +259,6 @@ BOOL CdbMainTable::CheckIfAcqDateTimeIsUnique(COleDateTime * ptimeNewVal)
 	return TRUE;
 }
 
-
 void CdbMainTable::GetMaxIDs()
 {
 	max_insectID = -1;
@@ -265,7 +266,7 @@ void CdbMainTable::GetMaxIDs()
 	max_ID = -1;
 	const auto nrecords = GetNRecords();
 	if (0 == nrecords)
-		return; 
+		return;
 
 	MoveFirst();
 	while (!IsEOF())
@@ -283,11 +284,10 @@ void CdbMainTable::GetMaxIDs()
 	}
 }
 
-
 BOOL CdbMainTable::FindIDinColumn(long iID, int icolumn)
 {
 	CString cs;		// to construct insect and sensillum number (for example)
-	CString str;	// to store FindFirst filter	
+	CString str;	// to store FindFirst filter
 	const auto cscolhead = m_desc[icolumn].csColName;
 	str.Format(_T("%s=%li"), static_cast<LPCTSTR>(cscolhead), iID);
 	auto flag = FALSE;
@@ -310,10 +310,9 @@ int CdbMainTable::GetColumnIndex(CString csName)
 {
 	CDaoFieldInfo fieldInfo;
 	GetFieldInfo(csName, fieldInfo, AFX_DAO_SECONDARY_INFO);
-	
+
 	return fieldInfo.m_nOrdinalPosition;
 }
-
 
 void CdbMainTable::RefreshQuery()
 {
@@ -322,14 +321,14 @@ void CdbMainTable::RefreshQuery()
 	else
 	{
 		Close();
-		Open(dbOpenDynaset); 
+		Open(dbOpenDynaset);
 	}
 }
 
 void CdbMainTable::BuildFilters()
 {
 	m_strFilter.Empty();
-	for (auto ifield =0; ifield < m_nFields; ifield++)
+	for (auto ifield = 0; ifield < m_nFields; ifield++)
 	{
 		if (m_desc[ifield].bFilter2 == TRUE)
 		{
@@ -343,32 +342,32 @@ void CdbMainTable::BuildFilters()
 			case FIELD_IND_TEXT:
 			case FIELD_IND_FILEPATH:
 			case FIELD_LONG:
+			{
+				int i = 0;
+				cs.Format(_T("%i"), m_desc[ifield].lfilterParam2.GetAt(i));
+				m_strFilter += cs;
+				for (i = 1; i < m_desc[ifield].lfilterParam2.GetSize(); i++)
 				{
-					int i = 0;
-					cs.Format(_T("%i"), m_desc[ifield].lfilterParam2.GetAt(i));
+					cs.Format(_T(", %i"), m_desc[ifield].lfilterParam2.GetAt(i));
 					m_strFilter += cs;
-					for (i = 1; i < m_desc[ifield].lfilterParam2.GetSize(); i++)
-					{
-						cs.Format(_T(", %i"), m_desc[ifield].lfilterParam2.GetAt(i));
-						m_strFilter += cs;
-					}
 				}
-				break;
+			}
+			break;
 
 			case FIELD_DATE_YMD:
+			{
+				auto i = 0;
+				auto o_time = m_desc[ifield].otfilterParam2.GetAt(i);
+				cs = o_time.Format(_T(" #%m/%d/%y#"));
+				m_strFilter += cs;
+				for (i = 1; i < m_desc[ifield].otfilterParam2.GetSize(); i++)
 				{
-					auto i = 0;
-					auto o_time = m_desc[ifield].otfilterParam2.GetAt(i);
-					cs = o_time.Format(_T(" #%m/%d/%y#"));
+					o_time = m_desc[ifield].otfilterParam2.GetAt(i);
+					cs = o_time.Format(_T(", #%m/%d/%y#"));
 					m_strFilter += cs;
-					for (i = 1; i < m_desc[ifield].otfilterParam2.GetSize(); i++)
-					{
-						o_time = m_desc[ifield].otfilterParam2.GetAt(i);
-						cs = o_time.Format(_T(", #%m/%d/%y#"));
-						m_strFilter += cs;
-					}
 				}
-				break;
+			}
+			break;
 
 			default:
 				ASSERT(false);
@@ -378,7 +377,7 @@ void CdbMainTable::BuildFilters()
 		}
 		else if (m_desc[ifield].bFilter1)
 		{
-			if(!m_strFilter.IsEmpty())
+			if (!m_strFilter.IsEmpty())
 				m_strFilter += " AND ";
 			m_strFilter += m_desc[ifield].csEQUcondition;
 		}
@@ -391,18 +390,18 @@ void CdbMainTable::ClearFilters()
 	for (auto i = 0; i < m_nFields; i++)
 		m_desc[i].bFilter1 = FALSE;
 	m_strFilter.Empty();
-	m_bFilterON =FALSE;
+	m_bFilterON = FALSE;
 }
 
 void CdbMainTable::SetDataLen(long datalen)
 {
-	try 
+	try
 	{
 		Edit();
 		m_datalen = datalen;
 		Update();
 	}
-	catch(CDaoException* e) {DisplayDaoException(e, 12); e->Delete();}
+	catch (CDaoException* e) { DisplayDaoException(e, 12); e->Delete(); }
 }
 
 long CdbMainTable::GetNRecords()
@@ -413,20 +412,20 @@ long CdbMainTable::GetNRecords()
 		return nrecords;
 
 	ASSERT(CanBookmark());
-	try 
+	try
 	{
 		const auto ol = GetBookmark();
 		MoveLast();
 		MoveFirst();
-		nrecords = GetRecordCount( );
+		nrecords = GetRecordCount();
 		SetBookmark(ol);
 	}
 	catch (CDaoException* e) { DisplayDaoException(e, 9); e->Delete(); }
-	
+
 	return nrecords;
 }
 
-void CdbMainTable::AddDaytoDateArray(COleDateTime &o_time)
+void CdbMainTable::AddDaytoDateArray(COleDateTime& o_time)
 {
 	auto b_flag = FALSE;
 	COleDateTime day_time;
@@ -496,7 +495,7 @@ void CdbMainTable::AddtoliArray(int icol)
 
 void CdbMainTable::AddtoIDArray(CUIntArray* puiIDArray, long iID)
 {
-	auto b_flag = FALSE;			
+	auto b_flag = FALSE;
 	// val is greater than current val -> loop forwards
 	const auto ui_id = static_cast<UINT>(iID);
 
@@ -595,7 +594,7 @@ void CdbMainTable::BuildAndSortIDArrays()
 	// go to first record and browse the table
 	MoveFirst();
 	auto i = 0;
-	while(!IsEOF()) 
+	while (!IsEOF())
 	{
 		AddCurrentRecordtoIDArrays();
 		MoveNext();
@@ -634,6 +633,3 @@ void CdbMainTable::CopyPathToPath2()
 	// restore current record
 	SetBookmark(bookmark_current);
 }
-
-
-		

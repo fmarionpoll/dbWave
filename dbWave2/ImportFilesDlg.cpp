@@ -24,11 +24,11 @@ IMPLEMENT_DYNAMIC(CImportFilesDlg, CDialog)
 
 CImportFilesDlg::CImportFilesDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CImportFilesDlg::IDD, pParent)
-	  , m_pfilenameArray(nullptr), m_pdbDoc(nullptr), m_ncurrent(0)
-	  , m_nfiles(0)
-	  , m_filefrom(_T(""))
-	  , m_fileto(_T(""))
-	  , m_scan_count(0), m_xinstgain(0), m_xrate(0), m_dspan{}, m_dbinval{}, m_bReadHeader(TRUE)
+	, m_pfilenameArray(nullptr), m_pdbDoc(nullptr), m_ncurrent(0)
+	, m_nfiles(0)
+	, m_filefrom(_T(""))
+	, m_fileto(_T(""))
+	, m_scan_count(0), m_xinstgain(0), m_xrate(0), m_dspan{}, m_dbinval{}, m_bReadHeader(TRUE)
 {
 	m_bconvert = FALSE;
 	m_option = 0;
@@ -49,19 +49,17 @@ void CImportFilesDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK1, m_bReadHeader);
 }
 
-
 BEGIN_MESSAGE_MAP(CImportFilesDlg, CDialog)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDCANCEL, &CImportFilesDlg::OnBnClickedCancel)
 	ON_BN_CLICKED(ID_STARTSTOP, &CImportFilesDlg::ADC_OnBnClickedStartstop)
 END_MESSAGE_MAP()
 
-
 // CImportFilesDlg message handlers
-BOOL CImportFilesDlg::OnInitDialog() 
+BOOL CImportFilesDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_nfiles = m_pfilenameArray->GetSize();	// get nb of files
 	m_ncurrent = 1;
 	// outut file extension
@@ -72,19 +70,19 @@ BOOL CImportFilesDlg::OnInitDialog()
 		break;
 	case ATFFILE:
 	case ASCIISYNTECH:		// option non implemented
-		default:
+	default:
 		m_ext = ".dat";
 		break;
 	}
 
-	UpdateDlgItems();	
+	UpdateDlgItems();
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CImportFilesDlg::UpdateDlgItems()
 {
-	int j = m_ncurrent -1;
+	int j = m_ncurrent - 1;
 	m_filefrom = m_pfilenameArray->GetAt(j);
 	m_fileto = m_filefrom + m_ext;
 	UpdateData(FALSE);
@@ -94,12 +92,11 @@ void CImportFilesDlg::OnDestroy()
 {
 	CDialog::OnDestroy();
 
-	int ilast = m_ncurrent+1;		// index last data file to open
+	int ilast = m_ncurrent + 1;		// index last data file to open
 	// adjust size of the file array
 	if (m_pfilenameArray->GetSize() > ilast)
 		m_pfilenameArray->SetSize(ilast);
 }
-
 
 void CImportFilesDlg::OnBnClickedCancel()
 {
@@ -107,17 +104,16 @@ void CImportFilesDlg::OnBnClickedCancel()
 	CDialog::OnCancel();
 }
 
-
 void CImportFilesDlg::ADC_OnBnClickedStartstop()
 {
 	m_pconvertedFiles->RemoveAll();
 
 	// loop over the array of files
-	for (int i=0; i<m_nfiles; i++)
+	for (int i = 0; i < m_nfiles; i++)
 	{
 		m_filefrom = m_pfilenameArray->GetAt(i);
 		m_fileto = m_filefrom + m_ext;
-		BOOL flag=TRUE;
+		BOOL flag = TRUE;
 		UpdateData(FALSE);
 
 		switch (m_option)
@@ -133,13 +129,12 @@ void CImportFilesDlg::ADC_OnBnClickedStartstop()
 			break;
 		}
 		// if the conversion went well, add file to database and ask for further info from user
-		if (flag) 
+		if (flag)
 			m_pconvertedFiles->Add(m_fileto);
 		m_ncurrent++;
 	}
 	CDialog::OnOK();
 }
-
 
 BOOL CImportFilesDlg::ImportATFFile()
 {
@@ -166,14 +161,14 @@ BOOL CImportFilesDlg::ImportATFFile()
 		UpdateDlgItems();
 		return FALSE;
 	}
-	
+
 	// read infos; exit if file does not have the requested buzzword
 	CString csdummy;
 	CString csdummy2;
 	CString csLine;
 
 	// read first line
-	pFrom->ReadString (csLine);
+	pFrom->ReadString(csLine);
 	int i = 0; // substring index to extract
 	// parsing string can also be done with strtok (which allows multiple separators)
 	AfxExtractSubString(csdummy, csLine, i, '\t');
@@ -181,7 +176,7 @@ BOOL CImportFilesDlg::ImportATFFile()
 	AfxExtractSubString(csdummy2, csLine, i, '\t');
 	i++;
 	// check it is the correct data file version
-	if (csdummy.Compare (_T("ATF")) != 0 || csdummy2.Compare(_T("1.0")))
+	if (csdummy.Compare(_T("ATF")) != 0 || csdummy2.Compare(_T("1.0")))
 	{
 		pFrom->Abort();						// abort process
 		delete pFrom;						// delete object and exit
@@ -210,52 +205,52 @@ BOOL CImportFilesDlg::ImportATFFile()
 	}
 
 	// read first line i.e. length of the data header
-	pFrom->ReadString (csLine);	// 1
-	i=0;
+	pFrom->ReadString(csLine);	// 1
+	i = 0;
 	AfxExtractSubString(csdummy, csLine, i, '\t');
 	i++;
 	AfxExtractSubString(csdummy2, csLine, i, '\t');
 	i++;
-	int nlines_in_header= _ttoi(csdummy);
-	int ncolumns= _ttoi(csdummy2);
-	
-	m_scan_count = ncolumns-1;
-	ASSERT(m_scan_count >0);
+	int nlines_in_header = _ttoi(csdummy);
+	int ncolumns = _ttoi(csdummy2);
+
+	m_scan_count = ncolumns - 1;
+	ASSERT(m_scan_count > 0);
 	ASSERT(m_scan_count <= 16);
 
 	// describe data
 	m_xinstgain = 100.;	// tentative value (top to min=2000 mV)
 	m_xrate = 10000.0f;	// tentative value
-	CWaveFormat* pwF= pTo->GetpWaveFormat();
+	CWaveFormat* pwF = pTo->GetpWaveFormat();
 	pwF->fullscale_Volts = 20.0f;	// 20 V full scale
 	pwF->binspan = 65536;	// 16 bits resolution
-	pwF->binzero = 0 ;	// ?
+	pwF->binzero = 0;	// ?
 
 	pwF->mode_encoding = OLx_ENC_2SCOMP;
 	pwF->mode_clock = INTERNAL_CLOCK;
 	pwF->mode_trigger = INTERNAL_TRIGGER;
-	pwF->scan_count= m_scan_count;		// number of channels in scan list
-	pwF->chrate = (float) m_xrate;		// channel sampling rate (Hz)
+	pwF->scan_count = m_scan_count;		// number of channels in scan list
+	pwF->chrate = (float)m_xrate;		// channel sampling rate (Hz)
 	pwF->csADcardName = "Digidata Axon";
 
-	for (int i=0; i< m_scan_count; i++)
+	for (int i = 0; i < m_scan_count; i++)
 	{
-		int ichan =(pTo->GetpWavechanArray())->channel_add();
-		CWaveChan* pChannel =  (pTo->GetpWavechanArray())->get_p_channel(ichan);
-		pChannel->am_gaintotal = (float) m_xinstgain;
-		m_dspan[i]= 20000./m_xinstgain;		// span= 20 V max to min
-		m_dbinval[i]= m_dspan[i]/65536.;	// divide voltage span into 2exp16 bins
+		int ichan = (pTo->GetpWavechanArray())->channel_add();
+		CWaveChan* pChannel = (pTo->GetpWavechanArray())->get_p_channel(ichan);
+		pChannel->am_gaintotal = (float)m_xinstgain;
+		m_dspan[i] = 20000. / m_xinstgain;		// span= 20 V max to min
+		m_dbinval[i] = m_dspan[i] / 65536.;	// divide voltage span into 2exp16 bins
 		pChannel->am_gainamplifier = pChannel->am_gaintotal;
 		pChannel->am_gainAD = 1;
 		pChannel->am_gainpre = 1;
 		pChannel->am_gainpost = 1;
 		pChannel->am_gainheadstage = 1;
-		pChannel->am_adchannel=i;			// channel A/D 
+		pChannel->am_adchannel = i;			// channel A/D
 	}
 
 	/*
 line 1-	ATF	1.0
-line 2-	7	3     
+line 2-	7	3
 line 3-	"AcquisitionMode=Gap Free"
 line 4-	"Comment="
 line 5-	"YTop=200,10"
@@ -267,91 +262,91 @@ line 10- "Time (s)"	"Trace #1 (mV)"	"Trace #1 (Au)"
 line 11-	0	141.144	0.0317383
 	*/
 	// read dummy lines if user requests it or if number of lines != 7
-	if (m_bReadHeader == FALSE || nlines_in_header != 7) 
+	if (m_bReadHeader == FALSE || nlines_in_header != 7)
 	{
-		for (i=0; i<= nlines_in_header; i++)
-			pFrom->ReadString (csLine);	// 1
+		for (i = 0; i <= nlines_in_header; i++)
+			pFrom->ReadString(csLine);	// 1
 	}
 	else
 	{
 		// 1 acquisition mode "AcquisitionMode=Gap Free"
-		pFrom->ReadString (csLine);
-		
+		pFrom->ReadString(csLine);
+
 		// 2 dummy "comments"
-		pFrom->ReadString (csLine);
+		pFrom->ReadString(csLine);
 
 		// 3 & 4 max & min values "YTop=200,10"
-		pFrom->ReadString (csLine);
+		pFrom->ReadString(csLine);
 		csLine.Replace('=', ',');
-		int i=0;
+		int i = 0;
 		CString csLine2;
-		pFrom->ReadString (csLine2);
+		pFrom->ReadString(csLine2);
 		csLine2.Replace('=', ',');
-	
-		for (int ichan=0; ichan< m_scan_count; ichan++)
+
+		for (int ichan = 0; ichan < m_scan_count; ichan++)
 		{
 			i++;
 			AfxExtractSubString(csdummy, csLine, i, ',');
-			float xmax = (float) _ttof(csdummy);
+			float xmax = (float)_ttof(csdummy);
 			AfxExtractSubString(csdummy2, csLine2, i, ',');
-			float xmin = (float) _ttof(csdummy2);
+			float xmin = (float)_ttof(csdummy2);
 			// take the max absolute value
 			xmin = abs(xmin);
-			xmax = abs (xmax);
+			xmax = abs(xmax);
 			if (xmin > xmax)
 				xmax = xmin;
-			float xtotal = (float)( xmax * 2.);
-			CWaveChan* pChannel =  (pTo->GetpWavechanArray())->get_p_channel(ichan);
+			float xtotal = (float)(xmax * 2.);
+			CWaveChan* pChannel = (pTo->GetpWavechanArray())->get_p_channel(ichan);
 			pChannel->am_gaintotal = 20000. / xtotal;
 		}
 
 		// 5 start time
-		pFrom->ReadString (csLine);
+		pFrom->ReadString(csLine);
 		// 6 columns names "SignalsExported=Scaled V,Odour Cmd"
-		pFrom->ReadString (csLine);
+		pFrom->ReadString(csLine);
 		csLine.Replace('=', ',');
-		i=0;
-		for (int ichan=0; ichan< m_scan_count; ichan++)
+		i = 0;
+		for (int ichan = 0; ichan < m_scan_count; ichan++)
 		{
 			i++;
 			AfxExtractSubString(csdummy2, csLine, i, ',');
 			csdummy2.Replace('"', ' ');
-			CWaveChan* pChannel =  (pTo->GetpWavechanArray())->get_p_channel(ichan);
+			CWaveChan* pChannel = (pTo->GetpWavechanArray())->get_p_channel(ichan);
 			pChannel->am_csComment = csdummy2;
 		}
 
-		pFrom->ReadString (csLine);
+		pFrom->ReadString(csLine);
 		// 7 columns scale
-		pFrom->ReadString (csLine);
+		pFrom->ReadString(csLine);
 		// (8) title of the line
-		pFrom->ReadString (csLine);
+		pFrom->ReadString(csLine);
 	}
 
 	// change acq params & ask for proper descriptors
-	if (!GetAcquisitionParameters(pTo) 
+	if (!GetAcquisitionParameters(pTo)
 		|| !GetExperimentParameters(pTo))
 	{
 		pTo->AcqDoc_DataAppendStop();
 		pTo->AcqDeleteFile();
 		goto Emergency_exit;
 	}
-	
+
 	pwF->binspan = 65536;				// 16 bits resolution
 	pwF->binzero = 0;
 	pwF->mode_encoding = OLx_ENC_BINARY;
-	
+
 	// start conversion
 	int bufLen = 32768;
 	pTo->AdjustBUF(bufLen);
 	ULONGLONG compteur = pTo->GetBUFchanLength();
 	int compteur2 = 0;
 	pTo->AcqDoc_DataAppendStart();
-	ULONGLONG compteurtotal=0;
+	ULONGLONG compteurtotal = 0;
 	double dtime_start = 0;
 	double dtime_end = 0;
 	short* pdataBUF0 = pTo->GetpRawDataBUF();
-	
-	TRY 
+
+	TRY
 	{
 		while (compteur > 0)
 		{
@@ -360,9 +355,9 @@ line 11-	0	141.144	0.0317383
 			CString csLinetab;
 			compteur2 = 0;
 
-			for (int ii=0; ii<bufLen; ii++) 
+			for (int ii = 0; ii < bufLen; ii++)
 			{
-				pFrom->ReadString (csLinetab); // ; Wave data Signal
+				pFrom->ReadString(csLinetab); // ; Wave data Signal
 				// trap end-of-file condition - this is the only way we get out of this while loop
 				if (csLinetab.IsEmpty())
 				{
@@ -380,20 +375,20 @@ line 11-	0	141.144	0.0317383
 				compteurtotal++;
 
 				// extract channels
-				for (int ichan=0; ichan< m_scan_count; ichan++)
+				for (int ichan = 0; ichan < m_scan_count; ichan++)
 				{
 					i++;
 					AfxExtractSubString(csdummy, csLinetab, i, '\t');
 					dvalue = _ttof(csdummy);
-					dvalue2 = dvalue/m_dbinval[ichan];
-					if ((dvalue2 > (double) 32768.) || (dvalue2 < (double) -32767.))
+					dvalue2 = dvalue / m_dbinval[ichan];
+					if ((dvalue2 > (double) 32768.) || (dvalue2 < (double)-32767.))
 					{
 						MessageBox(_T("Overflow error : decrease the amplifier gain"));
 						pTo->AcqDoc_DataAppendStop();
 						pTo->AcqDeleteFile();
 						goto Emergency_exit;
 					}
-					*pdataBUF = (short) (dvalue2);
+					*pdataBUF = (short)(dvalue2);
 					pdataBUF++;
 					compteur2++;
 				}
@@ -402,26 +397,26 @@ line 11-	0	141.144	0.0317383
 			// save data and update display
 			CWnd* p_wnd = GetDlgItem(IDC_STATIC6);
 			p_wnd->SetWindowText(csdummy2);
-			pTo->AcqDoc_DataAppend(pdataBUF0, compteur2*sizeof(short));
+			pTo->AcqDoc_DataAppend(pdataBUF0, compteur2 * sizeof(short));
 		}
 
-		// update rate
-		CWaveFormat* pwF= pTo->GetpWaveFormat();
-		float xxrate = (float) (compteurtotal/(dtime_end-dtime_start));
-		pwF->chrate = xxrate;
+	// update rate
+	CWaveFormat* pwF = pTo->GetpWaveFormat();
+	float xxrate = (float)(compteurtotal / (dtime_end - dtime_start));
+	pwF->chrate = xxrate;
 	}
 
-	// useless but ...
-	CATCH(CFileException, fe) 
+		// useless but ...
+		CATCH(CFileException, fe)
 	{
-		pTo->AcqDoc_DataAppend(pdataBUF0, compteur2*sizeof(short));
+		pTo->AcqDoc_DataAppend(pdataBUF0, compteur2 * sizeof(short));
 	}
 	END_CATCH
 
-	// TODO: update file length?
-	pTo->AcqDoc_DataAppendStop();
+		// TODO: update file length?
+		pTo->AcqDoc_DataAppendStop();
 	pTo->AcqCloseFile();
-	
+
 	// exit: delete objects
 Emergency_exit:
 	delete pTo;
@@ -431,35 +426,34 @@ Emergency_exit:
 
 BOOL CImportFilesDlg::GetExperimentParameters(CAcqDataDoc* pTo)
 {
-
 	ADExperimentDlg dlg;							// create dialog box
 	dlg.m_bFilename = FALSE;						// hide path name
-	CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();
-	OPTIONS_ACQDATA* pacqD= &(p_app->options_acqdata);			// pointer to data acq options 
+	CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();
+	OPTIONS_ACQDATA* pacqD = &(p_app->options_acqdata);			// pointer to data acq options
 	dlg.m_pADC_options = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
-	// ...	
+	// ...
 	BOOL flag = dlg.DoModal();
 	if (IDOK == flag)
 	{
 		CWaveFormat* pwFTo = pTo->GetpWaveFormat();
 		CWaveFormat* pwFDlg = &pacqD->waveFormat;
 
-		pwFTo->csADcardName= pwFDlg->csADcardName;
-		pwFTo->cs_comment= pwFDlg->cs_comment;
-		pwFTo->csStimulus= pwFDlg->csStimulus;
-		pwFTo->csConcentration= pwFDlg->csConcentration;
-		pwFTo->csInsectname= pwFDlg->csInsectname;
-		pwFTo->csLocation= pwFDlg->csLocation;
-		pwFTo->csSensillum= pwFDlg->csSensillum;
-		pwFTo->csStrain= pwFDlg->csStrain;
-		pwFTo->csOperator= pwFDlg->csOperator;
-		pwFTo->csMoreComment= pwFDlg->csMoreComment;
-		pwFTo->csStimulus2= pwFDlg->csStimulus2;
-		pwFTo->csConcentration2= pwFDlg->csConcentration2;
-		pwFTo->csSex= pwFDlg->csSex;
-		pwFTo->insectID= pwFDlg->insectID;
-		pwFTo->sensillumID= pwFDlg->sensillumID;
+		pwFTo->csADcardName = pwFDlg->csADcardName;
+		pwFTo->cs_comment = pwFDlg->cs_comment;
+		pwFTo->csStimulus = pwFDlg->csStimulus;
+		pwFTo->csConcentration = pwFDlg->csConcentration;
+		pwFTo->csInsectname = pwFDlg->csInsectname;
+		pwFTo->csLocation = pwFDlg->csLocation;
+		pwFTo->csSensillum = pwFDlg->csSensillum;
+		pwFTo->csStrain = pwFDlg->csStrain;
+		pwFTo->csOperator = pwFDlg->csOperator;
+		pwFTo->csMoreComment = pwFDlg->csMoreComment;
+		pwFTo->csStimulus2 = pwFDlg->csStimulus2;
+		pwFTo->csConcentration2 = pwFDlg->csConcentration2;
+		pwFTo->csSex = pwFDlg->csSex;
+		pwFTo->insectID = pwFDlg->insectID;
+		pwFTo->sensillumID = pwFDlg->sensillumID;
 		return TRUE;
 	}
 	return FALSE;
@@ -470,21 +464,19 @@ BOOL CImportFilesDlg::GetAcquisitionParameters(CAcqDataDoc* pTo)
 	CADInputParmsDlg dlg2;
 	dlg2.m_pwFormat = pTo->GetpWaveFormat();
 	dlg2.m_pchArray = pTo->GetpWavechanArray();
-	
-	// invoke dialog box	
+
+	// invoke dialog box
 	BOOL flag = dlg2.DoModal();
 	if (IDOK == flag)
 	{
-		for (int i=0; i< m_scan_count; i++)
+		for (int i = 0; i < m_scan_count; i++)
 		{
-			CWaveChan* pChannel =  (pTo->GetpWavechanArray())->get_p_channel(i);
+			CWaveChan* pChannel = (pTo->GetpWavechanArray())->get_p_channel(i);
 			m_xinstgain = pChannel->am_gaintotal;
-			m_dspan[i]= 20000./m_xinstgain;		// span= 20 V max to min
-			m_dbinval[i]= m_dspan[i]/65536.;	// divide voltage span into 2exp16 bins
+			m_dspan[i] = 20000. / m_xinstgain;		// span= 20 V max to min
+			m_dbinval[i] = m_dspan[i] / 65536.;	// divide voltage span into 2exp16 bins
 		}
 		return TRUE;
 	}
 	return FALSE;
 }
-	
-

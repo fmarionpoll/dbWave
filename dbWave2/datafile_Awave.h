@@ -1,4 +1,4 @@
-// AwaveFile.h 
+// AwaveFile.h
 // Definition of Awave files and I/O functions
 #pragma once
 
@@ -22,11 +22,11 @@ public:
 	BOOL WriteVTtags(CTagList* ptags) override;
 
 	// I/O operations to be updated by Save
-	BOOL InitFile() override;	
+	BOOL InitFile() override;
 	BOOL DataAppendStart() override;
 	BOOL DataAppend(short* pBU, UINT bytesLength) override;
 	BOOL DataAppendStop() override;
-	
+
 	// protected variables
 protected:
 	CStringA		m_csFiledesc;	// ASCII chain w. file version
@@ -34,7 +34,7 @@ protected:
 	BOOL			m_bmodified{};
 
 	// Implementation
-protected:	
+protected:
 	void DeleteMap();
 	void WriteFileMap();
 	void ReportSaveLoadException(LPCTSTR filename, CException* e, BOOL bSaving, UINT nIDP);

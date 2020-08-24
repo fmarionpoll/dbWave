@@ -32,4 +32,3 @@ using namespace Excel;
 	rename( "EOF", "AdoNSEOF" ) \
 	auto_rename
 using namespace DAO;
-

@@ -72,8 +72,8 @@ void CPrintDataCommentsDlg::OnOK()
 	mdPM->bChansComment = m_bchanscomment;
 	mdPM->bChanSettings = m_bchansettings;
 	mdPM->bDocName = m_bdocname;
-	mdPM->textseparator=m_textseparator;
-	mdPM->fontsize=m_fontsize;
+	mdPM->textseparator = m_textseparator;
+	mdPM->fontsize = m_fontsize;
 
 	CDialog::OnOK();
 }
@@ -87,9 +87,9 @@ BOOL CPrintDataCommentsDlg::OnInitDialog()
 	m_bchanscomment = mdPM->bChansComment;
 	m_bchansettings = mdPM->bChanSettings;
 	m_bdocname = mdPM->bDocName;
-	m_fontsize=mdPM->fontsize;
+	m_fontsize = mdPM->fontsize;
 	m_textseparator = mdPM->textseparator;
-	
+
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

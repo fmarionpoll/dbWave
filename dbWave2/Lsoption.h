@@ -8,22 +8,22 @@
 
 class CLoadSaveOptionsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CLoadSaveOptionsDlg(CWnd* pParent = nullptr);	// standard constructor	
+	CLoadSaveOptionsDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_LOADSAVEOPTIONS };
 	CComboBox	m_CBnamelist;
 	CString	m_ddxcomment;
-	CStringArray*		pParmFiles;	
-	CString*			pcomment;
+	CStringArray* pParmFiles;
+	CString* pcomment;
 
-	CStringArray pFiles;	
+	CStringArray pFiles;
 	CString		m_currentFile;			//
 	int			m_cursel;				// current file selected
 	BOOL		m_bfilenamechanged;		// file name was modified
-	BOOL		m_bcommentchanged;		// comment was modified	
+	BOOL		m_bcommentchanged;		// comment was modified
 
 // Overrides
 public:

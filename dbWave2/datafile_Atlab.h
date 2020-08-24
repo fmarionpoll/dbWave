@@ -11,24 +11,23 @@ public:
 	CDataFileATLAB();           // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CDataFileATLAB)
 
-// Attributes
+	// Attributes
 public:
 
-// Operations
+	// Operations
 public:
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
 	BOOL CheckFileType(CFile* file);
 protected:
 	void InitDummyChansInfo(short chanlistindex);
 	void LoadChanFromCyber(short i, char* pcyberchan);
-	void InitChansFromCyberA320(char *pHeader, short version);
+	void InitChansFromCyberA320(char* pHeader, short version);
 	CString GetCyberA320filter(int ncode);
 
-	CWaveFormat*	m_pWFormat;
+	CWaveFormat* m_pWFormat;
 	CWaveChanArray* m_pArray;
 
-
-// Implementation
+	// Implementation
 public:
 	virtual ~CDataFileATLAB();
 #ifdef _DEBUG
@@ -38,5 +37,4 @@ public:
 
 	// Generated message map functions
 protected:
-
 };

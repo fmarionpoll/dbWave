@@ -14,12 +14,12 @@
 // Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
-// file may be redistributed unmodified by any means PROVIDING it is 
-// not sold for profit without the authors written consent, and 
-// providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// file may be redistributed unmodified by any means PROVIDING it is
+// not sold for profit without the authors written consent, and
+// providing that this notice and the authors name and all copyright
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -28,7 +28,6 @@
 // For use with CGridCtrl v2.10
 //
 //////////////////////////////////////////////////////////////////////
-
 
 #include "GridCell.h"
 
@@ -40,24 +39,23 @@ class CGridCellCombo : public CGridCell
 public:
 	CGridCellCombo();
 
-// editing cells
+	// editing cells
 public:
 	virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
 	virtual CWnd* GetEditWnd() const;
 	virtual void  EndEdit();
 
-// Operations
+	// Operations
 public:
 	virtual CSize GetCellExtent(CDC* p_dc);
 
-// CGridCellCombo specific calls
+	// CGridCellCombo specific calls
 public:
 	void  SetOptions(const CStringArray& ar);
-	void  SetStyle(DWORD dw_style)           { m_dwStyle = dw_style; }
-	DWORD GetStyle()                        { return m_dwStyle;    }
+	void  SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
+	DWORD GetStyle() { return m_dwStyle; }
 	int	  SetCurSel(int sel);
 	int   GetCurSel();
-
 
 protected:
 	virtual BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
@@ -66,8 +64,6 @@ protected:
 	DWORD        m_dwStyle;
 };
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CComboEdit window
 
@@ -75,19 +71,19 @@ protected:
 
 class CComboEdit : public CEdit
 {
-// Construction
+	// Construction
 public:
 	CComboEdit();
 
-// Attributes
+	// Attributes
 public:
 
-// Operations
+	// Operations
 public:
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CComboEdit)
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CComboEdit)
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	//}}AFX_VIRTUAL
 
@@ -110,29 +106,29 @@ class CGridInPlaceList : public CComboBox
 {
 	friend class CComboEdit;
 
-// Construction
+	// Construction
 public:
 	CGridInPlaceList(CWnd* pParent,         // parent
-				 CRect& rect,           // dimensions & location
-				 DWORD dw_style,         // window/combobox style
-				 UINT nID,              // control ID
-				 int nRow, int nColumn, // row and column
-				 COLORREF crFore, COLORREF crBack,  // Foreground, background colour
-				 CStringArray& Items,   // Items in list
-				 CString sInitText,     // initial selection
-				 UINT nFirstChar);      // first character to pass to control
+		CRect& rect,           // dimensions & location
+		DWORD dw_style,         // window/combobox style
+		UINT nID,              // control ID
+		int nRow, int nColumn, // row and column
+		COLORREF crFore, COLORREF crBack,  // Foreground, background colour
+		CStringArray& Items,   // Items in list
+		CString sInitText,     // initial selection
+		UINT nFirstChar);      // first character to pass to control
 
 // Attributes
 public:
-   CComboEdit m_comboedit;  // subclassed edit control
+	CComboEdit m_comboedit;  // subclassed edit control
 
-// Operations
+ // Operations
 public:
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CGridInPlaceList)
-	protected:
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CGridInPlaceList)
+protected:
 	virtual void PostNcDestroy();
 	//}}AFX_VIRTUAL
 
@@ -144,7 +140,7 @@ public:
 protected:
 	int GetCorrectDropWidth();
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -159,8 +155,8 @@ private:
 	CString  m_sInitText;
 	int		 m_nRow;
 	int		 m_nCol;
-	UINT     m_nLastChar; 
-	BOOL	 m_bExitOnArrows; 
+	UINT     m_nLastChar;
+	BOOL	 m_bExitOnArrows;
 	COLORREF m_crForeClr, m_crBackClr;
 };
 

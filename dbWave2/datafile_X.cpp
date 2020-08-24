@@ -23,8 +23,8 @@ CDataFileX::CDataFileX()
 	m_ulOffsetData = 0;
 	m_ulOffsetHeader = 0;
 	m_ulbytescount = 0;
-	m_idType=DOCTYPE_UNKNOWN;
-	m_csType= _T("UNKNOWN");
+	m_idType = DOCTYPE_UNKNOWN;
+	m_csType = _T("UNKNOWN");
 }
 
 CDataFileX::~CDataFileX()
@@ -49,7 +49,6 @@ void CDataFileX::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CDataFileX commands
 
@@ -67,28 +66,49 @@ long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
 // base class implementation of virtual functions
 
 BOOL CDataFileX::CheckFileType(CFile* pfile)
-	{return DOCTYPE_UNKNOWN;}
+{
+	return DOCTYPE_UNKNOWN;
+}
 BOOL CDataFileX::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
-	{return TRUE;}
-BOOL CDataFileX::ReadHZtags(CTagList* pHZtags) 
-	{return FALSE;}
-BOOL CDataFileX::ReadVTtags(CTagList* pVTtags) 
-	{return FALSE;}
+{
+	return TRUE;
+}
+BOOL CDataFileX::ReadHZtags(CTagList* pHZtags)
+{
+	return FALSE;
+}
+BOOL CDataFileX::ReadVTtags(CTagList* pVTtags)
+{
+	return FALSE;
+}
 
 // I/O operations to be updated by Save
 
-BOOL CDataFileX::InitFile() 
-	{return FALSE;}
-BOOL CDataFileX::DataAppendStart() 
-	{m_ulbytescount = 0; return FALSE;}
-BOOL CDataFileX::DataAppend(short* pBU, UINT uibytesLength) 
-	{return FALSE; }
-BOOL CDataFileX::DataAppendStop() 
-	{return FALSE;}
-BOOL CDataFileX::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC) 
-	{return FALSE;}
+BOOL CDataFileX::InitFile()
+{
+	return FALSE;
+}
+BOOL CDataFileX::DataAppendStart()
+{
+	m_ulbytescount = 0; return FALSE;
+}
+BOOL CDataFileX::DataAppend(short* pBU, UINT uibytesLength)
+{
+	return FALSE;
+}
+BOOL CDataFileX::DataAppendStop()
+{
+	return FALSE;
+}
+BOOL CDataFileX::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
+{
+	return FALSE;
+}
 BOOL CDataFileX::WriteHZtags(CTagList* ptags)
-	{return FALSE;}
-BOOL CDataFileX::WriteVTtags(CTagList* ptags) 
-	{return FALSE;}
-
+{
+	return FALSE;
+}
+BOOL CDataFileX::WriteVTtags(CTagList* ptags)
+{
+	return FALSE;
+}

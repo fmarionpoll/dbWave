@@ -13,8 +13,8 @@ class CADInputParmsDlg : public CDialog
 public:
 	CADInputParmsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CADInputParmsDlg();
-	
-// Dialog Data
+
+	// Dialog Data
 	enum { IDD = IDD_AD_INPUTPARMSDLG };
 
 protected:
@@ -22,7 +22,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 protected:
-// number of input channels
+	// number of input channels
 	int m_nacqchans;				// number of acquisition channels
 	int m_maxchans;					// max nb for channel input number (0-7 or 0-15; exception for channel 16=DIN)
 	int m_inputlistmax;				// dt9800 = 32 (set when creating the object)
@@ -31,11 +31,11 @@ protected:
 public:
 	CGridCtrl m_Grid;
 
-// parameters passed:
+	// parameters passed:
 public:
 	// input/output data:
-	CWaveFormat*	m_pwFormat;		// acquisition parameters
-	CWaveChanArray*	m_pchArray;		// acquisition channels
+	CWaveFormat* m_pwFormat;		// acquisition parameters
+	CWaveChanArray* m_pchArray;		// acquisition channels
 	BOOL			m_bchainDialog;	// chain dialog (no= FALSE)
 	// parameter set on exit to chain dialog
 	UINT m_postmessage;				// launch assoc dialog
@@ -46,7 +46,7 @@ public:
 	BOOL m_bcommandAmplifier;		// change ampli settings on the fly (if present); default = none
 	CUSBPxxS1Ctl* m_pAlligatorAmplifier;
 	CArray< USBPxxPARAMETERS*, USBPxxPARAMETERS*>* p_alligatordevice_ptr_array;
-		
+
 	// Implementation
 protected:
 	static TCHAR* pszRowTitle[];
@@ -77,15 +77,15 @@ protected:
 
 public:
 	virtual BOOL OnInitDialog();
-	
+
 	CComboBox m_resolutionCombo;		// A/D resolution: 8, 12, 16 bits (?)
 	CComboBox m_encodingCombo;			// encoding mode (binary offset/straight/2's complement)
-	
+
 	afx_msg void OnEnChangeNacqchans();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedSingleended();
 	afx_msg void OnBnClickedDifferential();
-	afx_msg void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeResolution();
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedAdintervals();

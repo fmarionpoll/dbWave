@@ -19,7 +19,6 @@ CImportOptionsDlg::CImportOptionsDlg(CWnd* pParent /*=NULL*/)
 	, m_bNewIDs(FALSE)
 	, m_bAllowDuplicateFiles(FALSE)
 {
-
 }
 
 CImportOptionsDlg::~CImportOptionsDlg()
@@ -33,9 +32,7 @@ void CImportOptionsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECKDISCARD, m_bAllowDuplicateFiles);
 }
 
-
 BEGIN_MESSAGE_MAP(CImportOptionsDlg, CDialogEx)
 END_MESSAGE_MAP()
-
 
 // CImportOptionsDlg message handlers

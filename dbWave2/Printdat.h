@@ -8,7 +8,7 @@
 
 class CPrintDataOptionsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CPrintDataOptionsDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -22,7 +22,7 @@ public:
 	BOOL	m_bPrintSpkBars;
 	OPTIONS_VIEWDATA* mdPM;
 
-// Implementation
+	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	virtual BOOL OnInitDialog();
@@ -34,7 +34,7 @@ protected:
 
 class CPrintDataCommentsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CPrintDataCommentsDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -49,7 +49,7 @@ public:
 	int		m_textseparator;
 	OPTIONS_VIEWDATA* mdPM;
 
-// Implementation
+	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	virtual void OnOK();

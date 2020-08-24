@@ -9,7 +9,7 @@
 
 class ADIntervalsDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	ADIntervalsDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -24,21 +24,21 @@ public:
 	BOOL	m_baudiblesound;
 	int		m_threshchan;
 	int		m_threshval;
-	CWaveFormat*	m_pwaveFormat;
-    
-    UINT	m_postmessage;		// parameter passed on exit to activate another dialog
-    float	m_ratemax;			// max sampling rate (per chan)
-    float	m_ratemin;			// min sampling rate (per chan)
-    UINT	m_bufferWsizemax;	// maximum buffer size
+	CWaveFormat* m_pwaveFormat;
+
+	UINT	m_postmessage;		// parameter passed on exit to activate another dialog
+	float	m_ratemax;			// max sampling rate (per chan)
+	float	m_ratemin;			// min sampling rate (per chan)
+	UINT	m_bufferWsizemax;	// maximum buffer size
 	BOOL	m_bchainDialog;
 
-    CEditCtrl mm_adratechan;
+	CEditCtrl mm_adratechan;
 	CEditCtrl mm_sweepduration;
 	CEditCtrl mm_bufferWsize;
 	CEditCtrl mm_bufferNitems;
 	CEditCtrl mm_acqduration;
 
-// Implementation
+	// Implementation
 protected:
 	CWaveFormat m_acqdef;	// acquisition parameters
 

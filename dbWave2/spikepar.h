@@ -13,10 +13,10 @@ public:
 	int  SourceChan;		// source channel
 	int	 TransformMethod;	// detect from data transformed - i = transform method cf CAcqDataDoc
 	int  DetectMethod;		// unused
-	int	 Threshold1;		// value of threshold 1	
-	int	 bMode;				// 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down); 
+	int	 Threshold1;		// value of threshold 1
+	int	 bMode;				// 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down);
 
-public :
+public:
 	STIMDETECT();
 	~STIMDETECT();
 	STIMDETECT& operator = (const STIMDETECT& arg);
@@ -35,7 +35,7 @@ public:
 	CString	comment;			// free comment (for ex describing the method)
 
 	int		detectWhat;			// 0=spikes, 1=stimulus
-	int		detectMode;			// stim: 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down); 
+	int		detectMode;			// stim: 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down);
 	int		detectFrom;			// detection method - (stored as WORD): 0=chan; 1 = tag
 	int		detectChan;			// source channel
 	int		detectTransform;	// detect from data transformed - i = transform method cf CAcqDataDoc
@@ -47,19 +47,18 @@ public:
 	int		extractTransform;	// transformed data extracted
 	int		extractNpoints;		// spike length (n data pts)
 	int		prethreshold;		// offset spike npts before threshold
-	int		refractory;			// re-start detection n pts after threshold	
+	int		refractory;			// re-start detection n pts after threshold
 
 protected:
 	void	ReadVersionlessthan6(CArchive& ar, int version);
 	void	ReadVersion6(CArchive& ar);
 	void	ReadVersion7(CArchive& ar);
-	
-public :
+
+public:
 	SPKDETECTPARM();
 	~SPKDETECTPARM();
 	SPKDETECTPARM& operator = (const SPKDETECTPARM& arg);
 	void Serialize(CArchive& ar) override;
-
 };
 
 // Array of spike detection parameters
@@ -71,9 +70,9 @@ public:
 	BOOL		bChanged;							// flag set TRUE if contents has changed
 	int			AddItem();							// add one parameter array item
 	int			RemoveItem(int i);
-	SPKDETECTPARM* GetItem(int i) {return spkdetectparm_ptr_array.GetAt(i);}
-	void		SetItem(int i, SPKDETECTPARM* pSD) {*(spkdetectparm_ptr_array[i]) = *pSD;}
-	int			GetSize() {return spkdetectparm_ptr_array.GetSize();}
+	SPKDETECTPARM* GetItem(int i) { return spkdetectparm_ptr_array.GetAt(i); }
+	void		SetItem(int i, SPKDETECTPARM* pSD) { *(spkdetectparm_ptr_array[i]) = *pSD; }
+	int			GetSize() { return spkdetectparm_ptr_array.GetSize(); }
 	void		SetSize(int nitems);
 
 protected:
@@ -81,7 +80,7 @@ protected:
 	void		DeleteArray();
 	CArray <SPKDETECTPARM*, SPKDETECTPARM*> spkdetectparm_ptr_array;							// array with SPKDETECTPARM objects
 
-public :
+public:
 	CSpkDetectArray();
 	virtual			~CSpkDetectArray();
 	CSpkDetectArray& operator	= (const CSpkDetectArray& arg);
@@ -99,18 +98,17 @@ class SPKDETECTARRAY : public CObject
 public:
 	BOOL bChanged;										// flag set TRUE if contents has changed
 	void				SetChanArray(int acqchan, CSpkDetectArray* pspk);
-	CSpkDetectArray*	GetChanArray(int acqchan);
+	CSpkDetectArray* GetChanArray(int acqchan);
 
 protected:
 	WORD				wversion;						// version number
 	CMapWordToPtr		chanArrayMap;					// array of CPtrArray
 	void				DeleteAll();					// erase all arrays of parmItems (and all parmItems within them)
 
-public :
+public:
 	SPKDETECTARRAY();
 	virtual		~SPKDETECTARRAY();
 	void Serialize(CArchive& ar) override;
-
 };
 
 // spike classification parameters
@@ -156,13 +154,13 @@ public:
 	float	mvmin;			// display limits
 	float	mvmax;
 
-	void*	ptpl;
+	void* ptpl;
 
-public :
+public:
 	SPKCLASSIF();
 	~SPKCLASSIF();
 	SPKCLASSIF& operator = (const SPKCLASSIF& arg);	// operator redefinition
 	void Serialize(CArchive& ar) override;
 
-	void CreateTPL();	
+	void CreateTPL();
 };

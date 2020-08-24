@@ -11,9 +11,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CdbMultiDocTemplate
 
-CdbMultiDocTemplate::CdbMultiDocTemplate(UINT nIDResource, CRuntimeClass* pDocClass, CRuntimeClass* pFrameClass, CRuntimeClass* pViewClass) 
-	: CMultiDocTemplate (nIDResource, pDocClass, pFrameClass, pViewClass) {};
-
+CdbMultiDocTemplate::CdbMultiDocTemplate(UINT nIDResource, CRuntimeClass* pDocClass, CRuntimeClass* pFrameClass, CRuntimeClass* pViewClass)
+	: CMultiDocTemplate(nIDResource, pDocClass, pFrameClass, pViewClass) {};
 
 CdbMultiDocTemplate::~CdbMultiDocTemplate()
 {
@@ -49,18 +48,18 @@ BOOL CdbMultiDocTemplate::GetDocString(CString& rString, enum DocStringIndex i) 
 	if (i == CDocTemplate::filterExt)
 	{
 		// string contains more than one extension?
-		auto n_find_pos = str_temp.Find(_T(";"));		
+		auto n_find_pos = str_temp.Find(_T(";"));
 		while (n_find_pos != -1)
 		{
 			auto str_left = str_temp.Left(n_find_pos + 1);
 			auto str_right = _T("*") + str_temp.Right(str_temp.GetLength() - n_find_pos - 1);
 			str_temp = str_left + str_right;
-			n_find_pos = str_temp.Find(_T(";"), n_find_pos+1);
+			n_find_pos = str_temp.Find(_T(";"), n_find_pos + 1);
 		}
 	}
 	rString = str_temp;
 	return TRUE;
-} 
+}
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -75,27 +74,27 @@ CMultiDocTemplate::Confidence CdbMultiDocTemplate::MatchDocType(LPCTSTR lpszPath
 	{
 		const auto p_document = GetNextDoc(pos);
 		if (p_document->GetPathName() == cs_path_name)
-		{		
+		{
 			rpDocMatch = p_document;
 			return yesAlreadyOpen;
 		}
 	}	// end while
 
 	// not open - then see if it matches either suffix
-	CString str_filter_ext ;
+	CString str_filter_ext;
 	if (GetDocString(str_filter_ext, CDocTemplate::filterExt) && !str_filter_ext.IsEmpty())
-	{	
+	{
 		// make sure there is a dot in the filename
 		const auto n_dot = cs_path_name.ReverseFind(_T('.'));
 		if (n_dot <= 0)
 			return noAttempt;	// no extension found, exit
 
 		// loop over the different extensions stored into the template filter
-		auto cs_path_name_ext = cs_path_name.Right(cs_path_name.GetLength() - n_dot -1);
+		auto cs_path_name_ext = cs_path_name.Right(cs_path_name.GetLength() - n_dot - 1);
 		cs_path_name_ext.MakeLower();
 		ASSERT(str_filter_ext[0] == _T('.'));
 		auto n_semi = str_filter_ext.Find(';');
-		
+
 		while (n_semi != -1)
 		{
 			auto ext = str_filter_ext.Left(n_semi);	// get extension
@@ -106,7 +105,7 @@ CMultiDocTemplate::Confidence CdbMultiDocTemplate::MatchDocType(LPCTSTR lpszPath
 				return yesAttemptNative; // extension matches
 
 			// update filter string
-			str_filter_ext = str_filter_ext.Mid(n_semi+2);
+			str_filter_ext = str_filter_ext.Mid(n_semi + 2);
 			// search for next filter extension
 			n_semi = str_filter_ext.Find(';');
 		}
@@ -115,4 +114,3 @@ CMultiDocTemplate::Confidence CdbMultiDocTemplate::MatchDocType(LPCTSTR lpszPath
 	// otherwise we will guess it may work
 	return yesAttemptForeign;
 }
-

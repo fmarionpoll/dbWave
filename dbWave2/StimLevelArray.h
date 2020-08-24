@@ -6,15 +6,15 @@ class CIntervalsAndLevels : public CObject
 {
 	DECLARE_SERIAL(CIntervalsAndLevels)
 
-public :
-	CIntervalsAndLevels();	
+public:
+	CIntervalsAndLevels();
 	virtual		~CIntervalsAndLevels();
 	void Serialize(CArchive& ar) override;
 
 	CIntervalsAndLevels& operator = (const CIntervalsAndLevels& arg);
 
 	inline long	GetiiTime(int i) { return intervalsArray.GetAt(i); };
-	inline void	SetiiTime(int i, long iitime) { intervalsArray.SetAt(i, iitime);};
+	inline void	SetiiTime(int i, long iitime) { intervalsArray.SetAt(i, iitime); };
 	inline long	GetSize() { return intervalsArray.GetSize(); }
 	inline int  GetChan() { return ichan; }
 	inline void SetChan(int chan) { ichan = chan; }
@@ -34,7 +34,7 @@ protected:
 
 // ----------------------------------------------
 
-struct CIntervalPoint  {
+struct CIntervalPoint {
 	long ii;
 	WORD w;
 };
@@ -55,7 +55,7 @@ class CIntervalsAndWordsSeries : public CObject
 	inline long		GetSize() { return intervalpoint_array.GetSize(); }
 	CIntervalPoint  GetIntervalPointAt(int i);
 
-	void	ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP=1, BOOL bcopyRate = TRUE);
+	void	ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP = 1, BOOL bcopyRate = TRUE);
 	void	ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
 	void	ExportIntervalsSeries(int chan, CIntervalsAndLevels* pOut);
 
@@ -64,4 +64,3 @@ public:
 	float	chrate;
 	int		version;
 };
-

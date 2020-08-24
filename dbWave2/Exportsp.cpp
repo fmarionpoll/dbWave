@@ -11,7 +11,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CExportSpikeInfosDlg dialog
 
-
 CExportSpikeInfosDlg::CExportSpikeInfosDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CExportSpikeInfosDlg::IDD, pParent)
 {
@@ -32,15 +31,14 @@ CExportSpikeInfosDlg::CExportSpikeInfosDlg(CWnd* pParent /*=NULL*/)
 	m_histampl_nbins = 0;
 	m_iexportoptions = -1;
 	m_bexportzero = FALSE;
-	m_bexportPivot=TRUE;
-	m_bexporttoExcel=TRUE;
-	m_istimulusindex=0;
-	m_bhist=SW_SHOW;
-	m_bhistampl=SW_SHOW;
+	m_bexportPivot = TRUE;
+	m_bexporttoExcel = TRUE;
+	m_istimulusindex = 0;
+	m_bhist = SW_SHOW;
+	m_bhistampl = SW_SHOW;
 	m_brelation = TRUE;
 	m_pvdS = nullptr;
 }
-
 
 void CExportSpikeInfosDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -56,7 +54,7 @@ void CExportSpikeInfosDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SPIKECLASS2, m_classnb2);
 	DDX_Check(pDX, IDC_TOTALSPIKES, m_btotalspikes);
 	DDX_Check(pDX, IDC_SPKFILECOMMENTS, m_bspkcomments);
-	DDX_Radio(pDX, IDC_RADIO1, m_ispikeclassoptions);	
+	DDX_Radio(pDX, IDC_RADIO1, m_ispikeclassoptions);
 	DDX_Text(pDX, IDC_NBINS, m_nbins);
 	DDX_Text(pDX, IDC_HISTMAX, m_histampl_vmax);
 	DDX_Text(pDX, IDC_HISTMIN, m_histampl_vmin);
@@ -88,49 +86,48 @@ BEGIN_MESSAGE_MAP(CExportSpikeInfosDlg, CDialog)
 	ON_BN_CLICKED(IDC_SPIKEPOINTS, OnBnClickedSpikepoints)
 END_MESSAGE_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CExportSpikeInfosDlg message handlers
 
 BOOL CExportSpikeInfosDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_bspkcomments  = m_pvdS->bspkcomments;
-	m_bacqchsettings= m_pvdS->bacqchsettings;
-	m_bacqcomments	= m_pvdS->bacqcomments;
-	m_bacqdate		= m_pvdS->bacqdate;	
+	m_bspkcomments = m_pvdS->bspkcomments;
+	m_bacqchsettings = m_pvdS->bacqchsettings;
+	m_bacqcomments = m_pvdS->bacqcomments;
+	m_bacqdate = m_pvdS->bacqdate;
 	//m_bartefacts 	= m_pvdS->bartefacts;
-	m_classnb 		= m_pvdS->classnb;
-	m_classnb2		= m_pvdS->classnb2;
-	m_btotalspikes 	= m_pvdS->btotalspikes;
-	m_bexportzero	= m_pvdS->bexportzero;
-	m_bexportPivot	= m_pvdS->bexportPivot;
+	m_classnb = m_pvdS->classnb;
+	m_classnb2 = m_pvdS->classnb2;
+	m_btotalspikes = m_pvdS->btotalspikes;
+	m_bexportzero = m_pvdS->bexportzero;
+	m_bexportPivot = m_pvdS->bexportPivot;
 	m_bexporttoExcel = m_pvdS->bexporttoExcel;
-	m_timeend		= m_pvdS->timeend;
-	m_timestart		= m_pvdS->timestart;
-	m_histampl_nbins= m_pvdS->histampl_nbins;
+	m_timeend = m_pvdS->timeend;
+	m_timestart = m_pvdS->timestart;
+	m_histampl_nbins = m_pvdS->histampl_nbins;
 	m_histampl_vmax = m_pvdS->histampl_vmax;
 	m_histampl_vmin = m_pvdS->histampl_vmin;
-	m_istimulusindex= m_pvdS->istimulusindex;
+	m_istimulusindex = m_pvdS->istimulusindex;
 
 	m_iexportoptions = m_pvdS->exportdatatype;
-	if (m_iexportoptions <0)
+	if (m_iexportoptions < 0)
 		m_iexportoptions = EXPORT_PSTH;
 	m_ispikeclassoptions = m_pvdS->spikeclassoption + 1;
-	auto disphist=SW_HIDE;
-	auto disphistampl=SW_HIDE;
+	auto disphist = SW_HIDE;
+	auto disphistampl = SW_HIDE;
 	switch (m_iexportoptions)
 	{
 	case EXPORT_PSTH:
-		m_nbins 		= m_pvdS->nbins;
-		m_timebin		= (m_timeend-m_timestart)/m_nbins;
-		disphist=SW_SHOW;
+		m_nbins = m_pvdS->nbins;
+		m_timebin = (m_timeend - m_timestart) / m_nbins;
+		disphist = SW_SHOW;
 		break;
 	case EXPORT_ISI:
 	case EXPORT_AUTOCORR:
 		m_nbins = m_pvdS->nbinsISI;
-		m_timebin= m_pvdS->binISI;
-		disphist=SW_SHOW;
+		m_timebin = m_pvdS->binISI;
+		disphist = SW_SHOW;
 		break;
 	case EXPORT_HISTAMPL:
 		disphistampl = SW_SHOW;
@@ -139,24 +136,24 @@ BOOL CExportSpikeInfosDlg::OnInitDialog()
 		break;
 	}
 
-	DisplayHistParms(disphist);	
+	DisplayHistParms(disphist);
 	DisplayHistAmplParms(disphistampl);
 
-	((CButton*) GetDlgItem(IDC_RADIO4))->SetCheck(m_pvdS->babsolutetime);
-	((CButton*) GetDlgItem(IDC_RADIO5))->SetCheck(!m_pvdS->babsolutetime);
+	((CButton*)GetDlgItem(IDC_RADIO4))->SetCheck(m_pvdS->babsolutetime);
+	((CButton*)GetDlgItem(IDC_RADIO5))->SetCheck(!m_pvdS->babsolutetime);
 	GetDlgItem(IDC_EDIT1)->ShowWindow(!m_pvdS->babsolutetime);
 
-	((CButton*) GetDlgItem(IDC_RADIOALLCHANS))->SetCheck(m_pvdS->ballChannels);
-	((CButton*) GetDlgItem(IDC_RADIOCURRCHAN))->SetCheck(!m_pvdS->ballChannels);
+	((CButton*)GetDlgItem(IDC_RADIOALLCHANS))->SetCheck(m_pvdS->ballChannels);
+	((CButton*)GetDlgItem(IDC_RADIOCURRCHAN))->SetCheck(!m_pvdS->ballChannels);
 
 	UpdateData(FALSE);
-	OnClassFilter();	
+	OnClassFilter();
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CExportSpikeInfosDlg::OnOK() 
+void CExportSpikeInfosDlg::OnOK()
 {
-	UpdateData(TRUE);	
+	UpdateData(TRUE);
 
 	if (m_timestart >= m_timeend)
 	{
@@ -165,134 +162,129 @@ void CExportSpikeInfosDlg::OnOK()
 	}
 
 	// intervals OK - proceed
-	m_pvdS->bChanged		= TRUE;
-	m_pvdS->bacqchsettings	= m_bacqchsettings;
-	m_pvdS->bacqcomments	= m_bacqcomments;
-	m_pvdS->bacqdate		= m_bacqdate;
-	m_pvdS->exportdatatype	= m_iexportoptions;
-	m_pvdS->bexportzero		= m_bexportzero;
-	m_pvdS->bexportPivot	= m_bexportPivot;
-	m_pvdS->bexporttoExcel	= m_bexporttoExcel;
+	m_pvdS->bChanged = TRUE;
+	m_pvdS->bacqchsettings = m_bacqchsettings;
+	m_pvdS->bacqcomments = m_bacqcomments;
+	m_pvdS->bacqdate = m_bacqdate;
+	m_pvdS->exportdatatype = m_iexportoptions;
+	m_pvdS->bexportzero = m_bexportzero;
+	m_pvdS->bexportPivot = m_bexportPivot;
+	m_pvdS->bexporttoExcel = m_bexporttoExcel;
 	if (m_iexportoptions == EXPORT_PSTH)
 	{
-		m_pvdS->nbins		= m_nbins;
-		m_pvdS->timebin		= m_timebin;
+		m_pvdS->nbins = m_nbins;
+		m_pvdS->timebin = m_timebin;
 	}
 	else if (m_iexportoptions == EXPORT_ISI || m_iexportoptions == EXPORT_AUTOCORR)
 	{
-		m_pvdS->nbinsISI	= m_nbins;
-		m_pvdS->binISI		= m_timebin;
+		m_pvdS->nbinsISI = m_nbins;
+		m_pvdS->binISI = m_timebin;
 	}
-	//m_pvdS->bartefacts = m_bartefacts;			
-	m_pvdS->classnb			= m_classnb;
-	m_pvdS->classnb2		= m_classnb2;
-	m_pvdS->bcolumnheader	= TRUE;
-	m_pvdS->btotalspikes	= m_btotalspikes;
-	m_pvdS->bspkcomments	= m_bspkcomments;
-	m_pvdS->spikeclassoption= m_ispikeclassoptions - 1;
+	//m_pvdS->bartefacts = m_bartefacts;
+	m_pvdS->classnb = m_classnb;
+	m_pvdS->classnb2 = m_classnb2;
+	m_pvdS->bcolumnheader = TRUE;
+	m_pvdS->btotalspikes = m_btotalspikes;
+	m_pvdS->bspkcomments = m_bspkcomments;
+	m_pvdS->spikeclassoption = m_ispikeclassoptions - 1;
 
-	m_pvdS->timestart		= m_timestart;
-	m_pvdS->timeend			= m_timeend;
+	m_pvdS->timestart = m_timestart;
+	m_pvdS->timeend = m_timeend;
 
-	m_pvdS->histampl_nbins	= m_histampl_nbins;
-	m_pvdS->istimulusindex	= m_istimulusindex;
-	m_pvdS->histampl_vmax	= m_histampl_vmax;
-	m_pvdS->histampl_vmin	= m_histampl_vmin;
+	m_pvdS->histampl_nbins = m_histampl_nbins;
+	m_pvdS->istimulusindex = m_istimulusindex;
+	m_pvdS->histampl_vmax = m_histampl_vmax;
+	m_pvdS->histampl_vmin = m_histampl_vmin;
 
-	m_pvdS->babsolutetime = ((CButton*) GetDlgItem(IDC_RADIO4))->GetCheck();
-	m_pvdS->ballChannels = ((CButton*) GetDlgItem(IDC_RADIOALLCHANS))->GetCheck();
+	m_pvdS->babsolutetime = ((CButton*)GetDlgItem(IDC_RADIO4))->GetCheck();
+	m_pvdS->ballChannels = ((CButton*)GetDlgItem(IDC_RADIOALLCHANS))->GetCheck();
 
 	CDialog::OnOK();
 }
 
-void CExportSpikeInfosDlg::OnClassFilter() 
+void CExportSpikeInfosDlg::OnClassFilter()
 {
 	UpdateData(TRUE);
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(0 == m_ispikeclassoptions);
 	GetDlgItem(IDC_SPIKECLASS2)->EnableWindow(0 == m_ispikeclassoptions);
 }
 
-void CExportSpikeInfosDlg::OnEnChangeNbins() 
+void CExportSpikeInfosDlg::OnEnChangeNbins()
 {
 	UpdateData(TRUE);
 	if (m_nbins > 0 && m_iexportoptions == EXPORT_PSTH && m_brelation)
 	{
-		m_timebin	= (m_timeend-m_timestart)/m_nbins;
+		m_timebin = (m_timeend - m_timestart) / m_nbins;
 		UpdateData(FALSE);
 	}
 }
 
-void CExportSpikeInfosDlg::OnEnChangeBinsize() 
+void CExportSpikeInfosDlg::OnEnChangeBinsize()
 {
 	UpdateData(TRUE);
 	if (m_timebin > 0 && m_iexportoptions == EXPORT_PSTH && m_brelation)
 	{
-		m_nbins	= static_cast<int>((m_timeend - m_timestart) / m_timebin);
+		m_nbins = static_cast<int>((m_timeend - m_timestart) / m_timebin);
 		UpdateData(FALSE);
 	}
 }
 
-void CExportSpikeInfosDlg::OnclickPSTH() 
+void CExportSpikeInfosDlg::OnclickPSTH()
 {
 	if (m_iexportoptions != EXPORT_PSTH)
 	{
-		m_iexportoptions =EXPORT_PSTH;
-		m_nbins 		= m_pvdS->nbins;
-		m_timebin		= m_pvdS->timebin;
+		m_iexportoptions = EXPORT_PSTH;
+		m_nbins = m_pvdS->nbins;
+		m_timebin = m_pvdS->timebin;
 		UpdateData(FALSE);
 	}
 	DisplayHistAmplParms(SW_HIDE);
-	DisplayHistParms(SW_SHOW);	
+	DisplayHistParms(SW_SHOW);
 }
 
-
-void CExportSpikeInfosDlg::OnclickISI() 
+void CExportSpikeInfosDlg::OnclickISI()
 {
 	if (m_iexportoptions != EXPORT_ISI)
 	{
-		m_iexportoptions =EXPORT_ISI;
-		m_nbins 		= m_pvdS->nbinsISI;
-		m_timebin		= m_pvdS->binISI;
+		m_iexportoptions = EXPORT_ISI;
+		m_nbins = m_pvdS->nbinsISI;
+		m_timebin = m_pvdS->binISI;
 		UpdateData(FALSE);
 	}
 	DisplayHistAmplParms(SW_HIDE);
 	DisplayHistParms(SW_SHOW);
 }
 
-
-void CExportSpikeInfosDlg::OnclickAUTOCORR() 
+void CExportSpikeInfosDlg::OnclickAUTOCORR()
 {
-	if (m_iexportoptions != EXPORT_AUTOCORR )
+	if (m_iexportoptions != EXPORT_AUTOCORR)
 	{
 		m_iexportoptions = EXPORT_AUTOCORR;
-		m_nbins 		= m_pvdS->nbinsISI;
-		m_timebin		= m_pvdS->binISI;
+		m_nbins = m_pvdS->nbinsISI;
+		m_timebin = m_pvdS->binISI;
 		UpdateData(FALSE);
 	}
 	DisplayHistAmplParms(SW_HIDE);
 	DisplayHistParms(SW_SHOW);
 }
 
-
-void CExportSpikeInfosDlg::OnclickOthers() 
+void CExportSpikeInfosDlg::OnclickOthers()
 {
 	DisplayHistAmplParms(SW_HIDE);
 	DisplayHistParms(SW_HIDE);
 }
 
-
-void CExportSpikeInfosDlg::OnclickAmplHistog() 
+void CExportSpikeInfosDlg::OnclickAmplHistog()
 {
 	DisplayHistAmplParms(SW_SHOW);
 	DisplayHistParms(SW_HIDE);
 }
 
-
 void CExportSpikeInfosDlg::DisplayHistParms(int bdisplay)
 {
 	if (m_bhist != bdisplay)
 	{
-		m_bhist =bdisplay;
+		m_bhist = bdisplay;
 		GetDlgItem(IDC_NBINS)->ShowWindow(bdisplay);
 		GetDlgItem(IDC_BINSIZE)->ShowWindow(bdisplay);
 		GetDlgItem(IDC_STATIC10)->ShowWindow(bdisplay);
@@ -301,12 +293,11 @@ void CExportSpikeInfosDlg::DisplayHistParms(int bdisplay)
 	}
 }
 
-
 void CExportSpikeInfosDlg::DisplayHistAmplParms(int bdisplay)
 {
 	if (m_bhistampl != bdisplay)
 	{
-		m_bhistampl=bdisplay;
+		m_bhistampl = bdisplay;
 		GetDlgItem(IDC_HISTNBINS_STATIC)->ShowWindow(bdisplay);
 		GetDlgItem(IDC_HISTMIN_STATIC)->ShowWindow(bdisplay);
 		GetDlgItem(IDC_HISTMAX_STATIC)->ShowWindow(bdisplay);
@@ -332,5 +323,5 @@ void CExportSpikeInfosDlg::OnBnClickedSpikepoints()
 {
 	m_iexportoptions = EXPORT_SPIKEPOINTS;
 	DisplayHistAmplParms(SW_HIDE);
-	DisplayHistParms(SW_HIDE);	
+	DisplayHistParms(SW_HIDE);
 }

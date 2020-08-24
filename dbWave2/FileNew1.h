@@ -11,7 +11,7 @@ public:
 	CFileNew1(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CFileNew1();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_FILE_NEW1 };
 
 protected:

@@ -1,4 +1,3 @@
-
 // spikehistp.cpp : implementation file
 //
 // Purpose:
@@ -214,9 +213,9 @@ LPTSTR CWndVerticalHistogram::ExportAscii(LPTSTR lp)
 	int i;
 	for (i = 0; i < histogram_ptr_array.GetSize(); i++)
 		lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array[i])->GetAt(0)));
-	lp--;	// erase \t and replace with \n	
+	lp--;	// erase \t and replace with \n
 
-	// loop through all points	
+	// loop through all points
 	lp += wsprintf(lp, _T("\nvalues;\n"));
 	for (auto j = 1; j <= m_nbins; j++)
 	{
@@ -238,7 +237,7 @@ void CWndVerticalHistogram::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// convert pix into data value
 		const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
-		SetHZtagVal(m_HCtrapped, val);				// change cursor value		
+		SetHZtagVal(m_HCtrapped, val);				// change cursor value
 		point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 		XorHZtag(point.y);
 		CScopeScreen::OnLButtonUp(nFlags, point);
@@ -317,7 +316,7 @@ void CWndVerticalHistogram::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	CScopeScreen::OnLButtonDown(nFlags, point);
 	if (m_currCursorMode != 0 || m_HCtrapped >= 0)// do nothing else if mode != 0
-		return;	 								// or any tag hit (VT, HZ) detected	
+		return;	 								// or any tag hit (VT, HZ) detected
 
 	// test if mouse hit one histogram
 	// if hit, then tell parent to select corresp histogram (spike)
@@ -337,14 +336,14 @@ void CWndVerticalHistogram::ZoomData(CRect* rFrom, CRect* rDest)
 	rFrom->NormalizeRect();
 	rDest->NormalizeRect();
 
-	// change y gain & y offset		
+	// change y gain & y offset
 	const auto y_we = m_yWE;				// save previous window extent
 	m_yWE = MulDiv(m_yWE, rDest->Height(), rFrom->Height());
 	m_yWO = m_yWO
 		- MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
 		+ MulDiv(rDest->top - m_yVO, y_we, m_yVE);
 
-	// change index of first and last pt displayed	
+	// change index of first and last pt displayed
 	const auto x_we = m_xWE;				// save previous window extent
 	m_xWE = MulDiv(m_xWE, rDest->Width(), rFrom->Width());
 	m_xWO = m_xWO
@@ -482,7 +481,7 @@ void CWndVerticalHistogram::GetHistogLimits(int ihist)
 
 	// Récuperation de l'indice du maximum
 	m_imax = m_ifirst;          // index first pt
-	m_lmax = 0;					// max	
+	m_lmax = 0;					// max
 	for (auto i = m_ifirst; i <= m_ilast; i++)
 	{
 		const auto dwitem = p_dw->GetAt(i);
@@ -529,7 +528,6 @@ void CWndVerticalHistogram::OnSize(UINT nType, int cx, int cy)
 }
 
 CDWordArray* CWndVerticalHistogram::InitClassArray(int nbins, int spike_class) {
-
 	CDWordArray* p_dw = new (CDWordArray);	// init array
 	ASSERT(p_dw != NULL);
 	histogram_ptr_array.Add(p_dw);		// save pointer to this new array

@@ -8,7 +8,7 @@
 class CPivotTableChangeList : public COleDispatchDriver
 {
 public:
-	CPivotTableChangeList(){} // Calls COleDispatchDriver default constructor
+	CPivotTableChangeList() {} // Calls COleDispatchDriver default constructor
 	CPivotTableChangeList(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotTableChangeList(const CPivotTableChangeList& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotTableChangeList methods
 public:
@@ -42,7 +41,7 @@ public:
 	LPDISPATCH get__Default(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -55,7 +54,7 @@ public:
 	LPDISPATCH get_Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -68,12 +67,11 @@ public:
 	LPDISPATCH Add(LPCTSTR Tuple, double Value, VARIANT& AllocationValue, VARIANT& AllocationMethod, VARIANT& AllocationWeightExpression)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_BSTR VTS_R8 VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_R8 VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0xb5, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, Tuple, Value, &AllocationValue, &AllocationMethod, &AllocationWeightExpression);
 		return result;
 	}
 
 	// PivotTableChangeList properties
 public:
-
 };

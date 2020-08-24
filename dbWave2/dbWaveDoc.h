@@ -15,20 +15,20 @@ protected: // create from serialization only
 	CdbWaveDoc();
 	DECLARE_DYNCREATE(CdbWaveDoc)
 
-// Attributes
+	// Attributes
 public:
-	CAcqDataDoc*	m_pDat;
-	CSpikeDoc*		m_pSpk;
+	CAcqDataDoc* m_pDat;
+	CSpikeDoc* m_pSpk;
 	HMENU			m_hMyMenu;
 	CIntervalsAndLevels m_stimsaved;
-	
+
 	// database
-	CdbWdatabase*	m_pDB;
+	CdbWdatabase* m_pDB;
 	BOOL			m_validTables;
 	CDWordArray		m_selectedRecords;
 	CString			m_dbFilename;
 	CString			m_ProposedDataPathName;
-	
+
 protected:
 	CString			m_currentDatafileName;
 	CString			m_currentSpikefileName;
@@ -39,17 +39,17 @@ protected:
 	BOOL			m_bClearMdbOnExit;
 	BOOL			m_bTranspose;
 
-// Operations
+	// Operations
 public:
-	void			ImportDescFromFileList(CStringArray& filename, BOOL bOnlygenuine=FALSE);
+	void			ImportDescFromFileList(CStringArray& filename, BOOL bOnlygenuine = FALSE);
 	BOOL			IsDatFile(CString csFilename) const;
-	inline BOOL		IsFilePresent(CString csFilename) {CFileStatus r_status; return CFile::GetStatus(csFilename, r_status);}
-	CWaveFormat*	GetWaveFormat(CString filename, BOOL bIsDatFile);
+	inline BOOL		IsFilePresent(CString csFilename) { CFileStatus r_status; return CFile::GetStatus(csFilename, r_status); }
+	CWaveFormat* GetWaveFormat(CString filename, BOOL bIsDatFile);
 	BOOL			ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
-	BOOL			ImportDatabase (CString &filename);
+	BOOL			ImportDatabase(CString& filename);
 	BOOL			OnNewDocument(LPCTSTR lpszPathName);
-	CAcqDataDoc*	OpenCurrentDataFile();
-	CSpikeDoc*		OpenCurrentSpikeFile();
+	CAcqDataDoc* OpenCurrentDataFile();
+	CSpikeDoc* OpenCurrentSpikeFile();
 
 	void			RemoveDuplicateFiles();
 	void			RemoveMissingFiles();
@@ -63,40 +63,40 @@ public:
 	void			GetAllSpkMaxMin(BOOL bAll, BOOL bRecalc, int* max, int* min);
 	CSize			GetSpkMaxMin_y1(BOOL bAll);
 
-	int		GetcurrentSpkListIndex() const {return m_icurSpkList;}
-	void	SetcurrentSpkListIndex(int icur) {m_icurSpkList = icur;}
-	int		GetcurrentSpkListSize() const {return m_pSpk->GetSpkListSize();}
+	int		GetcurrentSpkListIndex() const { return m_icurSpkList; }
+	void	SetcurrentSpkListIndex(int icur) { m_icurSpkList = icur; }
+	int		GetcurrentSpkListSize() const { return m_pSpk->GetSpkListSize(); }
 	CSpikeDoc* GetcurrentSpkDocument() const { return m_pSpk; }
 
-	inline void		SetClearMdbOnExit(BOOL bClear) {m_bClearMdbOnExit = bClear;}
-	
+	inline void		SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
+
 	void			ExportDataAsciiComments(CSharedFile* pSF); //, OPTIONS_VIEWDATA* pVD);
 	void			ExportNumberofSpikes(CSharedFile* pSF);
 	CString			ExportDatabaseData(int ioption = 0);
 	void			ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass);
 	void			SynchronizeSourceInfos(BOOL bAll);
-	BOOL			UpdateWaveFmtFromDatabase (CWaveFormat* p_wave_format) const;
+	BOOL			UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 
-	void			ExportDatafilesAsTXTfiles	();
-	BOOL			CopyAllFilesintoDirectory	(const CString& path);
-	bool			BinaryFileCopy				(LPCTSTR pszSource, LPCTSTR pszDest);
-	BOOL			CreateDirectories			(CString path);
+	void			ExportDatafilesAsTXTfiles();
+	BOOL			CopyAllFilesintoDirectory(const CString& path);
+	bool			BinaryFileCopy(LPCTSTR pszSource, LPCTSTR pszDest);
+	BOOL			CreateDirectories(CString path);
 
 protected:
 	BOOL			TransposeFileForExcel(CSharedFile* pSF);
-	int				CheckifFilesCanbeOpened (CStringArray& filenames, CSharedFile* psf);
+	int				CheckifFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf);
 
-// Overrides
+	// Overrides
 public:
 	void Serialize(CArchive& ar) override;
-	
+
 	virtual BOOL	OnNewDocument();
 	virtual BOOL	OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL	OnSaveDocument(LPCTSTR lpszPathName);
 	virtual HMENU	GetDefaultMenu(); // get menu depending on state
 	void			UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint);
 
-// Implementation
+	// Implementation
 public:
 	virtual			~CdbWaveDoc();
 #ifdef _DEBUG
@@ -104,11 +104,11 @@ public:
 	virtual void	Dump(CDumpContext& dc) const;
 #endif
 
-// DAO database functions
+	// DAO database functions
 public:
-	inline long DBGetNRecords()						{ return m_pDB->GetNRecords(); }
-	inline CDaoRecordset* DBGetRecordset()			{ return &m_pDB->m_mainTableSet; }
-	inline void DBRefreshQuery()					{ if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery();}
+	inline long DBGetNRecords() { return m_pDB->GetNRecords(); }
+	inline CDaoRecordset* DBGetRecordset() { return &m_pDB->m_mainTableSet; }
+	inline void DBRefreshQuery() { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery(); }
 	void		DBDeleteCurrentRecord();
 	CString		DBGetCurrentDatFileName(const BOOL bTest = FALSE);
 	CString		DBGetCurrentSpkFileName(const BOOL bTest = FALSE);
@@ -125,17 +125,16 @@ public:
 	long		DBGetCurrentRecordPosition();
 	long		DBGetCurrentRecordID();
 	inline BOOL	DBSetCurrentRecordPosition(long ifile) { return m_pDB->SetIndexCurrentFile(ifile); }
-	inline BOOL	DBMoveToID(long recordID)	{ return m_pDB->MoveToID(recordID); }
-	inline BOOL DBMoveFirst()				{ return m_pDB->MoveRecord(ID_RECORD_FIRST); }
-	inline BOOL DBMoveNext()				{ return m_pDB->MoveRecord(ID_RECORD_NEXT); }
-	inline BOOL DBMovePrev()				{ return m_pDB->MoveRecord(ID_RECORD_PREV); }
-	inline BOOL DBMoveLast()				{ return m_pDB->MoveRecord(ID_RECORD_LAST); }
+	inline BOOL	DBMoveToID(long recordID) { return m_pDB->MoveToID(recordID); }
+	inline BOOL DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
+	inline BOOL DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
+	inline BOOL DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
+	inline BOOL DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
 
 protected:
-	BOOL		OpenDatabase (LPCTSTR lpszPathName);
+	BOOL		OpenDatabase(LPCTSTR lpszPathName);
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
 };
-

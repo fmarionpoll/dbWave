@@ -8,7 +8,7 @@
 class CPivotFilter : public COleDispatchDriver
 {
 public:
-	CPivotFilter(){} // Calls COleDispatchDriver default constructor
+	CPivotFilter() {} // Calls COleDispatchDriver default constructor
 	CPivotFilter(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotFilter(const CPivotFilter& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotFilter methods
 public:
@@ -47,7 +46,7 @@ public:
 	}
 	void put_Order(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0xc0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_FilterType()
@@ -123,5 +122,4 @@ public:
 
 	// PivotFilter properties
 public:
-
 };

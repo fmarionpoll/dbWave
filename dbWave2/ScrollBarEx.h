@@ -1,6 +1,5 @@
 #pragma once
 
-
 // CScrollBarEx
 
 class CScrollBarEx : public CScrollBar
@@ -10,11 +9,11 @@ class CScrollBarEx : public CScrollBar
 public:
 	CScrollBarEx();
 	virtual ~CScrollBarEx();
-	inline int GetScrollHeight(){return (m_scBarInfo.rcScrollBar.bottom - m_scBarInfo.rcScrollBar.top +1);}
-	inline int GetScrollWidth() {return (m_scBarInfo.rcScrollBar.right - m_scBarInfo.rcScrollBar.left +1);}
-	inline int GetThumbSize()	{return m_scBarInfo.dxyLineButton;}
-	inline int GetThumbBottom() {return m_scBarInfo.xyThumbBottom;}
-	inline int GetThumbTop()	{return m_scBarInfo.xyThumbTop;}
+	inline int GetScrollHeight() { return (m_scBarInfo.rcScrollBar.bottom - m_scBarInfo.rcScrollBar.top + 1); }
+	inline int GetScrollWidth() { return (m_scBarInfo.rcScrollBar.right - m_scBarInfo.rcScrollBar.left + 1); }
+	inline int GetThumbSize() { return m_scBarInfo.dxyLineButton; }
+	inline int GetThumbBottom() { return m_scBarInfo.xyThumbBottom; }
+	inline int GetThumbTop() { return m_scBarInfo.xyThumbTop; }
 
 private:
 	BOOL			m_bCaptured;
@@ -30,5 +29,3 @@ public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };
-
-

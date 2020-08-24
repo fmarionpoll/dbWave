@@ -30,14 +30,11 @@ void CFileNew1::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST, m_list);
 }
 
-
 BEGIN_MESSAGE_MAP(CFileNew1, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CFileNew1::OnBnClickedOk)
 END_MESSAGE_MAP()
 
-
 // CFileNew1 message handlers
-
 
 BOOL CFileNew1::OnInitDialog()
 {
@@ -51,7 +48,6 @@ BOOL CFileNew1::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 void CFileNew1::OnBnClickedOk()
 {

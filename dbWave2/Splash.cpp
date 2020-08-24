@@ -3,8 +3,8 @@
 //
 
 #include "StdAfx.h"
-#include "resource.h" 
-#include "Splash.h" 
+#include "resource.h"
+#include "Splash.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -55,13 +55,13 @@ BOOL CSplashWnd::PreTranslateAppMessage(MSG* pMsg)
 
 	// If we get a keyboard or mouse message, hide the splash screen.
 	if (pMsg->message == WM_KEYDOWN ||
-	    pMsg->message == WM_SYSKEYDOWN ||
-	    pMsg->message == WM_LBUTTONDOWN ||
-	    pMsg->message == WM_RBUTTONDOWN ||
-	    pMsg->message == WM_MBUTTONDOWN ||
-	    pMsg->message == WM_NCLBUTTONDOWN ||
-	    pMsg->message == WM_NCRBUTTONDOWN ||
-	    pMsg->message == WM_NCMBUTTONDOWN)
+		pMsg->message == WM_SYSKEYDOWN ||
+		pMsg->message == WM_LBUTTONDOWN ||
+		pMsg->message == WM_RBUTTONDOWN ||
+		pMsg->message == WM_MBUTTONDOWN ||
+		pMsg->message == WM_NCLBUTTONDOWN ||
+		pMsg->message == WM_NCRBUTTONDOWN ||
+		pMsg->message == WM_NCMBUTTONDOWN)
 	{
 		m_pSplashWnd->HideSplashScreen();
 		return TRUE;	// message handled here

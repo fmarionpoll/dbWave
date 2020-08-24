@@ -8,7 +8,7 @@
 class CPivotItems : public COleDispatchDriver
 {
 public:
-	CPivotItems(){} // Calls COleDispatchDriver default constructor
+	CPivotItems() {} // Calls COleDispatchDriver default constructor
 	CPivotItems(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotItems(const CPivotItems& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotItems methods
 public:
@@ -41,7 +40,7 @@ public:
 	}
 	void Add(LPCTSTR Name)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0xb5, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Name);
 	}
 	long get_Count()
@@ -53,7 +52,7 @@ public:
 	LPDISPATCH Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -66,5 +65,4 @@ public:
 
 	// PivotItems properties
 public:
-
 };

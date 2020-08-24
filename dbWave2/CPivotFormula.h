@@ -8,7 +8,7 @@
 class CPivotFormula : public COleDispatchDriver
 {
 public:
-	CPivotFormula(){} // Calls COleDispatchDriver default constructor
+	CPivotFormula() {} // Calls COleDispatchDriver default constructor
 	CPivotFormula(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotFormula(const CPivotFormula& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotFormula methods
 public:
@@ -51,7 +50,7 @@ public:
 	}
 	void put__Default(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x0, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_Formula()
@@ -62,7 +61,7 @@ public:
 	}
 	void put_Formula(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x105, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_Value()
@@ -73,7 +72,7 @@ public:
 	}
 	void put_Value(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	long get_Index()
@@ -84,7 +83,7 @@ public:
 	}
 	void put_Index(long newValue)
 	{
-		static BYTE parms[] = VTS_I4 ;
+		static BYTE parms[] = VTS_I4;
 		InvokeHelper(0x1e6, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 	CString get_StandardFormula()
@@ -95,11 +94,10 @@ public:
 	}
 	void put_StandardFormula(LPCTSTR newValue)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x824, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
 	}
 
 	// PivotFormula properties
 public:
-
 };

@@ -14,12 +14,12 @@ class CWaveBuf : public CObject
 	DECLARE_SERIAL(CWaveBuf);
 	friend class CAcqDataDoc;
 
-// Attributes
+	// Attributes
 protected:
-	short*	GetWBAdrRawDataBuf() const;
-	short*  GetWBAdrRawDataElmt(int chan, int index) const;
-	short*	GetWBAdrTransfData() const;
-	short*	GetWBAdrTransfDataElmt(int index) const;
+	short* GetWBAdrRawDataBuf() const;
+	short* GetWBAdrRawDataElmt(int chan, int index) const;
+	short* GetWBAdrTransfData() const;
+	short* GetWBAdrTransfDataElmt(int index) const;
 public:
 	int		GetWBNumElements() const;
 	int		GetWBNumChannels() const;
@@ -27,14 +27,14 @@ public:
 	float	GetWBSampleRate() const;
 	BOOL 	GetWBVoltsperBin(int ch_index, float* volts_per_bin, int mode = 0) const;
 
-//operations
+	//operations
 	CWaveBuf();
 	virtual ~CWaveBuf();
-	void Serialize( CArchive& ar) override;
+	void Serialize(CArchive& ar) override;
 	int		WBDatachanSetnum(int i);
 
 	// Transform Data
-	//------------	
+	//------------
 	static CString GetWBTransformsAllowed(int i);
 	static BOOL 	IsWBTransformAllowed(int i);
 	static WORD 	GetWBNTypesofTransforms();
@@ -42,37 +42,37 @@ public:
 	static int		GetWBTransformSpan(int i);
 	static int		IsWBSpanChangeAllowed(int i);
 	static int		SetWBTransformSpan(int i, int span);
-	static int		GetWBcorrectionFactor(int i, float *correct);
+	static int		GetWBcorrectionFactor(int i, float* correct);
 
 	// Transformations
 	//----------------
-	void 	BDeriv   (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BCopy    (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BLanczo2 (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDiffer1 (const short* lp_source, short* lp_dest, int cx) const;	
-	void 	BDiffer2 (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDiffer3 (const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDeriv(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BCopy(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BLanczo2(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDiffer1(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDiffer2(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDiffer3(const short* lp_source, short* lp_dest, int cx) const;
 	void 	BDiffer10(const short* lp_source, short* lp_dest, int cx) const;
-	
-	void 	BLanczo3 (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri1f3 (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri2f3 (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri2f5 (const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri3f3 (const short* lp_source, short* lp_dest, int cx) const;
+
+	void 	BLanczo3(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDeri1f3(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDeri2f3(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDeri2f5(const short* lp_source, short* lp_dest, int cx) const;
+	void 	BDeri3f3(const short* lp_source, short* lp_dest, int cx) const;
 	void 	BMovAvg30(short* lp_source, short* lp_dest, int cx) const;
 	void	BMedian30(short* lp_source, short* lp_dest, int cx);
 	void	BMedian35(short* lp_source, short* lp_dest, int cx);
-	void	BMedian  (short* lp_source, short* lp_dest, int cx, int nspan);
-	void	BRMS     (short* lp_source, short* lp_dest, int cx) const;
+	void	BMedian(short* lp_source, short* lp_dest, int cx, int nspan);
+	void	BRMS(short* lp_source, short* lp_dest, int cx) const;
 
-private:    
+private:
 	void DeleteBuffers();
 
 	// data
 	//-----
 
-protected:	
-	BOOL	CreateWBuffer(int i_num_elements, int nchannels=1);
+protected:
+	BOOL	CreateWBuffer(int i_num_elements, int nchannels = 1);
 	CWaveChanArray m_chanArray;				// array of structures with the channel description
 	CWaveFormat    m_waveFormat;			// structure with data acquisition def & parameters
 
@@ -83,15 +83,14 @@ protected:
 	static int		m_bvariableSpan[];		// flag to tell if the sliding window size can be changed
 
 private:
-	short*	m_pWData;						// Pointer to the origin of the primary data array
-	short*	m_pWTransf;						// primary transform buffer
+	short* m_pWData;						// Pointer to the origin of the primary data array
+	short* m_pWTransf;						// primary transform buffer
 
 	BOOL	m_bTransf;
 	WORD	m_wversion;
 	int		m_iNumElements;					// n elements within buffer
 	size_t	m_dwBufferSize;
-	short*	m_parraySorted;					// array used by BMedian to store a sorted array of data
-	short*	m_parrayCircular;				// array used by BMedian to store a sliding window array of data
+	short* m_parraySorted;					// array used by BMedian to store a sorted array of data
+	short* m_parrayCircular;				// array used by BMedian to store a sliding window array of data
 	int		m_parray_size;
 };
-

@@ -4,7 +4,6 @@
 #include "dbMainTable.h"
 #include "dbIndexTable.h"
 
-
 #define REC_ALL		0
 #define REC_CURRENT	1
 #define REC_SELECTED 2
@@ -26,7 +25,7 @@ public:
 	CdbEditFieldDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CdbEditFieldDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_DBEDITRECORDFIELD };
 
 protected:
@@ -56,12 +55,12 @@ public:
 
 	//////////////////////////////////
 	// parameters passed
-	CdbMainTable*	m_pMainTable{};		// address of main table
+	CdbMainTable* m_pMainTable{};		// address of main table
 	CString			m_csColName;		// name of the column
-	CdbIndexTable*	m_pIndexTable{};		// address secondary table
-	CArray<long, long>*	 m_pliIDArray{};		// address uiArray storing IDs
+	CdbIndexTable* m_pIndexTable{};		// address secondary table
+	CArray<long, long>* m_pliIDArray{};		// address uiArray storing IDs
 	BOOL			m_bIndexTable;		// TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
-	CdbWaveDoc*		m_pdbDoc{};
+	CdbWaveDoc* m_pdbDoc{};
 	/////////////////////////////////
 
 	afx_msg void OnBnClickedRadio1();

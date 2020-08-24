@@ -63,4 +63,3 @@ void CPrintDrawAreaDlg::OnOK()
 	mdPM->bFilterDataSource = m_bFilterDat;
 	CDialog::OnOK();
 }
-

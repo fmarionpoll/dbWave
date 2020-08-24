@@ -1,4 +1,3 @@
-
 #pragma once
 
 // dbInsectTable.h : header file
@@ -12,18 +11,18 @@ public:
 	CdbIndexTable(CDaoDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CdbIndexTable)
 
-// Field/Param Data
+	// Field/Param Data
 	CString	m_cs;
 	long	m_ID;
-	
+
 	CString	m_defaultSQL;
 	CString m_DFX_cs;
 	CString	m_DFX_ID;
 
-// temp value
+	// temp value
 	CString	m_defaultName;
 
-// Overrides
+	// Overrides
 public:
 	virtual CString GetDefaultDBName();						// Default database name
 	virtual CString GetDefaultSQL();						// Default SQL for Recordset
@@ -31,15 +30,15 @@ public:
 
 	// operations
 	void	SetNames(CString csdefaultSQL, CString DFX_cs, CString DFX_ID);
-	long	GetIDorCreateIDforString (const CString& cs);
-	BOOL	GetIDFromString (CString cs, long& iID);
+	long	GetIDorCreateIDforString(const CString& cs);
+	BOOL	GetIDFromString(CString cs, long& iID);
 	BOOL	SeekID(long iID);
-	CString GetStringFromID (long iID);
+	CString GetStringFromID(long iID);
 	void	CreateIndextable(const CString& cstable, const CString& cs, const CString& csID, int textSize, CDaoDatabase* p_database);
 	int		AddStringsFromCombo(CComboBox* pcombo);
 	int		RemoveStringsNotInCombo(CComboBox* pcombo);
 
-// Implementation
+	// Implementation
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;

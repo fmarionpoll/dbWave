@@ -4,7 +4,7 @@
 // characters from the keyboard and store them as text within the window.
 //
 // CEditCtrl is used to subclass edit controls and check the incoming keys
-// when the user press CR, the field is considered as validated and 
+// when the user press CR, the field is considered as validated and
 // a message is sent to the parent to signal that.
 //
 // in addition CEditCtrl traps up/down arrow keys and signals it to the parent
@@ -29,7 +29,7 @@
 // control and take action oly when m_bEntryDone is TRUE. It is to the responsablility
 // of this parent to reset m_bEntryDone to FALSE when input is processed so that a new
 // value can be validated.
-// 
+//
 
 #include "StdAfx.h"
 #include "Editctrl.h"
@@ -43,8 +43,8 @@
 
 CEditCtrl::CEditCtrl()
 {
-	m_bEntryDone = FALSE;	
-	m_nChar=0;	
+	m_bEntryDone = FALSE;
+	m_nChar = 0;
 }
 
 CEditCtrl::~CEditCtrl()
@@ -57,9 +57,8 @@ BEGIN_MESSAGE_MAP(CEditCtrl, CWnd)
 	ON_WM_CHAR()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_WM_VSCROLL()	
+	ON_WM_VSCROLL()
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CEditCtrl message handlers
@@ -74,13 +73,13 @@ void CEditCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	// VK_SPACE (20), _PRIOR, _NEXT, _END, _HOME, _LEFT, _UP, _RIGHT, _DOWN, _SELECT(28)
 	if (nChar > VK_SPACE && nChar < VK_SELECT)
 		ProcessKeys(nChar);
-	else		
+	else
 		CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 //--------------------------------------------------------------------------
 void CEditCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (!ProcessKeys(nChar))		
+	if (!ProcessKeys(nChar))
 		CEdit::OnChar(nChar, nRepCnt, nFlags);
 }
 
@@ -95,23 +94,23 @@ void CEditCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 BOOL CEditCtrl::ProcessKeys(UINT nChar)
 {
 	switch (nChar)
-	{		
+	{
 	case VK_TAB:					// change selection with TAB
-		{
-			const auto b_next = (GetKeyState(VK_SHIFT) & 0x8000);
-			const auto h_next = ::GetNextDlgGroupItem(::GetParent(m_hWnd), m_hWnd, b_next);
-			::SetFocus(h_next);			// select next dlg item
-		}
-		break;
+	{
+		const auto b_next = (GetKeyState(VK_SHIFT) & 0x8000);
+		const auto h_next = ::GetNextDlgGroupItem(::GetParent(m_hWnd), m_hWnd, b_next);
+		::SetFocus(h_next);			// select next dlg item
+	}
+	break;
 
 	case VK_RETURN:		// post message to parent
 	case VK_UP:			// arrow up
 	case VK_DOWN:		// arrow down
 	case VK_PRIOR:		// page up
 	case VK_NEXT:		// page down
-		m_bEntryDone=TRUE;
-		m_nChar=nChar;
-		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE),reinterpret_cast<LPARAM>(m_hWnd));
+		m_bEntryDone = TRUE;
+		m_nChar = nChar;
+		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
 		break;
 
 	default:
@@ -132,8 +131,8 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 //--------------------------------------------------------------------------
 void CEditCtrl::OnSetFocus(CWnd* pOldWnd)
 {
-	CWnd::OnSetFocus(pOldWnd);	
-	SetSel(0, -1);	
+	CWnd::OnSetFocus(pOldWnd);
+	SetSel(0, -1);
 }
 
 // force validation if m_bEntry=FALSE (entry not processed)
@@ -143,12 +142,12 @@ void CEditCtrl::OnKillFocus(CWnd* pNewWnd)
 	{
 		m_bEntryDone = TRUE;
 		m_nChar = VK_RETURN;
-		GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), EN_CHANGE),reinterpret_cast<LPARAM>(m_hWnd));
+		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
 	}
-	CWnd::OnKillFocus(pNewWnd);	
+	CWnd::OnKillFocus(pNewWnd);
 }
 
-void CEditCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CEditCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (nSBCode == SB_LINEDOWN)
 		m_nChar = VK_DOWN;
@@ -156,7 +155,6 @@ void CEditCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_nChar = VK_UP;
 	else
 		return; // nothing special
-	m_bEntryDone=TRUE;
-	GetParent()->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(), EN_CHANGE),reinterpret_cast<LPARAM>(m_hWnd));
+	m_bEntryDone = TRUE;
+	GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
 }
-

@@ -13,7 +13,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CListBClaSizeDlg dialog
 
-
 CListBClaSizeDlg::CListBClaSizeDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CListBClaSizeDlg::IDD, pParent)
 {
@@ -22,7 +21,6 @@ CListBClaSizeDlg::CListBClaSizeDlg(CWnd* pParent /*=NULL*/)
 	m_textcol = 0;
 	m_intercolspace = 0;
 }
-
 
 void CListBClaSizeDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -34,10 +32,8 @@ void CListBClaSizeDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CListBClaSizeDlg, CDialog)
-	
-END_MESSAGE_MAP()
 
+END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CListBClaSizeDlg message handlers
-

@@ -33,13 +33,12 @@ protected:
 	int  	m_binsize{};			// size of one bin
 	int 	m_abcissaminval;	// minimum value from which histogram is built (abcissa)
 	int 	m_abcissamaxval;	// maximum value (abcissa max)
-	int  	m_nbins;			// n bins within histogram    
+	int  	m_nbins;			// n bins within histogram
 
-	DWORD 	m_lmax;				// value max   	
+	DWORD 	m_lmax;				// value max
 	int  	m_imax{};				// index max
 	int  	m_ifirst{};			// index first interval with data
 	int  	m_ilast{};			// index last interval with data
-
 
 public:
 	void SetPlotMode(int mode, int selclass) { m_plotmode = mode; m_selclass = selclass; }
@@ -55,7 +54,7 @@ public:
 	int   GetHistMaxPos() const { return m_imax; }
 	DWORD GetHistMax() const { return m_lmax; }
 
-	void BuildHistFromDocument(CdbWaveDoc * p_document, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
 
 	void RemoveHistData();
 	LPTSTR ExportAscii(LPTSTR lp);					// export ascii data
@@ -71,8 +70,8 @@ protected:
 	void ReSize_And_Clear_Histograms(int nbins, int max, int min);
 	void GetHistogLimits(int ihist);
 	void GetClassArray(int iclass, CDWordArray*& pDW);
-	CDWordArray * InitClassArray(int nbins, int spike_class);
-	void BuildHistFromSpikeList(CSpikeList * p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+	CDWordArray* InitClassArray(int nbins, int spike_class);
+	void BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
 	void GetExtents();
 	void PlotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
 
@@ -85,4 +84,3 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
 };
-

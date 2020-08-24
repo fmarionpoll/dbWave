@@ -1,6 +1,5 @@
 #pragma once
 
-
 // CTransferFilesDlg dialog
 
 class CTransferFilesDlg : public CDialogEx
@@ -11,10 +10,8 @@ public:
 	CTransferFilesDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CTransferFilesDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_TRANSFERFILES };
-	
-	
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

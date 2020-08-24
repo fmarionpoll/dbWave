@@ -10,7 +10,7 @@ public:
 	CEditSpikeClassDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditSpikeClassDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_EDITSPIKECLASS };
 
 protected:

@@ -1,50 +1,65 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <HTML>
 <HEAD>
-<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
-<Title>Analog to digital conversion</Title>
+    <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+    <Title>Analog to digital conversion</Title>
 </HEAD>
 <BODY>
-<h1>Analog-to-digital conversion</h1>
-<p>In order to acquire data, you need a data acquisition card that converts 
-    electrical signals into numbers.</p>
+    <h1>Analog-to-digital conversion</h1>
+    <p>
+        In order to acquire data, you need a data acquisition card that converts
+        electrical signals into numbers.
+    </p>
 
-<p>dbWave is interfaced to Data Translation data acquisition cards through a generic driver 
-    from Data Translation called DTOpenLayer.</p>
-    <p>The driver is downloadable from DT website at
+    <p>
+        dbWave is interfaced to Data Translation data acquisition cards through a generic driver
+        from Data Translation called DTOpenLayer.
+    </p>
+    <p>
+        The driver is downloadable from DT website at
         <a href="http://www.datatranslation.com/cd/omni/">
-        http://www.datatranslation.com/cd/omni/</a></p>
-    <p>Basically, the driver is generic and provides the same program interface to a 
-        program, which means that you can use dbWave with a whole line of data 
-        acquisition cards. In our laboratory, we currently use USB cards called 
-        multifunction cards of the DT9800 family.</p>
+            http://www.datatranslation.com/cd/omni/
+        </a>
+    </p>
+    <p>
+        Basically, the driver is generic and provides the same program interface to a
+        program, which means that you can use dbWave with a whole line of data
+        acquisition cards. In our laboratory, we currently use USB cards called
+        multifunction cards of the DT9800 family.
+    </p>
     <p>When you acquire data, you need to pay attention to 3 parameters:</p>
     <ul>
-        <li><strong>How fast you sample your data</strong>. This is called the sampling 
-            rate. Ideally, the sampling rate should be at least 2 x as fast as the highest 
-            frequency of your signal (theorem of Shannon). Usually, we sample the signal at 
-            10 kHz. If you don&#39;t sample fast enough, you may see phantom frequencies in your 
-            signal (due to undersampling). This also mean that even if you are not 
-            interested in very high frequencies, if your source signal contains high 
-            frequencies, you need to filter them using an analog filter before sampling them 
-            with your A/D card. In practice, we filter the incoming data with a 3 kHz 
-            filter.</li>
-        <li><strong>How sensitive your data scale is</strong>. This is related to the fact 
-            that the electrical signal is converted into a number which usually is an 
-            integer. This means that if you data acquisition card has a 12 bits resolution, 
-            data are encoded between 0 and 4095. If you are using a 16 bits card, data are 
-            encoded between 0 and 65535. Since extracellular recorded spikes in insects are 
-            typically in the range of 100 µV to 10 mV, we have to amplify the signal before 
-            making the conversion, and store along the factor of conversion to be able to 
-            convert these numbers back to a a voltage amplitude.</li>
-        <li><strong>How many channels you want to monitor</strong>. DT9800 cards typically 
-            monitor up to 16 channels which are sampled either sequentially or 
-            simultaneously. As the sampling frequency is usually given by a clock located on 
-            the A/D card, this may reduce the sampling per channel. Typically, we record 1 
-            to 3 channels simultaneously so that it is not a problem for our application. As 
-            the data are stored sequentially, generally,&nbsp; the data files contain data 
-            which are interleaved: t1: chan1, chan2, chan3, ...; t2: chan1, chan2, chan3, 
-            ..; etc. </li>
+        <li>
+            <strong>How fast you sample your data</strong>. This is called the sampling
+            rate. Ideally, the sampling rate should be at least 2 x as fast as the highest
+            frequency of your signal (theorem of Shannon). Usually, we sample the signal at
+            10 kHz. If you don&#39;t sample fast enough, you may see phantom frequencies in your
+            signal (due to undersampling). This also mean that even if you are not
+            interested in very high frequencies, if your source signal contains high
+            frequencies, you need to filter them using an analog filter before sampling them
+            with your A/D card. In practice, we filter the incoming data with a 3 kHz
+            filter.
+        </li>
+        <li>
+            <strong>How sensitive your data scale is</strong>. This is related to the fact
+            that the electrical signal is converted into a number which usually is an
+            integer. This means that if you data acquisition card has a 12 bits resolution,
+            data are encoded between 0 and 4095. If you are using a 16 bits card, data are
+            encoded between 0 and 65535. Since extracellular recorded spikes in insects are
+            typically in the range of 100 µV to 10 mV, we have to amplify the signal before
+            making the conversion, and store along the factor of conversion to be able to
+            convert these numbers back to a a voltage amplitude.
+        </li>
+        <li>
+            <strong>How many channels you want to monitor</strong>. DT9800 cards typically
+            monitor up to 16 channels which are sampled either sequentially or
+            simultaneously. As the sampling frequency is usually given by a clock located on
+            the A/D card, this may reduce the sampling per channel. Typically, we record 1
+            to 3 channels simultaneously so that it is not a problem for our application. As
+            the data are stored sequentially, generally,&nbsp; the data files contain data
+            which are interleaved: t1: chan1, chan2, chan3, ...; t2: chan1, chan2, chan3,
+            ..; etc.
+        </li>
     </ul>
 </BODY>
 </HTML>

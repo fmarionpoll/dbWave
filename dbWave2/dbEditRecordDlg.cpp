@@ -22,9 +22,9 @@
 IMPLEMENT_DYNAMIC(CdbEditRecordDlg, CDialog)
 CdbEditRecordDlg::CdbEditRecordDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CdbEditRecordDlg::IDD, pParent)
-	  , m_pSet(nullptr), m_cs_more(_T(""))
-	  , m_csnameDat(_T(""))
-	  , m_csnameSpk(_T(""))
+	, m_pSet(nullptr), m_cs_more(_T(""))
+	, m_csnameDat(_T(""))
+	, m_csnameSpk(_T(""))
 {
 	//m_pDaoView = NULL;
 	m_bshowIDC_NEXT = TRUE;
@@ -40,53 +40,53 @@ CdbEditRecordDlg::~CdbEditRecordDlg()
 void CdbEditRecordDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMBO_EXPT2,			m_ctlexpt);
-	DDX_Control(pDX, IDC_COMBO_INSECTID,		m_ctlinsectID);
-	DDX_Control(pDX, IDC_COMBO_SENSILLUMID,		m_ctlSensillumID);
-	DDX_Control(pDX, IDC_COMBO_REPEATT,			m_ctlrepeat);
-	DDX_Control(pDX, IDC_COMBO_REPEATT2,		m_ctlrepeat2);
-	DDX_Control(pDX, IDC_COMBO_STIMULUS,		m_ctlstim);
-	DDX_Control(pDX, IDC_COMBO_CONCENTRATION,	m_ctlconc);
-	DDX_Control(pDX, IDC_COMBO_STIMULUS2,		m_ctlstim2);
-	DDX_Control(pDX, IDC_COMBO_CONCENTRATION2,	m_ctlconc2);
-	DDX_Control(pDX, IDC_COMBO_INSECTNAME,		m_ctlinsect);
-	DDX_Control(pDX, IDC_COMBO_SENSILLUMNAME,	m_ctlsensillum);
-	DDX_Control(pDX, IDC_COMBO_LOCATION,		m_ctllocation);
-	DDX_Control(pDX, IDC_COMBO_OPERATOR,		m_ctlOperator);
-	DDX_Control(pDX, IDC_COMBO_STRAIN,			m_ctlstrain);
-	DDX_Control(pDX, IDC_COMBO_SEX,				m_ctlsex);
-	DDX_Control(pDX, IDC_COMBO_PATHDAT,			m_ctlpathdat);
-	DDX_Control(pDX, IDC_COMBO_PATHSPK,			m_ctlpathspk);
-	DDX_Control(pDX, IDC_COMBO_FLAG,			m_ctlflag);
+	DDX_Control(pDX, IDC_COMBO_EXPT2, m_ctlexpt);
+	DDX_Control(pDX, IDC_COMBO_INSECTID, m_ctlinsectID);
+	DDX_Control(pDX, IDC_COMBO_SENSILLUMID, m_ctlSensillumID);
+	DDX_Control(pDX, IDC_COMBO_REPEATT, m_ctlrepeat);
+	DDX_Control(pDX, IDC_COMBO_REPEATT2, m_ctlrepeat2);
+	DDX_Control(pDX, IDC_COMBO_STIMULUS, m_ctlstim);
+	DDX_Control(pDX, IDC_COMBO_CONCENTRATION, m_ctlconc);
+	DDX_Control(pDX, IDC_COMBO_STIMULUS2, m_ctlstim2);
+	DDX_Control(pDX, IDC_COMBO_CONCENTRATION2, m_ctlconc2);
+	DDX_Control(pDX, IDC_COMBO_INSECTNAME, m_ctlinsect);
+	DDX_Control(pDX, IDC_COMBO_SENSILLUMNAME, m_ctlsensillum);
+	DDX_Control(pDX, IDC_COMBO_LOCATION, m_ctllocation);
+	DDX_Control(pDX, IDC_COMBO_OPERATOR, m_ctlOperator);
+	DDX_Control(pDX, IDC_COMBO_STRAIN, m_ctlstrain);
+	DDX_Control(pDX, IDC_COMBO_SEX, m_ctlsex);
+	DDX_Control(pDX, IDC_COMBO_PATHDAT, m_ctlpathdat);
+	DDX_Control(pDX, IDC_COMBO_PATHSPK, m_ctlpathspk);
+	DDX_Control(pDX, IDC_COMBO_FLAG, m_ctlflag);
 
-	DDX_Text(pDX, IDC_EDIT_COMMENT,				m_cs_more);
-	DDX_Text(pDX, IDC_EDIT_NAMEDAT,				m_csnameDat);
-	DDX_Text(pDX, IDC_EDIT_NAMESPK,				m_csnameSpk);	
+	DDX_Text(pDX, IDC_EDIT_COMMENT, m_cs_more);
+	DDX_Text(pDX, IDC_EDIT_NAMEDAT, m_csnameDat);
+	DDX_Text(pDX, IDC_EDIT_NAMESPK, m_csnameSpk);
 }
 
 BEGIN_MESSAGE_MAP(CdbEditRecordDlg, CDialog)
-	ON_BN_CLICKED(IDC_BUTTONINSECTID,		&CdbEditRecordDlg::OnBnClickedButtoninsectid)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUMID,	&CdbEditRecordDlg::OnBnClickedButtonsensillumid)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS,		&CdbEditRecordDlg::OnBnClickedButtonstimulus)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION,	&CdbEditRecordDlg::OnBnClickedButtonconcentration)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2,		&CdbEditRecordDlg::OnBnClickedButtonstimulus2)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2,	&CdbEditRecordDlg::OnBnClickedButtonconcentration2)
-	ON_BN_CLICKED(IDC_BUTTONINSECTNAME,		&CdbEditRecordDlg::OnBnClickedButtoninsectname)
-	ON_BN_CLICKED(IDC_BUTTONSTRAIN,			&CdbEditRecordDlg::OnBnClickedButtonstrain)
-	ON_BN_CLICKED(IDC_BUTTONSEX,			&CdbEditRecordDlg::OnBnClickedButtonsex)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUM,		&CdbEditRecordDlg::OnBnClickedButtonsensillum)
-	ON_BN_CLICKED(IDC_BUTTONLOCATION,		&CdbEditRecordDlg::OnBnClickedButtonlocation)
-	ON_BN_CLICKED(IDC_BUTTONOPERATOR,		&CdbEditRecordDlg::OnBnClickedButtonoperator)
-	ON_BN_CLICKED(IDC_BUTTON5,				&CdbEditRecordDlg::OnBnClickedButton5)
-	ON_BN_CLICKED(IDC_BUTTON1,				&CdbEditRecordDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_SYNCHROSINGLE,		&CdbEditRecordDlg::OnBnClickedSynchrosingle)
-	ON_BN_CLICKED(IDC_SYNCHROALL,			&CdbEditRecordDlg::OnBnClickedSynchroall)
-	ON_BN_CLICKED(IDC_PREVIOUS,				&CdbEditRecordDlg::OnBnClickedPrevious)
-	ON_BN_CLICKED(IDC_NEXT,					&CdbEditRecordDlg::OnBnClickedNext)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT,			&CdbEditRecordDlg::OnBnClickedButtonrepeat)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT2,		&CdbEditRecordDlg::OnBnClickedButtonrepeat2)
-	ON_BN_CLICKED(IDC_BUTTONFLAG,			&CdbEditRecordDlg::OnBnClickedButtonflag)
-	ON_BN_CLICKED(IDC_BUTTONEXPT2,			&CdbEditRecordDlg::OnBnClickedButtonexpt2)
+	ON_BN_CLICKED(IDC_BUTTONINSECTID, &CdbEditRecordDlg::OnBnClickedButtoninsectid)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUMID, &CdbEditRecordDlg::OnBnClickedButtonsensillumid)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &CdbEditRecordDlg::OnBnClickedButtonstimulus)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &CdbEditRecordDlg::OnBnClickedButtonconcentration)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &CdbEditRecordDlg::OnBnClickedButtonstimulus2)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &CdbEditRecordDlg::OnBnClickedButtonconcentration2)
+	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &CdbEditRecordDlg::OnBnClickedButtoninsectname)
+	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &CdbEditRecordDlg::OnBnClickedButtonstrain)
+	ON_BN_CLICKED(IDC_BUTTONSEX, &CdbEditRecordDlg::OnBnClickedButtonsex)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &CdbEditRecordDlg::OnBnClickedButtonsensillum)
+	ON_BN_CLICKED(IDC_BUTTONLOCATION, &CdbEditRecordDlg::OnBnClickedButtonlocation)
+	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &CdbEditRecordDlg::OnBnClickedButtonoperator)
+	ON_BN_CLICKED(IDC_BUTTON5, &CdbEditRecordDlg::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON1, &CdbEditRecordDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_SYNCHROSINGLE, &CdbEditRecordDlg::OnBnClickedSynchrosingle)
+	ON_BN_CLICKED(IDC_SYNCHROALL, &CdbEditRecordDlg::OnBnClickedSynchroall)
+	ON_BN_CLICKED(IDC_PREVIOUS, &CdbEditRecordDlg::OnBnClickedPrevious)
+	ON_BN_CLICKED(IDC_NEXT, &CdbEditRecordDlg::OnBnClickedNext)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT, &CdbEditRecordDlg::OnBnClickedButtonrepeat)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &CdbEditRecordDlg::OnBnClickedButtonrepeat2)
+	ON_BN_CLICKED(IDC_BUTTONFLAG, &CdbEditRecordDlg::OnBnClickedButtonflag)
+	ON_BN_CLICKED(IDC_BUTTONEXPT2, &CdbEditRecordDlg::OnBnClickedButtonexpt2)
 END_MESSAGE_MAP()
 
 // CdbEditRecordDlg message handlers
@@ -106,25 +106,25 @@ void CdbEditRecordDlg::PopulateControls()
 {
 	auto p_db = m_pdbDoc->m_pDB;
 	// fill combo boxes associated with a secondary table
-	PopulateCombo_WithText(p_db->m_stimSet,		m_ctlstim,		m_pSet->m_stim_ID);
-	PopulateCombo_WithText(p_db->m_concSet,		m_ctlconc,		m_pSet->m_conc_ID);
-	PopulateCombo_WithText(p_db->m_stimSet,		m_ctlstim2,		m_pSet->m_stim2_ID);
-	PopulateCombo_WithText(p_db->m_concSet,		m_ctlconc2,		m_pSet->m_conc2_ID);
-	PopulateCombo_WithText(p_db->m_insectSet,	m_ctlinsect,	m_pSet->m_insect_ID);
-	PopulateCombo_WithText(p_db->m_strainSet,	m_ctlstrain,	m_pSet->m_strain_ID);
-	PopulateCombo_WithText(p_db->m_sexSet,		m_ctlsex,		m_pSet->m_sex_ID);
+	PopulateCombo_WithText(p_db->m_stimSet, m_ctlstim, m_pSet->m_stim_ID);
+	PopulateCombo_WithText(p_db->m_concSet, m_ctlconc, m_pSet->m_conc_ID);
+	PopulateCombo_WithText(p_db->m_stimSet, m_ctlstim2, m_pSet->m_stim2_ID);
+	PopulateCombo_WithText(p_db->m_concSet, m_ctlconc2, m_pSet->m_conc2_ID);
+	PopulateCombo_WithText(p_db->m_insectSet, m_ctlinsect, m_pSet->m_insect_ID);
+	PopulateCombo_WithText(p_db->m_strainSet, m_ctlstrain, m_pSet->m_strain_ID);
+	PopulateCombo_WithText(p_db->m_sexSet, m_ctlsex, m_pSet->m_sex_ID);
 	PopulateCombo_WithText(p_db->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
-	PopulateCombo_WithText(p_db->m_locationSet,	m_ctllocation,	m_pSet->m_location_ID);
-	PopulateCombo_WithText(p_db->m_operatorSet,	m_ctlOperator,	m_pSet->m_operator_ID);
-	PopulateCombo_WithText(p_db->m_pathSet,		m_ctlpathdat,	m_pSet->m_path_ID);
-	PopulateCombo_WithText(p_db->m_pathSet,		m_ctlpathspk,	m_pSet->m_path2_ID);
-	PopulateCombo_WithText(p_db->m_exptSet,		m_ctlexpt,		m_pSet->m_expt_ID);
+	PopulateCombo_WithText(p_db->m_locationSet, m_ctllocation, m_pSet->m_location_ID);
+	PopulateCombo_WithText(p_db->m_operatorSet, m_ctlOperator, m_pSet->m_operator_ID);
+	PopulateCombo_WithText(p_db->m_pathSet, m_ctlpathdat, m_pSet->m_path_ID);
+	PopulateCombo_WithText(p_db->m_pathSet, m_ctlpathspk, m_pSet->m_path2_ID);
+	PopulateCombo_WithText(p_db->m_exptSet, m_ctlexpt, m_pSet->m_expt_ID);
 	// ID combos
-	PopulateCombo_WithNumbers(m_ctlinsectID,	&m_pSet->m_desc[CH_IDINSECT].liArray,	m_pSet->m_IDinsect);
-	PopulateCombo_WithNumbers(m_ctlSensillumID,	&m_pSet->m_desc[CH_IDSENSILLUM].liArray,m_pSet->m_IDsensillum);
-	PopulateCombo_WithNumbers(m_ctlrepeat,		&m_pSet-> m_desc[CH_REPEAT].liArray,	m_pSet->m_repeat);
-	PopulateCombo_WithNumbers(m_ctlrepeat2,		&m_pSet->m_desc[CH_REPEAT2].liArray,	m_pSet->m_repeat2);
-	PopulateCombo_WithNumbers(m_ctlflag,		&m_pSet->m_desc[CH_FLAG].liArray,		m_pSet->m_flag);
+	PopulateCombo_WithNumbers(m_ctlinsectID, &m_pSet->m_desc[CH_IDINSECT].liArray, m_pSet->m_IDinsect);
+	PopulateCombo_WithNumbers(m_ctlSensillumID, &m_pSet->m_desc[CH_IDSENSILLUM].liArray, m_pSet->m_IDsensillum);
+	PopulateCombo_WithNumbers(m_ctlrepeat, &m_pSet->m_desc[CH_REPEAT].liArray, m_pSet->m_repeat);
+	PopulateCombo_WithNumbers(m_ctlrepeat2, &m_pSet->m_desc[CH_REPEAT2].liArray, m_pSet->m_repeat2);
+	PopulateCombo_WithNumbers(m_ctlflag, &m_pSet->m_desc[CH_FLAG].liArray, m_pSet->m_flag);
 
 	// fixed parameters
 	m_cs_more = m_pSet->m_more;
@@ -145,7 +145,7 @@ void CdbEditRecordDlg::PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, 
 
 	const auto array_size = pIDarray->GetSize();
 	auto isel = 0;
-	for (auto i=0; i< array_size; i++)
+	for (auto i = 0; i < array_size; i++)
 	{
 		const auto i_id = pIDarray->GetAt(i);
 		cs.Format(_T("%i"), i_id);
@@ -161,11 +161,11 @@ void CdbEditRecordDlg::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCo
 {
 	combo.ResetContent();
 	// fill combo box
-	if (linkedtableSet.IsOpen() && !linkedtableSet.IsBOF()) 
+	if (linkedtableSet.IsOpen() && !linkedtableSet.IsBOF())
 	{
 		COleVariant var_value0, var_value1;
 		linkedtableSet.MoveFirst();
-		while(!linkedtableSet.IsEOF()) 
+		while (!linkedtableSet.IsEOF())
 		{
 			linkedtableSet.GetFieldValue(0, var_value0);
 			linkedtableSet.GetFieldValue(1, var_value1);
@@ -182,7 +182,7 @@ void CdbEditRecordDlg::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCo
 
 	// search item which has value iID
 	auto isel = -1;
-	for (auto i=0; i < combo.GetCount(); i++)
+	for (auto i = 0; i < combo.GetCount(); i++)
 	{
 		if (iID == static_cast<int>(combo.GetItemData(i)))
 		{
@@ -196,22 +196,22 @@ void CdbEditRecordDlg::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCo
 void CdbEditRecordDlg::UpdateDatabaseFromDialog()
 {
 	UpdateData(TRUE); // transfer data from dlg to variables
-	
+
 	// update combo boxes associated with a secondary table
 	m_pSet->Edit();
 
-	CdbWdatabase* p_database = m_pdbDoc->m_pDB; 
-	UpdateSetFromCombo(p_database->m_stimSet,		m_ctlstim,		m_pSet->m_stim_ID);
-	UpdateSetFromCombo(p_database->m_concSet,		m_ctlconc,		m_pSet->m_conc_ID);
-	UpdateSetFromCombo(p_database->m_stimSet,		m_ctlstim2,		m_pSet->m_stim2_ID);
-	UpdateSetFromCombo(p_database->m_concSet,		m_ctlconc2,		m_pSet->m_conc2_ID);
-	UpdateSetFromCombo(p_database->m_insectSet,	m_ctlinsect,	m_pSet->m_insect_ID);
-	UpdateSetFromCombo(p_database->m_strainSet,	m_ctlstrain,	m_pSet->m_strain_ID);
-	UpdateSetFromCombo(p_database->m_sexSet,		m_ctlsex,		m_pSet->m_sex_ID);
+	CdbWdatabase* p_database = m_pdbDoc->m_pDB;
+	UpdateSetFromCombo(p_database->m_stimSet, m_ctlstim, m_pSet->m_stim_ID);
+	UpdateSetFromCombo(p_database->m_concSet, m_ctlconc, m_pSet->m_conc_ID);
+	UpdateSetFromCombo(p_database->m_stimSet, m_ctlstim2, m_pSet->m_stim2_ID);
+	UpdateSetFromCombo(p_database->m_concSet, m_ctlconc2, m_pSet->m_conc2_ID);
+	UpdateSetFromCombo(p_database->m_insectSet, m_ctlinsect, m_pSet->m_insect_ID);
+	UpdateSetFromCombo(p_database->m_strainSet, m_ctlstrain, m_pSet->m_strain_ID);
+	UpdateSetFromCombo(p_database->m_sexSet, m_ctlsex, m_pSet->m_sex_ID);
 	UpdateSetFromCombo(p_database->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
-	UpdateSetFromCombo(p_database->m_locationSet,	m_ctllocation,	m_pSet->m_location_ID);
-	UpdateSetFromCombo(p_database->m_operatorSet,	m_ctlOperator,	m_pSet->m_operator_ID);
-	UpdateSetFromCombo(p_database->m_exptSet,		m_ctlexpt,		m_pSet->m_expt_ID);
+	UpdateSetFromCombo(p_database->m_locationSet, m_ctllocation, m_pSet->m_location_ID);
+	UpdateSetFromCombo(p_database->m_operatorSet, m_ctlOperator, m_pSet->m_operator_ID);
+	UpdateSetFromCombo(p_database->m_exptSet, m_ctlexpt, m_pSet->m_expt_ID);
 
 	//// save fixed parameters
 
@@ -221,14 +221,14 @@ void CdbEditRecordDlg::UpdateDatabaseFromDialog()
 	m_ctlSensillumID.GetWindowText(cs);
 	m_pSet->m_IDsensillum = _ttoi(cs);
 	m_ctlrepeat.GetWindowText(cs);
-	m_pSet->m_repeat	= _ttoi(cs);
+	m_pSet->m_repeat = _ttoi(cs);
 	m_ctlrepeat2.GetWindowText(cs);
-	m_pSet->m_repeat2	= _ttoi(cs);
+	m_pSet->m_repeat2 = _ttoi(cs);
 	m_ctlflag.GetWindowText(cs);
-	m_pSet->m_flag		= _ttoi(cs);
-	m_pSet->m_more		= m_cs_more;	
-	m_pSet->m_Filedat	= m_csnameDat;
-	m_pSet->m_Filespk	= m_csnameSpk;
+	m_pSet->m_flag = _ttoi(cs);
+	m_pSet->m_more = m_cs_more;
+	m_pSet->m_Filedat = m_csnameDat;
+	m_pSet->m_Filespk = m_csnameSpk;
 	m_pSet->Update();
 }
 
@@ -244,15 +244,15 @@ void CdbEditRecordDlg::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboB
 	CString cs_combo;
 	combo.GetWindowText(cs_combo);
 	const auto n_index = combo.FindStringExact(0, cs_combo);
-	if (n_index == CB_ERR )
+	if (n_index == CB_ERR)
 	{
 		// if new value, add a record in the linked table
 		if (!cs_combo.IsEmpty())
 		{
 			linkedtableSet.AddNew();
 			linkedtableSet.SetFieldValue(0, COleVariant(cs_combo, VT_BSTRT));
-			try { linkedtableSet.Update();}
-			catch(CDaoException* e) {DisplayDaoException(e, 24); e->Delete();}
+			try { linkedtableSet.Update(); }
+			catch (CDaoException* e) { DisplayDaoException(e, 24); e->Delete(); }
 
 			// get value and set the ID number in the main table
 			linkedtableSet.MoveLast();
@@ -261,7 +261,7 @@ void CdbEditRecordDlg::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboB
 			linkedtableSet.GetFieldValue(1, var_value1);
 			const CString cs = var_value0.bstrVal;
 			ASSERT(cs_combo == cs);
-			iIDset = var_value1.lVal;				
+			iIDset = var_value1.lVal;
 		}
 		// if empty string, set field to null in the main table
 		else
@@ -313,11 +313,11 @@ void CdbEditRecordDlg::EditChangeItem_IndirectField(int IDC)
 		return;
 
 	CdbEditFieldDlg dlg;
-	dlg.m_pMainTable	= m_pSet;				// address main table
-	dlg.m_csColName		= pdesc->csColName;		// name of the column
-	dlg.m_pIndexTable	= pdesc->plinkedSet;	// address secondary table
-	dlg.m_pliIDArray	= nullptr;					// not a primary field
-	dlg.m_pdbDoc		= m_pdbDoc;
+	dlg.m_pMainTable = m_pSet;				// address main table
+	dlg.m_csColName = pdesc->csColName;		// name of the column
+	dlg.m_pIndexTable = pdesc->plinkedSet;	// address secondary table
+	dlg.m_pliIDArray = nullptr;					// not a primary field
+	dlg.m_pdbDoc = m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
 		PopulateCombo_WithText(*pdesc->plinkedSet, *pdesc->pComboBox, *pdesc->pdataItem);
 }
@@ -329,11 +329,11 @@ void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 		return;
 
 	CdbEditFieldDlg dlg;
-	dlg.m_pMainTable	= m_pSet;				// address main table
-	dlg.m_csColName		= pdesc->csColName;		// name of the column
-	dlg.m_pliIDArray	= &pdesc->liArray;		// address of table of ids
-	dlg.m_pIndexTable   = nullptr;
-	dlg.m_pdbDoc		= m_pdbDoc;
+	dlg.m_pMainTable = m_pSet;				// address main table
+	dlg.m_csColName = pdesc->csColName;		// name of the column
+	dlg.m_pliIDArray = &pdesc->liArray;		// address of table of ids
+	dlg.m_pIndexTable = nullptr;
+	dlg.m_pdbDoc = m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
 	{
 		// update array
@@ -343,7 +343,7 @@ void CdbEditRecordDlg::EditChangeItem_MainField(int IDC)
 		// find current selection and set combo to this position
 		const auto i_id = *pdesc->pdataItem;
 		auto icursel = 0;
-		for (auto i = pdesc->liArray.GetUpperBound(); i>= 0; i--)
+		for (auto i = pdesc->liArray.GetUpperBound(); i >= 0; i--)
 		{
 			if (i_id == pdesc->liArray.GetAt(i))
 			{
@@ -367,84 +367,84 @@ DB_ITEMDESC* CdbEditRecordDlg::GetItemDescriptors(int IDC)
 	switch (IDC)
 	{
 	case IDC_COMBO_EXPT2:
-		ich=CH_EXPT_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlexpt;
+		ich = CH_EXPT_ID;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlexpt;
 		break;
 	case IDC_COMBO_INSECTNAME:
-		ich=CH_INSECT_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlinsect;
+		ich = CH_INSECT_ID;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlinsect;
 		break;
 	case IDC_COMBO_LOCATION:
-		ich= CH_LOCATION_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctllocation;
+		ich = CH_LOCATION_ID;
+		m_pSet->m_desc[ich].pComboBox = &m_ctllocation;
 		break;
 	case IDC_COMBO_SENSILLUMNAME:
 		ich = CH_SENSILLUM_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlsensillum;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlsensillum;
 		break;
 	case IDC_COMBO_STIMULUS:
 		ich = CH_STIM_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlstim;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlstim;
 		break;
 	case IDC_COMBO_CONCENTRATION:
-		ich= CH_CONC_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlconc;
+		ich = CH_CONC_ID;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlconc;
 		break;
 	case IDC_COMBO_OPERATOR:
 		ich = CH_OPERATOR_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlOperator;
-		break;	
+		m_pSet->m_desc[ich].pComboBox = &m_ctlOperator;
+		break;
 	case IDC_COMBO_STRAIN:
 		ich = CH_STRAIN_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlstrain;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlstrain;
 		break;
 	case IDC_COMBO_SEX:
 		ich = CH_SEX_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlsex;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlsex;
 		break;
 	case IDC_COMBO_STIMULUS2:
 		ich = CH_STIM2_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlstim2;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlstim2;
 		break;
 	case IDC_COMBO_CONCENTRATION2:
 		ich = CH_CONC2_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlconc2;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlconc2;
 		break;
 	case IDC_COMBO_PATHDAT:
 		ich = CH_PATH_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlpathdat;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlpathdat;
 		break;
 	case IDC_COMBO_PATHSPK:
 		ich = CH_PATH2_ID;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlpathspk;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlpathspk;
 		break;
 
 	case IDC_COMBO_INSECTID:
 		ich = CH_IDINSECT;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlinsectID;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlinsectID;
 		break;
 	case IDC_COMBO_SENSILLUMID:
 		ich = CH_IDSENSILLUM;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlSensillumID;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlSensillumID;
 		break;
 	case IDC_COMBO_FLAG:
 		ich = CH_FLAG;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlflag;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlflag;
 		break;
 	case IDC_COMBO_REPEATT:
 		ich = CH_REPEAT;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlrepeat;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlrepeat;
 		break;
 	case IDC_COMBO_REPEATT2:
 		ich = CH_REPEAT2;
-		m_pSet->m_desc[ich].pComboBox	= &m_ctlrepeat2;
+		m_pSet->m_desc[ich].pComboBox = &m_ctlrepeat2;
 		break;
-	
+
 	default:
-		ich=-1;
+		ich = -1;
 		break;
 	}
-	if (ich>= 0)
+	if (ich >= 0)
 		pdesc = p_db->GetRecordItemDescriptor(ich);
 
 	return pdesc;
@@ -552,6 +552,3 @@ void CdbEditRecordDlg::OnBnClickedNext()
 	PopulateControls();
 	UpdateData(FALSE);
 }
-
-
-

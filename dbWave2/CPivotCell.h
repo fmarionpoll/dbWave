@@ -8,7 +8,7 @@
 class CPivotCell : public COleDispatchDriver
 {
 public:
-	CPivotCell(){} // Calls COleDispatchDriver default constructor
+	CPivotCell() {} // Calls COleDispatchDriver default constructor
 	CPivotCell(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotCell(const CPivotCell& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotCell methods
 public:
@@ -140,5 +139,4 @@ public:
 
 	// PivotCell properties
 public:
-
 };

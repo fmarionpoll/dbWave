@@ -8,7 +8,7 @@ class CPropertiesToolBar : public CMFCToolBar
 public:
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
-		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*) GetOwner(), bDisableIfNoHndler);
+		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*)GetOwner(), bDisableIfNoHndler);
 	}
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
@@ -25,13 +25,13 @@ protected:
 	CPropertiesToolBar		m_wndToolBar;
 	CMFCPropertyGridCtrl	m_wndPropList;
 
-// Implementation
+	// Implementation
 public:
 protected:
-	CdbWaveDoc*		m_pDoc;
-	CdbWaveDoc*		m_pDocOld;
+	CdbWaveDoc* m_pDoc;
+	CdbWaveDoc* m_pDocOld;
 	CFont			m_fntPropList;
-	
+
 	static int		m_noCol[];				// [26] succession of fields
 	static int		m_propCol[NTABLECOLS];	// no col (0 to 28), no group (1, 2, 3 or -1 if not displayed) and type ()
 	CUIntArray		m_typeProps;
@@ -71,4 +71,3 @@ public:
 	afx_msg void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 };
-

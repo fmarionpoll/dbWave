@@ -8,20 +8,20 @@
 
 class CEditCtrl : public CEdit
 {
-// Construction
+	// Construction
 public:
 	CEditCtrl();
 
-// Attributes
+	// Attributes
 public:
 	BOOL	m_bEntryDone;
 	UINT	m_nChar;
 
-// Operations
+	// Operations
 public:
 protected:
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CEditCtrl();
 	BOOL ProcessKeys(UINT nChar);
@@ -36,4 +36,3 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	DECLARE_MESSAGE_MAP()
 };
-

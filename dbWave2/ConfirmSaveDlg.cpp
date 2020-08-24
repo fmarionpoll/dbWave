@@ -21,23 +21,21 @@ CConfirmSaveDlg::~CConfirmSaveDlg()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CConfirmSaveDlg, CDialog)
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
-
 
 // CConfirmSaveDlg message handlers
 
 BOOL CConfirmSaveDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_timeleft = 5;	// number of seconds during which the routine will wait  
+	m_timeleft = 5;	// number of seconds during which the routine will wait
 	m_cstimeleft.Format(_T("(in %i seconds)"), m_timeleft);
 	SetDlgItemText(IDC_STATIC2, m_cstimeleft);
 	SetDlgItemText(IDC_FILENAME, m_csfilename);
 	SetTimer(1, 1000, nullptr);
-	return TRUE; 
+	return TRUE;
 }
 
 void CConfirmSaveDlg::OnTimer(UINT nIDEvent)
@@ -53,5 +51,3 @@ void CConfirmSaveDlg::OnTimer(UINT nIDEvent)
 	else
 		EndDialog(IDOK);		// end of the game
 }
-
-

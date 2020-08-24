@@ -8,7 +8,7 @@
 
 class CDataSeriesDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CDataSeriesDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -21,10 +21,10 @@ public:
 	CListBox	m_listseries;
 	CString		m_name;
 	int			m_ispan;
-	CLineViewWnd*	m_lineview;	// data contours
-	CAcqDataDoc*	m_pdbDoc;		// data document
+	CLineViewWnd* m_lineview;	// data contours
+	CAcqDataDoc* m_pdbDoc;		// data document
 	int				m_listindex;// same as lineview:Chanlist
-	
+
 // Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
@@ -40,4 +40,3 @@ protected:
 	afx_msg void OnEnChangeEdit1();
 	DECLARE_MESSAGE_MAP()
 };
-

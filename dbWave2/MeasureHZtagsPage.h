@@ -4,7 +4,6 @@
 #include "Lineview.h"
 #include "Editctrl.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CMeasureHZtagsPage dialog
 
@@ -12,12 +11,12 @@ class CMeasureHZtagsPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CMeasureHZtagsPage)
 
-// Construction
+	// Construction
 public:
 	CMeasureHZtagsPage();
 	~CMeasureHZtagsPage();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_PROPPAGE3 };
 	int		m_datachannel;
 	int		m_index;
@@ -26,25 +25,25 @@ public:
 
 	// input parameters
 	OPTIONS_VIEWDATAMEASURE* m_pMO;
-	CdbWaveDoc* 	m_pdbDoc;	
-	CAcqDataDoc* 	m_pdatDoc;	
-	CLineViewWnd*	m_plineview;
+	CdbWaveDoc* m_pdbDoc;
+	CAcqDataDoc* m_pdatDoc;
+	CLineViewWnd* m_plineview;
 
 	// locals
 	CEditCtrl mm_index;
 	CEditCtrl mm_datachannel;
 	CEditCtrl mm_mvlevel;
 
-// Overrides
-	public:
+	// Overrides
+public:
 	virtual void OnCancel();
 	virtual void OnOK();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	BOOL GetHZcursorVal(int index);
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	afx_msg void OnCenter();
@@ -56,6 +55,4 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnDeleteAll();
 	DECLARE_MESSAGE_MAP()
-
 };
-

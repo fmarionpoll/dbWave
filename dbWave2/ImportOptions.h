@@ -10,7 +10,7 @@ public:
 	CImportOptionsDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CImportOptionsDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_IMPORTOPTIONS };
 
 protected:

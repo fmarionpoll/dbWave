@@ -10,7 +10,7 @@
 class CWorkbooks : public COleDispatchDriver
 {
 public:
-	CWorkbooks(){} // Calls COleDispatchDriver default constructor
+	CWorkbooks() {} // Calls COleDispatchDriver default constructor
 	CWorkbooks(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CWorkbooks(const CWorkbooks& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -19,7 +19,6 @@ public:
 
 	// Operations
 public:
-
 
 	// Workbooks methods
 public:
@@ -44,7 +43,7 @@ public:
 	LPDISPATCH Add(VARIANT& Template)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xb5, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, &Template);
 		return result;
 	}
@@ -61,7 +60,7 @@ public:
 	LPDISPATCH get_Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
@@ -74,74 +73,73 @@ public:
 	LPDISPATCH _Open(LPCTSTR Filename, VARIANT& UpdateLinks, VARIANT& ReadOnly, VARIANT& Format, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& IgnoreReadOnlyRecommended, VARIANT& Origin, VARIANT& Delimiter, VARIANT& Editable, VARIANT& Notify, VARIANT& Converter, VARIANT& AddToMru)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x2aa, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, Filename, &UpdateLinks, &ReadOnly, &Format, &Password, &WriteResPassword, &IgnoreReadOnlyRecommended, &Origin, &Delimiter, &Editable, &Notify, &Converter, &AddToMru);
 		return result;
 	}
 	void __OpenText(LPCTSTR Filename, VARIANT& Origin, VARIANT& StartRow, VARIANT& DataType, long TextQualifier, VARIANT& ConsecutiveDelimiter, VARIANT& tab, VARIANT& Semicolon, VARIANT& Comma, VARIANT& Space, VARIANT& Other, VARIANT& OtherChar, VARIANT& FieldInfo, VARIANT& TextVisualLayout)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x2ab, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Filename, &Origin, &StartRow, &DataType, TextQualifier, &ConsecutiveDelimiter, &tab, &Semicolon, &Comma, &Space, &Other, &OtherChar, &FieldInfo, &TextVisualLayout);
 	}
 	LPDISPATCH get__Default(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	void _OpenText(LPCTSTR Filename, VARIANT& Origin, VARIANT& StartRow, VARIANT& DataType, long TextQualifier, VARIANT& ConsecutiveDelimiter, VARIANT& tab, VARIANT& Semicolon, VARIANT& Comma, VARIANT& Space, VARIANT& Other, VARIANT& OtherChar, VARIANT& FieldInfo, VARIANT& TextVisualLayout, VARIANT& DecimalSeparator, VARIANT& ThousandsSeparator)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x6ed, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Filename, &Origin, &StartRow, &DataType, TextQualifier, &ConsecutiveDelimiter, &tab, &Semicolon, &Comma, &Space, &Other, &OtherChar, &FieldInfo, &TextVisualLayout, &DecimalSeparator, &ThousandsSeparator);
 	}
 	LPDISPATCH Open(LPCTSTR Filename, VARIANT& UpdateLinks, VARIANT& ReadOnly, VARIANT& Format, VARIANT& Password, VARIANT& WriteResPassword, VARIANT& IgnoreReadOnlyRecommended, VARIANT& Origin, VARIANT& Delimiter, VARIANT& Editable, VARIANT& Notify, VARIANT& Converter, VARIANT& AddToMru, VARIANT& Local, VARIANT& CorruptLoad)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x783, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, Filename, &UpdateLinks, &ReadOnly, &Format, &Password, &WriteResPassword, &IgnoreReadOnlyRecommended, &Origin, &Delimiter, &Editable, &Notify, &Converter, &AddToMru, &Local, &CorruptLoad);
 		return result;
 	}
 	void OpenText(LPCTSTR Filename, VARIANT& Origin, VARIANT& StartRow, VARIANT& DataType, long TextQualifier, VARIANT& ConsecutiveDelimiter, VARIANT& tab, VARIANT& Semicolon, VARIANT& Comma, VARIANT& Space, VARIANT& Other, VARIANT& OtherChar, VARIANT& FieldInfo, VARIANT& TextVisualLayout, VARIANT& DecimalSeparator, VARIANT& ThousandsSeparator, VARIANT& TrailingMinusNumbers, VARIANT& Local)
 	{
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_I4 VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x784, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Filename, &Origin, &StartRow, &DataType, TextQualifier, &ConsecutiveDelimiter, &tab, &Semicolon, &Comma, &Space, &Other, &OtherChar, &FieldInfo, &TextVisualLayout, &DecimalSeparator, &ThousandsSeparator, &TrailingMinusNumbers, &Local);
 	}
 	LPDISPATCH OpenDatabase(LPCTSTR Filename, VARIANT& CommandText, VARIANT& CommandType, VARIANT& BackgroundQuery, VARIANT& ImportDataAs)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x813, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, Filename, &CommandText, &CommandType, &BackgroundQuery, &ImportDataAs);
 		return result;
 	}
 	void CheckOut(LPCTSTR Filename)
 	{
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x815, DISPATCH_METHOD, VT_EMPTY, nullptr, parms, Filename);
 	}
 	BOOL CanCheckOut(LPCTSTR Filename)
 	{
 		BOOL result;
-		static BYTE parms[] = VTS_BSTR ;
+		static BYTE parms[] = VTS_BSTR;
 		InvokeHelper(0x816, DISPATCH_METHOD, VT_BOOL, (void*)&result, parms, Filename);
 		return result;
 	}
 	LPDISPATCH _OpenXML(LPCTSTR Filename, VARIANT& Stylesheets)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT;
 		InvokeHelper(0x817, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, Filename, &Stylesheets);
 		return result;
 	}
 	LPDISPATCH OpenXML(LPCTSTR Filename, VARIANT& Stylesheets, VARIANT& LoadOption)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT ;
+		static BYTE parms[] = VTS_BSTR VTS_VARIANT VTS_VARIANT;
 		InvokeHelper(0x8e8, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, Filename, &Stylesheets, &LoadOption);
 		return result;
 	}
 
 	// Workbooks properties
 public:
-
 };

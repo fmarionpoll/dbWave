@@ -1,4 +1,3 @@
-
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
 // MainFrm.cpp : implementation of the CMainFrame class
@@ -21,38 +20,36 @@ const UINT ui_last_user_tool_bar_id = ui_first_user_tool_bar_id + i_max_user_too
 BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_COMMAND(ID_WINDOW_MANAGER,					&CMainFrame::OnWindowManager)
+	ON_COMMAND(ID_WINDOW_MANAGER, &CMainFrame::OnWindowManager)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
-	
-	ON_COMMAND(ID_TOOLS_OPTIONS,					&CMainFrame::OnOptions)
-	
-	ON_COMMAND(ID_VIEW_CUSTOMIZE,					&CMainFrame::OnViewCustomize)
-	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR,		&CMainFrame::OnToolbarCreateNew)
-	
-	ON_COMMAND(ID_PANE_PROPERTIESWND,				&CMainFrame::OnViewPropertiesWindow)
-	ON_UPDATE_COMMAND_UI(ID_PANE_PROPERTIESWND,		&CMainFrame::OnUpdateViewPropertiesWindow)
-	ON_COMMAND(ID_PANE_FILTERWND,					&CMainFrame::OnViewFilterWindow)
-	ON_UPDATE_COMMAND_UI(ID_PANE_FILTERWND,			&CMainFrame::OnUpdateViewFilterWindow)
-	ON_MESSAGE(WM_MYMESSAGE,						&CMainFrame::OnMyMessage)
+
+	ON_COMMAND(ID_TOOLS_OPTIONS, &CMainFrame::OnOptions)
+
+	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
+	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
+
+	ON_COMMAND(ID_PANE_PROPERTIESWND, &CMainFrame::OnViewPropertiesWindow)
+	ON_UPDATE_COMMAND_UI(ID_PANE_PROPERTIESWND, &CMainFrame::OnUpdateViewPropertiesWindow)
+	ON_COMMAND(ID_PANE_FILTERWND, &CMainFrame::OnViewFilterWindow)
+	ON_UPDATE_COMMAND_UI(ID_PANE_FILTERWND, &CMainFrame::OnUpdateViewFilterWindow)
+	ON_MESSAGE(WM_MYMESSAGE, &CMainFrame::OnMyMessage)
 	ON_WM_SETTINGCHANGE()
 
-	ON_COMMAND(ID_CHECK_FILTERPANE,					&CMainFrame::OnCheckFilterpane)
-	ON_UPDATE_COMMAND_UI(ID_CHECK_FILTERPANE,		&CMainFrame::OnUpdateCheckFilterpane)
-	ON_COMMAND(ID_CHECK_PROPERTIESPANE,				&CMainFrame::OnCheckPropertiespane)
-	ON_UPDATE_COMMAND_UI(ID_CHECK_PROPERTIESPANE,	&CMainFrame::OnUpdateCheckPropertiespane)
+	ON_COMMAND(ID_CHECK_FILTERPANE, &CMainFrame::OnCheckFilterpane)
+	ON_UPDATE_COMMAND_UI(ID_CHECK_FILTERPANE, &CMainFrame::OnUpdateCheckFilterpane)
+	ON_COMMAND(ID_CHECK_PROPERTIESPANE, &CMainFrame::OnCheckPropertiespane)
+	ON_UPDATE_COMMAND_UI(ID_CHECK_PROPERTIESPANE, &CMainFrame::OnUpdateCheckPropertiespane)
 
-	ON_COMMAND(ID_HELP_FINDER,			&CMDIFrameWndEx::OnHelpFinder)
-	ON_COMMAND(ID_HELP,					&CMDIFrameWndEx::OnHelp)
-	ON_COMMAND(ID_CONTEXT_HELP,			&CMDIFrameWndEx::OnContextHelp)
-	ON_COMMAND(ID_DEFAULT_HELP,			&CMDIFrameWndEx::OnHelpFinder)
+	ON_COMMAND(ID_HELP_FINDER, &CMDIFrameWndEx::OnHelpFinder)
+	ON_COMMAND(ID_HELP, &CMDIFrameWndEx::OnHelp)
+	ON_COMMAND(ID_CONTEXT_HELP, &CMDIFrameWndEx::OnContextHelp)
+	ON_COMMAND(ID_DEFAULT_HELP, &CMDIFrameWndEx::OnHelpFinder)
 
 END_MESSAGE_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame construction/destruction
-
 
 CMainFrame::CMainFrame()
 {
@@ -126,7 +123,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create navigation pane\n");
 		return -1;      // fail to create
 	}
-	EnableDocking(CBRS_ALIGN_LEFT);	
+	EnableDocking(CBRS_ALIGN_LEFT);
 	EnableAutoHidePanes(CBRS_ALIGN_RIGHT);
 
 	// Load menu item image (not placed on any standard toolbars):
@@ -138,7 +135,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create docking windows\n");
 		return -1;
 	}
-	// enable docking and attach 
+	// enable docking and attach
 	// TODO - see model VS as they have more calls here
 	m_wndFilter.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndFilter);
@@ -161,14 +158,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	if( !CMDIFrameWndEx::PreCreateWindow(cs) )
+	if (!CMDIFrameWndEx::PreCreateWindow(cs))
 		return FALSE;
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame diagnostics
@@ -192,7 +187,7 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	CString str_filter_view;
 	auto b_name_valid = str_filter_view.LoadString(IDS_FILTERPANE);
 	ASSERT(b_name_valid);
-	if (!m_wndFilter.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE, 
+	if (!m_wndFilter.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
 		ID_PANE_FILTERWND,
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
@@ -204,7 +199,7 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	CString str_properties_view;
 	b_name_valid = str_properties_view.LoadString(IDS_PROPERTIESPANE);
 	ASSERT(b_name_valid);
-	if (!m_wndProperties.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE, 
+	if (!m_wndProperties.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
 		ID_PANE_PROPERTIESWND,
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
 	{
@@ -219,24 +214,24 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 {
 	const auto h_filter_pane_icon = static_cast<HICON>(::LoadImage(::AfxGetResourceHandle(),
-	                                                          MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW),
-	                                                          IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0));
+		MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW),
+		IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0));
 	m_wndFilter.SetIcon(h_filter_pane_icon, FALSE);
 
 	const auto h_properties_pane_icon = static_cast<HICON>(::LoadImage(::AfxGetResourceHandle(),
-	                                                           MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND),
-	                                                           IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0));
+		MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND),
+		IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0));
 	m_wndProperties.SetIcon(h_properties_pane_icon, FALSE);
 
 	UpdateMDITabbedBarsIcons();
 }
 
-CdbWaveDoc * CMainFrame::GetMDIActiveDocument()
+CdbWaveDoc* CMainFrame::GetMDIActiveDocument()
 {
 	const auto p_child = MDIGetActive();
 	if (p_child == nullptr)
 		return nullptr;
-	auto*p_view = (CDaoRecordView*)p_child->GetActiveView();
+	auto* p_view = (CDaoRecordView*)p_child->GetActiveView();
 	return (CdbWaveDoc*)p_view->GetDocument();
 }
 
@@ -255,10 +250,10 @@ BOOL CMainFrame::CreateOutlookBar()
 
 	// add images to this bar
 	CImageList	img1;
-	
+
 	img1.Create(IDB_NAVIGATIONLARGE, 32, 0, RGB(255, 0, 255));
 
-#define NBUTTONS 8	
+#define NBUTTONS 8
 	const WORD dw_style = TBSTYLE_BUTTON | TBSTYLE_AUTOSIZE;
 	struct {
 		UINT id;                            // command ID
@@ -283,7 +278,7 @@ BOOL CMainFrame::CreateOutlookBar()
 	m_wndOutlookPane.EnableTextLabels();
 	m_wndOutlookPane.EnableDocking(CBRS_ALIGN_ANY);
 
-	for (int i = 0; i<NBUTTONS; i++)
+	for (int i = 0; i < NBUTTONS; i++)
 	{
 		CString str;
 		if (!str.LoadString(Buttons[i].strid))
@@ -302,7 +297,6 @@ BOOL CMainFrame::CreateOutlookBar()
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame message handlers
-
 
 void CMainFrame::OnWindowManager()
 {
@@ -360,7 +354,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
 			break;
-		default: ;
+		default:;
 		}
 
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
@@ -377,14 +371,12 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
 
-
 void CMainFrame::OnViewCustomize()
 {
 	auto p_dlg_cust = new CMFCToolBarsCustomizeDialog(this, TRUE /* scan menus */);
 	p_dlg_cust->EnableUserDefinedToolbars();
 	p_dlg_cust->Create();
 }
-
 
 LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp, LPARAM lp)
 {
@@ -403,7 +395,6 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp, LPARAM lp)
 	return lres;
 }
 
-
 void CMainFrame::OnOptions()
 {
 	auto p_options_dlg = new CMFCRibbonCustomizeDialog(this, &m_wndRibbonBar);
@@ -412,7 +403,6 @@ void CMainFrame::OnOptions()
 	p_options_dlg->DoModal();
 	delete p_options_dlg;
 }
-
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext)
 {
@@ -435,7 +425,6 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 	return TRUE;
 }
-
 
 void CMainFrame::OnViewPropertiesWindow()
 {
@@ -487,7 +476,7 @@ void CMainFrame::OnCheckFilterpane()
 	m_wndFilter.ShowPane(m_bFilterPaneVisible, FALSE, TRUE);
 }
 
-void CMainFrame::OnUpdateCheckFilterpane(CCmdUI *pCmdUI)
+void CMainFrame::OnUpdateCheckFilterpane(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_bFilterPaneVisible);
 }
@@ -498,9 +487,7 @@ void CMainFrame::OnCheckPropertiespane()
 	m_wndProperties.ShowPane(m_bPropertiesPaneVisible, FALSE, TRUE);
 }
 
-void CMainFrame::OnUpdateCheckPropertiespane(CCmdUI *pCmdUI)
+void CMainFrame::OnUpdateCheckPropertiespane(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_bPropertiesPaneVisible);
 }
-
-

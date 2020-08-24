@@ -4,8 +4,7 @@
 // Oct 23, 2008 - FMP
 // store constants
 
-
-// toolbar 
+// toolbar
 #define WM_TOOLBARTYPE WM_USER+1
 
 // private message ID
@@ -47,11 +46,11 @@ constexpr auto HINT_MOVECURSORRIGHT = 8;		// move hz cursor(right side)	lowp = L
 constexpr auto HINT_OFFSETCURSOR = 9;			// move hz cursor(both sides)   lowp = diff / previous val
 constexpr auto HINT_CHANGEZOOM = 10;			// change zoom factor
 
-constexpr auto HINT_HITVERTTAG = 11;			// vertical tag hit				lowp = tag index	
+constexpr auto HINT_HITVERTTAG = 11;			// vertical tag hit				lowp = tag index
 constexpr auto HINT_MOVEVERTTAG = 12;			// vertical tag has moved 		lowp = new pixel / selected tag
 constexpr auto HINT_CHANGEVERTTAG = 13;			// vertical tag has changed 	lowp = tag nb
 
-constexpr auto HINT_HITHZTAG = 14;				// horiz tag hit				lowp = cursor index	
+constexpr auto HINT_HITHZTAG = 14;				// horiz tag hit				lowp = cursor index
 constexpr auto HINT_MOVEHZTAG = 15;				// horiz tag has moved 			lowp = new cursor value (pixel)
 constexpr auto HINT_CHANGEHZTAG = 16;			// horizontal tag has changed 	lowp = tag nb
 constexpr auto HINT_DEFINEDRECT = 17;			// rect defined					lowp = unused; limits: CFButton::GetDefinedRect()
@@ -108,7 +107,7 @@ constexpr auto CHG_YSCALE = 32;					// change scale bar channel;
 constexpr auto UPD_YSCALE = 64;					// update y scale;
 constexpr auto CHG_YBAR = 128;					// change bar height;
 
-// update bias scroll 
+// update bias scroll
 constexpr auto YZERO_MIN = -16350;
 constexpr auto YZERO_MAX = 16350;
 constexpr auto YZERO_LINE = 32;

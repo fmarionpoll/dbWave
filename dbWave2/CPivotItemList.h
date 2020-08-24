@@ -8,7 +8,7 @@
 class CPivotItemList : public COleDispatchDriver
 {
 public:
-	CPivotItemList(){} // Calls COleDispatchDriver default constructor
+	CPivotItemList() {} // Calls COleDispatchDriver default constructor
 	CPivotItemList(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
 	CPivotItemList(const CPivotItemList& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
 
@@ -17,7 +17,6 @@ public:
 
 	// Operations
 public:
-
 
 	// PivotItemList methods
 public:
@@ -48,14 +47,14 @@ public:
 	LPDISPATCH Item(VARIANT& Index)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0xaa, DISPATCH_METHOD, VT_DISPATCH, (void*)&result, parms, &Index);
 		return result;
 	}
 	LPDISPATCH get__Default(VARIANT& Field)
 	{
 		LPDISPATCH result;
-		static BYTE parms[] = VTS_VARIANT ;
+		static BYTE parms[] = VTS_VARIANT;
 		InvokeHelper(0x0, DISPATCH_PROPERTYGET, VT_DISPATCH, (void*)&result, parms, &Field);
 		return result;
 	}
@@ -68,5 +67,4 @@ public:
 
 	// PivotItemList properties
 public:
-
 };

@@ -7,7 +7,7 @@
 
 class CBrowseFileDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CBrowseFileDlg(CWnd* pParent = nullptr);	// standard constructor
 
@@ -22,7 +22,7 @@ public:
 	BOOL	m_keepforeachfile;
 	OPTIONS_VIEWDATA* mfBR;
 
-// Implementation
+	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
@@ -31,4 +31,3 @@ protected:
 	virtual void OnOK();
 	DECLARE_MESSAGE_MAP()
 };
-

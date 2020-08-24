@@ -13,7 +13,7 @@ IMPLEMENT_DYNCREATE(CGridCellNumeric, CGridCell)
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -25,7 +25,7 @@ static char THIS_FILE[]=__FILE__;
 BOOL CGridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
 	m_bEditing = TRUE;
-	
+
 	// CInPlaceEdit auto-deletes itself
 	m_pEditWnd = new CInPlaceEdit(GetGrid(), rect, /*GetStyle() |*/ ES_NUMBER, nID, nRow, nCol,
 		GetText(), nChar);
@@ -39,4 +39,3 @@ void CGridCellNumeric::EndEdit()
 	if (m_pEditWnd)
 		((CInPlaceEdit*)m_pEditWnd)->EndEdit();
 }
-

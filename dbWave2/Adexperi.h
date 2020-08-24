@@ -1,4 +1,3 @@
-
 //////////////////////////////////////////////////////////////////////////////
 // ADExperimentDlg dialog
 
@@ -7,7 +6,7 @@
 
 class ADExperimentDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	ADExperimentDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -33,27 +32,27 @@ public:
 	CComboBox m_coRepeat;
 	CComboBox m_coRepeat2;
 	CComboBox m_coExpt;
-	CMFCEditBrowseCtrl m_mfcBrowsePath;	
+	CMFCEditBrowseCtrl m_mfcBrowsePath;
 
 	CString m_szFileName;
 	BOOL	m_bFilename;
 
-// Overrides
-	public:
-	protected:
+	// Overrides
+public:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Implementation: set parameters 
+// Implementation: set parameters
 	// data acquisition: set only parameter 1 (address of all parameters)
 	// file: set all three parameters
 public:
 	OPTIONS_ACQDATA* m_pADC_options;		// data parameters (different options common)
 	BOOL			m_bADexpt;		// set true if data acq / false if parmas from file
-	CWaveFormat*	m_pwaveFormat;	// if data file, set this to file wave format
-	CdbWaveDoc*		m_pdbDoc;
+	CWaveFormat* m_pwaveFormat;	// if data file, set this to file wave format
+	CdbWaveDoc* m_pdbDoc;
 	BOOL			m_bEditMode;
 
-protected:	
+protected:
 	int  SaveList(CComboBox* pCo, CStringArray* p_spike_element);
 	void LoadList(CComboBox* pCo, CStringArray* p_spike_element, int isel, CDaoRecordset* pmSet = nullptr);
 	void EditComboBox(CComboBox* pCo);
