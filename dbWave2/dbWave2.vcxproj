@@ -68,11 +68,11 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
     <LibraryPath>C:\Users\fred\source\repos\dbWave2\dbWave2\include\office;C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>$(ExecutablePath);$(ProgramFiles)\HTML Help Workshop\redist\</ExecutablePath>
+    <ExecutablePath>$(ExecutablePath);</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
-    <ExecutablePath>$(ExecutablePath);$(ProgramFiles)\HTML Help Workshop\redist\</ExecutablePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <OutDir>$(SolutionDir)\dbWave2\$(Configuration)\</OutDir>
