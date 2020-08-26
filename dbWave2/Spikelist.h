@@ -55,7 +55,7 @@ protected:
 
 // (2) -------------ordered spike list with class, time, etc-----------------------------
 
-	BOOL			m_bextrema = false;			// extrema valid / no
+	BOOL			m_bextrema = false;		// extrema valid / no
 	int				m_totalmin = 0;			// min of all spikes
 	int				m_totalmax = 0;			// max of all spikes
 	CArray<CSpikeElemt*, CSpikeElemt*>	m_spkelmts{};	// array of SpikeElemts
@@ -66,9 +66,9 @@ protected:
 
 // (4) miscellaneous
 
-	BOOL			m_bsaveartefacts = false;		// save (yes/no) artefacts - default = FALSE
+	BOOL			m_bsaveartefacts = false;	// save (yes/no) artefacts - default = FALSE
 	BOOL 			m_bvalidclasslist = false;	// class list (array with classnb & nb spikes/class)
-	int				m_nbclasses = 0;				//
+	int				m_nbclasses = 0;			//
 	CArray <int, int>	m_classArray{};			// CWordArray describing classes found and nb of spikes within them
 	// TODO enrich class to make use of indexes et al apparent into a class
 
@@ -90,7 +90,7 @@ public:
 	int		GetSpikeAmplitudeOffset(int no) const { return m_spkelmts[no]->get_amplitude_offset(); }
 	int		GetSpikeValAt(int no, int index) const { return *(GetpSpikeData(no) + index); }
 	int		GetSpikeLength()		const { return m_spikebuffer.GetSpklen(); }
-	int		GetTotalSpikes()		const { return m_spkelmts.GetSize(); }
+	int		GetTotalSpikes()		const { return m_spkelmts.GetCount(); }
 
 	void	SetSpikeClass(int no, int nclass) { m_spkelmts[no]->set_class(nclass); m_bvalidclasslist = FALSE; }
 	void	SetSpikeTime(int no, long iitime) { m_spkelmts[no]->set_time(iitime); }
