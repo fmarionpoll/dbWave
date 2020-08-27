@@ -214,6 +214,7 @@ public:
 	BOOL btotalspikes;			// total nb of spikes
 	BOOL babsolutetime;			// TRUE= absolute spk time, FALSE=relative to first stim
 	BOOL bincrflagonsave;		// increment database flag when spike file is saved
+	BOOL bSpikeDetectThreshold;	// spike detection threshold
 
 	int  ncommentcolumns;		// number of comment columns in the table exported to excel
 

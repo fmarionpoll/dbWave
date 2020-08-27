@@ -955,9 +955,9 @@ void CSpikeDoc::ExportTableColHeaders_db(CSharedFile* pSF, OPTIONS_VIEWSPIKES* v
 	// spike detection chan
 	if (vdS->btotalspikes)
 	{	// ................     total spikes
-		cs_dummy = _T("\ttotal_spikes\tnb_classes\tduration(s)");
+		cs_dummy = _T("\tspk_threshold\ttotal_spikes\tnb_classes\tduration(s)");
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		ncolumns += 3;
+		ncolumns += 4;
 	}
 
 	// export spike detect chan, channel and class
@@ -1124,12 +1124,14 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 
 	if (vdS->btotalspikes)
 	{
+		cs_dummy.Format(_T("\t%f"), pspklist->GetdetectThresholdmV());
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("\t%i"), pspklist->GetTotalSpikes());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("\t%i"), pspklist->GetNbclasses());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		const auto tduration = static_cast<float>(m_acqsize) / static_cast<float>(m_acqrate);
-		cs_dummy.Format(_T("\t%.3f"), tduration);
+		cs_dummy.Format(_T("\t%f"), tduration);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 	// spike list item, spike class

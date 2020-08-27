@@ -1581,12 +1581,15 @@ void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list
 	// number of spikes
 	if (options_viewspikes->btotalspikes)
 	{
+		cs_dummy.Format(_T("%s%f"), static_cast<LPCTSTR>(cs_tab), p_spike_list->GetdetectThresholdmV());
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+
 		cs_dummy.Format(_T("%s%i"), static_cast<LPCTSTR>(cs_tab), p_spike_list->GetTotalSpikes());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("%s%i"), static_cast<LPCTSTR>(cs_tab), p_spike_list->GetNbclasses());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		const auto tduration = static_cast<float>(m_pSpk->GetAcqDuration());
-		cs_dummy.Format(_T("%s%.3f"), static_cast<LPCTSTR>(cs_tab), tduration);
+		cs_dummy.Format(_T("%s%f"), static_cast<LPCTSTR>(cs_tab), tduration);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 
@@ -1723,7 +1726,6 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 		m_pSpk->ExportSpkFileComment(pSF, options_viewspikes, 0, cs_file_desc);
 		m_pSpk->ExportSpkAttributesOneFile(pSF, options_viewspikes);
 	}
-
 	// multiple file export operations: ISI, AUTOCORR, HISTAMPL, AVERAGE, INTERV, PSTH
 	else
 	{

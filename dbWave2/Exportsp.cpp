@@ -54,6 +54,7 @@ void CExportSpikeInfosDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SPIKECLASS2, m_classnb2);
 	DDX_Check(pDX, IDC_TOTALSPIKES, m_btotalspikes);
 	DDX_Check(pDX, IDC_SPKFILECOMMENTS, m_bspkcomments);
+
 	DDX_Radio(pDX, IDC_RADIO1, m_ispikeclassoptions);
 	DDX_Text(pDX, IDC_NBINS, m_nbins);
 	DDX_Text(pDX, IDC_HISTMAX, m_histampl_vmax);

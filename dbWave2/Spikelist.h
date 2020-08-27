@@ -45,24 +45,24 @@ protected:
 	CString			m_IDstring = _T("Awave Spike file v");
 
 	// (1) ---------------infos about data acquisition and spike detection ------------------
-	CWaveChan		m_acqchan{};		// description acquisition channel
-	WORD  			m_encoding{};		// data encoding mode
-	long  			m_binzero{};		// 2048
-	float 			m_samprate{};		// data acq sampling rate (Hz)
-	float 			m_voltsperbin{};	// nb volts per bin (data)
-	SPKDETECTPARM	m_parm{};			// detection parameters
-	CString			m_cscomment;		// spike channel descriptor (unused but archived)
+	CWaveChan		m_acqchan{};				// description acquisition channel
+	WORD  			m_encoding{};				// data encoding mode
+	long  			m_binzero{};				// 2048
+	float 			m_samprate{};				// data acq sampling rate (Hz)
+	float 			m_voltsperbin{};			// nb volts per bin (data)
+	SPKDETECTPARM	m_parm{};					// detection parameters
+	CString			m_cscomment;				// spike channel descriptor (unused but archived)
 
 // (2) -------------ordered spike list with class, time, etc-----------------------------
 
-	BOOL			m_bextrema = false;		// extrema valid / no
-	int				m_totalmin = 0;			// min of all spikes
-	int				m_totalmax = 0;			// max of all spikes
+	BOOL			m_bextrema = false;			// extrema valid / no
+	int				m_totalmin = 0;				// min of all spikes
+	int				m_totalmax = 0;				// max of all spikes
 	CArray<CSpikeElemt*, CSpikeElemt*>	m_spkelmts{};	// array of SpikeElemts
 
 // (3) -------------unordered data buffers with spikes extracted from acq data-----------
 
-	CSpikeBuffer	m_spikebuffer{};		// spike data buffer
+	CSpikeBuffer	m_spikebuffer{};			// spike data buffer
 
 // (4) miscellaneous
 

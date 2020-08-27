@@ -366,6 +366,8 @@
 #define IDC_STATIC13                    396
 #define IDC_TIMEINTERVALS               398
 #define IDC_TOTALSPIKES                 402
+#define IDC_TOTALSPIKES2                403
+#define IDC_SPIKEDETECTIONTHRESHOLD     403
 #define IDC_PAGEMARGINS                 404
 #define IDC_DRAWAREA                    405
 #define IDC_DRAWOPTIONS                 406
@@ -923,11 +925,11 @@
 #define AFX_IDS_HELPMODEMESSAGE2        57347
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        575
+#define _APS_NEXT_RESOURCE_VALUE        576
 #define _APS_NEXT_COMMAND_VALUE         33021
 #define _APS_NEXT_CONTROL_VALUE         1513
 #define _APS_NEXT_SYMED_VALUE           555
