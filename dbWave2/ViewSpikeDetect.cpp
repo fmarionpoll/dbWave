@@ -37,8 +37,8 @@
 #define new DEBUG_NEW
 #endif
 
-#define BRESTORE	0
-#define BSAVE		1
+constexpr auto BRESTORE = 0;
+constexpr auto BSAVE = 1;
 
 IMPLEMENT_DYNCREATE(CViewSpikeDetection, CDaoRecordView)
 
@@ -1409,12 +1409,12 @@ int CViewSpikeDetection::DetectMethod1(WORD schan)
 	}
 
 	// set parameters (copy array into local parms)
-	const short threshold = pspkDP->detectThreshold;			// threshold value
-	const auto method = pspkDP->detectTransform;			// how source data are transformed
-	const auto sourcechan = pspkDP->detectChan;				// source channel
-	const auto prethreshold = pspkDP->prethreshold;				// pts before threshold
-	const auto refractory = pspkDP->refractory;				// refractory period
-	const auto postthreshold = pspkDP->extractNpoints - prethreshold;
+	const short threshold		= pspkDP->detectThreshold;			// threshold value
+	const auto method			= pspkDP->detectTransform;			// how source data are transformed
+	const auto sourcechan		= pspkDP->detectChan;				// source channel
+	const auto prethreshold		= pspkDP->prethreshold;				// pts before threshold
+	const auto refractory		= pspkDP->refractory;				// refractory period
+	const auto postthreshold	= pspkDP->extractNpoints - prethreshold;
 
 	// get parameters from document
 	auto p_dat = GetDocument()->m_pDat;

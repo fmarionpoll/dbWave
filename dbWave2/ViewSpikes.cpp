@@ -461,9 +461,9 @@ void CViewSpikes::OnInitialUpdate()
 
 	// load global parameters
 	auto* p_app = (CdbWaveApp*)AfxGetApp();
-	options_viewdata = &(p_app->options_viewdata);					// viewdata options
-	mdMO = &(p_app->options_viewdata_measure);					// measure options
-	m_psC = &(p_app->spkC);					// get address of spike classif parms
+	options_viewdata = &(p_app->options_viewdata);		// viewdata options
+	mdMO = &(p_app->options_viewdata_measure);			// measure options
+	m_psC = &(p_app->spkC);								// get address of spike classif parms
 	m_destclass = m_psC->vdestclass;
 	m_sourceclass = m_psC->vsourceclass;
 	m_bresetzoom = m_psC->bresetzoom;
@@ -722,6 +722,7 @@ void CViewSpikes::SelectSpkList(int icursel)
 
 	// update source data: change data channel and update display
 	int isourceview = m_pSpkList->GetextractChan();
+	ASSERT(isourceview == m_pspkDP->extractChan);
 	if (m_pSpkList->GetdetectWhat() == 1)
 		isourceview = m_pSpkList->GetdetectChan();
 

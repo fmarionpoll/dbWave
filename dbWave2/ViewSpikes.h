@@ -132,10 +132,10 @@ protected:
 
 	// page format printing parameters (pixel unit)
 	CRect						m_printRect;
-	OPTIONS_VIEWDATA* options_viewdata = nullptr;	// view data options
-	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;			// measure options
-	SPKCLASSIF* m_psC = nullptr;
-	SPKDETECTPARM* m_pspkDP = nullptr;		// spike detection parameters
+	OPTIONS_VIEWDATA*			options_viewdata= nullptr;	// view data options
+	OPTIONS_VIEWDATAMEASURE*	mdMO			= nullptr;	// measure options
+	SPKCLASSIF*					m_psC			= nullptr;
+	SPKDETECTPARM*				m_pspkDP		= nullptr;	// spike detection parameters
 
 protected:
 	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
@@ -177,7 +177,6 @@ protected:
 	afx_msg void OnGAINbutton();
 	afx_msg void OnBIASbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	//	afx_msg void OnExchangeSourceAndDest();
 	afx_msg void OnArtefact();
 	afx_msg void OnEnChangeJitter();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -187,8 +186,6 @@ protected:
 	afx_msg void OnRecordShiftright();
 	DECLARE_MESSAGE_MAP()
 public:
-	//afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
-	//afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult) ;
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	CTabCtrl m_tabCtrl;
