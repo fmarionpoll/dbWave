@@ -1156,3 +1156,33 @@ BOOL CSpikeList::SortSpikeWithY1AndY2(const CSize fromclass_toclass, const CSize
 
 	return bchanged;
 }
+
+int CSpikeList::GetValidSpikeNumber(int ispike) {
+	if (ispike < 0)
+		ispike = -1;
+	if (ispike >= GetTotalSpikes())
+		ispike = GetTotalSpikes() - 1;
+	return ispike;
+}
+
+int CSpikeList::GetNextSpike(int spikeno, int delta, BOOL bKeepSameClass) {
+	int spikeold = spikeno ;
+	int classold = 0;
+	if (spikeold >= 0 && spikeold < GetTotalSpikes()-1)
+		classold = GetSpikeClass(spikeno);
+	if (delta >= 0)
+		delta = 1;
+	else
+		delta = -1;
+	if (bKeepSameClass) {
+		do {
+			spikeno += delta;
+			if (spikeno == 0 || spikeno == GetTotalSpikes()-1 )
+				break;
+		} while (GetSpikeClass(spikeno) != classold);
+	}
+	else
+		spikeno += delta;
+
+	return GetValidSpikeNumber(spikeno);
+}

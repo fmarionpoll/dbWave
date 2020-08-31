@@ -342,6 +342,8 @@
 #define IDC_SPIKECLASS2                 353
 #define IDC_ADJUST                      355
 #define IDC_ARTEFACT                    356
+#define IDC_ARTEFACT2                   357
+#define IDC_SAMECLASS                   357
 #define IDC_ACQDATE                     359
 #define IDC_ACQTIME                     360
 #define IDC_ACQCOMMENTS                 361

@@ -22,6 +22,7 @@ public:
 	int				m_destclass = 1;
 	BOOL			m_bresetzoom = true;
 	BOOL			m_bartefact = false;
+	BOOL			m_bKeepSameClass = false;
 	float			m_jitter_ms = 1.f;
 	CdbWaveDoc* GetDocument();
 
@@ -48,10 +49,10 @@ protected:
 	CStretchControl m_stretch;				// clamp controls to sides of the formview area
 	BOOL			m_binit = false;
 
-	CdbWaveDoc* m_dbDoc = nullptr;		// master source document
-	CSpikeDoc* m_pSpkDoc = nullptr;	// destination data doc
-	CSpikeList* m_pSpkList = nullptr;	// temporary spike list
-	CAcqDataDoc* m_pDataDoc = nullptr;	// data document pointer
+	CdbWaveDoc*		m_dbDoc = nullptr;		// master source document
+	CSpikeDoc*		m_pSpkDoc = nullptr;	// destination data doc
+	CSpikeList*		m_pSpkList = nullptr;	// temporary spike list
+	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
 	BOOL			m_bDatDocExists = false;
 	BOOL			m_bSpkDocExists = false;
 	BOOL			m_bInitSourceView = true;
@@ -189,6 +190,7 @@ public:
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	CTabCtrl m_tabCtrl;
+	afx_msg void OnBnClickedSameclass();
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

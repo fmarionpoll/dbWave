@@ -88,6 +88,7 @@ BEGIN_MESSAGE_MAP(CViewSpikes, CDaoRecordView)
 
 	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikes::OnNMClickTab1)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikes::OnTcnSelchangeTab1)
+	ON_BN_CLICKED(IDC_SAMECLASS, &CViewSpikes::OnBnClickedSameclass)
 END_MESSAGE_MAP()
 
 void CViewSpikes::DoDataExchange(CDataExchange* pDX)
@@ -105,6 +106,7 @@ void CViewSpikes::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
 	DDX_Text(pDX, IDC_JITTER, m_jitter_ms);
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
+	DDX_Check(pDX, IDC_SAMECLASS, m_bKeepSameClass);
 }
 
 void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
@@ -1566,25 +1568,24 @@ void CViewSpikes::OnEnChangeNOspike()
 	if (mm_spikeno.m_bEntryDone)
 	{
 		const auto spikeno = m_spikeno;
+
 		switch (mm_spikeno.m_nChar)
 		{				// load data from edit controls
 		case VK_RETURN:	UpdateData(TRUE);	break;
 		case VK_UP:
-		case VK_PRIOR:	m_spikeno++;	break;
+		case VK_PRIOR:	m_spikeno = m_pSpkList->GetNextSpike(spikeno, 1, m_bKeepSameClass);	break;
 		case VK_DOWN:
-		case VK_NEXT:   m_spikeno--;	break;
+		case VK_NEXT:   m_spikeno = m_pSpkList->GetNextSpike(spikeno , -1, m_bKeepSameClass);	break;
 		default:;
 		}
 
 		// check boundaries
-		if (m_spikeno < 0)
-			m_spikeno = -1;
-		if (m_spikeno >= m_pSpkList->GetTotalSpikes())
-			m_spikeno = m_pSpkList->GetTotalSpikes() - 1;
+		m_spikeno = m_pSpkList->GetValidSpikeNumber(m_spikeno);
 
 		mm_spikeno.m_bEntryDone = FALSE;	// clear flag
 		mm_spikeno.m_nChar = 0;			// empty buffer
 		mm_spikeno.SetSel(0, -1);		// select all text
+
 		if (m_spikeno != spikeno)		// change display if necessary
 		{
 			SelectSpike(m_spikeno);
@@ -2400,4 +2401,9 @@ void CViewSpikes::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto icursel = m_tabCtrl.GetCurSel();
 	SelectSpkList(icursel);
 	*pResult = 0;
+}
+
+void CViewSpikes::OnBnClickedSameclass()
+{
+	m_bKeepSameClass = ((CButton*)GetDlgItem(IDC_SAMECLASS))->GetCheck();
 }

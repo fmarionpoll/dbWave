@@ -91,6 +91,7 @@ public:
 	int		GetSpikeValAt(int no, int index) const { return *(GetpSpikeData(no) + index); }
 	int		GetSpikeLength()		const { return m_spikebuffer.GetSpklen(); }
 	int		GetTotalSpikes()		const { return m_spkelmts.GetCount(); }
+	
 
 	void	SetSpikeClass(int no, int nclass) { m_spkelmts[no]->set_class(nclass); m_bvalidclasslist = FALSE; }
 	void	SetSpikeTime(int no, long iitime) { m_spkelmts[no]->set_time(iitime); }
@@ -115,7 +116,6 @@ public:
 	float	GetdetectThresholdmV()	const { return m_parm.detectThresholdmV; }
 
 	void	SetFlagSaveArtefacts(BOOL bflag) { m_bsaveartefacts = bflag; }
-
 	void	SetextractChan(int echan) { m_parm.extractChan = echan; }
 	void	SetdetectChan(int dchan) { m_parm.detectChan = dchan; }
 	void	SetextractTransform(int extractTransform) { m_parm.extractTransform = extractTransform; }
@@ -125,7 +125,7 @@ public:
 
 	int  	AddSpike(short* lpsource, int nchans, long iitime, int sourcechan, int iclass, BOOL bCheck);
 	BOOL	TransferDataToSpikeBuffer(int no, short* lpsource, int nchans, BOOL badjust = FALSE);
-	short* GetpSpikeData(int no) const { return m_spikebuffer.GetSpike(no); }
+	short*	GetpSpikeData(int no) const { return m_spikebuffer.GetSpike(no); }
 	int  	RemoveSpike(int spikeindex);
 	BOOL	IsAnySpikeAround(long iitime, int jitter, int& spikeindex, int ichan);
 
@@ -142,15 +142,19 @@ public:
 	void	EraseData();
 	void	ChangeSpikeClassID(int oldclaID, int newclaID);
 
+
 	// measure parameters
-	void Measure_case0_AmplitudeMinToMax(int t1, int t2);
-	void Measure_case1_AmplitudeAtT(int t);
-	void Measure_case2_AmplitudeAtT2MinusAtT1(int t1, int t2);
+	void	Measure_case0_AmplitudeMinToMax(int t1, int t2);
+	void	Measure_case1_AmplitudeAtT(int t);
+	void	Measure_case2_AmplitudeAtT2MinusAtT1(int t1, int t2);
 
-	CSize Measure_Y1_MaxMin();
+	CSize	Measure_Y1_MaxMin();
 
-	BOOL SortSpikeWithY1(CSize fromclass_toclass, CSize timewindow, CSize limits);
-	BOOL SortSpikeWithY1AndY2(CSize fromclass_toclass, CSize timewindow, CSize limits1, CSize limits2);
+	BOOL	SortSpikeWithY1(CSize fromclass_toclass, CSize timewindow, CSize limits);
+	BOOL	SortSpikeWithY1AndY2(CSize fromclass_toclass, CSize timewindow, CSize limits1, CSize limits2);
+
+	int		GetValidSpikeNumber(int ispike);
+	int		GetNextSpike(int spikeno, int delta, BOOL bKeepSameClass);
 
 	// deal with list of spikes flagged
 protected:
