@@ -154,7 +154,7 @@ void cdxCRotBevelLine::OnPaint()
 	GetClientRect(rect_client);
 
 	COLORREF	oldBkCol = dc.GetBkColor();
-	CFont* pOldFont = dc.SelectObject(GetFont());
+	CFont*		pOldFont = dc.SelectObject(GetFont());
 	COLORREF	hiCol = ::GetSysColor(!m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
 	COLORREF	loCol = ::GetSysColor(m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
 
