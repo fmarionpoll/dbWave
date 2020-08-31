@@ -494,7 +494,7 @@ LRESULT CGridCtrl::SendCacheHintToParent(const CCellRange& range) const
 #define LAYER_SIGNATURE (0x5FD4E64)
 int CGridCtrl::GetLayer(int** pLayer) // used to save and restore order of columns
 { //  gives back the size of the area (do not forget to delete pLayer)
-	int Length = 2 + GetColumnCount() * 2;
+	int Length = (1 + GetColumnCount()) * sizeof(int);
 	int* Layer = new int[Length];	// the caller is supposed to delete it
 	Layer[0] = LAYER_SIGNATURE;
 	Layer[1] = GetColumnCount();
