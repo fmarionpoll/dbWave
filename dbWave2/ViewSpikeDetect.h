@@ -104,6 +104,7 @@ protected:
 	void SelectSpikeNo(int spikeno, BOOL bMultipleSelection);
 	BOOL CheckDetectionSettings();
 	void UpdateCB();
+	void UpdateLegendDetectionWnd();
 	void UpdateCombosDetectChanAndTransforms();
 	void DefineStretchParameters();
 	void DefineSubClassedItems();
@@ -163,7 +164,7 @@ protected:
 	// specific printer parameters
 	TEXTMETRIC	m_tMetric{};			// onbegin/onendPrinting
 	LOGFONT		m_logFont{};			// onbegin/onendPrinting
-	CFont* m_pOldFont = nullptr;		// onbegin/onendPrinting
+	CFont*		m_pOldFont = nullptr;	// onbegin/onendPrinting
 	CFont		m_fontPrint;			// onbegin/onendPrinting
 	CRect		m_printRect;
 

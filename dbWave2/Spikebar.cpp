@@ -40,6 +40,9 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
 
+	if (p_dbwave_doc_ == nullptr)
+		return;
+
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);

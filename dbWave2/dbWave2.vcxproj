@@ -113,6 +113,7 @@
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <SDLCheck>true</SDLCheck>
       <EnablePREfast>true</EnablePREfast>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -197,6 +198,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <EnablePREfast>true</EnablePREfast>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

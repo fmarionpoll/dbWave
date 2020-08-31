@@ -1684,8 +1684,6 @@ CString CdbWaveDoc::ExportDatabaseData(const int ioption)
 }
 
 // exports spike data on consecutive rows (except for a few options)
-// returns nb columns of comments
-
 void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 {
 	CProgressDlg dlg;
@@ -1866,7 +1864,6 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 }
 
 // called when we export data to Excel
-
 BOOL CdbWaveDoc::TransposeFileForExcel(CSharedFile* pSF)
 {
 	// create dummy file on disk that duplicates the memory file
@@ -2182,7 +2179,6 @@ void CdbWaveDoc::DeleteErasedFiles()
 }
 
 // delete record: change data and spike file extensions and copy record to table_deleted
-// remove corresponding records from table_deleted
 
 void CdbWaveDoc::DBDeleteCurrentRecord()
 {

@@ -229,6 +229,7 @@ void CViewSpikeDetection::UpdateLegends()
 	UpdateFileScroll();		// adjust scroll bar to file position
 	UpdateCB();				// update combo box
 	UpdateVTtags();			// set VT tags
+	UpdateLegendDetectionWnd();
 
 	// update data displayed
 	m_displaySpk_BarView.Invalidate();
@@ -1098,6 +1099,7 @@ void CViewSpikeDetection::UpdateDetectionParameters()
 	// make sure that tabs are identical to what has been changed
 	UpdateTabs();
 	UpdateCB();
+	UpdateLegendDetectionWnd();
 
 	// update static controls
 	GetDlgItem(IDC_STATIC10)->Invalidate();
@@ -1111,6 +1113,7 @@ void CViewSpikeDetection::UpdateDetectionParameters()
 	GetDlgItem(IDC_SOURCECHAN)->Invalidate();
 	GetDlgItem(IDC_TRANSFORM)->Invalidate();
 	mm_thresholdval.Invalidate();
+
 }
 
 void CViewSpikeDetection::OnToolsDetectionparameters()
@@ -1717,6 +1720,12 @@ void CViewSpikeDetection::OnArtefact()
 		SaveCurrentSpikeFile();
 	}
 	m_spikeno = -1;
+
+	const auto iSelParms = m_tabCtrl.GetCurSel();
+	GetDocument()->SetcurrentSpkListIndex(iSelParms);
+	m_pDetectParms = m_parmsCurrent.GetItem(iSelParms);
+	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(iSelParms);
+
 	SelectSpikeNo(m_spikeno, FALSE);
 	UpdateSpikeDisplay();
 
@@ -2143,6 +2152,7 @@ void CViewSpikeDetection::OnSelchangeDetectMode()
 	UpdateData(TRUE);
 	m_pDetectParms->detectWhat = m_CBdetectWhat.GetCurSel();
 	UpdateCB();
+	UpdateLegendDetectionWnd();
 	m_displayData_Detect.GetDataFromDoc(); 		// load data
 	m_displayData_Detect.AutoZoomChan(0);		// vertical position of channel
 	m_displayData_Detect.Invalidate();
@@ -2157,6 +2167,14 @@ void CViewSpikeDetection::UpdateCB()
 	m_displayData_Detect.SetHZtagChan(0, 0);
 	m_displayData_Detect.SetHZtagVal(0, m_pDetectParms->detectThreshold);
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
+}
+
+void CViewSpikeDetection::UpdateLegendDetectionWnd() {
+	CString text;
+	GetDlgItem(IDC_TRANSFORM)->GetWindowTextW(text);
+	GetDlgItem(IDC_STATICDISPLAYDETECT)->SetWindowTextW(text);
+	GetDlgItem(IDC_STATICDISPLAYDETECT)->Invalidate();
+
 }
 
 void CViewSpikeDetection::UpdateVTtags()
@@ -3322,8 +3340,8 @@ void CViewSpikeDetection::OnCbnSelchangeTransform2()
 
 void CViewSpikeDetection::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	const auto icursel = m_tabCtrl.GetCurSel();
-	UpdateDetectionSettings(icursel);
+	const auto iSelParms = m_tabCtrl.GetCurSel();
+	UpdateDetectionSettings(iSelParms);
 	*pResult = 0;
 }
 
