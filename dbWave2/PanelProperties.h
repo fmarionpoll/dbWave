@@ -28,8 +28,8 @@ protected:
 	// Implementation
 public:
 protected:
-	CdbWaveDoc* m_pDoc;
-	CdbWaveDoc* m_pDocOld;
+	CdbWaveDoc*		m_pDoc;
+	CdbWaveDoc*		m_pDocOld;
 	CFont			m_fntPropList;
 
 	static int		m_noCol[];				// [26] succession of fields

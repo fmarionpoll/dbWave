@@ -1717,6 +1717,12 @@ void CViewSpikeDetection::OnArtefact()
 		SaveCurrentSpikeFile();
 	}
 	m_spikeno = -1;
+
+	const auto iSelParms = m_tabCtrl.GetCurSel();
+	GetDocument()->SetcurrentSpkListIndex(iSelParms);
+	m_pDetectParms = m_parmsCurrent.GetItem(iSelParms);
+	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(iSelParms);
+
 	SelectSpikeNo(m_spikeno, FALSE);
 	UpdateSpikeDisplay();
 
@@ -3322,8 +3328,8 @@ void CViewSpikeDetection::OnCbnSelchangeTransform2()
 
 void CViewSpikeDetection::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	const auto icursel = m_tabCtrl.GetCurSel();
-	UpdateDetectionSettings(icursel);
+	const auto iSelParms = m_tabCtrl.GetCurSel();
+	UpdateDetectionSettings(iSelParms);
 	*pResult = 0;
 }
 

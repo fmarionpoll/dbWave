@@ -810,7 +810,8 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 		mem_dc.SelectObject(&bitmap_plot);
 		mem_dc.SetMapMode(p_dc->GetMapMode());
 
-		p_wnd->PlotDatatoDC(&mem_dc);
+		if (pdb_doc != nullptr)
+			p_wnd->PlotDatatoDC(&mem_dc);
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
 		mem_dc.MoveTo(1, 0);

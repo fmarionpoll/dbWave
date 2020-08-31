@@ -224,8 +224,6 @@ void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup)
 		case FIELD_LONG:
 			p_prop->SetValue(desc.lVal);
 			p_prop->SetOriginalValue(desc.lVal);
-			//if (icol == CH_REPEAT)
-			//	ATLTRACE2("value read = %i\n", pdesc->lVal);
 			break;
 		case FIELD_TEXT:
 			p_prop->SetValue(desc.csVal);
