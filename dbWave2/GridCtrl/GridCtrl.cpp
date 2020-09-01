@@ -491,10 +491,12 @@ LRESULT CGridCtrl::SendCacheHintToParent(const CCellRange& range) const
 		return 0;
 }
 
+/*
 #define LAYER_SIGNATURE (0x5FD4E64)
 int CGridCtrl::GetLayer(int** pLayer) // used to save and restore order of columns
 { //  gives back the size of the area (do not forget to delete pLayer)
 	int Length = (1 + GetColumnCount()) * sizeof(int);
+	//int Length = 2 + GetColumnCount() * 2; 
 	int* Layer = new int[Length];	// the caller is supposed to delete it
 	Layer[0] = LAYER_SIGNATURE;
 	Layer[1] = GetColumnCount();
@@ -510,6 +512,7 @@ void CGridCtrl::SetLayer(int* pLayer)
 	memcpy(&m_arColOrder[0], &pLayer[2], GetColumnCount() * sizeof(int));
 	memcpy(&m_arColWidths[0], &pLayer[2 + GetColumnCount()], GetColumnCount() * sizeof(int));
 }
+*/
 
 BEGIN_MESSAGE_MAP(CGridCtrl, CWnd)
 	//EFW - Added ON_WM_RBUTTONUP
