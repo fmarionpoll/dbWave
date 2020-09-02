@@ -647,9 +647,9 @@ void CViewSpikes::UpdateFileParameters()
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
 
-		CSpikeList* pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex());
+		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		CSpikeList* pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 		m_pSpkList = pSpkList;
-		const auto icur = m_pSpkDoc->GetSpkList_CurrentIndex();
 		m_pspkDP = pSpkList->GetDetectParms();
 
 		// reset tab control
@@ -704,8 +704,6 @@ void CViewSpikes::UpdateFileParameters()
 void CViewSpikes::SelectSpkList(int icursel)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icursel);
-	//CSpikeDoc* pSpkDoc = GetDocument()->GetcurrentSpkDocument();
-	//pSpkDoc->SetSpkList_CurrentIndex(icursel);
 	ASSERT(m_pSpkList != NULL);
 	m_spkClassListBox.SetSpkList(m_pSpkList);
 	m_spkClassListBox.Invalidate();
