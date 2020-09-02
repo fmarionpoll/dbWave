@@ -253,7 +253,7 @@ CdbWaveDoc* CViewData::GetDocument() // non-debug version is inline
 
 CDaoRecordset* CViewData::OnGetRecordset()
 {
-	return GetDocument()->DBGetRecordset();
+	return GetDocument()->GetDB_Recordset();
 }
 
 BOOL CViewData::OnMove(UINT nIDMoveCommand)
@@ -555,7 +555,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 	// load parameters from document file: none yet loaded?
 	const BOOL b_first_update = (m_pdatDoc == nullptr);
 	auto p_dbwave_doc = GetDocument();
-	auto cs_dat_file = p_dbwave_doc->DBGetCurrentDatFileName();
+	auto cs_dat_file = p_dbwave_doc->GetDB_CurrentDatFileName();
 	if ((m_bvalidDoc = cs_dat_file.IsEmpty()))
 		return;
 
@@ -883,7 +883,7 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void CViewData::OnViewAlldata()
 {
-	m_displayDataFile.GetDataFromDoc(0, GetDocument()->DBGetDataLen() - 1);
+	m_displayDataFile.GetDataFromDoc(0, GetDocument()->GetDB_DataLen() - 1);
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 	UpdateData(FALSE);
 	m_displayDataFile.Invalidate();
@@ -1222,7 +1222,7 @@ void CViewData::SaveModifiedFile()
 
 	if (m_pdatDoc->IsModified())
 	{
-		CString docname = GetDocument()->DBGetCurrentDatFileName();
+		CString docname = GetDocument()->GetDB_CurrentDatFileName();
 		m_pdatDoc->OnSaveDocument(docname);
 	}
 	m_pdatDoc->SetModifiedFlag(FALSE);
@@ -1236,7 +1236,7 @@ void CViewData::ADC_OnHardwareDefineexperiment()
 	if (IDOK == dlg.DoModal())
 	{
 		auto p_dbwave_doc = GetDocument();
-		const auto record_id = p_dbwave_doc->DBGetCurrentRecordID();;
+		const auto record_id = p_dbwave_doc->GetDB_CurrentRecordID();;
 		GetDocument()->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 		p_dbwave_doc->DBMoveToID(record_id);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -1293,7 +1293,7 @@ void CViewData::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
 		pInfo->m_nCurPage, pInfo->GetMaxPage(),
 		t.GetDay(), t.GetMonth(), t.GetYear());
 
-	auto cs_dat_file = GetDocument()->DBGetCurrentDatFileName();
+	auto cs_dat_file = GetDocument()->GetDB_CurrentDatFileName();
 	const auto icount = cs_dat_file.ReverseFind(_T('\\'));
 	auto ch_date = cs_dat_file.Left(icount);
 	ch_date = ch_date.Left(ch_date.GetLength() - 1) + ch;
@@ -1356,7 +1356,7 @@ CString CViewData::GetFileInfos()
 	{
 		if (options_viewdata->bDocName)					// print file name
 		{
-			str_comment += GetDocument()->DBGetCurrentDatFileName() + tab;
+			str_comment += GetDocument()->GetDB_CurrentDatFileName() + tab;
 		}
 		if (options_viewdata->bAcqDateTime)				// print data acquisition date & time
 		{
@@ -1525,7 +1525,7 @@ int	CViewData::PrintGetNPages()
 	// compute number of rows according to bmultirow & bentirerecord flag
 	m_lprintFirst = m_displayDataFile.GetDataFirst();
 	m_lprintLen = m_displayDataFile.GetDataLast() - m_lprintFirst + 1;
-	m_file0 = GetDocument()->DBGetCurrentRecordPosition();
+	m_file0 = GetDocument()->GetDB_CurrentRecordPosition();
 	ASSERT(m_file0 >= 0);
 	m_nfiles = 1;
 	auto ifile0 = m_file0;
@@ -1533,7 +1533,7 @@ int	CViewData::PrintGetNPages()
 	if (!options_viewdata->bPrintSelection)
 	{
 		ifile0 = 0;
-		m_nfiles = p_dbwave_doc->DBGetNRecords();
+		m_nfiles = p_dbwave_doc->GetDB_NRecords();
 		ifile1 = m_nfiles;
 	}
 
@@ -1545,16 +1545,16 @@ int	CViewData::PrintGetNPages()
 	else
 	{
 		ntotal_rows = 0;
-		p_dbwave_doc->DBSetCurrentRecordPosition(ifile0);
+		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile0);
 		for (auto i = ifile0; i < ifile1; i++, p_dbwave_doc->DBMoveNext())
 		{
 			// get size of document for all files
-			auto len = p_dbwave_doc->DBGetDataLen();
+			auto len = p_dbwave_doc->GetDB_DataLen();
 			if (len <= 0)
 			{
 				p_dbwave_doc->OpenCurrentDataFile();
 				len = m_pdatDoc->GetDOCchanLength();
-				p_dbwave_doc->DBSetDataLen(len);
+				p_dbwave_doc->SetDB_DataLen(len);
 			}
 			len -= m_lprintFirst;
 			auto nrows = len / m_lprintLen;			// how many rows for this file?
@@ -1568,7 +1568,7 @@ int	CViewData::PrintGetNPages()
 	{
 		try
 		{
-			p_dbwave_doc->DBSetCurrentRecordPosition(m_file0);
+			p_dbwave_doc->SetDB_CurrentRecordPosition(m_file0);
 			p_dbwave_doc->OpenCurrentDataFile();
 		}
 		catch (CDaoException* e) { DisplayDaoException(e, 2); e->Delete(); }
@@ -1621,10 +1621,10 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	auto very_last = m_lprintFirst + m_lprintLen;		// index last data point / current file
 	const int curpage = pInfo->m_nCurPage;					// get current page number
 	GetFileSeriesIndexFromPage(curpage, filenumber, l_first);
-	if (l_first < GetDocument()->DBGetDataLen() - 1)
+	if (l_first < GetDocument()->GetDB_DataLen() - 1)
 		UpdateFileParameters();
 	if (options_viewdata->bEntireRecord)
-		very_last = GetDocument()->DBGetDataLen() - 1;
+		very_last = GetDocument()->GetDB_DataLen() - 1;
 
 	SCOPESTRUCT oldparms;
 	SCOPESTRUCT* p_newparms = m_displayDataFile.GetScopeParameters();
@@ -1644,7 +1644,7 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		// load data and adjust display rectangle ----------------------------------------
 		// reduce width to the size of the data
 		auto l_last = l_first + m_lprintLen;			// compute last pt to load
-		if (l_first < GetDocument()->DBGetDataLen() - 1)
+		if (l_first < GetDocument()->GetDB_DataLen() - 1)
 		{
 			if (l_last > very_last)					// check end across file length
 				l_last = very_last;
@@ -1708,10 +1708,10 @@ BOOL CViewData::PrintGetNextRow(int& filenumber, long& l_first, long& very_last)
 			return FALSE;
 
 		GetDocument()->DBMoveNext();
-		if (l_first < GetDocument()->DBGetDataLen() - 1)
+		if (l_first < GetDocument()->GetDB_DataLen() - 1)
 		{
 			if (options_viewdata->bEntireRecord)
-				very_last = GetDocument()->DBGetDataLen() - 1;
+				very_last = GetDocument()->GetDB_DataLen() - 1;
 		}
 	}
 	else
@@ -1724,7 +1724,7 @@ BOOL CViewData::PrintGetNextRow(int& filenumber, long& l_first, long& very_last)
 				return FALSE;
 
 			GetDocument()->DBMoveNext();
-			very_last = GetDocument()->DBGetDataLen() - 1;
+			very_last = GetDocument()->GetDB_DataLen() - 1;
 			l_first = m_lprintFirst;
 		}
 	}
@@ -1735,7 +1735,7 @@ void CViewData::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	m_bIsPrinting = FALSE;
-	GetDocument()->DBSetCurrentRecordPosition(m_file0);
+	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
 	m_displayDataFile.ResizeChannels(m_npixels0, 0);
 	m_displayDataFile.GetDataFromDoc(m_lFirst0, m_lLast0);
 	UpdateFileParameters();
@@ -1800,7 +1800,7 @@ void CViewData::UpdateFileScroll()
 {
 	m_filescroll_infos.fMask = SIF_ALL | SIF_PAGE | SIF_POS;
 	m_filescroll_infos.nMin = 0;
-	m_filescroll_infos.nMax = GetDocument()->DBGetDataLen();
+	m_filescroll_infos.nMax = GetDocument()->GetDB_DataLen();
 	m_filescroll_infos.nPos = m_displayDataFile.GetDataFirst();
 	m_filescroll_infos.nPage = m_displayDataFile.GetDataLast() - m_displayDataFile.GetDataFirst() + 1;
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);

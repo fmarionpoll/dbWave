@@ -46,6 +46,10 @@ public:
 	CSpikeList* SetSpkListCurrent(int ichan);
 	CSpikeList* GetSpkListCurrent();
 	int			GetSpkListCurrentIndex()	const { return m_currspklist; }
+	int			GetcurrentSpkListIndex() const { return m_currspklist; }
+	void		SetcurrentSpkListIndex(int icur) { m_currspklist = icur; }
+	int			GetcurrentSpkListSize() const { return GetSpkListSize(); }
+
 	int			AddSpkList() { spikelist_array.SetSize(GetSpkListSize() + 1); return GetSpkListSize(); }
 
 	void		SetSourceFilename(CString cs) { m_acqfile = cs; }

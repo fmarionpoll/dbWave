@@ -608,15 +608,15 @@ void CWndVerticalHistogram::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFi
 	if (ballFiles)
 	{
 		file_first = 0;
-		file_last = p_doc->DBGetNRecords() - 1;
-		ncurrentfile = p_doc->DBGetCurrentRecordPosition();
+		file_last = p_doc->GetDB_NRecords() - 1;
+		ncurrentfile = p_doc->GetDB_CurrentRecordPosition();
 	}
 
 	for (auto ifile = file_first; ifile <= file_last; ifile++)
 	{
 		if (ballFiles)
 		{
-			p_doc->DBSetCurrentRecordPosition(ifile);
+			p_doc->SetDB_CurrentRecordPosition(ifile);
 			p_doc->OpenCurrentSpikeFile();
 		}
 		CSpikeList* p_spikelist = p_doc->m_pSpk->GetSpkListCurrent();
@@ -626,7 +626,7 @@ void CWndVerticalHistogram::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFi
 
 	if (ballFiles)
 	{
-		p_doc->DBSetCurrentRecordPosition(ncurrentfile);
+		p_doc->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_doc->OpenCurrentSpikeFile();
 	}
 }

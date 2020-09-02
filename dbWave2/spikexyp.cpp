@@ -58,15 +58,15 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC * p_dc)
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = p_dbwave_doc_->DBGetNRecords();
-		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+		nfiles = p_dbwave_doc_->GetDB_NRecords();
+		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
 	}
 
 	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 		}
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
@@ -200,7 +200,7 @@ void CSpikeXYpWnd::PlotDatatoDC(CDC * p_dc)
 	// restore selection to initial file
 	if (m_ballFiles)
 	{
-		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
@@ -498,8 +498,8 @@ int CSpikeXYpWnd::DoesCursorHitCurveInDoc(CPoint point)
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = p_dbwave_doc_->DBGetNRecords();
-		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+		nfiles = p_dbwave_doc_->GetDB_NRecords();
+		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
 	}
 
 	int result = -1;
@@ -507,7 +507,7 @@ int CSpikeXYpWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
@@ -523,7 +523,7 @@ int CSpikeXYpWnd::DoesCursorHitCurveInDoc(CPoint point)
 
 	if (m_ballFiles && result < 0)
 	{
-		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}

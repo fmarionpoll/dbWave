@@ -58,15 +58,15 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 	if (m_ballFiles)
 	{
 		file_first = 0;
-		file_last = p_dbwave_doc_->DBGetNRecords() - 1;
-		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+		file_last = p_dbwave_doc_->GetDB_NRecords() - 1;
+		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
 	}
 
 	for (auto ifile = file_first; ifile <= file_last; ifile++)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 		}
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
@@ -199,7 +199,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 
 	if (m_ballFiles)
 	{
-		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
@@ -507,8 +507,8 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = p_dbwave_doc_->DBGetNRecords();
-		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+		nfiles = p_dbwave_doc_->GetDB_NRecords();
+		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
 	}
 
 	int result = -1;
@@ -516,7 +516,7 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
@@ -532,7 +532,7 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 
 	if (m_ballFiles && result < 0)
 	{
-		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
@@ -586,15 +586,15 @@ void CSpikeShapeWnd::GetExtents()
 		return;
 	}
 
-	const auto ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+	const auto ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
 	const auto file_first = 0;
-	const auto file_last = p_dbwave_doc_->DBGetNRecords();
+	const auto file_last = p_dbwave_doc_->GetDB_NRecords();
 
 	if (m_yWE == 1 || m_yWE == 0) // && m_yWO == 0)
 	{
 		for (auto ifile = file_first; ifile <= file_last; ifile++)
 		{
-			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 
@@ -605,7 +605,7 @@ void CSpikeShapeWnd::GetExtents()
 	}
 
 	// exit
-	p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+	p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 	p_dbwave_doc_->OpenCurrentSpikeFile();
 	p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 }

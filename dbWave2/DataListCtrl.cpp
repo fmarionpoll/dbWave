@@ -374,7 +374,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	auto p_dbwave_doc = ((CViewdbWave*)GetParent())->GetDocument();
 	if (p_dbwave_doc == nullptr)
 		return;
-	const int indexcurrentfile = p_dbwave_doc->DBGetCurrentRecordPosition();	// save current file
+	const int indexcurrentfile = p_dbwave_doc->GetDB_CurrentRecordPosition();	// save current file
 
 	// which update is necessary?
 	// conditions for out of range (renew all items)
@@ -448,9 +448,9 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 
 		// create lineview and spike superposition
 		ptr->index = index + ifirst;
-		p_dbwave_doc->DBSetCurrentRecordPosition(ptr->index);		// select the other file
-		ptr->csDatafileName = p_dbwave_doc->DBGetCurrentDatFileName(TRUE);
-		ptr->csSpikefileName = p_dbwave_doc->DBGetCurrentSpkFileName(TRUE);
+		p_dbwave_doc->SetDB_CurrentRecordPosition(ptr->index);		// select the other file
+		ptr->csDatafileName = p_dbwave_doc->GetDB_CurrentDatFileName(TRUE);
+		ptr->csSpikefileName = p_dbwave_doc->GetDB_CurrentSpkFileName(TRUE);
 		auto p_database = p_dbwave_doc->m_pDB;
 		p_database->GetRecordItemValue(CH_IDINSECT, &desc);
 		ptr->insectID = desc.lVal;
@@ -472,7 +472,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		ptr->csFlag.Format(_T("%i"), desc.lVal);
 
 		// colum: number of spike = verify that spike file is defined, if yes, load nb spikes
-		if (p_dbwave_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+		if (p_dbwave_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 			ptr->csNspk.Empty();
 		else
 		{
@@ -503,7 +503,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 
 	// restore document conditions
 	if (indexcurrentfile >= 0)
-		p_dbwave_doc->DBSetCurrentRecordPosition(indexcurrentfile);
+		p_dbwave_doc->SetDB_CurrentRecordPosition(indexcurrentfile);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -761,8 +761,7 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 		ptr->pspikeWnd->SetbUseDIB(FALSE);
 	}
 	auto p_wnd = ptr->pspikeWnd;
-	const auto pdb_doc = ((CViewdbWave*)GetParent())->GetDocument();
-
+	
 	// open spike document
 	if (ptr->pspikeDoc == nullptr)
 	{
@@ -776,7 +775,16 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 	}
 	else
 	{
-		const auto spklist_current = pdb_doc->GetcurrentSpkListIndex(); // 0;
+		CViewdbWave* pParent = (CViewdbWave*) GetParent();
+		const auto pdb_doc = pParent->GetDocument();
+		if (pdb_doc == nullptr)
+			return;
+
+		CSpikeDoc* pSpkDoc = pdb_doc->GetcurrentSpkDocument();
+		if (pSpkDoc == nullptr)
+			return;
+
+		auto spklist_current = pSpkDoc->GetcurrentSpkListIndex();
 		const auto pspk_list = ptr->pspikeDoc->SetSpkListCurrent(spklist_current);
 		p_wnd->SetSourceData(pspk_list, ptr->pspikeDoc);
 		p_wnd->SetPlotMode(m_spikeplotmode, m_selclass);
@@ -810,8 +818,9 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 		mem_dc.SelectObject(&bitmap_plot);
 		mem_dc.SetMapMode(p_dc->GetMapMode());
 
-		if (pdb_doc != nullptr)
-			p_wnd->PlotDatatoDC(&mem_dc);
+		//if (pdb_doc != nullptr)
+			p_wnd->PlotSingleSpkDatatoDC(&mem_dc);
+
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
 		mem_dc.MoveTo(1, 0);

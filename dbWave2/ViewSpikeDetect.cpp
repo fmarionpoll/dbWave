@@ -144,15 +144,15 @@ void CViewSpikeDetection::OnFileSave()
 	CFile f;
 	CFileDialog dlg(FALSE,
 		_T("spk"),										// default filename extension
-		GetDocument()->DBGetCurrentSpkFileName(),		// initial file name
+		GetDocument()->GetDB_CurrentSpkFileName(),		// initial file name
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("Awave Spikes (*.spk) | *.spk |All Files (*.*) | *.* ||"));
 
 	if (IDOK == dlg.DoModal())
 	{
 		p_spike_doc_->OnSaveDocument(dlg.GetPathName());
-		GetDocument()->Setnbspikes(p_spike_doc_->GetSpkListCurrent()->GetTotalSpikes());
-		GetDocument()->Setnbspikeclasses(1);
+		GetDocument()->SetDB_nbspikes(p_spike_doc_->GetSpkListCurrent()->GetTotalSpikes());
+		GetDocument()->SetDB_nbspikeclasses(1);
 		p_spike_doc_->SetModifiedFlag(FALSE);
 	}
 }
@@ -256,30 +256,30 @@ void CViewSpikeDetection::SaveCurrentSpikeFile()
 	{
 		// save file data name
 		const auto pdat_doc = GetDocument()->m_pDat;
-		const auto docname = GetDocument()->DBGetCurrentDatFileName();
+		const auto docname = GetDocument()->GetDB_CurrentDatFileName();
 		p_spike_doc_->m_acqfile = docname;
 		p_spike_doc_->InitSourceDoc(pdat_doc);						// init file doc, etc
 		p_spike_doc_->SetDetectionDate(CTime::GetCurrentTime());	// detection date
 
-		const auto filename = p_doc->DBDefineCurrentSpikeFileName();
+		const auto filename = p_doc->SetDB_CurrentSpikeFileName();
 		p_spike_doc_->OnSaveDocument(filename);
 
 		// save nb spikes into database
 		/*int nlist = m_pspkDocVSD->GetSpkListSize();*/
 		p_spikelist_ = p_spike_doc_->SetSpkListCurrent(0);
 		const auto nspikes = p_spikelist_->GetTotalSpikes();
-		GetDocument()->Setnbspikes(nspikes);
+		GetDocument()->SetDB_nbspikes(nspikes);
 		if (!p_spikelist_->IsClassListValid())
 			p_spikelist_->UpdateClassList();
 		const auto nbclasses = p_spikelist_->GetNbclasses();
-		GetDocument()->Setnbspikeclasses(nbclasses);
+		GetDocument()->SetDB_nbspikeclasses(nbclasses);
 		m_bDetected = FALSE;
 
 		if (((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
 		{
-			auto flag = GetDocument()->DBGetCurrentRecordFlag();
+			auto flag = GetDocument()->GetDB_CurrentRecordFlag();
 			flag++;
-			GetDocument()->DBSetCurrentRecordFlag(flag);
+			GetDocument()->SetDB_CurrentRecordFlag(flag);
 		}
 	}
 
@@ -292,7 +292,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 {
 	// update spike doc and temporary spike list
 	auto pdb_doc = GetDocument();
-	CString filename = pdb_doc->DBGetCurrentSpkFileName(FALSE);
+	CString filename = pdb_doc->GetDB_CurrentSpkFileName(FALSE);
 
 	// open the current spike file
 	if (pdb_doc->OpenCurrentSpikeFile() == nullptr)
@@ -311,11 +311,11 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 	{
 		p_spike_doc_ = pdb_doc->m_pSpk;
 		p_spike_doc_->SetModifiedFlag(FALSE);
-		p_spike_doc_->SetPathName(GetDocument()->DBGetCurrentSpkFileName(FALSE), FALSE);
+		p_spike_doc_->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(FALSE), FALSE);
 	}
 
 	// select a spikelist
-	int icurspklist = GetDocument()->GetcurrentSpkListIndex();
+	int icurspklist = GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex();
 	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(icurspklist);
 	if (p_spikelist_ == nullptr && p_spike_doc_->GetSpkListSize() > 0)
 	{
@@ -341,7 +341,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 			p_l->InitSpikeList(pdb_doc->m_pDat, m_parmsCurrent.GetItem(i));
 		}
 		icurspklist = 0;
-		pdb_doc->SetcurrentSpkListIndex(icurspklist);
+		pdb_doc->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icurspklist);
 		p_spikelist_ = p_spike_doc_->SetSpkListCurrent(icurspklist);
 		ASSERT(p_spikelist_ != nullptr);
 	}
@@ -422,7 +422,7 @@ BOOL CViewSpikeDetection::CheckDetectionSettings()
 	ASSERT_VALID(m_pDetectParms);
 	if (nullptr == m_pDetectParms)
 	{
-		m_iDetectParms = GetDocument()->GetcurrentSpkListIndex();
+		m_iDetectParms = GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex();
 		m_pDetectParms = m_parmsCurrent.GetItem(m_iDetectParms);
 	}
 
@@ -453,7 +453,7 @@ BOOL CViewSpikeDetection::CheckDetectionSettings()
 void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 {
 	auto pdb_doc = GetDocument();
-	CString filename = pdb_doc->DBGetCurrentDatFileName();
+	CString filename = pdb_doc->GetDB_CurrentDatFileName();
 	if (pdb_doc->OpenCurrentDataFile() == nullptr)
 		return;
 
@@ -745,7 +745,7 @@ CdbWaveDoc* CViewSpikeDetection::GetDocument()
 
 CDaoRecordset* CViewSpikeDetection::OnGetRecordset()
 {
-	return GetDocument()->DBGetRecordset();
+	return GetDocument()->GetDB_Recordset();
 }
 
 LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
@@ -1176,7 +1176,7 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 	p_spike_doc_->SetDetectionDate(CTime::GetCurrentTime());		// detection date
 	//long loldDataFirst = m_displayDetect.GetDataFirst();	// index first pt to test
 	//long loldDataLast = m_displayDetect.GetDataLast();		// index last pt to test
-	const auto ioldlist = GetDocument()->GetcurrentSpkListIndex();
+	const auto ioldlist = GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex();
 	m_spikeno = -1;										// Nov 5, 2005
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
@@ -1618,7 +1618,7 @@ void CViewSpikeDetection::OnBnClickedClearall()
 		CSpikeList* pspklist = p_spike_doc_->SetSpkListCurrent(i);
 		pspklist->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	}
-	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(GetDocument()->GetcurrentSpkListIndex());
+	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
 	ASSERT(p_spikelist_ != NULL);
 
 	HighlightSpikes(FALSE);				// remove display of spikes
@@ -1638,7 +1638,7 @@ void CViewSpikeDetection::OnClear()
 	m_displaySpk_BarView.SelectSpike(-1);		// deselect spike bars
 	m_displaySpk_Shape.SelectSpikeShape(-1);// deselect superimposed spikes
 
-	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(GetDocument()->GetcurrentSpkListIndex());
+	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
 	p_spikelist_->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	HighlightSpikes(FALSE);				// remove display of spikes
 
@@ -1722,7 +1722,7 @@ void CViewSpikeDetection::OnArtefact()
 	m_spikeno = -1;
 
 	const auto iSelParms = m_tabCtrl.GetCurSel();
-	GetDocument()->SetcurrentSpkListIndex(iSelParms);
+	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(iSelParms);
 	m_pDetectParms = m_parmsCurrent.GetItem(iSelParms);
 	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(iSelParms);
 
@@ -2224,7 +2224,7 @@ void CViewSpikeDetection::PrintFileBottomPage(CDC* p_dc, CPrintInfo* p_info)
 	ch.Format(_T("  page %d:%d %d-%d-%d"), // %d:%d",
 		p_info->m_nCurPage, p_info->GetMaxPage(),
 		t.GetDay(), t.GetMonth(), t.GetYear());
-	const auto ch_date = GetDocument()->DBGetCurrentSpkFileName();
+	const auto ch_date = GetDocument()->GetDB_CurrentSpkFileName();
 	p_dc->SetTextAlign(TA_CENTER);
 	p_dc->TextOut(options_viewdata->horzRes / 2, options_viewdata->vertRes - 57, ch_date);
 }
@@ -2255,7 +2255,7 @@ BOOL CViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int& filenum
 
 	auto very_last = m_lprintFirst + m_lprintLen;
 	if (options_viewdata->bEntireRecord)
-		very_last = GetDocument()->DBGetDataLen() - 1;
+		very_last = GetDocument()->GetDB_DataLen() - 1;
 
 	for (auto row = 0; row < totalrows; row++)
 	{
@@ -2275,10 +2275,10 @@ BOOL CViewSpikeDetection::PrintGetNextRow(int& filenumber, long& l_first, long& 
 			return FALSE;
 
 		GetDocument()->DBMoveNext();
-		if (l_first < GetDocument()->DBGetDataLen() - 1)
+		if (l_first < GetDocument()->GetDB_DataLen() - 1)
 		{
 			if (options_viewdata->bEntireRecord)
-				very_last = GetDocument()->DBGetDataLen() - 1;
+				very_last = GetDocument()->GetDB_DataLen() - 1;
 		}
 	}
 	else
@@ -2291,7 +2291,7 @@ BOOL CViewSpikeDetection::PrintGetNextRow(int& filenumber, long& l_first, long& 
 				return FALSE;
 
 			GetDocument()->DBMoveNext();
-			very_last = GetDocument()->DBGetDataLen() - 1;
+			very_last = GetDocument()->GetDB_DataLen() - 1;
 			l_first = m_lprintFirst;
 		}
 	}
@@ -2310,7 +2310,7 @@ CString CViewSpikeDetection::PrintGetFileInfos()
 	if (options_viewdata->bDocName || options_viewdata->bAcqDateTime)// print doc infos?
 	{
 		if (options_viewdata->bDocName)					// print file name
-			str_comment += GetDocument()->DBGetCurrentDatFileName() + tab;
+			str_comment += GetDocument()->GetDB_CurrentDatFileName() + tab;
 
 		if (options_viewdata->bAcqDateTime)				// print data acquisition date & time
 		{
@@ -2604,7 +2604,7 @@ int	CViewSpikeDetection::PrintGetNPages()
 	// compute number of rows according to bmultirow & bentirerecord flag
 	m_lprintFirst = m_displayData_Detect.GetDataFirst();
 	m_lprintLen = m_displayData_Detect.GetDataLast() - m_lprintFirst + 1;
-	m_file0 = GetDocument()->DBGetCurrentRecordPosition();
+	m_file0 = GetDocument()->GetDB_CurrentRecordPosition();
 	ASSERT(m_file0 >= 0);
 	m_nfiles = 1;
 	auto ifile0 = m_file0;
@@ -2612,7 +2612,7 @@ int	CViewSpikeDetection::PrintGetNPages()
 	if (!options_viewdata->bPrintSelection)
 	{
 		ifile0 = 0;
-		m_nfiles = pdb_doc->DBGetNRecords();
+		m_nfiles = pdb_doc->GetDB_NRecords();
 		ifile1 = m_nfiles;
 	}
 
@@ -2624,18 +2624,18 @@ int	CViewSpikeDetection::PrintGetNPages()
 	else
 	{
 		ntotal_rows = 0;
-		pdb_doc->DBSetCurrentRecordPosition(ifile0);
+		pdb_doc->SetDB_CurrentRecordPosition(ifile0);
 		for (auto i = ifile0; i < ifile1; i++, pdb_doc->DBMoveNext())
 		{
 			// get size of document for all files
-			auto len = pdb_doc->DBGetDataLen();
+			auto len = pdb_doc->GetDB_DataLen();
 			if (len <= 0)
 			{
 				pdb_doc->OpenCurrentDataFile();
 				len = pdb_doc->m_pDat->GetDOCchanLength();
-				const auto len1 = GetDocument()->DBGetDataLen() - 1;
+				const auto len1 = GetDocument()->GetDB_DataLen() - 1;
 				ASSERT(len == len1);
-				pdb_doc->DBSetDataLen(len);
+				pdb_doc->SetDB_DataLen(len);
 			}
 			len -= m_lprintFirst;
 			auto nrows = len / m_lprintLen;	// how many rows for this file?
@@ -2649,7 +2649,7 @@ int	CViewSpikeDetection::PrintGetNPages()
 	{
 		try
 		{
-			pdb_doc->DBSetCurrentRecordPosition(m_file0);
+			pdb_doc->SetDB_CurrentRecordPosition(m_file0);
 			pdb_doc->OpenCurrentDataFile();
 		}
 		catch (CDaoException* e) { DisplayDaoException(e, 3); e->Delete(); }
@@ -2725,10 +2725,10 @@ void CViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	auto very_last = m_lprintFirst + m_lprintLen;	// index last data point / current file
 	const int curpage = pInfo->m_nCurPage;				// get current page number
 	PrintGetFileSeriesIndexFromPage(curpage, filenumber, l_first);
-	if (l_first < GetDocument()->DBGetDataLen() - 1)
+	if (l_first < GetDocument()->GetDB_DataLen() - 1)
 		UpdateFileParameters(FALSE);
 	if (options_viewdata->bEntireRecord)
-		very_last = GetDocument()->DBGetDataLen() - 1;
+		very_last = GetDocument()->GetDB_DataLen() - 1;
 
 	// loop through all files	--------------------------------------------------------
 	for (auto i = 0; i < m_nbrowsperpage; i++)
@@ -2859,7 +2859,7 @@ void CViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	// restore file from index and display parameters
-	GetDocument()->DBSetCurrentRecordPosition(m_file0);
+	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
 
 	m_displayData_Detect.ResizeChannels(m_npixels0, 0);
 	m_displayData_Detect.GetDataFromDoc(m_lFirst0, m_lLast0);
@@ -3171,7 +3171,7 @@ void CViewSpikeDetection::UpdateDetectionSettings(int iSelParms)
 	// set new parameters
 	p_spikelist_->m_selspike = m_spikeno;			// save spike selected
 	m_iDetectParms = iSelParms;
-	GetDocument()->SetcurrentSpkListIndex(iSelParms);
+	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(iSelParms);
 	m_pDetectParms = m_parmsCurrent.GetItem(iSelParms);
 	p_spikelist_ = p_spike_doc_->SetSpkListCurrent(iSelParms);
 	if (p_spikelist_ != nullptr)
@@ -3373,6 +3373,6 @@ void CViewSpikeDetection::UpdateTabs()
 	}
 	p_spike_doc_->SetSpkListCurrent(currlist);
 
-	m_iDetectParms = GetDocument()->GetcurrentSpkListIndex();
+	m_iDetectParms = GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex();
 	m_tabCtrl.SetCurSel(m_iDetectParms);
 }

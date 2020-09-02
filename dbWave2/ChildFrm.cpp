@@ -406,27 +406,27 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 		ReplaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATAFILE:
-		if (!pdb_doc->DBGetCurrentDatFileName(TRUE).IsEmpty())
+		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
 			ReplaceView(RUNTIME_CLASS(CViewData), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDETECTION:
-		if (!pdb_doc->DBGetCurrentDatFileName(TRUE).IsEmpty())
+		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
 			ReplaceView(RUNTIME_CLASS(CViewSpikeDetection), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
-		if (!pdb_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 			ReplaceView(RUNTIME_CLASS(CViewSpikes), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
-		if (!pdb_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 			ReplaceView(RUNTIME_CLASS(CViewSpikeSort), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
-		if (!pdb_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 			ReplaceView(RUNTIME_CLASS(CViewSpikeTemplates), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
-		if (!pdb_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 			ReplaceView(RUNTIME_CLASS(CViewSpikeHist), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
@@ -465,7 +465,7 @@ void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 	case ID_VIEW_SPIKETIMESERIES:
 		flag = (flag
-			&& !p_dbwave_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty()
+			&& !p_dbwave_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty()
 			&& m_viewON != ID_VIEW_ACQUIREDATA);
 		break;
 
@@ -474,7 +474,7 @@ void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 		break;
 
 	default:
-		flag = (flag && !p_dbwave_doc->DBGetCurrentDatFileName().IsEmpty());
+		flag = (flag && !p_dbwave_doc->GetDB_CurrentDatFileName().IsEmpty());
 		break;
 	}
 
@@ -635,7 +635,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 	auto istep = 0;
 	CString cscomment;
 	auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
-	const int nfiles = p_dbwave_doc->DBGetNRecords();
+	const int nfiles = p_dbwave_doc->GetDB_NRecords();
 
 	for (int ifile = 0; ifile < nfiles; ifile++)
 	{
@@ -645,11 +645,11 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 				break;
 
 		cscomment.Format(_T("Processing file [%i / %i] "), ifile + 1, nfiles);
-		cscomment += p_dbwave_doc->DBGetCurrentDatFileName();
+		cscomment += p_dbwave_doc->GetDB_CurrentDatFileName();
 		dlg.SetStatus(cscomment);
 
 		// load file
-		p_dbwave_doc->DBSetCurrentRecordPosition(ifile);
+		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
 		const auto b_ok = p_dbwave_doc->OpenCurrentDataFile();
 		if (!b_ok)
 			continue;
@@ -694,7 +694,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		}
 		// change flag if condition met
 		if (nconsecutivepoints >= n_consecutive_points)
-			p_dbwave_doc->DBSetCurrentRecordFlag(flag_rejected_file_as);
+			p_dbwave_doc->SetDB_CurrentRecordFlag(flag_rejected_file_as);
 
 		// update interface
 		if (MulDiv(ifile, 100, nfiles) > istep)
@@ -711,15 +711,15 @@ void CChildFrame::OnRecordGotorecord()
 {
 	CGotoRecordDlg dlg;
 	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
-	dlg.m_recordPos = p_dbwave_doc->DBGetCurrentRecordPosition();
-	dlg.m_recordID = p_dbwave_doc->DBGetCurrentRecordID();
+	dlg.m_recordPos = p_dbwave_doc->GetDB_CurrentRecordPosition();
+	dlg.m_recordID = p_dbwave_doc->GetDB_CurrentRecordID();
 	dlg.m_bGotoRecordID = ((CdbWaveApp*)AfxGetApp())->options_viewdata.bGotoRecordID;
 
 	if (IDOK == dlg.DoModal())
 	{
 		((CdbWaveApp*)AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
 		if (!dlg.m_bGotoRecordID)
-			p_dbwave_doc->DBSetCurrentRecordPosition(dlg.m_recordPos);
+			p_dbwave_doc->SetDB_CurrentRecordPosition(dlg.m_recordPos);
 		else
 			p_dbwave_doc->DBMoveToID(dlg.m_recordID);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -778,7 +778,7 @@ void CChildFrame::OnRecordDeletecurrent()
 	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
 
 	// save index current file
-	auto currentindex = p_dbwave_doc->DBGetCurrentRecordPosition();
+	auto currentindex = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	if (currentindex < 0)
 		currentindex = 0;
 
@@ -809,7 +809,7 @@ void CChildFrame::OnRecordDeletecurrent()
 
 		// update views and rename "erased" files
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
-		p_dbwave_doc->DBSetCurrentRecordPosition(currentindex);
+		p_dbwave_doc->SetDB_CurrentRecordPosition(currentindex);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 
 		// delete erased files
@@ -1112,14 +1112,14 @@ void CChildFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeact
 void CChildFrame::OnToolsPathsRelative()
 {
 	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
-	p_dbwave_doc->DBSetPathsRelative_to_DataBaseFile();
+	p_dbwave_doc->SetDB_PathsRelative_to_DataBaseFile();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsPathsAbsolute()
 {
 	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
-	p_dbwave_doc->DBSetPathsAbsolute();
+	p_dbwave_doc->SetDB_PathsAbsolute();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 

@@ -164,8 +164,8 @@ void CPropertiesWnd::UpdatePropList()
 	m_bchangedProperty = FALSE;		// reset flag
 
 	// database general section
-	const int ipos = m_pDoc->DBGetCurrentRecordPosition() + 1;
-	const int irows = m_pDoc->DBGetNRecords();
+	const int ipos = m_pDoc->GetDB_CurrentRecordPosition() + 1;
+	const int irows = m_pDoc->GetDB_NRecords();
 	if (irows == 0)
 		return;
 
@@ -379,7 +379,7 @@ void CPropertiesWnd::InitPropList()
 	/*icol0 =*/ InitGroupFromTable(p_group4, icol0);
 	m_wndPropList.AddProperty(p_group4);
 
-	if (p_database && m_pDoc->DBGetNRecords() > 0)
+	if (p_database && m_pDoc->GetDB_NRecords() > 0)
 	{
 		m_bUpdateCombos = TRUE;
 		UpdatePropList();
@@ -502,9 +502,9 @@ void CPropertiesWnd::OnUpdateBnUpdateinfos(CCmdUI* pCmdUI)
 
 void CPropertiesWnd::OnBnClickedUpdateinfos()
 {
-	const auto l_index = m_pDoc->DBGetCurrentRecordPosition();
+	const auto l_index = m_pDoc->GetDB_CurrentRecordPosition();
 	UpdateTableFromProp();
-	m_pDoc->DBSetCurrentRecordPosition(l_index);
+	m_pDoc->SetDB_CurrentRecordPosition(l_index);
 	m_pDoc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 }
 

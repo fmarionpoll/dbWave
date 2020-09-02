@@ -201,7 +201,7 @@ void CViewdbWave::OnInitialUpdate()
 		// update tab control
 		InitctrlTab();
 		m_tabCtrl.ShowWindow(SW_SHOW);
-		m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkListIndex());
+		m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
 	};
 }
 
@@ -290,7 +290,7 @@ CdbWaveDoc* CViewdbWave::GetDocument()
 
 CDaoRecordset* CViewdbWave::OnGetRecordset()
 {
-	return GetDocument()->DBGetRecordset();
+	return GetDocument()->GetDB_Recordset();
 }
 
 void CViewdbWave::UpdateControls()
@@ -298,12 +298,12 @@ void CViewdbWave::UpdateControls()
 	auto pdb_doc = GetDocument();
 	CFileStatus status;
 
-	auto filename = pdb_doc->DBGetCurrentDatFileName();
+	auto filename = pdb_doc->GetDB_CurrentDatFileName();
 	m_bvalidDat = CFile::GetStatus(filename, status);
-	filename = pdb_doc->DBGetCurrentSpkFileName(TRUE);
+	filename = pdb_doc->GetDB_CurrentSpkFileName(TRUE);
 	m_bvalidSpk = CFile::GetStatus(filename, status);
 
-	const int ifile = pdb_doc->DBGetCurrentRecordPosition();
+	const int ifile = pdb_doc->GetDB_CurrentRecordPosition();
 	m_dataListCtrl.SetCurSel(ifile);
 	m_dataListCtrl.EnsureVisible(ifile, FALSE);
 }
@@ -366,7 +366,7 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 void CViewdbWave::FillListBox()
 {
 	auto pdb_doc = GetDocument();
-	const int imax = pdb_doc->DBGetNRecords();
+	const int imax = pdb_doc->GetDB_NRecords();
 	m_dataListCtrl.DeleteAllItems();
 	m_dataListCtrl.SetItemCountEx(imax);
 }
@@ -376,7 +376,7 @@ void CViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	// get item clicked and select it
 	const auto p_item_activate = (NMITEMACTIVATE*)pNMHDR;
 	if (p_item_activate->iItem >= 0)
-		GetDocument()->DBSetCurrentRecordPosition(p_item_activate->iItem);
+		GetDocument()->SetDB_CurrentRecordPosition(p_item_activate->iItem);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	CDaoRecordView::OnInitialUpdate();
 
@@ -464,7 +464,7 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 void CViewdbWave::DeleteRecords()
 {
 	// save index current file
-	auto currentindex = GetDocument()->DBGetCurrentRecordPosition() - 1;
+	auto currentindex = GetDocument()->GetDB_CurrentRecordPosition() - 1;
 	if (currentindex < 0)
 		currentindex = 0;
 
@@ -484,7 +484,7 @@ void CViewdbWave::DeleteRecords()
 		while (pos)
 		{
 			const auto n_item = m_dataListCtrl.GetNextSelectedItem(pos);
-			pdb_doc->DBSetCurrentRecordPosition(n_item - ndel);
+			pdb_doc->SetDB_CurrentRecordPosition(n_item - ndel);
 			pdb_doc->DBDeleteCurrentRecord();
 			ndel++;
 		}
@@ -496,7 +496,7 @@ void CViewdbWave::DeleteRecords()
 		m_pSet->SetFieldNull(NULL);
 	m_pSet->RefreshQuery();*/
 
-	pdb_doc->DBSetCurrentRecordPosition(currentindex);
+	pdb_doc->SetDB_CurrentRecordPosition(currentindex);
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -549,7 +549,7 @@ void CViewdbWave::InitctrlTab()
 	auto j = 0;
 	if (GetDocument()->OpenCurrentSpikeFile() != nullptr)
 	{
-		const auto curr_listsize = GetDocument()->GetcurrentSpkListSize();
+		const auto curr_listsize = GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListSize();
 		for (auto i = 0; i < curr_listsize; i++)
 		{
 			auto p_spike_list = GetDocument()->m_pSpk->SetSpkListCurrent(i);
@@ -750,7 +750,7 @@ void CViewdbWave::OnBnClickedRadio2()
 	InitctrlTab();
 
 	m_tabCtrl.ShowWindow(SW_SHOW);
-	m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkListIndex());
+	m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
 
 	// display spikes
 	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
@@ -803,7 +803,7 @@ void CViewdbWave::OnEnChangeSpikeclass()
 void CViewdbWave::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	GetDocument()->SetcurrentSpkListIndex(icursel);
+	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icursel);
 	m_dataListCtrl.RefreshDisplay();
 	*pResult = 0;
 }

@@ -308,7 +308,7 @@ BOOL CViewSpikeSort::OnMove(UINT nIDMoveCommand)
 	SaveCurrentFileParms();
 	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	auto p_doc = GetDocument();
-	if (p_doc->DBGetCurrentSpkFileName(TRUE).IsEmpty())
+	if (p_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 		return false;
@@ -342,7 +342,7 @@ CdbWaveDoc* CViewSpikeSort::GetDocument() // non-debug version is inline
 
 CDaoRecordset* CViewSpikeSort::OnGetRecordset()
 {
-	return GetDocument()->DBGetRecordset();
+	return GetDocument()->GetDB_Recordset();
 }
 
 void CViewSpikeSort::UpdateFileParameters()
@@ -374,8 +374,8 @@ void CViewSpikeSort::UpdateFileParameters()
 			j++;
 		}
 	}
-	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(pdb_doc->GetcurrentSpkListIndex());
-	m_tabCtrl.SetCurSel(pdb_doc->GetcurrentSpkListIndex());
+	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(pdb_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+	m_tabCtrl.SetCurSel(pdb_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
 
 	// spike and classes
 	auto spikeno = m_pSpkList->m_selspike;
@@ -508,10 +508,10 @@ void CViewSpikeSort::OnSort()
 {
 	// set file indexes - assume only one file selected
 	auto pdb_doc = GetDocument();
-	const int currentfile = pdb_doc->DBGetCurrentRecordPosition();
+	const int currentfile = pdb_doc->GetDB_CurrentRecordPosition();
 	auto firstfile = currentfile;
 	auto lastfile = firstfile;
-	const auto nfiles = pdb_doc->DBGetNRecords();
+	const auto nfiles = pdb_doc->GetDB_NRecords();
 	const auto currentlist = m_pSpkDoc->GetSpkListCurrentIndex();
 
 	// change indexes if ALL files selected
@@ -521,7 +521,7 @@ void CViewSpikeSort::OnSort()
 	if (m_bAllfiles)
 	{
 		firstfile = 0;						// index first file
-		lastfile = pdb_doc->DBGetNRecords() - 1;// index last file
+		lastfile = pdb_doc->GetDB_NRecords() - 1;// index last file
 		pdlg = new CProgressDlg;
 		pdlg->Create();
 		pdlg->SetStep(1);
@@ -531,7 +531,7 @@ void CViewSpikeSort::OnSort()
 	{
 		// load spike file
 		BOOL flagchanged;
-		pdb_doc->DBSetCurrentRecordPosition(ifile);
+		pdb_doc->SetDB_CurrentRecordPosition(ifile);
 		m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
 		if (nullptr == m_pSpkDoc)
 			continue;
@@ -574,8 +574,8 @@ void CViewSpikeSort::OnSort()
 
 		if (flagchanged)
 		{
-			m_pSpkDoc->OnSaveDocument(pdb_doc->DBGetCurrentSpkFileName(FALSE));
-			pdb_doc->Setnbspikes(m_pSpkList->GetTotalSpikes());
+			m_pSpkDoc->OnSaveDocument(pdb_doc->GetDB_CurrentSpkFileName(FALSE));
+			pdb_doc->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
 		}
 	}
 
@@ -583,7 +583,7 @@ void CViewSpikeSort::OnSort()
 	if (m_bAllfiles)
 	{
 		delete pdlg;
-		pdb_doc->DBSetCurrentRecordPosition(currentfile);
+		pdb_doc->SetDB_CurrentRecordPosition(currentfile);
 		m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
 		m_pSpkList = m_pSpkDoc->GetSpkListCurrent();
 	}
@@ -760,9 +760,9 @@ void CViewSpikeSort::UnflagAllSpikes()
 {
 	if (m_bAllfiles) {
 		auto pdb_doc = GetDocument();
-		for (auto ifile = 0; ifile < pdb_doc->DBGetNRecords(); ifile++)
+		for (auto ifile = 0; ifile < pdb_doc->GetDB_NRecords(); ifile++)
 		{
-			pdb_doc->DBSetCurrentRecordPosition(ifile);
+			pdb_doc->SetDB_CurrentRecordPosition(ifile);
 			m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
 
 			for (auto j = 0; j < m_pSpkDoc->GetSpkListSize(); j++) {
@@ -782,8 +782,8 @@ void CViewSpikeSort::OnMeasure()
 {
 	// set file indexes - assume only one file selected
 	auto pdb_doc = GetDocument();
-	int currentfile = pdb_doc->DBGetCurrentRecordPosition(); // index current file
-	const int nfiles = pdb_doc->DBGetNRecords();
+	int currentfile = pdb_doc->GetDB_CurrentRecordPosition(); // index current file
+	const int nfiles = pdb_doc->GetDB_NRecords();
 	const auto currentlist = m_pSpkDoc->GetSpkListCurrentIndex();
 	int firstfile = currentfile;
 	int lastfile = currentfile;
@@ -801,7 +801,7 @@ void CViewSpikeSort::OnMeasure()
 		// check if user wants to continue
 		if (m_bAllfiles)
 		{
-			pdb_doc->DBSetCurrentRecordPosition(ifile);
+			pdb_doc->SetDB_CurrentRecordPosition(ifile);
 			m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
 		}
 		// check if this file is ok
@@ -839,13 +839,13 @@ void CViewSpikeSort::OnMeasure()
 		}
 
 		//save only if changed?
-		m_pSpkDoc->OnSaveDocument(pdb_doc->DBGetCurrentSpkFileName(FALSE));
+		m_pSpkDoc->OnSaveDocument(pdb_doc->GetDB_CurrentSpkFileName(FALSE));
 	}
 
 	if (m_bAllfiles)
 	{
-		currentfile = pdb_doc->DBGetCurrentRecordPosition();
-		pdb_doc->DBSetCurrentRecordPosition(currentfile);
+		currentfile = pdb_doc->GetDB_CurrentRecordPosition();
+		pdb_doc->SetDB_CurrentRecordPosition(currentfile);
 		m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
 		m_pSpkList = m_pSpkDoc->GetSpkListCurrent();
 		spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
@@ -1027,7 +1027,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	dlg.m_pdbWaveDoc = GetDocument();
 
 	// refresh pointer to data file because it not used elsewhere in the view
-	auto docname = GetDocument()->DBGetCurrentDatFileName();
+	auto docname = GetDocument()->GetDB_CurrentDatFileName();
 	auto b_doc_exists = FALSE;
 	if (!docname.IsEmpty())
 	{
@@ -1073,18 +1073,18 @@ void CViewSpikeSort::SaveCurrentFileParms()
 	{
 		const auto currentlist = m_tabCtrl.GetCurSel();
 		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
-		m_pSpkDoc->OnSaveDocument(GetDocument()->DBGetCurrentSpkFileName(FALSE));
+		m_pSpkDoc->OnSaveDocument(GetDocument()->GetDB_CurrentSpkFileName(FALSE));
 
 		// save modifications into the database
-		GetDocument()->Setnbspikes(m_pSpkList->GetTotalSpikes());
-		GetDocument()->Setnbspikeclasses(m_pSpkList->GetNbclasses());
+		GetDocument()->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
+		GetDocument()->SetDB_nbspikeclasses(m_pSpkList->GetNbclasses());
 
 		// change flag is button is checked
 		if (((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
 		{
-			int flag = GetDocument()->DBGetCurrentRecordFlag();
+			int flag = GetDocument()->GetDB_CurrentRecordFlag();
 			flag++;
-			GetDocument()->DBSetCurrentRecordFlag(flag);
+			GetDocument()->SetDB_CurrentRecordFlag(flag);
 		}
 	}
 }
@@ -1361,7 +1361,7 @@ void CViewSpikeSort::UpdateScrollBar()
 void CViewSpikeSort::SelectSpkList(int icursel)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(icursel);
-	GetDocument()->SetcurrentSpkListIndex(icursel);
+	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icursel);
 	ASSERT(m_pSpkList != NULL);
 	OnMeasure();
 

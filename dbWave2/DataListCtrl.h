@@ -58,7 +58,8 @@ protected:
 	CImageList	m_imagelist;	// list of bitmap images
 	static int	m_icolwidth[NCOLS];
 	CUIntArray* m_picolwidth;
-
+	CBitmap*	m_pEmptyBitmap;
+	
 	int			m_cx;			// image height
 	int			m_cy;			// image width
 	int			m_dattransform;
@@ -70,17 +71,16 @@ protected:
 	float		m_mVspan;
 	BOOL		m_bsetTimeSpan;
 	BOOL		m_bsetmVSpan;
+	BOOL		m_bDisplayFileName;
 
 	void		DeletePtrArray();
 	void		ResizePtrArray(int nitems);
 	void		SetEmptyBitmap(BOOL bForcedUpdate = FALSE);
-	CBitmap* m_pEmptyBitmap;
 	void		DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage);
 	void		DisplayDataWnd(CDataListCtrlRowObject* ptr, int iImage);
 	void		DisplayEmptyWnd(CDataListCtrlRowObject* ptr, int iImage);
 
-	BOOL		m_bDisplayFileName;
-
+	
 	// Generated message map functions
 	afx_msg void OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDestroy();

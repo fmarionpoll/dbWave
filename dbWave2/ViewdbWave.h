@@ -21,16 +21,14 @@ protected: // create from serialization only
 
 public:
 	enum { IDD = IDD_VIEWDBWAVE };
-	CdbMainTable* m_pSet;
+	CdbMainTable*	m_pSet;
 
 	// Attributes
 public:
-	CdbWaveDoc* GetDocument();
 	CDataListCtrl	m_dataListCtrl;
 	BOOL			m_bvalidDat;
 	BOOL			m_bvalidSpk;
-
-	// Operations
+	CdbWaveDoc*		GetDocument();
 
 	// Overrides
 public:
@@ -70,7 +68,7 @@ protected:
 	CEditCtrl			mm_timelast;		// last abcissa value
 	CEditCtrl			mm_amplitudespan;	// amplitude
 	CStretchControl		m_stretch;			// properties for controls
-	OPTIONS_VIEWDATA* m_options_viewdata;
+	OPTIONS_VIEWDATA*	m_options_viewdata;
 	CTabCtrl			m_tabCtrl;
 
 	// internal functions

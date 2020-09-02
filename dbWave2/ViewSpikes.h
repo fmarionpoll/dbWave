@@ -24,7 +24,7 @@ public:
 	BOOL			m_bartefact = false;
 	BOOL			m_bKeepSameClass = false;
 	float			m_jitter_ms = 1.f;
-	CdbWaveDoc* GetDocument();
+	CdbWaveDoc*		GetDocument();
 
 	// Attributes
 protected:

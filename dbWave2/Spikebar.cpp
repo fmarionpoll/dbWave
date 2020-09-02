@@ -56,15 +56,15 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = p_dbwave_doc_->DBGetNRecords();
-		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+		nfiles = p_dbwave_doc_->GetDB_NRecords();
+		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
 	}
 
 	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_spike_doc_ = p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = nullptr;
 			if (p_dbwave_doc_->m_pSpk != nullptr)
@@ -148,34 +148,128 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 
 	if (m_ballFiles)
 	{
-		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}
 }
+
+
+void CSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
+{
+	if (m_erasebkgnd)
+		EraseBkgnd(p_dc);
+
+	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
+	auto rect = m_displayRect;
+	rect.DeflateRect(1, 1);
+
+	// save context
+	const auto n_saved_dc = p_dc->SaveDC();
+	const auto bkcolor = p_dc->GetBkColor();
+	p_dc->IntersectClipRect(&m_clientRect);
+
+
+	// test presence of data
+	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+	{
+		p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
+		p_dc->RestoreDC(n_saved_dc);
+		return;
+	}
+
+	// plot comment at the bottom
+	if (m_bBottomComment)
+	{
+		p_dc->DrawText(m_csBottomComment, m_csBottomComment.GetLength(), rect, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+	}
+
+	// display data: trap error conditions
+	if (m_yWE == 1)
+	{
+		int maxval, minval;
+		p_spikelist_->GetTotalMaxMin(TRUE, &maxval, &minval);
+		m_yWE = maxval - minval;
+		m_yWO = (maxval + minval) / 2;
+	}
+
+	if (m_xWE == 1) // this is generally the case: && m_xWO == 0)
+	{
+		m_xWE = m_displayRect.right;
+		m_xWO = m_displayRect.left;
+	}
+
+	DisplayBars(p_dc, &m_displayRect);
+
+	if (p_spike_doc_ == nullptr)
+		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
+	CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
+
+	if (pintervals->nitems > 0)
+		DisplayStimulus(p_dc, &m_displayRect);
+
+	// display vertical cursors
+	if (GetNVTtags() > 0)
+	{
+		// select pen and display mode
+		const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
+		const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+
+		// iterate through VT cursor list
+		const auto y0 = 0;
+		const int y1 = m_displayRect.bottom;
+		for (auto j = GetNVTtags() - 1; j >= 0; j--)
+		{
+			const auto lk = GetVTtagLval(j);	// get val
+			if (lk <m_lFirst || lk > m_lLast)
+				continue;
+			const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));
+			p_dc->MoveTo(k, y0);			// set initial pt
+			p_dc->LineTo(k, y1);			// VT line
+		}
+		p_dc->SetROP2(nold_rop);			// restore old display mode
+		p_dc->SelectObject(oldp);
+	}
+
+	// temp tag
+	if (m_hwndReflect != nullptr && m_tempVTtag != nullptr)
+	{
+		const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
+		const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+		p_dc->MoveTo(m_tempVTtag->m_pixel, m_displayRect.top + 2);
+		p_dc->LineTo(m_tempVTtag->m_pixel, m_displayRect.bottom - 2);
+		p_dc->SetROP2(nold_rop);
+		p_dc->SelectObject(oldp);
+	}
+	
+	p_dc->RestoreDC(n_saved_dc);
+}
+
 
 void CSpikeBarWnd::DisplayStimulus(CDC* p_dc, CRect* rect) const
 {
 	CPen bluepen;
 	bluepen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
 	const auto pold_p = (CPen*)p_dc->SelectObject(&bluepen);
-	const int top = rect->bottom - m_barheight + 2;; // m_clientRect.bottom - m_barheight +2;
-	const int bottom = rect->bottom - 3; //m_clientRect.bottom - 3;
-	const auto displen = rect->Width(); //m_clientRect.GetRectWidth();
+	const int top = rect->bottom - m_barheight + 2;
+	const int bottom = rect->bottom - 3;
+	const auto displen = rect->Width();	
 
 	// search first stimulus transition within interval
 	const auto iistart = m_lFirst;
 	const auto iiend = m_lLast;
 	const auto iilen = iiend - iistart;
 	auto i0 = 0;
-	CArray <long, long>* pintervalsArray = &(p_dbwave_doc_->m_pSpk->m_stimIntervals.intervalsArray);
+	//CArray <long, long>* pintervalsArray = &(p_dbwave_doc_->m_pSpk->m_stimIntervals.intervalsArray);
+	CArray <long, long>* pintervalsArray = &(p_spike_doc_->m_stimIntervals.intervalsArray);
+
 
 	while (i0 < pintervalsArray->GetSize()
 		&& pintervalsArray->GetAt(i0) < iistart)
 		i0++;							// loop until found
 
 	auto istate = bottom;				// use this variable to keep track of pulse broken by display limits
-	const auto jj = (i0 / 2) * 2;					// keep index of the ON transition
+	const auto jj = (i0 / 2) * 2;		// keep index of the ON transition
 	if (jj != i0)
 		istate = top;
 	p_dc->MoveTo(rect->left, istate);
@@ -192,7 +286,7 @@ void CSpikeBarWnd::DisplayStimulus(CDC* p_dc, CRect* rect) const
 
 		iix0 = MulDiv(displen, iix0, iilen) + rect->left;
 		p_dc->LineTo(iix0, istate);		// draw line up to the first point of the pulse
-		p_dc->LineTo(iix0, top);			// draw vertical line to top of pulse
+		p_dc->LineTo(iix0, top);		// draw vertical line to top of pulse
 
 		// stim ends here
 		istate = bottom;				// after pulse, descend to bottom level
@@ -203,7 +297,7 @@ void CSpikeBarWnd::DisplayStimulus(CDC* p_dc, CRect* rect) const
 			istate = top;				// do not descend..
 		}
 		iix1 = MulDiv(displen, iix1, iilen) + rect->left + 1;
-		p_dc->LineTo(iix1, top);			// draw top of pulse
+		p_dc->LineTo(iix1, top);		// draw top of pulse
 		p_dc->LineTo(iix1, istate);		// draw descent to bottom line
 	}
 	p_dc->LineTo(rect->left + displen, istate);		// end of loop - draw the rest
@@ -657,8 +751,8 @@ int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 	long ncurrentfile = 0;
 	if (m_ballFiles)
 	{
-		nfiles = p_dbwave_doc_->DBGetNRecords();
-		ncurrentfile = p_dbwave_doc_->DBGetCurrentRecordPosition();
+		nfiles = p_dbwave_doc_->GetDB_NRecords();
+		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
 	}
 
 	int result = -1;
@@ -666,7 +760,7 @@ int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->DBSetCurrentRecordPosition(ifile);
+			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 		}
@@ -682,7 +776,7 @@ int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 
 	if (m_ballFiles && result < 0)
 	{
-		p_dbwave_doc_->DBSetCurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
 	}

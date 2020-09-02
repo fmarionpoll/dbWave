@@ -38,7 +38,6 @@ CdbWaveDoc::CdbWaveDoc()
 	m_hMyMenu = nullptr;
 	m_validTables = FALSE;
 
-	m_icurSpkList = 0;
 	m_bClearMdbOnExit = FALSE;
 	m_bTranspose = false;
 }
@@ -292,8 +291,8 @@ BOOL CdbWaveDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	return TRUE;
 }
 
-CString CdbWaveDoc::DBDefineCurrentSpikeFileName() {
-	if (!DBGetCurrentSpkFileName(TRUE).IsEmpty())
+CString CdbWaveDoc::SetDB_CurrentSpikeFileName() {
+	if (!GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 		return m_currentSpikefileName;
 
 	// not found? derive name from data file (same directory)
@@ -321,7 +320,7 @@ CString CdbWaveDoc::DBDefineCurrentSpikeFileName() {
 	return m_currentSpikefileName;
 }
 
-CString CdbWaveDoc::DBGetCurrentDatFileName(const BOOL b_test)
+CString CdbWaveDoc::GetDB_CurrentDatFileName(const BOOL b_test)
 {
 	m_currentDatafileName = m_pDB->GetDatFilenameFromCurrentRecord();
 	auto filename = m_currentDatafileName;
@@ -330,7 +329,7 @@ CString CdbWaveDoc::DBGetCurrentDatFileName(const BOOL b_test)
 	return filename;
 }
 
-CString CdbWaveDoc::DBGetCurrentSpkFileName(const BOOL b_test)
+CString CdbWaveDoc::GetDB_CurrentSpkFileName(const BOOL b_test)
 {
 	m_currentSpikefileName = m_pDB->GetSpkFilenameFromCurrentRecord();
 	auto file_name = m_currentSpikefileName;
@@ -339,7 +338,7 @@ CString CdbWaveDoc::DBGetCurrentSpkFileName(const BOOL b_test)
 	return file_name;
 }
 
-long CdbWaveDoc::DBGetDataLen()
+long CdbWaveDoc::GetDB_DataLen()
 {
 	long datalen = 0;
 	try { datalen = m_pDB->m_mainTableSet.m_datalen; }
@@ -399,15 +398,15 @@ void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* mi
 	long ncurrentfile = 0;
 	if (bAllFiles)
 	{
-		nfiles = DBGetNRecords();
-		ncurrentfile = DBGetCurrentRecordPosition();
+		nfiles = GetDB_NRecords();
+		ncurrentfile = GetDB_CurrentRecordPosition();
 	}
 
 	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
 		if (bAllFiles)
 		{
-			DBSetCurrentRecordPosition(ifile);
+			SetDB_CurrentRecordPosition(ifile);
 			OpenCurrentSpikeFile();
 			m_pSpk->SetSpkListCurrent(0);
 		}
@@ -417,7 +416,7 @@ void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* mi
 
 	if (bAllFiles)
 	{
-		DBSetCurrentRecordPosition(ncurrentfile);
+		SetDB_CurrentRecordPosition(ncurrentfile);
 		OpenCurrentSpikeFile();
 		m_pSpk->SetSpkListCurrent(0);
 	}
@@ -429,8 +428,8 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 	long ncurrentfile = 0;
 	if (bAll)
 	{
-		nfiles = DBGetNRecords();
-		ncurrentfile = DBGetCurrentRecordPosition();
+		nfiles = GetDB_NRecords();
+		ncurrentfile = GetDB_CurrentRecordPosition();
 	}
 
 	CSize dummy(0, 0);
@@ -439,7 +438,7 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 	{
 		if (bAll)
 		{
-			DBSetCurrentRecordPosition(ifile);
+			SetDB_CurrentRecordPosition(ifile);
 			OpenCurrentSpikeFile();
 			m_pSpk->SetSpkListCurrent(0);
 		}
@@ -461,7 +460,7 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 
 	if (bAll)
 	{
-		DBSetCurrentRecordPosition(ncurrentfile);
+		SetDB_CurrentRecordPosition(ncurrentfile);
 		OpenCurrentSpikeFile();
 		m_pSpk->SetSpkListCurrent(0);
 	}
@@ -469,7 +468,7 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 	return dummy;
 }
 
-long CdbWaveDoc::DBGetCurrentRecordPosition()
+long CdbWaveDoc::GetDB_CurrentRecordPosition()
 {
 	long ifile = -1;
 	try
@@ -484,24 +483,24 @@ long CdbWaveDoc::DBGetCurrentRecordPosition()
 	return ifile;
 }
 
-long CdbWaveDoc::DBGetCurrentRecordID()
+long CdbWaveDoc::GetDB_CurrentRecordID()
 {
 	return m_pDB->m_mainTableSet.m_ID;
 }
 
-void CdbWaveDoc::DBSetCurrentRecordFlag(const int flag)
+void CdbWaveDoc::SetDB_CurrentRecordFlag(const int flag)
 {
 	m_pDB->m_mainTableSet.Edit();
 	m_pDB->m_mainTableSet.m_flag = flag;
 	m_pDB->m_mainTableSet.Update();
 }
 
-void CdbWaveDoc::DBSetPathsRelative_to_DataBaseFile()
+void CdbWaveDoc::SetDB_PathsRelative_to_DataBaseFile()
 {
 	m_pDB->ConvertPathTabletoRelativePath();
 }
 
-void CdbWaveDoc::DBSetPathsAbsolute()
+void CdbWaveDoc::SetDB_PathsAbsolute()
 {
 	m_pDB->ConvertPathTabletoAbsolutePath();
 }
@@ -516,7 +515,7 @@ void CdbWaveDoc::DBDeleteUnusedEntries()
 	m_pDB->DeleteUnusedEntriesInAccessoryTables();
 }
 
-void CdbWaveDoc::Setnbspikes(long nspikes)
+void CdbWaveDoc::SetDB_nbspikes(long nspikes)
 {
 	try
 	{
@@ -531,17 +530,17 @@ void CdbWaveDoc::Setnbspikes(long nspikes)
 	}
 }
 
-long CdbWaveDoc::Getnbspikes()
+long CdbWaveDoc::GetDB_nbspikes()
 {
 	return m_pDB->m_mainTableSet.m_nspikes;
 }
 
-long CdbWaveDoc::Getnbspikeclasses()
+long CdbWaveDoc::GetDB_nbspikeclasses()
 {
 	return m_pDB->m_mainTableSet.m_nspikeclasses;
 }
 
-void CdbWaveDoc::Setnbspikeclasses(long nclasses)
+void CdbWaveDoc::SetDB_nbspikeclasses(long nclasses)
 {
 	try
 	{
@@ -563,8 +562,8 @@ void CdbWaveDoc::ExportDataAsciiComments(CSharedFile* p_shared_file)
 	CString cs_dummy;
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	const auto p_view_data_options = &(p_app->options_viewdata);
-	const int index_current = DBGetCurrentRecordPosition();
-	const int n_files = DBGetNRecords();
+	const int index_current = GetDB_CurrentRecordPosition();
+	const int n_files = GetDB_NRecords();
 
 	// memory allocated -- get pointer to it
 	cs_dummy.Format(_T("n files = %i\r\n\r\n"), n_files);
@@ -574,7 +573,7 @@ void CdbWaveDoc::ExportDataAsciiComments(CSharedFile* p_shared_file)
 	for (auto ifile = 0; ifile < n_files; ifile++)
 	{
 		// get ith file's comment
-		DBSetCurrentRecordPosition(ifile);
+		SetDB_CurrentRecordPosition(ifile);
 		cs_dummy.Format(_T("%i\t%i\t"), ifile + 1, m_pDB->m_mainTableSet.m_ID);
 		p_shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
@@ -606,7 +605,7 @@ void CdbWaveDoc::ExportDataAsciiComments(CSharedFile* p_shared_file)
 		}
 	}
 
-	DBSetCurrentRecordPosition(index_current);
+	SetDB_CurrentRecordPosition(index_current);
 	OpenCurrentDataFile();
 }
 
@@ -1347,7 +1346,7 @@ BOOL CdbWaveDoc::ImportDatabase(CString& filename)
 void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 {
 	// save current index position - restore on exit
-	const auto currentfile = DBGetCurrentRecordPosition();
+	const auto currentfile = GetDB_CurrentRecordPosition();
 
 	// make sure there are objects to read / write data and spike files
 	if (m_pDat == nullptr)		// data doc
@@ -1392,7 +1391,7 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 	dlg.SetStep(1);
 	auto istep = 0;
 	CString cscomment;
-	const auto nfiles = DBGetNRecords();
+	const auto nfiles = GetDB_NRecords();
 	auto ifile = 1;
 
 	// got to the first record
@@ -1441,7 +1440,7 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 	m_pDB->GetFilenamesFromCurrentRecord();
 
 	// restore current data position
-	DBSetCurrentRecordPosition(currentfile);
+	SetDB_CurrentRecordPosition(currentfile);
 }
 
 BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const
@@ -1694,13 +1693,13 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 	CString csfilecomment = _T("Analyze file: ");
 
 	// save current selection and export header of the table
-	const int ioldindex = DBGetCurrentRecordPosition();
-	const int nfiles = DBGetNRecords();
+	const int ioldindex = GetDB_CurrentRecordPosition();
+	const int nfiles = GetDB_NRecords();
 	if (nullptr == m_pSpk)
 	{
 		m_pSpk = new CSpikeDoc;
 		ASSERT(m_pSpk != NULL);
-		m_pSpk->SetSpkListCurrent(GetcurrentSpkListIndex());
+		m_pSpk->SetSpkListCurrent(GetcurrentSpkDocument()->GetcurrentSpkListIndex());
 	}
 
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
@@ -1781,7 +1780,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 			dlg.SetStatus(cscomment);
 
 			// open document
-			DBSetCurrentRecordPosition(ifile1);
+			SetDB_CurrentRecordPosition(ifile1);
 			if (m_currentSpikefileName.IsEmpty())
 				continue;
 			// check if file is still present and open it
@@ -1857,7 +1856,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 		TransposeFileForExcel(pSF);
 
 	// restore initial file name and channel
-	DBSetCurrentRecordPosition(ioldindex);
+	SetDB_CurrentRecordPosition(ioldindex);
 	if (OpenCurrentSpikeFile() != nullptr)
 		m_pSpk->SetSpkListCurrent(ioldlist);
 	UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -2211,7 +2210,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 	dlg.Create();
 	dlg.SetWindowText(_T("Scan database to discard duplicate (or missing) data files..."));
 	CString cscomment;
-	const int nfiles = DBGetNRecords();
+	const int nfiles = GetDB_NRecords();
 	dlg.SetRange(0, nfiles);
 	dlg.SetStep(1);
 
@@ -2405,7 +2404,7 @@ void CdbWaveDoc::RemoveMissingFiles()
 	CString cs_dummy;
 
 	//int indexcurrent = DBGetCurrentRecordPosition();
-	const int nfiles = DBGetNRecords();
+	const int nfiles = GetDB_NRecords();
 	auto ifile = 0;
 
 	// loop through all files
@@ -2470,7 +2469,7 @@ void CdbWaveDoc::RemoveFalseSpkFiles()
 	CString csfilecomment = _T("Checking database consistency - find and remove missing files: ");
 	CString cs_dummy;
 
-	const int nfiles = DBGetNRecords();
+	const int nfiles = GetDB_NRecords();
 	auto ifile = 0;
 	auto i_files_removed = 0;
 	auto i_errors_corrected = 0;
@@ -2554,7 +2553,7 @@ void CdbWaveDoc::RemoveFalseSpkFiles()
 void CdbWaveDoc::ExportDatafilesAsTXTfiles()
 {
 	// save current index position - restore on exit
-	const auto currentfile = DBGetCurrentRecordPosition();
+	const auto currentfile = GetDB_CurrentRecordPosition();
 
 	// make sure there are objects to read / write data and spike files
 	if (m_pDat == nullptr)		// data doc
@@ -2573,7 +2572,7 @@ void CdbWaveDoc::ExportDatafilesAsTXTfiles()
 	CProgressDlg dlg;
 	dlg.Create();
 	CString cscomment;
-	const auto nfiles = DBGetNRecords();
+	const auto nfiles = GetDB_NRecords();
 	auto ifile = 1;
 	dlg.SetRange(0, nfiles);
 	CString cs_filenames;
@@ -2625,6 +2624,6 @@ void CdbWaveDoc::ExportDatafilesAsTXTfiles()
 	m_pDB->GetFilenamesFromCurrentRecord();
 
 	// restore current data position
-	DBSetCurrentRecordPosition(currentfile);
+	SetDB_CurrentRecordPosition(currentfile);
 	dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf = psf;
 }

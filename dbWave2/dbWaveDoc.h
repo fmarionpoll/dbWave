@@ -17,13 +17,13 @@ protected: // create from serialization only
 
 	// Attributes
 public:
-	CAcqDataDoc* m_pDat;
-	CSpikeDoc* m_pSpk;
+	CAcqDataDoc*	m_pDat;
+	CSpikeDoc*		m_pSpk;
 	HMENU			m_hMyMenu;
 	CIntervalsAndLevels m_stimsaved;
 
 	// database
-	CdbWdatabase* m_pDB;
+	CdbWdatabase*	m_pDB;
 	BOOL			m_validTables;
 	CDWordArray		m_selectedRecords;
 	CString			m_dbFilename;
@@ -35,7 +35,6 @@ protected:
 
 	BOOL			m_bcallnew;
 	CStringArray	m_csfiles_to_delete;
-	int				m_icurSpkList;
 	BOOL			m_bClearMdbOnExit;
 	BOOL			m_bTranspose;
 
@@ -44,29 +43,25 @@ public:
 	void			ImportDescFromFileList(CStringArray& filename, BOOL bOnlygenuine = FALSE);
 	BOOL			IsDatFile(CString csFilename) const;
 	inline BOOL		IsFilePresent(CString csFilename) { CFileStatus r_status; return CFile::GetStatus(csFilename, r_status); }
-	CWaveFormat* GetWaveFormat(CString filename, BOOL bIsDatFile);
+	CWaveFormat*	GetWaveFormat(CString filename, BOOL bIsDatFile);
 	BOOL			ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
 	BOOL			ImportDatabase(CString& filename);
 	BOOL			OnNewDocument(LPCTSTR lpszPathName);
-	CAcqDataDoc* OpenCurrentDataFile();
-	CSpikeDoc* OpenCurrentSpikeFile();
+	CAcqDataDoc*	OpenCurrentDataFile();
+	CSpikeDoc*		OpenCurrentSpikeFile();
+	CSpikeDoc*		GetcurrentSpkDocument() const { return m_pSpk; }
 
 	void			RemoveDuplicateFiles();
 	void			RemoveMissingFiles();
 	void			RemoveFalseSpkFiles();
 	void			DeleteErasedFiles();
 
-	long			Getnbspikes();				// assuming only 1 spike list / spike file (which might be wrong)
-	void			Setnbspikes(long nspikes);	// assuming only 1 spike list / file
-	long			Getnbspikeclasses();
-	void			Setnbspikeclasses(long nclasses);
+	long			GetDB_nbspikes();				// assuming only 1 spike list / spike file (which might be wrong)
+	void			SetDB_nbspikes(long nspikes);	// assuming only 1 spike list / file
+	long			GetDB_nbspikeclasses();
+	void			SetDB_nbspikeclasses(long nclasses);
 	void			GetAllSpkMaxMin(BOOL bAll, BOOL bRecalc, int* max, int* min);
 	CSize			GetSpkMaxMin_y1(BOOL bAll);
-
-	int		GetcurrentSpkListIndex() const { return m_icurSpkList; }
-	void	SetcurrentSpkListIndex(int icur) { m_icurSpkList = icur; }
-	int		GetcurrentSpkListSize() const { return m_pSpk->GetSpkListSize(); }
-	CSpikeDoc* GetcurrentSpkDocument() const { return m_pSpk; }
 
 	inline void		SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
 
@@ -106,25 +101,25 @@ public:
 
 	// DAO database functions
 public:
-	inline long DBGetNRecords() { return m_pDB->GetNRecords(); }
-	inline CDaoRecordset* DBGetRecordset() { return &m_pDB->m_mainTableSet; }
+	inline long GetDB_NRecords() { return m_pDB->GetNRecords(); }
+	inline CDaoRecordset* GetDB_Recordset() { return &m_pDB->m_mainTableSet; }
 	inline void DBRefreshQuery() { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery(); }
 	void		DBDeleteCurrentRecord();
-	CString		DBGetCurrentDatFileName(const BOOL bTest = FALSE);
-	CString		DBGetCurrentSpkFileName(const BOOL bTest = FALSE);
-	CString		DBDefineCurrentSpikeFileName();
-	inline void DBSetDataLen(long len) { m_pDB->SetDataLen(len); }
-	long		DBGetDataLen();
-	void		DBSetCurrentRecordFlag(int flag);
-	inline int	DBGetCurrentRecordFlag() { return m_pDB->m_mainTableSet.m_flag; }
-	void		DBSetPathsRelative_to_DataBaseFile();
-	void		DBSetPathsAbsolute();
+	CString		GetDB_CurrentDatFileName(const BOOL bTest = FALSE);
+	CString		GetDB_CurrentSpkFileName(const BOOL bTest = FALSE);
+	CString		SetDB_CurrentSpikeFileName();
+	inline void SetDB_DataLen(long len) { m_pDB->SetDataLen(len); }
+	long		GetDB_DataLen();
+	void		SetDB_CurrentRecordFlag(int flag);
+	inline int	GetDB_CurrentRecordFlag() { return m_pDB->m_mainTableSet.m_flag; }
+	void		SetDB_PathsRelative_to_DataBaseFile();
+	void		SetDB_PathsAbsolute();
 	void		DBTransferDatPathToSpkPath();
 	void		DBDeleteUnusedEntries();
 
-	long		DBGetCurrentRecordPosition();
-	long		DBGetCurrentRecordID();
-	inline BOOL	DBSetCurrentRecordPosition(long ifile) { return m_pDB->SetIndexCurrentFile(ifile); }
+	long		GetDB_CurrentRecordPosition();
+	long		GetDB_CurrentRecordID();
+	inline BOOL	SetDB_CurrentRecordPosition(long ifile) { return m_pDB->SetIndexCurrentFile(ifile); }
 	inline BOOL	DBMoveToID(long recordID) { return m_pDB->MoveToID(recordID); }
 	inline BOOL DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
 	inline BOOL DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }

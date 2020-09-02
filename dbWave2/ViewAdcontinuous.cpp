@@ -1236,7 +1236,7 @@ void CViewADContinuous::SaveAndCloseFile()
 		// if so, skip
 		// otherwise add data file name to the database
 		auto pdb_doc = GetDocument();
-		if (m_szFileName.CompareNoCase(pdb_doc->DBGetCurrentDatFileName(FALSE)) != 0)
+		if (m_szFileName.CompareNoCase(pdb_doc->GetDB_CurrentDatFileName(FALSE)) != 0)
 		{
 			// add document to database
 			m_csNameArray.Add(m_szFileName);
@@ -1274,7 +1274,7 @@ void CViewADContinuous::TransferFilesToDatabase()
 	p_set->BuildAndSortIDArrays();
 	p_set->RefreshQuery();
 	const int nfiles = pdb_doc->m_pDB->GetNRecords();
-	pdb_doc->DBSetCurrentRecordPosition(nfiles - 1);
+	pdb_doc->SetDB_CurrentRecordPosition(nfiles - 1);
 	pdb_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
