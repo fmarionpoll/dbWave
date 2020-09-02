@@ -89,7 +89,7 @@ BOOL CSpikeEditDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();			// call base class function
 	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
-	m_pSpkList = m_pdbWaveDoc->m_pSpk->GetSpkListCurrent();
+	m_pSpkList = m_pdbWaveDoc->m_pSpk->GetSpkList_Current();
 	if (m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() == 0)
 	{
 		EndDialog(FALSE);			// exit if no spikes to edit

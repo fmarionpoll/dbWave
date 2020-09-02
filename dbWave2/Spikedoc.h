@@ -41,16 +41,13 @@ public:
 	CTime 		GetDate()					const { return m_detectiondate; }
 	CString		GetComment()				const { return m_comment; }
 
-	int			GetSpkListSize() const { return spikelist_array.GetSize(); }
-	void		SetSpkListSize(int i) { return spikelist_array.SetSize(i); }
-	CSpikeList* SetSpkListCurrent(int ichan);
-	CSpikeList* GetSpkListCurrent();
-	int			GetSpkListCurrentIndex()	const { return m_currspklist; }
-	int			GetcurrentSpkListIndex() const { return m_currspklist; }
-	void		SetcurrentSpkListIndex(int icur) { m_currspklist = icur; }
-	int			GetcurrentSpkListSize() const { return GetSpkListSize(); }
+	int			GetSpkList_Size() const { return spikelist_array.GetSize(); }
+	void		SetSpkList_Size(int i) { return spikelist_array.SetSize(i); }
+	CSpikeList* SetSpkList_AsCurrent(int ichan);
+	CSpikeList* GetSpkList_Current();
+	int			GetSpkList_CurrentIndex()	const { return m_currspklist; }
 
-	int			AddSpkList() { spikelist_array.SetSize(GetSpkListSize() + 1); return GetSpkListSize(); }
+	int			AddSpkList() { spikelist_array.SetSize(GetSpkList_Size() + 1); return GetSpkList_Size(); }
 
 	void		SetSourceFilename(CString cs) { m_acqfile = cs; }
 	void		SetDetectionDate(CTime t) { m_detectiondate = t; }

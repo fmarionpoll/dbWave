@@ -331,9 +331,9 @@ BOOL CViewSpikes::AddSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 	if (!bfound)
 	{
 		spikeindex = m_pSpkList->AddSpike(p_data_spike_0,		//lpSource	= buff pointer to the buffer to copy
-			1, //offset, /*nchans,*/			//nchans	= nb of interleaved channels
-			iitime0 + prethreshold,				//time = file index of first pt of the spk
-			doc_channel,							//detectChan	= data source chan index
+			1, //offset, /*nchans,*/							//nchans	= nb of interleaved channels
+			iitime0 + prethreshold,								//time = file index of first pt of the spk
+			doc_channel,										//detectChan	= data source chan index
 			m_destclass, bcheck_if_otheraround);
 
 		m_pSpkDoc->SetModifiedFlag();
@@ -647,17 +647,19 @@ void CViewSpikes::UpdateFileParameters()
 		m_bSpkDocExists = TRUE;
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
-		m_pSpkDoc->SetSpkListCurrent(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
-		const auto icur = m_pSpkDoc->GetSpkListCurrentIndex();
-		m_pspkDP = m_pSpkDoc->GetSpkListCurrent()->GetDetectParms();
+
+		CSpikeList* pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex());
+		m_pSpkList = pSpkList;
+		const auto icur = m_pSpkDoc->GetSpkList_CurrentIndex();
+		m_pspkDP = pSpkList->GetDetectParms();
 
 		// reset tab control
 		m_tabCtrl.DeleteAllItems();
 		// load list of detection parameters
 		auto j = 0;
-		for (auto i = 0; i < m_pSpkDoc->GetSpkListSize(); i++)
+		for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
 		{
-			const auto p_spike_list = m_pSpkDoc->SetSpkListCurrent(i);
+			const auto p_spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
 			CString cs;
 			if (p_spike_list->GetdetectWhat() != 0)
 				continue;
@@ -667,14 +669,13 @@ void CViewSpikes::UpdateFileParameters()
 		}
 
 		// select spike list
-		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(icur);
-		m_tabCtrl.SetCurSel(icur);
-		if (!m_pSpkList->IsClassListValid())		// if class list not valid:
+		m_tabCtrl.SetCurSel(m_pSpkDoc->GetSpkList_CurrentIndex());
+		if (!pSpkList->IsClassListValid())		// if class list not valid:
 		{
-			m_pSpkList->UpdateClassList();			// rebuild list of classes
+			pSpkList->UpdateClassList();			// rebuild list of classes
 			m_pSpkDoc->SetModifiedFlag();			// and set modified flag
 		}
-		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());	// tell CListBox where spikes are
+		m_spkClassListBox.SetSourceData(pSpkList, GetDocument());	// tell CListBox where spikes are
 		m_spkClassListBox.SetCurSel(0);					// select first line from listbox
 
 		// display classes
@@ -692,7 +693,7 @@ void CViewSpikes::UpdateFileParameters()
 		{
 			// adjust gain of spkform
 			int max, min;
-			m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+			pSpkList->GetTotalMaxMin(TRUE, &max, &min);
 			m_yWE = MulDiv(max - min + 1, 10, 8);
 			m_yWO = max / 2 + min / 2;
 		}
@@ -715,8 +716,9 @@ void CViewSpikes::UpdateFileParameters()
 
 void CViewSpikes::SelectSpkList(int icursel)
 {
-	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(icursel);
-	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icursel);
+	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icursel);
+	//CSpikeDoc* pSpkDoc = GetDocument()->GetcurrentSpkDocument();
+	//pSpkDoc->SetSpkList_CurrentIndex(icursel);
 	ASSERT(m_pSpkList != NULL);
 	m_spkClassListBox.SetSpkList(m_pSpkList);
 	m_spkClassListBox.Invalidate();
@@ -1188,7 +1190,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		if (p_dbwave_doc->GetDB_nbspikeclasses() <= 0)
 		{
 			m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
-			m_pSpkList = m_pSpkDoc->GetSpkListCurrent();
+			m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 			if (!m_pSpkList->IsClassListValid())	// if class list not valid:
 			{
 				m_pSpkList->UpdateClassList();		// rebuild list of classes
@@ -1340,7 +1342,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		r_wtext.right = r_wtext.left + rcol;
 		rw_spikes.left = r_wtext.right + rseparator;
 		//auto n = m_pSpkDoc->GetSpkListCurrent()->GetSpikeLength();
-		if (m_pSpkDoc->GetSpkListCurrent()->GetSpikeLength() > 1)
+		if (m_pSpkDoc->GetSpkList_Current()->GetSpikeLength() > 1)
 			rw_spikes.right = rw_spikes.left + rcol;
 		else
 			rw_spikes.right = rw_spikes.left;
@@ -1386,7 +1388,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		r_wtext.bottom = r_wbars.bottom;
 
 		int max, min;
-		m_pSpkDoc->GetSpkListCurrent()->GetTotalMaxMin(TRUE, &max, &min);
+		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
 		const short middle = max / 2 + min / 2;
 		m_spkClassListBox.SetYzoom(iextent, middle);
 		const auto ncount = m_spkClassListBox.GetCount();				// get nb of items in this file
@@ -1951,9 +1953,8 @@ void CViewSpikes::OnEditCopy()
 		}
 
 		// display spikes and bars
-
 		int max, min;
-		m_pSpkDoc->GetSpkListCurrent()->GetTotalMaxMin(TRUE, &max, &min);
+		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
 		const short middle = max / 2 + min / 2;
 		m_spkClassListBox.SetYzoom(iextent, middle);
 		const auto ncount = m_spkClassListBox.GetCount();				// get nb of items in this file
@@ -1966,60 +1967,6 @@ void CViewSpikes::OnEditCopy()
 			rw_text.OffsetRect(0, rheight);
 		}
 
-		/*
-				// display curves : data
-				CRect rectdata = rect;
-				int rspkwidth = MulDiv(m_spkShapeView.GetRectWidth(), rect.GetRectWidth(),
-					m_spkShapeView.GetRectWidth() + m_sourceView.GetRectWidth());
-				int rdataheight = MulDiv(m_sourceView.GetRectHeight(), rect.GetRectHeight(),
-					m_sourceView.GetRectHeight() + spk_bar_wnd_.GetRectHeight());
-				int separator = rspkwidth / 10;
-				rectdata.bottom = rect.top + rdataheight - separator/2;
-				rectdata.left = rect.left + rspkwidth + separator;
-				m_sourceView.Print(&mDC, &rectdata);
-
-				// title & ordinates, abcissa
-				GetDlgItem(IDC_DATACOMMENTS)->GetWindowText(comments);
-				mDC.TextOut(xcol, ypxrow, comments);
-				ypxrow += lineheight;
-
-				// ordinates & abcissa
-				comments = "Abcissa: ";
-				CString content;
-				GetDlgItem(IDC_TIMEFIRST)->GetWindowText(content);
-				comments += content;
-				comments += " - ";
-				GetDlgItem(IDC_TIMELAST)->GetWindowText(content);
-				comments += content;
-				mDC.TextOut(xcol, ypxrow, comments);
-				ypxrow += lineheight;
-
-				comments += PrintDataBars(&mDC, &rectdata);
-				UINT uiFlag = mDC.SetTextAlign(TA_LEFT | TA_NOUPDATECP);
-				UINT nFormat = DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK;
-				CRect rectComment = rect;
-				rectComment.top = ypxrow;
-				rectComment.right = rectdata.left;
-				ypxrow += mDC.DrawText(comments, comments.GetLength(), rectComment, nFormat);
-
-				// display spike bars
-				CRect rectbars = rectdata;
-				rectbars.top = rectdata.bottom + separator;
-				rectbars.bottom = rect.bottom -2*lineheight;
-				spk_bar_wnd_.Print(&mDC, &rectbars);
-
-				// display spike shapes
-				CRect rectspk = rect;					// compute output rectangle
-				rectspk.left += separator;
-				rectspk.right = rect.left + rspkwidth;
-				rectspk.bottom = rect.bottom -2*lineheight;
-				rectspk.top = rectspk.bottom - rectbars.GetRectHeight();
-				m_spkShapeView.Print(&mDC, &rectspk);
-				comments = PrintSpkShapeBars(&mDC, &rectspk, TRUE);
-				rectComment.top = rectspk.bottom;
-				mDC.DrawText(comments, comments.GetLength(), rectComment, nFormat);
-				mDC.SelectObject(p_old_brush);
-		*/
 		if (m_pOldFont != nullptr)
 			mDC.SelectObject(m_pOldFont);
 		m_fontPrint.DeleteObject();

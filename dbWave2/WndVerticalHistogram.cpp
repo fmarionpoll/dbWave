@@ -619,7 +619,7 @@ void CWndVerticalHistogram::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFi
 			p_doc->SetDB_CurrentRecordPosition(ifile);
 			p_doc->OpenCurrentSpikeFile();
 		}
-		CSpikeList* p_spikelist = p_doc->m_pSpk->GetSpkListCurrent();
+		CSpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
 		if (p_spikelist != nullptr && p_spikelist->GetTotalSpikes() > 0)
 			BuildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
 	}

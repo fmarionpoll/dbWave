@@ -68,7 +68,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			p_spike_doc_ = p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = nullptr;
 			if (p_dbwave_doc_->m_pSpk != nullptr)
-				p_spikelist_ = p_spike_doc_->GetSpkListCurrent();
+				p_spikelist_ = p_spike_doc_->GetSpkList_Current();
 		}
 
 		// test presence of data
@@ -150,7 +150,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 	{
 		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 	}
 }
 
@@ -762,7 +762,7 @@ int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 		{
 			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 		}
 
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
@@ -778,7 +778,7 @@ int CSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 	}
 
 	return result;

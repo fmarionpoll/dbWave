@@ -776,6 +776,7 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 	else
 	{
 		CViewdbWave* pParent = (CViewdbWave*) GetParent();
+		int iTab = pParent->m_tabCtrl.GetCurSel();
 		const auto pdb_doc = pParent->GetDocument();
 		if (pdb_doc == nullptr)
 			return;
@@ -784,8 +785,7 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 		if (pSpkDoc == nullptr)
 			return;
 
-		auto spklist_current = pSpkDoc->GetcurrentSpkListIndex();
-		const auto pspk_list = ptr->pspikeDoc->SetSpkListCurrent(spklist_current);
+		const auto pspk_list = ptr->pspikeDoc->SetSpkList_AsCurrent(iTab);
 		p_wnd->SetSourceData(pspk_list, ptr->pspikeDoc);
 		p_wnd->SetPlotMode(m_spikeplotmode, m_selclass);
 		long l_first = 0;

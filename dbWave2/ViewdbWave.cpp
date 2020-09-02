@@ -50,7 +50,7 @@ BEGIN_MESSAGE_MAP(CViewdbWave, CDaoRecordView)
 	ON_BN_CLICKED(IDC_CHECK1, &CViewdbWave::OnBnClickedCheck1)
 	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &CViewdbWave::OnBnClickedRadioallclasses)
 	ON_BN_CLICKED(IDC_RADIOONECLASS, &CViewdbWave::OnBnClickedRadiooneclass)
-	ON_BN_CLICKED(IDC_RADIO2, &CViewdbWave::OnBnClickedRadio2)
+	ON_BN_CLICKED(IDC_RADIO2, &CViewdbWave::OnBnClickedDisplaySpikes)
 	ON_NOTIFY(HDN_ENDTRACK, 0, &CViewdbWave::OnHdnEndtrackListctrl)
 	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTCTRL, &CViewdbWave::OnLvnColumnclickListctrl)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewdbWave::OnTcnSelchangeTab1)
@@ -201,7 +201,8 @@ void CViewdbWave::OnInitialUpdate()
 		// update tab control
 		InitctrlTab();
 		m_tabCtrl.ShowWindow(SW_SHOW);
-		m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		m_tabCtrl.SetCurSel(icur);
 	};
 }
 
@@ -306,6 +307,15 @@ void CViewdbWave::UpdateControls()
 	const int ifile = pdb_doc->GetDB_CurrentRecordPosition();
 	m_dataListCtrl.SetCurSel(ifile);
 	m_dataListCtrl.EnsureVisible(ifile, FALSE);
+
+	if (m_options_viewdata->displaymode == 2) {
+		if (GetDocument()->OpenCurrentSpikeFile() != nullptr)
+		{
+			const auto curr_listsize = GetDocument()->GetcurrentSpkDocument()->GetSpkList_Size();
+			if (m_tabCtrl.GetItemCount() < curr_listsize)
+				InitctrlTab();
+		}
+	}
 }
 
 BOOL CViewdbWave::OnMove(UINT nIDMoveCommand)
@@ -540,32 +550,6 @@ void CViewdbWave::OnBnClickedRadio1()
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 }
 
-void CViewdbWave::InitctrlTab()
-{
-	// reset tab control
-	m_tabCtrl.DeleteAllItems();
-
-	// load list of detection parameters
-	auto j = 0;
-	if (GetDocument()->OpenCurrentSpikeFile() != nullptr)
-	{
-		const auto curr_listsize = GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListSize();
-		for (auto i = 0; i < curr_listsize; i++)
-		{
-			auto p_spike_list = GetDocument()->m_pSpk->SetSpkListCurrent(i);
-			if (!p_spike_list)
-				continue;
-			CString cs;
-			if (p_spike_list->GetdetectWhat() != 0)
-				continue;
-			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(p_spike_list->GetComment()));
-			m_tabCtrl.InsertItem(j, cs);
-			//m_tabCtrl.SetItemData(j, i);		// save list item
-			j++;
-		}
-	}
-}
-
 void CViewdbWave::OnBnClickedRadio3()
 {
 	((CButton*)GetDlgItem(IDC_RADIO3))->SetCheck(BST_CHECKED);
@@ -736,7 +720,7 @@ void CViewdbWave::OnBnClickedRadiooneclass()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CViewdbWave::OnBnClickedRadio2()
+void CViewdbWave::OnBnClickedDisplaySpikes()
 {
 	((CButton*)GetDlgItem(IDC_RADIO2))->SetCheck(BST_CHECKED);
 
@@ -750,7 +734,8 @@ void CViewdbWave::OnBnClickedRadio2()
 	InitctrlTab();
 
 	m_tabCtrl.ShowWindow(SW_SHOW);
-	m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+	int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	m_tabCtrl.SetCurSel(icur);
 
 	// display spikes
 	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
@@ -803,7 +788,7 @@ void CViewdbWave::OnEnChangeSpikeclass()
 void CViewdbWave::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icursel);
+	GetDocument()->GetcurrentSpkDocument()->SetSpkList_AsCurrent(icursel);
 	m_dataListCtrl.RefreshDisplay();
 	*pResult = 0;
 }

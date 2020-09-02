@@ -315,16 +315,16 @@ void CViewSpikeTemplates::UpdateFileParameters()
 {
 	// init views
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
-	m_pSpkDoc->SetSpkListCurrent(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
-	const auto icur = m_pSpkDoc->GetSpkListCurrentIndex();
+	const auto icur = m_pSpkDoc->GetSpkList_CurrentIndex();
+	m_pSpkDoc->SetSpkList_AsCurrent(icur);
 
 	// reset tab control
 	m_tabCtrl.DeleteAllItems();
 	// load list of detection parameters
 	auto j = 0;
-	for (auto i = 0; i < m_pSpkDoc->GetSpkListSize(); i++)
+	for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
 	{
-		const auto p_spike_list = m_pSpkDoc->SetSpkListCurrent(i);
+		const auto p_spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
 		CString cs;
 		if (p_spike_list->GetdetectWhat() != 0)
 			continue;
@@ -338,8 +338,8 @@ void CViewSpikeTemplates::UpdateFileParameters()
 void CViewSpikeTemplates::SelectSpikeList(int icur)
 {
 	// select spike list
-	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icur);
-	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(icur);
+	//GetDocument()->GetcurrentSpkDocument()->SetSpkList_CurrentIndex(icur);
+	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 	m_tabCtrl.SetCurSel(icur);
 
 	if (!m_pSpkList->IsClassListValid())		// if class list not valid:
@@ -861,7 +861,7 @@ void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	auto lastfile = currentfile;			// index last file in the series
 	// make sure we have the correct spike list here
 	const auto currentlist = m_tabCtrl.GetCurSel();
-	m_pSpkDoc->SetSpkListCurrent(currentlist);
+	m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 
 	CString cscomment;
 	CString csfilecomment = _T("Analyze file: ");
@@ -884,7 +884,7 @@ void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 		p_dbwave_doc->SetTitle(cs);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
-		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist); // load pointer to spike list
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist); // load pointer to spike list
 		if (!m_pSpkList->IsClassListValid())		// if class list not valid:
 		{
 			m_pSpkList->UpdateClassList();			// rebuild list of classes
@@ -974,7 +974,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 			m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		}
 
-		const auto spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		nspikes = spike_list->GetTotalSpikes();
 		for (auto i = 0; i < nspikes; i++)
 			m_templList.tAdd(m_pSpkList->GetpSpikeData(i));
@@ -1002,7 +1002,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 			p_dbwave_doc->SetTitle(cs);
 		}
 
-		auto spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		nspikes = spike_list->GetTotalSpikes();
 
 		// create template CListCtrl
@@ -1114,7 +1114,7 @@ void CViewSpikeTemplates::SortSpikes()
 			p_dbwave_doc->SetTitle(cs);
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
-			m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist); // load pointer to spike list
+			m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist); // load pointer to spike list
 			if (!m_pSpkList->IsClassListValid())		// if class list not valid:
 			{
 				m_pSpkList->UpdateClassList();			// rebuild list of classes
@@ -1206,7 +1206,7 @@ void CViewSpikeTemplates::SortSpikes()
 
 	// update display: average and spk form
 	DisplayAvg(FALSE, &m_avgList);
-	m_pSpkList = m_pSpkDoc->GetSpkListCurrent();
+	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	m_spkForm.SetSourceData(m_pSpkList, GetDocument());
 	m_spkForm.Invalidate();
 }
@@ -1314,7 +1314,7 @@ void CViewSpikeTemplates::EditSpikeClass(int controlID, int controlItem)
 					cs += p_dbwave_doc->GetDB_CurrentSpkFileName(FALSE);
 					p_dbwave_doc->SetTitle(cs);
 					m_pSpkDoc->SetModifiedFlag(FALSE);
-					m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
+					m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 				}
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero

@@ -408,9 +408,9 @@ void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* mi
 		{
 			SetDB_CurrentRecordPosition(ifile);
 			OpenCurrentSpikeFile();
-			m_pSpk->SetSpkListCurrent(0);
+			m_pSpk->SetSpkList_AsCurrent(0);
 		}
-		auto p_spk_list = m_pSpk->GetSpkListCurrent();
+		auto p_spk_list = m_pSpk->GetSpkList_Current();
 		p_spk_list->GetTotalMaxMin(bRecalc, max, min);
 	}
 
@@ -418,7 +418,7 @@ void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* mi
 	{
 		SetDB_CurrentRecordPosition(ncurrentfile);
 		OpenCurrentSpikeFile();
-		m_pSpk->SetSpkListCurrent(0);
+		m_pSpk->SetSpkList_AsCurrent(0);
 	}
 }
 
@@ -440,9 +440,9 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 		{
 			SetDB_CurrentRecordPosition(ifile);
 			OpenCurrentSpikeFile();
-			m_pSpk->SetSpkListCurrent(0);
+			m_pSpk->SetSpkList_AsCurrent(0);
 		}
-		auto p_spk_list = m_pSpk->GetSpkListCurrent();
+		auto p_spk_list = m_pSpk->GetSpkList_Current();
 		if (p_spk_list->GetTotalSpikes() == 0)
 			continue;
 
@@ -462,7 +462,7 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 	{
 		SetDB_CurrentRecordPosition(ncurrentfile);
 		OpenCurrentSpikeFile();
-		m_pSpk->SetSpkListCurrent(0);
+		m_pSpk->SetSpkList_AsCurrent(0);
 	}
 
 	return dummy;
@@ -1119,10 +1119,10 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 			if (!m_pSpk->OnOpenDocument(cs_spk_file))
 				break;
 
-			m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkListCurrent()->GetTotalSpikes();
-			if (m_pSpk->GetSpkListCurrent()->GetNbclasses() < 0)
-				m_pSpk->GetSpkListCurrent()->UpdateClassList();
-			m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkListCurrent()->GetNbclasses();
+			m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkList_Current()->GetTotalSpikes();
+			if (m_pSpk->GetSpkList_Current()->GetNbclasses() < 0)
+				m_pSpk->GetSpkList_Current()->UpdateClassList();
+			m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->GetNbclasses();
 			m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_acqsize;
 		}
 
@@ -1699,13 +1699,13 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 	{
 		m_pSpk = new CSpikeDoc;
 		ASSERT(m_pSpk != NULL);
-		m_pSpk->SetSpkListCurrent(GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+		m_pSpk->SetSpkList_AsCurrent(GetcurrentSpkDocument()->GetSpkList_CurrentIndex());
 	}
 
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_viewspikes = &(p_app->options_viewspikes);
 
-	const auto ioldlist = m_pSpk->GetSpkListCurrentIndex();
+	const auto ioldlist = m_pSpk->GetSpkList_CurrentIndex();
 	m_pSpk->ExportTableTitle(pSF, options_viewspikes, nfiles);
 	m_pSpk->ExportTableColHeaders_db(pSF, options_viewspikes);
 	m_pSpk->ExportTableColHeaders_data(pSF, options_viewspikes);		// this is for the measure
@@ -1738,8 +1738,8 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 			nbins = options_viewspikes->histampl_nbins + 2;
 			break;
 		case EXPORT_AVERAGE:	// assume that all spikes have the same length
-			p_doubl = new double[m_pSpk->GetSpkListCurrent()->GetSpikeLength() * 2 + 1 + 2];
-			*p_doubl = m_pSpk->GetSpkListCurrent()->GetSpikeLength();
+			p_doubl = new double[m_pSpk->GetSpkList_Current()->GetSpikeLength() * 2 + 1 + 2];
+			*p_doubl = m_pSpk->GetSpkList_Current()->GetSpikeLength();
 			break;
 		case EXPORT_INTERV:		// feb 23, 2009
 			break;
@@ -1797,7 +1797,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 
 			// loop over the spike lists stored in that file
 			auto ichan1 = 0;
-			auto ichan2 = m_pSpk->GetSpkListSize();
+			auto ichan2 = m_pSpk->GetSpkList_Size();
 			if (!options_viewspikes->ballChannels)
 			{
 				ichan1 = ioldlist;
@@ -1807,7 +1807,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 			//----------------------------------------------------------
 			for (auto ispikelist = ichan1; ispikelist < ichan2; ispikelist++)
 			{
-				const auto p_spike_list = m_pSpk->SetSpkListCurrent(ispikelist);
+				const auto p_spike_list = m_pSpk->SetSpkList_AsCurrent(ispikelist);
 				options_viewspikes->ichan = ispikelist;
 				for (auto kclass = iclass1; kclass <= iclass2; kclass++)
 				{
@@ -1858,7 +1858,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 	// restore initial file name and channel
 	SetDB_CurrentRecordPosition(ioldindex);
 	if (OpenCurrentSpikeFile() != nullptr)
-		m_pSpk->SetSpkListCurrent(ioldlist);
+		m_pSpk->SetSpkList_AsCurrent(ioldlist);
 	UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 

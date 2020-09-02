@@ -292,6 +292,7 @@
     <ClCompile Include="Browsefi.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CSpkListTabCtrl.cpp" />
     <ClCompile Include="CUSBPxxS1Ctl.cpp" />
     <ClCompile Include="dtBoardDlg.cpp" />
     <ClCompile Include="chanlistitem.cpp">
@@ -626,6 +627,7 @@
     <ClInclude Include="Awavepar.h" />
     <ClInclude Include="Browsefi.h" />
     <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CSpkListTabCtrl.h" />
     <ClInclude Include="CUSBPxxS1Ctl.h" />
     <ClInclude Include="dtBoardDlg.h" />
     <ClInclude Include="chanlistitem.h" />

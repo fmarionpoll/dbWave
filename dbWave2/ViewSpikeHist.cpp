@@ -199,9 +199,9 @@ void CViewSpikeHist::OnInitialUpdate()
 		ASSERT(p_dbwave_doc->m_pSpk != NULL);
 	}
 	p_spike_doc_ = p_dbwave_doc->m_pSpk;
-	p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+	p_spike_doc_->GetSpkList_Current();
 	OnDisplay();
-	SelectSpkList(p_spike_doc_->GetSpkListCurrentIndex(), TRUE);
+	SelectSpkList(p_spike_doc_->GetSpkList_CurrentIndex(), TRUE);
 }
 
 void CViewSpikeHist::OnSize(UINT nType, int cx, int cy)
@@ -253,7 +253,7 @@ void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		break;
 	case HINT_DOCHASCHANGED:		// file has changed?
 	case HINT_DOCMOVERECORD:
-		SelectSpkList(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex(), TRUE);
+		SelectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
 		OnDisplay();
 		break;
 
@@ -275,7 +275,7 @@ BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand)
 	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	if (!m_pvdS->ballfiles)
 		OnDisplay();
-	SelectSpkList(GetDocument()->GetcurrentSpkDocument()->GetcurrentSpkListIndex(), TRUE);
+	SelectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
 	return flag;
 }
 
@@ -1166,6 +1166,8 @@ void CViewSpikeHist::BuildData()
 		lastfile = m_nfiles - 1;
 	}
 
+	auto currentlist_index = p_dbwave_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+
 	for (auto ifile = firstfile; ifile <= lastfile; ifile++)
 	{
 		if (m_nfiles > 1)
@@ -1189,7 +1191,7 @@ void CViewSpikeHist::BuildData()
 		if (nullptr == p_spike_doc_)
 			continue;
 
-		p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+		p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
 
 		switch (m_bhistType)
 		{
@@ -1239,7 +1241,7 @@ void CViewSpikeHist::BuildData()
 	{
 		p_dbwave_doc->SetDB_CurrentRecordPosition(currentfile);
 		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
-		p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+		p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
 	}
 	SAFE_DELETE(pdlg);
 }
@@ -1427,7 +1429,7 @@ long CViewSpikeHist::PlotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, lo
 		// display stimulus
 		if (btype == 0 && p_spike_doc_->m_stimIntervals.nitems > 0)
 		{
-			const auto p_spk_list = p_spike_doc_->GetSpkListCurrent();
+			const auto p_spk_list = p_spike_doc_->GetSpkList_Current();
 			const auto samprate = p_spk_list->GetAcqSampRate();
 			int iioffset0 = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(m_pvdS->istimulusindex);
 			if (m_pvdS->babsolutetime)
@@ -1552,16 +1554,17 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 	}
 
 	// external loop: browse from file to file
+	auto currentlist_index = p_dbwave_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 	for (auto ifile = firstfile;
 		ifile <= lastfile && row < disp_rect.bottom;
 		ifile++)
 	{
 		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
 		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
-		p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+		p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
 
 		// load pointers to spike file and spike list
-		const auto p_spk_list = p_spike_doc_->GetSpkListCurrent();
+		const auto p_spk_list = p_spike_doc_->GetSpkList_Current();
 		const auto samprate = p_spk_list->GetAcqSampRate();
 		const auto ii_frame_first = static_cast<long>(m_timefirst * samprate);
 		const auto ii_frame_last = static_cast<long>(m_timelast * samprate);
@@ -1706,7 +1709,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 
 	p_dbwave_doc->SetDB_CurrentRecordPosition(currentfile);
 	p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
-	p_spike_doc_->SetSpkListCurrent(p_dbwave_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+	p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
 
 	p_dc->SelectObject(pold_pen);
 	p_dc->SelectObject(pold_brush);
@@ -2228,9 +2231,9 @@ void CViewSpikeHist::SelectSpkList(int icur, BOOL bRefreshInterface)
 		m_tabCtrl.DeleteAllItems();
 		// load list of detection parameters
 		auto j = 0;
-		for (auto i = 0; i < p_spike_doc_->GetSpkListSize(); i++)
+		for (auto i = 0; i < p_spike_doc_->GetSpkList_Size(); i++)
 		{
-			const auto p_spike_list = p_spike_doc_->SetSpkListCurrent(i);
+			const auto p_spike_list = p_spike_doc_->SetSpkList_AsCurrent(i);
 			CString cs;
 			if (p_spike_list->GetdetectWhat() != 0)
 				continue;
@@ -2241,7 +2244,7 @@ void CViewSpikeHist::SelectSpkList(int icur, BOOL bRefreshInterface)
 	}
 
 	// select spike list
-	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icur);
+	GetDocument()->GetcurrentSpkDocument()->SetSpkList_AsCurrent(icur);
 	m_tabCtrl.SetCurSel(icur);
 }
 

@@ -909,7 +909,7 @@ void CSpikeDoc::ExportTableTitle(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int 
 		break;
 	case EXPORT_AVERAGE:
 		cs_dummy.Format(_T("\r\ndata:\tN\txi=mean amplitude (mV)\tSum square of amplitudes\r\nn points:\t%i\r\n"),
-			GetSpkListCurrent()->GetSpikeLength());
+			GetSpkList_Current()->GetSpikeLength());
 		break;
 	case EXPORT_HISTAMPL:
 	case EXPORT_LATENCY:
@@ -1010,7 +1010,7 @@ void CSpikeDoc::ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		break;
 	case EXPORT_AVERAGE:
 	{
-		const auto npoints = GetSpkListCurrent()->GetSpikeLength();
+		const auto npoints = GetSpkList_Current()->GetSpikeLength();
 		cs_dummy = _T("\tN");
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		CString cs;
@@ -1678,28 +1678,18 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	}
 }
 
-CSpikeList* CSpikeDoc::SetSpkListCurrent(int ichan)
+CSpikeList* CSpikeDoc::SetSpkList_AsCurrent(int ichan)
 {
 	CSpikeList* pspklist = nullptr;
-	if (ichan < 0)
-		ichan = 0;
-
-	// if the list requested does not exist, return a NULL pointer
-	if (spikelist_array.GetSize() > 0)
+	if (spikelist_array.GetSize() > 0 && ichan >= 0 && ichan < spikelist_array.GetSize())
 	{
-		// spike list requested exist, select it and return a pointer to it
-		if (ichan >= 0 && ichan < spikelist_array.GetSize())
-		{
-			pspklist = &spikelist_array[ichan];
-			m_currspklist = ichan;
-		}
+		pspklist = &spikelist_array[ichan];
+		m_currspklist = ichan;
 	}
 	return pspklist;
 }
 
-CSpikeList* CSpikeDoc::GetSpkListCurrent()
+CSpikeList* CSpikeDoc::GetSpkList_Current()
 {
-	auto pspklist = &spikelist_array[m_currspklist];
-	ASSERT(pspklist);
-	return pspklist;
+	return &spikelist_array[m_currspklist];
 }

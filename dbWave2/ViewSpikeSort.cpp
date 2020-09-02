@@ -363,9 +363,9 @@ void CViewSpikeSort::UpdateFileParameters()
 	// reset tab control
 	m_tabCtrl.DeleteAllItems();
 	auto j = 0;
-	for (auto i = 0; i < m_pSpkDoc->GetSpkListSize(); i++)
+	for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
 	{
-		const auto spike_list = m_pSpkDoc->SetSpkListCurrent(i);
+		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
 		if (spike_list->GetdetectWhat() == 0)
 		{
 			CString cs;
@@ -374,8 +374,9 @@ void CViewSpikeSort::UpdateFileParameters()
 			j++;
 		}
 	}
-	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(pdb_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
-	m_tabCtrl.SetCurSel(pdb_doc->GetcurrentSpkDocument()->GetcurrentSpkListIndex());
+	int icur = pdb_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+	m_tabCtrl.SetCurSel(icur);
 
 	// spike and classes
 	auto spikeno = m_pSpkList->m_selspike;
@@ -512,7 +513,7 @@ void CViewSpikeSort::OnSort()
 	auto firstfile = currentfile;
 	auto lastfile = firstfile;
 	const auto nfiles = pdb_doc->GetDB_NRecords();
-	const auto currentlist = m_pSpkDoc->GetSpkListCurrentIndex();
+	const auto currentlist = m_pSpkDoc->GetSpkList_CurrentIndex();
 
 	// change indexes if ALL files selected
 	CProgressDlg* pdlg = nullptr;
@@ -552,7 +553,7 @@ void CViewSpikeSort::OnSort()
 		}
 
 		// load spike list
-		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		if ((nullptr == m_pSpkList) || (0 == m_pSpkList->GetSpikeLength()))
 			continue;
 
@@ -585,7 +586,7 @@ void CViewSpikeSort::OnSort()
 		delete pdlg;
 		pdb_doc->SetDB_CurrentRecordPosition(currentfile);
 		m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
-		m_pSpkList = m_pSpkDoc->GetSpkListCurrent();
+		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	}
 
 	// refresh data windows
@@ -765,8 +766,8 @@ void CViewSpikeSort::UnflagAllSpikes()
 			pdb_doc->SetDB_CurrentRecordPosition(ifile);
 			m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
 
-			for (auto j = 0; j < m_pSpkDoc->GetSpkListSize(); j++) {
-				m_pSpkList = m_pSpkDoc->SetSpkListCurrent(j);
+			for (auto j = 0; j < m_pSpkDoc->GetSpkList_Size(); j++) {
+				m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(j);
 				m_pSpkList->RemoveAllSpikeFlags();
 			}
 		}
@@ -784,7 +785,7 @@ void CViewSpikeSort::OnMeasure()
 	auto pdb_doc = GetDocument();
 	int currentfile = pdb_doc->GetDB_CurrentRecordPosition(); // index current file
 	const int nfiles = pdb_doc->GetDB_NRecords();
-	const auto currentlist = m_pSpkDoc->GetSpkListCurrentIndex();
+	const auto currentlist = m_pSpkDoc->GetSpkList_CurrentIndex();
 	int firstfile = currentfile;
 	int lastfile = currentfile;
 	// change size of arrays and prepare temporary dialog
@@ -807,7 +808,7 @@ void CViewSpikeSort::OnMeasure()
 		// check if this file is ok
 		if (m_pSpkDoc == nullptr)
 			continue;
-		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		if (m_pSpkList == nullptr)
 			continue;
 
@@ -847,7 +848,7 @@ void CViewSpikeSort::OnMeasure()
 		currentfile = pdb_doc->GetDB_CurrentRecordPosition();
 		pdb_doc->SetDB_CurrentRecordPosition(currentfile);
 		m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
-		m_pSpkList = m_pSpkDoc->GetSpkListCurrent();
+		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 		spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	}
 
@@ -1045,7 +1046,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		const auto currentlist = m_tabCtrl.GetCurSel();
-		const auto spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		const auto nspikes = spike_list->GetTotalSpikes();
 	}
 
@@ -1072,7 +1073,7 @@ void CViewSpikeSort::SaveCurrentFileParms()
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
 		const auto currentlist = m_tabCtrl.GetCurSel();
-		m_pSpkList = m_pSpkDoc->SetSpkListCurrent(currentlist);
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		m_pSpkDoc->OnSaveDocument(GetDocument()->GetDB_CurrentSpkFileName(FALSE));
 
 		// save modifications into the database
@@ -1360,8 +1361,8 @@ void CViewSpikeSort::UpdateScrollBar()
 
 void CViewSpikeSort::SelectSpkList(int icursel)
 {
-	m_pSpkList = m_pSpkDoc->SetSpkListCurrent(icursel);
-	GetDocument()->GetcurrentSpkDocument()->SetcurrentSpkListIndex(icursel);
+	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icursel);
+	//GetDocument()->GetcurrentSpkDocument()->SetSpkList_CurrentIndex(icursel);
 	ASSERT(m_pSpkList != NULL);
 	OnMeasure();
 
@@ -1901,7 +1902,7 @@ void CViewSpikeSort::OnEnChangeSpikenoclass()
 		{
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			const auto currentlist = m_tabCtrl.GetCurSel();
-			auto* spike_list = m_pSpkDoc->SetSpkListCurrent(currentlist);
+			auto* spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 			spike_list->SetSpikeClass(m_spikeno, m_spikenoclass);
 			UpdateLegends();
 		}

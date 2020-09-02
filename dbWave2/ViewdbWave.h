@@ -6,6 +6,7 @@
 #include "Spikebar.h"
 #include "spikeshape.h"
 #include "Editctrl.h"
+#include "CSpkListTabCtrl.h"
 
 //class CdbWaveCntrItem;
 //class CdbMainTable;
@@ -29,6 +30,7 @@ public:
 	BOOL			m_bvalidDat;
 	BOOL			m_bvalidSpk;
 	CdbWaveDoc*		GetDocument();
+	CSpkListTabCtrl m_tabCtrl;
 
 	// Overrides
 public:
@@ -69,14 +71,14 @@ protected:
 	CEditCtrl			mm_amplitudespan;	// amplitude
 	CStretchControl		m_stretch;			// properties for controls
 	OPTIONS_VIEWDATA*	m_options_viewdata;
-	CTabCtrl			m_tabCtrl;
+
 
 	// internal functions
 	void		UpdateControls();
 	void		FillListBox();
 public:
 	void		DeleteRecords();
-	void		InitctrlTab();
+	
 	// Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -90,7 +92,7 @@ protected:
 public:
 	afx_msg void OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedRadio1();
-	afx_msg void OnBnClickedRadio2();
+	afx_msg void OnBnClickedDisplaySpikes();
 	afx_msg void OnBnClickedRadio3();
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();

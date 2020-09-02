@@ -24,6 +24,8 @@ public:
 	BOOL			m_bartefact = false;
 	BOOL			m_bKeepSameClass = false;
 	float			m_jitter_ms = 1.f;
+	CTabCtrl		m_tabCtrl;
+
 	CdbWaveDoc*		GetDocument();
 
 	// Attributes
@@ -185,12 +187,11 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRecordShiftleft();
 	afx_msg void OnRecordShiftright();
+	afx_msg void OnBnClickedSameclass();
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
-	CTabCtrl m_tabCtrl;
-	afx_msg void OnBnClickedSameclass();
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

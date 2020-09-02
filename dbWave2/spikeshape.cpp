@@ -69,7 +69,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 		}
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 
 		//test if data are there - if none, display message and exit
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
@@ -201,7 +201,7 @@ void CSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 	{
 		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 	}
 }
 
@@ -518,7 +518,7 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 		{
 			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 		}
 
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
@@ -534,7 +534,7 @@ int CSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 	{
 		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 	}
 
 	return result;
@@ -596,7 +596,7 @@ void CSpikeShapeWnd::GetExtents()
 		{
 			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 
 			GetExtentsCurrentSpkList();
 			if (m_yWE != 0)
@@ -607,7 +607,7 @@ void CSpikeShapeWnd::GetExtents()
 	// exit
 	p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
 	p_dbwave_doc_->OpenCurrentSpikeFile();
-	p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkListCurrent();
+	p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 }
 
 void CSpikeShapeWnd::GetExtentsCurrentSpkList()

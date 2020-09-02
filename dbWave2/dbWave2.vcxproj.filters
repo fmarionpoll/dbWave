@@ -414,6 +414,9 @@
     <ClCompile Include="ScrollBarEx.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
+    <ClCompile Include="CSpkListTabCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -907,6 +910,9 @@
     </ClInclude>
     <ClInclude Include="ScrollBarEx.h">
       <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="CSpkListTabCtrl.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
