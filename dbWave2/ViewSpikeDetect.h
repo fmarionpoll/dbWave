@@ -9,6 +9,7 @@
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "./Controls/cdxCRotBevelLine.h"
+#include "CSpkListTabCtrl.h"
 
 class CViewSpikeDetection : public CDaoRecordView
 {
@@ -36,13 +37,13 @@ public:
 	cdxCRotBevelLine	m_bevel2;
 	cdxCRotBevelLine	m_bevel3;
 
-	CdbWaveDoc* GetDocument();
+	CdbWaveDoc*		GetDocument();
 
 	// form variables
 protected:
 	int				m_scancount_doc = -1;		// number of channels in the data document
-	CSpikeDoc* p_spike_doc_ = nullptr;	// destination data doc
-	CSpikeList* p_spikelist_ = nullptr;	// temporary spike list
+	CSpikeDoc*		p_spike_doc_ = nullptr;	// destination data doc
+	CSpikeList*		p_spikelist_ = nullptr;	// temporary spike list
 	CDWordArray 	m_DWintervals;			// intervals to draw detected spikes
 
 	CLineViewWnd	m_displayData_Detect;
@@ -250,7 +251,7 @@ public:
 	afx_msg void OnCbnSelchangeTransform2();
 
 	DECLARE_MESSAGE_MAP()
-	CTabCtrl m_tabCtrl;
+	CSpkListTabCtrl	m_tabCtrl;
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 };
 

@@ -1720,7 +1720,6 @@ void CViewSpikeDetection::OnArtefact()
 	m_spikeno = -1;
 
 	const auto iSelParms = m_tabCtrl.GetCurSel();
-	//GetDocument()->GetcurrentSpkDocument()->SetSpkList_CurrentIndex(iSelParms);
 	m_pDetectParms = m_parmsCurrent.GetItem(iSelParms);
 	p_spikelist_ = p_spike_doc_->SetSpkList_AsCurrent(iSelParms);
 

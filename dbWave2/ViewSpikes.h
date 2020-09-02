@@ -3,6 +3,7 @@
 // ViewSpikes.h : header file
 
 #include "SpikeClassListBox.h"
+#include "CSpkListTabCtrl.h"
 
 class CViewSpikes : public CDaoRecordView
 {
@@ -24,7 +25,7 @@ public:
 	BOOL			m_bartefact = false;
 	BOOL			m_bKeepSameClass = false;
 	float			m_jitter_ms = 1.f;
-	CTabCtrl		m_tabCtrl;
+	CSpkListTabCtrl	m_tabCtrl;
 
 	CdbWaveDoc*		GetDocument();
 

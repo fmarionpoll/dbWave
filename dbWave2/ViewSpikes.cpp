@@ -187,7 +187,6 @@ BOOL CViewSpikes::OnMove(UINT nIDMoveCommand)
 		((CChildFrame*)GetParent())->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 		return false;
 	}
-
 	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
@@ -654,22 +653,10 @@ void CViewSpikes::UpdateFileParameters()
 		m_pspkDP = pSpkList->GetDetectParms();
 
 		// reset tab control
-		m_tabCtrl.DeleteAllItems();
-		// load list of detection parameters
-		auto j = 0;
-		for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
-		{
-			const auto p_spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
-			CString cs;
-			if (p_spike_list->GetdetectWhat() != 0)
-				continue;
-			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(p_spike_list->GetComment()));
-			m_tabCtrl.InsertItem(j, cs);
-			j++;
-		}
+		m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
 
 		// select spike list
-		m_tabCtrl.SetCurSel(m_pSpkDoc->GetSpkList_CurrentIndex());
+		m_tabCtrl.SetCurSpkList(GetDocument());
 		if (!pSpkList->IsClassListValid())		// if class list not valid:
 		{
 			pSpkList->UpdateClassList();			// rebuild list of classes
@@ -2338,15 +2325,13 @@ void CViewSpikes::OnRecordShiftright()
 
 void CViewSpikes::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	const auto icursel = m_tabCtrl.GetCurSel();
-	SelectSpkList(icursel);
+	SelectSpkList(m_tabCtrl.GetCurSel());
 	*pResult = 0;
 }
 
 void CViewSpikes::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	const auto icursel = m_tabCtrl.GetCurSel();
-	SelectSpkList(icursel);
+	SelectSpkList(m_tabCtrl.GetCurSel());
 	*pResult = 0;
 }
 
