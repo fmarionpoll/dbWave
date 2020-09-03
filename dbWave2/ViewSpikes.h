@@ -114,32 +114,32 @@ protected:
 
 // VIEWPRNT.CPP: print view
 protected:
-	CRect 	m_Margin;				// margins (pixels)
-	int		m_file0{};				// current file
-	long	m_lFirst0{};
-	long	m_lLast0{};
+	CRect 				m_Margin;				// margins (pixels)
+	int					m_file0{};				// current file
+	long				m_lFirst0{};
+	long				m_lLast0{};
 
-	int		m_nfiles{};				// nb of files in doc
-	int 	m_nbrowsperpage{};		// USER: nb files/page
-	long 	m_lprintFirst{};		// file index of first pt
-	long 	m_lprintLen{};			// nb pts per line
-	int 	m_printFirst{};
-	int 	m_printLast{};
-	int		m_maxclasses = 1;
-	BOOL	m_bIsPrinting{};
+	int					m_nfiles{};				// nb of files in doc
+	int 				m_nbrowsperpage{};		// USER: nb files/page
+	long 				m_lprintFirst{};		// file index of first pt
+	long 				m_lprintLen{};			// nb pts per line
+	int 				m_printFirst{};
+	int 				m_printLast{};
+	int					m_maxclasses = 1;
+	BOOL				m_bIsPrinting{};
 
 	// specific printer parameters
-	TEXTMETRIC m_tMetric{};			// onbegin/onendPrinting
-	LOGFONT	m_logFont{};			// onbegin/onendPrinting
-	CFont* m_pOldFont{};			// onbegin/onendPrinting
-	CFont	m_fontPrint;			// onbegin/onendPrinting
+	TEXTMETRIC			m_tMetric{};			// onbegin/onendPrinting
+	LOGFONT				m_logFont{};			// onbegin/onendPrinting
+	CFont*				m_pOldFont{};			// onbegin/onendPrinting
+	CFont				m_fontPrint;			// onbegin/onendPrinting
 
 	// page format printing parameters (pixel unit)
-	CRect						m_printRect;
-	OPTIONS_VIEWDATA*			options_viewdata= nullptr;	// view data options
-	OPTIONS_VIEWDATAMEASURE*	mdMO			= nullptr;	// measure options
-	SPKCLASSIF*					m_psC			= nullptr;
-	SPKDETECTPARM*				m_pspkDP		= nullptr;	// spike detection parameters
+	CRect				m_printRect;
+	OPTIONS_VIEWDATA*	options_viewdata = nullptr;	// view data options
+	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;	// measure options
+	SPKCLASSIF*			m_psC = nullptr;
+	SPKDETECTPARM*		m_pspkDP = nullptr;		// spike detection parameters
 
 protected:
 	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);

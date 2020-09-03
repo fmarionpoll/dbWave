@@ -260,10 +260,11 @@ int CSpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 {
 	// erase content of the list box
-	SetRedraw(FALSE);	// prevent redrawing
-	ResetContent();		// clear content
-	p_spikelist_ = pSList;
+	SetRedraw(FALSE);
+	ResetContent();	
+
 	p_dbwave_doc_ = pdbDoc;
+	p_spikelist_ = pSList;
 	if (pSList == nullptr || pdbDoc == nullptr)
 		return;
 	p_spike_doc_ = pdbDoc->m_pSpk;
@@ -272,8 +273,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 	if (!pSList->IsClassListValid())
 		pSList->UpdateClassList();
 
-	// add as many window as necessary; store pointer into listbox
-	//int size = m_rowheight;
+	// add as many windows as necessary; store pointer into listbox
 	const auto rect_spikes = CRect(0, 0, 0, 0); //CRect(0, 0, size, size);
 	const auto rect_bars = CRect(0, 0, 0, 0); ; //CRect(size, 0, 3*size, size);
 
@@ -285,7 +285,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 
 	for (auto i = 0; i < nbclasses; i++)
 	{
-		const auto iclass = pSList->GetclassID(i);	//CSpikeList
+		const auto iclass = pSList->GetclassID(i);
 
 		// 1) create spike form button
 		CSpikeShapeWnd* pspkShapes = nullptr;
@@ -352,11 +352,23 @@ void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 {
 	p_spikelist_ = p_spike_list;
-	for (auto i = 0; i < GetCount(); i++)
-	{
-		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
-		(pptr->pspk_shapes)->SetSpkList(p_spike_list);
-		(pptr->pspk_bars)->SetSpkList(p_spike_list);
+	if (!p_spike_list->IsClassListValid())
+		p_spike_list->UpdateClassList();
+	const auto nspikes = p_spike_list->GetTotalSpikes();
+	auto nbclasses = 1;
+	if (nspikes > 0)
+		nbclasses = p_spike_list->GetNbclasses();
+
+	if (nbclasses == GetCount()) {
+		for (auto i = 0; i < GetCount(); i++)
+		{
+			const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
+			(pptr->pspk_shapes)->SetSpkList(p_spike_list);
+			(pptr->pspk_bars)->SetSpkList(p_spike_list);
+		}
+	}
+	else {
+		SetSourceData(p_spike_list, p_dbwave_doc_);
 	}
 }
 

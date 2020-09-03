@@ -305,15 +305,15 @@ BOOL CViewSpikes::AddSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 	const auto spikelen = m_pSpkList->GetSpikeLength();
 
 	// get parameters from document
-	//int nchans;									// number of data chans / source buffer
+	//int nchans;										// number of data chans / source buffer
 	//auto p_buffer = m_pDataDoc->LoadRawDataParams(&nchans);
 	const auto nspan = m_pDataDoc->GetTransfDataSpan(method);	// nb pts to read before transf
 
 	const auto iitime0 = iitime - prethreshold;
-	auto l_read_write_first = iitime0;			// first point (eventually) needed
-	auto l_read_write_last = iitime0 + spikelen;	// last pt needed
+	auto l_read_write_first = iitime0;					// first point (eventually) needed
+	auto l_read_write_last = iitime0 + spikelen;		// last pt needed
 	if (!m_pDataDoc->LoadRawData(&l_read_write_first, &l_read_write_last, nspan))
-		return FALSE;					// exit if error
+		return FALSE;									// exit if error
 	//short* p_data =
 	m_pDataDoc->LoadTransfData(l_read_write_first, l_read_write_last, method, doc_channel);
 	const auto p_data_spike_0 = m_pDataDoc->GetpTransfDataElmt(iitime0 - l_read_write_first);
@@ -632,18 +632,20 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 void CViewSpikes::UpdateFileParameters()
 {
 	// init data view
-	CString filename = GetDocument()->GetDB_CurrentSpkFileName(FALSE);
-	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+	m_bDatDocExists = (GetDocument()->OpenCurrentDataFile() != nullptr);
+	m_pDataDoc = nullptr;
+	if (m_bDatDocExists)
+		m_pDataDoc = GetDocument()->m_pDat;
 
 	// init spike views
-	if (m_pSpkDoc == nullptr)
+	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+	m_bSpkDocExists = (m_pSpkDoc == nullptr);
+	if (m_bSpkDocExists)
 	{
-		m_bSpkDocExists = FALSE;
 		m_spkClassListBox.SetSourceData(nullptr, nullptr);
 	}
 	else
 	{
-		m_bSpkDocExists = TRUE;
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
 
@@ -651,21 +653,16 @@ void CViewSpikes::UpdateFileParameters()
 		CSpikeList* pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 		m_pSpkList = pSpkList;
 		m_pspkDP = pSpkList->GetDetectParms();
+		m_pSpkList->m_selspike = -1;
+		m_spikeno = m_pSpkList->m_selspike;
 
 		// reset tab control
 		m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
+		m_tabCtrl.SetCurSel(icur);
 
-		// select spike list
-		m_tabCtrl.SetCurSpkList(GetDocument());
-		if (!pSpkList->IsClassListValid())		// if class list not valid:
-		{
-			pSpkList->UpdateClassList();			// rebuild list of classes
-			m_pSpkDoc->SetModifiedFlag();			// and set modified flag
-		}
+		// setup classes rows
 		m_spkClassListBox.SetSourceData(pSpkList, GetDocument());	// tell CListBox where spikes are
-		m_spkClassListBox.SetCurSel(0);					// select first line from listbox
-
-		// display classes
+		// adjust Y zoom
 		ASSERT(m_lFirst >= 0);
 		if (m_bresetzoom)
 		{
@@ -675,7 +672,9 @@ void CViewSpikes::UpdateFileParameters()
 		}
 		else if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
 			m_lLast = m_pSpkDoc->GetAcqSize() - 1;	// clip to the end of the data
+		
 		m_spkClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
+
 		if (m_yWE == 1)
 		{
 			// adjust gain of spkform
@@ -687,25 +686,17 @@ void CViewSpikes::UpdateFileParameters()
 		m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
 	}
 
-	// get source data
-	CString docname = GetDocument()->GetDB_CurrentDatFileName();
-	m_bDatDocExists = (GetDocument()->OpenCurrentDataFile() != nullptr);
-	m_pDataDoc = nullptr;
-	if (m_bDatDocExists)
-		m_pDataDoc = GetDocument()->m_pDat;
-	m_spikeno = m_pSpkList->m_selspike;
-	if (m_spikeno > m_pSpkList->GetTotalSpikes() - 1)
-		m_spikeno = -1;
-
-	// update interface elements
-	UpdateScrollBar();
+	// select row
+	m_spkClassListBox.SetCurSel(0);
 }
 
 void CViewSpikes::SelectSpkList(int icursel)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icursel);
 	ASSERT(m_pSpkList != NULL);
+
 	m_spkClassListBox.SetSpkList(m_pSpkList);
+
 	m_spkClassListBox.Invalidate();
 	m_pspkDP = m_pSpkList->GetDetectParms();
 
@@ -1277,6 +1268,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	auto l_first = PrintGetFileSeriesIndexFromPage(curpage - 1, &filenumber);
 	GetDocument()->SetDB_CurrentRecordPosition(filenumber);
 	UpdateFileParameters();									// update file parameters
+	UpdateScrollBar();
 	auto very_last = m_pSpkDoc->GetAcqSize() - 1;				// index last data point / current file
 
 	CRect r_where(m_printRect.left, 						// left
@@ -1476,6 +1468,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			{									// NO: select new file
 				GetDocument()->DBMoveNext();
 				UpdateFileParameters(); 		// update file parameters
+				UpdateScrollBar();
 				very_last = m_pSpkDoc->GetAcqSize() - 1;
 			}
 			else
@@ -1495,6 +1488,7 @@ void CViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 
 	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
 	UpdateFileParameters();
+	UpdateScrollBar();
 	m_spkClassListBox.SetTimeIntervals(m_lFirst0, m_lLast0);
 	m_spkClassListBox.Invalidate();
 
@@ -1983,6 +1977,7 @@ void CViewSpikes::OnEditCopy()
 
 	// restore screen in previous state
 	UpdateFileParameters();
+	UpdateScrollBar();
 	m_spkClassListBox.Invalidate();
 	if (m_bDatDocExists)
 	{

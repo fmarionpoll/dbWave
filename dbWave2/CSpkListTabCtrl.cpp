@@ -52,11 +52,7 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeList(CdbWaveDoc* pDoc)
 	}
 }
 
-void CSpkListTabCtrl::SetCurSpkList(CdbWaveDoc* pDoc)
-{
-	int icur = pDoc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
-	SetCurSel(icur);
-}
+
 
 
 

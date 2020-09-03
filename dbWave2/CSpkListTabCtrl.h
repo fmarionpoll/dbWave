@@ -12,7 +12,6 @@ public:
 
 	void InitctrlTabFromSpikeList(CdbWaveDoc* pDoc);
 
-	void SetCurSpkList(CdbWaveDoc* pDoc);
 
 protected:
 	DECLARE_MESSAGE_MAP()

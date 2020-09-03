@@ -733,7 +733,7 @@ void CViewdbWave::OnBnClickedDisplaySpikes()
 	// update tab control
 	m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
 	m_tabCtrl.ShowWindow(SW_SHOW);
-	m_tabCtrl.SetCurSpkList(GetDocument());
+	m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex());
 
 	// display spikes
 	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
