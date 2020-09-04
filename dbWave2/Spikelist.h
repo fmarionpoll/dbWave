@@ -165,7 +165,7 @@ public:
 	int		ToggleSpikeFlag(int spikeno);
 	void	SetSingleSpikeFlag(int spikeno);
 	BOOL	GetSpikeFlag(int spikeno);
-	void	RemoveAllSpikeFlags() { m_spike_flagged.RemoveAll(); }
+	void	RemoveAllSpikeFlags() { if (m_spike_flagged.GetCount() > 0) m_spike_flagged.RemoveAll(); }
 	void	FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
 	void	SelectSpikeswithinRect(int vmin, int vmax, long l_first, long l_ast, BOOL bAdd);
 

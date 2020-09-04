@@ -15,6 +15,9 @@ CSpikeList::CSpikeList()
 {
 	//m_spkelmts.SetSize(0, 128);
 	//m_classArray.SetSize(0, 128);
+	m_classArray.SetSize(2);						// default size - some functions
+	m_classArray.SetAt(0, 0);						// access this array anyway so provide
+	m_classArray.SetAt(1, 0);						// dummy values for them
 }
 
 CSpikeList::~CSpikeList()

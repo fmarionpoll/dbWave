@@ -639,8 +639,8 @@ void CViewSpikes::UpdateFileParameters()
 
 	// init spike views
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
-	m_bSpkDocExists = (m_pSpkDoc == nullptr);
-	if (m_bSpkDocExists)
+	m_bSpkDocExists = (m_pSpkDoc != nullptr);
+	if (!m_bSpkDocExists)
 	{
 		m_spkClassListBox.SetSourceData(nullptr, nullptr);
 	}
@@ -650,9 +650,8 @@ void CViewSpikes::UpdateFileParameters()
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
 
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
-		CSpikeList* pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
-		m_pSpkList = pSpkList;
-		m_pspkDP = pSpkList->GetDetectParms();
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
+		m_pspkDP = m_pSpkList->GetDetectParms();
 		m_pSpkList->m_selspike = -1;
 		m_spikeno = m_pSpkList->m_selspike;
 
@@ -661,33 +660,36 @@ void CViewSpikes::UpdateFileParameters()
 		m_tabCtrl.SetCurSel(icur);
 
 		// setup classes rows
-		m_spkClassListBox.SetSourceData(pSpkList, GetDocument());	// tell CListBox where spikes are
+		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());	// tell CListBox where spikes are
 		// adjust Y zoom
 		ASSERT(m_lFirst >= 0);
 		if (m_bresetzoom)
 		{
 			m_spkClassListBox.SetRedraw(FALSE);
-			OnZoom();
+			ZoomOnPresetInterval(0);
 			m_spkClassListBox.SetRedraw(TRUE);
 		}
 		else if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
 			m_lLast = m_pSpkDoc->GetAcqSize() - 1;	// clip to the end of the data
 		
 		m_spkClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
-
-		if (m_yWE == 1)
-		{
-			// adjust gain of spkform
-			int max, min;
-			pSpkList->GetTotalMaxMin(TRUE, &max, &min);
-			m_yWE = MulDiv(max - min + 1, 10, 8);
-			m_yWO = max / 2 + min / 2;
-		}
-		m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
+		AdjustYZoomToMaxMin(false);
 	}
 
 	// select row
 	m_spkClassListBox.SetCurSel(0);
+}
+
+void CViewSpikes::AdjustYZoomToMaxMin(BOOL bForceSearchMaxMin) {
+	if (m_yWE == 1 || bForceSearchMaxMin)
+	{
+		// adjust gain of spkform
+		int max, min;
+		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+		m_yWE = MulDiv(max - min + 1, 10, 8);
+		m_yWO = (max  + min) / 2;
+	}
+	m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
 }
 
 void CViewSpikes::SelectSpkList(int icursel)
@@ -806,12 +808,7 @@ void CViewSpikes::OnFormatGainadjust()
 {
 	if (m_bSpkDocExists)
 	{
-		// adjust gain of spkform
-		int max, min;
-		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
-		m_yWE = MulDiv(max - min + 1, 10, 8);
-		m_yWO = max / 2 + min / 2;
-		m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
+		AdjustYZoomToMaxMin(true);
 	}
 	if (m_bDatDocExists)
 		m_displayDataFile.MaxgainChan(0);
@@ -1352,7 +1349,6 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			p_dc->SelectClipRgn(nullptr);
 
 			iextent = m_displayDataFile.GetChanlistYextent(0);
-			//izero = m_sourceView.GetChanlistYzero(0);
 			r_wbars.top = r_wbars.bottom;
 		}
 
@@ -1364,6 +1360,8 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		r_wtext.top = r_wbars.top;
 		r_wtext.bottom = r_wbars.bottom;
 
+		//m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+		//AdjustYZoomToMaxMin(true); 
 		int max, min;
 		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
 		const short middle = max / 2 + min / 2;
@@ -1718,9 +1716,9 @@ void CViewSpikes::OnEnChangeZoom()
 
 		mm_zoom.m_bEntryDone = FALSE;	// clear flag
 		mm_zoom.m_nChar = 0;			// empty buffer
-		mm_zoom.SetSel(0, -1);		// select all text
-		if (m_zoom != zoom)		// change display if necessary
-			OnZoom();
+		mm_zoom.SetSel(0, -1);			// select all text
+		if (m_zoom != zoom)				// change display if necessary
+			ZoomOnPresetInterval(0);
 		else
 			UpdateData(FALSE);
 	}
@@ -1932,10 +1930,7 @@ void CViewSpikes::OnEditCopy()
 		}
 
 		// display spikes and bars
-		int max, min;
-		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
-		const short middle = max / 2 + min / 2;
-		m_spkClassListBox.SetYzoom(iextent, middle);
+		AdjustYZoomToMaxMin(true);
 		const auto ncount = m_spkClassListBox.GetCount();				// get nb of items in this file
 
 		for (int icount = 0; icount < ncount; icount++)
@@ -2033,10 +2028,6 @@ void CViewSpikes::OnBIASbutton()
 	SetVBarMode(BAR_BIAS);
 }
 
-// --------------------------------------------------------------------------
-// SetVBarMode
-// --------------------------------------------------------------------------
-
 void CViewSpikes::SetVBarMode(short bMode)
 {
 	if (bMode == BAR_BIAS)
@@ -2045,10 +2036,6 @@ void CViewSpikes::SetVBarMode(short bMode)
 		m_VBarMode = BAR_GAIN;
 	UpdateBiasScroll();
 }
-
-// --------------------------------------------------------------------------
-// UpdateGainScroll()
-// --------------------------------------------------------------------------
 
 void CViewSpikes::UpdateGainScroll()
 {
@@ -2060,9 +2047,6 @@ void CViewSpikes::UpdateGainScroll()
 		TRUE);
 }
 
-// --------------------------------------------------------------------------
-// OnGainScroll()
-// --------------------------------------------------------------------------
 void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	int lSize = m_displayDataFile.GetChanlistYextent(0);
@@ -2112,10 +2096,6 @@ void CViewSpikes::UpdateBiasScroll()
 		* 100 / static_cast<int>(YZERO_SPAN)) + static_cast<int>(50);
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 }
-
-// --------------------------------------------------------------------------
-// OnBiasScroll()
-// --------------------------------------------------------------------------
 
 void CViewSpikes::OnBiasScroll(UINT nSBCode, UINT nPos)
 {

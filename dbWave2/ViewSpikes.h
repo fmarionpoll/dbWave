@@ -76,6 +76,7 @@ protected:
 protected:
 	void UpdateLegends(BOOL bFirst);	// update legends
 	void UpdateFileParameters();		// update parms when file has changed
+	void AdjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
 	void SaveCurrentFileParms();		// save spike file if modified
 	void SelectSpike(int spikeno);
 	void DefineSubClassedItems();

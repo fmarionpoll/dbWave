@@ -261,7 +261,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 {
 	// erase content of the list box
 	SetRedraw(FALSE);
-	ResetContent();	
+	ResetContent();
 
 	p_dbwave_doc_ = pdbDoc;
 	p_spikelist_ = pSList;
@@ -280,53 +280,54 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 	auto i_id = 0;
 	const auto nspikes = pSList->GetTotalSpikes();
 	auto nbclasses = 1;
-	if (nspikes > 0)
+	if (nspikes > 0) {
 		nbclasses = pSList->GetNbclasses();
 
-	for (auto i = 0; i < nbclasses; i++)
-	{
-		const auto iclass = pSList->GetclassID(i);
-
-		// 1) create spike form button
-		CSpikeShapeWnd* pspkShapes = nullptr;
-		if (pSList->GetSpikeLength() > 0)
+		for (auto i = 0; i < nbclasses; i++)
 		{
-			pspkShapes = new (CSpikeShapeWnd);
-			ASSERT(pspkShapes != NULL);
-			pspkShapes->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i_id);
+			const auto iclass = pSList->GetclassID(i);
 
-			pspkShapes->SetSourceData(pSList, pdbDoc);
-			pspkShapes->SetPlotMode(PLOT_ONECLASSONLY, iclass);
-			pspkShapes->SetRangeMode(RANGE_INDEX);
-			pspkShapes->SetSpkIndexes(0, nspikes - 1);
-			pspkShapes->SetbDrawframe(TRUE);
+			// 1) create spike form button
+			CSpikeShapeWnd* pspkShapes = nullptr;
+			if (pSList->GetSpikeLength() > 0)
+			{
+				pspkShapes = new (CSpikeShapeWnd);
+				ASSERT(pspkShapes != NULL);
+				pspkShapes->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i_id);
+
+				pspkShapes->SetSourceData(pSList, pdbDoc);
+				pspkShapes->SetPlotMode(PLOT_ONECLASSONLY, iclass);
+				pspkShapes->SetRangeMode(RANGE_INDEX);
+				pspkShapes->SetSpkIndexes(0, nspikes - 1);
+				pspkShapes->SetbDrawframe(TRUE);
+				i_id++;
+			}
+
+			// 2) bars with spike height
+			auto* pspk_bars = new (CSpikeBarWnd);
+			ASSERT(pspk_bars != NULL);
+			pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
+
+			pspk_bars->SetSourceData(pSList, pdbDoc);
+			pspk_bars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
+			pspk_bars->SetRangeMode(RANGE_INDEX);
+			pspk_bars->SetSpkIndexes(0, nspikes - 1);
+			pspk_bars->SetbDrawframe(TRUE);
 			i_id++;
+
+			// 3) create text
+			auto* pcs = new CString();
+			pcs->Format(_T("class %i\nn=%i"), iclass, (int)pSList->GetclassNbspk(i));
+			ASSERT(pcs != NULL);
+
+			// 4) create array of 3 pointers and pass it to the listbox
+			const auto pptr = new(myptr);
+			ASSERT(pptr != NULL);
+			pptr->pcs = pcs;
+			pptr->pspk_shapes = pspkShapes;
+			pptr->pspk_bars = pspk_bars;
+			AddString(LPTSTR(pptr));
 		}
-
-		// 2) bars with spike height
-		auto* pspk_bars = new (CSpikeBarWnd);
-		ASSERT(pspk_bars != NULL);
-		pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
-
-		pspk_bars->SetSourceData(pSList, pdbDoc);
-		pspk_bars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
-		pspk_bars->SetRangeMode(RANGE_INDEX);
-		pspk_bars->SetSpkIndexes(0, nspikes - 1);
-		pspk_bars->SetbDrawframe(TRUE);
-		i_id++;
-
-		// 3) create text
-		auto* pcs = new CString();
-		pcs->Format(_T("class %i\nn=%i"), iclass, (int)pSList->GetclassNbspk(i));
-		ASSERT(pcs != NULL);
-
-		// 4) create array of 3 pointers and pass it to the listbox
-		const auto pptr = new(myptr);
-		ASSERT(pptr != NULL);
-		pptr->pcs = pcs;
-		pptr->pspk_shapes = pspkShapes;
-		pptr->pspk_bars = pspk_bars;
-		AddString(LPTSTR(pptr));
 	}
 	// exit: allow data redrawing
 	SetRedraw(TRUE);
