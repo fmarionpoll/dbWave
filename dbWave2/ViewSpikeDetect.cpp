@@ -1172,8 +1172,6 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 	m_bDetected = TRUE;									// set flag: detection = YES
 	p_spike_doc_->SetModifiedFlag(TRUE);					// set flag: document has changed
 	p_spike_doc_->SetDetectionDate(CTime::GetCurrentTime());		// detection date
-	//long loldDataFirst = m_displayDetect.GetDataFirst();	// index first pt to test
-	//long loldDataLast = m_displayDetect.GetDataLast();		// index last pt to test
 	const auto ioldlist = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 	m_spikeno = -1;										// Nov 5, 2005
 
