@@ -269,33 +269,26 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 		return;
 	p_spike_doc_ = pdbDoc->m_pSpk;
 
-	// get list of classes
-	if (!pSList->IsClassListValid())
-		pSList->UpdateClassList();
-
 	// add as many windows as necessary; store pointer into listbox
 	const auto rect_spikes = CRect(0, 0, 0, 0); //CRect(0, 0, size, size);
 	const auto rect_bars = CRect(0, 0, 0, 0); ; //CRect(size, 0, 3*size, size);
 
 	auto i_id = 0;
-	const auto nspikes = pSList->GetTotalSpikes();
-	auto nbclasses = 1;
-	if (nspikes > 0)
-		nbclasses = pSList->GetNbclasses();
-
+	int nbclasses = GetHowManyClassesInCurrentSpikeList();
+	const auto nspikes = p_spikelist_->GetTotalSpikes();
 	for (auto i = 0; i < nbclasses; i++)
 	{
-		const auto iclass = pSList->GetclassID(i);
+		const auto iclass = p_spikelist_->GetclassID(i);
 
 		// 1) create spike form button
 		CSpikeShapeWnd* pspkShapes = nullptr;
-		if (pSList->GetSpikeLength() > 0)
+		if (p_spikelist_->GetSpikeLength() > 0)
 		{
 			pspkShapes = new (CSpikeShapeWnd);
 			ASSERT(pspkShapes != NULL);
 			pspkShapes->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i_id);
 
-			pspkShapes->SetSourceData(pSList, pdbDoc);
+			pspkShapes->SetSourceData(p_spikelist_, pdbDoc);
 			pspkShapes->SetPlotMode(PLOT_ONECLASSONLY, iclass);
 			pspkShapes->SetRangeMode(RANGE_INDEX);
 			pspkShapes->SetSpkIndexes(0, nspikes - 1);
@@ -308,7 +301,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 		ASSERT(pspk_bars != NULL);
 		pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
 
-		pspk_bars->SetSourceData(pSList, pdbDoc);
+		pspk_bars->SetSourceData(p_spikelist_, pdbDoc);
 		pspk_bars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
 		pspk_bars->SetRangeMode(RANGE_INDEX);
 		pspk_bars->SetSpkIndexes(0, nspikes - 1);
@@ -317,7 +310,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 
 		// 3) create text
 		auto* pcs = new CString();
-		pcs->Format(_T("class %i\nn=%i"), iclass, (int)pSList->GetclassNbspk(i));
+		pcs->Format(_T("class %i\nn=%i"), iclass, (int)p_spikelist_->GetclassNbspk(i));
 		ASSERT(pcs != NULL);
 
 		// 4) create array of 3 pointers and pass it to the listbox
@@ -349,15 +342,20 @@ void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 	}
 }
 
+int CSpikeClassListBox::GetHowManyClassesInCurrentSpikeList() {
+	if (!p_spikelist_->IsClassListValid())
+		p_spikelist_->UpdateClassList();
+	const auto nspikes = p_spikelist_->GetTotalSpikes();
+	auto nbclasses = 1;
+	if (nspikes > 0)
+		nbclasses = p_spikelist_->GetNbclasses();
+	return nbclasses;
+}
+
 void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 {
 	p_spikelist_ = p_spike_list;
-	if (!p_spike_list->IsClassListValid())
-		p_spike_list->UpdateClassList();
-	const auto nspikes = p_spike_list->GetTotalSpikes();
-	auto nbclasses = 1;
-	if (nspikes > 0)
-		nbclasses = p_spike_list->GetNbclasses();
+	int nbclasses = GetHowManyClassesInCurrentSpikeList();
 
 	if (nbclasses == GetCount()) {
 		for (auto i = 0; i < GetCount(); i++)
@@ -473,6 +471,7 @@ void CSpikeClassListBox::SetYzoom(int y_we, int y_wo)
 		(pptr->pspk_bars)->SetYWExtOrg(y_we, y_wo);
 	}
 }
+
 void CSpikeClassListBox::SetXzoom(int x_we, int x_wo)
 {
 	for (auto i = 0; i < GetCount(); i++)

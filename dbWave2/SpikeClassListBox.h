@@ -47,6 +47,7 @@ public:
 	//inline CSpikeDoc* GetSpikeDoc() const { return p_spike_doc_; };
 
 	void SetTimeIntervals(long l_first, long l_last);
+	int GetHowManyClassesInCurrentSpikeList();
 	long GetTimeFirst() const { return m_lFirst; }
 	long GetTimeLast() const { return m_lLast; }
 
