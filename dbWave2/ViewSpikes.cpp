@@ -650,14 +650,14 @@ void CViewSpikes::UpdateFileParameters()
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 		m_pspkDP = m_pSpkList->GetDetectParms();
-		m_pSpkList->m_selspike = -1;
-		m_spikeno = m_pSpkList->m_selspike;
 
 		// reset tab control
 		m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
 		m_tabCtrl.SetCurSel(icur);
 
 		// setup classes rows
+		m_pSpkList->m_selspike = -1;
+		m_spikeno = m_pSpkList->m_selspike;
 		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());	// tell CListBox where spikes are
 		// adjust Y zoom
 		ASSERT(m_lFirst >= 0);
