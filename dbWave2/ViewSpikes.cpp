@@ -201,7 +201,8 @@ void CViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	case HINT_DOCHASCHANGED:		// file has changed?
 	case HINT_DOCMOVERECORD:
 		UpdateFileParameters();
-		UpdateLegends(TRUE);
+		InitDisplayData();
+		UpdateLegends();
 		break;
 	case HINT_CLOSEFILEMODIFIED:	// close modified file: save
 		SaveCurrentFileParms();
@@ -261,7 +262,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			m_lFirst = m_spkClassListBox.GetTimeFirst();
 			m_lLast = m_spkClassListBox.GetTimeLast();
 		}
-		UpdateLegends(FALSE);
+		UpdateLegends();
 		break;
 
 	case HINT_HITSPIKE:
@@ -361,14 +362,15 @@ BOOL CViewSpikes::AddSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 	}
 
 	SelectSpike(spikeindex);
-	UpdateLegends(TRUE);
+	InitDisplayData();
+	UpdateLegends();
 	m_spkClassListBox.Invalidate();
 	return TRUE;
 }
 
 void CViewSpikes::SelectSpike(int spikeno)
 {
-	if (!m_bSpkDocExists)
+	if (m_pSpkDoc == nullptr)
 		return;
 	if (spikeno >= m_pSpkList->GetTotalSpikes())
 		spikeno = -1;
@@ -387,7 +389,7 @@ void CViewSpikes::SelectSpike(int spikeno)
 		const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetSpikePretrig();
 		const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 		n_cmd_show = SW_SHOW;
-		if (m_bDatDocExists)
+		if (m_pDataDoc != nullptr)
 		{
 			m_DWintervals.SetAt(3, spk_first);
 			m_DWintervals.SetAt(4, spk_last);
@@ -498,7 +500,8 @@ void CViewSpikes::OnInitialUpdate()
 	((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	UpdateFileParameters();
-	UpdateLegends(TRUE);
+	InitDisplayData();
+	UpdateLegends();
 	if (m_baddspikemode)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
@@ -534,7 +537,60 @@ CDaoRecordset* CViewSpikes::OnGetRecordset()
 	return GetDocument()->GetDB_Recordset();
 }
 
-void CViewSpikes::UpdateLegends(BOOL bFirst)
+void CViewSpikes::InitDisplayData() {
+	// if data found, pass data to the display button
+	if (m_pDataDoc == nullptr)
+		return;
+	
+	GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_SHOW);
+	m_displayDataFile.SetbUseDIB(FALSE);
+	m_displayDataFile.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
+
+	int isourceview = m_pSpkList->GetextractChan();
+	if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
+	{
+		m_pSpkList->SetextractChan(0);
+		isourceview = 0;
+	}
+	if (m_pSpkList->GetdetectWhat() == 1)
+	{
+		isourceview = m_pSpkList->GetdetectChan();
+		if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
+		{
+			m_pSpkList->SetdetectChan(0);
+			isourceview = 0;
+		}
+	}
+
+	// set detection channel
+	if (m_displayDataFile.SetChanlistSourceChan(0, isourceview) < 0)
+	{
+		m_displayDataFile.RemoveAllChanlistItems();
+	}
+	else
+	{
+		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
+		m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
+		if (m_bInitSourceView)
+		{
+			m_bInitSourceView = FALSE;
+			int max, min;
+			m_displayDataFile.GetChanlistMaxMin(0, &max, &min);
+			const auto iextent = MulDiv(max - min + 1, 11, 10);
+			const auto izero = (max + min) / 2;
+			m_displayDataFile.SetChanlistYextent(0, iextent);
+			m_displayDataFile.SetChanlistYzero(0, izero);
+		}
+	}
+	m_DWintervals.SetSize(3 + 2);				// total size
+	m_DWintervals.SetAt(0, 0);					// source channel
+	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0)));	// red color
+	m_DWintervals.SetAt(2, 1);					// pen size
+	m_DWintervals.SetAt(3, 0);					// pen size
+	m_DWintervals.SetAt(4, 0);					// pen size
+}
+
+void CViewSpikes::UpdateLegends()
 {
 	if (m_lFirst < 0)
 		m_lFirst = 0;
@@ -546,61 +602,7 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 		m_lFirst = m_lLast - 120;
 
 	// update comments and time
-	if (bFirst)
-	{
-		// if data found, pass data to the display button
-		if (m_bDatDocExists)
-		{
-			GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_SHOW);
-			m_displayDataFile.SetbUseDIB(FALSE);
-			m_displayDataFile.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
-
-			int isourceview = m_pSpkList->GetextractChan();
-			if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
-			{
-				m_pSpkList->SetextractChan(0);
-				isourceview = 0;
-			}
-			if (m_pSpkList->GetdetectWhat() == 1)
-			{
-				isourceview = m_pSpkList->GetdetectChan();
-				if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
-				{
-					m_pSpkList->SetdetectChan(0);
-					isourceview = 0;
-				}
-			}
-
-			// set detection channel
-			if (m_displayDataFile.SetChanlistSourceChan(0, isourceview) < 0)
-			{
-				m_displayDataFile.RemoveAllChanlistItems();
-			}
-			else
-			{
-				m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
-				m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
-				if (m_bInitSourceView)
-				{
-					m_bInitSourceView = FALSE;
-					int max, min;
-					m_displayDataFile.GetChanlistMaxMin(0, &max, &min);
-					const auto iextent = MulDiv(max - min + 1, 11, 10);
-					const auto izero = (max + min) / 2;
-					m_displayDataFile.SetChanlistYextent(0, iextent);
-					m_displayDataFile.SetChanlistYzero(0, izero);
-				}
-			}
-			m_DWintervals.SetSize(3 + 2);					// total size
-			m_DWintervals.SetAt(0, 0);					// source channel
-			m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0)));	// red color
-			m_DWintervals.SetAt(2, 1);					// pen size
-			m_DWintervals.SetAt(3, 0);					// pen size
-			m_DWintervals.SetAt(4, 0);					// pen size
-		}
-		else
-			GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_HIDE);
-	}
+	GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_HIDE);
 
 	// set cursor
 	auto hwnd = GetSafeHwnd();
@@ -631,16 +633,12 @@ void CViewSpikes::UpdateLegends(BOOL bFirst)
 
 void CViewSpikes::UpdateFileParameters()
 {
-	// init data view
-	m_bDatDocExists = (GetDocument()->OpenCurrentDataFile() != nullptr);
-	m_pDataDoc = nullptr;
-	if (m_bDatDocExists)
-		m_pDataDoc = GetDocument()->m_pDat;
+	// open data file and spike file
+	m_pDataDoc = GetDocument()->OpenCurrentDataFile();
+	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 
 	// init spike views
-	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
-	m_bSpkDocExists = (m_pSpkDoc == nullptr);
-	if (m_bSpkDocExists)
+	if (m_pSpkDoc == nullptr)
 	{
 		m_spkClassListBox.SetSourceData(nullptr, nullptr);
 	}
@@ -650,9 +648,8 @@ void CViewSpikes::UpdateFileParameters()
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
 
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
-		CSpikeList* pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
-		m_pSpkList = pSpkList;
-		m_pspkDP = pSpkList->GetDetectParms();
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
+		m_pspkDP = m_pSpkList->GetDetectParms();
 		m_pSpkList->m_selspike = -1;
 		m_spikeno = m_pSpkList->m_selspike;
 
@@ -661,33 +658,36 @@ void CViewSpikes::UpdateFileParameters()
 		m_tabCtrl.SetCurSel(icur);
 
 		// setup classes rows
-		m_spkClassListBox.SetSourceData(pSpkList, GetDocument());	// tell CListBox where spikes are
+		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());	// tell CListBox where spikes are
 		// adjust Y zoom
 		ASSERT(m_lFirst >= 0);
 		if (m_bresetzoom)
 		{
 			m_spkClassListBox.SetRedraw(FALSE);
-			OnZoom();
+			ZoomOnPresetInterval(0);
 			m_spkClassListBox.SetRedraw(TRUE);
 		}
 		else if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
 			m_lLast = m_pSpkDoc->GetAcqSize() - 1;	// clip to the end of the data
 		
 		m_spkClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
-
-		if (m_yWE == 1)
-		{
-			// adjust gain of spkform
-			int max, min;
-			pSpkList->GetTotalMaxMin(TRUE, &max, &min);
-			m_yWE = MulDiv(max - min + 1, 10, 8);
-			m_yWO = max / 2 + min / 2;
-		}
-		m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
+		AdjustYZoomToMaxMin(false);
 	}
 
 	// select row
 	m_spkClassListBox.SetCurSel(0);
+}
+
+void CViewSpikes::AdjustYZoomToMaxMin(BOOL bForceSearchMaxMin) {
+	if (m_yWE == 1 || bForceSearchMaxMin)
+	{
+		// adjust gain of spkform
+		int max, min;
+		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+		m_yWE = MulDiv(max - min + 1, 10, 8);
+		m_yWO = (max  + min) / 2;
+	}
+	m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
 }
 
 void CViewSpikes::SelectSpkList(int icursel)
@@ -767,7 +767,7 @@ void CViewSpikes::OnFormatAlldata()
 	const short x_we = m_pSpkList->GetSpikeLength();
 	m_spkClassListBox.SetXzoom(x_we, x_wo);
 
-	UpdateLegends(FALSE);
+	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayDataFile.Invalidate();
@@ -793,10 +793,10 @@ void CViewSpikes::OnFormatCentercurve()
 		m_spkClass.SetYzoom(m_spkClass.GetYWExtent(), middle);
 	}
 	*/
-	if (m_bDatDocExists)
+	if (m_pDataDoc != nullptr)
 		m_displayDataFile.CenterChan(0);
 
-	UpdateLegends(FALSE);
+	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayDataFile.Invalidate();
@@ -804,18 +804,13 @@ void CViewSpikes::OnFormatCentercurve()
 
 void CViewSpikes::OnFormatGainadjust()
 {
-	if (m_bSpkDocExists)
+	if (m_pSpkDoc != nullptr)
 	{
-		// adjust gain of spkform
-		int max, min;
-		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
-		m_yWE = MulDiv(max - min + 1, 10, 8);
-		m_yWO = max / 2 + min / 2;
-		m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
+		AdjustYZoomToMaxMin(true);
 	}
-	if (m_bDatDocExists)
+	if (m_pDataDoc != nullptr)
 		m_displayDataFile.MaxgainChan(0);
-	UpdateLegends(FALSE);
+	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayDataFile.Invalidate();
@@ -852,7 +847,8 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	}
 	m_lFirst = l_first;
 	m_lLast = l_last;
-	UpdateLegends(TRUE);
+	InitDisplayData();
+	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayDataFile.Invalidate();
@@ -1304,7 +1300,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		auto rw2 = r_where;								// printing rectangle - constant
 		rw2.OffsetRect(-r_where.left, -r_where.top);		// set RW2 origin = 0,0
 		auto rheight = rw2.Height() / m_maxclasses;		// ncount;
-		if (m_bDatDocExists)
+		if (m_pDataDoc != nullptr)
 			rheight = rw2.Height() / (m_maxclasses + 1);
 		const auto rseparator = rheight / 8;
 		const auto rcol = rw2.Width() / 8;
@@ -1342,7 +1338,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		auto iextent = m_spkClassListBox.GetYWExtent();			// get current extents
 		//auto izero = m_spkClass.GetYWOrg();
 
-		if (m_bDatDocExists)
+		if (m_pDataDoc != nullptr)
 		{
 			if (options_viewdata->bClipRect)						// clip curve display ?
 				p_dc->IntersectClipRect(&r_wbars);		// yes
@@ -1352,7 +1348,6 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			p_dc->SelectClipRgn(nullptr);
 
 			iextent = m_displayDataFile.GetChanlistYextent(0);
-			//izero = m_sourceView.GetChanlistYzero(0);
 			r_wbars.top = r_wbars.bottom;
 		}
 
@@ -1364,6 +1359,8 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		r_wtext.top = r_wbars.top;
 		r_wtext.bottom = r_wbars.bottom;
 
+		//m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+		//AdjustYZoomToMaxMin(true); 
 		int max, min;
 		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
 		const short middle = max / 2 + min / 2;
@@ -1583,7 +1580,7 @@ void CViewSpikes::OnEnChangeNOspike()
 					const long lspan = (m_lLast - m_lFirst) / 2;
 					m_lFirst = lcenter - lspan;
 					m_lLast = lcenter + lspan;
-					UpdateLegends(FALSE);
+					UpdateLegends();
 				}
 				// center curve vertically
 				const auto ixpixel = MulDiv(lcenter - m_lFirst, m_displayDataFile.GetNxPixels(), m_lLast - m_lFirst);
@@ -1622,7 +1619,7 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 	{
 		m_spkClassListBox.ChangeSpikeClass(m_spikeno, m_spikenoclass);
 		m_pSpkDoc->SetModifiedFlag(TRUE);
-		UpdateLegends(FALSE);
+		UpdateLegends();
 		m_spkClassListBox.Invalidate();
 		m_displayDataFile.Invalidate();
 	}
@@ -1656,7 +1653,7 @@ void CViewSpikes::OnEnChangeTimefirst()
 		if (l_first != m_lFirst)
 		{
 			m_lFirst = l_first;
-			UpdateLegends(FALSE);
+			UpdateLegends();
 			m_spkClassListBox.Invalidate();
 			m_displayDataFile.Invalidate();
 		}
@@ -1690,7 +1687,7 @@ void CViewSpikes::OnEnChangeTimelast()
 		if (l_last != m_lLast)
 		{
 			m_lLast = l_last;
-			UpdateLegends(FALSE);
+			UpdateLegends();
 			m_spkClassListBox.Invalidate();
 			m_displayDataFile.Invalidate();
 		}
@@ -1718,9 +1715,9 @@ void CViewSpikes::OnEnChangeZoom()
 
 		mm_zoom.m_bEntryDone = FALSE;	// clear flag
 		mm_zoom.m_nChar = 0;			// empty buffer
-		mm_zoom.SetSel(0, -1);		// select all text
-		if (m_zoom != zoom)		// change display if necessary
-			OnZoom();
+		mm_zoom.SetSel(0, -1);			// select all text
+		if (m_zoom != zoom)				// change display if necessary
+			ZoomOnPresetInterval(0);
 		else
 			UpdateData(FALSE);
 	}
@@ -1825,13 +1822,13 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_lFirst = l_first;
 		m_lLast = l_last;
-		UpdateLegends(FALSE);
+		UpdateLegends();
 		m_spkClassListBox.Invalidate();
 		m_displayDataFile.Invalidate();
 	}
 	else
 		UpdateScrollBar();
-	if (m_bDatDocExists)
+	if (m_pDataDoc != nullptr)
 		m_displayDataFile.CenterChan(0);
 }
 
@@ -1920,7 +1917,7 @@ void CViewSpikes::OnEditCopy()
 		rw_bars.left = rw_spikes.right + rseparator;
 
 		// display data	if data file was found
-		if (m_bDatDocExists)
+		if (m_pDataDoc != nullptr)
 		{
 			m_displayDataFile.CenterChan(0);
 			m_displayDataFile.Print(&mDC, &rw_bars);
@@ -1932,10 +1929,7 @@ void CViewSpikes::OnEditCopy()
 		}
 
 		// display spikes and bars
-		int max, min;
-		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
-		const short middle = max / 2 + min / 2;
-		m_spkClassListBox.SetYzoom(iextent, middle);
+		AdjustYZoomToMaxMin(true);
 		const auto ncount = m_spkClassListBox.GetCount();				// get nb of items in this file
 
 		for (int icount = 0; icount < ncount; icount++)
@@ -1979,7 +1973,7 @@ void CViewSpikes::OnEditCopy()
 	UpdateFileParameters();
 	UpdateScrollBar();
 	m_spkClassListBox.Invalidate();
-	if (m_bDatDocExists)
+	if (m_pDataDoc != nullptr)
 	{
 		m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
 		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
@@ -1999,7 +1993,7 @@ void CViewSpikes::ZoomOnPresetInterval(int iistart)
 	m_lFirst = iistart;
 	const auto acqrate = m_pSpkDoc->GetAcqRate();
 	m_lLast = static_cast<long>((m_lFirst / acqrate + m_zoom) * acqrate);
-	UpdateLegends(FALSE);
+	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayDataFile.Invalidate();
@@ -2033,10 +2027,6 @@ void CViewSpikes::OnBIASbutton()
 	SetVBarMode(BAR_BIAS);
 }
 
-// --------------------------------------------------------------------------
-// SetVBarMode
-// --------------------------------------------------------------------------
-
 void CViewSpikes::SetVBarMode(short bMode)
 {
 	if (bMode == BAR_BIAS)
@@ -2045,10 +2035,6 @@ void CViewSpikes::SetVBarMode(short bMode)
 		m_VBarMode = BAR_GAIN;
 	UpdateBiasScroll();
 }
-
-// --------------------------------------------------------------------------
-// UpdateGainScroll()
-// --------------------------------------------------------------------------
 
 void CViewSpikes::UpdateGainScroll()
 {
@@ -2060,9 +2046,6 @@ void CViewSpikes::UpdateGainScroll()
 		TRUE);
 }
 
-// --------------------------------------------------------------------------
-// OnGainScroll()
-// --------------------------------------------------------------------------
 void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	int lSize = m_displayDataFile.GetChanlistYextent(0);
@@ -2092,7 +2075,7 @@ void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 	if (lSize > 0) //&& lSize<=YEXTENT_MAX)
 	{
 		m_displayDataFile.SetChanlistYextent(0, lSize);
-		UpdateLegends(FALSE);
+		UpdateLegends();
 		m_displayDataFile.Invalidate();
 	}
 	// update scrollBar
@@ -2112,10 +2095,6 @@ void CViewSpikes::UpdateBiasScroll()
 		* 100 / static_cast<int>(YZERO_SPAN)) + static_cast<int>(50);
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 }
-
-// --------------------------------------------------------------------------
-// OnBiasScroll()
-// --------------------------------------------------------------------------
 
 void CViewSpikes::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
@@ -2241,7 +2220,7 @@ void CViewSpikes::OnArtefact()
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_bartefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);
-	UpdateLegends(FALSE);
+	UpdateLegends();
 	m_spkClassListBox.Invalidate();
 }
 
