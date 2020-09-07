@@ -56,8 +56,6 @@ protected:
 	CSpikeDoc*		m_pSpkDoc = nullptr;	// destination data doc
 	CSpikeList*		m_pSpkList = nullptr;	// temporary spike list
 	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
-	BOOL			m_bDatDocExists = false;
-	BOOL			m_bSpkDocExists = false;
 	BOOL			m_bInitSourceView = true;
 	int				m_lFirst = 0;
 	int				m_lLast = -1;
@@ -74,7 +72,8 @@ protected:
 
 	// Implementation
 protected:
-	void UpdateLegends(BOOL bFirst);	// update legends
+	void UpdateLegends();				// update legends
+	void InitDisplayData();
 	void UpdateFileParameters();		// update parms when file has changed
 	void AdjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
 	void SaveCurrentFileParms();		// save spike file if modified
