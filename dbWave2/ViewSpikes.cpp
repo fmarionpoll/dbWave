@@ -649,16 +649,14 @@ void CViewSpikes::UpdateFileParameters()
 
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
+		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());
+
 		m_pspkDP = m_pSpkList->GetDetectParms();
 
 		// reset tab control
-		m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
+		m_tabCtrl.InitctrlTabFromSpikeList(m_pSpkDoc);
 		m_tabCtrl.SetCurSel(icur);
 
-		// setup classes rows
-		m_pSpkList->m_selspike = -1;
-		m_spikeno = m_pSpkList->m_selspike;
-		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());	// tell CListBox where spikes are
 		// adjust Y zoom
 		ASSERT(m_lFirst >= 0);
 		if (m_bresetzoom)
@@ -797,7 +795,6 @@ void CViewSpikes::OnFormatCentercurve()
 		m_displayDataFile.CenterChan(0);
 
 	UpdateLegends();
-	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayDataFile.Invalidate();
 }
@@ -810,8 +807,8 @@ void CViewSpikes::OnFormatGainadjust()
 	}
 	if (m_pDataDoc != nullptr)
 		m_displayDataFile.MaxgainChan(0);
+
 	UpdateLegends();
-	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayDataFile.Invalidate();
 }
@@ -1242,8 +1239,8 @@ void CViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_lLast0 = m_spkClassListBox.GetTimeLast();
 
 	//---------------------init objects-------------------------------------
-	memset(&m_logFont, 0, sizeof(LOGFONT));		// prepare font
-	lstrcpy(m_logFont.lfFaceName, _T("Arial"));		// Arial font
+	memset(&m_logFont, 0, sizeof(LOGFONT));					// prepare font
+	lstrcpy(m_logFont.lfFaceName, _T("Arial"));				// Arial font
 	m_logFont.lfHeight = options_viewdata->fontsize;		// font height
 	m_pOldFont = nullptr;
 	m_fontPrint.CreateFontIndirect(&m_logFont);
@@ -1254,8 +1251,8 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
 	p_dc->SetMapMode(MM_TEXT);								// (1 pixel = 1 logical point)
-	PrintFileBottomPage(p_dc, pInfo);							// print bottom - text, date, etc
-	const int curpage = pInfo->m_nCurPage;						// get current page number
+	PrintFileBottomPage(p_dc, pInfo);						// print bottom - text, date, etc
+	const int curpage = pInfo->m_nCurPage;					// get current page number
 
 	// --------------------- load data corresponding to the first row of current page
 
@@ -1263,12 +1260,12 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	int filenumber;			   								// file number and file index
 	auto l_first = PrintGetFileSeriesIndexFromPage(curpage - 1, &filenumber);
 	GetDocument()->SetDB_CurrentRecordPosition(filenumber);
-	UpdateFileParameters();									// update file parameters
+	UpdateFileParameters();
 	UpdateScrollBar();
-	auto very_last = m_pSpkDoc->GetAcqSize() - 1;				// index last data point / current file
+	auto very_last = m_pSpkDoc->GetAcqSize() - 1;			// index last data point / current file
 
 	CRect r_where(m_printRect.left, 						// left
-		m_printRect.top,						// top
+		m_printRect.top,									// top
 		m_printRect.left + options_viewdata->WidthDoc,		// right ( and bottom next line)
 		m_printRect.top + options_viewdata->HeightDoc);
 
@@ -1277,19 +1274,19 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	{
 		// save conditions (Save/RestoreDC is mandatory!) --------------------------------
 
-		const auto old_dc = p_dc->SaveDC();						// save DC
+		const auto old_dc = p_dc->SaveDC();					// save DC
 
 		// set first rectangle where data will be printed
 
 		auto comment_rect = r_where;						// save RWhere for comments
-		p_dc->SetMapMode(MM_TEXT);						// 1 pixel = 1 logical unit
-		p_dc->SetTextAlign(TA_LEFT); 					// set text align mode
+		p_dc->SetMapMode(MM_TEXT);							// 1 pixel = 1 logical unit
+		p_dc->SetTextAlign(TA_LEFT); 						// set text align mode
 		if (options_viewdata->bFrameRect)							// print rectangle if necessary
 		{
 			p_dc->MoveTo(r_where.left, r_where.top);
 			p_dc->LineTo(r_where.right, r_where.top);		// top hz
 			p_dc->LineTo(r_where.right, r_where.bottom);	// right vert
-			p_dc->LineTo(r_where.left, r_where.bottom);	// bottom hz
+			p_dc->LineTo(r_where.left, r_where.bottom);		// bottom hz
 			p_dc->LineTo(r_where.left, r_where.top);		// left vert
 		}
 		p_dc->SetViewportOrg(r_where.left, r_where.top);
@@ -1297,9 +1294,9 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		// load data and adjust display rectangle ----------------------------------------
 		// reduce width to the size of the data
 
-		auto rw2 = r_where;								// printing rectangle - constant
+		auto rw2 = r_where;									// printing rectangle - constant
 		rw2.OffsetRect(-r_where.left, -r_where.top);		// set RW2 origin = 0,0
-		auto rheight = rw2.Height() / m_maxclasses;		// ncount;
+		auto rheight = rw2.Height() / m_maxclasses;			// ncount;
 		if (m_pDataDoc != nullptr)
 			rheight = rw2.Height() / (m_maxclasses + 1);
 		const auto rseparator = rheight / 8;
@@ -1464,7 +1461,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			if (filenumber < m_nfiles)			// last file ??
 			{									// NO: select new file
 				GetDocument()->DBMoveNext();
-				UpdateFileParameters(); 		// update file parameters
+				UpdateFileParameters(); 
 				UpdateScrollBar();
 				very_last = m_pSpkDoc->GetAcqSize() - 1;
 			}

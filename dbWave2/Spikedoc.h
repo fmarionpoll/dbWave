@@ -45,6 +45,7 @@ public:
 	void		SetSpkList_Size(int i) { return spikelist_array.SetSize(i); }
 	CSpikeList* SetSpkList_AsCurrent(int ichan);
 	CSpikeList* GetSpkList_Current();
+	CSpikeList* GetSpkList_At(int ichan);
 	int			GetSpkList_CurrentIndex()	const { return m_currspklist; }
 
 	int			AddSpkList() { spikelist_array.SetSize(GetSpkList_Size() + 1); return GetSpkList_Size(); }

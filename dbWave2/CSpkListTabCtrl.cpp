@@ -23,22 +23,16 @@ CSpkListTabCtrl::~CSpkListTabCtrl()
 BEGIN_MESSAGE_MAP(CSpkListTabCtrl, CTabCtrl)
 END_MESSAGE_MAP()
 
-
-
 // CSpkListTabCtrl message handlers
-void CSpkListTabCtrl::InitctrlTabFromSpikeList(CdbWaveDoc* pDoc)
+void CSpkListTabCtrl::InitctrlTabFromSpikeList(CSpikeDoc* pSpkDoc)
 {
-	// reset tab control
 	DeleteAllItems();
-
-	// load list of detection parameters
 	auto j = 0;
-	if (pDoc->OpenCurrentSpikeFile() != nullptr)
-	{
-		const auto curr_listsize = pDoc->GetcurrentSpkDocument()->GetSpkList_Size();
+	
+		const auto curr_listsize = pSpkDoc->GetSpkList_Size();
 		for (auto i = 0; i < curr_listsize; i++)
 		{
-			auto p_spike_list = pDoc->m_pSpk->SetSpkList_AsCurrent(i);
+			auto p_spike_list = pSpkDoc->GetSpkList_At(i);
 			if (!p_spike_list)
 				continue;
 			CString cs;
@@ -46,10 +40,9 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeList(CdbWaveDoc* pDoc)
 				continue;
 			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(p_spike_list->GetComment()));
 			InsertItem(j, cs);
-			//m_tabCtrl.SetItemData(j, i);		// save list item
 			j++;
 		}
-	}
+	
 }
 
 

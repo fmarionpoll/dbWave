@@ -199,7 +199,7 @@ void CViewdbWave::OnInitialUpdate()
 	if (m_options_viewdata->displaymode == 2)
 	{
 		// update tab control
-		m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
+		m_tabCtrl.InitctrlTabFromSpikeList(GetDocument()->GetcurrentSpkDocument());
 		m_tabCtrl.ShowWindow(SW_SHOW);
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 		m_tabCtrl.SetCurSel(icur);
@@ -313,7 +313,7 @@ void CViewdbWave::UpdateControls()
 		{
 			const auto curr_listsize = GetDocument()->GetcurrentSpkDocument()->GetSpkList_Size();
 			if (m_tabCtrl.GetItemCount() < curr_listsize)
-				m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
+				m_tabCtrl.InitctrlTabFromSpikeList(GetDocument()->GetcurrentSpkDocument());
 		}
 	}
 }
@@ -731,7 +731,7 @@ void CViewdbWave::OnBnClickedDisplaySpikes()
 
 	m_options_viewdata->displaymode = 2;
 	// update tab control
-	m_tabCtrl.InitctrlTabFromSpikeList(GetDocument());
+	m_tabCtrl.InitctrlTabFromSpikeList(GetDocument()->GetcurrentSpkDocument());
 	m_tabCtrl.ShowWindow(SW_SHOW);
 	m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex());
 

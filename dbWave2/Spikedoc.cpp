@@ -1693,3 +1693,7 @@ CSpikeList* CSpikeDoc::GetSpkList_Current()
 {
 	return &spikelist_array[m_currspklist];
 }
+
+CSpikeList* CSpikeDoc::GetSpkList_At(int ichan) {
+	return &spikelist_array[ichan];
+}
