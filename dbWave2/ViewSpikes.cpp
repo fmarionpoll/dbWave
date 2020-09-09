@@ -48,9 +48,26 @@ BOOL CViewSpikes::PreCreateWindow(CREATESTRUCT& cs)
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
+void CViewSpikes::DoDataExchange(CDataExchange* pDX)
+{
+	CDaoRecordView::DoDataExchange(pDX);
+
+	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
+	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
+	DDX_Text(pDX, IDC_NSPIKES, m_spikeno);
+	DDX_Text(pDX, IDC_EDIT2, m_spikenoclass);
+	DDX_Text(pDX, IDC_EDIT3, m_zoom);
+	DDX_Text(pDX, IDC_EDIT4, m_sourceclass);
+	DDX_Text(pDX, IDC_EDIT5, m_destclass);
+	DDX_Check(pDX, IDC_CHECK1, m_bresetzoom);
+	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
+	DDX_Text(pDX, IDC_JITTER, m_jitter_ms);
+	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
+	DDX_Check(pDX, IDC_SAMECLASS, m_bKeepSameClass);
+}
+
 BEGIN_MESSAGE_MAP(CViewSpikes, CDaoRecordView)
 
-	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
@@ -59,6 +76,8 @@ BEGIN_MESSAGE_MAP(CViewSpikes, CDaoRecordView)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
+
+	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
 
 	ON_COMMAND(ID_FORMAT_ALLDATA, OnFormatAlldata)
 	ON_COMMAND(ID_FORMAT_CENTERCURVE, OnFormatCentercurve)
@@ -91,24 +110,6 @@ BEGIN_MESSAGE_MAP(CViewSpikes, CDaoRecordView)
 	ON_BN_CLICKED(IDC_SAMECLASS, &CViewSpikes::OnBnClickedSameclass)
 END_MESSAGE_MAP()
 
-void CViewSpikes::DoDataExchange(CDataExchange* pDX)
-{
-	CDaoRecordView::DoDataExchange(pDX);
-
-	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
-	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
-	DDX_Text(pDX, IDC_NSPIKES, m_spikeno);
-	DDX_Text(pDX, IDC_EDIT2, m_spikenoclass);
-	DDX_Text(pDX, IDC_EDIT3, m_zoom);
-	DDX_Text(pDX, IDC_EDIT4, m_sourceclass);
-	DDX_Text(pDX, IDC_EDIT5, m_destclass);
-	DDX_Check(pDX, IDC_CHECK1, m_bresetzoom);
-	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
-	DDX_Text(pDX, IDC_JITTER, m_jitter_ms);
-	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
-	DDX_Check(pDX, IDC_SAMECLASS, m_bKeepSameClass);
-}
-
 void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
@@ -137,7 +138,7 @@ void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 			CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
 			p_app->m_pviewspikesMemFile->SeekToBegin();
 			m_displayDataFile.Serialize(ar);
-			ar.Close();					// close archive
+			ar.Close();	
 		}
 		// set bincrflagonsave
 		auto p_app = (CdbWaveApp*)AfxGetApp();
@@ -252,7 +253,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEHZLIMITS:		// abcissa have changed
 	case HINT_CHANGEZOOM:
 	case HINT_VIEWSIZECHANGED:		// change zoom
-		if (HIWORD(lParam) == IDC_BUTTON1)
+		if (HIWORD(lParam) == IDC_DISPLAYDAT)
 		{
 			m_lFirst = m_displayDataFile.GetDataFirst();
 			m_lLast = m_displayDataFile.GetDataLast();
@@ -419,7 +420,7 @@ void CViewSpikes::DefineSubClassedItems()
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
 	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100, FALSE);
-	VERIFY(m_displayDataFile.SubclassDlgItem(IDC_BUTTON1, this));
+	VERIFY(m_displayDataFile.SubclassDlgItem(IDC_DISPLAYDAT, this));
 	VERIFY(mm_zoom.SubclassDlgItem(IDC_EDIT3, this));
 	mm_zoom.ShowScrollBar(SB_VERT);
 	VERIFY(mm_sourceclass.SubclassDlgItem(IDC_EDIT4, this));
@@ -443,7 +444,7 @@ void CViewSpikes::DefineStretchParameters()
 	m_stretch.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 
-	m_stretch.newProp(IDC_BUTTON1, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_DISPLAYDAT, XLEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_TIMEINTERVALS, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
@@ -477,7 +478,7 @@ void CViewSpikes::OnInitialUpdate()
 	GetDlgItem(IDC_LISTCLASSES)->GetWindowRect(&rect);
 	m_spkClassListBox.SetRowHeight(m_psC->rowheight);
 	CRect rect2;
-	GetDlgItem(IDC_BUTTON1)->GetWindowRect(&rect2);
+	GetDlgItem(IDC_DISPLAYDAT)->GetWindowRect(&rect2);
 	const int leftcolwidth = rect2.left - rect.left - 2;
 	m_spkClassListBox.SetLeftColWidth(leftcolwidth);
 	if (m_psC->coltext < 0)
@@ -542,7 +543,7 @@ void CViewSpikes::InitDisplayData() {
 	if (m_pDataDoc == nullptr)
 		return;
 	
-	GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_DISPLAYDAT)->ShowWindow(SW_SHOW);
 	m_displayDataFile.SetbUseDIB(FALSE);
 	m_displayDataFile.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
 
@@ -582,6 +583,8 @@ void CViewSpikes::InitDisplayData() {
 			m_displayDataFile.SetChanlistYzero(0, izero);
 		}
 	}
+	m_displayDataFile.Invalidate();
+
 	m_DWintervals.SetSize(3 + 2);				// total size
 	m_DWintervals.SetAt(0, 0);					// source channel
 	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0)));	// red color
@@ -602,7 +605,7 @@ void CViewSpikes::UpdateLegends()
 		m_lFirst = m_lLast - 120;
 
 	// update comments and time
-	GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_DISPLAYDAT)->ShowWindow(SW_HIDE);
 
 	// set cursor
 	auto hwnd = GetSafeHwnd();
