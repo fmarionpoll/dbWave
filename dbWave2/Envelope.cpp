@@ -338,7 +338,7 @@ void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans
 void CEnvelope::GetEnvelopeMaxMin(int* max, int* min)
 {
 	auto* p_envel = &m_Envelope[2];
-	int maxval = *p_envel;			// get first max and min short
+	short maxval = *p_envel;			// get first max and min short
 	auto minval = maxval;
 	const auto npixels = m_Envelope.GetSize();
 
