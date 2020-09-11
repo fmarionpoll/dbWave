@@ -50,7 +50,6 @@ CViewSpikeDetection::CViewSpikeDetection()
 
 CViewSpikeDetection::~CViewSpikeDetection()
 {
-	// save spkD list i	 changed
 	if (p_spike_doc_ != nullptr)
 		SaveCurrentSpikeFile();
 }
@@ -2493,7 +2492,7 @@ void CViewSpikeDetection::SerializeWindowsState(BOOL bSave, int itab)
 	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());	// pointer to list of pointers to store parameters
 	if (itab < 0 || itab >= m_tabCtrl.GetItemCount())
 	{
-		int itab_sel = m_tabCtrl.GetCurSel();			// current selected tab
+		int itab_sel = m_tabCtrl.GetCurSel();				// current selected tab
 		if (itab_sel < 0)
 			itab_sel = 0;
 		itab = itab_sel;

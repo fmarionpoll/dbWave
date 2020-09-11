@@ -342,7 +342,6 @@
 #define IDC_SPIKECLASS2                 353
 #define IDC_ADJUST                      355
 #define IDC_ARTEFACT                    356
-#define IDC_ARTEFACT2                   357
 #define IDC_SAMECLASS                   357
 #define IDC_ACQDATE                     359
 #define IDC_ACQTIME                     360
@@ -807,6 +806,7 @@
 #define IDC_BUTTON_NEXTID               1509
 #define IDC_USBPXXS1CTL                 1510
 #define IDC_BINMV                       1512
+#define IDC_DISPLAYDAT                  1513
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -933,7 +933,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        576
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1513
+#define _APS_NEXT_CONTROL_VALUE         1514
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

@@ -519,13 +519,13 @@ BOOL CLineViewWnd::GetDataFromDoc()
 
 	// check intervals	(assume m_lxSize OK)
 	if (m_lxFirst < 0)
-		m_lxFirst = 0;							// avoid negative start
+		m_lxFirst = 0;								// avoid negative start
 	m_lxLast = m_lxFirst + m_lxSize - 1;			// test end
-	if (m_lxLast > m_lxVeryLast)				// past end of file?
+	if (m_lxLast > m_lxVeryLast)					// past end of file?
 	{
 		if (m_lxSize >= m_lxVeryLast + 1)
 			m_lxSize = m_lxVeryLast + 1;
-		m_lxLast = m_lxVeryLast;				// clip to end
+		m_lxLast = m_lxVeryLast;					// clip to end
 		m_lxFirst = m_lxLast - m_lxSize + 1;		// change start
 	}
 
@@ -533,11 +533,11 @@ BOOL CLineViewWnd::GetDataFromDoc()
 	if (envelope_ptr_array.GetSize() < 1)
 		return FALSE;
 	auto p_cont = envelope_ptr_array.GetAt(0);
-	const auto nspan = p_cont->GetDocbufferSpan();		// additional pts necessary
+	const auto nspan = p_cont->GetDocbufferSpan();	// additional pts necessary
 
 	// loop through all pixels if data buffer is longer than data displayed
 	// within one pixel...
-	auto l_first = m_lxFirst;					// start
+	auto l_first = m_lxFirst;						// start
 	const auto ipixelmax = m_scale.GetnIntervals();	// max pixel
 	const auto nchans = m_pDataFile->GetScanCount();
 
@@ -546,16 +546,16 @@ BOOL CLineViewWnd::GetDataFromDoc()
 		// compute file index of pts within current pixel
 		const auto data_within_1_pixel = m_scale.GetIntervalSize(ipixel); // size first pixel
 		const int l_last = l_first + data_within_1_pixel - 1;
-		auto b_new = TRUE;						// flag to tell routine that it should start from new data
+		auto b_new = TRUE;							// flag to tell routine that it should start from new data
 
 		while (l_first <= l_last)
 		{
 			auto lBUFchanFirst = l_first;			// index very first pt within pixel
-			long lBUFchanLast = l_last;			// index very last pixel
+			long lBUFchanLast = l_last;				// index very last pixel
 
 			 // ask document to read raw data, document returns index of data loaded within the buffer
 			if (!m_pDataFile->LoadRawData(&lBUFchanFirst, &lBUFchanLast, nspan))
-				break;							// exit if error reported
+				break;								// exit if error reported
 
 			// build Envelopes  .................
 			if (lBUFchanLast > l_last)
@@ -571,7 +571,7 @@ BOOL CLineViewWnd::GetDataFromDoc()
 
 				const auto source_chan = p_cont->GetSourceChan();// get source channel
 				const auto itransf = p_cont->GetSourceMode();	// get transform mode
-				if (itransf > 0)							// if transformation, compute transf
+				if (itransf > 0)						// if transformation, compute transf
 				{										// and then build envelope
 					const auto lp_data = m_pDataFile->LoadTransfData(l_first, lBUFchanLast, itransf, source_chan);
 					p_cont->FillEnvelopeWithMxMi(ipixel, lp_data, 1, npoints, b_new);
