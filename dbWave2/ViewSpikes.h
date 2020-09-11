@@ -32,7 +32,7 @@ public:
 	// Attributes
 protected:
 	CSpikeClassListBox m_spkClassListBox;	// listbox of spike classes
-	CLineViewWnd	m_displayDataFile;		// data display
+	CLineViewWnd	m_displayData;		// data display
 	CEditCtrl		mm_spikeno;
 	CEditCtrl		mm_spikenoclass;
 	CEditCtrl		mm_timefirst;			// first abcissa value
