@@ -137,14 +137,14 @@ void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 
 			CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
 			p_app->m_pviewspikesMemFile->SeekToBegin();
-			m_displayDataFile.Serialize(ar);
+			m_displayData.Serialize(ar);
 			ar.Close();	
 		}
 		// set bincrflagonsave
 		auto p_app = (CdbWaveApp*)AfxGetApp();
 		p_app->options_viewspikes.bincrflagonsave = ((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 		// save zoom dataview
-		((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(m_displayDataFile.GetScopeParameters());
+		((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(m_displayData.GetScopeParameters());
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -168,7 +168,7 @@ void CViewSpikes::OnSize(UINT nType, int cx, int cy)
 		// set track rectangle
 		CRect rect0, rect1, rect2;
 		GetWindowRect(&rect0);
-		m_displayDataFile.GetWindowRect(&rect1);
+		m_displayData.GetWindowRect(&rect1);
 		m_spkClassListBox.GetWindowRect(&rect2);
 		m_rectVTtrack.top = rect1.top - rect0.top;
 		m_rectVTtrack.bottom = rect2.bottom - rect0.top;
@@ -224,27 +224,27 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_SETMOUSECURSOR:
 		if (threshold > CURSOR_MEASURE)	 // clip cursor shape to max 2
 			threshold = 0;
-		if (m_displayDataFile.GetMouseCursorType() != threshold)
+		if (m_displayData.GetMouseCursorType() != threshold)
 			SetAddspikesMode(threshold);
-		m_displayDataFile.SetMouseCursorType(threshold);
+		m_displayData.SetMouseCursorType(threshold);
 		m_spkClassListBox.SetMouseCursorType(threshold);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(threshold, 0));
 		break;
 
 	case HINT_DEFINEDRECT:
-		if (m_displayDataFile.GetMouseCursorType() == CURSOR_MEASURE)
+		if (m_displayData.GetMouseCursorType() == CURSOR_MEASURE)
 		{
-			const auto rect = m_displayDataFile.GetDefinedRect();
-			const auto left = m_displayDataFile.GetDataOffsetfromPixel(rect.left);
-			const auto right = m_displayDataFile.GetDataOffsetfromPixel(rect.right);
+			const auto rect = m_displayData.GetDefinedRect();
+			const auto left = m_displayData.GetDataOffsetfromPixel(rect.left);
+			const auto right = m_displayData.GetDataOffsetfromPixel(rect.right);
 			// set a tag in the center of the rectangle
-			m_displayDataFile.AddVTLtag((left + right) / 2);
-			m_displayDataFile.Invalidate();
+			m_displayData.AddVTLtag((left + right) / 2);
+			m_displayData.Invalidate();
 		}
 		break;
 
 	case HINT_SELECTSPIKES:
-		m_displayDataFile.Invalidate();
+		m_displayData.Invalidate();
 		m_spkClassListBox.Invalidate();
 		break;
 
@@ -255,8 +255,8 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_VIEWSIZECHANGED:		// change zoom
 		if (HIWORD(lParam) == IDC_DISPLAYDAT)
 		{
-			m_lFirst = m_displayDataFile.GetDataFirst();
-			m_lLast = m_displayDataFile.GetDataLast();
+			m_lFirst = m_displayData.GetDataFirst();
+			m_lLast = m_displayData.GetDataLast();
 		}
 		else if (HIWORD(lParam) == IDC_LISTCLASSES) //[ne marche pas! HIWORD(lParam)==1]
 		{
@@ -284,7 +284,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		options_viewdata->spkviewdata = *m_displayDataFile.GetScopeParameters();
+		options_viewdata->spkviewdata = *m_displayData.GetScopeParameters();
 		break;
 
 	case HINT_HITSPIKE_SHIFT:
@@ -394,8 +394,8 @@ void CViewSpikes::SelectSpike(int spikeno)
 		{
 			m_DWintervals.SetAt(3, spk_first);
 			m_DWintervals.SetAt(4, spk_last);
-			m_displayDataFile.SetHighlightData(&m_DWintervals);
-			m_displayDataFile.Invalidate();
+			m_displayData.SetHighlightData(&m_DWintervals);
+			m_displayData.Invalidate();
 		}
 	}
 	else
@@ -420,7 +420,7 @@ void CViewSpikes::DefineSubClassedItems()
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
 	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100, FALSE);
-	VERIFY(m_displayDataFile.SubclassDlgItem(IDC_DISPLAYDAT, this));
+	VERIFY(m_displayData.SubclassDlgItem(IDC_DISPLAYDAT, this));
 	VERIFY(mm_zoom.SubclassDlgItem(IDC_EDIT3, this));
 	mm_zoom.ShowScrollBar(SB_VERT);
 	VERIFY(mm_sourceclass.SubclassDlgItem(IDC_EDIT4, this));
@@ -496,7 +496,7 @@ void CViewSpikes::OnInitialUpdate()
 	m_spkClassListBox.SetColsWidth(m_psC->coltext, m_psC->colspikes, m_psC->colseparator);
 
 	// init relation with document, display data, adjust parameters
-	m_displayDataFile.SetScopeParameters(&(options_viewdata->viewdata));
+	m_displayData.SetScopeParameters(&(options_viewdata->viewdata));
 	// set bincrflagonsave
 	((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
@@ -506,7 +506,7 @@ void CViewSpikes::OnInitialUpdate()
 	if (m_baddspikemode)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
-		m_displayDataFile.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
+		m_displayData.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
 	}
 }
 
@@ -544,8 +544,8 @@ void CViewSpikes::InitDisplayData() {
 		return;
 	
 	GetDlgItem(IDC_DISPLAYDAT)->ShowWindow(SW_SHOW);
-	m_displayDataFile.SetbUseDIB(FALSE);
-	m_displayDataFile.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
+	m_displayData.SetbUseDIB(FALSE);
+	m_displayData.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
 
 	int isourceview = m_pSpkList->GetextractChan();
 	if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
@@ -564,26 +564,26 @@ void CViewSpikes::InitDisplayData() {
 	}
 
 	// set detection channel
-	if (m_displayDataFile.SetChanlistSourceChan(0, isourceview) < 0)
+	if (m_displayData.SetChanlistSourceChan(0, isourceview) < 0)
 	{
-		m_displayDataFile.RemoveAllChanlistItems();
+		m_displayData.RemoveAllChanlistItems();
 	}
 	else
 	{
-		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
-		m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
+		m_displayData.ResizeChannels(m_displayData.GetRectWidth(), m_lLast - m_lFirst);
+		m_displayData.GetDataFromDoc(m_lFirst, m_lLast);
 		if (m_bInitSourceView)
 		{
 			m_bInitSourceView = FALSE;
 			int max, min;
-			m_displayDataFile.GetChanlistMaxMin(0, &max, &min);
+			m_displayData.GetChanlistMaxMin(0, &max, &min);
 			const auto iextent = MulDiv(max - min + 1, 11, 10);
 			const auto izero = (max + min) / 2;
-			m_displayDataFile.SetChanlistYextent(0, iextent);
-			m_displayDataFile.SetChanlistYzero(0, izero);
+			m_displayData.SetChanlistYextent(0, iextent);
+			m_displayData.SetChanlistYzero(0, izero);
 		}
 	}
-	m_displayDataFile.Invalidate();
+	m_displayData.Invalidate();
 
 	m_DWintervals.SetSize(3 + 2);				// total size
 	m_DWintervals.SetAt(0, 0);					// source channel
@@ -611,9 +611,9 @@ void CViewSpikes::UpdateLegends()
 	auto hwnd = GetSafeHwnd();
 	if (!m_baddspikemode)
 		hwnd = nullptr;
-	m_displayDataFile.ReflectMouseMoveMessg(hwnd);
+	m_displayData.ReflectMouseMoveMessg(hwnd);
 	m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-	m_displayDataFile.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
+	m_displayData.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
 
 	// update spike bars & forms CListBox
 	if (m_lFirst != m_spkClassListBox.GetTimeFirst()
@@ -623,7 +623,7 @@ void CViewSpikes::UpdateLegends()
 	// update text abcissa and horizontal scroll position
 	m_timefirst = m_lFirst / m_pSpkDoc->GetAcqRate();
 	m_timelast = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
-	m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
+	m_displayData.GetDataFromDoc(m_lFirst, m_lLast);
 
 	// store current file settings
 	m_pSpkList->m_lFirstSL = m_lFirst;
@@ -708,23 +708,23 @@ void CViewSpikes::SelectSpkList(int icursel)
 		isourceview = m_pSpkList->GetdetectChan();
 
 	// no data available
-	if (m_displayDataFile.SetChanlistSourceChan(0, isourceview) < 0)
+	if (m_displayData.SetChanlistSourceChan(0, isourceview) < 0)
 	{
-		m_displayDataFile.RemoveAllChanlistItems();
+		m_displayData.RemoveAllChanlistItems();
 	}
 	// data are ok
 	else
 	{
-		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
-		m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
+		m_displayData.ResizeChannels(m_displayData.GetRectWidth(), m_lLast - m_lFirst);
+		m_displayData.GetDataFromDoc(m_lFirst, m_lLast);
 		int max, min;
-		m_displayDataFile.GetChanlistMaxMin(0, &max, &min);
+		m_displayData.GetChanlistMaxMin(0, &max, &min);
 		const auto iextent = MulDiv(max - min + 1, 11, 10);
 		const auto izero = (max + min) / 2;
-		m_displayDataFile.SetChanlistYextent(0, iextent);
-		m_displayDataFile.SetChanlistYzero(0, izero);
+		m_displayData.SetChanlistYextent(0, iextent);
+		m_displayData.SetChanlistYzero(0, izero);
 	}
-	m_displayDataFile.Invalidate();
+	m_displayData.Invalidate();
 }
 
 void CViewSpikes::SaveCurrentFileParms()
@@ -771,7 +771,7 @@ void CViewSpikes::OnFormatAlldata()
 	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_displayDataFile.Invalidate();
+	m_displayData.Invalidate();
 }
 
 void CViewSpikes::OnFormatCentercurve()
@@ -795,11 +795,11 @@ void CViewSpikes::OnFormatCentercurve()
 	}
 	*/
 	if (m_pDataDoc != nullptr)
-		m_displayDataFile.CenterChan(0);
+		m_displayData.CenterChan(0);
 
 	UpdateLegends();
 	m_spkClassListBox.Invalidate();
-	m_displayDataFile.Invalidate();
+	m_displayData.Invalidate();
 }
 
 void CViewSpikes::OnFormatGainadjust()
@@ -809,11 +809,11 @@ void CViewSpikes::OnFormatGainadjust()
 		AdjustYZoomToMaxMin(true);
 	}
 	if (m_pDataDoc != nullptr)
-		m_displayDataFile.MaxgainChan(0);
+		m_displayData.MaxgainChan(0);
 
 	UpdateLegends();
 	m_spkClassListBox.Invalidate();
-	m_displayDataFile.Invalidate();
+	m_displayData.Invalidate();
 }
 
 void CViewSpikes::OnToolsEdittransformspikes()
@@ -851,7 +851,7 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_displayDataFile.Invalidate();
+	m_displayData.Invalidate();
 }
 
 //-----------------------------------------------------------------------
@@ -1115,7 +1115,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 
 	CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
 	p_app->m_pviewspikesMemFile->SeekToBegin();
-	m_displayDataFile.Serialize(ar);
+	m_displayData.Serialize(ar);
 	//spk_bar_wnd_.Serialize(ar);
 	//m_spkShapeView.Serialize(ar);
 	ar.Close();					// close archive
@@ -1342,12 +1342,12 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		{
 			if (options_viewdata->bClipRect)						// clip curve display ?
 				p_dc->IntersectClipRect(&r_wbars);		// yes
-			m_displayDataFile.GetDataFromDoc(l_first, l_last);	// load data from file
-			m_displayDataFile.CenterChan(0);
-			m_displayDataFile.Print(p_dc, &r_wbars);			// print data
+			m_displayData.GetDataFromDoc(l_first, l_last);	// load data from file
+			m_displayData.CenterChan(0);
+			m_displayData.Print(p_dc, &r_wbars);			// print data
 			p_dc->SelectClipRgn(nullptr);
 
-			iextent = m_displayDataFile.GetChanlistYextent(0);
+			iextent = m_displayData.GetChanlistYextent(0);
 			r_wbars.top = r_wbars.bottom;
 		}
 
@@ -1494,7 +1494,7 @@ void CViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	{
 		CArchive ar(p_app->m_pviewspikesMemFile, CArchive::load);
 		p_app->m_pviewspikesMemFile->SeekToBegin();
-		m_displayDataFile.Serialize(ar);
+		m_displayData.Serialize(ar);
 		ar.Close();					// close archive
 	}
 }
@@ -1583,12 +1583,12 @@ void CViewSpikes::OnEnChangeNOspike()
 					UpdateLegends();
 				}
 				// center curve vertically
-				const auto ixpixel = MulDiv(lcenter - m_lFirst, m_displayDataFile.GetNxPixels(), m_lLast - m_lFirst);
-				const auto ival = m_displayDataFile.GetChanlistBinAt(0, ixpixel);
-				m_displayDataFile.SetChanlistYzero(0, ival);
+				const auto ixpixel = MulDiv(lcenter - m_lFirst, m_displayData.GetNxPixels(), m_lLast - m_lFirst);
+				const auto ival = m_displayData.GetChanlistBinAt(0, ixpixel);
+				m_displayData.SetChanlistYzero(0, ival);
 				// display data
 				m_spkClassListBox.Invalidate();
-				m_displayDataFile.Invalidate();
+				m_displayData.Invalidate();
 			}
 		}
 		else
@@ -1621,7 +1621,7 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		UpdateLegends();
 		m_spkClassListBox.Invalidate();
-		m_displayDataFile.Invalidate();
+		m_displayData.Invalidate();
 	}
 }
 
@@ -1655,7 +1655,7 @@ void CViewSpikes::OnEnChangeTimefirst()
 			m_lFirst = l_first;
 			UpdateLegends();
 			m_spkClassListBox.Invalidate();
-			m_displayDataFile.Invalidate();
+			m_displayData.Invalidate();
 		}
 	}
 }
@@ -1689,7 +1689,7 @@ void CViewSpikes::OnEnChangeTimelast()
 			m_lLast = l_last;
 			UpdateLegends();
 			m_spkClassListBox.Invalidate();
-			m_displayDataFile.Invalidate();
+			m_displayData.Invalidate();
 		}
 	}
 }
@@ -1824,12 +1824,12 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_lLast = l_last;
 		UpdateLegends();
 		m_spkClassListBox.Invalidate();
-		m_displayDataFile.Invalidate();
+		m_displayData.Invalidate();
 	}
 	else
 		UpdateScrollBar();
 	if (m_pDataDoc != nullptr)
-		m_displayDataFile.CenterChan(0);
+		m_displayData.CenterChan(0);
 }
 
 void CViewSpikes::UpdateScrollBar()
@@ -1919,10 +1919,10 @@ void CViewSpikes::OnEditCopy()
 		// display data	if data file was found
 		if (m_pDataDoc != nullptr)
 		{
-			m_displayDataFile.CenterChan(0);
-			m_displayDataFile.Print(&mDC, &rw_bars);
+			m_displayData.CenterChan(0);
+			m_displayData.Print(&mDC, &rw_bars);
 
-			iextent = m_displayDataFile.GetChanlistYextent(0);
+			iextent = m_displayData.GetChanlistYextent(0);
 			rw_spikes.OffsetRect(0, rheight);
 			rw_bars.OffsetRect(0, rheight);
 			rw_text.OffsetRect(0, rheight);
@@ -1975,9 +1975,9 @@ void CViewSpikes::OnEditCopy()
 	m_spkClassListBox.Invalidate();
 	if (m_pDataDoc != nullptr)
 	{
-		m_displayDataFile.GetDataFromDoc(m_lFirst, m_lLast);
-		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), m_lLast - m_lFirst);
-		m_displayDataFile.Invalidate();
+		m_displayData.GetDataFromDoc(m_lFirst, m_lLast);
+		m_displayData.ResizeChannels(m_displayData.GetRectWidth(), m_lLast - m_lFirst);
+		m_displayData.Invalidate();
 	}
 }
 
@@ -1996,7 +1996,7 @@ void CViewSpikes::ZoomOnPresetInterval(int iistart)
 	UpdateLegends();
 	// display data
 	m_spkClassListBox.Invalidate();
-	m_displayDataFile.Invalidate();
+	m_displayData.Invalidate();
 }
 
 void CViewSpikes::OnFormatPreviousframe()
@@ -2039,7 +2039,7 @@ void CViewSpikes::SetVBarMode(short bMode)
 void CViewSpikes::UpdateGainScroll()
 {
 	m_scrolly.SetScrollPos(
-		MulDiv(m_displayDataFile.GetChanlistYextent(0),
+		MulDiv(m_displayData.GetChanlistYextent(0),
 			100,
 			YEXTENT_MAX)
 		+ 50,
@@ -2048,7 +2048,7 @@ void CViewSpikes::UpdateGainScroll()
 
 void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	int lSize = m_displayDataFile.GetChanlistYextent(0);
+	int lSize = m_displayData.GetChanlistYextent(0);
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -2074,9 +2074,9 @@ void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 	// change y extent
 	if (lSize > 0) //&& lSize<=YEXTENT_MAX)
 	{
-		m_displayDataFile.SetChanlistYextent(0, lSize);
+		m_displayData.SetChanlistYextent(0, lSize);
 		UpdateLegends();
-		m_displayDataFile.Invalidate();
+		m_displayData.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_GAIN)
@@ -2090,16 +2090,16 @@ void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 
 void CViewSpikes::UpdateBiasScroll()
 {
-	const auto i_pos = static_cast<int>((m_displayDataFile.GetChanlistYzero(0)
-		- m_displayDataFile.GetChanlistBinZero(0))
+	const auto i_pos = static_cast<int>((m_displayData.GetChanlistYzero(0)
+		- m_displayData.GetChanlistBinZero(0))
 		* 100 / static_cast<int>(YZERO_SPAN)) + static_cast<int>(50);
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 }
 
 void CViewSpikes::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
-	auto l_size = m_displayDataFile.GetChanlistYzero(0) - m_displayDataFile.GetChanlistBinZero(0);
-	const auto yextent = m_displayDataFile.GetChanlistYextent(0);
+	auto l_size = m_displayData.GetChanlistYzero(0) - m_displayData.GetChanlistBinZero(0);
+	const auto yextent = m_displayData.GetChanlistYextent(0);
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -2132,8 +2132,8 @@ void CViewSpikes::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (l_size > YZERO_MIN && l_size < YZERO_MAX)
 	{
-		m_displayDataFile.SetChanlistYzero(0, l_size + m_displayDataFile.GetChanlistBinZero(0));
-		m_displayDataFile.Invalidate();
+		m_displayData.SetChanlistYzero(0, l_size + m_displayData.GetChanlistBinZero(0));
+		m_displayData.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_BIAS)
@@ -2185,9 +2185,9 @@ void CViewSpikes::SetAddspikesMode(int mousecursorType)
 	auto hwnd = GetSafeHwnd();
 	if (!m_baddspikemode)
 		hwnd = nullptr;
-	m_displayDataFile.ReflectMouseMoveMessg(hwnd);
+	m_displayData.ReflectMouseMoveMessg(hwnd);
 	m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-	m_displayDataFile.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
+	m_displayData.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
 
 	// display or not controls used when add_spike_mode is selected
 	GetDlgItem(IDC_SOURCECLASS)->ShowWindow(n_cmd_show);
@@ -2255,7 +2255,7 @@ void CViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		else
 			m_ptVT = -1;
 		m_bdummy = TRUE;
-		m_displayDataFile.XorTempVTtag(m_ptVT);
+		m_displayData.XorTempVTtag(m_ptVT);
 		m_spkClassListBox.XorTempVTtag(m_ptVT);
 	}
 	// pass message to parent
@@ -2267,7 +2267,7 @@ void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 	ReleaseCapture();
 	if (m_rectVTtrack.PtInRect(point))
 	{
-		const int iitime = m_displayDataFile.GetDataOffsetfromPixel(point.x - m_rectVTtrack.left);
+		const int iitime = m_displayData.GetDataOffsetfromPixel(point.x - m_rectVTtrack.left);
 		m_jitter = m_jitter_ms;
 		auto b_check = TRUE;
 		if (nFlags & MK_CONTROL)
