@@ -396,7 +396,7 @@ void CViewADContinuous::ADC_DeclareBuffers()
 	*(m_inputDataFile.GetpWaveFormat()) = *wave_format;	// save settings into data file
 
 														// update display length (and also the text - abcissa)
-	m_displayDataFile.AttachDataFile(&m_inputDataFile, 0);
+	m_displayDataFile.AttachDataFile(&m_inputDataFile);
 	m_displayDataFile.ResizeChannels(0, m_chsweeplength);
 	if (m_displayDataFile.GetChanlistSize() != wave_format->scan_count)
 	{
@@ -1194,7 +1194,7 @@ void CViewADContinuous::OnStop(const BOOL b_display_error_msg)
 		SaveAndCloseFile();
 		// update view data
 		const auto lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
-		m_displayDataFile.AttachDataFile(&m_inputDataFile, lsizeDOCchan);
+		m_displayDataFile.AttachDataFile(&m_inputDataFile);
 		m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), lsizeDOCchan);
 		m_displayDataFile.GetDataFromDoc(0, lsizeDOCchan);
 	}
@@ -1259,7 +1259,7 @@ void CViewADContinuous::UpdateViewDataFinal()
 
 	p_doc_dat->ReadDataInfos();
 	const auto size_doc_channel = p_doc_dat->GetDOCchanLength();
-	m_displayDataFile.AttachDataFile(p_doc_dat, size_doc_channel);
+	m_displayDataFile.AttachDataFile(p_doc_dat);
 	m_displayDataFile.ResizeChannels(m_displayDataFile.GetRectWidth(), size_doc_channel);
 	m_displayDataFile.GetDataFromDoc(0, size_doc_channel);
 }
@@ -1493,7 +1493,7 @@ void CViewADContinuous::OnInitialUpdate()
 	*(m_inputDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;	// copy data formats into this file
 	m_pADC_options->chanArray.channel_set_number(m_pADC_options->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
-	m_displayDataFile.AttachDataFile(&m_inputDataFile, 10);			// prepare display area
+	m_displayDataFile.AttachDataFile(&m_inputDataFile);			// prepare display area
 
 	// init communication with Alligator
 	m_Alligator.USBPxxS1Command(0, ID_INITIALIZE, nullptr, nullptr);

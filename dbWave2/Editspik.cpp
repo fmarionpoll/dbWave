@@ -119,7 +119,7 @@ BOOL CSpikeEditDlg::OnInitDialog()
 	{
 		VERIFY(m_sourceView.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
 		m_sourceView.SetbUseDIB(FALSE);
-		m_sourceView.AttachDataFile(m_pAcqDatDoc, m_pAcqDatDoc->GetDOCchanLength());
+		m_sourceView.AttachDataFile(m_pAcqDatDoc);
 		const auto lvSize = m_sourceView.GetRectSize();
 		m_sourceView.ResizeChannels(lvSize.cx, 0);// change nb of pixels
 		m_sourceView.RemoveAllChanlistItems();

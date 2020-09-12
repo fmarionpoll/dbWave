@@ -24,7 +24,7 @@ public:
 	BOOL GetSmoothDataFromDoc(int ioption);
 
 	int  ResizeChannels(int npixels, long lSize);	// change size of display chans, load data if necessary
-	BOOL AttachDataFile(CAcqDataDoc* pDataFile, long lSize);
+	BOOL AttachDataFile(CAcqDataDoc* pDataFile);
 	BOOL IsDefined() const { return (chanlistitem_ptr_array.GetSize() > 0); } // is data defined?
 	CAcqDataDoc* GetpDataFile() const { return m_pDataFile; }
 

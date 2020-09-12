@@ -458,18 +458,14 @@ int CLineViewWnd::ResizeChannels(const int npixels, const long l_size)
 	return old_npixels;
 }
 
-BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* p_data_file, long l_size)
+BOOL CLineViewWnd::AttachDataFile(CAcqDataDoc* p_data_file)
 {
 	m_pDataFile = p_data_file;
 	m_samplingrate = m_pDataFile->GetpWaveFormat()->chrate;
 	m_pDataFile->SetReadingBufferDirty();
 	ASSERT(m_pDataFile->GetDOCchanLength() > 0);
-	if (l_size <= 0)
-	{
-		l_size = GetDataSize();
-		if (l_size > m_pDataFile->GetDOCchanLength())	// check
-			l_size = m_pDataFile->GetDOCchanLength();
-	}
+
+	long l_size = m_pDataFile->GetDOCchanLength();
 
 	// init parameters used to display Envelopes
 	const int l_very_last = m_lxVeryLast;

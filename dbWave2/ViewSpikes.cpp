@@ -539,12 +539,14 @@ void CViewSpikes::UpdateFileParameters(BOOL bUpdateInterface) {
 }
 
 void CViewSpikes::UpdateDataFile(BOOL bUpdateInterface) {
+	//CString filename = GetDocument()->GetDB_CurrentDatFileName();
 	m_pDataDoc = GetDocument()->OpenCurrentDataFile();
 	if (m_pDataDoc == nullptr)
 		return;
 	
 	m_displayData.SetbUseDIB(FALSE);
-	m_displayData.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
+	m_displayData.AttachDataFile(m_pDataDoc);
+
 	
 	int isourceview = m_pSpkList->GetextractChan();
 	if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
@@ -571,6 +573,7 @@ void CViewSpikes::UpdateDataFile(BOOL bUpdateInterface) {
 	{
 		m_displayData.ResizeChannels(m_displayData.GetRectWidth(), m_lLast - m_lFirst);
 		m_displayData.GetDataFromDoc(m_lFirst, m_lLast);
+
 		if (m_bInitSourceView)
 		{
 			m_bInitSourceView = FALSE;
@@ -636,6 +639,7 @@ void CViewSpikes::UpdateLegends(BOOL bUpdateInterface)
 
 void CViewSpikes::UpdateSpikeFile(BOOL bUpdateInterface)
 {
+	//CString filename = GetDocument()->GetDB_CurrentSpkFileName();
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 	if (m_pSpkDoc == nullptr)
 	{

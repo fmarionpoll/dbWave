@@ -567,7 +567,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 
 		*p_copy = 0;
 		m_pdbDoc->SetDB_CurrentRecordPosition(current_file_index);
-		CString filename2 = m_pdbDoc->GetDB_CurrentDatFileName();
+		//CString filename2 = m_pdbDoc->GetDB_CurrentDatFileName();
 		m_pdbDoc->OpenCurrentDataFile();
 		EndWaitCursor();     // it's done
 

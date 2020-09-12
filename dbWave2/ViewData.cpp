@@ -578,12 +578,12 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 	}
 
 	// load parameters from current data file
-	m_displayDataFile.AttachDataFile(m_pdatDoc, 0);	// prepare lineview
+	m_displayDataFile.AttachDataFile(m_pdatDoc);
 	m_pdatDoc->SetModifiedFlag(FALSE);
 
-	// OPTION: display entire file				// (inactif si multirow)
-	long l_first = 0;								// first abcissa
-	long l_last = m_pdatDoc->GetDOCchanLength() - 1;	// last abcissa
+	// OPTION: display entire file	--	(inactif si multirow)
+	long l_first = 0;
+	long l_last = m_pdatDoc->GetDOCchanLength() - 1;
 
 	if (!options_viewdata->bEntireRecord || options_viewdata->bMultirowDisplay && !b_first_update)
 	{

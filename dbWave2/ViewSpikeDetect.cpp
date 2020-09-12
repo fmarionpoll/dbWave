@@ -291,6 +291,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 {
 	// update spike doc and temporary spike list
 	auto pdb_doc = GetDocument();
+	//CString filename = pdb_doc->GetDB_CurrentSpkFileName();
 	if (pdb_doc->OpenCurrentSpikeFile() == nullptr)
 	{
 		// file not found: create new object, and create file
@@ -307,7 +308,7 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 	{
 		p_spike_doc_ = pdb_doc->m_pSpk;
 		p_spike_doc_->SetModifiedFlag(FALSE);
-		p_spike_doc_->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(FALSE), FALSE);
+		p_spike_doc_->SetPathName(pdb_doc->GetDB_CurrentSpkFileName(), FALSE);
 	}
 
 	// select a spikelist
@@ -481,8 +482,8 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 		UpdateCombosDetectChanAndTransforms();
 	}
 	// change doc attached to lineviewbutton
-	m_displayData_Detect.AttachDataFile(p_data_file, 0);
-	m_displayData_Source.AttachDataFile(p_data_file, 0);
+	m_displayData_Detect.AttachDataFile(p_data_file);
+	m_displayData_Source.AttachDataFile(p_data_file);
 
 	// update sourceview display
 	if (m_displayData_Detect.GetChanlistSize() < 1)

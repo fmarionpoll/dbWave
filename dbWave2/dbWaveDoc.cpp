@@ -361,6 +361,8 @@ CAcqDataDoc* CdbWaveDoc::OpenCurrentDataFile()
 	}
 
 	// open document; erase object if operation failed
+	const auto currentfile = GetDB_CurrentRecordPosition();
+	GetDB_CurrentDatFileName(TRUE);
 	if (m_currentDatafileName.IsEmpty()
 		|| !m_pDat->OnOpenDocument(m_currentDatafileName))
 	{
@@ -381,6 +383,8 @@ CSpikeDoc* CdbWaveDoc::OpenCurrentSpikeFile()
 		ASSERT(m_pSpk != NULL);
 	}
 	// open document; erase object if operation fails
+	const auto currentfile = GetDB_CurrentRecordPosition();
+	GetDB_CurrentSpkFileName(TRUE);
 	if (m_currentSpikefileName.IsEmpty()
 		|| !m_pSpk->OnOpenDocument(m_currentSpikefileName))
 	{

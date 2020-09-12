@@ -656,7 +656,7 @@ void CDataListCtrl::DisplayDataWnd(CDataListCtrlRowObject* ptr, int iImage)
 			p_wnd->GetScopeParameters()->crScopeFill = p_wnd->GetColor(15);
 
 		ptr->pdataDoc->ReadDataInfos();
-		p_wnd->AttachDataFile(ptr->pdataDoc, 0);
+		p_wnd->AttachDataFile(ptr->pdataDoc);
 
 		// display all channels : loop through all doc channels & add if necessary
 		CWaveFormat* pwaveFormat = ptr->pdataDoc->GetpWaveFormat();
