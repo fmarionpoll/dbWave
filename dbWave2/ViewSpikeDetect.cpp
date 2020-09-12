@@ -174,7 +174,7 @@ void CViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			break;
 		case HINT_DOCMOVERECORD:
 		case HINT_DOCHASCHANGED:		// file has changed?
-			UpdateFileParameters();
+			UpdateFileParameters(TRUE);
 			break;
 		case HINT_REPLACEVIEW:
 		default:
@@ -291,9 +291,6 @@ void CViewSpikeDetection::UpdateSpikeFile(BOOL bUpdateInterface)
 {
 	// update spike doc and temporary spike list
 	auto pdb_doc = GetDocument();
-	CString filename = pdb_doc->GetDB_CurrentSpkFileName(FALSE);
-
-	// open the current spike file
 	if (pdb_doc->OpenCurrentSpikeFile() == nullptr)
 	{
 		// file not found: create new object, and create file
@@ -450,7 +447,7 @@ BOOL CViewSpikeDetection::CheckDetectionSettings()
 void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 {
 	auto pdb_doc = GetDocument();
-	CString filename = pdb_doc->GetDB_CurrentDatFileName();
+	//CString filename = pdb_doc->GetDB_CurrentDatFileName();
 	if (pdb_doc->OpenCurrentDataFile() == nullptr)
 		return;
 

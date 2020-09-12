@@ -1180,12 +1180,16 @@ int CSpikeList::GetNextSpike(int spikeno, int delta, BOOL bKeepSameClass) {
 	if (bKeepSameClass) {
 		do {
 			spikeno += delta;
-			if (spikeno == 0 || spikeno == GetTotalSpikes()-1 )
+			if (spikeno < 0 || spikeno >= GetTotalSpikes() ) {
+				spikeno = spikeold;
 				break;
-		} while (GetSpikeClass(spikeno) != classold);
+			}
+		} while (spikeno < GetTotalSpikes() && GetSpikeClass(spikeno) != classold);
 	}
 	else
 		spikeno += delta;
 
+	if (spikeno >= GetTotalSpikes())
+		spikeno = spikeold;
 	return GetValidSpikeNumber(spikeno);
 }

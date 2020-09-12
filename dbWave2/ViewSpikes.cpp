@@ -86,8 +86,8 @@ BEGIN_MESSAGE_MAP(CViewSpikes, CDaoRecordView)
 	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
 	ON_COMMAND(ID_FORMAT_PREVIOUSFRAME, OnFormatPreviousframe)
 	ON_COMMAND(ID_FORMAT_NEXTFRAME, OnFormatNextframe)
-	ON_COMMAND(ID_RECORD_SHIFTLEFT, OnRecordShiftleft)
-	ON_COMMAND(ID_RECORD_SHIFTRIGHT, OnRecordShiftright)
+	ON_COMMAND(ID_RECORD_SHIFTLEFT, OnHScrollLeft)
+	ON_COMMAND(ID_RECORD_SHIFTRIGHT, OnHScrollRight)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
@@ -201,9 +201,7 @@ void CViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 	case HINT_DOCHASCHANGED:		// file has changed?
 	case HINT_DOCMOVERECORD:
-		UpdateFileParameters();
-		InitDisplayData();
-		UpdateLegends();
+		UpdateFileParameters(TRUE);
 		break;
 	case HINT_CLOSEFILEMODIFIED:	// close modified file: save
 		SaveCurrentFileParms();
@@ -263,7 +261,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			m_lFirst = m_spkClassListBox.GetTimeFirst();
 			m_lLast = m_spkClassListBox.GetTimeLast();
 		}
-		UpdateLegends();
+		UpdateLegends(TRUE);
 		break;
 
 	case HINT_HITSPIKE:
@@ -321,7 +319,7 @@ BOOL CViewSpikes::AddSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 	const auto p_data_spike_0 = m_pDataDoc->GetpTransfDataElmt(iitime0 - l_read_write_first);
 
 	// add a new spike if no spike is found around
-	int spikeindex;
+	int spikeindex = 0;
 	auto bfound = FALSE;
 	if (bcheck_if_otheraround)
 	{
@@ -339,15 +337,13 @@ BOOL CViewSpikes::AddSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 
 		m_pSpkDoc->SetModifiedFlag();
 	}
-
-	// else change the spike class (if necessary)
 	else if (m_pSpkList->GetSpikeClass(spikeindex) != m_destclass)
 	{
 		m_pSpkList->SetSpikeClass(spikeindex, m_destclass);
 		m_pSpkDoc->SetModifiedFlag();
 	}
 
-	// save the data into the file
+	// save the modified data into the spike file
 	if (m_pSpkDoc->IsModified())
 	{
 		m_pSpkList->UpdateClassList();
@@ -355,16 +351,15 @@ BOOL CViewSpikes::AddSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		GetDocument()->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
 		GetDocument()->SetDB_nbspikeclasses(m_pSpkList->GetNbclasses());
-
 		const auto boldparm = m_bresetzoom;
 		m_bresetzoom = FALSE;
-		UpdateFileParameters();
+		UpdateSpikeFile(TRUE);
 		m_bresetzoom = boldparm;
 	}
+	m_spikeno = spikeindex;
 
-	SelectSpike(spikeindex);
-	InitDisplayData();
-	UpdateLegends();
+	UpdateDataFile(TRUE);
+	UpdateLegends(TRUE);
 	m_spkClassListBox.Invalidate();
 	return TRUE;
 }
@@ -500,9 +495,7 @@ void CViewSpikes::OnInitialUpdate()
 	// set bincrflagonsave
 	((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
-	UpdateFileParameters();
-	InitDisplayData();
-	UpdateLegends();
+	UpdateFileParameters(TRUE);
 	if (m_baddspikemode)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
@@ -538,15 +531,21 @@ CDaoRecordset* CViewSpikes::OnGetRecordset()
 	return GetDocument()->GetDB_Recordset();
 }
 
-void CViewSpikes::InitDisplayData() {
-	// if data found, pass data to the display button
+void CViewSpikes::UpdateFileParameters(BOOL bUpdateInterface) {
+	UpdateSpikeFile(bUpdateInterface);
+	UpdateDataFile(bUpdateInterface);
+	if (bUpdateInterface)
+		UpdateLegends(bUpdateInterface);
+}
+
+void CViewSpikes::UpdateDataFile(BOOL bUpdateInterface) {
+	m_pDataDoc = GetDocument()->OpenCurrentDataFile();
 	if (m_pDataDoc == nullptr)
 		return;
 	
-	GetDlgItem(IDC_DISPLAYDAT)->ShowWindow(SW_SHOW);
 	m_displayData.SetbUseDIB(FALSE);
 	m_displayData.AttachDataFile(m_pDataDoc, m_pDataDoc->GetDOCchanLength());
-
+	
 	int isourceview = m_pSpkList->GetextractChan();
 	if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
 	{
@@ -583,7 +582,11 @@ void CViewSpikes::InitDisplayData() {
 			m_displayData.SetChanlistYzero(0, izero);
 		}
 	}
-	m_displayData.Invalidate();
+	
+	if (bUpdateInterface)
+	{
+		m_displayData.Invalidate();
+	}
 
 	m_DWintervals.SetSize(3 + 2);				// total size
 	m_DWintervals.SetAt(0, 0);					// source channel
@@ -593,7 +596,7 @@ void CViewSpikes::InitDisplayData() {
 	m_DWintervals.SetAt(4, 0);					// pen size
 }
 
-void CViewSpikes::UpdateLegends()
+void CViewSpikes::UpdateLegends(BOOL bUpdateInterface)
 {
 	if (m_lFirst < 0)
 		m_lFirst = 0;
@@ -603,9 +606,6 @@ void CViewSpikes::UpdateLegends()
 		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
 	if (m_lFirst > m_lLast)
 		m_lFirst = m_lLast - 120;
-
-	// update comments and time
-	GetDlgItem(IDC_DISPLAYDAT)->ShowWindow(SW_HIDE);
 
 	// set cursor
 	auto hwnd = GetSafeHwnd();
@@ -634,13 +634,9 @@ void CViewSpikes::UpdateLegends()
 	UpdateScrollBar();
 }
 
-void CViewSpikes::UpdateFileParameters()
+void CViewSpikes::UpdateSpikeFile(BOOL bUpdateInterface)
 {
-	// open data file and spike file
-	m_pDataDoc = GetDocument()->OpenCurrentDataFile();
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
-
-	// init spike views
 	if (m_pSpkDoc == nullptr)
 	{
 		m_spkClassListBox.SetSourceData(nullptr, nullptr);
@@ -768,7 +764,7 @@ void CViewSpikes::OnFormatAlldata()
 	const short x_we = m_pSpkList->GetSpikeLength();
 	m_spkClassListBox.SetXzoom(x_we, x_wo);
 
-	UpdateLegends();
+	UpdateLegends(TRUE);
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayData.Invalidate();
@@ -797,7 +793,7 @@ void CViewSpikes::OnFormatCentercurve()
 	if (m_pDataDoc != nullptr)
 		m_displayData.CenterChan(0);
 
-	UpdateLegends();
+	UpdateLegends(TRUE);
 	m_spkClassListBox.Invalidate();
 	m_displayData.Invalidate();
 }
@@ -811,7 +807,7 @@ void CViewSpikes::OnFormatGainadjust()
 	if (m_pDataDoc != nullptr)
 		m_displayData.MaxgainChan(0);
 
-	UpdateLegends();
+	UpdateLegends(TRUE);
 	m_spkClassListBox.Invalidate();
 	m_displayData.Invalidate();
 }
@@ -843,12 +839,12 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		SaveCurrentFileParms();
-		UpdateFileParameters();
+		UpdateSpikeFile(TRUE);
 	}
 	m_lFirst = l_first;
 	m_lLast = l_last;
-	InitDisplayData();
-	UpdateLegends();
+	UpdateDataFile(TRUE);
+	UpdateLegends(TRUE);
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayData.Invalidate();
@@ -1263,7 +1259,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	int filenumber;			   								// file number and file index
 	auto l_first = PrintGetFileSeriesIndexFromPage(curpage - 1, &filenumber);
 	GetDocument()->SetDB_CurrentRecordPosition(filenumber);
-	UpdateFileParameters();
+	UpdateFileParameters(FALSE);
 	UpdateScrollBar();
 	auto very_last = m_pSpkDoc->GetAcqSize() - 1;			// index last data point / current file
 
@@ -1323,7 +1319,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// bottom of the first rectangle
 		r_wbars.bottom = rw2.top + rheight;
-		auto l_last = l_first + m_lprintLen;				// compute last pt to load
+		auto l_last = l_first + m_lprintLen;			// compute last pt to load
 		if (l_last > very_last)							// check end across file length
 			l_last = very_last;
 		if ((l_last - l_first + 1) < m_lprintLen)				// adjust rect to length of data
@@ -1353,7 +1349,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// ------------------------ print spikes
 
-		r_wbars.bottom = r_wbars.top + rheight;		// adjust the rect position
+		r_wbars.bottom = r_wbars.top + rheight;			// adjust the rect position
 		rw_spikes.top = r_wbars.top;
 		rw_spikes.bottom = r_wbars.bottom;
 		r_wtext.top = r_wbars.top;
@@ -1464,7 +1460,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			if (filenumber < m_nfiles)			// last file ??
 			{									// NO: select new file
 				GetDocument()->DBMoveNext();
-				UpdateFileParameters(); 
+				UpdateFileParameters(FALSE);
 				UpdateScrollBar();
 				very_last = m_pSpkDoc->GetAcqSize() - 1;
 			}
@@ -1484,8 +1480,7 @@ void CViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_bIsPrinting = FALSE;
 
 	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
-	UpdateFileParameters();
-	UpdateScrollBar();
+	UpdateFileParameters(TRUE);
 	m_spkClassListBox.SetTimeIntervals(m_lFirst0, m_lLast0);
 	m_spkClassListBox.Invalidate();
 
@@ -1580,7 +1575,7 @@ void CViewSpikes::OnEnChangeNOspike()
 					const long lspan = (m_lLast - m_lFirst) / 2;
 					m_lFirst = lcenter - lspan;
 					m_lLast = lcenter + lspan;
-					UpdateLegends();
+					UpdateLegends(TRUE);
 				}
 				// center curve vertically
 				const auto ixpixel = MulDiv(lcenter - m_lFirst, m_displayData.GetNxPixels(), m_lLast - m_lFirst);
@@ -1619,7 +1614,7 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 	{
 		m_spkClassListBox.ChangeSpikeClass(m_spikeno, m_spikenoclass);
 		m_pSpkDoc->SetModifiedFlag(TRUE);
-		UpdateLegends();
+		UpdateLegends(TRUE);
 		m_spkClassListBox.Invalidate();
 		m_displayData.Invalidate();
 	}
@@ -1653,7 +1648,7 @@ void CViewSpikes::OnEnChangeTimefirst()
 		if (l_first != m_lFirst)
 		{
 			m_lFirst = l_first;
-			UpdateLegends();
+			UpdateLegends(TRUE);
 			m_spkClassListBox.Invalidate();
 			m_displayData.Invalidate();
 		}
@@ -1687,7 +1682,7 @@ void CViewSpikes::OnEnChangeTimelast()
 		if (l_last != m_lLast)
 		{
 			m_lLast = l_last;
-			UpdateLegends();
+			UpdateLegends(TRUE);
 			m_spkClassListBox.Invalidate();
 			m_displayData.Invalidate();
 		}
@@ -1822,7 +1817,7 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_lFirst = l_first;
 		m_lLast = l_last;
-		UpdateLegends();
+		UpdateLegends(TRUE);
 		m_spkClassListBox.Invalidate();
 		m_displayData.Invalidate();
 	}
@@ -1970,7 +1965,7 @@ void CViewSpikes::OnEditCopy()
 	}
 
 	// restore screen in previous state
-	UpdateFileParameters();
+	UpdateSpikeFile(TRUE);
 	UpdateScrollBar();
 	m_spkClassListBox.Invalidate();
 	if (m_pDataDoc != nullptr)
@@ -1993,7 +1988,7 @@ void CViewSpikes::ZoomOnPresetInterval(int iistart)
 	m_lFirst = iistart;
 	const auto acqrate = m_pSpkDoc->GetAcqRate();
 	m_lLast = static_cast<long>((m_lFirst / acqrate + m_zoom) * acqrate);
-	UpdateLegends();
+	UpdateLegends(TRUE);
 	// display data
 	m_spkClassListBox.Invalidate();
 	m_displayData.Invalidate();
@@ -2075,7 +2070,7 @@ void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 	if (lSize > 0) //&& lSize<=YEXTENT_MAX)
 	{
 		m_displayData.SetChanlistYextent(0, lSize);
-		UpdateLegends();
+		UpdateLegends(TRUE);
 		m_displayData.Invalidate();
 	}
 	// update scrollBar
@@ -2220,7 +2215,7 @@ void CViewSpikes::OnArtefact()
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_bartefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);
-	UpdateLegends();
+	UpdateLegends(TRUE);
 	m_spkClassListBox.Invalidate();
 }
 
@@ -2285,12 +2280,12 @@ void CViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 	CDaoRecordView::OnLButtonDown(nFlags, point);
 }
 
-void CViewSpikes::OnRecordShiftleft()
+void CViewSpikes::OnHScrollLeft()
 {
 	OnHScroll(SB_PAGELEFT, NULL, (CScrollBar*)GetDlgItem(IDC_SCROLLBAR1));
 }
 
-void CViewSpikes::OnRecordShiftright()
+void CViewSpikes::OnHScrollRight()
 {
 	OnHScroll(SB_PAGERIGHT, NULL, (CScrollBar*)GetDlgItem(IDC_SCROLLBAR1));
 }

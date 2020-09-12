@@ -52,7 +52,6 @@ protected:
 	CStretchControl m_stretch;				// clamp controls to sides of the formview area
 	BOOL			m_binit = false;
 
-	CdbWaveDoc*		m_dbDoc = nullptr;		// master source document
 	CSpikeDoc*		m_pSpkDoc = nullptr;	// destination data doc
 	CSpikeList*		m_pSpkList = nullptr;	// temporary spike list
 	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
@@ -72,11 +71,12 @@ protected:
 
 	// Implementation
 protected:
-	void UpdateLegends();				// update legends
-	void InitDisplayData();
-	void UpdateFileParameters();		// update parms when file has changed
+	void UpdateFileParameters(BOOL bUpdateInterface = TRUE);
+	void UpdateLegends(BOOL bUpdateInterface);	
+	void UpdateDataFile(BOOL bUpdateInterface);
+	void UpdateSpikeFile(BOOL bUpdateInterface);
 	void AdjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
-	void SaveCurrentFileParms();		// save spike file if modified
+	void SaveCurrentFileParms();
 	void SelectSpike(int spikeno);
 	void DefineSubClassedItems();
 	void DefineStretchParameters();
@@ -186,8 +186,8 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRecordShiftleft();
-	afx_msg void OnRecordShiftright();
+	afx_msg void OnHScrollLeft();
+	afx_msg void OnHScrollRight();
 	afx_msg void OnBnClickedSameclass();
 	DECLARE_MESSAGE_MAP()
 public:
