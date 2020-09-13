@@ -23,7 +23,24 @@
 #define new DEBUG_NEW
 #endif
 
-int CDataListCtrl::m_icolwidth[] = { 1, 10, 300, 15, 30, 30, 50, 40, 40, 40, 40 };
+int CDataListCtrl::m_colwidth[] = { 1, 
+				10, 300, 15, 30, 
+				30, 50, 40, 40, 
+				40, 40 };
+CString CDataListCtrl :: m_colheaders[] = { __T(""), 
+				__T("#"), __T("data"), __T("insect ID"), __T("sensillum"), 
+				__T("stim1"), __T("conc1"), __T("stim2"), __T("conc2"),
+				__T("spikes"), __T("flag") };
+
+int CDataListCtrl::m_colfmt[] = { LVCFMT_LEFT, 
+				LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, 
+				LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, 
+				LVCFMT_CENTER, LVCFMT_CENTER };
+
+int CDataListCtrl::m_colindex[] = { 0, 
+				COL_INDEX, COL_CURVE, COL_INSECT, COL_SENSI,
+				COL_STIM1, COL_CONC1, COL_STIM2, COL_CONC2,
+				COL_NBSPK, COL_FLAG};
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataListCtrl
@@ -65,8 +82,6 @@ void CDataListCtrl::OnDestroy()
 	CListCtrl::OnDestroy();
 }
 
-// delete objects then the array
-
 void CDataListCtrl::DeletePtrArray()
 {
 	if (datalistctrlrowobject_prt_array.GetSize() == NULL)
@@ -79,9 +94,6 @@ void CDataListCtrl::DeletePtrArray()
 	}
 	datalistctrlrowobject_prt_array.RemoveAll();
 }
-
-// change size of the array
-// delete items or add items accordingly
 
 void CDataListCtrl::ResizePtrArray(int nitems)
 {
@@ -117,6 +129,31 @@ void CDataListCtrl::ResizePtrArray(int nitems)
 	}
 }
 
+void CDataListCtrl::InitColumns(CUIntArray* picolwidth)
+{
+	if (picolwidth != nullptr)
+	{
+		m_picolwidth = picolwidth;
+		const auto ncol_stored = picolwidth->GetSize();
+		if (ncol_stored < NCOLS)
+			picolwidth->SetSize(NCOLS);
+		for (auto i = 0; i < ncol_stored; i++)
+			m_colwidth[i] = picolwidth->GetAt(i);
+	}
+
+	for (int nCol = 0; nCol < NCOLS; nCol++)
+	{
+		InsertColumn(nCol, m_colheaders[nCol], m_colfmt[nCol], m_colwidth[nCol], -1);
+	}
+
+	m_cx = m_colwidth[COL_CURVE];
+	m_imagelist.Create(m_cx, m_cy, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
+	SetImageList(&m_imagelist, LVSIL_SMALL);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CDataListCtrl message handlers
+
 BEGIN_MESSAGE_MAP(CDataListCtrl, CListCtrl)
 
 	ON_WM_DESTROY()
@@ -128,115 +165,6 @@ BEGIN_MESSAGE_MAP(CDataListCtrl, CListCtrl)
 
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataListCtrl message handlers
-
-void CDataListCtrl::InitColumns(CUIntArray* picolwidth)
-{
-	if (picolwidth != nullptr)
-	{
-		m_picolwidth = picolwidth;
-		const auto ncol_stored = picolwidth->GetSize();
-		if (ncol_stored < NCOLS)
-			picolwidth->SetSize(NCOLS);
-		for (auto i = 0; i < ncol_stored; i++)
-			m_icolwidth[i] = picolwidth->GetAt(i);
-	}
-
-	LVCOLUMN lvcol;
-	const UINT mask = LVCF_FMT | LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH | LVCF_ORDER;
-	lvcol.mask = mask;
-	/*
-valid members: LVCF_FMT - fmt | LVCF_SUBITEM - iSubItem | LVCF_TEXT - pszText | LVCF_WIDTH - cx | LVCF_ORDER - iOrder
-LVCF_IMAGE		Version 4.70. The iImage member is valid.
-*/
-	auto i_order = 0;		// trick to allow displaying rec
-	lvcol.pszText = __T("");
-	lvcol.fmt = LVCFMT_LEFT;
-	lvcol.iOrder = i_order;
-	lvcol.cx = 1;
-	InsertColumn(i_order, &lvcol);
-
-	ASSERT(i_order == 0);		// make sure the first item is 0
-
-	i_order = COL_INDEX;			// 0
-	lvcol.pszText = __T("#");
-	lvcol.fmt = LVCFMT_CENTER;
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order = COL_CURVE;			// 1
-	lvcol.pszText = __T("data");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order = COL_INSECT;			// 2
-	lvcol.pszText = __T("insect ID");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	// -----------------------------
-
-	i_order++;			// 3
-	lvcol.pszText = __T("sensillum");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order++;			// 4
-	lvcol.pszText = __T("stim1");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order++;			// 5
-	lvcol.pszText = __T("conc1");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order++;			// 6
-	lvcol.pszText = __T("stim2");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order++;			// 7
-	lvcol.pszText = __T("conc2");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order++;			// 8
-	lvcol.pszText = _T("spikes");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	i_order++;			// 9
-	lvcol.pszText = __T("flag");
-	lvcol.iOrder = i_order;
-	lvcol.cx = m_icolwidth[i_order];
-	InsertColumn(i_order, &lvcol);
-
-	m_cx = m_icolwidth[COL_CURVE];
-	m_imagelist.Create(m_cx, m_cy, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
-	SetImageList(&m_imagelist, LVSIL_SMALL);
-
-	// change format of column zero
-	//LV_COLUMN lvColumn;
-	//memset(&lvColumn, 0, sizeof(lvColumn));
-	//lvColumn.mask = LVCF_FMT;
-	//GetColumn(0, &lvColumn);
-	//lvColumn.fmt = LVCFMT_CENTER;
-	//SetColumn(0, &lvColumn);
-
-	//CHeaderCtrl* pHeaderCtrl = GetHeaderCtrl();
-	//ASSERT(NULL != pHeaderCtrl);
-}
 
 void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -378,10 +306,10 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 
 	// which update is necessary?
 	// conditions for out of range (renew all items)
-	auto idelta = 0;							// flag (copy forwards or backwards)
+	auto idelta = 0;						// flag (copy forwards or backwards)
 	auto n_to_transfer = 0;					// number of items to copy
 	auto n_to_rebuild = datalistctrlrowobject_prt_array.GetSize();	// number of items to refresh
-	auto idest1 = 0;							// index first item to be exchg with source
+	auto idest1 = 0;						// index first item to be exchg with source
 	auto isource1 = 0;						// index first source item
 	auto inew1 = 0;
 	const auto difference = ifirst - ifirst_array;
@@ -392,7 +320,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	{
 		if (difference > 0 && difference < datalistctrlrowobject_prt_array.GetSize())
 		{
-			idelta = 1;							// copy forward
+			idelta = 1;						// copy forward
 			n_to_transfer = datalistctrlrowobject_prt_array.GetSize() - difference;
 			n_to_rebuild -= n_to_transfer;
 			isource1 = difference;;
@@ -535,8 +463,8 @@ void CDataListCtrl::RefreshDisplay()
 {
 	if (datalistctrlrowobject_prt_array.GetSize() == NULL)
 		return;
-	const int ifirst_array = datalistctrlrowobject_prt_array.GetAt(0)->index;
-	const int ilast_array = datalistctrlrowobject_prt_array.GetAt(datalistctrlrowobject_prt_array.GetUpperBound())->index;
+	const int ifirst_row = datalistctrlrowobject_prt_array.GetAt(0)->index;
+	const int ilast_row = datalistctrlrowobject_prt_array.GetAt(datalistctrlrowobject_prt_array.GetUpperBound())->index;
 
 	// left, top, right, bottom
 	SetEmptyBitmap();
@@ -560,7 +488,7 @@ void CDataListCtrl::RefreshDisplay()
 			break;
 		}
 	}
-	RedrawItems(ifirst_array, ilast_array);		// CCtrlList standard function
+	RedrawItems(ifirst_row, ilast_row);		// CCtrlList standard function
 	Invalidate();
 	UpdateWindow();
 }
@@ -777,14 +705,8 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 	{
 		CViewdbWave* pParent = (CViewdbWave*) GetParent();
 		int iTab = pParent->m_tabCtrl.GetCurSel();
-		const auto pdb_doc = pParent->GetDocument();
-		if (pdb_doc == nullptr)
-			return;
-
-		CSpikeDoc* pSpkDoc = pdb_doc->GetcurrentSpkDocument();
-		if (pSpkDoc == nullptr)
-			return;
-
+		if (iTab < 0) 
+			iTab = 0;
 		const auto pspk_list = ptr->pspikeDoc->SetSpkList_AsCurrent(iTab);
 		p_wnd->SetSourceData(pspk_list, ptr->pspikeDoc);
 		p_wnd->SetPlotMode(m_spikeplotmode, m_selclass);
@@ -836,9 +758,9 @@ void CDataListCtrl::DisplayEmptyWnd(CDataListCtrlRowObject* ptr, int iImage)
 
 void CDataListCtrl::ResizeSignalColumn(int npixels)
 {
-	m_icolwidth[COL_CURVE] = npixels;
+	m_colwidth[COL_CURVE] = npixels;
 	m_imagelist.DeleteImageList();
-	m_cx = m_icolwidth[COL_CURVE];
+	m_cx = m_colwidth[COL_CURVE];
 	m_imagelist.Create(m_cx, m_cy, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
 	SetImageList(&m_imagelist, LVSIL_SMALL);
 	m_imagelist.SetImageCount(datalistctrlrowobject_prt_array.GetSize());
@@ -856,13 +778,13 @@ void CDataListCtrl::FitColumnsToSize(int npixels)
 {
 	// compute size of fixed columns
 	auto fixedsize = 0;
-	for (auto i : m_icolwidth)
+	for (auto i : m_colwidth)
 	{
 		fixedsize += i;
 	}
-	fixedsize -= m_icolwidth[COL_CURVE];
+	fixedsize -= m_colwidth[COL_CURVE];
 	const auto signalcolsize = npixels - fixedsize;
-	if (signalcolsize != m_icolwidth[COL_CURVE] && signalcolsize > 2)
+	if (signalcolsize != m_colwidth[COL_CURVE] && signalcolsize > 2)
 	{
 		SetColumnWidth(COL_CURVE, signalcolsize);
 		ResizeSignalColumn(signalcolsize);

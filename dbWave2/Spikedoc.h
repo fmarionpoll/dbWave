@@ -1,9 +1,9 @@
 #pragma once
 
 #include "StimLevelArray.h"
-//#include "spikepar.h"		// spike parameters options
-#include "Spikelist.h"		// list of spikes
-#include "Spikeclas.h"		// spike classes
+//#include "spikepar.h"	
+#include "Spikelist.h"
+#include "Spikeclas.h"
 
 class CSpikeDoc : public CDocument
 {
@@ -30,7 +30,7 @@ public:
 	CIntervalsAndLevels	m_stimIntervals;	// stimulus array
 
 protected:
-	CArray<CSpikeList, CSpikeList> spikelist_array;
+	CArray<CSpikeList, CSpikeList> spikelist_array = {};
 
 	// Operations
 public:

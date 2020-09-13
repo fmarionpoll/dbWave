@@ -49,14 +49,21 @@ public:
 	int		GetSpikePlotMode()		const { return m_spikeplotmode; }
 	int		GetSpikeClass()			const { return m_selclass; }
 
-	CLineViewWnd* GetDataViewCurrentRecord();
-	// const {return datalistctrlrowobject_prt_array->GetAt(GetCurSel())->pdataWnd; }
+
+	CLineViewWnd*		GetDataViewCurrentRecord();
+	inline int			GetVisibleRowsSize() {return datalistctrlrowobject_prt_array.GetSize();}
+	inline CAcqDataDoc*	GetVisibleRowsAcqDataDocAt(int index) { return  datalistctrlrowobject_prt_array[index]->pdataDoc; }
+	inline CSpikeDoc*	GetVisibleRowsSpikeDocAt(int index) { return datalistctrlrowobject_prt_array[index]->pspikeDoc; }
 
 	// Generated message map functions
 protected:
 	CArray <CDataListCtrlRowObject*, CDataListCtrlRowObject*> datalistctrlrowobject_prt_array;
-	CImageList	m_imagelist;	// list of bitmap images
-	static int	m_icolwidth[NCOLS];
+	CImageList		m_imagelist;
+	static int		m_colwidth[NCOLS];
+	static CString	m_colheaders[NCOLS];
+	static int		m_colfmt[NCOLS];
+	static int		m_colindex[NCOLS];
+
 	CUIntArray* m_picolwidth;
 	CBitmap*	m_pEmptyBitmap;
 	
@@ -79,7 +86,6 @@ protected:
 	void		DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage);
 	void		DisplayDataWnd(CDataListCtrlRowObject* ptr, int iImage);
 	void		DisplayEmptyWnd(CDataListCtrlRowObject* ptr, int iImage);
-
 	
 	// Generated message map functions
 	afx_msg void OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult);

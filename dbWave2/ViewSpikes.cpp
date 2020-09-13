@@ -657,7 +657,7 @@ void CViewSpikes::UpdateSpikeFile(BOOL bUpdateInterface)
 		m_pspkDP = m_pSpkList->GetDetectParms();
 
 		// reset tab control
-		m_tabCtrl.InitctrlTabFromSpikeList(m_pSpkDoc);
+		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 		m_tabCtrl.SetCurSel(icur);
 
 		// adjust Y zoom

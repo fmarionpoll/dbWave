@@ -10,7 +10,7 @@ public:
 	CSpkListTabCtrl();
 	virtual ~CSpkListTabCtrl();
 
-	void InitctrlTabFromSpikeList(CSpikeDoc* pSpkDoc);
+	void InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc);
 
 
 protected:

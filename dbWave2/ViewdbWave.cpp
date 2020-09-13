@@ -199,7 +199,7 @@ void CViewdbWave::OnInitialUpdate()
 	if (m_options_viewdata->displaymode == 2)
 	{
 		// update tab control
-		m_tabCtrl.InitctrlTabFromSpikeList(GetDocument()->GetcurrentSpkDocument());
+		m_tabCtrl.InitctrlTabFromSpikeDoc(GetDocument()->GetcurrentSpkDocument());
 		m_tabCtrl.ShowWindow(SW_SHOW);
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 		m_tabCtrl.SetCurSel(icur);
@@ -313,7 +313,7 @@ void CViewdbWave::UpdateControls()
 		{
 			const auto curr_listsize = GetDocument()->GetcurrentSpkDocument()->GetSpkList_Size();
 			if (m_tabCtrl.GetItemCount() < curr_listsize)
-				m_tabCtrl.InitctrlTabFromSpikeList(GetDocument()->GetcurrentSpkDocument());
+				m_tabCtrl.InitctrlTabFromSpikeDoc(GetDocument()->GetcurrentSpkDocument());
 		}
 	}
 }
@@ -729,13 +729,8 @@ void CViewdbWave::OnBnClickedDisplaySpikes()
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
 	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
 
-	m_options_viewdata->displaymode = 2;
-	// update tab control
-	m_tabCtrl.InitctrlTabFromSpikeList(GetDocument()->GetcurrentSpkDocument());
-	m_tabCtrl.ShowWindow(SW_SHOW);
-	m_tabCtrl.SetCurSel(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex());
-
 	// display spikes
+	m_options_viewdata->displaymode = 2;
 	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
 	if (m_options_viewdata->bDisplayAllClasses)
 	{
@@ -749,6 +744,19 @@ void CViewdbWave::OnBnClickedDisplaySpikes()
 		((CButton*)GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_CHECKED);
 		m_spikeclass = m_options_viewdata->spikeclass;
 		m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
+	}
+	m_dataListCtrl.RefreshDisplay();
+
+	// update tab control
+	int nrows = m_dataListCtrl.GetVisibleRowsSize();
+	if (nrows > 0) {
+		const auto pSpkDoc = m_dataListCtrl.GetVisibleRowsSpikeDocAt(0);
+		if (pSpkDoc->GetSpkList_Size() > 1) {
+			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
+			m_tabCtrl.ShowWindow(SW_SHOW);
+			m_tabCtrl.SetCurSel(pSpkDoc->GetSpkList_CurrentIndex());
+			m_tabCtrl.Invalidate();
+		}
 	}
 	m_dataListCtrl.RefreshDisplay();
 }
