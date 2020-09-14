@@ -346,13 +346,6 @@ void CViewSpikeTemplates::SelectSpikeList(int icur)
 		m_pSpkDoc->SetModifiedFlag();
 	}
 
-	//if (m_lFirst < 0)
-	//	m_lFirst = 0;
-	//if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
-	//	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
-	//m_scrollFilePos_infos.nMin = 0;	
-	//m_scrollFilePos_infos.nMax = m_lLast;
-
 	// change pointer to select new spike list & test if one spike is selected
 	int spikeno = m_pSpkList->m_selspike;
 	if (spikeno > m_pSpkList->GetTotalSpikes() - 1 || spikeno < 0)
@@ -484,10 +477,7 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEHZLIMITS:		
 	case HINT_CHANGEZOOM:
 	case HINT_VIEWSIZECHANGED:     
-		m_templList.SetYWExtOrg(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
-		m_templList.Invalidate();
-		m_avgList.SetYWExtOrg(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
-		m_avgList.Invalidate();
+		SetExtentZeroAllDisplay(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
 		UpdateLegends();
 		break;
 
@@ -698,15 +688,8 @@ void CViewSpikeTemplates::OnFormatGainadjust()
 	m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
 	const auto extent = maxval - minval;
 	const auto zero = (maxval + minval) / 2;
-	m_spkForm.SetYWExtOrg(extent, zero);
-	m_spkForm.Invalidate();
 
-	m_templList.SetYWExtOrg(extent, zero);
-	m_templList.Invalidate();
-	m_avgList.SetYWExtOrg(extent, zero);
-	m_avgList.Invalidate();
-	m_avgAllList.SetYWExtOrg(extent, zero);
-	m_avgAllList.Invalidate();
+	SetExtentZeroAllDisplay(extent, zero);
 }
 
 void CViewSpikeTemplates::OnFormatCentercurve()
@@ -715,6 +698,10 @@ void CViewSpikeTemplates::OnFormatCentercurve()
 	m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
 	const auto extent = m_spkForm.GetYWExtent();
 	const auto zero = (maxval + minval) / 2;
+	SetExtentZeroAllDisplay(extent, zero);
+}
+
+void CViewSpikeTemplates::SetExtentZeroAllDisplay(int extent, int zero) {
 	m_spkForm.SetYWExtOrg(extent, zero);
 	m_spkForm.Invalidate();
 	m_templList.SetYWExtOrg(extent, zero);

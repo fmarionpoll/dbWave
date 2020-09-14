@@ -17,17 +17,17 @@ protected:
 public:
 
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
-	float	m_timefirst;
-	float	m_timelast;
-	int		m_hitrate;
-	float	m_ktolerance;
-	int		m_spikenoclass;
-	int		m_hitratesort;
-	int		m_ifirstsortedclass;
-	BOOL	m_ballfiles;
-	BOOL	m_ballTempl;
-	BOOL	m_ballSort;
-	CTabCtrl m_tab1Ctrl;
+	float				m_timefirst;
+	float				m_timelast;
+	int					m_hitrate;
+	float				m_ktolerance;
+	int					m_spikenoclass;
+	int					m_hitratesort;
+	int					m_ifirstsortedclass;
+	BOOL				m_ballfiles;
+	BOOL				m_ballTempl;
+	BOOL				m_ballSort;
+	CTabCtrl			m_tab1Ctrl;
 
 	CdbWaveDoc* GetDocument();
 
@@ -98,6 +98,8 @@ protected:
 	void DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList); //, CImageList* pImList);
 	void SortSpikes();
 	void UpdateCtrlTab1(int iselect);
+	void SetExtentZeroAllDisplay(int extent, int zero);
+
 
 public:
 	// Generated message map functions
