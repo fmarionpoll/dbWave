@@ -25,7 +25,6 @@ public:
 	int		m_hitratesort;
 	int		m_ifirstsortedclass;
 	BOOL	m_ballfiles;
-
 	BOOL	m_ballTempl;
 	BOOL	m_ballSort;
 	CTabCtrl m_tab1Ctrl;
@@ -33,34 +32,34 @@ public:
 	CdbWaveDoc* GetDocument();
 
 protected:
-	CEditCtrl	mm_hitrate;
-	CEditCtrl	mm_hitratesort;
-	CEditCtrl	mm_ktolerance;
-	CEditCtrl	mm_spikenoclass;
-	CEditCtrl	mm_timefirst;			// first abcissa value
-	CEditCtrl	mm_timelast;			// last abcissa value
-	CEditCtrl	mm_ifirstsortedclass;
+	CEditCtrl			mm_hitrate;
+	CEditCtrl			mm_hitratesort;
+	CEditCtrl			mm_ktolerance;
+	CEditCtrl			mm_spikenoclass;
+	CEditCtrl			mm_timefirst;			// first abcissa value
+	CEditCtrl			mm_timelast;			// last abcissa value
+	CEditCtrl			mm_ifirstsortedclass;
 
 	CTemplateListWnd	m_avgList;
 	CTemplateListWnd	m_templList;
 	CTemplateListWnd	m_avgAllList;
 
-	CSpikeShapeWnd		m_spkForm;		// all spikes in displayspikes
-	CStretchControl		m_stretch;		// array of properties associated with controls
+	CSpikeShapeWnd		m_spkForm;				// all spikes in displayspikes
+	CStretchControl		m_stretch;				// array of properties associated with controls
 	BOOL				m_binit;
 
-	CSpikeDoc* m_pSpkDoc;			// destination data doc
-	CSpikeList* m_pSpkList;			// temporary spike list
-	int				m_lFirst;
-	int				m_lLast;
-	OPTIONS_VIEWDATA* mdPM;	// view data options
-	OPTIONS_VIEWDATAMEASURE* mdMO;	// measure options
-	SPKCLASSIF* m_psC;				// sort parameters
-	int				m_ktagleft;			// VT tags
-	int				m_ktagright;
-	SCROLLINFO		m_scrollFilePos_infos;
-	int				m_spikeno;
-	BOOL			m_ballclasses;
+	CSpikeDoc*			m_pSpkDoc;				// destination data doc
+	CSpikeList*			m_pSpkList;				// temporary spike list
+	int					m_lFirst;
+	int					m_lLast;
+	OPTIONS_VIEWDATA*	mdPM;					// view data options
+	OPTIONS_VIEWDATAMEASURE* mdMO;				// measure options
+	SPKCLASSIF*			m_psC;					// sort parameters
+	int					m_ktagleft;				// VT tags
+	int					m_ktagright;
+	SCROLLINFO			m_scrollFilePos_infos;
+	int					m_spikeno;
+	BOOL				m_ballclasses;
 
 	// Attributes
 public:

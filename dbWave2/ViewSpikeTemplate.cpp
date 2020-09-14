@@ -337,23 +337,21 @@ void CViewSpikeTemplates::UpdateFileParameters()
 
 void CViewSpikeTemplates::SelectSpikeList(int icur)
 {
-	// select spike list
-	//GetDocument()->GetcurrentSpkDocument()->SetSpkList_CurrentIndex(icur);
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 	m_tabCtrl.SetCurSel(icur);
 
-	if (!m_pSpkList->IsClassListValid())		// if class list not valid:
+	if (!m_pSpkList->IsClassListValid())
 	{
-		m_pSpkList->UpdateClassList();			// rebuild list of classes
-		m_pSpkDoc->SetModifiedFlag();			// and set modified flag
+		m_pSpkList->UpdateClassList();
+		m_pSpkDoc->SetModifiedFlag();
 	}
 
-	if (m_lFirst < 0)
-		m_lFirst = 0;
-	if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
-		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
-	m_scrollFilePos_infos.nMin = 0;				// tell HZ scroll what are the limits
-	m_scrollFilePos_infos.nMax = m_lLast;
+	//if (m_lFirst < 0)
+	//	m_lFirst = 0;
+	//if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
+	//	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+	//m_scrollFilePos_infos.nMin = 0;	
+	//m_scrollFilePos_infos.nMax = m_lLast;
 
 	// change pointer to select new spike list & test if one spike is selected
 	int spikeno = m_pSpkList->m_selspike;
@@ -381,14 +379,15 @@ void CViewSpikeTemplates::SelectSpikeList(int icur)
 
 	m_lFirst = 0;
 	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
-
+	m_scrollFilePos_infos.nMin = 0;
+	m_scrollFilePos_infos.nMax = m_lLast;
 	m_spkForm.SetTimeIntervals(m_lFirst, m_lLast);
 	m_spkForm.Invalidate();
 
 	SelectSpike(spikeno);
 	UpdateLegends();
 
-	DisplayAvg(FALSE, &m_avgList); //&m_ImListAvg);	// not sure this is necessary....
+	DisplayAvg(FALSE, &m_avgList); 
 	UpdateTemplates();
 }
 
@@ -405,7 +404,9 @@ void CViewSpikeTemplates::UpdateTemplates()
 			m_templList.SetImageList(&m_templList.m_imageList, LVSIL_NORMAL);
 		}
 		SetDlgItemInt(IDC_NTEMPLATES, m_templList.GetNtemplates());
-		m_templList.SetYWExtOrg(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
+		int extent = m_spkForm.GetYWExtent();
+		int zero = m_spkForm.GetYWOrg();
+		m_templList.SetYWExtOrg(extent , zero);
 		m_templList.UpdateTemplateLegends("t");
 		m_templList.Invalidate();
 		n_cmd_show = SW_SHOW;
@@ -456,23 +457,23 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	switch (wParam)
 	{
-	case HINT_SETMOUSECURSOR: // ------------- change mouse cursor (all 3 items)
-		if (threshold > CURSOR_ZOOM)	// clip cursor shape to max
+	case HINT_SETMOUSECURSOR:
+		if (threshold > CURSOR_ZOOM)
 			threshold = 0;
-		SetViewMouseCursor(threshold);	// change cursor val in the other button
+		SetViewMouseCursor(threshold);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(threshold, 0));
 		break;
 
-	case HINT_HITSPIKE:		// -------------  spike is selected or deselected
+	case HINT_HITSPIKE:	
 		SelectSpike(threshold);
 		break;
 
-	case HINT_CHANGEVERTTAG: // -------------  vertical tag val has changed
-		if (threshold == m_ktagleft)		// first tag
+	case HINT_CHANGEVERTTAG:
+		if (threshold == m_ktagleft)
 		{
 			m_psC->kleft = m_spkForm.GetVTtagVal(m_ktagleft);
 		}
-		else if (threshold == m_ktagright)	// second tag
+		else if (threshold == m_ktagright)
 		{
 			m_psC->kright = m_spkForm.GetVTtagVal(m_ktagright);
 		}
@@ -480,9 +481,9 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		m_templList.Invalidate();
 		break;
 
-	case HINT_CHANGEHZLIMITS:		// abcissa have changed
+	case HINT_CHANGEHZLIMITS:		
 	case HINT_CHANGEZOOM:
-	case HINT_VIEWSIZECHANGED:       // change zoom
+	case HINT_VIEWSIZECHANGED:     
 		m_templList.SetYWExtOrg(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
 		m_templList.Invalidate();
 		m_avgList.SetYWExtOrg(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
