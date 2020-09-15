@@ -47,9 +47,9 @@ protected:
 	// length = total spike length
 	// mean, sup val, low val (as computed by tSetdisplayData())
 	// combined arrays
-	int* m_pAvg;			// first point of the array
-	int* m_pMax0;		// upper limit
-	int* m_pMin0;		// lower limit
+	int*	m_pAvg;			// first point of the array
+	int*	m_pMax0;		// upper limit
+	int*	m_pMin0;		// lower limit
 
 	// Operations
 public:
@@ -73,7 +73,7 @@ protected:
 	void 	FillOrdinatesAtscale(BOOL bScale);
 	void	GetExtents();
 public:
-	void	PlotDatatoDC(CDC* p_dc);
+	void	PlotDatatoDC(CDC* p_dc) override;
 
 	// Implementation
 public:

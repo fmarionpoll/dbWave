@@ -661,8 +661,6 @@ void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
 	SetCapture();
 }
 
-// ---------------------------------------------------------------------
-
 void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
 	int			i_item;

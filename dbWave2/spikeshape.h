@@ -18,21 +18,21 @@ public:
 	// parameters
 
 protected:
-	int		m_rangemode;		// display range (time OR storage index)
-	long	m_lFirst;			// time first (real time = index/sampling rate)
-	long	m_lLast;			// time last
-	int		m_spkfirst{};		// index first spike
-	int		m_spklast{};		// index last spike
-	int		m_currentclass;		// selected class (different color) (-1 = display all)
-	int		m_selectedspike;	// selected spike (display differently)
-	int		m_colorselectedspike; // color selected spike (index / color table)
-	int		m_hitspk;			// index spike
-	int		m_selclass{};		// index class selected
-	BOOL 	m_btrackCurve;		// track curve ?
+	int			m_rangemode;		// display range (time OR storage index)
+	long		m_lFirst;			// time first (real time = index/sampling rate)
+	long		m_lLast;			// time last
+	int			m_spkfirst{};		// index first spike
+	int			m_spklast{};		// index last spike
+	int			m_currentclass;		// selected class (different color) (-1 = display all)
+	int			m_selectedspike;	// selected spike (display differently)
+	int			m_colorselectedspike; // color selected spike (index / color table)
+	int			m_hitspk;			// index spike
+	int			m_selclass{};		// index class selected
+	BOOL 		m_btrackCurve;		// track curve ?
 
-	BOOL	m_bText;			// allow text default false
-	int		m_ndisplayedspikes{};	// number of spikes displayed
-	BOOL	m_ballFiles;		// display data from all files in CdbWaveDoc*
+	BOOL		m_bText;			// allow text default false
+	int			m_ndisplayedspikes{};	// number of spikes displayed
+	BOOL		m_ballFiles;		// display data from all files in CdbWaveDoc*
 	CArray <CPoint, CPoint> polypoints_;		// points displayed with polyline
 
 	CSpikeList* p_spikelist_;
@@ -40,32 +40,32 @@ protected:
 
 	// Helpers
 public:
-	void SetRangeMode(int mode) { m_rangemode = mode; }
-	int  GetRangeMode() const { return m_rangemode; }
+	void		SetRangeMode(int mode) { m_rangemode = mode; }
+	int			GetRangeMode() const { return m_rangemode; }
 
-	void SetPlotMode(int mode, int selclass) { m_plotmode = mode; m_selclass = selclass; }
-	int  GetPlotMode() const { return m_plotmode; }
+	void		SetPlotMode(int mode, int selclass) { m_plotmode = mode; m_selclass = selclass; }
+	int			GetPlotMode() const { return m_plotmode; }
 
-	void SetSelClass(int selclass) { m_selclass = selclass; }
-	int  GetSelClass() const { return m_selclass; }
+	void		SetSelClass(int selclass) { m_selclass = selclass; }
+	int			GetSelClass() const { return m_selclass; }
 
-	void SetTextOption(BOOL bText) { m_bText = bText; }
-	BOOL GetTextOption() const { return m_bText; }
+	void		SetTextOption(BOOL bText) { m_bText = bText; }
+	BOOL		GetTextOption() const { return m_bText; }
 
-	void SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document) { p_dbwave_doc_ = p_document; p_spikelist_ = p_spk_list; m_selectedspike = -1; }
-	void SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void		SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document) { p_dbwave_doc_ = p_document; p_spikelist_ = p_spk_list; m_selectedspike = -1; }
+	void		SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
 
-	void SetCurrentClass(int curcla) { m_currentclass = curcla; }
-	int  GetCurrentClass() const { return m_currentclass; }
+	void		SetCurrentClass(int curcla) { m_currentclass = curcla; }
+	int			GetCurrentClass() const { return m_currentclass; }
 
-	void SetTimeIntervals(long l_first, long l_last) { m_lFirst = l_first; m_lLast = l_last; }
-	long GetTimeFirst() const { return m_lFirst; }
-	long GetTimeLast() const { return m_lLast; }
+	void		SetTimeIntervals(long l_first, long l_last) { m_lFirst = l_first; m_lLast = l_last; }
+	long		GetTimeFirst() const { return m_lFirst; }
+	long		GetTimeLast() const { return m_lLast; }
 
-	void SetSpkIndexes(int first, int last) { m_spkfirst = first, m_spklast = last; }
-	int	GetHitSpike() const { return m_hitspk; }
-	int	GetSelectedSpike() const { return m_selectedspike; }
-	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_dbwave_doc_ = p_document; }
+	void		SetSpkIndexes(int first, int last) { m_spkfirst = first, m_spklast = last; }
+	int			GetHitSpike() const { return m_hitspk; }
+	int			GetSelectedSpike() const { return m_selectedspike; }
+	void		DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_dbwave_doc_ = p_document; }
 
 	// non-inline functions
 	void		MoveVTtrack(int itrack, int newval);

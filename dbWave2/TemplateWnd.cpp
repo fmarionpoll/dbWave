@@ -139,7 +139,7 @@ void CTemplateWnd::DeleteArrays()
 
 void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 {
-	if (m_erasebkgnd)		// erase background
+	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
 
 	if (m_tpllen == 0)
@@ -152,7 +152,7 @@ void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2);
 	p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
 
-	GetExtents();
+	//GetExtents();
 	PrepareDC(p_dc);
 
 	if (m_polypts.GetSize() != m_tpllen * 6)
