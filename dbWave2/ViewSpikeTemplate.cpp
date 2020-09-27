@@ -32,6 +32,7 @@ IMPLEMENT_DYNCREATE(CViewSpikeTemplates, CDaoRecordView)
 CViewSpikeTemplates::CViewSpikeTemplates()
 	: CDaoRecordView(CViewSpikeTemplates::IDD), m_pSpkDoc(nullptr), m_pSpkList(nullptr), m_lFirst(0), m_lLast(0),
 	mdPM(nullptr), mdMO(nullptr), m_psC(nullptr), m_ktagleft(0), m_ktagright(0), m_scrollFilePos_infos()
+	, m_bDisplaySingleClass(FALSE)
 {
 	m_timefirst = 0.0f;
 	m_timelast = 0.0f;
@@ -42,7 +43,7 @@ CViewSpikeTemplates::CViewSpikeTemplates()
 	m_ifirstsortedclass = 0;
 	m_ballfiles = FALSE;
 	m_spikeno = -1;
-	m_ballclasses = FALSE;
+	m_bDisplaySingleClass = FALSE;
 	m_binit = FALSE;
 	m_ballTempl = FALSE;
 	m_ballSort = FALSE;
@@ -157,6 +158,7 @@ void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK1, m_ballfiles);
 	DDX_Control(pDX, IDC_TAB1, m_tab1Ctrl);
 	DDX_Control(pDX, IDC_TAB2, m_tabCtrl);
+	DDX_Check(pDX, IDC_DISPLAYSINGLECLASS, m_bDisplaySingleClass);
 }
 
 BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CDaoRecordView)
@@ -173,8 +175,6 @@ BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CDaoRecordView)
 	ON_BN_CLICKED(IDC_BUILD, OnBuildTemplates)
 	ON_EN_CHANGE(IDC_HITRATE, OnEnChangeHitrate)
 	ON_EN_CHANGE(IDC_TOLERANCE, OnEnChangeTolerance)
-	ON_BN_CLICKED(IDC_RADIO1, Onallclasses)
-	ON_BN_CLICKED(IDC_RADIO2, Onsingleclass)
 	ON_EN_CHANGE(IDC_HITRATE2, OnEnChangeHitrateSort)
 	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST2, OnKeydownTemplateList)
 	ON_BN_CLICKED(IDC_CHECK1, OnCheck1)
@@ -187,6 +187,7 @@ BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CDaoRecordView)
 	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &CViewSpikeTemplates::OnEnChangeIfirstsortedclass)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &CViewSpikeTemplates::OnTcnSelchangeTab2)
 	ON_NOTIFY(NM_CLICK, IDC_TAB2, &CViewSpikeTemplates::OnNMClickTab2)
+	ON_BN_CLICKED(IDC_DISPLAYSINGLECLASS, &CViewSpikeTemplates::OnBnClickedDisplaysingleclass)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -307,7 +308,6 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	m_ktagright = m_spkForm.AddVTtag(m_psC->kright);
 
 	UpdateFileParameters();
-	((CButton*)GetDlgItem(IDC_RADIO2))->SetCheck(1);
 	UpdateCtrlTab1(0);
 }
 
@@ -317,9 +317,8 @@ void CViewSpikeTemplates::UpdateFileParameters()
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 	const auto icur = m_pSpkDoc->GetSpkList_CurrentIndex();
 	m_pSpkDoc->SetSpkList_AsCurrent(icur);
-
-	// reset tab control
 	m_tabCtrl.DeleteAllItems();
+
 	// load list of detection parameters
 	auto j = 0;
 	for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
@@ -365,7 +364,7 @@ void CViewSpikeTemplates::SelectSpikeList(int icur)
 		m_psC->kleft = m_pSpkList->GetSpikePretrig();
 		m_psC->kright = m_psC->kleft + m_pSpkList->GetSpikeRefractory();
 	}
-	if (m_ballclasses)
+	if (!m_bDisplaySingleClass)
 		m_spkForm.SetPlotMode(PLOT_BLACK, 0);
 	else
 		m_spkForm.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
@@ -489,22 +488,6 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return 0L;
-}
-
-void CViewSpikeTemplates::Onallclasses()
-{
-	m_ballclasses = TRUE;
-	GetDlgItem(IDC_EDIT2)->ShowWindow(SW_HIDE);
-	m_spkForm.SetPlotMode(PLOT_BLACK, m_spikenoclass);
-	m_spkForm.Invalidate();
-}
-
-void CViewSpikeTemplates::Onsingleclass()
-{
-	m_ballclasses = FALSE;
-	GetDlgItem(IDC_EDIT2)->ShowWindow(SW_SHOW);
-	m_spkForm.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
-	m_spkForm.Invalidate();
 }
 
 void CViewSpikeTemplates::OnEnChangeclassno()
@@ -662,7 +645,6 @@ void CViewSpikeTemplates::UpdateScrollBar()
 	else
 	{
 		GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_SHOW);
-
 		m_scrollFilePos_infos.fMask = SIF_ALL;
 		m_scrollFilePos_infos.nPos = m_lFirst;
 		m_scrollFilePos_infos.nPage = m_lLast - m_lFirst;
@@ -814,7 +796,7 @@ void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 {
 	// get list of classes
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
-	//int tpllen = m_psC->kright - m_psC->kleft + 1;
+	int tpllen = m_psC->kright - m_psC->kleft + 1;
 
 	// define and attach to ImageList to CListCtrl; create 1 item by default
 	if (pTPList->GetImageList(LVSIL_NORMAL) != &pTPList->m_imageList)
@@ -863,28 +845,28 @@ void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	{
 		// load file
 		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
-		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
-		if (m_pSpkDoc == nullptr)
+		auto pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
+		if (pSpkDoc == nullptr)
 			continue;
 		CString cs;
 		cs.Format(_T("%i/%i - "), ifile, lastfile);
 		cs += p_dbwave_doc->GetDB_CurrentSpkFileName(FALSE);
 		p_dbwave_doc->SetTitle(cs);
-		m_pSpkDoc->SetModifiedFlag(FALSE);
+		pSpkDoc->SetModifiedFlag(FALSE);
 
-		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist); // load pointer to spike list
-		if (!m_pSpkList->IsClassListValid())		// if class list not valid:
+		auto pSpkList = pSpkDoc->SetSpkList_AsCurrent(currentlist); // load pointer to spike list
+		if (!pSpkList->IsClassListValid())		// if class list not valid:
 		{
-			m_pSpkList->UpdateClassList();			// rebuild list of classes
-			m_pSpkDoc->SetModifiedFlag();			// and set modified flag
+			pSpkList->UpdateClassList();		// rebuild list of classes
+			pSpkDoc->SetModifiedFlag();			// and set modified flag
 		}
-		const auto nspikes = m_pSpkList->GetTotalSpikes();
+		const auto nspikes = pSpkList->GetTotalSpikes();
 
 		// add spikes to templates - create templates on the fly
 		int j_templ;
 		for (auto i = 0; i < nspikes; i++)
 		{
-			const auto cla = m_pSpkList->GetSpikeClass(i);
+			const auto cla = pSpkList->GetSpikeClass(i);
 			auto b_found = FALSE;
 			for (j_templ = 0; j_templ < pTPList->GetTemplateDataSize(); j_templ++)
 			{
@@ -905,7 +887,7 @@ void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 			}
 
 			// get data and add spike
-			const auto p_spik = m_pSpkList->GetpSpikeData(i);
+			const auto p_spik = pSpkList->GetpSpikeData(i);
 			pTPList->tAdd(j_templ, p_spik);	// add spike to template j
 			pTPList->tAdd(p_spik);		// add spike to template zero
 		}
@@ -997,7 +979,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 		for (auto i = 0; i < nspikes; i++)
 		{
 			// filter out undesirable spikes
-			if (!m_ballclasses)
+			if (m_bDisplaySingleClass)
 			{
 				if (m_pSpkList->GetSpikeClass(i) != m_spikenoclass)
 					continue;
@@ -1115,7 +1097,7 @@ void CViewSpikeTemplates::SortSpikes()
 		for (auto ispike = 0; ispike < nspikes; ispike++)
 		{
 			// filter out undesirable spikes - i.e. not relevant to the sort
-			if (!m_ballclasses)
+			if (m_bDisplaySingleClass)
 			{
 				// skip spikes that do not belong to selected class
 				if (m_pSpkList->GetSpikeClass(ispike) != m_spikenoclass)
@@ -1446,4 +1428,18 @@ void CViewSpikeTemplates::OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto icursel = m_tabCtrl.GetCurSel();
 	SelectSpikeList(icursel);
 	*pResult = 0;
+}
+
+void CViewSpikeTemplates::OnBnClickedDisplaysingleclass()
+{
+	UpdateData(TRUE);
+	if (m_bDisplaySingleClass) {
+		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_SHOW);
+		m_spkForm.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
+	}
+	else {
+		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_HIDE);
+		m_spkForm.SetPlotMode(PLOT_BLACK, m_spikenoclass);
+	}
+	m_spkForm.Invalidate();
 }

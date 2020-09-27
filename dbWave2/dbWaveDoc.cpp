@@ -145,7 +145,8 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 	// create dbFile
 	m_pDB = new CdbWdatabase;
 	m_pDB->Attach(&m_currentDatafileName, &m_currentSpikefileName);
-	m_pDB->Create(cs_name, dbLangGeneral, dbVersion30);
+	using DAO::DatabaseTypeEnum;
+	m_pDB->Create(cs_name, dbLangGeneral, DatabaseTypeEnum::dbVersion30);
 	m_dbFilename = cs_name;
 	m_ProposedDataPathName = cs_name.Left(cs_name.ReverseFind('.'));
 	m_pDB->CreateTables();
@@ -887,11 +888,13 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 
 	//-------------------------------------------------------
 	// remove non-relevant files from the new database
-	if (p_new->m_pDB->m_mainTableSet.GetEditMode() != dbEditNone)
+	using DAO::EditModeEnum;
+	if (p_new->m_pDB->m_mainTableSet.GetEditMode() != EditModeEnum::dbEditNone)
 		p_new->m_pDB->m_mainTableSet.Update();
 	p_new->m_pDB->m_mainTableSet.Close();				// close dynaset and open as datatable
 
-	try { p_new->m_pDB->m_mainTableSet.Open(dbOpenTable, nullptr, 0); }
+	using DAO::RecordsetTypeEnum;
+	try { p_new->m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenTable, nullptr, 0); }
 	catch (CDaoException* e) { AfxMessageBox(e->m_pErrorInfo->m_strDescription); e->Delete(); return FALSE; }
 
 	// load OleTime into array and avoid duplicating data acq file with the same A/D time
@@ -1015,7 +1018,8 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 	// -------------------------- cancel any pending edit or add operation
 	m_pDB->UpdateTables();
 	m_pDB->m_mainTableSet.Close();				// close dynaset and open as datatable
-	try { m_pDB->m_mainTableSet.Open(dbOpenTable, nullptr, 0); }
+	using DAO::RecordsetTypeEnum;
+	try { m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenTable, nullptr, 0); }
 	catch (CDaoException* e)
 	{
 		AfxMessageBox(_T("Cancel import: ") + e->m_pErrorInfo->m_strDescription);
@@ -1143,7 +1147,8 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 	// open dynaset
 	m_pDB->m_mainTableSet.Close();
 	try {
-		m_pDB->m_mainTableSet.Open(dbOpenDynaset, nullptr, 0);
+		using DAO::RecordsetTypeEnum;
+		m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenDynaset, nullptr, 0);
 	}
 	catch (CDaoException* e) {
 		AfxMessageBox(e->m_pErrorInfo->m_strDescription);
@@ -1235,7 +1240,8 @@ BOOL CdbWaveDoc::ExtractFilenamesFromDatabase(const LPCSTR filename, CStringArra
 	// check for the presence of Table 'table'
 	try
 	{
-		record_set.Open(dbOpenTable, cs_table);
+		using DAO::RecordsetTypeEnum;
+		record_set.Open(RecordsetTypeEnum::dbOpenTable, cs_table);
 		// check if column "filename" is present
 		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_FILENAME].csColName, fieldinfo_filename);
 		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_FILESPK].csColName, fieldinfo_filespk);
@@ -1256,8 +1262,9 @@ BOOL CdbWaveDoc::ExtractFilenamesFromDatabase(const LPCSTR filename, CStringArra
 	// open tables
 	try
 	{
-		path_set.Open(dbOpenTable, nullptr, 0);
-		table_set.Open(dbOpenDynaset, nullptr, 0);
+		using DAO::RecordsetTypeEnum;
+		path_set.Open(RecordsetTypeEnum::dbOpenTable, nullptr, 0);
+		table_set.Open(RecordsetTypeEnum::dbOpenDynaset, nullptr, 0);
 	}
 	catch (CDaoException* e)
 	{
@@ -1335,7 +1342,8 @@ BOOL CdbWaveDoc::ImportDatabase(CString& filename)
 
 	// open dynaset
 	m_pDB->m_mainTableSet.Close();
-	try { m_pDB->m_mainTableSet.Open(dbOpenDynaset, nullptr, 0); }
+	using DAO::RecordsetTypeEnum;
+	try { m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenDynaset, nullptr, 0); }
 	catch (CDaoException* e) {
 		AfxMessageBox(e->m_pErrorInfo->m_strDescription);
 		e->Delete();
@@ -2233,7 +2241,8 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 	m_pDB->UpdateTables();
 
 	m_pDB->m_mainTableSet.Close();				// close dynaset and open as datatable
-	try { m_pDB->m_mainTableSet.Open(dbOpenTable, nullptr, 0); }
+	using DAO::RecordsetTypeEnum;
+	try { m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenTable, nullptr, 0); }
 	catch (CDaoException* e) { AfxMessageBox(e->m_pErrorInfo->m_strDescription); e->Delete(); return; }
 
 	// scan database to collect all file names
@@ -2312,7 +2321,8 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 
 	// re-open dynaset
 	m_pDB->m_mainTableSet.Close();
-	try { m_pDB->m_mainTableSet.Open(dbOpenDynaset, nullptr, 0); }
+	using DAO::RecordsetTypeEnum;
+	try { m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenDynaset, nullptr, 0); }
 	catch (CDaoException* e) { AfxMessageBox(e->m_pErrorInfo->m_strDescription); e->Delete(); return; }
 	m_pDB->m_mainTableSet.Requery();
 
@@ -2418,7 +2428,10 @@ void CdbWaveDoc::RemoveMissingFiles()
 	m_pDB->UpdateTables();
 
 	m_pDB->m_mainTableSet.Close();				// close dynaset and open as datatable
-	try { m_pDB->m_mainTableSet.Open(dbOpenTable, nullptr, 0); }
+	try { 
+		using DAO::RecordsetTypeEnum;
+		m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenTable, nullptr, 0); 
+	}
 	catch (CDaoException* e) { AfxMessageBox(e->m_pErrorInfo->m_strDescription); e->Delete(); return; }
 
 	// load OleTime into array and avoid duplicating data acq file with the same A/D time
@@ -2458,7 +2471,10 @@ void CdbWaveDoc::RemoveMissingFiles()
 
 	// open dynaset
 	m_pDB->m_mainTableSet.Close();
-	try { m_pDB->m_mainTableSet.Open(dbOpenDynaset, nullptr, 0); }
+	try {
+		using DAO::RecordsetTypeEnum;
+		m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenDynaset, nullptr, 0);
+	}
 	catch (CDaoException* e) { AfxMessageBox(e->m_pErrorInfo->m_strDescription); e->Delete(); return; }
 	m_pDB->m_mainTableSet.Requery();
 }
@@ -2485,7 +2501,10 @@ void CdbWaveDoc::RemoveFalseSpkFiles()
 	m_pDB->UpdateTables();
 
 	m_pDB->m_mainTableSet.Close();				// close dynaset and open as datatable
-	try { m_pDB->m_mainTableSet.Open(dbOpenTable, nullptr, 0); }
+	try {
+		using DAO::RecordsetTypeEnum;
+		m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenTable, nullptr, 0); 
+	}
 	catch (CDaoException* e) { AfxMessageBox(e->m_pErrorInfo->m_strDescription); e->Delete(); return; }
 
 	// load OleTime into array and avoid duplicating data acq file with the same A/D time
@@ -2539,7 +2558,10 @@ void CdbWaveDoc::RemoveFalseSpkFiles()
 
 	// open dynaset
 	m_pDB->m_mainTableSet.Close();
-	try { m_pDB->m_mainTableSet.Open(dbOpenDynaset, nullptr, 0); }
+	try {
+		using DAO::RecordsetTypeEnum;
+		m_pDB->m_mainTableSet.Open(RecordsetTypeEnum::dbOpenDynaset, nullptr, 0);
+	}
 	catch (CDaoException* e) { AfxMessageBox(e->m_pErrorInfo->m_strDescription); e->Delete(); return; }
 	m_pDB->m_mainTableSet.Requery();
 

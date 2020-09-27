@@ -594,8 +594,10 @@ void CTemplateListWnd::SetHitRate_Tolerance(int* phitrate, float* ptolerance)
 	if (m_ktolerance != *ptolerance)
 	{
 		m_ktolerance = *ptolerance;
-		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
-			GetTemplateWnd(i)->SetkTolerance(&m_ktolerance);
+		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++) {
+			CTemplateWnd* ptemplate = GetTemplateWnd(i);
+			ptemplate->SetkTolerance(&m_ktolerance);
+		}
 		m_tpl0.m_ktolerance = m_ktolerance;
 	}
 }
@@ -604,8 +606,10 @@ void CTemplateListWnd::SetYWExtOrg(int extent, int zero)
 {
 	m_yextent = extent;
 	m_yzero = zero;
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
-		GetTemplateWnd(i)->SetYWExtOrg(extent, zero);
+	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++) {
+		CTemplateWnd* ptemplate = GetTemplateWnd(i);
+		ptemplate->SetYWExtOrg(extent, zero);
+	}
 }
 
 void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)

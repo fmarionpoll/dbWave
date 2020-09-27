@@ -286,31 +286,15 @@ void CdbEditFieldDlg::OnBnClickedOk()
 	CDialogEx::OnOK();
 }
 
-void CdbEditFieldDlg::ModifySelected()
-{
-	const auto iedit = m_pMainTable->GetEditMode();
-	if (iedit != dbEditNone)
-		m_pMainTable->Update();
 
-	const auto bookmark_current = m_pMainTable->GetBookmark();
-
-	const auto u_selected_count = m_pdbDoc->m_selectedRecords.GetSize();
-	ASSERT(u_selected_count > 0);
-
-	for (auto i = 0; i < u_selected_count; i++)
-	{
-		const long n_item = m_pdbDoc->m_selectedRecords.GetAt(i);
-		m_pMainTable->SetAbsolutePosition(n_item);
-		ModifyCurrent();
-	}
-	m_pMainTable->SetBookmark(bookmark_current);
-}
 
 void CdbEditFieldDlg::ModifyAll()
 {
 	const auto iedit = m_pMainTable->GetEditMode();
-	if (iedit != dbEditNone)
+	using DAO::EditModeEnum;
+	if (iedit != EditModeEnum::dbEditNone)
 		m_pMainTable->Update();
+	
 
 	const auto bookmark_current = m_pMainTable->GetBookmark();
 	m_pMainTable->MoveFirst();

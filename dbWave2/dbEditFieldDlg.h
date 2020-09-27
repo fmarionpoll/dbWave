@@ -33,7 +33,26 @@ protected:
 	void	DisplayElements();
 	void	ModifyCurrent();
 	void	ModifyAll();
-	void	ModifySelected();
+	void	ModifySelected()
+	{
+		const auto iedit = m_pMainTable->GetEditMode();
+		using DAO::EditModeEnum;
+		if (iedit != EditModeEnum::dbEditNone)
+			m_pMainTable->Update();
+
+		const auto bookmark_current = m_pMainTable->GetBookmark();
+
+		const auto u_selected_count = m_pdbDoc->m_selectedRecords.GetSize();
+		ASSERT(u_selected_count > 0);
+
+		for (auto i = 0; i < u_selected_count; i++)
+		{
+			const long n_item = m_pdbDoc->m_selectedRecords.GetAt(i);
+			m_pMainTable->SetAbsolutePosition(n_item);
+			ModifyCurrent();
+		}
+		m_pMainTable->SetBookmark(bookmark_current);
+	}
 
 	long	m_sourceID;
 	long	m_destID{};

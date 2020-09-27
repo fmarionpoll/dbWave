@@ -17,7 +17,7 @@ using namespace Office;
 using namespace VBIDE;
 
 #import "./include/office/excel.exe" \
-		exclude("IFont", "IPicture") \
+		exclude("IFont",		"IPicture") \
 		rename("VBE",			"testVBE") \
 		rename("FindText",		"ExcelFindText") \
 		rename("NoPrompt",		"ExcelNoPrompt") \

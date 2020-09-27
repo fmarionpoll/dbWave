@@ -28,6 +28,7 @@ public:
 	BOOL				m_ballTempl;
 	BOOL				m_ballSort;
 	CTabCtrl			m_tab1Ctrl;
+	BOOL				m_bDisplaySingleClass;
 
 	CdbWaveDoc* GetDocument();
 
@@ -59,7 +60,6 @@ protected:
 	int					m_ktagright;
 	SCROLLINFO			m_scrollFilePos_infos;
 	int					m_spikeno;
-	BOOL				m_ballclasses;
 
 	// Attributes
 public:
@@ -100,7 +100,6 @@ protected:
 	void UpdateCtrlTab1(int iselect);
 	void SetExtentZeroAllDisplay(int extent, int zero);
 
-
 public:
 	// Generated message map functions
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -133,6 +132,7 @@ public:
 	CTabCtrl m_tabCtrl;
 	afx_msg void OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedDisplaysingleclass();
 };
 
 /////////////////////////////////////////////////////////////////////////////

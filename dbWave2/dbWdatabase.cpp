@@ -94,15 +94,18 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 
 	//first create the main field, and ID number that is incremented automatically
 	// when a new record is created. This column is indexed
+	using DAO::DataTypeEnum;
+	using DAO::FieldAttributeEnum;
+	using DAO::CollatingOrderEnum;
 	CDaoFieldInfo fd0;
 	fd0.m_strName = m_mainTableSet.m_desc[CH_ID].csColName;	// "ID"
-	fd0.m_nType = dbLong;						// Primary
+	fd0.m_nType = DataTypeEnum::dbLong;						// Primary
 	fd0.m_lSize = 4;							// Primary
-	fd0.m_lAttributes = dbAutoIncrField;				// Primary
+	fd0.m_lAttributes = FieldAttributeEnum::dbAutoIncrField;				// Primary
 	fd0.m_nOrdinalPosition = 1;							// Secondary
 	fd0.m_bRequired = TRUE;							// Secondary
 	fd0.m_bAllowZeroLength = FALSE;						// Secondary
-	fd0.m_lCollatingOrder = dbSortGeneral;				// Secondary
+	fd0.m_lCollatingOrder = CollatingOrderEnum::dbSortGeneral;				// Secondary
 	fd0.m_strForeignName = _T("");						// Secondary
 	fd0.m_strSourceField = _T("");						// Secondary
 	fd0.m_strSourceTable = _T("");						// Secondary
@@ -113,12 +116,12 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 
 	// then create data fields
 	auto i = 1;
-	table_def.CreateField(m_mainTableSet.m_desc[i].csColName, dbDate, 8, 0);		// 1 -acq_date
+	table_def.CreateField(m_mainTableSet.m_desc[i].csColName, DataTypeEnum::dbDate, 8, 0);		// 1 -acq_date
 
 	fd0.m_bAllowZeroLength = TRUE;
 	fd0.m_bRequired = FALSE;
-	fd0.m_lAttributes = dbVariableField;
-	fd0.m_nType = dbText;
+	fd0.m_lAttributes = FieldAttributeEnum::dbVariableField;
+	fd0.m_nType = DataTypeEnum::dbText;
 	fd0.m_lSize = 255;
 
 	for (i = 2; i <= 4; i++)													// 2 -filename / 3 -filespk // 4 - "acq_comment"
@@ -131,16 +134,16 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 	i = 5;																		// 5 - "more"
 	fd0.m_strName = m_mainTableSet.m_desc[i].csColName;
 	fd0.m_nOrdinalPosition = i;
-	fd0.m_nType = dbMemo;
-	fd0.m_lSize = dbMemo;
+	fd0.m_nType = DataTypeEnum::dbMemo;
+	fd0.m_lSize = DataTypeEnum::dbMemo;
 	table_def.CreateField(fd0);
 
 	for (i = 6; i <= 25; i++)
-		table_def.CreateField(m_mainTableSet.m_desc[i].csColName, dbLong, 4, 0);		//  6 - insectID to 25 = sex_ID
+		table_def.CreateField(m_mainTableSet.m_desc[i].csColName, DataTypeEnum::dbLong, 4, 0);		//  6 - insectID to 25 = sex_ID
 	for (i = 26; i <= 27; i++)
-		table_def.CreateField(m_mainTableSet.m_desc[i].csColName, dbDate, 8, 0);		// 26 - acqdate_day / 27 - acqdate_time
+		table_def.CreateField(m_mainTableSet.m_desc[i].csColName, DataTypeEnum::dbDate, 8, 0);		// 26 - acqdate_day / 27 - acqdate_time
 	i = 28;
-	table_def.CreateField(m_mainTableSet.m_desc[i].csColName, dbLong, 4, 0);			// 28 - expt_ID
+	table_def.CreateField(m_mainTableSet.m_desc[i].csColName, DataTypeEnum::dbLong, 4, 0);			// 28 - expt_ID
 
 	// create the corresponding indexes
 	CDaoIndexFieldInfo index_field0;
@@ -162,7 +165,8 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 	table_def.Append();
 
 	// create relations
-	const long l_attr = dbRelationDontEnforce; //dbRelationUpdateCascade;
+	using DAO::RelationAttributeEnum;
+	const long l_attr = RelationAttributeEnum::dbRelationDontEnforce; //dbRelationUpdateCascade;
 	if (!CreateRelationwithAssocTable(csTable, CH_INSECT_ID, l_attr, &m_insectSet)) return FALSE;
 	if (!CreateRelationwithAssocTable(csTable, CH_SENSILLUM_ID, l_attr, &m_sensillumSet)) return FALSE;
 	if (!CreateRelationwithAssocTable(csTable, CH_OPERATOR_ID, l_attr, &m_operatorSet)) return FALSE;
@@ -182,12 +186,12 @@ BOOL CdbWdatabase::CreateRelationwith2AssocTables(const LPCTSTR lpsz_foreign_tab
 {
 	try {
 		const LPCTSTR lpsz_table = m_desctab[column_first].szRelTable;
-
+		using DAO::RelationAttributeEnum;
 		CDaoRelationInfo rl_info;
 		rl_info.m_strTable = lpsz_table;
 		rl_info.m_strName.Format(_T("%s_%s"), lpsz_foreign_table, lpsz_table);
 		rl_info.m_strForeignTable = lpsz_foreign_table;
-		rl_info.m_lAttributes = dbRelationDontEnforce;
+		rl_info.m_lAttributes = RelationAttributeEnum::dbRelationDontEnforce;
 
 		CDaoRelationFieldInfo r_field[2];
 		r_field[0].m_strName = lpsz_table;
@@ -277,10 +281,11 @@ BOOL CdbWdatabase::OpenTables()
 	const CString cs_table = _T("table");
 
 	// check for the presence of Table 'table'
+	using DAO::RecordsetTypeEnum;
 	try
 	{
 		CDaoFieldInfo fd0;
-		record_set.Open(dbOpenTable, cs_table);
+		record_set.Open(RecordsetTypeEnum::dbOpenTable, cs_table);
 		// check if column "filename" is present
 		record_set.GetFieldInfo(m_mainTableSet.m_desc[CH_FILENAME].csColName, fd0);
 		// check number of columns
@@ -295,7 +300,9 @@ BOOL CdbWdatabase::OpenTables()
 			// open table definition
 			CDaoTableDef table_def(this);
 			CString cs_rel;
-			const long l_attr = dbRelationUpdateCascade;
+			using DAO::RelationAttributeEnum;
+			using DAO::DataTypeEnum;
+			const long l_attr = RelationAttributeEnum::dbRelationUpdateCascade;
 
 			switch (field_count)
 			{
@@ -305,8 +312,8 @@ BOOL CdbWdatabase::OpenTables()
 				table_def.Open(cs_table);
 				cs_rel = _T("table_Rel1");
 				const auto i_pos = cs_rel.GetLength() - 1;
-				table_def.CreateField(m_mainTableSet.m_desc[CH_STIM2_ID].csColName, dbLong, 4, 0); // stim2_ID
-				table_def.CreateField(m_mainTableSet.m_desc[CH_CONC2_ID].csColName, dbLong, 4, 0); // conc2_ID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_STIM2_ID].csColName, DataTypeEnum::dbLong, 4, 0); // stim2_ID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_CONC2_ID].csColName, DataTypeEnum::dbLong, 4, 0); // conc2_ID
 				cs_rel.SetAt(i_pos, '9');
 				CreateRelation(cs_rel, _T("stim"), cs_table, l_attr, _T("stimID"), m_mainTableSet.m_desc[CH_STIM2_ID].csColName); // stim2_ID
 				cs_rel.SetAt(i_pos, 'A');
@@ -316,7 +323,7 @@ BOOL CdbWdatabase::OpenTables()
 			// only 21 fields (instead of 22) - add one field for flags
 			case 21:
 				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_FLAG].csColName, dbLong, 4, 0);		// flag
+				table_def.CreateField(m_mainTableSet.m_desc[CH_FLAG].csColName, DataTypeEnum::dbLong, 4, 0);		// flag
 				table_def.Close();
 
 				// only 22 fields (instead of 24) - add 2 fields for strain and sex
@@ -325,8 +332,8 @@ BOOL CdbWdatabase::OpenTables()
 				table_def.Open(cs_table);
 
 				// add fields in the maintable, add the corresponding tables and the relations between the main table and the new index tables
-				table_def.CreateField(m_mainTableSet.m_desc[CH_STRAIN_ID].csColName, dbLong, 4, 0);	// strain_ID
-				table_def.CreateField(m_mainTableSet.m_desc[CH_SEX_ID].csColName, dbLong, 4, 0);		// sex_ID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_STRAIN_ID].csColName, DataTypeEnum::dbLong, 4, 0);	// strain_ID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_SEX_ID].csColName, DataTypeEnum::dbLong, 4, 0);		// sex_ID
 				m_strainSet.CreateIndextable(_T("strain"), _T("strain"), _T("strainID"), 100, this);
 				m_sexSet.CreateIndextable(_T("sex"), _T("sex"), _T("sexID"), 10, this);
 				CreateRelation(_T("table_strain"), _T("strain"), cs_table, l_attr, _T("strainID"), m_mainTableSet.m_desc[CH_STRAIN_ID].csColName); // strain_ID
@@ -334,11 +341,11 @@ BOOL CdbWdatabase::OpenTables()
 				// type -> location
 				DeleteRelation(_T("table_type"));									// delete relationship
 				table_def.DeleteField(CH_LOCATION_ID);								// delete the field (index is different because we deleted one field)
-				table_def.CreateField(m_mainTableSet.m_desc[CH_LOCATION_ID].csColName, dbLong, 4, 0);	// locationID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_LOCATION_ID].csColName, DataTypeEnum::dbLong, 4, 0);	// locationID
 				// stage -> sensillumname
 				DeleteRelation(_T("table_stage"));									// delete relationship
 				table_def.DeleteField(CH_SENSILLUM_ID);								// delete field
-				table_def.CreateField(m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName, dbLong, 4, 0);	// sensillumID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName, DataTypeEnum::dbLong, 4, 0);	// sensillumID
 				table_def.Close();
 
 				// rename table stage into sensillumname
@@ -365,21 +372,21 @@ BOOL CdbWdatabase::OpenTables()
 			// only 24 fields instead of 26
 			case 24:
 				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].csColName, dbLong, 4, 0);	// repeatID
-				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].csColName, dbLong, 4, 0);	// repeat2ID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].csColName, DataTypeEnum::dbLong, 4, 0);	// repeatID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].csColName, DataTypeEnum::dbLong, 4, 0);	// repeat2ID
 				table_def.Close();
 
 				// only 26 instead of 28
 			case 26:
 				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_DAY].csColName, dbDate, 8, 0); // acqdate_day
-				table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_TIME].csColName, dbDate, 8, 0); // acqdate_time
+				table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_DAY].csColName, DataTypeEnum::dbDate, 8, 0); // acqdate_day
+				table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_TIME].csColName, DataTypeEnum::dbDate, 8, 0); // acqdate_time
 				table_def.Close();
 
 				// only 28 instead of 29: add "exptID" column and 1 table
 			case 28:
 				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].csColName, dbLong, 4, 0);	// expt_ID
+				table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].csColName, DataTypeEnum::dbLong, 4, 0);	// expt_ID
 				m_exptSet.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
 				CreateRelation(_T("table_expt"), _T("expt"), cs_table, l_attr, _T("exptID"), m_mainTableSet.m_desc[CH_EXPT_ID].csColName); // strain_ID
 				table_def.Close();
@@ -425,7 +432,8 @@ BOOL CdbWdatabase::OpenTables()
 	try
 	{
 		m_mainTableSet.m_defaultName = GetName();
-		m_mainTableSet.Open(dbOpenDynaset, nullptr, 0);
+		using DAO::RecordsetTypeEnum;
+		m_mainTableSet.Open(RecordsetTypeEnum::dbOpenDynaset, nullptr, 0);
 	}
 	catch (CDaoException* e)
 	{
@@ -442,8 +450,9 @@ BOOL CdbWdatabase::OpenTables()
 }
 
 void CdbWdatabase::OpenIndexTable(CdbIndexTable* p_index_table_set) {
+	using DAO::RecordsetTypeEnum;
 	p_index_table_set->m_defaultName = GetName();
-	p_index_table_set->Open(dbOpenTable, nullptr, 0);
+	p_index_table_set->Open(RecordsetTypeEnum::dbOpenTable, nullptr, 0);
 }
 
 void CdbWdatabase::CloseDatabase()
@@ -476,24 +485,24 @@ void CdbWdatabase::UpdateTables()
 	//	= dbEditInProgress (Edit has been called)
 	//	= dbEditAdd (AddNew has been called)
 	// Update() is necessary before calling Moveto to complete AddNew or Edit operations
-
-	if (m_mainTableSet.GetEditMode() != dbEditNone)
+	using DAO::EditModeEnum;
+	if (m_mainTableSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_mainTableSet.Update();
-	if (m_operatorSet.GetEditMode() != dbEditNone)
+	if (m_operatorSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_operatorSet.Update();
-	if (m_insectSet.GetEditMode() != dbEditNone)
+	if (m_insectSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_insectSet.Update();
-	if (m_locationSet.GetEditMode() != dbEditNone)
+	if (m_locationSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_locationSet.Update();
-	if (m_sensillumSet.GetEditMode() != dbEditNone)
+	if (m_sensillumSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_sensillumSet.Update();
-	if (m_pathSet.GetEditMode() != dbEditNone)
+	if (m_pathSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_pathSet.Update();
-	if (m_sexSet.GetEditMode() != dbEditNone)
+	if (m_sexSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_sexSet.Update();
-	if (m_strainSet.GetEditMode() != dbEditNone)
+	if (m_strainSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_strainSet.Update();
-	if (m_exptSet.GetEditMode() != dbEditNone)
+	if (m_exptSet.GetEditMode() != EditModeEnum::dbEditNone)
 		m_exptSet.Update();
 }
 
