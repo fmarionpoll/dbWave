@@ -176,8 +176,6 @@ void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-// ---------------------------------------------------------------------------------
-
 void CTemplateWnd::GetExtents()
 {
 	if (m_yWE == 1) // && m_yWO == 0)
@@ -289,10 +287,6 @@ void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 	}
 	m_polypts[m_polypts.GetUpperBound()] = m_polypts[m_tpllen * 2 + 1];
 }
-
-// ------------------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------------
 
 void CTemplateWnd::SetTemplateLength(int len, int extent, int org)
 {
@@ -530,6 +524,7 @@ void CTemplateWnd::tGlobalstats(double* gstd, double* gdist)
 
 // ---------------------------------------------------------------------------------
 // trap messages and send them to parent
+
 void CTemplateWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	MapWindowPoints(GetParent(), &point, 1);

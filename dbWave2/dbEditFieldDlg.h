@@ -36,8 +36,7 @@ protected:
 	void	ModifySelected()
 	{
 		const auto iedit = m_pMainTable->GetEditMode();
-		using DAO::EditModeEnum;
-		if (iedit != EditModeEnum::dbEditNone)
+		if (iedit != dbEditNone)
 			m_pMainTable->Update();
 
 		const auto bookmark_current = m_pMainTable->GetBookmark();

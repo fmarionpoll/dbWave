@@ -78,8 +78,8 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_desc[CH_ACQDATE_TIME].pdataItem = nullptr;
 	m_desc[CH_EXPT_ID].pdataItem = &m_expt_ID;
 
-	using DAO::RecordsetTypeEnum;
-	m_nDefaultType = RecordsetTypeEnum::dbOpenDynaset;
+	m_nDefaultType = dbOpenDynaset;
+
 	m_desc[CH_ACQDATE_DAY].otfilterParam1 = static_cast<DATE>(0); // 16
 	m_desc[CH_ACQDATE_TIME].otfilterParam1 = static_cast<DATE>(0); // 17
 	m_nParams = 18;
@@ -322,8 +322,7 @@ void CdbMainTable::RefreshQuery()
 	else
 	{
 		Close();
-		using DAO::RecordsetTypeEnum;
-		Open(RecordsetTypeEnum::dbOpenDynaset);
+		Open(dbOpenDynaset);
 	}
 }
 

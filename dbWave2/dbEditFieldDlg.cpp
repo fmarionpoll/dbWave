@@ -291,8 +291,7 @@ void CdbEditFieldDlg::OnBnClickedOk()
 void CdbEditFieldDlg::ModifyAll()
 {
 	const auto iedit = m_pMainTable->GetEditMode();
-	using DAO::EditModeEnum;
-	if (iedit != EditModeEnum::dbEditNone)
+	if (iedit != dbEditNone)
 		m_pMainTable->Update();
 	
 

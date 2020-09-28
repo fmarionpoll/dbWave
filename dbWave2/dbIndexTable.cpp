@@ -22,8 +22,7 @@ CdbIndexTable::CdbIndexTable(CDaoDatabase* pdb)
 	m_ID = 0;
 	m_nFields = 2;
 
-	using DAO::RecordsetTypeEnum;
-	m_nDefaultType = RecordsetTypeEnum::dbOpenTable;
+	m_nDefaultType = dbOpenTable;
 	m_defaultSQL = _T("[name]");
 	m_DFX_cs = _T("[cs]");
 	m_DFX_ID = _T("[ID]");
@@ -187,17 +186,14 @@ void CdbIndexTable::CreateIndextable(const CString& cstablename, const CString& 
 
 	// create first field in the table
 	CDaoFieldInfo fd0;
-	using DAO::DataTypeEnum;
-	using DAO::FieldAttributeEnum;
-	using DAO::CollatingOrderEnum;
 	fd0.m_strName = cscol1;
-	fd0.m_nType = DataTypeEnum::dbText;	// Primary
+	fd0.m_nType = dbText;	// Primary
 	fd0.m_lSize = textSize;				// Primary
-	fd0.m_lAttributes = FieldAttributeEnum::dbVariableField;	// Primary
+	fd0.m_lAttributes = dbVariableField;	// Primary
 	fd0.m_nOrdinalPosition = 2;			// Secondary
 	fd0.m_bRequired = FALSE;			// Secondary
 	fd0.m_bAllowZeroLength = FALSE;		// Secondary
-	fd0.m_lCollatingOrder = CollatingOrderEnum::dbSortGeneral;
+	fd0.m_lCollatingOrder = dbSortGeneral;
 	fd0.m_strForeignName = _T("");		// Secondary
 	fd0.m_strSourceField = _T("");		// Secondary
 	fd0.m_strSourceTable = _T("");		// Secondary
@@ -225,9 +221,9 @@ void CdbIndexTable::CreateIndextable(const CString& cstablename, const CString& 
 
 	// create second field
 	fd0.m_strName = csIDcol2;
-	fd0.m_nType = DataTypeEnum::dbLong;				// Primary
-	fd0.m_lSize = 4;						// Primary
-	fd0.m_lAttributes = FieldAttributeEnum::dbAutoIncrField;	// Primary
+	fd0.m_nType = dbLong;				// Primary
+	fd0.m_lSize = 4;					// Primary
+	fd0.m_lAttributes = dbAutoIncrField;	// Primary
 	fd0.m_nOrdinalPosition = 2;			// Secondary
 	fd0.m_bRequired = TRUE;				// Secondary
 	tb.CreateField(fd0);
