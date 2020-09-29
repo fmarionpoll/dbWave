@@ -56,8 +56,8 @@ public:
 	void	SetTemplateLength(int len, int extent = -1, int org = -1);
 	void	tSetdisplayData();	// fill pMean data
 	void	tInit();			// init parameters, erase data pSum & pMean
-	void	tAddSpikeToTemplate(short* p_source);	// add a waveform to pSum
-	double	tPower();				// compute power of pSum
+	void	tAddSpikeTopSum(short* p_source);
+	double	tPowerOfpSum();	
 	BOOL	tGetNumberOfPointsWithin(short* p_source, int* hitrate);
 	double	tMinDist(short* p_source, int* ioffsetmin, BOOL bJitter = FALSE);
 	void	tGlobalstats(double* gstd, double* gdist);

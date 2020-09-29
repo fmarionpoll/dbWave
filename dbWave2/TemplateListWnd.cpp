@@ -523,7 +523,7 @@ BOOL CTemplateListWnd::tInit(int i)
 
 BOOL CTemplateListWnd::tAdd(short* p_source)
 {
-	m_tpl0.tAddSpikeToTemplate(p_source);
+	m_tpl0.tAddSpikeTopSum(p_source);
 	return TRUE;
 }
 
@@ -532,7 +532,7 @@ BOOL CTemplateListWnd::tAdd(int i, short* p_source)
 	const BOOL flag = (i >= 0) && (i < templatewnd_ptr_array.GetSize());
 	if (flag)
 	{
-		GetTemplateWnd(i)->tAddSpikeToTemplate(p_source);
+		GetTemplateWnd(i)->tAddSpikeTopSum(p_source);
 	}
 	return flag;
 }
@@ -541,7 +541,7 @@ BOOL CTemplateListWnd::tPower(int i, double* xpower)
 {
 	const BOOL flag = (i >= 0) && (i < templatewnd_ptr_array.GetSize());
 	if (flag)
-		*xpower = GetTemplateWnd(i)->tPower();
+		*xpower = GetTemplateWnd(i)->tPowerOfpSum();
 	return flag;
 }
 

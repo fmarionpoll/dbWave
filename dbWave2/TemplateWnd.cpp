@@ -152,7 +152,7 @@ void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2);
 	p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
 
-	//GetExtents();
+	GetExtents();
 	PrepareDC(p_dc);
 
 	if (m_polypts.GetSize() != m_tpllen * 6)
@@ -208,24 +208,25 @@ void CTemplateWnd::GetExtents()
 
 void CTemplateWnd::InitPolypointAbcissa()
 {
-	m_polypts.SetSize(m_tpllen * 6 + 2);
-	auto i1 = m_tpllen;
-	auto i2 = i1 * 2;
-	//long* p_destination = (long*) &m_polypts[0];
+	m_polypts.SetSize(m_tpllen * 3 + 2);
+	auto i0 = 0; // m_polypts[0].x;
+	auto i1 = i0 + m_tpllen;
+	auto i2 = i1 + 2 * m_tpllen - 1;
+	//long* pDest0 = (long*) &m_polypts[0];
 	//long* pDest1 = (long*) &m_polypts[m_tpllen*2];
 	//long* pDest2 = (long*) &m_polypts[m_polypts.GetUpperBound() -3];
 
-	for (auto i = 1; i <= m_tpllen; i++, i1++, i2++)
+	for (auto index = 0; index <= m_tpllen; index++, i0++, i1++, i2--)
 	{
-		//*p_destination = i;	// copy data
-		//p_destination += 2;
+		//*pDest0 = i;	// copy data
+		//pDest0 += 2;
 		//*pDest1 = i;
 		//pDest1 += 2;
 		//*pDest2 = i;
 		//pDest2 -= 2;
-		m_polypts[i].x = i;
-		m_polypts[i1].x = i;
-		m_polypts[i2].x = i;
+		m_polypts[i0].x = index;
+		m_polypts[i1].x = index;
+		m_polypts[i2].x = index;
 	}
 	m_polypts[m_polypts.GetUpperBound() - 1] = m_polypts[m_tpllen * 2];
 }
@@ -240,28 +241,28 @@ void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 	// fill with average data
 	auto p_avg = m_pAvg;
 	auto p_max = m_pMax0;
-	auto p_min = m_pMin0;
+	auto p_min = m_pMin0 + m_tpllen - 1 ;
 
 	//long* pDAvg = (long*) &m_polypts[1];
 	//long* pDMx = (long*) &m_polypts[m_tpllen*2 + 1];
 	//long* pDMi = (long*) &m_polypts[m_polypts.GetUpperBound()-2];
 
 	auto i1 = m_tpllen;
-	auto i2 = i1 * 2;
+	auto i2 = i1 + 2 * m_tpllen - 1;
 
 	if (!bScale)
 	{
-		for (auto i = 0; i < m_tpllen; i++, i1++, i2++)
+		for (auto i = 0; i < m_tpllen; i++, i1++, i2--)
 		{
-			m_polypts[i].x = *p_avg;
-			m_polypts[i1].x = *p_max;
-			m_polypts[i2].x = *p_min;
+			m_polypts[i].y = *p_avg;
+			m_polypts[i1].y = *p_max;
+			m_polypts[i2].y = *p_min;
 			//*pDAvg = *pAvg;
 			//*pDMx = *pMax;
 			//*pDMi = *pMin;
 			p_avg++;
 			p_max++;
-			p_min++;
+			p_min--;
 			//pDAvg+= 2;
 			//pDMx+= 2;
 			//pDMi-= 2;
@@ -269,17 +270,17 @@ void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 	}
 	else
 	{
-		for (int i = 0; i < m_tpllen; i++, i1++, i2++)
+		for (int i = 0; i < m_tpllen; i++, i1++, i2--)
 		{
-			m_polypts[i].x = MulDiv(*p_avg - m_yWO, m_yVE, m_yWE) + m_yVO;;
-			m_polypts[i1].x = MulDiv(*p_max - m_yWO, m_yVE, m_yWE) + m_yVO;
-			m_polypts[i2].x = MulDiv(*p_min - m_yWO, m_yVE, m_yWE) + m_yVO;
+			m_polypts[i].y = MulDiv(*p_avg - m_yWO, m_yVE, m_yWE) + m_yVO;;
+			m_polypts[i1].y = MulDiv(*p_max - m_yWO, m_yVE, m_yWE) + m_yVO;
+			m_polypts[i2].y = MulDiv(*p_min - m_yWO, m_yVE, m_yWE) + m_yVO;
 			//*pDAvg = MulDiv(*pAvg -m_yWO, m_yVE, m_yWE) + m_yVO;
 			//*pDMx = MulDiv(*pMax -m_yWO, m_yVE, m_yWE) + m_yVO;
 			//*pDMi = MulDiv(*pMin -m_yWO, m_yVE, m_yWE) + m_yVO;
 			p_avg++;
 			p_max++;
-			p_min++;
+			p_min--;
 			//pDAvg+= 2;
 			//pDMx+= 2;
 			//pDMi-= 2;
@@ -324,7 +325,7 @@ void CTemplateWnd::tInit()
 	m_nitems = 0;			// n elements
 }
 
-void CTemplateWnd::tAddSpikeToTemplate(short* p_source)
+void CTemplateWnd::tAddSpikeTopSum(short* p_source)
 {
 	mytype* p_sum = m_pSUM0;
 	mytype* p_sum2 = m_pSUM20;
@@ -376,7 +377,7 @@ void CTemplateWnd::tSetdisplayData()
 	}
 
 	// update power
-	tPower();
+	tPowerOfpSum();
 	m_bValid = TRUE;
 }
 
@@ -385,7 +386,7 @@ void CTemplateWnd::tSetdisplayData()
 //
 // compute power of this template
 
-double CTemplateWnd::tPower()
+double CTemplateWnd::tPowerOfpSum()
 {
 	mytype* p_sum = m_pSUM0 + m_xWO;
 	double xi;
@@ -518,7 +519,7 @@ void CTemplateWnd::tGlobalstats(double* gstd, double* gdist)
 
 	//.... compute global distance
 	if (!m_bValid)
-		tPower();
+		tPowerOfpSum();
 	*gdist = ystd * m_ktolerance / m_power;
 }
 
