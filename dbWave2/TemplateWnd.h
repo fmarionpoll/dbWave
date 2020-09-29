@@ -68,7 +68,9 @@ protected:
 
 	// Implementation : display
 protected:
-	CArray<CPoint, CPoint> m_polypts;		// points displayed with polyline
+	CArray<CPoint, CPoint> m_ptsAvg;		// points displayed with polyline
+	CArray<CPoint, CPoint> m_ptsArea;		// points displayed with polyline
+
 	void 	InitPolypointAbcissa();
 	void 	FillOrdinatesAtscale(BOOL bScale);
 	void	GetExtents();
