@@ -109,10 +109,10 @@ END_MESSAGE_MAP()
 CTemplateWnd::CTemplateWnd() : m_power(0), m_pMax0(nullptr), m_pMin0(nullptr)
 {
 	m_pSumArray = nullptr;
-	m_pSUM0 = nullptr; // array with sum (X)
-	m_pSUM20 = nullptr; // array with sum (X * X)
-	m_nitems = 0; // n elements
-	m_tpllen = 0; // length of template array
+	m_pSUM0 = nullptr;
+	m_pSUM20 = nullptr;
+	m_nitems = 0;
+	m_tpllen = 0;
 	m_pAvg = nullptr;
 	m_bValid = FALSE;
 	m_ktolerance = 1.96f;
@@ -155,7 +155,7 @@ void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 	GetExtents();
 	PrepareDC(p_dc);
 
-	if (m_polypts.GetSize() != m_tpllen * 6)
+	if (m_ptsArea.GetSize() != m_tpllen * 2)
 		InitPolypointAbcissa();
 
 	// transfer to polypoint, adjust amplitude & plot
@@ -164,12 +164,12 @@ void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 	// plot area between max and min in grey
 	const auto old_pen = p_dc->SelectObject(&m_penTable[SILVER_COLOR]);
 	const auto pold_b = (CBrush*)p_dc->SelectStockObject(LTGRAY_BRUSH);
-	p_dc->Polygon(&m_polypts[2 * m_tpllen], m_tpllen * 2 + 1);
+	p_dc->Polygon(&m_ptsArea[0], m_tpllen * 2 + 1);
 	p_dc->SelectObject(pold_b);
 
 	// plot central curve
 	p_dc->SelectStockObject(BLACK_PEN);
-	p_dc->Polyline(&m_polypts[0], m_tpllen);
+	p_dc->Polyline(&m_ptsAvg[0], m_tpllen);
 
 	// restore resources
 	p_dc->SelectObject(old_pen);
@@ -201,92 +201,59 @@ void CTemplateWnd::GetExtents()
 	}
 }
 
-// ------------------------------------------------------------------------------------
-// set abcissa:
-// first part of m_polypoints (m_tpllen points) = abcissa for the central line (average)
-// second part (m_tpllen*2 + 1 points) = closed polygon with upper and lower limits
-
 void CTemplateWnd::InitPolypointAbcissa()
 {
-	m_polypts.SetSize(m_tpllen * 3 + 2);
-	auto i0 = 0; // m_polypts[0].x;
-	auto i1 = i0 + m_tpllen;
-	auto i2 = i1 + 2 * m_tpllen - 1;
-	//long* pDest0 = (long*) &m_polypts[0];
-	//long* pDest1 = (long*) &m_polypts[m_tpllen*2];
-	//long* pDest2 = (long*) &m_polypts[m_polypts.GetUpperBound() -3];
+	m_ptsArea.SetSize(m_tpllen * 2 + 1);
+	m_ptsAvg.SetSize(m_tpllen);
+	auto i1 = 0;
+	auto i2 = m_ptsArea.GetUpperBound() - 1;
 
-	for (auto index = 0; index <= m_tpllen; index++, i0++, i1++, i2--)
+	for (auto index = 0; index < m_tpllen; index++, i1++, i2--)
 	{
-		//*pDest0 = i;	// copy data
-		//pDest0 += 2;
-		//*pDest1 = i;
-		//pDest1 += 2;
-		//*pDest2 = i;
-		//pDest2 -= 2;
-		m_polypts[i0].x = index;
-		m_polypts[i1].x = index;
-		m_polypts[i2].x = index;
+		m_ptsAvg[i1].x = index;
+		m_ptsArea[i1].x = index;
+		m_ptsArea[i2].x = index;
 	}
-	m_polypts[m_polypts.GetUpperBound() - 1] = m_polypts[m_tpllen * 2];
+	m_ptsArea[m_ptsArea.GetUpperBound()].x = m_ptsArea[0].x;
 }
 
-// ------------------------------------------------------------------------------------
-// set ordinates
-// first part of m_polypoints (m_tpllen points) = ordinates for the central line (average)
-// second part (m_tpllen*2 + 1 points) = closed polygon with upper and lower limits
 
 void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 {
 	// fill with average data
 	auto p_avg = m_pAvg;
 	auto p_max = m_pMax0;
-	auto p_min = m_pMin0 + m_tpllen - 1 ;
+	auto p_min = m_pMin0;
 
-	//long* pDAvg = (long*) &m_polypts[1];
-	//long* pDMx = (long*) &m_polypts[m_tpllen*2 + 1];
-	//long* pDMi = (long*) &m_polypts[m_polypts.GetUpperBound()-2];
-
-	auto i1 = m_tpllen;
-	auto i2 = i1 + 2 * m_tpllen - 1;
+	auto i1 = 0;
+	auto i2 = m_ptsArea.GetUpperBound() -1;
 
 	if (!bScale)
 	{
 		for (auto i = 0; i < m_tpllen; i++, i1++, i2--)
 		{
-			m_polypts[i].y = *p_avg;
-			m_polypts[i1].y = *p_max;
-			m_polypts[i2].y = *p_min;
-			//*pDAvg = *pAvg;
-			//*pDMx = *pMax;
-			//*pDMi = *pMin;
+			m_ptsAvg[i].y = *p_avg;
+			m_ptsArea[i1].y = *p_max;
+			m_ptsArea[i2].y = *p_min;
 			p_avg++;
 			p_max++;
-			p_min--;
-			//pDAvg+= 2;
-			//pDMx+= 2;
-			//pDMi-= 2;
+			p_min++;
 		}
 	}
 	else
 	{
 		for (int i = 0; i < m_tpllen; i++, i1++, i2--)
 		{
-			m_polypts[i].y = MulDiv(*p_avg - m_yWO, m_yVE, m_yWE) + m_yVO;;
-			m_polypts[i1].y = MulDiv(*p_max - m_yWO, m_yVE, m_yWE) + m_yVO;
-			m_polypts[i2].y = MulDiv(*p_min - m_yWO, m_yVE, m_yWE) + m_yVO;
-			//*pDAvg = MulDiv(*pAvg -m_yWO, m_yVE, m_yWE) + m_yVO;
-			//*pDMx = MulDiv(*pMax -m_yWO, m_yVE, m_yWE) + m_yVO;
-			//*pDMi = MulDiv(*pMin -m_yWO, m_yVE, m_yWE) + m_yVO;
+			m_ptsAvg[i].y = MulDiv(*p_avg - m_yWO, m_yVE, m_yWE) + m_yVO;;
+			m_ptsArea[i1].y = MulDiv(*p_max - m_yWO, m_yVE, m_yWE) + m_yVO;
+			m_ptsArea[i2].y = MulDiv(*p_min - m_yWO, m_yVE, m_yWE) + m_yVO;
 			p_avg++;
 			p_max++;
-			p_min--;
-			//pDAvg+= 2;
-			//pDMx+= 2;
-			//pDMi-= 2;
+			p_min++;
+
 		}
 	}
-	m_polypts[m_polypts.GetUpperBound()] = m_polypts[m_tpllen * 2 + 1];
+	m_ptsArea[m_ptsArea.GetUpperBound()].y = m_ptsArea[0].y;
 }
 
 void CTemplateWnd::SetTemplateLength(int len, int extent, int org)
@@ -297,8 +264,8 @@ void CTemplateWnd::SetTemplateLength(int len, int extent, int org)
 	{
 		DeleteArrays();
 
-		m_tpllen = len;		// length of template array
-		m_nitems = 0;			// n elements
+		m_tpllen = len;	
+		m_nitems = 0;
 
 		m_pSumArray = new mytype[len * 2];
 		m_pSUM0 = m_pSumArray;
@@ -322,7 +289,7 @@ void CTemplateWnd::tInit()
 {
 	memset(m_pSumArray, 0, m_tpllen * 2 * sizeof(mytype));
 	memset(m_pAvg, 0, m_tpllen * 3 * sizeof(int));
-	m_nitems = 0;			// n elements
+	m_nitems = 0;
 }
 
 void CTemplateWnd::tAddSpikeTopSum(short* p_source)
@@ -376,15 +343,9 @@ void CTemplateWnd::tSetdisplayData()
 		}
 	}
 
-	// update power
 	tPowerOfpSum();
 	m_bValid = TRUE;
 }
-
-// ---------------------------------------------------------------------------------
-// tPower()
-//
-// compute power of this template
 
 double CTemplateWnd::tPowerOfpSum()
 {
