@@ -366,7 +366,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
 	{
 		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
-		if (spike_list->GetdetectWhat() == 0)
+		if (spike_list->GetdetectWhat() == DETECT_SPIKES)
 		{
 			CString cs;
 			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(spike_list->GetComment()));
@@ -374,14 +374,16 @@ void CViewSpikeSort::UpdateFileParameters()
 			j++;
 		}
 	}
-	int icur = pdb_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	int indexCurrentSpkList = pdb_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
-	m_tabCtrl.SetCurSel(icur);
+	m_tabCtrl.SetCurSel(indexCurrentSpkList);
 
 	// spike and classes
 	auto spikeno = m_pSpkList->m_selspike;
-	if (m_pSpkList->GetTotalSpikes() < spikeno || 0 > spikeno)
+	if (m_pSpkList->GetTotalSpikes() < spikeno || 0 > spikeno) {
 		spikeno = -1;
+		m_sourceclass = 0;
+	}
 	else
 	{	// set source class to the class of the selected spike
 		m_sourceclass = m_pSpkList->GetSpikeClass(spikeno);
@@ -800,11 +802,11 @@ void CViewSpikeSort::OnMeasure()
 	for (auto ifile = firstfile; ifile <= lastfile; ifile++)
 	{
 		// check if user wants to continue
-		if (m_bAllfiles)
-		{
+		//if (m_bAllfiles)
+		//{
 			pdb_doc->SetDB_CurrentRecordPosition(ifile);
 			m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
-		}
+		//}
 		// check if this file is ok
 		if (m_pSpkDoc == nullptr)
 			continue;

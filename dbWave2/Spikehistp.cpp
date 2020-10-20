@@ -563,7 +563,9 @@ void CSpikeHistWnd::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first,
 			continue;
 
 		// increment corresponding histogram interval into the first histogram (general, displayed in grey)
-		const auto index = (y1 - m_abcissaminval) / m_binsize + 1;
+		auto index = (y1 - m_abcissaminval) / m_binsize + 1;
+		if (index >= p_dword_array->GetSize())
+			index = p_dword_array->GetSize() - 1;
 		auto dw_data = p_dword_array->GetAt(index) + 1;
 		p_dword_array->SetAt(index, dw_data);
 

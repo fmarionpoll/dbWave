@@ -325,7 +325,7 @@ void CViewSpikeTemplates::UpdateFileParameters()
 	{
 		const auto p_spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
 		CString cs;
-		if (p_spike_list->GetdetectWhat() != 0)
+		if (p_spike_list->GetdetectWhat() != DETECT_SPIKES)
 			continue;
 		cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(p_spike_list->GetComment()));
 		m_tabCtrl.InsertItem(j, cs);

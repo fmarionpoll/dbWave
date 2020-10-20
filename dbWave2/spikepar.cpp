@@ -36,7 +36,7 @@ STIMDETECT::STIMDETECT() : bChanged(0)
 	TransformMethod = 0; // detect from data transformed - i = transform method cf CAcqDataDoc
 	DetectMethod = 0; // detection method see CDetectionView for methods
 	Threshold1 = 0; // value of threshold 1
-	bMode = 0; // ON/OFF
+	bMode = MODE_ON_OFF; // ON/OFF
 }
 
 STIMDETECT::~STIMDETECT()
@@ -331,8 +331,8 @@ SPKDETECTPARM::SPKDETECTPARM() : bChanged(0)
 	prethreshold = 20; // offset spike npts before threshold
 	refractory = 20; // re-start detection n pts after threshold
 	detectThresholdmV = 0.5f; // detection threshold in mV
-	detectWhat = 0; // detect spikes, 1=detect stimulus
-	detectMode = 0; // if sti, = ON/OFF
+	detectWhat = DETECT_SPIKES; // detect spikes, 1=detect stimulus
+	detectMode = MODE_ON_OFF; // if sti, = ON/OFF
 }
 
 SPKDETECTPARM::~SPKDETECTPARM()

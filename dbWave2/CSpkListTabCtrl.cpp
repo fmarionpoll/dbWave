@@ -36,7 +36,7 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc)
 		if (!p_spike_list)
 			continue;
 		CString cs;
-		if (p_spike_list->GetdetectWhat() != 0)
+		if (p_spike_list->GetdetectWhat() != DETECT_SPIKES)
 			continue;
 		cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(p_spike_list->GetComment()));
 		InsertItem(j, cs);

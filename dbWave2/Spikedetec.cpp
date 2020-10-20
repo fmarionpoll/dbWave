@@ -109,7 +109,7 @@ void CSpikeDetectDlg::SaveChanParameters(int chan)
 	// detect spikes
 	if (((CButton*)GetDlgItem(IDC_SPIKESRADIO))->GetCheck() == BST_CHECKED)
 	{
-		m_pspkD->detectWhat = 0;
+		m_pspkD->detectWhat = DETECT_SPIKES;
 		m_pspkD->extractChan = ((CComboBox*)GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
 		m_pspkD->extractTransform = ((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
 		m_pspkD->extractNpoints = GetDlgItemInt(IDC_SPIKENPOINTS);
@@ -119,7 +119,7 @@ void CSpikeDetectDlg::SaveChanParameters(int chan)
 	// detect stimulus
 	else
 	{
-		m_pspkD->detectWhat = 1;
+		m_pspkD->detectWhat = DETECT_STIMULUS;
 		m_pspkD->detectMode = ((CComboBox*)GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
 		m_pspkD->extractChan = m_pspkD->detectChan;
 	}
@@ -131,7 +131,7 @@ void CSpikeDetectDlg::LoadChanParameters(int chan)
 	m_pspkD = m_pDetectSettingsArray->GetItem(chan);
 	GetDlgItem(IDC_COMMENT)->SetWindowText(m_pspkD->comment);
 
-	if (m_pspkD->detectWhat == 0)
+	if (m_pspkD->detectWhat == DETECT_SPIKES)
 	{
 		((CButton*)GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_CHECKED);
 		((CButton*)GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_UNCHECKED);
@@ -228,13 +228,13 @@ void CSpikeDetectDlg::SetDlgInterfaceState(int detectWhat)
 
 void CSpikeDetectDlg::OnBnClickedSpikesradio()
 {
-	m_pspkD->detectWhat = 0;
+	m_pspkD->detectWhat = DETECT_SPIKES;
 	SetDlgInterfaceState(m_pspkD->detectWhat);
 }
 
 void CSpikeDetectDlg::OnBnClickedStimradio()
 {
-	m_pspkD->detectWhat = 1;
+	m_pspkD->detectWhat = DETECT_STIMULUS;
 	SetDlgInterfaceState(m_pspkD->detectWhat);
 }
 

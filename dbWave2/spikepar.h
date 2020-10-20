@@ -35,7 +35,13 @@ public:
 	CString	comment;			// free comment (for ex describing the method)
 
 	int		detectWhat;			// 0=spikes, 1=stimulus
+#define DETECT_SPIKES		0
+#define DETECT_STIMULUS		1
 	int		detectMode;			// stim: 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down);
+#define MODE_ON_OFF		0
+#define MODE_OFF_ON		1
+#define MODE_ON_ON		2
+#define MODE_OFF_OFF	3
 	int		detectFrom;			// detection method - (stored as WORD): 0=chan; 1 = tag
 	int		detectChan;			// source channel
 	int		detectTransform;	// detect from data transformed - i = transform method cf CAcqDataDoc

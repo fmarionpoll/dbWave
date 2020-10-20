@@ -1217,7 +1217,7 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 			ASSERT(pFC != NULL);
 			p_spikelist_->InitSpikeList(GetDocument()->m_pDat, pFC);
 		}
-		if ((m_parmsCurrent.GetItem(i))->detectWhat == 0)
+		if ((m_parmsCurrent.GetItem(i))->detectWhat == DETECT_SPIKES)
 		{
 			DetectMethod1(i);							// detect spikes
 		}
@@ -1274,10 +1274,10 @@ int CViewSpikeDetection::DetectStim1(int ichan)
 	// set detection mode
 	// 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down);
 	auto b_cross_upw = TRUE;
-	if (psti_d->detectMode == 1 || psti_d->detectMode == 3)
+	if (psti_d->detectMode == MODE_OFF_ON || psti_d->detectMode == MODE_OFF_OFF)
 		b_cross_upw = FALSE;
 	auto b_mode = TRUE;
-	if (psti_d->detectMode == 2 || psti_d->detectMode == 3)
+	if (psti_d->detectMode == MODE_ON_ON	|| psti_d->detectMode == MODE_OFF_OFF)
 		b_mode = FALSE;
 
 	auto b_save_on = FALSE;
@@ -1635,7 +1635,7 @@ void CViewSpikeDetection::OnClear()
 	p_spikelist_->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	HighlightSpikes(FALSE);				// remove display of spikes
 
-	if (p_spikelist_->GetdetectWhat() == 1)
+	if (p_spikelist_->GetdetectWhat() == DETECT_STIMULUS)
 	{
 		p_spike_doc_->m_stimIntervals.nitems = 0;		// zero stimuli
 		p_spike_doc_->m_stimIntervals.intervalsArray.RemoveAll();
