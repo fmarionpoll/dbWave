@@ -183,7 +183,7 @@ void CViewSpikeSort::OnInitialUpdate()
 	// load global parameters
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_psC = &(p_app->spkC);
-	mdPM = &(p_app->options_viewdata);
+	m_pOptionsViewData = &(p_app->options_viewdata);
 
 	// assign values to controls
 	m_CBparameter.SetCurSel(m_psC->iparameter);
@@ -195,22 +195,22 @@ void CViewSpikeSort::OnInitialUpdate()
 
 	spikeshape_wnd_.DisplayAllFiles(false, GetDocument());
 	spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
-	spikeshape_wnd_.SetScopeParameters(mdPM->spksort1spk);
+	spikeshape_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1spk));
 	m_spkformtagleft = spikeshape_wnd_.AddVTtag(m_psC->ileft);	
 	m_spkformtagright = spikeshape_wnd_.AddVTtag(m_psC->iright);
 
 	xygraph_wnd_.DisplayAllFiles(false, GetDocument());
 	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-	xygraph_wnd_.SetScopeParameters(mdPM->spksort1parms);
+	xygraph_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1parms));
 	m_itagup = xygraph_wnd_.AddHZtag(m_psC->iupper, 0);	
 	m_itaglow = xygraph_wnd_.AddHZtag(m_psC->ilower, 0);
 
 	spikebars_wnd_.DisplayAllFiles(false, GetDocument());
 	spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-	spikebars_wnd_.SetScopeParameters(mdPM->spksort1bars);
+	spikebars_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1bars));
 
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-	yhistogram_wnd_.SetScopeParameters(mdPM->spksort1hist);
+	yhistogram_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1hist));
 	
 	// set bincrflagonsave
 	((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
@@ -361,8 +361,14 @@ CDaoRecordset* CViewSpikeSort::OnGetRecordset()
 void CViewSpikeSort::UpdateSpikeFile() 
 {
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+
 	if (nullptr != m_pSpkDoc)
 	{
+		m_pSpkDoc->SetModifiedFlag(FALSE);
+		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
+		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
+
 		// TODO : move into other subroutine?
 
 		m_tabCtrl.DeleteAllItems();
@@ -434,7 +440,7 @@ void CViewSpikeSort::UpdateFileParameters()
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 
 	// this is like that if option "complete file selected"
-	if (bfirstupdate || mdPM->bEntireRecord)
+	if (bfirstupdate || m_pOptionsViewData->bEntireRecord)
 	{
 		m_lFirst = 0;
 		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
@@ -768,10 +774,10 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		mdPM->spksort1spk = *spikeshape_wnd_.GetScopeParameters();
-		mdPM->spksort1parms = *xygraph_wnd_.GetScopeParameters();
-		mdPM->spksort1hist = *yhistogram_wnd_.GetScopeParameters();
-		mdPM->spksort1bars = *spikebars_wnd_.GetScopeParameters();
+		m_pOptionsViewData->spksort1spk = *spikeshape_wnd_.GetScopeParameters();
+		m_pOptionsViewData->spksort1parms = *xygraph_wnd_.GetScopeParameters();
+		m_pOptionsViewData->spksort1hist = *yhistogram_wnd_.GetScopeParameters();
+		m_pOptionsViewData->spksort1bars = *spikebars_wnd_.GetScopeParameters();
 		break;
 
 	default:

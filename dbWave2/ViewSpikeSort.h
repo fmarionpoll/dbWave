@@ -67,7 +67,7 @@ protected:
 	CSpikeDoc* m_pSpkDoc = nullptr;
 	CSpikeList* m_pSpkList = nullptr;
 	SPKCLASSIF* m_psC{};
-	OPTIONS_VIEWDATA* mdPM{};
+	OPTIONS_VIEWDATA* m_pOptionsViewData{};
 	CTabCtrl m_tabCtrl{};
 
 	int		m_itaglow{};

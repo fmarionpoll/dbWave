@@ -74,7 +74,7 @@ protected:
 
 public:
 	virtual SCOPESTRUCT* GetScopeParameters();
-	virtual void			SetScopeParameters(SCOPESTRUCT* pStruct);
+	virtual void SetScopeParameters(SCOPESTRUCT* pStruct);
 
 	// ---------------------------------------------------------------
 	// Attributes
