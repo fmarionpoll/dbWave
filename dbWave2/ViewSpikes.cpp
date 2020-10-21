@@ -534,8 +534,7 @@ CDaoRecordset* CViewSpikes::OnGetRecordset()
 void CViewSpikes::UpdateFileParameters(BOOL bUpdateInterface) {
 	UpdateSpikeFile(bUpdateInterface);
 	UpdateDataFile(bUpdateInterface);
-	if (bUpdateInterface)
-		UpdateLegends(bUpdateInterface);
+	UpdateLegends(bUpdateInterface);
 }
 
 void CViewSpikes::UpdateDataFile(BOOL bUpdateInterface) {
@@ -599,8 +598,52 @@ void CViewSpikes::UpdateDataFile(BOOL bUpdateInterface) {
 	m_DWintervals.SetAt(4, 0);					// pen size
 }
 
+void CViewSpikes::UpdateSpikeFile(BOOL bUpdateInterface)
+{
+	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+	if (nullptr == m_pSpkDoc)
+	{
+		m_spkClassListBox.SetSourceData(nullptr, nullptr);
+	}
+	else
+	{
+		m_pSpkDoc->SetModifiedFlag(FALSE);
+		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
+		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
+
+		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
+		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());
+		m_pspkDP = m_pSpkList->GetDetectParms();
+
+		if (bUpdateInterface) {
+			m_tabCtrl.SetCurSel(icur);
+			// adjust Y zoom
+			ASSERT(m_lFirst >= 0);
+			if (m_bresetzoom)
+			{
+				m_spkClassListBox.SetRedraw(FALSE);
+				ZoomOnPresetInterval(0);
+				m_spkClassListBox.SetRedraw(TRUE);
+			}
+			else if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
+				m_lLast = m_pSpkDoc->GetAcqSize() - 1;	// clip to the end of the data
+
+			m_spkClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
+			AdjustYZoomToMaxMin(false);
+		}
+	}
+
+	// select row
+	if (bUpdateInterface)
+		m_spkClassListBox.SetCurSel(0);
+}
+
 void CViewSpikes::UpdateLegends(BOOL bUpdateInterface)
 {
+	if (!bUpdateInterface)
+		return;
+
 	if (m_lFirst < 0)
 		m_lFirst = 0;
 	if (m_lLast <= m_lFirst)
@@ -635,48 +678,6 @@ void CViewSpikes::UpdateLegends(BOOL bUpdateInterface)
 	// update scrollbar and select spikes
 	SelectSpike(m_spikeno);
 	UpdateScrollBar();
-}
-
-void CViewSpikes::UpdateSpikeFile(BOOL bUpdateInterface)
-{
-	//CString filename = GetDocument()->GetDB_CurrentSpkFileName();
-	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
-	if (m_pSpkDoc == nullptr)
-	{
-		m_spkClassListBox.SetSourceData(nullptr, nullptr);
-	}
-	else
-	{
-		m_pSpkDoc->SetModifiedFlag(FALSE);
-		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
-
-		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
-		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
-		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());
-
-		m_pspkDP = m_pSpkList->GetDetectParms();
-
-		// reset tab control
-		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
-		m_tabCtrl.SetCurSel(icur);
-
-		// adjust Y zoom
-		ASSERT(m_lFirst >= 0);
-		if (m_bresetzoom)
-		{
-			m_spkClassListBox.SetRedraw(FALSE);
-			ZoomOnPresetInterval(0);
-			m_spkClassListBox.SetRedraw(TRUE);
-		}
-		else if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
-			m_lLast = m_pSpkDoc->GetAcqSize() - 1;	// clip to the end of the data
-		
-		m_spkClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
-		AdjustYZoomToMaxMin(false);
-	}
-
-	// select row
-	m_spkClassListBox.SetCurSel(0);
 }
 
 void CViewSpikes::AdjustYZoomToMaxMin(BOOL bForceSearchMaxMin) {

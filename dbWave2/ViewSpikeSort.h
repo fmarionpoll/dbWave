@@ -85,11 +85,11 @@ protected:
 	float	m_delta{};
 	int		m_parmmax{};			// max of array m_measure_y1
 	int		m_parmmin{};			// min of array m_measure_y1
-	BOOL	m_bvalidextrema = false;		// tells if m_parmmax & m_parmmin are valid
+	BOOL	m_bvalidextrema = false; // tells if m_parmmax & m_parmmin are valid
 	long	m_lFirst{};				// display first
 	long	m_lLast{};				// display last
-	BOOL	m_bMeasureDone = false;			// flag m_measure_y1 valid
-	int		m_divAmplitudeBy = 1;		// value to adjust changes in amplitude / filter(s)
+	BOOL	m_bMeasureDone = false;	// flag m_measure_y1 valid
+	int		m_divAmplitudeBy = 1;	// value to adjust changes in amplitude / filter(s)
 
 	SCROLLINFO	m_scroll_file_pos_infos_{};
 
@@ -110,6 +110,8 @@ public:
 protected:
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
+	void DefineSubClassedItems();
+	void DefineStretchParameters();
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 	//}}AFX_VIRTUAL
@@ -123,6 +125,7 @@ protected:
 #endif
 
 	void UpdateFileParameters();
+	void UpdateSpikeFile();
 	void UpdateLegends();
 	void SaveCurrentFileParms();
 

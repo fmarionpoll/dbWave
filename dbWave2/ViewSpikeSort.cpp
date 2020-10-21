@@ -116,37 +116,8 @@ BEGIN_MESSAGE_MAP(CViewSpikeSort, CDaoRecordView)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeSort::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
-void CViewSpikeSort::OnInitialUpdate()
+void CViewSpikeSort::DefineSubClassedItems()
 {
-	// attach set
-	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	CDaoRecordView::OnInitialUpdate();
-	m_psC = &(p_app->spkC);
-	mdPM = &(p_app->options_viewdata);
-
-	// assign controls to stretch
-	m_stretch.AttachParent(this);
-
-	//m_stretch.newProp(IDC_HISTOGRAM, SZEQ_XLEQ, YTEQ_YBEQ);
-	//m_stretch.newProp(IDC_BINMV,		SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_LIMITLOWER,	SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_LIMITUPPER,	SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_STATICLOWER,SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_STATICUPPER2, SZEQ_XLEQ, SZEQ_YBEQ);
-
-	m_stretch.newProp(IDC_EDIT7, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_DISPLAYPARM, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_DISPLAYBARS, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_SCROLLBAR1, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_EDIT3, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
-
-	m_stretch.newProp(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_EDITLEFT2, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
-
 	// subclass some controls
 	VERIFY(yhistogram_wnd_.SubclassDlgItem(IDC_HISTOGRAM, this));
 	VERIFY(xygraph_wnd_.SubclassDlgItem(IDC_DISPLAYPARM, this));
@@ -173,6 +144,46 @@ void CViewSpikeSort::OnInitialUpdate()
 	mm_spikenoclass.ShowScrollBar(SB_VERT);
 
 	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100, FALSE);
+}
+
+void CViewSpikeSort::DefineStretchParameters()
+{
+	// assign controls to stretch
+	m_stretch.AttachParent(this);
+
+	//m_stretch.newProp(IDC_HISTOGRAM, SZEQ_XLEQ, YTEQ_YBEQ);
+	//m_stretch.newProp(IDC_BINMV,		SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_LIMITLOWER,	SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_LIMITUPPER,	SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_STATICLOWER,SZEQ_XLEQ, SZEQ_YBEQ);
+	//m_stretch.newProp(IDC_STATICUPPER2, SZEQ_XLEQ, SZEQ_YBEQ);
+
+	m_stretch.newProp(IDC_EDIT7, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_DISPLAYPARM, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch.newProp(IDC_DISPLAYBARS, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_SCROLLBAR1, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_EDIT3, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
+
+	m_stretch.newProp(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_EDITLEFT2, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
+
+	m_binit = TRUE;
+}
+
+void CViewSpikeSort::OnInitialUpdate()
+{
+	CDaoRecordView::OnInitialUpdate();
+	DefineSubClassedItems();
+	DefineStretchParameters();
+
+	// load global parameters
+	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	m_psC = &(p_app->spkC);
+	mdPM = &(p_app->options_viewdata);
 
 	// assign values to controls
 	m_CBparameter.SetCurSel(m_psC->iparameter);
@@ -181,28 +192,30 @@ void CViewSpikeSort::OnInitialUpdate()
 
 	m_sourceclass = m_psC->sourceclass;
 	m_destinationclass = m_psC->destclass;
+
 	spikeshape_wnd_.DisplayAllFiles(false, GetDocument());
-	xygraph_wnd_.DisplayAllFiles(false, GetDocument());
-	spikebars_wnd_.DisplayAllFiles(false, GetDocument());
-
 	spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
+	spikeshape_wnd_.SetScopeParameters(mdPM->spksort1spk);
+	m_spkformtagleft = spikeshape_wnd_.AddVTtag(m_psC->ileft);	
+	m_spkformtagright = spikeshape_wnd_.AddVTtag(m_psC->iright);
+
+	xygraph_wnd_.DisplayAllFiles(false, GetDocument());
 	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	xygraph_wnd_.SetScopeParameters(mdPM->spksort1parms);
+	m_itagup = xygraph_wnd_.AddHZtag(m_psC->iupper, 0);	
+	m_itaglow = xygraph_wnd_.AddHZtag(m_psC->ilower, 0);
+
+	spikebars_wnd_.DisplayAllFiles(false, GetDocument());
 	spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	spikebars_wnd_.SetScopeParameters(mdPM->spksort1bars);
+
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-
-	*spikeshape_wnd_.GetScopeParameters() = mdPM->spksort1spk;
-	*xygraph_wnd_.GetScopeParameters() = mdPM->spksort1parms;
-	*yhistogram_wnd_.GetScopeParameters() = mdPM->spksort1hist;
-	*spikebars_wnd_.GetScopeParameters() = mdPM->spksort1bars;
-
+	yhistogram_wnd_.SetScopeParameters(mdPM->spksort1hist);
+	
 	// set bincrflagonsave
 	((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// display tag lines at proper places
-	m_spkformtagleft = spikeshape_wnd_.AddVTtag(m_psC->ileft);	// first VTtag
-	m_spkformtagright = spikeshape_wnd_.AddVTtag(m_psC->iright);	// second VTtag
-	m_itagup = xygraph_wnd_.AddHZtag(m_psC->iupper, 0);	// first HZ tag
-	m_itaglow = xygraph_wnd_.AddHZtag(m_psC->ilower, 0);	// second HZ tag
 	m_spkhistupper = yhistogram_wnd_.AddVTtag(m_psC->iupper);
 	m_spkhistlower = yhistogram_wnd_.AddVTtag(m_psC->ilower);
 
@@ -345,6 +358,32 @@ CDaoRecordset* CViewSpikeSort::OnGetRecordset()
 	return GetDocument()->GetDB_Recordset();
 }
 
+void CViewSpikeSort::UpdateSpikeFile() 
+{
+	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+	if (nullptr != m_pSpkDoc)
+	{
+		// TODO : move into other subroutine?
+
+		m_tabCtrl.DeleteAllItems();
+		auto j = 0;
+		for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
+		{
+			const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
+			if (spike_list->GetdetectWhat() == DETECT_SPIKES)
+			{
+				CString cs;
+				cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(spike_list->GetComment()));
+				m_tabCtrl.InsertItem(j, cs);
+				j++;
+			}
+		}
+		int indexCurrentSpkList = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+		m_tabCtrl.SetCurSel(indexCurrentSpkList);
+	}
+}
+
 void CViewSpikeSort::UpdateFileParameters()
 {
 	// reset parms ? flag = single file or file list has changed
@@ -353,30 +392,12 @@ void CViewSpikeSort::UpdateFileParameters()
 		yhistogram_wnd_.RemoveHistData();
 	}
 
+	UpdateSpikeFile();
+
 	// change pointer to select new spike list & test if one spike is selected
 	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
 	auto pdb_doc = GetDocument();
-	m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
-	if (nullptr == m_pSpkDoc)
-		return;
 
-	// reset tab control
-	m_tabCtrl.DeleteAllItems();
-	auto j = 0;
-	for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
-	{
-		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
-		if (spike_list->GetdetectWhat() == DETECT_SPIKES)
-		{
-			CString cs;
-			cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(spike_list->GetComment()));
-			m_tabCtrl.InsertItem(j, cs);
-			j++;
-		}
-	}
-	int indexCurrentSpkList = pdb_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
-	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
-	m_tabCtrl.SetCurSel(indexCurrentSpkList);
 
 	// spike and classes
 	auto spikeno = m_pSpkList->m_selspike;
