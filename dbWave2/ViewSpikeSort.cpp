@@ -369,26 +369,12 @@ void CViewSpikeSort::UpdateSpikeFile()
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 
-		// TODO : move into other subroutine?
-
-		m_tabCtrl.DeleteAllItems();
-		auto j = 0;
-		for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
-		{
-			const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
-			if (spike_list->GetdetectWhat() == DETECT_SPIKES)
-			{
-				CString cs;
-				cs.Format(_T("#%i %s"), i, static_cast<LPCTSTR>(spike_list->GetComment()));
-				m_tabCtrl.InsertItem(j, cs);
-				j++;
-			}
-		}
-		int indexCurrentSpkList = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
-		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
-		m_tabCtrl.SetCurSel(indexCurrentSpkList);
+		// update Tab at the bottom
+		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
+		m_tabCtrl.SetCurSel(icur);
 	}
 }
+
 
 void CViewSpikeSort::UpdateFileParameters()
 {
@@ -398,13 +384,17 @@ void CViewSpikeSort::UpdateFileParameters()
 		yhistogram_wnd_.RemoveHistData();
 	}
 
+	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
 	UpdateSpikeFile();
 
-	// change pointer to select new spike list & test if one spike is selected
-	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
-	auto pdb_doc = GetDocument();
-
-
+	if (bfirstupdate || m_pOptionsViewData->bEntireRecord)
+	{
+		m_timeFirst = 0.f;
+		m_timeLast = (m_pSpkDoc->GetAcqSize() - 1) / m_pSpkList->GetAcqSampRate();
+	}
+	m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->GetAcqSampRate());
+	m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
+	
 	// spike and classes
 	auto spikeno = m_pSpkList->m_selspike;
 	if (m_pSpkList->GetTotalSpikes() < spikeno || 0 > spikeno) {
@@ -412,51 +402,37 @@ void CViewSpikeSort::UpdateFileParameters()
 		m_sourceclass = 0;
 	}
 	else
-	{	// set source class to the class of the selected spike
+	{
 		m_sourceclass = m_pSpkList->GetSpikeClass(spikeno);
 		m_psC->sourceclass = m_sourceclass;
 	}
 	ASSERT(m_sourceclass < 32768);
-
-	// display source spikes
-	spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
-	spikebars_wnd_.SetSourceData(m_pSpkList, GetDocument());
 
 	if (0 == m_psC->ileft && 0 == m_psC->iright)
 	{
 		m_psC->ileft = m_pSpkList->GetSpikePretrig();
 		m_psC->iright = m_psC->ileft + m_pSpkList->GetSpikeRefractory();
 	}
-
-	// refresh sorting parameters and data file properties
 	m_t1 = (m_psC->ileft * m_tunit) / m_pSpkList->GetAcqSampRate();
 	m_t2 = (m_psC->iright * m_tunit) / m_pSpkList->GetAcqSampRate();
+
+	spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	spikeshape_wnd_.SetVTtagVal(m_spkformtagleft, m_psC->ileft);
 	spikeshape_wnd_.SetVTtagVal(m_spkformtagright, m_psC->iright);
-
 	spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
-	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+
+	spikebars_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+
+	xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument()); 
+	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 
-	// this is like that if option "complete file selected"
-	if (bfirstupdate || m_pOptionsViewData->bEntireRecord)
-	{
-		m_lFirst = 0;
-		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
-		m_timeFirst = 0.f;
-		m_timeLast = m_lLast / m_pSpkList->GetAcqSampRate();
-	}
-	else
-	{
-		m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->GetAcqSampRate());
-		m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
-	}
+	UpdateLegends();
 
 	// display & compute parameters
 	if (!m_bAllfiles || !m_bMeasureDone)
 	{
-		xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument());
 		if (4 != m_psC->iparameter)
 		{
 			xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
@@ -483,20 +459,13 @@ void CViewSpikeSort::UpdateFileParameters()
 		m_bMeasureDone = FALSE;		// no parameters yet
 		OnMeasure();
 	}
-	spikeshape_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
-	spikebars_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
-
-	spikeshape_wnd_.Invalidate();
-	spikebars_wnd_.Invalidate();
-	UpdateScrollBar();
+	
 	SelectSpikeFromCurrentList(spikeno);
 }
 
 void CViewSpikeSort::UpdateLegends()
 {
 	// update text abcissa and horizontal scroll position
-	m_pSpkList->m_lFirstSL = m_lFirst;
-	m_pSpkList->m_lLastSL = m_lLast;
 	m_timeFirst = m_lFirst / m_pSpkList->GetAcqSampRate();
 	m_timeLast = m_lLast / m_pSpkList->GetAcqSampRate();
 	UpdateScrollBar();

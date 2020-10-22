@@ -601,6 +601,7 @@ void CViewSpikes::UpdateDataFile(BOOL bUpdateInterface) {
 void CViewSpikes::UpdateSpikeFile(BOOL bUpdateInterface)
 {
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+
 	if (nullptr == m_pSpkDoc)
 	{
 		m_spkClassListBox.SetSourceData(nullptr, nullptr);
@@ -613,9 +614,9 @@ void CViewSpikes::UpdateSpikeFile(BOOL bUpdateInterface)
 
 		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
-		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());
 		m_pspkDP = m_pSpkList->GetDetectParms();
 
+		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());
 		if (bUpdateInterface) {
 			m_tabCtrl.SetCurSel(icur);
 			// adjust Y zoom
@@ -670,10 +671,6 @@ void CViewSpikes::UpdateLegends(BOOL bUpdateInterface)
 	m_timefirst = m_lFirst / m_pSpkDoc->GetAcqRate();
 	m_timelast = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
 	m_displayData.GetDataFromDoc(m_lFirst, m_lLast);
-
-	// store current file settings
-	m_pSpkList->m_lFirstSL = m_lFirst;
-	m_pSpkList->m_lLastSL = m_lLast;
 
 	// update scrollbar and select spikes
 	SelectSpike(m_spikeno);

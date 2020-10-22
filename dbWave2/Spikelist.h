@@ -30,8 +30,6 @@ public:
 	~CSpikeList();
 
 	int				m_selspike = -1;
-	long			m_lFirstSL = 0;
-	long			m_lLastSL = 0;
 	int				m_jitterSL = 2;
 	int				m_icenter1SL = 0;
 	int				m_icenter2SL = 60;

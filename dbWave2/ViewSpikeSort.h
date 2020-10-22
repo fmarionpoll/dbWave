@@ -5,6 +5,7 @@
 #include "dbWaveDoc.h"
 #include "Spikebar.h"
 #include "WndVerticalHistogram.h"
+#include "CSpkListTabCtrl.h"
 
 // spikesort1.h : header file
 
@@ -68,7 +69,7 @@ protected:
 	CSpikeList* m_pSpkList = nullptr;
 	SPKCLASSIF* m_psC{};
 	OPTIONS_VIEWDATA* m_pOptionsViewData{};
-	CTabCtrl m_tabCtrl{};
+	CSpkListTabCtrl	 m_tabCtrl{};
 
 	int		m_itaglow{};
 	int		m_itagup{};
@@ -122,7 +123,7 @@ protected:
 #ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
-#endif
+# endif
 
 	void UpdateFileParameters();
 	void UpdateSpikeFile();
@@ -132,6 +133,7 @@ protected:
 	void SelectSpikeFromCurrentList(int spikeno);
 	void UpdateGain();
 	void UpdateScrollBar();
+	
 	void SelectSpkList(int icursel);
 	void ActivateMode4();
 	void BuildHistogram();

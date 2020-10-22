@@ -422,16 +422,10 @@ void CViewSpikeTemplates::UpdateLegends()
 	m_timefirst = m_lFirst / m_pSpkDoc->GetAcqRate();
 	m_timelast = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
 
-	// store current file settings
-	m_pSpkList->m_lFirstSL = m_lFirst;
-	m_pSpkList->m_lLastSL = m_lLast;
-
 	// draw dependent buttons
 	m_spkForm.SetTimeIntervals(m_lFirst, m_lLast);
 	m_spkForm.Invalidate();
 
-	m_pSpkList->m_lFirstSL = m_lFirst;
-	m_pSpkList->m_lLastSL = m_lLast;
 	UpdateData(FALSE);	// copy view object to controls
 	UpdateScrollBar();
 }
