@@ -537,7 +537,10 @@ void CSpikeDoc::_ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* 
 	// export stimulus occurence time(s) that fit(s) into the time interval requested
 	if (vdS->exportdatatype == EXPORT_PSTH && m_stimIntervals.intervalsArray.GetSize() > 0)
 	{
-		const auto samprate = pspklist->GetAcqSampRate();
+		auto samprate = pspklist->GetAcqSampRate();
+		if (samprate == 0.f) {
+			samprate = m_acqrate;
+		}
 		ASSERT(samprate != 0.f);
 		const auto istim0 = 0;
 		const auto istim1 = m_stimIntervals.intervalsArray.GetSize() - 1;
