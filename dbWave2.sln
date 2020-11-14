@@ -37,6 +37,7 @@ Global
 		{10B34088-9EAA-4160-B300-0D4B625301E2}.Debug|Win32.ActiveCfg = DefaultBuild
 		{10B34088-9EAA-4160-B300-0D4B625301E2}.DVD-5|Win32.ActiveCfg = DefaultBuild
 		{10B34088-9EAA-4160-B300-0D4B625301E2}.Release|Win32.ActiveCfg = DefaultBuild
+		{10B34088-9EAA-4160-B300-0D4B625301E2}.Release|Win32.Build.0 = DefaultBuild
 		{10B34088-9EAA-4160-B300-0D4B625301E2}.SingleImage|Win32.ActiveCfg = DefaultBuild
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

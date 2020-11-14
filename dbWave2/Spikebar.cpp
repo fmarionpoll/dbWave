@@ -70,6 +70,12 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			if (p_dbwave_doc_->m_pSpk != nullptr)
 				p_spikelist_ = p_spike_doc_->GetSpkList_Current();
 		}
+		if (p_spike_doc_ == nullptr)
+		{
+			p_spike_doc_ = p_dbwave_doc_->m_pSpk;
+			if (p_spike_doc_ == nullptr)
+				continue;
+		}
 
 		// test presence of data
 		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
@@ -78,6 +84,7 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 			continue;
 		}
+		
 
 		// plot comment at the bottom
 		if (m_bBottomComment)
@@ -102,8 +109,6 @@ void CSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 
 		DisplayBars(p_dc, &m_displayRect);
 
-		if (p_spike_doc_ == nullptr)
-			p_spike_doc_ = p_dbwave_doc_->m_pSpk;
 		CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
 
 		if (pintervals->nitems > 0)
