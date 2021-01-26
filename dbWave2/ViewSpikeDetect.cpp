@@ -1166,11 +1166,11 @@ void CViewSpikeDetection::OnMeasure()
 void CViewSpikeDetection::DetectAll(BOOL bAll)
 {
 	// init spike document (erase spike list data & intervals)
-	m_bDetected = TRUE;									// set flag: detection = YES
-	p_spike_doc_->SetModifiedFlag(TRUE);					// set flag: document has changed
-	p_spike_doc_->SetDetectionDate(CTime::GetCurrentTime());		// detection date
-	const auto ioldlist = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
-	m_spikeno = -1;										// Nov 5, 2005
+	m_bDetected = TRUE;	
+	p_spike_doc_->SetModifiedFlag(TRUE);
+	p_spike_doc_->SetDetectionDate(CTime::GetCurrentTime());
+	auto ioldlist = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	m_spikeno = -1;
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
 	const auto p_dat = GetDocument()->m_pDat;
@@ -1235,9 +1235,13 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 	SaveCurrentSpikeFile();
 
 	// display data
+	if (ioldlist < 0)
+		ioldlist = 0;
 	p_spikelist_ = p_spike_doc_->SetSpkList_AsCurrent(ioldlist);
+
 	m_displaySpk_BarView.SetSourceData(p_spikelist_, GetDocument());
 	m_displaySpk_Shape.SetSourceData(p_spikelist_, GetDocument());
+	
 
 	// center spikes, change nb spikes and update content of draw buttons
 	if (options_viewdata->bMaximizeGain
@@ -1248,11 +1252,13 @@ void CViewSpikeDetection::DetectAll(BOOL bAll)
 	{
 		m_displaySpk_BarView.MaxCenter();
 		m_displaySpk_Shape.SetYWExtOrg(m_displaySpk_BarView.GetYWExtent(), m_displaySpk_BarView.GetYWOrg());
-		m_displaySpk_Shape.SetXWExtOrg(p_spikelist_->GetSpikeLength(), 0);
+		int spklen = 60;
+		if (p_spikelist_ != nullptr)
+			spklen = p_spikelist_->GetSpikeLength(); m_displaySpk_Shape.SetXWExtOrg(spklen, 0);
 		UpdateSpkShapeWndScale(FALSE);
 	}
 
-	HighlightSpikes(TRUE);								// highlight spikes
+	HighlightSpikes(TRUE);
 	UpdateLegends();
 	UpdateTabs();
 }

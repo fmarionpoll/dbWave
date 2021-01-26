@@ -1694,7 +1694,10 @@ CSpikeList* CSpikeDoc::SetSpkList_AsCurrent(int ichan)
 
 CSpikeList* CSpikeDoc::GetSpkList_Current()
 {
-	return &spikelist_array[m_currspklist];
+	if (m_currspklist >= 0)
+		return &spikelist_array[m_currspklist];
+	else
+		return nullptr;
 }
 
 CSpikeList* CSpikeDoc::GetSpkList_At(int ichan) {

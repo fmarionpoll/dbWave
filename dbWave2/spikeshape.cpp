@@ -597,10 +597,11 @@ void CSpikeShapeWnd::GetExtents()
 			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
-
-			GetExtentsCurrentSpkList();
-			if (m_yWE != 0)
-				break;
+			if (p_spikelist_ != NULL) {
+				GetExtentsCurrentSpkList();
+				if (m_yWE != 0)
+					break;
+				}
 		}
 	}
 
