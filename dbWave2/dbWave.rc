@@ -2348,8 +2348,8 @@ IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,2020,11,3
- PRODUCTVERSION 4,2019,11,3
+ FILEVERSION 4,2021,1,26
+ PRODUCTVERSION 4,2021,1,26
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2366,12 +2366,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "AgroParisTech - EGCE UMR 9191 (CNRS-Paris Sud-IRD)"
             VALUE "FileDescription", "Database-oriented  data acquisition and analysis for extracellular electrophysiology"
-            VALUE "FileVersion", "4.2020.11.3"
+            VALUE "FileVersion", "4.2021.1.26"
             VALUE "InternalName", "dbWave2"
             VALUE "LegalCopyright", "Copyright (C) 2018-2022"
             VALUE "OriginalFilename", "dbWave2.exe"
             VALUE "ProductName", " dbWave Application"
-            VALUE "ProductVersion", "4.2019.11.3"
+            VALUE "ProductVersion", "4.2021.1.26"
         END
     END
     BLOCK "VarFileInfo"
@@ -3557,7 +3557,7 @@ END
 STRINGTABLE
 BEGIN
     IDP_PROGRESS_CAPTION    "Operation in progress ..."
-    IDS_FILEDESCRIP         "dbWave database (*.mdb;*.accdb)|*.mdb;*.accdb|Acq. data (*.dat;*.asd;*.mcid)|*.dat;*.asd;*.mcid|Spikes (*.spk)|*.spk|Text (*.txt)|*.txt|Project (*.prj)|*.prj|"
+    IDS_FILEDESCRIP         "dbWave database (*.mdb;*.accdb)|*.mdb;*.accdb|Acq. data (*.dat;*.asd;*.mcid;*.smr;*.smrx)|*.dat;*.asd;*.mcid;*.smr;*.smrx|Spikes (*.spk)|*.spk|Text (*.txt)|*.txt|Project (*.prj)|*.prj|"
     IDS_OUTLOOKBAR          "Outlook bar"
     IDS_ACQDATA_SWEEPDURATIONLOW 
                             "Warning:\nsweep duration is too short\nchoose larger value"
@@ -3578,7 +3578,7 @@ BEGIN
     IDS_DAC_TOOFAST         "DAC rate too fast: acquisition stopped"
     IDR_PROJECTTYPE         "\nPROJECT\nProject\nList of files(*.prj;*.txt)\n.prj\ndbWaveFileType3\ndbWave_project\nprojI\nprojI Files\n\n"
     IDS_WRITEPROTECT        "This file is READ_ONLY"
-    IDR_DBDATATYPE          """\nDATA\nAcquisition data\nData Files(*.dat;*.asd)\n.dat\ndbWaveFileType1\ndbWave_data_acquisition \ndatI\ndati Files\n\n"
+    IDR_DBDATATYPE          """\nDATA\nAcquisition data\nData Files(*.dat;*.asd;*.smr,*.smrx)\n.dat\ndbWaveFileType1\ndbWave_data_acquisition \ndatI\ndati Files\n\n"
     IDR_DBSPIKETYPE         "\nSPIKES\nSpike data\nSpike Files*(.spk)\n.spk\ndbWaveFileType2\ndbWave_spike \nSPIKI\nspki Files\n\n"
 END
 

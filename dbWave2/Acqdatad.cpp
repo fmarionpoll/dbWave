@@ -10,6 +10,7 @@
 #include "datafile_Atlab.h"
 #include "datafile_ASD.h"
 #include "datafile_mcid.h"
+#include "datafile_SMR.h"
 #include "importgenericdatadlg.h"
 #include "datafile_Awave.h"
 
@@ -98,7 +99,6 @@ BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
 	const BOOL flag = SaveAs(szPathName, FALSE);
 	if (flag)
 		SetModifiedFlag(FALSE);	// mark the document as clean
-
 	return flag;
 }
 
@@ -297,6 +297,9 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 			break;
 		case DOCTYPE_MCID:
 			m_pXFile = new CDataFileMCID;
+			break;
+		case DOCTYPE_SMR:
+			m_pXFile = new CDataFileSMR;
 			break;
 			//case DOCTYPE_PCCLAMP		5	// PCCLAMP document (not implemented yet)
 			//case DOCTYPE_SAPID 		6	// SAPID document (not implemented yet)
@@ -512,6 +515,7 @@ int CAcqDataDoc::CheckFileType(CFile* f) const
 	}
 
 	// not of current type
+
 	// check if ATLAB file
 	if (i_id < 0)
 	{
@@ -548,8 +552,18 @@ int CAcqDataDoc::CheckFileType(CFile* f) const
 		delete pFileX;
 	}
 
+	// check if CFS file
+	if (i_id < 0)
+	{
+		auto* pFileX = new (CDataFileSMR);
+		ASSERT(pFileX != NULL);
+		i_id = pFileX->CheckFileType(f);
+		delete pFileX;
+	}
+
 	return i_id;
 }
+
 
 // adjust size of the buffer for data read from file
 // update buffer parameters
@@ -969,8 +983,6 @@ BOOL CAcqDataDoc::WriteHZtags(CTagList* p_tags)
 	return m_pXFile->WriteHZtags(p_tags);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 BOOL CAcqDataDoc::WriteVTtags(CTagList* p_tags)
 {
 	if (p_tags == nullptr)
@@ -991,18 +1003,13 @@ BOOL CAcqDataDoc::AcqDoc_DataAppendStart()
 		m_pXFile = new CDataFileAWAVE;
 		ASSERT(m_pXFile != NULL);
 	}
-
 	return m_pXFile->DataAppendStart();
 }
-
-/////////////////////////////////////////////////////////////////////////////
 
 BOOL CAcqDataDoc::AcqDoc_DataAppend(short* p_buffer, const UINT bytes_length) const
 {
 	return m_pXFile->DataAppend(p_buffer, bytes_length);
 }
-
-/////////////////////////////////////////////////////////////////////////////
 
 BOOL CAcqDataDoc::AcqDoc_DataAppendStop()
 {

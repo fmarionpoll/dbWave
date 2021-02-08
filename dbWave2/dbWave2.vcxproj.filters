@@ -417,6 +417,9 @@
     <ClCompile Include="CSpkListTabCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="datafile_SMR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -912,6 +915,9 @@
       <Filter>customctrl</Filter>
     </ClInclude>
     <ClInclude Include="CSpkListTabCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="datafile_SMR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
