@@ -34,8 +34,8 @@ protected:
 	BOOL			OpenAcqFile(CString& szfilename);
 
 #ifdef _DEBUG
-	void AssertValid() const override;
-	void Dump(CDumpContext& dc) const override;
+	void			AssertValid() const override;
+	void			Dump(CDumpContext& dc) const override;
 #endif
 
 	// Generated message map functions
@@ -47,8 +47,8 @@ protected:
 	// Data members and functions dealing with CDataFileX and data reading buffer
 	// -----------------------------------
 
-	CDataFileX* m_pXFile;			// data file /* CDataFileX* */
-	CWaveBuf* m_pWBuf;			// CWaveBuffer
+	CDataFileX*		m_pXFile;			// data file /* CDataFileX* */
+	CWaveBuf*		m_pWBuf;			// CWaveBuffer
 	CTagList		m_hz_tags{};		// list of horizontal cursors
 	CTagList		m_vt_tags{};		// list of vertical tags
 
@@ -72,7 +72,7 @@ protected:
 	int				m_tBUFsourcechan;
 
 public:
-	inline long			GettBUFfirst() const { return m_tBUFfirst; }
+	inline long		 GettBUFfirst() const { return m_tBUFfirst; }
 	inline CTagList* GetpHZtags() { return &m_hz_tags; }
 	inline CTagList* GetpVTtags() { return &m_vt_tags; }
 
@@ -81,10 +81,10 @@ public:
 	int		CheckFileType(CFile* file) const;
 	int 	CheckFileTypeFromName(CString& sz_path_name);
 	int  	BGetVal(int chan, long l_index);
-	short* LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
+	short*	LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL	BuildTransfData(int transform_type, int ns);
 	BOOL	LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
-	short* LoadRawDataParams(int* n_channels);
+	short*	LoadRawDataParams(int* n_channels);
 
 	// write data
 	BOOL	WriteHZtags(CTagList* ptags);

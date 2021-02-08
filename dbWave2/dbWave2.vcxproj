@@ -294,6 +294,7 @@
     </ClCompile>
     <ClCompile Include="CSpkListTabCtrl.cpp" />
     <ClCompile Include="CUSBPxxS1Ctl.cpp" />
+    <ClCompile Include="datafile_SMR.cpp" />
     <ClCompile Include="dtBoardDlg.cpp" />
     <ClCompile Include="chanlistitem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -629,6 +630,7 @@
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CSpkListTabCtrl.h" />
     <ClInclude Include="CUSBPxxS1Ctl.h" />
+    <ClInclude Include="datafile_SMR.h" />
     <ClInclude Include="dtBoardDlg.h" />
     <ClInclude Include="chanlistitem.h" />
     <ClInclude Include="ChildFrm.h" />

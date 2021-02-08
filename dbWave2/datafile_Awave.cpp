@@ -51,7 +51,7 @@ BOOL CDataFileAWAVE::InitFile()
 	char* pdummy[257];				// create string with 256 chars
 	ASSERT(pdummy != NULL);
 	memset(&pdummy[0], ' ', 256);
-	Write(LPCSTR(pdummy), 256);	// write it
+	Write(LPCSTR(pdummy), 256);		// write it
 
 	// write file signature
 	Seek(0, CFile::begin);			// position pointer
@@ -64,11 +64,11 @@ BOOL CDataFileAWAVE::InitFile()
 
 // check if the datafile has a recognizable header format
 
-BOOL CDataFileAWAVE::CheckFileType(CFile* pfile)
+BOOL CDataFileAWAVE::CheckFileType(CFile* f)
 {
-	pfile->Seek(0, CFile::begin);
+	f->Seek(0, CFile::begin);
 	char signature[6];
-	pfile->Read(signature, 5);
+	f->Read(signature, 5);
 	signature[5] = '\0';
 	CStringA cs_signature(signature);
 	auto flag = DOCTYPE_UNKNOWN;

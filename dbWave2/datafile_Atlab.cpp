@@ -325,14 +325,11 @@ void CDataFileATLAB::InitDummyChansInfo(short chanlistindex)
 
 BOOL CDataFileATLAB::CheckFileType(CFile* f)
 {
-	// ------lit octets testes pour determiner type de fichier
-	WORD w_atlab;			// struct for ATLab file
+	WORD w_atlab;								// struct for ATLab file
 	auto flag = DOCTYPE_UNKNOWN;
 	f->Seek(m_ulOffsetHeader, CFile::begin);	// position pointer to start of file
-	f->Read(&w_atlab, sizeof(w_atlab));		// Read data
-
-	// test Atlab
-	if (w_atlab == 0xAAAA) //	//&&( tab[2] == 0x07 || tab[2] == 0x06)
+	f->Read(&w_atlab, sizeof(w_atlab));			// Read data
+	if (w_atlab == 0xAAAA)						//&&( tab[2] == 0x07 || tab[2] == 0x06)
 		flag = m_idType;
 	return flag;
 }

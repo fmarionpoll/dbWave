@@ -206,7 +206,8 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	// open spike or dat documents
 	if ((cs_ext.Compare(_T("dat")) == 0) || (cs_ext.Compare(_T("spk")) == 0)
-		|| (cs_ext.Compare(_T("asd")) == 0))
+		|| (cs_ext.Compare(_T("asd")) == 0) || (cs_ext.Compare(_T("smr")) == 0)
+		|| (cs_ext.Compare(_T("smrx")) == 0))
 	{
 		if (iext > 0)
 			csnew = csnew.Left(iext);
@@ -1068,7 +1069,7 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		auto cs_extent = cs_filename.Right(cs_filename.GetLength() - idotposition - 1);
 		auto cs_root_name = cs_filename.Mid(ilastbackslashposition + 1, namelen);
 
-		const auto b_is_dat_file = IsDatFile(cs_filename);
+		const auto b_is_dat_file = IsExtensionRecognizedAsDataFile(cs_extent);
 		if (b_is_dat_file) {
 			cs_dat_file = cs_filename;
 			cs_spk_file = cs_filename.Left(idotposition) + _T(".spk");
@@ -1165,11 +1166,13 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 	SAFE_DELETE(psf);
 }
 
-BOOL CdbWaveDoc::IsDatFile(CString cs_filename) const
+BOOL CdbWaveDoc::IsExtensionRecognizedAsDataFile(CString string) const
 {
-	return (cs_filename.Find(_T(".dat")) > 0
-		|| cs_filename.Find(_T(".mcid")) > 0
-		|| cs_filename.Find(_T(".asd")) > 0);
+	return (string.Find(_T("dat"))	!= -1
+		|| string.Find(_T("mcid"))	!= -1
+		|| string.Find(_T("asd"))	!= -1
+		|| string.Find(_T("smr"))	!= -1
+		|| string.Find(_T("smrx"))	!= -1);
 }
 
 CWaveFormat* CdbWaveDoc::GetWaveFormat(CString csFilename, BOOL bIsDatFile) {
@@ -2066,11 +2069,7 @@ int CdbWaveDoc::CheckifFilesCanbeOpened(CStringArray& filenames, CSharedFile* ps
 		CString cs_ext;
 		const auto i_ext = cs_filename.ReverseFind('.');
 		cs_ext = cs_filename.Right(cs_filename.GetLength() - i_ext - 1);
-		BOOL b_dat = (cs_ext.Compare(_T("dat")) == 0);
-		if (!b_dat)
-			b_dat = (cs_ext.Compare(_T("mcid")) == 0);
-		if (!b_dat)
-			b_dat = (cs_ext.Compare(_T("asd")) == 0);
+		BOOL b_dat = IsExtensionRecognizedAsDataFile(cs_ext);
 
 		if ((!b_dat && cs_ext.Compare(_T("spk")) != 0) || (cs_filename.Find(_T("tmp.dat")) >= 0))
 		{
@@ -2649,3 +2648,4 @@ void CdbWaveDoc::ExportDatafilesAsTXTfiles()
 	SetDB_CurrentRecordPosition(currentfile);
 	dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf = psf;
 }
+

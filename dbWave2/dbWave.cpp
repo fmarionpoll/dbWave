@@ -97,8 +97,8 @@ CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 	m_pviewdataMemFile = nullptr;
 	m_pviewspikesMemFile = nullptr;
 	m_psort1spikesMemFile = nullptr;
-	m_bADcardFound = TRUE;
 	m_pdbWaveViewTemplate = nullptr;
+	m_bADcardFound = TRUE;
 }
 
 BOOL CdbWaveApp::InitInstance()
