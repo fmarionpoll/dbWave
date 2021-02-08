@@ -97,8 +97,11 @@ BOOL CDataFileSMR::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 BOOL CDataFileSMR::CheckFileType(CFile* f)
 {
 	BOOL flag = DOCTYPE_UNKNOWN;
+	short systemID = 0;
 	char copyright[LENCOPYRIGHT+3] = { 0 };	// space for "(C) CED 87
-	f->Read(copyright, sizeof(LENCOPYRIGHT + 2));
+	f->Seek(0, CFile::begin);
+	f->Read(&systemID, sizeof(short));
+	f->Read(copyright, LENCOPYRIGHT + 2);
 
 	copyright[LENCOPYRIGHT+2] = '\0';
 	CStringA cs_signature(copyright);
