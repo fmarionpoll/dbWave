@@ -1334,7 +1334,7 @@ int CViewSpikeDetection::DetectStim1(int ichan)
 
 				// add element
 				b_cross_upw = FALSE;
-				b_save_on = !b_save_on;
+				b_save_on = ~b_save_on;
 				if (!b_mode && !b_save_on)
 					continue;
 			}
@@ -1345,7 +1345,7 @@ int CViewSpikeDetection::DetectStim1(int ichan)
 
 				// add element
 				b_cross_upw = TRUE;
-				b_save_on = !b_save_on;
+				b_save_on = ~b_save_on;
 				if (!b_mode && !b_save_on)
 					continue;
 			}
