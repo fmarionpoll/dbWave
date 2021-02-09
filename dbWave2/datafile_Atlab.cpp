@@ -98,12 +98,12 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 
 	// decode ATLAB header and fill in windows structure
 	// ---------------- specific DT2821 differential mode
-	pWFormat->fullscale_Volts = 20.f;	// 20 mv full scale (+10 V to -10 V)
-	pWFormat->binspan = 4096;	// 12 bits resolution
-	pWFormat->binzero = 2048;			// offset binary encoding
+	pWFormat->fullscale_Volts = 20.f;					// 20 mv full scale (+10 V to -10 V)
+	pWFormat->binspan = 4096;							// 12 bits resolution
+	pWFormat->binzero = 2048;							// offset binary encoding
 
 	// 1) version independent parameters
-	//pWFormat->wversion = 1;			// initial version
+	//pWFormat->wversion = 1;							// initial version
 
 	// get device flags & encoding
 	//DEV_FLAGS devflags = (DEV_FLAGS)((short) *(pHeader+DEVFLAGS));
@@ -111,7 +111,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	// load data acquisition comment
 	auto pcomment = p_header + ACQCOM;					// get pointer to acqcom
 	int i;
-	for (i = 0; i < ACQCOM_LEN; i++)						// loop over acqcom (80 chars)
+	for (i = 0; i < ACQCOM_LEN; i++)					// loop over acqcom (80 chars)
 		if (*(pcomment + i) == 0)
 			*(pcomment + i) = ' ';	// erase zeros
 	pcomment = p_header + ACQCOM;						// restore pointer
@@ -160,12 +160,12 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	{
 		pArray->channel_add();
 		auto* p_chan = pArray->get_p_channel(i);
-		p_chan->am_adchannel = *pchanlist; pchanlist++;	// acq chan
+		p_chan->am_adchannel = *pchanlist; pchanlist++;		// acq chan
 		p_chan->am_gainAD = *pgainlist; pgainlist++;		// gain on the A/D card
 		auto j = static_cast<short>(strlen(pcomtlist));
 		if (j > 40 || j < 0)
 			j = 40;
-		p_chan->am_csComment = CStringA(pcomtlist, j);			// chan comment
+		p_chan->am_csComment = CStringA(pcomtlist, j);		// chan comment
 		p_chan->am_gainamplifier = *pxgainlist;				// total gain (ampli + A/D card)
 		p_chan->am_gaintotal = p_chan->am_gainamplifier * static_cast<float>(p_chan->am_gainAD);
 		// TODO: check if resolution is computed correctly
@@ -189,19 +189,19 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	case 0:	// version 0: transfer parms from xgain && cyber to channel_instrm
 		//AfxMessageBox("Atlab header version 0", MB_OK);
 
-		if (pcyber_a320->ComSpeed == 0)	// cyberAmp??
+		if (pcyber_a320->ComSpeed == 0)						// cyberAmp??
 			break;
 		InitChansFromCyberA320(p_header, version);
-		pWFormat->trig_mode = 0; //OLx_TRG_SOFT;
+		pWFormat->trig_mode = 0;							//OLx_TRG_SOFT;
 		pchar = p_header + TIMING;
 		pshort = reinterpret_cast<short*>(pchar);
 		if (*pshort & EXTERNAL_TRIGGER)
-			pWFormat->trig_mode = 1; //OLx_TRG_EXTERN;
+			pWFormat->trig_mode = 1;						//OLx_TRG_EXTERN;
 		bflag = 2;
 		break;
 
 	case 1:	// version 1: trig parameters explicitely set
-		if (pcyber_a320->ComSpeed == 0)	// cyberAmp??
+		if (pcyber_a320->ComSpeed == 0)						// cyberAmp??
 			break;
 		InitChansFromCyberA320(p_header, version);
 		pchar = p_header + TRIGGER_MODE; pshort = (short*)pchar;
@@ -213,11 +213,11 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 		break;
 
 	default: // version before version 0
-		pWFormat->trig_mode = 0; //OLx_TRG_SOFT;
+		pWFormat->trig_mode = 0;							//OLx_TRG_SOFT;
 		pchar = p_header + TIMING;
 		pshort = reinterpret_cast<short*>(pchar);
 		if (*pshort & EXTERNAL_TRIGGER)
-			pWFormat->trig_mode = 1; //OLx_TRG_EXTERN;
+			pWFormat->trig_mode = 1;						//OLx_TRG_EXTERN;
 		break;
 	}
 
@@ -276,11 +276,11 @@ void CDataFileATLAB::LoadChanFromCyber(short i, char* pcyberchan)
 	pChan->am_gainheadstage = pcyb->gainprobe;
 	pChan->am_csamplifier = CString(_T("CyberAmp"));
 	pChan->am_amplifierchan = pcyb->acqchan;
-	pChan->am_gainpre = pcyb->gainpre; 	// pre-filter amplification
-	pChan->am_gainpost = pcyb->gainpost;	// post-filter amplification
-	pChan->am_notchfilt = pcyb->notchfilt;// notch filter ON/off
-	pChan->am_lowpass = pcyb->lowpass;	// low pass filter 0=DC 4....30000
-	pChan->am_offset = pcyb->offset;		// input offset
+	pChan->am_gainpre = pcyb->gainpre; 				// pre-filter amplification
+	pChan->am_gainpost = pcyb->gainpost;			// post-filter amplification
+	pChan->am_notchfilt = pcyb->notchfilt;			// notch filter ON/off
+	pChan->am_lowpass = pcyb->lowpass;				// low pass filter 0=DC 4....30000
+	pChan->am_offset = pcyb->offset;				// input offset
 	pChan->am_csInputpos = GetCyberA320filter(pcyb->inputpos);
 	pChan->am_csInputneg = GetCyberA320filter(pcyb->inputneg);
 	pChan->am_gainamplifier = 1.;
@@ -314,11 +314,11 @@ void CDataFileATLAB::InitDummyChansInfo(short chanlistindex)
 	p_chan->am_csheadstage = p_chan->am_csamplifier;
 	p_chan->am_gainheadstage = 1;
 	p_chan->am_amplifierchan = 1;
-	p_chan->am_gainpre = 1;	// pre-filter amplification
-	p_chan->am_gainpost = 1;	// post-filter amplification
-	p_chan->am_notchfilt = 0;	// notch filter ON/off
-	p_chan->am_lowpass = 0;	// low pass filter 0=DC 4....30000
-	p_chan->am_offset = 0.0f;	// input offset
+	p_chan->am_gainpre = 1;							// pre-filter amplification
+	p_chan->am_gainpost = 1;						// post-filter amplification
+	p_chan->am_notchfilt = 0;						// notch filter ON/off
+	p_chan->am_lowpass = 0;							// low pass filter 0=DC 4....30000
+	p_chan->am_offset = 0.0f;						// input offset
 	p_chan->am_csInputpos = CStringA("DC");
 	p_chan->am_csInputneg = CStringA("GND");
 }
@@ -326,13 +326,13 @@ void CDataFileATLAB::InitDummyChansInfo(short chanlistindex)
 BOOL CDataFileATLAB::CheckFileType(CFile* f)
 {
 	// ------lit octets testes pour determiner type de fichier
-	WORD w_atlab;			// struct for ATLab file
+	WORD w_atlab;									// struct for ATLab file
 	auto flag = DOCTYPE_UNKNOWN;
-	f->Seek(m_ulOffsetHeader, CFile::begin);	// position pointer to start of file
-	f->Read(&w_atlab, sizeof(w_atlab));		// Read data
+	f->Seek(m_ulOffsetHeader, CFile::begin);		// position pointer to start of file
+	f->Read(&w_atlab, sizeof(w_atlab));				// Read data
 
 	// test Atlab
-	if (w_atlab == 0xAAAA) //	//&&( tab[2] == 0x07 || tab[2] == 0x06)
+	if (w_atlab == 0xAAAA)							//&&( tab[2] == 0x07 || tab[2] == 0x06)
 		flag = m_idType;
 	return flag;
 }

@@ -250,14 +250,11 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 {
 	// open file using the last object type used or the default type
 	CFileException fe;
-	if (m_pXFile != nullptr && m_pXFile->m_hFile != CFile::hFileNull)	// close if file currently opened
+	if (m_pXFile != nullptr && m_pXFile->m_hFile != CFile::hFileNull)
 		m_pXFile->Close();
 	CFileStatus r_status;
-	const auto flag = CFile::GetStatus(cs_filename, r_status);
-
-	// what if file not found? exit!
-	if (!flag)
-		return flag;
+	if (!CFile::GetStatus(cs_filename, r_status))
+		return false;
 
 	// create standard object if pxfile is null
 	if (m_pXFile == nullptr)
@@ -508,7 +505,7 @@ int CAcqDataDoc::CheckFileType(CFile* f) const
 	{
 		i_id = m_pXFile->CheckFileType(f);
 		if (i_id != DOCTYPE_UNKNOWN)
-			return m_pXFile->m_idType;	// return file type ID
+			return m_pXFile->m_idType;
 	}
 
 	// not of current type

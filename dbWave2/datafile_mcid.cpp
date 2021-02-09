@@ -57,7 +57,7 @@ void CDataFileMCID::Dump(CDumpContext& dc) const
 BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 {
 	MCID_HEADER mcidHeader;
-	Seek(0, CFile::begin);		// position pointer to start of file
+	Seek(0, CFile::begin);
 	Read(&mcidHeader, sizeof(MCID_HEADER));
 
 	m_bHeaderSize = sizeof(MCID_HEADER) + mcidHeader.application_header;
@@ -69,21 +69,21 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	{
 		pArray->channel_add();
 		CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
-		pChan->am_csComment = CString(" ");			// channel annotation
+		pChan->am_csComment = CString(" ");
 		pChan->am_resolutionV = mcidHeader.sensitivity[i] / 2000.;
-		pChan->am_gainamplifier = 1. / pChan->am_resolutionV;	// fractional gain
+		pChan->am_gainamplifier = 1. / pChan->am_resolutionV;
 
-		pChan->am_adchannel = 0;						// channel scan list
-		pChan->am_gainAD = 1;							// channel gain list
+		pChan->am_adchannel = 0;					// channel scan list
+		pChan->am_gainAD = 1;						// channel gain list
 		pChan->am_csamplifier = CString(" ");		// amplifier type
-		pChan->am_csheadstage = CString(" ");			// headstage type
-		pChan->am_gainheadstage = 1;					// assume headstage gain = 1
+		pChan->am_csheadstage = CString(" ");		// headstage type
+		pChan->am_gainheadstage = 1;				// assume headstage gain = 1
 		pChan->am_amplifierchan = 0;				// assume 1 channel / amplifier
 		pChan->am_gainpre = 1;						// assume gain -pre and -post = 1
 		pChan->am_gainpost = 1;
-		pChan->am_notchfilt = 0;						// assume no notch filter
+		pChan->am_notchfilt = 0;					// assume no notch filter
 		pChan->am_lowpass = 0;						// assume not low pass filtering
-		pChan->am_offset = 0.0f;						// assume no offset compensation
+		pChan->am_offset = 0.0f;					// assume no offset compensation
 		pChan->am_csInputpos = "DC";				// assume input + = DC
 		pChan->am_csInputneg = "GND";				// assume input - = GND
 		pChan->am_gaintotal = pChan->am_gainamplifier;
@@ -91,7 +91,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	//	tentative
 	pWFormat->fullscale_Volts = 5.0f;				// 10 V full scale
-	pWFormat->binspan = 65536;				// 16 bits resolution
+	pWFormat->binspan = 65536;						// 16 bits resolution
 	pWFormat->binzero = 0;
 
 	pWFormat->mode_encoding = OLx_ENC_BINARY;
@@ -113,7 +113,7 @@ BOOL CDataFileMCID::CheckFileType(CFile* f)
 	// ------read bytes to make sure we are accessing the right file
 	BOOL flag = DOCTYPE_UNKNOWN;
 	MCID_HEADER mcidHeader;
-	f->Seek(0, CFile::begin);		// position pointer to start of file
+	f->Seek(0, CFile::begin);
 	f->Read(&mcidHeader, sizeof(MCID_HEADER));
 
 	m_bHeaderSize = mcidHeader.application_header;

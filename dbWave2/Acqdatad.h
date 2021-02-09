@@ -6,26 +6,21 @@
 #define		BY_TIME		1
 #define		BY_NAME		2
 
-#include "WaveBuf.h"		// data acquisition buffer
+#include "WaveBuf.h"
 #include "datafile_X.h"
-#include "Awavepar.h"		// user parameters
+#include "Awavepar.h"
 
 class CAcqDataDoc : public CDocument
 {
 	friend class CImportGenericDataDlg;
 	DECLARE_DYNCREATE(CAcqDataDoc)
 public:
-	CAcqDataDoc();		// constructor used by dynamic creation
+	CAcqDataDoc();
 	virtual ~CAcqDataDoc();
 
-	// Operations
-	//-----------
 public:
 	CString			GetDataFileInfos(OPTIONS_VIEWDATA* pVD);
 	void			ExportDataFile_to_TXTFile(CStdioFile* pdataDest);
-
-	// Implementation
-	//---------------
 	BOOL 			OnSaveDocument(CString& sz_path_name);
 	BOOL 			OnOpenDocument(CString& sz_path_name);
 	BOOL 			OnNewDocument() override;
@@ -47,8 +42,8 @@ protected:
 	// Data members and functions dealing with CDataFileX and data reading buffer
 	// -----------------------------------
 
-	CDataFileX* m_pXFile;			// data file /* CDataFileX* */
-	CWaveBuf* m_pWBuf;			// CWaveBuffer
+	CDataFileX*		m_pXFile;			// data file /* CDataFileX* */
+	CWaveBuf*		m_pWBuf;			// CWaveBuffer
 	CTagList		m_hz_tags{};		// list of horizontal cursors
 	CTagList		m_vt_tags{};		// list of vertical tags
 
@@ -72,7 +67,7 @@ protected:
 	int				m_tBUFsourcechan;
 
 public:
-	inline long			GettBUFfirst() const { return m_tBUFfirst; }
+	inline long		GettBUFfirst() const { return m_tBUFfirst; }
 	inline CTagList* GetpHZtags() { return &m_hz_tags; }
 	inline CTagList* GetpVTtags() { return &m_vt_tags; }
 
@@ -81,10 +76,10 @@ public:
 	int		CheckFileType(CFile* file) const;
 	int 	CheckFileTypeFromName(CString& sz_path_name);
 	int  	BGetVal(int chan, long l_index);
-	short* LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
+	short*	LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL	BuildTransfData(int transform_type, int ns);
 	BOOL	LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
-	short* LoadRawDataParams(int* n_channels);
+	short*	LoadRawDataParams(int* n_channels);
 
 	// write data
 	BOOL	WriteHZtags(CTagList* ptags);
@@ -111,10 +106,10 @@ public:
 	CWaveFormat* GetpWaveFormat() const { return &m_pWBuf->m_waveFormat; }
 	int		GetScanCount() const { return m_pWBuf->m_waveFormat.scan_count; }
 
-	short* GetpRawDataBUF() const { return m_pWBuf->GetWBAdrRawDataBuf(); }
-	short* GetpRawDataElmt(int chan, int index) const { return m_pWBuf->GetWBAdrRawDataElmt(chan, index - m_lBUFchanFirst); }
-	short* GetpTransfDataBUF() const { return m_pWBuf->GetWBAdrTransfData(); }
-	short* GetpTransfDataElmt(int index) const { return (m_pWBuf->GetWBAdrTransfData() + index); }
+	short*	GetpRawDataBUF() const { return m_pWBuf->GetWBAdrRawDataBuf(); }
+	short*	GetpRawDataElmt(int chan, int index) const { return m_pWBuf->GetWBAdrRawDataElmt(chan, index - m_lBUFchanFirst); }
+	short*	GetpTransfDataBUF() const { return m_pWBuf->GetWBAdrTransfData(); }
+	short*	GetpTransfDataElmt(int index) const { return (m_pWBuf->GetWBAdrTransfData() + index); }
 	int		GetTransfDataSpan(int i) const { return m_pWBuf->GetWBTransformSpan(i); }
 	WORD	GetTransfDataNTypes() const { return m_pWBuf->GetWBNTypesofTransforms(); }
 	CString	GetTransfDataName(int i) const { return m_pWBuf->GetWBTransformsAllowed(i); }
