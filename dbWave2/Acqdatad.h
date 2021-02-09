@@ -29,8 +29,8 @@ protected:
 	BOOL			OpenAcqFile(CString& szfilename);
 
 #ifdef _DEBUG
-	void AssertValid() const override;
-	void Dump(CDumpContext& dc) const override;
+	void			AssertValid() const override;
+	void			Dump(CDumpContext& dc) const override;
 #endif
 
 	// Generated message map functions

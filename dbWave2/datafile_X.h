@@ -6,18 +6,18 @@
 #pragma once
 
 // The different type of the document recognized
-constexpr auto DOCTYPE_AWAVE = 0;		// aWave document
-constexpr auto DOCTYPE_ASYST = 1;		// ASYST document
-constexpr auto DOCTYPE_ATLAB = 2;		// ATLAB document
-constexpr auto DOCTYPE_ASDSYNTECH = 3;	// ASD SYNTECH document (data)
-constexpr auto DOCTYPE_MCID = 4;		// MCI cf A French, Halifax
-constexpr auto DOCTYPE_CED = 8;			// CED File
-constexpr auto DOCTYPE_UNKNOWN = -1;	// document type not recognized
+constexpr auto DOCTYPE_AWAVE = 0;		// aWave document;
+constexpr auto DOCTYPE_ASYST = 1;		// ASYST document;
+constexpr auto DOCTYPE_ATLAB = 2;		// ATLAB document;
+constexpr auto DOCTYPE_ASDSYNTECH = 3;	// ASD SYNTECH document (data);
+constexpr auto DOCTYPE_MCID = 4;		// MCI cf A French, Halifax;
+constexpr auto DOCTYPE_SMR	= 5;		// CFS cambridge Filing system;
+constexpr auto DOCTYPE_UNKNOWN = -1;	// document type not recognized;
 
 class CDataFileX : public CFile
 {
 public:
-	CDataFileX();			// constructor used by dynamic creation
+	CDataFileX();				// constructor used by dynamic creation
 	~CDataFileX();
 	DECLARE_DYNCREATE(CDataFileX)
 
@@ -52,5 +52,4 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-protected:
 };

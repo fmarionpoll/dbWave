@@ -231,13 +231,8 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* wave_format, CWaveChanArray* wavec
 
 BOOL CDataFileASD::CheckFileType(CFile* f)
 {
-	// position pointer to start of file
 	f->Seek(0L, CFile::begin);
-
-	// create archive to overload file operations
 	auto flag = DOCTYPE_UNKNOWN;
-
-	// (1) read data identification string
 	auto i_len = 32;
 	char buf[32];
 	auto pbuf = &buf[0];
