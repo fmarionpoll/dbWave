@@ -229,7 +229,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* wave_format, CWaveChanArray* wavec
 	return DOCTYPE_ASDSYNTECH;
 }
 
-BOOL CDataFileASD::CheckFileType(CFile* f)
+int CDataFileASD::CheckFileType(CFile* f)
 {
 	f->Seek(0L, CFile::begin);
 	auto flag = DOCTYPE_UNKNOWN;

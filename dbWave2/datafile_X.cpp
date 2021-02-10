@@ -65,7 +65,7 @@ long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
 ////////////////////////////////////////////////////////////////////////
 // base class implementation of virtual functions
 
-BOOL CDataFileX::CheckFileType(CFile* pfile)
+int CDataFileX::CheckFileType(CFile* pfile)
 {
 	return DOCTYPE_UNKNOWN;
 }
@@ -111,4 +111,16 @@ BOOL CDataFileX::WriteHZtags(CTagList* ptags)
 BOOL CDataFileX::WriteVTtags(CTagList* ptags)
 {
 	return FALSE;
+}
+
+int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) {
+	std::string needle(bufPattern, lenPattern-1);
+	std::string haystack(bufRead, lenRead);
+	std::size_t n = haystack.find(needle);
+	int flag = DOCTYPE_UNKNOWN;
+	if (n != std::string::npos) {
+		flag = m_idType;
+		m_csType = bufPattern;
+	}
+	return flag;
 }

@@ -64,7 +64,7 @@ BOOL CDataFileAWAVE::InitFile()
 
 // check if the datafile has a recognizable header format
 
-BOOL CDataFileAWAVE::CheckFileType(CFile* f)
+int CDataFileAWAVE::CheckFileType(CFile* f)
 {
 	f->Seek(0, CFile::begin);
 	char signature[6];

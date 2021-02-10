@@ -100,7 +100,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	return TRUE;
 }
 
-BOOL CDataFileMCID::CheckFileType(CFile* f)
+int CDataFileMCID::CheckFileType(CFile* f)
 {
 	BOOL flag = DOCTYPE_UNKNOWN;
 	MCID_HEADER mcidHeader;
@@ -110,7 +110,7 @@ BOOL CDataFileMCID::CheckFileType(CFile* f)
 	m_ulOffsetData = mcidHeader.application_header;
 
 	// test "mcid"
-	//if (tab[8]==166 && tab[9]==166 &&  tab[10]==166 && tab[11]==166)
-	//	flag = m_idType;
+	/*if (tab[8]==166 && tab[9]==166 && tab[10]==166 && tab[11]==166)
+		flag = m_idType;*/
 	return flag;
 }

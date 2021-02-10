@@ -131,30 +131,30 @@ typedef struct tagATLABHEADER {		// index
 
 // offset within header (C convention, assuming 1 byte)
 
-#define DEVID 				4	// device_id.........AD card id
-#define DEVFLAGS 			6	// device_flags......type of acquisition
-#define SCNCNT				8	// scan_count .......number of acq channels
-#define CHANLST				10	// channel_list[8] ..input channel list
-#define TRIGGER_MODE		26	// trigger_mode......AD trigger mode [0..]
-#define TRIGGER_CHAN		28	// trigger_chan......AD trigger channel [0..7]
-#define TRIGGER_THRESHOLD 	30	// trigger_treshold..AD trig threshold value [binary]
-#define TRIGGER_POLARITY	32	// trigger_polarity
-#define GAINLST				42	// gain_list[8]...... gain channel list
-#define CHANCOM				74	// channel_comment[8][40]
-#define ACQDATE				714	// acq_date[10]
-#define ACQTIME				724	// acq_time[10]
-#define TIMING				736	// timing_source
-#define CLKPER				738	// clock_period
-#define SAMCNT				742	// sample_count
-#define RDCNT				746	// read_count
-#define ACQCOM				750	// acq_comment[80]
-#define VERSION				830	// version
-#define CYBERA320			832	// CyberA320
-#define CYBER_1				840	// cyber1
-#define CYBER_2				868	// cyber2
-#define XGAIN				914	// xgain_list[8]
+#define DEVID 						4	// device_id.........AD card id
+#define DEVFLAGS 					6	// device_flags......type of acquisition
+#define SCNCNT						8	// scan_count .......number of acq channels
+#define CHANLST						10	// channel_list[8] ..input channel list
+#define TRIGGER_MODE				26	// trigger_mode......AD trigger mode [0..]
+#define TRIGGER_CHAN				28	// trigger_chan......AD trigger channel [0..7]
+#define TRIGGER_THRESHOLD 			30	// trigger_treshold..AD trig threshold value [binary]
+#define TRIGGER_POLARITY			32	// trigger_polarity
+#define GAINLST						42	// gain_list[8]...... gain channel list
+#define CHANCOM						74	// channel_comment[8][40]
+#define ACQDATE						714	// acq_date[10]
+#define ACQTIME						724	// acq_time[10]
+#define TIMING						736	// timing_source
+#define CLKPER						738	// clock_period
+#define SAMCNT						742	// sample_count
+#define RDCNT						746	// read_count
+#define ACQCOM						750	// acq_comment[80]
+#define VERSION						830	// version
+#define CYBERA320					832	// CyberA320
+#define CYBER_1						840	// cyber1
+#define CYBER_2						868	// cyber2
+#define XGAIN						914	// xgain_list[8]
 
-#define	ACQCOM_LEN			80
+#define	ACQCOM_LEN					80
 
 /* A/D trigger property             */
 

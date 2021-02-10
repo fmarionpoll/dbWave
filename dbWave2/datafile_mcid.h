@@ -1,7 +1,5 @@
-// MCIDFile.h : header file
-//
-
 #pragma once
+#include "datafile_X.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // McidFile document
@@ -54,20 +52,22 @@ typedef struct {
 	double		count_time;					// spikes/s count interval (s)
 } SINC1_MCID_HEADER_1;
 
-class CDataFileMCID : public CDataFileX
+class CDataFileMCID : 
+	public CDataFileX
 {
 public:
 	CDataFileMCID();
 	DECLARE_DYNCREATE(CDataFileMCID)
+	virtual ~CDataFileMCID();
 
 	// Operations
 public:
-	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
-	BOOL CheckFileType(CFile* file);
+	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
+	int  CheckFileType(CFile* file) override;
 
 	// Implementation
 public:
-	virtual ~CDataFileMCID();
+	
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;

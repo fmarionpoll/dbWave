@@ -323,7 +323,7 @@ void CDataFileATLAB::InitDummyChansInfo(short chanlistindex)
 	p_chan->am_csInputneg = CStringA("GND");
 }
 
-BOOL CDataFileATLAB::CheckFileType(CFile* f)
+int CDataFileATLAB::CheckFileType(CFile* f)
 {
 	// ------lit octets testes pour determiner type de fichier
 	WORD w_atlab;			// struct for ATLab file

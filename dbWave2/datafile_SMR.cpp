@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "datafile_SMR.h"
-
+#include "ceds64int.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -10,15 +10,18 @@
 // CDataFileCFS
 
 IMPLEMENT_DYNCREATE(CDataFileSMR, CDataFileX)
+const int	LENCEDSON	= 16;
+const char	CEDSON32[]	= "(C) CED 87";
+const char	CEDSON64[]	= "S64";
 
 CDataFileSMR::CDataFileSMR()
 {
-	m_bHeaderSize = 512;
-	m_ulOffsetData = m_bHeaderSize;
-	m_ulOffsetHeader = 0;
-	m_idType = DOCTYPE_SMR;
-	m_csType = _T("(C) CED 87");
-	m_csFiledesc = "SMRFILE";
+	m_bHeaderSize		= 512;
+	m_ulOffsetData		= m_bHeaderSize;
+	m_ulOffsetHeader	= 0;
+	m_idType			= DOCTYPE_SMR;
+	m_csType			= CEDSON64;
+	m_csFiledesc		= "SMRFILE";
 }
 
 CDataFileSMR::~CDataFileSMR()
@@ -42,9 +45,7 @@ void CDataFileSMR::Dump(CDumpContext& dc) const
 
 BOOL CDataFileSMR::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 {
-	//CFS_HEADER cfsHeader;
-	//Seek(0, CFile::begin);		// position pointer to start of file
-	//Read(&cfsHeader, sizeof(CFS_HEADER));
+	
 
 	//m_bHeaderSize = sizeof(CFS_HEADER) + cfsHeader.application_header;
 	//m_ulOffsetData = m_bHeaderSize;
@@ -77,7 +78,7 @@ BOOL CDataFileSMR::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	////	tentative
 	//pWFormat->fullscale_Volts = 5.0f;				// 10 V full scale
-	//pWFormat->binspan = 65536;				// 16 bits resolution
+	//pWFormat->binspan = 65536;					// 16 bits resolution
 	//pWFormat->binzero = 0;
 
 	//pWFormat->mode_encoding = OLx_ENC_BINARY;
@@ -94,19 +95,15 @@ BOOL CDataFileSMR::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	return TRUE;
 }
 
-BOOL CDataFileSMR::CheckFileType(CFile* f)
+int CDataFileSMR::CheckFileType(CFile* f)
 {
-	BOOL flag = DOCTYPE_UNKNOWN;
-	short systemID = 0;
-	char copyright[LENCOPYRIGHT+3] = { 0 };	// space for "(C) CED 87
+	char bufRead[LENCEDSON] = { 0 };
 	f->Seek(0, CFile::begin);
-	f->Read(&systemID, sizeof(short));
-	f->Read(copyright, LENCOPYRIGHT + 2);
-
-	copyright[LENCOPYRIGHT+2] = '\0';
-	CStringA cs_signature(copyright);
-	if (cs_signature.Find(m_csType) != -1)
-		flag = m_idType;
+	f->Read(bufRead, sizeof(bufRead));
+	
+	int flag = isPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
+	if (flag == DOCTYPE_UNKNOWN)
+		flag = isPatternPresent(bufRead + 2, sizeof(bufRead)-2, CEDSON32, sizeof(CEDSON32));
 	return flag;
-
 }
+

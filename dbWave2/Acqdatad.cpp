@@ -32,17 +32,6 @@ BEGIN_MESSAGE_MAP(CAcqDataDoc, CDocument)
 
 END_MESSAGE_MAP()
 
-///////////////////////////////////////////////////////////////////////////
-// Construction / Destruction
-
-//**************************************************************************
-//function:  CAcqDataDoc()
-//purpose: Create a new CAcqDataDoc object
-//parameters: none
-//returns: none
-//comments: constructor used by dynamic creation
-// **************************************************************************/
-
 CAcqDataDoc::CAcqDataDoc()
 {
 	m_bdefined = FALSE;		// data are not defined
@@ -67,23 +56,12 @@ CAcqDataDoc::CAcqDataDoc()
 	m_bRemoveOffset = TRUE;
 }
 
-/**************************************************************************
- function:  ~CAcqDataDoc()
- purpose: Remove from memory an CAcqDataDoc object
- parameters: none
- returns: none
- comments:
- **************************************************************************/
-
 CAcqDataDoc::~CAcqDataDoc()
 {
 	// delete structures created
 	SAFE_DELETE(m_pWBuf);
 	SAFE_DELETE(m_pXFile);
 }
-
-////////////////////////////////////////////////////////////////////////////
-// Implementation
 
 /**************************************************************************
  function:  OnSaveDocument(const char* pszName)
@@ -93,7 +71,6 @@ CAcqDataDoc::~CAcqDataDoc()
  returns: TRUE if operation was successful, else returns FALSE
  comments:
  **************************************************************************/
-
 BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
 {
 	const BOOL flag = SaveAs(szPathName, FALSE);
@@ -110,7 +87,6 @@ BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
  returns: TRUE if operation was successful, else returns FALSE
  comments:
  **************************************************************************/
-
 BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 {
 	// close data file if already opened
@@ -128,10 +104,10 @@ BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 	// check if file can be opened - exit if it can't and return an empty object
 	CFileStatus r_status;
 	const auto b_open = CFile::GetStatus(sz_path_name, r_status);
-	if (!b_open || r_status.m_size <= 4096)	// avoid to open 1kb files ...
+	if (!b_open || r_status.m_size <= 4096)			// patch to avoid to open 1kb files ...
 	{
-		SAFE_DELETE(m_pXFile);				// delete data file object if any
-		return FALSE;						// and return
+		SAFE_DELETE(m_pXFile);
+		return FALSE;
 	}
 	ASSERT(sz_path_name.Right(3) != _T("del"));
 
@@ -144,29 +120,29 @@ BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 		auto p_dlg = new CImportGenericDataDlg;
 
 		// init parameters
-		auto cs_array = new CStringArray;				// dlg needs an array of strings
+		auto cs_array = new CStringArray;			// dlg needs an array of strings
 		ASSERT(cs_array != NULL);
 		cs_array->Add(sz_path_name);
 		p_dlg->m_pfilenameArray = cs_array;			// pass address of array
 		p_dlg->bConvert = TRUE;						// tell that conversion is allowed
-		auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());	// get pointer to application
+		auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 		p_dlg->piivO = &(p_app->options_import);
-		m_pXFile->Close();							// close file
-		SAFE_DELETE(m_pXFile);						// delete object
+		m_pXFile->Close();
+		SAFE_DELETE(m_pXFile);
 
 		// call dialog
-		const auto result = p_dlg->DoModal();				// start dialog
+		const auto result = p_dlg->DoModal();		// start dialog
 		delete p_dlg;
 		if (IDOK != result || 0 == cs_array->GetSize())
 			return FALSE;
 
 		// change name of files here (rename)
-		auto filename_old = sz_path_name;
+		CString filename_old = sz_path_name;
 		const auto count = filename_old.ReverseFind('\\') + 1;
 		filename_old.Insert(count, _T("OLD_"));
 
 		// check if same file already exist
-		CFileStatus status;	// file status: time creation, ...
+		CFileStatus status;	
 		auto b_flag_exist = CFile::GetStatus(filename_old, status);
 		if (b_flag_exist != 0)
 			CFile::Remove(filename_old);
@@ -203,9 +179,9 @@ BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 
 		delete cs_array;
 
-		m_pXFile = new CDataFileAWAVE;					// create an aWave data file
-		ASSERT(m_pXFile != NULL);					// check validity
-		b_found_match = OpenAcqFile(sz_path_name);		// open corresponding file
+		m_pXFile = new CDataFileAWAVE;
+		ASSERT(m_pXFile != NULL);
+		b_found_match = OpenAcqFile(sz_path_name);
 	}
 	return b_found_match;
 }
@@ -331,7 +307,6 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
  returns: TRUE if operation was successful, else returns FALSE
  comments:
  **************************************************************************/
-
 BOOL CAcqDataDoc::OnNewDocument()
 {
 	//if (!CDocument::OnNewDocument())
@@ -352,9 +327,6 @@ BOOL CAcqDataDoc::OnNewDocument()
 	return TRUE;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Export Data
-
 /**************************************************************************
  function: GetFileInfos
  purpose:
@@ -362,7 +334,6 @@ BOOL CAcqDataDoc::OnNewDocument()
  returns:
  comments:
  **************************************************************************/
-
 CString CAcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 {
 	const CString sep('\t');
@@ -500,7 +471,6 @@ void CAcqDataDoc::Dump(CDumpContext& dc) const
 
 //////////////////////////////////////////////////////////////////////////////
 // check file type
-
 int CAcqDataDoc::CheckFileType(CFile* f) const
 {
 	auto i_id = DOCTYPE_UNKNOWN;
@@ -560,7 +530,6 @@ int CAcqDataDoc::CheckFileType(CFile* f) const
 
 	return i_id;
 }
-
 
 // adjust size of the buffer for data read from file
 // update buffer parameters
@@ -667,7 +636,6 @@ BOOL CAcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 			TRUE & update m_lBUFchanFirst, m_lBUFchanLast
  comments:
  **************************************************************************/
-
 BOOL CAcqDataDoc::ReadDataBlock(long l_first)
 {
 	// check limits
@@ -731,7 +699,6 @@ void CAcqDataDoc::ReadDataInfos()
  returns:
  comments:
  **************************************************************************/
-
 int CAcqDataDoc::BGetVal(const int channel, const long l_index)
 {
 	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
@@ -755,7 +722,6 @@ int CAcqDataDoc::BGetVal(const int channel, const long l_index)
 
  comments:      load as many data as possible within buffer
  **************************************************************************/
-
 short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const int transform_type, const int source_channel)
 {
 	const BOOL b_already_done = (m_bValidTransfBuffer
@@ -871,7 +837,6 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 
  comments:
  **************************************************************************/
-
 BOOL CAcqDataDoc::BuildTransfData(const int transform_type, const int source_channel)
 {
 	// make sure that transform buffer is ready
@@ -931,11 +896,6 @@ BOOL CAcqDataDoc::BuildTransfData(const int transform_type, const int source_cha
 	return flag;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// awave file
-// create new awave file
-/////////////////////////////////////////////////////////////////////////////
-
 BOOL CAcqDataDoc::CreateAcqFile(CString& cs_file_name)
 {
 	if (!cs_file_name.IsEmpty())
@@ -969,8 +929,6 @@ BOOL CAcqDataDoc::CreateAcqFile(CString& cs_file_name)
 	return TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 BOOL CAcqDataDoc::WriteHZtags(CTagList* p_tags)
 {
 	if (p_tags == nullptr)
@@ -988,8 +946,6 @@ BOOL CAcqDataDoc::WriteVTtags(CTagList* p_tags)
 		return TRUE;
 	return m_pXFile->WriteVTtags(p_tags);
 }
-
-/////////////////////////////////////////////////////////////////////////////
 
 BOOL CAcqDataDoc::AcqDoc_DataAppendStart()
 {
@@ -1027,7 +983,6 @@ BOOL CAcqDataDoc::AcqSaveDataDescriptors()
 	return flag;
 }
 
-// delete file on the disk
 void CAcqDataDoc::AcqDeleteFile() const
 {
 	const auto cs_file_path = m_pXFile->GetFilePath();
@@ -1040,13 +995,6 @@ void CAcqDataDoc::AcqCloseFile() const
 	if (m_pXFile != nullptr && m_pXFile->m_hFile != CFile::hFileNull)
 		m_pXFile->Close();
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// save current data file under a new name
-// default : save under awave format
-// (other options not implemented yet)
-// if "overwrite" (saveas is the same name than the source file:
-//    create new file, copy into old file, delete new file
 
 BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_type)
 {
