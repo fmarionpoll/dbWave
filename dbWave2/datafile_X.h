@@ -47,11 +47,15 @@ public:
 
 // Implementation
 public:
+	virtual bool IsAlreadyOpened(CString & sz_path_name);
+	virtual bool OpenDataFile(CString& sz_path_name, UINT u_open_flag);
+	virtual void CloseDataFile();
+
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 protected:
-	int	isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern);
+	int	IsPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern);
 
 };

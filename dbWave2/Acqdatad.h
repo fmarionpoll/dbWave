@@ -27,14 +27,14 @@ public:
 
 protected:
 	BOOL			OpenAcqFile(CString& szfilename);
+	bool			DlgToImportDataFile(CString& sz_path_name);
+	int				ImportFile(CString& sz_path_name);
 
 #ifdef _DEBUG
 	void			AssertValid() const override;
 	void			Dump(CDumpContext& dc) const override;
 #endif
 
-	// Generated message map functions
-	//--------------------------------
 protected:
 	DECLARE_MESSAGE_MAP()
 
@@ -74,7 +74,6 @@ public:
 	// Operations
 public:
 	int		CheckFileType(CFile* file) const;
-	int 	CheckFileTypeFromName(CString& sz_path_name);
 	int  	BGetVal(int chan, long l_index);
 	short*	LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL	BuildTransfData(int transform_type, int ns);

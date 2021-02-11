@@ -106,9 +106,9 @@ int CDataFileFromCEDSpike2::CheckFileType(CFile* f)
 	f->Seek(0, CFile::begin);
 	f->Read(bufRead, sizeof(bufRead));
 	
-	int flag = isPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
+	int flag = IsPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
 	if (flag == DOCTYPE_UNKNOWN)
-		flag = isPatternPresent(bufRead + 2, sizeof(bufRead)-2, CEDSON32, sizeof(CEDSON32));
+		flag = IsPatternPresent(bufRead + 2, sizeof(bufRead)-2, CEDSON32, sizeof(CEDSON32));
 	return flag;
 }
 

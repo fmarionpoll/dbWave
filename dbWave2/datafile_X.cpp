@@ -12,9 +12,6 @@
 // One routine is common to all: reading data from files assuming that data
 // are 16 bits numbers and that channels are interleaved
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileX
-
 IMPLEMENT_DYNCREATE(CDataFileX, CObject)
 
 CDataFileX::CDataFileX()
@@ -31,10 +28,8 @@ CDataFileX::~CDataFileX()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileX diagnostics
-
 #ifdef _DEBUG
+
 void CDataFileX::AssertValid() const
 {
 	CObject::AssertValid();
@@ -105,7 +100,8 @@ BOOL CDataFileX::WriteVTtags(CTagList* ptags)
 	return FALSE;
 }
 
-int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) {
+int CDataFileX::IsPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) 
+{
 	std::string needle(bufPattern, lenPattern-1);
 	std::string haystack(bufRead, lenRead);
 	std::size_t n = haystack.find(needle);
@@ -116,3 +112,25 @@ int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPatt
 	}
 	return flag;
 }
+
+bool CDataFileX::IsAlreadyOpened(CString& sz_path_name)
+{
+	if (m_hFile == CFile::hFileNull)
+		return false;
+	return (GetFileName().CompareNoCase(sz_path_name) == 0);
+}
+
+bool CDataFileX::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
+{
+	bool flag = Open(sz_path_name, u_open_flag);
+	if (!flag)
+		Abort();
+	return flag;
+}
+
+void CDataFileX::CloseDataFile()
+{
+	if (m_hFile != CFile::hFileNull)
+		Close();
+}
+

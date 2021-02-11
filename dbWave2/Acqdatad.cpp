@@ -83,20 +83,18 @@ BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
  function:  OnOpenDocument(CString &szPathName)
  purpose: Open the file called szPathName
  parameters:
-	_ CString &szPathName : Name of the file to be opened
+	CString &szPathName : Name of the file to be opened
  returns: TRUE if operation was successful, else returns FALSE
  comments:
  **************************************************************************/
 BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 {
-	// close data file if already opened
-	if (m_pXFile != nullptr
-		&& m_pXFile->m_hFile != CFile::hFileNull)
+	// close data file unless it is already opened
+	if (m_pXFile != nullptr)
 	{
-		auto filename = m_pXFile->GetFileName();
-		if (filename.CompareNoCase(sz_path_name) == 0)
+		if (m_pXFile->IsAlreadyOpened(sz_path_name) == 0)
 			return TRUE;
-		m_pXFile->Close();
+		m_pXFile->CloseDataFile();
 	}
 	// set file reading buffer as dirty
 	m_bValidReadBuffer = FALSE;
@@ -111,115 +109,83 @@ BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 	}
 	ASSERT(sz_path_name.Right(3) != _T("del"));
 
-	// check file type (we are now sure that the file exists)
 	auto b_found_match = OpenAcqFile(sz_path_name);
-
-	// the format of the data file was not recognized - see if we can import
 	if (b_found_match < 0)
 	{
-		auto p_dlg = new CImportGenericDataDlg;
-
-		// init parameters
-		auto cs_array = new CStringArray;			// dlg needs an array of strings
-		ASSERT(cs_array != NULL);
-		cs_array->Add(sz_path_name);
-		p_dlg->m_pfilenameArray = cs_array;			// pass address of array
-		p_dlg->bConvert = TRUE;						// tell that conversion is allowed
-		auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-		p_dlg->piivO = &(p_app->options_import);
-		m_pXFile->Close();
-		SAFE_DELETE(m_pXFile);
-
-		// call dialog
-		const auto result = p_dlg->DoModal();		// start dialog
-		delete p_dlg;
-		if (IDOK != result || 0 == cs_array->GetSize())
-			return FALSE;
-
-		// change name of files here (rename)
-		CString filename_old = sz_path_name;
-		const auto count = filename_old.ReverseFind('\\') + 1;
-		filename_old.Insert(count, _T("OLD_"));
-
-		// check if same file already exist
-		CFileStatus status;	
-		auto b_flag_exist = CFile::GetStatus(filename_old, status);
-		if (b_flag_exist != 0)
-			CFile::Remove(filename_old);
-		try
-		{
-			CFile::Rename(sz_path_name, filename_old);
-		}
-		catch (CFileException* pEx)
-		{
-			CString cs;
-			cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
-			cs = sz_path_name + cs;
-			ATLTRACE2(cs);
-			pEx->Delete();
-		}
-
-		filename_old = cs_array->GetAt(0);
-		b_flag_exist = CFile::GetStatus(sz_path_name, status);
-
-		if (b_flag_exist != 0)
-			CFile::Remove(sz_path_name);
-		try
-		{
-			CFile::Rename(filename_old, sz_path_name);
-		}
-		catch (CFileException* pEx)
-		{
-			CString cs;
-			cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
-			cs = sz_path_name + cs;
-			ATLTRACE2(cs);
-			pEx->Delete();
-		}
-
-		delete cs_array;
-
-		m_pXFile = new CDataFileAWAVE;
-		ASSERT(m_pXFile != NULL);
-		b_found_match = OpenAcqFile(sz_path_name);
+		b_found_match = ImportFile(sz_path_name);
 	}
 	return b_found_match;
 }
 
-// open data file and load first data block
-int CAcqDataDoc::CheckFileTypeFromName(CString& sz_path_name)
+int CAcqDataDoc::ImportFile(CString& sz_path_name)
 {
-	// open file using the last object type used or the default type
-	CFileException fe;
-	if (m_pXFile != nullptr && m_pXFile->m_hFile != CFile::hFileNull)	// close if file currently opened
-		m_pXFile->Close();
-	CFileStatus r_status;
-	const auto flag = CFile::GetStatus(sz_path_name, r_status);
-	if (!flag)
-		return flag;
+	m_pXFile->CloseDataFile();
+	SAFE_DELETE(m_pXFile);
+	CString filename_new = sz_path_name;
+	if (!DlgToImportDataFile(filename_new))
+		return FALSE;
 
-	// create standard object if p file is null
-	if (m_pXFile == nullptr)
-		m_pXFile = new CDataFileAWAVE;
+	// change name of files here (rename)
+	CString filename_old = sz_path_name;
+	const auto count = filename_old.ReverseFind('\\') + 1;
+	filename_old.Insert(count, _T("OLD_"));
 
-	// open file
-	UINT u_open_flag = (r_status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
-	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary;//, &fe;
-	if (!m_pXFile->Open(sz_path_name, u_open_flag))
+	// check if same file already exist
+	CFileStatus status;
+	auto b_flag_exist = CFile::GetStatus(filename_old, status);
+	if (b_flag_exist != 0)
+		CFile::Remove(filename_old);
+	try
 	{
-		m_pXFile->Abort();
-		return false;
+		CFile::Rename(sz_path_name, filename_old);
+	}
+	catch (CFileException* pEx)
+	{
+		CString cs;
+		cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
+		cs = sz_path_name + cs;
+		ATLTRACE2(cs);
+		pEx->Delete();
 	}
 
-	// create buffer
-	if (m_pWBuf == nullptr)
-		m_pWBuf = new CWaveBuf;
-	ASSERT(m_pWBuf != NULL);	// check object created properly
 
-	// read data & create object according to file signature (checkfiletype)
-	const auto i_id = CheckFileType(m_pXFile);
-	m_pXFile->Close();
-	return i_id;
+	b_flag_exist = CFile::GetStatus(sz_path_name, status);
+	if (b_flag_exist != 0)
+		CFile::Remove(sz_path_name);
+	try
+	{
+		CFile::Rename(filename_new, sz_path_name);
+	}
+	catch (CFileException* pEx)
+	{
+		CString cs;
+		cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
+		cs = sz_path_name + cs;
+		ATLTRACE2(cs);
+		pEx->Delete();
+	}
+
+
+	m_pXFile = new CDataFileAWAVE;
+	ASSERT(m_pXFile != NULL);
+	b_found_match = OpenAcqFile(sz_path_name);
+}
+
+bool CAcqDataDoc::DlgToImportDataFile(CString& sz_path_name)
+{
+	auto cs_array	= new CStringArray;			// dlg needs an array of strings
+	ASSERT(cs_array != NULL);
+	cs_array->Add(sz_path_name);
+
+	auto p_dlg				= new CImportGenericDataDlg;
+	p_dlg->m_pfilenameArray = cs_array;			// address of array
+	p_dlg->bConvert			= TRUE;				// conversion is allowed
+	p_dlg->piivO			= &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import);
+	if (IDOK != p_dlg->DoModal() || 0 == cs_array->GetSize())
+		return false;
+
+	sz_path_name = cs_array->GetAt(0);
+	return true;
 }
 
 BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
