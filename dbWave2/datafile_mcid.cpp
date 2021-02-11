@@ -9,9 +9,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileMCID
-
 IMPLEMENT_DYNCREATE(CDataFileMCID, CDataFileX)
 
 CDataFileMCID::CDataFileMCID()
@@ -27,9 +24,6 @@ CDataFileMCID::~CDataFileMCID()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileMCID diagnostics
-
 #ifdef _DEBUG
 void CDataFileMCID::AssertValid() const
 {
@@ -41,10 +35,6 @@ void CDataFileMCID::Dump(CDumpContext& dc) const
 	CDataFileX::Dump(dc);
 }
 #endif //_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileMCID commands
-
 
 BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 {

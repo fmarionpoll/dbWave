@@ -103,7 +103,7 @@ public:
 	long	GetBUFchanLength() const { return m_lBUFchanSize; }
 
 	CWaveChanArray* GetpWavechanArray() const { return &m_pWBuf->m_chanArray; }
-	CWaveFormat* GetpWaveFormat() const { return &m_pWBuf->m_waveFormat; }
+	CWaveFormat*	GetpWaveFormat() const { return &m_pWBuf->m_waveFormat; }
 	int		GetScanCount() const { return m_pWBuf->m_waveFormat.scan_count; }
 
 	short*	GetpRawDataBUF() const { return m_pWBuf->GetWBAdrRawDataBuf(); }

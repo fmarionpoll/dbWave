@@ -417,7 +417,7 @@
     <ClCompile Include="CSpkListTabCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="datafile_SMR.cpp">
+    <ClCompile Include="datafile_CEDSpike2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -917,10 +917,10 @@
     <ClInclude Include="CSpkListTabCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="datafile_SMR.h">
+    <ClInclude Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.h">
+    <ClInclude Include="datafile_CEDSpike2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

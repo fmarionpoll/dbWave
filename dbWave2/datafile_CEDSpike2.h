@@ -1,13 +1,13 @@
 #pragma once
 #include "datafile_X.h"
 
-class CDataFileSMR :
+class CDataFileFromCEDSpike2 :
     public CDataFileX
 {
 public:
-	CDataFileSMR();
-	DECLARE_DYNCREATE(CDataFileSMR)
-	virtual ~CDataFileSMR();
+	CDataFileFromCEDSpike2();
+	DECLARE_DYNCREATE(CDataFileFromCEDSpike2)
+	virtual ~CDataFileFromCEDSpike2();
 
 	// Operations
 public:
@@ -24,7 +24,10 @@ public:
 #endif
 
 protected:
-	CStringA	m_csFiledesc;
+	CStringA		m_csFiledesc;
+	CWaveFormat*	m_pWFormat;
+	CWaveChanArray* m_pArray;
+
 	
 	// Generated message map functions
 protected:

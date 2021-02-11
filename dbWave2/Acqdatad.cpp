@@ -232,13 +232,13 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 	if (!CFile::GetStatus(cs_filename, r_status))
 		return false;
 
-	// create standard object if pxfile is null
+	// create CDataFileAWAVE object if pxfile is null
 	if (m_pXFile == nullptr)
 		m_pXFile = new CDataFileAWAVE;
 
 	// open file
 	UINT u_open_flag = (r_status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
-	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary; // , &fe;
+	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary;
 	if (!m_pXFile->Open(cs_filename, u_open_flag))
 	{
 		m_pXFile->Abort();
@@ -248,7 +248,7 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 	// create buffer
 	if (m_pWBuf == nullptr)
 		m_pWBuf = new CWaveBuf;
-	ASSERT(m_pWBuf != NULL);	// check object created properly
+	ASSERT(m_pWBuf != NULL);
 	const auto p_chan_array = GetpWavechanArray();
 	const auto p_wave_format = GetpWaveFormat();
 
@@ -272,7 +272,7 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 			m_pXFile = new CDataFileMCID;
 			break;
 		case DOCTYPE_SMR:
-			m_pXFile = new CDataFileSMR;
+			m_pXFile = new CDataFileFromSpike2;
 			break;
 			//case DOCTYPE_PCCLAMP		5	// PCCLAMP document (not implemented yet)
 			//case DOCTYPE_SAPID 		6	// SAPID document (not implemented yet)
@@ -456,8 +456,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	pdataDest->WriteString(&sep);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CAcqDataDoc diagnostic
+
 #ifdef _DEBUG
 void CAcqDataDoc::AssertValid() const
 {
@@ -469,20 +468,18 @@ void CAcqDataDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-//////////////////////////////////////////////////////////////////////////////
-// check file type
+
 int CAcqDataDoc::CheckFileType(CFile* f) const
 {
 	auto i_id = DOCTYPE_UNKNOWN;
+	// is current type?
 	if (m_pXFile != nullptr)
 	{
 		i_id = m_pXFile->CheckFileType(f);
 		if (i_id != DOCTYPE_UNKNOWN)
 			return m_pXFile->m_idType;
 	}
-
-	// not of current type
-
+	
 	// check if ATLAB file
 	if (i_id < 0)
 	{
@@ -519,14 +516,15 @@ int CAcqDataDoc::CheckFileType(CFile* f) const
 		delete pFileX;
 	}
 
-	// check if CFS file
+	// check if Spike2 file from CED
 	if (i_id < 0)
 	{
-		auto* pFileX = new (CDataFileSMR);
+		auto* pFileX = new (CDataFileFromSpike2);
 		ASSERT(pFileX != NULL);
 		i_id = pFileX->CheckFileType(f);
 		delete pFileX;
 	}
+	
 
 	return i_id;
 }

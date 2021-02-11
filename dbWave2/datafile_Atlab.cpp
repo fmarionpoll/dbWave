@@ -1,6 +1,3 @@
-// AtlabFile.cpp : implementation file
-//
-
 #include "StdAfx.h"
 #include "dataheader_Atlab.H"
 #include "datafile_Atlab.h"
@@ -8,9 +5,6 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileATLAB
 
 IMPLEMENT_DYNCREATE(CDataFileATLAB, CDataFileX)
 
@@ -28,9 +22,6 @@ CDataFileATLAB::~CDataFileATLAB()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileATLAB diagnostics
-
 #ifdef _DEBUG
 void CDataFileATLAB::AssertValid() const
 {
@@ -43,15 +34,12 @@ void CDataFileATLAB::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileATLAB commands
-
 BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 {
 	// Read file header
-	auto bflag = TRUE;
-	m_pWFormat = pWFormat;
-	m_pArray = pArray;
+	auto bflag	= TRUE;
+	m_pWFormat	= pWFormat;
+	m_pArray	= pArray;
 
 	auto const p_header = new char[m_bHeaderSize];
 	ASSERT(p_header != NULL);
@@ -325,7 +313,6 @@ void CDataFileATLAB::InitDummyChansInfo(short chanlistindex)
 
 int CDataFileATLAB::CheckFileType(CFile* f)
 {
-	// ------lit octets testes pour determiner type de fichier
 	WORD w_atlab;			// struct for ATLab file
 	auto flag = DOCTYPE_UNKNOWN;
 	f->Seek(m_ulOffsetHeader, CFile::begin);	// position pointer to start of file

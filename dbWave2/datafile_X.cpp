@@ -49,9 +49,6 @@ void CDataFileX::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileX commands
-
 long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
 {
 	// seek and read CFile
@@ -61,9 +58,6 @@ long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
 	// adjust dependent parameters
 	return l_size / sizeof(short);
 }
-
-////////////////////////////////////////////////////////////////////////
-// base class implementation of virtual functions
 
 int CDataFileX::CheckFileType(CFile* pfile)
 {
@@ -81,8 +75,6 @@ BOOL CDataFileX::ReadVTtags(CTagList* pVTtags)
 {
 	return FALSE;
 }
-
-// I/O operations to be updated by Save
 
 BOOL CDataFileX::InitFile()
 {

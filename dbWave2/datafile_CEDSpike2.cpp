@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "datafile_SMR.h"
+#include "datafile_CEDSpike2.h"
 #include "ceds64int.h"
 
 #ifdef _DEBUG
@@ -9,12 +9,12 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDataFileCFS
 
-IMPLEMENT_DYNCREATE(CDataFileSMR, CDataFileX)
+IMPLEMENT_DYNCREATE(CDataFileFromCEDSpike2, CDataFileX)
 const int	LENCEDSON	= 16;
 const char	CEDSON32[]	= "(C) CED 87";
 const char	CEDSON64[]	= "S64";
 
-CDataFileSMR::CDataFileSMR()
+CDataFileFromCEDSpike2::CDataFileFromCEDSpike2()
 {
 	m_bHeaderSize		= 512;
 	m_ulOffsetData		= m_bHeaderSize;
@@ -24,28 +24,33 @@ CDataFileSMR::CDataFileSMR()
 	m_csFiledesc		= "SMRFILE";
 }
 
-CDataFileSMR::~CDataFileSMR()
+CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileCFS diagnostics
-
 #ifdef _DEBUG
-void CDataFileSMR::AssertValid() const
+void CDataFileFromCEDSpike2::AssertValid() const
 {
 	CDataFileX::AssertValid();
 }
 
-void CDataFileSMR::Dump(CDumpContext& dc) const
+void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const
 {
 	CDataFileX::Dump(dc);
 }
 #endif //_DEBUG
 
-BOOL CDataFileSMR::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
+BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 {
-	
+	// Read file header
+	auto bflag = TRUE;
+	m_pWFormat = pWFormat;
+	m_pArray = pArray;
+
+	auto const p_header = new char[m_bHeaderSize];
+	ASSERT(p_header != NULL);
+	Seek(m_ulOffsetHeader, CFile::begin);		// position pointer
+	Read(p_header, m_bHeaderSize);				// read header
 
 	//m_bHeaderSize = sizeof(CFS_HEADER) + cfsHeader.application_header;
 	//m_ulOffsetData = m_bHeaderSize;
@@ -95,7 +100,7 @@ BOOL CDataFileSMR::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	return TRUE;
 }
 
-int CDataFileSMR::CheckFileType(CFile* f)
+int CDataFileFromCEDSpike2::CheckFileType(CFile* f)
 {
 	char bufRead[LENCEDSON] = { 0 };
 	f->Seek(0, CFile::begin);

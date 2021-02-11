@@ -24,7 +24,7 @@ protected:
 	void InitChansFromCyberA320(char* pHeader, short version);
 	CString GetCyberA320filter(int ncode);
 
-	CWaveFormat* m_pWFormat;
+	CWaveFormat*	m_pWFormat;
 	CWaveChanArray* m_pArray;
 
 	// Implementation
