@@ -10,7 +10,7 @@
 #include "datafile_Atlab.h"
 #include "datafile_ASD.h"
 #include "datafile_mcid.h"
-#include "datafile_SMR.h"
+#include "datafile_CEDSpike2.h"
 #include "importgenericdatadlg.h"
 #include "datafile_Awave.h"
 
@@ -455,7 +455,6 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	}
 	pdataDest->WriteString(&sep);
 }
-
 
 #ifdef _DEBUG
 void CAcqDataDoc::AssertValid() const

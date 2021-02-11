@@ -14,7 +14,6 @@ public:
 	int  CheckFileType(CFile* file) override;
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
 
-
 	// Implementation
 public:
 	
@@ -27,7 +26,6 @@ protected:
 	CStringA		m_csFiledesc;
 	CWaveFormat*	m_pWFormat;
 	CWaveChanArray* m_pArray;
-
 	
 	// Generated message map functions
 protected:
