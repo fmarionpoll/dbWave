@@ -6,8 +6,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileCFS
 
 IMPLEMENT_DYNCREATE(CDataFileFromCEDSpike2, CDataFileX)
 const int	LENCEDSON	= 16;
@@ -100,15 +98,29 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	return TRUE;
 }
 
+bool CDataFileFromCEDSpike2::isOpened(CString& sz_path_name)
+{
+	return false;
+}
+
+bool CDataFileFromCEDSpike2::openDataFile(CString& sz_path_name, UINT u_open_flag)
+{
+	return false;
+}
+
+void CDataFileFromCEDSpike2::closeDataFile()
+{
+}
+
 int CDataFileFromCEDSpike2::CheckFileType(CFile* f)
 {
 	char bufRead[LENCEDSON] = { 0 };
 	f->Seek(0, CFile::begin);
 	f->Read(bufRead, sizeof(bufRead));
 	
-	int flag = IsPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
+	int flag = isCharacterPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
 	if (flag == DOCTYPE_UNKNOWN)
-		flag = IsPatternPresent(bufRead + 2, sizeof(bufRead)-2, CEDSON32, sizeof(CEDSON32));
+		flag = isCharacterPatternPresent(bufRead + 2, sizeof(bufRead)-2, CEDSON32, sizeof(CEDSON32));
 	return flag;
 }
 

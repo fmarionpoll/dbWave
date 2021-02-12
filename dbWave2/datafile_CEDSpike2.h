@@ -13,6 +13,9 @@ public:
 public:
 	int  CheckFileType(CFile* file) override;
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
+	bool isOpened(CString& sz_path_name) override;
+	bool openDataFile(CString& sz_path_name, UINT u_open_flag) override;
+	void closeDataFile() override;
 
 	// Implementation
 public:
@@ -26,8 +29,5 @@ protected:
 	CStringA		m_csFiledesc;
 	CWaveFormat*	m_pWFormat;
 	CWaveChanArray* m_pArray;
-	
-	// Generated message map functions
-protected:
 };
 

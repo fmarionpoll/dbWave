@@ -100,7 +100,7 @@ BOOL CDataFileX::WriteVTtags(CTagList* ptags)
 	return FALSE;
 }
 
-int CDataFileX::IsPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) 
+int CDataFileX::isCharacterPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) 
 {
 	std::string needle(bufPattern, lenPattern-1);
 	std::string haystack(bufRead, lenRead);
@@ -113,14 +113,14 @@ int CDataFileX::IsPatternPresent(char* bufRead, int lenRead, const char* bufPatt
 	return flag;
 }
 
-bool CDataFileX::IsAlreadyOpened(CString& sz_path_name)
+bool CDataFileX::isOpened(CString& sz_path_name)
 {
 	if (m_hFile == CFile::hFileNull)
 		return false;
 	return (GetFileName().CompareNoCase(sz_path_name) == 0);
 }
 
-bool CDataFileX::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
+bool CDataFileX::openDataFile(CString& sz_path_name, UINT u_open_flag)
 {
 	bool flag = Open(sz_path_name, u_open_flag);
 	if (!flag)
@@ -128,7 +128,7 @@ bool CDataFileX::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
 	return flag;
 }
 
-void CDataFileX::CloseDataFile()
+void CDataFileX::closeDataFile()
 {
 	if (m_hFile != CFile::hFileNull)
 		Close();

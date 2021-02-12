@@ -27,8 +27,10 @@ public:
 
 protected:
 	BOOL			OpenAcqFile(CString& szfilename);
-	bool			DlgToImportDataFile(CString& sz_path_name);
-	int				ImportFile(CString& sz_path_name);
+	bool			dlgImportDataFile(CString& sz_path_name);
+	int				importFile(CString& sz_path_name);
+	void			removeFile(CString file1);
+	void			renameFile2As1(CString filename_old, CString sz_path_name);
 
 #ifdef _DEBUG
 	void			AssertValid() const override;

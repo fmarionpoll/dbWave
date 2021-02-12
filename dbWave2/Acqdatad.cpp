@@ -92,9 +92,9 @@ BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 	// close data file unless it is already opened
 	if (m_pXFile != nullptr)
 	{
-		if (m_pXFile->IsAlreadyOpened(sz_path_name) == 0)
+		if (m_pXFile->isOpened(sz_path_name) == 0)
 			return TRUE;
-		m_pXFile->CloseDataFile();
+		m_pXFile->closeDataFile();
 	}
 	// set file reading buffer as dirty
 	m_bValidReadBuffer = FALSE;
@@ -111,67 +111,61 @@ BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 
 	auto b_found_match = OpenAcqFile(sz_path_name);
 	if (b_found_match < 0)
-	{
-		b_found_match = ImportFile(sz_path_name);
-	}
+		b_found_match = importFile(sz_path_name);
+	
 	return b_found_match;
 }
 
-int CAcqDataDoc::ImportFile(CString& sz_path_name)
+int CAcqDataDoc::importFile(CString& sz_path_name)
 {
-	m_pXFile->CloseDataFile();
+	m_pXFile->closeDataFile();
 	SAFE_DELETE(m_pXFile);
 	CString filename_new = sz_path_name;
-	if (!DlgToImportDataFile(filename_new))
+	if (!dlgImportDataFile(filename_new))
 		return FALSE;
 
-	// change name of files here (rename)
+	// add "old_" to filename
 	CString filename_old = sz_path_name;
 	const auto count = filename_old.ReverseFind('\\') + 1;
 	filename_old.Insert(count, _T("OLD_"));
 
-	// check if same file already exist
-	CFileStatus status;
-	auto b_flag_exist = CFile::GetStatus(filename_old, status);
-	if (b_flag_exist != 0)
-		CFile::Remove(filename_old);
-	try
-	{
-		CFile::Rename(sz_path_name, filename_old);
-	}
-	catch (CFileException* pEx)
-	{
-		CString cs;
-		cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
-		cs = sz_path_name + cs;
-		ATLTRACE2(cs);
-		pEx->Delete();
-	}
-
-
-	b_flag_exist = CFile::GetStatus(sz_path_name, status);
-	if (b_flag_exist != 0)
-		CFile::Remove(sz_path_name);
-	try
-	{
-		CFile::Rename(filename_new, sz_path_name);
-	}
-	catch (CFileException* pEx)
-	{
-		CString cs;
-		cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
-		cs = sz_path_name + cs;
-		ATLTRACE2(cs);
-		pEx->Delete();
-	}
-
+	// TODO check if this is right???
+	removeFile(filename_old);
+	renameFile2As1(sz_path_name, filename_old);
+	//removeFile(sz_path_name);
+	//renameFile2As1(sz_path_name, filename_new);
 
 	m_pXFile = new CDataFileAWAVE;
 	ASSERT(m_pXFile != NULL);
-	b_found_match = OpenAcqFile(sz_path_name);
+	int b_found_match = OpenAcqFile(sz_path_name);
+	return b_found_match;
 }
 
-bool CAcqDataDoc::DlgToImportDataFile(CString& sz_path_name)
+void CAcqDataDoc::removeFile(CString file1)
+{
+	CFileStatus status;
+	auto b_flag_exist = CFile::GetStatus(file1, status);
+	if (b_flag_exist != 0)
+		CFile::Remove(file1);
+}
+
+void CAcqDataDoc::renameFile2As1(CString file1, CString file2)
+{
+	try
+	{
+		CFile::Rename(file2, file1);
+	}
+	catch (CFileException* pEx)
+	{
+		CString cs;
+		cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
+		cs = file2 + cs;
+		ATLTRACE2(cs);
+		pEx->Delete();
+	}
+}
+
+bool CAcqDataDoc::dlgImportDataFile(CString& sz_path_name)
 {
 	auto cs_array	= new CStringArray;			// dlg needs an array of strings
 	ASSERT(cs_array != NULL);
@@ -190,26 +184,24 @@ bool CAcqDataDoc::DlgToImportDataFile(CString& sz_path_name)
 
 BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 {
-	// open file using the last object type used or the default type
 	CFileException fe;
-	if (m_pXFile != nullptr && m_pXFile->m_hFile != CFile::hFileNull)
-		m_pXFile->Close();
 	CFileStatus r_status;
-	if (!CFile::GetStatus(cs_filename, r_status))
-		return false;
 
 	// create CDataFileAWAVE object if pxfile is null
 	if (m_pXFile == nullptr)
 		m_pXFile = new CDataFileAWAVE;
+	else
+	{
+		m_pXFile->closeDataFile();
+		if (!CFile::GetStatus(cs_filename, r_status))
+			return false;
+	}
 
 	// open file
 	UINT u_open_flag = (r_status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
 	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary;
-	if (!m_pXFile->Open(cs_filename, u_open_flag))
-	{
-		m_pXFile->Abort();
+	if (!m_pXFile->openDataFile(cs_filename, u_open_flag))
 		return FALSE;
-	}
 
 	// create buffer
 	if (m_pWBuf == nullptr)
@@ -238,7 +230,7 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 			m_pXFile = new CDataFileMCID;
 			break;
 		case DOCTYPE_SMR:
-			m_pXFile = new CDataFileFromSpike2;
+			m_pXFile = new CDataFileFromCEDSpike2;
 			break;
 			//case DOCTYPE_PCCLAMP		5	// PCCLAMP document (not implemented yet)
 			//case DOCTYPE_SAPID 		6	// SAPID document (not implemented yet)
@@ -247,7 +239,7 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 			m_pXFile = new CDataFileX;
 			break;
 		}
-		m_pXFile->Open(cs_filename, u_open_flag);	// open file again, this time with using the correct object
+		m_pXFile->openDataFile(cs_filename, u_open_flag);	// open file again, this time with using the correct object
 	}
 
 	// return with error if format not known
@@ -484,7 +476,7 @@ int CAcqDataDoc::CheckFileType(CFile* f) const
 	// check if Spike2 file from CED
 	if (i_id < 0)
 	{
-		auto* pFileX = new (CDataFileFromSpike2);
+		auto* pFileX = new (CDataFileFromCEDSpike2);
 		ASSERT(pFileX != NULL);
 		i_id = pFileX->CheckFileType(f);
 		delete pFileX;
@@ -876,9 +868,7 @@ BOOL CAcqDataDoc::CreateAcqFile(CString& cs_file_name)
 			ASSERT(m_pXFile != NULL);
 		}
 
-		CFileException fe;
-
-		if (!m_pXFile->Open(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, &fe)) //shareDenyNone
+		if (!m_pXFile->openDataFile(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone)) //shareDenyNone
 		{
 			AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);
 			return FALSE;
@@ -949,14 +939,14 @@ BOOL CAcqDataDoc::AcqSaveDataDescriptors()
 void CAcqDataDoc::AcqDeleteFile() const
 {
 	const auto cs_file_path = m_pXFile->GetFilePath();
-	m_pXFile->Close();
+	m_pXFile->closeDataFile();
 	CFile::Remove(cs_file_path);
 }
 
 void CAcqDataDoc::AcqCloseFile() const
 {
 	if (m_pXFile != nullptr && m_pXFile->m_hFile != CFile::hFileNull)
-		m_pXFile->Close();
+		m_pXFile->closeDataFile();
 }
 
 BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_type)
@@ -1020,7 +1010,7 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 
 	// position source file index to start of data
 	m_pXFile->Seek(m_pXFile->m_ulOffsetData, CFile::begin);
-	auto p_buf = m_pWBuf->GetWBAdrRawDataBuf();// buffer to store data
+	auto p_buf = m_pWBuf->GetWBAdrRawDataBuf();	// buffer to store data
 	auto l_buf_size = m_lBUFSize;		// length of the buffer
 
 	while (n_samples > 0)				// loop until the end of the file
@@ -1074,11 +1064,11 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 		} while (dw_read > 0);
 
 		// file is transferred, destroy temporary file
-		p_new_doc->m_pXFile->Close();
+		p_new_doc->m_pXFile->closeDataFile();
 		//CFile::Remove(dummyName);
 
 		// delete current file object and open saved-as file ??
-		m_pXFile->Close();
+		m_pXFile->closeDataFile();
 		SAFE_DELETE(m_pXFile);
 
 		// create / update CDataFileX associated object
@@ -1086,12 +1076,8 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 		ASSERT(m_pXFile != NULL);
 
 		// open saved file
-		CFileException fe;
-		if (!m_pXFile->Open(new_name, CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary, &fe))
-		{
-			m_pXFile->Abort();
+		if (!m_pXFile->openDataFile(new_name, CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary))
 			return FALSE;
-		}
 	}
 
 	// destroy object created

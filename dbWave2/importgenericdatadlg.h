@@ -1,11 +1,5 @@
 #pragma once
 
-// ImportGenericDataDlg.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CImportGenericDataDlg dialog
-
 #include "editctrl.h"
 #include "cscale.h"
 #include "scopescr.h"
@@ -22,7 +16,7 @@ public:
 
 	OPTIONS_IMPORT* piivO;				// from caller
 	BOOL			bConvert;
-	CStringArray* m_pfilenameArray;
+	CStringArray*	m_pfilenameArray;
 	CEditCtrl		mm_nbADchannels;
 	CEditCtrl		mm_adChannelChan;
 	CEditCtrl		mm_skipNbytes;
@@ -36,19 +30,19 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTGENERICDATAFILE };
-	CComboBox	m_filedroplist;
-	CComboBox	m_ComboPrecision;
-	CString	m_adChannelComment;
-	float	m_adChannelGain;
-	UINT	m_adChannelChan;
-	UINT	m_nbADchannels;
-	UINT	m_nbRuns;
-	float	m_samplingrate;
-	UINT	m_skipNbytes;
-	float	m_voltageMax;
-	float	m_voltageMin;
-	CString	m_csFileTitle;
-	BOOL	m_bpreviewON;
+	CComboBox		m_filedroplist;
+	CComboBox		m_ComboPrecision;
+	CString			m_adChannelComment;
+	float			m_adChannelGain;
+	UINT			m_adChannelChan;
+	UINT			m_nbADchannels;
+	UINT			m_nbRuns;
+	float			m_samplingrate;
+	UINT			m_skipNbytes;
+	float			m_voltageMax;
+	float			m_voltageMin;
+	CString			m_csFileTitle;
+	BOOL			m_bpreviewON;
 
 	// Overrides
 public:

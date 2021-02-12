@@ -1,6 +1,3 @@
-// ImportGenericDataDlg.cpp : implementation file
-//
-
 #include "StdAfx.h"
 #include "resource.h"
 #include "dataheader_Atlab.H"
@@ -20,23 +17,23 @@
 CImportGenericDataDlg::CImportGenericDataDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CImportGenericDataDlg::IDD, pParent), m_pfilenameArray(nullptr)
 {
-	m_adChannelComment = _T("");
-	m_adChannelGain = 0.0f;
-	m_adChannelChan = 0;
-	m_nbADchannels = 0;
-	m_nbRuns = 0;
-	m_samplingrate = 0.0f;
-	m_skipNbytes = 0;
-	m_voltageMax = 0.0f;
-	m_voltageMin = 0.0f;
-	m_csFileTitle = _T("");
-	m_bpreviewON = FALSE;
-	bConvert = FALSE;
-	m_bpreviewON = FALSE;
-	m_fileold = _T("");
-	m_bChanged = FALSE;
-	m_bimportall = FALSE;
-	piivO = nullptr;
+	m_adChannelComment	= _T("");
+	m_adChannelGain		= 0.0f;
+	m_adChannelChan		= 0;
+	m_nbADchannels		= 0;
+	m_nbRuns			= 0;
+	m_samplingrate		= 0.0f;
+	m_skipNbytes		= 0;
+	m_voltageMax		= 0.0f;
+	m_voltageMin		= 0.0f;
+	m_csFileTitle		= _T("");
+	m_bpreviewON		= FALSE;
+	bConvert			= FALSE;
+	m_bpreviewON		= FALSE;
+	m_fileold			= _T("");
+	m_bChanged			= FALSE;
+	m_bimportall		= FALSE;
+	piivO				= nullptr;
 }
 
 void CImportGenericDataDlg::DoDataExchange(CDataExchange* pDX)
