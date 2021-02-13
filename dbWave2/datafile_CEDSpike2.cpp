@@ -105,6 +105,9 @@ bool CDataFileFromCEDSpike2::isOpened(CString& sz_path_name)
 
 bool CDataFileFromCEDSpike2::openDataFile(CString& sz_path_name, UINT u_open_flag)
 {
+	MATINT_API  sFh = S64Open(sz_path_name, u_open_flag);
+	if (sFh < 0) 
+		Error(); /* error if we fail */
 	return false;
 }
 

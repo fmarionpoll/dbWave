@@ -425,7 +425,6 @@ void CAcqDataDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-
 int CAcqDataDoc::CheckFileType(CFile* f) const
 {
 	auto i_id = DOCTYPE_UNKNOWN;
@@ -481,7 +480,6 @@ int CAcqDataDoc::CheckFileType(CFile* f) const
 		i_id = pFileX->CheckFileType(f);
 		delete pFileX;
 	}
-	
 
 	return i_id;
 }
