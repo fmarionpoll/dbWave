@@ -156,7 +156,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
     <LibraryPath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>$(ExecutablePath);</ExecutablePath>
+    <ExecutablePath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
@@ -290,6 +290,10 @@
       </Outputs>
       <LinkObjects>true</LinkObjects>
     </CustomBuild>
+    <PostBuildEvent>
+      <Message>copy dll to directory</Message>
+      <Command>xcopy /y /d "C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\*.dll" "$(outdir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Midl>
@@ -1729,6 +1733,9 @@
     <Image Include="res\toolbar_spk256.bmp" />
     <Image Include="res\writelarge.bmp" />
     <Image Include="res\writesmall.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

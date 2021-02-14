@@ -29,5 +29,6 @@ protected:
 	CStringA		m_csFiledesc;
 	CWaveFormat*	m_pWFormat;
 	CWaveChanArray* m_pArray;
+	int				m_nFid;
 };
 
