@@ -1,6 +1,17 @@
 #pragma once
 #include "datafile_X.h"
 
+constexpr auto CHANTYPE_unused		= 0;
+constexpr auto CHANTYPE_Adc			= 1;
+constexpr auto CHANTYPE_EventFall	= 2;
+constexpr auto CHANTYPE_EventRise	= 3;
+constexpr auto CHANTYPE_EventBoth	= 4;
+constexpr auto CHANTYPE_Marker		= 5;
+constexpr auto CHANTYPE_WaveMark	= 6;
+constexpr auto CHANTYPE_RealMark	= 7;
+constexpr auto CHANTYPE_TextMark	= 8;
+constexpr auto CHANTYPE_RealWave	= 9;
+
 class CDataFileFromCEDSpike2 :
     public CDataFileX
 {
@@ -30,5 +41,7 @@ protected:
 	CWaveFormat*	m_pWFormat;
 	CWaveChanArray* m_pArray;
 	int				m_nFid;
+
+	void addAdcChannelFromCEDFile(int nChan, CWaveFormat* pWFormat, CWaveChanArray* pArray);
 };
 
