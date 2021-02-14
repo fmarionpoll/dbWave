@@ -118,46 +118,36 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 			int chanType = S64ChanType(m_nFid, nChan);
 
 			switch (chanType) {
-			case CHANTYPE_unused:
-				break;
 			case CHANTYPE_Adc:
-				addAdcChannelFromCEDFile(nChan, pWFormat, pArray);
+				addAdcChannelFromCEDFile(nChan, pArray);
 				pWFormat->scan_count++;
 				break;
 			case CHANTYPE_EventFall:
-			case  CHANTYPE_EventRise:
+			case CHANTYPE_EventRise:
 			case CHANTYPE_EventBoth:
 			case CHANTYPE_Marker:
 			case CHANTYPE_WaveMark:
 			case CHANTYPE_RealMark:
 			case CHANTYPE_TextMark:
 			case CHANTYPE_RealWave:
+			case CHANTYPE_unused:
 			default:
 				break;
 			}
 		}
 		//pWFormat->chrate = (float)(1. / cfsHeader.sample_interval);
-
-		//pWFormat->scan_count = cfsHeader.number_of_channels;		// 4   number of channels in scan list
-
-		//for (UINT i = 0; i < cfsHeader.number_of_channels; i++)
-		//{
-
-		//}
-
 		//pWFormat->sample_count = cfsHeader.number_of_samples;
 	}
 	return TRUE;
 }
 
-
-void  CDataFileFromCEDSpike2::addAdcChannelFromCEDFile(int nChan, CWaveFormat* pWFormat, CWaveChanArray* pArray) {
+void  CDataFileFromCEDSpike2::addAdcChannelFromCEDFile(int nChan, CWaveChanArray* pArray) {
 	int i = pArray->channel_add();
 	CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
 	pChan->am_chanID = nChan;
-	pChan->am_csamplifier.Empty();		// amplifier type
-	pChan->am_csheadstage.Empty();		// headstage type
-	pChan->am_csComment.Empty();		// channel comment
+	pChan->am_csamplifier.Empty();			// amplifier type
+	pChan->am_csheadstage.Empty();			// headstage type
+	pChan->am_csComment.Empty();			// channel comment
 	int sizeComment = S64GetChanComment(m_nFid, nChan, nullptr, -1);
 	if (sizeComment > 0) {
 		char* buffer = new char[sizeComment];
@@ -165,21 +155,25 @@ void  CDataFileFromCEDSpike2::addAdcChannelFromCEDFile(int nChan, CWaveFormat* p
 		pChan->am_csComment = CString(buffer);
 		TRACE(" chan %i comment= %s\n", nChan, buffer);
 	}
-	
-//	pChan->am_resolutionV	= cfsHeader.sensitivity[i] / 2000.;
-//	pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;	// fractional gain
 
-//	pChan->am_adchannel		= 0;				// channel scan list
-//	pChan->am_gainAD		= 1;				// channel gain list
-	
-//	pChan->am_gainheadstage	= 1;				// assume headstage gain = 1
-//	pChan->am_amplifierchan	= 0;				// assume 1 channel / amplifier
-//	pChan->am_gainpre		= 1;				// assume gain -pre and -post = 1
-//	pChan->am_gainpost		= 1;
-//	pChan->am_notchfilt		= 0;				// assume no notch filter
-//	pChan->am_lowpass		= 0;				// assume not low pass filtering
-//	pChan->am_offset		= 0.0f;				// assume no offset compensation
-//	pChan->am_csInputpos	= "DC";				// assume input + = DC
-//	pChan->am_csInputneg	= "GND";			// assume input - = GND
-//	pChan->am_gaintotal		= pChan->am_gainamplifier;
+	pChan->am_adchannel		= 0;			// channel scan list
+	pChan->am_gainAD		= 1;			// channel gain list
+	pChan->am_gainheadstage	= 1;			// assume headstage gain = 1
+	pChan->am_amplifierchan	= 0;			// assume 1 channel / amplifier
+	pChan->am_gainpre		= 1;			// assume gain -pre = 1
+	pChan->am_gainpost		= 1;			// assume gain -post = 1
+	pChan->am_notchfilt		= 0;			// assume no notch filter
+	pChan->am_lowpass		= 0;			// assume not low pass filtering
+	pChan->am_offset		= 0.0f;			// assume no offset compensation
+	pChan->am_csInputpos	= "DC";			// assume input + = DC
+	pChan->am_csInputneg	= "GND";		// assume input - = GND
+
+	// TODO get proper values from C64 file
+	pChan->am_resolutionV	= 1.;
+	pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;
+	pChan->am_gaintotal		= pChan->am_gainamplifier;
+
+	//pChan->am_resolutionV		= cfsHeader.sensitivity[i] / 2000.;
+	//pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;	// fractional gain
+	//pChan->am_gaintotal		= pChan->am_gainamplifier;
 }
