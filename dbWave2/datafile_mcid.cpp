@@ -49,7 +49,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 
 	for (UINT i = 0; i < mcidHeader.number_of_channels; i++)
 	{
-		pArray->channel_add();
+		pArray->chanArray_add();
 		CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
 		pChan->am_csComment = CString(" ");
 		pChan->am_resolutionV = mcidHeader.sensitivity[i] / 2000.;

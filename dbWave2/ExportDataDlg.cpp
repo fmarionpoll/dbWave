@@ -768,9 +768,9 @@ BOOL CExportDataDlg::ExportDataAsdbWaveFile()
 		for (auto i = lastchannel; i > 0; i--)
 		{
 			if (i > mm_lastchan || i < mm_firstchan)
-				pw_c_dest->channel_remove(i);
+				pw_c_dest->chanArray_removeAt(i);
 		}
-		ASSERT(nchans == pw_c_dest->channel_get_number());
+		ASSERT(nchans == pw_c_dest->chanArray_getSize());
 		pw_f_dest->scan_count = nchans;
 	}
 

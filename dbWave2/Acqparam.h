@@ -114,12 +114,12 @@ public:
 	double		am_resolutionV{};	// resolution
 
 public:
-	CWaveChan();					//constructor
+	CWaveChan();
 	CWaveChan(CWaveChan& arg);
-	~CWaveChan();					//destructor
+	~CWaveChan();
 	virtual long Write(CFile* datafile);
 	virtual BOOL Read(CFile* datafile);
-	CWaveChan& operator = (const CWaveChan& arg); // redefinition operator =
+	CWaveChan& operator = (const CWaveChan& arg); 
 	void Serialize(CArchive& ar) override;
 
 protected:
@@ -149,12 +149,12 @@ public:
 	CWaveChanArray& operator = (const CWaveChanArray& arg);
 	CWaveChan* get_p_channel(int i) const;
 
-	int		channel_add();
-	int		channel_add(CWaveChan* arg);
-	int		channel_set_number(int i);
-	void	channel_insert(int i);
-	void	channel_remove(int i);
-	void	channel_remove_all();
-	int		channel_get_number() const;
+	int		chanArray_add();
+	int		chanArray_add(CWaveChan* arg);
+	int		chanArray_setSize(int i);
+	void	chanArray_insertAt(int i);
+	void	chanArray_removeAt(int i);
+	void	chanArray_removeAll();
+	int		chanArray_getSize() const;
 	void	Serialize(CArchive& ar) override;
 };

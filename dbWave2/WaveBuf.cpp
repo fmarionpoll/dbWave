@@ -38,12 +38,12 @@ int	CWaveBuf::WBDatachanSetnum(const int i)
 {
 	// no action if the number of data channels is right
 	if (m_waveFormat.scan_count == i
-		&& m_chanArray.channel_get_number() == i)
+		&& m_chanArray.chanArray_getSize() == i)
 		return i;
 	const auto iNumElements = m_waveFormat.buffersize / m_waveFormat.scan_count;
 	m_waveFormat.scan_count = i;
-	m_chanArray.channel_set_number(i);
-	ASSERT(m_chanArray.channel_get_number() == m_waveFormat.scan_count);
+	m_chanArray.chanArray_setSize(i);
+	ASSERT(m_chanArray.chanArray_getSize() == m_waveFormat.scan_count);
 	CreateWBuffer(iNumElements, i);
 	return m_waveFormat.scan_count;
 }

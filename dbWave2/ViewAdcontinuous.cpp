@@ -1481,7 +1481,7 @@ void CViewADContinuous::OnInitialUpdate()
 		if (p_dat != nullptr)
 		{
 			m_pADC_options->waveFormat = *(p_dat->GetpWaveFormat());	// read data header
-			m_pADC_options->chanArray.channel_set_number(m_pADC_options->waveFormat.scan_count);
+			m_pADC_options->chanArray.chanArray_setSize(m_pADC_options->waveFormat.scan_count);
 			m_pADC_options->chanArray = *p_dat->GetpWavechanArray();	// get channel descriptors
 			// restore state of "write-to-file" parameter that was just erased
 			m_pADC_options->waveFormat.bADwritetofile = m_bADwritetofile;
@@ -1491,7 +1491,7 @@ void CViewADContinuous::OnInitialUpdate()
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument();							// create a file to receive incoming data (A/D)
 	*(m_inputDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;	// copy data formats into this file
-	m_pADC_options->chanArray.channel_set_number(m_pADC_options->waveFormat.scan_count);
+	m_pADC_options->chanArray.chanArray_setSize(m_pADC_options->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
 	m_displayDataFile.AttachDataFile(&m_inputDataFile);			// prepare display area
 
@@ -1966,7 +1966,7 @@ BOOL CViewADContinuous::InitConnectionWithAmplifiers()
 {
 	CCyberAmp m_cyber;
 	auto bcyber_present = FALSE;
-	const auto nchans = (m_pADC_options->chanArray).channel_get_number();
+	const auto nchans = (m_pADC_options->chanArray).chanArray_getSize();
 	for (auto i = 0; i < nchans; i++)
 	{
 		const auto pchan = (m_pADC_options->chanArray).get_p_channel(i);

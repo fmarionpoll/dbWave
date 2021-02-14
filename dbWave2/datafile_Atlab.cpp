@@ -146,7 +146,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray
 	auto* pxgainlist = reinterpret_cast<float*>(pchar);
 	for (i = 0; i < pWFormat->scan_count; i++)
 	{
-		pArray->channel_add();
+		pArray->chanArray_add();
 		auto* p_chan = pArray->get_p_channel(i);
 		p_chan->am_adchannel = *pchanlist; pchanlist++;		// acq chan
 		p_chan->am_gainAD = *pgainlist; pgainlist++;		// gain on the A/D card
