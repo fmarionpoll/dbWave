@@ -42,6 +42,6 @@ protected:
 	CWaveChanArray* m_pArray;
 	int				m_nFid;
 
-	void addAdcChannelFromCEDFile(int nChan, CWaveFormat* pWFormat, CWaveChanArray* pArray);
+	void addAdcChannelFromCEDFile(int nChan, CWaveChanArray* pArray);
 };
 
