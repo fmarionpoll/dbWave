@@ -69,9 +69,9 @@ int CDataFileFromCEDSpike2::CheckFileType(CFile* f)
 	f->Seek(0, CFile::begin);
 	f->Read(bufRead, sizeof(bufRead));
 	
-	int flag = isCharacterPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
+	int flag = isPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
 	if (flag == DOCTYPE_UNKNOWN)
-		flag = isCharacterPatternPresent(bufRead + 2, sizeof(bufRead)-2, CEDSON32, sizeof(CEDSON32));
+		flag = isPatternPresent(bufRead + 2, sizeof(bufRead)-2, CEDSON32, sizeof(CEDSON32));
 	return flag;
 }
 
@@ -89,6 +89,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	pWFormat->mode_encoding = OLx_ENC_BINARY;
 	pWFormat->mode_clock = INTERNAL_CLOCK;
 	pWFormat->mode_trigger = INTERNAL_TRIGGER;
+	pWFormat->csADcardName = "CED1401";
 
 	// get comments
 	pWFormat->cs_comment.Empty();
@@ -96,12 +97,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	pWFormat->csConcentration.Empty();
 	pWFormat->csSensillum.Empty();
 	for (int nInd = 1; nInd <= 5; nInd++) {
-		int sizeComment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
-		if (sizeComment > 0) {
-			char* buffer = new char[sizeComment];
-			int flag = S64GetFileComment(m_nFid, nInd, buffer, 0);
-			TRACE(" comment %i = %s\n", nInd, buffer);
-		}
+		ATLTRACE2(" comment %i = %s\n", nInd, getFileComment(nInd));
 	}
 
 	// get global data and n channels
@@ -116,15 +112,16 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	if (lowestFreeChan > 0) {
 		for (int nChan = 0; nChan < lowestFreeChan; nChan++) {
 			int chanType = S64ChanType(m_nFid, nChan);
+			ATLTRACE2(" chan %i comment= %s ...\n", nChan, getChannelComment(nChan));
 			switch (chanType) {
 			case CHANTYPE_Adc:
 			{
-				addAdcChannelFromCEDFile(nChan, pArray);
+				getAdcChannel(nChan, pArray);
 				pWFormat->scan_count++;
 				long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
-				pWFormat->chrate = 1.0 / (ticksPerSample * S64GetTimeBase(m_nFid));
+				pWFormat->chrate = (float) (1.0 / (ticksPerSample * S64GetTimeBase(m_nFid)));
 				long long maxTimeInTicks = S64ChanMaxTime(m_nFid, nChan);
-				pWFormat->sample_count = maxTimeInTicks / ticksPerSample;
+				pWFormat->sample_count = (long) (maxTimeInTicks / ticksPerSample);
 			}
 				break;
 			case CHANTYPE_EventFall:
@@ -146,21 +143,15 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	return TRUE;
 }
 
-void  CDataFileFromCEDSpike2::addAdcChannelFromCEDFile(int nChan, CWaveChanArray* pArray) {
+void  CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArray) {
 	int i = pArray->chanArray_add();
 	CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
 	pChan->am_chanID = nChan;
 	pChan->am_csamplifier.Empty();			// amplifier type
 	pChan->am_csheadstage.Empty();			// headstage type
 	pChan->am_csComment.Empty();			// channel comment
-	int sizeComment = S64GetChanComment(m_nFid, nChan, nullptr, -1);
-	if (sizeComment > 0) {
-		char* buffer = new char[sizeComment];
-		int flag = S64GetChanComment(m_nFid, nChan, buffer, 0);
-		pChan->am_csComment = CString(buffer);
-		TRACE(" chan %i comment= %s\n", nChan, buffer);
-	}
-
+	pChan->am_csComment = getChannelComment(nChan);
+	
 	pChan->am_adchannel		= 0;			// channel scan list
 	pChan->am_gainAD		= 1;			// channel gain list
 	pChan->am_gainheadstage	= 1;			// assume headstage gain = 1
@@ -174,6 +165,9 @@ void  CDataFileFromCEDSpike2::addAdcChannelFromCEDFile(int nChan, CWaveChanArray
 	pChan->am_csInputneg	= "GND";		// assume input - = GND
 
 	// TODO get proper values from C64 file
+	int flag = S64GetChanOffset(m_nFid, nChan, &pChan->am_offset);
+	flag = S64GetChanScale(m_nFid, nChan, &pChan->am_scale);
+
 	pChan->am_resolutionV	= 1.;
 	pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;
 	pChan->am_gaintotal		= pChan->am_gainamplifier;
@@ -182,3 +176,43 @@ void  CDataFileFromCEDSpike2::addAdcChannelFromCEDFile(int nChan, CWaveChanArray
 	//pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;	// fractional gain
 	//pChan->am_gaintotal		= pChan->am_gainamplifier;
 }
+
+CString  CDataFileFromCEDSpike2::getChannelComment(int nChan) {
+	int sizeComment = S64GetChanComment(m_nFid, nChan, nullptr, -1);
+	if (sizeComment > 0) {
+		char* buffer = new char[sizeComment];
+		int flag = S64GetChanComment(m_nFid, nChan, buffer, 0);
+		return CString(buffer);
+	}
+	return nullptr;
+}
+
+CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
+	int sizeComment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
+	if (sizeComment > 0) {
+		char* buffer = new char[sizeComment];
+		int flag = S64GetFileComment(m_nFid, nInd, buffer, 0);
+		return CString(buffer);
+	}
+	return nullptr;
+}
+
+long CDataFileFromCEDSpike2::ReadData(long dataIndex, long nbpoints, short* pBuffer)
+{
+	// seek and read CFile
+	const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
+	Seek(l_off, CFile::begin);
+	const long l_size = Read(pBuffer, nbpoints);
+	// adjust dependent parameters
+	return l_size / sizeof(short);
+
+	int nMax = nbpoints; // TODO: divide by nchans if several data acquisition channels?
+	long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
+	long long tFrom = dataIndex * ticksPerSample;
+
+	/*
+	MATINT_API int S64ReadWaveS(const int nFid, const int nChan, short* pData, const int nMax,
+        const long long tFrom, const long long tUpto, long long* tFirst, const int nMask);
+	*/
+}
+

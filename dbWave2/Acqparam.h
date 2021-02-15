@@ -91,7 +91,6 @@ class CWaveChan : public CObject
 {
 	DECLARE_SERIAL(CWaveChan);
 public:
-	int			am_chanID{};		// id used for CED
 	CString		am_csComment;		// channel annotation
 	short		am_adchannel{};		// channel A/D
 	short		am_gainAD{};		// channel A/D gain
@@ -112,6 +111,10 @@ public:
 	double		am_gainamplifier{};	// double value to allow fractional gain
 	double		am_gaintotal{};		// total gain as double
 	double		am_resolutionV{};	// resolution
+
+	int			am_chanID{};		// id used for CED
+	double		am_scale{};			// scale used by CED
+	double		am_offset{};		// offset used by CED
 
 public:
 	CWaveChan();

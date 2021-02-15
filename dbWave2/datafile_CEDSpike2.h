@@ -27,6 +27,8 @@ public:
 	bool isOpened(CString& sz_path_name) override;
 	bool openDataFile(CString& sz_path_name, UINT u_open_flag) override;
 	void closeDataFile() override;
+	long ReadData(long dataIndex, long nbpoints, short* pBuffer) override;
+
 
 	// Implementation
 public:
@@ -42,6 +44,9 @@ protected:
 	CWaveChanArray* m_pArray;
 	int				m_nFid;
 
-	void addAdcChannelFromCEDFile(int nChan, CWaveChanArray* pArray);
+	void getAdcChannel(int nChan, CWaveChanArray* pArray);
+	CString  getFileComment(int nInd);
+	CString  getChannelComment(int nChan);
+
 };
 

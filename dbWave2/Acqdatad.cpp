@@ -516,23 +516,23 @@ BOOL CAcqDataDoc::AllocBUF()
 		m_pWBuf = new CWaveBuf;
 
 	ASSERT(m_pWBuf != NULL);	// check object created properly
-	CWaveFormat* pwF = GetpWaveFormat();
-	m_lDOCchanLength = pwF->sample_count / static_cast<long>(pwF->scan_count);
-	m_DOCnbchans = pwF->scan_count;
-	pwF->duration = static_cast<float>(m_lDOCchanLength) / pwF->chrate;
+	CWaveFormat* pwF= GetpWaveFormat();
+	m_lDOCchanLength= pwF->sample_count / static_cast<long>(pwF->scan_count);
+	m_DOCnbchans	= pwF->scan_count;
+	pwF->duration	= static_cast<float>(m_lDOCchanLength) / pwF->chrate;
 
 	const int i_num_elements = m_lDOCchanLength;
 	if (i_num_elements * pwF->scan_count > m_lBUFSize)
-		m_lBUFSize = i_num_elements * pwF->scan_count;
+		m_lBUFSize	= i_num_elements * pwF->scan_count;
 
 	if (m_lBUFSize > static_cast<long>(MAX_BUFFER_LENGTH_AS_BYTES / sizeof(short)))
 		m_lBUFSize = MAX_BUFFER_LENGTH_AS_BYTES / sizeof(short);
 
-	m_lBUFchanSize = m_lBUFSize / static_cast<long>(pwF->scan_count);
+	m_lBUFchanSize	= m_lBUFSize / static_cast<long>(pwF->scan_count);
 	m_lBUFchanFirst = 0;
-	m_lBUFchanLast = m_lBUFchanSize - 1;
-	m_lBUFSize = m_lBUFchanSize * pwF->scan_count;
-	m_lBUFmaxSize = m_lBUFSize * sizeof(short);
+	m_lBUFchanLast	= m_lBUFchanSize - 1;
+	m_lBUFSize		= m_lBUFchanSize * pwF->scan_count;
+	m_lBUFmaxSize	= m_lBUFSize * sizeof(short);
 
 	// alloc RW buffer
 	return m_pWBuf->CreateWBuffer(m_lBUFchanSize, pwF->scan_count);

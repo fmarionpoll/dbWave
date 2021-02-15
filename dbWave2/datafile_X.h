@@ -38,24 +38,24 @@ public:
 	virtual BOOL	WriteVTtags(CTagList* ptags);
 
 	//data parameters
-	int			m_bHeaderSize;		// data header size
-	int			m_idType;			// file type 0=unknown; 1=atlab; 2=Asyst; 3=awave; ..
-	CStringA	m_csType;
-	ULONGLONG	m_ulOffsetData;		// file offset of data start
-	ULONGLONG	m_ulOffsetHeader;	// file offset of data header
-	ULONGLONG	m_ulbytescount;		// dummy parameter: Data append
+	int				m_bHeaderSize;		// data header size
+	int				m_idType;			// file type 0=unknown; 1=atlab; 2=Asyst; 3=awave; ..
+	CStringA		m_csType;
+	ULONGLONG		m_ulOffsetData;		// file offset of data start
+	ULONGLONG		m_ulOffsetHeader;	// file offset of data header
+	ULONGLONG		m_ulbytescount;		// dummy parameter: Data append
 
 // Implementation
 public:
-	virtual bool isOpened(CString & sz_path_name);
-	virtual bool openDataFile(CString& sz_path_name, UINT u_open_flag);
-	virtual void closeDataFile();
+	virtual bool	isOpened(CString & sz_path_name);
+	virtual bool	openDataFile(CString& sz_path_name, UINT u_open_flag);
+	virtual void	closeDataFile();
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void	AssertValid() const;
+	virtual void	Dump(CDumpContext& dc) const;
 #endif
 protected:
-	int	isCharacterPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern);
+	int				isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern);
 
 };

@@ -100,7 +100,7 @@ BOOL CDataFileX::WriteVTtags(CTagList* ptags)
 	return FALSE;
 }
 
-int CDataFileX::isCharacterPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) 
+int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) 
 {
 	std::string needle(bufPattern, lenPattern-1);
 	std::string haystack(bufRead, lenRead);
