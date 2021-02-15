@@ -116,11 +116,16 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	if (lowestFreeChan > 0) {
 		for (int nChan = 0; nChan < lowestFreeChan; nChan++) {
 			int chanType = S64ChanType(m_nFid, nChan);
-
 			switch (chanType) {
 			case CHANTYPE_Adc:
+			{
 				addAdcChannelFromCEDFile(nChan, pArray);
 				pWFormat->scan_count++;
+				long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
+				pWFormat->chrate = 1.0 / (ticksPerSample * S64GetTimeBase(m_nFid));
+				long long maxTimeInTicks = S64ChanMaxTime(m_nFid, nChan);
+				pWFormat->sample_count = maxTimeInTicks / ticksPerSample;
+			}
 				break;
 			case CHANTYPE_EventFall:
 			case CHANTYPE_EventRise:
@@ -142,7 +147,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 }
 
 void  CDataFileFromCEDSpike2::addAdcChannelFromCEDFile(int nChan, CWaveChanArray* pArray) {
-	int i = pArray->channel_add();
+	int i = pArray->chanArray_add();
 	CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
 	pChan->am_chanID = nChan;
 	pChan->am_csamplifier.Empty();			// amplifier type
