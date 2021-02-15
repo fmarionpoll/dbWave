@@ -617,7 +617,7 @@ BOOL CAcqDataDoc::ReadDataBlock(long l_first)
 	{
 		short* p_buffer = m_pWBuf->GetWBAdrRawDataBuf();
 		ASSERT(p_buffer != NULL);
-		const auto l_size = m_pXFile->ReadData(l_first, m_lBUFSize * sizeof(short), p_buffer);
+		const auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, GetpWaveFormat());
 		m_lBUFchanLast = m_lBUFchanFirst + l_size / m_DOCnbchans - 1;
 
 		// remove offset so that data are signed short (for offset binary data of 12 or 16 bits resolution)

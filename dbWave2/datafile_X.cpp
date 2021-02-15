@@ -44,7 +44,7 @@ void CDataFileX::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-long CDataFileX::ReadData(long dataIndex, long nbpoints, short* pBuffer)
+long CDataFileX::ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveFormat* pWFormat)
 {
 	// seek and read CFile
 	const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;

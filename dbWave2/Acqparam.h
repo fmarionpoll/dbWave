@@ -112,9 +112,9 @@ public:
 	double		am_gaintotal{};		// total gain as double
 	double		am_resolutionV{};	// resolution
 
-	int			am_chanID{};		// id used for CED
-	double		am_scale{};			// scale used by CED
-	double		am_offset{};		// offset used by CED
+	int			am_CEDchanID{};		// id used for CED
+	double		am_CEDscale{};		// scale used by CED
+	double		am_CEDoffset{};		// offset used by CED
 
 public:
 	CWaveChan();

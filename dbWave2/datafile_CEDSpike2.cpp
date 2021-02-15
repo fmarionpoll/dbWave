@@ -104,10 +104,24 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	double timeBase = S64GetTimeBase(m_nFid);
 	int lowestFreeChan = S64GetFreeChan(m_nFid);
 	int maxChan = S64MaxChans(m_nFid);
-	/*
-	long long arrayTimeDate[8]{}; // 0=1/100s(0-99); 1=s(0-59); 2=min(0-59); 3=h(0-23); 4=day(1-31); 5=month (1-12); 6=year(1980-2200)
-	int flag = S64TimeDate(m_nFid, &arrayTimeDate[0], nullptr, 1); // TOTO what is iMode? (last parameter)
-	*/
+	
+
+	struct TTimeDate            // bit compatible with TSONTimeDate
+	{
+		uint8_t ucHun;          //!< hundreths of a second, 0-99
+		uint8_t ucSec;          //!< seconds, 0-59
+		uint8_t ucMin;          //!< minutes, 0-59
+		uint8_t ucHour;         //!< hour - 24 hour clock, 0-23
+		uint8_t ucDay;          //!< day of month, 1-31
+		uint8_t ucMon;          //!< month of year, 1-12
+		uint16_t wYear;         //!< year 1980-65535! 0 means unset.
+
+		//! Sets the contents to 0
+		void clear() { ucHun = ucSec = ucMin = ucHour = ucDay = ucMon = 0; wYear = 0; }
+	};
+	TTimeDate arrayGetTimeDate{};
+	int flag = S64TimeDate(m_nFid, (long long*)&arrayGetTimeDate, nullptr, -1);
+	
 	pWFormat->scan_count = 0;
 	if (lowestFreeChan > 0) {
 		for (int nChan = 0; nChan < lowestFreeChan; nChan++) {
@@ -146,7 +160,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 void  CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArray) {
 	int i = pArray->chanArray_add();
 	CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
-	pChan->am_chanID = nChan;
+	pChan->am_CEDchanID = nChan;
 	pChan->am_csamplifier.Empty();			// amplifier type
 	pChan->am_csheadstage.Empty();			// headstage type
 	pChan->am_csComment.Empty();			// channel comment
@@ -165,8 +179,8 @@ void  CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArray) {
 	pChan->am_csInputneg	= "GND";		// assume input - = GND
 
 	// TODO get proper values from C64 file
-	int flag = S64GetChanOffset(m_nFid, nChan, &pChan->am_offset);
-	flag = S64GetChanScale(m_nFid, nChan, &pChan->am_scale);
+	int flag = S64GetChanOffset(m_nFid, nChan, &pChan->am_CEDoffset);
+	flag = S64GetChanScale(m_nFid, nChan, &pChan->am_CEDscale);
 
 	pChan->am_resolutionV	= 1.;
 	pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;
@@ -197,7 +211,7 @@ CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
 	return nullptr;
 }
 
-long CDataFileFromCEDSpike2::ReadData(long dataIndex, long nbpoints, short* pBuffer)
+long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveFormat* pWFormat)
 {
 	// seek and read CFile
 	const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
@@ -207,6 +221,7 @@ long CDataFileFromCEDSpike2::ReadData(long dataIndex, long nbpoints, short* pBuf
 	return l_size / sizeof(short);
 
 	int nMax = nbpoints; // TODO: divide by nchans if several data acquisition channels?
+	int nChan = 1;
 	long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
 	long long tFrom = dataIndex * ticksPerSample;
 

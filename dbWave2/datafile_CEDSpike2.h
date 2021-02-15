@@ -27,7 +27,7 @@ public:
 	bool isOpened(CString& sz_path_name) override;
 	bool openDataFile(CString& sz_path_name, UINT u_open_flag) override;
 	void closeDataFile() override;
-	long ReadData(long dataIndex, long nbpoints, short* pBuffer) override;
+	long ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveFormat* pWFormat) override;
 
 
 	// Implementation
