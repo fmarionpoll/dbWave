@@ -85,7 +85,7 @@ int CLineViewWnd::AddChanlistItem(int ns, int mode)
 		const auto pwave_format = m_pDataFile->GetpWaveFormat();
 		p_chan_list_item->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
 		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_Volts);
-		if (ns >= pchan_array->channel_get_number())
+		if (ns >= pchan_array->chanArray_getSize())
 			ns = 0;
 		const auto pchan = pchan_array->get_p_channel(ns);
 		p_chan_list_item->dl_comment = pchan->am_csComment;	// get comment however
@@ -224,7 +224,7 @@ void CLineViewWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 	chanlist_item->SetOrdinatesSourceData(chan, transform);
 	// modify comment
 	const auto pchanArray = m_pDataFile->GetpWavechanArray();
-	if (chan >= pchanArray->channel_get_number())
+	if (chan >= pchanArray->chanArray_getSize())
 		chan = 0;
 	const auto pchan = pchanArray->get_p_channel(chan);
 	chanlist_item->dl_comment = pchan->am_csComment;

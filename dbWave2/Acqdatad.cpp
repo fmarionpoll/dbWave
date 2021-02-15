@@ -995,11 +995,11 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 	}
 
 	// save data header
-	if (GetpWaveFormat()->scan_count < GetpWavechanArray()->channel_get_number())
+	if (GetpWaveFormat()->scan_count < GetpWavechanArray()->chanArray_getSize())
 	{
 		const auto last_channel = GetpWaveFormat()->scan_count - 1;
-		for (auto i = GetpWavechanArray()->channel_get_number() - 1; i > last_channel; i--)
-			GetpWavechanArray()->channel_remove(i);
+		for (auto i = GetpWavechanArray()->chanArray_getSize() - 1; i > last_channel; i--)
+			GetpWavechanArray()->chanArray_removeAt(i);
 	}
 
 	// save data

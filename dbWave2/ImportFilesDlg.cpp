@@ -235,7 +235,7 @@ BOOL CImportFilesDlg::ImportATFFile()
 
 	for (int i = 0; i < m_scan_count; i++)
 	{
-		int ichan = (pTo->GetpWavechanArray())->channel_add();
+		int ichan = (pTo->GetpWavechanArray())->chanArray_add();
 		CWaveChan* pChannel = (pTo->GetpWavechanArray())->get_p_channel(ichan);
 		pChannel->am_gaintotal = (float)m_xinstgain;
 		m_dspan[i] = 20000. / m_xinstgain;		// span= 20 V max to min

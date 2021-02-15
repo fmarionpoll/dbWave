@@ -660,7 +660,7 @@ void CADInputParmsDlg::OnCbnSelchangeResolution()
 void CADInputParmsDlg::LoadChanData(int col)
 {
 	// select channel and load parameters CComboBox
-	ASSERT(col <= m_pchArray->channel_get_number());
+	ASSERT(col <= m_pchArray->chanArray_getSize());
 	const auto p_chan = m_pchArray->get_p_channel(col - 1);
 
 	// settings for the col
@@ -738,7 +738,7 @@ void CADInputParmsDlg::SaveData()
 	if (m_nacqchans != m_pwFormat->scan_count)
 	{
 		m_pwFormat->scan_count = m_nacqchans;
-		m_pchArray->channel_set_number(m_nacqchans);
+		m_pchArray->chanArray_setSize(m_nacqchans);
 		const WORD ch_buffer_size = m_pwFormat->buffersize / m_nacqchans;
 		m_pwFormat->buffersize = ch_buffer_size * m_nacqchans;
 	}
@@ -758,8 +758,8 @@ void CADInputParmsDlg::SaveData()
 void CADInputParmsDlg::SaveChanData(int col)
 {
 	// select channel and load parameters CComboBox
-	if (m_pchArray->channel_get_number() < col)
-		m_pchArray->channel_set_number(col);
+	if (m_pchArray->chanArray_getSize() < col)
+		m_pchArray->chanArray_setSize(col);
 	auto p_chan = m_pchArray->get_p_channel(col - 1);
 
 	// AD channel comment
