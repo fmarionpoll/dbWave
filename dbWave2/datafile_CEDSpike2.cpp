@@ -105,20 +105,6 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	int lowestFreeChan = S64GetFreeChan(m_nFid);
 	int maxChan = S64MaxChans(m_nFid);
 	
-
-	struct TTimeDate            // bit compatible with TSONTimeDate
-	{
-		uint8_t ucHun;          //!< hundreths of a second, 0-99
-		uint8_t ucSec;          //!< seconds, 0-59
-		uint8_t ucMin;          //!< minutes, 0-59
-		uint8_t ucHour;         //!< hour - 24 hour clock, 0-23
-		uint8_t ucDay;          //!< day of month, 1-31
-		uint8_t ucMon;          //!< month of year, 1-12
-		uint16_t wYear;         //!< year 1980-65535! 0 means unset.
-
-		//! Sets the contents to 0
-		void clear() { ucHun = ucSec = ucMin = ucHour = ucDay = ucMon = 0; wYear = 0; }
-	};
 	TTimeDate arrayGetTimeDate{};
 	int flag = S64TimeDate(m_nFid, (long long*)&arrayGetTimeDate, nullptr, -1);
 	
@@ -211,23 +197,28 @@ CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
 	return nullptr;
 }
 
-long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveFormat* pWFormat)
+long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
-	// seek and read CFile
-	const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
-	Seek(l_off, CFile::begin);
-	const long l_size = Read(pBuffer, nbpoints);
-	// adjust dependent parameters
-	return l_size / sizeof(short);
+	//// seek and read CFile
+	//const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
+	//Seek(l_off, CFile::begin);
+	//const long l_size = Read(pBuffer, nbPointsAllChannels);
+	//// adjust dependent parameters
+	//return l_size / sizeof(short);
+	int scan_count = pArray->chanArray_getSize();
+	int nMax = nbPointsAllChannels/ scan_count;
+	
 
-	int nMax = nbpoints; // TODO: divide by nchans if several data acquisition channels?
-	int nChan = 1;
-	long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
-	long long tFrom = dataIndex * ticksPerSample;
-
-	/*
-	MATINT_API int S64ReadWaveS(const int nFid, const int nChan, short* pData, const int nMax,
-        const long long tFrom, const long long tUpto, long long* tFirst, const int nMask);
-	*/
+	for (int ichan = 0; ichan < scan_count; ichan++) {
+		CWaveChan* pChan = pArray->get_p_channel(ichan);
+		int nChan = pChan->am_CEDchanID;
+		short* pData = pBuffer;
+		long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
+		long long tFrom = dataIndex * ticksPerSample;
+		long long tUpto = (dataIndex + nMax)* ticksPerSample;
+		long long* tFirst{};
+		const int nMask = 0;
+		int flag = S64ReadWaveS(m_nFid, nChan, pData, nMax, tFrom, tUpto, tFirst, nMask);
+	}
 }
 

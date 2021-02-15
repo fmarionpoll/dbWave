@@ -12,6 +12,22 @@ constexpr auto CHANTYPE_RealMark	= 7;
 constexpr auto CHANTYPE_TextMark	= 8;
 constexpr auto CHANTYPE_RealWave	= 9;
 
+
+struct TTimeDate            // bit compatible with TSONTimeDate
+{
+	uint8_t ucHun;          //!< hundreths of a second, 0-99
+	uint8_t ucSec;          //!< seconds, 0-59
+	uint8_t ucMin;          //!< minutes, 0-59
+	uint8_t ucHour;         //!< hour - 24 hour clock, 0-23
+	uint8_t ucDay;          //!< day of month, 1-31
+	uint8_t ucMon;          //!< month of year, 1-12
+	uint16_t wYear;         //!< year 1980-65535! 0 means unset.
+
+	//! Sets the contents to 0
+	void clear() { ucHun = ucSec = ucMin = ucHour = ucDay = ucMon = 0; wYear = 0; }
+};
+
+
 class CDataFileFromCEDSpike2 :
     public CDataFileX
 {
@@ -27,8 +43,7 @@ public:
 	bool isOpened(CString& sz_path_name) override;
 	bool openDataFile(CString& sz_path_name, UINT u_open_flag) override;
 	void closeDataFile() override;
-	long ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveFormat* pWFormat) override;
-
+	long ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray) override;
 
 	// Implementation
 public:

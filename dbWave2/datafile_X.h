@@ -24,7 +24,7 @@ public:
 	// Operations
 	virtual int		CheckFileType(CFile* pfile);
 	virtual BOOL	ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
-	virtual	long	ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveFormat* pWFormat);
+	virtual	long	ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray);
 	virtual BOOL	ReadHZtags(CTagList* pHZtags);
 	virtual BOOL	ReadVTtags(CTagList* pVTtags);
 
