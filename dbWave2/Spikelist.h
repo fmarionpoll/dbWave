@@ -2,7 +2,6 @@
 
 // spikelist.h : header file
 
-#include "Acqparam.h"		// data acquisition struct: wave format, wave chans
 #include "WaveBuf.h"		// data acquisition buffer
 #include "SpikeBuffer.h"
 #include "SpikeElement.h"

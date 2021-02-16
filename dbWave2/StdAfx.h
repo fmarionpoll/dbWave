@@ -56,10 +56,12 @@
 #include <errno.h>
 #include <process.h>
 #include <afxdisp.h>
-
+#include "AcqWaveChan.h"
+#include "AcqWaveChanArray.h"
+#include "AcqWaveFormat.h"
 #include "StretchControls.h"
 #include "dbwave_constants.h"
-#include "Acqparam.h"		// structures describing data acquisition parameters
+
 #include "Taglines.h"		// tag structures
 #include "datafile_X.h"		// data file base class
 #include "wavebuf.h"		// data file buffer structure

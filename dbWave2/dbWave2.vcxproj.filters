@@ -57,9 +57,6 @@
     <ClCompile Include="Acqdatad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Acqparam.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Adexperi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -420,6 +417,15 @@
     <ClCompile Include="datafile_CEDSpike2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AcqWaveFormat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AcqWaveChan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AcqWaveChanArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -459,9 +465,6 @@
       <Filter>customctrl</Filter>
     </ClInclude>
     <ClInclude Include="Acqdatad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Acqparam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Adexperi.h">
@@ -921,6 +924,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="datafile_CEDSpike2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AcqWaveFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AcqWaveChan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AcqWaveChanArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

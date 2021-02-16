@@ -776,11 +776,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Acqparam.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="AcqWaveChan.cpp" />
+    <ClCompile Include="AcqWaveChanArray.cpp" />
+    <ClCompile Include="AcqWaveFormat.cpp" />
     <ClCompile Include="Adexperi.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1342,7 +1340,9 @@
     </ClInclude>
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="Acqdatad.h" />
-    <ClInclude Include="Acqparam.h" />
+    <ClInclude Include="AcqWaveChan.h" />
+    <ClInclude Include="AcqWaveChanArray.h" />
+    <ClInclude Include="AcqWaveFormat.h" />
     <ClInclude Include="Adexperi.h" />
     <ClInclude Include="ADInputParmsDlg.h" />
     <ClInclude Include="Adinterv.h" />

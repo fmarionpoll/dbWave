@@ -19,30 +19,28 @@ public:
 	virtual ~CAcqDataDoc();
 
 public:
-	CString			GetDataFileInfos(OPTIONS_VIEWDATA* pVD);
-	void			ExportDataFile_to_TXTFile(CStdioFile* pdataDest);
-	BOOL 			OnSaveDocument(CString& sz_path_name);
-	BOOL 			OnOpenDocument(CString& sz_path_name);
-	BOOL 			OnNewDocument() override;
+	CString	GetDataFileInfos(OPTIONS_VIEWDATA* pVD);
+	void	ExportDataFile_to_TXTFile(CStdioFile* pdataDest);
+	BOOL 	OnSaveDocument(CString& sz_path_name);
+	BOOL 	OnOpenDocument(CString& sz_path_name);
+	BOOL 	OnNewDocument() override;
 
 protected:
-	BOOL			OpenAcqFile(CString& szfilename);
-	bool			dlgImportDataFile(CString& sz_path_name);
-	int				importFile(CString& sz_path_name);
-	void			removeFile(CString file1);
-	void			renameFile2As1(CString filename_old, CString sz_path_name);
+	BOOL	OpenAcqFile(CString& szfilename);
+	bool	dlgImportDataFile(CString& sz_path_name);
+	int		importFile(CString& sz_path_name);
+	void	removeFile(CString file1);
+	void	renameFile2As1(CString filename_old, CString sz_path_name);
 
 #ifdef _DEBUG
-	void			AssertValid() const override;
-	void			Dump(CDumpContext& dc) const override;
+	void	AssertValid() const override;
+	void	Dump(CDumpContext& dc) const override;
 #endif
 
 protected:
 	DECLARE_MESSAGE_MAP()
 
-	// -------------------------------
 	// Data members and functions dealing with CDataFileX and data reading buffer
-	// -----------------------------------
 
 	CDataFileX*		m_pXFile;			// data file /* CDataFileX* */
 	CWaveBuf*		m_pWBuf;			// CWaveBuffer

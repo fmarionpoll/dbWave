@@ -1,13 +1,10 @@
 #pragma once
 
-// WaveBuf.h : header file
-
 #include <string>
+#include "AcqWaveFormat.h"
+#include "AcqWaveChanArray.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CWaveBuf window
-
-#define MOVAVG30 13
+constexpr auto MOVAVG30 = 13;
 
 class CWaveBuf : public CObject
 {
@@ -30,19 +27,19 @@ public:
 	//operations
 	CWaveBuf();
 	virtual ~CWaveBuf();
-	void Serialize(CArchive& ar) override;
+	void	Serialize(CArchive& ar) override;
 	int		WBDatachanSetnum(int i);
 
 	// Transform Data
 	//------------
-	static CString GetWBTransformsAllowed(int i);
-	static BOOL 	IsWBTransformAllowed(int i);
-	static WORD 	GetWBNTypesofTransforms();
-	BOOL 	InitWBTransformBuffer();
-	static int		GetWBTransformSpan(int i);
-	static int		IsWBSpanChangeAllowed(int i);
-	static int		SetWBTransformSpan(int i, int span);
-	static int		GetWBcorrectionFactor(int i, float* correct);
+	static	CString	GetWBTransformsAllowed(int i);
+	static	BOOL 	IsWBTransformAllowed(int i);
+	static	WORD 	GetWBNTypesofTransforms();
+			BOOL 	InitWBTransformBuffer();
+	static	int		GetWBTransformSpan(int i);
+	static	int		IsWBSpanChangeAllowed(int i);
+	static	int		SetWBTransformSpan(int i, int span);
+	static	int		GetWBcorrectionFactor(int i, float* correct);
 
 	// Transformations
 	//----------------
@@ -83,14 +80,14 @@ protected:
 	static int		m_bvariableSpan[];		// flag to tell if the sliding window size can be changed
 
 private:
-	short* m_pWData;						// Pointer to the origin of the primary data array
-	short* m_pWTransf;						// primary transform buffer
+	short*			m_pWData;				// Pointer to the origin of the primary data array
+	short*			m_pWTransf;				// primary transform buffer
 
-	BOOL	m_bTransf;
-	WORD	m_wversion;
-	int		m_iNumElements;					// n elements within buffer
-	size_t	m_dwBufferSize;
-	short* m_parraySorted;					// array used by BMedian to store a sorted array of data
-	short* m_parrayCircular;				// array used by BMedian to store a sliding window array of data
-	int		m_parray_size;
+	BOOL			m_bTransf;
+	WORD			m_wversion;
+	int				m_iNumElements;			// n elements within buffer
+	size_t			m_dwBufferSize;
+	short*			m_parraySorted;			// array used by BMedian to store a sorted array of data
+	short*			m_parrayCircular;		// array used by BMedian to store a sliding window array of data
+	int				m_parray_size;
 };

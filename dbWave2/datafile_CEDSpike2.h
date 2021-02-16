@@ -59,9 +59,9 @@ protected:
 	CWaveChanArray* m_pArray;
 	int				m_nFid;
 
-	void getAdcChannel(int nChan, CWaveChanArray* pArray);
-	CString  getFileComment(int nInd);
-	CString  getChannelComment(int nChan);
+	CWaveChan*	getAdcChannel(int nChan, CWaveChanArray* pArray);
+	CString		getFileComment(int nInd);
+	CString		getChannelComment(int nChan);
 
 };
 

@@ -96,9 +96,9 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	pWFormat->csStimulus.Empty();
 	pWFormat->csConcentration.Empty();
 	pWFormat->csSensillum.Empty();
-	for (int nInd = 1; nInd <= 5; nInd++) {
-		ATLTRACE2(" comment %i = %s\n", nInd, getFileComment(nInd));
-	}
+	//for (int nInd = 1; nInd <= 5; nInd++) {
+	//	ATLTRACE2(" comment %i = %s\n", nInd, getFileComment(nInd));
+	//}
 
 	// get global data and n channels
 	double timeBase = S64GetTimeBase(m_nFid);
@@ -107,21 +107,20 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	
 	TTimeDate arrayGetTimeDate{};
 	int flag = S64TimeDate(m_nFid, (long long*)&arrayGetTimeDate, nullptr, -1);
-	
+	pWFormat->acqtime = CTime(arrayGetTimeDate.wYear, arrayGetTimeDate.ucMon, arrayGetTimeDate.ucDay, arrayGetTimeDate.ucHour, arrayGetTimeDate.ucMin, arrayGetTimeDate.ucSec);
+
 	pWFormat->scan_count = 0;
 	if (lowestFreeChan > 0) {
 		for (int nChan = 0; nChan < lowestFreeChan; nChan++) {
 			int chanType = S64ChanType(m_nFid, nChan);
-			ATLTRACE2(" chan %i comment= %s ...\n", nChan, getChannelComment(nChan));
+			//ATLTRACE2(" chan %i comment= %s ...\n", nChan, getChannelComment(nChan));
 			switch (chanType) {
 			case CHANTYPE_Adc:
 			{
-				getAdcChannel(nChan, pArray);
+				CWaveChan* pChan = getAdcChannel(nChan, pArray);
 				pWFormat->scan_count++;
-				long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
-				pWFormat->chrate = (float) (1.0 / (ticksPerSample * S64GetTimeBase(m_nFid)));
-				long long maxTimeInTicks = S64ChanMaxTime(m_nFid, nChan);
-				pWFormat->sample_count = (long) (maxTimeInTicks / ticksPerSample);
+				pWFormat->chrate = (float) (1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
+				pWFormat->sample_count = (long) (pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
 			}
 				break;
 			case CHANTYPE_EventFall:
@@ -143,7 +142,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	return TRUE;
 }
 
-void  CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArray) {
+CWaveChan* CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArray) {
 	int i = pArray->chanArray_add();
 	CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
 	pChan->am_CEDchanID = nChan;
@@ -168,13 +167,19 @@ void  CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArray) {
 	int flag = S64GetChanOffset(m_nFid, nChan, &pChan->am_CEDoffset);
 	flag = S64GetChanScale(m_nFid, nChan, &pChan->am_CEDscale);
 
-	pChan->am_resolutionV	= 1.;
-	pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;
+	pChan->am_resolutionV	= 10.; //assume +- 5 V
+	pChan->am_gainamplifier	= 10.; // assume a gain of 10
 	pChan->am_gaintotal		= pChan->am_gainamplifier;
+
+	pChan->am_CEDticksPerSample = S64ChanDivide(m_nFid, nChan);
+	pChan->am_CEDmaxTimeInTicks = S64ChanMaxTime(m_nFid, nChan);
+	
 
 	//pChan->am_resolutionV		= cfsHeader.sensitivity[i] / 2000.;
 	//pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;	// fractional gain
 	//pChan->am_gaintotal		= pChan->am_gainamplifier;
+
+	return pChan;
 }
 
 CString  CDataFileFromCEDSpike2::getChannelComment(int nChan) {
@@ -207,18 +212,19 @@ long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannel
 	//return l_size / sizeof(short);
 	int scan_count = pArray->chanArray_getSize();
 	int nMax = nbPointsAllChannels/ scan_count;
-	
-
+	int flag = -1;
+	long long lldataIndex = dataIndex;
 	for (int ichan = 0; ichan < scan_count; ichan++) {
 		CWaveChan* pChan = pArray->get_p_channel(ichan);
 		int nChan = pChan->am_CEDchanID;
 		short* pData = pBuffer;
 		long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
-		long long tFrom = dataIndex * ticksPerSample;
-		long long tUpto = (dataIndex + nMax)* ticksPerSample;
+		long long tFrom = lldataIndex * ticksPerSample;
+		long long tUpto = (lldataIndex + nMax)* ticksPerSample;
 		long long* tFirst{};
 		const int nMask = 0;
-		int flag = S64ReadWaveS(m_nFid, nChan, pData, nMax, tFrom, tUpto, tFirst, nMask);
+		flag = S64ReadWaveS(m_nFid, nChan, pData, nMax, tFrom, tUpto, tFirst, nMask);
 	}
+	return flag;
 }
 

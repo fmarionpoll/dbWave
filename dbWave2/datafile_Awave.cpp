@@ -409,23 +409,23 @@ BOOL CDataFileAWAVE::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 
 BOOL CDataFileAWAVE::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 {
-	DeleteMap();							// cleanup map
+	DeleteMap();								// cleanup map
 
 	// fill map by reading all descriptors until end of list
-	Seek(m_ulOffsetHeader, CFile::begin);	// position pointer
+	Seek(m_ulOffsetHeader, CFile::begin);		// position pointer
 
-	CSubfileItem* p_struct;					// CStruct pointer
-	WORD ucCode;							// struct code
-	do										// loop until STRUCT_END
-	{
+	CSubfileItem* p_struct;						// CStruct pointer
+	WORD ucCode;								// struct code
+	do											// loop until STRUCT_END
+	{	
 		p_struct = new CSubfileItem;			// create new structure
 		ASSERT(p_struct);
-		p_struct->Read(this);				// read struct from file
-		ucCode = p_struct->GetCode();		// get code
+		p_struct->Read(this);					// read struct from file
+		ucCode = p_struct->GetCode();			// get code
 		m_structMap.SetAt(ucCode, p_struct);	// add struct to map
-		if (ucCode == STRUCT_JUMP)			// if jump struct, update file pointer
+		if (ucCode == STRUCT_JUMP)				// if jump struct, update file pointer
 			Seek(p_struct->GetDataOffset(), CFile::begin);
-	} while (ucCode != STRUCT_END);			// stop?
+	} while (ucCode != STRUCT_END);				// stop?
 
 	// read ACQDEF structure: get file pointer and load data
 	if (m_structMap.Lookup(STRUCT_ACQDEF, reinterpret_cast<CObject*&>(p_struct)))

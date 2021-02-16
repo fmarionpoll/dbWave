@@ -20,30 +20,30 @@ public:
 	CDataListCtrlRowObject(int i);
 	virtual ~CDataListCtrlRowObject();
 
-	BOOL			bChanged;			// flag set TRUE if contents has changed
-	WORD			wversion = 0;		// version number
+	BOOL			bChanged = false;
+	WORD			wversion = 0;
 
 	BOOL			bInit = false;
 	UINT			index;
 	long			insectID;
 
-	CString			cs_comment;
-	CString			csDatafileName;
-	CString			csSpikefileName;
-	CString			csSensillumname;
-	CString			csStim1;
-	CString			csConc1;
-	CString			csStim2;
-	CString			csConc2;
-	CString			csNspk;
-	CString			csFlag;
-	CString			csDate;
+	CString			cs_comment{};
+	CString			csDatafileName{};
+	CString			csSpikefileName{};
+	CString			csSensillumname{};
+	CString			csStim1{};
+	CString			csConc1{};
+	CString			csStim2{};
+	CString			csConc2{};
+	CString			csNspk{};
+	CString			csFlag{};
+	CString			csDate{};
 
-	CLineViewWnd* pdataWnd = nullptr;
-	CSpikeBarWnd* pspikeWnd = nullptr;
-	CdbWaveDoc* pdbWaveDoc = nullptr;
-	CAcqDataDoc* pdataDoc = nullptr;
-	CSpikeDoc* pspikeDoc = nullptr;
+	CLineViewWnd*	pdataWnd = nullptr;
+	CSpikeBarWnd*	pspikeWnd = nullptr;
+	CdbWaveDoc*		pdbWaveDoc = nullptr;
+	CAcqDataDoc*	pdataDoc = nullptr;
+	CSpikeDoc*		pspikeDoc = nullptr;
 
 	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);
 	void Serialize(CArchive& ar) override;

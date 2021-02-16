@@ -3,7 +3,6 @@
 
 #include "StdAfx.h"
 
-#include "Acqparam.h"		// data acquisition struct: wave format, wave chans
 #include "Taglines.h"		// tags
 #include "Acqdatad.h"
 

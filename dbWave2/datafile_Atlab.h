@@ -1,9 +1,6 @@
-// AtlabFile.h : header file
-//
+
 #pragma once
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileATLAB document
 
 class CDataFileATLAB : public CDataFileX
 {
