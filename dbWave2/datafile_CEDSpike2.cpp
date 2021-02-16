@@ -25,6 +25,7 @@ CDataFileFromCEDSpike2::CDataFileFromCEDSpike2()
 
 CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2()
 {
+	closeDataFile();
 }
 
 #ifdef _DEBUG
@@ -41,13 +42,13 @@ void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const
 
 bool CDataFileFromCEDSpike2::isOpened(CString& sz_path_name)
 {
-	return false;
+	return (m_nFid > 0);
 }
 
 bool CDataFileFromCEDSpike2::openDataFile(CString& sz_path_name, UINT u_open_flag)
 {
 	m_nFid = S64Open(CT2A(sz_path_name), u_open_flag);
-	if (m_nFid < 0) {
+	if (m_nFid <= 0) {
 		AfxMessageBox(AFX_IDP_FAILED_TO_OPEN_DOC);
 		return false;
 	}
@@ -56,11 +57,13 @@ bool CDataFileFromCEDSpike2::openDataFile(CString& sz_path_name, UINT u_open_fla
 
 void CDataFileFromCEDSpike2::closeDataFile()
 {
-	int flag = S64Close(m_nFid);
-	if (flag < 0) {
-
-		AfxMessageBox(_T("Failed to close data file"), MB_OK); 
-	}
+	if (m_nFid > 0) {
+		int flag = S64Close(m_nFid);
+		if (flag < 0) {
+			AfxMessageBox(_T("Failed to close data file\nError code=%i", flag), MB_OK);
+		}
+		m_nFid = -1;
+	}	
 }
 
 int CDataFileFromCEDSpike2::CheckFileType(CFile* f)

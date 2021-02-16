@@ -122,8 +122,9 @@ bool CDataFileX::isOpened(CString& sz_path_name)
 
 bool CDataFileX::openDataFile(CString& sz_path_name, UINT u_open_flag)
 {
-	bool flag = Open(sz_path_name, u_open_flag);
-	if (!flag)
+	CFileException error{};
+	bool flag = Open(sz_path_name, u_open_flag, &error);
+	if (flag == 0)
 		Abort();
 	return flag;
 }

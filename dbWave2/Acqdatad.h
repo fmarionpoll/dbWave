@@ -42,8 +42,8 @@ protected:
 
 	// Data members and functions dealing with CDataFileX and data reading buffer
 
-	CDataFileX*		m_pXFile;			// data file /* CDataFileX* */
-	CWaveBuf*		m_pWBuf;			// CWaveBuffer
+	CDataFileX*		m_pXFile=nullptr;	// data file /* CDataFileX* */
+	CWaveBuf*		m_pWBuf=nullptr;	// CWaveBuffer
 	CTagList		m_hz_tags{};		// list of horizontal cursors
 	CTagList		m_vt_tags{};		// list of vertical tags
 

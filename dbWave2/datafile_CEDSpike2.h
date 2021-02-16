@@ -55,9 +55,9 @@ public:
 
 protected:
 	CStringA		m_csFiledesc;
-	CWaveFormat*	m_pWFormat;
-	CWaveChanArray* m_pArray;
-	int				m_nFid;
+	CWaveFormat*	m_pWFormat		= nullptr;
+	CWaveChanArray* m_pArray		= nullptr;
+	int				m_nFid			=-1;
 
 	CWaveChan*	getAdcChannel(int nChan, CWaveChanArray* pArray);
 	CString		getFileComment(int nInd);
