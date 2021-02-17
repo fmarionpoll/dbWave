@@ -16,15 +16,15 @@ protected:
 public:
 	enum { IDD = IDD_VIEWDATA };
 
-	int		m_ichanselected;
-	float	m_v1;
-	float	m_v2;
-	float	m_diff;
-	float	m_timefirst;
-	float	m_timelast;
+	int			m_ichanselected;
+	float		m_v1;
+	float		m_v2;
+	float		m_diff;
+	float		m_timefirst;
+	float		m_timelast;
 
 	// subclassed controls within CDaoRecordView
-	CLineViewWnd	m_displayDataFile;	// data display
+	CLineViewWnd m_displayDataFile;	// data display
 	float		m_floatNDigits; 	// 10(000) -> n digits displayed
 	CEditCtrl	mm_v1;				// first HZ cursor
 	CEditCtrl	mm_v2;				// second HZ cursor
@@ -41,40 +41,40 @@ public:
 protected:
 	// parameters related to data display and to document
 	CAcqDataDoc* m_pdatDoc;			// document pointer
-	BOOL	m_bvalidDoc;
-	float	m_samplingRate;
-	int 	m_cursorstate;			// lineview cursor
-	int		m_VBarpixelratio;		// vertical bar pixel ratio
-	int		m_HBarpixelratio;		// horizontal bar pixel ratio
-	int		m_currentfileindex;
+	BOOL		m_bvalidDoc;
+	float		m_samplingRate;
+	int 		m_cursorstate;			// lineview cursor
+	int			m_VBarpixelratio;		// vertical bar pixel ratio
+	int			m_HBarpixelratio;		// horizontal bar pixel ratio
+	int			m_currentfileindex;
 
-	HICON	m_hBias;
-	HICON	m_hZoom;
-	int		scan_count;
-	float	chrate;
+	HICON		m_hBias;
+	HICON		m_hZoom;
+	int			scan_count;
+	float		chrate;
 
-	CRect 	m_Margin;				// margins (pixels)
-	int		m_file0;				// current file
-	long	m_lFirst0;
-	long	m_lLast0;
-	int		m_npixels0;
+	CRect 		m_Margin;				// margins (pixels)
+	int			m_file0;				// current file
+	long		m_lFirst0;
+	long		m_lLast0;
+	int			m_npixels0;
 
-	int		m_nfiles;				// nb of files in doc
-	int 	m_nbrowsperpage;		// USER: nb files/page
-	long 	m_lprintFirst;			// file index of first pt
-	long 	m_lprintLen{};			// nb pts per line
-	float 	m_printFirst{};
-	float 	m_printLast{};
-	BOOL	m_bIsPrinting;
+	int			m_nfiles;				// nb of files in doc
+	int 		m_nbrowsperpage;		// USER: nb files/page
+	long 		m_lprintFirst;			// file index of first pt
+	long 		m_lprintLen{};			// nb pts per line
+	float 		m_printFirst{};
+	float 		m_printLast{};
+	BOOL		m_bIsPrinting;
 
 	// specific printer parameters
-	TEXTMETRIC m_tMetric{};			// onbegin/onendPrinting
-	LOGFONT	m_logFont{};				// onbegin/onendPrinting
-	CFont* m_pOldFont{};				// onbegin/onendPrinting
-	CFont	m_fontPrint;			// onbegin/onendPrinting
+	TEXTMETRIC	m_tMetric{};			// onbegin/onendPrinting
+	LOGFONT		m_logFont{};			// onbegin/onendPrinting
+	CFont*		m_pOldFont{};			// onbegin/onendPrinting
+	CFont		m_fontPrint;			// onbegin/onendPrinting
 
 	// page format printing parameters (pixel unit)
-	CRect						m_printRect;
+	CRect		m_printRect;
 	OPTIONS_VIEWDATA* options_viewdata{};
 	OPTIONS_VIEWDATAMEASURE* mdMO{};		// measure options
 
@@ -93,15 +93,15 @@ protected:
 	int		PrintGetNPages();
 
 	CStretchControl m_stretch;
-	BOOL	m_binit;
-	BOOL	m_bCommonScale{};
+	BOOL		m_binit;
+	BOOL		m_bCommonScale{};
 
 	//public:
 protected:
-	CScrollBarEx	m_filescroll;			// data position within file
-	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
-	int				m_VBarMode{};			// flag V scrollbar state
-	CScrollBar 		m_scrolly;				// V scrollbar
+	CScrollBarEx m_filescroll;			// data position within file
+	SCROLLINFO	m_filescroll_infos{};	// infos for scrollbar
+	int			m_VBarMode{};			// flag V scrollbar state
+	CScrollBar 	m_scrolly;				// V scrollbar
 
 	void	OnFileScroll(UINT nSBCode, UINT nPos);
 	void	OnGainScroll(UINT nSBCode, UINT nPos);
@@ -121,20 +121,20 @@ protected:
 	// Overrides
 public:
 	CDaoRecordset* OnGetRecordset() override;
-	BOOL PreCreateWindow(CREATESTRUCT& cs)  override;
-	BOOL OnMove(UINT nIDMoveCommand)  override;
+	BOOL	PreCreateWindow(CREATESTRUCT& cs)  override;
+	BOOL	OnMove(UINT nIDMoveCommand)  override;
 protected:
-	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void DoDataExchange(CDataExchange* pDX) override;
-	void OnInitialUpdate() override;
-	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
-	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void	DoDataExchange(CDataExchange* pDX) override;
+	void	OnInitialUpdate() override;
+	BOOL	OnPreparePrinting(CPrintInfo* pInfo) override;
+	void	OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void	OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	void	OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
-	void DefineSubClassedItems();
-	void DefineStretchParameters();
+	void	DefineSubClassedItems();
+	void	DefineStretchParameters();
 
 	// Implementation
 public:

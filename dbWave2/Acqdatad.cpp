@@ -192,14 +192,14 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 
 	int dataTypesArray[] = { DOCTYPE_AWAVE, DOCTYPE_SMR, DOCTYPE_ATLAB, DOCTYPE_ASDSYNTECH, DOCTYPE_MCID,  DOCTYPE_UNKNOWN };
 	int arrSize = sizeof(dataTypesArray) / sizeof(dataTypesArray[0]);
-	auto i_id = DOCTYPE_UNKNOWN;
+	auto id_type = DOCTYPE_UNKNOWN;
 	for (int id = 0; id < arrSize; id++) {
 		if (m_pXFile != nullptr)
 			delete m_pXFile;
 		instanciateDataFileObject(id);
-		m_pXFile->openDataFile(cs_filename, u_open_flag);
-		auto i_id = m_pXFile->CheckFileType(cs_filename);
-		if (i_id != DOCTYPE_UNKNOWN)
+		if (0 != m_pXFile->openDataFile(cs_filename, u_open_flag))
+			id_type = m_pXFile->CheckFileType(cs_filename);
+		if (id_type != DOCTYPE_UNKNOWN)
 			break;
 	}
 
@@ -210,6 +210,7 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 	}
 
 	// save file pointer, read data header and Tags
+	m_pXFileType = id_type;
 	if (m_pWBuf == nullptr)
 		m_pWBuf = new CWaveBuf;
 	ASSERT(m_pWBuf != NULL);

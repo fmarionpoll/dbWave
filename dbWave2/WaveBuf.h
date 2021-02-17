@@ -63,13 +63,14 @@ public:
 	void	BRMS(short* lp_source, short* lp_dest, int cx) const;
 
 private:
-	void DeleteBuffers();
+	void	DeleteBuffers();
 
 	// data
 	//-----
 
 protected:
 	BOOL	CreateWBuffer(int i_num_elements, int nchannels = 1);
+
 	CWaveChanArray m_chanArray;				// array of structures with the channel description
 	CWaveFormat    m_waveFormat;			// structure with data acquisition def & parameters
 

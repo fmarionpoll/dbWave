@@ -43,6 +43,7 @@ protected:
 	// Data members and functions dealing with CDataFileX and data reading buffer
 
 	CDataFileX*		m_pXFile=nullptr;	// data file /* CDataFileX* */
+	int				m_pXFileType = DOCTYPE_UNKNOWN;
 	int				m_lastDocumentType = DOCTYPE_UNKNOWN;
 	CWaveBuf*		m_pWBuf=nullptr;	// CWaveBuffer
 	CTagList		m_hz_tags{};		// list of horizontal cursors

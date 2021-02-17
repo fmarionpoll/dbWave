@@ -83,27 +83,29 @@ CViewData::CViewData()
 	m_lprintFirst(0), m_lprintLen(0), m_printFirst(0), m_printLast(0), m_tMetric(), m_logFont(), m_pOldFont(nullptr),
 	options_viewdata(nullptr), mdMO(nullptr), m_bCommonScale(0), m_filescroll_infos(), m_VBarMode(0)
 {
-	m_ichanselected = 0;
-	m_timefirst = 0.0f;
-	m_timelast = 0.0f;
-	m_floatNDigits = 1000.0f; // display with n digits (3)
-	m_samplingRate = 1.0f; // sampling rate (Hz)
-	m_cursorstate = 0; // cursor state: system arrow
-	m_HBarpixelratio = 10; // horizontalbar pixel ratio (%)
-	m_VBarpixelratio = 30; // vertical bar pixel ratio
-	m_pdatDoc = nullptr;
-	m_bIsPrinting = FALSE;
-	m_currentfileindex = 0;
-	m_bInitComment = TRUE;
+	m_ichanselected		= 0;
+	m_timefirst			= 0.0f;
+	m_timelast			= 0.0f;
+	m_floatNDigits		= 1000.0f;		// display with n digits (3)
+	m_samplingRate		= 1.0f;			// sampling rate (Hz)
+	m_cursorstate		= 0;			// cursor state: system arrow
+	m_HBarpixelratio	= 10;			// horizontalbar pixel ratio (%)
+	m_VBarpixelratio	= 30;			// vertical bar pixel ratio
+	m_pdatDoc			= nullptr;
+	m_bIsPrinting		= FALSE;
+	m_currentfileindex	= 0;
+	m_bInitComment		= TRUE;
 
-	m_bvalidDoc = FALSE;
-	m_binit = FALSE;
+	m_bvalidDoc			= FALSE;
+	m_binit				= FALSE;
 
 	m_bEnableActiveAccessibility = FALSE;
 }
 
 CViewData::~CViewData()
 {
+	m_pdatDoc->AcqCloseFile();
+
 }
 
 void CViewData::DoDataExchange(CDataExchange* pDX)
