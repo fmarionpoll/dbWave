@@ -215,12 +215,6 @@ CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
 
 long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
-	//// seek and read CFile
-	//const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
-	//Seek(l_off, CFile::begin);
-	//const long l_size = Read(pBuffer, nbPointsAllChannels);
-	//// adjust dependent parameters
-	//return l_size / sizeof(short);
 	int scan_count = pArray->chanArray_getSize();
 	int nMax = nbPointsAllChannels/ scan_count;
 	int nValuesRead = -1;
@@ -229,6 +223,8 @@ long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannel
 
 	long long lldataIndex = dataIndex;
 	for (int ichan = 0; ichan < scan_count; ichan++) {
+		TRACE("dataIndex= %i nbPoints = %i ", dataIndex, nMax);
+
 		CWaveChan* pChan = pArray->get_p_channel(ichan);
 		int nChan = pChan->am_CEDchanID;
 		short* pData = pBuffer;
@@ -242,7 +238,15 @@ long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannel
 				tUpto,		// time after which no data is returned
 				&tFirst,	// return time of the first item
 				nMask);
-		ATLTRACE2("data read from channel %i \n", nChan);
+
+		TRACE("iFirst = %d nbPoints = %d ...\n", tFirst / ticksPerSample, nValuesRead);
+
+		//if (tFirst > tFrom) {
+		//	long iFirst = tFirst / ticksPerSample;
+		//	size_t number = nValuesRead;
+		//	memcpy(pBuffer + iFirst, pBuffer, nValuesRead);
+		//	memset(pBuffer, 65536 / 2, iFirst - 1);
+		//}
 	}
 	return nValuesRead;
 }
