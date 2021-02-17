@@ -22,7 +22,7 @@ public:
 	DECLARE_DYNCREATE(CDataFileX)
 
 	// Operations
-	virtual int		CheckFileType(CFile* pfile);
+	virtual int		CheckFileType(CString& cs_filename);
 	virtual BOOL	ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
 	virtual	long	ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray);
 	virtual BOOL	ReadHZtags(CTagList* pHZtags);
@@ -38,6 +38,7 @@ public:
 	virtual BOOL	WriteVTtags(CTagList* ptags);
 
 	//data parameters
+	UINT			m_u_open_flag;
 	int				m_bHeaderSize;		// data header size
 	int				m_idType;			// file type 0=unknown; 1=atlab; 2=Asyst; 3=awave; ..
 	CStringA		m_csType;

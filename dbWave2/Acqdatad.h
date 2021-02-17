@@ -43,6 +43,7 @@ protected:
 	// Data members and functions dealing with CDataFileX and data reading buffer
 
 	CDataFileX*		m_pXFile=nullptr;	// data file /* CDataFileX* */
+	int				m_lastDocumentType = DOCTYPE_UNKNOWN;
 	CWaveBuf*		m_pWBuf=nullptr;	// CWaveBuffer
 	CTagList		m_hz_tags{};		// list of horizontal cursors
 	CTagList		m_vt_tags{};		// list of vertical tags
@@ -73,7 +74,6 @@ public:
 
 	// Operations
 public:
-	int		CheckFileType(CFile* file) const;
 	int  	BGetVal(int chan, long l_index);
 	short*	LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL	BuildTransfData(int transform_type, int ns);
@@ -132,6 +132,8 @@ public:
 	void	ReadDataInfos();
 
 protected:
-	long	m_lDOCchanLength;	// n words in file / channels
+	long	m_lDOCchanLength;
 	BOOL	ReadDataBlock(long l_first);
+	void	instanciateDataFileObject(int docType);
+
 };

@@ -64,11 +64,11 @@ BOOL CDataFileAWAVE::InitFile()
 
 // check if the datafile has a recognizable header format
 
-int CDataFileAWAVE::CheckFileType(CFile* f)
+int CDataFileAWAVE::CheckFileType(CString & csFileName)
 {
-	f->Seek(0, CFile::begin);
+	Seek(0, CFile::begin);
 	char signature[6];
-	f->Read(signature, 5);
+	Read(signature, 5);
 	signature[5] = '\0';
 	CStringA cs_signature(signature);
 	auto flag = DOCTYPE_UNKNOWN;

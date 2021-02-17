@@ -12,7 +12,7 @@ public:
 	// Operations
 public:
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
-	int CheckFileType(CFile* file) override;
+	int CheckFileType(CString& cs_filename) override;
 
 protected:
 	CString	m_csOldStringID;

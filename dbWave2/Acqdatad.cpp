@@ -186,70 +186,38 @@ BOOL CAcqDataDoc::OpenAcqFile(CString& cs_filename)
 	CFileException fe;
 	CFileStatus r_status;
 
-	// create CDataFileAWAVE object if pxfile is null
-	if (m_pXFile == nullptr)
-		m_pXFile = new CDataFileAWAVE;
-	else
-	{
-		m_pXFile->closeDataFile();
-		if (!CFile::GetStatus(cs_filename, r_status))
-			return false;
-	}
-
 	// open file
 	UINT u_open_flag = (r_status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
 	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary;
-	if (!m_pXFile->openDataFile(cs_filename, u_open_flag))
-		return FALSE;
 
-	// create buffer
-	if (m_pWBuf == nullptr)
-		m_pWBuf = new CWaveBuf;
-	ASSERT(m_pWBuf != NULL);
-	const auto p_chan_array = GetpWavechanArray();
-	const auto p_wave_format = GetpWaveFormat();
-
-	// read data & create object according to file signature (checkfiletype)
-	const auto i_id = CheckFileType(m_pXFile);
-	if (m_pXFile == nullptr || m_pXFile->m_idType != i_id)
-	{
-		SAFE_DELETE(m_pXFile);
-		switch (i_id)
-		{
-		case DOCTYPE_AWAVE:
-			m_pXFile = new CDataFileAWAVE;
+	int dataTypesArray[] = { DOCTYPE_AWAVE, DOCTYPE_SMR, DOCTYPE_ATLAB, DOCTYPE_ASDSYNTECH, DOCTYPE_MCID,  DOCTYPE_UNKNOWN };
+	int arrSize = sizeof(dataTypesArray) / sizeof(dataTypesArray[0]);
+	auto i_id = DOCTYPE_UNKNOWN;
+	for (int id = 0; id < arrSize; id++) {
+		if (m_pXFile != nullptr)
+			delete m_pXFile;
+		instanciateDataFileObject(id);
+		m_pXFile->openDataFile(cs_filename, u_open_flag);
+		auto i_id = m_pXFile->CheckFileType(cs_filename);
+		if (i_id != DOCTYPE_UNKNOWN)
 			break;
-		case DOCTYPE_ATLAB:
-			m_pXFile = new CDataFileATLAB;
-			break;
-		case DOCTYPE_ASDSYNTECH:
-			m_pXFile = new CDataFileASD;
-			break;
-		case DOCTYPE_MCID:
-			m_pXFile = new CDataFileMCID;
-			break;
-		case DOCTYPE_SMR:
-			m_pXFile = new CDataFileFromCEDSpike2;
-			break;
-			//case DOCTYPE_PCCLAMP		5	// PCCLAMP document (not implemented yet)
-			//case DOCTYPE_SAPID 		6	// SAPID document (not implemented yet)
-			//case DOCTYPE_UNKNOWN		-1	// type of the document not accepted
-		default:
-			m_pXFile = new CDataFileX;
-			break;
-		}
-		m_pXFile->openDataFile(cs_filename, u_open_flag);	// open file again, this time with using the correct object
 	}
 
-	// return with error if format not known
-	if (i_id == DOCTYPE_UNKNOWN)
+	if (m_pXFile == nullptr || m_pXFile->m_idType == DOCTYPE_UNKNOWN)
 	{
 		AllocBUF();
-		return -1;
+		return false;
 	}
 
 	// save file pointer, read data header and Tags
-	const auto b_flag = m_pXFile->ReadDataInfos(p_wave_format, p_chan_array);
+	if (m_pWBuf == nullptr)
+		m_pWBuf = new CWaveBuf;
+	ASSERT(m_pWBuf != NULL);
+	const auto p_chan_array	= GetpWavechanArray();
+	const auto p_wave_format= GetpWaveFormat();
+	const auto b_flag		= m_pXFile->ReadDataInfos(p_wave_format, p_chan_array);
+	
+	// create buffer
 	AllocBUF();
 	m_pXFile->ReadVTtags(&m_vt_tags);
 	m_pXFile->ReadHZtags(&m_hz_tags);
@@ -424,63 +392,31 @@ void CAcqDataDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-int CAcqDataDoc::CheckFileType(CFile* f) const
-{
-	auto i_id = DOCTYPE_UNKNOWN;
-	// is current type?
-	if (m_pXFile != nullptr)
+void CAcqDataDoc::instanciateDataFileObject(int docType) {
+	switch (docType)
 	{
-		i_id = m_pXFile->CheckFileType(f);
-		if (i_id != DOCTYPE_UNKNOWN)
-			return m_pXFile->m_idType;
+	case DOCTYPE_AWAVE:
+		m_pXFile = new CDataFileAWAVE;
+		break;
+	case DOCTYPE_ATLAB:
+		m_pXFile = new CDataFileATLAB;
+		break;
+	case DOCTYPE_ASDSYNTECH:
+		m_pXFile = new CDataFileASD;
+		break;
+	case DOCTYPE_MCID:
+		m_pXFile = new CDataFileMCID;
+		break;
+	case DOCTYPE_SMR:
+		m_pXFile = new CDataFileFromCEDSpike2;
+		break;
+		//case DOCTYPE_PCCLAMP		5	// PCCLAMP document (not implemented yet)
+		//case DOCTYPE_SAPID 		6	// SAPID document (not implemented yet)
+		//case DOCTYPE_UNKNOWN		-1	// type of the document not accepted
+	default:
+		m_pXFile = new CDataFileX;
+		break;
 	}
-	
-	// check if ATLAB file
-	if (i_id < 0)
-	{
-		auto* p_file = new (CDataFileATLAB);
-		ASSERT(p_file != NULL);
-		i_id = p_file->CheckFileType(f);
-		delete p_file;
-	}
-
-	// check if aWave file
-	if (i_id < 0)
-	{
-		auto* pFileX = new (CDataFileAWAVE);
-		ASSERT(pFileX != NULL);
-		i_id = pFileX->CheckFileType(f);
-		delete pFileX;
-	}
-
-	// check if ASD Syntech file
-	if (i_id < 0)
-	{
-		auto* pFileX = new (CDataFileASD);
-		ASSERT(pFileX != NULL);
-		i_id = pFileX->CheckFileType(f);
-		delete pFileX;
-	}
-
-	// check if MCID Halifax file
-	if (i_id < 0)
-	{
-		auto* pFileX = new (CDataFileMCID);
-		ASSERT(pFileX != NULL);
-		i_id = pFileX->CheckFileType(f);
-		delete pFileX;
-	}
-
-	// check if Spike2 file from CED
-	if (i_id < 0)
-	{
-		auto* pFileX = new (CDataFileFromCEDSpike2);
-		ASSERT(pFileX != NULL);
-		i_id = pFileX->CheckFileType(f);
-		delete pFileX;
-	}
-
-	return i_id;
 }
 
 // adjust size of the buffer for data read from file

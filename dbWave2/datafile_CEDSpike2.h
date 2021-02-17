@@ -38,7 +38,7 @@ public:
 
 	// Operations
 public:
-	int  CheckFileType(CFile* file) override;
+	int  CheckFileType(CString& cs_filename) override;
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
 	bool isOpened(CString& sz_path_name) override;
 	bool openDataFile(CString& sz_path_name, UINT u_open_flag) override;

@@ -13,7 +13,7 @@ public:
 	CDataFileAWAVE(CFile* file);
 	virtual ~CDataFileAWAVE();
 
-	int  CheckFileType(CFile* pfile) override;
+	int  CheckFileType(CString& cs_filename) override;
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
 	BOOL ReadHZtags(CTagList* pHZtags) override;
 	BOOL ReadVTtags(CTagList* pVTtags) override;

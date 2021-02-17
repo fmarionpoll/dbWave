@@ -22,6 +22,7 @@ CDataFileX::CDataFileX()
 	m_ulbytescount = 0;
 	m_idType = DOCTYPE_UNKNOWN;
 	m_csType = _T("UNKNOWN");
+	UINT m_u_open_flag = CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary;
 }
 
 CDataFileX::~CDataFileX()
@@ -54,7 +55,7 @@ long CDataFileX::ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWav
 	return l_size / sizeof(short);
 }
 
-int CDataFileX::CheckFileType(CFile* pfile)
+int CDataFileX::CheckFileType(CString& cs_filename)
 {
 	return DOCTYPE_UNKNOWN;
 }

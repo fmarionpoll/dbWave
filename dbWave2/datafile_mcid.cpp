@@ -90,12 +90,12 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
 	return TRUE;
 }
 
-int CDataFileMCID::CheckFileType(CFile* f)
+int CDataFileMCID::CheckFileType(CString& cs_filename)
 {
 	BOOL flag = DOCTYPE_UNKNOWN;
 	MCID_HEADER mcidHeader;
-	f->Seek(0, CFile::begin);
-	f->Read(&mcidHeader, sizeof(MCID_HEADER));
+	Seek(0, CFile::begin);
+	Read(&mcidHeader, sizeof(MCID_HEADER));
 	m_bHeaderSize = mcidHeader.application_header;
 	m_ulOffsetData = mcidHeader.application_header;
 

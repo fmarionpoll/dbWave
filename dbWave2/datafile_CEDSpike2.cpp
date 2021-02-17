@@ -57,20 +57,27 @@ bool CDataFileFromCEDSpike2::openDataFile(CString& sz_path_name, UINT u_open_fla
 
 void CDataFileFromCEDSpike2::closeDataFile()
 {
-	if (m_nFid > 0) {
+	if (m_nFid >= 0) {
 		int flag = S64Close(m_nFid);
 		if (flag < 0) {
-			AfxMessageBox(_T("Failed to close data file\nError code=%i", flag), MB_OK);
+			CString errorMessage;
+			errorMessage.Format(_T("Failed to close data file\nError code=%i"), flag);
+			AfxMessageBox(errorMessage, MB_OK);
 		}
 		m_nFid = -1;
 	}	
 }
 
-int CDataFileFromCEDSpike2::CheckFileType(CFile* f)
+int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
 {
+	cs_fileName.MakeLower();
+	if (cs_fileName.Find(_T("smr")) != -1) {
+		return DOCTYPE_SMR;
+	}
+
 	char bufRead[LENCEDSON] = { 0 };
-	f->Seek(0, CFile::begin);
-	f->Read(bufRead, sizeof(bufRead));
+	Seek(0, CFile::begin);
+	Read(bufRead, sizeof(bufRead));
 	
 	int flag = isPatternPresent(bufRead, sizeof(bufRead), CEDSON64, sizeof(CEDSON64));
 	if (flag == DOCTYPE_UNKNOWN)
@@ -113,6 +120,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	pWFormat->acqtime = CTime(arrayGetTimeDate.wYear, arrayGetTimeDate.ucMon, arrayGetTimeDate.ucDay, arrayGetTimeDate.ucHour, arrayGetTimeDate.ucMin, arrayGetTimeDate.ucSec);
 
 	pWFormat->scan_count = 0;
+	pArray->chanArray_removeAll();
 	if (lowestFreeChan > 0) {
 		for (int nChan = 0; nChan < lowestFreeChan; nChan++) {
 			int chanType = S64ChanType(m_nFid, nChan);
@@ -166,7 +174,6 @@ CWaveChan* CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArr
 	pChan->am_csInputpos	= "DC";			// assume input + = DC
 	pChan->am_csInputneg	= "GND";		// assume input - = GND
 
-	// TODO get proper values from C64 file
 	int flag = S64GetChanOffset(m_nFid, nChan, &pChan->am_CEDoffset);
 	flag = S64GetChanScale(m_nFid, nChan, &pChan->am_CEDscale);
 
@@ -176,11 +183,6 @@ CWaveChan* CDataFileFromCEDSpike2::getAdcChannel(int nChan, CWaveChanArray* pArr
 
 	pChan->am_CEDticksPerSample = S64ChanDivide(m_nFid, nChan);
 	pChan->am_CEDmaxTimeInTicks = S64ChanMaxTime(m_nFid, nChan);
-	
-
-	//pChan->am_resolutionV		= cfsHeader.sensitivity[i] / 2000.;
-	//pChan->am_gainamplifier	= 1. / pChan->am_resolutionV;	// fractional gain
-	//pChan->am_gaintotal		= pChan->am_gainamplifier;
 
 	return pChan;
 }
@@ -224,9 +226,9 @@ long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannel
 		long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
 		long long tFrom = lldataIndex * ticksPerSample;
 		long long tUpto = (lldataIndex + nMax)* ticksPerSample;
-		long long* tFirst{};
+		long long tFirst{};
 		const int nMask = 0;
-		flag = S64ReadWaveS(m_nFid, nChan, pData, nMax, tFrom, tUpto, tFirst, nMask);
+		flag = S64ReadWaveS(m_nFid, nChan, pData, nMax, tFrom, tUpto, &tFirst, nMask);
 	}
 	return flag;
 }

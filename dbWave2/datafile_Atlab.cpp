@@ -311,12 +311,12 @@ void CDataFileATLAB::InitDummyChansInfo(short chanlistindex)
 	p_chan->am_csInputneg = CStringA("GND");
 }
 
-int CDataFileATLAB::CheckFileType(CFile* f)
+int CDataFileATLAB::CheckFileType(CString& cs_filename)
 {
-	WORD w_atlab;			// struct for ATLab file
+	WORD w_atlab;									// struct for ATLab file
 	auto flag = DOCTYPE_UNKNOWN;
-	f->Seek(m_ulOffsetHeader, CFile::begin);	// position pointer to start of file
-	f->Read(&w_atlab, sizeof(w_atlab));			// Read data
+	Seek(m_ulOffsetHeader, CFile::begin);			// position pointer to start of file
+	Read(&w_atlab, sizeof(w_atlab));				// Read data
 
 	// test Atlab
 	if (w_atlab == 0xAAAA) //	//&&( tab[2] == 0x07 || tab[2] == 0x06)

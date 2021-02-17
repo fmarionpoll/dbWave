@@ -206,16 +206,16 @@ BOOL CDataFileASD::ReadDataInfos(CWaveFormat* wave_format, CWaveChanArray* wavec
 	return DOCTYPE_ASDSYNTECH;
 }
 
-int CDataFileASD::CheckFileType(CFile* f)
+int CDataFileASD::CheckFileType(CString& cs_filename)
 {
-	f->Seek(0L, CFile::begin);
+	Seek(0L, CFile::begin);
 	auto flag = DOCTYPE_UNKNOWN;
 	auto i_len = 32;
 	char buf[32];
 	auto pbuf = &buf[0];
 	do
 	{
-		f->Read(pbuf, sizeof(char));
+		Read(pbuf, sizeof(char));
 		pbuf++;
 		i_len--;
 	} while (*(pbuf - 1) != 0 && i_len > 0);
@@ -226,7 +226,7 @@ int CDataFileASD::CheckFileType(CFile* f)
 
 	// (2) file version number
 	WORD w;
-	f->Read(&w, sizeof(WORD));
+	Read(&w, sizeof(WORD));
 	auto w_type2 = SWAPWORD(w);
 	if (w_type2 != 1)
 	{
@@ -235,19 +235,19 @@ int CDataFileASD::CheckFileType(CFile* f)
 	}
 
 	// browse file and get list of data type chunks
-	const auto filelength = f->GetLength() - 1;
+	const auto filelength = GetLength() - 1;
 	//auto offset = f->GetPosition();
 	DWORD dw;
 
-	while (f->GetPosition() < filelength)
+	while (GetPosition() < filelength)
 	{
 		// read tag / "new data block"
-		f->Read(&w, sizeof(WORD));
+		Read(&w, sizeof(WORD));
 		w_type2 = SWAPWORD(w);
 		ASSERT(w_type2 == m_wID);			// assert tag = 0xAAAA
 
 		// check file type
-		f->Read(&w, sizeof(WORD));	// (4) file version number
+		Read(&w, sizeof(WORD));	// (4) file version number
 		w_type2 = SWAPWORD(w);
 
 		switch (w_type2)
@@ -255,47 +255,47 @@ int CDataFileASD::CheckFileType(CFile* f)
 		case DT_WAVE:
 		{
 			flag = DOCTYPE_ASDSYNTECH;
-			m_ulOffsetHeader = f->GetPosition();
+			m_ulOffsetHeader = GetPosition();
 
 			// (1) signal name
 			CString cs_name;
 			auto ch = ' ';
 			while (ch != 0)
 			{
-				f->Read(&ch, sizeof(char));
+				Read(&ch, sizeof(char));
 				if (ch != 0) cs_name += ch;
 			}
 
-			f->Read(&dw, sizeof(DWORD));
+			Read(&dw, sizeof(DWORD));
 			const DWORD rec_factor = SWAPLONG(dw);
 			auto gainpost = static_cast<short>(rec_factor);		// max is 32768
 			short gainpre = 1;
 			ASSERT(rec_factor <= 32768);
 
-			f->Read(&dw, sizeof(DWORD));
+			Read(&dw, sizeof(DWORD));
 			auto sample_rate = static_cast<double>(SWAPLONG(dw)) / 1000.0;
 
-			f->Read(&dw, sizeof(DWORD));
+			Read(&dw, sizeof(DWORD));
 			const DWORD count = SWAPLONG(dw);
 
 			for (DWORD index = 0; index < count; index++)	// (6-7) percent and time
 			{
-				f->Read(&w, sizeof(WORD));
+				Read(&w, sizeof(WORD));
 				int percent = SWAPWORD(w);
-				f->Read(&dw, sizeof(DWORD));
+				Read(&dw, sizeof(DWORD));
 				auto time = SWAPLONG(dw);
 			}
 
 			UINT uicount = 0;							// (8) number of record samples
-			f->Read(&dw, sizeof(DWORD));
+			Read(&dw, sizeof(DWORD));
 			uicount = SWAPLONG(dw);
 
-			const auto l_offset1 = f->GetPosition();		// start of data area
+			const auto l_offset1 = GetPosition();		// start of data area
 			m_ulOffsetData = l_offset1 + 1;
 			const auto l_offset2 = ULONGLONG(uicount) * 2;				// length of data area (in bytes)
-			f->Seek(l_offset2, CFile::current);		// position pointer
+			Seek(l_offset2, CFile::current);		// position pointer
 
-			f->Read(&w, sizeof(WORD));
+			Read(&w, sizeof(WORD));
 			auto check_sum = SWAPWORD(w);
 		}
 		break;
@@ -308,14 +308,14 @@ int CDataFileASD::CheckFileType(CFile* f)
 			WORD w = 0;
 			do
 			{
-				f->Read(&w, sizeof(WORD));
+				Read(&w, sizeof(WORD));
 				WORD w_type = SWAPWORD(w);
-			} while (w != m_wID && f->GetPosition() < filelength);
+			} while (w != m_wID && GetPosition() < filelength);
 			// 0xAAAA
 			if (w == m_wID)
 			{
-				const LONGLONG lpos = f->GetPosition() - 2;
-				f->Seek(lpos, CFile::begin);
+				const LONGLONG lpos = GetPosition() - 2;
+				Seek(lpos, CFile::begin);
 			}
 		}
 		break;

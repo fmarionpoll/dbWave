@@ -14,7 +14,7 @@ public:
 	// Operations
 public:
 	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
-	int  CheckFileType(CFile* file);
+	int  CheckFileType(CString& cs_filename);
 protected:
 	void InitDummyChansInfo(short chanlistindex);
 	void LoadChanFromCyber(short i, char* pcyberchan);
