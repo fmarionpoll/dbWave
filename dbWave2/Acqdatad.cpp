@@ -553,7 +553,7 @@ BOOL CAcqDataDoc::ReadDataBlock(long l_first)
 	{
 		short* p_buffer = m_pWBuf->GetWBAdrRawDataBuf();
 		ASSERT(p_buffer != NULL);
-		//TRACE("ReadDataBlok l_first= %i nbPoints = %i doc length= %i \n", l_first, m_lBUFSize, m_lDOCchanLength);
+		//TRACE("ReadDataBlock l_first= %i nbPoints = %i doc length= %i \n", l_first, m_lBUFSize, m_lDOCchanLength);
 		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, GetpWavechanArray());
 		//if (l_size == 0)
 		//	return FALSE;

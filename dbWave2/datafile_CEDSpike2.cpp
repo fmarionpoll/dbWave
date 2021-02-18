@@ -216,50 +216,56 @@ CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
 long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
 	int scan_count = pArray->chanArray_getSize();
-	int nMax = nbPointsAllChannels/ sizeof(short) / scan_count;
+	int llDataNValues = nbPointsAllChannels/ sizeof(short) / scan_count;
 	int nValuesRead = -1;
 	long long tFirst{};
-	long long lldataIndex = dataIndex;
+	long long llDataIndex = dataIndex;
 
 	for (int ichan = 0; ichan < scan_count; ichan++) {
-		
 		CWaveChan* pChan = pArray->get_p_channel(ichan);
 		short* pData = pBuffer;
-		nValuesRead = ReadOneChanAdcData(pChan, pData, lldataIndex, nMax);
+		nValuesRead = ReadOneChanAdcData(pChan, pData, llDataIndex, llDataNValues);
 	}
 	return nValuesRead;
 }
 
-long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, long long lldataIndex, int nMax) {
+long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, long long llDataIndex, int llDataNValues) {
+
 	const int nMask = 0;
-	int nChan = pChan->am_CEDchanID;
-	long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
-	long long tFrom = lldataIndex * ticksPerSample;
-	long long tUpto = (lldataIndex + nMax) * ticksPerSample;
+	int chanID = pChan->am_CEDchanID;
+	long long ticksPerSample = S64ChanDivide(m_nFid, chanID);
+	long long tFrom = llDataIndex * ticksPerSample;
+	long long tUpto = (llDataIndex + llDataNValues) * ticksPerSample;
 	long long tFirst{};
-	int nValuesRead = S64ReadWaveS(m_nFid, nChan, pData, nMax, tFrom, tUpto, &tFirst, nMask);
+	int nValuesRead = S64ReadWaveS(m_nFid, chanID, pData, llDataNValues, tFrom, tUpto, &tFirst, nMask);
 
-	if (nValuesRead > 0 && tFirst > tFrom) {
-		long iFirst = (long)(tFirst / ticksPerSample);
-		size_t number = (long)(nValuesRead * sizeof(short));
-		memmove(pData + iFirst, pData, number);
+	ATLTRACE2("ReadDataBlock nValuesRead = %i l_first= %i nPoints = %i\n", nValuesRead, llDataIndex, llDataNValues);
 
-		size_t number2 = (iFirst - 1) * sizeof(short);
-		memset(pData, 65536 / 2, number2);
+	if (nValuesRead > 0) { 
+		int nValuesActuallyRead = nValuesRead;
+		if (tFirst > tFrom) {
+			long iFirst = (long)(tFirst / ticksPerSample);
+			long offset = iFirst - (long) llDataIndex;
+			nValuesActuallyRead += offset;
 
-		// TODO : read by chunks if reading was interrupted. Is there any data in the interval after?
+			size_t number = (long)(nValuesRead * sizeof(short));
+			memmove(pData + offset, pData, number);
+			size_t number2 = (offset - 1) * sizeof(short);
+			memset(pData, 65536 / 2, number2);
+		}
+
+		// read by chunks if reading was interrupted. Is there any data in the interval after?
 		// nvalues actually "read" is: nValuesRead + (iFirst-1)
-		int lastPointRead = nValuesRead + iFirst - 1;
-		if (lastPointRead < nMax) {
-			int new_nMax = nMax - lastPointRead;
-			long long new_lldataIndex = lldataIndex + lastPointRead;
-			short* new_pData = pData + lastPointRead;
-			ReadOneChanAdcData(pChan, new_pData, new_lldataIndex, new_nMax);
+		if (nValuesActuallyRead < (llDataNValues + llDataIndex-1)) {
+			int new_llDataNValues = llDataNValues - nValuesActuallyRead;
+			long long new_llDataIndex = llDataIndex + nValuesActuallyRead;
+			short* new_pData = pData + nValuesRead;
+			ReadOneChanAdcData(pChan, new_pData, new_llDataIndex, new_llDataNValues);
 		}
 	}
-
 	return nValuesRead;
 }
+
 
 
 
