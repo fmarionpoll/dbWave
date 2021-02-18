@@ -216,38 +216,50 @@ CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
 long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
 	int scan_count = pArray->chanArray_getSize();
-	int nMax = nbPointsAllChannels/ scan_count;
+	int nMax = nbPointsAllChannels/ sizeof(short) / scan_count;
 	int nValuesRead = -1;
 	long long tFirst{};
-	const int nMask = 0;
-
 	long long lldataIndex = dataIndex;
+
 	for (int ichan = 0; ichan < scan_count; ichan++) {
-		TRACE("dataIndex= %i nbPoints = %i ", dataIndex, nMax);
-
+		
 		CWaveChan* pChan = pArray->get_p_channel(ichan);
-		int nChan = pChan->am_CEDchanID;
 		short* pData = pBuffer;
-		long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
-		long long tFrom = lldataIndex * ticksPerSample;
-		long long tUpto = (lldataIndex + nMax)* ticksPerSample;
-		nValuesRead = S64ReadWaveS(m_nFid, nChan, 
-				pData,		// buffer to receive data
-				nMax,		// maximum number of values to read
-				tFrom,		// start data at (time offset from the start of the data file)
-				tUpto,		// time after which no data is returned
-				&tFirst,	// return time of the first item
-				nMask);
-
-		TRACE("iFirst = %d nbPoints = %d ...\n", tFirst / ticksPerSample, nValuesRead);
-
-		//if (tFirst > tFrom) {
-		//	long iFirst = tFirst / ticksPerSample;
-		//	size_t number = nValuesRead;
-		//	memcpy(pBuffer + iFirst, pBuffer, nValuesRead);
-		//	memset(pBuffer, 65536 / 2, iFirst - 1);
-		//}
+		nValuesRead = ReadOneChanAdcData(pChan, pData, lldataIndex, nMax);
 	}
 	return nValuesRead;
 }
+
+long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, long long lldataIndex, int nMax) {
+	const int nMask = 0;
+	int nChan = pChan->am_CEDchanID;
+	long long ticksPerSample = S64ChanDivide(m_nFid, nChan);
+	long long tFrom = lldataIndex * ticksPerSample;
+	long long tUpto = (lldataIndex + nMax) * ticksPerSample;
+	long long tFirst{};
+	int nValuesRead = S64ReadWaveS(m_nFid, nChan, pData, nMax, tFrom, tUpto, &tFirst, nMask);
+
+	if (nValuesRead > 0 && tFirst > tFrom) {
+		long iFirst = (long)(tFirst / ticksPerSample);
+		size_t number = (long)(nValuesRead * sizeof(short));
+		memmove(pData + iFirst, pData, number);
+
+		size_t number2 = (iFirst - 1) * sizeof(short);
+		memset(pData, 65536 / 2, number2);
+
+		// TODO : read by chunks if reading was interrupted. Is there any data in the interval after?
+		// nvalues actually "read" is: nValuesRead + (iFirst-1)
+		int lastPointRead = nValuesRead + iFirst - 1;
+		if (lastPointRead < nMax) {
+			int new_nMax = nMax - lastPointRead;
+			long long new_lldataIndex = lldataIndex + lastPointRead;
+			short* new_pData = pData + lastPointRead;
+			ReadOneChanAdcData(pChan, new_pData, new_lldataIndex, new_nMax);
+		}
+	}
+
+	return nValuesRead;
+}
+
+
 
