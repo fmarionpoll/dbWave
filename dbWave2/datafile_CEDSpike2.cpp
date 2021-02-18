@@ -254,9 +254,8 @@ long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, 
 			memset(pData, 65536 / 2, number2);
 		}
 
-		// read by chunks if reading was interrupted. Is there any data in the interval after?
-		// nvalues actually "read" is: nValuesRead + (iFirst-1)
-		if (nValuesActuallyRead < (llDataNValues + llDataIndex-1)) {
+		// read another chunk if reading was interrupted by a gap
+		if (nValuesActuallyRead < llDataNValues) {
 			int new_llDataNValues = llDataNValues - nValuesActuallyRead;
 			long long new_llDataIndex = llDataIndex + nValuesActuallyRead;
 			short* new_pData = pData + nValuesRead;
