@@ -216,7 +216,7 @@ CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
 long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
 	int scan_count = pArray->chanArray_getSize();
-	int llDataNValues = nbPointsAllChannels/ sizeof(short) / scan_count;
+	long long llDataNValues = nbPointsAllChannels/ sizeof(short) / scan_count;
 	int nValuesRead = -1;
 	long long tFirst{};
 	long long llDataIndex = dataIndex;
@@ -229,7 +229,7 @@ long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannel
 	return nValuesRead;
 }
 
-long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, long long llDataIndex, int llDataNValues) {
+long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues) {
 
 	const int nMask = 0;
 	int chanID = pChan->am_CEDchanID;
@@ -237,26 +237,29 @@ long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, 
 	long long tFrom = llDataIndex * ticksPerSample;
 	long long tUpto = (llDataIndex + llDataNValues) * ticksPerSample;
 	long long tFirst{};
-	int nValuesRead = S64ReadWaveS(m_nFid, chanID, pData, llDataNValues, tFrom, tUpto, &tFirst, nMask);
+	const int nValuesMax = (int) llDataNValues;
+	int nValuesRead = S64ReadWaveS(m_nFid, chanID, pData, nValuesMax, tFrom, tUpto, &tFirst, nMask);
 
-	ATLTRACE2("ReadDataBlock nValuesRead = %i l_first= %i nPoints = %i\n", nValuesRead, llDataIndex, llDataNValues);
+	CStringA message;
+	message.Format("ReadDataBlock nValuesRead = %i l_first= %i nPoints = %i\n", nValuesRead, (int) llDataIndex, (int) llDataNValues);
+	ATLTRACE2(message);
 
 	if (nValuesRead > 0) { 
 		int nValuesActuallyRead = nValuesRead;
 		if (tFirst > tFrom) {
 			long iFirst = (long)(tFirst / ticksPerSample);
-			long offset = iFirst - (long) llDataIndex;
+			long offset = (long) (iFirst - llDataIndex);
 			nValuesActuallyRead += offset;
 
 			size_t number = (long)(nValuesRead * sizeof(short));
 			memmove(pData + offset, pData, number);
 			size_t number2 = (offset - 1) * sizeof(short);
-			memset(pData, 65536 / 2, number2);
+			memset(pData, 0, number2);
 		}
 
 		// read another chunk if reading was interrupted by a gap
 		if (nValuesActuallyRead < llDataNValues) {
-			int new_llDataNValues = llDataNValues - nValuesActuallyRead;
+			int new_llDataNValues = (int) ( llDataNValues - nValuesActuallyRead);
 			long long new_llDataIndex = llDataIndex + nValuesActuallyRead;
 			short* new_pData = pData + nValuesRead;
 			ReadOneChanAdcData(pChan, new_pData, new_llDataIndex, new_llDataNValues);
