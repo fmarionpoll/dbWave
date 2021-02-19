@@ -241,7 +241,7 @@ long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, 
 	int nValuesRead = S64ReadWaveS(m_nFid, chanID, pData, nValuesMax, tFrom, tUpto, &tFirst, nMask);
 
 	CStringA message;
-	message.Format("ReadDataBlock nValuesRead = %i l_first= %i nPoints = %i\n", nValuesRead, (int) llDataIndex, (int) llDataNValues);
+	message.Format("ReadDataBlock l_first= %i nPoints = %i nValuesRead = %i \n", (int) llDataIndex, (int) llDataNValues, nValuesRead);
 	ATLTRACE2(message);
 
 	if (nValuesRead > 0) { 
