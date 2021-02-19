@@ -249,12 +249,15 @@ long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, 
 		if (tFirst > tFrom) {
 			long iFirst = (long)(tFirst / ticksPerSample);
 			long offset = (long) (iFirst - llDataIndex);
-			nValuesActuallyRead += offset;
-
+			
 			size_t number = (long)(nValuesRead * sizeof(short));
 			memmove(pData + offset, pData, number);
 			size_t number2 = (offset - 1) * sizeof(short);
 			memset(pData, 0, number2);
+
+			message.Format("memset [0, 1]= %i, %i memmove [offset]= %i : %i \n", *pData, *(pData+1), offset, *(pData+offset));
+			ATLTRACE2(message);
+			nValuesActuallyRead += offset;
 		}
 
 		// read another chunk if reading was interrupted by a gap
