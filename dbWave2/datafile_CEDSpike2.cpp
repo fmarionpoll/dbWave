@@ -246,7 +246,7 @@ long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, 
 
 	if (nValuesRead > 0) { 
 		int nValuesActuallyRead = nValuesRead;
-		if (tFirst > tFrom) {
+		if (tFrom == 0 && tFirst > tFrom) {
 			long iFirst = (long)(tFirst / ticksPerSample);
 			long offset = (long) (iFirst - llDataIndex);
 			
