@@ -62,7 +62,8 @@ protected:
 	CWaveChan*	getAdcChannel(int nChan, CWaveChanArray* pArray);
 	CString		getFileComment(int nInd);
 	CString		getChannelComment(int nChan);
-	long		ReadOneChanAdcData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
+	long		readOneChanAdcData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
+	long		relocateChanAdcData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
 
 };
 

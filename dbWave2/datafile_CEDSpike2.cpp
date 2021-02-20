@@ -213,62 +213,59 @@ CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
 	return comment;
 }
 
-long CDataFileFromCEDSpike2::ReadAdcData(long dataIndex, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
+long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
 	int scan_count = pArray->chanArray_getSize();
-	long long llDataNValues = nbPointsAllChannels/ sizeof(short) / scan_count;
+	long long llDataNValues = nbPointsAllChannels/ scan_count / sizeof(short);
 	int nValuesRead = -1;
 	long long tFirst{};
-	long long llDataIndex = dataIndex;
+	long long ll_First = l_First;
 
 	for (int ichan = 0; ichan < scan_count; ichan++) {
 		CWaveChan* pChan = pArray->get_p_channel(ichan);
-		short* pData = pBuffer;
-		nValuesRead = ReadOneChanAdcData(pChan, pData, llDataIndex, llDataNValues);
+		// TODO: create channel buffer
+		size_t numberBytes = ((int) llDataNValues) * sizeof(short);
+		memset(pBuffer, 100, numberBytes);
+		nValuesRead = readOneChanAdcData(pChan, pBuffer, ll_First, llDataNValues);
 	}
+	// TODO: combine channels buffers to build interleaved data 
 	return nValuesRead;
 }
 
-long CDataFileFromCEDSpike2::ReadOneChanAdcData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues) {
+long CDataFileFromCEDSpike2::readOneChanAdcData(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues) {
 
+	const int chanID = pChan->am_CEDchanID;
+	const long long ticksPerSample = S64ChanDivide(m_nFid, chanID);
+	const long long tUpTo = (ll_First + llNValues-1) * ticksPerSample;
 	const int nMask = 0;
-	int chanID = pChan->am_CEDchanID;
-	long long ticksPerSample = S64ChanDivide(m_nFid, chanID);
-	long long tFrom = llDataIndex * ticksPerSample;
-	long long tUpto = (llDataIndex + llDataNValues) * ticksPerSample;
-	long long tFirst{};
-	const int nValuesMax = (int) llDataNValues;
-	int nValuesRead = S64ReadWaveS(m_nFid, chanID, pData, nValuesMax, tFrom, tUpto, &tFirst, nMask);
+	int numberOfValuesRead = 0;
+	
+	while (numberOfValuesRead < llNValues) {
+		int			nMax	= (int) llNValues - numberOfValuesRead;
+		long long	tFrom	= (ll_First + numberOfValuesRead) * ticksPerSample;
+		short*		pBuffer = pData + numberOfValuesRead;
+		long long	tFirst{};
+		int nValuesRead = S64ReadWaveS(m_nFid, chanID, pBuffer, nMax, tFrom, tUpTo, &tFirst, nMask);
+		if (nValuesRead <= 0)
+			break;
 
-	CStringA message;
-	message.Format("ReadDataBlock l_first= %i nPoints = %i nValuesRead = %i \n", (int) llDataIndex, (int) llDataNValues, nValuesRead);
-	ATLTRACE2(message);
-
-	if (nValuesRead > 0) { 
-		int nValuesActuallyRead = nValuesRead;
-		if (tFrom == 0 && tFirst > tFrom) {
-			long iFirst = (long)(tFirst / ticksPerSample);
-			long offset = (long) (iFirst - llDataIndex);
-			
-			size_t number = (long)(nValuesRead * sizeof(short));
-			memmove(pData + offset, pData, number);
-			size_t number2 = (offset - 1) * sizeof(short);
-			memset(pData, 0, number2);
-
-			message.Format("memset [0, 1]= %i, %i memmove [offset]= %i : %i \n", *pData, *(pData+1), offset, *(pData+offset));
-			ATLTRACE2(message);
-			nValuesActuallyRead += offset;
-		}
-
-		// read another chunk if reading was interrupted by a gap
-		if (nValuesActuallyRead < llDataNValues) {
-			int new_llDataNValues = (int) ( llDataNValues - nValuesActuallyRead);
-			long long new_llDataIndex = llDataIndex + nValuesActuallyRead;
-			short* new_pData = pData + nValuesRead;
-			ReadOneChanAdcData(pChan, new_pData, new_llDataIndex, new_llDataNValues);
+		numberOfValuesRead += nValuesRead;
+		if (tFirst > tFrom) {
+			long offset = relocateChanAdcData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
+			numberOfValuesRead += offset;
 		}
 	}
-	return nValuesRead;
+	return numberOfValuesRead;
+}
+
+long CDataFileFromCEDSpike2::relocateChanAdcData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) {
+	long offset = (long)((tFirst - tFrom) / ticksPerSample);
+	size_t count = nValuesRead * sizeof(short);
+	memmove(pBuffer + offset, pBuffer, count);
+
+	count = (offset - 1) * sizeof(short);
+	memset(pBuffer, 0, count);
+	return offset;
 }
 
 
