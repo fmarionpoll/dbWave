@@ -59,11 +59,11 @@ protected:
 	CWaveChanArray* m_pArray		= nullptr;
 	int				m_nFid			=-1;
 
-	CWaveChan*	getAdcChannel(int nChan, CWaveChanArray* pArray);
+	void		initWaveChan(CWaveChan* pChan, int cedChan);
 	CString		getFileComment(int nInd);
 	CString		getChannelComment(int nChan);
-	long		readOneChanAdcData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
-	long		relocateChanAdcData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
+	long		read_data_oneChannel(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
+	long		relocate_tFrom_to_tFirst(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
 
 };
 
