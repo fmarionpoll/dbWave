@@ -8,7 +8,7 @@
 //#include "Editctrl.h"
 //#include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "ExportDataDlg.h"
+#include "DlgExportData.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -3,12 +3,12 @@
 #include "StdAfx.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
-#include "scopescr.h"
+#include "chart.h"
 #include "Envelope.h"
 #include "chanlistitem.h"
-#include "Lineview.h"
+#include "ChartData.h"
 #include "Spikedoc.h"
-#include "Spikebar.h"
+#include "ChartSpikeBar.h"
 
 // CDataListCtrlRowObject command target
 
@@ -39,8 +39,8 @@ public:
 	CString			csFlag{};
 	CString			csDate{};
 
-	CLineViewWnd*	pdataWnd = nullptr;
-	CSpikeBarWnd*	pspikeWnd = nullptr;
+	CChartDataWnd*	pChartDataWnd = nullptr;
+	CChartSpikeBarWnd*	pSpikeChartWnd = nullptr;
 	CdbWaveDoc*		pdbWaveDoc = nullptr;
 	CAcqDataDoc*	pdataDoc = nullptr;
 	CSpikeDoc*		pspikeDoc = nullptr;

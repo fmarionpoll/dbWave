@@ -8,12 +8,9 @@
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
-#include "scopescr.h"
-//#include "spikeshape.h"
-//#include "Envelope.h"
-//#include "chanlistitem.h"
-#include "Lineview.h"
-#include "Spikebar.h"
+#include "Chart.h"
+#include "ChartData.h"
+#include "ChartSpikeBar.h"
 #include "ViewdbWave.h"
 
 #include "DataListCtrlRowObject.h"
@@ -532,11 +529,11 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-CLineViewWnd* CDataListCtrl::GetDataViewCurrentRecord()
+CChartDataWnd* CDataListCtrl::GetDataViewCurrentRecord()
 {
 	UINT uSelectedCount = GetSelectedCount();
 	int  nItem = -1;
-	CLineViewWnd* ptr = nullptr;
+	CChartDataWnd* ptr = nullptr;
 
 	// Update all of the selected items.
 	if (uSelectedCount > 0)
@@ -545,7 +542,7 @@ CLineViewWnd* CDataListCtrl::GetDataViewCurrentRecord()
 		ASSERT(nItem != -1);
 		nItem -= GetTopIndex();
 		if (nItem >= 0 && nItem < datalistctrlrowobject_prt_array.GetSize())
-			ptr = datalistctrlrowobject_prt_array.GetAt(nItem)->pdataWnd;
+			ptr = datalistctrlrowobject_prt_array.GetAt(nItem)->pChartDataWnd;
 	}
 	return ptr;
 }
@@ -553,14 +550,14 @@ CLineViewWnd* CDataListCtrl::GetDataViewCurrentRecord()
 void CDataListCtrl::DisplayDataWnd(CDataListCtrlRowObject* ptr, int iImage)
 {
 	// create objects if necessary : CLineView and CAcqDataDoc
-	if (ptr->pdataWnd == nullptr)
+	if (ptr->pChartDataWnd == nullptr)
 	{
-		ptr->pdataWnd = new CLineViewWnd;
-		ASSERT(ptr->pdataWnd != NULL);
-		ptr->pdataWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, iImage * 100);
-		ptr->pdataWnd->SetbUseDIB(FALSE);
+		ptr->pChartDataWnd = new CChartDataWnd;
+		ASSERT(ptr->pChartDataWnd != NULL);
+		ptr->pChartDataWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, iImage * 100);
+		ptr->pChartDataWnd->SetbUseDIB(FALSE);
 	}
-	auto p_wnd = ptr->pdataWnd;
+	auto p_wnd = ptr->pChartDataWnd;
 	p_wnd->SetString(ptr->cs_comment);
 
 	// open data document
@@ -681,14 +678,14 @@ void CDataListCtrl::DisplayDataWnd(CDataListCtrlRowObject* ptr, int iImage)
 void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 {
 	// create spike window and spike document if necessary
-	if (ptr->pspikeWnd == nullptr)
+	if (ptr->pSpikeChartWnd == nullptr)
 	{
-		ptr->pspikeWnd = new CSpikeBarWnd;
-		ASSERT(ptr->pspikeWnd != NULL);
-		ptr->pspikeWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, ptr->index * 1000);
-		ptr->pspikeWnd->SetbUseDIB(FALSE);
+		ptr->pSpikeChartWnd = new CChartSpikeBarWnd;
+		ASSERT(ptr->pSpikeChartWnd != NULL);
+		ptr->pSpikeChartWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, ptr->index * 1000);
+		ptr->pSpikeChartWnd->SetbUseDIB(FALSE);
 	}
-	auto p_wnd = ptr->pspikeWnd;
+	auto p_wnd = ptr->pSpikeChartWnd;
 	
 	// open spike document
 	if (ptr->pspikeDoc == nullptr)
@@ -768,8 +765,8 @@ void CDataListCtrl::ResizeSignalColumn(int npixels)
 	for (int i = 0; i < datalistctrlrowobject_prt_array.GetSize(); i++)
 	{
 		auto* ptr = datalistctrlrowobject_prt_array.GetAt(i);
-		SAFE_DELETE(ptr->pdataWnd);
-		SAFE_DELETE(ptr->pspikeWnd);
+		SAFE_DELETE(ptr->pChartDataWnd);
+		SAFE_DELETE(ptr->pSpikeChartWnd);
 	}
 	RefreshDisplay();
 }

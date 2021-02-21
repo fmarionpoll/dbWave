@@ -3,8 +3,8 @@
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "scopescr.h"
-//#include "Lineview.h"
+#include "chart.h"
+//#include "ChartData.h"
 //#include "Editctrl.h"
 //#include "NoteDoc.h"
 #include "dbWaveDoc.h"
@@ -22,7 +22,7 @@ IMPLEMENT_DYNCREATE(CMeasureOptionsPage, CPropertyPage)
 // CMeasureOptionsPage property page
 
 CMeasureOptionsPage::CMeasureOptionsPage() : CPropertyPage(CMeasureOptionsPage::IDD), m_wSourcechan(0), m_pMO(nullptr),
-m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_plineview(nullptr)
+m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_pChartDataWnd(nullptr)
 {
 	m_bExtrema = FALSE;
 	m_bDiffExtrema = FALSE;
@@ -94,17 +94,17 @@ void CMeasureOptionsPage::OnSinglechannel()
 
 void CMeasureOptionsPage::OnVerticaltags()
 {
-	m_plineview->DelAllHZtags();
-	m_plineview->SetVTtagList(m_pdatDoc->GetpVTtags());
-	m_plineview->Invalidate();
+	m_pChartDataWnd->DelAllHZtags();
+	m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
+	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
 }
 
 void CMeasureOptionsPage::OnHorizontaltags()
 {
-	m_plineview->DelAllVTtags();
-	m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
-	m_plineview->Invalidate();
+	m_pChartDataWnd->DelAllVTtags();
+	m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
 }
 
@@ -134,13 +134,13 @@ void CMeasureOptionsPage::SaveOptions()
 	{
 	case IDC_VERTICALTAGS:
 		i_id = 0;
-		m_plineview->DelAllHZtags();
-		m_plineview->SetVTtagList(m_pdatDoc->GetpVTtags());
+		m_pChartDataWnd->DelAllHZtags();
+		m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
 		break;
 	case IDC_HORIZONTALTAGS:
 		i_id = 1;
-		m_plineview->DelAllVTtags();
-		m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
+		m_pChartDataWnd->DelAllVTtags();
+		m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
 		break;
 	case IDC_RECTANGLETAG:		i_id = 2; break;
 	case IDC_STIMULUSTAG:		i_id = 3; break;

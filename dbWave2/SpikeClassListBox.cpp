@@ -10,9 +10,9 @@
 #include "Listbcla.h"
 #include "SpikeClassListBox.h"
 
-#include "scopescr.h"
-#include "Spikebar.h"
-#include "spikeshape.h"
+#include "Chart.h"
+#include "ChartSpikeBar.h"
+#include "ChartSpikeShape.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,8 +21,8 @@
 struct myptr
 {
 	CString* pcs;
-	CSpikeShapeWnd* pspk_shapes;
-	CSpikeBarWnd* pspk_bars;
+	CChartSpikeShapeWnd* pspk_shapes;
+	CChartSpikeBarWnd* pspk_bars;
 };
 
 BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
@@ -281,10 +281,10 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 		const auto iclass = p_spikelist_->GetclassID(i);
 
 		// 1) create spike form button
-		CSpikeShapeWnd* pspkShapes = nullptr;
+		CChartSpikeShapeWnd* pspkShapes = nullptr;
 		if (p_spikelist_->GetSpikeLength() > 0)
 		{
-			pspkShapes = new (CSpikeShapeWnd);
+			pspkShapes = new (CChartSpikeShapeWnd);
 			ASSERT(pspkShapes != NULL);
 			pspkShapes->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i_id);
 
@@ -297,7 +297,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 		}
 
 		// 2) bars with spike height
-		auto* pspk_bars = new (CSpikeBarWnd);
+		auto* pspk_bars = new (CChartSpikeBarWnd);
 		ASSERT(pspk_bars != NULL);
 		pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
 
@@ -649,11 +649,11 @@ void CSpikeClassListBox::PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRec
 
 	// spike shape
 	if (pptr->pspk_shapes != nullptr)
-		((CSpikeShapeWnd*)(pptr->pspk_shapes))->Print(p_dc, prect2);
+		((CChartSpikeShapeWnd*)(pptr->pspk_shapes))->Print(p_dc, prect2);
 
 	// spike bars
 	if (pptr->pspk_bars != nullptr)
-		((CSpikeBarWnd*)(pptr->pspk_bars))->Print(p_dc, prect3);
+		((CChartSpikeBarWnd*)(pptr->pspk_bars))->Print(p_dc, prect3);
 }
 
 void CSpikeClassListBox::XorTempVTtag(int xpoint)

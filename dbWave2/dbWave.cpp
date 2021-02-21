@@ -13,20 +13,8 @@
 #include "WaveBuf.h"
 #include "Awavepar.h"
 #include "Splash.h"
-#include "AboutDlg.h"
-//#include "dbWave.h"
-//#include "dbMainTable.h"
-//#include "Acqparam.h"
-//#include "Taglines.h"
-//#include "datafile_X.h"
-//#include "Acqdatad.h"
-//#include "Cscale.h"
-//#include "scopescr.h"
-//#include "Lineview.h"
-//#include "Spikebar.h"
-//#include "spikeshape.h"
-//#include "Editctrl.h"
-//#include "SpikeClassListBox.h"
+#include "DlgAbout.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

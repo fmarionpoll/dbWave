@@ -4,7 +4,7 @@
 
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "EditListDlg.h"
+#include "DlgEditList.h"
 #include "Adexperi.h"
 
 #ifdef _DEBUG

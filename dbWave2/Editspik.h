@@ -1,17 +1,13 @@
 #pragma once
 
-// editspik.h : header file
-
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeEditDlg dialog
-#include "Lineview.h"
-#include "spikeshape.h"
+#include "ChartData.h"
+#include "ChartSpikeShape.h"
 
 class CSpikeEditDlg : public CDialog
 {
 	// Construction
 public:
-	CSpikeEditDlg(CWnd* pParent = nullptr);	// standard constructor
+	CSpikeEditDlg(CWnd* pParent = nullptr);
 
 // Dialog Data
 	enum { IDD = IDD_EDITSPIKE };
@@ -26,9 +22,9 @@ public:
 	CEditCtrl		mm_displayratio;
 	CEditCtrl		mm_yvextent;
 
-	CdbWaveDoc* m_pdbWaveDoc = nullptr;
-	int				m_spikeChan;	// source channel
-	CWnd* m_parent;		// post messages to parent
+	CdbWaveDoc*		m_pdbWaveDoc = nullptr;
+	int				m_spikeChan;			// source channel
+	CWnd*			m_parent;				// post messages to parent
 	int				m_xextent;
 	int 			m_yextent;
 	int 			m_xzero;
@@ -36,19 +32,19 @@ public:
 	BOOL 			m_bchanged;
 
 protected:
-	CSpikeList* m_pSpkList = nullptr;		// spike list
-	CAcqDataDoc* m_pAcqDatDoc = nullptr;		// source data doc cDocument
+	CSpikeList*		m_pSpkList = nullptr;	// spike list
+	CAcqDataDoc*	m_pAcqDatDoc = nullptr;	// source data doc cDocument
 	int				m_spkpretrig;
 	int				m_spklen;
 	int				m_viewdatalen;
-	CDWordArray		m_DWintervals;	// intervals to highlight spikes / CLineviewWnd
-	CSpikeShapeWnd	m_spkForm;		// all spikes in displayspikes
-	CLineViewWnd	m_sourceView;	// source data
+	CDWordArray		m_DWintervals;			// intervals to highlight spikes / CLineviewWnd
+	CChartSpikeShapeWnd	m_SpkChartWnd;		// all spikes in displayspikes
+	CChartDataWnd	m_ChartDataWnd;			// source data
 	long			m_iitimeold;
 	long			m_iitime;
 	CScrollBar		m_HScroll;
 	CScrollBar		m_VScroll;
-	SCROLLINFO		m_HScroll_infos;	// infos for scrollbar
+	SCROLLINFO		m_HScroll_infos;		// infos for scrollbar
 	SCROLLINFO		m_VScroll_infos;
 
 	// Implementation

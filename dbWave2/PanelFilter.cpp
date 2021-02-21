@@ -3,7 +3,7 @@
 #include "MainFrm.h"
 #include "resource.h"
 #include "PanelFilter.h"
-#include "ProgDlg.h"
+#include "DlgProg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

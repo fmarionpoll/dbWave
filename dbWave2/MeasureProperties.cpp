@@ -17,7 +17,7 @@ CMeasureProperties::CMeasureProperties(CWnd* p_wnd_parent, const int select_acti
 	// One way to make a different property page the
 	// active one is to call SetActivePage().
 
-	m_plineview = nullptr;
+	m_pChartDataWnd = nullptr;
 	AddPage(&m_measure_hz_tags_page);	// measure options
 	AddPage(&m_measure_vt_tags_page);	// VT tags edit
 	AddPage(&m_measure_options_page);	// HZ edit
@@ -36,10 +36,10 @@ END_MESSAGE_MAP()
 BOOL CMeasureProperties::OnInitDialog()
 {
 	// all
-	m_measure_hz_tags_page.m_plineview = m_plineview;
-	m_measure_vt_tags_page.m_plineview = m_plineview;
-	m_measure_options_page.m_plineview = m_plineview;
-	m_measure_results_page.m_plineview = m_plineview;
+	m_measure_hz_tags_page.m_pChartDataWnd = m_pChartDataWnd;
+	m_measure_vt_tags_page.m_pChartDataWnd = m_pChartDataWnd;
+	m_measure_options_page.m_pChartDataWnd = m_pChartDataWnd;
+	m_measure_results_page.m_pChartDataWnd = m_pChartDataWnd;
 
 	m_measure_hz_tags_page.m_pMO = m_pMO;
 	m_measure_vt_tags_page.m_pMO = m_pMO;

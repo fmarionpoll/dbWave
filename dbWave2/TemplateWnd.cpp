@@ -9,7 +9,7 @@
 #include "StdAfx.h"
 
 //#include "resource.h"
-#include "scopescr.h"
+#include "chart.h"
 #include "TemplateWnd.h"
 #include <math.h>
 
@@ -17,7 +17,7 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_SERIAL(CTemplateWnd, CScopeScreen, 0 /* schema number*/)
+IMPLEMENT_SERIAL(CTemplateWnd, CChartWnd, 0 /* schema number*/)
 
 CTemplateWnd& CTemplateWnd::operator = (const CTemplateWnd& arg)
 {
@@ -96,7 +96,7 @@ void CTemplateWnd::Serialize(CArchive& ar)
 	}
 }
 
-BEGIN_MESSAGE_MAP(CTemplateWnd, CScopeScreen)
+BEGIN_MESSAGE_MAP(CTemplateWnd, CChartWnd)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()

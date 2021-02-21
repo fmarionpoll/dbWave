@@ -45,7 +45,7 @@ protected:
 	CTemplateListWnd	m_templList;
 	CTemplateListWnd	m_avgAllList;
 
-	CSpikeShapeWnd		m_spkForm;				// all spikes in displayspikes
+	CChartSpikeShapeWnd		m_spkForm;				// all spikes in displayspikes
 	CStretchControl		m_stretch;				// array of properties associated with controls
 	BOOL				m_binit;
 

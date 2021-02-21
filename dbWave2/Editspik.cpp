@@ -8,9 +8,9 @@
 #include "Acqdatad.h"
 #include "Editctrl.h"
 //#include "Cscale.h"
-#include "scopescr.h"
-#include "Lineview.h"
-#include "spikeshape.h"
+#include "chart.h"
+#include "ChartData.h"
+#include "ChartSpikeShape.h"
 #include "Editspik.h"
 
 #ifdef _DEBUG
@@ -70,7 +70,7 @@ void CSpikeEditDlg::LoadSpikeParms()
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = p_spike_element->get_time();
 
-	m_spkForm.SelectSpikeShape(m_spikeno);
+	m_SpkChartWnd.SelectSpikeShape(m_spikeno);
 
 	LoadSourceData();						// load data from source file
 	UpdateData(FALSE);						// update screen
@@ -107,36 +107,36 @@ BOOL CSpikeEditDlg::OnInitDialog()
 	mm_spikeno.ShowScrollBar(SB_VERT);
 
 	// attach spike buffer
-	VERIFY(m_spkForm.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
-	m_spkForm.SetSourceData(m_pSpkList, m_pdbWaveDoc);
+	VERIFY(m_SpkChartWnd.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
+	m_SpkChartWnd.SetSourceData(m_pSpkList, m_pdbWaveDoc);
 	if (m_spikeno < 0)						// select at least spike 0
 		m_spikeno = 0;
 
-	m_spkForm.SetRangeMode(RANGE_ALL);		// display mode (lines)
-	m_spkForm.SetPlotMode(PLOT_BLACK, 0);	// display also artefacts
+	m_SpkChartWnd.SetRangeMode(RANGE_ALL);		// display mode (lines)
+	m_SpkChartWnd.SetPlotMode(PLOT_BLACK, 0);	// display also artefacts
 
 	if (m_pAcqDatDoc != nullptr)
 	{
-		VERIFY(m_sourceView.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
-		m_sourceView.SetbUseDIB(FALSE);
-		m_sourceView.AttachDataFile(m_pAcqDatDoc);
-		const auto lvSize = m_sourceView.GetRectSize();
-		m_sourceView.ResizeChannels(lvSize.cx, 0);// change nb of pixels
-		m_sourceView.RemoveAllChanlistItems();
-		m_sourceView.AddChanlistItem(m_pSpkList->GetextractChan(), m_pSpkList->GetextractTransform());
+		VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
+		m_ChartDataWnd.SetbUseDIB(FALSE);
+		m_ChartDataWnd.AttachDataFile(m_pAcqDatDoc);
+		const auto lvSize = m_ChartDataWnd.GetRectSize();
+		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0);// change nb of pixels
+		m_ChartDataWnd.RemoveAllChanlistItems();
+		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetextractChan(), m_pSpkList->GetextractTransform());
 
 		if (m_pSpkList->GetcompensateBaseline())
 		{
-			m_sourceView.AddChanlistItem(m_pSpkList->GetextractChan(), MOVAVG30);
-			m_sourceView.SetChanlistColor(1, 6);
-			m_sourceView.SetChanlistPenWidth(1, 1);
+			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetextractChan(), MOVAVG30);
+			m_ChartDataWnd.SetChanlistColor(1, 6);
+			m_ChartDataWnd.SetChanlistPenWidth(1, 1);
 			((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(1);
 		}
 		m_DWintervals.SetSize(3 + 2);						// total size
 		m_DWintervals.SetAt(0, 0);						// source channel
 		m_DWintervals.SetAt(1, (DWORD)RGB(255, 0, 0));	// red color
 		m_DWintervals.SetAt(2, 1);						// pen size
-		m_sourceView.SetHighlightData(&m_DWintervals);// tell sourceview to highlight spk
+		m_ChartDataWnd.SetHighlightData(&m_DWintervals);// tell sourceview to highlight spk
 
 		// validate associated controls
 		VERIFY(mm_yvextent.SubclassDlgItem(IDC_YEXTENT, this));
@@ -327,12 +327,12 @@ void CSpikeEditDlg::OnEnChangeYextent()
 		if (m_yvextent != m_yextent)
 		{
 			m_yextent = m_yvextent;
-			m_sourceView.SetChanlistYextent(0, m_yextent);
+			m_ChartDataWnd.SetChanlistYextent(0, m_yextent);
 			if (m_pSpkList->GetcompensateBaseline())
-				m_sourceView.SetChanlistYextent(1, m_yextent);
-			m_spkForm.SetYWExtOrg(m_yextent, m_yzero);
-			m_sourceView.Invalidate();
-			m_spkForm.Invalidate();
+				m_ChartDataWnd.SetChanlistYextent(1, m_yextent);
+			m_SpkChartWnd.SetYWExtOrg(m_yextent, m_yzero);
+			m_ChartDataWnd.Invalidate();
+			m_SpkChartWnd.Invalidate();
 		}
 	}
 }
@@ -361,26 +361,26 @@ void CSpikeEditDlg::LoadSourceData()
 	if (l_v_first < 0)									// check limits
 		l_v_first = 0;									// clip to start of the file
 	auto l_v_last = l_v_first + m_viewdatalen - 1;			// last pt
-	if (l_v_last > m_sourceView.GetDocumentLast())		// clip to size of data
+	if (l_v_last > m_ChartDataWnd.GetDocumentLast())		// clip to size of data
 	{
-		l_v_last = m_sourceView.GetDocumentLast();
+		l_v_last = m_ChartDataWnd.GetDocumentLast();
 		l_v_first = l_v_last - m_viewdatalen + 1;
 	}
 	// get data from doc
 	m_spikeChan = p_spike_element->get_source_channel();
-	m_sourceView.SetChanlistSourceChan(0, m_spikeChan);
-	m_sourceView.GetDataFromDoc(l_v_first, l_v_last);	// load data from file
+	m_ChartDataWnd.SetChanlistSourceChan(0, m_spikeChan);
+	m_ChartDataWnd.GetDataFromDoc(l_v_first, l_v_last);	// load data from file
 
 	// adjust offset (center spike) : use initial offset from spike
-	m_sourceView.SetChanlistYzero(0, m_yzero + p_spike_element->get_amplitude_offset());
-	m_sourceView.SetChanlistYextent(0, m_yextent);
+	m_ChartDataWnd.SetChanlistYzero(0, m_yzero + p_spike_element->get_amplitude_offset());
+	m_ChartDataWnd.SetChanlistYextent(0, m_yextent);
 
 	if (m_pSpkList->GetcompensateBaseline())
 	{
-		m_sourceView.SetChanlistYzero(1, m_yzero + p_spike_element->get_amplitude_offset());
-		m_sourceView.SetChanlistYextent(1, m_yextent);
+		m_ChartDataWnd.SetChanlistYzero(1, m_yzero + p_spike_element->get_amplitude_offset());
+		m_ChartDataWnd.SetChanlistYextent(1, m_yextent);
 	}
-	m_sourceView.Invalidate();
+	m_ChartDataWnd.Invalidate();
 }
 
 // ----------------------------------------------------------------------
@@ -419,7 +419,7 @@ void CSpikeEditDlg::LoadSpikeFromData(int shift)
 		offset += m_pSpkList->GetSpikeAmplitudeOffset(m_spikeno);
 		m_pSpkList->OffsetSpikeAmplitude(m_spikeno, offset, offset);
 
-		m_spkForm.Invalidate();
+		m_SpkChartWnd.Invalidate();
 		m_bchanged = TRUE;
 	}
 }

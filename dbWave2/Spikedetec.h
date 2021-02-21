@@ -7,24 +7,24 @@
 // CSpikeDetectDlg dialog
 
 #include "cscale.h"
-#include "scopescr.h"
-#include "lineview.h"
+#include "chart.h"
+#include "chartdata.h"
 
 class CSpikeDetectDlg : public CDialog
 {
 	// Construction
 public:
-	CSpikeDetectDlg(CWnd* pParent = nullptr);	// standard constructor
+	CSpikeDetectDlg(CWnd* pParent = nullptr);
 
 // Dialog Data
 	enum { IDD = IDD_SPKDETECTPARM };
 
-	CSpkDetectArray* m_pDetectSettingsArray;			// parameter set by caller
-	CAcqDataDoc* m_dbDoc;							// parameter set by caller
-	int 			m_iDetectParmsDlg;					// parameter set by caller
-	OPTIONS_VIEWDATA* mdPM;						// browse options
-	CLineViewWnd* m_pdisplayDetect;
-	CLineViewWnd* m_pdisplayData;
+	CSpkDetectArray*	m_pDetectSettingsArray;		// parameter set by caller
+	CAcqDataDoc*		m_dbDoc;					// parameter set by caller
+	int 				m_iDetectParmsDlg;			// parameter set by caller
+	OPTIONS_VIEWDATA*	mdPM;						// browse options
+	CChartDataWnd*		m_pChartDataDetectWnd;
+	CChartDataWnd*		m_pChartDataSourceWnd;
 
 protected:
 	SPKDETECTPARM* m_pspkD;

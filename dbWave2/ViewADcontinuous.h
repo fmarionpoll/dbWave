@@ -51,7 +51,7 @@ public:
 	CDTAcq32			m_DAC_DTAcq32;		// DDX
 
 protected:
-	CLineViewWnd		m_displayDataFile;			// source data display button
+	CChartDataWnd		m_ChartDataWnd;		// source data display button
 	int 				m_cursorstate;		// source data cursor state
 	float				m_sweepduration;
 	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed

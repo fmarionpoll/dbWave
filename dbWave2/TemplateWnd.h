@@ -2,15 +2,15 @@
 
 // TemplateWnd.h headerfile
 
-#include "scopescr.h"
+#include "chart.h"
 #if !defined mytype
 #define mytype	double
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CTemplateWnd window <- CScopeScreen <- CWnd
+// CTemplateWnd window <- CChartWnd <- CWnd
 
-class CTemplateWnd : public CScopeScreen
+class CTemplateWnd : public CChartWnd
 {
 	DECLARE_SERIAL(CTemplateWnd)
 

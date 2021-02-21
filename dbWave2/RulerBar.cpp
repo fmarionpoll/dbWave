@@ -2,7 +2,7 @@
 //
 
 #include "StdAfx.h"
-#include "Lineview.h"
+#include "ChartData.h"
 #include "RulerBar.h"
 
 #include <math.h>
@@ -101,7 +101,7 @@ CRulerBar::CRulerBar()
 	m_penColor = ::GetSysColor(COLOR_WINDOWTEXT);
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
 	m_bHorizontal = -1;
-	m_pLineViewWnd = nullptr;
+	m_pChartDataWnd = nullptr;
 	m_pRuler = nullptr;
 	m_bCaptured = FALSE;
 	m_captureMode = -1;
@@ -137,12 +137,12 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 	{
 		if (m_pRuler != nullptr)
 			pRuler = m_pRuler;
-		else if (m_pLineViewWnd != nullptr)
+		else if (m_pChartDataWnd != nullptr)
 		{
 			if (m_rcClient.Height() > m_rcClient.Width())
-				m_pRuler = &m_pLineViewWnd->m_yRuler;
+				m_pRuler = &m_pChartDataWnd->m_yRuler;
 			else
-				m_pRuler = &m_pLineViewWnd->m_xRuler;
+				m_pRuler = &m_pChartDataWnd->m_xRuler;
 			pRuler = m_pRuler;
 		}
 		else
@@ -285,11 +285,11 @@ BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_s
 	return CWnd::Create(nullptr, _T("RulerBarWnd"), dw_style, rect, pParentWnd, nID);
 }
 
-BOOL CRulerBar::Create(CWnd* pParentWnd, CLineViewWnd* pLineViewWnd, BOOL bAsXAxis, int dSize, UINT nID)
+BOOL CRulerBar::Create(CWnd* pParentWnd, CChartDataWnd* pChartDataWnd, BOOL bAsXAxis, int dSize, UINT nID)
 {
-	m_pLineViewWnd = pLineViewWnd;
+	m_pChartDataWnd = pChartDataWnd;
 	CRect rect;
-	pLineViewWnd->GetWindowRect(&rect);
+	pChartDataWnd->GetWindowRect(&rect);
 	auto rectthis = rect;
 	if (bAsXAxis)
 	{
@@ -351,18 +351,18 @@ void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 		ReleaseCapture();
 		newpt = point;
 		const int delta = -(newpt.y - oldpt.y);
-		if (m_pLineViewWnd != nullptr)
+		if (m_pChartDataWnd != nullptr)
 		{
 			CRect prevrect;
-			m_pLineViewWnd->GetClientRect(prevrect);
+			m_pChartDataWnd->GetClientRect(prevrect);
 			auto newrect = prevrect;
 			if (!m_bHorizontal) {
 				if (m_bBottom)
 					newrect.bottom -= delta;
 				else
 					newrect.top += delta;
-				m_pLineViewWnd->ZoomData(&prevrect, &newrect);
-				m_pLineViewWnd->Invalidate();
+				m_pChartDataWnd->ZoomData(&prevrect, &newrect);
+				m_pChartDataWnd->Invalidate();
 			}
 			else {
 				if (m_bBottom)

@@ -1,7 +1,7 @@
 #pragma once
 #include "dbWaveDoc.h"
 #include "Acqdatad.h"
-#include "Lineview.h"
+#include "ChartData.h"
 #include "Editctrl.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -25,9 +25,9 @@ public:
 
 	// input parameters
 	OPTIONS_VIEWDATAMEASURE* m_pMO;
-	CdbWaveDoc* m_pdbDoc;
-	CAcqDataDoc* m_pdatDoc;
-	CLineViewWnd* m_plineview;
+	CdbWaveDoc*		m_pdbDoc;
+	CAcqDataDoc*	m_pdatDoc;
+	CChartDataWnd*	m_pChartDataWnd;
 
 	// locals
 	CEditCtrl mm_index;

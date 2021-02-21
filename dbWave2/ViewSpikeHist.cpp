@@ -6,8 +6,8 @@
 #include "resource.h"
 
 //#include "Cscale.h"
-#include "scopescr.h"
-//#include "Lineview.h"
+#include "chart.h"
+//#include "ChartData.h"
 #include "Editctrl.h"
 //#include "dbMainTable.h"
 #include "dbWaveDoc.h"
@@ -17,7 +17,7 @@
 
 #include "MainFrm.h"
 #include "ChildFrm.h"
-#include "ProgDlg.h"
+#include "DlgProg.h"
 #include "ViewSpikeHist.h"
 
 #ifdef _DEBUG

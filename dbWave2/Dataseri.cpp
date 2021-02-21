@@ -3,8 +3,8 @@
 
 #include "StdAfx.h"
 //#include "Cscale.h"
-#include "scopescr.h"
-#include "Lineview.h"
+#include "chart.h"
+#include "ChartData.h"
 #include "Dataseri.h"
 
 #ifdef _DEBUG
@@ -15,7 +15,7 @@
 // CDataSeriesFormatDlg dialog
 
 CDataSeriesFormatDlg::CDataSeriesFormatDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataSeriesFormatDlg::IDD, pParent), m_plineview(nullptr), m_pdbDoc(nullptr), m_listindex(0), m_yzero(0),
+	: CDialog(CDataSeriesFormatDlg::IDD, pParent), m_pChartDataWnd(nullptr), m_pdbDoc(nullptr), m_listindex(0), m_yzero(0),
 	m_yextent(0), m_mVperbin(0)
 {
 	m_maxmv = 0.0f;
@@ -49,11 +49,11 @@ void CDataSeriesFormatDlg::OnOK()
 
 void CDataSeriesFormatDlg::GetParams(int index)
 {
-	m_yzero = m_plineview->GetChanlistYzero(index);
-	m_yextent = m_plineview->GetChanlistYextent(index);
-	const auto color = m_plineview->GetChanlistColor(index);
+	m_yzero = m_pChartDataWnd->GetChanlistYzero(index);
+	m_yextent = m_pChartDataWnd->GetChanlistYextent(index);
+	const auto color = m_pChartDataWnd->GetChanlistColor(index);
 	m_colorbutton.SetColor(color);
-	m_mVperbin = m_plineview->GetChanlistVoltsperDataBin(index) * 1000.0f;
+	m_mVperbin = m_pChartDataWnd->GetChanlistVoltsperDataBin(index) * 1000.0f;
 	m_binzero = 0; // m_dbDoc->m_pDataFile->GetpWaveFormat()->binzero;
 	m_maxmv = (m_yextent / 2.f + m_yzero - m_binzero) * m_mVperbin;
 	m_minmv = (-m_yextent / 2.f + m_yzero - m_binzero) * m_mVperbin;
@@ -63,16 +63,16 @@ void CDataSeriesFormatDlg::SetParams(const int index)
 {
 	m_yzero = static_cast<int>((m_maxmv + m_minmv) / (m_mVperbin * 2.0f)) + m_binzero;
 	m_yextent = static_cast<int>((m_maxmv - m_minmv) / m_mVperbin);
-	m_plineview->SetChanlistYzero(index, m_yzero);
-	m_plineview->SetChanlistYextent(index, m_yextent);
+	m_pChartDataWnd->SetChanlistYzero(index, m_yzero);
+	m_pChartDataWnd->SetChanlistYextent(index, m_yextent);
 	const auto ccolor = m_colorbutton.GetColor();
-	auto icolor = m_plineview->FindColor(ccolor);
+	auto icolor = m_pChartDataWnd->FindColor(ccolor);
 	if (icolor < 0)
 	{
 		icolor = NB_COLORS - 1;
-		m_plineview->SetColor(icolor, ccolor);
+		m_pChartDataWnd->SetColor(icolor, ccolor);
 	}
-	m_plineview->SetChanlistColor(index, icolor);
+	m_pChartDataWnd->SetChanlistColor(index, icolor);
 }
 void CDataSeriesFormatDlg::OnCancel()
 {
@@ -91,9 +91,9 @@ BOOL CDataSeriesFormatDlg::OnInitDialog()
 	*/
 
 	// load channel description CComboBox
-	const auto chanmax = m_plineview->GetChanlistSize();
+	const auto chanmax = m_pChartDataWnd->GetChanlistSize();
 	for (auto i = 0; i < chanmax; i++)
-		m_listseries.AddString(m_plineview->GetChanlistComment(i));
+		m_listseries.AddString(m_pChartDataWnd->GetChanlistComment(i));
 
 	// select...
 	GetParams(m_listindex);

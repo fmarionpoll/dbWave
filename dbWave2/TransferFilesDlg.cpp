@@ -4,7 +4,7 @@
 #include "StdAfx.h"
 //#include "dbWave.h"
 #include "resource.h"
-#include "TransferFilesDlg.h"
+#include "DlgTransferFiles.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG

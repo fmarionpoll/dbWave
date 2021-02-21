@@ -15,7 +15,7 @@
 
 CSpikeDetectDlg::CSpikeDetectDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSpikeDetectDlg::IDD, pParent), m_pDetectSettingsArray(nullptr), m_dbDoc(nullptr), mdPM(nullptr),
-	m_pdisplayDetect(nullptr), m_pdisplayData(nullptr), m_pspkD(nullptr), m_scancount(0)
+	m_pChartDataDetectWnd(nullptr), m_pChartDataSourceWnd(nullptr), m_pspkD(nullptr), m_scancount(0)
 {
 	m_iDetectParmsDlg = 0;
 }
@@ -262,7 +262,7 @@ void CSpikeDetectDlg::OnBnClickedDelparambttn()
 void CSpikeDetectDlg::OnEnChangeDetectthreshold()
 {
 	const int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	m_pdisplayDetect->MoveHZtagtoVal(0, ithreshold);
+	m_pChartDataDetectWnd->MoveHZtagtoVal(0, ithreshold);
 }
 
 void CSpikeDetectDlg::OnCbnSelchangeDetectchan()
@@ -276,10 +276,10 @@ void CSpikeDetectDlg::UpdateSourceView()
 	const auto icursel2 = ((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
 	// TODO not used??
 	//int icursel3 = ((CComboBox*) GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
-	m_pdisplayDetect->SetChanlistOrdinates(0, icursel, icursel2);
-	m_pdisplayDetect->GetDataFromDoc();
-	m_pdisplayDetect->AutoZoomChan(0);
-	m_pdisplayDetect->Invalidate();
+	m_pChartDataDetectWnd->SetChanlistOrdinates(0, icursel, icursel2);
+	m_pChartDataDetectWnd->GetDataFromDoc();
+	m_pChartDataDetectWnd->AutoZoomChan(0);
+	m_pChartDataDetectWnd->Invalidate();
 }
 
 void CSpikeDetectDlg::OnCbnSelchangeDetecttransform()
@@ -291,7 +291,7 @@ void CSpikeDetectDlg::OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto p_nm_up_down = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	ithreshold -= MulDiv(m_pdisplayDetect->GetChanlistYextent(0), p_nm_up_down->iDelta, 10);
+	ithreshold -= MulDiv(m_pChartDataDetectWnd->GetChanlistYextent(0), p_nm_up_down->iDelta, 10);
 	SetDlgItemInt(IDC_DETECTTHRESHOLD, ithreshold);
 
 	*pResult = 0;

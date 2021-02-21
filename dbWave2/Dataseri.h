@@ -18,7 +18,7 @@ public:
 	CListBox	m_listseries;
 	float	m_maxmv;
 	float	m_minmv;
-	CLineViewWnd* m_plineview;	// data contours
+	CChartDataWnd* m_pChartDataWnd;	// data contours
 	CAcqDataDoc* m_pdbDoc;		// data document
 	int 	m_listindex;        	// same as lineview:Chanlist
 	int		m_yzero;

@@ -20,10 +20,10 @@ public:
 	float	m_xmax;
 	float	m_xmin;
 
-	CLineViewWnd* m_plinev;	// data Envelopes
-	int				m_nChanmax;	// (global?) max nb of channels
-	int				m_Channel;	// current channel
-	BOOL			m_bChanged;	// a factor from current channel was changed
+	CChartDataWnd*	m_pChartDataWnd;	// data Envelopes
+	int				m_nChanmax;			// (global?) max nb of channels
+	int				m_Channel;			// current channel
+	BOOL			m_bChanged;			// a factor from current channel was changed
 
 protected:
 	float m_p10;			// power of ten (multiplication factor to all parms)

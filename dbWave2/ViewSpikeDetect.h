@@ -46,10 +46,10 @@ protected:
 	CSpikeList*		p_spikelist_ = nullptr;	// temporary spike list
 	CDWordArray 	m_DWintervals;			// intervals to draw detected spikes
 
-	CLineViewWnd	m_displayData_Detect;
-	CLineViewWnd	m_displayData_Source;
-	CSpikeBarWnd	m_displaySpk_BarView;	// bars with spike height
-	CSpikeShapeWnd	m_displaySpk_Shape;		// all spikes in displayspikes
+	CChartDataWnd	m_ChartDataWnd_Detect;
+	CChartDataWnd	m_ChartDataWnd_Source;
+	CChartSpikeBarWnd	m_displaySpk_BarView;	// bars with spike height
+	CChartSpikeShapeWnd	m_displaySpk_Shape;		// all spikes in displayspikes
 
 	CScrollBarEx	m_filescroll;			// data position within file
 	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
@@ -92,8 +92,8 @@ public:
 	inline void	SetViewMouseCursor(int cursormode) {
 		m_displaySpk_BarView.SetMouseCursorType(cursormode);
 		m_displaySpk_Shape.SetMouseCursorType(cursormode);
-		m_displayData_Detect.SetMouseCursorType(cursormode);
-		m_displayData_Source.SetMouseCursorType(cursormode);
+		m_ChartDataWnd_Detect.SetMouseCursorType(cursormode);
+		m_ChartDataWnd_Source.SetMouseCursorType(cursormode);
 	}
 
 	// Implementation
@@ -175,13 +175,13 @@ protected:
 	void 		PrintComputePageSize();
 
 	CString		PrintGetFileInfos();
-	CString		PrintDataBars(CDC* p_dc, CLineViewWnd* pLineViewWnd, CRect* prect);
+	CString		PrintDataBars(CDC* p_dc, CChartDataWnd* pChartDataWnd, CRect* prect);
 	CString		PrintSpkShapeBars(CDC* p_dc, CRect* prect, BOOL bAll);
 	void		PrintCreateFont();
 	BOOL		PrintGetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
 	BOOL		PrintGetNextRow(int& filenumber, long& l_first, long& very_last);
 	int			PrintGetNPages();
-	void		PrintDataCartridge(CDC* p_dc, CLineViewWnd* plineViewWnd, CRect* prect, BOOL bComments, BOOL bBars);
+	void		PrintDataCartridge(CDC* p_dc, CChartDataWnd* pChartDataWnd, CRect* prect, BOOL bComments, BOOL bBars);
 
 	// gain and bias setting: data and functions
 	HICON		m_hBias = nullptr;

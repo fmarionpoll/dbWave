@@ -9,17 +9,12 @@
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
 
-//#include "Cscale.h"
-#include "scopescr.h"
-//#include "Lineview.h"
+#include "chart.h"
 #include "Editctrl.h"
-//#include "Spikebar.h"
-//#include "spikeshape.h"
 #include "DataListCtrl.h"
 
 #include "MainFrm.h"
 #include "ChildFrm.h"
-//#include "ProgDlg.h"
 
 #include "ViewdbWave.h"
 
@@ -362,10 +357,10 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	}
 	else
 	{
-		CLineViewWnd* pWnd = m_dataListCtrl.GetDataViewCurrentRecord();
-		if (pWnd != nullptr)
+		CChartDataWnd* pChartDataWnd = m_dataListCtrl.GetDataViewCurrentRecord();
+		if (pChartDataWnd != nullptr)
 		{
-			((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(pWnd->GetScopeParameters());
+			((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(pChartDataWnd->GetScopeParameters());
 		}
 		if (pActivateView != nullptr)
 			((CChildFrame*)p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;

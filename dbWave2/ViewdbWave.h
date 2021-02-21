@@ -2,17 +2,17 @@
 
 #include "DataListCtrl.h"
 #include "dbMainTable.h"
-#include "Lineview.h"
-#include "Spikebar.h"
-#include "spikeshape.h"
+#include "ChartData.h"
+#include "ChartSpikeBar.h"
+#include "ChartSpikeShape.h"
 #include "Editctrl.h"
 #include "CSpkListTabCtrl.h"
 
 //class CdbWaveCntrItem;
 //class CdbMainTable;
 //class CLineViewWnd;
-//class CSpikeBarWnd;
-//class CSpikeShapeWnd;
+//class CChartSpikeBarWnd;
+//class CChartSpikeShapeWnd;
 
 class CViewdbWave : public CDaoRecordView
 {

@@ -14,15 +14,15 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_DATASERIES };
-	CButton	m_deleteseries;
-	CButton	m_defineseries;
-	CComboBox	m_transform;
-	CComboBox	m_ordinates;
-	CListBox	m_listseries;
-	CString		m_name;
-	int			m_ispan;
-	CLineViewWnd* m_lineview;	// data contours
-	CAcqDataDoc* m_pdbDoc;		// data document
+	CButton			m_deleteseries;
+	CButton			m_defineseries;
+	CComboBox		m_transform;
+	CComboBox		m_ordinates;
+	CListBox		m_listseries;
+	CString			m_name;
+	int				m_ispan;
+	CChartDataWnd*	m_pChartDataWnd;	// data contours
+	CAcqDataDoc*	m_pdbDoc;		// data document
 	int				m_listindex;// same as lineview:Chanlist
 
 // Implementation

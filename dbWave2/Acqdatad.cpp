@@ -10,7 +10,7 @@
 #include "datafile_ASD.h"
 #include "datafile_mcid.h"
 #include "datafile_CEDSpike2.h"
-#include "importgenericdatadlg.h"
+#include "DlgImportGenericData.h"
 #include "datafile_Awave.h"
 
 #ifdef _DEBUG

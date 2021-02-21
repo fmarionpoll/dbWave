@@ -3,8 +3,8 @@
 
 #include "StdAfx.h"
 //#include "Cscale.h"
-//#include "scopescr.h"
-#include "Lineview.h"
+//#include "chart.h"
+#include "ChartData.h"
 #include "resource.h"
 #include "Vdseries.h"
 
@@ -13,7 +13,7 @@
 #endif
 
 CDataSeriesDlg::CDataSeriesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataSeriesDlg::IDD, pParent), m_ispan(0), m_lineview(nullptr), m_pdbDoc(nullptr), m_listindex(0)
+	: CDialog(CDataSeriesDlg::IDD, pParent), m_ispan(0), m_pChartDataWnd(nullptr), m_pdbDoc(nullptr), m_listindex(0)
 {
 	m_name = "";
 }
@@ -43,10 +43,10 @@ BOOL CDataSeriesDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_listseries.AddString(_T("New"));
-	int chanmax = m_lineview->GetChanlistSize();
+	int chanmax = m_pChartDataWnd->GetChanlistSize();
 	int i = 0;
 	for (i = 0; i < chanmax; i++)
-		m_listseries.AddString(m_lineview->GetChanlistComment(i));
+		m_listseries.AddString(m_pChartDataWnd->GetChanlistComment(i));
 
 	// doc channel comments
 	chanmax = (m_pdbDoc->GetpWaveFormat())->scan_count;
@@ -73,9 +73,9 @@ void CDataSeriesDlg::OnSelchangeListseries()
 	if (m_listindex >= 0)		// if lineview type channel
 	{							// select corresp source chan & transform mode
 		m_listseries.GetText(m_listindex + 1, m_name);			// chan comment
-		auto i = m_lineview->GetChanlistSourceChan(m_listindex);	// data source chan
+		auto i = m_pChartDataWnd->GetChanlistSourceChan(m_listindex);	// data source chan
 		m_ordinates.SetCurSel(i);								// and transform mode
-		i = m_lineview->GetChanlistTransformMode(m_listindex);
+		i = m_pChartDataWnd->GetChanlistTransformMode(m_listindex);
 		m_transform.SetCurSel(i);
 		b_delete_series = TRUE;										// Un-enable "define new series button"
 	}
@@ -86,11 +86,11 @@ void CDataSeriesDlg::OnSelchangeListseries()
 
 void CDataSeriesDlg::OnClickedDeleteseries()
 {
-	if (m_lineview->RemoveChanlistItem(m_listindex))
+	if (m_pChartDataWnd->RemoveChanlistItem(m_listindex))
 	{
 		m_listseries.DeleteString(m_listindex + 1);
 		m_listseries.SetCurSel(m_listindex);
-		m_lineview->Invalidate();
+		m_pChartDataWnd->Invalidate();
 	}
 	OnSelchangeListseries();
 }
@@ -105,16 +105,16 @@ void CDataSeriesDlg::OnClickedDefineseries()
 	// modify current series
 	if (m_listindex >= 0)
 	{
-		m_lineview->SetChanlistSourceChan(m_listindex, ns);
-		m_lineview->SetChanlistTransformMode(m_listindex, mode);
+		m_pChartDataWnd->SetChanlistSourceChan(m_listindex, ns);
+		m_pChartDataWnd->SetChanlistTransformMode(m_listindex, mode);
 	}
 	// or create new series
 	else
 	{
-		const auto i = m_lineview->AddChanlistItem(ns, mode);
+		const auto i = m_pChartDataWnd->AddChanlistItem(ns, mode);
 		if (i >= 0)							// new channel created? yes
 		{
-			m_name = m_lineview->GetChanlistComment(i);
+			m_name = m_pChartDataWnd->GetChanlistComment(i);
 			m_listseries.AddString(m_name);		// controls' variables
 			m_listindex = i;   					// update current index
 			m_listseries.SetCurSel(m_listindex + 1);	// select new channel
@@ -122,12 +122,12 @@ void CDataSeriesDlg::OnClickedDefineseries()
 	}
 
 	// cope with the changes: display, adjust curve
-	m_lineview->GetDataFromDoc();	// load data from document
+	m_pChartDataWnd->GetDataFromDoc();	// load data from document
 	int max, min;					// center the new curve
-	m_lineview->GetChanlistMaxMin(m_listindex, &max, &min);
-	m_lineview->SetChanlistYzero(m_listindex, (max + min) / 2);
-	m_lineview->SetChanlistYextent(m_listindex, static_cast<int>((max - min + 1) * 1.2));
-	m_lineview->Invalidate();
+	m_pChartDataWnd->GetChanlistMaxMin(m_listindex, &max, &min);
+	m_pChartDataWnd->SetChanlistYzero(m_listindex, (max + min) / 2);
+	m_pChartDataWnd->SetChanlistYextent(m_listindex, static_cast<int>((max - min + 1) * 1.2));
+	m_pChartDataWnd->Invalidate();
 
 	OnSelchangeListseries();
 }
@@ -138,8 +138,8 @@ void CDataSeriesDlg::OnOK()
 	m_listindex = m_listseries.GetCurSel() - 1;
 	if (m_listindex < 0)
 		m_listindex = 0;
-	m_lineview->GetDataFromDoc();
-	m_lineview->Invalidate();
+	m_pChartDataWnd->GetDataFromDoc();
+	m_pChartDataWnd->Invalidate();
 	CDialog::OnOK();
 }
 

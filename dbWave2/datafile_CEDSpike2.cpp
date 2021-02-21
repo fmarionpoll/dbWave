@@ -222,7 +222,7 @@ long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels,
 		CWaveChan* pChan = pArray->get_p_channel(ichan);
 		// TODO: create channel buffer
 		size_t numberBytes = ((int) llDataNValues) * sizeof(short);
-		memset(pBuffer, 100, numberBytes);
+		memset(pBuffer, 0, numberBytes);
 		nValuesRead = read_data_oneChannel(pChan, pBuffer, ll_First, llDataNValues);
 	}
 	// TODO: combine channels buffers to build interleaved data 

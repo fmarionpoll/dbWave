@@ -25,15 +25,15 @@ CDataListCtrlRowObject::CDataListCtrlRowObject(int i) : bChanged(0), insectID(0)
 
 CDataListCtrlRowObject::~CDataListCtrlRowObject()
 {
-	if (pdataWnd != nullptr)
+	if (pChartDataWnd != nullptr)
 	{
-		pdataWnd->DestroyWindow();
-		delete pdataWnd;
+		pChartDataWnd->DestroyWindow();
+		delete pChartDataWnd;
 	}
-	if (pspikeWnd != nullptr)
+	if (pSpikeChartWnd != nullptr)
 	{
-		pspikeWnd->DestroyWindow();
-		delete pspikeWnd;
+		pSpikeChartWnd->DestroyWindow();
+		delete pSpikeChartWnd;
 	}
 	SAFE_DELETE(pdataDoc);
 	SAFE_DELETE(pspikeDoc);
@@ -67,8 +67,8 @@ CDataListCtrlRowObject& CDataListCtrlRowObject::operator = (const CDataListCtrlR
 		csNspk = arg.csNspk;
 		csFlag = arg.csFlag;
 		csDate = arg.csDate;
-		pdataWnd = arg.pdataWnd;
-		pspikeWnd = arg.pspikeWnd;
+		pChartDataWnd = arg.pChartDataWnd;
+		pSpikeChartWnd = arg.pSpikeChartWnd;
 		pdataDoc = arg.pdataDoc;
 		pspikeDoc = arg.pspikeDoc;
 		pdbWaveDoc = arg.pdbWaveDoc;
@@ -103,8 +103,8 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 
 		const auto nobj = static_cast<int>(3);
 		ar << nobj;
-		pdataWnd->Serialize(ar);
-		pspikeWnd->Serialize(ar);
+		pChartDataWnd->Serialize(ar);
+		pSpikeChartWnd->Serialize(ar);
 		ar << insectID;
 	}
 	else
@@ -131,8 +131,8 @@ void CDataListCtrlRowObject::Serialize(CArchive& ar)
 		int nobj;
 		ar >> nobj;
 		ASSERT(nobj >= 2);
-		pdataWnd->Serialize(ar);
-		pspikeWnd->Serialize(ar);
+		pChartDataWnd->Serialize(ar);
+		pSpikeChartWnd->Serialize(ar);
 		nobj -= 2;
 		nobj--; if (nobj > 0)  ar >> insectID;
 	}

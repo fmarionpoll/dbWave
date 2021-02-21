@@ -3,7 +3,7 @@
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "afxwin.h"
-#include "Lineview.h"
+#include "ChartData.h"
 #include "Editctrl.h"
 
 class CViewData : public CDaoRecordView
@@ -24,7 +24,7 @@ public:
 	float		m_timelast;
 
 	// subclassed controls within CDaoRecordView
-	CLineViewWnd m_displayDataFile;	// data display
+	CChartDataWnd m_ChartDataWnd;	// data display
 	float		m_floatNDigits; 	// 10(000) -> n digits displayed
 	CEditCtrl	mm_v1;				// first HZ cursor
 	CEditCtrl	mm_v2;				// second HZ cursor

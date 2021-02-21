@@ -3,8 +3,8 @@
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "scopescr.h"
-#include "Lineview.h"
+#include "chart.h"
+#include "ChartData.h"
 //#include "Editctrl.h"
 #include "NoteDoc.h"
 #include "dbWaveDoc.h"
@@ -22,7 +22,7 @@ IMPLEMENT_DYNCREATE(CMeasureResultsPage, CPropertyPage)
 
 CMeasureResultsPage::CMeasureResultsPage() : CPropertyPage(CMeasureResultsPage::IDD), m_pdbDoc(nullptr)
 {
-	m_plineview = nullptr;
+	m_pChartDataWnd = nullptr;
 }
 
 CMeasureResultsPage::~CMeasureResultsPage()
@@ -113,7 +113,7 @@ void CMeasureResultsPage::OutputTitle()
 	if (!cs_cols.IsEmpty())
 	{
 		auto channel_first = 0;									// assume all data channels
-		auto channel_last = m_plineview->GetChanlistSize() - 1;	// requested
+		auto channel_last = m_pChartDataWnd->GetChanlistSize() - 1;	// requested
 		const auto n_pixels_mv = (m_listResults.GetStringWidth(_T("0.000000")) * 3) / 2;
 
 		if (!m_pMO->bAllChannels)					// else if flag set
@@ -154,7 +154,7 @@ void CMeasureResultsPage::OutputTitle()
 
 void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 {
-	const auto n_tags = m_plineview->GetNVTtags();
+	const auto n_tags = m_pChartDataWnd->GetNVTtags();
 	auto tag_first = -1;
 	auto tag_last = -1;
 
@@ -172,7 +172,7 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 		if (tag_last < 0)
 		{
 			tag_last = i;
-			MeasureWithinInterval(channel, line, m_plineview->GetVTtagLval(tag_first), m_plineview->GetVTtagLval(tag_last));
+			MeasureWithinInterval(channel, line, m_pChartDataWnd->GetVTtagLval(tag_first), m_pChartDataWnd->GetVTtagLval(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -182,7 +182,7 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 	// cope with isolated tags
 	if (tag_first > 0 && tag_last < 0)
 	{
-		const auto l1 = m_plineview->GetVTtagLval(tag_first);
+		const auto l1 = m_pChartDataWnd->GetVTtagLval(tag_first);
 		MeasureWithinInterval(channel, line, l1, l1);
 	}
 }
@@ -192,8 +192,8 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 	short* p_data;
 	int n_channels;
 	const auto p_buf = m_pdatDoc->LoadRawDataParams(&n_channels);
-	const auto source_chan = m_plineview->GetChanlistSourceChan(channel);
-	const auto transform_mode = m_plineview->GetChanlistTransformMode(channel);
+	const auto source_chan = m_pChartDataWnd->GetChanlistSourceChan(channel);
+	const auto transform_mode = m_pChartDataWnd->GetChanlistTransformMode(channel);
 	const auto span = m_pdatDoc->GetTransfDataSpan(transform_mode);
 
 	// get first data point (init max and min)
@@ -255,7 +255,7 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int line, const long l1, const long l2)
 {
 	// get scale factor for channel and sampling rate
-	m_mVperBin = m_plineview->GetChanlistVoltsperDataBin(channel) * 1000.0f;
+	m_mVperBin = m_pChartDataWnd->GetChanlistVoltsperDataBin(channel) * 1000.0f;
 	const auto rate = m_pdatDoc->GetpWaveFormat()->chrate;
 
 	auto output_column = (m_col - 1) * m_nbdatacols + 1;		// output data into column icol
@@ -362,7 +362,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 
 void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 {
-	const auto number_of_tags = m_plineview->GetNHZtags();
+	const auto number_of_tags = m_pChartDataWnd->GetNHZtags();
 	auto tag_first = -1;
 	auto tag_last = -1;
 
@@ -380,7 +380,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 		if (tag_last < 0)
 		{
 			tag_last = i;
-			MeasureBetweenHZ(ichan, line, m_plineview->GetHZtagVal(tag_first), m_plineview->GetHZtagVal(tag_last));
+			MeasureBetweenHZ(ichan, line, m_pChartDataWnd->GetHZtagVal(tag_first), m_pChartDataWnd->GetHZtagVal(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -390,7 +390,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 	// cope with isolated tags
 	if (tag_first > 0 && tag_last < 0)
 	{
-		const auto v1 = m_plineview->GetHZtagVal(tag_first);
+		const auto v1 = m_pChartDataWnd->GetHZtagVal(tag_first);
 		MeasureBetweenHZ(ichan, line, v1, v1);
 	}
 }
@@ -399,7 +399,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, const int v1, const int v2)
 {
 	// get scale factor for channel and sampling rate
-	m_mVperBin = m_plineview->GetChanlistVoltsperDataBin(channel) * 1000.0f;
+	m_mVperBin = m_pChartDataWnd->GetChanlistVoltsperDataBin(channel) * 1000.0f;
 
 	auto column_1 = (m_col - 1) * m_nbdatacols + 1;		// output data into column icol
 	auto item = m_listResults.GetItemCount();	// compute which line will receive data
@@ -517,16 +517,16 @@ BOOL CMeasureResultsPage::MeasureParameters()
 
 			// output title for this data set
 			auto i_chan_0 = 0;
-			auto i_chan_1 = m_plineview->GetChanlistSize() - 1;
+			auto i_chan_1 = m_pChartDataWnd->GetChanlistSize() - 1;
 			if (!m_pMO->bAllChannels)
 			{
 				i_chan_0 = m_pMO->wSourceChan;
 				i_chan_1 = i_chan_0;
 			}
-			if (i_chan_0 >= m_plineview->GetChanlistSize())
+			if (i_chan_0 >= m_pChartDataWnd->GetChanlistSize())
 				i_chan_0 = 0;
-			if (i_chan_1 >= m_plineview->GetChanlistSize())
-				i_chan_1 = m_plineview->GetChanlistSize() - 1;
+			if (i_chan_1 >= m_pChartDataWnd->GetChanlistSize())
+				i_chan_1 = m_pChartDataWnd->GetChanlistSize() - 1;
 
 			m_col = 1;
 			for (auto i_chan = i_chan_0; i_chan <= i_chan_1; i_chan++)
@@ -587,7 +587,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 // remove tags on exit
 void CMeasureResultsPage::OnOK()
 {
-	m_plineview->Invalidate();
+	m_pChartDataWnd->Invalidate();
 	CPropertyPage::OnOK();
 }
 

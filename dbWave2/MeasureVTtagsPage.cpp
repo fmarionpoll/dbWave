@@ -3,8 +3,8 @@
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "scopescr.h"
-#include "Lineview.h"
+#include "chart.h"
+#include "ChartData.h"
 #include "Editctrl.h"
 //#include "NoteDoc.h"
 #include "dbWaveDoc.h"
@@ -29,7 +29,7 @@ m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_samplingrate(0), m_verylast(0)
 	m_timesec = 0.0f;
 	m_timeshift = 0.0f;
 	m_duration = 0.0f;
-	m_plineview = nullptr;
+	m_pChartDataWnd = nullptr;
 }
 
 CMeasureVTtagsPage::~CMeasureVTtagsPage()
@@ -73,7 +73,7 @@ BOOL CMeasureVTtagsPage::GetVTtagVal(int index)
 	if (index < 0 || index >= m_nbtags)
 		return FALSE;
 	m_index = index;
-	const auto lk = m_plineview->GetVTtagLval(m_index);
+	const auto lk = m_pChartDataWnd->GetVTtagLval(m_index);
 	m_timesec = static_cast<float>(lk) / m_samplingrate;
 
 	return TRUE;
@@ -99,9 +99,9 @@ void CMeasureVTtagsPage::OnCancel()
 	OnDeleteSeries();
 	if (m_pMO->wOption != 0)
 	{
-		m_plineview->DelAllVTtags();
+		m_pChartDataWnd->DelAllVTtags();
 		if (m_pMO->wOption == 1)
-			m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
+			m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
 	}
 	CPropertyPage::OnCancel();
 }
@@ -109,13 +109,13 @@ void CMeasureVTtagsPage::OnCancel()
 void CMeasureVTtagsPage::OnOK()
 {
 	auto p_tag_list = m_pdatDoc->GetpVTtags();
-	p_tag_list->CopyTagList(m_plineview->GetVTtagList());
+	p_tag_list->CopyTagList(m_pChartDataWnd->GetVTtagList());
 	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 0)
 	{
-		m_plineview->DelAllVTtags();
+		m_pChartDataWnd->DelAllVTtags();
 		if (m_pMO->wOption == 1)
-			m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
+			m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
 	}
 	CPropertyPage::OnOK();
 }
@@ -129,10 +129,10 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 
 	// save initial state of VTtags
 	//TODO bug here
-	m_plineview->SetVTtagList(m_pdatDoc->GetpVTtags());
-	m_plineview->DelAllHZtags();
-	m_plineview->Invalidate();
-	m_nbtags = m_plineview->GetNVTtags();
+	m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
+	m_pChartDataWnd->DelAllHZtags();
+	m_pChartDataWnd->Invalidate();
+	m_nbtags = m_pChartDataWnd->GetNVTtags();
 	GetVTtagVal(0);
 
 	// subclassed edits
@@ -142,7 +142,7 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 	VERIFY(mm_period.SubclassDlgItem(IDC_PERIOD, this));
 	VERIFY(mm_nperiods.SubclassDlgItem(IDC_NPERIODSEDIT, this));
 	VERIFY(mm_timeshift.SubclassDlgItem(IDC_TIMESHIFT, this));
-	m_verylast = static_cast<float>(m_plineview->GetDocumentLast()) / m_samplingrate;
+	m_verylast = static_cast<float>(m_pChartDataWnd->GetDocumentLast()) / m_samplingrate;
 	SetspacedTagsOptions();
 	m_duration = m_pMO->duration;		// on/OFF duration (sec)
 	m_period = m_pMO->period;				// period (sec)
@@ -158,12 +158,12 @@ void CMeasureVTtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbtags)
 	{
-		m_plineview->DelVTtag(m_index);
+		m_pChartDataWnd->DelVTtag(m_index);
 		m_nbtags--;
 	}
 	if (m_index > m_nbtags - 1)
 		m_index = m_nbtags - 1;
-	m_plineview->Invalidate();
+	m_pChartDataWnd->Invalidate();
 
 	GetVTtagVal(m_index);
 	UpdateData(FALSE);
@@ -223,8 +223,8 @@ void CMeasureVTtagsPage::OnEnChangeTimesec()
 		auto const lk = static_cast<long>(m_timesec * m_samplingrate);
 		if (m_index >= 0 && m_index < m_nbtags)
 		{
-			m_plineview->SetVTtagLval(m_index, lk);
-			m_plineview->Invalidate();
+			m_pChartDataWnd->SetVTtagLval(m_index, lk);
+			m_pChartDataWnd->Invalidate();
 		}
 	}
 }
@@ -331,9 +331,9 @@ void CMeasureVTtagsPage::OnShiftTags()
 {
 	const auto offset = static_cast<long>(m_timeshift * m_samplingrate);
 	for (auto i = 0; i < m_nbtags; i++)
-		m_plineview->SetVTtagLval(i, m_plineview->GetVTtagLval(i) + offset);
+		m_pChartDataWnd->SetVTtagLval(i, m_pChartDataWnd->GetVTtagLval(i) + offset);
 	// update data
-	m_plineview->Invalidate();
+	m_pChartDataWnd->Invalidate();
 	GetVTtagVal(m_index);
 	UpdateData(FALSE);
 }
@@ -346,11 +346,11 @@ void CMeasureVTtagsPage::OnAddTags()
 	// compute limits
 	if (!m_pMO->bSetTagsforCompleteFile)
 	{
-		m_nbtags = m_plineview->GetNVTtags();
-		time = m_plineview->GetVTtagLval(m_nbtags - 1) / m_samplingrate;
+		m_nbtags = m_pChartDataWnd->GetNVTtags();
+		time = m_pChartDataWnd->GetVTtagLval(m_nbtags - 1) / m_samplingrate;
 		time_end = m_period * static_cast<float>(m_nperiods) + time;
 		// delete this one which will be re-created within the loop
-		m_plineview->DelVTtag(m_nbtags - 1);
+		m_pChartDataWnd->DelVTtag(m_nbtags - 1);
 		m_nbtags--;
 	}
 	// total file, start at zero
@@ -365,13 +365,13 @@ void CMeasureVTtagsPage::OnAddTags()
 	auto n_intervals = 0.0f;
 	while (time <= time_end)
 	{
-		m_plineview->AddVTLtag(static_cast<long>(time * m_samplingrate));
-		m_plineview->AddVTLtag(static_cast<long>((time + m_duration) * m_samplingrate));
+		m_pChartDataWnd->AddVTLtag(static_cast<long>(time * m_samplingrate));
+		m_pChartDataWnd->AddVTLtag(static_cast<long>((time + m_duration) * m_samplingrate));
 		n_intervals++;
 		time = time0 + m_period * n_intervals;
 	}
 	m_nbtags += static_cast<int>(n_intervals) * 2;
-	m_plineview->Invalidate();
+	m_pChartDataWnd->Invalidate();
 	UpdateData(FALSE);
 }
 
@@ -379,15 +379,15 @@ void CMeasureVTtagsPage::OnDeleteSeries()
 {
 	// delete present tags
 	auto p_tags_list = m_pdatDoc->GetpVTtags();
-	m_plineview->SetVTtagList(p_tags_list);
+	m_pChartDataWnd->SetVTtagList(p_tags_list);
 	m_nbtags = p_tags_list->GetNTags();
-	m_plineview->Invalidate();
+	m_pChartDataWnd->Invalidate();
 }
 
 void CMeasureVTtagsPage::OnDeleteAll()
 {
-	m_plineview->DelAllVTtags();
-	m_plineview->Invalidate();
+	m_pChartDataWnd->DelAllVTtags();
+	m_pChartDataWnd->Invalidate();
 	m_nbtags = 0;
 	GetVTtagVal(0);
 	UpdateData(FALSE);

@@ -3,8 +3,8 @@
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "scopescr.h"
-#include "Lineview.h"
+#include "chart.h"
+#include "ChartData.h"
 #include "Editctrl.h"
 //#include "NoteDoc.h"
 #include "dbWaveDoc.h"
@@ -24,7 +24,7 @@ m_pdatDoc(nullptr)
 	m_index = 0;
 	m_mvlevel = 0.0f;
 	m_nbcursors = 0;
-	m_plineview = nullptr;
+	m_pChartDataWnd = nullptr;
 }
 
 CMeasureHZtagsPage::~CMeasureHZtagsPage()
@@ -60,9 +60,9 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 	if (index < 0 || index >= m_nbcursors)
 		return FALSE;
 	m_index = index;
-	m_datachannel = m_plineview->GetHZtagChan(index);
-	int k = m_plineview->GetHZtagVal(m_index);
-	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, k);
+	m_datachannel = m_pChartDataWnd->GetHZtagChan(index);
+	int k = m_pChartDataWnd->GetHZtagVal(m_index);
+	m_mvlevel = m_pChartDataWnd->ConvertChanlistDataBinsToMilliVolts(m_datachannel, k);
 
 	return TRUE;
 }
@@ -70,11 +70,11 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 void CMeasureHZtagsPage::OnCenter()
 {
 	int max, min;
-	m_plineview->GetChanlistMaxMin(m_datachannel, &max, &min);
+	m_pChartDataWnd->GetChanlistMaxMin(m_datachannel, &max, &min);
 	const auto val = (max + min) / 2;
-	m_plineview->SetHZtagVal(m_index, val);
-	m_plineview->Invalidate();
-	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
+	m_pChartDataWnd->SetHZtagVal(m_index, val);
+	m_pChartDataWnd->Invalidate();
+	m_mvlevel = m_pChartDataWnd->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
 
@@ -82,13 +82,13 @@ void CMeasureHZtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbcursors)
 	{
-		m_plineview->DelHZtag(m_index);
+		m_pChartDataWnd->DelHZtag(m_index);
 		m_nbcursors--;
 	}
 	if (m_index > m_nbcursors - 1)
 		m_index = m_nbcursors;
 	GetHZcursorVal(m_index);
-	m_plineview->Invalidate();
+	m_pChartDataWnd->Invalidate();
 	UpdateData(FALSE);
 }
 
@@ -111,12 +111,12 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 		// update dependent parameters
 		if (m_datachannel < 0)
 			m_datachannel = 0;
-		if (m_datachannel >= m_plineview->GetChanlistSize())
-			m_datachannel = m_plineview->GetChanlistSize() - 1;
+		if (m_datachannel >= m_pChartDataWnd->GetChanlistSize())
+			m_datachannel = m_pChartDataWnd->GetChanlistSize() - 1;
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			m_plineview->SetHZtagChan(m_index, m_datachannel);
-			m_plineview->Invalidate();
+			m_pChartDataWnd->SetHZtagChan(m_index, m_datachannel);
+			m_pChartDataWnd->Invalidate();
 		}
 		UpdateData(FALSE);
 	}
@@ -167,9 +167,9 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 		UpdateData(FALSE);
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			const auto val = m_plineview->ConvertChanlistVoltstoDataBins(m_datachannel, m_mvlevel / 1000.0f);
-			m_plineview->SetHZtagVal(m_index, val);
-			m_plineview->Invalidate();
+			const auto val = m_pChartDataWnd->ConvertChanlistVoltstoDataBins(m_datachannel, m_mvlevel / 1000.0f);
+			m_pChartDataWnd->SetHZtagVal(m_index, val);
+			m_pChartDataWnd->Invalidate();
 		}
 	}
 }
@@ -177,11 +177,11 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 void CMeasureHZtagsPage::OnAdjust()
 {
 	int max, min;
-	m_plineview->GetChanlistMaxMin(m_datachannel, &max, &min);
+	m_pChartDataWnd->GetChanlistMaxMin(m_datachannel, &max, &min);
 	// get nb cursors / m_datachannel
 	auto n_cursors = 0;
 	for (auto i = m_nbcursors - 1; i >= 0; i--)
-		if (m_plineview->GetHZtagChan(i) == m_datachannel)
+		if (m_pChartDataWnd->GetHZtagChan(i) == m_datachannel)
 			n_cursors++;
 
 	// then split cursors across m_datachannel span
@@ -195,28 +195,28 @@ void CMeasureHZtagsPage::OnAdjust()
 	auto val = min;
 	for (auto i = 0; i < m_nbcursors; i++)
 	{
-		if (m_plineview->GetHZtagChan(i) == m_datachannel)
+		if (m_pChartDataWnd->GetHZtagChan(i) == m_datachannel)
 		{
-			m_plineview->SetHZtagVal(i, val);
+			m_pChartDataWnd->SetHZtagVal(i, val);
 			val += dv;
 		}
 	}
-	m_plineview->Invalidate();
-	val = m_plineview->GetHZtagVal(m_index);
-	m_mvlevel = m_plineview->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
+	m_pChartDataWnd->Invalidate();
+	val = m_pChartDataWnd->GetHZtagVal(m_index);
+	m_mvlevel = m_pChartDataWnd->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
 
 void CMeasureHZtagsPage::OnOK()
 {
 	auto p_tags_list = m_pdatDoc->GetpHZtags();
-	p_tags_list->CopyTagList(m_plineview->GetHZtagList());
+	p_tags_list->CopyTagList(m_pChartDataWnd->GetHZtagList());
 	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 1)
 	{
-		m_plineview->DelAllHZtags();
+		m_pChartDataWnd->DelAllHZtags();
 		if (m_pMO->wOption == 0)
-			m_plineview->SetVTtagList(m_pdatDoc->GetpVTtags());
+			m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
 	}
 	CPropertyPage::OnOK();
 }
@@ -226,13 +226,13 @@ void CMeasureHZtagsPage::OnCancel()
 	// restore initial state of HZcursors
 	if (m_pMO->wOption != 1)
 	{
-		m_plineview->DelAllHZtags();
+		m_pChartDataWnd->DelAllHZtags();
 		if (m_pMO->wOption == 0)
-			m_plineview->SetVTtagList(m_pdatDoc->GetpVTtags());
+			m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
 	}
 	else
-		m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
-	m_plineview->Invalidate();
+		m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+	m_pChartDataWnd->Invalidate();
 	CPropertyPage::OnCancel();
 }
 
@@ -240,10 +240,10 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_plineview->SetHZtagList(m_pdatDoc->GetpHZtags());
-	m_plineview->DelAllVTtags();
-	m_plineview->Invalidate();
-	m_nbcursors = m_plineview->GetNHZtags();
+	m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+	m_pChartDataWnd->DelAllVTtags();
+	m_pChartDataWnd->Invalidate();
+	m_nbcursors = m_pChartDataWnd->GetNHZtags();
 	GetHZcursorVal(0);
 
 	// sublassed edits
@@ -258,8 +258,8 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 
 void CMeasureHZtagsPage::OnDeleteAll()
 {
-	m_plineview->DelAllHZtags();
-	m_plineview->Invalidate();
+	m_pChartDataWnd->DelAllHZtags();
+	m_pChartDataWnd->Invalidate();
 	m_nbcursors = 0;
 	GetHZcursorVal(0);
 	UpdateData(FALSE);

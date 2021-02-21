@@ -1,9 +1,9 @@
 #pragma once
 
-#include "scopescr.h"
+#include "chart.h"
 #include "Envelope.h"
 #include "chanlistitem.h"
-#include "Lineview.h"
+#include "ChartData.h"
 #include "DataListCtrlRowObject.h"
 
 #define COL_INDEX		1
@@ -50,7 +50,7 @@ public:
 	int		GetSpikeClass()			const { return m_selclass; }
 
 
-	CLineViewWnd*		GetDataViewCurrentRecord();
+	CChartDataWnd*		GetDataViewCurrentRecord();
 	inline int			GetVisibleRowsSize() {return datalistctrlrowobject_prt_array.GetSize();}
 	inline CAcqDataDoc*	GetVisibleRowsAcqDataDocAt(int index) { return  datalistctrlrowobject_prt_array[index]->pdataDoc; }
 	inline CSpikeDoc*	GetVisibleRowsSpikeDocAt(int index) { return datalistctrlrowobject_prt_array[index]->pspikeDoc; }

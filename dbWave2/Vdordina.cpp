@@ -3,8 +3,8 @@
 
 #include "StdAfx.h"
 //#include "Cscale.h"
-//#include "scopescr.h"
-#include "Lineview.h"
+//#include "chart.h"
+#include "ChartData.h"
 
 #include "resource.h"
 #include "Vdordina.h"
@@ -48,7 +48,7 @@
 //	min					1		0		1
 
 CDataViewOrdinatesDlg::CDataViewOrdinatesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataViewOrdinatesDlg::IDD, pParent), m_plinev(nullptr), m_nChanmax(0), m_Channel(0), m_bChanged(0),
+	: CDialog(CDataViewOrdinatesDlg::IDD, pParent), m_pChartDataWnd(nullptr), m_nChanmax(0), m_Channel(0), m_bChanged(0),
 	m_p10(0), m_voltsperpixel(0), m_VoltsperBin(0)
 {
 	m_iUnit = -1;
@@ -87,11 +87,11 @@ BOOL CDataViewOrdinatesDlg::OnInitDialog()
 	// me, the parameters (zero and extent) of channel 0 / chanlist / lineview
 	// are MODIFIED after calling the base class CDialog::OnInitDialog
 	int i;
-	m_nChanmax = m_plinev->GetChanlistSize();			// nb of data channels
+	m_nChanmax = m_pChartDataWnd->GetChanlistSize();			// nb of data channels
 	for (i = 0; i < m_nChanmax; i++)						// browse through all chans
 	{
-		m_settings.Add(m_plinev->GetChanlistYzero(i));	// save zero
-		m_settings.Add(m_plinev->GetChanlistYextent(i));// save extent
+		m_settings.Add(m_pChartDataWnd->GetChanlistYzero(i));	// save zero
+		m_settings.Add(m_pChartDataWnd->GetChanlistYextent(i));// save extent
 	}
 	CDialog::OnInitDialog();
 
@@ -99,9 +99,9 @@ BOOL CDataViewOrdinatesDlg::OnInitDialog()
 	int j = 0;											// index to restore parms
 	for (i = 0; i < m_nChanmax; i++)						// browse through all chans again
 	{
-		m_plinev->SetChanlistYzero(i, m_settings.GetAt(j)); j++;		// restore zero
-		m_plinev->SetChanlistYextent(i, m_settings.GetAt(j)); j++;	// restore extent
-		m_chanSelect.AddString(m_plinev->GetChanlistComment(i));	// load comment/chan
+		m_pChartDataWnd->SetChanlistYzero(i, m_settings.GetAt(j)); j++;		// restore zero
+		m_pChartDataWnd->SetChanlistYextent(i, m_settings.GetAt(j)); j++;	// restore extent
+		m_chanSelect.AddString(m_pChartDataWnd->GetChanlistComment(i));	// load comment/chan
 	}
 	m_chanSelect.SetCurSel(m_Channel);				// select chan zero
 
@@ -116,9 +116,9 @@ BOOL CDataViewOrdinatesDlg::OnInitDialog()
 void CDataViewOrdinatesDlg::LoadChanlistData(int i)
 {
 	// compute max and min from zero and extent
-	m_VoltsperBin = m_plinev->GetChanlistVoltsperDataBin(i);
-	const auto zero = static_cast<float>(m_plinev->GetChanlistYzero(i));
-	const auto extent = static_cast<float>(m_plinev->GetChanlistYextent(i));
+	m_VoltsperBin = m_pChartDataWnd->GetChanlistVoltsperDataBin(i);
+	const auto zero = static_cast<float>(m_pChartDataWnd->GetChanlistYzero(i));
+	const auto extent = static_cast<float>(m_pChartDataWnd->GetChanlistYextent(i));
 	//const auto binzero =  static_cast<float>(0.0)  /*m_plinev->GetChanlistBinZero(i)*/;
 
 	m_xcenter = (zero/*- binzero*/)*m_VoltsperBin / m_p10;
@@ -142,15 +142,15 @@ void CDataViewOrdinatesDlg::SaveChanlistData(int indexlist)
 
 	for (auto j = indexfirst; j < indexlast; j++)
 	{
-		const auto vper_bin = m_plinev->GetChanlistVoltsperDataBin(j);
+		const auto vper_bin = m_pChartDataWnd->GetChanlistVoltsperDataBin(j);
 		const auto xzero = ((m_xmax + m_xmin) / 2.f) * m_p10;
 		const auto xextent = (m_xmax - m_xmin) * m_p10;
-		auto i = static_cast<int>(xzero / vper_bin) + m_plinev->GetChanlistBinZero(j);
-		m_plinev->SetChanlistYzero(j, i);		// change zero
+		auto i = static_cast<int>(xzero / vper_bin) + m_pChartDataWnd->GetChanlistBinZero(j);
+		m_pChartDataWnd->SetChanlistYzero(j, i);		// change zero
 		i = static_cast<int>(xextent / vper_bin);
-		m_plinev->SetChanlistYextent(j, i);	// change extent
+		m_pChartDataWnd->SetChanlistYextent(j, i);	// change extent
 	}
-	m_plinev->Invalidate();
+	m_pChartDataWnd->Invalidate();
 }
 
 void CDataViewOrdinatesDlg::ChangeUnits(int iUnit, BOOL bNew)
@@ -205,10 +205,10 @@ void CDataViewOrdinatesDlg::OnKillfocusVertcenter()
 	m_xmax += diff;
 	m_xmin += diff;
 
-	const auto vper_bin = m_plinev->GetChanlistVoltsperDataBin(m_Channel);
+	const auto vper_bin = m_pChartDataWnd->GetChanlistVoltsperDataBin(m_Channel);
 	const auto xzero = ((m_xmax + m_xmin) / 2.f) * m_p10;
-	const auto zero = static_cast<int>(xzero / vper_bin) + m_plinev->GetChanlistBinZero(m_Channel);
-	m_plinev->SetChanlistYzero(m_Channel, zero);
+	const auto zero = static_cast<int>(xzero / vper_bin) + m_pChartDataWnd->GetChanlistBinZero(m_Channel);
+	m_pChartDataWnd->SetChanlistYzero(m_Channel, zero);
 	m_bChanged = TRUE;
 	UpdateData(FALSE);
 }
@@ -218,14 +218,14 @@ void CDataViewOrdinatesDlg::OnKillfocusVertMxMi()
 	UpdateData(TRUE);
 
 	// save into lineview and reload to change scale and voltsperpixel
-	const auto vper_bin = m_plinev->GetChanlistVoltsperDataBin(m_Channel);
+	const auto vper_bin = m_pChartDataWnd->GetChanlistVoltsperDataBin(m_Channel);
 	const auto xzero = ((m_xmax + m_xmin) / 2.f) * m_p10;
 	const auto xextent = (m_xmax - m_xmin) * m_p10;
-	const auto zero = static_cast<int>(xzero / vper_bin) + m_plinev->GetChanlistBinZero(m_Channel);
+	const auto zero = static_cast<int>(xzero / vper_bin) + m_pChartDataWnd->GetChanlistBinZero(m_Channel);
 	const auto extent = static_cast<int>(xextent / vper_bin);
 
-	m_plinev->SetChanlistYzero(m_Channel, zero);
-	m_plinev->SetChanlistYextent(m_Channel, extent);
+	m_pChartDataWnd->SetChanlistYzero(m_Channel, zero);
+	m_pChartDataWnd->SetChanlistYextent(m_Channel, extent);
 	LoadChanlistData(m_Channel);
 	ChangeUnits(m_iUnit, FALSE);
 
@@ -236,13 +236,13 @@ void CDataViewOrdinatesDlg::OnKillfocusVertMxMi()
 void CDataViewOrdinatesDlg::OnCancel()
 {
 	// restore extent of the channels
-	m_nChanmax = m_plinev->GetChanlistSize(); // nb of data channels
+	m_nChanmax = m_pChartDataWnd->GetChanlistSize(); // nb of data channels
 	auto j = 0;
 	for (auto i = 0; i < m_nChanmax; i++)
 	{
-		m_plinev->SetChanlistYzero(i, static_cast<int>(m_settings[j]));
+		m_pChartDataWnd->SetChanlistYzero(i, static_cast<int>(m_settings[j]));
 		j++;
-		m_plinev->SetChanlistYextent(i, static_cast<int>(m_settings[j]));
+		m_pChartDataWnd->SetChanlistYextent(i, static_cast<int>(m_settings[j]));
 		j++;
 	}
 	CDialog::OnCancel();

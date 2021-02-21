@@ -1,6 +1,6 @@
 #pragma once
 #include "dbWaveDoc.h"
-#include "lineview.h"
+#include "chartdata.h"
 #include "MeasureHZtagsPage.h"
 #include "MeasureOptionsPage.h"
 #include "MeasureResultsPage.h"
@@ -30,9 +30,9 @@ public:
 	CMeasureResultsPage m_measure_results_page;
 
 	// CMeasureResults
-	CLineViewWnd* m_plineview{};
-	CdbWaveDoc* m_pdbDoc{};
-	CAcqDataDoc* m_pdatDoc{};
+	CChartDataWnd*	m_pChartDataWnd{};
+	CdbWaveDoc*		m_pdbDoc{};
+	CAcqDataDoc*	m_pdatDoc{};
 
 	OPTIONS_VIEWDATAMEASURE* m_pMO{};
 	int				m_currentchan{};

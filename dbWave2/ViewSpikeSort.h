@@ -1,10 +1,10 @@
 #pragma once
-#include "spikehistp.h"
-#include "spikexyp.h"
-#include "spikeshape.h"
+#include "ChartSpikeHist.h"
+#include "ChartSpikeXY.h"
+#include "ChartSpikeShape.h"
 #include "dbWaveDoc.h"
-#include "Spikebar.h"
-#include "WndVerticalHistogram.h"
+#include "ChartSpikeBar.h"
+#include "ChartSpikeHistVert.h"
 #include "CSpkListTabCtrl.h"
 
 // spikesort1.h : header file
@@ -44,10 +44,10 @@ protected:
 	CStretchControl m_stretch{};
 	BOOL			m_binit = false;
 
-	CSpikeHistWnd	yhistogram_wnd_;	// spike histogram
-	CSpikeXYpWnd	xygraph_wnd_;		// bars with spike height
-	CSpikeShapeWnd	spikeshape_wnd_;	// spike shapes
-	CSpikeBarWnd	spikebars_wnd_;		// bars with spike height
+	CChartSpikeHist	yhistogram_wnd_;	// spike histogram
+	CChartSpikeXYWnd	xygraph_wnd_;		// bars with spike height
+	CChartSpikeShapeWnd	spikeshape_wnd_;	// spike shapes
+	CChartSpikeBarWnd	spikebars_wnd_;		// bars with spike height
 
 	CEditCtrl	mm_t1;
 	CEditCtrl	mm_t2;

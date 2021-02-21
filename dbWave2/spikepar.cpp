@@ -16,7 +16,7 @@
 
 #include "StdAfx.h"
 //#include "resource.h"
-//#include "scopescr.h"
+//#include "chart.h"
 //#include "TemplateWnd.h"
 #include "TemplateListWnd.h"
 
