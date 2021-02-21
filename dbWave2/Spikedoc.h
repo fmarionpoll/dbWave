@@ -62,37 +62,37 @@ public:
 	void		SortStimArray();
 
 public:
-	void ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString& csFileComment);	// 0
-	void ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, const CString& csFileComment);	// 4
-	void ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);					// 1,2,3
-	void ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int iclass, const CString& csFileComment);
-	void ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, CString csFileComment);
-	void ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl, CString csFileComment);
-	void ExportTableTitle(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nfiles);
-	void ExportTableColHeaders_db(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
-	void ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
-	void _ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, int ispklist, int iclass);
-	void _ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist, int iclass);
-	void _ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
-	void _ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass);
+	void		ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString& csFileComment);	// 0
+	void		ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, const CString& csFileComment);	// 4
+	void		ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);					// 1,2,3
+	void		ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int iclass, const CString& csFileComment);
+	void		ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, CString csFileComment);
+	void		ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl, CString csFileComment);
+	void		ExportTableTitle(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nfiles);
+	void		ExportTableColHeaders_db(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
+	void		ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
+	void		_ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, int ispklist, int iclass);
+	void		_ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist, int iclass);
+	void		_ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
+	void		_ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass);
 
 	// Implementation
 public:
-	BOOL OnSaveDocument(LPCTSTR pszPathName);
-	BOOL OnNewDocument();
-	BOOL OnOpenDocument(LPCTSTR pszPathName);
-	void ClearData();
-	long BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* pSum0, int iclass);
-	long BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
-	long BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
-	long BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
+	BOOL		OnSaveDocument(LPCTSTR pszPathName);
+	BOOL		OnNewDocument();
+	BOOL		OnOpenDocument(LPCTSTR pszPathName);
+	void		ClearData();
+	long		BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* pSum0, int iclass);
+	long		BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
+	long		BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
+	long		BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
 
 protected:
-	void Serialize(CArchive& ar) override;
+	void		Serialize(CArchive& ar) override;
 
-	void ReadBeforeVersion6(CArchive& ar, WORD wwVersion);
-	void ReadVersion6(CArchive& ar);
-	void ReadVersion7(CArchive& ar);
+	void		ReadBeforeVersion6(CArchive& ar, WORD wwVersion);
+	void		ReadVersion6(CArchive& ar);
+	void		ReadVersion7(CArchive& ar);
 
 	// Generated message map functions
 protected:

@@ -26,7 +26,7 @@ public:
 	BOOL 	OnNewDocument() override;
 
 protected:
-	BOOL	OpenAcqFile(CString& szfilename);
+	BOOL	openAcqFile(CString& szfilename);
 	bool	dlgImportDataFile(CString& sz_path_name);
 	int		importFile(CString& sz_path_name);
 	void	removeFile(CString file1);

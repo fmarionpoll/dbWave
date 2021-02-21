@@ -48,9 +48,8 @@ public:
 
 // Implementation
 public:
-	virtual bool	isOpened(CString & sz_path_name);
-	virtual bool	openDataFile(CString& sz_path_name, UINT u_open_flag);
-	virtual void	closeDataFile();
+	virtual bool	OpenDataFile(CString& sz_path_name, UINT u_open_flag);
+	virtual void	CloseDataFile();
 
 #ifdef _DEBUG
 	virtual void	AssertValid() const;

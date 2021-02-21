@@ -13,41 +13,35 @@ const int	LENCEDSON	= 16;
 const char	CEDSON64[] = "CED_DATA";
 
 
-CDataFileFromCEDSpike2::CDataFileFromCEDSpike2()
-{
+CDataFileFromCEDSpike2::CDataFileFromCEDSpike2() {
+
 	m_bHeaderSize		= 512;
 	m_ulOffsetData		= m_bHeaderSize;
 	m_ulOffsetHeader	= 0;
 	m_idType			= DOCTYPE_SMR;
 	m_csType			= CEDSON64;
-	m_csFiledesc		= "SMRFILE";
 }
 
-CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2()
-{
-	closeDataFile();
+CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2() {
+
+	CloseDataFile();
 	ATLTRACE2("closed Data File\n");
 }
 
 #ifdef _DEBUG
-void CDataFileFromCEDSpike2::AssertValid() const
-{
+void CDataFileFromCEDSpike2::AssertValid() const {
+
 	CDataFileX::AssertValid();
 }
 
-void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const
-{
+void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const {
+
 	CDataFileX::Dump(dc);
 }
 #endif //_DEBUG
 
-bool CDataFileFromCEDSpike2::isOpened(CString& sz_path_name)
-{
-	return (m_nFid > 0);
-}
+bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_flag) {
 
-bool CDataFileFromCEDSpike2::openDataFile(CString& sz_path_name, UINT u_open_flag)
-{
 	m_nFid = S64Open(CT2A(sz_path_name), -1);
 	if (m_nFid <= 0) {
 		AfxMessageBox(AFX_IDP_FAILED_TO_OPEN_DOC);
@@ -56,8 +50,8 @@ bool CDataFileFromCEDSpike2::openDataFile(CString& sz_path_name, UINT u_open_fla
 	return true;
 }
 
-void CDataFileFromCEDSpike2::closeDataFile()
-{
+void CDataFileFromCEDSpike2::CloseDataFile() {
+
 	if (m_nFid >= 0) {
 		int flag = S64Close(m_nFid);
 		if (flag < 0) {
@@ -69,8 +63,8 @@ void CDataFileFromCEDSpike2::closeDataFile()
 	}	
 }
 
-int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
-{
+int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName) {
+
 	cs_fileName.MakeLower();
 	if (cs_fileName.Find(_T("smr")) != -1) {
 		return DOCTYPE_SMR;
@@ -78,12 +72,10 @@ int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
 	return DOCTYPE_UNKNOWN;
 }
 
-BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
-{
+BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) {
+
 	// Read file header
 	auto bflag = TRUE;
-	m_pWFormat = pWFormat;
-	m_pArray = pArray;
 
 	//	tentative
 	pWFormat->fullscale_Volts	= 5.0f;			// 10 V full scale
@@ -157,6 +149,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 }
 
 void CDataFileFromCEDSpike2::initWaveChan(CWaveChan* pChan, int cedChan) {
+
 	pChan->am_CEDchanID = cedChan;
 	pChan->am_csamplifier.Empty();			// amplifier type
 	pChan->am_csheadstage.Empty();			// headstage type
@@ -187,6 +180,7 @@ void CDataFileFromCEDSpike2::initWaveChan(CWaveChan* pChan, int cedChan) {
 }
 
 CString  CDataFileFromCEDSpike2::getChannelComment(int nChan) {
+
 	int sizeComment = S64GetChanComment(m_nFid, nChan, nullptr, -1);
 	CString comment;
 	if (sizeComment > 0) {
@@ -199,6 +193,7 @@ CString  CDataFileFromCEDSpike2::getChannelComment(int nChan) {
 }
 
 CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
+
 	int sizeComment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
 	CString comment;
 	if (sizeComment > 0) {
@@ -256,6 +251,7 @@ long CDataFileFromCEDSpike2::read_data_oneChannel(CWaveChan* pChan, short* pData
 }
 
 long CDataFileFromCEDSpike2::relocate_tFrom_to_tFirst(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) {
+	
 	long offset = (long)((tFirst - tFrom) / ticksPerSample);
 	size_t count = nValuesRead * sizeof(short);
 	memmove(pBuffer + offset, pBuffer, count);

@@ -48,6 +48,7 @@ public:
 	BOOL			ImportDatabase(CString& filename);
 	BOOL			OnNewDocument(LPCTSTR lpszPathName);
 	CAcqDataDoc*	OpenCurrentDataFile();
+	CAcqDataDoc*	GetcurrentDataDocument() const { return m_pDat; }
 	CSpikeDoc*		OpenCurrentSpikeFile();
 	CSpikeDoc*		GetcurrentSpkDocument() const { return m_pSpk; }
 

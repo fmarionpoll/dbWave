@@ -34,16 +34,15 @@ class CDataFileFromCEDSpike2 :
 public:
 	CDataFileFromCEDSpike2();
 	DECLARE_DYNCREATE(CDataFileFromCEDSpike2)
-	virtual ~CDataFileFromCEDSpike2();
+	virtual		~CDataFileFromCEDSpike2();
 
 	// Operations
 public:
-	int  CheckFileType(CString& cs_filename) override;
-	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
-	bool isOpened(CString& sz_path_name) override;
-	bool openDataFile(CString& sz_path_name, UINT u_open_flag) override;
-	void closeDataFile() override;
-	long ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray) override;
+	int			CheckFileType(CString& cs_filename) override;
+	BOOL		ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
+	bool		OpenDataFile(CString& sz_path_name, UINT u_open_flag) override;
+	void		CloseDataFile() override;
+	long		ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray) override;
 
 	// Implementation
 public:
@@ -54,10 +53,7 @@ public:
 #endif
 
 protected:
-	CStringA		m_csFiledesc;
-	CWaveFormat*	m_pWFormat		= nullptr;
-	CWaveChanArray* m_pArray		= nullptr;
-	int				m_nFid			=-1;
+	int			m_nFid			=-1;
 
 	void		initWaveChan(CWaveChan* pChan, int cedChan);
 	CString		getFileComment(int nInd);

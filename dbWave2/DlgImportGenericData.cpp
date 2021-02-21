@@ -575,7 +575,7 @@ void CImportGenericDataDlg::UpdatePreview()
 	// convert data
 	if (m_filesource != m_fileold)
 	{
-		m_AcqDataFile.OpenAcqFile(m_filesource);
+		m_AcqDataFile.openAcqFile(m_filesource);
 		m_fileold = m_filesource;
 	}
 	m_AcqDataFile.SetReadingBufferDirty(); // invalidate data buffer

@@ -371,6 +371,8 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 void CViewdbWave::FillListBox()
 {
 	auto pdb_doc = GetDocument();
+	if (pdb_doc->GetcurrentDataDocument() != nullptr)
+		pdb_doc->GetcurrentDataDocument()->AcqCloseFile();
 	const int imax = pdb_doc->GetDB_NRecords();
 	m_dataListCtrl.DeleteAllItems();
 	m_dataListCtrl.SetItemCountEx(imax);

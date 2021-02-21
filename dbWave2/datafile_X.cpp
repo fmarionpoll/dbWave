@@ -114,14 +114,7 @@ int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPatt
 	return flag;
 }
 
-bool CDataFileX::isOpened(CString& sz_path_name)
-{
-	if (m_hFile == CFile::hFileNull)
-		return false;
-	return (GetFileName().CompareNoCase(sz_path_name) == 0);
-}
-
-bool CDataFileX::openDataFile(CString& sz_path_name, UINT u_open_flag)
+bool CDataFileX::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
 {
 	CFileException error{};
 	bool flag = Open(sz_path_name, u_open_flag, &error);
@@ -130,7 +123,7 @@ bool CDataFileX::openDataFile(CString& sz_path_name, UINT u_open_flag)
 	return flag;
 }
 
-void CDataFileX::closeDataFile()
+void CDataFileX::CloseDataFile()
 {
 	if (m_hFile != CFile::hFileNull)
 		Close();
