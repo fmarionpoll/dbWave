@@ -336,8 +336,10 @@ void CViewdbWave::OnClickMedianFilter()
 		return;
 
 	m_options_viewdata->bFilterDat = ((CButton*)GetDlgItem(IDC_FILTERCHECK))->GetCheck();
-	if (m_options_viewdata->bFilterDat)	m_dattransform = 13;
-	else					m_dattransform = 0;
+	if (m_options_viewdata->bFilterDat)	
+		m_dattransform = 13;
+	else					
+		m_dattransform = 0;
 	m_dataListCtrl.SetTransformMode(m_dattransform);
 	m_dataListCtrl.RefreshDisplay();
 }
@@ -370,11 +372,8 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 
 void CViewdbWave::FillListBox()
 {
-	auto pdb_doc = GetDocument();
-	if (pdb_doc->GetcurrentDataDocument() != nullptr)
-		pdb_doc->GetcurrentDataDocument()->AcqCloseFile();
-	const int imax = pdb_doc->GetDB_NRecords();
 	m_dataListCtrl.DeleteAllItems();
+	const int imax = GetDocument()->GetDB_NRecords();
 	m_dataListCtrl.SetItemCountEx(imax);
 }
 
@@ -386,7 +385,6 @@ void CViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 		GetDocument()->SetDB_CurrentRecordPosition(p_item_activate->iItem);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	CDaoRecordView::OnInitialUpdate();
-
 	*pResult = 0;
 }
 

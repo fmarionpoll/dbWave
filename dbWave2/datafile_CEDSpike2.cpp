@@ -25,7 +25,6 @@ CDataFileFromCEDSpike2::CDataFileFromCEDSpike2() {
 CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2() {
 
 	CloseDataFile();
-	ATLTRACE2("closed Data File\n");
 }
 
 #ifdef _DEBUG
@@ -42,6 +41,7 @@ void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const {
 
 bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_flag) {
 
+	ATLTRACE2("---CED OpenDataFile \n" );
 	m_nFid = S64Open(CT2A(sz_path_name), -1);
 	if (m_nFid <= 0) {
 		AfxMessageBox(AFX_IDP_FAILED_TO_OPEN_DOC);
@@ -53,6 +53,7 @@ bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_fla
 void CDataFileFromCEDSpike2::CloseDataFile() {
 
 	if (m_nFid >= 0) {
+		ATLTRACE2("--- CED CloseDataFile \n");
 		int flag = S64Close(m_nFid);
 		if (flag < 0) {
 			CString errorMessage;
@@ -108,7 +109,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	if (lowestFreeChan > 0) {
 		for (int cedChan = 0; cedChan < lowestFreeChan; cedChan++) {
 			int chanType = S64ChanType(m_nFid, cedChan);
-			ATLTRACE2(" chan %i comment= %s ...\n", cedChan, getChannelComment(cedChan));
+			//ATLTRACE2(" chan %i comment= %s ...\n", cedChan, getChannelComment(cedChan));
 			switch (chanType) {
 			case CHANTYPE_Adc:
 			{
@@ -121,24 +122,32 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 			}
 				break;
 			case CHANTYPE_EventFall:	
-				ATLTRACE2("%2d Event on falling edge\n", cedChan); break;
+				//ATLTRACE2("%2d Event on falling edge\n", cedChan); 
+				break;
 			case CHANTYPE_EventRise:	
-				ATLTRACE2("%2d Event on rising edge\n", cedChan); break;
+				//ATLTRACE2("%2d Event on rising edge\n", cedChan);
+				break;
 			case CHANTYPE_EventBoth:	
-				ATLTRACE2("%2d Event on both edges\n", cedChan); break;
+				//ATLTRACE2("%2d Event on both edges\n", cedChan); 
+				break;
 			case CHANTYPE_Marker:		
-				ATLTRACE2("%2d Marker data\n", cedChan); break;
+				//ATLTRACE2("%2d Marker data\n", cedChan); 
+				break;
 			case CHANTYPE_WaveMark:		
-				ATLTRACE2("%2d WaveMark data\n", cedChan); break;
+				//ATLTRACE2("%2d WaveMark data\n", cedChan);
+				break;
 			case CHANTYPE_RealMark:		
-				ATLTRACE2("%2d RealMark data\n", cedChan); break;
+				//ATLTRACE2("%2d RealMark data\n", cedChan);
+				break;
 			case CHANTYPE_TextMark:		
-				ATLTRACE2("%2d TextMark data\n", cedChan); break;
+				//ATLTRACE2("%2d TextMark data\n", cedChan); 
+				break;
 			case CHANTYPE_RealWave:		
-				ATLTRACE2("%2d RealWave data\n", cedChan); break;
+				//ATLTRACE2("%2d RealWave data\n", cedChan); 
+				break;
 			case CHANTYPE_unused:
 			default:
-				ATLTRACE2("%2d unused channel (type = %i)\n", cedChan, chanType);
+				//ATLTRACE2("%2d unused channel (type = %i)\n", cedChan, chanType);
 				break;
 			}
 		}

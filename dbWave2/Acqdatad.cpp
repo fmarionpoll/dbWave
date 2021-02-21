@@ -88,6 +88,8 @@ BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
  **************************************************************************/
 BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 {
+	ATLTRACE2("CAcqDataDoc::OnOpenDocument %s \n", sz_path_name);
+
 	// close data file unless it is already opened
 	if (m_pXFile != nullptr)
 		m_pXFile->CloseDataFile();

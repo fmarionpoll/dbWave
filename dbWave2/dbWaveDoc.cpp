@@ -1846,7 +1846,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 						m_pSpk->_ExportSpkPSTH(pSF, options_viewspikes, p_hist0, ispikelist, kclass);
 						break;
 					default:
-						ATLTRACE2(_T("option selected not implemented: %i\n"), options_viewspikes->exportdatatype);
+						ATLTRACE2(_T("option selected not implemented: %i /n"), options_viewspikes->exportdatatype);
 						break;
 					}
 				} // end of for: kclass
