@@ -132,6 +132,8 @@ BOOL CViewData::PreCreateWindow(CREATESTRUCT& cs)
 
 void CViewData::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
+	ATLTRACE2("CViewData::OnActivateView \n");
+
 	if (bActivate)
 	{
 		auto p_mainframe = (CMainFrame*)AfxGetMainWnd();
@@ -183,6 +185,8 @@ void CViewData::DefineStretchParameters()
 
 void CViewData::OnInitialUpdate()
 {
+	ATLTRACE2("CViewData::OnInitialUpdate \n");
+
 	DefineSubClassedItems();
 
 	m_ADC_yRulerBar.AttachScopeWnd(&m_ChartDataWnd, FALSE);
