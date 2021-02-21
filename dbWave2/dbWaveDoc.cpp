@@ -899,15 +899,15 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 
 	// load OleTime into array and avoid duplicating data acq file with the same A/D time
 	p_new->m_pDB->m_mainTableSet.MoveFirst();
-	CFileStatus r_status;
-
+	
 	if (!p_new->m_pDB->m_mainTableSet.IsBOF())
 	{
 		while (!p_new->m_pDB->m_mainTableSet.IsEOF())
 		{
 			p_new->m_pDB->GetFilenamesFromCurrentRecord();
-			const auto b_dat_file = CFile::GetStatus(p_new->m_currentDatafileName, r_status);	// check if data file is present
-			const auto b_spk_file = CFile::GetStatus(p_new->m_currentSpikefileName, r_status);	// check if spike file is present
+			CFileStatus status;
+			const auto b_dat_file = CFile::GetStatus(p_new->m_currentDatafileName, status);	// check if data file is present
+			const auto b_spk_file = CFile::GetStatus(p_new->m_currentSpikefileName, status);	// check if spike file is present
 			if (!b_dat_file && !b_spk_file)											// if none of them found, remove record
 				p_new->m_pDB->m_mainTableSet.Delete();
 			p_new->m_pDB->m_mainTableSet.MoveNext();
@@ -924,9 +924,9 @@ bool CdbWaveDoc::BinaryFileCopy(const LPCTSTR pszSource, LPCTSTR pszDest)
 {
 	// check that destfile does not exist
 	 // check if same file already exists: if yes, destroy it
-	CFileStatus r_status;
+	CFileStatus status;
 	const CString cs_newname = pszDest;
-	if (CFile::GetStatus(cs_newname, r_status))
+	if (CFile::GetStatus(cs_newname, status))
 	{
 		auto prompt = cs_newname;
 		prompt += _T("\nThis file seems to exist already.\nDelete the old file?");
@@ -1080,9 +1080,9 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		}
 
 		// test  files
-		CFileStatus r_status;
-		const auto b_dat_present = CFile::GetStatus(cs_dat_file, r_status);
-		const auto b_spik_present = CFile::GetStatus(cs_spk_file, r_status);
+		CFileStatus status;
+		const auto b_dat_present = CFile::GetStatus(cs_dat_file, status);
+		const auto b_spik_present = CFile::GetStatus(cs_spk_file, status);
 		if (b_dat_present)
 			cs_filename = cs_dat_file;
 		else if (b_spik_present)
@@ -1797,8 +1797,8 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 			if (m_currentSpikefileName.IsEmpty())
 				continue;
 			// check if file is still present and open it
-			CFileStatus r_status;
-			if (!CFile::GetStatus(m_currentSpikefileName, r_status))
+			CFileStatus status;
+			if (!CFile::GetStatus(m_currentSpikefileName, status))
 			{
 				cs_file_comment = _T("\r\n") + ExportDatabaseData();
 				cs_file_comment += _T("\tERROR: MISSING FILE");		// next line
@@ -2080,8 +2080,8 @@ int CdbWaveDoc::CheckifFilesCanbeOpened(CStringArray& filenames, CSharedFile* ps
 		}
 
 		// open document and read data
-		CFileStatus r_status;	// file status: time creation, ..
-		const BOOL bflag = CFile::GetStatus(cs_filename, r_status);
+		CFileStatus status;
+		const BOOL bflag = CFile::GetStatus(cs_filename, status);
 
 		// GOTO next file if it not possible to open the file either as a spk or a dat file
 		if (!bflag)
@@ -2112,8 +2112,8 @@ void CdbWaveDoc::DeleteErasedFiles()
 		auto file_new_name = file_name + _T("del");
 
 		// check if same file already exists: if yes, search if up to 10 clones exist, otherwise, destroy the last clone
-		CFileStatus r_status;
-		if (CFile::GetStatus(file_new_name, r_status))
+		CFileStatus status;
+		if (CFile::GetStatus(file_new_name, status))
 		{
 			auto flag = TRUE;
 			CString prompt;
@@ -2121,7 +2121,7 @@ void CdbWaveDoc::DeleteErasedFiles()
 			{
 				CString cs;
 				prompt.Format(_T("%s%i"), static_cast<LPCTSTR>(file_new_name), j);
-				flag = CFile::GetStatus(prompt, r_status);
+				flag = CFile::GetStatus(prompt, status);
 				if (!flag)
 					break;
 			}
@@ -2434,7 +2434,7 @@ void CdbWaveDoc::RemoveMissingFiles()
 
 	// load OleTime into array and avoid duplicating data acq file with the same A/D time
 	m_pDB->m_mainTableSet.MoveFirst();
-	CFileStatus r_status;
+	CFileStatus status;
 
 	if (!m_pDB->m_mainTableSet.IsBOF())
 	{
@@ -2450,8 +2450,8 @@ void CdbWaveDoc::RemoveMissingFiles()
 			cscomment.Format(_T("Processing file [%i / %i] %s"), ifile, nfiles, static_cast<LPCTSTR>(m_currentDatafileName));
 			dlg.SetStatus(cscomment);
 			// check if files are present
-			const auto b_dat_file = CFile::GetStatus(m_currentDatafileName, r_status);	// check if data file is present
-			const auto  b_spk_file = CFile::GetStatus(m_currentSpikefileName, r_status);	// check if spike file is present
+			const auto b_dat_file = CFile::GetStatus(m_currentDatafileName, status);	// check if data file is present
+			const auto  b_spk_file = CFile::GetStatus(m_currentSpikefileName, status);	// check if spike file is present
 			if (!b_dat_file && !b_spk_file)										// if none of them found, remove record
 				m_pDB->m_mainTableSet.Delete();
 
@@ -2505,7 +2505,7 @@ void CdbWaveDoc::RemoveFalseSpkFiles()
 
 	// load OleTime into array and avoid duplicating data acq file with the same A/D time
 	m_pDB->m_mainTableSet.MoveFirst();
-	CFileStatus r_status;
+	CFileStatus status;
 
 	if (!m_pDB->m_mainTableSet.IsBOF())
 	{
@@ -2522,7 +2522,7 @@ void CdbWaveDoc::RemoveFalseSpkFiles()
 
 			// check if spike file is present
 			auto cs_spikefile_name = m_currentDatafileName.Left(m_currentDatafileName.ReverseFind('.') + 1) + _T("spk");
-			const auto b_spk_file = CFile::GetStatus(cs_spikefile_name, r_status);
+			const auto b_spk_file = CFile::GetStatus(cs_spikefile_name, status);
 
 			// if spk file not found in the same directory, remove record
 			if (!b_spk_file)

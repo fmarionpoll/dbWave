@@ -250,10 +250,10 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 		docname = docname.Left(i);	// clip name to remove extension
 	docname += ".spk";				// add "fresh" extension (spk)
 
-	CFileStatus r_status;			// file status: time creation, ...
-	const auto b_flag_exists = CFile::GetStatus(docname, r_status);
+	CFileStatus status;	
+	const auto b_flag_exists = CFile::GetStatus(docname, status);
 
-	if (b_flag_exists && (r_status.m_attribute & CFile::readOnly))
+	if (b_flag_exists && (status.m_attribute & CFile::readOnly))
 	{
 		CString prompt;
 		AfxFormatString1(prompt, AFX_IDP_ASK_TO_SAVE, docname);
@@ -321,8 +321,8 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 BOOL CSpikeDoc::OnOpenDocument(LPCTSTR pszPathName)
 {
 	ClearData();
-	CFileStatus r_status;
-	if (!CFile::GetStatus(pszPathName, r_status))
+	CFileStatus status;
+	if (!CFile::GetStatus(pszPathName, status))
 		return FALSE;
 
 	CFile f;

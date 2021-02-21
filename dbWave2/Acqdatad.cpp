@@ -96,9 +96,9 @@ BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 	m_bValidReadBuffer = FALSE;
 
 	// check if file can be opened - exit if it can't and return an empty object
-	CFileStatus r_status;
-	const auto b_open = CFile::GetStatus(sz_path_name, r_status);
-	if (!b_open || r_status.m_size <= 4096)			// patch to avoid to open 1kb files ...
+	CFileStatus status;
+	const auto b_open = CFile::GetStatus(sz_path_name, status);
+	if (!b_open || status.m_size <= 4096)			// patch to avoid to open 1kb files ...
 	{
 		SAFE_DELETE(m_pXFile);
 		return FALSE;
@@ -181,10 +181,10 @@ bool CAcqDataDoc::dlgImportDataFile(CString& sz_path_name)
 BOOL CAcqDataDoc::openAcqFile(CString& cs_filename)
 {
 	CFileException fe;
-	CFileStatus r_status;
+	CFileStatus status;
 
 	// open file
-	UINT u_open_flag = (r_status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
+	UINT u_open_flag = (status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
 	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary;
 
 	int dataTypesArray[] = { DOCTYPE_AWAVE, DOCTYPE_SMR, DOCTYPE_ATLAB, DOCTYPE_ASDSYNTECH, DOCTYPE_MCID,  DOCTYPE_UNKNOWN };
@@ -904,8 +904,8 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 	auto cs_former_name = m_pXFile->GetFilePath();
 
 	// check if same file already exist
-	CFileStatus r_status;	// file status: time creation, ...
-	const auto b_file_already_exists = CFile::GetStatus(new_name, r_status);
+	CFileStatus status;
+	const auto b_file_already_exists = CFile::GetStatus(new_name, status);
 	if (b_file_already_exists != 0 && b_check_over_write)
 	{
 		auto prompt = new_name;
@@ -917,7 +917,7 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 	// check if collision with current file
 	auto b_is_duplicate_name = FALSE;
 	if (b_file_already_exists &&
-		cs_former_name.CompareNoCase(r_status.m_szFullName) == 0) // used in conjunction with CFile::GetStatus()
+		cs_former_name.CompareNoCase(status.m_szFullName) == 0) // used in conjunction with CFile::GetStatus()
 	{
 		b_is_duplicate_name = TRUE;
 		dummy_name = new_name;

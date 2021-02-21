@@ -1024,8 +1024,8 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	auto b_doc_exists = FALSE;
 	if (!docname.IsEmpty())
 	{
-		CFileStatus r_status;
-		b_doc_exists = CFile::GetStatus(docname, r_status);
+		CFileStatus status;
+		b_doc_exists = CFile::GetStatus(docname, status);
 	}
 	if (b_doc_exists) {
 		const auto flag = (GetDocument()->OpenCurrentDataFile() != nullptr);
@@ -1089,8 +1089,8 @@ void CViewSpikeSort::OnToolsAlignspikes()
 	auto docname = m_pSpkDoc->GetSourceFilename();
 	if (!docname.IsEmpty())
 	{
-		CFileStatus r_status;	// file status: time creation, ...
-		b_doc_exist = CFile::GetStatus(docname, r_status);
+		CFileStatus status;
+		b_doc_exist = CFile::GetStatus(docname, status);
 	}
 	if (!b_doc_exist)
 	{
