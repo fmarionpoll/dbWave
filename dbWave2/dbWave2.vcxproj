@@ -1240,6 +1240,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Tag.cpp" />
     <ClCompile Include="Taglines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1486,6 +1487,7 @@
     <ClInclude Include="StimLevelArray.h" />
     <ClInclude Include="StretchControls.h" />
     <ClInclude Include="subfileitem.h" />
+    <ClInclude Include="Tag.h" />
     <ClInclude Include="Taglines.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TemplateListWnd.h" />

@@ -1,52 +1,14 @@
 #pragma once
 
-////////////////////////////////////////////////////////////////////////////////
-// 	Taglines.h
-//  CTag: Specification file
-//
-//
-
-class CTag : public CObject
-{
-	DECLARE_SERIAL(CTag)
-	// Construction Destruction
-public:
-	CTag();
-	CTag(int refchan);
-	CTag(int val, int ref_chan);
-	CTag(long lval, int ref_chan);
-	CTag(const CTag& hc);					// Constructeur par copie
-	~CTag();
-
-	CTag& operator = (const CTag& arg);		// operator redefinition
-	void Serialize(CArchive& ar) override;
-
-	long Write(CFile* pdatafile);
-	BOOL Read(CFile* pdatafile);
-
-	// Management procedures
-public:
-	int 	m_refchan;						// channel associated (-1) if none
-	int 	m_pixel;
-	int 	m_value;						// line val
-	long	m_lvalue;						// assoc long val (for vertical bar)
-	CString m_csComment;					// comment
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Class CTagList
+#include "Tag.h"
 
 class CTagList : public CObject
 {
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Channel tags operations
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 protected:
 	CArray <CTag*, CTag*> tag_ptr_array;                    // array of tags
-	int			m_version;
-	int			InsertTag(CTag* pcur);
+	int		m_version;
+	int		insertTag(CTag* pcur);
 
 	// Construction, Destruction
 public:
@@ -75,7 +37,7 @@ public:
 	CString GetTagComment(int itag);		// get comment
 
 	int 	GetNTags();
-	CTag* GetTag(int itag);
+	CTag*	GetTag(int itag);
 
 	long	Write(CFile* pdatafile);
 	BOOL	Read(CFile* pdatafile);

@@ -95,8 +95,10 @@ int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
 	return DOCTYPE_UNKNOWN;
 }
 
-BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) 
+BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 {
+	CWaveFormat* pWFormat = pBuf->GetpWaveFormat();
+	CWaveChanArray* pArray = pBuf->GetpWavechanArray();
 	// Read file header
 	auto bflag = TRUE;
 
@@ -130,54 +132,64 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	pWFormat->acqtime = CTime(
 		arrayGetTimeDate.wYear, arrayGetTimeDate.ucMon, arrayGetTimeDate.ucDay, 
 		arrayGetTimeDate.ucHour, arrayGetTimeDate.ucMin, arrayGetTimeDate.ucSec);
-
 	pWFormat->scan_count = 0;
 	pArray->chanArray_removeAll();
-	if (lowestFreeChan > 0) {
-		for (int cedChan = 0; cedChan < lowestFreeChan; cedChan++) {
-			int chanType = S64ChanType(m_nFid, cedChan);
-			//ATLTRACE2(" chan %i comment= %s ...\n", cedChan, getChannelComment(cedChan));
-			switch (chanType) {
-			case CHANTYPE_Adc:
-			{
-				int i = pArray->chanArray_add();
-				CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
-				read_ChannelParameters(pChan, cedChan);
-				pWFormat->scan_count++;
-				pWFormat->chrate = (float) (1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
-				pWFormat->sample_count = (long) (pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
-			}
-				break;
-			case CHANTYPE_EventFall:	
-				//ATLTRACE2("%2d Event on falling edge\n", cedChan); 
-				break;
-			case CHANTYPE_EventRise:	
-				//ATLTRACE2("%2d Event on rising edge\n", cedChan);
-				break;
-			case CHANTYPE_EventBoth:	
-				//ATLTRACE2("%2d Event on both edges\n", cedChan); 
-				break;
-			case CHANTYPE_Marker:		
-				//ATLTRACE2("%2d Marker data\n", cedChan); 
-				break;
-			case CHANTYPE_WaveMark:		
-				//ATLTRACE2("%2d WaveMark data\n", cedChan);
-				break;
-			case CHANTYPE_RealMark:		
-				//ATLTRACE2("%2d RealMark data\n", cedChan);
-				break;
-			case CHANTYPE_TextMark:		
-				//ATLTRACE2("%2d TextMark data\n", cedChan); 
-				break;
-			case CHANTYPE_RealWave:		
-				//ATLTRACE2("%2d RealWave data\n", cedChan); 
-				break;
-			case CHANTYPE_unused:
-			default:
-				//ATLTRACE2("%2d unused channel (type = %i)\n", cedChan, chanType);
-				break;
-			}
+
+	for (int cedChan = 1; cedChan < maxChan; cedChan++) {	// lowestFreeChan
+		int chanType = S64ChanType(m_nFid, cedChan);
+		if (chanType == 0)
+			continue;
+
+		CString descriptor;
+		switch (chanType) {
+		case CHANTYPE_Adc:
+		{
+			descriptor = "Adc data";
+			int i = pArray->chanArray_add();
+			CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
+			read_ChannelParameters(pChan, cedChan);
+			pWFormat->scan_count++;
+			pWFormat->chrate = (float)(1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
+			pWFormat->sample_count = (long)(pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
 		}
+		break;
+		case CHANTYPE_EventFall:
+			descriptor = "Event on falling edge";
+			read_EventFall(cedChan);
+			break;
+		case CHANTYPE_EventRise:
+			descriptor = "Event on rising edge";
+			break;
+		case CHANTYPE_EventBoth:
+			descriptor = "Event on both edges";
+			break;
+		case CHANTYPE_Marker:
+			descriptor = "Marker data";
+			break;
+		case CHANTYPE_WaveMark:
+			descriptor = "WaveMark data";
+			break;
+		case CHANTYPE_RealMark:
+			descriptor = "RealMark data";
+			break;
+		case CHANTYPE_TextMark:
+			descriptor = "TextMark data";
+			break;
+		case CHANTYPE_RealWave:
+			descriptor = "RealWave data";
+			break;
+		case CHANTYPE_unused:
+		default:
+			descriptor = "unused channel";
+			break;
+		}
+
+		CString comment;
+		comment.Format(_T(" chan %i ["), cedChan);
+		comment += _T("] title = ") + descriptor + read_ChannelTitle(cedChan);
+		comment += _T(" comment =") + read_ChannelComment(cedChan) + _T("\n");
+		ATLTRACE2(comment);
+
 		//pWFormat->chrate = (float)(1. / cfsHeader.sample_interval);
 		//pWFormat->sample_count = cfsHeader.number_of_samples;
 	}
@@ -222,6 +234,19 @@ CString  CDataFileFromCEDSpike2::read_ChannelComment(int cedChan)
 	if (sizeComment > 0) {
 		char* buffer = new char[sizeComment];
 		int flag = S64GetChanComment(m_nFid, cedChan, buffer, 0);
+		comment = CString(buffer);
+		delete[] buffer;
+	}
+	return comment;
+}
+
+CString  CDataFileFromCEDSpike2::read_ChannelTitle(int cedChan)
+{
+	int sizeComment = S64GetChanTitle(m_nFid, cedChan, nullptr, -1);
+	CString comment;
+	if (sizeComment > 0) {
+		char* buffer = new char[sizeComment];
+		int flag = S64GetChanTitle(m_nFid, cedChan, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
 	}
@@ -309,6 +334,11 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 		}
 	}
 	return errorMsg;
+}
+
+void CDataFileFromCEDSpike2::read_EventFall(int cedChan)
+{
+
 }
 
 

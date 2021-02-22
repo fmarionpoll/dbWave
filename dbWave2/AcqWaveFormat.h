@@ -62,8 +62,8 @@ public:
 
 	//------------------- Total : 33 variable members
 protected:
-	static CString AddComments(const CString& p_separator, BOOL bExpl, const CString& csExpl, const CString& cscomment);
-	void Read_v8_and_before(CArchive& ar, WORD version);
+	static CString	addComments(const CString& p_separator, BOOL bExpl, const CString& csExpl, const CString& cscomment);
+	void 			read_v8_and_before(CArchive& ar, WORD version);
 
 public:
 	CWaveFormat();	// constructor

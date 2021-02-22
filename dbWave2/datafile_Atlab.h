@@ -13,7 +13,7 @@ public:
 
 	// Operations
 public:
-	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
+	BOOL ReadDataInfos(CWaveBuf* pBuf);
 	int  CheckFileType(CString& cs_filename);
 protected:
 	void InitDummyChansInfo(short chanlistindex);

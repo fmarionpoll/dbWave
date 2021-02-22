@@ -13,22 +13,28 @@ class CWaveBuf : public CObject
 
 	// Attributes
 protected:
-	short* GetWBAdrRawDataBuf() const;
-	short* GetWBAdrRawDataElmt(int chan, int index) const;
-	short* GetWBAdrTransfData() const;
-	short* GetWBAdrTransfDataElmt(int index) const;
+	short*			GetWBAdrRawDataBuf() const;
+	short*			GetWBAdrRawDataElmt(int chan, int index) const;
+	short*			GetWBAdrTransfData() const;
+	short*			GetWBAdrTransfDataElmt(int index) const;
+
 public:
-	int		GetWBNumElements() const;
-	int		GetWBNumChannels() const;
-	void	SetWBSampleRate(float fSampRate);
-	float	GetWBSampleRate() const;
-	BOOL 	GetWBVoltsperBin(int ch_index, float* volts_per_bin, int mode = 0) const;
+	int				GetWBNumElements() const;
+	int				GetWBNumChannels() const;
+	void			SetWBSampleRate(float fSampRate);
+	float			GetWBSampleRate() const;
+	BOOL 			GetWBVoltsperBin(int ch_index, float* volts_per_bin, int mode = 0) const;
+	inline CTagList* GetpHZtags()		{ return &m_hz_tags; }
+	inline CTagList* GetpVTtags()		{ return &m_vt_tags; }
+	inline CWaveChanArray* GetpWavechanArray() { return &m_chanArray; }
+	inline CWaveFormat*	GetpWaveFormat()	{ return &m_waveFormat; }
+
 
 	//operations
 	CWaveBuf();
-	virtual ~CWaveBuf();
-	void	Serialize(CArchive& ar) override;
-	int		WBDatachanSetnum(int i);
+	virtual			~CWaveBuf();
+	void			Serialize(CArchive& ar) override;
+	int				WBDatachanSetnum(int i);
 
 	// Transform Data
 	//------------
@@ -43,36 +49,36 @@ public:
 
 	// Transformations
 	//----------------
-	void 	BDeriv(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BCopy(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BLanczo2(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDiffer1(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDiffer2(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDiffer3(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDiffer10(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDeriv(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BCopy(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BLanczo2(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDiffer1(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDiffer2(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDiffer3(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDiffer10(const short* lp_source, short* lp_dest, int cx) const;
 
-	void 	BLanczo3(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri1f3(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri2f3(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri2f5(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BDeri3f3(const short* lp_source, short* lp_dest, int cx) const;
-	void 	BMovAvg30(short* lp_source, short* lp_dest, int cx) const;
-	void	BMedian30(short* lp_source, short* lp_dest, int cx);
-	void	BMedian35(short* lp_source, short* lp_dest, int cx);
-	void	BMedian(short* lp_source, short* lp_dest, int cx, int nspan);
-	void	BRMS(short* lp_source, short* lp_dest, int cx) const;
+	void 			BLanczo3(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDeri1f3(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDeri2f3(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDeri2f5(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BDeri3f3(const short* lp_source, short* lp_dest, int cx) const;
+	void 			BMovAvg30(short* lp_source, short* lp_dest, int cx) const;
+	void			BMedian30(short* lp_source, short* lp_dest, int cx);
+	void			BMedian35(short* lp_source, short* lp_dest, int cx);
+	void			BMedian(short* lp_source, short* lp_dest, int cx, int nspan);
+	void			BRMS(short* lp_source, short* lp_dest, int cx) const;
 
 private:
-	void	DeleteBuffers();
-
-	// data
-	//-----
+	void			deleteBuffers();
 
 protected:
-	BOOL	CreateWBuffer(int i_num_elements, int nchannels = 1);
+	BOOL			CreateWBuffer(int i_num_elements, int nchannels = 1);
 
-	CWaveChanArray m_chanArray;				// array of structures with the channel description
-	CWaveFormat    m_waveFormat;			// structure with data acquisition def & parameters
+	CWaveChanArray	m_chanArray{};			// array of structures with the channel description
+	CWaveFormat		m_waveFormat{};			// structure with data acquisition def & parameters
+	CTagList		m_hz_tags{};		// list of horizontal cursors
+	CTagList		m_vt_tags{};		// list of vertical tags
+
 
 	static int		m_maxtransform;			// number of transmformation allowed
 	static std::string	m_pTransformsAllowed[];	// ASCII description of each transformation

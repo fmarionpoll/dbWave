@@ -64,7 +64,7 @@ public:
 	// Operations
 public:
 	int			CheckFileType(CString& cs_filename) override;
-	BOOL		ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
+	BOOL		ReadDataInfos(CWaveBuf* pBuf) override;
 	bool		OpenDataFile(CString& sz_path_name, UINT u_open_flag) override;
 	void		CloseDataFile() override;
 	long		ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray) override;
@@ -84,8 +84,10 @@ protected:
 	void		read_ChannelParameters(CWaveChan* pChan, int cedChan);
 	CString		read_FileComment(int nInd);
 	CString		read_ChannelComment(int cedChan);
+	CString		read_ChannelTitle(int cedChan);
 	long		read_ChannelData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
 	long		relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
 	CString		getErrorMessage(int flag);
+	void		read_EventFall(int cedChan);
 };
 

@@ -211,14 +211,12 @@ BOOL CAcqDataDoc::openAcqFile(CString& cs_filename)
 	if (m_pWBuf == nullptr)
 		m_pWBuf = new CWaveBuf;
 	ASSERT(m_pWBuf != NULL);
-	const auto p_chan_array	= GetpWavechanArray();
-	const auto p_wave_format= GetpWaveFormat();
-	const auto b_flag		= m_pXFile->ReadDataInfos(p_wave_format, p_chan_array);
+	const auto b_flag = m_pXFile->ReadDataInfos(m_pWBuf);
 	
 	// create buffer
 	AllocBUF();
-	m_pXFile->ReadVTtags(&m_vt_tags);
-	m_pXFile->ReadHZtags(&m_hz_tags);
+	m_pXFile->ReadVTtags(m_pWBuf->GetpVTtags());
+	m_pXFile->ReadHZtags(m_pWBuf->GetpHZtags());
 
 	return b_flag;
 }
@@ -354,7 +352,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	pdataDest->WriteString(cs_out);
 
 	// loop to read actual data
-	ReadDataBlock(0);
+	readDataBlock(0);
 	const auto mv_factor = p_wave_format->fullscale_Volts / p_wave_format->binspan * 1000.;
 	for (long j = 0; j < GetDOCchanLength(); j++)
 	{
@@ -500,7 +498,7 @@ BOOL CAcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 	if ((*l_first - n_span < m_lBUFchanFirst)
 		|| (*l_last + n_span > m_lBUFchanLast) || !m_bValidReadBuffer)
 	{
-		flag = ReadDataBlock(*l_first - n_span);
+		flag = readDataBlock(*l_first - n_span);
 		m_bValidReadBuffer = TRUE;
 		m_bValidTransfBuffer = FALSE;
 	}
@@ -522,7 +520,7 @@ BOOL CAcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 			TRUE & update m_lBUFchanFirst, m_lBUFchanLast
  comments:
  **************************************************************************/
-BOOL CAcqDataDoc::ReadDataBlock(long l_first)
+BOOL CAcqDataDoc::readDataBlock(long l_first)
 {
 	// check limits
 	if (l_first < 0)
@@ -578,7 +576,7 @@ BOOL CAcqDataDoc::ReadDataBlock(long l_first)
 void CAcqDataDoc::ReadDataInfos()
 {
 	ASSERT(m_pXFile != NULL);
-	m_pXFile->ReadDataInfos(GetpWaveFormat(), GetpWavechanArray());
+	m_pXFile->ReadDataInfos(m_pWBuf);
 	AllocBUF();
 }
 
@@ -594,7 +592,7 @@ void CAcqDataDoc::ReadDataInfos()
 int CAcqDataDoc::BGetVal(const int channel, const long l_index)
 {
 	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
-		ReadDataBlock(l_index);
+		readDataBlock(l_index);
 	const int index = l_index - m_lBUFchanFirst;
 	return *(m_pWBuf->GetWBAdrRawDataElmt(channel, index));
 }
@@ -635,7 +633,7 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 	// ASSERT make sure that all data requested are within the buffer ...
 	ASSERT(!(l_first < m_lBUFchanFirst) && !(l_last > m_lBUFchanLast));
 	if (((l_first - l_span) < m_lBUFchanFirst) || ((l_last + l_span) > m_lBUFchanLast)) // we should never get there
-		ReadDataBlock(l_first - l_span);							// but, just in case
+		readDataBlock(l_first - l_span);							// but, just in case
 
 	auto n_points = static_cast<int>(l_last - l_first + 1);
 	const int n_channels = GetpWaveFormat()->scan_count;
@@ -822,7 +820,7 @@ BOOL CAcqDataDoc::CreateAcqFile(CString& cs_file_name)
 BOOL CAcqDataDoc::WriteHZtags(CTagList* p_tags)
 {
 	if (p_tags == nullptr)
-		p_tags = &m_hz_tags;
+		p_tags = m_pWBuf->GetpHZtags();
 	if (p_tags == nullptr || p_tags->GetNTags() == 0)
 		return TRUE;
 	return m_pXFile->WriteHZtags(p_tags);
@@ -831,7 +829,7 @@ BOOL CAcqDataDoc::WriteHZtags(CTagList* p_tags)
 BOOL CAcqDataDoc::WriteVTtags(CTagList* p_tags)
 {
 	if (p_tags == nullptr)
-		p_tags = &m_vt_tags;
+		p_tags = m_pWBuf->GetpVTtags();
 	if (p_tags == nullptr || p_tags->GetNTags() == 0)
 		return TRUE;
 	return m_pXFile->WriteVTtags(p_tags);
@@ -977,10 +975,10 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 
 	// save other objects if exist (tags, others)
 
-	if (m_hz_tags.GetNTags() > 0)
-		p_new_doc->WriteHZtags(&m_hz_tags);
-	if (m_vt_tags.GetNTags() > 0)
-		p_new_doc->WriteVTtags(&m_vt_tags);
+	if (m_pWBuf->GetpHZtags()->GetNTags() > 0)
+		p_new_doc->WriteHZtags(m_pWBuf->GetpHZtags());
+	if (m_pWBuf->GetpVTtags()->GetNTags() > 0)
+		p_new_doc->WriteVTtags(m_pWBuf->GetpVTtags());
 
 	// if destination name == source: remove source and rename destination
 	if (b_is_duplicate_name)

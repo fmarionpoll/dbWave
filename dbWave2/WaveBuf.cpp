@@ -29,7 +29,7 @@ CWaveBuf::CWaveBuf()
 
 CWaveBuf::~CWaveBuf()
 {
-	DeleteBuffers();
+	deleteBuffers();
 	SAFE_DELETE_ARRAY(m_parraySorted);
 	SAFE_DELETE_ARRAY(m_parrayCircular);
 }
@@ -91,7 +91,7 @@ float CWaveBuf::GetWBSampleRate() const
 	return m_waveFormat.chrate;
 }
 
-void CWaveBuf::DeleteBuffers()
+void CWaveBuf::deleteBuffers()
 {
 	if (m_pWData != nullptr)
 	{
@@ -117,7 +117,7 @@ BOOL CWaveBuf::CreateWBuffer(const int i_num_elements, const int nchannels)
 	const size_t dwBufferSize = i_num_elements * nchannels * sizeof(short) + dwSafeFactor;
 	if (m_dwBufferSize != dwBufferSize)
 	{
-		DeleteBuffers();
+		deleteBuffers();
 		m_pWData = static_cast<short*>(malloc(dwBufferSize));
 		ASSERT(m_pWData != NULL);
 		if (m_pWData == nullptr)

@@ -14,7 +14,7 @@ public:
 	virtual ~CDataFileAWAVE();
 
 	int  CheckFileType(CString& cs_filename) override;
-	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
+	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
 	BOOL ReadHZtags(CTagList* pHZtags) override;
 	BOOL ReadVTtags(CTagList* pVTtags) override;
 	BOOL WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC) override;

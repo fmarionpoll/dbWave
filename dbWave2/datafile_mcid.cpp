@@ -36,8 +36,10 @@ void CDataFileMCID::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-BOOL CDataFileMCID::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
+BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 {
+	CWaveFormat* pWFormat = pBuf->GetpWaveFormat();
+	CWaveChanArray* pArray = pBuf->GetpWavechanArray();
 	MCID_HEADER mcidHeader;
 	Seek(0, CFile::begin);
 	Read(&mcidHeader, sizeof(MCID_HEADER));

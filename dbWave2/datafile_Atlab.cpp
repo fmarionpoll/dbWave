@@ -34,8 +34,10 @@ void CDataFileATLAB::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-BOOL CDataFileATLAB::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
+BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 {
+	CWaveFormat* pWFormat = pBuf->GetpWaveFormat();
+	CWaveChanArray* pArray = pBuf->GetpWavechanArray();
 	// Read file header
 	auto bflag	= TRUE;
 	m_pWFormat	= pWFormat;

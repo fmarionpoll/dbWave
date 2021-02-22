@@ -103,33 +103,33 @@ public:
 
 	// DAO database functions
 public:
-	inline long GetDB_NRecords() { return m_pDB->GetNRecords(); }
+	inline long		GetDB_NRecords() { return m_pDB->GetNRecords(); }
 	inline CDaoRecordset* GetDB_Recordset() { return &m_pDB->m_mainTableSet; }
-	inline void DBRefreshQuery() { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery(); }
-	void		DBDeleteCurrentRecord();
-	CString		GetDB_CurrentDatFileName(const BOOL bTest = FALSE);
-	CString		GetDB_CurrentSpkFileName(const BOOL bTest = FALSE);
-	CString		SetDB_CurrentSpikeFileName();
-	inline void SetDB_DataLen(long len) { m_pDB->SetDataLen(len); }
-	long		GetDB_DataLen();
-	void		SetDB_CurrentRecordFlag(int flag);
-	inline int	GetDB_CurrentRecordFlag() { return m_pDB->m_mainTableSet.m_flag; }
-	void		SetDB_PathsRelative_to_DataBaseFile();
-	void		SetDB_PathsAbsolute();
-	void		DBTransferDatPathToSpkPath();
-	void		DBDeleteUnusedEntries();
+	inline void		DBRefreshQuery() { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr); m_pDB->m_mainTableSet.RefreshQuery(); }
+	void			DBDeleteCurrentRecord();
+	CString			GetDB_CurrentDatFileName(const BOOL bTest = FALSE);
+	CString			GetDB_CurrentSpkFileName(const BOOL bTest = FALSE);
+	CString			SetDB_CurrentSpikeFileName();
+	inline void		SetDB_DataLen(long len) { m_pDB->SetDataLen(len); }
+	long			GetDB_DataLen();
+	void			SetDB_CurrentRecordFlag(int flag);
+	inline int		GetDB_CurrentRecordFlag() { return m_pDB->m_mainTableSet.m_flag; }
+	void			SetDB_PathsRelative_to_DataBaseFile();
+	void			SetDB_PathsAbsolute();
+	void			DBTransferDatPathToSpkPath();
+	void			DBDeleteUnusedEntries();
 
-	long		GetDB_CurrentRecordPosition();
-	long		GetDB_CurrentRecordID();
-	inline BOOL	SetDB_CurrentRecordPosition(long ifile) { return m_pDB->SetIndexCurrentFile(ifile); }
-	inline BOOL	DBMoveToID(long recordID) { return m_pDB->MoveToID(recordID); }
-	inline BOOL DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
-	inline BOOL DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
-	inline BOOL DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
-	inline BOOL DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
+	long			GetDB_CurrentRecordPosition();
+	long			GetDB_CurrentRecordID();
+	inline BOOL		SetDB_CurrentRecordPosition(long ifile) { return m_pDB->SetIndexCurrentFile(ifile); }
+	inline BOOL		DBMoveToID(long recordID) { return m_pDB->MoveToID(recordID); }
+	inline BOOL		DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
+	inline BOOL		DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
+	inline BOOL		DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
+	inline BOOL		DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
 
 protected:
-	BOOL		OpenDatabase(LPCTSTR lpszPathName);
+	BOOL			OpenDatabase(LPCTSTR lpszPathName);
 
 	// Generated message map functions
 protected:

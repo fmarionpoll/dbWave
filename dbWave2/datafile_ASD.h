@@ -11,7 +11,7 @@ public:
 
 	// Operations
 public:
-	BOOL ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) override;
+	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
 	int CheckFileType(CString& cs_filename) override;
 
 protected:

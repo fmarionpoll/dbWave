@@ -407,8 +407,10 @@ BOOL CDataFileAWAVE::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 // BOOL ReadDataInfos()
 // read and initialize the members variable
 
-BOOL CDataFileAWAVE::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
+BOOL CDataFileAWAVE::ReadDataInfos(CWaveBuf* pBuf)
 {
+	CWaveFormat* pWFormat = pBuf->GetpWaveFormat();
+	CWaveChanArray* pArray = pBuf->GetpWavechanArray();
 	DeleteMap();								// cleanup map
 
 	// fill map by reading all descriptors until end of list

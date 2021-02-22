@@ -62,10 +62,11 @@
 #include "StretchControls.h"
 #include "dbwave_constants.h"
 
+#include "Tag.h"
 #include "Taglines.h"		// tag structures
-#include "datafile_X.h"		// data file base class
-#include "wavebuf.h"		// data file buffer structure
 #include "StimLevelArray.h"
+#include "wavebuf.h"		// data file buffer structure
+#include "datafile_X.h"		// data file base class
 #include "awavepar.h"		// view data options
 #include "spikepar.h"		// spike parameters options
 #include "dbMultiDocTemplate.h"

@@ -94,7 +94,6 @@ BOOL CViewdbWave::PreCreateWindow(CREATESTRUCT& cs)
 
 void CViewdbWave::OnInitialUpdate()
 {
-	ATLTRACE2("CViewdbWave::OnInitialUpdate \n");
 	// init document and DaoRecordView
 	CdbWaveDoc* p_dbwave_doc = GetDocument();
 	m_pSet = &p_dbwave_doc->m_pDB->m_mainTableSet;

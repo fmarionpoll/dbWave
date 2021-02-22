@@ -59,7 +59,7 @@ int CDataFileX::CheckFileType(CString& cs_filename)
 {
 	return DOCTYPE_UNKNOWN;
 }
-BOOL CDataFileX::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray)
+BOOL CDataFileX::ReadDataInfos(CWaveBuf* pBuf)
 {
 	return TRUE;
 }

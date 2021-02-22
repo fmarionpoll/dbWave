@@ -21,7 +21,7 @@ public:
 	virtual void	CloseDataFile();
 	// Operations
 	virtual int		CheckFileType(CString& cs_filename);
-	virtual BOOL	ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
+	virtual BOOL	ReadDataInfos(CWaveBuf* pBuf);
 	virtual	long	ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray);
 	virtual BOOL	ReadHZtags(CTagList* pHZtags);
 	virtual BOOL	ReadVTtags(CTagList* pVTtags);
