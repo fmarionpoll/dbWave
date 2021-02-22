@@ -63,7 +63,7 @@ void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const
 
 bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_flag) 
 {
-	ATLTRACE2("--- CED OpenDataFile (old nFid= %i) \n", m_nFid );
+	//ATLTRACE2("--- CED OpenDataFile (old nFid= %i) \n", m_nFid );
 	m_nFid = S64Open(CT2A(sz_path_name), -1);
 	if (m_nFid <= 0) {
 		CString message = CString("OpenCEDDataFile error: ") + getErrorMessage(m_nFid);
@@ -76,7 +76,7 @@ bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_fla
 void CDataFileFromCEDSpike2::CloseDataFile() 
 {
 	if (m_nFid >= 0) {
-		ATLTRACE2("--- CED CloseDataFile (old nFid= %i) \n", m_nFid);
+		//ATLTRACE2("--- CED CloseDataFile (old nFid= %i) \n", m_nFid);
 		int flag = S64Close(m_nFid);
 		if (flag < 0) {
 			CString message = CString("CloseCEDDataFile error: ") + getErrorMessage(flag);

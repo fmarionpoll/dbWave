@@ -375,6 +375,12 @@ CAcqDataDoc* CdbWaveDoc::OpenCurrentDataFile()
 	return m_pDat;
 }
 
+void  CdbWaveDoc::CloseCurrentDataFile() 
+{
+	if (m_pDat != nullptr)
+		m_pDat->AcqCloseFile();
+}
+
 CSpikeDoc* CdbWaveDoc::OpenCurrentSpikeFile()
 {
 	// spike doc to read data files

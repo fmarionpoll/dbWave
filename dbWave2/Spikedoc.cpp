@@ -98,11 +98,11 @@ void CSpikeDoc::Serialize(CArchive& ar)
 		WORD wwVersion;
 		ar >> wwVersion;					// R1
 		if (wwVersion == 7)
-			ReadVersion7(ar);
+			readVersion7(ar);
 		else if (wwVersion == 6)
-			ReadVersion6(ar);
+			readVersion6(ar);
 		else if (wwVersion < 6)
-			ReadBeforeVersion6(ar, wwVersion);
+			readBeforeVersion6(ar, wwVersion);
 		else
 		{
 			ASSERT(FALSE);
@@ -134,7 +134,7 @@ void CSpikeDoc::SortStimArray()
 	}
 }
 
-void CSpikeDoc::ReadBeforeVersion6(CArchive& ar, WORD wwVersion)
+void CSpikeDoc::readBeforeVersion6(CArchive& ar, WORD wwVersion)
 {
 	if (wwVersion >= 2 && wwVersion < 5)
 	{
@@ -176,7 +176,7 @@ void CSpikeDoc::ReadBeforeVersion6(CArchive& ar, WORD wwVersion)
 	m_spkclass.Serialize(ar);
 }
 
-void CSpikeDoc::ReadVersion6(CArchive& ar)
+void CSpikeDoc::readVersion6(CArchive& ar)
 {
 	ar >> m_detectiondate;		// W2
 	ar >> m_comment;			// W3
@@ -210,7 +210,7 @@ void CSpikeDoc::ReadVersion6(CArchive& ar)
 	m_spkclass.Serialize(ar);
 }
 
-void CSpikeDoc::ReadVersion7(CArchive& ar)
+void CSpikeDoc::readVersion7(CArchive& ar)
 {
 	ar >> m_detectiondate;		// W2
 	ar >> m_comment;			// W3

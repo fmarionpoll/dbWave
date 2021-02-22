@@ -49,6 +49,7 @@ public:
 	BOOL			OnNewDocument(LPCTSTR lpszPathName);
 	CAcqDataDoc*	OpenCurrentDataFile();
 	CAcqDataDoc*	GetcurrentDataDocument() const { return m_pDat; }
+	void			CloseCurrentDataFile();
 	CSpikeDoc*		OpenCurrentSpikeFile();
 	CSpikeDoc*		GetcurrentSpkDocument() const { return m_pSpk; }
 

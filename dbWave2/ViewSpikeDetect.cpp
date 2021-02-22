@@ -50,8 +50,6 @@ CViewSpikeDetection::CViewSpikeDetection()
 
 CViewSpikeDetection::~CViewSpikeDetection()
 {
-	if (p_spike_doc_ != nullptr)
-		SaveCurrentSpikeFile();
 }
 
 BOOL CViewSpikeDetection::PreCreateWindow(CREATESTRUCT& cs)
@@ -194,7 +192,6 @@ void CViewSpikeDetection::OnActivateView(BOOL bActivate, CView* pActivateView, C
 	// exit view
 	else
 	{
-		SaveCurrentSpikeFile();
 		SerializeWindowsState(BSAVE);
 		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_viewspikes.bincrflagonsave = ((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();

@@ -37,27 +37,25 @@ public:
 	CString		GetFileInfos();
 	void		InitSourceDoc(CAcqDataDoc* p_document);
 
-	CString		GetSourceFilename()			const { return m_acqfile; }
-	CTime 		GetDate()					const { return m_detectiondate; }
-	CString		GetComment()				const { return m_comment; }
+	CString		GetSourceFilename()	const { return m_acqfile; }
+	CTime 		GetDate()			const { return m_detectiondate; }
+	CString		GetComment()		const { return m_comment; }
+	CTime		GetAcqTime()		const { return m_acqtime; }
+	float 		GetAcqDuration()	const { return m_acqsize / m_acqrate; }
+	long		GetAcqSize()		const { return m_acqsize; }
+	float		GetAcqRate()		const { return m_acqrate; }
 
-	int			GetSpkList_Size() const { return spikelist_array.GetSize(); }
+	int			GetSpkList_Size()	const { return spikelist_array.GetSize(); }
 	void		SetSpkList_Size(int i) { return spikelist_array.SetSize(i); }
 	CSpikeList* SetSpkList_AsCurrent(int ichan);
 	CSpikeList* GetSpkList_Current();
 	CSpikeList* GetSpkList_At(int ichan);
-	int			GetSpkList_CurrentIndex()	const { return m_currspklist; }
-
+	int			GetSpkList_CurrentIndex() const { return m_currspklist; }
 	int			AddSpkList() { spikelist_array.SetSize(GetSpkList_Size() + 1); return GetSpkList_Size(); }
 
 	void		SetSourceFilename(CString cs) { m_acqfile = cs; }
 	void		SetDetectionDate(CTime t) { m_detectiondate = t; }
 	void		SetComment(CString cs) { m_comment = cs; }
-
-	CTime		GetAcqTime()		const { return m_acqtime; }
-	float 		GetAcqDuration()	const { return m_acqsize / m_acqrate; }
-	long		GetAcqSize()		const { return m_acqsize; }
-	float		GetAcqRate()		const { return m_acqrate; }
 
 	void		SortStimArray();
 
@@ -89,10 +87,9 @@ public:
 
 protected:
 	void		Serialize(CArchive& ar) override;
-
-	void		ReadBeforeVersion6(CArchive& ar, WORD wwVersion);
-	void		ReadVersion6(CArchive& ar);
-	void		ReadVersion7(CArchive& ar);
+	void		readBeforeVersion6(CArchive& ar, WORD wwVersion);
+	void		readVersion6(CArchive& ar);
+	void		readVersion7(CArchive& ar);
 
 	// Generated message map functions
 protected:

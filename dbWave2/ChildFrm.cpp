@@ -496,9 +496,7 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	// delete old view without deleting document
 	const auto bautodel = p_dbwave_doc->m_bAutoDelete;
 	p_dbwave_doc->m_bAutoDelete = FALSE;
-	CAcqDataDoc* pDataDoc = p_dbwave_doc->GetcurrentDataDocument();
-	if (pDataDoc != nullptr)
-		pDataDoc->AcqCloseFile();
+	p_dbwave_doc->CloseCurrentDataFile();
 	p_current_view->DestroyWindow();
 	p_dbwave_doc->m_bAutoDelete = bautodel;
 

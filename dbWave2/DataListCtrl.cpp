@@ -263,8 +263,6 @@ void CDataListCtrl::SetCurSel(int recposition)
 
 void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 {
-	ATLTRACE("CDataListCtrl::UpdateCache -- enter \n");
-
 	// adjust number of items in the array and adjust ifirst and ilast
 	const auto inb_visible = ilast - ifirst + 1;
 	if (ifirst < 0)
@@ -426,7 +424,6 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	// restore document conditions
 	if (indexcurrentfile >= 0)
 		p_dbwave_doc->SetDB_CurrentRecordPosition(indexcurrentfile);
-	ATLTRACE("CDataListCtrl::UpdateCache -- leave \n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
