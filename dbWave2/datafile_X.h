@@ -1,18 +1,14 @@
-// CDataFileX.h : header file
-//
-/////////////////////////////////////////////////////////////////////////////
-// CDataFileX document
 
 #pragma once
 
-// The different type of the document recognized
+// Document types 
+constexpr auto DOCTYPE_UNKNOWN		= -1;	// document type not recognized;
 constexpr auto DOCTYPE_AWAVE		= 0;	// aWave document;
 constexpr auto DOCTYPE_ASYST		= 1;	// ASYST document;
 constexpr auto DOCTYPE_ATLAB		= 2;	// ATLAB document;
 constexpr auto DOCTYPE_ASDSYNTECH	= 3;	// ASD SYNTECH document (data);
 constexpr auto DOCTYPE_MCID			= 4;	// MCI cf A French, Halifax;
 constexpr auto DOCTYPE_SMR			= 5;	// CFS cambridge Filing system;
-constexpr auto DOCTYPE_UNKNOWN		= -1;	// document type not recognized;
 
 class CDataFileX : public CFile
 {

@@ -12,6 +12,31 @@ constexpr auto CHANTYPE_RealMark	= 7;
 constexpr auto CHANTYPE_TextMark	= 8;
 constexpr auto CHANTYPE_RealWave	= 9;
 
+constexpr int S64_OK				= 0;
+constexpr int NO_FILE				= -1;
+constexpr int NO_BLOCK				= -2;
+constexpr int CALL_AGAIN			= -3;
+constexpr int NO_ACCESS				= -5;
+constexpr int NO_MEMORY				= -8;
+constexpr int NO_CHANNEL			= -9;
+constexpr int CHANNEL_USED			= -10;
+constexpr int CHANNEL_TYPE			= -11;
+constexpr int PAST_EOF				= -12;
+constexpr int WRONG_FILE			= -13;
+constexpr int NO_EXTRA				= -14;
+constexpr int BAD_READ				= -17;
+constexpr int BAD_WRITE				= -18;
+constexpr int CORRUPT_FILE			= -19;
+constexpr int PAST_SOF				= -20;
+constexpr int READ_ONLY				= -21;
+constexpr int BAD_PARAM				= -22;
+constexpr int OVER_WRITE			= -23;
+constexpr int MORE_DATA				= -24;
+
+struct errorMessage {
+	int			val;
+	const char* msg;
+};
 
 struct TTimeDate            // bit compatible with TSONTimeDate
 {
@@ -29,7 +54,7 @@ struct TTimeDate            // bit compatible with TSONTimeDate
 
 
 class CDataFileFromCEDSpike2 :
-    public CDataFileX
+	public CDataFileX
 {
 public:
 	CDataFileFromCEDSpike2();
@@ -46,20 +71,21 @@ public:
 
 	// Implementation
 public:
-	
+
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
 protected:
-	int			m_nFid			=-1;
+	static		errorMessage errorMessages[];
+	int			m_nFid	=-1;
 
 	void		initWaveChan(CWaveChan* pChan, int cedChan);
 	CString		getFileComment(int nInd);
 	CString		getChannelComment(int nChan);
-	long		read_data_oneChannel(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
-	long		relocate_tFrom_to_tFirst(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
-
+	long		readData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
+	long		relocateData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
+	CString		getErrorMessage(int flag);
 };
 

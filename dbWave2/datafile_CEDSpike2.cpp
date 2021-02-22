@@ -12,6 +12,28 @@ IMPLEMENT_DYNCREATE(CDataFileFromCEDSpike2, CDataFileX)
 const int	LENCEDSON	= 16;
 const char	CEDSON64[] = "CED_DATA";
 
+errorMessage CDataFileFromCEDSpike2::errorMessages[] = {
+		{ S64_OK, "There was no error"},
+		{ NO_FILE, "Attempt to use when file not open, or use of an invalid file handle, or no spare file handle"},
+		{ NO_BLOCK, " Failed to allocate a disk block when writing to the file.The disk is probably full, or there was a disk error."},
+		{ CALL_AGAIN, " This is a long operation, call again."},
+		{ NO_ACCESS, " This operation was not allowed."},
+		{ NO_MEMORY, " Out of memory reading a 32 - bit son file."},
+		{ NO_CHANNEL, " A channel does not exist."},
+		{ CHANNEL_USED, " Attempt to reuse a channel that already exists."},
+		{ CHANNEL_TYPE, " The channel cannot be used for this operation."},
+		{ PAST_EOF, " Read past the end of the file."},
+		{ WRONG_FILE, " Attempt to open wrong file type.This is not a SON file."},
+		{ NO_EXTRA, " A request to read user data is outside the extra data region."},
+		{ BAD_READ, " A read error(disk error was detected.This is an operating system error."},
+		{ BAD_WRITE, " Something went wrong writing data.This is an operating system error."},
+		{ CORRUPT_FILE, " The file is bad or an attempt to write corrupted data."},
+		{ PAST_SOF, " An attempt was made to access data before the start of the file."},
+		{ READ_ONLY, " Attempt to write to a read only file."},
+		{ BAD_PARAM, " A bad parameter to a call into the SON library."},
+		{ OVER_WRITE, " An attempt was made to over - write data when not allowed."},
+		{ MORE_DATA, " A file is bigger than the header says; maybe not closed correctly."}
+	};
 
 CDataFileFromCEDSpike2::CDataFileFromCEDSpike2() {
 
@@ -100,6 +122,10 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	
 	TTimeDate arrayGetTimeDate{};
 	int flag = S64TimeDate(m_nFid, (long long*)&arrayGetTimeDate, nullptr, -1);
+	if (flag < 0) {
+		ATLTRACE(getErrorMessage(flag));
+		return false;
+	}
 	pWFormat->acqtime = CTime(
 		arrayGetTimeDate.wYear, arrayGetTimeDate.ucMon, arrayGetTimeDate.ucDay, 
 		arrayGetTimeDate.ucHour, arrayGetTimeDate.ucMin, arrayGetTimeDate.ucSec);
@@ -227,13 +253,13 @@ long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels,
 		// TODO: create channel buffer
 		size_t numberBytes = ((int) llDataNValues) * sizeof(short);
 		memset(pBuffer, 0, numberBytes);
-		nValuesRead = read_data_oneChannel(pChan, pBuffer, ll_First, llDataNValues);
+		nValuesRead = readData(pChan, pBuffer, ll_First, llDataNValues);
 	}
 	// TODO: combine channels buffers to build interleaved data 
 	return nValuesRead;
 }
 
-long CDataFileFromCEDSpike2::read_data_oneChannel(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues) {
+long CDataFileFromCEDSpike2::readData(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues) {
 
 	const int chanID = pChan->am_CEDchanID;
 	const long long ticksPerSample = S64ChanDivide(m_nFid, chanID);
@@ -252,14 +278,14 @@ long CDataFileFromCEDSpike2::read_data_oneChannel(CWaveChan* pChan, short* pData
 
 		numberOfValuesRead += nValuesRead;
 		if (tFirst > tFrom) {
-			long offset = relocate_tFrom_to_tFirst(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
+			long offset = relocateData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
 			numberOfValuesRead += offset;
 		}
 	}
 	return numberOfValuesRead;
 }
 
-long CDataFileFromCEDSpike2::relocate_tFrom_to_tFirst(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) {
+long CDataFileFromCEDSpike2::relocateData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) {
 	
 	long offset = (long)((tFirst - tFrom) / ticksPerSample);
 	size_t count = nValuesRead * sizeof(short);
@@ -268,6 +294,19 @@ long CDataFileFromCEDSpike2::relocate_tFrom_to_tFirst(short* pBuffer, long long 
 	count = (offset - 1) * sizeof(short);
 	memset(pBuffer, 0, count);
 	return offset;
+}
+
+CString CDataFileFromCEDSpike2::getErrorMessage(int flag) {
+	int nItems = sizeof(errorMessages)/sizeof(errorMessages[0]);
+	ASSERT(nItems == 20 );
+	CString errorMsg = _T("error not found");
+	for (int i = 0; i < nItems; i++) {
+		if (flag == errorMessages[i].val) {
+			errorMsg = errorMessages[i].msg;
+			break;
+		}
+	}
+	return errorMsg;
 }
 
 
