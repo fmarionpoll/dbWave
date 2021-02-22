@@ -106,7 +106,9 @@ void CSpikeDoc::Serialize(CArchive& ar)
 		else
 		{
 			ASSERT(FALSE);
-			ATLTRACE2(_T("Version not recognized: %i\n"), wwVersion);
+			CString message;
+			message.Format(_T("Version not recognized: %i"), wwVersion);
+			AfxMessageBox(message, MB_OK);
 		}
 	}
 }

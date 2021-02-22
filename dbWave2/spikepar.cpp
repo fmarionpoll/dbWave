@@ -480,7 +480,9 @@ void SPKDETECTPARM::Serialize(CArchive& ar)
 			else
 			{
 				ASSERT(FALSE);
-				ATLTRACE2("error: unrecognizable version %i\n", version);
+				CString message;
+				message.Format(_T("Error: version (%i) not recognized"), version);
+				AfxMessageBox(message, MB_OK);
 			}
 		}
 		else

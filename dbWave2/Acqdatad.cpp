@@ -88,8 +88,6 @@ BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
  **************************************************************************/
 BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 {
-	ATLTRACE2("CAcqDataDoc::OnOpenDocument %s \n", sz_path_name);
-
 	// close data file unless it is already opened
 	if (m_pXFile != nullptr)
 		m_pXFile->CloseDataFile();
@@ -158,7 +156,7 @@ void CAcqDataDoc::renameFile2As1(CString file1, CString file2)
 		CString cs;
 		cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
 		cs = file2 + cs;
-		ATLTRACE2(cs);
+		AfxMessageBox (cs, MB_OK);
 		pEx->Delete();
 	}
 }
@@ -884,7 +882,7 @@ void CAcqDataDoc::AcqDeleteFile() const
 
 void CAcqDataDoc::AcqCloseFile() const
 {
-	if (m_pXFile != nullptr && m_pXFile->m_hFile != CFile::hFileNull)
+	if (m_pXFile != nullptr)
 		m_pXFile->CloseDataFile();
 }
 

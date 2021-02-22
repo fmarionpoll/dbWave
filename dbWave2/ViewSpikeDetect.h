@@ -175,13 +175,13 @@ protected:
 	void 		PrintComputePageSize();
 
 	CString		PrintGetFileInfos();
-	CString		PrintDataBars(CDC* p_dc, CChartDataWnd* pChartDataWnd, CRect* prect);
+	CString		PrintDataBars(CDC* p_dc, CChartDataWnd* pDataChartWnd, CRect* prect);
 	CString		PrintSpkShapeBars(CDC* p_dc, CRect* prect, BOOL bAll);
 	void		PrintCreateFont();
 	BOOL		PrintGetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
 	BOOL		PrintGetNextRow(int& filenumber, long& l_first, long& very_last);
 	int			PrintGetNPages();
-	void		PrintDataCartridge(CDC* p_dc, CChartDataWnd* pChartDataWnd, CRect* prect, BOOL bComments, BOOL bBars);
+	void		PrintDataCartridge(CDC* p_dc, CChartDataWnd* pDataChartWnd, CRect* prect, BOOL bComments, BOOL bBars);
 
 	// gain and bias setting: data and functions
 	HICON		m_hBias = nullptr;

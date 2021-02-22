@@ -1972,17 +1972,17 @@ void CViewSpikeDetection::OnToolsDataseries()
 	UpdateLegends();
 }
 
-void CViewSpikeDetection::PrintDataCartridge(CDC* p_dc, CChartDataWnd* pChartDataWnd, CRect* prect, BOOL bComments, BOOL bBars)
+void CViewSpikeDetection::PrintDataCartridge(CDC* p_dc, CChartDataWnd* pDataChartWnd, CRect* prect, BOOL bComments, BOOL bBars)
 {
-	SCOPESTRUCT* pStruct = pChartDataWnd->GetScopeParameters();
+	SCOPESTRUCT* pStruct = pDataChartWnd->GetScopeParameters();
 	const auto b_draw_f = pStruct->bDrawframe;
 	pStruct->bDrawframe = TRUE;
-	pChartDataWnd->Print(p_dc, prect, (options_viewdata->bcontours == 1));
+	pDataChartWnd->Print(p_dc, prect, (options_viewdata->bcontours == 1));
 	pStruct->bDrawframe = b_draw_f;
 
 	// data vertical and horizontal bars
 
-	const auto comments = PrintDataBars(p_dc, pChartDataWnd, prect);
+	const auto comments = PrintDataBars(p_dc, pDataChartWnd, prect);
 
 	const int xcol = prect->left;
 	const int ypxrow = prect->top;
@@ -2325,7 +2325,7 @@ CString CViewSpikeDetection::PrintGetFileInfos()
 	return str_comment;
 }
 
-CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pChartDataWnd, CRect* rect)
+CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pDataChartWnd, CRect* rect)
 {
 	CString cs;
 	const CString rc(_T("\r"));
@@ -2334,28 +2334,28 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pChartDataW
 	CString cs_unit;									// string for voltage or time unit
 	const CPoint	bar_origin(-10, -10);						// bar origin at 10,10 pts on the left lower corner of the rectangle
 	//CSize	barWidth = CSize(1,1);					// width of bars (5 pixels)
-	auto ihorz_bar = pChartDataWnd->GetRectWidth() / 10;	// initial horz bar length 1/10th of display rect
-	auto ivert_bar = pChartDataWnd->GetRectHeight() / 3;	// initial vert bar height 1/3rd  of display rect
+	auto ihorz_bar = pDataChartWnd->GetRectWidth() / 10;	// initial horz bar length 1/10th of display rect
+	auto ivert_bar = pDataChartWnd->GetRectHeight() / 3;	// initial vert bar height 1/3rd  of display rect
 
 	///// time abscissa ///////////////////////////
-	auto str_comment = PrintConvertFileIndex(pChartDataWnd->GetDataFirst(), pChartDataWnd->GetDataLast());
+	auto str_comment = PrintConvertFileIndex(pDataChartWnd->GetDataFirst(), pDataChartWnd->GetDataLast());
 
 	///// horizontal time bar ///////////////////////////
 	if (options_viewdata->bTimeScaleBar)
 	{
 		// convert bar size into time units and back into pixels
 		cs_unit = _T(" s");											// initial time unit
-		const auto xtperpixel = pChartDataWnd->GetTimeperPixel();
+		const auto xtperpixel = pDataChartWnd->GetTimeperPixel();
 		const auto z = xtperpixel * ihorz_bar;							// convert 1/10 of the length of the data displayed into time
 		float	x_scale_factor;
-		const auto x = pChartDataWnd->ChangeUnit(z, &cs_unit, &x_scale_factor); // convert time into a scaled time
-		const auto k = pChartDataWnd->NiceUnit(x);							// convert the (scaled) time value into time expressed as an integral
+		const auto x = pDataChartWnd->ChangeUnit(z, &cs_unit, &x_scale_factor); // convert time into a scaled time
+		const auto k = pDataChartWnd->NiceUnit(x);							// convert the (scaled) time value into time expressed as an integral
 		ihorz_bar = static_cast<int>((float(k) * x_scale_factor) / xtperpixel); // compute how much pixels it makes
 		// print out the scale and units
 		cs.Format(_T("horz bar = %i %s"), k, static_cast<LPCTSTR>(cs_unit));
 		str_comment += cs + rc;
 		// draw horizontal line
-		ihorz_bar = MulDiv(ihorz_bar, rect->Width(), pChartDataWnd->GetRectWidth());
+		ihorz_bar = MulDiv(ihorz_bar, rect->Width(), pDataChartWnd->GetRectWidth());
 		p_dc->MoveTo(rect->left + bar_origin.x, rect->bottom - bar_origin.y);
 		p_dc->LineTo(rect->left + bar_origin.x + ihorz_bar, rect->bottom - bar_origin.y);
 	}
@@ -2364,15 +2364,15 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pChartDataW
 	float	y_scale_factor;											// compute a good unit for channel 0
 	cs_unit = _T(" V");												// initial voltage unit
 	// convert bar size into voltage units and back into pixels
-	const auto vperpixel = pChartDataWnd->GetChanlistVoltsperPixel(0);
+	const auto vperpixel = pDataChartWnd->GetChanlistVoltsperPixel(0);
 	const auto zvolts = vperpixel * ivert_bar;							// convert 1/3 of the height into voltage
-	const auto zscale = pChartDataWnd->ChangeUnit(zvolts, &cs_unit, &y_scale_factor);	// convert voltage into a scale voltage
-	const auto znice = static_cast<float>(pChartDataWnd->NiceUnit(zscale));			// convert the (scaled) time value into time expressed as an integral
+	const auto zscale = pDataChartWnd->ChangeUnit(zvolts, &cs_unit, &y_scale_factor);	// convert voltage into a scale voltage
+	const auto znice = static_cast<float>(pDataChartWnd->NiceUnit(zscale));			// convert the (scaled) time value into time expressed as an integral
 	ivert_bar = static_cast<int>(znice * y_scale_factor / vperpixel);			// compute how much pixels it makes
 
 	if (options_viewdata->bVoltageScaleBar)
 	{
-		ivert_bar = MulDiv(ivert_bar, rect->Height(), pChartDataWnd->GetRectHeight());
+		ivert_bar = MulDiv(ivert_bar, rect->Height(), pDataChartWnd->GetRectHeight());
 		p_dc->MoveTo(rect->left + bar_origin.x, rect->bottom - bar_origin.y);
 		p_dc->LineTo(rect->left + bar_origin.x, rect->bottom - bar_origin.y - ivert_bar);
 	}
@@ -2380,20 +2380,20 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pChartDataW
 	// comments, bar value and chan settings for each channel
 	if (options_viewdata->bChansComment || options_viewdata->bVoltageScaleBar || options_viewdata->bChanSettings)
 	{
-		const auto imax = pChartDataWnd->GetChanlistSize();	// number of data channels
+		const auto imax = pDataChartWnd->GetChanlistSize();	// number of data channels
 		for (auto ichan = 0; ichan < imax; ichan++)		// loop
 		{
 			// skip channels not printed
-			if (!pChartDataWnd->GetChanlistflagPrintVisible(ichan))
+			if (!pDataChartWnd->GetChanlistflagPrintVisible(ichan))
 				continue;
 			// boucler sur les commentaires de chan n a chan 0...
 			cs.Format(_T("chan#%i "), ichan);			// channel number
 			str_comment += cs;
 			if (options_viewdata->bVoltageScaleBar)				// bar scale value
 			{
-				const auto z = static_cast<float>(ivert_bar) * pChartDataWnd->GetChanlistVoltsperPixel(ichan);
+				const auto z = static_cast<float>(ivert_bar) * pDataChartWnd->GetChanlistVoltsperPixel(ichan);
 				const auto x = z / y_scale_factor;
-				const auto j = pChartDataWnd->NiceUnit(x);
+				const auto j = pDataChartWnd->NiceUnit(x);
 				cs.Format(_T("vert bar = %i %s "), j, static_cast<LPCTSTR>(cs_unit));	// store val into comment
 				str_comment += cs;
 			}
@@ -2401,13 +2401,13 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pChartDataW
 			if (options_viewdata->bChansComment)
 			{
 				str_comment += tab;
-				str_comment += pChartDataWnd->GetChanlistComment(ichan);
+				str_comment += pDataChartWnd->GetChanlistComment(ichan);
 			}
 			str_comment += rc;
 			// print amplifiers settings (gain & filter), next line
 			if (options_viewdata->bChanSettings)
 			{
-				const WORD channb = pChartDataWnd->GetChanlistSourceChan(ichan);
+				const WORD channb = pDataChartWnd->GetChanlistSourceChan(ichan);
 				const auto pchan_array = GetDocument()->m_pDat->GetpWavechanArray();
 				const auto p_chan = pchan_array->get_p_channel(channb);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"),

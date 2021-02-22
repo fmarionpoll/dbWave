@@ -53,7 +53,9 @@ void CSpikeList::Serialize(CArchive& ar)
 			else
 			{
 				ASSERT(FALSE);
-				ATLTRACE2("reading spike list: unrecognizable version %i\n", iversion);
+				CString message;
+				message.Format(_T("reading spike list: unrecognizable version %i"), iversion);
+				AfxMessageBox(message, MB_OK);
 			}
 		}
 	}

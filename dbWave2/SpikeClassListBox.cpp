@@ -210,11 +210,11 @@ void CSpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
 	auto pspk_shapes = pptr->pspk_shapes;
 	if (pspk_shapes != nullptr)
 	{
-		pspk_shapes->DestroyWindow();
+		//pspk_shapes->DestroyWindow();
 		delete pspk_shapes;
 	}
 	auto pspk_bars = pptr->pspk_bars;
-	pspk_bars->DestroyWindow();
+	//pspk_bars->DestroyWindow();
 	delete pspk_bars;
 
 	delete pptr;

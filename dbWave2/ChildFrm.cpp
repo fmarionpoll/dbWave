@@ -232,7 +232,7 @@ void CChildFrame::OnToolsExportdatacomments()
 	{
 		UpdateWindow();
 		CWaitCursor wait;
-		ExportASCII(0);
+		exportASCII(0);
 	}
 }
 
@@ -245,7 +245,7 @@ void CChildFrame::OnToolsExportnumberofspikes()
 	{
 		UpdateWindow();
 		CWaitCursor wait;
-		ExportASCII(1);
+		exportASCII(1);
 	}
 }
 
@@ -259,7 +259,7 @@ void CChildFrame::OnToolsExportdataAsText()
 
 // --------------------------------------------------------------------
 
-void CChildFrame::ExportASCII(int option)
+void CChildFrame::exportASCII(int option)
 {
 	CSharedFile sf(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 	auto* pdb_doc = (CdbWaveDoc*)GetActiveDocument();
@@ -294,7 +294,7 @@ void CChildFrame::ExportASCII(int option)
 	{
 		auto flag = FALSE;
 		if (p_app->options_viewdata.btoExcel)
-			flag = ExportToExcel();
+			flag = exportToExcel();
 		if (!p_app->options_viewdata.btoExcel || !flag)
 		{
 			CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
@@ -310,7 +310,7 @@ void CChildFrame::ExportASCII(int option)
 	{
 		auto flag = FALSE;
 		if (p_app->options_viewspikes.bexporttoExcel)
-			flag = ExportToExcelAndBuildPivot(option);
+			flag = exportToExcelAndBuildPivot(option);
 
 		if (!p_app->options_viewspikes.bexporttoExcel || !flag)
 		{
@@ -396,40 +396,40 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 	switch (iID)
 	{
 	case ID_VIEW_DATABASE:
-		ReplaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDBView);
+		replaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATAFILE:
 		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewData), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(CViewData), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDETECTION:
 		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewSpikeDetection), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(CViewSpikeDetection), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewSpikes), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikes), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewSpikeSort), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikeSort), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewSpikeTemplates), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikeTemplates), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			ReplaceView(RUNTIME_CLASS(CViewSpikeHist), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikeHist), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
-		ReplaceView(RUNTIME_CLASS(CViewADContinuous), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(CViewADContinuous), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		b_active_panes = FALSE;
 		break;
 
 	default:
 		iID = 0;
-		ReplaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		break;
 	}
 	p_mainframe->ActivatePropertyPane(b_active_panes);
@@ -477,25 +477,28 @@ void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 
 // assume that the views replaced are of CDaoRecordView type
 
-void CChildFrame::ReplaceView(CRuntimeClass* pViewClass, HMENU hmenu)
+void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 {
 	auto p_current_view = GetActiveView();
 	if ((p_current_view->IsKindOf(pViewClass)) == TRUE)
 		return;
 
-	auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto* p_dbwave_doc = (CdbWaveDoc*) GetActiveDocument();
 	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->m_hMyMenu = hmenu;
 
 	CSize size;
 	CRect rect;
 	p_current_view->GetClientRect(rect);
-	size.cx = rect.right;	// or: rect.GetRectWidth()
-	size.cy = rect.bottom;	// or: rect.GetRectHeight()
+	size.cx = rect.right;
+	size.cy = rect.bottom;
 
 	// delete old view without deleting document
 	const auto bautodel = p_dbwave_doc->m_bAutoDelete;
 	p_dbwave_doc->m_bAutoDelete = FALSE;
+	CAcqDataDoc* pDataDoc = p_dbwave_doc->GetcurrentDataDocument();
+	if (pDataDoc != nullptr)
+		pDataDoc->AcqCloseFile();
 	p_current_view->DestroyWindow();
 	p_dbwave_doc->m_bAutoDelete = bautodel;
 
@@ -811,7 +814,7 @@ void CChildFrame::OnRecordDeletecurrent()
 	}
 }
 
-BOOL CChildFrame::ExportToExcel()
+BOOL CChildFrame::exportToExcel()
 {
 	//define a few constants
 	COleVariant v_opt(DISP_E_PARAMNOTFOUND, VT_ERROR);
@@ -848,7 +851,7 @@ BOOL CChildFrame::ExportToExcel()
 	return TRUE;
 }
 
-BOOL CChildFrame::ExportToExcelAndBuildPivot(int option)
+BOOL CChildFrame::exportToExcelAndBuildPivot(int option)
 {
 	//define a few constants
 	COleVariant v_opt(DISP_E_PARAMNOTFOUND, VT_ERROR);
@@ -912,9 +915,9 @@ BOOL CChildFrame::ExportToExcelAndBuildPivot(int option)
 		if (p_app->options_viewspikes.bexportPivot)
 		{
 			CString cs_bin;
-			BuildPivot(&o_app, &odata_sheet, cs1, _T("pivot_cnt"), static_cast<short>(-4112), col2);
-			BuildPivot(&o_app, &odata_sheet, cs1, _T("pivot_std"), static_cast<short>(-4156), col2);
-			BuildPivot(&o_app, &odata_sheet, cs1, _T("pivot_avg"), static_cast<short>(-4106), col2);
+			buildExcelPivot(&o_app, &odata_sheet, cs1, _T("pivot_cnt"), static_cast<short>(-4112), col2);
+			buildExcelPivot(&o_app, &odata_sheet, cs1, _T("pivot_std"), static_cast<short>(-4156), col2);
+			buildExcelPivot(&o_app, &odata_sheet, cs1, _T("pivot_avg"), static_cast<short>(-4106), col2);
 		}
 	}
 
@@ -926,7 +929,7 @@ BOOL CChildFrame::ExportToExcelAndBuildPivot(int option)
 	return TRUE;
 }
 
-void CChildFrame::BuildPivot(void* poApp, void* podataSheet, CString csSourceDataAddress, CString csNameSheet, short XlConsolidationFunction, int col2)
+void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSourceDataAddress, CString csNameSheet, short XlConsolidationFunction, int col2)
 {
 	COleVariant cov_xl_database(static_cast<short>(1));
 	COleVariant v_opt(DISP_E_PARAMNOTFOUND, VT_ERROR);

@@ -13,30 +13,30 @@ const int	LENCEDSON	= 16;
 const char	CEDSON64[] = "CED_DATA";
 
 errorMessage CDataFileFromCEDSpike2::errorMessages[] = {
-		{ S64_OK, "There was no error"},
-		{ NO_FILE, "Attempt to use when file not open, or use of an invalid file handle, or no spare file handle"},
-		{ NO_BLOCK, " Failed to allocate a disk block when writing to the file.The disk is probably full, or there was a disk error."},
-		{ CALL_AGAIN, " This is a long operation, call again."},
-		{ NO_ACCESS, " This operation was not allowed."},
-		{ NO_MEMORY, " Out of memory reading a 32 - bit son file."},
-		{ NO_CHANNEL, " A channel does not exist."},
-		{ CHANNEL_USED, " Attempt to reuse a channel that already exists."},
-		{ CHANNEL_TYPE, " The channel cannot be used for this operation."},
-		{ PAST_EOF, " Read past the end of the file."},
-		{ WRONG_FILE, " Attempt to open wrong file type.This is not a SON file."},
-		{ NO_EXTRA, " A request to read user data is outside the extra data region."},
-		{ BAD_READ, " A read error(disk error was detected.This is an operating system error."},
-		{ BAD_WRITE, " Something went wrong writing data.This is an operating system error."},
-		{ CORRUPT_FILE, " The file is bad or an attempt to write corrupted data."},
-		{ PAST_SOF, " An attempt was made to access data before the start of the file."},
-		{ READ_ONLY, " Attempt to write to a read only file."},
-		{ BAD_PARAM, " A bad parameter to a call into the SON library."},
-		{ OVER_WRITE, " An attempt was made to over - write data when not allowed."},
-		{ MORE_DATA, " A file is bigger than the header says; maybe not closed correctly."}
+		{ S64_OK,		"There was no error"},
+		{ NO_FILE,		"Attempt to use when file not open, or use of an invalid file handle, or no spare file handle"},
+		{ NO_BLOCK,		"Failed to allocate a disk block when writing to the file.The disk is probably full, or there was a disk error."},
+		{ CALL_AGAIN,	"This is a long operation, call again."},
+		{ NO_ACCESS,	"This operation was not allowed."},
+		{ NO_MEMORY,	"Out of memory reading a 32 - bit son file."},
+		{ NO_CHANNEL,	"A channel does not exist."},
+		{ CHANNEL_USED,	"Attempt to reuse a channel that already exists."},
+		{ CHANNEL_TYPE,	"The channel cannot be used for this operation."},
+		{ PAST_EOF,		"Read past the end of the file."},
+		{ WRONG_FILE,	"Attempt to open wrong file type.This is not a SON file."},
+		{ NO_EXTRA,		"A request to read user data is outside the extra data region."},
+		{ BAD_READ,		"A read error(disk error was detected.This is an operating system error."},
+		{ BAD_WRITE,	"Something went wrong writing data.This is an operating system error."},
+		{ CORRUPT_FILE,	"The file is bad or an attempt to write corrupted data."},
+		{ PAST_SOF,		"An attempt was made to access data before the start of the file."},
+		{ READ_ONLY,	"Attempt to write to a read only file."},
+		{ BAD_PARAM,	"A bad parameter to a call into the SON library."},
+		{ OVER_WRITE,	"An attempt was made to over - write data when not allowed."},
+		{ MORE_DATA,	"A file is bigger than the header says; maybe not closed correctly."}
 	};
 
-CDataFileFromCEDSpike2::CDataFileFromCEDSpike2() {
-
+CDataFileFromCEDSpike2::CDataFileFromCEDSpike2() 
+{
 	m_bHeaderSize		= 512;
 	m_ulOffsetData		= m_bHeaderSize;
 	m_ulOffsetHeader	= 0;
@@ -44,50 +44,50 @@ CDataFileFromCEDSpike2::CDataFileFromCEDSpike2() {
 	m_csType			= CEDSON64;
 }
 
-CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2() {
-
+CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2() 
+{
 	CloseDataFile();
 }
 
 #ifdef _DEBUG
-void CDataFileFromCEDSpike2::AssertValid() const {
-
+void CDataFileFromCEDSpike2::AssertValid() const 
+{
 	CDataFileX::AssertValid();
 }
 
-void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const {
-
+void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const 
+{
 	CDataFileX::Dump(dc);
 }
 #endif //_DEBUG
 
-bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_flag) {
-
-	ATLTRACE2("---CED OpenDataFile \n" );
+bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_flag) 
+{
+	ATLTRACE2("--- CED OpenDataFile (old nFid= %i) \n", m_nFid );
 	m_nFid = S64Open(CT2A(sz_path_name), -1);
 	if (m_nFid <= 0) {
-		AfxMessageBox(AFX_IDP_FAILED_TO_OPEN_DOC);
+		CString message = CString("OpenCEDDataFile error: ") + getErrorMessage(m_nFid);
+		AfxMessageBox(message, MB_OK);
 		return false;
 	}
 	return true;
 }
 
-void CDataFileFromCEDSpike2::CloseDataFile() {
-
+void CDataFileFromCEDSpike2::CloseDataFile() 
+{
 	if (m_nFid >= 0) {
-		ATLTRACE2("--- CED CloseDataFile \n");
+		ATLTRACE2("--- CED CloseDataFile (old nFid= %i) \n", m_nFid);
 		int flag = S64Close(m_nFid);
 		if (flag < 0) {
-			CString errorMessage;
-			errorMessage.Format(_T("Failed to close data file\nError code=%i"), flag);
-			AfxMessageBox(errorMessage, MB_OK);
+			CString message = CString("CloseCEDDataFile error: ") + getErrorMessage(flag);
+			AfxMessageBox(message, MB_OK);
 		}
 		m_nFid = -1;
 	}	
 }
 
-int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName) {
-
+int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName) 
+{
 	cs_fileName.MakeLower();
 	if (cs_fileName.Find(_T("smr")) != -1) {
 		return DOCTYPE_SMR;
@@ -95,8 +95,8 @@ int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName) {
 	return DOCTYPE_UNKNOWN;
 }
 
-BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) {
-
+BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray) 
+{
 	// Read file header
 	auto bflag = TRUE;
 
@@ -123,7 +123,8 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	TTimeDate arrayGetTimeDate{};
 	int flag = S64TimeDate(m_nFid, (long long*)&arrayGetTimeDate, nullptr, -1);
 	if (flag < 0) {
-		ATLTRACE(getErrorMessage(flag));
+		CString message = CString("Error reading date ") + getErrorMessage(flag) + CString(" \n");
+		AfxMessageBox(message, MB_OK);
 		return false;
 	}
 	pWFormat->acqtime = CTime(
@@ -183,8 +184,8 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	return TRUE;
 }
 
-void CDataFileFromCEDSpike2::read_ChannelParameters(CWaveChan* pChan, int cedChan) {
-
+void CDataFileFromCEDSpike2::read_ChannelParameters(CWaveChan* pChan, int cedChan) 
+{
 	pChan->am_CEDchanID = cedChan;
 	pChan->am_csamplifier.Empty();			// amplifier type
 	pChan->am_csheadstage.Empty();			// headstage type
@@ -214,8 +215,8 @@ void CDataFileFromCEDSpike2::read_ChannelParameters(CWaveChan* pChan, int cedCha
 	pChan->am_CEDmaxTimeInTicks = S64ChanMaxTime(m_nFid, cedChan);
 }
 
-CString  CDataFileFromCEDSpike2::read_ChannelComment(int cedChan) {
-
+CString  CDataFileFromCEDSpike2::read_ChannelComment(int cedChan) 
+{
 	int sizeComment = S64GetChanComment(m_nFid, cedChan, nullptr, -1);
 	CString comment;
 	if (sizeComment > 0) {
@@ -227,8 +228,8 @@ CString  CDataFileFromCEDSpike2::read_ChannelComment(int cedChan) {
 	return comment;
 }
 
-CString  CDataFileFromCEDSpike2::read_FileComment(int nInd) {
-
+CString  CDataFileFromCEDSpike2::read_FileComment(int nInd) 
+{
 	int sizeComment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
 	CString comment;
 	if (sizeComment > 0) {
@@ -259,8 +260,8 @@ long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels,
 	return nValuesRead;
 }
 
-long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues) {
-
+long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues) 
+{
 	const int chanID = pChan->am_CEDchanID;
 	const long long ticksPerSample = S64ChanDivide(m_nFid, chanID);
 	const long long tUpTo = (ll_First + llNValues-1) * ticksPerSample;
@@ -285,8 +286,8 @@ long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, lo
 	return numberOfValuesRead;
 }
 
-long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) {
-	
+long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) 
+{	
 	long offset = (long)((tFirst - tFrom) / ticksPerSample);
 	size_t count = nValuesRead * sizeof(short);
 	memmove(pBuffer + offset, pBuffer, count);
@@ -296,7 +297,8 @@ long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFro
 	return offset;
 }
 
-CString CDataFileFromCEDSpike2::getErrorMessage(int flag) {
+CString CDataFileFromCEDSpike2::getErrorMessage(int flag) 
+{
 	int nItems = sizeof(errorMessages)/sizeof(errorMessages[0]);
 	ASSERT(nItems == 20 );
 	CString errorMsg = _T("error not found");

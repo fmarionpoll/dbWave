@@ -153,14 +153,13 @@ LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_ACTIVATEVIEW:
-		//ATLTRACE2(_T("CPropDockPane: OnMyMessage ACTIVATEVIEW\n"));
 		m_pDoc = reinterpret_cast<CdbWaveDoc*>(lParam);
 		if (m_pDoc != m_pDocOld)
 			InitFilterList();
 		break;
 
 	case HINT_MDIACTIVATE:
-	{	//ATLTRACE2(_T("CPropDockPane: OnMyMessage HINT_MDIACTIVATE\n"));
+	{	
 		auto* pmain = (CMainFrame*)AfxGetMainWnd();
 		BOOL b_maximized;
 		auto p_child = pmain->MDIGetActive(&b_maximized);

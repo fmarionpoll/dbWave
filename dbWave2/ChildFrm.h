@@ -12,34 +12,33 @@ public:
 
 	// Attributes
 public:
-	UINT			m_viewON;
-	int				m_previousviewON;
-	int				m_cursorstate;
-	int				m_nStatus;
-
-protected:
-	BOOL			m_bDeleteFile;
-	BOOL			m_bKeepChoice;
+	UINT	m_viewON;
+	int		m_previousviewON;
+	int		m_cursorstate;
+	int		m_nStatus;
 
 	// Overrides
 public:
-	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-	void ActivateFrame(int n_cmd_show = -1) override;
+	BOOL	PreCreateWindow(CREATESTRUCT& cs) override;
+	void	ActivateFrame(int n_cmd_show = -1) override;
 
 	// Implementation
 public:
 	virtual ~CChildFrame();
 #ifdef _DEBUG
-	void AssertValid() const override;
-	void Dump(CDumpContext& dc) const override;
+	void	AssertValid() const override;
+	void	Dump(CDumpContext& dc) const override;
 #endif
 protected:
-	void ExportASCII(int option);
-	void ReplaceView(CRuntimeClass* pViewClass, HMENU hmenu);
-	void OnToolsImportfiles(int ifilter);
-	BOOL ExportToExcel();
-	BOOL ExportToExcelAndBuildPivot(int option);
-	void BuildPivot(void* oApp, void* odataSheet, CString csSourceDataAddress, CString csNameSheet, short XlConsolidationFunction, int col2);
+	BOOL	m_bDeleteFile;
+	BOOL	m_bKeepChoice;
+
+	void	replaceView(CRuntimeClass* pViewClass, HMENU hmenu);
+	void	OnToolsImportfiles(int ifilter);
+	void	exportASCII(int option);
+	BOOL	exportToExcel();
+	BOOL	exportToExcelAndBuildPivot(int option);
+	void	buildExcelPivot(void* oApp, void* odataSheet, CString csSourceDataAddress, CString csNameSheet, short XlConsolidationFunction, int col2);
 
 	// Generated message map functions
 protected:

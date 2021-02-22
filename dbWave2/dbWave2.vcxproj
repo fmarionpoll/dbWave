@@ -886,7 +886,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DataListCtrlRowObject.cpp">
+    <ClCompile Include="DataListCtrl_Row.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1394,7 +1394,7 @@
     <ClInclude Include="dataheader_Asyst.H" />
     <ClInclude Include="dataheader_Atlab.H" />
     <ClInclude Include="DataListCtrl.h" />
-    <ClInclude Include="DataListCtrlRowObject.h" />
+    <ClInclude Include="DataListCtrl_Row.h" />
     <ClInclude Include="Dataseri.h" />
     <ClInclude Include="DlgdbEditField.h" />
     <ClInclude Include="DlgdbEditRecord.h" />

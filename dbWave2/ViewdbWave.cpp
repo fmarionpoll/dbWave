@@ -155,8 +155,10 @@ void CViewdbWave::OnInitialUpdate()
 		((CButton*)GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
 		GetDlgItem(IDC_FILTERCHECK)->EnableWindow(TRUE);
 		((CButton*)GetDlgItem(IDC_FILTERCHECK))->SetCheck(m_options_viewdata->bFilterDat);
-		if (m_options_viewdata->bFilterDat)	m_dattransform = 13;	// apply median filter to data displayed
-		else					m_dattransform = 0;		// no filter (raw data)
+		if (m_options_viewdata->bFilterDat)	
+			m_dattransform = 13;	// apply median filter to data displayed
+		else					
+			m_dattransform = 0;		// no filter (raw data)
 		m_dataListCtrl.SetTransformMode(m_dattransform);
 		break;
 	case 2:
@@ -186,10 +188,12 @@ void CViewdbWave::OnInitialUpdate()
 		break;
 	}
 
+	// close data file if opened?
+
 	// select the proper record
-	FillListBox();
+	fillListBox();
 	m_dataListCtrl.UpdateCache(-3, -3);
-	UpdateControls();
+	updateControls();
 
 	// init display controls
 	if (m_options_viewdata->displaymode == 2)
@@ -290,7 +294,7 @@ CDaoRecordset* CViewdbWave::OnGetRecordset()
 	return GetDocument()->GetDB_Recordset();
 }
 
-void CViewdbWave::UpdateControls()
+void CViewdbWave::updateControls()
 {
 	auto pdb_doc = GetDocument();
 	CFileStatus status;
@@ -347,8 +351,6 @@ void CViewdbWave::OnClickMedianFilter()
 
 void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
-	ATLTRACE2("CViewdbWave::OnActivateView \n");
-
 	auto* p_mainframe = (CMainFrame*)AfxGetMainWnd();
 	if (bActivate)
 	{
@@ -362,10 +364,10 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	}
 	else
 	{
-		CChartDataWnd* pChartDataWnd = m_dataListCtrl.GetDataViewCurrentRecord();
-		if (pChartDataWnd != nullptr)
+		CChartDataWnd* pDataChartWnd = m_dataListCtrl.GetDataViewCurrentRecord();
+		if (pDataChartWnd != nullptr)
 		{
-			((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(pChartDataWnd->GetScopeParameters());
+			((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(pDataChartWnd->GetScopeParameters());
 		}
 		if (pActivateView != nullptr)
 			((CChildFrame*)p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;
@@ -373,7 +375,7 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CViewdbWave::FillListBox()
+void CViewdbWave::fillListBox()
 {
 	m_dataListCtrl.DeleteAllItems();
 	const int imax = GetDocument()->GetDB_NRecords();
@@ -455,16 +457,16 @@ void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 	case HINT_REPLACEVIEW:
 		m_dataListCtrl.UpdateCache(-2, -2);
-		UpdateControls();
+		updateControls();
 		break;
 
 	case HINT_REQUERY:
-		FillListBox();
+		fillListBox();
 	case HINT_DOCHASCHANGED:
 		m_dataListCtrl.UpdateCache(-1, -1);
 	case HINT_DOCMOVERECORD:
 	default:
-		UpdateControls();
+		updateControls();
 		break;
 	}
 }

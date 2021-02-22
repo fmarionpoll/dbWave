@@ -17,6 +17,8 @@ public:
 	~CDataFileX();
 	DECLARE_DYNCREATE(CDataFileX)
 
+	virtual bool	OpenDataFile(CString& sz_path_name, UINT u_open_flag);
+	virtual void	CloseDataFile();
 	// Operations
 	virtual int		CheckFileType(CString& cs_filename);
 	virtual BOOL	ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray* pArray);
@@ -43,10 +45,6 @@ public:
 	ULONGLONG		m_ulbytescount;		// dummy parameter: Data append
 
 // Implementation
-public:
-	virtual bool	OpenDataFile(CString& sz_path_name, UINT u_open_flag);
-	virtual void	CloseDataFile();
-
 #ifdef _DEBUG
 	virtual void	AssertValid() const;
 	virtual void	Dump(CDumpContext& dc) const;

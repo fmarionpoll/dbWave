@@ -51,9 +51,9 @@ public:
 	virtual BOOL	Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
 		DWORD dw_style, const RECT& rect, CWnd* pParentWnd,
 		UINT nID, CCreateContext* pContext = nullptr);
-	BOOL			Create(CWnd* pParentWnd, CChartDataWnd* pChartDataWnd, BOOL bAsXAxis, int dSize, UINT nID);
+	BOOL			Create(CWnd* pParentWnd, CChartDataWnd* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID);
 	void			DrawScalefromRuler(CRuler* pRuler);
-	inline void		AttachScopeWnd(CChartDataWnd* pChartDataWnd, BOOL bXaxis) { m_pChartDataWnd = pChartDataWnd; m_bHorizontal = bXaxis; }
+	inline void		AttachScopeWnd(CChartDataWnd* pDataChartWnd, BOOL bXaxis) { m_pChartDataWnd = pDataChartWnd; m_bHorizontal = bXaxis; }
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnPaint();

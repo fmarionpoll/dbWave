@@ -22,34 +22,35 @@ protected: // create from serialization only
 
 public:
 	enum { IDD = IDD_VIEWDBWAVE };
-	CdbMainTable*	m_pSet;
+	CdbMainTable*		m_pSet;
 
 	// Attributes
 public:
-	CDataListCtrl	m_dataListCtrl;
-	BOOL			m_bvalidDat;
-	BOOL			m_bvalidSpk;
-	CdbWaveDoc*		GetDocument();
-	CSpkListTabCtrl m_tabCtrl;
+	CDataListCtrl		m_dataListCtrl;
+	BOOL				m_bvalidDat;
+	BOOL				m_bvalidSpk;
+	CdbWaveDoc*			GetDocument();
+	CSpkListTabCtrl		m_tabCtrl;
 
 	// Overrides
 public:
-	virtual CDaoRecordset* OnGetRecordset();
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL OnMove(UINT nIDMoveCommand);
+	virtual CDaoRecordset* OnGetRecordset() override;
+	virtual BOOL		PreCreateWindow(CREATESTRUCT& cs) override;
+	virtual BOOL		OnMove(UINT nIDMoveCommand) override;
+
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual void OnInitialUpdate();
-	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+	virtual void		DoDataExchange(CDataExchange* pDX) override;
+	virtual void		OnInitialUpdate() override;
+	virtual BOOL		OnPreparePrinting(CPrintInfo* pInfo) override;
+	virtual void		OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	virtual void		OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	virtual void		OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	virtual void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	virtual void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 
 	// Implementation
 public:
-	virtual ~CViewdbWave();
+	virtual				~CViewdbWave();
 
 #ifdef _DEBUG
 	virtual void		AssertValid() const;
@@ -72,12 +73,11 @@ protected:
 	CStretchControl		m_stretch;			// properties for controls
 	OPTIONS_VIEWDATA*	m_options_viewdata;
 
+	void				updateControls();
+	void				fillListBox();
 
-	// internal functions
-	void		UpdateControls();
-	void		FillListBox();
 public:
-	void		DeleteRecords();
+	void				DeleteRecords();
 	
 	// Generated message map functions
 protected:

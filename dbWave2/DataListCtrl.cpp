@@ -13,7 +13,7 @@
 #include "ChartSpikeBar.h"
 #include "ViewdbWave.h"
 
-#include "DataListCtrlRowObject.h"
+#include "DataListCtrl_Row.h"
 //#include "DataListCtrl.h"
 
 #ifdef _DEBUG
@@ -62,7 +62,7 @@ CDataListCtrl::CDataListCtrl()
 
 CDataListCtrl::~CDataListCtrl()
 {
-	DeletePtrArray();
+	deletePtrArray();
 }
 
 void CDataListCtrl::OnDestroy()
@@ -79,47 +79,47 @@ void CDataListCtrl::OnDestroy()
 	CListCtrl::OnDestroy();
 }
 
-void CDataListCtrl::DeletePtrArray()
+void CDataListCtrl::deletePtrArray()
 {
-	if (datalistctrlrowobject_prt_array.GetSize() == NULL)
+	if (ptrArray.GetSize() == NULL)
 		return;
-	const auto imax = datalistctrlrowobject_prt_array.GetSize();
+	const auto imax = ptrArray.GetSize();
 	for (auto i = 0; i < imax; i++)
 	{
-		auto* ptr = datalistctrlrowobject_prt_array.GetAt(i);
+		auto* ptr = ptrArray.GetAt(i);
 		SAFE_DELETE(ptr);
 	}
-	datalistctrlrowobject_prt_array.RemoveAll();
+	ptrArray.RemoveAll();
 }
 
-void CDataListCtrl::ResizePtrArray(int nitems)
+void CDataListCtrl::resizePtrArray(int nitems)
 {
-	if (nitems == datalistctrlrowobject_prt_array.GetSize())
+	if (nitems == ptrArray.GetSize())
 		return;
 
 	// Resize m_imagelist CImageList
 	m_imagelist.SetImageCount(nitems);
 
 	// reduce size
-	if (datalistctrlrowobject_prt_array.GetSize() > nitems)
+	if (ptrArray.GetSize() > nitems)
 	{
-		for (auto i = datalistctrlrowobject_prt_array.GetSize() - 1; i >= nitems; i--)
-			delete datalistctrlrowobject_prt_array.GetAt(i);
-		datalistctrlrowobject_prt_array.SetSize(nitems);
+		for (auto i = ptrArray.GetSize() - 1; i >= nitems; i--)
+			delete ptrArray.GetAt(i);
+		ptrArray.SetSize(nitems);
 	}
 	// grow size
 	else
 	{
-		const auto lowernew = datalistctrlrowobject_prt_array.GetSize();
-		datalistctrlrowobject_prt_array.SetSize(nitems);
+		const auto lowernew = ptrArray.GetSize();
+		ptrArray.SetSize(nitems);
 		auto index = 0;
 		if (lowernew > 0)
-			index = datalistctrlrowobject_prt_array.GetAt(lowernew - 1)->index;
+			index = ptrArray.GetAt(lowernew - 1)->index;
 		for (auto i = lowernew; i < nitems; i++)
 		{
-			auto* ptr = new CDataListCtrlRowObject;
+			auto* ptr = new CDataListCtrl_Row;
 			ASSERT(ptr != NULL);
-			datalistctrlrowobject_prt_array.SetAt(i, ptr);
+			ptrArray.SetAt(i, ptr);
 			index++;
 			ptr->index = index;
 		}
@@ -168,10 +168,10 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	// check if first if the requested line is stored into the buffer
 	auto ifirst_array = 0;
 	auto ilast_array = 0;
-	if (datalistctrlrowobject_prt_array.GetSize() > 0)
+	if (ptrArray.GetSize() > 0)
 	{
-		ifirst_array = datalistctrlrowobject_prt_array.GetAt(0)->index;
-		ilast_array = datalistctrlrowobject_prt_array.GetAt(datalistctrlrowobject_prt_array.GetUpperBound())->index;
+		ifirst_array = ptrArray.GetAt(0)->index;
+		ilast_array = ptrArray.GetAt(ptrArray.GetUpperBound())->index;
 	}
 
 	// is item within the cache?
@@ -194,7 +194,7 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 		ifirst_array = ilast_array - GetCountPerPage() + 1;
 		UpdateCache(ifirst_array, ilast_array);
 	}
-	else if (datalistctrlrowobject_prt_array.GetSize() == 0)
+	else if (ptrArray.GetSize() == 0)
 		UpdateCache(ifirst_array, ilast_array);
 
 	// now, the requested item is in the cache
@@ -203,12 +203,12 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	if (pdb_doc == nullptr)
 		return;
 
-	const int ifirstvisible = datalistctrlrowobject_prt_array.GetAt(0)->index;
+	const int ifirstvisible = ptrArray.GetAt(0)->index;
 	auto icache_index = i_item_index - ifirstvisible;
-	if (icache_index > (datalistctrlrowobject_prt_array.GetSize() - 1))
-		icache_index = datalistctrlrowobject_prt_array.GetSize() - 1;
+	if (icache_index > (ptrArray.GetSize() - 1))
+		icache_index = ptrArray.GetSize() - 1;
 
-	auto* ptr = datalistctrlrowobject_prt_array.GetAt(icache_index);
+	auto* ptr = ptrArray.GetAt(icache_index);
 
 	if (p_item->mask & LVIF_TEXT) //valid text buffer?
 	{
@@ -263,16 +263,10 @@ void CDataListCtrl::SetCurSel(int recposition)
 
 void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 {
-	auto ifirst_array = 0;
-	if (datalistctrlrowobject_prt_array.GetSize() > 0)
-	{
-		ifirst_array = datalistctrlrowobject_prt_array.GetAt(0)->index;
-	}
+	ATLTRACE("CDataListCtrl::UpdateCache -- enter \n");
 
 	// adjust number of items in the array and adjust ifirst and ilast
 	const auto inb_visible = ilast - ifirst + 1;
-
-	// check ifirst & ilast
 	if (ifirst < 0)
 	{
 		ifirst = 0;
@@ -286,52 +280,55 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 
 	// resize array if the number of visible records is different from the number of lines / listcontrol
 	auto b_forced_update = FALSE;
-	if (inb_visible != datalistctrlrowobject_prt_array.GetSize())
+	if (inb_visible != ptrArray.GetSize())
 	{
 		// if cache size increases, erase old information (set flag)
-		if (inb_visible > datalistctrlrowobject_prt_array.GetSize())
+		if (inb_visible > ptrArray.GetSize())
 			b_forced_update = TRUE;
 		// if cache size decreases, just delete extra rows
-		ResizePtrArray(inb_visible);
+		resizePtrArray(inb_visible);
 	}
 
 	// get data file pointer and pointer to database
 	auto p_dbwave_doc = ((CViewdbWave*)GetParent())->GetDocument();
 	if (p_dbwave_doc == nullptr)
 		return;
-	const int indexcurrentfile = p_dbwave_doc->GetDB_CurrentRecordPosition();	// save current file
+	const int indexcurrentfile = p_dbwave_doc->GetDB_CurrentRecordPosition();
 
 	// which update is necessary?
 	// conditions for out of range (renew all items)
 	auto idelta = 0;						// flag (copy forwards or backwards)
 	auto n_to_transfer = 0;					// number of items to copy
-	auto n_to_rebuild = datalistctrlrowobject_prt_array.GetSize();	// number of items to refresh
+	auto n_to_rebuild = ptrArray.GetSize();	// number of items to refresh
 	auto idest1 = 0;						// index first item to be exchg with source
 	auto isource1 = 0;						// index first source item
 	auto inew1 = 0;
+	auto ifirst_array = 0;
+	if (ptrArray.GetSize() > 0)
+		ifirst_array = ptrArray.GetAt(0)->index;
 	const auto difference = ifirst - ifirst_array;
 
 	// change indexes according to case
 	// scroll up (go forwards i.e. towards indexes of higher value)
 	if (!b_forced_update)
 	{
-		if (difference > 0 && difference < datalistctrlrowobject_prt_array.GetSize())
+		if (difference > 0 && difference < ptrArray.GetSize())
 		{
 			idelta = 1;						// copy forward
-			n_to_transfer = datalistctrlrowobject_prt_array.GetSize() - difference;
+			n_to_transfer = ptrArray.GetSize() - difference;
 			n_to_rebuild -= n_to_transfer;
 			isource1 = difference;;
 			idest1 = 0;
 			inew1 = n_to_transfer;
 		}
 		// scroll down (go backwards i.e. towards indexes of lower value)
-		else if (difference < 0 && -difference < datalistctrlrowobject_prt_array.GetSize())
+		else if (difference < 0 && -difference < ptrArray.GetSize())
 		{
 			idelta = -1;
-			n_to_transfer = datalistctrlrowobject_prt_array.GetSize() + difference;
+			n_to_transfer = ptrArray.GetSize() + difference;
 			n_to_rebuild -= n_to_transfer;
 			isource1 = n_to_transfer - 1;
-			idest1 = datalistctrlrowobject_prt_array.GetSize() - 1;
+			idest1 = ptrArray.GetSize() - 1;
 			inew1 = 0;
 		}
 
@@ -343,10 +340,10 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		while (n_to_transfer > 0)
 		{
 			// exchange objects
-			auto* p_source = datalistctrlrowobject_prt_array.GetAt(isource);
-			const auto p_dest = datalistctrlrowobject_prt_array.GetAt(idest);
-			datalistctrlrowobject_prt_array.SetAt(idest, p_source);
-			datalistctrlrowobject_prt_array.SetAt(isource, p_dest);
+			auto* p_source = ptrArray.GetAt(isource);
+			const auto p_dest = ptrArray.GetAt(idest);
+			ptrArray.SetAt(idest, p_source);
+			ptrArray.SetAt(isource, p_dest);
 			m_imagelist.Copy(idest, isource, ILCF_SWAP);
 
 			// update indexes
@@ -363,13 +360,13 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	int index = inew1;
 
 	// left, top, right, bottom
-	SetEmptyBitmap();
+	setEmptyBitmap();
 	DB_ITEMDESC desc;
 
 	while (n_to_rebuild > 0)
 	{
 		// get data; create object if null
-		auto ptr = datalistctrlrowobject_prt_array.GetAt(index);
+		auto ptr = ptrArray.GetAt(index);
 
 		// create lineview and spike superposition
 		ptr->index = index + ifirst;
@@ -412,14 +409,14 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		{
 			// data mode
 		case 1:
-			DisplayDataWnd(ptr, index);
+			displayDataWnd(ptr, index);
 			break;
 			// spike bars
 		case 2:
-			DisplaySpikeWnd(ptr, index);
+			displaySpikeWnd(ptr, index);
 			break;
 		default:
-			DisplayEmptyWnd(ptr, index);
+			displayEmptyWnd(ptr, index);
 			break;
 		}
 		index++;
@@ -429,10 +426,11 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	// restore document conditions
 	if (indexcurrentfile >= 0)
 		p_dbwave_doc->SetDB_CurrentRecordPosition(indexcurrentfile);
+	ATLTRACE("CDataListCtrl::UpdateCache -- leave \n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CDataListCtrl::SetEmptyBitmap(const BOOL b_forced_update)
+void CDataListCtrl::setEmptyBitmap(const BOOL b_forced_update)
 {
 	if (m_pEmptyBitmap != nullptr && !b_forced_update)
 		return;
@@ -458,30 +456,30 @@ void CDataListCtrl::SetEmptyBitmap(const BOOL b_forced_update)
 
 void CDataListCtrl::RefreshDisplay()
 {
-	if (datalistctrlrowobject_prt_array.GetSize() == NULL)
+	if (ptrArray.GetSize() == NULL)
 		return;
-	const int ifirst_row = datalistctrlrowobject_prt_array.GetAt(0)->index;
-	const int ilast_row = datalistctrlrowobject_prt_array.GetAt(datalistctrlrowobject_prt_array.GetUpperBound())->index;
+	const int ifirst_row = ptrArray.GetAt(0)->index;
+	const int ilast_row = ptrArray.GetAt(ptrArray.GetUpperBound())->index;
 
 	// left, top, right, bottom
-	SetEmptyBitmap();
+	setEmptyBitmap();
 
-	const auto nrows = datalistctrlrowobject_prt_array.GetSize();
+	const auto nrows = ptrArray.GetSize();
 	for (auto index = 0; index < nrows; index++)
 	{
-		auto* ptr = datalistctrlrowobject_prt_array.GetAt(index);
+		auto* ptr = ptrArray.GetAt(index);
 		if (ptr == nullptr)
 			continue;
 		switch (m_displaymode)
 		{
 		case 1:
-			DisplayDataWnd(ptr, index);
+			displayDataWnd(ptr, index);
 			break;
 		case 2:
-			DisplaySpikeWnd(ptr, index);
+			displaySpikeWnd(ptr, index);
 			break;
 		default:
-			DisplayEmptyWnd(ptr, index);
+			displayEmptyWnd(ptr, index);
 			break;
 		}
 	}
@@ -541,23 +539,23 @@ CChartDataWnd* CDataListCtrl::GetDataViewCurrentRecord()
 		nItem = GetNextItem(nItem, LVNI_SELECTED);
 		ASSERT(nItem != -1);
 		nItem -= GetTopIndex();
-		if (nItem >= 0 && nItem < datalistctrlrowobject_prt_array.GetSize())
-			ptr = datalistctrlrowobject_prt_array.GetAt(nItem)->pChartDataWnd;
+		if (nItem >= 0 && nItem < ptrArray.GetSize())
+			ptr = ptrArray.GetAt(nItem)->pDataChartWnd;
 	}
 	return ptr;
 }
 
-void CDataListCtrl::DisplayDataWnd(CDataListCtrlRowObject* ptr, int iImage)
+void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	// create objects if necessary : CLineView and CAcqDataDoc
-	if (ptr->pChartDataWnd == nullptr)
+	if (ptr->pDataChartWnd == nullptr)
 	{
-		ptr->pChartDataWnd = new CChartDataWnd;
-		ASSERT(ptr->pChartDataWnd != NULL);
-		ptr->pChartDataWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, iImage * 100);
-		ptr->pChartDataWnd->SetbUseDIB(FALSE);
+		ptr->pDataChartWnd = new CChartDataWnd;
+		ASSERT(ptr->pDataChartWnd != NULL);
+		ptr->pDataChartWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, iImage * 100);
+		ptr->pDataChartWnd->SetbUseDIB(FALSE);
 	}
-	auto p_wnd = ptr->pChartDataWnd;
+	auto p_wnd = ptr->pDataChartWnd;
 	p_wnd->SetString(ptr->cs_comment);
 
 	// open data document
@@ -675,7 +673,7 @@ void CDataListCtrl::DisplayDataWnd(CDataListCtrlRowObject* ptr, int iImage)
 	m_imagelist.Replace(iImage, &bitmap_plot, nullptr);
 }
 
-void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
+void CDataListCtrl::displaySpikeWnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	// create spike window and spike document if necessary
 	if (ptr->pSpikeChartWnd == nullptr)
@@ -748,7 +746,7 @@ void CDataListCtrl::DisplaySpikeWnd(CDataListCtrlRowObject* ptr, int iImage)
 	}
 }
 
-void CDataListCtrl::DisplayEmptyWnd(CDataListCtrlRowObject* ptr, int iImage)
+void CDataListCtrl::displayEmptyWnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	m_imagelist.Replace(iImage, m_pEmptyBitmap, nullptr);
 }
@@ -760,12 +758,12 @@ void CDataListCtrl::ResizeSignalColumn(int npixels)
 	m_cx = m_colwidth[COL_CURVE];
 	m_imagelist.Create(m_cx, m_cy, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
 	SetImageList(&m_imagelist, LVSIL_SMALL);
-	m_imagelist.SetImageCount(datalistctrlrowobject_prt_array.GetSize());
+	m_imagelist.SetImageCount(ptrArray.GetSize());
 
-	for (int i = 0; i < datalistctrlrowobject_prt_array.GetSize(); i++)
+	for (int i = 0; i < ptrArray.GetSize(); i++)
 	{
-		auto* ptr = datalistctrlrowobject_prt_array.GetAt(i);
-		SAFE_DELETE(ptr->pChartDataWnd);
+		auto* ptr = ptrArray.GetAt(i);
+		SAFE_DELETE(ptr->pDataChartWnd);
 		SAFE_DELETE(ptr->pSpikeChartWnd);
 	}
 	RefreshDisplay();

@@ -291,7 +291,6 @@ void CGridInPlaceList::OnSelendOK()
 void CGridInPlaceList::PostNcDestroy()
 {
 	CComboBox::PostNcDestroy();
-
 	delete this;
 }
 

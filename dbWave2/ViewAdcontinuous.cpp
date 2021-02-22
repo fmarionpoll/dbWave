@@ -1253,7 +1253,7 @@ void CViewADContinuous::UpdateViewDataFinal()
 	auto p_doc_dat = pdb_doc->OpenCurrentDataFile();
 	if (p_doc_dat == nullptr)
 	{
-		ATLTRACE2(_T("error reading current document"));
+		AfxMessageBox(_T("error reading current document"), MB_OK);
 		return;
 	}
 

@@ -12,13 +12,13 @@
 
 // CDataListCtrlRowObject command target
 
-class CDataListCtrlRowObject : public CObject
+class CDataListCtrl_Row : public CObject
 {
-	DECLARE_SERIAL(CDataListCtrlRowObject)
+	DECLARE_SERIAL(CDataListCtrl_Row)
 public:
-	CDataListCtrlRowObject();
-	CDataListCtrlRowObject(int i);
-	virtual ~CDataListCtrlRowObject();
+	CDataListCtrl_Row();
+	CDataListCtrl_Row(int i);
+	virtual ~CDataListCtrl_Row();
 
 	BOOL			bChanged = false;
 	WORD			wversion = 0;
@@ -39,12 +39,12 @@ public:
 	CString			csFlag{};
 	CString			csDate{};
 
-	CChartDataWnd*	pChartDataWnd = nullptr;
+	CChartDataWnd*		pDataChartWnd = nullptr;
 	CChartSpikeBarWnd*	pSpikeChartWnd = nullptr;
 	CdbWaveDoc*		pdbWaveDoc = nullptr;
 	CAcqDataDoc*	pdataDoc = nullptr;
 	CSpikeDoc*		pspikeDoc = nullptr;
 
-	CDataListCtrlRowObject& operator = (const CDataListCtrlRowObject& arg);
+	CDataListCtrl_Row& operator = (const CDataListCtrl_Row& arg);
 	void Serialize(CArchive& ar) override;
 };

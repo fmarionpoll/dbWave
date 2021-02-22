@@ -2381,7 +2381,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 					catch (CFileException* p_ex)
 					{
 						auto cs_local = _T("File") + cs_file_path + _T(" %20s cannot be removed\n");
-						ATLTRACE2(cs_local);
+						AfxMessageBox(cs_local, MB_OK);
 						p_ex->Delete();
 					}
 				}
@@ -2397,7 +2397,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 					catch (CFileException* p_ex)
 					{
 						auto cs_local = _T("File") + cs_file_path + _T(" %20s cannot be removed\n");
-						ATLTRACE2(cs_local);
+						AfxMessageBox(cs_local, MB_OK);
 						p_ex->Delete();
 					}
 				}

@@ -13,9 +13,7 @@ IMPLEMENT_SERIAL(CChartDataWnd, CChartWnd, 1)
 
 CChartDataWnd::CChartDataWnd()
 {
-	m_bVTtagsLONG = TRUE;		// VT tags defined as long
-
-	// init arrays for cool display of empty data
+	m_bVTtagsLONG = TRUE;
 	AddChanlistItem(0, 0);
 	ResizeChannels(m_npixels, 1024);
 	m_csEmpty = _T("no data (lineview)");
@@ -23,7 +21,6 @@ CChartDataWnd::CChartDataWnd()
 
 CChartDataWnd::~CChartDataWnd()
 {
-	// remove list of objects (channels & Envelopes)
 	RemoveAllChanlistItems();
 }
 

@@ -13,10 +13,10 @@ protected:
 	CArray <CWaveChan*, CWaveChan*>	wavechan_ptr_array;		// array of channels
 
 public:
-	CWaveChanArray();				// create array
-	~CWaveChanArray();				// delete array
-	long write(CFile* datafile);	// binary write
-	BOOL read(CFile* datafile);		// binary read
+	CWaveChanArray();
+	~CWaveChanArray();
+	long write(CFile* datafile);
+	BOOL read(CFile* datafile);
 
 	CWaveChanArray& operator = (const CWaveChanArray& arg);
 	CWaveChan* get_p_channel(int i) const;

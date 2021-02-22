@@ -215,7 +215,6 @@ BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 void CInPlaceEdit::PostNcDestroy()
 {
 	CEdit::PostNcDestroy();
-
 	delete this;
 }
 

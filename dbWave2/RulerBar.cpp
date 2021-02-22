@@ -285,11 +285,11 @@ BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_s
 	return CWnd::Create(nullptr, _T("RulerBarWnd"), dw_style, rect, pParentWnd, nID);
 }
 
-BOOL CRulerBar::Create(CWnd* pParentWnd, CChartDataWnd* pChartDataWnd, BOOL bAsXAxis, int dSize, UINT nID)
+BOOL CRulerBar::Create(CWnd* pParentWnd, CChartDataWnd* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID)
 {
-	m_pChartDataWnd = pChartDataWnd;
+	m_pChartDataWnd = pDataChartWnd;
 	CRect rect;
-	pChartDataWnd->GetWindowRect(&rect);
+	pDataChartWnd->GetWindowRect(&rect);
 	auto rectthis = rect;
 	if (bAsXAxis)
 	{
