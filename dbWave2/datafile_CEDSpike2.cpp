@@ -141,7 +141,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 			{
 				int i = pArray->chanArray_add();
 				CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
-				initWaveChan(pChan, cedChan);
+				read_ChannelParameters(pChan, cedChan);
 				pWFormat->scan_count++;
 				pWFormat->chrate = (float) (1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
 				pWFormat->sample_count = (long) (pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
@@ -183,13 +183,13 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveFormat* pWFormat, CWaveChanArray
 	return TRUE;
 }
 
-void CDataFileFromCEDSpike2::initWaveChan(CWaveChan* pChan, int cedChan) {
+void CDataFileFromCEDSpike2::read_ChannelParameters(CWaveChan* pChan, int cedChan) {
 
 	pChan->am_CEDchanID = cedChan;
 	pChan->am_csamplifier.Empty();			// amplifier type
 	pChan->am_csheadstage.Empty();			// headstage type
 	pChan->am_csComment.Empty();			// channel comment
-	pChan->am_csComment = getChannelComment(cedChan);
+	pChan->am_csComment = read_ChannelComment(cedChan);
 	
 	pChan->am_adchannel		= 0;			// channel scan list
 	pChan->am_gainAD		= 1;			// channel gain list
@@ -214,20 +214,20 @@ void CDataFileFromCEDSpike2::initWaveChan(CWaveChan* pChan, int cedChan) {
 	pChan->am_CEDmaxTimeInTicks = S64ChanMaxTime(m_nFid, cedChan);
 }
 
-CString  CDataFileFromCEDSpike2::getChannelComment(int nChan) {
+CString  CDataFileFromCEDSpike2::read_ChannelComment(int cedChan) {
 
-	int sizeComment = S64GetChanComment(m_nFid, nChan, nullptr, -1);
+	int sizeComment = S64GetChanComment(m_nFid, cedChan, nullptr, -1);
 	CString comment;
 	if (sizeComment > 0) {
 		char* buffer = new char[sizeComment];
-		int flag = S64GetChanComment(m_nFid, nChan, buffer, 0);
+		int flag = S64GetChanComment(m_nFid, cedChan, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
 	}
 	return comment;
 }
 
-CString  CDataFileFromCEDSpike2::getFileComment(int nInd) {
+CString  CDataFileFromCEDSpike2::read_FileComment(int nInd) {
 
 	int sizeComment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
 	CString comment;
@@ -253,13 +253,13 @@ long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels,
 		// TODO: create channel buffer
 		size_t numberBytes = ((int) llDataNValues) * sizeof(short);
 		memset(pBuffer, 0, numberBytes);
-		nValuesRead = readData(pChan, pBuffer, ll_First, llDataNValues);
+		nValuesRead = read_ChannelData(pChan, pBuffer, ll_First, llDataNValues);
 	}
 	// TODO: combine channels buffers to build interleaved data 
 	return nValuesRead;
 }
 
-long CDataFileFromCEDSpike2::readData(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues) {
+long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues) {
 
 	const int chanID = pChan->am_CEDchanID;
 	const long long ticksPerSample = S64ChanDivide(m_nFid, chanID);
@@ -278,14 +278,14 @@ long CDataFileFromCEDSpike2::readData(CWaveChan* pChan, short* pData, long long 
 
 		numberOfValuesRead += nValuesRead;
 		if (tFirst > tFrom) {
-			long offset = relocateData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
+			long offset = relocate_ChannelData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
 			numberOfValuesRead += offset;
 		}
 	}
 	return numberOfValuesRead;
 }
 
-long CDataFileFromCEDSpike2::relocateData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) {
+long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample) {
 	
 	long offset = (long)((tFirst - tFrom) / ticksPerSample);
 	size_t count = nValuesRead * sizeof(short);

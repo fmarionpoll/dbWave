@@ -81,11 +81,11 @@ protected:
 	static		errorMessage errorMessages[];
 	int			m_nFid	=-1;
 
-	void		initWaveChan(CWaveChan* pChan, int cedChan);
-	CString		getFileComment(int nInd);
-	CString		getChannelComment(int nChan);
-	long		readData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
-	long		relocateData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
+	void		read_ChannelParameters(CWaveChan* pChan, int cedChan);
+	CString		read_FileComment(int nInd);
+	CString		read_ChannelComment(int cedChan);
+	long		read_ChannelData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
+	long		relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
 	CString		getErrorMessage(int flag);
 };
 
