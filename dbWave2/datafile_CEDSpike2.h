@@ -88,6 +88,6 @@ protected:
 	long		read_ChannelData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
 	long		relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
 	CString		getErrorMessage(int flag);
-	void		read_EventFall(int cedChan);
+	void		read_EventFall(int cedChan, CWaveBuf* pBuf);
 };
 

@@ -155,7 +155,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		break;
 		case CHANTYPE_EventFall:
 			descriptor = "Event on falling edge";
-			read_EventFall(cedChan);
+			read_EventFall(cedChan, pBuf);
 			break;
 		case CHANTYPE_EventRise:
 			descriptor = "Event on rising edge";
@@ -336,9 +336,25 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 	return errorMsg;
 }
 
-void CDataFileFromCEDSpike2::read_EventFall(int cedChan)
+void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 {
-
+	long long tTo = S64ChanMaxTime(m_nFid, cedChan);
+	CTagList* pTag = pBuf->GetpVTtags();
+	pTag->RemoveAllTags();
+	const long long ticksPerSample = S64ChanDivide(m_nFid, cedChan);
+	const int nMask = 0;
+	long long tFrom = 0;
+	int nMax = 1;
+	int nRead = 0;
+	int nItems = 0;
+	long long Data = 0;
+	do {
+		nRead = S64ReadEvents(m_nFid, cedChan, &Data, nMax, tFrom, tTo, nMask);
+		tFrom = Data +1;
+		long lValue = (long) (Data / ticksPerSample);
+		CTag tag = CTag(lValue, 0);
+		pTag->AddTag(tag);
+	} while (nRead > 0);
 }
 
 

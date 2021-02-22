@@ -29,7 +29,6 @@ public:
 	inline CWaveChanArray* GetpWavechanArray() { return &m_chanArray; }
 	inline CWaveFormat*	GetpWaveFormat()	{ return &m_waveFormat; }
 
-
 	//operations
 	CWaveBuf();
 	virtual			~CWaveBuf();
@@ -89,7 +88,6 @@ protected:
 private:
 	short*			m_pWData;				// Pointer to the origin of the primary data array
 	short*			m_pWTransf;				// primary transform buffer
-
 	BOOL			m_bTransf;
 	WORD			m_wversion;
 	int				m_iNumElements;			// n elements within buffer
