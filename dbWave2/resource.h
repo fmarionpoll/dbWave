@@ -417,7 +417,6 @@
 #define IDC_CENTER                      529
 #define IDC_EXPORT                      530
 #define IDC_DISPLAYSPIKE_buttn          531
-#define IDC_EXPORT2                     531
 #define IDC_IMPORTFROMDATA              531
 #define IDC_DISPLAREA_buttn             532
 #define IDD_IMPORTOPTIONS               533
@@ -810,6 +809,7 @@
 #define IDC_BINMV                       1512
 #define IDC_DISPLAYDAT                  1513
 #define IDC_DISPLAYSINGLECLASS          1514
+#define IDC_REORDER                     1515
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -936,7 +936,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        576
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1515
+#define _APS_NEXT_CONTROL_VALUE         1516
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif
