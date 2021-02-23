@@ -336,7 +336,7 @@ void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 
 void ADExperimentDlg::EditComboBox(CComboBox* pCo)
 {
-	CEditListDlg dlg;
+	CDlgEditList dlg;
 	dlg.pCo = pCo;
 	if (IDOK == dlg.DoModal())
 	{

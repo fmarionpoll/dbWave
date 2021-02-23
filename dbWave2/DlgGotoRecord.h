@@ -1,11 +1,11 @@
 #pragma once
 
 
-class CGotoRecordDlg : public CDialog
+class CDlgGotoRecord : public CDialog
 {
 	// Construction
 public:
-	CGotoRecordDlg(CWnd* pParent = nullptr);   // standard constructor
+	CDlgGotoRecord(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_GOTORECORDID };

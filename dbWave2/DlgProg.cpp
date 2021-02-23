@@ -1,4 +1,3 @@
-//  ProgDlg.cpp : implementation file
 // CG: This file was added by the Progress Dialog component
 
 #include "StdAfx.h"
@@ -9,7 +8,7 @@
 #define new DEBUG_NEW
 #endif
 
-CProgressDlg::CProgressDlg(UINT nCaptionID)
+CDlgProgress::CDlgProgress(UINT nCaptionID)
 {
 	m_nCaptionID = IDP_PROGRESS_CAPTION;
 	if (nCaptionID != 0)
@@ -21,26 +20,26 @@ CProgressDlg::CProgressDlg(UINT nCaptionID)
 	m_bParentDisabled = FALSE;
 }
 
-CProgressDlg::~CProgressDlg()
+CDlgProgress::~CDlgProgress()
 {
 	if (m_hWnd != nullptr)
 		DestroyWindow();
 }
 
-BOOL CProgressDlg::DestroyWindow()
+BOOL CDlgProgress::DestroyWindow()
 {
 	ReEnableParent();
 	return CDialog::DestroyWindow();
 }
 
-void CProgressDlg::ReEnableParent()
+void CDlgProgress::ReEnableParent()
 {
 	if (m_bParentDisabled && (m_pParentWnd != nullptr))
 		m_pParentWnd->EnableWindow(TRUE);
 	m_bParentDisabled = FALSE;
 }
 
-BOOL CProgressDlg::Create(CWnd* pParent)
+BOOL CDlgProgress::Create(CWnd* pParent)
 {
 	// Get the true parent of the dialog
 	m_pParentWnd = CWnd::GetSafeOwner(pParent);
@@ -55,7 +54,7 @@ BOOL CProgressDlg::Create(CWnd* pParent)
 		m_bParentDisabled = TRUE;
 	}
 
-	if (!CDialog::Create(CProgressDlg::IDD, pParent))
+	if (!CDialog::Create(CDlgProgress::IDD, pParent))
 	{
 		ReEnableParent();
 		return FALSE;
@@ -64,17 +63,17 @@ BOOL CProgressDlg::Create(CWnd* pParent)
 	return TRUE;
 }
 
-void CProgressDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgProgress::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, CG_IDC_PROGDLG_PROGRESS, m_Progress);
 }
 
-BEGIN_MESSAGE_MAP(CProgressDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgProgress, CDialog)
 
 END_MESSAGE_MAP()
 
-void CProgressDlg::SetStatus(LPCTSTR lpszMessage)
+void CDlgProgress::SetStatus(LPCTSTR lpszMessage)
 {
 	ASSERT(m_hWnd); // Don't call this _before_ the dialog has
 					// been created. Can be called from OnInitDialog
@@ -85,19 +84,19 @@ void CProgressDlg::SetStatus(LPCTSTR lpszMessage)
 	p_wnd_status->SetWindowText(lpszMessage);
 }
 
-void CProgressDlg::OnCancel()
+void CDlgProgress::OnCancel()
 {
 	m_bCancel = TRUE;
 }
 
-void CProgressDlg::SetRange(int nLower, int nUpper)
+void CDlgProgress::SetRange(int nLower, int nUpper)
 {
 	m_nLower = nLower;
 	m_nUpper = nUpper;
 	m_Progress.SetRange(nLower, nUpper);
 }
 
-int CProgressDlg::SetPos(int nPos)
+int CDlgProgress::SetPos(int nPos)
 {
 	PumpMessages();
 	const auto i_result = m_Progress.SetPos(nPos);
@@ -105,13 +104,13 @@ int CProgressDlg::SetPos(int nPos)
 	return i_result;
 }
 
-int CProgressDlg::SetStep(int nStep)
+int CDlgProgress::SetStep(int nStep)
 {
 	m_nStep = nStep; // Store for later use in calculating percentage
 	return m_Progress.SetStep(nStep);
 }
 
-int CProgressDlg::OffsetPos(int nPos)
+int CDlgProgress::OffsetPos(int nPos)
 {
 	PumpMessages();
 	const auto i_result = m_Progress.OffsetPos(nPos);
@@ -119,7 +118,7 @@ int CProgressDlg::OffsetPos(int nPos)
 	return i_result;
 }
 
-int CProgressDlg::StepIt()
+int CDlgProgress::StepIt()
 {
 	PumpMessages();
 	const auto i_result = m_Progress.StepIt();
@@ -127,7 +126,7 @@ int CProgressDlg::StepIt()
 	return i_result;
 }
 
-void CProgressDlg::PumpMessages()
+void CDlgProgress::PumpMessages()
 {
 	// Must call Create() before using the dialog
 	ASSERT(m_hWnd != NULL);
@@ -144,7 +143,7 @@ void CProgressDlg::PumpMessages()
 	}
 }
 
-BOOL CProgressDlg::CheckCancelButton()
+BOOL CDlgProgress::CheckCancelButton()
 {
 	// Process all pending messages
 	PumpMessages();
@@ -162,7 +161,7 @@ BOOL CProgressDlg::CheckCancelButton()
 	return b_result;
 }
 
-void CProgressDlg::UpdatePercent(int nNewPos)
+void CDlgProgress::UpdatePercent(int nNewPos)
 {
 	auto p_wnd_percent = GetDlgItem(CG_IDC_PROGDLG_PERCENT);
 
@@ -193,7 +192,7 @@ void CProgressDlg::UpdatePercent(int nNewPos)
 /////////////////////////////////////////////////////////////////////////////
 // CProgressDlg message handlers
 
-BOOL CProgressDlg::OnInitDialog()
+BOOL CDlgProgress::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_Progress.SetRange(m_nLower, m_nUpper);

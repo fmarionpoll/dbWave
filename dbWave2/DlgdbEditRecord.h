@@ -5,13 +5,13 @@
 class CdbWaveDoc;
 class CdbMainTable;
 
-class CdbEditRecordDlg : public CDialog
+class CDlgdbEditRecord : public CDialog
 {
-	DECLARE_DYNAMIC(CdbEditRecordDlg)
+	DECLARE_DYNAMIC(CDlgdbEditRecord)
 
 public:
-	CdbEditRecordDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CdbEditRecordDlg();
+	CDlgdbEditRecord(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgdbEditRecord();
 
 	CdbWaveDoc* m_pdbDoc;
 	CdbMainTable* m_pSet;

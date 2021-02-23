@@ -3,7 +3,7 @@
 
 #include "StdAfx.h"
 
-#include "Taglines.h"		// tags
+#include "Taglist.h"		// tags
 #include "Acqdatad.h"
 
 #include "datafile_Atlab.h"
@@ -167,7 +167,7 @@ bool CAcqDataDoc::dlgImportDataFile(CString& sz_path_name)
 	ASSERT(cs_array != NULL);
 	cs_array->Add(sz_path_name);
 
-	auto p_dlg				= new CImportGenericDataDlg;
+	auto p_dlg				= new CDlgImportGenericData;
 	p_dlg->m_pfilenameArray = cs_array;			// address of array
 	p_dlg->bConvert			= TRUE;				// conversion is allowed
 	p_dlg->piivO			= &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import);

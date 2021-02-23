@@ -486,7 +486,7 @@ void CPropertiesWnd::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
 void CPropertiesWnd::OnBnClickedEditinfos()
 {
 	m_pDoc->UpdateAllViews(nullptr, HINT_GETSELECTEDRECORDS, nullptr);
-	CdbEditRecordDlg dlg;
+	CDlgdbEditRecord dlg;
 	dlg.m_pdbDoc = m_pDoc;
 	if (IDOK == dlg.DoModal())
 	{

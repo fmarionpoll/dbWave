@@ -1,9 +1,9 @@
 #pragma once
 
-class CAboutDlg : public CDialogEx
+class CDlgAbout : public CDialogEx
 {
 public:
-	CAboutDlg();
+	CDlgAbout();
 
 	// Dialog Data
 	enum { IDD = IDD_ABOUTBOXDLG };

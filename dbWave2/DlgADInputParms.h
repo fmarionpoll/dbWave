@@ -6,13 +6,13 @@
 #include "CUSBPxxS1Ctl.h"
 #include "./GridCtrl/GridCtrl.h"
 
-class CADInputParmsDlg : public CDialog
+class CDlgADInputParms : public CDialog
 {
-	DECLARE_DYNAMIC(CADInputParmsDlg)
+	DECLARE_DYNAMIC(CDlgADInputParms)
 
 public:
-	CADInputParmsDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CADInputParmsDlg();
+	CDlgADInputParms(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgADInputParms();
 
 	// Dialog Data
 	enum { IDD = IDD_AD_INPUTPARMSDLG };

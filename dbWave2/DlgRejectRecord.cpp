@@ -9,11 +9,9 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CRejectRecordDlg dialog
 
-CRejectRecordDlg::CRejectRecordDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CRejectRecordDlg::IDD, pParent)
+CDlgRejectRecord::CDlgRejectRecord(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgRejectRecord::IDD, pParent)
 {
 	m_bconsecutivepoints = FALSE;
 	m_Nconsecutivepoints = 0;
@@ -21,7 +19,7 @@ CRejectRecordDlg::CRejectRecordDlg(CWnd* pParent /*=NULL*/)
 	m_flag = 1;
 }
 
-void CRejectRecordDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgRejectRecord::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Check(pDX, IDC_CHECK1, m_bconsecutivepoints);
@@ -30,9 +28,7 @@ void CRejectRecordDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, m_flag);
 }
 
-BEGIN_MESSAGE_MAP(CRejectRecordDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgRejectRecord, CDialog)
 
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CRejectRecordDlg message handlers

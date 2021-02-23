@@ -6,8 +6,8 @@
 #define new DEBUG_NEW
 #endif
 
-CFindFilesDlg::CFindFilesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CFindFilesDlg::IDD, pParent)
+CDlgFindFiles::CDlgFindFiles(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgFindFiles::IDD, pParent)
 	, m_pfilenames(nullptr), m_banyformat(FALSE), m_bexcludecloud(TRUE), m_bSubtreeSearch(0)
 {
 	m_path = _T("");
@@ -18,7 +18,7 @@ CFindFilesDlg::CFindFilesDlg(CWnd* pParent /*=NULL*/)
 }
 
 
-void CFindFilesDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgFindFiles::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_fileext);
@@ -28,14 +28,14 @@ void CFindFilesDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CFindFilesDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgFindFiles, CDialog)
 
 	ON_BN_CLICKED(IDC_BUTTON2, OnSearch)
 
 END_MESSAGE_MAP()
 
 
-BOOL CFindFilesDlg::OnInitDialog()
+BOOL CDlgFindFiles::OnInitDialog()
 {
 	CDialog::OnInitDialog();				// call class original routine
 
@@ -78,7 +78,7 @@ BOOL CFindFilesDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CFindFilesDlg::OnOK()
+void CDlgFindFiles::OnOK()
 {
 	if (m_pfilenames->GetSize() == 0)
 		OnSearch();
@@ -91,7 +91,7 @@ void CFindFilesDlg::OnOK()
 	CDialog::OnOK();
 }
 
-void CFindFilesDlg::OnSearch()
+void CDlgFindFiles::OnSearch()
 {
 	UpdateData(TRUE);		// update m_path
 
@@ -123,14 +123,14 @@ void CFindFilesDlg::OnSearch()
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 }
 
-void CFindFilesDlg::DisplaynFound()
+void CDlgFindFiles::DisplaynFound()
 {
 	TCHAR sz[50];
 	wsprintf(sz, _T("n found = %i"), m_nfound);
 	GetDlgItem(IDC_STATIC1)->SetWindowText(sz);
 }
 
-void CFindFilesDlg::TraverseDirectory(CString path)
+void CDlgFindFiles::TraverseDirectory(CString path)
 {
 	CFileFind finder;
 	auto str_wildcard = path;
@@ -154,7 +154,7 @@ void CFindFilesDlg::TraverseDirectory(CString path)
 	}
 }
 
-void CFindFilesDlg::FindFiles(CString path)
+void CDlgFindFiles::FindFiles(CString path)
 {
 	CFileFind finder;
 	const auto str_wildcard = path + _T("\\") + m_searchString;

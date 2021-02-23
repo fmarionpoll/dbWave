@@ -85,7 +85,7 @@ protected:
 
 	// Overrides
 public:
-	void Serialize(CArchive& ar) override;
+	void			Serialize(CArchive& ar) override;
 
 	virtual BOOL	OnNewDocument();
 	virtual BOOL	OnOpenDocument(LPCTSTR lpszPathName);

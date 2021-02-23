@@ -1,5 +1,3 @@
-// PivotDlg.cpp : implementation file
-//
 
 #include "StdAfx.h"
 //#include "dbWave.h"
@@ -18,10 +16,10 @@
 
 // CPivotDlg dialog
 
-IMPLEMENT_DYNAMIC(CPivotDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CDlgPivot, CDialogEx)
 
-CPivotDlg::CPivotDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CPivotDlg::IDD, pParent)
+CDlgPivot::CDlgPivot(CWnd* pParent /*=NULL*/)
+	: CDialogEx(CDlgPivot::IDD, pParent)
 {
 	m_nFixCols = 1;
 	m_nFixRows = 1;
@@ -29,24 +27,24 @@ CPivotDlg::CPivotDlg(CWnd* pParent /*=NULL*/)
 	m_nRows = 26;
 }
 
-CPivotDlg::~CPivotDlg()
+CDlgPivot::~CDlgPivot()
 {
 }
 
-void CPivotDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgPivot::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID, m_Grid);
 }
 
-BEGIN_MESSAGE_MAP(CPivotDlg, CDialogEx)
-	ON_BN_CLICKED(IDOK, &CPivotDlg::OnBnClickedOk)
+BEGIN_MESSAGE_MAP(CDlgPivot, CDialogEx)
+	ON_BN_CLICKED(IDOK, &CDlgPivot::OnBnClickedOk)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 // CPivotDlg message handlers
 
-BOOL CPivotDlg::OnInitDialog()
+BOOL CDlgPivot::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -56,13 +54,13 @@ BOOL CPivotDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CPivotDlg::OnBnClickedOk()
+void CDlgPivot::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
 	CDialogEx::OnOK();
 }
 
-bool CPivotDlg::VirtualCompare(int c1, int c2)
+bool CDlgPivot::VirtualCompare(int c1, int c2)
 {
 	//CGridCtrl *pThis = CGridCtrl::m_This; // Mmm, in big virtual mode you must well optimize this function
 	//int col = pThis->m_CurCol;            // a first version with CStrings was catastrophic....
@@ -73,7 +71,7 @@ BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 	auto p_wnd = CWnd::FromHandle(hwnd);
 	const auto p_translate = reinterpret_cast<CSize*>(lParam);
 
-	auto p_dlg = (CPivotDlg*)p_wnd->GetParent();
+	auto p_dlg = (CDlgPivot*)p_wnd->GetParent();
 	if (!p_dlg) return FALSE;
 
 	CRect rect;
@@ -105,7 +103,7 @@ BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 	return TRUE;
 }
 
-void CPivotDlg::OnSize(UINT nType, int cx, int cy)
+void CDlgPivot::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
 	if (cx <= 1 || cy <= 1)

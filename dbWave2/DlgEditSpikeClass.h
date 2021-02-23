@@ -2,13 +2,13 @@
 
 // CEditSpikeClassDlg dialog
 
-class CEditSpikeClassDlg : public CDialog
+class CDlgEditSpikeClass : public CDialog
 {
-	DECLARE_DYNAMIC(CEditSpikeClassDlg)
+	DECLARE_DYNAMIC(CDlgEditSpikeClass)
 
 public:
-	CEditSpikeClassDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CEditSpikeClassDlg();
+	CDlgEditSpikeClass(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgEditSpikeClass();
 
 	// Dialog Data
 	enum { IDD = IDD_EDITSPIKECLASS };

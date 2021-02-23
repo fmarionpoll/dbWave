@@ -2,13 +2,13 @@
 
 // CDAOutputsDlg dialog
 
-class CDAOutputParametersDlg : public CDialogEx
+class CDlgDAOutputParameters : public CDialogEx
 {
-	DECLARE_DYNAMIC(CDAOutputParametersDlg)
+	DECLARE_DYNAMIC(CDlgDAOutputParameters)
 
 public:
-	CDAOutputParametersDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CDAOutputParametersDlg();
+	CDlgDAOutputParameters(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgDAOutputParameters();
 
 	// Dialog Data
 	enum { IDD = IDD_DA_OUTPUTPARMS };

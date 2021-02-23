@@ -3,49 +3,55 @@
 
 // CEditStimArrayDlg dialog
 
-class CEditStimArrayDlg : public CDialog
+class CDlgEditStimArray : public CDialog
 {
-	DECLARE_DYNAMIC(CEditStimArrayDlg)
+	DECLARE_DYNAMIC(CDlgEditStimArray)
 
 public:
-	CEditStimArrayDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CEditStimArrayDlg();
+	CDlgEditStimArray(CWnd* pParent = nullptr);
+	virtual ~CDlgEditStimArray();
 
 	// data passed by caller
+	CTagList*			m_pTagList = nullptr;
+	CIntervalsAndLevels* m_pstimsaved = nullptr;
 	CArray < CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
-	float				m_rate;
-	CIntervalsAndLevels* m_pstimsaved;
+	float				m_rate = 0.f;
 
 	// Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
 
 protected:
-	CIntervalsAndLevels* m_pstim;
+	CIntervalsAndLevels* m_pstim = nullptr;
 
-	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	CImageList* m_pimagelist;
-	CStretchControl m_stretch;
-	BOOL			m_binit;
-	CEdit			m_csEdit;		// IDC_EDIT1
-	float			m_value;		// IDC_EDIT1
-	int				m_iItem;
-	CListCtrl		m_stimarrayCtrl;// IDC_LISTSTIM
+	virtual void	DoDataExchange(CDataExchange* pDX);
+	CStretchControl m_stretch{};
+	BOOL		m_binit = false;
+	CEdit		m_csEdit{};
+	float		m_value = 0;
+	int			m_iItem = -1;
+	CListCtrl	m_stimarrayCtrl{};
+	CImageList* m_pimagelist = nullptr;
 
-	void			SelectItem(int i);
-	void			ResetListOrder();
-	void			TransferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
+	void		selectItem(int i);
+	void		resetListOrder();
+	void		addNewItem(int i, long lInterval);
+	void		transferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
+	void		setSubItem0(LVITEM& lvi, int i, CString& cs);
+	void		setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs);
+
 
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedEdit();
-	afx_msg void OnEnKillfocusEdit1();
+	afx_msg void OnEnKillfocusReOrder();
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedInsert();
 	afx_msg void OnBnClickedDelete3();
-	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedReOrder();
 	afx_msg void OnBnClickedCopy();
 	afx_msg void OnBnClickedPaste();
 	afx_msg void OnBnClickedExport();
+	afx_msg void OnBnClickedImportfromdata();
 };

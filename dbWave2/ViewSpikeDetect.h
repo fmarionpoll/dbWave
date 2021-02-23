@@ -41,108 +41,108 @@ public:
 
 	// form variables
 protected:
-	int				m_scancount_doc = -1;		// number of channels in the data document
-	CSpikeDoc*		p_spike_doc_ = nullptr;	// destination data doc
-	CSpikeList*		p_spikelist_ = nullptr;	// temporary spike list
-	CDWordArray 	m_DWintervals;			// intervals to draw detected spikes
+	int				m_scancount_doc = -1;			// number of channels in the data document
+	CSpikeDoc*		p_spike_doc_ = nullptr;			// destination data doc
+	CSpikeList*		p_spikelist_ = nullptr;			// temporary spike list
+	CDWordArray 	m_DWintervals;					// intervals to draw detected spikes
 
 	CChartDataWnd	m_ChartDataWnd_Detect;
 	CChartDataWnd	m_ChartDataWnd_Source;
-	CChartSpikeBarWnd	m_displaySpk_BarView;	// bars with spike height
-	CChartSpikeShapeWnd	m_displaySpk_Shape;		// all spikes in displayspikes
+	CChartSpikeBarWnd	m_displaySpk_BarView;		// bars with spike height
+	CChartSpikeShapeWnd	m_displaySpk_Shape;			// all spikes in displayspikes
 
-	CScrollBarEx	m_filescroll;			// data position within file
-	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
+	CScrollBarEx	m_filescroll;					// data position within file
+	SCROLLINFO		m_filescroll_infos{};			// infos for scrollbar
 
-	CEditCtrl		mm_spikeno;			// spike selected
-	CEditCtrl		mm_thresholdval;	// value of threshold
-	CEditCtrl		mm_timefirst;		// first abcissa value
-	CEditCtrl		mm_timelast;		// last abcissa value
-	CEditCtrl		mm_spkWndDuration;	// duration of the spike shape window
-	CEditCtrl		mm_spkWndAmplitude;	// amplitude of the spike shape window
-	CEditCtrl		mm_ichanselected;	// channel selected
+	CEditCtrl		mm_spikeno;						// spike selected
+	CEditCtrl		mm_thresholdval;				// value of threshold
+	CEditCtrl		mm_timefirst;					// first abcissa value
+	CEditCtrl		mm_timelast;					// last abcissa value
+	CEditCtrl		mm_spkWndDuration;				// duration of the spike shape window
+	CEditCtrl		mm_spkWndAmplitude;				// amplitude of the spike shape window
+	CEditCtrl		mm_ichanselected;				// channel selected
 	CEditCtrl		mm_ichanselected2;
 
-	int				m_zoominteger = 0;		// zoom length (nb data acq points)
+	int				m_zoominteger = 0;				// zoom length (nb data acq points)
 	SPKDETECTARRAY* m_pArrayFromApp = nullptr;
 	CSpkDetectArray	m_parmsCurrent;
 	SPKDETECTPARM* m_pDetectParms = nullptr;
-	int 			m_iDetectParms = 0;		// index spk detect parm currently selected / array
+	int 			m_iDetectParms = 0;				// index spk detect parm currently selected / array
 
 	OPTIONS_VIEWDATA* options_viewdata = nullptr;	// browse options
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;		// measure options
 
-	float 			m_samplingRate = 0.f;	// data sampling rate
-	BOOL			m_bValidThreshold = false;		// flag: TRUE=threshold should be evaluated
-	BOOL			m_bDetected = false;
-	TCHAR			m_szbuf[64]{};
+	float 		m_samplingRate = 0.f;				// data sampling rate
+	BOOL		m_bValidThreshold = false;			// flag: TRUE=threshold should be evaluated
+	BOOL		m_bDetected = false;
+	TCHAR		m_szbuf[64]{};
 
 	// Operations
 protected:
-	void DetectAll(BOOL bAll);			// detect from current set of parms or from all
-	int	 DetectMethod1(WORD schan);		// spike detection, method 1 / m_spkD chan schan
-	int	 DetectStim1(int i);				// stimulus detection
-	void SerializeWindowsState(BOOL bSave, int itab = -1);
+	void		DetectAll(BOOL bAll);				// detect from current set of parms or from all
+	int			DetectMethod1(WORD schan);			// spike detection, method 1 / m_spkD chan schan
+	int			DetectStim1(int i);					// stimulus detection
+	void		SerializeWindowsState(BOOL bSave, int itab = -1);
 
 	// changing size of client moves children
 	CStretchControl m_stretch;
-	BOOL			m_binit = false;
-	int				m_cursorstate = 0;
+	BOOL		m_binit = false;
+	int			m_cursorstate = 0;
 public:
 	inline void	SetViewMouseCursor(int cursormode) {
-		m_displaySpk_BarView.SetMouseCursorType(cursormode);
-		m_displaySpk_Shape.SetMouseCursorType(cursormode);
-		m_ChartDataWnd_Detect.SetMouseCursorType(cursormode);
-		m_ChartDataWnd_Source.SetMouseCursorType(cursormode);
+					m_displaySpk_BarView.SetMouseCursorType(cursormode);
+					m_displaySpk_Shape.SetMouseCursorType(cursormode);
+					m_ChartDataWnd_Detect.SetMouseCursorType(cursormode);
+					m_ChartDataWnd_Source.SetMouseCursorType(cursormode);
 	}
 
 	// Implementation
 protected:
-	void AlignDisplayToCurrentSpike();
-	void HighlightSpikes(BOOL flag = TRUE);
-	void OnFileScroll(UINT nSBCode, UINT nPos);
-	void SaveCurrentSpikeFile();
-	void SelectSpikeNo(int spikeno, BOOL bMultipleSelection);
-	BOOL CheckDetectionSettings();
-	void UpdateCB();
-	void UpdateLegendDetectionWnd();
-	void UpdateCombosDetectChanAndTransforms();
-	void DefineStretchParameters();
-	void DefineSubClassedItems();
-	void UpdateDetectionParameters();
-	void UpdateDetectionControls();
-	void UpdateDetectionSettings(int iSelParms);
-	void UpdateFileParameters(BOOL bUpdateInterface = TRUE);
-	void UpdateDataFile(BOOL bUpdateInterface);
-	void UpdateSpikeFile(BOOL bUpdateInterface = TRUE);
-	void UpdateFileScroll();
-	void UpdateLegends();
-	void UpdateSpkShapeWndScale(BOOL bSetFromControls = TRUE);
-	void UpdateVTtags();
-	void UpdateSpikeDisplay();
+	void		AlignDisplayToCurrentSpike();
+	void		HighlightSpikes(BOOL flag = TRUE);
+	void		OnFileScroll(UINT nSBCode, UINT nPos);
+	void		SaveCurrentSpikeFile();
+	void		SelectSpikeNo(int spikeno, BOOL bMultipleSelection);
+	BOOL		CheckDetectionSettings();
+	void		UpdateCB();
+	void		UpdateLegendDetectionWnd();
+	void		UpdateCombosDetectChanAndTransforms();
+	void		DefineStretchParameters();
+	void		DefineSubClassedItems();
+	void		UpdateDetectionParameters();
+	void		UpdateDetectionControls();
+	void		UpdateDetectionSettings(int iSelParms);
+	void		UpdateFileParameters(BOOL bUpdateInterface = TRUE);
+	void		UpdateDataFile(BOOL bUpdateInterface);
+	void		UpdateSpikeFile(BOOL bUpdateInterface = TRUE);
+	void		UpdateFileScroll();
+	void		UpdateLegends();
+	void		UpdateSpkShapeWndScale(BOOL bSetFromControls = TRUE);
+	void		UpdateVTtags();
+	void		UpdateSpikeDisplay();
 
 	// public interface to view
 public:
 	// Overrides
 	CDaoRecordset* OnGetRecordset() override;
-	BOOL	PreCreateWindow(CREATESTRUCT& cs) override;
-	BOOL	OnMove(UINT nIDMoveCommand) override;
+	BOOL		PreCreateWindow(CREATESTRUCT& cs) override;
+	BOOL		OnMove(UINT nIDMoveCommand) override;
 protected:
-	void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void	DoDataExchange(CDataExchange* pDX) override;
-	void	OnInitialUpdate() override;
-	BOOL	OnPreparePrinting(CPrintInfo* pInfo) override;
-	void	OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void	OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	void	OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void		DoDataExchange(CDataExchange* pDX) override;
+	void		OnInitialUpdate() override;
+	BOOL		OnPreparePrinting(CPrintInfo* pInfo) override;
+	void		OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void		OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	void		OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
 	// Implementation
 public:
 	~CViewSpikeDetection() override;
 #ifdef _DEBUG
-	void	AssertValid() const override;
-	void	Dump(CDumpContext& dc) const override;
+	void		AssertValid() const override;
+	void		Dump(CDumpContext& dc) const override;
 #endif
 
 	// print view
@@ -187,14 +187,14 @@ protected:
 	HICON		m_hBias = nullptr;
 	HICON		m_hZoom = nullptr;
 	CScrollBar 	m_scrolly;				// V scrollbar
-	float		m_yscaleFactor = 0.f;		// div factor for y bar
+	float		m_yscaleFactor = 0.f;	// div factor for y bar
 	int			m_VBarMode = 0;			// flag V scrollbar state
 
 	HICON		m_hBias2 = nullptr;
 	HICON		m_hZoom2 = nullptr;
 	CScrollBar 	m_scrolly2;				// V scrollbar
 	float		m_yscaleFactor2 = 0.f;	// div factor for y bar
-	int			m_VBarMode2 = 0;			// flag V scrollbar state
+	int			m_VBarMode2 = 0;		// flag V scrollbar state
 
 	void		OnGainScroll(UINT nSBCode, UINT nPos, int iID);
 	void		OnBiasScroll(UINT nSBCode, UINT nPos, int iID);

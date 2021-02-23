@@ -1,5 +1,3 @@
-// ImportFilesDlg.cpp : implementation file
-//
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "DlgImportFiles.h"
@@ -18,12 +16,12 @@
 #define new DEBUG_NEW
 #endif
 
-// CImportFilesDlg dialog
 
-IMPLEMENT_DYNAMIC(CImportFilesDlg, CDialog)
 
-CImportFilesDlg::CImportFilesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CImportFilesDlg::IDD, pParent)
+IMPLEMENT_DYNAMIC(CDlgImportFiles, CDialog)
+
+CDlgImportFiles::CDlgImportFiles(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgImportFiles::IDD, pParent)
 	, m_pfilenameArray(nullptr), m_pdbDoc(nullptr), m_ncurrent(0)
 	, m_nfiles(0)
 	, m_filefrom(_T(""))
@@ -35,11 +33,11 @@ CImportFilesDlg::CImportFilesDlg(CWnd* pParent /*=NULL*/)
 	m_pconvertedFiles = nullptr;
 }
 
-CImportFilesDlg::~CImportFilesDlg()
+CDlgImportFiles::~CDlgImportFiles()
 {
 }
 
-void CImportFilesDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgImportFiles::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT1, m_ncurrent);
@@ -49,14 +47,14 @@ void CImportFilesDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK1, m_bReadHeader);
 }
 
-BEGIN_MESSAGE_MAP(CImportFilesDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgImportFiles, CDialog)
 	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDCANCEL, &CImportFilesDlg::OnBnClickedCancel)
-	ON_BN_CLICKED(ID_STARTSTOP, &CImportFilesDlg::ADC_OnBnClickedStartstop)
+	ON_BN_CLICKED(IDCANCEL, &CDlgImportFiles::OnBnClickedCancel)
+	ON_BN_CLICKED(ID_STARTSTOP, &CDlgImportFiles::ADC_OnBnClickedStartstop)
 END_MESSAGE_MAP()
 
 // CImportFilesDlg message handlers
-BOOL CImportFilesDlg::OnInitDialog()
+BOOL CDlgImportFiles::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -80,7 +78,7 @@ BOOL CImportFilesDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CImportFilesDlg::UpdateDlgItems()
+void CDlgImportFiles::UpdateDlgItems()
 {
 	int j = m_ncurrent - 1;
 	m_filefrom = m_pfilenameArray->GetAt(j);
@@ -88,7 +86,7 @@ void CImportFilesDlg::UpdateDlgItems()
 	UpdateData(FALSE);
 }
 
-void CImportFilesDlg::OnDestroy()
+void CDlgImportFiles::OnDestroy()
 {
 	CDialog::OnDestroy();
 
@@ -98,13 +96,13 @@ void CImportFilesDlg::OnDestroy()
 		m_pfilenameArray->SetSize(ilast);
 }
 
-void CImportFilesDlg::OnBnClickedCancel()
+void CDlgImportFiles::OnBnClickedCancel()
 {
 	// TODO: Add your control notification handler code here
 	CDialog::OnCancel();
 }
 
-void CImportFilesDlg::ADC_OnBnClickedStartstop()
+void CDlgImportFiles::ADC_OnBnClickedStartstop()
 {
 	m_pconvertedFiles->RemoveAll();
 
@@ -136,7 +134,7 @@ void CImportFilesDlg::ADC_OnBnClickedStartstop()
 	CDialog::OnOK();
 }
 
-BOOL CImportFilesDlg::ImportATFFile()
+BOOL CDlgImportFiles::ImportATFFile()
 {
 	// load parameters
 	BOOL flag = TRUE;
@@ -424,7 +422,7 @@ Emergency_exit:
 	return flag;
 }
 
-BOOL CImportFilesDlg::GetExperimentParameters(CAcqDataDoc* pTo)
+BOOL CDlgImportFiles::GetExperimentParameters(CAcqDataDoc* pTo)
 {
 	ADExperimentDlg dlg;							// create dialog box
 	dlg.m_bFilename = FALSE;						// hide path name
@@ -459,9 +457,9 @@ BOOL CImportFilesDlg::GetExperimentParameters(CAcqDataDoc* pTo)
 	return FALSE;
 }
 
-BOOL CImportFilesDlg::GetAcquisitionParameters(CAcqDataDoc* pTo)
+BOOL CDlgImportFiles::GetAcquisitionParameters(CAcqDataDoc* pTo)
 {
-	CADInputParmsDlg dlg2;
+	CDlgADInputParms dlg2;
 	dlg2.m_pwFormat = pTo->GetpWaveFormat();
 	dlg2.m_pchArray = pTo->GetpWavechanArray();
 

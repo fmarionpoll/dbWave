@@ -63,7 +63,7 @@
 #include "dbwave_constants.h"
 
 #include "Tag.h"
-#include "Taglines.h"		// tag structures
+#include "Taglist.h"		// tag structures
 #include "StimLevelArray.h"
 #include "wavebuf.h"		// data file buffer structure
 #include "datafile_X.h"		// data file base class

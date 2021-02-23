@@ -1237,7 +1237,7 @@ void CViewSpikeTemplates::EditSpikeClass(int controlID, int controlItem)
 	const auto oldclass = pList->GetTemplateclassID(controlItem);
 
 	// launch edit dlg
-	CEditSpikeClassDlg dlg;
+	CDlgEditSpikeClass dlg;
 	dlg.m_iClass = oldclass;
 	if (IDOK == dlg.DoModal() && oldclass != dlg.m_iClass)
 	{

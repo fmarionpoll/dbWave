@@ -17,13 +17,13 @@
 // CdbEditFieldDlg dialog
 class CdbWaveDoc;
 
-class CdbEditFieldDlg : public CDialogEx
+class CDlgdbEditField : public CDialogEx
 {
-	DECLARE_DYNAMIC(CdbEditFieldDlg)
+	DECLARE_DYNAMIC(CDlgdbEditField)
 
 public:
-	CdbEditFieldDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CdbEditFieldDlg();
+	CDlgdbEditField(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgdbEditField();
 
 	// Dialog Data
 	enum { IDD = IDD_DBEDITRECORDFIELD };

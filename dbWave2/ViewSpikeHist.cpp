@@ -1152,14 +1152,14 @@ void CViewSpikeHist::BuildData()
 	auto firstfile = currentfile;		// index first file in the series
 	auto lastfile = currentfile;			// index last file in the series
 
-	CProgressDlg* pdlg = nullptr;
+	CDlgProgress* pdlg = nullptr;
 	auto istep = 0;
 	CString cscomment;
 	CString csfilecomment = _T("Analyze file: ");
 
 	if (m_nfiles > 1)
 	{
-		pdlg = new CProgressDlg;
+		pdlg = new CDlgProgress;
 		pdlg->Create();
 		pdlg->SetStep(1);
 		firstfile = 0;

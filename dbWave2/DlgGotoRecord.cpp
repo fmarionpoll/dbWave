@@ -1,5 +1,3 @@
-// GotoRecordDlg.cpp : implementation file
-//
 
 #include "StdAfx.h"
 #include "resource.h"
@@ -9,33 +7,28 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CGotoRecordDlg dialog
 
-CGotoRecordDlg::CGotoRecordDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CGotoRecordDlg::IDD, pParent)
+CDlgGotoRecord::CDlgGotoRecord(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgGotoRecord::IDD, pParent)
 {
 	m_recordID = 0;
 	m_recordPos = 0;
 	m_bGotoRecordID = false;
 }
 
-void CGotoRecordDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgGotoRecord::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT2, m_recordID);
 	DDX_Text(pDX, IDC_EDIT1, m_recordPos);
 }
 
-BEGIN_MESSAGE_MAP(CGotoRecordDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgGotoRecord, CDialog)
 	ON_BN_CLICKED(IDC_RADIO1, OnClickedPosition)
 	ON_BN_CLICKED(IDC_RADIO2, OnClickedID)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CGotoRecordDlg message handlers
-
-BOOL CGotoRecordDlg::OnInitDialog()
+BOOL CDlgGotoRecord::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetOptions();
@@ -44,7 +37,7 @@ BOOL CGotoRecordDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CGotoRecordDlg::SetOptions()
+void CDlgGotoRecord::SetOptions()
 {
 	((CButton*)GetDlgItem(IDC_RADIO1))->SetCheck(!m_bGotoRecordID);
 	((CButton*)GetDlgItem(IDC_RADIO2))->SetCheck(m_bGotoRecordID);
@@ -62,13 +55,13 @@ void CGotoRecordDlg::SetOptions()
 	GetDlgItem(idisable)->EnableWindow(FALSE);
 }
 
-void CGotoRecordDlg::OnClickedPosition()
+void CDlgGotoRecord::OnClickedPosition()
 {
 	m_bGotoRecordID = FALSE;
 	SetOptions();
 }
 
-void CGotoRecordDlg::OnClickedID()
+void CDlgGotoRecord::OnClickedID()
 {
 	m_bGotoRecordID = TRUE;
 	SetOptions();

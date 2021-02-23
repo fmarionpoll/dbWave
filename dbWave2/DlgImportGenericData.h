@@ -6,13 +6,13 @@
 #include "chartdata.h"
 #include "Acqdatad.h"
 
-class CImportGenericDataDlg : public CDialog
+class CDlgImportGenericData : public CDialog
 {
 	friend class CAcqDataDoc;
 
 	// Construction
 public:
-	CImportGenericDataDlg(CWnd* pParent = nullptr);   // standard constructor
+	CDlgImportGenericData(CWnd* pParent = nullptr);   // standard constructor
 
 	OPTIONS_IMPORT* piivO;				// from caller
 	BOOL			bConvert;

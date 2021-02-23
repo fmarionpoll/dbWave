@@ -7,13 +7,13 @@
 #include "dtacq32.h"
 #include "afxwin.h"
 
-class CDataTranslationBoardDlg : public CDialog
+class CDlgDataTranslationBoard : public CDialog
 {
-	DECLARE_DYNAMIC(CDataTranslationBoardDlg)
+	DECLARE_DYNAMIC(CDlgDataTranslationBoard)
 
 public:
-	CDataTranslationBoardDlg(CWnd* pParent = nullptr);
-	virtual ~CDataTranslationBoardDlg();
+	CDlgDataTranslationBoard(CWnd* pParent = nullptr);
+	virtual ~CDlgDataTranslationBoard();
 	enum { IDD = IDD_DTBOARD_DLG };
 
 	CDTAcq32* m_pAnalogIN;

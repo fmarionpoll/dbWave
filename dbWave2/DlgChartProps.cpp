@@ -12,8 +12,8 @@
 #define new DEBUG_NEW
 #endif
 
-CChartPropsDlg::CChartPropsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CChartPropsDlg::IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
+CDlgChartProps::CDlgChartProps(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgChartProps::IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
 {
 	m_xyticks = 0;
 	m_xytickline = 0;
@@ -22,7 +22,7 @@ CChartPropsDlg::CChartPropsDlg(CWnd* pParent /*=NULL*/)
 	m_crScopeGrid = 0;
 }
 
-void CChartPropsDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgChartProps::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT4, m_xyticks);
@@ -31,7 +31,7 @@ void CChartPropsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT6, m_ycells);
 }
 
-BEGIN_MESSAGE_MAP(CChartPropsDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgChartProps, CDialog)
 	ON_EN_CHANGE(IDC_EDIT3, OnEnChangeXCells)
 	ON_EN_CHANGE(IDC_EDIT4, OnEnChangeXYTicks)
 	ON_EN_CHANGE(IDC_EDIT5, OnEnChangeXYTicksLine)
@@ -40,7 +40,7 @@ BEGIN_MESSAGE_MAP(CChartPropsDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON2, OnGridColor)
 END_MESSAGE_MAP()
 
-BOOL CChartPropsDlg::OnInitDialog()
+BOOL CDlgChartProps::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
@@ -65,7 +65,7 @@ BOOL CChartPropsDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CChartPropsDlg::OnEnChangeXCells()
+void CDlgChartProps::OnEnChangeXCells()
 {
 	if (mm_xcells.m_bEntryDone) {
 		auto xcells = m_xcells;
@@ -104,7 +104,7 @@ void CChartPropsDlg::OnEnChangeXCells()
 	}
 }
 
-void CChartPropsDlg::OnEnChangeXYTicks()
+void CDlgChartProps::OnEnChangeXYTicks()
 {
 	if (mm_xyticks.m_bEntryDone) {
 		auto xyticks = m_xyticks;
@@ -144,7 +144,7 @@ void CChartPropsDlg::OnEnChangeXYTicks()
 	}
 }
 
-void CChartPropsDlg::OnEnChangeXYTicksLine()
+void CDlgChartProps::OnEnChangeXYTicksLine()
 {
 	if (mm_xytickline.m_bEntryDone)
 	{
@@ -185,7 +185,7 @@ void CChartPropsDlg::OnEnChangeXYTicksLine()
 	}
 }
 
-void CChartPropsDlg::OnEnChangeYCells()
+void CDlgChartProps::OnEnChangeYCells()
 {
 	if (mm_ycells.m_bEntryDone)
 	{
@@ -225,7 +225,7 @@ void CChartPropsDlg::OnEnChangeYCells()
 	}
 }
 
-void CChartPropsDlg::OnBackgroundColor()
+void CDlgChartProps::OnBackgroundColor()
 {
 	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())
@@ -234,7 +234,7 @@ void CChartPropsDlg::OnBackgroundColor()
 	m_pscope->Invalidate();
 }
 
-void CChartPropsDlg::OnGridColor()
+void CDlgChartProps::OnGridColor()
 {
 	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())

@@ -217,7 +217,7 @@ protected:
 
 	// Operations
 public:
-	void		DisplayVTtags(CDC* p_dc);
+	void		DisplayVTtags_Value(CDC* p_dc);
 	void		DisplayHZtags(CDC* p_dc);
 	void		XorVTtag(int xpoint);		// xor vertical line at point.x
 	void		XorTempVTtag(int xpoint);

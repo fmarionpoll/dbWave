@@ -1,11 +1,11 @@
 #pragma once
 
 
-class CRejectRecordDlg : public CDialog
+class CDlgRejectRecord : public CDialog
 {
 	// Construction
 public:
-	CRejectRecordDlg(CWnd* pParent = nullptr);   // standard constructor
+	CDlgRejectRecord(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_DEFINEARTEFACTSLIMITS };

@@ -137,7 +137,7 @@ void CChartSpikeHist::PlotDatatoDC(CDC* p_dc)
 	if (GetNHZtags() > 0)		// display horizontal tags
 		DisplayHZtags(p_dc);
 	if (GetNVTtags() > 0)		// display vertical tags
-		DisplayVTtags(p_dc);
+		DisplayVTtags_Value(p_dc);
 	p_dc->RestoreDC(n_saved_dc);
 }
 

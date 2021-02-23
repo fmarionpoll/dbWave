@@ -7,13 +7,13 @@
 
 // CImportFilesDlg dialog
 
-class CImportFilesDlg : public CDialog
+class CDlgImportFiles : public CDialog
 {
-	DECLARE_DYNAMIC(CImportFilesDlg)
+	DECLARE_DYNAMIC(CDlgImportFiles)
 
 public:
-	CImportFilesDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CImportFilesDlg();
+	CDlgImportFiles(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgImportFiles();
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTFILESDLG };

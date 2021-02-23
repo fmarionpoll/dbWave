@@ -2,13 +2,13 @@
 
 #include "GridCtrl/GridCtrl.h"
 
-class CPivotDlg : public CDialogEx
+class CDlgPivot : public CDialogEx
 {
-	DECLARE_DYNAMIC(CPivotDlg)
+	DECLARE_DYNAMIC(CDlgPivot)
 
 public:
-	CPivotDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CPivotDlg();
+	CDlgPivot(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgPivot();
 
 	// Dialog Data
 	enum { IDD = IDD_PIVOTDLG };
