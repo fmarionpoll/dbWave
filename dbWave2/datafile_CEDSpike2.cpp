@@ -123,7 +123,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 	int maxChan			= S64MaxChans(m_nFid);
 	
 	TTimeDate arrayGetTimeDate{};
-	int flag = S64TimeDate(m_nFid, (long long*)&arrayGetTimeDate, nullptr, -1);
+	int flag = S64TimeDate(m_nFid, (long long*) &arrayGetTimeDate, nullptr, -1);
 	if (flag < 0) {
 		CString message = CString("Error reading date ") + getErrorMessage(flag) + CString(" \n");
 		AfxMessageBox(message, MB_OK);
@@ -134,6 +134,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		arrayGetTimeDate.ucHour, arrayGetTimeDate.ucMin, arrayGetTimeDate.ucSec);
 	pWFormat->scan_count = 0;
 	pArray->chanArray_removeAll();
+	int	adcChan = -1;
 
 	for (int cedChan = 1; cedChan < maxChan; cedChan++) {	// lowestFreeChan
 		int chanType = S64ChanType(m_nFid, cedChan);
@@ -151,6 +152,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 			pWFormat->scan_count++;
 			pWFormat->chrate = (float)(1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
 			pWFormat->sample_count = (long)(pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
+			adcChan = cedChan;
 		}
 		break;
 		case CHANTYPE_EventFall:
@@ -193,6 +195,8 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		//pWFormat->chrate = (float)(1. / cfsHeader.sample_interval);
 		//pWFormat->sample_count = cfsHeader.number_of_samples;
 	}
+	if (adcChan >= 0)
+		convert_VTtags_Ticks_to_ADintervals(pBuf, adcChan);
 	return TRUE;
 }
 
@@ -339,9 +343,9 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 {
 	long long tTo = S64ChanMaxTime(m_nFid, cedChan);
-	CTagList* pTag = pBuf->GetpVTtags();
-	pTag->RemoveAllTags();
-	const long long ticksPerSample = S64ChanDivide(m_nFid, cedChan);
+	tTo = -1;
+	CTagList* pTags = pBuf->GetpVTtags();
+	pTags->RemoveAllTags();
 	const int nMask = 0;
 	long long tFrom = 0;
 	int nMax = 1;
@@ -351,11 +355,24 @@ void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 	do {
 		nRead = S64ReadEvents(m_nFid, cedChan, &Data, nMax, tFrom, tTo, nMask);
 		tFrom = Data +1;
-		long lValue = (long) (Data / ticksPerSample);
-		CTag tag = CTag(lValue, 0);
-		pTag->AddTag(tag);
+		pTags->AddTag(CTag(Data));
 	} while (nRead > 0);
 }
+
+void CDataFileFromCEDSpike2::convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf, int cedChan)
+{
+	CTagList* pTags = pBuf->GetpVTtags();
+	int ntags = pTags->GetNTags();
+	if (ntags > 0) {
+		const long long ticksPerSample = S64ChanDivide(m_nFid, cedChan);
+		for (int i = 0; i < ntags; i++) {
+			CTag* ptag = pTags->GetTag(i);
+			ptag->m_lvalue = (long)(ptag->m_lTicks / ticksPerSample);
+			ptag->m_refchan = cedChan;
+		}
+	}
+}
+
 
 
 

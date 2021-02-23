@@ -1241,7 +1241,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tag.cpp" />
-    <ClCompile Include="Taglines.cpp">
+    <ClCompile Include="Taglist.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1488,7 +1488,7 @@
     <ClInclude Include="StretchControls.h" />
     <ClInclude Include="subfileitem.h" />
     <ClInclude Include="Tag.h" />
-    <ClInclude Include="Taglines.h" />
+    <ClInclude Include="Taglist.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TemplateListWnd.h" />
     <ClInclude Include="TemplateWnd.h" />

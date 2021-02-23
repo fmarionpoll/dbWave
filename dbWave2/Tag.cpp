@@ -39,6 +39,15 @@ CTag::CTag(long lval, int ref_chan)
 	m_pixel = -1;
 }
 
+CTag::CTag(long long lTicks)
+{
+	m_refchan = -1;
+	m_value = -1;
+	m_lvalue = -1;
+	m_pixel = -1;
+	m_lTicks = lTicks;
+}
+
 CTag::CTag(const CTag& hc)
 {
 	m_refchan = hc.m_refchan;

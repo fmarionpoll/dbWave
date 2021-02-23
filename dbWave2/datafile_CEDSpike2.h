@@ -89,5 +89,6 @@ protected:
 	long		relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead, long long ticksPerSample);
 	CString		getErrorMessage(int flag);
 	void		read_EventFall(int cedChan, CWaveBuf* pBuf);
+	void		convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf, int cedChan);
 };
 

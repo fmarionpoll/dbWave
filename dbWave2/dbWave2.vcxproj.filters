@@ -213,9 +213,6 @@
     <ClCompile Include="subfileitem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Taglines.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TemplateListWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -429,6 +426,9 @@
     <ClCompile Include="Tag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Taglist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -633,9 +633,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="subfileitem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Taglines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
@@ -939,6 +936,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Taglist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
