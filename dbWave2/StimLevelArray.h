@@ -1,6 +1,5 @@
 #pragma once
 
-// ----------------------------------------------
 
 class CIntervalsAndLevels : public CObject
 {
@@ -22,24 +21,20 @@ public:
 
 public:
 	CArray <long, long> intervalsArray;	// time on, time off (n clock intervals)
-	int		iID;				// ID number of the array
+	int		iID;						// ID number of the array
 	int		ichan;
-	CString	csDescriptor;		// descriptor of the array
-	int		nitems;				// number of on/off events
-	int		npercycle;			// repeat sequence parameter
-	float	chrate;				// n clock cycles per second
+	CString	csDescriptor;				// descriptor of the array
+	int		nitems;						// number of on/off events
+	int		npercycle;					// repeat sequence parameter
+	float	chrate;						// n clock cycles per second
 protected:
 	int		version;
 };
 
-// ----------------------------------------------
-
 struct CIntervalPoint {
-	long ii;
-	WORD w;
+	long	ii;
+	WORD	w;
 };
-
-// ----------------------------------------------
 
 class CIntervalsAndWordsSeries : public CObject
 {
@@ -48,19 +43,19 @@ class CIntervalsAndWordsSeries : public CObject
 	CIntervalsAndWordsSeries();
 	CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg);
 	~CIntervalsAndWordsSeries();
-	void operator = (const CIntervalsAndWordsSeries& arg);
-	void Serialize(CArchive& ar) override;
+	void			 operator = (const CIntervalsAndWordsSeries& arg);
+	void			Serialize(CArchive& ar) override;
 
-	void	EraseAllData();
+	void			EraseAllData();
 	inline long		GetSize() { return intervalpoint_array.GetSize(); }
 	CIntervalPoint  GetIntervalPointAt(int i);
 
-	void	ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP = 1, BOOL bcopyRate = TRUE);
-	void	ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
-	void	ExportIntervalsSeries(int chan, CIntervalsAndLevels* pOut);
+	void			ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP = 1, BOOL bcopyRate = TRUE);
+	void			ImportAndMergeIntervalsArrays(CPtrArray* pIntervals);
+	void			ExportIntervalsSeries(int chan, CIntervalsAndLevels* pOut);
 
 public:
 	CArray <CIntervalPoint, CIntervalPoint>  intervalpoint_array;
-	float	chrate;
-	int		version;
+	float			chrate;
+	int				version;
 };

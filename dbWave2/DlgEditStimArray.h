@@ -3,18 +3,19 @@
 
 // CEditStimArrayDlg dialog
 
-class CEditStimArrayDlg : public CDialog
+class CDlgEditStimArray : public CDialog
 {
-	DECLARE_DYNAMIC(CEditStimArrayDlg)
+	DECLARE_DYNAMIC(CDlgEditStimArray)
 
 public:
-	CEditStimArrayDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CEditStimArrayDlg();
+	CDlgEditStimArray(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgEditStimArray();
 
 	// data passed by caller
-	CArray < CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
+	CTagList*			m_pTagList = nullptr;
 	float				m_rate;
 	CIntervalsAndLevels* m_pstimsaved;
+	CArray < CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
 
 	// Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
@@ -31,9 +32,11 @@ protected:
 	int				m_iItem;
 	CListCtrl		m_stimarrayCtrl;// IDC_LISTSTIM
 
-	void			SelectItem(int i);
-	void			ResetListOrder();
-	void			TransferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
+	void			selectItem(int i);
+	void			resetListOrder();
+	void			addNewItem(long lInterval);
+	LVITEM			getItemDescriptor(int i);
+	void			transferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -48,4 +51,5 @@ public:
 	afx_msg void OnBnClickedCopy();
 	afx_msg void OnBnClickedPaste();
 	afx_msg void OnBnClickedExport();
+	afx_msg void OnBnClickedImportfromdata();
 };

@@ -1,5 +1,3 @@
-// EditSpikeClassDlg.cpp : implementation file
-//
 
 #include "StdAfx.h"
 #include "dbWave.h"
@@ -9,27 +7,24 @@
 #define new DEBUG_NEW
 #endif
 
-// CEditSpikeClassDlg dialog
 
-IMPLEMENT_DYNAMIC(CEditSpikeClassDlg, CDialog)
+IMPLEMENT_DYNAMIC(CDlgEditSpikeClass, CDialog)
 
-CEditSpikeClassDlg::CEditSpikeClassDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CEditSpikeClassDlg::IDD, pParent)
+CDlgEditSpikeClass::CDlgEditSpikeClass(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgEditSpikeClass::IDD, pParent)
 	, m_iClass(0)
 {
 }
 
-CEditSpikeClassDlg::~CEditSpikeClassDlg()
+CDlgEditSpikeClass::~CDlgEditSpikeClass()
 {
 }
 
-void CEditSpikeClassDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgEditSpikeClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT1, m_iClass);
 }
 
-BEGIN_MESSAGE_MAP(CEditSpikeClassDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgEditSpikeClass, CDialog)
 END_MESSAGE_MAP()
-
-// CEditSpikeClassDlg message handlers

@@ -210,7 +210,7 @@ void CFilterWnd::InitFilterList()
 	ASSERT(p_db);
 
 	// setup dialog box
-	CProgressDlg dlg;
+	CDlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
 

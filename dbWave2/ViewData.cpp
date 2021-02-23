@@ -497,7 +497,7 @@ void CViewData::OnUpdateEditCopy(CCmdUI* pCmdUI)
 
 void CViewData::ADC_OnHardwareChannelsDlg()
 {
-	CADInputParmsDlg dlg;
+	CDlgADInputParms dlg;
 
 	// init dialog data
 	dlg.m_pwFormat = m_pdatDoc->GetpWaveFormat();
@@ -1232,7 +1232,7 @@ void CViewData::SaveModifiedFile()
 
 void CViewData::ADC_OnHardwareDefineexperiment()
 {
-	CdbEditRecordDlg dlg;
+	CDlgdbEditRecord dlg;
 	dlg.m_pdbDoc = GetDocument();
 
 	if (IDOK == dlg.DoModal())

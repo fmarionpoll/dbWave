@@ -2,13 +2,13 @@
 
 // CEditListDlg dialog
 
-class CEditListDlg : public CDialog
+class CDlgEditList : public CDialog
 {
-	DECLARE_DYNAMIC(CEditListDlg)
+	DECLARE_DYNAMIC(CDlgEditList)
 
 public:
-	CEditListDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CEditListDlg();
+	CDlgEditList(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgEditList();
 	CComboBox* pCo;
 	CString		m_csNewString;
 	CListBox	m_clStrings;

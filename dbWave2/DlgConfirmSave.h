@@ -2,13 +2,13 @@
 
 // CConfirmSaveDlg dialog
 
-class CConfirmSaveDlg : public CDialog
+class CDlgConfirmSave : public CDialog
 {
-	DECLARE_DYNAMIC(CConfirmSaveDlg)
+	DECLARE_DYNAMIC(CDlgConfirmSave)
 
 public:
-	CConfirmSaveDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CConfirmSaveDlg();
+	CDlgConfirmSave(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgConfirmSave();
 
 	// Dialog Data
 	enum { IDD = IDD_CONFIRMDIALOG };

@@ -1,12 +1,12 @@
 #pragma once
 
 
-class CProgressDlg : public CDialog
+class CDlgProgress : public CDialog
 {
 	// Construction / Destruction
 public:
-	CProgressDlg(UINT nCaptionID = 0);   // standard constructor
-	~CProgressDlg();
+	CDlgProgress(UINT nCaptionID = 0);   // standard constructor
+	~CDlgProgress();
 
 	BOOL Create(CWnd* pParent = nullptr);
 

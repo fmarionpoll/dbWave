@@ -23,7 +23,7 @@
 // the numbers below are used in a "switch" to take action according to the row item
 // within OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 
-TCHAR* CADInputParmsDlg::pszRowTitle[] = {
+TCHAR* CDlgADInputParms::pszRowTitle[] = {
 	_T("Title"),
 	// 1: // title
 	_T("A/D channel (0-7) "),
@@ -45,17 +45,17 @@ TCHAR* CADInputParmsDlg::pszRowTitle[] = {
 	_T(" resolution (µV)"),
 	// 13: // max range 14: // total gain 15:// bin resolution
 	_T("") };
-TCHAR* CADInputParmsDlg::pszHighPass[] = { _T("GND"),_T("DC"),_T("0.1"),_T("1"),_T("10"),_T("30"),_T("100"),_T("300"),
+TCHAR* CDlgADInputParms::pszHighPass[] = { _T("GND"),_T("DC"),_T("0.1"),_T("1"),_T("10"),_T("30"),_T("100"),_T("300"),
 											_T(""),_T(""),_T(""),_T(""),_T(""),_T(""),_T(""),_T("") };
-TCHAR* CADInputParmsDlg::pszADGains[] = { _T("1"),_T("2"),_T("4"),_T("8"),_T(""),_T(""),_T(""),_T("") };
-TCHAR* CADInputParmsDlg::pszAmplifier[] = { _T("CyberAmp 320"),_T("Neurolog"),_T("IDAC"),_T("Dagan"),_T("Alligator"),  _T("none"),_T(""),_T("") };
-TCHAR* CADInputParmsDlg::pszProbeType[] = { _T("Syntech"),_T("DTP02"),_T("AI401"),_T("Neurolog"),_T("AD575"),_T("Dagan"),_T("none"),_T("") };
-TCHAR* CADInputParmsDlg::pszEncoding[] = { _T("Offset binary"),_T("Two's complement"),_T("Unknown"),_T(""),_T(""),_T(""),_T(""),_T("") };
-int		CADInputParmsDlg::iEncoding[] = { OLx_ENC_BINARY, OLx_ENC_2SCOMP, -1 };
+TCHAR* CDlgADInputParms::pszADGains[] = { _T("1"),_T("2"),_T("4"),_T("8"),_T(""),_T(""),_T(""),_T("") };
+TCHAR* CDlgADInputParms::pszAmplifier[] = { _T("CyberAmp 320"),_T("Neurolog"),_T("IDAC"),_T("Dagan"),_T("Alligator"),  _T("none"),_T(""),_T("") };
+TCHAR* CDlgADInputParms::pszProbeType[] = { _T("Syntech"),_T("DTP02"),_T("AI401"),_T("Neurolog"),_T("AD575"),_T("Dagan"),_T("none"),_T("") };
+TCHAR* CDlgADInputParms::pszEncoding[] = { _T("Offset binary"),_T("Two's complement"),_T("Unknown"),_T(""),_T(""),_T(""),_T(""),_T("") };
+int		CDlgADInputParms::iEncoding[] = { OLx_ENC_BINARY, OLx_ENC_2SCOMP, -1 };
 
-IMPLEMENT_DYNAMIC(CADInputParmsDlg, CDialog)
-CADInputParmsDlg::CADInputParmsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CADInputParmsDlg::IDD, pParent)
+IMPLEMENT_DYNAMIC(CDlgADInputParms, CDialog)
+CDlgADInputParms::CDlgADInputParms(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgADInputParms::IDD, pParent)
 	, m_nacqchans(0)
 	, m_maxchans(0)
 {
@@ -81,10 +81,10 @@ CADInputParmsDlg::CADInputParmsDlg(CWnd* pParent /*=NULL*/)
 	m_row_readonly = 1;
 }
 
-CADInputParmsDlg::~CADInputParmsDlg()
+CDlgADInputParms::~CDlgADInputParms()
 = default;
 
-void CADInputParmsDlg::DoDataExchange(CDataExchange * pDX)
+void CDlgADInputParms::DoDataExchange(CDataExchange * pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_NACQCHANS, m_nacqchans);
@@ -94,7 +94,7 @@ void CADInputParmsDlg::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_ENCODING, m_encodingCombo);
 }
 
-BEGIN_MESSAGE_MAP(CADInputParmsDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgADInputParms, CDialog)
 	ON_EN_CHANGE(IDC_NACQCHANS, OnEnChangeNacqchans)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_SINGLEENDED, OnBnClickedSingleended)
@@ -107,7 +107,7 @@ END_MESSAGE_MAP()
 
 // CADInputParmsDlg message handlers
 
-BOOL CADInputParmsDlg::OnInitDialog()
+BOOL CDlgADInputParms::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	CRect rect;
@@ -242,7 +242,7 @@ BOOL CADInputParmsDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CADInputParmsDlg::OnEnChangeNacqchans()
+void CDlgADInputParms::OnEnChangeNacqchans()
 {
 	if (!::IsWindow(m_Grid.m_hWnd))
 		return;
@@ -268,7 +268,7 @@ void CADInputParmsDlg::OnEnChangeNacqchans()
 	UpdateData(FALSE);
 }
 
-void CADInputParmsDlg::AdjustGridSize()
+void CDlgADInputParms::AdjustGridSize()
 {
 	const auto n_old_columns = m_Grid.GetColumnCount();
 	// reduce size of the grid; delete last columns
@@ -293,7 +293,7 @@ BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 	auto p_wnd = CWnd::FromHandle(h_wnd);
 	auto* p_translate = reinterpret_cast<CSize*>(lParam);
 
-	auto* p_dlg = (CADInputParmsDlg*)p_wnd->GetParent();
+	auto* p_dlg = (CDlgADInputParms*)p_wnd->GetParent();
 	if (!p_dlg) return FALSE;
 
 	CRect rect;
@@ -331,7 +331,7 @@ BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 	return TRUE;
 }
 
-void CADInputParmsDlg::OnSize(UINT nType, int cx, int cy)
+void CDlgADInputParms::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 	if (cx <= 1 || cy <= 1)
@@ -349,7 +349,7 @@ void CADInputParmsDlg::OnSize(UINT nType, int cx, int cy)
 //////////////////////////////////////////////////////
 // set column with proper header, combos, etc and data
 
-void CADInputParmsDlg::InitADchannelCombo(int col, int iselect)
+void CDlgADInputParms::InitADchannelCombo(int col, int iselect)
 {
 	// build string array with channel list
 	CStringArray csArrayOptions;
@@ -375,7 +375,7 @@ void CADInputParmsDlg::InitADchannelCombo(int col, int iselect)
 	}
 }
 
-BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
+BOOL CDlgADInputParms::InitGridColumnDefaults(int col)
 {
 	if (col < 1 || col >= m_Grid.GetColumnCount())
 		return FALSE;
@@ -559,7 +559,7 @@ BOOL CADInputParmsDlg::InitGridColumnDefaults(int col)
 	return TRUE;
 }
 
-void CADInputParmsDlg::InitGridColumnReadOnlyFields(int col)
+void CDlgADInputParms::InitGridColumnReadOnlyFields(int col)
 {
 	// "Signal total gain" - read only / numeric
 	int row = m_row_readonly;
@@ -583,21 +583,21 @@ void CADInputParmsDlg::InitGridColumnReadOnlyFields(int col)
 	m_Grid.SetItemText(row, col, cs);
 }
 
-void CADInputParmsDlg::OnBnClickedSingleended()
+void CDlgADInputParms::OnBnClickedSingleended()
 {
 	m_maxchans = m_numchansMAXSE;
 	m_bchantype = OLx_CHNT_SINGLEENDED;
 	OnEnChangeNacqchans();
 }
 
-void CADInputParmsDlg::OnBnClickedDifferential()
+void CDlgADInputParms::OnBnClickedDifferential()
 {
 	m_maxchans = m_numchansMAXDI;
 	m_bchantype = OLx_CHNT_DIFFERENTIAL;
 	OnEnChangeNacqchans();
 }
 
-void CADInputParmsDlg::OnGridEndEdit(NMHDR * pNotifyStruct, LRESULT * pResult)
+void CDlgADInputParms::OnGridEndEdit(NMHDR * pNotifyStruct, LRESULT * pResult)
 {
 	const auto p_item = reinterpret_cast<NM_GRIDVIEW*>(pNotifyStruct);
 	switch (p_item->iRow)
@@ -640,7 +640,7 @@ void CADInputParmsDlg::OnGridEndEdit(NMHDR * pNotifyStruct, LRESULT * pResult)
 	m_Grid.Refresh();
 }
 
-void CADInputParmsDlg::OnCbnSelchangeResolution()
+void CDlgADInputParms::OnCbnSelchangeResolution()
 {
 	CString cs;
 	m_resolutionCombo.GetWindowText(cs);
@@ -657,7 +657,7 @@ void CADInputParmsDlg::OnCbnSelchangeResolution()
 }
 
 // load column data (index = 1, n)
-void CADInputParmsDlg::LoadChanData(int col)
+void CDlgADInputParms::LoadChanData(int col)
 {
 	// select channel and load parameters CComboBox
 	ASSERT(col <= m_pchArray->chanArray_getSize());
@@ -732,7 +732,7 @@ void CADInputParmsDlg::LoadChanData(int col)
 	InitGridColumnReadOnlyFields(col);
 }
 
-void CADInputParmsDlg::SaveData()
+void CDlgADInputParms::SaveData()
 {
 	// if number of acq channels changed, change corresp structures
 	if (m_nacqchans != m_pwFormat->scan_count)
@@ -755,7 +755,7 @@ void CADInputParmsDlg::SaveData()
 }
 
 // save column data (index = 1, n)
-void CADInputParmsDlg::SaveChanData(int col)
+void CDlgADInputParms::SaveChanData(int col)
 {
 	// select channel and load parameters CComboBox
 	if (m_pchArray->chanArray_getSize() < col)
@@ -819,14 +819,14 @@ void CADInputParmsDlg::SaveChanData(int col)
 	p_chan->am_resolutionV = m_pwFormat->fullscale_Volts / p_chan->am_gaintotal / m_pwFormat->binspan;
 }
 
-void CADInputParmsDlg::OnBnClickedOk()
+void CDlgADInputParms::OnBnClickedOk()
 {
 	UpdateData(TRUE);
 	SaveData();
 	OnOK();
 }
 
-void CADInputParmsDlg::OnBnClickedAdintervals()
+void CDlgADInputParms::OnBnClickedAdintervals()
 {
 	m_postmessage = IDC_ADINTERVALS;
 	UpdateData(TRUE);
@@ -834,7 +834,7 @@ void CADInputParmsDlg::OnBnClickedAdintervals()
 	OnOK();
 }
 
-void CADInputParmsDlg::SetAmplifierParms(int col)
+void CDlgADInputParms::SetAmplifierParms(int col)
 {
 	if (!m_bcommandAmplifier)
 		return;
@@ -860,7 +860,7 @@ void CADInputParmsDlg::SetAmplifierParms(int col)
 	}
 }
 
-void CADInputParmsDlg::GetAmplifierParms(int col)
+void CDlgADInputParms::GetAmplifierParms(int col)
 {
 	if (!m_bcommandAmplifier)
 		return;

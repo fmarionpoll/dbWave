@@ -12,11 +12,11 @@
 
 class CAcqDataDoc : public CDocument
 {
-	friend class CImportGenericDataDlg;
+	friend class CDlgImportGenericData;
 	DECLARE_DYNCREATE(CAcqDataDoc)
 public:
 	CAcqDataDoc();
-	virtual ~CAcqDataDoc();
+	virtual		~CAcqDataDoc();
 
 public:
 	CString		GetDataFileInfos(OPTIONS_VIEWDATA* pVD);

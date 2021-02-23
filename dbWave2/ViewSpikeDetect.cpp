@@ -50,12 +50,13 @@ CViewSpikeDetection::CViewSpikeDetection()
 
 CViewSpikeDetection::~CViewSpikeDetection()
 {
+	if (p_spike_doc_ != nullptr)
+		SaveCurrentSpikeFile();
 }
 
 BOOL CViewSpikeDetection::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: Modify the Window class or styles here by modifying
-		//  the CREATESTRUCT cs
+	// TODO: Modify the Window class or styles here by modifying the CREATESTRUCT cs
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
@@ -192,6 +193,7 @@ void CViewSpikeDetection::OnActivateView(BOOL bActivate, CView* pActivateView, C
 	// exit view
 	else
 	{
+		SaveCurrentSpikeFile();
 		SerializeWindowsState(BSAVE);
 		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_viewspikes.bincrflagonsave = ((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
@@ -222,7 +224,7 @@ void CViewSpikeDetection::UpdateLegends()
 		m_bartefact = (p_s->get_class() < 0);
 	}
 
-	UpdateFileScroll();		// adjust scroll bar to file position
+	UpdateFileScroll();
 	UpdateCB();				// update combo box
 	UpdateVTtags();			// set VT tags
 	UpdateLegendDetectionWnd();
@@ -1290,7 +1292,7 @@ int CViewSpikeDetection::DetectStim1(int ichan)
 	const auto l_data_last = m_ChartDataWnd_Detect.GetDataLast();		// index last pt to test
 
 	// plot progress dialog box
-	CProgressDlg dlg;
+	CDlgProgress dlg;
 	dlg.Create();
 	//int istep = 0;
 	dlg.SetRange(0, 100);
@@ -2148,8 +2150,8 @@ void CViewSpikeDetection::OnSelchangeDetectMode()
 	m_pDetectParms->detectWhat = m_CBdetectWhat.GetCurSel();
 	UpdateCB();
 	UpdateLegendDetectionWnd();
-	m_ChartDataWnd_Detect.GetDataFromDoc(); 		// load data
-	m_ChartDataWnd_Detect.AutoZoomChan(0);		// vertical position of channel
+	m_ChartDataWnd_Detect.GetDataFromDoc();
+	m_ChartDataWnd_Detect.AutoZoomChan(0);
 	m_ChartDataWnd_Detect.Invalidate();
 }
 
@@ -3222,12 +3224,14 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 {
 	p_spike_doc_->SortStimArray();
 
-	CEditStimArrayDlg dlg;
+	CDlgEditStimArray dlg;
 	dlg.intervalsandlevels_ptr_array.RemoveAll();
 	dlg.intervalsandlevels_ptr_array.Add(&p_spike_doc_->m_stimIntervals);
 	dlg.m_rate = m_samplingRate;
 	dlg.m_pstimsaved = &GetDocument()->m_stimsaved;
-
+	if (GetDocument()->m_pDat != nullptr)
+		dlg.m_pTagList = GetDocument()->m_pDat->GetpVTtags();
+	
 	if (IDOK == dlg.DoModal())
 	{
 		UpdateVTtags();

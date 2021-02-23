@@ -2,11 +2,11 @@
 #include "afxeditbrowsectrl.h"
 #include "dbWaveDoc.h"
 
-class CFindFilesDlg : public CDialog
+class CDlgFindFiles : public CDialog
 {
 	// Construction
 public:
-	CFindFilesDlg(CWnd* pParent = nullptr);   // standard constructor
+	CDlgFindFiles(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_FINDFILES };

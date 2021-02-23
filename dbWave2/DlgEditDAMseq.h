@@ -1,13 +1,13 @@
 #pragma once
 #include "afxwin.h"
 
-class CEditDAMseqDlg : public CDialogEx
+class CDlgEditDAMseq : public CDialogEx
 {
-	DECLARE_DYNAMIC(CEditDAMseqDlg)
+	DECLARE_DYNAMIC(CDlgEditDAMseq)
 
 public:
-	CEditDAMseqDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CEditDAMseqDlg();
+	CDlgEditDAMseq(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgEditDAMseq();
 
 	// Dialog Data
 	enum { IDD = IDD_DA_MSEQ };

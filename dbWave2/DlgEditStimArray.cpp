@@ -11,22 +11,22 @@
 
 // CEditStimArrayDlg dialog
 
-IMPLEMENT_DYNAMIC(CEditStimArrayDlg, CDialog)
+IMPLEMENT_DYNAMIC(CDlgEditStimArray, CDialog)
 
-CEditStimArrayDlg::CEditStimArrayDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CEditStimArrayDlg::IDD, pParent)
+CDlgEditStimArray::CDlgEditStimArray(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgEditStimArray::IDD, pParent)
 	, m_rate(0), m_pstim(nullptr), m_binit(0), m_value(0), m_iItem(0)
 {
 	m_pimagelist = nullptr;
 	m_pstimsaved = nullptr;
 }
 
-CEditStimArrayDlg::~CEditStimArrayDlg()
+CDlgEditStimArray::~CDlgEditStimArray()
 {
 	SAFE_DELETE(m_pimagelist);
 }
 
-void CEditStimArrayDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgEditStimArray::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LISTSTIM, m_stimarrayCtrl);
@@ -34,22 +34,23 @@ void CEditStimArrayDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_value);
 }
 
-BEGIN_MESSAGE_MAP(CEditStimArrayDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgEditStimArray, CDialog)
 	ON_WM_SIZE()
-	ON_BN_CLICKED(IDC_EDIT, &CEditStimArrayDlg::OnBnClickedEdit)
-	ON_EN_KILLFOCUS(IDC_EDIT1, &CEditStimArrayDlg::OnEnKillfocusEdit1)
-	ON_BN_CLICKED(IDC_DELETE, &CEditStimArrayDlg::OnBnClickedDelete)
-	ON_BN_CLICKED(IDC_INSERT, &CEditStimArrayDlg::OnBnClickedInsert)
-	ON_BN_CLICKED(IDC_DELETE3, &CEditStimArrayDlg::OnBnClickedDelete3)
-	ON_BN_CLICKED(IDC_BUTTON1, &CEditStimArrayDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_COPY, &CEditStimArrayDlg::OnBnClickedCopy)
-	ON_BN_CLICKED(IDC_PASTE, &CEditStimArrayDlg::OnBnClickedPaste)
-	ON_BN_CLICKED(IDC_EXPORT, &CEditStimArrayDlg::OnBnClickedExport)
+	ON_BN_CLICKED(IDC_EDIT, &CDlgEditStimArray::OnBnClickedEdit)
+	ON_EN_KILLFOCUS(IDC_EDIT1, &CDlgEditStimArray::OnEnKillfocusEdit1)
+	ON_BN_CLICKED(IDC_DELETE, &CDlgEditStimArray::OnBnClickedDelete)
+	ON_BN_CLICKED(IDC_INSERT, &CDlgEditStimArray::OnBnClickedInsert)
+	ON_BN_CLICKED(IDC_DELETE3, &CDlgEditStimArray::OnBnClickedDelete3)
+	ON_BN_CLICKED(IDC_BUTTON1, &CDlgEditStimArray::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_COPY, &CDlgEditStimArray::OnBnClickedCopy)
+	ON_BN_CLICKED(IDC_PASTE, &CDlgEditStimArray::OnBnClickedPaste)
+	ON_BN_CLICKED(IDC_EXPORT, &CDlgEditStimArray::OnBnClickedExport)
+	ON_BN_CLICKED(IDC_IMPORTFROMDATA, &CDlgEditStimArray::OnBnClickedImportfromdata)
 END_MESSAGE_MAP()
 
 // CEditStimArrayDlg message handlers
 
-BOOL CEditStimArrayDlg::OnInitDialog()
+BOOL CDlgEditStimArray::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -107,18 +108,21 @@ BOOL CEditStimArrayDlg::OnInitDialog()
 	const auto n_arrays = intervalsandlevels_ptr_array.GetSize();
 	ASSERT(n_arrays == 1);
 	m_pstim = intervalsandlevels_ptr_array.GetAt(0);
-	TransferIntervalsArrayToDialogList(m_pstim);
+	transferIntervalsArrayToDialogList(m_pstim);
 
 	// update paste button (disabled if stimsaved is empty
 	if (m_pstimsaved->intervalsArray.GetSize() < 1)
 		GetDlgItem(IDC_PASTE)->EnableWindow(FALSE);
 
+	if (m_pTagList == nullptr)
+		GetDlgItem(IDC_IMPORTFROMDATA)->EnableWindow(false);
+
 	// select first item in the list
-	SelectItem(0);
+	selectItem(0);
 	return FALSE;
 }
 
-void CEditStimArrayDlg::SelectItem(int item)
+void CDlgEditStimArray::selectItem(int item)
 {
 	m_iItem = item;
 	if (m_iItem < 0)
@@ -130,66 +134,63 @@ void CEditStimArrayDlg::SelectItem(int item)
 	m_stimarrayCtrl.SetFocus();
 }
 
-void CEditStimArrayDlg::ResetListOrder()
+void CDlgEditStimArray::resetListOrder()
 {
-	// Use the LV_ITEM structure to insert the items
-	LVITEM lvi;
-	CString cs;
 	const auto nitems = m_stimarrayCtrl.GetItemCount();
 	for (int i = 0; i < nitems; i++)
 	{
-		lvi.iItem = i;
-		lvi.iSubItem = 0;
-		lvi.mask = LVIF_IMAGE | LVIF_TEXT;
-		cs.Format(_T("%i"), i);
-		lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
-		lvi.iImage = i % 2;
-
+		LVITEM lvi = getItemDescriptor(i);
 		m_stimarrayCtrl.SetItem(&lvi);
 	}
 }
 
-void CEditStimArrayDlg::TransferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim)
+void CDlgEditStimArray::transferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim)
 {
 	m_stimarrayCtrl.DeleteAllItems();
-
 	const auto nitems = m_pstim->intervalsArray.GetSize();
 	m_pstim->chrate = m_rate;
-
-	// Use the LV_ITEM structure to insert the items
-	LVITEM lvi;
-	CString cs;
 	for (int i = 0; i < nitems; i++)
-	{
-		lvi.iItem = i;
-
-		// Insert the first item
-		lvi.iSubItem = 0;
-		lvi.mask = LVIF_IMAGE | LVIF_TEXT;
-		cs.Format(_T("%i"), i);
-		lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
-		lvi.iImage = i % 2;		// There are 8 images in the image list
-
-		m_stimarrayCtrl.InsertItem(&lvi);
-
-		// Set subitem
-		lvi.mask = LVIF_TEXT;
-		lvi.iSubItem = 1;
-		cs.Format(_T("%10.3f"), ((float)m_pstim->intervalsArray[i]) / m_rate);
-		lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
-
-		m_stimarrayCtrl.SetItem(&lvi);
-	}
+		addNewItem(m_pstim->intervalsArray[i]);
 }
 
-void CEditStimArrayDlg::OnSize(UINT nType, int cx, int cy)
+LVITEM CDlgEditStimArray::getItemDescriptor(int i) 
+{
+	LVITEM lvi{};
+	CString cs;
+
+	lvi.iItem = i;
+	lvi.iSubItem = 0;
+	lvi.mask = LVIF_IMAGE | LVIF_TEXT;
+	cs.Format(_T("%i"), i);
+	lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
+	lvi.iImage = i % 2;		// There are 8 images in the image list
+	return lvi;
+}
+
+void CDlgEditStimArray::addNewItem(long lInterval)
+{
+	int i = m_stimarrayCtrl.GetItemCount() + 1;
+
+	LVITEM lvi = getItemDescriptor(i);
+	m_stimarrayCtrl.InsertItem(&lvi);
+
+	// Set subitem
+	lvi.mask = LVIF_TEXT;
+	lvi.iSubItem = 1;
+	CString cs;
+	cs.Format(_T("%10.3f"), ((float) lInterval) / m_rate);
+	lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
+	m_stimarrayCtrl.SetItem(&lvi);
+}
+
+void CDlgEditStimArray::OnSize(UINT nType, int cx, int cy)
 {
 	if (cx > 1 || cy > 1)
 		m_stretch.ResizeControls(nType, cx, cy);
 	CDialog::OnSize(nType, cx, cy);
 }
 
-void CEditStimArrayDlg::OnBnClickedEdit()
+void CDlgEditStimArray::OnBnClickedEdit()
 {
 	auto pos = m_stimarrayCtrl.GetFirstSelectedItemPosition();
 	if (pos == nullptr)
@@ -210,7 +211,7 @@ void CEditStimArrayDlg::OnBnClickedEdit()
 	m_csEdit.SetSel(0, -1, FALSE);
 }
 
-void CEditStimArrayDlg::OnEnKillfocusEdit1()
+void CDlgEditStimArray::OnEnKillfocusEdit1()
 {
 	UpdateData(TRUE);
 	CString cs;
@@ -231,7 +232,7 @@ void CEditStimArrayDlg::OnEnKillfocusEdit1()
 	GetDlgItem(IDC_EDIT)->SetWindowText(_T("&Edit"));
 }
 
-void CEditStimArrayDlg::OnBnClickedDelete()
+void CDlgEditStimArray::OnBnClickedDelete()
 {
 	auto pos = m_stimarrayCtrl.GetFirstSelectedItemPosition();
 	if (pos == nullptr)
@@ -245,11 +246,11 @@ void CEditStimArrayDlg::OnBnClickedDelete()
 	if (m_iItem > ilast)
 		m_iItem = ilast;
 
-	ResetListOrder();
-	SelectItem(m_iItem);
+	resetListOrder();
+	selectItem(m_iItem);
 }
 
-void CEditStimArrayDlg::OnBnClickedInsert()
+void CDlgEditStimArray::OnBnClickedInsert()
 {
 	auto pos = m_stimarrayCtrl.GetFirstSelectedItemPosition();
 	if (pos != nullptr)
@@ -279,17 +280,17 @@ void CEditStimArrayDlg::OnBnClickedInsert()
 	lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
 	m_stimarrayCtrl.SetItem(&lvi);
 
-	ResetListOrder();
-	SelectItem(m_iItem);
+	resetListOrder();
+	selectItem(m_iItem);
 }
 
-void CEditStimArrayDlg::OnBnClickedDelete3()
+void CDlgEditStimArray::OnBnClickedDelete3()
 {
 	m_stimarrayCtrl.DeleteAllItems();
 	m_pstim->intervalsArray.RemoveAll();
 }
 
-void CEditStimArrayDlg::OnBnClickedButton1()
+void CDlgEditStimArray::OnBnClickedButton1()
 {
 	// sort sti
 	const auto nitems = m_pstim->intervalsArray.GetSize();
@@ -323,17 +324,17 @@ void CEditStimArrayDlg::OnBnClickedButton1()
 		m_stimarrayCtrl.SetItem(&lvi);
 	}
 	//ResetListOrder();
-	SelectItem(0);
+	selectItem(0);
 	UpdateData(FALSE);
 }
 
-void CEditStimArrayDlg::OnBnClickedCopy()
+void CDlgEditStimArray::OnBnClickedCopy()
 {
 	*m_pstimsaved = *m_pstim;
 	GetDlgItem(IDC_PASTE)->EnableWindow(TRUE);
 }
 
-void CEditStimArrayDlg::OnBnClickedPaste()
+void CDlgEditStimArray::OnBnClickedPaste()
 {
 	const auto nitems = m_pstimsaved->nitems;
 
@@ -368,10 +369,10 @@ void CEditStimArrayDlg::OnBnClickedPaste()
 		lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
 		m_stimarrayCtrl.SetItem(&lvi);
 	}
-	ResetListOrder();
+	resetListOrder();
 }
 
-void CEditStimArrayDlg::OnBnClickedExport()
+void CDlgEditStimArray::OnBnClickedExport()
 {
 	CString cs_buffer;
 	const auto nitems = m_stimarrayCtrl.GetItemCount();
@@ -390,4 +391,17 @@ void CEditStimArrayDlg::OnBnClickedExport()
 	auto p_view = (CRichEditView*)p_document->GetNextView(pos);
 	CRichEditCtrl& p_edit = p_view->GetRichEditCtrl();
 	p_edit.SetWindowText(cs_buffer);		// copy content of window into CString
+}
+
+void CDlgEditStimArray::OnBnClickedImportfromdata()
+{
+	const auto nitems = m_pstim->intervalsArray.GetSize();
+	m_pstim->chrate = m_rate; 
+	
+	int nTags = m_pTagList->GetNTags();
+	for (int i = 0; i < nTags; i++) {
+		long lInterval = m_pTagList->GetTagLVal(i);
+		m_pstim->AddInterval(lInterval);
+		addNewItem(lInterval);
+	}
 }

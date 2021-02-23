@@ -1,5 +1,3 @@
-// EditListDlg.cpp : implementation file
-//
 
 #include "StdAfx.h"
 #include "dbWave.h"
@@ -9,38 +7,35 @@
 #define new DEBUG_NEW
 #endif
 
-// CEditListDlg dialog
+IMPLEMENT_DYNAMIC(CDlgEditList, CDialog)
 
-IMPLEMENT_DYNAMIC(CEditListDlg, CDialog)
-
-CEditListDlg::CEditListDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CEditListDlg::IDD, pParent)
+CDlgEditList::CDlgEditList(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgEditList::IDD, pParent)
 	, m_csNewString(_T("")), m_selected(0)
 {
 	pCo = nullptr;
 }
 
-CEditListDlg::~CEditListDlg()
+CDlgEditList::~CDlgEditList()
 {
 }
 
-void CEditListDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgEditList::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT1, m_csNewString);
 	DDX_Control(pDX, IDC_LIST1, m_clStrings);
 }
 
-BEGIN_MESSAGE_MAP(CEditListDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgEditList, CDialog)
 	ON_WM_INITMENU()
-	ON_BN_CLICKED(IDC_DELETE, &CEditListDlg::OnBnClickedDelete)
-	ON_BN_CLICKED(IDC_ADDITEM, &CEditListDlg::OnBnClickedAdditem)
+	ON_BN_CLICKED(IDC_DELETE, &CDlgEditList::OnBnClickedDelete)
+	ON_BN_CLICKED(IDC_ADDITEM, &CDlgEditList::OnBnClickedAdditem)
 	ON_WM_SIZE()
 	//	ON_BN_CLICKED(IDC_BUTTON1, &CEditListDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
-// CEditListDlg message handlers
-BOOL CEditListDlg::OnInitDialog()
+BOOL CDlgEditList::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -54,7 +49,7 @@ BOOL CEditListDlg::OnInitDialog()
 	return TRUE;
 }
 
-void CEditListDlg::OnOK()
+void CDlgEditList::OnOK()
 {
 	m_selected = m_clStrings.GetCurSel();
 	const auto nitems = m_clStrings.GetCount();
@@ -68,7 +63,7 @@ void CEditListDlg::OnOK()
 	CDialog::OnOK();
 }
 
-void CEditListDlg::OnBnClickedDelete()
+void CDlgEditList::OnBnClickedDelete()
 {
 	const auto ncount = m_clStrings.GetSelCount();
 	if (0 == ncount)
@@ -92,7 +87,7 @@ void CEditListDlg::OnBnClickedDelete()
 	UpdateData(FALSE);
 }
 
-void CEditListDlg::OnBnClickedAdditem()
+void CDlgEditList::OnBnClickedAdditem()
 {
 	UpdateData(TRUE);					// get data from dlg
 	if (!m_csNewString.IsEmpty())		// add string if not empty
@@ -104,7 +99,7 @@ void CEditListDlg::OnBnClickedAdditem()
 	GetDlgItem(IDC_EDIT1)->SetFocus();
 }
 
-void CEditListDlg::OnSize(UINT nType, int cx, int cy)
+void CDlgEditList::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 }

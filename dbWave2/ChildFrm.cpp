@@ -87,12 +87,12 @@ BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 	ON_COMMAND_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, ReplaceViewIndex)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, OnUpdateViewmenu)
 
-	ON_COMMAND(ID_TOOLS_EXPORTDATACOMMENTS, OnToolsExportdatacomments)						// ok
+	ON_COMMAND(ID_TOOLS_EXPORTDATACOMMENTS, OnToolsExportdatacomments)
 	ON_COMMAND(ID_TOOLS_EXPORTDATAASTEXT, OnToolsExportdataAsText)
-	ON_COMMAND(ID_TOOLS_EXPORTNUMBEROFSPIKES, OnToolsExportnumberofspikes)					// ok
+	ON_COMMAND(ID_TOOLS_EXPORTNUMBEROFSPIKES, OnToolsExportnumberofspikes)
 	ON_COMMAND(ID_TOOLS_EXPORTDATAFILE, &CChildFrame::OnToolsExportdatafile)
-	ON_COMMAND(ID_TOOLS_REMOVEMISSINGFILENAMES, OnToolsRemoveMissingFiles)					// ok
-	ON_COMMAND(ID_TOOLS_REMOVEDUPLICATEFILES, OnToolsRemoveduplicatefiles)					// ok
+	ON_COMMAND(ID_TOOLS_REMOVEMISSINGFILENAMES, OnToolsRemoveMissingFiles)
+	ON_COMMAND(ID_TOOLS_REMOVEDUPLICATEFILES, OnToolsRemoveduplicatefiles)
 	ON_COMMAND(ID_TOOLS_REMOVEARTEFACTFILES, &CChildFrame::OnToolsRemoveartefactfiles)
 	ON_COMMAND(ID_TOOLS_RESTOREDELETEDFILES, &CChildFrame::OnToolsRestoredeletedfiles)
 	ON_COMMAND(ID_TOOLS_CHECKCONSISTENCY, &CChildFrame::OnToolsCheckFilelistsConsistency)
@@ -516,7 +516,7 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	RecalcLayout();
 
 	// adjust size of the view replacing the previous one
-	p_new_view->SendMessage(WM_SIZE, SIZE_MAXIMIZED, MAKELPARAM(size.cx, size.cy)); 	// MAKELPARAM = low, high
+	p_new_view->SendMessage(WM_SIZE, SIZE_MAXIMIZED, MAKELPARAM(size.cx, size.cy));
 	SetActiveView(p_new_view);
 }
 
@@ -531,18 +531,16 @@ void CChildFrame::OnToolsRemoveMissingFiles()
 
 void CChildFrame::OnToolsRemoveduplicatefiles()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();	// get pointer to document
-	ASSERT(p_dbwave_doc);										// debug: check that doc is defined
-
+	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->RemoveDuplicateFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsCheckFilelistsConsistency()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();	// get pointer to document
-	ASSERT(p_dbwave_doc);										// debug: check that doc is defined
-
+	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	ASSERT(p_dbwave_doc);	
 	p_dbwave_doc->RemoveFalseSpkFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
@@ -550,8 +548,8 @@ void CChildFrame::OnToolsCheckFilelistsConsistency()
 void CChildFrame::OnToolsRestoredeletedfiles()
 {
 	// scan directories and rename files *.datdel into *.dat and *.spkdel into *.spk
-	CStringArray filenames;			// store file names in this array
-	CFindFilesDlg dlg;
+	CStringArray filenames;
+	CDlgFindFiles dlg;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = 0;
 	dlg.m_ioption = 1;
@@ -560,7 +558,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 
 	if (IDOK == i_result)
 	{
-		CProgressDlg dlg_progress;
+		CDlgProgress dlg_progress;
 		dlg_progress.Create();
 		dlg_progress.SetStep(1);
 		auto istep = 0;
@@ -582,14 +580,14 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 			CFile::Rename(csoldname, csnewname);
 		}
 	}
-	auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
+	auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
 	ASSERT(p_dbwave_doc != NULL);
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
+	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
 	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->SynchronizeSourceInfos(FALSE);
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
@@ -597,7 +595,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 
 void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 {
-	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
+	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
 	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->SynchronizeSourceInfos(TRUE);
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
@@ -605,7 +603,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 
 void CChildFrame::OnToolsRemoveartefactfiles()
 {
-	CRejectRecordDlg dlg1;
+	CDlgRejectRecord dlg1;
 	long n_consecutive_points = 1000;
 	short jitter = 4;
 	BOOL flag_rejected_file_as;
@@ -623,7 +621,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		return;
 
 	// search
-	CProgressDlg dlg;
+	CDlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
 	auto istep = 0;
@@ -703,7 +701,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 
 void CChildFrame::OnRecordGotorecord()
 {
-	CGotoRecordDlg dlg;
+	CDlgGotoRecord dlg;
 	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
 	dlg.m_recordPos = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	dlg.m_recordID = p_dbwave_doc->GetDB_CurrentRecordID();
@@ -722,7 +720,7 @@ void CChildFrame::OnRecordGotorecord()
 
 void CChildFrame::OnToolsImportfiles(int ifilter)
 {
-	CFindFilesDlg dlg;
+	CDlgFindFiles dlg;
 	CStringArray filenames;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = ifilter;
@@ -740,14 +738,14 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 
 void CChildFrame::OnToolsImportATFfiles()
 {
-	CFindFilesDlg dlg;
+	CDlgFindFiles dlg;
 	CStringArray filenames;			// store file names in this array
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = 6;
 	dlg.m_pdbDoc = (CdbWaveDoc*)GetActiveDocument();
 	if (IDOK == dlg.DoModal())
 	{
-		CImportFilesDlg dlg2;
+		CDlgImportFiles dlg2;
 		CStringArray convertedFiles;
 		dlg2.m_pconvertedFiles = &convertedFiles;
 		dlg2.m_pfilenameArray = &filenames;

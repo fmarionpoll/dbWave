@@ -417,6 +417,8 @@
 #define IDC_CENTER                      529
 #define IDC_EXPORT                      530
 #define IDC_DISPLAYSPIKE_buttn          531
+#define IDC_EXPORT2                     531
+#define IDC_IMPORTFROMDATA              531
 #define IDC_DISPLAREA_buttn             532
 #define IDD_IMPORTOPTIONS               533
 #define IDC_LISTCLASSES                 534

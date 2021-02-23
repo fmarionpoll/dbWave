@@ -1,11 +1,11 @@
 #pragma once
 #include "Editctrl.h"
 
-class CChartPropsDlg : public CDialog
+class CDlgChartProps : public CDialog
 {
 	// Construction
 public:
-	CChartPropsDlg(CWnd* pParent = nullptr);   // standard constructor
+	CDlgChartProps(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_SCOPEPROPERTIES };

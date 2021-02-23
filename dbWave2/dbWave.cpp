@@ -245,11 +245,11 @@ int CdbWaveApp::ExitInstance()
 
 void CdbWaveApp::OnAppAbout()
 {
-	CAboutDlg about_dlg;
+	CDlgAbout about_dlg;
 	about_dlg.DoModal();
 }
 
-BOOL CAboutDlg::OnInitDialog()
+BOOL CDlgAbout::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 

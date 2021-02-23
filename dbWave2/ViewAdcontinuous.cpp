@@ -1220,7 +1220,7 @@ void CViewADContinuous::SaveAndCloseFile()
 		auto ires = IDCANCEL;
 		if (wave_format->sample_count > 1) // make sure real data have been acquired
 		{
-			CConfirmSaveDlg dlg;
+			CDlgConfirmSave dlg;
 			dlg.m_csfilename = m_szFileName;
 			ires = dlg.DoModal();
 		}
@@ -1722,7 +1722,7 @@ void CViewADContinuous::ADC_OnHardwareChannelsDlg()
 	if (m_ADC_inprogress)
 		OnStop(TRUE);
 
-	CADInputParmsDlg dlg;
+	CDlgADInputParms dlg;
 	dlg.m_pwFormat = &(m_pADC_options->waveFormat);
 	dlg.m_pchArray = &(m_pADC_options->chanArray);
 	dlg.m_numchansMAXDI = m_ADC_DTAcq32.GetSSCaps(OLSSC_MAXDICHANS);
@@ -2234,7 +2234,7 @@ void CViewADContinuous::SetCombostartoutput(int option)
 
 void CViewADContinuous::DAC_OnBnClickedParameters2()
 {
-	CDAChannelsDlg dlg;
+	CDlgDAChannels dlg;
 	const auto isize = m_pDAC_options->outputparms_array.GetSize();
 	if (isize < 10)
 		m_pDAC_options->outputparms_array.SetSize(10);
@@ -2278,7 +2278,7 @@ void CViewADContinuous::UpdateRadioButtons()
 
 void CViewADContinuous::OnBnClickedCardFeatures()
 {
-	CDataTranslationBoardDlg dlg;
+	CDlgDataTranslationBoard dlg;
 	dlg.m_pAnalogIN = &m_ADC_DTAcq32;
 	dlg.m_pAnalogOUT = &m_DAC_DTAcq32;
 	auto iout = dlg.DoModal();

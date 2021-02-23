@@ -1,5 +1,3 @@
-// ConfirmSaveDlg.cpp : implementation file
-//
 #include "StdAfx.h"
 //#include "dbWave.h"
 #include "DlgConfirmSave.h"
@@ -8,26 +6,24 @@
 #define new DEBUG_NEW
 #endif
 
-// CConfirmSaveDlg dialog
 
-IMPLEMENT_DYNAMIC(CConfirmSaveDlg, CDialog)
-CConfirmSaveDlg::CConfirmSaveDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CConfirmSaveDlg::IDD, pParent)
+IMPLEMENT_DYNAMIC(CDlgConfirmSave, CDialog)
+CDlgConfirmSave::CDlgConfirmSave(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgConfirmSave::IDD, pParent)
 {
 	m_timeleft = 5;
 }
 
-CConfirmSaveDlg::~CConfirmSaveDlg()
+CDlgConfirmSave::~CDlgConfirmSave()
 {
 }
 
-BEGIN_MESSAGE_MAP(CConfirmSaveDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDlgConfirmSave, CDialog)
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
-// CConfirmSaveDlg message handlers
 
-BOOL CConfirmSaveDlg::OnInitDialog()
+BOOL CDlgConfirmSave::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_timeleft = 5;	// number of seconds during which the routine will wait
@@ -38,7 +34,7 @@ BOOL CConfirmSaveDlg::OnInitDialog()
 	return TRUE;
 }
 
-void CConfirmSaveDlg::OnTimer(UINT nIDEvent)
+void CDlgConfirmSave::OnTimer(UINT nIDEvent)
 {
 	// update variables
 	m_timeleft--;
