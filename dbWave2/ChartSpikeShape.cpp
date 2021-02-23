@@ -180,7 +180,7 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 			DisplayHZtags(p_dc);
 
 		if (GetNVTtags() > 0)
-			DisplayVTtags(p_dc);
+			DisplayVTtags_Value(p_dc);
 
 		// display text
 		if (m_bText && m_plotmode == PLOT_ONECLASSONLY)

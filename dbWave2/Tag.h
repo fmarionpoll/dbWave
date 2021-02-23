@@ -8,7 +8,6 @@ public:
 	CTag();
 	CTag(int refchan);
 	CTag(int val, int ref_chan);
-	CTag(long lval, int ref_chan);
 	CTag(long long lTicks);
 	CTag(const CTag& hc);
 	~CTag();
@@ -20,11 +19,11 @@ public:
 
 	// Management procedures
 public:
-	int 	m_refchan;		// channel associated (-1) if none
-	int 	m_pixel;
-	int 	m_value;		// line val (for horizontal bar)
-	long	m_lvalue;		// assoc long val (for vertical bar)
-	long long m_lTicks;		// length in ticks
-	CString m_csComment;	// comment
+	int 	m_refchan	= -1;		// channel associated (-1) if none
+	int 	m_pixel		= -1;
+	int 	m_value		= 0;		// line val (for horizontal bar)
+	long	m_lvalue	= -1;		// assoc long val (for vertical bar)
+	long long m_lTicks	= 0;		// length in ticks
+	CString m_csComment{};			// comment
 };
 

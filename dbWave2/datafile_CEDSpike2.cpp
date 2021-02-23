@@ -342,20 +342,14 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 
 void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 {
-	long long tTo = S64ChanMaxTime(m_nFid, cedChan);
-	tTo = -1;
 	CTagList* pTags = pBuf->GetpVTtags();
 	pTags->RemoveAllTags();
-	const int nMask = 0;
-	long long tFrom = 0;
-	int nMax = 1;
 	int nRead = 0;
-	int nItems = 0;
-	long long Data = 0;
+	long long Data = -1;
 	do {
-		nRead = S64ReadEvents(m_nFid, cedChan, &Data, nMax, tFrom, tTo, nMask);
-		tFrom = Data +1;
-		pTags->AddTag(CTag(Data));
+		nRead = S64ReadEvents(m_nFid, cedChan, &Data, 1, Data+1, -1, 0);
+		if (nRead > 0)
+			pTags->AddTag(CTag(Data));
 	} while (nRead > 0);
 }
 

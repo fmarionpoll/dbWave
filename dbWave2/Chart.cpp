@@ -997,24 +997,22 @@ void CChartWnd::InvertTracker(CPoint point)
 	m_ptLast = point;						// update m_ptLast
 }
 
-void CChartWnd::DisplayVTtags(CDC* p_dc)
+void CChartWnd::DisplayVTtags_Value(CDC* p_dc)
 {
-	// select pen and display mode
-	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
-
-	// iterate through VT cursor list
+	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto y0 = MulDiv(0 - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto y1 = MulDiv(m_displayRect.bottom - m_yVO, m_yWE, m_yVE) + m_yWO;
+
 	for (auto j = GetNVTtags() - 1; j >= 0; j--)
 	{
-		const auto k = GetVTtagVal(j);		// get val
-		p_dc->MoveTo(k, y0);			// set initial pt
-		p_dc->LineTo(k, y1);			// VT line
+		const auto k = GetVTtagVal(j);	
+		p_dc->MoveTo(k, y0);
+		p_dc->LineTo(k, y1);
 	}
 
 	p_dc->SelectObject(oldp);
-	p_dc->SetROP2(nold_rop);			// restore old display mode
+	p_dc->SetROP2(nold_rop);
 }
 
 void CChartWnd::DisplayHZtags(CDC* p_dc)
@@ -1028,10 +1026,10 @@ void CChartWnd::DisplayHZtags(CDC* p_dc)
 	for (auto i = GetNHZtags() - 1; i >= 0; i--)
 	{
 		const auto k = GetHZtagVal(i);		// get val
-		if (k == oldval)			// skip if already displayed
+		if (k == oldval)					// skip if already displayed
 			continue;
-		p_dc->MoveTo(m_xWO, k);		// set initial pt
-		p_dc->LineTo(m_xWE, k);		// HZ line
+		p_dc->MoveTo(m_xWO, k);	
+		p_dc->LineTo(m_xWE, k);
 		oldval = k;
 	}
 	p_dc->SelectObject(pold);
