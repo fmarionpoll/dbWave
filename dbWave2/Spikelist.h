@@ -155,7 +155,7 @@ public:
 
 	// deal with list of spikes flagged
 protected:
-	CArray <int, int> m_spike_flagged;	// store spike number in this array
+	CArray <int, int> m_spike_flagged;
 
 public:
 	int		SetSpikeFlag(int spikeno, BOOL bFlag);

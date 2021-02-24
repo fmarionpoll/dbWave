@@ -10,6 +10,11 @@ protected:
 	// Form Data
 public:
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
+
+
+	float	m_t1 = 0.f;
+	float	m_t2 = 0.f;
+	float	m_tunit = 1000.f;		// 1=s, 1000f=ms, 1e6=us
 	float				m_timefirst = 0.;
 	float				m_timelast = 0.;
 	int					m_hitrate = 0;
@@ -26,6 +31,8 @@ public:
 	CdbWaveDoc*			GetDocument();
 
 protected:
+	CEditCtrl	mm_t1;
+	CEditCtrl	mm_t2;
 	CEditCtrl			mm_hitrate;
 	CEditCtrl			mm_hitratesort;
 	CEditCtrl			mm_ktolerance;
@@ -38,7 +45,7 @@ protected:
 	CTemplateListWnd	m_templList;
 	CTemplateListWnd	m_avgAllList;
 
-	CChartSpikeShapeWnd	m_spkForm;				// all spikes in displayspikes
+	CChartSpikeShapeWnd	spikeshape_wnd_;				// all spikes in displayspikes
 	CStretchControl		m_stretch;				// array of properties associated with controls
 	BOOL				m_binit;
 
@@ -50,13 +57,13 @@ protected:
 	SCROLLINFO			m_scrollFilePos_infos{};
 	int					m_lFirst = 0;
 	int					m_lLast = 0;
-	int					m_ktagleft = 0;			// VT tags
-	int					m_ktagright = 0;
+	int					m_spkformtagleft = 0;			// VT tags
+	int					m_spkformtagright = 0;
 	int					m_spikeno = -1;
 
 	// Attributes
 public:
-	inline void SetViewMouseCursor(int cursormode) { m_spkForm.SetMouseCursorType(cursormode); }
+	inline void SetViewMouseCursor(int cursormode) { spikeshape_wnd_.SetMouseCursorType(cursormode); }
 
 	// Overrides
 public:
@@ -122,6 +129,8 @@ public:
 	afx_msg void OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedDisplaysingleclass();
+	afx_msg void OnEnChangeT1();
+	afx_msg void OnEnChangeT2();
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

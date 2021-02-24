@@ -125,6 +125,8 @@ void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 {
 	CDaoRecordView::DoDataExchange(pDX);
 
+	DDX_Text(pDX, IDC_T1, m_t1);
+	DDX_Text(pDX, IDC_T2, m_t2);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
 	DDX_Text(pDX, IDC_HITRATE, m_hitrate);
@@ -140,12 +142,12 @@ void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CDaoRecordView)
 
+	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
 	ON_WM_SIZE()
 	ON_EN_CHANGE(IDC_EDIT2, OnEnChangeclassno)
 	ON_EN_CHANGE(IDC_TIMEFIRST, OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, OnEnChangeTimelast)
 	ON_WM_HSCROLL()
-	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
 	ON_COMMAND(ID_FORMAT_ALLDATA, OnFormatAlldata)
 	ON_COMMAND(ID_FORMAT_GAINADJUST, OnFormatGainadjust)
 	ON_COMMAND(ID_FORMAT_CENTERCURVE, OnFormatCentercurve)
@@ -165,6 +167,8 @@ BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CDaoRecordView)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &CViewSpikeTemplates::OnTcnSelchangeTab2)
 	ON_NOTIFY(NM_CLICK, IDC_TAB2, &CViewSpikeTemplates::OnNMClickTab2)
 	ON_BN_CLICKED(IDC_DISPLAYSINGLECLASS, &CViewSpikeTemplates::OnBnClickedDisplaysingleclass)
+	ON_EN_CHANGE(IDC_T1, &CViewSpikeTemplates::OnEnChangeT1)
+	ON_EN_CHANGE(IDC_T2, &CViewSpikeTemplates::OnEnChangeT2)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -221,7 +225,7 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	// force resizing
 	m_binit = TRUE;
 
-	VERIFY(m_spkForm.SubclassDlgItem(IDC_DISPLAYSPIKE, this));
+	VERIFY(spikeshape_wnd_.SubclassDlgItem(IDC_DISPLAYSPIKE, this));
 	VERIFY(mm_spikenoclass.SubclassDlgItem(IDC_EDIT2, this));
 	mm_spikenoclass.ShowScrollBar(SB_VERT);
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
@@ -230,6 +234,9 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	VERIFY(m_templList.SubclassDlgItem(IDC_LIST2, this));
 	VERIFY(m_avgList.SubclassDlgItem(IDC_LIST1, this));
 	VERIFY(m_avgAllList.SubclassDlgItem(IDC_LIST3, this));
+
+	VERIFY(mm_t1.SubclassDlgItem(IDC_T1, this));
+	VERIFY(mm_t2.SubclassDlgItem(IDC_T2, this));
 
 	VERIFY(mm_hitrate.SubclassDlgItem(IDC_HITRATE, this));
 	mm_hitrate.ShowScrollBar(SB_VERT);
@@ -280,9 +287,9 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	m_ktolerance = m_psC->ktolerance;
 
 	m_pSpkDoc = (CSpikeDoc*)GetDocument();
-	m_spkForm.SetPlotMode(PLOT_ONECLASS, 0);
-	m_ktagleft = m_spkForm.AddVTtag(m_psC->kleft);
-	m_ktagright = m_spkForm.AddVTtag(m_psC->kright);
+	spikeshape_wnd_.SetPlotMode(PLOT_ONECLASS, 0);
+	m_spkformtagleft = spikeshape_wnd_.AddVTtag(m_psC->kleft);
+	m_spkformtagright = spikeshape_wnd_.AddVTtag(m_psC->kright);
 
 	updateFileParameters();
 	updateCtrlTab1(0);
@@ -335,23 +342,26 @@ void CViewSpikeTemplates::selectSpikeList(int icur)
 		m_spikenoclass = 0;
 
 	// prepare display source spikes
-	m_spkForm.SetSourceData(m_pSpkList, GetDocument());
+	spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	if (m_psC->kleft == 0 && m_psC->kright == 0)
 	{
 		m_psC->kleft = m_pSpkList->GetSpikePretrig();
 		m_psC->kright = m_psC->kleft + m_pSpkList->GetSpikeRefractory();
 	}
+	m_t1 = (m_psC->kleft * m_tunit) / m_pSpkList->GetAcqSampRate();
+	m_t2 = (m_psC->kright * m_tunit) / m_pSpkList->GetAcqSampRate();
+
 	if (!m_bDisplaySingleClass)
-		m_spkForm.SetPlotMode(PLOT_BLACK, 0);
+		spikeshape_wnd_.SetPlotMode(PLOT_BLACK, 0);
 	else
-		m_spkForm.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
+		spikeshape_wnd_.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
 
 	m_lFirst = 0;
 	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
 	m_scrollFilePos_infos.nMin = 0;
 	m_scrollFilePos_infos.nMax = m_lLast;
-	m_spkForm.SetTimeIntervals(m_lFirst, m_lLast);
-	m_spkForm.Invalidate();
+	spikeshape_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
+	spikeshape_wnd_.Invalidate();
 
 	selectSpike(spikeno);
 	updateLegends();
@@ -368,13 +378,13 @@ void CViewSpikeTemplates::updateTemplates()
 		if (m_templList.GetImageList(LVSIL_NORMAL) != &m_templList.m_imageList)
 		{
 			CRect rect;
-			m_spkForm.GetClientRect(&rect);
+			spikeshape_wnd_.GetClientRect(&rect);
 			m_templList.m_imageList.Create(rect.right, rect.bottom, ILC_COLOR8, 4, 1);
 			m_templList.SetImageList(&m_templList.m_imageList, LVSIL_NORMAL);
 		}
 		SetDlgItemInt(IDC_NTEMPLATES, m_templList.GetNtemplates());
-		int extent = m_spkForm.GetYWExtent();
-		int zero = m_spkForm.GetYWOrg();
+		int extent = spikeshape_wnd_.GetYWExtent();
+		int zero = spikeshape_wnd_.GetYWOrg();
 		m_templList.SetYWExtOrg(extent , zero);
 		m_templList.UpdateTemplateLegends("t");
 		m_templList.Invalidate();
@@ -400,8 +410,8 @@ void CViewSpikeTemplates::updateLegends()
 	m_timelast = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
 
 	// draw dependent buttons
-	m_spkForm.SetTimeIntervals(m_lFirst, m_lLast);
-	m_spkForm.Invalidate();
+	spikeshape_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
+	spikeshape_wnd_.Invalidate();
 
 	UpdateData(FALSE);	// copy view object to controls
 	updateScrollBar();
@@ -409,7 +419,7 @@ void CViewSpikeTemplates::updateLegends()
 
 void CViewSpikeTemplates::selectSpike(short spikeno)
 {
-	m_spkForm.SelectSpikeShape(spikeno);
+	spikeshape_wnd_.SelectSpikeShape(spikeno);
 	m_spikeno = spikeno;
 	m_pSpkList->m_selspike = spikeno;
 }
@@ -432,13 +442,19 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_CHANGEVERTTAG:
-		if (threshold == m_ktagleft)
+		if (threshold == m_spkformtagleft)
 		{
-			m_psC->kleft = m_spkForm.GetVTtagVal(m_ktagleft);
+			m_psC->kleft = spikeshape_wnd_.GetVTtagVal(m_spkformtagleft);
+			m_t1 = m_psC->kleft * m_tunit / m_pSpkList->GetAcqSampRate();
+			mm_t1.m_bEntryDone = TRUE;
+			OnEnChangeT1();
 		}
-		else if (threshold == m_ktagright)
+		else if (threshold == m_spkformtagright)
 		{
-			m_psC->kright = m_spkForm.GetVTtagVal(m_ktagright);
+			m_psC->kright = spikeshape_wnd_.GetVTtagVal(m_spkformtagright);
+			m_t2 = m_psC->kright * m_tunit / m_pSpkList->GetAcqSampRate();
+			mm_t2.m_bEntryDone = TRUE;
+			OnEnChangeT2();
 		}
 		m_templList.SetTemplateLength(0, m_psC->kleft, m_psC->kright);
 		m_templList.Invalidate();
@@ -447,7 +463,7 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEHZLIMITS:		
 	case HINT_CHANGEZOOM:
 	case HINT_VIEWSIZECHANGED:     
-		setExtentZeroAllDisplay(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
+		setExtentZeroAllDisplay(spikeshape_wnd_.GetYWExtent(), spikeshape_wnd_.GetYWOrg());
 		updateLegends();
 		break;
 
@@ -482,8 +498,8 @@ void CViewSpikeTemplates::OnEnChangeclassno()
 
 		if (m_spikenoclass != spikenoclass)	// change display if necessary
 		{
-			m_spkForm.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
-			m_spkForm.Invalidate();
+			spikeshape_wnd_.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
+			spikeshape_wnd_.Invalidate();
 			updateLegends();
 		}
 	}
@@ -631,7 +647,7 @@ void CViewSpikeTemplates::OnFormatAlldata()
 	// spikes: center spikes horizontally and adjust hz size of display
 	const short x_wo = 0;
 	const short x_we = m_pSpkList->GetSpikeLength();
-	m_spkForm.SetXWExtOrg(x_we, x_wo);
+	spikeshape_wnd_.SetXWExtOrg(x_we, x_wo);
 	updateLegends();
 }
 
@@ -649,14 +665,14 @@ void CViewSpikeTemplates::OnFormatCentercurve()
 {
 	int maxval, minval;
 	m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
-	const auto extent = m_spkForm.GetYWExtent();
+	const auto extent = spikeshape_wnd_.GetYWExtent();
 	const auto zero = (maxval + minval) / 2;
 	setExtentZeroAllDisplay(extent, zero);
 }
 
 void CViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero) {
-	m_spkForm.SetYWExtOrg(extent, zero);
-	m_spkForm.Invalidate();
+	spikeshape_wnd_.SetYWExtOrg(extent, zero);
+	spikeshape_wnd_.Invalidate();
 	m_templList.SetYWExtOrg(extent, zero);
 	m_templList.Invalidate();
 	m_avgList.SetYWExtOrg(extent, zero);
@@ -773,7 +789,7 @@ void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	if (pTPList->GetImageList(LVSIL_NORMAL) != &pTPList->m_imageList)
 	{
 		CRect rect;
-		m_spkForm.GetClientRect(&rect);
+		spikeshape_wnd_.GetClientRect(&rect);
 		pTPList->m_imageList.Create(rect.right, rect.bottom, ILC_COLOR8, 1, 1);
 		pTPList->SetImageList(&pTPList->m_imageList, LVSIL_NORMAL);
 	}
@@ -783,15 +799,15 @@ void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	pTPList->SetTemplateLength(m_pSpkList->GetSpikeLength(), 0, m_pSpkList->GetSpikeLength() - 1);
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
 
-	int zero = m_spkForm.GetYWOrg();
-	int extent = m_spkForm.GetYWExtent();
+	int zero = spikeshape_wnd_.GetYWOrg();
+	int extent = spikeshape_wnd_.GetYWExtent();
 	if (zero == 0 && extent == 0)
 	{
 		int maxval, minval;
 		m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
 		extent = maxval - minval;
 		zero = (maxval + minval) / 2;
-		m_spkForm.SetYWExtOrg(extent, zero);
+		spikeshape_wnd_.SetYWExtOrg(extent, zero);
 	}
 	pTPList->SetYWExtOrg(extent, zero);
 
@@ -1148,8 +1164,8 @@ void CViewSpikeTemplates::sortSpikes()
 	// update display: average and spk form
 	displayAvg(FALSE, &m_avgList);
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
-	m_spkForm.SetSourceData(m_pSpkList, GetDocument());
-	m_spkForm.Invalidate();
+	spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
+	spikeshape_wnd_.Invalidate();
 }
 
 void CViewSpikeTemplates::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1406,11 +1422,101 @@ void CViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 	UpdateData(TRUE);
 	if (m_bDisplaySingleClass) {
 		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_SHOW);
-		m_spkForm.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
+		spikeshape_wnd_.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
 	}
 	else {
 		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_HIDE);
-		m_spkForm.SetPlotMode(PLOT_BLACK, m_spikenoclass);
+		spikeshape_wnd_.SetPlotMode(PLOT_BLACK, m_spikenoclass);
 	}
-	m_spkForm.Invalidate();
+	spikeshape_wnd_.Invalidate();
+}
+
+void CViewSpikeTemplates::OnEnChangeT1()
+{
+	if (mm_t1.m_bEntryDone)
+	{
+		auto t1 = m_t1;
+		const auto delta = m_tunit / m_pSpkList->GetAcqSampRate();
+
+		switch (mm_t1.m_nChar)
+		{				// load data from edit controls
+		case VK_RETURN:
+			UpdateData(TRUE);
+			t1 = m_t1;
+			break;
+		case VK_UP:
+		case VK_PRIOR:
+			t1 += delta;
+			break;
+		case VK_DOWN:
+		case VK_NEXT:
+			t1 -= delta;
+			break;
+		default:;
+		}
+		// check boundaries
+		if (t1 < 0)
+			t1 = 0.0f;
+		if (t1 >= m_t2)
+			t1 = m_t2 - delta;
+		// change display if necessary
+		mm_t1.m_bEntryDone = FALSE;	// clear flag
+		mm_t1.m_nChar = 0;			// empty buffer
+		mm_t1.SetSel(0, -1);		// select all text
+		m_t1 = t1;
+		const auto it1 = static_cast<int>(m_t1 / delta);
+		if (it1 != spikeshape_wnd_.GetVTtagVal(m_spkformtagleft))
+		{
+			m_psC->ileft = it1;
+			spikeshape_wnd_.MoveVTtrack(m_spkformtagleft, m_psC->ileft);
+			m_pSpkList->m_imaxmin1SL = m_psC->ileft;
+		}
+		UpdateData(FALSE);
+	}
+}
+
+
+void CViewSpikeTemplates::OnEnChangeT2()
+{
+	if (mm_t2.m_bEntryDone)
+	{
+		auto t2 = m_t2;
+		const auto delta = m_tunit / m_pSpkList->GetAcqSampRate();
+		switch (mm_t2.m_nChar)
+		{				// load data from edit controls
+		case VK_RETURN:
+			UpdateData(TRUE);
+			t2 = m_t2;
+			break;
+		case VK_UP:
+		case VK_PRIOR:
+			t2 += delta;
+			break;
+		case VK_DOWN:
+		case VK_NEXT:
+			t2 -= delta;
+			break;
+		default:;
+		}
+
+		// check boundaries
+		if (t2 < m_t1)
+			t2 = m_t1 + delta;
+		const auto tmax = (m_pSpkList->GetSpikeLength() - 1) * delta;
+		if (t2 >= tmax)
+			t2 = tmax;
+		// change display if necessary
+		mm_t2.m_bEntryDone = FALSE;	// clear flag
+		mm_t2.m_nChar = 0;			// empty buffer
+		mm_t2.SetSel(0, -1);		// select all text
+		m_t2 = t2;
+		const auto it2 = static_cast<int>(m_t2 / delta);
+		if (it2 != spikeshape_wnd_.GetVTtagVal(m_spkformtagright))
+		{
+			m_psC->iright = it2;
+			spikeshape_wnd_.MoveVTtrack(m_spkformtagright, m_psC->iright);
+			m_pSpkList->m_imaxmin2SL = m_psC->iright;
+		}
+		UpdateData(FALSE);
+	}
 }
