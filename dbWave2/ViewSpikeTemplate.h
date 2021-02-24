@@ -110,8 +110,8 @@ public:
 	afx_msg void OnBuildTemplates();
 	afx_msg void OnEnChangeHitrate();
 	afx_msg void OnEnChangeTolerance();
-	afx_msg void Onallclasses();
-	afx_msg void Onsingleclass();
+	afx_msg void OnAllClasses();
+	afx_msg void OnSingleClass();
 	afx_msg void OnEnChangeHitrateSort();
 	afx_msg void OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCheck1();

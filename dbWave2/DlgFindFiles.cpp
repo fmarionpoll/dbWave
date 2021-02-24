@@ -8,13 +8,8 @@
 
 CDlgFindFiles::CDlgFindFiles(CWnd* pParent /*=NULL*/)
 	: CDialog(CDlgFindFiles::IDD, pParent)
-	, m_pfilenames(nullptr), m_banyformat(FALSE), m_bexcludecloud(TRUE), m_bSubtreeSearch(0)
+
 {
-	m_path = _T("");
-	m_selinit = 0;
-	m_ioption = 0;
-	m_pdbDoc = nullptr;
-	m_nfound = 0;
 }
 
 
@@ -23,7 +18,6 @@ void CDlgFindFiles::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_fileext);
 	DDX_Check(pDX, IDC_CHECKOTHERFORMATS, m_banyformat);
-	DDX_Check(pDX, IDC_EXCLUDECLOUD, m_bexcludecloud);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_mfcbrowsecontrol);
 }
 
@@ -37,20 +31,15 @@ END_MESSAGE_MAP()
 
 BOOL CDlgFindFiles::OnInitDialog()
 {
-	CDialog::OnInitDialog();				// call class original routine
-
-	m_pfilenames->RemoveAll();				// clear output CStringArray
-	m_nfound = 0;							// no file found yet
-
-	// assume user wants to explore subfolders
-	((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(1);
-
+	CDialog::OnInitDialog();
+	m_pfilenames->RemoveAll();
 	m_path = ((CdbWaveApp*)AfxGetApp())->options_import.path;
 	if (m_pdbDoc)
 		m_path = m_pdbDoc->m_ProposedDataPathName;
 	m_mfcbrowsecontrol.SetWindowTextW(m_path);
 
 	// hide yet undefined infos
+	((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(1);
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 
@@ -66,7 +55,6 @@ BOOL CDlgFindFiles::OnInitDialog()
 		m_fileext.AddString(_T("*.spkdel"));
 	}
 	else
-		// update numbering option
 	{
 		CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
 		((CButton*)GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bImportDuplicateFiles);
@@ -74,8 +62,7 @@ BOOL CDlgFindFiles::OnInitDialog()
 	UpdateData(FALSE);
 	m_fileext.SetCurSel(m_selinit);			// select first item / file extensions
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; 
 }
 
 void CDlgFindFiles::OnOK()
@@ -93,7 +80,7 @@ void CDlgFindFiles::OnOK()
 
 void CDlgFindFiles::OnSearch()
 {
-	UpdateData(TRUE);		// update m_path
+	UpdateData(TRUE);
 
 	m_ppath.RemoveAll();							// clean list of paths
 	m_pfilenames->RemoveAll();						// remove all file names
@@ -114,7 +101,7 @@ void CDlgFindFiles::OnSearch()
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_SHOW);
 	for (auto i = 0; i <= m_ppath.GetUpperBound(); i++)
 	{
-		auto cs_dir = m_ppath.GetAt(i);
+		CString cs_dir = m_ppath.GetAt(i);
 		GetDlgItem(IDC_STATIC3)->SetWindowText(cs_dir);
 		FindFiles(cs_dir);
 		DisplaynFound();
@@ -133,7 +120,7 @@ void CDlgFindFiles::DisplaynFound()
 void CDlgFindFiles::TraverseDirectory(CString path)
 {
 	CFileFind finder;
-	auto str_wildcard = path;
+	CString str_wildcard = path;
 	str_wildcard += _T("\\*.*");
 
 	// start working for files
@@ -165,15 +152,6 @@ void CDlgFindFiles::FindFiles(CString path)
 		auto cs_dummy = finder.GetFilePath();
 		if (1 != m_ioption && 0 == (cs_dummy.Right(3)).CompareNoCase(_T("del")))
 			continue;
-		if (m_bexcludecloud)
-		{
-			if (cs_dummy.Find(_T("\\Dropbox"), 0) >= 0)
-				continue;
-			if (cs_dummy.Find(_T("\\Google"), 0) >= 0)
-				continue;
-			if (cs_dummy.Find(_T("\\Skydrive"), 0) >= 0)
-				continue;
-		}
 		m_pfilenames->Add(cs_dummy);
 		m_nfound++;
 	}

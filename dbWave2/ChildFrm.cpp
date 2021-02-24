@@ -73,26 +73,26 @@ IMPLEMENT_DYNCREATE(CChildFrame, CMDIChildWndEx)
 
 BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 
-	ON_COMMAND(ID_VIEW_CURSORMODE_NORMAL, OnViewCursormodeNormal)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_NORMAL, OnUpdateViewCursormodeNormal)
-	ON_COMMAND(ID_VIEW_CURSORMODE_MEASURE, OnViewCursormodeMeasure)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_MEASURE, OnUpdateViewCursormodeMeasure)
-	ON_COMMAND(ID_VIEW_CURSORMODE_ZOOMIN, OnViewCursormodeZoomin)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_ZOOMIN, OnUpdateViewCursormodeZoomin)
-	ON_COMMAND(ID_OPTIONS_BROWSEMODE, OnOptionsBrowsemode)
-	ON_COMMAND(ID_OPTIONS_PRINTMARGINS, OnOptionsPrintmargins)
-	ON_COMMAND(ID_OPTIONS_LOADSAVEOPTIONS, OnOptionsLoadsaveoptions)
-	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
+	ON_COMMAND(ID_VIEW_CURSORMODE_NORMAL, &CChildFrame::OnViewCursormodeNormal)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_NORMAL, &CChildFrame::OnUpdateViewCursormodeNormal)
+	ON_COMMAND(ID_VIEW_CURSORMODE_MEASURE, &CChildFrame::OnViewCursormodeMeasure)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_MEASURE, &CChildFrame::OnUpdateViewCursormodeMeasure)
+	ON_COMMAND(ID_VIEW_CURSORMODE_ZOOMIN, &CChildFrame::OnViewCursormodeZoomin)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_ZOOMIN, &CChildFrame::OnUpdateViewCursormodeZoomin)
+	ON_COMMAND(ID_OPTIONS_BROWSEMODE, &CChildFrame::OnOptionsBrowsemode)
+	ON_COMMAND(ID_OPTIONS_PRINTMARGINS, &CChildFrame::OnOptionsPrintmargins)
+	ON_COMMAND(ID_OPTIONS_LOADSAVEOPTIONS, &CChildFrame::OnOptionsLoadsaveoptions)
+	ON_MESSAGE(WM_MYMESSAGE, &CChildFrame::OnMyMessage)
 	ON_WM_CREATE()
-	ON_COMMAND_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, ReplaceViewIndex)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, OnUpdateViewmenu)
+	ON_COMMAND_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, &CChildFrame::ReplaceViewIndex)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, &CChildFrame::OnUpdateViewmenu)
 
-	ON_COMMAND(ID_TOOLS_EXPORTDATACOMMENTS, OnToolsExportdatacomments)
-	ON_COMMAND(ID_TOOLS_EXPORTDATAASTEXT, OnToolsExportdataAsText)
-	ON_COMMAND(ID_TOOLS_EXPORTNUMBEROFSPIKES, OnToolsExportnumberofspikes)
+	ON_COMMAND(ID_TOOLS_EXPORTDATACOMMENTS, &CChildFrame::OnToolsExportdatacomments)
+	ON_COMMAND(ID_TOOLS_EXPORTDATAASTEXT, &CChildFrame::OnToolsExportdataAsText)
+	ON_COMMAND(ID_TOOLS_EXPORTNUMBEROFSPIKES, &CChildFrame::OnToolsExportnumberofspikes)
 	ON_COMMAND(ID_TOOLS_EXPORTDATAFILE, &CChildFrame::OnToolsExportdatafile)
-	ON_COMMAND(ID_TOOLS_REMOVEMISSINGFILENAMES, OnToolsRemoveMissingFiles)
-	ON_COMMAND(ID_TOOLS_REMOVEDUPLICATEFILES, OnToolsRemoveduplicatefiles)
+	ON_COMMAND(ID_TOOLS_REMOVEMISSINGFILENAMES, &CChildFrame::OnToolsRemoveMissingFiles)
+	ON_COMMAND(ID_TOOLS_REMOVEDUPLICATEFILES, &CChildFrame::OnToolsRemoveduplicatefiles)
 	ON_COMMAND(ID_TOOLS_REMOVEARTEFACTFILES, &CChildFrame::OnToolsRemoveartefactfiles)
 	ON_COMMAND(ID_TOOLS_RESTOREDELETEDFILES, &CChildFrame::OnToolsRestoredeletedfiles)
 	ON_COMMAND(ID_TOOLS_CHECKCONSISTENCY, &CChildFrame::OnToolsCheckFilelistsConsistency)
@@ -739,7 +739,7 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 void CChildFrame::OnToolsImportATFfiles()
 {
 	CDlgFindFiles dlg;
-	CStringArray filenames;			// store file names in this array
+	CStringArray filenames;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = 6;
 	dlg.m_pdbDoc = (CdbWaveDoc*)GetActiveDocument();
@@ -750,11 +750,11 @@ void CChildFrame::OnToolsImportATFfiles()
 		dlg2.m_pconvertedFiles = &convertedFiles;
 		dlg2.m_pfilenameArray = &filenames;
 		dlg2.m_option = ATFFILE;
-		auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
+		auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
 		dlg2.m_pdbDoc = p_dbwave_doc;
 		if (IDOK == dlg2.DoModal())
 		{
-			p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
+			p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
 			p_dbwave_doc->ImportDescFromFileList(convertedFiles);
 			p_dbwave_doc->DBMoveLast();
 			p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);

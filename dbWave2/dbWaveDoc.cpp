@@ -1094,6 +1094,7 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		else if (b_spik_present)
 			cs_filename = cs_spk_file;
 		const auto p_wave_format = GetWaveFormat(cs_filename, b_dat_present);
+		m_pDat->AcqCloseFile();
 		if (p_wave_format == nullptr)
 		{
 			cs_dummy.Format(_T("file discarded=%i:\t%s \r\n"), ifile, static_cast<LPCTSTR>(cs_filename));
@@ -1102,8 +1103,8 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		}
 
 		// check data acquisition time - go to next file if already exist and if flag set
-		COleDateTime o_time;
 		auto t = p_wave_format->acqtime;
+		COleDateTime o_time;
 		o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 		if (!dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import.bImportDuplicateFiles)
 		{

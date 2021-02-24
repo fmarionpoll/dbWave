@@ -11,17 +11,14 @@ public:
 // Dialog Data
 	enum { IDD = IDD_FINDFILES };
 	CComboBox			m_fileext;
-	CString				m_path;
+	CString				m_path = _T("");
 	CMFCEditBrowseCtrl	m_mfcbrowsecontrol;
-
-	int					m_nfound;
-	int					m_selinit;
-	CStringArray* m_pfilenames;
-	BOOL				m_ioption;
-	BOOL				m_banyformat;
-	BOOL				m_bexcludecloud;
-
-	CdbWaveDoc* m_pdbDoc;
+	int					m_nfound = 0;
+	int					m_selinit = 0;
+	CStringArray*		m_pfilenames = nullptr;
+	BOOL				m_ioption = 0;
+	BOOL				m_banyformat = false;
+	CdbWaveDoc*			m_pdbDoc = nullptr;
 
 	// Overrides
 protected:
@@ -30,7 +27,7 @@ protected:
 // Implementation
 protected:
 	CString			m_searchString;
-	BOOL			m_bSubtreeSearch;
+	BOOL			m_bSubtreeSearch = false;
 	CStringArray	m_ppath;
 	CString			m_csrootSearch;
 
