@@ -150,8 +150,8 @@ public:
 	void 		MoveHZtagtoVal(int itag, int ival);
 	void		UpdateXRuler();
 	void		UpdateYRuler();
-	void		PlotDatatoDC(CDC* p_dc);
-	void		ZoomData(CRect* prevRect, CRect* newRect);
+	void		PlotDatatoDC(CDC* p_dc) override;
+	void		ZoomData(CRect* prevRect, CRect* newRect) override;
 
 	void		Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
 

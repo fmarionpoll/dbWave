@@ -107,12 +107,12 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			m_xWO = m_displayRect.left;
 		}
 
-		DisplayBars(p_dc, &m_displayRect);
+		displayBars(p_dc, &m_displayRect);
 
 		CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
 
 		if (pintervals->nitems > 0)
-			DisplayStimulus(p_dc, &m_displayRect);
+			displayStimulus(p_dc, &m_displayRect);
 
 		// display vertical cursors
 		if (GetNVTtags() > 0)
@@ -204,14 +204,14 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 		m_xWO = m_displayRect.left;
 	}
 
-	DisplayBars(p_dc, &m_displayRect);
+	displayBars(p_dc, &m_displayRect);
 
 	if (p_spike_doc_ == nullptr)
 		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
 	CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
 
 	if (pintervals->nitems > 0)
-		DisplayStimulus(p_dc, &m_displayRect);
+		displayStimulus(p_dc, &m_displayRect);
 
 	// display vertical cursors
 	if (GetNVTtags() > 0)
@@ -251,7 +251,7 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 }
 
 
-void CChartSpikeBarWnd::DisplayStimulus(CDC* p_dc, CRect* rect) const
+void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 {
 	CPen bluepen;
 	bluepen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
@@ -309,7 +309,7 @@ void CChartSpikeBarWnd::DisplayStimulus(CDC* p_dc, CRect* rect) const
 	p_dc->SelectObject(pold_p);
 }
 
-void CChartSpikeBarWnd::DisplayBars(CDC* p_dc, CRect* rect)
+void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 {
 	// prepare loop to display spikes
 	auto* pold_pen = (CPen*)p_dc->SelectStockObject(BLACK_PEN);
@@ -414,7 +414,7 @@ void CChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 	m_xWO = m_displayRect.left;
 
 	dc.IntersectClipRect(&m_clientRect);
-	PrepareDC(&dc);
+	prepareDC(&dc);
 	const auto pensize = 0;
 
 	// loop over the array of flagged spikes
@@ -438,7 +438,7 @@ void CChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 				break;
 			case PLOT_CLASSCOLORS:
 				if (nospike == m_selectedspike)
-					HighlightOneBar(nospike, &dc);
+					highlightOneBar(nospike, &dc);
 				color = nospikeclass % NB_COLORS;
 				break;
 			case PLOT_BLACK:
@@ -477,7 +477,7 @@ void CChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 	m_xWE = m_displayRect.Width();
 	m_xWO = m_displayRect.left;
 	dc.IntersectClipRect(&m_clientRect);
-	PrepareDC(&dc);
+	prepareDC(&dc);
 
 	int  color;
 	// spike is not selected
@@ -493,7 +493,7 @@ void CChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 			break;
 		case PLOT_CLASSCOLORS:
 			if (nospike == m_selectedspike)
-				HighlightOneBar(nospike, &dc);
+				highlightOneBar(nospike, &dc);
 			color = p_spikelist_->GetSpikeClass(nospike) % NB_COLORS;
 			break;
 		case PLOT_BLACK:
@@ -508,7 +508,7 @@ void CChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 		switch (m_plotmode)
 		{
 		case PLOT_CLASSCOLORS:
-			HighlightOneBar(nospike, &dc);
+			highlightOneBar(nospike, &dc);
 			color = p_spikelist_->GetSpikeClass(nospike) % NB_COLORS;
 			break;
 		case PLOT_BLACK:
@@ -560,7 +560,7 @@ BOOL CChartSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 	return TRUE;
 }
 
-void CChartSpikeBarWnd::HighlightOneBar(const int nospike, CDC* p_dc) const
+void CChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
 {
 	const auto old_rop = p_dc->GetROP2();
 	p_dc->SetROP2(R2_NOTXORPEN);
@@ -632,7 +632,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	if (!m_bLmouseDown)
 	{
-		PostMyMessage(HINT_DROPPED, NULL);
+		postMyMessage(HINT_DROPPED, NULL);
 		return;
 	}
 	CChartWnd::OnLButtonUp(n_flags, point);
@@ -642,9 +642,9 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 	if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 	{
 		if (m_cursorType != CURSOR_ZOOM)
-			PostMyMessage(HINT_HITAREA, NULL);
+			postMyMessage(HINT_HITAREA, NULL);
 		else
-			ZoomIn();
+			zoomIn();
 		return;	 // exit: mouse movement was too small
 	}
 
@@ -657,7 +657,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 		{
 			auto rect = GetDefinedRect();
 			SelectSpikesWithinRect(&rect, n_flags);
-			PostMyMessage(HINT_SELECTSPIKES, NULL);
+			postMyMessage(HINT_SELECTSPIKES, NULL);
 		}
 		break;
 
@@ -666,7 +666,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 		m_ZoomFrom = rect_in;
 		m_ZoomTo = rect_out;
 		m_iUndoZoom = 1;
-		PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+		postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 		break;
 
 	default:
@@ -682,16 +682,16 @@ void CChartSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
 	if (m_currCursorMode == 0)
 	{
 		m_btrackCurve = FALSE;
-		m_hitspk = DoesCursorHitCurve(point);
+		m_hitspk = hitCurve(point);
 		// tell parent spike selected
 		if (m_hitspk >= 0)
 		{
 			if (nFlags & MK_SHIFT)
-				PostMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
+				postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
 			else if (nFlags & MK_CONTROL)
-				PostMyMessage(HINT_HITSPIKE_CTRL, m_hitspk);
+				postMyMessage(HINT_HITSPIKE_CTRL, m_hitspk);
 			else
-				PostMyMessage(HINT_HITSPIKE, m_hitspk);
+				postMyMessage(HINT_HITSPIKE, m_hitspk);
 			return;
 		}
 	}
@@ -728,7 +728,7 @@ void CChartSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	l_size = l_size * rDest->Width() / rFrom->Width();
 	m_lLast = m_lFirst + l_size - 1;
 
-	PostMyMessage(HINT_CHANGEHZLIMITS, NULL);
+	postMyMessage(HINT_CHANGEHZLIMITS, NULL);
 }
 
 void CChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -739,18 +739,18 @@ void CChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (m_selectedspike >= 0)
 		{
-			PostMyMessage(HINT_DBLCLKSEL, m_selectedspike);
+			postMyMessage(HINT_DBLCLKSEL, m_selectedspike);
 		}
 		else
 		{
-			const auto iselectedspike = DoesCursorHitCurve(point);
+			const auto iselectedspike = hitCurve(point);
 			if (iselectedspike >= 0)
-				PostMyMessage(HINT_DBLCLKSEL, iselectedspike);
+				postMyMessage(HINT_DBLCLKSEL, iselectedspike);
 		}
 	}
 }
 
-int CChartSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
+int CChartSpikeBarWnd::hitCurveInDoc(CPoint point)
 {
 	long nfiles = 1;
 	long ncurrentfile = 0;
@@ -774,7 +774,7 @@ int CChartSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 		{
 			continue;
 		}
-		result = DoesCursorHitCurve(point);
+		result = hitCurve(point);
 		if (result >= 0)
 			break;
 	}
@@ -789,7 +789,7 @@ int CChartSpikeBarWnd::DoesCursorHitCurveInDoc(CPoint point)
 	return result;
 }
 
-int CChartSpikeBarWnd::DoesCursorHitCurve(const CPoint point)
+int CChartSpikeBarWnd::hitCurve(const CPoint point)
 {
 	auto hitspk = -1;
 	// for y coordinates, conversion is straightforward:
@@ -882,10 +882,10 @@ void CChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 
 	// set mapping mode and viewport
 	const auto n_saved_dc = p_dc->SaveDC();				// save display context
-	DisplayBars(p_dc, rect);
+	displayBars(p_dc, rect);
 
 	if (p_dbwave_doc_->m_pSpk->m_stimIntervals.nitems > 0)
-		DisplayStimulus(p_dc, rect);
+		displayStimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);
 }

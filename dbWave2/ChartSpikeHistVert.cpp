@@ -73,7 +73,7 @@ void CChartSpikeHistVert::PlotDatatoDC(CDC* p_dc)
 		EraseBkgnd(p_dc);
 
 	// load resources
-	GetExtents();
+	getExtents();
 	if (m_lmax == 0)
 	{
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
@@ -84,7 +84,7 @@ void CChartSpikeHistVert::PlotDatatoDC(CDC* p_dc)
 		return;
 	}
 	const int n_saved_dc = p_dc->SaveDC();
-	PrepareDC(p_dc);
+	prepareDC(p_dc);
 	int color;
 	// save background color which is changed by later calls to FillSolidRect
 	// when doing so, pens created with PS_DOT pattern and with XOR_PEN do
@@ -125,7 +125,7 @@ void CChartSpikeHistVert::PlotDatatoDC(CDC* p_dc)
 				continue;
 			}
 		}
-		PlotHistogram(p_dc, p_dw, color);
+		plotHistogram(p_dc, p_dw, color);
 	}
 
 	// plot selected class (one histogram)
@@ -133,10 +133,10 @@ void CChartSpikeHistVert::PlotDatatoDC(CDC* p_dc)
 	{
 		color = BLACK_COLOR;
 		CDWordArray* p_dw = nullptr;
-		GetClassArray(m_selclass, p_dw);
+		getClassArray(m_selclass, p_dw);
 		if (p_dw != nullptr)
 		{
-			PlotHistogram(p_dc, p_dw, color);
+			plotHistogram(p_dc, p_dw, color);
 		}
 	}
 
@@ -149,7 +149,7 @@ void CChartSpikeHistVert::PlotDatatoDC(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void CChartSpikeHistVert::PlotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
+void CChartSpikeHistVert::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
 {
 	CRect rect_histog;
 	rect_histog.bottom = m_abcissaminval - m_binsize;
@@ -185,7 +185,7 @@ void CChartSpikeHistVert::MoveVTtagtoVal(int itag, int ival)
 	SetVTtagVal(itag, ival);
 }
 
-void CChartSpikeHistVert::GetClassArray(int iclass, CDWordArray*& pDW)
+void CChartSpikeHistVert::getClassArray(int iclass, CDWordArray*& pDW)
 {
 	// test if pDW at 0 position is the right one
 	if ((nullptr != pDW) && (static_cast<int>(pDW->GetAt(0)) == iclass))
@@ -241,7 +241,7 @@ void CChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
 		point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 		XorHZtag(point.y);
 		CChartWnd::OnLButtonUp(nFlags, point);
-		PostMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
 	}
 	break;
 
@@ -254,7 +254,7 @@ void CChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CChartWnd::OnLButtonUp(nFlags, point);
-		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 	}
 	break;
 
@@ -269,9 +269,9 @@ void CChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
 			if (m_cursorType != CURSOR_ZOOM)
-				PostMyMessage(HINT_HITAREA, NULL);
+				postMyMessage(HINT_HITAREA, NULL);
 			else
-				ZoomIn();
+				zoomIn();
 			break;					// exit: mouse movement was too small
 		}
 
@@ -320,13 +320,13 @@ void CChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// test if mouse hit one histogram
 	// if hit, then tell parent to select corresp histogram (spike)
-	m_hitspk = DoesCursorHitCurve(point);
+	m_hitspk = hitCurve(point);
 	if (m_hitspk >= 0)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF;		// flag trackrect
-		ReleaseCursor();				// release cursor capture
-		PostMyMessage(HINT_HITSPIKE, m_hitspk);
+		releaseCursor();				// release cursor capture
+		postMyMessage(HINT_HITSPIKE, m_hitspk);
 		return;
 	}
 }
@@ -352,7 +352,7 @@ void CChartSpikeHistVert::ZoomData(CRect* rFrom, CRect* rDest)
 
 	// display
 	Invalidate();
-	PostMyMessage(HINT_CHANGEZOOM, 0);
+	postMyMessage(HINT_CHANGEZOOM, 0);
 }
 
 void CChartSpikeHistVert::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -365,7 +365,7 @@ void CChartSpikeHistVert::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
-int CChartSpikeHistVert::DoesCursorHitCurve(CPoint point)
+int CChartSpikeHistVert::hitCurve(CPoint point)
 {
 	auto hitspk = -1;
 	// convert device coordinates into logical coordinates
@@ -437,12 +437,12 @@ int CChartSpikeHistVert::DoesCursorHitCurve(CPoint point)
 	return hitspk;
 }
 
-void CChartSpikeHistVert::GetExtents()
+void CChartSpikeHistVert::getExtents()
 {
 	if (m_xWE == 1) // && m_xWO == 0)
 	{
 		if (m_lmax == 0)
-			GetHistogLimits(0);
+			getHistogLimits(0);
 		m_xWE = static_cast<int>(m_lmax);
 		m_xWO = 0;
 	}
@@ -454,7 +454,7 @@ void CChartSpikeHistVert::GetExtents()
 	}
 }
 
-void CChartSpikeHistVert::GetHistogLimits(int ihist)
+void CChartSpikeHistVert::getHistogLimits(int ihist)
 {
 	// for some unknown reason, m_pHistarray is set at zero when arriving here
 	if (histogram_ptr_array.GetSize() <= 0)
@@ -504,7 +504,7 @@ void CChartSpikeHistVert::GetHistogLimits(int ihist)
 //		int nbins			= number of bins -> bin size
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
 
-void CChartSpikeHistVert::ReSize_And_Clear_Histograms(int nbins, int max, int min)
+void CChartSpikeHistVert::reSize_And_Clear_Histograms(int nbins, int max, int min)
 {
 	m_binsize = (max - min + 1) / nbins + 1;		// set bin size
 	m_abcissaminval = min;					// set min
@@ -527,7 +527,7 @@ void CChartSpikeHistVert::OnSize(UINT nType, int cx, int cy)
 	m_yVO = cy;
 }
 
-CDWordArray* CChartSpikeHistVert::InitClassArray(int nbins, int spike_class) {
+CDWordArray* CChartSpikeHistVert::initClassArray(int nbins, int spike_class) {
 	CDWordArray* p_dw = new (CDWordArray);	// init array
 	ASSERT(p_dw != NULL);
 	histogram_ptr_array.Add(p_dw);		// save pointer to this new array
@@ -538,7 +538,7 @@ CDWordArray* CChartSpikeHistVert::InitClassArray(int nbins, int spike_class) {
 	return p_dw;
 }
 
-void CChartSpikeHistVert::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
+void CChartSpikeHistVert::buildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
 {
 	// erase data and arrays if bnew:
 	if (bNew)
@@ -557,7 +557,7 @@ void CChartSpikeHistVert::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_
 	}
 
 	if (nbins != m_nbins || p_dword_array->GetSize() != (nbins + 1))
-		ReSize_And_Clear_Histograms(nbins, max, min);
+		reSize_And_Clear_Histograms(nbins, max, min);
 
 	CDWordArray* p_dw = nullptr;
 	auto nspikes = p_spk_list->GetTotalSpikes();
@@ -580,9 +580,9 @@ void CChartSpikeHistVert::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_
 
 		// dispatch into corresp class histogram (create one if necessary)
 		const auto spike_class = spike_element->get_class();
-		GetClassArray(spike_class, p_dw);
+		getClassArray(spike_class, p_dw);
 		if (p_dw == nullptr)
-			p_dw = InitClassArray(nbins, spike_class);
+			p_dw = initClassArray(nbins, spike_class);
 
 		if (p_dw != nullptr)
 		{
@@ -590,7 +590,7 @@ void CChartSpikeHistVert::BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_
 			p_dw->SetAt(index, dw_data);
 		}
 	}
-	GetHistogLimits(0);
+	getHistogLimits(0);
 }
 
 void CChartSpikeHistVert::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew)
@@ -621,7 +621,7 @@ void CChartSpikeHistVert::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFile
 		}
 		CSpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
 		if (p_spikelist != nullptr && p_spikelist->GetTotalSpikes() > 0)
-			BuildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
+			buildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
 	}
 
 	if (ballFiles)

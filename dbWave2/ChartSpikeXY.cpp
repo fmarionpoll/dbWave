@@ -42,7 +42,7 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 
 	// display data: trap error conditions
 	const auto windowduration = m_lLast - m_lFirst + 1;	// abcissa size
-	GetExtents();								// get origin and extents for xy axes
+	getExtents();								// get origin and extents for xy axes
 	ASSERT(m_xWE != 1);
 	p_dc->SetMapMode(MM_TEXT);
 
@@ -137,7 +137,7 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 
 		// display spike selected
 		if (m_selectedspike >= 0)
-			HighlightOnePoint(m_selectedspike, p_dc);
+			highlightOnePoint(m_selectedspike, p_dc);
 
 		if (p_spikelist_->GetSpikeFlagArrayCount() > 0)
 		{
@@ -145,7 +145,7 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 			for (auto i = p_spikelist_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
 			{
 				const auto nospike = p_spikelist_->GetSpikeFlagArrayAt(i);
-				HighlightOnePoint(nospike, p_dc);
+				highlightOnePoint(nospike, p_dc);
 			}
 		}
 
@@ -250,7 +250,7 @@ void CChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
 			break;
 		case PLOT_CLASSCOLORS:
 			if (spikeno == m_selectedspike)
-				HighlightOnePoint(spikeno, &dc);
+				highlightOnePoint(spikeno, &dc);
 			color = spike_class % 8;
 			break;
 		case PLOT_BLACK:
@@ -264,16 +264,16 @@ void CChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
 		color = RED_COLOR;
 		if (m_plotmode == PLOT_CLASSCOLORS)
 		{
-			HighlightOnePoint(spikeno, &dc);
+			highlightOnePoint(spikeno, &dc);
 			color = spike_class % 8;
 		}
 	}
 
 	// display spike
-	DrawSelectedSpike(spikeno, color, &dc);
+	drawSelectedSpike(spikeno, color, &dc);
 }
 
-void CChartSpikeXYWnd::HighlightOnePoint(int nospike, CDC * p_dc)
+void CChartSpikeXYWnd::highlightOnePoint(int nospike, CDC * p_dc)
 {
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
@@ -300,7 +300,7 @@ void CChartSpikeXYWnd::HighlightOnePoint(int nospike, CDC * p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-void CChartSpikeXYWnd::DrawSelectedSpike(int nospike, int color, CDC * p_dc)
+void CChartSpikeXYWnd::drawSelectedSpike(int nospike, int color, CDC * p_dc)
 {
 	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
 	const auto l_spike_time = spike_element->get_time();
@@ -358,7 +358,7 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 		XorHZtag(point.y);
 		CChartWnd::OnLButtonUp(nFlags, point);
-		PostMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
 	}
 	break;
 
@@ -370,7 +370,7 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CChartWnd::OnLButtonUp(nFlags, point);
-		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 	}
 	break;
 
@@ -382,9 +382,9 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
 			if (m_cursorType != CURSOR_ZOOM)
-				PostMyMessage(HINT_HITAREA, NULL);
+				postMyMessage(HINT_HITAREA, NULL);
 			else
-				ZoomIn();
+				zoomIn();
 			return;					// exit: mouse movement was too small
 		}
 
@@ -438,17 +438,17 @@ void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// test if mouse hit a spike
-	m_hitspk = DoesCursorHitCurveInDoc(point);
+	m_hitspk = hitCurveInDoc(point);
 	if (m_hitspk >= 0)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF;		// flag trackrect
-		ReleaseCursor();				// release cursor capture
+		releaseCursor();				// release cursor capture
 		if (nFlags & MK_SHIFT)
-			PostMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
+			postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
 
 		else
-			PostMyMessage(HINT_HITSPIKE, m_hitspk);
+			postMyMessage(HINT_HITSPIKE, m_hitspk);
 	}
 }
 
@@ -481,7 +481,7 @@ void CChartSpikeXYWnd::ZoomData(CRect * rFrom, CRect * rDest)
 	m_lLast = m_lFirst + l_size - 1;
 	// display
 	Invalidate();
-	PostMyMessage(HINT_CHANGEHZLIMITS, NULL);
+	postMyMessage(HINT_CHANGEHZLIMITS, NULL);
 }
 
 void CChartSpikeXYWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -492,7 +492,7 @@ void CChartSpikeXYWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 }
 
-int CChartSpikeXYWnd::DoesCursorHitCurveInDoc(CPoint point)
+int CChartSpikeXYWnd::hitCurveInDoc(CPoint point)
 {
 	long nfiles = 1;
 	long ncurrentfile = 0;
@@ -516,7 +516,7 @@ int CChartSpikeXYWnd::DoesCursorHitCurveInDoc(CPoint point)
 		{
 			continue;
 		}
-		result = DoesCursorHitCurve(point);
+		result = hitCurve(point);
 		if (result >= 0)
 			break;
 	}
@@ -531,7 +531,7 @@ int CChartSpikeXYWnd::DoesCursorHitCurveInDoc(CPoint point)
 	return result;
 }
 
-int CChartSpikeXYWnd::DoesCursorHitCurve(CPoint point)
+int CChartSpikeXYWnd::hitCurve(CPoint point)
 {
 	// abcissa
 	const auto taille = (m_lLast - m_lFirst + 1);
@@ -581,7 +581,7 @@ BOOL CChartSpikeXYWnd::is_spike_within_limits(const int ispike)
 	return true;
 }
 
-void CChartSpikeXYWnd::GetExtents()
+void CChartSpikeXYWnd::getExtents()
 {
 	if (m_yWE == 1) // && m_yWO == 0)
 	{

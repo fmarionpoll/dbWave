@@ -295,7 +295,7 @@ void CChartWnd::EraseBkgnd(CDC* p_dc)
 	DrawGrid(p_dc);
 }
 
-void CChartWnd::DrawGridEvenlySpaced(CDC* p_dc)
+void CChartWnd::drawGridEvenlySpaced(CDC* p_dc)
 {
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
@@ -350,7 +350,7 @@ void CChartWnd::DrawGridEvenlySpaced(CDC* p_dc)
 	}
 }
 
-void CChartWnd::DrawGridFromRuler(CDC* p_dc, CRuler* pRuler)
+void CChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -404,7 +404,7 @@ void CChartWnd::DrawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 	p_dc->SelectObject(p_old_pen);
 }
 
-void CChartWnd::DrawScalefromRuler(CDC* p_dc, CRuler* pRuler)
+void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -504,24 +504,24 @@ void CChartWnd::DrawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 	p_dc->SelectObject(p_old_pen);
 }
 
-void CChartWnd::DrawGridNicelySpaced(CDC* p_dc)
+void CChartWnd::drawGridNicelySpaced(CDC* p_dc)
 {
 	if (m_pXRulerBar == nullptr)
-		DrawScalefromRuler(p_dc, &m_xRuler);
+		drawScalefromRuler(p_dc, &m_xRuler);
 	else
 	{
 		m_pXRulerBar->DrawScalefromRuler(&m_xRuler);
 		m_pXRulerBar->Invalidate();
-		DrawGridFromRuler(p_dc, &m_xRuler);
+		drawGridFromRuler(p_dc, &m_xRuler);
 	}
 
 	if (m_pYRulerBar == nullptr)
-		DrawScalefromRuler(p_dc, &m_yRuler);
+		drawScalefromRuler(p_dc, &m_yRuler);
 	else
 	{
 		m_pYRulerBar->DrawScalefromRuler(&m_yRuler);
 		m_pYRulerBar->Invalidate();
-		DrawGridFromRuler(p_dc, &m_yRuler);
+		drawGridFromRuler(p_dc, &m_yRuler);
 	}
 }
 
@@ -540,9 +540,9 @@ void CChartWnd::AdjustDisplayRect(CRect* pRect)
 void CChartWnd::DrawGrid(CDC* p_dc)
 {
 	if (m_bNiceGrid)
-		DrawGridNicelySpaced(p_dc);
+		drawGridNicelySpaced(p_dc);
 	else
-		DrawGridEvenlySpaced(p_dc);
+		drawGridEvenlySpaced(p_dc);
 }
 
 void CChartWnd::SetNxScaleCells(int iCells, int iTicks, int iTickLine)
@@ -559,17 +559,17 @@ void CChartWnd::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
 	m_scopestruct.iYTickLine = iTickLine;
 }
 
-void CChartWnd::SendMyMessage(int code, int codeparm)
+void CChartWnd::sendMyMessage(int code, int codeparm)
 {
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void CChartWnd::PostMyMessage(int code, int codeparm)
+void CChartWnd::postMyMessage(int code, int codeparm)
 {
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void CChartWnd::PrepareDC(CDC* p_dc, CPrintInfo* pInfo)
+void CChartWnd::prepareDC(CDC* p_dc, CPrintInfo* pInfo)
 {
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	if (pInfo == nullptr)
@@ -599,7 +599,7 @@ void CChartWnd::SetMouseCursor(int cursorm) {
 	SetCursor(m_currCursor);
 }
 
-void CChartWnd::CaptureCursor()
+void CChartWnd::captureCursor()
 {
 	SetCapture();				// capture mouse
 	auto rect_limit = m_displayRect;
@@ -607,7 +607,7 @@ void CChartWnd::CaptureCursor()
 	ClipCursor(rect_limit);		// tell mouse cursor what are the limits
 }
 
-void CChartWnd::ReleaseCursor()
+void CChartWnd::releaseCursor()
 {
 	// mouse was captured
 	ReleaseCapture();
@@ -622,7 +622,7 @@ BOOL CChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message)
 
 void CChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	PostMyMessage(HINT_SETMOUSECURSOR, m_cursorType + 1);
+	postMyMessage(HINT_SETMOUSECURSOR, m_cursorType + 1);
 }
 
 void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
@@ -653,12 +653,12 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	case CURSOR_MEASURE:				// cross (measure mode) (2)
 		if (nFlags & MK_CONTROL)
 		{
-			PostMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
+			postMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
 		}
 		m_trackMode = TRACK_RECT;		// flag trackrect
 
 		// test HZ tags - if OK, then start tracking & init variables & flags
-		m_HCtrapped = HitTestHZtag(point.y);
+		m_HCtrapped = hitHZtag(point.y);
 		if (m_HCtrapped >= 0)
 		{
 			m_trackMode = TRACK_HZTAG;
@@ -666,18 +666,18 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			m_ptLast.y = m_HZtags.GetTagPix(m_HCtrapped);
 			m_ptFirst = m_ptLast;
 			// tell parent that HZtag was selected
-			SendMyMessage(HINT_HITHZTAG, m_HCtrapped);
+			sendMyMessage(HINT_HITHZTAG, m_HCtrapped);
 			break;
 		}
 
 		// test VT tags - if OK, then track
 		if (!m_bVTtagsLONG)
-			m_HCtrapped = HitTestVTtagPix(int(point.x));
+			m_HCtrapped = hitVTtagPix(int(point.x));
 		else
 		{
 			m_liJitter = long(m_cxjitter) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width());
 			const auto lx = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width()) + m_liFirst;
-			m_HCtrapped = HitTestVTtagLong(lx);
+			m_HCtrapped = hitVTtagLong(lx);
 		}
 
 		// mouse cursor did hit a tag, either horizontal or vertical
@@ -690,7 +690,7 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 				m_ptLast.x = m_VTtags.GetTagPix(m_HCtrapped);
 			m_ptLast.y = 0;
 			// tell parent that VTtag was selected
-			SendMyMessage(HINT_HITVERTTAG, m_HCtrapped);
+			sendMyMessage(HINT_HITVERTTAG, m_HCtrapped);
 			break;
 		}
 		break;
@@ -698,7 +698,7 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		// track rectangle and invert content of the rectangle
 	case CURSOR_ZOOM:					// zoom (1)
 		m_trackMode = TRACK_RECT;
-		InvertTracker(point);			// invert rectangle
+		invertTracker(point);			// invert rectangle
 		break;
 
 	case CURSOR_VERTICAL:
@@ -710,7 +710,7 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// limit the tracking to the client area of the view
-	CaptureCursor();
+	captureCursor();
 	return;
 }
 
@@ -720,7 +720,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_RECT:
-		InvertTracker(point);
+		invertTracker(point);
 		break;
 
 		// track horizontal tag : move tag, get val and send message
@@ -731,7 +731,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 			const auto val = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
 			XorHZtag(point.y);			// move tag to new pixel
 			m_HZtags.SetTagVal(m_HCtrapped, val);
-			PostMyMessage(HINT_MOVEHZTAG, m_HCtrapped);
+			postMyMessage(HINT_MOVEHZTAG, m_HCtrapped);
 		}
 		break;
 
@@ -752,7 +752,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 				const auto lval = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width()) + m_liFirst;
 				m_VTtags.SetTagLVal(m_HCtrapped, lval);
 			}
-			PostMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
+			postMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
 		}
 		break;
 
@@ -790,9 +790,9 @@ void CChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_trackMode != TRACK_OFF)
 	{
-		ReleaseCursor();
+		releaseCursor();
 		if (m_trackMode == TRACK_RECT && m_currCursorMode)
-			InvertTracker(point);
+			invertTracker(point);
 		m_trackMode = TRACK_OFF;
 	}
 	else if (m_hwndReflect != nullptr)
@@ -819,8 +819,8 @@ void CChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 		m_ptFirst = point;
 		m_ptLast = point;
 		m_trackMode = TRACK_RECT;		// flag trackrect
-		InvertTracker(point);			// invert rectangle
-		CaptureCursor();
+		invertTracker(point);			// invert rectangle
+		captureCursor();
 		break;
 	case CURSOR_VERTICAL:
 	default:
@@ -835,13 +835,13 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 	{
 	case TRACK_RECT:
 	{
-		ReleaseCursor();
+		releaseCursor();
 		// skip too small a rectangle (5 pixels?)
 		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 		const short jitter = 3;
 		if (rect_out.Height() < jitter && rect_out.Width() < jitter)
 		{
-			ZoomOut();
+			zoomOut();
 		}
 		else
 		{
@@ -853,9 +853,9 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 		}
 	}
 	if (m_cursorType == CURSOR_MEASURE)
-		PostMyMessage(HINT_RMOUSEBUTTONUP, NULL);
+		postMyMessage(HINT_RMOUSEBUTTONUP, NULL);
 	else
-		PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+		postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 	break;
 
 	case TRACK_OFF:
@@ -875,14 +875,14 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 				Invalidate();
 			}
 			else
-				PostMyMessage(HINT_WINDOWPROPSCHANGED, NULL);
+				postMyMessage(HINT_WINDOWPROPSCHANGED, NULL);
 			m_bAllowProps = TRUE;
 		}
 		break;
 
 	default:
-		ReleaseCursor();
-		ZoomOut();
+		releaseCursor();
+		zoomOut();
 		break;
 	}
 	m_trackMode = TRACK_OFF;
@@ -892,16 +892,16 @@ void CChartWnd::ZoomData(CRect* prevRect, CRect* newRect)
 {
 }
 
-void CChartWnd::ZoomPop()
+void CChartWnd::zoomPop()
 {
 	ZoomData(&m_ZoomTo, &m_ZoomFrom);
 	m_iUndoZoom = 0;
 }
 
-void CChartWnd::ZoomOut()
+void CChartWnd::zoomOut()
 {
 	if (m_iUndoZoom > 0) // memory?
-		ZoomPop();
+		zoomPop();
 	else
 	{
 		CClientDC dc(this);
@@ -915,10 +915,10 @@ void CChartWnd::ZoomOut()
 	}
 }
 
-void CChartWnd::ZoomIn()
+void CChartWnd::zoomIn()
 {
 	if (m_iUndoZoom < 0) // memory?
-		ZoomPop();
+		zoomPop();
 	else
 	{
 		CClientDC dc(this);
@@ -932,7 +932,7 @@ void CChartWnd::ZoomIn()
 	}
 }
 
-int CChartWnd::HitTestHZtag(int y)
+int CChartWnd::hitHZtag(int y)
 {
 	auto chit = -1;				// horizontal cursor hit
 	const auto jitter = 3;		// jitter allowed: 5 pixels total
@@ -949,7 +949,7 @@ int CChartWnd::HitTestHZtag(int y)
 	return chit;
 }
 
-int CChartWnd::HitTestVTtagLong(long lx)
+int CChartWnd::hitVTtagLong(long lx)
 {
 	auto chit = -1;				// horizontal cursor hit
 	const auto j = m_VTtags.GetNTags();
@@ -965,7 +965,7 @@ int CChartWnd::HitTestVTtagLong(long lx)
 	return chit;
 }
 
-int CChartWnd::HitTestVTtagPix(int x)
+int CChartWnd::hitVTtagPix(int x)
 {
 	auto chit = -1;				// horizontal cursor hit
 	const auto jitter = 3;		// jitter allowed: 5 pixels total
@@ -982,7 +982,7 @@ int CChartWnd::HitTestVTtagPix(int x)
 	return chit;
 }
 
-void CChartWnd::InvertTracker(CPoint point)
+void CChartWnd::invertTracker(CPoint point)
 {
 	CClientDC dc(this);						// get dc to fbutton window
 	const auto old_brush = (CBrush*)dc.SelectStockObject(NULL_BRUSH);
@@ -1159,4 +1159,8 @@ void CChartWnd::PlotToBitmap(CBitmap* pBitmap)
 	mem_dc.CreateCompatibleDC(&dc);
 	mem_dc.SelectObject(pBitmap);
 	PlotDatatoDC(&mem_dc);
+}
+
+int CChartWnd::hitCurve(CPoint point) {
+	return 0;
 }

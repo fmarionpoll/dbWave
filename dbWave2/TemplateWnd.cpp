@@ -153,7 +153,7 @@ void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
 
 	GetExtents();
-	PrepareDC(p_dc);
+	prepareDC(p_dc);
 
 	if (m_ptsArea.GetSize() != m_tpllen * 2)
 		InitPolypointAbcissa();

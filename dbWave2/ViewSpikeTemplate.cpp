@@ -2,14 +2,6 @@
 //
 
 #include "StdAfx.h"
-//#include <math.h>
-//#include "Cscale.h"
-//#include "MainFrm.h"
-//#include "Copyasdl.h"
-//#include "ChildFrm.h"
-//#include "DlgProg.h"
-//#include "ChartData.h"
-//#include "dbMainTable.h"
 #include "chart.h"
 #include "Editctrl.h"
 #include "dbWave.h"
@@ -30,23 +22,8 @@
 IMPLEMENT_DYNCREATE(CViewSpikeTemplates, CDaoRecordView)
 
 CViewSpikeTemplates::CViewSpikeTemplates()
-	: CDaoRecordView(CViewSpikeTemplates::IDD), m_pSpkDoc(nullptr), m_pSpkList(nullptr), m_lFirst(0), m_lLast(0),
-	mdPM(nullptr), mdMO(nullptr), m_psC(nullptr), m_ktagleft(0), m_ktagright(0), m_scrollFilePos_infos()
-	, m_bDisplaySingleClass(FALSE)
+	: CDaoRecordView(CViewSpikeTemplates::IDD)
 {
-	m_timefirst = 0.0f;
-	m_timelast = 0.0f;
-	m_hitrate = 0;
-	m_ktolerance = 0.0f;
-	m_spikenoclass = 0;
-	m_hitratesort = 0;
-	m_ifirstsortedclass = 0;
-	m_ballfiles = FALSE;
-	m_spikeno = -1;
-	m_bDisplaySingleClass = FALSE;
-	m_binit = FALSE;
-	m_ballTempl = FALSE;
-	m_ballSort = FALSE;
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
@@ -54,7 +31,7 @@ CViewSpikeTemplates::~CViewSpikeTemplates()
 {
 	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
-		SaveCurrentSpkFile();	// save file if modified
+		saveCurrentSpkFile();	// save file if modified
 }
 
 BOOL CViewSpikeTemplates::PreCreateWindow(CREATESTRUCT& cs)
@@ -117,10 +94,10 @@ void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		{
 		case HINT_DOCHASCHANGED:		// file has changed?
 		case HINT_DOCMOVERECORD:
-			UpdateFileParameters();
+			updateFileParameters();
 			break;
 		case HINT_CLOSEFILEMODIFIED:	// close modified file: save
-			SaveCurrentSpkFile();
+			saveCurrentSpkFile();
 			break;
 		case HINT_REPLACEVIEW:
 		default:
@@ -131,7 +108,7 @@ void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 BOOL CViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
 {
-	SaveCurrentSpkFile();
+	saveCurrentSpkFile();
 	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
 	if (p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
@@ -212,7 +189,7 @@ void CViewSpikeTemplates::OnSize(UINT nType, int cx, int cy)
 	CDaoRecordView::OnSize(nType, cx, cy);
 }
 
-void CViewSpikeTemplates::SaveCurrentSpkFile()
+void CViewSpikeTemplates::saveCurrentSpkFile()
 {
 	// save previous file if anything has changed
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
@@ -307,11 +284,11 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	m_ktagleft = m_spkForm.AddVTtag(m_psC->kleft);
 	m_ktagright = m_spkForm.AddVTtag(m_psC->kright);
 
-	UpdateFileParameters();
-	UpdateCtrlTab1(0);
+	updateFileParameters();
+	updateCtrlTab1(0);
 }
 
-void CViewSpikeTemplates::UpdateFileParameters()
+void CViewSpikeTemplates::updateFileParameters()
 {
 	// init views
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
@@ -331,10 +308,10 @@ void CViewSpikeTemplates::UpdateFileParameters()
 		m_tabCtrl.InsertItem(j, cs);
 		j++;
 	}
-	SelectSpikeList(icur);
+	selectSpikeList(icur);
 }
 
-void CViewSpikeTemplates::SelectSpikeList(int icur)
+void CViewSpikeTemplates::selectSpikeList(int icur)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 	m_tabCtrl.SetCurSel(icur);
@@ -376,14 +353,14 @@ void CViewSpikeTemplates::SelectSpikeList(int icur)
 	m_spkForm.SetTimeIntervals(m_lFirst, m_lLast);
 	m_spkForm.Invalidate();
 
-	SelectSpike(spikeno);
-	UpdateLegends();
+	selectSpike(spikeno);
+	updateLegends();
 
-	DisplayAvg(FALSE, &m_avgList); 
-	UpdateTemplates();
+	displayAvg(FALSE, &m_avgList); 
+	updateTemplates();
 }
 
-void CViewSpikeTemplates::UpdateTemplates()
+void CViewSpikeTemplates::updateTemplates()
 {
 	auto n_cmd_show = SW_HIDE;
 	if (m_templList.GetNtemplates() > 0)
@@ -407,7 +384,7 @@ void CViewSpikeTemplates::UpdateTemplates()
 	GetDlgItem(IDC_NTEMPLATES)->ShowWindow(n_cmd_show);
 }
 
-void CViewSpikeTemplates::UpdateLegends()
+void CViewSpikeTemplates::updateLegends()
 {
 	if (m_lFirst < 0)
 		m_lFirst = 0;
@@ -427,10 +404,10 @@ void CViewSpikeTemplates::UpdateLegends()
 	m_spkForm.Invalidate();
 
 	UpdateData(FALSE);	// copy view object to controls
-	UpdateScrollBar();
+	updateScrollBar();
 }
 
-void CViewSpikeTemplates::SelectSpike(short spikeno)
+void CViewSpikeTemplates::selectSpike(short spikeno)
 {
 	m_spkForm.SelectSpikeShape(spikeno);
 	m_spikeno = spikeno;
@@ -451,7 +428,7 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE:	
-		SelectSpike(threshold);
+		selectSpike(threshold);
 		break;
 
 	case HINT_CHANGEVERTTAG:
@@ -470,12 +447,12 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEHZLIMITS:		
 	case HINT_CHANGEZOOM:
 	case HINT_VIEWSIZECHANGED:     
-		SetExtentZeroAllDisplay(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
-		UpdateLegends();
+		setExtentZeroAllDisplay(m_spkForm.GetYWExtent(), m_spkForm.GetYWOrg());
+		updateLegends();
 		break;
 
 	case HINT_RMOUSEBUTTONDOWN:
-		EditSpikeClass(HIWORD(lParam), threshold);
+		editSpikeClass(HIWORD(lParam), threshold);
 		break;
 
 	default:
@@ -507,7 +484,7 @@ void CViewSpikeTemplates::OnEnChangeclassno()
 		{
 			m_spkForm.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
 			m_spkForm.Invalidate();
-			UpdateLegends();
+			updateLegends();
 		}
 	}
 }
@@ -540,7 +517,7 @@ void CViewSpikeTemplates::OnEnChangeTimefirst()
 		if (l_first != m_lFirst)
 		{
 			m_lFirst = l_first;
-			UpdateLegends();
+			updateLegends();
 		}
 	}
 }
@@ -573,7 +550,7 @@ void CViewSpikeTemplates::OnEnChangeTimelast()
 		if (l_last != m_lLast)
 		{
 			m_lLast = l_last;
-			UpdateLegends();
+			updateLegends();
 		}
 	}
 }
@@ -626,13 +603,13 @@ void CViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	{
 		m_lFirst = l_first;
 		m_lLast = l_last;
-		UpdateLegends();
+		updateLegends();
 	}
 	else
-		UpdateScrollBar();
+		updateScrollBar();
 }
 
-void CViewSpikeTemplates::UpdateScrollBar()
+void CViewSpikeTemplates::updateScrollBar()
 {
 	if (m_lFirst == 0 && m_lLast >= m_pSpkDoc->GetAcqSize() - 1)
 		GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_HIDE);
@@ -655,7 +632,7 @@ void CViewSpikeTemplates::OnFormatAlldata()
 	const short x_wo = 0;
 	const short x_we = m_pSpkList->GetSpikeLength();
 	m_spkForm.SetXWExtOrg(x_we, x_wo);
-	UpdateLegends();
+	updateLegends();
 }
 
 void CViewSpikeTemplates::OnFormatGainadjust()
@@ -665,7 +642,7 @@ void CViewSpikeTemplates::OnFormatGainadjust()
 	const auto extent = maxval - minval;
 	const auto zero = (maxval + minval) / 2;
 
-	SetExtentZeroAllDisplay(extent, zero);
+	setExtentZeroAllDisplay(extent, zero);
 }
 
 void CViewSpikeTemplates::OnFormatCentercurve()
@@ -674,10 +651,10 @@ void CViewSpikeTemplates::OnFormatCentercurve()
 	m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
 	const auto extent = m_spkForm.GetYWExtent();
 	const auto zero = (maxval + minval) / 2;
-	SetExtentZeroAllDisplay(extent, zero);
+	setExtentZeroAllDisplay(extent, zero);
 }
 
-void CViewSpikeTemplates::SetExtentZeroAllDisplay(int extent, int zero) {
+void CViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero) {
 	m_spkForm.SetYWExtOrg(extent, zero);
 	m_spkForm.Invalidate();
 	m_templList.SetYWExtOrg(extent, zero);
@@ -786,7 +763,7 @@ void CViewSpikeTemplates::OnEnChangeTolerance()
 	}
 }
 
-void CViewSpikeTemplates::DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList)
+void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList)
 {
 	// get list of classes
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
@@ -1039,10 +1016,10 @@ void CViewSpikeTemplates::OnBuildTemplates()
 	}
 
 	m_templList.SortTemplatesByNumberofSpikes(TRUE, TRUE, m_ifirstsortedclass);
-	UpdateTemplates();
+	updateTemplates();
 }
 
-void CViewSpikeTemplates::SortSpikes()
+void CViewSpikeTemplates::sortSpikes()
 {
 	// set tolerance to sort tolerance
 	m_templList.SetHitRate_Tolerance(&m_hitratesort, &m_ktolerance);
@@ -1169,7 +1146,7 @@ void CViewSpikeTemplates::SortSpikes()
 	}
 
 	// update display: average and spk form
-	DisplayAvg(FALSE, &m_avgList);
+	displayAvg(FALSE, &m_avgList);
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	m_spkForm.SetSourceData(m_pSpkList, GetDocument());
 	m_spkForm.Invalidate();
@@ -1212,7 +1189,7 @@ void CViewSpikeTemplates::OnCheck1()
 	UpdateData(TRUE);
 }
 
-void CViewSpikeTemplates::EditSpikeClass(int controlID, int controlItem)
+void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 {
 	// find which item has been selected
 	CTemplateListWnd* pList = nullptr;
@@ -1314,10 +1291,10 @@ void CViewSpikeTemplates::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 
 	// switch display
 	const auto iselect = m_tab1Ctrl.GetCurSel();
-	UpdateCtrlTab1(iselect);
+	updateCtrlTab1(iselect);
 }
 
-void CViewSpikeTemplates::UpdateCtrlTab1(int iselect)
+void CViewSpikeTemplates::updateCtrlTab1(int iselect)
 {
 	WORD i_templ = SW_SHOW;
 	WORD i_avg = SW_HIDE;
@@ -1371,12 +1348,12 @@ void CViewSpikeTemplates::UpdateCtrlTab1(int iselect)
 
 void CViewSpikeTemplates::OnBnClickedSort()
 {
-	SortSpikes();
+	sortSpikes();
 }
 
 void CViewSpikeTemplates::OnBnClickedDisplay()
 {
-	DisplayAvg(TRUE, &m_avgAllList); //, &m_ImListAll);
+	displayAvg(TRUE, &m_avgAllList); //, &m_ImListAll);
 }
 
 void CViewSpikeTemplates::OnEnChangeIfirstsortedclass()
@@ -1413,14 +1390,14 @@ void CViewSpikeTemplates::OnEnChangeIfirstsortedclass()
 void CViewSpikeTemplates::OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	SelectSpikeList(icursel);
+	selectSpikeList(icursel);
 	*pResult = 0;
 }
 
 void CViewSpikeTemplates::OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	SelectSpikeList(icursel);
+	selectSpikeList(icursel);
 	*pResult = 0;
 }
 

@@ -172,12 +172,12 @@ public:
 
 protected:
 	// Implementation
-	void	ReadfileVersion1(CArchive& ar);
-	void	RemoveArtefacts();
-	void	ReadfileVersion_before5(CArchive& ar, int iversion);
-	void	ReadfileVersion5(CArchive& ar);
-	void	ReadfileVersion6(CArchive& ar);
+	void	readfileVersion1(CArchive& ar);
+	void	removeArtefacts();
+	void	readfileVersion_before5(CArchive& ar, int iversion);
+	void	readfileVersion5(CArchive& ar);
+	void	readfileVersion6(CArchive& ar);
 
-	void	WritefileVersion6(CArchive& ar);
-	void	DeleteArrays();
+	void	writefileVersion6(CArchive& ar);
+	void	deleteArrays();
 };

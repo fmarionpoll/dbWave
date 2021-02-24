@@ -773,7 +773,7 @@ void CChartDataWnd::ZoomData(CRect* r1, CRect* r2)
 		ResizeChannels(0, l_last - l_first + 1);
 		GetDataFromDoc(l_first, l_last);
 	}
-	PostMyMessage(HINT_VIEWSIZECHANGED, NULL);
+	postMyMessage(HINT_VIEWSIZECHANGED, NULL);
 }
 
 //---------------------------------------------------------------------------
@@ -1361,7 +1361,7 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			m_curTrack = m_zero;				// use m_curTrack to store zero
 
 			curveXOR();							// xor curve
-			PostMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
+			postMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
 			return;
 		}
 	}
@@ -1394,7 +1394,7 @@ void CChartDataWnd::OnMouseMove(UINT nFlags, CPoint point)
 void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// liberate cursor
-	ReleaseCursor();
+	releaseCursor();
 
 	// perform action according to track mode
 	switch (m_trackMode)
@@ -1406,7 +1406,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
 		chanlist_item->SetYzero(m_zero);
 		m_trackMode = TRACK_OFF;
-		PostMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
+		postMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
 		Invalidate();
 	}
 	break;
@@ -1418,7 +1418,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		SetHZtagVal(m_HCtrapped, val);				// change cursor value
 		point.y = GetChanlistBintoPixel(chan, val);
 		XorHZtag(point.y);
-		PostMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);	// tell parent that val changed
+		postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);	// tell parent that val changed
 		m_trackMode = TRACK_OFF;
 	}
 	break;
@@ -1430,7 +1430,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		SetVTtagLval(m_HCtrapped, lval);
 		point.x = int((lval - m_liFirst) * long(m_displayRect.right) / (m_liLast - m_liFirst + 1));
 		XorVTtag(point.x);
-		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 		m_trackMode = TRACK_OFF;
 	}
 	break;
@@ -1449,7 +1449,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		case 0:		// if no cursor, no curve track, then move display
 			if (b_rect_ok)
 			{
-				InvertTracker(point);
+				invertTracker(point);
 				rect_out = rect_in;
 				rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
 				ZoomData(&rect_in, &rect_out);
@@ -1464,11 +1464,11 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 				m_iUndoZoom = 1;
 			}
 			else
-				ZoomIn();
-			PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+				zoomIn();
+			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
 		case CURSOR_MEASURE: // rectangle / measure mode
-			PostMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that val changed
+			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that val changed
 			break;
 		default:
 			break;

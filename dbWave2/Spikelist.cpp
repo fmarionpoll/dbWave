@@ -22,7 +22,7 @@ CSpikeList::CSpikeList()
 
 CSpikeList::~CSpikeList()
 {
-	DeleteArrays();
+	deleteArrays();
 }
 
 void CSpikeList::Serialize(CArchive& ar)
@@ -30,26 +30,26 @@ void CSpikeList::Serialize(CArchive& ar)
 	m_wversion = 6;				// version=6 - aug 2013 change spike element
 	if (ar.IsStoring())
 	{
-		WritefileVersion6(ar);
+		writefileVersion6(ar);
 	}
 
 	else
 	{
-		DeleteArrays();
+		deleteArrays();
 		CString cs_id;
 		ar >> cs_id;
 		if (cs_id != m_IDstring)
-			ReadfileVersion1(ar);
+			readfileVersion1(ar);
 		else
 		{
 			WORD iversion;
 			ar >> iversion;
 			if (iversion > 0 && iversion < 5)
-				ReadfileVersion_before5(ar, iversion);
+				readfileVersion_before5(ar, iversion);
 			else if (iversion == 5)
-				ReadfileVersion5(ar);
+				readfileVersion5(ar);
 			else if (iversion == 6)
-				ReadfileVersion6(ar);
+				readfileVersion6(ar);
 			else
 			{
 				ASSERT(FALSE);
@@ -61,7 +61,7 @@ void CSpikeList::Serialize(CArchive& ar)
 	}
 }
 
-void CSpikeList::ReadfileVersion1(CArchive& ar)
+void CSpikeList::readfileVersion1(CArchive& ar)
 {
 	m_icenter1SL = 0;
 	m_icenter2SL = m_parm.prethreshold;;
@@ -69,7 +69,7 @@ void CSpikeList::ReadfileVersion1(CArchive& ar)
 	m_imaxmin2SL = m_spikebuffer.GetSpklen() - 1;
 }
 
-void CSpikeList::RemoveArtefacts()
+void CSpikeList::removeArtefacts()
 {
 	auto nspikes = m_spkelmts.GetSize();
 	auto save_nbspikes = nspikes;
@@ -90,7 +90,7 @@ void CSpikeList::RemoveArtefacts()
 	UpdateClassList();
 }
 
-void CSpikeList::WritefileVersion6(CArchive& ar)
+void CSpikeList::writefileVersion6(CArchive& ar)
 {
 	ar << m_IDstring;								// (1) save version ID
 	ar << m_wversion;								// current version: 4 (aug 2005)
@@ -106,7 +106,7 @@ void CSpikeList::WritefileVersion6(CArchive& ar)
 
 	// save spike elements
 	if (!m_bsaveartefacts)
-		RemoveArtefacts();
+		removeArtefacts();
 	const auto nspikes = m_spkelmts.GetSize();
 	ar << static_cast<WORD>(nspikes);
 	for (auto i = 0; i < nspikes; i++)
@@ -150,7 +150,7 @@ void CSpikeList::WritefileVersion6(CArchive& ar)
 	ar.Flush();										// end of storing -- flush data
 }
 
-void CSpikeList::ReadfileVersion6(CArchive& ar)
+void CSpikeList::readfileVersion6(CArchive& ar)
 {
 	// read spike detection parameters array
 	ar >> m_encoding;								// data encoding mode
@@ -209,7 +209,7 @@ void CSpikeList::ReadfileVersion6(CArchive& ar)
 	ar >> m_imaxmin2SL; nparms--;
 }
 
-void CSpikeList::ReadfileVersion5(CArchive& ar)
+void CSpikeList::readfileVersion5(CArchive& ar)
 {
 	// read spike detection parameters array
 	ar >> m_encoding;								// data encoding mode
@@ -268,7 +268,7 @@ void CSpikeList::ReadfileVersion5(CArchive& ar)
 	ar >> m_imaxmin2SL; nparms--;
 }
 
-void CSpikeList::ReadfileVersion_before5(CArchive& ar, int iversion)
+void CSpikeList::readfileVersion_before5(CArchive& ar, int iversion)
 {
 	// (1) version ID already loaded
 
@@ -363,7 +363,7 @@ void CSpikeList::ReadfileVersion_before5(CArchive& ar, int iversion)
 	}
 }
 
-void CSpikeList::DeleteArrays()
+void CSpikeList::deleteArrays()
 {
 	if (m_spkelmts.GetSize() > 0)
 	{
@@ -716,7 +716,7 @@ BOOL CSpikeList::InitSpikeList(CAcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
 
 void CSpikeList::EraseData()
 {
-	DeleteArrays();
+	deleteArrays();
 	m_spikebuffer.DeleteAllSpikes();
 	m_selspike = -1;
 }

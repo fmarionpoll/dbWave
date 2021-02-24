@@ -49,8 +49,8 @@ public:
 	int		GetSelectedSpike() const { return m_selectedspike; }
 	int		GetHitSpike() const { return m_hitspk; }
 
-	void SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document) { p_dbwave_doc_ = p_document; p_spikelist_ = p_spk_list; m_selectedspike = -1; }
-	void SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void	SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document) { p_dbwave_doc_ = p_document; p_spikelist_ = p_spk_list; m_selectedspike = -1; }
+	void	SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
 
 	int		SelectSpike(int spikeno);
 	void	DisplaySpike(int nospike, BOOL bselect);
@@ -60,15 +60,15 @@ public:
 
 	void	DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document) { m_ballFiles = bON; p_dbwave_doc_ = p_document; }
 	void	PlotDatatoDC(CDC* p_dc) override;
+	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:
-	void	DrawSelectedSpike(int nospike, int color, CDC* p_dc);
-	void	ZoomData(CRect* prevRect, CRect* newRect) override;
-	int		DoesCursorHitCurve(CPoint point);
-	int		DoesCursorHitCurveInDoc(CPoint point);
+	void	drawSelectedSpike(int nospike, int color, CDC* p_dc);
+	int		hitCurve(CPoint point);
+	int		hitCurveInDoc(CPoint point);
 	BOOL	is_spike_within_limits(int ispike);
-	void	GetExtents();
-	void	HighlightOnePoint(int nospike, CDC* p_dc);
+	void	getExtents();
+	void	highlightOnePoint(int nospike, CDC* p_dc);
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

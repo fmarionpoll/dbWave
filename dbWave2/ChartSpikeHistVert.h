@@ -62,22 +62,20 @@ public:
 	void MoveHZtagtoVal(int itag, int ival);
 
 	void SetSpkList(CSpikeList* p_spk_list) { m_pSL = p_spk_list; }
+	void ZoomData(CRect* prevRect, CRect* newRect) override;
+	void PlotDatatoDC(CDC* p_dc) override;
 
 	// implementation
 protected:
-	void ZoomData(CRect* r1, CRect* r2);
-	int  DoesCursorHitCurve(CPoint point);
-	void ReSize_And_Clear_Histograms(int nbins, int max, int min);
-	void GetHistogLimits(int ihist);
-	void GetClassArray(int iclass, CDWordArray*& pDW);
-	CDWordArray* InitClassArray(int nbins, int spike_class);
-	void BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
-	void GetExtents();
-	void PlotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
+	int  hitCurve(CPoint point) override;
+	void reSize_And_Clear_Histograms(int nbins, int max, int min);
+	void getHistogLimits(int ihist);
+	void getClassArray(int iclass, CDWordArray*& pDW);
+	CDWordArray* initClassArray(int nbins, int spike_class);
+	void buildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+	void getExtents();
+	void plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
 
-public:
-	void PlotDatatoDC(CDC* p_dc);
-protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);

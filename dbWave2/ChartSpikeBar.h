@@ -71,15 +71,14 @@ public:
 	void 	Print(CDC* p_dc, CRect* rect);
 	void	PlotDatatoDC(CDC* p_dc) override;
 	void	PlotSingleSpkDatatoDC(CDC* p_dc);
-
+	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:
-	void	ZoomData(CRect* prevRect, CRect* newRect) override;
-	int		DoesCursorHitCurve(CPoint point);
-	int		DoesCursorHitCurveInDoc(CPoint point);
-	void 	DisplayBars(CDC* p_dc, CRect* rect);
-	void	HighlightOneBar(int nospike, CDC* p_dc) const;
-	void	DisplayStimulus(CDC* p_dc, CRect* rect) const;
+	int		hitCurve(CPoint point) override;
+	int		hitCurveInDoc(CPoint point);
+	void 	displayBars(CDC* p_dc, CRect* rect);
+	void	highlightOneBar(int nospike, CDC* p_dc) const;
+	void	displayStimulus(CDC* p_dc, CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

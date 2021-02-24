@@ -1,8 +1,5 @@
 #pragma once
 
-// spkhistp.h : header file
-// CChartSpikeHist button
-//
 // CChartSpikeHist build, stores and display a list of histograms
 // each histogram has the same abcissa limits (same nb of bins also)
 // they are intended to store and display histograms of parameters measured
@@ -41,43 +38,42 @@ protected:
 	int  	m_ilast{};			// index last interval with data
 
 public:
-	void SetPlotMode(int mode, int selclass) { m_plotmode = mode; m_selclass = selclass; }
+	void	SetPlotMode(int mode, int selclass) { m_plotmode = mode; m_selclass = selclass; }
 
-	void SetTimeIntervals(long l_first, long l_last) { m_lFirst = l_first; m_lLast = l_last; }
-	long GetTimeFirst() const { return m_lFirst; }
-	long GetTimeLast() const { return m_lLast; }
+	void	SetTimeIntervals(long l_first, long l_last) { m_lFirst = l_first; m_lLast = l_last; }
+	long	GetTimeFirst() const { return m_lFirst; }
+	long	GetTimeLast() const { return m_lLast; }
 
-	int GetBinsize() const { return m_binsize; }
-	int GetBinMinval() const { return m_abcissaminval; }
-	int GetBinMaxVal() const { return m_abcissamaxval; }
-	int GetnBins() const { return m_nbins; }
-	int   GetHistMaxPos() const { return m_imax; }
-	DWORD GetHistMax() const { return m_lmax; }
+	int		GetBinsize() const { return m_binsize; }
+	int		GetBinMinval() const { return m_abcissaminval; }
+	int		GetBinMaxVal() const { return m_abcissamaxval; }
+	int		GetnBins() const { return m_nbins; }
+	int		GetHistMaxPos() const { return m_imax; }
+	DWORD	GetHistMax() const { return m_lmax; }
 
-	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+	void	BuildHistFromDocument(CdbWaveDoc* p_document, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
 
-	void RemoveHistData();
-	LPTSTR ExportAscii(LPTSTR lp);					// export ascii data
-	void MoveVTtagtoVal(int itag, int ival);
-	void MoveHZtagtoVal(int itag, int ival);
+	void	RemoveHistData();
+	LPTSTR	ExportAscii(LPTSTR lp);					// export ascii data
+	void	MoveVTtagtoVal(int itag, int ival);
+	void	MoveHZtagtoVal(int itag, int ival);
 
-	void SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
-
+	void	SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 	// implementation
 protected:
-	void ZoomData(CRect* r1, CRect* r2);
-	int  DoesCursorHitCurve(CPoint point);
-	void ReSize_And_Clear_Histograms(int nbins, int max, int min);
-	void GetHistogLimits(int ihist);
-	void GetExtents();
-	void PlotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
+	int		hitCurve(CPoint point) override;
+	void	reSize_And_Clear_Histograms(int nbins, int max, int min);
+	void	getHistogLimits(int ihist);
+	void	getExtents();
+	void	plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
 
-	void GetClassArray(int iclass, CDWordArray*& pDW);
-	CDWordArray* InitClassArray(int nbins, int spike_class);
-	void BuildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+	void	getClassArray(int iclass, CDWordArray*& pDW);
+	CDWordArray* initClassArray(int nbins, int spike_class);
+	void	buildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
 
 public:
-	void PlotDatatoDC(CDC* p_dc);
+	void	PlotDatatoDC(CDC* p_dc);
 
 protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

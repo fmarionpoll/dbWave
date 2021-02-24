@@ -121,10 +121,10 @@ public:
 	void			DrawGrid(CDC* p_dc);
 	void			AdjustDisplayRect(CRect* rect);
 protected:
-	void			DrawGridEvenlySpaced(CDC* p_dc);
-	void			DrawGridFromRuler(CDC* p_dc, CRuler* pRuler);
-	void			DrawGridNicelySpaced(CDC* p_dc);
-	void			DrawScalefromRuler(CDC* p_dc, CRuler* scale);
+	void			drawGridEvenlySpaced(CDC* p_dc);
+	void			drawGridFromRuler(CDC* p_dc, CRuler* pRuler);
+	void			drawGridNicelySpaced(CDC* p_dc);
+	void			drawScalefromRuler(CDC* p_dc, CRuler* scale);
 
 	// tags ------------------------------------------------------------------------
 public:
@@ -217,31 +217,32 @@ protected:
 
 	// Operations
 public:
-	void		DisplayVTtags_Value(CDC* p_dc);
-	void		DisplayHZtags(CDC* p_dc);
 	void		XorVTtag(int xpoint);		// xor vertical line at point.x
 	void		XorTempVTtag(int xpoint);
 	void		XorHZtag(int ypoint);	// xor horizontal line at point.y
 	void		ResetXortag() { m_ptLast.x = -1; m_ptLast.y = -1; }
 	void		ReflectMouseMoveMessg(HWND hwnd) { m_hwndReflect = hwnd; }
 	void		PlotToBitmap(CBitmap* pBitmap);
+	virtual	void ZoomData(CRect* prevRect, CRect* newRect);
+	virtual void DisplayVTtags_Value(CDC* p_dc);
+	virtual void DisplayHZtags(CDC* p_dc);
 
 protected:
-	void		PrepareDC(CDC* p_dc, CPrintInfo* pInfo = nullptr);
-	void		CaptureCursor();
-	void		ReleaseCursor();
-	void		SendMyMessage(int code, int codeparm);
-	void		PostMyMessage(int code, int codeparm);
-	void		InvertTracker(CPoint point);	// invert rectangle when mouse-left is down
-	int			HitTestHZtag(int y);			// test if point is on an horizontal tag line
-	int			HitTestVTtagPix(int x);		// test if point is on a vertical tag line
-	int			HitTestVTtagLong(long lx); 	// test if point is on a vertical tag line
-	void		ZoomIn();
-	void		ZoomOut();
-	void		ZoomPop();
-
-	virtual void ZoomData(CRect* prevRect, CRect* newRect);	// zoom display
+	void		prepareDC(CDC* p_dc, CPrintInfo* pInfo = nullptr);
+	void		captureCursor();
+	void		releaseCursor();
+	void		sendMyMessage(int code, int codeparm);
+	void		postMyMessage(int code, int codeparm);
+	void		invertTracker(CPoint point);	// invert rectangle when mouse-left is down
+	int			hitHZtag(int y);				// test if point is on an horizontal tag line
+	int			hitVTtagPix(int x);				// test if point is on a vertical tag line
+	int			hitVTtagLong(long lx); 			// test if point is on a vertical tag line
+	void		zoomIn();
+	void		zoomOut();
+	void		zoomPop();
 	virtual void PreSubclassWindow();
+	virtual int	 hitCurve(CPoint point);
+
 
 public:
 	virtual void PlotDatatoDC(CDC* p_dc);

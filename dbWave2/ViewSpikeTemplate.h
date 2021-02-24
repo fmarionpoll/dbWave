@@ -1,36 +1,29 @@
 #pragma once
 #include "TemplateListWnd.h"
 
-// SpikeTemplateView.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpikeTemplates form view
-
 class CViewSpikeTemplates : public CDaoRecordView
 {
 protected:
-	CViewSpikeTemplates();           // protected constructor used by dynamic creation
+	CViewSpikeTemplates(); 
 	DECLARE_DYNCREATE(CViewSpikeTemplates)
 
 	// Form Data
 public:
-
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
-	float				m_timefirst;
-	float				m_timelast;
-	int					m_hitrate;
-	float				m_ktolerance;
-	int					m_spikenoclass;
-	int					m_hitratesort;
-	int					m_ifirstsortedclass;
-	BOOL				m_ballfiles;
-	BOOL				m_ballTempl;
-	BOOL				m_ballSort;
+	float				m_timefirst = 0.;
+	float				m_timelast = 0.;
+	int					m_hitrate = 0;
+	float				m_ktolerance = 0.;
+	int					m_spikenoclass = 0;
+	int					m_hitratesort = 0;
+	int					m_ifirstsortedclass = 0;
+	BOOL				m_ballfiles = false;
+	BOOL				m_ballTempl = false;
+	BOOL				m_ballSort = false;
+	BOOL				m_bDisplaySingleClass = false;
 	CTabCtrl			m_tab1Ctrl;
-	BOOL				m_bDisplaySingleClass;
 
-	CdbWaveDoc* GetDocument();
+	CdbWaveDoc*			GetDocument();
 
 protected:
 	CEditCtrl			mm_hitrate;
@@ -45,60 +38,56 @@ protected:
 	CTemplateListWnd	m_templList;
 	CTemplateListWnd	m_avgAllList;
 
-	CChartSpikeShapeWnd		m_spkForm;				// all spikes in displayspikes
+	CChartSpikeShapeWnd	m_spkForm;				// all spikes in displayspikes
 	CStretchControl		m_stretch;				// array of properties associated with controls
 	BOOL				m_binit;
 
-	CSpikeDoc*			m_pSpkDoc;				// destination data doc
-	CSpikeList*			m_pSpkList;				// temporary spike list
-	int					m_lFirst;
-	int					m_lLast;
-	OPTIONS_VIEWDATA*	mdPM;					// view data options
-	OPTIONS_VIEWDATAMEASURE* mdMO;				// measure options
-	SPKCLASSIF*			m_psC;					// sort parameters
-	int					m_ktagleft;				// VT tags
-	int					m_ktagright;
-	SCROLLINFO			m_scrollFilePos_infos;
-	int					m_spikeno;
+	CSpikeDoc*			m_pSpkDoc = nullptr;	// destination data doc
+	CSpikeList*			m_pSpkList = nullptr;	// temporary spike list
+	OPTIONS_VIEWDATA*			mdPM = nullptr;	// view data options
+	OPTIONS_VIEWDATAMEASURE*	mdMO = nullptr;	// measure options
+	SPKCLASSIF*					m_psC = nullptr;// sort parameters
+	SCROLLINFO			m_scrollFilePos_infos{};
+	int					m_lFirst = 0;
+	int					m_lLast = 0;
+	int					m_ktagleft = 0;			// VT tags
+	int					m_ktagright = 0;
+	int					m_spikeno = -1;
 
 	// Attributes
 public:
 	inline void SetViewMouseCursor(int cursormode) { m_spkForm.SetMouseCursorType(cursormode); }
 
-	// Operations
-public:
-
 	// Overrides
 public:
-	virtual CDaoRecordset* OnGetRecordset();
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL OnMove(UINT nIDMoveCommand);
+	virtual CDaoRecordset* OnGetRecordset() override;
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	virtual BOOL OnMove(UINT nIDMoveCommand) override;
 protected:
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnInitialUpdate();
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	virtual void DoDataExchange(CDataExchange* pDX) override;
+	virtual void OnInitialUpdate() override;
+	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
 	// Implementation
 protected:
-	virtual ~CViewSpikeTemplates();
+	virtual		~CViewSpikeTemplates() override;
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void AssertValid() const override;
+	virtual void Dump(CDumpContext& dc) const override;
 #endif
-
-	void SaveCurrentSpkFile();
-	void UpdateFileParameters();		// reset parameters for new file
-	void UpdateTemplates();
-	void UpdateLegends();
-	void SelectSpike(short spikeno);
-	void UpdateScrollBar();
-	void SelectSpikeList(int icur);
-	void EditSpikeClass(int controlID, int controlItem);
-	void DisplayAvg(BOOL ballfiles, CTemplateListWnd* pTPList); //, CImageList* pImList);
-	void SortSpikes();
-	void UpdateCtrlTab1(int iselect);
-	void SetExtentZeroAllDisplay(int extent, int zero);
+	void		saveCurrentSpkFile();
+	void		updateFileParameters();		// reset parameters for new file
+	void		updateTemplates();
+	void		updateLegends();
+	void		selectSpike(short spikeno);
+	void		updateScrollBar();
+	void		selectSpikeList(int icur);
+	void		editSpikeClass(int controlID, int controlItem);
+	void		displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList); //, CImageList* pImList);
+	void		sortSpikes();
+	void		updateCtrlTab1(int iselect);
+	void		setExtentZeroAllDisplay(int extent, int zero);
 
 public:
 	// Generated message map functions
@@ -134,8 +123,6 @@ public:
 	afx_msg void OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedDisplaysingleclass();
 };
-
-/////////////////////////////////////////////////////////////////////////////
 
 #ifndef _DEBUG  // debug version in dataView.cpp
 inline CdbWaveDoc* CViewSpikeTemplates::GetDocument()

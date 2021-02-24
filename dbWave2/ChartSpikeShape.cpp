@@ -50,8 +50,8 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 
 	// display data: trap error conditions
 	const auto n_saved_dc = p_dc->SaveDC();
-	GetExtents();
-	PrepareDC(p_dc);
+	getExtents();
+	prepareDC(p_dc);
 	auto ncurrentfile = 0;
 	auto file_first = ncurrentfile;
 	auto file_last = ncurrentfile;
@@ -92,7 +92,7 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 		if (polypoints_.GetSize() != taillespk)
 		{
 			polypoints_.SetSize(taillespk, 2);
-			InitPolypointAbcissa();
+			initPolypointAbcissa();
 		}
 
 		// loop through all spikes of the list
@@ -138,7 +138,7 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 
 			// display data
 			lpspk = p_spikelist_->GetpSpikeData(ispk);
-			FillPolypointOrdinates(lpspk);
+			fillPolypointOrdinates(lpspk);
 			p_dc->Polyline(&polypoints_[0], taillespk);
 		}
 
@@ -161,7 +161,7 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 					continue;
 				// display data
 				lpspk = p_spikelist_->GetpSpikeData(ispk);
-				FillPolypointOrdinates(lpspk);
+				fillPolypointOrdinates(lpspk);
 				p_dc->Polyline(&polypoints_[0], taillespk);
 			}
 		}
@@ -170,10 +170,10 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 		auto iselect = -1;
 		if (m_selectedspike >= 0 && (IsSpikeWithinRange(m_selectedspike)))
 			iselect = m_selectedspike;
-		DrawSelectedSpike(iselect, p_dc);
+		drawSelectedSpike(iselect, p_dc);
 
 		if (p_spikelist_->GetSpikeFlagArrayCount() > 0)
-			DrawFlaggedSpikes(p_dc);
+			drawFlaggedSpikes(p_dc);
 
 		// display tags
 		if (GetNHZtags() > 0)
@@ -205,7 +205,7 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 	}
 }
 
-void CChartSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* p_dc)
+void CChartSpikeShapeWnd::drawSelectedSpike(int nospike, CDC* p_dc)
 {
 	const auto n_saved_dc = p_dc->SaveDC();
 	auto rect = m_displayRect;
@@ -215,8 +215,8 @@ void CChartSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* p_dc)
 	if (nospike >= 0)
 	{
 		// change coordinate settings
-		GetExtents();
-		PrepareDC(p_dc);
+		getExtents();
+		prepareDC(p_dc);
 
 		p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2 + m_displayRect.top);
 		p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
@@ -228,7 +228,7 @@ void CChartSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* p_dc)
 
 		// display data
 		auto* lpspk = p_spikelist_->GetpSpikeData(nospike);
-		FillPolypointOrdinates(lpspk);
+		fillPolypointOrdinates(lpspk);
 		p_dc->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 
 		// restore resources
@@ -238,15 +238,15 @@ void CChartSpikeShapeWnd::DrawSelectedSpike(int nospike, CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void CChartSpikeShapeWnd::DrawFlaggedSpikes(CDC* pDC0)
+void CChartSpikeShapeWnd::drawFlaggedSpikes(CDC* pDC0)
 {
 	ASSERT(pDC0 != NULL);
 	auto p_dc = pDC0;
 	const auto n_saved_dc = p_dc->SaveDC();
 
 	// change coordinate settings
-	GetExtents();
-	PrepareDC(p_dc);
+	getExtents();
+	prepareDC(p_dc);
 	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2);
 	p_dc->SetViewportExt(m_displayRect.right, -m_displayRect.Height());
 
@@ -264,7 +264,7 @@ void CChartSpikeShapeWnd::DrawFlaggedSpikes(CDC* pDC0)
 			continue;
 		//if (PLOT_ONECLASSONLY == m_plotmode && nospikeclass != m_selclass)
 		//	continue;
-		FillPolypointOrdinates(p_spikelist_->GetpSpikeData(nospike));
+		fillPolypointOrdinates(p_spikelist_->GetpSpikeData(nospike));
 		p_dc->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 	}
 
@@ -276,7 +276,7 @@ void CChartSpikeShapeWnd::DrawFlaggedSpikes(CDC* pDC0)
 void CChartSpikeShapeWnd::DisplayFlaggedSpikes(BOOL bHighLight)
 {
 	if (bHighLight)
-		DrawFlaggedSpikes(&m_PlotDC);
+		drawFlaggedSpikes(&m_PlotDC);
 	Invalidate();
 }
 
@@ -287,15 +287,15 @@ int	CChartSpikeShapeWnd::DisplayExData(short* p_data, int color)
 	if (polypoints_.GetSize() != nelements)
 	{
 		polypoints_.SetSize(nelements, 2);
-		InitPolypointAbcissa();
+		initPolypointAbcissa();
 	}
 
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	PrepareDC(&dc);
+	prepareDC(&dc);
 	CPen new_pen(PS_SOLID, 0, m_colorTable[color]);
 	const auto oldpen = (CPen*)dc.SelectObject(&new_pen);
-	FillPolypointOrdinates(p_data);
+	fillPolypointOrdinates(p_data);
 	dc.Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 
 	dc.SelectObject(oldpen);
@@ -326,12 +326,12 @@ int	CChartSpikeShapeWnd::SelectSpikeShape(int spikeno)
 	if (!m_bUseDIB)
 	{
 		CClientDC dc(this);
-		DrawSelectedSpike(m_selectedspike, &dc);
+		drawSelectedSpike(m_selectedspike, &dc);
 	}
 	else
 	{
 		if (m_PlotDC.GetSafeHdc())
-			DrawSelectedSpike(m_selectedspike, &m_PlotDC);
+			drawSelectedSpike(m_selectedspike, &m_PlotDC);
 	}
 	Invalidate();
 	return oldselected;
@@ -341,7 +341,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (!m_bLmouseDown)
 	{
-		PostMyMessage(HINT_DROPPED, NULL);
+		postMyMessage(HINT_DROPPED, NULL);
 		return;
 	}
 
@@ -353,7 +353,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		if (point.y != m_ptLast.y || point.x != m_ptLast.x)
 			OnMouseMove(nFlags, point);
 		m_trackMode = TRACK_OFF;
-		ReleaseCursor();
+		releaseCursor();
 		CChartWnd::OnLButtonUp(nFlags, point);
 	}
 	break;
@@ -367,7 +367,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CChartWnd::OnLButtonUp(nFlags, point);
-		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 	}
 	break;
 
@@ -380,9 +380,9 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
 			if (m_cursorType != CURSOR_ZOOM)
-				PostMyMessage(HINT_HITAREA, NULL);
+				postMyMessage(HINT_HITAREA, NULL);
 			else
-				ZoomIn();
+				zoomIn();
 			return;					// exit: mouse movement was too small
 		}
 
@@ -393,14 +393,14 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		case 0:
 			rect_out = rect_in;
 			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-			PostMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that val changed
+			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that val changed
 			break;
 		case CURSOR_ZOOM: 	// zoom operation
 			ZoomData(&rect_in, &rect_out);
 			m_ZoomFrom = rect_in;
 			m_ZoomTo = rect_out;
 			m_iUndoZoom = 1;
-			PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
 		default:
 			break;
@@ -427,17 +427,17 @@ void CChartSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// test if mouse hit one spike
 	// if hit, then tell parent to select corresp spike
-	m_hitspk = DoesCursorHitCurveInDoc(point);
+	m_hitspk = hitCurveInDoc(point);
 	if (m_hitspk >= 0)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF;		// flag trackrect
-		ReleaseCursor();				// release cursor capture
+		releaseCursor();				// release cursor capture
 		if (nFlags & MK_SHIFT)
-			PostMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);	// tell parent spike selected
+			postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);	// tell parent spike selected
 
 		else
-			PostMyMessage(HINT_HITSPIKE, m_hitspk);
+			postMyMessage(HINT_HITSPIKE, m_hitspk);
 	}
 }
 
@@ -479,7 +479,7 @@ void CChartSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 
 	// display
 	Invalidate();
-	PostMyMessage(HINT_CHANGEZOOM, 0);
+	postMyMessage(HINT_CHANGEZOOM, 0);
 }
 
 void CChartSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -490,18 +490,18 @@ void CChartSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (m_selectedspike >= 0)
 		{
-			PostMyMessage(HINT_DBLCLKSEL, m_selectedspike);
+			postMyMessage(HINT_DBLCLKSEL, m_selectedspike);
 		}
 		else
 		{
-			const auto iselectedspike = DoesCursorHitCurve(point);
+			const auto iselectedspike = hitCurve(point);
 			if (iselectedspike > 0)
-				PostMyMessage(HINT_DBLCLKSEL, iselectedspike);
+				postMyMessage(HINT_DBLCLKSEL, iselectedspike);
 		}
 	}
 }
 
-int CChartSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
+int CChartSpikeShapeWnd::hitCurveInDoc(CPoint point)
 {
 	long nfiles = 1;
 	long ncurrentfile = 0;
@@ -525,7 +525,7 @@ int CChartSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 		{
 			continue;
 		}
-		result = DoesCursorHitCurve(point);
+		result = hitCurve(point);
 		if (result >= 0)
 			break;
 	}
@@ -540,7 +540,7 @@ int CChartSpikeShapeWnd::DoesCursorHitCurveInDoc(CPoint point)
 	return result;
 }
 
-int  CChartSpikeShapeWnd::DoesCursorHitCurve(const CPoint point) const
+int  CChartSpikeShapeWnd::hitCurve(const CPoint point) 
 {
 	auto hitspk = -1;
 	// convert device coordinates into logical coordinates
@@ -578,11 +578,11 @@ int  CChartSpikeShapeWnd::DoesCursorHitCurve(const CPoint point) const
 	return hitspk;
 }
 
-void CChartSpikeShapeWnd::GetExtents()
+void CChartSpikeShapeWnd::getExtents()
 {
 	if (!m_ballFiles)
 	{
-		GetExtentsCurrentSpkList();
+		getExtentsCurrentSpkList();
 		return;
 	}
 
@@ -598,7 +598,7 @@ void CChartSpikeShapeWnd::GetExtents()
 			p_dbwave_doc_->OpenCurrentSpikeFile();
 			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 			if (p_spikelist_ != NULL) {
-				GetExtentsCurrentSpkList();
+				getExtentsCurrentSpkList();
 				if (m_yWE != 0)
 					break;
 				}
@@ -611,7 +611,7 @@ void CChartSpikeShapeWnd::GetExtents()
 	p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 }
 
-void CChartSpikeShapeWnd::GetExtentsCurrentSpkList()
+void CChartSpikeShapeWnd::getExtentsCurrentSpkList()
 {
 	if (m_yWE == 1 || m_yWE == 0)
 	{
@@ -628,7 +628,7 @@ void CChartSpikeShapeWnd::GetExtentsCurrentSpkList()
 	}
 }
 
-void CChartSpikeShapeWnd::InitPolypointAbcissa()
+void CChartSpikeShapeWnd::initPolypointAbcissa()
 {
 	const auto nelements = polypoints_.GetSize();
 	m_xWE = nelements + 1;
@@ -638,7 +638,7 @@ void CChartSpikeShapeWnd::InitPolypointAbcissa()
 		polypoints_[i].x = i + 1;
 }
 
-void CChartSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
+void CChartSpikeShapeWnd::fillPolypointOrdinates(short* lpSource)
 {
 	auto nelements = polypoints_.GetSize();
 	if (nelements == 0)
@@ -646,7 +646,7 @@ void CChartSpikeShapeWnd::FillPolypointOrdinates(short* lpSource)
 		nelements = p_spikelist_->GetSpikeLength();
 		ASSERT(nelements > 0);
 		polypoints_.SetSize(nelements, 2);
-		InitPolypointAbcissa();
+		initPolypointAbcissa();
 	}
 
 	for (auto i = 0; i < nelements; i++, lpSource++)
@@ -732,7 +732,7 @@ void CChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 		if (m_plotmode == PLOT_ONECLASS && spkcla == m_selclass)
 			continue;
 
-		PlotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(ispk));
+		plotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(ispk));
 	}
 
 	// display selected class if requested by option
@@ -749,7 +749,7 @@ void CChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 			}
 			if (p_spikelist_->GetSpikeClass(ispk) != m_selclass)
 				continue;
-			PlotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(ispk));
+			plotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(ispk));
 		}
 	}
 
@@ -758,7 +758,7 @@ void CChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	{
 		CPen new_pen(PS_SOLID, 0, m_colorTable[m_colorselectedspike]);
 		p_dc->SelectObject(&new_pen);
-		PlotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(m_selectedspike));
+		plotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(m_selectedspike));
 	}
 
 	// restore resources
@@ -771,7 +771,7 @@ void CChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	m_yVE = old_y_ve;
 }
 
-void CChartSpikeShapeWnd::PlotArraytoDC(CDC* p_dc, short* pspk)
+void CChartSpikeShapeWnd::plotArraytoDC(CDC* p_dc, short* pspk)
 {
 	const auto nelements = polypoints_.GetSize();
 	for (auto i = 0; i < nelements; i++, pspk++)
@@ -794,7 +794,7 @@ void CChartSpikeShapeWnd::PlotArraytoDC(CDC* p_dc, short* pspk)
 
 float CChartSpikeShapeWnd::GetDisplayMaxMv()
 {
-	GetExtents();
+	getExtents();
 	return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWE - m_yWO - p_spikelist_->GetAcqBinzero()));
 }
 
@@ -802,7 +802,7 @@ float CChartSpikeShapeWnd::GetDisplayMinMv()
 {
 	if (p_spikelist_ == nullptr)
 		return 1.f;
-	GetExtents();
+	getExtents();
 	return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWO - m_yWE - p_spikelist_->GetAcqBinzero()));
 }
 
@@ -810,7 +810,7 @@ float CChartSpikeShapeWnd::GetExtent_mV()
 {
 	if (p_spikelist_ == nullptr)
 		return 1.f;
-	GetExtents();
+	getExtents();
 	return (p_spikelist_->GetAcqVoltsperBin() * m_yWE * 1000.f);
 }
 
@@ -818,7 +818,7 @@ float CChartSpikeShapeWnd::GetExtent_ms()
 {
 	if (p_spikelist_ == nullptr)
 		return 1.f;
-	GetExtents();
+	getExtents();
 	return (static_cast<float>(1000.0 * m_xWE) / p_spikelist_->GetAcqSampRate());
 }
 
