@@ -307,10 +307,11 @@ long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, lo
 			break;
 
 		numberOfValuesRead += nValuesRead;
-		//if (tFirst > tFrom) {
-		//	long offset = relocate_ChannelData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
-		//	numberOfValuesRead += offset;
-		//}
+		if (tFirst > tFrom) {
+			if (m_bRelocate_if_StartWithGap)
+				relocate_ChannelData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
+			numberOfValuesRead += tFirst/ ticksPerSample;
+		}
 	}
 	return numberOfValuesRead;
 }
