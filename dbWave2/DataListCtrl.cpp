@@ -647,6 +647,7 @@ void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 			p_wnd->SetChanlistYextent(i, iextent);
 			p_wnd->SetChanlistYzero(i, izero);
 		}
+		ptr->pdataDoc->AcqCloseFile();
 	}
 
 	// plot data

@@ -197,10 +197,11 @@ void CViewdbWave::OnInitialUpdate()
 	// init display controls
 	if (m_options_viewdata->displaymode == 2)
 	{
+		CSpikeDoc* pSpkDoc = GetDocument()->GetcurrentSpkDocument();
 		// update tab control
-		m_tabCtrl.InitctrlTabFromSpikeDoc(GetDocument()->GetcurrentSpkDocument());
+		m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
 		m_tabCtrl.ShowWindow(SW_SHOW);
-		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		int icur = pSpkDoc->GetSpkList_CurrentIndex();
 		m_tabCtrl.SetCurSel(icur);
 	};
 }
@@ -300,6 +301,7 @@ void CViewdbWave::updateControls()
 
 	auto filename = pdb_doc->GetDB_CurrentDatFileName();
 	m_bvalidDat = CFile::GetStatus(filename, status);
+
 	filename = pdb_doc->GetDB_CurrentSpkFileName(TRUE);
 	m_bvalidSpk = CFile::GetStatus(filename, status);
 
@@ -308,11 +310,12 @@ void CViewdbWave::updateControls()
 	m_dataListCtrl.EnsureVisible(ifile, FALSE);
 
 	if (m_options_viewdata->displaymode == 2) {
-		if (GetDocument()->OpenCurrentSpikeFile() != nullptr)
+		CSpikeDoc* pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+		if (pSpkDoc != nullptr)
 		{
-			const auto curr_listsize = GetDocument()->GetcurrentSpkDocument()->GetSpkList_Size();
+			const auto curr_listsize = pSpkDoc->GetSpkList_Size();
 			if (m_tabCtrl.GetItemCount() < curr_listsize)
-				m_tabCtrl.InitctrlTabFromSpikeDoc(GetDocument()->GetcurrentSpkDocument());
+				m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
 		}
 	}
 }
