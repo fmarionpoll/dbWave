@@ -82,7 +82,8 @@ protected:
 	int			m_nFid							=-1;
 	boolean		m_bRelocate_if_StartWithGap		= false;
 	boolean		m_bRemoveGaps					= true;
-	long long	m_TicksPerSample				= -1;
+	long long	m_ticksPerSample				= -1;
+	long long	m_ticksFileOffset				= 0;
 
 	void		read_ChannelParameters(CWaveChan* pChan, int cedChan);
 	CString		read_FileComment(int nInd);

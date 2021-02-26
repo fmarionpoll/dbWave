@@ -189,15 +189,15 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 	const auto smallscaleinc = pRuler->m_dscaleinc / 5.;
 	dc.SetBkMode(TRANSPARENT);
 
-	while (dpos <= pRuler->m_dlast)									// =
+	while (dpos <= pRuler->m_dlast)
 	{
 		// display small ticks
-		auto dsmallpos = dpos;									// =
+		auto dsmallpos = dpos;
 		int tick_pos;
-		for (auto i = 0; i < 4; i++)									// =
+		for (auto i = 0; i < 4; i++)
 		{
-			dsmallpos += smallscaleinc;								// =
-			auto ratio = (pRuler->m_dlast - dsmallpos) / dlen;	// =
+			dsmallpos += smallscaleinc;
+			auto ratio = (pRuler->m_dlast - dsmallpos) / dlen;
 			if (!m_bHorizontal)
 			{
 				tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen);
@@ -218,10 +218,10 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 		else
 			tick_pos = static_cast<int>(m_rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen);
 
-		if (tick_pos >= 0)											// =
+		if (tick_pos >= 0)
 		{
-			str.Format(_T("%g"), dpos);								// =
-			const auto size = dc.GetTextExtent(str);						// =
+			str.Format(_T("%g"), dpos);
+			const auto size = dc.GetTextExtent(str);
 			int x, y;
 			if (!m_bHorizontal)
 			{
@@ -229,7 +229,7 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 				dc.MoveTo(m_rcClient.right, tick_pos);
 				dc.LineTo(m_rcClient.right - tick_big_height, tick_pos);
 				// text
-				if (dpos != 0. && fabs(dpos) < 1E-10)				// prevent "bad" zero
+				if (dpos != 0. && fabs(dpos) < 1E-10)				// prevents "bad" zero
 					dpos = 0;
 				x = m_rcClient.right - tick_big_height - size.cx - 2;
 				y = tick_pos - (size.cy / 2);
@@ -245,14 +245,14 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 					x = m_rcClient.right - size.cx;
 				y = m_rcClient.top + tick_big_height + 1;
 			}
-			dc.TextOut(x, y, str);									// =
+			dc.TextOut(x, y, str);
 		}
-		dpos += pRuler->m_dscaleinc;								// =
+		dpos += pRuler->m_dscaleinc;
 	}
 
 	// restore objects used in this routine
-	dc.SelectObject(p_old_pen);										// =
-	dc.SelectObject(p_old_font);										// =
+	dc.SelectObject(p_old_pen);
+	dc.SelectObject(p_old_font);
 }
 
 BOOL CRulerBar::OnEraseBkgnd(CDC* p_dc)

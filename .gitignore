@@ -248,4 +248,4 @@ ModelManifest.xml
 *.chm
 
 # project
-*.vdproj
+# *.vdproj
