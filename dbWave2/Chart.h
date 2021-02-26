@@ -153,14 +153,14 @@ public:
 	void	SetVTtagLval(int itag, long lval) { m_VTtags.SetTagLVal(itag, lval); }
 	long	GetVTtagLval(int itag) { return m_VTtags.GetTagLVal(itag); }
 
-	BOOL	GetbDrawframe() const { return m_scopestruct.bDrawframe; }
-	void	SetbDrawframe(BOOL flag) { m_scopestruct.bDrawframe = flag; }
-	CRect	GetDefinedRect() { return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y); }
-
 	void	SetVTtagList(CTagList* pList) { m_VTtags.CopyTagList(pList); }
 	void	SetHZtagList(CTagList* pList) { m_HZtags.CopyTagList(pList); }
 	CTagList* GetVTtagList();
 	CTagList* GetHZtagList();
+
+	BOOL	GetbDrawframe() const { return m_scopestruct.bDrawframe; }
+	void	SetbDrawframe(BOOL flag) { m_scopestruct.bDrawframe = flag; }
+	CRect	GetDefinedRect() { return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y); }
 
 	CString		m_csBottomComment;
 	BOOL		m_bBottomComment = false;
@@ -217,9 +217,9 @@ protected:
 
 	// Operations
 public:
-	void		XorVTtag(int xpoint);		// xor vertical line at point.x
+	void		XorVTtag(int xpoint);
 	void		XorTempVTtag(int xpoint);
-	void		XorHZtag(int ypoint);	// xor horizontal line at point.y
+	void		XorHZtag(int ypoint);
 	void		ResetXortag() { m_ptLast.x = -1; m_ptLast.y = -1; }
 	void		ReflectMouseMoveMessg(HWND hwnd) { m_hwndReflect = hwnd; }
 	void		PlotToBitmap(CBitmap* pBitmap);
@@ -231,6 +231,8 @@ protected:
 	void		prepareDC(CDC* p_dc, CPrintInfo* pInfo = nullptr);
 	void		captureCursor();
 	void		releaseCursor();
+	void		lbuttonUp_HzTag(UINT nFlags, CPoint point);
+
 	void		sendMyMessage(int code, int codeparm);
 	void		postMyMessage(int code, int codeparm);
 	void		invertTracker(CPoint point);	// invert rectangle when mouse-left is down

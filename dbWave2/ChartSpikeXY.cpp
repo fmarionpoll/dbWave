@@ -152,7 +152,6 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 		//display HZ cursors
 		if (GetNHZtags() > 0)
 		{
-			//DisplayHZtags(p_dc);
 			// select pen and display mode
 			const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 			const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -351,16 +350,8 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_HZTAG:
-	{
-		// convert pix into data value
-		const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
-		SetHZtagVal(m_HCtrapped, val);
-		point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
-		XorHZtag(point.y);
-		CChartWnd::OnLButtonUp(nFlags, point);
-		postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
-	}
-	break;
+		lbuttonUp_HzTag(nFlags, point);
+		break;
 
 	case TRACK_VTTAG:
 	{

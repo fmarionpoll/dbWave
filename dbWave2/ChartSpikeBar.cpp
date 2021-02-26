@@ -225,14 +225,14 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 		const int y1 = m_displayRect.bottom;
 		for (auto j = GetNVTtags() - 1; j >= 0; j--)
 		{
-			const auto lk = GetVTtagLval(j);	// get val
+			const auto lk = GetVTtagLval(j);
 			if (lk <m_lFirst || lk > m_lLast)
 				continue;
 			const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));
-			p_dc->MoveTo(k, y0);			// set initial pt
-			p_dc->LineTo(k, y1);			// VT line
+			p_dc->MoveTo(k, y0);
+			p_dc->LineTo(k, y1);
 		}
-		p_dc->SetROP2(nold_rop);			// restore old display mode
+		p_dc->SetROP2(nold_rop);
 		p_dc->SelectObject(oldp);
 	}
 
