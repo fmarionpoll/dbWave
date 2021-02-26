@@ -4,6 +4,8 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbWave2", "dbWave2\dbWave2.vcxproj", "{7BC96351-C033-4F7B-B77C-93054AA5D31A}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "dbWave2_setup", "dbWave2_setup\dbWave2_setup.vdproj", "{E372C67B-E801-4F62-A108-B16D507642EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|ARM = All|ARM
@@ -63,6 +65,24 @@ Global
 		{7BC96351-C033-4F7B-B77C-93054AA5D31A}.SingleImage|Win32.Build.0 = Template|Win32
 		{7BC96351-C033-4F7B-B77C-93054AA5D31A}.SingleImage|x64.ActiveCfg = Debug|x64
 		{7BC96351-C033-4F7B-B77C-93054AA5D31A}.SingleImage|x64.Build.0 = Debug|x64
+		{E372C67B-E801-4F62-A108-B16D507642EE}.All|ARM.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.All|Win32.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.All|x64.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.CD_ROM|ARM.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.CD_ROM|Win32.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.CD_ROM|x64.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.Debug|ARM.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.Debug|Win32.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.Debug|x64.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.DVD-5|ARM.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.DVD-5|Win32.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.DVD-5|x64.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.Release|ARM.ActiveCfg = Release
+		{E372C67B-E801-4F62-A108-B16D507642EE}.Release|Win32.ActiveCfg = Release
+		{E372C67B-E801-4F62-A108-B16D507642EE}.Release|x64.ActiveCfg = Release
+		{E372C67B-E801-4F62-A108-B16D507642EE}.SingleImage|ARM.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.SingleImage|Win32.ActiveCfg = Debug
+		{E372C67B-E801-4F62-A108-B16D507642EE}.SingleImage|x64.ActiveCfg = Debug
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
