@@ -300,9 +300,18 @@ long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, lo
 	while (numberOfValuesRead < llNValues) {
 		int			nMax	= (int) llNValues - numberOfValuesRead;
 		long long	tFrom	= (ll_First + numberOfValuesRead) * ticksPerSample;
+		if (tFrom == tUpTo)
+			break;
+
 		short*		pBuffer = pData + numberOfValuesRead;
 		long long	tFirst{};
 		int nValuesRead = S64ReadWaveS(m_nFid, chanID, pBuffer, nMax, tFrom, tUpTo, &tFirst, nMask);
+
+		/*CString message;
+		message.Format(_T("nValuesRead= %i tFrom= %i tUpTo= %i  tFirst= %i\n"), 
+			nValuesRead, (int) (tFrom/ticksPerSample), (int) (tUpTo / ticksPerSample), (int) (tFirst / ticksPerSample));
+		ATLTRACE2(message);*/
+
 		if (nValuesRead <= 0)
 			break;
 
@@ -310,7 +319,7 @@ long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, lo
 		if (tFirst > tFrom) {
 			if (m_bRelocate_if_StartWithGap)
 				relocate_ChannelData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
-			numberOfValuesRead += tFirst/ ticksPerSample;
+			numberOfValuesRead += (long) (tFirst/ ticksPerSample);
 		}
 	}
 	return numberOfValuesRead;
