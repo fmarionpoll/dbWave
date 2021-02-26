@@ -234,16 +234,8 @@ void CChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_HZTAG:
-	{
-		// convert pix into data value
-		const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
-		SetHZtagVal(m_HCtrapped, val);				// change cursor value
-		point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
-		XorHZtag(point.y);
-		CChartWnd::OnLButtonUp(nFlags, point);
-		postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
-	}
-	break;
+		lbuttonUp_HzTag(nFlags, point);
+		break;
 
 	case TRACK_VTTAG:
 		// vertical tag was tracked

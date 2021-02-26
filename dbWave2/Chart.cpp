@@ -729,7 +729,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			m_ptCurr = point;
 			const auto val = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
-			XorHZtag(point.y);			// move tag to new pixel
+			XorHZtag(point.y);
 			m_HZtags.SetTagVal(m_HCtrapped, val);
 			postMyMessage(HINT_MOVEHZTAG, m_HCtrapped);
 		}
@@ -808,6 +808,17 @@ void CChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 				point.y + (rect1.top - rect0.top)));
 	}
 	m_bLmouseDown = FALSE;
+}
+
+void CChartWnd::lbuttonUp_HzTag(UINT nFlags, CPoint point)
+{
+	// convert pix into data value
+	const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
+	SetHZtagVal(m_HCtrapped, val);
+	point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
+	XorHZtag(point.y);
+	CChartWnd::OnLButtonUp(nFlags, point);
+	postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
 }
 
 void CChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
@@ -990,11 +1001,11 @@ void CChartWnd::invertTracker(CPoint point)
 	const auto old_pen = dc.SelectObject(&m_blackDottedPen);
 	dc.Rectangle(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 	dc.Rectangle(m_ptFirst.x, m_ptFirst.y, point.x, point.y);
-	dc.SelectObject(old_pen);				// select old pen
 
-	dc.SelectObject(old_brush);				// select old brush
-	dc.SetROP2(nold_rop);					// select previous draw mode
-	m_ptLast = point;						// update m_ptLast
+	dc.SelectObject(old_pen);
+	dc.SelectObject(old_brush);
+	dc.SetROP2(nold_rop);
+	m_ptLast = point;
 }
 
 void CChartWnd::DisplayVTtags_Value(CDC* p_dc)
@@ -1017,23 +1028,20 @@ void CChartWnd::DisplayVTtags_Value(CDC* p_dc)
 
 void CChartWnd::DisplayHZtags(CDC* p_dc)
 {
-	// select pen and display mode
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-
-	// iterate through HZ cursor list
 	auto oldval = GetHZtagVal(GetNHZtags() - 1) - 1;
-	for (auto i = GetNHZtags() - 1; i >= 0; i--)
+	for (auto iTag = GetNHZtags() - 1; iTag >= 0; iTag--)
 	{
-		const auto k = GetHZtagVal(i);		// get val
-		if (k == oldval)					// skip if already displayed
+		const auto k = GetHZtagVal(iTag);	
+		if (k == oldval)
 			continue;
 		p_dc->MoveTo(m_xWO, k);	
 		p_dc->LineTo(m_xWE, k);
 		oldval = k;
 	}
 	p_dc->SelectObject(pold);
-	p_dc->SetROP2(nold_rop);			// restore old display mode
+	p_dc->SetROP2(nold_rop);
 }
 
 void CChartWnd::XorHZtag(int ypoint)
@@ -1044,7 +1052,7 @@ void CChartWnd::XorHZtag(int ypoint)
 
 	const auto p_old_pen = dc.SelectObject(&m_blackDottedPen);
 	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&m_displayRect);	// clip drawing inside rectangle
+	dc.IntersectClipRect(&m_displayRect);
 
 	dc.MoveTo(m_displayRect.left, m_ptLast.y);
 	dc.LineTo(m_displayRect.right, m_ptLast.y);

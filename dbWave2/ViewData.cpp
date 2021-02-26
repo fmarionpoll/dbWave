@@ -839,7 +839,7 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 		// ......................  horizontal cursors
-	case 1:					// if no HZcursors, take those of rectangle or limits of lineview
+	case 1:						// if no HZcursors, take those of rectangle or limits of lineview
 		m_ChartDataWnd.AddHZtag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
 		if (mdMO->wLimitInf != mdMO->wLimitSup)
 			m_ChartDataWnd.AddHZtag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
@@ -861,14 +861,14 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	m_ChartDataWnd.Invalidate();
 	break;
 
-	case HINT_CHANGEHZTAG:	// horizontal tag has changed 	lowp = tag nb
+	case HINT_CHANGEHZTAG:		// horizontal tag has changed 	lowp = tag nb
 		if (mdMO->wOption == 3)
 			mdMO->wStimulusthresh = m_ChartDataWnd.GetHZtagVal(0);
 		else
 			UpdateHZtagsVal();
 		break;
 
-	case HINT_VIEWSIZECHANGED:       // change zoom
+	case HINT_VIEWSIZECHANGED:  // change zoom
 		UpdateLegends(UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE);
 		m_ChartDataWnd.Invalidate();
 		SetVBarMode(m_VBarMode);

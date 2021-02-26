@@ -903,7 +903,6 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 			const auto p_point = &m_PolyPoints[j];
 			p_point->y = MulDiv(short(p_point->y) - worg, yVE, wext);
 		}
-
 		p_dc->MoveTo(m_PolyPoints[0]);
 		p_dc->Polyline(&m_PolyPoints[0], nelements);
 
@@ -939,7 +938,6 @@ void CChartDataWnd::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pCha
 	auto wext = pChan->GetYextent();
 	auto worg = pChan->GetYzero();
 	const auto yVE = m_displayRect.Height();
-
 	for (auto i = GetNHZtags() - 1; i >= 0; i--)
 	{
 		if (GetHZtagChan(i) != ichan)
@@ -1320,9 +1318,8 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		for (auto icur = 0; icur < GetNHZtags(); icur++)
 		{
-			// convert device coordinates into val
 			const auto pixval = GetChanlistBintoPixel(GetHZtagChan(icur), GetHZtagVal(icur));
-			SetHZtagPix(icur, pixval);			// set pixval
+			SetHZtagPix(icur, pixval);
 		}
 	}
 
@@ -1333,7 +1330,7 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// call base class to test for horiz cursor or XORing rectangle
-	CChartWnd::OnLButtonDown(nFlags, point);		// capture cursor
+	CChartWnd::OnLButtonDown(nFlags, point);	
 
 	// if cursor mode = 0 and no tag hit detected, mouse mode=track rect
 	// test curve hit -- specific to lineview, if hit curve, track curve instead
@@ -1344,24 +1341,24 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		if (m_hitcurve >= 0)
 		{
 			// cancel track rect mode (cursor captured)
-			m_trackMode = TRACK_CURVE;		// flag: track curve
+			m_trackMode = TRACK_CURVE;						// flag: track curve
 
 			// modify polypoint and prepare for XORing curve tracked with mouse
 			const auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
 			auto pX = chanlist_item->pEnvelopeAbcissa;		// display: load abcissa
 			pX->GetMeanToAbcissa(m_PolyPoints);
-			m_XORnelmts = pX->GetEnvelopeSize() / 2;	// nb of elements
-			m_XORxext = pX->GetnElements() / 2;		// extent
+			m_XORnelmts = pX->GetEnvelopeSize() / 2;		// nb of elements
+			m_XORxext = pX->GetnElements() / 2;				// extent
 
-			auto pY = chanlist_item->pEnvelopeOrdinates;				// load ordinates
+			auto pY = chanlist_item->pEnvelopeOrdinates;	// load ordinates
 			pY->GetMeanToOrdinates(m_PolyPoints);
 			m_XORyext = chanlist_item->GetYextent();		// store extent
-			m_zero = chanlist_item->GetYzero();			// store zero
-			m_ptFirst = point;					// save first point
-			m_curTrack = m_zero;				// use m_curTrack to store zero
+			m_zero = chanlist_item->GetYzero();				// store zero
+			m_ptFirst = point;								// save first point
+			m_curTrack = m_zero;							// use m_curTrack to store zero
 
-			curveXOR();							// xor curve
-			postMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
+			curveXOR();										// xor curve
+			postMyMessage(HINT_HITCHANNEL, m_hitcurve);		// tell parent chan selected
 			return;
 		}
 	}
@@ -1393,13 +1390,9 @@ void CChartDataWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	// liberate cursor
 	releaseCursor();
-
-	// perform action according to track mode
 	switch (m_trackMode)
 	{
-		// curve was tracked
 	case TRACK_CURVE:
 	{
 		curveXOR();	// (clear) necessary since XORcurve can draw outside client area
@@ -1409,20 +1402,12 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		postMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
 		Invalidate();
 	}
-	break;
-	// horizontal cursor was tracked
+		break;
+
 	case TRACK_HZTAG:
-	{
-		const auto chan = GetHZtagChan(m_HCtrapped);		// get channel
-		const auto val = GetChanlistPixeltoBin(chan, m_ptLast.y);
-		SetHZtagVal(m_HCtrapped, val);				// change cursor value
-		point.y = GetChanlistBintoPixel(chan, val);
-		XorHZtag(point.y);
-		postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);	// tell parent that val changed
-		m_trackMode = TRACK_OFF;
-	}
-	break;
-	// test if vertical tag was tracked
+		lbuttonUp_HzTag(nFlags, point);
+		break;
+
 	case TRACK_VTTAG:
 	{
 		// convert pix into data value and back again
@@ -1433,9 +1418,9 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 		m_trackMode = TRACK_OFF;
 	}
-	break;
+		break;
+
 	case TRACK_RECT:
-		// mouse was captured: no -> exit!
 	{
 		// skip too small a rectangle (5 pixels?)
 		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
@@ -1476,7 +1461,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		m_trackMode = TRACK_OFF;
 		Invalidate();
 	}
-	break;
+		break;
 	default:
 		break;
 	}
@@ -1553,8 +1538,8 @@ void CChartDataWnd::MoveHZtagtoVal(int i, int val)
 {
 	const auto chan = GetHZtagChan(i);
 	const auto chanlist_item = chanlistitem_ptr_array[chan];
-	m_XORyext = chanlist_item->GetYextent();			// store extent
-	m_zero = chanlist_item->GetYzero();				// store zero
+	m_XORyext = chanlist_item->GetYextent();
+	m_zero = chanlist_item->GetYzero();
 	m_ptLast.y = MulDiv(GetHZtagVal(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
 	CPoint point;
 	point.y = MulDiv(val - m_zero, m_yVE, m_XORyext) + m_yVO;
