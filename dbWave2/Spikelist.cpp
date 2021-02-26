@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 #include "SpikeFromChan.h"
 #include "Spikelist.h"
 

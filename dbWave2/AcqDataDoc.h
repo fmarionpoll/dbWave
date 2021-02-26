@@ -1,10 +1,14 @@
-// acqdatad.h : header file
-
 #pragma once
 
 // sort options :
-#define		BY_TIME		1
-#define		BY_NAME		2
+auto constexpr BY_TIME = 1;
+auto constexpr BY_NAME = 2;
+auto constexpr MAX_BUFFER_LENGTH_AS_BYTES = 614400;
+
+//  1 s at 10 kHz =  1(s) * 10 000 (data points) * 2 (bytes) * 3 (chans) = 60 000
+// 10 s at 10 kHz = 10(s) * 10 000 (data points) * 2 (bytes) * 3 (chans) = 600 000
+// with a multiple of 1024 =  614400
+
 
 #include "Awavepar.h"
 #include "WaveBuf.h"
@@ -42,35 +46,32 @@ protected:
 
 	// Data members and functions dealing with CDataFileX and data reading buffer
 
-	CDataFileX*	m_pXFile=nullptr;	// data file /* CDataFileX* */
-	int			m_pXFileType = DOCTYPE_UNKNOWN;
-	int			m_lastDocumentType = DOCTYPE_UNKNOWN;
-	CWaveBuf*	m_pWBuf=nullptr;	// CWaveBuffer
+	CDataFileX*	m_pXFile			= nullptr;
+	int			m_pXFileType		= DOCTYPE_UNKNOWN;
+	int			m_lastDocumentType	= DOCTYPE_UNKNOWN;
+	int			m_DOCnbchans		= 0;					// nb channels / doc
+	int			m_iOffsetInt		= sizeof(short);		// offset in bytes
+	long		m_lDOCchanLength	= 0;
+
+	CWaveBuf*	m_pWBuf				= nullptr;
+	long		m_lBUFmaxSize		= MAX_BUFFER_LENGTH_AS_BYTES;	// constant (?) size of the buffer
+	long		m_lBUFSize			= 0;					// buffer size (n channels * sizeof(word) * lRWSize
+	long		m_lBUFchanSize		= 0;					// n words in buffer / channel
+	long		m_lBUFchanFirst		= 0;					// file index of first word in RW buffer
+	long		m_lBUFchanLast		= 0;					// file index of last word in RW buffer
+	BOOL		m_bValidReadBuffer	= false;				// flag / valid data ; FALSE to force reading data from file
+	BOOL		m_bValidTransfBuffer= false;				// flag to tell that transform buffer is valid (check if really used?)
+	BOOL		m_bdefined			= false;	
+	BOOL		m_bRemoveOffset		= true;					// transform data read in short values if binary offset encoding
 	
-	long		m_lBUFmaxSize;		// constant (?) size of the buffer
-	long		m_lBUFchanFirst;	// file index of first word in RW buffer
-	long		m_lBUFchanLast;		// file index of last word in RW buffer
-	int			m_DOCnbchans;		// nb channels / doc
-	int			m_iOffsetInt;		// offset in bytes
-	BOOL		m_bValidReadBuffer;	// flag / valid data into buffer
-										// set to FALSE to force reading data from file
-	BOOL		m_bValidTransfBuffer;	// flag to tell that transform buffer is valid (check if really used?)
-	BOOL		m_bdefined;			// file that remain open
-	long		m_lBUFSize;			// buffer size (n channels * sizeof(word) * lRWSize
-	long		m_lBUFchanSize;		// n words in buffer / channel
-	BOOL		m_bRemoveOffset;	// transform data read in short values if binary offset encoding
-
 	// use with caution - parameters set by last call to LoadTransfData
-	long		m_tBUFfirst;
-	long		m_tBUFlast;
-	int			m_tBUFtransform;
-	int			m_tBUFsourcechan;
+	long		m_tBUFfirst = 0;
+	long		m_tBUFlast = 1;
+	int			m_tBUFtransform = 0;
+	int			m_tBUFsourcechan = 0;
 
 public:
-	inline long		GettBUFfirst() const { return m_tBUFfirst; }
-
-	// Operations
-public:
+	inline long	GettBUFfirst() const { return m_tBUFfirst; }
 	int  		BGetVal(int chan, long l_index);
 	short*		LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL		BuildTransfData(int transform_type, int ns);
@@ -105,10 +106,10 @@ public:
 
 	int			GetScanCount() const { return m_pWBuf->m_waveFormat.scan_count; }
 
-	short*		GetpRawDataBUF() const { return m_pWBuf->GetWBAdrRawDataBuf(); }
-	short*		GetpRawDataElmt(int chan, int index) const { return m_pWBuf->GetWBAdrRawDataElmt(chan, index - m_lBUFchanFirst); }
-	short*		GetpTransfDataBUF() const { return m_pWBuf->GetWBAdrTransfData(); }
-	short*		GetpTransfDataElmt(int index) const { return (m_pWBuf->GetWBAdrTransfData() + index); }
+	short*		GetpRawDataBUF() const { return m_pWBuf->getWBAdrRawDataBuf(); }
+	short*		GetpRawDataElmt(int chan, int index) const { return m_pWBuf->getWBAdrRawDataElmt(chan, index - m_lBUFchanFirst); }
+	short*		GetpTransfDataBUF() const { return m_pWBuf->getWBAdrTransfData(); }
+	short*		GetpTransfDataElmt(int index) const { return (m_pWBuf->getWBAdrTransfData() + index); }
 	int			GetTransfDataSpan(int i) const { return m_pWBuf->GetWBTransformSpan(i); }
 	WORD		GetTransfDataNTypes() const { return m_pWBuf->GetWBNTypesofTransforms(); }
 	CString		GetTransfDataName(int i) const { return m_pWBuf->GetWBTransformsAllowed(i); }
@@ -132,7 +133,6 @@ public:
 	void		ReadDataInfos();
 
 protected:
-	long		m_lDOCchanLength;
 	BOOL		readDataBlock(long l_first);
 	void		instanciateDataFileObject(int docType);
 

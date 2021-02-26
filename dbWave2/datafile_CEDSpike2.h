@@ -79,9 +79,10 @@ public:
 
 protected:
 	static		errorMessage errorMessages[];
-	int			m_nFid	=-1;
-	boolean		m_bRelocate_if_StartWithGap = false;
-	boolean		m_bRemoveGaps = true;
+	int			m_nFid							=-1;
+	boolean		m_bRelocate_if_StartWithGap		= false;
+	boolean		m_bRemoveGaps					= true;
+	long long	m_TicksPerSample				= -1;
 
 	void		read_ChannelParameters(CWaveChan* pChan, int cedChan);
 	CString		read_FileComment(int nInd);

@@ -82,9 +82,9 @@ int CChartDataWnd::AddChanlistItem(int ns, int mode)
 		const auto pwave_format = m_pDataFile->GetpWaveFormat();
 		p_chan_list_item->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
 		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_Volts);
-		if (ns >= pchan_array->chanArray_getSize())
+		if (ns >= pchan_array->ChanArray_getSize())
 			ns = 0;
-		const auto pchan = pchan_array->get_p_channel(ns);
+		const auto pchan = pchan_array->Get_p_channel(ns);
 		p_chan_list_item->dl_comment = pchan->am_csComment;	// get comment however
 		UpdateChanlistMaxSpan();				// update span max
 		if (mode > 0)							// modif comment if transform buffer
@@ -158,7 +158,7 @@ void CChartDataWnd::UpdateChanlistFromDoc()
 		const auto mode = p_ord->GetSourceMode();
 		p_ord->SetDocbufferSpan(m_pDataFile->GetTransfDataSpan(mode));
 		const auto pchan_array = m_pDataFile->GetpWavechanArray();
-		const auto pchan = pchan_array->get_p_channel(ns);
+		const auto pchan = pchan_array->Get_p_channel(ns);
 		p_chanlist_item->dl_comment = pchan->am_csComment;
 		if (mode > 0)
 			p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) + ": " + p_chanlist_item->dl_comment;
@@ -206,7 +206,7 @@ int CChartDataWnd::SetChanlistSourceChan(WORD i, int ns)
 	const auto mode = p_ord->GetSourceMode();	// get transform mode
 	// modify comment
 	const auto pchan_array = m_pDataFile->GetpWavechanArray();
-	const auto pchan = pchan_array->get_p_channel(ns);
+	const auto pchan = pchan_array->Get_p_channel(ns);
 	p_chanlist_item->dl_comment = pchan->am_csComment;
 	if (mode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) + _T(": ") + p_chanlist_item->dl_comment;
@@ -221,9 +221,9 @@ void CChartDataWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
 	chanlist_item->SetOrdinatesSourceData(chan, transform);
 	// modify comment
 	const auto pchanArray = m_pDataFile->GetpWavechanArray();
-	if (chan >= pchanArray->chanArray_getSize())
+	if (chan >= pchanArray->ChanArray_getSize())
 		chan = 0;
-	const auto pchan = pchanArray->get_p_channel(chan);
+	const auto pchan = pchanArray->Get_p_channel(chan);
 	chanlist_item->dl_comment = pchan->am_csComment;
 	if (transform > 0)
 		chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(transform)).Left(6) + _T(": ") + chanlist_item->dl_comment;
@@ -297,7 +297,7 @@ int CChartDataWnd::SetChanlistTransformMode(WORD i, int imode)
 
 	// modify comment
 	const auto pchan_array = m_pDataFile->GetpWavechanArray();
-	const auto pchan = pchan_array->get_p_channel(ns);
+	const auto pchan = pchan_array->Get_p_channel(ns);
 	p_chanlist_item->dl_comment = pchan->am_csComment;
 	if (imode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(imode)).Left(8)
@@ -593,7 +593,7 @@ BOOL CChartDataWnd::GetSmoothDataFromDoc(int ioption)
 	// check intervals	(assume m_lxSize OK)
 	if (m_lxFirst < 0)
 		m_lxFirst = 0;							// avoid negative start
-	m_lxLast = m_lxFirst + m_lxSize - 1;			// test end
+	m_lxLast = m_lxFirst + m_lxSize - 1;		// test end
 	if (m_lxLast > m_lxVeryLast)				// past end of file?
 	{
 		if (m_lxSize >= m_lxVeryLast + 1)
@@ -724,6 +724,7 @@ BOOL CChartDataWnd::ScrollDataFromDoc(WORD nSBCode)
 	m_lxFirst = l_first;
 	return GetDataFromDoc();
 }
+
 
 void CChartDataWnd::UpdatePageLineSize()
 {

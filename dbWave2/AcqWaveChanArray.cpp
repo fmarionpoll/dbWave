@@ -14,10 +14,10 @@ CWaveChanArray::CWaveChanArray()
 
 CWaveChanArray::~CWaveChanArray()
 {
-	chanArray_removeAll();
+	ChanArray_removeAll();
 }
 
-long CWaveChanArray::write(CFile * datafile)
+long CWaveChanArray::Write(CFile * datafile)
 {
 	const auto p1 = datafile->GetPosition();
 	short array_size = wavechan_ptr_array.GetSize();
@@ -32,7 +32,7 @@ long CWaveChanArray::write(CFile * datafile)
 	return static_cast<long>(p2 - p1);
 }
 
-BOOL CWaveChanArray::read(CFile * datafile)
+BOOL CWaveChanArray::Read(CFile * datafile)
 {
 	short array_size;
 	datafile->Read(&array_size, sizeof(short));
@@ -42,7 +42,7 @@ BOOL CWaveChanArray::read(CFile * datafile)
 	// if size = 0, create dummy & empty channel
 	if (array_size == 0)
 	{
-		chanArray_removeAll();					// erase existing data
+		ChanArray_removeAll();					// erase existing data
 		p_channel = new CWaveChan;
 		ASSERT(p_channel != NULL);
 		wavechan_ptr_array.Add(p_channel);
@@ -54,7 +54,7 @@ BOOL CWaveChanArray::read(CFile * datafile)
 	{
 		do
 		{
-			p_channel = get_p_channel(n);
+			p_channel = Get_p_channel(n);
 			ASSERT(p_channel != NULL);
 			if (!p_channel->Read(datafile))
 				return FALSE;
@@ -63,7 +63,7 @@ BOOL CWaveChanArray::read(CFile * datafile)
 	}
 	else
 	{
-		chanArray_removeAll();					// erase existing data
+		ChanArray_removeAll();					// erase existing data
 		do
 		{
 			p_channel = new CWaveChan;
@@ -85,25 +85,25 @@ CWaveChanArray& CWaveChanArray::operator = (const CWaveChanArray & arg)
 {
 	if (this != &arg) {
 		const auto n_items = arg.wavechan_ptr_array.GetSize();// source size
-		chanArray_removeAll();					// erase existing data
+		ChanArray_removeAll();					// erase existing data
 		for (auto i = 0; i < n_items; i++)	// loop over n items
 		{
 			const auto  p_channel = new CWaveChan(); // create new object
 			ASSERT(p_channel != NULL);
-			*p_channel = *arg.get_p_channel(i);
+			*p_channel = *arg.Get_p_channel(i);
 
-			chanArray_add(p_channel);		// store pointer into array
+			ChanArray_add(p_channel);		// store pointer into array
 		}
 	}
 	return *this;
 }
 
-CWaveChan* CWaveChanArray::get_p_channel(int i) const
+CWaveChan* CWaveChanArray::Get_p_channel(int i) const
 {
 	return wavechan_ptr_array.GetAt(i);
 }
 
-void CWaveChanArray::chanArray_removeAll()
+void CWaveChanArray::ChanArray_removeAll()
 {
 	for (auto i = 0; i < wavechan_ptr_array.GetSize(); i++)
 	{
@@ -113,47 +113,47 @@ void CWaveChanArray::chanArray_removeAll()
 	wavechan_ptr_array.RemoveAll();
 }
 
-int CWaveChanArray::chanArray_add(CWaveChan * arg)
+int CWaveChanArray::ChanArray_add(CWaveChan * arg)
 {
 	return wavechan_ptr_array.Add(arg);
 }
 
-int CWaveChanArray::chanArray_add()
+int CWaveChanArray::ChanArray_add()
 {
 	const auto p = new CWaveChan;
 	ASSERT(p != NULL);
-	return chanArray_add(p);
+	return ChanArray_add(p);
 }
 
-void CWaveChanArray::chanArray_insertAt(const int i)
+void CWaveChanArray::ChanArray_insertAt(const int i)
 {
 	const auto p = new CWaveChan;
 	ASSERT(p != NULL);
 	wavechan_ptr_array.InsertAt(i, p, 1);
 }
 
-void CWaveChanArray::chanArray_removeAt(const int i)
+void CWaveChanArray::ChanArray_removeAt(const int i)
 {
 	const auto p = wavechan_ptr_array[i];
 	delete p;
 	wavechan_ptr_array.RemoveAt(i);
 }
 
-int CWaveChanArray::chanArray_getSize() const
+int CWaveChanArray::ChanArray_getSize() const
 {
 	return wavechan_ptr_array.GetSize();
 }
 
-int CWaveChanArray::chanArray_setSize(const int i)
+int CWaveChanArray::ChanArray_setSize(const int i)
 {
 	if (i < wavechan_ptr_array.GetSize())
 	{
 		for (auto j = wavechan_ptr_array.GetUpperBound(); j >= i; j--)
-			chanArray_removeAt(j);
+			ChanArray_removeAt(j);
 	}
 	else if (i > wavechan_ptr_array.GetSize())
 		for (auto j = wavechan_ptr_array.GetSize(); j < i; j++)
-			chanArray_add();
+			ChanArray_add();
 	return wavechan_ptr_array.GetSize();
 }
 
@@ -181,7 +181,7 @@ void CWaveChanArray::Serialize(CArchive & ar)
 		int items; ar >> items;		// get number of items
 		if (items > 0)				// loop to read all CWaveChan items
 		{
-			chanArray_removeAll();
+			ChanArray_removeAll();
 			for (auto i = 0; i < items; i++)
 			{
 				auto pItem = new CWaveChan;

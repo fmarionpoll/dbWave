@@ -4,7 +4,7 @@
 #include "cscale.h"
 #include "chart.h"
 #include "chartdata.h"
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 
 class CDlgImportGenericData : public CDialog
 {

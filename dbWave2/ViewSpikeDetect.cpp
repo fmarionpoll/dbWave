@@ -557,7 +557,7 @@ void CViewSpikeDetection::UpdateCombosDetectChanAndTransforms()
 	for (auto i = 0; i < imax; i++)
 	{
 		comment.Format(_T("%i: "), i);
-		comment += pchan_array->get_p_channel(i)->am_csComment;
+		comment += pchan_array->Get_p_channel(i)->am_csComment;
 		VERIFY(m_CBdetectChan.AddString(comment) != CB_ERR);
 	}
 
@@ -2404,7 +2404,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pDataChartW
 			{
 				const WORD channb = pDataChartWnd->GetChanlistSourceChan(ichan);
 				const auto pchan_array = GetDocument()->m_pDat->GetpWavechanArray();
-				const auto p_chan = pchan_array->get_p_channel(channb);
+				const auto p_chan = pchan_array->Get_p_channel(channb);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"),
 					static_cast<LPCTSTR>(p_chan->am_csheadstage), static_cast<long>(p_chan->am_gaintotal), p_chan->am_lowpass, static_cast<LPCTSTR>(p_chan->am_csInputpos), static_cast<LPCTSTR>(p_chan->am_csInputneg));
 				str_comment += cs;

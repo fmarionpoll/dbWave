@@ -5,7 +5,7 @@
 //#include "dbWave.h"
 //#include "Spikedoc.h"
 #include "dbWaveDoc.h"
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 #include "Editctrl.h"
 //#include "Cscale.h"
 #include "chart.h"

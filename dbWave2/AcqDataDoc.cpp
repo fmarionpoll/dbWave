@@ -4,7 +4,7 @@
 #include "StdAfx.h"
 
 #include "Taglist.h"		// tags
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 
 #include "datafile_Atlab.h"
 #include "datafile_ASD.h"
@@ -17,13 +17,6 @@
 #define new DEBUG_NEW
 #endif
 
-#define MAX_BUFFER_LENGTH_AS_BYTES  614400//102400
-//  1 s at 10 kHz =  1(s) * 10 000 (data points) * 2 (bytes) * 3 (chans) = 60 000
-// 10 s at 10 kHz = 10(s) * 10 000 (data points) * 2 (bytes) * 3 (chans) = 600 000
-// with a multiple of 1024 =  614400
-
-/////////////////////////////////////////////////////////////////////////////
-// CAcqDataDoc
 
 IMPLEMENT_DYNCREATE(CAcqDataDoc, CDocument)
 
@@ -33,26 +26,6 @@ END_MESSAGE_MAP()
 
 CAcqDataDoc::CAcqDataDoc()
 {
-	m_bdefined = FALSE;		// data are not defined
-
-	m_lDOCchanLength = 0;	// file chan data length
-	m_DOCnbchans = 0;			// nb chans
-	m_lBUFchanSize = 0;		// size of the read buffer
-	m_lBUFchanFirst = 0;	// index first point
-	m_lBUFchanLast = 0;		// index last point
-	m_lBUFSize = 0;			// size of the read buffer (?)
-	m_lBUFmaxSize = MAX_BUFFER_LENGTH_AS_BYTES; // max buf size
-	m_iOffsetInt = sizeof(short);	// offset in bytes
-	m_tBUFfirst = 0;
-	m_tBUFlast = 1;
-	m_tBUFtransform = 0;
-	m_tBUFsourcechan = 0;
-
-	m_pWBuf = nullptr;
-	m_pXFile = nullptr;
-	m_bValidReadBuffer = FALSE;
-	m_bValidTransfBuffer = FALSE;
-	m_bRemoveOffset = TRUE;
 }
 
 CAcqDataDoc::~CAcqDataDoc()
@@ -290,7 +263,7 @@ CString CAcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 		CString cs;
 		for (auto i_chan = 0; i_chan < p_wave_format->scan_count; i_chan++)
 		{
-			const auto p_chan = (GetpWavechanArray())->get_p_channel(i_chan);
+			const auto p_chan = (GetpWavechanArray())->Get_p_channel(i_chan);
 			if (pVD->bacqchcomment)
 				cs_out += sep + p_chan->am_csComment;
 			if (pVD->bacqchsetting)
@@ -344,7 +317,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	cs_out = sep;
 	for (auto i_chan = 0; i_chan < p_wave_format->scan_count; i_chan++)
 	{
-		const auto p_chan = (GetpWavechanArray())->get_p_channel(i_chan);
+		const auto p_chan = (GetpWavechanArray())->Get_p_channel(i_chan);
 		cs_out += p_chan->am_csComment;
 		if (i_chan < p_wave_format->scan_count - 1)
 			cs_out += sep2;
@@ -360,7 +333,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 		cs_out = sep;
 		for (auto channel = 0; channel < p_wave_format->scan_count; channel++)
 		{
-			const auto p_chan = (GetpWavechanArray())->get_p_channel(channel);
+			const auto p_chan = (GetpWavechanArray())->Get_p_channel(channel);
 			const auto value = BGetVal(channel, j);
 			const auto channel_gain = static_cast<double>(p_chan->am_gainheadstage)
 				* static_cast<double>(p_chan->am_gainAD)
@@ -436,7 +409,7 @@ BOOL CAcqDataDoc::AdjustBUF(int i_num_elements)
 	m_lBUFmaxSize = m_lBUFSize * sizeof(short);
 
 	// alloc RW buffer
-	return m_pWBuf->CreateWBuffer(m_lBUFchanSize, p_wf->scan_count);
+	return m_pWBuf->createWBuffer(m_lBUFchanSize, p_wf->scan_count);
 }
 
 // allocate buffers to read data
@@ -466,7 +439,7 @@ BOOL CAcqDataDoc::AllocBUF()
 	m_lBUFmaxSize	= m_lBUFSize * sizeof(short);
 
 	// alloc RW buffer
-	return m_pWBuf->CreateWBuffer(m_lBUFchanSize, pwF->scan_count);
+	return m_pWBuf->createWBuffer(m_lBUFchanSize, pwF->scan_count);
 }
 
 // returns the address of the raw data buffer
@@ -474,7 +447,7 @@ BOOL CAcqDataDoc::AllocBUF()
 short* CAcqDataDoc::LoadRawDataParams(int* nb_channels)
 {
 	*nb_channels = GetScanCount();
-	return m_pWBuf->GetWBAdrRawDataBuf();
+	return m_pWBuf->getWBAdrRawDataBuf();
 }
 
 /**************************************************************************
@@ -546,7 +519,7 @@ BOOL CAcqDataDoc::readDataBlock(long l_first)
 	// read data from file
 	if (m_pXFile != nullptr)
 	{
-		short* p_buffer = m_pWBuf->GetWBAdrRawDataBuf();
+		short* p_buffer = m_pWBuf->getWBAdrRawDataBuf();
 		ASSERT(p_buffer != NULL);
 		//TRACE("ReadDataBlock l_first= %i nbPoints = %i doc length= %i \n", l_first, m_lBUFSize, m_lDOCchanLength);
 		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, GetpWavechanArray());
@@ -561,7 +534,7 @@ BOOL CAcqDataDoc::readDataBlock(long l_first)
 		const auto w_bin_zero = static_cast<WORD>(m_pWBuf->m_waveFormat.binzero);
 		if (m_bRemoveOffset && w_bin_zero != NULL)
 		{
-			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->GetWBAdrRawDataBuf());
+			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->getWBAdrRawDataBuf());
 			for (long i = 0; i < l_size; i++, pw_buf++)
 				*pw_buf -= w_bin_zero;
 		}
@@ -594,7 +567,7 @@ int CAcqDataDoc::BGetVal(const int channel, const long l_index)
 	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
 		readDataBlock(l_index);
 	const int index = l_index - m_lBUFchanFirst;
-	return *(m_pWBuf->GetWBAdrRawDataElmt(channel, index));
+	return *(m_pWBuf->getWBAdrRawDataElmt(channel, index));
 }
 
 /**************************************************************************
@@ -624,7 +597,7 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 	m_tBUFfirst = l_first;
 	m_tBUFlast = l_last;
 
-	if (m_pWBuf->GetWBAdrTransfData() == nullptr)
+	if (m_pWBuf->getWBAdrTransfData() == nullptr)
 		m_pWBuf->InitWBTransformBuffer();
 
 	const auto i_span = m_pWBuf->GetWBTransformSpan(transform_type);
@@ -639,10 +612,10 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 	const int n_channels = GetpWaveFormat()->scan_count;
 	ASSERT(source_channel < n_channels);											// make sure this is a valid channel
 	const int i_offset = (l_first - m_lBUFchanFirst) * n_channels + source_channel;
-	auto lp_source = m_pWBuf->GetWBAdrRawDataBuf() + i_offset;
+	auto lp_source = m_pWBuf->getWBAdrRawDataBuf() + i_offset;
 
 	// call corresponding one-pass routine
-	auto lp_destination = m_pWBuf->GetWBAdrTransfData();
+	auto lp_destination = m_pWBuf->getWBAdrTransfData();
 
 	// check if source l_first can be used
 	const auto b_isLFirstLower = (l_first < l_span);
@@ -664,7 +637,7 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 	{
 		// erase data at the end of the buffer
 		const int i_cx = i_span + l_last - l_first + 1;
-		auto lp_dest0 = m_pWBuf->GetWBAdrTransfData();
+		auto lp_dest0 = m_pWBuf->getWBAdrTransfData();
 		for (auto cx = 0; cx < i_cx; cx++, lp_dest0++)
 			*lp_dest0 = 0;
 	}
@@ -694,7 +667,7 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 		// set undefined pts equal to first valid point
 		if (b_isLFirstLower)
 		{
-			auto lp_dest0 = m_pWBuf->GetWBAdrTransfData();
+			auto lp_dest0 = m_pWBuf->getWBAdrTransfData();
 			for (auto cx = i_span; cx > 0; cx--, lp_dest0++)
 				*lp_dest0 = 0;
 			n_points += i_span;
@@ -730,17 +703,17 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 BOOL CAcqDataDoc::BuildTransfData(const int transform_type, const int source_channel)
 {
 	// make sure that transform buffer is ready
-	if (m_pWBuf->GetWBAdrTransfData() == nullptr)
+	if (m_pWBuf->getWBAdrTransfData() == nullptr)
 		m_pWBuf->InitWBTransformBuffer();
 	auto flag = TRUE;
 
 	// init parameters
-	auto lp_source = m_pWBuf->GetWBAdrRawDataBuf() + source_channel;
+	auto lp_source = m_pWBuf->getWBAdrRawDataBuf() + source_channel;
 	const int nb_channels = GetpWaveFormat()->scan_count;
 	ASSERT(source_channel < nb_channels);
 
 	// adjust pointers according to nspan - (fringe data) and set flags erase these data at the end
-	auto lp_dest = m_pWBuf->GetWBAdrTransfData();
+	auto lp_dest = m_pWBuf->getWBAdrTransfData();
 	const auto i_span_between_points = m_pWBuf->GetWBTransformSpan(transform_type);
 	const auto l_span_between_points = static_cast<long>(i_span_between_points);
 	const auto l_first = m_lBUFchanFirst + l_span_between_points;
@@ -774,12 +747,12 @@ BOOL CAcqDataDoc::BuildTransfData(const int transform_type, const int source_cha
 	// set undefined pts equal to first valid point
 	if (i_span_between_points > 0)
 	{
-		auto lp_dest0 = m_pWBuf->GetWBAdrTransfData();
+		auto lp_dest0 = m_pWBuf->getWBAdrTransfData();
 		for (auto cx = i_span_between_points; cx > 0; cx--, lp_dest0++)
 			*lp_dest0 = 0;
 		n_points += i_span_between_points;
 
-		lp_dest0 = m_pWBuf->GetWBAdrTransfData() + n_points;
+		lp_dest0 = m_pWBuf->getWBAdrTransfData() + n_points;
 		for (auto cx = i_span_between_points; cx > 0; cx--, lp_dest0++)
 			*lp_dest0 = 0;
 	}
@@ -932,11 +905,11 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 	}
 
 	// save data header
-	if (GetpWaveFormat()->scan_count < GetpWavechanArray()->chanArray_getSize())
+	if (GetpWaveFormat()->scan_count < GetpWavechanArray()->ChanArray_getSize())
 	{
 		const auto last_channel = GetpWaveFormat()->scan_count - 1;
-		for (auto i = GetpWavechanArray()->chanArray_getSize() - 1; i > last_channel; i--)
-			GetpWavechanArray()->chanArray_removeAt(i);
+		for (auto i = GetpWavechanArray()->ChanArray_getSize() - 1; i > last_channel; i--)
+			GetpWavechanArray()->ChanArray_removeAt(i);
 	}
 
 	// save data
@@ -945,7 +918,7 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 
 	// position source file index to start of data
 	m_pXFile->Seek(m_pXFile->m_ulOffsetData, CFile::begin);
-	auto p_buf = m_pWBuf->GetWBAdrRawDataBuf();	// buffer to store data
+	auto p_buf = m_pWBuf->getWBAdrRawDataBuf();	// buffer to store data
 	auto l_buf_size = m_lBUFSize;		// length of the buffer
 
 	while (n_samples > 0)				// loop until the end of the file
@@ -989,7 +962,7 @@ BOOL CAcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i
 		m_pXFile->SeekToBegin();
 		p_new_doc->m_pXFile->SeekToBegin();
 
-		p_buf = m_pWBuf->GetWBAdrRawDataBuf();// buffer to store data
+		p_buf = m_pWBuf->getWBAdrRawDataBuf();// buffer to store data
 		const auto n_bytes = m_lBUFSize * sizeof(short);
 		DWORD dw_read;
 		do

@@ -1,6 +1,6 @@
 #pragma once
 #include "dbWaveDoc.h"
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 #include "ChartData.h"
 #include "Editctrl.h"
 

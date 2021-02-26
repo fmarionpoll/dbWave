@@ -771,7 +771,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DlgAbout.cpp" />
-    <ClCompile Include="Acqdatad.cpp">
+    <ClCompile Include="AcqDataDoc.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1340,7 +1340,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="DlgAbout.h" />
-    <ClInclude Include="Acqdatad.h" />
+    <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="AcqWaveChan.h" />
     <ClInclude Include="AcqWaveChanArray.h" />
     <ClInclude Include="AcqWaveFormat.h" />

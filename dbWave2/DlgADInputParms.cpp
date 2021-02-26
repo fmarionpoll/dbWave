@@ -660,8 +660,8 @@ void CDlgADInputParms::OnCbnSelchangeResolution()
 void CDlgADInputParms::LoadChanData(int col)
 {
 	// select channel and load parameters CComboBox
-	ASSERT(col <= m_pchArray->chanArray_getSize());
-	const auto p_chan = m_pchArray->get_p_channel(col - 1);
+	ASSERT(col <= m_pchArray->ChanArray_getSize());
+	const auto p_chan = m_pchArray->Get_p_channel(col - 1);
 
 	// settings for the col
 	GV_ITEM item;
@@ -738,7 +738,7 @@ void CDlgADInputParms::SaveData()
 	if (m_nacqchans != m_pwFormat->scan_count)
 	{
 		m_pwFormat->scan_count = m_nacqchans;
-		m_pchArray->chanArray_setSize(m_nacqchans);
+		m_pchArray->ChanArray_setSize(m_nacqchans);
 		const WORD ch_buffer_size = m_pwFormat->buffersize / m_nacqchans;
 		m_pwFormat->buffersize = ch_buffer_size * m_nacqchans;
 	}
@@ -758,9 +758,9 @@ void CDlgADInputParms::SaveData()
 void CDlgADInputParms::SaveChanData(int col)
 {
 	// select channel and load parameters CComboBox
-	if (m_pchArray->chanArray_getSize() < col)
-		m_pchArray->chanArray_setSize(col);
-	auto p_chan = m_pchArray->get_p_channel(col - 1);
+	if (m_pchArray->ChanArray_getSize() < col)
+		m_pchArray->ChanArray_setSize(col);
+	auto p_chan = m_pchArray->Get_p_channel(col - 1);
 
 	// AD channel comment
 	auto row = 1;
@@ -840,7 +840,7 @@ void CDlgADInputParms::SetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	auto p_chan = m_pchArray->get_p_channel(col - 1);
+	auto p_chan = m_pchArray->Get_p_channel(col - 1);
 
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0)
@@ -866,7 +866,7 @@ void CDlgADInputParms::GetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	const auto p_chan = m_pchArray->get_p_channel(col - 1);
+	const auto p_chan = m_pchArray->Get_p_channel(col - 1);
 
 	// exit if cyberAmp not declared - if not, exit
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0

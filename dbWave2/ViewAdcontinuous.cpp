@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include <math.h>
 #include "resource.h"
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 //#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
@@ -334,7 +334,7 @@ BOOL CViewADContinuous::ADC_InitSubSystem()
 		for (auto i = 0; i < p_acq_dwave_format->scan_count; i++)
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
-			const auto p_channel = (m_pADC_options->chanArray).get_p_channel(i);
+			const auto p_channel = (m_pADC_options->chanArray).Get_p_channel(i);
 			if (p_channel->am_adchannel > m_numchansMAX - 1 && p_channel->am_adchannel != 16)
 				p_channel->am_adchannel = m_numchansMAX - 1;
 			m_ADC_DTAcq32.SetChannelList(i, p_channel->am_adchannel);
@@ -1481,7 +1481,7 @@ void CViewADContinuous::OnInitialUpdate()
 		if (p_dat != nullptr)
 		{
 			m_pADC_options->waveFormat = *(p_dat->GetpWaveFormat());	// read data header
-			m_pADC_options->chanArray.chanArray_setSize(m_pADC_options->waveFormat.scan_count);
+			m_pADC_options->chanArray.ChanArray_setSize(m_pADC_options->waveFormat.scan_count);
 			m_pADC_options->chanArray = *p_dat->GetpWavechanArray();	// get channel descriptors
 			// restore state of "write-to-file" parameter that was just erased
 			m_pADC_options->waveFormat.bADwritetofile = m_bADwritetofile;
@@ -1491,7 +1491,7 @@ void CViewADContinuous::OnInitialUpdate()
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument();							// create a file to receive incoming data (A/D)
 	*(m_inputDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;	// copy data formats into this file
-	m_pADC_options->chanArray.chanArray_setSize(m_pADC_options->waveFormat.scan_count);
+	m_pADC_options->chanArray.ChanArray_setSize(m_pADC_options->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
 	m_ChartDataWnd.AttachDataFile(&m_inputDataFile);			// prepare display area
 
@@ -1966,10 +1966,10 @@ BOOL CViewADContinuous::InitConnectionWithAmplifiers()
 {
 	CCyberAmp m_cyber;
 	auto bcyber_present = FALSE;
-	const auto nchans = (m_pADC_options->chanArray).chanArray_getSize();
+	const auto nchans = (m_pADC_options->chanArray).ChanArray_getSize();
 	for (auto i = 0; i < nchans; i++)
 	{
-		const auto pchan = (m_pADC_options->chanArray).get_p_channel(i);
+		const auto pchan = (m_pADC_options->chanArray).Get_p_channel(i);
 
 		// test if Cyberamp320 selected
 		const auto a = pchan->am_csamplifier.Find(_T("CyberAmp"));

@@ -13,10 +13,10 @@ class CWaveBuf : public CObject
 
 	// Attributes
 protected:
-	short*			GetWBAdrRawDataBuf() const;
-	short*			GetWBAdrRawDataElmt(int chan, int index) const;
-	short*			GetWBAdrTransfData() const;
-	short*			GetWBAdrTransfDataElmt(int index) const;
+	short*			getWBAdrRawDataBuf() const;
+	short*			getWBAdrRawDataElmt(int chan, int index) const;
+	short*			getWBAdrTransfData() const;
+	short*			getWBAdrTransfDataElmt(int index) const;
 
 public:
 	int				GetWBNumElements() const;
@@ -24,10 +24,10 @@ public:
 	void			SetWBSampleRate(float fSampRate);
 	float			GetWBSampleRate() const;
 	BOOL 			GetWBVoltsperBin(int ch_index, float* volts_per_bin, int mode = 0) const;
-	inline CTagList* GetpHZtags()		{ return &m_hz_tags; }
-	inline CTagList* GetpVTtags()		{ return &m_vt_tags; }
-	inline CWaveChanArray* GetpWavechanArray() { return &m_chanArray; }
-	inline CWaveFormat*	GetpWaveFormat()	{ return &m_waveFormat; }
+	inline CTagList*		GetpHZtags()		{ return &m_hz_tags; }
+	inline CTagList*		GetpVTtags()		{ return &m_vt_tags; }
+	inline CWaveChanArray*	GetpWavechanArray() { return &m_chanArray; }
+	inline CWaveFormat*		GetpWaveFormat()	{ return &m_waveFormat; }
 
 	//operations
 	CWaveBuf();
@@ -71,12 +71,12 @@ private:
 	void			deleteBuffers();
 
 protected:
-	BOOL			CreateWBuffer(int i_num_elements, int nchannels = 1);
+	BOOL			createWBuffer(int i_num_elements, int nchannels = 1);
 
 	CWaveChanArray	m_chanArray{};			// array of structures with the channel description
 	CWaveFormat		m_waveFormat{};			// structure with data acquisition def & parameters
-	CTagList		m_hz_tags{};		// list of horizontal cursors
-	CTagList		m_vt_tags{};		// list of vertical tags
+	CTagList		m_hz_tags{};			// list of horizontal cursors
+	CTagList		m_vt_tags{};			// list of vertical tags
 
 
 	static int		m_maxtransform;			// number of transmformation allowed

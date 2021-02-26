@@ -127,8 +127,8 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	//for (i = 0; i<wave_format->scan_count; i++)
 	//{
 	int i = 0;
-	wavechan_array->chanArray_add();
-	CWaveChan* pChan = (CWaveChan*)wavechan_array->get_p_channel(i);
+	wavechan_array->ChanArray_add();
+	CWaveChan* pChan = (CWaveChan*)wavechan_array->Get_p_channel(i);
 	pChan->am_csComment = CString(" ");					// channel annotation
 	pChan->am_adchannel = 0;								// channel scan list
 	pChan->am_gainAD = 1;									// channel gain list

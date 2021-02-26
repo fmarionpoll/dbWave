@@ -3,7 +3,7 @@
 #include "Envelope.h"
 #include "chanlistitem.h"
 #include "chart.h"
-#include "acqdatad.h"
+#include "AcqDataDoc.h"
 #include "Cscale.h"
 
 class CChartDataWnd : public CChartWnd
@@ -17,11 +17,11 @@ public:
 
 	// data display operations
 public:
-	BOOL		GetDataFromDoc();							// load data from document
-	BOOL		GetDataFromDoc(long l_first);				// load data from doc, from index l_first, same length
-	BOOL		GetDataFromDoc(long l_first, long l_last);	// load data from doc: l_first to l_last
-	BOOL		ScrollDataFromDoc(WORD nSBCode);			// load data relative to current data
+	BOOL		GetDataFromDoc();
+	BOOL		GetDataFromDoc(long l_first);
+	BOOL		GetDataFromDoc(long l_first, long l_last);
 	BOOL		GetSmoothDataFromDoc(int ioption);
+	BOOL		ScrollDataFromDoc(WORD nSBCode);
 
 	int			ResizeChannels(int npixels, long lSize);	// change size of display chans, load data if necessary
 	BOOL		AttachDataFile(CAcqDataDoc* pDataFile);
@@ -61,14 +61,14 @@ protected:
 
 	int			m_npixels = 1;			// nb pixels displayed horizontally
 	int			m_dataperpixel = 1;		// nb of data point per pixel
-	long		m_lxVeryLast = 1;			// end of document
+	long		m_lxVeryLast = 1;		// end of document
 	long		m_lxPage{};				// size of page increment / file index
 	long		m_lxLine{};				// size of line increment / file index
-	long		m_lxSize = 1;				// nb of data pts represented in a Envelope
+	long		m_lxSize = 1;			// nb of data pts represented in a Envelope
 	long		m_lxFirst = 0;			// file index of 1rst pt in the Envelopes
-	long		m_lxLast = 1;				// file index of last pt in the Envelopes
+	long		m_lxLast = 1;			// file index of last pt in the Envelopes
 	float		m_samplingrate{};
-	BOOL		m_btrackCurve = false;			// track curve if hit
+	BOOL		m_btrackCurve = false;	// track curve if hit
 
 	int			m_XORnelmts{};			// curve tracking parameters
 	int			m_hitcurve{};			// ibid  which curve was hitted if any
@@ -161,7 +161,6 @@ protected:
 	void		curveXOR();
 	void		displayVTtags_LValue(CDC* p_dc);
 	void		displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan);
-
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

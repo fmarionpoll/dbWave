@@ -54,9 +54,6 @@
     <ClCompile Include="GridCtrl\GridCellCombo_FMP.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="Acqdatad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Adexperi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -429,6 +426,9 @@
     <ClCompile Include="Taglist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AcqDataDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCellDateTime.h">
@@ -466,9 +466,6 @@
     </ClInclude>
     <ClInclude Include="GridCtrl\GridCellCombo_FMP.h">
       <Filter>customctrl</Filter>
-    </ClInclude>
-    <ClInclude Include="Acqdatad.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Adexperi.h">
       <Filter>Header Files</Filter>
@@ -939,6 +936,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Taglist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AcqDataDoc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

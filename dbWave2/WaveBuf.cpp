@@ -38,35 +38,35 @@ int	CWaveBuf::WBDatachanSetnum(const int i)
 {
 	// no action if the number of data channels is right
 	if (m_waveFormat.scan_count == i
-		&& m_chanArray.chanArray_getSize() == i)
+		&& m_chanArray.ChanArray_getSize() == i)
 		return i;
 	const auto iNumElements = m_waveFormat.buffersize / m_waveFormat.scan_count;
 	m_waveFormat.scan_count = i;
-	m_chanArray.chanArray_setSize(i);
-	ASSERT(m_chanArray.chanArray_getSize() == m_waveFormat.scan_count);
-	CreateWBuffer(iNumElements, i);
+	m_chanArray.ChanArray_setSize(i);
+	ASSERT(m_chanArray.ChanArray_getSize() == m_waveFormat.scan_count);
+	createWBuffer(iNumElements, i);
 	return m_waveFormat.scan_count;
 }
 
-short* CWaveBuf::GetWBAdrRawDataBuf() const
+short* CWaveBuf::getWBAdrRawDataBuf() const
 {
 	ASSERT(m_pWData != NULL);
 	return m_pWData;
 }
 
-short* CWaveBuf::GetWBAdrRawDataElmt(const int chan, const int index) const
+short* CWaveBuf::getWBAdrRawDataElmt(const int chan, const int index) const
 {
 	ASSERT(chan < m_waveFormat.scan_count);
 	ASSERT(m_pWData != NULL);
 	return m_pWData + index * m_waveFormat.scan_count + chan;
 }
 
-short* CWaveBuf::GetWBAdrTransfData() const
+short* CWaveBuf::getWBAdrTransfData() const
 {
 	return m_pWTransf;
 }
 
-short* CWaveBuf::GetWBAdrTransfDataElmt(const int index) const
+short* CWaveBuf::getWBAdrTransfDataElmt(const int index) const
 {
 	return m_pWTransf + index;
 }
@@ -107,7 +107,7 @@ void CWaveBuf::deleteBuffers()
 }
 
 // -----------------------------------------------------------
-BOOL CWaveBuf::CreateWBuffer(const int i_num_elements, const int nchannels)
+BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int nchannels)
 {
 	ASSERT(this);
 	ASSERT(i_num_elements >= 1); // must have at least one
@@ -595,22 +595,22 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 	auto correction = 1.0f;
 	GetWBcorrectionFactor(mode, &correction);
 
-	if (m_chanArray.get_p_channel(ch_index)->am_resolutionV == 0)
+	if (m_chanArray.Get_p_channel(ch_index)->am_resolutionV == 0)
 	{
-		if (m_chanArray.get_p_channel(ch_index)->am_gaintotal == 0.)
+		if (m_chanArray.Get_p_channel(ch_index)->am_gaintotal == 0.)
 		{
-			m_chanArray.get_p_channel(ch_index)->am_gaintotal = m_chanArray.get_p_channel(ch_index)->am_gainamplifier
-				* float(m_chanArray.get_p_channel(ch_index)->am_gainpre)
-				* float(m_chanArray.get_p_channel(ch_index)->am_gainpost)
-				* float(m_chanArray.get_p_channel(ch_index)->am_gainheadstage)
-				* float(m_chanArray.get_p_channel(ch_index)->am_gainAD);
+			m_chanArray.Get_p_channel(ch_index)->am_gaintotal = m_chanArray.Get_p_channel(ch_index)->am_gainamplifier
+				* float(m_chanArray.Get_p_channel(ch_index)->am_gainpre)
+				* float(m_chanArray.Get_p_channel(ch_index)->am_gainpost)
+				* float(m_chanArray.Get_p_channel(ch_index)->am_gainheadstage)
+				* float(m_chanArray.Get_p_channel(ch_index)->am_gainAD);
 		}
 
-		m_chanArray.get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_Volts
-			/ float(m_chanArray.get_p_channel(ch_index)->am_gaintotal)
+		m_chanArray.Get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_Volts
+			/ float(m_chanArray.Get_p_channel(ch_index)->am_gaintotal)
 			/ float(m_waveFormat.binspan);
 	}
-	*volts_per_bin = static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_resolutionV / correction);
+	*volts_per_bin = static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_resolutionV / correction);
 	return true;
 }
 

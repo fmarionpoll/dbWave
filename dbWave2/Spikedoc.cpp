@@ -3,7 +3,7 @@
 // derived from CDocument
 
 #include "StdAfx.h"
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 #include "Spikedoc.h"
 //#include <math.h>
 

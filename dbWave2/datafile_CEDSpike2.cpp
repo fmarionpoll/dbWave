@@ -133,7 +133,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		arrayGetTimeDate.wYear, arrayGetTimeDate.ucMon, arrayGetTimeDate.ucDay, 
 		arrayGetTimeDate.ucHour, arrayGetTimeDate.ucMin, arrayGetTimeDate.ucSec);
 	pWFormat->scan_count = 0;
-	pArray->chanArray_removeAll();
+	pArray->ChanArray_removeAll();
 	int	adcChan = -1;
 
 	for (int cedChan = 1; cedChan < maxChan; cedChan++) {	// lowestFreeChan
@@ -146,15 +146,15 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		case CHANTYPE_Adc:
 		{
 			descriptor = "Adc data";
-			int i = pArray->chanArray_add();
-			CWaveChan* pChan = (CWaveChan*)pArray->get_p_channel(i);
+			int i = pArray->ChanArray_add();
+			CWaveChan* pChan = (CWaveChan*)pArray->Get_p_channel(i);
 			read_ChannelParameters(pChan, cedChan);
 			pWFormat->scan_count++;
 			pWFormat->chrate = (float)(1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
 			pWFormat->sample_count = (long)(pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
 			adcChan = cedChan;
 		}
-		break;
+			break;
 		case CHANTYPE_EventFall:
 			descriptor = "Event on falling edge";
 			read_EventFall(cedChan, pBuf);
@@ -192,6 +192,19 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		comment += _T(" comment =") + read_ChannelComment(cedChan) + _T("\n");
 		ATLTRACE2(comment);
 
+		CTagList* pTags = pBuf->GetpVTtags();
+		if (pTags != nullptr && pTags->GetNTags() > 0 && pWFormat->scan_count > 0)
+		{
+			for (int i = 0; i < pArray->ChanArray_getSize(); i++) 
+			{
+				CWaveChan* pChan = (CWaveChan*)pArray->Get_p_channel(i);
+				if (m_TicksPerSample != pChan->am_CEDticksPerSample)
+					m_TicksPerSample = pChan->am_CEDticksPerSample;
+			}
+			CTag* pTag = pTags->GetTag(0);
+			long long offset = pTag->m_lTicks / m_TicksPerSample;
+			pWFormat->sample_count -= (int) offset;
+		}
 		//pWFormat->chrate = (float)(1. / cfsHeader.sample_interval);
 		//pWFormat->sample_count = cfsHeader.number_of_samples;
 	}
@@ -272,14 +285,14 @@ CString  CDataFileFromCEDSpike2::read_FileComment(int nInd)
 
 long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
-	int scan_count = pArray->chanArray_getSize();
+	int scan_count = pArray->ChanArray_getSize();
 	long long llDataNValues = nbPointsAllChannels/ scan_count / sizeof(short);
 	int nValuesRead = -1;
 	long long tFirst{};
 	long long ll_First = l_First;
 
 	for (int ichan = 0; ichan < scan_count; ichan++) {
-		CWaveChan* pChan = pArray->get_p_channel(ichan);
+		CWaveChan* pChan = pArray->Get_p_channel(ichan);
 		// TODO: create channel buffer
 		size_t numberBytes = ((int) llDataNValues) * sizeof(short);
 		memset(pBuffer, 0, numberBytes);

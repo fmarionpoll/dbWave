@@ -7,7 +7,7 @@
 #include "Spikelist.h"		// list of spikes
 #include "Spikeclas.h"		// spike classes
 #include "Spikedoc.h"
-#include "Acqdatad.h"
+#include "AcqDataDoc.h"
 
 class CdbWaveDoc : public COleDocument
 {

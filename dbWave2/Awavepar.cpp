@@ -1158,7 +1158,7 @@ OPTIONS_IMPORT::OPTIONS_IMPORT()
 	title = "";
 	pwaveChanArray = new (CWaveChanArray);
 	ASSERT(pwaveChanArray != NULL);
-	pwaveChanArray->chanArray_add();	// add dummy channel
+	pwaveChanArray->ChanArray_add();	// add dummy channel
 	nSelectedFilter = 0;
 	// export options
 	exportType = 0;
