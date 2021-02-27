@@ -176,10 +176,10 @@ void CChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 			drawFlaggedSpikes(p_dc);
 
 		// display tags
-		if (GetNHZtags() > 0)
+		if (m_HZtags.GetNTags() > 0)
 			DisplayHZtags(p_dc);
 
-		if (GetNVTtags() > 0)
+		if (m_VTtags.GetNTags() > 0)
 			DisplayVTtags_Value(p_dc);
 
 		// display text
@@ -363,7 +363,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// convert pix into data value and back again
 		const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-		SetVTtagVal(m_HCtrapped, val);
+		m_VTtags.SetTagVal(m_HCtrapped, val);
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CChartWnd::OnLButtonUp(nFlags, point);
@@ -414,10 +414,10 @@ void CChartSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	m_bLmouseDown = TRUE;
 	// call base class to test for horiz cursor or XORing rectangle
-	if (GetNVTtags() > 0)
+	if (m_VTtags.GetNTags() > 0)
 	{
-		for (auto icur = GetNVTtags() - 1; icur >= 0; icur--)	// loop through all tags
-			SetVTtagPix(icur, MulDiv(GetVTtagVal(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
+		for (auto icur = m_VTtags.GetNTags() - 1; icur >= 0; icur--)	// loop through all tags
+			m_VTtags.SetTagPix(icur, MulDiv(m_VTtags.GetValue(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
 	}
 
 	// track rectangle or VTtag?
@@ -825,8 +825,8 @@ float CChartSpikeShapeWnd::GetExtent_ms()
 void CChartSpikeShapeWnd::MoveVTtrack(int itrack, int newval)
 {
 	CPoint point;
-	m_ptLast.x = MulDiv(GetVTtagVal(itrack) - m_xWO, m_xVE, m_xWE) + m_xVO;
-	SetVTtagVal(itrack, newval);			// set new value
+	m_ptLast.x = MulDiv(m_VTtags.GetValue(itrack) - m_xWO, m_xVE, m_xWE) + m_xVO;
+	m_VTtags.SetTagVal(itrack, newval);			// set new value
 	point.x = MulDiv(newval - m_xWO, m_xVE, m_xWE) + m_xVO;	// convert val into pixel
 	XorVTtag(point.x);						// xor line
 }

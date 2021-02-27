@@ -288,8 +288,8 @@ void CViewSpikeTemplates::OnInitialUpdate()
 
 	m_pSpkDoc = (CSpikeDoc*)GetDocument();
 	spikeshape_wnd_.SetPlotMode(PLOT_ONECLASS, 0);
-	m_spkformtagleft = spikeshape_wnd_.AddVTtag(m_psC->kleft);
-	m_spkformtagright = spikeshape_wnd_.AddVTtag(m_psC->kright);
+	m_spkformtagleft = spikeshape_wnd_.m_VTtags.AddTag(m_psC->kleft, 0);
+	m_spkformtagright = spikeshape_wnd_.m_VTtags.AddTag(m_psC->kright, 0);
 
 	updateFileParameters();
 	updateCtrlTab1(0);
@@ -444,14 +444,14 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEVERTTAG:
 		if (threshold == m_spkformtagleft)
 		{
-			m_psC->kleft = spikeshape_wnd_.GetVTtagVal(m_spkformtagleft);
+			m_psC->kleft = spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagleft);
 			m_t1 = m_psC->kleft * m_tunit / m_pSpkList->GetAcqSampRate();
 			mm_t1.m_bEntryDone = TRUE;
 			OnEnChangeT1();
 		}
 		else if (threshold == m_spkformtagright)
 		{
-			m_psC->kright = spikeshape_wnd_.GetVTtagVal(m_spkformtagright);
+			m_psC->kright = spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagright);
 			m_t2 = m_psC->kright * m_tunit / m_pSpkList->GetAcqSampRate();
 			mm_t2.m_bEntryDone = TRUE;
 			OnEnChangeT2();
@@ -1465,7 +1465,7 @@ void CViewSpikeTemplates::OnEnChangeT1()
 		mm_t1.SetSel(0, -1);		// select all text
 		m_t1 = t1;
 		const auto it1 = static_cast<int>(m_t1 / delta);
-		if (it1 != spikeshape_wnd_.GetVTtagVal(m_spkformtagleft))
+		if (it1 != spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagleft))
 		{
 			m_psC->ileft = it1;
 			spikeshape_wnd_.MoveVTtrack(m_spkformtagleft, m_psC->ileft);
@@ -1511,7 +1511,7 @@ void CViewSpikeTemplates::OnEnChangeT2()
 		mm_t2.SetSel(0, -1);		// select all text
 		m_t2 = t2;
 		const auto it2 = static_cast<int>(m_t2 / delta);
-		if (it2 != spikeshape_wnd_.GetVTtagVal(m_spkformtagright))
+		if (it2 != spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagright))
 		{
 			m_psC->iright = it2;
 			spikeshape_wnd_.MoveVTtrack(m_spkformtagright, m_psC->iright);

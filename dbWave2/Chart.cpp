@@ -814,7 +814,7 @@ void CChartWnd::lbuttonUp_HzTag(UINT nFlags, CPoint point)
 {
 	// convert pix into data value
 	const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
-	SetHZtagVal(m_HCtrapped, val);
+	m_HZtags.SetTagVal(m_HCtrapped, val);
 	point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(point.y);
 	CChartWnd::OnLButtonUp(nFlags, point);
@@ -1015,9 +1015,9 @@ void CChartWnd::DisplayVTtags_Value(CDC* p_dc)
 	const auto y0 = MulDiv(0 - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto y1 = MulDiv(m_displayRect.bottom - m_yVO, m_yWE, m_yVE) + m_yWO;
 
-	for (auto j = GetNVTtags() - 1; j >= 0; j--)
+	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 	{
-		const auto k = GetVTtagVal(j);	
+		const auto k = m_VTtags.GetValue(j);	
 		p_dc->MoveTo(k, y0);
 		p_dc->LineTo(k, y1);
 	}
@@ -1030,10 +1030,10 @@ void CChartWnd::DisplayHZtags(CDC* p_dc)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	auto oldval = GetHZtagVal(GetNHZtags() - 1) - 1;
-	for (auto iTag = GetNHZtags() - 1; iTag >= 0; iTag--)
+	auto oldval = m_HZtags.GetValue(m_HZtags.GetNTags() - 1) - 1;
+	for (auto iTag = m_HZtags.GetNTags() - 1; iTag >= 0; iTag--)
 	{
-		const auto k = GetHZtagVal(iTag);	
+		const auto k = m_HZtags.GetValue(iTag);
 		if (k == oldval)
 			continue;
 		p_dc->MoveTo(m_xWO, k);	
@@ -1120,10 +1120,6 @@ void CChartWnd::SetbUseDIB(BOOL bsetPlot)
 {
 	m_bUseDIB = bsetPlot;
 }
-
-int CChartWnd::GetNHZtags() { return m_HZtags.GetNTags(); }
-
-int CChartWnd::GetNVTtags() { return m_VTtags.GetNTags(); }
 
 void CChartWnd::Serialize(CArchive& ar)
 {

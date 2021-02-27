@@ -150,11 +150,11 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 		}
 
 		//display HZ cursors
-		if (GetNHZtags() > 0)
+		if (m_HZtags.GetNTags() > 0)
 			displayHZtags(p_dc);
 
 		// display VT cursors
-		if (GetNVTtags() > 0)		// display vertical tags
+		if (m_VTtags.GetNTags() > 0)		// display vertical tags
 			displayVTtags(p_dc);
 	}
 
@@ -180,9 +180,9 @@ void CChartSpikeXYWnd::displayVTtags(CDC* p_dc)
 	// iterate through VT cursor list
 	const auto y0 = m_displayRect.top;
 	const auto y1 = m_displayRect.bottom;
-	for (auto j = GetNVTtags() - 1; j >= 0; j--)
+	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 	{
-		const auto val = GetVTtagVal(j);			// get val
+		const auto val = m_VTtags.GetValue(j);			// get val
 		const auto pix_x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		p_dc->MoveTo(pix_x, y0);			// set initial pt
 		p_dc->LineTo(pix_x, y1);			// VT line
@@ -197,9 +197,9 @@ void CChartSpikeXYWnd::displayHZtags(CDC* p_dc)
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto x1 = m_displayRect.left;
 	const auto x2 = m_displayRect.right;
-	for (auto i = GetNHZtags() - 1; i >= 0; i--)
+	for (auto i = m_HZtags.GetNTags() - 1; i >= 0; i--)
 	{
-		const auto k = GetHZtagVal(i);
+		const auto k = m_HZtags.GetValue(i);
 		const auto y1 = MulDiv(k - m_yWO, m_yVE, m_yWE) + m_yVO;
 		p_dc->MoveTo(x1, y1);
 		p_dc->LineTo(x2, y1);
@@ -320,18 +320,18 @@ void CChartSpikeXYWnd::drawSelectedSpike(int nospike, int color, CDC * p_dc)
 
 void CChartSpikeXYWnd::MoveHZtagtoVal(int i, int val)
 {
-	m_ptLast.y = MulDiv(GetHZtagVal(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
+	m_ptLast.y = MulDiv(m_HZtags.GetValue(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto ypix = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(ypix);
-	SetHZtagVal(i, val);
+	m_HZtags.SetTagVal(i, val);
 }
 
 void CChartSpikeXYWnd::MoveVTtagtoVal(int i, int val)
 {
-	m_ptLast.x = MulDiv(GetVTtagVal(i) - m_xWO, m_xVE, m_xWE) + m_xVO;
+	m_ptLast.x = MulDiv(m_VTtags.GetValue(i) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto xpix = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 	XorVTtag(xpix);
-	SetVTtagVal(i, val);
+	m_VTtags.SetTagVal(i, val);
 }
 
 int	CChartSpikeXYWnd::SelectSpike(int spikeno)
@@ -360,7 +360,7 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// convert pix into data value
 		const auto val = MulDiv(m_ptLast.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-		SetVTtagVal(m_HCtrapped, val);
+		m_VTtags.SetTagVal(m_HCtrapped, val);
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CChartWnd::OnLButtonUp(nFlags, point);
@@ -408,18 +408,18 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// compute pixel position of tags
-	if (GetNHZtags() > 0)
+	if (m_HZtags.GetNTags() > 0)
 	{
-		for (auto icur = GetNHZtags() - 1; icur >= 0; icur--)
-			SetHZtagPix(icur, MulDiv(GetHZtagVal(icur) - m_yWO, m_yVE, m_yWE) + m_yVO);
+		for (auto icur = m_HZtags.GetNTags() - 1; icur >= 0; icur--)
+			m_HZtags.SetTagPix(icur, MulDiv(m_HZtags.GetValue(icur) - m_yWO, m_yVE, m_yWE) + m_yVO);
 	}
-	if (GetNVTtags() > 0)
+	if (m_VTtags.GetNTags() > 0)
 	{
-		for (auto icur = GetNVTtags() - 1; icur >= 0; icur--)
+		for (auto icur = m_VTtags.GetNTags() - 1; icur >= 0; icur--)
 		{
-			const auto val = GetVTtagVal(icur);
+			const auto val = m_VTtags.GetValue(icur);
 			const auto pix = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-			SetVTtagPix(icur, pix);
+			m_VTtags.SetTagPix(icur, pix);
 		}
 	}
 

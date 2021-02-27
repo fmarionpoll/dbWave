@@ -320,10 +320,10 @@ void CViewData::UpdateChannel(int channel)
 	if (m_ichanselected != channel)							// new value is different than previous
 	{														// change other dependent parameters
 		if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption == 1
-			&& m_ChartDataWnd.GetNHZtags() > 0)
+			&& m_ChartDataWnd.m_HZtags.GetNTags() > 0)
 		{
-			for (auto i = 0; i < m_ChartDataWnd.GetNHZtags(); i++)
-				m_ChartDataWnd.SetHZtagChan(i, m_ichanselected);
+			for (auto i = 0; i < m_ChartDataWnd.m_HZtags.GetNTags(); i++)
+				m_ChartDataWnd.m_HZtags.SetTagChan(i, m_ichanselected);
 			UpdateHZtagsVal();
 			m_ChartDataWnd.Invalidate();
 		}
@@ -694,7 +694,7 @@ void CViewData::SetCursorAssociatedWindows()
 {
 	auto n_cmd_show = SW_HIDE;
 	if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption == 1
-		&& m_ChartDataWnd.GetNHZtags() > 0)
+		&& m_ChartDataWnd.m_HZtags.GetNTags() > 0)
 		n_cmd_show = SW_SHOW;
 
 	// change windows state: edit windows
@@ -712,13 +712,13 @@ void CViewData::SetCursorAssociatedWindows()
 
 void CViewData::UpdateHZtagsVal()
 {
-	if (m_ChartDataWnd.GetNHZtags() <= 0)
+	if (m_ChartDataWnd.m_HZtags.GetNTags() <= 0)
 		return;
-	const auto v1 = m_ChartDataWnd.GetHZtagVal(0);
+	const auto v1 = m_ChartDataWnd.m_HZtags.GetValue(0);
 	auto itag = 0;
-	if (m_ChartDataWnd.GetNHZtags() > 1)
+	if (m_ChartDataWnd.m_HZtags.GetNTags() > 1)
 		itag = 1;
-	const auto v2 = m_ChartDataWnd.GetHZtagVal(itag);
+	const auto v2 = m_ChartDataWnd.m_HZtags.GetValue(itag);
 	const auto mv_per_bin = m_ChartDataWnd.GetChanlistVoltsperDataBin(m_ichanselected) * 1000.0f;
 	m_v1 = static_cast<float>(v1) * mv_per_bin;
 	m_v2 = static_cast<float>(v2) * mv_per_bin;
@@ -756,19 +756,19 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			{
 				auto ptaglist = m_pdatDoc->GetpVTtags();
 				ptaglist->CopyTagList(m_ChartDataWnd.GetVTtagList());
-				m_ChartDataWnd.DelAllVTtags();
+				m_ChartDataWnd.m_VTtags.RemoveAllTags();
 			}
 			else if (mdMO->wOption == 1)	// horizontal cursors
 			{
 				auto ptaglist = m_pdatDoc->GetpHZtags();
 				ptaglist->CopyTagList(m_ChartDataWnd.GetHZtagList());
-				m_ChartDataWnd.RemoveAllHZtags();
+				m_ChartDataWnd. m_HZtags.RemoveAllTags();
 			}
 			else if (mdMO->wOption == 3) // detect stimulus
 			{
-				mdMO->wStimuluschan = m_ChartDataWnd.GetHZtagChan(0);
-				mdMO->wStimulusthresh = m_ChartDataWnd.GetHZtagVal(0);
-				m_ChartDataWnd.RemoveAllHZtags();
+				mdMO->wStimuluschan = m_ChartDataWnd.m_HZtags.GetChannel(0);
+				mdMO->wStimulusthresh = m_ChartDataWnd.m_HZtags.GetValue(0);
+				m_ChartDataWnd. m_HZtags.RemoveAllTags();
 			}
 			m_ChartDataWnd.Invalidate();
 		}
@@ -783,11 +783,11 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (m_cursorstate == CURSOR_MEASURE)
 		{
 			if (mdMO->wOption == 0)
-				m_ChartDataWnd.SetVTtagList(m_pdatDoc->GetpVTtags());
+				m_ChartDataWnd.m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 			else if (mdMO->wOption == 1)
-				m_ChartDataWnd.SetHZtagList(m_pdatDoc->GetpHZtags());
+				m_ChartDataWnd.m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
 			else if (mdMO->wOption == 3)
-				m_ChartDataWnd.AddHZtag(mdMO->wStimulusthresh, mdMO->wStimuluschan);
+				m_ChartDataWnd.m_HZtags.AddTag(mdMO->wStimulusthresh, mdMO->wStimuluschan);
 			m_ChartDataWnd.Invalidate();
 		}
 		SetCursorAssociatedWindows();
@@ -812,20 +812,20 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	{
 		// ......................  vertical tags
 	case 0:					// if no VTtags, then take those of rectangle, or limits of lineview
-		m_ChartDataWnd.AddVTLtag(mdMO->lLimitLeft);
+		m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitLeft, 0);
 		if (mdMO->lLimitRight != mdMO->lLimitLeft)
-			m_ChartDataWnd.AddVTLtag(mdMO->lLimitRight);
+			m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitRight, 0);
 		// store new VT tags into document
 		m_pdatDoc->GetpVTtags()->CopyTagList(m_ChartDataWnd.GetVTtagList());
 		break;
 
 		// ......................  horizontal cursors
 	case 1:						// if no HZcursors, take those of rectangle or limits of lineview
-		m_ChartDataWnd.AddHZtag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
+		m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
 		if (mdMO->wLimitInf != mdMO->wLimitSup)
-			m_ChartDataWnd.AddHZtag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
+			m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
 		m_pdatDoc->GetpHZtags()->CopyTagList(m_ChartDataWnd.GetHZtagList());
-		if (m_ChartDataWnd.GetNHZtags() == 2)
+		if (m_ChartDataWnd.m_HZtags.GetNTags() == 2)
 			SetCursorAssociatedWindows();
 		UpdateHZtagsVal();
 		break;
@@ -844,7 +844,7 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEHZTAG:		// horizontal tag has changed 	lowp = tag nb
 		if (mdMO->wOption == 3)
-			mdMO->wStimulusthresh = m_ChartDataWnd.GetHZtagVal(0);
+			mdMO->wStimulusthresh = m_ChartDataWnd.m_HZtags.GetValue(0);
 		else
 			UpdateHZtagsVal();
 		break;
@@ -1177,8 +1177,8 @@ void CViewData::MeasureProperties(int item)
 	case 0:	m_pdatDoc->GetpVTtags()->CopyTagList(m_ChartDataWnd.GetVTtagList()); break;
 	case 1: m_pdatDoc->GetpHZtags()->CopyTagList(m_ChartDataWnd.GetHZtagList()); break;
 	case 3:
-		mdMO->wStimuluschan = m_ChartDataWnd.GetHZtagChan(0);
-		mdMO->wStimulusthresh = m_ChartDataWnd.GetHZtagVal(0);
+		mdMO->wStimuluschan = m_ChartDataWnd.m_HZtags.GetChannel(0);
+		mdMO->wStimulusthresh = m_ChartDataWnd.m_HZtags.GetValue(0);
 		break;
 	default: break;
 	}

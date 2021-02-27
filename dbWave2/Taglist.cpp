@@ -91,7 +91,7 @@ void CTagList::SetTagVal(int itag, int newval)
 		pcur->m_value = newval;
 }
 
-int CTagList::GetTagVal(int itag)
+int CTagList::GetValue(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
@@ -100,7 +100,7 @@ int CTagList::GetTagVal(int itag)
 	return NULL;
 }
 
-int CTagList::GetTagChan(int itag)
+int CTagList::GetChannel(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)

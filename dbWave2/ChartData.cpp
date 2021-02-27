@@ -899,7 +899,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 		p_dc->MoveTo(m_PolyPoints[0]);
 		p_dc->Polyline(&m_PolyPoints[0], nelements);
 
-		if (GetNHZtags() > 0)
+		if (m_HZtags.GetNTags() > 0)
 			displayHZtags_Chan(p_dc, ichan, chanlist_item);
 
 		highlightData(p_dc, ichan);
@@ -909,7 +909,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->SelectObject(poldpen);
 	p_dc->RestoreDC(n_saved_dc);
 
-	if (GetNVTtags() > 0)
+	if (m_VTtags.GetNTags() > 0)
 		displayVTtags_LValue(p_dc);
 
 	// temp tag
@@ -932,12 +932,12 @@ void CChartDataWnd::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pCha
 	auto wext = pChan->GetYextent();
 	auto worg = pChan->GetYzero();
 	const auto yVE = m_displayRect.Height();
-	for (auto i = GetNHZtags() - 1; i >= 0; i--)
+	for (auto i = m_HZtags.GetNTags() - 1; i >= 0; i--)
 	{
-		if (GetHZtagChan(i) != ichan)
+		if (m_HZtags.GetChannel(i) != ichan)
 			continue;
 		//ATLTRACE2("display HZtag %i \n", i);
-		auto k = GetHZtagVal(i);
+		auto k = m_HZtags.GetValue(i);
 		k = MulDiv(short(k) - worg, yVE, wext);
 		p_dc->MoveTo(m_displayRect.left, k);
 		p_dc->LineTo(m_displayRect.right, k);
@@ -953,9 +953,9 @@ void CChartDataWnd::displayVTtags_LValue(CDC* p_dc)
 	const auto y0 = 0;
 	const int y1 = m_displayRect.bottom;
 
-	for (auto j = GetNVTtags() - 1; j >= 0; j--)
+	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 	{
-		const auto lk = GetVTtagLval(j);
+		const auto lk = m_VTtags.GetTagLVal(j);
 		if (lk <m_lxFirst || lk > m_lxLast)
 			continue;
 		const auto llk = (lk - m_lxFirst) * float(m_displayRect.Width()) / (m_lxLast - m_lxFirst + 1);
@@ -1072,7 +1072,7 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		}
 
 		//display associated cursors ------------------------------------------
-		if (GetNHZtags() > 0)					// print HZ cursors if any?
+		if (m_HZtags.GetNTags() > 0)					// print HZ cursors if any?
 		{
 			// select pen and display mode
 			CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
@@ -1080,11 +1080,11 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			// iterate through HZ cursor list
 			const int x0 = pRect->left;
 			const int x1 = pRect->right;
-			for (auto j = GetNHZtags() - 1; j >= 0; j--)
+			for (auto j = m_HZtags.GetNTags() - 1; j >= 0; j--)
 			{
-				if (GetHZtagChan(j) != ichan)	// next tag if not associated with
+				if (m_HZtags.GetChannel(j) != ichan)	// next tag if not associated with
 					continue;					// current channel
-				auto k = GetHZtagVal(j);			// get value
+				auto k = m_HZtags.GetValue(j);	
 				k = MulDiv(k - yzero, yVE, yextent) + yVO;
 				p_dc->MoveTo(x0, k);				// set initial pt
 				p_dc->LineTo(x1, k);				// HZ line
@@ -1096,7 +1096,7 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	}
 
 	// display vertical cursors ------------------------------------------------
-	if (GetNVTtags() > 0)
+	if (m_VTtags.GetNTags() > 0)
 	{
 		// select pen and display mode
 		CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
@@ -1106,9 +1106,9 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		const int y1 = pRect->bottom;
 		const int k0 = pRect->left;
 		const int ksize = pRect->right - k0;
-		for (auto j = GetNVTtags() - 1; j >= 0; j--)
+		for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 		{
-			const auto lk = GetVTtagLval(j);	// get val
+			const auto lk = m_VTtags.GetTagLVal(j);	// get val
 			if (lk <m_lxFirst || lk > m_lxLast)
 				continue;
 			const int k = k0 + (lk - m_lxFirst) * ksize / (m_lxLast - m_lxFirst + 1);
@@ -1309,16 +1309,18 @@ void CChartDataWnd::curveXOR()
 void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// convert chan values stored within HZ tags into pixels
-	if (GetNHZtags() > 0)
+	if (m_HZtags.GetNTags() > 0)
 	{
-		for (auto icur = 0; icur < GetNHZtags(); icur++)
+		for (auto icur = 0; icur < m_HZtags.GetNTags(); icur++)
 		{
-			const auto pixval = GetChanlistBintoPixel(GetHZtagChan(icur), GetHZtagVal(icur));
-			SetHZtagPix(icur, pixval);
+			const auto pixval = GetChanlistBintoPixel(
+				m_HZtags.GetChannel(icur), 
+				m_HZtags.GetValue(icur));
+			m_HZtags.SetTagPix(icur, pixval);
 		}
 	}
 
-	if (GetNVTtags() > 0)
+	if (m_VTtags.GetNTags() > 0)
 	{
 		m_liFirst = m_lxFirst;
 		m_liLast = m_lxLast;
@@ -1361,7 +1363,7 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	// if horizontal cursor hit -- specific .. deal with variable gain
 	if (m_trackMode == TRACK_HZTAG)
 	{
-		const auto chanlist_item = chanlistitem_ptr_array[GetHZtagChan(m_HCtrapped)];
+		const auto chanlist_item = chanlistitem_ptr_array[m_HZtags.GetChannel(m_HCtrapped)];
 		m_yWE = chanlist_item->GetYextent();				// store extent
 		m_yWO = chanlist_item->GetYzero();					// store zero
 	}
@@ -1407,7 +1409,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// convert pix into data value and back again
 		const auto lval = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.right) + m_liFirst;
-		SetVTtagLval(m_HCtrapped, lval);
+		m_VTtags.SetTagLVal(m_HCtrapped, lval);
 		point.x = int((lval - m_liFirst) * long(m_displayRect.right) / (m_liLast - m_liFirst + 1));
 		XorVTtag(point.x);
 		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
@@ -1531,15 +1533,15 @@ int CChartDataWnd::doesCursorHitCurve(CPoint point)
 
 void CChartDataWnd::MoveHZtagtoVal(int i, int val)
 {
-	const auto chan = GetHZtagChan(i);
+	const auto chan = m_HZtags.GetChannel(i);
 	const auto chanlist_item = chanlistitem_ptr_array[chan];
 	m_XORyext = chanlist_item->GetYextent();
 	m_zero = chanlist_item->GetYzero();
-	m_ptLast.y = MulDiv(GetHZtagVal(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
+	m_ptLast.y = MulDiv(m_HZtags.GetValue(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
 	CPoint point;
 	point.y = MulDiv(val - m_zero, m_yVE, m_XORyext) + m_yVO;
 	XorHZtag(point.y);
-	SetHZtagVal(i, val);
+	m_HZtags.SetTagVal(i, val);
 }
 
 void CChartDataWnd::SetHighlightData(CHighLight& source)

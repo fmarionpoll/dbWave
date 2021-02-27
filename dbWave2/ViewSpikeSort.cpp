@@ -190,14 +190,14 @@ void CViewSpikeSort::OnInitialUpdate()
 	spikeshape_wnd_.DisplayAllFiles(false, GetDocument());
 	spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
 	spikeshape_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1spk));
-	m_spkformtagleft = spikeshape_wnd_.AddVTtag(m_psC->ileft);	
-	m_spkformtagright = spikeshape_wnd_.AddVTtag(m_psC->iright);
+	m_spkformtagleft = spikeshape_wnd_.m_VTtags.AddTag(m_psC->ileft, 0);
+	m_spkformtagright = spikeshape_wnd_.m_VTtags.AddTag(m_psC->iright, 0);
 
 	xygraph_wnd_.DisplayAllFiles(false, GetDocument());
 	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	xygraph_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1parms));
-	m_itagup = xygraph_wnd_.AddHZtag(m_psC->iupper, 0);	
-	m_itaglow = xygraph_wnd_.AddHZtag(m_psC->ilower, 0);
+	m_itagup = xygraph_wnd_.m_HZtags.AddTag(m_psC->iupper, 0);	
+	m_itaglow = xygraph_wnd_.m_HZtags.AddTag(m_psC->ilower, 0);
 
 	spikebars_wnd_.DisplayAllFiles(false, GetDocument());
 	spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
@@ -210,8 +210,8 @@ void CViewSpikeSort::OnInitialUpdate()
 	((CButton*)(GetDlgItem(IDC_INCREMENTFLAG)))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// display tag lines at proper places
-	m_spkhistupper = yhistogram_wnd_.AddVTtag(m_psC->iupper);
-	m_spkhistlower = yhistogram_wnd_.AddVTtag(m_psC->ilower);
+	m_spkhistupper = yhistogram_wnd_.m_VTtags.AddTag(m_psC->iupper, 0);
+	m_spkhistlower = yhistogram_wnd_.m_VTtags.AddTag(m_psC->ilower, 0);
 
 	updateFileParameters();
 	if (nullptr != m_pSpkList) {
@@ -231,10 +231,10 @@ void CViewSpikeSort::activateMode4()
 	if (4 == m_psC->iparameter)
 	{
 		n_cmd_show = SW_SHOW;
-		if (1 > xygraph_wnd_.GetNVTtags())
+		if (1 > xygraph_wnd_.m_VTtags.GetNTags())
 		{
-			m_ixyright = xygraph_wnd_.AddVTtag(m_psC->ixyright);
-			m_ixyleft = xygraph_wnd_.AddVTtag(m_psC->ixyleft);
+			m_ixyright = xygraph_wnd_.m_VTtags.AddTag(m_psC->ixyright, 0);
+			m_ixyleft = xygraph_wnd_.m_VTtags.AddTag(m_psC->ixyleft, 0);
 			const auto delta = m_pSpkList->GetAcqSampRate() / m_tunit;
 			m_txyright = static_cast<float>(m_psC->ixyright) / delta;
 			m_txyleft = static_cast<float>(m_psC->ixyleft) / delta;
@@ -254,7 +254,7 @@ void CViewSpikeSort::activateMode4()
 	}
 	else
 	{
-		xygraph_wnd_.DelAllVTtags();
+		xygraph_wnd_.m_VTtags.RemoveAllTags();
 		xygraph_wnd_.SetNxScaleCells(0, 0, 0);
 	}
 	GetDlgItem(IDC_STATICRIGHT)->ShowWindow(n_cmd_show);
@@ -411,8 +411,8 @@ void CViewSpikeSort::updateFileParameters()
 	m_t2 = (m_psC->iright * m_tunit) / m_pSpkList->GetAcqSampRate();
 
 	spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
-	spikeshape_wnd_.SetVTtagVal(m_spkformtagleft, m_psC->ileft);
-	spikeshape_wnd_.SetVTtagVal(m_spkformtagright, m_psC->iright);
+	spikeshape_wnd_.m_VTtags.SetTagVal(m_spkformtagleft, m_psC->ileft);
+	spikeshape_wnd_.m_VTtags.SetTagVal(m_spkformtagright, m_psC->iright);
 	spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
 
 	spikebars_wnd_.SetSourceData(m_pSpkList, GetDocument());
@@ -430,19 +430,19 @@ void CViewSpikeSort::updateFileParameters()
 		if (4 != m_psC->iparameter)
 		{
 			xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
-			if (xygraph_wnd_.GetNVTtags() > 0)
+			if (xygraph_wnd_.m_VTtags.GetNTags() > 0)
 			{
-				xygraph_wnd_.DelAllVTtags();
+				xygraph_wnd_.m_VTtags.RemoveAllTags();
 				xygraph_wnd_.Invalidate();
 			}
 		}
 		else
 		{
 			xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
-			if (1 > xygraph_wnd_.GetNVTtags())
+			if (1 > xygraph_wnd_.m_VTtags.GetNTags())
 			{
-				m_ixyright = xygraph_wnd_.AddVTtag(m_psC->ixyright);
-				m_ixyleft = xygraph_wnd_.AddVTtag(m_psC->ixyleft);
+				m_ixyright = xygraph_wnd_.m_VTtags.AddTag(m_psC->ixyright, 0);
+				m_ixyleft = xygraph_wnd_.m_VTtags.AddTag(m_psC->ixyleft, 0);
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_tunit;
 				m_txyright = static_cast<float>(m_psC->ixyright) / delta;
 				m_txyleft = static_cast<float>(m_psC->ixyleft) / delta;
@@ -662,14 +662,14 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (threshold == m_spkformtagleft)		// first tag
 			{
-				m_psC->ileft = spikeshape_wnd_.GetVTtagVal(m_spkformtagleft);
+				m_psC->ileft = spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagleft);
 				m_t1 = m_psC->ileft * m_tunit / m_pSpkList->GetAcqSampRate();
 				mm_t1.m_bEntryDone = TRUE;
 				OnEnChangeT1();
 			}
 			else if (threshold == m_spkformtagright)	// second tag
 			{
-				m_psC->iright = spikeshape_wnd_.GetVTtagVal(m_spkformtagright);
+				m_psC->iright = spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagright);
 				m_t2 = m_psC->iright * m_tunit / m_pSpkList->GetAcqSampRate();
 				mm_t2.m_bEntryDone = TRUE;
 				OnEnChangeT2();
@@ -679,13 +679,13 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (threshold == m_spkhistlower)		// first tag
 			{
-				m_psC->ilower = yhistogram_wnd_.GetVTtagVal(m_spkhistlower);
+				m_psC->ilower = yhistogram_wnd_.m_VTtags.GetValue(m_spkhistlower);
 				m_lower = m_psC->ilower * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				UpdateData(false);
 			}
 			else if (threshold == m_spkhistupper)	// second tag
 			{
-				m_psC->iupper = yhistogram_wnd_.GetVTtagVal(m_spkhistupper);	// load new value
+				m_psC->iupper = yhistogram_wnd_.m_VTtags.GetValue(m_spkhistupper);	// load new value
 				m_upper = m_psC->iupper * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				UpdateData(false);
 			}
@@ -695,7 +695,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (threshold == m_ixyright)
 			{
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_tunit;
-				m_psC->ixyright = xygraph_wnd_.GetVTtagVal(m_ixyright);
+				m_psC->ixyright = xygraph_wnd_.m_VTtags.GetValue(m_ixyright);
 				m_txyright = static_cast<float>(m_psC->ixyright) / delta;
 				mm_txyright.m_bEntryDone = TRUE;
 				OnEnChangeEditright2();
@@ -703,7 +703,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			else if (threshold == m_ixyleft)
 			{
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_tunit;
-				m_psC->ixyleft = xygraph_wnd_.GetVTtagVal(m_ixyleft);
+				m_psC->ixyleft = xygraph_wnd_.m_VTtags.GetValue(m_ixyleft);
 				m_txyleft = static_cast<float>(m_psC->ixyleft) / delta;
 				mm_txyleft.m_bEntryDone = TRUE;
 				OnEnChangeEditleft2();
@@ -717,14 +717,14 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (threshold == m_itaglow)		// first tag
 			{
-				m_psC->ilower = xygraph_wnd_.GetHZtagVal(m_itaglow);	// load new value
+				m_psC->ilower = xygraph_wnd_.m_HZtags.GetValue(m_itaglow);	// load new value
 				m_lower = m_psC->ilower * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				mm_lower.m_bEntryDone = TRUE;
 				OnEnChangelower();
 			}
 			else if (threshold == m_itagup)	// second tag
 			{
-				m_psC->iupper = xygraph_wnd_.GetHZtagVal(m_itagup);	// load new value
+				m_psC->iupper = xygraph_wnd_.m_HZtags.GetValue(m_itagup);	// load new value
 				m_upper = m_psC->iupper * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				mm_upper.m_bEntryDone = TRUE;
 				OnEnChangeupper();
@@ -844,12 +844,12 @@ void CViewSpikeSort::OnMeasure()
 		spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	}
 
-	xygraph_wnd_.SetHZtagVal(m_itaglow, m_psC->ilower);
-	xygraph_wnd_.SetHZtagVal(m_itagup, m_psC->iupper);
+	xygraph_wnd_.m_HZtags.SetTagVal(m_itaglow, m_psC->ilower);
+	xygraph_wnd_.m_HZtags.SetTagVal(m_itagup, m_psC->iupper);
 
 	buildHistogram();
-	yhistogram_wnd_.SetVTtagVal(m_itaglow, m_psC->ilower);
-	yhistogram_wnd_.SetVTtagVal(m_itagup, m_psC->iupper);
+	yhistogram_wnd_.m_VTtags.SetTagVal(m_itaglow, m_psC->ilower);
+	yhistogram_wnd_.m_VTtags.SetTagVal(m_itagup, m_psC->iupper);
 
 	updateGain();
 	UpdateData(FALSE);
@@ -1414,7 +1414,7 @@ void CViewSpikeSort::OnEnChangeEditleft2()
 		m_txyleft = left;
 		left = m_txyleft / delta;
 		const auto itleft = static_cast<int>(left);
-		if (itleft != xygraph_wnd_.GetVTtagVal(m_ixyleft))
+		if (itleft != xygraph_wnd_.m_VTtags.GetValue(m_ixyleft))
 		{
 			m_psC->ixyleft = itleft;
 			xygraph_wnd_.MoveVTtagtoVal(m_ixyleft, itleft);
@@ -1451,7 +1451,7 @@ void CViewSpikeSort::OnEnChangeEditright2()
 		m_txyright = right;
 		right = m_txyright / delta;
 		const auto itright = static_cast<int>(right);
-		if (itright != xygraph_wnd_.GetVTtagVal(m_ixyright))
+		if (itright != xygraph_wnd_.m_VTtags.GetValue(m_ixyright))
 		{
 			m_psC->ixyright = itright;
 			xygraph_wnd_.MoveVTtagtoVal(m_ixyright, itright);
@@ -1566,9 +1566,9 @@ void CViewSpikeSort::OnEnChangelower()
 		mm_lower.SetSel(0, -1);			// select all text
 		m_lower = lower;
 		m_psC->ilower = static_cast<int>(m_lower / m_delta);
-		if (m_psC->ilower != xygraph_wnd_.GetHZtagVal(m_itaglow))
+		if (m_psC->ilower != xygraph_wnd_.m_HZtags.GetValue(m_itaglow))
 			xygraph_wnd_.MoveHZtagtoVal(m_itaglow, m_psC->ilower);
-		if (m_psC->ilower != yhistogram_wnd_.GetVTtagVal(m_spkhistlower))
+		if (m_psC->ilower != yhistogram_wnd_.m_VTtags.GetValue(m_spkhistlower))
 			yhistogram_wnd_.MoveVTtagtoVal(m_spkhistlower, m_psC->ilower);
 		UpdateData(FALSE);
 	}
@@ -1604,9 +1604,9 @@ void CViewSpikeSort::OnEnChangeupper()
 		mm_upper.SetSel(0, -1);			// select all text
 		m_upper = upper;
 		m_psC->iupper = static_cast<int>(m_upper / m_delta);
-		if (m_psC->iupper != xygraph_wnd_.GetHZtagVal(m_itagup))
+		if (m_psC->iupper != xygraph_wnd_.m_HZtags.GetValue(m_itagup))
 			xygraph_wnd_.MoveHZtagtoVal(m_itagup, m_psC->iupper);
-		if (m_psC->ilower != yhistogram_wnd_.GetVTtagVal(m_spkhistupper))
+		if (m_psC->ilower != yhistogram_wnd_.m_VTtags.GetValue(m_spkhistupper))
 			yhistogram_wnd_.MoveVTtagtoVal(m_spkhistupper, m_psC->iupper);
 		UpdateData(FALSE);
 	}
@@ -1646,7 +1646,7 @@ void CViewSpikeSort::OnEnChangeT1()
 		mm_t1.SetSel(0, -1);		// select all text
 		m_t1 = t1;
 		const auto it1 = static_cast<int>(m_t1 / delta);
-		if (it1 != spikeshape_wnd_.GetVTtagVal(m_spkformtagleft))
+		if (it1 != spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagleft))
 		{
 			m_psC->ileft = it1;
 			spikeshape_wnd_.MoveVTtrack(m_spkformtagleft, m_psC->ileft);
@@ -1691,7 +1691,7 @@ void CViewSpikeSort::OnEnChangeT2()
 		mm_t2.SetSel(0, -1);		// select all text
 		m_t2 = t2;
 		const auto it2 = static_cast<int>(m_t2 / delta);
-		if (it2 != spikeshape_wnd_.GetVTtagVal(m_spkformtagright))
+		if (it2 != spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagright))
 		{
 			m_psC->iright = it2;
 			spikeshape_wnd_.MoveVTtrack(m_spkformtagright, m_psC->iright);

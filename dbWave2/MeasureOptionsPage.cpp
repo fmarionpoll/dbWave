@@ -94,16 +94,16 @@ void CMeasureOptionsPage::OnSinglechannel()
 
 void CMeasureOptionsPage::OnVerticaltags()
 {
-	m_pChartDataWnd->RemoveAllHZtags();
-	m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
+	m_pChartDataWnd-> m_HZtags.RemoveAllTags();
+	m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
 }
 
 void CMeasureOptionsPage::OnHorizontaltags()
 {
-	m_pChartDataWnd->DelAllVTtags();
-	m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+	m_pChartDataWnd->m_VTtags.RemoveAllTags();
+	m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
 	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
 }
@@ -134,13 +134,13 @@ void CMeasureOptionsPage::SaveOptions()
 	{
 	case IDC_VERTICALTAGS:
 		i_id = 0;
-		m_pChartDataWnd->RemoveAllHZtags();
-		m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
+		m_pChartDataWnd-> m_HZtags.RemoveAllTags();
+		m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 		break;
 	case IDC_HORIZONTALTAGS:
 		i_id = 1;
-		m_pChartDataWnd->DelAllVTtags();
-		m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+		m_pChartDataWnd->m_VTtags.RemoveAllTags();
+		m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
 		break;
 	case IDC_RECTANGLETAG:		i_id = 2; break;
 	case IDC_STIMULUSTAG:		i_id = 3; break;

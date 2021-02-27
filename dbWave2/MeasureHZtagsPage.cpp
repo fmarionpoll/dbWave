@@ -60,8 +60,8 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 	if (index < 0 || index >= m_nbcursors)
 		return FALSE;
 	m_index = index;
-	m_datachannel = m_pChartDataWnd->GetHZtagChan(index);
-	int k = m_pChartDataWnd->GetHZtagVal(m_index);
+	m_datachannel = m_pChartDataWnd->m_HZtags.GetChannel(index);
+	int k = m_pChartDataWnd->m_HZtags.GetValue(m_index);
 	m_mvlevel = m_pChartDataWnd->ConvertChanlistDataBinsToMilliVolts(m_datachannel, k);
 
 	return TRUE;
@@ -72,7 +72,7 @@ void CMeasureHZtagsPage::OnCenter()
 	int max, min;
 	m_pChartDataWnd->GetChanlistMaxMin(m_datachannel, &max, &min);
 	const auto val = (max + min) / 2;
-	m_pChartDataWnd->SetHZtagVal(m_index, val);
+	m_pChartDataWnd->m_HZtags.SetTagVal(m_index, val);
 	m_pChartDataWnd->Invalidate();
 	m_mvlevel = m_pChartDataWnd->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
@@ -82,7 +82,7 @@ void CMeasureHZtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbcursors)
 	{
-		m_pChartDataWnd->RemoveHZtag(m_index);
+		m_pChartDataWnd->m_HZtags.RemoveTag(m_index);
 		m_nbcursors--;
 	}
 	if (m_index > m_nbcursors - 1)
@@ -115,7 +115,7 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 			m_datachannel = m_pChartDataWnd->GetChanlistSize() - 1;
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			m_pChartDataWnd->SetHZtagChan(m_index, m_datachannel);
+			m_pChartDataWnd->m_HZtags.SetTagChan(m_index, m_datachannel);
 			m_pChartDataWnd->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -168,7 +168,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
 			const auto val = m_pChartDataWnd->ConvertChanlistVoltstoDataBins(m_datachannel, m_mvlevel / 1000.0f);
-			m_pChartDataWnd->SetHZtagVal(m_index, val);
+			m_pChartDataWnd->m_HZtags.SetTagVal(m_index, val);
 			m_pChartDataWnd->Invalidate();
 		}
 	}
@@ -181,7 +181,7 @@ void CMeasureHZtagsPage::OnAdjust()
 	// get nb cursors / m_datachannel
 	auto n_cursors = 0;
 	for (auto i = m_nbcursors - 1; i >= 0; i--)
-		if (m_pChartDataWnd->GetHZtagChan(i) == m_datachannel)
+		if (m_pChartDataWnd->m_HZtags.GetChannel(i) == m_datachannel)
 			n_cursors++;
 
 	// then split cursors across m_datachannel span
@@ -195,14 +195,14 @@ void CMeasureHZtagsPage::OnAdjust()
 	auto val = min;
 	for (auto i = 0; i < m_nbcursors; i++)
 	{
-		if (m_pChartDataWnd->GetHZtagChan(i) == m_datachannel)
+		if (m_pChartDataWnd->m_HZtags.GetChannel(i) == m_datachannel)
 		{
-			m_pChartDataWnd->SetHZtagVal(i, val);
+			m_pChartDataWnd->m_HZtags.SetTagVal(i, val);
 			val += dv;
 		}
 	}
 	m_pChartDataWnd->Invalidate();
-	val = m_pChartDataWnd->GetHZtagVal(m_index);
+	val = m_pChartDataWnd->m_HZtags.GetValue(m_index);
 	m_mvlevel = m_pChartDataWnd->ConvertChanlistDataBinsToMilliVolts(m_datachannel, val);
 	UpdateData(FALSE);
 }
@@ -214,9 +214,9 @@ void CMeasureHZtagsPage::OnOK()
 	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 1)
 	{
-		m_pChartDataWnd->RemoveAllHZtags();
+		m_pChartDataWnd-> m_HZtags.RemoveAllTags();
 		if (m_pMO->wOption == 0)
-			m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
+			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 	}
 	CPropertyPage::OnOK();
 }
@@ -226,12 +226,12 @@ void CMeasureHZtagsPage::OnCancel()
 	// restore initial state of HZcursors
 	if (m_pMO->wOption != 1)
 	{
-		m_pChartDataWnd->RemoveAllHZtags();
+		m_pChartDataWnd-> m_HZtags.RemoveAllTags();
 		if (m_pMO->wOption == 0)
-			m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
+			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 	}
 	else
-		m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+		m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
 	m_pChartDataWnd->Invalidate();
 	CPropertyPage::OnCancel();
 }
@@ -240,10 +240,10 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
-	m_pChartDataWnd->DelAllVTtags();
+	m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
+	m_pChartDataWnd->m_VTtags.RemoveAllTags();
 	m_pChartDataWnd->Invalidate();
-	m_nbcursors = m_pChartDataWnd->GetNHZtags();
+	m_nbcursors = m_pChartDataWnd->m_HZtags.GetNTags();
 	GetHZcursorVal(0);
 
 	// sublassed edits
@@ -258,7 +258,7 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 
 void CMeasureHZtagsPage::OnDeleteAll()
 {
-	m_pChartDataWnd->RemoveAllHZtags();
+	m_pChartDataWnd-> m_HZtags.RemoveAllTags();
 	m_pChartDataWnd->Invalidate();
 	m_nbcursors = 0;
 	GetHZcursorVal(0);

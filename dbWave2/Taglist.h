@@ -6,7 +6,7 @@ class CTagList : public CObject
 {
 
 protected:
-	CArray <CTag*, CTag*> tag_ptr_array;                    // array of tags
+	CArray <CTag*, CTag*> tag_ptr_array; 
 	int		m_version;
 	int		insertTag(CTag* pcur);
 
@@ -27,14 +27,14 @@ public:
 	void	SetTagChan(int itag, int newchan);	// get reference channel
 	void	SetTagVal(int itag, int newval);	// change tag value
 	void	SetTagPix(int itag, int newval);	// change tag pixel value
-	void	SetTagLVal(int itag, long longval);// change tag Lvalue
+	void	SetTagLVal(int itag, long longval);	// change tag Lvalue
 	void	SetTagComment(int itag, CString comment); // change tag comment
 
-	int		GetTagChan(int itag);				// get reference channel
-	int		GetTagVal(int itag);				// get tag value
+	int		GetChannel(int itag);				// get reference channel
+	int		GetValue(int itag);					// get tag value
 	int		GetTagPix(int itag);				// get tag pixel value
 	long	GetTagLVal(int itag);				// get tag value
-	CString GetTagComment(int itag);		// get comment
+	CString GetTagComment(int itag);			// get comment
 
 	int 	GetNTags();
 	CTag*	GetTag(int itag);

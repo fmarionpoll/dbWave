@@ -486,9 +486,9 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 		m_ChartDataWnd_Detect.RemoveAllChanlistItems();
 		m_ChartDataWnd_Detect.AddChanlistItem(0, 0);
 		m_ChartDataWnd_Detect.SetChanlistColor(0, 0);
-		m_ChartDataWnd_Detect.RemoveAllHZtags();
+		m_ChartDataWnd_Detect. m_HZtags.RemoveAllTags();
 		m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.ConvertChanlistVoltstoDataBins(0, m_pDetectParms->detectThresholdmV / 1000.f);
-		m_ChartDataWnd_Detect.AddHZtag(m_pDetectParms->detectThreshold, 0);
+		m_ChartDataWnd_Detect.m_HZtags.AddTag(m_pDetectParms->detectThreshold, 0);
 	}
 
 	//add all channels to detection window
@@ -680,8 +680,8 @@ void CViewSpikeDetection::OnInitialUpdate()
 	CDaoRecordView::OnInitialUpdate();
 
 	// load file data
-	if (m_ChartDataWnd_Detect.GetNHZtags() < 1)
-		m_ChartDataWnd_Detect.AddHZtag(0, 0);
+	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
+		m_ChartDataWnd_Detect.m_HZtags.AddTag(0, 0);
 
 	UpdateFileParameters(TRUE);
 	m_ChartDataWnd_Detect.SetScopeParameters(&(options_viewdata->viewdata));
@@ -760,8 +760,9 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	// ----------------------------- move horizontal cursor / source data
 	case HINT_MOVEHZTAG:
-		m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.GetHZtagVal(threshold);
-		m_thresholdval = m_ChartDataWnd_Detect.ConvertChanlistDataBinsToMilliVolts(0, m_ChartDataWnd_Detect.GetHZtagVal(threshold));
+		m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.m_HZtags.GetValue(threshold);
+		m_thresholdval = m_ChartDataWnd_Detect.ConvertChanlistDataBinsToMilliVolts(0, 
+			m_ChartDataWnd_Detect.m_HZtags.GetValue(threshold));
 		m_pDetectParms->detectThresholdmV = m_thresholdval;
 		mm_thresholdval.m_bEntryDone = TRUE;
 		OnEnChangeThresholdval();
@@ -845,9 +846,9 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	{
 		int lvalue = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(threshold);
 		if (i_id == m_ChartDataWnd_Detect.GetDlgCtrlID())
-			lvalue = m_ChartDataWnd_Detect.GetVTtagLval(threshold);
+			lvalue = m_ChartDataWnd_Detect.m_VTtags.GetTagLVal(threshold);
 		else if (i_id == m_ChartDataWnd_Source.GetDlgCtrlID())
-			lvalue = m_ChartDataWnd_Source.GetVTtagLval(threshold);
+			lvalue = m_ChartDataWnd_Source.m_VTtags.GetTagLVal(threshold);
 
 		p_spike_doc_->m_stimIntervals.intervalsArray.SetAt(threshold, lvalue);
 		UpdateVTtags();
@@ -2157,8 +2158,8 @@ void CViewSpikeDetection::UpdateCB()
 	m_CBtransform.SetCurSel(m_pDetectParms->detectTransform);
 	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, m_pDetectParms->detectChan, m_pDetectParms->detectTransform);
 	m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.ConvertChanlistVoltstoDataBins(0, m_thresholdval / 1000.f);
-	m_ChartDataWnd_Detect.SetHZtagChan(0, 0);
-	m_ChartDataWnd_Detect.SetHZtagVal(0, m_pDetectParms->detectThreshold);
+	m_ChartDataWnd_Detect.m_HZtags.SetTagChan(0, 0);
+	m_ChartDataWnd_Detect.m_HZtags.SetTagVal(0, m_pDetectParms->detectThreshold);
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
 }
 
@@ -2172,18 +2173,18 @@ void CViewSpikeDetection::UpdateLegendDetectionWnd() {
 
 void CViewSpikeDetection::UpdateVTtags()
 {
-	m_displaySpk_BarView.DelAllVTtags();
-	m_ChartDataWnd_Detect.DelAllVTtags();
-	m_ChartDataWnd_Source.DelAllVTtags();
+	m_displaySpk_BarView.m_VTtags.RemoveAllTags();
+	m_ChartDataWnd_Detect.m_VTtags.RemoveAllTags();
+	m_ChartDataWnd_Source.m_VTtags.RemoveAllTags();
 	if (p_spike_doc_->m_stimIntervals.nitems == 0)
 		return;
 
 	for (auto i = 0; i < p_spike_doc_->m_stimIntervals.intervalsArray.GetSize(); i++)
 	{
 		const int cx = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(i);
-		m_displaySpk_BarView.AddVTLtag(cx);
-		m_ChartDataWnd_Detect.AddVTLtag(cx);
-		m_ChartDataWnd_Source.AddVTLtag(cx);
+		m_displaySpk_BarView.m_VTtags.AddLTag(cx, 0);
+		m_ChartDataWnd_Detect.m_VTtags.AddLTag(cx, 0);
+		m_ChartDataWnd_Source.m_VTtags.AddLTag(cx, 0);
 	}
 }
 
@@ -3197,10 +3198,10 @@ void CViewSpikeDetection::UpdateDetectionControls()
 
 	const auto ithreshold = p_spikelist_->GetdetectThreshold();
 	m_thresholdval = m_ChartDataWnd_Detect.ConvertChanlistDataBinsToMilliVolts(0, ithreshold);
-	if (m_ChartDataWnd_Detect.GetNHZtags() < 1)
-		m_ChartDataWnd_Detect.AddHZtag(ithreshold, 0);
+	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
+		m_ChartDataWnd_Detect.m_HZtags.AddTag(ithreshold, 0);
 	else
-		m_ChartDataWnd_Detect.SetHZtagVal(0, ithreshold);
+		m_ChartDataWnd_Detect.m_HZtags.SetTagVal(0, ithreshold);
 
 	// update spike channel displayed
 	m_displaySpk_BarView.SetSpkList(p_spikelist_);

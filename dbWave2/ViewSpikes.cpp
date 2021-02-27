@@ -234,7 +234,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			const auto left = m_ChartDataWnd.GetDataOffsetfromPixel(rect.left);
 			const auto right = m_ChartDataWnd.GetDataOffsetfromPixel(rect.right);
 			// set a tag in the center of the rectangle
-			m_ChartDataWnd.AddVTLtag((left + right) / 2);
+			m_ChartDataWnd.m_VTtags.AddLTag((left + right) / 2, 0);
 			m_ChartDataWnd.Invalidate();
 		}
 		break;

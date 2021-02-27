@@ -154,7 +154,7 @@ void CMeasureResultsPage::OutputTitle()
 
 void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 {
-	const auto n_tags = m_pChartDataWnd->GetNVTtags();
+	const auto n_tags = m_pChartDataWnd->m_VTtags.GetNTags();
 	auto tag_first = -1;
 	auto tag_last = -1;
 
@@ -172,7 +172,7 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 		if (tag_last < 0)
 		{
 			tag_last = i;
-			MeasureWithinInterval(channel, line, m_pChartDataWnd->GetVTtagLval(tag_first), m_pChartDataWnd->GetVTtagLval(tag_last));
+			MeasureWithinInterval(channel, line, m_pChartDataWnd->m_VTtags.GetTagLVal(tag_first), m_pChartDataWnd->m_VTtags.GetTagLVal(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -182,7 +182,7 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 	// cope with isolated tags
 	if (tag_first > 0 && tag_last < 0)
 	{
-		const auto l1 = m_pChartDataWnd->GetVTtagLval(tag_first);
+		const auto l1 = m_pChartDataWnd->m_VTtags.GetTagLVal(tag_first);
 		MeasureWithinInterval(channel, line, l1, l1);
 	}
 }
@@ -362,7 +362,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 
 void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 {
-	const auto number_of_tags = m_pChartDataWnd->GetNHZtags();
+	const auto number_of_tags = m_pChartDataWnd->m_HZtags.GetNTags();
 	auto tag_first = -1;
 	auto tag_last = -1;
 
@@ -380,7 +380,9 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 		if (tag_last < 0)
 		{
 			tag_last = i;
-			MeasureBetweenHZ(ichan, line, m_pChartDataWnd->GetHZtagVal(tag_first), m_pChartDataWnd->GetHZtagVal(tag_last));
+			MeasureBetweenHZ(ichan, line, 
+				m_pChartDataWnd->m_HZtags.GetValue(tag_first), 
+				m_pChartDataWnd->m_HZtags.GetValue(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -390,7 +392,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 	// cope with isolated tags
 	if (tag_first > 0 && tag_last < 0)
 	{
-		const auto v1 = m_pChartDataWnd->GetHZtagVal(tag_first);
+		const auto v1 = m_pChartDataWnd->m_HZtags.GetValue(tag_first);
 		MeasureBetweenHZ(ichan, line, v1, v1);
 	}
 }

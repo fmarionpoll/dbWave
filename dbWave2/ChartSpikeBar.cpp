@@ -115,7 +115,7 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			displayStimulus(p_dc, &m_displayRect);
 
 		// display vertical cursors
-		if (GetNVTtags() > 0)
+		if (m_VTtags.GetNTags() > 0)
 		{
 			// select pen and display mode
 			const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
@@ -124,9 +124,9 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			// iterate through VT cursor list
 			const auto y0 = 0;
 			const int y1 = m_displayRect.bottom;
-			for (auto j = GetNVTtags() - 1; j >= 0; j--)
+			for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 			{
-				const auto lk = GetVTtagLval(j);	// get val
+				const auto lk = m_VTtags.GetTagLVal(j);	// get val
 				if (lk <m_lFirst || lk > m_lLast)
 					continue;
 				const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));
@@ -214,7 +214,7 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 		displayStimulus(p_dc, &m_displayRect);
 
 	// display vertical cursors
-	if (GetNVTtags() > 0)
+	if (m_VTtags.GetNTags() > 0)
 	{
 		// select pen and display mode
 		const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
@@ -223,9 +223,9 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 		// iterate through VT cursor list
 		const auto y0 = 0;
 		const int y1 = m_displayRect.bottom;
-		for (auto j = GetNVTtags() - 1; j >= 0; j--)
+		for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 		{
-			const auto lk = GetVTtagLval(j);
+			const auto lk = m_VTtags.GetTagLVal(j);
 			if (lk <m_lFirst || lk > m_lLast)
 				continue;
 			const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));

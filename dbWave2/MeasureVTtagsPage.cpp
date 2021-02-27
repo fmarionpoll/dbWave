@@ -73,7 +73,7 @@ BOOL CMeasureVTtagsPage::GetVTtagVal(int index)
 	if (index < 0 || index >= m_nbtags)
 		return FALSE;
 	m_index = index;
-	const auto lk = m_pChartDataWnd->GetVTtagLval(m_index);
+	const auto lk = m_pChartDataWnd->m_VTtags.GetTagLVal(m_index);
 	m_timesec = static_cast<float>(lk) / m_samplingrate;
 
 	return TRUE;
@@ -99,9 +99,9 @@ void CMeasureVTtagsPage::OnCancel()
 	OnDeleteSeries();
 	if (m_pMO->wOption != 0)
 	{
-		m_pChartDataWnd->DelAllVTtags();
+		m_pChartDataWnd->m_VTtags.RemoveAllTags();
 		if (m_pMO->wOption == 1)
-			m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+			m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
 	}
 	CPropertyPage::OnCancel();
 }
@@ -113,9 +113,9 @@ void CMeasureVTtagsPage::OnOK()
 	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 0)
 	{
-		m_pChartDataWnd->DelAllVTtags();
+		m_pChartDataWnd->m_VTtags.RemoveAllTags();
 		if (m_pMO->wOption == 1)
-			m_pChartDataWnd->SetHZtagList(m_pdatDoc->GetpHZtags());
+			m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
 	}
 	CPropertyPage::OnOK();
 }
@@ -129,10 +129,10 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 
 	// save initial state of VTtags
 	//TODO bug here
-	m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
-	m_pChartDataWnd->RemoveAllHZtags();
+	m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
+	m_pChartDataWnd-> m_HZtags.RemoveAllTags();
 	m_pChartDataWnd->Invalidate();
-	m_nbtags = m_pChartDataWnd->GetNVTtags();
+	m_nbtags = m_pChartDataWnd->m_VTtags.GetNTags();
 	GetVTtagVal(0);
 
 	// subclassed edits
@@ -158,7 +158,7 @@ void CMeasureVTtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbtags)
 	{
-		m_pChartDataWnd->DelVTtag(m_index);
+		m_pChartDataWnd->m_VTtags.RemoveTag(m_index);
 		m_nbtags--;
 	}
 	if (m_index > m_nbtags - 1)
@@ -223,7 +223,7 @@ void CMeasureVTtagsPage::OnEnChangeTimesec()
 		auto const lk = static_cast<long>(m_timesec * m_samplingrate);
 		if (m_index >= 0 && m_index < m_nbtags)
 		{
-			m_pChartDataWnd->SetVTtagLval(m_index, lk);
+			m_pChartDataWnd->m_VTtags.SetTagLVal(m_index, lk);
 			m_pChartDataWnd->Invalidate();
 		}
 	}
@@ -331,7 +331,7 @@ void CMeasureVTtagsPage::OnShiftTags()
 {
 	const auto offset = static_cast<long>(m_timeshift * m_samplingrate);
 	for (auto i = 0; i < m_nbtags; i++)
-		m_pChartDataWnd->SetVTtagLval(i, m_pChartDataWnd->GetVTtagLval(i) + offset);
+		m_pChartDataWnd->m_VTtags.SetTagLVal(i, m_pChartDataWnd->m_VTtags.GetTagLVal(i) + offset);
 	// update data
 	m_pChartDataWnd->Invalidate();
 	GetVTtagVal(m_index);
@@ -346,11 +346,11 @@ void CMeasureVTtagsPage::OnAddTags()
 	// compute limits
 	if (!m_pMO->bSetTagsforCompleteFile)
 	{
-		m_nbtags = m_pChartDataWnd->GetNVTtags();
-		time = m_pChartDataWnd->GetVTtagLval(m_nbtags - 1) / m_samplingrate;
+		m_nbtags = m_pChartDataWnd->m_VTtags.GetNTags();
+		time = m_pChartDataWnd->m_VTtags.GetTagLVal(m_nbtags - 1) / m_samplingrate;
 		time_end = m_period * static_cast<float>(m_nperiods) + time;
 		// delete this one which will be re-created within the loop
-		m_pChartDataWnd->DelVTtag(m_nbtags - 1);
+		m_pChartDataWnd->m_VTtags.RemoveTag(m_nbtags - 1);
 		m_nbtags--;
 	}
 	// total file, start at zero
@@ -365,8 +365,8 @@ void CMeasureVTtagsPage::OnAddTags()
 	auto n_intervals = 0.0f;
 	while (time <= time_end)
 	{
-		m_pChartDataWnd->AddVTLtag(static_cast<long>(time * m_samplingrate));
-		m_pChartDataWnd->AddVTLtag(static_cast<long>((time + m_duration) * m_samplingrate));
+		m_pChartDataWnd->m_VTtags.AddLTag(static_cast<long>(time * m_samplingrate), 0);
+		m_pChartDataWnd->m_VTtags.AddLTag(static_cast<long>((time + m_duration) * m_samplingrate), 0);
 		n_intervals++;
 		time = time0 + m_period * n_intervals;
 	}
@@ -379,14 +379,14 @@ void CMeasureVTtagsPage::OnDeleteSeries()
 {
 	// delete present tags
 	auto p_tags_list = m_pdatDoc->GetpVTtags();
-	m_pChartDataWnd->SetVTtagList(p_tags_list);
+	m_pChartDataWnd->m_VTtags.CopyTagList(p_tags_list);
 	m_nbtags = p_tags_list->GetNTags();
 	m_pChartDataWnd->Invalidate();
 }
 
 void CMeasureVTtagsPage::OnDeleteAll()
 {
-	m_pChartDataWnd->DelAllVTtags();
+	m_pChartDataWnd->m_VTtags.RemoveAllTags();
 	m_pChartDataWnd->Invalidate();
 	m_nbtags = 0;
 	GetVTtagVal(0);
