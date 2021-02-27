@@ -486,7 +486,7 @@ void CViewSpikeDetection::UpdateDataFile(BOOL bUpdateInterface)
 		m_ChartDataWnd_Detect.RemoveAllChanlistItems();
 		m_ChartDataWnd_Detect.AddChanlistItem(0, 0);
 		m_ChartDataWnd_Detect.SetChanlistColor(0, 0);
-		m_ChartDataWnd_Detect.DelAllHZtags();
+		m_ChartDataWnd_Detect.RemoveAllHZtags();
 		m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.ConvertChanlistVoltstoDataBins(0, m_pDetectParms->detectThresholdmV / 1000.f);
 		m_ChartDataWnd_Detect.AddHZtag(m_pDetectParms->detectThreshold, 0);
 	}

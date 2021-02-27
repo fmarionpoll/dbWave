@@ -130,7 +130,7 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 	// save initial state of VTtags
 	//TODO bug here
 	m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
-	m_pChartDataWnd->DelAllHZtags();
+	m_pChartDataWnd->RemoveAllHZtags();
 	m_pChartDataWnd->Invalidate();
 	m_nbtags = m_pChartDataWnd->GetNVTtags();
 	GetVTtagVal(0);

@@ -177,9 +177,6 @@
     <ClCompile Include="Printpag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RulerBar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Spikeclas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -286,9 +283,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PanelFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadStateTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CUSBPxxS1Ctl.cpp">
@@ -429,29 +423,14 @@
     <ClCompile Include="AcqDataDoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QuadStateTree.cpp">
+      <Filter>customctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="RulerBar.cpp">
+      <Filter>customctrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GridCtrl\GridCellDateTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl\GridCellNumeric.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl\GridCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl\GridDropTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl\GridInPlaceEdit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl\GridTitleTip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl\GridURLCell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GridCtrl\GridCell.h">
       <Filter>customctrl</Filter>
     </ClInclude>
@@ -594,9 +573,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Printpag.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RulerBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spikeclas.h">
@@ -776,9 +752,6 @@
     <ClInclude Include="PanelFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QuadStateTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DTx-EZ\Include\OLTYPES.H">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -940,6 +913,33 @@
     </ClInclude>
     <ClInclude Include="AcqDataDoc.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadStateTree.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridCellDateTime.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridInPlaceEdit.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridCtrl.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridCellNumeric.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridDropTarget.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridTitleTip.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridURLCell.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="RulerBar.h">
+      <Filter>customctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

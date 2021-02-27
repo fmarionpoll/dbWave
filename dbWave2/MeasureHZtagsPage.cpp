@@ -82,7 +82,7 @@ void CMeasureHZtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbcursors)
 	{
-		m_pChartDataWnd->DelHZtag(m_index);
+		m_pChartDataWnd->RemoveHZtag(m_index);
 		m_nbcursors--;
 	}
 	if (m_index > m_nbcursors - 1)
@@ -214,7 +214,7 @@ void CMeasureHZtagsPage::OnOK()
 	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 1)
 	{
-		m_pChartDataWnd->DelAllHZtags();
+		m_pChartDataWnd->RemoveAllHZtags();
 		if (m_pMO->wOption == 0)
 			m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
 	}
@@ -226,7 +226,7 @@ void CMeasureHZtagsPage::OnCancel()
 	// restore initial state of HZcursors
 	if (m_pMO->wOption != 1)
 	{
-		m_pChartDataWnd->DelAllHZtags();
+		m_pChartDataWnd->RemoveAllHZtags();
 		if (m_pMO->wOption == 0)
 			m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
 	}
@@ -258,7 +258,7 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 
 void CMeasureHZtagsPage::OnDeleteAll()
 {
-	m_pChartDataWnd->DelAllHZtags();
+	m_pChartDataWnd->RemoveAllHZtags();
 	m_pChartDataWnd->Invalidate();
 	m_nbcursors = 0;
 	GetHZcursorVal(0);

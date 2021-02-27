@@ -94,7 +94,7 @@ void CMeasureOptionsPage::OnSinglechannel()
 
 void CMeasureOptionsPage::OnVerticaltags()
 {
-	m_pChartDataWnd->DelAllHZtags();
+	m_pChartDataWnd->RemoveAllHZtags();
 	m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
 	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
@@ -134,7 +134,7 @@ void CMeasureOptionsPage::SaveOptions()
 	{
 	case IDC_VERTICALTAGS:
 		i_id = 0;
-		m_pChartDataWnd->DelAllHZtags();
+		m_pChartDataWnd->RemoveAllHZtags();
 		m_pChartDataWnd->SetVTtagList(m_pdatDoc->GetpVTtags());
 		break;
 	case IDC_HORIZONTALTAGS:

@@ -49,8 +49,8 @@ int CChartDataWnd::AddChanlistItem(int ns, int mode)
 	// first time??	create Envelope(0) with abcissa series
 	if (chanlistitem_ptr_array.GetSize() == 0)
 	{
-		m_PolyPoints.SetSize(m_npixels * 4);		// set size of polypoint array
-		m_scale.SetScale(m_npixels, m_lxSize);	// compute scale (this is first time)
+		m_PolyPoints.SetSize(m_npixels * 4);				// set size of polypoint array
+		m_scale.SetScale(m_npixels, m_lxSize);				// compute scale (this is first time)
 		m_dataperpixel = 2;
 		auto* p_envelope = new CEnvelope(m_npixels * m_dataperpixel, m_dataperpixel, 0, -1, 0);
 		ASSERT(p_envelope != NULL);
@@ -820,7 +820,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_bADbuffers)
 		return;
-
+	//ATLTRACE2("start PlotDataToDC \n");
 	// erase background
 	if (m_erasebkgnd)
 	{
@@ -831,7 +831,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
-	/*auto p_old_font= */p_dc->SelectObject(&m_hFont);
+	p_dc->SelectObject(&m_hFont);
 
 	// exit if no data defined
 	if (!IsDefined() || m_pDataFile == nullptr)
@@ -875,6 +875,12 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 	for (auto ichan = chanlistitem_ptr_array.GetUpperBound(); ichan >= 0; ichan--)	// scan all channels
 	{
 		const auto chanlist_item = chanlistitem_ptr_array[ichan];
+		wext = chanlist_item->GetYextent();
+		worg = chanlist_item->GetYzero();
+		p_dc->SelectObject(&m_penTable[chanlist_item->GetColor()]);
+		if (chanlist_item->GetPenWidth() == 0)
+			continue;
+
 		if (pX != chanlist_item->pEnvelopeAbcissa)
 		{
 			pX = chanlist_item->pEnvelopeAbcissa;
@@ -884,22 +890,8 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 			pX->ExportToAbcissa(m_PolyPoints);
 		}
 
-		if (chanlist_item->GetYextent() != wext)
-			wext = chanlist_item->GetYextent();
-		if (chanlist_item->GetYzero() != worg)
-			worg = chanlist_item->GetYzero();
-
 		auto pY = chanlist_item->pEnvelopeOrdinates;
 		pY->ExportToOrdinates(m_PolyPoints);
-
-		if (chanlist_item->GetColor() != color)
-		{
-			color = chanlist_item->GetColor();
-			p_dc->SelectObject(&m_penTable[color]);
-		}
-		if (chanlist_item->GetPenWidth() == 0)
-			continue;
-
 		for (auto j = 0; j < nelements; j++) {
 			const auto p_point = &m_PolyPoints[j];
 			p_point->y = MulDiv(short(p_point->y) - worg, yVE, wext);
@@ -930,6 +922,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 		p_dc->SetROP2(nold_rop);
 		p_dc->SelectObject(poldp);
 	}
+	//ATLTRACE2("end PlotDataToDC \n");
 }
 
 void CChartDataWnd::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
@@ -943,10 +936,11 @@ void CChartDataWnd::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pCha
 	{
 		if (GetHZtagChan(i) != ichan)
 			continue;
+		//ATLTRACE2("display HZtag %i \n", i);
 		auto k = GetHZtagVal(i);
 		k = MulDiv(short(k) - worg, yVE, wext);
-		p_dc->MoveTo(m_xWO, k);
-		p_dc->LineTo(m_xWE, k);
+		p_dc->MoveTo(m_displayRect.left, k);
+		p_dc->LineTo(m_displayRect.right, k);
 	}
 	p_dc->SetROP2(nold_rop);
 	p_dc->SelectObject(pold);

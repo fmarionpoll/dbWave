@@ -16,16 +16,16 @@ protected:
 public:
 	enum { IDD = IDD_VIEWDATA };
 
-	int			m_ichanselected;
-	float		m_v1;
-	float		m_v2;
-	float		m_diff;
-	float		m_timefirst;
-	float		m_timelast;
+	int			m_ichanselected = 0;
+	float		m_v1			= 0.;
+	float		m_v2			= 0.;
+	float		m_diff			= 0.;
+	float		m_timefirst		= 0.;
+	float		m_timelast		= 0.;
 
 	// subclassed controls within CDaoRecordView
-	CChartDataWnd m_ChartDataWnd;	// data display
-	float		m_floatNDigits; 	// 10(000) -> n digits displayed
+	CChartDataWnd m_ChartDataWnd{};	// data display
+	float		m_floatNDigits = 1000.;  // 10(000) -> n digits displayed
 	CEditCtrl	mm_v1;				// first HZ cursor
 	CEditCtrl	mm_v2;				// second HZ cursor
 	CEditCtrl	mm_diff;			// difference v1-v2
@@ -35,48 +35,48 @@ public:
 	CRulerBar	m_ADC_yRulerBar;
 	CRulerBar	m_ADC_xRulerBar;
 
-	BOOL		m_bInitComment;
+	BOOL		m_bInitComment = true;
 	CdbWaveDoc* GetDocument();
 
 protected:
 	// parameters related to data display and to document
-	CAcqDataDoc* m_pdatDoc;			// document pointer
-	BOOL		m_bvalidDoc;
-	float		m_samplingRate;
-	int 		m_cursorstate;			// lineview cursor
-	int			m_VBarpixelratio;		// vertical bar pixel ratio
-	int			m_HBarpixelratio;		// horizontal bar pixel ratio
-	int			m_currentfileindex;
+	CAcqDataDoc* m_pdatDoc		= nullptr;
+	BOOL		m_bvalidDoc		= false;
+	float		m_samplingRate	= 1.;
+	int 		m_cursorstate	= 0;		// cursor = system arrow
+	int			m_VBarpixelratio = 30;		// vertical bar pixel ratio
+	int			m_HBarpixelratio = 10;		// horizontal bar pixel ratio
+	int			m_currentfileindex = 0;
 
-	HICON		m_hBias;
-	HICON		m_hZoom;
-	int			scan_count;
-	float		chrate;
+	HICON		m_hBias			= nullptr;
+	HICON		m_hZoom			= nullptr;
+	int			scan_count		= 0;
+	float		chrate			= 0.;
 
-	CRect 		m_Margin;				// margins (pixels)
-	int			m_file0;				// current file
-	long		m_lFirst0;
-	long		m_lLast0;
-	int			m_npixels0;
+	CRect 		m_Margin;					// margins (pixels)
+	int			m_file0			= 0;		// current file
+	long		m_lFirst0		= 0;
+	long		m_lLast0		= 0;
+	int			m_npixels0		= 0;
 
-	int			m_nfiles;				// nb of files in doc
-	int 		m_nbrowsperpage;		// USER: nb files/page
-	long 		m_lprintFirst;			// file index of first pt
-	long 		m_lprintLen{};			// nb pts per line
-	float 		m_printFirst{};
-	float 		m_printLast{};
-	BOOL		m_bIsPrinting;
+	int			m_nfiles		= 0;		// nb of files in doc
+	int 		m_nbrowsperpage = 0;		// USER: nb files/page
+	long 		m_lprintFirst	= 0;		// file index of first pt
+	long 		m_lprintLen		= 0;		// nb pts per line
+	float 		m_printFirst	= 0.;
+	float 		m_printLast		= 0.;
+	BOOL		m_bIsPrinting	= false;
 
 	// specific printer parameters
 	TEXTMETRIC	m_tMetric{};			// onbegin/onendPrinting
 	LOGFONT		m_logFont{};			// onbegin/onendPrinting
-	CFont*		m_pOldFont{};			// onbegin/onendPrinting
+	CFont*		m_pOldFont		= nullptr; 	// onbegin/onendPrinting
 	CFont		m_fontPrint;			// onbegin/onendPrinting
 
 	// page format printing parameters (pixel unit)
 	CRect		m_printRect;
-	OPTIONS_VIEWDATA* options_viewdata{};
-	OPTIONS_VIEWDATAMEASURE* mdMO{};		// measure options
+	OPTIONS_VIEWDATA* options_viewdata	= nullptr;
+	OPTIONS_VIEWDATAMEASURE* mdMO		= nullptr;		// measure options
 
 protected:
 	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
@@ -93,8 +93,8 @@ protected:
 	int		PrintGetNPages();
 
 	CStretchControl m_stretch;
-	BOOL		m_binit;
-	BOOL		m_bCommonScale{};
+	BOOL		m_binit			= false;
+	BOOL		m_bCommonScale	= false;
 
 	//public:
 protected:

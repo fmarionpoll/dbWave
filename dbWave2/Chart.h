@@ -133,8 +133,8 @@ public:
 	int		GetHZtagPix(int i) { return m_HZtags.GetTagPix(i); }
 	int		GetNHZtags();
 	int		AddHZtag(int val, int chan) { return m_HZtags.AddTag(val, chan); }
-	int		DelHZtag(int index) { return m_HZtags.RemoveTag(index); }
-	void	DelAllHZtags() { m_HZtags.RemoveAllTags(); }
+	int		RemoveHZtag(int index) { return m_HZtags.RemoveTag(index); }
+	void	RemoveAllHZtags() { m_HZtags.RemoveAllTags(); }
 
 	void	SetHZtagVal(int i, int val) { m_HZtags.SetTagVal(i, val); }
 	void	SetHZtagPix(int i, int val) { m_HZtags.SetTagPix(i, val); }

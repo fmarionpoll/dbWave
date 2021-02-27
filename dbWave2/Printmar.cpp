@@ -409,12 +409,10 @@ void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 	// change mouse cursor and replot if one bar is selected
 	else
 	{
-		// select display mode
 		const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 		int cursor;
 		// erase old bar
 		DrawBar(&m_bars[m_icapturedBar], p_dc);
-
 		// compute new bar position and display
 		if ((m_icapturedBar % 2) > 0)
 		{
@@ -430,10 +428,7 @@ void CPrintMarginsDlg::OnMouseMove(UINT nFlags, CPoint point)
 		}
 		DrawBar(&m_bars[m_icapturedBar], p_dc);
 
-		// restore old display mode
 		p_dc->SetROP2(nold_rop);
-
-		// set mouse cursor
 		SetCursor(AfxGetApp()->LoadCursor(cursor));
 	}
 

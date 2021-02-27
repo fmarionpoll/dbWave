@@ -151,47 +151,11 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 
 		//display HZ cursors
 		if (GetNHZtags() > 0)
-		{
-			// select pen and display mode
-			const auto pold = p_dc->SelectObject(&m_blackDottedPen);
-			const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-
-			// iterate through HZ cursor list
-			const auto x1 = m_displayRect.left;
-			const auto x2 = m_displayRect.right;
-			for (auto i = GetNHZtags() - 1; i >= 0; i--)
-			{
-				const auto k = GetHZtagVal(i);		// get val
-				const auto y1 = MulDiv(k - m_yWO, m_yVE, m_yWE) + m_yVO;
-				p_dc->MoveTo(x1, y1);		// set initial pt
-				p_dc->LineTo(x2, y1);		// HZ line
-			}
-			p_dc->SelectObject(pold);
-			p_dc->SetROP2(nold_rop);			// restore old display mode
-		}
+			displayHZtags(p_dc);
 
 		// display VT cursors
 		if (GetNVTtags() > 0)		// display vertical tags
-		{
-			// select pen and display mode
-			const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-			const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
-			m_xWO = m_lFirst;
-			m_xWE = m_lLast - m_lFirst + 1;
-
-			// iterate through VT cursor list
-			const auto y0 = m_displayRect.top;
-			const auto y1 = m_displayRect.bottom;
-			for (auto j = GetNVTtags() - 1; j >= 0; j--)
-			{
-				const auto val = GetVTtagVal(j);			// get val
-				const auto pix_x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-				p_dc->MoveTo(pix_x, y0);			// set initial pt
-				p_dc->LineTo(pix_x, y1);			// VT line
-			}
-			p_dc->SelectObject(oldp);
-			p_dc->SetROP2(nold_rop);
-		}
+			displayVTtags(p_dc);
 	}
 
 	// restore resources
@@ -203,6 +167,45 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 		p_dbwave_doc_->OpenCurrentSpikeFile();
 		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
 	}
+}
+
+void CChartSpikeXYWnd::displayVTtags(CDC* p_dc) 
+{
+	// select pen and display mode
+	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
+	m_xWO = m_lFirst;
+	m_xWE = m_lLast - m_lFirst + 1;
+
+	// iterate through VT cursor list
+	const auto y0 = m_displayRect.top;
+	const auto y1 = m_displayRect.bottom;
+	for (auto j = GetNVTtags() - 1; j >= 0; j--)
+	{
+		const auto val = GetVTtagVal(j);			// get val
+		const auto pix_x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
+		p_dc->MoveTo(pix_x, y0);			// set initial pt
+		p_dc->LineTo(pix_x, y1);			// VT line
+	}
+	p_dc->SelectObject(oldp);
+	p_dc->SetROP2(nold_rop);
+}
+
+void CChartSpikeXYWnd::displayHZtags(CDC* p_dc)
+{
+	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
+	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+	const auto x1 = m_displayRect.left;
+	const auto x2 = m_displayRect.right;
+	for (auto i = GetNHZtags() - 1; i >= 0; i--)
+	{
+		const auto k = GetHZtagVal(i);
+		const auto y1 = MulDiv(k - m_yWO, m_yVE, m_yWE) + m_yVO;
+		p_dc->MoveTo(x1, y1);
+		p_dc->LineTo(x2, y1);
+	}
+	p_dc->SelectObject(pold);
+	p_dc->SetROP2(nold_rop);
 }
 
 BOOL CChartSpikeXYWnd::IsSpikeWithinRange(int spikeno)

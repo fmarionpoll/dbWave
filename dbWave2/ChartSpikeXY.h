@@ -69,6 +69,8 @@ protected:
 	BOOL	is_spike_within_limits(int ispike);
 	void	getExtents();
 	void	highlightOnePoint(int nospike, CDC* p_dc);
+	void	displayHZtags(CDC* p_dc);
+	void	displayVTtags(CDC* p_dc);
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

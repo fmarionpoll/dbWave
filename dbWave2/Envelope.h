@@ -41,7 +41,7 @@ protected:
 	int		m_span;				// additionnal data pts necessary to compute transform
 	int		m_dataperpixel;		// 2=simple envelope, 1=raw data
 	int		m_npixels;			// nb of valid elements in the array
-	CArray <short, short> m_Envelope;		// Envelope array
+	CArray <short, short> m_Envelope;	// Envelope array
 
 // Operations
 public:
