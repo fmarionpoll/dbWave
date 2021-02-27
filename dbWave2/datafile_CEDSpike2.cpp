@@ -204,9 +204,8 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 				m_ticksPerSample = pChan->am_CEDticksPerSample;
 		}
 		CTag* pTag = pTags->GetTag(0);
-		//m_ticksFileOffset = pTag->m_lTicks + m_ticksPerSample;
-		long long offset = pTag->m_lTicks / m_ticksPerSample;
-		int newlength = pWFormat->sample_count - (int)offset;
+		m_llFileOffset = pTag->m_lTicks / m_ticksPerSample;
+		int newlength = pWFormat->sample_count - (int)m_llFileOffset;
 		pWFormat->sample_count = newlength;
 	}
 	//pWFormat->chrate = (float)(1. / cfsHeader.sample_interval);
@@ -290,7 +289,7 @@ long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels,
 	long long llDataNValues = nbPointsAllChannels/ scan_count / sizeof(short);
 	int nValuesRead = -1;
 	long long tFirst{};
-	long long ll_First = l_First + m_ticksFileOffset;
+	long long ll_First = l_First + m_llFileOffset;
 
 	for (int ichan = 0; ichan < scan_count; ichan++) {
 		CWaveChan* pChan = pArray->Get_p_channel(ichan);
@@ -314,7 +313,7 @@ long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, lo
 	while (numberOfValuesRead < llNValues) {
 		int			nMax	= (int) llNValues - numberOfValuesRead;
 		long long	tFrom	= (ll_First + numberOfValuesRead) * ticksPerSample;
-		if (tFrom == tUpTo)
+		if (tFrom >= tUpTo)
 			break;
 
 		short*		pBuffer = pData + numberOfValuesRead;
@@ -323,7 +322,9 @@ long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, lo
 
 		CString message;
 		message.Format(_T("nValuesRead= %i tFrom= %i tUpTo= %i  tFirst= %i\n"), 
-			nValuesRead, (int) (tFrom/ticksPerSample), (int) (tUpTo / ticksPerSample), (int) (tFirst / ticksPerSample));
+			nValuesRead, (int) (tFrom/ticksPerSample), 
+			(int) (tUpTo / ticksPerSample), 
+			(int) (tFirst / ticksPerSample));
 		ATLTRACE2(message);
 
 		if (nValuesRead <= 0)
