@@ -40,27 +40,18 @@ public:
 public:
 	cdxCRotBevelLine() : m_bSunken(true) {}
 	virtual ~cdxCRotBevelLine() {}
-
 	BOOL Create(const RECT& rect, CWnd* pParentWnd) { return CStatic::Create(NULL,WS_CHILD|WS_VISIBLE,rect,pParentWnd); }
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(cdxCRotBevelLine)
-	//}}AFX_VIRTUAL
 
 	// Generated message map functions
 protected:
-	//{{AFX_MSG(cdxCRotBevelLine)
 	afx_msg void OnPaint();
 	afx_msg void OnEnable(BOOL bEnable);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
-	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP();
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_CDXCROTBEVELLINE_H__5B60B8C5_DA3B_11D2_BF41_000000000000__INCLUDED_)

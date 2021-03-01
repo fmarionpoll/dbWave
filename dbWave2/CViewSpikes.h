@@ -9,7 +9,7 @@ class CViewSpikes : public CDaoRecordView
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikes)
-	CViewSpikes();			// protected constructor used by dynamic creation
+	CViewSpikes();
 
 // Form Data
 public:
@@ -98,7 +98,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CViewData)
 public:
-	virtual CDaoRecordset* OnGetRecordset();
+	virtual CDaoRecordset* OnGetRecordset() override;
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnMove(UINT nIDMoveCommand);
 protected:

@@ -18,7 +18,7 @@
 #include "MainFrm.h"
 #include "Copyasdl.h"
 #include "ChildFrm.h"
-#include "ViewSpikes.h"
+#include "CViewSpikes.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

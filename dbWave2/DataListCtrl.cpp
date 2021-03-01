@@ -11,7 +11,7 @@
 #include "Chart.h"
 #include "ChartData.h"
 #include "ChartSpikeBar.h"
-#include "ViewdbWave.h"
+#include "CViewdbWave.h"
 
 #include "DataListCtrl_Row.h"
 //#include "DataListCtrl.h"

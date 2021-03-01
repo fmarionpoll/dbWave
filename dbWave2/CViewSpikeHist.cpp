@@ -18,7 +18,7 @@
 #include "MainFrm.h"
 #include "ChildFrm.h"
 #include "DlgProg.h"
-#include "ViewSpikeHist.h"
+#include "CViewSpikeHist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

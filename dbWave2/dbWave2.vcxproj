@@ -770,6 +770,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CViewdbWaveRecord.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
     <ClCompile Include="AcqDataDoc.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -1276,47 +1277,47 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewAdcontinuous.cpp">
+    <ClCompile Include="CViewAdcontinuous.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewData.cpp">
+    <ClCompile Include="CViewData.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewdbWave.cpp">
+    <ClCompile Include="CViewdbWave.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewNotedoc.cpp">
+    <ClCompile Include="CViewNotedoc.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewSpikeDetect.cpp">
+    <ClCompile Include="CViewSpikeDetect.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewSpikeHist.cpp">
+    <ClCompile Include="CViewSpikeHist.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewSpikes.cpp">
+    <ClCompile Include="CViewSpikes.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewSpikeSort.cpp">
+    <ClCompile Include="CViewSpikeSort.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewSpikeTemplate.cpp">
+    <ClCompile Include="CViewSpikeTemplate.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1339,6 +1340,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="CViewdbWaveRecord.h" />
     <ClInclude Include="DlgAbout.h" />
     <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="AcqWaveChan.h" />
@@ -1496,15 +1498,15 @@
     <ClInclude Include="Vdabciss.h" />
     <ClInclude Include="Vdordina.h" />
     <ClInclude Include="Vdseries.h" />
-    <ClInclude Include="ViewADcontinuous.h" />
-    <ClInclude Include="ViewData.h" />
-    <ClInclude Include="ViewdbWave.h" />
-    <ClInclude Include="ViewNotedoc.h" />
-    <ClInclude Include="ViewSpikeDetect.h" />
-    <ClInclude Include="ViewSpikeHist.h" />
-    <ClInclude Include="ViewSpikes.h" />
-    <ClInclude Include="ViewSpikeSort.h" />
-    <ClInclude Include="ViewSpikeTemplate.h" />
+    <ClInclude Include="CViewADcontinuous.h" />
+    <ClInclude Include="CViewData.h" />
+    <ClInclude Include="CViewdbWave.h" />
+    <ClInclude Include="CViewNotedoc.h" />
+    <ClInclude Include="CViewSpikeDetect.h" />
+    <ClInclude Include="CViewSpikeHist.h" />
+    <ClInclude Include="CViewSpikes.h" />
+    <ClInclude Include="CViewSpikeSort.h" />
+    <ClInclude Include="CViewSpikeTemplate.h" />
     <ClInclude Include="WaveBuf.h" />
     <ClInclude Include="ChartSpikeHistVert.h" />
     <ClInclude Include="Xyparame.h" />

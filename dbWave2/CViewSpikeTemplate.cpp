@@ -13,7 +13,7 @@
 #include "TemplateListWnd.h"
 #include "DlgEditSpikeClass.h"
 #include "Editspik.h"
-#include "ViewSpikeTemplate.h"
+#include "CViewSpikeTemplate.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
