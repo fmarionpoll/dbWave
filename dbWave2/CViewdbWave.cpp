@@ -22,9 +22,9 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewdbWave, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewdbWave, CViewdbWaveRecord)
 
-BEGIN_MESSAGE_MAP(CViewdbWave, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewdbWave, CViewdbWaveRecord)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
@@ -55,7 +55,7 @@ BEGIN_MESSAGE_MAP(CViewdbWave, CDaoRecordView)
 END_MESSAGE_MAP()
 
 CViewdbWave::CViewdbWave()
-	: CDaoRecordView(CViewdbWave::IDD)
+	: CViewdbWaveRecord(CViewdbWave::IDD)
 	, m_timefirst(0)
 	, m_timelast(0)
 	, m_amplitudespan(0), m_options_viewdata(nullptr)
@@ -85,12 +85,6 @@ void CViewdbWave::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BOOL CViewdbWave::PreCreateWindow(CREATESTRUCT& cs)
-{
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
-	return CDaoRecordView::PreCreateWindow(cs);
-}
 
 void CViewdbWave::OnInitialUpdate()
 {

@@ -78,9 +78,8 @@ BEGIN_MESSAGE_MAP(CViewData, CViewdbWaveRecord)
 END_MESSAGE_MAP()
 
 CViewData::CViewData()
-	: CViewdbWaveRecord(CViewdbWaveRecord::IDD)
+	: CViewdbWaveRecord(IDD)
 {
-	m_bEnableActiveAccessibility = FALSE;
 }
 
 CViewData::~CViewData()
@@ -103,13 +102,6 @@ void CViewData::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FILESCROLL, m_filescroll);
 	DDX_Control(pDX, IDC_COMBOCHAN, m_comboSelectChan);
 }
-
-//BOOL CViewData::PreCreateWindow(CREATESTRUCT& cs)
-//{
-//	// TODO: Modify the Window class or styles here by modifying
-//	//  the CREATESTRUCT cs
-//	return CDaoRecordView::PreCreateWindow(cs);
-//}
 
 void CViewData::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {

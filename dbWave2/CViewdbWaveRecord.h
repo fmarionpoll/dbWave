@@ -5,15 +5,14 @@
 
 class CViewdbWaveRecord : public CDaoRecordView
 {
-	DECLARE_DYNCREATE(CViewdbWaveRecord)
+	DECLARE_DYNAMIC(CViewdbWaveRecord)
 
 protected:
-	CViewdbWaveRecord();
+	explicit CViewdbWaveRecord(LPCTSTR lpszTemplateName);
+	explicit CViewdbWaveRecord(UINT nIDTemplate);
 	virtual ~CViewdbWaveRecord();
 
 public:
-	enum { IDD = 0 };
-	
 	CdbWaveDoc* GetDocument();
 	virtual void OnDraw(CDC* pDC); 
 #ifdef _DEBUG
@@ -28,7 +27,7 @@ protected:
 
 public:
 	BOOL	PreCreateWindow(CREATESTRUCT& cs)  override;
-	virtual CDaoRecordset* OnGetRecordset();
+	virtual CDaoRecordset* OnGetRecordset() = 0;
 
 };
 

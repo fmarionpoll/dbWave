@@ -4,13 +4,18 @@
 
 
 
+IMPLEMENT_DYNAMIC(CViewdbWaveRecord, CDaoRecordView)
 
-IMPLEMENT_DYNCREATE(CViewdbWaveRecord, CDaoRecordView)
-
-CViewdbWaveRecord::CViewdbWaveRecord()
-	: CDaoRecordView(CViewdbWaveRecord::IDD)
+CViewdbWaveRecord::CViewdbWaveRecord(LPCTSTR lpszTemplateName)
+	: CDaoRecordView(lpszTemplateName)
 {
+	m_bEnableActiveAccessibility = FALSE;
+}
 
+CViewdbWaveRecord::CViewdbWaveRecord(UINT nIDTemplate)
+	: CDaoRecordView(nIDTemplate)
+{
+	m_bEnableActiveAccessibility = FALSE;
 }
 
 CViewdbWaveRecord::~CViewdbWaveRecord()

@@ -185,11 +185,11 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 			descriptor = "unused channel";
 			break;
 		}
-		CString comment;
-		comment.Format(_T(" chan %i ["), cedChan);
-		comment += _T("] title = ") + descriptor + read_ChannelTitle(cedChan);
-		comment += _T(" comment =") + read_ChannelComment(cedChan) + _T("\n");
-		ATLTRACE2(comment);
+		//CString comment;
+		//comment.Format(_T(" chan %i ["), cedChan);
+		//comment += _T("] title = ") + descriptor + read_ChannelTitle(cedChan);
+		//comment += _T(" comment =") + read_ChannelComment(cedChan) + _T("\n");
+		//ATLTRACE2(comment);
 	}
 	if (adcChan >= 0)
 		convert_VTtags_Ticks_to_ADintervals(pBuf, adcChan);
@@ -320,12 +320,12 @@ long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, lo
 		long long	tFirst{};
 		int nValuesRead = S64ReadWaveS(m_nFid, chanID, pBuffer, nMax, tFrom, tUpTo, &tFirst, nMask);
 
-		CString message;
-		message.Format(_T("nValuesRead= %i tFrom= %i tUpTo= %i  tFirst= %i\n"), 
-			nValuesRead, (int) (tFrom/ticksPerSample), 
-			(int) (tUpTo / ticksPerSample), 
-			(int) (tFirst / ticksPerSample));
-		ATLTRACE2(message);
+		//CString message;
+		//message.Format(_T("nValuesRead= %i tFrom= %i tUpTo= %i  tFirst= %i\n"), 
+		//	nValuesRead, (int) (tFrom/ticksPerSample), 
+		//	(int) (tUpTo / ticksPerSample), 
+		//	(int) (tFirst / ticksPerSample));
+		//ATLTRACE2(message);
 
 		if (nValuesRead <= 0)
 			break;

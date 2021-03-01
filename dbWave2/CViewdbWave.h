@@ -7,6 +7,7 @@
 #include "ChartSpikeShape.h"
 #include "Editctrl.h"
 #include "CSpkListTabCtrl.h"
+#include "CViewdbWaveRecord.h"
 
 //class CdbWaveCntrItem;
 //class CdbMainTable;
@@ -14,7 +15,7 @@
 //class CChartSpikeBarWnd;
 //class CChartSpikeShapeWnd;
 
-class CViewdbWave : public CDaoRecordView
+class CViewdbWave : public CViewdbWaveRecord
 {
 protected: // create from serialization only
 	DECLARE_DYNCREATE(CViewdbWave)
@@ -35,7 +36,6 @@ public:
 	// Overrides
 public:
 	virtual CDaoRecordset* OnGetRecordset() override;
-	virtual BOOL		PreCreateWindow(CREATESTRUCT& cs) override;
 	virtual BOOL		OnMove(UINT nIDMoveCommand) override;
 
 protected:
