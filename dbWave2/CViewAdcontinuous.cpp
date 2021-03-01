@@ -14,7 +14,7 @@
 #include "ChartData.h"
 #include "./include/DataTranslation/Olxdadefs.h"
 #include "./include/DataTranslation/Olxdaapi.h"
-#include "ViewADcontinuous.h"
+#include "CViewADcontinuous.h"
 #include "ChildFrm.h"
 #include "MainFrm.h"
 #include "DlgConfirmSave.h"

@@ -22,7 +22,6 @@
 #include <afxcontrolbars.h> // MFC support for ribbons and control bars
 #include <afxole.h>         // MFC OLE classes
 #include <afxdisp.h>        // MFC Automation classes
-#include <afxdao.h>			// MFC DAO database classes
 #include <afx.h>
 #include <afxdb.h>
 #include <afxtempl.h>
@@ -56,6 +55,10 @@
 #include <errno.h>
 #include <process.h>
 #include <afxdisp.h>
+
+#pragma warning(disable : 4995)
+#include <afxdao.h>			// MFC DAO database classes
+
 #include "AcqWaveChan.h"
 #include "AcqWaveChanArray.h"
 #include "AcqWaveFormat.h"
@@ -70,7 +73,7 @@
 #include "awavepar.h"		// view data options
 #include "spikepar.h"		// spike parameters options
 #include "dbMultiDocTemplate.h"
-#pragma warning(disable : 4995)
+
 #include "dbwave.h"
 #include "resource.h"
 

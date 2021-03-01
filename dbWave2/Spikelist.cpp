@@ -1022,7 +1022,6 @@ void CSpikeList::ChangeSpikeClassID(int oldclaID, int newclaID)
 void CSpikeList::Measure_case0_AmplitudeMinToMax(const int t1, const int t2)
 {
 	const auto nspikes = GetTotalSpikes();
-
 	for (auto ispike = 0; ispike < nspikes; ispike++)
 	{
 		const auto spike_element = GetSpikeElemt(ispike);

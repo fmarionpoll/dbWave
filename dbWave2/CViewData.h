@@ -5,12 +5,15 @@
 #include "afxwin.h"
 #include "ChartData.h"
 #include "Editctrl.h"
+#include "CViewdbWaveRecord.h"
 
-class CViewData : public CDaoRecordView
+
+
+class CViewData : public CViewdbWaveRecord
 {
 protected:
 	DECLARE_DYNCREATE(CViewData)
-	CViewData();					// protected constructor used by dynamic creation
+	CViewData();
 
 // Form Data
 public:
@@ -79,18 +82,18 @@ protected:
 	OPTIONS_VIEWDATAMEASURE* mdMO		= nullptr;		// measure options
 
 protected:
-	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
-	CString ConvertFileIndex(long l_first, long l_last);
-	void 	ComputePrinterPageSize();
-	CString GetFileInfos();
-	CString PrintBars(CDC* p_dc, CRect* rect);
-	BOOL	GetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
-	BOOL	PrintGetNextRow(int& filenumber, long& l_first, long& verylast);
-	void	SaveModifiedFile();
-	void	UpdateFileParameters(BOOL bUpdateInterface = TRUE);
-	void	UpdateChannelsDisplayParameters();
-	void	ChainDialog(WORD iID);
-	int		PrintGetNPages();
+	void 		PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
+	CString		ConvertFileIndex(long l_first, long l_last);
+	void 		ComputePrinterPageSize();
+	CString		GetFileInfos();
+	CString		PrintBars(CDC* p_dc, CRect* rect);
+	BOOL		GetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
+	BOOL		PrintGetNextRow(int& filenumber, long& l_first, long& verylast);
+	void		SaveModifiedFile();
+	void		UpdateFileParameters(BOOL bUpdateInterface = TRUE);
+	void		UpdateChannelsDisplayParameters();
+	void		ChainDialog(WORD iID);
+	int			PrintGetNPages();
 
 	CStretchControl m_stretch;
 	BOOL		m_binit			= false;
@@ -103,38 +106,38 @@ protected:
 	int			m_VBarMode{};			// flag V scrollbar state
 	CScrollBar 	m_scrolly;				// V scrollbar
 
-	void	OnFileScroll(UINT nSBCode, UINT nPos);
-	void	OnGainScroll(UINT nSBCode, UINT nPos);
-	void	UpdateYExtent(int ichan, int yextent);
-	void	UpdateYZero(int ichan, int ybias);
-	void	OnBiasScroll(UINT nSBCode, UINT nPos);
-	void	UpdateGainScroll();
-	void	UpdateBiasScroll();
-	void	SetVBarMode(short bMode);
-	void	UpdateFileScroll();
-	void	UpdateLegends(int operation);
-	void	UpdateHZtagsVal();
-	void	SetCursorAssociatedWindows();
-	void	UpdateChannel(int channel);
-	void	MeasureProperties(int item);
+	void		OnFileScroll(UINT nSBCode, UINT nPos);
+	void		OnGainScroll(UINT nSBCode, UINT nPos);
+	void		UpdateYExtent(int ichan, int yextent);
+	void		UpdateYZero(int ichan, int ybias);
+	void		OnBiasScroll(UINT nSBCode, UINT nPos);
+	void		UpdateGainScroll();
+	void		UpdateBiasScroll();
+	void		SetVBarMode(short bMode);
+	void		UpdateFileScroll();
+	void		UpdateLegends(int operation);
+	void		UpdateHZtagsVal();
+	void		SetCursorAssociatedWindows();
+	void		UpdateChannel(int channel);
+	void		MeasureProperties(int item);
 
 	// Overrides
 public:
 	CDaoRecordset* OnGetRecordset() override;
-	BOOL	PreCreateWindow(CREATESTRUCT& cs)  override;
-	BOOL	OnMove(UINT nIDMoveCommand)  override;
+	//BOOL		PreCreateWindow(CREATESTRUCT& cs)  override;
+	BOOL		OnMove(UINT nIDMoveCommand)  override;
 protected:
-	void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void	DoDataExchange(CDataExchange* pDX) override;
-	void	OnInitialUpdate() override;
-	BOOL	OnPreparePrinting(CPrintInfo* pInfo) override;
-	void	OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void	OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	void	OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void		DoDataExchange(CDataExchange* pDX) override;
+	void		OnInitialUpdate() override;
+	BOOL		OnPreparePrinting(CPrintInfo* pInfo) override;
+	void		OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void		OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	void		OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
-	void	DefineSubClassedItems();
-	void	DefineStretchParameters();
+	void		DefineSubClassedItems();
+	void		DefineStretchParameters();
 
 	// Implementation
 public:

@@ -407,7 +407,7 @@ void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 
 void CChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 {
-	if (p_spikelist_->GetSpikeFlagArrayCount())
+	if (p_spikelist_->GetSpikeFlagArrayCount() < 1)
 		return;
 
 	CClientDC dc(this);

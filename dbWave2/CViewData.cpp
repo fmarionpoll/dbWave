@@ -30,15 +30,15 @@
 
 #include "DlgdbEditRecord.h"
 #include "DlgADInputParms.h"
-#include "ViewData.h"
+#include "CViewData.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewData, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewData, CViewdbWaveRecord)
 
-BEGIN_MESSAGE_MAP(CViewData, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewData, CViewdbWaveRecord)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BIAS_button, &CViewData::OnClickedBias)
 	ON_BN_CLICKED(IDC_GAIN_button, &CViewData::OnClickedGain)
@@ -104,12 +104,12 @@ void CViewData::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBOCHAN, m_comboSelectChan);
 }
 
-BOOL CViewData::PreCreateWindow(CREATESTRUCT& cs)
-{
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
-	return CDaoRecordView::PreCreateWindow(cs);
-}
+//BOOL CViewData::PreCreateWindow(CREATESTRUCT& cs)
+//{
+//	// TODO: Modify the Window class or styles here by modifying
+//	//  the CREATESTRUCT cs
+//	return CDaoRecordView::PreCreateWindow(cs);
+//}
 
 void CViewData::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {

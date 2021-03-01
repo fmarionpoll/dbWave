@@ -10,7 +10,7 @@
 #include "DlgdbNewFileDuplicate.h"
 #include "DlgProg.h"
 #include "NoteDoc.h"
-#include "ViewNotedoc.h"
+#include "CViewNotedoc.h"
 #include "MainFrm.h"
 
 #ifdef _DEBUG

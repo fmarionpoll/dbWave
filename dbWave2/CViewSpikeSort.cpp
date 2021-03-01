@@ -12,7 +12,7 @@
 #include "Editspik.h"
 #include "MainFrm.h"
 #include "DlgProg.h"
-#include "ViewSpikeSort.h"
+#include "CViewSpikeSort.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -600,9 +600,9 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	switch (code)
 	{
 	case HINT_SETMOUSECURSOR:	// ------------- change mouse cursor (all 3 items)
-		if (CURSOR_ZOOM < threshold)		// clip cursor shape to max
+		if (CURSOR_ZOOM < threshold)	
 			threshold = 0;
-		SetViewMouseCursor(threshold);	// change cursor val in the other button
+		SetViewMouseCursor(threshold);	
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(threshold, 0));
 		break;
 
