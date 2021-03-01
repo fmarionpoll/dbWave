@@ -78,7 +78,7 @@ BEGIN_MESSAGE_MAP(CViewData, CViewdbWaveRecord)
 END_MESSAGE_MAP()
 
 CViewData::CViewData()
-	: CDaoRecordView(CViewData::IDD)
+	: CViewdbWaveRecord(CViewdbWaveRecord::IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 }

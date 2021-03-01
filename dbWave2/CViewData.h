@@ -27,13 +27,13 @@ public:
 	float		m_timelast		= 0.;
 
 	// subclassed controls within CDaoRecordView
-	CChartDataWnd m_ChartDataWnd{};	// data display
-	float		m_floatNDigits = 1000.;  // 10(000) -> n digits displayed
-	CEditCtrl	mm_v1;				// first HZ cursor
-	CEditCtrl	mm_v2;				// second HZ cursor
-	CEditCtrl	mm_diff;			// difference v1-v2
-	CEditCtrl	mm_timefirst;		// first abcissa value
-	CEditCtrl	mm_timelast;		// last abcissa value
+	CChartDataWnd m_ChartDataWnd{};			// data display
+	float		m_floatNDigits = 1000.;		// 10(000) -> n digits displayed
+	CEditCtrl	mm_v1;						// first HZ cursor
+	CEditCtrl	mm_v2;						// second HZ cursor
+	CEditCtrl	mm_diff;					// difference v1-v2
+	CEditCtrl	mm_timefirst;				// first abcissa value
+	CEditCtrl	mm_timelast;				// last abcissa value
 	CComboBox	m_comboSelectChan;
 	CRulerBar	m_ADC_yRulerBar;
 	CRulerBar	m_ADC_xRulerBar;
@@ -71,10 +71,10 @@ protected:
 	BOOL		m_bIsPrinting	= false;
 
 	// specific printer parameters
-	TEXTMETRIC	m_tMetric{};			// onbegin/onendPrinting
-	LOGFONT		m_logFont{};			// onbegin/onendPrinting
+	TEXTMETRIC	m_tMetric{};				// onbegin/onendPrinting
+	LOGFONT		m_logFont{};				// onbegin/onendPrinting
 	CFont*		m_pOldFont		= nullptr; 	// onbegin/onendPrinting
-	CFont		m_fontPrint;			// onbegin/onendPrinting
+	CFont		m_fontPrint;				// onbegin/onendPrinting
 
 	// page format printing parameters (pixel unit)
 	CRect		m_printRect;

@@ -8,6 +8,7 @@
 IMPLEMENT_DYNCREATE(CViewdbWaveRecord, CDaoRecordView)
 
 CViewdbWaveRecord::CViewdbWaveRecord()
+	: CDaoRecordView(CViewdbWaveRecord::IDD)
 {
 
 }

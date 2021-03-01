@@ -12,8 +12,9 @@ protected:
 	virtual ~CViewdbWaveRecord();
 
 public:
+	enum { IDD = 0 };
+	
 	CdbWaveDoc* GetDocument();
-
 	virtual void OnDraw(CDC* pDC); 
 #ifdef _DEBUG
 	virtual void AssertValid() const;
