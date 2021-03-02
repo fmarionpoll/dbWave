@@ -25,11 +25,11 @@ public:
 #endif
 
 protected:
-	CStringArray*	extractListOfFilesSimple(CString& cspathname, CRichEditCtrl& pEdit);
-	BOOL			openListOfFilesSimple(CString& cspathname, CStringArray* cs_arrayfiles);
-	BOOL			addFileName(CString resToken, CStringArray* pArrayOK, CStringArray* pArrayTested);
-	void			displayFilesImported(CRichEditCtrl& pEdit, CStringArray* pArrayTested);
-	CStringArray*	analyzeLine(CString cs);
+	void		extractListOfFilesSimple(CRichEditCtrl& pEdit, CStringArray& csArrayOK);
+	BOOL		openListOfFilesSimple(CString& cspathname, CStringArray& cs_arrayfiles);
+	BOOL		addFileName(CString& resToken, CStringArray& csArrayOK, CStringArray& csArrayTested);
+	void		displayFilesImported(CRichEditCtrl& pEdit, CStringArray& pArrayTested);
+	void		analyzeLine(CString& cs, CStringArray& pResult);
 
 	DECLARE_MESSAGE_MAP()
 };

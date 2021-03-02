@@ -12,7 +12,7 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTOPTIONS };
-	BOOL m_bNewIDs = true;
+	BOOL m_bNewIDs = false;
 	BOOL m_bAllowDuplicateFiles = false;
 	BOOL m_bReadColumns = false;
 	BOOL m_bHeader = false;

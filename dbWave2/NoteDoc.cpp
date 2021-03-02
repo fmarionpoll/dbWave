@@ -121,15 +121,15 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	}
 	else
 	{
-		CStringArray* pArrayOK = extractListOfFilesSimple(cspathname, pEdit);
-		if (pArrayOK != nullptr)
-			flag = openListOfFilesSimple(cspathname, pArrayOK);
-		delete pArrayOK;
+		CStringArray csArrayOK;
+		extractListOfFilesSimple(pEdit, csArrayOK);
+		if (csArrayOK.GetCount() > 0)
+			flag = openListOfFilesSimple(cspathname, csArrayOK);
 	}
 	return flag;
 }
 
-BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray* cs_arrayfiles)
+BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray& cs_arrayfiles)
 {
 	auto p_app = (CdbWaveApp*)AfxGetApp();
 	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*)(p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
@@ -150,7 +150,7 @@ BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray* cs_array
 
 		if (p_dbwave_doc->OnNewDocument(dbname))
 		{
-			p_dbwave_doc->ImportFileList(*cs_arrayfiles);
+			p_dbwave_doc->ImportFileList(cs_arrayfiles);
 			auto p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
 			ASSERT(p_wave_format != NULL);
 			p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
@@ -159,7 +159,7 @@ BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray* cs_array
 	return flag;
 }
 
-BOOL CNoteDoc::addFileName(CString resToken, CStringArray* pArrayOK, CStringArray* pArrayTested)
+BOOL CNoteDoc::addFileName(CString& resToken, CStringArray& csArrayOK, CStringArray& csArrayTested)
 {
 	BOOL bChanged = false;
 	CFileStatus status;
@@ -172,31 +172,29 @@ BOOL CNoteDoc::addFileName(CString resToken, CStringArray* pArrayOK, CStringArra
 	else
 	{
 		token.MakeLower();
-		pArrayOK->Add(token);
+		csArrayOK.Add(token);
 	}
-	pArrayTested->Add(token);
+	csArrayTested.Add(token);
 	return bChanged;
 }
 
-void CNoteDoc::displayFilesImported(CRichEditCtrl& pEdit, CStringArray* pArrayTested)
+void CNoteDoc::displayFilesImported(CRichEditCtrl& pEdit, CStringArray& csArrayTested)
 {
 	CString all;
-	for (int i = 0; i < pArrayTested->GetCount(); i++) 
-		all += pArrayTested->GetAt(i) + _T("\n");
+	for (int i = 0; i < csArrayTested.GetCount(); i++) 
+		all += csArrayTested.GetAt(i) + _T("\n");
 	pEdit.SetWindowText(all);
 	AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
 }
 
-CStringArray* CNoteDoc::extractListOfFilesSimple(CString& cspathname, CRichEditCtrl& pEdit)
+void CNoteDoc::extractListOfFilesSimple(CRichEditCtrl& pEdit, CStringArray& csArrayOK)
 {
 	CString file_list{};
 	pEdit.GetWindowText(file_list);
 	if (file_list.IsEmpty())
-		return nullptr;
+		return;
 
-	CStringArray* pArrayOK = new CStringArray();
-	CStringArray* pArrayTested = new CStringArray();
-
+	CStringArray csArrayTested;
 	boolean bchanged = false;
 	int ifirst = 0;
 	if (((CdbWaveApp*)AfxGetApp())->options_import.bHeader)
@@ -204,39 +202,38 @@ CStringArray* CNoteDoc::extractListOfFilesSimple(CString& cspathname, CRichEditC
 
 	int curPos = 0;
 	int count = 0;
-	CString resToken = file_list.Tokenize(_T("\r\n"), curPos);
-	while (!resToken.IsEmpty()) 
+	LPCWSTR seps = L"\r\n";
+	CString resultLine = file_list.Tokenize(seps, curPos);
+	while (!resultLine.IsEmpty()) 
 	{
 		count++;
-		if (resToken.GetLength() > 2)
+		if (resultLine.GetLength() > 2)
 		{
-			CStringArray* pResult = analyzeLine(resToken);
-			if (count > ifirst)
-				bchanged |= addFileName(pResult->GetAt(0), pArrayOK, pArrayTested);
-			delete pResult;
+			CStringArray csResult;
+			analyzeLine(resultLine, csResult);
+			if (count > ifirst) {
+				CString name = csResult.GetAt(0);
+				bchanged |= addFileName(name, csArrayOK, csArrayTested);
+			}
 		}
-		resToken = file_list.Tokenize(_T("\r\n"), curPos);
+		resultLine = file_list.Tokenize(seps, curPos);
 	}
 
 	if (bchanged)
 	{
-		displayFilesImported(pEdit, pArrayTested);
+		displayFilesImported(pEdit, csArrayTested);
 	}
-	delete pArrayTested;
-	return pArrayOK;
 }
 
-CStringArray* CNoteDoc::analyzeLine(CString csLine)
+void CNoteDoc::analyzeLine(CString& csLine, CStringArray& csResult)
 {
-	CStringArray* pResult = new CStringArray();
-	TCHAR seps[] = _T("\t;");
+	LPCWSTR seps = L"\t;";
 	int curPos = 0;
 	CString resToken = csLine.Tokenize(seps, curPos);
 	while (!resToken.IsEmpty())
 	{
 		if (resToken.GetLength() > 1) 
-			pResult->Add(resToken);
+			csResult.Add(resToken);
 		resToken = csLine.Tokenize(seps, curPos);
 	}
-	return pResult;
 }
