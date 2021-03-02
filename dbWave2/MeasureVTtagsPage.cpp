@@ -82,7 +82,7 @@ BOOL CMeasureVTtagsPage::GetVTtagVal(int index)
 void CMeasureVTtagsPage::SetspacedTagsOptions()
 {
 	((CButton*)GetDlgItem(IDC_RADIO1))->SetCheck(m_pMO->bSetTagsforCompleteFile);
-	((CButton*)GetDlgItem(IDC_RADIO2))->SetCheck(!m_pMO->bSetTagsforCompleteFile);
+	((CButton*)GetDlgItem(IDC_RADIO2))->SetCheck(m_pMO->bSetTagsforCompleteFile);
 	// validate dependent edit box accordingly
 	GetDlgItem(IDC_NPERIODSSTATIC)->EnableWindow(!m_pMO->bSetTagsforCompleteFile);
 	GetDlgItem(IDC_NPERIODSEDIT)->EnableWindow(!m_pMO->bSetTagsforCompleteFile);
@@ -109,7 +109,7 @@ void CMeasureVTtagsPage::OnCancel()
 void CMeasureVTtagsPage::OnOK()
 {
 	auto p_tag_list = m_pdatDoc->GetpVTtags();
-	p_tag_list->CopyTagList(m_pChartDataWnd->GetVTtagList());
+	p_tag_list->CopyTagList(&m_pChartDataWnd->m_VTtags);
 	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 0)
 	{

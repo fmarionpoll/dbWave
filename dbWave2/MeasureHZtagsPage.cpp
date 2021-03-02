@@ -210,7 +210,7 @@ void CMeasureHZtagsPage::OnAdjust()
 void CMeasureHZtagsPage::OnOK()
 {
 	auto p_tags_list = m_pdatDoc->GetpHZtags();
-	p_tags_list->CopyTagList(m_pChartDataWnd->GetHZtagList());
+	p_tags_list->CopyTagList(&m_pChartDataWnd->m_HZtags);
 	m_pMO->bChanged = TRUE;
 	if (m_pMO->wOption != 1)
 	{
