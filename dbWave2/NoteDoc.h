@@ -26,11 +26,10 @@ public:
 
 protected:
 	CStringArray*	extractListOfFilesSimple(CString& cspathname, CRichEditCtrl& pEdit);
-	CStringArray*	extractListOfFilesSimple_old(CString& cspathname, CRichEditCtrl& pEdit);
 	BOOL			openListOfFilesSimple(CString& cspathname, CStringArray* cs_arrayfiles);
 	BOOL			addFileName(CString resToken, CStringArray* pArrayOK, CStringArray* pArrayTested);
 	void			displayFilesImported(CRichEditCtrl& pEdit, CStringArray* pArrayTested);
+	CStringArray*	analyzeLine(CString cs);
 
-	
 	DECLARE_MESSAGE_MAP()
 };

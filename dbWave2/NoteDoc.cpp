@@ -121,10 +121,10 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	}
 	else
 	{
-		CStringArray* cs_arrayfiles = extractListOfFilesSimple_old(cspathname, pEdit);
-		if (cs_arrayfiles != nullptr)
-			flag = openListOfFilesSimple(cspathname, cs_arrayfiles);
-		delete cs_arrayfiles;
+		CStringArray* pArrayOK = extractListOfFilesSimple(cspathname, pEdit);
+		if (pArrayOK != nullptr)
+			flag = openListOfFilesSimple(cspathname, pArrayOK);
+		delete pArrayOK;
 	}
 	return flag;
 }
@@ -159,89 +159,6 @@ BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray* cs_array
 	return flag;
 }
 
-CStringArray* CNoteDoc::extractListOfFilesSimple_old(CString& cspathname, CRichEditCtrl& pEdit)
-{
-	CString file_list{};
-	pEdit.GetWindowText(file_list);
-	if (file_list.IsEmpty())
-		return nullptr;
-
-	CStringArray* cs_arrayfiles = new CStringArray();
-	CString new_list = file_list;
-	const auto pstring = file_list.GetBuffer(file_list.GetLength());
-	const auto pnew = new_list.GetBuffer(new_list.GetLength());
-	TCHAR seps[] = _T("\n\t;\r\f");
-	TCHAR* next_token = nullptr;
-
-	// loop through the string to extract data and build file names
-	auto bchanged = FALSE;
-	auto token = _tcstok_s(pstring, seps, &next_token);
-	while (token != nullptr)
-	{
-		CString filename = token;
-		CFileStatus status;
-		if (!CFile::GetStatus(filename, status))
-		{	// not found: replace the first letter with a question mark
-			*(pnew + (token - pstring)) = '?';
-			bchanged = TRUE;
-		}
-		else
-		{
-			filename.MakeLower();
-			cs_arrayfiles->Add(filename);
-		}
-		// scan next line
-		token = _tcstok_s(nullptr, seps, &next_token);
-	}
-
-	if (bchanged)
-	{
-		CRichEditCtrl& pEdit = static_cast<CRichEditView*>(m_viewList.GetHead())->GetRichEditCtrl();
-		pEdit.SetWindowText(new_list);
-		AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
-	}
-	file_list.ReleaseBuffer();
-	new_list.ReleaseBuffer();
-	return cs_arrayfiles;
-}
-
-CStringArray* CNoteDoc::extractListOfFilesSimple(CString& cspathname, CRichEditCtrl& pEdit)
-{
-	int nlines = pEdit.GetLineCount();
-	CStringArray* pArrayOK = new CStringArray();
-	CStringArray* pArrayTested = new CStringArray();
-
-	boolean bchanged = false;
-	int ifirst = 0;
-	if (((CdbWaveApp*)AfxGetApp())->options_import.bHeader)
-		ifirst = 1;
-		
-	for (int i = ifirst; i < nlines; i++)
-	{
-		//int nLineIndex = pEdit.LineIndex(i);
-		//int lineLength = pEdit.LineLength(nLineIndex);
-
-		int lineLength = pEdit.LineLength(i);
-		CString csLine{};
-		pEdit.GetLine(i, csLine.GetBuffer(lineLength +1), lineLength);
-		csLine.ReleaseBuffer(lineLength +1);
-		TCHAR seps[] = _T("\t");
-		int curPos = 0;
-		CString resToken = csLine.Tokenize(seps, curPos);
-		while (!resToken.IsEmpty())
-		{
-			bchanged |= addFileName(resToken, pArrayOK, pArrayTested);
-			resToken = csLine.Tokenize(seps, curPos);
-		}
-	}
-	if (bchanged)
-	{
-		displayFilesImported(pEdit, pArrayTested);
-	}
-
-	return pArrayOK;
-}
-
 BOOL CNoteDoc::addFileName(CString resToken, CStringArray* pArrayOK, CStringArray* pArrayTested)
 {
 	BOOL bChanged = false;
@@ -268,4 +185,58 @@ void CNoteDoc::displayFilesImported(CRichEditCtrl& pEdit, CStringArray* pArrayTe
 		all += pArrayTested->GetAt(i) + _T("\n");
 	pEdit.SetWindowText(all);
 	AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
+}
+
+CStringArray* CNoteDoc::extractListOfFilesSimple(CString& cspathname, CRichEditCtrl& pEdit)
+{
+	CString file_list{};
+	pEdit.GetWindowText(file_list);
+	if (file_list.IsEmpty())
+		return nullptr;
+
+	CStringArray* pArrayOK = new CStringArray();
+	CStringArray* pArrayTested = new CStringArray();
+
+	boolean bchanged = false;
+	int ifirst = 0;
+	if (((CdbWaveApp*)AfxGetApp())->options_import.bHeader)
+		ifirst = 1;
+
+	int curPos = 0;
+	int count = 0;
+	CString resToken = file_list.Tokenize(_T("\r\n"), curPos);
+	while (!resToken.IsEmpty()) 
+	{
+		count++;
+		if (resToken.GetLength() > 2)
+		{
+			CStringArray* pResult = analyzeLine(resToken);
+			if (count > ifirst)
+				bchanged |= addFileName(pResult->GetAt(0), pArrayOK, pArrayTested);
+			delete pResult;
+		}
+		resToken = file_list.Tokenize(_T("\r\n"), curPos);
+	}
+
+	if (bchanged)
+	{
+		displayFilesImported(pEdit, pArrayTested);
+	}
+	delete pArrayTested;
+	return pArrayOK;
+}
+
+CStringArray* CNoteDoc::analyzeLine(CString csLine)
+{
+	CStringArray* pResult = new CStringArray();
+	TCHAR seps[] = _T("\t;");
+	int curPos = 0;
+	CString resToken = csLine.Tokenize(seps, curPos);
+	while (!resToken.IsEmpty())
+	{
+		if (resToken.GetLength() > 1) 
+			pResult->Add(resToken);
+		resToken = csLine.Tokenize(seps, curPos);
+	}
+	return pResult;
 }

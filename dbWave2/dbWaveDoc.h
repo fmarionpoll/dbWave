@@ -9,15 +9,15 @@
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
 
-struct sourceData {
-
-	CString		cs_dat_file{};
-	CString		cs_spk_file{};
-	CString		cs_path{};
-	int			ilastbackslashposition = -1;
-	boolean		b_dat_present = false;
-	boolean		b_spik_present = false;
-	CWaveFormat* p_wave_format = nullptr;
+struct sourceData 
+{
+	CString			cs_dat_file{};
+	CString			cs_spk_file{};
+	CString			cs_path{};
+	int				ilastbackslashposition = -1;
+	boolean			b_dat_present = false;
+	boolean			b_spik_present = false;
+	CWaveFormat*	p_wave_format = nullptr;
 };
 
 class CdbWaveDoc : public COleDocument
