@@ -9,43 +9,41 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbMainTable implementation
 
 IMPLEMENT_DYNAMIC(CdbMainTable, CDaoRecordset)
 
 CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	: CDaoRecordset(pdb), max_insectID(0), max_sensillumID(0), max_ID(0)
 {
-	m_ID = 0; // 1
-	m_Filedat = _T(""); //
-	m_Filespk = _T(""); //
-	m_acq_date = static_cast<DATE>(0); //
-	m_acq_comment = _T(""); // 5
-	m_IDinsect = 0; //
-	m_IDsensillum = 0; //
-	m_more = _T(""); //
-	m_insect_ID = 0; //
-	m_location_ID = 0; // 10
-	m_operator_ID = 0; //
-	m_sensillum_ID = 0; //
-	m_path_ID = 0; //
-	m_path2_ID = 0; //
-	m_datalen = 0; // 15
-	m_nspikes = 0; //
-	m_nspikeclasses = 0; //
-	m_stim_ID = 0; //
-	m_conc_ID = 0; //
-	m_stim2_ID = 0; // 20
-	m_conc2_ID = 0; //
-	m_sex_ID = 0; //
-	m_strain_ID = 0; //
-	m_flag = 0; // 24
-	m_repeat = 0; // 25
-	m_repeat2 = 0; // 26
-	m_acqdate_day = static_cast<DATE>(0); // 27
-	m_acqdate_time = static_cast<DATE>(0); // 28
-	m_expt_ID = 0; // 29
+	m_ID = 0;											// 1
+	m_Filedat = _T("");						//
+	m_Filespk = _T("");						//
+	m_acq_date = static_cast<DATE>(0);		//
+	m_acq_comment = _T(""); 				// 5
+	m_IDinsect = 0;							//
+	m_IDsensillum = 0;						//
+	m_more = _T("");						//
+	m_insect_ID = 0;						//
+	m_location_ID = 0;						// 10
+	m_operator_ID = 0;						//
+	m_sensillum_ID = 0;						//
+	m_path_ID = 0;							//
+	m_path2_ID = 0;							//
+	m_datalen = 0;							// 15
+	m_nspikes = 0;							//
+	m_nspikeclasses = 0;					//
+	m_stim_ID = 0;							//
+	m_conc_ID = 0;							//
+	m_stim2_ID = 0;							// 20
+	m_conc2_ID = 0;							//
+	m_sex_ID = 0;							//
+	m_strain_ID = 0;						//
+	m_flag = 0;								// 24
+	m_repeat = 0;							// 25
+	m_repeat2 = 0;							// 26
+	m_acqdate_day = static_cast<DATE>(0);	// 27
+	m_acqdate_time = static_cast<DATE>(0);	// 28
+	m_expt_ID = 0;							// 29
 	m_nFields = 29;
 
 	m_desc[CH_ID].pdataItem = &m_ID;

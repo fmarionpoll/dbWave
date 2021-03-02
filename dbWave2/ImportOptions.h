@@ -12,8 +12,10 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTOPTIONS };
-	BOOL m_bNewIDs;
-	BOOL m_bAllowDuplicateFiles;
+	BOOL m_bNewIDs = true;
+	BOOL m_bAllowDuplicateFiles = false;
+	BOOL m_bReadColumns = false;
+	BOOL m_bHeader = false;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

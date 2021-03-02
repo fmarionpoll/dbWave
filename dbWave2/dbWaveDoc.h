@@ -9,6 +9,17 @@
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
 
+struct sourceData {
+
+	CString		cs_dat_file{};
+	CString		cs_spk_file{};
+	CString		cs_path{};
+	int			ilastbackslashposition = -1;
+	boolean		b_dat_present = false;
+	boolean		b_spik_present = false;
+	CWaveFormat* p_wave_format = nullptr;
+};
+
 class CdbWaveDoc : public COleDocument
 {
 protected: // create from serialization only
@@ -40,7 +51,7 @@ protected:
 
 	// Operations
 public:
-	void			ImportDescFromFileList(CStringArray& filename, BOOL bOnlygenuine = FALSE);
+	void			ImportFileList(CStringArray& filename, BOOL bOnlygenuine = FALSE);
 	BOOL			IsExtensionRecognizedAsDataFile(CString string) const;
 	inline BOOL		IsFilePresent(CString csFilename) { CFileStatus status; return CFile::GetStatus(csFilename, status); }
 	CWaveFormat*	GetWaveFormat(CString filename, BOOL bIsDatFile);
@@ -80,8 +91,12 @@ public:
 	BOOL			CreateDirectories(CString path);
 
 protected:
-	BOOL			TransposeFileForExcel(CSharedFile* pSF);
-	int				CheckifFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf);
+	BOOL			transposeFileForExcel(CSharedFile* pSF);
+	int				checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf);
+	sourceData*		getWaveFormatFromEitherFile(CString cs_filename);
+	void			setRecordFileNames(sourceData* record);
+	boolean			setRecordSpkClasses(sourceData* record);
+	void			setRecordWaveFormat(sourceData* record);
 
 	// Overrides
 public:

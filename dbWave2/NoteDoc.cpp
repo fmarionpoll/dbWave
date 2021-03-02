@@ -1,8 +1,5 @@
-// NoteDoc.cpp : implementation of the CNoteDoc class
-//
 
 #include "StdAfx.h"
-//#include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "NotedocCntrItem.h"
 #include "NoteDoc.h"
@@ -10,6 +7,27 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+/*
+map<int, int, string> int2String{ 
+	{1, 0, "Expt"},
+	{2, 2, "insectID"},
+	{3, 2,  "ssID"},
+	{4, 0, "insect"},
+	{5, 0, "strain"},
+	{6, 0, "sex"},
+	{7, 0, "location"},
+	{8, 0, "operator"},
+	{9, 0, "more"},
+	{10, 0, "stim1"},
+	{11, 0, "conc1"},
+	{12, 2, "repeat1"},
+	{13, 0, "stim2"},
+	{14, 0, "conc2"},
+	{15, 2, "repeat2"},
+	{16, 0, "type"}
+};
+*/
 
 IMPLEMENT_DYNCREATE(CNoteDoc, CRichEditDoc)
 
@@ -32,10 +50,7 @@ CNoteDoc::~CNoteDoc()
 
 BOOL CNoteDoc::OnNewDocument()
 {
-	if (!CRichEditDoc::OnNewDocument())
-		return FALSE;
-
-	return TRUE;
+	return CRichEditDoc::OnNewDocument();
 }
 
 CRichEditCntrItem* CNoteDoc::CreateClientItem(REOBJECT* preo) const
@@ -43,29 +58,11 @@ CRichEditCntrItem* CNoteDoc::CreateClientItem(REOBJECT* preo) const
 	return new CNotedocCntrItem(preo, const_cast<CNoteDoc*>(this));
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CNoteDoc serialization
-
 void CNoteDoc::Serialize(CArchive& ar)
 {
-	//if (ar.IsStoring())
-	//{
-	//	// TODO: add storing code here
-	//}
-	//else
-	//{
-	//	// TODO: add loading code here
-	//}
-
-	// Calling the base class CRichEditDoc enables serialization
-	//  of the container document's COleClientItem objects.
-	// TODO: set CRichEditDoc::m_bRTF = FALSE if you are serializing as text
 	m_bRTF = FALSE;
 	CRichEditDoc::Serialize(ar);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CNoteDoc diagnostics
 
 #ifdef _DEBUG
 void CNoteDoc::AssertValid() const
@@ -78,9 +75,6 @@ void CNoteDoc::Dump(CDumpContext& dc) const
 	CRichEditDoc::Dump(dc);
 }
 #endif //_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-// CNoteDoc commands
 
 BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
@@ -106,21 +100,78 @@ BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName)
 #include "ImportOptions.h"
 BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 {
-	CWaitCursor wait;
 	auto flag = FALSE;					// pessimistic flag
-	CString file_list;					// load file list within this string
-	auto& pEdit = static_cast<CRichEditView*>(m_viewList.GetHead())->GetRichEditCtrl();
-	pEdit.GetWindowText(file_list);		// copy content of window into CString
-	if (file_list.IsEmpty())
-		return flag;
+	CRichEditCtrl& pEdit = static_cast<CRichEditView*>(m_viewList.GetHead())->GetRichEditCtrl();
 
-	// assume that filenames are separated either by "rc", "TAB", ";" or "LF"
-	auto new_list = file_list;
+	// make sure the correct import options are selected
+	CImportOptionsDlg dlg;
+	auto p_app = (CdbWaveApp*)AfxGetApp();
+	dlg.m_bAllowDuplicateFiles = p_app->options_import.bImportDuplicateFiles;
+	dlg.m_bHeader = p_app->options_import.bHeader;
+	dlg.m_bReadColumns = p_app->options_import.bReadColumns;
+	if (IDOK == dlg.DoModal()) {
+		p_app->options_import.bImportDuplicateFiles = dlg.m_bAllowDuplicateFiles;
+		p_app->options_import.bHeader = dlg.m_bHeader;
+		p_app->options_import.bReadColumns = dlg.m_bReadColumns;
+	}
+
+	// open data files
+	if (p_app->options_import.bReadColumns)
+	{
+	}
+	else
+	{
+		CStringArray* cs_arrayfiles = extractListOfFilesSimple(cspathname, pEdit);
+		if (cs_arrayfiles != nullptr)
+			flag = openListOfFilesSimple(cspathname, cs_arrayfiles);
+		delete cs_arrayfiles;
+	}
+	return flag;
+}
+
+BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray* cs_arrayfiles)
+{
+	auto p_app = (CdbWaveApp*)AfxGetApp();
+	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*)(p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
+	BOOL flag = FALSE;
+	if (p_dbwave_doc != nullptr)
+	{
+		flag = TRUE;
+		if (cspathname.IsEmpty())
+		{
+			cspathname = GetTitle();
+			if (cspathname.IsEmpty())
+				cspathname = "dummy.mdb";
+		}
+
+		const auto i1 = cspathname.ReverseFind('\\');
+		const auto i2 = cspathname.ReverseFind('.');
+		const auto dbname = cspathname.Mid(i1 + 1, i2 - i1 - 1);
+
+		if (p_dbwave_doc->OnNewDocument(dbname))
+		{
+			p_dbwave_doc->ImportFileList(*cs_arrayfiles);
+			auto p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
+			ASSERT(p_wave_format != NULL);
+			p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+		}
+	}
+	return flag;
+}
+
+CStringArray* CNoteDoc::extractListOfFilesSimple_old(CString& cspathname, CRichEditCtrl& pEdit)
+{
+	CString file_list{};
+	pEdit.GetWindowText(file_list);
+	if (file_list.IsEmpty())
+		return nullptr;
+
+	CStringArray* cs_arrayfiles = new CStringArray();
+	CString new_list = file_list;
 	const auto pstring = file_list.GetBuffer(file_list.GetLength());
 	const auto pnew = new_list.GetBuffer(new_list.GetLength());
 	TCHAR seps[] = _T("\n\t;\r\f");
 	TCHAR* next_token = nullptr;
-	CStringArray cs_arrayfiles;
 
 	// loop through the string to extract data and build file names
 	auto bchanged = FALSE;
@@ -137,57 +188,84 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 		else
 		{
 			filename.MakeLower();
-			cs_arrayfiles.Add(filename);
+			cs_arrayfiles->Add(filename);
 		}
 		// scan next line
 		token = _tcstok_s(nullptr, seps, &next_token);
 	}
+
 	if (bchanged)
 	{
-		pEdit.SetWindowText(new_list);	// copy content to window
+		CRichEditCtrl& pEdit = static_cast<CRichEditView*>(m_viewList.GetHead())->GetRichEditCtrl();
+		pEdit.SetWindowText(new_list);
 		AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
 	}
 	file_list.ReleaseBuffer();
 	new_list.ReleaseBuffer();
+	return cs_arrayfiles;
+}
 
-	// make sure the correct import options are selected
-	CImportOptionsDlg dlg;
-	auto p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
-	dlg.m_bAllowDuplicateFiles = p_app->options_import.bImportDuplicateFiles;
-	if (IDOK == dlg.DoModal())
-	{
-		p_app->options_import.bImportDuplicateFiles = dlg.m_bAllowDuplicateFiles;
-	}
+CStringArray* CNoteDoc::extractListOfFilesSimple(CString& cspathname, CRichEditCtrl& pEdit)
+{
+	int nlines = pEdit.GetLineCount();
+	CStringArray* pArrayOK = new CStringArray();
+	CStringArray* pArrayTested = new CStringArray();
 
-	// open data file
-	if (cs_arrayfiles.GetSize() > 0)
+	boolean bchanged = false;
+	int ifirst = 0;
+	if (((CdbWaveApp*)AfxGetApp())->options_import.bHeader)
+		ifirst = 1;
+		
+	for (int i = ifirst; i < nlines; i++)
 	{
-		//auto p_frame_wnd = (CFrameWnd*) ((CRichEditView*)m_viewList.GetHead())->GetParent();
-		//auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		// create an empty document and then create a table with the same name as the project
-		auto* p_dbwave_doc = (CdbWaveDoc*)(p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
-		if (p_dbwave_doc != nullptr)
+		//int nLineIndex = pEdit.LineIndex(i);
+		//int lineLength = pEdit.LineLength(nLineIndex);
+
+		int lineLength = pEdit.LineLength(i);
+		CString csLine{};
+		pEdit.GetLine(i, csLine.GetBuffer(lineLength +1), lineLength);
+		csLine.ReleaseBuffer(lineLength +1);
+		TCHAR seps[] = _T("\t");
+		int curPos = 0;
+		CString resToken = csLine.Tokenize(seps, curPos);
+		while (!resToken.IsEmpty())
 		{
-			flag = TRUE;
-			if (cspathname.IsEmpty())
-			{
-				cspathname = GetTitle();
-				if (cspathname.IsEmpty())
-					cspathname = "dummy.mdb";
-			}
-
-			const auto i1 = cspathname.ReverseFind('\\');
-			const auto i2 = cspathname.ReverseFind('.');
-			const auto dbname = cspathname.Mid(i1 + 1, i2 - i1 - 1);
-
-			if (p_dbwave_doc->OnNewDocument(dbname))	// create table
-			{
-				p_dbwave_doc->ImportDescFromFileList(cs_arrayfiles);
-				auto p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
-				ASSERT(p_wave_format != NULL);
-				p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
-			}
+			bchanged |= addFileName(resToken, pArrayOK, pArrayTested);
+			resToken = csLine.Tokenize(seps, curPos);
 		}
 	}
-	return flag;
+	if (bchanged)
+	{
+		displayFilesImported(pEdit, pArrayTested);
+	}
+
+	return pArrayOK;
+}
+
+BOOL CNoteDoc::addFileName(CString resToken, CStringArray* pArrayOK, CStringArray* pArrayTested)
+{
+	BOOL bChanged = false;
+	CFileStatus status;
+	CString token = resToken;
+	if (!CFile::GetStatus(resToken, status))
+	{	// not found: add a question mark
+		token = _T("? ") + resToken;
+		bChanged = TRUE;
+	}
+	else
+	{
+		token.MakeLower();
+		pArrayOK->Add(token);
+	}
+	pArrayTested->Add(token);
+	return bChanged;
+}
+
+void CNoteDoc::displayFilesImported(CRichEditCtrl& pEdit, CStringArray* pArrayTested)
+{
+	CString all;
+	for (int i = 0; i < pArrayTested->GetCount(); i++) 
+		all += pArrayTested->GetAt(i) + _T("\n");
+	pEdit.SetWindowText(all);
+	AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
 }

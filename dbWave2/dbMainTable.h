@@ -4,48 +4,50 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#define CH_ID				0
-#define CH_ACQDATE			1
-#define CH_FILENAME			2
-#define	CH_FILESPK			3
-#define	CH_ACQ_COMMENTS		4
+constexpr auto CH_ID				= 0;
+constexpr auto CH_ACQDATE			= 1;
+constexpr auto CH_FILENAME			= 2;
+constexpr auto CH_FILESPK			= 3;
+constexpr auto CH_ACQ_COMMENTS		= 4;
 
-#define	CH_MORE				5
-#define	CH_IDINSECT			6
-#define	CH_IDSENSILLUM		7
-#define	CH_DATALEN			8
-#define	CH_NSPIKES			9
+constexpr auto CH_MORE				= 5;
+constexpr auto CH_IDINSECT			= 6;
+constexpr auto CH_IDSENSILLUM		= 7;
+constexpr auto CH_DATALEN			= 8;
+constexpr auto CH_NSPIKES			= 9;
 
-#define	CH_NSPIKECLASSES	10
-#define	CH_FLAG				11
-#define	CH_INSECT_ID		12
-#define	CH_SENSILLUM_ID		13
-#define CH_OPERATOR_ID		14
+constexpr auto CH_NSPIKECLASSES		= 10;
+constexpr auto CH_FLAG				= 11;
+constexpr auto CH_INSECT_ID			= 12;
+constexpr auto CH_SENSILLUM_ID		= 13;
+constexpr auto CH_OPERATOR_ID		= 14;
 
-#define CH_STIM_ID			15
-#define	CH_CONC_ID			16
-#define CH_LOCATION_ID		17
-#define	CH_PATH_ID			18
-#define	CH_PATH2_ID			19
+constexpr auto CH_STIM_ID			= 15;
+constexpr auto CH_CONC_ID			= 16;
+constexpr auto CH_LOCATION_ID		= 17;
+constexpr auto CH_PATH_ID			= 18;
+constexpr auto CH_PATH2_ID			= 19;
 
-#define	CH_STIM2_ID			20
-#define	CH_CONC2_ID			21
-#define	CH_STRAIN_ID		22
-#define	CH_SEX_ID			23
-#define	CH_REPEAT			24
+constexpr auto CH_STIM2_ID			= 20;
+constexpr auto CH_CONC2_ID			= 21;
+constexpr auto CH_STRAIN_ID			= 22;
+constexpr auto CH_SEX_ID			= 23;
+constexpr auto CH_REPEAT			= 24;
 
-#define	CH_REPEAT2			25
-#define CH_ACQDATE_DAY		26
-#define	CH_ACQDATE_TIME		27
-#define CH_EXPT_ID			28
+constexpr auto CH_REPEAT2			= 25;
+constexpr auto CH_ACQDATE_DAY		= 26;
+constexpr auto CH_ACQDATE_TIME		= 27;
+constexpr auto CH_EXPT_ID			= 28;
 
-#define FIELD_IND_TEXT		1
-#define FIELD_LONG			2
-#define	FIELD_TEXT			3
-#define	FIELD_DATE			4
-#define	FIELD_IND_FILEPATH	5
-#define	FIELD_DATE_HMS		6
-#define FIELD_DATE_YMD		7
+constexpr auto FIELD_IND_TEXT		= 1;
+constexpr auto FIELD_LONG			= 2;
+constexpr auto FIELD_TEXT			= 3;
+constexpr auto FIELD_DATE			= 4;
+constexpr auto FIELD_IND_FILEPATH	= 5;
+constexpr auto FIELD_DATE_HMS		= 6;
+constexpr auto FIELD_DATE_YMD		= 7;
+
+constexpr int NCOLUMNS = 30;
 
 #include "dbIndexTable.h"
 
@@ -53,19 +55,19 @@
 typedef struct _DB_ITEMDESC {
 	// -----------------descriptor and DFX parameters
 	int									icol = 0;					// column number in the table
-	CString								csColName;				// x - "name" of the column in the main table
-	CString								csColNamewithBrackets;	// x - "[name]" used by DFX exchange mechanism
-	CString								csColParam;				// x - "nameParam"
-	CString								csEQUcondition;			// x - "name = nameParam"
+	CString								csColName;					// x - "name" of the column in the main table
+	CString								csColNamewithBrackets;		// x - "[name]" used by DFX exchange mechanism
+	CString								csColParam;					// x - "nameParam"
+	CString								csEQUcondition;				// x - "name = nameParam"
 	CString								csAssocTable;
 
 	// ------------------filtering
-	BOOL								bFilter1 = false;				// if TRUE, it means only 1 value is selected - the value of which is stored in lfilterParam1
+	BOOL								bFilter1 = false;			// if TRUE, it means only 1 value is selected - the value of which is stored in lfilterParam1
 	long								lfilterParam1 = 0;
 	COleDateTime						otfilterParam1;
 	CString								csfilterParam1 = 0;
 
-	BOOL								bFilter2 = false;				// if TRUE, it means the values in lfilterParam2 are selected;
+	BOOL								bFilter2 = false;			// if TRUE, it means the values in lfilterParam2 are selected;
 	CArray<long, long>					lfilterParam2;
 	CArray<COleDateTime, COleDateTime>	otfilterParam2;
 	CStringArray						csfilterParam2;
@@ -78,17 +80,17 @@ typedef struct _DB_ITEMDESC {
 
 	// helpers
 	int									typeLocal = FIELD_LONG;		// field type (FIELD_IND_TEXT, FIELD_LONG, FIELD_TEXT, FIELD_DATE, FIELD_IND_FILEPATH)
-	CArray<long, long>					liArray;		// array storing the different elements of this field (if long or indirection)
-	CArray<COleDateTime, COleDateTime>	tiArray;		// array storing the different elements of this field (if date(day))
-	CStringArray						csElementsArray;	// string version of the list different elements (to compare with filter - either csfilterParam1, or csFilterParam2)
+	CArray<long, long>					liArray;					// array storing the different elements of this field (if long or indirection)
+	CArray<COleDateTime, COleDateTime>	tiArray;					// array storing the different elements of this field (if date(day))
+	CStringArray						csElementsArray;			// string version of the list different elements (to compare with filter - either csfilterParam1, or csFilterParam2)
 
 	// --------------------temporary pointers
-	long* pdataItem = nullptr;		// x - address of the field in the main table
-	CdbIndexTable* plinkedSet = nullptr;		// x - address of the linked table (indirection)
-	CComboBox* pComboBox = nullptr;		// address of combobox associated with the item
+	long* pdataItem = nullptr;										// x - address of the field in the main table
+	CdbIndexTable* plinkedSet = nullptr;							// x - address of the linked table (indirection)
+	CComboBox* pComboBox = nullptr;									// address of combobox associated with the item
 } DB_ITEMDESC;
 
-////////////////////////////////////////////////
+
 #pragma warning(disable : 4995)
 
 class CdbMainTable : public CDaoRecordset
@@ -128,27 +130,27 @@ public:
 	COleDateTime	m_acqdate_day;				// 27
 	COleDateTime	m_acqdate_time;				// 28 xxxxxxx suppress this parameter, leave dummy ?
 	long			m_expt_ID;					// 29
-#define NCOLUMNS 30
+
 	// filter parameters
 	BOOL			m_bFilterON;
 	DB_ITEMDESC		m_desc[NCOLUMNS];
 	CString			m_csdefaultSQL;
 
 	// temp values
-	long	max_insectID;
-	long	max_sensillumID;
-	long	max_ID;
-	CString m_defaultName;
+	long			max_insectID;
+	long			max_sensillumID;
+	long			max_ID;
+	CString			m_defaultName;
 
 public:
-	void	BuildAndSortIDArrays();
-	void	CopyPathToPath2();
-	void	AddCurrentRecordtoIDArrays();
+	void			BuildAndSortIDArrays();
+	void			CopyPathToPath2();
+	void			AddCurrentRecordtoIDArrays();
 protected:
-	void	AddtoliArray(int icol);
-	void	AddtoIDArray(CUIntArray* pmIDArray, long uiID);
-	void	AddDaytoDateArray(COleDateTime& o_time);
-	void	DeleteDateArray();
+	void			AddtoliArray(int icol);
+	void			AddtoIDArray(CUIntArray* pmIDArray, long uiID);
+	void			AddDaytoDateArray(COleDateTime& o_time);
+	void			DeleteDateArray();
 
 	// Overrides
 public:
@@ -157,26 +159,27 @@ public:
 	virtual void	DoFieldExchange(CDaoFieldExchange* pFX);	// RFX support
 
 // Implementation
-	virtual ~CdbMainTable();
+	virtual			~CdbMainTable();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void	AssertValid() const;
+	virtual void	Dump(CDumpContext& dc) const;
 #endif
-	long	GetNRecords();
-	BOOL	SetLongValue(long iID, CString cscolname);
-	BOOL	SetValueNull(CString cscolname);
-	void	GetAcqdateArray(CPtrArray* pacqdate);
-	BOOL	CheckIfAcqDateTimeIsUnique(COleDateTime* ptime);
-	void	GetMaxIDs();
-	BOOL	FindIDinColumn(long iID, int icolumn);
-	int		GetColumnIndex(CString csName);
+	long			GetNRecords();
+	BOOL			SetLongValue(long iID, CString cscolname);
+	BOOL			SetValueNull(CString cscolname);
+	void			GetAcqdateArray(CPtrArray* pacqdate);
+	BOOL			CheckIfAcqDateTimeIsUnique(COleDateTime* ptime);
+	void			GetMaxIDs();
+	BOOL			FindIDinColumn(long iID, int icolumn);
+	int				GetColumnIndex(CString csName);
 
-	void	BuildFilters();
-	void	ClearFilters();
-	void	RefreshQuery();
-	void	SetDataLen(long datalen);
-	inline void SetFilterSingleItem(DB_ITEMDESC* pdesc)
-	{
-		m_desc[pdesc->icol].bFilter1 = pdesc->bFilter1; m_desc[pdesc->icol].lfilterParam1 = pdesc->lfilterParam1;
-	}
+	void			BuildFilters();
+	void			ClearFilters();
+	void			RefreshQuery();
+	void			SetDataLen(long datalen);
+	inline void		SetFilterSingleItem(DB_ITEMDESC* pdesc)
+					{
+						m_desc[pdesc->icol].bFilter1 = pdesc->bFilter1; 
+						m_desc[pdesc->icol].lfilterParam1 = pdesc->lfilterParam1;
+					}
 };

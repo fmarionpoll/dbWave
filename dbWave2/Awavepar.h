@@ -322,7 +322,9 @@ public:
 	BOOL	bPreview;
 	BOOL	bSapid3_5;
 	BOOL	bDummy;
-	BOOL	bImportDuplicateFiles;
+	BOOL	bImportDuplicateFiles = false;
+	BOOL	bReadColumns = false;
+	BOOL	bHeader = false;
 	short	nbRuns;
 	short	nbChannels;
 	float	samplingRate;

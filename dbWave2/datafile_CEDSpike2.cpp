@@ -208,8 +208,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		int newlength = pWFormat->sample_count - (int)m_llFileOffset;
 		pWFormat->sample_count = newlength;
 	}
-	//pWFormat->chrate = (float)(1. / cfsHeader.sample_interval);
-	//pWFormat->sample_count = cfsHeader.number_of_samples;
+
 	return TRUE;
 }
 

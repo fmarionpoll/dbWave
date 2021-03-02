@@ -1,9 +1,4 @@
 #pragma once
-
-// NoteDoc.h : interface of the CNoteDoc class
-//
-/////////////////////////////////////////////////////////////////////////////
-
 #include <afxrich.h>		// MFC rich edit classes
 
 class CNoteDoc : public CRichEditDoc
@@ -15,20 +10,27 @@ protected: // create from serialization only
 	// Overrides
 public:
 	virtual BOOL OnNewDocument();
-	void Serialize(CArchive& ar) override;
+	void		Serialize(CArchive& ar) override;
 
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual CRichEditCntrItem* CreateClientItem(REOBJECT* preo) const;
-	BOOL OpenProjectFiles(CString& cspathname);
+	BOOL		OpenProjectFiles(CString& cspathname);
 
 	// Implementation
 public:
-	virtual ~CNoteDoc();
+	virtual		~CNoteDoc();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
 protected:
+	CStringArray*	extractListOfFilesSimple(CString& cspathname, CRichEditCtrl& pEdit);
+	CStringArray*	extractListOfFilesSimple_old(CString& cspathname, CRichEditCtrl& pEdit);
+	BOOL			openListOfFilesSimple(CString& cspathname, CStringArray* cs_arrayfiles);
+	BOOL			addFileName(CString resToken, CStringArray* pArrayOK, CStringArray* pArrayTested);
+	void			displayFilesImported(CRichEditCtrl& pEdit, CStringArray* pArrayTested);
+
+	
 	DECLARE_MESSAGE_MAP()
 };

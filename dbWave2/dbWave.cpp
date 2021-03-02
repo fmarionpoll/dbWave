@@ -572,7 +572,7 @@ void CdbWaveApp::OnFileOpen()
 			p_dbwave_doc->SetClearMdbOnExit(TRUE);
 			if (p_dbwave_doc->OnNewDocument())	// create table
 			{
-				p_dbwave_doc->ImportDescFromFileList(filenames);
+				p_dbwave_doc->ImportFileList(filenames);
 				auto p_wave_format = (CMDIFrameWnd*)m_pdbWaveViewTemplate->CreateNewFrame(p_dbwave_doc, nullptr);
 				ASSERT(p_wave_format != NULL);
 				m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);

@@ -729,7 +729,7 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 	{
 		auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
 		const BOOL b_only_genuine = !dlg.m_banyformat;
-		p_dbwave_doc->ImportDescFromFileList(filenames, b_only_genuine);
+		p_dbwave_doc->ImportFileList(filenames, b_only_genuine);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, static_cast<LPARAM>(NULL));
@@ -755,7 +755,7 @@ void CChildFrame::OnToolsImportATFfiles()
 		if (IDOK == dlg2.DoModal())
 		{
 			p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
-			p_dbwave_doc->ImportDescFromFileList(convertedFiles);
+			p_dbwave_doc->ImportFileList(convertedFiles);
 			p_dbwave_doc->DBMoveLast();
 			p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
@@ -1025,7 +1025,7 @@ void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSour
 //		//if (IDOK == iResult)
 //		//	{
 //		//		CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) GetMDIActiveDocument();// get pointer to document
-//		//		p_dbwave_doc->ImportDescFromFileList(convertedFiles);
+//		//		p_dbwave_doc->ImportFileList(convertedFiles);
 //		//		p_dbwave_doc->BuilInsectAndSensillumIDArrays();
 //		//		p_dbwave_doc->MoveRecord(ID_RECORD_LAST);
 //		//		p_dbwave_doc->UpdateAllViews(NULL, HINT_REQUERY, NULL);

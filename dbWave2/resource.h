@@ -686,7 +686,10 @@
 #define IDC_NEXT                        1361
 #define IDC_CHECK3                      1362
 #define IDC_CHECKDISCARD                1362
+#define IDC_HEADERFIRSTLINE             1363
 #define IDC_CHANSELECTED                1364
+#define IDC_HEADERFIRSTLINE2            1364
+#define IDC_READCOLUMNS                 1364
 #define IDC_NBSPIKES_TEXT               1365
 #define IDC_NBSPIKES_NB                 1366
 #define IDC_REMOVEFLAG                  1367
@@ -934,7 +937,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        576
+#define _APS_NEXT_RESOURCE_VALUE        577
 #define _APS_NEXT_COMMAND_VALUE         33021
 #define _APS_NEXT_CONTROL_VALUE         1516
 #define _APS_NEXT_SYMED_VALUE           555

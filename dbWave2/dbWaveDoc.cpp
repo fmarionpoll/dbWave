@@ -216,7 +216,7 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		{
 			CStringArray filenames;
 			filenames.Add(lpszPathName);
-			ImportDescFromFileList(filenames);
+			ImportFileList(filenames);
 		}
 		return flag;
 	}
@@ -1006,14 +1006,93 @@ HMENU CdbWaveDoc::GetDefaultMenu()
 // filenames	CStringArray with a list of file names (with their path)
 // bOnlygenuine	if false, each file will be first evaluated to determine its format
 
-void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenuine)
+
+ sourceData* CdbWaveDoc::getWaveFormatFromEitherFile(CString cs_filename)
+{
+	sourceData* record = new sourceData();
+
+	record->ilastbackslashposition = cs_filename.ReverseFind('\\');
+	const auto idotposition = cs_filename.ReverseFind('.');
+	const auto namelen = idotposition - record->ilastbackslashposition - 1;
+	record->cs_path = cs_filename.Left(record->ilastbackslashposition);
+	record->cs_path.MakeLower();
+	auto cs_extent = cs_filename.Right(cs_filename.GetLength() - idotposition - 1);
+	auto cs_root_name = cs_filename.Mid(record->ilastbackslashposition + 1, namelen);
+
+	const auto b_is_dat_file = IsExtensionRecognizedAsDataFile(cs_extent);
+	if (b_is_dat_file) {
+		record->cs_dat_file = cs_filename;
+		record->cs_spk_file = cs_filename.Left(idotposition) + _T(".spk");
+	}
+	else 
+	{
+		record->cs_dat_file = cs_filename.Left(idotposition) + _T(".") + cs_extent;
+		record->cs_spk_file = cs_filename;
+	}
+
+	// test  files
+	CFileStatus status;
+	record->b_dat_present = CFile::GetStatus(record->cs_dat_file, status);
+	record->b_spik_present = CFile::GetStatus(record->cs_spk_file, status);
+	if (record->b_dat_present)
+		cs_filename = record->cs_dat_file;
+	else if (record->b_spik_present)
+		cs_filename = record->cs_spk_file;
+	record->p_wave_format = GetWaveFormat(cs_filename, record->b_dat_present);
+	m_pDat->AcqCloseFile();
+
+	return record;
+}
+
+ void CdbWaveDoc::setRecordFileNames(sourceData* record) 
+ {
+	 boolean flag = true;
+
+	 // save file names
+	 if (record->b_dat_present)
+	 {
+		 m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_pathSet.GetIDorCreateIDforString(record->cs_path);
+		 m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filedat), FALSE);
+		 m_pDB->m_mainTableSet.m_Filedat = record->cs_dat_file.Right(record->cs_dat_file.GetLength() - record->ilastbackslashposition - 1);
+		 m_pDB->m_mainTableSet.m_datalen = m_pDat->GetDOCchanLength();
+	 }
+
+	 if (record->b_spik_present)
+	 {
+		 m_pDB->m_mainTableSet.m_path2_ID = m_pDB->m_pathSet.GetIDorCreateIDforString(record->cs_path);
+		 m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filespk), FALSE);
+		 m_pDB->m_mainTableSet.m_Filespk = record->cs_spk_file.Right(record->cs_spk_file.GetLength() - record->ilastbackslashposition - 1);
+		
+	 }
+
+ }
+
+ boolean CdbWaveDoc::setRecordSpkClasses(sourceData* record) 
+ {
+	 boolean flag = m_pSpk->OnOpenDocument(record->cs_spk_file);
+	 if (flag)
+	 {
+		 m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkList_Current()->GetTotalSpikes();
+		 if (m_pSpk->GetSpkList_Current()->GetNbclasses() < 0)
+			 m_pSpk->GetSpkList_Current()->UpdateClassList();
+		 m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->GetNbclasses();
+		 m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_acqsize;
+	 }
+	 return flag;
+ }
+
+ void CdbWaveDoc::setRecordWaveFormat(sourceData* record)
+ {
+	 m_pDB->TransferWaveFormatDataToRecord(record->p_wave_format);
+ }
+
+void CdbWaveDoc::ImportFileList(CStringArray& filenames, BOOL bOnlygenuine)
 {
 	// exit if no data to import
 	const auto nfiles = filenames.GetSize();
 	if (nfiles == 0)
 		return;
 
-	CString cscomment;
 	CString cs_file_test;
 	CString cs_dummy;
 	auto psf = dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
@@ -1023,8 +1102,9 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 
 	// -------------------------- cancel any pending edit or add operation
 	m_pDB->UpdateTables();
-	m_pDB->m_mainTableSet.Close();				// close dynaset and open as datatable
-	try { 
+	m_pDB->m_mainTableSet.Close();
+	try 
+	{ 
 		m_pDB->m_mainTableSet.Open(dbOpenTable, nullptr, 0); 
 	}
 	catch (CDaoException* e)
@@ -1038,7 +1118,7 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 	// browse existing database array - collect data file acquisition time and IDs already used
 	m_pDB->m_mainTableSet.GetMaxIDs();
 	auto m_id = m_pDB->m_mainTableSet.max_ID;
-	const auto nfilesok = CheckifFilesCanbeOpened(filenames, psf);
+	const auto nfilesok = checkFilesCanbeOpened(filenames, psf);
 
 	// ---------------------------------------------file loop: read infos --------------------------------
 	CDlgProgress dlg;
@@ -1049,13 +1129,13 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 
 	for (auto ifile = 0; ifile < nfilesok; ifile++)
 	{
-		// get file name
-		auto cs_filename = filenames[ifile];
-
 		// check if user wants to stop and update progression bar
 		if (dlg.CheckCancelButton())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
+		// get file name
+		CString cs_filename = filenames[ifile];
+		CString cscomment;
 		cscomment.Format(_T("Import file [%i / %i] %s"), ifile + 1, nfilesok, static_cast<LPCTSTR>(cs_filename));
 		dlg.SetStatus(cscomment);
 		if (MulDiv(ifile, 100, nfilesok) > istep)
@@ -1065,37 +1145,8 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		}
 
 		// open document and read data - go to next file if not readable
-		CString cs_dat_file;
-		CString cs_spk_file;
-		const auto ilastbackslashposition = cs_filename.ReverseFind('\\');
-		const auto idotposition = cs_filename.ReverseFind('.');
-		const auto namelen = idotposition - ilastbackslashposition - 1;
-		auto cs_path = cs_filename.Left(ilastbackslashposition);
-		cs_path.MakeLower();
-		auto cs_extent = cs_filename.Right(cs_filename.GetLength() - idotposition - 1);
-		auto cs_root_name = cs_filename.Mid(ilastbackslashposition + 1, namelen);
-
-		const auto b_is_dat_file = IsExtensionRecognizedAsDataFile(cs_extent);
-		if (b_is_dat_file) {
-			cs_dat_file = cs_filename;
-			cs_spk_file = cs_filename.Left(idotposition) + _T(".spk");
-		}
-		else {
-			cs_spk_file = cs_filename;
-			cs_dat_file = cs_filename.Left(idotposition) + _T(".dat");
-		}
-
-		// test  files
-		CFileStatus status;
-		const auto b_dat_present = CFile::GetStatus(cs_dat_file, status);
-		const auto b_spik_present = CFile::GetStatus(cs_spk_file, status);
-		if (b_dat_present)
-			cs_filename = cs_dat_file;
-		else if (b_spik_present)
-			cs_filename = cs_spk_file;
-		const auto p_wave_format = GetWaveFormat(cs_filename, b_dat_present);
-		m_pDat->AcqCloseFile();
-		if (p_wave_format == nullptr)
+		sourceData* record = getWaveFormatFromEitherFile(cs_filename);
+		if (record->p_wave_format == nullptr)
 		{
 			cs_dummy.Format(_T("file discarded=%i:\t%s \r\n"), ifile, static_cast<LPCTSTR>(cs_filename));
 			psf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -1103,7 +1154,7 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		}
 
 		// check data acquisition time - go to next file if already exist and if flag set
-		auto t = p_wave_format->acqtime;
+		auto t = record->p_wave_format->acqtime;
 		COleDateTime o_time;
 		o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 		if (!dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import.bImportDuplicateFiles)
@@ -1115,38 +1166,12 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 		// add new record  -- mID
 		m_pDB->m_mainTableSet.AddNew();
 		m_id++;
-		m_pDB->m_mainTableSet.m_ID = m_id;  // is this necessary? there is an autonumber in the definition of the field in this table
-		// but autonumber does not necessarily work when you add a new record to a table?
-
-		// save file names
-		if (b_dat_present)
+		m_pDB->m_mainTableSet.m_ID = m_id;  
+		setRecordFileNames(record);
+		setRecordSpkClasses(record);
+		setRecordWaveFormat(record);
+		try 
 		{
-			m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_pathSet.GetIDorCreateIDforString(cs_path);
-			m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filedat), FALSE);
-			m_pDB->m_mainTableSet.m_Filedat = cs_dat_file.Right(cs_dat_file.GetLength() - ilastbackslashposition - 1);
-			m_pDB->m_mainTableSet.m_datalen = m_pDat->GetDOCchanLength();
-		}
-
-		if (b_spik_present)
-		{
-			m_pDB->m_mainTableSet.m_path2_ID = m_pDB->m_pathSet.GetIDorCreateIDforString(cs_path);
-			m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filespk), FALSE);
-			m_pDB->m_mainTableSet.m_Filespk = cs_spk_file.Right(cs_spk_file.GetLength() - ilastbackslashposition - 1);
-			if (!m_pSpk->OnOpenDocument(cs_spk_file))
-				break;
-
-			m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkList_Current()->GetTotalSpikes();
-			if (m_pSpk->GetSpkList_Current()->GetNbclasses() < 0)
-				m_pSpk->GetSpkList_Current()->UpdateClassList();
-			m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->GetNbclasses();
-			m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_acqsize;
-		}
-
-		// transfer data to database
-		m_pDB->TransferWaveFormatDataToRecord(p_wave_format);
-
-		// update record
-		try {
 			m_pDB->m_mainTableSet.Update();
 		}
 		catch (CDaoException* e) { DisplayDaoException(e, 17); e->Delete(); }
@@ -1154,7 +1179,8 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 
 	// open dynaset
 	m_pDB->m_mainTableSet.Close();
-	try {
+	try 
+	{
 		m_pDB->m_mainTableSet.Open(dbOpenDynaset, nullptr, 0);
 	}
 	catch (CDaoException* e) {
@@ -1172,6 +1198,8 @@ void CdbWaveDoc::ImportDescFromFileList(CStringArray& filenames, BOOL bOnlygenui
 	SAFE_DELETE(m_pSpk);
 	SAFE_DELETE(psf);
 }
+
+
 
 BOOL CdbWaveDoc::IsExtensionRecognizedAsDataFile(CString string) const
 {
@@ -1873,7 +1901,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 
 	// transpose file
 	if (m_bTranspose)
-		TransposeFileForExcel(pSF);
+		transposeFileForExcel(pSF);
 
 	// restore initial file name and channel
 	SetDB_CurrentRecordPosition(ioldindex);
@@ -1883,7 +1911,7 @@ void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 }
 
 // called when we export data to Excel
-BOOL CdbWaveDoc::TransposeFileForExcel(CSharedFile* pSF)
+BOOL CdbWaveDoc::transposeFileForExcel(CSharedFile* pSF)
 {
 	// create dummy file on disk that duplicates the memory file
 	CStdioFile data_dest;								// destination file object
@@ -2044,7 +2072,7 @@ BOOL CdbWaveDoc::TransposeFileForExcel(CSharedFile* pSF)
 	return TRUE;
 }
 
-int CdbWaveDoc::CheckifFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf)
+int CdbWaveDoc::checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf)
 {
 	// prepare progress dialog box
 	CDlgProgress dlg;

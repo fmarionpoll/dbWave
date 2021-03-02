@@ -1,5 +1,3 @@
-// dbIndexTable.cpp : implementation file
-//
 
 #include "StdAfx.h"
 //#include <afxconv.h>           // For LPTSTR -> LPSTR macros
@@ -10,8 +8,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbIndexTable
 
 IMPLEMENT_DYNAMIC(CdbIndexTable, CDaoRecordset)
 
@@ -71,7 +67,6 @@ void CdbIndexTable::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-// this function is in dbWaveDoc as UpdateLinkedTablewithString
 /////////////////////////////////////////////////////////////////////////////
 // find string within linked table
 // add new record in this linked table with the string if not found
@@ -187,19 +182,19 @@ void CdbIndexTable::CreateIndextable(const CString& cstablename, const CString& 
 	// create first field in the table
 	CDaoFieldInfo fd0;
 	fd0.m_strName = cscol1;
-	fd0.m_nType = dbText;	// Primary
-	fd0.m_lSize = textSize;				// Primary
+	fd0.m_nType = dbText;					// Primary
+	fd0.m_lSize = textSize;					// Primary
 	fd0.m_lAttributes = dbVariableField;	// Primary
-	fd0.m_nOrdinalPosition = 2;			// Secondary
-	fd0.m_bRequired = FALSE;			// Secondary
-	fd0.m_bAllowZeroLength = FALSE;		// Secondary
+	fd0.m_nOrdinalPosition = 2;				// Secondary
+	fd0.m_bRequired = FALSE;				// Secondary
+	fd0.m_bAllowZeroLength = FALSE;			// Secondary
 	fd0.m_lCollatingOrder = dbSortGeneral;
-	fd0.m_strForeignName = _T("");		// Secondary
-	fd0.m_strSourceField = _T("");		// Secondary
-	fd0.m_strSourceTable = _T("");		// Secondary
-	fd0.m_strValidationRule = _T("");	// All
-	fd0.m_strValidationText = _T("");	// All
-	fd0.m_strDefaultValue = _T("");		// All
+	fd0.m_strForeignName = _T("");			// Secondary
+	fd0.m_strSourceField = _T("");			// Secondary
+	fd0.m_strSourceTable = _T("");			// Secondary
+	fd0.m_strValidationRule = _T("");		// All
+	fd0.m_strValidationText = _T("");		// All
+	fd0.m_strDefaultValue = _T("");			// All
 	tb.CreateField(fd0);
 
 	// create first index
@@ -221,11 +216,11 @@ void CdbIndexTable::CreateIndextable(const CString& cstablename, const CString& 
 
 	// create second field
 	fd0.m_strName = csIDcol2;
-	fd0.m_nType = dbLong;				// Primary
-	fd0.m_lSize = 4;					// Primary
+	fd0.m_nType = dbLong;					// Primary
+	fd0.m_lSize = 4;						// Primary
 	fd0.m_lAttributes = dbAutoIncrField;	// Primary
-	fd0.m_nOrdinalPosition = 2;			// Secondary
-	fd0.m_bRequired = TRUE;				// Secondary
+	fd0.m_nOrdinalPosition = 2;				// Secondary
+	fd0.m_bRequired = TRUE;					// Secondary
 	tb.CreateField(fd0);
 
 	// create first index
