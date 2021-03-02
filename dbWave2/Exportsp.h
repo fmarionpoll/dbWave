@@ -61,9 +61,10 @@ protected:
 	afx_msg void OnclickAUTOCORR();
 	afx_msg void OnclickOthers();
 	afx_msg void OnclickAmplHistog();
-	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedRadio5();
 	afx_msg void OnBnClickedRadio4();
 	afx_msg void OnBnClickedSpikepoints();
+
+	DECLARE_MESSAGE_MAP()
 };

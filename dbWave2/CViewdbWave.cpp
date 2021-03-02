@@ -22,9 +22,9 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewdbWave, CViewdbWaveRecord)
+IMPLEMENT_DYNCREATE(CViewdbWave, CViewDAO)
 
-BEGIN_MESSAGE_MAP(CViewdbWave, CViewdbWaveRecord)
+BEGIN_MESSAGE_MAP(CViewdbWave, CViewDAO)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
@@ -55,20 +55,8 @@ BEGIN_MESSAGE_MAP(CViewdbWave, CViewdbWaveRecord)
 END_MESSAGE_MAP()
 
 CViewdbWave::CViewdbWave()
-	: CViewdbWaveRecord(CViewdbWave::IDD)
-	, m_timefirst(0)
-	, m_timelast(0)
-	, m_amplitudespan(0), m_options_viewdata(nullptr)
+	: CViewDAO(CViewdbWave::IDD)
 {
-	m_pSet = nullptr;
-	m_bAddMode = FALSE;
-	m_bFilterON = TRUE;
-	m_bvalidDat = FALSE;
-	m_bvalidSpk = FALSE;
-	m_dattransform = 0;
-	m_binit = FALSE;
-	m_spikeclass = 0;
-	m_bEnableActiveAccessibility = FALSE;
 }
 
 CViewdbWave::~CViewdbWave()
@@ -84,7 +72,6 @@ void CViewdbWave::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SPIKECLASS, m_spikeclass);
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
-
 
 void CViewdbWave::OnInitialUpdate()
 {
@@ -200,63 +187,10 @@ void CViewdbWave::OnInitialUpdate()
 	};
 }
 
-BOOL CViewdbWave::OnPreparePrinting(CPrintInfo* pInfo)
-{
-	if (!CView::DoPreparePrinting(pInfo))
-		return FALSE;
-
-	if (!COleDocObjectItem::OnPreparePrinting(this, pInfo))
-		return FALSE;
-
-	return TRUE;
-}
-
-void CViewdbWave::OnBeginPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
-{
-	// TODO: add extra initialization before printing
-}
-
-void CViewdbWave::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
-{
-	// TODO: add cleanup after printing
-}
-
-void CViewdbWave::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
-{
-	// TODO: add customized printing code here
-	if (pInfo->m_bDocObject)
-		COleDocObjectItem::OnPrint(this, pInfo, TRUE);
-	else
-		CView::OnPrint(p_dc, pInfo);
-}
-
-void CViewdbWave::OnDestroy()
-{
-	// Deactivate the item on destruction; this is important
-	// when a splitter view is being used.
-	CDaoRecordView::OnDestroy();
-}
-
 void CViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 {
-	// adapt size of resizeable controls
-	if (m_binit)
-	{
-		switch (n_type)
-		{
-		case SIZE_MAXIMIZED:
-		case SIZE_RESTORED:
-			if (cx <= 0 || cy <= 0)
-				break;
-			// change size of windows declared to this m_stretch
-			m_stretch.ResizeControls(n_type, cx, cy);
-			break;
-		default:
-			break;
-		}
-	}
 	// do other resizing
-	CDaoRecordView::OnSize(n_type, cx, cy);
+	CViewDAO::OnSize(n_type, cx, cy);
 	if (::IsWindow(m_dataListCtrl.m_hWnd)) {
 		CRect rect;
 		m_dataListCtrl.GetClientRect(&rect);
@@ -264,40 +198,13 @@ void CViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 	}
 }
 
-#ifdef _DEBUG
-void CViewdbWave::AssertValid() const
-{
-	CDaoRecordView::AssertValid();
-}
-
-void CViewdbWave::Dump(CDumpContext& dc) const
-{
-	CDaoRecordView::Dump(dc);
-}
-
-CdbWaveDoc* CViewdbWave::GetDocument()
-// non-debug version is inline
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif //_DEBUG
-
-CDaoRecordset* CViewdbWave::OnGetRecordset()
-{
-	return GetDocument()->GetDB_Recordset();
-}
-
 void CViewdbWave::updateControls()
 {
 	auto pdb_doc = GetDocument();
 	CFileStatus status;
 
-	auto filename = pdb_doc->GetDB_CurrentDatFileName();
-	m_bvalidDat = CFile::GetStatus(filename, status);
-
-	filename = pdb_doc->GetDB_CurrentSpkFileName(TRUE);
-	m_bvalidSpk = CFile::GetStatus(filename, status);
+	m_bvalidDat = CFile::GetStatus(pdb_doc->GetDB_CurrentDatFileName(), status);
+	m_bvalidSpk = CFile::GetStatus(pdb_doc->GetDB_CurrentSpkFileName(TRUE), status);
 
 	const int ifile = pdb_doc->GetDB_CurrentRecordPosition();
 	m_dataListCtrl.SetCurSel(ifile);
@@ -312,13 +219,6 @@ void CViewdbWave::updateControls()
 				m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
 		}
 	}
-}
-
-BOOL CViewdbWave::OnMove(UINT nIDMoveCommand)
-{
-	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
-	return flag;
 }
 
 void CViewdbWave::OnRecordPageup()

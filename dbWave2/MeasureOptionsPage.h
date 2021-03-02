@@ -62,5 +62,6 @@ protected:
 	afx_msg void OnHorizontaltags();
 	afx_msg void OnStimulustag();
 	virtual BOOL OnInitDialog();
+
 	DECLARE_MESSAGE_MAP()
 };

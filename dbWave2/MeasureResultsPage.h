@@ -62,8 +62,8 @@ protected:
 
 // Implementation
 protected:
-	// Generated message map functions
 	afx_msg void OnExport();
 	virtual BOOL OnInitDialog();
+
 	DECLARE_MESSAGE_MAP()
 };

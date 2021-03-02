@@ -34,5 +34,6 @@ protected:
 	afx_msg void OnKillfocusAbcissa();
 	afx_msg void OnKillfocusDuration();
 	afx_msg void OnKillfocusCenter();
+
 	DECLARE_MESSAGE_MAP()
 };

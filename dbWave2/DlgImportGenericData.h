@@ -78,5 +78,6 @@ protected:
 	afx_msg void OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnSapid3_5();
 	afx_msg void OnEnChangeChannelcomment();
+
 	DECLARE_MESSAGE_MAP()
 };

@@ -43,5 +43,6 @@ protected:
 	virtual void OnCancel();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSelchangeListseries();
+
 	DECLARE_MESSAGE_MAP()
 };

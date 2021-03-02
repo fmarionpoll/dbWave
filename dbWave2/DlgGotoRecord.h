@@ -25,5 +25,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnClickedPosition();
 	afx_msg void OnClickedID();
+
 	DECLARE_MESSAGE_MAP()
 };

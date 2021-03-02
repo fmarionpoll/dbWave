@@ -5,11 +5,11 @@
 #include "afxwin.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-#include "CViewdbWaveRecord.h"
+#include "CViewDao.h"
 
 
 
-class CViewData : public CViewdbWaveRecord
+class CViewData : public CViewDAO
 {
 protected:
 	DECLARE_DYNCREATE(CViewData)
@@ -25,10 +25,11 @@ public:
 	float		m_diff			= 0.;
 	float		m_timefirst		= 0.;
 	float		m_timelast		= 0.;
+	float		m_floatNDigits = 1000.;		// 10(000) -> n digits displayed
+	BOOL		m_bInitComment = true;
 
 	// subclassed controls within CDaoRecordView
 	CChartDataWnd m_ChartDataWnd{};			// data display
-	float		m_floatNDigits = 1000.;		// 10(000) -> n digits displayed
 	CEditCtrl	mm_v1;						// first HZ cursor
 	CEditCtrl	mm_v2;						// second HZ cursor
 	CEditCtrl	mm_diff;					// difference v1-v2
@@ -37,9 +38,6 @@ public:
 	CComboBox	m_comboSelectChan;
 	CRulerBar	m_ADC_yRulerBar;
 	CRulerBar	m_ADC_xRulerBar;
-
-	BOOL		m_bInitComment = true;
-	CdbWaveDoc* GetDocument();
 
 protected:
 	// parameters related to data display and to document
@@ -56,28 +54,6 @@ protected:
 	int			scan_count		= 0;
 	float		chrate			= 0.;
 
-	CRect 		m_Margin;					// margins (pixels)
-	int			m_file0			= 0;		// current file
-	long		m_lFirst0		= 0;
-	long		m_lLast0		= 0;
-	int			m_npixels0		= 0;
-
-	int			m_nfiles		= 0;		// nb of files in doc
-	int 		m_nbrowsperpage = 0;		// USER: nb files/page
-	long 		m_lprintFirst	= 0;		// file index of first pt
-	long 		m_lprintLen		= 0;		// nb pts per line
-	float 		m_printFirst	= 0.;
-	float 		m_printLast		= 0.;
-	BOOL		m_bIsPrinting	= false;
-
-	// specific printer parameters
-	TEXTMETRIC	m_tMetric{};				// onbegin/onendPrinting
-	LOGFONT		m_logFont{};				// onbegin/onendPrinting
-	CFont*		m_pOldFont		= nullptr; 	// onbegin/onendPrinting
-	CFont		m_fontPrint;				// onbegin/onendPrinting
-
-	// page format printing parameters (pixel unit)
-	CRect		m_printRect;
 	OPTIONS_VIEWDATA* options_viewdata	= nullptr;
 	OPTIONS_VIEWDATAMEASURE* mdMO		= nullptr;		// measure options
 
@@ -95,15 +71,13 @@ protected:
 	void		ChainDialog(WORD iID);
 	int			PrintGetNPages();
 
-	CStretchControl m_stretch;
-	BOOL		m_binit			= false;
 	BOOL		m_bCommonScale	= false;
 
 	//public:
 protected:
 	CScrollBarEx m_filescroll;			// data position within file
 	SCROLLINFO	m_filescroll_infos{};	// infos for scrollbar
-	int			m_VBarMode{};			// flag V scrollbar state
+	int			m_VBarMode= 0;			// flag V scrollbar state
 	CScrollBar 	m_scrolly;				// V scrollbar
 
 	void		OnFileScroll(UINT nSBCode, UINT nPos);
@@ -122,10 +96,6 @@ protected:
 	void		MeasureProperties(int item);
 
 	// Overrides
-public:
-	CDaoRecordset* OnGetRecordset() override;
-	//BOOL		PreCreateWindow(CREATESTRUCT& cs)  override;
-	BOOL		OnMove(UINT nIDMoveCommand)  override;
 protected:
 	void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void		DoDataExchange(CDataExchange* pDX) override;
@@ -142,14 +112,7 @@ protected:
 	// Implementation
 public:
 	virtual ~CViewData();
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-#endif
 
-	DECLARE_MESSAGE_MAP()
-	// Generated message map functions
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnClickedBias();
 	afx_msg void OnClickedGain();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -180,11 +143,7 @@ public:
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();
 	afx_msg void OnCbnSelchangeCombochan();
+
+	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CViewData::GetDocument()
-{
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif

@@ -64,5 +64,6 @@ protected:
 	afx_msg void OnSelchangeExportas();
 	afx_msg void OnExport();
 	afx_msg void OnExportall();
+
 	DECLARE_MESSAGE_MAP()
 };

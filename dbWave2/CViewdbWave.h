@@ -7,7 +7,7 @@
 #include "ChartSpikeShape.h"
 #include "Editctrl.h"
 #include "CSpkListTabCtrl.h"
-#include "CViewdbWaveRecord.h"
+#include "CViewDao.h"
 
 //class CdbWaveCntrItem;
 //class CdbMainTable;
@@ -15,7 +15,7 @@
 //class CChartSpikeBarWnd;
 //class CChartSpikeShapeWnd;
 
-class CViewdbWave : public CViewdbWaveRecord
+class CViewdbWave : public CViewDAO
 {
 protected: // create from serialization only
 	DECLARE_DYNCREATE(CViewdbWave)
@@ -23,55 +23,37 @@ protected: // create from serialization only
 
 public:
 	enum { IDD = IDD_VIEWDBWAVE };
-	CdbMainTable*		m_pSet;
 
 	// Attributes
 public:
 	CDataListCtrl		m_dataListCtrl;
-	BOOL				m_bvalidDat;
-	BOOL				m_bvalidSpk;
-	CdbWaveDoc*			GetDocument();
 	CSpkListTabCtrl		m_tabCtrl;
-
+	BOOL				m_bvalidDat = false;
+	BOOL				m_bvalidSpk = false;
 	// Overrides
-public:
-	virtual CDaoRecordset* OnGetRecordset() override;
-	virtual BOOL		OnMove(UINT nIDMoveCommand) override;
-
 protected:
 	virtual void		DoDataExchange(CDataExchange* pDX) override;
 	virtual void		OnInitialUpdate() override;
-	virtual BOOL		OnPreparePrinting(CPrintInfo* pInfo) override;
-	virtual void		OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	virtual void		OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	virtual void		OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
 	virtual void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 	virtual void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-
 	// Implementation
 public:
 	virtual				~CViewdbWave();
 
-#ifdef _DEBUG
-	virtual void		AssertValid() const;
-	virtual void		Dump(CDumpContext& dc) const;
-#endif
-
 protected:
-	BOOL				m_binit;
-	BOOL				m_bAddMode;
-	BOOL				m_bFilterON;
-	int					m_dattransform;
+	BOOL				m_bAddMode = false;
+	BOOL				m_bFilterON = true;
+	int					m_dattransform = 0;
+	float				m_timefirst = 0.;
+	float				m_timelast = 0.;
+	float				m_amplitudespan = 0.;
+	int					m_spikeclass = 0;
+
 	CEditCtrl			mm_spikeclass;		// selected spike class
-	float				m_timefirst;
-	float				m_timelast;
-	float				m_amplitudespan;
-	int					m_spikeclass;
 	CEditCtrl			mm_timefirst;		// first abcissa value
 	CEditCtrl			mm_timelast;		// last abcissa value
 	CEditCtrl			mm_amplitudespan;	// amplitude
-	CStretchControl		m_stretch;			// properties for controls
-	OPTIONS_VIEWDATA*	m_options_viewdata;
+	OPTIONS_VIEWDATA*	m_options_viewdata = nullptr;
 
 	void				updateControls();
 	void				fillListBox();
@@ -82,7 +64,6 @@ public:
 	// Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
-	afx_msg void OnDestroy();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnRecordPageup();
 	afx_msg void OnRecordPagedown();
@@ -108,10 +89,3 @@ public:
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 };
-
-#ifndef _DEBUG  // debug version in dbWaveView.cpp
-inline CdbWaveDoc* CViewdbWave::GetDocument()
-{
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif

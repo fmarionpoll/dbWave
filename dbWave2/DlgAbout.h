@@ -14,5 +14,6 @@ protected:
 // Implementation
 protected:
 	BOOL OnInitDialog() override;
+
 	DECLARE_MESSAGE_MAP()
 };

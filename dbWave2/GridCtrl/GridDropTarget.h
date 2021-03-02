@@ -53,9 +53,6 @@ public:
 	DROPEFFECT  OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
 	DROPEFFECT  OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint point);
 
-	// Overrides
-
-	// Implementation
 protected:
 
 	DECLARE_MESSAGE_MAP()

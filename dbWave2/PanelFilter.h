@@ -43,7 +43,6 @@ protected:
 public:
 	virtual ~CFilterWnd();
 
-	DECLARE_MESSAGE_MAP()
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -59,4 +58,6 @@ protected:
 public:
 	afx_msg void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
+
+	DECLARE_MESSAGE_MAP()
 };

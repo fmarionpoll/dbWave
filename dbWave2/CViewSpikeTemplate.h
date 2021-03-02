@@ -117,8 +117,6 @@ public:
 	afx_msg void OnCheck1();
 	afx_msg void OnDestroy();
 
-	DECLARE_MESSAGE_MAP()
-
 	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
@@ -131,6 +129,8 @@ public:
 	afx_msg void OnBnClickedDisplaysingleclass();
 	afx_msg void OnEnChangeT1();
 	afx_msg void OnEnChangeT2();
+
+	DECLARE_MESSAGE_MAP()
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

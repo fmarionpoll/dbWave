@@ -38,5 +38,6 @@ protected:
 	virtual void OnCancel();
 	afx_msg void OnSelchangeTransform();
 	afx_msg void OnEnChangeEdit1();
+
 	DECLARE_MESSAGE_MAP()
 };

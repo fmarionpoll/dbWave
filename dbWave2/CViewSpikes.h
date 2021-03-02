@@ -189,10 +189,12 @@ protected:
 	afx_msg void OnHScrollLeft();
 	afx_msg void OnHScrollRight();
 	afx_msg void OnBnClickedSameclass();
-	DECLARE_MESSAGE_MAP()
+	
 public:
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
+
+	DECLARE_MESSAGE_MAP()
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

@@ -36,9 +36,9 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewData, CViewdbWaveRecord)
+IMPLEMENT_DYNCREATE(CViewData, CViewDAO)
 
-BEGIN_MESSAGE_MAP(CViewData, CViewdbWaveRecord)
+BEGIN_MESSAGE_MAP(CViewData, CViewDAO)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BIAS_button, &CViewData::OnClickedBias)
 	ON_BN_CLICKED(IDC_GAIN_button, &CViewData::OnClickedGain)
@@ -78,14 +78,13 @@ BEGIN_MESSAGE_MAP(CViewData, CViewdbWaveRecord)
 END_MESSAGE_MAP()
 
 CViewData::CViewData()
-	: CViewdbWaveRecord(IDD)
+	: CViewDAO(IDD)
 {
 }
 
 CViewData::~CViewData()
 {
 	m_pdatDoc->AcqCloseFile();
-
 }
 
 void CViewData::DoDataExchange(CDataExchange* pDX)
@@ -150,7 +149,6 @@ void CViewData::DefineStretchParameters()
 	m_stretch.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
-
 	m_binit = TRUE;
 }
 
@@ -184,58 +182,9 @@ void CViewData::OnInitialUpdate()
 
 void CViewData::OnDestroy()
 {
-	CDaoRecordView::OnDestroy();
+	CViewDAO::OnDestroy();
 	DeleteObject(m_hBias);		// bias button (handle)
 	DeleteObject(m_hZoom);		// zoom button (handle)
-}
-
-void CViewData::OnSize(UINT nType, int cx, int cy)
-{
-	if (m_binit)
-	{
-		switch (nType)
-		{
-		case SIZE_MAXIMIZED:
-		case SIZE_RESTORED:
-			if (cx <= 0 || cy <= 0)
-				break;
-			m_stretch.ResizeControls(nType, cx, cy);
-			break;
-		default:
-			break;
-		}
-	}
-	CDaoRecordView::OnSize(nType, cx, cy);
-}
-
-#ifdef _DEBUG
-void CViewData::AssertValid() const
-{
-	CDaoRecordView::AssertValid();
-}
-
-void CViewData::Dump(CDumpContext& dc) const
-{
-	CDaoRecordView::Dump(dc);
-}
-
-CdbWaveDoc* CViewData::GetDocument() // non-debug version is inline
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif //_DEBUG
-
-CDaoRecordset* CViewData::OnGetRecordset()
-{
-	return GetDocument()->GetDB_Recordset();
-}
-
-BOOL CViewData::OnMove(UINT nIDMoveCommand)
-{
-	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
-	return flag;
 }
 
 void CViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -970,25 +919,25 @@ void CViewData::UpdateGainScroll()
 
 void CViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	int lSize = m_ChartDataWnd.GetChanlistYextent(m_ichanselected);
+	int yExtent = m_ChartDataWnd.GetChanlistYextent(m_ichanselected);
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT:		lSize = YEXTENT_MIN; break;
-	case SB_LINELEFT:	lSize -= lSize / 10 + 1; break;
-	case SB_LINERIGHT:	lSize += lSize / 10 + 1; break;
-	case SB_PAGELEFT:	lSize -= lSize / 2 + 1; break;
-	case SB_PAGERIGHT:	lSize += lSize + 1; break;
-	case SB_RIGHT:		lSize = YEXTENT_MAX; break;
+	case SB_LEFT:		yExtent = YEXTENT_MIN; break;
+	case SB_LINELEFT:	yExtent -= yExtent / 10 + 1; break;
+	case SB_LINERIGHT:	yExtent += yExtent / 10 + 1; break;
+	case SB_PAGELEFT:	yExtent -= yExtent / 2 + 1; break;
+	case SB_PAGERIGHT:	yExtent += yExtent + 1; break;
+	case SB_RIGHT:		yExtent = YEXTENT_MAX; break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK:	lSize = MulDiv(nPos - 50, YEXTENT_MAX, 100); break;
+	case SB_THUMBTRACK:	yExtent = MulDiv(nPos - 50, YEXTENT_MAX, 100); break;
 	default:			break;
 	}
 
 	// change y extent
-	if (lSize > 0) //&& lSize<=YEXTENT_MAX)
+	if (yExtent > 0) //&& yExtent<=YEXTENT_MAX)
 	{
-		UpdateYExtent(m_ichanselected, lSize);
+		UpdateYExtent(m_ichanselected, yExtent);
 		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
 	}
 	// update scrollBar
@@ -1565,9 +1514,9 @@ void CViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_npixels0 = m_ChartDataWnd.GetRectWidth();
 
 	//---------------------init objects-------------------------------------
-	memset(&m_logFont, 0, sizeof(LOGFONT));			// prepare font
-	lstrcpy(m_logFont.lfFaceName, _T("Arial"));			// Arial font
-	m_logFont.lfHeight = options_viewdata->fontsize;			// font height
+	memset(&m_logFont, 0, sizeof(LOGFONT));					// prepare font
+	lstrcpy(m_logFont.lfFaceName, _T("Arial"));				// Arial font
+	m_logFont.lfHeight = options_viewdata->fontsize;		// font height
 	m_pOldFont = nullptr;
 	/*BOOL flag = */m_fontPrint.CreateFontIndirect(&m_logFont);
 	p_dc->SetBkMode(TRANSPARENT);
@@ -1578,22 +1527,22 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
 
 	// --------------------- RWhere = rectangle/row in which we plot the data, rWidth = row width
-	const auto r_width = options_viewdata->WidthDoc;					// margins
-	const auto r_height = options_viewdata->HeightDoc;					// margins
-	CRect r_where(m_printRect.left, 				// printing rectangle for data
+	const auto r_width = options_viewdata->WidthDoc;		// margins
+	const auto r_height = options_viewdata->HeightDoc;		// margins
+	CRect r_where(m_printRect.left, 						// printing rectangle for data
 		m_printRect.top,
 		m_printRect.left + r_width,
 		m_printRect.top + r_height);
-	//CRect RW2 = RWhere;								// printing rectangle - constant
-	//RW2.OffsetRect(-RWhere.left, -RWhere.top);		// set RW2 origin = 0,0
+	//CRect RW2 = RWhere;									// printing rectangle - constant
+	//RW2.OffsetRect(-RWhere.left, -RWhere.top);			// set RW2 origin = 0,0
 
-	p_dc->SetMapMode(MM_TEXT);						// change map mode to text (1 pixel = 1 logical point)
-	PrintFileBottomPage(p_dc, pInfo);				// print bottom - text, date, etc
+	p_dc->SetMapMode(MM_TEXT);								// change map mode to text (1 pixel = 1 logical point)
+	PrintFileBottomPage(p_dc, pInfo);						// print bottom - text, date, etc
 
 	// --------------------- load data corresponding to the first row of current page
-	int filenumber;    								// file number and file index
-	long l_first;									// index first data point / first file
-	auto very_last = m_lprintFirst + m_lprintLen;		// index last data point / current file
+	int filenumber;    										// file number and file index
+	long l_first;											// index first data point / first file
+	auto very_last = m_lprintFirst + m_lprintLen;			// index last data point / current file
 	const int curpage = pInfo->m_nCurPage;					// get current page number
 	GetFileSeriesIndexFromPage(curpage, filenumber, l_first);
 	if (l_first < GetDocument()->GetDB_DataLen() - 1)
@@ -1612,16 +1561,16 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	for (auto i = 0; i < m_nbrowsperpage; i++)
 	{
 		// first : set rectangle where data will be printed
-		auto comment_rect = r_where;					// save RWhere for comments
-		p_dc->SetMapMode(MM_TEXT);					// 1 pixel = 1 logical unit
-		p_dc->SetTextAlign(TA_LEFT); 				// set text align mode
+		auto comment_rect = r_where;						// save RWhere for comments
+		p_dc->SetMapMode(MM_TEXT);							// 1 pixel = 1 logical unit
+		p_dc->SetTextAlign(TA_LEFT); 						// set text align mode
 
 		// load data and adjust display rectangle ----------------------------------------
 		// reduce width to the size of the data
-		auto l_last = l_first + m_lprintLen;			// compute last pt to load
+		auto l_last = l_first + m_lprintLen;				// compute last pt to load
 		if (l_first < GetDocument()->GetDB_DataLen() - 1)
 		{
-			if (l_last > very_last)					// check end across file length
+			if (l_last > very_last)							// check end across file length
 				l_last = very_last;
 			m_ChartDataWnd.GetDataFromDoc(l_first, l_last);	// load data from file
 			UpdateChannelsDisplayParameters();
@@ -1632,18 +1581,18 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		r_where.OffsetRect(0, r_height + options_viewdata->heightSeparator);
 
 		// restore DC and print comments --------------------------------------------------
-		p_dc->SetMapMode(MM_TEXT);				// 1 LP = 1 pixel
-		p_dc->SelectClipRgn(nullptr);				// no more clipping
-		p_dc->SetViewportOrg(0, 0);				// org = 0,0
+		p_dc->SetMapMode(MM_TEXT);							// 1 LP = 1 pixel
+		p_dc->SelectClipRgn(nullptr);						// no more clipping
+		p_dc->SetViewportOrg(0, 0);							// org = 0,0
 
 		// print comments according to row within file
 		CString cs_comment;
-		if (l_first == m_lprintFirst)			// first row = full comment
+		if (l_first == m_lprintFirst)						// first row = full comment
 		{
 			cs_comment += GetFileInfos();
-			cs_comment += PrintBars(p_dc, &comment_rect);// bars and bar legends
+			cs_comment += PrintBars(p_dc, &comment_rect);	// bars and bar legends
 		}
-		else									// other rows: time intervals only
+		else												// other rows: time intervals only
 			cs_comment = ConvertFileIndex(m_ChartDataWnd.GetDataFirst(), m_ChartDataWnd.GetDataLast());
 
 		// print comments stored into cs_comment
@@ -1666,7 +1615,7 @@ void CViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		if (ifile != filenumber)
 			UpdateFileParameters(FALSE);
 	}
-	p_dc->RestoreDC(old_dc);					// restore Display context
+	p_dc->RestoreDC(old_dc);								// restore Display context
 
 	// end of file loop : restore initial conditions
 	if (m_pOldFont != nullptr)

@@ -46,5 +46,6 @@ protected:
 	afx_msg void OnKillfocusVertMxMi();
 	virtual void OnCancel();
 	afx_msg void OnKillfocusVertcenter();
+
 	DECLARE_MESSAGE_MAP()
 };

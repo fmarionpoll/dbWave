@@ -20,25 +20,26 @@ public:
 
 	// values passed by caller
 public:
-	CStringArray* m_pfilenameArray;
-	CStringArray* m_pconvertedFiles;
-	CdbWaveDoc* m_pdbDoc;
-	int				m_option;
+	CStringArray* m_pfilenameArray = nullptr;
+	CStringArray* m_pconvertedFiles = nullptr;
+	CdbWaveDoc* m_pdbDoc = nullptr;
+	int			m_option = 0;
+	BOOL		m_bReadHeader = true;
 
 	// Implementation
 protected:
-	BOOL		m_bconvert;
-	CString		m_ext;
-	int			m_ncurrent;	// number of current file
-	int			m_nfiles;	// number of files
-	CString		m_filefrom;
-	CString		m_fileto;
+	BOOL		m_bconvert = false;
+	CString		m_ext{};
+	int			m_ncurrent = 0;	// number of current file
+	int			m_nfiles= 0;	// number of files
+	CString		m_filefrom{};
+	CString		m_fileto{};
 
-	int			m_scan_count;
-	double		m_xinstgain;
-	double		m_xrate;
-	double		m_dspan[16];
-	double		m_dbinval[16];
+	int			m_scan_count = 0;
+	double		m_xinstgain = 0.;
+	double		m_xrate = 0.;
+	double		m_dspan[16]{};
+	double		m_dbinval[16]{};
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -48,10 +49,10 @@ protected:
 	BOOL		GetExperimentParameters(CAcqDataDoc* pTo);
 	BOOL		ImportATFFile();
 
-	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();
 	afx_msg void OnBnClickedCancel();
 	afx_msg void ADC_OnBnClickedStartstop();
-	BOOL m_bReadHeader;
+
+	DECLARE_MESSAGE_MAP()
 };

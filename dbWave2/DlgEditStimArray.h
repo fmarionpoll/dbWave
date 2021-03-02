@@ -39,8 +39,6 @@ protected:
 	void		setSubItem0(LVITEM& lvi, int i, CString& cs);
 	void		setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs);
 
-
-	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -54,4 +52,6 @@ public:
 	afx_msg void OnBnClickedPaste();
 	afx_msg void OnBnClickedExport();
 	afx_msg void OnBnClickedImportfromdata();
+
+	DECLARE_MESSAGE_MAP()
 };

@@ -54,5 +54,6 @@ protected:
 	afx_msg void OnEnChangeMvlevel();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnDeleteAll();
+
 	DECLARE_MESSAGE_MAP()
 };

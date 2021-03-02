@@ -12,12 +12,13 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_TRANSFERFILES };
+	CString m_csPathname;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtonpath();
-	CString m_csPathname;
+
+	DECLARE_MESSAGE_MAP()
 };

@@ -43,5 +43,6 @@ protected:
 	afx_msg void OnEnChangeXzero();
 	afx_msg void OnEnChangeYextent();
 	afx_msg void OnEnChangeYzero();
+
 	DECLARE_MESSAGE_MAP()
 };

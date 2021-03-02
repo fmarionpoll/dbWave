@@ -83,8 +83,6 @@ public:
 protected:
 	void UpdateString(void* pptr, int iclass, int nbspikes);
 
-	// Overrides
-
 	// Implementation
 public:
 	virtual ~CSpikeClassListBox();
@@ -98,5 +96,6 @@ public:
 	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+
 	DECLARE_MESSAGE_MAP()
 };

@@ -62,7 +62,6 @@ protected:
 	virtual void OnCancel();
 	virtual BOOL OnInitDialog();
 
-	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtoninsectname();
 	afx_msg void OnBnClickedButtonstrain();
@@ -79,4 +78,6 @@ public:
 	afx_msg void OnBnClickedButtonexpt();
 	afx_msg void OnEnKillfocusMfceditbrowse1();
 	afx_msg void OnBnClickedButtonNextid();
+
+	DECLARE_MESSAGE_MAP()
 };

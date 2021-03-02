@@ -20,7 +20,6 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	DECLARE_MESSAGE_MAP()
 protected:
 	// number of input channels
 	int m_nacqchans;				// number of acquisition channels
@@ -89,4 +88,6 @@ public:
 	afx_msg void OnCbnSelchangeResolution();
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedAdintervals();
+
+	DECLARE_MESSAGE_MAP()
 };

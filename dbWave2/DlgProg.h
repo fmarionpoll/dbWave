@@ -49,5 +49,6 @@ protected:
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
+
 	DECLARE_MESSAGE_MAP()
 };

@@ -33,7 +33,7 @@ protected:
 	void DrawBar(CRect* bar, CDC* pdc);
 	int IsMouseOverAnyBar(CPoint* point);
 
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX);
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
@@ -46,5 +46,6 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+
 	DECLARE_MESSAGE_MAP()
 };

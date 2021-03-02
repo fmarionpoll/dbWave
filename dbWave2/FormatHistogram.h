@@ -39,5 +39,6 @@ protected:
 	afx_msg void OnStimulusFillcolor();
 	afx_msg void OnStimulusBordercolor();
 	afx_msg void OnBackgroundcolor();
+
 	DECLARE_MESSAGE_MAP()
 };

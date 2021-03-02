@@ -13,15 +13,15 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_CONFIRMDIALOG };
 
-protected:
-	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
+	CString m_cstimeleft;
+	CString m_csfilename;
 
 private:
 	int m_timeleft;
 public:
 	afx_msg void OnTimer(UINT nIDEvent);
-	CString m_cstimeleft;
-	CString m_csfilename;
+	
+	DECLARE_MESSAGE_MAP()
 };

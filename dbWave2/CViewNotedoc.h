@@ -27,5 +27,6 @@ public:
 protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnToolsOpendatafiles();
+
 	DECLARE_MESSAGE_MAP()
 };

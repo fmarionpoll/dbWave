@@ -70,5 +70,6 @@ protected:
 	afx_msg void OnAddTags();
 	afx_msg void OnDeleteSeries();
 	afx_msg void OnDeleteAll();
+
 	DECLARE_MESSAGE_MAP()
 };

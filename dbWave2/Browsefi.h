@@ -29,5 +29,6 @@ protected:
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
+
 	DECLARE_MESSAGE_MAP()
 };

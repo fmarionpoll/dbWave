@@ -55,5 +55,6 @@ protected:
 	afx_msg void OnEnChangeAcqduration();
 	afx_msg void OnTrigthresholdOFF();
 	afx_msg void OnTrigthresholdON();
+
 	DECLARE_MESSAGE_MAP()
 };

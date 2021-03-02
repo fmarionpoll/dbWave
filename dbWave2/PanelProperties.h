@@ -65,9 +65,9 @@ protected:
 	afx_msg void OnUpdateBnUpdateinfos(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnPropertyChanged(WPARAM, LPARAM);
 
-	DECLARE_MESSAGE_MAP()
-
 public:
 	afx_msg void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
+
+	DECLARE_MESSAGE_MAP()
 };

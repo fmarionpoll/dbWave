@@ -770,7 +770,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CViewdbWaveRecord.cpp" />
+    <ClCompile Include="CViewDao.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
     <ClCompile Include="AcqDataDoc.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -1340,7 +1340,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="CViewdbWaveRecord.h" />
+    <ClInclude Include="CViewDao.h" />
     <ClInclude Include="DlgAbout.h" />
     <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="AcqWaveChan.h" />

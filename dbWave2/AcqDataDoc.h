@@ -42,8 +42,6 @@ protected:
 #endif
 
 protected:
-	DECLARE_MESSAGE_MAP()
-
 	// Data members and functions dealing with CDataFileX and data reading buffer
 
 	CDataFileX*	m_pXFile			= nullptr;
@@ -136,4 +134,5 @@ protected:
 	BOOL		readDataBlock(long l_first);
 	void		instanciateDataFileObject(int docType);
 
+	DECLARE_MESSAGE_MAP()
 };

@@ -27,5 +27,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
 	afx_msg void OnRadio3();
+
 	DECLARE_MESSAGE_MAP()
 };

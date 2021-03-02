@@ -140,11 +140,12 @@ protected:
 	afx_msg void OnEnChangeEditnstipercycle();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnEnChangeEditlockonstim();
-	DECLARE_MESSAGE_MAP()
+
 public:
 	CTabCtrl m_tabCtrl;
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	DECLARE_MESSAGE_MAP()
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp

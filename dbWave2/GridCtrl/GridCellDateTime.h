@@ -50,6 +50,14 @@ public:
 		CTime* pcTime,
 		UINT nFirstChar);      // first character to pass to control
 
+private:
+	CTime* m_pcTime;
+	int		 m_nRow;
+	int		 m_nCol;
+	UINT     m_nLastChar;
+	BOOL	 m_bExitOnArrows;
+	COLORREF m_crForeClr, m_crBackClr;
+
 // Overrides
 protected:
 	virtual void PostNcDestroy();
@@ -67,12 +75,4 @@ protected:
 	afx_msg UINT OnGetDlgCode();
 
 	DECLARE_MESSAGE_MAP()
-
-private:
-	CTime* m_pcTime;
-	int		 m_nRow;
-	int		 m_nCol;
-	UINT     m_nLastChar;
-	BOOL	 m_bExitOnArrows;
-	COLORREF m_crForeClr, m_crBackClr;
 };

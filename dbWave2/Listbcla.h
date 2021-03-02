@@ -1,10 +1,5 @@
 #pragma once
 
-// listbcla.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CListBClaSizeDlg dialog
 
 class CListBClaSizeDlg : public CDialog
 {
@@ -24,9 +19,6 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
-
-// Implementation
-protected:
 
 	DECLARE_MESSAGE_MAP()
 };

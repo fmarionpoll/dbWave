@@ -12,12 +12,6 @@ protected: // create from serialization only
 	CNoteDoc();
 	DECLARE_DYNCREATE(CNoteDoc)
 
-	// Attributes
-public:
-
-	// Operations
-public:
-
 	// Overrides
 public:
 	virtual BOOL OnNewDocument();
@@ -36,9 +30,5 @@ public:
 #endif
 
 protected:
-
-	// Generated message map functions
-protected:
-
 	DECLARE_MESSAGE_MAP()
 };

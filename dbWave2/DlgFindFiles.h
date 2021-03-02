@@ -39,5 +39,6 @@ protected:
 	virtual void OnOK();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSearch();
+
 	DECLARE_MESSAGE_MAP()
 };

@@ -58,7 +58,6 @@ protected:  // control bar embedded members
 	CdbWaveDoc* GetMDIActiveDocument();
 
 	// Generated message map functions
-	DECLARE_MESSAGE_MAP()
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnWindowManager();
@@ -80,4 +79,6 @@ public:
 	afx_msg void OnUpdateCheckFilterpane(CCmdUI* pCmdUI);
 	afx_msg void OnCheckPropertiespane();
 	afx_msg void OnUpdateCheckPropertiespane(CCmdUI* pCmdUI);
+
+	DECLARE_MESSAGE_MAP()
 };

@@ -96,6 +96,7 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -121,13 +122,18 @@ public:
 // Attributes
 public:
 	CComboEdit m_comboedit;  // subclassed edit control
+private:
+	int		 m_nNumLines;
+	CString  m_sInitText;
+	int		 m_nRow;
+	int		 m_nCol;
+	UINT     m_nLastChar;
+	BOOL	 m_bExitOnArrows;
+	COLORREF m_crForeClr, m_crBackClr;
 
  // Operations
 public:
 
-	// Overrides
-		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CGridInPlaceList)
 protected:
 	virtual void PostNcDestroy();
 	//}}AFX_VIRTUAL
@@ -148,21 +154,9 @@ protected:
 	afx_msg void OnDropdown();
 	afx_msg UINT OnGetDlgCode();
 	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
-	DECLARE_MESSAGE_MAP()
 
-private:
-	int		 m_nNumLines;
-	CString  m_sInitText;
-	int		 m_nRow;
-	int		 m_nCol;
-	UINT     m_nLastChar;
-	BOOL	 m_bExitOnArrows;
-	COLORREF m_crForeClr, m_crBackClr;
+	DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_GRIDCELLCOMBO_H__ECD42822_16DF_11D1_992F_895E185F9C72__INCLUDED_)

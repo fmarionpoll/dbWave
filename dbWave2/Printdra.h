@@ -20,13 +20,14 @@ public:
 	int		m_spkheight;
 	int		m_spkwidth;
 	OPTIONS_VIEWDATA* mdPM;
+	BOOL	m_bFilterDat;
 
 	// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
+
 	DECLARE_MESSAGE_MAP()
-public:
-	BOOL m_bFilterDat;
+
 };

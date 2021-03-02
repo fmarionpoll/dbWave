@@ -56,7 +56,7 @@ protected:
 	long	m_sourceID;
 	long	m_destID{};
 	long	m_initialID;
-	DECLARE_MESSAGE_MAP()
+	
 public:
 	int		m_sourceselect;
 	int		m_sourcecondition;
@@ -93,4 +93,6 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnCbnSelchangeCombo3();
+
+	DECLARE_MESSAGE_MAP()
 };

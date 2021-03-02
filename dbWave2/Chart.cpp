@@ -36,7 +36,7 @@ int	CChartWnd::m_cursordragmode[NB_CURSORS];
 int CChartWnd::m_countcurs = 0;
 
 TCHAR CChartWnd::csUnit[] = { _T("GM  mµpf  ") };
-int  CChartWnd::dUnitsPower[] = { 9,6, 0, 0, -3, -6, -9, -12, 0 };
+int CChartWnd::dUnitsPower[] = { 9,6, 0, 0, -3, -6, -9, -12, 0 };
 int	CChartWnd::dmaxIndex = 8;
 int	CChartWnd::dniceIntervals[] = { 1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, 0 };
 

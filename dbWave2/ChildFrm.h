@@ -57,7 +57,7 @@ protected:
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void ReplaceViewIndex(UINT nID);
 	afx_msg void OnUpdateViewmenu(CCmdUI* pCmdUI);
-	DECLARE_MESSAGE_MAP()
+	
 public:
 	afx_msg void OnRecordGotorecord();
 	afx_msg void OnRecordDeletecurrent();
@@ -85,4 +85,6 @@ public:
 	afx_msg void OnToolsSynchro();
 	afx_msg void OnToolsGarbage();
 	afx_msg void OnToolsCompactdatabase();
+
+	DECLARE_MESSAGE_MAP()
 };

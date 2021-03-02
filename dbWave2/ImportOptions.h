@@ -12,12 +12,11 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTOPTIONS };
+	BOOL m_bNewIDs;
+	BOOL m_bAllowDuplicateFiles;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
-public:
-	BOOL m_bNewIDs;
-	BOOL m_bAllowDuplicateFiles;
 };

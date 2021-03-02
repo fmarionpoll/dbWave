@@ -21,9 +21,10 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	CWnd* m_pParent;
 
-	DECLARE_MESSAGE_MAP()
 public:
 	virtual void OnOK();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedMseqRandomSeed();
+
+	DECLARE_MESSAGE_MAP()
 };

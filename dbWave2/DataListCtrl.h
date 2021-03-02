@@ -92,5 +92,6 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+
 	DECLARE_MESSAGE_MAP()
 };

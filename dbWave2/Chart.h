@@ -37,7 +37,7 @@ public:
 	virtual BOOL	Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
 	virtual SCOPESTRUCT* GetScopeParameters();
 	virtual void	SetScopeParameters(SCOPESTRUCT* pStruct);
-	virtual int		SetMouseCursorType(int cursormode);	// change mouse cursor on button
+	virtual int		SetMouseCursorType(int cursormode);			// change mouse cursor on button
 	virtual	void	ZoomData(CRect* prevRect, CRect* newRect);
 	virtual void	DisplayVTtags_Value(CDC* p_dc);
 	virtual void	DisplayHZtags(CDC* p_dc);
@@ -105,8 +105,8 @@ public:
 	CRulerBar*		m_pXRulerBar = nullptr;
 	CRulerBar*		m_pYRulerBar = nullptr;
 
-	CTagList		m_HZtags{};				// List of horizontal tag lines
-	CTagList		m_VTtags{};				// List of vertical tag lines
+	CTagList		m_HZtags{};						// List of horizontal tag lines
+	CTagList		m_VTtags{};						// List of vertical tag lines
 	CTagList*		GetVTtagList();
 	CTagList*		GetHZtagList();
 	
@@ -129,7 +129,7 @@ protected:
 	static int		dmaxIndex;
 	static int		dniceIntervals[];
 
-	CPen			m_penTable[NB_COLORS];	// table with CPen objects (same colors as color table
+	CPen			m_penTable[NB_COLORS];			// table with CPen objects (same colors as color table
 	BOOL			m_bLmouseDown = false;
 	BOOL			m_bUseDIB = false;
 	CDC				m_PlotDC{};
@@ -141,11 +141,11 @@ protected:
 	int				m_plotmode = 0;
 	int				m_colorbackgr = SILVER_COLOR;
 	int				m_colorselected = BLACK_COLOR;
-	BOOL			m_erasebkgnd = true;	// erase backgroung (flag)
-	BOOL			m_bVTtagsLONG = false;	// flag: TRUE if VTtags are defined as long
-	long			m_liFirst = 0;			// file position of first left pixel
-	long			m_liLast = 0;			// file position of last right pixel
-	long			m_liJitter{};			// file position range corresponding mouse jitter
+	BOOL			m_erasebkgnd = true;			// erase backgroung (flag)
+	BOOL			m_bVTtagsLONG = false;			// flag: TRUE if VTtags are defined as long
+	long			m_liFirst = 0;					// file position of first left pixel
+	long			m_liLast = 0;					// file position of last right pixel
+	long			m_liJitter{};					// file position range corresponding mouse jitter
 
 	// plotting options - parameters for PLOT_WITHINBOUNDS
 	int				m_plotwithin_mode{};
@@ -155,30 +155,30 @@ protected:
 	int				m_color_outsidelimits{};
 
 	// mouse tracking modes
-	int				m_HCtrapped{};			// cursor index trapped by the mouse
+	int				m_HCtrapped{};					// cursor index trapped by the mouse
 	int				m_trackMode = TRACK_OFF;
 
-	int 			m_xWO = 0;				// x origin, extent / window & view
+	int 			m_xWO = 0;						// x origin, extent / window & view
 	int				m_xWE = 1;
 	int				m_xVO = 0;
 	int				m_xVE = 1;
-	int 			m_yWO = 0;				// y origin, extent / window & view
+	int 			m_yWO = 0;						// y origin, extent / window & view
 	int				m_yWE = 1;
 	int				m_yVO = 0;
 	int				m_yVE = 1;
 
-	int 			m_curTrack{};			// threshold  tracked
+	int 			m_curTrack{};					// threshold  tracked
 	CPoint			m_ptFirst{};
 	CPoint			m_ptCurr{};
 	CPoint			m_ptLast{};
 	CRect			m_clientRect{};
 	CRect			m_displayRect{};
 
-	int 			m_cxjitter;				// mouse horizontal hitter
-	int				m_cyjitter;				// mouse vertical jitter
-	CRect			m_ZoomFrom;				// temp rect
-	CRect			m_ZoomTo;				// temp rect
-	int				m_iUndoZoom = 0;		// 1: rect+ stored; -1: rect- stored; 0: none stored (not implemented)
+	int 			m_cxjitter;						// mouse horizontal hitter
+	int				m_cyjitter;						// mouse vertical jitter
+	CRect			m_ZoomFrom;						// temp rect
+	CRect			m_ZoomTo;						// temp rect
+	int				m_iUndoZoom = 0;				// 1: rect+ stored; -1: rect- stored; 0: none stored (not implemented)
 
 	BOOL			m_bAllowProps = true;
 	HWND			m_hwndReflect = nullptr;
@@ -218,5 +218,6 @@ protected:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+
 	DECLARE_MESSAGE_MAP()
 };

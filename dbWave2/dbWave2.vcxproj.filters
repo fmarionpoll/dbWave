@@ -402,9 +402,6 @@
     <ClCompile Include="RulerBar.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="CViewdbWaveRecord.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CViewAdcontinuous.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -430,6 +427,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CViewSpikeTemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CViewDao.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -917,9 +917,6 @@
     <ClInclude Include="RulerBar.h">
       <Filter>customctrl</Filter>
     </ClInclude>
-    <ClInclude Include="CViewdbWaveRecord.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CViewADcontinuous.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -945,6 +942,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CViewSpikeTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CViewDao.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

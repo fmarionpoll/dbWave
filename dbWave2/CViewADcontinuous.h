@@ -202,9 +202,11 @@ protected:
 #endif
 
 	// Generated message map functions
-	DECLARE_MESSAGE_MAP()
-	DECLARE_EVENTSINK_MAP()
+
 public:
+	void DeviceConnectedUsbpxxs1ctl1(long Handle);
+	void DeviceDisconnectedUsbpxxs1ctl1(long Handle);
+
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void ADC_OnHardwareChannelsDlg();
 	afx_msg void ADC_OnHardwareIntervalsDlg();
@@ -232,6 +234,6 @@ public:
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void DAC_OnBnClickedStartStop();
 
-	void DeviceConnectedUsbpxxs1ctl1(long Handle);
-	void DeviceDisconnectedUsbpxxs1ctl1(long Handle);
+	DECLARE_MESSAGE_MAP()
+	DECLARE_EVENTSINK_MAP()
 };

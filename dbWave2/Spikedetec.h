@@ -46,7 +46,6 @@ protected:
 	virtual void OnOK();
 	afx_msg void OnDetectfromtag();
 	afx_msg void OnDetectfromchan();
-	DECLARE_MESSAGE_MAP()
 
 public:
 	CTabCtrl m_cParameterTabCtrl;
@@ -63,4 +62,6 @@ public:
 	afx_msg void OnEnChangeComment();
 	afx_msg void OnBnClickedShiftright();
 	afx_msg void OnBnClickedShiftleft();
+
+	DECLARE_MESSAGE_MAP()
 };

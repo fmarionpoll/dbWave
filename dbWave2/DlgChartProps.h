@@ -39,5 +39,6 @@ protected:
 	afx_msg void OnEnChangeYCells();
 	afx_msg void OnBackgroundColor();
 	afx_msg void OnGridColor();
+
 	DECLARE_MESSAGE_MAP()
 };

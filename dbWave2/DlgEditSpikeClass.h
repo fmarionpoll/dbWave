@@ -9,15 +9,13 @@ class CDlgEditSpikeClass : public CDialog
 public:
 	CDlgEditSpikeClass(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDlgEditSpikeClass();
-
-	// Dialog Data
 	enum { IDD = IDD_EDITSPIKECLASS };
+
+	// input and output value
+	int m_iClass;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
-public:
-	// input and output value
-	int m_iClass;
 };

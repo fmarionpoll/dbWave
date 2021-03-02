@@ -16,6 +16,11 @@ public:
 	virtual ~CDlgDataTranslationBoard();
 	enum { IDD = IDD_DTBOARD_DLG };
 
+	CComboBox	m_cbBoard;
+	CListBox	m_listBoardCaps;
+	CListBox	m_listSSNumCaps;
+	CListBox	m_listSSYNCaps;
+
 	CDTAcq32* m_pAnalogIN;
 	short		m_subssystemIN;
 	short		m_subsystemelementIN;
@@ -27,6 +32,7 @@ private:
 	UINT		m_dtoaCount;
 	int			m_nsubsystems;
 	CString		m_boardName;
+
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -41,10 +47,7 @@ protected:
 
 	afx_msg void OnSelchangeBoard();
 	afx_msg void OnLbnSelchangeListBoardcaps();
+
 	DECLARE_MESSAGE_MAP()
-public:
-	CComboBox	m_cbBoard;
-	CListBox	m_listBoardCaps;
-	CListBox	m_listSSNumCaps;
-	CListBox	m_listSSYNCaps;
+
 };

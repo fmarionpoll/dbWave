@@ -66,10 +66,11 @@ public:
 	void	FilePrintSetup();
 	CString Get_MyDocuments_MydbWavePath();
 
-	DECLARE_MESSAGE_MAP()
 	afx_msg void OnAppAbout();
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileNew();
+
+	DECLARE_MESSAGE_MAP()
 };
 
 extern CdbWaveApp theApp;

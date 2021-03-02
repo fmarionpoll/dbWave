@@ -13,14 +13,15 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_FILE_NEW1 };
+	CListBox m_list;
+	int		m_icursel;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
-	CListBox m_list;
-	int		m_icursel;
 	afx_msg void OnBnClickedOk();
+
+	DECLARE_MESSAGE_MAP()
 };

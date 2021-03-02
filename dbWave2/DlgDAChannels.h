@@ -47,7 +47,6 @@ public:
 
 	virtual BOOL OnInitDialog();
 
-	DECLARE_MESSAGE_MAP()
 	afx_msg void OnBnClickedOk();
 
 	afx_msg void OnBnClickedCheckchan0();
@@ -75,4 +74,6 @@ public:
 	afx_msg void OnCbnSelchangeCombosource7();
 	afx_msg void OnCbnSelchangeCombosource8();
 	afx_msg void OnCbnSelchangeCombosource9();
+
+	DECLARE_MESSAGE_MAP()
 };

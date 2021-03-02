@@ -38,9 +38,6 @@ public:
 	int				m_currentchan{};
 	float			m_samplingrate{};
 
-	// Operations
-public:
-
 	// Overrides
 public:
 	virtual BOOL OnInitDialog();
@@ -48,9 +45,6 @@ public:
 	// Implementation
 public:
 	virtual ~CMeasureProperties();
-
-	// Generated message map functions
-protected:
 
 	DECLARE_MESSAGE_MAP()
 };

@@ -32,7 +32,6 @@ protected:
 	DB_ITEMDESC* GetItemDescriptors(int IDC);
 	void	UpdateDatabaseFromDialog();
 
-	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
 protected:
@@ -83,4 +82,6 @@ public:
 	afx_msg void OnBnClickedButtonrepeat2();
 	afx_msg void OnBnClickedButtonflag();
 	afx_msg void OnBnClickedButtonexpt2();
+
+	DECLARE_MESSAGE_MAP()
 };

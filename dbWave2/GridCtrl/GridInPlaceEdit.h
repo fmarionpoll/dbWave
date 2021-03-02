@@ -30,11 +30,14 @@ class CInPlaceEdit : public CEdit
 public:
 	CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 		int nRow, int nColumn, CString sInitText, UINT nFirstChar);
+private:
+	int     m_nRow;
+	int     m_nColumn;
+	CString m_sInitText;
+	UINT    m_nLastChar;
+	BOOL    m_bExitOnArrows;
+	CRect   m_Rect;
 
-	// Attributes
-public:
-
-	// Operations
 public:
 	void EndEdit();
 
@@ -56,11 +59,5 @@ protected:
 	afx_msg UINT OnGetDlgCode();
 	DECLARE_MESSAGE_MAP()
 
-private:
-	int     m_nRow;
-	int     m_nColumn;
-	CString m_sInitText;
-	UINT    m_nLastChar;
-	BOOL    m_bExitOnArrows;
-	CRect   m_Rect;
+
 };

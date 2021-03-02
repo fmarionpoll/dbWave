@@ -47,5 +47,6 @@ protected:
 	afx_msg void OnLoad();
 	afx_msg void OnSave();
 	afx_msg void OnKillfocusComment();
+
 	DECLARE_MESSAGE_MAP()
 };

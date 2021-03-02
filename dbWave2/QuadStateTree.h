@@ -62,7 +62,6 @@ typedef struct tagTVNCHECK          // Information for the TVN_CHECK notificatio
 class CQuadStateTree : public CTreeCtrl
 {
 	DECLARE_DYNAMIC(CQuadStateTree)
-	DECLARE_MESSAGE_MAP()
 
 public:
 	CQuadStateTree();
@@ -74,12 +73,15 @@ public:
 	virtual BOOL Create(DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
 	virtual BOOL CreateEx(DWORD dwExStyle, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
 
+protected:
+	virtual void PreSubclassWindow();
+
 private:
-	void    BuildBitmap();
-	void    ToggleCheck(HTREEITEM hTreeItem);
-	void    SetTriggerItem(HTREEITEM hTreeItem);
-	BOOL    SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState);
-	LRESULT SendTVNCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState, TVCS_CHECKSTATE OldCheckState);
+	void		BuildBitmap();
+	void		ToggleCheck(HTREEITEM hTreeItem);
+	void		SetTriggerItem(HTREEITEM hTreeItem);
+	BOOL		SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState);
+	LRESULT		SendTVNCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState, TVCS_CHECKSTATE OldCheckState);
 
 	CBitmap    m_Bitmap;
 	CImageList m_ImageList;
@@ -95,6 +97,5 @@ public:
 	afx_msg BOOL    OnTvnItemchanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnTvmSetitem(WPARAM wp, LPARAM lp);
 
-protected:
-	virtual void PreSubclassWindow();
+	DECLARE_MESSAGE_MAP()
 };

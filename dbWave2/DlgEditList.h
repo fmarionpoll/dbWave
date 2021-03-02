@@ -20,7 +20,6 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	DECLARE_MESSAGE_MAP()
 
 public:
 	virtual BOOL OnInitDialog();
@@ -29,4 +28,6 @@ public:
 	afx_msg void OnBnClickedAdditem();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//	afx_msg void OnBnClickedButton1();
+
+	DECLARE_MESSAGE_MAP()
 };
