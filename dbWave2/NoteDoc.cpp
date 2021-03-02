@@ -121,7 +121,7 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	}
 	else
 	{
-		CStringArray* cs_arrayfiles = extractListOfFilesSimple(cspathname, pEdit);
+		CStringArray* cs_arrayfiles = extractListOfFilesSimple_old(cspathname, pEdit);
 		if (cs_arrayfiles != nullptr)
 			flag = openListOfFilesSimple(cspathname, cs_arrayfiles);
 		delete cs_arrayfiles;
@@ -178,7 +178,7 @@ CStringArray* CNoteDoc::extractListOfFilesSimple_old(CString& cspathname, CRichE
 	auto token = _tcstok_s(pstring, seps, &next_token);
 	while (token != nullptr)
 	{
-		CString filename = token;	// get filename into CString
+		CString filename = token;
 		CFileStatus status;
 		if (!CFile::GetStatus(filename, status))
 		{	// not found: replace the first letter with a question mark
