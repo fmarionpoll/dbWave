@@ -696,13 +696,13 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			if (mdMO->wOption == 0)	// vertical cursors
 			{
 				auto ptaglist = m_pdatDoc->GetpVTtags();
-				ptaglist->CopyTagList(m_ChartDataWnd.GetVTtagList());
+				ptaglist->CopyTagList(&m_ChartDataWnd.m_VTtags);
 				m_ChartDataWnd.m_VTtags.RemoveAllTags();
 			}
 			else if (mdMO->wOption == 1)	// horizontal cursors
 			{
 				auto ptaglist = m_pdatDoc->GetpHZtags();
-				ptaglist->CopyTagList(m_ChartDataWnd.GetHZtagList());
+				ptaglist->CopyTagList(&m_ChartDataWnd.m_HZtags);
 				m_ChartDataWnd. m_HZtags.RemoveAllTags();
 			}
 			else if (mdMO->wOption == 3) // detect stimulus
@@ -757,7 +757,7 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (mdMO->lLimitRight != mdMO->lLimitLeft)
 			m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitRight, 0);
 		// store new VT tags into document
-		m_pdatDoc->GetpVTtags()->CopyTagList(m_ChartDataWnd.GetVTtagList());
+		m_pdatDoc->GetpVTtags()->CopyTagList(&m_ChartDataWnd.m_VTtags);
 		break;
 
 		// ......................  horizontal cursors
@@ -765,7 +765,7 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
 		if (mdMO->wLimitInf != mdMO->wLimitSup)
 			m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
-		m_pdatDoc->GetpHZtags()->CopyTagList(m_ChartDataWnd.GetHZtagList());
+		m_pdatDoc->GetpHZtags()->CopyTagList(&m_ChartDataWnd.m_HZtags);
 		if (m_ChartDataWnd.m_HZtags.GetNTags() == 2)
 			SetCursorAssociatedWindows();
 		UpdateHZtagsVal();
@@ -1115,8 +1115,12 @@ void CViewData::MeasureProperties(int item)
 	// save current data into data document
 	switch (mdMO->wOption)
 	{
-	case 0:	m_pdatDoc->GetpVTtags()->CopyTagList(m_ChartDataWnd.GetVTtagList()); break;
-	case 1: m_pdatDoc->GetpHZtags()->CopyTagList(m_ChartDataWnd.GetHZtagList()); break;
+	case 0:	
+		m_pdatDoc->GetpVTtags()->CopyTagList(&m_ChartDataWnd.m_VTtags); 
+		break;
+	case 1: 
+		m_pdatDoc->GetpHZtags()->CopyTagList(&m_ChartDataWnd.m_HZtags); 
+		break;
 	case 3:
 		mdMO->wStimuluschan = m_ChartDataWnd.m_HZtags.GetChannel(0);
 		mdMO->wStimulusthresh = m_ChartDataWnd.m_HZtags.GetValue(0);

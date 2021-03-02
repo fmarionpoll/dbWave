@@ -107,9 +107,6 @@ public:
 
 	CTagList		m_HZtags{};						// List of horizontal tag lines
 	CTagList		m_VTtags{};						// List of vertical tag lines
-	CTagList*		GetVTtagList();
-	CTagList*		GetHZtagList();
-	
 	CString			m_csBottomComment{};
 	BOOL			m_bBottomComment = false;
 	

@@ -1094,16 +1094,6 @@ void CChartWnd::XorTempVTtag(int xpoint)
 	m_tempVTtag->m_pixel = xpoint;
 }
 
-CTagList* CChartWnd::GetHZtagList()
-{
-	return &m_HZtags;
-}
-
-CTagList* CChartWnd::GetVTtagList()
-{
-	return &m_VTtags;
-}
-
 SCOPESTRUCT* CChartWnd::GetScopeParameters()
 {
 	return &m_scopestruct;
