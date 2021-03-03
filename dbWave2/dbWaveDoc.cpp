@@ -1005,38 +1005,38 @@ HMENU CdbWaveDoc::GetDefaultMenu()
 	return m_hMyMenu;    // just use original default
 }
 
- sourceData* CdbWaveDoc::getWaveFormatFromEitherFile(CString cs_filename)
+ sourceData CdbWaveDoc::getWaveFormatFromEitherFile(CString cs_filename)
 {
-	sourceData* record = new sourceData();
+	 sourceData record;
 
-	record->ilastbackslashposition = cs_filename.ReverseFind('\\');
+	record.ilastbackslashposition = cs_filename.ReverseFind('\\');
 	const auto idotposition = cs_filename.ReverseFind('.');
-	const auto namelen = idotposition - record->ilastbackslashposition - 1;
-	record->cs_path = cs_filename.Left(record->ilastbackslashposition);
-	record->cs_path.MakeLower();
+	const auto namelen = idotposition - record.ilastbackslashposition - 1;
+	record.cs_path = cs_filename.Left(record.ilastbackslashposition);
+	record.cs_path.MakeLower();
 	auto cs_extent = cs_filename.Right(cs_filename.GetLength() - idotposition - 1);
-	auto cs_root_name = cs_filename.Mid(record->ilastbackslashposition + 1, namelen);
+	auto cs_root_name = cs_filename.Mid(record.ilastbackslashposition + 1, namelen);
 
 	const auto b_is_dat_file = IsExtensionRecognizedAsDataFile(cs_extent);
 	if (b_is_dat_file) {
-		record->cs_dat_file = cs_filename;
-		record->cs_spk_file = cs_filename.Left(idotposition) + _T(".spk");
+		record.cs_dat_file = cs_filename;
+		record.cs_spk_file = cs_filename.Left(idotposition) + _T(".spk");
 	}
 	else 
 	{
-		record->cs_dat_file = cs_filename.Left(idotposition) + _T(".") + cs_extent;
-		record->cs_spk_file = cs_filename;
+		record.cs_dat_file = cs_filename.Left(idotposition) + _T(".") + cs_extent;
+		record.cs_spk_file = cs_filename;
 	}
 
 	// test  files
 	CFileStatus status;
-	record->b_dat_present = CFile::GetStatus(record->cs_dat_file, status);
-	record->b_spik_present = CFile::GetStatus(record->cs_spk_file, status);
-	if (record->b_dat_present)
-		cs_filename = record->cs_dat_file;
-	else if (record->b_spik_present)
-		cs_filename = record->cs_spk_file;
-	record->p_wave_format = GetWaveFormat(cs_filename, record->b_dat_present);
+	record.b_dat_present = CFile::GetStatus(record.cs_dat_file, status);
+	record.b_spik_present = CFile::GetStatus(record.cs_spk_file, status);
+	if (record.b_dat_present)
+		cs_filename = record.cs_dat_file;
+	else if (record.b_spik_present)
+		cs_filename = record.cs_spk_file;
+	record.p_wave_format = GetWaveFormat(cs_filename, record.b_dat_present);
 	m_pDat->AcqCloseFile();
 
 	return record;
@@ -1058,7 +1058,7 @@ HMENU CdbWaveDoc::GetDefaultMenu()
 	 return found;
  }
 
- sourceData* CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns, boolean bHeader)
+void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns, boolean bHeader)
  {
 	 CWaveFormat* p_wave_format = pRecord->p_wave_format;
 	 int index = index2DArray(irecord, nColumns, bHeader);
@@ -1112,7 +1112,6 @@ HMENU CdbWaveDoc::GetDefaultMenu()
 			 break;
 		 }
 	 }
-	 return pRecord;
  }
 
  void CdbWaveDoc::setRecordFileNames(sourceData* record) 
@@ -1164,15 +1163,16 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 	if (nfiles == 0)
 		return;
 
-	auto psf = dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
+	CSharedFile* psf = dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
 	SAFE_DELETE(psf)
-		dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf = nullptr;
+	dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf = nullptr;
 	psf = new CSharedFile(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 
 	// -------------------------- cancel any pending edit or add operation
 	m_pDB->UpdateTables();
 	m_pDB->m_mainTableSet.Close();
-	if (!m_pDB->m_mainTableSet.OpenTable(dbOpenTable, nullptr, 0)) {
+	if (!m_pDB->m_mainTableSet.OpenTable(dbOpenTable, nullptr, 0)) 
+	{
 		delete psf;
 		return; 
 	}
@@ -1197,7 +1197,7 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 				break;
 		// get file name
 		int index = index2DArray(irec, nColumns, bHeader);
-		CString cs_filename = fileList[index];
+		CString cs_filename = CString(fileList[index]);
 		CString cscomment;
 		cscomment.Format(_T("Import file [%i / %i] %s"), index + 1, nfilesok, static_cast<LPCTSTR>(cs_filename));
 		dlg.SetStatus(cscomment);
@@ -1209,15 +1209,13 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 
 	// open dynaset
 	m_pDB->m_mainTableSet.Close();
-	if (!m_pDB->m_mainTableSet.OpenTable(dbOpenDynaset, nullptr, 0)) 
+	if (m_pDB->m_mainTableSet.OpenTable(dbOpenDynaset, nullptr, 0)) 
 	{
-		delete psf;
-		return;
+		m_pDB->m_mainTableSet.Requery();
+		m_pDB->m_mainTableSet.BuildAndSortIDArrays();
+		m_pDB->m_mainTableSet.MoveLast();
 	}
-	m_pDB->m_mainTableSet.Requery();
-	m_pDB->m_mainTableSet.BuildAndSortIDArrays();
-	m_pDB->m_mainTableSet.MoveLast();
-
+	
 	// close files opened here
 	SAFE_DELETE(m_pDat);
 	SAFE_DELETE(m_pSpk);
@@ -1227,15 +1225,15 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 boolean CdbWaveDoc::importFileSingle(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns, boolean bHeader)
 {
 	// open document and read data - go to next file if not readable
-	sourceData* pRecord = getWaveFormatFromEitherFile(cs_filename);
-	if (pRecord->p_wave_format == nullptr)
+	sourceData record = getWaveFormatFromEitherFile(cs_filename);
+	if (record.p_wave_format == nullptr)
 		return false;
 
 	if (nColumns > 1)
-		pRecord = getInfosFromStringArray(pRecord, csArray, irecord, nColumns, bHeader);
+		getInfosFromStringArray(&record, csArray, irecord, nColumns, bHeader);
 
 	// check data acquisition time - go to next file if already exist and if flag set
-	auto t = pRecord->p_wave_format->acqtime;
+	auto t = record.p_wave_format->acqtime;
 	COleDateTime o_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 	if (!dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import.bImportDuplicateFiles)
@@ -1248,9 +1246,9 @@ boolean CdbWaveDoc::importFileSingle(CString& cs_filename, long& m_id, int ireco
 	m_pDB->m_mainTableSet.AddNew();
 	m_id++;
 	m_pDB->m_mainTableSet.m_ID = m_id;
-	setRecordFileNames(pRecord);
-	setRecordSpkClasses(pRecord);
-	setRecordWaveFormat(pRecord);
+	setRecordFileNames(&record);
+	setRecordSpkClasses(&record);
+	setRecordWaveFormat(&record);
 	try
 	{
 		m_pDB->m_mainTableSet.Update();
@@ -2146,8 +2144,9 @@ int CdbWaveDoc::checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf,
 	{
 		// check if filename not already defined
 		int index = index2DArray(irec, nColumns, bHeader);
-		filenames[index].MakeLower();
-		CString cs_filename = filenames[index];
+		CString cs_filename = CString(filenames[index]);
+		cs_filename.MakeLower();
+
 		if (lstrlen(cs_filename) >= _MAX_PATH)
 			continue;
 

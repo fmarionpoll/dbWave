@@ -93,7 +93,7 @@ public:
 protected:
 	static numberIDToText headers[];
 	BOOL			transposeFileForExcel(CSharedFile* pSF);
-	sourceData*		getWaveFormatFromEitherFile(CString cs_filename);
+	sourceData		getWaveFormatFromEitherFile(CString cs_filename);
 	void			setRecordFileNames(sourceData* record);
 	boolean			setRecordSpkClasses(sourceData* record);
 	void			setRecordWaveFormat(sourceData* record);
@@ -107,7 +107,7 @@ protected:
 	}
 	void			removeRowAt(CStringArray& filenames, int iRow, int nColumns, boolean bHeader);
 	CSharedFile*	fileDiscardedMessage(CSharedFile* pSF, CString cs_filename, int irec);
-	sourceData*		getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns, boolean bHeader);
+	void			getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns, boolean bHeader);
 	int				findHeader(CString& text);
 
 	// Overrides
