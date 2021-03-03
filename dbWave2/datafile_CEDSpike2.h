@@ -33,11 +33,6 @@ constexpr int BAD_PARAM				= -22;
 constexpr int OVER_WRITE			= -23;
 constexpr int MORE_DATA				= -24;
 
-struct errorMessage {
-	int			val;
-	const char* msg;
-};
-
 struct TTimeDate            // bit compatible with TSONTimeDate
 {
 	uint8_t ucHun;          //!< hundreths of a second, 0-99
@@ -51,7 +46,6 @@ struct TTimeDate            // bit compatible with TSONTimeDate
 	//! Sets the contents to 0
 	void clear() { ucHun = ucSec = ucMin = ucHour = ucDay = ucMon = 0; wYear = 0; }
 };
-
 
 class CDataFileFromCEDSpike2 :
 	public CDataFileX
@@ -78,11 +72,11 @@ public:
 #endif
 
 protected:
-	static		errorMessage errorMessages[];
-	int			m_nFid							=-1;
-	boolean		m_bRelocate_if_StartWithGap		= false;
-	boolean		m_bRemoveGaps					= true;
-	long long	m_ticksPerSample				= -1;
+	static numberIDToText errorMessages[];
+	int			m_nFid						=-1;
+	boolean		m_bRelocate_if_StartWithGap	= false;
+	boolean		m_bRemoveGaps				= true;
+	long long	m_ticksPerSample			= -1;
 	long long	m_llFileOffset				= 0;
 
 	void		read_ChannelParameters(CWaveChan* pChan, int cedChan);

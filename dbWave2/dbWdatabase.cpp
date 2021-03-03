@@ -1082,19 +1082,19 @@ void CdbWdatabase::TransferWaveFormatDataToRecord(CWaveFormat* p_wf)
 	m_mainTableSet.m_more = p_wf->csMoreComment;
 
 	// set type, stimulus and concentrations
-	m_mainTableSet.m_operator_ID = m_operatorSet.GetIDorCreateIDforString(p_wf->csOperator);
-	m_mainTableSet.m_insect_ID = m_insectSet.GetIDorCreateIDforString(p_wf->csInsectname);
-	m_mainTableSet.m_location_ID = m_locationSet.GetIDorCreateIDforString(p_wf->csLocation);
-	m_mainTableSet.m_expt_ID = m_exptSet.GetIDorCreateIDforString(p_wf->cs_comment);
-	m_mainTableSet.m_sensillum_ID = m_sensillumSet.GetIDorCreateIDforString(p_wf->csSensillum);
-	m_mainTableSet.m_stim_ID = m_stimSet.GetIDorCreateIDforString(p_wf->csStimulus);
-	m_mainTableSet.m_conc_ID = m_concSet.GetIDorCreateIDforString(p_wf->csConcentration);
-	m_mainTableSet.m_stim2_ID = m_stimSet.GetIDorCreateIDforString(p_wf->csStimulus2);
-	m_mainTableSet.m_conc2_ID = m_concSet.GetIDorCreateIDforString(p_wf->csConcentration2);
-	m_mainTableSet.m_sex_ID = m_sexSet.GetIDorCreateIDforString(p_wf->csSex);
-	m_mainTableSet.m_strain_ID = m_strainSet.GetIDorCreateIDforString(p_wf->csStrain);
-	m_mainTableSet.m_expt_ID = m_exptSet.GetIDorCreateIDforString(p_wf->cs_comment);
-	m_mainTableSet.m_flag = 0;
+	m_mainTableSet.m_operator_ID	= m_operatorSet.GetIDorCreateIDforString	(p_wf->csOperator);
+	m_mainTableSet.m_insect_ID		= m_insectSet.GetIDorCreateIDforString		(p_wf->csInsectname);
+	m_mainTableSet.m_location_ID	= m_locationSet.GetIDorCreateIDforString	(p_wf->csLocation);
+	m_mainTableSet.m_expt_ID		= m_exptSet.GetIDorCreateIDforString		(p_wf->cs_comment);
+	m_mainTableSet.m_sensillum_ID	= m_sensillumSet.GetIDorCreateIDforString	(p_wf->csSensillum);
+	m_mainTableSet.m_stim_ID		= m_stimSet.GetIDorCreateIDforString		(p_wf->csStimulus);
+	m_mainTableSet.m_conc_ID		= m_concSet.GetIDorCreateIDforString		(p_wf->csConcentration);
+	m_mainTableSet.m_stim2_ID		= m_stimSet.GetIDorCreateIDforString		(p_wf->csStimulus2);
+	m_mainTableSet.m_conc2_ID		= m_concSet.GetIDorCreateIDforString		(p_wf->csConcentration2);
+	m_mainTableSet.m_sex_ID			= m_sexSet.GetIDorCreateIDforString			(p_wf->csSex);
+	m_mainTableSet.m_strain_ID		= m_strainSet.GetIDorCreateIDforString		(p_wf->csStrain);
+	m_mainTableSet.m_expt_ID		= m_exptSet.GetIDorCreateIDforString		(p_wf->cs_comment);
+	m_mainTableSet.m_flag			= p_wf->flag;
 }
 
 void CdbWdatabase::DeleteUnusedEntriesInAccessoryTables()

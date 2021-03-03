@@ -1341,6 +1341,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="CViewDao.h" />
+    <ClInclude Include="dbWave_structures.h" />
     <ClInclude Include="DlgAbout.h" />
     <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="AcqWaveChan.h" />

@@ -91,12 +91,13 @@ public:
 	BOOL			CreateDirectories(CString path);
 
 protected:
+	static numberIDToText headers[];
 	BOOL			transposeFileForExcel(CSharedFile* pSF);
 	sourceData*		getWaveFormatFromEitherFile(CString cs_filename);
 	void			setRecordFileNames(sourceData* record);
 	boolean			setRecordSpkClasses(sourceData* record);
 	void			setRecordWaveFormat(sourceData* record);
-	boolean			importFileSingle(CString& cs_filename, long& m_id, int nColumns, boolean bHeader);
+	boolean			importFileSingle(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns, boolean bHeader);
 	int				checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf, int nColumns, boolean bHeader);
 	inline int		index2DArray(int iRow, int nColumns, boolean bHeader) {
 		return (iRow + (bHeader ? 1 : 0)) * nColumns;
@@ -105,7 +106,9 @@ protected:
 		return csArray.GetSize() / nColumns - (bHeader ? 1 : 0);
 	}
 	void			removeRowAt(CStringArray& filenames, int iRow, int nColumns, boolean bHeader);
-	CSharedFile*	fileDiscarded(CSharedFile* pSF, CStringArray& filenames, CString cs_filename, int irec, int nColumns, boolean bHeader);
+	CSharedFile*	fileDiscardedMessage(CSharedFile* pSF, CString cs_filename, int irec);
+	sourceData*		getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns, boolean bHeader);
+	int				findHeader(CString& text);
 
 	// Overrides
 public:

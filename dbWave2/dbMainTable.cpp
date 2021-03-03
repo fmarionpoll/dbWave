@@ -112,6 +112,7 @@ CdbMainTable::~CdbMainTable()
 
 boolean	CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
 {
+	boolean flag = true;
 	try
 	{
 		Open(nOpenType, lpszSQL, nOptions);
@@ -120,8 +121,9 @@ boolean	CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
 	{
 		AfxMessageBox(_T("Cancel import: ") + e->m_pErrorInfo->m_strDescription);
 		e->Delete();
-		return false;
+		flag = false;;
 	}
+	return flag;
 }
 
 CString CdbMainTable::GetDefaultDBName()

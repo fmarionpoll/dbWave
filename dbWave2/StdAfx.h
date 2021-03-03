@@ -64,6 +64,7 @@
 #include "AcqWaveFormat.h"
 #include "StretchControls.h"
 #include "dbwave_constants.h"
+#include "dbwave_structures.h"
 
 #include "Tag.h"
 #include "Taglist.h"		// tag structures

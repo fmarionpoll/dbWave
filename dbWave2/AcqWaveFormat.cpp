@@ -14,46 +14,7 @@ IMPLEMENT_SERIAL(CWaveFormat, CObject, 0 /* schema number*/)
 
 CWaveFormat::CWaveFormat()
 {
-	csADcardName = _T("undefined");
-	cs_comment = _T("");			// file annotation
-	csStimulus = _T("");			// stimulation (chemical)
-	csConcentration = _T("");		// stimulus concentration
-	csStimulus2 = _T("");			// stimulation (chemical 2)
-	csConcentration2 = _T("");		// stimulus 2 concentration
-	csInsectname = _T("");			// insect type
-	csLocation = _T("");			// sensillum location (organ)
-	csSensillum = _T("");			// type of sensillum
-	csMoreComment = _T("");			// additional free comment
-	csOperator = _T("");			// operator
-	csStrain = _T("");				// strain
-	csSex = _T("");					// sex
 	acqtime = CTime::GetCurrentTime();
-
-	wversion = 8;					// header version number
-	fullscale_Volts = 20.0f;		// volts full scale, gain 1
-	binspan = 4096;					// nb of bins (4096)
-	binzero = 2048;
-	mode_encoding = OLx_ENC_BINARY;
-	mode_clock = INTERNAL_CLOCK;	// internal, external
-	mode_trigger = INTERNAL_TRIGGER;// internal, external, trigg_scan
-
-	chrate = 10000.0f;				// channel sampling rate (Hz)
-	scan_count = 1;					// number of channels in scan list
-	sample_count = 10000;			// sample count
-	duration = 0.0f;				// file duration (s)
-	trig_mode = 0;					// soft, keyboard, trig_ext, input+, input-
-	trig_chan = 0;					// (trig_mode=input) A/D channel input
-	trig_threshold = 2048;			// (trig_mode=input) A/D channel input threshold value
-	data_flow = 0;					// 0 = continuous, 1 = burst
-	bOnlineDisplay = TRUE;			// TRUE = online data display
-	bADwritetofile = FALSE;			// TRUE = write data to disk
-	bufferNitems = 10;				// n buffers declared
-	buffersize = 1000;				// total size of one buffer
-	insectID = 0;
-	sensillumID = 0;
-	repeat = 0;
-	repeat2 = 0;
-	bUnicode = TRUE;
 }
 
 CWaveFormat::~CWaveFormat()

@@ -12,7 +12,7 @@ IMPLEMENT_DYNCREATE(CDataFileFromCEDSpike2, CDataFileX)
 const int	LENCEDSON	= 16;
 const char	CEDSON64[] = "CED_DATA";
 
-errorMessage CDataFileFromCEDSpike2::errorMessages[] = {
+numberIDToText CDataFileFromCEDSpike2::errorMessages[] = {
 		{ S64_OK,		"There was no error"},
 		{ NO_FILE,		"Attempt to use when file not open, or use of an invalid file handle, or no spare file handle"},
 		{ NO_BLOCK,		"Failed to allocate a disk block when writing to the file.The disk is probably full, or there was a disk error."},
