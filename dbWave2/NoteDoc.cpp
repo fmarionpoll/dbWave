@@ -116,20 +116,16 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	}
 
 	// open data files
-	if (p_app->options_import.bReadColumns)
-	{
-	}
-	else
-	{
-		CStringArray csArrayOK;
-		extractListOfFilesSimple(pEdit, csArrayOK);
-		if (csArrayOK.GetCount() > 0)
-			flag = openListOfFilesSimple(cspathname, csArrayOK);
-	}
+	CStringArray csFileList;
+	CStringArray csDescriptorsList;
+	extractList(pEdit, csFileList, csDescriptorsList);
+	if (csFileList.GetCount() > 0)
+		flag = openFileList(cspathname, csFileList, csDescriptorsList);
+
 	return flag;
 }
 
-BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray& cs_arrayfiles)
+BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStringArray& csDescriptorsList)
 {
 	auto p_app = (CdbWaveApp*)AfxGetApp();
 	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*)(p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
@@ -150,7 +146,16 @@ BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray& cs_array
 
 		if (p_dbwave_doc->OnNewDocument(dbname))
 		{
-			p_dbwave_doc->ImportFileList(cs_arrayfiles);
+			if (p_app->options_import.bReadColumns) 
+			{
+				int nColumns = csDescriptorsList.GetCount() / (csFileList.GetCount() + p_app->options_import.bHeader);
+				p_dbwave_doc->ImportFileList(csDescriptorsList, nColumns, p_app->options_import.bHeader);
+			}
+			else 
+			{
+				p_dbwave_doc->ImportFileList(csFileList);
+			}
+
 			auto p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
 			ASSERT(p_wave_format != NULL);
 			p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
@@ -159,81 +164,96 @@ BOOL CNoteDoc::openListOfFilesSimple(CString& cspathname, CStringArray& cs_array
 	return flag;
 }
 
-BOOL CNoteDoc::addFileName(CString& resToken, CStringArray& csArrayOK, CStringArray& csArrayTested)
+BOOL CNoteDoc::extractList(CRichEditCtrl& pEdit, CStringArray& csFileList, CStringArray& csDescriptorsList)
 {
-	BOOL bChanged = false;
-	CFileStatus status;
-	CString token = resToken;
-	if (!CFile::GetStatus(resToken, status))
-	{	// not found: add a question mark
-		token = _T("? ") + resToken;
-		bChanged = TRUE;
-	}
-	else
-	{
-		token.MakeLower();
-		csArrayOK.Add(token);
-	}
-	csArrayTested.Add(token);
-	return bChanged;
-}
+	CString textFromRichEditView{};
+	pEdit.GetWindowText(textFromRichEditView);
+	if (textFromRichEditView.IsEmpty())
+		return false;
 
-void CNoteDoc::displayFilesImported(CRichEditCtrl& pEdit, CStringArray& csArrayTested)
-{
-	CString all;
-	for (int i = 0; i < csArrayTested.GetCount(); i++) 
-		all += csArrayTested.GetAt(i) + _T("\n");
-	pEdit.SetWindowText(all);
-	AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
-}
-
-void CNoteDoc::extractListOfFilesSimple(CRichEditCtrl& pEdit, CStringArray& csArrayOK)
-{
-	CString file_list{};
-	pEdit.GetWindowText(file_list);
-	if (file_list.IsEmpty())
-		return;
-
-	CStringArray csArrayTested;
-	boolean bchanged = false;
+	boolean bFilesNotFound = false;
+	CStringArray csFilesTested;
 	int ifirst = 0;
 	if (((CdbWaveApp*)AfxGetApp())->options_import.bHeader)
 		ifirst = 1;
 
 	int curPos = 0;
-	int count = 0;
+	int countRows = 0;
+	int countColumns = 0;
 	LPCWSTR seps = L"\r\n";
-	CString resultLine = file_list.Tokenize(seps, curPos);
-	while (!resultLine.IsEmpty()) 
+	CString csRow = textFromRichEditView.Tokenize(seps, curPos);
+	while (!csRow.IsEmpty()) 
 	{
-		count++;
-		if (resultLine.GetLength() > 2)
+		countRows++;
+		if (csRow.GetLength() > 2)
 		{
-			CStringArray csResult;
-			analyzeLine(resultLine, csResult);
-			if (count > ifirst) {
-				CString name = csResult.GetAt(0);
-				bchanged |= addFileName(name, csArrayOK, csArrayTested);
+			CStringArray csColumnsOneRow;
+			countColumns = extractColumnsFromRow(csRow, csColumnsOneRow);
+			if (countRows > ifirst) {
+				CString name = csColumnsOneRow.GetAt(0);
+				if (addFileName(name, csFileList, csFilesTested))
+					addRowToArray(csColumnsOneRow, csDescriptorsList);
+				else
+					bFilesNotFound = true;
+			}
+			else if (ifirst == 1)
+			{
+				addRowToArray(csColumnsOneRow, csDescriptorsList);
 			}
 		}
-		resultLine = file_list.Tokenize(seps, curPos);
+		csRow = textFromRichEditView.Tokenize(seps, curPos);
 	}
 
-	if (bchanged)
-	{
-		displayFilesImported(pEdit, csArrayTested);
-	}
+	if (bFilesNotFound)
+		displayFilesImported(pEdit, csFilesTested);
+	return true;
 }
 
-void CNoteDoc::analyzeLine(CString& csLine, CStringArray& csResult)
+void CNoteDoc::addRowToArray(CStringArray& csRow, CStringArray& csOut)
+{
+	for (int i = 0; i < csRow.GetCount(); i++)
+		csOut.Add(csRow.GetAt(i));
+}
+
+int CNoteDoc::extractColumnsFromRow(CString& csRow, CStringArray& csColumns)
 {
 	LPCWSTR seps = L"\t;";
 	int curPos = 0;
-	CString resToken = csLine.Tokenize(seps, curPos);
+	int countColumns = 0;
+	CString resToken = csRow.Tokenize(seps, curPos);
 	while (!resToken.IsEmpty())
 	{
-		if (resToken.GetLength() > 1) 
-			csResult.Add(resToken);
-		resToken = csLine.Tokenize(seps, curPos);
+		csColumns.Add(resToken);
+		countColumns++;
+		resToken = csRow.Tokenize(seps, curPos);
 	}
+	return countColumns;
 }
+
+BOOL CNoteDoc::addFileName(CString& resToken, CStringArray& csFileList, CStringArray& csDescriptorsList)
+{
+	BOOL bFound = true;
+	CString token = resToken;
+	if (!isFilePresent(resToken))
+	{	// not found: add a question mark
+		token = _T("? ") + resToken;
+		bFound = false;
+	}
+	else
+	{
+		token.MakeLower();
+		csFileList.Add(token);
+	}
+	csDescriptorsList.Add(token);
+	return bFound;
+}
+
+void CNoteDoc::displayFilesImported(CRichEditCtrl& pEdit, CStringArray& csDescriptorsList)
+{
+	CString all;
+	for (int i = 0; i < csDescriptorsList.GetCount(); i++)
+		all += csDescriptorsList.GetAt(i) + _T("\n");
+	pEdit.SetWindowText(all);
+	AfxMessageBox(_T("Some files were not found\n\nThese are marked\nby a '?' in the project"));
+}
+

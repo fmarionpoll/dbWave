@@ -25,11 +25,14 @@ public:
 #endif
 
 protected:
-	void		extractListOfFilesSimple(CRichEditCtrl& pEdit, CStringArray& csArrayOK);
-	BOOL		openListOfFilesSimple(CString& cspathname, CStringArray& cs_arrayfiles);
+	BOOL		extractList(CRichEditCtrl& pEdit, CStringArray& csFilesOK, CStringArray& csDescriptors);
+	BOOL		openFileList(CString& cspathname, CStringArray& cs_arrayfiles, CStringArray& csListDescriptors);
 	BOOL		addFileName(CString& resToken, CStringArray& csArrayOK, CStringArray& csArrayTested);
 	void		displayFilesImported(CRichEditCtrl& pEdit, CStringArray& pArrayTested);
-	void		analyzeLine(CString& cs, CStringArray& pResult);
+	int			extractColumnsFromRow(CString& cs, CStringArray& pResult);
+	inline BOOL isFilePresent(CString csFilename) { CFileStatus status; return CFile::GetStatus(csFilename, status); }
+	void		addRowToArray(CStringArray& csRow, CStringArray& csOut);
+
 
 	DECLARE_MESSAGE_MAP()
 };

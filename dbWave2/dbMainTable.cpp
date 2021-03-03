@@ -46,61 +46,59 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_expt_ID = 0;							// 29
 	m_nFields = 29;
 
-	m_desc[CH_ID].pdataItem = &m_ID;
-	m_desc[CH_ACQDATE].pdataItem = nullptr; //&m_acq_date;
-	m_desc[CH_FILENAME].pdataItem = nullptr; //&m_Filedat;
-	m_desc[CH_FILESPK].pdataItem = nullptr; //&m_Filespk;
-	m_desc[CH_ACQ_COMMENTS].pdataItem = nullptr; //&m_acq_comment;
-	m_desc[CH_MORE].pdataItem = nullptr; //&m_more;
-	m_desc[CH_IDINSECT].pdataItem = &m_IDinsect;
-	m_desc[CH_IDSENSILLUM].pdataItem = &m_IDsensillum;
-	m_desc[CH_DATALEN].pdataItem = &m_datalen;
-	m_desc[CH_NSPIKES].pdataItem = &m_nspikes;
-	m_desc[CH_NSPIKECLASSES].pdataItem = &m_nspikeclasses;
-	m_desc[CH_FLAG].pdataItem = &m_flag;
-	m_desc[CH_INSECT_ID].pdataItem = &m_insect_ID;
-	m_desc[CH_SENSILLUM_ID].pdataItem = &m_sensillum_ID;
-	m_desc[CH_OPERATOR_ID].pdataItem = &m_operator_ID;
-	m_desc[CH_STIM_ID].pdataItem = &m_stim_ID;
-	m_desc[CH_CONC_ID].pdataItem = &m_conc_ID;
-	m_desc[CH_LOCATION_ID].pdataItem = &m_location_ID;
-	m_desc[CH_PATH_ID].pdataItem = &m_path_ID;
-	m_desc[CH_PATH2_ID].pdataItem = &m_path2_ID;
-	m_desc[CH_STIM2_ID].pdataItem = &m_stim2_ID;
-	m_desc[CH_CONC2_ID].pdataItem = &m_conc2_ID;
-	m_desc[CH_STRAIN_ID].pdataItem = &m_strain_ID;
-	m_desc[CH_SEX_ID].pdataItem = &m_sex_ID;
-	m_desc[CH_REPEAT].pdataItem = &m_repeat;
-	m_desc[CH_REPEAT2].pdataItem = &m_repeat2;
-	m_desc[CH_ACQDATE_DAY].pdataItem = nullptr;
-	m_desc[CH_ACQDATE_TIME].pdataItem = nullptr;
-	m_desc[CH_EXPT_ID].pdataItem = &m_expt_ID;
+	m_desc[CH_ID].pdataItem				= &m_ID;
+	m_desc[CH_ACQDATE].pdataItem		= nullptr; //&m_acq_date;
+	m_desc[CH_FILENAME].pdataItem		= nullptr; //&m_Filedat;
+	m_desc[CH_FILESPK].pdataItem		= nullptr; //&m_Filespk;
+	m_desc[CH_ACQ_COMMENTS].pdataItem	= nullptr; //&m_acq_comment;
+	m_desc[CH_MORE].pdataItem			= nullptr; //&m_more;
+	m_desc[CH_IDINSECT].pdataItem		= &m_IDinsect;
+	m_desc[CH_IDSENSILLUM].pdataItem	= &m_IDsensillum;
+	m_desc[CH_DATALEN].pdataItem		= &m_datalen;
+	m_desc[CH_NSPIKES].pdataItem		= &m_nspikes;
+	m_desc[CH_NSPIKECLASSES].pdataItem	= &m_nspikeclasses;
+	m_desc[CH_FLAG].pdataItem			= &m_flag;
+	m_desc[CH_INSECT_ID].pdataItem		= &m_insect_ID;
+	m_desc[CH_SENSILLUM_ID].pdataItem	= &m_sensillum_ID;
+	m_desc[CH_OPERATOR_ID].pdataItem	= &m_operator_ID;
+	m_desc[CH_STIM_ID].pdataItem		= &m_stim_ID;
+	m_desc[CH_CONC_ID].pdataItem		= &m_conc_ID;
+	m_desc[CH_LOCATION_ID].pdataItem	= &m_location_ID;
+	m_desc[CH_PATH_ID].pdataItem		= &m_path_ID;
+	m_desc[CH_PATH2_ID].pdataItem		= &m_path2_ID;
+	m_desc[CH_STIM2_ID].pdataItem		= &m_stim2_ID;
+	m_desc[CH_CONC2_ID].pdataItem		= &m_conc2_ID;
+	m_desc[CH_STRAIN_ID].pdataItem		= &m_strain_ID;
+	m_desc[CH_SEX_ID].pdataItem			= &m_sex_ID;
+	m_desc[CH_REPEAT].pdataItem			= &m_repeat;
+	m_desc[CH_REPEAT2].pdataItem		= &m_repeat2;
+	m_desc[CH_ACQDATE_DAY].pdataItem	= nullptr;
+	m_desc[CH_ACQDATE_TIME].pdataItem	= nullptr;
+	m_desc[CH_EXPT_ID].pdataItem		= &m_expt_ID;
 
 	m_nDefaultType = dbOpenDynaset;
-
 	m_desc[CH_ACQDATE_DAY].otfilterParam1 = static_cast<DATE>(0); // 16
 	m_desc[CH_ACQDATE_TIME].otfilterParam1 = static_cast<DATE>(0); // 17
 	m_nParams = 18;
-
 	m_csdefaultSQL = _T("[table]");
 
 	// clear fields
 	for (int i = 0; i <= m_nFields; i++)
 	{
-		m_desc[i].bFilter1 = FALSE;
-		m_desc[i].csColParam.Empty();
+		m_desc[i].bFilter1		= FALSE;
 		m_desc[i].lfilterParam1 = 0;
+		m_desc[i].bFilter2		= FALSE;
+		m_desc[i].pdataItem		= nullptr;
+		m_desc[i].icol			= i;
+		m_desc[i].pComboBox		= nullptr; 
+		m_desc[i].csColParam	.Empty();
 		m_desc[i].csfilterParam1.Empty();
-		m_desc[i].bFilter2 = FALSE;
-		m_desc[i].lfilterParam2.RemoveAll();
+		m_desc[i].lfilterParam2	.RemoveAll();
 		m_desc[i].otfilterParam2.RemoveAll();
 		m_desc[i].csfilterParam2.RemoveAll();
-		m_desc[i].pdataItem = nullptr;
-		m_desc[i].icol = i;
-		m_desc[i].liArray.RemoveAll();
-		m_desc[i].tiArray.RemoveAll();
+		m_desc[i].liArray		.RemoveAll();
+		m_desc[i].tiArray		.RemoveAll();
 		m_desc[i].csElementsArray.RemoveAll();
-		m_desc[i].pComboBox = nullptr;
 	}
 
 	m_defaultName.Empty();
@@ -110,6 +108,20 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 CdbMainTable::~CdbMainTable()
 {
 	DeleteDateArray();
+}
+
+boolean	CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
+{
+	try
+	{
+		Open(nOpenType, lpszSQL, nOptions);
+	}
+	catch (CDaoException* e)
+	{
+		AfxMessageBox(_T("Cancel import: ") + e->m_pErrorInfo->m_strDescription);
+		e->Delete();
+		return false;
+	}
 }
 
 CString CdbMainTable::GetDefaultDBName()

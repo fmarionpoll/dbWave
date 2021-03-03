@@ -1267,8 +1267,8 @@ void CViewADContinuous::UpdateViewDataFinal()
 void CViewADContinuous::TransferFilesToDatabase()
 {
 	auto pdb_doc = GetDocument();
-	pdb_doc->ImportFileList(m_csNameArray);				// add file name(s) to the list of records in the database
-	m_csNameArray.RemoveAll();									// clear file names
+	pdb_doc->ImportFileList(m_csNameArray);	
+	m_csNameArray.RemoveAll();	
 
 	auto p_set = &(GetDocument()->m_pDB->m_mainTableSet);
 	p_set->BuildAndSortIDArrays();

@@ -146,6 +146,8 @@ public:
 	void			BuildAndSortIDArrays();
 	void			CopyPathToPath2();
 	void			AddCurrentRecordtoIDArrays();
+	boolean			OpenTable(int nOpenType = AFX_DAO_USE_DEFAULT_TYPE, LPCTSTR lpszSQL = NULL, int nOptions = 0);
+
 protected:
 	void			AddtoliArray(int icol);
 	void			AddtoIDArray(CUIntArray* pmIDArray, long uiID);

@@ -728,8 +728,8 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 	if (IDOK == dlg.DoModal())
 	{
 		auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
-		const BOOL b_only_genuine = !dlg.m_banyformat;
-		p_dbwave_doc->ImportFileList(filenames, b_only_genuine);
+		//const BOOL b_only_genuine = !dlg.m_banyformat;
+		p_dbwave_doc->ImportFileList(filenames);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, static_cast<LPARAM>(NULL));

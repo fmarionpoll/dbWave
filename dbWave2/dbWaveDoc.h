@@ -51,7 +51,7 @@ protected:
 
 	// Operations
 public:
-	void			ImportFileList(CStringArray& filename, BOOL bOnlygenuine = FALSE);
+	void			ImportFileList(CStringArray& fileList, int nColumns = 1, boolean bHeader = false);
 	BOOL			IsExtensionRecognizedAsDataFile(CString string) const;
 	inline BOOL		IsFilePresent(CString csFilename) { CFileStatus status; return CFile::GetStatus(csFilename, status); }
 	CWaveFormat*	GetWaveFormat(CString filename, BOOL bIsDatFile);
@@ -92,11 +92,20 @@ public:
 
 protected:
 	BOOL			transposeFileForExcel(CSharedFile* pSF);
-	int				checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf);
 	sourceData*		getWaveFormatFromEitherFile(CString cs_filename);
 	void			setRecordFileNames(sourceData* record);
 	boolean			setRecordSpkClasses(sourceData* record);
 	void			setRecordWaveFormat(sourceData* record);
+	boolean			importFileSingle(CString& cs_filename, long& m_id, int nColumns, boolean bHeader);
+	int				checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf, int nColumns, boolean bHeader);
+	inline int		index2DArray(int iRow, int nColumns, boolean bHeader) {
+		return (iRow + (bHeader ? 1 : 0)) * nColumns;
+	};
+	inline int		getSize2DArray(CStringArray& csArray, int nColumns, boolean bHeader) {
+		return csArray.GetSize() / nColumns - (bHeader ? 1 : 0);
+	}
+	void			removeRowAt(CStringArray& filenames, int iRow, int nColumns, boolean bHeader);
+	CSharedFile*	fileDiscarded(CSharedFile* pSF, CStringArray& filenames, CString cs_filename, int irec, int nColumns, boolean bHeader);
 
 	// Overrides
 public:

@@ -423,17 +423,9 @@ BOOL CdbWdatabase::OpenTables()
 		return FALSE;
 	}
 
-	try
-	{
-		m_mainTableSet.m_defaultName = GetName();
-		m_mainTableSet.Open(dbOpenDynaset, nullptr, 0);
-	}
-	catch (CDaoException* e)
-	{
-		AfxMessageBox(e->m_pErrorInfo->m_strDescription);
-		e->Delete();
+	m_mainTableSet.m_defaultName = GetName();
+	if (!m_mainTableSet.OpenTable(dbOpenDynaset, nullptr, 0))
 		return FALSE;
-	}
 
 	// store links to attached table addresses
 	for (auto column = 0; column < NTABLECOLS; column++)
