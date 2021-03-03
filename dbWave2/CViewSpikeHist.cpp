@@ -1276,7 +1276,7 @@ void CViewSpikeHist::BuildData()
 //		p_spk_list->GetAcqSampRate()
 //
 // output (passed parameter):
-//		return max val of histogram
+//		return max value of histogram
 // output (modified internal parameters)
 //		m_rectratio	 % of histogram height versus plotting area
 

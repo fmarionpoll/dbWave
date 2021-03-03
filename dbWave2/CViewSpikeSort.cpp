@@ -657,7 +657,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	break;
 
 	//case HINT_MOVEVERTTAG: // -------------  vertical tag has moved lowp = tag index
-	case HINT_CHANGEVERTTAG: // -------------  vertical tag val has changed
+	case HINT_CHANGEVERTTAG: // -------------  vertical tag value has changed
 		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
 		{
 			if (threshold == m_spkformtagleft)		// first tag

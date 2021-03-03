@@ -1041,7 +1041,7 @@ CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 						float x = PrintChangeUnit(z, &csUnit, &x_scale_factor); // convert
 
 						// approximate
-						int j = (int) x;					// get int val
+						int j = (int) x;					// get int value
 						if (x-j > 0.5)						// increment integer if diff > 0.5
 							j++;
 						int k = (int) NiceUnit(x);			// compare with nice unit abs
@@ -1054,7 +1054,7 @@ CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 							z = (float) k * x_scale_factor;
 							j = (int) PrintChangeUnit(z, &csUnit, &x_scale_factor); // convert
 						}
-						wsprintf(sz_value, "bar = %i %s ", j, csUnit);	// store val into comment
+						wsprintf(sz_value, "bar = %i %s ", j, csUnit);	// store value into comment
 						cs_comment += sz_value;
 					}
 					str_comment += cs_comment;

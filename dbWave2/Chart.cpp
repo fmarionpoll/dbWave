@@ -723,7 +723,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 		invertTracker(point);
 		break;
 
-		// track horizontal tag : move tag, get val and send message
+		// track horizontal tag : move tag, get value and send message
 	case TRACK_HZTAG:
 		if (point.y != m_ptCurr.y)
 		{
@@ -735,7 +735,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 		}
 		break;
 
-		// track vertical tag : move tag & update val
+		// track vertical tag : move tag & update value
 	case TRACK_VTTAG:
 		if (point.x != m_ptCurr.x)
 		{

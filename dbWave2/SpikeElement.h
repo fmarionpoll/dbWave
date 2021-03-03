@@ -25,7 +25,7 @@ private:
 	int		m_class;		// spike class - init to zero at first
 	int		m_chanparm;		// spike detection array index
 	int		m_max;			// spike max	(used to scan rapidly to adjust display)
-	int		m_min;			// min val		(used to scan rapidly to adjust display)
+	int		m_min;			// min value		(used to scan rapidly to adjust display)
 	int		m_dmaxmin;
 	int		m_offset;		// offset voltage pt 1
 	int		y1_ = 0;			// parameter measured and stored

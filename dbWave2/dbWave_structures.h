@@ -2,6 +2,6 @@
 
 
 struct numberIDToText {
-	int			val;
-	CString		msg;
+	int			value;
+	CString		csText;
 };

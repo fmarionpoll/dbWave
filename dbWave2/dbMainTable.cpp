@@ -481,7 +481,7 @@ void CdbMainTable::AddtoliArray(int icol)
 
 	auto pli_array = &m_desc[icol].liArray;
 	auto b_flag = FALSE;
-	// val is greater than current val -> loop forwards
+	// value is greater than current value -> loop forwards
 
 	for (auto i = 0; i <= pli_array->GetUpperBound(); i++)
 	{
@@ -509,7 +509,7 @@ void CdbMainTable::AddtoliArray(int icol)
 void CdbMainTable::AddtoIDArray(CUIntArray* puiIDArray, long iID)
 {
 	auto b_flag = FALSE;
-	// val is greater than current val -> loop forwards
+	// value is greater than current value -> loop forwards
 	const auto ui_id = static_cast<UINT>(iID);
 
 	for (auto i = 0; i <= puiIDArray->GetUpperBound(); i++)

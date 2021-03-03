@@ -43,7 +43,7 @@ constexpr auto HINT_SELECTSPIKES = 5;
 constexpr auto HINT_DBLCLKSEL = 6;				// doubleclick selection		lowp = item selected
 constexpr auto HINT_MOVECURSORLEFT = 7;			// move hz cursor(left side)	lowp = LP value
 constexpr auto HINT_MOVECURSORRIGHT = 8;		// move hz cursor(right side)	lowp = LP value
-constexpr auto HINT_OFFSETCURSOR = 9;			// move hz cursor(both sides)   lowp = diff / previous val
+constexpr auto HINT_OFFSETCURSOR = 9;			// move hz cursor(both sides)   lowp = diff / previous value
 constexpr auto HINT_CHANGEZOOM = 10;			// change zoom factor
 
 constexpr auto HINT_HITVERTTAG = 11;			// vertical tag hit				lowp = tag index

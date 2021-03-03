@@ -13,26 +13,26 @@ const int	LENCEDSON	= 16;
 const char	CEDSON64[] = "CED_DATA";
 
 numberIDToText CDataFileFromCEDSpike2::errorMessages[] = {
-		{ S64_OK,		"There was no error"},
-		{ NO_FILE,		"Attempt to use when file not open, or use of an invalid file handle, or no spare file handle"},
-		{ NO_BLOCK,		"Failed to allocate a disk block when writing to the file.The disk is probably full, or there was a disk error."},
-		{ CALL_AGAIN,	"This is a long operation, call again."},
-		{ NO_ACCESS,	"This operation was not allowed."},
-		{ NO_MEMORY,	"Out of memory reading a 32 - bit son file."},
-		{ NO_CHANNEL,	"A channel does not exist."},
-		{ CHANNEL_USED,	"Attempt to reuse a channel that already exists."},
-		{ CHANNEL_TYPE,	"The channel cannot be used for this operation."},
-		{ PAST_EOF,		"Read past the end of the file."},
-		{ WRONG_FILE,	"Attempt to open wrong file type.This is not a SON file."},
-		{ NO_EXTRA,		"A request to read user data is outside the extra data region."},
-		{ BAD_READ,		"A read error(disk error was detected.This is an operating system error."},
-		{ BAD_WRITE,	"Something went wrong writing data.This is an operating system error."},
-		{ CORRUPT_FILE,	"The file is bad or an attempt to write corrupted data."},
-		{ PAST_SOF,		"An attempt was made to access data before the start of the file."},
-		{ READ_ONLY,	"Attempt to write to a read only file."},
-		{ BAD_PARAM,	"A bad parameter to a call into the SON library."},
-		{ OVER_WRITE,	"An attempt was made to over - write data when not allowed."},
-		{ MORE_DATA,	"A file is bigger than the header says; maybe not closed correctly."}
+		{ S64_OK,		_T("There was no error")},
+		{ NO_FILE,		_T("Attempt to use when file not open, or use of an invalid file handle, or no spare file handle")},
+		{ NO_BLOCK,		_T("Failed to allocate a disk block when writing to the file.The disk is probably full, or there was a disk error.")},
+		{ CALL_AGAIN,	_T("This is a long operation, call again.")},
+		{ NO_ACCESS,	_T("This operation was not allowed.")},
+		{ NO_MEMORY,	_T("Out of memory reading a 32 - bit son file.")},
+		{ NO_CHANNEL,	_T("A channel does not exist.")},
+		{ CHANNEL_USED,	_T("Attempt to reuse a channel that already exists.")},
+		{ CHANNEL_TYPE,	_T("The channel cannot be used for this operation.")},
+		{ PAST_EOF,		_T("Read past the end of the file.")},
+		{ WRONG_FILE,	_T("Attempt to open wrong file type.This is not a SON file.")},
+		{ NO_EXTRA,		_T("A request to read user data is outside the extra data region.")},
+		{ BAD_READ,		_T("A read error(disk error was detected.This is an operating system error.")},
+		{ BAD_WRITE,	_T("Something went wrong writing data.This is an operating system error.")},
+		{ CORRUPT_FILE,	_T("The file is bad or an attempt to write corrupted data.")},
+		{ PAST_SOF,		_T("An attempt was made to access data before the start of the file.")},
+		{ READ_ONLY,	_T("Attempt to write to a read only file.")},
+		{ BAD_PARAM,	_T("A bad parameter to a call into the SON library.")},
+		{ OVER_WRITE,	_T("An attempt was made to over - write data when not allowed.")},
+		{ MORE_DATA,	_T("A file is bigger than the header says; maybe not closed correctly.")}
 	};
 
 CDataFileFromCEDSpike2::CDataFileFromCEDSpike2() 
@@ -356,8 +356,8 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 	ASSERT(nItems == 20 );
 	CString errorMsg = _T("error not found");
 	for (int i = 0; i < nItems; i++) {
-		if (flag == errorMessages[i].val) {
-			errorMsg = errorMessages[i].msg;
+		if (flag == errorMessages[i].value) {
+			errorMsg = errorMessages[i].csText;
 			break;
 		}
 	}

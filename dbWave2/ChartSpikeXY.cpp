@@ -182,7 +182,7 @@ void CChartSpikeXYWnd::displayVTtags(CDC* p_dc)
 	const auto y1 = m_displayRect.bottom;
 	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 	{
-		const auto val = m_VTtags.GetValue(j);			// get val
+		const auto val = m_VTtags.GetValue(j);			// get value
 		const auto pix_x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		p_dc->MoveTo(pix_x, y0);			// set initial pt
 		p_dc->LineTo(pix_x, y1);			// VT line

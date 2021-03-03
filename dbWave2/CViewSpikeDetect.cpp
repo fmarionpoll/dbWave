@@ -2390,7 +2390,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pDataChartW
 				const auto z = static_cast<float>(ivert_bar) * pDataChartWnd->GetChanlistVoltsperPixel(ichan);
 				const auto x = z / y_scale_factor;
 				const auto j = pDataChartWnd->NiceUnit(x);
-				cs.Format(_T("vert bar = %i %s "), j, static_cast<LPCTSTR>(cs_unit));	// store val into comment
+				cs.Format(_T("vert bar = %i %s "), j, static_cast<LPCTSTR>(cs_unit));	// store value into comment
 				str_comment += cs;
 			}
 			// print chan comment
@@ -2441,7 +2441,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll
 				wsprintf(m_szbuf, _T("Vbar=%i %s"), k, static_cast<LPCTSTR>(cs_unit));
 			else
 				_stprintf_s(m_szbuf, 64, _T("Vbar=%f.3 mV"), z);
-			cs_comment = m_szbuf;					// store val into comment
+			cs_comment = m_szbuf;					// store value into comment
 			str_comment = cs_comment + rc;
 		}
 
@@ -2469,10 +2469,10 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll
 		cs_unit = _T(" ms");
 		k = static_cast<int>(z);
 		wsprintf(m_szbuf, _T("Horz=%i."), k);
-		cs_comment = m_szbuf;		// store val into comment
+		cs_comment = m_szbuf;		// store value into comment
 		k = static_cast<int>(1000.0f * (z - float(k)));
 		wsprintf(m_szbuf, _T("%i %s"), k, static_cast<LPCTSTR>(cs_unit));
-		cs_comment += m_szbuf;		// store val into comment
+		cs_comment += m_szbuf;		// store value into comment
 		str_comment += cs_comment;
 		str_comment += rc;
 	}

@@ -267,7 +267,7 @@ void ADIntervalsDlg::OnEnChangeBuffersize()
 		mm_bufferWsize.m_nChar = 0;			// empty buffer
 		mm_bufferWsize.SetSel(0, -1);		// select all text
 
-		// check val and update dependent parameter
+		// check value and update dependent parameter
 		const auto ui_w_size_min = static_cast<WORD>(m_adratechan * 0.05); // minimum buffer size = 50 ms (!?)
 		if (m_bufferWsize > m_bufferWsizemax)
 			m_bufferWsize = m_bufferWsizemax;

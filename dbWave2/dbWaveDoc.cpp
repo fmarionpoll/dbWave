@@ -17,6 +17,13 @@
 #define new DEBUG_NEW
 #endif
 
+numberIDToText CdbWaveDoc::headers[] = {
+   { 0, _T("path")}, { 1, _T("Expt")}, { 2, _T("insectID")}, { 3, _T("ssID")}, { 4, _T("insect")},
+   { 5, _T("strain")}, { 6, _T("sex")}, { 7, _T("location")}, { 8, _T("operator")}, { 9, _T("more")},
+   { 10, _T("stim1")}, { 11, _T("conc1")}, { 12, _T("repeat1")}, { 13, _T("stim2")}, { 14, _T("conc2")},
+   { 15, _T("repeat2")}, { 16, _T("type")}, { 17, _T("flag")}
+};
+
 IMPLEMENT_DYNCREATE(CdbWaveDoc, COleDocument)
 
 BEGIN_MESSAGE_MAP(CdbWaveDoc, COleDocument)
@@ -1035,22 +1042,16 @@ HMENU CdbWaveDoc::GetDefaultMenu()
 	return record;
 }
 
- numberIDToText CdbWaveDoc::headers[] = {
-	{ 0, _T("path")}, { 1, _T("Expt")}, { 2, _T("insectID")}, { 3, _T("ssID")}, { 4, _T("insect")},
-	{ 5, _T("strain")}, { 6, _T("sex")}, { 7, _T("location")}, { 8, _T("operator")}, { 9, _T("more")},
-	{ 10, _T("stim1")}, { 11, _T("conc1")}, { 12, _T("repeat1")}, { 13, _T("stim2")}, { 14, _T("conc2")},
-	{ 15, _T("repeat2")}, { 16, _T("type")}, { 17, _T("flag")}
- };
 
  int CdbWaveDoc::findHeader(CString& text)
  {
 	 int found = -1;
 	 for (int i = 0; i < 18; i++) 
 	 {
-		 CString header = headers[i].msg;
+		 CString header = headers[i].csText;
 		 if (text.CompareNoCase(header) == 0)
 		 {
-			 found = headers[i].val;
+			 found = headers[i].value;
 			 break;
 		 }
 	 }
@@ -1061,49 +1062,51 @@ HMENU CdbWaveDoc::GetDefaultMenu()
  {
 	 CWaveFormat* p_wave_format = pRecord->p_wave_format;
 	 int index = index2DArray(irecord, nColumns, bHeader);
-	 int index0 = -1 + (bHeader ? 1 : 0);
+	 
 	 for (int i = 1; i < nColumns; i++) 
 	 {
-		 int item = i+1;
+		 int iColumn = i+1;
 		 if (bHeader) 
 		 {
 			 CString text = filenames.GetAt(i-1);
-			 item = findHeader(text);
+			 iColumn = findHeader(text);
 		 }
-		 switch (item) {
-		 case 1:	p_wave_format->cs_comment = filenames.GetAt(item);
+		 int index_irecord = index + iColumn;
+		 CString csItem = filenames.GetAt(index_irecord);
+		 switch (iColumn) {
+		 case 1:	p_wave_format->cs_comment = csItem;
 			 break;
-		 case 2:	p_wave_format->insectID = _ttoi(filenames.GetAt(item));
+		 case 2:	p_wave_format->insectID = _ttoi(csItem);
 			 break;
-		 case 3:	p_wave_format->sensillumID = _ttoi(filenames.GetAt(item));
+		 case 3:	p_wave_format->sensillumID = _ttoi(csItem);
 			 break;
-		 case 4:	p_wave_format->csInsectname = filenames.GetAt(item);
+		 case 4:	p_wave_format->csInsectname = csItem;
 			 break;
-		 case 5:	p_wave_format->csStrain = filenames.GetAt(item);
+		 case 5:	p_wave_format->csStrain = csItem;
 			 break;
-		 case 6:	p_wave_format->csSex = filenames.GetAt(item);
+		 case 6:	p_wave_format->csSex = csItem;
 			 break;
-		 case 7:	p_wave_format->csLocation = filenames.GetAt(item);
+		 case 7:	p_wave_format->csLocation = csItem;
 			 break;
-		 case 8:	p_wave_format->csOperator = filenames.GetAt(item);
+		 case 8:	p_wave_format->csOperator = csItem;
 			 break;
-		 case 9:	p_wave_format->csMoreComment = filenames.GetAt(item);
+		 case 9:	p_wave_format->csMoreComment = csItem;
 			 break;
-		 case 10:	p_wave_format->csStimulus = filenames.GetAt(item);
+		 case 10:	p_wave_format->csStimulus = csItem;
 			 break;
-		 case 11:	p_wave_format->csConcentration = filenames.GetAt(item);
+		 case 11:	p_wave_format->csConcentration = csItem;
 			 break;
-		 case 12:	p_wave_format->repeat = _ttoi(filenames.GetAt(item));
+		 case 12:	p_wave_format->repeat = _ttoi(csItem);
 			 break;
-		 case 13:	p_wave_format->csStimulus2 = filenames.GetAt(item);
+		 case 13:	p_wave_format->csStimulus2 = csItem;
 			 break;
-		 case 14:	p_wave_format->csConcentration2 = filenames.GetAt(item);
+		 case 14:	p_wave_format->csConcentration2 = csItem;
 			 break;
-		 case 15:	p_wave_format->repeat2 = _ttoi(filenames.GetAt(item));
+		 case 15:	p_wave_format->repeat2 = _ttoi(csItem);
 			 break;
-		 case 16:	p_wave_format->csSensillum = filenames.GetAt(item);
+		 case 16:	p_wave_format->csSensillum = csItem;
 			 break;
-		 case 17:	p_wave_format->flag = _ttoi(filenames.GetAt(item));
+		 case 17:	p_wave_format->flag = _ttoi(csItem);
 			 break;
 		 default:	
 			 break;
@@ -1169,7 +1172,6 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 	// -------------------------- cancel any pending edit or add operation
 	m_pDB->UpdateTables();
 	m_pDB->m_mainTableSet.Close();
-	
 	if (!m_pDB->m_mainTableSet.OpenTable(dbOpenTable, nullptr, 0)) {
 		delete psf;
 		return; 
@@ -1693,7 +1695,7 @@ void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 
-	// spike list item, spike class
+	// spike list iColumn, spike class
 	if (options_viewspikes->spikeclassoption != 0)
 		cs_dummy.Format(_T("%s%i %s%s %s%i"), static_cast<LPCTSTR>(cs_tab), options_viewspikes->ichan,
 			static_cast<LPCTSTR>(cs_tab), static_cast<LPCTSTR>(p_spike_list->GetComment()),

@@ -265,8 +265,8 @@ public:
 	WORD wversion;			// version number
 
 	// parameters to measure
-	BOOL bExtrema;			// 1- measure max and min (val, time)
-	BOOL bDiffExtrema;		// 2- difference between extrema (val, time)
+	BOOL bExtrema;			// 1- measure max and min (value, time)
+	BOOL bDiffExtrema;		// 2- difference between extrema (value, time)
 	BOOL bHalfrisetime;		// 3- time necessary to reach half of the amplitude
 	BOOL bHalfrecovery;		// 4- time necessary to regain half of the initial amplitude
 	BOOL bDatalimits;		// 5- data value at limits

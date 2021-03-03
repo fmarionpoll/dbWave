@@ -312,7 +312,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 		}
 	}
 
-	// measure max and min (val, time)
+	// measure max and min (value, time)
 	if (m_pMO->bExtrema)
 	{
 		x_dummy = static_cast<float>(m_max) * m_mVperBin;
@@ -335,7 +335,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 		}
 	}
 
-	// difference between extrema (val, time)
+	// difference between extrema (value, time)
 	if (m_pMO->bDiffExtrema)
 	{
 		x_dummy = static_cast<float>(m_max - m_min) * m_mVperBin;

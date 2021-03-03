@@ -754,16 +754,16 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 				if (*(m_parraySorted + jj1 - 1) < *(m_parraySorted + jj1))
 					jj1++;			// compare to the better underlining
 			}
-			if (val < *(m_parraySorted + jj1 - 1))// demote val
+			if (val < *(m_parraySorted + jj1 - 1))// demote value
 			{
 				*(m_parraySorted + i - 1) = *(m_parraySorted + jj1 - 1);
 				i = jj1;
 				jj1 = jj1 + jj1;
-			}						// this is val's level. Set j to terminate the
+			}						// this is value's level. Set j to terminate the
 			else					// sift-down
 				jj1 = ir + 2;
 		}
-		*(m_parraySorted + i - 1) = val;		// put val into its slot
+		*(m_parraySorted + i - 1) = val;		// put value into its slot
 	}
 	// end of initial sort
 

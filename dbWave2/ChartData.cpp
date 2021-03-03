@@ -1108,7 +1108,7 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		const int ksize = pRect->right - k0;
 		for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 		{
-			const auto lk = m_VTtags.GetTagLVal(j);	// get val
+			const auto lk = m_VTtags.GetTagLVal(j);	// get value
 			if (lk <m_lxFirst || lk > m_lxLast)
 				continue;
 			const int k = k0 + (lk - m_lxFirst) * ksize / (m_lxLast - m_lxFirst + 1);
@@ -1450,7 +1450,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
 		case CURSOR_MEASURE: // rectangle / measure mode
-			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that val changed
+			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that value changed
 			break;
 		default:
 			break;
@@ -1488,7 +1488,7 @@ int CChartDataWnd::doesCursorHitCurve(CPoint point)
 	// loop through all channels
 	for (auto chan = 0; chan <= ichans; chan++)	// scan all channels
 	{
-		// convert device coordinates into val
+		// convert device coordinates into value
 		const auto ival = GetChanlistPixeltoBin(chan, point.y);
 		const auto ijitter = MulDiv(m_cyjitter, GetChanlistYextent(chan), -m_yVE);
 		const auto valmax = ival + ijitter;			// mouse max
@@ -1589,8 +1589,8 @@ void CChartDataWnd::highlightData(CDC* p_dc, int chan)
 	for (auto i = 0; i < m_highlighted.l_first.GetSize(); i++)
 	{
 		// load ith interval values
-		auto l_first = m_highlighted.l_first[i];		// first val
-		auto l_last = m_highlighted.l_last[i];		// last val
+		auto l_first = m_highlighted.l_first[i];		// first value
+		auto l_last = m_highlighted.l_last[i];		// last value
 
 		if (l_last < m_lxFirst || l_first > m_lxLast)
 			continue;								// next if out of range

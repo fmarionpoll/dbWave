@@ -646,7 +646,7 @@ void CViewData::SetCursorAssociatedWindows()
 	GetDlgItem(IDC_EDIT2)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_EDIT3)->ShowWindow(n_cmd_show);
 
-	// change cursors val
+	// change cursors value
 	if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption == 1)
 		UpdateHZtagsVal();
 }
@@ -1362,7 +1362,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 				auto x = m_ChartDataWnd.ChangeUnit(z, &cs_unit, &x_scale_factor); // convert
 
 				// approximate
-				auto j = static_cast<int>(x);					// get int val
+				auto j = static_cast<int>(x);					// get int value
 				if ((double(x) - j) > 0.5)				// increment integer if diff > 0.5
 					j++;
 				auto k = m_ChartDataWnd.NiceUnit(x);	// compare with nice unit abs
@@ -1375,7 +1375,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 					z = static_cast<float>(k) * x_scale_factor;
 					j = static_cast<int>(m_ChartDataWnd.ChangeUnit(z, &cs_unit, &x_scale_factor)); // convert
 				}
-				wsprintf(sz_value, _T("bar = %i %s "), j, static_cast<LPCTSTR>(cs_unit));	// store val into comment
+				wsprintf(sz_value, _T("bar = %i %s "), j, static_cast<LPCTSTR>(cs_unit));	// store value into comment
 				cs_comment += sz_value;
 			}
 			str_comment += cs_comment;

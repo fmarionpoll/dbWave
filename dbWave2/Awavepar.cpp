@@ -975,8 +975,8 @@ OPTIONS_VIEWDATAMEASURE::OPTIONS_VIEWDATAMEASURE()
 	wversion = 2;
 
 	// parameters to measure
-	bExtrema = TRUE;			// measure max and min (val, time)
-	bDiffExtrema = TRUE;		// difference between extrema (val, time)
+	bExtrema = TRUE;			// measure max and min (value, time)
+	bDiffExtrema = TRUE;		// difference between extrema (value, time)
 	bHalfrisetime = FALSE;	// time necessary to reach half of the amplitude
 	bHalfrecovery = FALSE;	// time necessary to regain half of the initial amplitude
 	bDatalimits = TRUE;		// data value at limits
@@ -1020,8 +1020,8 @@ OPTIONS_VIEWDATAMEASURE& OPTIONS_VIEWDATAMEASURE::operator = (const OPTIONS_VIEW
 		bChanged = arg.bChanged;
 
 		// parameters to measure
-		bExtrema = arg.bExtrema;			// measure max and min (val, time)
-		bDiffExtrema = arg.bDiffExtrema;	// difference between extrema (val, time)
+		bExtrema = arg.bExtrema;			// measure max and min (value, time)
+		bDiffExtrema = arg.bDiffExtrema;	// difference between extrema (value, time)
 		bDiffDatalimits = arg.bDiffDatalimits; // diff between tags/cursors
 		bHalfrisetime = arg.bHalfrisetime;// time necessary to reach half of the amplitude
 		bHalfrecovery = arg.bHalfrecovery;// time necessary to regain half of the initial amplitude
@@ -1291,7 +1291,7 @@ void OPTIONS_IMPORT::Serialize(CArchive & ar)
 		{
 			WORD w1;
 			ar >> bflag;
-			// decompose flags: update flag (/2),  get val, mask
+			// decompose flags: update flag (/2),  get value, mask
 			bSingleRun = bflag;  bSingleRun &= 0x1; bflag >>= 1;
 			bPreview = bflag;  bPreview &= 0x1; bflag >>= 1;
 			bSapid3_5 = bflag; bSapid3_5 &= 0x1;

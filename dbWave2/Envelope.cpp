@@ -190,7 +190,7 @@ void CEnvelope::GetMeanToAbcissa(CArray<CPoint, CPoint> & dest)
 	auto jdest = 0;
 	for (auto i = m_Envelope.GetSize() / 2; i > 0; i--)
 	{
-		dest[jdest].x = (*lp_source / 2 + *(lp_source + 1) / 2);	// copy half val
+		dest[jdest].x = (*lp_source / 2 + *(lp_source + 1) / 2);	// copy half value
 		jdest++;
 		lp_source += 2;
 	}
@@ -202,7 +202,7 @@ void CEnvelope::GetMeanToOrdinates(CArray<CPoint, CPoint> & dest)
 	auto jdest = 0;
 	for (auto i = m_Envelope.GetSize() / 2; i > 0; i--)
 	{
-		dest[jdest].y = (*lp_source / 2 + *(lp_source + 1) / 2);	// copy half val
+		dest[jdest].y = (*lp_source / 2 + *(lp_source + 1) / 2);	// copy half value
 		jdest++;
 		lp_source += 2;
 	}

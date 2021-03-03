@@ -45,7 +45,7 @@ protected:
 
 	// template array - results and envelope
 	// length = total spike length
-	// mean, sup val, low val (as computed by tSetdisplayData())
+	// mean, sup value, low value (as computed by tSetdisplayData())
 	// combined arrays
 	int*	m_pAvg;			// first point of the array
 	int*	m_pMax0;		// upper limit

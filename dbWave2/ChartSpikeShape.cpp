@@ -393,7 +393,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		case 0:
 			rect_out = rect_in;
 			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that val changed
+			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that value changed
 			break;
 		case CURSOR_ZOOM: 	// zoom operation
 			ZoomData(&rect_in, &rect_out);
@@ -827,7 +827,7 @@ void CChartSpikeShapeWnd::MoveVTtrack(int itrack, int newval)
 	CPoint point;
 	m_ptLast.x = MulDiv(m_VTtags.GetValue(itrack) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	m_VTtags.SetTagVal(itrack, newval);			// set new value
-	point.x = MulDiv(newval - m_xWO, m_xVE, m_xWE) + m_xVO;	// convert val into pixel
+	point.x = MulDiv(newval - m_xWO, m_xVE, m_xWE) + m_xVO;	// convert value into pixel
 	XorVTtag(point.x);						// xor line
 }
 

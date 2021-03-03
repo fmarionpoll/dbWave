@@ -521,7 +521,7 @@ void CSpikeList::MeasureSpikeMaxMin(const int index, int* max, int* imax, int* m
 	auto lp_buffer = m_spikebuffer.GetSpike(index); // get pointer to buffer
 	int val = *lp_buffer;
 	*max = val;		// assume offset between points = 1 (short)
-	*min = val;        // init max and min val
+	*min = val;        // init max and min value
 	*imin = *imax = 0;
 	for (auto i = 1; i < m_spikebuffer.GetSpklen(); i++)// loop to scan data
 	{
@@ -584,7 +584,7 @@ void CSpikeList::MeasureSpikeMaxMinEx(const int index, int* max, int* imax, int*
 	lp_buffer += ifirst;					// get pointer to buffer
 	int val = *lp_buffer;
 	*max = val;						// assume offset between points = 1 (short)
-	*min = *max;					// init max and min val
+	*min = *max;					// init max and min value
 	*imin = *imax = ifirst;
 	for (auto i = ifirst + 1; i <= ilast; i++)	// loop to scan data
 	{

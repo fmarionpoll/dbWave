@@ -126,7 +126,7 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			const int y1 = m_displayRect.bottom;
 			for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 			{
-				const auto lk = m_VTtags.GetTagLVal(j);	// get val
+				const auto lk = m_VTtags.GetTagLVal(j);	// get value
 				if (lk <m_lFirst || lk > m_lLast)
 					continue;
 				const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));
