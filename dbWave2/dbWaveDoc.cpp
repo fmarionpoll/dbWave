@@ -18,10 +18,12 @@
 #endif
 
 numberIDToText CdbWaveDoc::headers[] = {
-   { 0, _T("path")}, { 1, _T("Expt")}, { 2, _T("insectID")}, { 3, _T("ssID")}, { 4, _T("insect")},
-   { 5, _T("strain")}, { 6, _T("sex")}, { 7, _T("location")}, { 8, _T("operator")}, { 9, _T("more")},
-   { 10, _T("stim1")}, { 11, _T("conc1")}, { 12, _T("repeat1")}, { 13, _T("stim2")}, { 14, _T("conc2")},
-   { 15, _T("repeat2")}, { 16, _T("type")}, { 17, _T("flag")}
+	{ 0, _T("path")}, { 1, _T("Expt")}, { 2, _T("insectID")}, { 3, _T("ssID")}, { 4, _T("insect")},
+	{ 5, _T("strain")}, { 6, _T("sex")}, { 7, _T("location")}, { 8, _T("operator")}, { 9, _T("more")},
+	{ 10, _T("stim1")}, { 11, _T("conc1")}, { 12, _T("repeat1")}, { 13, _T("stim2")}, { 14, _T("conc2")},
+	{ 15, _T("repeat2")}, 
+	{ 16, _T("type")}, {16, _T("sensillum")},
+	{ 17, _T("flag") }
 };
 
 IMPLEMENT_DYNCREATE(CdbWaveDoc, COleDocument)
@@ -1068,7 +1070,7 @@ void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file
 		 int iColumn = i;
 		 if (bHeader) 
 		 {
-			 CString text = filenames.GetAt(i-1);
+			 CString text = filenames.GetAt(i);
 			 iColumn = findHeader(text);
 		 }
 		 int index_irecord = index + i;
@@ -1187,6 +1189,7 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 	dlg.Create();
 	dlg.SetStep(1);
 	dlg.SetPos(0);
+	dlg.SetRange(0, nfilesok);
 	auto istep = 0;
 
 	for (auto irec = 0; irec < nfilesok; irec++)
@@ -1199,7 +1202,7 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 		int index = index2DArray(irec, nColumns, bHeader);
 		CString cs_filename = CString(fileList[index]);
 		CString cscomment;
-		cscomment.Format(_T("Import file [%i / %i] %s"), index + 1, nfilesok, static_cast<LPCTSTR>(cs_filename));
+		cscomment.Format(_T("Import file [%i / %i] %s"), irec + 1, nfilesok, static_cast<LPCTSTR>(cs_filename));
 		dlg.SetStatus(cscomment);
 		dlg.StepIt();
 
@@ -2134,11 +2137,12 @@ void CdbWaveDoc::removeRowAt(CStringArray& filenames, int iRow, int nColumns, bo
 int CdbWaveDoc::checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf, int nColumns, boolean bHeader)
 {
 	// prepare progress dialog box
+	auto nfilesok = 0;
+	const int nfiles = getSize2DArray(filenames, nColumns, bHeader);
 	CDlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
-	auto nfilesok = 0;
-	const int nfiles = getSize2DArray(filenames, nColumns, bHeader);
+	dlg.SetRange(0, nfiles);
 
 	for (auto irec = nfiles - 1; irec >= 0; irec--)
 	{

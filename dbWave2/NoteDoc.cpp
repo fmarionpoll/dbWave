@@ -8,26 +8,6 @@
 #define new DEBUG_NEW
 #endif
 
-/*
-map<int, int, string> int2String{ 
-	{1, 0, "Expt"},
-	{2, 2, "insectID"},
-	{3, 2,  "ssID"},
-	{4, 0, "insect"},
-	{5, 0, "strain"},
-	{6, 0, "sex"},
-	{7, 0, "location"},
-	{8, 0, "operator"},
-	{9, 0, "more"},
-	{10, 0, "stim1"},
-	{11, 0, "conc1"},
-	{12, 2, "repeat1"},
-	{13, 0, "stim2"},
-	{14, 0, "conc2"},
-	{15, 2, "repeat2"},
-	{16, 0, "type"}
-};
-*/
 
 IMPLEMENT_DYNCREATE(CNoteDoc, CRichEditDoc)
 
@@ -220,26 +200,20 @@ int CNoteDoc::extractColumnsFromRow(CString& csRow, CStringArray& csColumns)
 	LPCWSTR seps = L"\t;,";
 	int curPos = 0;
 	int countColumns = 0;
-	CString resToken = csRow.Tokenize(seps, curPos);
-	while (curPos > 0)
-	{
+	int newPos = 0;
+	CString csExtract = csRow;
+	while (newPos >= 0) {
+		csExtract = csExtract.Right(csExtract.GetLength() - curPos);
+		newPos = csExtract.FindOneOf(seps);
+		int endPos = newPos;
+		if (endPos < 0)
+			endPos = csExtract.GetLength();
+		CString resToken = csExtract.Left(endPos);
 		csColumns.Add(resToken);
 		countColumns++;
-		resToken = csRow.Tokenize(seps, curPos);
+		curPos = newPos+1;
 	}
-
 	return countColumns;
-	/*
-	int main(void) {
-    char string[] = "this,is,the,string,,,,you,want,to,parse";
-    char *strPtr = string;
-    char *token;
-
-    while (token = strsep(&strPtr, ",")) {
-        printf("Processing '%s'\n", token);
-    }
-    return 0;	
-	*/
 }
 
 BOOL CNoteDoc::addFileName(CString& resToken, CStringArray& csFileList, CStringArray& csDescriptorsList)

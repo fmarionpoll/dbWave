@@ -1,5 +1,3 @@
-// NotedocCntrItem.cpp : implementation of the CNotedocCntrItem class
-//
 
 #include "StdAfx.h"
 
@@ -11,8 +9,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CNotedocCntrItem implementation
 
 IMPLEMENT_SERIAL(CNotedocCntrItem, CRichEditCntrItem, 0)
 
@@ -27,8 +23,6 @@ CNotedocCntrItem::~CNotedocCntrItem()
 	// TODO: add cleanup code here
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CNotedocCntrItem diagnostics
 
 #ifdef _DEBUG
 void CNotedocCntrItem::AssertValid() const
@@ -41,5 +35,3 @@ void CNotedocCntrItem::Dump(CDumpContext& dc) const
 	CRichEditCntrItem::Dump(dc);
 }
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
