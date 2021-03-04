@@ -25,8 +25,8 @@ public:
 #endif
 
 protected:
-	BOOL		extractList(CRichEditCtrl& pEdit, CStringArray& csFilesOK, CStringArray& csDescriptors);
-	BOOL		openFileList(CString& cspathname, CStringArray& cs_arrayfiles, CStringArray& csListDescriptors);
+	int			extractList(CRichEditCtrl& pEdit, CStringArray& csFilesOK, CStringArray& csDescriptors);
+	BOOL		openFileList(CString& cspathname, CStringArray& cs_arrayfiles, CStringArray& csListDescriptors, int nColumns);
 	BOOL		addFileName(CString& resToken, CStringArray& csArrayOK, CStringArray& csArrayTested);
 	void		displayFilesImported(CRichEditCtrl& pEdit, CStringArray& pArrayTested);
 	int			extractColumnsFromRow(CString& cs, CStringArray& pResult);

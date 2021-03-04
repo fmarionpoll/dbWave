@@ -118,14 +118,14 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	// open data files
 	CStringArray csFileList;
 	CStringArray csDescriptorsList;
-	extractList(pEdit, csFileList, csDescriptorsList);
+	int nColumns = extractList(pEdit, csFileList, csDescriptorsList);
 	if (csFileList.GetCount() > 0)
-		flag = openFileList(cspathname, csFileList, csDescriptorsList);
+		flag = openFileList(cspathname, csFileList, csDescriptorsList, nColumns);
 
 	return flag;
 }
 
-BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStringArray& csDescriptorsList)
+BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStringArray& csDescriptorsList, int nColumns)
 {
 	auto p_app = (CdbWaveApp*)AfxGetApp();
 	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*)(p_app->m_pdbWaveViewTemplate)->CreateNewDocument();
@@ -148,7 +148,7 @@ BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStri
 		{
 			if (p_app->options_import.bReadColumns) 
 			{
-				int nColumns = csDescriptorsList.GetCount() / (csFileList.GetCount() + p_app->options_import.bHeader);
+				int nColumns2 = csDescriptorsList.GetCount() / (csFileList.GetCount() + p_app->options_import.bHeader);
 				p_dbwave_doc->ImportFileList(csDescriptorsList, nColumns, p_app->options_import.bHeader);
 			}
 			else 
@@ -164,12 +164,12 @@ BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStri
 	return flag;
 }
 
-BOOL CNoteDoc::extractList(CRichEditCtrl& pEdit, CStringArray& csFileList, CStringArray& csDescriptorsList)
+int CNoteDoc::extractList(CRichEditCtrl& pEdit, CStringArray& csFileList, CStringArray& csDescriptorsList)
 {
 	CString textFromRichEditView{};
 	pEdit.GetWindowText(textFromRichEditView);
 	if (textFromRichEditView.IsEmpty())
-		return false;
+		return 0;
 
 	boolean bFilesNotFound = false;
 	CStringArray csFilesTested;
@@ -206,7 +206,7 @@ BOOL CNoteDoc::extractList(CRichEditCtrl& pEdit, CStringArray& csFileList, CStri
 
 	if (bFilesNotFound)
 		displayFilesImported(pEdit, csFilesTested);
-	return true;
+	return countColumns;
 }
 
 void CNoteDoc::addRowToArray(CStringArray& csRow, CStringArray& csOut)
@@ -217,17 +217,29 @@ void CNoteDoc::addRowToArray(CStringArray& csRow, CStringArray& csOut)
 
 int CNoteDoc::extractColumnsFromRow(CString& csRow, CStringArray& csColumns)
 {
-	LPCWSTR seps = L"\t;";
+	LPCWSTR seps = L"\t;,";
 	int curPos = 0;
 	int countColumns = 0;
 	CString resToken = csRow.Tokenize(seps, curPos);
-	while (!resToken.IsEmpty())
+	while (curPos > 0)
 	{
 		csColumns.Add(resToken);
 		countColumns++;
 		resToken = csRow.Tokenize(seps, curPos);
 	}
+
 	return countColumns;
+	/*
+	int main(void) {
+    char string[] = "this,is,the,string,,,,you,want,to,parse";
+    char *strPtr = string;
+    char *token;
+
+    while (token = strsep(&strPtr, ",")) {
+        printf("Processing '%s'\n", token);
+    }
+    return 0;	
+	*/
 }
 
 BOOL CNoteDoc::addFileName(CString& resToken, CStringArray& csFileList, CStringArray& csDescriptorsList)

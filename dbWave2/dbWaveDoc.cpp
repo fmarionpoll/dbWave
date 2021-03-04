@@ -1065,13 +1065,13 @@ void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file
 	 
 	 for (int i = 1; i < nColumns; i++) 
 	 {
-		 int iColumn = i+1;
+		 int iColumn = i;
 		 if (bHeader) 
 		 {
 			 CString text = filenames.GetAt(i-1);
 			 iColumn = findHeader(text);
 		 }
-		 int index_irecord = index + iColumn;
+		 int index_irecord = index + i;
 		 CString csItem = filenames.GetAt(index_irecord);
 		 switch (iColumn) {
 		 case 1:	p_wave_format->cs_comment = csItem;
