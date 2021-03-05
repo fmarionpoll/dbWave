@@ -15,31 +15,13 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_0CC75F39653F4D0C99E6E5AC591FA245"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_1A2565BB09C0441A80223B6EAD140C9E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_30C32DDA2A094882BB25A2D510340FB0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_43D007A153CD4E26A465CD6B33E8C162"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_464FF39977E645C78CF8282BB4EDB270"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -160,70 +142,10 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0CC75F39653F4D0C99E6E5AC591FA245"
-            {
-            "SourcePath" = "8:C:\\Program Files (x86)\\FMP\\dbWave2\\oldaapi32.dll"
-            "TargetName" = "8:oldaapi32.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_70F132C1888A4AF4B738A437859A06A1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_30C32DDA2A094882BB25A2D510340FB0"
-            {
-            "SourcePath" = "8:C:\\Program Files (x86)\\FMP\\dbWave2\\OLMEM32.dll"
-            "TargetName" = "8:OLMEM32.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_70F132C1888A4AF4B738A437859A06A1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_43D007A153CD4E26A465CD6B33E8C162"
             {
             "SourcePath" = "8:..\\..\\..\\..\\OneDrive\\Documents\\CED Library\\CEDSon64\\CEDS64ML\\x86\\msvcr110.dll"
             "TargetName" = "8:msvcr110.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_70F132C1888A4AF4B738A437859A06A1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_464FF39977E645C78CF8282BB4EDB270"
-            {
-            "SourcePath" = "8:C:\\Program Files (x86)\\FMP\\dbWave2\\Readme.txt"
-            "TargetName" = "8:Readme.txt"
             "Tag" = "8:"
             "Folder" = "8:_70F132C1888A4AF4B738A437859A06A1"
             "Condition" = "8:"
