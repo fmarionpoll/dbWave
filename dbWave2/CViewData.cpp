@@ -941,8 +941,8 @@ void CViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
 	}
 	// update scrollBar
-	if (m_VBarMode == BAR_GAIN)
-		UpdateGainScroll();
+	m_ChartDataWnd.Invalidate();
+	UpdateGainScroll();
 }
 
 void CViewData::UpdateBiasScroll()
@@ -977,8 +977,8 @@ void CViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 		UpdateYZero(m_ichanselected, l_size + m_ChartDataWnd.GetChanlistBinZero(m_ichanselected));
 	}
 	// update scrollBar
-	if (m_VBarMode == BAR_BIAS)
-		UpdateBiasScroll();
+	m_ChartDataWnd.Invalidate();
+	UpdateBiasScroll();
 }
 
 void CViewData::OnCenterCurve()
