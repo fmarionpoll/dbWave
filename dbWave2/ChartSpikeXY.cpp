@@ -581,16 +581,18 @@ void CChartSpikeXYWnd::getExtents()
 	{
 		auto maxval = 4096;
 		auto minval = 0;
-		if (p_spikelist_ != nullptr)
+		if (p_spikelist_ != nullptr )
 		{
 			const auto upperbound = p_spikelist_->GetTotalSpikes() - 1;
-			maxval = p_spikelist_->GetSpikeElemt(upperbound)->get_y1();
-			minval = maxval;
-			for (auto i = upperbound; i >= 0; i--)
-			{
-				const auto val = p_spikelist_->GetSpikeElemt(i)->get_y1();
-				if (val > maxval) maxval = val;
-				if (val < minval) minval = val;
+			if (upperbound >= 0) {
+				maxval = p_spikelist_->GetSpikeElemt(upperbound)->get_y1();
+				minval = maxval;
+				for (auto i = upperbound; i >= 0; i--)
+				{
+					const auto val = p_spikelist_->GetSpikeElemt(i)->get_y1();
+					if (val > maxval) maxval = val;
+					if (val < minval) minval = val;
+				}
 			}
 		}
 		m_yWE = maxval - minval + 2;
