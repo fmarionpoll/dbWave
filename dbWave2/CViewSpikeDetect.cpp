@@ -251,11 +251,12 @@ void CViewSpikeDetection::SaveCurrentSpikeFile()
 		// save file data name
 		const auto pdat_doc = GetDocument()->m_pDat;
 		const auto docname = GetDocument()->GetDB_CurrentDatFileName();
-		p_spike_doc_->m_acqfile = docname;
-		p_spike_doc_->InitSourceDoc(pdat_doc);						// init file doc, etc
-		p_spike_doc_->SetDetectionDate(CTime::GetCurrentTime());	// detection date
-
 		const auto filename = p_doc->SetDB_CurrentSpikeFileName();
+
+		p_spike_doc_->m_acqfile = docname;
+		p_spike_doc_->InitSourceDoc(pdat_doc);
+		p_spike_doc_->SetDetectionDate(CTime::GetCurrentTime());
+
 		p_spike_doc_->OnSaveDocument(filename);
 
 		// save nb spikes into database
@@ -1626,23 +1627,24 @@ void CViewSpikeDetection::OnBnClickedClearall()
 
 void CViewSpikeDetection::OnClear()
 {
-	m_spikeno = -1;						// unselect spike
-	m_ChartSpkWnd_Bar.SelectSpike(-1);		// deselect spike bars
-	m_ChartSpkWnd_Shape.SelectSpikeShape(-1);// deselect superimposed spikes
+	m_spikeno = -1;	
+	m_ChartSpkWnd_Bar.SelectSpike(-1);
+	m_ChartSpkWnd_Shape.SelectSpikeShape(-1);
 
 	p_spikelist_ = p_spike_doc_->GetSpkList_Current();
 	p_spikelist_->InitSpikeList(GetDocument()->m_pDat, nullptr);
-	highlightSpikes(FALSE);				// remove display of spikes
+	highlightSpikes(FALSE);		
 
 	if (p_spikelist_->GetdetectWhat() == DETECT_STIMULUS)
 	{
-		p_spike_doc_->m_stimIntervals.nitems = 0;		// zero stimuli
+		p_spike_doc_->m_stimIntervals.nitems = 0;
 		p_spike_doc_->m_stimIntervals.intervalsArray.RemoveAll();
-		updateVTtags();					// update display of vertical tags
+		updateVTtags();	
 	}
 
-	updateLegends();					// change legends
-	p_spike_doc_->SetModifiedFlag(TRUE);	// mark spike document as changed
+	updateLegends();
+	p_spike_doc_->SetModifiedFlag(TRUE);
+	// TODO : upate database?
 }
 
 void CViewSpikeDetection::OnEnChangeSpikeno()
