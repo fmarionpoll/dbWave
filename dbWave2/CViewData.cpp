@@ -102,20 +102,6 @@ void CViewData::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBOCHAN, m_comboSelectChan);
 }
 
-void CViewData::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
-{
-	if (bActivate)
-	{
-		auto p_mainframe = (CMainFrame*)AfxGetMainWnd();
-		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
-	}
-	else
-	{
-		((CdbWaveApp*)AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());
-	}
-	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
-}
-
 void CViewData::DefineSubClassedItems()
 {
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));

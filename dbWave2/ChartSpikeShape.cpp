@@ -621,7 +621,7 @@ void CChartSpikeShapeWnd::getExtentsCurrentSpkList()
 		m_yWO = maxval / 2 + minval / 2;
 	}
 
-	if (m_xWE == 1)
+	if (m_xWE <= 1)
 	{
 		m_xWE = p_spikelist_->GetSpikeLength();
 		m_xWO = 0;

@@ -73,7 +73,6 @@ protected:
 
 	BOOL		m_bCommonScale	= false;
 
-	//public:
 protected:
 	CScrollBarEx m_filescroll;			// data position within file
 	SCROLLINFO	m_filescroll_infos{};	// infos for scrollbar
@@ -104,8 +103,7 @@ protected:
 	void		OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
 	void		OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
 	void		OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
-
+	
 	void		DefineSubClassedItems();
 	void		DefineStretchParameters();
 
