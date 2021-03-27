@@ -1,17 +1,14 @@
 #pragma once
 
-// viewspkd.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpikeDetection form view
 
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "./Controls/cdxCRotBevelLine.h"
 #include "CSpkListTabCtrl.h"
+#include "CViewDao.h"
 
-class CViewSpikeDetection : public CDaoRecordView
+class CViewSpikeDetection : public CViewDAO
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikeDetection)
@@ -37,12 +34,10 @@ public:
 	cdxCRotBevelLine	m_bevel2;
 	cdxCRotBevelLine	m_bevel3;
 
-	CdbWaveDoc*			GetDocument();
-
 	// form variables
 protected:
 	int					m_scancount_doc = -1;			// number of channels in the data document
-	CSpikeDoc*			p_spike_doc_ = nullptr;			// destination data doc
+	CSpikeDoc*			m_pSpkDoc = nullptr;			// destination data doc
 	CSpikeList*			p_spikelist_ = nullptr;			// temporary spike list
 	CDWordArray 		m_DWintervals;					// intervals to draw detected spikes
 
@@ -77,8 +72,6 @@ protected:
 	BOOL				m_bDetected = false;
 	TCHAR				m_szbuf[64]{};
 
-	CStretchControl		m_stretch;
-	BOOL				m_binit = false;
 	int					m_cursorstate = 0;
 public:
 	inline void			SetViewMouseCursor(int cursormode) {
@@ -120,8 +113,6 @@ protected:
 	// public interface to view
 public:
 	// Overrides
-	CDaoRecordset*		OnGetRecordset() override;
-	BOOL				PreCreateWindow(CREATESTRUCT& cs) override;
 	BOOL				OnMove(UINT nIDMoveCommand) override;
 protected:
 	void				OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
@@ -135,36 +126,8 @@ protected:
 
 	// Implementation
 public:
-	~CViewSpikeDetection() override;
-#ifdef _DEBUG
-	void				AssertValid() const override;
-	void				Dump(CDumpContext& dc) const override;
-#endif
-
+						~CViewSpikeDetection() override;
 	// print view
-protected:
-	CRect				m_Margin;				// margins (pixels)
-	int					m_file0 = 0;			// current file
-	long				m_lFirst0 = 0;
-	long				m_lLast0 = 0;
-	int					m_npixels0 = 0;
-	int					m_nfiles = 0;			// nb of files in doc
-	int 				m_nbrowsperpage = 0;	// USER: nb files/page
-	long				m_lprintFirst = 0;		// file index of first pt
-	long 				m_lprintLen = 0;		// nb pts per line
-	float				m_printFirst = 0;
-	float 				m_printLast = 0;
-	BOOL				m_bIsPrinting = 0;
-	CRect				m_rData;
-	CRect				m_rSpike;
-
-	// specific printer parameters
-	TEXTMETRIC			m_tMetric{};			// onbegin/onendPrinting
-	LOGFONT				m_logFont{};			// onbegin/onendPrinting
-	CFont*				m_pOldFont = nullptr;	// onbegin/onendPrinting
-	CFont				m_fontPrint;			// onbegin/onendPrinting
-	CRect				m_printRect;
-
 protected:
 	void 				PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
 	CString				PrintConvertFileIndex(long l_first, long l_last);
@@ -200,9 +163,7 @@ protected:
 	void				UpdateTabs();
 
 	// Generated message map functions
-
 public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnMeasureAll();
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnFirstFrame();
@@ -227,7 +188,6 @@ public:
 	afx_msg void OnToolsDataseries();
 	afx_msg void OnEditCopy();
 	afx_msg void OnFileSave();
-	afx_msg void OnDestroy();
 	afx_msg void OnMeasure();
 
 	afx_msg void OnBnClickedBiasbutton();
@@ -246,16 +206,9 @@ public:
 	afx_msg void OnEnChangeChanselected2();
 	afx_msg void OnCbnSelchangeTransform2();
 
-
 	CSpkListTabCtrl	m_tabCtrl;
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CViewSpikeDetection::GetDocument()
-{
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif

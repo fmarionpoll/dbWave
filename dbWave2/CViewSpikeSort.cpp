@@ -18,35 +18,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikeSort, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewSpikeSort, CViewDAO)
 
 // TODO limit size of measure array to nbspikes within currently selected spikelist
 
-CViewSpikeSort::CViewSpikeSort()
-	: CDaoRecordView(CViewSpikeSort::IDD)
-{
-	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
-}
-
-CViewSpikeSort::~CViewSpikeSort()
-{
-	// save spkD list i	 changed
-	if (m_pSpkDoc != nullptr)
-		saveCurrentFileParms();	// save file if modified
-	// save current spike detection parameters
-	m_psC->bChanged = TRUE;
-	m_psC->sourceclass = m_sourceclass;
-	m_psC->destclass = m_destinationclass;
-	m_psC->mvmax = m_mVMax;
-	m_psC->mvmin = m_mVMin;
-}
-
-BOOL CViewSpikeSort::PreCreateWindow(CREATESTRUCT& cs)
-{
-	// TODO: Modify the Window class or styles here by modifying
-		//  the CREATESTRUCT cs
-	return CDaoRecordView::PreCreateWindow(cs);
-}
 
 void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 {
@@ -64,7 +39,7 @@ void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT6, m_mVMax);
 	DDX_Text(pDX, IDC_EDIT7, m_mVMin);
 	DDX_Text(pDX, IDC_BINMV, m_mVbin);
-	DDX_Check(pDX, IDC_CHECK1, m_bAllfiles);
+	DDX_Check(pDX, IDC_CHECK1, m_bAllFiles);
 	DDX_Text(pDX, IDC_NSPIKES, m_spikeno);
 	DDX_Text(pDX, IDC_SPIKECLASS, m_spikenoclass);
 	DDX_Text(pDX, IDC_EDITRIGHT2, m_txyright);
@@ -75,48 +50,68 @@ void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewSpikeSort, CDaoRecordView)
 
-	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE,			&CViewSpikeSort::OnMyMessage)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_SOURCECLASS, &CViewSpikeSort::OnEnChangeSourceclass)
-	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &CViewSpikeSort::OnEnChangeDestinationclass)
-	ON_CBN_SELCHANGE(IDC_PARAMETER, &CViewSpikeSort::OnSelchangeParameter)
-	ON_EN_CHANGE(IDC_LIMITLOWER, &CViewSpikeSort::OnEnChangelower)
-	ON_EN_CHANGE(IDC_LIMITUPPER, &CViewSpikeSort::OnEnChangeupper)
-	ON_EN_CHANGE(IDC_T1, &CViewSpikeSort::OnEnChangeT1)
-	ON_EN_CHANGE(IDC_T2, &CViewSpikeSort::OnEnChangeT2)
-	ON_BN_CLICKED(IDC_EXECUTE, &CViewSpikeSort::OnSort)
-	ON_BN_CLICKED(IDC_MEASURE, &CViewSpikeSort::OnMeasure)
-	ON_BN_CLICKED(IDC_CHECK1, &CViewSpikeSort::OnSelectAllFiles)
-	ON_COMMAND(ID_FORMAT_ALLDATA, &CViewSpikeSort::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &CViewSpikeSort::OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &CViewSpikeSort::OnFormatGainadjust)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, &CViewSpikeSort::OnToolsEdittransformspikes)
-	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &CViewSpikeSort::OnToolsAlignspikes)
-	ON_EN_CHANGE(IDC_EDIT2, &CViewSpikeSort::OnEnChangetimeFirst)
-	ON_EN_CHANGE(IDC_EDIT3, &CViewSpikeSort::OnEnChangetimeLast)
-	ON_EN_CHANGE(IDC_EDIT7, &CViewSpikeSort::OnEnChangemVMin)
-	ON_EN_CHANGE(IDC_EDIT6, &CViewSpikeSort::OnEnChangemVMax)
-	ON_EN_CHANGE(IDC_EDITLEFT2, &CViewSpikeSort::OnEnChangeEditleft2)
-	ON_EN_CHANGE(IDC_EDITRIGHT2, &CViewSpikeSort::OnEnChangeEditright2)
-	ON_EN_CHANGE(IDC_NSPIKES, &CViewSpikeSort::OnEnChangeNOspike)
+	ON_EN_CHANGE(IDC_SOURCECLASS,		&CViewSpikeSort::OnEnChangeSourceclass)
+	ON_EN_CHANGE(IDC_DESTINATIONCLASS,	&CViewSpikeSort::OnEnChangeDestinationclass)
+	ON_CBN_SELCHANGE(IDC_PARAMETER,		&CViewSpikeSort::OnSelchangeParameter)
+	ON_EN_CHANGE(IDC_LIMITLOWER,		&CViewSpikeSort::OnEnChangelower)
+	ON_EN_CHANGE(IDC_LIMITUPPER,		&CViewSpikeSort::OnEnChangeupper)
+	ON_EN_CHANGE(IDC_T1,				&CViewSpikeSort::OnEnChangeT1)
+	ON_EN_CHANGE(IDC_T2,				&CViewSpikeSort::OnEnChangeT2)
+	ON_BN_CLICKED(IDC_EXECUTE,			&CViewSpikeSort::OnSort)
+	ON_BN_CLICKED(IDC_MEASURE,			&CViewSpikeSort::OnMeasure)
+	ON_BN_CLICKED(IDC_CHECK1,			&CViewSpikeSort::OnSelectAllFiles)
+	ON_COMMAND(ID_FORMAT_ALLDATA,		&CViewSpikeSort::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE,	&CViewSpikeSort::OnFormatCentercurve)
+	ON_COMMAND(ID_FORMAT_GAINADJUST,	&CViewSpikeSort::OnFormatGainadjust)
+	ON_COMMAND(ID_TOOLS_EDITSPIKES,		&CViewSpikeSort::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_TOOLS_ALIGNSPIKES,	&CViewSpikeSort::OnToolsAlignspikes)
+	ON_EN_CHANGE(IDC_EDIT2,				&CViewSpikeSort::OnEnChangetimeFirst)
+	ON_EN_CHANGE(IDC_EDIT3,				&CViewSpikeSort::OnEnChangetimeLast)
+	ON_EN_CHANGE(IDC_EDIT7,				&CViewSpikeSort::OnEnChangemVMin)
+	ON_EN_CHANGE(IDC_EDIT6,				&CViewSpikeSort::OnEnChangemVMax)
+	ON_EN_CHANGE(IDC_EDITLEFT2,			&CViewSpikeSort::OnEnChangeEditleft2)
+	ON_EN_CHANGE(IDC_EDITRIGHT2,		&CViewSpikeSort::OnEnChangeEditright2)
+	ON_EN_CHANGE(IDC_NSPIKES,			&CViewSpikeSort::OnEnChangeNOspike)
 	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &CViewSpikeSort::OnToolsEdittransformspikes)
-	ON_EN_CHANGE(IDC_SPIKECLASS, &CViewSpikeSort::OnEnChangeSpikenoclass)
-	ON_EN_CHANGE(IDC_BINMV, OnEnChangeNBins)
-
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeSort::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeSort::OnTcnSelchangeTab1)
+	ON_EN_CHANGE(IDC_SPIKECLASS,		&CViewSpikeSort::OnEnChangeSpikenoclass)
+	ON_EN_CHANGE(IDC_BINMV,				&CViewSpikeSort::OnEnChangeNBins)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1,		&CViewSpikeSort::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1,	&CViewSpikeSort::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
+
+
+
+CViewSpikeSort::CViewSpikeSort()
+	: CViewDAO(CViewSpikeSort::IDD)
+{
+	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
+}
+
+CViewSpikeSort::~CViewSpikeSort()
+{
+	// save spkD list i	 changed
+	if (m_pSpkDoc != nullptr)
+		saveCurrentFileParms();	// save file if modified
+	// save current spike detection parameters
+	m_psC->bChanged = TRUE;
+	m_psC->sourceclass = m_sourceclass;
+	m_psC->destclass = m_destinationclass;
+	m_psC->mvmax = m_mVMax;
+	m_psC->mvmin = m_mVMin;
+}
 
 void CViewSpikeSort::DefineSubClassedItems()
 {
 	// subclass some controls
 	VERIFY(yhistogram_wnd_.SubclassDlgItem(IDC_HISTOGRAM, this));
 	VERIFY(xygraph_wnd_.SubclassDlgItem(IDC_DISPLAYPARM, this));
-	VERIFY(spikeshape_wnd_.SubclassDlgItem(IDC_DISPLAYSPIKE, this));
-	VERIFY(spikebars_wnd_.SubclassDlgItem(IDC_DISPLAYBARS, this));
+	VERIFY(m_ChartSpkWnd_Shape.SubclassDlgItem(IDC_DISPLAYSPIKE, this));
+	VERIFY(m_ChartSpkWnd_Bar.SubclassDlgItem(IDC_DISPLAYBARS, this));
 
 	VERIFY(mm_t1.SubclassDlgItem(IDC_T1, this));
 	VERIFY(mm_t2.SubclassDlgItem(IDC_T2, this));
@@ -142,15 +137,7 @@ void CViewSpikeSort::DefineSubClassedItems()
 
 void CViewSpikeSort::DefineStretchParameters()
 {
-	// assign controls to stretch
 	m_stretch.AttachParent(this);
-
-	//m_stretch.newProp(IDC_HISTOGRAM, SZEQ_XLEQ, YTEQ_YBEQ);
-	//m_stretch.newProp(IDC_BINMV,		SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_LIMITLOWER,	SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_LIMITUPPER,	SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_STATICLOWER,SZEQ_XLEQ, SZEQ_YBEQ);
-	//m_stretch.newProp(IDC_STATICUPPER2, SZEQ_XLEQ, SZEQ_YBEQ);
 
 	m_stretch.newProp(IDC_EDIT7, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
@@ -164,8 +151,6 @@ void CViewSpikeSort::DefineStretchParameters()
 	m_stretch.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_EDITLEFT2, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
-
-	m_binit = TRUE;
 }
 
 void CViewSpikeSort::OnInitialUpdate()
@@ -173,6 +158,9 @@ void CViewSpikeSort::OnInitialUpdate()
 	CDaoRecordView::OnInitialUpdate();
 	DefineSubClassedItems();
 	DefineStretchParameters();
+	m_binit = TRUE;
+	m_autoIncrement = true;
+	m_autoDetect = true;
 
 	// load global parameters
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
@@ -187,11 +175,11 @@ void CViewSpikeSort::OnInitialUpdate()
 	m_sourceclass = m_psC->sourceclass;
 	m_destinationclass = m_psC->destclass;
 
-	spikeshape_wnd_.DisplayAllFiles(false, GetDocument());
-	spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
-	spikeshape_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1spk));
-	m_spkformtagleft = spikeshape_wnd_.m_VTtags.AddTag(m_psC->ileft, 0);
-	m_spkformtagright = spikeshape_wnd_.m_VTtags.AddTag(m_psC->iright, 0);
+	m_ChartSpkWnd_Shape.DisplayAllFiles(false, GetDocument());
+	m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
+	m_ChartSpkWnd_Shape.SetScopeParameters(&(m_pOptionsViewData->spksort1spk));
+	m_spkformtagleft = m_ChartSpkWnd_Shape.m_VTtags.AddTag(m_psC->ileft, 0);
+	m_spkformtagright = m_ChartSpkWnd_Shape.m_VTtags.AddTag(m_psC->iright, 0);
 
 	xygraph_wnd_.DisplayAllFiles(false, GetDocument());
 	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
@@ -199,9 +187,9 @@ void CViewSpikeSort::OnInitialUpdate()
 	m_itagup = xygraph_wnd_.m_HZtags.AddTag(m_psC->iupper, 0);	
 	m_itaglow = xygraph_wnd_.m_HZtags.AddTag(m_psC->ilower, 0);
 
-	spikebars_wnd_.DisplayAllFiles(false, GetDocument());
-	spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-	spikebars_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1bars));
+	m_ChartSpkWnd_Bar.DisplayAllFiles(false, GetDocument());
+	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	m_ChartSpkWnd_Bar.SetScopeParameters(&(m_pOptionsViewData->spksort1bars));
 
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	yhistogram_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1hist));
@@ -313,43 +301,7 @@ void CViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 BOOL CViewSpikeSort::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentFileParms();
-	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	auto p_doc = GetDocument();
-	if (p_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-	{
-		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
-		return false;
-	}
-	p_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
-	return flag;
-}
-
-void CViewSpikeSort::OnDestroy()
-{
-	CDaoRecordView::OnDestroy();
-}
-
-#ifdef _DEBUG
-void CViewSpikeSort::AssertValid() const
-{
-	CDaoRecordView::AssertValid();
-}
-
-void CViewSpikeSort::Dump(CDumpContext& dc) const
-{
-	CDaoRecordView::Dump(dc);
-}
-
-CdbWaveDoc* CViewSpikeSort::GetDocument() // non-debug version is inline
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif //_DEBUG
-
-CDaoRecordset* CViewSpikeSort::OnGetRecordset()
-{
-	return GetDocument()->GetDB_Recordset();
+	return CViewDAO::OnMove(nIDMoveCommand);
 }
 
 void CViewSpikeSort::updateSpikeFile() 
@@ -369,11 +321,10 @@ void CViewSpikeSort::updateSpikeFile()
 	}
 }
 
-
 void CViewSpikeSort::updateFileParameters()
 {
 	// reset parms ? flag = single file or file list has changed
-	if (!m_bAllfiles)
+	if (!m_bAllFiles)
 	{
 		yhistogram_wnd_.RemoveHistData();
 	}
@@ -410,22 +361,23 @@ void CViewSpikeSort::updateFileParameters()
 	m_t1 = (m_psC->ileft * m_tunit) / m_pSpkList->GetAcqSampRate();
 	m_t2 = (m_psC->iright * m_tunit) / m_pSpkList->GetAcqSampRate();
 
-	spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
-	spikeshape_wnd_.m_VTtags.SetTagVal(m_spkformtagleft, m_psC->ileft);
-	spikeshape_wnd_.m_VTtags.SetTagVal(m_spkformtagright, m_psC->iright);
-	spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
+	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Bar.SetSourceData(m_pSpkList, GetDocument());
+	xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument());
 
-	spikebars_wnd_.SetSourceData(m_pSpkList, GetDocument());
-	spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	m_ChartSpkWnd_Shape.m_VTtags.SetTagVal(m_spkformtagleft, m_psC->ileft);
+	m_ChartSpkWnd_Shape.m_VTtags.SetTagVal(m_spkformtagright, m_psC->iright);
+	m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
 
-	xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument()); 
+	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+
 	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 
 	updateLegends();
 
 	// display & compute parameters
-	if (!m_bAllfiles || !m_bMeasureDone)
+	if (!m_bAllFiles || !m_bMeasureDone)
 	{
 		if (4 != m_psC->iparameter)
 		{
@@ -468,33 +420,15 @@ void CViewSpikeSort::updateLegends()
 		xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
 	else
 		xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
-	spikeshape_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
-	spikebars_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
+	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
+	m_ChartSpkWnd_Bar.SetTimeIntervals(m_lFirst, m_lLast);
 
 	xygraph_wnd_.Invalidate();
-	spikeshape_wnd_.Invalidate();
-	spikebars_wnd_.Invalidate();
+	m_ChartSpkWnd_Shape.Invalidate();
+	m_ChartSpkWnd_Bar.Invalidate();
 	yhistogram_wnd_.Invalidate();
 
 	UpdateData(FALSE);	// copy view object to controls
-}
-
-void CViewSpikeSort::OnSize(UINT nType, int cx, int cy)
-{
-	if (m_binit)
-	{
-		switch (nType)
-		{
-		case SIZE_MAXIMIZED:
-		case SIZE_RESTORED:
-			if (cx > 0 && cy > 0)
-				m_stretch.ResizeControls(nType, cx, cy);
-			break;
-		default:
-			break;
-		}
-	}
-	CDaoRecordView::OnSize(nType, cx, cy);
 }
 
 void CViewSpikeSort::OnSort()
@@ -511,7 +445,7 @@ void CViewSpikeSort::OnSort()
 	CDlgProgress* pdlg = nullptr;
 	auto istep = 0;
 	CString cscomment;
-	if (m_bAllfiles)
+	if (m_bAllFiles)
 	{
 		firstfile = 0;						// index first file
 		lastfile = pdb_doc->GetDB_NRecords() - 1;// index last file
@@ -530,7 +464,7 @@ void CViewSpikeSort::OnSort()
 			continue;
 
 		// update screen if multi-file requested
-		if (m_bAllfiles)
+		if (m_bAllFiles)
 		{
 			if (pdlg->CheckCancelButton())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
@@ -573,7 +507,7 @@ void CViewSpikeSort::OnSort()
 	}
 
 	// end of loop, select current file again if necessary
-	if (m_bAllfiles)
+	if (m_bAllFiles)
 	{
 		delete pdlg;
 		pdb_doc->SetDB_CurrentRecordPosition(currentfile);
@@ -585,8 +519,8 @@ void CViewSpikeSort::OnSort()
 	buildHistogram();
 
 	xygraph_wnd_.Invalidate();
-	spikeshape_wnd_.Invalidate();
-	spikebars_wnd_.Invalidate();
+	m_ChartSpkWnd_Shape.Invalidate();
+	m_ChartSpkWnd_Bar.Invalidate();
 	yhistogram_wnd_.Invalidate();
 
 	m_pSpkDoc->SetModifiedFlag(TRUE);
@@ -594,16 +528,15 @@ void CViewSpikeSort::OnSort()
 
 LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 {
-	short threshold = LOWORD(lParam);
-	//short wParam = HIWORD(lParam);
+	short shortValue = LOWORD(lParam);
 
 	switch (code)
 	{
 	case HINT_SETMOUSECURSOR:	// ------------- change mouse cursor (all 3 items)
-		if (CURSOR_ZOOM < threshold)	
-			threshold = 0;
-		SetViewMouseCursor(threshold);	
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(threshold, 0));
+		if (CURSOR_ZOOM < shortValue)	
+			shortValue = 0;
+		SetViewMouseCursor(shortValue);	
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(shortValue, 0));
 		break;
 
 	case HINT_CHANGEHZLIMITS:	// -------------  abcissa have changed
@@ -614,8 +547,8 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		}
 		else
 		{
-			m_lFirst = spikebars_wnd_.GetTimeFirst();
-			m_lLast = spikebars_wnd_.GetTimeLast();
+			m_lFirst = m_ChartSpkWnd_Bar.GetTimeFirst();
+			m_lLast = m_ChartSpkWnd_Bar.GetTimeLast();
 		}
 		updateLegends();
 		break;
@@ -626,9 +559,9 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			unflagAllSpikes();
 		auto spikeno = 0;
 		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-			spikeno = spikeshape_wnd_.GetHitSpike();
+			spikeno = m_ChartSpkWnd_Shape.GetHitSpike();
 		else if (HIWORD(lParam) == IDC_DISPLAYBARS)
-			spikeno = spikebars_wnd_.GetHitSpike();
+			spikeno = m_ChartSpkWnd_Bar.GetHitSpike();
 		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
 			spikeno = xygraph_wnd_.GetHitSpike();
 
@@ -638,19 +571,19 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 
 	case HINT_SELECTSPIKES:
 		xygraph_wnd_.Invalidate();
-		spikeshape_wnd_.Invalidate();
-		spikebars_wnd_.Invalidate();
+		m_ChartSpkWnd_Shape.Invalidate();
+		m_ChartSpkWnd_Bar.Invalidate();
 		break;
 
 	case HINT_DBLCLKSEL:
 	{
 		auto spikeno = 0;
 		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-			spikeno = spikeshape_wnd_.GetHitSpike();
+			spikeno = m_ChartSpkWnd_Shape.GetHitSpike();
 		else if (HIWORD(lParam) == IDC_DISPLAYBARS)
-			spikeno = spikebars_wnd_.GetHitSpike();
+			spikeno = m_ChartSpkWnd_Bar.GetHitSpike();
 		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
-			spikeno = xygraph_wnd_.GetHitSpike();  // if m_bAllFiles, spikeno is global, otherwise it comes from a single file...
+			spikeno = xygraph_wnd_.GetHitSpike();		// if m_bAllFiles, spikeno is global, otherwise it comes from a single file...
 		SelectSpikeFromCurrentList(spikeno);
 		OnToolsEdittransformspikes();
 	}
@@ -660,16 +593,16 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	case HINT_CHANGEVERTTAG: // -------------  vertical tag value has changed
 		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
 		{
-			if (threshold == m_spkformtagleft)		// first tag
+			if (shortValue == m_spkformtagleft)			// first tag
 			{
-				m_psC->ileft = spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagleft);
+				m_psC->ileft = m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagleft);
 				m_t1 = m_psC->ileft * m_tunit / m_pSpkList->GetAcqSampRate();
 				mm_t1.m_bEntryDone = TRUE;
 				OnEnChangeT1();
 			}
-			else if (threshold == m_spkformtagright)	// second tag
+			else if (shortValue == m_spkformtagright)	// second tag
 			{
-				m_psC->iright = spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagright);
+				m_psC->iright = m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagright);
 				m_t2 = m_psC->iright * m_tunit / m_pSpkList->GetAcqSampRate();
 				mm_t2.m_bEntryDone = TRUE;
 				OnEnChangeT2();
@@ -677,13 +610,13 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		}
 		else if (HIWORD(lParam) == IDC_HISTOGRAM)
 		{
-			if (threshold == m_spkhistlower)		// first tag
+			if (shortValue == m_spkhistlower)			// first tag
 			{
 				m_psC->ilower = yhistogram_wnd_.m_VTtags.GetValue(m_spkhistlower);
 				m_lower = m_psC->ilower * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				UpdateData(false);
 			}
-			else if (threshold == m_spkhistupper)	// second tag
+			else if (shortValue == m_spkhistupper)		// second tag
 			{
 				m_psC->iupper = yhistogram_wnd_.m_VTtags.GetValue(m_spkhistupper);	// load new value
 				m_upper = m_psC->iupper * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
@@ -692,7 +625,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		}
 		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
 		{
-			if (threshold == m_ixyright)
+			if (shortValue == m_ixyright)
 			{
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_tunit;
 				m_psC->ixyright = xygraph_wnd_.m_VTtags.GetValue(m_ixyright);
@@ -700,7 +633,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				mm_txyright.m_bEntryDone = TRUE;
 				OnEnChangeEditright2();
 			}
-			else if (threshold == m_ixyleft)
+			else if (shortValue == m_ixyleft)
 			{
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_tunit;
 				m_psC->ixyleft = xygraph_wnd_.m_VTtags.GetValue(m_ixyleft);
@@ -715,14 +648,14 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	//case HINT_MOVEHZTAG:	// ------------- move horizontal tag
 		if (HIWORD(lParam) == IDC_DISPLAYPARM)
 		{
-			if (threshold == m_itaglow)		// first tag
+			if (shortValue == m_itaglow)		// first tag
 			{
 				m_psC->ilower = xygraph_wnd_.m_HZtags.GetValue(m_itaglow);	// load new value
 				m_lower = m_psC->ilower * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				mm_lower.m_bEntryDone = TRUE;
 				OnEnChangelower();
 			}
-			else if (threshold == m_itagup)	// second tag
+			else if (shortValue == m_itagup)	// second tag
 			{
 				m_psC->iupper = xygraph_wnd_.m_HZtags.GetValue(m_itagup);	// load new value
 				m_upper = m_psC->iupper * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
@@ -737,10 +670,10 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		m_pOptionsViewData->spksort1spk = *spikeshape_wnd_.GetScopeParameters();
+		m_pOptionsViewData->spksort1spk = *m_ChartSpkWnd_Shape.GetScopeParameters();
 		m_pOptionsViewData->spksort1parms = *xygraph_wnd_.GetScopeParameters();
 		m_pOptionsViewData->spksort1hist = *yhistogram_wnd_.GetScopeParameters();
-		m_pOptionsViewData->spksort1bars = *spikebars_wnd_.GetScopeParameters();
+		m_pOptionsViewData->spksort1bars = *m_ChartSpkWnd_Bar.GetScopeParameters();
 		break;
 
 	default:
@@ -751,7 +684,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 
 void CViewSpikeSort::unflagAllSpikes()
 {
-	if (m_bAllfiles) {
+	if (m_bAllFiles) {
 		auto pdb_doc = GetDocument();
 		for (auto ifile = 0; ifile < pdb_doc->GetDB_NRecords(); ifile++)
 		{
@@ -767,8 +700,8 @@ void CViewSpikeSort::unflagAllSpikes()
 	else
 		m_pSpkList->RemoveAllSpikeFlags();
 	xygraph_wnd_.Invalidate();
-	spikeshape_wnd_.Invalidate();
-	spikebars_wnd_.Invalidate();
+	m_ChartSpkWnd_Shape.Invalidate();
+	m_ChartSpkWnd_Bar.Invalidate();
 }
 
 void CViewSpikeSort::OnMeasure()
@@ -782,7 +715,7 @@ void CViewSpikeSort::OnMeasure()
 	int lastfile = currentfile;
 	// change size of arrays and prepare temporary dialog
 	SelectSpikeFromCurrentList(-1);
-	if (m_bAllfiles)
+	if (m_bAllFiles)
 	{
 		firstfile = 0;						// index first file
 		lastfile = nfiles - 1;				// index last file
@@ -835,14 +768,16 @@ void CViewSpikeSort::OnMeasure()
 		m_pSpkDoc->OnSaveDocument(pdb_doc->GetDB_CurrentSpkFileName(FALSE));
 	}
 
-	if (m_bAllfiles)
+	if (m_bAllFiles)
 	{
 		currentfile = pdb_doc->GetDB_CurrentRecordPosition();
 		pdb_doc->SetDB_CurrentRecordPosition(currentfile);
 		m_pSpkDoc = pdb_doc->OpenCurrentSpikeFile();
 		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
-		spikeshape_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	}
+
+	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Bar.SetSourceData(m_pSpkList, GetDocument());
 
 	xygraph_wnd_.m_HZtags.SetTagVal(m_itaglow, m_psC->ilower);
 	xygraph_wnd_.m_HZtags.SetTagVal(m_itagup, m_psC->iupper);
@@ -890,19 +825,19 @@ void CViewSpikeSort::OnFormatAlldata()
 			xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
 		xygraph_wnd_.Invalidate();
 
-		spikeshape_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
-		spikeshape_wnd_.Invalidate();
+		m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
+		m_ChartSpkWnd_Shape.Invalidate();
 
-		spikebars_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
-		spikebars_wnd_.Invalidate();
+		m_ChartSpkWnd_Bar.SetTimeIntervals(m_lFirst, m_lLast);
+		m_ChartSpkWnd_Bar.Invalidate();
 		build_histogram = TRUE;
 	}
 
 	// spikes: center spikes horizontally and adjust hz size of display
 
 	const auto x_we = m_pSpkList->GetSpikeLength();
-	if (x_we != spikeshape_wnd_.GetXWExtent() || 0 != spikeshape_wnd_.GetXWOrg())
-		spikeshape_wnd_.SetXWExtOrg(x_we, 0);
+	if (x_we != m_ChartSpkWnd_Shape.GetXWExtent() || 0 != m_ChartSpkWnd_Shape.GetXWOrg())
+		m_ChartSpkWnd_Shape.SetXWExtOrg(x_we, 0);
 
 	// change spk_hist_wnd_
 	if (build_histogram)
@@ -925,7 +860,7 @@ void CViewSpikeSort::buildHistogram()
 	if (nbins <= 0)
 		return;
 
-	yhistogram_wnd_.BuildHistFromDocument(pdb_doc, m_bAllfiles, m_lFirst, m_lLast, m_parmmax, m_parmmin, nbins, TRUE);
+	yhistogram_wnd_.BuildHistFromDocument(pdb_doc, m_bAllFiles, m_lFirst, m_lLast, m_parmmax, m_parmmin, nbins, TRUE);
 }
 
 void CViewSpikeSort::OnFormatCentercurve()
@@ -938,8 +873,8 @@ void CViewSpikeSort::OnFormatCentercurve()
 	int max, min;
 	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
 	const auto middle = (max + min) / 2;
-	spikeshape_wnd_.SetYWExtOrg(spikeshape_wnd_.GetYWExtent(), middle);
-	spikebars_wnd_.SetYWExtOrg(spikeshape_wnd_.GetYWExtent(), middle);
+	m_ChartSpkWnd_Shape.SetYWExtOrg(m_ChartSpkWnd_Shape.GetYWExtent(), middle);
+	m_ChartSpkWnd_Bar.SetYWExtOrg(m_ChartSpkWnd_Shape.GetYWExtent(), middle);
 
 	updateLegends();
 }
@@ -947,30 +882,30 @@ void CViewSpikeSort::OnFormatCentercurve()
 void CViewSpikeSort::OnFormatGainadjust()
 {
 	// adjust gain of spkform and spkbar: data = raw signal
-	int max, min;
-	GetDocument()->GetAllSpkMaxMin(m_bAllfiles, TRUE, &max, &min);
-	//m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+	int maxval, minval;
+	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
 
-	auto y_we = MulDiv(max - min + 1, 10, 9);
-	auto y_wo = (max + min) / 2;
-	spikeshape_wnd_.SetYWExtOrg(y_we, y_wo);
-	spikebars_wnd_.SetYWExtOrg(y_we, y_wo);
+	auto y_we = MulDiv(maxval - minval + 1, 10, 9);
+	auto y_wo = (maxval + minval) / 2;
+	m_ChartSpkWnd_Shape.SetYWExtOrg(y_we, y_wo);
+	m_ChartSpkWnd_Bar.SetYWExtOrg(y_we, y_wo);
+	//m_ChartSpkWnd_Bar.MaxCenter();
 
 	// adjust gain for spk_hist_wnd_ and XYp: data = computed values
 	// search max min of parameter values
-	CSize measure = GetDocument()->GetSpkMaxMin_y1(m_bAllfiles);
-	max = measure.cx;
-	min = measure.cy;
+	CSize measure = GetDocument()->GetSpkMaxMin_y1(m_bAllFiles);
+	maxval = measure.cx;
+	minval = measure.cy;
 
 	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 	const auto max2 = static_cast<int>(m_upper / delta);
 	const auto min2 = static_cast<int> (m_lower / delta);
-	if (max2 > max)
-		max = max2;
-	if (min2 < min)
-		min = min2;
-	y_we = MulDiv(max - min + 1, 10, 8);
-	y_wo = (max + min) / 2;
+	if (max2 > maxval)
+		maxval = max2;
+	if (min2 < minval)
+		minval = min2;
+	y_we = MulDiv(maxval - minval + 1, 10, 8);
+	y_wo = (maxval + minval) / 2;
 
 	// update display
 	xygraph_wnd_.SetYWExtOrg(y_we, y_wo);
@@ -979,8 +914,8 @@ void CViewSpikeSort::OnFormatGainadjust()
 	yhistogram_wnd_.SetYWExtOrg(MulDiv(ymax, 10, 8), 0);
 
 	// update edit controls
-	m_mVMax = static_cast<float>(max) * delta;
-	m_mVMin = static_cast<float>(min) * delta;
+	m_mVMax = static_cast<float>(maxval) * delta;
+	m_mVMin = static_cast<float>(minval) * delta;
 	buildHistogram();
 	updateLegends();
 }
@@ -989,8 +924,8 @@ void CViewSpikeSort::SelectSpikeFromCurrentList(int spikeno)
 {
 	const auto ispike_local = spikeno;
 
-	spikeshape_wnd_.SelectSpikeShape(ispike_local);
-	spikebars_wnd_.SelectSpike(ispike_local);
+	m_ChartSpkWnd_Shape.SelectSpikeShape(ispike_local);
+	m_ChartSpkWnd_Bar.SelectSpike(ispike_local);
 	xygraph_wnd_.SelectSpike(ispike_local);
 	m_pSpkList->m_selspike = ispike_local;
 
@@ -1011,10 +946,10 @@ void CViewSpikeSort::SelectSpikeFromCurrentList(int spikeno)
 void CViewSpikeSort::OnToolsEdittransformspikes()
 {
 	CSpikeEditDlg dlg;
-	dlg.m_yextent = spikeshape_wnd_.GetYWExtent();
-	dlg.m_yzero = spikeshape_wnd_.GetYWOrg();
-	dlg.m_xextent = spikeshape_wnd_.GetXWExtent();
-	dlg.m_xzero = spikeshape_wnd_.GetXWOrg();
+	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent();
+	dlg.m_yzero = m_ChartSpkWnd_Shape.GetYWOrg();
+	dlg.m_xextent = m_ChartSpkWnd_Shape.GetXWExtent();
+	dlg.m_xzero = m_ChartSpkWnd_Shape.GetXWOrg();
 	dlg.m_spikeno = m_spikeno;
 	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();
@@ -1050,10 +985,10 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 
 void CViewSpikeSort::OnSelectAllFiles()
 {
-	m_bAllfiles = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
-	spikebars_wnd_.DisplayAllFiles(m_bAllfiles, GetDocument());
-	spikeshape_wnd_.DisplayAllFiles(m_bAllfiles, GetDocument());
-	xygraph_wnd_.DisplayAllFiles(m_bAllfiles, GetDocument());
+	m_bAllFiles = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_ChartSpkWnd_Bar.DisplayAllFiles(m_bAllFiles, GetDocument());
+	m_ChartSpkWnd_Shape.DisplayAllFiles(m_bAllFiles, GetDocument());
+	xygraph_wnd_.DisplayAllFiles(m_bAllFiles, GetDocument());
 
 	m_bMeasureDone = FALSE;
 	OnMeasure();
@@ -1133,7 +1068,7 @@ void CViewSpikeSort::OnToolsAlignspikes()
 	for (auto i = 0; i < spikelen; i++, p_mean++, p_sum++)
 		*p_mean = static_cast<short>(*p_sum / nbspk_selclass);
 
-	spikeshape_wnd_.DisplayExData(p_mean0);
+	m_ChartSpkWnd_Shape.DisplayExData(p_mean0);
 
 	// for each spike, compute correlation and take max value correlation
 	const auto kstart = m_psC->ileft;		// start of template match
@@ -1268,8 +1203,8 @@ void CViewSpikeSort::OnToolsAlignspikes()
 	// exit : delete resources used locally
 	if (m_pSpkDoc->IsModified())
 	{
-		spikeshape_wnd_.Invalidate();
-		spikeshape_wnd_.DisplayExData(p_mean0);
+		m_ChartSpkWnd_Shape.Invalidate();
+		m_ChartSpkWnd_Shape.DisplayExData(p_mean0);
 	}
 
 	delete[] p_sum0;
@@ -1360,14 +1295,14 @@ void CViewSpikeSort::selectSpkList(int icursel)
 
 	// update source data: change data channel and update display
 	yhistogram_wnd_.SetSpkList(m_pSpkList);
-	spikeshape_wnd_.SetSpkList(m_pSpkList);
-	spikebars_wnd_.SetSpkList(m_pSpkList);
+	m_ChartSpkWnd_Shape.SetSpkList(m_pSpkList);
+	m_ChartSpkWnd_Bar.SetSpkList(m_pSpkList);
 	xygraph_wnd_.SetSpkList(m_pSpkList);
 
 	yhistogram_wnd_.Invalidate();
 	xygraph_wnd_.Invalidate();
-	spikeshape_wnd_.Invalidate();
-	spikebars_wnd_.Invalidate();
+	m_ChartSpkWnd_Shape.Invalidate();
+	m_ChartSpkWnd_Bar.Invalidate();
 }
 
 void CViewSpikeSort::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1482,14 +1417,14 @@ void CViewSpikeSort::OnEnChangeSourceclass()
 		if (sourceclass != m_sourceclass)
 		{
 			m_sourceclass = sourceclass;
-			spikeshape_wnd_.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
+			m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
 			xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 			yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-			spikebars_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+			m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 		}
 		// change histogram accordingly
-		spikeshape_wnd_.Invalidate();
-		spikebars_wnd_.Invalidate();
+		m_ChartSpkWnd_Shape.Invalidate();
+		m_ChartSpkWnd_Bar.Invalidate();
 		xygraph_wnd_.Invalidate();
 		yhistogram_wnd_.Invalidate();
 
@@ -1646,10 +1581,10 @@ void CViewSpikeSort::OnEnChangeT1()
 		mm_t1.SetSel(0, -1);		// select all text
 		m_t1 = t1;
 		const auto it1 = static_cast<int>(m_t1 / delta);
-		if (it1 != spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagleft))
+		if (it1 != m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagleft))
 		{
 			m_psC->ileft = it1;
-			spikeshape_wnd_.MoveVTtrack(m_spkformtagleft, m_psC->ileft);
+			m_ChartSpkWnd_Shape.MoveVTtrack(m_spkformtagleft, m_psC->ileft);
 			m_pSpkList->m_imaxmin1SL = m_psC->ileft;
 		}
 		UpdateData(FALSE);
@@ -1691,10 +1626,10 @@ void CViewSpikeSort::OnEnChangeT2()
 		mm_t2.SetSel(0, -1);		// select all text
 		m_t2 = t2;
 		const auto it2 = static_cast<int>(m_t2 / delta);
-		if (it2 != spikeshape_wnd_.m_VTtags.GetValue(m_spkformtagright))
+		if (it2 != m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagright))
 		{
 			m_psC->iright = it2;
-			spikeshape_wnd_.MoveVTtrack(m_spkformtagright, m_psC->iright);
+			m_ChartSpkWnd_Shape.MoveVTtrack(m_spkformtagright, m_psC->iright);
 			m_pSpkList->m_imaxmin2SL = m_psC->iright;
 		}
 		UpdateData(FALSE);

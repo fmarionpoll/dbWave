@@ -105,13 +105,14 @@ void CSpikeDoc::Serialize(CArchive& ar)
 			readBeforeVersion6(ar, wwVersion);
 		else
 		{
-			ASSERT(FALSE);
-			CString message;
-			message.Format(_T("Version not recognized: %i"), wwVersion);
-			AfxMessageBox(message, MB_OK);
+			//ASSERT(FALSE);
+			//CString message;
+			//message.Format(_T("Spike file version not recognized: %i"), wwVersion);
+			//AfxMessageBox(message, MB_OK);
 		}
 	}
 }
+
 void CSpikeDoc::SortStimArray()
 {
 	const auto nsti = m_stimIntervals.intervalsArray.GetSize();
@@ -242,15 +243,19 @@ void CSpikeDoc::readVersion7(CArchive& ar)
 }
 
 // CSpikeDoc commands
-
-BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
+void CSpikeDoc::setFileExtension_as_SPK(CString& docname) 
 {
-	// check that path name has ".spk"
-	CString docname = pszPathName;	// copy name into CString object
 	const auto i = docname.ReverseFind('.');		// find extension separator
 	if (i > 0)
 		docname = docname.Left(i);	// clip name to remove extension
 	docname += ".spk";				// add "fresh" extension (spk)
+}
+
+BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
+{
+	// check that path name has ".spk"
+	CString docname = pszPathName;
+	setFileExtension_as_SPK(docname);
 
 	CFileStatus status;	
 	const auto b_flag_exists = CFile::GetStatus(docname, status);
@@ -1702,6 +1707,7 @@ CSpikeList* CSpikeDoc::GetSpkList_Current()
 		return nullptr;
 }
 
-CSpikeList* CSpikeDoc::GetSpkList_At(int ichan) {
+CSpikeList* CSpikeDoc::GetSpkList_At(int ichan) 
+{
 	return &spikelist_array[ichan];
 }

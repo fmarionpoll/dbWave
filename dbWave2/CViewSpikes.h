@@ -4,8 +4,9 @@
 
 #include "SpikeClassListBox.h"
 #include "CSpkListTabCtrl.h"
+#include "CViewDao.h"
 
-class CViewSpikes : public CDaoRecordView
+class CViewSpikes : public CViewDAO
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikes)
@@ -27,11 +28,11 @@ public:
 	float			m_jitter_ms = 1.f;
 	CSpkListTabCtrl	m_tabCtrl;
 
-	CdbWaveDoc*		GetDocument();
-
 	// Attributes
 protected:
 	CSpikeClassListBox m_spkClassListBox;	// listbox of spike classes
+	int				m_maxclasses = 1;
+	
 	CChartDataWnd	m_ChartDataWnd;			// data display
 	CEditCtrl		mm_spikeno;
 	CEditCtrl		mm_spikenoclass;
@@ -49,12 +50,10 @@ protected:
 	int				m_VBarMode = 0;			// flag V scrollbar state
 	CScrollBar 		m_scrolly;				// V scrollbar
 
-	CStretchControl m_stretch;				// clamp controls to sides of the formview area
-	BOOL			m_binit = false;
-
 	CSpikeDoc*		m_pSpkDoc = nullptr;	// destination data doc
 	CSpikeList*		m_pSpkList = nullptr;	// temporary spike list
 	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
+
 	BOOL			m_bInitSourceView = true;
 	int				m_lFirst = 0;
 	int				m_lLast = -1;
@@ -93,13 +92,6 @@ protected:
 
 	// public interface to view
 public:
-
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CViewData)
-public:
-	virtual CDaoRecordset* OnGetRecordset() override;
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnMove(UINT nIDMoveCommand);
 protected:
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
@@ -112,30 +104,7 @@ protected:
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	//}}AFX_VIRTUAL
 
-// VIEWPRNT.CPP: print view
-protected:
-	CRect 				m_Margin;				// margins (pixels)
-	int					m_file0{};				// current file
-	long				m_lFirst0{};
-	long				m_lLast0{};
-
-	int					m_nfiles{};				// nb of files in doc
-	int 				m_nbrowsperpage{};		// USER: nb files/page
-	long 				m_lprintFirst{};		// file index of first pt
-	long 				m_lprintLen{};			// nb pts per line
-	int 				m_printFirst{};
-	int 				m_printLast{};
-	int					m_maxclasses = 1;
-	BOOL				m_bIsPrinting{};
-
-	// specific printer parameters
-	TEXTMETRIC			m_tMetric{};			// onbegin/onendPrinting
-	LOGFONT				m_logFont{};			// onbegin/onendPrinting
-	CFont*				m_pOldFont{};			// onbegin/onendPrinting
-	CFont				m_fontPrint;			// onbegin/onendPrinting
-
 	// page format printing parameters (pixel unit)
-	CRect				m_printRect;
 	OPTIONS_VIEWDATA*	options_viewdata = nullptr;	// view data options
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;	// measure options
 	SPKCLASSIF*			m_psC = nullptr;
@@ -153,14 +122,9 @@ protected:
 	// Implementation
 protected:
 	virtual ~CViewSpikes();
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-#endif
 
 	// Generated message map functions
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnFormatAlldata();
 	afx_msg void OnFormatCentercurve();
 	afx_msg void OnFormatGainadjust();
@@ -171,7 +135,6 @@ protected:
 	afx_msg void OnEnChangeTimelast();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnEditCopy();
-	afx_msg void OnDestroy();
 	afx_msg void OnZoom();
 	afx_msg void OnEnChangeZoom();
 	afx_msg void OnEnChangeSourceclass();
@@ -196,10 +159,3 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 };
-
-#ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CViewSpikes::GetDocument()
-{
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif

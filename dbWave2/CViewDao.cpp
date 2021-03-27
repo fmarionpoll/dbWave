@@ -25,7 +25,6 @@ CViewDAO::~CViewDAO()
 BEGIN_MESSAGE_MAP(CViewDAO, CDaoRecordView)
 END_MESSAGE_MAP()
 
-
 // CdaoView drawing
 void CViewDAO::OnDraw(CDC* pDC)
 {
@@ -33,10 +32,6 @@ void CViewDAO::OnDraw(CDC* pDC)
 	// TODO: add draw code here
 }
 
-//CDaoRecordset* CViewDAO::OnGetRecordset()
-//{
-//	return GetDocument()->GetDB_Recordset();
-//}
 // CdaoView diagnostics
 #ifdef _DEBUG
 void CViewDAO::AssertValid() const
@@ -91,9 +86,32 @@ void CViewDAO::OnSize(UINT nType, int cx, int cy)
 
 BOOL CViewDAO::OnMove(UINT nIDMoveCommand)
 {
+	//const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
+	//GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	//return flag;
 	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	auto p_document = GetDocument();
+	if (m_autoDetect && p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
+	{
+		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
+		return false;
+	}
+	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
+}
+
+void CViewDAO::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+{
+	if (bActivate)
+	{
+		AfxGetMainWnd()->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
+	}
+	else
+	{
+		if (m_autoIncrement)
+			((CdbWaveApp*)AfxGetApp())->options_viewspikes.bincrflagonsave = ((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
+	}
+	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void CViewDAO::OnDestroy()

@@ -6,10 +6,9 @@
 #include "ChartSpikeBar.h"
 #include "ChartSpikeHistVert.h"
 #include "CSpkListTabCtrl.h"
+#include "CViewDao.h"
 
-// spikesort1.h : header file
-
-class CViewSpikeSort : public CDaoRecordView
+class CViewSpikeSort : public CViewDAO
 {
 	DECLARE_DYNCREATE(CViewSpikeSort)
 protected:
@@ -31,24 +30,19 @@ public:
 	float				m_timeLast = 0.f;
 	float				m_mVMax = 0.f;
 	float				m_mVMin = 0.f;
-	BOOL				m_bAllfiles = false;
+	BOOL				m_bAllFiles = false;
 	int					m_spikeno = -1;
 	int					m_spikenoclass = 0;
 	float				m_txyright = 1.f;
 	float				m_txyleft = 0.f;
 	float				m_mVbin = .1f;
 
-	CdbWaveDoc*			GetDocument();
-
 	// Attributes
 protected:
-	CStretchControl		m_stretch{};
-	BOOL				m_binit = false;
-
-	CChartSpikeHist		yhistogram_wnd_;	// spike histogram
-	CChartSpikeXYWnd	xygraph_wnd_;		// bars with spike height
-	CChartSpikeShapeWnd	spikeshape_wnd_;	// spike shapes
-	CChartSpikeBarWnd	spikebars_wnd_;		// bars with spike height
+	CChartSpikeHist		yhistogram_wnd_;		// spike histogram
+	CChartSpikeXYWnd	xygraph_wnd_;			// points with spike height or different measures
+	CChartSpikeShapeWnd	m_ChartSpkWnd_Shape;	// spike shapes
+	CChartSpikeBarWnd	m_ChartSpkWnd_Bar;		// bars with spike height
 
 	CEditCtrl			mm_t1;
 	CEditCtrl			mm_t2;
@@ -68,6 +62,7 @@ protected:
 
 	CSpikeDoc*			m_pSpkDoc = nullptr;
 	CSpikeList*			m_pSpkList = nullptr;
+
 	SPKCLASSIF*			m_psC{};
 	OPTIONS_VIEWDATA*	m_pOptionsViewData{};
 	CSpkListTabCtrl		m_tabCtrl{};
@@ -97,12 +92,10 @@ protected:
 public:
 	void				SetViewMouseCursor(int cursormode) {
 							xygraph_wnd_.SetMouseCursorType(cursormode);
-							spikeshape_wnd_.SetMouseCursorType(cursormode); }
+							m_ChartSpkWnd_Shape.SetMouseCursorType(cursormode); }
 
 	// Overrides
 public:
-	CDaoRecordset*		OnGetRecordset() override;
-	BOOL				PreCreateWindow(CREATESTRUCT& cs) override;
 	BOOL				OnMove(UINT nIDMoveCommand) override;
 protected:
 	void				OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
@@ -115,10 +108,7 @@ protected:
 	// Implementation
 protected:
 	virtual				~CViewSpikeSort();
-#ifdef _DEBUG
-	void				AssertValid() const override;
-	void				Dump(CDumpContext& dc) const override;
-# endif
+
 	void				updateFileParameters();
 	void				updateSpikeFile();
 	void				updateLegends();
@@ -135,7 +125,6 @@ protected:
 
 	// Generated message map functions
 public:
-	afx_msg void		OnSize(UINT nType, int cx, int cy);
 	afx_msg void		OnSelchangeParameter();
 	afx_msg void		OnSort();
 	afx_msg LRESULT		OnMyMessage(WPARAM code, LPARAM lParam);
@@ -147,7 +136,6 @@ public:
 	afx_msg void		OnToolsEdittransformspikes();
 	afx_msg void		OnSelectAllFiles();
 	afx_msg void		OnToolsAlignspikes();
-	afx_msg void		OnDestroy();
 	afx_msg void		OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
 	afx_msg void		OnEnChangelower();
@@ -171,10 +159,3 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 };
-
-#ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CViewSpikeSort::GetDocument()
-{
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif

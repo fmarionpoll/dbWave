@@ -24,9 +24,9 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikes, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewSpikes, CViewDAO)
 
-CViewSpikes::CViewSpikes() : CDaoRecordView(CViewSpikes::IDD)
+CViewSpikes::CViewSpikes() : CViewDAO(CViewSpikes::IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -37,13 +37,6 @@ CViewSpikes::~CViewSpikes()
 	m_psC->vsourceclass = m_sourceclass;
 	m_psC->bresetzoom = m_bresetzoom;
 	m_psC->fjitter_ms = m_jitter_ms;
-}
-
-BOOL CViewSpikes::PreCreateWindow(CREATESTRUCT& cs)
-{
-	// TODO: Modify the Window class or styles here by modifying
-		//  the CREATESTRUCT cs
-	return CDaoRecordView::PreCreateWindow(cs);
 }
 
 void CViewSpikes::DoDataExchange(CDataExchange* pDX)
@@ -147,47 +140,39 @@ void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CViewSpikes::OnSize(UINT nType, int cx, int cy)
-{
-	if (m_binit)
-	{
-		switch (nType)
-		{
-		case SIZE_MAXIMIZED:
-		case SIZE_RESTORED:
-			if (cx <= 0 || cy <= 0)
-				break;
-			m_stretch.ResizeControls(nType, cx, cy);
-			break;
-		default:
-			break;
-		}
-
-		// set track rectangle
-		CRect rect0, rect1, rect2;
-		GetWindowRect(&rect0);
-		m_ChartDataWnd.GetWindowRect(&rect1);
-		m_spkClassListBox.GetWindowRect(&rect2);
-		m_rectVTtrack.top = rect1.top - rect0.top;
-		m_rectVTtrack.bottom = rect2.bottom - rect0.top;
-		m_rectVTtrack.left = rect1.left - rect0.left;
-		m_rectVTtrack.right = rect1.right - rect0.left;
-	}
-	CDaoRecordView::OnSize(nType, cx, cy);
-}
+//void CViewSpikes::OnSize(UINT nType, int cx, int cy)
+//{
+//	if (m_binit)
+//	{
+//		switch (nType)
+//		{
+//		case SIZE_MAXIMIZED:
+//		case SIZE_RESTORED:
+//			if (cx <= 0 || cy <= 0)
+//				break;
+//			m_stretch.ResizeControls(nType, cx, cy);
+//			break;
+//		default:
+//			break;
+//		}
+//
+//		// set track rectangle
+//		CRect rect0, rect1, rect2;
+//		GetWindowRect(&rect0);
+//		m_ChartDataWnd.GetWindowRect(&rect1);
+//		m_spkClassListBox.GetWindowRect(&rect2);
+//		m_rectVTtrack.top = rect1.top - rect0.top;
+//		m_rectVTtrack.bottom = rect2.bottom - rect0.top;
+//		m_rectVTtrack.left = rect1.left - rect0.left;
+//		m_rectVTtrack.right = rect1.right - rect0.left;
+//	}
+//	CDaoRecordView::OnSize(nType, cx, cy);
+//}
 
 BOOL CViewSpikes::OnMove(UINT nIDMoveCommand)
 {
 	SaveCurrentFileParms();
-	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	auto p_document = GetDocument();
-	if (p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-	{
-		((CChildFrame*)GetParent())->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
-		return false;
-	}
-	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
-	return flag;
+	return CViewDAO::OnMove(nIDMoveCommand);
 }
 
 void CViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -446,8 +431,6 @@ void CViewSpikes::DefineStretchParameters()
 	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, SZEQ_YTEQ);
-
-	m_binit = TRUE;
 }
 
 void CViewSpikes::OnInitialUpdate()
@@ -455,6 +438,9 @@ void CViewSpikes::OnInitialUpdate()
 	CDaoRecordView::OnInitialUpdate();
 	DefineSubClassedItems();
 	DefineStretchParameters();
+	m_binit = TRUE;
+	m_autoIncrement = true;
+	m_autoDetect = true;
 
 	// load global parameters
 	auto* p_app = (CdbWaveApp*)AfxGetApp();
@@ -499,34 +485,6 @@ void CViewSpikes::OnInitialUpdate()
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
 		m_ChartDataWnd.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold, m_pspkDP->extractChan);
 	}
-}
-
-void CViewSpikes::OnDestroy()
-{
-	CDaoRecordView::OnDestroy();
-}
-
-#ifdef _DEBUG
-void CViewSpikes::AssertValid() const
-{
-	CDaoRecordView::AssertValid();
-}
-
-void CViewSpikes::Dump(CDumpContext& dc) const
-{
-	CDaoRecordView::Dump(dc);
-}
-
-CdbWaveDoc* CViewSpikes::GetDocument()
-{
-	return (CdbWaveDoc*)m_pDocument;
-}
-
-#endif //_DEBUG
-
-CDaoRecordset* CViewSpikes::OnGetRecordset()
-{
-	return GetDocument()->GetDB_Recordset();
 }
 
 void CViewSpikes::UpdateFileParameters(BOOL bUpdateInterface) {
@@ -850,10 +808,7 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	m_ChartDataWnd.Invalidate();
 }
 
-//-----------------------------------------------------------------------
-// compute printer's page dot resolution
-// borrowed from sample\drawcli\drawdoc.cpp
-//-----------------------------------------------------------------------
+/// ////////////////////////////////////////////////////////////////
 
 void CViewSpikes::PrintComputePageSize()
 {
@@ -1494,9 +1449,6 @@ void CViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	}
 }
 
-// --------------------------------------------------------------------------
-// (where could we store these values???)
-// --------------------------------------------------------------------------
 static char vs_units[] = { "GM  mµpf  " };		// units & corresp powers
 static int  vs_units_power[] = { 9,6, 0, 0, -3, -6, -9, -12, 0 };
 static int	vsmax_index = 8;				// nb of elmts
@@ -1837,8 +1789,6 @@ void CViewSpikes::UpdateScrollBar()
 	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollInfo(&m_scrollFilePos_infos);
 }
 
-// --------------------------------------------------------------------------
-
 void CViewSpikes::OnEditCopy()
 {
 	CCopyAsDlg dlg;
@@ -2077,11 +2027,6 @@ void CViewSpikes::OnGainScroll(UINT nSBCode, UINT nPos)
 	if (m_VBarMode == BAR_GAIN)
 		UpdateGainScroll();
 }
-
-// --------------------------------------------------------------------------
-// UpdateBiasScroll()
-// -- not very nice code; interface counter intuitive
-// --------------------------------------------------------------------------
 
 void CViewSpikes::UpdateBiasScroll()
 {

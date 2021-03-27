@@ -301,7 +301,8 @@ BOOL CdbWaveDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	return TRUE;
 }
 
-CString CdbWaveDoc::SetDB_CurrentSpikeFileName() {
+CString CdbWaveDoc::SetDB_CurrentSpikeFileName() 
+{
 	if (!GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 		return m_currentSpikefileName;
 
@@ -1206,7 +1207,7 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 		dlg.SetStatus(cscomment);
 		dlg.StepIt();
 
-		if (!importFileSingle(cs_filename, m_id, irec, fileList, nColumns, bHeader))
+		if (!importFileSingle(cs_filename, m_id, irec, fileList, nColumns, bHeader)) 
 			psf = fileDiscardedMessage(psf, cs_filename, irec);
 	}
 
@@ -1260,12 +1261,14 @@ boolean CdbWaveDoc::importFileSingle(CString& cs_filename, long& m_id, int ireco
 	{ 
 		DisplayDaoException(e, 17); 
 		e->Delete(); 
+		return false;
 	}
 	return true;
 }
 
 BOOL CdbWaveDoc::IsExtensionRecognizedAsDataFile(CString string) const
 {
+	string.MakeLower();
 	return (string.Find(_T("dat"))	!= -1
 		|| string.Find(_T("mcid"))	!= -1
 		|| string.Find(_T("asd"))	!= -1

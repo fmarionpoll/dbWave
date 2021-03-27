@@ -646,10 +646,10 @@ void CSpikeList::GetTotalMaxMin(const BOOL b_recalc, int* max, int* min)
 {
 	if (b_recalc || !m_bextrema)
 	{
-		auto lmax = 0, lmin = 65535;
-
+		auto lmin = 0, lmax = 65535;
+		int nspikes = m_spkelmts.GetCount();
 		// first find valid max and min
-		for (auto index = 0; index < m_spkelmts.GetSize(); index++)
+		for (auto index = 0; index < nspikes; index++)
 		{
 			if (GetSpikeClass(index) >= 0)
 			{
@@ -659,7 +659,7 @@ void CSpikeList::GetTotalMaxMin(const BOOL b_recalc, int* max, int* min)
 		}
 		m_totalmin = lmin;	// init max with first value
 		m_totalmax = lmax;	// init min with first value
-		for (auto index = 0; index < m_spkelmts.GetSize(); index++)
+		for (auto index = 0; index < nspikes; index++)
 		{
 			if (GetSpikeClass(index) >= 0)
 			{
