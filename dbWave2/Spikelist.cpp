@@ -365,9 +365,10 @@ void CSpikeList::readfileVersion_before5(CArchive& ar, int iversion)
 
 void CSpikeList::deleteArrays()
 {
-	if (m_spkelmts.GetSize() > 0)
+	int nspikes = m_spkelmts.GetSize();
+	if (nspikes > 0)
 	{
-		for (auto i = m_spkelmts.GetUpperBound(); i >= 0; i--)
+		for (auto i = nspikes - 1; i >= 0; i--)
 		{
 			auto* pspk_element = m_spkelmts.GetAt(i);
 			delete pspk_element;
