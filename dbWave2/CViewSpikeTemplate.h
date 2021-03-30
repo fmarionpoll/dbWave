@@ -9,7 +9,6 @@ protected:
 	CViewSpikeTemplates(); 
 	DECLARE_DYNCREATE(CViewSpikeTemplates)
 
-	// Form Data
 public:
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
 
@@ -27,7 +26,7 @@ public:
 	BOOL				m_ballTempl = false;
 	BOOL				m_ballSort = false;
 	BOOL				m_bDisplaySingleClass = false;
-	CTabCtrl			m_tab1Ctrl;
+	CTabCtrl			m_tab1Ctrl{};
 
 protected:
 	CEditCtrl			mm_t1;
@@ -40,29 +39,25 @@ protected:
 	CEditCtrl			mm_timelast;			// last abcissa value
 	CEditCtrl			mm_ifirstsortedclass;
 
-	CTemplateListWnd	m_avgList;
-	CTemplateListWnd	m_templList;
-	CTemplateListWnd	m_avgAllList;
+	CTemplateListWnd	m_avgList{};
+	CTemplateListWnd	m_templList{};
+	CTemplateListWnd	m_avgAllList{};
 
 	CChartSpikeShapeWnd	m_ChartSpkWnd_Shape;	// all spikes in displayspikes
-	CSpikeDoc*			m_pSpkDoc = nullptr;	// destination data doc
-	CSpikeList*			m_pSpkList = nullptr;	// temporary spike list
 
-	OPTIONS_VIEWDATA*			mdPM = nullptr;	// view data options
-	OPTIONS_VIEWDATAMEASURE*	mdMO = nullptr;	// measure options
-	SPKCLASSIF*					m_psC = nullptr;// sort parameters
+	OPTIONS_VIEWDATA*	mdPM = nullptr;			// view data options
+	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;	// measure options
+	SPKCLASSIF*			m_psC = nullptr;		// sort parameters
 	SCROLLINFO			m_scrollFilePos_infos{};
-	int					m_lFirst = 0;
-	int					m_lLast = 0;
-	int					m_spkformtagleft = 0;			// VT tags
+	long				m_lFirst = 0;
+	long				m_lLast = 0;
+	int					m_spkformtagleft = 0;
 	int					m_spkformtagright = 0;
 	int					m_spikeno = -1;
 
-	// Attributes
 public:
 	inline void SetViewMouseCursor(int cursormode) { m_ChartSpkWnd_Shape.SetMouseCursorType(cursormode); }
 
-	// Overrides
 public:
 	virtual BOOL OnMove(UINT nIDMoveCommand) override;
 protected:
@@ -74,7 +69,6 @@ protected:
 protected:
 	virtual		~CViewSpikeTemplates() override;
 
-	void		saveCurrentSpkFile();
 	void		updateFileParameters();		// reset parameters for new file
 	void		updateTemplates();
 	void		updateLegends();
@@ -109,12 +103,11 @@ public:
 	//afx_msg void OnSingleClass();
 	//afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
 	//afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
+
 	afx_msg void OnBnClickedSort();
 	afx_msg void OnBnClickedDisplay();
 	afx_msg void OnEnChangeIfirstsortedclass();
 
-	CTabCtrl m_tabCtrl;
 	afx_msg void OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedDisplaysingleclass();

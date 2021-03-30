@@ -76,7 +76,7 @@ void CDataListCtrl::OnDestroy()
 			m_picolwidth->SetAt(i, GetColumnWidth(i));
 	}
 	SAFE_DELETE(m_pEmptyBitmap);
-	CListCtrl::OnDestroy();
+	//CListCtrl::OnDestroy();
 }
 
 void CDataListCtrl::deletePtrArray()

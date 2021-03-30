@@ -1,7 +1,7 @@
 #pragma once
 //#include <afxdao.h>
 #pragma warning(disable : 4995)
-
+#include "CSpkListTabCtrl.h"
 
 class CViewDAO : public CDaoRecordView
 {
@@ -23,6 +23,11 @@ public:
 	virtual void	OnDraw(CDC* pDC);
 	virtual BOOL	PreCreateWindow(CREATESTRUCT& cs)  override;
 
+	CSpikeDoc*		m_pSpkDoc = nullptr;
+	CSpikeList*		m_pSpkList = nullptr;
+	void			saveCurrentSpkFile();
+	CSpkListTabCtrl	m_tabCtrl{};
+
 #ifdef _DEBUG
 	virtual void	AssertValid() const;
 #ifndef _WIN32_WCE
@@ -40,8 +45,8 @@ protected:
 	int 			m_nbrowsperpage = 0;	// USER: nb files/page
 	long			m_lprintFirst = 0;		// file index of first pt
 	long 			m_lprintLen = 0;		// nb pts per line
-	float			m_printFirst = 0;
-	float 			m_printLast = 0;
+	long			m_printFirst = 0;
+	long 			m_printLast = 0;
 	BOOL			m_bIsPrinting = false;
 	CRect			m_rData;
 	CRect			m_rSpike;
@@ -66,6 +71,8 @@ protected:
 protected:
 	afx_msg void	OnSize(UINT nType, int cx, int cy);
 	afx_msg void	OnDestroy();
+	afx_msg void	OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void	OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 };

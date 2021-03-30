@@ -33,12 +33,10 @@ END_MESSAGE_MAP()
 
 void CChartDataWnd::RemoveAllChanlistItems()
 {
-	// suppress array and objects pointed by m_pEnvelopesArray
 	for (auto i = envelope_ptr_array.GetUpperBound(); i >= 0; i--)
 		delete envelope_ptr_array[i];
 	envelope_ptr_array.RemoveAll();
 
-	// suppress array and objects pointed by m_pChanlistItemArray
 	for (auto i = chanlistitem_ptr_array.GetUpperBound(); i >= 0; i--)
 		delete chanlistitem_ptr_array[i];
 	chanlistitem_ptr_array.RemoveAll();
@@ -49,12 +47,12 @@ int CChartDataWnd::AddChanlistItem(int ns, int mode)
 	// first time??	create Envelope(0) with abcissa series
 	if (chanlistitem_ptr_array.GetSize() == 0)
 	{
-		m_PolyPoints.SetSize(m_npixels * 4);				// set size of polypoint array
-		m_scale.SetScale(m_npixels, m_lxSize);				// compute scale (this is first time)
+		m_PolyPoints.SetSize(m_npixels * 4);
+		m_scale.SetScale(m_npixels, m_lxSize);	
 		m_dataperpixel = 2;
 		auto* p_envelope = new CEnvelope(m_npixels * m_dataperpixel, m_dataperpixel, 0, -1, 0);
 		ASSERT(p_envelope != NULL);
-		envelope_ptr_array.Add(p_envelope);					// add item Ptr to array
+		envelope_ptr_array.Add(p_envelope);	
 		p_envelope->FillEnvelopeWithAbcissa(m_npixels * m_dataperpixel, m_lxSize);
 	}
 
@@ -1449,7 +1447,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 				zoomIn();
 			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
-		case CURSOR_MEASURE: // rectangle / measure mode
+		case CURSOR_CROSS: // rectangle / measure mode
 			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that value changed
 			break;
 		default:

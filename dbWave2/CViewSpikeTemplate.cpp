@@ -72,7 +72,6 @@ BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CViewDAO)
 	ON_EN_CHANGE(IDC_HITRATE2,			&CViewSpikeTemplates::OnEnChangeHitrateSort)
 	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST2,	&CViewSpikeTemplates::OnKeydownTemplateList)
 	ON_BN_CLICKED(IDC_CHECK1,			&CViewSpikeTemplates::OnCheck1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1,	&CViewSpikeTemplates::OnTcnSelchangeTab1)
 	ON_BN_CLICKED(IDC_SORT,				&CViewSpikeTemplates::OnBnClickedSort)
 	ON_BN_CLICKED(IDC_DISPLAY,			&CViewSpikeTemplates::OnBnClickedDisplay)
 	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &CViewSpikeTemplates::OnEnChangeIfirstsortedclass)
@@ -85,13 +84,19 @@ END_MESSAGE_MAP()
 
 void CViewSpikeTemplates::OnDestroy()
 {
-	CDaoRecordView::OnDestroy();
 	if (m_templList.GetNtemplates() != 0)
 	{
 		if (m_psC->ptpl == nullptr)
 			m_psC->CreateTPL();
 		*(CTemplateListWnd*)m_psC->ptpl = m_templList;
 	}
+	CDaoRecordView::OnDestroy();
+}
+
+BOOL CViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
+{
+	saveCurrentSpkFile();
+	return CViewDAO::OnMove(nIDMoveCommand);
 }
 
 void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -114,39 +119,15 @@ void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-BOOL CViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
-{
-	saveCurrentSpkFile();
-	return CViewDAO::OnMove(nIDMoveCommand);
-}
-
-void CViewSpikeTemplates::saveCurrentSpkFile()
-{
-	auto p_doc = GetDocument();
-	
-	// save previous file if anything has changed
-	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
-	{
-		m_pSpkDoc->OnSaveDocument(p_doc->GetDB_CurrentSpkFileName(FALSE));
-		m_pSpkDoc->SetModifiedFlag(FALSE);
-
-		p_doc->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
-		p_doc->SetDB_nbspikeclasses(m_pSpkList->GetNbclasses());
-
-		// change flag is button is checked
-		if (((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
-		{
-			int flag = p_doc->GetDB_CurrentRecordFlag();
-			flag++;
-			p_doc->SetDB_CurrentRecordFlag(flag);
-		}
-	}
-}
-
 void CViewSpikeTemplates::OnInitialUpdate()
 {
 	m_stretch.AttachParent(this);		// attach formview pointer
-	m_stretch.newProp(IDC_LIST1, XLEQ_XREQ, SZEQ_YTEQ);
+	//m_stretch.newProp(IDC_LIST1, XLEQ_XREQ, SZEQ_YTEQ);
+	//m_stretch.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
+	//m_stretch.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
+	//m_stretch.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
+
+	m_stretch.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
@@ -334,15 +315,13 @@ void CViewSpikeTemplates::updateLegends()
 	if (m_lFirst > m_lLast)
 		m_lFirst = m_lLast - 120;
 
-	// update text abcissa and horizontal scroll position
 	m_timefirst = m_lFirst / m_pSpkDoc->GetAcqRate();
 	m_timelast = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
 
-	// draw dependent buttons
 	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Shape.Invalidate();
 
-	UpdateData(FALSE);	// copy view object to controls
+	UpdateData(FALSE);
 	updateScrollBar();
 }
 
@@ -355,8 +334,7 @@ void CViewSpikeTemplates::selectSpike(short spikeno)
 
 LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
-	short shortValue = LOWORD(lParam);	// value associated
-
+	short shortValue = LOWORD(lParam);
 	switch (wParam)
 	{
 	case HINT_SETMOUSECURSOR:
@@ -399,7 +377,9 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_RMOUSEBUTTONDOWN:
 		editSpikeClass(HIWORD(lParam), shortValue);
 		break;
-
+	case HINT_VIEWTABHASCHANGED:
+		updateCtrlTab1(shortValue);
+		break;
 	default:
 		break;
 	}
@@ -1230,15 +1210,6 @@ void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 			}
 		}
 	}
-}
-
-void CViewSpikeTemplates::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	*pResult = 0;
-
-	// switch display
-	const auto iselect = m_tab1Ctrl.GetCurSel();
-	updateCtrlTab1(iselect);
 }
 
 void CViewSpikeTemplates::updateCtrlTab1(int iselect)

@@ -14,6 +14,21 @@
 
 IMPLEMENT_SERIAL(CTemplateListWnd, CListCtrl, 0 /* schema number*/)
 
+CTemplateListWnd::CTemplateListWnd()
+{
+	m_tpl0.tInit();
+}
+
+CTemplateListWnd::~CTemplateListWnd()
+{
+	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	{
+		const auto templatewnd_ptr = templatewnd_ptr_array.GetAt(i);
+		delete templatewnd_ptr;
+	}
+	templatewnd_ptr_array.RemoveAll();
+}
+
 CTemplateListWnd& CTemplateListWnd::operator = (const CTemplateListWnd& arg)
 {
 	if (this != &arg) {
@@ -111,35 +126,6 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 	}
 }
 
-// ----------------------------------------------------------------------------
-
-CTemplateListWnd::CTemplateListWnd() : m_globaldist(0), m_iItemDrag(0), m_iItemDrop(0)
-{
-	m_hitrate = 75;
-	m_ktolerance = 1.96f;
-	m_globalstd = 0.f;
-	m_tpllen = 60;
-	m_tpleft = 0;
-	m_tpright = 1;
-	m_yextent = 0;
-	m_yzero = 0;
-	m_bDragging = FALSE;
-	m_pimageListDrag = nullptr;
-	m_tpl0.tInit();
-}
-
-// ----------------------------------------------------------------------------
-
-CTemplateListWnd::~CTemplateListWnd()
-{
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
-	{
-		const auto p_spike_element = templatewnd_ptr_array.GetAt(i);
-		delete p_spike_element;
-	}
-	templatewnd_ptr_array.RemoveAll();
-}
-
 int CTemplateListWnd::InsertTemplate(int i, int classID)
 {
 	// create window control
@@ -179,6 +165,7 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 	// return -1 if something is wrong
 	return index;
 }
+
 void CTemplateListWnd::TransferTemplateData()
 {
 	for (int i = 0; i < templatewnd_ptr_array.GetSize(); i++)
@@ -447,7 +434,6 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 				break;
 			}
 		}
-		p_spike_element->DestroyWindow();
 		delete p_spike_element;
 		templatewnd_ptr_array.RemoveAt(item);
 		p_nm_list_view->lParam = NULL;
@@ -717,19 +703,19 @@ void CTemplateListWnd::OnButtonUp(CPoint point)
 		if (l_style == LVS_REPORT && m_iItemDrop != m_iItemDrag)
 		{
 			cstr = GetItemText(m_iItemDrag, 0);
-			SetItemText(m_iItemDrop, 1, cstr);  // drop subitem text is dragged main item text
+			SetItemText(m_iItemDrop, 1, cstr); 
 		}
-		if (l_style == LVS_LIST && m_iItemDrop != m_iItemDrag)  //add ** to the drop item text
+		else if (l_style == LVS_LIST && m_iItemDrop != m_iItemDrag)
 		{
 			cstr = GetItemText(m_iItemDrop, 0);
 			cstr += _T("**");
 			SetItemText(m_iItemDrop, 0, cstr);
 		}
-		if (l_style == LVS_ICON || l_style == LVS_SMALLICON)  // move the icon
+		else if (l_style == LVS_ICON || l_style == LVS_SMALLICON)
 		{
-			point -= m_ptHotSpot;  // the icon should be drawn exactly where the image is
+			point -= m_ptHotSpot; 
 			point += m_ptOrigin;
-			SetItemPosition(m_iItemDrag, point);  // just move the dragged item
+			SetItemPosition(m_iItemDrag, point);
 		}
 		::ReleaseCapture();
 	}

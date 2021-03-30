@@ -48,10 +48,10 @@ BEGIN_MESSAGE_MAP(CViewdbWave, CViewDAO)
 	ON_BN_CLICKED(IDC_RADIO2, &CViewdbWave::OnBnClickedDisplaySpikes)
 	ON_NOTIFY(HDN_ENDTRACK, 0, &CViewdbWave::OnHdnEndtrackListctrl)
 	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTCTRL, &CViewdbWave::OnLvnColumnclickListctrl)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewdbWave::OnTcnSelchangeTab1)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LISTCTRL, &CViewdbWave::OnItemActivateListctrl)
 	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL, &CViewdbWave::OnDblclkListctrl)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewdbWave::OnNMClickTab1)
+
+	//ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewDAO::OnNMClickTab1)
 END_MESSAGE_MAP()
 
 CViewdbWave::CViewdbWave()
@@ -294,6 +294,24 @@ void CViewdbWave::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 	// quit the current view and switch to spike detection view
 	((CChildFrame*)GetParent())->PostMessage(WM_COMMAND, WPARAM(ID_VIEW_SPIKEDETECTION), LPARAM(NULL));
+}
+
+LRESULT CViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
+{
+	int threshold = LOWORD(lParam);	// value associated
+	const int i_id = HIWORD(lParam);
+
+	switch (wParam)
+	{
+	case HINT_VIEWTABHASCHANGED:
+		GetDocument()->GetcurrentSpkDocument()->SetSpkList_AsCurrent(threshold);
+		m_dataListCtrl.RefreshDisplay();
+		break;
+
+	default:
+		break;
+	}
+	return 0L;
 }
 
 void CViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -687,16 +705,3 @@ void CViewdbWave::OnEnChangeSpikeclass()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void CViewdbWave::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	const auto icursel = m_tabCtrl.GetCurSel();
-	GetDocument()->GetcurrentSpkDocument()->SetSpkList_AsCurrent(icursel);
-	m_dataListCtrl.RefreshDisplay();
-	*pResult = 0;
-}
-
-void CViewdbWave::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	auto icursel = m_tabCtrl.GetCurSel();
-	*pResult = 0;
-}

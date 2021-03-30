@@ -650,7 +650,7 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		// track horizontal & VT cursors if mouse HIT
 	case 0:								// arrow (default)
-	case CURSOR_MEASURE:				// cross (measure mode) (2)
+	case CURSOR_CROSS:				// cross (measure mode) (2)
 		if (nFlags & MK_CONTROL)
 		{
 			postMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
@@ -826,7 +826,7 @@ void CChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 	switch (m_cursorType)
 	{
 	case CURSOR_ZOOM:
-	case CURSOR_MEASURE:	// tracking type
+	case CURSOR_CROSS:	// tracking type
 		m_ptFirst = point;
 		m_ptLast = point;
 		m_trackMode = TRACK_RECT;		// flag trackrect
@@ -863,7 +863,7 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			m_iUndoZoom = -1;
 		}
 	}
-	if (m_cursorType == CURSOR_MEASURE)
+	if (m_cursorType == CURSOR_CROSS)
 		postMyMessage(HINT_RMOUSEBUTTONUP, NULL);
 	else
 		postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);

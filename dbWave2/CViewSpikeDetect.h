@@ -5,7 +5,7 @@
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "./Controls/cdxCRotBevelLine.h"
-#include "CSpkListTabCtrl.h"
+
 #include "CViewDao.h"
 
 class CViewSpikeDetection : public CViewDAO
@@ -37,8 +37,6 @@ public:
 	// form variables
 protected:
 	int					m_scancount_doc = -1;			// number of channels in the data document
-	CSpikeDoc*			m_pSpkDoc = nullptr;			// destination data doc
-	CSpikeList*			p_spikelist_ = nullptr;			// temporary spike list
 	CDWordArray 		m_DWintervals;					// intervals to draw detected spikes
 
 	CChartDataWnd		m_ChartDataWnd_Detect;
@@ -89,8 +87,7 @@ protected:
 	void				serializeWindowsState(BOOL bSave, int itab = -1);
 	void				alignDisplayToCurrentSpike();
 	void				highlightSpikes(BOOL flag = TRUE);
-	void				OnFileScroll(UINT nSBCode, UINT nPos);
-	void				SaveCurrentSpikeFile();
+	void				scrollFile(UINT nSBCode, UINT nPos);
 	void				selectSpikeNo(int spikeno, BOOL bMultipleSelection);
 	BOOL				checkDetectionSettings();
 	void				updateCB();
@@ -205,9 +202,6 @@ public:
 	afx_msg void OnBnClickedBias2();
 	afx_msg void OnEnChangeChanselected2();
 	afx_msg void OnCbnSelchangeTransform2();
-
-	CSpkListTabCtrl	m_tabCtrl;
-	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 };

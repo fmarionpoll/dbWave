@@ -19,13 +19,10 @@
 
 class CDataListCtrl : public CListCtrl
 {
-	// Construction
 public:
-	CDataListCtrl();
+					CDataListCtrl();
+	virtual			~CDataListCtrl() override;
 
-	// Implementation
-public:
-	virtual			~CDataListCtrl();
 	void			InitColumns(CUIntArray* picolwidth = nullptr);
 	void			SetCurSel(int recposition);
 	void			UpdateCache(int ifirst, int ilast);
@@ -49,13 +46,11 @@ public:
 	int				GetSpikePlotMode()		const { return m_spikeplotmode; }
 	int				GetSpikeClass()			const { return m_selclass; }
 
-
-	CChartDataWnd*		GetDataViewCurrentRecord();
-	inline int			GetVisibleRowsSize() {return ptrArray.GetSize();}
+	CChartDataWnd*	GetDataViewCurrentRecord();
+	inline int		GetVisibleRowsSize() {return ptrArray.GetSize();}
 	inline CAcqDataDoc*	GetVisibleRowsAcqDataDocAt(int index) { return  ptrArray[index]->pdataDoc; }
 	inline CSpikeDoc*	GetVisibleRowsSpikeDocAt(int index) { return ptrArray[index]->pspikeDoc; }
 
-	// Generated message map functions
 protected:
 	CArray <CDataListCtrl_Row*, CDataListCtrl_Row*> ptrArray;
 	CImageList		m_imagelist;

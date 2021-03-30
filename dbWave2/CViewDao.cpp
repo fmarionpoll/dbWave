@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "dbWaveDoc.h"
 #include "CViewDao.h"
-
+#include "dbWave_constants.h"
 
 
 IMPLEMENT_DYNAMIC(CViewDAO, CDaoRecordView)
@@ -23,6 +23,9 @@ CViewDAO::~CViewDAO()
 }
 
 BEGIN_MESSAGE_MAP(CViewDAO, CDaoRecordView)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewDAO::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewDAO::OnTcnSelchangeTab1)
+
 END_MESSAGE_MAP()
 
 // CdaoView drawing
@@ -151,3 +154,51 @@ void CViewDAO::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		CView::OnPrint(p_dc, pInfo);
 }
 
+void CViewDAO::saveCurrentSpkFile()
+{
+	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
+	{
+		auto p_doc = GetDocument();
+		const auto currentlist = m_tabCtrl.GetCurSel();
+		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
+		if (!m_pSpkList->IsClassListValid())	// if class list not valid:
+			m_pSpkList->UpdateClassList();		// rebuild list of classes
+		const auto spkfile_name = p_doc->GetDB_CurrentSpkFileName(FALSE);
+		m_pSpkDoc->OnSaveDocument(spkfile_name);
+		m_pSpkDoc->SetModifiedFlag(FALSE);
+
+		auto nclasses = 1;
+		const auto  ntotalspikes = m_pSpkList->GetTotalSpikes();
+		if (ntotalspikes > 0)
+		{
+			if (!m_pSpkList->IsClassListValid())		// if class list not valid:
+				nclasses = m_pSpkList->UpdateClassList();
+			else
+				nclasses = m_pSpkList->GetNbclasses();
+		}
+		p_doc->SetDB_nbspikes(ntotalspikes);
+		p_doc->SetDB_nbspikeclasses(nclasses);
+
+		// change flag is button is checked
+		if (((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
+		{
+			int flag = p_doc->GetDB_CurrentRecordFlag();
+			flag++;
+			p_doc->SetDB_CurrentRecordFlag(flag);
+		}
+	}
+}
+
+void CViewDAO::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	auto icursel = m_tabCtrl.GetCurSel(); 
+	SendMessage(WM_MYMESSAGE, HINT_VIEWTABCHANGE, MAKELPARAM(icursel, 0));
+	*pResult = 0;
+}
+
+void CViewDAO::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	const auto icursel = m_tabCtrl.GetCurSel();
+	PostMessage(WM_MYMESSAGE, HINT_VIEWTABHASCHANGED, MAKELPARAM(icursel, 0));
+	*pResult = 0;
+}

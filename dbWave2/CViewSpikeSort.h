@@ -5,14 +5,14 @@
 #include "dbWaveDoc.h"
 #include "ChartSpikeBar.h"
 #include "ChartSpikeHistVert.h"
-#include "CSpkListTabCtrl.h"
 #include "CViewDao.h"
 
 class CViewSpikeSort : public CViewDAO
 {
 	DECLARE_DYNCREATE(CViewSpikeSort)
 protected:
-	CViewSpikeSort();			// protected constructor used by dynamic creation
+						CViewSpikeSort();
+	virtual				~CViewSpikeSort() override;
 
 // Form Data
 public:
@@ -60,12 +60,8 @@ protected:
 	CEditCtrl			mm_txyleft;
 	CEditCtrl			mm_mVbin;
 
-	CSpikeDoc*			m_pSpkDoc = nullptr;
-	CSpikeList*			m_pSpkList = nullptr;
-
 	SPKCLASSIF*			m_psC{};
 	OPTIONS_VIEWDATA*	m_pOptionsViewData{};
-	CSpkListTabCtrl		m_tabCtrl{};
 
 	int					m_itaglow{};
 	int					m_itagup{};
@@ -107,17 +103,12 @@ protected:
 
 	// Implementation
 protected:
-	virtual				~CViewSpikeSort();
-
 	void				updateFileParameters();
 	void				updateSpikeFile();
 	void				updateLegends();
-	void				saveCurrentFileParms();
-
-	void				SelectSpikeFromCurrentList(int spikeno);
+	void				selectSpikeFromCurrentList(int spikeno);
 	void				updateGain();
 	void				updateScrollBar();
-	
 	void				selectSpkList(int icursel);
 	void				activateMode4();
 	void				buildHistogram();
@@ -153,9 +144,6 @@ public:
 	afx_msg void		OnEnChangeEditleft2();
 	afx_msg void		OnEnChangeEditright2();
 	afx_msg void		OnEnChangeNBins();
-
-	afx_msg void		OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void		OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 };

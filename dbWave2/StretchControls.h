@@ -4,25 +4,26 @@
 #if !defined (_CONTROLP_H_)
 #define _CONTROLP_H_
 
-#define SZEQ_XLEQ		1	// equal size -- constant distance with x left
-#define SZEQ_XREQ		2	// equal size -- constant dist with x right
-#define XLEQ_XREQ		3	// equal dist from both sides -- size accordingly
-#define SZEQ_XLPR		4	// equal size -- proportional distance from left border
-#define SZEQ_XRPR		5	// equal size -- proportional distance from right border
-#define XLPR_XRPR		6	// proportional distance from both borders -- size accordingly
-#define SZPR_XLEQ		7
-#define SZPR_XREQ		8
-#define RIGHT_BAR		9
+constexpr auto SZEQ_XLEQ = 1;	// equal size -- constant distance with x left;
+constexpr auto SZEQ_XREQ = 2;	// equal size -- constant dist with x right;
+constexpr auto XLEQ_XREQ = 3;	// equal dist from both sides -- size accordingly;
+constexpr auto SZEQ_XLPR = 4;	// equal size -- proportional distance from left border;
+constexpr auto SZEQ_XRPR = 5;	// equal size -- proportional distance from right border;
+constexpr auto XLPR_XRPR = 6;	// proportional distance from both borders -- size accordingly;
+constexpr auto SZPR_XLEQ = 7;
+constexpr auto SZPR_XREQ = 8;
+constexpr auto RIGHT_BAR = 9;
 
-#define SZEQ_YTEQ		1	// equal size -- constant distance with y top
-#define SZEQ_YBEQ		2	// equal size -- constant dist with y bottom
-#define YTEQ_YBEQ		3	// equal dist from both sides -- size accordingly
-#define SZEQ_YTPR		4	// equal size -- proportional distance from top border
-#define SZEQ_YBPR		5	// equal size -- proportional distance from bottom border
-#define YTPR_YBPR		6	// proportional distance from both borders -- size accordingly
-#define SZPR_YTEQ		7
-#define SZPR_YBEQ		8
-#define BOTTOM_BAR		9
+constexpr auto SZEQ_YTEQ = 1;	// equal size -- constant distance with y top;
+constexpr auto SZEQ_YBEQ = 2;	// equal size -- constant dist with y bottom;
+constexpr auto YTEQ_YBEQ = 3;	// equal dist from both sides -- size accordingly;
+constexpr auto SZEQ_YTPR = 4;	// equal size -- proportional distance from top border;
+constexpr auto SZEQ_YBPR = 5;	// equal size -- proportional distance from bottom border;
+constexpr auto YTPR_YBPR = 6;	// proportional distance from both borders -- size accordingly;
+constexpr auto SZPR_YTEQ = 7;
+constexpr auto SZPR_YBEQ = 8;
+constexpr auto BOTTOM_BAR = 9;
+
 /*
 // Définitions supplémentaires
 // afin de raccorder les objets de AppStudio entre eux.

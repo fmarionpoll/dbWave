@@ -1,5 +1,3 @@
-// ExportDataDlg.cpp : implementation file
-//
 
 #include "StdAfx.h"
 //#include "dbWave_constants.h"
@@ -18,9 +16,6 @@
 #define EXPORT_SAPID	1
 #define EXPORT_TEXT		2
 #define EXPORT_EXCEL	3
-
-/////////////////////////////////////////////////////////////////////////////
-// CExportDataDlg dialog
 
 CExportDataDlg::CExportDataDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CExportDataDlg::IDD, pParent), m_dbDoc(nullptr), m_indexoldselectedfile(0), mm_lFirst(0), mm_lLast(0),
@@ -56,8 +51,6 @@ BEGIN_MESSAGE_MAP(CExportDataDlg, CDialog)
 	ON_BN_CLICKED(IDC_EXPORTALL, OnExportall)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CExportDataDlg protected procedures
 void CExportDataDlg::UpdateStructFromControls()
 {
 	UpdateData(TRUE);
@@ -71,9 +64,6 @@ void CExportDataDlg::UpdateStructFromControls()
 	iivO.fTimefirst = m_timefirst;
 	iivO.fTimelast = m_timelast;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CExportDataDlg message handlers
 
 BOOL CExportDataDlg::DestroyWindow()
 {

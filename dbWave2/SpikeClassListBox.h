@@ -43,8 +43,6 @@ protected:
 public:
 	void SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc);
 	void SetSpkList(CSpikeList* p_spike_list);
-	//inline CSpikeList* GetSpkListCurrent() const { return p_spikelist_; };
-	//inline CSpikeDoc* GetSpikeDoc() const { return p_spike_doc_; };
 
 	void SetTimeIntervals(long l_first, long l_last);
 	int GetHowManyClassesInCurrentSpikeList();

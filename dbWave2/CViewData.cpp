@@ -246,7 +246,7 @@ void CViewData::UpdateChannel(int channel)
 		m_ichanselected = 0;								// clip to minimum (and if 0?)
 	if (m_ichanselected != channel)							// new value is different than previous
 	{														// change other dependent parameters
-		if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption == 1
+		if (m_cursorstate == CURSOR_CROSS && mdMO->wOption == 1
 			&& m_ChartDataWnd.m_HZtags.GetNTags() > 0)
 		{
 			for (auto i = 0; i < m_ChartDataWnd.m_HZtags.GetNTags(); i++)
@@ -620,7 +620,7 @@ void CViewData::UpdateChannelsDisplayParameters()
 void CViewData::SetCursorAssociatedWindows()
 {
 	auto n_cmd_show = SW_HIDE;
-	if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption == 1
+	if (m_cursorstate == CURSOR_CROSS && mdMO->wOption == 1
 		&& m_ChartDataWnd.m_HZtags.GetNTags() > 0)
 		n_cmd_show = SW_SHOW;
 
@@ -633,7 +633,7 @@ void CViewData::SetCursorAssociatedWindows()
 	GetDlgItem(IDC_EDIT3)->ShowWindow(n_cmd_show);
 
 	// change cursors value
-	if (m_cursorstate == CURSOR_MEASURE && mdMO->wOption == 1)
+	if (m_cursorstate == CURSOR_CROSS && mdMO->wOption == 1)
 		UpdateHZtagsVal();
 }
 
@@ -677,7 +677,7 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	{
 	case HINT_SETMOUSECURSOR:
 		// save current cursors into document if cursorstate = 3
-		if (m_cursorstate == CURSOR_MEASURE)
+		if (m_cursorstate == CURSOR_CROSS)
 		{
 			if (mdMO->wOption == 0)	// vertical cursors
 			{
@@ -700,14 +700,14 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			m_ChartDataWnd.Invalidate();
 		}
 		// change cursor value (+1), clip to upper cursor value
-		if (lowp > CURSOR_MEASURE)
+		if (lowp > CURSOR_CROSS)
 			lowp = 0;
 		// change cursor and tell parent that it has changed
 		m_cursorstate = m_ChartDataWnd.SetMouseCursorType(lowp);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 
 		// recall cursors from document if cursorstate = 2
-		if (m_cursorstate == CURSOR_MEASURE)
+		if (m_cursorstate == CURSOR_CROSS)
 		{
 			if (mdMO->wOption == 0)
 				m_ChartDataWnd.m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
@@ -821,7 +821,7 @@ void CViewData::OnToolsVerticaltags()
 	mdMO->wOption = 0;
 
 	// change cursor and tell parent that it has changed
-	m_cursorstate = m_ChartDataWnd.SetMouseCursorType(CURSOR_MEASURE);
+	m_cursorstate = m_ChartDataWnd.SetMouseCursorType(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	//MeasureProperties(1);
 }
@@ -830,7 +830,7 @@ void CViewData::OnToolsHorizontalcursors()
 {
 	mdMO->wOption = 1;
 	// change cursor and tell parent that it has changed
-	m_cursorstate = m_ChartDataWnd.SetMouseCursorType(CURSOR_MEASURE);
+	m_cursorstate = m_ChartDataWnd.SetMouseCursorType(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	//MeasureProperties(0);
 }
@@ -1095,8 +1095,8 @@ void CViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CViewData::MeasureProperties(int item)
 {
 	// make sure that cursor is ok
-	if (m_cursorstate != CURSOR_MEASURE)
-		OnMyMessage(NULL, MAKELPARAM(CURSOR_MEASURE, HINT_SETMOUSECURSOR));
+	if (m_cursorstate != CURSOR_CROSS)
+		OnMyMessage(NULL, MAKELPARAM(CURSOR_CROSS, HINT_SETMOUSECURSOR));
 
 	// save current data into data document
 	switch (mdMO->wOption)

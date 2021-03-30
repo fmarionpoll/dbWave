@@ -3,14 +3,14 @@
 // ViewSpikes.h : header file
 
 #include "SpikeClassListBox.h"
-#include "CSpkListTabCtrl.h"
 #include "CViewDao.h"
 
 class CViewSpikes : public CViewDAO
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikes)
-	CViewSpikes();
+					CViewSpikes();
+	virtual			~CViewSpikes() override;
 
 // Form Data
 public:
@@ -26,7 +26,6 @@ public:
 	BOOL			m_bartefact = false;
 	BOOL			m_bKeepSameClass = false;
 	float			m_jitter_ms = 1.f;
-	CSpkListTabCtrl	m_tabCtrl;
 
 	// Attributes
 protected:
@@ -50,8 +49,6 @@ protected:
 	int				m_VBarMode = 0;			// flag V scrollbar state
 	CScrollBar 		m_scrolly;				// V scrollbar
 
-	CSpikeDoc*		m_pSpkDoc = nullptr;	// destination data doc
-	CSpikeList*		m_pSpkList = nullptr;	// temporary spike list
 	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
 
 	BOOL			m_bInitSourceView = true;
@@ -70,59 +67,54 @@ protected:
 
 	// Implementation
 protected:
-	void UpdateFileParameters(BOOL bUpdateInterface = TRUE);
-	void UpdateLegends(BOOL bUpdateInterface);	
-	void UpdateDataFile(BOOL bUpdateInterface);
-	void UpdateSpikeFile(BOOL bUpdateInterface);
-	void AdjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
-	void SaveCurrentFileParms();
-	void SelectSpike(int spikeno);
-	void DefineSubClassedItems();
-	void DefineStretchParameters();
-	void UpdateScrollBar();
-	void ZoomOnPresetInterval(int iistart);
-	void OnGainScroll(UINT nSBCode, UINT nPos);
-	void OnBiasScroll(UINT nSBCode, UINT nPos);
-	void UpdateGainScroll();
-	void UpdateBiasScroll();
-	void SetVBarMode(short bMode);
-	BOOL AddSpiketoList(long iitime, BOOL bcheck_if_otheraround);
-	void SetAddspikesMode(int mousecursorType);
-	void SelectSpkList(int icursel);
+	void			updateFileParameters(BOOL bUpdateInterface = TRUE);
+	void			updateLegends(BOOL bUpdateInterface);	
+	void			updateDataFile(BOOL bUpdateInterface);
+	void			updateSpikeFile(BOOL bUpdateInterface);
+	void			updateGainScroll();
+	void			updateBiasScroll();
+	void			updateScrollBar();
+	void			adjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
+	void			selectSpike(int spikeno);
+	void			defineSubClassedItems();
+	void			defineStretchParameters();
+	void			zoomOnPresetInterval(int iistart);
+	void			scrollGain(UINT nSBCode, UINT nPos);
+	void			scrollBias(UINT nSBCode, UINT nPos);
+	void			setVBarMode(short bMode);
+	BOOL			addSpiketoList(long iitime, BOOL bcheck_if_otheraround);
+	void			setAddspikesMode(int mousecursorType);
+	void			selectSpkList(int icursel);
 
 	// public interface to view
 public:
-	virtual BOOL OnMove(UINT nIDMoveCommand);
+	virtual BOOL	OnMove(UINT nIDMoveCommand);
 protected:
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnInitialUpdate(); // called first time after construct
-	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo);
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
-	//}}AFX_VIRTUAL
+	virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	virtual void	DoDataExchange(CDataExchange* pDX) override;    
+	virtual void	OnInitialUpdate() override;
+	virtual BOOL	OnPreparePrinting(CPrintInfo* pInfo) override;
+	virtual void	OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	virtual void	OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	virtual void	OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	virtual void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
 	// page format printing parameters (pixel unit)
 	OPTIONS_VIEWDATA*	options_viewdata = nullptr;	// view data options
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;	// measure options
-	SPKCLASSIF*			m_psC = nullptr;
-	SPKDETECTPARM*		m_pspkDP = nullptr;		// spike detection parameters
+	SPKCLASSIF*		m_psC = nullptr;
+	SPKDETECTPARM*	m_pspkDP = nullptr;		// spike detection parameters
 
 protected:
-	void 	PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
-	CString PrintConvertFileIndex(long l_first, long l_last);
-	void 	PrintComputePageSize();
-	CString PrintGetFileInfos();
-	CString PrintBars(CDC* p_dc, CRect* rect);
-	long 	PrintGetFileSeriesIndexFromPage(int page, int* file);
-	float	PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
+	void			PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
+	CString			PrintConvertFileIndex(long l_first, long l_last);
+	void 			PrintComputePageSize();
+	CString			PrintGetFileInfos();
+	CString			PrintBars(CDC* p_dc, CRect* rect);
+	long 			PrintGetFileSeriesIndexFromPage(int page, int* file);
+	float			PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 
-	// Implementation
 protected:
-	virtual ~CViewSpikes();
-
 	// Generated message map functions
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnFormatAlldata();
@@ -152,10 +144,6 @@ protected:
 	afx_msg void OnHScrollLeft();
 	afx_msg void OnHScrollRight();
 	afx_msg void OnBnClickedSameclass();
-	
-public:
-	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 };

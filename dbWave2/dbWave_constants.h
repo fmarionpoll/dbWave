@@ -19,7 +19,7 @@ constexpr auto DOC_SPIKE = 4;
 // type of mouse cursor
 constexpr auto CURSOR_ARROW = 0;				// m_cursorType;
 constexpr auto CURSOR_ZOOM = 1;
-constexpr auto CURSOR_MEASURE = 2;
+constexpr auto CURSOR_CROSS = 2;
 constexpr auto CURSOR_VERTICAL = 3;
 constexpr auto CURSOR_RESIZE_HZ = 4;
 constexpr auto CURSOR_RESIZE_VERT = 5;
@@ -70,6 +70,9 @@ constexpr auto HINT_HITSPIKE_SHIFT = 27;		// hit spike with SHIFT key down	lowp 
 constexpr auto HINT_SHAREDMEMFILLED = 29;		// shared memory file was created and waits for being displayed
 constexpr auto HINT_LMOUSEBUTTONDOW_CTRL = 30;	// CScopeCtrl when mode is "arrow" and CTRL is down when the mouse left button is up
 
+constexpr auto HINT_VIEWTABCHANGE = 50;			// bottom view tab will change
+constexpr auto HINT_VIEWTABHASCHANGED = 51;		// bottom view tab will change
+
 constexpr auto HINT_DOCISABOUTTOCHANGE = 100;	// doc will change
 constexpr auto HINT_DOCHASCHANGED = 101;		// file has changed
 constexpr auto HINT_VIEWSIZECHANGED = 102;		// change zoom
@@ -79,7 +82,6 @@ constexpr auto HINT_DOCMOVERECORD = 105;		// MOVE TO a different record (data+sp
 //constexpr auto HINT_DOCSELECTRECORD =	106;	// select a different record (data+spk file)
 constexpr auto HINT_CHANGERULERSCROLL = 107;
 constexpr auto HINT_TRACKRULERSCROLL = 108;
-
 constexpr auto HINT_FILTERREMOVED = 109;
 
 constexpr auto HINT_RECORDGOTO = 200;			// select database record

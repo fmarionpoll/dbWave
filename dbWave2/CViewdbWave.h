@@ -6,20 +6,15 @@
 #include "ChartSpikeBar.h"
 #include "ChartSpikeShape.h"
 #include "Editctrl.h"
-#include "CSpkListTabCtrl.h"
 #include "CViewDao.h"
 
-//class CdbWaveCntrItem;
-//class CdbMainTable;
-//class CLineViewWnd;
-//class CChartSpikeBarWnd;
-//class CChartSpikeShapeWnd;
 
 class CViewdbWave : public CViewDAO
 {
 protected: // create from serialization only
 	DECLARE_DYNCREATE(CViewdbWave)
-	CViewdbWave();
+						CViewdbWave();
+	virtual				~CViewdbWave() override;
 
 public:
 	enum { IDD = IDD_VIEWDBWAVE };
@@ -27,20 +22,16 @@ public:
 	// Attributes
 public:
 	CDataListCtrl		m_dataListCtrl;
-	CSpkListTabCtrl		m_tabCtrl;
-	BOOL				m_bvalidDat = false;
-	BOOL				m_bvalidSpk = false;
-	// Overrides
-protected:
-	virtual void		DoDataExchange(CDataExchange* pDX) override;
-	virtual void		OnInitialUpdate() override;
-	virtual void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
-	virtual void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	// Implementation
-public:
-	virtual				~CViewdbWave();
 
 protected:
+	CEditCtrl			mm_spikeclass;		// selected spike class
+	CEditCtrl			mm_timefirst;		// first abcissa value
+	CEditCtrl			mm_timelast;		// last abcissa value
+	CEditCtrl			mm_amplitudespan;	// amplitude
+	OPTIONS_VIEWDATA* m_options_viewdata = nullptr; 
+	
+	BOOL				m_bvalidDat = false;
+	BOOL				m_bvalidSpk = false;
 	BOOL				m_bAddMode = false;
 	BOOL				m_bFilterON = true;
 	int					m_dattransform = 0;
@@ -49,12 +40,11 @@ protected:
 	float				m_amplitudespan = 0.;
 	int					m_spikeclass = 0;
 
-	CEditCtrl			mm_spikeclass;		// selected spike class
-	CEditCtrl			mm_timefirst;		// first abcissa value
-	CEditCtrl			mm_timelast;		// last abcissa value
-	CEditCtrl			mm_amplitudespan;	// amplitude
-	OPTIONS_VIEWDATA*	m_options_viewdata = nullptr;
-
+protected:
+	virtual void		DoDataExchange(CDataExchange* pDX) override;
+	virtual void		OnInitialUpdate() override;
+	virtual void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	virtual void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void				updateControls();
 	void				fillListBox();
 
@@ -71,6 +61,7 @@ protected:
 	afx_msg void OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult);
 public:
+	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedDisplaySpikes();
@@ -85,7 +76,4 @@ public:
 	afx_msg void OnBnClickedRadioallclasses();
 	afx_msg void OnBnClickedRadiooneclass();
 	afx_msg void OnEnChangeSpikeclass();
-
-	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 };

@@ -1,24 +1,18 @@
-// DataListCtrlRowObject.cpp : implementation file
-//
-
 #include "StdAfx.h"
-//#include "dbWave.h"
 #include "DataListCtrl_Row.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_SERIAL(CDataListCtrl_Row, CObject, 0 /* schema number*/)
 
-// CDataListCtrlRowObject
+IMPLEMENT_SERIAL(CDataListCtrl_Row, CObject, 0)
 
-CDataListCtrl_Row::CDataListCtrl_Row() : bChanged(0), insectID(0)
+CDataListCtrl_Row::CDataListCtrl_Row()
 {
-	index = 0;
 }
 
-CDataListCtrl_Row::CDataListCtrl_Row(int i) : bChanged(0), insectID(0), pdataDoc(nullptr), pspikeDoc(nullptr)
+CDataListCtrl_Row::CDataListCtrl_Row(int i)
 {
 	index = i;
 }
@@ -27,12 +21,10 @@ CDataListCtrl_Row::~CDataListCtrl_Row()
 {
 	if (pDataChartWnd != nullptr)
 	{
-		pDataChartWnd->DestroyWindow();
 		delete pDataChartWnd;
 	}
 	if (pSpikeChartWnd != nullptr)
 	{
-		pSpikeChartWnd->DestroyWindow();
 		delete pSpikeChartWnd;
 	}
 	SAFE_DELETE(pdataDoc);
@@ -71,7 +63,6 @@ CDataListCtrl_Row& CDataListCtrl_Row::operator = (const CDataListCtrl_Row& arg)
 		pSpikeChartWnd = arg.pSpikeChartWnd;
 		pdataDoc = arg.pdataDoc;
 		pspikeDoc = arg.pspikeDoc;
-		pdbWaveDoc = arg.pdbWaveDoc;
 	}
 	return *this;
 }

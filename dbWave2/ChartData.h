@@ -11,7 +11,7 @@ class CChartDataWnd : public CChartWnd
 	// Construction
 public:
 	CChartDataWnd();
-	virtual		~CChartDataWnd();
+	virtual		~CChartDataWnd() override;
 	DECLARE_SERIAL(CChartDataWnd)
 	void		Serialize(CArchive& ar) override;
 
@@ -52,7 +52,7 @@ public:
 // Attributes
 protected:
 	// these variables define the curves displayed on the screen (data from doc)
-	CAcqDataDoc* m_pDataFile = nullptr;	// pointer to data source file
+	CAcqDataDoc*							m_pDataFile = nullptr;	// pointer to data source file
 	CArray<CChanlistItem*, CChanlistItem*>	chanlistitem_ptr_array;	// list of display items (abcissa, Envelope, disp. parms)
 	CArray<CEnvelope*, CEnvelope*>			envelope_ptr_array;	// list of Envelopes
 	CArray <CPoint, CPoint>					m_PolyPoints;		// array with abcissa & ordinates
@@ -81,7 +81,7 @@ protected:
 
 	BOOL		m_bPrintHZcursor{};		// default=FALSE
 	BOOL		m_btrackspike = false;	// track spike with vertic cursor
-	int			m_tracklen = 60;			// length of waveform to track
+	int			m_tracklen = 60;		// length of waveform to track
 	int			m_trackoffset = 20;		// offset of waveform from cursor
 	int			m_trackchannel = 0;		// lineview channel
 

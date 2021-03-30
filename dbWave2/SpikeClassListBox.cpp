@@ -208,13 +208,9 @@ void CSpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
 	delete pcs;
 
 	auto pspk_shapes = pptr->pspk_shapes;
-	if (pspk_shapes != nullptr)
-	{
-		//pspk_shapes->DestroyWindow();
-		delete pspk_shapes;
-	}
+	delete pspk_shapes;
+
 	auto pspk_bars = pptr->pspk_bars;
-	//pspk_bars->DestroyWindow();
 	delete pspk_bars;
 
 	delete pptr;
@@ -682,7 +678,7 @@ void CSpikeClassListBox::ReflectBarsMouseMoveMessg(HWND hwnd)
 		const auto pptr = reinterpret_cast<myptr*>(GetItemData(i));
 		(pptr->pspk_bars)->ReflectMouseMoveMessg(hwnd);
 		if (hwnd != nullptr)
-			pptr->pspk_bars->SetMouseCursorType(CURSOR_MEASURE);
+			pptr->pspk_bars->SetMouseCursorType(CURSOR_CROSS);
 	}
 }
 

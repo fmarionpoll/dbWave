@@ -80,8 +80,6 @@ BEGIN_MESSAGE_MAP(CViewSpikeSort, CDaoRecordView)
 	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &CViewSpikeSort::OnToolsEdittransformspikes)
 	ON_EN_CHANGE(IDC_SPIKECLASS,		&CViewSpikeSort::OnEnChangeSpikenoclass)
 	ON_EN_CHANGE(IDC_BINMV,				&CViewSpikeSort::OnEnChangeNBins)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1,		&CViewSpikeSort::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1,	&CViewSpikeSort::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 
@@ -96,7 +94,7 @@ CViewSpikeSort::~CViewSpikeSort()
 {
 	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
-		saveCurrentFileParms();	// save file if modified
+		saveCurrentSpkFile();	// save file if modified
 	// save current spike detection parameters
 	m_psC->bChanged = TRUE;
 	m_psC->sourceclass = m_sourceclass;
@@ -262,7 +260,7 @@ void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 	}
 	else
 	{
-		saveCurrentFileParms();
+		saveCurrentSpkFile();
 		auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 		if (nullptr == p_app->m_psort1spikesMemFile)
 		{
@@ -289,7 +287,7 @@ void CViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			updateFileParameters();
 			break;
 		case HINT_CLOSEFILEMODIFIED:	// close modified file: save
-			saveCurrentFileParms();
+			saveCurrentSpkFile();
 			break;
 		case HINT_REPLACEVIEW:
 		default:
@@ -300,7 +298,7 @@ void CViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 BOOL CViewSpikeSort::OnMove(UINT nIDMoveCommand)
 {
-	saveCurrentFileParms();
+	saveCurrentSpkFile();
 	return CViewDAO::OnMove(nIDMoveCommand);
 }
 
@@ -406,7 +404,7 @@ void CViewSpikeSort::updateFileParameters()
 		OnMeasure();
 	}
 	
-	SelectSpikeFromCurrentList(spikeno);
+	selectSpikeFromCurrentList(spikeno);
 }
 
 void CViewSpikeSort::updateLegends()
@@ -529,7 +527,6 @@ void CViewSpikeSort::OnSort()
 LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 {
 	short shortValue = LOWORD(lParam);
-
 	switch (code)
 	{
 	case HINT_SETMOUSECURSOR:	// ------------- change mouse cursor (all 3 items)
@@ -565,7 +562,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
 			spikeno = xygraph_wnd_.GetHitSpike();
 
-		SelectSpikeFromCurrentList(spikeno);
+		selectSpikeFromCurrentList(spikeno);
 	}
 	break;
 
@@ -584,7 +581,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			spikeno = m_ChartSpkWnd_Bar.GetHitSpike();
 		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
 			spikeno = xygraph_wnd_.GetHitSpike();		// if m_bAllFiles, spikeno is global, otherwise it comes from a single file...
-		SelectSpikeFromCurrentList(spikeno);
+		selectSpikeFromCurrentList(spikeno);
 		OnToolsEdittransformspikes();
 	}
 	break;
@@ -675,6 +672,9 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		m_pOptionsViewData->spksort1hist = *yhistogram_wnd_.GetScopeParameters();
 		m_pOptionsViewData->spksort1bars = *m_ChartSpkWnd_Bar.GetScopeParameters();
 		break;
+	case HINT_VIEWTABHASCHANGED:
+		selectSpkList(shortValue);
+		break;
 
 	default:
 		break;
@@ -714,7 +714,7 @@ void CViewSpikeSort::OnMeasure()
 	int firstfile = currentfile;
 	int lastfile = currentfile;
 	// change size of arrays and prepare temporary dialog
-	SelectSpikeFromCurrentList(-1);
+	selectSpikeFromCurrentList(-1);
 	if (m_bAllFiles)
 	{
 		firstfile = 0;						// index first file
@@ -920,7 +920,7 @@ void CViewSpikeSort::OnFormatGainadjust()
 	updateLegends();
 }
 
-void CViewSpikeSort::SelectSpikeFromCurrentList(int spikeno)
+void CViewSpikeSort::selectSpikeFromCurrentList(int spikeno)
 {
 	const auto ispike_local = spikeno;
 
@@ -978,7 +978,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	}
 
 	if (!dlg.m_bartefact && m_spikeno != dlg.m_spikeno)
-		SelectSpikeFromCurrentList(dlg.m_spikeno);
+		selectSpikeFromCurrentList(dlg.m_spikeno);
 
 	updateLegends();
 }
@@ -992,29 +992,6 @@ void CViewSpikeSort::OnSelectAllFiles()
 
 	m_bMeasureDone = FALSE;
 	OnMeasure();
-}
-
-void CViewSpikeSort::saveCurrentFileParms()
-{
-	// save previous file if anything has changed
-	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
-	{
-		const auto currentlist = m_tabCtrl.GetCurSel();
-		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-		m_pSpkDoc->OnSaveDocument(GetDocument()->GetDB_CurrentSpkFileName(FALSE));
-
-		// save modifications into the database
-		GetDocument()->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
-		GetDocument()->SetDB_nbspikeclasses(m_pSpkList->GetNbclasses());
-
-		// change flag is button is checked
-		if (((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
-		{
-			int flag = GetDocument()->GetDB_CurrentRecordFlag();
-			flag++;
-			GetDocument()->SetDB_CurrentRecordFlag(flag);
-		}
-	}
 }
 
 void CViewSpikeSort::OnToolsAlignspikes()
@@ -1305,23 +1282,6 @@ void CViewSpikeSort::selectSpkList(int icursel)
 	m_ChartSpkWnd_Bar.Invalidate();
 }
 
-void CViewSpikeSort::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	const auto icursel = m_tabCtrl.GetCurSel();
-	m_tabCtrl.SetCurSel(icursel);
-	selectSpkList(icursel);
-	*pResult = 0;
-}
-
-void CViewSpikeSort::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	const auto icursel = m_tabCtrl.GetCurSel();
-	selectSpkList(icursel);
-	*pResult = 0;
-}
-
-// ---------- OnEnChange
-
 void CViewSpikeSort::OnEnChangeEditleft2()
 {
 	if (mm_txyleft.m_bEntryDone)
@@ -1428,7 +1388,7 @@ void CViewSpikeSort::OnEnChangeSourceclass()
 		xygraph_wnd_.Invalidate();
 		yhistogram_wnd_.Invalidate();
 
-		SelectSpikeFromCurrentList(-1);
+		selectSpikeFromCurrentList(-1);
 		UpdateData(FALSE);
 	}
 }
@@ -1453,7 +1413,7 @@ void CViewSpikeSort::OnEnChangeDestinationclass()
 		mm_destinationclass.m_nChar = 0;			// empty buffer
 		mm_destinationclass.SetSel(0, -1);		// select all text
 		m_destinationclass = destinationclass;
-		SelectSpikeFromCurrentList(-1);
+		selectSpikeFromCurrentList(-1);
 		UpdateData(FALSE);
 	}
 }
@@ -1802,7 +1762,7 @@ void CViewSpikeSort::OnEnChangeNOspike()
 				}
 			}
 		}
-		SelectSpikeFromCurrentList(m_spikeno);
+		selectSpikeFromCurrentList(m_spikeno);
 	}
 }
 
