@@ -2045,7 +2045,7 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;			// TODO see which channel is selected
-	auto l_size = m_ChartDataWnd.GetChanlistYextent(ichan);
+	auto l_size = m_ChartDataWnd.GetChanlistItem(ichan)->GetYextent();
 	switch (nSBCode)
 	{
 	case SB_LEFT:		l_size = YEXTENT_MIN; break;
@@ -2068,7 +2068,7 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 		const auto ichanlast = wave_format->scan_count - 1;
 
 		for (auto i = ichanfirst; i <= ichanlast; i++)
-			m_ChartDataWnd.SetChanlistYextent(i, l_size);
+			m_ChartDataWnd.GetChanlistItem(i)->SetYextent(l_size);
 		m_ChartDataWnd.Invalidate();
 		UpdateChanLegends(0);
 		m_pADC_options->izoomCursel = l_size;
@@ -2086,8 +2086,9 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;			// TODO: see which channel is selected
-	auto l_size = m_ChartDataWnd.GetChanlistYzero(ichan) - m_ChartDataWnd.GetChanlistBinZero(ichan);
-	const auto yextent = m_ChartDataWnd.GetChanlistYextent(ichan);
+	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
+	auto l_size = chan->GetYzero() - chan->GetDataBinZero();
+	const auto yextent = chan->GetYextent();
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -2110,7 +2111,10 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 		const auto ichanfirst = 0;
 		const auto ichanlast = wave_format->scan_count - 1;
 		for (auto i = ichanfirst; i <= ichanlast; i++)
-			m_ChartDataWnd.SetChanlistYzero(i, l_size + m_ChartDataWnd.GetChanlistBinZero(i));
+		{
+			CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(i);
+			chan->SetYzero(l_size + chan->GetDataBinZero());
+		}
 		m_ChartDataWnd.Invalidate();
 	}
 	// update scrollBar
@@ -2125,8 +2129,9 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 void CViewADContinuous::UpdateBiasScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
-	const auto ichan = 0;			// TODO see which channel is selected
-	const auto i_pos = int((m_ChartDataWnd.GetChanlistYzero(ichan) - m_ChartDataWnd.GetChanlistBinZero(ichan))
+	const auto ichan = 0;						// TODO see which channel is selected
+	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
+	const auto i_pos = int((chan->GetYzero() - chan->GetDataBinZero())
 		* 100 / int(YZERO_SPAN)) + int(50);
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 }
@@ -2135,16 +2140,17 @@ void CViewADContinuous::UpdateGainScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
 	const auto ichan = 0;
-	m_scrolly.SetScrollPos(MulDiv(m_ChartDataWnd.GetChanlistYextent(ichan), 100, YEXTENT_MAX) + 50, TRUE);
+	m_scrolly.SetScrollPos(MulDiv(m_ChartDataWnd.GetChanlistItem(ichan)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 }
 
 void CViewADContinuous::UpdateChanLegends(int chan)
 {
 	// TODO
 	const auto ichan = 0;
-	auto yzero = m_ChartDataWnd.GetChanlistYzero(ichan);
-	auto yextent = m_ChartDataWnd.GetChanlistYextent(ichan);
-	auto mv_per_bin = m_ChartDataWnd.GetChanlistVoltsperDataBin(ichan) * 1000.0f;
+	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(ichan);
+	auto yzero = pchan->GetYzero();
+	auto yextent = pchan->GetYextent();
+	auto mv_per_bin = pchan->GetVoltsperDataBin() * 1000.0f;
 	//auto binzero = 0;
 }
 

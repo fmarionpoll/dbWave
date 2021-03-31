@@ -121,9 +121,6 @@ BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CChildFrame construction/destruction
-
 CChildFrame::CChildFrame()
 {
 	m_viewON = ID_VIEW_DATABASE;
@@ -145,8 +142,6 @@ BOOL CChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
-// CChildFrame diagnostics
-
 #ifdef _DEBUG
 void CChildFrame::AssertValid() const
 {
@@ -159,8 +154,6 @@ void CChildFrame::Dump(CDumpContext& dc) const
 }
 
 #endif //_DEBUG
-
-// CChildFrame message handlers
 
 void CChildFrame::OnViewCursormodeNormal()
 {
@@ -257,8 +250,6 @@ void CChildFrame::OnToolsExportdataAsText()
 	PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, static_cast<LPARAM>(NULL));
 }
 
-// --------------------------------------------------------------------
-
 void CChildFrame::exportASCII(int option)
 {
 	CSharedFile sf(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
@@ -335,8 +326,6 @@ void CChildFrame::ActivateFrame(int n_cmd_show)
 	CMDIChildWndEx::ActivateFrame(n_cmd_show);
 }
 
-// --------------------------------------------------------------------------
-
 LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam)
@@ -382,11 +371,6 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	}
 	return 0L;
 }
-
-////////////////////////////////////////////////////////////////////////////////////
-// switch between different views or create a new one if it exists
-// sample routine extracted from viewplace (MSDN CD9)
-// VWRPLC: Replaces Views for a CMDIChildWndEx-derived Class
 
 void CChildFrame::ReplaceViewIndex(UINT iID)
 {
@@ -475,10 +459,9 @@ void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(m_viewON == pCmdUI->m_nID);
 }
 
-// assume that the views replaced are of CDaoRecordView type
-
 void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 {
+	// assume that the views replaced are of CDaoRecordView type
 	auto p_current_view = GetActiveView();
 	if ((p_current_view->IsKindOf(pViewClass)) == TRUE)
 		return;

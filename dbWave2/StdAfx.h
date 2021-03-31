@@ -59,11 +59,12 @@
 #pragma warning(disable : 4995)
 #include <afxdao.h>			// MFC DAO database classes
 
+#include "dbWave_constants.h"
+
 #include "AcqWaveChan.h"
 #include "AcqWaveChanArray.h"
 #include "AcqWaveFormat.h"
 #include "StretchControls.h"
-#include "dbwave_constants.h"
 #include "dbwave_structures.h"
 
 #include "Tag.h"

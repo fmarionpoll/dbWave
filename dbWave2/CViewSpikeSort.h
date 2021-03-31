@@ -5,6 +5,7 @@
 #include "dbWaveDoc.h"
 #include "ChartSpikeBar.h"
 #include "ChartSpikeHistVert.h"
+#include "ScrollBarEx.h"
 #include "CViewDao.h"
 
 class CViewSpikeSort : public CViewDAO
@@ -60,6 +61,9 @@ protected:
 	CEditCtrl			mm_txyleft;
 	CEditCtrl			mm_mVbin;
 
+	CScrollBarEx		m_filescroll;					// data position within file
+	SCROLLINFO			m_filescroll_infos{};			// infos for scrollbar
+
 	SPKCLASSIF*			m_psC{};
 	OPTIONS_VIEWDATA*	m_pOptionsViewData{};
 
@@ -82,7 +86,6 @@ protected:
 	long				m_lLast{};				// display last
 	BOOL				m_bMeasureDone = false;	// flag m_measure_y1 valid
 	int					m_divAmplitudeBy = 1;	// value to adjust changes in amplitude / filter(s)
-	SCROLLINFO			m_scroll_file_pos_infos_{};
 
 	// Operations
 public:
@@ -108,7 +111,8 @@ protected:
 	void				updateLegends();
 	void				selectSpikeFromCurrentList(int spikeno);
 	void				updateGain();
-	void				updateScrollBar();
+	void				updateFileScroll();
+	void				scrollFile(UINT nSBCode, UINT nPos);
 	void				selectSpkList(int icursel);
 	void				activateMode4();
 	void				buildHistogram();

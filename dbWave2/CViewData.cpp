@@ -4,7 +4,6 @@
 #include "StdAfx.h"
 //#include <math.h>
 #include "dbWave.h"
-#include "dbWave_constants.h"
 #include "resource.h"
 
 //#include "Cscale.h"
@@ -217,7 +216,7 @@ void CViewData::UpdateLegends(int ioperation)
 	if (ioperation & UPD_YSCALE)
 		ioperation |= CHG_YBAR;
 	if (ioperation & CHG_YBAR)
-		UpdateYZero(m_ichanselected, m_ChartDataWnd.GetChanlistYzero(m_ichanselected));
+		UpdateYZero(m_ichanselected, m_ChartDataWnd.GetChanlistItem(m_ichanselected)->GetYzero());
 
 	UpdateData(FALSE);
 }
@@ -516,14 +515,14 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 			auto b_present = FALSE;
 			for (auto j = lnvchans - 1; j >= 0; j--)
 			{
-				if ((b_present = (m_ChartDataWnd.GetChanlistSourceChan(j) == jdocchan)))
+				if ((b_present = (m_ChartDataWnd.GetChanlistItem(j)->GetSourceChan() == jdocchan)))
 					break;
 			}
 			if (!b_present) {
 				m_ChartDataWnd.AddChanlistItem(jdocchan, 0);
 				lnvchans++;
 			}
-			m_ChartDataWnd.SetChanlistColor(jdocchan, jdocchan);
+			m_ChartDataWnd.GetChanlistItem(jdocchan)->SetColor(jdocchan);
 		}
 	}
 
@@ -542,7 +541,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 	{
 		CString cs;
 		cs.Format(_T("channel %i - "), i);
-		cs = cs + m_ChartDataWnd.GetChanlistComment(i);
+		cs = cs + m_ChartDataWnd.GetChanlistItem(i)->GetComment();
 		m_comboSelectChan.AddString(cs);
 	}
 	if (ndocchans > 1) {
@@ -572,9 +571,10 @@ void CViewData::UpdateChannelsDisplayParameters()
 		for (auto i = 0; i < n_lineview_chans; i++)
 		{
 			// keep final gain constant even if ampli gain changed
-			m_ChartDataWnd.GetChanlistMaxMin(i, &max, &min);
-			auto iextent = m_ChartDataWnd.GetChanlistYextent(i);
-			auto izero = m_ChartDataWnd.GetChanlistYzero(i);
+			CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(i);
+			pchan->GetMaxMin(&max, &min);
+			auto iextent = pchan->GetYextent();
+			auto izero = pchan->GetYzero();
 
 			if (options_viewdata->bMaximizeGain)
 				iextent = MulDiv(max - min + 1, 11, 10);
@@ -589,8 +589,9 @@ void CViewData::UpdateChannelsDisplayParameters()
 	else
 	{
 		const auto ichan = 0;
-		auto iextent = m_ChartDataWnd.GetChanlistYextent(ichan);
-		auto izero = m_ChartDataWnd.GetChanlistYzero(ichan);
+		CChanlistItem* pchan0 = m_ChartDataWnd.GetChanlistItem(ichan);
+		auto iextent = pchan0->GetYextent();
+		auto izero = pchan0->GetYzero();
 		if (options_viewdata->bMaximizeGain)
 		{
 			float vmax = 0.;
@@ -598,16 +599,17 @@ void CViewData::UpdateChannelsDisplayParameters()
 			for (auto i = 0; i < n_lineview_chans; i++)
 			{
 				// keep final gain constant even if ampli gain changed
-				m_ChartDataWnd.GetChanlistMaxMin(i, &max, &min);
-				const auto maxchani = m_ChartDataWnd.ConvertChanlistDataBinsToVolts(i, max);
-				const auto minchani = m_ChartDataWnd.ConvertChanlistDataBinsToVolts(i, min);
+				CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(i);
+				pchan->GetMaxMin(&max, &min);
+				const auto maxchani = pchan->ConvertDataBinsToVolts(max);
+				const auto minchani = pchan->ConvertDataBinsToVolts(min);
 				if (maxchani > vmax)
 					vmax = maxchani;
 				if (minchani < vmin)
 					vmin = minchani;
 			}
-			max = m_ChartDataWnd.ConvertChanlistVoltstoDataBins(ichan, vmax);
-			min = m_ChartDataWnd.ConvertChanlistVoltstoDataBins(ichan, vmin);
+			max = pchan0->ConvertVoltsToDataBins(vmax);
+			min = pchan0->ConvertVoltsToDataBins(vmin);
 			iextent = MulDiv(max - min + 1, 10, 8);
 			izero = (max + min) / 2;
 		}
@@ -646,7 +648,7 @@ void CViewData::UpdateHZtagsVal()
 	if (m_ChartDataWnd.m_HZtags.GetNTags() > 1)
 		itag = 1;
 	const auto v2 = m_ChartDataWnd.m_HZtags.GetValue(itag);
-	const auto mv_per_bin = m_ChartDataWnd.GetChanlistVoltsperDataBin(m_ichanselected) * 1000.0f;
+	const auto mv_per_bin = m_ChartDataWnd.GetChanlistItem(m_ichanselected)->GetVoltsperDataBin() * 1000.0f;
 	m_v1 = static_cast<float>(v1) * mv_per_bin;
 	m_v2 = static_cast<float>(v2) * mv_per_bin;
 	m_diff = m_v1 - m_v2;
@@ -726,48 +728,50 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_DEFINEDRECT:
-	{
-		const auto rect = m_ChartDataWnd.GetDefinedRect();
-		mdMO->wLimitSup = static_cast<WORD>(rect.top);
+		{
+			const auto rect = m_ChartDataWnd.GetDefinedRect();
+			mdMO->wLimitSup = static_cast<WORD>(rect.top);
+			mdMO->wLimitInf = static_cast<WORD>(rect.bottom);
+			mdMO->lLimitLeft = m_ChartDataWnd.GetDataOffsetfromPixel(rect.left);
+			mdMO->lLimitRight = m_ChartDataWnd.GetDataOffsetfromPixel(rect.right);
+		}
+		// action according to option
+		switch (mdMO->wOption)
+		{
+			// ......................  vertical tags
+		case 0:					// if no VTtags, then take those of rectangle, or limits of lineview
+			m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitLeft, 0);
+			if (mdMO->lLimitRight != mdMO->lLimitLeft)
+				m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitRight, 0);
+			// store new VT tags into document
+			m_pdatDoc->GetpVTtags()->CopyTagList(&m_ChartDataWnd.m_VTtags);
+			break;
 
-		mdMO->wLimitInf = static_cast<WORD>(rect.bottom);
-		mdMO->lLimitLeft = m_ChartDataWnd.GetDataOffsetfromPixel(rect.left);
-		mdMO->lLimitRight = m_ChartDataWnd.GetDataOffsetfromPixel(rect.right);
-	}
-	// action according to option
-	switch (mdMO->wOption)
-	{
-		// ......................  vertical tags
-	case 0:					// if no VTtags, then take those of rectangle, or limits of lineview
-		m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitLeft, 0);
-		if (mdMO->lLimitRight != mdMO->lLimitLeft)
-			m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitRight, 0);
-		// store new VT tags into document
-		m_pdatDoc->GetpVTtags()->CopyTagList(&m_ChartDataWnd.m_VTtags);
-		break;
+			// ......................  horizontal cursors
+		case 1:						// if no HZcursors, take those of rectangle or limits of lineview
+		{
+			CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_ichanselected);
+			m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
+			if (mdMO->wLimitInf != mdMO->wLimitSup)
+				m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
+			m_pdatDoc->GetpHZtags()->CopyTagList(&m_ChartDataWnd.m_HZtags);
+			if (m_ChartDataWnd.m_HZtags.GetNTags() == 2)
+				SetCursorAssociatedWindows();
+			UpdateHZtagsVal();
+		}
+			break;
 
-		// ......................  horizontal cursors
-	case 1:						// if no HZcursors, take those of rectangle or limits of lineview
-		m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup), m_ichanselected);
-		if (mdMO->wLimitInf != mdMO->wLimitSup)
-			m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
-		m_pdatDoc->GetpHZtags()->CopyTagList(&m_ChartDataWnd.m_HZtags);
-		if (m_ChartDataWnd.m_HZtags.GetNTags() == 2)
-			SetCursorAssociatedWindows();
-		UpdateHZtagsVal();
+			// ......................  rectangle area
+			//case 2:				// parameters are already within lineview and mdMO
+			//	break;
+			// ......................  detect stimulus and then measure
+			//case 3:				// if not displayed, plot HZ detection cursor
+			//	break;
+		default:
+			break;
+		}
+		m_ChartDataWnd.Invalidate();
 		break;
-
-		// ......................  rectangle area
-		//case 2:				// parameters are already within lineview and mdMO
-		//	break;
-		// ......................  detect stimulus and then measure
-		//case 3:				// if not displayed, plot HZ detection cursor
-		//	break;
-	default:
-		break;
-	}
-	m_ChartDataWnd.Invalidate();
-	break;
 
 	case HINT_CHANGEHZTAG:		// horizontal tag has changed 	lowp = tag nb
 		if (mdMO->wOption == 3)
@@ -896,7 +900,7 @@ void CViewData::UpdateGainScroll()
 {
 	m_scrolly.SetScrollPos(
 		MulDiv(
-			m_ChartDataWnd.GetChanlistYextent(m_ichanselected),
+			m_ChartDataWnd.GetChanlistItem(m_ichanselected)->GetYextent(),
 			100,
 			YEXTENT_MAX)
 		+ 50,
@@ -905,7 +909,7 @@ void CViewData::UpdateGainScroll()
 
 void CViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	int yExtent = m_ChartDataWnd.GetChanlistYextent(m_ichanselected);
+	int yExtent = m_ChartDataWnd.GetChanlistItem(m_ichanselected)->GetYextent();
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -933,7 +937,8 @@ void CViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 
 void CViewData::UpdateBiasScroll()
 {
-	const auto i_pos = static_cast<int>((m_ChartDataWnd.GetChanlistYzero(m_ichanselected) - m_ChartDataWnd.GetChanlistBinZero(m_ichanselected))
+	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_ichanselected);
+	const auto i_pos = static_cast<int>((pchan->GetYzero() - pchan->GetDataBinZero())
 		* 100 / static_cast<int>(YZERO_SPAN)) + static_cast<int>(50);
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 	UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
@@ -941,8 +946,9 @@ void CViewData::UpdateBiasScroll()
 
 void CViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
-	auto l_size = m_ChartDataWnd.GetChanlistYzero(m_ichanselected) - m_ChartDataWnd.GetChanlistBinZero(m_ichanselected);
-	const auto yextent = m_ChartDataWnd.GetChanlistYextent(m_ichanselected);
+	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_ichanselected);
+	auto l_size = pchan->GetYzero() - pchan->GetDataBinZero();
+	const auto yextent = pchan->GetYextent();
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -960,7 +966,7 @@ void CViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (l_size > YZERO_MIN && l_size < YZERO_MAX)
 	{
-		UpdateYZero(m_ichanselected, l_size + m_ChartDataWnd.GetChanlistBinZero(m_ichanselected));
+		UpdateYZero(m_ichanselected, l_size + pchan->GetDataBinZero());
 	}
 	// update scrollBar
 	m_ChartDataWnd.Invalidate();
@@ -971,9 +977,11 @@ void CViewData::OnCenterCurve()
 {
 	m_ChartDataWnd.CenterChan(m_ichanselected);
 	m_ChartDataWnd.Invalidate();
-	const auto yextent = m_ChartDataWnd.GetChanlistYextent(m_ichanselected);
+	
+	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_ichanselected);
+	const auto yextent = pchan->GetYextent();
 	UpdateYExtent(m_ichanselected, yextent);
-	const auto yzero = m_ChartDataWnd.GetChanlistYzero(m_ichanselected);
+	const auto yzero = pchan->GetYzero();
 	UpdateYZero(m_ichanselected, yzero);
 }
 
@@ -982,9 +990,10 @@ void CViewData::OnGainAdjustCurve()
 	m_ChartDataWnd.MaxgainChan(m_ichanselected);
 	m_ChartDataWnd.Invalidate();
 
-	const auto yextent = m_ChartDataWnd.GetChanlistYextent(m_ichanselected);
+	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_ichanselected);
+	const auto yextent = pchan->GetYextent();
 	UpdateYExtent(m_ichanselected, yextent);
-	const auto yzero = m_ChartDataWnd.GetChanlistYzero(m_ichanselected);
+	const auto yzero = pchan->GetYzero();
 	UpdateYZero(m_ichanselected, yzero);
 	UpdateLegends(CHG_YSCALE);
 }
@@ -1000,12 +1009,13 @@ void CViewData::OnSplitCurves()
 	int  max, min;
 	for (auto i = 0; i < nchans; i++)
 	{
-		m_ChartDataWnd.GetChanlistMaxMin(i, &max, &min);
+		CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(i);
+		chan->GetMaxMin(&max, &min);
 		const auto iextent = MulDiv(max - min + 1, 100 * nchans, 100);
 		const auto ibias = MulDiv(pxzero, iextent, pxheight);  // convert pixel into bins
 		const auto izero = (max + min) / 2 - ibias;				// change bias
-		m_ChartDataWnd.SetChanlistYextent(i, iextent);
-		m_ChartDataWnd.SetChanlistYzero(i, izero);
+		chan->SetYextent(iextent);
+		chan->SetYzero(izero);
 		pxzero -= pxoffset;								// update position of next curve
 	}
 	UpdateLegends(CHG_YSCALE);
@@ -1344,7 +1354,8 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_viewdata->bVoltageScaleBar)				// bar scale value
 			{
 				cs_unit = _T(" V");						// provisional unit
-				auto z = static_cast<float>(m_ChartDataWnd.GetRectHeight()) / 5 * m_ChartDataWnd.GetChanlistVoltsperPixel(ichan);
+				auto z = static_cast<float>(m_ChartDataWnd.GetRectHeight()) / 5 
+					* m_ChartDataWnd.GetChanlistVoltsperPixel(ichan);
 				auto x = m_ChartDataWnd.ChangeUnit(z, &cs_unit, &x_scale_factor); // convert
 
 				// approximate
@@ -1370,7 +1381,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_viewdata->bChansComment)
 			{
 				str_comment += tab;
-				str_comment += m_ChartDataWnd.GetChanlistComment(ichan);
+				str_comment += m_ChartDataWnd.GetChanlistItem(ichan)->GetComment();
 			}
 			str_comment += rc;
 
@@ -1378,7 +1389,7 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_viewdata->bChanSettings)
 			{
 				CString cs;
-				const WORD channb = m_ChartDataWnd.GetChanlistSourceChan(ichan);
+				const WORD channb = m_ChartDataWnd.GetChanlistItem(ichan)->GetSourceChan();
 				const auto pchanArray = m_pdatDoc->GetpWavechanArray();
 				const auto pChan = pchanArray->Get_p_channel(channb);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), static_cast<LPCTSTR>(pChan->am_csheadstage),
@@ -1732,29 +1743,32 @@ void CViewData::OnCbnSelchangeCombochan()
 	{
 		m_bCommonScale = TRUE;
 		m_ichanselected = 0;
-		const auto yextent = m_ChartDataWnd.GetChanlistYextent(0);
+		CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(0);
+		const auto yextent = pchan->GetYextent();
 		UpdateYExtent(0, yextent);
-		const auto yzero = m_ChartDataWnd.GetChanlistYzero(0);
+		const auto yzero = pchan->GetYzero();
 		UpdateYZero(0, yzero);
 	}
 }
 
 void CViewData::UpdateYExtent(int ichan, int yextent)
 {
-	m_ChartDataWnd.SetChanlistYextent(ichan, yextent);
+	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(ichan);
+	pchan->SetYextent(yextent);
 	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.GetChanlistSize())
 	{
-		const auto yVoltsextent = m_ChartDataWnd.GetChanlistVoltsperDataBin(ichan) * yextent;
+		const auto yVoltsextent = pchan->GetVoltsperDataBin() * yextent;
 		m_ChartDataWnd.SetChanlistVoltsExtent(-1, &yVoltsextent);
 	}
 }
 
 void CViewData::UpdateYZero(int ichan, int ybias)
 {
-	m_ChartDataWnd.SetChanlistYzero(ichan, ybias);
+	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
+	chan->SetYzero(ybias);
 	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.GetChanlistSize())
 	{
-		const auto yVoltsextent = m_ChartDataWnd.GetChanlistVoltsperDataBin(ichan) * ybias;
+		const auto yVoltsextent = chan->GetVoltsperDataBin() * ybias;
 		m_ChartDataWnd.SetChanlistVoltsZero(-1, &yVoltsextent);
 	}
 }

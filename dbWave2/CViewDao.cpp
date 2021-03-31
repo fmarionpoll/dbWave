@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "dbWaveDoc.h"
 #include "CViewDao.h"
-#include "dbWave_constants.h"
+
 
 
 IMPLEMENT_DYNAMIC(CViewDAO, CDaoRecordView)

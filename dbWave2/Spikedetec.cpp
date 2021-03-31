@@ -291,7 +291,7 @@ void CSpikeDetectDlg::OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto p_nm_up_down = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	ithreshold -= MulDiv(m_pChartDataDetectWnd->GetChanlistYextent(0), p_nm_up_down->iDelta, 10);
+	ithreshold -= MulDiv(m_pChartDataDetectWnd->GetChanlistItem(0)->GetYextent(), p_nm_up_down->iDelta, 10);
 	SetDlgItemInt(IDC_DETECTTHRESHOLD, ithreshold);
 
 	*pResult = 0;

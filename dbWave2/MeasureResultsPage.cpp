@@ -192,8 +192,9 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 	short* p_data;
 	int n_channels;
 	const auto p_buf = m_pdatDoc->LoadRawDataParams(&n_channels);
-	const auto source_chan = m_pChartDataWnd->GetChanlistSourceChan(channel);
-	const auto transform_mode = m_pChartDataWnd->GetChanlistTransformMode(channel);
+	CChanlistItem* pchan = m_pChartDataWnd->GetChanlistItem(channel);
+	const auto source_chan = pchan->GetSourceChan();
+	const auto transform_mode = pchan->GetTransformMode();
 	const auto span = m_pdatDoc->GetTransfDataSpan(transform_mode);
 
 	// get first data point (init max and min)
@@ -255,7 +256,7 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int line, const long l1, const long l2)
 {
 	// get scale factor for channel and sampling rate
-	m_mVperBin = m_pChartDataWnd->GetChanlistVoltsperDataBin(channel) * 1000.0f;
+	m_mVperBin = m_pChartDataWnd->GetChanlistItem(channel)->GetVoltsperDataBin() * 1000.0f;
 	const auto rate = m_pdatDoc->GetpWaveFormat()->chrate;
 
 	auto output_column = (m_col - 1) * m_nbdatacols + 1;		// output data into column icol
@@ -401,7 +402,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, const int v1, const int v2)
 {
 	// get scale factor for channel and sampling rate
-	m_mVperBin = m_pChartDataWnd->GetChanlistVoltsperDataBin(channel) * 1000.0f;
+	m_mVperBin = m_pChartDataWnd->GetChanlistItem(channel)->GetVoltsperDataBin() * 1000.0f;
 
 	auto column_1 = (m_col - 1) * m_nbdatacols + 1;		// output data into column icol
 	auto item = m_listResults.GetItemCount();	// compute which line will receive data

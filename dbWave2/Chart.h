@@ -37,7 +37,7 @@ public:
 	virtual BOOL	Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
 	virtual SCOPESTRUCT* GetScopeParameters();
 	virtual void	SetScopeParameters(SCOPESTRUCT* pStruct);
-	virtual int		SetMouseCursorType(int cursormode);			// change mouse cursor on button
+	virtual int		SetMouseCursorType(int cursormode);
 	virtual	void	ZoomData(CRect* prevRect, CRect* newRect);
 	virtual void	DisplayVTtags_Value(CDC* p_dc);
 	virtual void	DisplayHZtags(CDC* p_dc);
@@ -62,7 +62,6 @@ public:
 	int				GetMouseCursorType() const { return m_cursorType; }
 	void			SetMouseCursor(int cursorm);
 
-	// scale
 	void			SetYWExtOrg(int extent, int zero) { m_yWE = extent; m_yWO = zero; }
 	void			SetXWExtOrg(int extent, int zero) { m_xWE = extent; m_xWO = zero; }
 	int				GetYWExtent() const { return m_yWE; }
@@ -79,12 +78,12 @@ public:
 	void			AttachExternalXRuler(CRulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
 	void			AttachExternalYRuler(CRulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
-	// Operations
 	void			XorVTtag(int xpoint);
 	void			XorTempVTtag(int xpoint);
 	void			XorHZtag(int ypoint);
 	void			ResetXortag() { m_ptLast.x = -1; m_ptLast.y = -1; }
 	void			ReflectMouseMoveMessg(HWND hwnd) { m_hwndReflect = hwnd; }
+	void			SetCursorMaxOnDblClick(int imax) { m_cursorIndexMax = imax; }
 	void			PlotToBitmap(CBitmap* pBitmap);
 
 	void			DrawGrid(CDC* p_dc);
@@ -96,9 +95,9 @@ public:
 	void			SetBottomComment(BOOL flag, CString cs) { m_csBottomComment = cs; m_bBottomComment = flag; }
 
 public:
-	CRuler			m_xRuler;
-	CRuler			m_yRuler;
-	CFont			m_hFont;
+	CRuler			m_xRuler{};
+	CRuler			m_yRuler{};
+	CFont			m_hFont{};
 	BOOL			m_bNiceGrid = false;
 	int				m_abcissaheight = 10;
 	int				m_ordinateswidth = 25;
@@ -115,6 +114,7 @@ protected:
 	static int		m_countcurs;					// objects counter
 	static HCURSOR	m_cursor[NB_CURSORS];			// array with cursor handles
 	static int		m_cursordragmode[NB_CURSORS];	// cursor mode: 0=invert rect; 1=catch object
+	int				m_cursorIndexMax = NB_CURSORS;
 	int				m_cursorType = 0;				// current cursor
 	int				m_oldcursorType = 0;
 	HCURSOR			m_currCursor{};					// handle to current cursor

@@ -128,8 +128,8 @@ BOOL CSpikeEditDlg::OnInitDialog()
 		if (m_pSpkList->GetcompensateBaseline())
 		{
 			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetextractChan(), MOVAVG30);
-			m_ChartDataWnd.SetChanlistColor(1, 6);
-			m_ChartDataWnd.SetChanlistPenWidth(1, 1);
+			m_ChartDataWnd.GetChanlistItem(1)->SetColor(6);
+			m_ChartDataWnd.GetChanlistItem(1)->SetPenWidth(1);
 			((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(1);
 		}
 		m_DWintervals.SetSize(3 + 2);						// total size
@@ -327,23 +327,15 @@ void CSpikeEditDlg::OnEnChangeYextent()
 		if (m_yvextent != m_yextent)
 		{
 			m_yextent = m_yvextent;
-			m_ChartDataWnd.SetChanlistYextent(0, m_yextent);
+			m_ChartDataWnd.GetChanlistItem(0)->SetYextent(m_yextent);
 			if (m_pSpkList->GetcompensateBaseline())
-				m_ChartDataWnd.SetChanlistYextent(1, m_yextent);
+				m_ChartDataWnd.GetChanlistItem(1)->SetYextent(m_yextent);
 			m_SpkChartWnd.SetYWExtOrg(m_yextent, m_yzero);
 			m_ChartDataWnd.Invalidate();
 			m_SpkChartWnd.Invalidate();
 		}
 	}
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// Buttons actions
-
-// --------------------------------------------------------------------------
-// LoadSourceData
-// load data displayed within sourceView button
-// --------------------------------------------------------------------------
 
 void CSpikeEditDlg::LoadSourceData()
 {
@@ -353,13 +345,13 @@ void CSpikeEditDlg::LoadSourceData()
 	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms
 	const auto l_first = p_spike_element->get_time() - m_spkpretrig;	// change selection
 	m_DWintervals.SetAt(3, l_first);						// store interval
-	const auto l_last = l_first + m_spklen;						// end interval
-	m_DWintervals.SetAt(4, l_last);						// store
+	const auto l_last = l_first + m_spklen;					// end interval
+	m_DWintervals.SetAt(4, l_last);							// store
 
 	// compute limits of m_sourceView
 	auto l_v_first = l_first + m_spklen / 2 - m_viewdatalen / 2;
-	if (l_v_first < 0)									// check limits
-		l_v_first = 0;									// clip to start of the file
+	if (l_v_first < 0)										// check limits
+		l_v_first = 0;										// clip to start of the file
 	auto l_v_last = l_v_first + m_viewdatalen - 1;			// last pt
 	if (l_v_last > m_ChartDataWnd.GetDocumentLast())		// clip to size of data
 	{
@@ -368,17 +360,20 @@ void CSpikeEditDlg::LoadSourceData()
 	}
 	// get data from doc
 	m_spikeChan = p_spike_element->get_source_channel();
+	
 	m_ChartDataWnd.SetChanlistSourceChan(0, m_spikeChan);
-	m_ChartDataWnd.GetDataFromDoc(l_v_first, l_v_last);	// load data from file
+	m_ChartDataWnd.GetDataFromDoc(l_v_first, l_v_last);		// load data from file
 
 	// adjust offset (center spike) : use initial offset from spike
-	m_ChartDataWnd.SetChanlistYzero(0, m_yzero + p_spike_element->get_amplitude_offset());
-	m_ChartDataWnd.SetChanlistYextent(0, m_yextent);
+	CChanlistItem* chan0 = m_ChartDataWnd.GetChanlistItem(0);
+	chan0->SetYzero(m_yzero + p_spike_element->get_amplitude_offset());
+	chan0->SetYextent(m_yextent);
 
 	if (m_pSpkList->GetcompensateBaseline())
 	{
-		m_ChartDataWnd.SetChanlistYzero(1, m_yzero + p_spike_element->get_amplitude_offset());
-		m_ChartDataWnd.SetChanlistYextent(1, m_yextent);
+		CChanlistItem* chan1 = m_ChartDataWnd.GetChanlistItem(1);
+		chan1->SetYzero(m_yzero + p_spike_element->get_amplitude_offset());
+		chan1->SetYextent(m_yextent);
 	}
 	m_ChartDataWnd.Invalidate();
 }

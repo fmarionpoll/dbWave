@@ -1,11 +1,7 @@
 #pragma once
-
-
-
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "./Controls/cdxCRotBevelLine.h"
-
 #include "CViewDao.h"
 
 class CViewSpikeDetection : public CViewDAO

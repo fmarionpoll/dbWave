@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "dbWave_constants.h"
 #include <stdlib.h>
 #include <Strsafe.h>
 #include "resource.h"
@@ -165,73 +164,73 @@ void CChartDataWnd::UpdateChanlistFromDoc()
 	UpdateChanlistMaxSpan();	// update max span
 }
 
-void CChartDataWnd::UpdateGainSettings(int i)
+void CChartDataWnd::UpdateGainSettings(int ichanlist)
 {
-	auto p_chanlist_item = chanlistitem_ptr_array[i];
-	const auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
+	CChanlistItem* pchan = chanlistitem_ptr_array[ichanlist];
+	const auto p_ord = pchan->pEnvelopeOrdinates;
 	const auto ns = p_ord->GetSourceChan();
 	const auto mode = p_ord->GetSourceMode();
 	float doc_volts_per_bin;
 	m_pDataFile->GetWBVoltsperBin(ns, &doc_volts_per_bin, mode);
-	const auto volts_per_data_bin = p_chanlist_item->GetVoltsperDataBin();
+	const auto volts_per_data_bin = pchan->GetVoltsperDataBin();
 	const auto pwave_format = m_pDataFile->GetpWaveFormat();
 	if (doc_volts_per_bin != volts_per_data_bin)
 	{
-		p_chanlist_item->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
-		p_chanlist_item->SetDataVoltsFormat(doc_volts_per_bin, pwave_format->fullscale_Volts);
-		auto iextent = p_chanlist_item->GetYextent();
+		pchan->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
+		pchan->SetDataVoltsFormat(doc_volts_per_bin, pwave_format->fullscale_Volts);
+		auto iextent = pchan->GetYextent();
 		iextent = int(float(iextent) / doc_volts_per_bin * volts_per_data_bin);
-		p_chanlist_item->SetYextent(iextent);
+		pchan->SetYextent(iextent);
 	}
 }
 
-int CChartDataWnd::SetChanlistSourceChan(WORD i, int ns)
+int CChartDataWnd::SetChanlistSourceChan(WORD ichanlist, int acqchan)
 {
 	// check if channel is allowed
 	const auto pwave_format = m_pDataFile->GetpWaveFormat();
-	if (pwave_format->scan_count <= ns || ns < 0)
+	if (pwave_format->scan_count <= acqchan || acqchan < 0)
 		return -1;
 
 	// make sure we have enough data channels...
-	if (GetChanlistSize() <= i)
-		for (auto j = GetChanlistSize(); j <= i; j++)
+	if (GetChanlistSize() <= ichanlist)
+		for (auto j = GetChanlistSize(); j <= ichanlist; j++)
 			AddChanlistItem(j, 0);
 
 	// change channel
-	auto p_chanlist_item = chanlistitem_ptr_array[i];
+	auto p_chanlist_item = chanlistitem_ptr_array[ichanlist];
 	auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
-	p_ord->SetSourceChan(ns);			// change data channel
-	const auto mode = p_ord->GetSourceMode();	// get transform mode
+	p_ord->SetSourceChan(acqchan);
+	const auto mode = p_ord->GetSourceMode();
 	// modify comment
 	const auto pchan_array = m_pDataFile->GetpWavechanArray();
-	const auto pchan = pchan_array->Get_p_channel(ns);
+	const auto pchan = pchan_array->Get_p_channel(acqchan);
 	p_chanlist_item->dl_comment = pchan->am_csComment;
 	if (mode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) + _T(": ") + p_chanlist_item->dl_comment;
-	UpdateGainSettings(i);				// keep physical value of yextent and zero constant
-	return ns;
+	UpdateGainSettings(ichanlist);
+	return acqchan;
 }
 
-void CChartDataWnd::SetChanlistOrdinates(WORD i, int chan, int transform)
+void CChartDataWnd::SetChanlistOrdinates(WORD ichanlist, int acqchan, int transform)
 {
 	// change channel
-	auto chanlist_item = chanlistitem_ptr_array[i];
-	chanlist_item->SetOrdinatesSourceData(chan, transform);
+	auto chanlist_item = chanlistitem_ptr_array[ichanlist];
+	chanlist_item->SetOrdinatesSourceData(acqchan, transform);
 	// modify comment
 	const auto pchanArray = m_pDataFile->GetpWavechanArray();
-	if (chan >= pchanArray->ChanArray_getSize())
-		chan = 0;
-	const auto pchan = pchanArray->Get_p_channel(chan);
+	if (acqchan >= pchanArray->ChanArray_getSize())
+		acqchan = 0;
+	const auto pchan = pchanArray->Get_p_channel(acqchan);
 	chanlist_item->dl_comment = pchan->am_csComment;
 	if (transform > 0)
 		chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(transform)).Left(6) + _T(": ") + chanlist_item->dl_comment;
 }
 
-void CChartDataWnd::SetChanlistVoltsExtent(const int chan, const float* pvalue)
+void CChartDataWnd::SetChanlistVoltsExtent(const int ichanlist, const float* pvalue)
 {
-	auto ichanfirst = chan;
-	auto ichanlast = chan;
-	if (chan < 0)
+	auto ichanfirst = ichanlist;
+	auto ichanlast = ichanlist;
+	if (ichanlist < 0)
 	{
 		ichanfirst = 0;
 		ichanlast = chanlistitem_ptr_array.GetUpperBound();
@@ -251,11 +250,11 @@ void CChartDataWnd::SetChanlistVoltsExtent(const int chan, const float* pvalue)
 	}
 }
 
-void CChartDataWnd::SetChanlistVoltsZero(const int chan, const float* pvalue)
+void CChartDataWnd::SetChanlistVoltsZero(const int ichanlist, const float* pvalue)
 {
-	auto ichanfirst = chan;
-	auto ichanlast = chan;
-	if (chan < 0)
+	auto ichanfirst = ichanlist;
+	auto ichanlast = ichanlist;
+	if (ichanlist < 0)
 	{
 		ichanfirst = 0;
 		ichanlast = chanlistitem_ptr_array.GetUpperBound();
@@ -276,7 +275,7 @@ void CChartDataWnd::SetChanlistVoltsZero(const int chan, const float* pvalue)
 	}
 }
 
-int CChartDataWnd::SetChanlistTransformMode(WORD i, int imode)
+int CChartDataWnd::SetChanlistTransformMode(WORD ichanlist, int imode)
 {
 	// check if transform is allowed
 	if (!m_pDataFile->IsWBTransformAllowed(imode) ||	// ? is transform allowed
@@ -287,7 +286,7 @@ int CChartDataWnd::SetChanlistTransformMode(WORD i, int imode)
 	}
 
 	// change transform mode
-	auto p_chanlist_item = chanlistitem_ptr_array[i];
+	auto p_chanlist_item = chanlistitem_ptr_array[ichanlist];
 	auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
 	const auto ns = p_ord->GetSourceChan();
 	// change transform
@@ -300,7 +299,7 @@ int CChartDataWnd::SetChanlistTransformMode(WORD i, int imode)
 	if (imode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(imode)).Left(8)
 		+ _T(": ") + p_chanlist_item->dl_comment;
-	UpdateGainSettings(i);
+	UpdateGainSettings(ichanlist);
 	UpdateChanlistMaxSpan();
 	return imode;
 }
@@ -346,9 +345,10 @@ void CChartDataWnd::AutoZoomChan(int j)
 	int max, min;
 	for (auto i = i1; i <= i2; i++)
 	{
-		GetChanlistMaxMin(i, &max, &min);
-		SetChanlistYzero(i, (max + min) / 2);
-		SetChanlistYextent(i, MulDiv(max - min + 1, 10, 8));
+		CChanlistItem* chan = GetChanlistItem(i);
+		chan->GetMaxMin(&max, &min);
+		chan->SetYzero((max + min) / 2);
+		chan->SetYextent(MulDiv(max - min + 1, 10, 8));
 	}
 }
 
@@ -359,11 +359,12 @@ void CChartDataWnd::SplitChans()
 	auto icur = nchans - 1;
 	for (auto i = 0; i < nchans; i++, icur -= 2)
 	{
-		GetChanlistMaxMin(i, &max, &min);
+		CChanlistItem* chan = GetChanlistItem(i);
+		chan->GetMaxMin(&max, &min);
 		const auto amplitudespan = MulDiv((max - min), 12 * nchans, 10);
-		SetChanlistYextent(i, amplitudespan);
+		chan->SetYextent(amplitudespan);
 		const auto ioffset = (max + min) / 2 + MulDiv(amplitudespan, icur, nchans * 2);
-		SetChanlistYzero(i, ioffset);
+		chan->SetYzero(ioffset);
 	}
 }
 
@@ -380,9 +381,10 @@ void CChartDataWnd::CenterChan(int j)
 	int max, min;
 	for (auto i = i1; i <= i2; i++)
 	{
-		GetChanlistMaxMin(i, &max, &min);
+		CChanlistItem* chan = GetChanlistItem(i);
+		chan->GetMaxMin( &max, &min);
 		const auto yzero = (max + min) / 2;
-		SetChanlistYzero(i, yzero);
+		chan->SetYzero(yzero);
 	}
 }
 
@@ -399,15 +401,12 @@ void CChartDataWnd::MaxgainChan(int j)
 	int max, min;
 	for (auto i = i1; i <= i2; i++)
 	{
-		GetChanlistMaxMin(i, &max, &min);
+		CChanlistItem* pchan = GetChanlistItem(i);
+		pchan->GetMaxMin(&max, &min);
 		const auto yextent = MulDiv(max - min + 1, 10, 8);
-		SetChanlistYextent(i, yextent);
+		pchan->SetYextent(yextent);
 	}
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CLineViewWnd message handlers
-/////////////////////////////////////////////////////////////////////////////
 
 int CChartDataWnd::ResizeChannels(const int npixels, const long l_size)
 {
@@ -479,7 +478,7 @@ BOOL CChartDataWnd::AttachDataFile(CAcqDataDoc* p_data_file)
 	const auto chanlistmax = chanlistitem_ptr_array.GetUpperBound();
 	for (auto i = chanlistmax; i >= 0; i--)
 	{
-		if (GetChanlistSourceChan(i) > docchanmax)
+		if (GetChanlistItem(i)->GetSourceChan() > docchanmax)
 			RemoveChanlistItem(i);
 	}
 
@@ -723,7 +722,6 @@ BOOL CChartDataWnd::ScrollDataFromDoc(WORD nSBCode)
 	return GetDataFromDoc();
 }
 
-
 void CChartDataWnd::UpdatePageLineSize()
 {
 	if (m_pDataFile != nullptr)
@@ -775,17 +773,6 @@ void CChartDataWnd::ZoomData(CRect* r1, CRect* r2)
 	postMyMessage(HINT_VIEWSIZECHANGED, NULL);
 }
 
-//---------------------------------------------------------------------------
-// Plot functions
-//
-// PlotDatatoDC();  - draw on DC passed in argument
-//
-// CLineViewWnd does not use the DIB surface provided by CChartWnd from
-// which it is derived. Thus, it must get its DC from Windows.
-// In this case, when the nb of curves and the nb of points is small, this
-// direct approach is faster than resorting to the DIBsurface
-//---------------------------------------------------------------------------
-
 void CChartDataWnd::UpdateXRuler()
 {
 	if (m_bNiceGrid)
@@ -807,8 +794,9 @@ void CChartDataWnd::UpdateYRuler()
 		{
 			const auto binlow = GetChanlistPixeltoBin(0, 0);
 			const auto binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
-			auto yfirst = ConvertChanlistDataBinsToVolts(0, binlow);
-			auto ylast = ConvertChanlistDataBinsToVolts(0, binhigh);
+			CChanlistItem* pchan = GetChanlistItem(0);
+			auto yfirst = pchan->ConvertDataBinsToVolts (binlow);
+			auto ylast = pchan->ConvertDataBinsToVolts (binhigh);
 			m_yRuler.UpdateRange(&yfirst, &ylast);
 		}
 	}
@@ -1160,14 +1148,14 @@ BOOL CChartDataWnd::CopyAsText(int ioption, int iunit, int nabcissa)
 				// unit for each channel
 				StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE, _T("mvolts per bin:\r\n"));
 				for (auto i = 0; i < GetChanlistSize(); i++)
-					StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE, _T("%f\t"), double(GetChanlistVoltsperDataBin(i)) * 1000.f);
+					StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE, _T("%f\t"), double(GetChanlistItem(i)->GetVoltsperDataBin()) * 1000.f);
 				lp_copy--;	// erase last tab
 			}
 
 			// comment for each channel
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE, _T("\r\nchan title:\r\n"));
 			for (auto i = 0; i < GetChanlistSize(); i++)
-				StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE, _T("%s\t"), static_cast<LPCTSTR>(GetChanlistComment(i)));
+				StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE, _T("%s\t"), static_cast<LPCTSTR>(GetChanlistItem(i)->GetComment()));
 			lp_copy--;	// erase last tab
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE, _T("\r\n"));
 
@@ -1219,7 +1207,7 @@ LPTSTR CChartDataWnd::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 			const int k = (chanlist_item->pEnvelopeOrdinates)->GetPointAt(j);
 			if (iunit == 1)
 			{
-				lpCopy += wsprintf(lpCopy, _T("%f\t"), double(k) * GetChanlistVoltsperDataBin(i) * 1000.f);
+				lpCopy += wsprintf(lpCopy, _T("%f\t"), double(k) * GetChanlistItem(i)->GetVoltsperDataBin() * 1000.f);
 			}
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);
@@ -1252,7 +1240,7 @@ LPTSTR CChartDataWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 				k = k / 2;
 			}
 			if (iunit == 1)
-				lpCopy += wsprintf(lpCopy, _T("%f\t"), double(k) * GetChanlistVoltsperDataBin(i) * 1000.f);
+				lpCopy += wsprintf(lpCopy, _T("%f\t"), double(k) * GetChanlistItem(i)->GetVoltsperDataBin() * 1000.f);
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);
 		}
@@ -1447,8 +1435,8 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 				zoomIn();
 			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
-		case CURSOR_CROSS: // rectangle / measure mode
-			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that value changed
+		case CURSOR_CROSS:
+			postMyMessage(HINT_DEFINEDRECT, NULL);
 			break;
 		default:
 			break;
@@ -1488,7 +1476,7 @@ int CChartDataWnd::doesCursorHitCurve(CPoint point)
 	{
 		// convert device coordinates into value
 		const auto ival = GetChanlistPixeltoBin(chan, point.y);
-		const auto ijitter = MulDiv(m_cyjitter, GetChanlistYextent(chan), -m_yVE);
+		const auto ijitter = MulDiv(m_cyjitter, GetChanlistItem(chan)->GetYextent(), -m_yVE);
 		const auto valmax = ival + ijitter;			// mouse max
 		const auto valmin = ival - ijitter;			// mouse min
 		chanlist_item = chanlistitem_ptr_array[chan]->pEnvelopeOrdinates;
@@ -1628,16 +1616,6 @@ void CChartDataWnd::highlightData(CDC* p_dc, int chan)
 	p_dc->SelectObject(poldpen);
 }
 
-//---------------------------------------------------------------------------
-// ADdisplayStart
-//
-// prepare a client DC with pen, ext/org, cliprect, prepare abcissa
-// init position of next display
-// companion routine: ADdisplayStop which closes the client DC
-// param:
-//	nADchannels		nb of data acquisition channels
-//---------------------------------------------------------------------------
-
 void CChartDataWnd::ADdisplayStart(int chsamples)
 {
 	// init parameters related to AD display
@@ -1660,23 +1638,6 @@ void CChartDataWnd::ADdisplayStart(int chsamples)
 	const auto textlen = cs.GetLength();
 	dc.DrawText(cs, textlen, rect, DT_LEFT);
 }
-
-// ADdisplayBuffer()
-//		display nsamples of data, all channels
-//
-// parameters in:
-//		short*	lpBuf ......address of first pt of the buffer
-//		long	nsamples ...number of data pt to display / channel
-// hidden parameters;
-//		long	m_lxSize ........max number of samples (along a line)
-//							(init: OnSize, ResizeChannels)
-//		short   m_ADx(m_ADy)VO,VE,WO,WE display parameters (gain, offset)
-//							(init: ADdisplayStart)
-// 		long	m_lADbufferdone ..index of last pt displayed
-//							(init: last ADdisplayBuffer & ADdisplayStart)
-//		CScale	m_scale	........scale long index -> pixel index
-//		CObjectArray m_pChanlistItemArray ...array of envelopes to display
-//---------------------------------------------------------------------------
 
 void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 {

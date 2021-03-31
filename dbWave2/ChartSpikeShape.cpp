@@ -383,7 +383,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 				postMyMessage(HINT_HITAREA, NULL);
 			else
 				zoomIn();
-			return;					// exit: mouse movement was too small
+			return;	
 		}
 
 		// perform action according to cursor type
@@ -393,9 +393,9 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		case 0:
 			rect_out = rect_in;
 			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-			postMyMessage(HINT_DEFINEDRECT, NULL);	// tell parent that value changed
+			postMyMessage(HINT_DEFINEDRECT, NULL);
 			break;
-		case CURSOR_ZOOM: 	// zoom operation
+		case CURSOR_ZOOM:
 			ZoomData(&rect_in, &rect_out);
 			m_ZoomFrom = rect_in;
 			m_ZoomTo = rect_out;

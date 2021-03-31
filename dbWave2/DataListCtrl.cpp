@@ -590,7 +590,7 @@ void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 			auto b_present = FALSE;				// pessimistic
 			for (auto j = lnvchans - 1; j >= 0; j--)// check all channels / display list
 			{									// test if this data chan is present + no transf
-				if (p_wnd->GetChanlistSourceChan(j) == jdocchan)
+				if (p_wnd->GetChanlistItem(j)->GetSourceChan() == jdocchan)
 				{
 					b_present = TRUE;			// the wanted chan is present: stop loopint through disp list
 					p_wnd->SetChanlistTransformMode(j, m_dattransform);
@@ -602,7 +602,7 @@ void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 				p_wnd->AddChanlistItem(jdocchan, m_dattransform);
 				lnvchans++;
 			}
-			p_wnd->SetChanlistColor(jdocchan, jdocchan);
+			p_wnd->GetChanlistItem(jdocchan)->SetColor(jdocchan);
 		}
 
 		// load real data from file and update time parameters
@@ -627,14 +627,15 @@ void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 		int max, min;
 		for (auto i = j; i >= 0; i--)
 		{
-			p_wnd->GetChanlistMaxMin(i, &max, &min);
+			CChanlistItem* pchan = p_wnd->GetChanlistItem(i);
+			pchan->GetMaxMin(&max, &min);
 			auto ispan = max - min + 1;
 			int iextent;
 			int izero;
 			if (m_bsetmVSpan > 0.f)
 			{
-				ispan = p_wnd->ConvertChanlistVoltstoDataBins(i, m_mVspan / 1000.f);
-				izero = p_wnd->GetChanlistBinZero(i);
+				ispan = pchan->ConvertVoltsToDataBins(m_mVspan / 1000.f);
+				izero = pchan->GetDataBinZero();
 				iextent = ispan;
 			}
 			else
@@ -644,8 +645,8 @@ void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 				izero = (max + min) / 2 - MulDiv(iextent, j, lnvchans * 2);
 			}
 			j -= 2;
-			p_wnd->SetChanlistYextent(i, iextent);
-			p_wnd->SetChanlistYzero(i, izero);
+			pchan->SetYextent(iextent);
+			pchan->SetYzero(izero);
 		}
 		ptr->pdataDoc->AcqCloseFile();
 	}

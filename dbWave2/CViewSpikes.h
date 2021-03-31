@@ -3,6 +3,7 @@
 // ViewSpikes.h : header file
 
 #include "SpikeClassListBox.h"
+#include "ScrollBarEx.h"
 #include "CViewDao.h"
 
 class CViewSpikes : public CViewDAO
@@ -29,10 +30,10 @@ public:
 
 	// Attributes
 protected:
+	CChartDataWnd	m_ChartDataWnd;			// data display
 	CSpikeClassListBox m_spkClassListBox;	// listbox of spike classes
 	int				m_maxclasses = 1;
 	
-	CChartDataWnd	m_ChartDataWnd;			// data display
 	CEditCtrl		mm_spikeno;
 	CEditCtrl		mm_spikenoclass;
 	CEditCtrl		mm_timefirst;			// first abcissa value
@@ -41,6 +42,9 @@ protected:
 	CEditCtrl		mm_sourceclass;
 	CEditCtrl		mm_destclass;
 	CEditCtrl		mm_jitter_ms;
+
+	CScrollBarEx	m_filescroll;			// data position within file
+	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
 
 	int				m_zoominteger = 1;		// zoom length (nb data acq points)
 	HICON			m_hBias = nullptr;
@@ -54,7 +58,7 @@ protected:
 	BOOL			m_bInitSourceView = true;
 	int				m_lFirst = 0;
 	int				m_lLast = -1;
-	SCROLLINFO		m_scrollFilePos_infos{};
+
 	CDWordArray		m_DWintervals;			// intervals to highlight spikes
 	BOOL			m_baddspikemode = false;
 
@@ -63,7 +67,7 @@ protected:
 	int				m_ptVT = -1;
 	CRect			m_rectVTtrack = CRect(0, 0, 0, 0);
 	float			m_jitter = 0.f;
-	BOOL			m_bdummy = true;
+	BOOL			m_bdummy = TRUE;
 
 	// Implementation
 protected:
@@ -73,7 +77,6 @@ protected:
 	void			updateSpikeFile(BOOL bUpdateInterface);
 	void			updateGainScroll();
 	void			updateBiasScroll();
-	void			updateScrollBar();
 	void			adjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
 	void			selectSpike(int spikeno);
 	void			defineSubClassedItems();
@@ -85,6 +88,9 @@ protected:
 	BOOL			addSpiketoList(long iitime, BOOL bcheck_if_otheraround);
 	void			setAddspikesMode(int mousecursorType);
 	void			selectSpkList(int icursel);
+	void			setTrackRectangle();
+	void			scrollFile(UINT nSBCode, UINT nPos);
+	void			updateFileScroll();
 
 	// public interface to view
 public:

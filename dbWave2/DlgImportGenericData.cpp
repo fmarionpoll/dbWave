@@ -599,12 +599,13 @@ void CDlgImportGenericData::UpdatePreview()
 	for (int i = 0; i < ndocchans; i++)
 	{
 		int max, min;
-		m_ChartDataWnd.GetChanlistMaxMin(i, &max, &min);
+		CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(i);
+		chan->GetMaxMin(&max, &min);
 		// split curves if requested by options
 		int iextent = MulDiv(max - min + 1, 11, 10);
 		int izero = (max + min) / 2;
-		m_ChartDataWnd.SetChanlistYextent(i, iextent);
-		m_ChartDataWnd.SetChanlistYzero(i, izero);
+		chan->SetYextent(iextent);
+		chan->SetYzero(izero);
 	}
 	m_ChartDataWnd.Invalidate();
 }

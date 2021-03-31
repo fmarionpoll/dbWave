@@ -1,8 +1,6 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "chart.h"
-
-//#include "Editctrl.h"
 #include "DlgChartProps.h"
 #include <math.h>
 
@@ -113,7 +111,6 @@ IMPLEMENT_SERIAL(CChartWnd, CWnd, 1)
 
 CChartWnd::CChartWnd()
 {
-	// load cursors from resources		// #define NB_CURSORS 3
 	if (m_countcurs == 0)
 	{
 		short j = 0;
@@ -601,15 +598,14 @@ void CChartWnd::SetMouseCursor(int cursorm) {
 
 void CChartWnd::captureCursor()
 {
-	SetCapture();				// capture mouse
+	SetCapture();
 	auto rect_limit = m_displayRect;
-	ClientToScreen(rect_limit);	// convert coordinates
-	ClipCursor(rect_limit);		// tell mouse cursor what are the limits
+	ClientToScreen(rect_limit);
+	ClipCursor(rect_limit);	
 }
 
 void CChartWnd::releaseCursor()
 {
-	// mouse was captured
 	ReleaseCapture();
 	ClipCursor(nullptr);
 }
@@ -622,7 +618,10 @@ BOOL CChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message)
 
 void CChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	postMyMessage(HINT_SETMOUSECURSOR, m_cursorType + 1);
+	int newcursor = m_cursorType + 1;
+	if (newcursor >= m_cursorIndexMax)
+		newcursor = 0;
+	postMyMessage(HINT_SETMOUSECURSOR, newcursor);
 }
 
 void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
@@ -633,84 +632,81 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
 		::GetWindowRect(m_hwndReflect, &rect0);
-
-		// reflect mouse move message
 		::SendMessage(m_hwndReflect, WM_LBUTTONDOWN, nFlags,
-			MAKELPARAM(point.x + (rect1.left - rect0.left),
-				point.y + (rect1.top - rect0.top)));
-		return;
+			MAKELPARAM(point.x + (rect1.left - rect0.left), point.y + (rect1.top - rect0.top)));
 	}
-
-	m_ptFirst = point;
-	m_ptLast = point;
-	m_ptCurr = point;
-
-	// take action according to cursor mode
-	switch (m_cursorType)				// tracking type
+	else
 	{
-		// track horizontal & VT cursors if mouse HIT
-	case 0:								// arrow (default)
-	case CURSOR_CROSS:				// cross (measure mode) (2)
-		if (nFlags & MK_CONTROL)
-		{
-			postMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
-		}
-		m_trackMode = TRACK_RECT;		// flag trackrect
+		m_ptFirst = point;
+		m_ptLast = point;
+		m_ptCurr = point;
 
-		// test HZ tags - if OK, then start tracking & init variables & flags
-		m_HCtrapped = hitHZtag(point.y);
-		if (m_HCtrapped >= 0)
+		// take action according to cursor mode
+		switch (m_cursorType)
 		{
-			m_trackMode = TRACK_HZTAG;
-			m_ptLast.x = 0;				// set initial coordinates
-			m_ptLast.y = m_HZtags.GetTagPix(m_HCtrapped);
-			m_ptFirst = m_ptLast;
-			// tell parent that HZtag was selected
-			sendMyMessage(HINT_HITHZTAG, m_HCtrapped);
-			break;
-		}
+			// track horizontal & VT cursors if mouse HIT
+		case 0:								// arrow (default)
+		case CURSOR_CROSS:					// cross (measure mode) (2)
+			if (nFlags & MK_CONTROL)
+				postMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
+			
+			m_trackMode = TRACK_RECT;		// flag trackrect
 
-		// test VT tags - if OK, then track
-		if (!m_bVTtagsLONG)
-			m_HCtrapped = hitVTtagPix(int(point.x));
-		else
-		{
-			m_liJitter = long(m_cxjitter) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width());
-			const auto lx = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width()) + m_liFirst;
-			m_HCtrapped = hitVTtagLong(lx);
-		}
+			// test HZ tags - if OK, then start tracking & init variables & flags
+			m_HCtrapped = hitHZtag(point.y);
+			if (m_HCtrapped >= 0)
+			{
+				m_trackMode = TRACK_HZTAG;
+				m_ptLast.x = 0;				// set initial coordinates
+				m_ptLast.y = m_HZtags.GetTagPix(m_HCtrapped);
+				m_ptFirst = m_ptLast;
+				// tell parent that HZtag was selected
+				sendMyMessage(HINT_HITHZTAG, m_HCtrapped);
+				break;
+			}
 
-		// mouse cursor did hit a tag, either horizontal or vertical
-		if (m_HCtrapped >= 0)
-		{
-			m_trackMode = TRACK_VTTAG;
-			if (m_bVTtagsLONG)
-				m_ptLast.x = int((m_VTtags.GetTagLVal(m_HCtrapped) - m_liFirst) * long(m_displayRect.Width()) / (m_liLast - m_liFirst + 1));
+			// test VT tags - if OK, then track
+			if (!m_bVTtagsLONG)
+				m_HCtrapped = hitVTtagPix(int(point.x));
 			else
-				m_ptLast.x = m_VTtags.GetTagPix(m_HCtrapped);
-			m_ptLast.y = 0;
-			// tell parent that VTtag was selected
-			sendMyMessage(HINT_HITVERTTAG, m_HCtrapped);
+			{
+				m_liJitter = long(m_cxjitter) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width());
+				const auto lx = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width()) + m_liFirst;
+				m_HCtrapped = hitVTtagLong(lx);
+			}
+
+			// mouse cursor did hit a tag, either horizontal or vertical
+			if (m_HCtrapped >= 0)
+			{
+				m_trackMode = TRACK_VTTAG;
+				if (m_bVTtagsLONG)
+					m_ptLast.x = int((m_VTtags.GetTagLVal(m_HCtrapped) - m_liFirst) * long(m_displayRect.Width()) / (m_liLast - m_liFirst + 1));
+				else
+					m_ptLast.x = m_VTtags.GetTagPix(m_HCtrapped);
+				m_ptLast.y = 0;
+				// tell parent that VTtag was selected
+				sendMyMessage(HINT_HITVERTTAG, m_HCtrapped);
+				break;
+			}
+			break;
+
+			// track rectangle and invert content of the rectangle
+		case CURSOR_ZOOM:					// zoom (1)
+			m_trackMode = TRACK_RECT;
+			invertTracker(point);			// invert rectangle
+			break;
+
+		case CURSOR_VERTICAL:
+			GetParent()->SendMessage(WM_MYMESSAGE, WM_LBUTTONDOWN, MAKELONG(point.x, point.y));
+			return;
+
+		default:
 			break;
 		}
-		break;
 
-		// track rectangle and invert content of the rectangle
-	case CURSOR_ZOOM:					// zoom (1)
-		m_trackMode = TRACK_RECT;
-		invertTracker(point);			// invert rectangle
-		break;
-
-	case CURSOR_VERTICAL:
-		GetParent()->SendMessage(WM_MYMESSAGE, WM_LBUTTONDOWN, MAKELONG(point.x, point.y));
-		return;
-
-	default:
-		break;
+		// limit the tracking to the client area of the view
+		captureCursor();
 	}
-
-	// limit the tracking to the client area of the view
-	captureCursor();
 	return;
 }
 
@@ -771,17 +767,6 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 				MAKELPARAM(point.x + (rect1.left - rect0.left),
 					point.y + (rect1.top - rect0.top)));
 		}
-		//else
-		//{
-		//	CRect rect;
-		//	GetWindowRect(rect);
-		//	if ((point.x > (rect.Width() - (SPLITSIZE + TRACKSIZE))) || (point.x < (SPLITSIZE + TRACKSIZE)))
-		//		SetMouseCursor(CURSOR_RESIZE_HZ);
-		//	else if ((point.y > (rect.Height() - (SPLITSIZE + TRACKSIZE +12))) || (point.y < (SPLITSIZE + TRACKSIZE +12)))
-		//		SetMouseCursor(CURSOR_RESIZE_VERT);
-		//	else
-		//		SetMouseCursor(CURSOR_ARROW);
-		//}
 		break;
 	}
 }

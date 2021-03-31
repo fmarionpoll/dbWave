@@ -10,7 +10,6 @@
 
 #include "StdAfx.h"
 #include "dbWave.h"
-#include "dbWave_constants.h"
 #include "resource.h"
 #include "chart.h"
 #include "ChartData.h"
@@ -439,9 +438,10 @@ void CViewSpikeDetection::updateDataFile(BOOL bUpdateInterface)
 	{
 		m_ChartDataWnd_Detect.RemoveAllChanlistItems();
 		m_ChartDataWnd_Detect.AddChanlistItem(0, 0);
-		m_ChartDataWnd_Detect.SetChanlistColor(0, 0);
+		CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+		pchan->SetColor(0);
 		m_ChartDataWnd_Detect. m_HZtags.RemoveAllTags();
-		m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.ConvertChanlistVoltstoDataBins(0, m_pDetectParms->detectThresholdmV / 1000.f);
+		m_pDetectParms->detectThreshold = pchan->ConvertVoltsToDataBins(m_pDetectParms->detectThresholdmV / 1000.f);
 		m_ChartDataWnd_Detect.m_HZtags.AddTag(m_pDetectParms->detectThreshold, 0);
 	}
 
@@ -453,8 +453,9 @@ void CViewSpikeDetection::updateDataFile(BOOL bUpdateInterface)
 		auto b_present = FALSE;				// pessimistic
 		for (auto j = lnvchans - 1; j >= 0; j--)// check all channels / display list
 		{									// test if this data chan is present + no transf
-			if (m_ChartDataWnd_Source.GetChanlistSourceChan(j) == i
-				&& m_ChartDataWnd_Source.GetChanlistTransformMode(j) == 0)
+			CChanlistItem* pchan = m_ChartDataWnd_Source.GetChanlistItem(j);
+			if (pchan->GetSourceChan() == i
+				&& pchan->GetTransformMode() == 0)
 			{
 				b_present = TRUE;			// the wanted chan is present: stop loopint through disp list
 				break;						// and examine next doc channel
@@ -465,7 +466,7 @@ void CViewSpikeDetection::updateDataFile(BOOL bUpdateInterface)
 			m_ChartDataWnd_Source.AddChanlistItem(i, 0);	// add this channel
 			lnvchans++;
 		}
-		m_ChartDataWnd_Source.SetChanlistColor(i, i);
+		m_ChartDataWnd_Source.GetChanlistItem(i)->SetColor(i);
 	}
 
 	// if browse through another file ; keep previous display parameters & load data
@@ -486,7 +487,7 @@ void CViewSpikeDetection::updateDataFile(BOOL bUpdateInterface)
 		// adjust scroll bar (size of button and left/right limits)
 		m_filescroll_infos.fMask = SIF_ALL;
 		m_filescroll_infos.nMin = 0;
-		m_filescroll_infos.nMax = p_data_file->GetDOCchanLength() - 1;
+		m_filescroll_infos.nMax = m_ChartDataWnd_Detect.GetDataLast();
 		m_filescroll_infos.nPos = 0;
 		m_filescroll_infos.nPage = m_ChartDataWnd_Detect.GetDataLast() - m_ChartDataWnd_Detect.GetDataFirst() + 1;
 		m_filescroll.SetScrollInfo(&m_filescroll_infos);
@@ -667,8 +668,8 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	// ----------------------------- move horizontal cursor / source data
 	case HINT_MOVEHZTAG:
 		m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.m_HZtags.GetValue(threshold);
-		m_thresholdval = m_ChartDataWnd_Detect.ConvertChanlistDataBinsToMilliVolts(0, 
-			m_ChartDataWnd_Detect.m_HZtags.GetValue(threshold));
+		m_thresholdval = m_ChartDataWnd_Detect.GetChanlistItem(0)
+			->ConvertDataBinsToVolts(m_ChartDataWnd_Detect.m_HZtags.GetValue(threshold)) * 1000.f;
 		m_pDetectParms->detectThresholdmV = m_thresholdval;
 		mm_thresholdval.m_bEntryDone = TRUE;
 		OnEnChangeThresholdval();
@@ -857,14 +858,6 @@ void CViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	switch (nSBCode)
 	{
 	case SB_THUMBTRACK:
-		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL);
-		l_first = m_filescroll_infos.nPos;
-		l_last = l_first + m_filescroll_infos.nPage - 1;
-		m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last);
-		m_ChartDataWnd_Source.GetDataFromDoc(l_first, l_last);
-		updateLegends();
-		break;
-
 	case SB_THUMBPOSITION:
 		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL);
 		l_first = m_filescroll_infos.nPos;
@@ -1039,7 +1032,8 @@ void CViewSpikeDetection::OnSelchangeDetectchan()
 	m_pDetectParms->detectChan = m_CBdetectChan.GetCurSel();
 	m_pDetectParms->bChanged = TRUE;
 	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, m_pDetectParms->detectChan, m_pDetectParms->detectTransform);
-	m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.ConvertChanlistVoltstoDataBins(0, m_pDetectParms->detectThresholdmV / 1000.f);
+	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+	m_pDetectParms->detectThreshold = pchan->ConvertVoltsToDataBins(m_pDetectParms->detectThresholdmV / 1000.f);
 	m_ChartDataWnd_Detect.MoveHZtagtoVal(0, m_pDetectParms->detectThreshold);
 	m_ChartDataWnd_Detect.GetDataFromDoc(); 
 	m_ChartDataWnd_Detect.AutoZoomChan(0);
@@ -1475,8 +1469,9 @@ void CViewSpikeDetection::OnFormatXscale()
 	if (pFocus != nullptr && m_ChartDataWnd_Detect.m_hWnd == pFocus->m_hWnd)
 	{
 		dlg.m_xparam = FALSE;
-		dlg.m_yzero = m_ChartDataWnd_Detect.GetChanlistYzero(m_pDetectParms->detectChan);
-		dlg.m_yextent = m_ChartDataWnd_Detect.GetChanlistYextent(m_pDetectParms->detectChan);
+		CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(m_pDetectParms->detectChan);
+		dlg.m_yzero = pchan->GetYzero();
+		dlg.m_yextent = pchan->GetYextent();
 		dlg.m_bDisplaysource = TRUE;
 	}
 	else if (pFocus != nullptr && m_ChartSpkWnd_Bar.m_hWnd == pFocus->m_hWnd)
@@ -1499,8 +1494,9 @@ void CViewSpikeDetection::OnFormatXscale()
 	{
 		if (dlg.m_bDisplaysource)
 		{
-			m_ChartDataWnd_Detect.SetChanlistYzero(0, dlg.m_yzero);
-			m_ChartDataWnd_Detect.SetChanlistYextent(0, dlg.m_yextent);
+			CChanlistItem* chan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+			chan->SetYzero(dlg.m_yzero);
+			chan->SetYextent(dlg.m_yextent);
 			m_ChartDataWnd_Detect.Invalidate();
 		}
 		if (dlg.m_bDisplaybars)
@@ -1797,7 +1793,8 @@ void CViewSpikeDetection::OnEnChangeThresholdval()
 		{
 			m_thresholdval = thresholdval;
 			m_pDetectParms->detectThresholdmV = thresholdval;
-			m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.ConvertChanlistVoltstoDataBins(0, m_thresholdval / 1000.f);
+			CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+			m_pDetectParms->detectThreshold = pchan->ConvertVoltsToDataBins(m_thresholdval / 1000.f);
 			m_ChartDataWnd_Detect.MoveHZtagtoVal(0, m_pDetectParms->detectThreshold);
 		}
 
@@ -2074,7 +2071,7 @@ void CViewSpikeDetection::updateCB()
 	m_CBdetectChan.SetCurSel(m_pDetectParms->detectChan);
 	m_CBtransform.SetCurSel(m_pDetectParms->detectTransform);
 	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, m_pDetectParms->detectChan, m_pDetectParms->detectTransform);
-	m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.ConvertChanlistVoltstoDataBins(0, m_thresholdval / 1000.f);
+	m_pDetectParms->detectThreshold = m_ChartDataWnd_Detect.GetChanlistItem(0)->ConvertVoltsToDataBins(m_thresholdval / 1000.f);
 	m_ChartDataWnd_Detect.m_HZtags.SetTagChan(0, 0);
 	m_ChartDataWnd_Detect.m_HZtags.SetTagVal(0, m_pDetectParms->detectThreshold);
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
@@ -2299,8 +2296,9 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pDataChartW
 		const auto imax = pDataChartWnd->GetChanlistSize();	// number of data channels
 		for (auto ichan = 0; ichan < imax; ichan++)		// loop
 		{
+			CChanlistItem* pchan = pDataChartWnd->GetChanlistItem(ichan);
 			// skip channels not printed
-			if (!pDataChartWnd->GetChanlistflagPrintVisible(ichan))
+			if (!pchan->GetflagPrintVisible())
 				continue;
 			// boucler sur les commentaires de chan n a chan 0...
 			cs.Format(_T("chan#%i "), ichan);			// channel number
@@ -2317,13 +2315,13 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, CChartDataWnd* pDataChartW
 			if (options_viewdata->bChansComment)
 			{
 				str_comment += tab;
-				str_comment += pDataChartWnd->GetChanlistComment(ichan);
+				str_comment += pchan->GetComment();
 			}
 			str_comment += rc;
 			// print amplifiers settings (gain & filter), next line
 			if (options_viewdata->bChanSettings)
 			{
-				const WORD channb = pDataChartWnd->GetChanlistSourceChan(ichan);
+				const WORD channb = pchan->GetSourceChan();
 				const auto pchan_array = GetDocument()->m_pDat->GetpWavechanArray();
 				const auto p_chan = pchan_array->Get_p_channel(channb);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"),
@@ -2676,7 +2674,7 @@ void CViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			p_dc->IntersectClipRect(&m_rData);			// (eventually)
 
 		// print detected channel only data
-		m_ChartDataWnd_Detect.SetChanlistflagPrintVisible(0, chan0Drawmode);
+		m_ChartDataWnd_Detect.GetChanlistItem(0)->SetflagPrintVisible(chan0Drawmode);
 		m_ChartDataWnd_Detect.ResizeChannels(m_rData.Width(), 0);
 		m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last);	// load data from file
 		m_ChartDataWnd_Detect.Print(p_dc, &m_rData);			// print data
@@ -2756,12 +2754,12 @@ void CViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		if (ifile != filenumber)
 		{
 			updateFileParameters(FALSE);
-			m_ChartDataWnd_Detect.SetChanlistflagPrintVisible(0, 0); // cancel printing channel zero
+			m_ChartDataWnd_Detect.GetChanlistItem(0)->SetflagPrintVisible(0); // cancel printing channel zero
 		}
 	}
 
 	// end of file loop : restore initial conditions
-	m_ChartDataWnd_Detect.SetChanlistflagPrintVisible(0, 1);
+	m_ChartDataWnd_Detect.GetChanlistItem(0)->SetflagPrintVisible(1);
 	if (!options_viewdata->bFilterDataSource)
 		m_ChartDataWnd_Detect.SetChanlistTransformMode(0, m_pDetectParms->detectTransform);
 
@@ -2850,10 +2848,10 @@ void CViewSpikeDetection::UpdateGainScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 		m_scrolly.SetScrollPos(
-			MulDiv(m_ChartDataWnd_Detect.GetChanlistYextent(m_ichanselected), 100, YEXTENT_MAX) + 50, TRUE);
+			MulDiv(m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 	else
 		m_scrolly2.SetScrollPos(
-			MulDiv(m_ChartDataWnd_Source.GetChanlistYextent(m_ichanselected2), 100, YEXTENT_MAX) + 50, TRUE);
+			MulDiv(m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected2)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 }
 
 void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
@@ -2865,7 +2863,7 @@ void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 		p_view = &m_ChartDataWnd_Source;
 		ichan = m_ichanselected2;
 	}
-	int lSize = p_view->GetChanlistYextent(ichan);
+	int lSize = p_view->GetChanlistItem(ichan)->GetYextent();
 
 	// get corresponding data
 	switch (nSBCode)
@@ -2883,7 +2881,7 @@ void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 	// change y extent
 	if (lSize > 0) //&& lSize<=YEXTENT_MAX)
 	{
-		p_view->SetChanlistYextent(ichan, lSize);
+		p_view->GetChanlistItem(ichan)->SetYextent(lSize);
 		updateLegends();
 	}
 	// update scrollBar
@@ -2895,14 +2893,15 @@ void CViewSpikeDetection::UpdateBiasScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 	{
-		const auto i_pos = int((m_ChartDataWnd_Detect.GetChanlistYzero(m_ichanselected) - m_ChartDataWnd_Detect.GetChanlistBinZero(m_ichanselected))
+		CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected);
+		const auto i_pos = int((pchan->GetYzero() - pchan->GetDataBinZero())
 			* 100 / int(YZERO_SPAN)) + int(50);
 		m_scrolly.SetScrollPos(i_pos, TRUE);
 	}
 	else
 	{
-		const auto i_pos = static_cast<int>((m_ChartDataWnd_Source.GetChanlistYzero(m_ichanselected2) - m_ChartDataWnd_Source.GetChanlistBinZero(
-			m_ichanselected2))
+		CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected2);
+		const auto i_pos = int((pchan->GetYzero() - pchan->GetDataBinZero())
 			* 100 / int(YZERO_SPAN)) + int(50);
 		m_scrolly2.SetScrollPos(i_pos, TRUE);
 	}
@@ -2918,8 +2917,9 @@ void CViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 		ichan = m_ichanselected2;
 	}
 
-	auto l_size = p_view->GetChanlistYzero(ichan) - p_view->GetChanlistBinZero(ichan);
-	const auto yextent = p_view->GetChanlistYextent(ichan);
+	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(ichan);
+	auto l_size = pchan->GetYzero() - pchan->GetDataBinZero();
+	const auto yextent = pchan->GetYextent();
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -2937,7 +2937,8 @@ void CViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 	// try to read data with this new size
 	if (l_size > YZERO_MIN && l_size < YZERO_MAX)
 	{
-		p_view->SetChanlistYzero(ichan, l_size + p_view->GetChanlistBinZero(ichan));
+		CChanlistItem* chan = p_view->GetChanlistItem(ichan);
+		chan->SetYzero(l_size + chan->GetDataBinZero());
 		p_view->Invalidate();
 	}
 	// update scrollBar
@@ -3034,11 +3035,12 @@ void CViewSpikeDetection::OnEnChangeSpkWndLength()
 void CViewSpikeDetection::OnBnClickedLocatebttn()
 {
 	int max, min;
-	m_ChartDataWnd_Detect.GetChanlistMaxMin(0, &max, &min);
+	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+	pchan->GetMaxMin(&max, &min);
 
 	// modify value
 	m_pDetectParms->detectThreshold = (max + min) / 2;
-	m_thresholdval = m_ChartDataWnd_Detect.ConvertChanlistDataBinsToMilliVolts(0, m_pDetectParms->detectThreshold);
+	m_thresholdval = pchan->ConvertDataBinsToVolts(m_pDetectParms->detectThreshold) * 1000.f;
 	m_pDetectParms->detectThresholdmV = m_thresholdval;
 	// update user-interface: edit control and threshold bar in sourceview
 	CString cs;
@@ -3110,14 +3112,16 @@ void CViewSpikeDetection::updateDetectionControls()
 
 	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, detectchan, m_pSpkList->GetdetectTransform());
 	m_CBtransform2.SetCurSel(m_pSpkList->GetextractTransform());
-	m_ChartDataWnd_Detect.SetChanlistColor(0, detectchan);
+
+	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+	pchan->SetColor(detectchan);
 
 	m_ChartDataWnd_Detect.GetDataFromDoc(); 		// load data
 	//if (options_viewdata->bSplitCurves)
 	//	m_displayDataFile.SplitChans();
 
 	const auto ithreshold = m_pSpkList->GetdetectThreshold();
-	m_thresholdval = m_ChartDataWnd_Detect.ConvertChanlistDataBinsToMilliVolts(0, ithreshold);
+	m_thresholdval = pchan->ConvertDataBinsToVolts(ithreshold)*1000.f;
 	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
 		m_ChartDataWnd_Detect.m_HZtags.AddTag(ithreshold, 0);
 	else

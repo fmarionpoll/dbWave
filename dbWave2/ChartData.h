@@ -8,14 +8,12 @@
 
 class CChartDataWnd : public CChartWnd
 {
-	// Construction
 public:
 	CChartDataWnd();
 	virtual		~CChartDataWnd() override;
 	DECLARE_SERIAL(CChartDataWnd)
 	void		Serialize(CArchive& ar) override;
 
-	// data display operations
 public:
 	BOOL		GetDataFromDoc();
 	BOOL		GetDataFromDoc(long l_first);
@@ -91,46 +89,20 @@ public:
 	void 		RemoveAllChanlistItems();
 	int  		AddChanlistItem(int ns, int mode);
 	int  		RemoveChanlistItem(WORD i);
+	inline CChanlistItem* GetChanlistItem(int i) const { return chanlistitem_ptr_array.GetAt(i); }
 
-	void		SetChanlistYzero(WORD i, int zero) { chanlistitem_ptr_array[i]->SetYzero(zero); }
-	void		SetChanlistYextent(WORD i, int yextent) { chanlistitem_ptr_array[i]->SetYextent(yextent); }
-	void		SetChanlistComment(WORD i, CString& comment) { chanlistitem_ptr_array[i]->dl_comment = comment; }
-	void		SetChanlistColor(WORD i, int color) { chanlistitem_ptr_array[i]->SetColor(color); }
-	void		SetChanlistPenWidth(WORD i, WORD penwidth) { chanlistitem_ptr_array[i]->SetPenWidth(penwidth); }
-	void		SetChanlistflagPrintVisible(WORD i, WORD drawmode) { chanlistitem_ptr_array[i]->SetflagPrintVisible(drawmode); }
 	int			SetChanlistTransformMode(WORD i, int imode);
 	int			SetChanlistSourceChan(WORD i, int ns);
 	void		SetChanlistOrdinates(WORD i, int chan, int transform);
 	void		SetChanlistVoltsExtent(int chan, const float* pvalue);
 	void		SetChanlistVoltsZero(int chan, const float* pvalue);
 
-	CChanlistItem* GetChanlistItem(int i) const { return chanlistitem_ptr_array.GetAt(i); }
-	float		GetChanlistVoltsExtent(int chan) { return chanlistitem_ptr_array[chan]->GetDataVoltsSpan(); }
-	CString		GetChanlistComment(WORD i) { return chanlistitem_ptr_array[i]->dl_comment; }
-	float 		GetChanlistVoltsperDataBin(WORD i) { return chanlistitem_ptr_array[i]->GetVoltsperDataBin(); }
-	int 		GetChanlistYextent(WORD i) { return chanlistitem_ptr_array[i]->GetYextent(); }
-	int 		GetChanlistYzero(WORD i) { return chanlistitem_ptr_array[i]->GetYzero(); }
-
-	float 		GetChanlistVoltsperPixel(WORD i) { return ((float)chanlistitem_ptr_array[i]->GetYextent() * chanlistitem_ptr_array[i]->GetVoltsperDataBin() / -m_yVE); }
-	float 		GetTimeperPixel() { return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)GetRectWidth(); }
-	int			GetChanlistColor(WORD i) { return chanlistitem_ptr_array[i]->GetColor(); }
-	WORD		GetChanlistPenWidth(WORD i) { return chanlistitem_ptr_array[i]->GetPenWidth(); }
-	int			GetChanlistYsource(WORD i) { return chanlistitem_ptr_array[i]->pEnvelopeOrdinates->GetSourceChan(); }
-	int 		GetChanlistYmode(WORD i) { return chanlistitem_ptr_array[i]->pEnvelopeOrdinates->GetSourceMode(); }
-	WORD		GetChanlistflagPrintVisible(WORD i) { return chanlistitem_ptr_array[i]->GetflagPrintVisible(); }
-
-	int			GetChanlistBinZero(WORD i) { return chanlistitem_ptr_array[i]->GetDataBinZero(); }
-	int			GetChanlistBinSpan(WORD i) { return chanlistitem_ptr_array[i]->GetDataBinSpan(); }
-
-	int 		GetChanlistSourceChan(WORD i) { return chanlistitem_ptr_array[i]->pEnvelopeOrdinates->GetSourceChan(); }
-	int 		GetChanlistTransformMode(WORD i) { return chanlistitem_ptr_array[i]->pEnvelopeOrdinates->GetSourceMode(); }
-	int			GetChanlistBinAt(WORD i, int index) { return chanlistitem_ptr_array[i]->pEnvelopeOrdinates->GetPointAt(index); }
-	void  		GetChanlistMaxMin(WORD i, int* pmax, int* pmin) { chanlistitem_ptr_array[i]->pEnvelopeOrdinates->GetEnvelopeMaxMin(pmax, pmin); }
-
-	float		ConvertChanlistDataBinsToVolts(WORD i, int bins) { return chanlistitem_ptr_array[i]->ConvertDataBinsToVolts(bins); }
-	float		ConvertChanlistDataBinsToMilliVolts(WORD i, int bins) { return (chanlistitem_ptr_array[i]->ConvertDataBinsToVolts(bins) * 1000.f); }
-	int			ConvertChanlistVoltstoDataBins(WORD i, float nvolts) { return chanlistitem_ptr_array[i]->ConvertVoltsToDataBins(nvolts); }
-
+	float 		GetChanlistVoltsperPixel(WORD i) {
+						CChanlistItem* pchan = GetChanlistItem(i);
+						return ((float)pchan->GetYextent() * pchan->GetVoltsperDataBin() / -m_yVE);}
+	float 		GetTimeperPixel() { 
+						return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)GetRectWidth(); }
+	
 	int			GetChanlistBintoPixel(WORD chan, int bin) { return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_yVE, chanlistitem_ptr_array[chan]->GetYextent()) + m_yVO; }
 	int			GetChanlistPixeltoBin(WORD chan, int pixels) { return MulDiv(pixels - m_yVO, chanlistitem_ptr_array[chan]->GetYextent(), m_yVE) + chanlistitem_ptr_array[chan]->GetYzero(); }
 

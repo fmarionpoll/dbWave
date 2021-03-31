@@ -130,7 +130,8 @@ void CViewSpikeSort::DefineSubClassedItems()
 	VERIFY(mm_spikenoclass.SubclassDlgItem(IDC_SPIKECLASS, this));
 	mm_spikenoclass.ShowScrollBar(SB_VERT);
 
-	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100, FALSE);
+	VERIFY(m_filescroll.SubclassDlgItem(IDC_FILESCROLL, this));
+	m_filescroll.SetScrollRange(0, 100, FALSE);
 }
 
 void CViewSpikeSort::DefineStretchParameters()
@@ -141,7 +142,7 @@ void CViewSpikeSort::DefineStretchParameters()
 	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_DISPLAYPARM, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_DISPLAYBARS, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_SCROLLBAR1, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_EDIT3, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
 
@@ -359,18 +360,24 @@ void CViewSpikeSort::updateFileParameters()
 	m_t1 = (m_psC->ileft * m_tunit) / m_pSpkList->GetAcqSampRate();
 	m_t2 = (m_psC->iright * m_tunit) / m_pSpkList->GetAcqSampRate();
 
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
 	m_ChartSpkWnd_Bar.SetSourceData(m_pSpkList, GetDocument());
-	xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument());
-
+	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	
+	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
 	m_ChartSpkWnd_Shape.m_VTtags.SetTagVal(m_spkformtagleft, m_psC->ileft);
 	m_ChartSpkWnd_Shape.m_VTtags.SetTagVal(m_spkformtagright, m_psC->iright);
 	m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
 
-	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-
+	xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument());
 	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+
+	m_filescroll_infos.fMask = SIF_ALL;
+	m_filescroll_infos.nMin = 0;
+	m_filescroll_infos.nMax = m_pSpkDoc->GetAcqSize() - 1;
+	m_filescroll_infos.nPos = 0;
+	m_filescroll_infos.nPage = m_pSpkDoc->GetAcqSize();
+	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 
 	updateLegends();
 
@@ -412,18 +419,20 @@ void CViewSpikeSort::updateLegends()
 	// update text abcissa and horizontal scroll position
 	m_timeFirst = m_lFirst / m_pSpkList->GetAcqSampRate();
 	m_timeLast = m_lLast / m_pSpkList->GetAcqSampRate();
-	updateScrollBar();
+	updateFileScroll();
 
 	if (4 != m_psC->iparameter)
 		xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
 	else
 		xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
-	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
-	m_ChartSpkWnd_Bar.SetTimeIntervals(m_lFirst, m_lLast);
-
 	xygraph_wnd_.Invalidate();
+
+	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Shape.Invalidate();
+
+	m_ChartSpkWnd_Bar.SetTimeIntervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Bar.Invalidate();
+
 	yhistogram_wnd_.Invalidate();
 
 	UpdateData(FALSE);	// copy view object to controls
@@ -1200,7 +1209,27 @@ void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
+	// trap messages from CScrollBarEx
+	CString cs;
+	switch (nSBCode)
+	{
+	case SB_THUMBTRACK:
+	case SB_THUMBPOSITION:
+		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL);
+		m_lFirst = m_filescroll_infos.nPos;
+		m_lLast = m_lFirst + m_filescroll_infos.nPage - 1;
+		break;
 
+	default:
+		scrollFile(nSBCode, nPos);
+		break;
+	}
+	updateLegends();
+}
+
+void CViewSpikeSort::scrollFile(UINT nSBCode, UINT nPos)
+{
+	auto b_result = FALSE;
 	// get corresponding data
 	const auto total_scroll = m_pSpkDoc->GetAcqSize();
 	const auto page_scroll = (m_lLast - m_lFirst);
@@ -1241,26 +1270,16 @@ void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		l_first = l_last - page_scroll;
 	}
 
-	// adjust display
-	if (l_first != m_lFirst)
-	{
-		m_lFirst = l_first;
-		m_lLast = l_last;
-		updateLegends();
-	}
-	else
-		updateScrollBar();
+	m_lFirst = l_first;
+	m_lLast = l_last;
 }
 
-void CViewSpikeSort::updateScrollBar()
+void CViewSpikeSort::updateFileScroll()
 {
-	GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_SHOW);
-	m_scroll_file_pos_infos_.fMask = SIF_ALL;
-	m_scroll_file_pos_infos_.nMin = 0;
-	m_scroll_file_pos_infos_.nMax = m_pSpkDoc->GetAcqSize() - 1;
-	m_scroll_file_pos_infos_.nPos = m_lFirst;
-	m_scroll_file_pos_infos_.nPage = m_lLast - m_lFirst;
-	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollInfo(&m_scroll_file_pos_infos_);
+	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
+	m_filescroll_infos.nPos = m_lFirst;
+	m_filescroll_infos.nPage = m_lLast - m_lFirst + 1;
+	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 
 void CViewSpikeSort::selectSpkList(int icursel)
