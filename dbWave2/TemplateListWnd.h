@@ -63,6 +63,7 @@ public:
 	void		SetTemplateclassID(int item, LPCTSTR pszType, int classID);
 
 	inline CTemplateWnd* GetTemplateWnd(int i) const { return templatewnd_ptr_array.GetAt(i); }
+	CTemplateWnd* GetTemplateWndForClass(int iclass);
 	inline int	GetTemplateLength() const { return m_tpllen; }
 	inline int	GetNtemplates() const { return GetItemCount(); }
 	inline int	GetTemplateclassID(int item) const { return templatewnd_ptr_array.GetAt(item)->m_classID; }

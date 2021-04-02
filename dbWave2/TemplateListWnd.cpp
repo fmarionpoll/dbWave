@@ -291,6 +291,12 @@ void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
 	}
 }
 
+CTemplateWnd* CTemplateListWnd::GetTemplateWndForClass(int iclass)
+{
+	CTemplateWnd* pTemplate = nullptr;
+	return pTemplate;
+}
+
 void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClasses, int minclassnb)
 {
 	// sort m_ptpl
