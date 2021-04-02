@@ -16,19 +16,20 @@ class CSpikeElemt : public CObject
 	DECLARE_SERIAL(CSpikeElemt)
 public:
 	CSpikeElemt();
-	CSpikeElemt(LONG time, WORD channel);
-	CSpikeElemt(LONG time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin);
+	CSpikeElemt(long time, WORD channel);
+	CSpikeElemt(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin);
+	virtual ~CSpikeElemt() override;
 
 	// Attributes
 private:
 	long	m_iitime;		// occurence time - multiply by rate to get time in seconds
 	int		m_class;		// spike class - init to zero at first
 	int		m_chanparm;		// spike detection array index
-	int		m_max;			// spike max	(used to scan rapidly to adjust display)
-	int		m_min;			// min value		(used to scan rapidly to adjust display)
+	int		m_max;			// spike max (used to scan rapidly to adjust display)
+	int		m_min;			// spike min (used to scan rapidly to adjust display)
 	int		m_dmaxmin;
 	int		m_offset;		// offset voltage pt 1
-	int		y1_ = 0;			// parameter measured and stored
+	int		y1_ = 0;		// parameter measured and stored
 	int		y2_ = 0;
 	int		dt_ = 0;
 
@@ -56,7 +57,6 @@ public:
 
 	// Implementation
 public:
-	virtual ~CSpikeElemt();
 	void	Read0(CArchive& ar);
-	void Serialize(CArchive& ar) override;
+	void	Serialize(CArchive& ar) override;
 };

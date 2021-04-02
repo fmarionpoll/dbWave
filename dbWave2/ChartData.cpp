@@ -637,18 +637,17 @@ BOOL CChartDataWnd::GetSmoothDataFromDoc(int ioption)
 			{
 				p_cont = envelope_ptr_array.GetAt(i_envelope);
 
-				const auto source_chan = p_cont->GetSourceChan();// get source channel
-				const auto itransf = p_cont->GetSourceMode();	// get transform mode
-				if (itransf > 0)							// if transformation, compute transf
+				const auto source_chan = p_cont->GetSourceChan();
+				const auto itransf = p_cont->GetSourceMode();
+				int intervals = nchans;
+				if (itransf > 0)						// if transformation, compute transf
 				{										// and then build envelope
 					lp_data = m_pDataFile->LoadTransfData(l_first, l_buf_chan_last, itransf, source_chan);
-					p_cont->FillEnvelopeWithSmoothMxMi(ipixel, lp_data, 1, npoints, b_new, ioption);
+					intervals = 1;
 				}
 				else									// no transformation: compute max min
-				{										// and then build envelope
 					lp_data = m_pDataFile->GetpRawDataElmt(source_chan, l_first);
-					p_cont->FillEnvelopeWithSmoothMxMi(ipixel, lp_data, nchans, npoints, b_new, ioption);
-				}
+				p_cont->FillEnvelopeWithSmoothMxMi(ipixel, lp_data, intervals, npoints, b_new, ioption);
 			}
 			b_new = FALSE;
 			l_first = l_buf_chan_last + 1;
@@ -845,6 +844,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2);
 	p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
 	p_dc->SetWindowExt(m_displayRect.Width(), m_displayRect.Height());
+
 	p_dc->SetWindowOrg(0, 0);
 
 	// display all channels
@@ -878,6 +878,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 
 		auto pY = chanlist_item->pEnvelopeOrdinates;
 		pY->ExportToOrdinates(m_PolyPoints);
+
 		for (auto j = 0; j < nelements; j++) {
 			const auto p_point = &m_PolyPoints[j];
 			p_point->y = MulDiv(short(p_point->y) - worg, yVE, wext);

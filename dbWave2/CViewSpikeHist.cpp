@@ -30,30 +30,6 @@ CViewSpikeHist::CViewSpikeHist()
 	: CDaoRecordView(CViewSpikeHist::IDD), m_pvdS(nullptr), mdPM(nullptr), m_bhistType(0), m_scrollFilePos_infos(),
 	m_nPSTH(0), m_nISI(0), m_logFont(), m_xfirst(0), m_xlast(0), m_logFontDisp()
 {
-	m_timefirst = 0.0f;
-	m_timelast = 2.5f;
-	m_spikeclass = 0;
-	m_dotheight = 0;
-	m_rowheight = 0;
-	m_binISIms = 0.0f;
-	m_nbinsISI = 0;
-	m_timebinms = 0.0f;
-	m_parrayISI = nullptr;
-	m_pPSTH = nullptr;
-	m_pISI = nullptr;
-	m_sizepPSTH = 0;
-	m_sizepISI = 0;
-	m_sizeparrayISI = 0;
-	m_initiated = FALSE;
-	m_pbitmap = nullptr;
-	m_displayRect = CRect(0, 0, 0, 0);
-	m_bmodified = TRUE;
-	m_nfiles = 1;
-	t1000 = 1000.f;
-	m_bPrint = FALSE;
-	m_rectratio = 100;
-	p_spike_doc_ = nullptr;
-	m_binit = FALSE;
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
@@ -68,8 +44,6 @@ CViewSpikeHist::~CViewSpikeHist()
 
 BOOL CViewSpikeHist::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: Modify the Window class or styles here by modifying
-		//  the CREATESTRUCT cs
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
@@ -91,30 +65,30 @@ BEGIN_MESSAGE_MAP(CViewSpikeHist, CDaoRecordView)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
-	ON_EN_CHANGE(IDC_TIMEFIRST, OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, OnEnChangeTimelast)
-	ON_EN_CHANGE(IDC_EDIT4, OnEnChangeTimebin)
-	ON_EN_CHANGE(IDC_BINSIZE, OnEnChangebinISI)
-	ON_BN_CLICKED(IDC_CHECK1, OnClickAllfiles)
-	ON_BN_CLICKED(IDC_RADIOABSOLUTE, OnabsoluteTime)
-	ON_BN_CLICKED(IDC_RADIORELATIVE, OnrelativeTime)
-	ON_BN_CLICKED(IDC_RADIOONECLASS, OnClickOneclass)
-	ON_BN_CLICKED(IDC_RADIOALLCLASSES, OnClickAllclasses)
-	ON_EN_CHANGE(IDC_SPIKECLASS, OnEnChangeSpikeclass)
-	ON_EN_CHANGE(IDC_EDIT1, OnEnChangenbins)
-	ON_EN_CHANGE(IDC_EDIT3, OnEnChangerowheight)
-	ON_EN_CHANGE(IDC_EDIT2, OnEnChangeDotheight)
-	ON_COMMAND(ID_FORMAT_HISTOGRAM, OnFormatHistogram)
-	ON_BN_CLICKED(IDC_CHECK2, OnClickCycleHist)
-	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
-	ON_LBN_SELCHANGE(IDC_LIST1, OnSelchangeHistogramtype)
-	ON_EN_CHANGE(IDC_EDITNSTIPERCYCLE, OnEnChangeEditnstipercycle)
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_EDITLOCKONSTIM, OnEnChangeEditlockonstim)
-	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeHist::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeHist::OnTcnSelchangeTab1)
+	ON_EN_CHANGE(IDC_TIMEFIRST,			&CViewSpikeHist::OnEnChangeTimefirst)
+	ON_EN_CHANGE(IDC_TIMELAST,			&CViewSpikeHist::OnEnChangeTimelast)
+	ON_EN_CHANGE(IDC_EDIT4,				&CViewSpikeHist::OnEnChangeTimebin)
+	ON_EN_CHANGE(IDC_BINSIZE,			&CViewSpikeHist::OnEnChangebinISI)
+	ON_BN_CLICKED(IDC_CHECK1,			&CViewSpikeHist::OnClickAllfiles)
+	ON_BN_CLICKED(IDC_RADIOABSOLUTE,	&CViewSpikeHist::OnabsoluteTime)
+	ON_BN_CLICKED(IDC_RADIORELATIVE,	&CViewSpikeHist::OnrelativeTime)
+	ON_BN_CLICKED(IDC_RADIOONECLASS,	&CViewSpikeHist::OnClickOneclass)
+	ON_BN_CLICKED(IDC_RADIOALLCLASSES,	&CViewSpikeHist::OnClickAllclasses)
+	ON_EN_CHANGE(IDC_SPIKECLASS,		&CViewSpikeHist::OnEnChangeSpikeclass)
+	ON_EN_CHANGE(IDC_EDIT1,				&CViewSpikeHist::OnEnChangenbins)
+	ON_EN_CHANGE(IDC_EDIT3,				&CViewSpikeHist::OnEnChangerowheight)
+	ON_EN_CHANGE(IDC_EDIT2,				&CViewSpikeHist::OnEnChangeDotheight)
+	ON_COMMAND(ID_FORMAT_HISTOGRAM,		&CViewSpikeHist::OnFormatHistogram)
+	ON_BN_CLICKED(IDC_CHECK2,			&CViewSpikeHist::OnClickCycleHist)
+	ON_COMMAND(ID_EDIT_COPY,			&CViewSpikeHist::OnEditCopy)
+	ON_LBN_SELCHANGE(IDC_LIST1,			&CViewSpikeHist::OnSelchangeHistogramtype)
+	ON_EN_CHANGE(IDC_EDITNSTIPERCYCLE,	&CViewSpikeHist::OnEnChangeEditnstipercycle)
+	ON_EN_CHANGE(IDC_EDITLOCKONSTIM,	&CViewSpikeHist::OnEnChangeEditlockonstim)
+	ON_COMMAND(ID_FILE_PRINT,			CView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW,	CView::OnFilePrintPreview)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1,		&CViewSpikeHist::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1,	&CViewSpikeHist::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -141,7 +115,7 @@ void CViewSpikeHist::OnInitialUpdate()
 
 	// create local fonts
 	memset(&m_logFontDisp, 0, sizeof(LOGFONT));		// prepare font
-	lstrcpy(m_logFontDisp.lfFaceName, _T("Arial"));		// Arial font
+	lstrcpy(m_logFontDisp.lfFaceName, _T("Arial"));	// Arial font
 	m_logFontDisp.lfHeight = 15;					// font height
 	/*BOOL flag = */m_fontDisp.CreateFontIndirect(&m_logFontDisp);
 
@@ -181,7 +155,7 @@ void CViewSpikeHist::OnInitialUpdate()
 	m_topleft.x = rect1.left - rect0.left + 1;
 	m_topleft.y = rect1.top - rect0.top + 1;
 	m_initiated = TRUE;
-	ShowControls(m_pvdS->bhistType);
+	showControls(m_pvdS->bhistType);
 
 	// attach controls to stretch
 	m_stretch.AttachParent(this);		// attach formview pointer
@@ -200,8 +174,8 @@ void CViewSpikeHist::OnInitialUpdate()
 	}
 	p_spike_doc_ = p_dbwave_doc->m_pSpk;
 	p_spike_doc_->GetSpkList_Current();
-	OnDisplay();
-	SelectSpkList(p_spike_doc_->GetSpkList_CurrentIndex(), TRUE);
+	buildDataAndDisplay();
+	selectSpkList(p_spike_doc_->GetSpkList_CurrentIndex(), TRUE);
 }
 
 void CViewSpikeHist::OnSize(UINT nType, int cx, int cy)
@@ -253,8 +227,8 @@ void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		break;
 	case HINT_DOCHASCHANGED:		// file has changed?
 	case HINT_DOCMOVERECORD:
-		SelectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
-		OnDisplay();
+		selectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
+		buildDataAndDisplay();
 		break;
 
 	default:
@@ -274,8 +248,8 @@ BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand)
 
 	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	if (!m_pvdS->ballfiles)
-		OnDisplay();
-	SelectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
+		buildDataAndDisplay();
+	selectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
 	return flag;
 }
 
@@ -338,7 +312,7 @@ void CViewSpikeHist::OnEnChangeTimefirst()
 		m_pvdS->timestart = m_timefirst;
 		UpdateData(FALSE);
 		if (timefirst != m_timefirst)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
@@ -373,7 +347,7 @@ void CViewSpikeHist::OnEnChangeTimelast()
 		m_pvdS->timeend = m_timelast;
 		UpdateData(FALSE);
 		if (timelast != m_timelast)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
@@ -403,7 +377,7 @@ void CViewSpikeHist::OnEnChangeTimebin()
 		m_pvdS->timebin = m_timebinms / t1000;
 		UpdateData(FALSE);
 		if (binms != m_timebinms)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
@@ -433,7 +407,7 @@ void CViewSpikeHist::OnEnChangebinISI()
 		m_pvdS->binISI = m_binISIms / t1000;
 		UpdateData(FALSE);
 		if (binms != m_binISIms)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
@@ -463,15 +437,15 @@ void CViewSpikeHist::OnEnChangeSpikeclass()
 		m_pvdS->classnb = m_spikeclass;
 		UpdateData(FALSE);
 		if (spikeclassoption != m_spikeclass)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
-void CViewSpikeHist::OnDisplay()
+void CViewSpikeHist::buildDataAndDisplay()
 {
 	if (!m_binit)
 		return;
-	BuildData();						// build histogram(s)
+	buildData();						// build histogram(s)
 	m_bmodified = TRUE;					// force display
 	InvalidateRect(&m_displayRect);		// display
 }
@@ -517,13 +491,13 @@ void CViewSpikeHist::OnDraw(CDC* p_dc)
 		case 0:
 		case 1:
 		case 2:
-			DisplayHistogram(&dcMem, &rect);
+			displayHistogram(&dcMem, &rect);
 			break;
 		case 3:
-			DisplayDot(&dcMem, &rect);
+			displayDot(&dcMem, &rect);
 			break;
 		case 4:
-			DisplayPSTHAutoc(&dcMem, &rect);
+			displayPSTHAutoc(&dcMem, &rect);
 			break;
 		default:
 			break;
@@ -552,17 +526,13 @@ void CViewSpikeHist::OnDraw(CDC* p_dc)
 	dcMem.SelectObject(poldbitmap);		// release bitmap
 }
 
-void CViewSpikeHist::GetFileInfos(CString& str_comment)
+void CViewSpikeHist::getFileInfos(CString& str_comment)
 {
 	if (m_nfiles == 1)
 	{
 		const CString tab("    ");			// use 4 spaces as tabulation character
 		const CString rc("\n");				// next line
-		str_comment += "Title:";
-		p_spike_doc_ = GetDocument()->m_pSpk;
-		//str_comment += m_pSpkDoc->GetAcqComment();
-		str_comment += rc;
-		if (m_bPrint)				// print document's infos
+		if (m_bPrint)
 		{
 			if (mdPM->bDocName || mdPM->bAcqDateTime)// print doc infos?
 			{
@@ -594,7 +564,7 @@ void CViewSpikeHist::OnClickAllfiles()
 		m_pvdS->ballfiles = FALSE;
 		m_nfiles = 1;
 	}
-	OnDisplay();
+	buildDataAndDisplay();
 }
 
 void CViewSpikeHist::OnClickCycleHist()
@@ -607,7 +577,7 @@ void CViewSpikeHist::OnClickCycleHist()
 	}
 	else
 		m_pvdS->bCycleHist = FALSE;
-	OnDisplay();
+	buildDataAndDisplay();
 }
 
 void CViewSpikeHist::OnClickOneclass()
@@ -616,7 +586,7 @@ void CViewSpikeHist::OnClickOneclass()
 	{
 		m_pvdS->spikeclassoption = TRUE;
 		(CWnd*)GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
-		OnDisplay();
+		buildDataAndDisplay();
 	}
 }
 
@@ -626,7 +596,7 @@ void CViewSpikeHist::OnClickAllclasses()
 	{
 		m_pvdS->spikeclassoption = FALSE;
 		(CWnd*)GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
-		OnDisplay();
+		buildDataAndDisplay();
 	}
 }
 
@@ -635,7 +605,7 @@ void CViewSpikeHist::OnabsoluteTime()
 	if (!m_pvdS->babsolutetime)
 	{
 		m_pvdS->babsolutetime = TRUE;
-		OnDisplay();
+		buildDataAndDisplay();
 	}
 }
 
@@ -644,11 +614,11 @@ void CViewSpikeHist::OnrelativeTime()
 	if (m_pvdS->babsolutetime)
 	{
 		m_pvdS->babsolutetime = FALSE;
-		OnDisplay();
+		buildDataAndDisplay();
 	}
 }
 
-void CViewSpikeHist::ShowControls(int iselect)
+void CViewSpikeHist::showControls(int iselect)
 {
 	m_bhistType = iselect;
 	switch (iselect)
@@ -736,7 +706,7 @@ void CViewSpikeHist::OnEnChangenbins()
 		m_pvdS->nbinsISI = m_nbinsISI;
 		UpdateData(FALSE);
 		if (nbins != m_nbinsISI)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
@@ -766,7 +736,7 @@ void CViewSpikeHist::OnEnChangerowheight()
 		m_pvdS->dotlineheight = m_rowheight + m_pvdS->dotheight;
 		UpdateData(FALSE);
 		if (rowheight != m_rowheight)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
@@ -797,7 +767,7 @@ void CViewSpikeHist::OnEnChangeDotheight()
 		m_pvdS->dotlineheight = m_rowheight + m_dotheight;
 		UpdateData(FALSE);
 		if (dotheight != m_dotheight)
-			OnDisplay();
+			buildDataAndDisplay();
 	}
 }
 
@@ -832,13 +802,13 @@ void CViewSpikeHist::OnEditCopy()
 	case 0:
 	case 1:
 	case 2:
-		DisplayHistogram(&m_dc, &rect);
+		displayHistogram(&m_dc, &rect);
 		break;
 	case 3:
-		DisplayDot(&m_dc, &rect);
+		displayDot(&m_dc, &rect);
 		break;
 	case 4:
-		DisplayPSTHAutoc(&m_dc, &rect);
+		displayPSTHAutoc(&m_dc, &rect);
 		break;
 	default:
 		break;
@@ -982,7 +952,7 @@ void CViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		if (m_nfiles == 1) //??? (m_nfiles > 1)
 		{
 			p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
-			BuildData();
+			buildData();
 		}
 		// print the histogram
 		switch (m_bhistType)
@@ -990,13 +960,13 @@ void CViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		case 0:
 		case 1:
 		case 2:
-			DisplayHistogram(p_dc, &r_where);
+			displayHistogram(p_dc, &r_where);
 			break;
 		case 3:
-			DisplayDot(p_dc, &r_where);
+			displayDot(p_dc, &r_where);
 			break;
 		case 4:
-			DisplayPSTHAutoc(p_dc, &r_where);
+			displayPSTHAutoc(p_dc, &r_where);
 			break;
 		default:
 			break;
@@ -1055,11 +1025,11 @@ void CViewSpikeHist::OnFormatHistogram()
 		m_pvdS->crStimFill = dlg.m_crStimFill;
 		m_pvdS->crStimBorder = dlg.m_crStimBorder;
 		m_pvdS->crChartArea = dlg.m_crChartArea;
-		OnDisplay();
+		buildDataAndDisplay();
 	}
 }
 
-void CViewSpikeHist::BuildData()
+void CViewSpikeHist::buildData()
 {
 	auto nbins = static_cast<int>((m_timelast - m_timefirst) * t1000 / m_timebinms);
 	if (nbins <= 0)
@@ -1280,7 +1250,7 @@ void CViewSpikeHist::BuildData()
 // output (modified internal parameters)
 //		m_rectratio	 % of histogram height versus plotting area
 
-long CViewSpikeHist::PlotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, long* phistog0, int orientation, int btype)
+long CViewSpikeHist::plotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, long* phistog0, int orientation, int btype)
 {
 	CPen penbars;
 	penbars.CreatePen(PS_SOLID, 0, m_pvdS->crHistBorder);
@@ -1444,7 +1414,7 @@ long CViewSpikeHist::PlotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, lo
 			auto rect = *pdispRect;
 			rect.bottom = rect.bottom + tm.tmHeight + tm.tmDescent - 2;
 			rect.top = pdispRect->bottom + 2 * tm.tmDescent + 2;
-			DisplayStim(p_dc, &rect, &iistart, &iiend);
+			displayStim(p_dc, &rect, &iistart, &iiend);
 		}
 
 		// display histogram
@@ -1468,7 +1438,7 @@ long CViewSpikeHist::PlotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, lo
 	return max;
 }
 
-void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
+void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 {
 	CWaitCursor wait;
 
@@ -1495,7 +1465,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 
 	// output legends
 	CString str_comment;
-	GetFileInfos(str_comment);			// title
+	getFileInfos(str_comment);
 
 	// histogram type and bin value
 	m_xfirst = m_timefirst;				// abcissa first
@@ -1591,7 +1561,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 				{
 					CRect rect(rcleft, row + vt_bottom,
 						rectlen + rcleft, row + vt_top);
-					DisplayStim(p_dc, &rect, &ii_first, &ii_last);
+					displayStim(p_dc, &rect, &ii_first, &ii_last);
 				}
 				// display spikes
 				auto iitime0 = -1;
@@ -1699,7 +1669,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 
 				CRect rect(rcleft, row + dotlineheight - dotheight,
 					rectlen + rcleft, row + vt_bottom);
-				DisplayStim(p_dc, &rect, &istart, &iend);
+				displayStim(p_dc, &rect, &istart, &iend);
 			}
 		}
 
@@ -1715,7 +1685,7 @@ void CViewSpikeHist::DisplayDot(CDC* p_dc, CRect* pRect)
 	p_dc->SelectObject(pold_brush);
 }
 
-void CViewSpikeHist::DisplayHistogram(CDC* p_dc, CRect* pRect)
+void CViewSpikeHist::displayHistogram(CDC* p_dc, CRect* pRect)
 {
 	auto disp_rect = *pRect;		// this will be the display rect for histogram
 
@@ -1748,7 +1718,7 @@ void CViewSpikeHist::DisplayHistogram(CDC* p_dc, CRect* pRect)
 		break;
 	}
 	// plot data
-	const int histogmax = PlotHistog(p_dc, &disp_rect, nbinshistog, phistog0, 0, m_bhistType);
+	const int histogmax = plotHistog(p_dc, &disp_rect, nbinshistog, phistog0, 0, m_bhistType);
 
 	// output legends: title of the graph and data description
 	auto comment_rect = disp_rect;	// comment rectangle
@@ -1758,7 +1728,7 @@ void CViewSpikeHist::DisplayHistogram(CDC* p_dc, CRect* pRect)
 		comment_rect.top -= tm.tmHeight * 2; // + tm.tmDescent;
 
 	CString str_comment;   			// scratch pad
-	GetFileInfos(str_comment);		// file comments
+	getFileInfos(str_comment);		// file comments
 
 	// histogram type and bin value
 	auto divisor = 1.f;				// factor to normalize histograms
@@ -1857,7 +1827,7 @@ void CViewSpikeHist::DisplayHistogram(CDC* p_dc, CRect* pRect)
 	v_font.DeleteObject();
 }
 
-void CViewSpikeHist::DisplayPSTHAutoc(CDC* p_dc, CRect* pRect)
+void CViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 {
 	// print text on horizontal lines
 	TEXTMETRIC tm;					// load characteristics of the font
@@ -1949,14 +1919,14 @@ void CViewSpikeHist::DisplayPSTHAutoc(CDC* p_dc, CRect* pRect)
 	peri_rect_histog.top = rect_histog.bottom + separator;
 	peri_rect_histog.bottom = disp_rect.bottom;
 
-	PlotHistog(p_dc, &peri_rect_histog, m_sizepPSTH, m_pPSTH, 0, 0);
+	plotHistog(p_dc, &peri_rect_histog, m_sizepPSTH, m_pPSTH, 0, 0);
 
 	// display autocorrelation -----------------------------------
 	auto auto_rect_histog = rect_histog;
 	auto_rect_histog.left = rect_histog.right + separator;
 	auto_rect_histog.right = auto_rect_histog.left + peri_rect_histog.Height();
 
-	PlotHistog(p_dc, &auto_rect_histog, m_sizepISI, m_pISI, -1, 2);
+	plotHistog(p_dc, &auto_rect_histog, m_sizepISI, m_pISI, -1, 2);
 
 	// display colour scale
 	const auto delta_xpix = separator;
@@ -1997,7 +1967,7 @@ void CViewSpikeHist::DisplayPSTHAutoc(CDC* p_dc, CRect* pRect)
 		comment_rect.top -= tm.tmHeight * 2;
 
 	CString str_comment;   			// scratch pad
-	GetFileInfos(str_comment);		// file comments
+	getFileInfos(str_comment);		// file comments
 	str_comment += _T("Peristimulus-Autocorrelation");
 	auto ui_flag = p_dc->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
 	p_dc->DrawText(str_comment,
@@ -2061,7 +2031,7 @@ void CViewSpikeHist::DisplayPSTHAutoc(CDC* p_dc, CRect* pRect)
 	p_dc->SetBkMode(OPAQUE);
 }
 
-void CViewSpikeHist::DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last)
+void CViewSpikeHist::displayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last)
 {
 	// draw rectangle for stimulus
 	if (p_spike_doc_->m_stimIntervals.nitems <= 0)
@@ -2141,14 +2111,14 @@ void CViewSpikeHist::OnSelchangeHistogramtype()
 	const auto i = ((CListBox*)GetDlgItem(IDC_LIST1))->GetCurSel();
 	if (m_bhistType == i)
 		return;
-	ShowControls(i);
-	OnDisplay();
+	showControls(i);
+	buildDataAndDisplay();
 }
 
 void CViewSpikeHist::OnEnChangeEditnstipercycle()
 {
 	m_pvdS->nstipercycle = GetDlgItemInt(IDC_EDITNSTIPERCYCLE);
-	OnDisplay();
+	buildDataAndDisplay();
 }
 
 void CViewSpikeHist::OnEnChangeEditlockonstim()
@@ -2165,7 +2135,7 @@ void CViewSpikeHist::OnEnChangeEditlockonstim()
 		m_pvdS->istimulusindex = ilock;
 		SetDlgItemInt(IDC_EDITLOCKONSTIM, m_pvdS->istimulusindex);
 	}
-	OnDisplay();
+	buildDataAndDisplay();
 }
 
 void CViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -2219,11 +2189,11 @@ void CViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	m_timelast += delta;
 	m_pvdS->timestart = m_timefirst;
 	m_pvdS->timeend = m_timelast;
-	OnDisplay();
+	buildDataAndDisplay();
 	UpdateData(FALSE);
 }
 
-void CViewSpikeHist::SelectSpkList(int icur, BOOL bRefreshInterface)
+void CViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 {
 	if (bRefreshInterface)
 	{
@@ -2251,15 +2221,15 @@ void CViewSpikeHist::SelectSpkList(int icur, BOOL bRefreshInterface)
 void CViewSpikeHist::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	SelectSpkList(icursel);
-	OnDisplay();
+	selectSpkList(icursel);
+	buildDataAndDisplay();
 	*pResult = 0;
 }
 
 void CViewSpikeHist::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	SelectSpkList(icursel);
-	OnDisplay();
+	selectSpkList(icursel);
+	buildDataAndDisplay();
 	*pResult = 0;
 }

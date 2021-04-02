@@ -50,6 +50,7 @@ public:
 	inline int		GetDataBinZero()					const { return dl_databinzero; }
 	inline int		GetDataBinSpan()					const { return dl_databinspan; }
 	inline float	GetDataVoltsSpan()					const { return dl_datavoltspan; }
+	
 	inline void		SetDataBinFormat(long binzero, long binspan) { dl_databinzero = binzero; dl_databinspan = binspan; }
 	inline void		SetDataVoltsFormat(float VperBin, float VoltsSpan) { dl_datavoltspbin = VperBin; dl_datavoltspan = VoltsSpan; }
 	inline void		SetYzero(int zero)					{ dl_yzero = zero; }

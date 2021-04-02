@@ -70,7 +70,7 @@ protected:
 
 public:
 	inline long	GettBUFfirst() const { return m_tBUFfirst; }
-	int  		BGetVal(int chan, long l_index);
+	short  		BGetVal(int chan, long l_index);
 	short*		LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL		BuildTransfData(int transform_type, int ns);
 	BOOL		LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);

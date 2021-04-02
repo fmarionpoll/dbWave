@@ -91,6 +91,7 @@ protected:
 	void			setTrackRectangle();
 	void			scrollFile(UINT nSBCode, UINT nPos);
 	void			updateFileScroll();
+	void			centerDataDisplayOnSpike(int spikeno);
 
 	// public interface to view
 public:

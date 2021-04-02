@@ -12,28 +12,28 @@ class CViewSpikeHist : public CDaoRecordView
 {
 	DECLARE_DYNCREATE(CViewSpikeHist)
 protected:
-	CViewSpikeHist();           // protected constructor used by dynamic creation
-
+				CViewSpikeHist();
+	virtual		~CViewSpikeHist() override;
 // Form Data
 public:
 	enum { IDD = IDD_VIEWSPKTIMESERIES };
 	CComboBox	m_cbHistType;
-	float	m_timefirst;
-	float	m_timelast;
-	int		m_spikeclass;
-	int		m_dotheight;
-	int		m_rowheight;
-	float	m_binISIms;
-	int		m_nbinsISI;
-	float	m_timebinms;
+	float		m_timefirst = 0.f;
+	float		m_timelast = 2.5f;
+	int			m_spikeclass = 0;
+	int			m_dotheight = 0;
+	int			m_rowheight = 0;
+	float		m_binISIms = 0.f;
+	int			m_nbinsISI = 0;
+	float		m_timebinms = 0.f;
 
 	CdbWaveDoc* GetDocument();
-	CSpikeDoc* p_spike_doc_;			// pointer to document
+	CSpikeDoc*	p_spike_doc_ = nullptr;	
 
 // Attributes
 protected:
 	CStretchControl m_stretch;
-	BOOL			m_binit;
+	BOOL		m_binit = false;
 	CEditCtrl	mm_timebinms;		// bin size (ms)
 	CEditCtrl	mm_binISIms;		// bin size (ms)
 	CEditCtrl	mm_nbinsISI;		// nbins ISI
@@ -43,42 +43,38 @@ protected:
 	CEditCtrl	mm_spikeclass;		// selected spike class
 	CEditCtrl	mm_dotheight;		// dot height
 	CEditCtrl	mm_rowheight;		// row height
-	OPTIONS_VIEWSPIKES* m_pvdS;		// histogram options
-	OPTIONS_VIEWDATA* mdPM;		// view data options
-	int			m_bhistType;
-	SCROLLINFO m_scrollFilePos_infos;
+	OPTIONS_VIEWSPIKES* m_pvdS = nullptr;		// histogram options
+	OPTIONS_VIEWDATA* mdPM = nullptr;			// view data options
+	int			m_bhistType = 0;
+	SCROLLINFO m_scrollFilePos_infos{};
 
-	long* m_pPSTH;				// histogram data (pointer to array)
-	int		m_sizepPSTH;			// nbins within histogram
-	long	m_nPSTH;
-	long* m_pISI;
-	int		m_sizepISI;
-	long	m_nISI;
-	long* m_parrayISI;
-	int		m_sizeparrayISI;
+	long*		m_pPSTH = nullptr;	// histogram data (pointer to array)
+	int			m_sizepPSTH = 0;	// nbins within histogram
+	long		m_nPSTH = 0;
+	long*		m_pISI = nullptr;
+	int			m_sizepISI = 0;
+	long		m_nISI = 0;
+	long*		m_parrayISI = nullptr;
+	int			m_sizeparrayISI = 0;
 
-	CRect	m_displayRect;			// display area
-	CPoint	m_topleft;				// top position of display area
-	BOOL	m_initiated;			// flag / initial settings
-	BOOL	m_bmodified;			// flag ON-> compute data
-	CBitmap* m_pbitmap;				// temp bitmap used to improve display speed
-	int		m_nfiles;				// nb of files used to build histogram
-	float	t1000;
-	BOOL	m_bPrint;
-	CRect	m_commentRect;
+	CRect		m_displayRect = CRect(0, 0, 0, 0);
+	CPoint		m_topleft;			// top position of display area
+	BOOL		m_initiated = false;// flag / initial settings
+	BOOL		m_bmodified = true;	// flag ON-> compute data
+	CBitmap*	m_pbitmap = nullptr;// temp bitmap used to improve display speed
+	int			m_nfiles = 1;		// nb of files used to build histogram
+	const float	t1000 = 1000.f;
+	BOOL		m_bPrint = false;
+	CRect		m_commentRect;
 
-	LOGFONT	m_logFont;				// onbegin/onendPrinting
-	CFont	m_fontPrint;
-	int		m_rectratio;
-	float	m_xfirst;
-	float	m_xlast;
+	LOGFONT		m_logFont{};		// onbegin/onendPrinting
+	CFont		m_fontPrint;
+	int			m_rectratio = 100;
+	float		m_xfirst = 0.f;
+	float		m_xlast = 0.f;
 
-	LOGFONT	m_logFontDisp;			// onbegin/onendPrinting
-	CFont	m_fontDisp;				// display font
-
-// Operations
-// public interface to view
-public:
+	LOGFONT		m_logFontDisp{};	// onbegin/onendPrinting
+	CFont		m_fontDisp{};		// display font
 
 	// Overrides
 public:
@@ -87,8 +83,8 @@ public:
 	virtual BOOL OnMove(UINT nIDMoveCommand);
 protected:
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnInitialUpdate(); // called first time after construct
+	virtual void DoDataExchange(CDataExchange* pDX); 
+	virtual void OnInitialUpdate(); 
 	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	virtual void OnDraw(CDC* p_dc);
 	virtual void OnPrint(CDC* p_dc, CPrintInfo* pInfo);
@@ -97,21 +93,20 @@ protected:
 	virtual void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo);
 
 protected:
-	void BuildData();
-	void GetFileInfos(CString& str_comment);
-	void DisplayHistogram(CDC* p_dc, CRect* pRect);
-	void DisplayDot(CDC* p_dc, CRect* pRect);
-	void DisplayPSTHAutoc(CDC* p_dc, CRect* pRect);
-	void DisplayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last);
-	void OnDisplay();
-	void ShowControls(int iselect);
-	void SelectSpkList(int icursel, BOOL bRefreshInterface = FALSE);
+	void		buildData();
+	void		getFileInfos(CString& str_comment);
+	void		displayHistogram(CDC* p_dc, CRect* pRect);
+	void		displayDot(CDC* p_dc, CRect* pRect);
+	void		displayPSTHAutoc(CDC* p_dc, CRect* pRect);
+	void		displayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last);
+	void		buildDataAndDisplay();
+	void		showControls(int iselect);
+	void		selectSpkList(int icursel, BOOL bRefreshInterface = FALSE);
 
 	// Implementation
 protected:
-	long PlotHistog(CDC* p_dc, CRect* dispRect, int nbins, long* phistog0, int orientation = 0, int btype = 0);
+	long		plotHistog(CDC* p_dc, CRect* dispRect, int nbins, long* phistog0, int orientation = 0, int btype = 0);
 
-	virtual ~CViewSpikeHist();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;

@@ -65,9 +65,13 @@ protected:
 
 	BOOL			m_bsaveartefacts = false;	// save (yes/no) artefacts - default = FALSE
 	BOOL 			m_bvalidclasslist = false;	// class list (array with classnb & nb spikes/class)
-	int				m_nbclasses = 0;			//
-	CArray <int, int>	m_classArray{};			// CWordArray describing classes found and nb of spikes within them
+	int				m_nbclasses = 0;
+	CArray <int, int>	m_classArray{};			// classes found and nb of spikes within them
 	// TODO enrich class to make use of indexes et al apparent into a class
+
+//  (5) list of spikes flagged
+
+	CArray <int, int> m_spike_flagged;
 
 	// Operations
 public:
@@ -88,12 +92,11 @@ public:
 	int		GetSpikeValAt(int no, int index) const { return *(GetpSpikeData(no) + index); }
 	int		GetSpikeLength()		const { return m_spikebuffer.GetSpklen(); }
 	int		GetTotalSpikes()		const { return m_spkelmts.GetCount(); }
-	
 
 	void	SetSpikeClass(int no, int nclass) { m_spkelmts[no]->set_class(nclass); m_bvalidclasslist = FALSE; }
 	void	SetSpikeTime(int no, long iitime) { m_spkelmts[no]->set_time(iitime); }
 
-	CSpikeElemt* GetSpikeElemt(int no) { return m_spkelmts.GetAt(no); }
+	CSpikeElemt* GetSpikeElemt(int no)	{ return m_spkelmts.GetAt(no); }
 
 	WORD	GetAcqEncoding()		const { return m_encoding; }
 	float	GetAcqSampRate()		const { return m_samprate; }
@@ -139,7 +142,6 @@ public:
 	void	EraseData();
 	void	ChangeSpikeClassID(int oldclaID, int newclaID);
 
-
 	// measure parameters
 	void	Measure_case0_AmplitudeMinToMax(int t1, int t2);
 	void	Measure_case1_AmplitudeAtT(int t);
@@ -152,10 +154,6 @@ public:
 
 	int		GetValidSpikeNumber(int ispike);
 	int		GetNextSpike(int spikeno, int delta, BOOL bKeepSameClass);
-
-	// deal with list of spikes flagged
-protected:
-	CArray <int, int> m_spike_flagged;
 
 public:
 	int		SetSpikeFlag(int spikeno, BOOL bFlag);
@@ -171,7 +169,6 @@ public:
 	int		GetSpikeFlagArrayCount() const { return m_spike_flagged.GetCount(); }
 
 protected:
-	// Implementation
 	void	readfileVersion1(CArchive& ar);
 	void	removeArtefacts();
 	void	readfileVersion_before5(CArchive& ar, int iversion);

@@ -99,8 +99,8 @@ public:
 protected:
 	void				OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void				DoDataExchange(CDataExchange* pDX) override;
-	void				DefineSubClassedItems();
-	void				DefineStretchParameters();
+	void				defineSubClassedItems();
+	void				defineStretchParameters();
 	void				OnInitialUpdate() override;
 	void				OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 

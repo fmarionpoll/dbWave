@@ -961,7 +961,7 @@ void CSpikeList::CenterSpikeAmplitude(int spkindex, int ifirst, int ilast, WORD 
 
 long CSpikeList::UpdateClassList()
 {
-	const auto nspikes = GetTotalSpikes();		// total nb of spikes within list
+	const auto nspikes = GetTotalSpikes();
 	m_nbclasses = 1;					// erase nb of classes
 	m_classArray.SetSize(0);			// erase array
 	m_bvalidclasslist = TRUE;			// class list OK when exit

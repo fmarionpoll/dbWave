@@ -254,10 +254,30 @@ void CEnvelope::FillEnvelopeWithMxMi(int ifirst, short* lp_data, int nchans, int
 	*lp_envelope = i_min;		// store min
 }
 
+short*  CEnvelope::getMaxMin(int nelements, short* lpData, int nchans, short& i_min, short& i_max, long& y1)
+{
+	y1 = 0;
+	int n = nelements;
+	while (n > 0)
+	{
+		short idata = *lpData;
+		y1 += idata;
+		if (idata < i_min)
+			i_min = idata;
+		else if (idata > i_max)
+			i_max = idata;
+		lpData += nchans;
+		n--;
+	}
+	if (nelements > 0)
+		y1 = y1 / nelements; 
+	return lpData;
+}
+
 void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans, int nelmts, BOOL bNew, int ioption)
 {
 	// simple case: save just the raw data
-	auto lp_envelope = &m_Envelope[ifirst * m_dataperpixel];
+	short* lp_envelope = &m_Envelope[ifirst * m_dataperpixel];
 	if (m_dataperpixel == 1)	// only one data point per pixel
 	{
 		*lp_envelope = *lpData;	// simply copy data
@@ -267,51 +287,23 @@ void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans
 	// more than 1 point per interval
 	// cut interval in 2 and store either [max, min] or [min, max] depending on the direction of the curve
 	// find direction by comparing the average point between the 2 sub-intervals
-	int i_max = *lpData;			// init max
-	auto i_min = i_max;			// init min
-	long y1 = 0;
-	long y2 = 0;
+	short i_max = *lpData;		// init max
+	short i_min = i_max;		// init min
 	if (!bNew)
 	{
 		i_min = *lp_envelope;
 		i_max = *(lp_envelope + 1);
 	}
-
-	const auto nelemts1 = nelmts / 2;
-	const auto nelemts2 = nelmts - nelemts1;
-	short idata;
-
-	// first subinterval
-	auto n = nelemts1;
-	while (n > 0)				// scan nb elements
-	{							// designed by scale
-		idata = *lpData;		// load value
-		y1 += idata;			// change max
-		if (idata < i_min)
-			i_min = idata;		// change min
-		else if (idata > i_max)
-			i_max = idata;		// change max
-		lpData += nchans;		// update data pointer
-		n--;
-	}
-	if (nelemts1 > 0)
-		y1 = y1 / nelemts1;
-
+		
+	// first sub-interval
+	const int nelemts1 = nelmts / 2;
+	long y1 = 0;
+	lpData = getMaxMin(nelemts1, lpData, nchans, i_min, i_max, y1);
+		
 	// second sub-interval
-	n = nelemts2;
-	while (n > 0)				// scan nb elements
-	{							// designed by scale
-		idata = *lpData;		// load value
-		y2 += idata;			// change max
-		if (idata < i_min)
-			i_min = idata;		// change min
-		else if (idata > i_max)
-			i_max = idata;		// change max
-		lpData += nchans;		// update data pointer
-		n--;
-	}
-	if (nelemts2 > 0)
-		y2 = y2 / nelemts2;
+	const int nelemts2 = nelmts - nelemts1;
+	long y2 = 0;
+	lpData = getMaxMin(nelemts2, lpData, nchans, i_min, i_max, y2);
 
 	if (ioption == 0)
 	{
@@ -324,32 +316,48 @@ void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans
 	}
 	else //if (ioption == 2)
 	{
-		i_min = y1;
-		i_max = y2;
+		i_min = (short) y1;
+		i_max = (short) y2;
 	}
 
-	*lp_envelope = i_min;		// store max
-	lp_envelope++;				// update Envelope pointer
-	*lp_envelope = i_max;		// store min
+	*lp_envelope = i_min;
+	lp_envelope++;
+	*lp_envelope = i_max;
 }
 
 // GetEnvelopeMaxMin
 
 void CEnvelope::GetEnvelopeMaxMin(int* max, int* min)
 {
-	auto* p_envel = &m_Envelope[2];
-	short maxval = *p_envel;			// get first max and min short
-	auto minval = maxval;
-	const auto npixels = m_Envelope.GetSize();
+	short maxval = m_Envelope[2];
+	short minval = maxval;
+	const int npixels = m_Envelope.GetSize();
 
 	// loop over envelope and discard last 2 and first 2 points
-	for (auto i = npixels - 2; i > 1; i--, p_envel++)
+	for (auto i = 3; i < npixels - 2; i++)
 	{
-		if (*p_envel > maxval)		// is max max?
-			maxval = *p_envel;		// no
-		if (*p_envel < minval)		// is min min?
-			minval = *p_envel;		// no
+		short val = m_Envelope[i];
+		if (val > maxval)
+			maxval = val;
+		if (val < minval)
+			minval = val;
 	}
-	*min = minval;					// return value of min
-	*max = maxval;					// return value of max
+	*min = (int) minval;
+	*max = (int) maxval;
+}
+
+void CEnvelope::GetEnvelopeMaxMinBetweenPoints(int ifirstpixel, int ilastpixel, int* max, int* min)
+{
+	short maxval = m_Envelope[ifirstpixel];	
+	short minval = maxval;
+	for (int i = ifirstpixel +1; i <= ilastpixel; i++)
+	{
+		short val = m_Envelope[i];
+		if (val > maxval)
+			maxval = val;
+		if (val < minval)
+			minval = val;
+	}
+	*min = (int) minval;
+	*max = (int) maxval;
 }

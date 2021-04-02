@@ -67,35 +67,35 @@ BEGIN_MESSAGE_MAP(CViewSpikes, CDaoRecordView)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 
-	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE,			&CViewSpikes::OnMyMessage)
 
-	ON_COMMAND(ID_FORMAT_ALLDATA, OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, OnFormatGainadjust)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, OnToolsEdittransformspikes)
-	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
-	ON_COMMAND(ID_FORMAT_PREVIOUSFRAME, OnFormatPreviousframe)
-	ON_COMMAND(ID_FORMAT_NEXTFRAME, OnFormatNextframe)
-	ON_COMMAND(ID_RECORD_SHIFTLEFT, OnHScrollLeft)
-	ON_COMMAND(ID_RECORD_SHIFTRIGHT, OnHScrollRight)
-	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
+	ON_COMMAND(ID_FORMAT_ALLDATA,		&CViewSpikes::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE,	&CViewSpikes::OnFormatCentercurve)
+	ON_COMMAND(ID_FORMAT_GAINADJUST,	&CViewSpikes::OnFormatGainadjust)
+	ON_COMMAND(ID_TOOLS_EDITSPIKES,		&CViewSpikes::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_EDIT_COPY,			&CViewSpikes::OnEditCopy)
+	ON_COMMAND(ID_FORMAT_PREVIOUSFRAME, &CViewSpikes::OnFormatPreviousframe)
+	ON_COMMAND(ID_FORMAT_NEXTFRAME,		&CViewSpikes::OnFormatNextframe)
+	ON_COMMAND(ID_RECORD_SHIFTLEFT,		&CViewSpikes::OnHScrollLeft)
+	ON_COMMAND(ID_RECORD_SHIFTRIGHT,	&CViewSpikes::OnHScrollRight)
+	ON_COMMAND(ID_FILE_PRINT,			CView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW,	CView::OnFilePrintPreview)
 
-	ON_EN_CHANGE(IDC_NSPIKES, OnEnChangeNOspike)
-	ON_EN_CHANGE(IDC_EDIT2, OnEnChangeSpikenoclass)
-	ON_EN_CHANGE(IDC_TIMEFIRST, OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, OnEnChangeTimelast)
-	ON_EN_CHANGE(IDC_EDIT3, OnEnChangeZoom)
-	ON_EN_CHANGE(IDC_EDIT4, OnEnChangeSourceclass)
-	ON_EN_CHANGE(IDC_EDIT5, OnEnChangeDestclass)
-	ON_EN_CHANGE(IDC_JITTER, OnEnChangeJitter)
+	ON_EN_CHANGE(IDC_NSPIKES,			&CViewSpikes::OnEnChangeNOspike)
+	ON_EN_CHANGE(IDC_EDIT2,				&CViewSpikes::OnEnChangeSpikenoclass)
+	ON_EN_CHANGE(IDC_TIMEFIRST,			&CViewSpikes::OnEnChangeTimefirst)
+	ON_EN_CHANGE(IDC_TIMELAST,			&CViewSpikes::OnEnChangeTimelast)
+	ON_EN_CHANGE(IDC_EDIT3,				&CViewSpikes::OnEnChangeZoom)
+	ON_EN_CHANGE(IDC_EDIT4,				&CViewSpikes::OnEnChangeSourceclass)
+	ON_EN_CHANGE(IDC_EDIT5,				&CViewSpikes::OnEnChangeDestclass)
+	ON_EN_CHANGE(IDC_JITTER,			&CViewSpikes::OnEnChangeJitter)
 
-	ON_BN_CLICKED(IDC_BUTTON2, OnZoom)
-	ON_BN_CLICKED(IDC_GAIN_button, OnGAINbutton)
-	ON_BN_CLICKED(IDC_BIAS_button, OnBIASbutton)
-	ON_BN_CLICKED(IDC_ARTEFACT, OnArtefact)
+	ON_BN_CLICKED(IDC_BUTTON2,			&CViewSpikes::OnZoom)
+	ON_BN_CLICKED(IDC_GAIN_button,		&CViewSpikes::OnGAINbutton)
+	ON_BN_CLICKED(IDC_BIAS_button,		&CViewSpikes::OnBIASbutton)
+	ON_BN_CLICKED(IDC_ARTEFACT,			&CViewSpikes::OnArtefact)
 
-	ON_BN_CLICKED(IDC_SAMECLASS, &CViewSpikes::OnBnClickedSameclass)
+	ON_BN_CLICKED(IDC_SAMECLASS,		&CViewSpikes::OnBnClickedSameclass)
 END_MESSAGE_MAP()
 
 void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
@@ -311,11 +311,11 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 BOOL CViewSpikes::addSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 {
-	const auto method		= m_pSpkList->GetdetectTransform();
-	const auto doc_channel	= m_pSpkList->GetextractChan();
-	const auto prethreshold = m_pSpkList->GetSpikePretrig();
-	const auto spikelen		= m_pSpkList->GetSpikeLength();
-	const auto nspan		= m_pDataDoc->GetTransfDataSpan(method);
+	const int method		= m_pSpkList->GetdetectTransform();
+	const int doc_channel	= m_pSpkList->GetextractChan();
+	const int prethreshold = m_pSpkList->GetSpikePretrig();
+	const int spikelen		= m_pSpkList->GetSpikeLength();
+	const int nspan		= m_pDataDoc->GetTransfDataSpan(method);
 	const auto iitime0		= iitime - prethreshold;
 	auto l_read_write_first = iitime0;
 	auto l_read_write_last	= iitime0 + spikelen;
@@ -1500,52 +1500,68 @@ void CViewSpikes::OnEnChangeNOspike()
 
 		switch (mm_spikeno.m_nChar)
 		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		case VK_RETURN:	
+			UpdateData(TRUE);	
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_spikeno = m_pSpkList->GetNextSpike(spikeno, 1, m_bKeepSameClass);	break;
+		case VK_PRIOR:	
+			m_spikeno = m_pSpkList->GetNextSpike(spikeno, 1, m_bKeepSameClass);	
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_spikeno = m_pSpkList->GetNextSpike(spikeno , -1, m_bKeepSameClass);	break;
-		default:;
+		case VK_NEXT:   
+			m_spikeno = m_pSpkList->GetNextSpike(spikeno , -1, m_bKeepSameClass);	
+			break;
+		default:
+			break;
 		}
 
-		// check boundaries
+		mm_spikeno.m_bEntryDone = FALSE;
+		mm_spikeno.m_nChar = 0;
+		mm_spikeno.SetSel(0, -1);
+
 		m_spikeno = m_pSpkList->GetValidSpikeNumber(m_spikeno);
-
-		mm_spikeno.m_bEntryDone = FALSE;	// clear flag
-		mm_spikeno.m_nChar = 0;			// empty buffer
-		mm_spikeno.SetSel(0, -1);		// select all text
-
-		if (m_spikeno != spikeno)		// change display if necessary
+		if (m_spikeno != spikeno)
 		{
 			selectSpike(m_spikeno);
 			if (m_spikeno >= 0)
-			{
-				// test if spike visible in the current time interval
-				const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);
-				const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetSpikePretrig();
-				const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
-				const auto lcenter = (spk_last + spk_first) / 2;
-
-				if (spk_first < m_lFirst || spk_last > m_lLast)
-				{
-					const long lspan = (m_lLast - m_lFirst) / 2;
-					m_lFirst = lcenter - lspan;
-					m_lLast = lcenter + lspan;
-					updateLegends(TRUE);
-				}
-				// center curve vertically
-				CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
-				const auto ixpixel = MulDiv(lcenter - m_lFirst, m_ChartDataWnd.GetNxPixels(), m_lLast - m_lFirst);
-				const auto ival = chan->GetBinAt(ixpixel);
-				chan->SetYzero(ival);
-				// display data
-				m_spkClassListBox.Invalidate();
-				m_ChartDataWnd.Invalidate();
-			}
+				centerDataDisplayOnSpike(m_spikeno);
 		}
 		else
 			UpdateData(FALSE);
 	}
+}
+
+void CViewSpikes::centerDataDisplayOnSpike(int spikeno)
+{
+	// test if spike visible in the current time interval
+	CSpikeElemt* p_spike_element = m_pSpkList->GetSpikeElemt(spikeno);
+	const long spk_first = p_spike_element->get_time() - m_pSpkList->GetSpikePretrig();
+	const long spk_last = spk_first + m_pSpkList->GetSpikeLength();
+	const long lcenter = (spk_last + spk_first) / 2;
+	if (spk_first < m_lFirst || spk_last > m_lLast)
+	{
+		const long lspan = (m_lLast - m_lFirst) / 2;
+		m_lFirst = lcenter - lspan;
+		m_lLast = lcenter + lspan;
+		updateLegends(TRUE);
+	}
+
+	// center curve vertically
+	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
+	const int doc_channel = m_pSpkList->GetextractChan();
+	short maxdata = m_pDataDoc->BGetVal(doc_channel, spk_first);
+	short mindata = maxdata;
+	for (long i = spk_first; i <= spk_last; i++)
+	{
+		short val = m_pDataDoc->BGetVal(doc_channel, i);
+		if (val > maxdata) maxdata = val;
+		if (val < mindata) mindata = val;
+	}
+	chan->SetYzero((maxdata+mindata)/2);
+
+	// display data
+	m_spkClassListBox.Invalidate();
+	m_ChartDataWnd.Invalidate();
 }
 
 void CViewSpikes::OnEnChangeSpikenoclass()

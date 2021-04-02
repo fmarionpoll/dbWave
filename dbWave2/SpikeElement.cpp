@@ -29,7 +29,7 @@ CSpikeElemt::CSpikeElemt(long time, WORD channel)
 	m_dmaxmin = 0;
 }
 
-CSpikeElemt::CSpikeElemt(LONG time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin)
+CSpikeElemt::CSpikeElemt(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin)
 {
 	m_iitime = time;
 	m_chanparm = channel;

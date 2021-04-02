@@ -562,7 +562,7 @@ void CAcqDataDoc::ReadDataInfos()
  returns:
  comments:
  **************************************************************************/
-int CAcqDataDoc::BGetVal(const int channel, const long l_index)
+short CAcqDataDoc::BGetVal(const int channel, const long l_index)
 {
 	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
 		readDataBlock(l_index);

@@ -18,10 +18,28 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikeSort, CViewDAO)
-
 // TODO limit size of measure array to nbspikes within currently selected spikelist
 
+IMPLEMENT_DYNCREATE(CViewSpikeSort, CViewDAO)
+
+CViewSpikeSort::CViewSpikeSort()
+	: CViewDAO(CViewSpikeSort::IDD)
+{
+	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
+}
+
+CViewSpikeSort::~CViewSpikeSort()
+{
+	// save spkD list i	 changed
+	if (m_pSpkDoc != nullptr)
+		saveCurrentSpkFile();	// save file if modified
+	// save current spike detection parameters
+	m_psC->bChanged = TRUE;
+	m_psC->sourceclass = m_sourceclass;
+	m_psC->destclass = m_destinationclass;
+	m_psC->mvmax = m_mVMax;
+	m_psC->mvmin = m_mVMin;
+}
 
 void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 {
@@ -82,28 +100,7 @@ BEGIN_MESSAGE_MAP(CViewSpikeSort, CDaoRecordView)
 	ON_EN_CHANGE(IDC_BINMV,				&CViewSpikeSort::OnEnChangeNBins)
 END_MESSAGE_MAP()
 
-
-
-CViewSpikeSort::CViewSpikeSort()
-	: CViewDAO(CViewSpikeSort::IDD)
-{
-	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
-}
-
-CViewSpikeSort::~CViewSpikeSort()
-{
-	// save spkD list i	 changed
-	if (m_pSpkDoc != nullptr)
-		saveCurrentSpkFile();	// save file if modified
-	// save current spike detection parameters
-	m_psC->bChanged = TRUE;
-	m_psC->sourceclass = m_sourceclass;
-	m_psC->destclass = m_destinationclass;
-	m_psC->mvmax = m_mVMax;
-	m_psC->mvmin = m_mVMin;
-}
-
-void CViewSpikeSort::DefineSubClassedItems()
+void CViewSpikeSort::defineSubClassedItems()
 {
 	// subclass some controls
 	VERIFY(yhistogram_wnd_.SubclassDlgItem(IDC_HISTOGRAM, this));
@@ -134,7 +131,7 @@ void CViewSpikeSort::DefineSubClassedItems()
 	m_filescroll.SetScrollRange(0, 100, FALSE);
 }
 
-void CViewSpikeSort::DefineStretchParameters()
+void CViewSpikeSort::defineStretchParameters()
 {
 	m_stretch.AttachParent(this);
 
@@ -155,8 +152,8 @@ void CViewSpikeSort::DefineStretchParameters()
 void CViewSpikeSort::OnInitialUpdate()
 {
 	CDaoRecordView::OnInitialUpdate();
-	DefineSubClassedItems();
-	DefineStretchParameters();
+	defineSubClassedItems();
+	defineStretchParameters();
 	m_binit = TRUE;
 	m_autoIncrement = true;
 	m_autoDetect = true;
@@ -207,9 +204,7 @@ void CViewSpikeSort::OnInitialUpdate()
 		m_upper = m_psC->iupper * m_delta;
 		UpdateData(false);
 	}
-
 	activateMode4();
-	m_binit = TRUE;
 }
 
 void CViewSpikeSort::activateMode4()

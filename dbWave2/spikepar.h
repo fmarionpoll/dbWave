@@ -167,6 +167,5 @@ public:
 	~SPKCLASSIF();
 	SPKCLASSIF& operator = (const SPKCLASSIF& arg);	// operator redefinition
 	void Serialize(CArchive& ar) override;
-
 	void CreateTPL();
 };

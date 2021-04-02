@@ -11,16 +11,12 @@ IMPLEMENT_SERIAL(CSpikeBuffer, CObject, 0 /* schema number*/)
 
 CSpikeBuffer::CSpikeBuffer()
 {
-	m_spikedata_buffer = nullptr;
-	m_binzero = 2048;
 	SetSpklen(1);	// init with spike len = 1
 	m_spikedata_positions.SetSize(0, 128);
 }
 
 CSpikeBuffer::CSpikeBuffer(int lenspk)
 {
-	m_spikedata_buffer = nullptr;
-	m_binzero = 2048;
 	SetSpklen(lenspk);
 	m_spikedata_positions.SetSize(0, 128);
 }

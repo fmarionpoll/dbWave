@@ -6,54 +6,54 @@
 class CViewSpikeTemplates : public CViewDAO
 {
 protected:
-	CViewSpikeTemplates(); 
 	DECLARE_DYNCREATE(CViewSpikeTemplates)
-
+				CViewSpikeTemplates();
+	virtual		~CViewSpikeTemplates() override;
 public:
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
 
-	float				m_t1 = 0.f;
-	float				m_t2 = 0.f;
-	float				m_tunit = 1000.f;		// 1=s, 1000f=ms, 1e6=us
-	float				m_timefirst = 0.;
-	float				m_timelast = 0.;
-	int					m_hitrate = 0;
-	float				m_ktolerance = 0.;
-	int					m_spikenoclass = 0;
-	int					m_hitratesort = 0;
-	int					m_ifirstsortedclass = 0;
-	BOOL				m_bAllFiles = false;
-	BOOL				m_ballTempl = false;
-	BOOL				m_ballSort = false;
-	BOOL				m_bDisplaySingleClass = false;
-	CTabCtrl			m_tab1Ctrl{};
+	float		m_t1 = 0.f;
+	float		m_t2 = 6.f;
+	float		m_tunit = 1000.f;		// 1=s, 1000f=ms, 1e6=us
+	float		m_timefirst = 0.;
+	float		m_timelast = 0.;
+	int			m_hitrate = 0;
+	float		m_ktolerance = 0.;
+	int			m_spikenoclass = 0;
+	int			m_hitratesort = 0;
+	int			m_ifirstsortedclass = 0;
+	BOOL		m_bAllFiles = false;
+	BOOL		m_ballTempl = false;
+	BOOL		m_ballSort = false;
+	BOOL		m_bDisplaySingleClass = false;
+	CTabCtrl	m_tab1Ctrl{};
 
 protected:
-	CEditCtrl			mm_t1;
-	CEditCtrl			mm_t2;
-	CEditCtrl			mm_hitrate;
-	CEditCtrl			mm_hitratesort;
-	CEditCtrl			mm_ktolerance;
-	CEditCtrl			mm_spikenoclass;
-	CEditCtrl			mm_timefirst;			// first abcissa value
-	CEditCtrl			mm_timelast;			// last abcissa value
-	CEditCtrl			mm_ifirstsortedclass;
+	CEditCtrl	mm_t1;
+	CEditCtrl	mm_t2;
+	CEditCtrl	mm_hitrate;
+	CEditCtrl	mm_hitratesort;
+	CEditCtrl	mm_ktolerance;
+	CEditCtrl	mm_spikenoclass;
+	CEditCtrl	mm_timefirst;			// first abcissa value
+	CEditCtrl	mm_timelast;			// last abcissa value
+	CEditCtrl	mm_ifirstsortedclass;
 
-	CTemplateListWnd	m_avgList{};
-	CTemplateListWnd	m_templList{};
-	CTemplateListWnd	m_avgAllList{};
+	CTemplateListWnd m_avgList{};
+	CTemplateListWnd m_templList{};
+	CTemplateListWnd m_avgAllList{};
 
 	CChartSpikeShapeWnd	m_ChartSpkWnd_Shape;	// all spikes in displayspikes
 
-	OPTIONS_VIEWDATA*	mdPM = nullptr;			// view data options
+	OPTIONS_VIEWDATA* mdPM = nullptr;			// view data options
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;	// measure options
-	SPKCLASSIF*			m_psC = nullptr;		// sort parameters
-	SCROLLINFO			m_scrollFilePos_infos{};
-	long				m_lFirst = 0;
-	long				m_lLast = 0;
-	int					m_spkformtagleft = 0;
-	int					m_spkformtagright = 0;
-	int					m_spikeno = -1;
+	SPKCLASSIF*	m_psC = nullptr;		// sort parameters
+	SCROLLINFO	m_scrollFilePos_infos{};
+	long		m_lFirst = 0;
+	long		m_lLast = 0;
+	int			m_spkformtagleft = 0;
+	int			m_spkformtagright = 0;
+	int			m_spikeno = -1;
 
 public:
 	inline void SetViewMouseCursor(int cursormode) { m_ChartSpkWnd_Shape.SetMouseCursorType(cursormode); }
@@ -67,8 +67,8 @@ protected:
 
 	// Implementation
 protected:
-	virtual		~CViewSpikeTemplates() override;
-
+	void		defineSubClassedItems();
+	void		defineStretchParameters();
 	void		updateFileParameters();		// reset parameters for new file
 	void		updateTemplates();
 	void		updateLegends();
@@ -80,6 +80,9 @@ protected:
 	void		sortSpikes();
 	void		updateCtrlTab1(int iselect);
 	void		setExtentZeroAllDisplay(int extent, int zero);
+	void		updateSpikeFile();
+	inline float convertSpikeIndexToTime(int index) {return index * m_tunit / m_pSpkList->GetAcqSampRate(); }
+	inline int	convertTimeToSpikeIndex(float time) { return (int) (time * m_pSpkList->GetAcqSampRate() / m_tunit); }
 
 public:
 	// Generated message map functions

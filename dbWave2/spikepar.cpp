@@ -627,8 +627,8 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 		ar >> w1; iright = w1;
 		ar >> w1; ilower = w1;
 		ar >> w1; iupper = w1;
-		ar >> w1; sourceclass = w1;
-		ar >> w1; destclass = w1;
+		ar >> w1; sourceclass = w1; // dummy in v4
+		ar >> w1; destclass = w1;	// dummy in v4
 
 		// version 2
 		if (version > 1)
