@@ -7,7 +7,7 @@ class CViewSpikeTemplates : public CViewDAO
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikeTemplates)
-				CViewSpikeTemplates();
+	CViewSpikeTemplates();
 	virtual		~CViewSpikeTemplates() override;
 public:
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
@@ -47,7 +47,7 @@ protected:
 
 	OPTIONS_VIEWDATA* mdPM = nullptr;			// view data options
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;	// measure options
-	SPKCLASSIF*	m_psC = nullptr;		// sort parameters
+	SPKCLASSIF* m_psC = nullptr;		// sort parameters
 	SCROLLINFO	m_scrollFilePos_infos{};
 	long		m_lFirst = 0;
 	long		m_lLast = 0;
@@ -81,8 +81,8 @@ protected:
 	void		updateCtrlTab1(int iselect);
 	void		setExtentZeroAllDisplay(int extent, int zero);
 	void		updateSpikeFile();
-	inline float convertSpikeIndexToTime(int index) {return index * m_tunit / m_pSpkList->GetAcqSampRate(); }
-	inline int	convertTimeToSpikeIndex(float time) { return (int) (time * m_pSpkList->GetAcqSampRate() / m_tunit); }
+	inline float convertSpikeIndexToTime(int index) { return index * m_tunit / m_pSpkList->GetAcqSampRate(); }
+	inline int	convertTimeToSpikeIndex(float time) { return (int)(time * m_pSpkList->GetAcqSampRate() / m_tunit); }
 
 public:
 	// Generated message map functions
@@ -119,4 +119,3 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 };
-

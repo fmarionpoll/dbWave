@@ -709,7 +709,7 @@ void CTemplateListWnd::OnButtonUp(CPoint point)
 		if (l_style == LVS_REPORT && m_iItemDrop != m_iItemDrag)
 		{
 			cstr = GetItemText(m_iItemDrag, 0);
-			SetItemText(m_iItemDrop, 1, cstr); 
+			SetItemText(m_iItemDrop, 1, cstr);
 		}
 		else if (l_style == LVS_LIST && m_iItemDrop != m_iItemDrag)
 		{
@@ -719,7 +719,7 @@ void CTemplateListWnd::OnButtonUp(CPoint point)
 		}
 		else if (l_style == LVS_ICON || l_style == LVS_SMALLICON)
 		{
-			point -= m_ptHotSpot; 
+			point -= m_ptHotSpot;
 			point += m_ptOrigin;
 			SetItemPosition(m_iItemDrag, point);
 		}

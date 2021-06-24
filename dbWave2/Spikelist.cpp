@@ -528,7 +528,7 @@ void CSpikeList::MeasureSpikeMaxMin(const int index, int* max, int* imax, int* m
 	{
 		lp_buffer++;
 		val = *lp_buffer;
-		if (val > * max)	// search max
+		if (val > *max)	// search max
 		{
 			*max = val;	// change max and imax
 			*imax = i;
@@ -554,7 +554,7 @@ void CSpikeList::MeasureSpikeMaxThenMin(const int index, int* max, int* imax, in
 	{
 		lp_buffer++;
 		val = *lp_buffer;
-		if (val > * max)	// search max
+		if (val > *max)	// search max
 		{
 			*max = val;	// change max and imax
 			*imax = i;
@@ -591,7 +591,7 @@ void CSpikeList::MeasureSpikeMaxMinEx(const int index, int* max, int* imax, int*
 	{
 		lp_buffer++;
 		val = *lp_buffer;
-		if (val > * max)				// search max
+		if (val > *max)				// search max
 		{
 			*max = val;				// change max and imax
 			*imax = i;
@@ -619,7 +619,7 @@ void CSpikeList::MeasureSpikeMaxThenMinEx(const int index, int* max, int* imax, 
 	{
 		lp_buffer++;
 		val = *lp_buffer;
-		if (val > * max)				// search max
+		if (val > *max)				// search max
 		{
 			*max = val;				// change max and imax
 			*imax = i;
@@ -1171,9 +1171,9 @@ int CSpikeList::GetValidSpikeNumber(int ispike) {
 }
 
 int CSpikeList::GetNextSpike(int spikeno, int delta, BOOL bKeepSameClass) {
-	int spikeold = spikeno ;
+	int spikeold = spikeno;
 	int classold = 0;
-	if (spikeold >= 0 && spikeold < GetTotalSpikes()-1)
+	if (spikeold >= 0 && spikeold < GetTotalSpikes() - 1)
 		classold = GetSpikeClass(spikeno);
 	if (delta >= 0)
 		delta = 1;
@@ -1182,7 +1182,7 @@ int CSpikeList::GetNextSpike(int spikeno, int delta, BOOL bKeepSameClass) {
 	if (bKeepSameClass) {
 		do {
 			spikeno += delta;
-			if (spikeno < 0 || spikeno >= GetTotalSpikes() ) {
+			if (spikeno < 0 || spikeno >= GetTotalSpikes()) {
 				spikeno = spikeold;
 				break;
 			}

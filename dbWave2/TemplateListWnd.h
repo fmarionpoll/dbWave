@@ -2,7 +2,6 @@
 
 #include "TemplateWnd.h"
 
-
 class CTemplateListWnd : public CListCtrl
 {
 	DECLARE_SERIAL(CTemplateListWnd)
@@ -13,7 +12,7 @@ public:
 	virtual ~CTemplateListWnd() override;
 	CTemplateListWnd& operator = (const CTemplateListWnd& arg);	// operator redefinition
 	void		Serialize(CArchive& ar) override;
-	
+
 	// Attributes
 public:
 	CImageList	m_imageList;
@@ -23,20 +22,20 @@ protected:
 	CImageList* m_pimageListDrag = nullptr;
 	CArray < CTemplateWnd*, CTemplateWnd*> templatewnd_ptr_array;
 	CTemplateWnd m_tpl0{};
-	int			m_tpllen		= 60;
-	int			m_tpleft		= 0;
-	int			m_tpright		= 1;
-	float		m_ktolerance	= 1.96f;
-	int			m_hitrate		= 75;
-	int			m_yextent		= 0;
-	int			m_yzero			= 0;
-	BOOL		m_bDragging		= false;
-	int			m_iItemDrag		= 0;
-	int			m_iItemDrop		= 0;
+	int			m_tpllen = 60;
+	int			m_tpleft = 0;
+	int			m_tpright = 1;
+	float		m_ktolerance = 1.96f;
+	int			m_hitrate = 75;
+	int			m_yextent = 0;
+	int			m_yzero = 0;
+	BOOL		m_bDragging = false;
+	int			m_iItemDrag = 0;
+	int			m_iItemDrop = 0;
 	CPoint		m_ptHotSpot{};
 	CPoint		m_ptOrigin{};
 	CSize		m_sizeDelta{};
-	
+
 public:
 	int			InsertTemplate(int i, int classID);
 	int			InsertTemplateData(int i, int classID);

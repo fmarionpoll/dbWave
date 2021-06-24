@@ -2,8 +2,6 @@
 #include "dbWaveDoc.h"
 #include "CViewDao.h"
 
-
-
 IMPLEMENT_DYNAMIC(CViewDAO, CDaoRecordView)
 
 CViewDAO::CViewDAO(LPCTSTR lpszTemplateName)
@@ -41,7 +39,6 @@ void CViewDAO::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
-
 
 CdbWaveDoc* CViewDAO::GetDocument()
 {
@@ -191,7 +188,7 @@ void CViewDAO::saveCurrentSpkFile()
 
 void CViewDAO::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	auto icursel = m_tabCtrl.GetCurSel(); 
+	auto icursel = m_tabCtrl.GetCurSel();
 	SendMessage(WM_MYMESSAGE, HINT_VIEWTABCHANGE, MAKELPARAM(icursel, 0));
 	*pResult = 0;
 }
