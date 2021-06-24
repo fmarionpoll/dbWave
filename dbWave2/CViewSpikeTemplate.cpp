@@ -176,11 +176,11 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// set ctrlTab values and extend its size
-	CString cs = _T("Create Templates");
+	CString cs = _T("Create");
 	m_tab1Ctrl.InsertItem(0, cs);
-	cs = _T("Sort with Templates");
+	cs = _T("Sort");
 	m_tab1Ctrl.InsertItem(1, cs);
-	cs = _T("Display Average");
+	cs = _T("Display");
 	m_tab1Ctrl.InsertItem(2, cs);
 	CRect rect;
 	m_tab1Ctrl.GetWindowRect(&rect);
