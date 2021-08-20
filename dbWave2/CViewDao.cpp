@@ -158,16 +158,14 @@ void CViewDAO::saveCurrentSpkFile()
 		auto p_doc = GetDocument();
 		const auto currentlist = m_tabCtrl.GetCurSel();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-		if (m_pSpkList != nullptr) {
-			if (!m_pSpkList->IsClassListValid())	// if class list not valid:
-				m_pSpkList->UpdateClassList();		// rebuild list of classes
-		}
+		if (m_pSpkList != nullptr && !m_pSpkList->IsClassListValid())
+			m_pSpkList->UpdateClassList();	
 		const auto spkfile_name = p_doc->GetDB_CurrentSpkFileName(FALSE);
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
 		auto nclasses = 1;
-		const auto  ntotalspikes = m_pSpkList->GetTotalSpikes();
+		const auto  ntotalspikes = (m_pSpkList != nullptr) ? m_pSpkList->GetTotalSpikes(): 0;
 		if (ntotalspikes > 0)
 		{
 			if (!m_pSpkList->IsClassListValid())		// if class list not valid:

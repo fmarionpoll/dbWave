@@ -58,12 +58,12 @@ public:
 	~CSubfileItem();
 
 	// Helpers
-	WORD		GetCode() const { return m_rec.wCode; }
-	CStringA	GetLabel() const { return m_rec.szLabel; }
-	unsigned char GetDataEncoding() const { return m_rec.ucEncoding; };
-	int		GetItemnb() const { return m_rec.itemnb; }
-	ULONGLONG GetDataOffset() const { return m_rec.ulOffset; }
-	ULONGLONG GetDataLength() const { return m_rec.ulLength; }
+	WORD			GetCode() const { return m_rec.wCode; }
+	CStringA		GetLabel() const { return m_rec.szLabel; }
+	unsigned char	GetDataEncoding() const { return m_rec.ucEncoding; };
+	int				GetItemnb() const { return m_rec.itemnb; }
+	ULONGLONG		GetDataOffset() const { return m_rec.ulOffset; }
+	ULONGLONG		GetDataLength() const { return m_rec.ulLength; }
 
 	void SetCode(unsigned char ucCode) { m_rec.wCode = ucCode; }
 	void SetLabel(char* pszLabel);
@@ -73,6 +73,6 @@ public:
 	void SetDataLength(ULONGLONG ulLength) { m_rec.ulLength = ulLength; }
 
 	// I/O Operations
-	void Read(CFile* pdatafile);
-	ULONGLONG Write(CFile* pdatafile);
+	void		Read(CFile* pdatafile);
+	ULONGLONG	Write(CFile* pdatafile);
 };
