@@ -345,7 +345,7 @@ int CWaveBuf::GetWBcorrectionFactor(int i, float* correct)
 			and store the result in transform buffer lp_dest
  parameters:	lp_source pointer to 1rst point to transform from RW buffer x(k=0)
 				lp_dest	 pointer to destination buffer
-				n items	n points to examine
+				cx = n items	n points to examine
  returns:	fills lp_dest buffer with first derivative of signal/lp_source
  comments:	; use a formula from
 	Usui S. and Amidror I. (1982)
@@ -363,11 +363,11 @@ int CWaveBuf::GetWBcorrectionFactor(int i, float* correct)
 
 	BDERIV computes only the expression between brackets [..]
 
-	The expression is evaluated in two steps. It should be noted that
-	expression (a) equals expression (b) * (-1) 4 steps later. The
+	The expression is evaluated in two steps. 
+	Expression (a) equals expression (b) * (-1) 4 steps later. The
 	algorithm actually implemented use this fact to evaluate this
 	expression only once, but stores it in y(k+4) and subtract it
-	from y(k), using registers ax, bx, and dx to store x(k+1), x(k+2)
+	from y(k), using ax, bx, and dx to store x(k+1), x(k+2)
 	and x(k+3).
 
   !!! this kind of filter produces an array with 6 missing points
@@ -382,7 +382,7 @@ void CWaveBuf::BDeriv(const short* lp_source, short* lp_dest, int cx) const
 	lp_source -= ispan * nchans;	// init source address: k-3
 	cx += ispan;				// modify nb of pts
 	int bx = *lp_source; 		// xk+1 load first data pts
-	lp_source += nchans;			// update offset
+	lp_source += nchans;		// update offset
 	int dx = *lp_source; 		// xk+2
 	lp_source += nchans; 		// update offset
 
@@ -656,7 +656,7 @@ void CWaveBuf::BMovAvg30(short* lp_source, short* lp_dest, const int cx) const
  parameters:	input array + nb of points to compute, span=30 points
  returns:		output array with median value
  comments:
- source:	L. Fiore, G. Corsini, L. Geppetti (1997) Application of non-linear
+ source:	L. Fiore, G. Corsini, L. Geppetti (1996) Application of non-linear
 			filters based on the median filter to experimental and simulated
 			multiunit neural recordings. J Neurosci Meth 70: 177-184.
  **************************************************************************/
