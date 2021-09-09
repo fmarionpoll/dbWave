@@ -170,9 +170,10 @@ void CViewDAO::saveCurrentSpkFile()
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
 		auto nclasses = 1;
-		const auto  ntotalspikes = m_pSpkList->GetTotalSpikes();
-		if (ntotalspikes > 0)
+		int ntotalspikes = 0;
+		if (m_pSpkList != nullptr && m_pSpkList->GetTotalSpikes() > 0)
 		{
+			ntotalspikes = m_pSpkList->GetTotalSpikes();
 			if (!m_pSpkList->IsClassListValid())		// if class list not valid:
 				nclasses = m_pSpkList->UpdateClassList();
 			else
