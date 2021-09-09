@@ -5,16 +5,15 @@
 #define mytype	double
 #endif
 
-
 class CTemplateWnd : public CChartWnd
 {
 	DECLARE_SERIAL(CTemplateWnd)
 
 	//Construction
 public:
-					CTemplateWnd();
+	CTemplateWnd();
 	virtual			~CTemplateWnd() override;
-	CTemplateWnd&	operator = (const CTemplateWnd& arg);
+	CTemplateWnd& operator = (const CTemplateWnd& arg);
 	void			Serialize(CArchive& ar) override;
 
 	// Attributes
@@ -35,18 +34,18 @@ protected:
 	int				m_tpllen;		// length of templates array
 	// template array - intermediary results : sum, sum2
 	// length = total spike length (defined by m_tpllen)
-	mytype*			m_pSumArray;	// array declared for longs
-	mytype*			m_pSUM0;		// array with sum (X)
-	mytype*			m_pSUM20;		// array with sum (X * X)
+	mytype* m_pSumArray;	// array declared for longs
+	mytype* m_pSUM0;		// array with sum (X)
+	mytype* m_pSUM20;		// array with sum (X * X)
 	long			m_nitems;		// n elements
 
 	// template array - results and envelope
 	// length = total spike length
 	// mean, sup value, low value (as computed by tSetdisplayData())
 	// combined arrays
-	int*			m_pAvg;			// first point of the array
-	int*			m_pMax0;		// upper limit
-	int*			m_pMin0;		// lower limit
+	int* m_pAvg;			// first point of the array
+	int* m_pMax0;		// upper limit
+	int* m_pMin0;		// lower limit
 
 	// Operations
 public:
@@ -54,7 +53,7 @@ public:
 	void			tSetdisplayData();	// fill pMean data
 	void			tInit();			// init parameters, erase data pSum & pMean
 	void			tAddSpikeTopSum(short* p_source);
-	double			tPowerOfpSum();	
+	double			tPowerOfpSum();
 	BOOL			tGetNumberOfPointsWithin(short* p_source, int* hitrate);
 	double			tMinDist(short* p_source, int* ioffsetmin, BOOL bJitter = FALSE);
 	void			tGlobalstats(double* gstd, double* gdist);

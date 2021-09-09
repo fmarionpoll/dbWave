@@ -4,21 +4,17 @@
 #include "dbWaveDoc.h"
 #include "CSpkListTabCtrl.h"
 
-
-
 // CSpkListTabCtrl
 
 IMPLEMENT_DYNAMIC(CSpkListTabCtrl, CTabCtrl)
 
 CSpkListTabCtrl::CSpkListTabCtrl()
 {
-
 }
 
 CSpkListTabCtrl::~CSpkListTabCtrl()
 {
 }
-
 
 BEGIN_MESSAGE_MAP(CSpkListTabCtrl, CTabCtrl)
 END_MESSAGE_MAP()
@@ -28,7 +24,7 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc)
 {
 	DeleteAllItems();
 	auto j = 0;
-	
+
 	const auto curr_listsize = pSpkDoc->GetSpkList_Size();
 	for (auto i = 0; i < curr_listsize; i++)
 	{
@@ -42,10 +38,4 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc)
 		InsertItem(j, cs);
 		j++;
 	}
-	
 }
-
-
-
-
-

@@ -2,8 +2,6 @@
 #include "dbWaveDoc.h"
 #include "CViewDao.h"
 
-
-
 IMPLEMENT_DYNAMIC(CViewDAO, CDaoRecordView)
 
 CViewDAO::CViewDAO(LPCTSTR lpszTemplateName)
@@ -41,7 +39,6 @@ void CViewDAO::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
-
 
 CdbWaveDoc* CViewDAO::GetDocument()
 {
@@ -161,19 +158,16 @@ void CViewDAO::saveCurrentSpkFile()
 		auto p_doc = GetDocument();
 		const auto currentlist = m_tabCtrl.GetCurSel();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-		if (m_pSpkList != nullptr) {
-			if (!m_pSpkList->IsClassListValid())	// if class list not valid:
-				m_pSpkList->UpdateClassList();		// rebuild list of classes
-		}
+		if (m_pSpkList != nullptr && !m_pSpkList->IsClassListValid())
+			m_pSpkList->UpdateClassList();	
 		const auto spkfile_name = p_doc->GetDB_CurrentSpkFileName(FALSE);
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
 		auto nclasses = 1;
-		int ntotalspikes = 0;
-		if (m_pSpkList != nullptr && m_pSpkList->GetTotalSpikes() > 0)
+		const auto  ntotalspikes = (m_pSpkList != nullptr) ? m_pSpkList->GetTotalSpikes(): 0;
+		if (ntotalspikes > 0)
 		{
-			ntotalspikes = m_pSpkList->GetTotalSpikes();
 			if (!m_pSpkList->IsClassListValid())		// if class list not valid:
 				nclasses = m_pSpkList->UpdateClassList();
 			else
@@ -194,7 +188,7 @@ void CViewDAO::saveCurrentSpkFile()
 
 void CViewDAO::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	auto icursel = m_tabCtrl.GetCurSel(); 
+	auto icursel = m_tabCtrl.GetCurSel();
 	SendMessage(WM_MYMESSAGE, HINT_VIEWTABCHANGE, MAKELPARAM(icursel, 0));
 	*pResult = 0;
 }

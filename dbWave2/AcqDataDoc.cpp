@@ -35,14 +35,6 @@ CAcqDataDoc::~CAcqDataDoc()
 	SAFE_DELETE(m_pXFile);
 }
 
-/**************************************************************************
- function:  OnSaveDocument(const char* pszName)
- purpose: Save the file named pszName
- parameters:
-	_ const char* pszName : name of the file to be saved
- returns: TRUE if operation was successful, else returns FALSE
- comments:
- **************************************************************************/
 BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
 {
 	const BOOL flag = SaveAs(szPathName, FALSE);
@@ -51,14 +43,6 @@ BOOL CAcqDataDoc::OnSaveDocument(CString& szPathName)
 	return flag;
 }
 
-/**************************************************************************
- function:  OnOpenDocument(CString &szPathName)
- purpose: Open the file called szPathName
- parameters:
-	CString &szPathName : Name of the file to be opened
- returns: TRUE if operation was successful, else returns FALSE
- comments:
- **************************************************************************/
 BOOL CAcqDataDoc::OnOpenDocument(CString& sz_path_name)
 {
 	// close data file unless it is already opened
@@ -194,13 +178,6 @@ BOOL CAcqDataDoc::openAcqFile(CString& cs_filename)
 	return b_flag;
 }
 
-/**************************************************************************
- function:  OnNewDocument()
- purpose: Create a new document
- parameters: none
- returns: TRUE if operation was successful, else returns FALSE
- comments:
- **************************************************************************/
 BOOL CAcqDataDoc::OnNewDocument()
 {
 	//if (!CDocument::OnNewDocument())
@@ -208,7 +185,6 @@ BOOL CAcqDataDoc::OnNewDocument()
 	DeleteContents();
 	m_strPathName.Empty();      // no path name yet
 	SetModifiedFlag(FALSE);     // make clean
-	//OnDocumentEvent(onAfterNewDocument); // this call causes a crash as the template is not defined for CAcqDataDoc
 
 	if (m_pWBuf == nullptr)
 	{
@@ -221,13 +197,6 @@ BOOL CAcqDataDoc::OnNewDocument()
 	return TRUE;
 }
 
-/**************************************************************************
- function: GetFileInfos
- purpose:
- parameters:
- returns:
- comments:
- **************************************************************************/
 CString CAcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 {
 	const CString sep('\t');
@@ -450,20 +419,6 @@ short* CAcqDataDoc::LoadRawDataParams(int* nb_channels)
 	return m_pWBuf->getWBAdrRawDataBuf();
 }
 
-/**************************************************************************
- function:		LoadRawData (long* l_first, long* l_last, short n_span)
-
- purpose:		load data from file into memory buffer
- parameters:
-	_ l_first = file channel index of first pt (address of variable)
-	_ l_last = file channel index of last point (address of variable)
-	_ n_span = try having n_span points before l_first and n_span after l_last
-			  (necessary for transforms)
- returns:		l_first , l_last: chan file indexes of first and last pt
-				buffer: data loaded from file
-				TRUE if no error
- comments:      load as much data as possible within buffer
- **************************************************************************/
 BOOL CAcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 {
 	auto flag = TRUE;
@@ -484,15 +439,6 @@ BOOL CAcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 	return flag;
 }
 
-/**************************************************************************
- function:	ReadDataBlock(long l_first)
- purpose:	Read a data block from a given file offset
- parameters:
-	_ l_first =
- return:	FALSE if something is wrong;
-			TRUE & update m_lBUFchanFirst, m_lBUFchanLast
- comments:
- **************************************************************************/
 BOOL CAcqDataDoc::readDataBlock(long l_first)
 {
 	// check limits
@@ -544,8 +490,6 @@ BOOL CAcqDataDoc::readDataBlock(long l_first)
 		return FALSE;
 }
 
-// read data infos from the file descriptor
-// and update data buffer size accordingly
 void CAcqDataDoc::ReadDataInfos()
 {
 	ASSERT(m_pXFile != NULL);
@@ -553,15 +497,6 @@ void CAcqDataDoc::ReadDataInfos()
 	AllocBUF();
 }
 
-/**************************************************************************
- function:		BGetVal (short channel, long lIndex)
- purpose: Returns value and refreshes data if necessery
- parameters:
-	_ short channel : channel of the current plot
-	_ long lIndex : index of the current plot
- returns:
- comments:
- **************************************************************************/
 short CAcqDataDoc::BGetVal(const int channel, const long l_index)
 {
 	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
@@ -570,21 +505,6 @@ short CAcqDataDoc::BGetVal(const int channel, const long l_index)
 	return *(m_pWBuf->getWBAdrRawDataElmt(channel, index));
 }
 
-/**************************************************************************
- function:		LoadTransfData (long* l_first, long* l_last, short transformType, short chan)
-
- purpose:		load data from file into memory buffer and store given transform
-				into transform buffer
- parameters:	l_first = file channel index of first pt (address of variable)
-				l_last = file channel index of last point (address of variable)
-				transformType = index to transformation request
-				sourcechan = source channel
-
- returns:		l_first , l_last: chan file indexes of first and last pt
-				buffer: data loaded from file
-
- comments:      load as many data as possible within buffer
- **************************************************************************/
 short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const int transform_type, const int source_channel)
 {
 	const BOOL b_already_done = (m_bValidTransfBuffer
@@ -686,20 +606,6 @@ short* CAcqDataDoc::LoadTransfData(const long l_first, const long l_last, const 
 	return lp_destination;
 }
 
-/**************************************************************************
- function:		BuildTransfData (int transformType, int chan)
-
- purpose:		build transf data from data loaded within raw data buffer
-				store into transform buffer
- parameters:	m_lBUFchanFirst = file channel index of first pt (assume data buffer is valid)
-				m_lBUFchanLast = file channel index of last point (assume data buffer is valid)
-				transformType = index to transformation request
-				sourcechan = source channel
-
- returns:		BOOL flag = true if operation completed
-
- comments:
- **************************************************************************/
 BOOL CAcqDataDoc::BuildTransfData(const int transform_type, const int source_channel)
 {
 	// make sure that transform buffer is ready
