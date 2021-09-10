@@ -122,18 +122,39 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 	auto plast = pfirst + 2;
 	char cdummy = *plast;
 	*plast = 0;
-	const short month = atoi(pfirst);	*plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
-	const short day = atoi(pfirst);	*plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
-	const short year = 1900 + atoi(pfirst); *plast = cdummy;
+	const short month = atoi(pfirst);
+	*plast = cdummy;
+	pfirst = plast + 1;
+	plast = pfirst + 2;
+	cdummy = *plast;
+	*plast = 0;
+	const short day = atoi(pfirst);
+	*plast = cdummy;
+	pfirst = plast + 1;
+	plast = pfirst + 2;
+	cdummy = *plast;
+	*plast = 0;
+	const short year = 1900 + atoi(pfirst);
+	*plast = cdummy;
 
 	// convert data acquisition time
 	pfirst = p_header + ACQTIME;
 	plast = pfirst + 2;
 	cdummy = *plast;
 	*plast = 0;
-	const short hour = atoi(pfirst); *plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
-	const short min = atoi(pfirst); *plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
-	const short sec = atoi(pfirst); *plast = cdummy;
+	const short hour = atoi(pfirst);
+	*plast = cdummy;
+	pfirst = plast + 1;
+	plast = pfirst + 2;
+	cdummy = *plast;
+	*plast = 0;
+	const short min = atoi(pfirst);
+	*plast = cdummy;
+	pfirst = plast + 1;
+	plast = pfirst + 2;
+	cdummy = *plast; *plast = 0;
+	const short sec = atoi(pfirst);
+	*plast = cdummy;
 	pWFormat->acqtime = CTime(year, month, day, hour, min, sec);
 
 	// clock period, sampling rate/chan and file duration

@@ -109,7 +109,7 @@ typedef struct tagATLABHEADER {		// index
 	short		gain_list[8];		// 21  channel gain list
 	char 		free_2[16];			// ...................................
 	char		channel_comment[8][40];// 37 channel annotation
-	//INSTRUMPARM channel_instrum[8];	//     channel instumental parameters
+	//INSTRUMPARM channel_instrum[8];	//     channel instrumental parameters
 	char		free_3[320];			//
 	char		acq_date[10];		// 357 acquisition date
 	char		acq_time[10];		// 362 acquisition time
