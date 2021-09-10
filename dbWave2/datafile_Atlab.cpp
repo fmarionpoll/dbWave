@@ -2,6 +2,9 @@
 #include "dataheader_Atlab.H"
 #include "datafile_Atlab.h"
 
+#include <iomanip>
+#include <sstream>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -39,9 +42,9 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 	CWaveFormat* pWFormat = pBuf->GetpWaveFormat();
 	CWaveChanArray* pArray = pBuf->GetpWavechanArray();
 	// Read file header
-	auto bflag	= TRUE;
-	m_pWFormat	= pWFormat;
-	m_pArray	= pArray;
+	auto bflag = TRUE;
+	m_pWFormat = pWFormat;
+	m_pArray = pArray;
 
 	auto const p_header = new char[m_bHeaderSize];
 	ASSERT(p_header != NULL);
@@ -118,49 +121,30 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 	pWFormat->csSensillum.TrimRight();
 	pWFormat->cs_comment.Empty();
 
-	auto pfirst = p_header + ACQDATE;
-	auto plast = pfirst + 2;
-	char cdummy = *plast;
-	*plast = 0;
-	const short month = atoi(pfirst);
-	*plast = cdummy;
-	pfirst = plast + 1;
-	plast = pfirst + 2;
-	cdummy = *plast;
-	*plast = 0;
-	const short day = atoi(pfirst);
-	*plast = cdummy;
-	pfirst = plast + 1;
-	plast = pfirst + 2;
-	cdummy = *plast;
-	*plast = 0;
-	const short year = 1900 + atoi(pfirst);
-	*plast = cdummy;
-
-	// convert data acquisition time
-	pfirst = p_header + ACQTIME;
-	plast = pfirst + 2;
-	cdummy = *plast;
-	*plast = 0;
-	const short hour = atoi(pfirst);
-	*plast = cdummy;
-	pfirst = plast + 1;
-	plast = pfirst + 2;
-	cdummy = *plast;
-	*plast = 0;
-	const short min = atoi(pfirst);
-	*plast = cdummy;
-	pfirst = plast + 1;
-	plast = pfirst + 2;
-	cdummy = *plast; *plast = 0;
-	const short sec = atoi(pfirst);
-	*plast = cdummy;
-	pWFormat->acqtime = CTime(year, month, day, hour, min, sec);
+	const auto pfirst = p_header + ACQDATE;
+	const auto str_date_time = CString(pfirst, 19);
+	COleDateTime myDtTime{};
+	CTime sys_time ={};
+	if (myDtTime.ParseDateTime(str_date_time))
+	{
+		SYSTEMTIME st;
+		if (myDtTime.GetAsSystemTime(st))
+		{
+			sys_time = st;
+		}
+	}
+	else
+	{
+		ASSERT(FALSE);
+		sys_time = CTime::GetCurrentTime();
+	}
+	pWFormat->acqtime = sys_time;
 
 	// clock period, sampling rate/chan and file duration
 	pchar = p_header + CLKPER;
-	plong = (long*)pchar;
-	const auto clock_rate = 4.0E6f / static_cast<float>(*plong);
+	//plong = (INT32*)pchar;
+	auto pplong = reinterpret_cast<INT32*>(pchar);
+	const auto clock_rate = 4.0E6f / static_cast<float>(*pplong);
 	pWFormat->chrate = clock_rate / pWFormat->scan_count;
 	pWFormat->duration = pWFormat->sample_count / clock_rate;
 
