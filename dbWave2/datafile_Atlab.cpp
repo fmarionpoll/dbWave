@@ -63,7 +63,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 	case 128:	pWFormat->csADcardName = _T("DT2823");		break;
 	case 256:	pWFormat->csADcardName = _T("DT2825");		break;
 	case 512:	pWFormat->csADcardName = _T("DT2824");		break;
-	default:	pWFormat->csADcardName = _T("DT_OTHER");		break;
+	default:	pWFormat->csADcardName = _T("DT_OTHER");	break;
 	}
 
 	// A/D acquisition mode -- not implemented
@@ -71,7 +71,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 
 	// number of data acquisition channels
 	pchar = p_header + SCNCNT;
-	pWFormat->scan_count = *((short*)pchar);
+	pWFormat->scan_count = *(short*)pchar;
 
 	// check if file is not corrupted
 	pchar = p_header + SAMCNT;
@@ -119,22 +119,27 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 	pWFormat->cs_comment.Empty();
 
 	auto pfirst = p_header + ACQDATE;
-	auto plast = pfirst + 2; char cdummy = *plast; *plast = 0;
+	auto plast = pfirst + 2;
+	char cdummy = *plast;
+	*plast = 0;
 	const short month = atoi(pfirst);	*plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
 	const short day = atoi(pfirst);	*plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
 	const short year = 1900 + atoi(pfirst); *plast = cdummy;
 
 	// convert data acquisition time
 	pfirst = p_header + ACQTIME;
-	plast = pfirst + 2; cdummy = *plast; *plast = 0;
+	plast = pfirst + 2;
+	cdummy = *plast;
+	*plast = 0;
 	const short hour = atoi(pfirst); *plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
 	const short min = atoi(pfirst); *plast = cdummy; pfirst = plast + 1; plast = pfirst + 2; cdummy = *plast; *plast = 0;
 	const short sec = atoi(pfirst); *plast = cdummy;
 	pWFormat->acqtime = CTime(year, month, day, hour, min, sec);
 
 	// clock period, sampling rate/chan and file duration
-	pchar = p_header + CLKPER; plong = (long*)pchar;
-	const auto clock_rate = 4.0E6f / ((float)*plong);
+	pchar = p_header + CLKPER;
+	plong = (long*)pchar;
+	const auto clock_rate = 4.0E6f / static_cast<float>(*plong);
 	pWFormat->chrate = clock_rate / pWFormat->scan_count;
 	pWFormat->duration = pWFormat->sample_count / clock_rate;
 

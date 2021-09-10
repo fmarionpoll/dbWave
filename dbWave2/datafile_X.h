@@ -41,7 +41,7 @@ public:
 	int				m_idType;			// file type 0=unknown; 1=atlab; 2=Asyst; 3=awave; ..
 	CStringA		m_csType;
 	ULONGLONG		m_ulOffsetData;		// file offset of data start
-	ULONGLONG		m_ulOffsetHeader;	// file offset of data header
+	LONGLONG		m_ulOffsetHeader;	// file offset of data header
 	ULONGLONG		m_ulbytescount;		// dummy parameter: Data append
 
 // Implementation

@@ -151,7 +151,7 @@ void CDataFileAWAVE::WriteFileMap()
 	nbitemsmax--;						// minus struct_jump or struc_end
 	auto nbitems = 0;					// init nb structures to zero
 
-	// loop throught the map & write subfile descriptors
+	// loop through the map & write subfile descriptors
 	// skip end-of-file descriptor
 	// add a "jump" descriptor if header (256) is full
 	// and continue to write descriptors further at the end of the file
