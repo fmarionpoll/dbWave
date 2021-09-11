@@ -3,11 +3,8 @@
 #include "datafile_Atlab.h"
 
 #include <iomanip>
-#include <sstream>
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
+
 
 IMPLEMENT_DYNCREATE(CDataFileATLAB, CDataFileX)
 
@@ -48,8 +45,8 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 
 	auto const p_header = new char[m_bHeaderSize];
 	ASSERT(p_header != NULL);
-	Seek(m_ulOffsetHeader, CFile::begin);	// position pointer
-	Read(p_header, m_bHeaderSize);			// read header
+	Seek(m_ulOffsetHeader, CFile::begin);
+	Read(p_header, m_bHeaderSize);
 
 	// get A/D card type
 	auto pchar = p_header + DEVID;
@@ -74,7 +71,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 
 	// number of data acquisition channels
 	pchar = p_header + SCNCNT;
-	pWFormat->scan_count = *(short*)pchar;
+	pWFormat->scan_count = *reinterpret_cast<short*>(pchar);
 
 	// check if file is not corrupted
 	pchar = p_header + SAMCNT;
@@ -82,12 +79,12 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 	const auto len1 = static_cast<long>(GetLength() - m_bHeaderSize) / 2;
 	if (len1 != *plong)
 	{
-		*plong = len1;
+		//*plong = len1;
 		SeekToBegin();
 		Write(p_header, m_bHeaderSize);
 		bflag = 2;
 	}
-	pWFormat->sample_count = *plong;
+	pWFormat->sample_count = len1;
 
 	// decode ATLAB header and fill in windows structure
 	// ---------------- specific DT2821 differential mode
@@ -142,9 +139,8 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 
 	// clock period, sampling rate/chan and file duration
 	pchar = p_header + CLKPER;
-	//plong = (INT32*)pchar;
-	auto pplong = reinterpret_cast<INT32*>(pchar);
-	const auto clock_rate = 4.0E6f / static_cast<float>(*pplong);
+	plong = reinterpret_cast<long*>(pchar);
+	const auto clock_rate = 4.0E6f / static_cast<float>(*plong);
 	pWFormat->chrate = clock_rate / pWFormat->scan_count;
 	pWFormat->duration = pWFormat->sample_count / clock_rate;
 
@@ -221,7 +217,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* pBuf)
 		break;
 	}
 
-	// init additional parameters
+	
 	delete[] p_header;
 	return bflag;
 }
