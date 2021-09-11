@@ -90,7 +90,7 @@ protected:
 	void		readBeforeVersion6(CArchive& ar, WORD wwVersion);
 	void		readVersion6(CArchive& ar);
 	void		readVersion7(CArchive& ar);
-	void		setFileExtension_as_SPK(CString& filename);
+	void		set_file_extension_as_spk(CString& filename);
 
 	// Generated message map functions
 protected:

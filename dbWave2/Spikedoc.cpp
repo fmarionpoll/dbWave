@@ -243,27 +243,29 @@ void CSpikeDoc::readVersion7(CArchive& ar)
 }
 
 // CSpikeDoc commands
-void CSpikeDoc::setFileExtension_as_SPK(CString& docname) 
+void CSpikeDoc::set_file_extension_as_spk(CString& fileName) 
 {
-	const auto i = docname.ReverseFind('.');		// find extension separator
+	const auto i = fileName.ReverseFind('.');		// find extension separator
 	if (i > 0)
-		docname = docname.Left(i);	// clip name to remove extension
-	docname += ".spk";				// add "fresh" extension (spk)
+		fileName = fileName.Left(i);	// clip name to remove extension
+	fileName += ".spk";				// add "fresh" extension (spk)
 }
 
 BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 {
 	// check that path name has ".spk"
-	CString docname = pszPathName;
-	setFileExtension_as_SPK(docname);
+	CString fileName = pszPathName;
+	if (fileName.IsEmpty())
+		return false;
+	set_file_extension_as_spk(fileName);
 
 	CFileStatus status;	
-	const auto b_flag_exists = CFile::GetStatus(docname, status);
+	const auto b_flag_exists = CFile::GetStatus(fileName, status);
 
 	if (b_flag_exists && (status.m_attribute & CFile::readOnly))
 	{
 		CString prompt;
-		AfxFormatString1(prompt, AFX_IDP_ASK_TO_SAVE, docname);
+		AfxFormatString1(prompt, AFX_IDP_ASK_TO_SAVE, fileName);
 		switch (AfxMessageBox(prompt, MB_YESNOCANCEL, AFX_IDP_ASK_TO_SAVE))
 		{
 		case IDYES:
@@ -273,25 +275,25 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 			ASSERT(p_template != NULL);
 			if (!m_newpath.IsEmpty())
 			{
-				const auto j = docname.ReverseFind('\\') + 1;
+				const auto j = fileName.ReverseFind('\\') + 1;
 				if (j != -1)
-					docname = docname.Mid(j);
-				docname = m_newpath + docname;
+					fileName = fileName.Mid(j);
+				fileName = m_newpath + fileName;
 			}
 
-			if (!AfxGetApp()->DoPromptFileName(docname,
+			if (!AfxGetApp()->DoPromptFileName(fileName,
 				AFX_IDS_SAVEFILE,
 				OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, FALSE, p_template))
 				return FALSE;
-			if (!AfxGetApp()->DoPromptFileName(docname,
+			if (!AfxGetApp()->DoPromptFileName(fileName,
 				AFX_IDS_SAVEFILECOPY,
 				OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, FALSE, p_template))
 				return FALSE;
 
 			// don't even attempt to save
-			const auto k = docname.ReverseFind('\\') + 1;	// find last occurence of antislash
+			const auto k = fileName.ReverseFind('\\') + 1;	// find last occurence of antislash
 			if (k != -1)
-				m_newpath = docname.Left(k);
+				m_newpath = fileName.Left(k);
 		}
 		break;
 
@@ -306,7 +308,7 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 	CFileException e;
 	try
 	{
-		f.Open(docname, CFile::modeCreate | CFile::modeWrite, &e);
+		f.Open(fileName, CFile::modeCreate | CFile::modeWrite, &e);
 		CArchive ar(&f, CArchive::store);
 		Serialize(ar);
 		ar.Flush();
@@ -317,7 +319,7 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 	catch (CFileException* pe)
 	{
 		f.Abort();
-		ReportSaveLoadException(docname, pe, FALSE, AFX_IDP_FAILED_TO_SAVE_DOC);
+		ReportSaveLoadException(fileName, pe, FALSE, AFX_IDP_FAILED_TO_SAVE_DOC);
 		pe->Delete();
 		return FALSE;
 	}

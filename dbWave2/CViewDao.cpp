@@ -94,7 +94,7 @@ BOOL CViewDAO::OnMove(UINT nIDMoveCommand)
 	if (m_autoDetect && p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
-		return false;
+		//return false;
 	}
 	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
@@ -159,8 +159,9 @@ void CViewDAO::saveCurrentSpkFile()
 		const auto currentlist = m_tabCtrl.GetCurSel();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		if (m_pSpkList != nullptr && !m_pSpkList->IsClassListValid())
-			m_pSpkList->UpdateClassList();	
-		const auto spkfile_name = p_doc->GetDB_CurrentSpkFileName(FALSE);
+			m_pSpkList->UpdateClassList();
+
+		auto spkfile_name = p_doc->SetDB_CurrentSpikeFileName();
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 

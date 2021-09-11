@@ -1045,7 +1045,6 @@ HMENU CdbWaveDoc::GetDefaultMenu()
 	return record;
 }
 
-
  int CdbWaveDoc::findHeader(CString& text)
  {
 	 int found = -1;
