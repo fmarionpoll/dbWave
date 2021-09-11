@@ -189,7 +189,8 @@ BEGIN
     COMBOBOX        IDC_COMBO1,65,49,66,55,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Static",IDC_STATIC3,7,70,239,8
     RTEXT           "n found = 0",IDC_STATIC1,182,58,64,8
-    CONTROL         "Import &duplicate files",IDC_CHECKDISCARD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,93,80,10
+    CONTROL         "Import &files acquired at the exact same time",IDC_CHECKDISCARD,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,93,151,10
     CONTROL         "&Accept any data format",IDC_CHECKOTHERFORMATS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,105,89,10
     CONTROL         "",IDC_MFCEDITBROWSE1,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,7,18,170,14
 END
