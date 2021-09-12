@@ -322,7 +322,7 @@ public:
 	BOOL	bPreview;
 	BOOL	bSapid3_5;
 	BOOL	bDummy;
-	BOOL	bImportDuplicateFiles = false;
+	BOOL	bDiscardDuplicateFiles = false;
 	BOOL	bReadColumns = false;
 	BOOL	bHeader = false;
 	short	nbRuns;

@@ -1173,7 +1173,7 @@ OPTIONS_IMPORT::OPTIONS_IMPORT()
 	iundersample = 1;
 	path.Empty();
 	bDummy = FALSE;
-	bImportDuplicateFiles = false;
+	bDiscardDuplicateFiles = false;
 	bChanged = false;
 }
 
@@ -1272,7 +1272,7 @@ void OPTIONS_IMPORT::Serialize(CArchive & ar)
 		ar << ntypes;	// nb of ints
 		ar << iundersample;
 		bflag = bDummy;
-		bflag <<= 1; bflag += bImportDuplicateFiles;
+		bflag <<= 1; bflag += bDiscardDuplicateFiles;
 		ar << bflag;
 
 		// CStrings
@@ -1334,7 +1334,7 @@ void OPTIONS_IMPORT::Serialize(CArchive & ar)
 				if (nints > 0)
 				{
 					ar >> bflag; nints--;
-					bImportDuplicateFiles = bflag; bImportDuplicateFiles &= 0x1; bflag >>= 1;
+					bDiscardDuplicateFiles = bflag; bDiscardDuplicateFiles &= 0x1; bflag >>= 1;
 					bDummy = bflag; bDummy &= 0x1; bflag >>= 1;
 				}
 			}

@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "DlgFindFiles.h"
-//#include <shlobj.h>
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -39,7 +39,7 @@ BOOL CDlgFindFiles::OnInitDialog()
 	m_mfcbrowsecontrol.SetWindowTextW(m_path);
 
 	// hide yet undefined infos
-	((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(1);
+	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 
@@ -57,7 +57,7 @@ BOOL CDlgFindFiles::OnInitDialog()
 	else
 	{
 		CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
-		((CButton*)GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bImportDuplicateFiles);
+		static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bDiscardDuplicateFiles);
 	}
 	UpdateData(FALSE);
 	m_fileext.SetCurSel(m_selinit);			// select first item / file extensions
@@ -73,7 +73,7 @@ void CDlgFindFiles::OnOK()
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
 	auto p_app = (CdbWaveApp*)AfxGetApp();
 	p_app->options_import.path = m_path;
-	p_app->options_import.bImportDuplicateFiles = ((CButton*)GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
+	p_app->options_import.bDiscardDuplicateFiles = static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
 
 	CDialog::OnOK();
 }
@@ -87,7 +87,7 @@ void CDlgFindFiles::OnSearch()
 	m_nfound = 0;									// reset nb of files found
 	m_fileext.GetWindowText(m_searchString);		// get search string (filter)
 
-	m_bSubtreeSearch = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_bSubtreeSearch = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);

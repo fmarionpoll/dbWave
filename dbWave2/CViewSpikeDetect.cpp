@@ -201,7 +201,7 @@ void CViewSpikeDetection::updateLegends()
 	// draw dependent buttons
 	m_ChartSpkWnd_Bar.SetTimeIntervals(l_first, l_last);		// spike bars
 	m_ChartSpkWnd_Shape.SetTimeIntervals(l_first, l_last);		// superimposed spikes
-	updateSpkShapeWndScale(FALSE); 						// get parms from file/prevent spkshape draw
+	updateSpkShapeWndScale(FALSE); 								// get parms from file/prevent spkshape draw
 
 	// update text abcissa and horizontal scroll position
 	m_timefirst = l_first / m_samplingRate;

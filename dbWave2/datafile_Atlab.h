@@ -2,36 +2,28 @@
 #pragma once
 
 
-class CDataFileATLAB : public CDataFileX
+class CDataFileATLAB final : public CDataFileX
 {
 public:
-	CDataFileATLAB();           // protected constructor used by dynamic creation
+	CDataFileATLAB();
 	DECLARE_DYNCREATE(CDataFileATLAB)
 
-	// Attributes
-public:
-
-	// Operations
-public:
-	BOOL ReadDataInfos(CWaveBuf* pBuf);
-	int  CheckFileType(CString& cs_filename);
+	BOOL ReadDataInfos(CWaveBuf* p_buf) override;
+	int  CheckFileType(CString& cs_filename) override;
 protected:
-	void InitDummyChansInfo(short chanlistindex);
-	void LoadChanFromCyber(short i, char* pcyberchan);
-	void InitChansFromCyberA320(char* pHeader, short version);
-	CString GetCyberA320filter(int ncode);
+	void init_dummy_chans_info(int chanlistindex) const;
+	void load_channel_from_cyber(int channel, char* pcyberchan) const;
+	void init_channels_from_cyber_a320(char* p_header) const;
+	static CString get_cyber_a320_filter(int ncode);
 
 	CWaveFormat*	m_pWFormat;
 	CWaveChanArray* m_pArray;
 
-	// Implementation
 public:
-	virtual ~CDataFileATLAB();
+	~CDataFileATLAB() override;
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	auto AssertValid() const -> void override;
+	auto Dump(CDumpContext& dc) const -> void override;
 #endif
 
-	// Generated message map functions
-protected:
 };
