@@ -1137,6 +1137,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Ruler.cpp" />
     <ClCompile Include="RulerBar.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1468,6 +1469,7 @@
     <ClInclude Include="GridCtrl\GridCell.h" />
     <ClInclude Include="GridCtrl\GridCellBase.h" />
     <ClInclude Include="GridCtrl\GridCellCheck.h" />
+    <ClInclude Include="Ruler.h" />
     <ClInclude Include="RulerBar.h" />
     <ClInclude Include="Chart.h" />
     <ClInclude Include="DlgChartProps.h" />

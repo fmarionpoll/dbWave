@@ -432,6 +432,9 @@
     <ClCompile Include="CViewDao.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Ruler.cpp">
+      <Filter>customctrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -949,6 +952,9 @@
     </ClInclude>
     <ClInclude Include="dbWave_structures.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ruler.h">
+      <Filter>customctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

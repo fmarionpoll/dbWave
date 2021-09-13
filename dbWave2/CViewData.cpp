@@ -1,32 +1,18 @@
-// View data displays data and allow interactive browsing through the file
-// print and copy implemented
-
 #include "StdAfx.h"
-//#include <math.h>
 #include "dbWave.h"
 #include "resource.h"
-
-//#include "Cscale.h"
 #include "chart.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-//#include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "Vdordina.h"
 #include "Vdseries.h"
 #include "Adinterv.h"
 #include "Dataseri.h"
-
 #include "MeasureProperties.h"
-//#include "Editctrl.h"
-//#include "CyberAmp.h"
-//#include "Adexperi.h"
-#include "MainFrm.h"
-#include "Copyasdl.h"
-//#include "ChildFrm.h"
+#include "Copyasdl.h""
 #include "Vdabciss.h"
 #include "RulerBar.h"
-
 #include "DlgdbEditRecord.h"
 #include "DlgADInputParms.h"
 #include "CViewData.h"
@@ -96,7 +82,6 @@ void CViewData::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, m_diff);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
-
 	DDX_Control(pDX, IDC_FILESCROLL, m_filescroll);
 	DDX_Control(pDX, IDC_COMBOCHAN, m_comboSelectChan);
 }
@@ -109,8 +94,8 @@ void CViewData::DefineSubClassedItems()
 	// bitmap buttons: load icons & set buttons
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
-	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>((HANDLE)m_hBias));
-	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>((HANDLE)m_hZoom));
+	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hBias)));
+	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hZoom)));
 
 	VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAY, this));
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
