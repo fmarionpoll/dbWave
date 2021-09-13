@@ -168,7 +168,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 		if (j > 40 || j < 0)
 			j = 40;
 		p_chan->am_csComment = CStringA(pcomtlist, j);		// chan comment
-		p_chan->am_gainamplifier = *p_xgain_list;				// total gain (ampli + A/D card)
+		p_chan->am_gainamplifier = *p_xgain_list;			// total gain (ampli + A/D card)
 		p_chan->am_gaintotal = p_chan->am_gainamplifier * static_cast<double>(p_chan->am_gainAD);
 		// TODO: check if resolution is computed correctly
 		p_chan->am_resolutionV = static_cast<double>(p_WaveFormat->fullscale_Volts) / p_chan->am_gaintotal / p_WaveFormat->binspan;
