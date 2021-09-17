@@ -780,7 +780,7 @@ void CChartDataWnd::UpdateXRuler()
 		{
 			auto first = m_lxFirst / m_samplingrate;
 			auto last = m_lxLast / m_samplingrate;
-			m_xRuler.UpdateRange(&first, &last);
+			m_xRuler.UpdateRange(first, last);
 		}
 	}
 }
@@ -796,7 +796,7 @@ void CChartDataWnd::UpdateYRuler()
 			CChanlistItem* pchan = GetChanlistItem(0);
 			auto yfirst = pchan->ConvertDataBinsToVolts (binlow);
 			auto ylast = pchan->ConvertDataBinsToVolts (binhigh);
-			m_yRuler.UpdateRange(&yfirst, &ylast);
+			m_yRuler.UpdateRange(yfirst, ylast);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "Ruler.h"
 
 // chart.h : header file
 

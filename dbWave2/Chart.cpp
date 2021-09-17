@@ -92,8 +92,8 @@ float CChartWnd::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 		xVal = -xVal;
 	}
 	// get power of 10 of the value
-	const auto iprec = short(log10(xVal));	// log10 of value (upper limit)
-	if ((iprec <= 0) && (xVal < 1.))	// perform extra checking if iprec <= 0
+	const auto iprec = static_cast<short>(log10(xVal));	// log10 of value (upper limit)
+	if (iprec <= 0 && xVal < 1.)	// perform extra checking if iprec <= 0
 		i = 4 - iprec / 3;					// change equation if Units values change
 	else
 		i = 3 - iprec / 3;					// change equation if Units values change
@@ -148,8 +148,8 @@ CChartWnd::CChartWnd()
 	for (int i = 0; i < NB_COLORS; i++)
 		m_penTable[i].CreatePen(PS_SOLID, 0, m_colorTable[i]);
 
-	m_xRuler.m_bHorizontal = TRUE;
-	m_yRuler.m_bHorizontal = FALSE;
+	m_xRuler.m_is_horizontal = TRUE;
+	m_yRuler.m_is_horizontal = FALSE;
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
 }
 
@@ -363,7 +363,7 @@ void CChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 	// draw ticks and legends
 	//auto tick_small_height = 4;
 	int tickmax;
-	if (pRuler->m_bHorizontal)		// horizontal
+	if (pRuler->m_is_horizontal)		// horizontal
 		tickmax = rc_client.Width();
 	else							// vertical
 		tickmax = rc_client.Height();
@@ -377,7 +377,7 @@ void CChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 	while (dpos <= pRuler->m_dlast)
 	{
 		int tick_pos;
-		if (pRuler->m_bHorizontal)	// horizontal
+		if (pRuler->m_is_horizontal)	// horizontal
 		{
 			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 			if (tick_pos >= 0 && tick_pos <= tickmax) {
@@ -421,7 +421,7 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 	// draw ticks and legends
 	const auto tick_small_height = 4;
 	int tickmax;
-	if (pRuler->m_bHorizontal)		// horizontal
+	if (pRuler->m_is_horizontal)		// horizontal
 		tickmax = rc_client.Width();
 	else							// vertical
 		tickmax = rc_client.Height();
@@ -441,7 +441,7 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 		for (auto i = 0; i < 4; i++)
 		{
 			dsmallpos += smallscaleinc;
-			if (pRuler->m_bHorizontal) // ---------------------------- horizontal
+			if (pRuler->m_is_horizontal) // ---------------------------- horizontal
 			{
 				tick_pos = int(rc_client.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 				if (tick_pos >= rc_client.left && tick_pos <= tickmax)
@@ -463,7 +463,7 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 
 		// display large ticks and text
 		p_dc->SelectObject(&a_pen2);
-		if (pRuler->m_bHorizontal)	// horizontal
+		if (pRuler->m_is_horizontal)	// horizontal
 			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 		else						// vertical
 			tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
@@ -472,7 +472,7 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 			str.Format(_T("%g"), dpos);
 			const auto size = p_dc->GetTextExtent(str);
 			int x, y;
-			if (pRuler->m_bHorizontal)	// ----------- horizontal
+			if (pRuler->m_is_horizontal)	// ----------- horizontal
 			{
 				p_dc->MoveTo(tick_pos, rc_client.bottom - 1);	// line
 				p_dc->LineTo(tick_pos, rc_client.top + 1);

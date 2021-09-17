@@ -137,7 +137,7 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 		if (tick_pos >= 0)
 		{
 			str.Format(_T("%g"), dpos);
-			const auto size = dc.GetTextExtent(str);
+			auto size = dc.GetTextExtent(str);
 			int x, y;
 			if (!m_bHorizontal)
 			{
@@ -145,8 +145,13 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 				dc.MoveTo(m_rcClient.right, tick_pos);
 				dc.LineTo(m_rcClient.right - tick_big_height, tick_pos);
 				// text
-				if (dpos != 0. && fabs(dpos) < 1E-10)				// prevents "bad" zero
+				if (dpos != 0. && fabs(dpos) < 1E-10)				// prevents "bad" zero 
+				{
 					dpos = 0;
+					str.Format(_T("%g"), dpos);
+					size = dc.GetTextExtent(str);
+
+				}
 				x = m_rcClient.right - tick_big_height - size.cx - 2;
 				y = tick_pos - (size.cy / 2);
 			}
