@@ -10,7 +10,7 @@
 #include "Adinterv.h"
 #include "Dataseri.h"
 #include "MeasureProperties.h"
-#include "Copyasdl.h""
+#include "Copyasdl.h"
 #include "Vdabciss.h"
 #include "RulerBar.h"
 #include "DlgdbEditRecord.h"
