@@ -28,7 +28,7 @@ public:
 	short	scan_count = 1;				// number of channels in scan list
 
 	float	chrate = 10000.;			// channel sampling rate (Hz)
-	long	sample_count = 0;			// sample count
+	long	sample_count = 1000;		// sample count
 	float 	duration = 0.;				// file duration (s)
 
 	short	trig_mode = 0;				// 0=soft, 1=keyboard, 2=trig_ext(TTL), 3=input+, 4=input-

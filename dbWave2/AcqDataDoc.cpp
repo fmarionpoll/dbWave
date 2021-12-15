@@ -390,6 +390,7 @@ BOOL CAcqDataDoc::AllocBUF()
 
 	ASSERT(m_pWBuf != NULL);	// check object created properly
 	CWaveFormat* pwF= GetpWaveFormat();
+
 	m_lDOCchanLength= pwF->sample_count / static_cast<long>(pwF->scan_count);
 	m_DOCnbchans	= pwF->scan_count;
 	pwF->duration	= static_cast<float>(m_lDOCchanLength) / pwF->chrate;
