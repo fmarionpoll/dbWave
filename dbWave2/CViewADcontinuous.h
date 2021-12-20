@@ -142,8 +142,10 @@ protected:
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
 	void DAC_StopAndLiberateBuffers();
-	void get_dt_error(ECODE ecode, BOOL b_display) const;
+	void DisplayDTError(ECODE ecode, BOOL b_display) const;
 	BOOL DAC_ClearAllOutputs();
+	BOOL DisplayDTLayerError(COleDispatchException* e);
+	BOOL DisplayOleError(COleDispatchException* e);
 	int	 DAC_SetChannelList();
 	int  DAC_GetNumberOfChans();
 	void DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
