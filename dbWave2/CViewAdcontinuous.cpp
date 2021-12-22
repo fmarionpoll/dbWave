@@ -8,7 +8,7 @@
 #include "Adexperi.h"
 #include "dtacq32.h"
 #include "CyberAmp.h"
-#include "chart.h"
+#include "Chart.h"
 #include "ChartData.h"
 #include "./include/DataTranslation/Olxdadefs.h"
 #include "./include/DataTranslation/Olxdaapi.h"
@@ -24,8 +24,8 @@
 #define new DEBUG_NEW
 #endif
 
-#define MIN_DURATION 0.1
-#define MIN_BUFLEN	32
+constexpr auto MIN_DURATION = 0.1;
+constexpr auto MIN_BUFLEN = 32;
 
 IMPLEMENT_DYNCREATE(CViewADContinuous, CFormView)
 
@@ -49,7 +49,7 @@ CViewADContinuous::CViewADContinuous()
 	m_ADC_chbuflen = 0;
 	m_bFileOpen = FALSE;
 	m_numchansMAX = 16;
-	m_freqmax = 50000.f;
+	m_freqmax = 50000.;
 	m_bSimultaneousStart = FALSE;
 	m_bhidesubsequent = FALSE;
 
@@ -188,7 +188,7 @@ BOOL CViewADContinuous::FindDTOpenLayersBoards()
 	for (UINT i = 0; i < ui_num_boards; i++)
 		m_ADcardCombo.AddString(m_ADC_DTAcq32.GetBoardList(static_cast<short>(i)));
 
-	auto isel = 0;
+	short isel = 0;
 	// if name already defined, check if board present
 	if (!(m_pADC_options->waveFormat).csADcardName.IsEmpty())
 		isel = m_ADcardCombo.FindString(-1, (m_pADC_options->waveFormat).csADcardName);
