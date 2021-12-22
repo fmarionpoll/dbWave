@@ -253,14 +253,14 @@ BOOL CViewADContinuous::ADC_OpenSubSystem(const CString card_name)
 	const auto p_wave_format = &(m_pADC_options->waveFormat);
 	const auto max = m_ADC_DTAcq32.GetMaxRange(); // maximum input voltage
 	const auto min = m_ADC_DTAcq32.GetMinRange(); // minimum input voltage
-	p_wave_format->fullscale_Volts = static_cast<float>(max - min);
+	p_wave_format->fullscale_volts = max - min;
 
 	// convert into bin scale (nb of divisions)
 	const int iresolution = m_ADC_DTAcq32.GetResolution();
 	p_wave_format->binspan = ((1L << iresolution) - 1);
 
 	// data encoding (binary or offset encoding)
-	p_wave_format->mode_encoding = static_cast<int>(m_ADC_DTAcq32.GetEncoding());
+	p_wave_format->mode_encoding = m_ADC_DTAcq32.GetEncoding();
 	if (p_wave_format->mode_encoding == OLx_ENC_BINARY)
 		p_wave_format->binzero = p_wave_format->binspan / 2 + 1;
 	else if (p_wave_format->mode_encoding == OLx_ENC_2SCOMP)
@@ -296,7 +296,7 @@ BOOL CViewADContinuous::ADC_InitSubSystem()
 		m_ADC_DTAcq32.SetClockSource(OLx_CLK_INTERNAL);
 
 		// set trigger mode
-		int trig = p_acq_dwave_format->trig_mode;
+		short trig = p_acq_dwave_format->trig_mode;
 		if (trig > OLx_TRG_EXTRA)
 			trig = 0;
 		m_ADC_DTAcq32.SetTrigger(trig);
@@ -322,7 +322,7 @@ BOOL CViewADContinuous::ADC_InitSubSystem()
 		auto clockrate = double(p_acq_dwave_format->chrate) * p_acq_dwave_format->scan_count;
 		m_ADC_DTAcq32.SetFrequency(clockrate);			// set sampling frequency (total throughput)
 		clockrate = m_ADC_DTAcq32.GetFrequency();
-		p_acq_dwave_format->chrate = float(clockrate) / p_acq_dwave_format->scan_count;
+		p_acq_dwave_format->chrate = static_cast<float>(clockrate / p_acq_dwave_format->scan_count);
 
 		// update channel list (chan & gain)
 		m_ADC_DTAcq32.SetListSize(p_acq_dwave_format->scan_count);
@@ -337,9 +337,9 @@ BOOL CViewADContinuous::ADC_InitSubSystem()
 			const auto d_gain = m_ADC_DTAcq32.GetGainList(i);
 			p_channel->am_gainAD = static_cast<short>(d_gain);
 			// compute dependent parameters
-			p_channel->am_gainamplifier = double(p_channel->am_gainheadstage) * p_channel->am_gainpre * p_channel->am_gainpost;
+			p_channel->am_gainamplifier = static_cast<double>(p_channel->am_gainheadstage) * p_channel->am_gainpre * p_channel->am_gainpost;
 			p_channel->am_gaintotal = p_channel->am_gainamplifier * p_channel->am_gainAD;
-			p_channel->am_resolutionV = p_acq_dwave_format->fullscale_Volts / p_channel->am_gaintotal / p_acq_dwave_format->binspan;
+			p_channel->am_resolutionV = p_acq_dwave_format->fullscale_volts / p_channel->am_gaintotal / p_acq_dwave_format->binspan;
 		}
 
 		// pass parameters to the board and check if errors
@@ -553,23 +553,25 @@ BOOL CViewADContinuous::DAC_InitSubSystem()
 		m_DAC_DTAcq32.SetFrequency(clockrate);		// set sampling frequency (total throughput)
 
 		// set trigger mode
-		int trig = m_pADC_options->waveFormat.trig_mode;
+		short trig = m_pADC_options->waveFormat.trig_mode;
 		if (trig > OLx_TRG_EXTRA)
 			trig = 0;
 		m_DAC_DTAcq32.SetTrigger(trig);
 
 		DAC_SetChannelList();
 		const auto resolutionfactor = pow(2.0, m_DAC_DTAcq32.GetResolution());
-		m_DACmsbit = long(pow(2.0, ((double)m_DAC_DTAcq32.GetResolution() - 1)));
-		m_DAClRes = long(resolutionfactor) - 1;
+		m_DACmsbit = static_cast<long>(pow(2.0, (static_cast<double>(m_DAC_DTAcq32.GetResolution()) - 1)));
+		m_DAClRes = static_cast<long>(resolutionfactor) - 1;
 
 		for (auto i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
 		{
 			const auto p_parms = &m_pDAC_options->outputparms_array.GetAt(i);
 			if (p_parms->bDigital)
 				continue;
-			p_parms->ampUp = (double(p_parms->dAmplitudeMaxV) * resolutionfactor) / (double(m_DAC_DTAcq32.GetMaxRange()) - m_DAC_DTAcq32.GetMinRange());
-			p_parms->ampLow = (double(p_parms->dAmplitudeMinV) * resolutionfactor) / (double(m_DAC_DTAcq32.GetMaxRange()) - m_DAC_DTAcq32.GetMinRange());
+			p_parms->ampUp = p_parms->dAmplitudeMaxV * resolutionfactor
+								/ static_cast<double>(m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
+			p_parms->ampLow = p_parms->dAmplitudeMinV * resolutionfactor
+								/ static_cast<double>(m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
 		}
 
 		// pass parameters to the board and check if errors
@@ -627,7 +629,7 @@ int CViewADContinuous::DAC_SetChannelList()
 				digital_output++;
 			else
 			{
-				m_DAC_DTAcq32.SetChannelList(analog_output, p_parms->iChan);
+				m_DAC_DTAcq32.SetChannelList(static_cast<short>(analog_output), static_cast<short>(p_parms->iChan));
 				analog_output++;
 			}
 		}
@@ -1292,7 +1294,7 @@ BOOL CViewADContinuous::OnStart()
 
 	// data format
 	wave_format->binspan = (m_pADC_options->waveFormat).binspan;
-	wave_format->fullscale_Volts = (m_pADC_options->waveFormat).fullscale_Volts;
+	wave_format->fullscale_volts = (m_pADC_options->waveFormat).fullscale_volts;
 	// trick: if OLx_ENC_BINARY, it is changed on the fly within AD_Transfer function
 	// when a DT buffer into a CAcqDataDoc buffer
 	wave_format->mode_encoding = OLx_ENC_2SCOMP;

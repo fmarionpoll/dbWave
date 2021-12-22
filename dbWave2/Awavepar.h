@@ -373,7 +373,7 @@ public:
 	int				insectnumber;
 	int				iundersample;
 	BOOL			baudiblesound;
-	BOOL			bChannelType;					// OLx_CHNT_SINGLEENDED or OLx_CHNT_DIFFERENTIAL
+	int				bChannelType;					// OLx_CHNT_SINGLEENDED or OLx_CHNT_DIFFERENTIAL
 
 	CStringArray	csA_stimulus;
 	CStringArray	csA_concentration;

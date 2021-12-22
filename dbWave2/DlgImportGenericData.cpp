@@ -717,7 +717,7 @@ void CDlgImportGenericData::UpdateWaveDescriptors(CAcqDataDoc* pDataF)
 	// define parameters within CWaveFormat
 	pwF->cs_comment = piivO->title;
 	pwF->acqtime = status.m_ctime;	// use CFile creation time
-	pwF->fullscale_Volts = piivO->voltageMax - piivO->voltageMin;
+	pwF->fullscale_volts = piivO->voltageMax - piivO->voltageMin;
 	pwF->mode_encoding = piivO->encodingMode;
 	long binspan = 4096;
 	switch (piivO->bitsPrecision)

@@ -78,7 +78,7 @@ int CChartDataWnd::AddChanlistItem(int ns, int mode)
 		const auto pchan_array = m_pDataFile->GetpWavechanArray();
 		const auto pwave_format = m_pDataFile->GetpWaveFormat();
 		p_chan_list_item->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
-		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_Volts);
+		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_volts);
 		if (ns >= pchan_array->ChanArray_getSize())
 			ns = 0;
 		const auto pchan = pchan_array->Get_p_channel(ns);
@@ -177,7 +177,7 @@ void CChartDataWnd::UpdateGainSettings(int ichanlist)
 	if (doc_volts_per_bin != volts_per_data_bin)
 	{
 		pchan->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
-		pchan->SetDataVoltsFormat(doc_volts_per_bin, pwave_format->fullscale_Volts);
+		pchan->SetDataVoltsFormat(doc_volts_per_bin, pwave_format->fullscale_volts);
 		auto iextent = pchan->GetYextent();
 		iextent = int(float(iextent) / doc_volts_per_bin * volts_per_data_bin);
 		pchan->SetYextent(iextent);
