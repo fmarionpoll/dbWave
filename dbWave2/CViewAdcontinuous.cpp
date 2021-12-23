@@ -36,33 +36,11 @@ CViewADContinuous::CViewADContinuous()
 	m_pDAC_options(nullptr), m_DACdigitalchannel(0), m_DACdigitalfirst(0), m_DAClistsize(0), m_DACmsbit(0),
 	m_DAClRes(0), m_DAC_bufhandle(nullptr), m_DAC_buflen(0), m_DAC_chbuflen(0), m_DAC_nBuffersFilledSinceStart(0),
 	m_DAC_frequency(0), m_sweeplength(0), m_chsweep1(0)
-	//, m_chsweep2(0), m_chsweepRefresh(0), m_bytesweepRefresh(0), m_fclockrate(0)
-{
-	m_sweepduration = 1.0f;
-	m_bADwritetofile = FALSE;
-	m_ptableSet = nullptr;
-	m_ADC_inprogress = FALSE; // no A/D in progress
-	m_DAC_inprogress = FALSE; // no D/A in progress
-	m_bchanged = FALSE; // data unchanged
-	m_bAskErase = FALSE; // no warning when data are erased
-	m_chsweeplength = 0;
-	m_ADC_chbuflen = 0;
-	m_bFileOpen = FALSE;
-	m_numchansMAX = 16;
-	m_freqmax = 50000.;
-	m_bSimultaneousStart = FALSE;
-	m_bhidesubsequent = FALSE;
 
+{
 	m_BkColor = GetSysColor(COLOR_BTNFACE); // set color for edit button
 	m_pEditBkBrush = new CBrush(m_BkColor); // background color = like a button
-	ASSERT(m_pEditBkBrush != NULL); // check brush
-
-	m_bEnableActiveAccessibility = FALSE;
-	m_bsimultaneousStartAD = FALSE;
-	m_bsimultaneousStartDA = FALSE;
-	m_ADC_yRulerBar.AttachScopeWnd(&m_ChartDataWnd, FALSE);
-	m_bADC_IsPresent = FALSE;
-	m_bDAC_IsPresent = FALSE;
+	ASSERT(m_pEditBkBrush != NULL);			// check brush
 }
 
 CViewADContinuous::~CViewADContinuous()
@@ -250,7 +228,7 @@ BOOL CViewADContinuous::ADC_OpenSubSystem(const CString card_name)
 	}
 
 	// save parameters into CWaveFormat
-	const auto p_wave_format = &(m_pADC_options->waveFormat);
+	CWaveFormat* p_wave_format = &(m_pADC_options->waveFormat);
 	const auto max = m_ADC_DTAcq32.GetMaxRange(); // maximum input voltage
 	const auto min = m_ADC_DTAcq32.GetMinRange(); // minimum input voltage
 	p_wave_format->fullscale_volts = max - min;
@@ -568,10 +546,10 @@ BOOL CViewADContinuous::DAC_InitSubSystem()
 			const auto p_parms = &m_pDAC_options->outputparms_array.GetAt(i);
 			if (p_parms->bDigital)
 				continue;
-			p_parms->ampUp = p_parms->dAmplitudeMaxV * resolutionfactor
-								/ static_cast<double>(m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
-			p_parms->ampLow = p_parms->dAmplitudeMinV * resolutionfactor
-								/ static_cast<double>(m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
+			double maxRange = m_DAC_DTAcq32.GetMaxRange();
+			double minRange = m_DAC_DTAcq32.GetMinRange();
+			p_parms->ampUp = p_parms->dAmplitudeMaxV * resolutionfactor / (maxRange - minRange);
+			p_parms->ampLow = p_parms->dAmplitudeMinV * resolutionfactor / (maxRange - minRange);			
 		}
 
 		// pass parameters to the board and check if errors
@@ -1286,7 +1264,7 @@ BOOL CViewADContinuous::OnStart()
 	m_chsweep1 = 0;
 	m_chsweep2 = -1;
 	m_ChartDataWnd.ADdisplayStart(m_chsweeplength);
-	auto wave_format = m_inputDataFile.GetpWaveFormat();
+	CWaveFormat* wave_format = m_inputDataFile.GetpWaveFormat();
 	wave_format->sample_count = 0;							// no samples yet
 	wave_format->chrate = wave_format->chrate / m_pADC_options->iundersample;
 	m_fclockrate = wave_format->chrate * wave_format->scan_count;
