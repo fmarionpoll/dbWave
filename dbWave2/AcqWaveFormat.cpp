@@ -27,14 +27,14 @@ void CWaveFormat::Serialize(CArchive & ar)
 		const WORD version = 9;
 		ar << version;							// 1
 		ar << acqtime;							// 2
-		ar << fullscale_Volts;					// 3
+		ar << fullscale_volts;					// 3
 		ar << binspan;							// 4
 		ar << binzero;							// 5
 		ar << static_cast<WORD>(mode_encoding);	// 6
 		ar << static_cast<WORD>(mode_clock);	// 7
 		ar << static_cast<WORD>(mode_trigger);	// 8
 		ar << chrate;							// 9
-		ar << static_cast<WORD>(scan_count);	// 10
+		ar << scan_count;						// 10
 		ar << sample_count;
 		ar << duration;
 		ar << static_cast<WORD>(trig_mode);
@@ -46,7 +46,7 @@ void CWaveFormat::Serialize(CArchive & ar)
 		ar << bufferNitems;
 		ar << buffersize;
 
-		const int n_comments = 14;
+		constexpr int n_comments = 14;
 		ar << n_comments;
 		// save "CString"
 		ar << cs_comment;
@@ -63,7 +63,7 @@ void CWaveFormat::Serialize(CArchive & ar)
 		ar << csConcentration2;
 		ar << csSex;
 
-		const int n_items = 4;
+		constexpr int n_items = 4;
 		ar << n_items;
 		// save "long"
 		ar << insectID;
@@ -81,7 +81,7 @@ void CWaveFormat::Serialize(CArchive & ar)
 		{
 			WORD w;
 			ar >> acqtime;						// 2
-			ar >> fullscale_Volts;				// 3
+			ar >> fullscale_volts;				// 3
 			ar >> binspan;						// 4
 			ar >> binzero;						// 5
 			ar >> w; mode_encoding = static_cast<short>(w);	// 6
@@ -132,7 +132,7 @@ void CWaveFormat::read_v8_and_before(CArchive & ar, WORD version)
 	ASSERT(!ar.IsStoring());
 	WORD w;
 	ar >> acqtime;            			// 2
-	ar >> fullscale_Volts;           	// 3
+	ar >> fullscale_volts;           	// 3
 	if (version < 6)
 	{
 		ar >> w;  binspan = w;			// 4
@@ -214,7 +214,7 @@ CWaveFormat& CWaveFormat::operator = (const CWaveFormat & arg)
 	if (this != &arg) {
 		acqtime = arg.acqtime;
 		wversion = arg.wversion;
-		fullscale_Volts = arg.fullscale_Volts;
+		fullscale_volts = arg.fullscale_volts;
 		binspan = arg.binspan;
 		binzero = arg.binzero;
 

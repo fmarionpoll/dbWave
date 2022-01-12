@@ -1433,11 +1433,11 @@ void OPTIONS_ACQDATA::Serialize(CArchive & ar)
 	{
 		ar << m_wversion;
 
-		ar << (WORD)2;				// 1 - string parameters
+		ar << static_cast<WORD>(2);				// 1 - string parameters
 		ar << csBasename;
 		ar << csPathname;
 
-		ar << (WORD)19;			// 2 - int parameters
+		ar << static_cast<WORD>(19);			// 2 - int parameters
 		ar << exptnumber;			// 1
 		ar << icsA_stimulus;		// 2
 		ar << icsA_concentration;	// 3
@@ -1458,7 +1458,7 @@ void OPTIONS_ACQDATA::Serialize(CArchive & ar)
 		ar << icsA_expt;			// 18
 		ar << insectnumber;				// 19
 
-		ar << (WORD)11;			// 3 - CStringArray parameters
+		ar << static_cast<WORD>(11);				// 3 - CStringArray parameters
 		int nsize;
 		int i;
 		nsize = csA_stimulus.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_stimulus.GetAt(i); };

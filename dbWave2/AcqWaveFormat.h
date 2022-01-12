@@ -18,14 +18,14 @@ public:
 	WORD	wversion = 8;				// header version number
 
 	CTime	acqtime;
-	float	fullscale_Volts = 20.0f;	// volts full scale, gain 1
+	float	fullscale_volts = 20.0f;	// volts full scale, gain 1
 	long	binspan = 4096;				// 2^12, 2^16
 	long	binzero = 2048;				// 2048, 32768 (0 if 2's complement)
 
 	short	mode_encoding = 0;			// 0=offset binary/1=straight/2=2scomplement
 	short	mode_clock = 0;				// 0=internal, 1=external
 	short	mode_trigger = 0;			// 0=internal, 1=external, 2=trigg_scan
-	short	scan_count = 1;				// number of channels in scan list
+	int		scan_count = 1;				// number of channels in scan list
 
 	float	chrate = 10000.;			// channel sampling rate (Hz)
 	long	sample_count = 1000;		// sample count

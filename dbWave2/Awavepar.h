@@ -373,7 +373,7 @@ public:
 	int				insectnumber;
 	int				iundersample;
 	BOOL			baudiblesound;
-	BOOL			bChannelType;			// OLx_CHNT_SINGLEENDED or OLx_CHNT_DIFFERENTIAL
+	int				bChannelType;					// OLx_CHNT_SINGLEENDED or OLx_CHNT_DIFFERENTIAL
 
 	CStringArray	csA_stimulus;
 	CStringArray	csA_concentration;
@@ -400,11 +400,11 @@ public:
 	int				icsA_repeat;
 	int				icsA_repeat2;
 	int				icsA_expt;
-	int				izoomCursel;			// display zoom factor (acq)
+	int				izoomCursel;					// display zoom factor (acq)
 
-	CWaveFormat		waveFormat;				// wave format
-	CWaveChanArray	chanArray;				// channels descriptors
-	float			sweepduration;			// display parameter
+	CWaveFormat		waveFormat;						// wave format
+	CWaveChanArray	chanArray;						// channels descriptors
+	float			sweepduration;					// display parameter
 };
 
 // ---------------------------------------------------------------------
@@ -419,41 +419,41 @@ class OUTPUTPARMS : public CObject
 	void Serialize(CArchive& ar) override;
 
 public:
-	BOOL			bChanged{};				// flag set TRUE if contents has changed
-	WORD			wversion{};				// version number
+	BOOL	bChanged{};								// flag set TRUE if contents has changed
+	WORD	wversion{};								// version number
 
-	BOOL			bON;					// channel authorized or not
-	int				iChan;					// chan
-	BOOL			bDigital;				// digital or Analog
-	double			dAmplitudeMaxV;			// maximum amplitude of the signal
-	double			dAmplitudeMinV;			// minimum amplitude of the signal
-	double			dFrequency;				// frequency of the output signal
-	int				iWaveform;				// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
-	CString			csFilename;				// filename to output
+	BOOL	bON;									// channel authorized or not
+	int		iChan;									// chan
+	BOOL	bDigital;								// digital or Analog
+	double	dAmplitudeMaxV;							// maximum amplitude of the signal
+	double	dAmplitudeMinV;							// minimum amplitude of the signal
+	double	dFrequency;								// frequency of the output signal
+	int		iWaveform;								// 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
+	CString	csFilename;								// filename to output
 	CIntervalsAndLevels	stimulussequence;
 	CIntervalsAndWordsSeries sti;
 
-	int				mseq_iRatio;			// m_mSeqRatio;		// Shifts/sample interval
-	int				mseq_iDelay;			// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples
-	int				mseq_iSeed;				// m_mSeqSeed;		// Sequence seed or zero=random seed
-	double			dummy1;					// m_mSeqAmplitude; // M-sequence amplitude
-	double			dummy2;					// m_mSeqOffset;	// Add this offset before multiplication
-	BOOL			bStart;
-	int				num;
-	UINT			bit33;
-	UINT			count;
-	UINT			bit1{};
-	double			ampUp{};
-	double			ampLow{};
+	int		mseq_iRatio;							// m_mSeqRatio;		// Shifts/sample interval
+	int		mseq_iDelay;							// m_mSeqDelay;		// Delay M-sequence and offset by this number of samples
+	int		mseq_iSeed;								// m_mSeqSeed;		// Sequence seed or zero=random seed
+	double	dummy1;									// m_mSeqAmplitude; // M-sequence amplitude
+	double	dummy2;									// m_mSeqOffset;	// Add this offset before multiplication
+	BOOL	bStart;
+	int		num;
+	UINT	bit33;
+	UINT	count;
+	UINT	bit1{};
+	double	ampUp{};
+	double	ampLow{};
 
-	double			noise_dAmplitV;
-	double			noise_dFactor;
-	double			noise_dOffsetV;
-	int				noise_iDelay;
-	BOOL			noise_bExternal;
-	double			lastamp{};
-	double			lastphase{};
-	double			value;
+	double	noise_dAmplitV;
+	double	noise_dFactor;
+	double	noise_dOffsetV;
+	int		noise_iDelay;
+	BOOL	noise_bExternal;
+	double	lastamp{};
+	double	lastphase{};
+	double	value;
 };
 
 class OPTIONS_OUTPUTDATA : public CObject
@@ -465,17 +465,17 @@ class OPTIONS_OUTPUTDATA : public CObject
 	void Serialize(CArchive& ar) override;
 
 public:
-	BOOL			bChanged;				// flag set TRUE if contents has changed
-	WORD			wversion;				// version number
+	BOOL	bChanged;								// flag set TRUE if contents has changed
+	WORD	wversion;								// version number
 
-	BOOL			bAllowDA;				// allow DA if present
-	BOOL			bPresetWave;			// 0=preset, 1=from file
-	CString			csOutputFile;			// output file
+	BOOL	bAllowDA;								// allow DA if present
+	BOOL	bPresetWave;							// 0=preset, 1=from file
+	CString	csOutputFile;							// output file
 
 	CArray <OUTPUTPARMS, OUTPUTPARMS> outputparms_array;
 
-	double			dDAFrequency_perchan;	// output frequency (per chan)
-	int				iDATriggermode;			// 0=synchronous; 1=soft on start; 2=external trigger
-	int				iDAnbuffers;			// number of DA buffers
-	int				iDAbufferlength;		// length of each buffer
+	double	dDAFrequency_perchan;					// output frequency (per chan)
+	int		iDATriggermode;							// 0=synchronous; 1=soft on start; 2=external trigger
+	int		iDAnbuffers;							// number of DA buffers
+	int		iDAbufferlength;						// length of each buffer
 };
