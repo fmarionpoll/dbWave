@@ -341,7 +341,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (!m_bLmouseDown)
 	{
-		postMyMessage(HINT_DROPPED, NULL);
+		PostMyMessage(HINT_DROPPED, NULL);
 		return;
 	}
 
@@ -367,7 +367,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CChartWnd::OnLButtonUp(nFlags, point);
-		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 	}
 	break;
 
@@ -380,7 +380,7 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
 			if (m_cursorType != CURSOR_ZOOM)
-				postMyMessage(HINT_HITAREA, NULL);
+				PostMyMessage(HINT_HITAREA, NULL);
 			else
 				zoomIn();
 			return;	
@@ -393,14 +393,14 @@ void CChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		case 0:
 			rect_out = rect_in;
 			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-			postMyMessage(HINT_DEFINEDRECT, NULL);
+			PostMyMessage(HINT_DEFINEDRECT, NULL);
 			break;
 		case CURSOR_ZOOM:
 			ZoomData(&rect_in, &rect_out);
 			m_ZoomFrom = rect_in;
 			m_ZoomTo = rect_out;
 			m_iUndoZoom = 1;
-			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+			PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
 		default:
 			break;
@@ -434,10 +434,10 @@ void CChartSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		m_trackMode = TRACK_OFF;		// flag trackrect
 		releaseCursor();				// release cursor capture
 		if (nFlags & MK_SHIFT)
-			postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);	// tell parent spike selected
+			PostMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);	// tell parent spike selected
 
 		else
-			postMyMessage(HINT_HITSPIKE, m_hitspk);
+			PostMyMessage(HINT_HITSPIKE, m_hitspk);
 	}
 }
 
@@ -479,7 +479,7 @@ void CChartSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 
 	// display
 	Invalidate();
-	postMyMessage(HINT_CHANGEZOOM, 0);
+	PostMyMessage(HINT_CHANGEZOOM, 0);
 }
 
 void CChartSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -490,13 +490,13 @@ void CChartSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (m_selectedspike >= 0)
 		{
-			postMyMessage(HINT_DBLCLKSEL, m_selectedspike);
+			PostMyMessage(HINT_DBLCLKSEL, m_selectedspike);
 		}
 		else
 		{
 			const auto iselectedspike = hitCurve(point);
 			if (iselectedspike > 0)
-				postMyMessage(HINT_DBLCLKSEL, iselectedspike);
+				PostMyMessage(HINT_DBLCLKSEL, iselectedspike);
 		}
 	}
 }

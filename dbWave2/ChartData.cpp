@@ -769,7 +769,7 @@ void CChartDataWnd::ZoomData(CRect* r1, CRect* r2)
 		ResizeChannels(0, l_last - l_first + 1);
 		GetDataFromDoc(l_first, l_last);
 	}
-	postMyMessage(HINT_VIEWSIZECHANGED, NULL);
+	PostMyMessage(HINT_VIEWSIZECHANGED, NULL);
 }
 
 void CChartDataWnd::UpdateXRuler()
@@ -887,9 +887,9 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 		p_dc->Polyline(&m_PolyPoints[0], nelements);
 
 		if (m_HZtags.GetNTags() > 0)
-			displayHZtags_Chan(p_dc, ichan, chanlist_item);
+			DisplayHZtags_Chan(p_dc, ichan, chanlist_item);
 
-		highlightData(p_dc, ichan);
+		HighlightData(p_dc, ichan);
 	}
 
 	// restore DC
@@ -897,7 +897,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 
 	if (m_VTtags.GetNTags() > 0)
-		displayVTtags_LValue(p_dc);
+		DisplayVTtags_LValue(p_dc);
 
 	// temp tag
 	if (m_hwndReflect != nullptr && m_tempVTtag != nullptr)
@@ -912,7 +912,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 	//ATLTRACE2("end PlotDataToDC \n");
 }
 
-void CChartDataWnd::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
+void CChartDataWnd::DisplayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -933,7 +933,7 @@ void CChartDataWnd::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pCha
 	p_dc->SelectObject(pold);
 }
 
-void CChartDataWnd::displayVTtags_LValue(CDC* p_dc)
+void CChartDataWnd::DisplayVTtags_LValue(CDC* p_dc)
 {
 	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -1079,7 +1079,7 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			p_dc->SelectObject(pold_pen);
 		}
 		// highlight data ------------------------------------------------------
-		highlightData(p_dc, ichan);
+		HighlightData(p_dc, ichan);
 	}
 
 	// display vertical cursors ------------------------------------------------
@@ -1265,7 +1265,7 @@ LPTSTR CChartDataWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 // client area by fast BitBlt. This latter method was less efficient (slower)
 // than XORing directly to the screen.
 
-void CChartDataWnd::curveXOR()
+void CChartDataWnd::CurveXOR()
 {
 	// ------- client area (direct draw)
 	auto p_dc = CWnd::GetDC();			// select dc
@@ -1321,7 +1321,7 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	if (m_currCursorMode == 0 && m_HCtrapped < 0)	// test if cursor hits a curve
 	{
 		m_trackMode = TRACK_RECT;
-		m_hitcurve = doesCursorHitCurve(point);
+		m_hitcurve = DoesCursorHitCurve(point);
 		if (m_hitcurve >= 0)
 		{
 			// cancel track rect mode (cursor captured)
@@ -1341,8 +1341,8 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			m_ptFirst = point;								// save first point
 			m_curTrack = m_zero;							// use m_curTrack to store zero
 
-			curveXOR();										// xor curve
-			postMyMessage(HINT_HITCHANNEL, m_hitcurve);		// tell parent chan selected
+			CurveXOR();										// xor curve
+			PostMyMessage(HINT_HITCHANNEL, m_hitcurve);		// tell parent chan selected
 			return;
 		}
 	}
@@ -1361,9 +1361,9 @@ void CChartDataWnd::OnMouseMove(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_CURVE:
-		curveXOR();					// erase past curve and compute new zero
+		CurveXOR();
 		m_zero = MulDiv(point.y - m_ptFirst.y, m_XORyext, -m_yVE) + m_curTrack;
-		curveXOR();					// plot new curve
+		CurveXOR();	
 		break;
 
 	default:
@@ -1379,11 +1379,11 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 	case TRACK_CURVE:
 	{
-		curveXOR();	// (clear) necessary since XORcurve can draw outside client area
+		CurveXOR();	
 		auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
 		chanlist_item->SetYzero(m_zero);
 		m_trackMode = TRACK_OFF;
-		postMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
+		PostMyMessage(HINT_HITCHANNEL, m_hitcurve);	
 		Invalidate();
 	}
 		break;
@@ -1399,7 +1399,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		m_VTtags.SetTagLVal(m_HCtrapped, lval);
 		point.x = int((lval - m_liFirst) * long(m_displayRect.right) / (m_liLast - m_liFirst + 1));
 		XorVTtag(point.x);
-		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 		m_trackMode = TRACK_OFF;
 	}
 		break;
@@ -1434,10 +1434,10 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 			}
 			else
 				zoomIn();
-			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+			PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
 		case CURSOR_CROSS:
-			postMyMessage(HINT_DEFINEDRECT, NULL);
+			PostMyMessage(HINT_DEFINEDRECT, NULL);
 			break;
 		default:
 			break;
@@ -1451,7 +1451,7 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-int CChartDataWnd::doesCursorHitCurve(CPoint point)
+int CChartDataWnd::DoesCursorHitCurve(CPoint point)
 {
 	auto chanfound = -1;						// output value
 	const auto ichans = chanlistitem_ptr_array.GetUpperBound();
@@ -1557,7 +1557,7 @@ void CChartDataWnd::SetHighlightData(CDWordArray* pDWintervals)
 	}
 }
 
-void CChartDataWnd::highlightData(CDC* p_dc, int chan)
+void CChartDataWnd::HighlightData(CDC* p_dc, int chan)
 {
 	// skip if not the correct chan
 	if (chan != m_highlighted.channel || m_highlighted.l_first.GetSize() < 2)

@@ -635,7 +635,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	if (!m_bLmouseDown)
 	{
-		postMyMessage(HINT_DROPPED, NULL);
+		PostMyMessage(HINT_DROPPED, NULL);
 		return;
 	}
 	CChartWnd::OnLButtonUp(n_flags, point);
@@ -645,7 +645,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 	if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 	{
 		if (m_cursorType != CURSOR_ZOOM)
-			postMyMessage(HINT_HITAREA, NULL);
+			PostMyMessage(HINT_HITAREA, NULL);
 		else
 			zoomIn();
 		return;	 // exit: mouse movement was too small
@@ -660,7 +660,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 		{
 			auto rect = GetDefinedRect();
 			SelectSpikesWithinRect(&rect, n_flags);
-			postMyMessage(HINT_SELECTSPIKES, NULL);
+			PostMyMessage(HINT_SELECTSPIKES, NULL);
 		}
 		break;
 
@@ -669,7 +669,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 		m_ZoomFrom = rect_in;
 		m_ZoomTo = rect_out;
 		m_iUndoZoom = 1;
-		postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+		PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 		break;
 
 	default:
@@ -690,11 +690,11 @@ void CChartSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
 		if (m_hitspk >= 0)
 		{
 			if (nFlags & MK_SHIFT)
-				postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
+				PostMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
 			else if (nFlags & MK_CONTROL)
-				postMyMessage(HINT_HITSPIKE_CTRL, m_hitspk);
+				PostMyMessage(HINT_HITSPIKE_CTRL, m_hitspk);
 			else
-				postMyMessage(HINT_HITSPIKE, m_hitspk);
+				PostMyMessage(HINT_HITSPIKE, m_hitspk);
 			return;
 		}
 	}
@@ -731,7 +731,7 @@ void CChartSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	l_size = l_size * rDest->Width() / rFrom->Width();
 	m_lLast = m_lFirst + l_size - 1;
 
-	postMyMessage(HINT_CHANGEHZLIMITS, NULL);
+	PostMyMessage(HINT_CHANGEHZLIMITS, NULL);
 }
 
 void CChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -742,13 +742,13 @@ void CChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (m_selectedspike >= 0)
 		{
-			postMyMessage(HINT_DBLCLKSEL, m_selectedspike);
+			PostMyMessage(HINT_DBLCLKSEL, m_selectedspike);
 		}
 		else
 		{
 			const auto iselectedspike = hitCurve(point);
 			if (iselectedspike >= 0)
-				postMyMessage(HINT_DBLCLKSEL, iselectedspike);
+				PostMyMessage(HINT_DBLCLKSEL, iselectedspike);
 		}
 	}
 }

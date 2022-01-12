@@ -97,8 +97,7 @@ public:
 	void		SetChanlistVoltsExtent(int chan, const float* pvalue);
 	void		SetChanlistVoltsZero(int chan, const float* pvalue);
 
-	float 		GetChanlistVoltsperPixel(WORD i) {
-						CChanlistItem* pchan = GetChanlistItem(i);
+	float 		GetChanlistVoltsperPixel(WORD i) {CChanlistItem* pchan = GetChanlistItem(i);
 						return ((float)pchan->GetYextent() * pchan->GetVoltsperDataBin() / -m_yVE);}
 	float 		GetTimeperPixel() { 
 						return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)GetRectWidth(); }
@@ -128,11 +127,11 @@ public:
 	void		Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
 
 protected:
-	void		highlightData(CDC* p_dc, int chan);
-	int			doesCursorHitCurve(CPoint point);
-	void		curveXOR();
-	void		displayVTtags_LValue(CDC* p_dc);
-	void		displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan);
+	void		HighlightData(CDC* p_dc, int chan);
+	int			DoesCursorHitCurve(CPoint point);
+	void		CurveXOR();
+	void		DisplayVTtags_LValue(CDC* p_dc);
+	void		DisplayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan);
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

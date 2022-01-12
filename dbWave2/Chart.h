@@ -191,7 +191,7 @@ protected:
 	void			releaseCursor();
 	void			lbuttonUp_HzTag(UINT nFlags, CPoint point);
 	void			sendMyMessage(int code, int codeparm);
-	void			postMyMessage(int code, int codeparm);
+	void			PostMyMessage(int code, int codeparm);
 	void			invertTracker(CPoint point);	// invert rectangle when mouse-left is down
 	int				hitHZtag(int y);				// test if point is on an horizontal tag line
 	int				hitVTtagPix(int x);				// test if point is on a vertical tag line

@@ -683,7 +683,7 @@ void CDlgADInputParms::LoadChanData(int col)
 	item.strText.Format(_T("%i"), p_chan->am_gainAD);
 	m_Grid.SetItem(&item);
 
-	GetAmplifierParms(col); // get amplifier current settings
+	GetAmplifierParms(col); 
 
 	// ----------------------------------------
 	// amplifier name
@@ -854,10 +854,10 @@ void CDlgADInputParms::SetAmplifierParms(int col)
 		/*auto error_code = */cyber_amp.SetWaveChanParms(p_chan);
 	}
 
-	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
-	{
-		//m_pAlligatorAmplifier->SetWaveChanParms(pchan, m_pdevice1);
-	}
+	//if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
+	//{
+	//	m_pAlligatorAmplifier->SetWaveChanParms(p_chan, m_pdevice1);
+	//}
 }
 
 void CDlgADInputParms::GetAmplifierParms(int col)

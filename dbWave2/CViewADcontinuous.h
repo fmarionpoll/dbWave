@@ -33,16 +33,16 @@ protected:
 	// Form Data
 public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
-	CdbMainTable* m_ptableSet;
+	CdbMainTable*		m_ptableSet = nullptr;
 	CString				m_boardName;
 	CRulerBar			m_ADC_xRulerBar;
 	CRulerBar			m_ADC_yRulerBar;
 	CComboBox			m_ADcardCombo;
 	CMFCButton			m_btnStartStop;
-	BOOL				m_bADwritetofile;
-	int					m_bStartOutPutMode;
-	BOOL				m_bADC_IsPresent;
-	BOOL				m_bDAC_IsPresent;
+	BOOL				m_bADwritetofile = false;
+	int					m_bStartOutPutMode = 0;
+	BOOL				m_bADC_IsPresent = false;
+	BOOL				m_bDAC_IsPresent = false;
 	// Alligator amplifier
 	CArray < USBPxxPARAMETERS*, USBPxxPARAMETERS*>	alligatorparameters_ptr_array{};
 	CUSBPxxS1Ctl		m_Alligator;		// DDX
@@ -52,15 +52,15 @@ public:
 
 protected:
 	CChartDataWnd		m_ChartDataWnd;		// source data display button
-	int 				m_cursorstate;		// source data cursor state
-	float				m_sweepduration;
+	int 				m_cursorstate = 0;	// source data cursor state
+	float				m_sweepduration = 1.;
 	CEditCtrl			mm_yupper;			// edit control for max amplitude displayed
 	CEditCtrl			mm_ylower;			// edit control for min amplitude displayed
 	CStretchControl		m_stretch;			// array of properties associated with controls
-	HICON				m_hBias;
-	HICON				m_hZoom;
-	float				m_yscaleFactor;		// div factor for y bar
-	int					m_VBarMode;			// flag V scrollbar state
+	HICON				m_hBias = nullptr;
+	HICON				m_hZoom = nullptr;
+	float				m_yscaleFactor = 0.;// div factor for y bar
+	int					m_VBarMode = 0;			// flag V scrollbar state
 	CScrollBar 			m_scrolly;			// V scrollbar
 	CBrush* m_pEditBkBrush;
 	COLORREF			m_BkColor;
@@ -77,54 +77,54 @@ protected:
 
 	// data	parameters
 protected:
-	BOOL				m_bFoundDTOPenLayerDLL;
-	BOOL				m_bhidesubsequent;
+	BOOL				m_bFoundDTOPenLayerDLL = false;
+	BOOL				m_bhidesubsequent = false;
 
 	CAcqDataDoc			m_inputDataFile;	// document
 	//CAcqDataDoc		m_outputDataFile;	// D/A file...
 	CStringArray		m_csNameArray;
-	BOOL				m_bFileOpen;		// flag / file open
+	BOOL				m_bFileOpen = false;		// flag / file open
 	CString				m_szFileName;		// data filename
 
-	BOOL 				m_bAskErase;		// ask erase when data may be lost (default = FALSE)
-	BOOL				m_bchanged;			// flag: save data or not
-	double 				m_freqmax;			// maximum sampling frequency (Hz)
-	int					m_numchansMAX;
+	BOOL 				m_bAskErase = false;		// ask erase when data may be lost (default = FALSE)
+	BOOL				m_bchanged = false;			// flag: save data or not
+	double 				m_freqmax = 50000.;			// maximum sampling frequency (Hz)
+	int					m_numchansMAX = 16;
 
-	BOOL				m_bSimultaneousStart;	//TRUE if the card is capable of this
-	ECODE				m_ecode;
+	BOOL				m_bSimultaneousStart = false;	//TRUE if the card is capable of this
+	ECODE				m_ecode = 0;
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pADC_options;		// pointer to data acq options
-	BOOL				m_ADC_inprogress;	// A/D is in progress (used by OnStop/OnStart)
-	HBUF				m_ADC_bufhandle;
-	long				m_ADC_buflen;		// nb of acq sample per DT buffer
-	long				m_ADC_chbuflen;		// nb pts for one chan in DT buffer
-	BOOL				m_bsimultaneousStartAD;
+	OPTIONS_ACQDATA*	m_pADC_options = nullptr;		// pointer to data acq options
+	BOOL				m_ADC_inprogress=false;	// A/D is in progress (used by OnStop/OnStart)
+	HBUF				m_ADC_bufhandle = nullptr;
+	long				m_ADC_buflen = 0;		// nb of acq sample per DT buffer
+	long				m_ADC_chbuflen = 0;		// nb pts for one chan in DT buffer
+	BOOL				m_bsimultaneousStartAD = false;
 
-	OPTIONS_OUTPUTDATA* m_pDAC_options;		// pointer to data output options
-	int					m_DACdigitalchannel;
-	BOOL				m_DACdigitalfirst;
-	int					m_DAClistsize;
-	long				m_DACmsbit;
-	long				m_DAClRes;
+	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;		// pointer to data output options
+	int					m_DACdigitalchannel = 0;
+	BOOL				m_DACdigitalfirst = 0;
+	int					m_DAClistsize = 0;
+	long				m_DACmsbit = 0;
+	long				m_DAClRes = 0;
 
-	BOOL				m_DAC_inprogress;	// D/A in progress
-	HBUF				m_DAC_bufhandle;
-	long				m_DAC_buflen;		// nb of acq sample per DT buffer
-	long				m_DAC_chbuflen;
-	BOOL				m_bsimultaneousStartDA;
-	long				m_DAC_nBuffersFilledSinceStart;
-	double				m_DAC_frequency;
+	BOOL				m_DAC_inprogress = false;	// D/A in progress
+	HBUF				m_DAC_bufhandle = nullptr;
+	long				m_DAC_buflen = 0;		// nb of acq sample per DT buffer
+	long				m_DAC_chbuflen = 0;
+	BOOL				m_bsimultaneousStartDA = false;
+	long				m_DAC_nBuffersFilledSinceStart = 0;
+	double				m_DAC_frequency = 0.;
 
 	// sweep
-	long				m_chsweeplength;	// sweep length (per channel)
-	long				m_sweeplength;		// sweep length (all channels)
-	int					m_chsweep1;			// indexes
-	int					m_chsweep2{};
-	int					m_chsweepRefresh{};
-	int					m_bytesweepRefresh{};
-	float				m_fclockrate{};		// apparent clock rate
+	long				m_chsweeplength = 0;	// sweep length (per channel)
+	long				m_sweeplength = 0;		// sweep length (all channels)
+	int					m_chsweep1 = 0;			// indexes
+	int					m_chsweep2 = 0;
+	int					m_chsweepRefresh = 0;
+	int					m_bytesweepRefresh = 0;
+	float				m_fclockrate = 0;		// apparent clock rate
 
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
