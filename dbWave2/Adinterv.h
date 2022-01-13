@@ -15,34 +15,34 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_AD_INTERVALS };
-	int		m_bufferNitems;
+	int		m_buffer_nitems;
 	float	m_adratechan;
 	float	m_acqduration;
 	float	m_sweepduration;
-	UINT	m_bufferWsize;
-	UINT	m_undersamplefactor;
+	int		m_buffer_wsize;
+	int		m_undersamplefactor;
 	BOOL	m_baudiblesound;
 	int		m_threshchan;
 	int		m_threshval;
-	CWaveFormat* m_pwaveFormat;
+	CWaveFormat* m_pwave_format;
 
 	UINT	m_postmessage;		// parameter passed on exit to activate another dialog
 	float	m_ratemax;			// max sampling rate (per chan)
 	float	m_ratemin;			// min sampling rate (per chan)
-	UINT	m_bufferWsizemax;	// maximum buffer size
-	BOOL	m_bchainDialog;
+	UINT	m_buffer_wsizemax;	// maximum buffer size
+	BOOL	m_bchain_dialog;
 
 	CEditCtrl mm_adratechan;
 	CEditCtrl mm_sweepduration;
-	CEditCtrl mm_bufferWsize;
-	CEditCtrl mm_bufferNitems;
+	CEditCtrl mm_buffer_wsize;
+	CEditCtrl mm_buffer_nitems;
 	CEditCtrl mm_acqduration;
 
 	// Implementation
 protected:
 	CWaveFormat m_acqdef;	// acquisition parameters
 
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;	// DDX/DDV support
 
 	// Generated message map functions
 	afx_msg void OnAdchannels();

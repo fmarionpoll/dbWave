@@ -346,8 +346,8 @@ void CViewADContinuous::ADC_DeclareBuffers()
 
 	// define buffer length
 	m_sweepduration = m_pADC_options->sweepduration;
-	m_chsweeplength = static_cast<long>(m_sweepduration * wave_format->chrate / static_cast<float>(m_pADC_options->iundersample));
-	m_ADC_chbuflen = m_chsweeplength * m_pADC_options->iundersample / wave_format->bufferNitems;
+	m_chsweep_length = static_cast<long>(m_sweepduration * wave_format->chrate / static_cast<float>(m_pADC_options->iundersample));
+	m_ADC_chbuflen = m_chsweep_length * m_pADC_options->iundersample / wave_format->bufferNitems;
 	m_ADC_buflen = m_ADC_chbuflen * wave_format->scan_count;
 
 	for (auto i = 0; i < wave_format->bufferNitems; i++)
@@ -358,13 +358,13 @@ void CViewADContinuous::ADC_DeclareBuffers()
 	}
 
 	// set sweep length to the nb of data buffers
-	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * long(wave_format->scan_count);	// ?
-	m_inputDataFile.AdjustBUF(m_chsweeplength);
+	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweep_length * long(wave_format->scan_count);	// ?
+	m_inputDataFile.AdjustBUF(m_chsweep_length);
 	*(m_inputDataFile.GetpWaveFormat()) = *wave_format;	// save settings into data file
 
 														// update display length (and also the text - abcissa)
 	m_ChartDataWnd.AttachDataFile(&m_inputDataFile);
-	m_ChartDataWnd.ResizeChannels(0, m_chsweeplength);
+	m_ChartDataWnd.ResizeChannels(0, m_chsweep_length);
 	if (m_ChartDataWnd.GetChanlistSize() != wave_format->scan_count)
 	{
 		m_ChartDataWnd.RemoveAllChanlistItems();
@@ -1010,7 +1010,7 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_SQUARE(short* p_dt_buffer, const 
 void CViewADContinuous::DAC_Dig_FillBufferWith_MSEQ(short* p_dt_buffer, const int chan, OUTPUTPARMS* parms_chan) const
 {
 	WORD	amp_up = 1;
-	amp_up = amp_up << parms_chan->iChan;
+	amp_up = amp_up << static_cast<WORD>(parms_chan->iChan);
 	const auto dac_list_size = m_DAClistsize;
 	double x = 0;
 	//auto mseq_offset_delay = parms_chan->mseq_iDelay;
@@ -1258,13 +1258,13 @@ BOOL CViewADContinuous::OnStart()
 		DAC_DeclareAndFillBuffers();
 
 	// start AD display
-	m_chsweep1 = 0;
-	m_chsweep2 = -1;
-	m_ChartDataWnd.ADdisplayStart(m_chsweeplength);
+	m_chsweep_1 = 0;
+	m_chsweep_2 = -1;
+	m_ChartDataWnd.ADdisplayStart(m_chsweep_length);
 	CWaveFormat* wave_format = m_inputDataFile.GetpWaveFormat();
 	wave_format->sample_count = 0;							// no samples yet
-	wave_format->chrate = wave_format->chrate / m_pADC_options->iundersample;
-	m_fclockrate = wave_format->chrate * wave_format->scan_count;
+	wave_format->chrate = wave_format->chrate / static_cast<float>(m_pADC_options->iundersample);
+	m_fclockrate = wave_format->chrate * static_cast<float>(wave_format->scan_count);
 	wave_format->acqtime = CTime::GetCurrentTime();
 
 	// data format
@@ -1311,7 +1311,6 @@ BOOL CViewADContinuous::OnStart()
 	// starting A/D when simultaneous list
 	else
 	{
-		BOOL retval;
 		HSSLIST h_ss_list;
 		ASSERT(m_bDAC_IsPresent);
 
@@ -1323,23 +1322,21 @@ BOOL CViewADContinuous::OnStart()
 		m_DAC_DTAcq32.Config();
 
 		// DA system
-		ecode = olDaPutDassToSSList(h_ss_list, HDASS(m_DAC_DTAcq32.GetHDass()));
+		ecode = olDaPutDassToSSList(h_ss_list, reinterpret_cast<HDASS>(m_DAC_DTAcq32.GetHDass()));
 		if (ecode != OLNOERROR)
 		{
-			retval = ecode;
 			ecode = olDaReleaseSSList(h_ss_list);
 			DisplayDTError(ecode, true);
-			return retval;
+			return static_cast<bool>(ecode);
 		}
 
 		// AD system
 		ecode = olDaPutDassToSSList(h_ss_list, HDASS(m_ADC_DTAcq32.GetHDass()));
 		if (ecode != OLNOERROR)
 		{
-			retval = ecode;
 			ecode = olDaReleaseSSList(h_ss_list);
 			DisplayDTError(ecode, true);
-			return retval;
+			return static_cast<bool>(ecode);
 		}
 
 		// prestart
@@ -1545,19 +1542,16 @@ LRESULT CViewADContinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	// code = 2: horiz cursor hit	lowp = cursor index
 	int lowp = LOWORD(lParam);	// value associated with code
 
-	switch (code)
+	if (code == HINT_SETMOUSECURSOR)
 	{
-	case HINT_SETMOUSECURSOR:
 		if (lowp > CURSOR_ZOOM)
 			lowp = 0;
 		m_cursorstate = m_ChartDataWnd.SetMouseCursorType(lowp);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
-		break;
-
-	default:
-		if (lowp == 0) MessageBeep(MB_ICONEXCLAMATION);
-		break;
 	}
+	else if (lowp == 0) 
+		MessageBeep(MB_ICONEXCLAMATION);
+
 	return 0L;
 }
 
@@ -1716,14 +1710,14 @@ void CViewADContinuous::ADC_OnHardwareIntervalsDlg()
 
 	ADIntervalsDlg dlg;
 	const auto wave_format = &(m_pADC_options->waveFormat);
-	dlg.m_pwaveFormat = wave_format;
+	dlg.m_pwave_format = wave_format;
 	dlg.m_ratemin = 1.0f;
-	dlg.m_ratemax = float(m_freqmax / wave_format->scan_count);
-	dlg.m_bufferWsizemax = UINT(65536) * 4;
+	dlg.m_ratemax = static_cast<float>(m_freqmax / wave_format->scan_count);
+	dlg.m_buffer_wsizemax = static_cast<UINT>(65536) * 4;
 	dlg.m_undersamplefactor = m_pADC_options->iundersample;
 	dlg.m_baudiblesound = m_pADC_options->baudiblesound;
 	dlg.m_sweepduration = m_sweepduration;
-	dlg.m_bchainDialog = TRUE;
+	dlg.m_bchain_dialog = TRUE;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -1740,7 +1734,7 @@ void CViewADContinuous::ADC_OnHardwareIntervalsDlg()
 	}
 }
 
-void CViewADContinuous::ChainDialog(WORD iID)
+void CViewADContinuous::ChainDialog(UINT iID)
 {
 	WORD menu_id;
 	switch (iID)
@@ -1778,7 +1772,7 @@ void CViewADContinuous::ADC_OnOverrunError()
 void CViewADContinuous::ADC_OnBufferDone()
 {
 	// get buffer off done list
-	m_ADC_bufhandle = HBUF(m_ADC_DTAcq32.GetQueue());
+	m_ADC_bufhandle = reinterpret_cast<HBUF>(m_ADC_DTAcq32.GetQueue());
 	if (m_ADC_bufhandle == nullptr)
 		return;
 
@@ -1789,16 +1783,16 @@ void CViewADContinuous::ADC_OnBufferDone()
 	{
 		// update length of data acquired
 		ADC_Transfer(pDTbuf);
-		auto wave_format = m_inputDataFile.GetpWaveFormat();
-		wave_format->sample_count += m_bytesweepRefresh / 2;
-		const auto duration = wave_format->sample_count / m_fclockrate;
+		const auto wave_format = m_inputDataFile.GetpWaveFormat();
+		wave_format->sample_count += m_bytesweep_refresh / 2;
+		const auto duration = static_cast<float>(wave_format->sample_count) / m_fclockrate;
 		auto pdata_buf = m_inputDataFile.GetpRawDataBUF();
-		pdata_buf += (m_chsweep1 * wave_format->scan_count);
+		pdata_buf += (m_chsweep_1 * wave_format->scan_count);
 
 		// first thing to do: save data to file
 		if (wave_format->bADwritetofile)
 		{
-			const auto flag = m_inputDataFile.AcqDoc_DataAppend(pdata_buf, m_bytesweepRefresh);
+			const auto flag = m_inputDataFile.AcqDoc_DataAppend(pdata_buf, m_bytesweep_refresh);
 			ASSERT(flag);
 			// end of acquisition
 			if (duration >= wave_format->duration)
@@ -1816,14 +1810,14 @@ void CViewADContinuous::ADC_OnBufferDone()
 		}
 		else														// no file I/O: refresh screen pos
 		{
-			if (wave_format->sample_count >= m_chsweeplength * wave_format->scan_count)
+			if (wave_format->sample_count >= m_chsweep_length * wave_format->scan_count)
 				wave_format->sample_count = 0;
 		}
 		m_ADC_DTAcq32.SetQueue(long(m_ADC_bufhandle));				// tell ADdriver that data buffer is free
 
 		// then: display acqDataDoc buffer
 		if (wave_format->bOnlineDisplay)								// display data if requested
-			m_ChartDataWnd.ADdisplayBuffer(pdata_buf, m_chsweepRefresh);
+			m_ChartDataWnd.ADdisplayBuffer(pdata_buf, m_chsweep_refresh);
 		CString cs;
 		cs.Format(_T("%.3lf"), duration);							// update total time on the screen
 		SetDlgItemText(IDC_STATIC1, cs);							// update time elapsed
@@ -1836,12 +1830,12 @@ void CViewADContinuous::ADC_Transfer(short* pDTbuf0)
 	CWaveFormat* wave_format = m_inputDataFile.GetpWaveFormat();
 	short* pdataBuf = m_inputDataFile.GetpRawDataBUF();		// acqDataDoc buffer
 
-	m_chsweep1 = m_chsweep2 + 1;								// update data abcissa on the screen
-	if (m_chsweep1 >= m_chsweeplength)						// if data are out of the screen, wrap
-		m_chsweep1 = 0;
-	m_chsweep2 = m_chsweep1 + m_ADC_chbuflen - 1;				// abcissa of the last data point
-	m_chsweepRefresh = m_chsweep2 - m_chsweep1 + 1;			// number of data points to refresh on the screen
-	pdataBuf += (m_chsweep1 * wave_format->scan_count);
+	m_chsweep_1 = m_chsweep_2 + 1;								// update data abcissa on the screen
+	if (m_chsweep_1 >= m_chsweep_length)						// if data are out of the screen, wrap
+		m_chsweep_1 = 0;
+	m_chsweep_2 = m_chsweep_1 + m_ADC_chbuflen - 1;				// abcissa of the last data point
+	m_chsweep_refresh = m_chsweep_2 - m_chsweep_1 + 1;			// number of data points to refresh on the screen
+	pdataBuf += (m_chsweep_1 * wave_format->scan_count);
 
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
 	if ((m_pADC_options->waveFormat).binzero != NULL)
@@ -1863,7 +1857,7 @@ void CViewADContinuous::ADC_Transfer(short* pDTbuf0)
 		auto pdata_buf2 = pdataBuf;
 		auto p_dt_buffer = pDTbuf0;
 		const auto iundersample = m_pADC_options->iundersample;
-		m_chsweepRefresh = m_chsweepRefresh / iundersample;
+		m_chsweep_refresh = m_chsweep_refresh / iundersample;
 		// loop and compute average between consecutive points
 		for (auto j = 0; j < wave_format->scan_count; j++, pdata_buf2++, p_dt_buffer++)
 		{
@@ -1883,7 +1877,7 @@ void CViewADContinuous::ADC_Transfer(short* pDTbuf0)
 		}
 	}
 	// update byte length of buffer
-	m_bytesweepRefresh = m_chsweepRefresh * sizeof(short) * wave_format->scan_count;
+	m_bytesweep_refresh = m_chsweep_refresh * sizeof(short) * wave_format->scan_count;
 }
 
 BOOL CViewADContinuous::InitConnectionWithAmplifiers()
@@ -1979,7 +1973,7 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 	case SB_PAGERIGHT:	l_size += l_size + 1; break;
 	case SB_RIGHT:		l_size = YEXTENT_MAX; break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK:	l_size = MulDiv(nPos - 50, YEXTENT_MAX, 100); break;
+	case SB_THUMBTRACK:	l_size = MulDiv(static_cast<int>(nPos - 50), YEXTENT_MAX, 100); break;
 	default:			break;
 	}
 
@@ -1988,7 +1982,7 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 	{
 		// assume that all channels are displayed at the same gain & offset
 		const auto wave_format = &(m_pADC_options->waveFormat);
-		const auto ichanfirst = 0;
+		constexpr auto ichanfirst = 0;
 		const auto ichanlast = wave_format->scan_count - 1;
 
 		for (auto i = ichanfirst; i <= ichanlast; i++)
@@ -2009,8 +2003,8 @@ void CViewADContinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
 	// assume that all channels are displayed at the same gain & offset
-	const auto ichan = 0;			// TODO: see which channel is selected
-	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
+	constexpr auto ichan = 0;			// TODO: see which channel is selected
+	const CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
 	auto l_size = chan->GetYzero() - chan->GetDataBinZero();
 	const auto yextent = chan->GetYextent();
 	// get corresponding data
@@ -2023,7 +2017,7 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 	case SB_PAGERIGHT:	l_size += yextent / 10 + 1; break;
 	case SB_RIGHT:		l_size = YZERO_MAX; break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK:	l_size = (nPos - 50) * (YZERO_SPAN / 100); break;
+	case SB_THUMBTRACK:	l_size = static_cast<int>(nPos - 50) * (YZERO_SPAN / 100); break;
 	default:
 		break;
 	}
@@ -2032,12 +2026,12 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 	if (l_size > YZERO_MIN && l_size < YZERO_MAX)
 	{
 		const auto wave_format = &(m_pADC_options->waveFormat);
-		const auto ichanfirst = 0;
+		constexpr auto ichanfirst = 0;
 		const auto ichanlast = wave_format->scan_count - 1;
 		for (auto i = ichanfirst; i <= ichanlast; i++)
 		{
-			CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(i);
-			chan->SetYzero(l_size + chan->GetDataBinZero());
+			CChanlistItem* chanlist_item = m_ChartDataWnd.GetChanlistItem(i);
+			chanlist_item->SetYzero(l_size + chanlist_item->GetDataBinZero());
 		}
 		m_ChartDataWnd.Invalidate();
 	}
@@ -2053,25 +2047,24 @@ void CViewADContinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 void CViewADContinuous::UpdateBiasScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
-	const auto ichan = 0;						// TODO see which channel is selected
-	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
-	const auto i_pos = int((chan->GetYzero() - chan->GetDataBinZero())
-		* 100 / int(YZERO_SPAN)) + int(50);
+	constexpr auto ichan = 0;						// TODO see which channel is selected
+	const CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
+	const auto i_pos = (chan->GetYzero() - chan->GetDataBinZero())* 100 / static_cast<int>(YZERO_SPAN) + 50;
 	m_scrolly.SetScrollPos(i_pos, TRUE);
 }
 
 void CViewADContinuous::UpdateGainScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
-	const auto ichan = 0;
+	constexpr auto ichan = 0;
 	m_scrolly.SetScrollPos(MulDiv(m_ChartDataWnd.GetChanlistItem(ichan)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 }
 
 void CViewADContinuous::UpdateChanLegends(int chan)
 {
 	// TODO
-	const auto ichan = 0;
-	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(ichan);
+	constexpr auto ichan = 0;
+	const CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(ichan);
 	auto yzero = pchan->GetYzero();
 	auto yextent = pchan->GetYextent();
 	auto mv_per_bin = pchan->GetVoltsperDataBin() * 1000.0f;
@@ -2081,12 +2074,12 @@ void CViewADContinuous::UpdateChanLegends(int chan)
 float CViewADContinuous::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain) const
 {
 	float f_min, f_max;
-	const auto l_res = long(pow(2.0, double(pSS->GetResolution())));
+	const auto l_res = static_cast<long>(pow(2.0, static_cast<double>(pSS->GetResolution())));
 	if (pSS->GetMinRange() != 0.F)
-		f_min = pSS->GetMinRange() / float(dfGain);
+		f_min = pSS->GetMinRange() / static_cast<float>(dfGain);
 	else f_min = 0.F;
 	if (pSS->GetMaxRange() != 0.F)
-		f_max = pSS->GetMaxRange() / float(dfGain);
+		f_max = pSS->GetMaxRange() / static_cast<float>(dfGain);
 	else f_max = 0.F;
 
 	//make sure value is sign extended if 2's comp
@@ -2096,9 +2089,7 @@ float CViewADContinuous::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain) c
 		if (lVal >= (l_res / 2))
 			lVal = lVal - l_res;
 	}
-
-	// convert to volts
-	auto f_volts = lVal * ((f_max - f_min) / l_res);
+	float f_volts = lVal * ((f_max - f_min) / static_cast<float>(l_res));
 
 	// adjust DC offset
 	if (pSS->GetEncoding() == OLx_ENC_2SCOMP)
@@ -2115,13 +2106,13 @@ long CViewADContinuous::VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain)
 	float f_max;
 	long l_value;
 
-	const auto l_res = long(pow(2., double(pSS->GetResolution())));
+	const auto l_res = static_cast<long>(pow(2., static_cast<double>(pSS->GetResolution())));
 
 	if (pSS->GetMinRange() != 0.F)
-		f_min = pSS->GetMinRange() / float(dfGain);
+		f_min = pSS->GetMinRange() / static_cast<float>(dfGain);
 	else f_min = 0.F;
 	if (pSS->GetMaxRange() != 0.F)
-		f_max = pSS->GetMaxRange() / float(dfGain);
+		f_max = pSS->GetMaxRange() / static_cast<float>(dfGain);
 	else f_max = 0.F;
 
 	//clip input to range
@@ -2131,14 +2122,14 @@ long CViewADContinuous::VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain)
 	//if 2's comp encoding
 	if (pSS->GetEncoding() == OLx_ENC_2SCOMP)
 	{
-		l_value = long((fVolts - (f_min + f_max) / 2) * l_res / (f_max - f_min));
+		l_value = static_cast<long>((fVolts - (f_min + f_max) / 2) * static_cast<float>(l_res) / (f_max - f_min));
 		// adjust for binary wrap if any
 		if (l_value == (l_res / 2)) l_value -= 1;
 	}
 	else
 	{
 		// convert to offset binary
-		l_value = long((fVolts - f_min) * l_res / (f_max - f_min));
+		l_value = static_cast<long>((fVolts - f_min) * static_cast<float>(l_res) / (f_max - f_min));
 		// adjust for binary wrap if any
 		if (l_value == l_res) l_value -= 1;
 	}
