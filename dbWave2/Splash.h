@@ -1,12 +1,6 @@
 #pragma once
 
-// CG: This file was added by the Splash Screen component.
 
-// Splash.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-//   Splash Screen class
 
 class CSplashWnd : public CWnd
 {
@@ -19,15 +13,11 @@ public:
 	CBitmap m_bitmap;
 
 	// Operations
-public:
 	static void EnableSplashScreen(BOOL bEnable = TRUE);
 	static void ShowSplashScreen(CWnd* pParentWnd = nullptr);
 	static BOOL PreTranslateAppMessage(MSG* pMsg);
 
-	// Overrides
 
-	// Implementation
-public:
 	~CSplashWnd();
 	virtual void PostNcDestroy();
 

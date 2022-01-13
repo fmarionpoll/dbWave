@@ -471,7 +471,7 @@ void CViewSpikes::OnInitialUpdate()
 	auto* p_app = (CdbWaveApp*)AfxGetApp();
 	options_viewdata = &(p_app->options_viewdata);		// viewdata options
 	mdMO = &(p_app->options_viewdata_measure);			// measure options
-	m_psC = &(p_app->spkC);								// get address of spike classif parms
+	m_psC = &(p_app->spike_classification);								// get address of spike classif parms
 	m_destclass = m_psC->vdestclass;
 	m_sourceclass = m_psC->vsourceclass;
 	m_bresetzoom = m_psC->bresetzoom;
@@ -744,7 +744,7 @@ void CViewSpikes::OnFormatCentercurve()
 		// loop over all spikes of the list
 		int nspikes = m_pSpkList->GetTotalSpikes();
 		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();		// get pointer to application
-		SPKCLASSIF* m_psC= &(p_app->spkC);					// get address of spike classif parms
+		SPKCLASSIF* m_psC= &(p_app->spike_classification);					// get address of spike classif parms
 		short it1 = m_psC->ileft;
 		short it2 = m_psC->iright;
 		for (int ispike = 0; ispike < nspikes; ispike++)

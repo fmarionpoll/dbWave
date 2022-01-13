@@ -168,7 +168,7 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	const auto p_app = (CdbWaveApp*)AfxGetApp();
 	mdPM = &(p_app->options_viewdata);
 	mdMO = &(p_app->options_viewdata_measure);
-	m_psC = &(p_app->spkC);
+	m_psC = &(p_app->spike_classification);
 	if (m_psC->ptpl != nullptr)
 		m_templList = *((CTemplateListWnd*)m_psC->ptpl);
 

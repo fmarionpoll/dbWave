@@ -375,28 +375,28 @@ BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 {
 	CFile f;					// file object
 	CFileException fe;			// trap exceptions
-	auto bsuccess = TRUE;
+	auto success = TRUE;
 
 	if (b_read)		// read informations ...........................
 	{
 		if (f.Open(csParmfile, CFile::modeReadWrite | CFile::shareDenyNone, &fe))
 		{
 			CArchive ar(&f, CArchive::load);
-			WORD m;	ar >> m;					// nb items to load
+			WORD m;	ar >> m;	
 			int n = m;
-			ar >> m_comment; // comment
-			n--; if (n > 0) stiD.Serialize(ar);	// STIMDETECT
-			n--; if (n > 0) spkDA.Serialize(ar);// SPKDETECTARRAY
-			n--; if (n > 0) options_viewdata.Serialize(ar);	// OPTIONS_VIEWDATA
-			n--; if (n > 0) options_viewspikes.Serialize(ar);	// OPTIONS_VIEWSPIKES
-			n--; if (n > 0) spkC.Serialize(ar);	// SPKCLASSIF
-			n--; if (n > 0) options_viewdata_measure.Serialize(ar);	// OPTIONS_VIEWDATAMEASURE
-			n--; if (n > 0) options_import.Serialize(ar);	// OPTIONS_IMPORT
-			n--; if (n > 0) options_acqdata.Serialize(ar);	// OPTIONS_ACQDATA
-			n--; if (n > 0) options_outputdata.Serialize(ar);	//OPTIONS_OUTPUTDATA
+			ar >> m_comment; 
+			n--; if (n > 0) stimulus_detection.Serialize(ar);	
+			n--; if (n > 0) Spike_detect_array.Serialize(ar);
+			n--; if (n > 0) options_viewdata.Serialize(ar);
+			n--; if (n > 0) options_viewspikes.Serialize(ar);	
+			n--; if (n > 0) spike_classification.Serialize(ar);
+			n--; if (n > 0) options_viewdata_measure.Serialize(ar);
+			n--; if (n > 0) options_import.Serialize(ar);	
+			n--; if (n > 0) options_acqdata.Serialize(ar);
+			n--; if (n > 0) options_outputdata.Serialize(ar);	
 
-			ar.Close();					// close archive
-			f.Close();					// close file
+			ar.Close();	
+			f.Close();	
 		}
 	}
 	else	// Save informations .............................
@@ -404,27 +404,27 @@ BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
 		if (f.Open(csParmfile, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, &fe))
 		{
 			CArchive ar(&f, CArchive::store);
-			ar << static_cast<WORD>(10);		// nb items
-			ar << m_comment;		// 1 comment
-			stiD.Serialize(ar);		// 2 STIMDETECT
-			spkDA.Serialize(ar);	// 3 SPKDETECTARRAY
-			options_viewdata.Serialize(ar);		// 4 OPTIONS_VIEWDATA
-			options_viewspikes.Serialize(ar);		// 5 OPTIONS_VIEWSPIKES
-			spkC.Serialize(ar);		// 6 SPKCLASSIF
-			options_viewdata_measure.Serialize(ar);		// 7 OPTIONS_VIEWDATAMEASURE
-			options_import.Serialize(ar);		// 8 OPTIONS_IMPORT
-			options_acqdata.Serialize(ar);		// 9 OPTIONS_ACQDATA
-			options_outputdata.Serialize(ar);		// 10 OPTIONS_OUTPUTDATA
+			ar << static_cast<WORD>(10);	
+			ar << m_comment;		
+			stimulus_detection.Serialize(ar);		
+			Spike_detect_array.Serialize(ar);	
+			options_viewdata.Serialize(ar);	
+			options_viewspikes.Serialize(ar);		
+			spike_classification.Serialize(ar);		
+			options_viewdata_measure.Serialize(ar);	
+			options_import.Serialize(ar);		
+			options_acqdata.Serialize(ar);
+			options_outputdata.Serialize(ar);	
 			ar.Close();
 			f.Close();
 		}
 		else
 		{
 			AfxMessageBox(IDS_PARAMETERFILE_FAILEDTOSAVE);
-			bsuccess = FALSE;
+			success = FALSE;
 		}
 	}
-	return bsuccess;
+	return success;
 }
 
 void CdbWaveApp::SetPrinterOrientation()

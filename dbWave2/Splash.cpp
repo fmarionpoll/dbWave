@@ -10,7 +10,7 @@
 #define new DEBUG_NEW
 #endif
 
-BOOL CSplashWnd::m_bShowSplashWnd;
+BOOL		CSplashWnd::m_bShowSplashWnd;
 CSplashWnd* CSplashWnd::m_pSplashWnd;
 
 CSplashWnd::CSplashWnd()
@@ -76,7 +76,7 @@ BOOL CSplashWnd::Create(CWnd* pParentWnd /*= NULL*/)
 		return FALSE;
 
 	BITMAP bm;
-	auto idummy = m_bitmap.GetBitmap(&bm);
+	m_bitmap.GetBitmap(&bm);
 	return CreateEx(0,
 		AfxRegisterWndClass(0, AfxGetApp()->LoadStandardCursor(IDC_ARROW)),
 		nullptr, WS_POPUP | WS_VISIBLE, 0, 0, bm.bmWidth, bm.bmHeight, pParentWnd->GetSafeHwnd(), nullptr);

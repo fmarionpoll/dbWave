@@ -29,7 +29,7 @@ public:
 	UINT	m_postmessage;		// parameter passed on exit to activate another dialog
 	float	m_ratemax;			// max sampling rate (per chan)
 	float	m_ratemin;			// min sampling rate (per chan)
-	UINT	m_buffer_wsizemax;	// maximum buffer size
+	int		m_buffer_wsizemax;	// maximum buffer size
 	BOOL	m_bchain_dialog;
 
 	CEditCtrl mm_adratechan;
