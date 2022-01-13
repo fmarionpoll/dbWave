@@ -62,7 +62,7 @@ protected:
 	float				m_yscaleFactor = 0.;// div factor for y bar
 	int					m_VBarMode = 0;			// flag V scrollbar state
 	CScrollBar 			m_scrolly;			// V scrollbar
-	CBrush* m_pEditBkBrush;
+	CBrush*				m_pEditBkBrush;
 	COLORREF			m_BkColor;
 
 	void OnGainScroll(UINT nSBCode, UINT nPos);
@@ -80,8 +80,8 @@ protected:
 	BOOL				m_bFoundDTOPenLayerDLL = false;
 	BOOL				m_bhidesubsequent = false;
 
-	CAcqDataDoc			m_inputDataFile;	// document
-	//CAcqDataDoc		m_outputDataFile;	// D/A file...
+	CAcqDataDoc			m_inputDataFile;			// document
+	//CAcqDataDoc		m_outputDataFile;			// D/A file...
 	CStringArray		m_csNameArray;
 	BOOL				m_bFileOpen = false;		// flag / file open
 	CString				m_szFileName;		// data filename
