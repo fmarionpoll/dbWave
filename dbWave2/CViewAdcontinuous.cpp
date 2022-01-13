@@ -2,14 +2,13 @@
 #include <cmath>
 #include "resource.h"
 #include "AcqDataDoc.h"
-//#include "Editctrl.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "Adinterv.h"
 #include "Adexperi.h"
 #include "dtacq32.h"
 #include "CyberAmp.h"
-#include "chart.h"
+#include "Chart.h"
 #include "ChartData.h"
 #include "./include/DataTranslation/Olxdadefs.h"
 #include "./include/DataTranslation/Olxdaapi.h"
@@ -18,7 +17,6 @@
 #include "MainFrm.h"
 #include "DlgConfirmSave.h"
 #include "DlgDAChannels.h"
-//#include "DlgDAOutputsParms.h"
 #include "DlgdtBoard.h"
 #include "DlgADInputParms.h"
 
@@ -221,9 +219,7 @@ BOOL CViewADContinuous::ADC_OpenSubSystem(const CString card_name)
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
-		return FALSE;
+		return DisplayOleError(e);
 	}
 
 	// save parameters into CWaveFormat
@@ -327,9 +323,7 @@ BOOL CViewADContinuous::ADC_InitSubSystem()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
-		return FALSE;
+		return DisplayOleError(e);
 	}
 
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
@@ -405,10 +399,7 @@ void CViewADContinuous::ADC_DeleteBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		CString myError;
-		myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError)); myError += e->m_strDescription;
-		AfxMessageBox(myError);
-		e->Delete();
+		DisplayDTLayerError(e);
 	}
 }
 
@@ -427,10 +418,7 @@ void CViewADContinuous::ADC_StopAndLiberateBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		CString myError;
-		myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError)); myError += e->m_strDescription;
-		AfxMessageBox(myError);
-		e->Delete();
+		DisplayDTLayerError(e);
 	}
 	m_ADC_inprogress = FALSE;
 }
@@ -447,18 +435,14 @@ BOOL CViewADContinuous::DAC_OpenSubSystem(const CString& card_name)
 		const int n_da_elements = m_DAC_DTAcq32.GetDevCaps(OLDC_DAELEMENTS);
 		if (n_da_elements < 1)
 			return FALSE;
+
 		m_DAC_DTAcq32.SetSubSysElement(0);
 		ASSERT(m_DAC_DTAcq32.GetHDass() != NULL),
 			m_bsimultaneousStartDA = m_DAC_DTAcq32.GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
 	}
 	catch (COleDispatchException* e)
 	{
-		CString my_error;
-		my_error.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
-		my_error += e->m_strDescription;
-		AfxMessageBox(my_error);
-		e->Delete();
-		return FALSE;
+		return DisplayDTLayerError(e);
 	}
 	return TRUE;
 }
@@ -490,14 +474,39 @@ BOOL CViewADContinuous::DAC_ClearAllOutputs()
 	}
 	catch (COleDispatchException* e)
 	{
-		CString my_error;
-		my_error.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
-		my_error += e->m_strDescription;
-		AfxMessageBox(my_error);
-		e->Delete();
-		return FALSE;
+		return DisplayDTLayerError(e);
 	}
 	return TRUE;
+}
+
+BOOL CViewADContinuous::DisplayDTLayerError(COleDispatchException* e) 
+{
+	CString my_error;
+	my_error.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
+	my_error += e->m_strDescription;
+	AfxMessageBox(my_error);
+	e->Delete();
+	return FALSE;
+}
+
+BOOL CViewADContinuous::DisplayOleError(COleDispatchException* e) 
+{
+	AfxMessageBox(e->m_strDescription);
+	e->Delete();
+	return FALSE;
+}
+
+void CViewADContinuous::DisplayDTError(const ECODE ecode, const BOOL b_display_error) const
+{
+	if (ecode != OLNOERROR) {
+		CHAR errstr[255];
+		olDaGetErrorString(ecode, errstr, 255);
+		if (b_display_error) {
+			CString cs = _T("error ");
+			cs += errstr;
+			AfxMessageBox(cs);
+		}
+	}
 }
 
 BOOL CViewADContinuous::DAC_InitSubSystem()
@@ -544,9 +553,7 @@ BOOL CViewADContinuous::DAC_InitSubSystem()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
-		return FALSE;
+		return DisplayOleError(e);
 	}
 	return TRUE;
 }
@@ -608,8 +615,7 @@ int CViewADContinuous::DAC_SetChannelList()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
+		DisplayOleError(e);
 	}
 	return m_DAClistsize;
 }
@@ -632,11 +638,7 @@ void CViewADContinuous::DAC_DeleteBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		CString myError;
-		myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
-		myError += e->m_strDescription;
-		AfxMessageBox(myError);
-		e->Delete();
+		DisplayDTLayerError(e);
 	}
 }
 
@@ -1121,23 +1123,9 @@ void CViewADContinuous::DAC_StopAndLiberateBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		AfxMessageBox(e->m_strDescription);
-		e->Delete();
+		DisplayOleError(e);
 	}
 	m_DAC_inprogress = FALSE;
-}
-
-void CViewADContinuous::get_dt_error(const ECODE ecode, const BOOL b_display_error) const
-{
-	if (ecode != OLNOERROR) {
-		CHAR errstr[255];
-		olDaGetErrorString(ecode, errstr, 255);
-		if (b_display_error) {
-			CString cs = _T("error ");
-			cs += errstr;
-			AfxMessageBox(cs);
-		}
-	}
 }
 
 void CViewADContinuous::OnStop(const BOOL b_display_error_msg)
@@ -1148,9 +1136,9 @@ void CViewADContinuous::OnStop(const BOOL b_display_error_msg)
 		HSSLIST h_ss_list;
 
 		auto ecode = olDaGetSSList(&h_ss_list);
-		get_dt_error(ecode, b_display_error_msg);
+		DisplayDTError(ecode, b_display_error_msg);
 		ecode = olDaReleaseSSList(h_ss_list);
-		get_dt_error(ecode, b_display_error_msg);
+		DisplayDTError(ecode, b_display_error_msg);
 	}
 
 	// stop AD, liberate DTbuffers
@@ -1316,10 +1304,7 @@ BOOL CViewADContinuous::OnStart()
 		}
 		catch (COleDispatchException* e)
 		{
-			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError)); myError += e->m_strDescription;
-			AfxMessageBox(myError);
-			e->Delete();
+			DisplayDTLayerError(e);
 		}
 	}
 
@@ -1331,7 +1316,7 @@ BOOL CViewADContinuous::OnStart()
 
 		// create simultaneous starting list
 		auto ecode = olDaGetSSList(&h_ss_list);
-		get_dt_error(ecode, true);
+		DisplayDTError(ecode, true);
 
 		m_ADC_DTAcq32.Config();
 		m_DAC_DTAcq32.Config();
@@ -1342,7 +1327,7 @@ BOOL CViewADContinuous::OnStart()
 		{
 			ecode = olDaReleaseSSList(h_ss_list);
 			DisplayDTError(ecode, true);
-			return retval;
+			return static_cast<bool>(ecode);
 		}
 
 		// AD system
@@ -1351,16 +1336,16 @@ BOOL CViewADContinuous::OnStart()
 		{
 			ecode = olDaReleaseSSList(h_ss_list);
 			DisplayDTError(ecode, true);
-			return retval;
+			return static_cast<bool>(ecode);
 		}
 
 		// prestart
 		ecode = olDaSimultaneousPrestart(h_ss_list);
-		get_dt_error(ecode, true);
+		DisplayDTError(ecode, true);
 
 		// start simultaneously
 		ecode = olDaSimultaneousStart(h_ss_list);
-		get_dt_error(ecode, true);
+		DisplayDTError(ecode, true);
 
 		m_ADC_inprogress = TRUE;
 		m_DAC_inprogress = TRUE;
@@ -2196,8 +2181,7 @@ void CViewADContinuous::OnBnClickedCardFeatures()
 	CDlgDataTranslationBoard dlg;
 	dlg.m_pAnalogIN = &m_ADC_DTAcq32;
 	dlg.m_pAnalogOUT = &m_DAC_DTAcq32;
-	auto iout = dlg.DoModal();
-	//iout++;
+	dlg.DoModal();
 }
 
 void CViewADContinuous::DAC_OnBnClickedStartStop()
@@ -2235,10 +2219,7 @@ BOOL CViewADContinuous::DAC_Start()
 		}
 		catch (COleDispatchException* e)
 		{
-			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i"), int(e->m_scError)); myError += e->m_strDescription;
-			AfxMessageBox(myError);
-			e->Delete();
+			DisplayDTLayerError(e);
 		}
 	}
 	DAC_UpdateStartStop(m_DAC_inprogress);
