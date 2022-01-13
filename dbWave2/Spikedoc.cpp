@@ -1334,15 +1334,15 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 // compute autocorrelation
 // in:
 //	OPTION_VIEWSPIKES
-//		nbinsISI			number of bins
-//		timestart			first valid spike occurence time (s)
-//		timeend				last valid spike occurence (s)
-//		spikeclassoption	0=all spike class, -1=only one, 1=exclude artefacts
-//		classnb				if !spikeclassoption, compute only from spikes with this class nb
-//		babsolutetime		false=correct time with first stimulus time
-//		binISI				bin duration (in s)
-//	long* plSum0			array of longs to receive histogram bins
-//	iclass					class selected
+//		nbinsISI	number of bins
+//		timestart	first valid spike occurence time (s)
+//		timeend		last valid spike occurence (s)
+//		spikeclassoption	0=all spike class, -1:only one, 1=exclude artefacts
+//		classnb		if !spikeclassoption, compute only from spikes with this class nb
+//		babsolutetime	false=correct time with first stimulus time
+//		binISI		bin duration (in s)
+//	long* plSum0 array of longs to receive histogram bins
+//	iclass		class selected
 // out:
 //	*plSum0
 //	number of spikes used as time ref for autocorrelation
