@@ -789,7 +789,7 @@ void CViewADContinuous::DAC_FillBufferWith_RAMP(short* p_dt_buffer, const int ch
 void CViewADContinuous::DAC_FillBufferWith_CONSTANT(short* p_dt_buffer, const int chan, OUTPUTPARMS* parms_chan)
 {
 	const auto amp = parms_chan->value * pow(2.0, m_DAC_DTAcq32.GetResolution()) / static_cast<
-		double>(m_DAC_DTAcq32.GetMaxRange()) - static_cast<double>(m_DAC_DTAcq32.GetMinRange());
+		double>(m_DAC_DTAcq32.GetMaxRange() - m_DAC_DTAcq32.GetMinRange());
 	const auto nchans = m_DAClistsize;
 
 	for (auto i = chan; i < m_DAC_buflen; i += nchans)
@@ -819,7 +819,7 @@ void CViewADContinuous::DAC_FillBufferWith_ONOFFSeq(short* p_dt_buffer, const in
 	// find end = first interval after buffer_end; find start
 	for (interval = 0; interval < pstim->GetSize(); interval++)
 	{
-		stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
+		stim_end = long(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
 		if (stim_end > buffer_start)
 			break;
 		wamp = pstim->GetIntervalPointAt(interval).w;
@@ -839,7 +839,7 @@ void CViewADContinuous::DAC_FillBufferWith_ONOFFSeq(short* p_dt_buffer, const in
 			interval++;
 			//wamp = FALSE;
 			if (interval < pstim->GetSize())
-				stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
+				stim_end = long(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
 			wamp = pstim->GetIntervalPointAt(interval - 1).w;
 			amp = amp_up * wamp + amp_low * !wamp;
 			wout = WORD(amp);
@@ -899,13 +899,13 @@ void CViewADContinuous::DAC_FillBufferWith_MSEQ(short* p_dt_buffer, const int ch
 
 void CViewADContinuous::DAC_Dig_FillBufferWith_ONOFFSeq(short* p_dt_buffer, const int chan, OUTPUTPARMS* parms_chan) const
 {
-	constexpr WORD amp_low = 0;
+	const WORD amp_low = 0;
 	WORD amp_up = 1;
 	amp_up = amp_up << parms_chan->iChan;
 	const auto nchans = m_DAClistsize;
 
-	const auto pstim = &parms_chan->sti;
-	const auto ch_freq_ratio = m_DAC_frequency / static_cast<double>(pstim->chrate);
+	auto pstim = &parms_chan->sti;
+	const auto ch_freq_ratio = m_DAC_frequency / pstim->chrate;
 	const auto buffer_start = m_DAC_nBuffersFilledSinceStart * m_DAC_chbuflen;
 	//auto buffer_end = (m_DAC_nBuffersFilledSinceStart + 1)*m_DAC_chbuflen;
 	auto buffer_ii = buffer_start;
@@ -916,7 +916,7 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_ONOFFSeq(short* p_dt_buffer, cons
 	// find end = first interval after buffer_end; find start
 	for (interval = 0; interval < pstim->GetSize(); interval++)
 	{
-		stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
+		stim_end = long(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
 		if (stim_end > buffer_start)
 			break;
 		wamp = pstim->GetIntervalPointAt(interval).w;
@@ -937,7 +937,7 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_ONOFFSeq(short* p_dt_buffer, cons
 		{
 			interval++;
 			if (interval < pstim->GetSize())
-				stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
+				stim_end = long(pstim->GetIntervalPointAt(interval).ii * ch_freq_ratio);
 			wamp = pstim->GetIntervalPointAt(interval - 1).w;
 			if (wamp > 0)
 				wout = amp_up;
@@ -951,20 +951,18 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_VAL(short* p_dt_buffer, const int
 {
 	const auto nchans = m_DAClistsize;
 	const auto w1 = 1 << parms_chan->iChan;
+	const auto w0 = 0;
 
 	// fill buffer
-	if (m_DACdigitalfirst == 0) 
-	{
-		auto wout = 0;
+	if (m_DACdigitalfirst == 0) {
+		auto wout = w0;
 		if (val > 0)
 			wout = w1;
 		for (auto i = chan; i < m_DAC_buflen; i += nchans)
 			*(p_dt_buffer + i) = wout;
 	}
-	else 
-	{
-		if (val > 0) 
-		{
+	else {
+		if (val > 0) {
 			const auto wout = w1;
 			for (auto i = chan; i < m_DAC_buflen; i += nchans)
 				*(p_dt_buffer + i) |= wout;
@@ -983,12 +981,12 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_SQUARE(short* p_dt_buffer, const 
 	auto phase = parms_chan->lastphase;
 	WORD amp_up = 1;
 	amp_up = amp_up << parms_chan->iChan;
+	const WORD	amp_low = 0;
 	const auto freq = parms_chan->dFrequency / m_DAC_frequency;
 	const auto nchans = m_DAClistsize;
 
 	for (auto i = chan; i < m_DAC_buflen; i += nchans)
 	{
-		constexpr WORD amp_low = 0;
 		WORD	amp;
 		if (phase < 0)
 			amp = amp_up;
@@ -1009,6 +1007,7 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_SQUARE(short* p_dt_buffer, const 
 
 void CViewADContinuous::DAC_Dig_FillBufferWith_MSEQ(short* p_dt_buffer, const int chan, OUTPUTPARMS* parms_chan) const
 {
+	const WORD	amp_low = 0;
 	WORD	amp_up = 1;
 	amp_up = amp_up << parms_chan->iChan;
 	const auto dac_list_size = m_DAClistsize;
@@ -1024,9 +1023,8 @@ void CViewADContinuous::DAC_Dig_FillBufferWith_MSEQ(short* p_dt_buffer, const in
 		{
 			x = parms_chan->ampLow;
 			if (parms_chan->mseq_iDelay == 0) {
-				constexpr WORD amp_low = 0;
 				DAC_MSequence(parms_chan);
-				x = static_cast<double>(parms_chan->bit1) * amp_up + static_cast<double>(!parms_chan->bit1) * amp_low;
+				x = double(parms_chan->bit1) * amp_up + double(!parms_chan->bit1) * amp_low;
 			}
 		}
 		if (m_DACdigitalfirst == 0)
@@ -1114,7 +1112,8 @@ void CViewADContinuous::DAC_StopAndLiberateBuffers()
 		do {
 			h_buf = HBUF(m_DAC_DTAcq32.GetQueue());
 			if (h_buf != nullptr) {
-				if (const ECODE ecode = olDmFreeBuffer(h_buf); ecode != OLNOERROR)
+				const auto ecode = olDmFreeBuffer(h_buf);
+				if (ecode != OLNOERROR)
 					AfxMessageBox(_T("Could not free Buffer"));
 			}
 		} while (h_buf != nullptr);
