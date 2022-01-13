@@ -84,7 +84,7 @@ protected:
 	//CAcqDataDoc		m_outputDataFile;			// D/A file...
 	CStringArray		m_csNameArray;
 	BOOL				m_bFileOpen = false;		// flag / file open
-	CString				m_szFileName;				// data filename
+	CString				m_szFileName;		// data filename
 
 	BOOL 				m_bAskErase = false;		// ask erase when data may be lost (default = FALSE)
 	BOOL				m_bchanged = false;			// flag: save data or not
@@ -95,14 +95,14 @@ protected:
 	ECODE				m_ecode = 0;
 
 	// DT buffer
-	OPTIONS_ACQDATA*	m_pADC_options = nullptr;	// pointer to data acq options
-	BOOL				m_ADC_inprogress=false;		// A/D is in progress (used by OnStop/OnStart)
+	OPTIONS_ACQDATA*	m_pADC_options = nullptr;		// pointer to data acq options
+	BOOL				m_ADC_inprogress=false;	// A/D is in progress (used by OnStop/OnStart)
 	HBUF				m_ADC_bufhandle = nullptr;
-	long				m_ADC_buflen = 0;			// nb of acq sample per DT buffer
-	long				m_ADC_chbuflen = 0;			// nb pts for one chan in DT buffer
+	long				m_ADC_buflen = 0;		// nb of acq sample per DT buffer
+	long				m_ADC_chbuflen = 0;		// nb pts for one chan in DT buffer
 	BOOL				m_bsimultaneousStartAD = false;
 
-	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
+	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;		// pointer to data output options
 	int					m_DACdigitalchannel = 0;
 	BOOL				m_DACdigitalfirst = 0;
 	int					m_DAClistsize = 0;
@@ -111,20 +111,20 @@ protected:
 
 	BOOL				m_DAC_inprogress = false;	// D/A in progress
 	HBUF				m_DAC_bufhandle = nullptr;
-	long				m_DAC_buflen = 0;			// nb of acq sample per DT buffer
+	long				m_DAC_buflen = 0;		// nb of acq sample per DT buffer
 	long				m_DAC_chbuflen = 0;
 	BOOL				m_bsimultaneousStartDA = false;
 	long				m_DAC_nBuffersFilledSinceStart = 0;
 	double				m_DAC_frequency = 0.;
 
 	// sweep
-	long				m_chsweep_length = 0;		// sweep length (per channel)
-	long				m_sweeplength = 0;			// sweep length (all channels)
-	int					m_chsweep_1 = 0;			// indexes
-	int					m_chsweep_2 = 0;
-	int					m_chsweep_refresh = 0;
-	int					m_bytesweep_refresh = 0;
-	float				m_fclockrate = 0;			// apparent clock rate
+	long				m_chsweeplength = 0;	// sweep length (per channel)
+	long				m_sweeplength = 0;		// sweep length (all channels)
+	int					m_chsweep1 = 0;			// indexes
+	int					m_chsweep2 = 0;
+	int					m_chsweepRefresh = 0;
+	int					m_bytesweepRefresh = 0;
+	float				m_fclockrate = 0;		// apparent clock rate
 
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
@@ -187,7 +187,7 @@ protected:
 	virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	virtual			~CViewADContinuous();
 	virtual	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
-	void			ChainDialog(UINT iID);
+	void			ChainDialog(WORD iID);
 
 #ifdef _DEBUG
 	virtual void AssertValid() const;
