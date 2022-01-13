@@ -223,7 +223,7 @@ BOOL CViewADContinuous::ADC_OpenSubSystem(const CString card_name)
 	}
 
 	// save parameters into CWaveFormat
-	CWaveFormat* p_wave_format = &(m_pADC_options->waveFormat);
+	const auto p_wave_format = &(m_pADC_options->waveFormat);
 	const auto max = m_ADC_DTAcq32.GetMaxRange(); // maximum input voltage
 	const auto min = m_ADC_DTAcq32.GetMinRange(); // minimum input voltage
 	p_wave_format->fullscale_volts = max - min;
@@ -1502,10 +1502,6 @@ void CViewADContinuous::OnActivateView(BOOL bActivate, CView* pActivateView, CVi
 		pmf->ActivatePropertyPane(FALSE);
 		((CChildFrame*)pmf->MDIGetActive())->m_cursorstate = 0;
 	}
-	else
-	{
-
-	}
 	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
@@ -1781,7 +1777,7 @@ void CViewADContinuous::ADC_OnBufferDone()
 
 	// get pointer to buffer
 	short* pDTbuf;
-	m_ecode = olDmGetBufferPtr(m_ADC_bufhandle, (LPVOID FAR*) &pDTbuf);
+	m_ecode = olDmGetBufferPtr(m_ADC_bufhandle, (void**)&pDTbuf);
 	if (m_ecode == OLNOERROR)
 	{
 		// update length of data acquired
