@@ -1,6 +1,7 @@
 // aqcparam.cpp    implementation file
 
 #include "StdAfx.h"
+#include "dataheader_Atlab.H"
 #include "AcqWaveFormat.h"
 
 #ifdef _DEBUG
@@ -23,7 +24,7 @@ void CWaveFormat::Serialize(CArchive & ar)
 {
 	if (ar.IsStoring())
 	{
-		constexpr WORD version = 9;
+		const WORD version = 9;
 		ar << version;							// 1
 		ar << acqtime;							// 2
 		ar << fullscale_volts;					// 3
@@ -100,8 +101,6 @@ void CWaveFormat::Serialize(CArchive & ar)
 
 			int n_comments;
 			ar >> n_comments;
-			if (n_comments != 14)
-				return;
 			ASSERT(n_comments == 14);
 			ar >> cs_comment;
 			ar >> csStimulus;

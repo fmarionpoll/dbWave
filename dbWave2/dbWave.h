@@ -40,9 +40,9 @@ public:
 
 	CStringArray			m_csParmFiles;
 	CString					m_comment;
-	STIMDETECT 				stimulus_detection;
-	SPKDETECTARRAY			Spike_detect_array;
-	SPKCLASSIF				spike_classification;
+	STIMDETECT 				stiD;
+	SPKDETECTARRAY			spkDA;
+	SPKCLASSIF				spkC;
 
 	OPTIONS_VIEWDATA 		options_viewdata;
 	OPTIONS_VIEWSPIKES 		options_viewspikes;
@@ -51,12 +51,12 @@ public:
 	OPTIONS_ACQDATA			options_acqdata;
 	OPTIONS_OUTPUTDATA		options_outputdata;
 
-	CMemFile*				m_pviewdataMemFile;
+	CMemFile* m_pviewdataMemFile;
 	CArray <CMemFile*, CMemFile*> viewspikesmemfile_ptr_array;
-	CMemFile*				m_pviewspikesMemFile;
-	CMemFile*				m_psort1spikesMemFile;
+	CMemFile* m_pviewspikesMemFile;
+	CMemFile* m_psort1spikesMemFile;
 	CStringArray			m_tempMDBfiles;
-	CSharedFile*			m_psf{};
+	CSharedFile* m_psf{};
 	BOOL					m_bADcardFound;
 
 	void	Defaultparameters(BOOL b_read);

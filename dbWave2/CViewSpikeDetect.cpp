@@ -621,7 +621,7 @@ void CViewSpikeDetection::OnInitialUpdate()
 {
 	// load spike detection parameters from .INI file
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	m_pArrayFromApp = &(p_app->Spike_detect_array);				// spike detection array parms
+	m_pArrayFromApp = &(p_app->spkDA);				// spike detection array parms
 	options_viewdata = &(p_app->options_viewdata);	// browse/print parms
 
 	defineStretchParameters();
