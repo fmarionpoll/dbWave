@@ -959,7 +959,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	dlg.m_pdbWaveDoc = GetDocument();
 
 	// refresh pointer to data file because it not used elsewhere in the view
-	const auto docname = GetDocument()->GetDB_CurrentDatFileName();
+	auto docname = GetDocument()->GetDB_CurrentDatFileName();
 	auto b_doc_exists = FALSE;
 	if (!docname.IsEmpty())
 	{
@@ -989,7 +989,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 
 void CViewSpikeSort::OnSelectAllFiles()
 {
-	m_bAllFiles = dynamic_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_bAllFiles = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
 	m_ChartSpkWnd_Bar.DisplayAllFiles(m_bAllFiles, GetDocument());
 	m_ChartSpkWnd_Shape.DisplayAllFiles(m_bAllFiles, GetDocument());
 	xygraph_wnd_.DisplayAllFiles(m_bAllFiles, GetDocument());
@@ -1137,12 +1137,12 @@ void CViewSpikeSort::OnToolsAlignspikes()
 			for (auto k = kstart; k < kend; k++, p_mean_k++, pdat_k += offset)
 			{
 				const auto val = static_cast<double>(*pdat_k);
-				*p_cxy_lag += static_cast<double>(*p_mean_k) * val;
+				*p_cxy_lag += double(*p_mean_k) * val;
 				cxx_spike += val * val;
 			}
 
-			*p_cxy_lag /= (static_cast<double>(kend) - kstart + 1);
-			*p_cxy_lag = *p_cxy_lag / sqrt(cxx_mean * cxx_spike);
+			*p_cxy_lag /= (double(kend) - kstart + 1);
+			*p_cxy_lag = double(*p_cxy_lag) / sqrt(cxx_mean * cxx_spike);
 		}
 
 		// get max and min of this correlation

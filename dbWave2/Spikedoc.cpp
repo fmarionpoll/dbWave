@@ -991,58 +991,58 @@ void CSpikeDoc::ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 	auto tstart = vdS->timestart;
 	switch (vdS->exportdatatype)
 	{
-		case EXPORT_PSTH:		// PSTH
-			nbins = vdS->nbins;
-			tspan = vdS->timeend - vdS->timestart;
-			tbin = tspan / nbins;
-			break;
-		case EXPORT_ISI:		// ISI
-			nbins = vdS->nbinsISI;
-			tbin = vdS->binISI;
-			tstart = 0;
-			cs_dummy = _T("\tN");
-			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-			break;
-		case EXPORT_AUTOCORR:	// Autocorr
-			nbins = vdS->nbinsISI;
-			tspan = vdS->binISI * nbins;
-			tbin = vdS->binISI;
-			tstart = -tspan / 2.f;
-			cs_dummy = _T("\tN");
-			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-			break;
-		case EXPORT_HISTAMPL:
-			nbins = vdS->histampl_nbins;
-			tstart = vdS->histampl_vmin;
-			tbin = (vdS->histampl_vmax - vdS->histampl_vmin) * 1000.f / nbins;
-			nbins += 2;
-			tstart -= tbin;
-			cs_dummy = _T("\tmean\tsum2\tNelmts");
-			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-			break;
-		case EXPORT_AVERAGE:
-			{
-			const auto npoints = GetSpkList_Current()->GetSpikeLength();
-			cs_dummy = _T("\tN");
-			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-			CString cs;
-			cs_dummy.Empty();
-			for (auto i = 0; i < npoints; i++)
-			{
-				cs.Format(_T("\tx%i"), i);
-				cs_dummy += cs;
-			}
-			for (auto i = 0; i < npoints; i++)
-			{
-				cs.Format(_T("\tSx2_%i"), i);
-				cs_dummy += cs;
-			}
-			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-			}
-			break;
+	case EXPORT_PSTH:		// PSTH
+		nbins = vdS->nbins;
+		tspan = vdS->timeend - vdS->timestart;
+		tbin = tspan / nbins;
+		break;
+	case EXPORT_ISI:		// ISI
+		nbins = vdS->nbinsISI;
+		tbin = vdS->binISI;
+		tstart = 0;
+		cs_dummy = _T("\tN");
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+		break;
+	case EXPORT_AUTOCORR:	// Autocorr
+		nbins = vdS->nbinsISI;
+		tspan = vdS->binISI * nbins;
+		tbin = vdS->binISI;
+		tstart = -tspan / 2.f;
+		cs_dummy = _T("\tN");
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+		break;
+	case EXPORT_HISTAMPL:
+		nbins = vdS->histampl_nbins;
+		tstart = vdS->histampl_vmin;
+		tbin = (vdS->histampl_vmax - vdS->histampl_vmin) * 1000.f / nbins;
+		nbins += 2;
+		tstart -= tbin;
+		cs_dummy = _T("\tmean\tsum2\tNelmts");
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+		break;
+	case EXPORT_AVERAGE:
+	{
+		const auto npoints = GetSpkList_Current()->GetSpikeLength();
+		cs_dummy = _T("\tN");
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+		CString cs;
+		cs_dummy.Empty();
+		for (auto i = 0; i < npoints; i++)
+		{
+			cs.Format(_T("\tx%i"), i);
+			cs_dummy += cs;
+		}
+		for (auto i = 0; i < npoints; i++)
+		{
+			cs.Format(_T("\tSx2_%i"), i);
+			cs_dummy += cs;
+		}
+		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+	}
+	break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	// ................     loop to scan all time intervals
@@ -1457,7 +1457,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 {
 	long n = 0;					// number of 'pivot spikes'
-	const auto pspklist = &spikelist_array[m_currspklist];
+	auto pspklist = &spikelist_array[m_currspklist];
 
 	const auto nspikes = pspklist->GetTotalSpikes();
 	if (nspikes <= 0)			// return if no spikes in that file
