@@ -364,7 +364,7 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		CChartWnd::OnLButtonUp(nFlags, point);
-		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 	}
 	break;
 
@@ -376,7 +376,7 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
 			if (m_cursorType != CURSOR_ZOOM)
-				PostMyMessage(HINT_HITAREA, NULL);
+				postMyMessage(HINT_HITAREA, NULL);
 			else
 				zoomIn();
 			return;					// exit: mouse movement was too small
@@ -439,10 +439,10 @@ void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		m_trackMode = TRACK_OFF;		// flag trackrect
 		releaseCursor();				// release cursor capture
 		if (nFlags & MK_SHIFT)
-			PostMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
+			postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
 
 		else
-			PostMyMessage(HINT_HITSPIKE, m_hitspk);
+			postMyMessage(HINT_HITSPIKE, m_hitspk);
 	}
 }
 
@@ -475,7 +475,7 @@ void CChartSpikeXYWnd::ZoomData(CRect * rFrom, CRect * rDest)
 	m_lLast = m_lFirst + l_size - 1;
 	// display
 	Invalidate();
-	PostMyMessage(HINT_CHANGEHZLIMITS, NULL);
+	postMyMessage(HINT_CHANGEHZLIMITS, NULL);
 }
 
 void CChartSpikeXYWnd::OnLButtonDblClk(UINT nFlags, CPoint point)

@@ -114,7 +114,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	wave_format->scan_count = 1;			// assume 1 channel
 
 	// ---------------- specifics from Syntech A/D card
-	wave_format->fullscale_volts = 10.0f;	// 10 mv full scale
+	wave_format->fullscale_Volts = 10.0f;	// 10 mv full scale
 	wave_format->binspan = 32768;			// 15 bits resolution
 	wave_format->binzero = wave_format->binspan / 2;	// ?
 
@@ -146,7 +146,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	pChan->am_gainamplifier = (float)rec_factor;
 
 	pChan->am_gaintotal = pChan->am_gainamplifier * pChan->am_gainheadstage;		// total gain
-	pChan->am_resolutionV = wave_format->fullscale_volts / pChan->am_gaintotal / wave_format->binspan;
+	pChan->am_resolutionV = wave_format->fullscale_Volts / pChan->am_gaintotal / wave_format->binspan;
 
 	// ---------------- ASD -- capture date and time
 

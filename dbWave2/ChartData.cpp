@@ -47,11 +47,11 @@ int CChartDataWnd::AddChanlistItem(int ns, int mode)
 	if (chanlistitem_ptr_array.GetSize() == 0)
 	{
 		m_PolyPoints.SetSize(m_npixels * 4);
-		m_scale.SetScale(m_npixels, m_lxSize);	
+		m_scale.SetScale(m_npixels, m_lxSize);
 		m_dataperpixel = 2;
 		auto* p_envelope = new CEnvelope(m_npixels * m_dataperpixel, m_dataperpixel, 0, -1, 0);
 		ASSERT(p_envelope != NULL);
-		envelope_ptr_array.Add(p_envelope);	
+		envelope_ptr_array.Add(p_envelope);
 		p_envelope->FillEnvelopeWithAbcissa(m_npixels * m_dataperpixel, m_lxSize);
 	}
 
@@ -78,7 +78,7 @@ int CChartDataWnd::AddChanlistItem(int ns, int mode)
 		const auto pchan_array = m_pDataFile->GetpWavechanArray();
 		const auto pwave_format = m_pDataFile->GetpWaveFormat();
 		p_chan_list_item->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
-		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_volts);
+		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_Volts);
 		if (ns >= pchan_array->ChanArray_getSize())
 			ns = 0;
 		const auto pchan = pchan_array->Get_p_channel(ns);
@@ -177,7 +177,7 @@ void CChartDataWnd::UpdateGainSettings(int ichanlist)
 	if (doc_volts_per_bin != volts_per_data_bin)
 	{
 		pchan->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
-		pchan->SetDataVoltsFormat(doc_volts_per_bin, pwave_format->fullscale_volts);
+		pchan->SetDataVoltsFormat(doc_volts_per_bin, pwave_format->fullscale_Volts);
 		auto iextent = pchan->GetYextent();
 		iextent = int(float(iextent) / doc_volts_per_bin * volts_per_data_bin);
 		pchan->SetYextent(iextent);
@@ -382,7 +382,7 @@ void CChartDataWnd::CenterChan(int j)
 	for (auto i = i1; i <= i2; i++)
 	{
 		CChanlistItem* chan = GetChanlistItem(i);
-		chan->GetMaxMin( &max, &min);
+		chan->GetMaxMin(&max, &min);
 		const auto yzero = (max + min) / 2;
 		chan->SetYzero(yzero);
 	}
@@ -609,10 +609,10 @@ BOOL CChartDataWnd::GetSmoothDataFromDoc(int ioption)
 	auto l_first = m_lxFirst;					// start
 	const auto ipixelmax = m_scale.GetnIntervals();	// max pixel
 
-	for (auto ipixel = 0; ipixel < ipixelmax; ipixel++)
+	for (int pixel = 0; pixel < ipixelmax; pixel++)
 	{
 		// compute file index of pts within current pixel
-		const auto data_within_1_pixel = m_scale.GetIntervalSize(ipixel); // size first pixel
+		const auto data_within_1_pixel = m_scale.GetIntervalSize(pixel); // size first pixel
 		const auto l_last = l_first + data_within_1_pixel - 1;
 		auto b_new = TRUE;						// flag to tell routine that it should start from new data
 
@@ -647,7 +647,7 @@ BOOL CChartDataWnd::GetSmoothDataFromDoc(int ioption)
 				}
 				else									// no transformation: compute max min
 					lp_data = m_pDataFile->GetpRawDataElmt(source_chan, l_first);
-				p_cont->FillEnvelopeWithSmoothMxMi(ipixel, lp_data, intervals, npoints, b_new, ioption);
+				p_cont->FillEnvelopeWithSmoothMxMi(pixel, lp_data, intervals, npoints, b_new, ioption);
 			}
 			b_new = FALSE;
 			l_first = l_buf_chan_last + 1;
@@ -769,7 +769,7 @@ void CChartDataWnd::ZoomData(CRect* r1, CRect* r2)
 		ResizeChannels(0, l_last - l_first + 1);
 		GetDataFromDoc(l_first, l_last);
 	}
-	PostMyMessage(HINT_VIEWSIZECHANGED, NULL);
+	postMyMessage(HINT_VIEWSIZECHANGED, NULL);
 }
 
 void CChartDataWnd::UpdateXRuler()
@@ -794,8 +794,8 @@ void CChartDataWnd::UpdateYRuler()
 			const auto binlow = GetChanlistPixeltoBin(0, 0);
 			const auto binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
 			CChanlistItem* pchan = GetChanlistItem(0);
-			auto yfirst = pchan->ConvertDataBinsToVolts (binlow);
-			auto ylast = pchan->ConvertDataBinsToVolts (binhigh);
+			auto yfirst = pchan->ConvertDataBinsToVolts(binlow);
+			auto ylast = pchan->ConvertDataBinsToVolts(binhigh);
 			m_yRuler.UpdateRange(yfirst, ylast);
 		}
 	}
@@ -887,9 +887,9 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 		p_dc->Polyline(&m_PolyPoints[0], nelements);
 
 		if (m_HZtags.GetNTags() > 0)
-			DisplayHZtags_Chan(p_dc, ichan, chanlist_item);
+			displayHZtags_Chan(p_dc, ichan, chanlist_item);
 
-		HighlightData(p_dc, ichan);
+		highlightData(p_dc, ichan);
 	}
 
 	// restore DC
@@ -897,7 +897,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 
 	if (m_VTtags.GetNTags() > 0)
-		DisplayVTtags_LValue(p_dc);
+		displayVTtags_LValue(p_dc);
 
 	// temp tag
 	if (m_hwndReflect != nullptr && m_tempVTtag != nullptr)
@@ -912,7 +912,7 @@ void CChartDataWnd::PlotDatatoDC(CDC* p_dc)
 	//ATLTRACE2("end PlotDataToDC \n");
 }
 
-void CChartDataWnd::DisplayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
+void CChartDataWnd::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -933,7 +933,7 @@ void CChartDataWnd::DisplayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pCha
 	p_dc->SelectObject(pold);
 }
 
-void CChartDataWnd::DisplayVTtags_LValue(CDC* p_dc)
+void CChartDataWnd::displayVTtags_LValue(CDC* p_dc)
 {
 	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -1071,7 +1071,7 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			{
 				if (m_HZtags.GetChannel(j) != ichan)	// next tag if not associated with
 					continue;					// current channel
-				auto k = m_HZtags.GetValue(j);	
+				auto k = m_HZtags.GetValue(j);
 				k = MulDiv(k - yzero, yVE, yextent) + yVO;
 				p_dc->MoveTo(x0, k);				// set initial pt
 				p_dc->LineTo(x1, k);				// HZ line
@@ -1079,7 +1079,7 @@ void CChartDataWnd::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			p_dc->SelectObject(pold_pen);
 		}
 		// highlight data ------------------------------------------------------
-		HighlightData(p_dc, ichan);
+		highlightData(p_dc, ichan);
 	}
 
 	// display vertical cursors ------------------------------------------------
@@ -1265,7 +1265,7 @@ LPTSTR CChartDataWnd::GetAsciiLine(LPTSTR lpCopy, int iunit)
 // client area by fast BitBlt. This latter method was less efficient (slower)
 // than XORing directly to the screen.
 
-void CChartDataWnd::CurveXOR()
+void CChartDataWnd::curveXOR()
 {
 	// ------- client area (direct draw)
 	auto p_dc = CWnd::GetDC();			// select dc
@@ -1301,7 +1301,7 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		for (auto icur = 0; icur < m_HZtags.GetNTags(); icur++)
 		{
 			const auto pixval = GetChanlistBintoPixel(
-				m_HZtags.GetChannel(icur), 
+				m_HZtags.GetChannel(icur),
 				m_HZtags.GetValue(icur));
 			m_HZtags.SetTagPix(icur, pixval);
 		}
@@ -1314,14 +1314,14 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// call base class to test for horiz cursor or XORing rectangle
-	CChartWnd::OnLButtonDown(nFlags, point);	
+	CChartWnd::OnLButtonDown(nFlags, point);
 
 	// if cursor mode = 0 and no tag hit detected, mouse mode=track rect
 	// test curve hit -- specific to lineview, if hit curve, track curve instead
 	if (m_currCursorMode == 0 && m_HCtrapped < 0)	// test if cursor hits a curve
 	{
 		m_trackMode = TRACK_RECT;
-		m_hitcurve = DoesCursorHitCurve(point);
+		m_hitcurve = doesCursorHitCurve(point);
 		if (m_hitcurve >= 0)
 		{
 			// cancel track rect mode (cursor captured)
@@ -1341,8 +1341,8 @@ void CChartDataWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			m_ptFirst = point;								// save first point
 			m_curTrack = m_zero;							// use m_curTrack to store zero
 
-			CurveXOR();										// xor curve
-			PostMyMessage(HINT_HITCHANNEL, m_hitcurve);		// tell parent chan selected
+			curveXOR();										// xor curve
+			postMyMessage(HINT_HITCHANNEL, m_hitcurve);		// tell parent chan selected
 			return;
 		}
 	}
@@ -1361,9 +1361,9 @@ void CChartDataWnd::OnMouseMove(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_CURVE:
-		CurveXOR();
+		curveXOR();					// erase past curve and compute new zero
 		m_zero = MulDiv(point.y - m_ptFirst.y, m_XORyext, -m_yVE) + m_curTrack;
-		CurveXOR();	
+		curveXOR();					// plot new curve
 		break;
 
 	default:
@@ -1379,14 +1379,14 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 	case TRACK_CURVE:
 	{
-		CurveXOR();	
+		curveXOR();	// (clear) necessary since XORcurve can draw outside client area
 		auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
 		chanlist_item->SetYzero(m_zero);
 		m_trackMode = TRACK_OFF;
-		PostMyMessage(HINT_HITCHANNEL, m_hitcurve);	
+		postMyMessage(HINT_HITCHANNEL, m_hitcurve);	// tell parent chan selected
 		Invalidate();
 	}
-		break;
+	break;
 
 	case TRACK_HZTAG:
 		lbuttonUp_HzTag(nFlags, point);
@@ -1399,10 +1399,10 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		m_VTtags.SetTagLVal(m_HCtrapped, lval);
 		point.x = int((lval - m_liFirst) * long(m_displayRect.right) / (m_liLast - m_liFirst + 1));
 		XorVTtag(point.x);
-		PostMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 		m_trackMode = TRACK_OFF;
 	}
-		break;
+	break;
 
 	case TRACK_RECT:
 	{
@@ -1434,10 +1434,10 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 			}
 			else
 				zoomIn();
-			PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 			break;
 		case CURSOR_CROSS:
-			PostMyMessage(HINT_DEFINEDRECT, NULL);
+			postMyMessage(HINT_DEFINEDRECT, NULL);
 			break;
 		default:
 			break;
@@ -1445,13 +1445,13 @@ void CChartDataWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		m_trackMode = TRACK_OFF;
 		Invalidate();
 	}
-		break;
+	break;
 	default:
 		break;
 	}
 }
 
-int CChartDataWnd::DoesCursorHitCurve(CPoint point)
+int CChartDataWnd::doesCursorHitCurve(CPoint point)
 {
 	auto chanfound = -1;						// output value
 	const auto ichans = chanlistitem_ptr_array.GetUpperBound();
@@ -1557,7 +1557,7 @@ void CChartDataWnd::SetHighlightData(CDWordArray* pDWintervals)
 	}
 }
 
-void CChartDataWnd::HighlightData(CDC* p_dc, int chan)
+void CChartDataWnd::highlightData(CDC* p_dc, int chan)
 {
 	// skip if not the correct chan
 	if (chan != m_highlighted.channel || m_highlighted.l_first.GetSize() < 2)
@@ -1647,12 +1647,12 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 	// as a multiple of the nb of buffers)
 	if (m_lADbufferdone + nsamples > m_lxSize)
 	{
-		const auto ndata = m_lxSize - m_lADbufferdone;
-		if (ndata > 0)
+		const long pixels_left_until_end_of_Display = m_lxSize - m_lADbufferdone;
+		if (pixels_left_until_end_of_Display > 0)
 		{
-			ADdisplayBuffer(lpBuf, ndata);			// display end
-			nsamples -= ndata;						// reduce nb of data to display
-			lpBuf += (ndata * long(m_pDataFile->GetpWaveFormat()->scan_count));
+			ADdisplayBuffer(lpBuf, pixels_left_until_end_of_Display);			// display end
+			nsamples -= pixels_left_until_end_of_Display;						// reduce nb of data to display
+			lpBuf += (pixels_left_until_end_of_Display * (long) m_pDataFile->GetpWaveFormat()->scan_count);
 		}
 		m_lADbufferdone = 0;						// clear len of data
 	}
@@ -1669,13 +1669,13 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 		p_dc = &dc_mem;
 
 	// get first and last pixels of the interval to display
-	const auto ad_pixel_first = MulDiv(m_lADbufferdone, m_npixels, m_lxSize);
-	auto ad_pixel_last = MulDiv(m_lADbufferdone + nsamples - 1, m_npixels, m_lxSize);
+	const int ad_pixel_first = MulDiv(m_lADbufferdone, m_npixels, m_lxSize);
+	int ad_pixel_last = MulDiv(m_lADbufferdone + nsamples - 1, m_npixels, m_lxSize);
 	if (ad_pixel_last > m_displayRect.right - 2)
 		ad_pixel_last = m_displayRect.right - 2;
 
-	const auto npixels = ad_pixel_last - ad_pixel_first + 1;
-	const auto npoints = npixels * m_dataperpixel;
+	const int display_pixels = ad_pixel_last - ad_pixel_first + 1;
+	const int display_data_points = display_pixels * m_dataperpixel;
 
 	//////////////////////////// prepare display ///////////////////////////////////
 
@@ -1691,40 +1691,40 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 	p_dc->IntersectClipRect(rect);
 	p_dc->FillSolidRect(&rect, m_scopestruct.crScopeFill);
 
-	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
+	auto* ppen_old = dynamic_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
-	p_dc->SetMapMode(MM_ANISOTROPIC);		// display in anisotropic mode
+	p_dc->SetMapMode(MM_ANISOTROPIC);			// display in anisotropic mode
 	p_dc->SetViewportExt(m_xVE, m_yVE);
 	p_dc->SetViewportOrg(m_xVO, m_yVO);
 	p_dc->SetWindowExt(m_npixels, m_yVE);	//chanlist_item->GetYextent());
 	p_dc->SetWindowOrg(0, 0);				//chanlist_item->GetYzero());
 	const auto yVE = m_yVE;
 
-	for (auto ichan = 0; ichan < chanlistitem_ptr_array.GetSize(); ichan++)
+	for (int channel_number = 0; channel_number < chanlistitem_ptr_array.GetSize(); channel_number++)
 	{
 		// load channel descriptors
-		const auto chanlist_item = chanlistitem_ptr_array[ichan];
+		const auto channel_item = chanlistitem_ptr_array[channel_number];
 		CPen temp_pen;
-		temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[chanlist_item->GetColor()]);
+		temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[channel_item->GetColor()]);
 		p_dc->SelectObject(&temp_pen);
 
 		// compute max min and plot array
 		auto ppt = p_polypoints;
-		auto p_data = lpBuf + ichan;
-		const auto worg = chanlist_item->GetYzero();
-		const auto wext = chanlist_item->GetYextent();
+		auto p_data = lpBuf + channel_number;
+		const auto worg = channel_item->GetYzero();
+		const auto wext = channel_item->GetYextent();
 		const int n_doc_chans = m_pDataFile->GetpWaveFormat()->scan_count;
 		// only one data point per pixel
 		if (m_dataperpixel != 1)
 		{
 			auto nelmts0 = 0;
-			for (auto i = 0; i < npixels; i++)
+			for (int i = 0; i < display_pixels; i++)
 			{
 				auto i_max = *p_data;			// init max
 				auto i_min = i_max;				// init min
-				int nelmts = ((i + 1) * nsamples / npixels) - nelmts0;
-				nelmts0 += nelmts;
-				while (nelmts > 0)			// scan nb elements
+				int number_of_elements = ((i + 1) * nsamples / display_pixels) - nelmts0;
+				nelmts0 += number_of_elements;
+				while (number_of_elements > 0)			// scan nb elements
 				{							// designed by scale
 					const auto idata = *p_data;		// load value
 					if (idata < i_min)
@@ -1732,24 +1732,29 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 					else if (idata > i_max)
 						i_max = idata;		// change max
 					p_data += n_doc_chans;	// update data pointer
-					nelmts--;
+					number_of_elements--;
 				}
 
 				ppt->y = MulDiv(i_max - worg, yVE, wext);
+				ppt->x = i + ad_pixel_first;
 				ppt++;		// update Envelope pointer
 				ppt->y = MulDiv(i_min - worg, yVE, wext);
+				ppt->x = i + ad_pixel_first;
 				ppt++;		// update Envelope pointer
 			}
 		}
 
-		// at least 2 data points per pixel
+		// 1 point per pixel
 		else
 		{
-			for (auto i = 0; i < npixels; i++, ppt++, p_data += n_doc_chans)
+			for (auto i = 0; i < display_pixels; i++, ppt++, p_data += n_doc_chans)
+			{
 				ppt->y = MulDiv(*p_data - worg, yVE, wext);
+				ppt->x = i + ad_pixel_first;
+			}
 		}
 		p_dc->MoveTo(int(p_polypoints->x - 2), int(p_polypoints->y));
-		p_dc->PolylineTo(p_polypoints, npoints);
+		p_dc->PolylineTo(p_polypoints, display_data_points);
 		temp_pen.DeleteObject();
 	}
 

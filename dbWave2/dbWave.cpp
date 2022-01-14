@@ -160,7 +160,7 @@ BOOL CdbWaveApp::InitInstance()
 	m_pADViewTemplate = new CdbMultiDocTemplate(IDR_DBDATATYPE,
 		RUNTIME_CLASS(CdbWaveDoc),
 		RUNTIME_CLASS(CChildFrame),		// multifile MDI child frame
-		RUNTIME_CLASS(CViewADContinuous));	// AD view
+		RUNTIME_CLASS(CADContView));	// AD view
 	ASSERT(m_pADViewTemplate != NULL);
 	m_pADViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
 	AddDocTemplate(m_pADViewTemplate);

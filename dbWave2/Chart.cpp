@@ -561,7 +561,7 @@ void CChartWnd::sendMyMessage(int code, int codeparm)
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void CChartWnd::PostMyMessage(int code, int codeparm)
+void CChartWnd::postMyMessage(int code, int codeparm)
 {
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
@@ -601,7 +601,7 @@ void CChartWnd::captureCursor()
 	SetCapture();
 	auto rect_limit = m_displayRect;
 	ClientToScreen(rect_limit);
-	ClipCursor(rect_limit);	
+	ClipCursor(rect_limit);
 }
 
 void CChartWnd::releaseCursor()
@@ -621,7 +621,7 @@ void CChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	int newcursor = m_cursorType + 1;
 	if (newcursor >= m_cursorIndexMax)
 		newcursor = 0;
-	PostMyMessage(HINT_SETMOUSECURSOR, newcursor);
+	postMyMessage(HINT_SETMOUSECURSOR, newcursor);
 }
 
 void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
@@ -648,8 +648,8 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		case 0:								// arrow (default)
 		case CURSOR_CROSS:					// cross (measure mode) (2)
 			if (nFlags & MK_CONTROL)
-				PostMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
-			
+				postMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
+
 			m_trackMode = TRACK_RECT;		// flag trackrect
 
 			// test HZ tags - if OK, then start tracking & init variables & flags
@@ -727,7 +727,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 			const auto val = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
 			XorHZtag(point.y);
 			m_HZtags.SetTagVal(m_HCtrapped, val);
-			PostMyMessage(HINT_MOVEHZTAG, m_HCtrapped);
+			postMyMessage(HINT_MOVEHZTAG, m_HCtrapped);
 		}
 		break;
 
@@ -748,7 +748,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 				const auto lval = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width()) + m_liFirst;
 				m_VTtags.SetTagLVal(m_HCtrapped, lval);
 			}
-			PostMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
+			postMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
 		}
 		break;
 
@@ -803,7 +803,7 @@ void CChartWnd::lbuttonUp_HzTag(UINT nFlags, CPoint point)
 	point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(point.y);
 	CChartWnd::OnLButtonUp(nFlags, point);
-	PostMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
+	postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
 }
 
 void CChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
@@ -849,9 +849,9 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 		}
 	}
 	if (m_cursorType == CURSOR_CROSS)
-		PostMyMessage(HINT_RMOUSEBUTTONUP, NULL);
+		postMyMessage(HINT_RMOUSEBUTTONUP, NULL);
 	else
-		PostMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+		postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
 	break;
 
 	case TRACK_OFF:
@@ -871,7 +871,7 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 				Invalidate();
 			}
 			else
-				PostMyMessage(HINT_WINDOWPROPSCHANGED, NULL);
+				postMyMessage(HINT_WINDOWPROPSCHANGED, NULL);
 			m_bAllowProps = TRUE;
 		}
 		break;
@@ -1002,7 +1002,7 @@ void CChartWnd::DisplayVTtags_Value(CDC* p_dc)
 
 	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 	{
-		const auto k = m_VTtags.GetValue(j);	
+		const auto k = m_VTtags.GetValue(j);
 		p_dc->MoveTo(k, y0);
 		p_dc->LineTo(k, y1);
 	}
@@ -1021,7 +1021,7 @@ void CChartWnd::DisplayHZtags(CDC* p_dc)
 		const auto k = m_HZtags.GetValue(iTag);
 		if (k == oldval)
 			continue;
-		p_dc->MoveTo(m_xWO, k);	
+		p_dc->MoveTo(m_xWO, k);
 		p_dc->LineTo(m_xWE, k);
 		oldval = k;
 	}

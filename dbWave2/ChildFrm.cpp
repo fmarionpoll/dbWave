@@ -407,7 +407,7 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 			replaceView(RUNTIME_CLASS(CViewSpikeHist), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
-		replaceView(RUNTIME_CLASS(CViewADContinuous), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(CADContView), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
 		b_active_panes = FALSE;
 		break;
 

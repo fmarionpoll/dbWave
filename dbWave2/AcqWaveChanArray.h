@@ -2,10 +2,6 @@
 #pragma once
 
 
-//////////////////////////////////////////////////////////////////////
-// Class  CWaveChanArray                                            //
-// table of CWaveChan                                               //
-//////////////////////////////////////////////////////////////////////
 class CWaveChanArray : public CObject
 {
 	DECLARE_SERIAL(CWaveChanArray);

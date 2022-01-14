@@ -1,11 +1,8 @@
 #pragma once
 
-#include "dbIndexTable.h"
 #include "dbMainTable.h"
 #include "dbWdatabase.h"
-#include "spikepar.h"		// spike parameters options
 #include "Spikelist.h"		// list of spikes
-#include "Spikeclas.h"		// spike classes
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
 

@@ -35,7 +35,7 @@ CWaveChan::CWaveChan()
 	am_csversion = _T("mcid");
 }
 
-CWaveChan::CWaveChan(CWaveChan & arg)
+CWaveChan::CWaveChan(CWaveChan& arg)
 {
 	*this = arg;
 

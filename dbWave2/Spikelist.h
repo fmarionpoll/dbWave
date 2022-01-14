@@ -96,7 +96,7 @@ public:
 	void	SetSpikeClass(int no, int nclass) { m_spkelmts[no]->set_class(nclass); m_bvalidclasslist = FALSE; }
 	void	SetSpikeTime(int no, long iitime) { m_spkelmts[no]->set_time(iitime); }
 
-	CSpikeElemt* GetSpikeElemt(int no)	{ return m_spkelmts.GetAt(no); }
+	CSpikeElemt* GetSpikeElemt(int no) { return m_spkelmts.GetAt(no); }
 
 	WORD	GetAcqEncoding()		const { return m_encoding; }
 	float	GetAcqSampRate()		const { return m_samprate; }
@@ -125,7 +125,7 @@ public:
 
 	int  	AddSpike(short* lpsource, int nchans, long iitime, int sourcechan, int iclass, BOOL bCheck);
 	BOOL	TransferDataToSpikeBuffer(int no, short* lpsource, int nchans, BOOL badjust = FALSE);
-	short*	GetpSpikeData(int no) const { return m_spikebuffer.GetSpike(no); }
+	short* GetpSpikeData(int no) const { return m_spikebuffer.GetSpike(no); }
 	int  	RemoveSpike(int spikeindex);
 	BOOL	IsAnySpikeAround(long iitime, int jitter, int& spikeindex, int ichan);
 

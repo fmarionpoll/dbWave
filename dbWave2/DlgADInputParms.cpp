@@ -816,7 +816,7 @@ void CDlgADInputParms::SaveChanData(int col)
 	p_chan->am_gainamplifier = double(p_chan->am_gainheadstage) * (double)p_chan->am_gainpre * (double)p_chan->am_gainpost;
 	p_chan->am_gaintotal = p_chan->am_gainamplifier * p_chan->am_gainAD;
 	// compute dependent parameters
-	p_chan->am_resolutionV = m_pwFormat->fullscale_volts / p_chan->am_gaintotal / m_pwFormat->binspan;
+	p_chan->am_resolutionV = m_pwFormat->fullscale_Volts / p_chan->am_gaintotal / m_pwFormat->binspan;
 }
 
 void CDlgADInputParms::OnBnClickedOk()

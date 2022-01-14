@@ -6,9 +6,8 @@
 class CSpikeFromChan : public CObject
 {
 	DECLARE_SERIAL(CSpikeFromChan)
-public:
+
 	CSpikeFromChan();
-public:
 	WORD			wversion;		// version number of the structure
 	WORD  			encoding;		// data encoding mode
 	long  			binzero;		// 2048
@@ -19,7 +18,6 @@ public:
 	SPKDETECTPARM	parm;			// detection parameters
 
 // Implementation
-public:
 	virtual ~CSpikeFromChan();
 	void Serialize(CArchive& ar) override;
 

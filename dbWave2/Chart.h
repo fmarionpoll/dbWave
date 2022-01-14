@@ -102,14 +102,14 @@ public:
 	BOOL			m_bNiceGrid = false;
 	int				m_abcissaheight = 10;
 	int				m_ordinateswidth = 25;
-	CRulerBar*		m_pXRulerBar = nullptr;
-	CRulerBar*		m_pYRulerBar = nullptr;
+	CRulerBar* m_pXRulerBar = nullptr;
+	CRulerBar* m_pYRulerBar = nullptr;
 
 	CTagList		m_HZtags{};						// List of horizontal tag lines
 	CTagList		m_VTtags{};						// List of vertical tag lines
 	CString			m_csBottomComment{};
 	BOOL			m_bBottomComment = false;
-	
+
 	// Implementation
 protected:
 	static int		m_countcurs;					// objects counter
@@ -180,7 +180,7 @@ protected:
 
 	BOOL			m_bAllowProps = true;
 	HWND			m_hwndReflect = nullptr;
-	CTag*			m_tempVTtag = nullptr;
+	CTag* m_tempVTtag = nullptr;
 
 protected:
 	virtual void	PreSubclassWindow();
@@ -191,7 +191,7 @@ protected:
 	void			releaseCursor();
 	void			lbuttonUp_HzTag(UINT nFlags, CPoint point);
 	void			sendMyMessage(int code, int codeparm);
-	void			PostMyMessage(int code, int codeparm);
+	void			postMyMessage(int code, int codeparm);
 	void			invertTracker(CPoint point);	// invert rectangle when mouse-left is down
 	int				hitHZtag(int y);				// test if point is on an horizontal tag line
 	int				hitVTtagPix(int x);				// test if point is on a vertical tag line

@@ -606,7 +606,7 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 				* float(m_chanArray.Get_p_channel(ch_index)->am_gainAD);
 		}
 
-		m_chanArray.Get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_volts
+		m_chanArray.Get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_Volts
 			/ float(m_chanArray.Get_p_channel(ch_index)->am_gaintotal)
 			/ float(m_waveFormat.binspan);
 	}

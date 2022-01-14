@@ -4,10 +4,10 @@
 class CHighLight : public CObject
 {
 public:
-	CHighLight();	
+	CHighLight();
 	DECLARE_SERIAL(CHighLight)
 	void Serialize(CArchive& ar) override;
-	CHighLight& operator = (const CHighLight& arg);	
+	CHighLight& operator = (const CHighLight& arg);
 
 public:
 	int					channel = 0;
@@ -20,12 +20,12 @@ public:
 class CEnvelope : public CObject
 {
 public:
-				CEnvelope();				// protected constructor used by dynamic creation
-				DECLARE_SERIAL(CEnvelope)
+	CEnvelope();				// protected constructor used by dynamic creation
+	DECLARE_SERIAL(CEnvelope)
 
 public:
-				CEnvelope(WORD npixels);	// create Envelope with npoints
-				CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span);
+	CEnvelope(WORD npixels);	// create Envelope with npoints
+	CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span);
 	void		Serialize(CArchive& ar) override;
 
 	// Attributes
@@ -36,9 +36,9 @@ protected:
 	int			m_dataperpixel;		// 2=simple envelope, 1=raw data
 	int			m_npixels;			// nb of valid elements in the array
 	CArray <short, short> m_Envelope;	// Envelope array
-	short*		getMaxMin(int nelements, short* lpData, int nchans, short& i_min, short& i_max, long& y);
+	short* getMaxMin(int nelements, short* lpData, int nchans, short& i_min, short& i_max, long& y);
 
-// Operations
+	// Operations
 public:
 	void		FillEnvelopeWithAbcissa(int npixels, int npoints);
 	void		FillEnvelopeWithAbcissaEx(int pixfirst, int pixlast, int ndatapoints);
@@ -47,24 +47,22 @@ public:
 	void		ExportToAbcissa(CArray<CPoint, CPoint>& dest);
 	void		ExportToOrdinates(CArray<CPoint, CPoint>& dest);
 
-	// Helper functions
-public:
 	//----------description
-	inline int	GetDocbufferSpan() const { return m_span; }
-	inline void SetDocbufferSpan(int span) { m_span = span; }
+	int	GetDocbufferSpan() const { return m_span; }
+	void SetDocbufferSpan(int span) { m_span = span; }
 
 	//----------Envelope array
-	inline short* GetElmtAdr(int i) { return &m_Envelope[i]; }
-	inline int	GetSourceMode()const { return m_sourceMode; }
-	inline int	GetSourceChan() const { return m_sourceChan; }
-	inline int	GetEnvelopeSize() const { return m_Envelope.GetSize(); }
-	inline int	GetnElements() const { return m_npixels; }
-	inline int	GetAt(int j) const { return m_Envelope[j]; }
-	inline void SetSourceMode(int n, int span) { m_sourceMode = n; m_span = span; }
-	inline void SetSourceChan(int n) { m_sourceChan = n; }
-	inline void SetPointAt(int j, int val) { m_Envelope[j] = val; }
-	inline void SetSourceData(const int chan, const int transform) { m_sourceChan = chan; m_sourceMode = transform; }
-	inline short GetPointAt(const int i) { return short(m_Envelope[i]); }
+	short* GetElmtAdr(int i) { return &m_Envelope[i]; }
+	int	GetSourceMode()const { return m_sourceMode; }
+	int	GetSourceChan() const { return m_sourceChan; }
+	int	GetEnvelopeSize() const { return m_Envelope.GetSize(); }
+	int	GetnElements() const { return m_npixels; }
+	int	GetAt(int j) const { return m_Envelope[j]; }
+	void SetSourceMode(int n, int span) { m_sourceMode = n; m_span = span; }
+	void SetSourceChan(int n) { m_sourceChan = n; }
+	void SetPointAt(int j, int val) { m_Envelope[j] = val; }
+	void SetSourceData(const int chan, const int transform) { m_sourceChan = chan; m_sourceMode = transform; }
+	short GetPointAt(const int i) { return short(m_Envelope[i]); }
 
 	void		SetEnvelopeSize(int npixels, int ndataperpixel);
 	void		FillEnvelopeWithMxMi(int ifirst, short* lpData, int nchans, int nelmts, BOOL bNew);

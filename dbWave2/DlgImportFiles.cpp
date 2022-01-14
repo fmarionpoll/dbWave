@@ -212,7 +212,7 @@ BOOL CDlgImportFiles::ImportATFFile()
 	m_xinstgain = 100.;	// tentative value (top to min=2000 mV)
 	m_xrate = 10000.0f;	// tentative value
 	CWaveFormat* pwF = pTo->GetpWaveFormat();
-	pwF->fullscale_volts = 20.0f;	// 20 V full scale
+	pwF->fullscale_Volts = 20.0f;	// 20 V full scale
 	pwF->binspan = 65536;	// 16 bits resolution
 	pwF->binzero = 0;	// ?
 

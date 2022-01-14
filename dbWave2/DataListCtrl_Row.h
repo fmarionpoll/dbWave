@@ -1,13 +1,8 @@
 #pragma once
 
 //#include "StdAfx.h"
-#include "dbWaveDoc.h"
 #include "Spikedoc.h"
-#include "chart.h"
-#include "Envelope.h"
-#include "chanlistitem.h"
 #include "ChartData.h"
-#include "Spikedoc.h"
 #include "ChartSpikeBar.h"
 
 // CDataListCtrlRowObject command target
@@ -38,10 +33,10 @@ public:
 	CString			csFlag{};
 	CString			csDate{};
 
-	CAcqDataDoc*		pdataDoc = nullptr;
-	CChartDataWnd*		pDataChartWnd = nullptr;
-	CSpikeDoc*			pspikeDoc = nullptr;
-	CChartSpikeBarWnd*	pSpikeChartWnd = nullptr;
+	CAcqDataDoc* pdataDoc = nullptr;
+	CChartDataWnd* pDataChartWnd = nullptr;
+	CSpikeDoc* pspikeDoc = nullptr;
+	CChartSpikeBarWnd* pSpikeChartWnd = nullptr;
 
 	CDataListCtrl_Row& operator = (const CDataListCtrl_Row& arg);
 	void Serialize(CArchive& ar) override;

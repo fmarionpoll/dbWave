@@ -2,7 +2,7 @@
 
 #include "Envelope.h"
 #include "chanlistitem.h"
-#include "chart.h"
+#include "Chart.h"
 #include "AcqDataDoc.h"
 #include "Cscale.h"
 
@@ -50,7 +50,7 @@ public:
 // Attributes
 protected:
 	// these variables define the curves displayed on the screen (data from doc)
-	CAcqDataDoc*							m_pDataFile = nullptr;	// pointer to data source file
+	CAcqDataDoc* m_pDataFile = nullptr;	// pointer to data source file
 	CArray<CChanlistItem*, CChanlistItem*>	chanlistitem_ptr_array;	// list of display items (abcissa, Envelope, disp. parms)
 	CArray<CEnvelope*, CEnvelope*>			envelope_ptr_array;	// list of Envelopes
 	CArray <CPoint, CPoint>					m_PolyPoints;		// array with abcissa & ordinates
@@ -89,7 +89,7 @@ public:
 	void 		RemoveAllChanlistItems();
 	int  		AddChanlistItem(int ns, int mode);
 	int  		RemoveChanlistItem(WORD i);
-	inline CChanlistItem* GetChanlistItem(int i) const { return chanlistitem_ptr_array.GetAt(i); }
+	CChanlistItem* GetChanlistItem(int i) const { return chanlistitem_ptr_array.GetAt(i); }
 
 	int			SetChanlistTransformMode(WORD i, int imode);
 	int			SetChanlistSourceChan(WORD i, int ns);
@@ -97,11 +97,14 @@ public:
 	void		SetChanlistVoltsExtent(int chan, const float* pvalue);
 	void		SetChanlistVoltsZero(int chan, const float* pvalue);
 
-	float 		GetChanlistVoltsperPixel(WORD i) {CChanlistItem* pchan = GetChanlistItem(i);
-						return ((float)pchan->GetYextent() * pchan->GetVoltsperDataBin() / -m_yVE);}
-	float 		GetTimeperPixel() { 
-						return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)GetRectWidth(); }
-	
+	float 		GetChanlistVoltsperPixel(WORD i) {
+		CChanlistItem* pchan = GetChanlistItem(i);
+		return ((float)pchan->GetYextent() * pchan->GetVoltsperDataBin() / -m_yVE);
+	}
+	float 		GetTimeperPixel() {
+		return ((float)(GetDataSize() / m_pDataFile->GetpWaveFormat()->chrate)) / (float)GetRectWidth();
+	}
+
 	int			GetChanlistBintoPixel(WORD chan, int bin) { return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_yVE, chanlistitem_ptr_array[chan]->GetYextent()) + m_yVO; }
 	int			GetChanlistPixeltoBin(WORD chan, int pixels) { return MulDiv(pixels - m_yVO, chanlistitem_ptr_array[chan]->GetYextent(), m_yVE) + chanlistitem_ptr_array[chan]->GetYzero(); }
 
@@ -127,11 +130,11 @@ public:
 	void		Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
 
 protected:
-	void		HighlightData(CDC* p_dc, int chan);
-	int			DoesCursorHitCurve(CPoint point);
-	void		CurveXOR();
-	void		DisplayVTtags_LValue(CDC* p_dc);
-	void		DisplayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan);
+	void		highlightData(CDC* p_dc, int chan);
+	int			doesCursorHitCurve(CPoint point);
+	void		curveXOR();
+	void		displayVTtags_LValue(CDC* p_dc);
+	void		displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan);
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

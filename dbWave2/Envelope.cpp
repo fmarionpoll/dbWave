@@ -146,13 +146,13 @@ void CEnvelope::FillEnvelopeWithAbcissaEx(int pixfirst, int pixlast, int ndatapo
 	}
 }
 
-void CEnvelope::ExportToAbcissa(CArray<CPoint, CPoint> & dest)
+void CEnvelope::ExportToAbcissa(CArray<CPoint, CPoint> &dest)
 {
 	for (auto i = 0; i < m_Envelope.GetSize(); i++)
 		dest.GetAt(i).x = m_Envelope[i];
 }
 
-void CEnvelope::ExportToOrdinates(CArray<CPoint, CPoint> & dest)
+void CEnvelope::ExportToOrdinates(CArray<CPoint, CPoint> &dest)
 {
 	for (auto i = 0; i < m_Envelope.GetSize(); i++)
 		dest.GetAt(i).y = m_Envelope[i];
@@ -184,7 +184,7 @@ void CEnvelope::Serialize(CArchive & ar)
 // copy average of 2 consecutive pts (ie (max + min)/2)
 // used by lineview to indicate where curves are dragged by the mouse
 
-void CEnvelope::GetMeanToAbcissa(CArray<CPoint, CPoint> & dest)
+void CEnvelope::GetMeanToAbcissa(CArray<CPoint, CPoint> &dest)
 {
 	auto lp_source = &m_Envelope[0];	// source data: a Envelope
 	auto jdest = 0;
@@ -196,7 +196,7 @@ void CEnvelope::GetMeanToAbcissa(CArray<CPoint, CPoint> & dest)
 	}
 }
 
-void CEnvelope::GetMeanToOrdinates(CArray<CPoint, CPoint> & dest)
+void CEnvelope::GetMeanToOrdinates(CArray<CPoint, CPoint> &dest)
 {
 	auto lp_source = &m_Envelope[0];	// source data: a Envelope
 	auto jdest = 0;
@@ -254,7 +254,7 @@ void CEnvelope::FillEnvelopeWithMxMi(int ifirst, short* lp_data, int nchans, int
 	*lp_envelope = i_min;		// store min
 }
 
-short*  CEnvelope::getMaxMin(int nelements, short* lpData, int nchans, short& i_min, short& i_max, long& y1)
+short* CEnvelope::getMaxMin(int nelements, short* lpData, int nchans, short& i_min, short& i_max, long& y1)
 {
 	y1 = 0;
 	int n = nelements;
@@ -270,7 +270,7 @@ short*  CEnvelope::getMaxMin(int nelements, short* lpData, int nchans, short& i_
 		n--;
 	}
 	if (nelements > 0)
-		y1 = y1 / nelements; 
+		y1 = y1 / nelements;
 	return lpData;
 }
 
@@ -294,12 +294,12 @@ void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans
 		i_min = *lp_envelope;
 		i_max = *(lp_envelope + 1);
 	}
-		
+
 	// first sub-interval
 	const int nelemts1 = nelmts / 2;
 	long y1 = 0;
 	lpData = getMaxMin(nelemts1, lpData, nchans, i_min, i_max, y1);
-		
+
 	// second sub-interval
 	const int nelemts2 = nelmts - nelemts1;
 	long y2 = 0;
@@ -316,8 +316,8 @@ void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans
 	}
 	else //if (ioption == 2)
 	{
-		i_min = (short) y1;
-		i_max = (short) y2;
+		i_min = (short)y1;
+		i_max = (short)y2;
 	}
 
 	*lp_envelope = i_min;
@@ -342,15 +342,15 @@ void CEnvelope::GetEnvelopeMaxMin(int* max, int* min)
 		if (val < minval)
 			minval = val;
 	}
-	*min = (int) minval;
-	*max = (int) maxval;
+	*min = (int)minval;
+	*max = (int)maxval;
 }
 
 void CEnvelope::GetEnvelopeMaxMinBetweenPoints(int ifirstpixel, int ilastpixel, int* max, int* min)
 {
-	short maxval = m_Envelope[ifirstpixel];	
+	short maxval = m_Envelope[ifirstpixel];
 	short minval = maxval;
-	for (int i = ifirstpixel +1; i <= ilastpixel; i++)
+	for (int i = ifirstpixel + 1; i <= ilastpixel; i++)
 	{
 		short val = m_Envelope[i];
 		if (val > maxval)
@@ -358,6 +358,6 @@ void CEnvelope::GetEnvelopeMaxMinBetweenPoints(int ifirstpixel, int ilastpixel, 
 		if (val < minval)
 			minval = val;
 	}
-	*min = (int) minval;
-	*max = (int) maxval;
+	*min = (int)minval;
+	*max = (int)maxval;
 }

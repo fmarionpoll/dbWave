@@ -74,7 +74,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 	}
 
 	//	tentative
-	pWFormat->fullscale_volts = 5.0f;				// 10 V full scale
+	pWFormat->fullscale_Volts = 5.0f;				// 10 V full scale
 	pWFormat->binspan = 65536;						// 16 bits resolution
 	pWFormat->binzero = 0;
 

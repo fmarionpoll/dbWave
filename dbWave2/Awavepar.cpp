@@ -659,51 +659,51 @@ IMPLEMENT_SERIAL(OPTIONS_VIEWSPIKES, CObject, 0 /* schema number*/)
 OPTIONS_VIEWSPIKES::OPTIONS_VIEWSPIKES() : bexporttoExcel(0), bincrflagonsave(0), ncommentcolumns(0), wIntParms(0),
 wBoolParms(0)
 {
-	wversion		= 3;
+	wversion = 3;
 
-	timestart		= 0.0f; // interval definition
-	timeend			= 2.0f; //
-	timebin			= 0.1f; // bin size (sec)
-	histampl_vmax	= 1.f;
-	histampl_vmin	= 0.f;
-	histampl_nbins	= 20;
-	nbins			= 20; // number of bins
-	classnb			= 0; // class nb
-	classnb2		= 0;
+	timestart = 0.0f; // interval definition
+	timeend = 2.0f; //
+	timebin = 0.1f; // bin size (sec)
+	histampl_vmax = 1.f;
+	histampl_vmin = 0.f;
+	histampl_nbins = 20;
+	nbins = 20; // number of bins
+	classnb = 0; // class nb
+	classnb2 = 0;
 
-	bacqcomments	= TRUE; // source data comments
-	bacqdate		= TRUE; // source data time and date
-	bacqchsettings	= FALSE; // source data acq chan settings
-	bspkcomments	= FALSE; // spike file comments
-	exportdatatype	= 0;
+	bacqcomments = TRUE; // source data comments
+	bacqdate = TRUE; // source data time and date
+	bacqchsettings = FALSE; // source data acq chan settings
+	bspkcomments = FALSE; // spike file comments
+	exportdatatype = 0;
 	spikeclassoption = FALSE; // discriminate spike class
-	bartefacts		= TRUE; // eliminate artefacts (class < 0)
-	bcolumnheader	= TRUE; // column headers ON/OFF
-	btotalspikes	= TRUE; // total nb of spikes
-	babsolutetime	= TRUE; // TRUE= absolute spike time
-	bexportzero		= FALSE;
+	bartefacts = TRUE; // eliminate artefacts (class < 0)
+	bcolumnheader = TRUE; // column headers ON/OFF
+	btotalspikes = TRUE; // total nb of spikes
+	babsolutetime = TRUE; // TRUE= absolute spike time
+	bexportzero = FALSE;
 	bSpikeDetectThreshold = TRUE;
 
-	heightLine		= 130; // height of one line
+	heightLine = 130; // height of one line
 	heightSeparator = 20; // height between lines
-	bdisplayBars	= TRUE; // default(TRUE)
-	bdisplayShapes	= TRUE; // default(TRUE)
-	bsplitClasses	= TRUE; // display classes on different lines
-	ballfiles		= FALSE;
-	dotheight		= 3;
-	dotlineheight	= 5;
-	bdotunderline	= FALSE;
-	nbinsISI		= 100;
-	binISI			= 2.f;
-	bYmaxAuto		= TRUE;
-	Ymax			= 1.0f;
+	bdisplayBars = TRUE; // default(TRUE)
+	bdisplayShapes = TRUE; // default(TRUE)
+	bsplitClasses = TRUE; // display classes on different lines
+	ballfiles = FALSE;
+	dotheight = 3;
+	dotlineheight = 5;
+	bdotunderline = FALSE;
+	nbinsISI = 100;
+	binISI = 2.f;
+	bYmaxAuto = TRUE;
+	Ymax = 1.0f;
 
-	crHistFill		= RGB(0x80, 0x80, 0x80); // COLORREF
-	crHistBorder	= RGB(0x80, 0x80, 0x80);
-	crStimFill		= RGB(117, 192, 239);
-	crStimBorder	= RGB(117, 192, 239);
-	crChartArea		= RGB(255, 255, 255);
-	int i			= 18;
+	crHistFill = RGB(0x80, 0x80, 0x80); // COLORREF
+	crHistBorder = RGB(0x80, 0x80, 0x80);
+	crStimFill = RGB(117, 192, 239);
+	crStimBorder = RGB(117, 192, 239);
+	crChartArea = RGB(255, 255, 255);
+	int i = 18;
 	i--;
 	crScale[i] = RGB(35, 31, 28); //RGB(255,255,255);
 	i--;
@@ -1433,11 +1433,11 @@ void OPTIONS_ACQDATA::Serialize(CArchive & ar)
 	{
 		ar << m_wversion;
 
-		ar << static_cast<WORD>(2);				// 1 - string parameters
+		ar << (WORD)2;				// 1 - string parameters
 		ar << csBasename;
 		ar << csPathname;
 
-		ar << static_cast<WORD>(19);			// 2 - int parameters
+		ar << (WORD)19;			// 2 - int parameters
 		ar << exptnumber;			// 1
 		ar << icsA_stimulus;		// 2
 		ar << icsA_concentration;	// 3
@@ -1458,7 +1458,7 @@ void OPTIONS_ACQDATA::Serialize(CArchive & ar)
 		ar << icsA_expt;			// 18
 		ar << insectnumber;				// 19
 
-		ar << static_cast<WORD>(11);				// 3 - CStringArray parameters
+		ar << (WORD)11;			// 3 - CStringArray parameters
 		int nsize;
 		int i;
 		nsize = csA_stimulus.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_stimulus.GetAt(i); };

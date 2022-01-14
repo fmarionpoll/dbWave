@@ -372,7 +372,7 @@ CAcqDataDoc* CdbWaveDoc::OpenCurrentDataFile()
 	}
 
 	// open document; erase object if operation failed
-	const auto currentfile = GetDB_CurrentRecordPosition();
+	GetDB_CurrentRecordPosition();
 	GetDB_CurrentDatFileName(TRUE);
 	if (m_currentDatafileName.IsEmpty()
 		|| !m_pDat->OnOpenDocument(m_currentDatafileName))

@@ -16,14 +16,14 @@ class CWaveChan : public CObject
 	DECLARE_SERIAL(CWaveChan);
 public:
 	CString		am_csComment;		// channel annotation
-	short		am_adchannel{};		// channel A/D
-	short		am_gainAD{};		// channel A/D gain
+	short		am_adchannel = 0;		// channel A/D
+	short		am_gainAD = 1;		// channel A/D gain
 
 	CString		am_csheadstage;   	// headstage type (ASCII)
-	short		am_gainheadstage{};	// amplification factor at headstage level
+	short		am_gainheadstage = 1;	// amplification factor at headstage level
 
 	CString		am_csamplifier;		// instrumental amplifier
-	short 		am_amplifierchan{};	// amplifier channel
+	short 		am_amplifierchan = 0;	// amplifier channel
 	short		am_gainpre{};		// pre-filter amplification
 	short		am_gainpost{};		// post-filter amplification
 	short		am_notchfilt{};		// notch filter ON/off
@@ -48,7 +48,7 @@ public:
 	~CWaveChan();
 	virtual long Write(CFile* datafile);
 	virtual BOOL Read(CFile* datafile);
-	CWaveChan& operator = (const CWaveChan& arg); 
+	CWaveChan& operator = (const CWaveChan& arg);
 	void Serialize(CArchive& ar) override;
 
 protected:

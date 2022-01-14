@@ -1,6 +1,6 @@
 #pragma once
 
-//CChartSpikeBarWnd button
+#include "dbWaveDoc.h"
 
 class CChartSpikeBarWnd : public CChartWnd
 {
