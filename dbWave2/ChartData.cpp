@@ -1640,37 +1640,35 @@ void CChartDataWnd::ADdisplayStart(int chsamples)
 	dc.DrawText(cs, textlen, rect, DT_LEFT);
 }
 
-void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
+void CChartDataWnd::ADdisplayBuffer(short* samples_buffer, long samples_number)
 {
 	// check data wrap
-	// deal with overlapping data (this should never occur if sweep size defined
-	// as a multiple of the nb of buffers)
-	if (m_lADbufferdone + nsamples > m_lxSize)
+	if (m_lADbufferdone + samples_number > m_lxSize)
 	{
 		const long pixels_left_until_end_of_Display = m_lxSize - m_lADbufferdone;
 		if (pixels_left_until_end_of_Display > 0)
 		{
-			ADdisplayBuffer(lpBuf, pixels_left_until_end_of_Display);			// display end
-			nsamples -= pixels_left_until_end_of_Display;						// reduce nb of data to display
-			lpBuf += (pixels_left_until_end_of_Display * (long) m_pDataFile->GetpWaveFormat()->scan_count);
+			ADdisplayBuffer(samples_buffer, pixels_left_until_end_of_Display);
+			samples_number -= pixels_left_until_end_of_Display;	
+			samples_buffer += (pixels_left_until_end_of_Display * static_cast<long>(m_pDataFile->GetpWaveFormat()->scan_count));
 		}
-		m_lADbufferdone = 0;						// clear len of data
+		m_lADbufferdone = 0;
 	}
 
 	// create device context and prepare bitmap to receive drawing commands
-	CClientDC dc(this);						// get window DC
-	CDC dc_mem;								// prepare device context
-	dc_mem.CreateCompatibleDC(&dc);			// create compatible DC
+	CClientDC dc(this);	
+	CDC dc_mem;	
+	dc_mem.CreateCompatibleDC(&dc);	
 	CBitmap bitmap_plot;
-	const auto poldbitmap = dc_mem.SelectObject(&bitmap_plot);
-	const auto isave_dc = dc_mem.SaveDC();			// save DC
+	const auto bitmap_old = dc_mem.SelectObject(&bitmap_plot);
+	const auto dc_old = dc_mem.SaveDC();
 	CDC* p_dc = &dc;
 	if (m_bUseDIB)
 		p_dc = &dc_mem;
 
 	// get first and last pixels of the interval to display
 	const int ad_pixel_first = MulDiv(m_lADbufferdone, m_npixels, m_lxSize);
-	int ad_pixel_last = MulDiv(m_lADbufferdone + nsamples - 1, m_npixels, m_lxSize);
+	int ad_pixel_last = MulDiv(m_lADbufferdone + samples_number - 1, m_npixels, m_lxSize);
 	if (ad_pixel_last > m_displayRect.right - 2)
 		ad_pixel_last = m_displayRect.right - 2;
 
@@ -1679,10 +1677,7 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 
 	//////////////////////////// prepare display ///////////////////////////////////
 
-	const auto p_polypoints = &m_PolyPoints[ad_pixel_first * m_dataperpixel * 2];
-	//dcMem.SetMapMode (MM_TEXT);
-	//dcMem.SetViewportOrg (0, 0);
-	//dcMem.SetWindowOrg (0, 0);
+	const auto points_to_display = &m_PolyPoints[ad_pixel_first * m_dataperpixel * 2];
 
 	CRect rect(ad_pixel_first, m_displayRect.top, ad_pixel_last, m_displayRect.bottom);
 	if (ad_pixel_first == 0)
@@ -1693,7 +1688,7 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 
 	auto* ppen_old = dynamic_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
-	p_dc->SetMapMode(MM_ANISOTROPIC);			// display in anisotropic mode
+	p_dc->SetMapMode(MM_ANISOTROPIC);
 	p_dc->SetViewportExt(m_xVE, m_yVE);
 	p_dc->SetViewportOrg(m_xVO, m_yVO);
 	p_dc->SetWindowExt(m_npixels, m_yVE);	//chanlist_item->GetYextent());
@@ -1709,58 +1704,58 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 		p_dc->SelectObject(&temp_pen);
 
 		// compute max min and plot array
-		auto ppt = p_polypoints;
-		auto p_data = lpBuf + channel_number;
-		const auto worg = channel_item->GetYzero();
-		const auto wext = channel_item->GetYextent();
-		const int n_doc_chans = m_pDataFile->GetpWaveFormat()->scan_count;
+		auto ppt = points_to_display;
+		auto p_data = samples_buffer + channel_number;
+		const auto y_zero = channel_item->GetYzero();
+		const auto y_extent = channel_item->GetYextent();
+		const int n_channels = m_pDataFile->GetpWaveFormat()->scan_count;
+
 		// only one data point per pixel
-		if (m_dataperpixel != 1)
+		if (m_dataperpixel > 1)
 		{
-			auto nelmts0 = 0;
+			int number_of_elements_displayed = 0;
 			for (int i = 0; i < display_pixels; i++)
 			{
-				auto i_max = *p_data;			// init max
-				auto i_min = i_max;				// init min
-				int number_of_elements = ((i + 1) * nsamples / display_pixels) - nelmts0;
-				nelmts0 += number_of_elements;
-				while (number_of_elements > 0)			// scan nb elements
-				{							// designed by scale
-					const auto idata = *p_data;		// load value
-					if (idata < i_min)
-						i_min = idata;		// change min
-					else if (idata > i_max)
-						i_max = idata;		// change max
-					p_data += n_doc_chans;	// update data pointer
+				auto i_max = *p_data;
+				auto i_min = i_max;	
+				int number_of_elements = ((i + 1) * samples_number / display_pixels) - number_of_elements_displayed;
+				number_of_elements_displayed += number_of_elements;
+				while (number_of_elements > 0)
+				{
+					if (const auto value_to_display = *p_data; value_to_display < i_min)
+						i_min = value_to_display;
+					else if (value_to_display > i_max)
+						i_max = value_to_display;	
+					p_data += n_channels;
 					number_of_elements--;
 				}
 
-				ppt->y = MulDiv(i_max - worg, yVE, wext);
+				ppt->y = MulDiv(i_max - y_zero, yVE, y_extent);
 				ppt->x = i + ad_pixel_first;
-				ppt++;		// update Envelope pointer
-				ppt->y = MulDiv(i_min - worg, yVE, wext);
+				ppt++;
+				ppt->y = MulDiv(i_min - y_zero, yVE, y_extent);
 				ppt->x = i + ad_pixel_first;
-				ppt++;		// update Envelope pointer
+				ppt++;
 			}
 		}
 
 		// 1 point per pixel
 		else
 		{
-			for (auto i = 0; i < display_pixels; i++, ppt++, p_data += n_doc_chans)
+			for (auto i = 0; i < display_pixels; i++, ppt++, p_data += n_channels)
 			{
-				ppt->y = MulDiv(*p_data - worg, yVE, wext);
+				ppt->y = MulDiv(*p_data - y_zero, yVE, y_extent);
 				ppt->x = i + ad_pixel_first;
 			}
 		}
-		p_dc->MoveTo(int(p_polypoints->x - 2), int(p_polypoints->y));
-		p_dc->PolylineTo(p_polypoints, display_data_points);
+		p_dc->MoveTo(static_cast<int>(points_to_display->x - 2), static_cast<int>(points_to_display->y));
+		p_dc->PolylineTo(points_to_display, display_data_points);
 		temp_pen.DeleteObject();
 	}
 
 	// restore the old pen and exit
-	p_dc->SelectObject(ppen_old);	// select initial object
-	p_dc->RestoreDC(isave_dc);		// restore DC
+	p_dc->SelectObject(ppen_old);
+	p_dc->RestoreDC(dc_old);
 	p_dc->SetMapMode(MM_TEXT);
 	p_dc->SetViewportOrg(0, 0);
 	p_dc->SetWindowOrg(0, 0);
@@ -1772,8 +1767,8 @@ void CChartDataWnd::ADdisplayBuffer(short* lpBuf, long nsamples)
 			rect.left, rect.top,
 			SRCCOPY);
 
-	dc_mem.SelectObject(poldbitmap);	// release bitmap
-	m_lADbufferdone += nsamples;
+	dc_mem.SelectObject(bitmap_old);
+	m_lADbufferdone += samples_number;
 }
 
 void CChartDataWnd::Serialize(CArchive& ar)
@@ -1793,15 +1788,15 @@ void CChartDataWnd::Serialize(CArchive& ar)
 		ar << m_lxLast;				// file index of last pt in the Envelopes
 		ar << m_npixels;			// nb pixels displayed horizontally
 
-		const auto nenvelopes = envelope_ptr_array.GetSize();
-		ar << nenvelopes;
-		const auto nchanlist_items = chanlistitem_ptr_array.GetSize();
-		ar << nchanlist_items;
+		const auto n_envelopes = envelope_ptr_array.GetSize();
+		ar << n_envelopes;
+		const auto n_channels = chanlistitem_ptr_array.GetSize();
+		ar << n_channels;
 
-		for (auto i = 0; i < nenvelopes; i++)
+		for (auto i = 0; i < n_envelopes; i++)
 			envelope_ptr_array[i]->Serialize(ar);
 
-		for (auto i = 0; i < nchanlist_items; i++)
+		for (auto i = 0; i < n_channels; i++)
 			chanlistitem_ptr_array[i]->Serialize(ar);
 	}
 	else
@@ -1860,11 +1855,6 @@ void CChartDataWnd::Serialize(CArchive& ar)
 			chanlistitem_ptr_array[i]->SetEnvelopeArrays(envelope_ptr_array.GetAt(ix), ix, envelope_ptr_array.GetAt(iy), iy);
 		}
 	}
-
-	/*
-	CDWordArray*	m_pDWintervals;	// intervals of data that are highlighted
-	CDataFile*		m_pDataFile;
-	*/
 }
 
 void CChartDataWnd::SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, int trackchannel)
