@@ -9,7 +9,7 @@
 #include "CyberAmp.h"
 
 #include <Olxdadefs.h>
-#include <olxdaapi.h>
+#include <Olxdaapi.h>
 
 #include "ChartData.h"
 #include "CViewADcontinuous.h"
@@ -222,9 +222,7 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 
 	// save parameters into CWaveFormat
 	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat);
-	float max = m_Acq32_ADC.GetMaxRange();						// maximum input voltage
-	float min = m_Acq32_ADC.GetMinRange();						// minimum input voltage
-	pWFormat->fullscale_Volts = (float)(max - min);
+	pWFormat->fullscale_Volts = m_Acq32_ADC.GetMaxRange() - m_Acq32_ADC.GetMinRange();
 
 	// convert into bin scale (nb of divisions)
 	int iresolution = m_Acq32_ADC.GetResolution();

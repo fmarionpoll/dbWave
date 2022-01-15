@@ -57,7 +57,7 @@ protected:
 	float				m_yscaleFactor = 1;			// div factor for y bar 
 	int					m_VBarMode = 0;				// flag V scrollbar state
 	CScrollBar 			m_scrolly;					// V scrollbar
-	CBrush* m_pEditBkBrush;
+	CBrush*				m_pEditBkBrush = nullptr;
 	COLORREF			m_BkColor;
 
 	void OnGainScroll(UINT nSBCode, UINT nPos);
@@ -99,22 +99,22 @@ protected:
 
 	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
 	int					m_DACdigitalchannel = 0;
-	BOOL				m_DACdigitalfirst;
+	BOOL				m_DACdigitalfirst = false;
 	int					m_DAClistsize = 0;
 	long				m_DACmsbit;
 	long				m_DAClRes;
 
 	BOOL				m_DAC_inprogress = false;	// D/A in progress
-	HBUF				m_DAC_bufhandle;
-	long				m_DAC_buflen;				// nb of acq sample per DT buffer
-	long				m_DAC_chbuflen;
+	HBUF				m_DAC_bufhandle = nullptr;
+	long				m_DAC_buflen = 0;			// nb of acq sample per DT buffer
+	long				m_DAC_chbuflen = 0;
 	BOOL				m_bsimultaneousStartDA = false;
 	long				m_DAC_nBuffersFilledSinceStart;
 	double				m_DAC_frequency;
 
 	// sweep
 	long				m_chsweeplength = 0;		// sweep length (per channel)
-	long				m_sweeplength;				// sweep length (all channels)
+	long				m_sweeplength = 1000;		// sweep length (all channels)
 	int					m_chsweep1;					// indexes
 	int					m_chsweep2;
 	int					m_chsweepRefresh;
@@ -172,7 +172,6 @@ protected:
 	void displayolDaErrorMessage(CHAR* errstr);
 
 	// Overrides
-protected:
 	virtual CDaoRecordset* OnGetRecordset();
 	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void	OnInitialUpdate();
@@ -200,12 +199,12 @@ protected:
 	DECLARE_EVENTSINK_MAP()
 public:
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnHardwareAdchannels();
 	afx_msg void OnHardwareAdintervals();
 	afx_msg void OnHardwareDefineexperiment();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBufferDone_ADC();
 	afx_msg void OnTriggerError_ADC();
 	afx_msg void OnOverrunError_ADC();
