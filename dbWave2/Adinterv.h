@@ -26,7 +26,7 @@ public:
 	int		m_threshval;
 	CWaveFormat* m_pwaveFormat;
 
-	UINT	m_postmessage;		// parameter passed on exit to activate another dialog
+	WORD	m_postmessage;		// parameter passed on exit to activate another dialog
 	float	m_ratemax;			// max sampling rate (per chan)
 	float	m_ratemin;			// min sampling rate (per chan)
 	UINT	m_bufferWsizemax;	// maximum buffer size

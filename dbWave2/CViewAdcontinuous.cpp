@@ -1623,7 +1623,7 @@ BOOL CADContView::Defineexperiment()
 				csfilename = m_pADC_options->csPathname + m_pADC_options->csBasename + csBufTemp + _T(".dat");
 				flag = CFile::GetStatus(csfilename, status);
 			}
-			CString cs = _T("The Next available file name is: ") + csfilename;
+			const CString cs = _T("The Next available file name is: ") + csfilename;
 			iIDresponse = AfxMessageBox(cs, MB_YESNO | MB_ICONWARNING);
 		}
 	}
@@ -1644,9 +1644,8 @@ void CADContView::OnHardwareAdchannels()
 		StopAcquisition(TRUE);
 		UpdateStartStop(FALSE);
 	}
-	CDlgADInputParms dlg;
 
-	// init dialog data
+	CDlgADInputParms dlg;
 	dlg.m_pwFormat = &(m_pADC_options->waveFormat);
 	dlg.m_pchArray = &(m_pADC_options->chanArray);
 	dlg.m_numchansMAXDI = m_Acq32_ADC.GetSSCaps(OLSSC_MAXDICHANS);
@@ -1658,7 +1657,7 @@ void CADContView::OnHardwareAdchannels()
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		// make sure that buffer size is a multiple of the nb of chans
+		// make sure that buffer size is a multiple of the nb of channels
 		m_pADC_options->bChannelType = dlg.m_bchantype;
 		ADC_InitSubSystem();
 		UpdateData(FALSE);
@@ -1677,12 +1676,11 @@ void CADContView::OnHardwareAdintervals()
 		UpdateStartStop(FALSE);
 	}
 	ADIntervalsDlg dlg;
-	// init dialog data 
 	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat);
 	dlg.m_pwaveFormat = pWFormat;
 	dlg.m_ratemin = 1.0f;
-	dlg.m_ratemax = (float)(m_freqmax / pWFormat->scan_count);
-	dlg.m_bufferWsizemax = (UINT)65536 * 4;
+	dlg.m_ratemax = float(m_freqmax / pWFormat->scan_count);
+	dlg.m_bufferWsizemax = UINT(65536) * 4;
 	dlg.m_undersamplefactor = m_pADC_options->iundersample;
 	dlg.m_baudiblesound = m_pADC_options->baudiblesound;
 	dlg.m_sweepduration = m_sweepduration;
@@ -1708,18 +1706,16 @@ void CADContView::ChainDialog(WORD iID)
 	WORD menuID;
 	switch (iID)
 	{
-	case IDC_ADINTERVALS:
-		menuID = ID_HARDWARE_ADINTERVALS;
-		break;
-	case IDC_ADCHANNELS:
-		menuID = ID_HARDWARE_ADCHANNELS;
-		break;
-	default:
-		return;
-		break;
+		case IDC_ADINTERVALS:
+			menuID = ID_HARDWARE_ADINTERVALS;
+			break;
+		case IDC_ADCHANNELS:
+			menuID = ID_HARDWARE_ADCHANNELS;
+			break;
+		default:
+			return;
 	}
 	PostMessage(WM_COMMAND, menuID, NULL);
-	return;
 }
 
 void CADContView::OnTriggerError_ADC()
@@ -1778,7 +1774,7 @@ void CADContView::OnBufferDone_ADC()
 
 		CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();	// pointer to data descriptor
 		pWFormat->sample_count += m_bytesweepRefresh / 2;				// update total sample count
-		float duration = pWFormat->sample_count / m_fclockrate;
+		const float duration = float(pWFormat->sample_count) / m_fclockrate;
 
 		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 		pdataBuf += (m_chsweep1 * pWFormat->scan_count);
@@ -1786,7 +1782,7 @@ void CADContView::OnBufferDone_ADC()
 		// first thing to do: save data to file
 		if (pWFormat->bADwritetofile)								// write buffer to file
 		{
-			BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_bytesweepRefresh);
+			const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_bytesweepRefresh);
 			ASSERT(flag);
 			// end of acquisition
 			if (duration >= pWFormat->duration)
@@ -1812,7 +1808,7 @@ void CADContView::OnBufferDone_ADC()
 			if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
 				pWFormat->sample_count = 0;
 		}
-		m_Acq32_ADC.SetQueue((long)m_ADC_bufhandle);					// tell ADdriver that data buffer is free
+		m_Acq32_ADC.SetQueue(long(m_ADC_bufhandle));				// tell ADdriver that data buffer is free
 
 		// then: display options_acqdataataDoc buffer
 		if (pWFormat->bOnlineDisplay)								// display data if requested
@@ -1873,7 +1869,7 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	{
 		short* pdataBuf2 = pdataBuf;
 		short* pDTbuf = pDTbuf0;
-		int iundersample = m_pADC_options->iundersample;
+		const int iundersample = m_pADC_options->iundersample;
 		m_chsweepRefresh = m_chsweepRefresh / iundersample;
 		// loop and compute average between consecutive points
 		for (int j = 0; j < pWFormat->scan_count; j++, pdataBuf2++, pDTbuf++)
@@ -1888,13 +1884,13 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 					SUM += *pSource;
 					pSource += pWFormat->scan_count;
 				}
-				*pDest = (short)(SUM / iundersample);
+				*pDest = short(SUM / iundersample);
 				pDest += pWFormat->scan_count;
 			}
 		}
 	}
 	// update byte length of buffer
-	m_bytesweepRefresh = m_chsweepRefresh * sizeof(short) * pWFormat->scan_count;
+	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
 BOOL CADContView::InitCyberAmp()
