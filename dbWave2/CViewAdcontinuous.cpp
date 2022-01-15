@@ -296,7 +296,7 @@ BOOL CADContView::ADC_InitSubSystem()
 			poptions_acqdatawaveFormat->scan_count = m_numchansMAX;
 
 		// set frequency to value requested, set frequency and get the value returned
-		double clockrate = poptions_acqdatawaveFormat->chrate * poptions_acqdatawaveFormat->scan_count;
+		double clockrate = (double) poptions_acqdatawaveFormat->chrate * (double) poptions_acqdatawaveFormat->scan_count;
 		m_Acq32_ADC.SetFrequency(clockrate);			// set sampling frequency (total throughput)
 		clockrate = m_Acq32_ADC.GetFrequency();
 		poptions_acqdatawaveFormat->chrate = (float)clockrate / poptions_acqdatawaveFormat->scan_count;
@@ -315,9 +315,9 @@ BOOL CADContView::ADC_InitSubSystem()
 			double dGain = m_Acq32_ADC.GetGainList(i);
 			pChannel->am_gainAD = (short)dGain;
 			// compute dependent parameters
-			pChannel->am_gainamplifier = pChannel->am_gainheadstage * (float)pChannel->am_gainpre * (float)pChannel->am_gainpost;
+			pChannel->am_gainamplifier = (double) pChannel->am_gainheadstage * (double)pChannel->am_gainpre * (double)pChannel->am_gainpost;
 			pChannel->am_gaintotal = pChannel->am_gainamplifier * pChannel->am_gainAD;
-			pChannel->am_resolutionV = poptions_acqdatawaveFormat->fullscale_Volts / pChannel->am_gaintotal / poptions_acqdatawaveFormat->binspan;
+			pChannel->am_resolutionV = (double) poptions_acqdatawaveFormat->fullscale_Volts / pChannel->am_gaintotal / (double) poptions_acqdatawaveFormat->binspan;
 		}
 
 		// pass parameters to the board and check if errors
@@ -539,8 +539,8 @@ BOOL CADContView::DAC_InitSubSystem()
 
 		DAC_SetChannelList();
 		double resolutionfactor = pow(2.0, m_Acq32_DAC.GetResolution());
-		m_DACmsbit = (long)pow(2.0, (m_Acq32_DAC.GetResolution() - 1));
-		m_DAClRes = (long)resolutionfactor - 1;
+		m_DACmsbit = (long)pow(2.0, double(m_Acq32_DAC.GetResolution()) - 1.);
+		m_DAClRes = (long)(resolutionfactor - 1.);
 
 		for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
 		{
@@ -548,8 +548,9 @@ BOOL CADContView::DAC_InitSubSystem()
 			//DAC_MSequence(TRUE, pParms);
 			if (pParms->bDigital)
 				continue;
-			pParms->ampUp = pParms->dAmplitudeMaxV * resolutionfactor / (m_Acq32_DAC.GetMaxRange() - m_Acq32_DAC.GetMinRange());
-			pParms->ampLow = pParms->dAmplitudeMinV * resolutionfactor / (m_Acq32_DAC.GetMaxRange() - m_Acq32_DAC.GetMinRange());
+			double delta = double(m_Acq32_DAC.GetMaxRange()) - double(m_Acq32_DAC.GetMinRange());
+			pParms->ampUp = pParms->dAmplitudeMaxV * resolutionfactor / delta;
+			pParms->ampLow = pParms->dAmplitudeMinV * resolutionfactor / delta;
 		}
 
 		// pass parameters to the board and check if errors
@@ -787,7 +788,7 @@ void CADContView::DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* 
 
 void CADContView::DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	double	amp = outputparms_array->value * pow(2.0, m_Acq32_DAC.GetResolution()) / (m_Acq32_DAC.GetMaxRange() - m_Acq32_DAC.GetMinRange());
+	double	amp = outputparms_array->value * pow(2.0, m_Acq32_DAC.GetResolution()) / (double (m_Acq32_DAC.GetMaxRange()) - (double)m_Acq32_DAC.GetMinRange());
 	int nchans = m_DAClistsize;
 
 	for (int i = chan; i < m_DAC_buflen; i += nchans)
@@ -994,7 +995,7 @@ void CADContView::DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPAR
 			x = outputparms_array->ampLow;
 			if (outputparms_array->mseq_iDelay == 0) {
 				DAC_MSequence(FALSE, outputparms_array);
-				x = (double)(outputparms_array->bit1 * ampUp + !outputparms_array->bit1 * ampLow);
+				x = double(WORD(outputparms_array->bit1) * ampUp + WORD( !outputparms_array->bit1) * ampLow);
 			}
 		}
 		if (m_DACdigitalfirst == 0)
@@ -1952,7 +1953,7 @@ BOOL CADContView::InitCyberAmp()
 			m_cyber.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
 
 			m_cyber.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-			m_cyber.SetGain(pchan->am_amplifierchan, (int)(pchan->am_gaintotal / (pchan->am_gainheadstage * pchan->am_gainAD)));
+			m_cyber.SetGain(pchan->am_amplifierchan, (int)(pchan->am_gaintotal / (double (pchan->am_gainheadstage) * double(pchan->am_gainAD))));
 			m_cyber.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
 			int errorcode = m_cyber.C300_FlushCommandsAndAwaitResponse();
 		}

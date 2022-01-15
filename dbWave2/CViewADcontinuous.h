@@ -52,8 +52,8 @@ protected:
 	CEditCtrl			mm_yupper;					// edit control for max amplitude displayed	
 	CEditCtrl			mm_ylower;					// edit control for min amplitude displayed
 	CStretchControl		m_stretch;					// array of properties associated with controls
-	HICON				m_hBias;
-	HICON				m_hZoom;
+	HICON				m_hBias{};
+	HICON				m_hZoom{};
 	float				m_yscaleFactor = 1;			// div factor for y bar 
 	int					m_VBarMode = 0;				// flag V scrollbar state
 	CScrollBar 			m_scrolly;					// V scrollbar
@@ -87,20 +87,20 @@ protected:
 	int					m_numchansMAX = 8;
 
 	BOOL				m_bSimultaneousStart = false;	//TRUE if the card is capable of this
-	ECODE				m_ecode;
+	ECODE				m_ecode{};
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pADC_options;				// pointer to data acq options 
+	OPTIONS_ACQDATA*	m_pADC_options = nullptr;	// pointer to data acq options 
 	BOOL				m_ADC_inprogress = false;	// A/D is in progress (used by OnStop/OnStart)
-	HBUF				m_ADC_bufhandle;
-	long				m_ADC_buflen;				// nb of acq sample per DT buffer
+	HBUF				m_ADC_bufhandle = nullptr;
+	long				m_ADC_buflen = 0;			// nb of acq sample per DT buffer
 	long				m_ADC_chbuflen = 0;			// nb pts for one chan in DT buffer
 	BOOL				m_bsimultaneousStartAD = false;
 
-	OPTIONS_OUTPUTDATA* m_pDAC_options;				// pointer to data output options
-	int					m_DACdigitalchannel;
+	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
+	int					m_DACdigitalchannel = 0;
 	BOOL				m_DACdigitalfirst;
-	int					m_DAClistsize;
+	int					m_DAClistsize = 0;
 	long				m_DACmsbit;
 	long				m_DAClRes;
 
