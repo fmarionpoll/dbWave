@@ -27,7 +27,7 @@ void CWaveFormat::Serialize(CArchive & ar)
 		const WORD version = 9;
 		ar << version;							// 1
 		ar << acqtime;							// 2
-		ar << fullscale_Volts;					// 3
+		ar << fullscale_volts;					// 3
 		ar << binspan;							// 4
 		ar << binzero;							// 5
 		ar << static_cast<WORD>(mode_encoding);	// 6
@@ -81,7 +81,7 @@ void CWaveFormat::Serialize(CArchive & ar)
 		{
 			WORD w;
 			ar >> acqtime;						// 2
-			ar >> fullscale_Volts;				// 3
+			ar >> fullscale_volts;				// 3
 			ar >> binspan;						// 4
 			ar >> binzero;						// 5
 			ar >> w; mode_encoding = static_cast<short>(w);	// 6
@@ -132,7 +132,7 @@ void CWaveFormat::read_v8_and_before(CArchive & ar, WORD version)
 	ASSERT(!ar.IsStoring());
 	WORD w;
 	ar >> acqtime;            			// 2
-	ar >> fullscale_Volts;           	// 3
+	ar >> fullscale_volts;           	// 3
 	if (version < 6)
 	{
 		ar >> w;  binspan = w;			// 4
@@ -212,49 +212,49 @@ void CWaveFormat::read_v8_and_before(CArchive & ar, WORD version)
 CWaveFormat& CWaveFormat::operator = (const CWaveFormat & arg)
 {
 	if (this != &arg) {
-		acqtime = arg.acqtime;
-		wversion = arg.wversion;
-		fullscale_Volts = arg.fullscale_Volts;
-		binspan = arg.binspan;
-		binzero = arg.binzero;
+		acqtime			= arg.acqtime;
+		wversion		= arg.wversion;
+		fullscale_volts = arg.fullscale_volts;
+		binspan			= arg.binspan;
+		binzero			= arg.binzero;
 
-		mode_encoding = arg.mode_encoding;
-		mode_clock = arg.mode_clock;
-		mode_trigger = arg.mode_trigger;
+		mode_encoding	= arg.mode_encoding;
+		mode_clock		= arg.mode_clock;
+		mode_trigger	= arg.mode_trigger;
 
-		chrate = arg.chrate;
-		scan_count = arg.scan_count;
-		sample_count = arg.sample_count;
-		duration = arg.duration;
+		chrate			= arg.chrate;
+		scan_count		= arg.scan_count;
+		sample_count	= arg.sample_count;
+		duration		= arg.duration;
 
-		trig_mode = arg.trig_mode;
-		trig_chan = arg.trig_chan;
-		trig_threshold = arg.trig_threshold;
+		trig_mode		= arg.trig_mode;
+		trig_chan		= arg.trig_chan;
+		trig_threshold	= arg.trig_threshold;
 
-		data_flow = arg.data_flow;
-		bOnlineDisplay = arg.bOnlineDisplay;
-		bADwritetofile = arg.bADwritetofile;
-		bufferNitems = arg.bufferNitems;
-		buffersize = arg.buffersize;
+		data_flow		= arg.data_flow;
+		bOnlineDisplay	= arg.bOnlineDisplay;
+		bADwritetofile	= arg.bADwritetofile;
+		bufferNitems	= arg.bufferNitems;
+		buffersize		= arg.buffersize;
 
-		cs_comment = arg.cs_comment;			// 1
-		csStimulus = arg.csStimulus;
+		cs_comment		= arg.cs_comment;
+		csStimulus		= arg.csStimulus;
 		csConcentration = arg.csConcentration;
-		csStimulus2 = arg.csStimulus2;
+		csStimulus2		= arg.csStimulus2;
 		csConcentration2 = arg.csConcentration2;
 
-		csInsectname = arg.csInsectname;
-		csLocation = arg.csLocation;
-		csSensillum = arg.csSensillum;
-		csStrain = arg.csStrain;
-		csSex = arg.csSex;
-		csMoreComment = arg.csMoreComment;
-		csADcardName = arg.csADcardName;	// 10
-		csOperator = arg.csOperator;
-		insectID = arg.insectID;
-		sensillumID = arg.sensillumID;
-		repeat = arg.repeat;
-		repeat2 = arg.repeat2;
+		csInsectname	= arg.csInsectname;
+		csLocation		= arg.csLocation;
+		csSensillum		= arg.csSensillum;
+		csStrain		= arg.csStrain;
+		csSex			= arg.csSex;
+		csMoreComment	= arg.csMoreComment;
+		csADcardName	= arg.csADcardName;
+		csOperator		= arg.csOperator;
+		insectID		= arg.insectID;
+		sensillumID		= arg.sensillumID;
+		repeat			= arg.repeat;
+		repeat2			= arg.repeat2;
 	}
 	return *this;
 }

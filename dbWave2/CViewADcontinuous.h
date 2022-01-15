@@ -1,29 +1,17 @@
 #pragma once
 
-// adcontvi.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CADContView form view
-
-
 #ifndef __AFXEXT_H__
 #include <afxext.h>
 #endif
 #include "RulerBar.h"
-#include "ScrollBarEx.h"
 #include "afxwin.h"
 #include "dtacq32.h"
-#include <oltypes.h>
-#include <olerrors.h>
+#include <OLTYPES.H>
 #include <Olmem.h>
 
-// DT Openlayer board
 
-#define STRLEN 80        // string size 
 
-///////////////////////////////////////////////////////////////////////////////
-class CADContView : public CFormView
+class CADContView final : public CFormView
 {
 	friend class CBoard;
 
@@ -32,7 +20,6 @@ protected:
 	DECLARE_DYNCREATE(CADContView)
 
 	// Form Data
-public:
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 	CdbMainTable*		m_ptableSet = nullptr;
 	CString				m_boardName;
@@ -83,7 +70,7 @@ protected:
 
 	BOOL 				m_bAskErase = false;		// ask erase when data may be lost (default = FALSE)
 	BOOL				m_bchanged = false;			// flag: save data or not	
-	double 				m_freqmax = 50000;			// maximum sampling frequency (Hz)
+	double 				m_freqmax = 50000.;			// maximum sampling frequency (Hz)
 	int					m_numchansMAX = 8;
 
 	BOOL				m_bSimultaneousStart = false;	//TRUE if the card is capable of this
@@ -101,25 +88,25 @@ protected:
 	int					m_DACdigitalchannel = 0;
 	BOOL				m_DACdigitalfirst = false;
 	int					m_DAClistsize = 0;
-	long				m_DACmsbit;
-	long				m_DAClRes;
+	long				m_DACmsbit = 0;
+	long				m_DAClRes = 0;
 
 	BOOL				m_DAC_inprogress = false;	// D/A in progress
 	HBUF				m_DAC_bufhandle = nullptr;
 	long				m_DAC_buflen = 0;			// nb of acq sample per DT buffer
 	long				m_DAC_chbuflen = 0;
 	BOOL				m_bsimultaneousStartDA = false;
-	long				m_DAC_nBuffersFilledSinceStart;
-	double				m_DAC_frequency;
+	long				m_DAC_nBuffersFilledSinceStart = 0;
+	double				m_DAC_frequency = 1.;
 
 	// sweep
 	long				m_chsweeplength = 0;		// sweep length (per channel)
 	long				m_sweeplength = 1000;		// sweep length (all channels)
-	int					m_chsweep1;					// indexes
-	int					m_chsweep2;
-	int					m_chsweepRefresh;
-	int					m_bytesweepRefresh;
-	float				m_fclockrate;				// apparent clock rate
+	int					m_chsweep1 = 0;				// indexes
+	int					m_chsweep2 = 0;
+	int					m_chsweepRefresh = 0;
+	int					m_bytesweepRefresh = 0;
+	float				m_fclockrate = 10000.;		// apparent clock rate
 
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
@@ -138,19 +125,19 @@ protected:
 	BOOL DAC_InitSubSystem();
 	void DAC_DeleteBuffers();
 	void DAC_DeclareAndFillBuffers();
-	void DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_MSequence(BOOL start, OUTPUTPARMS* parmsChan);
-	void DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_MSequence(BOOL start, OUTPUTPARMS* outputparms_array);
+	void DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 
-	void DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
-	void DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* pParms);
+	void DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 
 	void DAC_FillBuffer(short* pDTbuf);
 	void DAC_StopAndLiberateBuffers();
@@ -165,6 +152,8 @@ protected:
 	BOOL StartOutput();
 	void StopOutput();
 
+	void DTLayerError(COleDispatchException* e);
+
 	BOOL InitCyberAmp();
 	BOOL Defineexperiment();
 	void TransferFilesToDatabase();
@@ -172,17 +161,17 @@ protected:
 	void displayolDaErrorMessage(CHAR* errstr);
 
 	// Overrides
-	virtual CDaoRecordset* OnGetRecordset();
-	virtual void	DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void	OnInitialUpdate();
-	virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual			~CADContView();
-	virtual	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
-	void			ChainDialog(WORD iID);
+			CDaoRecordset* OnGetRecordset();
+	void	DoDataExchange(CDataExchange* pDX) override; 
+	void	OnInitialUpdate() override;
+	void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+			~CADContView() override;
+	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void	ChainDialog(WORD iID);
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
 #endif
 
 #ifndef _DEBUG  // debug version in dbWaveView.cpp

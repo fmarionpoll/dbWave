@@ -295,7 +295,7 @@ void CAcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 
 	// loop to read actual data
 	readDataBlock(0);
-	const auto mv_factor = p_wave_format->fullscale_Volts / p_wave_format->binspan * 1000.;
+	const auto mv_factor = p_wave_format->fullscale_volts / p_wave_format->binspan * 1000.;
 	for (long j = 0; j < GetDOCchanLength(); j++)
 	{
 		CString cs;

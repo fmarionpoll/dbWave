@@ -159,6 +159,7 @@
     <ExecutablePath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(ExecutablePath)</ExecutablePath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
     <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
@@ -295,8 +296,10 @@
       <VerifyInputsAndOutputsExist>false</VerifyInputsAndOutputsExist>
     </CustomBuild>
     <PostBuildEvent>
-      <Message>copy dll to directory</Message>
-      <Command>xcopy /y /d "C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\*.dll" "$(outdir)"</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
