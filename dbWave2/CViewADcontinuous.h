@@ -1,28 +1,16 @@
 #pragma once
 
-// adcontvi.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CADContView form view
-
-
 #ifndef __AFXEXT_H__
 #include <afxext.h>
 #endif
 #include "RulerBar.h"
-#include "ScrollBarEx.h"
 #include "afxwin.h"
 #include "dtacq32.h"
-#include <oltypes.h>
-#include <olerrors.h>
+#include <OLTYPES.H>
 #include <Olmem.h>
 
-// DT Openlayer board
 
-#define STRLEN 80        // string size 
 
-///////////////////////////////////////////////////////////////////////////////
 class CADContView : public CFormView
 {
 	friend class CBoard;
@@ -52,12 +40,12 @@ protected:
 	CEditCtrl			mm_yupper;					// edit control for max amplitude displayed	
 	CEditCtrl			mm_ylower;					// edit control for min amplitude displayed
 	CStretchControl		m_stretch;					// array of properties associated with controls
-	HICON				m_hBias;
-	HICON				m_hZoom;
+	HICON				m_hBias = nullptr;
+	HICON				m_hZoom = nullptr;
 	float				m_yscaleFactor = 1;			// div factor for y bar 
 	int					m_VBarMode = 0;				// flag V scrollbar state
 	CScrollBar 			m_scrolly;					// V scrollbar
-	CBrush* m_pEditBkBrush;
+	CBrush*				m_pEditBkBrush;
 	COLORREF			m_BkColor;
 
 	void OnGainScroll(UINT nSBCode, UINT nPos);
@@ -87,39 +75,39 @@ protected:
 	int					m_numchansMAX = 8;
 
 	BOOL				m_bSimultaneousStart = false;	//TRUE if the card is capable of this
-	ECODE				m_ecode;
+	ECODE				m_ecode = 0;
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pADC_options;				// pointer to data acq options 
+	OPTIONS_ACQDATA*	m_pADC_options = nullptr;	// pointer to data acq options 
 	BOOL				m_ADC_inprogress = false;	// A/D is in progress (used by OnStop/OnStart)
-	HBUF				m_ADC_bufhandle;
-	long				m_ADC_buflen;				// nb of acq sample per DT buffer
+	HBUF				m_ADC_bufhandle = nullptr;
+	long				m_ADC_buflen = 0;			// nb of acq sample per DT buffer
 	long				m_ADC_chbuflen = 0;			// nb pts for one chan in DT buffer
 	BOOL				m_bsimultaneousStartAD = false;
 
-	OPTIONS_OUTPUTDATA* m_pDAC_options;				// pointer to data output options
-	int					m_DACdigitalchannel;
-	BOOL				m_DACdigitalfirst;
-	int					m_DAClistsize;
-	long				m_DACmsbit;
-	long				m_DAClRes;
+	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
+	int					m_DACdigitalchannel = 0;
+	BOOL				m_DACdigitalfirst = 0;
+	int					m_DAClistsize = 0;
+	long				m_DACmsbit = 0;
+	long				m_DAClRes = 0;
 
 	BOOL				m_DAC_inprogress = false;	// D/A in progress
-	HBUF				m_DAC_bufhandle;
-	long				m_DAC_buflen;				// nb of acq sample per DT buffer
-	long				m_DAC_chbuflen;
+	HBUF				m_DAC_bufhandle = nullptr;
+	long				m_DAC_buflen = 0;			// nb of acq sample per DT buffer
+	long				m_DAC_chbuflen = 0;
 	BOOL				m_bsimultaneousStartDA = false;
-	long				m_DAC_nBuffersFilledSinceStart;
-	double				m_DAC_frequency;
+	long				m_DAC_nBuffersFilledSinceStart = 0;
+	double				m_DAC_frequency = 1.;
 
 	// sweep
 	long				m_chsweeplength = 0;		// sweep length (per channel)
-	long				m_sweeplength;				// sweep length (all channels)
-	int					m_chsweep1;					// indexes
-	int					m_chsweep2;
-	int					m_chsweepRefresh;
-	int					m_bytesweepRefresh;
-	float				m_fclockrate;				// apparent clock rate
+	long				m_sweeplength = 0;			// sweep length (all channels)
+	int					m_chsweep1 = 0;				// indexes
+	int					m_chsweep2 = 0;
+	int					m_chsweepRefresh = 0;
+	int					m_bytesweepRefresh = 0;
+	float				m_fclockrate = 0.;			// apparent clock rate
 
 // functions for data acquisition
 	BOOL FindDTOpenLayersBoards();

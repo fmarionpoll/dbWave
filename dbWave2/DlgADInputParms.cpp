@@ -185,9 +185,7 @@ BOOL CDlgADInputParms::OnInitDialog()
 		m_encodingCombo.SetCurSel(i_current);
 	}
 
-	/////////////////////////////////////////////////////////////////////////
 	// initialise grid properties
-	/////////////////////////////////////////////////////////////////////////
 
 	m_Grid.EnableDragAndDrop(TRUE);
 	m_Grid.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xFF, 0xFF, 0xFF));
@@ -346,7 +344,6 @@ void CDlgADInputParms::OnSize(UINT nType, int cx, int cy)
 		p_wnd->ShowWindow((nType == SIZE_MAXIMIZED) ? SW_HIDE : SW_SHOW);
 }
 
-//////////////////////////////////////////////////////
 // set column with proper header, combos, etc and data
 
 void CDlgADInputParms::InitADchannelCombo(int col, int iselect)
@@ -813,7 +810,7 @@ void CDlgADInputParms::SaveChanData(int col)
 	row++;
 	cs = m_Grid.GetItemText(row, col);
 	p_chan->am_gainheadstage = _ttoi(cs);
-	p_chan->am_gainamplifier = double(p_chan->am_gainheadstage) * (double)p_chan->am_gainpre * (double)p_chan->am_gainpost;
+	p_chan->am_gainamplifier = double(p_chan->am_gainheadstage) * double(p_chan->am_gainpre) * double(p_chan->am_gainpost);
 	p_chan->am_gaintotal = p_chan->am_gainamplifier * p_chan->am_gainAD;
 	// compute dependent parameters
 	p_chan->am_resolutionV = m_pwFormat->fullscale_Volts / p_chan->am_gaintotal / m_pwFormat->binspan;

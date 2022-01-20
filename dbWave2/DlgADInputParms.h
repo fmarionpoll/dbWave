@@ -33,36 +33,36 @@ public:
 	// parameters passed:
 public:
 	// input/output data:
-	CWaveFormat* m_pwFormat;		// acquisition parameters
+	CWaveFormat*	m_pwFormat;		// acquisition parameters
 	CWaveChanArray* m_pchArray;		// acquisition channels
 	BOOL			m_bchainDialog;	// chain dialog (no= FALSE)
 	// parameter set on exit to chain dialog
-	UINT m_postmessage;				// launch assoc dialog
+	UINT			 m_postmessage;				// launch assoc dialog
 
-	BOOL m_bchantype;				// flag TRUE=single ended; false=differential - default: false
-	int m_numchansMAXDI;			// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
-	int m_numchansMAXSE;			// = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
-	BOOL m_bcommandAmplifier;		// change ampli settings on the fly (if present); default = none
-	CUSBPxxS1Ctl* m_pAlligatorAmplifier;
+	BOOL			m_bchantype;				// flag TRUE=single ended; false=differential - default: false
+	int				m_numchansMAXDI;			// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
+	int				m_numchansMAXSE;			// = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
+	BOOL			m_bcommandAmplifier;		// change ampli settings on the fly (if present); default = none
+	CUSBPxxS1Ctl*	m_pAlligatorAmplifier;
 	CArray< USBPxxPARAMETERS*, USBPxxPARAMETERS*>* p_alligatordevice_ptr_array;
 
 	// Implementation
 protected:
-	static TCHAR* pszRowTitle[];
-	static TCHAR* pszHighPass[];
-	static TCHAR* pszADGains[];
-	static TCHAR* pszAmplifier[];
-	static TCHAR* pszProbeType[];
-	static TCHAR* pszEncoding[];
-	static int   iEncoding[];
+	static TCHAR*	pszRowTitle[];
+	static TCHAR*	pszHighPass[];
+	static TCHAR*	pszADGains[];
+	static TCHAR*	pszAmplifier[];
+	static TCHAR*	pszProbeType[];
+	static TCHAR*	pszEncoding[];
+	static int		iEncoding[];
 
-	int		m_rowADchannel;
-	int		m_row_ADgain;
-	int		m_row_headstagegain;
-	int		m_row_ampgain;
-	int		m_row_readonly;
-	UINT	m_iNBins;
-	float	m_xVoltsMax;
+	int				m_rowADchannel;
+	int				m_row_ADgain;
+	int				m_row_headstagegain;
+	int				m_row_ampgain;
+	int				m_row_readonly;
+	UINT			m_iNBins;
+	float			m_xVoltsMax;
 
 	BOOL	InitGridColumnDefaults(int col);
 	void	AdjustGridSize();
@@ -75,10 +75,10 @@ protected:
 	void	GetAmplifierParms(int col);
 
 public:
-	virtual BOOL OnInitDialog();
+	BOOL	OnInitDialog() override;
 
-	CComboBox m_resolutionCombo;		// A/D resolution: 8, 12, 16 bits (?)
-	CComboBox m_encodingCombo;			// encoding mode (binary offset/straight/2's complement)
+	CComboBox		m_resolutionCombo;		// A/D resolution: 8, 12, 16 bits (?)
+	CComboBox		m_encodingCombo;			// encoding mode (binary offset/straight/2's complement)
 
 	afx_msg void OnEnChangeNacqchans();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
