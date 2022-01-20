@@ -95,7 +95,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	p_WaveFormat->sample_count = len1;
 
 	// ---------------- specific DT2821 differential mode
-	p_WaveFormat->fullscale_Volts = 20.f;	// 20 mv full scale (+10 V to -10 V)
+	p_WaveFormat->fullscale_volts = 20.f;	// 20 mv full scale (+10 V to -10 V)
 	p_WaveFormat->binspan = 4096;			// 12 bits resolution
 	p_WaveFormat->binzero = 2048;			// offset binary encoding
 	p_WaveFormat->wversion = 1;				// initial version
@@ -171,7 +171,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 		p_chan->am_gainamplifier = *p_xgain_list;			// total gain (ampli + A/D card)
 		p_chan->am_gaintotal = p_chan->am_gainamplifier * static_cast<double>(p_chan->am_gainAD);
 		// TODO: check if resolution is computed correctly
-		p_chan->am_resolutionV = static_cast<double>(p_WaveFormat->fullscale_Volts) / p_chan->am_gaintotal / p_WaveFormat->binspan;
+		p_chan->am_resolutionV = static_cast<double>(p_WaveFormat->fullscale_volts) / p_chan->am_gaintotal / p_WaveFormat->binspan;
 	}
 
 	// init as if no amplifier were present

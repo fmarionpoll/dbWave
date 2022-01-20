@@ -157,6 +157,9 @@
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
     <LibraryPath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;$(LibraryPath)</LibraryPath>
     <ExecutablePath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(ExecutablePath)</ExecutablePath>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+    <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
@@ -283,16 +286,20 @@
       </Command>
     </CustomBuild>
     <CustomBuild>
-      <Message>Performing Custom Build Tool</Message>
+      <Message>
+      </Message>
     </CustomBuild>
     <CustomBuild>
       <Outputs>
       </Outputs>
-      <LinkObjects>true</LinkObjects>
+      <LinkObjects>false</LinkObjects>
+      <VerifyInputsAndOutputsExist>false</VerifyInputsAndOutputsExist>
     </CustomBuild>
     <PostBuildEvent>
-      <Message>copy dll to directory</Message>
-      <Command>xcopy /y /d "C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\*.dll" "$(outdir)"</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">

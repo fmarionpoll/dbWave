@@ -37,7 +37,7 @@ public:
 	CWaveChanArray* m_pchArray;		// acquisition channels
 	BOOL			m_bchainDialog;	// chain dialog (no= FALSE)
 	// parameter set on exit to chain dialog
-	UINT			 m_postmessage;				// launch assoc dialog
+	WORD m_postmessage;				// launch assoc dialog
 
 	BOOL			m_bchantype;				// flag TRUE=single ended; false=differential - default: false
 	int				m_numchansMAXDI;			// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8

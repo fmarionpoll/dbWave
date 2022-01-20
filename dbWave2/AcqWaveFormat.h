@@ -18,7 +18,7 @@ public:
 	WORD	wversion = 8;				// header version number
 
 	CTime	acqtime;
-	float	fullscale_Volts = 20.0f;	// volts full scale, gain 1
+	float	fullscale_volts = 20.0f;	// volts full scale, gain 1
 	long	binspan = 4096;				// 2^12, 2^16
 	long	binzero = 2048;				// 2048, 32768 (0 if 2's complement)
 
@@ -67,11 +67,11 @@ protected:
 	void 			read_v8_and_before(CArchive& ar, WORD version);
 
 public:
-	CWaveFormat();	// constructor
-	~CWaveFormat();	// destructor
-	CWaveFormat& operator = (const CWaveFormat& arg);	// operator redefinition
+	CWaveFormat();
+	~CWaveFormat();
+	CWaveFormat& operator = (const CWaveFormat& arg);
 	long Write(CFile* datafile);
 	BOOL Read(CFile* datafile);
 	void Serialize(CArchive& ar) override;
-	CString GetComments(const CString& separator, BOOL bExplanations = FALSE) const;
+	CString GetComments(const CString& p_separator, BOOL b_explanations = FALSE) const;
 };
