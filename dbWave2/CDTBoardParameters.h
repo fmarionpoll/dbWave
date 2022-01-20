@@ -1,11 +1,11 @@
 #pragma once
 
-#include <olmem.h>         
-#include <olerrors.h>         
-#include <oldaapi.h>
-#include <oltypes.h>
-#include <oldadefs.h>
-#include <WinUser.h>
+#include "olmem.h"         
+#include "olerrors.h"         
+#include "oldaapi.h"
+#include "oltypes.h"
+#include "oldadefs.h"
+#include "WinUser.h"
 
 // Registration structure
 typedef struct _REG_CODE {
@@ -35,7 +35,7 @@ enum ASF_PACK_MESSAGE { MESS_FATAL, MESS_INFORM, MESS_INFORM_CANCEL, MESS_QUERY,
 
 ///////////////////////////////////////////////////////////////////////
 // modes of operation
-typedef enum	MODE { SINGLE_CHANNEL, DOUBLE_CHANNEL, TRIPLE_CHANNEL, NUMBER_OF_MODES };
+enum	MODE { SINGLE_CHANNEL, DOUBLE_CHANNEL, TRIPLE_CHANNEL, NUMBER_OF_MODES };
 #define			MODE_NAMES	{_T("Single"), _T("Double"), _T("Triple")};
 #define			CHANNELS	{1,					2,					3}
 
@@ -47,32 +47,32 @@ typedef enum	MODE { SINGLE_CHANNEL, DOUBLE_CHANNEL, TRIPLE_CHANNEL, NUMBER_OF_MO
 
 ///////////////////////////////////////////////////////////////////////
 // ANALOG encoding modes
-typedef enum	A_ENCODING { ENC_BINARY, ENC_2SCOMP };
+enum	A_ENCODING { ENC_BINARY, ENC_2SCOMP };
 
 ///////////////////////////////////////////////////////////////////////
 // Windows messages for boards and other functions
-typedef enum	WM_CODES {
+enum	WM_CODES {
 	WM_UPDATE_RATIO = WM_USER + 102,	// Update the ratio display
 	WM_CLOSE_RATIO,
 	DT_ADC_EVENT,
 	DT_DAC_EVENT
 };									// Close the ratio display
 
-									///////////////////////////////////////////////////////////////////////
-									// Available sample intervals
+///////////////////////////////////////////////////////////////////////
+// Available sample intervals
 #define NUMBER_OF_INTERVALS	10
 									// sample intervals in decimal seconds
 #define	D_INTERVALS		{0.05,		0.02,		0.01,		0.005,	0.002,	0.001,	0.0005,	0.0002,	0.0001,	0.00005}
 									// and in text
 #define S_INTERVALS		{_T("50.0"), _T("20.0"), _T("10.0"), _T("5.0"), _T("2.0"), _T("1.0"), _T("0.5"), _T("0.2"), _T("0.1"), _T("0.05")}
 
-									///////////////////////////////////////////////////////////////////////
-									// Data storage can be shown as samples or time
-typedef enum	STORE_MODE { SAMPLES_STORED, TIME_STORED, NUMBER_OF_STORE_MODES };
+///////////////////////////////////////////////////////////////////////
+// Data storage can be shown as samples or time
+enum	STORE_MODE { SAMPLES_STORED, TIME_STORED, NUMBER_OF_STORE_MODES };
 
 ///////////////////////////////////////////////////////////////////////
 // Ratio display information
-typedef enum	RATIO_CHOICE { RATIO_CHOICE_1, RATIO_CHOICE_2, RATIO_CHOICE_3, RATIO_CHOICE_4, MAX_RATIO_CHOICES };
+enum	RATIO_CHOICE { RATIO_CHOICE_1, RATIO_CHOICE_2, RATIO_CHOICE_3, RATIO_CHOICE_4, MAX_RATIO_CHOICES };
 #define			RATIO_CHOICE_TEXT	{_T("Prepulse/First pulse"), _T("First pulse/Prepulse"), _T("Prepulse"), _T("First pulse")};
 
 
@@ -124,38 +124,38 @@ typedef struct _IV {
 // This is the sixth one defined for this program
 typedef struct _DAQ_MCID_HEADER_9 {
 	// M-sequence info
-	double	mSeqAmplitude;				// M-sequence amplitude
-	BOOL	mSeqEnable;					// Generate M-sequence
-	double	mSeqOffset;					// Add this offset before multiplication
-	UINT	mSeqDelay;					// Delay M-sequence and offset by this number of samples
-	UINT	mSeqRatio;					// Shifts/sample interval
+	double	mSeqAmplitude;					// M-sequence amplitude
+	BOOL	mSeqEnable;						// Generate M-sequence
+	double	mSeqOffset;						// Add this offset before multiplication
+	UINT	mSeqDelay;						// Delay M-sequence and offset by this number of samples
+	UINT	mSeqRatio;						// Shifts/sample interval
 										// Noise info
-	double	noiseAmplitude;				// Noise amplitude
-	UINT	noiseEnable;				// Generate noise
-	double	noiseFactor;				// Multiply noise by this factor
-	double	noiseOffset;				// Add this offset before multiplication
-	UINT	noiseDelay;					// Delay noise and offset at start and end
+	double	noiseAmplitude;					// Noise amplitude
+	UINT	noiseEnable;					// Generate noise
+	double	noiseFactor;					// Multiply noise by this factor
+	double	noiseOffset;					// Add this offset before multiplication
+	UINT	noiseDelay;						// Delay noise and offset at start and end
 										// Stimulus info
-	double	stimulusAmplitude;			// Delay before stimulus
-	double	stimulusDuration;			// Duration of stimulus
-	BOOL	stimulateEnable;			// enable stimulation
+	double	stimulusAmplitude;				// Delay before stimulus
+	double	stimulusDuration;				// Duration of stimulus
+	BOOL	stimulateEnable;				// enable stimulation
 										// Two-step
 	TWO_STEP	ts;
 } DAQ_MCID_HEADER_9;
 
-#define MAX_MCID_CHANNELS	10	// Hopefully gross overkill!
-#define MAX_PROG_NAME		20	// Ditto
+#define MAX_MCID_CHANNELS	10				// Hopefully gross overkill!
+#define MAX_PROG_NAME		20				// Ditto
 
 typedef struct _MCID_HEADER {
 	char	program_name[MAX_PROG_NAME];	// Zero-terminated
 	UINT	program_version;				// ((V1*10+V2)*10+V3)*10+V4
 	UINT	mcid_version;					// ((V1*10+V2)*10+V3)*10+V4
-	double	sample_interval;	// In seconds
+	double	sample_interval;				// In seconds
 	double	sensitivity[MAX_MCID_CHANNELS];
-	UINT	number_of_channels;	// Number of channels recorded
-	UINT	number_of_samples;	// Total samples/channel
-	size_t	application_header;	// sizeof the application header
-	double	initial_time;		// Time starts at this value
+	UINT	number_of_channels;				// Number of channels recorded
+	UINT	number_of_samples;				// Total samples/channel
+	size_t	application_header;				// sizeof the application header
+	double	initial_time;					// Time starts at this value
 } MCID_HEADER;
 
 
@@ -195,18 +195,12 @@ typedef struct _SUBSYS {
 // Possible subsystem capabilities
 #define	SUB_COUNT	36
 #define	SUB_CAP		{OLSSC_SUP_AUTO_CALIBRATE,	OLSSC_SUP_SINGLEVALUE,	OLSSC_SUP_CONTINUOUS,	OLSSC_SUP_CONTINUOUS_PRETRIG,	OLSSC_SUP_CONTINUOUS_ABOUTTRIG,	OLSSC_SUP_RANDOM_CGL,		OLSSC_SUP_SEQUENTIAL_CGL,		OLSSC_SUP_ZEROSEQUENTIAL_CGL,	OLSSC_SUP_SIMULTANEOUS_SH,	OLSSC_SUP_SIMULTANEOUS_START,	OLSSC_SUP_SYNCHRONIZATION,	OLSSC_SUP_SIMULTANEOUS_CLOCKING,	OLSSC_SUP_PAUSE,	OLSSC_SUP_POSTMESSAGE,	OLSSC_SUP_INPROCESSFLUSH,	OLSSC_SUP_BUFFERING,	OLSSC_SUP_WRPSINGLE,	OLSSC_SUP_WRPMULTIPLE,	OLSSC_SUP_WRPWAVEFORM,	OLSSC_SUP_WRPWAVEFORM_ONLY,	OLSSC_SUP_GAPFREE_NODMA,	OLSSC_SUP_GAPFREE_SINGLEDMA,	OLSSC_SUP_GAPFREE_DUALDMA,	OLSSC_SUP_TRIGSCAN,	OLSSC_MAXMULTISCAN,	OLSS_SUP_RETRIGGER_SCAN_PER_TRIGGER,	OLSS_SUP_RETRIGGER_INTERNAL,	OLSSC_SUP_RETRIGGER_EXTRA,	OLSSC_SUP_INTERRUPT,	OLSSC_SUP_SINGLEENDED,	OLSSC_SUP_DIFFERENTIAL,	OLSSC_SUP_BINARY,	OLSSC_SUP_2SCOMP,	OLSSC_RETURNS_FLOATS,	OLSSC_NUMRANGES}
-#define	SUB_TEXT	{_T("Automatic calibration"),	_T("Single sampling"),	_T("Continuous sampling"), _T("Continuous pretriggered"), _T("Continuous about triggered"),
-_T("Random channels allowed"), _T("Sequential channels allowed"), _T("Zero first channel allowed"), _T("Hold channel required"), _T("Simultaneous start"), 
-_T("Prog. synchronization"), _T("Simultaneous clocking"), _T("Pausing"), _T("Post messages"), _T("In-process buffering"), _T("Buffering"), _T("Single-buffer wrap"),
-_T("Multi-buffer wrap"), _T("Waveform generation"), _T("FIFI Waveform only"), _T("Gap-free without DMA"), _T("Gap-free single DMA"), _T("Gap-free dual DMA"), 
-_T("Triggered scans"), _T("Multiple scans"), _T("Scan-per-trigger"), _T("Internal retriggering"), _T("Extra retriggering"), _T("Interrupt-driven I/O"),
-_T("Single-ended"), _T("Differential"), _T("Binary encoding"), _T("Twos-Complement"), _T("Floating point"), _T("Multiple voltage ranges")}
+#define	SUB_TEXT	{_T("Automatic calibration"),	_T("Single sampling"),	_T("Continuous sampling"), _T("Continuous pretriggered"), _T("Continuous about triggered"),_T("Random channels allowed"), _T("Sequential channels allowed"), _T("Zero first channel allowed"), _T("Hold channel required"), _T("Simultaneous start"), _T("Prog. synchronization"), _T("Simultaneous clocking"), _T("Pausing"), _T("Post messages"), _T("In-process buffering"), _T("Buffering"), _T("Single-buffer wrap"),_T("Multi-buffer wrap"), _T("Waveform generation"), _T("FIFI Waveform only"), _T("Gap-free without DMA"), _T("Gap-free single DMA"), _T("Gap-free dual DMA"), _T("Triggered scans"), _T("Multiple scans"), _T("Scan-per-trigger"), _T("Internal retriggering"), _T("Extra retriggering"), _T("Interrupt-driven I/O"),_T("Single-ended"), _T("Differential"), _T("Binary encoding"), _T("Twos-Complement"), _T("Floating point"), _T("Multiple voltage ranges")}
 
 // Numerical subsystem capabilities
 #define SS_NUM_COUNT 10
 #define SS_NUM_CAP	{OLSSC_MAXSECHANS,			OLSSC_MAXDICHANS,			OLSSC_NUMGAINS,		OLSSC_CGLDEPTH,		OLSSC_NUMDMACHANS,		OLSSC_NUMFILTERS,	OLSSC_NUMRANGES,	OLSSC_NUMRESOLUTIONS,	OLSSC_FIFO_SIZE_IN_K,	OLSSC_NUMCHANNELS}
-#define SS_NUM_TEXT	{_T("Single-ended channels"), _T("Differential channels"), _T("Gain selections"), _T("Channel gain list"),
-_T("DMA channels"), _T("Filters"), _T("Ranges"), _T("Resolutions"), _T("FIFO (KB)"), _T("I/O Channels")}
+#define SS_NUM_TEXT	{_T("Single-ended channels"), _T("Differential channels"), _T("Gain selections"), _T("Channel gain list"),_T("DMA channels"), _T("Filters"), _T("Ranges"), _T("Resolutions"), _T("FIFO (KB)"), _T("I/O Channels")}
 
 #define FATAL_ERROR(ecode,message) if ((m_board.status=(ecode))!=OLNOERROR) { MESSAGE(MESS_FATAL,message); return;}
 #define FATAL_ERROR_0(ecode,message) if ((m_board.status=(ecode))!=OLNOERROR) { MESSAGE(MESS_FATAL,message); return 0;}

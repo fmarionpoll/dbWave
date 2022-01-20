@@ -956,6 +956,9 @@
     <ClInclude Include="Ruler.h">
       <Filter>customctrl</Filter>
     </ClInclude>
+    <ClInclude Include="CDTBoardParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\bias.ico">

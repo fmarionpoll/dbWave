@@ -1722,7 +1722,8 @@ void CChartDataWnd::ADdisplayBuffer(short* samples_buffer, long samples_number)
 				number_of_elements_displayed += number_of_elements;
 				while (number_of_elements > 0)
 				{
-					if (const auto value_to_display = *p_data; value_to_display < i_min)
+					const auto value_to_display = *p_data;
+					if (value_to_display < i_min)
 						i_min = value_to_display;
 					else if (value_to_display > i_max)
 						i_max = value_to_display;	

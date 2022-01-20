@@ -1,7 +1,7 @@
 #if !defined(_OLDADEFS_)
 #define _OLDADEFS_
 
-#include "./include/DataTranslation/oltypes.h"
+#include <oltypes.h>
 
 /*-----------------------------------------------------------------------
 

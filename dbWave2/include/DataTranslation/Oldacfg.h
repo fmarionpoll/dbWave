@@ -1,7 +1,7 @@
 #if !defined(_OLDACFG_)
 #define _OLDACFG_
 
-#include "OlDaDefs.h"
+//#include "OlDaDefs.h"
 
 
 typedef unsigned char BYTE, *PBYTE;

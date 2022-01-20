@@ -2,6 +2,7 @@
 #include "CUSBPxxS1Ctl.h"
 #include "CyberAmp.h"
 #include "./GridCtrl/GridCtrl.h"
+#include "Olxdadefs.h"
 
 class CDlgADInputs : public CDialog
 {

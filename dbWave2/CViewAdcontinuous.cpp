@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include <cmath>
+#include <olerrors.h>
+
 #include "resource.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
@@ -8,8 +10,8 @@
 #include "dtacq32.h"
 #include "CyberAmp.h"
 
-#include <Olxdadefs.h>
-#include <Olxdaapi.h>
+#include "Olxdadefs.h"
+#include "Olxdaapi.h"
 
 #include "ChartData.h"
 #include "CViewADcontinuous.h"
@@ -347,7 +349,7 @@ void CADContView::ADC_DeclareBuffers()
 
 	// define buffer length
 	m_sweepduration = m_pADC_options->sweepduration;
-	m_chsweeplength = (long)(m_sweepduration * pWFormat->chrate / (float)m_pADC_options->iundersample);
+	m_chsweeplength = long(float(m_sweepduration) * pWFormat->chrate / float(m_pADC_options->iundersample));
 	m_ADC_chbuflen = m_chsweeplength * m_pADC_options->iundersample / pWFormat->bufferNitems;
 	m_ADC_buflen = m_ADC_chbuflen * pWFormat->scan_count;
 
@@ -357,11 +359,11 @@ void CADContView::ADC_DeclareBuffers()
 		ECODE ecode = olDmAllocBuffer(0, m_ADC_buflen, &m_ADC_bufhandle);
 		ecode = OLNOERROR;
 		if ((ecode == OLNOERROR) && (m_ADC_bufhandle != NULL))
-			m_Acq32_ADC.SetQueue((long)m_ADC_bufhandle); // but buffer onto Ready queue
+			m_Acq32_ADC.SetQueue(long(m_ADC_bufhandle)); // but buffer onto Ready queue
 	}
 
 	// set sweep length to the nb of data buffers
-	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * (long)pWFormat->scan_count;	// ?
+	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * long(pWFormat->scan_count);	// ?
 	m_inputDataFile.AdjustBUF(m_chsweeplength);
 	*(m_inputDataFile.GetpWaveFormat()) = *pWFormat;	// save settings into data file	
 

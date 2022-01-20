@@ -65,18 +65,18 @@
 #include "AcqWaveChanArray.h"
 #include "AcqWaveFormat.h"
 #include "StretchControls.h"
-#include "dbwave_structures.h"
+#include "dbWave_structures.h"
 
 #include "Tag.h"
 #include "Taglist.h"		// tag structures
 #include "StimLevelArray.h"
-#include "wavebuf.h"		// data file buffer structure
+#include "WaveBuf.h"		// data file buffer structure
 #include "datafile_X.h"		// data file base class
-#include "awavepar.h"		// view data options
+#include "Awavepar.h"		// view data options
 #include "spikepar.h"		// spike parameters options
 #include "dbMultiDocTemplate.h"
 
-#include "dbwave.h"
+#include "dbWave.h"
 #include "resource.h"
 
 #define SAFE_DELETE(ptr) if (ptr) { delete ptr; ptr = NULL; }

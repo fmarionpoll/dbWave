@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "DlgdtBoard.h"
+#include "CDTBoardParameters.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -70,8 +71,8 @@ void CDlgDataTranslationBoard::OnSelchangeBoard()
 
 #define SS_LIST_SIZE 6
 #define	SS_CODES {OLSS_AD, OLSS_DA, OLSS_DIN, OLSS_DOUT, OLSS_CT, OLSS_SRL}
-#define	SS_LIST	 {OLDC_ADELEMENTS, OLDC_DAELEMENTS, OLDC_DINELEMENTS, OLDC_DOUTELEMENTS, OLDC_CTELEMENTS, OLDC_SRLELEMENTS}
-#define SS_TEXT	 {	_T("Analog Inputs"), _T("Analog outputs"), _T("Digital Inputs"), _T("Digital Outputs"),	_T("Counter/Trigger"), _T("Serial Port")}
+#define	SS_LIST	 {OLDC_ADELEMENTS, OLDC_DAELEMENTS, OLDC_DINELEMENTS,OLDC_DOUTELEMENTS, OLDC_CTELEMENTS, OLDC_SRLELEMENTS}
+#define SS_TEXT	 {_T("Analog Inputs"), _T("Analog outputs"), _T("Digital Inputs"),_T("Digital Outputs"),	_T("Counter/Trigger"), _T("Serial Port")}
 
 int CDlgDataTranslationBoard::GetBoardCapabilities()
 {
@@ -138,10 +139,6 @@ void CDlgDataTranslationBoard::ChangeSubsystem(int index)
 	GetSubsystemNumericalCapabilities(numitems);
 }
 
-#define	SUB_COUNT	36
-#define	SUB_CAP		{OLSSC_SUP_AUTO_CALIBRATE, OLSSC_SUP_SINGLEVALUE, OLSSC_SUP_CONTINUOUS, OLSSC_SUP_CONTINUOUS_PRETRIG, OLSSC_SUP_CONTINUOUS_ABOUTTRIG, OLSSC_SUP_RANDOM_CGL, OLSSC_SUP_SEQUENTIAL_CGL, OLSSC_SUP_ZEROSEQUENTIAL_CGL, OLSSC_SUP_SIMULTANEOUS_SH, OLSSC_SUP_SIMULTANEOUS_START, OLSSC_SUP_SYNCHRONIZATION, OLSSC_SUP_SIMULTANEOUS_CLOCKING, OLSSC_SUP_PAUSE, OLSSC_SUP_POSTMESSAGE, OLSSC_SUP_INPROCESSFLUSH, OLSSC_SUP_BUFFERING, OLSSC_SUP_WRPSINGLE, OLSSC_SUP_WRPMULTIPLE, OLSSC_SUP_WRPWAVEFORM, OLSSC_SUP_WRPWAVEFORM_ONLY, OLSSC_SUP_GAPFREE_NODMA, OLSSC_SUP_GAPFREE_SINGLEDMA, OLSSC_SUP_GAPFREE_DUALDMA, OLSSC_SUP_TRIGSCAN, OLSSC_MAXMULTISCAN, OLSS_SUP_RETRIGGER_SCAN_PER_TRIGGER, OLSS_SUP_RETRIGGER_INTERNAL, OLSSC_SUP_RETRIGGER_EXTRA, OLSSC_SUP_INTERRUPT, OLSSC_SUP_SINGLEENDED, OLSSC_SUP_DIFFERENTIAL, OLSSC_SUP_BINARY, OLSSC_SUP_2SCOMP, OLSSC_RETURNS_FLOATS, OLSSC_NUMRANGES}
-#define	SUB_TEXT	{_T("Automatic calibration"), _T("Single sampling"), _T("Continuous sampling"), _T("Continuous pretriggered"), _T("Continuous about triggered"), _T("Random channels allowed"), _T("Sequential channels allowed"),  _T("Zero first channel allowed"),  _T("Hold channel required"),  _T("Simultaneous start"),  _T("Prog. synchronization"),  _T("Simultaneous clocking"), _T("Pausing"), _T("Post messages"), _T("In-process buffering"), _T("Buffering"), _T("Single-buffer wrap"), _T("Multi-buffer wrap"),  _T("Waveform generation"),  _T("FIFI Waveform only"), _T("Gap-free without DMA"), _T("Gap-free single DMA"), _T("Gap-free dual DMA"), _T("Triggered scans"),  _T("Multiple scans"),  _T("Scan-per-trigger"), _T("Internal retriggering"), _T("Extra retriggering"), _T("Interrupt-driven I/O"),  _T("Single-ended"), _T("Differential"), _T("Binary encoding"),  _T("Twos-Complement"),  _T("Floating point"), _T("Multiple voltage ranges")}
-
 void CDlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
 {
 	m_listSSYNCaps.ResetContent();
@@ -163,10 +160,6 @@ void CDlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
 	}
 	m_listSSYNCaps.Invalidate();
 }
-
-#define SS_NUM_COUNT 10
-#define SS_NUM_CAP	{OLSSC_MAXSECHANS, OLSSC_MAXDICHANS, OLSSC_NUMGAINS, OLSSC_CGLDEPTH, OLSSC_NUMDMACHANS, OLSSC_NUMFILTERS, OLSSC_NUMRANGES, OLSSC_NUMRESOLUTIONS, OLSSC_FIFO_SIZE_IN_K, OLSSC_NUMCHANNELS}
-#define SS_NUM_TEXT	{_T("Single-ended channels"), _T("Differential channels"), _T("Gain selections"), _T("Channel gain list"),_T("DMA channels"), _T("Filters"), _T("Ranges"), _T("Resolutions"), _T("FIFO (KB)"), _T("I/O Channels")}
 
 void CDlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
 {

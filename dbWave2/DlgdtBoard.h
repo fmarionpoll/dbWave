@@ -1,8 +1,6 @@
 #pragma once
-
-#include "./include/DataTranslation/OLTYPES.H"
 #include "dtacq32.h"
-#include "afxwin.h"
+
 
 class CDlgDataTranslationBoard : public CDialog
 {

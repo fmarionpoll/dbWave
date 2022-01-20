@@ -128,7 +128,8 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	CTime sys_time = {};
 	if (myDtTime.ParseDateTime(str_date_time))
 	{
-		if (SYSTEMTIME st; myDtTime.GetAsSystemTime(st))
+		SYSTEMTIME st;
+		if (myDtTime.GetAsSystemTime(st))
 		{
 			sys_time = st;
 		}
@@ -237,7 +238,8 @@ void CDataFileATLAB::init_channels_from_cyber_a320(char* p_header) const
 	// ATLAB(fred) version 0 did not set chan_cyber properly...
 	// if cyber_chanx equal on both channels, assume that parameters are not correctly set
 	// look for the first xgain that equals the Cyber gain
-	if (const auto pcyber2 = reinterpret_cast<CYBERCHAN*>(pchar); (pcyber1->acqchan == pcyber2->acqchan)
+	const auto pcyber2 = reinterpret_cast<CYBERCHAN*>(pchar);
+	if ( (pcyber1->acqchan == pcyber2->acqchan)
 		&& m_pWFormat->scan_count > 1)
 	{
 		AfxMessageBox(_T("cyber channel not correctly set"), MB_OK);
