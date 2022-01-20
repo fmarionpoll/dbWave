@@ -389,7 +389,7 @@ void CViewData::OnUpdateEditCopy(CCmdUI* pCmdUI)
 
 void CViewData::ADC_OnHardwareChannelsDlg()
 {
-	CDlgADInputParms dlg;
+	CDlgADInputs dlg;
 
 	// init dialog data
 	dlg.m_pwFormat = m_pdatDoc->GetpWaveFormat();

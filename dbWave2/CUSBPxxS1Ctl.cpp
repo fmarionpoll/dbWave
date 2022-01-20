@@ -527,6 +527,7 @@ long CUSBPxxS1Ctl::readNumberOfDevicesConnected()
 //  USBPHP-S1
 //	USBPBP-S1
 //**************************************************************************************
+
 long CUSBPxxS1Ctl::readHandleOfDevice(long device)
 {
 	VARIANT	in_val;
@@ -538,10 +539,12 @@ long CUSBPxxS1Ctl::readHandleOfDevice(long device)
 	return	packed;
 }
 
-void CUSBPxxS1Ctl::readAllParameters(long handle, USBPxxPARAMETERS* pUSBPxxParms)
+bool CUSBPxxS1Ctl::readAllParameters(long device, USBPxxPARAMETERS* pUSBPxxParms)
 {
-	//pUSBPxxParms->DeviceHandle = readHandleOfDevice(device);
-	pUSBPxxParms->DeviceHandle = handle;
+	devicesConnected = readNumberOfDevicesConnected();
+	pUSBPxxParms->DeviceHandle = readHandleOfDevice(device);
+	if (pUSBPxxParms->DeviceHandle == NULL)
+		return false;
 
 	readLPFC(pUSBPxxParms);
 	readHPFC(pUSBPxxParms);
@@ -556,8 +559,7 @@ void CUSBPxxS1Ctl::readAllParameters(long handle, USBPxxPARAMETERS* pUSBPxxParms
 	readSerialNumber(pUSBPxxParms);
 	readProductID(pUSBPxxParms);
 	readRevision(pUSBPxxParms);
-	devicesConnected = readNumberOfDevicesConnected();
-	//deviceNumber = 0;
+	return true;
 }
 
 // CUSBPxxS1Ctl operations
@@ -574,6 +576,7 @@ void CUSBPxxS1Ctl::readAllParameters(long handle, USBPxxPARAMETERS* pUSBPxxParms
 //  USBPGF-S1
 //	USBPBP-S1
 //**************************************************************************************
+
 void CUSBPxxS1Ctl::writeLPFC(USBPxxPARAMETERS* d)
 {
 	VARIANT	in_val;
@@ -595,6 +598,7 @@ void CUSBPxxS1Ctl::writeLPFC(USBPxxPARAMETERS* d)
 //  USBPHP-S1
 //	USBPBP-S1
 //**************************************************************************************
+
 void CUSBPxxS1Ctl::writeHPFC(USBPxxPARAMETERS* d)
 {
 	VARIANT	in_val;
@@ -628,6 +632,7 @@ void CUSBPxxS1Ctl::writeHPFC(USBPxxPARAMETERS* d)
 //  USBPHP-S1
 //	USBPBP-S1
 //**************************************************************************************
+
 void CUSBPxxS1Ctl::writeGainIndex(USBPxxPARAMETERS* d)
 {
 	VARIANT	in_val;
@@ -654,6 +659,7 @@ void CUSBPxxS1Ctl::writeGainIndex(USBPxxPARAMETERS* d)
 //  USBPGF-S1
 //	USBPIA-S1
 //**************************************************************************************
+
 void CUSBPxxS1Ctl::writeCouplingIndex(USBPxxPARAMETERS* d)
 {
 	VARIANT	in_val;
@@ -681,6 +687,7 @@ void CUSBPxxS1Ctl::writeCouplingIndex(USBPxxPARAMETERS* d)
 //  USBPGF-S1
 //  USBPBP-S1
 //**************************************************************************************
+
 void CUSBPxxS1Ctl::writeClockSourceIndex(USBPxxPARAMETERS* d)
 {
 	VARIANT	in_val;
@@ -714,6 +721,7 @@ void CUSBPxxS1Ctl::writeClockSourceIndex(USBPxxPARAMETERS* d)
 //  USBPGF-S1
 //  USBPBP-S1
 //**************************************************************************************
+
 void CUSBPxxS1Ctl::writePClockIndex(USBPxxPARAMETERS* d)
 {
 	VARIANT	in_val;
@@ -737,6 +745,7 @@ void CUSBPxxS1Ctl::writePClockIndex(USBPxxPARAMETERS* d)
 //  USBPHP-S1
 //	USBPBP-S1
 //**************************************************************************************
+
 void CUSBPxxS1Ctl::writeChannelNumber(USBPxxPARAMETERS* d)
 {
 	VARIANT	in_val;
@@ -764,6 +773,7 @@ void CUSBPxxS1Ctl::writeChannelNumber(USBPxxPARAMETERS* d)
 //  USBPHP-S1
 //	USBPBP-S1
 //**************************************************************************************
+
 void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS* d)
 {
 	auto index = 0;
@@ -789,13 +799,13 @@ void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS* d)
 
 // dbWave-specific functions
 
-BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan* pchan, USBPxxPARAMETERS* pdevice)
+bool CUSBPxxS1Ctl::SetWaveChanParms(long device, CWaveChan* pchan)
 {
-	//pdevice->DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
-
+	devicesConnected = readNumberOfDevicesConnected();
+	auto* pdevice = new USBPxxPARAMETERS();
+	pdevice->DeviceHandle = readHandleOfDevice(device);
 	if (pdevice == nullptr || pdevice->DeviceHandle == NULL)
-		return FALSE;
-	pdevice->ChannelNumber = pchan->am_amplifierchan;
+		return false;
 
 	pdevice->indexgain = ConvertAbsoluteGainToIndexGain(pchan->am_amplifierchan);
 	writeGainIndex(pdevice);
@@ -803,21 +813,21 @@ BOOL CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan* pchan, USBPxxPARAMETERS* pdevice)
 	writeHPFC(pdevice);
 	pdevice->LPFc = pchan->am_lowpass;
 	writeLPFC(pdevice);
-	return TRUE;
+	return true;
 }
 
-BOOL CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan* pchan, USBPxxPARAMETERS* pdevice)
+bool CUSBPxxS1Ctl::GetWaveChanParms(long device, CWaveChan* pchan)
 {
-	if (pdevice == nullptr || pdevice->DeviceHandle == NULL)
-		return FALSE;
+	auto* pdevice = new USBPxxPARAMETERS();
+	if (!readAllParameters(device, pdevice))
+		return false;
 
-	readAllParameters(pdevice->DeviceHandle, pdevice);
 	pchan->am_amplifierchan = short(pdevice->ChannelNumber);
 	pchan->am_gainpre = 1;
 	pchan->am_gainpost = short(pdevice->Gain);
 	pchan->am_csInputpos.Format(_T("%.3f"), pdevice->HPFc);
 	pchan->am_lowpass = short(pdevice->LPFc);
-	return TRUE;
+	return true;
 }
 
 // index functions

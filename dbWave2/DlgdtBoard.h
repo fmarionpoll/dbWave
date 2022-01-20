@@ -1,9 +1,6 @@
 #pragma once
 
-#include "./include/DataTranslation/OLDAAPI.H"
 #include "./include/DataTranslation/OLTYPES.H"
-#include "./include/DataTranslation/OLERRORS.H"
-#include "./include/DataTranslation/Olmem.h"
 #include "dtacq32.h"
 #include "afxwin.h"
 
@@ -21,24 +18,23 @@ public:
 	CListBox	m_listSSNumCaps;
 	CListBox	m_listSSYNCaps;
 
-	CDTAcq32* m_pAnalogIN;
-	short		m_subssystemIN;
-	short		m_subsystemelementIN;
-	CDTAcq32* m_pAnalogOUT;
-	CDTAcq32* m_pDTAcq32;
-
+	CDTAcq32*	m_pAnalogIN = nullptr;
+	CDTAcq32*	m_pAnalogOUT = nullptr;
+	CDTAcq32*	m_pDTAcq32 = nullptr;
+	short		m_subssystemIN = 0;
+	short		m_subsystemelementIN = 0;
+	
 private:
-	UINT		m_atodCount;
-	UINT		m_dtoaCount;
-	int			m_nsubsystems;
+	UINT		m_atodCount = 0;
+	UINT		m_dtoaCount = 0;
+	int			m_nsubsystems = 0;
 	CString		m_boardName;
 
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);
+	void DoDataExchange(CDataExchange* pDX) override;
 	// Implementation
-protected:
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	BOOL FindDTOpenLayersBoards();
 	int  GetBoardCapabilities();
 	void GetSubsystemYNCapabilities(int numitems);

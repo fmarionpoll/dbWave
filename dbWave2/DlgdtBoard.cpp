@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "resource.h"
-#include "dbWave.h"
 #include "DlgdtBoard.h"
 
 #ifdef _DEBUG
@@ -10,13 +9,8 @@
 IMPLEMENT_DYNAMIC(CDlgDataTranslationBoard, CDialog)
 
 CDlgDataTranslationBoard::CDlgDataTranslationBoard(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgDataTranslationBoard::IDD, pParent), m_subssystemIN(0), m_subsystemelementIN(0), m_atodCount(0),
-	m_dtoaCount(0)
+	: CDialog(CDlgDataTranslationBoard::IDD, pParent)
 {
-	m_pDTAcq32 = nullptr;
-	m_pAnalogIN = nullptr;
-	m_pAnalogOUT = nullptr;
-	m_nsubsystems = 0;
 }
 
 CDlgDataTranslationBoard::~CDlgDataTranslationBoard()
@@ -45,7 +39,6 @@ BOOL CDlgDataTranslationBoard::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_subssystemIN = m_pAnalogIN->GetSubSysType();
-
 	m_pDTAcq32 = m_pAnalogIN;
 	FindDTOpenLayersBoards();
 	OnSelchangeBoard();

@@ -95,7 +95,7 @@ void CADContView::OnDestroy()
 		if (m_Acq32_DAC.GetHDass() != NULL)
 			DAC_DeleteBuffers();
 	}
-	delete m_pEditBkBrush;		// brush for edit controls	
+	delete m_pEditBkBrush;	
 	CFormView::OnDestroy();
 }
 
@@ -194,7 +194,8 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(show);
 	GetDlgItem(IDC_COMBOSTARTOUTPUT)->ShowWindow(show);
 	GetDlgItem(IDC_STARTSTOP2)->ShowWindow(show);
-	SetCombostartoutput(m_pDAC_options->bAllowDA);
+	if (show == SW_SHOW)
+		SetCombostartoutput(m_pDAC_options->bAllowDA);
 
 	return TRUE;
 }
@@ -313,7 +314,7 @@ BOOL CADContView::ADC_InitSubSystem()
 			// compute dependent parameters
 			pChannel->am_gainamplifier = double(pChannel->am_gainheadstage) * double(pChannel->am_gainpre) * double(pChannel->am_gainpost);
 			pChannel->am_gaintotal = pChannel->am_gainamplifier * double(pChannel->am_gainAD);
-			pChannel->am_resolutionV = double(poptions_acqdatawaveFormat->fullscale_Volts) / pChannel->am_gaintotal / double(poptions_acqdatawaveFormat->binspan);
+			pChannel->am_resolutionV = double(poptions_acqdatawaveFormat->fullscale_volts) / pChannel->am_gaintotal / double(poptions_acqdatawaveFormat->binspan);
 		}
 
 		// pass parameters to the board and check if errors
@@ -351,10 +352,9 @@ void CADContView::ADC_DeclareBuffers()
 	m_ADC_buflen = m_ADC_chbuflen * pWFormat->scan_count;
 
 	// declare buffers to DT
-	ECODE ecode;
 	for (int i = 0; i < pWFormat->bufferNitems; i++)
 	{
-		ecode = olDmAllocBuffer(0, m_ADC_buflen, &m_ADC_bufhandle);
+		ECODE ecode = olDmAllocBuffer(0, m_ADC_buflen, &m_ADC_bufhandle);
 		ecode = OLNOERROR;
 		if ((ecode == OLNOERROR) && (m_ADC_bufhandle != NULL))
 			m_Acq32_ADC.SetQueue((long)m_ADC_bufhandle); // but buffer onto Ready queue
@@ -381,10 +381,10 @@ void CADContView::ADC_DeclareBuffers()
 	int iextent = MulDiv(pWFormat->binspan, 12, 10);
 	if (m_pADC_options->izoomCursel != 0)
 		iextent = m_pADC_options->izoomCursel;
-	int ioffset = 0;
 
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
+		const int ioffset = 0;
 		CChanlistItem* pD = m_ADsourceView.GetChanlistItem(i);
 		pD->SetYzero(ioffset);
 		pD->SetYextent(iextent);
@@ -439,7 +439,7 @@ void CADContView::ADC_StopAndLiberateBuffers()
 	m_ADC_inprogress = FALSE;
 }
 
-BOOL CADContView::DAC_OpenSubSystem(CString cardName)
+BOOL CADContView::DAC_OpenSubSystem(const CString cardName)
 {
 	try
 	{
@@ -448,7 +448,7 @@ BOOL CADContView::DAC_OpenSubSystem(CString cardName)
 			return FALSE;
 
 		m_Acq32_DAC.SetSubSysType(OLSS_DA);
-		int nDA = m_Acq32_DAC.GetDevCaps(OLDC_DAELEMENTS);
+		const int nDA = m_Acq32_DAC.GetDevCaps(OLDC_DAELEMENTS);
 		if (nDA < 1)
 			return FALSE;
 		m_Acq32_DAC.SetSubSysElement(0);
@@ -478,15 +478,15 @@ BOOL CADContView::DAC_ClearAllOutputs()
 		}
 		m_Acq32_DAC.ClearError();
 		m_Acq32_DAC.SetDataFlow(OLx_DF_SINGLEVALUE);
-		long OutValue = 0;
+		long out_value = 0;
 		if (m_Acq32_DAC.GetEncoding() == OLx_ENC_BINARY)
-			OutValue = (WORD)((OutValue ^ m_DACmsbit) & m_DAClRes);
+			out_value = WORD((out_value ^ m_DACmsbit) & m_DAClRes);
 
 		m_Acq32_DAC.Config();
 		int nchansmax = m_Acq32_DAC.GetSSCaps(OLSSC_NUMCHANNELS) - 1;
 		for (int i = 0; i < 2; i++)
 		{
-			m_Acq32_DAC.PutSingleValue(i, 1.0, OutValue);
+			m_Acq32_DAC.PutSingleValue(i, 1.0, out_value);
 		}
 	}
 	catch (COleDispatchException* e)
@@ -1646,7 +1646,7 @@ void CADContView::OnHardwareAdchannels()
 		UpdateStartStop(FALSE);
 	}
 
-	CDlgADInputParms dlg;
+	CDlgADInputs dlg;
 	dlg.m_pwFormat = &(m_pADC_options->waveFormat);
 	dlg.m_pchArray = &(m_pADC_options->chanArray);  
 	dlg.m_numchansMAXDI = m_Acq32_ADC.GetSSCaps(OLSSC_MAXDICHANS);
@@ -1654,6 +1654,7 @@ void CADContView::OnHardwareAdchannels()
 	dlg.m_bchantype = m_pADC_options->bChannelType;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
+	dlg.m_palligator = &m_alligator;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -1932,16 +1933,16 @@ BOOL CADContView::InitCyberAmp()
 
 void CADContView::OnBnClickedGainbutton()
 {
-	dynamic_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(0);
-	dynamic_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(1);
+	((CButton*) GetDlgItem(IDC_BIAS_button))->SetState(0);
+	((CButton*) GetDlgItem(IDC_GAIN_button))->SetState(1);
 	SetVBarMode(BAR_GAIN);
 }
 
 void CADContView::OnBnClickedBiasbutton()
 {
 	// set bias down and set gain up CButton	
-	dynamic_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(1);
-	dynamic_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(0);
+	((CButton*) GetDlgItem(IDC_BIAS_button))->SetState(1);
+	((CButton*) GetDlgItem(IDC_GAIN_button))->SetState(0);
 	SetVBarMode(BAR_BIAS);
 }
 
@@ -2185,15 +2186,15 @@ long CADContView::VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain)
 
 void CADContView::OnCbnSelchangeCombostartoutput()
 {
-	m_bStartOutPutMode = dynamic_cast<CComboBox*>(GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
+	m_bStartOutPutMode = ((CComboBox*) GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
 	m_pDAC_options->bAllowDA = m_bStartOutPutMode;
 	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(m_bStartOutPutMode != 0);
 }
 
 void CADContView::SetCombostartoutput(int option)
 {
-	dynamic_cast<CComboBox*>(GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(option);
-	option = dynamic_cast<CComboBox*>(GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
+	((CComboBox*) GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(option);
+	option = ((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
 	m_bStartOutPutMode = option;
 	m_pDAC_options->bAllowDA = option;
 	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(m_bStartOutPutMode != 0);
@@ -2237,9 +2238,9 @@ void CADContView::OnBnClickedOscilloscope()
 void CADContView::UpdateRadioButtons()
 {
 	if (m_bADwritetofile)
-		dynamic_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(BST_CHECKED);
+		((CButton*) GetDlgItem(IDC_WRITETODISK))->SetCheck(BST_CHECKED);
 	else
-		dynamic_cast<CButton*>(GetDlgItem(IDC_OSCILLOSCOPE))->SetCheck(BST_CHECKED);
+		((CButton*) GetDlgItem(IDC_OSCILLOSCOPE))->SetCheck(BST_CHECKED);
 	UpdateData(TRUE);
 }
 

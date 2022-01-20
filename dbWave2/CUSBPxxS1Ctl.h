@@ -5,7 +5,7 @@
 #include "ImportAlligatorDefinitions.h"
 
 //**************************************************************************************
-// All of the parameters that can be programmed in an individual USBPxxS1 is in the structure
+// All parameters that can be programmed in an individual USBPxxS1 are in the structure
 // typedef listed below.  Even though each module type may not have the hardware to
 // support the function, all module types firmware is the same.  For instance the
 // USBPGF-S1 does not have a high pass filter so HPFc is not functional.
@@ -84,11 +84,9 @@ public:
 	}
 
 	// Attributes
-public:
 	long	devicesConnected{};
 
 	// Operations
-public:
 	void USBPxxS1Command(long Handle, long CmdID, VARIANT* DataInPtr, VARIANT* DataOutPtr)
 	{
 		static BYTE parms[] = VTS_I4 VTS_I4 VTS_PVARIANT VTS_PVARIANT;
@@ -121,7 +119,7 @@ public:
 	void	readRevision(USBPxxPARAMETERS* d);
 	long	readNumberOfDevicesConnected();
 	long	readHandleOfDevice(long device);
-	void	readAllParameters(long handle, USBPxxPARAMETERS* d);
+	bool	readAllParameters(long device, USBPxxPARAMETERS* d);
 
 	void	writeLPFC(USBPxxPARAMETERS* d);
 	void	writeHPFC(USBPxxPARAMETERS* d);
@@ -133,7 +131,7 @@ public:
 	void	writeDescription(USBPxxPARAMETERS* d);
 
 	// dbWave-specific functions
-	BOOL	SetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
-	BOOL	GetWaveChanParms(CWaveChan* pChan, USBPxxPARAMETERS* pdevice);
+	bool	SetWaveChanParms(long device, CWaveChan* pchan);
+	bool	GetWaveChanParms(long device, CWaveChan* pchan);
 	int		ConvertAbsoluteGainToIndexGain(long gain);
 };

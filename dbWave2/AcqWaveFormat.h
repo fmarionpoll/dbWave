@@ -1,6 +1,6 @@
 #pragma once
 
-////////////////////////////////////////////////////////////////////////
+
 // CWaveFormat
 // data acquisition definitions
 // comments, sampling rate, etc
@@ -8,7 +8,6 @@
 // stored either under Asyst or Atlab
 // Separate routines decode the headers from such files and store the
 // parameters in CWaveFormat structure
-////////////////////////////////////////////////////////////////////////
 
 class CWaveFormat : public CObject
 {
@@ -63,7 +62,7 @@ public:
 
 	//------------------- Total : 33 variable members
 protected:
-	static CString	addComments(const CString& p_separator, BOOL bExpl, const CString& csExpl, const CString& cscomment);
+	static CString	addComments(const CString& p_separator, const BOOL b_explanation, const CString& cs_explanation, const CString& cs_comment);
 	void 			read_v8_and_before(CArchive& ar, WORD version);
 
 public:
