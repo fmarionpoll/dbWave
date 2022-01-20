@@ -131,7 +131,7 @@ public:
 	void	writeDescription(USBPxxPARAMETERS* d);
 
 	// dbWave-specific functions
-	bool	SetWaveChanParms(long device, CWaveChan* pchan);
-	bool	GetWaveChanParms(long device, CWaveChan* pchan);
+	bool	SetWaveChanParms(CWaveChan* pchan);
+	bool	GetWaveChanParms(CWaveChan* pchan);
 	int		ConvertAbsoluteGainToIndexGain(long gain);
 };

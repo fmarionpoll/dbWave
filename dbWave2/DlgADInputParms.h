@@ -1,5 +1,6 @@
 #pragma once
 #include "CUSBPxxS1Ctl.h"
+#include "CyberAmp.h"
 #include "./GridCtrl/GridCtrl.h"
 
 class CDlgADInputs : public CDialog
@@ -38,6 +39,8 @@ public:
 	BOOL			m_bcommandAmplifier = false;	// change ampli settings on the fly (if present); default = none
 
 	CUSBPxxS1Ctl*	m_palligator = nullptr;
+	CCyberAmp*		m_pcyber_amp = nullptr;
+
 
 	// Implementation
 protected:

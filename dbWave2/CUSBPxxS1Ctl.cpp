@@ -799,11 +799,11 @@ void  CUSBPxxS1Ctl::writeDescription(USBPxxPARAMETERS* d)
 
 // dbWave-specific functions
 
-bool CUSBPxxS1Ctl::SetWaveChanParms(long device, CWaveChan* pchan)
+bool CUSBPxxS1Ctl::SetWaveChanParms(CWaveChan* pchan)
 {
 	devicesConnected = readNumberOfDevicesConnected();
 	auto* pdevice = new USBPxxPARAMETERS();
-	pdevice->DeviceHandle = readHandleOfDevice(device);
+	pdevice->DeviceHandle = readHandleOfDevice(pchan->am_amplifierchan);
 	if (pdevice == nullptr || pdevice->DeviceHandle == NULL)
 		return false;
 
@@ -816,10 +816,10 @@ bool CUSBPxxS1Ctl::SetWaveChanParms(long device, CWaveChan* pchan)
 	return true;
 }
 
-bool CUSBPxxS1Ctl::GetWaveChanParms(long device, CWaveChan* pchan)
+bool CUSBPxxS1Ctl::GetWaveChanParms(CWaveChan* pchan)
 {
 	auto* pdevice = new USBPxxPARAMETERS();
-	if (!readAllParameters(device, pdevice))
+	if (!readAllParameters(pchan->am_amplifierchan, pdevice))
 		return false;
 
 	pchan->am_amplifierchan = short(pdevice->ChannelNumber);

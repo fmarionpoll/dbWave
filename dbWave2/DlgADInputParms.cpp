@@ -819,19 +819,17 @@ void CDlgADInputs::SetAmplifierParms(int col)
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0)
 	{
-		// cyberAmp declared: check if connected -if not, exit
-		CCyberAmp cyber_amp;
-		if (!(cyber_amp.Initialize() == NULL))
+		if (m_pcyber_amp == nullptr || !(m_pcyber_amp->Initialize() == NULL))
 			return;
 
 		p_chan->am_csInputneg = pszHighPass[0];
-		/*auto error_code = */cyber_amp.SetWaveChanParms(p_chan);
+		/*auto error_code = */m_pcyber_amp->SetWaveChanParms(p_chan);
 	}
 
-	//if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
-	//{
-	//	m_pAlligatorAmplifier->SetWaveChanParms(p_chan, m_pdevice1);
-	//}
+	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
+	{
+		m_palligator->SetWaveChanParms(p_chan);
+	}
 }
 
 void CDlgADInputs::GetAmplifierParms(int col)
@@ -846,46 +844,18 @@ void CDlgADInputs::GetAmplifierParms(int col)
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0)
 	{
-		// cyberAmp declared: check if connected -if not, exit
-		CCyberAmp cyber_amp;
-		const BOOL b_cyber_present = (cyber_amp.Initialize() == NULL);
-		if (!b_cyber_present)
+		if (m_pcyber_amp == nullptr || !(m_pcyber_amp->Initialize() == NULL))
 			return;
+		m_pcyber_amp->GetWaveChanParms(p_chan);
+
 	}
 
 	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
 	{
-		if (alligatordevice_ptr_array.GetSize() == 0)
-		{
-			if (m_palligator == nullptr)
-				return;
-			GetAlligatorAmplifiers();
-		}
-
-		const auto countAlligatorDevices = alligatordevice_ptr_array.GetCount();
-		USBPxxPARAMETERS* p_device = nullptr;
-		for (auto i = 0; i < countAlligatorDevices; i++)
-		{
-			USBPxxPARAMETERS* ptr = alligatordevice_ptr_array.GetAt(i);
-			if (p_chan->am_amplifierchan == ptr->ChannelNumber)
-			{
-				p_device = ptr;
-				break;
-			}
-		}
-		if (p_device != nullptr)
-		{
-			m_pAlligatorAmplifier->GetWaveChanParms(p_chan, p_device);
-		}
+		if (m_palligator == nullptr)
+			return;
+		
+		m_palligator->GetWaveChanParms(p_chan);
 	}
 }
 
-void CDlgADInputs::GetAlligatorAmplifiers()
-{
-	const int devicesConnected = m_palligator->readNumberOfDevicesConnected();
-
-	for (int i = 0; i < devicesConnected; i++)
-	{
-		auto item = new USBPxxPARAMETERS ();
-	}
-}
