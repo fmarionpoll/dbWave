@@ -52,6 +52,7 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_ADC);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DAC);
+	DDX_Control(pDX, IDC_USBPXXS1CTL, m_alligator);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
