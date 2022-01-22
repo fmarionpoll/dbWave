@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include <cmath>
-#include <olerrors.h>
+#include "OLERRORS.H"
+#include "Olxdadefs.h"
+#include "Olxdaapi.h"
 
 #include "resource.h"
 #include "dbMainTable.h"
@@ -9,9 +11,6 @@
 #include "Adexperi.h"
 #include "dtacq32.h"
 #include "CyberAmp.h"
-
-#include "Olxdadefs.h"
-#include "Olxdaapi.h"
 
 #include "ChartData.h"
 #include "CViewADcontinuous.h"
@@ -35,10 +34,6 @@ IMPLEMENT_DYNCREATE(CADContView, CFormView)
 CADContView::CADContView()
 	: CFormView(CADContView::IDD)
 {
-	m_BkColor = GetSysColor(COLOR_BTNFACE);	
-	m_pEditBkBrush = new CBrush(m_BkColor);
-	ASSERT(m_pEditBkBrush != NULL);
-
 	m_bEnableActiveAccessibility = FALSE;
 	m_ADC_yRulerBar.AttachScopeWnd(&m_ADsourceView, FALSE);
 }
@@ -52,7 +47,6 @@ void CADContView::DoDataExchange(CDataExchange* pDX)
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_ADC);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DAC);
-	DDX_Control(pDX, IDC_USBPXXS1CTL, m_alligator);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
@@ -98,8 +92,9 @@ void CADContView::OnDestroy()
 		if (m_Acq32_DAC.GetHDass() != NULL)
 			DAC_DeleteBuffers();
 	}
-	delete m_pEditBkBrush;	
+
 	CFormView::OnDestroy();
+	delete m_pBackgroundBrush;
 }
 
 HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -110,8 +105,8 @@ HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	case CTLCOLOR_EDIT:
 	case CTLCOLOR_MSGBOX:
 		// Set color to green on black and return the background brush.
-		pDC->SetBkColor(m_BkColor);
-		hbr = HBRUSH(m_pEditBkBrush->GetSafeHandle());
+		pDC->SetBkColor(m_backgroundColor);
+		hbr = HBRUSH(m_pBackgroundBrush->GetSafeHandle());
 		break;
 
 	default:
@@ -132,6 +127,9 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 5, CADContView::OnOverrunError_DAC, VTS_NONE)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::OnQueueDone_DAC, VTS_NONE)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::OnTriggerError_DAC, VTS_NONE)
+
+	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 1, CADContView::DeviceConnectedUsbpxxs1ctl1, VTS_I4)
+	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 2, CADContView::DeviceDisconnectedUsbpxxs1ctl1, VTS_I4)
 
 END_EVENTSINK_MAP()
 
@@ -368,7 +366,7 @@ void CADContView::ADC_DeclareBuffers()
 	m_inputDataFile.AdjustBUF(m_chsweeplength);
 	*(m_inputDataFile.GetpWaveFormat()) = *pWFormat;	// save settings into data file	
 
-														// update display length (and also the text - abcissa)	
+	// update display length (and also the text - abcissa)	
 	m_ADsourceView.AttachDataFile(&m_inputDataFile);
 	m_ADsourceView.ResizeChannels(0, m_chsweeplength);
 	if (m_ADsourceView.GetChanlistSize() != pWFormat->scan_count)
@@ -406,9 +404,9 @@ void CADContView::ADC_DeleteBuffers()
 	try {
 		if (m_Acq32_ADC.GetHDass() == NULL)
 			return;
-		m_Acq32_ADC.Flush();	// clean
-		HBUF hBuf = NULL;			// handle to buffer
-		do {				// loop until all buffers are removed
+		m_Acq32_ADC.Flush();
+		HBUF hBuf = NULL;
+		do {				
 			hBuf = (HBUF)m_Acq32_ADC.GetQueue();
 			if (hBuf != NULL)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
@@ -1366,10 +1364,10 @@ void CADContView::OnInitialUpdate()
 	// bitmap buttons: load icons & set buttons
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
-	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)(HANDLE)m_hBias);
-	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)(HANDLE)m_hZoom);
+	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, WPARAM(IMAGE_ICON), LPARAM(HANDLE(m_hBias)));
+	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, WPARAM(IMAGE_ICON), LPARAM(HANDLE(m_hZoom)));
 
-	BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
+	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
 	m_btnStartStop.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
 	m_btnStartStop.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
 	m_btnStartStop.EnableWindowsTheming(false); // true
@@ -1380,7 +1378,7 @@ void CADContView::OnInitialUpdate()
 	m_scrolly.SetScrollRange(0, 100);
 
 	// CFormView init CFile
-	CdbWaveApp* pApp = (CdbWaveApp*)AfxGetApp();
+	auto pApp = static_cast<CdbWaveApp*>(AfxGetApp());
 	m_pADC_options = &(pApp->options_acqdata);								// address of data acquisition parameters
 	m_pDAC_options = &(pApp->options_outputdata);								// address of data output parameters
 	m_bFoundDTOPenLayerDLL = FALSE;								// assume there is no card
@@ -1649,6 +1647,7 @@ void CADContView::OnHardwareAdchannels()
 		UpdateStartStop(FALSE);
 	}
 
+	UpdateData(TRUE);
 	CDlgADInputs dlg;
 	dlg.m_pwFormat = &(m_pADC_options->waveFormat);
 	dlg.m_pchArray = &(m_pADC_options->chanArray);  
@@ -1657,6 +1656,7 @@ void CADContView::OnHardwareAdchannels()
 	dlg.m_bchantype = m_pADC_options->bChannelType;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
+	m_alligator.InitializeComponent();
 	dlg.m_palligator = &m_alligator;
 
 	// invoke dialog box
@@ -2303,4 +2303,18 @@ void CADContView::DTLayerError(COleDispatchException* e)
 	myError += e->m_strDescription;
 	AfxMessageBox(myError);
 	e->Delete();
+}
+
+
+void CADContView::DeviceConnectedUsbpxxs1ctl1(long Handle)
+{
+	// TODO: Add your message handler code here
+	TRACE("Alligator connected");
+}
+
+
+void CADContView::DeviceDisconnectedUsbpxxs1ctl1(long Handle)
+{
+	// TODO: Add your message handler code here
+	TRACE("Alligator disconnected");
 }

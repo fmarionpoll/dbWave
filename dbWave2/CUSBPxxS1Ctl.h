@@ -1,64 +1,22 @@
 // CUSBPxxS1Ctl.h  : Declaration of ActiveX Control wrapper class(es) created by Microsoft Visual C++
 
 #pragma once
-
+#include <objbase.h>
 #include "ImportAlligatorDefinitions.h"
+#include "USBPxxPARAMETERS.h"
 
-//**************************************************************************************
-// All parameters that can be programmed in an individual USBPxxS1 are in the structure
-// typedef listed below.  Even though each module type may not have the hardware to
-// support the function, all module types firmware is the same.  For instance the
-// USBPGF-S1 does not have a high pass filter so HPFc is not functional.
-//**************************************************************************************
-class USBPxxPARAMETERS : public CObject
-{
-	DECLARE_SERIAL(USBPxxPARAMETERS);
 
-public:
-	float	LPFc;
-	float	HPFc;
 
-	long	DeviceHandle;
-	long	ChannelNumber;
-	long	SerialNumber;
-	long	ProductID;
-
-	long	indexgain;
-	long	indexCoupling;
-	long	indexClockSource;
-	long	indexPClock;
-	long	indexLPFilterType;
-	long	indexHPFilterType;
-
-	long	Gain;
-	int		RevisionHigh;
-	int		RevisionLow;
-
-	CString Description;
-	CString csCoupling;
-	CString csClockSource;
-	CString csPClock;
-	CString csLPFilterType;
-	CString csHPFilterType;
-
-public:
-	USBPxxPARAMETERS();								// constructor
-	~USBPxxPARAMETERS();							// destructor
-	USBPxxPARAMETERS& operator = (const USBPxxPARAMETERS& arg);	// operator redefinition
-	long Write(CFile* datafile);
-	BOOL Read(CFile* datafile);
-	void Serialize(CArchive& ar) override;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CUSBPxxS1Ctl
 
 class CUSBPxxS1Ctl : public CWnd
 {
 protected:
 	DECLARE_DYNCREATE(CUSBPxxS1Ctl)
 
-public:
+	CUSBPxxS1Ctl();
+	~CUSBPxxS1Ctl() override;
+
+
 	CLSID const& GetClsid()
 	{
 		static CLSID const clsid
@@ -84,7 +42,12 @@ public:
 	}
 
 	// Attributes
-	long	devicesConnected{};
+	long		devicesConnected = 0;
+	long		HANDLE = 0;
+	long		iDevicesConnected = 0;
+	long		iGain = 0;
+	int			iInput = 0, ic = 0;
+	int			ivGn[10] = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
 
 	// Operations
 	void USBPxxS1Command(long Handle, long CmdID, VARIANT* DataInPtr, VARIANT* DataOutPtr)
@@ -104,6 +67,7 @@ private:
 
 	// functions
 public:
+	void InitializeComponent();
 	void	readLPFC(USBPxxPARAMETERS* d);
 	void	readHPFC(USBPxxPARAMETERS* d);
 	void	readGain(USBPxxPARAMETERS* d);

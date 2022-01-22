@@ -11,7 +11,7 @@
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
-#include "chart.h"
+#include "Chart.h"
 #include "ChartData.h"
 #include "Editctrl.h"
 #include "dbWaveDoc.h"

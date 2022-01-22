@@ -813,6 +813,7 @@
 #define IDC_DISPLAYDAT                  1513
 #define IDC_DISPLAYSINGLECLASS          1514
 #define IDC_REORDER                     1515
+#define IDC_USBPXXS1CTL1                1516
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -936,10 +937,10 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_3D_CONTROLS                1
+#define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        577
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1516
+#define _APS_NEXT_CONTROL_VALUE         1517
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

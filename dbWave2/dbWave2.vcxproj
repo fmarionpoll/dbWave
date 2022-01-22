@@ -1271,6 +1271,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="USBPxxPARAMETERS.cpp" />
     <ClCompile Include="Vdabciss.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1350,6 +1351,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="ATLframework.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="CViewDao.h" />
     <ClInclude Include="dbWave_structures.h" />
@@ -1508,6 +1510,7 @@
     <ClInclude Include="TemplateListWnd.h" />
     <ClInclude Include="TemplateWnd.h" />
     <ClInclude Include="DlgTransferFiles.h" />
+    <ClInclude Include="USBPxxPARAMETERS.h" />
     <ClInclude Include="Vdabciss.h" />
     <ClInclude Include="Vdordina.h" />
     <ClInclude Include="Vdseries.h" />

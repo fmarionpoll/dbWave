@@ -435,6 +435,9 @@
     <ClCompile Include="Ruler.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
+    <ClCompile Include="USBPxxPARAMETERS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -959,6 +962,12 @@
     <ClInclude Include="CDTBoardParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="USBPxxPARAMETERS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ATLframework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\bias.ico">
@@ -1127,11 +1136,6 @@
     <None Include="dbWave2.ruleset" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="dbWave.rc">
-      <Filter>Source Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="Resource.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -1260,5 +1264,10 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="dbWave.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

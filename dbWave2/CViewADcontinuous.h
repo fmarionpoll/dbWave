@@ -17,11 +17,11 @@ class CADContView final : public CFormView
 	friend class CBoard;
 
 protected:
-	CADContView();		// protected constructor used by dynamic creation
+	CADContView();
 	DECLARE_DYNCREATE(CADContView)
-
 	// Form Data
 	enum { IDD = IDD_VIEWADCONTINUOUS };
+
 	CdbMainTable*		m_ptableSet = nullptr;
 	CString				m_boardName;
 	CDTAcq32			m_Acq32_ADC;
@@ -47,18 +47,18 @@ protected:
 	float				m_yscaleFactor = 1;			// div factor for y bar 
 	int					m_VBarMode = 0;				// flag V scrollbar state
 	CScrollBar 			m_scrolly;					// V scrollbar
-	CBrush*				m_pEditBkBrush = nullptr;
-	COLORREF			m_BkColor;
+	COLORREF			m_backgroundColor = GetSysColor(COLOR_BTNFACE);
+	CBrush*				m_pBackgroundBrush = new CBrush(m_backgroundColor);
 
-	void OnGainScroll(UINT nSBCode, UINT nPos);
-	void OnBiasScroll(UINT nSBCode, UINT nPos);
-	void UpdateGainScroll();
-	void UpdateBiasScroll();
-	void SetVBarMode(short bMode);
-	void UpdateChanLegends(int ichan);
+	void	OnGainScroll(UINT nSBCode, UINT nPos);
+	void	OnBiasScroll(UINT nSBCode, UINT nPos);
+	void	UpdateGainScroll();
+	void	UpdateBiasScroll();
+	void	SetVBarMode(short bMode);
+	void	UpdateChanLegends(int ichan);
 
-	void UpdateStartStop(BOOL bStart);
-	void UpdateRadioButtons();
+	void	UpdateStartStop(BOOL bStart);
+	void	UpdateRadioButtons();
 
 	// data	parameters
 protected:
@@ -112,56 +112,56 @@ protected:
 	float				m_fclockrate = 10000.;		// apparent clock rate
 
 // functions for data acquisition
-	BOOL FindDTOpenLayersBoards();
-	BOOL SelectDTOpenLayersBoard(CString cardName);
+	BOOL	FindDTOpenLayersBoards();
+	BOOL	SelectDTOpenLayersBoard(CString cardName);
 
-	BOOL ADC_OpenSubSystem(CString cardName);
-	BOOL ADC_InitSubSystem();
-	void ADC_DeleteBuffers();
-	void ADC_DeclareBuffers();
-	void ADC_Transfer(short* pDTbuf);
-	void ADC_StopAndLiberateBuffers();
+	BOOL	ADC_OpenSubSystem(CString cardName);
+	BOOL	ADC_InitSubSystem();
+	void	ADC_DeleteBuffers();
+	void	ADC_DeclareBuffers();
+	void	ADC_Transfer(short* pDTbuf);
+	void	ADC_StopAndLiberateBuffers();
 
-	BOOL DAC_OpenSubSystem(CString cardName);
-	BOOL DAC_ClearAllOutputs();
-	void DAC_SetChannelList();
-	BOOL DAC_InitSubSystem();
-	void DAC_DeleteBuffers();
-	void DAC_DeclareAndFillBuffers();
-	void DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_MSequence(BOOL start, OUTPUTPARMS* outputparms_array);
-	void DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
+	BOOL	DAC_OpenSubSystem(CString cardName);
+	BOOL	DAC_ClearAllOutputs();
+	void	DAC_SetChannelList();
+	BOOL	DAC_InitSubSystem();
+	void	DAC_DeleteBuffers();
+	void	DAC_DeclareAndFillBuffers();
+	void	DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_MSequence(BOOL start, OUTPUTPARMS* outputparms_array);
+	void	DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 
-	void DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	void	DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 
-	void DAC_FillBuffer(short* pDTbuf);
-	void DAC_StopAndLiberateBuffers();
-	void SetCombostartoutput(int option);
+	void	DAC_FillBuffer(short* pDTbuf);
+	void	DAC_StopAndLiberateBuffers();
+	void	SetCombostartoutput(int option);
 
-	long VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
-	float ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
+	long	VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
+	float	ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
 
-	void StopAcquisition(BOOL bDisplayErrorMsg);
-	void SaveAndCloseFile();
-	BOOL StartAcquisition();
-	BOOL StartOutput();
-	void StopOutput();
+	void	StopAcquisition(BOOL bDisplayErrorMsg);
+	void	SaveAndCloseFile();
+	BOOL	StartAcquisition();
+	BOOL	StartOutput();
+	void	StopOutput();
 
-	void DTLayerError(COleDispatchException* e);
+	void	DTLayerError(COleDispatchException* e);
 
-	BOOL InitCyberAmp();
-	BOOL Defineexperiment();
-	void TransferFilesToDatabase();
-	void UpdateViewDataFinal();
-	void displayolDaErrorMessage(CHAR* errstr);
+	BOOL	InitCyberAmp();
+	BOOL	Defineexperiment();
+	void	TransferFilesToDatabase();
+	void	UpdateViewDataFinal();
+	void	displayolDaErrorMessage(CHAR* errstr);
 
 	// Overrides
 			CDaoRecordset* OnGetRecordset();
@@ -173,8 +173,8 @@ protected:
 	void	ChainDialog(WORD iID);
 
 #ifdef _DEBUG
-	void AssertValid() const override;
-	void Dump(CDumpContext& dc) const override;
+	void	AssertValid() const override;
+	void	Dump(CDumpContext& dc) const override;
 #endif
 
 #ifndef _DEBUG  // debug version in dbWaveView.cpp
@@ -189,6 +189,7 @@ protected:
 	// Generated message map functions
 	DECLARE_MESSAGE_MAP()
 	DECLARE_EVENTSINK_MAP()
+
 public:
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
@@ -216,4 +217,7 @@ public:
 	afx_msg void OnBnClickedCardfeatures();
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void OnBnClickedStartstop2();
+
+	void DeviceConnectedUsbpxxs1ctl1(long Handle);
+	void DeviceDisconnectedUsbpxxs1ctl1(long Handle);
 };

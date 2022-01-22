@@ -3,160 +3,11 @@
 #include "StdAfx.h"
 #include "CUSBPxxS1Ctl.h"
 
-//------------------ class USBPxxPARAMETERS ---------------------------------
 
-IMPLEMENT_SERIAL(USBPxxPARAMETERS, CObject, 0 /* schema number*/)
+//#import "./include/Alligator/win32/USBPxxS1COM.dll" 
+#import "c://Windows//System32//USBPxxS1COM.dll" \
+			no_namespace raw_interfaces_only raw_native_types named_guids
 
-USBPxxPARAMETERS::USBPxxPARAMETERS()
-{
-	DeviceHandle = NULL;
-	LPFc = 0;
-	HPFc = 3000;
-	indexgain = 0;
-	indexCoupling = 0;
-	indexClockSource = 0;
-	indexPClock = 0;
-	ChannelNumber = 0;
-	indexLPFilterType = 0;
-	indexHPFilterType = 0;
-	SerialNumber = 0;
-	ProductID = 0;
-	RevisionHigh = 0;
-	RevisionLow = 0;
-	Gain = 1;
-}
-
-USBPxxPARAMETERS::~USBPxxPARAMETERS()
-{
-}
-
-USBPxxPARAMETERS& USBPxxPARAMETERS::operator=(const USBPxxPARAMETERS& arg)
-{
-	if (this != &arg) {
-		DeviceHandle = arg.DeviceHandle;
-		LPFc = arg.LPFc;
-		HPFc = arg.HPFc;
-		indexgain = arg.indexgain;
-		indexCoupling = arg.indexCoupling;
-		indexClockSource = arg.indexClockSource;
-		indexPClock = arg.indexPClock;
-		ChannelNumber = arg.ChannelNumber;
-		indexLPFilterType = arg.indexLPFilterType;
-		indexHPFilterType = arg.indexHPFilterType;
-		SerialNumber = arg.SerialNumber;
-		ProductID = arg.ProductID;
-		RevisionHigh = arg.RevisionHigh;
-		RevisionLow = arg.RevisionLow;
-		Description = arg.Description;
-		csCoupling = arg.csCoupling;
-		csClockSource = arg.csClockSource;
-		csPClock = arg.csPClock;
-		csLPFilterType = arg.csLPFilterType;
-		csHPFilterType = arg.csHPFilterType;
-	}
-	return *this;
-}
-
-long USBPxxPARAMETERS::Write(CFile* datafile)
-{
-	const auto p1 = datafile->GetPosition();
-	CArchive ar(datafile, CArchive::store);
-	Serialize(ar);
-	ar.Close();
-	const auto p2 = datafile->GetPosition();
-	return static_cast<long>(p2 - p1);
-}
-
-BOOL USBPxxPARAMETERS::Read(CFile* datafile)
-{
-	CArchive ar(datafile, CArchive::load);
-	auto flag = TRUE;
-	try
-	{
-		Serialize(ar);
-	}
-	catch (CException* e)
-	{
-		e->Delete();
-		flag = FALSE;
-	}
-	ar.Close();
-	return flag;
-}
-
-void USBPxxPARAMETERS::Serialize(CArchive& ar)
-{
-	if (ar.IsStoring())
-	{
-		const WORD wversion = 1;
-		ar << wversion;
-
-		int nitems = 2; ar << nitems;
-		ar << LPFc;
-		ar << HPFc;
-
-		nitems = 10; ar << nitems;
-		ar << DeviceHandle;
-		ar << indexgain;
-		ar << indexCoupling;
-		ar << indexClockSource;
-		ar << indexPClock;
-		ar << ChannelNumber;
-		ar << indexLPFilterType;
-		ar << indexHPFilterType;
-		ar << SerialNumber;
-		ar << ProductID;
-
-		nitems = 2; ar << nitems;
-		ar << RevisionHigh;
-		ar << RevisionLow;
-
-		nitems = 6; ar << nitems;
-		ar << Description;
-		ar << csCoupling;
-		ar << csClockSource;
-		ar << csPClock;
-		ar << csLPFilterType;
-		ar << csHPFilterType;
-	}
-	else
-	{
-		WORD wversion;
-		ar >> wversion;
-		ASSERT(wversion == 1);
-
-		int nitems;  ar >> nitems;
-		if (nitems > 0) ar >> LPFc; nitems--;
-		if (nitems > 0) ar >> HPFc; nitems--;
-
-		ar >> nitems;
-		if (nitems > 0) ar >> DeviceHandle; nitems--;
-		if (nitems > 0) ar >> indexgain; nitems--;
-		if (nitems > 0) ar >> indexCoupling; nitems--;
-		if (nitems > 0) ar >> indexClockSource; nitems--;
-		if (nitems > 0) ar >> indexPClock; nitems--;
-		if (nitems > 0) ar >> ChannelNumber; nitems--;
-		if (nitems > 0) ar >> indexLPFilterType; nitems--;
-		if (nitems > 0) ar >> indexHPFilterType; nitems--;
-		if (nitems > 0) ar >> SerialNumber; nitems--;
-		if (nitems > 0) ar >> ProductID; nitems--;
-
-		ar >> nitems;
-		if (nitems > 0) ar >> RevisionHigh; nitems--;
-		if (nitems > 0) ar >> RevisionLow; nitems--;
-
-		ar >> nitems;
-		if (nitems > 0) ar >> Description; nitems--;
-		if (nitems > 0) ar >> csCoupling; nitems--;
-		if (nitems > 0) ar >> csClockSource; nitems--;
-		if (nitems > 0) ar >> csPClock; nitems--;
-		if (nitems > 0) ar >> csLPFilterType; nitems--;
-		if (nitems > 0) ar >> csHPFilterType; nitems--;
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// CUSBPxxS1Ctl
 
 int		CUSBPxxS1Ctl::allig_Gain[] = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
 CString CUSBPxxS1Ctl::allig_Coupling[] = { _T("DC"), _T("AC") };
@@ -166,6 +17,59 @@ CString CUSBPxxS1Ctl::allig_LPFilterType[] = { _T("LPFT_CE"), _T("LPFT_B"), _T("
 CString CUSBPxxS1Ctl::allig_HPFilterType[] = { _T("HPFT_NONEE"), _T("HPFT_LNE"), _T("HPFT_LEE"), _T("HPFT_BNE"), _T("HPFT_BE") };
 
 IMPLEMENT_DYNCREATE(CUSBPxxS1Ctl, CWnd)
+
+CUSBPxxS1Ctl::CUSBPxxS1Ctl()
+{
+	//HRESULT hr = CoInitialize(NULL);
+	//if FAILED(hr)
+	//{
+	//	return;
+	//}
+
+	IUSBPxxS1Ctl* pIUSBP = nullptr;
+	HRESULT hr = CoCreateInstance(CLSID_USBPxxS1Ctl, NULL, CLSCTX_INPROC_SERVER, IID_IUSBPxxS1Ctl, (void**)&pIUSBP);
+
+	if (SUCCEEDED(hr))
+	{
+		TRACE("Call to open USBPIAS1 successful.\n");
+		//	initialize USB
+		pIUSBP->USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
+
+		VARIANT	in_val;
+		VARIANT	out_val;
+
+		in_val.lVal = 0;
+		pIUSBP->USBPxxS1Command(NULL, DCID_GET_CHANNEL_HANDLE, &in_val, &out_val);
+		HANDLE = out_val.lVal;
+
+		//	read serial number
+		pIUSBP->USBPxxS1Command(HANDLE, ID_READ_SERIALNUMBER, &in_val, &out_val);
+		printf("Serial number = %d\n", out_val.lVal);
+
+		//	read product ID
+		pIUSBP->USBPxxS1Command(HANDLE, ID_READ_PRODUCTID, &in_val, &out_val);
+		printf("Product ID = %d\n", out_val.lVal);
+	}
+}
+
+CUSBPxxS1Ctl::~CUSBPxxS1Ctl()
+{
+	CoUninitialize();
+}
+
+void CUSBPxxS1Ctl::InitializeComponent()
+{
+	if (HANDLE != 0)
+	{
+		//	get number of devices connected
+		VARIANT	in_val;
+		VARIANT	out_val;
+
+		USBPxxS1Command(HANDLE, DCID_GET_TOTAL_CONNECTED_CHANNELS, &in_val, &out_val);
+		iDevicesConnected = out_val.lVal;
+		TRACE("Number of Devices Connected = %d\n", iDevicesConnected);
+	}
+}
 
 // CUSBPxxS1Ctl properties
 //**************************************************************************************
