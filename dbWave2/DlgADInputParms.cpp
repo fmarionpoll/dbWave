@@ -5,7 +5,7 @@
 #include "GridCtrl/GridCellNumeric.h"
 #include "GridCtrl/GridCellCheck.h"
 #include "DlgADInputParms.h"
-#include "CyberAmp.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,6 +56,9 @@ IMPLEMENT_DYNAMIC(CDlgADInputs, CDialog)
 CDlgADInputs::CDlgADInputs(CWnd* pParent /*=NULL*/)
 	: CDialog(CDlgADInputs::IDD, pParent)
 {
+	if (m_palligator != nullptr) {
+		m_palligator->ConnectToFirstAlligator();
+	}
 }
 
 CDlgADInputs::~CDlgADInputs()

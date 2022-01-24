@@ -20,6 +20,7 @@
 #include "DlgDAChannels.h"
 #include "DlgdtBoard.h"
 #include "MainFrm.h"
+#include "USBPxxS1.h"
 
 
 #ifdef _DEBUG
@@ -1656,8 +1657,8 @@ void CADContView::OnHardwareAdchannels()
 	dlg.m_bchantype = m_pADC_options->bChannelType;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
-	m_alligator.InitializeComponent();
-	dlg.m_palligator = &m_alligator;
+	const auto p_alligator = new CUSBPxxS1();
+	dlg.m_palligator = p_alligator;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -1671,6 +1672,7 @@ void CADContView::OnHardwareAdchannels()
 		if (dlg.m_postmessage != NULL)
 			ChainDialog(dlg.m_postmessage);
 	}
+	delete p_alligator;
 }
 
 void CADContView::OnHardwareAdintervals()

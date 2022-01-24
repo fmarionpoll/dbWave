@@ -1,32 +1,8 @@
 ﻿#include "stdafx.h"
 #include "USBPxxPARAMETERS.h"
 
-//------------------ class USBPxxPARAMETERS ---------------------------------
-
 IMPLEMENT_SERIAL(USBPxxPARAMETERS, CObject, 0 /* schema number*/)
 
-USBPxxPARAMETERS::USBPxxPARAMETERS()
-{
-	DeviceHandle = NULL;
-	LPFc = 0;
-	HPFc = 3000;
-	indexgain = 0;
-	indexCoupling = 0;
-	indexClockSource = 0;
-	indexPClock = 0;
-	ChannelNumber = 0;
-	indexLPFilterType = 0;
-	indexHPFilterType = 0;
-	SerialNumber = 0;
-	ProductID = 0;
-	RevisionHigh = 0;
-	RevisionLow = 0;
-	Gain = 1;
-}
-
-USBPxxPARAMETERS::~USBPxxPARAMETERS()
-{
-}
 
 USBPxxPARAMETERS& USBPxxPARAMETERS::operator=(const USBPxxPARAMETERS& arg)
 {

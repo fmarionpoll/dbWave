@@ -778,6 +778,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="USBPxxS1.cpp" />
     <ClCompile Include="CViewDao.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
     <ClCompile Include="AcqDataDoc.cpp">
@@ -814,7 +815,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="CSpkListTabCtrl.cpp" />
-    <ClCompile Include="CUSBPxxS1Ctl.cpp" />
+    <ClCompile Include="USBPxxS1Ctl.cpp" />
     <ClCompile Include="datafile_CEDSpike2.cpp" />
     <ClCompile Include="DlgdtBoard.cpp" />
     <ClCompile Include="chanlistitem.cpp">
@@ -1353,6 +1354,7 @@
     </ClInclude>
     <ClInclude Include="ATLframework.h" />
     <ClInclude Include="CDTBoardParameters.h" />
+    <ClInclude Include="USBPxxS1.h" />
     <ClInclude Include="CViewDao.h" />
     <ClInclude Include="dbWave_structures.h" />
     <ClInclude Include="DlgAbout.h" />
@@ -1367,7 +1369,7 @@
     <ClInclude Include="Browsefi.h" />
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CSpkListTabCtrl.h" />
-    <ClInclude Include="CUSBPxxS1Ctl.h" />
+    <ClInclude Include="USBPxxS1Ctl.h" />
     <ClInclude Include="datafile_CEDSpike2.h" />
     <ClInclude Include="DlgdtBoard.h" />
     <ClInclude Include="chanlistitem.h" />

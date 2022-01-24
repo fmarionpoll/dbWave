@@ -9,7 +9,7 @@
 #include <OLTYPES.H>
 #include <Olmem.h>
 
-#include "CUSBPxxS1Ctl.h"
+#include "USBPxxS1Ctl.h"
 
 
 class CADContView final : public CFormView
@@ -26,7 +26,6 @@ protected:
 	CString				m_boardName;
 	CDTAcq32			m_Acq32_ADC;
 	CDTAcq32			m_Acq32_DAC;
-	CUSBPxxS1Ctl		m_alligator;
 
 	CRulerBar			m_ADC_xRulerBar;
 	CRulerBar			m_ADC_yRulerBar;

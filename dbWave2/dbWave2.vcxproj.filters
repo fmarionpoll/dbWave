@@ -258,7 +258,7 @@
     <ClCompile Include="PanelFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CUSBPxxS1Ctl.cpp">
+    <ClCompile Include="USBPxxS1Ctl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MeasureVTtagsPage.cpp">
@@ -436,6 +436,9 @@
       <Filter>customctrl</Filter>
     </ClCompile>
     <ClCompile Include="USBPxxPARAMETERS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="USBPxxS1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -746,7 +749,7 @@
     <ClInclude Include="ImportAlligatorDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CUSBPxxS1Ctl.h">
+    <ClInclude Include="USBPxxS1Ctl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MeasureVTtagsPage.h">
@@ -966,6 +969,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ATLframework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="USBPxxS1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

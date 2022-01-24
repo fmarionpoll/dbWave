@@ -1,12 +1,10 @@
 // CUSBPxxS1Ctl.cpp  : Definition of ActiveX Control wrapper class(es) created by Microsoft Visual C++
 
 #include "StdAfx.h"
-#include "CUSBPxxS1Ctl.h"
+#include "USBPxxS1Ctl.h"
 
 
-//#import "./include/Alligator/win32/USBPxxS1COM.dll" 
-#import "c://Windows//System32//USBPxxS1COM.dll" \
-			no_namespace raw_interfaces_only raw_native_types named_guids
+
 
 
 int		CUSBPxxS1Ctl::allig_Gain[] = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
