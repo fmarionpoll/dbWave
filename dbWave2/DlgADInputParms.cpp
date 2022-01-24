@@ -56,9 +56,6 @@ IMPLEMENT_DYNAMIC(CDlgADInputs, CDialog)
 CDlgADInputs::CDlgADInputs(CWnd* pParent /*=NULL*/)
 	: CDialog(CDlgADInputs::IDD, pParent)
 {
-	if (m_palligator != nullptr) {
-		m_palligator->ConnectToFirstAlligator();
-	}
 }
 
 CDlgADInputs::~CDlgADInputs()
@@ -90,6 +87,7 @@ END_MESSAGE_MAP()
 BOOL CDlgADInputs::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+
 	CRect rect;
 	GetClientRect(rect);
 	m_OldSize = CSize(rect.Width(), rect.Height());
@@ -829,9 +827,10 @@ void CDlgADInputs::SetAmplifierParms(int col)
 		/*auto error_code = */m_pcyber_amp->SetWaveChanParms(p_chan);
 	}
 
-	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
+	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_palligator != nullptr)
 	{
-		m_palligator->SetWaveChanParms(p_chan);
+		if (m_palligator->IsValidHandle())
+			m_palligator->SetWaveChanParms(p_chan);
 	}
 }
 
@@ -853,12 +852,10 @@ void CDlgADInputs::GetAmplifierParms(int col)
 
 	}
 
-	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0)
+	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_palligator != nullptr)
 	{
-		if (m_palligator == nullptr)
-			return;
-		
-		m_palligator->GetWaveChanParms(p_chan);
+		if (m_palligator->IsValidHandle())
+			m_palligator->GetWaveChanParms(p_chan);
 	}
 }
 

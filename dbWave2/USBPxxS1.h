@@ -17,11 +17,9 @@ public:
 
 protected:
 	// Attributes
-	long		devicesConnected	= 0;
-	long		HANDLE				= 0;
-	long		iDevicesConnected	= 0;
+	long			devicesConnected	= 0;
+	long			iDevicesConnected	= 0;
 	USBPxxPARAMETERS m_USBP{};
-
 	IUSBPxxS1Ctl*	m_pIUSBP = nullptr;
 
 	// constants
@@ -39,32 +37,33 @@ public:
 	int		GetAlligatorNumberConnected(CString& message);
 	long	GetAlligatorFirstAvailableHandle(CString& message);
 	bool	ConnectToFirstAlligator();
+	bool	IsValidHandle();
 
-	void	readLPFC(USBPxxPARAMETERS* d);
-	void	readHPFC(USBPxxPARAMETERS* d);
-	void	readGain(USBPxxPARAMETERS* d);
-	void	readCoupling(USBPxxPARAMETERS* d);
-	void	readClocksource(USBPxxPARAMETERS* d);
-	void	readPClock(USBPxxPARAMETERS* d);
-	void	readChannelNumber(USBPxxPARAMETERS* d);
-	void	readDescription(USBPxxPARAMETERS* d);
-	void	readLowPassFilterType(USBPxxPARAMETERS* d);
-	void	readHighPassFilterType(USBPxxPARAMETERS* d);
-	void	readSerialNumber(USBPxxPARAMETERS* d);
-	void	readProductID(USBPxxPARAMETERS* d);
-	void	readRevision(USBPxxPARAMETERS* d);
+	void	readLPFC(USBPxxPARAMETERS* pUSBP);
+	void	readHPFC(USBPxxPARAMETERS* pUSBP);
+	void	readGain(USBPxxPARAMETERS* pUSBP);
+	void	readCoupling(USBPxxPARAMETERS* pUSBP);
+	void	readClocksource(USBPxxPARAMETERS* pUSBP);
+	void	readPClock(USBPxxPARAMETERS* pUSBP);
+	void	readChannelNumber(USBPxxPARAMETERS* pUSBP);
+	void	readDescription(USBPxxPARAMETERS* pUSBP);
+	void	readLowPassFilterType(USBPxxPARAMETERS* pUSBP);
+	void	readHighPassFilterType(USBPxxPARAMETERS* pUSBP);
+	void	readSerialNumber(USBPxxPARAMETERS* pUSBP);
+	void	readProductID(USBPxxPARAMETERS* pUSBP);
+	void	readRevision(USBPxxPARAMETERS* pUSBP);
 	long	readNumberOfDevicesConnected();
 	long	readHandleOfDevice(long device);
-	bool	readAllParameters(long device, USBPxxPARAMETERS* d);
+	bool	readAllParameters(long device, USBPxxPARAMETERS* pUSBP);
 
-	void	writeLPFC(USBPxxPARAMETERS* d);
-	void	writeHPFC(USBPxxPARAMETERS* d);
-	void	writeGainIndex(USBPxxPARAMETERS* d);
-	void	writeCouplingIndex(USBPxxPARAMETERS* d);
-	void	writeClockSourceIndex(USBPxxPARAMETERS* d);
-	void	writePClockIndex(USBPxxPARAMETERS* d);
-	void	writeChannelNumber(USBPxxPARAMETERS* d);
-	void	writeDescription(USBPxxPARAMETERS* d);
+	void	writeLPFC(USBPxxPARAMETERS* pUSBP);
+	void	writeHPFC(USBPxxPARAMETERS* pUSBP);
+	void	writeGainIndex(USBPxxPARAMETERS* pUSBP);
+	void	writeCouplingIndex(USBPxxPARAMETERS* pUSBP);
+	void	writeClockSourceIndex(USBPxxPARAMETERS* pUSBP);
+	void	writePClockIndex(USBPxxPARAMETERS* pUSBP);
+	void	writeChannelNumber(USBPxxPARAMETERS* pUSBP);
+	void	writeDescription(USBPxxPARAMETERS* pUSBP);
 
 	// dbWave-specific functions
 	bool	SetWaveChanParms(CWaveChan* pchan);
