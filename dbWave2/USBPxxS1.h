@@ -4,9 +4,7 @@
 #include <objbase.h>
 #include "ImportAlligatorDefinitions.h"
 #include "USBPxxPARAMETERS.h"
-//#import "./include/Alligator/win32/USBPxxS1COM.dll" 
-#import "USBPxxS1COM.dll" \
-		no_namespace raw_interfaces_only raw_native_types named_guids
+#import "USBPxxS1COM.dll" no_namespace raw_interfaces_only raw_native_types named_guids
 
 
 class CUSBPxxS1 : public CObject
@@ -54,7 +52,7 @@ public:
 	void	readRevision(USBPxxPARAMETERS* pUSBP);
 	long	readNumberOfDevicesConnected();
 	long	readHandleOfDevice(long device);
-	bool	readAllParameters(long device, USBPxxPARAMETERS* pUSBP);
+	bool	readAllParameters(USBPxxPARAMETERS* pUSBP);
 
 	void	writeLPFC(USBPxxPARAMETERS* pUSBP);
 	void	writeHPFC(USBPxxPARAMETERS* pUSBP);
@@ -65,8 +63,12 @@ public:
 	void	writeChannelNumber(USBPxxPARAMETERS* pUSBP);
 	void	writeDescription(USBPxxPARAMETERS* pUSBP);
 
+	void	writeGainIndex(int gainIndex);
+	void	writeHPFC(CString highPass);
+	void	writeLPFC(int lowPass);
+
 	// dbWave-specific functions
 	bool	SetWaveChanParms(CWaveChan* pchan);
 	bool	GetWaveChanParms(CWaveChan* pchan);
-	int		ConvertAbsoluteGainToIndexGain(long gain);
+	int		ConvertAbsoluteGainToIndexGain(int gain);
 };

@@ -849,7 +849,6 @@ void CDlgADInputs::GetAmplifierParms(int col)
 		if (m_pcyber_amp == nullptr || !(m_pcyber_amp->Initialize() == NULL))
 			return;
 		m_pcyber_amp->GetWaveChanParms(p_chan);
-
 	}
 
 	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_palligator != nullptr)

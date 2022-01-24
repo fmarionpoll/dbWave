@@ -233,6 +233,7 @@ void CUSBPxxS1::readPClock(USBPxxPARAMETERS* pUSBP)
 	pUSBP->indexPClock = out_val.lVal;
 	pUSBP->csPClock = allig_PClock[pUSBP->indexPClock];
 }
+
 //**************************************************************************************
 // Read ChannelNumber - The Channel Number is an identifier.  It does not affect the
 //		function of the electronics.
@@ -458,13 +459,8 @@ long CUSBPxxS1::readHandleOfDevice(long device)
 	return	packed;
 }
 
-bool CUSBPxxS1::readAllParameters(long device, USBPxxPARAMETERS* pUSBPxxParms)
+bool CUSBPxxS1::readAllParameters(USBPxxPARAMETERS* pUSBPxxParms)
 {
-	devicesConnected = readNumberOfDevicesConnected();
-	pUSBPxxParms->DeviceHandle = readHandleOfDevice(device);
-	if (pUSBPxxParms->DeviceHandle == NULL)
-		return false;
-
 	readLPFC(pUSBPxxParms);
 	readHPFC(pUSBPxxParms);
 	readGain(pUSBPxxParms);
@@ -716,6 +712,25 @@ void  CUSBPxxS1::writeDescription(USBPxxPARAMETERS* pUSBP)
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_DESCRIPTION, &in_val, &out_val);
 }
 
+void CUSBPxxS1::writeGainIndex(int gainIndex)
+{
+	m_USBP.indexgain = gainIndex;
+	m_USBP.Gain = allig_Gain[m_USBP.indexgain];
+	writeGainIndex(&m_USBP);
+}
+
+void CUSBPxxS1::writeHPFC(CString highPass)
+{
+	m_USBP.HPFc = static_cast<float>(atof(CT2A(highPass)));
+	writeHPFC(&m_USBP);
+}
+
+void CUSBPxxS1::writeLPFC(int lowPass)
+{
+	m_USBP.LPFc = float(lowPass);
+	writeLPFC(&m_USBP);
+}
+
 // dbWave-specific functions
 
 bool CUSBPxxS1::SetWaveChanParms(CWaveChan* pchan)
@@ -723,12 +738,10 @@ bool CUSBPxxS1::SetWaveChanParms(CWaveChan* pchan)
 	if (m_USBP.DeviceHandle == 0)
 		return false;
 
-	m_USBP.indexgain = ConvertAbsoluteGainToIndexGain(pchan->am_amplifierchan);
-	writeGainIndex(&m_USBP);
-	m_USBP.HPFc = static_cast<float>(atof(CT2A(pchan->am_csInputpos)));
-	writeHPFC(&m_USBP);
-	m_USBP.LPFc = pchan->am_lowpass;
-	writeLPFC(&m_USBP);
+	writeGainIndex(ConvertAbsoluteGainToIndexGain(pchan->am_gainpre));
+	writeHPFC(pchan->am_csInputpos);
+	writeLPFC(pchan->am_lowpass);
+
 	return true;
 }
 
@@ -737,9 +750,10 @@ bool CUSBPxxS1::GetWaveChanParms(CWaveChan* pchan)
 	if (m_USBP.DeviceHandle == 0)
 		return false;
 
+	readAllParameters(&m_USBP);
 	pchan->am_amplifierchan = short(m_USBP.ChannelNumber);
-	pchan->am_gainpre = 1;
-	pchan->am_gainpost = short(m_USBP.Gain);
+	pchan->am_gainpre = short(m_USBP.Gain);
+	pchan->am_gainpost = 1;
 	pchan->am_csInputpos.Format(_T("%.3f"), m_USBP.HPFc);
 	pchan->am_lowpass = short(m_USBP.LPFc);
 	return true;
@@ -750,11 +764,11 @@ bool CUSBPxxS1::GetWaveChanParms(CWaveChan* pchan)
 // gain: convert to index which is inferior of equal to the table value explored from lower to higher values
 // array:	int CUSBPxxS1::allig_Gain[] = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
 
-int CUSBPxxS1::ConvertAbsoluteGainToIndexGain(long gain)
+int CUSBPxxS1::ConvertAbsoluteGainToIndexGain(int gain)
 {
 	int i;
-	const int imax = sizeof(allig_Gain) / sizeof(int);
-	for (i = 0; i < imax; i++)
+	constexpr int max = std::size(allig_Gain);
+	for (i = 0; i < max; i++)
 	{
 		if (gain <= allig_Gain[i])
 			break;

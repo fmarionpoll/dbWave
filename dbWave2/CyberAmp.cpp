@@ -435,12 +435,12 @@ int	CCyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
 	{
 	case -10:	strcat( sz_text, "GND" );break;
 	case 0:		strcat( sz_text, "DC" ); break;		// DC
-	case 1:		strcat( sz_text, "0.1" ); break;		// 0.1 Hz
+	case 1:		strcat( sz_text, "0.1" ); break;	// 0.1 Hz
 	case 10:	strcat( sz_text, "1" ); break;		// 1 Hz
 	case 100:	strcat( sz_text, "10" ); break;		// 10 Hz
 	case 300:	strcat( sz_text, "30" ); break;		// 30 Hz
-	case 1000:	strcat( sz_text, "100" ); break;		// 100 Hz
-	case 3000:	strcat( sz_text, "300" ); break;		// 300 Hz
+	case 1000:	strcat( sz_text, "100" ); break;	// 100 Hz
+	case 3000:	strcat( sz_text, "300" ); break;	// 300 Hz
 	default:	m_C300nLastError = C300_BADVALUE; break;
 	}
 	*/
@@ -802,7 +802,8 @@ int CCyberAmp::C300_FoundListMatch(int nFilterValue, int* lpn_list, const int nL
 		{
 			lpn_list -= n_jump;
 			n_offset -= n_jump;
-		}		else
+		}
+		else
 		{
 			while (n_offset + n_jump > nListItems - 1)
 				n_jump >>= 1;
