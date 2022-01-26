@@ -129,9 +129,6 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::OnQueueDone_DAC, VTS_NONE)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::OnTriggerError_DAC, VTS_NONE)
 
-	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 1, CADContView::DeviceConnectedUsbpxxs1ctl1, VTS_I4)
-	ON_EVENT(CADContView, IDC_USBPXXS1CTL1, 2, CADContView::DeviceDisconnectedUsbpxxs1ctl1, VTS_I4)
-
 END_EVENTSINK_MAP()
 
 void CADContView::OnCbnSelchangeComboboard()
@@ -207,7 +204,7 @@ BOOL CADContView::ADC_OpenSubSystem(CString cardName)
 	try
 	{
 		m_Acq32_ADC.SetBoard(cardName);
-		const int number_of_ADElements = m_Acq32_ADC.GetDevCaps(OLDC_ADELEMENTS);		// make sure A/D is available
+		const int number_of_ADElements = m_Acq32_ADC.GetDevCaps(OLDC_ADELEMENTS);
 		if (number_of_ADElements < 1)
 			return FALSE;
 		m_Acq32_ADC.SetSubSysType(OLSS_AD);
@@ -1657,6 +1654,7 @@ void CADContView::OnHardwareAdchannels()
 	dlg.m_bchantype = m_pADC_options->bChannelType;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
+
 	const auto p_alligator = new CUSBPxxS1();
 	dlg.m_palligator = p_alligator;
 
@@ -2307,16 +2305,3 @@ void CADContView::DTLayerError(COleDispatchException* e)
 	e->Delete();
 }
 
-
-void CADContView::DeviceConnectedUsbpxxs1ctl1(long Handle)
-{
-	// TODO: Add your message handler code here
-	TRACE("Alligator connected");
-}
-
-
-void CADContView::DeviceDisconnectedUsbpxxs1ctl1(long Handle)
-{
-	// TODO: Add your message handler code here
-	TRACE("Alligator disconnected");
-}

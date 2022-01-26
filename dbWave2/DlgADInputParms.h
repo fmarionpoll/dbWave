@@ -64,13 +64,20 @@ protected:
 
 	BOOL	InitGridColumnDefaults(int col);
 	void	AdjustGridSize();
-	void	InitGridColumnReadOnlyFields(int col);
 	void	InitADchannelCombo(int col, int iselect);
-	void	LoadChanData(int i);
-	void	SaveChanData(int i);
+	void	LoadGridWithWavechanData(int i);
+	void	SaveGridToWavechanData(int i);
 	void	SaveData();
 	void	SetAmplifierParms(int col);
-	void	GetAmplifierParms(int col);
+	void	GetAmplifierParms(CWaveChan* p_chan);
+
+	void	LoadADparameters_From_pwFormat();
+	void	InitRowHeaders();
+	void	InitColumns();
+	void	DisplayChannelADCard(GV_ITEM& item, const CWaveChan* p_chan);
+	void	DisplayChannelAmplifier(GV_ITEM& item, const CWaveChan* p_chan);
+	void	DisplayChannelProbe(GV_ITEM& item, const CWaveChan* p_chan);
+	void	DisplayChannelReadOnlyFields(int col);
 
 
 public:
