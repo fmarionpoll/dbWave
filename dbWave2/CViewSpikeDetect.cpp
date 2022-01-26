@@ -7,7 +7,6 @@
 // convert threshold into volts & back to binary (cope with variable gains)
 // cf: UpdateFileParameters
 
-
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"

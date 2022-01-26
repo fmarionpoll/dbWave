@@ -968,9 +968,6 @@
     <ClInclude Include="USBPxxPARAMETERS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ATLframework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="USBPxxS1.h">
       <Filter>Header Files</Filter>
     </ClInclude>

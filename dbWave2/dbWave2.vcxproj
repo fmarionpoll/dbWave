@@ -1352,7 +1352,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="ATLframework.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="USBPxxS1.h" />
     <ClInclude Include="CViewDao.h" />
