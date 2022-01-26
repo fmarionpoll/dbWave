@@ -20,13 +20,25 @@ CUSBPxxS1::CUSBPxxS1()
 
 CUSBPxxS1::~CUSBPxxS1()
 {
+	if (m_pIUSBP)
+	{
+		m_pIUSBP->Release();
+		m_pIUSBP = nullptr;
+	}
 	CoUninitialize();
 }
 
 HRESULT CUSBPxxS1::Initialize()
 {
-	HRESULT hr = CoCreateInstance(CLSID_USBPxxS1Ctl, NULL, CLSCTX_INPROC_SERVER, IID_IUSBPxxS1Ctl, (void**)&m_pIUSBP);
-	TRACE("create instance HR=%i", hr);
+	HRESULT hr = CoCreateInstance(CLSID_USBPxxS1Ctl, NULL, CLSCTX_INPROC_SERVER, 
+		IID_IUSBPxxS1Ctl, reinterpret_cast<void**>(&m_pIUSBP));
+	if (SUCCEEDED(hr)) {
+		TRACE("create instance HR=%i", hr);
+	}
+	else
+	{
+		TRACE("create instance HR=%i -- error", hr);
+	}
 	return hr;
 }
 
