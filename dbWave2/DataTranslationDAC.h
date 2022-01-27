@@ -51,6 +51,7 @@ protected:
 public:
 	void	DAC_OnBufferDone();
 	int		DAC_GetDigitalChannel() const { return m_DACdigitalchannel; }
-	bool	DAC_IsInProgress() const { return m_DAC_inprogress; };
+	bool	DAC_IsInProgress() const { return m_DAC_inprogress; }
+	void	DAC_SetInProgress() { m_DAC_inprogress = true; }
 };
 

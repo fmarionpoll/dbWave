@@ -68,7 +68,7 @@ protected:
 	BOOL				m_bFoundDTOPenLayerDLL = false;
 	BOOL				m_bhidesubsequent = false;
 
-	CAcqDataDoc			m_inputDataFile;			// document
+	CAcqDataDoc			m_acquiredDataFile;			// document
 	//CAcqDataDoc		m_outputDataFile;			// D/A file...
 	CStringArray		m_csNameArray;
 	BOOL				m_bFileOpen = false;		// flag / file open
@@ -76,23 +76,14 @@ protected:
 
 	BOOL 				m_bAskErase = false;		// ask erase when data may be lost (default = FALSE)
 	BOOL				m_bchanged = false;			// flag: save data or not	
-	double 				m_freqmax = 50000.;			// maximum sampling frequency (Hz)
-	int					m_numchansMAX = 8;
-
 	BOOL				m_bSimultaneousStart = false;	//TRUE if the card is capable of this
-	ECODE				m_ecode = 0;
 
 	// DT buffer
 	OPTIONS_ACQDATA*	m_pADC_options = nullptr;	// pointer to data acq options 
-	BOOL				m_ADC_inprogress = false;	// A/D is in progress (used by OnStop/OnStart)
-	HBUF				m_ADC_bufhandle = nullptr;
-	long				m_ADC_buflen = 0;			// nb of acq sample per DT buffer
-	long				m_ADC_chbuflen = 0;			// nb pts for one chan in DT buffer
 	BOOL				m_bsimultaneousStartAD = false;
 
 	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
 	BOOL				m_bsimultaneousStartDA = false;
-
 
 	// sweep
 	long				m_chsweeplength = 0;		// sweep length (per channel)
@@ -107,13 +98,6 @@ protected:
 	BOOL	FindDTOpenLayersBoards();
 	BOOL	SelectDTOpenLayersBoard(CString cardName);
 
-	//BOOL	ADC_OpenSubSystem(CString cardName);
-	//BOOL	ADC_InitSubSystem();
-	//void	ADC_DeleteBuffers();
-	//void	ADC_DeclareBuffers();
-	//void	ADC_Transfer(short* pDTbuf);
-	//void	ADC_StopAndLiberateBuffers();
-
 	void	SetCombostartoutput(int option);
 
 	long	VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
@@ -124,8 +108,6 @@ protected:
 	BOOL	StartAcquisition();
 	BOOL	StartOutput();
 	void	StopOutput();
-
-	void	DTLayerError(COleDispatchException* e);
 
 	BOOL	InitCyberAmp();
 	BOOL	Defineexperiment();

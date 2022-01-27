@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DataTranslationADC.h"
 
+#include "chanlistitem.h"
 #include "include/DataTranslation/OLERRORS.H"
 #include "include/DataTranslation/Olxdadefs.h"
 
@@ -34,9 +35,9 @@ BOOL DataTranslationADC::ADC_OpenSubSystem(CString cardName)
 	// set max channel number according to input configuration m_numchansMAX
 	m_pADC_options->bChannelType = GetChannelType();
 	if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
-		m_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
+		m_ADC_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
 	else
-		m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
+		m_ADC_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
 
 	// data encoding (binary or offset encoding)
 	pWFormat->mode_encoding = (int)GetEncoding();
@@ -46,7 +47,7 @@ BOOL DataTranslationADC::ADC_OpenSubSystem(CString cardName)
 		pWFormat->binzero = 0;
 
 	// load infos concerning frequency, dma chans, programmable gains
-	m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
+	m_ADC_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
 
 	// TODO tell sourceview here under which format are data
 	// TODO save format of data into temp document
@@ -87,14 +88,14 @@ BOOL DataTranslationADC::ADC_InitSubSystem()
 			m_pADC_options->bChannelType = OLx_CHNT_SINGLEENDED;
 		SetChannelType(m_pADC_options->bChannelType);
 		if (m_pADC_options->bChannelType == OLx_CHNT_SINGLEENDED)
-			m_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
+			m_ADC_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
 		else
-			m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
+			m_ADC_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
 		// limit scan_count to m_numchansMAX -
 		// this limits the nb of data acquisition channels to max-1 if one wants to use the additional I/O input "pseudo"channel
 		// so far, it seems acceptable...
-		if (poptions_acqdatawaveFormat->scan_count > m_numchansMAX)
-			poptions_acqdatawaveFormat->scan_count = m_numchansMAX;
+		if (poptions_acqdatawaveFormat->scan_count > m_ADC_numchansMAX)
+			poptions_acqdatawaveFormat->scan_count = m_ADC_numchansMAX;
 
 		// set frequency to value requested, set frequency and get the value returned
 		double clockrate = double(poptions_acqdatawaveFormat->chrate) * double(poptions_acqdatawaveFormat->scan_count);
@@ -109,8 +110,8 @@ BOOL DataTranslationADC::ADC_InitSubSystem()
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
 			CWaveChan* pChannel = (m_pADC_options->chanArray).Get_p_channel(i);
-			if (pChannel->am_adchannel > m_numchansMAX - 1 && pChannel->am_adchannel != 16)
-				pChannel->am_adchannel = m_numchansMAX - 1;
+			if (pChannel->am_adchannel > m_ADC_numchansMAX - 1 && pChannel->am_adchannel != 16)
+				pChannel->am_adchannel = m_ADC_numchansMAX - 1;
 			SetChannelList(i, pChannel->am_adchannel);
 			SetGainList(i, pChannel->am_gainAD);
 			const double dGain = GetGainList(i);
@@ -225,6 +226,9 @@ void DataTranslationADC::ADC_DeleteBuffers()
 
 void DataTranslationADC::ADC_StopAndLiberateBuffers()
 {
+	if (!m_ADC_inprogress)
+		return;
+
 	try {
 		Stop();
 		Flush();							// flush all buffers to Done Queue
@@ -307,3 +311,73 @@ void DataTranslationADC::DTLayerError(COleDispatchException* e)
 	AfxMessageBox(myError);
 	e->Delete();
 }
+
+void DataTranslationADC::ADC_Start()
+{
+	Config();
+	Start();
+	m_ADC_inprogress = TRUE;
+}
+
+void DataTranslationADC::ADC_OnBufferDone()
+{
+	// get buffer off done list	
+	m_ADC_bufhandle = (HBUF) GetQueue();
+	if (m_ADC_bufhandle == NULL)
+		return;
+
+	// get pointer to buffer
+	short* pDTbuf;
+	ECODE m_ecode = olDmGetBufferPtr(m_ADC_bufhandle, (void**)&pDTbuf);
+	if (m_ecode == OLNOERROR)
+	{
+		// update length of data acquired
+		ADC_Transfer(pDTbuf);										// transfer data into intermediary buffer
+
+		CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();	// pointer to data descriptor
+		pWFormat->sample_count += m_bytesweepRefresh / 2;				// update total sample count
+		const float duration = float(pWFormat->sample_count) / m_fclockrate;
+
+		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
+		pdataBuf += (m_chsweep1 * pWFormat->scan_count);
+
+		// first thing to do: save data to file
+		if (pWFormat->bADwritetofile)								// write buffer to file
+		{
+			const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_bytesweepRefresh);
+			ASSERT(flag);
+			// end of acquisition
+			if (duration >= pWFormat->duration)
+			{
+				StopAcquisition(TRUE);
+				if (m_bhidesubsequent)
+				{
+					if (!StartAcquisition())
+						StopAcquisition(TRUE);	// if bADStart = wrong, then stop AD
+					else
+					{
+						if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
+							ADC_OnBufferDone();
+					}
+					return;
+				}
+				UpdateStartStop(FALSE);
+				return;
+			}
+		}
+		else														// no file I/O: refresh screen pos
+		{
+			if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
+				pWFormat->sample_count = 0;
+		}
+		SetQueue(long(m_ADC_bufhandle));				// tell ADdriver that data buffer is free
+
+		// then: display options_acqdataataDoc buffer
+		if (pWFormat->bOnlineDisplay)								// display data if requested
+			m_ADsourceView.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
+		CString cs;
+		cs.Format(_T("%.3lf"), duration);							// update total time on the screen
+		SetDlgItemText(IDC_STATIC1, cs);							// update time elapsed
+	}
+}
+
