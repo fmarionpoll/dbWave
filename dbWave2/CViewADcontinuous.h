@@ -80,8 +80,6 @@ protected:
 
 	// DT buffer
 	OPTIONS_ACQDATA*	m_pADC_options = nullptr;	// pointer to data acq options 
-	BOOL				m_bsimultaneousStartAD = false;
-
 	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
 	BOOL				m_bsimultaneousStartDA = false;
 

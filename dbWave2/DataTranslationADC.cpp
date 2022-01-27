@@ -132,7 +132,6 @@ BOOL DataTranslationADC::ADC_InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 		DTLayerError(e);
 		return FALSE;
 	}
-
 	return TRUE;
 }
 

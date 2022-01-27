@@ -26,11 +26,14 @@ protected:
 	long	m_ADC_chbuflen = 0;
 	double 	m_ADC_freqmax = 50000.;			// maximum sampling frequency (Hz)
 	int		m_ADC_numchansMAX = 8;
+	BOOL	m_bsimultaneousStartAD = false;
+
 
 public:
 	bool	ADC_IsInProgress() const { return m_ADC_inprogress; }
 	void	ADC_SetInProgress() { m_ADC_inprogress = true; }
 	double	ADC_GetMaximumFrequency() const { return m_ADC_freqmax; }
 	int		ADC_GetMaximumNumberOfChannels() const { return m_ADC_numchansMAX; }
+	BOOL	ADC_IsSimultaneousStart() { return m_bsimultaneousStartAD; }
 };
 

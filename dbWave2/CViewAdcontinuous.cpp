@@ -180,7 +180,7 @@ BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
 	const BOOL flag_DA = m_Acq32_DAC.DAC_OpenSubSystem(cardName);
 	if (flag_DA)
 		m_bStartOutPutMode = 0;
-	m_bSimultaneousStart = m_bsimultaneousStartDA && m_bsimultaneousStartAD;
+	m_bSimultaneousStart = m_bsimultaneousStartDA && m_Acq32_ADC.ADC_IsSimultaneousStart();
 
 	// display additional interface elements
 	int show = (flag_AD ? SW_SHOW : SW_HIDE);
