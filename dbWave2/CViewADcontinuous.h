@@ -33,6 +33,8 @@ protected:
 	CMFCButton			m_btnStartStop;
 	BOOL				m_bADwritetofile = false;
 	int					m_bStartOutPutMode = 0;
+	bool				m_DAC_present = false;
+	bool				m_ADC_present = false;
 
 protected:
 	CChartDataWnd		m_ADsourceView;				// source data display button

@@ -2,6 +2,8 @@
 
 #pragma once
 #include <objbase.h>
+#include <vector>
+
 #include "ImportAlligatorDefinitions.h"
 #include "USBPxxPARAMETERS.h"
 #import "USBPxxS1COM.dll" no_namespace raw_interfaces_only raw_native_types named_guids
@@ -71,4 +73,5 @@ public:
 	bool	SetWaveChanParms(CWaveChan* pchan);
 	bool	GetWaveChanParms(CWaveChan* pchan);
 	int		ConvertAbsoluteGainToIndexGain(int gain);
+	std::vector<int>	GetGainsAvailable();
 };

@@ -772,8 +772,8 @@ bool CUSBPxxS1::SetWaveChanParms(CWaveChan* pchan)
 		return false;
 
 	writeGainIndex(ConvertAbsoluteGainToIndexGain(pchan->am_gainpre));
-	writeHPFC(pchan->am_csInputpos);
 	writeLPFC(pchan->am_lowpass);
+	writeHPFC(pchan->am_csInputpos);
 
 	return true;
 }
@@ -807,4 +807,10 @@ int CUSBPxxS1::ConvertAbsoluteGainToIndexGain(int gain)
 			break;
 	}
 	return i;
+}
+
+std::vector<int> CUSBPxxS1::GetGainsAvailable()
+{
+	std::vector<int> numbers(allig_Gain, allig_Gain + sizeof(allig_Gain) / sizeof(int));
+	return numbers;
 }

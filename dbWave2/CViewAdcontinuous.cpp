@@ -1196,10 +1196,12 @@ BOOL CADContView::StartAcquisition()
 		return FALSE;
 	}
 
-	if (!ADC_InitSubSystem())
+	m_ADC_present = ADC_InitSubSystem();
+	if (!m_ADC_present)
 		return FALSE;
 
-	if (m_bStartOutPutMode == 0 && DAC_InitSubSystem())
+	m_DAC_present = DAC_InitSubSystem();
+	if (m_bStartOutPutMode == 0 && m_DAC_present)
 		DAC_DeclareAndFillBuffers();
 
 	// start AD display
@@ -1240,7 +1242,7 @@ BOOL CADContView::StartAcquisition()
 			m_Acq32_ADC.Start();
 			m_ADC_inprogress = TRUE;
 			m_DAC_inprogress = FALSE;
-			if (m_bStartOutPutMode == 0)
+			if (m_bStartOutPutMode == 0 && m_DAC_present)
 			{
 				m_Acq32_DAC.Config();
 				m_Acq32_DAC.Start();
