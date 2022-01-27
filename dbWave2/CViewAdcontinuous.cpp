@@ -218,6 +218,8 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 
 	// stop AD, liberate DTbuffers
 	m_Acq32_ADC.ADC_StopAndLiberateBuffers();
+	m_ADsourceView.ADdisplayStop();
+	m_bchanged = TRUE;
 
 	// stop DA, liberate buffers
 	if (m_bStartOutPutMode == 0)
@@ -324,7 +326,8 @@ BOOL CADContView::StartAcquisition()
 		return FALSE;
 	}
 
-	m_ADC_present = m_Acq32_ADC.ADC_InitSubSystem();
+	m_ADC_present = InitAcquisitionSystemAndBuffers();
+	InitAcquisitionDisplay();
 	if (!m_ADC_present)
 		return FALSE;
 
@@ -532,11 +535,12 @@ void CADContView::OnInitialUpdate()
 	*(m_acquiredDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
 	m_ADsourceView.AttachDataFile(&m_acquiredDataFile);		// prepare display area
 
-	pApp->m_bADcardFound = FindDTOpenLayersBoards();			// open DT Open Layers board
+	pApp->m_bADcardFound = FindDTOpenLayersBoards();
 	if (pApp->m_bADcardFound)
 	{
-		m_Acq32_ADC.ADC_InitSubSystem();									// connect A/D DT OpenLayer subsystem
-		InitCyberAmp();											// control cyberamplifier
+		InitAcquisitionSystemAndBuffers();
+		InitAcquisitionDisplay();
+		InitializeAmplifiers();		// control cyberamplifier OR Alligator Or none?
 		
 		m_Acq32_DAC.DAC_InitSubSystem(m_pADC_options->waveFormat.chrate, m_pADC_options->waveFormat.trig_mode);
 		m_Acq32_DAC.DAC_ClearAllOutputs();
@@ -775,7 +779,8 @@ void CADContView::OnHardwareAdchannels()
 	if (IDOK == dlg.DoModal())
 	{
 		m_pADC_options->bChannelType = dlg.m_bchantype;
-		m_Acq32_ADC.ADC_InitSubSystem();
+		InitAcquisitionSystemAndBuffers();
+		InitAcquisitionDisplay();
 		UpdateData(FALSE);
 		UpdateChanLegends(0);
 	}
@@ -808,7 +813,8 @@ void CADContView::OnHardwareAdintervals()
 		m_pADC_options->baudiblesound = dlg.m_baudiblesound;
 		m_sweepduration = dlg.m_sweepduration;
 		m_pADC_options->sweepduration = m_sweepduration;
-		m_Acq32_ADC.ADC_InitSubSystem();
+		InitAcquisitionSystemAndBuffers();
+		InitAcquisitionDisplay();
 		UpdateData(FALSE);
 	}
 
@@ -882,7 +888,10 @@ void CADContView::OnBufferDone_DAC()
 	m_Acq32_DAC.DAC_OnBufferDone();
 }
 
-
+void CADContView::InitializeAmplifiers()
+{
+	InitCyberAmp(); // TODO init others and look at pwaveformat
+}
 
 BOOL CADContView::InitCyberAmp()
 {
@@ -1272,5 +1281,60 @@ BOOL CADContView::StartOutput()
 void CADContView::StopOutput()
 {
 	m_Acq32_DAC.DAC_StopAndLiberateBuffers();
+}
+
+BOOL CADContView::InitAcquisitionSystemAndBuffers()
+{
+	const BOOL isPresent = m_Acq32_ADC.ADC_InitSubSystem(m_pADC_options);
+	if (isPresent)
+	{
+		// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
+		*(m_acquiredDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
+		*(m_acquiredDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;
+
+		m_Acq32_ADC.ADC_DeclareBuffers();
+	}
+	return isPresent;
+}
+
+void CADContView::InitAcquisitionDisplay()
+{
+	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat); // get pointer to m_pADC_options wave format
+
+	// set sweep length to the nb of data buffers
+	(m_acquiredDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * long(pWFormat->scan_count);	// ?
+	m_acquiredDataFile.AdjustBUF(m_chsweeplength);
+	*(m_acquiredDataFile.GetpWaveFormat()) = *pWFormat;	// save settings into data file	
+
+	// update display length (and also the text - abcissa)	
+	m_ADsourceView.AttachDataFile(&m_acquiredDataFile);
+	m_ADsourceView.ResizeChannels(0, m_chsweeplength);
+	if (m_ADsourceView.GetChanlistSize() != pWFormat->scan_count)
+	{
+		m_ADsourceView.RemoveAllChanlistItems();
+		for (int j = 0; j < pWFormat->scan_count; j++)
+		{
+			m_ADsourceView.AddChanlistItem(j, 0);
+		}
+	}
+
+	// adapt source view 
+	int iextent = MulDiv(pWFormat->binspan, 12, 10);
+	if (m_pADC_options->izoomCursel != 0)
+		iextent = m_pADC_options->izoomCursel;
+
+	for (int i = 0; i < pWFormat->scan_count; i++)
+	{
+		const int ioffset = 0;
+		CChanlistItem* pD = m_ADsourceView.GetChanlistItem(i);
+		pD->SetYzero(ioffset);
+		pD->SetYextent(iextent);
+		pD->SetColor(i);
+		float docVoltsperb;
+		m_acquiredDataFile.GetWBVoltsperBin(i, &docVoltsperb);
+		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
+		pD->SetDataVoltsFormat(docVoltsperb, pWFormat->fullscale_volts);
+	}
+	m_ADsourceView.Invalidate();
 }
 

@@ -61,13 +61,14 @@ BOOL DataTranslationADC::ADC_OpenSubSystem(CString cardName)
 	return TRUE;
 }
 
-BOOL DataTranslationADC::ADC_InitSubSystem()
+BOOL DataTranslationADC::ADC_InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 {
 	try
 	{
 		ASSERT(GetHDass() != NULL);
 
 		// store all values within global parameters array
+		m_pADC_options = pADC_options;
 		CWaveFormat* poptions_acqdatawaveFormat = &(m_pADC_options->waveFormat);
 
 		// Set up the ADC - no wrap so we can get buffer reused	
@@ -132,17 +133,11 @@ BOOL DataTranslationADC::ADC_InitSubSystem()
 		return FALSE;
 	}
 
-	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
-	*(m_inputDataFile.GetpWavechanArray()) = m_pADC_options->chanArray;
-	*(m_inputDataFile.GetpWaveFormat()) = m_pADC_options->waveFormat;
-
-	ADC_DeclareBuffers();
 	return TRUE;
 }
 
 void DataTranslationADC::ADC_DeclareBuffers()
 {
-	// close data buffers
 	ADC_DeleteBuffers();
 
 	// make sure that buffer length contains at least nacq chans
@@ -151,8 +146,8 @@ void DataTranslationADC::ADC_DeclareBuffers()
 		pWFormat->buffersize = pWFormat->scan_count * m_pADC_options->iundersample;
 
 	// define buffer length
-	m_sweepduration = m_pADC_options->sweepduration;
-	m_chsweeplength = long(float(m_sweepduration) * pWFormat->chrate / float(m_pADC_options->iundersample));
+	float m_sweepduration = m_pADC_options->sweepduration;
+	long m_chsweeplength = long(float(m_sweepduration) * pWFormat->chrate / float(m_pADC_options->iundersample));
 	m_ADC_chbuflen = m_chsweeplength * m_pADC_options->iundersample / pWFormat->bufferNitems;
 	m_ADC_buflen = m_ADC_chbuflen * pWFormat->scan_count;
 
@@ -164,43 +159,6 @@ void DataTranslationADC::ADC_DeclareBuffers()
 		if ((ecode == OLNOERROR) && (m_ADC_bufhandle != NULL))
 			SetQueue(long(m_ADC_bufhandle)); // but buffer onto Ready queue
 	}
-
-	// set sweep length to the nb of data buffers
-	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * long(pWFormat->scan_count);	// ?
-	m_inputDataFile.AdjustBUF(m_chsweeplength);
-	*(m_inputDataFile.GetpWaveFormat()) = *pWFormat;	// save settings into data file	
-
-	// update display length (and also the text - abcissa)	
-	m_ADsourceView.AttachDataFile(&m_inputDataFile);
-	m_ADsourceView.ResizeChannels(0, m_chsweeplength);
-	if (m_ADsourceView.GetChanlistSize() != pWFormat->scan_count)
-	{
-		m_ADsourceView.RemoveAllChanlistItems();
-		for (int j = 0; j < pWFormat->scan_count; j++)
-		{
-			m_ADsourceView.AddChanlistItem(j, 0);
-		}
-	}
-
-	// adapt source view 
-	int iextent = MulDiv(pWFormat->binspan, 12, 10);
-	if (m_pADC_options->izoomCursel != 0)
-		iextent = m_pADC_options->izoomCursel;
-
-	for (int i = 0; i < pWFormat->scan_count; i++)
-	{
-		const int ioffset = 0;
-		CChanlistItem* pD = m_ADsourceView.GetChanlistItem(i);
-		pD->SetYzero(ioffset);
-		pD->SetYextent(iextent);
-		pD->SetColor(i);
-		float docVoltsperb;
-		m_inputDataFile.GetWBVoltsperBin(i, &docVoltsperb);
-		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
-		pD->SetDataVoltsFormat(docVoltsperb, pWFormat->fullscale_volts);
-	}
-	m_ADsourceView.Invalidate();
-	UpdateData(FALSE);
 }
 
 void DataTranslationADC::ADC_DeleteBuffers()
@@ -237,8 +195,6 @@ void DataTranslationADC::ADC_StopAndLiberateBuffers()
 			hBuf = (HBUF)GetQueue();
 			if (hBuf != NULL) SetQueue(long(hBuf));
 		} while (hBuf != NULL);
-		m_ADsourceView.ADdisplayStop();
-		m_bchanged = TRUE;
 	}
 	catch (COleDispatchException* e)
 	{

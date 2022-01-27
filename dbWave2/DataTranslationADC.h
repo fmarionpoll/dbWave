@@ -7,7 +7,7 @@ class DataTranslationADC :
 {
 public:
 	BOOL	ADC_OpenSubSystem(CString cardName);
-	BOOL	ADC_InitSubSystem();
+	BOOL	ADC_InitSubSystem(OPTIONS_ACQDATA* pADC_options);
 	void	ADC_DeleteBuffers();
 	void	ADC_DeclareBuffers();
 	void	ADC_Transfer(short* pDTbuf);

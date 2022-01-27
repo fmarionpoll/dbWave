@@ -108,6 +108,8 @@ protected:
 	BOOL	StartAcquisition();
 	BOOL	StartOutput();
 	void	StopOutput();
+	BOOL InitAcquisitionSystemAndBuffers();
+	void InitAcquisitionDisplay();
 
 	BOOL	InitCyberAmp();
 	BOOL	Defineexperiment();
@@ -155,6 +157,7 @@ public:
 	afx_msg void OnOverrunError_ADC();
 	afx_msg void OnQueueDone_ADC();
 	afx_msg void OnBufferDone_DAC();
+	void InitializeAmplifiers();
 	afx_msg void OnOverrunError_DAC();
 	afx_msg void OnQueueDone_DAC();
 	afx_msg void OnTriggerError_DAC();
