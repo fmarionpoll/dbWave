@@ -66,7 +66,7 @@ BOOL DataTranslationDAC::DAC_ClearAllOutputs()
 	return TRUE;
 }
 
-BOOL DataTranslationDAC::DAC_InitSubSystem()
+BOOL DataTranslationDAC::DAC_InitSubSystem(double ADC_channel_samplingrate, int ADC_trigger_mode)
 {
 	try
 	{
@@ -80,11 +80,11 @@ BOOL DataTranslationDAC::DAC_InitSubSystem()
 
 		// set clock the same as for A/D
 		SetClockSource(OLx_CLK_INTERNAL);
-		const double clockrate = m_pADC_options->waveFormat.chrate;
+		const double clockrate = ADC_channel_samplingrate;
 		SetFrequency(clockrate);		// set sampling frequency (total throughput)
 
 		// set trigger mode
-		int trig = m_pADC_options->waveFormat.trig_mode;
+		int trig = ADC_trigger_mode;
 		if (trig > OLx_TRG_EXTRA)
 			trig = 0;
 		SetTrigger(trig);
@@ -191,19 +191,17 @@ void DataTranslationDAC::DAC_DeleteBuffers()
 	}
 }
 
-void DataTranslationDAC::DAC_DeclareAndFillBuffers()
+void DataTranslationDAC::DAC_DeclareAndFillBuffers(float sweepduration, float chrate, int nbuffers)
 {
 	// close data buffers
 	DAC_DeleteBuffers();
 
 	// get current parms from A/D conversion
-	CWaveFormat* pWFormat = &(m_pADC_options->waveFormat);
-	m_DAC_frequency = pWFormat->chrate;
+	m_DAC_frequency = chrate;
 
 	// define buffer length
-	float sweepduration = m_pADC_options->sweepduration;
-	long chsweeplength = (long)(sweepduration * pWFormat->chrate);
-	int nbuffers = pWFormat->bufferNitems;
+	
+	long chsweeplength = (long)(sweepduration * chrate);
 	m_DAC_chbuflen = chsweeplength / nbuffers;
 	m_DAC_buflen = m_DAC_chbuflen * m_DAClistsize;
 
@@ -616,8 +614,18 @@ void DataTranslationDAC::DAC_FillBuffer(short* pDTbuf)
 	m_DAC_nBuffersFilledSinceStart++;
 }
 
+void DataTranslationDAC::DAC_Start()
+{
+	Config();
+	Start();
+	m_DAC_inprogress = true;
+}
+
 void DataTranslationDAC::DAC_StopAndLiberateBuffers()
 {
+	if (!m_DAC_inprogress)
+		return;
+
 	try {
 		Stop();
 		Flush();	// flush all buffers to Done Queue
@@ -651,7 +659,7 @@ void DataTranslationDAC::DTLayerError(COleDispatchException* e)
 }
 
 
-void DataTranslationDAC::OnBufferDone_DAC()
+void DataTranslationDAC::DAC_OnBufferDone()
 {
 	// get buffer off done list	
 	m_DAC_bufhandle = (HBUF) GetQueue();

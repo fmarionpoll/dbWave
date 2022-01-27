@@ -3,15 +3,15 @@
 
 #include "dtacq32.h"
 class DataTranslationDAC :
-    public CDTAcq32
+	public CDTAcq32
 {
 public:
 	BOOL	DAC_OpenSubSystem(CString cardName);
 	BOOL	DAC_ClearAllOutputs();
 	void	DAC_SetChannelList();
-	BOOL	DAC_InitSubSystem();
+	BOOL	DAC_InitSubSystem(double ADC_channel_samplingrate, int ADC_trigger_mode);
 	void	DAC_DeleteBuffers();
-	void	DAC_DeclareAndFillBuffers();
+	void	DAC_DeclareAndFillBuffers(float sweepduration, float chrate, int nbuffers);
 	void	DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 	void	DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 	void	DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
@@ -27,6 +27,7 @@ public:
 	void	DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 
 	void	DAC_FillBuffer(short* pDTbuf);
+	void	DAC_Start();
 	void	DAC_StopAndLiberateBuffers();
 
 protected:
@@ -45,9 +46,11 @@ protected:
 	long	m_DAC_nBuffersFilledSinceStart = 0;
 	double	m_DAC_frequency = 1.;
 
-	void DTLayerError(COleDispatchException* e);
+	void	DTLayerError(COleDispatchException* e);
 
 public:
-	void OnBufferDone_DAC();
+	void	DAC_OnBufferDone();
+	int		DAC_GetDigitalChannel() const { return m_DACdigitalchannel; }
+	bool	DAC_IsInProgress() const { return m_DAC_inprogress; };
 };
 

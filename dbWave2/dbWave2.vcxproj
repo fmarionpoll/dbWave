@@ -778,6 +778,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataTranslationADC.cpp" />
     <ClCompile Include="DataTranslationDAC.cpp" />
     <ClCompile Include="USBPxxS1.cpp" />
     <ClCompile Include="CViewDao.cpp" />
@@ -1354,6 +1355,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="CDTBoardParameters.h" />
+    <ClInclude Include="DataTranslationADC.h" />
     <ClInclude Include="DataTranslationDAC.h" />
     <ClInclude Include="USBPxxS1.h" />
     <ClInclude Include="CViewDao.h" />
