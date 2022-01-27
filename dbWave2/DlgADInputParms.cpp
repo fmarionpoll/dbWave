@@ -708,7 +708,7 @@ void CDlgADInputs::LoadADparameters_From_pwFormat()
 	{
 		m_nacqchans = 1;
 		m_resolutionCombo.SetCurSel(1);	// 12 bits
-		m_iNBins = 1 << 12;						// 2 exp (nbits)
+		m_iNBins = 1 << 12;				// 2 exp (nbits)
 		m_encodingCombo.SetCurSel(0);
 	}
 	else

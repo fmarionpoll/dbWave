@@ -9,6 +9,7 @@
 #include <OLTYPES.H>
 #include <Olmem.h>
 
+#include "DataTranslationDAC.h"
 #include "USBPxxS1Ctl.h"
 
 
@@ -25,7 +26,7 @@ protected:
 	CdbMainTable*		m_ptableSet = nullptr;
 	CString				m_boardName;
 	CDTAcq32			m_Acq32_ADC;
-	CDTAcq32			m_Acq32_DAC;
+	DataTranslationDAC	m_Acq32_DAC;
 
 	CRulerBar			m_ADC_xRulerBar;
 	CRulerBar			m_ADC_yRulerBar;
@@ -89,19 +90,19 @@ protected:
 	BOOL				m_bsimultaneousStartAD = false;
 
 	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
-	int					m_DACdigitalchannel = 0;
-	BOOL				m_DACdigitalfirst = false;
-	int					m_DAClistsize = 0;
-	long				m_DACmsbit = 0;
-	long				m_DAClRes = 0;
+	//int					m_DACdigitalchannel = 0;
+	//BOOL				m_DACdigitalfirst = false;
+	//int					m_DAClistsize = 0;
+	//long				m_DACmsbit = 0;
+	//long				m_DAClRes = 0;
 
-	BOOL				m_DAC_inprogress = false;	// D/A in progress
-	HBUF				m_DAC_bufhandle = nullptr;
-	long				m_DAC_buflen = 0;			// nb of acq sample per DT buffer
-	long				m_DAC_chbuflen = 0;
+	//BOOL				m_DAC_inprogress = false;	// D/A in progress
+	//HBUF				m_DAC_bufhandle = nullptr;
+	//long				m_DAC_buflen = 0;			// nb of acq sample per DT buffer
+	//long				m_DAC_chbuflen = 0;
 	BOOL				m_bsimultaneousStartDA = false;
-	long				m_DAC_nBuffersFilledSinceStart = 0;
-	double				m_DAC_frequency = 1.;
+	//long				m_DAC_nBuffersFilledSinceStart = 0;
+	//double				m_DAC_frequency = 1.;
 
 	// sweep
 	long				m_chsweeplength = 0;		// sweep length (per channel)
@@ -123,28 +124,28 @@ protected:
 	void	ADC_Transfer(short* pDTbuf);
 	void	ADC_StopAndLiberateBuffers();
 
-	BOOL	DAC_OpenSubSystem(CString cardName);
-	BOOL	DAC_ClearAllOutputs();
-	void	DAC_SetChannelList();
-	BOOL	DAC_InitSubSystem();
-	void	DAC_DeleteBuffers();
-	void	DAC_DeclareAndFillBuffers();
-	void	DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_MSequence(BOOL start, OUTPUTPARMS* outputparms_array);
-	void	DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
+	//BOOL	DAC_OpenSubSystem(CString cardName);
+	//BOOL	DAC_ClearAllOutputs();
+	//void	DAC_SetChannelList();
+	//BOOL	DAC_InitSubSystem();
+	//void	DAC_DeleteBuffers();
+	//void	DAC_DeclareAndFillBuffers();
+	//void	DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_MSequence(BOOL start, OUTPUTPARMS* outputparms_array);
+	//void	DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan);
 
-	void	DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
-	void	DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
+	//void	DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 
-	void	DAC_FillBuffer(short* pDTbuf);
-	void	DAC_StopAndLiberateBuffers();
+	//void	DAC_FillBuffer(short* pDTbuf);
+	//void	DAC_StopAndLiberateBuffers();
 	void	SetCombostartoutput(int option);
 
 	long	VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
