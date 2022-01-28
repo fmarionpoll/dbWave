@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "OPTIONS_ACQDATA.h"
+#include <Olxdadefs.h>
 
 
 IMPLEMENT_SERIAL(OPTIONS_ACQDATA, CObject, 0 /* schema number*/)

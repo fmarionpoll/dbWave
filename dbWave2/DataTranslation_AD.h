@@ -1,6 +1,7 @@
 #pragma once
 #include <olmem.h>
 #include "dtacq32.h"
+#include "OPTIONS_ACQDATA.h"
 
 
 class DataTranslation_AD :

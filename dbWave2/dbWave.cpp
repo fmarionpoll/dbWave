@@ -11,7 +11,6 @@
 #include "dbWaveDoc.h"
 #include "NoteDoc.h"
 #include "WaveBuf.h"
-#include "Awavepar.h"
 #include "Splash.h"
 #include "DlgAbout.h"
 

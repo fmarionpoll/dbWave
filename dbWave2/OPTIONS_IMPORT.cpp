@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "OPTIONS_IMPORT.h"
-
+#include "include/DataTranslation/Olxdadefs.h"
 
 
 IMPLEMENT_SERIAL(OPTIONS_IMPORT, CObject, 0)

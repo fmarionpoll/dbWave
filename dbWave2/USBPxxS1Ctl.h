@@ -5,7 +5,7 @@
 #include "ImportAlligatorDefinitions.h"
 #include "USBPxxPARAMETERS.h"
 //#import "./include/Alligator/win32/USBPxxS1COM.dll" 
-#import "USBPxxS1COM.dll" \no_namespace raw_interfaces_only raw_native_types named_guids
+#import "USBPxxS1COM.dll" no_namespace raw_interfaces_only raw_native_types named_guids
 
 
 class CUSBPxxS1Ctl : public CWnd
