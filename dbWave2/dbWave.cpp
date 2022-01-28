@@ -604,7 +604,7 @@ If you need to create new empty documents of a specific type without the framewo
 dialog box, you are going to have to call CDocTemplate::OpenDocumentFile(NULL) on the correct CDocTemplate
 object yourself.
 */
-#include "FileNew1.h"
+#include "DlgFileNew1.h"
 
 void CdbWaveApp::OnFileNew()
 {

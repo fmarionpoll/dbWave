@@ -3,7 +3,7 @@
 
 #include "StdAfx.h"
 //#include "dbWave.h"
-#include "FileNew1.h"
+#include "DlgFileNew1.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG

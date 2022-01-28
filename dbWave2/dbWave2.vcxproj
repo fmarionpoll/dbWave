@@ -1011,7 +1011,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="FileNew1.cpp">
+    <ClCompile Include="DlgFileNew1.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1452,7 +1452,7 @@
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="DlgExportData.h" />
     <ClInclude Include="Exportsp.h" />
-    <ClInclude Include="FileNew1.h" />
+    <ClInclude Include="DlgFileNew1.h" />
     <ClInclude Include="Fileversion.h" />
     <ClInclude Include="DlgFindFiles.h" />
     <ClInclude Include="FormatHistogram.h" />

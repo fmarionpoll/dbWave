@@ -225,7 +225,7 @@
     <ClCompile Include="Xyparame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileNew1.cpp">
+    <ClCompile Include="DlgFileNew1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TransferFilesDlg.cpp">
@@ -668,7 +668,7 @@
     <ClInclude Include="Adinterv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileNew1.h">
+    <ClInclude Include="DlgFileNew1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbIndexTable.h">
