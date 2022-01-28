@@ -441,10 +441,10 @@
     <ClCompile Include="USBPxxS1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataTranslationDAC.cpp">
+    <ClCompile Include="DataTranslation_DA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataTranslationADC.cpp">
+    <ClCompile Include="DataTranslation_AD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -977,10 +977,10 @@
     <ClInclude Include="USBPxxS1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataTranslationDAC.h">
+    <ClInclude Include="DataTranslation_DA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataTranslationADC.h">
+    <ClInclude Include="DataTranslation_AD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

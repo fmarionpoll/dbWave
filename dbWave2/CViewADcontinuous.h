@@ -9,8 +9,8 @@
 #include <OLTYPES.H>
 #include <Olmem.h>
 
-#include "DataTranslationADC.h"
-#include "DataTranslationDAC.h"
+#include "DataTranslation_AD.h"
+#include "DataTranslation_DA.h"
 #include "USBPxxS1Ctl.h"
 
 
@@ -26,17 +26,17 @@ protected:
 
 	CdbMainTable*		m_ptableSet = nullptr;
 	CString				m_boardName;
-	DataTranslationADC	m_Acq32_ADC;
-	DataTranslationDAC	m_Acq32_DAC;
+	DataTranslation_AD	m_Acq32_AD;
+	DataTranslation_DA	m_Acq32_DA;
 
-	CRulerBar			m_ADC_xRulerBar;
-	CRulerBar			m_ADC_yRulerBar;
+	CRulerBar			m_AD_xRulerBar;
+	CRulerBar			m_AD_yRulerBar;
 	CComboBox			m_ADcardCombo;
 	CMFCButton			m_btnStartStop;
 	BOOL				m_bADwritetofile = false;
 	int					m_bStartOutPutMode = 0;
-	bool				m_DAC_present = false;
-	bool				m_ADC_present = false;
+	bool				m_DA_present = false;
+	bool				m_AD_present = false;
 
 protected:
 	CChartDataWnd		m_ADsourceView;				// source data display button
@@ -68,7 +68,7 @@ protected:
 	BOOL				m_bFoundDTOPenLayerDLL = false;
 	BOOL				m_bhidesubsequent = false;
 
-	CAcqDataDoc			m_acquiredDataFile;			// document
+	CAcqDataDoc			m_inputDataFile;			// document
 	//CAcqDataDoc		m_outputDataFile;			// D/A file...
 	CStringArray		m_csNameArray;
 	BOOL				m_bFileOpen = false;		// flag / file open
@@ -79,8 +79,8 @@ protected:
 	BOOL				m_bSimultaneousStart = false;	//TRUE if the card is capable of this
 
 	// DT buffer
-	OPTIONS_ACQDATA*	m_pADC_options = nullptr;	// pointer to data acq options 
-	OPTIONS_OUTPUTDATA* m_pDAC_options = nullptr;	// pointer to data output options
+	OPTIONS_ACQDATA*	m_pOptions_AD = nullptr;	// pointer to data acq options 
+	OPTIONS_OUTPUTDATA* m_pOptions_DA = nullptr;	// pointer to data output options
 	BOOL				m_bsimultaneousStartDA = false;
 
 	// sweep
@@ -106,8 +106,8 @@ protected:
 	BOOL	StartAcquisition();
 	BOOL	StartOutput();
 	void	StopOutput();
-	BOOL InitAcquisitionSystemAndBuffers();
-	void InitAcquisitionDisplay();
+	BOOL	InitAcquisitionSystemAndBuffers();
+	void	InitAcquisitionDisplay();
 
 	BOOL	InitCyberAmp();
 	BOOL	Defineexperiment();
@@ -116,26 +116,25 @@ protected:
 	void	displayolDaErrorMessage(CHAR* errstr);
 
 	// Overrides
-			CDaoRecordset* OnGetRecordset();
+	CDaoRecordset* OnGetRecordset();
 	void	DoDataExchange(CDataExchange* pDX) override; 
 	void	OnInitialUpdate() override;
 	void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 			~CADContView() override;
 	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+
 	void	ChainDialog(WORD iID);
 
 #ifdef _DEBUG
 	void	AssertValid() const override;
 	void	Dump(CDumpContext& dc) const override;
-#endif
+	CdbWaveDoc* GetDocument();
+#else
 
-#ifndef _DEBUG  // debug version in dbWaveView.cpp
 	inline CdbWaveDoc* CADContView::GetDocument()
 	{
 		return (CdbWaveDoc*)m_pDocument;
 	}
-#else
-	CdbWaveDoc* GetDocument();
 #endif
 
 	// Generated message map functions
@@ -151,6 +150,8 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
 	afx_msg void OnBufferDone_ADC();
+	void ADC_Transfer(short* pDTbuf0);
+	void TransferToFile();
 	afx_msg void OnTriggerError_ADC();
 	afx_msg void OnOverrunError_ADC();
 	afx_msg void OnQueueDone_ADC();

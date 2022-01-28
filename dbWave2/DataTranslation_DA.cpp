@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "DataTranslationDAC.h"
+#include "DataTranslation_DA.h"
 
 #include <olerrors.h>
 #include <olmem.h>
@@ -8,7 +8,7 @@
 #include "DlgDAChannels.h"
 
 
-BOOL DataTranslationDAC::DAC_OpenSubSystem(const CString cardName)
+BOOL DataTranslation_DA::OpenSubSystem(const CString cardName)
 {
 	try
 	{
@@ -22,7 +22,7 @@ BOOL DataTranslationDAC::DAC_OpenSubSystem(const CString cardName)
 			return FALSE;
 		SetSubSysElement(0);
 		ASSERT(GetHDass() != NULL),
-			m_bsimultaneousStartDA = GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
+			m_bsimultaneousStart_DA = GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
 
 	}
 	catch (COleDispatchException* e)
@@ -33,7 +33,7 @@ BOOL DataTranslationDAC::DAC_OpenSubSystem(const CString cardName)
 	return TRUE;
 }
 
-BOOL DataTranslationDAC::DAC_ClearAllOutputs()
+BOOL DataTranslation_DA::ClearAllOutputs()
 {
 	try
 	{
@@ -49,7 +49,7 @@ BOOL DataTranslationDAC::DAC_ClearAllOutputs()
 		SetDataFlow(OLx_DF_SINGLEVALUE);
 		long out_value = 0;
 		if (GetEncoding() == OLx_ENC_BINARY)
-			out_value = WORD((out_value ^ m_DACmsbit) & m_DAClRes);
+			out_value = WORD((out_value ^ m_msbit) & m_lRes);
 
 		Config();
 		int nchansmax = GetSSCaps(OLSSC_NUMCHANNELS) - 1;
@@ -66,7 +66,7 @@ BOOL DataTranslationDAC::DAC_ClearAllOutputs()
 	return TRUE;
 }
 
-BOOL DataTranslationDAC::DAC_InitSubSystem(double ADC_channel_samplingrate, int ADC_trigger_mode)
+BOOL DataTranslation_DA::InitSubSystem(double ADC_channel_samplingrate, int ADC_trigger_mode)
 {
 	try
 	{
@@ -89,15 +89,15 @@ BOOL DataTranslationDAC::DAC_InitSubSystem(double ADC_channel_samplingrate, int 
 			trig = 0;
 		SetTrigger(trig);
 
-		DAC_SetChannelList();
+		SetChannelList();
 		const double resolutionfactor = pow(2.0, GetResolution());
-		m_DACmsbit = long(pow(2.0, double(GetResolution()) - 1.));
-		m_DAClRes = long(resolutionfactor - 1.);
+		m_msbit = long(pow(2.0, double(GetResolution()) - 1.));
+		m_lRes = long(resolutionfactor - 1.);
 
-		for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
+		for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &m_pDAC_options->outputparms_array.GetAt(i);
-			//DAC_MSequence(TRUE, pParms);
+			OUTPUTPARMS* pParms = &m_pOptions->outputparms_array.GetAt(i);
+			//MSequence(TRUE, pParms);
 			if (pParms->bDigital)
 				continue;
 			const double delta = double(GetMaxRange()) - double(GetMinRange());
@@ -117,14 +117,14 @@ BOOL DataTranslationDAC::DAC_InitSubSystem(double ADC_channel_samplingrate, int 
 	return TRUE;
 }
 
-void DataTranslationDAC::DAC_SetChannelList()
+void DataTranslation_DA::SetChannelList()
 {
 	int nanalogOutputs = 0;
 	int ndigitalOutputs = 0;
 
-	for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
+	for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* pParms = &m_pDAC_options->outputparms_array.GetAt(i);
+		const OUTPUTPARMS* pParms = &m_pOptions->outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 		if (!pParms->bDigital)
@@ -132,7 +132,7 @@ void DataTranslationDAC::DAC_SetChannelList()
 		else
 			ndigitalOutputs++;
 	}
-	m_DACdigitalchannel = 0;
+	m_digitalchannel = 0;
 	int nchans = nanalogOutputs;
 	nchans += (ndigitalOutputs > 0);
 
@@ -149,19 +149,19 @@ void DataTranslationDAC::DAC_SetChannelList()
 			{
 				if (nanalogOutputs > 0)
 				{
-					SetChannelList(i, i);
+					CDTAcq32::SetChannelList(i, i);
 					nanalogOutputs--;
-					m_DACdigitalchannel++;
+					m_digitalchannel++;
 				}
 			}
 		}
 
 		if (ndigitalOutputs)
 		{
-			SetChannelList(m_DACdigitalchannel, nchansmax - 1);
+			CDTAcq32::SetChannelList(m_digitalchannel, nchansmax - 1);
 		}
 
-		m_DAClistsize = GetListSize();
+		m_listsize = GetListSize();
 	}
 	catch (COleDispatchException* e)
 	{
@@ -169,7 +169,7 @@ void DataTranslationDAC::DAC_SetChannelList()
 	}
 }
 
-void DataTranslationDAC::DAC_DeleteBuffers()
+void DataTranslation_DA::DeleteBuffers()
 {
 	try {
 		if (GetHDass() == NULL)
@@ -183,7 +183,7 @@ void DataTranslationDAC::DAC_DeleteBuffers()
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
 		} while (hBuf != NULL);
-		m_DAC_bufhandle = hBuf;
+		m_bufhandle = hBuf;
 	}
 	catch (COleDispatchException* e)
 	{
@@ -191,84 +191,84 @@ void DataTranslationDAC::DAC_DeleteBuffers()
 	}
 }
 
-void DataTranslationDAC::DAC_DeclareAndFillBuffers(float sweepduration, float chrate, int nbuffers)
+void DataTranslation_DA::DeclareAndFillBuffers(float sweepduration, float chrate, int nbuffers)
 {
 	// close data buffers
-	DAC_DeleteBuffers();
+	DeleteBuffers();
 
 	// get current parms from A/D conversion
-	m_DAC_frequency = chrate;
+	m_frequency = chrate;
 
 	// define buffer length
 	
 	long chsweeplength = (long)(sweepduration * chrate);
-	m_DAC_chbuflen = chsweeplength / nbuffers;
-	m_DAC_buflen = m_DAC_chbuflen * m_DAClistsize;
+	m_chbuflen = chsweeplength / nbuffers;
+	m_buflen = m_chbuflen * m_listsize;
 
-	for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
+	for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* outputparms_array = &(m_pDAC_options->outputparms_array.GetAt(i));
+		OUTPUTPARMS* outputparms_array = &(m_pOptions->outputparms_array.GetAt(i));
 		outputparms_array->lastphase = 0;
 		outputparms_array->lastamp = 0;
 	}
 
 	// declare buffers to DT
-	m_DAC_nBuffersFilledSinceStart = 0;
+	m_nBuffersFilledSinceStart = 0;
 	for (int i = 0; i <= nbuffers; i++)
 	{
-		ECODE ecode = olDmAllocBuffer(0, m_DAC_buflen, &m_DAC_bufhandle);
+		ECODE ecode = olDmAllocBuffer(0, m_buflen, &m_bufhandle);
 		short* pDTbuf;
-		ecode = olDmGetBufferPtr(m_DAC_bufhandle, (void**)&pDTbuf);
-		DAC_FillBuffer(pDTbuf);
-		if ((ecode == OLNOERROR) && (m_DAC_bufhandle != nullptr))
+		ecode = olDmGetBufferPtr(m_bufhandle, (void**)&pDTbuf);
+		FillBuffer(pDTbuf);
+		if ((ecode == OLNOERROR) && (m_bufhandle != nullptr))
 		{
-			SetQueue(long(m_DAC_bufhandle));
+			SetQueue(long(m_bufhandle));
 		}
 	}
 }
 
-void DataTranslationDAC::DAC_ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan)
+void DataTranslation_DA::ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan)
 {
-	for (int i = chan; i < m_DAC_buflen; i += m_DAClistsize)
-		*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ m_DACmsbit) & m_DAClRes);
+	for (int i = chan; i < m_buflen; i += m_listsize)
+		*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ m_msbit) & m_lRes);
 }
 
-void DataTranslationDAC::DAC_FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	double	phase = outputparms_array->lastphase;
-	double	freq = outputparms_array->dFrequency / m_DAC_frequency;
+	double	freq = outputparms_array->dFrequency / m_frequency;
 	const double amplitude = (outputparms_array->ampUp - outputparms_array->ampLow) / 2;
 	const double offset = (outputparms_array->ampUp + outputparms_array->ampLow) / 2;
-	const int DAC_n_channels = m_DAClistsize;
+	const int n_channels = m_listsize;
 
 	const double pi2 = 3.1415927 * 2;
 	freq = freq * pi2;
-	for (int i = chan; i < m_DAC_buflen; i += DAC_n_channels)
+	for (int i = chan; i < m_buflen; i += n_channels)
 	{
 		*(pDTbuf + i) = short(cos(phase) * amplitude + offset);
-		if (*(pDTbuf + i) > m_DACmsbit)
-			*(pDTbuf + i) = short(m_DACmsbit - 1);
+		if (*(pDTbuf + i) > m_msbit)
+			*(pDTbuf + i) = short(m_msbit - 1);
 		phase += freq;
 		if (phase > pi2)
 			phase -= pi2;
 	}
 
 	if (GetEncoding() == OLx_ENC_BINARY)
-		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
 	outputparms_array->lastphase = phase;
 	outputparms_array->lastamp = amplitude;
 }
 
-void DataTranslationDAC::DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	double	phase = outputparms_array->lastphase;
-	const double freq = outputparms_array->dFrequency / m_DAC_frequency;
+	const double freq = outputparms_array->dFrequency / m_frequency;
 	const double amp_up = outputparms_array->ampUp;
 	const double amp_low = outputparms_array->ampLow;
-	const int DAC_n_channels = m_DAClistsize;
+	const int n_channels = m_listsize;
 
-	for (int i = chan; i < m_DAC_buflen; i += DAC_n_channels)
+	for (int i = chan; i < m_buflen; i += n_channels)
 	{
 		double	amp;
 		if (phase < 0)
@@ -282,24 +282,24 @@ void DataTranslationDAC::DAC_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTP
 	}
 
 	if (GetEncoding() == OLx_ENC_BINARY)
-		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
 	outputparms_array->lastphase = phase;
 }
 
-void DataTranslationDAC::DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	double phase = outputparms_array->lastphase;
-	const double freq = outputparms_array->dFrequency / m_DAC_frequency;
+	const double freq = outputparms_array->dFrequency / m_frequency;
 	double	amp = outputparms_array->ampUp;
-	int DAC_n_channels = m_DAClistsize;
+	int n_channels = m_listsize;
 
-	for (int i = chan; i < m_DAC_buflen; i += DAC_n_channels)
+	for (int i = chan; i < m_buflen; i += n_channels)
 	{
 		*(pDTbuf + i) = short(2 * phase * amp);
 		// clip value
-		if (*(pDTbuf + i) >= m_DACmsbit)
-			*(pDTbuf + i) = short(m_DACmsbit - 1);
+		if (*(pDTbuf + i) >= m_msbit)
+			*(pDTbuf + i) = short(m_msbit - 1);
 		phase = phase + 2 * freq;
 		if (phase > 0.5)
 		{
@@ -309,51 +309,51 @@ void DataTranslationDAC::DAC_FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OU
 	}
 
 	if (GetEncoding() == OLx_ENC_BINARY)
-		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
 	outputparms_array->lastphase = phase;
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslationDAC::DAC_FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	double	amp = outputparms_array->ampUp;
-	int nchans = m_DAClistsize;
+	int nchans = m_listsize;
 
-	for (int i = chan; i < m_DAC_buflen; i += nchans)
+	for (int i = chan; i < m_buflen; i += nchans)
 		*(pDTbuf + i) = (WORD) amp;
 
 	if (GetEncoding() == OLx_ENC_BINARY)
-		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslationDAC::DAC_FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	double delta = double(GetMaxRange()) - double(GetMinRange());
 	double	amp = outputparms_array->value * pow(2.0, GetResolution()) / delta;
-	int nchans = m_DAClistsize;
+	int nchans = m_listsize;
 
-	for (int i = chan; i < m_DAC_buflen; i += nchans)
+	for (int i = chan; i < m_buflen; i += nchans)
 		*(pDTbuf + i) = (WORD) amp;
 
 	if (GetEncoding() == OLx_ENC_BINARY)
-		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslationDAC::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	double	ampUp = outputparms_array->ampUp;
 	double  ampLow = outputparms_array->ampLow;
-	int		nchans = m_DAClistsize;
+	int		nchans = m_listsize;
 
 	CIntervalsAndWordsSeries* pstim = &outputparms_array->sti;
-	double	chFreqRatio = m_DAC_frequency / pstim->chrate;
-	long	buffer_start = m_DAC_nBuffersFilledSinceStart * m_DAC_chbuflen;
-	long	buffer_end = (m_DAC_nBuffersFilledSinceStart + 1) * m_DAC_chbuflen;
+	double	chFreqRatio = m_frequency / pstim->chrate;
+	long	buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
+	long	buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
 	long	buffer_ii = buffer_start;
 	int		interval = 0;
 
@@ -371,10 +371,10 @@ void DataTranslationDAC::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OU
 	double amp = ampUp * wamp + ampLow * !wamp;
 	WORD wout = (WORD) amp;
 	if (GetEncoding() == OLx_ENC_BINARY)
-		wout = (WORD)(wout ^ m_DACmsbit) & m_DAClRes;
+		wout = (WORD)(wout ^ m_msbit) & m_lRes;
 
 	// fill buffer
-	for (int i = chan; i < m_DAC_buflen; i += nchans, buffer_ii++)
+	for (int i = chan; i < m_buflen; i += nchans, buffer_ii++)
 	{
 		*(pDTbuf + i) = wout;
 
@@ -388,13 +388,13 @@ void DataTranslationDAC::DAC_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OU
 			amp = ampUp * wamp + ampLow * !wamp;
 			wout = (WORD) amp;
 			if (GetEncoding() == OLx_ENC_BINARY)
-				wout = (WORD)(wout ^ m_DACmsbit) & m_DAClRes;
+				wout = (WORD)(wout ^ m_msbit) & m_lRes;
 		}
 	}
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslationDAC::DAC_MSequence(BOOL bStart, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::MSequence(BOOL bStart, OUTPUTPARMS* outputparms_array)
 {
 	outputparms_array->count--;
 	if (outputparms_array->count == 0) {
@@ -412,13 +412,13 @@ void DataTranslationDAC::DAC_MSequence(BOOL bStart, OUTPUTPARMS* outputparms_arr
 	}
 }
 
-void DataTranslationDAC::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	int DAClistsize = m_DAClistsize;
+	int DAClistsize = m_listsize;
 	double x = 0;
 	int mseqOffsetDelay = outputparms_array->mseq_iDelay;
 
-	for (int i = chan; i < m_DAC_buflen; i += DAClistsize)
+	for (int i = chan; i < m_buflen; i += DAClistsize)
 	{
 		x = 0;
 		if (outputparms_array->mseq_iDelay > 0)
@@ -427,7 +427,7 @@ void DataTranslationDAC::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUT
 		{
 			x = outputparms_array->ampLow;
 			if (outputparms_array->mseq_iDelay == 0) {
-				DAC_MSequence(FALSE, outputparms_array);
+				MSequence(FALSE, outputparms_array);
 				x = (outputparms_array->bit1 * outputparms_array->ampUp) + (!outputparms_array->bit1 * outputparms_array->ampLow);
 			}
 		}
@@ -435,22 +435,22 @@ void DataTranslationDAC::DAC_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUT
 	}
 
 	if (GetEncoding() == OLx_ENC_BINARY)
-		DAC_ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
+		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
 
 	outputparms_array->lastamp = x;
 }
 
-void DataTranslationDAC::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	WORD	ampLow = 0;
 	WORD	ampUp = 1;
 	ampUp = ampUp << outputparms_array->iChan;
-	int		nchans = m_DAClistsize;
+	int		nchans = m_listsize;
 
 	CIntervalsAndWordsSeries* pstim = &outputparms_array->sti;
-	double	chFreqRatio = m_DAC_frequency / pstim->chrate;
-	long	buffer_start = m_DAC_nBuffersFilledSinceStart * m_DAC_chbuflen;
-	long	buffer_end = (m_DAC_nBuffersFilledSinceStart + 1) * m_DAC_chbuflen;
+	double	chFreqRatio = m_frequency / pstim->chrate;
+	long	buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
+	long	buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
 	long	buffer_ii = buffer_start;
 	int		interval = 0;
 
@@ -470,9 +470,9 @@ void DataTranslationDAC::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan
 		wout = ampUp;
 
 	// fill buffer
-	for (int i = chan; i < m_DAC_buflen; i += nchans, buffer_ii++)
+	for (int i = chan; i < m_buflen; i += nchans, buffer_ii++)
 	{
-		if (m_DACdigitalfirst == 0)
+		if (m_digitalfirst == 0)
 			*(pDTbuf + i) = wout;
 		else
 			*(pDTbuf + i) |= wout;
@@ -491,24 +491,24 @@ void DataTranslationDAC::DAC_Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan
 	}
 }
 
-void DataTranslationDAC::DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	double	phase = outputparms_array->lastphase;
 	WORD	amp = 0;
 	WORD	ampUp = 1;
 	ampUp = ampUp << outputparms_array->iChan;
 	WORD	ampLow = 0;
-	double	Freq = outputparms_array->dFrequency / m_DAC_frequency;
-	int nchans = m_DAClistsize;
+	double	Freq = outputparms_array->dFrequency / m_frequency;
+	int nchans = m_listsize;
 
-	for (int i = chan; i < m_DAC_buflen; i += nchans)
+	for (int i = chan; i < m_buflen; i += nchans)
 	{
 		if (phase < 0)
 			amp = ampUp;
 		else
 			amp = ampLow;
 
-		if (m_DACdigitalfirst == 0)
+		if (m_digitalfirst == 0)
 			*(pDTbuf + i) = amp;
 		else
 			*(pDTbuf + i) |= amp;
@@ -520,16 +520,16 @@ void DataTranslationDAC::DAC_Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, 
 	outputparms_array->lastphase = phase;
 }
 
-void DataTranslationDAC::DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
 	WORD	ampLow = 0;
 	WORD	ampUp = 1;
 	ampUp = ampUp << outputparms_array->iChan;
-	int DAClistsize = m_DAClistsize;
+	int DAClistsize = m_listsize;
 	double x = 0;
 	int mseqOffsetDelay = outputparms_array->mseq_iDelay;
 
-	for (int i = chan; i < m_DAC_buflen; i += DAClistsize)
+	for (int i = chan; i < m_buflen; i += DAClistsize)
 	{
 		x = 0;
 		if (outputparms_array->mseq_iDelay > 0)
@@ -538,11 +538,11 @@ void DataTranslationDAC::DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OU
 		{
 			x = outputparms_array->ampLow;
 			if (outputparms_array->mseq_iDelay == 0) {
-				DAC_MSequence(FALSE, outputparms_array);
+				MSequence(FALSE, outputparms_array);
 				x = double(outputparms_array->bit1) * double(ampUp) + double(!outputparms_array->bit1) * double(ampLow);
 			}
 		}
-		if (m_DACdigitalfirst == 0)
+		if (m_digitalfirst == 0)
 			*(pDTbuf + i) = WORD(x);
 		else
 			*(pDTbuf + i) |= WORD(x);
@@ -550,13 +550,13 @@ void DataTranslationDAC::DAC_Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OU
 	outputparms_array->lastamp = x;
 }
 
-void DataTranslationDAC::DAC_FillBuffer(short* pDTbuf)
+void DataTranslation_DA::FillBuffer(short* pDTbuf)
 {
 	int janalog = 0;
-	m_DACdigitalfirst = 0;
-	for (int i = 0; i < m_pDAC_options->outputparms_array.GetSize(); i++)
+	m_digitalfirst = 0;
+	for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* pParms = &m_pDAC_options->outputparms_array.GetAt(i);
+		OUTPUTPARMS* pParms = &m_pOptions->outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 
@@ -565,26 +565,26 @@ void DataTranslationDAC::DAC_FillBuffer(short* pDTbuf)
 			switch (pParms->iWaveform)
 			{
 			case DA_SINEWAVE:
-				DAC_FillBufferWith_SINUSOID(pDTbuf, janalog, pParms);
+				FillBufferWith_SINUSOID(pDTbuf, janalog, pParms);
 				break;
 			case DA_SQUAREWAVE:
-				DAC_FillBufferWith_SQUARE(pDTbuf, janalog, pParms);
+				FillBufferWith_SQUARE(pDTbuf, janalog, pParms);
 				break;
 			case DA_TRIANGLEWAVE:
-				DAC_FillBufferWith_TRIANGLE(pDTbuf, janalog, pParms);
+				FillBufferWith_TRIANGLE(pDTbuf, janalog, pParms);
 				break;
 			case DA_LINEWAVE:
-				DAC_FillBufferWith_RAMP(pDTbuf, janalog, pParms);
+				FillBufferWith_RAMP(pDTbuf, janalog, pParms);
 				break;
 			case DA_SEQUENCEWAVE:
-				DAC_FillBufferWith_ONOFFSeq(pDTbuf, janalog, pParms);
+				FillBufferWith_ONOFFSeq(pDTbuf, janalog, pParms);
 				break;
 			case DA_MSEQWAVE:
-				DAC_FillBufferWith_MSEQ(pDTbuf, janalog, pParms);
+				FillBufferWith_MSEQ(pDTbuf, janalog, pParms);
 				break;
 			case DA_CONSTANT:
 			default:
-				DAC_FillBufferWith_CONSTANT(pDTbuf, janalog, pParms);
+				FillBufferWith_CONSTANT(pDTbuf, janalog, pParms);
 				break;
 			}
 			janalog++;
@@ -594,13 +594,13 @@ void DataTranslationDAC::DAC_FillBuffer(short* pDTbuf)
 			switch (pParms->iWaveform)
 			{
 			case DA_SQUAREWAVE:
-				DAC_Dig_FillBufferWith_SQUARE(pDTbuf, m_DACdigitalchannel, pParms);
+				Dig_FillBufferWith_SQUARE(pDTbuf, m_digitalchannel, pParms);
 				break;
 			case DA_SEQUENCEWAVE:
-				DAC_Dig_FillBufferWith_ONOFFSeq(pDTbuf, m_DACdigitalchannel, pParms);
+				Dig_FillBufferWith_ONOFFSeq(pDTbuf, m_digitalchannel, pParms);
 				break;
 			case DA_MSEQWAVE:
-				DAC_Dig_FillBufferWith_MSEQ(pDTbuf, m_DACdigitalchannel, pParms);
+				Dig_FillBufferWith_MSEQ(pDTbuf, m_digitalchannel, pParms);
 				break;
 			case DA_ONE:
 				break;
@@ -608,22 +608,22 @@ void DataTranslationDAC::DAC_FillBuffer(short* pDTbuf)
 			default:
 				break;
 			}
-			m_DACdigitalfirst++;
+			m_digitalfirst++;
 		}
 	}
-	m_DAC_nBuffersFilledSinceStart++;
+	m_nBuffersFilledSinceStart++;
 }
 
-void DataTranslationDAC::DAC_Start()
+void DataTranslation_DA::Start()
 {
 	Config();
 	Start();
-	m_DAC_inprogress = true;
+	m_inprogress = true;
 }
 
-void DataTranslationDAC::DAC_StopAndLiberateBuffers()
+void DataTranslation_DA::StopAndLiberateBuffers()
 {
-	if (!m_DAC_inprogress)
+	if (!m_inprogress)
 		return;
 
 	try {
@@ -639,17 +639,17 @@ void DataTranslationDAC::DAC_StopAndLiberateBuffers()
 			}
 		} while (hBuf != NULL);
 
-		DAC_ClearAllOutputs();
+		ClearAllOutputs();
 	}
 	catch (COleDispatchException* e)
 	{
 		DTLayerError(e);
 	}
-	m_DAC_inprogress = FALSE;
+	m_inprogress = FALSE;
 }
 
 
-void DataTranslationDAC::DTLayerError(COleDispatchException* e)
+void DataTranslation_DA::DTLayerError(COleDispatchException* e)
 {
 	CString myError;
 	myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
@@ -659,21 +659,21 @@ void DataTranslationDAC::DTLayerError(COleDispatchException* e)
 }
 
 
-void DataTranslationDAC::DAC_OnBufferDone()
+void DataTranslation_DA::OnBufferDone()
 {
 	// get buffer off done list	
-	m_DAC_bufhandle = (HBUF) GetQueue();
-	if (m_DAC_bufhandle == NULL)
+	m_bufhandle = (HBUF) GetQueue();
+	if (m_bufhandle == NULL)
 		return;
 
 	// get pointer to buffer
 	short* pDTbuf;
-	ECODE m_ecode = olDmGetBufferPtr(m_DAC_bufhandle, (void**)&pDTbuf);
+	ECODE m_ecode = olDmGetBufferPtr(m_bufhandle, (void**)&pDTbuf);
 
 	if (m_ecode == OLNOERROR)
 	{
-		DAC_FillBuffer(pDTbuf);
-		SetQueue((long)m_DAC_bufhandle);
+		FillBuffer(pDTbuf);
+		SetQueue((long)m_bufhandle);
 	}
 }
 
