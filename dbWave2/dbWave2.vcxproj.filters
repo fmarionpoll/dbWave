@@ -60,9 +60,6 @@
     <ClCompile Include="Adinterv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Awavepar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Browsefi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -447,6 +444,33 @@
     <ClCompile Include="DataTranslation_AD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OPTIONS_ACQDATA.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_OUTPUTDATA.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OUTPUTPARMS.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_IMPORT.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_VIEWDATAMEASURE.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_VIEWSPIKES.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_VIEWDATA.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SCOPESTRUCT.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SCOPECHANNEL.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -465,9 +489,6 @@
       <Filter>customctrl</Filter>
     </ClInclude>
     <ClInclude Include="Adexperi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Awavepar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Browsefi.h">
@@ -981,6 +1002,33 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataTranslation_AD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OPTIONS_ACQDATA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OPTIONS_OUTPUTDATA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OUTPUTPARMS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OPTIONS_IMPORT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OPTIONS_VIEWDATAMEASURE.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OPTIONS_VIEWSPIKES.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OPTIONS_VIEWDATA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SCOPESTRUCT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SCOPECHANNEL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

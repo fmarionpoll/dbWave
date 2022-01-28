@@ -780,6 +780,15 @@
   <ItemGroup>
     <ClCompile Include="DataTranslation_AD.cpp" />
     <ClCompile Include="DataTranslation_DA.cpp" />
+    <ClCompile Include="OPTIONS_ACQDATA.cpp" />
+    <ClCompile Include="OPTIONS_IMPORT.cpp" />
+    <ClCompile Include="OPTIONS_OUTPUTDATA.cpp" />
+    <ClCompile Include="OPTIONS_VIEWDATA.cpp" />
+    <ClCompile Include="OPTIONS_VIEWDATAMEASURE.cpp" />
+    <ClCompile Include="OPTIONS_VIEWSPIKES.cpp" />
+    <ClCompile Include="OUTPUTPARMS.cpp" />
+    <ClCompile Include="SCOPECHANNEL.cpp" />
+    <ClCompile Include="SCOPESTRUCT.cpp" />
     <ClCompile Include="USBPxxS1.cpp" />
     <ClCompile Include="CViewDao.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
@@ -802,11 +811,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Adinterv.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Awavepar.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1357,6 +1361,15 @@
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="DataTranslation_AD.h" />
     <ClInclude Include="DataTranslation_DA.h" />
+    <ClInclude Include="OPTIONS_ACQDATA.h" />
+    <ClInclude Include="OPTIONS_IMPORT.h" />
+    <ClInclude Include="OPTIONS_OUTPUTDATA.h" />
+    <ClInclude Include="OPTIONS_VIEWDATA.h" />
+    <ClInclude Include="OPTIONS_VIEWDATAMEASURE.h" />
+    <ClInclude Include="OPTIONS_VIEWSPIKES.h" />
+    <ClInclude Include="OUTPUTPARMS.h" />
+    <ClInclude Include="SCOPECHANNEL.h" />
+    <ClInclude Include="SCOPESTRUCT.h" />
     <ClInclude Include="USBPxxS1.h" />
     <ClInclude Include="CViewDao.h" />
     <ClInclude Include="dbWave_structures.h" />
@@ -1368,7 +1381,6 @@
     <ClInclude Include="Adexperi.h" />
     <ClInclude Include="DlgADInputParms.h" />
     <ClInclude Include="Adinterv.h" />
-    <ClInclude Include="Awavepar.h" />
     <ClInclude Include="Browsefi.h" />
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CSpkListTabCtrl.h" />

@@ -327,6 +327,7 @@ BOOL CADContView::StartAcquisition()
 	}
 
 	m_AD_present = InitAcquisitionSystemAndBuffers();
+	InitAcquisitionInputFile();
 	InitAcquisitionDisplay();
 	if (!m_AD_present)
 		return FALSE;
@@ -370,9 +371,9 @@ BOOL CADContView::StartAcquisition()
 	// starting mode of A/D if no simultaneous list
 	if (!m_bSimultaneousStart || m_bStartOutPutMode != 0)
 	{
-		m_Acq32_AD.Start();
+		m_Acq32_AD.ConfigAndStart();
 		if (m_bStartOutPutMode == 0 && m_DA_present)
-			m_Acq32_DA.Start();
+			m_Acq32_DA.ConfigAndStart();
 	}
 
 	// starting A/D when simultaneous list 
@@ -411,14 +412,14 @@ BOOL CADContView::StartAcquisition()
 		ecode = olDaSimultaneousPrestart(hSSlist);
 		if (ecode != OLNOERROR) {
 			olDaGetErrorString(ecode, errstr, 255);
-			displayolDaErrorMessage(errstr);
+			DisplayolDaErrorMessage(errstr);
 		}
 
 		// start simultaneously
 		ecode = olDaSimultaneousStart(hSSlist);
 		if (ecode != OLNOERROR) {
 			olDaGetErrorString(ecode, errstr, 255);
-			displayolDaErrorMessage(errstr);
+			DisplayolDaErrorMessage(errstr);
 		}
 
 		m_Acq32_AD.SetInProgress();
@@ -428,7 +429,7 @@ BOOL CADContView::StartAcquisition()
 	return TRUE;
 }
 
-void CADContView::displayolDaErrorMessage(CHAR* errstr)
+void CADContView::DisplayolDaErrorMessage(CHAR* errstr)
 {
 	CString csError;
 	CStringA cstringa(errstr);
@@ -539,6 +540,7 @@ void CADContView::OnInitialUpdate()
 	if (pApp->m_bADcardFound)
 	{
 		InitAcquisitionSystemAndBuffers();
+		InitAcquisitionInputFile();
 		InitAcquisitionDisplay();
 		InitializeAmplifiers();		// control cyberamplifier OR Alligator Or none?
 		
@@ -591,8 +593,11 @@ void CADContView::OnSize(UINT nType, int cx, int cy)
 	{
 	case SIZE_MAXIMIZED:
 	case SIZE_RESTORED:
-		StopAcquisition(TRUE);
-		UpdateStartStop(m_Acq32_AD.IsInProgress());
+		if (m_Acq32_AD.IsInProgress())
+		{
+			StopAcquisition(TRUE);
+			UpdateStartStop(false);
+		}
 		
 		if (cx <= 0 || cy <= 0)
 			break;
@@ -673,7 +678,7 @@ void CADContView::OnBnClickedStartstop()
 
 void CADContView::UpdateStartStop(BOOL bStart)
 {
-	bool isrunning = m_Acq32_AD.IsInProgress();
+	//bool isrunning = m_Acq32_AD.IsInProgress();
 	if (bStart)
 	{
 		m_btnStartStop.SetWindowText(_T("STOP"));
@@ -687,10 +692,9 @@ void CADContView::UpdateStartStop(BOOL bStart)
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 		if (m_pOptions_AD->baudiblesound)
 			Beep(500, 400);
-		ASSERT(isrunning == FALSE);
+		//ASSERT(isrunning == FALSE);
 	}
-	m_btnStartStop.SetCheck(isrunning);
-	// change display
+	m_btnStartStop.SetCheck(bStart);
 	m_ADsourceView.Invalidate();
 }
 
@@ -780,6 +784,7 @@ void CADContView::OnHardwareAdchannels()
 	{
 		m_pOptions_AD->bChannelType = dlg.m_bchantype;
 		InitAcquisitionSystemAndBuffers();
+		InitAcquisitionInputFile();
 		InitAcquisitionDisplay();
 		UpdateData(FALSE);
 		UpdateChanLegends(0);
@@ -814,6 +819,7 @@ void CADContView::OnHardwareAdintervals()
 		m_sweepduration = dlg.m_sweepduration;
 		m_pOptions_AD->sweepduration = m_sweepduration;
 		InitAcquisitionSystemAndBuffers();
+		InitAcquisitionInputFile();
 		InitAcquisitionDisplay();
 		UpdateData(FALSE);
 	}
@@ -897,7 +903,7 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	m_chsweep1 = m_chsweep2 + 1;								// update data abcissa on the screen 
 	if (m_chsweep1 >= m_chsweeplength)						// if data are out of the screen, wrap
 		m_chsweep1 = 0;
-	m_chsweep2 = m_chsweep1 + m_ADC_chbuflen - 1;				// abcissa of the last data point
+	m_chsweep2 = m_chsweep1 + m_Acq32_AD.Getchbuflen() - 1;				// abcissa of the last data point
 	m_chsweepRefresh = m_chsweep2 - m_chsweep1 + 1;			// number of data points to refresh on the screen
 	pdataBuf += (m_chsweep1 * pWFormat->scan_count);
 
@@ -906,14 +912,14 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	{
 		WORD binzero = WORD((m_pOptions_AD->waveFormat).binzero);
 		WORD* pDTbuf = (WORD*)pDTbuf0;
-		for (int j = 0; j < m_ADC_buflen; j++, pDTbuf++)
+		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, pDTbuf++)
 			*pDTbuf -= binzero;
 	}
 
 	// no undersampling.. copy DTbuffer into data file buffer
 	if (m_pOptions_AD->iundersample <= 1)
 	{
-		memcpy(pdataBuf, pDTbuf0, m_ADC_buflen * sizeof(short));
+		memcpy(pdataBuf, pDTbuf0, m_Acq32_AD.Getbuflen() * sizeof(short));
 	}
 	// undersampling (assume that buffer length is a multiple of iundersample) and copy into data file buffer
 	else
@@ -927,7 +933,7 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 		{
 			short* pSource = pDTbuf;
 			short* pDest = pdataBuf2;
-			for (int i = 0; i < m_ADC_chbuflen; i += iundersample)
+			for (int i = 0; i < m_Acq32_AD.Getchbuflen(); i += iundersample)
 			{
 				long SUM = 0;
 				for (int k = 0; k < iundersample; k++)
@@ -944,9 +950,8 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
-void CADContView::TransferToFile()
+void CADContView::ADC_TransferToFile()
 {
-
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();	// pointer to data descriptor
 	pWFormat->sample_count += m_bytesweepRefresh / 2;				// update total sample count
 	const float duration = float(pWFormat->sample_count) / m_fclockrate;
@@ -970,7 +975,7 @@ void CADContView::TransferToFile()
 				else
 				{
 					if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
-						ADC_OnBufferDone();
+						OnBufferDone_ADC(); // TODO check what was that: ADC_OnBufferDone();
 				}
 				return;
 			}
@@ -983,7 +988,7 @@ void CADContView::TransferToFile()
 		if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
 			pWFormat->sample_count = 0;
 	}
-	m_Acq32_AD.SetQueue(long(m_ADC_bufhandle));				// tell ADdriver that data buffer is free
+	m_Acq32_AD.ReleaseLastBufferToQueue();										// tell ADdriver that data buffer is free
 
 	// then: display options_acqdataataDoc buffer
 	if (pWFormat->bOnlineDisplay)								// display data if requested
@@ -1380,11 +1385,13 @@ BOOL CADContView::StartOutput()
 {
 	if (!m_Acq32_DA.InitSubSystem(m_pOptions_AD->waveFormat.chrate, m_pOptions_AD->waveFormat.trig_mode))
 		return FALSE;
+
 	m_Acq32_DA.DeclareAndFillBuffers(
 		m_pOptions_AD->sweepduration,
 		m_pOptions_AD->waveFormat.chrate,
 		m_pOptions_AD->waveFormat.bufferNitems);
-	m_Acq32_DA.Start();
+
+	m_Acq32_DA.ConfigAndStart();
 	return TRUE;
 }
 
@@ -1396,26 +1403,28 @@ void CADContView::StopOutput()
 BOOL CADContView::InitAcquisitionSystemAndBuffers()
 {
 	const BOOL isPresent = m_Acq32_AD.InitSubSystem(m_pOptions_AD);
-	if (isPresent)
-	{
-		// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
-		*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
-		*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat;
+	if (!isPresent)
+		return false;
 
-		m_Acq32_AD.DeclareBuffers();
-	}
+	m_Acq32_AD.DeclareBuffers(&(m_pOptions_AD->waveFormat));
+	
 	return isPresent;
+}
+
+void CADContView::InitAcquisitionInputFile()
+{
+	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
+	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
+	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat;
+	// set sweep length to the nb of data buffers
+	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat); // get pointer to m_pADC_options wave format
+	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * long(pWFormat->scan_count);	// ?m_inputDataFile.AdjustBUF(m_chsweeplength);
+	m_Acq32_AD.DeclareBuffers(pWFormat);
 }
 
 void CADContView::InitAcquisitionDisplay()
 {
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat); // get pointer to m_pADC_options wave format
-
-	// set sweep length to the nb of data buffers
-	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * long(pWFormat->scan_count);	// ?
-	m_inputDataFile.AdjustBUF(m_chsweeplength);
-	*(m_inputDataFile.GetpWaveFormat()) = *pWFormat;	// save settings into data file	
-
 	// update display length (and also the text - abcissa)	
 	m_ADsourceView.AttachDataFile(&m_inputDataFile);
 	m_ADsourceView.ResizeChannels(0, m_chsweeplength);

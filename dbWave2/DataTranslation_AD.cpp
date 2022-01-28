@@ -23,40 +23,6 @@ BOOL DataTranslation_AD::OpenSubSystem(const CString card_name)
 		return FALSE;
 	}
 
-	// save parameters into CWaveFormat
-	CWaveFormat* pWFormat = &(m_pOptions->waveFormat);
-	pWFormat->fullscale_volts = GetMaxRange() - GetMinRange();
-
-	// convert into bin scale (nb of divisions)
-	int iresolution = GetResolution();
-	pWFormat->binspan = ((1L << iresolution) - 1);
-
-	// set max channel number according to input configuration m_numchansMAX
-	m_pOptions->bChannelType = GetChannelType();
-	if (m_pOptions->bChannelType == OLx_CHNT_SINGLEENDED)
-		m_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
-	else
-		m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
-
-	// data encoding (binary or offset encoding)
-	pWFormat->mode_encoding = (int)GetEncoding();
-	if (pWFormat->mode_encoding == OLx_ENC_BINARY)
-		pWFormat->binzero = pWFormat->binspan / 2 + 1;
-	else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
-		pWFormat->binzero = 0;
-
-	// load infos concerning frequency, dma chans, programmable gains
-	m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
-
-	// TODO tell sourceview here under which format are data
-	// TODO save format of data into temp document
-	// float volts = (float) ((pWFormat->fullscale_Volts) 
-	//				/(pWFormat->binspan) * value  -pWFormat->fullscale_Volts/2);
-	// TODO: update max min of chan 1 with gain && instrumental gain
-	//UpdateChanLegends(0);
-	//UpdateHorizontalRulerBar();
-	//UpdateVerticalRulerBar();
-
 	return TRUE;
 }
 
@@ -68,7 +34,43 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 
 		// store all values within global parameters array
 		m_pOptions = pADC_options;
+
+		// save parameters into CWaveFormat
 		CWaveFormat* poptions_acqdatawaveFormat = &(m_pOptions->waveFormat);
+
+		poptions_acqdatawaveFormat->fullscale_volts = GetMaxRange() - GetMinRange();
+
+		// convert into bin scale (nb of divisions)
+		int iresolution = GetResolution();
+		poptions_acqdatawaveFormat->binspan = ((1L << iresolution) - 1);
+
+		// set max channel number according to input configuration m_numchansMAX
+		m_pOptions->bChannelType = GetChannelType();
+		if (m_pOptions->bChannelType == OLx_CHNT_SINGLEENDED)
+			m_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
+		else
+			m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
+
+		// data encoding (binary or offset encoding)
+		poptions_acqdatawaveFormat->mode_encoding = (int)GetEncoding();
+		if (poptions_acqdatawaveFormat->mode_encoding == OLx_ENC_BINARY)
+			poptions_acqdatawaveFormat->binzero = poptions_acqdatawaveFormat->binspan / 2 + 1;
+		else if (poptions_acqdatawaveFormat->mode_encoding == OLx_ENC_2SCOMP)
+			poptions_acqdatawaveFormat->binzero = 0;
+
+		// load infos concerning frequency, dma chans, programmable gains
+		m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
+
+		// TODO tell sourceview here under which format are data
+		// TODO save format of data into temp document
+		// float volts = (float) ((pWFormat->fullscale_Volts) 
+		//				/(pWFormat->binspan) * value  -pWFormat->fullscale_Volts/2);
+		// TODO: update max min of chan 1 with gain && instrumental gain
+		//UpdateChanLegends(0);
+		//UpdateHorizontalRulerBar();
+		//UpdateVerticalRulerBar();
+
+		//------------------------------------------------------------------
 
 		// Set up the ADC - no wrap so we can get buffer reused	
 		SetDataFlow(OLx_DF_CONTINUOUS);
@@ -134,12 +136,12 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 	return TRUE;
 }
 
-void DataTranslation_AD::DeclareBuffers()
+void DataTranslation_AD::DeclareBuffers(CWaveFormat* pWFormat)
 {
 	DeleteBuffers();
 
 	// make sure that buffer length contains at least nacq chans
-	CWaveFormat* pWFormat = &(m_pOptions->waveFormat); // get pointer to m_pADC_options wave format
+	//CWaveFormat* pWFormat = &(m_pOptions->waveFormat); // get pointer to m_pADC_options wave format
 	if (pWFormat->buffersize < pWFormat->scan_count * m_pOptions->iundersample)
 		pWFormat->buffersize = pWFormat->scan_count * m_pOptions->iundersample;
 
@@ -212,7 +214,7 @@ void DataTranslation_AD::DTLayerError(COleDispatchException* e)
 	e->Delete();
 }
 
-void DataTranslation_AD::Start()
+void DataTranslation_AD::ConfigAndStart()
 {
 	Config();
 	Start();

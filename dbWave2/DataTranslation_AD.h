@@ -9,10 +9,10 @@ public:
 	BOOL	OpenSubSystem(CString card_name);
 	BOOL	InitSubSystem(OPTIONS_ACQDATA* pADC_options);
 	void	DeleteBuffers();
-	void	DeclareBuffers();
+	void	DeclareBuffers(CWaveFormat* pWFormat);
 	void	Transfer(short* pDTbuf);
 	void	StopAndLiberateBuffers();
-	void	Start();
+	void	ConfigAndStart();
 	short*	OnBufferDone();
 
 protected:
@@ -24,7 +24,7 @@ protected:
 	HBUF	m_bufhandle = nullptr;
 	long	m_buflen = 0;
 	long	m_chbuflen = 0;
-	double 	m_freqmax = 50000.;			// maximum sampling frequency (Hz)
+	double 	m_freqmax = 50000.;	
 	int		m_numchansMAX = 8;
 	BOOL	m_bsimultaneousStart_AD = false;
 
@@ -34,6 +34,9 @@ public:
 	void	SetInProgress() { m_inprogress = true; }
 	double	GetMaximumFrequency() const { return m_freqmax; }
 	int		GetMaximumNumberOfChannels() const { return m_numchansMAX; }
-	BOOL	IsSimultaneousStart() { return m_bsimultaneousStart_AD; }
+	BOOL	IsSimultaneousStart() const { return m_bsimultaneousStart_AD; }
+	long	Getchbuflen() const { return m_chbuflen; }
+	long	Getbuflen() const { return m_buflen; }
+	void	ReleaseLastBufferToQueue() { SetQueue(long(m_bufhandle)); }
 };
 

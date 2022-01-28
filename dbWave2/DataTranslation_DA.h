@@ -27,7 +27,7 @@ public:
 	void	Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 
 	void	FillBuffer(short* pDTbuf);
-	void	Start();
+	void	ConfigAndStart();
 	void	StopAndLiberateBuffers();
 
 protected:

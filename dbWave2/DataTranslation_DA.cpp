@@ -614,7 +614,7 @@ void DataTranslation_DA::FillBuffer(short* pDTbuf)
 	m_nBuffersFilledSinceStart++;
 }
 
-void DataTranslation_DA::Start()
+void DataTranslation_DA::ConfigAndStart()
 {
 	Config();
 	Start();

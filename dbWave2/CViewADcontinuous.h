@@ -6,8 +6,6 @@
 #include "RulerBar.h"
 #include "afxwin.h"
 #include "dtacq32.h"
-#include <OLTYPES.H>
-#include <Olmem.h>
 
 #include "DataTranslation_AD.h"
 #include "DataTranslation_DA.h"
@@ -107,13 +105,15 @@ protected:
 	BOOL	StartOutput();
 	void	StopOutput();
 	BOOL	InitAcquisitionSystemAndBuffers();
+	void	InitAcquisitionInputFile();
 	void	InitAcquisitionDisplay();
 
 	BOOL	InitCyberAmp();
 	BOOL	Defineexperiment();
 	void	TransferFilesToDatabase();
 	void	UpdateViewDataFinal();
-	void	displayolDaErrorMessage(CHAR* errstr);
+	void	DisplayolDaErrorMessage(CHAR* errstr);
+	void	ChainDialog(WORD iID);
 
 	// Overrides
 	CDaoRecordset* OnGetRecordset();
@@ -123,14 +123,11 @@ protected:
 			~CADContView() override;
 	void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
-	void	ChainDialog(WORD iID);
-
 #ifdef _DEBUG
 	void	AssertValid() const override;
 	void	Dump(CDumpContext& dc) const override;
 	CdbWaveDoc* GetDocument();
 #else
-
 	inline CdbWaveDoc* CADContView::GetDocument()
 	{
 		return (CdbWaveDoc*)m_pDocument;
@@ -151,7 +148,7 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnBufferDone_ADC();
 	void ADC_Transfer(short* pDTbuf0);
-	void TransferToFile();
+	void ADC_TransferToFile();
 	afx_msg void OnTriggerError_ADC();
 	afx_msg void OnOverrunError_ADC();
 	afx_msg void OnQueueDone_ADC();
