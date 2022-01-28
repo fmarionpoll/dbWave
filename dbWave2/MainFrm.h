@@ -1,9 +1,5 @@
 #pragma once
 
-// MainFrm.h : interface of the CMainFrame class
-//
-/////////////////////////////////////////////////////////////////////////////
-
 #include "dbIndexTable.h"
 #include "dbMainTable.h"
 #include "dbWdatabase.h"

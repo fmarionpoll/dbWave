@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "SCOPESTRUCT.h"
+
 
 class OPTIONS_VIEWDATA : public CObject
 {

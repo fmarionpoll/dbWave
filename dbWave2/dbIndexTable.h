@@ -1,8 +1,5 @@
 #pragma once
 
-// dbInsectTable.h : header file
-//
-/////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable : 4995)
 
 class CdbIndexTable : public CDaoRecordset

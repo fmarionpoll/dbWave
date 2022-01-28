@@ -1,8 +1,5 @@
 #pragma once
 
-// FileVersion.h: interface for the CFileVersion class.
-// by Manuel Laflamme
-//////////////////////////////////////////////////////////////////////
 
 class CFileVersion
 {

@@ -1,5 +1,3 @@
-// cscale.h
-
 #pragma once
 
 class CScale :public CObject
@@ -11,11 +9,11 @@ public:
 	void Serialize(CArchive& ar) override;
 
 protected:
-	int m_npixels;			// scale built for n pixels
-	int	m_nintervals;		// nb of elements within Scale
-	long m_lNdatapoints{};	// Ndatapoints are mapped to m_nintervals
-	CWordArray m_intervals;	// scale array: npts within each interval
-	CDWordArray m_position;	// interval array: consecutive file index (long)
+	int			m_npixels;			// scale built for n pixels
+	int			m_nintervals;		// nb of elements within Scale
+	long		m_lNdatapoints{};	// Ndatapoints are mapped to m_nintervals
+	CWordArray	m_intervals;		// scale array: npts within each interval
+	CDWordArray m_position;			// interval array: consecutive file index (long)
 
 public:
 	int			SetScale(int n_pixels, long n_points);

@@ -1,10 +1,5 @@
 #pragma once
 
-// lsoption.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CLoadSaveOptionsDlg dialog
 
 class CLoadSaveOptionsDlg : public CDialog
 {

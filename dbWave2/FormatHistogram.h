@@ -1,10 +1,5 @@
 #pragma once
 
-// FormatHistogram.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CFormatHistogramDlg dialog
 
 class CFormatHistogramDlg : public CDialog
 {

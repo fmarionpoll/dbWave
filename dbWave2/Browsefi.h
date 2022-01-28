@@ -1,9 +1,6 @@
-// browsefi.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CBrowseFileDlg dialog
 #pragma once
+#include "OPTIONS_VIEWDATA.h"
 
 class CBrowseFileDlg : public CDialog
 {

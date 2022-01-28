@@ -1,13 +1,5 @@
 #pragma once
 
-// SpikeHistView.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CViewSpikeHist form view
-
-//#include "CustomTabCtrl.h"
-
 class CViewSpikeHist : public CDaoRecordView
 {
 	DECLARE_DYNCREATE(CViewSpikeHist)

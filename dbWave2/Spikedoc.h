@@ -4,6 +4,7 @@
 //#include "spikepar.h"	
 #include "Spikelist.h"
 #include "Spikeclas.h"
+#include "OPTIONS_VIEWSPIKES.h"
 
 class CSpikeDoc : public CDocument
 {

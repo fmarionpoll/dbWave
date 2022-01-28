@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "OUTPUTPARMS.h"
 
 class OPTIONS_OUTPUTDATA : public CObject
 {

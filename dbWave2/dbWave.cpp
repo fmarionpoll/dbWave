@@ -613,7 +613,7 @@ void CdbWaveApp::OnFileNew()
 	//	CWinAppEx::OnFileNew();
 
 	// here we provide a custom dialog box with a listbox with 2 choices and manually create the document and the frames.
-	CFileNew1 dlg;
+	CDlgFileNew1 dlg;
 	if (dlg.DoModal() == IDOK)
 	{
 		const auto iselect = dlg.m_icursel;

@@ -5,6 +5,8 @@
 #endif
 
 #include "resource.h"       // main symbols
+#include "OPTIONS_VIEWDATAMEASURE.h"
+#include "OPTIONS_IMPORT.h"
 
 class CdbWaveApp : public CWinAppEx
 {

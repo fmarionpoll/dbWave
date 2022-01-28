@@ -1,10 +1,6 @@
 #pragma once
 #include "datafile_X.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// McidFile document
-// This is the standard MCID header
-
 #define MAX_MCID_CHANNELS	10				// Hopefully gross overkill!
 #define MAX_PROG_NAME		20				// Ditto
 enum	SPIKE_MODE {
@@ -60,12 +56,10 @@ public:
 	DECLARE_DYNCREATE(CDataFileMCID)
 	virtual ~CDataFileMCID();
 
-	// Operations
 public:
 	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
 	int  CheckFileType(CString& cs_filename) override;
 
-	// Implementation
 public:
 	
 #ifdef _DEBUG
@@ -73,6 +67,4 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-	// Generated message map functions
-protected:
 };

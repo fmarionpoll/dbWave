@@ -4,12 +4,6 @@
 #include "ChartData.h"
 #include "Editctrl.h"
 
-// CMeasureOptionsPage.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureOptionsPage dialog
-
 class CMeasureOptionsPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CMeasureOptionsPage)

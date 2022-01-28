@@ -1,7 +1,8 @@
 #pragma once
 #include <olmem.h>
-
 #include "dtacq32.h"
+
+
 class DataTranslation_DA :
 	public CDTAcq32
 {

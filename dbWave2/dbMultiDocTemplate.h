@@ -1,10 +1,5 @@
 #pragma once
 
-// dbMultiDocTemplate.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CdbMultiDocTemplate window
 
 class CdbMultiDocTemplate : public CMultiDocTemplate
 {

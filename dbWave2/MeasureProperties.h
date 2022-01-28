@@ -6,13 +6,6 @@
 #include "MeasureResultsPage.h"
 #include "MeasureVTtagsPage.h"
 
-// MeasureProperties.h : header file
-//
-// This class defines custom modal property sheet
-// CMeasureProperties.
-
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureProperties
 
 class CMeasureProperties : public CPropertySheet
 {

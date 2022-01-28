@@ -1,9 +1,5 @@
 #pragma once
-// exportsp.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CExportSpikeInfosDlg dialog
 
 class CExportSpikeInfosDlg : public CDialog
 {

@@ -1,9 +1,5 @@
 #pragma once
 
-// dbMainTable.h : interface of the CdbMainTable class
-//
-/////////////////////////////////////////////////////////////////////////////
-
 constexpr auto CH_ID				= 0;
 constexpr auto CH_ACQDATE			= 1;
 constexpr auto CH_FILENAME			= 2;

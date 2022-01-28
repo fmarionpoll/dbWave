@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "SCOPECHANNEL.h"
 
 class SCOPESTRUCT : public CObject
 {
@@ -26,6 +27,6 @@ public:
 	float		xScaleSpan_s;
 	float		yScaleSpan_v;
 
-	CArray <SCOPECHAN, SCOPECHAN> channels;
+	CArray <SCOPECHANNEL, SCOPECHANNEL> channels;
 };
 

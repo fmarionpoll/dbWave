@@ -1,11 +1,9 @@
 #pragma once
 
-//#include "StdAfx.h"
 #include "Spikedoc.h"
 #include "ChartData.h"
 #include "ChartSpikeBar.h"
 
-// CDataListCtrlRowObject command target
 
 class CDataListCtrl_Row : public CObject
 {

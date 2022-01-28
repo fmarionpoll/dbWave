@@ -1,6 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-// ADExperimentDlg dialog
-
 #pragma once
 #include "afxeditbrowsectrl.h"
 
@@ -42,15 +39,12 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Implementation: set parameters
-	// data acquisition: set only parameter 1 (address of all parameters)
-	// file: set all three parameters
 public:
-	OPTIONS_ACQDATA* m_pADC_options;		// data parameters (different options common)
-	BOOL			m_bADexpt;		// set true if data acq / false if parmas from file
-	CWaveFormat* m_pwaveFormat;	// if data file, set this to file wave format
-	CdbWaveDoc* m_pdbDoc;
-	BOOL			m_bEditMode;
+	OPTIONS_ACQDATA*	m_pADC_options;	
+	BOOL				m_bADexpt;
+	CWaveFormat*		m_pwaveFormat;
+	CdbWaveDoc*			m_pdbDoc;
+	BOOL				m_bEditMode;
 
 protected:
 	int  SaveList(CComboBox* pCo, CStringArray* p_spike_element);

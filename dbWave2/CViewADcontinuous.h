@@ -10,6 +10,8 @@
 #include "DataTranslation_AD.h"
 #include "DataTranslation_DA.h"
 #include "USBPxxS1Ctl.h"
+#include "OPTIONS_ACQDATA.h"
+#include "OPTIONS_OUTPUTDATA.h"
 
 
 class CADContView final : public CFormView

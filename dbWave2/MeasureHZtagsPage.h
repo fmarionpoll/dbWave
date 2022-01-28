@@ -4,8 +4,6 @@
 #include "ChartData.h"
 #include "Editctrl.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureHZtagsPage dialog
 
 class CMeasureHZtagsPage : public CPropertyPage
 {

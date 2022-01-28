@@ -1,15 +1,13 @@
 #pragma once
 #include "afxwin.h"
 
-// CFileNew1 dialog
-
-class CFileNew1 : public CDialogEx
+class CDlgFileNew1 : public CDialogEx
 {
-	DECLARE_DYNAMIC(CFileNew1)
+	DECLARE_DYNAMIC(CDlgFileNew1)
 
 public:
-	CFileNew1(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CFileNew1();
+	CDlgFileNew1(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CDlgFileNew1();
 
 	// Dialog Data
 	enum { IDD = IDD_FILE_NEW1 };

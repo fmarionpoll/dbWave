@@ -1,11 +1,8 @@
-// dataseri.h : header file
-//
+
 #pragma once
 
 #include "afxcolorbutton.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CDataSeriesFormatDlg dialog
 
 class CDataSeriesFormatDlg : public CDialog
 {

@@ -1,10 +1,5 @@
 #pragma once
 
-// editctrl.h : edit (trap TAB, arrows)
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CEditCtrl window
 
 class CEditCtrl : public CEdit
 {

@@ -1,10 +1,4 @@
-// datacomm.h : header file
-//
-
 #pragma once
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataCommentsDlg dialog
 
 class CDataCommentsDlg : public CDialog
 {

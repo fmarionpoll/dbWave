@@ -1,7 +1,5 @@
 #pragma once
 
-// CSpkListTabCtrl
-
 class CSpkListTabCtrl : public CTabCtrl
 {
 	DECLARE_DYNAMIC(CSpkListTabCtrl)

@@ -255,9 +255,6 @@
     <ClCompile Include="PanelFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="USBPxxS1Ctl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MeasureVTtagsPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -774,9 +771,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImportAlligatorDefinitions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="USBPxxS1Ctl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MeasureVTtagsPage.h">

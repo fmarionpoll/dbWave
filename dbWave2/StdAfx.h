@@ -72,7 +72,7 @@
 #include "StimLevelArray.h"
 #include "WaveBuf.h"		// data file buffer structure
 #include "datafile_X.h"		// data file base class
-#include "Awavepar.h"		// view data options
+
 #include "spikepar.h"		// spike parameters options
 #include "dbMultiDocTemplate.h"
 

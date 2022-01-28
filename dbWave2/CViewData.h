@@ -8,7 +8,6 @@
 #include "CViewDao.h"
 
 
-
 class CViewData : public CViewDAO
 {
 protected:

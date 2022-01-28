@@ -1,8 +1,6 @@
 #pragma once
 #include "Ruler.h"
 
-// chart.h : header file
-
 // display parameters: m_rangemode
 constexpr auto RANGE_ALL = 0;
 constexpr auto RANGE_TIMEINTERVALS = 1;
@@ -24,6 +22,7 @@ constexpr auto RED_COLOR = 4;
 constexpr auto NB_CURSORS = 6;
 
 #include "RulerBar.h"
+#include "SCOPESTRUCT.h"
 
 // CChartWnd window
 
@@ -102,8 +101,8 @@ public:
 	BOOL			m_bNiceGrid = false;
 	int				m_abcissaheight = 10;
 	int				m_ordinateswidth = 25;
-	CRulerBar* m_pXRulerBar = nullptr;
-	CRulerBar* m_pYRulerBar = nullptr;
+	CRulerBar*		m_pXRulerBar = nullptr;
+	CRulerBar*		m_pYRulerBar = nullptr;
 
 	CTagList		m_HZtags{};						// List of horizontal tag lines
 	CTagList		m_VTtags{};						// List of vertical tag lines
@@ -180,7 +179,7 @@ protected:
 
 	BOOL			m_bAllowProps = true;
 	HWND			m_hwndReflect = nullptr;
-	CTag* m_tempVTtag = nullptr;
+	CTag*			m_tempVTtag = nullptr;
 
 protected:
 	virtual void	PreSubclassWindow();

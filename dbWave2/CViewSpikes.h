@@ -1,7 +1,5 @@
 #pragma once
 
-// ViewSpikes.h : header file
-
 #include "SpikeClassListBox.h"
 #include "ScrollBarEx.h"
 #include "CViewDao.h"
