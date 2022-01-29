@@ -1,44 +1,44 @@
 #include "StdAfx.h"
 #include "resource.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "DlgChartProps.h"
-#include <math.h>
+#include <cmath>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-COLORREF CChartWnd::m_colorTable[] =
+COLORREF ChartWnd::m_colorTable[] =
 {
-	RGB(0,   0,   0),	// 0 black
-	RGB(128,   0, 128),	// 1 purple
-	RGB(201, 192, 187),	// 2 silver
-	RGB(128,   0,   0),	// 3 maroon
-	RGB(196,   2,  51),	// 4 red
-	RGB(128, 128, 128),	// 5 grey
-	RGB(249, 132, 229),	// 6 fuschia
-	RGB(0, 128,   0),	// 7 green
-	RGB(91, 255,   0),	// 8 lime
-	RGB(107, 142,  35),	// 9 olive
-	RGB(255, 205,   0),	// 10 yellow
-	RGB(0,   0, 128),	// 11 navy
-	RGB(0,   0, 255),	// 12 blue
-	RGB(0, 128, 128),	// 13 teal
-	RGB(0, 255, 255),	// 14 aqua
-	RGB(255, 255, 255),	// 15 white
-	RGB(1, 1, 1)		// 16 dummy
+	RGB(0, 0, 0), // 0 black
+	RGB(128, 0, 128), // 1 purple
+	RGB(201, 192, 187), // 2 silver
+	RGB(128, 0, 0), // 3 maroon
+	RGB(196, 2, 51), // 4 red
+	RGB(128, 128, 128), // 5 grey
+	RGB(249, 132, 229), // 6 fuschia
+	RGB(0, 128, 0), // 7 green
+	RGB(91, 255, 0), // 8 lime
+	RGB(107, 142, 35), // 9 olive
+	RGB(255, 205, 0), // 10 yellow
+	RGB(0, 0, 128), // 11 navy
+	RGB(0, 0, 255), // 12 blue
+	RGB(0, 128, 128), // 13 teal
+	RGB(0, 255, 255), // 14 aqua
+	RGB(255, 255, 255), // 15 white
+	RGB(1, 1, 1) // 16 dummy
 };
 
-HCURSOR CChartWnd::m_cursor[NB_CURSORS];
-int	CChartWnd::m_cursordragmode[NB_CURSORS];
-int CChartWnd::m_countcurs = 0;
+HCURSOR ChartWnd::m_cursor[NB_CURSORS];
+int ChartWnd::m_cursordragmode[NB_CURSORS];
+int ChartWnd::m_countcurs = 0;
 
-TCHAR CChartWnd::csUnit[] = { _T("GM  mµpf  ") };
-int CChartWnd::dUnitsPower[] = { 9,6, 0, 0, -3, -6, -9, -12, 0 };
-int	CChartWnd::dmaxIndex = 8;
-int	CChartWnd::dniceIntervals[] = { 1, 5, 10,  20,  25,  30,  40, 50, 75, 100, 200, 250, 300, 400, 500, 0 };
+TCHAR ChartWnd::csUnit[] = {_T("GM  mµpf  ")};
+int ChartWnd::dUnitsPower[] = {9, 6, 0, 0, -3, -6, -9, -12, 0};
+int ChartWnd::dmaxIndex = 8;
+int ChartWnd::dniceIntervals[] = {1, 5, 10, 20, 25, 30, 40, 50, 75, 100, 200, 250, 300, 400, 500, 0};
 
-int CChartWnd::FindColor(COLORREF ccolor)
+int ChartWnd::FindColor(COLORREF ccolor)
 {
 	auto icolor = -1;
 	for (auto i = 0; i < NB_COLORS; i++)
@@ -47,10 +47,10 @@ int CChartWnd::FindColor(COLORREF ccolor)
 	return icolor;
 }
 
-int CChartWnd::NiceUnit(float x_val)
+int ChartWnd::NiceUnit(float x_val)
 {
 	auto i = 0;
-	const auto ival = int(x_val);
+	const auto ival = static_cast<int>(x_val);
 	do
 	{
 		if (ival <= dniceIntervals[i])
@@ -59,21 +59,12 @@ int CChartWnd::NiceUnit(float x_val)
 			break;
 		}
 		i++;
-	} while (dniceIntervals[i] > 0);
+	}
+	while (dniceIntervals[i] > 0);
 	return dniceIntervals[i - 1];
 }
 
-// --------------------------------------------------------------------------
-// ChangeUnit: adapt xUnit (string) & scalefactor to xval
-// input:
-//		xval
-// return:
-//		scaled value
-//		xScalefactor
-//		xUnit
-// --------------------------------------------------------------------------
-
-float CChartWnd::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
+float ChartWnd::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 {
 	// avoid division by zero error
 	if (xVal == 0)
@@ -84,7 +75,7 @@ float CChartWnd::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 	}
 
 	// take absolute value of xVal and save sign
-	short	i;
+	short i;
 	short isign = 1;
 	if (xVal < 0)
 	{
@@ -92,24 +83,24 @@ float CChartWnd::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 		xVal = -xVal;
 	}
 	// get power of 10 of the value
-	const auto iprec = static_cast<short>(log10(xVal));	// log10 of value (upper limit)
-	if (iprec <= 0 && xVal < 1.)	// perform extra checking if iprec <= 0
-		i = 4 - iprec / 3;					// change equation if Units values change
+	const auto iprec = static_cast<short>(log10(xVal)); // log10 of value (upper limit)
+	if (iprec <= 0 && xVal < 1.) // perform extra checking if iprec <= 0
+		i = 4 - iprec / 3; // change equation if Units values change
 	else
-		i = 3 - iprec / 3;					// change equation if Units values change
-	if (i > dmaxIndex)					// clip to max index
+		i = 3 - iprec / 3; // change equation if Units values change
+	if (i > dmaxIndex) // clip to max index
 		i = dmaxIndex;
-	else if (i < 0)						// or clip to min index
+	else if (i < 0) // or clip to min index
 		i = 0;
 	// return data
-	*xScalefactor = float(pow(10.0f, dUnitsPower[i]));		// convert & store
-	xUnit->SetAt(0, csUnit[i]);								// replace character corresp to unit
-	return xVal * isign / *xScalefactor;						// return value/scale_factor
+	*xScalefactor = static_cast<float>(pow(10.0f, dUnitsPower[i])); // convert & store
+	xUnit->SetAt(0, csUnit[i]); // replace character corresp to unit
+	return xVal * isign / *xScalefactor; // return value/scale_factor
 }
 
-IMPLEMENT_SERIAL(CChartWnd, CWnd, 1)
+IMPLEMENT_SERIAL(ChartWnd, CWnd, 1)
 
-CChartWnd::CChartWnd()
+ChartWnd::ChartWnd()
 {
 	if (m_countcurs == 0)
 	{
@@ -137,7 +128,7 @@ CChartWnd::CChartWnd()
 
 	SetMouseCursor(0);
 
-	m_clientRect = CRect(0, 0, 10, 10);	// minimal size of the button
+	m_clientRect = CRect(0, 0, 10, 10); // minimal size of the button
 	AdjustDisplayRect(&m_clientRect);
 
 	m_cxjitter = GetSystemMetrics(SM_CXDOUBLECLK);
@@ -150,23 +141,24 @@ CChartWnd::CChartWnd()
 
 	m_xRuler.m_is_horizontal = TRUE;
 	m_yRuler.m_is_horizontal = FALSE;
-	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
+	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY,
+	                   VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
 }
 
-CChartWnd::~CChartWnd()
+ChartWnd::~ChartWnd()
 {
 	// remove static objects
 	m_countcurs--;
 	if (m_countcurs == 0)
 	{
-		for (auto i = 1; i < NB_CURSORS; i++)	// elmt 0: global object cursor
+		for (auto i = 1; i < NB_CURSORS; i++) // elmt 0: global object cursor
 		{
 			if (nullptr != m_cursor[i])
-				::DestroyCursor(m_cursor[i]);
+				DestroyCursor(m_cursor[i]);
 		}
 	}
-	m_HZtags.RemoveAllTags();			// remove horizontal tags
-	m_VTtags.RemoveAllTags();			// remove vertical tags
+	m_HZtags.RemoveAllTags(); // remove horizontal tags
+	m_VTtags.RemoveAllTags(); // remove vertical tags
 	delete m_tempVTtag;
 
 	// delete array of pens
@@ -176,7 +168,7 @@ CChartWnd::~CChartWnd()
 
 // trap call to presubclass in order to get source window size..
 // assume that palette is present within the application inside CMainFrame...
-void CChartWnd::PreSubclassWindow()
+void ChartWnd::PreSubclassWindow()
 {
 	CWnd::PreSubclassWindow();
 
@@ -189,7 +181,7 @@ void CChartWnd::PreSubclassWindow()
 	m_yVE = -m_displayRect.Height();
 }
 
-BEGIN_MESSAGE_MAP(CChartWnd, CWnd)
+BEGIN_MESSAGE_MAP(ChartWnd, CWnd)
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -202,7 +194,8 @@ BEGIN_MESSAGE_MAP(CChartWnd, CWnd)
 	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
-BOOL CChartWnd::Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL ChartWnd::Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID,
+                      CCreateContext* pContext)
 {
 	const auto flag = CWnd::Create(nullptr, lpszWindowName, dw_style, rect, pParentWnd, nID, pContext);
 	if (flag != 0)
@@ -210,7 +203,7 @@ BOOL CChartWnd::Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect,
 	return flag;
 }
 
-void CChartWnd::OnSize(UINT nType, int cx, int cy)
+void ChartWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	SetDisplayAreaSize(cx, cy);
@@ -221,7 +214,7 @@ void CChartWnd::OnSize(UINT nType, int cx, int cy)
 	Invalidate();
 }
 
-void CChartWnd::SetDisplayAreaSize(int cx, int cy)
+void ChartWnd::SetDisplayAreaSize(int cx, int cy)
 {
 	// update coordinates
 	m_clientRect.bottom = cy;
@@ -233,15 +226,16 @@ void CChartWnd::SetDisplayAreaSize(int cx, int cy)
 	m_yVE = -m_displayRect.Height();
 }
 
-BOOL CChartWnd::OnEraseBkgnd(CDC* p_dc)
+BOOL ChartWnd::OnEraseBkgnd(CDC* p_dc)
 {
 	return TRUE; // say we handled it
 }
 
-void CChartWnd::PlotToBitmap(CDC* p_dc)
+void ChartWnd::PlotToBitmap(CDC* p_dc)
 {
 	CBitmap bitmap_plot;
-	bitmap_plot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, p_dc->GetDeviceCaps(PLANES), p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
+	bitmap_plot.CreateBitmap(m_clientRect.right, m_clientRect.bottom, p_dc->GetDeviceCaps(PLANES),
+	                         p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 	m_PlotDC.CreateCompatibleDC(p_dc);
 	const auto pold_plot_bitmap = m_PlotDC.SelectObject(&bitmap_plot);
 	PlotDatatoDC(&m_PlotDC);
@@ -249,7 +243,7 @@ void CChartWnd::PlotToBitmap(CDC* p_dc)
 	m_PlotDC.SelectObject(pold_plot_bitmap);
 }
 
-void CChartWnd::OnPaint()
+void ChartWnd::OnPaint()
 {
 	CPaintDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
@@ -257,16 +251,16 @@ void CChartWnd::OnPaint()
 	// plot directly on the screen
 	if (!m_bUseDIB)
 		PlotDatatoDC(&dc);
-	// display the bitmap
+		// display the bitmap
 	else
 		PlotToBitmap(&dc);
 }
 
-void CChartWnd::PlotDatatoDC(CDC* p_dc)
+void ChartWnd::PlotDatatoDC(CDC* p_dc)
 {
 }
 
-void CChartWnd::EraseBkgnd(CDC* p_dc)
+void ChartWnd::EraseBkgnd(CDC* p_dc)
 {
 	// erase background around m_displayRect (assume only left and bottom areas)
 	if (m_bNiceGrid)
@@ -283,7 +277,7 @@ void CChartWnd::EraseBkgnd(CDC* p_dc)
 	CBrush brush;
 	brush.CreateSolidBrush(m_scopestruct.crScopeFill);
 	const auto p_old_brush = p_dc->SelectObject(&brush);
-	const auto p_old_pen = (CPen*)p_dc->SelectStockObject(BLACK_PEN);
+	const auto p_old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	p_dc->Rectangle(&m_displayRect);
 	p_dc->SelectObject(p_old_pen);
 	p_dc->SelectObject(p_old_brush);
@@ -292,7 +286,7 @@ void CChartWnd::EraseBkgnd(CDC* p_dc)
 	DrawGrid(p_dc);
 }
 
-void CChartWnd::drawGridEvenlySpaced(CDC* p_dc)
+void ChartWnd::drawGridEvenlySpaced(CDC* p_dc)
 {
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
@@ -347,7 +341,7 @@ void CChartWnd::drawGridEvenlySpaced(CDC* p_dc)
 	}
 }
 
-void CChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
+void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -363,9 +357,9 @@ void CChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 	// draw ticks and legends
 	//auto tick_small_height = 4;
 	int tickmax;
-	if (pRuler->m_is_horizontal)		// horizontal
+	if (pRuler->m_is_horizontal) // horizontal
 		tickmax = rc_client.Width();
-	else							// vertical
+	else // vertical
 		tickmax = rc_client.Height();
 
 	// draw scale
@@ -377,19 +371,21 @@ void CChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 	while (dpos <= pRuler->m_dlast)
 	{
 		int tick_pos;
-		if (pRuler->m_is_horizontal)	// horizontal
+		if (pRuler->m_is_horizontal) // horizontal
 		{
-			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
-			if (tick_pos >= 0 && tick_pos <= tickmax) {
-				p_dc->MoveTo(tick_pos, rc_client.bottom - 1);	// line
+			tick_pos = static_cast<int>(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+			if (tick_pos >= 0 && tick_pos <= tickmax)
+			{
+				p_dc->MoveTo(tick_pos, rc_client.bottom - 1); // line
 				p_dc->LineTo(tick_pos, rc_client.top + 1);
 			}
 		}
-		else						// vertical
+		else // vertical
 		{
-			tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
-			if (tick_pos >= 0 && tick_pos <= tickmax) {
-				p_dc->MoveTo(rc_client.left + 1, tick_pos);	// line
+			tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
+			if (tick_pos >= 0 && tick_pos <= tickmax)
+			{
+				p_dc->MoveTo(rc_client.left + 1, tick_pos); // line
 				p_dc->LineTo(rc_client.right - 1, tick_pos);
 			}
 		}
@@ -401,7 +397,7 @@ void CChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 	p_dc->SelectObject(p_old_pen);
 }
 
-void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
+void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -415,15 +411,16 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 	a_pen1.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
 	const auto p_old_pen = p_dc->SelectObject(&a_pen1);
 	a_pen2.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
-	/*auto p_old_font = */p_dc->SelectObject(&m_hFont);
+	/*auto p_old_font = */
+	p_dc->SelectObject(&m_hFont);
 	CString str;
 
 	// draw ticks and legends
 	const auto tick_small_height = 4;
 	int tickmax;
-	if (pRuler->m_is_horizontal)		// horizontal
+	if (pRuler->m_is_horizontal) // horizontal
 		tickmax = rc_client.Width();
-	else							// vertical
+	else // vertical
 		tickmax = rc_client.Height();
 
 	// draw scale
@@ -443,7 +440,7 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 			dsmallpos += smallscaleinc;
 			if (pRuler->m_is_horizontal) // ---------------------------- horizontal
 			{
-				tick_pos = int(rc_client.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+				tick_pos = static_cast<int>(rc_client.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rc_client.left;
 				if (tick_pos >= rc_client.left && tick_pos <= tickmax)
 				{
 					p_dc->MoveTo(tick_pos, rc_client.bottom - 1);
@@ -452,7 +449,7 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 			}
 			else // --------------------------------------------------- vertical
 			{
-				tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rc_client.top;
+				tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rc_client.top;
 				if (tick_pos >= rc_client.top && tick_pos <= tickmax)
 				{
 					p_dc->MoveTo(rc_client.left + 1, tick_pos);
@@ -463,20 +460,20 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 
 		// display large ticks and text
 		p_dc->SelectObject(&a_pen2);
-		if (pRuler->m_is_horizontal)	// horizontal
-			tick_pos = int(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
-		else						// vertical
-			tick_pos = int(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
+		if (pRuler->m_is_horizontal) // horizontal
+			tick_pos = static_cast<int>(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+		else // vertical
+			tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
 		if (tick_pos >= 0 && tick_pos <= tickmax)
 		{
 			str.Format(_T("%g"), dpos);
 			const auto size = p_dc->GetTextExtent(str);
 			int x, y;
-			if (pRuler->m_is_horizontal)	// ----------- horizontal
+			if (pRuler->m_is_horizontal) // ----------- horizontal
 			{
-				p_dc->MoveTo(tick_pos, rc_client.bottom - 1);	// line
+				p_dc->MoveTo(tick_pos, rc_client.bottom - 1); // line
 				p_dc->LineTo(tick_pos, rc_client.top + 1);
-				x = tick_pos - (size.cx / 2);					// text position (upper left)
+				x = tick_pos - (size.cx / 2); // text position (upper left)
 				if (x < 0)
 					x = 0;
 				if (x + size.cx > rc_client.right)
@@ -485,9 +482,9 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 			}
 			else // ---------------------------------- vertical
 			{
-				p_dc->MoveTo(rc_client.left + 1, tick_pos);	// line
+				p_dc->MoveTo(rc_client.left + 1, tick_pos); // line
 				p_dc->LineTo(rc_client.right - 1, tick_pos);
-				x = rc_client.left - size.cx - 2;			// text position (upper left)
+				x = rc_client.left - size.cx - 2; // text position (upper left)
 				y = tick_pos - (size.cy / 2);
 			}
 			p_dc->TextOut(x, y, str);
@@ -501,7 +498,7 @@ void CChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 	p_dc->SelectObject(p_old_pen);
 }
 
-void CChartWnd::drawGridNicelySpaced(CDC* p_dc)
+void ChartWnd::drawGridNicelySpaced(CDC* p_dc)
 {
 	if (m_pXRulerBar == nullptr)
 		drawScalefromRuler(p_dc, &m_xRuler);
@@ -522,7 +519,7 @@ void CChartWnd::drawGridNicelySpaced(CDC* p_dc)
 	}
 }
 
-void CChartWnd::AdjustDisplayRect(CRect* pRect)
+void ChartWnd::AdjustDisplayRect(CRect* pRect)
 {
 	m_displayRect = *pRect;
 	if (m_bNiceGrid)
@@ -534,7 +531,7 @@ void CChartWnd::AdjustDisplayRect(CRect* pRect)
 	}
 }
 
-void CChartWnd::DrawGrid(CDC* p_dc)
+void ChartWnd::DrawGrid(CDC* p_dc)
 {
 	if (m_bNiceGrid)
 		drawGridNicelySpaced(p_dc);
@@ -542,31 +539,31 @@ void CChartWnd::DrawGrid(CDC* p_dc)
 		drawGridEvenlySpaced(p_dc);
 }
 
-void CChartWnd::SetNxScaleCells(int iCells, int iTicks, int iTickLine)
+void ChartWnd::SetNxScaleCells(int iCells, int iTicks, int iTickLine)
 {
 	m_scopestruct.iXCells = iCells;
 	m_scopestruct.iXTicks = iTicks;
 	m_scopestruct.iXTickLine = iTickLine;
 }
 
-void CChartWnd::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
+void ChartWnd::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
 {
 	m_scopestruct.iYCells = iCells;
 	m_scopestruct.iYTicks = iTicks;
 	m_scopestruct.iYTickLine = iTickLine;
 }
 
-void CChartWnd::sendMyMessage(int code, int codeparm)
+void ChartWnd::sendMyMessage(int code, int codeparm)
 {
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void CChartWnd::postMyMessage(int code, int codeparm)
+void ChartWnd::postMyMessage(int code, int codeparm)
 {
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void CChartWnd::prepareDC(CDC* p_dc, CPrintInfo* pInfo)
+void ChartWnd::prepareDC(CDC* p_dc, CPrintInfo* pInfo)
 {
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	if (pInfo == nullptr)
@@ -580,7 +577,7 @@ void CChartWnd::prepareDC(CDC* p_dc, CPrintInfo* pInfo)
 	}
 }
 
-int CChartWnd::SetMouseCursorType(int cursorm)
+int ChartWnd::SetMouseCursorType(int cursorm)
 {
 	m_oldcursorType = m_cursorType;
 	ASSERT(NB_CURSORS > cursorm);
@@ -591,12 +588,13 @@ int CChartWnd::SetMouseCursorType(int cursorm)
 	return cursorm;
 }
 
-void CChartWnd::SetMouseCursor(int cursorm) {
+void ChartWnd::SetMouseCursor(int cursorm)
+{
 	SetMouseCursorType(cursorm);
 	SetCursor(m_currCursor);
 }
 
-void CChartWnd::captureCursor()
+void ChartWnd::captureCursor()
 {
 	SetCapture();
 	auto rect_limit = m_displayRect;
@@ -604,19 +602,19 @@ void CChartWnd::captureCursor()
 	ClipCursor(rect_limit);
 }
 
-void CChartWnd::releaseCursor()
+void ChartWnd::releaseCursor()
 {
 	ReleaseCapture();
 	ClipCursor(nullptr);
 }
 
-BOOL CChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message)
+BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message)
 {
-	::SetCursor(m_currCursor);
+	SetCursor(m_currCursor);
 	return TRUE;
 }
 
-void CChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	int newcursor = m_cursorType + 1;
 	if (newcursor >= m_cursorIndexMax)
@@ -624,7 +622,7 @@ void CChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	postMyMessage(HINT_SETMOUSECURSOR, newcursor);
 }
 
-void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
+void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_hwndReflect != nullptr)
 	{
@@ -633,7 +631,7 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		GetWindowRect(&rect1);
 		::GetWindowRect(m_hwndReflect, &rect0);
 		::SendMessage(m_hwndReflect, WM_LBUTTONDOWN, nFlags,
-			MAKELPARAM(point.x + (rect1.left - rect0.left), point.y + (rect1.top - rect0.top)));
+		              MAKELPARAM(point.x + (rect1.left - rect0.left), point.y + (rect1.top - rect0.top)));
 	}
 	else
 	{
@@ -644,20 +642,20 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		// take action according to cursor mode
 		switch (m_cursorType)
 		{
-			// track horizontal & VT cursors if mouse HIT
-		case 0:								// arrow (default)
-		case CURSOR_CROSS:					// cross (measure mode) (2)
+		// track horizontal & VT cursors if mouse HIT
+		case 0: // arrow (default)
+		case CURSOR_CROSS: // cross (measure mode) (2)
 			if (nFlags & MK_CONTROL)
 				postMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
 
-			m_trackMode = TRACK_RECT;		// flag trackrect
+			m_trackMode = TRACK_RECT; // flag trackrect
 
-			// test HZ tags - if OK, then start tracking & init variables & flags
+		// test HZ tags - if OK, then start tracking & init variables & flags
 			m_HCtrapped = hitHZtag(point.y);
 			if (m_HCtrapped >= 0)
 			{
 				m_trackMode = TRACK_HZTAG;
-				m_ptLast.x = 0;				// set initial coordinates
+				m_ptLast.x = 0; // set initial coordinates
 				m_ptLast.y = m_HZtags.GetTagPix(m_HCtrapped);
 				m_ptFirst = m_ptLast;
 				// tell parent that HZtag was selected
@@ -665,22 +663,26 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 				break;
 			}
 
-			// test VT tags - if OK, then track
+		// test VT tags - if OK, then track
 			if (!m_bVTtagsLONG)
-				m_HCtrapped = hitVTtagPix(int(point.x));
+				m_HCtrapped = hitVTtagPix(static_cast<int>(point.x));
 			else
 			{
-				m_liJitter = long(m_cxjitter) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width());
-				const auto lx = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width()) + m_liFirst;
+				m_liJitter = static_cast<long>(m_cxjitter) * (m_liLast - m_liFirst + 1) / static_cast<long>(
+					m_displayRect.Width());
+				const auto lx = static_cast<long>(point.x) * (m_liLast - m_liFirst + 1) / static_cast<long>(
+					m_displayRect.Width()) + m_liFirst;
 				m_HCtrapped = hitVTtagLong(lx);
 			}
 
-			// mouse cursor did hit a tag, either horizontal or vertical
+		// mouse cursor did hit a tag, either horizontal or vertical
 			if (m_HCtrapped >= 0)
 			{
 				m_trackMode = TRACK_VTTAG;
 				if (m_bVTtagsLONG)
-					m_ptLast.x = int((m_VTtags.GetTagLVal(m_HCtrapped) - m_liFirst) * long(m_displayRect.Width()) / (m_liLast - m_liFirst + 1));
+					m_ptLast.x = static_cast<int>((m_VTtags.GetTagLVal(m_HCtrapped) - m_liFirst) * long(
+						m_displayRect.Width()) / (m_liLast - m_liFirst +
+						1));
 				else
 					m_ptLast.x = m_VTtags.GetTagPix(m_HCtrapped);
 				m_ptLast.y = 0;
@@ -690,10 +692,10 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			}
 			break;
 
-			// track rectangle and invert content of the rectangle
-		case CURSOR_ZOOM:					// zoom (1)
+		// track rectangle and invert content of the rectangle
+		case CURSOR_ZOOM: // zoom (1)
 			m_trackMode = TRACK_RECT;
-			invertTracker(point);			// invert rectangle
+			invertTracker(point); // invert rectangle
 			break;
 
 		case CURSOR_VERTICAL:
@@ -707,10 +709,9 @@ void CChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		// limit the tracking to the client area of the view
 		captureCursor();
 	}
-	return;
 }
 
-void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
+void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// track rectangle : update rectangle size
 	switch (m_trackMode)
@@ -719,7 +720,7 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 		invertTracker(point);
 		break;
 
-		// track horizontal tag : move tag, get value and send message
+	// track horizontal tag : move tag, get value and send message
 	case TRACK_HZTAG:
 		if (point.y != m_ptCurr.y)
 		{
@@ -731,11 +732,11 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 		}
 		break;
 
-		// track vertical tag : move tag & update value
+	// track vertical tag : move tag & update value
 	case TRACK_VTTAG:
 		if (point.x != m_ptCurr.x)
 		{
-			XorVTtag(point.x);			// move cursor to new pixel
+			XorVTtag(point.x); // move cursor to new pixel
 			m_ptCurr = point;
 			m_VTtags.SetTagPix(m_HCtrapped, point.x);
 			if (!m_bVTtagsLONG)
@@ -745,7 +746,8 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 			}
 			else
 			{
-				const auto lval = long(point.x) * (m_liLast - m_liFirst + 1) / long(m_displayRect.Width()) + m_liFirst;
+				const auto lval = static_cast<long>(point.x) * (m_liLast - m_liFirst + 1) / static_cast<long>(
+					m_displayRect.Width()) + m_liFirst;
 				m_VTtags.SetTagLVal(m_HCtrapped, lval);
 			}
 			postMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
@@ -762,16 +764,16 @@ void CChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 			// reflect mouse move message
 			::SendMessage(m_hwndReflect,
-				WM_MOUSEMOVE,
-				nFlags,
-				MAKELPARAM(point.x + (rect1.left - rect0.left),
-					point.y + (rect1.top - rect0.top)));
+			              WM_MOUSEMOVE,
+			              nFlags,
+			              MAKELPARAM(point.x + (rect1.left - rect0.left),
+			                         point.y + (rect1.top - rect0.top)));
 		}
 		break;
 	}
 }
 
-void CChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_trackMode != TRACK_OFF)
 	{
@@ -789,33 +791,33 @@ void CChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 
 		// reflect mouse move message
 		::SendMessage(m_hwndReflect, WM_LBUTTONUP, nFlags,
-			MAKELPARAM(point.x + (rect1.left - rect0.left),
-				point.y + (rect1.top - rect0.top)));
+		              MAKELPARAM(point.x + (rect1.left - rect0.left),
+		                         point.y + (rect1.top - rect0.top)));
 	}
 	m_bLmouseDown = FALSE;
 }
 
-void CChartWnd::lbuttonUp_HzTag(UINT nFlags, CPoint point)
+void ChartWnd::lbuttonUp_HzTag(UINT nFlags, CPoint point)
 {
 	// convert pix into data value
 	const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
 	m_HZtags.SetTagVal(m_HCtrapped, val);
 	point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(point.y);
-	CChartWnd::OnLButtonUp(nFlags, point);
+	OnLButtonUp(nFlags, point);
 	postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
 }
 
-void CChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
+void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	switch (m_cursorType)
 	{
 	case CURSOR_ZOOM:
-	case CURSOR_CROSS:	// tracking type
+	case CURSOR_CROSS: // tracking type
 		m_ptFirst = point;
 		m_ptLast = point;
-		m_trackMode = TRACK_RECT;		// flag trackrect
-		invertTracker(point);			// invert rectangle
+		m_trackMode = TRACK_RECT; // flag trackrect
+		invertTracker(point); // invert rectangle
 		captureCursor();
 		break;
 	case CURSOR_VERTICAL:
@@ -825,34 +827,34 @@ void CChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
+void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	switch (m_trackMode)
 	{
 	case TRACK_RECT:
-	{
-		releaseCursor();
-		// skip too small a rectangle (5 pixels?)
-		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
-		const short jitter = 3;
-		if (rect_out.Height() < jitter && rect_out.Width() < jitter)
 		{
-			zoomOut();
+			releaseCursor();
+			// skip too small a rectangle (5 pixels?)
+			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
+			const short jitter = 3;
+			if (rect_out.Height() < jitter && rect_out.Width() < jitter)
+			{
+				zoomOut();
+			}
+			else
+			{
+				auto rect_in = m_displayRect;
+				ZoomData(&rect_out, &rect_in);
+				m_ZoomFrom = rect_out;
+				m_ZoomTo = rect_in;
+				m_iUndoZoom = -1;
+			}
 		}
+		if (m_cursorType == CURSOR_CROSS)
+			postMyMessage(HINT_RMOUSEBUTTONUP, NULL);
 		else
-		{
-			auto rect_in = m_displayRect;
-			ZoomData(&rect_out, &rect_in);
-			m_ZoomFrom = rect_out;
-			m_ZoomTo = rect_in;
-			m_iUndoZoom = -1;
-		}
-	}
-	if (m_cursorType == CURSOR_CROSS)
-		postMyMessage(HINT_RMOUSEBUTTONUP, NULL);
-	else
-		postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
-	break;
+			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+		break;
 
 	case TRACK_OFF:
 		CWnd::OnRButtonUp(nFlags, point);
@@ -862,7 +864,7 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			*parms_old = m_scopestruct;
 			CDlgChartProps dlg;
 			dlg.m_pscope = this;
-			m_bAllowProps = FALSE;		// inhibit properties
+			m_bAllowProps = FALSE; // inhibit properties
 
 			// if Cancel or Escape or anything else: restore previous values
 			if (IDOK != dlg.DoModal())
@@ -884,17 +886,17 @@ void CChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 	m_trackMode = TRACK_OFF;
 }
 
-void CChartWnd::ZoomData(CRect* prevRect, CRect* newRect)
+void ChartWnd::ZoomData(CRect* prevRect, CRect* newRect)
 {
 }
 
-void CChartWnd::zoomPop()
+void ChartWnd::zoomPop()
 {
 	ZoomData(&m_ZoomTo, &m_ZoomFrom);
 	m_iUndoZoom = 0;
 }
 
-void CChartWnd::zoomOut()
+void ChartWnd::zoomOut()
 {
 	if (m_iUndoZoom > 0) // memory?
 		zoomPop();
@@ -911,7 +913,7 @@ void CChartWnd::zoomOut()
 	}
 }
 
-void CChartWnd::zoomIn()
+void ChartWnd::zoomIn()
 {
 	if (m_iUndoZoom < 0) // memory?
 		zoomPop();
@@ -928,14 +930,14 @@ void CChartWnd::zoomIn()
 	}
 }
 
-int CChartWnd::hitHZtag(int y)
+int ChartWnd::hitHZtag(int y)
 {
-	auto chit = -1;				// horizontal cursor hit
-	const auto jitter = 3;		// jitter allowed: 5 pixels total
+	auto chit = -1; // horizontal cursor hit
+	const auto jitter = 3; // jitter allowed: 5 pixels total
 	const auto j = m_HZtags.GetNTags();
-	for (auto i = 0; i < j; i++)	// loop through all cursors
+	for (auto i = 0; i < j; i++) // loop through all cursors
 	{
-		const auto val = m_HZtags.GetTagPix(i);	// get pixel value
+		const auto val = m_HZtags.GetTagPix(i); // get pixel value
 		if (val <= y + jitter && val >= y - jitter)
 		{
 			chit = i;
@@ -945,11 +947,11 @@ int CChartWnd::hitHZtag(int y)
 	return chit;
 }
 
-int CChartWnd::hitVTtagLong(long lx)
+int ChartWnd::hitVTtagLong(long lx)
 {
-	auto chit = -1;				// horizontal cursor hit
+	auto chit = -1; // horizontal cursor hit
 	const auto j = m_VTtags.GetNTags();
-	for (auto i = 0; i < j; i++)	// loop through all cursors
+	for (auto i = 0; i < j; i++) // loop through all cursors
 	{
 		const auto lval = m_VTtags.GetTagLVal(i);
 		if (lval <= lx + m_liJitter && lval >= lx - m_liJitter)
@@ -961,12 +963,12 @@ int CChartWnd::hitVTtagLong(long lx)
 	return chit;
 }
 
-int CChartWnd::hitVTtagPix(int x)
+int ChartWnd::hitVTtagPix(int x)
 {
-	auto chit = -1;				// horizontal cursor hit
-	const auto jitter = 3;		// jitter allowed: 5 pixels total
+	auto chit = -1; // horizontal cursor hit
+	const auto jitter = 3; // jitter allowed: 5 pixels total
 	const auto j = m_VTtags.GetNTags();
-	for (auto i = 0; i < j; i++)	// loop through all cursors
+	for (auto i = 0; i < j; i++) // loop through all cursors
 	{
 		const auto val = m_VTtags.GetTagPix(i);
 		if (val <= x + jitter && val >= x - jitter)
@@ -978,10 +980,10 @@ int CChartWnd::hitVTtagPix(int x)
 	return chit;
 }
 
-void CChartWnd::invertTracker(CPoint point)
+void ChartWnd::invertTracker(CPoint point)
 {
-	CClientDC dc(this);						// get dc to fbutton window
-	const auto old_brush = (CBrush*)dc.SelectStockObject(NULL_BRUSH);
+	CClientDC dc(this); // get dc to fbutton window
+	const auto old_brush = static_cast<CBrush*>(dc.SelectStockObject(NULL_BRUSH));
 	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);
 	const auto old_pen = dc.SelectObject(&m_blackDottedPen);
 	dc.Rectangle(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
@@ -993,7 +995,7 @@ void CChartWnd::invertTracker(CPoint point)
 	m_ptLast = point;
 }
 
-void CChartWnd::DisplayVTtags_Value(CDC* p_dc)
+void ChartWnd::DisplayVTtags_Value(CDC* p_dc)
 {
 	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -1011,7 +1013,7 @@ void CChartWnd::DisplayVTtags_Value(CDC* p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-void CChartWnd::DisplayHZtags(CDC* p_dc)
+void ChartWnd::DisplayHZtags(CDC* p_dc)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -1029,7 +1031,7 @@ void CChartWnd::DisplayHZtags(CDC* p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-void CChartWnd::XorHZtag(int ypoint)
+void ChartWnd::XorHZtag(int ypoint)
 {
 	if (m_ptLast.y == ypoint)
 		return;
@@ -1049,13 +1051,13 @@ void CChartWnd::XorHZtag(int ypoint)
 	m_ptLast.y = ypoint;
 }
 
-void CChartWnd::XorVTtag(int xpoint)
+void ChartWnd::XorVTtag(int xpoint)
 {
 	CClientDC dc(this);
 
 	const auto p_old_pen = dc.SelectObject(&m_blackDottedPen);
 	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&m_clientRect);		// clip drawing inside rect
+	dc.IntersectClipRect(&m_clientRect); // clip drawing inside rect
 
 	dc.MoveTo(m_ptLast.x, m_displayRect.top);
 	dc.LineTo(m_ptLast.x, m_displayRect.bottom);
@@ -1068,7 +1070,7 @@ void CChartWnd::XorVTtag(int xpoint)
 	m_ptLast.x = xpoint;
 }
 
-void CChartWnd::XorTempVTtag(int xpoint)
+void ChartWnd::XorTempVTtag(int xpoint)
 {
 	if (m_tempVTtag == nullptr)
 	{
@@ -1079,33 +1081,33 @@ void CChartWnd::XorTempVTtag(int xpoint)
 	m_tempVTtag->m_pixel = xpoint;
 }
 
-SCOPESTRUCT* CChartWnd::GetScopeParameters()
+SCOPESTRUCT* ChartWnd::GetScopeParameters()
 {
 	return &m_scopestruct;
 }
 
-void CChartWnd::SetScopeParameters(SCOPESTRUCT* pStruct)
+void ChartWnd::SetScopeParameters(SCOPESTRUCT* pStruct)
 {
 	m_scopestruct = *pStruct;
 }
 
 // bsetPlot:   TRUE=use DIB array to draw curves FALSE: do not use it
 // bsetSelect: TRUE=use a separate bitmap to draw selected curve
-void CChartWnd::SetbUseDIB(BOOL bsetPlot)
+void ChartWnd::SetbUseDIB(BOOL bsetPlot)
 {
 	m_bUseDIB = bsetPlot;
 }
 
-void CChartWnd::Serialize(CArchive& ar)
+void ChartWnd::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
 		ar << m_plotmode;
 		ar << m_colorbackgr;
 		ar << m_colorselected;
-		ar << m_xWO;				// x origin, extent / window & view
+		ar << m_xWO; // x origin, extent / window & view
 		ar << m_xWE;
-		ar << m_yWO;				// y origin, extent / window & view
+		ar << m_yWO; // y origin, extent / window & view
 		ar << m_yWE;
 
 		ar << m_xVO;
@@ -1118,9 +1120,9 @@ void CChartWnd::Serialize(CArchive& ar)
 		ar >> m_plotmode;
 		ar >> m_colorbackgr;
 		ar >> m_colorselected;
-		ar >> m_xWO;				// x origin, extent / window & view
+		ar >> m_xWO; // x origin, extent / window & view
 		ar >> m_xWE;
-		ar >> m_yWO;				// y origin, extent / window & view
+		ar >> m_yWO; // y origin, extent / window & view
 		ar >> m_yWE;
 
 		ar >> m_xVO;
@@ -1131,7 +1133,7 @@ void CChartWnd::Serialize(CArchive& ar)
 	m_scopestruct.Serialize(ar);
 }
 
-void CChartWnd::PlotToBitmap(CBitmap* pBitmap)
+void ChartWnd::PlotToBitmap(CBitmap* pBitmap)
 {
 	CClientDC dc(this);
 	CDC mem_dc;
@@ -1140,6 +1142,7 @@ void CChartWnd::PlotToBitmap(CBitmap* pBitmap)
 	PlotDatatoDC(&mem_dc);
 }
 
-int CChartWnd::hitCurve(CPoint point) {
+int ChartWnd::hitCurve(CPoint point)
+{
 	return 0;
 }

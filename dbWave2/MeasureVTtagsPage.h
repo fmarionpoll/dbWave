@@ -5,7 +5,6 @@
 #include "OPTIONS_VIEWDATAMEASURE.h"
 
 
-
 class CMeasureVTtagsPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CMeasureVTtagsPage)
@@ -17,21 +16,22 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_PROPPAGE2 };
-	int		m_index;
-	int		m_nbtags;
-	int		m_nperiods;
-	float	m_period;
-	float	m_timesec;
-	float	m_timeshift;
-	float	m_duration;
+
+	int m_index;
+	int m_nbtags;
+	int m_nperiods;
+	float m_period;
+	float m_timesec;
+	float m_timeshift;
+	float m_duration;
 
 	// input parameters
-	OPTIONS_VIEWDATAMEASURE* m_pMO;	// init on call
-	CdbWaveDoc*		m_pdbDoc;
-	CAcqDataDoc*	m_pdatDoc;
-	CChartDataWnd*	m_pChartDataWnd;
-	float	m_samplingrate;
-	float	m_verylast;
+	OPTIONS_VIEWDATAMEASURE* m_pMO; // init on call
+	CdbWaveDoc* m_pdbDoc;
+	AcqDataDoc* m_pdatDoc;
+	ChartData* m_pChartDataWnd;
+	float m_samplingrate;
+	float m_verylast;
 
 	// locals
 	CEditCtrl mm_index;
@@ -44,18 +44,18 @@ public:
 
 	// Overrides
 public:
-	virtual void OnCancel();
-	virtual void OnOK();
+	void OnCancel() override;
+	void OnOK() override;
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	BOOL GetVTtagVal(int index);
 	void SetspacedTagsOptions();
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnRemove();
 	afx_msg void OnEnChangeItem();
 	afx_msg void OnEnChangeTimesec();

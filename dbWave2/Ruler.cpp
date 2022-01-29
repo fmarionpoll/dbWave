@@ -2,7 +2,6 @@
 #include "Ruler.h"
 
 
-
 CRuler::CRuler()
 {
 	m_is_horizontal = TRUE;
@@ -30,10 +29,14 @@ void CRuler::SetRange(double dfirst, double dlast)
 }
 
 int CRuler::GetScaleUnitPixels(int cx) const
-{ return static_cast<int>(m_dscaleinc * cx / (m_dlast - m_dfirst)); }
+{
+	return static_cast<int>(m_dscaleinc * cx / (m_dlast - m_dfirst));
+}
 
 double CRuler::GetScaleIncrement() const
-{ return m_dscaleinc; }
+{
+	return m_dscaleinc;
+}
 
 void CRuler::UpdateRange(double dfirst, double dlast)
 {
@@ -46,8 +49,8 @@ BOOL CRuler::AdjustScale()
 	// cf Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
 	// http://drdobbs.com/184401258
 
-	const auto last = static_cast<double>(m_dlast);
-	const auto first = static_cast<double>(m_dfirst);
+	const auto last = m_dlast;
+	const auto first = m_dfirst;
 	const auto range = last - first;
 
 	// deal with repeated values
@@ -70,10 +73,12 @@ BOOL CRuler::AdjustScale()
 	// set max scale
 	m_dscalelast = m_dscalefirst;
 	int i = 0;
-	do {
+	do
+	{
 		++i;
 		m_dscalelast += m_dscaleinc;
-	} while (m_dscalelast < last);
+	}
+	while (m_dscalelast < last);
 
 	// adjust for too few tickmarks
 	constexpr auto i_toofew = 5;

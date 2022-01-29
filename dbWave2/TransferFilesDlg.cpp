@@ -16,8 +16,8 @@
 IMPLEMENT_DYNAMIC(CTransferFilesDlg, CDialogEx)
 
 CTransferFilesDlg::CTransferFilesDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CTransferFilesDlg::IDD, pParent)
-	, m_csPathname(_T(""))
+	: CDialogEx(IDD, pParent)
+	  , m_csPathname(_T(""))
 {
 }
 
@@ -56,35 +56,35 @@ void CTransferFilesDlg::OnBnClickedButtonpath()
 	UpdateData(TRUE);
 	lstrcpy(sz_dir3, m_csPathname);
 
-	LPMALLOC g_pMalloc;					// special alloc mode (shell)
-	 // Get the shell's allocator.
+	LPMALLOC g_pMalloc; // special alloc mode (shell)
+	// Get the shell's allocator.
 	if (!SUCCEEDED(SHGetMalloc(&g_pMalloc)))
 		return; // 1;
 
-	BROWSEINFO bi;						// parameter array
-	LPTSTR lp_buffer;					// buffer
+	BROWSEINFO bi; // parameter array
+	LPTSTR lp_buffer; // buffer
 
 	// Allocate a buffer to receive browse information.
 	if ((lp_buffer = static_cast<LPTSTR>(g_pMalloc->Alloc(MAX_PATH))) == nullptr)
 		return;
 
 	// Fill in the BROWSEINFO structure.
-	bi.hwndOwner = GetSafeHwnd();		// owner of the dlg is this dlg box
-	bi.pidlRoot = nullptr;				//pidlPrograms; ?
+	bi.hwndOwner = GetSafeHwnd(); // owner of the dlg is this dlg box
+	bi.pidlRoot = nullptr; //pidlPrograms; ?
 	bi.lpfn = BrowseCallbackProc3;
-	bi.pszDisplayName = lp_buffer;		// output buffer
+	bi.pszDisplayName = lp_buffer; // output buffer
 	bi.lpszTitle = _T("Choose a Folder");
-	bi.ulFlags = BIF_USENEWUI;			// see doc for flags
+	bi.ulFlags = BIF_USENEWUI; // see doc for flags
 	bi.lParam = 0;
 
 	// Browse for a folder and return its PIDL.
 	const auto pidl_browse = SHBrowseForFolder(&bi);
-	if (pidl_browse != nullptr)			// check if a folder was chosen
+	if (pidl_browse != nullptr) // check if a folder was chosen
 	{
 		// Show the display name, title, and file system path.
 		if (SHGetPathFromIDList(pidl_browse, lp_buffer))
 		{
-			m_csPathname = lp_buffer;	// load folder name
+			m_csPathname = lp_buffer; // load folder name
 			if (m_csPathname.Right(1) != _T("\\"))
 				m_csPathname += _T("\\");
 		}

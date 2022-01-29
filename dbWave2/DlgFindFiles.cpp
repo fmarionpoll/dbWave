@@ -9,7 +9,7 @@
 #endif
 
 CDlgFindFiles::CDlgFindFiles(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgFindFiles::IDD, pParent)
+	: CDialog(IDD, pParent)
 
 {
 }
@@ -35,7 +35,7 @@ BOOL CDlgFindFiles::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_pfilenames->RemoveAll();
-	m_path = ((CdbWaveApp*)AfxGetApp())->options_import.path;
+	m_path = static_cast<CdbWaveApp*>(AfxGetApp())->options_import.path;
 	if (m_pdbDoc)
 		m_path = m_pdbDoc->m_ProposedDataPathName;
 	m_mfcbrowsecontrol.SetWindowTextW(m_path);
@@ -58,13 +58,13 @@ BOOL CDlgFindFiles::OnInitDialog()
 	}
 	else
 	{
-		CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
+		auto p_app = static_cast<CdbWaveApp*>(AfxGetApp()); // load browse parameters
 		static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bDiscardDuplicateFiles);
 	}
 	UpdateData(FALSE);
-	m_fileext.SetCurSel(m_selinit);			// select first item / file extensions
+	m_fileext.SetCurSel(m_selinit); // select first item / file extensions
 
-	return TRUE; 
+	return TRUE;
 }
 
 void CDlgFindFiles::OnOK()
@@ -73,7 +73,7 @@ void CDlgFindFiles::OnOK()
 		OnSearch();
 
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
-	auto p_app = (CdbWaveApp*)AfxGetApp();
+	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	p_app->options_import.path = m_path;
 	p_app->options_import.bDiscardDuplicateFiles = static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
 
@@ -84,16 +84,16 @@ void CDlgFindFiles::OnSearch()
 {
 	UpdateData(TRUE);
 
-	m_ppath.RemoveAll();							// clean list of paths
-	m_pfilenames->RemoveAll();						// remove all file names
-	m_nfound = 0;									// reset nb of files found
-	m_fileext.GetWindowText(m_searchString);		// get search string (filter)
+	m_ppath.RemoveAll(); // clean list of paths
+	m_pfilenames->RemoveAll(); // remove all file names
+	m_nfound = 0; // reset nb of files found
+	m_fileext.GetWindowText(m_searchString); // get search string (filter)
 
 	m_bSubtreeSearch = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
-	m_ppath.Add(m_path);							// add at least one path (root)
+	m_ppath.Add(m_path); // add at least one path (root)
 
 	// scan subdirectories
 	if (m_bSubtreeSearch)

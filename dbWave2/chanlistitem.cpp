@@ -53,7 +53,8 @@ CChanlistItem::CChanlistItem(CEnvelope* p_envelope_X, const int index_x, CEnvelo
 // init display parameters from chan list item
 //---------------------------------------------------------------------------
 
-void CChanlistItem::InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent, WORD new_drawmode)
+void CChanlistItem::InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent,
+                                     WORD new_drawmode)
 {
 	dl_penwidth = new_penwidth;
 	dl_color = new_color;
@@ -71,29 +72,29 @@ void CChanlistItem::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << dl_yzero;			// zero volts
-		ar << dl_yextent;		// max to min extent
-		ar << dl_penwidth;		// pen size
-		ar << dl_color;			// color
-		ar << dl_bprint;		// draw mode
-		ar << dl_datavoltspbin;	// scale factor (1 unit (0-4095) -> y volts)
-		ar << dl_databinzero;	// value of zero volts
-		ar << dl_databinspan;	// nb of bins encoding values within envelope
-		ar << dl_bHZtagsPrint;	// print HZ tags flag
+		ar << dl_yzero; // zero volts
+		ar << dl_yextent; // max to min extent
+		ar << dl_penwidth; // pen size
+		ar << dl_color; // color
+		ar << dl_bprint; // draw mode
+		ar << dl_datavoltspbin; // scale factor (1 unit (0-4095) -> y volts)
+		ar << dl_databinzero; // value of zero volts
+		ar << dl_databinspan; // nb of bins encoding values within envelope
+		ar << dl_bHZtagsPrint; // print HZ tags flag
 		ar << dl_indexabcissa;
 		ar << dl_indexordinates;
 	}
 	else
 	{
-		ar >> dl_yzero;			// zero volts
-		ar >> dl_yextent;		// max to min extent
-		ar >> dl_penwidth;		// pen size
-		ar >> dl_color;			// color
-		ar >> dl_bprint;		// draw mode
-		ar >> dl_datavoltspbin;	// scale factor (1 unit (0-4095) -> y volts)
-		ar >> dl_databinzero;		// value of zero volts
-		ar >> dl_databinspan;		// nb of bins encoding values within envelope
-		ar >> dl_bHZtagsPrint;	// print HZ tags flag
+		ar >> dl_yzero; // zero volts
+		ar >> dl_yextent; // max to min extent
+		ar >> dl_penwidth; // pen size
+		ar >> dl_color; // color
+		ar >> dl_bprint; // draw mode
+		ar >> dl_datavoltspbin; // scale factor (1 unit (0-4095) -> y volts)
+		ar >> dl_databinzero; // value of zero volts
+		ar >> dl_databinspan; // nb of bins encoding values within envelope
+		ar >> dl_bHZtagsPrint; // print HZ tags flag
 		ar >> dl_indexabcissa;
 		ar >> dl_indexordinates;
 	}

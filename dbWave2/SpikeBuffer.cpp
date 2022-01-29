@@ -11,7 +11,7 @@ IMPLEMENT_SERIAL(CSpikeBuffer, CObject, 0 /* schema number*/)
 
 CSpikeBuffer::CSpikeBuffer()
 {
-	SetSpklen(1);	// init with spike len = 1
+	SetSpklen(1); // init with spike len = 1
 	m_spikedata_positions.SetSize(0, 128);
 }
 
@@ -42,7 +42,8 @@ void CSpikeBuffer::SetSpklen(int lenspik)
 {
 	m_lenspk = lenspik;
 	DeleteAllSpikes();
-	if (m_lenspk > 0) {
+	if (m_lenspk > 0)
+	{
 		// allocate memory by 64 Kb chunks
 		m_spkbufferincrement = static_cast<WORD>(32767);
 		m_spkbufferincrement = (m_spkbufferincrement / m_lenspk) * m_lenspk;
@@ -122,7 +123,7 @@ BOOL CSpikeBuffer::DeleteSpike(int spkindex)
 
 BOOL CSpikeBuffer::ExchangeSpikes(int spk1, int spk2)
 {
-	if (spk1 > m_spikedata_positions.GetUpperBound() || spk1 <0
+	if (spk1 > m_spikedata_positions.GetUpperBound() || spk1 < 0
 		|| spk2 > m_spikedata_positions.GetUpperBound() || spk2 < 0)
 		return FALSE;
 	const DWORD dummy = m_spikedata_positions[spk1];

@@ -10,7 +10,7 @@
 #endif
 
 CDataViewAbcissaDlg::CDataViewAbcissaDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataViewAbcissaDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_firstAbcissa = 0.f;
 	m_frameDuration = 0.f;
@@ -24,7 +24,7 @@ CDataViewAbcissaDlg::CDataViewAbcissaDlg(CWnd* pParent /*=NULL*/)
 
 BOOL CDataViewAbcissaDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();   // ??
+	CDialog::OnInitDialog(); // ??
 	OnSelchangeAbcissaunits(); // after DDX
 	GetDlgItem(IDC_FIRSTABCISSA)->SetFocus();
 	return FALSE;
@@ -51,7 +51,7 @@ END_MESSAGE_MAP()
 
 void CDataViewAbcissaDlg::OnSelchangeAbcissaunits()
 {
-	m_abcissaUnitIndex = ((CComboBox*)GetDlgItem(IDC_ABCISSAUNITS))->GetCurSel();
+	m_abcissaUnitIndex = static_cast<CComboBox*>(GetDlgItem(IDC_ABCISSAUNITS))->GetCurSel();
 	if (m_previousIndex != m_abcissaUnitIndex)
 	{
 		m_firstAbcissa = m_firstAbcissa * m_abcissaScale;
@@ -60,15 +60,19 @@ void CDataViewAbcissaDlg::OnSelchangeAbcissaunits()
 
 		switch (m_abcissaUnitIndex)
 		{
-		case 0:						// ms
-			m_abcissaScale = 0.001f;	break;
-		case 1:						// seconds
-			m_abcissaScale = 1.0f;	break;
-		case 2:						// minutes
-			m_abcissaScale = 60.0f;	break;
-		case 3:						// hours
-			m_abcissaScale = 3600.0f; break;
-		default:					// seconds
+		case 0: // ms
+			m_abcissaScale = 0.001f;
+			break;
+		case 1: // seconds
+			m_abcissaScale = 1.0f;
+			break;
+		case 2: // minutes
+			m_abcissaScale = 60.0f;
+			break;
+		case 3: // hours
+			m_abcissaScale = 3600.0f;
+			break;
+		default: // seconds
 			m_abcissaScale = 1.0f;
 			m_abcissaUnitIndex = 1;
 			break;
@@ -79,7 +83,7 @@ void CDataViewAbcissaDlg::OnSelchangeAbcissaunits()
 		m_previousIndex = m_abcissaUnitIndex;
 	}
 	m_frameDuration = m_lastAbcissa - m_firstAbcissa;
-	m_centerAbcissa = m_firstAbcissa + m_frameDuration / (float)2.;
+	m_centerAbcissa = m_firstAbcissa + m_frameDuration / static_cast<float>(2.);
 	UpdateData(FALSE);
 }
 
@@ -135,7 +139,7 @@ void CDataViewAbcissaDlg::CheckLimits()
 		m_firstAbcissa = 0.0f;
 		flag = TRUE;
 	}
-	if (m_lastAbcissa<m_firstAbcissa || m_lastAbcissa>m_veryLastAbcissa)
+	if (m_lastAbcissa < m_firstAbcissa || m_lastAbcissa > m_veryLastAbcissa)
 	{
 		m_lastAbcissa = m_veryLastAbcissa;
 		flag = TRUE;

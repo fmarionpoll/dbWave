@@ -1,4 +1,3 @@
-
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "DlgEditList.h"
@@ -10,8 +9,8 @@
 IMPLEMENT_DYNAMIC(CDlgEditList, CDialog)
 
 CDlgEditList::CDlgEditList(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgEditList::IDD, pParent)
-	, m_csNewString(_T("")), m_selected(0)
+	: CDialog(IDD, pParent)
+	  , m_csNewString(_T("")), m_selected(0)
 {
 	pCo = nullptr;
 }
@@ -89,12 +88,12 @@ void CDlgEditList::OnBnClickedDelete()
 
 void CDlgEditList::OnBnClickedAdditem()
 {
-	UpdateData(TRUE);					// get data from dlg
-	if (!m_csNewString.IsEmpty())		// add string if not empty
+	UpdateData(TRUE); // get data from dlg
+	if (!m_csNewString.IsEmpty()) // add string if not empty
 	{
 		m_clStrings.AddString(m_csNewString);
 		m_csNewString.Empty();
-		UpdateData(FALSE);				// update data
+		UpdateData(FALSE); // update data
 	}
 	GetDlgItem(IDC_EDIT1)->SetFocus();
 }

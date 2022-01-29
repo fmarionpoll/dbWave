@@ -6,11 +6,12 @@
 class CPropertiesToolBar : public CMFCToolBar
 {
 public:
-	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
+	void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler) override
 	{
-		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*)GetOwner(), bDisableIfNoHndler);
+		CMFCToolBar::OnUpdateCmdUI(static_cast<CFrameWnd*>(GetOwner()), bDisableIfNoHndler);
 	}
-	virtual BOOL AllowShowOnList() const { return FALSE; }
+
+	BOOL AllowShowOnList() const override { return FALSE; }
 };
 
 class CPropertiesWnd : public CDockablePane
@@ -18,28 +19,28 @@ class CPropertiesWnd : public CDockablePane
 	DECLARE_DYNAMIC(CPropertiesWnd)
 public:
 	CPropertiesWnd();
-	virtual ~CPropertiesWnd();
-	void AdjustLayout();
+	~CPropertiesWnd() override;
+	void AdjustLayout() override;
 
 protected:
-	CPropertiesToolBar		m_wndToolBar;
-	CMFCPropertyGridCtrl	m_wndPropList;
+	CPropertiesToolBar m_wndToolBar;
+	CMFCPropertyGridCtrl m_wndPropList;
 
 	// Implementation
 public:
 protected:
-	CdbWaveDoc*		m_pDoc;
-	CdbWaveDoc*		m_pDocOld;
-	CFont			m_fntPropList;
+	CdbWaveDoc* m_pDoc;
+	CdbWaveDoc* m_pDocOld;
+	CFont m_fntPropList;
 
-	static int		m_noCol[];				// [26] succession of fields
-	static int		m_propCol[NTABLECOLS];	// no col (0 to 28), no group (1, 2, 3 or -1 if not displayed) and type ()
-	CUIntArray		m_typeProps;
-	CUIntArray		m_iIDProps;
-	CUIntArray		m_groupProps;
-	int				m_wndEditInfosHeight;
-	BOOL			m_bUpdateCombos;
-	BOOL			m_bchangedProperty;
+	static int m_noCol[]; // [26] succession of fields
+	static int m_propCol[NTABLECOLS]; // no col (0 to 28), no group (1, 2, 3 or -1 if not displayed) and type ()
+	CUIntArray m_typeProps;
+	CUIntArray m_iIDProps;
+	CUIntArray m_groupProps;
+	int m_wndEditInfosHeight;
+	BOOL m_bUpdateCombos;
+	BOOL m_bchangedProperty;
 
 	int InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0);
 	void UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup);
@@ -50,7 +51,7 @@ protected:
 	void UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup);
 
 protected:
-	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnExpandAllProperties();
 	afx_msg void OnUpdateExpandAllProperties(CCmdUI* pCmdUI);

@@ -5,24 +5,25 @@ class CDlgGotoRecord : public CDialog
 {
 	// Construction
 public:
-	CDlgGotoRecord(CWnd* pParent = nullptr);   // standard constructor
+	CDlgGotoRecord(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_GOTORECORDID };
-	long	m_recordID;
-	int		m_recordPos;
-	BOOL	m_bGotoRecordID;
+
+	long m_recordID;
+	int m_recordPos;
+	BOOL m_bGotoRecordID;
 
 	// Overrides)
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	void SetOptions();
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnClickedPosition();
 	afx_msg void OnClickedID();
 

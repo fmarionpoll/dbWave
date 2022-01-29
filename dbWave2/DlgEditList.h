@@ -7,23 +7,23 @@ class CDlgEditList : public CDialog
 	DECLARE_DYNAMIC(CDlgEditList)
 
 public:
-	CDlgEditList(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CDlgEditList();
+	CDlgEditList(CWnd* pParent = nullptr); // standard constructor
+	~CDlgEditList() override;
 	CComboBox* pCo;
-	CString		m_csNewString;
-	CListBox	m_clStrings;
+	CString m_csNewString;
+	CListBox m_clStrings;
 	CStringArray m_csArray;
-	int			m_selected;
+	int m_selected;
 
 	// Dialog Data
 	enum { IDD = IDD_EDITLISTDLG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 public:
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	BOOL OnInitDialog() override;
+	void OnOK() override;
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedAdditem();
 	afx_msg void OnSize(UINT nType, int cx, int cy);

@@ -6,31 +6,30 @@ class CdbMultiDocTemplate : public CMultiDocTemplate
 	// Construction
 public:
 	CdbMultiDocTemplate(UINT nIDResource, CRuntimeClass* pDocClass,
-		CRuntimeClass* pFrameClass, CRuntimeClass* pViewClass);
+	                    CRuntimeClass* pFrameClass, CRuntimeClass* pViewClass);
 
 	// Attributes
 public:
-
 	// Operations
 public:
 	BOOL GetDocString(CString& rString,
-		enum DocStringIndex index) const; // get one of the info strings
-	CMultiDocTemplate::Confidence MatchDocType(LPCTSTR lpszPathName,
-		CDocument*& rpDocMatch);
+	                  enum DocStringIndex index) const override; // get one of the info strings
+	Confidence MatchDocType(LPCTSTR lpszPathName,
+	                        CDocument*& rpDocMatch) override;
 
 	// Overrides
-		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CdbMultiDocTemplate)
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CdbMultiDocTemplate)
 public:
 protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	virtual ~CdbMultiDocTemplate();
+	~CdbMultiDocTemplate() override;
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
 #endif
 
 	// Generated message map functions

@@ -5,37 +5,37 @@ class CLoadSaveOptionsDlg : public CDialog
 {
 	// Construction
 public:
-	CLoadSaveOptionsDlg(CWnd* pParent = nullptr);	// standard constructor
+	CLoadSaveOptionsDlg(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_LOADSAVEOPTIONS };
-	CComboBox	m_CBnamelist;
-	CString	m_ddxcomment;
+
+	CComboBox m_CBnamelist;
+	CString m_ddxcomment;
 	CStringArray* pParmFiles;
 	CString* pcomment;
 
 	CStringArray pFiles;
-	CString		m_currentFile;			//
-	int			m_cursel;				// current file selected
-	BOOL		m_bfilenamechanged;		// file name was modified
-	BOOL		m_bcommentchanged;		// comment was modified
+	CString m_currentFile; //
+	int m_cursel; // current file selected
+	BOOL m_bfilenamechanged; // file name was modified
+	BOOL m_bcommentchanged; // comment was modified
 
-// Overrides
+	// Overrides
 public:
-
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
-	int	 ParmFindString(CString& filename);
+	int ParmFindString(CString& filename);
 	void UpdateFileList();
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	BOOL OnInitDialog() override;
+	void OnOK() override;
 	afx_msg void OnSelchangeNamelist();
-	virtual void OnCancel();
+	void OnCancel() override;
 	afx_msg void OnKillfocusNamelist();
 	afx_msg void OnEnChangeComment();
 	afx_msg void OnEditchangeNamelist();

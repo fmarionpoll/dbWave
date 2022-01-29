@@ -13,28 +13,29 @@ class CDTPlot32 : public CWnd
 protected:
 	DECLARE_DYNCREATE(CDTPlot32)
 public:
-	CLSID const& GetClsid()
+	const CLSID& GetClsid()
 	{
-		static CLSID const clsid
-			= { 0x81820e40, 0x3a07, 0x11cf, { 0xb6, 0x97, 0x0, 0x20, 0xaf, 0xeb, 0x10, 0xa0 } };
+		static const CLSID clsid
+			= {0x81820e40, 0x3a07, 0x11cf, {0xb6, 0x97, 0x0, 0x20, 0xaf, 0xeb, 0x10, 0xa0}};
 		return clsid;
 	}
-	virtual BOOL Create(LPCTSTR lpszClassName,
-		LPCTSTR lpszWindowName, DWORD dw_style,
-		const RECT& rect,
-		CWnd* pParentWnd, UINT nID,
-		CCreateContext* pContext = nullptr)
+
+	BOOL Create(LPCTSTR lpszClassName,
+	            LPCTSTR lpszWindowName, DWORD dw_style,
+	            const RECT& rect,
+	            CWnd* pParentWnd, UINT nID,
+	            CCreateContext* pContext = nullptr) override
 	{
 		return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID);
 	}
 
 	BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style,
-		const RECT& rect, CWnd* pParentWnd, UINT nID,
-		CFile* pPersist = nullptr, BOOL bStorage = FALSE,
-		BSTR bstrLicKey = nullptr)
+	            const RECT& rect, CWnd* pParentWnd, UINT nID,
+	            CFile* pPersist = nullptr, BOOL bStorage = FALSE,
+	            BSTR bstrLicKey = nullptr)
 	{
 		return CreateControl(GetClsid(), lpszWindowName, dw_style, rect, pParentWnd, nID,
-			pPersist, bStorage, bstrLicKey);
+		                     pPersist, bStorage, bstrLicKey);
 	}
 
 	// Attributes

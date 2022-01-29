@@ -10,32 +10,32 @@ class CDlgdbEditRecord : public CDialog
 	DECLARE_DYNAMIC(CDlgdbEditRecord)
 
 public:
-	CDlgdbEditRecord(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CDlgdbEditRecord();
+	CDlgdbEditRecord(CWnd* pParent = nullptr); // standard constructor
+	~CDlgdbEditRecord() override;
 
 	CdbWaveDoc* m_pdbDoc;
 	CdbMainTable* m_pSet;
-	BOOL			m_bshowIDC_NEXT;
-	BOOL			m_bshowIDC_PREVIOUS;
+	BOOL m_bshowIDC_NEXT;
+	BOOL m_bshowIDC_PREVIOUS;
 
 	// Dialog Data
 	enum { IDD = IDD_EDITRECORDDLG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	void	PopulateControls();
-	void	PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CComboBox& combo, int iID);
-	void	PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, long>* pIDarray, long& lvar);
-	void	UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBox& combo, long& iIDset);
-	void	EditChangeItem_IndirectField(int IDC);
-	void	EditChangeItem_MainField(int IDC);
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void PopulateControls();
+	void PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CComboBox& combo, int iID);
+	void PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, long>* pIDarray, long& lvar);
+	void UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBox& combo, long& iIDset);
+	void EditChangeItem_IndirectField(int IDC);
+	void EditChangeItem_MainField(int IDC);
 	DB_ITEMDESC* GetItemDescriptors(int IDC);
-	void	UpdateDatabaseFromDialog();
+	void UpdateDatabaseFromDialog();
 
 public:
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 protected:
-	virtual void OnOK();
+	void OnOK() override;
 public:
 	CComboBox m_ctlexpt;
 	CComboBox m_ctlinsectID;

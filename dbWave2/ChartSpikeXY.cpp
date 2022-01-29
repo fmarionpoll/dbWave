@@ -1,7 +1,7 @@
 // spikexyp.cpp Implementation File
 
 #include "StdAfx.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "Spikedoc.h"
 #include "ChartSpikeXY.h"
 
@@ -11,7 +11,7 @@
 
 // TODO loop through files when m_ballfiles is true: display and spike hit
 
-BEGIN_MESSAGE_MAP(CChartSpikeXYWnd, CChartWnd)
+BEGIN_MESSAGE_MAP(CChartSpikeXYWnd, ChartWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
@@ -27,7 +27,7 @@ CChartSpikeXYWnd::CChartSpikeXYWnd()
 CChartSpikeXYWnd::~CChartSpikeXYWnd()
 = default;
 
-void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
+void CChartSpikeXYWnd::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
@@ -41,8 +41,8 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 	const auto bkcolor = p_dc->GetBkColor();
 
 	// display data: trap error conditions
-	const auto windowduration = m_lLast - m_lFirst + 1;	// abcissa size
-	getExtents();								// get origin and extents for xy axes
+	const auto windowduration = m_lLast - m_lFirst + 1; // abcissa size
+	getExtents(); // get origin and extents for xy axes
 	ASSERT(m_xWE != 1);
 	p_dc->SetMapMode(MM_TEXT);
 
@@ -133,7 +133,7 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 			p_dc->MoveTo(x1, y1);
 			p_dc->FillSolidRect(&recti, m_colorTable[selbrush]);
 		}
-		p_dc->SetBkColor(bkcolor);		// restore background color
+		p_dc->SetBkColor(bkcolor); // restore background color
 
 		// display spike selected
 		if (m_selectedspike >= 0)
@@ -154,7 +154,7 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 			displayHZtags(p_dc);
 
 		// display VT cursors
-		if (m_VTtags.GetNTags() > 0)		// display vertical tags
+		if (m_VTtags.GetNTags() > 0) // display vertical tags
 			displayVTtags(p_dc);
 	}
 
@@ -169,7 +169,7 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC * p_dc)
 	}
 }
 
-void CChartSpikeXYWnd::displayVTtags(CDC* p_dc) 
+void CChartSpikeXYWnd::displayVTtags(CDC* p_dc)
 {
 	// select pen and display mode
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -182,10 +182,10 @@ void CChartSpikeXYWnd::displayVTtags(CDC* p_dc)
 	const auto y1 = m_displayRect.bottom;
 	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 	{
-		const auto val = m_VTtags.GetValue(j);			// get value
+		const auto val = m_VTtags.GetValue(j); // get value
 		const auto pix_x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-		p_dc->MoveTo(pix_x, y0);			// set initial pt
-		p_dc->LineTo(pix_x, y1);			// VT line
+		p_dc->MoveTo(pix_x, y0); // set initial pt
+		p_dc->LineTo(pix_x, y1); // VT line
 	}
 	p_dc->SelectObject(oldp);
 	p_dc->SetROP2(nold_rop);
@@ -246,9 +246,9 @@ void CChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
 		{
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
-			color = BLACK_COLOR;			// Black
+			color = BLACK_COLOR; // Black
 			if (spike_class != m_selclass)
-				color = SILVER_COLOR;		// LTgrey
+				color = SILVER_COLOR; // LTgrey
 			break;
 		case PLOT_CLASSCOLORS:
 			if (spikeno == m_selectedspike)
@@ -257,7 +257,7 @@ void CChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
 			break;
 		case PLOT_BLACK:
 		default:
-			color = BLACK_COLOR;	// Black
+			color = BLACK_COLOR; // Black
 			break;
 		}
 	}
@@ -275,7 +275,7 @@ void CChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
 	drawSelectedSpike(spikeno, color, &dc);
 }
 
-void CChartSpikeXYWnd::highlightOnePoint(int nospike, CDC * p_dc)
+void CChartSpikeXYWnd::highlightOnePoint(int nospike, CDC* p_dc)
 {
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
@@ -286,7 +286,7 @@ void CChartSpikeXYWnd::highlightOnePoint(int nospike, CDC * p_dc)
 
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51)); //RGB(255, 255, 255));
-	auto* oldpen = (CPen*)p_dc->SelectObject(&new_pen);
+	auto* oldpen = p_dc->SelectObject(&new_pen);
 
 	const auto width = m_rwidth * 2 / 3 + 2;
 	CRect rect1(-width, -width, width, width);
@@ -302,7 +302,7 @@ void CChartSpikeXYWnd::highlightOnePoint(int nospike, CDC * p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-void CChartSpikeXYWnd::drawSelectedSpike(int nospike, int color, CDC * p_dc)
+void CChartSpikeXYWnd::drawSelectedSpike(int nospike, int color, CDC* p_dc)
 {
 	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
 	const auto l_spike_time = spike_element->get_time();
@@ -334,7 +334,7 @@ void CChartSpikeXYWnd::MoveVTtagtoVal(int i, int val)
 	m_VTtags.SetTagVal(i, val);
 }
 
-int	CChartSpikeXYWnd::SelectSpike(int spikeno)
+int CChartSpikeXYWnd::SelectSpike(int spikeno)
 {
 	// erase old selected spike (eventually)
 	const auto oldselected = m_selectedspike;
@@ -357,51 +357,51 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		break;
 
 	case TRACK_VTTAG:
-	{
-		// convert pix into data value
-		const auto val = MulDiv(m_ptLast.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-		m_VTtags.SetTagVal(m_HCtrapped, val);
-		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-		XorVTtag(point.x);
-		CChartWnd::OnLButtonUp(nFlags, point);
-		postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
-	}
-	break;
+		{
+			// convert pix into data value
+			const auto val = MulDiv(m_ptLast.x - m_xVO, m_xWE, m_xVE) + m_xWO;
+			m_VTtags.SetTagVal(m_HCtrapped, val);
+			point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
+			XorVTtag(point.x);
+			ChartWnd::OnLButtonUp(nFlags, point);
+			postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+		}
+		break;
 
 	default:
-	{
-		CChartWnd::OnLButtonUp(nFlags, point);
-		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
-		const auto jitter = 3;
-		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
-			if (m_cursorType != CURSOR_ZOOM)
-				postMyMessage(HINT_HITAREA, NULL);
-			else
-				zoomIn();
-			return;					// exit: mouse movement was too small
-		}
+			ChartWnd::OnLButtonUp(nFlags, point);
+			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
+			const auto jitter = 3;
+			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
+			{
+				if (m_cursorType != CURSOR_ZOOM)
+					postMyMessage(HINT_HITAREA, NULL);
+				else
+					zoomIn();
+				return; // exit: mouse movement was too small
+			}
 
-		// perform action according to cursor type
-		auto rect_in = m_displayRect;
-		switch (m_cursorType)
-		{
-		case 0:
-			rect_out = rect_in;
-			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-			ZoomData(&rect_in, &rect_out);
-			break;
-		case CURSOR_ZOOM: 	// zoom operation
-			ZoomData(&rect_in, &rect_out);
-			m_ZoomFrom = rect_in;
-			m_ZoomTo = rect_out;
-			m_iUndoZoom = 1;
-			break;
-		default:
-			break;
+			// perform action according to cursor type
+			auto rect_in = m_displayRect;
+			switch (m_cursorType)
+			{
+			case 0:
+				rect_out = rect_in;
+				rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
+				ZoomData(&rect_in, &rect_out);
+				break;
+			case CURSOR_ZOOM: // zoom operation
+				ZoomData(&rect_in, &rect_out);
+				m_ZoomFrom = rect_in;
+				m_ZoomTo = rect_out;
+				m_iUndoZoom = 1;
+				break;
+			default:
+				break;
+			}
 		}
-	}
-	break;
+		break;
 	}
 }
 
@@ -424,11 +424,11 @@ void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// track rectangle or HZtag?
-	CChartWnd::OnLButtonDown(nFlags, point);
-	if (m_currCursorMode != 0 || m_HCtrapped >= 0)// do nothing else if mode != 0
+	ChartWnd::OnLButtonDown(nFlags, point);
+	if (m_currCursorMode != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
 	{
 		if (m_trackMode == TRACK_HZTAG || m_trackMode == TRACK_VTTAG)
-			return;	 								// or any tag hit (VT, HZ) detected
+			return; // or any tag hit (VT, HZ) detected
 	}
 
 	// test if mouse hit a spike
@@ -436,8 +436,8 @@ void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	if (m_hitspk >= 0)
 	{
 		// cancel track rect mode
-		m_trackMode = TRACK_OFF;		// flag trackrect
-		releaseCursor();				// release cursor capture
+		m_trackMode = TRACK_OFF; // flag trackrect
+		releaseCursor(); // release cursor capture
 		if (nFlags & MK_SHIFT)
 			postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
 
@@ -456,13 +456,13 @@ void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 // with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 
-void CChartSpikeXYWnd::ZoomData(CRect * rFrom, CRect * rDest)
+void CChartSpikeXYWnd::ZoomData(CRect* rFrom, CRect* rDest)
 {
-	rFrom->NormalizeRect();	// make sure that rect is not inverted
+	rFrom->NormalizeRect(); // make sure that rect is not inverted
 	rDest->NormalizeRect();
 
 	// change y gain & y offset
-	const auto y_we = m_yWE;				// save previous window extent
+	const auto y_we = m_yWE; // save previous window extent
 	m_yWE = MulDiv(m_yWE, rDest->Height(), rFrom->Height());
 	m_yWO = m_yWO
 		- MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
@@ -481,9 +481,10 @@ void CChartSpikeXYWnd::ZoomData(CRect * rFrom, CRect * rDest)
 void CChartSpikeXYWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if (m_selectedspike < 0 || m_hitspk < 0)
-		CChartWnd::OnLButtonDblClk(nFlags, point);
+		ChartWnd::OnLButtonDblClk(nFlags, point);
 	else
-		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED), reinterpret_cast<LPARAM>(m_hWnd));
+		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),
+		                         reinterpret_cast<LPARAM>(m_hWnd));
 }
 
 int CChartSpikeXYWnd::hitCurveInDoc(CPoint point)
@@ -581,10 +582,11 @@ void CChartSpikeXYWnd::getExtents()
 	{
 		auto maxval = 4096;
 		auto minval = 0;
-		if (p_spikelist_ != nullptr )
+		if (p_spikelist_ != nullptr)
 		{
 			const auto upperbound = p_spikelist_->GetTotalSpikes() - 1;
-			if (upperbound >= 0) {
+			if (upperbound >= 0)
+			{
 				maxval = p_spikelist_->GetSpikeElemt(upperbound)->get_y1();
 				minval = maxval;
 				for (auto i = upperbound; i >= 0; i--)

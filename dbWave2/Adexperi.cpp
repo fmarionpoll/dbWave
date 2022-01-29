@@ -17,8 +17,8 @@
 // ----------------------------------- globals ---------------------------------
 
 ADExperimentDlg::ADExperimentDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(ADExperimentDlg::IDD, pParent)
-	, m_bhidesubsequent(FALSE)
+	: CDialog(IDD, pParent)
+	  , m_bhidesubsequent(FALSE)
 {
 	m_csBasename = _T("");
 	m_csMoreComment = _T("");
@@ -111,7 +111,7 @@ void ADExperimentDlg::OnOK()
 
 	// check if this file is already present, exit if not...
 	CFileStatus status;
-	auto i_id_response = IDYES;	// default: go on if file not found
+	auto i_id_response = IDYES; // default: go on if file not found
 	if (CFile::GetStatus(m_szFileName, status))
 		i_id_response = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
 	// no .. find first available number
@@ -214,22 +214,29 @@ BOOL ADExperimentDlg::OnInitDialog()
 	m_mfcBrowsePath.SetWindowTextW(m_csPathname);
 
 	m_csMoreComment = m_pwaveFormat->csMoreComment;
-	LoadList(&m_coConcentration, &(m_pADC_options->csA_concentration), m_pADC_options->icsA_concentration, &(m_pdbDoc->m_pDB->m_concSet));
-	LoadList(&m_coStimulus, &(m_pADC_options->csA_stimulus), m_pADC_options->icsA_stimulus, &(m_pdbDoc->m_pDB->m_stimSet));
-	LoadList(&m_coConcentration2, &(m_pADC_options->csA_concentration2), m_pADC_options->icsA_concentration2, &(m_pdbDoc->m_pDB->m_concSet));
-	LoadList(&m_coStimulus2, &(m_pADC_options->csA_stimulus2), m_pADC_options->icsA_stimulus2, &(m_pdbDoc->m_pDB->m_stimSet));
+	LoadList(&m_coConcentration, &(m_pADC_options->csA_concentration), m_pADC_options->icsA_concentration,
+	         &(m_pdbDoc->m_pDB->m_concSet));
+	LoadList(&m_coStimulus, &(m_pADC_options->csA_stimulus), m_pADC_options->icsA_stimulus,
+	         &(m_pdbDoc->m_pDB->m_stimSet));
+	LoadList(&m_coConcentration2, &(m_pADC_options->csA_concentration2), m_pADC_options->icsA_concentration2,
+	         &(m_pdbDoc->m_pDB->m_concSet));
+	LoadList(&m_coStimulus2, &(m_pADC_options->csA_stimulus2), m_pADC_options->icsA_stimulus2,
+	         &(m_pdbDoc->m_pDB->m_stimSet));
 	LoadList(&m_coInsect, &(m_pADC_options->csA_insect), m_pADC_options->icsA_insect, &(m_pdbDoc->m_pDB->m_insectSet));
-	LoadList(&m_coLocation, &(m_pADC_options->csA_location), m_pADC_options->icsA_location, &(m_pdbDoc->m_pDB->m_locationSet));
-	LoadList(&m_coSensillum, &(m_pADC_options->csA_sensillum), m_pADC_options->icsA_sensillum, &(m_pdbDoc->m_pDB->m_sensillumSet));
+	LoadList(&m_coLocation, &(m_pADC_options->csA_location), m_pADC_options->icsA_location,
+	         &(m_pdbDoc->m_pDB->m_locationSet));
+	LoadList(&m_coSensillum, &(m_pADC_options->csA_sensillum), m_pADC_options->icsA_sensillum,
+	         &(m_pdbDoc->m_pDB->m_sensillumSet));
 	LoadList(&m_coStrain, &(m_pADC_options->csA_strain), m_pADC_options->icsA_strain, &(m_pdbDoc->m_pDB->m_strainSet));
 	LoadList(&m_coSex, &(m_pADC_options->csA_sex), m_pADC_options->icsA_sex, &(m_pdbDoc->m_pDB->m_sexSet));
-	LoadList(&m_coOperator, &(m_pADC_options->csA_operatorname), m_pADC_options->icsA_operatorname, &(m_pdbDoc->m_pDB->m_operatorSet));
+	LoadList(&m_coOperator, &(m_pADC_options->csA_operatorname), m_pADC_options->icsA_operatorname,
+	         &(m_pdbDoc->m_pDB->m_operatorSet));
 	LoadList(&m_coExpt, &(m_pADC_options->csA_expt), m_pADC_options->icsA_expt, &(m_pdbDoc->m_pDB->m_exptSet));
 	LoadList(&m_coRepeat, nullptr, m_pADC_options->icsA_repeat, nullptr);
 	LoadList(&m_coRepeat2, nullptr, m_pADC_options->icsA_repeat2, nullptr);
 
-	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN1))->SetRange32(0, 99999);
-	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN2))->SetRange32(0, 99999);
+	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange32(0, 99999);
+	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN2))->SetRange32(0, 99999);
 
 	if (!m_bADexpt)
 	{
@@ -255,8 +262,8 @@ BOOL ADExperimentDlg::OnInitDialog()
 	}
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 // save content of the list
@@ -267,7 +274,8 @@ int ADExperimentDlg::SaveList(CComboBox* p_combo, CStringArray* p_s)
 	{
 		CString csEdit;
 		p_combo->GetWindowText(csEdit);
-		if (!csEdit.IsEmpty()) {
+		if (!csEdit.IsEmpty())
+		{
 			iexist = p_combo->FindStringExact(-1, csEdit);
 			if (iexist == CB_ERR)
 				iexist = p_combo->AddString(csEdit);
@@ -279,8 +287,8 @@ int ADExperimentDlg::SaveList(CComboBox* p_combo, CStringArray* p_s)
 		p_s->SetSize(i_s_count);
 		for (auto i = 0; i < i_s_count; i++)
 		{
-			p_combo->GetLBText(i, cs_dummy);			// load string from combo box
-			p_s->SetAt(i, cs_dummy);					// save string into string list
+			p_combo->GetLBText(i, cs_dummy); // load string from combo box
+			p_s->SetAt(i, cs_dummy); // save string into string list
 		}
 	}
 	return iexist;
@@ -322,11 +330,11 @@ void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 		while (!pm_set->IsEOF())
 		{
 			pm_set->GetFieldValue(0, var_value1);
-			CString cs_field = var_value1.bstrVal;;		// check if the conversion is correct
+			CString cs_field = var_value1.bstrVal;
 			if (p_combo->FindStringExact(0, cs_field) == CB_ERR)
 			{
 				p_combo->AddString(cs_field);
-				i_sel = 0;		// reset selection if a chain is added
+				i_sel = 0; // reset selection if a chain is added
 			}
 			pm_set->MoveNext();
 		}

@@ -15,7 +15,7 @@
 #endif
 
 CPrintMarginsDlg::CPrintMarginsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CPrintMarginsDlg::IDD, pParent), m_viewtype(0), m_captureMode(0), m_icapturedBar(0)
+	: CDialog(IDD, pParent), m_viewtype(0), m_captureMode(0), m_icapturedBar(0)
 {
 	m_bCaptured = FALSE;
 	mdPM = nullptr;
@@ -63,7 +63,7 @@ void CPrintMarginsDlg::OnCommentsoptions()
 
 void CPrintMarginsDlg::OnDrawarea()
 {
-	CPrintDrawAreaDlg  dlg;
+	CPrintDrawAreaDlg dlg;
 	dlg.mdPM = mdPM;
 	dlg.DoModal();
 	SketchPrinterPage();
@@ -87,7 +87,7 @@ void CPrintMarginsDlg::OnPagemargins()
 
 void CPrintMarginsDlg::OnPrintersetup()
 {
-	CdbWaveApp* p_app = (CdbWaveApp*)AfxGetApp();	// load browse parameters
+	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp()); // load browse parameters
 	p_app->FilePrintSetup();
 	GetPageSize();
 	SketchPrinterPage();
@@ -97,8 +97,10 @@ void CPrintMarginsDlg::SketchPrinterPage()
 {
 	CClientDC dc(this);
 
-	/*auto p_old_brush = (CBrush*) */dc.SelectStockObject(WHITE_BRUSH);
-	/*auto pOldPen = (CPen*) */dc.SelectStockObject(BLACK_PEN);
+	/*auto p_old_brush = (CBrush*) */
+	dc.SelectStockObject(WHITE_BRUSH);
+	/*auto pOldPen = (CPen*) */
+	dc.SelectStockObject(BLACK_PEN);
 
 	const auto p_f_wnd = GetDlgItem(IDC_RECT1);
 	p_f_wnd->GetWindowRect(&m_rect);
@@ -108,25 +110,26 @@ void CPrintMarginsDlg::SketchPrinterPage()
 
 void CPrintMarginsDlg::OnPaint()
 {
-	CPaintDC dc(this); 					// device context for painting
+	CPaintDC dc(this); // device context for painting
 
-	/*CBrush* p_old_brush = (CBrush*) */dc.SelectStockObject(WHITE_BRUSH);
-	const auto p_old_pen = (CPen*)dc.SelectStockObject(BLACK_PEN);
+	/*CBrush* p_old_brush = (CBrush*) */
+	dc.SelectStockObject(WHITE_BRUSH);
+	const auto p_old_pen = static_cast<CPen*>(dc.SelectStockObject(BLACK_PEN));
 
 	const auto page_background = RGB(192, 192, 192);
 	const auto comment_area = page_background; //RGB(  0, 128, 128);
 
 	// erase background
 	const auto p_f_wnd = GetDlgItem(IDC_RECT1);
-	p_f_wnd->GetWindowRect(&m_rect);		// get window rectangle
-	ScreenToClient(&m_rect);			// convert  coordinates
+	p_f_wnd->GetWindowRect(&m_rect); // get window rectangle
+	ScreenToClient(&m_rect); // convert  coordinates
 	dc.FillSolidRect(&m_rect, page_background);
 
-	CPoint center;						// center of the drawing area
+	CPoint center; // center of the drawing area
 	center.x = (m_rect.right + m_rect.left) / 2;
 	center.y = (m_rect.bottom + m_rect.top) / 2;
-	const auto rectsize = min(m_rect.Width(), m_rect.Height());	// max size of the square
-	const auto maxresol = max(mdPM->vertRes, mdPM->horzRes);		// max resolution
+	const auto rectsize = min(m_rect.Width(), m_rect.Height()); // max size of the square
+	const auto maxresol = max(mdPM->vertRes, mdPM->horzRes); // max resolution
 
 	// draw page area
 	auto diff = MulDiv(mdPM->horzRes, rectsize, maxresol) / 2;
@@ -137,7 +140,7 @@ void CPrintMarginsDlg::OnPaint()
 	m_pagerect.bottom = center.y + diff;
 	dc.Rectangle(&m_pagerect);
 
-	auto i = MulDiv(mdPM->leftPageMargin, rectsize, maxresol);   // vertical lines
+	auto i = MulDiv(mdPM->leftPageMargin, rectsize, maxresol); // vertical lines
 	m_bars[0] = CRect(m_pagerect.left + i, m_rect.top, m_pagerect.left + i, m_rect.bottom);
 
 	i = MulDiv(mdPM->rightPageMargin, rectsize, maxresol);
@@ -200,7 +203,7 @@ void CPrintMarginsDlg::OnPaint()
 void CPrintMarginsDlg::DrawBar(CRect* bar, CDC* pdc)
 {
 	CPen penbars(PS_DOT, 1, RGB(0, 0, 255));
-	const auto p_old_pen = (CPen*)pdc->SelectObject(&penbars);
+	const auto p_old_pen = pdc->SelectObject(&penbars);
 
 	pdc->MoveTo(bar->left, bar->top);
 	pdc->LineTo(bar->right, bar->bottom);
@@ -220,7 +223,7 @@ void CPrintMarginsDlg::GetPageSize()
 
 	// GetPrinterDC returns a HDC so attach it
 	CDC dc;
-	const auto h_dc = dlg.CreatePrinterDC();     // to delete at the end -- see doc!
+	const auto h_dc = dlg.CreatePrinterDC(); // to delete at the end -- see doc!
 	ASSERT(h_dc != NULL);
 	dc.Attach(h_dc);
 
@@ -260,12 +263,12 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		ReleaseCapture();
 		m_bCaptured = FALSE;
 
-		const auto rectsize = min(m_rect.Width(), m_rect.Height());	// max size of the square
-		const auto maxresol = max(mdPM->vertRes, mdPM->horzRes);		// max resolution
+		const auto rectsize = min(m_rect.Width(), m_rect.Height()); // max size of the square
+		const auto maxresol = max(mdPM->vertRes, mdPM->horzRes); // max resolution
 
 		switch (m_icapturedBar)
 		{
-		case 0:	// left page margin
+		case 0: // left page margin
 			if (m_bars[0].left < m_pagerect.left)
 			{
 				m_bars[0].left = m_pagerect.left;
@@ -279,7 +282,7 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			mdPM->leftPageMargin = MulDiv(m_bars[0].right - m_pagerect.left, maxresol, rectsize);
 			break;
 
-		case 1:	// top page margin
+		case 1: // top page margin
 			if (m_bars[1].top < m_pagerect.top)
 			{
 				m_bars[1].top = m_pagerect.top;
@@ -293,7 +296,7 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			mdPM->topPageMargin = MulDiv(m_bars[1].top - m_pagerect.top, maxresol, rectsize);
 			break;
 
-		case 2:	// right page margin
+		case 2: // right page margin
 			if (m_bars[2].left < m_pagerect.left)
 			{
 				m_bars[2].left = m_pagerect.left;
@@ -321,7 +324,7 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			mdPM->bottomPageMargin = MulDiv((m_pagerect.bottom - m_bars[3].top), maxresol, rectsize);
 			break;
 
-		case 4:	// signal right
+		case 4: // signal right
 			if ((m_bars[4].right - m_bars[0].right) < 0)
 			{
 				m_bars[4].right = m_bars[0].left;
@@ -330,7 +333,7 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			mdPM->WidthDoc = MulDiv((m_bars[4].right - m_bars[0].right), maxresol, rectsize);
 			break;
 
-		case 5:	// signal band width
+		case 5: // signal band width
 			if ((m_bars[5].top - m_bars[1].top) < 0)
 			{
 				m_bars[5].top = m_bars[1].top;
@@ -344,7 +347,7 @@ void CPrintMarginsDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			mdPM->HeightDoc = MulDiv((m_bars[5].top - m_bars[1].top), maxresol, rectsize);
 			break;
 
-		case 6:	// horizontal separator between signal and comment area
+		case 6: // horizontal separator between signal and comment area
 			if ((m_bars[6].left - m_bars[4].right) < 0)
 			{
 				m_bars[6].right = m_bars[4].right;

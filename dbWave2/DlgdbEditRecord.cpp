@@ -20,11 +20,12 @@
 // CdbEditRecordDlg dialog
 
 IMPLEMENT_DYNAMIC(CDlgdbEditRecord, CDialog)
+
 CDlgdbEditRecord::CDlgdbEditRecord(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgdbEditRecord::IDD, pParent)
-	, m_pSet(nullptr), m_cs_more(_T(""))
-	, m_csnameDat(_T(""))
-	, m_csnameSpk(_T(""))
+	: CDialog(IDD, pParent)
+	  , m_pSet(nullptr), m_cs_more(_T(""))
+	  , m_csnameDat(_T(""))
+	  , m_csnameSpk(_T(""))
 {
 	//m_pDaoView = NULL;
 	m_bshowIDC_NEXT = TRUE;
@@ -98,7 +99,7 @@ BOOL CDlgdbEditRecord::OnInitDialog()
 	PopulateControls();
 	// TODO? disable controls corresponding to a filtered field
 	UpdateData(FALSE);
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
@@ -252,7 +253,11 @@ void CDlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboB
 			linkedtableSet.AddNew();
 			linkedtableSet.SetFieldValue(0, COleVariant(cs_combo, VT_BSTRT));
 			try { linkedtableSet.Update(); }
-			catch (CDaoException* e) { DisplayDaoException(e, 24); e->Delete(); }
+			catch (CDaoException* e)
+			{
+				DisplayDaoException(e, 24);
+				e->Delete();
+			}
 
 			// get value and set the ID number in the main table
 			linkedtableSet.MoveLast();
@@ -313,10 +318,10 @@ void CDlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
 		return;
 
 	CDlgdbEditField dlg;
-	dlg.m_pMainTable = m_pSet;				// address main table
-	dlg.m_csColName = pdesc->csColName;		// name of the column
-	dlg.m_pIndexTable = pdesc->plinkedSet;	// address secondary table
-	dlg.m_pliIDArray = nullptr;					// not a primary field
+	dlg.m_pMainTable = m_pSet; // address main table
+	dlg.m_csColName = pdesc->csColName; // name of the column
+	dlg.m_pIndexTable = pdesc->plinkedSet; // address secondary table
+	dlg.m_pliIDArray = nullptr; // not a primary field
 	dlg.m_pdbDoc = m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
 		PopulateCombo_WithText(*pdesc->plinkedSet, *pdesc->pComboBox, *pdesc->pdataItem);
@@ -329,9 +334,9 @@ void CDlgdbEditRecord::EditChangeItem_MainField(int IDC)
 		return;
 
 	CDlgdbEditField dlg;
-	dlg.m_pMainTable = m_pSet;				// address main table
-	dlg.m_csColName = pdesc->csColName;		// name of the column
-	dlg.m_pliIDArray = &pdesc->liArray;		// address of table of ids
+	dlg.m_pMainTable = m_pSet; // address main table
+	dlg.m_csColName = pdesc->csColName; // name of the column
+	dlg.m_pliIDArray = &pdesc->liArray; // address of table of ids
 	dlg.m_pIndexTable = nullptr;
 	dlg.m_pdbDoc = m_pdbDoc;
 	if (dlg.DoModal() == IDOK)

@@ -13,6 +13,6 @@ class CGridCellNumeric : public CGridCell
 	DECLARE_DYNCREATE(CGridCellNumeric)
 
 public:
-	virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-	virtual void EndEdit();
+	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+	void EndEdit() override;
 };

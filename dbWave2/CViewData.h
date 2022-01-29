@@ -14,101 +14,101 @@ protected:
 	DECLARE_DYNCREATE(CViewData)
 	CViewData();
 
-// Form Data
+	// Form Data
 public:
 	enum { IDD = IDD_VIEWDATA };
 
-	int			m_ichanselected = 0;
-	float		m_v1			= 0.;
-	float		m_v2			= 0.;
-	float		m_diff			= 0.;
-	float		m_timefirst		= 0.;
-	float		m_timelast		= 0.;
-	float		m_floatNDigits = 1000.;		// 10(000) -> n digits displayed
-	BOOL		m_bInitComment = true;
+	int m_ichanselected = 0;
+	float m_v1 = 0.;
+	float m_v2 = 0.;
+	float m_diff = 0.;
+	float m_timefirst = 0.;
+	float m_timelast = 0.;
+	float m_floatNDigits = 1000.; // 10(000) -> n digits displayed
+	BOOL m_bInitComment = true;
 
 	// subclassed controls within CDaoRecordView
-	CChartDataWnd m_ChartDataWnd{};			// data display
-	CEditCtrl	mm_v1;						// first HZ cursor
-	CEditCtrl	mm_v2;						// second HZ cursor
-	CEditCtrl	mm_diff;					// difference v1-v2
-	CEditCtrl	mm_timefirst;				// first abcissa value
-	CEditCtrl	mm_timelast;				// last abcissa value
-	CComboBox	m_comboSelectChan;
-	CRulerBar	m_ADC_yRulerBar;
-	CRulerBar	m_ADC_xRulerBar;
+	ChartData m_ChartDataWnd{}; // data display
+	CEditCtrl mm_v1; // first HZ cursor
+	CEditCtrl mm_v2; // second HZ cursor
+	CEditCtrl mm_diff; // difference v1-v2
+	CEditCtrl mm_timefirst; // first abcissa value
+	CEditCtrl mm_timelast; // last abcissa value
+	CComboBox m_comboSelectChan;
+	CRulerBar m_ADC_yRulerBar;
+	CRulerBar m_ADC_xRulerBar;
 
 protected:
 	// parameters related to data display and to document
-	CAcqDataDoc* m_pdatDoc		= nullptr;
-	BOOL		m_bvalidDoc		= false;
-	float		m_samplingRate	= 1.;
-	int 		m_cursorstate	= 0;		// cursor = system arrow
-	int			m_VBarpixelratio = 30;		// vertical bar pixel ratio
-	int			m_HBarpixelratio = 10;		// horizontal bar pixel ratio
-	int			m_currentfileindex = 0;
+	AcqDataDoc* m_pdatDoc = nullptr;
+	BOOL m_bvalidDoc = false;
+	float m_samplingRate = 1.;
+	int m_cursorstate = 0; // cursor = system arrow
+	int m_VBarpixelratio = 30; // vertical bar pixel ratio
+	int m_HBarpixelratio = 10; // horizontal bar pixel ratio
+	int m_currentfileindex = 0;
 
-	HICON		m_hBias			= nullptr;
-	HICON		m_hZoom			= nullptr;
-	int			scan_count		= 0;
-	float		chrate			= 0.;
+	HICON m_hBias = nullptr;
+	HICON m_hZoom = nullptr;
+	int scan_count = 0;
+	float chrate = 0.;
 
-	OPTIONS_VIEWDATA* options_viewdata	= nullptr;
-	OPTIONS_VIEWDATAMEASURE* mdMO		= nullptr;		// measure options
-
-protected:
-	void 		PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
-	CString		ConvertFileIndex(long l_first, long l_last);
-	void 		ComputePrinterPageSize();
-	CString		GetFileInfos();
-	CString		PrintBars(CDC* p_dc, CRect* rect);
-	BOOL		GetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
-	BOOL		PrintGetNextRow(int& filenumber, long& l_first, long& verylast);
-	void		SaveModifiedFile();
-	void		UpdateFileParameters(BOOL bUpdateInterface = TRUE);
-	void		UpdateChannelsDisplayParameters();
-	void		ChainDialog(WORD iID);
-	int			PrintGetNPages();
-
-	BOOL		m_bCommonScale	= false;
+	OPTIONS_VIEWDATA* options_viewdata = nullptr;
+	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; // measure options
 
 protected:
-	CScrollBarEx m_filescroll;			// data position within file
-	SCROLLINFO	m_filescroll_infos{};	// infos for scrollbar
-	int			m_VBarMode= 0;			// flag V scrollbar state
-	CScrollBar 	m_scrolly;				// V scrollbar
+	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
+	CString ConvertFileIndex(long l_first, long l_last);
+	void ComputePrinterPageSize();
+	CString GetFileInfos();
+	CString PrintBars(CDC* p_dc, CRect* rect);
+	BOOL GetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
+	BOOL PrintGetNextRow(int& filenumber, long& l_first, long& verylast);
+	void SaveModifiedFile();
+	void UpdateFileParameters(BOOL bUpdateInterface = TRUE);
+	void UpdateChannelsDisplayParameters();
+	void ChainDialog(WORD iID);
+	int PrintGetNPages();
 
-	void		OnFileScroll(UINT nSBCode, UINT nPos);
-	void		OnGainScroll(UINT nSBCode, UINT nPos);
-	void		UpdateYExtent(int ichan, int yextent);
-	void		UpdateYZero(int ichan, int ybias);
-	void		OnBiasScroll(UINT nSBCode, UINT nPos);
-	void		UpdateGainScroll();
-	void		UpdateBiasScroll();
-	void		SetVBarMode(short bMode);
-	void		UpdateFileScroll();
-	void		UpdateLegends(int operation);
-	void		UpdateHZtagsVal();
-	void		SetCursorAssociatedWindows();
-	void		UpdateChannel(int channel);
-	void		MeasureProperties(int item);
+	BOOL m_bCommonScale = false;
+
+protected:
+	CScrollBarEx m_filescroll; // data position within file
+	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
+	int m_VBarMode = 0; // flag V scrollbar state
+	CScrollBar m_scrolly; // V scrollbar
+
+	void OnFileScroll(UINT nSBCode, UINT nPos);
+	void OnGainScroll(UINT nSBCode, UINT nPos);
+	void UpdateYExtent(int ichan, int yextent);
+	void UpdateYZero(int ichan, int ybias);
+	void OnBiasScroll(UINT nSBCode, UINT nPos);
+	void UpdateGainScroll();
+	void UpdateBiasScroll();
+	void SetVBarMode(short bMode);
+	void UpdateFileScroll();
+	void UpdateLegends(int operation);
+	void UpdateHZtagsVal();
+	void SetCursorAssociatedWindows();
+	void UpdateChannel(int channel);
+	void MeasureProperties(int item);
 
 	// Overrides
 protected:
-	void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void		DoDataExchange(CDataExchange* pDX) override;
-	void		OnInitialUpdate() override;
-	BOOL		OnPreparePrinting(CPrintInfo* pInfo) override;
-	void		OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void		OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	void		OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	
-	void		DefineSubClassedItems();
-	void		DefineStretchParameters();
+	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void DoDataExchange(CDataExchange* pDX) override;
+	void OnInitialUpdate() override;
+	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
+	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+
+	void DefineSubClassedItems();
+	void DefineStretchParameters();
 
 	// Implementation
 public:
-	virtual ~CViewData();
+	~CViewData() override;
 
 	afx_msg void OnClickedBias();
 	afx_msg void OnClickedGain();
@@ -143,4 +143,3 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 };
-

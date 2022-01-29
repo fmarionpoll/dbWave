@@ -56,10 +56,10 @@ CSize CGridCellCheck::GetCellExtent(CDC* p_dc)
 {
 	// Using SM_CXHSCROLL as a guide to the size of the checkbox
 	int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2 * GetMargin();
-	CSize	cellSize = CGridCell::GetCellExtent(p_dc);
+	CSize cellSize = CGridCell::GetCellExtent(p_dc);
 	cellSize.cx += nWidth;
 	cellSize.cy = max(cellSize.cy, nWidth);
-	return  cellSize;
+	return cellSize;
 }
 
 // i/o:  i=dims of cell rect; o=dims of text rect
@@ -92,7 +92,7 @@ BOOL CGridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bErase
 	// if (CheckRect.GetRectWidth() < rect.GetRectWidth() && CheckRect.GetRectHeight() < rect.GetRectHeight()) {
 	// Do the draw
 	p_dc->DrawFrameControl(GetCheckPlacement(), DFC_BUTTON,
-		(m_bChecked) ? DFCS_BUTTONCHECK | DFCS_CHECKED : DFCS_BUTTONCHECK);
+	                       (m_bChecked) ? DFCS_BUTTONCHECK | DFCS_CHECKED : DFCS_BUTTONCHECK);
 
 	// }
 #endif
@@ -164,7 +164,7 @@ CRect CGridCellCheck::GetCheckPlacement()
 	}
 	*/
 
-	if (m_Rect.Height() < nWidth + 2 * static_cast<int> (GetMargin()))
+	if (m_Rect.Height() < nWidth + 2 * static_cast<int>(GetMargin()))
 	{
 		place.top = m_Rect.top + (m_Rect.Height() - nWidth) / 2;
 		place.bottom = place.top + nWidth;

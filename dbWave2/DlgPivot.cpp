@@ -1,4 +1,3 @@
-
 #include "StdAfx.h"
 //#include "dbWave.h"
 #include "resource.h"
@@ -19,7 +18,7 @@
 IMPLEMENT_DYNAMIC(CDlgPivot, CDialogEx)
 
 CDlgPivot::CDlgPivot(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CDlgPivot::IDD, pParent)
+	: CDialogEx(IDD, pParent)
 {
 	m_nFixCols = 1;
 	m_nFixRows = 1;
@@ -50,7 +49,7 @@ BOOL CDlgPivot::OnInitDialog()
 
 	// TODO:  Add extra initialization here
 
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
@@ -66,12 +65,13 @@ bool CDlgPivot::VirtualCompare(int c1, int c2)
 	//int col = pThis->m_CurCol;            // a first version with CStrings was catastrophic....
 	return (c1 < c2); // strange order, whatever the column number...
 }
+
 BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 {
 	auto p_wnd = CWnd::FromHandle(hwnd);
 	const auto p_translate = reinterpret_cast<CSize*>(lParam);
 
-	auto p_dlg = (CDlgPivot*)p_wnd->GetParent();
+	auto p_dlg = static_cast<CDlgPivot*>(p_wnd->GetParent());
 	if (!p_dlg) return FALSE;
 
 	CRect rect;
@@ -83,18 +83,18 @@ BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 		if (((rect.top >= 7 && p_translate->cy > 0) || rect.Height() > 20) &&
 			((rect.left >= 7 && p_translate->cx > 0) || rect.Width() > 20))
 			p_wnd->MoveWindow(rect.left, rect.top,
-				rect.Width() + p_translate->cx,
-				rect.Height() + p_translate->cy, FALSE);
+			                  rect.Width() + p_translate->cx,
+			                  rect.Height() + p_translate->cy, FALSE);
 		else
 			p_wnd->MoveWindow(rect.left + p_translate->cx, rect.top + p_translate->cy,
-				rect.Width(), rect.Height(), FALSE);
+			                  rect.Width(), rect.Height(), FALSE);
 	}
 
 	else
 	{
 		if (p_wnd->GetDlgCtrlID() == IDC_SIZEBOX)
 			p_wnd->MoveWindow(rect.left + p_translate->cx, rect.top + p_translate->cy,
-				rect.Width(), rect.Height(), FALSE);
+			                  rect.Width(), rect.Height(), FALSE);
 		else
 			p_wnd->MoveWindow(rect.left + p_translate->cx, rect.top, rect.Width(), rect.Height(), FALSE);
 	}
@@ -110,7 +110,7 @@ void CDlgPivot::OnSize(UINT nType, int cx, int cy)
 		return;
 
 	CSize translate(cx - m_OldSize.cx, cy - m_OldSize.cy);
-	::EnumChildWindows(GetSafeHwnd(), EnumProc2, reinterpret_cast<LPARAM>(&translate));
+	EnumChildWindows(GetSafeHwnd(), EnumProc2, reinterpret_cast<LPARAM>(&translate));
 	m_OldSize = CSize(cx, cy);
 	auto p_wnd = GetDlgItem(IDC_SIZEBOX);
 	if (p_wnd)

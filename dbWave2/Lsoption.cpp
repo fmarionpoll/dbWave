@@ -15,13 +15,13 @@
 // CLoadSaveOptionsDlg dialog
 
 CLoadSaveOptionsDlg::CLoadSaveOptionsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CLoadSaveOptionsDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_ddxcomment = _T("");
 	pParmFiles = nullptr;
 	pcomment = nullptr;
-	m_bfilenamechanged = FALSE;		// file name was modified
-	m_bcommentchanged = FALSE;		// comment was modified
+	m_bfilenamechanged = FALSE; // file name was modified
+	m_bcommentchanged = FALSE; // comment was modified
 	m_cursel = 0;
 }
 
@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 
 // ParmFindString() -- find parm
 // return -1 if filename not found
-int	CLoadSaveOptionsDlg::ParmFindString(CString& filename)
+int CLoadSaveOptionsDlg::ParmFindString(CString& filename)
 {
 	auto ifound = -1;
 	for (auto i = 0; i <= pFiles.GetUpperBound(); i++)
@@ -69,29 +69,28 @@ void CLoadSaveOptionsDlg::UpdateFileList()
 
 	// file name has changed : SAVE current parms under new name
 	//                      or LOAD new file
-	CString dummy;								// load name from edit control
-	m_CBnamelist.GetWindowText(dummy);			// get content of edit control
+	CString dummy; // load name from edit control
+	m_CBnamelist.GetWindowText(dummy); // get content of edit control
 
 	// check if name present into parms
 	if (ParmFindString(dummy) < 0)
 	{
-		m_CBnamelist.AddString(dummy);		// add into listbox
+		m_CBnamelist.AddString(dummy); // add into listbox
 		m_cursel = m_CBnamelist.GetCount() - 1;
-		pFiles.InsertAt(0, dummy);			// add into parmfiles
+		pFiles.InsertAt(0, dummy); // add into parmfiles
 	}
-	((CEdit*)GetDlgItem(IDC_COMMENT))->GetWindowText(m_ddxcomment);
+	GetDlgItem(IDC_COMMENT)->GetWindowText(m_ddxcomment);
 	*pcomment = m_ddxcomment;
 
 	// SAVE parameter file?
-	if (((CButton*)GetDlgItem(IDC_SAVE))->GetCheck())
-		((CdbWaveApp*)AfxGetApp())->ParmFile(dummy, FALSE);
-	// b_read=FALSE
+	if (static_cast<CButton*>(GetDlgItem(IDC_SAVE))->GetCheck())
+		static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, FALSE);
+		// b_read=FALSE
 
-// LOAD parameter file?
-	else
-		if (!((CdbWaveApp*)AfxGetApp())->ParmFile(dummy, TRUE))
-			// b_read=TRUE
-			AfxMessageBox(_T("Parameter file not found!"), MB_ICONSTOP | MB_OK);
+		// LOAD parameter file?
+	else if (!static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, TRUE))
+		// b_read=TRUE
+		AfxMessageBox(_T("Parameter file not found!"), MB_ICONSTOP | MB_OK);
 
 	m_bcommentchanged = FALSE;
 	m_bfilenamechanged = FALSE;
@@ -104,31 +103,31 @@ BOOL CLoadSaveOptionsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	// get pointers to variables used in this dialog box
-	pParmFiles = &(((CdbWaveApp*)AfxGetApp())->m_csParmFiles);
-	pcomment = &(((CdbWaveApp*)AfxGetApp())->m_comment);
+	pParmFiles = &(static_cast<CdbWaveApp*>(AfxGetApp())->m_csParmFiles);
+	pcomment = &(static_cast<CdbWaveApp*>(AfxGetApp())->m_comment);
 
 	// load data into combobox
-	for (int i = 0; i < pParmFiles->GetSize(); i++)	// browse through array
+	for (int i = 0; i < pParmFiles->GetSize(); i++) // browse through array
 	{
-		auto dummy = pParmFiles->GetAt(i);	// get string
+		auto dummy = pParmFiles->GetAt(i); // get string
 		pFiles.Add(dummy);
-		m_CBnamelist.AddString(dummy);		// add string to list box of combo box
+		m_CBnamelist.AddString(dummy); // add string to list box of combo box
 	}
-	m_currentFile = pFiles.GetAt(0);		// save current file name
+	m_currentFile = pFiles.GetAt(0); // save current file name
 
-	m_cursel = 0;								// select first item
-	m_CBnamelist.SetCurSel(m_cursel);		// of the combo box
+	m_cursel = 0; // select first item
+	m_CBnamelist.SetCurSel(m_cursel); // of the combo box
 
 	// load comment
 	m_ddxcomment = *pcomment;
 
 	// init parms to load
-	((CButton*)GetDlgItem(IDC_LOAD))->SetCheck(TRUE);
+	static_cast<CButton*>(GetDlgItem(IDC_LOAD))->SetCheck(TRUE);
 	OnLoad();
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 // ------------------------------------------------------------------
@@ -137,8 +136,8 @@ void CLoadSaveOptionsDlg::OnOK()
 {
 	// save data from current selected parm file
 	CString dummy;
-	m_CBnamelist.GetWindowText(dummy);			// get content of edit control
-	auto ifile = ParmFindString(dummy);			// find corresp file within parms
+	m_CBnamelist.GetWindowText(dummy); // get content of edit control
+	auto ifile = ParmFindString(dummy); // find corresp file within parms
 	if (ifile < 0)
 	{
 		UpdateFileList();
@@ -155,7 +154,7 @@ void CLoadSaveOptionsDlg::OnOK()
 
 void CLoadSaveOptionsDlg::OnCancel()
 {
-	((CdbWaveApp*)AfxGetApp())->ParmFile(m_currentFile, TRUE);	// b_read=TRUE
+	static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(m_currentFile, TRUE); // b_read=TRUE
 	CDialog::OnCancel();
 }
 
@@ -163,12 +162,12 @@ void CLoadSaveOptionsDlg::OnCancel()
 
 void CLoadSaveOptionsDlg::OnLoad()
 {
-	((CEdit*)GetDlgItem(IDC_COMMENT))->SetReadOnly(TRUE);
+	static_cast<CEdit*>(GetDlgItem(IDC_COMMENT))->SetReadOnly(TRUE);
 }
 
 void CLoadSaveOptionsDlg::OnSave()
 {
-	((CEdit*)GetDlgItem(IDC_COMMENT))->SetReadOnly(FALSE);
+	static_cast<CEdit*>(GetDlgItem(IDC_COMMENT))->SetReadOnly(FALSE);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -195,13 +194,13 @@ void CLoadSaveOptionsDlg::OnEditchangeNamelist()
 void CLoadSaveOptionsDlg::OnSelchangeNamelist()
 {
 	// save current set of parameters if
-	if (m_bcommentchanged && ((CButton*)GetDlgItem(IDC_SAVE))->GetCheck())
+	if (m_bcommentchanged && static_cast<CButton*>(GetDlgItem(IDC_SAVE))->GetCheck())
 	{
 		CString dummy;
 		m_CBnamelist.GetLBText(m_cursel, dummy);
-		((CEdit*)GetDlgItem(IDC_COMMENT))->GetWindowText(m_ddxcomment);
+		GetDlgItem(IDC_COMMENT)->GetWindowText(m_ddxcomment);
 		*pcomment = m_ddxcomment;
-		((CdbWaveApp*)AfxGetApp())->ParmFile(dummy, FALSE); // b_read=FALSE
+		static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, FALSE); // b_read=FALSE
 		m_bcommentchanged = FALSE;
 	}
 
@@ -211,9 +210,9 @@ void CLoadSaveOptionsDlg::OnSelchangeNamelist()
 	CString dummy;
 	m_cursel = m_CBnamelist.GetCurSel();
 	m_CBnamelist.GetLBText(m_cursel, dummy);
-	((CdbWaveApp*)AfxGetApp())->ParmFile(dummy, TRUE);	// b_read=TRUE
-	m_ddxcomment = *pcomment;		// load comment into string
-	UpdateData(FALSE);				// display changes
+	static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, TRUE); // b_read=TRUE
+	m_ddxcomment = *pcomment; // load comment into string
+	UpdateData(FALSE); // display changes
 }
 
 void CLoadSaveOptionsDlg::OnKillfocusNamelist()

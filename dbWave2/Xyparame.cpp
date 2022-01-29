@@ -12,7 +12,7 @@
 #endif
 
 XYParametersDlg::XYParametersDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(XYParametersDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_xextent = 0;
 	m_xzero = 0;
@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 BOOL XYParametersDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	if (!m_xparam)	// x parameters are not valid
+	if (!m_xparam) // x parameters are not valid
 	{
 		GetDlgItem(IDC_XZERO)->EnableWindow(FALSE);
 		GetDlgItem(IDC_XEXTENT)->EnableWindow(FALSE);

@@ -297,7 +297,7 @@
     <ClCompile Include="ChartData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Chart.cpp">
+    <ClCompile Include="ChartWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChartSpikeBar.cpp">
@@ -466,6 +466,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OPTIONS_VIEWDATAMEASURE.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChartDataAD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -833,7 +836,7 @@
     <ClInclude Include="ChartSpikeHistVert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Chart.h">
+    <ClInclude Include="ChartWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgADInputParms.h">
@@ -915,9 +918,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Taglist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AcqDataDoc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="QuadStateTree.h">
@@ -1023,6 +1023,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SCOPECHANNEL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChartDataAD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AcqDataDoc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

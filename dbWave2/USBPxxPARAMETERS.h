@@ -11,24 +11,24 @@ class USBPxxPARAMETERS : public CObject
 {
 	DECLARE_SERIAL(USBPxxPARAMETERS);
 
-	float	LPFc = 0;
-	float	HPFc = 3000;
+	float LPFc = 0;
+	float HPFc = 3000;
 
-	long	DeviceHandle = 0;
-	long	ChannelNumber = 0;
-	long	SerialNumber = 0;
-	long	ProductID = 0;
+	long DeviceHandle = 0;
+	long ChannelNumber = 0;
+	long SerialNumber = 0;
+	long ProductID = 0;
 
-	long	indexgain = 0;
-	long	indexCoupling = 0;
-	long	indexClockSource = 0;
-	long	indexPClock = 0;
-	long	indexLPFilterType = 0;
-	long	indexHPFilterType = 0;
+	long indexgain = 0;
+	long indexCoupling = 0;
+	long indexClockSource = 0;
+	long indexPClock = 0;
+	long indexLPFilterType = 0;
+	long indexHPFilterType = 0;
 
-	long	Gain = 2;
-	int		RevisionHigh = 0;
-	int		RevisionLow = 0;
+	long Gain = 2;
+	int RevisionHigh = 0;
+	int RevisionLow = 0;
 
 	CString Description;
 	CString csCoupling;
@@ -37,9 +37,8 @@ class USBPxxPARAMETERS : public CObject
 	CString csLPFilterType;
 	CString csHPFilterType;
 
-	USBPxxPARAMETERS& operator = (const USBPxxPARAMETERS& arg);
+	USBPxxPARAMETERS& operator =(const USBPxxPARAMETERS& arg);
 	long Write(CFile* datafile);
 	BOOL Read(CFile* datafile);
 	void Serialize(CArchive& ar) override;
 };
-

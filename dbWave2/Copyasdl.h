@@ -4,23 +4,24 @@ class CCopyAsDlg : public CDialog
 {
 	// Construction
 public:
-	CCopyAsDlg(CWnd* pParent = nullptr);	// standard constructor
+	CCopyAsDlg(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_COPYAS };
-	int		m_nabcissa;
-	int		m_nordinates;
+
+	int m_nabcissa;
+	int m_nordinates;
 	int m_ioption;
 	int m_iunit;
 	BOOL m_bgraphics;
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 	// Generated message map functions
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
+	void OnOK() override;
+	BOOL OnInitDialog() override;
 
 	DECLARE_MESSAGE_MAP()
 };

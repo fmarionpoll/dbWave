@@ -14,7 +14,7 @@
 // CListBClaSizeDlg dialog
 
 CListBClaSizeDlg::CListBClaSizeDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CListBClaSizeDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_rowheight = 0;
 	m_superpcol = 0;

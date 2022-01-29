@@ -20,7 +20,7 @@ CDataFileX::CDataFileX()
 	m_ulbytescount = 0;
 	m_idType = DOCTYPE_UNKNOWN;
 	m_csType = _T("UNKNOWN");
-	UINT m_u_open_flag = CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary;
+	UINT m_u_open_flag = modeReadWrite | shareDenyNone | typeBinary;
 }
 
 CDataFileX::~CDataFileX()
@@ -46,8 +46,8 @@ void CDataFileX::Dump(CDumpContext& dc) const
 long CDataFileX::ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray)
 {
 	// seek and read CFile
-	const LONGLONG l_off = (LONGLONG(dataIndex) * sizeof(short)) + m_ulOffsetData;
-	Seek(l_off, CFile::begin);
+	const LONGLONG l_off = (static_cast<LONGLONG>(dataIndex) * sizeof(short)) + m_ulOffsetData;
+	Seek(l_off, begin);
 	const long l_size = Read(pBuffer, nbpoints);
 	// adjust dependent parameters
 	return l_size / sizeof(short);
@@ -57,14 +57,17 @@ int CDataFileX::CheckFileType(CString& cs_filename)
 {
 	return DOCTYPE_UNKNOWN;
 }
+
 BOOL CDataFileX::ReadDataInfos(CWaveBuf* pBuf)
 {
 	return TRUE;
 }
+
 BOOL CDataFileX::ReadHZtags(CTagList* pHZtags)
 {
 	return FALSE;
 }
+
 BOOL CDataFileX::ReadVTtags(CTagList* pVTtags)
 {
 	return FALSE;
@@ -74,38 +77,46 @@ BOOL CDataFileX::InitFile()
 {
 	return FALSE;
 }
+
 BOOL CDataFileX::DataAppendStart()
 {
-	m_ulbytescount = 0; return FALSE;
+	m_ulbytescount = 0;
+	return FALSE;
 }
+
 BOOL CDataFileX::DataAppend(short* pBU, UINT uibytesLength)
 {
 	return FALSE;
 }
+
 BOOL CDataFileX::DataAppendStop()
 {
 	return FALSE;
 }
+
 BOOL CDataFileX::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 {
 	return FALSE;
 }
+
 BOOL CDataFileX::WriteHZtags(CTagList* ptags)
 {
 	return FALSE;
 }
+
 BOOL CDataFileX::WriteVTtags(CTagList* ptags)
 {
 	return FALSE;
 }
 
-int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern) 
+int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern)
 {
-	std::string needle(bufPattern, lenPattern-1);
+	std::string needle(bufPattern, lenPattern - 1);
 	std::string haystack(bufRead, lenRead);
 	std::size_t n = haystack.find(needle);
 	int flag = DOCTYPE_UNKNOWN;
-	if (n != std::string::npos) {
+	if (n != std::string::npos)
+	{
 		flag = m_idType;
 		m_csType = bufPattern;
 	}
@@ -123,7 +134,6 @@ bool CDataFileX::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
 
 void CDataFileX::CloseDataFile()
 {
-	if (m_hFile != CFile::hFileNull)
+	if (m_hFile != hFileNull)
 		Close();
 }
-

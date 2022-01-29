@@ -4,7 +4,7 @@
 #include "StdAfx.h"
 #include "Editctrl.h"
 #include "resource.h"
-#include "chart.h"
+#include "ChartWnd.h"
 //#include "Editctrl.h"
 #include "DlgChartProps.h"
 
@@ -13,7 +13,7 @@
 #endif
 
 CDlgChartProps::CDlgChartProps(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgChartProps::IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
+	: CDialog(IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
 {
 	m_xyticks = 0;
 	m_xytickline = 0;
@@ -61,16 +61,18 @@ BOOL CDlgChartProps::OnInitDialog()
 
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CDlgChartProps::OnEnChangeXCells()
 {
-	if (mm_xcells.m_bEntryDone) {
+	if (mm_xcells.m_bEntryDone)
+	{
 		auto xcells = m_xcells;
 		switch (mm_xcells.m_nChar)
-		{				// load data from edit controls
+		{
+		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
 			xcells = m_xcells;
@@ -83,15 +85,15 @@ void CDlgChartProps::OnEnChangeXCells()
 		case VK_NEXT:
 			xcells--;
 			break;
-		default:;
+		default: ;
 		}
 		// check boundaries
 		if (xcells < 1) xcells = 1;
 
 		// change display if necessary
-		mm_xcells.m_bEntryDone = FALSE;	// clear flag
-		mm_xcells.m_nChar = 0;			// empty buffer
-		mm_xcells.SetSel(0, -1);		// select all text
+		mm_xcells.m_bEntryDone = FALSE; // clear flag
+		mm_xcells.m_nChar = 0; // empty buffer
+		mm_xcells.SetSel(0, -1); // select all text
 		if (m_xcells != xcells)
 		{
 			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
@@ -106,10 +108,12 @@ void CDlgChartProps::OnEnChangeXCells()
 
 void CDlgChartProps::OnEnChangeXYTicks()
 {
-	if (mm_xyticks.m_bEntryDone) {
+	if (mm_xyticks.m_bEntryDone)
+	{
 		auto xyticks = m_xyticks;
 		switch (mm_xyticks.m_nChar)
-		{				// load data from edit controls
+		{
+		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
 			xyticks = m_xyticks;
@@ -122,15 +126,15 @@ void CDlgChartProps::OnEnChangeXYTicks()
 		case VK_NEXT:
 			xyticks--;
 			break;
-		default:;
+		default: ;
 		}
 		// check boundaries
 		if (xyticks < 0) xyticks = 0;
 
 		// change display if necessary
-		mm_xyticks.m_bEntryDone = FALSE;	// clear flag
-		mm_xyticks.m_nChar = 0;			// empty buffer
-		mm_xyticks.SetSel(0, -1);		// select all text
+		mm_xyticks.m_bEntryDone = FALSE; // clear flag
+		mm_xyticks.m_nChar = 0; // empty buffer
+		mm_xyticks.SetSel(0, -1); // select all text
 		if (m_xyticks != xyticks)
 		{
 			m_xyticks = xyticks;
@@ -150,7 +154,8 @@ void CDlgChartProps::OnEnChangeXYTicksLine()
 	{
 		auto xytickline = m_xytickline;
 		switch (mm_xytickline.m_nChar)
-		{				// load data from edit controls
+		{
+		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
 			xytickline = m_xytickline;
@@ -163,15 +168,15 @@ void CDlgChartProps::OnEnChangeXYTicksLine()
 		case VK_NEXT:
 			xytickline--;
 			break;
-		default:;
+		default: ;
 		}
 		// check boundaries
-		if (xytickline < 0)	xytickline = 0;
+		if (xytickline < 0) xytickline = 0;
 
 		// change display if necessary
-		mm_xytickline.m_bEntryDone = FALSE;	// clear flag
-		mm_xytickline.m_nChar = 0;			// empty buffer
-		mm_xytickline.SetSel(0, -1);		// select all text
+		mm_xytickline.m_bEntryDone = FALSE; // clear flag
+		mm_xytickline.m_nChar = 0; // empty buffer
+		mm_xytickline.SetSel(0, -1); // select all text
 		if (m_xytickline != xytickline)
 		{
 			m_xytickline = xytickline;
@@ -191,7 +196,8 @@ void CDlgChartProps::OnEnChangeYCells()
 	{
 		auto ycells = m_ycells;
 		switch (mm_ycells.m_nChar)
-		{				// load data from edit controls
+		{
+		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
 			ycells = m_ycells;
@@ -204,15 +210,15 @@ void CDlgChartProps::OnEnChangeYCells()
 		case VK_NEXT:
 			ycells--;
 			break;
-		default:;
+		default: ;
 		}
 		// check boundaries
 		if (ycells < 1) ycells = 1;
 
 		// change display if necessary
-		mm_ycells.m_bEntryDone = FALSE;	// clear flag
-		mm_ycells.m_nChar = 0;			// empty buffer
-		mm_ycells.SetSel(0, -1);		// select all text
+		mm_ycells.m_bEntryDone = FALSE; // clear flag
+		mm_ycells.m_nChar = 0; // empty buffer
+		mm_ycells.SetSel(0, -1); // select all text
 		if (m_ycells != ycells)
 		{
 			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();

@@ -15,7 +15,7 @@
 IMPLEMENT_DYNAMIC(CDlgFileNew1, CDialogEx)
 
 CDlgFileNew1::CDlgFileNew1(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CDlgFileNew1::IDD, pParent)
+	: CDialogEx(IDD, pParent)
 {
 	m_icursel = 0;
 }
@@ -45,7 +45,7 @@ BOOL CDlgFileNew1::OnInitDialog()
 	//m_list.AddString("Simple text");
 	m_list.SetCurSel(0);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 

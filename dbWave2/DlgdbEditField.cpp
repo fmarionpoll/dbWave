@@ -14,11 +14,11 @@
 IMPLEMENT_DYNAMIC(CDlgdbEditField, CDialogEx)
 
 CDlgdbEditField::CDlgdbEditField(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CDlgdbEditField::IDD, pParent)
-	, m_destID(0), m_csfieldvalue(_T(""))
-	, m_cstextsearch(_T(""))
-	, m_cstextreplacewith(_T("")), m_pMainTable(nullptr), m_pIndexTable(nullptr), m_pliIDArray(nullptr),
-	m_pdbDoc(nullptr)
+	: CDialogEx(IDD, pParent)
+	  , m_destID(0), m_csfieldvalue(_T(""))
+	  , m_cstextsearch(_T(""))
+	  , m_cstextreplacewith(_T("")), m_pMainTable(nullptr), m_pIndexTable(nullptr), m_pliIDArray(nullptr),
+	  m_pdbDoc(nullptr)
 {
 	m_sourceselect = REC_CURRENT;
 	m_sourcecondition = COND_EQU;
@@ -70,9 +70,9 @@ BOOL CDlgdbEditField::OnInitDialog()
 		m_bIndexTable = TRUE;
 	if (!m_bIndexTable)
 	{
-		((CEdit*)GetDlgItem(IDC_EDIT1))->ModifyStyle(NULL, ES_NUMBER);
-		((CEdit*)GetDlgItem(IDC_EDIT2))->ModifyStyle(NULL, ES_NUMBER);
-		((CEdit*)GetDlgItem(IDC_EDIT3))->ModifyStyle(NULL, ES_NUMBER);
+		GetDlgItem(IDC_EDIT1)->ModifyStyle(NULL, ES_NUMBER);
+		GetDlgItem(IDC_EDIT2)->ModifyStyle(NULL, ES_NUMBER);
+		GetDlgItem(IDC_EDIT3)->ModifyStyle(NULL, ES_NUMBER);
 		GetDlgItem(IDC_CHECKCASESENSITIV)->EnableWindow(FALSE);
 		GetDlgItem(IDC_BUTTON1)->EnableWindow(FALSE);
 		GetDlgItem(IDC_RADIO2)->EnableWindow(FALSE);
@@ -81,12 +81,12 @@ BOOL CDlgdbEditField::OnInitDialog()
 	}
 
 	// Add extra initialization here
-	((CButton*)GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
-	((CButton*)GetDlgItem(IDC_RADIO4))->SetCheck(BST_CHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIO4))->SetCheck(BST_CHECKED);
 	DisplayElements();
 
 	// fill source type
-	m_cosource.SetCurSel(1);		// only the current record
+	m_cosource.SetCurSel(1); // only the current record
 
 	// load source value from the main table
 	COleVariant var_value;
@@ -134,7 +134,7 @@ BOOL CDlgdbEditField::OnInitDialog()
 			if (j == CB_ERR)
 			{
 				const auto k = m_codictionary.InsertString(i, cs);
-				ASSERT(k != CB_ERR);;
+				ASSERT(k != CB_ERR);
 				m_codictionary.SetItemData(k, uc_id);
 			}
 		}
@@ -146,7 +146,7 @@ BOOL CDlgdbEditField::OnInitDialog()
 	m_codictionary.SetCurSel(iselect);
 
 	UpdateData(FALSE);
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
@@ -167,31 +167,37 @@ void CDlgdbEditField::OnCbnSelchangeCombo3()
 	m_sourceselect = m_cosource.GetCurSel();
 	DisplayElements();
 }
+
 void CDlgdbEditField::OnBnClickedRadio1()
 {
 	m_sourcecondition = COND_EQU;
 	DisplayElements();
 }
+
 void CDlgdbEditField::OnBnClickedRadio2()
 {
 	m_sourcecondition = COND_SEARCH;
 	DisplayElements();
 }
+
 void CDlgdbEditField::OnBnClickedRadio3()
 {
 	m_sourcecondition = COND_NONE;
 	DisplayElements();
 }
+
 void CDlgdbEditField::OnBnClickedRadio4()
 {
 	m_destaction = CHGE_ID;
 	DisplayElements();
 }
+
 void CDlgdbEditField::OnBnClickedRadio5()
 {
 	m_destaction = CHGE_TXT;
 	DisplayElements();
 }
+
 void CDlgdbEditField::OnBnClickedRadio6()
 {
 	m_destaction = CHGE_CLEAR;
@@ -238,7 +244,7 @@ void CDlgdbEditField::OnBnClickedOk()
 			ASSERT(m_pIndexTable->GetIDFromString(cs, m_destID));
 		}
 		if (m_sourcecondition == COND_SEARCH && !m_bCaseSensitive)
-			m_cstextsearch.MakeLower();			// change case of search string if case-sensitive is not checked
+			m_cstextsearch.MakeLower(); // change case of search string if case-sensitive is not checked
 	}
 	// numeric field only - value in the main table
 	else
@@ -247,7 +253,8 @@ void CDlgdbEditField::OnBnClickedOk()
 			m_initialID = GetDlgItemInt(IDC_EDIT1);
 
 		if (m_destaction == CHGE_ID)
-		{// change ID
+		{
+			// change ID
 			CString cs;
 			m_codictionary.GetLBText(m_codictionary.GetCurSel(), cs);
 			m_destID = _tstoi(cs);
@@ -281,13 +288,12 @@ void CDlgdbEditField::OnBnClickedOk()
 }
 
 
-
 void CDlgdbEditField::ModifyAll()
 {
 	const auto iedit = m_pMainTable->GetEditMode();
 	if (iedit != dbEditNone)
 		m_pMainTable->Update();
-	
+
 
 	const auto bookmark_current = m_pMainTable->GetBookmark();
 	m_pMainTable->MoveFirst();
@@ -301,11 +307,11 @@ void CDlgdbEditField::ModifyAll()
 
 void CDlgdbEditField::ModifyCurrent()
 {
-	long id_current = 0;								// ID of current record
+	long id_current = 0; // ID of current record
 	auto ifound = 0;
 	CString csvalue;
 	COleVariant var_value;
-	m_pMainTable->GetFieldValue(m_csColName, var_value);	// FALSE if field is null
+	m_pMainTable->GetFieldValue(m_csColName, var_value); // FALSE if field is null
 	const BOOL b_valid = (var_value.vt != VT_NULL);
 	if (b_valid)
 		id_current = var_value.lVal;
@@ -314,8 +320,8 @@ void CDlgdbEditField::ModifyCurrent()
 	switch (m_sourcecondition)
 	{
 	case COND_EQU:
-		if (id_current != m_initialID)	//&& bValid)
-			return;			// exit if current record is already correct or if record is not valid
+		if (id_current != m_initialID) //&& bValid)
+			return; // exit if current record is already correct or if record is not valid
 		break;
 	case COND_SEARCH:
 		if (!m_bIndexTable)
@@ -327,7 +333,7 @@ void CDlgdbEditField::ModifyCurrent()
 				csvalue.MakeLower();
 			ifound = csvalue.Find(m_cstextsearch, 0);
 			if (ifound < 0)
-				return;			// exit if the search string is not found
+				return; // exit if the search string is not found
 		}
 		break;
 	case COND_NONE:
@@ -338,13 +344,13 @@ void CDlgdbEditField::ModifyCurrent()
 	// change ID value, erase ID value or change text...
 	switch (m_destaction)
 	{
-	case CHGE_ID:				// change ID
+	case CHGE_ID: // change ID
 		m_pMainTable->SetLongValue(m_destID, m_csColName);
 		break;
-	case CHGE_CLEAR:			// erase iID
+	case CHGE_CLEAR: // erase iID
 		m_pMainTable->SetValueNull(m_csColName);
 		break;
-		// replace text within current record with new text
+	// replace text within current record with new text
 	case CHGE_TXT:
 		// indexed value
 		if (m_bIndexTable)

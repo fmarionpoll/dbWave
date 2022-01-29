@@ -12,39 +12,40 @@ class CMeasureOptionsPage : public CPropertyPage
 	// Construction
 public:
 	CMeasureOptionsPage();
-	~CMeasureOptionsPage();
+	~CMeasureOptionsPage() override;
 
 	// Dialog Data
 	enum { IDD = IDD_PROPPAGE1 };
-	BOOL	m_bExtrema;
-	BOOL	m_bDiffExtrema;
-	BOOL	m_bDiffDatalimits;
-	BOOL	m_bHalfrisetime;
-	BOOL	m_bHalfrecovery;
-	BOOL	m_bDatalimits;
-	BOOL	m_bLimitsval;
-	WORD	m_wSourcechan{};
-	WORD	m_wStimulusthresh;
-	WORD	m_wStimuluschan;
-	BOOL	m_bAllFiles;
-	int		m_uiSourceChan;
-	float	m_fStimulusoffset;
-	UINT	m_uiStimulusThreshold;
-	UINT	m_uiStimuluschan;
+
+	BOOL m_bExtrema;
+	BOOL m_bDiffExtrema;
+	BOOL m_bDiffDatalimits;
+	BOOL m_bHalfrisetime;
+	BOOL m_bHalfrecovery;
+	BOOL m_bDatalimits;
+	BOOL m_bLimitsval;
+	WORD m_wSourcechan{};
+	WORD m_wStimulusthresh;
+	WORD m_wStimuluschan;
+	BOOL m_bAllFiles;
+	int m_uiSourceChan;
+	float m_fStimulusoffset;
+	UINT m_uiStimulusThreshold;
+	UINT m_uiStimuluschan;
 	// input parameters
 	OPTIONS_VIEWDATAMEASURE* m_pMO{};
-	CdbWaveDoc*		m_pdbDoc{};
-	CAcqDataDoc*	m_pdatDoc{};
-	CChartDataWnd*	m_pChartDataWnd{};
+	CdbWaveDoc* m_pdbDoc{};
+	AcqDataDoc* m_pdatDoc{};
+	ChartData* m_pChartDataWnd{};
 
 	// Overrides
 public:
-	virtual void OnOK();
-	virtual BOOL OnKillActive();
+	void OnOK() override;
+	BOOL OnKillActive() override;
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	void ShowLimitsParms(BOOL bShow);
 	void ShowChanParm(BOOL b_show);
@@ -56,7 +57,7 @@ protected:
 	afx_msg void OnVerticaltags();
 	afx_msg void OnHorizontaltags();
 	afx_msg void OnStimulustag();
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 	DECLARE_MESSAGE_MAP()
 };

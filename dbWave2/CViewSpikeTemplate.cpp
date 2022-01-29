@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "Editctrl.h"
 #include "dbWave.h"
 #include "resource.h"
@@ -19,7 +19,7 @@
 IMPLEMENT_DYNCREATE(CViewSpikeTemplates, CViewDAO)
 
 CViewSpikeTemplates::CViewSpikeTemplates()
-	: CViewDAO(CViewSpikeTemplates::IDD)
+	: CViewDAO(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -28,7 +28,7 @@ CViewSpikeTemplates::~CViewSpikeTemplates()
 {
 	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
-		saveCurrentSpkFile();	// save file if modified
+		saveCurrentSpkFile(); // save file if modified
 }
 
 void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
@@ -85,7 +85,7 @@ void CViewSpikeTemplates::OnDestroy()
 	{
 		if (m_psC->ptpl == nullptr)
 			m_psC->CreateTPL();
-		*((CTemplateListWnd*)m_psC->ptpl) = m_templList;
+		*static_cast<CTemplateListWnd*>(m_psC->ptpl) = m_templList;
 	}
 	CDaoRecordView::OnDestroy();
 }
@@ -102,11 +102,11 @@ void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		switch (LOWORD(lHint))
 		{
-		case HINT_DOCHASCHANGED:		// file has changed?
+		case HINT_DOCHASCHANGED: // file has changed?
 		case HINT_DOCMOVERECORD:
 			updateFileParameters();
 			break;
-		case HINT_CLOSEFILEMODIFIED:	// close modified file: save
+		case HINT_CLOSEFILEMODIFIED: // close modified file: save
 			saveCurrentSpkFile();
 			break;
 		case HINT_REPLACEVIEW:
@@ -123,7 +123,7 @@ void CViewSpikeTemplates::defineSubClassedItems()
 	mm_spikenoclass.ShowScrollBar(SB_VERT);
 	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
-	((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100, FALSE);
+	static_cast<CScrollBar*>(GetDlgItem(IDC_SCROLLBAR1))->SetScrollRange(0, 100, FALSE);
 	VERIFY(m_templList.SubclassDlgItem(IDC_LIST2, this));
 	VERIFY(m_avgList.SubclassDlgItem(IDC_LIST1, this));
 	VERIFY(m_avgAllList.SubclassDlgItem(IDC_LIST3, this));
@@ -143,7 +143,7 @@ void CViewSpikeTemplates::defineSubClassedItems()
 
 void CViewSpikeTemplates::defineStretchParameters()
 {
-	m_stretch.AttachParent(this);		// attach formview pointer
+	m_stretch.AttachParent(this); // attach formview pointer
 	//m_stretch.newProp(IDC_LIST1, XLEQ_XREQ, SZEQ_YTEQ);
 	//m_stretch.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
 	//m_stretch.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
@@ -165,15 +165,15 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	m_autoDetect = true;
 
 	// load global parameters
-	const auto p_app = (CdbWaveApp*)AfxGetApp();
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	mdPM = &(p_app->options_viewdata);
 	mdMO = &(p_app->options_viewdata_measure);
 	m_psC = &(p_app->spkC);
 	if (m_psC->ptpl != nullptr)
-		m_templList = *((CTemplateListWnd*)m_psC->ptpl);
+		m_templList = *static_cast<CTemplateListWnd*>(m_psC->ptpl);
 
 	// set bincrflagonsave
-	((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
+	static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// set ctrlTab values and extend its size
 	CString cs = _T("Create");
@@ -241,7 +241,8 @@ void CViewSpikeTemplates::selectSpikeList(int icur)
 	if (spikeno > m_pSpkList->GetTotalSpikes() - 1 || spikeno < 0)
 		spikeno = -1;
 	else
-	{	// set source class to the class of the selected spike
+	{
+		// set source class to the class of the selected spike
 		m_spikenoclass = m_pSpkList->GetSpikeClass(spikeno);
 		m_psC->sourceclass = m_spikenoclass;
 	}
@@ -391,20 +392,24 @@ void CViewSpikeTemplates::OnEnChangeclassno()
 	{
 		const auto spikenoclass = m_spikenoclass;
 		switch (mm_spikenoclass.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_spikenoclass++;	break;
+		case VK_PRIOR: m_spikenoclass++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_spikenoclass--;	break;
-		default:;
+		case VK_NEXT: m_spikenoclass--;
+			break;
+		default: ;
 		}
 
-		mm_spikenoclass.m_bEntryDone = FALSE;	// clear flag
-		mm_spikenoclass.m_nChar = 0;			// empty buffer
-		mm_spikenoclass.SetSel(0, -1);		// select all text
+		mm_spikenoclass.m_bEntryDone = FALSE; // clear flag
+		mm_spikenoclass.m_nChar = 0; // empty buffer
+		mm_spikenoclass.SetSel(0, -1); // select all text
 
-		if (m_spikenoclass != spikenoclass)	// change display if necessary
+		if (m_spikenoclass != spikenoclass) // change display if necessary
 		{
 			m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
 			m_ChartSpkWnd_Shape.Invalidate();
@@ -420,7 +425,7 @@ void CViewSpikeTemplates::OnEnChangeTimefirst()
 		switch (mm_timefirst.m_nChar)
 		{
 		case VK_RETURN:
-			UpdateData(TRUE);		// load data from edit controls
+			UpdateData(TRUE); // load data from edit controls
 			break;
 		case VK_UP:
 		case VK_PRIOR:
@@ -430,12 +435,12 @@ void CViewSpikeTemplates::OnEnChangeTimefirst()
 		case VK_NEXT:
 			m_timefirst--;
 			break;
-		default:;
+		default: ;
 		}
 
 		mm_timefirst.m_bEntryDone = FALSE;
 		mm_timefirst.m_nChar = 0;
-		mm_timefirst.SetSel(0, -1); 	//select all text
+		mm_timefirst.SetSel(0, -1); //select all text
 
 		const auto l_first = static_cast<long>(m_timefirst * m_pSpkDoc->GetAcqRate());
 		if (l_first != m_lFirst)
@@ -453,7 +458,7 @@ void CViewSpikeTemplates::OnEnChangeTimelast()
 		switch (mm_timelast.m_nChar)
 		{
 		case VK_RETURN:
-			UpdateData(TRUE);		// load data from edit controls
+			UpdateData(TRUE); // load data from edit controls
 			break;
 		case VK_UP:
 		case VK_PRIOR:
@@ -463,12 +468,12 @@ void CViewSpikeTemplates::OnEnChangeTimelast()
 		case VK_NEXT:
 			m_timelast--;
 			break;
-		default:;
+		default: ;
 		}
 
 		mm_timelast.m_bEntryDone = FALSE;
 		mm_timelast.m_nChar = 0;
-		mm_timelast.SetSel(0, -1); 	//select all text
+		mm_timelast.SetSel(0, -1); //select all text
 
 		const auto l_last = static_cast<long>(m_timelast * m_pSpkDoc->GetAcqRate());
 		if (l_last != m_lLast)
@@ -497,15 +502,20 @@ void CViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	long l_first = m_lFirst;
 	switch (nSBCode)
 	{
-	case SB_LEFT:		l_first = 0;	break;			// Scroll to far left.
-	case SB_LINELEFT:	l_first -= sb_scroll;	break;	// Scroll left.
-	case SB_LINERIGHT:	l_first += sb_scroll; break;	// Scroll right
-	case SB_PAGELEFT:	l_first -= page_scroll; break;// Scroll one page left
-	case SB_PAGERIGHT:	l_first += page_scroll; break;// Scroll one page right.
-	case SB_RIGHT:		l_first = total_scroll - page_scroll + 1;
+	case SB_LEFT: l_first = 0;
+		break; // Scroll to far left.
+	case SB_LINELEFT: l_first -= sb_scroll;
+		break; // Scroll left.
+	case SB_LINERIGHT: l_first += sb_scroll;
+		break; // Scroll right
+	case SB_PAGELEFT: l_first -= page_scroll;
+		break; // Scroll one page left
+	case SB_PAGERIGHT: l_first += page_scroll;
+		break; // Scroll one page right.
+	case SB_RIGHT: l_first = total_scroll - page_scroll + 1;
 		break;
-	case SB_THUMBPOSITION:	// scroll to pos = nPos
-	case SB_THUMBTRACK:		// drag scroll box -- pos = nPos
+	case SB_THUMBPOSITION: // scroll to pos = nPos
+	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		l_first = static_cast<int>(nPos);
 		break;
 	default:
@@ -543,7 +553,7 @@ void CViewSpikeTemplates::updateScrollBar()
 		m_scrollFilePos_infos.fMask = SIF_ALL;
 		m_scrollFilePos_infos.nPos = m_lFirst;
 		m_scrollFilePos_infos.nPage = m_lLast - m_lFirst;
-		((CScrollBar*)GetDlgItem(IDC_SCROLLBAR1))->SetScrollInfo(&m_scrollFilePos_infos);
+		static_cast<CScrollBar*>(GetDlgItem(IDC_SCROLLBAR1))->SetScrollInfo(&m_scrollFilePos_infos);
 	}
 }
 
@@ -578,7 +588,8 @@ void CViewSpikeTemplates::OnFormatCentercurve()
 	setExtentZeroAllDisplay(extent, zero);
 }
 
-void CViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero) {
+void CViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero)
+{
 	m_ChartSpkWnd_Shape.SetYWExtOrg(extent, zero);
 	m_templList.SetYWExtOrg(extent, zero);
 	m_avgList.SetYWExtOrg(extent, zero);
@@ -597,7 +608,7 @@ void CViewSpikeTemplates::OnEnChangeHitrate()
 		switch (mm_hitrate.m_nChar)
 		{
 		case VK_RETURN:
-			UpdateData(TRUE);		// load data from edit controls
+			UpdateData(TRUE); // load data from edit controls
 			break;
 		case VK_UP:
 		case VK_PRIOR:
@@ -607,12 +618,12 @@ void CViewSpikeTemplates::OnEnChangeHitrate()
 		case VK_NEXT:
 			m_hitrate--;
 			break;
-		default:;
+		default: ;
 		}
 
 		mm_hitrate.m_bEntryDone = FALSE;
 		mm_hitrate.m_nChar = 0;
-		mm_hitrate.SetSel(0, -1); 	//select all text
+		mm_hitrate.SetSel(0, -1); //select all text
 
 		if (m_psC->hitrate != m_hitrate)
 			m_psC->hitrate = m_hitrate;
@@ -627,7 +638,7 @@ void CViewSpikeTemplates::OnEnChangeHitrateSort()
 		switch (mm_hitratesort.m_nChar)
 		{
 		case VK_RETURN:
-			UpdateData(TRUE);		// load data from edit controls
+			UpdateData(TRUE); // load data from edit controls
 			break;
 		case VK_UP:
 		case VK_PRIOR:
@@ -637,12 +648,12 @@ void CViewSpikeTemplates::OnEnChangeHitrateSort()
 		case VK_NEXT:
 			m_hitratesort--;
 			break;
-		default:;
+		default: ;
 		}
 
 		mm_hitratesort.m_bEntryDone = FALSE;
 		mm_hitratesort.m_nChar = 0;
-		mm_hitratesort.SetSel(0, -1); 	//select all text
+		mm_hitratesort.SetSel(0, -1); //select all text
 
 		if (m_psC->hitratesort != m_hitratesort)
 			m_psC->hitratesort = m_hitratesort;
@@ -657,7 +668,7 @@ void CViewSpikeTemplates::OnEnChangeTolerance()
 		switch (mm_ktolerance.m_nChar)
 		{
 		case VK_RETURN:
-			UpdateData(TRUE);		// load data from edit controls
+			UpdateData(TRUE); // load data from edit controls
 			break;
 		case VK_UP:
 		case VK_PRIOR:
@@ -667,14 +678,14 @@ void CViewSpikeTemplates::OnEnChangeTolerance()
 		case VK_NEXT:
 			m_ktolerance -= 0.1f;
 			break;
-		default:;
+		default: ;
 		}
 
 		if (m_ktolerance < 0)
 			m_ktolerance = -m_ktolerance;
 		mm_ktolerance.m_bEntryDone = FALSE;
 		mm_ktolerance.m_nChar = 0;
-		mm_ktolerance.SetSel(0, -1); 	//select all text
+		mm_ktolerance.SetSel(0, -1); //select all text
 
 		if (m_psC->ktolerance != m_ktolerance)
 			m_psC->ktolerance = m_ktolerance;
@@ -720,8 +731,8 @@ void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	// set file indexes - assume only one file selected
 	auto p_dbwave_doc = GetDocument();
 	const int currentfile = p_dbwave_doc->GetDB_CurrentRecordPosition(); // index current file
-	auto firstfile = currentfile;		// index first file in the series
-	auto lastfile = currentfile;			// index last file in the series
+	auto firstfile = currentfile; // index first file in the series
+	auto lastfile = currentfile; // index last file in the series
 	// make sure we have the correct spike list here
 	const auto currentlist = m_tabCtrl.GetCurSel();
 	m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
@@ -730,8 +741,8 @@ void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	CString csfilecomment = _T("Analyze file: ");
 	if (ballfiles)
 	{
-		firstfile = 0;						// index first file
-		lastfile = p_dbwave_doc->GetDB_NRecords() - 1;	// index last file
+		firstfile = 0; // index first file
+		lastfile = p_dbwave_doc->GetDB_NRecords() - 1; // index last file
 	}
 	// loop over files
 	for (auto ifile = firstfile; ifile <= lastfile; ifile++)
@@ -748,10 +759,10 @@ void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 		pSpkDoc->SetModifiedFlag(FALSE);
 
 		auto pSpkList = pSpkDoc->SetSpkList_AsCurrent(currentlist); // load pointer to spike list
-		if (!pSpkList->IsClassListValid())		// if class list not valid:
+		if (!pSpkList->IsClassListValid()) // if class list not valid:
 		{
-			pSpkList->UpdateClassList();		// rebuild list of classes
-			pSpkDoc->SetModifiedFlag();			// and set modified flag
+			pSpkList->UpdateClassList(); // rebuild list of classes
+			pSpkDoc->SetModifiedFlag(); // and set modified flag
 		}
 		const auto nspikes = pSpkList->GetTotalSpikes();
 
@@ -781,8 +792,8 @@ void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 
 			// get data and add spike
 			const auto p_spik = pSpkList->GetpSpikeData(i);
-			pTPList->tAdd(j_templ, p_spik);	// add spike to template j
-			pTPList->tAdd(p_spik);			// add spike to template zero
+			pTPList->tAdd(j_templ, p_spik); // add spike to template j
+			pTPList->tAdd(p_spik); // add spike to template zero
 		}
 	}
 
@@ -817,7 +828,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 	}
 
 	// add as many forms as we have classes
-	m_templList.DeleteAllItems();	// reinit all templates to zero
+	m_templList.DeleteAllItems(); // reinit all templates to zero
 	m_templList.SetTemplateLength(m_pSpkList->GetSpikeLength(), m_psC->kleft, m_psC->kright);
 	m_templList.SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
 
@@ -924,7 +935,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 			}
 
 			// add spike to the corresp template
-			m_templList.tAdd(tplmin, p_spik);	// add spike to template j
+			m_templList.tAdd(tplmin, p_spik); // add spike to template j
 		}
 	}
 
@@ -948,8 +959,8 @@ void CViewSpikeTemplates::sortSpikes()
 	// set file indexes - assume only one file selected
 	auto p_dbwave_doc = GetDocument();
 	const int currentfile = p_dbwave_doc->GetDB_CurrentRecordPosition(); // index current file
-	auto firstfile = currentfile;		// index first file in the series
-	auto lastfile = firstfile;			// index last file in the series
+	auto firstfile = currentfile; // index first file in the series
+	auto lastfile = firstfile; // index last file in the series
 	const auto currentlist = m_tabCtrl.GetCurSel();
 
 	// change indexes if ALL files selected
@@ -957,8 +968,8 @@ void CViewSpikeTemplates::sortSpikes()
 	CString csfilecomment = _T("Analyze file: ");
 	if (m_bAllFiles)
 	{
-		firstfile = 0;						// index first file
-		lastfile = p_dbwave_doc->GetDB_NRecords() - 1;	// index last file
+		firstfile = 0; // index first file
+		lastfile = p_dbwave_doc->GetDB_NRecords() - 1; // index last file
 	}
 
 	// loop CFrameWnd
@@ -977,15 +988,15 @@ void CViewSpikeTemplates::sortSpikes()
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
 			m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist); // load pointer to spike list
-			if (!m_pSpkList->IsClassListValid())		// if class list not valid:
+			if (!m_pSpkList->IsClassListValid()) // if class list not valid:
 			{
-				m_pSpkList->UpdateClassList();			// rebuild list of classes
-				m_pSpkDoc->SetModifiedFlag();			// and set modified flag
+				m_pSpkList->UpdateClassList(); // rebuild list of classes
+				m_pSpkDoc->SetModifiedFlag(); // and set modified flag
 			}
 		}
 
 		// spike loop
-		const auto nspikes = m_pSpkList->GetTotalSpikes();	// loop over all spikes
+		const auto nspikes = m_pSpkList->GetTotalSpikes(); // loop over all spikes
 		for (auto ispike = 0; ispike < nspikes; ispike++)
 		{
 			// filter out undesirable spikes - i.e. not relevant to the sort
@@ -1150,8 +1161,8 @@ void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 			// set file indexes - assume only one file selected
 			auto p_dbwave_doc = GetDocument();
 			const int currentfile = p_dbwave_doc->GetDB_CurrentRecordPosition(); // index current file
-			auto firstfile = currentfile;		// index first file in the series
-			auto lastfile = firstfile;			// index last file in the series
+			auto firstfile = currentfile; // index first file in the series
+			auto lastfile = firstfile; // index last file in the series
 			const auto currentlist = m_tabCtrl.GetCurSel();
 
 			// change indexes if ALL files selected
@@ -1159,8 +1170,8 @@ void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 			CString csfilecomment = _T("Analyze file: ");
 			if (b_all_files)
 			{
-				firstfile = 0;						// index first file
-				lastfile = p_dbwave_doc->GetDB_NRecords() - 1;	// index last file
+				firstfile = 0; // index first file
+				lastfile = p_dbwave_doc->GetDB_NRecords() - 1; // index last file
 			}
 
 			// loop CFrameWnd
@@ -1180,9 +1191,9 @@ void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 				}
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero
-				m_pSpkList->UpdateClassList();			// rebuild list of classes
+				m_pSpkList->UpdateClassList(); // rebuild list of classes
 				m_pSpkList->ChangeSpikeClassID(oldclass, dlg.m_iClass);
-				m_pSpkList->UpdateClassList();			// rebuild list of classes
+				m_pSpkList->UpdateClassList(); // rebuild list of classes
 				m_pSpkDoc->SetModifiedFlag(TRUE);
 
 				if (m_pSpkDoc->IsModified())
@@ -1275,7 +1286,7 @@ void CViewSpikeTemplates::OnEnChangeIfirstsortedclass()
 		switch (mm_ifirstsortedclass.m_nChar)
 		{
 		case VK_RETURN:
-			UpdateData(TRUE);		// load data from edit controls
+			UpdateData(TRUE); // load data from edit controls
 			break;
 		case VK_UP:
 		case VK_PRIOR:
@@ -1285,12 +1296,12 @@ void CViewSpikeTemplates::OnEnChangeIfirstsortedclass()
 		case VK_NEXT:
 			m_ifirstsortedclass--;
 			break;
-		default:;
+		default: ;
 		}
 
 		mm_ifirstsortedclass.m_bEntryDone = FALSE;
 		mm_ifirstsortedclass.m_nChar = 0;
-		mm_ifirstsortedclass.SetSel(0, -1); 	//select all text
+		mm_ifirstsortedclass.SetSel(0, -1); //select all text
 
 		// change class of all templates
 		//SetTemplateclassID(int item, LPCSTR pszType, int classID)
@@ -1316,11 +1327,13 @@ void CViewSpikeTemplates::OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult)
 void CViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 {
 	UpdateData(TRUE);
-	if (m_bDisplaySingleClass) {
+	if (m_bDisplaySingleClass)
+	{
 		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_SHOW);
 		m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
 	}
-	else {
+	else
+	{
 		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_HIDE);
 		m_ChartSpkWnd_Shape.SetPlotMode(PLOT_BLACK, m_spikenoclass);
 	}
@@ -1337,7 +1350,8 @@ void CViewSpikeTemplates::OnEnChangeT1()
 		const auto delta = m_tunit / m_pSpkList->GetAcqSampRate();
 
 		switch (mm_t1.m_nChar)
-		{				// load data from edit controls
+		{
+		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
 			t1 = m_t1;
@@ -1350,7 +1364,7 @@ void CViewSpikeTemplates::OnEnChangeT1()
 		case VK_NEXT:
 			t1 -= delta;
 			break;
-		default:;
+		default: ;
 		}
 		// check boundaries
 		if (t1 < 0)
@@ -1358,9 +1372,9 @@ void CViewSpikeTemplates::OnEnChangeT1()
 		if (t1 >= m_t2)
 			t1 = m_t2 - delta;
 		// change display if necessary
-		mm_t1.m_bEntryDone = FALSE;	// clear flag
-		mm_t1.m_nChar = 0;			// empty buffer
-		mm_t1.SetSel(0, -1);		// select all text
+		mm_t1.m_bEntryDone = FALSE; // clear flag
+		mm_t1.m_nChar = 0; // empty buffer
+		mm_t1.SetSel(0, -1); // select all text
 		m_t1 = t1;
 		const int it1 = convertTimeToSpikeIndex(m_t1);
 		if (it1 != m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagleft))
@@ -1382,7 +1396,8 @@ void CViewSpikeTemplates::OnEnChangeT2()
 		auto t2 = m_t2;
 		const auto delta = m_tunit / m_pSpkList->GetAcqSampRate();
 		switch (mm_t2.m_nChar)
-		{				// load data from edit controls
+		{
+		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
 			t2 = m_t2;
@@ -1395,7 +1410,7 @@ void CViewSpikeTemplates::OnEnChangeT2()
 		case VK_NEXT:
 			t2 -= delta;
 			break;
-		default:;
+		default: ;
 		}
 
 		// check boundaries
@@ -1407,9 +1422,9 @@ void CViewSpikeTemplates::OnEnChangeT2()
 		if (t2 >= tmax)
 			t2 = tmax;
 		// change display if necessary
-		mm_t2.m_bEntryDone = FALSE;	// clear flag
-		mm_t2.m_nChar = 0;			// empty buffer
-		mm_t2.SetSel(0, -1);		// select all text
+		mm_t2.m_bEntryDone = FALSE; // clear flag
+		mm_t2.m_nChar = 0; // empty buffer
+		mm_t2.SetSel(0, -1); // select all text
 		m_t2 = t2;
 		const int it2 = convertTimeToSpikeIndex(m_t2);
 		if (it2 != m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagright))

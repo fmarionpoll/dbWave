@@ -10,7 +10,7 @@
 #include "Listbcla.h"
 #include "SpikeClassListBox.h"
 
-#include "Chart.h"
+#include "ChartWnd.h"
 #include "ChartSpikeBar.h"
 #include "ChartSpikeShape.h"
 
@@ -20,9 +20,9 @@
 
 struct rowStruct
 {
-	CString*				pcs;
-	CChartSpikeShapeWnd*	pspk_shapes;
-	CChartSpikeBarWnd*		pspk_bars;
+	CString* pcs;
+	CChartSpikeShapeWnd* pspk_shapes;
+	CChartSpikeBarWnd* pspk_bars;
 };
 
 BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
@@ -34,11 +34,10 @@ BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
-CSpikeClassListBox::CSpikeClassListBox() 
+CSpikeClassListBox::CSpikeClassListBox()
 {
 	m_clrBkgnd = GetSysColor(COLOR_SCROLLBAR);
 	m_brBkgnd.CreateSolidBrush(m_clrBkgnd);
-
 }
 
 CSpikeClassListBox::~CSpikeClassListBox()
@@ -48,7 +47,7 @@ CSpikeClassListBox::~CSpikeClassListBox()
 LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	auto icursel = static_cast<int>(HIWORD(lParam)) / 2; // why lParam/2???
-	const int threshold = LOWORD(lParam);	// value associated
+	const int threshold = LOWORD(lParam); // value associated
 
 	// ----------------------------- change mouse cursor (all 3 items)
 	switch (wParam)
@@ -57,38 +56,39 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		SetMouseCursorType(threshold);
 		break;
 
-	case HINT_CHANGEHZLIMITS:		// abcissa have changed
+	case HINT_CHANGEHZLIMITS: // abcissa have changed
 		{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(icursel));
-		m_lFirst = (pptr->pspk_bars)->GetTimeFirst();
-		m_lLast = (pptr->pspk_bars)->GetTimeLast();
-		SetTimeIntervals(m_lFirst, m_lLast);
+			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(icursel));
+			m_lFirst = (pptr->pspk_bars)->GetTimeFirst();
+			m_lLast = (pptr->pspk_bars)->GetTimeLast();
+			SetTimeIntervals(m_lFirst, m_lLast);
 		}
 		break;
 
-	case HINT_HITSPIKE:				// spike is selected
+	case HINT_HITSPIKE: // spike is selected
 		SelectSpike(threshold);
-		m_selspikeLB = threshold;	// selected spike
-		m_oldsel = icursel;			// current line / CListBox
+		m_selspikeLB = threshold; // selected spike
+		m_oldsel = icursel; // current line / CListBox
 		m_bHitspk = TRUE;
 		break;
 
 	case HINT_CHANGEZOOM:
 		{
-		auto* pptr2 = reinterpret_cast<rowStruct*>(GetItemData(icursel));
-		const auto y_we = pptr2->pspk_bars->GetYWExtent();
-		const auto y_wo = pptr2->pspk_bars->GetYWOrg();
-		SetYzoom(y_we, y_wo);
+			auto* pptr2 = reinterpret_cast<rowStruct*>(GetItemData(icursel));
+			const auto y_we = pptr2->pspk_bars->GetYWExtent();
+			const auto y_wo = pptr2->pspk_bars->GetYWOrg();
+			SetYzoom(y_we, y_wo);
 		}
 		break;
 
-	case HINT_DROPPED:	// HIWORD(lParam) = ID of control who have sent this message
+	case HINT_DROPPED: // HIWORD(lParam) = ID of control who have sent this message
 		if (!m_bHitspk)
 			return 0L;
-		// change selection
-		if (icursel != m_oldsel) {
+	// change selection
+		if (icursel != m_oldsel)
+		{
 			// patch: when we displace a spike to line 0, the line nb is not correct (shadow window intercepting mouse?)
-			if (icursel <0 || icursel > GetCount())
+			if (icursel < 0 || icursel > GetCount())
 				icursel = 0;
 			ChangeSpikeClass(m_selspikeLB, p_spikelist_->GetclassID(icursel));
 		}
@@ -142,7 +142,8 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 			(pptr->pspk_shapes)->SetDisplayAreaSize(rect_spikes.Width(), rect_spikes.Height());
 			(pptr->pspk_shapes)->PlotDatatoDC(&dc_mem);
 			// transfer data to DC and clean the memory DC
-			dc.BitBlt(rect_spikes.left, rect_spikes.top, rect_spikes.Width(), rect_spikes.Height(), &dc_mem, 0, 0, SRCCOPY);
+			dc.BitBlt(rect_spikes.left, rect_spikes.top, rect_spikes.Width(), rect_spikes.Height(), &dc_mem, 0, 0,
+			          SRCCOPY);
 			dc_mem.SelectObject(p_old_bmp);
 			dc_mem.DeleteDC();
 		}
@@ -171,13 +172,13 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	if ((lpDIS->itemState & ODS_SELECTED) &&
 		(lpDIS->itemAction & (ODA_SELECT | ODA_DRAWENTIRE)))
 	{
-		const auto cr = RGB(0, 0, 255);	// 2 Blue RGB(0,0,0);
+		const auto cr = RGB(0, 0, 255); // 2 Blue RGB(0,0,0);
 		CBrush br(cr);
 		dc.FrameRect(&(lpDIS->rcItem), &br);
 	}
 
 	// Item has been de-selected -- remove frame
-	if (!(lpDIS->itemState & ODS_SELECTED) &&	// item not selected
+	if (!(lpDIS->itemState & ODS_SELECTED) && // item not selected
 		(lpDIS->itemAction & ODA_SELECT))
 	{
 		dc.FrameRect(&(lpDIS->rcItem), &m_brBkgnd);
@@ -226,13 +227,13 @@ int CSpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 {
 	const auto pptr1 = reinterpret_cast<rowStruct*>(lpCIS->itemData1);
 	const auto pptr2 = reinterpret_cast<rowStruct*>(lpCIS->itemData2);
-	auto iresult = 1;			// value to return (default:clas1>clas2)
+	auto iresult = 1; // value to return (default:clas1>clas2)
 	const auto clas1 = (pptr1->pspk_bars)->GetSelClass();
 	const auto clas2 = (pptr2->pspk_bars)->GetSelClass();
 	if (clas1 == clas2)
-		iresult = 0;			// exact match
+		iresult = 0; // exact match
 	else if (clas1 < clas2)
-		iresult = -1;			// lower goes first
+		iresult = -1; // lower goes first
 
 	return iresult;
 }
@@ -241,7 +242,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 {
 	// erase content of the list box
 	SetRedraw(FALSE);
-	ResetContent();	
+	ResetContent();
 
 	p_dbwave_doc_ = pdbDoc;
 	p_spikelist_ = pSList;
@@ -251,7 +252,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 
 	// add as many windows as necessary; store pointer into listbox
 	const auto rect_spikes = CRect(0, 0, 0, 0); //CRect(0, 0, size, size);
-	const auto rect_bars = CRect(0, 0, 0, 0); ; //CRect(size, 0, 3*size, size);
+	const auto rect_bars = CRect(0, 0, 0, 0);
 
 	auto i_id = 0;
 	int nbclasses = GetHowManyClassesInCurrentSpikeList();
@@ -292,7 +293,7 @@ void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
 
 		// 3) create text
 		auto* pcs = new CString();
-		pcs->Format(_T("class %i\nn=%i"), iclass, (int)p_spikelist_->GetclassNbspk(i));
+		pcs->Format(_T("class %i\nn=%i"), iclass, p_spikelist_->GetclassNbspk(i));
 		ASSERT(pcs != NULL);
 
 		// 4) create array of 3 pointers and pass it to the listbox
@@ -324,7 +325,8 @@ void CSpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 	}
 }
 
-int CSpikeClassListBox::GetHowManyClassesInCurrentSpikeList() {
+int CSpikeClassListBox::GetHowManyClassesInCurrentSpikeList()
+{
 	if (!p_spikelist_->IsClassListValid())
 		p_spikelist_->UpdateClassList();
 	const auto nspikes = p_spikelist_->GetTotalSpikes();
@@ -339,7 +341,8 @@ void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 	p_spikelist_ = p_spike_list;
 	int nbclasses = GetHowManyClassesInCurrentSpikeList();
 
-	if (nbclasses == GetCount()) {
+	if (nbclasses == GetCount())
+	{
 		for (auto i = 0; i < GetCount(); i++)
 		{
 			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
@@ -347,7 +350,8 @@ void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
 			(pptr->pspk_bars)->SetSpkList(p_spike_list);
 		}
 	}
-	else {
+	else
+	{
 		SetSourceData(p_spike_list, p_dbwave_doc_);
 	}
 }
@@ -372,20 +376,20 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 
 	// select spike
 	if (spikeno >= 0)
-	{	// get address of spike parms
+	{
+		// get address of spike parms
 		const auto p_spike_element = p_spikelist_->GetSpikeElemt(spikeno);
 		cla = p_spike_element->get_class();
 
 		// multiple selection
-		if (b_multiple_selection)
+		if (false)
 		{
 			auto nflaggedspikes = p_spikelist_->ToggleSpikeFlag(spikeno);
 			if (p_spikelist_->GetSpikeFlagArrayCount() < 1)
 				spikeno = -1;
 		}
 		// single selection
-		else
-			p_spikelist_->SetSingleSpikeFlag(spikeno);
+		p_spikelist_->SetSingleSpikeFlag(spikeno);
 	}
 	// un-select all spikes
 	else
@@ -394,12 +398,12 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	// select corresponding row
 	if (spikeno >= 0)
 	{
-		for (auto i = 0; i < GetCount(); i++)				// search row where this class is stored
+		for (auto i = 0; i < GetCount(); i++) // search row where this class is stored
 		{
-			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));		// get pointer to row objects
+			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i)); // get pointer to row objects
 			if ((pptr->pspk_bars)->GetSelClass() == cla)
 			{
-				SetCurSel(i);							// select corresponding row
+				SetCurSel(i); // select corresponding row
 				break;
 			}
 		}
@@ -527,8 +531,8 @@ void CSpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 
 HBRUSH CSpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor)
 {
-	p_dc->SetTextColor(m_clrText);	// text
-	p_dc->SetBkColor(m_clrBkgnd);	// text bkgnd
+	p_dc->SetTextColor(m_clrText); // text
+	p_dc->SetBkColor(m_clrBkgnd); // text bkgnd
 	return m_brBkgnd;
 	// Return a non-NULL brush if the parent's handler should not be called
 }
@@ -549,7 +553,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	int irow;
 	for (irow = 0; irow < GetCount(); irow++)
 	{
-		pptr = reinterpret_cast<rowStruct*>(GetItemData(irow));		// get pointer to row objects
+		pptr = reinterpret_cast<rowStruct*>(GetItemData(irow)); // get pointer to row objects
 		if ((pptr->pspk_bars)->GetSelClass() == oldclass)
 			break;
 	}
@@ -557,8 +561,8 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	if (pptr != nullptr)
 	{
 		if (pptr->pspk_shapes != nullptr)
-			(pptr->pspk_shapes)->SelectSpikeShape(-1);	// de-select old spike / spike
-		(pptr->pspk_bars)->SelectSpike(-1);				// de-select old spike / bars
+			(pptr->pspk_shapes)->SelectSpikeShape(-1); // de-select old spike / spike
+		(pptr->pspk_bars)->SelectSpike(-1); // de-select old spike / bars
 	}
 	// decrease total nb of spikes within class
 	CRect rect;
@@ -585,7 +589,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	pptr = nullptr;
 	for (irow = 0; irow < GetCount(); irow++)
 	{
-		pptr = reinterpret_cast<rowStruct*>(GetItemData(irow));		// get pointer to row objects
+		pptr = reinterpret_cast<rowStruct*>(GetItemData(irow)); // get pointer to row objects
 		if ((pptr->pspk_bars)->GetSelClass() == newclass)
 			break;
 	}
@@ -631,11 +635,11 @@ void CSpikeClassListBox::PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRec
 
 	// spike shape
 	if (pptr->pspk_shapes != nullptr)
-		((CChartSpikeShapeWnd*)(pptr->pspk_shapes))->Print(p_dc, prect2);
+		pptr->pspk_shapes->Print(p_dc, prect2);
 
 	// spike bars
 	if (pptr->pspk_bars != nullptr)
-		((CChartSpikeBarWnd*)(pptr->pspk_bars))->Print(p_dc, prect3);
+		pptr->pspk_bars->Print(p_dc, prect3);
 }
 
 void CSpikeClassListBox::XorTempVTtag(int xpoint)
@@ -679,8 +683,8 @@ void CSpikeClassListBox::OnMouseMove(UINT nFlags, CPoint point)
 
 		// reflect mouse move message
 		::SendMessage(m_hwndBarsReflect, WM_MOUSEMOVE, nFlags,
-			MAKELPARAM(point.x + (rect1.left - rect0.left),
-				point.y + (rect1.top - rect0.top)));
+		              MAKELPARAM(point.x + (rect1.left - rect0.left),
+		                         point.y + (rect1.top - rect0.top)));
 	}
 	else
 		CListBox::OnMouseMove(nFlags, point);
@@ -697,8 +701,8 @@ void CSpikeClassListBox::OnLButtonUp(UINT nFlags, CPoint point)
 
 		// reflect mouse move message
 		::SendMessage(m_hwndBarsReflect, WM_LBUTTONUP, nFlags,
-			MAKELPARAM(point.x + (rect1.left - rect0.left),
-				point.y + (rect1.top - rect0.top)));
+		              MAKELPARAM(point.x + (rect1.left - rect0.left),
+		                         point.y + (rect1.top - rect0.top)));
 	}
 	else
 		CListBox::OnLButtonUp(nFlags, point);

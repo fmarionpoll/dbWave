@@ -4,7 +4,7 @@
 //#import "C:\\Program Files (x86)\\Alligator Technologies\\SystemViewUSBPxx\\Distributable SDK Files\\win32\\USBPxxS1COM.dll" \
 //		no_namespace raw_interfaces_only raw_native_types named_guids
 
-enum	FIRMWARE_PARAMETER_ID_SET
+enum FIRMWARE_PARAMETER_ID_SET
 {
 	ID_INITIALIZE,
 	ID_READ_LPFC,
@@ -36,13 +36,13 @@ enum	FIRMWARE_PARAMETER_ID_SET
 	ID_WRITE_PRODUCTID
 };
 
-enum	DEVICE_COMMAND_ID_SET
+enum DEVICE_COMMAND_ID_SET
 {
 	DCID_GET_TOTAL_CONNECTED_CHANNELS = 0x100,
 	DCID_GET_CHANNEL_HANDLE
 };
 
-enum	ERROR_CODE_SET
+enum ERROR_CODE_SET
 {
 	EC_SUCCESSFUL,
 	EC_LP_FC_RANGE,
@@ -50,7 +50,7 @@ enum	ERROR_CODE_SET
 	EC_GAIN_RANGE
 };
 
-enum	LOW_PASS_FILTER_TYPE_SET
+enum LOW_PASS_FILTER_TYPE_SET
 {
 	LPFT_CE,
 	LPFT_B,
@@ -60,7 +60,7 @@ enum	LOW_PASS_FILTER_TYPE_SET
 	LPFT_HLP
 };
 
-enum	HIGH_PASS_FILTER_TYPE_SET
+enum HIGH_PASS_FILTER_TYPE_SET
 {
 	HPFT_NONE,
 	HPFT_LN,
@@ -69,7 +69,7 @@ enum	HIGH_PASS_FILTER_TYPE_SET
 	HPFT_BE
 };
 
-enum	PRODUCT_ID_SET
+enum PRODUCT_ID_SET
 {
 	USBPGFS1,
 	USBPIAS1,
@@ -77,39 +77,37 @@ enum	PRODUCT_ID_SET
 	USBPHPS1
 };
 
-typedef	struct
+using EXTENDED_CHAR = struct
 {
-	unsigned char	value;
-	unsigned char	valueEx;
-}
-EXTENDED_CHAR;
+	unsigned char value;
+	unsigned char valueEx;
+};
 
-typedef	struct
+using CHARACTER_PACKET = struct
 {
-	unsigned int	index;
-	EXTENDED_CHAR	ec;
-}
-CHARACTER_PACKET;
+	unsigned int index;
+	EXTENDED_CHAR ec;
+};
 
-typedef	union
+using REVISION_TYPE = union
 {
 	struct
 	{
-		unsigned int	Low;
-		unsigned int	High;
-	}Rlong;
-	long	Whole;
-}
-REVISION_TYPE;
+		unsigned int Low;
+		unsigned int High;
+	} Rlong;
 
-typedef	union
+	long Whole;
+};
+
+typedef union
 {
-	VARIANT	IVAR;
-	long	LVAR;
-	float	FVAR;
+	VARIANT IVAR;
+	long LVAR;
+	float FVAR;
 	CHARACTER_PACKET CVAR;
 	EXTENDED_CHAR EVAR;
 }
-VARIANT_TYPE, * pVARIANT_TYPE;
+	VARIANT_TYPE, *pVARIANT_TYPE;
 
 #define	USBPxxS1_DESCRIPTION_SIZE_LIMIT	30

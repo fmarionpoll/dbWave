@@ -6,7 +6,6 @@
 #include "DlgDAChannels.h"
 
 
-
 BOOL DataTranslation_DA::OpenSubSystem(const CString cardName)
 {
 	try
@@ -22,7 +21,6 @@ BOOL DataTranslation_DA::OpenSubSystem(const CString cardName)
 		SetSubSysElement(0);
 		ASSERT(GetHDass() != NULL),
 			m_bsimultaneousStart_DA = GetSSCaps(OLSSC_SUP_SIMULTANEOUS_START);
-
 	}
 	catch (COleDispatchException* e)
 	{
@@ -48,7 +46,7 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 		SetDataFlow(OLx_DF_SINGLEVALUE);
 		long out_value = 0;
 		if (GetEncoding() == OLx_ENC_BINARY)
-			out_value = WORD((out_value ^ m_msbit) & m_lRes);
+			out_value = static_cast<WORD>((out_value ^ m_msbit) & m_lRes);
 
 		Config();
 		int nchansmax = GetSSCaps(OLSSC_NUMCHANNELS) - 1;
@@ -75,12 +73,12 @@ BOOL DataTranslation_DA::InitSubSystem(double ADC_channel_samplingrate, int ADC_
 		// Set up the ADC - multiple wrap so we can get buffer reused	
 		SetDataFlow(OLx_DF_CONTINUOUS);
 		SetWrapMode(OLx_WRP_NONE);
-		SetDmaUsage(short(GetSSCaps(OLSSC_NUMDMACHANS)));
+		SetDmaUsage(static_cast<short>(GetSSCaps(OLSSC_NUMDMACHANS)));
 
 		// set clock the same as for A/D
 		SetClockSource(OLx_CLK_INTERNAL);
 		const double clockrate = ADC_channel_samplingrate;
-		SetFrequency(clockrate);		// set sampling frequency (total throughput)
+		SetFrequency(clockrate); // set sampling frequency (total throughput)
 
 		// set trigger mode
 		int trig = ADC_trigger_mode;
@@ -90,8 +88,8 @@ BOOL DataTranslation_DA::InitSubSystem(double ADC_channel_samplingrate, int ADC_
 
 		SetChannelList();
 		const double resolutionfactor = pow(2.0, GetResolution());
-		m_msbit = long(pow(2.0, double(GetResolution()) - 1.));
-		m_lRes = long(resolutionfactor - 1.);
+		m_msbit = static_cast<long>(pow(2.0, double(GetResolution()) - 1.));
+		m_lRes = static_cast<long>(resolutionfactor - 1.);
 
 		for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
 		{
@@ -99,7 +97,7 @@ BOOL DataTranslation_DA::InitSubSystem(double ADC_channel_samplingrate, int ADC_
 			//MSequence(TRUE, pParms);
 			if (pParms->bDigital)
 				continue;
-			const double delta = double(GetMaxRange()) - double(GetMinRange());
+			const double delta = static_cast<double>(GetMaxRange()) - static_cast<double>(GetMinRange());
 			pParms->ampUp = pParms->dAmplitudeMaxV * resolutionfactor / delta;
 			pParms->ampLow = pParms->dAmplitudeMinV * resolutionfactor / delta;
 		}
@@ -170,18 +168,22 @@ void DataTranslation_DA::SetChannelList()
 
 void DataTranslation_DA::DeleteBuffers()
 {
-	try {
+	try
+	{
 		if (GetHDass() == NULL)
 			return;
 
-		Flush();	// clean
-		HBUF hBuf;			// handle to buffer
-		do {				// loop until all buffers are removed
+		Flush(); // clean
+		HBUF hBuf; // handle to buffer
+		do
+		{
+			// loop until all buffers are removed
 			hBuf = (HBUF)GetQueue();
-			if (hBuf != NULL)
+			if (hBuf != nullptr)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
-		} while (hBuf != NULL);
+		}
+		while (hBuf != nullptr);
 		m_bufhandle = hBuf;
 	}
 	catch (COleDispatchException* e)
@@ -199,8 +201,8 @@ void DataTranslation_DA::DeclareAndFillBuffers(float sweepduration, float chrate
 	m_frequency = chrate;
 
 	// define buffer length
-	
-	long chsweeplength = (long)(sweepduration * chrate);
+
+	long chsweeplength = static_cast<long>(sweepduration * chrate);
 	m_chbuflen = chsweeplength / nbuffers;
 	m_buflen = m_chbuflen * m_listsize;
 
@@ -229,13 +231,13 @@ void DataTranslation_DA::DeclareAndFillBuffers(float sweepduration, float chrate
 void DataTranslation_DA::ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTbuf, int chan)
 {
 	for (int i = chan; i < m_buflen; i += m_listsize)
-		*(pDTbuf + i) = (WORD)((*(pDTbuf + i) ^ m_msbit) & m_lRes);
+		*(pDTbuf + i) = static_cast<WORD>((*(pDTbuf + i) ^ m_msbit) & m_lRes);
 }
 
 void DataTranslation_DA::FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	double	phase = outputparms_array->lastphase;
-	double	freq = outputparms_array->dFrequency / m_frequency;
+	double phase = outputparms_array->lastphase;
+	double freq = outputparms_array->dFrequency / m_frequency;
 	const double amplitude = (outputparms_array->ampUp - outputparms_array->ampLow) / 2;
 	const double offset = (outputparms_array->ampUp + outputparms_array->ampLow) / 2;
 	const int n_channels = m_listsize;
@@ -244,9 +246,9 @@ void DataTranslation_DA::FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUT
 	freq = freq * pi2;
 	for (int i = chan; i < m_buflen; i += n_channels)
 	{
-		*(pDTbuf + i) = short(cos(phase) * amplitude + offset);
+		*(pDTbuf + i) = static_cast<short>(cos(phase) * amplitude + offset);
 		if (*(pDTbuf + i) > m_msbit)
-			*(pDTbuf + i) = short(m_msbit - 1);
+			*(pDTbuf + i) = static_cast<short>(m_msbit - 1);
 		phase += freq;
 		if (phase > pi2)
 			phase -= pi2;
@@ -261,7 +263,7 @@ void DataTranslation_DA::FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUT
 
 void DataTranslation_DA::FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	double	phase = outputparms_array->lastphase;
+	double phase = outputparms_array->lastphase;
 	const double freq = outputparms_array->dFrequency / m_frequency;
 	const double amp_up = outputparms_array->ampUp;
 	const double amp_low = outputparms_array->ampLow;
@@ -269,12 +271,12 @@ void DataTranslation_DA::FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPA
 
 	for (int i = chan; i < m_buflen; i += n_channels)
 	{
-		double	amp;
+		double amp;
 		if (phase < 0)
 			amp = amp_up;
 		else
 			amp = amp_low;
-		*(pDTbuf + i) = short(amp);
+		*(pDTbuf + i) = static_cast<short>(amp);
 		phase += freq;
 		if (phase > 0.5)
 			phase -= 1;
@@ -290,15 +292,15 @@ void DataTranslation_DA::FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUT
 {
 	double phase = outputparms_array->lastphase;
 	const double freq = outputparms_array->dFrequency / m_frequency;
-	double	amp = outputparms_array->ampUp;
+	double amp = outputparms_array->ampUp;
 	int n_channels = m_listsize;
 
 	for (int i = chan; i < m_buflen; i += n_channels)
 	{
-		*(pDTbuf + i) = short(2 * phase * amp);
+		*(pDTbuf + i) = static_cast<short>(2 * phase * amp);
 		// clip value
 		if (*(pDTbuf + i) >= m_msbit)
-			*(pDTbuf + i) = short(m_msbit - 1);
+			*(pDTbuf + i) = static_cast<short>(m_msbit - 1);
 		phase = phase + 2 * freq;
 		if (phase > 0.5)
 		{
@@ -316,11 +318,11 @@ void DataTranslation_DA::FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUT
 
 void DataTranslation_DA::FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	double	amp = outputparms_array->ampUp;
+	double amp = outputparms_array->ampUp;
 	int nchans = m_listsize;
 
 	for (int i = chan; i < m_buflen; i += nchans)
-		*(pDTbuf + i) = (WORD) amp;
+		*(pDTbuf + i) = static_cast<WORD>(amp);
 
 	if (GetEncoding() == OLx_ENC_BINARY)
 		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
@@ -330,12 +332,12 @@ void DataTranslation_DA::FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARM
 
 void DataTranslation_DA::FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	double delta = double(GetMaxRange()) - double(GetMinRange());
-	double	amp = outputparms_array->value * pow(2.0, GetResolution()) / delta;
+	double delta = static_cast<double>(GetMaxRange()) - static_cast<double>(GetMinRange());
+	double amp = outputparms_array->value * pow(2.0, GetResolution()) / delta;
 	int nchans = m_listsize;
 
 	for (int i = chan; i < m_buflen; i += nchans)
-		*(pDTbuf + i) = (WORD) amp;
+		*(pDTbuf + i) = static_cast<WORD>(amp);
 
 	if (GetEncoding() == OLx_ENC_BINARY)
 		ConvertbufferFrom2ComplementsToOffsetBinary(pDTbuf, chan);
@@ -345,32 +347,32 @@ void DataTranslation_DA::FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUT
 
 void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	double	ampUp = outputparms_array->ampUp;
-	double  ampLow = outputparms_array->ampLow;
-	int		nchans = m_listsize;
+	double ampUp = outputparms_array->ampUp;
+	double ampLow = outputparms_array->ampLow;
+	int nchans = m_listsize;
 
 	CIntervalsAndWordsSeries* pstim = &outputparms_array->sti;
-	double	chFreqRatio = m_frequency / pstim->chrate;
-	long	buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
-	long	buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
-	long	buffer_ii = buffer_start;
-	int		interval = 0;
+	double chFreqRatio = m_frequency / pstim->chrate;
+	long buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
+	long buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
+	long buffer_ii = buffer_start;
+	int interval = 0;
 
-	BOOL	wamp = FALSE;
-	long	stim_end = 0;
+	BOOL wamp = FALSE;
+	long stim_end = 0;
 
 	// find end = first interval after buffer_end; find start 
 	for (interval = 0; interval < pstim->GetSize(); interval++)
 	{
-		stim_end = (long)(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+		stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
 		if (stim_end > buffer_start)
 			break;
 		wamp = pstim->GetIntervalPointAt(interval).w;
 	}
 	double amp = ampUp * wamp + ampLow * !wamp;
-	WORD wout = (WORD) amp;
+	WORD wout = static_cast<WORD>(amp);
 	if (GetEncoding() == OLx_ENC_BINARY)
-		wout = (WORD)(wout ^ m_msbit) & m_lRes;
+		wout = static_cast<WORD>(wout ^ m_msbit) & m_lRes;
 
 	// fill buffer
 	for (int i = chan; i < m_buflen; i += nchans, buffer_ii++)
@@ -382,12 +384,12 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 			interval++;
 			wamp = FALSE;
 			if (interval < pstim->GetSize())
-				stim_end = (long)(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+				stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
 			wamp = pstim->GetIntervalPointAt(interval - 1).w;
 			amp = ampUp * wamp + ampLow * !wamp;
-			wout = (WORD) amp;
+			wout = static_cast<WORD>(amp);
 			if (GetEncoding() == OLx_ENC_BINARY)
-				wout = (WORD)(wout ^ m_msbit) & m_lRes;
+				wout = static_cast<WORD>(wout ^ m_msbit) & m_lRes;
 		}
 	}
 	outputparms_array->lastamp = amp;
@@ -396,9 +398,11 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 void DataTranslation_DA::MSequence(BOOL bStart, OUTPUTPARMS* outputparms_array)
 {
 	outputparms_array->count--;
-	if (outputparms_array->count == 0) {
+	if (outputparms_array->count == 0)
+	{
 		outputparms_array->count = outputparms_array->mseq_iRatio + 1;
-		if (bStart) {
+		if (bStart)
+		{
 			outputparms_array->num = outputparms_array->mseq_iSeed;
 			outputparms_array->bit1 = 1;
 			outputparms_array->bit33 = 0;
@@ -425,12 +429,14 @@ void DataTranslation_DA::FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARM
 		else
 		{
 			x = outputparms_array->ampLow;
-			if (outputparms_array->mseq_iDelay == 0) {
+			if (outputparms_array->mseq_iDelay == 0)
+			{
 				MSequence(FALSE, outputparms_array);
-				x = (outputparms_array->bit1 * outputparms_array->ampUp) + (!outputparms_array->bit1 * outputparms_array->ampLow);
+				x = (outputparms_array->bit1 * outputparms_array->ampUp) + (!outputparms_array->bit1 * outputparms_array
+					->ampLow);
 			}
 		}
-		*(pDTbuf + i) = (WORD)x;
+		*(pDTbuf + i) = static_cast<WORD>(x);
 	}
 
 	if (GetEncoding() == OLx_ENC_BINARY)
@@ -441,25 +447,25 @@ void DataTranslation_DA::FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARM
 
 void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	WORD	ampLow = 0;
-	WORD	ampUp = 1;
+	WORD ampLow = 0;
+	WORD ampUp = 1;
 	ampUp = ampUp << outputparms_array->iChan;
-	int		nchans = m_listsize;
+	int nchans = m_listsize;
 
 	CIntervalsAndWordsSeries* pstim = &outputparms_array->sti;
-	double	chFreqRatio = m_frequency / pstim->chrate;
-	long	buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
-	long	buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
-	long	buffer_ii = buffer_start;
-	int		interval = 0;
+	double chFreqRatio = m_frequency / pstim->chrate;
+	long buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
+	long buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
+	long buffer_ii = buffer_start;
+	int interval = 0;
 
-	BOOL	wamp = 0;
-	long	stim_end = 0;
+	BOOL wamp = 0;
+	long stim_end = 0;
 
 	// find end = first interval after buffer_end; find start 
 	for (interval = 0; interval < pstim->GetSize(); interval++)
 	{
-		stim_end = (long)(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+		stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
 		if (stim_end > buffer_start)
 			break;
 		wamp = pstim->GetIntervalPointAt(interval).w;
@@ -480,7 +486,7 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OU
 		{
 			interval++;
 			if (interval < pstim->GetSize())
-				stim_end = (long)(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+				stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
 			wamp = pstim->GetIntervalPointAt(interval - 1).w;
 			if (wamp > 0)
 				wout = ampUp;
@@ -492,12 +498,12 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OU
 
 void DataTranslation_DA::Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	double	phase = outputparms_array->lastphase;
-	WORD	amp = 0;
-	WORD	ampUp = 1;
+	double phase = outputparms_array->lastphase;
+	WORD amp = 0;
+	WORD ampUp = 1;
 	ampUp = ampUp << outputparms_array->iChan;
-	WORD	ampLow = 0;
-	double	Freq = outputparms_array->dFrequency / m_frequency;
+	WORD ampLow = 0;
+	double Freq = outputparms_array->dFrequency / m_frequency;
 	int nchans = m_listsize;
 
 	for (int i = chan; i < m_buflen; i += nchans)
@@ -521,8 +527,8 @@ void DataTranslation_DA::Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTP
 
 void DataTranslation_DA::Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
 {
-	WORD	ampLow = 0;
-	WORD	ampUp = 1;
+	WORD ampLow = 0;
+	WORD ampUp = 1;
 	ampUp = ampUp << outputparms_array->iChan;
 	int DAClistsize = m_listsize;
 	double x = 0;
@@ -536,15 +542,17 @@ void DataTranslation_DA::Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUT
 		else
 		{
 			x = outputparms_array->ampLow;
-			if (outputparms_array->mseq_iDelay == 0) {
+			if (outputparms_array->mseq_iDelay == 0)
+			{
 				MSequence(FALSE, outputparms_array);
-				x = double(outputparms_array->bit1) * double(ampUp) + double(!outputparms_array->bit1) * double(ampLow);
+				x = static_cast<double>(outputparms_array->bit1) * static_cast<double>(ampUp) + static_cast<double>(!
+					outputparms_array->bit1) * static_cast<double>(ampLow);
 			}
 		}
 		if (m_digitalfirst == 0)
-			*(pDTbuf + i) = WORD(x);
+			*(pDTbuf + i) = static_cast<WORD>(x);
 		else
-			*(pDTbuf + i) |= WORD(x);
+			*(pDTbuf + i) |= static_cast<WORD>(x);
 	}
 	outputparms_array->lastamp = x;
 }
@@ -625,18 +633,22 @@ void DataTranslation_DA::StopAndLiberateBuffers()
 	if (!m_inprogress)
 		return;
 
-	try {
+	try
+	{
 		Stop();
-		Flush();	// flush all buffers to Done Queue
+		Flush(); // flush all buffers to Done Queue
 		HBUF hBuf;
-		do {
+		do
+		{
 			hBuf = (HBUF)GetQueue();
-			if (hBuf != NULL) {
+			if (hBuf != nullptr)
+			{
 				ECODE ecode = olDmFreeBuffer(hBuf);
 				if (ecode != OLNOERROR)
 					AfxMessageBox(_T("Could not free Buffer"));
 			}
-		} while (hBuf != NULL);
+		}
+		while (hBuf != nullptr);
 
 		ClearAllOutputs();
 	}
@@ -651,7 +663,7 @@ void DataTranslation_DA::StopAndLiberateBuffers()
 void DataTranslation_DA::DispatchException(COleDispatchException* e)
 {
 	CString myError;
-	myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
+	myError.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError));
 	myError += e->m_strDescription;
 	AfxMessageBox(myError);
 	e->Delete();
@@ -661,8 +673,8 @@ void DataTranslation_DA::DispatchException(COleDispatchException* e)
 void DataTranslation_DA::OnBufferDone()
 {
 	// get buffer off done list	
-	m_bufhandle = (HBUF) GetQueue();
-	if (m_bufhandle == NULL)
+	m_bufhandle = (HBUF)GetQueue();
+	if (m_bufhandle == nullptr)
 		return;
 
 	// get pointer to buffer
@@ -675,4 +687,3 @@ void DataTranslation_DA::OnBufferDone()
 		SetQueue((long)m_bufhandle);
 	}
 }
-

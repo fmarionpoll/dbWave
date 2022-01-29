@@ -11,7 +11,7 @@
 
 
 CDlgRejectRecord::CDlgRejectRecord(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgRejectRecord::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_bconsecutivepoints = FALSE;
 	m_Nconsecutivepoints = 0;
@@ -31,4 +31,3 @@ void CDlgRejectRecord::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CDlgRejectRecord, CDialog)
 
 END_MESSAGE_MAP()
-

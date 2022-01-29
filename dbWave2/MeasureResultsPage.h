@@ -10,56 +10,57 @@ class CMeasureResultsPage : public CPropertyPage
 	// Construction
 public:
 	CMeasureResultsPage();
-	~CMeasureResultsPage();
+	~CMeasureResultsPage() override;
 
 	// Dialog Data
 	enum { IDD = IDD_PROPPAGE4 };
-	CEdit	m_CEditResults;
+
+	CEdit m_CEditResults;
 	CListCtrl m_listResults;
 
 	// input parameters
-	CChartDataWnd*	m_pChartDataWnd;
-	CdbWaveDoc*		m_pdbDoc;
-	CAcqDataDoc*	m_pdatDoc{};
+	ChartData* m_pChartDataWnd;
+	CdbWaveDoc* m_pdbDoc;
+	AcqDataDoc* m_pdatDoc{};
 	OPTIONS_VIEWDATAMEASURE* m_pMO{};
-	int	m_currentchan{};
+	int m_currentchan{};
 
 protected:
 	// locals
-	BOOL  MeasureParameters();
-	void  MeasureFromVTtags(int ichan);
-	void  MeasureFromHZcur(int ichan);
-	void  MeasureFromRect(int ichan);
-	void  MeasureFromStim(int ichan);
-	void  OutputTitle();
+	BOOL MeasureParameters();
+	void MeasureFromVTtags(int ichan);
+	void MeasureFromHZcur(int ichan);
+	void MeasureFromRect(int ichan);
+	void MeasureFromStim(int ichan);
+	void OutputTitle();
 	//LPSTR OutputFileName(LPSTR lpCopy);
 
-	void  MeasureWithinInterval(int ichan, int line, long l1, long l2);
-	void  MeasureBetweenHZ(int ichan, int line, int v1, int v2);
-	void  GetMaxMin(int chan, long l_first, long l_last);
-	short	m_max{};
-	long	m_imax{};
-	short	m_min{};
-	long	m_imin{};
-	short	m_first{};
-	short	m_last{};
-	TCHAR	m_szT[64]{};		// dummy characters buffer
-	float	m_mVperBin{};
-	int		m_nbdatacols{};
-	int		m_col{};
-	CString	m_csTitle;
+	void MeasureWithinInterval(int ichan, int line, long l1, long l2);
+	void MeasureBetweenHZ(int ichan, int line, int v1, int v2);
+	void GetMaxMin(int chan, long l_first, long l_last);
+	short m_max{};
+	long m_imax{};
+	short m_min{};
+	long m_imin{};
+	short m_first{};
+	short m_last{};
+	TCHAR m_szT[64]{}; // dummy characters buffer
+	float m_mVperBin{};
+	int m_nbdatacols{};
+	int m_col{};
+	CString m_csTitle;
 
 	// Overrides
 public:
-	virtual void OnOK();
-	virtual BOOL OnSetActive();
+	void OnOK() override;
+	BOOL OnSetActive() override;
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	afx_msg void OnExport();
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 	DECLARE_MESSAGE_MAP()
 };

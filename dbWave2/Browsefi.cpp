@@ -9,7 +9,7 @@
 #endif
 
 CBrowseFileDlg::CBrowseFileDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CBrowseFileDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_allchannels = FALSE;
 	m_centercurves = FALSE;
@@ -40,7 +40,8 @@ END_MESSAGE_MAP()
 BOOL CBrowseFileDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	if (mfBR != nullptr) {
+	if (mfBR != nullptr)
+	{
 		m_allchannels = mfBR->bAllChannels;
 		m_centercurves = mfBR->bCenterCurves;
 		m_completefile = mfBR->bEntireRecord;
@@ -50,7 +51,7 @@ BOOL CBrowseFileDlg::OnInitDialog()
 		m_keepforeachfile = mfBR->bKeepForEachFile;
 	}
 	UpdateData(FALSE);
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 void CBrowseFileDlg::OnOK()

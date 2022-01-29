@@ -2,7 +2,6 @@
 #include "OUTPUTPARMS.h"
 
 
-
 IMPLEMENT_SERIAL(OUTPUTPARMS, CObject, 0 /* schema number*/)
 
 OUTPUTPARMS::OUTPUTPARMS()
@@ -11,9 +10,10 @@ OUTPUTPARMS::OUTPUTPARMS()
 OUTPUTPARMS::~OUTPUTPARMS()
 = default;
 
-OUTPUTPARMS& OUTPUTPARMS::operator = (const OUTPUTPARMS & arg)
+OUTPUTPARMS& OUTPUTPARMS::operator =(const OUTPUTPARMS& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		wversion = arg.wversion;
 		csFilename = arg.csFilename;
 		noise_bExternal = arg.noise_bExternal;
@@ -40,21 +40,21 @@ OUTPUTPARMS& OUTPUTPARMS::operator = (const OUTPUTPARMS & arg)
 	return *this;
 }
 
-void OUTPUTPARMS::Serialize(CArchive & ar)
+void OUTPUTPARMS::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
 		ar << wversion;
 
-		ar << WORD(1);			// CString
+		ar << static_cast<WORD>(1); // CString
 		ar << csFilename;
 
-		ar << WORD(3);			// BOOL
+		ar << static_cast<WORD>(3); // BOOL
 		ar << noise_bExternal;
 		ar << bON;
 		ar << bDigital;
 
-		ar << WORD(6);			// int
+		ar << static_cast<WORD>(6); // int
 		ar << iChan;
 		ar << iWaveform;
 		ar << mseq_iRatio;
@@ -62,7 +62,7 @@ void OUTPUTPARMS::Serialize(CArchive & ar)
 		ar << mseq_iSeed;
 		ar << noise_iDelay;
 
-		ar << WORD(9);			// double
+		ar << static_cast<WORD>(9); // double
 		ar << dAmplitudeMaxV;
 		ar << dAmplitudeMinV;
 		ar << dFrequency;
@@ -73,54 +73,107 @@ void OUTPUTPARMS::Serialize(CArchive & ar)
 		ar << noise_dOffsetV;
 		ar << value;
 
-		ar << WORD(2);			// 1 more object
+		ar << static_cast<WORD>(2); // 1 more object
 		stimulussequence.Serialize(ar);
 		sti.Serialize(ar);
 	}
 	else
 	{
-		WORD version; ar >> version;
+		WORD version;
+		ar >> version;
 		WORD wn;
 
 		// string parameters
-		ar >> wn; int n = wn;
-		if (n > 0) ar >> csFilename; n--;
-		CString csdummy; while (n > 0) { n--; ar >> csdummy; }
+		ar >> wn;
+		int n = wn;
+		if (n > 0) ar >> csFilename;
+		n--;
+		CString csdummy;
+		while (n > 0)
+		{
+			n--;
+			ar >> csdummy;
+		}
 
 		// BOOL parameters
-		ar >> wn; n = wn;
-		if (n > 0) ar >> noise_bExternal;	n--;
-		if (n > 0) ar >> bON; n--;
-		if (n > 0) ar >> bDigital; n--;
-		BOOL bdummy; while (n > 0) { n--; ar >> bdummy; }
+		ar >> wn;
+		n = wn;
+		if (n > 0) ar >> noise_bExternal;
+		n--;
+		if (n > 0) ar >> bON;
+		n--;
+		if (n > 0) ar >> bDigital;
+		n--;
+		BOOL bdummy;
+		while (n > 0)
+		{
+			n--;
+			ar >> bdummy;
+		}
 
 		// int parameters
-		ar >> wn; n = wn;
-		if (n > 0) ar >> iChan;				n--;
-		if (n > 0) ar >> iWaveform;			n--;
-		if (n > 0) ar >> mseq_iRatio;		n--;
-		if (n > 0) ar >> mseq_iDelay;		n--;
-		if (n > 0) ar >> mseq_iSeed;		n--;
-		if (n > 0) ar >> noise_iDelay;		n--;
-		int idummy; while (n > 0) { n--; ar >> idummy; }
+		ar >> wn;
+		n = wn;
+		if (n > 0) ar >> iChan;
+		n--;
+		if (n > 0) ar >> iWaveform;
+		n--;
+		if (n > 0) ar >> mseq_iRatio;
+		n--;
+		if (n > 0) ar >> mseq_iDelay;
+		n--;
+		if (n > 0) ar >> mseq_iSeed;
+		n--;
+		if (n > 0) ar >> noise_iDelay;
+		n--;
+		int idummy;
+		while (n > 0)
+		{
+			n--;
+			ar >> idummy;
+		}
 
 		// double parameters
-		ar >> wn; n = wn;
-		if (n > 0) ar >> dAmplitudeMaxV;	n--;
-		if (n > 0) ar >> dAmplitudeMinV;	n--;
-		if (n > 0) ar >> dFrequency;		n--;
-		if (n > 0) ar >> dummy1;			n--;
-		if (n > 0) ar >> dummy2;			n--;
-		if (n > 0) ar >> noise_dAmplitV;	n--;
-		if (n > 0) ar >> noise_dFactor;		n--;
-		if (n > 0) ar >> noise_dOffsetV;	n--;
-		if (n > 0) ar >> value;				n--;
-		double ddummy; while (n > 0) { n--; ar >> ddummy; }
+		ar >> wn;
+		n = wn;
+		if (n > 0) ar >> dAmplitudeMaxV;
+		n--;
+		if (n > 0) ar >> dAmplitudeMinV;
+		n--;
+		if (n > 0) ar >> dFrequency;
+		n--;
+		if (n > 0) ar >> dummy1;
+		n--;
+		if (n > 0) ar >> dummy2;
+		n--;
+		if (n > 0) ar >> noise_dAmplitV;
+		n--;
+		if (n > 0) ar >> noise_dFactor;
+		n--;
+		if (n > 0) ar >> noise_dOffsetV;
+		n--;
+		if (n > 0) ar >> value;
+		n--;
+		double ddummy;
+		while (n > 0)
+		{
+			n--;
+			ar >> ddummy;
+		}
 
 		// other?
-		ar >> wn; n = wn;
-		if (n > 0) { stimulussequence.Serialize(ar); n--; }
-		if (n > 0) { sti.Serialize(ar); n--; }
+		ar >> wn;
+		n = wn;
+		if (n > 0)
+		{
+			stimulussequence.Serialize(ar);
+			n--;
+		}
+		if (n > 0)
+		{
+			sti.Serialize(ar);
+			n--;
+		}
 		ASSERT(n == 0);
 	}
 }

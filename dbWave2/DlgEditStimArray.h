@@ -10,13 +10,13 @@ class CDlgEditStimArray : public CDialog
 
 public:
 	CDlgEditStimArray(CWnd* pParent = nullptr);
-	virtual ~CDlgEditStimArray();
+	~CDlgEditStimArray() override;
 
 	// data passed by caller
-	CTagList*			m_pTagList = nullptr;
+	CTagList* m_pTagList = nullptr;
 	CIntervalsAndLevels* m_pstimsaved = nullptr;
-	CArray < CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
-	float				m_rate = 0.f;
+	CArray<CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
+	float m_rate = 0.f;
 
 	// Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
@@ -24,24 +24,24 @@ public:
 protected:
 	CIntervalsAndLevels* m_pstim = nullptr;
 
-	virtual void	DoDataExchange(CDataExchange* pDX);
+	void DoDataExchange(CDataExchange* pDX) override;
 	CStretchControl m_stretch{};
-	BOOL		m_binit = false;
-	CEdit		m_csEdit{};
-	float		m_value = 0;
-	int			m_iItem = -1;
-	CListCtrl	m_stimarrayCtrl{};
+	BOOL m_binit = false;
+	CEdit m_csEdit{};
+	float m_value = 0;
+	int m_iItem = -1;
+	CListCtrl m_stimarrayCtrl{};
 	CImageList* m_pimagelist = nullptr;
 
-	void		selectItem(int i);
-	void		resetListOrder();
-	void		addNewItem(int i, long lInterval);
-	void		transferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
-	void		setSubItem0(LVITEM& lvi, int i, CString& cs);
-	void		setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs);
+	void selectItem(int i);
+	void resetListOrder();
+	void addNewItem(int i, long lInterval);
+	void transferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
+	void setSubItem0(LVITEM& lvi, int i, CString& cs);
+	void setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs);
 
 public:
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedEdit();
 	afx_msg void OnEnKillfocusReOrder();

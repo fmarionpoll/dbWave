@@ -14,8 +14,8 @@
 // CFormatHistogramDlg dialog
 
 CFormatHistogramDlg::CFormatHistogramDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CFormatHistogramDlg::IDD, pParent), m_bYmaxAuto(0), m_crHistFill(0), m_crHistBorder(0), m_crStimFill(0),
-	m_crStimBorder(0), m_crChartArea(0)
+	: CDialog(IDD, pParent), m_bYmaxAuto(0), m_crHistFill(0), m_crHistBorder(0), m_crStimFill(0),
+	  m_crStimBorder(0), m_crChartArea(0)
 {
 	m_Ymax = 0.0f;
 	m_xfirst = 0.0f;
@@ -45,28 +45,28 @@ END_MESSAGE_MAP()
 
 void CFormatHistogramDlg::OnCheckbYmaxAuto()
 {
-	m_bYmaxAuto = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_bYmaxAuto = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	if (!m_bYmaxAuto)
 	{
-		((CWnd*)GetDlgItem(IDC_EDIT1))->EnableWindow(FALSE);
+		GetDlgItem(IDC_EDIT1)->EnableWindow(FALSE);
 	}
 	else
 	{
-		((CWnd*)GetDlgItem(IDC_EDIT1))->EnableWindow(TRUE);
+		GetDlgItem(IDC_EDIT1)->EnableWindow(TRUE);
 	}
 }
 
 void CFormatHistogramDlg::OnPaint()
 {
-	CRect rect;							// rect variable
-	CPaintDC dc(this); 					// device context for painting
-	CBrush* p_old_brush = (CBrush*)dc.SelectStockObject(WHITE_BRUSH);
-	CPen* pOldPen = (CPen*)dc.SelectStockObject(NULL_PEN);
+	CRect rect; // rect variable
+	CPaintDC dc(this); // device context for painting
+	auto p_old_brush = static_cast<CBrush*>(dc.SelectStockObject(WHITE_BRUSH));
+	auto pOldPen = static_cast<CPen*>(dc.SelectStockObject(NULL_PEN));
 
 	// erase background
 	CWnd* pFWnd = GetDlgItem(IDC_STATIC10);
-	pFWnd->GetWindowRect(&rect);		// get window rectangle
-	ScreenToClient(&rect);				// convert  coordinates
+	pFWnd->GetWindowRect(&rect); // get window rectangle
+	ScreenToClient(&rect); // convert  coordinates
 	dc.Rectangle(&rect);
 
 	// display abcissa
@@ -89,8 +89,8 @@ void CFormatHistogramDlg::OnPaint()
 	dc.SelectObject(&spHist);
 
 	CRect rstim(rect.left + (3 * binlen + binlen / 2), rect.top + baseline,
-		rect.left + (5 * binlen + binlen / 2), rect.bottom - baseline);
-	dc.Rectangle(&rstim);		// 1
+	            rect.left + (5 * binlen + binlen / 2), rect.bottom - baseline);
+	dc.Rectangle(&rstim); // 1
 
 	// display histogram
 	CBrush BHist;
@@ -101,23 +101,23 @@ void CFormatHistogramDlg::OnPaint()
 	dc.SelectObject(&PHist);
 
 	CRect rhist(rect.left + binlen, rect.bottom - 2 * baseline,
-		rect.left + 2 * binlen, rect.bottom - baseline);
-	dc.Rectangle(&rhist);		// 1
+	            rect.left + 2 * binlen, rect.bottom - baseline);
+	dc.Rectangle(&rhist); // 1
 	rhist.OffsetRect(binlen, 0);
 	rhist.top = rect.bottom - 3 * baseline;
-	dc.Rectangle(&rhist);		// 2
+	dc.Rectangle(&rhist); // 2
 	rhist.OffsetRect(binlen, 0);
 	rhist.top = rect.bottom - 6 * baseline;
-	dc.Rectangle(&rhist);		// 3
+	dc.Rectangle(&rhist); // 3
 	rhist.OffsetRect(binlen, 0);
 	rhist.top = rect.bottom - 4 * baseline;
-	dc.Rectangle(&rhist);		// 4
+	dc.Rectangle(&rhist); // 4
 	rhist.OffsetRect(binlen, 0);
 	rhist.top = rect.bottom - 5 * baseline;
-	dc.Rectangle(&rhist);		// 5
+	dc.Rectangle(&rhist); // 5
 	rhist.OffsetRect(binlen, 0);
 	rhist.top = rect.bottom - 2 * baseline;
-	dc.Rectangle(&rhist);		// 6
+	dc.Rectangle(&rhist); // 6
 }
 
 void CFormatHistogramDlg::OnHistBordercolor()

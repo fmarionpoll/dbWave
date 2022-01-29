@@ -13,7 +13,7 @@
 #endif
 
 CDataSeriesDlg::CDataSeriesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataSeriesDlg::IDD, pParent), m_ispan(0), m_pChartDataWnd(nullptr), m_pdbDoc(nullptr), m_listindex(0)
+	: CDialog(IDD, pParent), m_ispan(0), m_pChartDataWnd(nullptr), m_pdbDoc(nullptr), m_listindex(0)
 {
 	m_name = "";
 }
@@ -70,19 +70,20 @@ void CDataSeriesDlg::OnSelchangeListseries()
 {
 	auto b_delete_series = FALSE;
 	m_listindex = m_listseries.GetCurSel() - 1;
-	if (m_listindex >= 0)		// if lineview type channel
-	{							// select corresp source chan & transform mode
+	if (m_listindex >= 0) // if lineview type channel
+	{
+		// select corresp source chan & transform mode
 		CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(m_listindex);
-		m_listseries.GetText(m_listindex + 1, m_name);			// chan comment
-		auto i = chan->GetSourceChan();							// data source chan
-		m_ordinates.SetCurSel(i);								// and transform mode
+		m_listseries.GetText(m_listindex + 1, m_name); // chan comment
+		auto i = chan->GetSourceChan(); // data source chan
+		m_ordinates.SetCurSel(i); // and transform mode
 		i = chan->GetTransformMode();
 		m_transform.SetCurSel(i);
-		b_delete_series = TRUE;									// Un-enable "define new series button"
+		b_delete_series = TRUE; // Un-enable "define new series button"
 	}
 
-	m_deleteseries.EnableWindow(b_delete_series);	// update button state
-	UpdateData(FALSE);                              // transfer data to controls
+	m_deleteseries.EnableWindow(b_delete_series); // update button state
+	UpdateData(FALSE); // transfer data to controls
 }
 
 void CDataSeriesDlg::OnClickedDeleteseries()
@@ -98,10 +99,10 @@ void CDataSeriesDlg::OnClickedDeleteseries()
 
 void CDataSeriesDlg::OnClickedDefineseries()
 {
-	UpdateData(TRUE);							// load data from controls
+	UpdateData(TRUE); // load data from controls
 	m_listindex = m_listseries.GetCurSel() - 1;
-	const auto ns = m_ordinates.GetCurSel();	// get data doc source channel
-	const auto mode = m_transform.GetCurSel();	// get transformation mode
+	const auto ns = m_ordinates.GetCurSel(); // get data doc source channel
+	const auto mode = m_transform.GetCurSel(); // get transformation mode
 
 	// modify current series
 	if (m_listindex >= 0)
@@ -113,18 +114,18 @@ void CDataSeriesDlg::OnClickedDefineseries()
 	else
 	{
 		const auto i = m_pChartDataWnd->AddChanlistItem(ns, mode);
-		if (i >= 0)								// new channel created? yes
+		if (i >= 0) // new channel created? yes
 		{
 			CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(i);
 			m_name = chan->GetComment();
-			m_listseries.AddString(m_name);		// controls' variables
-			m_listindex = i;   					// update current index
-			m_listseries.SetCurSel(m_listindex + 1);	// select new channel
+			m_listseries.AddString(m_name); // controls' variables
+			m_listindex = i; // update current index
+			m_listseries.SetCurSel(m_listindex + 1); // select new channel
 		}
 	}
 
 	// cope with the changes: display, adjust curve
-	m_pChartDataWnd->GetDataFromDoc();			// load data from document
+	m_pChartDataWnd->GetDataFromDoc(); // load data from document
 	int max, min;
 	CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(m_listindex);
 	chan->GetMaxMin(&max, &min);
@@ -137,7 +138,7 @@ void CDataSeriesDlg::OnClickedDefineseries()
 
 void CDataSeriesDlg::OnOK()
 {
-	OnClickedDefineseries(); 	// take into account last changes
+	OnClickedDefineseries(); // take into account last changes
 	m_listindex = m_listseries.GetCurSel() - 1;
 	if (m_listindex < 0)
 		m_listindex = 0;

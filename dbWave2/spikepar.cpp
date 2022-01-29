@@ -27,7 +27,6 @@
 #endif
 
 
-
 IMPLEMENT_SERIAL(STIMDETECT, CObject, 0)
 
 STIMDETECT::STIMDETECT() : bChanged(0)
@@ -35,7 +34,7 @@ STIMDETECT::STIMDETECT() : bChanged(0)
 	wversion = 2;
 	nItems = 0; // number of items/line (nb of chans/detection) ?
 	SourceChan = 0; // source channel
-	TransformMethod = 0; // detect from data transformed - i = transform method cf CAcqDataDoc
+	TransformMethod = 0; // detect from data transformed - i = transform method cf AcqDataDoc
 	DetectMethod = 0; // detection method see CDetectionView for methods
 	Threshold1 = 0; // value of threshold 1
 	bMode = MODE_ON_OFF; // ON/OFF
@@ -45,9 +44,10 @@ STIMDETECT::~STIMDETECT()
 {
 }
 
-STIMDETECT& STIMDETECT::operator = (const STIMDETECT& arg)
+STIMDETECT& STIMDETECT::operator =(const STIMDETECT& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		//comment=arg.comment;	// CArchive
 		nItems = arg.nItems;
 		SourceChan = arg.SourceChan;
@@ -73,16 +73,22 @@ void STIMDETECT::Serialize(CArchive& ar)
 	}
 	else
 	{
-		WORD version;  ar >> version;
+		WORD version;
+		ar >> version;
 		// read data (version 1)
 		if (version == 1)
 		{
 			WORD w1;
-			ar >> w1; nItems = w1;
-			ar >> w1; SourceChan = w1;
-			ar >> w1; TransformMethod = w1;
-			ar >> w1; DetectMethod = w1;
-			ar >> w1; Threshold1 = w1;
+			ar >> w1;
+			nItems = w1;
+			ar >> w1;
+			SourceChan = w1;
+			ar >> w1;
+			TransformMethod = w1;
+			ar >> w1;
+			DetectMethod = w1;
+			ar >> w1;
+			Threshold1 = w1;
 		}
 		else if (version > 1)
 		{
@@ -104,7 +110,7 @@ CSpkDetectArray::CSpkDetectArray()
 {
 	bChanged = FALSE;
 	wversion = 4;
-	SPKDETECTPARM* pparm = new SPKDETECTPARM;
+	auto pparm = new SPKDETECTPARM;
 	ASSERT(pparm != NULL);
 	spkdetectparm_ptr_array.SetSize(0);
 	spkdetectparm_ptr_array.Add(pparm);
@@ -158,7 +164,7 @@ int CSpkDetectArray::AddItem()
 
 // delete one parameter array item
 // return isize left
-int	CSpkDetectArray::RemoveItem(int ichan)
+int CSpkDetectArray::RemoveItem(int ichan)
 {
 	const auto isize = spkdetectparm_ptr_array.GetSize() - 1;
 	if (ichan > isize)
@@ -170,9 +176,10 @@ int	CSpkDetectArray::RemoveItem(int ichan)
 	return isize;
 }
 
-CSpkDetectArray& CSpkDetectArray::operator = (const CSpkDetectArray& arg)
+CSpkDetectArray& CSpkDetectArray::operator =(const CSpkDetectArray& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		const auto n_items = arg.spkdetectparm_ptr_array.GetSize();
 		SetSize(n_items);
 		for (auto i = 0; i < n_items; i++)
@@ -193,7 +200,8 @@ void CSpkDetectArray::Serialize(CArchive& ar)
 	}
 	else
 	{
-		WORD version;  ar >> version;
+		WORD version;
+		ar >> version;
 		// version 1 (11-2-96 FMP)
 		Serialize_Load(ar, version);
 	}
@@ -202,14 +210,18 @@ void CSpkDetectArray::Serialize(CArchive& ar)
 void CSpkDetectArray::Serialize_Load(CArchive& ar, WORD wversion)
 {
 	ASSERT(ar.IsLoading());
-	WORD n_items; ar >> n_items;
+	WORD n_items;
+	ar >> n_items;
 	SetSize(n_items);
 	for (auto i = 0; i < n_items; i++)
 		spkdetectparm_ptr_array[i]->Serialize(ar);
 	if (wversion > 1 && wversion < 3)
 	{
 		int dummy;
-		ar >> dummy; ar >> dummy; ar >> dummy; ar >> dummy;
+		ar >> dummy;
+		ar >> dummy;
+		ar >> dummy;
+		ar >> dummy;
 	}
 }
 
@@ -270,7 +282,7 @@ void SPKDETECTARRAY::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		wversion = 4;
-		ar << wversion;		// wversion = 4
+		ar << wversion; // wversion = 4
 		const auto narrays = chanArrayMap.GetSize();
 		ar << narrays;
 		auto pos = chanArrayMap.GetStartPosition();
@@ -288,7 +300,8 @@ void SPKDETECTARRAY::Serialize(CArchive& ar)
 	else
 	{
 		DeleteAll();
-		WORD version;  ar >> version;
+		WORD version;
+		ar >> version;
 		// version 1 (11-2-96 FMP)
 		if (version < 4)
 		{
@@ -323,7 +336,7 @@ SPKDETECTPARM::SPKDETECTPARM() : bChanged(0)
 {
 	wversion = 7; // version 6 (Aug 19 2005 FMP)
 	detectChan = 0; // source channel
-	detectTransform = 13; // detect from data transformed - i = transform method cf CAcqDataDoc
+	detectTransform = 13; // detect from data transformed - i = transform method cf AcqDataDoc
 	detectFrom = 0; // detection method 0=data, 1=tags
 	extractChan = 0;
 	extractTransform = 13;
@@ -341,9 +354,10 @@ SPKDETECTPARM::~SPKDETECTPARM()
 {
 }
 
-SPKDETECTPARM& SPKDETECTPARM::operator = (const SPKDETECTPARM& arg)
+SPKDETECTPARM& SPKDETECTPARM::operator =(const SPKDETECTPARM& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		comment = arg.comment;
 		detectFrom = arg.detectFrom;
 		detectChan = arg.detectChan;
@@ -366,27 +380,40 @@ void SPKDETECTPARM::ReadVersionlessthan6(CArchive& ar, int version)
 {
 	long lw;
 	WORD wi;
-	ar >> comment;							// CString
-	ar >> lw; detectChan = lw;				// long
-	ar >> lw; detectTransform = lw;			// long
-	ar >> wi; detectFrom = wi;				// WORD
-	ar >> wi; compensateBaseline = wi;		// WORD
-	ar >> lw; detectThreshold = lw;			// long
-	if (version < 3)			// dummy reading (threshold2: removed version 3)
+	ar >> comment; // CString
+	ar >> lw;
+	detectChan = lw; // long
+	ar >> lw;
+	detectTransform = lw; // long
+	ar >> wi;
+	detectFrom = wi; // WORD
+	ar >> wi;
+	compensateBaseline = wi; // WORD
+	ar >> lw;
+	detectThreshold = lw; // long
+	if (version < 3) // dummy reading (threshold2: removed version 3)
 		ar >> lw;
-	ar >> lw; extractNpoints = lw;			// long
-	ar >> lw; prethreshold = lw;			// long
-	ar >> lw; refractory = lw;				// long
-	if (version < 3)						// dummy reading (threshold adjust method)
-	{										// removed at version 3, moved to SPKdetectARRAY
-		ar >> lw; // (int)
-		float fw; ar >> fw;
-		ar >> lw; ar >> lw;
-	}
-	if (version > 1)		// added at version 2
+	ar >> lw;
+	extractNpoints = lw; // long
+	ar >> lw;
+	prethreshold = lw; // long
+	ar >> lw;
+	refractory = lw; // long
+	if (version < 3) // dummy reading (threshold adjust method)
 	{
-		ar >> lw; extractChan = lw;			// long
-		ar >> lw; extractTransform = lw;	// long
+		// removed at version 3, moved to SPKdetectARRAY
+		ar >> lw; // (int)
+		float fw;
+		ar >> fw;
+		ar >> lw;
+		ar >> lw;
+	}
+	if (version > 1) // added at version 2
+	{
+		ar >> lw;
+		extractChan = lw; // long
+		ar >> lw;
+		extractTransform = lw; // long
 	}
 }
 
@@ -394,26 +421,43 @@ void SPKDETECTPARM::ReadVersion6(CArchive& ar)
 {
 	int nitems;
 	ar >> nitems;
-	ar >> comment; nitems--; ASSERT(nitems == 0);
+	ar >> comment;
+	nitems--;
+	ASSERT(nitems == 0);
 
 	ar >> nitems;
-	ar >> detectFrom; nitems--;
-	ar >> compensateBaseline; nitems--; ASSERT(nitems == 0);
+	ar >> detectFrom;
+	nitems--;
+	ar >> compensateBaseline;
+	nitems--;
+	ASSERT(nitems == 0);
 
 	ar >> nitems;
-	ar >> detectChan; nitems--;
-	ar >> detectTransform; nitems--;
-	ar >> detectThreshold; nitems--;
-	ar >> extractNpoints; nitems--;
-	ar >> prethreshold; nitems--;
-	ar >> refractory; nitems--;
-	ar >> extractChan; nitems--;
-	ar >> extractTransform; nitems--;
-	if (nitems > 0) ar >> detectWhat; nitems--;
-	if (nitems > 0) ar >> detectMode; nitems--;
+	ar >> detectChan;
+	nitems--;
+	ar >> detectTransform;
+	nitems--;
+	ar >> detectThreshold;
+	nitems--;
+	ar >> extractNpoints;
+	nitems--;
+	ar >> prethreshold;
+	nitems--;
+	ar >> refractory;
+	nitems--;
+	ar >> extractChan;
+	nitems--;
+	ar >> extractTransform;
+	nitems--;
+	if (nitems > 0) ar >> detectWhat;
+	nitems--;
+	if (nitems > 0) ar >> detectMode;
+	nitems--;
 
 	ar >> nitems;
-	ar >> detectThresholdmV; nitems--; ASSERT(nitems == 0);
+	ar >> detectThresholdmV;
+	nitems--;
+	ASSERT(nitems == 0);
 }
 
 void SPKDETECTPARM::ReadVersion7(CArchive& ar)
@@ -421,26 +465,41 @@ void SPKDETECTPARM::ReadVersion7(CArchive& ar)
 	int nitems;
 	// string parameters
 	ar >> nitems;
-	ar >> comment; nitems--; ASSERT(nitems == 0);
+	ar >> comment;
+	nitems--;
+	ASSERT(nitems == 0);
 	// int parameters
 	ar >> nitems;
-	ar >> detectFrom; nitems--;
-	ar >> compensateBaseline; nitems--;
-	ar >> detectChan; nitems--;
-	ar >> detectTransform; nitems--;
-	ar >> detectThreshold; nitems--;
-	ar >> extractNpoints; nitems--;
-	ar >> prethreshold; nitems--;
-	ar >> refractory; nitems--;
-	ar >> extractChan; nitems--;
-	ar >> extractTransform; nitems--;
-	ar >> detectWhat; nitems--;
-	ar >> detectMode; nitems--;
+	ar >> detectFrom;
+	nitems--;
+	ar >> compensateBaseline;
+	nitems--;
+	ar >> detectChan;
+	nitems--;
+	ar >> detectTransform;
+	nitems--;
+	ar >> detectThreshold;
+	nitems--;
+	ar >> extractNpoints;
+	nitems--;
+	ar >> prethreshold;
+	nitems--;
+	ar >> refractory;
+	nitems--;
+	ar >> extractChan;
+	nitems--;
+	ar >> extractTransform;
+	nitems--;
+	ar >> detectWhat;
+	nitems--;
+	ar >> detectMode;
+	nitems--;
 
 	ASSERT(nitems == 0);
 	// float
 	ar >> nitems;
-	ar >> detectThresholdmV; nitems--;
+	ar >> detectThresholdmV;
+	nitems--;
 	ASSERT(nitems == 0);
 }
 
@@ -450,10 +509,12 @@ void SPKDETECTPARM::Serialize(CArchive& ar)
 	{
 		// version 7 (Aug 19 2005 FMP)
 		ar << wversion;
-		int nitems = 1; ar << nitems;
+		int nitems = 1;
+		ar << nitems;
 		ar << comment;
 
-		nitems = 12; ar << nitems;
+		nitems = 12;
+		ar << nitems;
 		ar << detectFrom;
 		ar << compensateBaseline;
 		ar << detectChan;
@@ -467,12 +528,14 @@ void SPKDETECTPARM::Serialize(CArchive& ar)
 		ar << detectWhat;
 		ar << detectMode;
 
-		nitems = 1; ar << nitems;
+		nitems = 1;
+		ar << nitems;
 		ar << detectThresholdmV;
 	}
 	else
 	{
-		WORD version;  ar >> version;
+		WORD version;
+		ar >> version;
 		if (version != wversion)
 		{
 			if (version > 0 && version < 5)
@@ -533,19 +596,20 @@ SPKCLASSIF::~SPKCLASSIF()
 		delete static_cast<CTemplateListWnd*>(ptpl);
 }
 
-SPKCLASSIF& SPKCLASSIF::operator = (const SPKCLASSIF& arg)
+SPKCLASSIF& SPKCLASSIF::operator =(const SPKCLASSIF& arg)
 {
-	if (this != &arg) {
-		dataTransform = arg.dataTransform;// transform mode
-		iparameter = arg.iparameter;	// type of parameter measured
-		ileft = arg.ileft;				// position of first cursor
-		iright = arg.iright;			// position of second cursor
-		ilower = arg.ilower;			// second threshold
-		iupper = arg.iupper;			// first threshold
+	if (this != &arg)
+	{
+		dataTransform = arg.dataTransform; // transform mode
+		iparameter = arg.iparameter; // type of parameter measured
+		ileft = arg.ileft; // position of first cursor
+		iright = arg.iright; // position of second cursor
+		ilower = arg.ilower; // second threshold
+		iupper = arg.iupper; // first threshold
 		ixyright = arg.ixyright;
 		ixyleft = arg.ixyleft;
-		sourceclass = arg.sourceclass;	// source class
-		destclass = arg.destclass;		// destination class
+		sourceclass = arg.sourceclass; // source class
+		destclass = arg.destclass; // destination class
 
 		hitrate = arg.hitrate;
 		hitratesort = arg.hitratesort;
@@ -556,8 +620,8 @@ SPKCLASSIF& SPKCLASSIF::operator = (const SPKCLASSIF& arg)
 		coltext = arg.coltext;
 		colspikes = arg.colspikes;
 		colseparator = arg.colseparator;
-		vsourceclass = arg.vsourceclass;	// source class
-		vdestclass = arg.vdestclass;		// destination class
+		vsourceclass = arg.vsourceclass; // source class
+		vdestclass = arg.vdestclass; // destination class
 		bresetzoom = arg.bresetzoom;
 		fjitter_ms = arg.fjitter_ms;
 
@@ -592,90 +656,190 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 
 		nfloatparms = 4;
 		ar << nfloatparms;
-		ar << ktolerance;		// 1
+		ar << ktolerance; // 1
 		ar << mvmin;
 		ar << mvmax;
 		ar << fjitter_ms;
 
 		nintparms = 16;
 		ar << nintparms;
-		ar << kleft;			// 1
-		ar << kright;			// 2
-		ar << rowheight;		// 3
-		ar << hitrate;			// 4
-		ar << hitratesort;		// 5
-		btplIspresent = ptpl != nullptr;	// test if templatelist is present
-		ar << btplIspresent;	// 6
-		ar << coltext;			// 7
-		ar << colspikes;		// 8
-		ar << colseparator;		// 9
-		ar << sourceclass;		// 10
-		ar << destclass;		// 11
-		ar << vsourceclass;		// 12
-		ar << vdestclass;		// 13
-		ar << bresetzoom;		// 14
-		ar << ixyright;			// 15
-		ar << ixyleft;			// 16
+		ar << kleft; // 1
+		ar << kright; // 2
+		ar << rowheight; // 3
+		ar << hitrate; // 4
+		ar << hitratesort; // 5
+		btplIspresent = ptpl != nullptr; // test if templatelist is present
+		ar << btplIspresent; // 6
+		ar << coltext; // 7
+		ar << colspikes; // 8
+		ar << colseparator; // 9
+		ar << sourceclass; // 10
+		ar << destclass; // 11
+		ar << vsourceclass; // 12
+		ar << vdestclass; // 13
+		ar << bresetzoom; // 14
+		ar << ixyright; // 15
+		ar << ixyleft; // 16
 	}
 	else
 	{
-		WORD version;  ar >> version;
+		WORD version;
+		ar >> version;
 
 		// version 1
 		WORD w1;
-		ar >> w1; dataTransform = w1;
-		ar >> w1; iparameter = w1;
-		ar >> w1; ileft = w1;
-		ar >> w1; iright = w1;
-		ar >> w1; ilower = w1;
-		ar >> w1; iupper = w1;
-		ar >> w1; sourceclass = w1; // dummy in v4
-		ar >> w1; destclass = w1;	// dummy in v4
+		ar >> w1;
+		dataTransform = w1;
+		ar >> w1;
+		iparameter = w1;
+		ar >> w1;
+		ileft = w1;
+		ar >> w1;
+		iright = w1;
+		ar >> w1;
+		ilower = w1;
+		ar >> w1;
+		iupper = w1;
+		ar >> w1;
+		sourceclass = w1; // dummy in v4
+		ar >> w1;
+		destclass = w1; // dummy in v4
 
 		// version 2
 		if (version > 1)
 		{
 			// float parameters
-			int nfparms; ar >> nfparms;
-			if (nfparms > 0) { ar >> ktolerance; nfparms--; }
-			if (nfparms > 0) { ar >> mvmin; nfparms--; }
-			if (nfparms > 0) { ar >> mvmax; nfparms--; }
-			if (nfparms > 0) { ar >> fjitter_ms; nfparms--; }
+			int nfparms;
+			ar >> nfparms;
+			if (nfparms > 0)
+			{
+				ar >> ktolerance;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> mvmin;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> mvmax;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> fjitter_ms;
+				nfparms--;
+			}
 			if (nfparms > 0)
 			{
 				float dummy;
-				do { ar >> dummy; nfparms--; } while (nfparms > 0);
+				do
+				{
+					ar >> dummy;
+					nfparms--;
+				}
+				while (nfparms > 0);
 			}
 			ASSERT(nfparms == 0);
 
 			// int parameters
 			ar >> nfparms;
-			if (nfparms > 0) { ar >> kleft; nfparms--; }
-			if (nfparms > 0) { ar >> kright; nfparms--; }
-			if (nfparms > 0) { ar >> rowheight; nfparms--; }
-			if (nfparms > 0) { ar >> hitrate; nfparms--; }
-			if (nfparms > 0) { ar >> hitratesort;  nfparms--; }
-			if (nfparms > 0) { ar >> btplIspresent;  nfparms--; }
-			if (nfparms > 0) { ar >> coltext;  nfparms--; }
-			if (nfparms > 0) { ar >> colspikes;  nfparms--; }
-			if (nfparms > 0) { ar >> colseparator;  nfparms--; }
-			if (nfparms > 0) { ar >> sourceclass;  nfparms--; }
-			if (nfparms > 0) { ar >> destclass;  nfparms--; }
-			if (nfparms > 0) { ar >> vsourceclass;  nfparms--; }
-			if (nfparms > 0) { ar >> vdestclass;  nfparms--; }
-			if (nfparms > 0) { ar >> bresetzoom;  nfparms--; }
-			if (nfparms > 0) { ar >> ixyright;  nfparms--; }
-			if (nfparms > 0) { ar >> ixyleft;  nfparms--; }
+			if (nfparms > 0)
+			{
+				ar >> kleft;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> kright;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> rowheight;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> hitrate;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> hitratesort;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> btplIspresent;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> coltext;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> colspikes;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> colseparator;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> sourceclass;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> destclass;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> vsourceclass;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> vdestclass;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> bresetzoom;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> ixyright;
+				nfparms--;
+			}
+			if (nfparms > 0)
+			{
+				ar >> ixyleft;
+				nfparms--;
+			}
 
 			if (nfparms > 0)
 			{
 				int dummy;
-				do { ar >> dummy; nfparms--; } while (nfparms > 0);
+				do
+				{
+					ar >> dummy;
+					nfparms--;
+				}
+				while (nfparms > 0);
 			}
 			ASSERT(nfparms == 0);
 
 			if (!btplIspresent && ptpl != nullptr)
-				delete (CTemplateListWnd*)ptpl;
+				delete static_cast<CTemplateListWnd*>(ptpl);
 		}
 	}
 
@@ -684,7 +848,7 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 	{
 		if (ptpl == nullptr)
 			ptpl = new (CTemplateListWnd);
-		((CTemplateListWnd*)ptpl)->Serialize(ar);
+		static_cast<CTemplateListWnd*>(ptpl)->Serialize(ar);
 	}
 }
 

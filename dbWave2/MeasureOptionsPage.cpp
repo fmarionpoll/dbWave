@@ -3,7 +3,7 @@
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "chart.h"
+#include "ChartWnd.h"
 //#include "ChartData.h"
 //#include "Editctrl.h"
 //#include "NoteDoc.h"
@@ -21,8 +21,8 @@ IMPLEMENT_DYNCREATE(CMeasureOptionsPage, CPropertyPage)
 /////////////////////////////////////////////////////////////////////////////
 // CMeasureOptionsPage property page
 
-CMeasureOptionsPage::CMeasureOptionsPage() : CPropertyPage(CMeasureOptionsPage::IDD), m_wSourcechan(0), m_pMO(nullptr),
-m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_pChartDataWnd(nullptr)
+CMeasureOptionsPage::CMeasureOptionsPage() : CPropertyPage(IDD), m_wSourcechan(0), m_pMO(nullptr),
+                                             m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_pChartDataWnd(nullptr)
 {
 	m_bExtrema = FALSE;
 	m_bDiffExtrema = FALSE;
@@ -94,7 +94,7 @@ void CMeasureOptionsPage::OnSinglechannel()
 
 void CMeasureOptionsPage::OnVerticaltags()
 {
-	m_pChartDataWnd-> m_HZtags.RemoveAllTags();
+	m_pChartDataWnd->m_HZtags.RemoveAllTags();
 	m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
@@ -127,14 +127,14 @@ void CMeasureOptionsPage::SaveOptions()
 	m_pMO->wStimuluschan = m_uiStimuluschan;
 	m_pMO->fStimulusoffset = m_fStimulusoffset;
 	m_pMO->bAllFiles = m_bAllFiles;
-	m_pMO->btime = ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_pMO->btime = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 
 	auto i_id = GetCheckedRadioButton(IDC_VERTICALTAGS, IDC_STIMULUSTAG);
 	switch (i_id)
 	{
 	case IDC_VERTICALTAGS:
 		i_id = 0;
-		m_pChartDataWnd-> m_HZtags.RemoveAllTags();
+		m_pChartDataWnd->m_HZtags.RemoveAllTags();
 		m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 		break;
 	case IDC_HORIZONTALTAGS:
@@ -142,12 +142,15 @@ void CMeasureOptionsPage::SaveOptions()
 		m_pChartDataWnd->m_VTtags.RemoveAllTags();
 		m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
 		break;
-	case IDC_RECTANGLETAG:		i_id = 2; break;
-	case IDC_STIMULUSTAG:		i_id = 3; break;
-	default:					i_id = 2; break;
+	case IDC_RECTANGLETAG: i_id = 2;
+		break;
+	case IDC_STIMULUSTAG: i_id = 3;
+		break;
+	default: i_id = 2;
+		break;
 	}
 	m_pMO->wOption = i_id;
-	m_pMO->bAllChannels = ((CButton*)GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
+	m_pMO->bAllChannels = static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
 	m_pMO->b_changed = TRUE;
 }
 
@@ -184,11 +187,17 @@ BOOL CMeasureOptionsPage::OnInitDialog()
 	auto flag = FALSE;
 	switch (m_pMO->wOption)
 	{
-	case 0:		i_id = IDC_VERTICALTAGS; break;
-	case 1:		i_id = IDC_HORIZONTALTAGS; break;
-	case 2: 	i_id = IDC_RECTANGLETAG; break;
-	case 3:		i_id = IDC_STIMULUSTAG; flag = TRUE; break;
-	default:	i_id = IDC_VERTICALTAGS; break;
+	case 0: i_id = IDC_VERTICALTAGS;
+		break;
+	case 1: i_id = IDC_HORIZONTALTAGS;
+		break;
+	case 2: i_id = IDC_RECTANGLETAG;
+		break;
+	case 3: i_id = IDC_STIMULUSTAG;
+		flag = TRUE;
+		break;
+	default: i_id = IDC_VERTICALTAGS;
+		break;
 	}
 	ShowLimitsParms(flag);
 
@@ -206,10 +215,10 @@ BOOL CMeasureOptionsPage::OnInitDialog()
 
 	GetDlgItem(IDC_CHECKRISETIME)->EnableWindow(FALSE);
 	GetDlgItem(IDC_CHECKRECOVERYTIME)->EnableWindow(FALSE);
-	((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->btime);
+	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->btime);
 
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }

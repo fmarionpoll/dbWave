@@ -3,39 +3,43 @@
 // CRuler
 
 
-
 // CRulerBar
 class CRuler;
-class CChartDataWnd;
+class ChartData;
 
 class CRulerBar : public CWnd
 {
 	DECLARE_DYNAMIC(CRulerBar)
 public:
 	CRulerBar();
-	virtual ~CRulerBar();
+	~CRulerBar() override;
 protected:
-	virtual void	PreSubclassWindow();
+	void PreSubclassWindow() override;
 private:
-	COLORREF		m_penColor;
-	CFont			m_hFont;
-	BOOL			m_bHorizontal;
-	CRect			m_rcClient;
-	BOOL			m_bCaptured;
-	BOOL			m_bBottom;
-	int				m_captureMode;
-	CPoint			oldpt;
-	CPoint			newpt;
-	CRuler*			m_pRuler;
-	CChartDataWnd*	m_pChartDataWnd;
+	COLORREF m_penColor;
+	CFont m_hFont;
+	BOOL m_bHorizontal;
+	CRect m_rcClient;
+	BOOL m_bCaptured;
+	BOOL m_bBottom;
+	int m_captureMode;
+	CPoint oldpt;
+	CPoint newpt;
+	CRuler* m_pRuler;
+	ChartData* m_pChartDataWnd;
 
 public:
-	virtual BOOL	Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
-		DWORD dw_style, const RECT& rect, CWnd* pParentWnd,
-		UINT nID, CCreateContext* pContext = nullptr);
-	BOOL			Create(CWnd* pParentWnd, CChartDataWnd* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID);
-	void			DrawScalefromRuler(CRuler* pRuler);
-	inline void		AttachScopeWnd(CChartDataWnd* pDataChartWnd, BOOL bXaxis) { m_pChartDataWnd = pDataChartWnd; m_bHorizontal = bXaxis; }
+	BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
+	            DWORD dw_style, const RECT& rect, CWnd* pParentWnd,
+	            UINT nID, CCreateContext* pContext = nullptr) override;
+	BOOL Create(CWnd* pParentWnd, ChartData* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID);
+	void DrawScalefromRuler(CRuler* pRuler);
+
+	void AttachScopeWnd(ChartData* pDataChartWnd, BOOL bXaxis)
+	{
+		m_pChartDataWnd = pDataChartWnd;
+		m_bHorizontal = bXaxis;
+	}
 
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);

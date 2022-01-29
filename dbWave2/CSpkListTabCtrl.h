@@ -6,7 +6,7 @@ class CSpkListTabCtrl : public CTabCtrl
 
 public:
 	CSpkListTabCtrl();
-	virtual ~CSpkListTabCtrl();
+	~CSpkListTabCtrl() override;
 
 	void InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc);
 
@@ -14,5 +14,3 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 };
-
-

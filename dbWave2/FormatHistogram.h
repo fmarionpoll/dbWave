@@ -5,13 +5,14 @@ class CFormatHistogramDlg : public CDialog
 {
 	// Construction
 public:
-	CFormatHistogramDlg(CWnd* pParent = nullptr);   // standard constructor
+	CFormatHistogramDlg(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_HIISTOGRAMPARAMETERS };
-	float	m_Ymax;
-	float	m_xfirst;
-	float	m_xlast;
+
+	float m_Ymax;
+	float m_xfirst;
+	float m_xlast;
 	BOOL m_bYmaxAuto;
 	COLORREF m_crHistFill;
 	COLORREF m_crHistBorder;
@@ -21,11 +22,10 @@ public:
 
 	// Overrides
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	afx_msg void OnCheckbYmaxAuto();
 	afx_msg void OnButtonHistFill();

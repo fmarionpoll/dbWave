@@ -9,54 +9,55 @@ class CSpikeEditDlg : public CDialog
 public:
 	CSpikeEditDlg(CWnd* pParent = nullptr);
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_EDITSPIKE };
-	int				m_spikeclass;
-	int				m_spikeno;
-	BOOL			m_bartefact;
-	int				m_displayratio;
-	int				m_yvextent;
 
-	CEditCtrl		mm_spikeno;
-	CEditCtrl		mm_spikeclass;
-	CEditCtrl		mm_displayratio;
-	CEditCtrl		mm_yvextent;
+	int m_spikeclass;
+	int m_spikeno;
+	BOOL m_bartefact;
+	int m_displayratio;
+	int m_yvextent;
 
-	CdbWaveDoc*		m_pdbWaveDoc = nullptr;
-	int				m_spikeChan;			// source channel
-	CWnd*			m_parent;				// post messages to parent
-	int				m_xextent;
-	int 			m_yextent;
-	int 			m_xzero;
-	int 			m_yzero;
-	BOOL 			m_bchanged;
+	CEditCtrl mm_spikeno;
+	CEditCtrl mm_spikeclass;
+	CEditCtrl mm_displayratio;
+	CEditCtrl mm_yvextent;
+
+	CdbWaveDoc* m_pdbWaveDoc = nullptr;
+	int m_spikeChan; // source channel
+	CWnd* m_parent; // post messages to parent
+	int m_xextent;
+	int m_yextent;
+	int m_xzero;
+	int m_yzero;
+	BOOL m_bchanged;
 
 protected:
-	CSpikeList*		m_pSpkList = nullptr;	// spike list
-	CAcqDataDoc*	m_pAcqDatDoc = nullptr;	// source data doc cDocument
-	int				m_spkpretrig;
-	int				m_spklen;
-	int				m_viewdatalen;
-	CDWordArray		m_DWintervals;			// intervals to highlight spikes / CLineviewWnd
-	CChartSpikeShapeWnd	m_SpkChartWnd;		// all spikes in displayspikes
-	CChartDataWnd	m_ChartDataWnd;			// source data
-	long			m_iitimeold;
-	long			m_iitime;
-	CScrollBar		m_HScroll;
-	CScrollBar		m_VScroll;
-	SCROLLINFO		m_HScroll_infos;		// infos for scrollbar
-	SCROLLINFO		m_VScroll_infos;
+	CSpikeList* m_pSpkList = nullptr; // spike list
+	AcqDataDoc* m_pAcqDatDoc = nullptr; // source data doc cDocument
+	int m_spkpretrig;
+	int m_spklen;
+	int m_viewdatalen;
+	CDWordArray m_DWintervals; // intervals to highlight spikes / CLineviewWnd
+	CChartSpikeShapeWnd m_SpkChartWnd; // all spikes in displayspikes
+	ChartData m_ChartDataWnd; // source data
+	long m_iitimeold;
+	long m_iitime;
+	CScrollBar m_HScroll;
+	CScrollBar m_VScroll;
+	SCROLLINFO m_HScroll_infos; // infos for scrollbar
+	SCROLLINFO m_VScroll_infos;
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 	void LoadSpikeParms();
 	void LoadSourceData();
 	void LoadSpikeFromData(int shift);
 	void UpdateSpikeScroll();
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnEnChangeSpikeno();
 	afx_msg void OnEnChangeSpikeclass();
 	afx_msg void OnArtefact();

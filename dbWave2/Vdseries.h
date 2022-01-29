@@ -1,41 +1,36 @@
 #pragma once
 
-// vdseries.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataSeriesDlg dialog
-
 class CDataSeriesDlg : public CDialog
 {
 	// Construction
 public:
-	CDataSeriesDlg(CWnd* pParent = nullptr);	// standard constructor
+	CDataSeriesDlg(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_DATASERIES };
-	CButton			m_deleteseries;
-	CButton			m_defineseries;
-	CComboBox		m_transform;
-	CComboBox		m_ordinates;
-	CListBox		m_listseries;
-	CString			m_name;
-	int				m_ispan;
-	CChartDataWnd*	m_pChartDataWnd;	// data contours
-	CAcqDataDoc*	m_pdbDoc;		// data document
-	int				m_listindex;// same as lineview:Chanlist
 
-// Implementation
+	CButton m_deleteseries;
+	CButton m_defineseries;
+	CComboBox m_transform;
+	CComboBox m_ordinates;
+	CListBox m_listseries;
+	CString m_name;
+	int m_ispan;
+	ChartData* m_pChartDataWnd; // data contours
+	AcqDataDoc* m_pdbDoc; // data document
+	int m_listindex; // same as lineview:Chanlist
+
+	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeListseries();
 	afx_msg void OnClickedDeleteseries();
 	afx_msg void OnClickedDefineseries();
-	virtual void OnOK();
-	virtual void OnCancel();
+	void OnOK() override;
+	void OnCancel() override;
 	afx_msg void OnSelchangeTransform();
 	afx_msg void OnEnChangeEdit1();
 

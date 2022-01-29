@@ -8,25 +8,26 @@ class CDlgDataTranslationBoard : public CDialog
 
 public:
 	CDlgDataTranslationBoard(CWnd* pParent = nullptr);
-	virtual ~CDlgDataTranslationBoard();
+	~CDlgDataTranslationBoard() override;
+
 	enum { IDD = IDD_DTBOARD_DLG };
 
-	CComboBox	m_cbBoard;
-	CListBox	m_listBoardCaps;
-	CListBox	m_listSSNumCaps;
-	CListBox	m_listSSYNCaps;
+	CComboBox m_cbBoard;
+	CListBox m_listBoardCaps;
+	CListBox m_listSSNumCaps;
+	CListBox m_listSSYNCaps;
 
-	CDTAcq32*	m_pAnalogIN = nullptr;
-	CDTAcq32*	m_pAnalogOUT = nullptr;
-	CDTAcq32*	m_pDTAcq32 = nullptr;
-	short		m_subssystemIN = 0;
-	short		m_subsystemelementIN = 0;
-	
+	CDTAcq32* m_pAnalogIN = nullptr;
+	CDTAcq32* m_pAnalogOUT = nullptr;
+	CDTAcq32* m_pDTAcq32 = nullptr;
+	short m_subssystemIN = 0;
+	short m_subsystemelementIN = 0;
+
 private:
-	UINT		m_atodCount = 0;
-	UINT		m_dtoaCount = 0;
-	int			m_nsubsystems = 0;
-	CString		m_boardName;
+	UINT m_atodCount = 0;
+	UINT m_dtoaCount = 0;
+	int m_nsubsystems = 0;
+	CString m_boardName;
 
 
 protected:
@@ -34,7 +35,7 @@ protected:
 	// Implementation
 	BOOL OnInitDialog() override;
 	BOOL FindDTOpenLayersBoards();
-	int  GetBoardCapabilities();
+	int GetBoardCapabilities();
 	void GetSubsystemYNCapabilities(int numitems);
 	void GetSubsystemNumericalCapabilities(int numitems);
 	void ChangeSubsystem(int index);
@@ -44,5 +45,4 @@ protected:
 	afx_msg void OnLbnSelchangeListBoardcaps();
 
 	DECLARE_MESSAGE_MAP()
-
 };

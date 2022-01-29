@@ -42,9 +42,10 @@ CDataListCtrl_Row::~CDataListCtrl_Row()
 	csDate.Empty();
 }
 
-CDataListCtrl_Row& CDataListCtrl_Row::operator = (const CDataListCtrl_Row& arg)
+CDataListCtrl_Row& CDataListCtrl_Row::operator =(const CDataListCtrl_Row& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		bInit = arg.bInit;
 		index = arg.index;
 		insectID = arg.insectID;
@@ -70,7 +71,7 @@ CDataListCtrl_Row& CDataListCtrl_Row::operator = (const CDataListCtrl_Row& arg)
 void CDataListCtrl_Row::Serialize(CArchive& ar)
 {
 	// not serialized:
-	// CAcqDataDoc*	pdataDoc;
+	// AcqDataDoc*	pdataDoc;
 	// CSpikeDoc*	pspikeDoc;
 
 	if (ar.IsStoring())
@@ -79,7 +80,7 @@ void CDataListCtrl_Row::Serialize(CArchive& ar)
 		ar << wversion;
 		ar << index;
 
-		const auto nstr = static_cast<int>(8);
+		const auto nstr = 8;
 		ar << nstr;
 		ar << cs_comment;
 		ar << csDatafileName;
@@ -92,7 +93,7 @@ void CDataListCtrl_Row::Serialize(CArchive& ar)
 		ar << csFlag;
 		ar << csDate;
 
-		const auto nobj = static_cast<int>(3);
+		const auto nobj = 3;
 		ar << nobj;
 		pDataChartWnd->Serialize(ar);
 		pSpikeChartWnd->Serialize(ar);
@@ -105,19 +106,29 @@ void CDataListCtrl_Row::Serialize(CArchive& ar)
 
 		int nstr;
 		ar >> nstr;
-		ar >> cs_comment; nstr--;
-		ar >> csDatafileName; nstr--;
-		ar >> csSensillumname; nstr--;
-		ar >> csStim1; nstr--;
-		ar >> csConc1; nstr--;
+		ar >> cs_comment;
+		nstr--;
+		ar >> csDatafileName;
+		nstr--;
+		ar >> csSensillumname;
+		nstr--;
+		ar >> csStim1;
+		nstr--;
+		ar >> csConc1;
+		nstr--;
 		if (wversion > 1)
 		{
-			ar >> csStim2; nstr--;
-			ar >> csConc2; nstr--;
+			ar >> csStim2;
+			nstr--;
+			ar >> csConc2;
+			nstr--;
 		}
-		ar >> csNspk; nstr--;
-		ar >> csFlag; nstr--;
-		ar >> csDate; nstr--;
+		ar >> csNspk;
+		nstr--;
+		ar >> csFlag;
+		nstr--;
+		ar >> csDate;
+		nstr--;
 
 		int nobj;
 		ar >> nobj;
@@ -125,6 +136,7 @@ void CDataListCtrl_Row::Serialize(CArchive& ar)
 		pDataChartWnd->Serialize(ar);
 		pSpikeChartWnd->Serialize(ar);
 		nobj -= 2;
-		nobj--; if (nobj > 0)  ar >> insectID;
+		nobj--;
+		if (nobj > 0) ar >> insectID;
 	}
 }

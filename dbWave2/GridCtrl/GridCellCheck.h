@@ -44,17 +44,17 @@ public:
 	BOOL GetCheck();
 
 	// Operations
-	virtual CSize GetCellExtent(CDC* p_dc);
-	virtual void OnClick(CPoint PointCellRelative);
-	virtual BOOL GetTextRect(LPRECT pRect);
+	CSize GetCellExtent(CDC* p_dc) override;
+	void OnClick(CPoint PointCellRelative) override;
+	BOOL GetTextRect(LPRECT pRect) override;
 
 protected:
 	CRect GetCheckPlacement();
 
-	virtual BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+	BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
 
 protected:
-	BOOL  m_bChecked;
+	BOOL m_bChecked;
 	CRect m_Rect;
 };
 

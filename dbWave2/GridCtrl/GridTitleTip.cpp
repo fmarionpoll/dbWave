@@ -100,8 +100,8 @@ BOOL CTitleTip::Create(CWnd* pParentWnd)
 	m_pParentWnd = pParentWnd;
 
 	m_bCreated = CreateEx(dwExStyle, TITLETIP_CLASSNAME, nullptr, dw_style,
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-		nullptr, nullptr, nullptr);
+	                      CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+	                      nullptr, nullptr, nullptr);
 
 	return m_bCreated;
 }
@@ -120,10 +120,10 @@ BOOL CTitleTip::DestroyWindow()
 // xoffset		 - Number of pixel that the text is offset from
 //				   left border of the cell
 void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
-	LPRECT lpHoverRect /*=NULL*/,
-	const LOGFONT* lpLogFont /*=NULL*/,
-	COLORREF crTextClr /* CLR_DEFAULT */,
-	COLORREF crBackClr /* CLR_DEFAULT */)
+                     LPRECT lpHoverRect /*=NULL*/,
+                     const LOGFONT* lpLogFont /*=NULL*/,
+                     COLORREF crTextClr /* CLR_DEFAULT */,
+                     COLORREF crBackClr /* CLR_DEFAULT */)
 {
 	if (!IsWindow(m_hWnd))
 		Create(m_pParentWnd);
@@ -138,7 +138,8 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 		return;
 
 	m_rectHover = (lpHoverRect != nullptr) ? lpHoverRect : rectTitle;
-	m_rectHover.right++; m_rectHover.bottom++;
+	m_rectHover.right++;
+	m_rectHover.bottom++;
 
 	m_pParentWnd->ClientToScreen(m_rectHover);
 	ScreenToClient(m_rectHover);
@@ -163,7 +164,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 	strTitle += lpszTitleText;
 	strTitle += _T(" ");
 
-	CFont font, * pOldFont = nullptr;
+	CFont font, *pOldFont = nullptr;
 	if (lpLogFont)
 	{
 		font.CreateFontIndirect(lpLogFont);
@@ -190,8 +191,8 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 	{
 		// Show the titletip
 		SetWindowPos(&wndTop, rectDisplay.left, rectDisplay.top,
-			rectDisplay.Width(), rectDisplay.Height(),
-			SWP_SHOWWINDOW | SWP_NOACTIVATE);
+		             rectDisplay.Width(), rectDisplay.Height(),
+		             SWP_SHOWWINDOW | SWP_NOACTIVATE);
 
 		// FNA - handle colors correctly
 		if (crBackClr != CLR_DEFAULT)
@@ -199,14 +200,14 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 			CBrush backBrush(crBackClr);
 			CBrush* p_old_brush = dc.SelectObject(&backBrush);
 			CRect rect;
-			dc.GetClipBox(&rect);     // Erase the area needed
+			dc.GetClipBox(&rect); // Erase the area needed
 
 			dc.PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
 			dc.SelectObject(p_old_brush);
 		}
 		// Set color
-		if (crTextClr != CLR_DEFAULT)//FNA
-			dc.SetTextColor(crTextClr);//FA
+		if (crTextClr != CLR_DEFAULT) //FNA
+			dc.SetTextColor(crTextClr); //FA
 
 		dc.SetBkMode(TRANSPARENT);
 		dc.TextOut(0, 0, strTitle);
@@ -218,7 +219,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 
 void CTitleTip::Hide()
 {
-	if (!::IsWindow(GetSafeHwnd()))
+	if (!IsWindow(GetSafeHwnd()))
 		return;
 
 	if (GetCapture()->GetSafeHwnd() == GetSafeHwnd())
@@ -239,12 +240,14 @@ void CTitleTip::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			if (p_wnd == this)
 				p_wnd = m_pParentWnd;
-			int hittest = (int)p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y));
-			if (hittest == HTCLIENT) {
+			int hittest = static_cast<int>(p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y)));
+			if (hittest == HTCLIENT)
+			{
 				p_wnd->ScreenToClient(&point);
 				p_wnd->PostMessage(WM_MOUSEMOVE, nFlags, MAKELONG(point.x, point.y));
 			}
-			else {
+			else
+			{
 				p_wnd->PostMessage(WM_NCMOUSEMOVE, hittest, MAKELONG(point.x, point.y));
 			}
 		}
@@ -263,60 +266,61 @@ BOOL CTitleTip::PreTranslateMessage(MSG* pMsg)
 	{
 	case WM_LBUTTONDOWN:
 		// Get tick count since last LButtonDown
-		dwTick = (DWORD)GetTickCount64();
+		dwTick = static_cast<DWORD>(GetTickCount64());
 		bDoubleClick = ((dwTick - m_dwLastLButtonDown) <= m_dwDblClickMsecs);
 		m_dwLastLButtonDown = dwTick;
-		// NOTE: DO NOT ADD break; STATEMENT HERE! Let code fall through
+	// NOTE: DO NOT ADD break; STATEMENT HERE! Let code fall through
 
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
-	{
-		POINTS pts = MAKEPOINTS(pMsg->lParam);
-		POINT  point;
-		point.x = pts.x;
-		point.y = pts.y;
-
-		ClientToScreen(&point);
-		Hide();
-
-		p_wnd = WindowFromPoint(point);
-		if (!p_wnd)
-			return CWnd::PreTranslateMessage(pMsg);
-
-		if (p_wnd->GetSafeHwnd() == GetSafeHwnd())
-			p_wnd = m_pParentWnd;
-
-		hittest = (int)p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y));
-
-		if (hittest == HTCLIENT)
 		{
-			p_wnd->ScreenToClient(&point);
-			pMsg->lParam = MAKELONG(point.x, point.y);
-		}
-		else
-		{
-			switch (pMsg->message) {
-			case WM_LBUTTONDOWN:
-				pMsg->message = WM_NCLBUTTONDOWN;
-				break;
-			case WM_RBUTTONDOWN:
-				pMsg->message = WM_NCRBUTTONDOWN;
-				break;
-			case WM_MBUTTONDOWN:
-				pMsg->message = WM_NCMBUTTONDOWN;
-				break;
+			POINTS pts = MAKEPOINTS(pMsg->lParam);
+			POINT point;
+			point.x = pts.x;
+			point.y = pts.y;
+
+			ClientToScreen(&point);
+			Hide();
+
+			p_wnd = WindowFromPoint(point);
+			if (!p_wnd)
+				return CWnd::PreTranslateMessage(pMsg);
+
+			if (p_wnd->GetSafeHwnd() == GetSafeHwnd())
+				p_wnd = m_pParentWnd;
+
+			hittest = static_cast<int>(p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y)));
+
+			if (hittest == HTCLIENT)
+			{
+				p_wnd->ScreenToClient(&point);
+				pMsg->lParam = MAKELONG(point.x, point.y);
 			}
-			pMsg->wParam = hittest;
-			pMsg->lParam = MAKELONG(point.x, point.y);
-		}
+			else
+			{
+				switch (pMsg->message)
+				{
+				case WM_LBUTTONDOWN:
+					pMsg->message = WM_NCLBUTTONDOWN;
+					break;
+				case WM_RBUTTONDOWN:
+					pMsg->message = WM_NCRBUTTONDOWN;
+					break;
+				case WM_MBUTTONDOWN:
+					pMsg->message = WM_NCMBUTTONDOWN;
+					break;
+				}
+				pMsg->wParam = hittest;
+				pMsg->lParam = MAKELONG(point.x, point.y);
+			}
 
-		// If this is the 2nd WM_LBUTTONDOWN in x milliseconds,
-		// post a WM_LBUTTONDBLCLK message instead of a single click.
-		p_wnd->PostMessage(bDoubleClick ? WM_LBUTTONDBLCLK : pMsg->message,
-			pMsg->wParam,
-			pMsg->lParam);
-		return TRUE;
-	}
+			// If this is the 2nd WM_LBUTTONDOWN in x milliseconds,
+			// post a WM_LBUTTONDBLCLK message instead of a single click.
+			p_wnd->PostMessage(bDoubleClick ? WM_LBUTTONDBLCLK : pMsg->message,
+			                   pMsg->wParam,
+			                   pMsg->lParam);
+			return TRUE;
+		}
 
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:

@@ -16,41 +16,41 @@ public:
 
 	// Attributes
 public:
-	UINT			m_SecondToolBarID;
+	UINT m_SecondToolBarID;
 	CMFCToolBar* m_pSecondToolBar;
-	void		ActivatePropertyPane(BOOL bDisplay);
-	void		ActivateFilterPane(BOOL bDisplay);
+	void ActivatePropertyPane(BOOL bDisplay);
+	void ActivateFilterPane(BOOL bDisplay);
 
 	// Overrides
 public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-		CWnd* pParentWnd = nullptr, CCreateContext* pContext = nullptr);
+	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
+	               CWnd* pParentWnd = nullptr, CCreateContext* pContext = nullptr) override;
 
 	// Implementation
 public:
-	virtual ~CMainFrame();
+	~CMainFrame() override;
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
 #endif
 
-protected:  // control bar embedded members
-	BOOL	m_bPropertiesPaneVisible;
-	BOOL	m_bFilterPaneVisible;
+protected: // control bar embedded members
+	BOOL m_bPropertiesPaneVisible;
+	BOOL m_bFilterPaneVisible;
 
-	CMFCRibbonStatusBar	m_wndStatusBar;
-	CMFCRibbonBar		m_wndRibbonBar;
+	CMFCRibbonStatusBar m_wndStatusBar;
+	CMFCRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
-	CMFCToolBarImages	m_UserImages;
-	CPropertiesWnd		m_wndProperties;
-	CFilterWnd			m_wndFilter;
-	CMFCOutlookBar		m_wndOutlookBar;
-	CMFCOutlookBarPane	m_wndOutlookPane;
+	CMFCToolBarImages m_UserImages;
+	CPropertiesWnd m_wndProperties;
+	CFilterWnd m_wndFilter;
+	CMFCOutlookBar m_wndOutlookBar;
+	CMFCOutlookBarPane m_wndOutlookPane;
 
-	BOOL				CreateOutlookBar();
-	BOOL				CreateDockingPropertiesPanes();
-	void				SetDockingPropertiesPanesIcons(BOOL bHiColorIcons);
+	BOOL CreateOutlookBar();
+	BOOL CreateDockingPropertiesPanes();
+	void SetDockingPropertiesPanesIcons(BOOL bHiColorIcons);
 	CdbWaveDoc* GetMDIActiveDocument();
 
 	// Generated message map functions

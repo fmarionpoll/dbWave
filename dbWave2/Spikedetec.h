@@ -1,13 +1,6 @@
 #pragma once
 
-// spikedetec.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeDetectDlg dialog
-
-#include "cscale.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "chartdata.h"
 #include "spikepar.h"
 
@@ -17,23 +10,23 @@ class CSpikeDetectDlg : public CDialog
 public:
 	CSpikeDetectDlg(CWnd* pParent = nullptr);
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_SPKDETECTPARM };
 
-	CSpkDetectArray*	m_pDetectSettingsArray;		// parameter set by caller
-	CAcqDataDoc*		m_dbDoc;					// parameter set by caller
-	int 				m_iDetectParmsDlg;			// parameter set by caller
-	OPTIONS_VIEWDATA*	mdPM;						// browse options
-	CChartDataWnd*		m_pChartDataDetectWnd;
-	CChartDataWnd*		m_pChartDataSourceWnd;
+	CSpkDetectArray* m_pDetectSettingsArray; // parameter set by caller
+	AcqDataDoc* m_dbDoc; // parameter set by caller
+	int m_iDetectParmsDlg; // parameter set by caller
+	OPTIONS_VIEWDATA* mdPM; // browse options
+	ChartData* m_pChartDataDetectWnd;
+	ChartData* m_pChartDataSourceWnd;
 
 protected:
 	SPKDETECTPARM* m_pspkD;
-	int				m_scancount;
+	int m_scancount;
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 	void LoadChanParameters(int chan);
 	void SaveChanParameters(int chan);
 	void DisplayDetectFromChan();
@@ -43,8 +36,8 @@ protected:
 	void SetTabComment(int i, CString& cs);
 	void UpdateTabShiftButtons();
 
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	BOOL OnInitDialog() override;
+	void OnOK() override;
 	afx_msg void OnDetectfromtag();
 	afx_msg void OnDetectfromchan();
 

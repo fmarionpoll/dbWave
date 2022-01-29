@@ -7,17 +7,19 @@
 //#include "WinUser.h"
 
 // Registration structure
-typedef struct _REG_CODE {
-	char	user_name[100];		// information for registering the user
-	UINT	code;				// code # the user must know
-	BOOL	registered;			// is it?
-	UINT	scramble_key;		// random key for scrambling (encrypting) user name
-} REG_CODE;
+using REG_CODE = struct _REG_CODE
+{
+	char user_name[100]; // information for registering the user
+	UINT code; // code # the user must know
+	BOOL registered; // is it?
+	UINT scramble_key; // random key for scrambling (encrypting) user name
+};
 
 #define STRLEN	100				// general string length
 
 //---------------- messages information -----------------------------------------
 #define	MAX_MESSAGES	3
+
 enum ASF_PACK_MESSAGE { MESS_FATAL, MESS_INFORM, MESS_INFORM_CANCEL, MESS_QUERY, MESS_QUERY_CANCEL };
 
 #define MESSAGE(x,y) CASF_Pack_Data::Message(x,y)
@@ -34,7 +36,8 @@ enum ASF_PACK_MESSAGE { MESS_FATAL, MESS_INFORM, MESS_INFORM_CANCEL, MESS_QUERY,
 
 ///////////////////////////////////////////////////////////////////////
 // modes of operation
-enum	MODE { SINGLE_CHANNEL, DOUBLE_CHANNEL, TRIPLE_CHANNEL, NUMBER_OF_MODES };
+enum MODE { SINGLE_CHANNEL, DOUBLE_CHANNEL, TRIPLE_CHANNEL, NUMBER_OF_MODES };
+
 #define			MODE_NAMES	{_T("Single"), _T("Double"), _T("Triple")};
 #define			CHANNELS	{1,					2,					3}
 
@@ -46,32 +49,35 @@ enum	MODE { SINGLE_CHANNEL, DOUBLE_CHANNEL, TRIPLE_CHANNEL, NUMBER_OF_MODES };
 
 ///////////////////////////////////////////////////////////////////////
 // ANALOG encoding modes
-enum	A_ENCODING { ENC_BINARY, ENC_2SCOMP };
+enum A_ENCODING { ENC_BINARY, ENC_2SCOMP };
 
 ///////////////////////////////////////////////////////////////////////
 // Windows messages for boards and other functions
-enum	WM_CODES {
-	WM_UPDATE_RATIO = WM_USER + 102,	// Update the ratio display
+enum WM_CODES
+{
+	WM_UPDATE_RATIO = WM_USER + 102,
+	// Update the ratio display
 	WM_CLOSE_RATIO,
 	DT_ADC_EVENT,
 	DT_DAC_EVENT
-};									// Close the ratio display
+}; // Close the ratio display
 
 ///////////////////////////////////////////////////////////////////////
 // Available sample intervals
 #define NUMBER_OF_INTERVALS	10
-									// sample intervals in decimal seconds
+// sample intervals in decimal seconds
 #define	D_INTERVALS		{0.05,		0.02,		0.01,		0.005,	0.002,	0.001,	0.0005,	0.0002,	0.0001,	0.00005}
-									// and in text
+// and in text
 #define S_INTERVALS		{_T("50.0"), _T("20.0"), _T("10.0"), _T("5.0"), _T("2.0"), _T("1.0"), _T("0.5"), _T("0.2"), _T("0.1"), _T("0.05")}
 
 ///////////////////////////////////////////////////////////////////////
 // Data storage can be shown as samples or time
-enum	STORE_MODE { SAMPLES_STORED, TIME_STORED, NUMBER_OF_STORE_MODES };
+enum STORE_MODE { SAMPLES_STORED, TIME_STORED, NUMBER_OF_STORE_MODES };
 
 ///////////////////////////////////////////////////////////////////////
 // Ratio display information
-enum	RATIO_CHOICE { RATIO_CHOICE_1, RATIO_CHOICE_2, RATIO_CHOICE_3, RATIO_CHOICE_4, MAX_RATIO_CHOICES };
+enum RATIO_CHOICE { RATIO_CHOICE_1, RATIO_CHOICE_2, RATIO_CHOICE_3, RATIO_CHOICE_4, MAX_RATIO_CHOICES };
+
 #define			RATIO_CHOICE_TEXT	{_T("Prepulse/First pulse"), _T("First pulse/Prepulse"), _T("Prepulse"), _T("First pulse")};
 
 
@@ -84,36 +90,38 @@ enum	RATIO_CHOICE { RATIO_CHOICE_1, RATIO_CHOICE_2, RATIO_CHOICE_3, RATIO_CHOICE
 ///////////////////////////////////////////////////////////////////////
 // Options that get stored in registry
 
-typedef struct _TWO_STEP {
-	BOOL			ts_enable;			// Enable two steps
-	double			prepulse_amplitude;	// Amplitude of prepulse
-	double			prepulse_duration;	// Duration of prepulse
-	UINT			prepulse_number;	// Number of prepulses
-	double			step_0_amplitude;	// Amplitude of first step in volts
-	double			step_1_amplitude;	// Amplitude of second step in volts
-	double			step_0_duration;	// Duration of first step (s)
-	double			step_1_duration;	// Duration of second step (s)
-	double			step_delay;			// Delay between two steps (s)
-	double			step_interval;		// Interval from first step to next pair (s)
-	BOOL			ratio;				// Show ratio window
-	double			max_ratio;			// For ratio display
-	double			min_ratio;			// For ratio display
-	RATIO_CHOICE	ratio_choice;		// What to divide by what?
-	UINT			ratio_channel;		// Channel=0,1 or 2
-} TWO_STEP;
+using TWO_STEP = struct _TWO_STEP
+{
+	BOOL ts_enable; // Enable two steps
+	double prepulse_amplitude; // Amplitude of prepulse
+	double prepulse_duration; // Duration of prepulse
+	UINT prepulse_number; // Number of prepulses
+	double step_0_amplitude; // Amplitude of first step in volts
+	double step_1_amplitude; // Amplitude of second step in volts
+	double step_0_duration; // Duration of first step (s)
+	double step_1_duration; // Duration of second step (s)
+	double step_delay; // Delay between two steps (s)
+	double step_interval; // Interval from first step to next pair (s)
+	BOOL ratio; // Show ratio window
+	double max_ratio; // For ratio display
+	double min_ratio; // For ratio display
+	RATIO_CHOICE ratio_choice; // What to divide by what?
+	UINT ratio_channel; // Channel=0,1 or 2
+};
 
-typedef struct _IV {
+using IV = struct _IV
+{
 	// IV Curve info
-	double	ivBaseline;					// Baseline voltage
-	UINT	ivDelay;					// Delay IV by the number of samples
-	BOOL	ivEnable;					// Generate IV curve
-	double	ivStart;					// Start voltage (mV)
-	double	ivStep;						// Step voltage (mV)
-	double	ivFinal;					// Final voltage
-	double	ivDuration;					// Duration of each step (ms)
-	UINT	ivStimulusScaling;			// Patch clamp amplifier setting
-	BOOL	ivMark;						// Mark epochs with zero current
-} IV;
+	double ivBaseline; // Baseline voltage
+	UINT ivDelay; // Delay IV by the number of samples
+	BOOL ivEnable; // Generate IV curve
+	double ivStart; // Start voltage (mV)
+	double ivStep; // Step voltage (mV)
+	double ivFinal; // Final voltage
+	double ivDuration; // Duration of each step (ms)
+	UINT ivStimulusScaling; // Patch clamp amplifier setting
+	BOOL ivMark; // Mark epochs with zero current
+};
 
 ///////////////////////////////////////////////////////////////////////
 // Data storage in MCID (Multi-channel integer data) file
@@ -122,65 +130,68 @@ typedef struct _IV {
 // The application header must follow the main header
 // This is the sixth one defined for this program
 
-typedef struct _DAQ_MCID_HEADER_9 {
+using DAQ_MCID_HEADER_9 = struct _DAQ_MCID_HEADER_9
+{
 	// M-sequence info
-	double	mSeqAmplitude;					// M-sequence amplitude
-	BOOL	mSeqEnable;						// Generate M-sequence
-	double	mSeqOffset;						// Add this offset before multiplication
-	UINT	mSeqDelay;						// Delay M-sequence and offset by this number of samples
-	UINT	mSeqRatio;						// Shifts/sample interval
-										// Noise info
-	double	noiseAmplitude;					// Noise amplitude
-	UINT	noiseEnable;					// Generate noise
-	double	noiseFactor;					// Multiply noise by this factor
-	double	noiseOffset;					// Add this offset before multiplication
-	UINT	noiseDelay;						// Delay noise and offset at start and end
-										// Stimulus info
-	double	stimulusAmplitude;				// Delay before stimulus
-	double	stimulusDuration;				// Duration of stimulus
-	BOOL	stimulateEnable;				// enable stimulation
-										// Two-step
-	TWO_STEP	ts;
-} DAQ_MCID_HEADER_9;
+	double mSeqAmplitude; // M-sequence amplitude
+	BOOL mSeqEnable; // Generate M-sequence
+	double mSeqOffset; // Add this offset before multiplication
+	UINT mSeqDelay; // Delay M-sequence and offset by this number of samples
+	UINT mSeqRatio; // Shifts/sample interval
+	// Noise info
+	double noiseAmplitude; // Noise amplitude
+	UINT noiseEnable; // Generate noise
+	double noiseFactor; // Multiply noise by this factor
+	double noiseOffset; // Add this offset before multiplication
+	UINT noiseDelay; // Delay noise and offset at start and end
+	// Stimulus info
+	double stimulusAmplitude; // Delay before stimulus
+	double stimulusDuration; // Duration of stimulus
+	BOOL stimulateEnable; // enable stimulation
+	// Two-step
+	TWO_STEP ts;
+};
 
 #define MAX_MCID_CHANNELS	10				// Hopefully gross overkill!
 #define MAX_PROG_NAME		20				// Ditto
 
-typedef struct _MCID_HEADER {
-	char	program_name[MAX_PROG_NAME];	// Zero-terminated
-	UINT	program_version;				// ((V1*10+V2)*10+V3)*10+V4
-	UINT	mcid_version;					// ((V1*10+V2)*10+V3)*10+V4
-	double	sample_interval;				// In seconds
-	double	sensitivity[MAX_MCID_CHANNELS];
-	UINT	number_of_channels;				// Number of channels recorded
-	UINT	number_of_samples;				// Total samples/channel
-	size_t	application_header;				// sizeof the application header
-	double	initial_time;					// Time starts at this value
-} MCID_HEADER;
-
+using MCID_HEADER = struct _MCID_HEADER
+{
+	char program_name[MAX_PROG_NAME]; // Zero-terminated
+	UINT program_version; // ((V1*10+V2)*10+V3)*10+V4
+	UINT mcid_version; // ((V1*10+V2)*10+V3)*10+V4
+	double sample_interval; // In seconds
+	double sensitivity[MAX_MCID_CHANNELS];
+	UINT number_of_channels; // Number of channels recorded
+	UINT number_of_samples; // Total samples/channel
+	size_t application_header; // sizeof the application header
+	double initial_time; // Time starts at this value
+};
 
 
 ///////////////////////////////////////////////////////////////////////
 // Data Translation board information
 
-typedef struct _BOARD {
-	HDEV			hdrvr;						// Driver
-	HDASS			hdass_ad;					// A/D Subsystem
-	HDASS			hdass_da;					// D/A Subsystem
-	ECODE			status;
-	CString		name; // [MAX_BOARD_NAME_LENGTH];	// string for board name
-	CString		entry; // [MAX_BOARD_NAME_LENGTH];	// string for board name
-	A_ENCODING	adc_enc;						// Binary or 2's Complement
-	A_ENCODING	dac_enc;						// Binary or 2's Complement
-} BOARD;
+using BOARD = struct _BOARD
+{
+	HDEV hdrvr; // Driver
+	HDASS hdass_ad; // A/D Subsystem
+	HDASS hdass_da; // D/A Subsystem
+	ECODE status;
+	CString name; // [MAX_BOARD_NAME_LENGTH];	// string for board name
+	CString entry; // [MAX_BOARD_NAME_LENGTH];	// string for board name
+	A_ENCODING adc_enc; // Binary or 2's Complement
+	A_ENCODING dac_enc; // Binary or 2's Complement
+};
 
 #define MAX_SS_NAME_LENGTH 100
 
-typedef struct _SUBSYS {
-	char	name[MAX_SS_NAME_LENGTH];
-	OLSS	ss_type;
-	UINT	element;
-} SUBSYS;
+using SUBSYS = struct _SUBSYS
+{
+	char name[MAX_SS_NAME_LENGTH];
+	OLSS ss_type;
+	UINT element;
+};
 
 // Board capabilities
 #define CAPABILITY_LIST_SIZE	7
@@ -205,5 +216,5 @@ typedef struct _SUBSYS {
 #define FATAL_ERROR(ecode,message) if ((m_board.status=(ecode))!=OLNOERROR) { MESSAGE(MESS_FATAL,message); return;}
 #define FATAL_ERROR_0(ecode,message) if ((m_board.status=(ecode))!=OLNOERROR) { MESSAGE(MESS_FATAL,message); return 0;}
 
-#define DAC_TIMER			1				
+#define DAC_TIMER			1
 #define DAC_INTERVAL		2

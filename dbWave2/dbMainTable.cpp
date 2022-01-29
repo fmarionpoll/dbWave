@@ -15,66 +15,66 @@ IMPLEMENT_DYNAMIC(CdbMainTable, CDaoRecordset)
 CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	: CDaoRecordset(pdb), max_insectID(0), max_sensillumID(0), max_ID(0)
 {
-	m_ID = 0;											// 1
-	m_Filedat = _T("");						//
-	m_Filespk = _T("");						//
-	m_acq_date = static_cast<DATE>(0);		//
-	m_acq_comment = _T(""); 				// 5
-	m_IDinsect = 0;							//
-	m_IDsensillum = 0;						//
-	m_more = _T("");						//
-	m_insect_ID = 0;						//
-	m_location_ID = 0;						// 10
-	m_operator_ID = 0;						//
-	m_sensillum_ID = 0;						//
-	m_path_ID = 0;							//
-	m_path2_ID = 0;							//
-	m_datalen = 0;							// 15
-	m_nspikes = 0;							//
-	m_nspikeclasses = 0;					//
-	m_stim_ID = 0;							//
-	m_conc_ID = 0;							//
-	m_stim2_ID = 0;							// 20
-	m_conc2_ID = 0;							//
-	m_sex_ID = 0;							//
-	m_strain_ID = 0;						//
-	m_flag = 0;								// 24
-	m_repeat = 0;							// 25
-	m_repeat2 = 0;							// 26
-	m_acqdate_day = static_cast<DATE>(0);	// 27
-	m_acqdate_time = static_cast<DATE>(0);	// 28
-	m_expt_ID = 0;							// 29
+	m_ID = 0; // 1
+	m_Filedat = _T(""); //
+	m_Filespk = _T(""); //
+	m_acq_date = static_cast<DATE>(0); //
+	m_acq_comment = _T(""); // 5
+	m_IDinsect = 0; //
+	m_IDsensillum = 0; //
+	m_more = _T(""); //
+	m_insect_ID = 0; //
+	m_location_ID = 0; // 10
+	m_operator_ID = 0; //
+	m_sensillum_ID = 0; //
+	m_path_ID = 0; //
+	m_path2_ID = 0; //
+	m_datalen = 0; // 15
+	m_nspikes = 0; //
+	m_nspikeclasses = 0; //
+	m_stim_ID = 0; //
+	m_conc_ID = 0; //
+	m_stim2_ID = 0; // 20
+	m_conc2_ID = 0; //
+	m_sex_ID = 0; //
+	m_strain_ID = 0; //
+	m_flag = 0; // 24
+	m_repeat = 0; // 25
+	m_repeat2 = 0; // 26
+	m_acqdate_day = static_cast<DATE>(0); // 27
+	m_acqdate_time = static_cast<DATE>(0); // 28
+	m_expt_ID = 0; // 29
 	m_nFields = 29;
 
-	m_desc[CH_ID].pdataItem				= &m_ID;
-	m_desc[CH_ACQDATE].pdataItem		= nullptr; //&m_acq_date;
-	m_desc[CH_FILENAME].pdataItem		= nullptr; //&m_Filedat;
-	m_desc[CH_FILESPK].pdataItem		= nullptr; //&m_Filespk;
-	m_desc[CH_ACQ_COMMENTS].pdataItem	= nullptr; //&m_acq_comment;
-	m_desc[CH_MORE].pdataItem			= nullptr; //&m_more;
-	m_desc[CH_IDINSECT].pdataItem		= &m_IDinsect;
-	m_desc[CH_IDSENSILLUM].pdataItem	= &m_IDsensillum;
-	m_desc[CH_DATALEN].pdataItem		= &m_datalen;
-	m_desc[CH_NSPIKES].pdataItem		= &m_nspikes;
-	m_desc[CH_NSPIKECLASSES].pdataItem	= &m_nspikeclasses;
-	m_desc[CH_FLAG].pdataItem			= &m_flag;
-	m_desc[CH_INSECT_ID].pdataItem		= &m_insect_ID;
-	m_desc[CH_SENSILLUM_ID].pdataItem	= &m_sensillum_ID;
-	m_desc[CH_OPERATOR_ID].pdataItem	= &m_operator_ID;
-	m_desc[CH_STIM_ID].pdataItem		= &m_stim_ID;
-	m_desc[CH_CONC_ID].pdataItem		= &m_conc_ID;
-	m_desc[CH_LOCATION_ID].pdataItem	= &m_location_ID;
-	m_desc[CH_PATH_ID].pdataItem		= &m_path_ID;
-	m_desc[CH_PATH2_ID].pdataItem		= &m_path2_ID;
-	m_desc[CH_STIM2_ID].pdataItem		= &m_stim2_ID;
-	m_desc[CH_CONC2_ID].pdataItem		= &m_conc2_ID;
-	m_desc[CH_STRAIN_ID].pdataItem		= &m_strain_ID;
-	m_desc[CH_SEX_ID].pdataItem			= &m_sex_ID;
-	m_desc[CH_REPEAT].pdataItem			= &m_repeat;
-	m_desc[CH_REPEAT2].pdataItem		= &m_repeat2;
-	m_desc[CH_ACQDATE_DAY].pdataItem	= nullptr;
-	m_desc[CH_ACQDATE_TIME].pdataItem	= nullptr;
-	m_desc[CH_EXPT_ID].pdataItem		= &m_expt_ID;
+	m_desc[CH_ID].pdataItem = &m_ID;
+	m_desc[CH_ACQDATE].pdataItem = nullptr; //&m_acq_date;
+	m_desc[CH_FILENAME].pdataItem = nullptr; //&m_Filedat;
+	m_desc[CH_FILESPK].pdataItem = nullptr; //&m_Filespk;
+	m_desc[CH_ACQ_COMMENTS].pdataItem = nullptr; //&m_acq_comment;
+	m_desc[CH_MORE].pdataItem = nullptr; //&m_more;
+	m_desc[CH_IDINSECT].pdataItem = &m_IDinsect;
+	m_desc[CH_IDSENSILLUM].pdataItem = &m_IDsensillum;
+	m_desc[CH_DATALEN].pdataItem = &m_datalen;
+	m_desc[CH_NSPIKES].pdataItem = &m_nspikes;
+	m_desc[CH_NSPIKECLASSES].pdataItem = &m_nspikeclasses;
+	m_desc[CH_FLAG].pdataItem = &m_flag;
+	m_desc[CH_INSECT_ID].pdataItem = &m_insect_ID;
+	m_desc[CH_SENSILLUM_ID].pdataItem = &m_sensillum_ID;
+	m_desc[CH_OPERATOR_ID].pdataItem = &m_operator_ID;
+	m_desc[CH_STIM_ID].pdataItem = &m_stim_ID;
+	m_desc[CH_CONC_ID].pdataItem = &m_conc_ID;
+	m_desc[CH_LOCATION_ID].pdataItem = &m_location_ID;
+	m_desc[CH_PATH_ID].pdataItem = &m_path_ID;
+	m_desc[CH_PATH2_ID].pdataItem = &m_path2_ID;
+	m_desc[CH_STIM2_ID].pdataItem = &m_stim2_ID;
+	m_desc[CH_CONC2_ID].pdataItem = &m_conc2_ID;
+	m_desc[CH_STRAIN_ID].pdataItem = &m_strain_ID;
+	m_desc[CH_SEX_ID].pdataItem = &m_sex_ID;
+	m_desc[CH_REPEAT].pdataItem = &m_repeat;
+	m_desc[CH_REPEAT2].pdataItem = &m_repeat2;
+	m_desc[CH_ACQDATE_DAY].pdataItem = nullptr;
+	m_desc[CH_ACQDATE_TIME].pdataItem = nullptr;
+	m_desc[CH_EXPT_ID].pdataItem = &m_expt_ID;
 
 	m_nDefaultType = dbOpenDynaset;
 	m_desc[CH_ACQDATE_DAY].otfilterParam1 = static_cast<DATE>(0); // 16
@@ -85,19 +85,19 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	// clear fields
 	for (int i = 0; i <= m_nFields; i++)
 	{
-		m_desc[i].bFilter1		= FALSE;
+		m_desc[i].bFilter1 = FALSE;
 		m_desc[i].lfilterParam1 = 0;
-		m_desc[i].bFilter2		= FALSE;
-		m_desc[i].pdataItem		= nullptr;
-		m_desc[i].icol			= i;
-		m_desc[i].pComboBox		= nullptr; 
-		m_desc[i].csColParam	.Empty();
+		m_desc[i].bFilter2 = FALSE;
+		m_desc[i].pdataItem = nullptr;
+		m_desc[i].icol = i;
+		m_desc[i].pComboBox = nullptr;
+		m_desc[i].csColParam.Empty();
 		m_desc[i].csfilterParam1.Empty();
-		m_desc[i].lfilterParam2	.RemoveAll();
+		m_desc[i].lfilterParam2.RemoveAll();
 		m_desc[i].otfilterParam2.RemoveAll();
 		m_desc[i].csfilterParam2.RemoveAll();
-		m_desc[i].liArray		.RemoveAll();
-		m_desc[i].tiArray		.RemoveAll();
+		m_desc[i].liArray.RemoveAll();
+		m_desc[i].tiArray.RemoveAll();
 		m_desc[i].csElementsArray.RemoveAll();
 	}
 
@@ -110,7 +110,7 @@ CdbMainTable::~CdbMainTable()
 	DeleteDateArray();
 }
 
-boolean	CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
+boolean CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
 {
 	boolean flag = true;
 	try
@@ -121,7 +121,7 @@ boolean	CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
 	{
 		AfxMessageBox(_T("Cancel import: ") + e->m_pErrorInfo->m_strDescription);
 		e->Delete();
-		flag = false;;
+		flag = false;
 	}
 	return flag;
 }
@@ -175,24 +175,42 @@ void CdbMainTable::DoFieldExchange(CDaoFieldExchange* pFX)
 
 	pFX->SetFieldType(CDaoFieldExchange::param);
 	int i;
-	i = CH_IDINSECT;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 1
-	i = CH_IDSENSILLUM;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_LOCATION_ID;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_STIM_ID;			DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_CONC_ID;			DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 5
-	i = CH_STIM2_ID;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_CONC2_ID;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_OPERATOR_ID;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_INSECT_ID;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_SENSILLUM_ID;	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 10
-	i = CH_STRAIN_ID;		DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_SEX_ID;			DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_FLAG;			DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_REPEAT;			DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
-	i = CH_REPEAT2;			DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 15
-	i = CH_ACQDATE_DAY;		DFX_DateTime(pFX, m_desc[i].csColParam, m_desc[i].otfilterParam1);	// 16
-	i = CH_ACQDATE_TIME;	DFX_DateTime(pFX, m_desc[i].csColParam, m_desc[i].otfilterParam1);	// 17
-	i = CH_EXPT_ID;			DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1);		// 18
+	i = CH_IDINSECT;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 1
+	i = CH_IDSENSILLUM;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_LOCATION_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_STIM_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_CONC_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 5
+	i = CH_STIM2_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_CONC2_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_OPERATOR_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_INSECT_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_SENSILLUM_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 10
+	i = CH_STRAIN_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_SEX_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_FLAG;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_REPEAT;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); //
+	i = CH_REPEAT2;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 15
+	i = CH_ACQDATE_DAY;
+	DFX_DateTime(pFX, m_desc[i].csColParam, m_desc[i].otfilterParam1); // 16
+	i = CH_ACQDATE_TIME;
+	DFX_DateTime(pFX, m_desc[i].csColParam, m_desc[i].otfilterParam1); // 17
+	i = CH_EXPT_ID;
+	DFX_Long(pFX, m_desc[i].csColParam, m_desc[i].lfilterParam1); // 18
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -213,28 +231,34 @@ void CdbMainTable::Dump(CDumpContext& dc) const
 // TODO: remove
 BOOL CdbMainTable::SetLongValue(long iID, CString cscolname)
 {
-	try {
+	try
+	{
 		Edit();
 		SetFieldValue(cscolname, COleVariant(iID, VT_I4));
 		Update();
 	}
 	catch (CDaoException* e)
 	{
-		DisplayDaoException(e, 24); e->Delete(); return FALSE;
+		DisplayDaoException(e, 24);
+		e->Delete();
+		return FALSE;
 	}
 	return TRUE;
 }
 
 BOOL CdbMainTable::SetValueNull(const CString cscolname)
 {
-	try {
+	try
+	{
 		Edit();
 		SetFieldValueNull(cscolname);
 		Update();
 	}
 	catch (CDaoException* e)
 	{
-		DisplayDaoException(e, 24); e->Delete(); return FALSE;
+		DisplayDaoException(e, 24);
+		e->Delete();
+		return FALSE;
 	}
 	return TRUE;
 }
@@ -299,19 +323,21 @@ void CdbMainTable::GetMaxIDs()
 
 BOOL CdbMainTable::FindIDinColumn(long iID, int icolumn)
 {
-	CString cs;		// to construct insect and sensillum number (for example)
-	CString str;	// to store FindFirst filter
+	CString cs; // to construct insect and sensillum number (for example)
+	CString str; // to store FindFirst filter
 	const auto cscolhead = m_desc[icolumn].csColName;
-	str.Format(_T("%s=%li"), static_cast<LPCTSTR>(cscolhead), iID);
+	str.Format(_T("%s=%li"), cscolhead, iID);
 	auto flag = FALSE;
 
-	try {
+	try
+	{
 		const auto var_current_pos = GetBookmark();
 		MoveFirst();
 		flag = FindFirst(str);
 		SetBookmark(var_current_pos);
 	}
-	catch (CDaoException* e) {
+	catch (CDaoException* e)
+	{
 		DisplayDaoException(e, 19);
 		e->Delete();
 	}
@@ -348,39 +374,39 @@ void CdbMainTable::BuildFilters()
 			if (!m_strFilter.IsEmpty())
 				m_strFilter += _T(" AND ");
 			CString cs;
-			cs.Format(_T("%s IN ("), static_cast<LPCTSTR>(m_desc[ifield].csColNamewithBrackets));
+			cs.Format(_T("%s IN ("), m_desc[ifield].csColNamewithBrackets);
 			m_strFilter += cs;
 			switch (m_desc[ifield].typeLocal)
 			{
 			case FIELD_IND_TEXT:
 			case FIELD_IND_FILEPATH:
 			case FIELD_LONG:
-			{
-				int i = 0;
-				cs.Format(_T("%i"), m_desc[ifield].lfilterParam2.GetAt(i));
-				m_strFilter += cs;
-				for (i = 1; i < m_desc[ifield].lfilterParam2.GetSize(); i++)
 				{
-					cs.Format(_T(", %i"), m_desc[ifield].lfilterParam2.GetAt(i));
+					int i = 0;
+					cs.Format(_T("%i"), m_desc[ifield].lfilterParam2.GetAt(i));
 					m_strFilter += cs;
+					for (i = 1; i < m_desc[ifield].lfilterParam2.GetSize(); i++)
+					{
+						cs.Format(_T(", %i"), m_desc[ifield].lfilterParam2.GetAt(i));
+						m_strFilter += cs;
+					}
 				}
-			}
-			break;
+				break;
 
 			case FIELD_DATE_YMD:
-			{
-				auto i = 0;
-				auto o_time = m_desc[ifield].otfilterParam2.GetAt(i);
-				cs = o_time.Format(_T(" #%m/%d/%y#"));
-				m_strFilter += cs;
-				for (i = 1; i < m_desc[ifield].otfilterParam2.GetSize(); i++)
 				{
-					o_time = m_desc[ifield].otfilterParam2.GetAt(i);
-					cs = o_time.Format(_T(", #%m/%d/%y#"));
+					auto i = 0;
+					auto o_time = m_desc[ifield].otfilterParam2.GetAt(i);
+					cs = o_time.Format(_T(" #%m/%d/%y#"));
 					m_strFilter += cs;
+					for (i = 1; i < m_desc[ifield].otfilterParam2.GetSize(); i++)
+					{
+						o_time = m_desc[ifield].otfilterParam2.GetAt(i);
+						cs = o_time.Format(_T(", #%m/%d/%y#"));
+						m_strFilter += cs;
+					}
 				}
-			}
-			break;
+				break;
 
 			default:
 				ASSERT(false);
@@ -414,7 +440,11 @@ void CdbMainTable::SetDataLen(long datalen)
 		m_datalen = datalen;
 		Update();
 	}
-	catch (CDaoException* e) { DisplayDaoException(e, 12); e->Delete(); }
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 12);
+		e->Delete();
+	}
 }
 
 long CdbMainTable::GetNRecords()
@@ -433,7 +463,11 @@ long CdbMainTable::GetNRecords()
 		nrecords = GetRecordCount();
 		SetBookmark(ol);
 	}
-	catch (CDaoException* e) { DisplayDaoException(e, 9); e->Delete(); }
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 9);
+		e->Delete();
+	}
 
 	return nrecords;
 }
@@ -589,9 +623,9 @@ void CdbMainTable::BuildAndSortIDArrays()
 	// ID arrays will be ordered incrementally
 	const int nrecords = GetNRecords();
 	if (!m_desc[CH_IDINSECT].bFilter1 && !m_desc[CH_IDINSECT].bFilter2)
-		m_desc[CH_IDINSECT].liArray.SetSize(0, nrecords);		// resize array to the max possible
+		m_desc[CH_IDINSECT].liArray.SetSize(0, nrecords); // resize array to the max possible
 	if (!m_desc[CH_IDSENSILLUM].bFilter1 && !m_desc[CH_IDSENSILLUM].bFilter2)
-		m_desc[CH_IDSENSILLUM].liArray.SetSize(0, nrecords);	// size of the array not known beforehand
+		m_desc[CH_IDSENSILLUM].liArray.SetSize(0, nrecords); // size of the array not known beforehand
 	if (!m_desc[CH_REPEAT].bFilter1 && !m_desc[CH_REPEAT].bFilter2)
 		m_desc[CH_REPEAT].liArray.SetSize(0, nrecords);
 	if (!m_desc[CH_REPEAT2].bFilter1 && !m_desc[CH_REPEAT2].bFilter2)

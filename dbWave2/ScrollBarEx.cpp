@@ -15,6 +15,7 @@
 // CScrollBarEx
 
 IMPLEMENT_DYNAMIC(CScrollBarEx, CScrollBar)
+
 CScrollBarEx::CScrollBarEx() : m_scBarInfo_old(), m_scInfo(), m_scInfo_old()
 {
 	m_bCaptured = FALSE;
@@ -41,8 +42,10 @@ void CScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (m_captureMode == MOVERIGHT
 		|| m_captureMode == MOVELEFT
-		|| (point.x >= m_scBarInfo.xyThumbTop - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbTop + SPLITSIZE + TRACKSIZE)
-		|| (point.x >= m_scBarInfo.xyThumbBottom - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbBottom + SPLITSIZE + TRACKSIZE))
+		|| (point.x >= m_scBarInfo.xyThumbTop - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbTop + SPLITSIZE +
+			TRACKSIZE)
+		|| (point.x >= m_scBarInfo.xyThumbBottom - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbBottom +
+			SPLITSIZE + TRACKSIZE))
 		SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
 
 	if (m_bCaptured)
@@ -83,9 +86,9 @@ void CScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 			m_scBarInfo.xyThumbTop = m_scBarInfo_old.xyThumbTop + point.x - oldpt.x;
 			m_scBarInfo.xyThumbBottom = m_scBarInfo_old.xyThumbBottom + point.x - oldpt.x;
 			m_scInfo.nPos = MulDiv(m_scBarInfo.xyThumbTop,
-				m_scInfo_old.nPos,
-				m_scBarInfo_old.xyThumbTop);
-			// update  barinfo
+			                       m_scInfo_old.nPos,
+			                       m_scBarInfo_old.xyThumbTop);
+		// update  barinfo
 			m_scInfo.fMask = SIF_PAGE | SIF_POS;
 			SetScrollInfo(&m_scInfo);
 			break;

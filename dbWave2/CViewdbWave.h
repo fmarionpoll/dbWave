@@ -13,44 +13,44 @@ class CViewdbWave : public CViewDAO
 {
 protected: // create from serialization only
 	DECLARE_DYNCREATE(CViewdbWave)
-						CViewdbWave();
-	virtual				~CViewdbWave() override;
+	CViewdbWave();
+	~CViewdbWave() override;
 
 public:
 	enum { IDD = IDD_VIEWDBWAVE };
 
 	// Attributes
 public:
-	CDataListCtrl		m_dataListCtrl;
+	CDataListCtrl m_dataListCtrl;
 
 protected:
-	CEditCtrl			mm_spikeclass;		// selected spike class
-	CEditCtrl			mm_timefirst;		// first abcissa value
-	CEditCtrl			mm_timelast;		// last abcissa value
-	CEditCtrl			mm_amplitudespan;	// amplitude
-	OPTIONS_VIEWDATA* m_options_viewdata = nullptr; 
-	
-	BOOL				m_bvalidDat = false;
-	BOOL				m_bvalidSpk = false;
-	BOOL				m_bAddMode = false;
-	BOOL				m_bFilterON = true;
-	int					m_dattransform = 0;
-	float				m_timefirst = 0.;
-	float				m_timelast = 0.;
-	float				m_amplitudespan = 0.;
-	int					m_spikeclass = 0;
+	CEditCtrl mm_spikeclass; // selected spike class
+	CEditCtrl mm_timefirst; // first abcissa value
+	CEditCtrl mm_timelast; // last abcissa value
+	CEditCtrl mm_amplitudespan; // amplitude
+	OPTIONS_VIEWDATA* m_options_viewdata = nullptr;
+
+	BOOL m_bvalidDat = false;
+	BOOL m_bvalidSpk = false;
+	BOOL m_bAddMode = false;
+	BOOL m_bFilterON = true;
+	int m_dattransform = 0;
+	float m_timefirst = 0.;
+	float m_timelast = 0.;
+	float m_amplitudespan = 0.;
+	int m_spikeclass = 0;
 
 protected:
-	virtual void		DoDataExchange(CDataExchange* pDX) override;
-	virtual void		OnInitialUpdate() override;
-	virtual void		OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
-	virtual void		OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void				updateControls();
-	void				fillListBox();
+	void DoDataExchange(CDataExchange* pDX) override;
+	void OnInitialUpdate() override;
+	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void updateControls();
+	void fillListBox();
 
 public:
-	void				DeleteRecords();
-	
+	void DeleteRecords();
+
 	// Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()

@@ -41,27 +41,27 @@ public:
 
 	// editing cells
 public:
-	virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-	virtual CWnd* GetEditWnd() const;
-	virtual void  EndEdit();
+	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+	CWnd* GetEditWnd() const override;
+	void EndEdit() override;
 
 	// Operations
 public:
-	virtual CSize GetCellExtent(CDC* p_dc);
+	CSize GetCellExtent(CDC* p_dc) override;
 
 	// CGridCellCombo specific calls
 public:
-	void  SetOptions(const CStringArray& ar);
-	void  SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
+	void SetOptions(const CStringArray& ar);
+	void SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
 	DWORD GetStyle() { return m_dwStyle; }
-	int	  SetCurSel(int sel);
-	int   GetCurSel();
+	int SetCurSel(int sel);
+	int GetCurSel();
 
 protected:
-	virtual BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+	BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
 
 	CStringArray m_Strings;
-	DWORD        m_dwStyle;
+	DWORD m_dwStyle;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -77,19 +77,17 @@ public:
 
 	// Attributes
 public:
-
 	// Operations
 public:
-
 	// Overrides
-		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CComboEdit)
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CComboEdit)
+	BOOL PreTranslateMessage(MSG* pMsg) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	virtual ~CComboEdit();
+	~CComboEdit() override;
 
 	// Generated message map functions
 protected:
@@ -109,38 +107,37 @@ class CGridInPlaceList : public CComboBox
 
 	// Construction
 public:
-	CGridInPlaceList(CWnd* pParent,         // parent
-		CRect& rect,           // dimensions & location
-		DWORD dw_style,         // window/combobox style
-		UINT nID,              // control ID
-		int nRow, int nColumn, // row and column
-		COLORREF crFore, COLORREF crBack,  // Foreground, background colour
-		CStringArray& Items,   // Items in list
-		CString sInitText,     // initial selection
-		UINT nFirstChar);      // first character to pass to control
+	CGridInPlaceList(CWnd* pParent, // parent
+	                 CRect& rect, // dimensions & location
+	                 DWORD dw_style, // window/combobox style
+	                 UINT nID, // control ID
+	                 int nRow, int nColumn, // row and column
+	                 COLORREF crFore, COLORREF crBack, // Foreground, background colour
+	                 CStringArray& Items, // Items in list
+	                 CString sInitText, // initial selection
+	                 UINT nFirstChar); // first character to pass to control
 
-// Attributes
+	// Attributes
 public:
-	CComboEdit m_comboedit;  // subclassed edit control
+	CComboEdit m_comboedit; // subclassed edit control
 private:
-	int		 m_nNumLines;
-	CString  m_sInitText;
-	int		 m_nRow;
-	int		 m_nCol;
-	UINT     m_nLastChar;
-	BOOL	 m_bExitOnArrows;
+	int m_nNumLines;
+	CString m_sInitText;
+	int m_nRow;
+	int m_nCol;
+	UINT m_nLastChar;
+	BOOL m_bExitOnArrows;
 	COLORREF m_crForeClr, m_crBackClr;
 
- // Operations
+	// Operations
 public:
-
 protected:
-	virtual void PostNcDestroy();
+	void PostNcDestroy() override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	virtual ~CGridInPlaceList();
+	~CGridInPlaceList() override;
 	void EndEdit();
 
 protected:

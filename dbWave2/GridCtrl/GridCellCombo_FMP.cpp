@@ -62,7 +62,7 @@ BOOL CComboEdit::PreTranslateMessage(MSG* pMsg)
 	// Make sure that the keystrokes continue to the appropriate handlers
 	if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP)
 	{
-		::TranslateMessage(pMsg);
+		TranslateMessage(pMsg);
 		::DispatchMessage(pMsg);
 		return TRUE;
 	}
@@ -87,7 +87,7 @@ void CComboEdit::OnKillFocus(CWnd* pNewWnd)
 {
 	CEdit::OnKillFocus(pNewWnd);
 
-	CGridInPlaceList* pOwner = (CGridInPlaceList*)GetOwner();  // This MUST be a CGridInPlaceList
+	auto pOwner = static_cast<CGridInPlaceList*>(GetOwner()); // This MUST be a CGridInPlaceList
 	if (pOwner)
 		pOwner->EndEdit();
 }
@@ -95,13 +95,13 @@ void CComboEdit::OnKillFocus(CWnd* pNewWnd)
 void CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
-		nChar == VK_DOWN || nChar == VK_UP ||
-		nChar == VK_RIGHT || nChar == VK_LEFT) &&
+			nChar == VK_DOWN || nChar == VK_UP ||
+			nChar == VK_RIGHT || nChar == VK_LEFT) &&
 		(GetKeyState(VK_CONTROL) < 0 && GetDlgCtrlID() == IDC_COMBOEDIT))
 	{
 		CWnd* pOwner = GetOwner();
 		if (pOwner)
-			pOwner->SendMessage(WM_KEYDOWN, nChar, nRepCnt + (((DWORD)nFlags) << 16));
+			pOwner->SendMessage(WM_KEYDOWN, nChar, nRepCnt + (static_cast<DWORD>(nFlags) << 16));
 		return;
 	}
 
@@ -114,7 +114,7 @@ void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		CWnd* pOwner = GetOwner();
 		if (pOwner)
-			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (((DWORD)nFlags) << 16));
+			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (static_cast<DWORD>(nFlags) << 16));
 		return;
 	}
 
@@ -122,7 +122,7 @@ void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		CWnd* pOwner = GetOwner();
 		if (pOwner)
-			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (((DWORD)nFlags) << 16));
+			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (static_cast<DWORD>(nFlags) << 16));
 		return;
 	}
 
@@ -133,10 +133,10 @@ void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 // CGridInPlaceList
 
 CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
-	int nRow, int nColumn,
-	COLORREF crFore, COLORREF crBack,
-	CStringArray& Items, CString sInitText,
-	UINT nFirstChar)
+                                   int nRow, int nColumn,
+                                   COLORREF crFore, COLORREF crBack,
+                                   CStringArray& Items, CString sInitText,
+                                   UINT nFirstChar)
 {
 	m_crForeClr = crFore;
 	m_crBackClr = crBack;
@@ -152,7 +152,7 @@ CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, U
 	DWORD dwComboStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL |
 		CBS_AUTOHSCROLL | dw_style;
 	int nHeight = rect.Height();
-	rect.bottom = rect.bottom + m_nNumLines * nHeight + ::GetSystemMetrics(SM_CYHSCROLL);
+	rect.bottom = rect.bottom + m_nNumLines * nHeight + GetSystemMetrics(SM_CYHSCROLL);
 	if (!Create(dwComboStyle, rect, pParent, nID)) return;
 
 	// Add the strings
@@ -175,8 +175,8 @@ CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, U
 	SetHorizontalExtent(0); // no horz scrolling
 
 	// Set the initial text to m_sInitText
-	if (::IsWindow(m_hWnd) && SelectString(-1, m_sInitText) == CB_ERR)
-		SetWindowText(m_sInitText);		// No text selected, so restore what was there before
+	if (IsWindow(m_hWnd) && SelectString(-1, m_sInitText) == CB_ERR)
+		SetWindowText(m_sInitText); // No text selected, so restore what was there before
 
 	ShowDropDown();
 
@@ -188,8 +188,10 @@ CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, U
 		switch (nFirstChar)
 		{
 		case VK_LBUTTON:
-		case VK_RETURN:   m_comboedit.SetSel((int)_tcslen(m_sInitText), -1); return;
-		case VK_BACK:     m_comboedit.SetSel((int)_tcslen(m_sInitText), -1); break;
+		case VK_RETURN: m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+			return;
+		case VK_BACK: m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+			break;
 		case VK_DOWN:
 		case VK_UP:
 		case VK_RIGHT:
@@ -197,8 +199,9 @@ CGridInPlaceList::CGridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, U
 		case VK_NEXT:
 		case VK_PRIOR:
 		case VK_HOME:
-		case VK_END:      m_comboedit.SetSel(0, -1); return;
-		default:          m_comboedit.SetSel(0, -1);
+		case VK_END: m_comboedit.SetSel(0, -1);
+			return;
+		default: m_comboedit.SetSel(0, -1);
 		}
 		SendMessage(WM_CHAR, nFirstChar);
 	}
@@ -213,7 +216,7 @@ CGridInPlaceList::~CGridInPlaceList()
 void CGridInPlaceList::EndEdit()
 {
 	CString str;
-	if (::IsWindow(m_hWnd))
+	if (IsWindow(m_hWnd))
 		GetWindowText(str);
 
 	// Send Notification to parent
@@ -227,20 +230,20 @@ void CGridInPlaceList::EndEdit()
 	dispinfo.item.row = m_nRow;
 	dispinfo.item.col = m_nCol;
 	dispinfo.item.strText = str;
-	dispinfo.item.lParam = (LPARAM)m_nLastChar;
+	dispinfo.item.lParam = static_cast<LPARAM>(m_nLastChar);
 
 	CWnd* pOwner = GetOwner();
 	if (IsWindow(pOwner->GetSafeHwnd()))
 		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
 
 	// Close this window (PostNcDestroy will delete this)
-	if (::IsWindow(m_hWnd))
+	if (IsWindow(m_hWnd))
 		PostMessage(WM_CLOSE, 0, 0);
 }
 
 int CGridInPlaceList::GetCorrectDropWidth()
 {
-	const int nMaxWidth = 200;  // don't let the box be bigger than this
+	const int nMaxWidth = 200; // don't let the box be bigger than this
 
 	// Reset the dropped width
 	int nNumEntries = GetCount();
@@ -251,7 +254,7 @@ int CGridInPlaceList::GetCorrectDropWidth()
 	int nSave = dc.SaveDC();
 	dc.SelectObject(GetFont());
 
-	int nScrollWidth = ::GetSystemMetrics(SM_CXVSCROLL);
+	int nScrollWidth = GetSystemMetrics(SM_CXVSCROLL);
 	for (int i = 0; i < nNumEntries; i++)
 	{
 		GetLBText(i, str);
@@ -334,8 +337,8 @@ void CGridInPlaceList::OnKillFocus(CWnd* pNewWnd)
 void CGridInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
-		nChar == VK_DOWN || nChar == VK_UP ||
-		nChar == VK_RIGHT || nChar == VK_LEFT) &&
+			nChar == VK_DOWN || nChar == VK_UP ||
+			nChar == VK_RIGHT || nChar == VK_LEFT) &&
 		(m_bExitOnArrows || GetKeyState(VK_CONTROL) < 0))
 	{
 		m_nLastChar = nChar;
@@ -350,12 +353,12 @@ void CGridInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CGridInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar == VK_ESCAPE)
-		SetWindowText(m_sInitText);	// restore previous text
+		SetWindowText(m_sInitText); // restore previous text
 
 	if (nChar == VK_TAB || nChar == VK_RETURN || nChar == VK_ESCAPE)
 	{
 		m_nLastChar = nChar;
-		GetParent()->SetFocus();	// This will destroy this window
+		GetParent()->SetFocus(); // This will destroy this window
 		return;
 	}
 
@@ -383,7 +386,7 @@ IMPLEMENT_DYNCREATE(CGridCellCombo, CGridCell)
 
 CGridCellCombo::CGridCellCombo() : CGridCell()
 {
-	m_dwStyle = CBS_DROPDOWN;  // CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
+	m_dwStyle = CBS_DROPDOWN; // CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
 	SetStyle(m_dwStyle);
 }
 
@@ -394,14 +397,14 @@ BOOL CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UI
 
 	// CGridInPlaceList auto-deletes itself
 	m_pEditWnd = new CGridInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol,
-		GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
+	                                  GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
 	return TRUE;
 }
 
 CWnd* CGridCellCombo::GetEditWnd() const
 {
 	if (m_pEditWnd && (m_pEditWnd->GetStyle() & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST)
-		return &(((CGridInPlaceList*)m_pEditWnd)->m_comboedit);
+		return &(static_cast<CGridInPlaceList*>(m_pEditWnd)->m_comboedit);
 
 	return nullptr;
 }
@@ -419,7 +422,7 @@ CSize CGridCellCombo::GetCellExtent(CDC* p_dc)
 void CGridCellCombo::EndEdit()
 {
 	if (m_pEditWnd)
-		((CGridInPlaceList*)m_pEditWnd)->EndEdit();
+		static_cast<CGridInPlaceList*>(m_pEditWnd)->EndEdit();
 }
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
@@ -493,7 +496,7 @@ int CGridCellCombo::SetCurSel(int sel)
 {
 	// check index
 	if (sel >= m_Strings.GetSize())
-		return CB_ERR;		// returns error code if out of range
+		return CB_ERR; // returns error code if out of range
 
 	// if OK, cancel edit, replace content and select
 	EndEdit();

@@ -12,8 +12,8 @@ class CDlgImportFiles : public CDialog
 	DECLARE_DYNAMIC(CDlgImportFiles)
 
 public:
-	CDlgImportFiles(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CDlgImportFiles();
+	CDlgImportFiles(CWnd* pParent = nullptr); // standard constructor
+	~CDlgImportFiles() override;
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTFILESDLG };
@@ -23,31 +23,31 @@ public:
 	CStringArray* m_pfilenameArray = nullptr;
 	CStringArray* m_pconvertedFiles = nullptr;
 	CdbWaveDoc* m_pdbDoc = nullptr;
-	int			m_option = 0;
-	BOOL		m_bReadHeader = true;
+	int m_option = 0;
+	BOOL m_bReadHeader = true;
 
 	// Implementation
 protected:
-	BOOL		m_bconvert = false;
-	CString		m_ext{};
-	int			m_ncurrent = 0;	// number of current file
-	int			m_nfiles= 0;	// number of files
-	CString		m_filefrom{};
-	CString		m_fileto{};
+	BOOL m_bconvert = false;
+	CString m_ext{};
+	int m_ncurrent = 0; // number of current file
+	int m_nfiles = 0; // number of files
+	CString m_filefrom{};
+	CString m_fileto{};
 
-	int			m_scan_count = 0;
-	double		m_xinstgain = 0.;
-	double		m_xrate = 0.;
-	double		m_dspan[16]{};
-	double		m_dbinval[16]{};
+	int m_scan_count = 0;
+	double m_xinstgain = 0.;
+	double m_xrate = 0.;
+	double m_dspan[16]{};
+	double m_dbinval[16]{};
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
-	void		UpdateDlgItems();
-	BOOL		GetAcquisitionParameters(CAcqDataDoc* pTo);
-	BOOL		GetExperimentParameters(CAcqDataDoc* pTo);
-	BOOL		ImportATFFile();
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	BOOL OnInitDialog() override;
+	void UpdateDlgItems();
+	BOOL GetAcquisitionParameters(AcqDataDoc* pTo);
+	BOOL GetExperimentParameters(AcqDataDoc* pTo);
+	BOOL ImportATFFile();
 
 public:
 	afx_msg void OnDestroy();

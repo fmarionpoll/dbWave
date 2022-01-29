@@ -1,4 +1,3 @@
-
 #pragma once
 #include "datafile_X.h"
 
@@ -8,9 +7,9 @@ public:
 	// Construction / Destruction
 	CDataFileAWAVE();
 	CDataFileAWAVE(CFile* file);
-	virtual ~CDataFileAWAVE();
+	~CDataFileAWAVE() override;
 
-	int  CheckFileType(CString& cs_filename) override;
+	int CheckFileType(CString& cs_filename) override;
 	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
 	BOOL ReadHZtags(CTagList* pHZtags) override;
 	BOOL ReadVTtags(CTagList* pVTtags) override;
@@ -26,9 +25,9 @@ public:
 
 	// protected variables
 protected:
-	CStringA		m_csFiledesc;	// ASCII chain w. file version
-	CMapWordToOb	m_structMap;	// subfile descriptors
-	BOOL			m_bmodified{};
+	CStringA m_csFiledesc; // ASCII chain w. file version
+	CMapWordToOb m_structMap; // subfile descriptors
+	BOOL m_bmodified{};
 
 	// Implementation
 protected:

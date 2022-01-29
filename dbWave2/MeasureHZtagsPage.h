@@ -12,20 +12,21 @@ class CMeasureHZtagsPage : public CPropertyPage
 	// Construction
 public:
 	CMeasureHZtagsPage();
-	~CMeasureHZtagsPage();
+	~CMeasureHZtagsPage() override;
 
 	// Dialog Data
 	enum { IDD = IDD_PROPPAGE3 };
-	int		m_datachannel;
-	int		m_index;
-	float	m_mvlevel;
-	int		m_nbcursors;
+
+	int m_datachannel;
+	int m_index;
+	float m_mvlevel;
+	int m_nbcursors;
 
 	// input parameters
 	OPTIONS_VIEWDATAMEASURE* m_pMO;
-	CdbWaveDoc*		m_pdbDoc;
-	CAcqDataDoc*	m_pdatDoc;
-	CChartDataWnd*	m_pChartDataWnd;
+	CdbWaveDoc* m_pdbDoc;
+	AcqDataDoc* m_pdatDoc;
+	ChartData* m_pChartDataWnd;
 
 	// locals
 	CEditCtrl mm_index;
@@ -34,10 +35,10 @@ public:
 
 	// Overrides
 public:
-	virtual void OnCancel();
-	virtual void OnOK();
+	void OnCancel() override;
+	void OnOK() override;
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 	BOOL GetHZcursorVal(int index);
 
@@ -50,7 +51,7 @@ protected:
 	afx_msg void OnEnChangeDatachannel();
 	afx_msg void OnEnChangeIndex();
 	afx_msg void OnEnChangeMvlevel();
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnDeleteAll();
 
 	DECLARE_MESSAGE_MAP()

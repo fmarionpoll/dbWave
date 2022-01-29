@@ -73,51 +73,51 @@ IMPLEMENT_DYNCREATE(CChildFrame, CMDIChildWndEx)
 
 BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 
-	ON_COMMAND(ID_VIEW_CURSORMODE_NORMAL,			&CChildFrame::OnViewCursormodeNormal)
+	ON_COMMAND(ID_VIEW_CURSORMODE_NORMAL, &CChildFrame::OnViewCursormodeNormal)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_NORMAL, &CChildFrame::OnUpdateViewCursormodeNormal)
-	ON_COMMAND(ID_VIEW_CURSORMODE_MEASURE,			&CChildFrame::OnViewCursormodeMeasure)
+	ON_COMMAND(ID_VIEW_CURSORMODE_MEASURE, &CChildFrame::OnViewCursormodeMeasure)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_MEASURE, &CChildFrame::OnUpdateViewCursormodeMeasure)
-	ON_COMMAND(ID_VIEW_CURSORMODE_ZOOMIN,			&CChildFrame::OnViewCursormodeZoomin)
+	ON_COMMAND(ID_VIEW_CURSORMODE_ZOOMIN, &CChildFrame::OnViewCursormodeZoomin)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_CURSORMODE_ZOOMIN, &CChildFrame::OnUpdateViewCursormodeZoomin)
-	ON_COMMAND(ID_OPTIONS_BROWSEMODE,				&CChildFrame::OnOptionsBrowsemode)
-	ON_COMMAND(ID_OPTIONS_PRINTMARGINS,				&CChildFrame::OnOptionsPrintmargins)
-	ON_COMMAND(ID_OPTIONS_LOADSAVEOPTIONS,			&CChildFrame::OnOptionsLoadsaveoptions)
-	ON_MESSAGE(WM_MYMESSAGE,						&CChildFrame::OnMyMessage)
+	ON_COMMAND(ID_OPTIONS_BROWSEMODE, &CChildFrame::OnOptionsBrowsemode)
+	ON_COMMAND(ID_OPTIONS_PRINTMARGINS, &CChildFrame::OnOptionsPrintmargins)
+	ON_COMMAND(ID_OPTIONS_LOADSAVEOPTIONS, &CChildFrame::OnOptionsLoadsaveoptions)
+	ON_MESSAGE(WM_MYMESSAGE, &CChildFrame::OnMyMessage)
 	ON_WM_CREATE()
 	ON_COMMAND_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, &CChildFrame::ReplaceViewIndex)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_DATABASE, ID_VIEW_ACQUIREDATA, &CChildFrame::OnUpdateViewmenu)
 
-	ON_COMMAND(ID_TOOLS_EXPORTDATACOMMENTS,			&CChildFrame::OnToolsExportdatacomments)
-	ON_COMMAND(ID_TOOLS_EXPORTDATAASTEXT,			&CChildFrame::OnToolsExportdataAsText)
-	ON_COMMAND(ID_TOOLS_EXPORTNUMBEROFSPIKES,		&CChildFrame::OnToolsExportnumberofspikes)
-	ON_COMMAND(ID_TOOLS_EXPORTDATAFILE,				&CChildFrame::OnToolsExportdatafile)
-	ON_COMMAND(ID_TOOLS_REMOVEMISSINGFILENAMES,		&CChildFrame::OnToolsRemoveMissingFiles)
-	ON_COMMAND(ID_TOOLS_REMOVEDUPLICATEFILES,		&CChildFrame::OnToolsRemoveduplicatefiles)
-	ON_COMMAND(ID_TOOLS_REMOVEARTEFACTFILES,		&CChildFrame::OnToolsRemoveartefactfiles)
-	ON_COMMAND(ID_TOOLS_RESTOREDELETEDFILES,		&CChildFrame::OnToolsRestoredeletedfiles)
-	ON_COMMAND(ID_TOOLS_CHECKCONSISTENCY,			&CChildFrame::OnToolsCheckFilelistsConsistency)
-	ON_COMMAND(ID_TOOLS_SYNCHRO_CURRENTFILE,		&CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile)
-	ON_COMMAND(ID_TOOLS_SYNCHRO_ALLFILES,			&CChildFrame::OnToolsSynchronizesourceinformationsAllfiles)
-	ON_COMMAND(ID_TOOLS_TRANSFERFILES,				&CChildFrame::OnToolsCopyAllProjectFiles)
-	ON_COMMAND(ID_TOOLS_IMPORT_DATAFILES,			&CChildFrame::OnToolsImportDatafiles)
-	ON_COMMAND(ID_TOOLS_IMPORT_SPIKEFILES,			&CChildFrame::OnToolsImportSpikefiles)
-	ON_COMMAND(ID_TOOLS_IMPORT_DATABASE,			&CChildFrame::OnToolsImportDatabase)
-	ON_COMMAND(ID_TOOLS_IMPORT_ATFFILES,			&CChildFrame::OnToolsImportATFfiles)
+	ON_COMMAND(ID_TOOLS_EXPORTDATACOMMENTS, &CChildFrame::OnToolsExportdatacomments)
+	ON_COMMAND(ID_TOOLS_EXPORTDATAASTEXT, &CChildFrame::OnToolsExportdataAsText)
+	ON_COMMAND(ID_TOOLS_EXPORTNUMBEROFSPIKES, &CChildFrame::OnToolsExportnumberofspikes)
+	ON_COMMAND(ID_TOOLS_EXPORTDATAFILE, &CChildFrame::OnToolsExportdatafile)
+	ON_COMMAND(ID_TOOLS_REMOVEMISSINGFILENAMES, &CChildFrame::OnToolsRemoveMissingFiles)
+	ON_COMMAND(ID_TOOLS_REMOVEDUPLICATEFILES, &CChildFrame::OnToolsRemoveduplicatefiles)
+	ON_COMMAND(ID_TOOLS_REMOVEARTEFACTFILES, &CChildFrame::OnToolsRemoveartefactfiles)
+	ON_COMMAND(ID_TOOLS_RESTOREDELETEDFILES, &CChildFrame::OnToolsRestoredeletedfiles)
+	ON_COMMAND(ID_TOOLS_CHECKCONSISTENCY, &CChildFrame::OnToolsCheckFilelistsConsistency)
+	ON_COMMAND(ID_TOOLS_SYNCHRO_CURRENTFILE, &CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile)
+	ON_COMMAND(ID_TOOLS_SYNCHRO_ALLFILES, &CChildFrame::OnToolsSynchronizesourceinformationsAllfiles)
+	ON_COMMAND(ID_TOOLS_TRANSFERFILES, &CChildFrame::OnToolsCopyAllProjectFiles)
+	ON_COMMAND(ID_TOOLS_IMPORT_DATAFILES, &CChildFrame::OnToolsImportDatafiles)
+	ON_COMMAND(ID_TOOLS_IMPORT_SPIKEFILES, &CChildFrame::OnToolsImportSpikefiles)
+	ON_COMMAND(ID_TOOLS_IMPORT_DATABASE, &CChildFrame::OnToolsImportDatabase)
+	ON_COMMAND(ID_TOOLS_IMPORT_ATFFILES, &CChildFrame::OnToolsImportATFfiles)
 	//ON_COMMAND(ID_TOOLS_IMPORT_SYNTECHASPKFILES, &CChildFrame::OnToolsImportSyntechaspkfiles)
 
-	ON_COMMAND(ID_RECORD_DELETECURRENT,				&CChildFrame::OnRecordDeletecurrent)
-	ON_COMMAND(ID_RECORD_GOTORECORD,				&CChildFrame::OnRecordGotorecord)
-	ON_COMMAND(ID_RECORD_ADD,						&CChildFrame::OnRecordAdd)
+	ON_COMMAND(ID_RECORD_DELETECURRENT, &CChildFrame::OnRecordDeletecurrent)
+	ON_COMMAND(ID_RECORD_GOTORECORD, &CChildFrame::OnRecordGotorecord)
+	ON_COMMAND(ID_RECORD_ADD, &CChildFrame::OnRecordAdd)
 
 	ON_WM_MDIACTIVATE()
-	ON_COMMAND(ID_TOOLS_PATHS_RELATIVE,				&CChildFrame::OnToolsPathsRelative)
-	ON_COMMAND(ID_TOOLS_PATHS_ABSOLUTE,				&CChildFrame::OnToolsPathsAbsolute)
-	ON_COMMAND(ID_TOOLS_PATH,						&CChildFrame::OnToolsPath)
-	ON_COMMAND(ID_TOOLS_IMPORT,						&CChildFrame::OnToolsImport)
-	ON_COMMAND(ID_TOOLS_SYNCHRO,					&CChildFrame::OnToolsSynchro)
-	ON_COMMAND(ID_TOOLS_REMOVEUNUSED,				&CChildFrame::OnToolsRemoveunused)
-	ON_COMMAND(ID_TOOLS_GARBAGE,					&CChildFrame::OnToolsGarbage)
-	ON_COMMAND(ID_TOOLS_COMPACTDATABASE,			&CChildFrame::OnToolsCompactdatabase)
+	ON_COMMAND(ID_TOOLS_PATHS_RELATIVE, &CChildFrame::OnToolsPathsRelative)
+	ON_COMMAND(ID_TOOLS_PATHS_ABSOLUTE, &CChildFrame::OnToolsPathsAbsolute)
+	ON_COMMAND(ID_TOOLS_PATH, &CChildFrame::OnToolsPath)
+	ON_COMMAND(ID_TOOLS_IMPORT, &CChildFrame::OnToolsImport)
+	ON_COMMAND(ID_TOOLS_SYNCHRO, &CChildFrame::OnToolsSynchro)
+	ON_COMMAND(ID_TOOLS_REMOVEUNUSED, &CChildFrame::OnToolsRemoveunused)
+	ON_COMMAND(ID_TOOLS_GARBAGE, &CChildFrame::OnToolsGarbage)
+	ON_COMMAND(ID_TOOLS_COMPACTDATABASE, &CChildFrame::OnToolsCompactdatabase)
 
 END_MESSAGE_MAP()
 
@@ -191,7 +191,7 @@ void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI* pCmdUI)
 void CChildFrame::OnOptionsBrowsemode()
 {
 	CBrowseFileDlg dlg;
-	dlg.mfBR = &(dynamic_cast<CdbWaveApp*> (AfxGetApp())->options_viewdata);
+	dlg.mfBR = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
 	dlg.DoModal();
 }
 
@@ -247,13 +247,13 @@ void CChildFrame::OnToolsExportdataAsText()
 	auto pdb_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	pdb_doc->ExportDatafilesAsTXTfiles();
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
-	PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, static_cast<LPARAM>(NULL));
+	PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 }
 
 void CChildFrame::exportASCII(int option)
 {
 	CSharedFile sf(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
-	auto* pdb_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto* pdb_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	switch (option)
 	{
@@ -271,7 +271,7 @@ void CChildFrame::exportASCII(int option)
 	auto h_mem = sf.Detach();
 	if (!h_mem)
 		return;
-	h_mem = ::GlobalReAlloc(h_mem, dw_len, GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
+	h_mem = GlobalReAlloc(h_mem, dw_len, GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 	if (!h_mem)
 		return;
 	auto* p_source = new COleDataSource();
@@ -281,39 +281,39 @@ void CChildFrame::exportASCII(int option)
 	//pass data to excel - if it does not work, paste to a new text document
 	switch (option)
 	{
-	case 0:			// export CAcqData
-	{
-		auto flag = FALSE;
-		if (p_app->options_viewdata.btoExcel)
-			flag = exportToExcel();
-		if (!p_app->options_viewdata.btoExcel || !flag)
+	case 0: // export CAcqData
 		{
-			CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
-			const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
-			auto pos = pdb_doc_export->GetFirstViewPosition();
-			const auto p_view = (CViewNoteDoc*)pdb_doc_export->GetNextView(pos);
-			auto& p_edit = p_view->GetRichEditCtrl();
-			p_edit.Paste();
+			auto flag = FALSE;
+			if (p_app->options_viewdata.btoExcel)
+				flag = exportToExcel();
+			if (!p_app->options_viewdata.btoExcel || !flag)
+			{
+				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
+				auto pos = pdb_doc_export->GetFirstViewPosition();
+				const auto p_view = static_cast<CViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
+				auto& p_edit = p_view->GetRichEditCtrl();
+				p_edit.Paste();
+			}
 		}
-	}
-	break;
+		break;
 	case 1:
-	{
-		auto flag = FALSE;
-		if (p_app->options_viewspikes.bexporttoExcel)
-			flag = exportToExcelAndBuildPivot(option);
-
-		if (!p_app->options_viewspikes.bexporttoExcel || !flag)
 		{
-			CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
-			const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
-			auto pos = pdb_doc_export->GetFirstViewPosition();
-			const auto p_view = (CViewNoteDoc*)pdb_doc_export->GetNextView(pos);
-			auto& p_edit = p_view->GetRichEditCtrl();
-			p_edit.Paste();
+			auto flag = FALSE;
+			if (p_app->options_viewspikes.bexporttoExcel)
+				flag = exportToExcelAndBuildPivot(option);
+
+			if (!p_app->options_viewspikes.bexporttoExcel || !flag)
+			{
+				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
+				auto pos = pdb_doc_export->GetFirstViewPosition();
+				const auto p_view = static_cast<CViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
+				auto& p_edit = p_view->GetRichEditCtrl();
+				p_edit.Paste();
+			}
 		}
-	}
-	break;
+		break;
 	default:
 		break;
 	}
@@ -331,40 +331,40 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_SETMOUSECURSOR:
-	{
-		const short lowp = LOWORD(lParam);
-		//switch (lowp)
-		//{
-		//case CURSOR_ZOOM:
-		//case CURSOR_MEASURE:
-		//case CURSOR_VERTICAL:
-		//	break;
-		//default:
-		//	m_cursorstate=CURSOR_ARROW;
-		//	break;
-		//}
-		m_cursorstate = lowp;
-	}
-	break;
+		{
+			const short lowp = LOWORD(lParam);
+			//switch (lowp)
+			//{
+			//case CURSOR_ZOOM:
+			//case CURSOR_MEASURE:
+			//case CURSOR_VERTICAL:
+			//	break;
+			//default:
+			//	m_cursorstate=CURSOR_ARROW;
+			//	break;
+			//}
+			m_cursorstate = lowp;
+		}
+		break;
 
 	case HINT_SHAREDMEMFILLED:
-	{
-		auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-		if (p_app->m_psf != nullptr)
 		{
-			CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
-			const auto p_doc_export = p_templ->OpenDocumentFile(nullptr);
-			auto pos = p_doc_export->GetFirstViewPosition();
-			auto* p_view = (CViewNoteDoc*)(p_doc_export->GetNextView(pos));
-			auto& p_edit = p_view->GetRichEditCtrl();
-			OpenClipboard();
-			EmptyClipboard();
-			SetClipboardData(CF_UNICODETEXT, (p_app->m_psf)->Detach());
-			CloseClipboard();
-			p_edit.Paste();
+			auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+			if (p_app->m_psf != nullptr)
+			{
+				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+				const auto p_doc_export = p_templ->OpenDocumentFile(nullptr);
+				auto pos = p_doc_export->GetFirstViewPosition();
+				auto* p_view = static_cast<CViewNoteDoc*>(p_doc_export->GetNextView(pos));
+				auto& p_edit = p_view->GetRichEditCtrl();
+				OpenClipboard();
+				EmptyClipboard();
+				SetClipboardData(CF_UNICODETEXT, (p_app->m_psf)->Detach());
+				CloseClipboard();
+				p_edit.Paste();
+			}
 		}
-	}
-	break;
+		break;
 
 	default:
 		break;
@@ -374,46 +374,46 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void CChildFrame::ReplaceViewIndex(UINT iID)
 {
-	auto pdb_doc = (CdbWaveDoc*)GetActiveDocument();
-	auto p_mainframe = (CMainFrame*)AfxGetMainWnd();
+	auto pdb_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
+	auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	auto b_active_panes = TRUE;
 	switch (iID)
 	{
 	case ID_VIEW_DATABASE:
-		replaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDBView);
+		replaceView(RUNTIME_CLASS(CViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATAFILE:
 		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewData), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(CViewData), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDETECTION:
 		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeDetection), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(CViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikes), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeSort), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeTemplates), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeHist), ((CdbWaveApp*)AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(CViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
-		replaceView(RUNTIME_CLASS(CADContView), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(CADContView), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		b_active_panes = FALSE;
 		break;
 
 	default:
 		iID = 0;
-		replaceView(RUNTIME_CLASS(CViewdbWave), ((CdbWaveApp*)AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(CViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	}
 	p_mainframe->ActivatePropertyPane(b_active_panes);
@@ -430,9 +430,9 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 
 void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc);
-	const auto p_app = (CdbWaveApp*)AfxGetApp();
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	BOOL flag = (p_dbwave_doc != nullptr);
 
 	switch (pCmdUI->m_nID)
@@ -466,7 +466,7 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	if ((p_current_view->IsKindOf(pViewClass)) == TRUE)
 		return;
 
-	auto* p_dbwave_doc = (CdbWaveDoc*) GetActiveDocument();
+	auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->m_hMyMenu = hmenu;
 
@@ -492,7 +492,7 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	context.m_pCurrentFrame = nullptr;
 
 	// create view inside a splitter
-	const auto p_new_view = (CView*)CreateView(&context);
+	const auto p_new_view = static_cast<CView*>(CreateView(&context));
 	p_new_view->SendMessage(WM_INITIALUPDATE, 0, 0);
 	GetMDIFrame()->MDISetMenu(CMenu::FromHandle(hmenu), nullptr);
 	GetMDIFrame()->DrawMenuBar();
@@ -505,8 +505,8 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 
 void CChildFrame::OnToolsRemoveMissingFiles()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();	// get pointer to document
-	ASSERT(p_dbwave_doc);										// debug: check that doc is defined
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument()); // get pointer to document
+	ASSERT(p_dbwave_doc); // debug: check that doc is defined
 
 	p_dbwave_doc->RemoveMissingFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
@@ -514,7 +514,7 @@ void CChildFrame::OnToolsRemoveMissingFiles()
 
 void CChildFrame::OnToolsRemoveduplicatefiles()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->RemoveDuplicateFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
@@ -522,8 +522,8 @@ void CChildFrame::OnToolsRemoveduplicatefiles()
 
 void CChildFrame::OnToolsCheckFilelistsConsistency()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
-	ASSERT(p_dbwave_doc);	
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
+	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->RemoveFalseSpkFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
@@ -536,7 +536,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = 0;
 	dlg.m_ioption = 1;
-	dlg.m_pdbDoc = (CdbWaveDoc*)GetActiveDocument();
+	dlg.m_pdbDoc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	const auto i_result = dlg.DoModal();
 
 	if (IDOK == i_result)
@@ -563,14 +563,14 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 			CFile::Rename(csoldname, csnewname);
 		}
 	}
-	auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc != NULL);
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->SynchronizeSourceInfos(FALSE);
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
@@ -578,7 +578,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 
 void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 {
-	CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc);
 	p_dbwave_doc->SynchronizeSourceInfos(TRUE);
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
@@ -609,7 +609,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 	dlg.SetStep(1);
 	auto istep = 0;
 	CString cscomment;
-	auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	const int nfiles = p_dbwave_doc->GetDB_NRecords();
 
 	for (int ifile = 0; ifile < nfiles; ifile++)
@@ -643,7 +643,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 			auto l_read_write_first = l_data_first;
 			auto l_read_write_last = l_data_last;
 			if (!p_dat->LoadRawData(&l_read_write_first, &l_read_write_last, 0))
-				break;								// exit if error reported
+				break; // exit if error reported
 			if (l_read_write_last > l_data_last)
 				l_read_write_last = l_data_last;
 			const auto p_data0 = p_dat->LoadTransfData(l_data_first, l_read_write_last, 0, 0);
@@ -685,14 +685,14 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 void CChildFrame::OnRecordGotorecord()
 {
 	CDlgGotoRecord dlg;
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	dlg.m_recordPos = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	dlg.m_recordID = p_dbwave_doc->GetDB_CurrentRecordID();
-	dlg.m_bGotoRecordID = ((CdbWaveApp*)AfxGetApp())->options_viewdata.bGotoRecordID;
+	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID;
 
 	if (IDOK == dlg.DoModal())
 	{
-		((CdbWaveApp*)AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
+		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
 		if (!dlg.m_bGotoRecordID)
 			p_dbwave_doc->SetDB_CurrentRecordPosition(dlg.m_recordPos);
 		else
@@ -707,15 +707,15 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 	CStringArray filenames;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = ifilter;
-	dlg.m_pdbDoc = (CdbWaveDoc*)GetActiveDocument();
+	dlg.m_pdbDoc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	if (IDOK == dlg.DoModal())
 	{
-		auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
+		auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument()); // get pointer to document
 		//const BOOL b_only_genuine = !dlg.m_banyformat;
 		p_dbwave_doc->ImportFileList(filenames);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
-		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, static_cast<LPARAM>(NULL));
+		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 	}
 }
 
@@ -725,7 +725,7 @@ void CChildFrame::OnToolsImportATFfiles()
 	CStringArray filenames;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = 6;
-	dlg.m_pdbDoc = (CdbWaveDoc*)GetActiveDocument();
+	dlg.m_pdbDoc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	if (IDOK == dlg.DoModal())
 	{
 		CDlgImportFiles dlg2;
@@ -733,16 +733,16 @@ void CChildFrame::OnToolsImportATFfiles()
 		dlg2.m_pconvertedFiles = &convertedFiles;
 		dlg2.m_pfilenameArray = &filenames;
 		dlg2.m_option = ATFFILE;
-		auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+		auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 		dlg2.m_pdbDoc = p_dbwave_doc;
 		if (IDOK == dlg2.DoModal())
 		{
-			p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+			p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 			p_dbwave_doc->ImportFileList(convertedFiles);
 			p_dbwave_doc->DBMoveLast();
 			p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
-			PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, static_cast<LPARAM>(NULL));
+			PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 		}
 	}
 }
@@ -750,7 +750,7 @@ void CChildFrame::OnToolsImportATFfiles()
 void CChildFrame::OnRecordDeletecurrent()
 {
 	const auto p_view = GetActiveView();
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();// get pointer to document
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument()); // get pointer to document
 
 	// save index current file
 	auto currentindex = p_dbwave_doc->GetDB_CurrentRecordPosition();
@@ -778,7 +778,7 @@ void CChildFrame::OnRecordDeletecurrent()
 		// delete records from the database and collect names of files to change
 		// save list of data files to delete into a temporary array
 		if (p_view->IsKindOf(RUNTIME_CLASS(CViewdbWave)))
-			((CViewdbWave*)p_view)->DeleteRecords();
+			static_cast<CViewdbWave*>(p_view)->DeleteRecords();
 		else
 			p_dbwave_doc->DBDeleteCurrentRecord();
 
@@ -813,14 +813,14 @@ BOOL CChildFrame::exportToExcel()
 	CWorkbook o_book = o_books.Add(v_opt);
 	CWorksheets o_sheets = o_book.get_Worksheets();
 	auto index = COleVariant(static_cast<short>(1));
-	CWorksheet odata_sheet = o_sheets.get_Item(index);		// select first sheet
+	CWorksheet odata_sheet = o_sheets.get_Item(index); // select first sheet
 	auto cell1 = COleVariant(_T("A1"));
-	CRange o_range = odata_sheet.get_Range(cell1, v_opt);	// select first cell
+	CRange o_range = odata_sheet.get_Range(cell1, v_opt); // select first cell
 
-	odata_sheet.Paste(v_opt, v_opt);						// paste data
+	odata_sheet.Paste(v_opt, v_opt); // paste data
 	//odataSheet._PasteSpecial(COleVariant(_T("Text")), vOpt, vOpt, vOpt, vOpt, vOpt);
 
-	odata_sheet.put_Name(_T("data"));						// change name of sheet
+	odata_sheet.put_Name(_T("data")); // change name of sheet
 
 	//Make Excel visible and give the user control
 	o_app.put_Visible(TRUE);
@@ -850,28 +850,28 @@ BOOL CChildFrame::exportToExcelAndBuildPivot(int option)
 	CWorkbook o_book = o_books.Add(v_opt);
 	CWorksheets o_sheets = o_book.get_Worksheets();
 	auto item = COleVariant(static_cast<short>(1));
-	CWorksheet odata_sheet = o_sheets.get_Item(item);		// select first sheet
+	CWorksheet odata_sheet = o_sheets.get_Item(item); // select first sheet
 	auto cell1 = COleVariant(_T("A1"));
-	CRange o_range = odata_sheet.get_Range(cell1, v_opt);	// select first cell
-	odata_sheet.Paste(v_opt, v_opt);						// paste data
-	odata_sheet.put_Name(_T("data"));						// change name of sheet
+	CRange o_range = odata_sheet.get_Range(cell1, v_opt); // select first cell
+	odata_sheet.Paste(v_opt, v_opt); // paste data
+	odata_sheet.put_Name(_T("data")); // change name of sheet
 	if (option == 1)
 	{
 		auto lcell1 = COleVariant(_T("A5"));
-		CRange o_range1 = odata_sheet.get_Range(lcell1, v_opt);		// select first cell of the table
+		CRange o_range1 = odata_sheet.get_Range(lcell1, v_opt); // select first cell of the table
 		const auto col1 = o_range1.get_Column();
 		const auto row1 = o_range1.get_Row();
 		o_range1.Select();
 
-		CRange o_select = o_range1.get_End(-4121);			//xlDown); XlDirection.xlDown
+		CRange o_select = o_range1.get_End(-4121); //xlDown); XlDirection.xlDown
 		const auto row2 = o_select.get_Row();
-		o_select = o_range1.get_End(-4161);					//xlToRight); XlDirection.xlToRight
+		o_select = o_range1.get_End(-4161); //xlToRight); XlDirection.xlToRight
 		const auto col2 = o_select.get_Column();
 
 		auto rowsize = COleVariant(row2 - row1 + 1);
 		auto columnsize = COleVariant(col2 - col1 + 1);
 		o_range1 = o_range1.get_Resize(rowsize, columnsize);
-		o_range1.Select();									// select data area
+		o_range1.Select(); // select data area
 
 		// build range address as text (I was unable to pass the range into PivotTableWizard)
 		CString cs2;
@@ -890,7 +890,7 @@ BOOL CChildFrame::exportToExcelAndBuildPivot(int option)
 		cs2 = odata_sheet.get_Name();
 		cs1 = cs2 + _T("!") + cs1;
 
-		auto* p_app = (CdbWaveApp*)AfxGetApp();
+		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		if (p_app->options_viewspikes.bexportPivot)
 		{
 			CString cs_bin;
@@ -908,7 +908,8 @@ BOOL CChildFrame::exportToExcelAndBuildPivot(int option)
 	return TRUE;
 }
 
-void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSourceDataAddress, CString csNameSheet, short XlConsolidationFunction, int col2)
+void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSourceDataAddress, CString csNameSheet,
+                                  short XlConsolidationFunction, int col2)
 {
 	COleVariant cov_xl_database(static_cast<short>(1));
 	COleVariant v_opt(DISP_E_PARAMNOTFOUND, VT_ERROR);
@@ -920,28 +921,28 @@ void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSour
 	odata_sheet->Activate();
 	auto sourcedata = COleVariant(csSourceDataAddress);
 	CPivotTable o_pivot1 = odata_sheet->PivotTableWizard(
-		cov_xl_database,						//const VARIANT& SourceType,
-		sourcedata,	//const VARIANT& SourceData,
-		v_opt,								//const VARIANT& TableDestination,
-		v_opt,								//const VARIANT& TableName,
-		cov_false,							//const VARIANT& RowGrand,
-		cov_false,							//const VARIANT& ColumnGrand,
-		v_opt,								//const VARIANT& SaveData,
-		v_opt,								//const VARIANT& HasAutoFormat,
-		v_opt,								//const VARIANT& AutoPage,
-		v_opt,								//const VARIANT& Reserved,
-		v_opt,								//const VARIANT& BackgroundQuery,
-		v_opt,								//const VARIANT& OptimizeCache,
-		v_opt,								//const VARIANT& PageFieldOrder,
-		v_opt,								//const VARIANT& PageFieldWrapCount,
-		v_opt,								//const VARIANT& ReadData,
-		v_opt);								//const VARIANT& Connection)
+		cov_xl_database, //const VARIANT& SourceType,
+		sourcedata, //const VARIANT& SourceData,
+		v_opt, //const VARIANT& TableDestination,
+		v_opt, //const VARIANT& TableName,
+		cov_false, //const VARIANT& RowGrand,
+		cov_false, //const VARIANT& ColumnGrand,
+		v_opt, //const VARIANT& SaveData,
+		v_opt, //const VARIANT& HasAutoFormat,
+		v_opt, //const VARIANT& AutoPage,
+		v_opt, //const VARIANT& Reserved,
+		v_opt, //const VARIANT& BackgroundQuery,
+		v_opt, //const VARIANT& OptimizeCache,
+		v_opt, //const VARIANT& PageFieldOrder,
+		v_opt, //const VARIANT& PageFieldWrapCount,
+		v_opt, //const VARIANT& ReadData,
+		v_opt); //const VARIANT& Connection)
 
 	CWorksheet pivot_sheet1 = o_app->get_ActiveSheet();
 	pivot_sheet1.put_Name(csNameSheet);
 
 	// get options
-	auto* p_app = (CdbWaveApp*)AfxGetApp();
+	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto p_option_viewspikes = &(p_app->options_viewspikes);
 
 	// add fields to pivottable
@@ -1049,7 +1050,7 @@ void CChildFrame::OnToolsImportDatabase()
 	dlgFile.GetOFN().lpstrTitle = _T("Select a database to be merged with current database...");
 	if (IDOK == dlgFile.DoModal())
 	{
-		auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+		auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 		p_dbwave_doc->ImportDatabase(fileName);
 		p_dbwave_doc->DBMoveLast();
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
@@ -1064,7 +1065,7 @@ void CChildFrame::OnToolsCopyAllProjectFiles()
 	if (IDOK == dlg.DoModal())
 	{
 		destination_path = dlg.m_csPathname;
-		auto* p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+		auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 		p_dbwave_doc->CopyAllFilesintoDirectory(destination_path);
 	}
 }
@@ -1072,28 +1073,28 @@ void CChildFrame::OnToolsCopyAllProjectFiles()
 void CChildFrame::OnToolsExportdatafile()
 {
 	CExportDataDlg dlg;
-	dlg.m_dbDoc = (CdbWaveDoc*)GetActiveDocument();
+	dlg.m_dbDoc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	dlg.DoModal();
 }
 
 void CChildFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd)
 {
 	CMDIChildWndEx::OnMDIActivate(bActivate, pActivateWnd, pDeactivateWnd);
-	auto p_mainframe = (CMainFrame*)AfxGetMainWnd();
+	auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
 		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_MDIACTIVATE, NULL);
 }
 
 void CChildFrame::OnToolsPathsRelative()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	p_dbwave_doc->SetDB_PathsRelative_to_DataBaseFile();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsPathsAbsolute()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	p_dbwave_doc->SetDB_PathsAbsolute();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
@@ -1105,7 +1106,7 @@ void CChildFrame::OnToolsPath()
 
 void CChildFrame::OnToolsRemoveunused()
 {
-	auto p_dbwave_doc = (CdbWaveDoc*)GetActiveDocument();
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	p_dbwave_doc->DBDeleteUnusedEntries();
 	AfxMessageBox(_T("Accessory tables cleaned of all un-used entries"));
 }

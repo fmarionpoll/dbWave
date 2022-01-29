@@ -13,7 +13,7 @@
 // CDataCommentsDlg dialog
 
 CDataCommentsDlg::CDataCommentsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataCommentsDlg::IDD, pParent), m_pvO(nullptr)
+	: CDialog(IDD, pParent), m_pvO(nullptr)
 {
 	m_bacqchans = FALSE;
 	m_bacqcomments = FALSE;
@@ -49,8 +49,8 @@ BOOL CDataCommentsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_bacqchans = m_pvO->bacqchcomment;		// copy parms into
-	m_bacqchsetting = m_pvO->bacqchsetting;	// dlg parms
+	m_bacqchans = m_pvO->bacqchcomment; // copy parms into
+	m_bacqchsetting = m_pvO->bacqchsetting; // dlg parms
 	m_bacqcomments = m_pvO->bacqcomments;
 	m_bacqdate = m_pvO->bacqdate;
 	m_bacqtime = m_pvO->bacqtime;
@@ -60,7 +60,7 @@ BOOL CDataCommentsDlg::OnInitDialog()
 
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 void CDataCommentsDlg::OnOK()
@@ -83,7 +83,7 @@ void CDataCommentsDlg::OnOK()
 		m_pvO->bfilesize = m_bfilesize;
 		m_pvO->btoExcel = m_btoExcel;
 		m_pvO->bdatabasecols = m_bdatabasecols;
-		m_pvO->b_changed = TRUE;	// save new params in app array
+		m_pvO->b_changed = TRUE; // save new params in app array
 	}
 	CDialog::OnOK();
 }

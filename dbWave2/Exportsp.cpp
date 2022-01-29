@@ -14,7 +14,7 @@
 // CExportSpikeInfosDlg dialog
 
 CExportSpikeInfosDlg::CExportSpikeInfosDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CExportSpikeInfosDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_bacqchsettings = FALSE;
 	m_bacqcomments = FALSE;
@@ -141,16 +141,16 @@ BOOL CExportSpikeInfosDlg::OnInitDialog()
 	DisplayHistParms(disphist);
 	DisplayHistAmplParms(disphistampl);
 
-	((CButton*)GetDlgItem(IDC_RADIO4))->SetCheck(m_pvdS->babsolutetime);
-	((CButton*)GetDlgItem(IDC_RADIO5))->SetCheck(!m_pvdS->babsolutetime);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIO4))->SetCheck(m_pvdS->babsolutetime);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIO5))->SetCheck(!m_pvdS->babsolutetime);
 	GetDlgItem(IDC_EDIT1)->ShowWindow(!m_pvdS->babsolutetime);
 
-	((CButton*)GetDlgItem(IDC_RADIOALLCHANS))->SetCheck(m_pvdS->ballChannels);
-	((CButton*)GetDlgItem(IDC_RADIOCURRCHAN))->SetCheck(!m_pvdS->ballChannels);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCHANS))->SetCheck(m_pvdS->ballChannels);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIOCURRCHAN))->SetCheck(!m_pvdS->ballChannels);
 
 	UpdateData(FALSE);
 	OnClassFilter();
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 void CExportSpikeInfosDlg::OnOK()
@@ -198,8 +198,8 @@ void CExportSpikeInfosDlg::OnOK()
 	m_pvdS->histampl_vmax = m_histampl_vmax;
 	m_pvdS->histampl_vmin = m_histampl_vmin;
 
-	m_pvdS->babsolutetime = ((CButton*)GetDlgItem(IDC_RADIO4))->GetCheck();
-	m_pvdS->ballChannels = ((CButton*)GetDlgItem(IDC_RADIOALLCHANS))->GetCheck();
+	m_pvdS->babsolutetime = static_cast<CButton*>(GetDlgItem(IDC_RADIO4))->GetCheck();
+	m_pvdS->ballChannels = static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCHANS))->GetCheck();
 
 	CDialog::OnOK();
 }

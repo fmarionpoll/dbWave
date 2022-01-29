@@ -8,33 +8,34 @@ public:
 
 	// Attributes
 public:
-	UINT	m_viewON;
-	int		m_previousviewON;
-	int		m_cursorstate;
-	int		m_nStatus;
+	UINT m_viewON;
+	int m_previousviewON;
+	int m_cursorstate;
+	int m_nStatus;
 
 	// Overrides
 public:
-	BOOL	PreCreateWindow(CREATESTRUCT& cs) override;
-	void	ActivateFrame(int n_cmd_show = -1) override;
+	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	void ActivateFrame(int n_cmd_show = -1) override;
 
 	// Implementation
 public:
-	virtual ~CChildFrame();
+	~CChildFrame() override;
 #ifdef _DEBUG
-	void	AssertValid() const override;
-	void	Dump(CDumpContext& dc) const override;
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
 #endif
 protected:
-	BOOL	m_bDeleteFile;
-	BOOL	m_bKeepChoice;
+	BOOL m_bDeleteFile;
+	BOOL m_bKeepChoice;
 
-	void	replaceView(CRuntimeClass* pViewClass, HMENU hmenu);
-	void	OnToolsImportfiles(int ifilter);
-	void	exportASCII(int option);
-	BOOL	exportToExcel();
-	BOOL	exportToExcelAndBuildPivot(int option);
-	void	buildExcelPivot(void* oApp, void* odataSheet, CString csSourceDataAddress, CString csNameSheet, short XlConsolidationFunction, int col2);
+	void replaceView(CRuntimeClass* pViewClass, HMENU hmenu);
+	void OnToolsImportfiles(int ifilter);
+	void exportASCII(int option);
+	BOOL exportToExcel();
+	BOOL exportToExcelAndBuildPivot(int option);
+	void buildExcelPivot(void* oApp, void* odataSheet, CString csSourceDataAddress, CString csNameSheet,
+	                     short XlConsolidationFunction, int col2);
 
 	// Generated message map functions
 protected:
@@ -53,7 +54,7 @@ protected:
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void ReplaceViewIndex(UINT nID);
 	afx_msg void OnUpdateViewmenu(CCmdUI* pCmdUI);
-	
+
 public:
 	afx_msg void OnRecordGotorecord();
 	afx_msg void OnRecordDeletecurrent();

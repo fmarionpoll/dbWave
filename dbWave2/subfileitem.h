@@ -35,12 +35,12 @@
 
 struct SUBF_DESCRIP
 {
-	WORD			wCode;					// Subfile type identifier
-	int				itemnb;					// index current item
-	unsigned char	ucEncoding;				// Encoding mode of the subfile
-	char			szLabel[LABEL_LEN + 1];	// Subfile type label
-	ULONGLONG		ulOffset;				// pointer to the beginning of the subfile (long)
-	ULONGLONG		ulLength;				// length of the subfile
+	WORD wCode; // Subfile type identifier
+	int itemnb; // index current item
+	unsigned char ucEncoding; // Encoding mode of the subfile
+	char szLabel[LABEL_LEN + 1]; // Subfile type label
+	ULONGLONG ulOffset; // pointer to the beginning of the subfile (long)
+	ULONGLONG ulLength; // length of the subfile
 };
 
 class CSubfileItem : public CObject
@@ -54,16 +54,16 @@ protected:
 public:
 	CSubfileItem();
 	CSubfileItem(unsigned char ucCode, char* csLabel, ULONGLONG ulOffset,
-		ULONGLONG ulLength, unsigned char ucEncoding, int itemnb = 0);
-	~CSubfileItem();
+	             ULONGLONG ulLength, unsigned char ucEncoding, int itemnb = 0);
+	~CSubfileItem() override;
 
 	// Helpers
-	WORD			GetCode() const { return m_rec.wCode; }
-	CStringA		GetLabel() const { return m_rec.szLabel; }
-	unsigned char	GetDataEncoding() const { return m_rec.ucEncoding; };
-	int				GetItemnb() const { return m_rec.itemnb; }
-	ULONGLONG		GetDataOffset() const { return m_rec.ulOffset; }
-	ULONGLONG		GetDataLength() const { return m_rec.ulLength; }
+	WORD GetCode() const { return m_rec.wCode; }
+	CStringA GetLabel() const { return m_rec.szLabel; }
+	unsigned char GetDataEncoding() const { return m_rec.ucEncoding; };
+	int GetItemnb() const { return m_rec.itemnb; }
+	ULONGLONG GetDataOffset() const { return m_rec.ulOffset; }
+	ULONGLONG GetDataLength() const { return m_rec.ulLength; }
 
 	void SetCode(unsigned char ucCode) { m_rec.wCode = ucCode; }
 	void SetLabel(char* pszLabel);
@@ -73,6 +73,6 @@ public:
 	void SetDataLength(ULONGLONG ulLength) { m_rec.ulLength = ulLength; }
 
 	// I/O Operations
-	void		Read(CFile* pdatafile);
-	ULONGLONG	Write(CFile* pdatafile);
+	void Read(CFile* pdatafile);
+	ULONGLONG Write(CFile* pdatafile);
 };

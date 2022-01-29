@@ -10,7 +10,7 @@
 #endif
 
 CPrintDataOptionsDlg::CPrintDataOptionsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CPrintDataOptionsDlg::IDD, pParent), m_bPrintSpkBars(0), mdPM(nullptr)
+	: CDialog(IDD, pParent), m_bPrintSpkBars(0), mdPM(nullptr)
 {
 	m_bClipRect = FALSE;
 	m_bFrameRect = FALSE;
@@ -35,7 +35,7 @@ BEGIN_MESSAGE_MAP(CPrintDataOptionsDlg, CDialog)
 END_MESSAGE_MAP()
 
 CPrintDataCommentsDlg::CPrintDataCommentsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CPrintDataCommentsDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_bacqcomment = FALSE;
 	m_bacqdatetime = FALSE;
@@ -91,7 +91,7 @@ BOOL CPrintDataCommentsDlg::OnInitDialog()
 	m_textseparator = mdPM->textseparator;
 
 	UpdateData(FALSE);
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 BOOL CPrintDataOptionsDlg::OnInitDialog()
@@ -106,7 +106,7 @@ BOOL CPrintDataOptionsDlg::OnInitDialog()
 	m_bPrintSpkBars = mdPM->bPrintSpkBars;
 
 	UpdateData(FALSE);
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 void CPrintDataOptionsDlg::OnOK()

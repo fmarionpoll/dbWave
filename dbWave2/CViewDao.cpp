@@ -45,7 +45,7 @@ void CViewDAO::AssertValid() const
 
 CdbWaveDoc* CViewDAO::GetDocument()
 {
-	return (CdbWaveDoc*)m_pDocument;
+	return static_cast<CdbWaveDoc*>(m_pDocument);
 }
 
 #ifndef _WIN32_WCE
@@ -107,12 +107,14 @@ void CViewDAO::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeac
 {
 	if (bActivate)
 	{
-		AfxGetMainWnd()->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
+		AfxGetMainWnd()->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW,
+		                             reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
 	{
 		if (m_autoIncrement)
-			((CdbWaveApp*)AfxGetApp())->options_viewspikes.bincrflagonsave = ((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
+			static_cast<CdbWaveApp*>(AfxGetApp())->options_viewspikes.bincrflagonsave = static_cast<CButton*>(
+				GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -126,7 +128,7 @@ void CViewDAO::OnDestroy()
 
 BOOL CViewDAO::OnPreparePrinting(CPrintInfo* pInfo)
 {
-	if (!CView::DoPreparePrinting(pInfo))
+	if (!DoPreparePrinting(pInfo))
 		return FALSE;
 
 	if (!COleDocObjectItem::OnPreparePrinting(this, pInfo))
@@ -169,10 +171,10 @@ void CViewDAO::saveCurrentSpkFile()
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
 		auto nclasses = 1;
-		const auto  ntotalspikes = (m_pSpkList != nullptr) ? m_pSpkList->GetTotalSpikes(): 0;
+		const auto ntotalspikes = (m_pSpkList != nullptr) ? m_pSpkList->GetTotalSpikes() : 0;
 		if (ntotalspikes > 0)
 		{
-			if (!m_pSpkList->IsClassListValid())		// if class list not valid:
+			if (!m_pSpkList->IsClassListValid()) // if class list not valid:
 				nclasses = m_pSpkList->UpdateClassList();
 			else
 				nclasses = m_pSpkList->GetNbclasses();
@@ -181,7 +183,7 @@ void CViewDAO::saveCurrentSpkFile()
 		p_doc->SetDB_nbspikeclasses(nclasses);
 
 		// change flag is button is checked
-		if (((CButton*)GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
+		if (static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
 		{
 			int flag = p_doc->GetDB_CurrentRecordFlag();
 			flag++;

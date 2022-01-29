@@ -61,13 +61,13 @@ void CViewNoteDoc::Dump(CDumpContext& dc) const
 CNoteDoc* CViewNoteDoc::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CNoteDoc)));
-	return (CNoteDoc*)m_pDocument;
+	return static_cast<CNoteDoc*>(m_pDocument);
 }
 #endif //_DEBUG
 
 void CViewNoteDoc::OnToolsOpendatafiles()
 {
-	CNoteDoc* p_document = (CNoteDoc*)GetDocument();
+	auto p_document = GetDocument();
 	CString csname = p_document->GetPathName();
 	p_document->OpenProjectFiles(csname);
 }

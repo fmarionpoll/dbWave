@@ -8,116 +8,117 @@ class CViewSpikes : public CViewDAO
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikes)
-					CViewSpikes();
-	virtual			~CViewSpikes() override;
+	CViewSpikes();
+	~CViewSpikes() override;
 
-// Form Data
+	// Form Data
 public:
 	enum { IDD = IDD_VIEWSPIKES };
-	float			m_timefirst = 0.f;
-	float			m_timelast = 0.f;
-	int				m_spikeno = -1;
-	int				m_spikenoclass = 0;
-	float			m_zoom = .2f;
-	int				m_sourceclass = 0;
-	int				m_destclass = 1;
-	BOOL			m_bresetzoom = true;
-	BOOL			m_bartefact = false;
-	BOOL			m_bKeepSameClass = false;
-	float			m_jitter_ms = 1.f;
+
+	float m_timefirst = 0.f;
+	float m_timelast = 0.f;
+	int m_spikeno = -1;
+	int m_spikenoclass = 0;
+	float m_zoom = .2f;
+	int m_sourceclass = 0;
+	int m_destclass = 1;
+	BOOL m_bresetzoom = true;
+	BOOL m_bartefact = false;
+	BOOL m_bKeepSameClass = false;
+	float m_jitter_ms = 1.f;
 
 	// Attributes
 protected:
-	CChartDataWnd	m_ChartDataWnd;			// data display
-	CSpikeClassListBox m_spkClassListBox;	// listbox of spike classes
-	int				m_maxclasses = 1;
-	
-	CEditCtrl		mm_spikeno;
-	CEditCtrl		mm_spikenoclass;
-	CEditCtrl		mm_timefirst;			// first abcissa value
-	CEditCtrl		mm_timelast;			// last abcissa value
-	CEditCtrl		mm_zoom;				// zoom factor
-	CEditCtrl		mm_sourceclass;
-	CEditCtrl		mm_destclass;
-	CEditCtrl		mm_jitter_ms;
+	ChartData m_ChartDataWnd; // data display
+	CSpikeClassListBox m_spkClassListBox; // listbox of spike classes
+	int m_maxclasses = 1;
 
-	CScrollBarEx	m_filescroll;			// data position within file
-	SCROLLINFO		m_filescroll_infos{};	// infos for scrollbar
+	CEditCtrl mm_spikeno;
+	CEditCtrl mm_spikenoclass;
+	CEditCtrl mm_timefirst; // first abcissa value
+	CEditCtrl mm_timelast; // last abcissa value
+	CEditCtrl mm_zoom; // zoom factor
+	CEditCtrl mm_sourceclass;
+	CEditCtrl mm_destclass;
+	CEditCtrl mm_jitter_ms;
 
-	int				m_zoominteger = 1;		// zoom length (nb data acq points)
-	HICON			m_hBias = nullptr;
-	HICON			m_hZoom = nullptr;
-	float			m_yscaleFactor = 0.f;	// div factor for y bar
-	int				m_VBarMode = 0;			// flag V scrollbar state
-	CScrollBar 		m_scrolly;				// V scrollbar
+	CScrollBarEx m_filescroll; // data position within file
+	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
 
-	CAcqDataDoc*	m_pDataDoc = nullptr;	// data document pointer
+	int m_zoominteger = 1; // zoom length (nb data acq points)
+	HICON m_hBias = nullptr;
+	HICON m_hZoom = nullptr;
+	float m_yscaleFactor = 0.f; // div factor for y bar
+	int m_VBarMode = 0; // flag V scrollbar state
+	CScrollBar m_scrolly; // V scrollbar
 
-	BOOL			m_bInitSourceView = true;
-	int				m_lFirst = 0;
-	int				m_lLast = -1;
+	AcqDataDoc* m_pDataDoc = nullptr; // data document pointer
 
-	CDWordArray		m_DWintervals;			// intervals to highlight spikes
-	BOOL			m_baddspikemode = false;
+	BOOL m_bInitSourceView = true;
+	int m_lFirst = 0;
+	int m_lLast = -1;
 
-	int				m_yWE = 1;				// offset and gain to display spikes
-	int				m_yWO = 0;
-	int				m_ptVT = -1;
-	CRect			m_rectVTtrack = CRect(0, 0, 0, 0);
-	float			m_jitter = 0.f;
-	BOOL			m_bdummy = TRUE;
+	CDWordArray m_DWintervals; // intervals to highlight spikes
+	BOOL m_baddspikemode = false;
+
+	int m_yWE = 1; // offset and gain to display spikes
+	int m_yWO = 0;
+	int m_ptVT = -1;
+	CRect m_rectVTtrack = CRect(0, 0, 0, 0);
+	float m_jitter = 0.f;
+	BOOL m_bdummy = TRUE;
 
 	// Implementation
 protected:
-	void			updateFileParameters(BOOL bUpdateInterface = TRUE);
-	void			updateLegends(BOOL bUpdateInterface);	
-	void			updateDataFile(BOOL bUpdateInterface);
-	void			updateSpikeFile(BOOL bUpdateInterface);
-	void			updateGainScroll();
-	void			updateBiasScroll();
-	void			adjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
-	void			selectSpike(int spikeno);
-	void			defineSubClassedItems();
-	void			defineStretchParameters();
-	void			zoomOnPresetInterval(int iistart);
-	void			scrollGain(UINT nSBCode, UINT nPos);
-	void			scrollBias(UINT nSBCode, UINT nPos);
-	void			setVBarMode(short bMode);
-	BOOL			addSpiketoList(long iitime, BOOL bcheck_if_otheraround);
-	void			setAddspikesMode(int mousecursorType);
-	void			selectSpkList(int icursel);
-	void			setTrackRectangle();
-	void			scrollFile(UINT nSBCode, UINT nPos);
-	void			updateFileScroll();
-	void			centerDataDisplayOnSpike(int spikeno);
+	void updateFileParameters(BOOL bUpdateInterface = TRUE);
+	void updateLegends(BOOL bUpdateInterface);
+	void updateDataFile(BOOL bUpdateInterface);
+	void updateSpikeFile(BOOL bUpdateInterface);
+	void updateGainScroll();
+	void updateBiasScroll();
+	void adjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
+	void selectSpike(int spikeno);
+	void defineSubClassedItems();
+	void defineStretchParameters();
+	void zoomOnPresetInterval(int iistart);
+	void scrollGain(UINT nSBCode, UINT nPos);
+	void scrollBias(UINT nSBCode, UINT nPos);
+	void setVBarMode(short bMode);
+	BOOL addSpiketoList(long iitime, BOOL bcheck_if_otheraround);
+	void setAddspikesMode(int mousecursorType);
+	void selectSpkList(int icursel);
+	void setTrackRectangle();
+	void scrollFile(UINT nSBCode, UINT nPos);
+	void updateFileScroll();
+	void centerDataDisplayOnSpike(int spikeno);
 
 	// public interface to view
 public:
-	virtual BOOL	OnMove(UINT nIDMoveCommand);
+	BOOL OnMove(UINT nIDMoveCommand) override;
 protected:
-	virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	virtual void	DoDataExchange(CDataExchange* pDX) override;    
-	virtual void	OnInitialUpdate() override;
-	virtual BOOL	OnPreparePrinting(CPrintInfo* pInfo) override;
-	virtual void	OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	virtual void	OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	virtual void	OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	virtual void	OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void DoDataExchange(CDataExchange* pDX) override;
+	void OnInitialUpdate() override;
+	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
+	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
 	// page format printing parameters (pixel unit)
-	OPTIONS_VIEWDATA*	options_viewdata = nullptr;	// view data options
-	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;	// measure options
-	SPKCLASSIF*		m_psC = nullptr;
-	SPKDETECTPARM*	m_pspkDP = nullptr;		// spike detection parameters
+	OPTIONS_VIEWDATA* options_viewdata = nullptr; // view data options
+	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; // measure options
+	SPKCLASSIF* m_psC = nullptr;
+	SPKDETECTPARM* m_pspkDP = nullptr; // spike detection parameters
 
 protected:
-	void			PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
-	CString			PrintConvertFileIndex(long l_first, long l_last);
-	void 			PrintComputePageSize();
-	CString			PrintGetFileInfos();
-	CString			PrintBars(CDC* p_dc, CRect* rect);
-	long 			PrintGetFileSeriesIndexFromPage(int page, int* file);
-	float			PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
+	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
+	CString PrintConvertFileIndex(long l_first, long l_last);
+	void PrintComputePageSize();
+	CString PrintGetFileInfos();
+	CString PrintBars(CDC* p_dc, CRect* rect);
+	long PrintGetFileSeriesIndexFromPage(int page, int* file);
+	float PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 
 protected:
 	// Generated message map functions

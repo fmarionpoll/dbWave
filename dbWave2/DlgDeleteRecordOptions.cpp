@@ -14,9 +14,9 @@
 IMPLEMENT_DYNAMIC(CDeleteRecordOptionsDlg, CDialog)
 
 CDeleteRecordOptionsDlg::CDeleteRecordOptionsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDeleteRecordOptionsDlg::IDD, pParent)
-	, m_bKeepChoice(FALSE)
-	, m_bDeleteFile(FALSE)
+	: CDialog(IDD, pParent)
+	  , m_bKeepChoice(FALSE)
+	  , m_bDeleteFile(FALSE)
 {
 }
 

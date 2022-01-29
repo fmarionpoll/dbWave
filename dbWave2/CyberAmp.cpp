@@ -15,14 +15,14 @@
 
 #define szLEN 100
 
-char	CCyberAmp::m_C300szCommands[];
-char	CCyberAmp::m_C300szRcvText[];
-int     CCyberAmp::m_C300nLastError;
-int     CCyberAmp::m_C300nDevNumber;
-int     CCyberAmp::m_C300nOutputPort;
-int     CCyberAmp::m_C300nOutputSpeed;
-int     CCyberAmp::m_C300nDebugVersion;
-DWORD   CCyberAmp::m_C300fReceiveDelay;
+char CCyberAmp::m_C300szCommands[];
+char CCyberAmp::m_C300szRcvText[];
+int CCyberAmp::m_C300nLastError;
+int CCyberAmp::m_C300nDevNumber;
+int CCyberAmp::m_C300nOutputPort;
+int CCyberAmp::m_C300nOutputSpeed;
+int CCyberAmp::m_C300nDebugVersion;
+DWORD CCyberAmp::m_C300fReceiveDelay;
 
 CCyberAmp::CCyberAmp()
 {
@@ -65,7 +65,7 @@ int CCyberAmp::Initialize()
 
 	m_C300nLastError = ABUS_Initialize();
 
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 int CCyberAmp::C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed)
@@ -73,63 +73,85 @@ int CCyberAmp::C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed)
 	// Clear the last error flag
 	m_C300nLastError = C300_SUCCESS;
 	C300_INT_TranslateABUSCOMSettings(nWhichPort, nWhichSpeed,
-		&m_C300nOutputPort, &m_C300nOutputSpeed);
+	                                  &m_C300nOutputPort, &m_C300nOutputSpeed);
 	m_C300nLastError = ABUS_SetOutput(m_C300nOutputPort, m_C300nOutputSpeed);
 	if (m_C300nLastError)
 		m_C300nLastError = C300_INT_TranslateABUSError(m_C300nLastError);
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 int CCyberAmp::C300_INT_TranslateABUSError(int ABUSError)
 {
 	switch (ABUSError)
 	{
-	case ABUS_SUCCESS:		m_C300nLastError = C300_SUCCESS; break;
-	case ABUS_BADDEVICE:	m_C300nLastError = C300_BADDEVICE; break;
-	case ABUS_BADSERIAL:	m_C300nLastError = C300_BADSERIAL; break;
-	case ABUS_XMITTIMEOUT:	m_C300nLastError = C300_XMITTIMEOUT; break;
-	case ABUS_RCVTIMEOUT:	m_C300nLastError = C300_RCVTIMEOUT; break;
-	case ABUS_RCVBUFOVERFLOW:m_C300nLastError = C300_RCVBUFOVERFLOW; break;
-	case ABUS_RCVOVERRUN:	m_C300nLastError = C300_RCVOVERRUN; break;
-	default:				m_C300nLastError = C300_BADABUSERROR; break;
+	case ABUS_SUCCESS: m_C300nLastError = C300_SUCCESS;
+		break;
+	case ABUS_BADDEVICE: m_C300nLastError = C300_BADDEVICE;
+		break;
+	case ABUS_BADSERIAL: m_C300nLastError = C300_BADSERIAL;
+		break;
+	case ABUS_XMITTIMEOUT: m_C300nLastError = C300_XMITTIMEOUT;
+		break;
+	case ABUS_RCVTIMEOUT: m_C300nLastError = C300_RCVTIMEOUT;
+		break;
+	case ABUS_RCVBUFOVERFLOW: m_C300nLastError = C300_RCVBUFOVERFLOW;
+		break;
+	case ABUS_RCVOVERRUN: m_C300nLastError = C300_RCVOVERRUN;
+		break;
+	default: m_C300nLastError = C300_BADABUSERROR;
+		break;
 	}
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 int CCyberAmp::C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed,
-	int* pnOutputPort, int* pnOutputSpeed)
+                                                 int* pnOutputPort, int* pnOutputSpeed)
 {
 	// Clear the last error flag
 	m_C300nLastError = C300_SUCCESS;
 
 	switch (nWhichPort)
 	{
-	case C300_COM1:	*pnOutputPort = ABUS_COM1; break;
-	case C300_COM2: *pnOutputPort = ABUS_COM2; break;
-	case C300_COM3: *pnOutputPort = ABUS_COM3; break;
-	case C300_COM4: *pnOutputPort = ABUS_COM4; break;
-	default:		*pnOutputPort = ABUS_CLOSED; break;
+	case C300_COM1: *pnOutputPort = ABUS_COM1;
+		break;
+	case C300_COM2: *pnOutputPort = ABUS_COM2;
+		break;
+	case C300_COM3: *pnOutputPort = ABUS_COM3;
+		break;
+	case C300_COM4: *pnOutputPort = ABUS_COM4;
+		break;
+	default: *pnOutputPort = ABUS_CLOSED;
+		break;
 	}
 
 	switch (nWhichSpeed)
 	{
-	case C300_SPEED19200:	*pnOutputSpeed = ABUS_SPEED19200; break;
-	case C300_SPEED9600:	*pnOutputSpeed = ABUS_SPEED9600; break;
-	case C300_SPEED4800:	*pnOutputSpeed = ABUS_SPEED4800; break;
-	case C300_SPEED2400:	*pnOutputSpeed = ABUS_SPEED2400; break;
-	case C300_SPEED1200:	*pnOutputSpeed = ABUS_SPEED1200; break;
-	case C300_SPEED600:		*pnOutputSpeed = ABUS_SPEED600; break;
-	case C300_SPEED300:		*pnOutputSpeed = ABUS_SPEED300; break;
-	case C300_SPEEDDEFAULT:	*pnOutputSpeed = ABUS_SPEEDDEFAULT; break;
-	default:				*pnOutputSpeed = ABUS_SPEEDDEFAULT; break;
+	case C300_SPEED19200: *pnOutputSpeed = ABUS_SPEED19200;
+		break;
+	case C300_SPEED9600: *pnOutputSpeed = ABUS_SPEED9600;
+		break;
+	case C300_SPEED4800: *pnOutputSpeed = ABUS_SPEED4800;
+		break;
+	case C300_SPEED2400: *pnOutputSpeed = ABUS_SPEED2400;
+		break;
+	case C300_SPEED1200: *pnOutputSpeed = ABUS_SPEED1200;
+		break;
+	case C300_SPEED600: *pnOutputSpeed = ABUS_SPEED600;
+		break;
+	case C300_SPEED300: *pnOutputSpeed = ABUS_SPEED300;
+		break;
+	case C300_SPEEDDEFAULT: *pnOutputSpeed = ABUS_SPEEDDEFAULT;
+		break;
+	default: *pnOutputSpeed = ABUS_SPEEDDEFAULT;
+		break;
 	}
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Internal routine to add the necessary command prefix to the   command string
@@ -228,20 +250,22 @@ int CCyberAmp::C300_FlushCommandsAndAwaitResponse()
 				else
 					*m_C300szRcvText = '\0';
 			}
-		} while (strlen(m_C300szCommands) > 0 && m_C300nLastError == C300_SUCCESS);
+		}
+		while (strlen(m_C300szCommands) > 0 && m_C300nLastError == C300_SUCCESS);
 	}
 
 	// Return the most recent error flag
 	if (m_C300nLastError != 0)
 	{
 		CString csError;
-		csError.Format(_T("Error returned by CyberAmp= %i\n when issuing command:\n%s\noutput port: %i\noutput speed: %d\n"),
-			m_C300nLastError, static_cast<LPCTSTR>(CA2T(sz_text)), m_C300nOutputPort, m_C300nOutputSpeed
+		csError.Format(
+			_T("Error returned by CyberAmp= %i\n when issuing command:\n%s\noutput port: %i\noutput speed: %d\n"),
+			m_C300nLastError, CA2T(sz_text), m_C300nOutputPort, m_C300nOutputSpeed
 		);
 		AfxMessageBox(csError, MB_OK);
 	}
 
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Returns the status text for a single channel
@@ -258,7 +282,7 @@ int CCyberAmp::C300_GetChannelStatus(int nChannel, char* lpszStatusText)
 			C300_GetLastReception(lpszStatusText);
 	}
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Set the AXOBUS device number of the CyberAmp
@@ -279,7 +303,7 @@ int CCyberAmp::C300_SetDeviceNumber(int nDevNum)
 		m_C300nDevNumber = nDevNum;
 	}
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //   Set the gain for a given channel
@@ -287,15 +311,15 @@ int CCyberAmp::C300_SetDeviceNumber(int nDevNum)
 int CCyberAmp::SetGain(int nChannel, int nGainValue)
 {
 	char sz_text[szLEN];
-	int  nPreAmp, nGainDivisor;
+	int nPreAmp, nGainDivisor;
 	// Clear the last error flag
 	m_C300nLastError = C300_SUCCESS;
 
 	// Check the channel number for validity
 	if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
-		return(m_C300nLastError = C300_BADCHANNEL);
+		return (m_C300nLastError = C300_BADCHANNEL);
 
-	switch (nGainValue)     // Build the gain command and channel value
+	switch (nGainValue) // Build the gain command and channel value
 	{
 	case 1:
 	case 2:
@@ -333,12 +357,12 @@ int CCyberAmp::SetGain(int nChannel, int nGainValue)
 	if (m_C300nLastError == C300_SUCCESS)
 	{
 		sprintf_s(sz_text, 99, "G%dP%dG%dO%d", nChannel, nPreAmp, nChannel,
-			nGainValue / nGainDivisor);
+		          nGainValue / nGainDivisor);
 		C300_INT_AddCommand(sz_text);
 	}
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //   Set the pre-amp and output gains
@@ -358,7 +382,7 @@ int CCyberAmp::C300_SetAmpGains(int nChannel, int nPreAmpGain, int nOutputGain)
 
 	// Check the channel number for validity
 	if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
-		return(m_C300nLastError = C300_BADCHANNEL);
+		return (m_C300nLastError = C300_BADCHANNEL);
 
 	// Build the pre-amp gain command if the value is to be changed
 	if (nPreAmpGain != C300_NOCHANGE)
@@ -404,12 +428,12 @@ int CCyberAmp::C300_SetAmpGains(int nChannel, int nPreAmpGain, int nOutputGain)
 		C300_INT_AddCommand(sz_text);
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //   Set the input coupling for a given channel
 
-int	CCyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
+int CCyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
 {
 	char sz_text[szLEN];
 
@@ -417,7 +441,7 @@ int	CCyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
 	m_C300nLastError = C300_SUCCESS;
 	// Check the channel number for validity
 	if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
-		return(m_C300nLastError = C300_BADCHANNEL);
+		return (m_C300nLastError = C300_BADCHANNEL);
 
 	// Build the coupling command and the channel number
 	sprintf_s(sz_text, 99, "C%d", nChannel);
@@ -451,7 +475,7 @@ int	CCyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
 		C300_INT_AddCommand(sz_text);
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 int CCyberAmp::SetWaveChanParms(CWaveChan* pchan)
@@ -461,9 +485,10 @@ int CCyberAmp::SetWaveChanParms(CWaveChan* pchan)
 	SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pchan->am_csInputneg);
 	SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
 	SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-	const auto gain = double(pchan->am_gaintotal) / (double(pchan->am_gainheadstage) * double(pchan->am_gainAD));
-	SetGain(pchan->am_amplifierchan, int(gain));
-	SetLPFilter(pchan->am_amplifierchan, int(pchan->am_lowpass));
+	const auto gain = static_cast<double>(pchan->am_gaintotal) / (static_cast<double>(pchan->am_gainheadstage) *
+		static_cast<double>(pchan->am_gainAD));
+	SetGain(pchan->am_amplifierchan, static_cast<int>(gain));
+	SetLPFilter(pchan->am_amplifierchan, static_cast<int>(pchan->am_lowpass));
 	return C300_FlushCommandsAndAwaitResponse();
 }
 
@@ -492,11 +517,11 @@ int CCyberAmp::SetmVOffset(int nChannel, float fOffset)
 
 	// Check the channel number for validity
 	if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
-		return(m_C300nLastError = C300_BADCHANNEL);
+		return (m_C300nLastError = C300_BADCHANNEL);
 
 	// Flush out any pending command string
 	if ((m_C300nLastError = C300_FlushCommandsAndAwaitResponse()) != C300_SUCCESS)
-		return(m_C300nLastError);
+		return (m_C300nLastError);
 
 	// Build the offset command and the channel no.
 	// Check the offset for valid range
@@ -514,7 +539,7 @@ int CCyberAmp::SetmVOffset(int nChannel, float fOffset)
 		m_C300nLastError = C300_BADVALUE;
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //   Set the filter for a given channel
@@ -542,7 +567,7 @@ int CCyberAmp::SetLPFilter(int nChannel, int nFilterValue)
 
 	// Check the channel number for validity
 	if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
-		return(m_C300nLastError = C300_BADCHANNEL);
+		return (m_C300nLastError = C300_BADCHANNEL);
 
 	// Build the filter command and the channel number
 	sprintf_s(sz_text, 99, "F%d", nChannel);
@@ -567,7 +592,7 @@ int CCyberAmp::SetLPFilter(int nChannel, int nFilterValue)
 		m_C300nLastError = C300_BADVALUE;
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Set the notch filter ON or OFF for a given channel
@@ -580,7 +605,7 @@ int CCyberAmp::SetNotchFilter(int nChannel, int nEnabled)
 
 	// Check the channel number for validity
 	if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
-		return(m_C300nLastError = C300_BADCHANNEL);
+		return (m_C300nLastError = C300_BADCHANNEL);
 
 	// Build the notch filter command and the channel number
 	if (nEnabled == C300_DISABLED)
@@ -591,7 +616,7 @@ int CCyberAmp::SetNotchFilter(int nChannel, int nEnabled)
 	C300_INT_AddCommand(sz_text);
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Zero the DC offset for a given channel.  Returns the actual offset (in mV)
@@ -599,10 +624,10 @@ int CCyberAmp::C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned)
 {
 	char* lpsz_offset;
 	char sz_text[szLEN];
-	m_C300nLastError = C300_SUCCESS;  // Clear the last error flag
+	m_C300nLastError = C300_SUCCESS; // Clear the last error flag
 	// Check the channel number for validity
 	if (nChannel < C300_MINCHANNEL || nChannel > C300_MAXCHANNEL)
-		return(m_C300nLastError = C300_BADCHANNEL);
+		return (m_C300nLastError = C300_BADCHANNEL);
 
 	// Flush out any pending command string
 	if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
@@ -628,7 +653,7 @@ int CCyberAmp::C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned)
 					else
 						m_C300nLastError = C300_COULDNOTDO;
 				else
-					*pfOffsetReturned = (float)atof(lpsz_offset + 1) / 1000.0F;
+					*pfOffsetReturned = static_cast<float>(atof(lpsz_offset + 1)) / 1000.0F;
 			}
 			else
 				m_C300nLastError = C300_BADVALUE;
@@ -636,7 +661,7 @@ int CCyberAmp::C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned)
 	}
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Reload the factory defaults  for all settings
@@ -650,7 +675,7 @@ int CCyberAmp::C300_LoadFactoryDefaults(void)
 	C300_INT_AddCommand("L");
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  CyberAmp to save the current state in the EEPROM
@@ -661,7 +686,7 @@ int CCyberAmp::C300_SaveCurrentState(void)
 	C300_INT_AddCommand("W");
 
 	// Return the value returned from C300_FlushCommands()
-	return(C300_FlushCommandsAndAwaitResponse());
+	return (C300_FlushCommandsAndAwaitResponse());
 }
 
 //  Enter or exit the electrode test mode
@@ -678,7 +703,7 @@ int CCyberAmp::C300_ElectrodeTest(int nEnabled)
 		C300_INT_AddCommand("TO+");
 
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Set the receive timeout value
@@ -692,7 +717,7 @@ int CCyberAmp::C300_SetReceiveTimeout(DWORD fTimeoutVal)
 		m_C300fReceiveDelay = DEFAULTRCVDELAY;
 
 	// Return the success state
-	return(m_C300nLastError = C300_SUCCESS);
+	return (m_C300nLastError = C300_SUCCESS);
 }
 
 //  Return the overload status of all channels
@@ -700,7 +725,7 @@ int CCyberAmp::C300_SetReceiveTimeout(DWORD fTimeoutVal)
 int CCyberAmp::C300_GetOverloadStatus(int* lpnChannelMask)
 {
 	char* lpsz_temp;
-	int  n_channel;
+	int n_channel;
 
 	// Clear the last error flag
 	m_C300nLastError = C300_SUCCESS;
@@ -727,7 +752,7 @@ int CCyberAmp::C300_GetOverloadStatus(int* lpnChannelMask)
 		}
 	}
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Return the last error generated by a call to the CyberAmp 300 support module
@@ -735,7 +760,7 @@ int CCyberAmp::C300_GetOverloadStatus(int* lpnChannelMask)
 int CCyberAmp::C300_GetLastError(void)
 {
 	// Return the most recent error flag
-	return(m_C300nLastError);
+	return (m_C300nLastError);
 }
 
 //  Return the raw text from the last communication with theCyberAmp
@@ -759,7 +784,7 @@ int CCyberAmp::C300_GetLastReception(char* lpszResultText)
 
 	const size_t ilen = RCVBUFSIZE;
 	strcpy_s(lpszResultText, ilen, m_C300szRcvText);
-	return(m_C300nLastError = C300_SUCCESS);
+	return (m_C300nLastError = C300_SUCCESS);
 }
 
 //  Return the library version number as a string
@@ -767,7 +792,7 @@ int CCyberAmp::C300_GetLastReception(char* lpszResultText)
 int CCyberAmp::C300_GetLibraryVersion(char* sz_txt)
 {
 	strcpy_s(sz_txt, strlen(sz_txt), VERSIONCYB);
-	return(m_C300nLastError = C300_SUCCESS);
+	return (m_C300nLastError = C300_SUCCESS);
 }
 
 //  Internal routine to concatenate a single char to a string
@@ -786,7 +811,7 @@ int CCyberAmp::C300_FoundListMatch(int nFilterValue, int* lpn_list, const int nL
 	// Test for a match with the 0 offset element of the list;
 	//     the following algorithm will not find this entry
 	if (nFilterValue == *lpn_list)
-		return(0);
+		return (0);
 
 	// Find the smallest multiple of two greater than half the
 	//     number of list items
@@ -816,16 +841,16 @@ int CCyberAmp::C300_FoundListMatch(int nFilterValue, int* lpn_list, const int nL
 	}
 
 	if (nFilterValue == *lpn_list)
-		return(n_offset);
-	return(NOT_FOUND);
+		return (n_offset);
+	return (NOT_FOUND);
 }
 
 // Initialize bus
 
-int	CCyberAmp::ABUS_Initialize()
+int CCyberAmp::ABUS_Initialize()
 {
 	const auto iCOM4 = 4;
-	char sz_status_text[RCVBUFSIZE + 1];//512];
+	char sz_status_text[RCVBUFSIZE + 1]; //512];
 	sz_status_text[0] = '\0';
 	m_C300fReceiveDelay = 2;
 
@@ -836,7 +861,7 @@ int	CCyberAmp::ABUS_Initialize()
 		{
 			// get status of the amplifier
 			if (C300_FlushCommandsAndAwaitResponse() != C300_SUCCESS)
-				return(m_C300nLastError);
+				return (m_C300nLastError);
 
 			// Output the general status command and flush it out
 			C300_INT_AddCommand("S0");
@@ -862,7 +887,7 @@ int	CCyberAmp::ABUS_Initialize()
 						m_C300nLastError = C300_BADDEVICE;
 
 					// Return the most recent error flag
-					return(m_C300nLastError);
+					return (m_C300nLastError);
 				}
 				return C300_SUCCESS;
 			}
@@ -871,7 +896,7 @@ int	CCyberAmp::ABUS_Initialize()
 	return C300_BADDEVICE;
 }
 
-int	CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed)
+int CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed)
 {
 	// close file if already opened
 	if (m_hComm != nullptr)
@@ -886,22 +911,27 @@ int	CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed)
 	CString cs_comchan;
 	switch (m_C300nOutputPort)
 	{
-	case ABUS_COM1:	cs_comchan = "COM1"; break;
-	case ABUS_COM2:	cs_comchan = "COM2"; break;
-	case ABUS_COM3:	cs_comchan = "COM3"; break;
-	case ABUS_COM4:	cs_comchan = "COM4"; break;
-	default: cs_comchan = "COM1"; break;
+	case ABUS_COM1: cs_comchan = "COM1";
+		break;
+	case ABUS_COM2: cs_comchan = "COM2";
+		break;
+	case ABUS_COM3: cs_comchan = "COM3";
+		break;
+	case ABUS_COM4: cs_comchan = "COM4";
+		break;
+	default: cs_comchan = "COM1";
+		break;
 	}
 
 	// ! note: CreateFile fails when the CYBERAMP program is running
 	// probably because the resource cannot be shared
-	m_hComm = CreateFile(cs_comchan,		// file name (com port)
-		GENERIC_READ | GENERIC_WRITE,	// dwDesiredAccess: generic RW
-		0,				// dwShareMode: exclusive access
-		nullptr,			// lpSecurityAttributes: no security attributes
-		OPEN_EXISTING,	// dwCreationDisposition: must exist
-		0,				// dwFlagsAndAttributes: not overlapped I/O
-		nullptr);			// hTemplateFile: handle to file with attrib to copy
+	m_hComm = CreateFile(cs_comchan, // file name (com port)
+	                     GENERIC_READ | GENERIC_WRITE, // dwDesiredAccess: generic RW
+	                     0, // dwShareMode: exclusive access
+	                     nullptr, // lpSecurityAttributes: no security attributes
+	                     OPEN_EXISTING, // dwCreationDisposition: must exist
+	                     0, // dwFlagsAndAttributes: not overlapped I/O
+	                     nullptr); // hTemplateFile: handle to file with attrib to copy
 
 	if (m_hComm == INVALID_HANDLE_VALUE)
 	{
@@ -945,7 +975,7 @@ int CCyberAmp::ABUS_SendString(int nOutputPort, char* lpszCmdString, DWORD fDela
 	}
 
 	DWORD dw_written;
-	OVERLAPPED os_write = { 0 };
+	OVERLAPPED os_write = {0};
 	const int nbytes = strlen(lpszCmdString);
 	m_CommTimeOuts.WriteTotalTimeoutMultiplier = fDelay;
 	m_CommTimeOuts.WriteTotalTimeoutConstant = fDelay;
@@ -974,7 +1004,8 @@ int CCyberAmp::ABUS_ReceiveString(char* lpszCmdString, int nWaitOK, DWORD fDelay
 	SetCommTimeouts(m_hComm, &m_CommTimeOuts);
 	fsuccess = GetCommTimeouts(m_hComm, &m_CommTimeOuts);
 
-	const auto b_success = ReadFile(m_hComm, lpszCmdString, dw_number_of_bytes_to_read, &dw_number_of_bytes_read, nullptr);
+	const auto b_success = ReadFile(m_hComm, lpszCmdString, dw_number_of_bytes_to_read, &dw_number_of_bytes_read,
+	                                nullptr);
 	if (b_success)
 	{
 		const auto pchar = &lpszCmdString[dw_number_of_bytes_read];

@@ -9,9 +9,9 @@ public:
 	enum { IDD = IDD_ABOUTBOXDLG };
 
 protected:
-	void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	BOOL OnInitDialog() override;
 

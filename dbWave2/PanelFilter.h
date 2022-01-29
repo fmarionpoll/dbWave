@@ -3,12 +3,12 @@
 
 class CFilterToolBar : public CMFCToolBar
 {
-	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
+	void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler) override
 	{
-		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*)GetOwner(), bDisableIfNoHndler);
+		CMFCToolBar::OnUpdateCmdUI(static_cast<CFrameWnd*>(GetOwner()), bDisableIfNoHndler);
 	}
 
-	virtual BOOL AllowShowOnList() const { return FALSE; }
+	BOOL AllowShowOnList() const override { return FALSE; }
 };
 
 class CFilterWnd : public CDockablePane
@@ -16,17 +16,17 @@ class CFilterWnd : public CDockablePane
 	// Construction
 public:
 	CFilterWnd();
-	void AdjustLayout();
+	void AdjustLayout() override;
 
 	// Attributes
 protected:
-	CQuadStateTree		m_wndFilterView;
-	CFilterToolBar		m_wndToolBar;
+	CQuadStateTree m_wndFilterView;
+	CFilterToolBar m_wndToolBar;
 
 	CdbWaveDoc* m_pDoc;
 	CdbWaveDoc* m_pDocOld;
-	static int			m_noCol[];			// [26] succession of fields that can be filtered
-	HTREEITEM			m_htreeitem[26];
+	static int m_noCol[]; // [26] succession of fields that can be filtered
+	HTREEITEM m_htreeitem[26];
 
 protected:
 	void InitFilterList();
@@ -41,7 +41,7 @@ protected:
 
 	// Implementation
 public:
-	virtual ~CFilterWnd();
+	~CFilterWnd() override;
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

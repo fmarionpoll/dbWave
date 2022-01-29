@@ -27,7 +27,7 @@ int CPropertiesWnd::m_noCol[] = {
 	CH_PATH2_ID,
 	CH_FILESPK,
 	CH_ACQ_COMMENTS,
-	-1,							// 0-6 acquisition: acq_date, datalen, path_ID, filename, path2_ID, filespk, acq_comment
+	-1, // 0-6 acquisition: acq_date, datalen, path_ID, filename, path2_ID, filespk, acq_comment
 	// ------2
 	CH_IDINSECT,
 	CH_IDSENSILLUM,
@@ -37,24 +37,28 @@ int CPropertiesWnd::m_noCol[] = {
 	CH_STRAIN_ID,
 	CH_SEX_ID,
 	CH_OPERATOR_ID,
-	-1,							// 7-14 experiment: insectID, sensillumID, insectname_ID, sensillumname_ID, location_ID, strain_ID, sex_ID, operator_ID
+	-1,
+	// 7-14 experiment: insectID, sensillumID, insectname_ID, sensillumname_ID, location_ID, strain_ID, sex_ID, operator_ID
 	// ------3
 	CH_EXPT_ID,
-	CH_STIM_ID,	CH_CONC_ID,	CH_REPEAT,
+	CH_STIM_ID, CH_CONC_ID, CH_REPEAT,
 	CH_STIM2_ID, CH_CONC2_ID, CH_REPEAT2,
-	-1,							// 15-21 stimulus: expt_ID, stim_ID, conc_ID, repeat, stim2_ID, conc2_ID, repeat2
+	-1, // 15-21 stimulus: expt_ID, stim_ID, conc_ID, repeat, stim2_ID, conc2_ID, repeat2
 	// ------4
 	CH_NSPIKES,
 	CH_NSPIKECLASSES,
 	CH_FLAG,
 	CH_MORE,
-	-1 };						// 22-25 measures: n spikes, spikeclasses, flag, more
+	-1
+}; // 22-25 measures: n spikes, spikeclasses, flag, more
 
-int CPropertiesWnd::m_propCol[] = { 	// TRUE = allow edit; list all possible columns
-	FALSE,	FALSE,	FALSE,	FALSE,	TRUE,	TRUE,	TRUE,
-	TRUE,	FALSE,	FALSE,	FALSE,	TRUE,	TRUE,	TRUE,	TRUE,
-	TRUE,	TRUE,	TRUE,	TRUE,	TRUE,	TRUE,	TRUE,
-	TRUE,	TRUE,	TRUE,	TRUE,	FALSE,	FALSE,	TRUE };
+int CPropertiesWnd::m_propCol[] = {
+	// TRUE = allow edit; list all possible columns
+	FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE,
+	TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE,
+	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+	TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE
+};
 
 CPropertiesWnd::CPropertiesWnd()
 {
@@ -99,14 +103,14 @@ void CPropertiesWnd::AdjustLayout()
 	const int cy_tlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
 	m_wndToolBar.SetWindowPos(nullptr, rect_client.left,
-		rect_client.top + m_wndEditInfosHeight,
-		rect_client.Width(),
-		cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	                          rect_client.top + m_wndEditInfosHeight,
+	                          rect_client.Width(),
+	                          cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndPropList.SetWindowPos(nullptr, rect_client.left,
-		rect_client.top + m_wndEditInfosHeight + cy_tlb,
-		rect_client.Width(),
-		rect_client.Height() - m_wndEditInfosHeight - cy_tlb,
-		SWP_NOACTIVATE | SWP_NOZORDER);
+	                           rect_client.top + m_wndEditInfosHeight + cy_tlb,
+	                           rect_client.Width(),
+	                           rect_client.Height() - m_wndEditInfosHeight - cy_tlb,
+	                           SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -117,7 +121,7 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	const CRect rect_dummy(0, 0, 24, 24);
 	//const DWORD dw_view_style = WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SORT | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	if (!m_wndPropList.Create(WS_VISIBLE | WS_CHILD, rect_dummy, this, 2))
-		return -1;      // fail to create
+		return -1; // fail to create
 	SetPropListFont();
 	InitPropList();
 
@@ -126,7 +130,9 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.CleanUpLockedImages();
 	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+	m_wndToolBar.SetPaneStyle(
+		m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
+			CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 	m_wndToolBar.SetOwner(this);
 	// All commands will be routed via this control , not via the parent frame:
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
@@ -162,7 +168,7 @@ void CPropertiesWnd::OnUpdateSortProperties(CCmdUI* pCmdUI)
 
 void CPropertiesWnd::UpdatePropList()
 {
-	m_bchangedProperty = FALSE;		// reset flag
+	m_bchangedProperty = FALSE; // reset flag
 
 	// database general section
 	const int ipos = m_pDoc->GetDB_CurrentRecordPosition() + 1;
@@ -251,7 +257,7 @@ void CPropertiesWnd::UpdateTableFromProp()
 {
 	auto p_database = m_pDoc->m_pDB;
 	auto p_maintable_set = &p_database->m_mainTableSet;
-	m_bchangedProperty = FALSE;		// reseet flag
+	m_bchangedProperty = FALSE; // reseet flag
 	p_maintable_set->Edit();
 
 	const auto iprops = m_wndPropList.GetPropertyCount();
@@ -268,7 +274,8 @@ void CPropertiesWnd::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 	auto p_database = m_pDoc->m_pDB;
 	const auto nsubitems = pGroup->GetSubItemsCount();
 
-	for (auto i = 0; i < nsubitems; i++) {
+	for (auto i = 0; i < nsubitems; i++)
+	{
 		auto p_prop = pGroup->GetSubItem(i);
 		if (!p_prop->IsModified())
 			continue;
@@ -300,7 +307,7 @@ void CPropertiesWnd::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 			p_prop->SetOriginalValue(prop_val.lVal);
 			p_prop->SetValue(prop_val.lVal);
 			break;
-			//case FIELD_DATE:
+		//case FIELD_DATE:
 		default:
 			break;
 		}
@@ -340,44 +347,45 @@ void CPropertiesWnd::InitPropList()
 	// ------------------------------------------------------
 	auto p_group0 = new CMFCPropertyGridProperty(_T("Database"));
 	p_group0->SetData(m__i_id);
-	m__i_id++;	// iID = 1000
+	m__i_id++; // iID = 1000
 	const int ipos = p_database->m_mainTableSet.GetAbsolutePosition() + 1;
 	const int irows = p_database->m_mainTableSet.GetNRecords();
 	auto p_prop = new CMFCPropertyGridProperty(_T("current record"), static_cast<_variant_t>(ipos),
-		_T("current record in the database (soft index)"));
+	                                           _T("current record in the database (soft index)"));
 	p_prop->SetData(m__i_id);
-	m__i_id++;		// iID = 1001
+	m__i_id++; // iID = 1001
 	p_group0->AddSubItem(p_prop);
 	p_prop = new CMFCPropertyGridProperty(_T("total records"), static_cast<_variant_t>(irows),
-		_T("number of records in the database"));
+	                                      _T("number of records in the database"));
 	p_prop->SetData(m__i_id);
-	m__i_id++;		// iID = 1002
+	m__i_id++; // iID = 1002
 	p_group0->AddSubItem(p_prop);
 	m_wndPropList.AddProperty(p_group0);
 
 	// ------------------------------------------------------ database content
 	const auto p_group1 = new CMFCPropertyGridProperty(_T("Acquisition"));
 	p_prop->SetData(m__i_id);
-	m__i_id++;		// iID = 1003
+	m__i_id++; // iID = 1003
 	auto icol0 = InitGroupFromTable(p_group1, 0);
 	m_wndPropList.AddProperty(p_group1);
 
 	const auto p_group2 = new CMFCPropertyGridProperty(_T("Experimental conditions"));
 	p_prop->SetData(m__i_id);
-	m__i_id++;		// iID = 1004
+	m__i_id++; // iID = 1004
 	icol0 = InitGroupFromTable(p_group2, icol0);
 	m_wndPropList.AddProperty(p_group2);
 
 	const auto p_group3 = new CMFCPropertyGridProperty(_T("Stimulus"));
 	p_prop->SetData(m__i_id);
-	m__i_id++;		// iID = 1005
+	m__i_id++; // iID = 1005
 	icol0 = InitGroupFromTable(p_group3, icol0);
 	m_wndPropList.AddProperty(p_group3);
 
 	const auto p_group4 = new CMFCPropertyGridProperty(_T("Measures"));
 	p_prop->SetData(m__i_id);
 	//m__i_id++;		// iID = 1005
-	/*icol0 =*/ InitGroupFromTable(p_group4, icol0);
+	/*icol0 =*/
+	InitGroupFromTable(p_group4, icol0);
 	m_wndPropList.AddProperty(p_group4);
 
 	if (p_database && m_pDoc->GetDB_NRecords() > 0)
@@ -395,7 +403,8 @@ void CPropertiesWnd::InitPropList()
 int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
 {
 	auto p_database = m_pDoc->m_pDB;
-	/*int nrecords = */p_database->m_mainTableSet.GetNRecords();
+	/*int nrecords = */
+	p_database->m_mainTableSet.GetNRecords();
 	const int icol1 = sizeof(m_noCol) / sizeof(int);
 	if (icol0 > icol1) icol0 = icol1 - 1;
 	int i;
@@ -416,7 +425,8 @@ int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int ico
 		CString cs_title = CdbWdatabase::m_desctab[idesctab].szDescriptor;
 		//CString cs_title = p_database->m_desctab[idesctab].szDescriptor;
 
-		switch (desc.typeLocal) {
+		switch (desc.typeLocal)
+		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
 			cs_comment = _T("Field indirect text");
@@ -465,7 +475,7 @@ void CPropertiesWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 
 void CPropertiesWnd::SetPropListFont()
 {
-	::DeleteObject(m_fntPropList.Detach());
+	DeleteObject(m_fntPropList.Detach());
 
 	LOGFONT lf;
 	afxGlobalData.fontRegular.GetLogFont(&lf);
@@ -531,22 +541,22 @@ LRESULT CPropertiesWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_MDIACTIVATE:
-	{
-		auto* pmain = (CMDIFrameWndEx*)AfxGetMainWnd();
-		BOOL b_maximized;
-		auto p_child = pmain->MDIGetActive(&b_maximized);
-		if (!p_child) return NULL;
-		const auto p_document = p_child->GetActiveDocument();
-		if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
-			return NULL;
-		m_pDoc = (CdbWaveDoc*)p_document;
-		if (m_pDoc != m_pDocOld)
 		{
-			m_bUpdateCombos = TRUE;
-			InitPropList();
+			auto* pmain = static_cast<CMDIFrameWndEx*>(AfxGetMainWnd());
+			BOOL b_maximized;
+			auto p_child = pmain->MDIGetActive(&b_maximized);
+			if (!p_child) return NULL;
+			const auto p_document = p_child->GetActiveDocument();
+			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+				return NULL;
+			m_pDoc = static_cast<CdbWaveDoc*>(p_document);
+			if (m_pDoc != m_pDocOld)
+			{
+				m_bUpdateCombos = TRUE;
+				InitPropList();
+			}
 		}
-	}
-	break;
+		break;
 
 	default:
 		break;
@@ -566,7 +576,7 @@ void CPropertiesWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		InitPropList();
 		break;
 
-	case HINT_CLOSEFILEMODIFIED:	// save current file parms
+	case HINT_CLOSEFILEMODIFIED: // save current file parms
 		m_pDocOld = nullptr;
 		break;
 

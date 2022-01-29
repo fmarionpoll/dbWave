@@ -1,4 +1,3 @@
-
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "DlgEditSpikeClass.h"
@@ -11,8 +10,8 @@
 IMPLEMENT_DYNAMIC(CDlgEditSpikeClass, CDialog)
 
 CDlgEditSpikeClass::CDlgEditSpikeClass(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgEditSpikeClass::IDD, pParent)
-	, m_iClass(0)
+	: CDialog(IDD, pParent)
+	  , m_iClass(0)
 {
 }
 

@@ -14,8 +14,9 @@ IMPLEMENT_DYNAMIC(CRulerBar, CWnd)
 
 CRulerBar::CRulerBar()
 {
-	m_penColor = ::GetSysColor(COLOR_WINDOWTEXT);
-	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY, VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
+	m_penColor = GetSysColor(COLOR_WINDOWTEXT);
+	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY,
+	                   VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
 	m_bHorizontal = -1;
 	m_pChartDataWnd = nullptr;
 	m_pRuler = nullptr;
@@ -85,7 +86,7 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 
 	// draw solid background
 	dc.IntersectClipRect(m_rcClient);
-	dc.FillSolidRect(m_rcClient, ::GetSysColor(COLOR_3DFACE));
+	dc.FillSolidRect(m_rcClient, GetSysColor(COLOR_3DFACE));
 
 	// draw baseline on the right side
 	if (!m_bHorizontal)
@@ -145,12 +146,11 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 				dc.MoveTo(m_rcClient.right, tick_pos);
 				dc.LineTo(m_rcClient.right - tick_big_height, tick_pos);
 				// text
-				if (dpos != 0. && fabs(dpos) < 1E-10)				// prevents "bad" zero 
+				if (dpos != 0. && fabs(dpos) < 1E-10) // prevents "bad" zero 
 				{
 					dpos = 0;
 					str.Format(_T("%g"), dpos);
 					size = dc.GetTextExtent(str);
-
 				}
 				x = m_rcClient.right - tick_big_height - size.cx - 2;
 				y = tick_pos - (size.cy / 2);
@@ -199,14 +199,15 @@ void CRulerBar::PreSubclassWindow()
 	CWnd::PreSubclassWindow();
 }
 
-BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect,
+                       CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	if ((rect.right - rect.left) < (rect.bottom - rect.top))
 		m_bHorizontal = FALSE;
 	return CWnd::Create(nullptr, _T("RulerBarWnd"), dw_style, rect, pParentWnd, nID);
 }
 
-BOOL CRulerBar::Create(CWnd* pParentWnd, CChartDataWnd* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID)
+BOOL CRulerBar::Create(CWnd* pParentWnd, ChartData* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID)
 {
 	m_pChartDataWnd = pDataChartWnd;
 	CRect rect;
@@ -277,7 +278,8 @@ void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 			CRect prevrect;
 			m_pChartDataWnd->GetClientRect(prevrect);
 			auto newrect = prevrect;
-			if (!m_bHorizontal) {
+			if (!m_bHorizontal)
+			{
 				if (m_bBottom)
 					newrect.bottom -= delta;
 				else
@@ -285,7 +287,8 @@ void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 				m_pChartDataWnd->ZoomData(&prevrect, &newrect);
 				m_pChartDataWnd->Invalidate();
 			}
-			else {
+			else
+			{
 				if (m_bBottom)
 					newrect.left -= delta;
 				else

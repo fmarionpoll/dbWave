@@ -8,7 +8,7 @@
 #include "AcqDataDoc.h"
 #include "Editctrl.h"
 //#include "Cscale.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "ChartData.h"
 #include "ChartSpikeShape.h"
 #include "Editspik.h"
@@ -21,9 +21,9 @@
 // CSpikeEditDlg dialog
 
 CSpikeEditDlg::CSpikeEditDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CSpikeEditDlg::IDD, pParent), m_parent(nullptr), m_xextent(0), m_yextent(0), m_xzero(0), m_yzero(0),
-	m_bchanged(0), m_spkpretrig(0), m_spklen(0), m_viewdatalen(0), m_iitimeold(0), m_iitime(0), m_HScroll_infos(),
-	m_VScroll_infos()
+	: CDialog(IDD, pParent), m_parent(nullptr), m_xextent(0), m_yextent(0), m_xzero(0), m_yzero(0),
+	  m_bchanged(0), m_spkpretrig(0), m_spklen(0), m_viewdatalen(0), m_iitimeold(0), m_iitime(0), m_HScroll_infos(),
+	  m_VScroll_infos()
 {
 	m_spikeclass = 0;
 	m_spikeno = 0;
@@ -65,15 +65,15 @@ END_MESSAGE_MAP()
 // --------------------------------------------------------------------------
 void CSpikeEditDlg::LoadSpikeParms()
 {
-	CSpikeElemt* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms
-	m_spikeclass = p_spike_element->get_class();		// class number
+	CSpikeElemt* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
+	m_spikeclass = p_spike_element->get_class(); // class number
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = p_spike_element->get_time();
 
 	m_SpkChartWnd.SelectSpikeShape(m_spikeno);
 
-	LoadSourceData();						// load data from source file
-	UpdateData(FALSE);						// update screen
+	LoadSourceData(); // load data from source file
+	UpdateData(FALSE); // update screen
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -87,12 +87,12 @@ void CSpikeEditDlg::LoadSpikeParms()
 
 BOOL CSpikeEditDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();			// call base class function
+	CDialog::OnInitDialog(); // call base class function
 	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
 	m_pSpkList = m_pdbWaveDoc->m_pSpk->GetSpkList_Current();
 	if (m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() == 0)
 	{
-		EndDialog(FALSE);			// exit if no spikes to edit
+		EndDialog(FALSE); // exit if no spikes to edit
 		return TRUE;
 	}
 
@@ -109,11 +109,11 @@ BOOL CSpikeEditDlg::OnInitDialog()
 	// attach spike buffer
 	VERIFY(m_SpkChartWnd.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
 	m_SpkChartWnd.SetSourceData(m_pSpkList, m_pdbWaveDoc);
-	if (m_spikeno < 0)						// select at least spike 0
+	if (m_spikeno < 0) // select at least spike 0
 		m_spikeno = 0;
 
-	m_SpkChartWnd.SetRangeMode(RANGE_ALL);		// display mode (lines)
-	m_SpkChartWnd.SetPlotMode(PLOT_BLACK, 0);	// display also artefacts
+	m_SpkChartWnd.SetRangeMode(RANGE_ALL); // display mode (lines)
+	m_SpkChartWnd.SetPlotMode(PLOT_BLACK, 0); // display also artefacts
 
 	if (m_pAcqDatDoc != nullptr)
 	{
@@ -121,7 +121,7 @@ BOOL CSpikeEditDlg::OnInitDialog()
 		m_ChartDataWnd.SetbUseDIB(FALSE);
 		m_ChartDataWnd.AttachDataFile(m_pAcqDatDoc);
 		const auto lvSize = m_ChartDataWnd.GetRectSize();
-		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0);// change nb of pixels
+		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
 		m_ChartDataWnd.RemoveAllChanlistItems();
 		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetextractChan(), m_pSpkList->GetextractTransform());
 
@@ -130,13 +130,13 @@ BOOL CSpikeEditDlg::OnInitDialog()
 			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetextractChan(), MOVAVG30);
 			m_ChartDataWnd.GetChanlistItem(1)->SetColor(6);
 			m_ChartDataWnd.GetChanlistItem(1)->SetPenWidth(1);
-			((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(1);
+			static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
 		}
-		m_DWintervals.SetSize(3 + 2);						// total size
-		m_DWintervals.SetAt(0, 0);						// source channel
-		m_DWintervals.SetAt(1, (DWORD)RGB(255, 0, 0));	// red color
-		m_DWintervals.SetAt(2, 1);						// pen size
-		m_ChartDataWnd.SetHighlightData(&m_DWintervals);// tell sourceview to highlight spk
+		m_DWintervals.SetSize(3 + 2); // total size
+		m_DWintervals.SetAt(0, 0); // source channel
+		m_DWintervals.SetAt(1, RGB(255, 0, 0)); // red color
+		m_DWintervals.SetAt(2, 1); // pen size
+		m_ChartDataWnd.SetHighlightData(&m_DWintervals); // tell sourceview to highlight spk
 
 		// validate associated controls
 		VERIFY(mm_yvextent.SubclassDlgItem(IDC_YEXTENT, this));
@@ -154,9 +154,9 @@ BOOL CSpikeEditDlg::OnInitDialog()
 		GetDlgItem(IDC_BUTTON4)->EnableWindow(FALSE);
 	}
 
-	m_displayratio = 20;						// how much spike versus source data
-	m_spkpretrig = m_pSpkList->GetSpikePretrig();	// load parms used many times
-	m_spklen = m_pSpkList->GetSpikeLength();		// pre-trig and spike length
+	m_displayratio = 20; // how much spike versus source data
+	m_spkpretrig = m_pSpkList->GetSpikePretrig(); // load parms used many times
+	m_spklen = m_pSpkList->GetSpikeLength(); // pre-trig and spike length
 	m_viewdatalen = MulDiv(m_spklen, 100, m_displayratio); // how wide is source window
 	if (m_yextent == 0)
 	{
@@ -166,12 +166,12 @@ BOOL CSpikeEditDlg::OnInitDialog()
 		m_yzero = (max + min) / 2;
 	}
 
-	m_yvextent = m_yextent;						// ordinates extent
+	m_yvextent = m_yextent; // ordinates extent
 
 	// display data and init parameters
-	LoadSpikeParms(); 							// load textual parms and displ source
+	LoadSpikeParms(); // load textual parms and displ source
 	m_iitimeold = m_iitime;
-	m_bchanged = FALSE;							// no modif yet to spikes
+	m_bchanged = FALSE; // no modif yet to spikes
 
 	// adjust scroll bar (size of button and left/right limits)
 #define SCROLLMAX 200
@@ -186,8 +186,8 @@ BOOL CSpikeEditDlg::OnInitDialog()
 	m_VScroll_infos = m_HScroll_infos;
 	m_VScroll.SetScrollInfo(&m_VScroll_infos);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 // --------------------------------------------------------------------------
@@ -198,16 +198,21 @@ BOOL CSpikeEditDlg::OnInitDialog()
 
 void CSpikeEditDlg::OnEnChangeSpikeno()
 {
-	if (mm_spikeno.m_bEntryDone) {
+	if (mm_spikeno.m_bEntryDone)
+	{
 		const auto spikeno = m_spikeno;
 		switch (mm_spikeno.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_spikeno++;	break;
+		case VK_PRIOR: m_spikeno++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_spikeno--;	break;
-		default:;
+		case VK_NEXT: m_spikeno--;
+			break;
+		default: ;
 		}
 
 		// check boundaries
@@ -216,10 +221,10 @@ void CSpikeEditDlg::OnEnChangeSpikeno()
 		if (m_spikeno >= m_pSpkList->GetTotalSpikes())
 			m_spikeno = m_pSpkList->GetTotalSpikes() - 1;
 
-		mm_spikeno.m_bEntryDone = FALSE;	// clear flag
-		mm_spikeno.m_nChar = 0;				// empty buffer
-		mm_spikeno.SetSel(0, -1);			// select all text
-		if (m_spikeno != spikeno)			// change display if necessary
+		mm_spikeno.m_bEntryDone = FALSE; // clear flag
+		mm_spikeno.m_nChar = 0; // empty buffer
+		mm_spikeno.SetSel(0, -1); // select all text
+		if (m_spikeno != spikeno) // change display if necessary
 		{
 			LoadSpikeParms();
 			m_iitimeold = m_iitime;
@@ -237,21 +242,26 @@ void CSpikeEditDlg::OnEnChangeSpikeno()
 
 void CSpikeEditDlg::OnEnChangeSpikeclass()
 {
-	if (mm_spikeclass.m_bEntryDone) {
+	if (mm_spikeclass.m_bEntryDone)
+	{
 		switch (mm_spikeclass.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE); break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_spikeclass++; break;
+		case VK_PRIOR: m_spikeclass++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_spikeclass--; break;
-		default:;
+		case VK_NEXT: m_spikeclass--;
+			break;
+		default: ;
 		}
 
 		m_pSpkList->SetSpikeClass(m_spikeno, m_spikeclass);
-		mm_spikeclass.m_bEntryDone = FALSE;	// clear flag
-		mm_spikeclass.m_nChar = 0;			// empty buffer
-		mm_spikeclass.SetSel(0, -1);		// select all text
+		mm_spikeclass.m_bEntryDone = FALSE; // clear flag
+		mm_spikeclass.m_nChar = 0; // empty buffer
+		mm_spikeclass.SetSel(0, -1); // select all text
 		m_bartefact = (m_spikeclass < 0);
 		UpdateData(FALSE);
 		m_bchanged = TRUE;
@@ -265,10 +275,10 @@ void CSpikeEditDlg::OnEnChangeSpikeclass()
 
 void CSpikeEditDlg::OnArtefact()
 {
-	UpdateData(TRUE);		// load value from control
+	UpdateData(TRUE); // load value from control
 	m_spikeclass = (m_bartefact) ? -1 : 0;
 	m_pSpkList->SetSpikeClass(m_spikeno, m_spikeclass);
-	UpdateData(FALSE);		// update value
+	UpdateData(FALSE); // update value
 	m_bchanged = TRUE;
 }
 
@@ -279,19 +289,24 @@ void CSpikeEditDlg::OnArtefact()
 
 void CSpikeEditDlg::OnEnChangeDisplayratio()
 {
-	if (mm_displayratio.m_bEntryDone) {
+	if (mm_displayratio.m_bEntryDone)
+	{
 		switch (mm_displayratio.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_displayratio++;	break;
+		case VK_PRIOR: m_displayratio++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_displayratio--;	break;
-		default:;
+		case VK_NEXT: m_displayratio--;
+			break;
+		default: ;
 		}
-		mm_displayratio.m_bEntryDone = FALSE;	// clear flag
-		mm_displayratio.m_nChar = 0;			// empty buffer
-		mm_displayratio.SetSel(0, -1);		// select all text
+		mm_displayratio.m_bEntryDone = FALSE; // clear flag
+		mm_displayratio.m_nChar = 0; // empty buffer
+		mm_displayratio.SetSel(0, -1); // select all text
 		if (m_displayratio < 1)
 			m_displayratio = 1;
 		UpdateData(FALSE);
@@ -307,19 +322,24 @@ void CSpikeEditDlg::OnEnChangeDisplayratio()
 
 void CSpikeEditDlg::OnEnChangeYextent()
 {
-	if (mm_yvextent.m_bEntryDone) {
+	if (mm_yvextent.m_bEntryDone)
+	{
 		switch (mm_yvextent.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_yvextent++;	break;
+		case VK_PRIOR: m_yvextent++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_yvextent--;	break;
-		default:;
+		case VK_NEXT: m_yvextent--;
+			break;
+		default: ;
 		}
-		mm_yvextent.m_bEntryDone = FALSE;	// clear flag
-		mm_yvextent.m_nChar = 0;			// empty buffer
-		mm_yvextent.SetSel(0, -1);		// select all text
+		mm_yvextent.m_bEntryDone = FALSE; // clear flag
+		mm_yvextent.m_nChar = 0; // empty buffer
+		mm_yvextent.SetSel(0, -1); // select all text
 		UpdateData(FALSE);
 
 		ASSERT(m_yvextent != 0);
@@ -342,27 +362,27 @@ void CSpikeEditDlg::LoadSourceData()
 	if (m_pAcqDatDoc == nullptr)
 		return;
 
-	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);  // get address of spike parms
-	const auto l_first = p_spike_element->get_time() - m_spkpretrig;	// change selection
-	m_DWintervals.SetAt(3, l_first);						// store interval
-	const auto l_last = l_first + m_spklen;					// end interval
-	m_DWintervals.SetAt(4, l_last);							// store
+	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
+	const auto l_first = p_spike_element->get_time() - m_spkpretrig; // change selection
+	m_DWintervals.SetAt(3, l_first); // store interval
+	const auto l_last = l_first + m_spklen; // end interval
+	m_DWintervals.SetAt(4, l_last); // store
 
 	// compute limits of m_sourceView
 	auto l_v_first = l_first + m_spklen / 2 - m_viewdatalen / 2;
-	if (l_v_first < 0)										// check limits
-		l_v_first = 0;										// clip to start of the file
-	auto l_v_last = l_v_first + m_viewdatalen - 1;			// last pt
-	if (l_v_last > m_ChartDataWnd.GetDocumentLast())		// clip to size of data
+	if (l_v_first < 0) // check limits
+		l_v_first = 0; // clip to start of the file
+	auto l_v_last = l_v_first + m_viewdatalen - 1; // last pt
+	if (l_v_last > m_ChartDataWnd.GetDocumentLast()) // clip to size of data
 	{
 		l_v_last = m_ChartDataWnd.GetDocumentLast();
 		l_v_first = l_v_last - m_viewdatalen + 1;
 	}
 	// get data from doc
 	m_spikeChan = p_spike_element->get_source_channel();
-	
+
 	m_ChartDataWnd.SetChanlistSourceChan(0, m_spikeChan);
-	m_ChartDataWnd.GetDataFromDoc(l_v_first, l_v_last);		// load data from file
+	m_ChartDataWnd.GetDataFromDoc(l_v_first, l_v_last); // load data from file
 
 	// adjust offset (center spike) : use initial offset from spike
 	CChanlistItem* chan0 = m_ChartDataWnd.GetChanlistItem(0);
@@ -383,7 +403,8 @@ void CSpikeEditDlg::LoadSourceData()
 
 void CSpikeEditDlg::LoadSpikeFromData(int shift)
 {
-	if (m_pAcqDatDoc != nullptr) {
+	if (m_pAcqDatDoc != nullptr)
+	{
 		auto offset = m_pSpkList->GetSpikeAmplitudeOffset(m_spikeno);
 		m_iitime += shift;
 		m_pSpkList->SetSpikeTime(m_spikeno, m_iitime);
@@ -396,7 +417,7 @@ void CSpikeEditDlg::LoadSpikeFromData(int shift)
 		const auto method = m_pSpkList->GetextractTransform();
 		if (method == 0)
 		{
-			int nchans;						// get buffer address and structure
+			int nchans; // get buffer address and structure
 			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&nchans);
 			lp_source += ((l_first - m_pAcqDatDoc->GettBUFfirst()) * nchans
 				+ m_spikeChan);
@@ -441,18 +462,24 @@ void CSpikeEditDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT:		shift = -10; break;	// scroll to the start
-	case SB_LINELEFT:	shift = -1; break;	// scroll one line left
-	case SB_LINERIGHT:	shift = +1; break;	// scroll one line right
-	case SB_PAGELEFT:	shift = -10; break;	// scroll one page left
-	case SB_PAGERIGHT:	shift = +10; break;	// scroll one page right
-	case SB_RIGHT:		shift = +10; break;	// scroll to end right
+	case SB_LEFT: shift = -10;
+		break; // scroll to the start
+	case SB_LINELEFT: shift = -1;
+		break; // scroll one line left
+	case SB_LINERIGHT: shift = +1;
+		break; // scroll one line right
+	case SB_PAGELEFT: shift = -10;
+		break; // scroll one page left
+	case SB_PAGERIGHT: shift = +10;
+		break; // scroll one page right
+	case SB_RIGHT: shift = +10;
+		break; // scroll to end right
 
-	case SB_THUMBPOSITION:	// scroll to pos = nPos
-	case SB_THUMBTRACK:		// drag scroll box -- pos = nPos
+	case SB_THUMBPOSITION: // scroll to pos = nPos
+	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		shift = nPos - SCROLLCENTER - (m_iitime - m_iitimeold);
 		break;
-	default:				// NOP: set position only
+	default: // NOP: set position only
 		return;
 	}
 	LoadSpikeFromData(shift);
@@ -481,18 +508,24 @@ void CSpikeEditDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_TOP:		shift = -10; break;	// scroll to the start
-	case SB_LINEUP:		shift = -1; break;	// scroll one line left
-	case SB_LINEDOWN:	shift = +1; break;	// scroll one line right
-	case SB_PAGEUP:		shift = -10; break;	// scroll one page left
-	case SB_PAGEDOWN:	shift = +10; break;	// scroll one page right
-	case SB_BOTTOM:		shift = +10; break;	// scroll to end right
+	case SB_TOP: shift = -10;
+		break; // scroll to the start
+	case SB_LINEUP: shift = -1;
+		break; // scroll one line left
+	case SB_LINEDOWN: shift = +1;
+		break; // scroll one line right
+	case SB_PAGEUP: shift = -10;
+		break; // scroll one page left
+	case SB_PAGEDOWN: shift = +10;
+		break; // scroll one page right
+	case SB_BOTTOM: shift = +10;
+		break; // scroll to end right
 
-	case SB_THUMBPOSITION:	// scroll to pos = nPos
-	case SB_THUMBTRACK:		// drag scroll box -- pos = nPos
+	case SB_THUMBPOSITION: // scroll to pos = nPos
+	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		shift = nPos - SCROLLCENTER - 4096;
 		break;
-	default:				// NOP: set position only
+	default: // NOP: set position only
 		return;
 	}
 

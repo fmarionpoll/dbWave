@@ -1,7 +1,7 @@
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "Chart.h"
+#include "ChartWnd.h"
 #include "ChartData.h"
 #include "Editctrl.h"
 #include "dbWaveDoc.h"
@@ -14,8 +14,8 @@
 
 IMPLEMENT_DYNCREATE(CMeasureHZtagsPage, CPropertyPage)
 
-CMeasureHZtagsPage::CMeasureHZtagsPage() : CPropertyPage(CMeasureHZtagsPage::IDD), m_pMO(nullptr), m_pdbDoc(nullptr),
-m_pdatDoc(nullptr)
+CMeasureHZtagsPage::CMeasureHZtagsPage() : CPropertyPage(IDD), m_pMO(nullptr), m_pdbDoc(nullptr),
+                                           m_pdatDoc(nullptr)
 {
 	m_datachannel = 0;
 	m_index = 0;
@@ -49,7 +49,7 @@ END_MESSAGE_MAP()
 
 BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 {
-	const BOOL flag = (m_nbcursors > 0 && index < m_nbcursors&& index >= 0);
+	const BOOL flag = (m_nbcursors > 0 && index < m_nbcursors && index >= 0);
 	GetDlgItem(IDC_ADJUST)->EnableWindow(flag);
 	GetDlgItem(IDC_CENTER)->EnableWindow(flag);
 	GetDlgItem(IDC_REMOVE)->EnableWindow(flag);
@@ -72,7 +72,7 @@ void CMeasureHZtagsPage::OnCenter()
 	const auto val = (max + min) / 2;
 	m_pChartDataWnd->m_HZtags.SetTagVal(m_index, val);
 	m_pChartDataWnd->Invalidate();
-	m_mvlevel = pchan->ConvertDataBinsToVolts(val)*1000.f;
+	m_mvlevel = pchan->ConvertDataBinsToVolts(val) * 1000.f;
 	UpdateData(FALSE);
 }
 
@@ -92,19 +92,24 @@ void CMeasureHZtagsPage::OnRemove()
 
 void CMeasureHZtagsPage::OnEnChangeDatachannel()
 {
-	if (mm_datachannel.m_bEntryDone) {
+	if (mm_datachannel.m_bEntryDone)
+	{
 		switch (mm_datachannel.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_datachannel++;	break;
+		case VK_PRIOR: m_datachannel++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_datachannel--;	break;
-		default:;
+		case VK_NEXT: m_datachannel--;
+			break;
+		default: ;
 		}
-		mm_datachannel.m_bEntryDone = FALSE;	// clear flag
-		mm_datachannel.m_nChar = 0;			// empty buffer
-		mm_datachannel.SetSel(0, -1);		// select all text
+		mm_datachannel.m_bEntryDone = FALSE; // clear flag
+		mm_datachannel.m_nChar = 0; // empty buffer
+		mm_datachannel.SetSel(0, -1); // select all text
 
 		// update dependent parameters
 		if (m_datachannel < 0)
@@ -122,19 +127,24 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 
 void CMeasureHZtagsPage::OnEnChangeIndex()
 {
-	if (mm_index.m_bEntryDone) {
+	if (mm_index.m_bEntryDone)
+	{
 		switch (mm_index.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_index++;	break;
+		case VK_PRIOR: m_index++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_index--;	break;
-		default:;
+		case VK_NEXT: m_index--;
+			break;
+		default: ;
 		}
-		mm_index.m_bEntryDone = FALSE;	// clear flag
-		mm_index.m_nChar = 0;			// empty buffer
-		mm_index.SetSel(0, -1);		// select all text
+		mm_index.m_bEntryDone = FALSE; // clear flag
+		mm_index.m_nChar = 0; // empty buffer
+		mm_index.SetSel(0, -1); // select all text
 		// update dependent parameters
 		if (m_index >= m_nbcursors)
 			m_index = m_nbcursors - 1;
@@ -147,25 +157,31 @@ void CMeasureHZtagsPage::OnEnChangeIndex()
 
 void CMeasureHZtagsPage::OnEnChangeMvlevel()
 {
-	if (mm_mvlevel.m_bEntryDone) {
+	if (mm_mvlevel.m_bEntryDone)
+	{
 		switch (mm_mvlevel.m_nChar)
-		{				// load data from edit controls
-		case VK_RETURN:	UpdateData(TRUE);	break;
+		{
+		// load data from edit controls
+		case VK_RETURN: UpdateData(TRUE);
+			break;
 		case VK_UP:
-		case VK_PRIOR:	m_mvlevel++;	break;
+		case VK_PRIOR: m_mvlevel++;
+			break;
 		case VK_DOWN:
-		case VK_NEXT:   m_mvlevel--;	break;
-		default:;
+		case VK_NEXT: m_mvlevel--;
+			break;
+		default: ;
 		}
-		mm_mvlevel.m_bEntryDone = FALSE;	// clear flag
-		mm_mvlevel.m_nChar = 0;			// empty buffer
-		mm_mvlevel.SetSel(0, -1);		// select all text
+		mm_mvlevel.m_bEntryDone = FALSE; // clear flag
+		mm_mvlevel.m_nChar = 0; // empty buffer
+		mm_mvlevel.SetSel(0, -1); // select all text
 
 		// update dependent parameters
 		UpdateData(FALSE);
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			const auto val = m_pChartDataWnd->GetChanlistItem(m_datachannel)->ConvertVoltsToDataBins(m_mvlevel / 1000.0f);
+			const auto val = m_pChartDataWnd->GetChanlistItem(m_datachannel)->ConvertVoltsToDataBins(
+				m_mvlevel / 1000.0f);
 			m_pChartDataWnd->m_HZtags.SetTagVal(m_index, val);
 			m_pChartDataWnd->Invalidate();
 		}
@@ -201,7 +217,7 @@ void CMeasureHZtagsPage::OnAdjust()
 	}
 	m_pChartDataWnd->Invalidate();
 	val = m_pChartDataWnd->m_HZtags.GetValue(m_index);
-	m_mvlevel = m_pChartDataWnd->GetChanlistItem(m_datachannel)->ConvertDataBinsToVolts(val)*1000.f;
+	m_mvlevel = m_pChartDataWnd->GetChanlistItem(m_datachannel)->ConvertDataBinsToVolts(val) * 1000.f;
 	UpdateData(FALSE);
 }
 
@@ -212,7 +228,7 @@ void CMeasureHZtagsPage::OnOK()
 	m_pMO->b_changed = TRUE;
 	if (m_pMO->wOption != 1)
 	{
-		m_pChartDataWnd-> m_HZtags.RemoveAllTags();
+		m_pChartDataWnd->m_HZtags.RemoveAllTags();
 		if (m_pMO->wOption == 0)
 			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 	}
@@ -224,7 +240,7 @@ void CMeasureHZtagsPage::OnCancel()
 	// restore initial state of HZcursors
 	if (m_pMO->wOption != 1)
 	{
-		m_pChartDataWnd-> m_HZtags.RemoveAllTags();
+		m_pChartDataWnd->m_HZtags.RemoveAllTags();
 		if (m_pMO->wOption == 0)
 			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
 	}
@@ -250,13 +266,13 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 	VERIFY(mm_mvlevel.SubclassDlgItem(IDC_MVLEVEL, this));
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CMeasureHZtagsPage::OnDeleteAll()
 {
-	m_pChartDataWnd-> m_HZtags.RemoveAllTags();
+	m_pChartDataWnd->m_HZtags.RemoveAllTags();
 	m_pChartDataWnd->Invalidate();
 	m_nbcursors = 0;
 	GetHZcursorVal(0);

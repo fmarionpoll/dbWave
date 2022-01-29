@@ -42,7 +42,9 @@ public:
 
 	// Operations
 public:
-	explicit CCellID(int nRow = -1, int nCol = -1) : row(nRow), col(nCol) {}
+	explicit CCellID(int nRow = -1, int nCol = -1) : row(nRow), col(nCol)
+	{
+	}
 
 	int IsValid() const { return (row >= 0 && col >= 0); }
 	int operator==(const CCellID& rhs) const { return (row == rhs.row && col == rhs.col); }
@@ -52,7 +54,6 @@ public:
 class CCellRange
 {
 public:
-
 	CCellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
 	{
 		m_nMinRow = -1;
@@ -64,13 +65,13 @@ public:
 
 	void Set(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1);
 
-	int  IsValid() const;
-	int  InRange(int row, int col) const;
-	int  InRange(const CCellID& cellID) const;
-	int  Count() { return (m_nMaxRow - m_nMinRow + 1) * (m_nMaxCol - m_nMinCol + 1); }
+	int IsValid() const;
+	int InRange(int row, int col) const;
+	int InRange(const CCellID& cellID) const;
+	int Count() { return (m_nMaxRow - m_nMinRow + 1) * (m_nMaxCol - m_nMinCol + 1); }
 
-	CCellID  GetTopLeft() const;
-	CCellRange  Intersect(const CCellRange& rhs) const;
+	CCellID GetTopLeft() const;
+	CCellRange Intersect(const CCellRange& rhs) const;
 
 	int GetMinRow() const { return m_nMinRow; }
 	void SetMinRow(int minRow) { m_nMinRow = minRow; }
@@ -88,8 +89,8 @@ public:
 	int GetColSpan() const { return m_nMaxCol - m_nMinCol + 1; }
 
 	void operator=(const CCellRange& rhs);
-	int  operator==(const CCellRange& rhs);
-	int  operator!=(const CCellRange& rhs);
+	int operator==(const CCellRange& rhs);
+	int operator!=(const CCellRange& rhs);
 
 protected:
 	int m_nMinRow;
@@ -146,7 +147,7 @@ inline CCellID CCellRange::GetTopLeft() const
 inline CCellRange CCellRange::Intersect(const CCellRange& rhs) const
 {
 	return CCellRange(max(m_nMinRow, rhs.m_nMinRow), max(m_nMinCol, rhs.m_nMinCol),
-		min(m_nMaxRow, rhs.m_nMaxRow), min(m_nMaxCol, rhs.m_nMaxCol));
+	                  min(m_nMaxRow, rhs.m_nMaxRow), min(m_nMaxCol, rhs.m_nMaxCol));
 }
 
 #endif // !defined(AFX_CELLRANGE_H__F86EF761_725A_11D1_ABBA_00A0243D1382__INCLUDED_)

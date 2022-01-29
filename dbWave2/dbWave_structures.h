@@ -1,7 +1,8 @@
 #pragma once
 
 
-struct numberIDToText {
-	int			value;
-	CString		csText;
+struct numberIDToText
+{
+	int value;
+	CString csText;
 };

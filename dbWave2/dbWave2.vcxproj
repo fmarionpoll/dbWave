@@ -778,6 +778,8 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AcqDataDoc.cpp" />
+    <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="DataTranslation_AD.cpp" />
     <ClCompile Include="DataTranslation_DA.cpp" />
     <ClCompile Include="OPTIONS_ACQDATA.cpp" />
@@ -1157,7 +1159,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Chart.cpp">
+    <ClCompile Include="ChartWnd.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1357,7 +1359,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="CDTBoardParameters.h" />
+    <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="DataTranslation_AD.h" />
     <ClInclude Include="DataTranslation_DA.h" />
     <ClInclude Include="OPTIONS_ACQDATA.h" />
@@ -1373,7 +1377,6 @@
     <ClInclude Include="CViewDao.h" />
     <ClInclude Include="dbWave_structures.h" />
     <ClInclude Include="DlgAbout.h" />
-    <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="AcqWaveChan.h" />
     <ClInclude Include="AcqWaveChanArray.h" />
     <ClInclude Include="AcqWaveFormat.h" />
@@ -1498,7 +1501,7 @@
     <ClInclude Include="GridCtrl\GridCellCheck.h" />
     <ClInclude Include="Ruler.h" />
     <ClInclude Include="RulerBar.h" />
-    <ClInclude Include="Chart.h" />
+    <ClInclude Include="ChartWnd.h" />
     <ClInclude Include="DlgChartProps.h" />
     <ClInclude Include="ScrollBarEx.h" />
     <ClInclude Include="ChartSpikeBar.h" />

@@ -15,7 +15,7 @@
 IMPLEMENT_DYNAMIC(CDlgDAOutputParameters, CDialogEx)
 
 CDlgDAOutputParameters::CDlgDAOutputParameters(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CDlgDAOutputParameters::IDD, pParent)
+	: CDialogEx(IDD, pParent)
 {
 }
 

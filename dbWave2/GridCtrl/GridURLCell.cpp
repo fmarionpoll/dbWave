@@ -14,17 +14,17 @@ HCURSOR CGridURLCell::g_hLinkCursor = nullptr;
 
 // Possible prefixes that indicate a hyperlink
 URLStruct CGridURLCell::g_szURIprefixes[] = {
-	{ _T("www."),    _tcslen(_T("www."))    },
-	{ _T("http:"),   _tcslen(_T("http:"))   },
-	{ _T("mailto:"), _tcslen(_T("mailto:")) },
-	{ _T("ftp:"),    _tcslen(_T("ftp:"))    },
-	{ _T("https:"),  _tcslen(_T("https:"))  },
-	{ _T("news:"),   _tcslen(_T("news:"))   },
-	{ _T("gopher:"), _tcslen(_T("gopher:")) },
-	{ _T("telnet:"), _tcslen(_T("telnet:")) },
-	{ _T("url:"),    _tcslen(_T("url:"))    },
-	{ _T("file:"),   _tcslen(_T("file:"))   },
-	{ _T("ftp."),    _tcslen(_T("ftp."))    }
+	{_T("www."), _tcslen(_T("www."))},
+	{_T("http:"), _tcslen(_T("http:"))},
+	{_T("mailto:"), _tcslen(_T("mailto:"))},
+	{_T("ftp:"), _tcslen(_T("ftp:"))},
+	{_T("https:"), _tcslen(_T("https:"))},
+	{_T("news:"), _tcslen(_T("news:"))},
+	{_T("gopher:"), _tcslen(_T("gopher:"))},
+	{_T("telnet:"), _tcslen(_T("telnet:"))},
+	{_T("url:"), _tcslen(_T("url:"))},
+	{_T("file:"), _tcslen(_T("file:"))},
+	{_T("ftp."), _tcslen(_T("ftp."))}
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -86,15 +86,14 @@ BOOL CGridURLCell::OnSetCursor()
 		SetCursor(g_hLinkCursor);
 		return TRUE;
 	}
-	else
 #endif
-		return CGridCell::OnSetCursor();
+	return CGridCell::OnSetCursor();
 }
 
 #ifndef _WIN32_WCE
 HCURSOR CGridURLCell::GetHandCursor()
 {
-	if (g_hLinkCursor == nullptr)		// No cursor handle - load our own
+	if (g_hLinkCursor == nullptr) // No cursor handle - load our own
 	{
 		// Get the windows directory
 		CString strWndDir;
@@ -169,7 +168,7 @@ BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 	strURL = GetText();
 
 	// Use float, otherwise we get an incorrect letter from the point
-	float width = (float)size.cx / (float)strURL.GetLength();
+	float width = static_cast<float>(size.cx) / static_cast<float>(strURL.GetLength());
 
 	// remove left of cell so we have original point again
 	pt.x -= m_Rect.left;
@@ -190,7 +189,7 @@ BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 	}
 
 	// Turn point into a letter
-	int ltrs = (int)((float)pt.x / width);
+	int ltrs = static_cast<int>((float)pt.x / width);
 #if  !defined(_WIN32_WCE) || (_WIN32_WCE > 210)
 	// Find spaces before and after letter, process text between
 	int endSpace = strURL.Find(_T(' '), ltrs);

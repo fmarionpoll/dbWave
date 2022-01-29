@@ -7,15 +7,16 @@ class CTransferFilesDlg : public CDialogEx
 	DECLARE_DYNAMIC(CTransferFilesDlg)
 
 public:
-	CTransferFilesDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CTransferFilesDlg();
+	CTransferFilesDlg(CWnd* pParent = nullptr); // standard constructor
+	~CTransferFilesDlg() override;
 
 	// Dialog Data
 	enum { IDD = IDD_TRANSFERFILES };
+
 	CString m_csPathname;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 public:
 	afx_msg void OnBnClickedButtonpath();

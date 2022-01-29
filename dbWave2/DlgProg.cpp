@@ -42,7 +42,7 @@ void CDlgProgress::ReEnableParent()
 BOOL CDlgProgress::Create(CWnd* pParent)
 {
 	// Get the true parent of the dialog
-	m_pParentWnd = CWnd::GetSafeOwner(pParent);
+	m_pParentWnd = GetSafeOwner(pParent);
 
 	// m_bParentDisabled is used to re-enable the parent window
 	// when the dialog is destroyed. So we don't want to set
@@ -54,7 +54,7 @@ BOOL CDlgProgress::Create(CWnd* pParent)
 		m_bParentDisabled = TRUE;
 	}
 
-	if (!CDialog::Create(CDlgProgress::IDD, pParent))
+	if (!CDialog::Create(IDD, pParent))
 	{
 		ReEnableParent();
 		return FALSE;
@@ -76,7 +76,7 @@ END_MESSAGE_MAP()
 void CDlgProgress::SetStatus(LPCTSTR lpszMessage)
 {
 	ASSERT(m_hWnd); // Don't call this _before_ the dialog has
-					// been created. Can be called from OnInitDialog
+	// been created. Can be called from OnInitDialog
 	auto p_wnd_status = GetDlgItem(CG_IDC_PROGDLG_STATUS);
 
 	// Verify that the static text control exists
@@ -166,10 +166,10 @@ void CDlgProgress::UpdatePercent(int nNewPos)
 	auto p_wnd_percent = GetDlgItem(CG_IDC_PROGDLG_PERCENT);
 
 	const auto n_divisor = m_nUpper - m_nLower;
-	ASSERT(n_divisor > 0);  // m_nLower should be smaller than m_nUpper
+	ASSERT(n_divisor > 0); // m_nLower should be smaller than m_nUpper
 
 	const auto n_dividend = (nNewPos - m_nLower);
-	ASSERT(n_dividend >= 0);   // Current position should be greater than m_nLower
+	ASSERT(n_dividend >= 0); // Current position should be greater than m_nLower
 
 	auto n_percent = n_dividend * 100 / n_divisor;
 

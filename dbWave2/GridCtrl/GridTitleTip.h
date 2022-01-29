@@ -34,7 +34,7 @@ class CTitleTip : public CWnd
 	// Construction
 public:
 	CTitleTip();
-	virtual ~CTitleTip();
+	~CTitleTip() override;
 	virtual BOOL Create(CWnd* pParentWnd);
 
 	// Attributes
@@ -45,27 +45,27 @@ public:
 	// Operations
 public:
 	void Show(CRect rectTitle, LPCTSTR lpszTitleText,
-		int xoffset = 0, LPRECT lpHoverRect = nullptr,
-		const LOGFONT* lpLogFont = nullptr,
-		COLORREF crTextClr = CLR_DEFAULT, COLORREF crBackClr = CLR_DEFAULT);
+	          int xoffset = 0, LPRECT lpHoverRect = nullptr,
+	          const LOGFONT* lpLogFont = nullptr,
+	          COLORREF crTextClr = CLR_DEFAULT, COLORREF crBackClr = CLR_DEFAULT);
 	void Hide();
 
 	// Overrides
-		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CTitleTip)
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CTitleTip)
 public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual BOOL DestroyWindow();
+	BOOL PreTranslateMessage(MSG* pMsg) override;
+	BOOL DestroyWindow() override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CWnd* m_pParentWnd;
-	CRect  m_rectTitle;
-	CRect  m_rectHover;
-	DWORD  m_dwLastLButtonDown;
-	DWORD  m_dwDblClickMsecs;
-	BOOL   m_bCreated;
+	CRect m_rectTitle;
+	CRect m_rectHover;
+	DWORD m_dwLastLButtonDown;
+	DWORD m_dwDblClickMsecs;
+	BOOL m_bCreated;
 
 	// Generated message map functions
 protected:

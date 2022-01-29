@@ -4,7 +4,7 @@
 #include "StdAfx.h"
 
 //#include "resource.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "TemplateWnd.h"
 #include "TemplateListWnd.h"
 
@@ -29,9 +29,10 @@ CTemplateListWnd::~CTemplateListWnd()
 	templatewnd_ptr_array.RemoveAll();
 }
 
-CTemplateListWnd& CTemplateListWnd::operator = (const CTemplateListWnd& arg)
+CTemplateListWnd& CTemplateListWnd::operator =(const CTemplateListWnd& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		DeleteAllTemplates();
 		m_tpl0 = arg.m_tpl0;
 		for (auto i = 0; i < arg.templatewnd_ptr_array.GetSize(); i++)
@@ -52,10 +53,10 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 		const WORD wversion = 1;
 		ar << wversion;
 
-		const auto nstrings = static_cast<int>(0);
+		const auto nstrings = 0;
 		ar << nstrings;
 
-		const auto nints = static_cast<int>(6);
+		const auto nints = 6;
 		ar << nints;
 		ar << m_tpllen;
 		ar << m_tpleft;
@@ -64,14 +65,14 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 		ar << m_yextent;
 		ar << m_yzero;
 
-		const auto nfloats = static_cast<int>(1);
+		const auto nfloats = 1;
 		ar << nfloats;
 		ar << m_ktolerance;
 
-		const auto ndoubles = static_cast<int>(2);
+		const auto ndoubles = 2;
 		ar << ndoubles;
-		ar << m_globalstd;	// 1
-		ar << m_globaldist;	// 2
+		ar << m_globalstd; // 1
+		ar << m_globaldist; // 2
 
 		// serialize templates
 		m_tpl0.Serialize(ar);
@@ -87,7 +88,8 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 	}
 	else
 	{
-		WORD version;  ar >> version;
+		WORD version;
+		ar >> version;
 
 		int nstrings;
 		ar >> nstrings;
@@ -107,8 +109,8 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 
 		int ndoubles;
 		ar >> ndoubles;
-		ar >> m_globalstd;	// 1
-		ar >> m_globaldist;	// 2
+		ar >> m_globalstd; // 1
+		ar >> m_globaldist; // 2
 
 		// serialize templates
 		m_tpl0.Serialize(ar);
@@ -129,7 +131,7 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 int CTemplateListWnd::InsertTemplate(int i, int classID)
 {
 	// create window control
-	const CRect rect_spikes(0, 0, m_tpllen, 64);		// dummy position
+	const CRect rect_spikes(0, 0, m_tpllen, 64); // dummy position
 	auto p_wnd = new (CTemplateWnd);
 	ASSERT(p_wnd != NULL);
 	p_wnd->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i);
@@ -150,7 +152,7 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 	templatewnd_ptr_array.InsertAt(index, p_wnd, 1);
 
 	// insert item if window was created
-	if (::IsWindow(m_hWnd))
+	if (IsWindow(m_hWnd))
 	{
 		LV_ITEM item;
 		item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
@@ -159,7 +161,8 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 		item.iImage = I_IMAGECALLBACK;
 		item.pszText = nullptr;
 		item.lParam = reinterpret_cast<LPARAM>(p_wnd);
-		/*int index1 = */InsertItem(&item);
+		/*int index1 = */
+		InsertItem(&item);
 	}
 
 	// return -1 if something is wrong
@@ -185,7 +188,7 @@ void CTemplateListWnd::TransferTemplateData()
 int CTemplateListWnd::InsertTemplateData(int i, int classID)
 {
 	// create window control
-	const CRect rect_spikes(1000, 0, m_tpllen, 64 + 1000);		// dummy position
+	const CRect rect_spikes(1000, 0, m_tpllen, 64 + 1000); // dummy position
 	auto p_wnd = new (CTemplateWnd);
 	ASSERT(p_wnd != NULL);
 	p_wnd->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i);
@@ -222,7 +225,7 @@ void CTemplateListWnd::DeleteAllTemplates()
 	m_tpl0.tInit();
 	if (templatewnd_ptr_array.GetSize() > 0)
 	{
-		if (::IsWindow(m_hWnd))
+		if (IsWindow(m_hWnd))
 			DeleteAllItems();
 		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
 		{
@@ -371,7 +374,7 @@ void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClass
 BOOL CTemplateListWnd::DeleteItem(int idelete)
 {
 	// search corresponding window
-	if (::IsWindow(m_hWnd))
+	if (IsWindow(m_hWnd))
 	{
 		CListCtrl::DeleteItem(idelete);
 	}
@@ -462,7 +465,7 @@ void CTemplateListWnd::UpdateTemplateLegends(LPCSTR pszType)
 		ptplWnd->m_csID = pszType;
 
 		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(ptplWnd->m_csID), ptplWnd->m_classID,
-			ptplWnd->GetNitems());
+		         ptplWnd->GetNitems());
 		SetItemText(i, 0, sz_item);
 	}
 }
@@ -488,7 +491,7 @@ void CTemplateListWnd::UpdateTemplateBaseClassID(int inewlowestclassID)
 		const auto ptpl2_wnd = GetTemplateWnd(i);
 		ptpl2_wnd->m_classID = ptpl2_wnd->m_classID - delta;
 		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(ptpl2_wnd->m_csID), ptpl2_wnd->m_classID,
-			ptpl2_wnd->GetNitems());
+		         ptpl2_wnd->GetNitems());
 		SetItemText(i, 0, sz_item);
 	}
 }
@@ -586,7 +589,8 @@ void CTemplateListWnd::SetHitRate_Tolerance(int* phitrate, float* ptolerance)
 	if (m_ktolerance != *ptolerance)
 	{
 		m_ktolerance = *ptolerance;
-		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++) {
+		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+		{
 			CTemplateWnd* ptemplate = GetTemplateWnd(i);
 			ptemplate->SetkTolerance(&m_ktolerance);
 		}
@@ -598,7 +602,8 @@ void CTemplateListWnd::SetYWExtOrg(int extent, int zero)
 {
 	m_yextent = extent;
 	m_yzero = zero;
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++) {
+	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	{
 		CTemplateWnd* ptemplate = GetTemplateWnd(i);
 		ptemplate->SetYWExtOrg(extent, zero);
 	}
@@ -606,7 +611,7 @@ void CTemplateListWnd::SetYWExtOrg(int extent, int zero)
 
 void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	CPoint	pt_item, pt_image;
+	CPoint pt_item, pt_image;
 	auto* pnm_list_view = reinterpret_cast<NM_LISTVIEW*>(pNMHDR);
 
 	ASSERT(!m_bDragging);
@@ -614,7 +619,7 @@ void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
 	m_iItemDrag = pnm_list_view->iItem;
 
 	CPoint ptAction = pnm_list_view->ptAction;
-	GetItemPosition(m_iItemDrag, &pt_item);  // ptItem is relative to (0,0) and not the view origin
+	GetItemPosition(m_iItemDrag, &pt_item); // ptItem is relative to (0,0) and not the view origin
 	GetOrigin(&m_ptOrigin);
 
 	// Update image list to make sure all images are loaded
@@ -638,14 +643,14 @@ void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
 	ASSERT(m_pimageListDrag == NULL);
 	m_pimageListDrag = CreateDragImage(m_iItemDrag, &pt_image);
 
-	m_sizeDelta = ptAction - pt_image;   // difference between cursor pos and image pos
-	m_ptHotSpot = ptAction - pt_item + m_ptOrigin;  // calculate hotspot for the cursor
-	CImageList::DragShowNolock(TRUE);  // lock updates and show drag image
-	m_pimageListDrag->SetDragCursorImage(0, m_ptHotSpot);  // define the hot spot for the new cursor image
+	m_sizeDelta = ptAction - pt_image; // difference between cursor pos and image pos
+	m_ptHotSpot = ptAction - pt_item + m_ptOrigin; // calculate hotspot for the cursor
+	CImageList::DragShowNolock(TRUE); // lock updates and show drag image
+	m_pimageListDrag->SetDragCursorImage(0, m_ptHotSpot); // define the hot spot for the new cursor image
 	m_pimageListDrag->BeginDrag(0, CPoint(0, 0));
 	ptAction -= m_sizeDelta;
 	CImageList::DragEnter(this, ptAction);
-	CImageList::DragMove(ptAction);  // move image to overlap original icon
+	CImageList::DragMove(ptAction); // move image to overlap original icon
 
 	//m_pimageListDrag->DragShowNolock(TRUE);  // lock updates and show drag image
 	//m_pimageListDrag->SetDragCursorImage(0, m_ptHotSpot);  // define the hot spot for the new cursor image
@@ -659,15 +664,15 @@ void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
-	int			i_item;
-	LV_ITEM		lvitem;
+	int i_item;
+	LV_ITEM lvitem;
 
 	auto l_style = GetWindowLong(m_hWnd, GWL_STYLE);
-	l_style &= LVS_TYPEMASK;  // drag will do different things in list and report mode
+	l_style &= LVS_TYPEMASK; // drag will do different things in list and report mode
 	if (m_bDragging)
 	{
 		ASSERT(m_pimageListDrag != NULL);
-		CImageList::DragMove(point - m_sizeDelta);  // move the image
+		CImageList::DragMove(point - m_sizeDelta); // move the image
 		//m_pimageListDrag->DragMove(point - m_sizeDelta);  // move the image
 
 		if ((i_item = HitTest(point)) != -1)
@@ -680,11 +685,11 @@ void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
 				lvitem.iItem = i_item;
 				lvitem.iSubItem = 0;
 				lvitem.mask = LVIF_STATE;
-				lvitem.stateMask = LVIS_DROPHILITED;  // highlight the drop target
+				lvitem.stateMask = LVIS_DROPHILITED; // highlight the drop target
 				SetItem(&lvitem);
 			}
 			point -= m_sizeDelta;
-			CImageList::DragEnter(this, point);  // lock updates and show drag image
+			CImageList::DragEnter(this, point); // lock updates and show drag image
 			//m_pimageListDrag->DragEnter(this, point);  // lock updates and show drag image
 		}
 	}
@@ -693,9 +698,9 @@ void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 void CTemplateListWnd::OnButtonUp(CPoint point)
 {
-	if (m_bDragging)  // end of the drag operation
+	if (m_bDragging) // end of the drag operation
 	{
-		CString		cstr;
+		CString cstr;
 
 		const auto l_style = GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK;
 		m_bDragging = FALSE;
@@ -723,7 +728,7 @@ void CTemplateListWnd::OnButtonUp(CPoint point)
 			point += m_ptOrigin;
 			SetItemPosition(m_iItemDrag, point);
 		}
-		::ReleaseCapture();
+		ReleaseCapture();
 	}
 }
 

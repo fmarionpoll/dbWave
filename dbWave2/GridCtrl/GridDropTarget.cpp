@@ -100,20 +100,17 @@ DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint /
 	{
 		if (dwKeyState & MK_CONTROL)
 			return DROPEFFECT_COPY;
-		else
-			return DROPEFFECT_MOVE;
+		return DROPEFFECT_MOVE;
 	}
-	else
-		return DROPEFFECT_NONE;
+	return DROPEFFECT_NONE;
 }
 
 DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject,
-	DWORD dwKeyState, CPoint point)
+                                        DWORD dwKeyState, CPoint point)
 {
 	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
 		return m_pGridCtrl->OnDragEnter(pDataObject, dwKeyState, point);
-	else
-		return DROPEFFECT_NONE;
+	return DROPEFFECT_NONE;
 }
 
 void CGridDropTarget::OnDragLeave(CWnd* p_wnd)
@@ -123,21 +120,19 @@ void CGridDropTarget::OnDragLeave(CWnd* p_wnd)
 }
 
 DROPEFFECT CGridDropTarget::OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject,
-	DWORD dwKeyState, CPoint point)
+                                       DWORD dwKeyState, CPoint point)
 {
 	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
 		return m_pGridCtrl->OnDragOver(pDataObject, dwKeyState, point);
-	else
-		return DROPEFFECT_NONE;
+	return DROPEFFECT_NONE;
 }
 
 BOOL CGridDropTarget::OnDrop(CWnd* p_wnd, COleDataObject* pDataObject,
-	DROPEFFECT dropEffect, CPoint point)
+                             DROPEFFECT dropEffect, CPoint point)
 {
 	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
 		return m_pGridCtrl->OnDrop(pDataObject, dropEffect, point);
-	else
-		return FALSE;
+	return FALSE;
 }
 
 #endif // GRIDCONTROL_NO_DRAGDROP

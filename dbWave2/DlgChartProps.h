@@ -5,34 +5,34 @@ class CDlgChartProps : public CDialog
 {
 	// Construction
 public:
-	CDlgChartProps(CWnd* pParent = nullptr);   // standard constructor
+	CDlgChartProps(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_SCOPEPROPERTIES };
-	int		m_xyticks;
-	int		m_xytickline;
-	int		m_xcells;
-	int		m_ycells;
 
-	CChartWnd* m_pscope;
-	COLORREF	m_crScopeFill;
-	COLORREF	m_crScopeGrid;
+	int m_xyticks;
+	int m_xytickline;
+	int m_xcells;
+	int m_ycells;
 
-	CEditCtrl	mm_xcells;
-	CEditCtrl	mm_ycells;
-	CEditCtrl	mm_xyticks;
-	CEditCtrl	mm_xytickline;
+	ChartWnd* m_pscope;
+	COLORREF m_crScopeFill;
+	COLORREF m_crScopeGrid;
+
+	CEditCtrl mm_xcells;
+	CEditCtrl mm_ycells;
+	CEditCtrl mm_xyticks;
+	CEditCtrl mm_xytickline;
 
 	// Overrides
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnEnChangeXCells();
 	afx_msg void OnEnChangeXYTicks();
 	afx_msg void OnEnChangeXYTicksLine();

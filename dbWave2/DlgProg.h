@@ -5,8 +5,8 @@ class CDlgProgress : public CDialog
 {
 	// Construction / Destruction
 public:
-	CDlgProgress(UINT nCaptionID = 0);   // standard constructor
-	~CDlgProgress();
+	CDlgProgress(UINT nCaptionID = 0); // standard constructor
+	~CDlgProgress() override;
 
 	BOOL Create(CWnd* pParent = nullptr);
 
@@ -15,22 +15,23 @@ public:
 	// Progress Dialog manipulation
 	void SetStatus(LPCTSTR lpszMessage);
 	void SetRange(int nLower, int nUpper);
-	int  SetStep(int nStep);
-	int  SetPos(int nPos);
-	int  OffsetPos(int nPos);
-	int  StepIt();
+	int SetStep(int nStep);
+	int SetPos(int nPos);
+	int OffsetPos(int nPos);
+	int StepIt();
 
 	// Dialog Data
 	enum { IDD = IDD_PROGRESS };
-	CProgressCtrl	m_Progress;
+
+	CProgressCtrl m_Progress;
 
 	// Overrides
 public:
-	virtual BOOL DestroyWindow();
+	BOOL DestroyWindow() override;
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	UINT m_nCaptionID;
 	int m_nLower;
@@ -42,13 +43,16 @@ protected:
 
 	void ReEnableParent();
 
-	virtual void OnCancel();
-	virtual void OnOK() {};
+	void OnCancel() override;
+
+	void OnOK() override
+	{
+	};
 	void UpdatePercent(int nCurrent);
 	void PumpMessages();
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 	DECLARE_MESSAGE_MAP()
 };

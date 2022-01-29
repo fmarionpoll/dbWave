@@ -1,5 +1,3 @@
-
-
 #include "StdAfx.h"
 #include "AcqWaveChan.h"
 
@@ -47,9 +45,10 @@ CWaveChan::CWaveChan(CWaveChan& arg)
 CWaveChan::~CWaveChan()
 = default;
 
-CWaveChan& CWaveChan::operator = (const CWaveChan & arg)
+CWaveChan& CWaveChan::operator =(const CWaveChan& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		am_csComment = arg.am_csComment;
 		am_adchannel = arg.am_adchannel;
 		am_gainAD = arg.am_gainAD;
@@ -73,22 +72,22 @@ CWaveChan& CWaveChan::operator = (const CWaveChan & arg)
 	return *this;
 }
 
-void CWaveChan::Serialize(CArchive & ar)
+void CWaveChan::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
 		const auto dummy = am_csversion + am_csComment;
 		ar << dummy;
 		const auto x_gain = 0.0f;
-		ar << x_gain;		// dummy
+		ar << x_gain; // dummy
 		ar << static_cast<WORD>(am_adchannel) << static_cast<WORD>(am_gainAD);
 		ar << am_csheadstage;
 		ar << static_cast<WORD>(am_gainheadstage);
 		ar << am_csamplifier << static_cast<WORD>(am_amplifierchan);
 		ar << static_cast<WORD>(am_gainpre) << static_cast<WORD>(am_gainpost);
 		ar << static_cast<WORD>(am_notchfilt) << static_cast<WORD>(am_lowpass);
-		am_inputpos = 0;	// dummy value (version april 2004 to add csInput)
-		am_inputneg = 0;	// dummy value (version april 2004 to add csInput)
+		am_inputpos = 0; // dummy value (version april 2004 to add csInput)
+		am_inputneg = 0; // dummy value (version april 2004 to add csInput)
 		ar << am_inputpos << am_inputneg;
 		ar << am_offset;
 		ar << am_csInputpos;
@@ -104,12 +103,17 @@ void CWaveChan::Serialize(CArchive & ar)
 		WORD w1, w2, w3, w4;
 		ar >> am_csComment;
 		float gain;
-		ar >> gain;				// dummy
-		ar >> w1 >> w2; am_adchannel = static_cast<short>(w1); am_gainAD = static_cast<short>(w2);
+		ar >> gain; // dummy
+		ar >> w1 >> w2;
+		am_adchannel = static_cast<short>(w1);
+		am_gainAD = static_cast<short>(w2);
 		ar >> am_csheadstage;
-		ar >> w1; am_gainheadstage = w1;
+		ar >> w1;
+		am_gainheadstage = w1;
 		ar >> am_csamplifier >> w1 >> w2 >> w3;
-		am_amplifierchan = static_cast<short>(w1); am_gainpre = static_cast<short>(w2); am_gainpost = static_cast<short>(w3);
+		am_amplifierchan = static_cast<short>(w1);
+		am_gainpre = static_cast<short>(w2);
+		am_gainpost = static_cast<short>(w3);
 		ar >> w1 >> w2 >> w3 >> w4;
 		am_notchfilt = static_cast<short>(w1);
 		am_lowpass = static_cast<short>(w2);
@@ -145,7 +149,7 @@ void CWaveChan::Serialize(CArchive & ar)
 
 // Write CWaveChan in a binary file
 
-long CWaveChan::Write(CFile * datafile)
+long CWaveChan::Write(CFile* datafile)
 {
 	const auto p1 = datafile->GetPosition();
 	CArchive ar(datafile, CArchive::store);
@@ -156,7 +160,7 @@ long CWaveChan::Write(CFile * datafile)
 }
 
 // Read CWaveChan from a binary file
-BOOL CWaveChan::Read(CFile * datafile)
+BOOL CWaveChan::Read(CFile* datafile)
 {
 	CArchive ar(datafile, CArchive::load);
 	auto flag = TRUE;
@@ -191,4 +195,3 @@ CString CWaveChan::GetCyberAmpInput(const int value)
 	}
 	return cs_out;
 }
-

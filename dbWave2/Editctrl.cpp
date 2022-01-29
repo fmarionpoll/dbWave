@@ -76,6 +76,7 @@ void CEditCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	else
 		CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
+
 //--------------------------------------------------------------------------
 void CEditCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
@@ -95,19 +96,19 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 {
 	switch (nChar)
 	{
-	case VK_TAB:					// change selection with TAB
-	{
-		const auto b_next = (GetKeyState(VK_SHIFT) & 0x8000);
-		const auto h_next = ::GetNextDlgGroupItem(::GetParent(m_hWnd), m_hWnd, b_next);
-		::SetFocus(h_next);			// select next dlg item
-	}
-	break;
+	case VK_TAB: // change selection with TAB
+		{
+			const auto b_next = (GetKeyState(VK_SHIFT) & 0x8000);
+			const auto h_next = ::GetNextDlgGroupItem(::GetParent(m_hWnd), m_hWnd, b_next);
+			::SetFocus(h_next); // select next dlg item
+		}
+		break;
 
-	case VK_RETURN:		// post message to parent
-	case VK_UP:			// arrow up
-	case VK_DOWN:		// arrow down
-	case VK_PRIOR:		// page up
-	case VK_NEXT:		// page down
+	case VK_RETURN: // post message to parent
+	case VK_UP: // arrow up
+	case VK_DOWN: // arrow down
+	case VK_PRIOR: // page up
+	case VK_NEXT: // page down
 		m_bEntryDone = TRUE;
 		m_nChar = nChar;
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
@@ -119,6 +120,7 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 
 	return TRUE;
 }
+
 //--------------------------------------------------------------------------
 // OnSetFocus()
 // quand le control est en mode "caret" (barre vertic clignotante)

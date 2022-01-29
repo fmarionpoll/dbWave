@@ -29,27 +29,27 @@ class CInPlaceEdit : public CEdit
 	// Construction
 public:
 	CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
-		int nRow, int nColumn, CString sInitText, UINT nFirstChar);
+	             int nRow, int nColumn, CString sInitText, UINT nFirstChar);
 private:
-	int     m_nRow;
-	int     m_nColumn;
+	int m_nRow;
+	int m_nColumn;
 	CString m_sInitText;
-	UINT    m_nLastChar;
-	BOOL    m_bExitOnArrows;
-	CRect   m_Rect;
+	UINT m_nLastChar;
+	BOOL m_bExitOnArrows;
+	CRect m_Rect;
 
 public:
 	void EndEdit();
 
 	// Overrides
 public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	BOOL PreTranslateMessage(MSG* pMsg) override;
 protected:
-	virtual void PostNcDestroy();
+	void PostNcDestroy() override;
 
 	// Implementation
 public:
-	virtual ~CInPlaceEdit();
+	~CInPlaceEdit() override;
 
 	// Generated message map functions
 protected:
@@ -58,6 +58,4 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg UINT OnGetDlgCode();
 	DECLARE_MESSAGE_MAP()
-
-
 };

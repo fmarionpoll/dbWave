@@ -14,7 +14,7 @@
 IMPLEMENT_DYNAMIC(CDlgEditStimArray, CDialog)
 
 CDlgEditStimArray::CDlgEditStimArray(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgEditStimArray::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 }
 
@@ -52,7 +52,7 @@ BOOL CDlgEditStimArray::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// init dialog size
-	m_stretch.AttachDialogParent(this);	// attach dialog pointer
+	m_stretch.AttachDialogParent(this); // attach dialog pointer
 	m_stretch.newProp(IDC_LISTSTIM, XLEQ_XREQ, YTEQ_YBEQ);
 
 	m_stretch.newProp(IDOK, SZEQ_XREQ, SZEQ_YTEQ);
@@ -79,9 +79,9 @@ BOOL CDlgEditStimArray::OnInitDialog()
 	m_pimagelist->Create(16, 16, ILC_COLOR, 2, 2);
 	CBitmap bm1, bm2;
 	bm1.LoadBitmap(IDB_STIMON);
-	m_pimagelist->Add(&bm1, static_cast<CBitmap*>(nullptr));
+	m_pimagelist->Add(&bm1, nullptr);
 	bm2.LoadBitmap(IDB_STIMOFF);
-	m_pimagelist->Add(&bm2, static_cast<CBitmap*>(nullptr));
+	m_pimagelist->Add(&bm2, nullptr);
 
 	// add 2 columns (icon & time)
 	LVCOLUMN lvcol;
@@ -246,7 +246,7 @@ void CDlgEditStimArray::OnBnClickedReOrder()
 	}
 
 	// Use the LV_ITEM structure to insert the items
-	
+
 	CString cs;
 	ASSERT(nitems == m_stimarrayCtrl.GetItemCount());
 	for (auto i = 0; i < nitems; i++)
@@ -302,11 +302,11 @@ void CDlgEditStimArray::OnBnClickedExport()
 		cs_buffer += cs + _T("\n");
 	}
 
-	auto* p_app = (CdbWaveApp*)AfxGetApp();
+	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	CMultiDocTemplate* pTempl = p_app->m_pNoteViewTemplate;
 	const auto p_document = pTempl->OpenDocumentFile(nullptr);
 	auto pos = p_document->GetFirstViewPosition();
-	auto p_view = (CRichEditView*)p_document->GetNextView(pos);
+	auto p_view = static_cast<CRichEditView*>(p_document->GetNextView(pos));
 	CRichEditCtrl& p_edit = p_view->GetRichEditCtrl();
 	p_edit.SetWindowText(cs_buffer);
 }
@@ -314,33 +314,34 @@ void CDlgEditStimArray::OnBnClickedExport()
 void CDlgEditStimArray::OnBnClickedImportfromdata()
 {
 	const auto nitems = m_pstim->intervalsArray.GetSize();
-	m_pstim->chrate = m_rate; 
-	
+	m_pstim->chrate = m_rate;
+
 	int nTags = m_pTagList->GetNTags();
-	for (int i = 0; i < nTags; i++) {
+	for (int i = 0; i < nTags; i++)
+	{
 		long lInterval = m_pTagList->GetTagLVal(i);
 		m_pstim->AddInterval(lInterval);
 		addNewItem(i, lInterval);
 	}
 }
 
-void CDlgEditStimArray::setSubItem0(LVITEM &lvi, int i, CString& cs)
+void CDlgEditStimArray::setSubItem0(LVITEM& lvi, int i, CString& cs)
 {
 	lvi.iItem = i;
 	lvi.iSubItem = 0;
 	lvi.mask = LVIF_IMAGE | LVIF_TEXT;
 	cs.Format(_T("%i"), i);
-	lvi.pszText = (LPTSTR)(LPCTSTR)cs;
-	lvi.iImage = i % 2;	
+	lvi.pszText = (LPTSTR)static_cast<LPCTSTR>(cs);
+	lvi.iImage = i % 2;
 }
 
-void CDlgEditStimArray::setSubItem1(LVITEM &lvi, int iItem, long lInterval, CString& cs)
+void CDlgEditStimArray::setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs)
 {
 	lvi.iItem = iItem;
 	lvi.iSubItem = 1;
 	lvi.mask = LVIF_TEXT;
-	cs.Format(_T("%10.3f"), ((float) lInterval / m_rate));
-	lvi.pszText = (LPTSTR)(LPCTSTR)cs;
+	cs.Format(_T("%10.3f"), (static_cast<float>(lInterval) / m_rate));
+	lvi.pszText = (LPTSTR)static_cast<LPCTSTR>(cs);
 }
 
 void CDlgEditStimArray::addNewItem(int i, long lInterval)

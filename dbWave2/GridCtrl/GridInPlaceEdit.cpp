@@ -59,17 +59,17 @@ static char THIS_FILE[] = __FILE__;
 // CInPlaceEdit
 
 CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
-	int nRow, int nColumn, CString sInitText,
-	UINT nFirstChar)
+                           int nRow, int nColumn, CString sInitText,
+                           UINT nFirstChar)
 {
 	m_sInitText = sInitText;
 	m_nRow = nRow;
 	m_nColumn = nColumn;
 	m_nLastChar = 0;
-	m_bExitOnArrows = (nFirstChar != VK_LBUTTON);    // If mouse click brought us here,
-													 // then no exit on arrows
+	m_bExitOnArrows = (nFirstChar != VK_LBUTTON); // If mouse click brought us here,
+	// then no exit on arrows
 
-	m_Rect = rect;  // For bizarre CE bug.
+	m_Rect = rect; // For bizarre CE bug.
 
 	DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
 		| dw_style;
@@ -80,10 +80,13 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 	SetWindowText(sInitText);
 	SetFocus();
 
-	switch (nFirstChar) {
+	switch (nFirstChar)
+	{
 	case VK_LBUTTON:
-	case VK_RETURN:   SetSel((int)_tcslen(m_sInitText), -1); return;
-	case VK_BACK:     SetSel((int)_tcslen(m_sInitText), -1); break;
+	case VK_RETURN: SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+		return;
+	case VK_BACK: SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+		break;
 	case VK_TAB:
 	case VK_DOWN:
 	case VK_UP:
@@ -93,8 +96,9 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 	case VK_PRIOR:
 	case VK_HOME:
 	case VK_SPACE:
-	case VK_END:      SetSel(0, -1); return;
-	default:          SetSel(0, -1);
+	case VK_END: SetSel(0, -1);
+		return;
+	default: SetSel(0, -1);
 	}
 
 	// Added by KiteFly. When entering DBCS chars into cells the first char was being lost
@@ -126,8 +130,8 @@ END_MESSAGE_MAP()
 void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
-		nChar == VK_DOWN || nChar == VK_UP ||
-		nChar == VK_RIGHT || nChar == VK_LEFT) &&
+			nChar == VK_DOWN || nChar == VK_UP ||
+			nChar == VK_RIGHT || nChar == VK_LEFT) &&
 		(m_bExitOnArrows || GetKeyState(VK_CONTROL) < 0))
 	{
 		m_nLastChar = nChar;
@@ -150,12 +154,12 @@ void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (nChar == VK_TAB || nChar == VK_RETURN)
 	{
 		m_nLastChar = nChar;
-		GetParent()->SetFocus();    // This will destroy this window
+		GetParent()->SetFocus(); // This will destroy this window
 		return;
 	}
 	if (nChar == VK_ESCAPE)
 	{
-		SetWindowText(m_sInitText);    // restore previous text
+		SetWindowText(m_sInitText); // restore previous text
 		m_nLastChar = nChar;
 		GetParent()->SetFocus();
 		return;
@@ -247,7 +251,7 @@ void CInPlaceEdit::EndEdit()
 	dispinfo.item.row = m_nRow;
 	dispinfo.item.col = m_nColumn;
 	dispinfo.item.strText = str;
-	dispinfo.item.lParam = (LPARAM)m_nLastChar;
+	dispinfo.item.lParam = static_cast<LPARAM>(m_nLastChar);
 
 	CWnd* pOwner = GetOwner();
 	if (pOwner)

@@ -1,7 +1,7 @@
 // spikebar.cpp Implementation File
 
 #include "StdAfx.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"
 #include "ChartSpikeBar.h"
@@ -12,9 +12,9 @@
 
 // TODO loop through files when m_ballfiles is true: spike hit
 
-IMPLEMENT_SERIAL(CChartSpikeBarWnd, CChartWnd, 1)
+IMPLEMENT_SERIAL(CChartSpikeBarWnd, ChartWnd, 1)
 
-BEGIN_MESSAGE_MAP(CChartSpikeBarWnd, CChartWnd)
+BEGIN_MESSAGE_MAP(CChartSpikeBarWnd, ChartWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
@@ -84,12 +84,13 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 			continue;
 		}
-		
+
 
 		// plot comment at the bottom
 		if (m_bBottomComment)
 		{
-			p_dc->DrawText(m_csBottomComment, m_csBottomComment.GetLength(), rect, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+			p_dc->DrawText(m_csBottomComment, m_csBottomComment.GetLength(), rect,
+			               DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
 		}
 
 		// display data: trap error conditions
@@ -126,14 +127,15 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 			const int y1 = m_displayRect.bottom;
 			for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 			{
-				const auto lk = m_VTtags.GetTagLVal(j);	// get value
-				if (lk <m_lFirst || lk > m_lLast)
+				const auto lk = m_VTtags.GetTagLVal(j); // get value
+				if (lk < m_lFirst || lk > m_lLast)
 					continue;
-				const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));
-				p_dc->MoveTo(k, y0);			// set initial pt
-				p_dc->LineTo(k, y1);			// VT line
+				const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast -
+					m_lFirst + 1));
+				p_dc->MoveTo(k, y0); // set initial pt
+				p_dc->LineTo(k, y1); // VT line
 			}
-			p_dc->SetROP2(nold_rop);			// restore old display mode
+			p_dc->SetROP2(nold_rop); // restore old display mode
 			p_dc->SelectObject(oldp);
 		}
 
@@ -226,9 +228,10 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 		for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 		{
 			const auto lk = m_VTtags.GetTagLVal(j);
-			if (lk <m_lFirst || lk > m_lLast)
+			if (lk < m_lFirst || lk > m_lLast)
 				continue;
-			const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast - m_lFirst + 1));
+			const auto k = static_cast<int>((lk - m_lFirst) * static_cast<float>(m_displayRect.Width()) / (m_lLast -
+				m_lFirst + 1));
 			p_dc->MoveTo(k, y0);
 			p_dc->LineTo(k, y1);
 		}
@@ -246,7 +249,7 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 		p_dc->SetROP2(nold_rop);
 		p_dc->SelectObject(oldp);
 	}
-	
+
 	p_dc->RestoreDC(n_saved_dc);
 }
 
@@ -255,10 +258,10 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 {
 	CPen bluepen;
 	bluepen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
-	const auto pold_p = (CPen*)p_dc->SelectObject(&bluepen);
+	const auto pold_p = p_dc->SelectObject(&bluepen);
 	const int top = rect->bottom - m_barheight + 2;
 	const int bottom = rect->bottom - 3;
-	const auto displen = rect->Width();	
+	const auto displen = rect->Width();
 
 	// search first stimulus transition within interval
 	const auto iistart = m_lFirst;
@@ -266,15 +269,15 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 	const auto iilen = iiend - iistart;
 	auto i0 = 0;
 	//CArray <long, long>* pintervalsArray = &(p_dbwave_doc_->m_pSpk->m_stimIntervals.intervalsArray);
-	CArray <long, long>* pintervalsArray = &(p_spike_doc_->m_stimIntervals.intervalsArray);
+	CArray<long, long>* pintervalsArray = &(p_spike_doc_->m_stimIntervals.intervalsArray);
 
 
 	while (i0 < pintervalsArray->GetSize()
 		&& pintervalsArray->GetAt(i0) < iistart)
-		i0++;							// loop until found
+		i0++; // loop until found
 
-	auto istate = bottom;				// use this variable to keep track of pulse broken by display limits
-	const auto jj = (i0 / 2) * 2;		// keep index of the ON transition
+	auto istate = bottom; // use this variable to keep track of pulse broken by display limits
+	const auto jj = (i0 / 2) * 2; // keep index of the ON transition
 	if (jj != i0)
 		istate = top;
 	p_dc->MoveTo(rect->left, istate);
@@ -284,35 +287,35 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 	{
 		// stim starts here
 		int iix0 = pintervalsArray->GetAt(ii) - iistart;
-		if (iix0 >= iilen)				// first transition ON after last graph pt?
-			break;						// yes = exit loop
-		if (iix0 < 0)					// first transition off graph?
-			iix0 = 0;					// yes = clip
+		if (iix0 >= iilen) // first transition ON after last graph pt?
+			break; // yes = exit loop
+		if (iix0 < 0) // first transition off graph?
+			iix0 = 0; // yes = clip
 
 		iix0 = MulDiv(displen, iix0, iilen) + rect->left;
-		p_dc->LineTo(iix0, istate);		// draw line up to the first point of the pulse
-		p_dc->LineTo(iix0, top);		// draw vertical line to top of pulse
+		p_dc->LineTo(iix0, istate); // draw line up to the first point of the pulse
+		p_dc->LineTo(iix0, top); // draw vertical line to top of pulse
 
 		// stim ends here
-		istate = bottom;				// after pulse, descend to bottom level
+		istate = bottom; // after pulse, descend to bottom level
 		int iix1 = pintervalsArray->GetAt(ii + 1) - iistart;
-		if (iix1 > iilen)				// last transition off graph?
+		if (iix1 > iilen) // last transition off graph?
 		{
-			iix1 = iilen;				// yes = clip
-			istate = top;				// do not descend..
+			iix1 = iilen; // yes = clip
+			istate = top; // do not descend..
 		}
 		iix1 = MulDiv(displen, iix1, iilen) + rect->left + 1;
-		p_dc->LineTo(iix1, top);		// draw top of pulse
-		p_dc->LineTo(iix1, istate);		// draw descent to bottom line
+		p_dc->LineTo(iix1, top); // draw top of pulse
+		p_dc->LineTo(iix1, istate); // draw descent to bottom line
 	}
-	p_dc->LineTo(rect->left + displen, istate);		// end of loop - draw the rest
+	p_dc->LineTo(rect->left + displen, istate); // end of loop - draw the rest
 	p_dc->SelectObject(pold_p);
 }
 
 void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 {
 	// prepare loop to display spikes
-	auto* pold_pen = (CPen*)p_dc->SelectStockObject(BLACK_PEN);
+	auto* pold_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	const long xextent = rect->Width();
 	if (m_yWE == 1)
 	{
@@ -323,7 +326,7 @@ void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 	}
 	const auto yextent = m_yWE;
 	const auto yzero = m_yWO;
-	const auto y_vo = static_cast<int>(rect->Height() / 2) + rect->top;
+	const auto y_vo = rect->Height() / 2 + rect->top;
 	const auto y_ve = -rect->Height();
 
 	// draw horizontal line
@@ -340,8 +343,8 @@ void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 			m_spklast = ilast;
 		if (m_spkfirst < 0)
 			m_spkfirst = 0;
-		ilast = m_spklast;		// reduces the nb of spikes examined
-		ifirst = m_spkfirst;	// assuming an ordered list...
+		ilast = m_spklast; // reduces the nb of spikes examined
+		ifirst = m_spkfirst; // assuming an ordered list...
 	}
 	const auto len = (m_lLast - m_lFirst + 1);
 	int max, min;
@@ -388,7 +391,8 @@ void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 		if (wspkcla >= 1)
 		{
 			TEXTMETRIC txtmetric;
-			if (p_dc->GetTextMetrics(&txtmetric)) {
+			if (p_dc->GetTextMetrics(&txtmetric))
+			{
 				auto cletter = _T('0');
 				cletter += wspkcla;
 				p_dc->TextOut(abcissa, min + (txtmetric.tmHeight / 2), &cletter, 1);
@@ -453,7 +457,7 @@ void CChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 
 		CPen new_pen;
 		new_pen.CreatePen(PS_SOLID, pensize, m_colorTable[color]);
-		const auto oldpen = (CPen*)dc.SelectObject(&new_pen);
+		const auto oldpen = dc.SelectObject(&new_pen);
 
 		// display data
 		const auto l_spike_time = p_spikelist_->GetSpikeTime(nospike);
@@ -482,7 +486,7 @@ void CChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 	dc.IntersectClipRect(&m_clientRect);
 	prepareDC(&dc);
 
-	int  color;
+	int color;
 	// spike is not selected
 	if (!bselect)
 	{
@@ -526,7 +530,7 @@ void CChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 	CPen new_pen;
 	const auto pensize = 0;
 	new_pen.CreatePen(PS_SOLID, pensize, m_colorTable[color]);
-	const auto oldpen = (CPen*)dc.SelectObject(&new_pen);
+	const auto oldpen = dc.SelectObject(&new_pen);
 
 	// display data
 	const auto l_spike_time = p_spikelist_->GetSpikeTime(nospike);
@@ -555,7 +559,7 @@ BOOL CChartSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 	if (m_rangemode == RANGE_TIMEINTERVALS
 		&& (p_spikelist_->GetSpikeTime(spikeno) < m_lFirst || p_spikelist_->GetSpikeTime(spikeno) > m_lLast))
 		return FALSE;
-	else if (m_rangemode == RANGE_INDEX
+	if (m_rangemode == RANGE_INDEX
 		&& (spikeno > m_spklast || spikeno < m_spkfirst))
 		return FALSE;
 	if (m_plotmode == PLOT_ONECLASSONLY && p_spikelist_->GetSpikeClass(spikeno) != m_selclass)
@@ -570,7 +574,7 @@ void CChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
 
 	const auto l_spike_time = p_spikelist_->GetSpikeTime(nospike);
 	const auto len = (m_lLast - m_lFirst + 1);
-	const auto  llk = (l_spike_time - m_lFirst) * static_cast<float>(m_xWE) / len;
+	const auto llk = (l_spike_time - m_lFirst) * static_cast<float>(m_xWE) / len;
 	const auto abcissa = static_cast<int>(llk) + m_xWO;
 
 	const auto max = MulDiv(1 - m_yVO, m_yWE, m_yVE) + m_yWO;
@@ -578,7 +582,7 @@ void CChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
 
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51));
-	const auto oldpen = (CPen*)p_dc->SelectObject(&new_pen);
+	const auto oldpen = p_dc->SelectObject(&new_pen);
 
 	p_dc->MoveTo(abcissa - 1, max);
 	p_dc->LineTo(abcissa + 1, max);
@@ -591,7 +595,7 @@ void CChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
 	p_dc->SetROP2(old_rop);
 }
 
-int	CChartSpikeBarWnd::SelectSpike(const int spikeno)
+int CChartSpikeBarWnd::SelectSpike(const int spikeno)
 {
 	// erase old selected spike
 	const auto oldselected = m_selectedspike;
@@ -638,7 +642,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 		postMyMessage(HINT_DROPPED, NULL);
 		return;
 	}
-	CChartWnd::OnLButtonUp(n_flags, point);
+	ChartWnd::OnLButtonUp(n_flags, point);
 
 	CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 	const auto jitter = 5;
@@ -648,7 +652,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 			postMyMessage(HINT_HITAREA, NULL);
 		else
 			zoomIn();
-		return;	 // exit: mouse movement was too small
+		return; // exit: mouse movement was too small
 	}
 
 	// perform action according to cursor type
@@ -664,7 +668,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 		}
 		break;
 
-	case CURSOR_ZOOM: 	// zoom operation
+	case CURSOR_ZOOM: // zoom operation
 		ZoomData(&rect_in, &rect_out);
 		m_ZoomFrom = rect_in;
 		m_ZoomTo = rect_out;
@@ -698,7 +702,7 @@ void CChartSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
 			return;
 		}
 	}
-	CChartWnd::OnLButtonDown(nFlags, point);
+	ChartWnd::OnLButtonDown(nFlags, point);
 }
 
 //---------------------------------------------------------------------------
@@ -737,7 +741,7 @@ void CChartSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
 void CChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if ((m_selectedspike < 0 && p_spikelist_->GetSpikeFlagArrayCount() < 1) || m_hitspk < 0)
-		CChartWnd::OnLButtonDblClk(nFlags, point);
+		ChartWnd::OnLButtonDblClk(nFlags, point);
 	else
 	{
 		if (m_selectedspike >= 0)
@@ -884,7 +888,7 @@ void CChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 		return;
 
 	// set mapping mode and viewport
-	const auto n_saved_dc = p_dc->SaveDC();				// save display context
+	const auto n_saved_dc = p_dc->SaveDC(); // save display context
 	displayBars(p_dc, rect);
 
 	if (p_dbwave_doc_->m_pSpk->m_stimIntervals.nitems > 0)
@@ -895,36 +899,36 @@ void CChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 
 void CChartSpikeBarWnd::Serialize(CArchive& ar)
 {
-	CChartWnd::Serialize(ar);
+	ChartWnd::Serialize(ar);
 
 	auto bdummy = TRUE;
 	if (ar.IsStoring())
 	{
-		ar << m_rangemode;		// display range (time OR storage index)
-		ar << m_lFirst;			// time index of first pt displayed
-		ar << m_lLast;			// time index of last pt displayed
-		ar << m_spkfirst;		// index first spike
-		ar << m_spklast;		// index last spike
-		ar << m_currentclass;	// current class in case of displaying classes
-		ar << m_selectedspike;	// selected spike (disply differently)
-		ar << m_hitspk;			// no of spike selected
-		ar << m_selclass;		// index class selected
-		ar << m_btrackCurve;	// track curve ?
+		ar << m_rangemode; // display range (time OR storage index)
+		ar << m_lFirst; // time index of first pt displayed
+		ar << m_lLast; // time index of last pt displayed
+		ar << m_spkfirst; // index first spike
+		ar << m_spklast; // index last spike
+		ar << m_currentclass; // current class in case of displaying classes
+		ar << m_selectedspike; // selected spike (disply differently)
+		ar << m_hitspk; // no of spike selected
+		ar << m_selclass; // index class selected
+		ar << m_btrackCurve; // track curve ?
 		ar << bdummy;
 		ar << m_selpen;
 	}
 	else
 	{
-		ar >> m_rangemode;		// display range (time OR storage index)
-		ar >> m_lFirst;			// time index of first pt displayed
-		ar >> m_lLast;			// time index of last pt displayed
-		ar >> m_spkfirst;		// index first spike
-		ar >> m_spklast;		// index last spike
-		ar >> m_currentclass;	// current class in case of displaying classes
-		ar >> m_selectedspike;	// selected spike (disply differently)
-		ar >> m_hitspk;			// no of spike selected
-		ar >> m_selclass;		// index class selected
-		ar >> m_btrackCurve;	// track curve ?
+		ar >> m_rangemode; // display range (time OR storage index)
+		ar >> m_lFirst; // time index of first pt displayed
+		ar >> m_lLast; // time index of last pt displayed
+		ar >> m_spkfirst; // index first spike
+		ar >> m_spklast; // index last spike
+		ar >> m_currentclass; // current class in case of displaying classes
+		ar >> m_selectedspike; // selected spike (disply differently)
+		ar >> m_hitspk; // no of spike selected
+		ar >> m_selclass; // index class selected
+		ar >> m_btrackCurve; // track curve ?
 		ar >> bdummy;
 		ar >> m_selpen;
 	}

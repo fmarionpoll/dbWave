@@ -39,9 +39,9 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	m_pWFormat = p_WaveFormat;
 	m_pArray = pWavechanArray;
 
-	auto const p_header = new char[m_bHeaderSize];
+	const auto p_header = new char[m_bHeaderSize];
 	ASSERT(p_header != NULL);
-	Seek(m_ulOffsetHeader, CFile::begin);
+	Seek(m_ulOffsetHeader, begin);
 	Read(p_header, m_bHeaderSize);
 
 	// get A/D card type
@@ -93,19 +93,19 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	p_WaveFormat->sample_count = len1;
 
 	// ---------------- specific DT2821 differential mode
-	p_WaveFormat->fullscale_volts = 20.f;	// 20 mv full scale (+10 V to -10 V)
-	p_WaveFormat->binspan = 4096;			// 12 bits resolution
-	p_WaveFormat->binzero = 2048;			// offset binary encoding
-	p_WaveFormat->wversion = 1;				// initial version
+	p_WaveFormat->fullscale_volts = 20.f; // 20 mv full scale (+10 V to -10 V)
+	p_WaveFormat->binspan = 4096; // 12 bits resolution
+	p_WaveFormat->binzero = 2048; // offset binary encoding
+	p_WaveFormat->wversion = 1; // initial version
 
 	// get device flags & encoding
 	//DEV_FLAGS devflags = (DEV_FLAGS)((short) *(pHeader+DEVFLAGS));
 
 	// load data acquisition comment
 	auto pcomment = p_header + ACQCOM;
-	for (int i = 0; i < ACQCOM_LEN; i++) 
+	for (int i = 0; i < ACQCOM_LEN; i++)
 		if (*(pcomment + i) == 0)
-			*(pcomment + i) = ' '; 
+			*(pcomment + i) = ' ';
 	pcomment = p_header + ACQCOM; // restore pointer
 	const auto atl_comment = CStringA(pcomment, ACQCOM_LEN); // load comment into string
 	p_WaveFormat->cs_comment = atl_comment;
@@ -162,15 +162,16 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 		auto* p_chan = pWavechanArray->Get_p_channel(i);
 		p_chan->am_adchannel = *p_channels_list;
 		p_chan->am_gainAD = *p_ADgain_list;
-	
+
 		auto j = static_cast<short>(strlen(pcomtlist));
 		if (j > 40 || j < 0)
 			j = 40;
-		p_chan->am_csComment = CStringA(pcomtlist, j);		// chan comment
-		p_chan->am_gainamplifier = *p_xgain_list;			// total gain (ampli + A/D card)
+		p_chan->am_csComment = CStringA(pcomtlist, j); // chan comment
+		p_chan->am_gainamplifier = *p_xgain_list; // total gain (ampli + A/D card)
 		p_chan->am_gaintotal = p_chan->am_gainamplifier * static_cast<double>(p_chan->am_gainAD);
 		// TODO: check if resolution is computed correctly
-		p_chan->am_resolutionV = static_cast<double>(p_WaveFormat->fullscale_volts) / p_chan->am_gaintotal / p_WaveFormat->binspan;
+		p_chan->am_resolutionV = static_cast<double>(p_WaveFormat->fullscale_volts) / p_chan->am_gaintotal /
+			p_WaveFormat->binspan;
 	}
 
 	// init as if no amplifier were present
@@ -237,19 +238,19 @@ void CDataFileATLAB::init_channels_from_cyber_a320(char* p_header) const
 	// if cyber_chanx equal on both channels, assume that parameters are not correctly set
 	// look for the first xgain that equals the Cyber gain
 	const auto pcyber2 = reinterpret_cast<CYBERCHAN*>(pchar);
-	if ( (pcyber1->acqchan == pcyber2->acqchan)
+	if ((pcyber1->acqchan == pcyber2->acqchan)
 		&& m_pWFormat->scan_count > 1)
 	{
 		AfxMessageBox(_T("cyber channel not correctly set"), MB_OK);
 	}
 
-		// default cyberamp description
+	// default cyberamp description
 	else
 	{
 		if (pcyber1->acqchan <= m_pWFormat->scan_count)
 		{
-			int chan =  pcyber1->acqchan - 1;
-			if (chan < 0) 
+			int chan = pcyber1->acqchan - 1;
+			if (chan < 0)
 				chan = 0;
 			load_channel_from_cyber(chan, reinterpret_cast<char*>(pcyber1));
 			if (m_pWFormat->scan_count == static_cast<short>(1))
@@ -274,22 +275,22 @@ void CDataFileATLAB::load_channel_from_cyber(const int channel, char* pcyberchan
 		|| (probe.CompareNoCase("0       ") == 0))
 		return;
 	const auto p_chan = m_pArray->Get_p_channel(channel);
-	p_chan->am_csheadstage		= probe;
-	p_chan->am_gainheadstage	= pcyb->gainprobe;
-	p_chan->am_csamplifier		= CString(_T("CyberAmp"));
-	p_chan->am_amplifierchan	= pcyb->acqchan;
-	p_chan->am_gainpre			= pcyb->gainpre;
-	p_chan->am_gainpost			= pcyb->gainpost;
-	p_chan->am_notchfilt		= pcyb->notchfilt;
-	p_chan->am_lowpass			= pcyb->lowpass;
-	p_chan->am_offset			= pcyb->offset; 
-	p_chan->am_csInputpos		= get_cyber_a320_filter(pcyb->inputpos);
-	p_chan->am_csInputneg		= get_cyber_a320_filter(pcyb->inputneg);
-	p_chan->am_gainamplifier	= 1.;
+	p_chan->am_csheadstage = probe;
+	p_chan->am_gainheadstage = pcyb->gainprobe;
+	p_chan->am_csamplifier = CString(_T("CyberAmp"));
+	p_chan->am_amplifierchan = pcyb->acqchan;
+	p_chan->am_gainpre = pcyb->gainpre;
+	p_chan->am_gainpost = pcyb->gainpost;
+	p_chan->am_notchfilt = pcyb->notchfilt;
+	p_chan->am_lowpass = pcyb->lowpass;
+	p_chan->am_offset = pcyb->offset;
+	p_chan->am_csInputpos = get_cyber_a320_filter(pcyb->inputpos);
+	p_chan->am_csInputneg = get_cyber_a320_filter(pcyb->inputneg);
+	p_chan->am_gainamplifier = 1.;
 	p_chan->am_gaintotal = static_cast<double>(pcyb->gainpre)
-						* static_cast<double>(pcyb->gainpost)
-						* static_cast<double> (pcyb->gainprobe)
-						* static_cast<double>(p_chan->am_gainAD);
+		* static_cast<double>(pcyb->gainpost)
+		* static_cast<double>(pcyb->gainprobe)
+		* static_cast<double>(p_chan->am_gainAD);
 }
 
 // assume that code is filter cutoff * 10
@@ -341,7 +342,7 @@ int CDataFileATLAB::CheckFileType(CString& cs_filename)
 {
 	WORD w_atlab; // struct for ATLab file
 	auto flag = DOCTYPE_UNKNOWN;
-	Seek(m_ulOffsetHeader, CFile::begin); // position pointer to start of file
+	Seek(m_ulOffsetHeader, begin); // position pointer to start of file
 	Read(&w_atlab, sizeof(w_atlab)); // Read data
 
 	// test Atlab

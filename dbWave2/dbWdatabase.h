@@ -3,13 +3,14 @@
 #define NTABLECOLS	29
 #include "AcqWaveFormat.h"
 
-typedef struct _TABCOL {
-	int		iID;
+typedef struct _TABCOL
+{
+	int iID;
 	TCHAR* szTableCol;
 	TCHAR* szDescriptor;
-	int		propCol;
+	int propCol;
 	TCHAR* szRelTable;
-} TABCOL, * LPTABCOL;
+} TABCOL, *LPTABCOL;
 
 // CdbWdatabase command target
 #pragma warning(disable : 4995)
@@ -18,23 +19,23 @@ class CdbWdatabase : public CDaoDatabase
 {
 public:
 	CdbWdatabase();
-	virtual ~CdbWdatabase();
+	~CdbWdatabase() override;
 
-	static	TABCOL  m_desctab[];
+	static TABCOL m_desctab[];
 
 	// CDaoRecordSets
-	CdbMainTable	m_mainTableSet;
+	CdbMainTable m_mainTableSet;
 
-	CdbIndexTable	m_operatorSet;
-	CdbIndexTable	m_insectSet;
-	CdbIndexTable	m_locationSet;
-	CdbIndexTable	m_sensillumSet;
-	CdbIndexTable	m_stimSet;
-	CdbIndexTable	m_concSet;
-	CdbIndexTable	m_sexSet;
-	CdbIndexTable	m_strainSet;
-	CdbIndexTable	m_exptSet;
-	CdbIndexTable	m_pathSet;
+	CdbIndexTable m_operatorSet;
+	CdbIndexTable m_insectSet;
+	CdbIndexTable m_locationSet;
+	CdbIndexTable m_sensillumSet;
+	CdbIndexTable m_stimSet;
+	CdbIndexTable m_concSet;
+	CdbIndexTable m_sexSet;
+	CdbIndexTable m_strainSet;
+	CdbIndexTable m_exptSet;
+	CdbIndexTable m_pathSet;
 
 	//CdbIndexTable	m_stim2Set; // TODO
 	//CdbIndexTable	m_conc2Set;	// TODO
@@ -43,44 +44,44 @@ public:
 	CString* m_pcurrentDataFilename;
 	CString* m_pcurrentSpkFileName;
 	// local
-	CString		m_databasePath;
+	CString m_databasePath;
 
-	void		Attach(CString* pstrData, CString* pstrSpk);
+	void Attach(CString* pstrData, CString* pstrSpk);
 
 	// operations
-	BOOL		CreateMainTable(CString cs);
-	void		CreateTables();
-	BOOL		OpenTables();
-	void		OpenIndexTable(CdbIndexTable* pIndexTableSet);
-	void		CloseDatabase();
-	void		UpdateTables();
+	BOOL CreateMainTable(CString cs);
+	void CreateTables();
+	BOOL OpenTables();
+	void OpenIndexTable(CdbIndexTable* pIndexTableSet);
+	void CloseDatabase();
+	void UpdateTables();
 
-	CString		GetDataBasePath();
-	void		SetDataBasePath();
-	void		GetFilenamesFromCurrentRecord();
-	CString		GetDatFilenameFromCurrentRecord();
-	CString		GetSpkFilenameFromCurrentRecord();
+	CString GetDataBasePath();
+	void SetDataBasePath();
+	void GetFilenamesFromCurrentRecord();
+	CString GetDatFilenameFromCurrentRecord();
+	CString GetSpkFilenameFromCurrentRecord();
 
 	// operations on main table
-	BOOL		MoveToID(long recordID);
-	CString		GetFilePath(int ID);
-	inline BOOL IsRelativePath(CString cspath) { return (cspath[0] == '.'); }
-	CString		GetRelativePathFromString(const CString& csAbsolutePath);
-	long		GetRelativePathFromID(long iID);
-	void		ConvertPathtoRelativePath(long icol);
-	void		ConvertPathTabletoRelativePath();
-	CString		GetAbsolutePathFromString(CString csPath);
-	long		GetAbsolutePathFromID(long iID);
-	void		ConvertPathtoAbsolutePath(int icolpath);
-	void		ConvertPathTabletoAbsolutePath();
-	BOOL		MoveRecord(UINT nIDMoveCommand);
-	inline BOOL MoveFirst() { return MoveRecord(ID_RECORD_FIRST); }
-	inline BOOL MoveNext() { return MoveRecord(ID_RECORD_NEXT); }
-	inline BOOL MovePrev() { return MoveRecord(ID_RECORD_PREV); }
-	inline BOOL MoveLast() { return MoveRecord(ID_RECORD_LAST); }
-	inline void	SetDataLen(long datalen) { m_mainTableSet.SetDataLen(datalen); }
-	inline long GetNRecords() { return m_mainTableSet.GetNRecords(); }
-	inline long GetNFields() { return m_mainTableSet.m_nFields; }
+	BOOL MoveToID(long recordID);
+	CString GetFilePath(int ID);
+	BOOL IsRelativePath(CString cspath) { return (cspath[0] == '.'); }
+	CString GetRelativePathFromString(const CString& csAbsolutePath);
+	long GetRelativePathFromID(long iID);
+	void ConvertPathtoRelativePath(long icol);
+	void ConvertPathTabletoRelativePath();
+	CString GetAbsolutePathFromString(CString csPath);
+	long GetAbsolutePathFromID(long iID);
+	void ConvertPathtoAbsolutePath(int icolpath);
+	void ConvertPathTabletoAbsolutePath();
+	BOOL MoveRecord(UINT nIDMoveCommand);
+	BOOL MoveFirst() { return MoveRecord(ID_RECORD_FIRST); }
+	BOOL MoveNext() { return MoveRecord(ID_RECORD_NEXT); }
+	BOOL MovePrev() { return MoveRecord(ID_RECORD_PREV); }
+	BOOL MoveLast() { return MoveRecord(ID_RECORD_LAST); }
+	void SetDataLen(long datalen) { m_mainTableSet.SetDataLen(datalen); }
+	long GetNRecords() { return m_mainTableSet.GetNRecords(); }
+	long GetNFields() { return m_mainTableSet.m_nFields; }
 
 	// get associated table?
 	// get list of items in associated tables?

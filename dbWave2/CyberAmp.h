@@ -112,60 +112,59 @@ public:
 	CCyberAmp();
 	~CCyberAmp() override;
 
-	int	Initialize(void);
-	int	SetGain(int nChannel, int nGainValue);
-	int	SetmVOffset(int nChannel, float fOffset);
-	int	SetLPFilter(int nChannel, int nFilterValue);
-	int	SetNotchFilter(int nChannel, int nEnabled);
-	int	SetHPFilter(int nChannel, int nInput, const CString& csCoupling);
+	int Initialize(void);
+	int SetGain(int nChannel, int nGainValue);
+	int SetmVOffset(int nChannel, float fOffset);
+	int SetLPFilter(int nChannel, int nFilterValue);
+	int SetNotchFilter(int nChannel, int nEnabled);
+	int SetHPFilter(int nChannel, int nInput, const CString& csCoupling);
 
 	int SetWaveChanParms(CWaveChan* pchan);
 	int GetWaveChanParms(CWaveChan* pchan);
 
-	int	C300_SetDeviceNumber(int nWhichDev);
-	int	C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed);
-	int	C300_SetReceiveTimeout(DWORD fTimeoutVal);
-	int	C300_SetAmpGains(int nChannel, int nPreAmpGain, int nOutputGain);
-	int	C300_LoadFactoryDefaults(void);
-	int	C300_ElectrodeTest(int nEnabled);
-	int	C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned);
-	int	C300_GetChannelStatus(int nChannel, char* lpStatusText);
-	int	C300_GetOverloadStatus(int* lpnChannelMask);
-	int	C300_SaveCurrentState(void);
-	int	C300_FlushCommandsAndAwaitResponse(void);
-	int	C300_GetLastError(void);
-	int	C300_GetLastReception(char* lpLastText);
-	int	C300_GetLibraryVersion(char* lpVersionText);
+	int C300_SetDeviceNumber(int nWhichDev);
+	int C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed);
+	int C300_SetReceiveTimeout(DWORD fTimeoutVal);
+	int C300_SetAmpGains(int nChannel, int nPreAmpGain, int nOutputGain);
+	int C300_LoadFactoryDefaults(void);
+	int C300_ElectrodeTest(int nEnabled);
+	int C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned);
+	int C300_GetChannelStatus(int nChannel, char* lpStatusText);
+	int C300_GetOverloadStatus(int* lpnChannelMask);
+	int C300_SaveCurrentState(void);
+	int C300_FlushCommandsAndAwaitResponse(void);
+	int C300_GetLastError(void);
+	int C300_GetLastReception(char* lpLastText);
+	int C300_GetLibraryVersion(char* lpVersionText);
 
-// Implementation
+	// Implementation
 protected:
-	static char		m_C300szCommands[4 * MAXCMDLEN + 1];
-	static char		m_C300szRcvText[RCVBUFSIZE + 1];
-	static int		m_C300nLastError;
-	static int		m_C300nDevNumber;
-	static int		m_C300nOutputPort;
-	static int		m_C300nOutputSpeed;
-	static int		m_C300nDebugVersion;
-	static DWORD	m_C300fReceiveDelay;
-	COMMTIMEOUTS	m_CommTimeOuts{};
+	static char m_C300szCommands[4 * MAXCMDLEN + 1];
+	static char m_C300szRcvText[RCVBUFSIZE + 1];
+	static int m_C300nLastError;
+	static int m_C300nDevNumber;
+	static int m_C300nOutputPort;
+	static int m_C300nOutputSpeed;
+	static int m_C300nDebugVersion;
+	static DWORD m_C300fReceiveDelay;
+	COMMTIMEOUTS m_CommTimeOuts{};
 
-	DCB				m_dcb{};		// DCB structure containing COM parameters
-	HANDLE			m_hComm;	// handle to file used to communicate with COM
+	DCB m_dcb{}; // DCB structure containing COM parameters
+	HANDLE m_hComm; // handle to file used to communicate with COM
 
-	static	void	C300_ResetParms();
+	static void C300_ResetParms();
 
-	static	void	C300_StringConcatChar(char* lpsz_string, int c);
-	static	int		C300_FoundListMatch(int nFilterValue, int* lpnList, int nListItems);
-			int		C300_INT_TranslateABUSError(int ABUSError);
-			int		C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed,
-							int* pnOutputPort, int* pnOutputSpeed);
-			void	C300_INT_StartCommand(void);
-			void	C300_INT_AddCommand(char* lpszCommandText);
+	static void C300_StringConcatChar(char* lpsz_string, int c);
+	static int C300_FoundListMatch(int nFilterValue, int* lpnList, int nListItems);
+	int C300_INT_TranslateABUSError(int ABUSError);
+	int C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed,
+	                                      int* pnOutputPort, int* pnOutputSpeed);
+	void C300_INT_StartCommand(void);
+	void C300_INT_AddCommand(char* lpszCommandText);
 
-			int		ABUS_Initialize(void);
-			int		ABUS_SetOutput(int nWhichPort, int nWhichSpeed);
-			int		ABUS_SendString(int nOutputPort, char* lpszCmdString, DWORD fDelay);
-			int		ABUS_ReceiveString(char* lpszCmdString, int nWaitOK, DWORD fDelay);
-			void	ABUS_FlushReceiveBuffer(int nOutputPort, DWORD fDelay);
+	int ABUS_Initialize(void);
+	int ABUS_SetOutput(int nWhichPort, int nWhichSpeed);
+	int ABUS_SendString(int nOutputPort, char* lpszCmdString, DWORD fDelay);
+	int ABUS_ReceiveString(char* lpszCmdString, int nWaitOK, DWORD fDelay);
+	void ABUS_FlushReceiveBuffer(int nOutputPort, DWORD fDelay);
 };
-

@@ -1,21 +1,24 @@
-
 #include "StdAfx.h"
 #include "USBPxxS1.h"
 
 #include "AcqWaveChan.h"
 
 
-int		CUSBPxxS1::allig_Gain[] = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
-CString CUSBPxxS1::allig_Coupling[] = { _T("DC"), _T("AC") };
-CString CUSBPxxS1::allig_ClockSource[] = { _T("Internal"), _T("External") };
-CString CUSBPxxS1::allig_PClock[] = { _T("Disabled"), _T("Enabled") };
-CString CUSBPxxS1::allig_LPFilterType[] = { _T("LPFT_CE"), _T("LPFT_B"), _T("LPFT_L"), _T("LPFT_HC"), _T("LPFT_LP"), _T("LPFT_HLP") };
-CString CUSBPxxS1::allig_HPFilterType[] = { _T("HPFT_NONEE"), _T("HPFT_LNE"), _T("HPFT_LEE"), _T("HPFT_BNE"), _T("HPFT_BE") };
+int CUSBPxxS1::allig_Gain[] = {1, 2, 5, 10, 20, 50, 100, 200, 500, 1000};
+CString CUSBPxxS1::allig_Coupling[] = {_T("DC"), _T("AC")};
+CString CUSBPxxS1::allig_ClockSource[] = {_T("Internal"), _T("External")};
+CString CUSBPxxS1::allig_PClock[] = {_T("Disabled"), _T("Enabled")};
+CString CUSBPxxS1::allig_LPFilterType[] = {
+	_T("LPFT_CE"), _T("LPFT_B"), _T("LPFT_L"), _T("LPFT_HC"), _T("LPFT_LP"), _T("LPFT_HLP")
+};
+CString CUSBPxxS1::allig_HPFilterType[] = {
+	_T("HPFT_NONEE"), _T("HPFT_LNE"), _T("HPFT_LEE"), _T("HPFT_BNE"), _T("HPFT_BE")
+};
 
 
 CUSBPxxS1::CUSBPxxS1()
 {
-	HRESULT hr = CoInitialize(NULL);
+	HRESULT hr = CoInitialize(nullptr);
 	TRACE("initialize co HR=%i \n", hr);
 }
 
@@ -31,9 +34,10 @@ CUSBPxxS1::~CUSBPxxS1()
 
 HRESULT CUSBPxxS1::Initialize()
 {
-	HRESULT hr = CoCreateInstance(CLSID_USBPxxS1Ctl, NULL, CLSCTX_INPROC_SERVER, 
-		IID_IUSBPxxS1Ctl, reinterpret_cast<void**>(&m_pIUSBP));
-	if (SUCCEEDED(hr)) {
+	HRESULT hr = CoCreateInstance(CLSID_USBPxxS1Ctl, nullptr, CLSCTX_INPROC_SERVER,
+	                              IID_IUSBPxxS1Ctl, reinterpret_cast<void**>(&m_pIUSBP));
+	if (SUCCEEDED(hr))
+	{
 		TRACE("create instance HR=%i \n", hr);
 	}
 	else
@@ -45,11 +49,11 @@ HRESULT CUSBPxxS1::Initialize()
 
 int CUSBPxxS1::GetAlligatorNumberConnected(CString& message)
 {
-	VARIANT	 in_val;
-	VARIANT	 out_val;
-	m_pIUSBP->USBPxxS1Command(0, ID_INITIALIZE, 0, 0);
+	VARIANT in_val;
+	VARIANT out_val;
+	m_pIUSBP->USBPxxS1Command(0, ID_INITIALIZE, nullptr, nullptr);
 	m_pIUSBP->USBPxxS1Command(NULL, DCID_GET_TOTAL_CONNECTED_CHANNELS, &in_val, &out_val);
-	iDevicesConnected = int(out_val.lVal);
+	iDevicesConnected = static_cast<int>(out_val.lVal);
 	CString out;
 	out.Format(_T("Number of Devices Connected = %d\n"), iDevicesConnected);
 	message += out;
@@ -58,8 +62,8 @@ int CUSBPxxS1::GetAlligatorNumberConnected(CString& message)
 
 long CUSBPxxS1::GetAlligatorFirstAvailableHandle(CString& message)
 {
-	VARIANT	 in_val;
-	VARIANT	 out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 	long handle = 0;
 	for (int ic = 0; ic < 10; ic++)
 	{
@@ -110,8 +114,8 @@ bool CUSBPxxS1::IsValidHandle()
 //**************************************************************************************
 void CUSBPxxS1::readLPFC(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_LPFC, &in_val, &out_val);
 	pUSBP->LPFc = out_val.fltVal;
@@ -128,8 +132,8 @@ void CUSBPxxS1::readLPFC(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readHPFC(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_HPFC, &in_val, &out_val);
 	pUSBP->HPFc = out_val.fltVal;
@@ -159,8 +163,8 @@ void CUSBPxxS1::readHPFC(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readGain(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_GAIN, &in_val, &out_val);
 	pUSBP->indexgain = out_val.lVal;
@@ -184,8 +188,8 @@ void CUSBPxxS1::readGain(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readCoupling(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_COUPLING, &in_val, &out_val);
 	pUSBP->indexCoupling = out_val.lVal;
@@ -211,8 +215,8 @@ void CUSBPxxS1::readCoupling(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readClocksource(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_CLOCKSOURCE, &in_val, &out_val);
 	pUSBP->indexClockSource = out_val.lVal;
@@ -244,8 +248,8 @@ void CUSBPxxS1::readClocksource(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readPClock(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_PCLOCK, &in_val, &out_val);
 	pUSBP->indexPClock = out_val.lVal;
@@ -268,8 +272,8 @@ void CUSBPxxS1::readPClock(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readChannelNumber(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_CHANNELNUMBER, &in_val, &out_val);
 	pUSBP->ChannelNumber = out_val.lVal;
@@ -299,8 +303,8 @@ void CUSBPxxS1::readDescription(USBPxxPARAMETERS* pUSBP)
 {
 	auto x = 30;
 	auto index = 0;
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	pUSBP->Description.Empty();
 	while (x--)
@@ -329,8 +333,8 @@ void CUSBPxxS1::readDescription(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readLowPassFilterType(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_LPFILTERTYPE, &in_val, &out_val);
 	pUSBP->indexLPFilterType = out_val.lVal;
@@ -351,8 +355,8 @@ void CUSBPxxS1::readLowPassFilterType(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readHighPassFilterType(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_HPFILTERTYPE, &in_val, &out_val);
 	pUSBP->indexHPFilterType = out_val.lVal;
@@ -375,8 +379,8 @@ void CUSBPxxS1::readHighPassFilterType(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readSerialNumber(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_SERIALNUMBER, &in_val, &out_val);
 	pUSBP->SerialNumber = out_val.lVal;
@@ -397,8 +401,8 @@ void CUSBPxxS1::readSerialNumber(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readProductID(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_PRODUCTID, &in_val, &out_val);
 	pUSBP->ProductID = out_val.lVal;
@@ -423,8 +427,8 @@ void CUSBPxxS1::readProductID(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 void CUSBPxxS1::readRevision(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_READ_REVISION, &in_val, &out_val);
 	const auto packed = out_val.lVal;
@@ -450,12 +454,12 @@ void CUSBPxxS1::readRevision(USBPxxPARAMETERS* pUSBP)
 //**************************************************************************************
 long CUSBPxxS1::readNumberOfDevicesConnected()
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	m_pIUSBP->USBPxxS1Command(NULL, DCID_GET_TOTAL_CONNECTED_CHANNELS, &in_val, &out_val);
 	const auto packed = out_val.lVal;
-	return	packed;
+	return packed;
 }
 
 //**************************************************************************************
@@ -476,14 +480,14 @@ long CUSBPxxS1::readNumberOfDevicesConnected()
 
 long CUSBPxxS1::readHandleOfDevice(long device)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.lVal = device;
 	m_pIUSBP->USBPxxS1Command(NULL, DCID_GET_CHANNEL_HANDLE, &in_val, &out_val);
 	const auto packed = out_val.lVal;
 	TRACE(_T("read handle =%i \n"), packed);
-	return	packed;
+	return packed;
 }
 
 bool CUSBPxxS1::readAllParameters(USBPxxPARAMETERS* pUSBPxxParms)
@@ -521,8 +525,8 @@ bool CUSBPxxS1::readAllParameters(USBPxxPARAMETERS* pUSBPxxParms)
 
 void CUSBPxxS1::writeLPFC(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.fltVal = pUSBP->LPFc;
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_LPFC, &in_val, &out_val);
@@ -544,8 +548,8 @@ void CUSBPxxS1::writeLPFC(USBPxxPARAMETERS* pUSBP)
 
 void CUSBPxxS1::writeHPFC(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.fltVal = pUSBP->HPFc;
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_HPFC, &in_val, &out_val);
@@ -579,8 +583,8 @@ void CUSBPxxS1::writeHPFC(USBPxxPARAMETERS* pUSBP)
 
 void CUSBPxxS1::writeGainIndex(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.lVal = pUSBP->indexgain;
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_GAIN, &in_val, &out_val);
@@ -607,8 +611,8 @@ void CUSBPxxS1::writeGainIndex(USBPxxPARAMETERS* pUSBP)
 
 void CUSBPxxS1::writeCouplingIndex(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.lVal = pUSBP->indexCoupling;
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_COUPLING, &in_val, &out_val);
@@ -636,8 +640,8 @@ void CUSBPxxS1::writeCouplingIndex(USBPxxPARAMETERS* pUSBP)
 
 void CUSBPxxS1::writeClockSourceIndex(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.lVal = pUSBP->indexClockSource;
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_CLOCKSOURCE, &in_val, &out_val);
@@ -671,8 +675,8 @@ void CUSBPxxS1::writeClockSourceIndex(USBPxxPARAMETERS* pUSBP)
 
 void CUSBPxxS1::writePClockIndex(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.lVal = pUSBP->indexPClock;
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_PCLOCK, &in_val, &out_val);
@@ -696,8 +700,8 @@ void CUSBPxxS1::writePClockIndex(USBPxxPARAMETERS* pUSBP)
 
 void CUSBPxxS1::writeChannelNumber(USBPxxPARAMETERS* pUSBP)
 {
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	in_val.lVal = pUSBP->ChannelNumber;
 	m_pIUSBP->USBPxxS1Command(pUSBP->DeviceHandle, ID_WRITE_CHANNELNUMBER, &in_val, &out_val);
@@ -723,11 +727,11 @@ void CUSBPxxS1::writeChannelNumber(USBPxxPARAMETERS* pUSBP)
 //	USBPBP-S1
 //**************************************************************************************
 
-void  CUSBPxxS1::writeDescription(USBPxxPARAMETERS* pUSBP)
+void CUSBPxxS1::writeDescription(USBPxxPARAMETERS* pUSBP)
 {
 	auto index = 0;
-	VARIANT	in_val;
-	VARIANT	out_val;
+	VARIANT in_val;
+	VARIANT out_val;
 
 	long packed_character;
 	auto x = pUSBP->Description.GetLength();
@@ -761,7 +765,7 @@ void CUSBPxxS1::writeHPFC(CString highPass)
 
 void CUSBPxxS1::writeLPFC(int lowPass)
 {
-	m_USBP.LPFc = float(lowPass);
+	m_USBP.LPFc = static_cast<float>(lowPass);
 	writeLPFC(&m_USBP);
 }
 
@@ -785,11 +789,11 @@ bool CUSBPxxS1::GetWaveChanParms(CWaveChan* pchan)
 		return false;
 
 	readAllParameters(&m_USBP);
-	pchan->am_amplifierchan = short(m_USBP.ChannelNumber);
-	pchan->am_gainpre = short(m_USBP.Gain);
+	pchan->am_amplifierchan = static_cast<short>(m_USBP.ChannelNumber);
+	pchan->am_gainpre = static_cast<short>(m_USBP.Gain);
 	pchan->am_gainpost = 1;
 	pchan->am_csInputpos.Format(_T("%.3f \n"), m_USBP.HPFc);
-	pchan->am_lowpass = short(m_USBP.LPFc);
+	pchan->am_lowpass = static_cast<short>(m_USBP.LPFc);
 	return true;
 }
 

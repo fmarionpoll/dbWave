@@ -35,25 +35,24 @@ class CGridDropTarget : public COleDropTarget
 {
 public:
 	CGridDropTarget();
-	virtual ~CGridDropTarget();
+	~CGridDropTarget() override;
 
 	// Attributes
 public:
 	CGridCtrl* m_pGridCtrl;
-	BOOL       m_bRegistered;
+	BOOL m_bRegistered;
 
 	// Operations
 public:
 	BOOL Register(CGridCtrl* pGridCtrl);
-	virtual void Revoke();
+	void Revoke() override;
 
-	BOOL        OnDrop(CWnd* p_wnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
-	DROPEFFECT  OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	void        OnDragLeave(CWnd* p_wnd);
-	DROPEFFECT  OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	DROPEFFECT  OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint point);
+	BOOL OnDrop(CWnd* p_wnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point) override;
+	DROPEFFECT OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point) override;
+	void OnDragLeave(CWnd* p_wnd) override;
+	DROPEFFECT OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point) override;
+	DROPEFFECT OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint point) override;
 
 protected:
-
 	DECLARE_MESSAGE_MAP()
 };

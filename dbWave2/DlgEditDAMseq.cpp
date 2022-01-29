@@ -7,11 +7,11 @@
 IMPLEMENT_DYNAMIC(CDlgEditDAMseq, CDialogEx)
 
 CDlgEditDAMseq::CDlgEditDAMseq(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CDlgEditDAMseq::IDD, pParent)
+	: CDialogEx(IDD, pParent)
 
-	, m_mSeqRatio(0)
-	, m_mSeqDelay(0)
-	, m_mSeqSeed(0)
+	  , m_mSeqRatio(0)
+	  , m_mSeqDelay(0)
+	  , m_mSeqSeed(0)
 {
 	m_pParent = pParent;
 }
@@ -45,8 +45,8 @@ BOOL CDlgEditDAMseq::OnInitDialog()
 	m_mSeqSeed = m_outDParms.mseq_iSeed;
 
 	UpdateData(FALSE);
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CDlgEditDAMseq::OnOK()
@@ -65,7 +65,8 @@ void CDlgEditDAMseq::OnBnClickedMseqRandomSeed()
 	UpdateData(TRUE);
 
 	auto the_time = CTime::GetCurrentTime();
-	const UINT seed = ((the_time.GetSecond() << 8) + (the_time.GetMinute() << 4) + (the_time.GetHour())) * 10000000 & 0x7fffffff;
+	const UINT seed = ((the_time.GetSecond() << 8) + (the_time.GetMinute() << 4) + (the_time.GetHour())) * 10000000 &
+		0x7fffffff;
 	m_mSeqSeed = seed;
 	UpdateData(FALSE);
 }

@@ -28,14 +28,14 @@ public:
 
 	// Implementation
 public:
-	~CSplashWnd();
-	virtual void PostNcDestroy();
+	~CSplashWnd() override;
+	void PostNcDestroy() override;
 
 protected:
 	BOOL Create(CWnd* pParentWnd = nullptr);
 	void HideSplashScreen();
 
-	static BOOL			m_bShowSplashWnd;
+	static BOOL m_bShowSplashWnd;
 	static CSplashWnd* m_pSplashWnd;
 
 	// Generated message map functions

@@ -6,26 +6,27 @@ class ADIntervalsDlg : public CDialog
 {
 	// Construction
 public:
-	ADIntervalsDlg(CWnd* pParent = nullptr);	// standard constructor
+	ADIntervalsDlg(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_AD_INTERVALS };
-	int		m_bufferNitems;
-	float	m_adratechan;
-	float	m_acqduration;
-	float	m_sweepduration;
-	UINT	m_bufferWsize;
-	UINT	m_undersamplefactor;
-	BOOL	m_baudiblesound;
-	int		m_threshchan;
-	int		m_threshval;
+
+	int m_bufferNitems;
+	float m_adratechan;
+	float m_acqduration;
+	float m_sweepduration;
+	UINT m_bufferWsize;
+	UINT m_undersamplefactor;
+	BOOL m_baudiblesound;
+	int m_threshchan;
+	int m_threshval;
 	CWaveFormat* m_pwaveFormat;
 
-	WORD	m_postmessage;		// parameter passed on exit to activate another dialog
-	float	m_ratemax;			// max sampling rate (per chan)
-	float	m_ratemin;			// min sampling rate (per chan)
-	UINT	m_bufferWsizemax;	// maximum buffer size
-	BOOL	m_bchainDialog;
+	WORD m_postmessage; // parameter passed on exit to activate another dialog
+	float m_ratemax; // max sampling rate (per chan)
+	float m_ratemin; // min sampling rate (per chan)
+	UINT m_bufferWsizemax; // maximum buffer size
+	BOOL m_bchainDialog;
 
 	CEditCtrl mm_adratechan;
 	CEditCtrl mm_sweepduration;
@@ -35,14 +36,14 @@ public:
 
 	// Implementation
 protected:
-	CWaveFormat m_acqdef;	// acquisition parameters
+	CWaveFormat m_acqdef; // acquisition parameters
 
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 	// Generated message map functions
 	afx_msg void OnAdchannels();
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
+	void OnOK() override;
+	BOOL OnInitDialog() override;
 	afx_msg void OnEnChangeAdratechan();
 	afx_msg void OnEnChangeDuration();
 	afx_msg void OnEnChangeBuffersize();

@@ -6,33 +6,34 @@ class CPrintMarginsDlg : public CDialog
 {
 	// Construction
 public:
-	CPrintMarginsDlg(CWnd* pParent = nullptr);	// standard constructor
+	CPrintMarginsDlg(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_PRINTMARGINS };
+
 	OPTIONS_VIEWDATA* mdPM;
-	int	m_viewtype;
+	int m_viewtype;
 
 	// Implementation
 protected:
-	void	SketchPrinterPage();
-	void	GetPageSize();
+	void SketchPrinterPage();
+	void GetPageSize();
 
-	CRect	m_pagerect;
-	CRect	m_bars[8];
+	CRect m_pagerect;
+	CRect m_bars[8];
 
-	CRect	m_rect;
-	BOOL	m_bCaptured;
-	int		m_captureMode;
-	int		m_icapturedBar;
+	CRect m_rect;
+	BOOL m_bCaptured;
+	int m_captureMode;
+	int m_icapturedBar;
 
 	void DrawBar(CRect* bar, CDC* pdc);
 	int IsMouseOverAnyBar(CPoint* point);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
+	void DoDataExchange(CDataExchange* pDX) override;
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	BOOL OnInitDialog() override;
+	void OnOK() override;
 	afx_msg void OnCommentsoptions();
 	afx_msg void OnDrawarea();
 	afx_msg void OnDrawoptions();

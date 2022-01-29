@@ -23,48 +23,48 @@ class CGridCellDateTime : public CGridCell
 public:
 	CGridCellDateTime();
 	CGridCellDateTime(DWORD dw_style);
-	virtual ~CGridCellDateTime();
-	virtual CSize GetCellExtent(CDC* p_dc);
+	~CGridCellDateTime() override;
+	CSize GetCellExtent(CDC* p_dc) override;
 
 	// editing cells
 public:
 	void Init(DWORD dw_style);
-	virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-	virtual CWnd* GetEditWnd() const;
-	virtual void  EndEdit();
+	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+	CWnd* GetEditWnd() const override;
+	void EndEdit() override;
 
 	CTime* GetTime() { return &m_cTime; };
-	void   SetTime(CTime time);
+	void SetTime(CTime time);
 };
 
 class CInPlaceDateTime : public CDateTimeCtrl
 {
 	// Construction
 public:
-	CInPlaceDateTime(CWnd* pParent,         // parent
-		CRect& rect,           // dimensions & location
-		DWORD dw_style,         // window/combobox style
-		UINT nID,              // control ID
-		int nRow, int nColumn, // row and column
-		COLORREF crFore, COLORREF crBack,  // Foreground, background colour
-		CTime* pcTime,
-		UINT nFirstChar);      // first character to pass to control
+	CInPlaceDateTime(CWnd* pParent, // parent
+	                 CRect& rect, // dimensions & location
+	                 DWORD dw_style, // window/combobox style
+	                 UINT nID, // control ID
+	                 int nRow, int nColumn, // row and column
+	                 COLORREF crFore, COLORREF crBack, // Foreground, background colour
+	                 CTime* pcTime,
+	                 UINT nFirstChar); // first character to pass to control
 
 private:
 	CTime* m_pcTime;
-	int		 m_nRow;
-	int		 m_nCol;
-	UINT     m_nLastChar;
-	BOOL	 m_bExitOnArrows;
+	int m_nRow;
+	int m_nCol;
+	UINT m_nLastChar;
+	BOOL m_bExitOnArrows;
 	COLORREF m_crForeClr, m_crBackClr;
 
-// Overrides
+	// Overrides
 protected:
-	virtual void PostNcDestroy();
+	void PostNcDestroy() override;
 
 	// Implementation
 public:
-	virtual ~CInPlaceDateTime();
+	~CInPlaceDateTime() override;
 	void EndEdit();
 
 	// Generated message map functions

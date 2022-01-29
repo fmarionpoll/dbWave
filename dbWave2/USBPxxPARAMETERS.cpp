@@ -6,7 +6,8 @@ IMPLEMENT_SERIAL(USBPxxPARAMETERS, CObject, 0 /* schema number*/)
 
 USBPxxPARAMETERS& USBPxxPARAMETERS::operator=(const USBPxxPARAMETERS& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		DeviceHandle = arg.DeviceHandle;
 		LPFc = arg.LPFc;
 		HPFc = arg.HPFc;
@@ -65,11 +66,13 @@ void USBPxxPARAMETERS::Serialize(CArchive& ar)
 		const WORD wversion = 1;
 		ar << wversion;
 
-		int nitems = 2; ar << nitems;
+		int nitems = 2;
+		ar << nitems;
 		ar << LPFc;
 		ar << HPFc;
 
-		nitems = 10; ar << nitems;
+		nitems = 10;
+		ar << nitems;
 		ar << DeviceHandle;
 		ar << indexgain;
 		ar << indexCoupling;
@@ -81,11 +84,13 @@ void USBPxxPARAMETERS::Serialize(CArchive& ar)
 		ar << SerialNumber;
 		ar << ProductID;
 
-		nitems = 2; ar << nitems;
+		nitems = 2;
+		ar << nitems;
 		ar << RevisionHigh;
 		ar << RevisionLow;
 
-		nitems = 6; ar << nitems;
+		nitems = 6;
+		ar << nitems;
 		ar << Description;
 		ar << csCoupling;
 		ar << csClockSource;
@@ -99,32 +104,53 @@ void USBPxxPARAMETERS::Serialize(CArchive& ar)
 		ar >> wversion;
 		ASSERT(wversion == 1);
 
-		int nitems;  ar >> nitems;
-		if (nitems > 0) ar >> LPFc; nitems--;
-		if (nitems > 0) ar >> HPFc; nitems--;
+		int nitems;
+		ar >> nitems;
+		if (nitems > 0) ar >> LPFc;
+		nitems--;
+		if (nitems > 0) ar >> HPFc;
+		nitems--;
 
 		ar >> nitems;
-		if (nitems > 0) ar >> DeviceHandle; nitems--;
-		if (nitems > 0) ar >> indexgain; nitems--;
-		if (nitems > 0) ar >> indexCoupling; nitems--;
-		if (nitems > 0) ar >> indexClockSource; nitems--;
-		if (nitems > 0) ar >> indexPClock; nitems--;
-		if (nitems > 0) ar >> ChannelNumber; nitems--;
-		if (nitems > 0) ar >> indexLPFilterType; nitems--;
-		if (nitems > 0) ar >> indexHPFilterType; nitems--;
-		if (nitems > 0) ar >> SerialNumber; nitems--;
-		if (nitems > 0) ar >> ProductID; nitems--;
+		if (nitems > 0) ar >> DeviceHandle;
+		nitems--;
+		if (nitems > 0) ar >> indexgain;
+		nitems--;
+		if (nitems > 0) ar >> indexCoupling;
+		nitems--;
+		if (nitems > 0) ar >> indexClockSource;
+		nitems--;
+		if (nitems > 0) ar >> indexPClock;
+		nitems--;
+		if (nitems > 0) ar >> ChannelNumber;
+		nitems--;
+		if (nitems > 0) ar >> indexLPFilterType;
+		nitems--;
+		if (nitems > 0) ar >> indexHPFilterType;
+		nitems--;
+		if (nitems > 0) ar >> SerialNumber;
+		nitems--;
+		if (nitems > 0) ar >> ProductID;
+		nitems--;
 
 		ar >> nitems;
-		if (nitems > 0) ar >> RevisionHigh; nitems--;
-		if (nitems > 0) ar >> RevisionLow; nitems--;
+		if (nitems > 0) ar >> RevisionHigh;
+		nitems--;
+		if (nitems > 0) ar >> RevisionLow;
+		nitems--;
 
 		ar >> nitems;
-		if (nitems > 0) ar >> Description; nitems--;
-		if (nitems > 0) ar >> csCoupling; nitems--;
-		if (nitems > 0) ar >> csClockSource; nitems--;
-		if (nitems > 0) ar >> csPClock; nitems--;
-		if (nitems > 0) ar >> csLPFilterType; nitems--;
-		if (nitems > 0) ar >> csHPFilterType; nitems--;
+		if (nitems > 0) ar >> Description;
+		nitems--;
+		if (nitems > 0) ar >> csCoupling;
+		nitems--;
+		if (nitems > 0) ar >> csClockSource;
+		nitems--;
+		if (nitems > 0) ar >> csPClock;
+		nitems--;
+		if (nitems > 0) ar >> csLPFilterType;
+		nitems--;
+		if (nitems > 0) ar >> csHPFilterType;
+		nitems--;
 	}
 }

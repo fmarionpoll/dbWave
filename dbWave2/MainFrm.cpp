@@ -15,7 +15,7 @@
 
 IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
 
-const int  i_max_user_toolbars = 10;
+const int i_max_user_toolbars = 10;
 const UINT ui_first_user_tool_bar_id = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT ui_last_user_tool_bar_id = ui_first_user_tool_bar_id + i_max_user_toolbars - 1;
 
@@ -24,7 +24,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_WM_DESTROY()
 	ON_COMMAND(ID_WINDOW_MANAGER, &CMainFrame::OnWindowManager)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7,
+	                           &CMainFrame::OnUpdateApplicationLook)
 
 	ON_COMMAND(ID_TOOLS_OPTIONS, &CMainFrame::OnOptions)
 
@@ -94,10 +95,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMDITabInfo mdi_tab_params;
 	mdi_tab_params.m_style = CMFCTabCtrl::STYLE_3D_ONENOTE; // other styles available...
-	mdi_tab_params.m_bActiveTabCloseButton = TRUE;		// set to FALSE to place close button at right of tab area
-	mdi_tab_params.m_bTabIcons = FALSE;					// set to TRUE to enable document icons on MDI tabs
-	mdi_tab_params.m_bAutoColor = TRUE;					// set to FALSE to disable auto-coloring of MDI tabs
-	mdi_tab_params.m_bDocumentMenu = TRUE;				// enable the document menu at the right edge of the tab area
+	mdi_tab_params.m_bActiveTabCloseButton = TRUE; // set to FALSE to place close button at right of tab area
+	mdi_tab_params.m_bTabIcons = FALSE; // set to TRUE to enable document icons on MDI tabs
+	mdi_tab_params.m_bAutoColor = TRUE; // set to FALSE to disable auto-coloring of MDI tabs
+	mdi_tab_params.m_bDocumentMenu = TRUE; // enable the document menu at the right edge of the tab area
 	EnableMDITabbedGroups(TRUE, mdi_tab_params);
 
 	// Create the ribbon bar
@@ -112,7 +113,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndStatusBar.Create(this))
 	{
 		TRACE0("Failed to create status bar\n");
-		return -1;      // fail to create
+		return -1; // fail to create
 	}
 	CDockingManager::SetDockingMode(DT_SMART);
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
@@ -123,7 +124,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!CreateOutlookBar())
 	{
 		TRACE0("Failed to create navigation pane\n");
-		return -1;      // fail to create
+		return -1; // fail to create
 	}
 	EnableDocking(CBRS_ALIGN_LEFT);
 	EnableAutoHidePanes(CBRS_ALIGN_RIGHT);
@@ -190,8 +191,8 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	auto b_name_valid = str_filter_view.LoadString(IDS_FILTERPANE);
 	ASSERT(b_name_valid);
 	if (!m_wndFilter.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
-		ID_PANE_FILTERWND,
-		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+	                        ID_PANE_FILTERWND,
+	                        WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create filter properties window\n");
 		return FALSE; // failed to create
@@ -202,8 +203,9 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	b_name_valid = str_properties_view.LoadString(IDS_PROPERTIESPANE);
 	ASSERT(b_name_valid);
 	if (!m_wndProperties.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
-		ID_PANE_PROPERTIESWND,
-		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
+	                            ID_PANE_PROPERTIESWND,
+	                            WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT |
+	                            CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create record properties window\n");
 		return FALSE; // failed to create
@@ -215,14 +217,20 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 
 void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 {
-	const auto h_filter_pane_icon = static_cast<HICON>(::LoadImage(::AfxGetResourceHandle(),
-		MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW),
-		IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0));
+	const auto h_filter_pane_icon = static_cast<HICON>(::LoadImage(AfxGetResourceHandle(),
+	                                                               MAKEINTRESOURCE(
+		                                                               bHiColorIcons ? IDI_FILE_VIEW_HC :
+		                                                               IDI_FILE_VIEW),
+	                                                               IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
+	                                                               GetSystemMetrics(SM_CYSMICON), 0));
 	m_wndFilter.SetIcon(h_filter_pane_icon, FALSE);
 
-	const auto h_properties_pane_icon = static_cast<HICON>(::LoadImage(::AfxGetResourceHandle(),
-		MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND),
-		IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0));
+	const auto h_properties_pane_icon = static_cast<HICON>(::LoadImage(AfxGetResourceHandle(),
+	                                                                   MAKEINTRESOURCE(
+		                                                                   bHiColorIcons ? IDI_PROPERTIES_WND_HC :
+		                                                                   IDI_PROPERTIES_WND),
+	                                                                   IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
+	                                                                   GetSystemMetrics(SM_CYSMICON), 0));
 	m_wndProperties.SetIcon(h_properties_pane_icon, FALSE);
 
 	UpdateMDITabbedBarsIcons();
@@ -233,8 +241,8 @@ CdbWaveDoc* CMainFrame::GetMDIActiveDocument()
 	const auto p_child = MDIGetActive();
 	if (p_child == nullptr)
 		return nullptr;
-	auto* p_view = (CDaoRecordView*)p_child->GetActiveView();
-	return (CdbWaveDoc*)p_view->GetDocument();
+	auto* p_view = static_cast<CDaoRecordView*>(p_child->GetActiveView());
+	return static_cast<CdbWaveDoc*>(p_view->GetDocument());
 }
 
 BOOL CMainFrame::CreateOutlookBar()
@@ -242,37 +250,39 @@ BOOL CMainFrame::CreateOutlookBar()
 	CMFCOutlookBarTabCtrl::EnableAnimation();
 	const auto nInitialWidth = 60;
 	const CString strCaption = _T("Shortcuts");
-	if (!m_wndOutlookBar.Create(strCaption, this, CRect(0, 0, nInitialWidth, nInitialWidth), ID_VIEW_OUTLOOKBAR, WS_CHILD | WS_VISIBLE | CBRS_LEFT))
-		return FALSE;      // fail to create
+	if (!m_wndOutlookBar.Create(strCaption, this, CRect(0, 0, nInitialWidth, nInitialWidth), ID_VIEW_OUTLOOKBAR,
+	                            WS_CHILD | WS_VISIBLE | CBRS_LEFT))
+		return FALSE; // fail to create
 
-						   // create the choices toolbar and fill it with images, buttons and text
+	// create the choices toolbar and fill it with images, buttons and text
 	auto* pShortcutsBarContainer = DYNAMIC_DOWNCAST(CMFCOutlookBarTabCtrl, m_wndOutlookBar.GetUnderlyingWindow());
 	if (pShortcutsBarContainer == nullptr)
 		return FALSE;
 
 	// add images to this bar
-	CImageList	img1;
+	CImageList img1;
 
 	img1.Create(IDB_NAVIGATIONLARGE, 32, 0, RGB(255, 0, 255));
 
 #define NBUTTONS 8
 	const WORD dw_style = TBSTYLE_BUTTON | TBSTYLE_AUTOSIZE;
-	struct {
-		UINT id;                            // command ID
-		UINT strid;							// string ID
-		UINT style;                         // button style
-		UINT iImage;                        // index of image in normal/hot bitmaps
+	struct
+	{
+		UINT id; // command ID
+		UINT strid; // string ID
+		UINT style; // button style
+		UINT iImage; // index of image in normal/hot bitmaps
 	} Buttons[NBUTTONS] = {
-		// command ID              button style                        image index
-		{ ID_VIEW_DATABASE,				IDS_BTTNDATABASE,	dw_style, 0 },
-		{ ID_VIEW_DATAFILE,				IDS_BTTNDATA,		dw_style, 1 },
-		{ ID_VIEW_SPIKEDETECTION,		IDS_BTTNDETECT,		dw_style, 2 },
-		{ ID_VIEW_SPIKEDISPLAY,			IDS_BTTNSPIKES,		dw_style, 3 },
-		{ ID_VIEW_SPIKESORTINGAMPLITUDE,IDS_BTTNSORT,		dw_style, 4 },
-		{ ID_VIEW_SPIKESORTINGTEMPLATES,IDS_BTTNTEMPLATES,	dw_style, 5 },
-		{ ID_VIEW_SPIKETIMESERIES,		IDS_BTTNTIMESERIES,	dw_style, 6 },
-		{ ID_VIEW_ACQUIREDATA,			IDS_BTTNACQDATA,	dw_style, 7 }
-	};
+			// command ID              button style                        image index
+			{ID_VIEW_DATABASE, IDS_BTTNDATABASE, dw_style, 0},
+			{ID_VIEW_DATAFILE, IDS_BTTNDATA, dw_style, 1},
+			{ID_VIEW_SPIKEDETECTION, IDS_BTTNDETECT, dw_style, 2},
+			{ID_VIEW_SPIKEDISPLAY, IDS_BTTNSPIKES, dw_style, 3},
+			{ID_VIEW_SPIKESORTINGAMPLITUDE,IDS_BTTNSORT, dw_style, 4},
+			{ID_VIEW_SPIKESORTINGTEMPLATES,IDS_BTTNTEMPLATES, dw_style, 5},
+			{ID_VIEW_SPIKETIMESERIES, IDS_BTTNTIMESERIES, dw_style, 6},
+			{ID_VIEW_ACQUIREDATA, IDS_BTTNACQDATA, dw_style, 7}
+		};
 
 	// Create first page:
 	m_wndOutlookPane.Create(&m_wndOutlookBar, AFX_DEFAULT_TOOLBAR_STYLE, ID_PANE_OUTLOOKBAR);
@@ -287,11 +297,11 @@ BOOL CMainFrame::CreateOutlookBar()
 			str = _T("??");
 		m_wndOutlookPane.AddButton(img1.ExtractIconW(i), str, Buttons[i].id);
 		m_wndOutlookPane.SetButtonInfo(i,
-			Buttons[i].id,                 // command id
-			Buttons[i].style,              // buttons style
-			Buttons[i].iImage);            // index of image in bitmap
+		                               Buttons[i].id, // command id
+		                               Buttons[i].style, // buttons style
+		                               Buttons[i].iImage); // index of image in bitmap
 	}
-	pShortcutsBarContainer->AddTab(&m_wndOutlookPane, _T("Views"), (UINT)-1, FALSE);
+	pShortcutsBarContainer->AddTab(&m_wndOutlookPane, _T("Views"), static_cast<UINT>(-1), FALSE);
 	img1.Detach();
 
 	return TRUE;
@@ -356,7 +366,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
 			break;
-		default:;
+		default: ;
 		}
 
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));

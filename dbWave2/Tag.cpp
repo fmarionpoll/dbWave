@@ -13,7 +13,7 @@ CTag::CTag()
 {
 }
 
-CTag::CTag(int ref_chan) 
+CTag::CTag(int ref_chan)
 {
 	m_refchan = ref_chan;
 }
@@ -42,9 +42,10 @@ CTag::~CTag()
 {
 }
 
-CTag& CTag::operator = (const CTag& arg)
+CTag& CTag::operator =(const CTag& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		m_refchan = arg.m_refchan;
 		m_pixel = arg.m_pixel;
 		m_value = arg.m_value;
@@ -68,9 +69,12 @@ void CTag::Serialize(CArchive& ar)
 	else
 	{
 		WORD w1;
-		ar >> w1; m_refchan = w1;
-		ar >> w1; m_pixel = w1;
-		ar >> w1; m_value = w1;
+		ar >> w1;
+		m_refchan = w1;
+		ar >> w1;
+		m_pixel = w1;
+		ar >> w1;
+		m_value = w1;
 		ar >> m_lvalue;
 		ar >> m_csComment;
 	}
@@ -93,4 +97,3 @@ BOOL CTag::Read(CFile* datafile)
 	ar.Close();
 	return TRUE;
 }
-

@@ -3,15 +3,15 @@
 
 #include "StdAfx.h"
 #include "resource.h"
-#include ".\Printdra.h"
+#include "./Printdra.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 CPrintDrawAreaDlg::CPrintDrawAreaDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CPrintDrawAreaDlg::IDD, pParent)
-	, m_bFilterDat(FALSE)
+	: CDialog(IDD, pParent)
+	  , m_bFilterDat(FALSE)
 {
 	m_HeightDoc = 0;
 	m_heightSeparator = 0;
@@ -48,7 +48,7 @@ BOOL CPrintDrawAreaDlg::OnInitDialog()
 	m_bFilterDat = mdPM->bFilterDataSource;
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 void CPrintDrawAreaDlg::OnOK()

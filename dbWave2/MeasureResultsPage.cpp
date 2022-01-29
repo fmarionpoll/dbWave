@@ -3,7 +3,7 @@
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "ChartData.h"
 //#include "Editctrl.h"
 #include "NoteDoc.h"
@@ -22,7 +22,7 @@ IMPLEMENT_DYNCREATE(CMeasureResultsPage, CPropertyPage)
 /////////////////////////////////////////////////////////////////////////////
 // CMeasureResultsPage property page
 
-CMeasureResultsPage::CMeasureResultsPage() : CPropertyPage(CMeasureResultsPage::IDD), m_pdbDoc(nullptr)
+CMeasureResultsPage::CMeasureResultsPage() : CPropertyPage(IDD), m_pdbDoc(nullptr)
 {
 	m_pChartDataWnd = nullptr;
 }
@@ -52,9 +52,9 @@ void CMeasureResultsPage::OnExport()
 	CMultiDocTemplate* p_template = p_app->m_pNoteViewTemplate;
 	const auto p_doc = p_template->OpenDocumentFile(nullptr);
 	auto pos = p_doc->GetFirstViewPosition();
-	const auto p_view = (CRichEditView*)p_doc->GetNextView(pos);
+	const auto p_view = static_cast<CRichEditView*>(p_doc->GetNextView(pos));
 	auto& p_edit = p_view->GetRichEditCtrl();
-	p_edit.SetWindowText(csBuffer);		// copy content of window into CString
+	p_edit.SetWindowText(csBuffer); // copy content of window into CString
 }
 
 void CMeasureResultsPage::OutputTitle()
@@ -69,42 +69,42 @@ void CMeasureResultsPage::OutputTitle()
 
 	switch (m_pMO->wOption)
 	{
-		// ......................  vertical tags
+	// ......................  vertical tags
 	case 0:
 		if (m_pMO->bDatalimits)
 		{
-			if (!m_pMO->btime)	cs_cols += _T("\tt1(mV)\tt2(mV)");
-			else				cs_cols += _T("\tt1(mV)\tt1(s)\tt2(mV)\tt2(s)");
+			if (!m_pMO->btime) cs_cols += _T("\tt1(mV)\tt2(mV)");
+			else cs_cols += _T("\tt1(mV)\tt1(s)\tt2(mV)\tt2(s)");
 		}
 		if (m_pMO->bDiffDatalimits)
 		{
 			cs_cols += _T("\tt2-t1(mV)");
-			if (m_pMO->btime)	cs_cols += _T("\tt2-t1(s)");
+			if (m_pMO->btime) cs_cols += _T("\tt2-t1(s)");
 		}
 		if (m_pMO->bExtrema)
 		{
-			if (!m_pMO->btime)	cs_cols += _T("\tMax(mV)\tmin(mV)");
-			else				cs_cols += _T("\tMax(mV)\tMax(s)\tmin(mV)\tmin(s)");
+			if (!m_pMO->btime) cs_cols += _T("\tMax(mV)\tmin(mV)");
+			else cs_cols += _T("\tMax(mV)\tMax(s)\tmin(mV)\tmin(s)");
 		}
 		if (m_pMO->bDiffExtrema)
 		{
 			cs_cols += _T("\tDiff(mV)");
-			if (m_pMO->btime)	cs_cols += _T("\tdiff(s)");
+			if (m_pMO->btime) cs_cols += _T("\tdiff(s)");
 		}
-		if (m_pMO->bHalfrisetime)	cs_cols += _T("\t1/2rise(s)");
-		if (m_pMO->bHalfrecovery)	cs_cols += _T("\t1/2reco(s)");
+		if (m_pMO->bHalfrisetime) cs_cols += _T("\t1/2rise(s)");
+		if (m_pMO->bHalfrecovery) cs_cols += _T("\t1/2reco(s)");
 		break;
 
-		// ......................  horizontal cursors
+	// ......................  horizontal cursors
 	case 1:
-		if (m_pMO->bDatalimits)		cs_cols += _T("\tv1(mV)\tv2(mV)");
-		if (m_pMO->bDiffDatalimits)	cs_cols += _T("\tv2-v1(mV)");
+		if (m_pMO->bDatalimits) cs_cols += _T("\tv1(mV)\tv2(mV)");
+		if (m_pMO->bDiffDatalimits) cs_cols += _T("\tv2-v1(mV)");
 		break;
 
-		// ......................  rectangle area
+	// ......................  rectangle area
 	case 2:
 		break;
-		// ......................  detect stimulus and then measure
+	// ......................  detect stimulus and then measure
 	case 3:
 		break;
 	default:
@@ -114,25 +114,26 @@ void CMeasureResultsPage::OutputTitle()
 	// now set columns - get nb of data channels CString
 	if (!cs_cols.IsEmpty())
 	{
-		auto channel_first = 0;									// assume all data channels
-		auto channel_last = m_pChartDataWnd->GetChanlistSize() - 1;	// requested
+		auto channel_first = 0; // assume all data channels
+		auto channel_last = m_pChartDataWnd->GetChanlistSize() - 1; // requested
 		const auto n_pixels_mv = (m_listResults.GetStringWidth(_T("0.000000")) * 3) / 2;
 
-		if (!m_pMO->bAllChannels)					// else if flag set
-		{											// restrict to a single chan
-			channel_first = m_pMO->wSourceChan;				// single channel
+		if (!m_pMO->bAllChannels) // else if flag set
+		{
+			// restrict to a single chan
+			channel_first = m_pMO->wSourceChan; // single channel
 			channel_last = channel_first;
 		}
 		m_nbdatacols = 0;
 		auto psz_t = m_szT;
-		TCHAR separators[] = _T("\t");		// separator = tab
+		TCHAR separators[] = _T("\t"); // separator = tab
 		TCHAR* next_token = nullptr;
 
 		for (auto channel = channel_first; channel <= channel_last; channel++)
 		{
 			auto cs = cs_cols;
 			auto p_string = cs.GetBuffer(cs.GetLength() + 1);
-			p_string++;					// skip first tab
+			p_string++; // skip first tab
 			auto p_token = _tcstok_s(p_string, separators, &next_token);
 			while (p_token != nullptr)
 			{
@@ -143,12 +144,12 @@ void CMeasureResultsPage::OutputTitle()
 				columns = 1 + m_listResults.InsertColumn(columns, psz_t, LVCFMT_LEFT, n_pixels_mv, columns);
 				m_csTitle += separators;
 				m_csTitle += psz_t;
-				p_token = _tcstok_s(nullptr, separators, &next_token);	// get next token
+				p_token = _tcstok_s(nullptr, separators, &next_token); // get next token
 			}
 
-			if (m_nbdatacols == 0)		// number of data columns
+			if (m_nbdatacols == 0) // number of data columns
 				m_nbdatacols = columns - 1;
-			cs.ReleaseBuffer();			// release character buffer
+			cs.ReleaseBuffer(); // release character buffer
 		}
 	}
 	m_csTitle += _T("\r\n");
@@ -174,7 +175,8 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 		if (tag_last < 0)
 		{
 			tag_last = i;
-			MeasureWithinInterval(channel, line, m_pChartDataWnd->m_VTtags.GetTagLVal(tag_first), m_pChartDataWnd->m_VTtags.GetTagLVal(tag_last));
+			MeasureWithinInterval(channel, line, m_pChartDataWnd->m_VTtags.GetTagLVal(tag_first),
+			                      m_pChartDataWnd->m_VTtags.GetTagLVal(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -261,15 +263,15 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	m_mVperBin = m_pChartDataWnd->GetChanlistItem(channel)->GetVoltsperDataBin() * 1000.0f;
 	const auto rate = m_pdatDoc->GetpWaveFormat()->chrate;
 
-	auto output_column = (m_col - 1) * m_nbdatacols + 1;		// output data into column icol
-	auto item = m_listResults.GetItemCount();	// compute which line will receive data
+	auto output_column = (m_col - 1) * m_nbdatacols + 1; // output data into column icol
+	auto item = m_listResults.GetItemCount(); // compute which line will receive data
 	if (line >= item)
 	{
-		wsprintf(&m_szT[0], _T("%i"), item);		// if new line, print line nb
-		m_listResults.InsertItem(item, m_szT);	// and insert a new line within table
+		wsprintf(&m_szT[0], _T("%i"), item); // if new line, print line nb
+		m_listResults.InsertItem(item, m_szT); // and insert a new line within table
 	}
 	else
-		item = line;								// else set variable value
+		item = line; // else set variable value
 
 	// measure parameters / selected interval; save results within common vars
 	GetMaxMin(channel, l1, l2);
@@ -277,28 +279,32 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	// output data according to options : data value at limits
 	//m_szT[0] = '\t';								// prepare string for edit output
 	CString cs_dummy;
-	float	x_dummy;
+	float x_dummy;
 	const CString cs_fmt(_T("\t%f"));
 	if (m_pMO->bDatalimits)
 	{
 		x_dummy = static_cast<float>(m_first) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+		m_listResults.SetItemText(item, output_column, cs_dummy);
+		output_column++;
 		if (m_pMO->btime)
 		{
 			x_dummy = static_cast<float>(l1) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
-			m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+			m_listResults.SetItemText(item, output_column, cs_dummy);
+			output_column++;
 		}
 
 		x_dummy = static_cast<float>(m_last) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+		m_listResults.SetItemText(item, output_column, cs_dummy);
+		output_column++;
 		if (m_pMO->btime)
 		{
 			x_dummy = static_cast<float>(l2) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
-			m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+			m_listResults.SetItemText(item, output_column, cs_dummy);
+			output_column++;
 		}
 	}
 
@@ -306,12 +312,14 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	{
 		x_dummy = static_cast<float>(m_last - m_first) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+		m_listResults.SetItemText(item, output_column, cs_dummy);
+		output_column++;
 		if (m_pMO->btime)
 		{
 			x_dummy = (static_cast<float>(l2) - l1) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
-			m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+			m_listResults.SetItemText(item, output_column, cs_dummy);
+			output_column++;
 		}
 	}
 
@@ -320,21 +328,25 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	{
 		x_dummy = static_cast<float>(m_max) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+		m_listResults.SetItemText(item, output_column, cs_dummy);
+		output_column++;
 		if (m_pMO->btime)
 		{
 			x_dummy = static_cast<float>(m_imax) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
-			m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+			m_listResults.SetItemText(item, output_column, cs_dummy);
+			output_column++;
 		}
 		x_dummy = static_cast<float>(m_min) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+		m_listResults.SetItemText(item, output_column, cs_dummy);
+		output_column++;
 		if (m_pMO->btime)
 		{
 			x_dummy = static_cast<float>(m_imin) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
-			m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+			m_listResults.SetItemText(item, output_column, cs_dummy);
+			output_column++;
 		}
 	}
 
@@ -343,7 +355,8 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	{
 		x_dummy = static_cast<float>(m_max - m_min) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, output_column, cs_dummy); output_column++;
+		m_listResults.SetItemText(item, output_column, cs_dummy);
+		output_column++;
 		if (m_pMO->btime)
 		{
 			x_dummy = static_cast<float>(m_imax - m_imin) / rate;
@@ -383,9 +396,9 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 		if (tag_last < 0)
 		{
 			tag_last = i;
-			MeasureBetweenHZ(ichan, line, 
-				m_pChartDataWnd->m_HZtags.GetValue(tag_first), 
-				m_pChartDataWnd->m_HZtags.GetValue(tag_last));
+			MeasureBetweenHZ(ichan, line,
+			                 m_pChartDataWnd->m_HZtags.GetValue(tag_first),
+			                 m_pChartDataWnd->m_HZtags.GetValue(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -406,20 +419,20 @@ void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, co
 	// get scale factor for channel and sampling rate
 	m_mVperBin = m_pChartDataWnd->GetChanlistItem(channel)->GetVoltsperDataBin() * 1000.0f;
 
-	auto column_1 = (m_col - 1) * m_nbdatacols + 1;		// output data into column icol
-	auto item = m_listResults.GetItemCount();	// compute which line will receive data
+	auto column_1 = (m_col - 1) * m_nbdatacols + 1; // output data into column icol
+	auto item = m_listResults.GetItemCount(); // compute which line will receive data
 	if (line >= item)
 	{
-		wsprintf(&m_szT[0], _T("%i"), item);	// if new line, print line nb
-		m_listResults.InsertItem(item, m_szT);	// and insert a new line within table
+		wsprintf(&m_szT[0], _T("%i"), item); // if new line, print line nb
+		m_listResults.InsertItem(item, m_szT); // and insert a new line within table
 	}
 	else
-		item = line;								// else set variable value
+		item = line; // else set variable value
 
 	// measure parameters / selected interval; save results within common vars
 	//m_szT[0]='\t';								// prepare string for edit output
 	CString cs_dummy;
-	float	x_dummy;
+	float x_dummy;
 	const CString cs_fmt(_T("\t%f"));
 
 	// output data according to options : data value at limits
@@ -427,11 +440,13 @@ void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, co
 	{
 		x_dummy = static_cast<float>(v1) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, column_1, cs_dummy); column_1++;
+		m_listResults.SetItemText(item, column_1, cs_dummy);
+		column_1++;
 
 		x_dummy = static_cast<float>(v2) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
-		m_listResults.SetItemText(item, column_1, cs_dummy); column_1++;
+		m_listResults.SetItemText(item, column_1, cs_dummy);
+		column_1++;
 	}
 
 	if (m_pMO->bDiffDatalimits)
@@ -440,8 +455,6 @@ void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, co
 		cs_dummy.Format(cs_fmt, x_dummy);
 		m_listResults.SetItemText(item, column_1, cs_dummy);
 	}
-
-	return;
 }
 
 void CMeasureResultsPage::MeasureFromRect(int ichan)
@@ -460,8 +473,8 @@ BOOL CMeasureResultsPage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	MeasureParameters();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 // measure parameters either from current file or from the entire series
@@ -479,21 +492,21 @@ BOOL CMeasureResultsPage::MeasureParameters()
 	}
 
 	// prepare listcontrol
-//	while (m_listResults.DeleteColumn(0) != 0);
+	//	while (m_listResults.DeleteColumn(0) != 0);
 	m_listResults.DeleteAllItems();
 
 	// prepare clipboard and Edit control (CEdit)
 	if (OpenClipboard())
 	{
-		EmptyClipboard();		// prepare clipboard and copy text to buffer
-		const DWORD dw_len = 32768;	// 32 Kb
-		const auto h_copy = static_cast<HANDLE>(::GlobalAlloc(GHND, dw_len));
+		EmptyClipboard(); // prepare clipboard and copy text to buffer
+		const DWORD dw_len = 32768; // 32 Kb
+		const auto h_copy = GlobalAlloc(GHND, dw_len);
 		if (h_copy == nullptr)
 		{
 			AfxMessageBox(_T("Memory low: unable to allocate memory"));
 			return TRUE;
 		}
-		auto p_copy = static_cast<TCHAR*>(::GlobalLock(static_cast<HGLOBAL>(h_copy)));
+		auto p_copy = static_cast<TCHAR*>(GlobalLock(h_copy));
 		auto p_copy0 = p_copy;
 
 		// export Ascii: begin //////////////////////////////////////////////
@@ -510,12 +523,12 @@ BOOL CMeasureResultsPage::MeasureParameters()
 			// open data file
 			m_pdbDoc->OpenCurrentDataFile();
 
-			p_vd->bacqcomments = TRUE;		// global comment
-			p_vd->bacqdate = TRUE;			// acquisition date
-			p_vd->bacqtime = TRUE;			// acquisition time
-			p_vd->bfilesize = FALSE;		// file size
-			p_vd->bacqchcomment = FALSE;	// acq channel indiv comment
-			p_vd->bacqchsetting = FALSE;	// acq chan indiv settings (gain, filter, etc)
+			p_vd->bacqcomments = TRUE; // global comment
+			p_vd->bacqdate = TRUE; // acquisition date
+			p_vd->bacqtime = TRUE; // acquisition time
+			p_vd->bfilesize = FALSE; // file size
+			p_vd->bacqchcomment = FALSE; // acq channel indiv comment
+			p_vd->bacqchsetting = FALSE; // acq chan indiv settings (gain, filter, etc)
 			auto cs = cs_out;
 			cs += m_pdbDoc->m_pDat->GetDataFileInfos(p_vd);
 			p_copy += wsprintf(p_copy, _T("%s\r\n"), static_cast<LPCTSTR>(cs));
@@ -539,14 +552,18 @@ BOOL CMeasureResultsPage::MeasureParameters()
 				// measure according to option
 				switch (m_pMO->wOption)
 				{
-					// ......................  vertical tags
-				case 0:	MeasureFromVTtags(i_chan); break;
-					// ......................  horizontal cursors
-				case 1:	MeasureFromHZcur(i_chan); break;
-					// ......................  rectangle area
-				case 2:	MeasureFromRect(i_chan); break;
-					// ......................  detect stimulus and then measure
-				case 3: MeasureFromStim(i_chan); break;
+				// ......................  vertical tags
+				case 0: MeasureFromVTtags(i_chan);
+					break;
+				// ......................  horizontal cursors
+				case 1: MeasureFromHZcur(i_chan);
+					break;
+				// ......................  rectangle area
+				case 2: MeasureFromRect(i_chan);
+					break;
+				// ......................  detect stimulus and then measure
+				case 3: MeasureFromStim(i_chan);
+					break;
 				default:
 					break;
 				}
@@ -554,7 +571,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 			}
 
 			// transfer content of clistctrl to clipboard
-			p_copy += wsprintf(p_copy, _T("%s"), (LPCTSTR)m_csTitle);
+			p_copy += wsprintf(p_copy, _T("%s"), static_cast<LPCTSTR>(m_csTitle));
 			const auto n_lines = m_listResults.GetItemCount();
 			const auto n_columns = m_nbdatacols * (m_col - 1) + 1;
 			for (auto item = 0; item < n_lines; item++)
@@ -564,8 +581,11 @@ BOOL CMeasureResultsPage::MeasureParameters()
 					auto cs_content = m_listResults.GetItemText(item, column);
 					p_copy += wsprintf(p_copy, _T("%s\t"), static_cast<LPCTSTR>(cs_content));
 				}
-				p_copy--; *p_copy = '\r'; p_copy++;
-				*p_copy = '\n'; p_copy++;
+				p_copy--;
+				*p_copy = '\r';
+				p_copy++;
+				*p_copy = '\n';
+				p_copy++;
 			}
 			// if not, then next file will override the results computed before
 		}
@@ -574,19 +594,19 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		m_pdbDoc->SetDB_CurrentRecordPosition(current_file_index);
 		//CString filename2 = m_pdbDoc->GetDB_CurrentDatFileName();
 		m_pdbDoc->OpenCurrentDataFile();
-		EndWaitCursor();     // it's done
+		EndWaitCursor(); // it's done
 
 		// export Ascii: end //////////////////////////////////////////////
 		m_CEditResults.SetWindowText(p_copy0);
-		::GlobalUnlock(static_cast<HGLOBAL>(h_copy));
+		GlobalUnlock(h_copy);
 		SetClipboardData(CF_TEXT, h_copy);
-		CloseClipboard();		// close connect w.clipboard
-		delete p_vd;				// delete temporary object
+		CloseClipboard(); // close connect w.clipboard
+		delete p_vd; // delete temporary object
 	}
 	UpdateData(FALSE);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 // remove tags on exit

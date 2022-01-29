@@ -34,13 +34,13 @@ BOOL CFileVersion::Open(LPCTSTR lpszModuleName)
 
 	// Get the version information size for allocate the buffer
 	DWORD dw_handle = 0;
-	const auto dw_data_size = ::GetFileVersionInfoSize(const_cast<LPTSTR>(lpszModuleName), &dw_handle);
+	const auto dw_data_size = ::GetFileVersionInfoSize(lpszModuleName, &dw_handle);
 	if (dw_data_size == 0)
 		return FALSE;
 
 	// Allocate buffer and retrieve version information
 	m_lpVersionData = new BYTE[dw_data_size];
-	if (!::GetFileVersionInfo(const_cast<LPTSTR>(lpszModuleName), 0, dw_data_size, reinterpret_cast<void**>(m_lpVersionData)))
+	if (!::GetFileVersionInfo(lpszModuleName, 0, dw_data_size, m_lpVersionData))
 	{
 		Close();
 		return FALSE;
@@ -50,7 +50,7 @@ BOOL CFileVersion::Open(LPCTSTR lpszModuleName)
 	UINT n_query_size;
 	DWORD* p_trans_table;
 	if (!::VerQueryValue(m_lpVersionData, _T("\\VarFileInfo\\Translation"),
-		reinterpret_cast<void**>(&p_trans_table), &n_query_size))
+	                     reinterpret_cast<void**>(&p_trans_table), &n_query_size))
 	{
 		Close();
 		return FALSE;
@@ -67,7 +67,7 @@ CString CFileVersion::QueryValue(LPCTSTR lpszValueName, DWORD dwLangCharset /* =
 	// Must call Open() first
 	ASSERT(m_lpVersionData != NULL);
 	if (m_lpVersionData == nullptr)
-		return static_cast<CString>(_T(""));
+		return L"";
 
 	// If no lang-charset specified use default
 	if (dwLangCharset == 0)
@@ -78,9 +78,9 @@ CString CFileVersion::QueryValue(LPCTSTR lpszValueName, DWORD dwLangCharset /* =
 	LPVOID lp_data;
 	CString str_value, str_block_name;
 	str_block_name.Format(_T("\\StringFileInfo\\%08lx\\%s"),
-		dwLangCharset, lpszValueName);
-	if (::VerQueryValue(reinterpret_cast<void**>(m_lpVersionData), str_block_name.GetBuffer(0),
-		&lp_data, &n_query_size))
+	                      dwLangCharset, lpszValueName);
+	if (::VerQueryValue(m_lpVersionData, str_block_name.GetBuffer(0),
+	                    &lp_data, &n_query_size))
 		str_value = static_cast<LPCTSTR>(lp_data);
 
 	str_block_name.ReleaseBuffer();
@@ -97,8 +97,8 @@ BOOL CFileVersion::GetFixedInfo(VS_FIXEDFILEINFO& vsffi)
 
 	UINT nQuerySize;
 	VS_FIXEDFILEINFO* p_vsffi;
-	if (::VerQueryValue(reinterpret_cast<void**>(m_lpVersionData), _T("\\"),
-		reinterpret_cast<void**>(&p_vsffi), &nQuerySize))
+	if (::VerQueryValue(m_lpVersionData, _T("\\"),
+	                    reinterpret_cast<void**>(&p_vsffi), &nQuerySize))
 	{
 		vsffi = *p_vsffi;
 		return TRUE;
@@ -115,9 +115,9 @@ CString CFileVersion::GetFixedFileVersion()
 	if (GetFixedInfo(vsffi))
 	{
 		str_version.Format(_T("%u,%u,%u,%u"), HIWORD(vsffi.dwFileVersionMS),
-			LOWORD(vsffi.dwFileVersionMS),
-			HIWORD(vsffi.dwFileVersionLS),
-			LOWORD(vsffi.dwFileVersionLS));
+		                   LOWORD(vsffi.dwFileVersionMS),
+		                   HIWORD(vsffi.dwFileVersionLS),
+		                   LOWORD(vsffi.dwFileVersionLS));
 	}
 	return str_version;
 }
@@ -130,9 +130,9 @@ CString CFileVersion::GetFixedProductVersion()
 	if (GetFixedInfo(vsffi))
 	{
 		str_version.Format(_T("%u,%u,%u,%u"), HIWORD(vsffi.dwProductVersionMS),
-			LOWORD(vsffi.dwProductVersionMS),
-			HIWORD(vsffi.dwProductVersionLS),
-			LOWORD(vsffi.dwProductVersionLS));
+		                   LOWORD(vsffi.dwProductVersionMS),
+		                   HIWORD(vsffi.dwProductVersionLS),
+		                   LOWORD(vsffi.dwProductVersionLS));
 	}
 	return str_version;
 }

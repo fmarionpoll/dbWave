@@ -3,7 +3,7 @@
 
 #include "StdAfx.h"
 //#include "Cscale.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "ChartData.h"
 #include "Dataseri.h"
 
@@ -15,8 +15,8 @@
 // CDataSeriesFormatDlg dialog
 
 CDataSeriesFormatDlg::CDataSeriesFormatDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataSeriesFormatDlg::IDD, pParent), m_pChartDataWnd(nullptr), m_pdbDoc(nullptr), m_listindex(0), m_yzero(0),
-	m_yextent(0), m_mVperbin(0)
+	: CDialog(IDD, pParent), m_pChartDataWnd(nullptr), m_pdbDoc(nullptr), m_listindex(0), m_yzero(0),
+	  m_yextent(0), m_mVperbin(0)
 {
 	m_maxmv = 0.0f;
 	m_minmv = 0.0f;
@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 void CDataSeriesFormatDlg::OnOK()
 {
-	UpdateData(TRUE);                              // transfer data to controls
+	UpdateData(TRUE); // transfer data to controls
 	SetParams(m_listseries.GetCurSel());
 	CDialog::OnOK();
 }
@@ -76,6 +76,7 @@ void CDataSeriesFormatDlg::SetParams(const int index)
 	}
 	chan->SetColor(icolor);
 }
+
 void CDataSeriesFormatDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
@@ -101,16 +102,16 @@ BOOL CDataSeriesFormatDlg::OnInitDialog()
 	GetParams(m_listindex);
 	UpdateData(FALSE);
 	m_listseries.SetCurSel(m_listindex);
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CDataSeriesFormatDlg::OnSelchangeListseries()
 {
-	UpdateData(TRUE);                              // transfer data to controls
+	UpdateData(TRUE); // transfer data to controls
 	const auto listindex = m_listseries.GetCurSel();
 	SetParams(m_listindex);
 	m_listindex = listindex;
 	GetParams(listindex);
-	UpdateData(FALSE);                              // transfer data to controls
+	UpdateData(FALSE); // transfer data to controls
 }

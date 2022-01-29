@@ -18,10 +18,10 @@ CMeasureProperties::CMeasureProperties(CWnd* p_wnd_parent, const int select_acti
 	// active one is to call SetActivePage().
 
 	m_pChartDataWnd = nullptr;
-	AddPage(&m_measure_hz_tags_page);	// measure options
-	AddPage(&m_measure_vt_tags_page);	// VT tags edit
-	AddPage(&m_measure_options_page);	// HZ edit
-	AddPage(&m_measure_results_page);	// measure results
+	AddPage(&m_measure_hz_tags_page); // measure options
+	AddPage(&m_measure_vt_tags_page); // VT tags edit
+	AddPage(&m_measure_options_page); // HZ edit
+	AddPage(&m_measure_results_page); // measure results
 	SetActivePage(select_active_page);
 }
 

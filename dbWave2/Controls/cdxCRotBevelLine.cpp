@@ -20,8 +20,8 @@ IMPLEMENT_DYNAMIC(cdxCRotBevelLine, CStatic);
 
 /////////////////////////////////////////////////////////////////////////////
 
-static const CString	s_strTwoSpaces = _T("  ");
-static const CPoint	s_pnt11 = CPoint(1, 1);
+static const CString s_strTwoSpaces = _T("  ");
+static const CPoint s_pnt11 = CPoint(1, 1);
 
 /////////////////////////////////////////////////////////////////////////////
 // construction
@@ -40,72 +40,72 @@ END_MESSAGE_MAP()
 
 static inline CRect makeTextRect(const CRect& rect_client, const CSize& sz, DWORD dwType, int iAngle)
 {
-	CRect	rectText;
+	CRect rectText;
 
 	switch (iAngle)
 	{
 	default:
 		ASSERT(false);
-	case	0:
+	case 0:
 		rectText.top = rect_client.top - sz.cy / 2 - 2;
 		rectText.bottom = rectText.top + sz.cy;
 		switch (dwType)
 		{
 		default:
 			ASSERT(false);
-		case	SS_LEFT:
+		case SS_LEFT:
 			rectText.left = rect_client.left;
 			rectText.right = rect_client.left + sz.cx;
 			break;
-		case	SS_CENTER:
+		case SS_CENTER:
 			rectText.left = rect_client.left + (rect_client.Width() - sz.cx) / 2;
 			rectText.right = rectText.left + sz.cx;
 			break;
-		case	SS_RIGHT:
+		case SS_RIGHT:
 			rectText.left = rect_client.right - sz.cx;
 			rectText.right = rect_client.right;
 			break;
 		}
 		break;
 
-	case	90:
+	case 90:
 		rectText.left = rect_client.left - sz.cy / 2 - 1;
 		rectText.right = rectText.left + sz.cy;
 		switch (dwType)
 		{
 		default:
 			ASSERT(false);
-		case	SS_RIGHT:
+		case SS_RIGHT:
 			rectText.top = rect_client.top;
 			rectText.bottom = rect_client.top + sz.cx;
 			break;
-		case	SS_CENTER:
+		case SS_CENTER:
 			rectText.top = rect_client.top + (rect_client.Height() - sz.cx) / 2;
 			rectText.bottom = rectText.top + sz.cx;
 			break;
-		case	SS_LEFT:
+		case SS_LEFT:
 			rectText.top = rect_client.bottom - sz.cx;
 			rectText.bottom = rect_client.bottom;
 			break;
 		}
 		break;
 
-	case	270:
+	case 270:
 		rectText.left = rect_client.left - sz.cy / 2 + 1;
 		rectText.right = rectText.left + sz.cy;
 		switch (dwType)
 		{
 		default:
 			ASSERT(false);
-		case	SS_LEFT:
+		case SS_LEFT:
 			rectText.top = rect_client.top;
 			rectText.bottom = rect_client.top + sz.cx;
 			break;
-		case	SS_CENTER:
+		case SS_CENTER:
 			rectText.top = rect_client.top + (rect_client.Height() - sz.cx) / 2;
 			rectText.bottom = rectText.top + sz.cx;
 			break;
-		case	SS_RIGHT:
+		case SS_RIGHT:
 			rectText.top = rect_client.bottom - sz.cx;
 			rectText.bottom = rect_client.bottom;
 			break;
@@ -118,27 +118,27 @@ static inline CRect makeTextRect(const CRect& rect_client, const CSize& sz, DWOR
 
 static inline void drawText(CDC& dc, CString s, const CRect& r, const CPoint& pnt11, bool bDisabled)
 {
-	COLORREF	txtCol = dc.GetTextColor();
-	int		md = dc.SetBkMode(TRANSPARENT);
+	COLORREF txtCol = dc.GetTextColor();
+	int md = dc.SetBkMode(TRANSPARENT);
 
 	if (bDisabled)
 	{
-		dc.SetTextColor(::GetSysColor(COLOR_3DHIGHLIGHT));
+		dc.SetTextColor(GetSysColor(COLOR_3DHIGHLIGHT));
 		dc.DrawText(s, r + pnt11, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
-		dc.SetTextColor(::GetSysColor(COLOR_3DSHADOW));
+		dc.SetTextColor(GetSysColor(COLOR_3DSHADOW));
 	}
 	else
-		dc.SetTextColor(::GetSysColor(COLOR_BTNTEXT));
+		dc.SetTextColor(GetSysColor(COLOR_BTNTEXT));
 
-	dc.DrawText(s, (RECT*)(const RECT*)r, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(s, (RECT*)static_cast<const RECT*>(r), DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 	dc.SetTextColor(txtCol);
 	dc.SetBkMode(md);
 }
 
 static inline CSize textExtent(CDC& dc, CString s)
 {
-	CRect	r(0, 10, 0, 10);
-	CSize	sz;
+	CRect r(0, 10, 0, 10);
+	CSize sz;
 	sz.cy = dc.DrawText(s, r, DT_LEFT | DT_SINGLELINE | DT_NOCLIP | DT_CALCRECT);
 	sz.cx = r.Width();
 	return sz;
@@ -150,20 +150,20 @@ void cdxCRotBevelLine::OnPaint()
 
 	CPaintDC dc(this); // device context for painting
 
-	CRect	rect_client;
+	CRect rect_client;
 	GetClientRect(rect_client);
 
-	COLORREF	oldBkCol = dc.GetBkColor();
-	CFont*		pOldFont = dc.SelectObject(GetFont());
-	COLORREF	hiCol = ::GetSysColor(!m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
-	COLORREF	loCol = ::GetSysColor(m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
+	COLORREF oldBkCol = dc.GetBkColor();
+	CFont* pOldFont = dc.SelectObject(GetFont());
+	COLORREF hiCol = GetSysColor(!m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
+	COLORREF loCol = GetSysColor(m_bSunken ? COLOR_3DHIGHLIGHT : COLOR_3DSHADOW);
 
-	dc.FillSolidRect(rect_client, ::GetSysColor(COLOR_BTNFACE));
+	dc.FillSolidRect(rect_client, GetSysColor(COLOR_BTNFACE));
 
 	// draw bevel
 
-	CRect		rectBevel;
-	bool		bHorz;
+	CRect rectBevel;
+	bool bHorz;
 
 	if (rect_client.Width() > rect_client.Height())
 	{
@@ -186,14 +186,14 @@ void cdxCRotBevelLine::OnPaint()
 
 	// add some text
 
-	CString	s;
+	CString s;
 	GetWindowText(s);
 
 	if (!s.IsEmpty())
 	{
 		// interpret my ~ stuff (even for horizontals where we cut it off only)
 
-		int	iAngle;
+		int iAngle;
 
 		if (s[0] == _T('~'))
 		{
@@ -205,14 +205,14 @@ void cdxCRotBevelLine::OnPaint()
 
 		// get proper style
 
-		DWORD	dwType = GetStyle() & SS_TYPEMASK;
+		DWORD dwType = GetStyle() & SS_TYPEMASK;
 
 		switch (dwType)
 		{
-		default:				dwType = SS_LEFT;
-		case	SS_LEFT:	break;
-		case	SS_RIGHT:	break;
-		case	SS_CENTER:	break;
+		default: dwType = SS_LEFT;
+		case SS_LEFT: break;
+		case SS_RIGHT: break;
+		case SS_CENTER: break;
 		}
 
 		if (dwType != SS_LEFT)
@@ -222,15 +222,15 @@ void cdxCRotBevelLine::OnPaint()
 
 		// get proper rect
 
-		CSize	sz = textExtent(dc, s);
-		CRect	rectText = makeTextRect(rectBevel, sz, dwType, iAngle);
+		CSize sz = textExtent(dc, s);
+		CRect rectText = makeTextRect(rectBevel, sz, dwType, iAngle);
 
 		++rectText.bottom;
-		if (dwType == SS_RIGHT)		// ensure disabled text is drawn properly
+		if (dwType == SS_RIGHT) // ensure disabled text is drawn properly
 			--rectText.left;
 
 		dc.IntersectClipRect(rectText);
-		dc.FillSolidRect(rectText, ::GetSysColor(COLOR_BTNFACE));
+		dc.FillSolidRect(rectText, GetSysColor(COLOR_BTNFACE));
 
 		if (bHorz)
 		{
@@ -238,7 +238,7 @@ void cdxCRotBevelLine::OnPaint()
 		}
 		else
 		{
-			cdxCRot90DC	rotDC(dc, rectText, iAngle, true);
+			cdxCRot90DC rotDC(dc, rectText, iAngle, true);
 
 			if (rotDC.IsCreated())
 				drawText(rotDC, s, rotDC, rotDC.rotate(s_pnt11), (GetStyle() & WS_DISABLED) != 0);

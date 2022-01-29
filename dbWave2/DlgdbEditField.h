@@ -22,18 +22,19 @@ class CDlgdbEditField : public CDialogEx
 	DECLARE_DYNAMIC(CDlgdbEditField)
 
 public:
-	CDlgdbEditField(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CDlgdbEditField();
+	CDlgdbEditField(CWnd* pParent = nullptr); // standard constructor
+	~CDlgdbEditField() override;
 
 	// Dialog Data
 	enum { IDD = IDD_DBEDITRECORDFIELD };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	void	DisplayElements();
-	void	ModifyCurrent();
-	void	ModifyAll();
-	void	ModifySelected()
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DisplayElements();
+	void ModifyCurrent();
+	void ModifyAll();
+
+	void ModifySelected()
 	{
 		const auto iedit = m_pMainTable->GetEditMode();
 		if (iedit != dbEditNone)
@@ -53,36 +54,36 @@ protected:
 		m_pMainTable->SetBookmark(bookmark_current);
 	}
 
-	long	m_sourceID;
-	long	m_destID{};
-	long	m_initialID;
-	
-public:
-	int		m_sourceselect;
-	int		m_sourcecondition;
-	int		m_destaction;
-	BOOL	m_bCaseSensitive;
+	long m_sourceID;
+	long m_destID{};
+	long m_initialID;
 
-	CString		m_csfieldvalue;
-	CString		m_cstextsearch;
-	CString		m_cstextreplacewith;
-	CComboBox	m_codictionary;
-	BOOL		m_bcodictchanged;
-	CComboBox	m_cosource;
-	int			m_first;
+public:
+	int m_sourceselect;
+	int m_sourcecondition;
+	int m_destaction;
+	BOOL m_bCaseSensitive;
+
+	CString m_csfieldvalue;
+	CString m_cstextsearch;
+	CString m_cstextreplacewith;
+	CComboBox m_codictionary;
+	BOOL m_bcodictchanged;
+	CComboBox m_cosource;
+	int m_first;
 
 	//////////////////////////////////
 	// parameters passed
-	CdbMainTable* m_pMainTable{};		// address of main table
-	CString			m_csColName;		// name of the column
-	CdbIndexTable* m_pIndexTable{};		// address secondary table
-	CArray<long, long>* m_pliIDArray{};		// address uiArray storing IDs
-	BOOL			m_bIndexTable;		// TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
+	CdbMainTable* m_pMainTable{}; // address of main table
+	CString m_csColName; // name of the column
+	CdbIndexTable* m_pIndexTable{}; // address secondary table
+	CArray<long, long>* m_pliIDArray{}; // address uiArray storing IDs
+	BOOL m_bIndexTable; // TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
 	CdbWaveDoc* m_pdbDoc{};
 	/////////////////////////////////
 
 	afx_msg void OnBnClickedRadio1();
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedRadio3();

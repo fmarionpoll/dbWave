@@ -13,9 +13,10 @@ OPTIONS_IMPORT::~OPTIONS_IMPORT()
 	SAFE_DELETE(pwave_chan_array)
 }
 
-OPTIONS_IMPORT& OPTIONS_IMPORT::operator = (const OPTIONS_IMPORT& arg)
+OPTIONS_IMPORT& OPTIONS_IMPORT::operator =(const OPTIONS_IMPORT& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		w_version = arg.w_version;
 		fGainFID = arg.fGainFID;
 		fGainEAD = arg.fGainEAD;
@@ -59,21 +60,24 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		w_version = 6; ar << w_version;
+		w_version = 6;
+		ar << w_version;
 		ar << fGainFID;
 		ar << fGainEAD;
 
 		// generic data import options
-		int bflag = bSapid3_5;	// combine flags: update flag, combine
-		bflag <<= 1; bflag += bPreview;
-		bflag <<= 1; bflag += bSingleRun;
+		int bflag = bSapid3_5; // combine flags: update flag, combine
+		bflag <<= 1;
+		bflag += bPreview;
+		bflag <<= 1;
+		bflag += bSingleRun;
 		ar << bflag;
 
-		ar << WORD(nbRuns);
-		ar << WORD(nbChannels);
+		ar << static_cast<WORD>(nbRuns);
+		ar << static_cast<WORD>(nbChannels);
 		ar << samplingRate;
-		ar << WORD(encodingMode);
-		ar << WORD(bitsPrecision);
+		ar << static_cast<WORD>(encodingMode);
+		ar << static_cast<WORD>(bitsPrecision);
 		ar << voltageMax;
 		ar << voltageMin;
 		ar << skipNbytes;
@@ -86,13 +90,17 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		// generic data export options
 		ar << exportType;
 		bflag = bAllchannels;
-		bflag <<= 1; bflag += bSeparateComments;
-		bflag <<= 1; bflag += bentireFile;
-		bflag <<= 1; bflag += bincludeTime;
+		bflag <<= 1;
+		bflag += bSeparateComments;
+		bflag <<= 1;
+		bflag += bentireFile;
+		bflag <<= 1;
+		bflag += bincludeTime;
 		ar << bflag;
 
 		ar << selectedChannel;
-		ar << fTimefirst; ar << fTimelast;
+		ar << fTimefirst;
+		ar << fTimelast;
 
 		ar << path_wtoascii;
 
@@ -105,7 +113,8 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		ar << ntypes;
 		ar << iundersample;
 		bflag = bDummy;
-		bflag <<= 1; bflag += bDiscardDuplicateFiles;
+		bflag <<= 1;
+		bflag += bDiscardDuplicateFiles;
 		ar << bflag;
 
 		// CStrings
@@ -125,15 +134,24 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 			WORD w1;
 			ar >> bflag;
 			// decompose flags: update flag (/2),  get value, mask
-			bSingleRun = bflag;  bSingleRun &= 0x1; bflag >>= 1;
-			bPreview = bflag;  bPreview &= 0x1; bflag >>= 1;
-			bSapid3_5 = bflag; bSapid3_5 &= 0x1;
+			bSingleRun = bflag;
+			bSingleRun &= 0x1;
+			bflag >>= 1;
+			bPreview = bflag;
+			bPreview &= 0x1;
+			bflag >>= 1;
+			bSapid3_5 = bflag;
+			bSapid3_5 &= 0x1;
 
-			ar >> w1; nbRuns = short(w1);
-			ar >> w1; nbChannels = short(w1);
+			ar >> w1;
+			nbRuns = static_cast<short>(w1);
+			ar >> w1;
+			nbChannels = static_cast<short>(w1);
 			ar >> samplingRate;
-			ar >> w1; encodingMode = short(w1);
-			ar >> w1; bitsPrecision = short(w1);
+			ar >> w1;
+			encodingMode = static_cast<short>(w1);
+			ar >> w1;
+			bitsPrecision = static_cast<short>(w1);
 			ar >> voltageMax;
 			ar >> voltageMin;
 			ar >> skipNbytes;
@@ -148,12 +166,20 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		{
 			ar >> exportType;
 			ar >> bflag;
-			bincludeTime = bflag; bincludeTime &= 0x1; bflag >>= 1;	
-			bentireFile = bflag; bentireFile &= 0x1; bflag >>= 1;
-			bSeparateComments = bflag; bSeparateComments &= 0x1; bflag >>= 1;
-			bAllchannels = bflag; bAllchannels &= 0x1;
+			bincludeTime = bflag;
+			bincludeTime &= 0x1;
+			bflag >>= 1;
+			bentireFile = bflag;
+			bentireFile &= 0x1;
+			bflag >>= 1;
+			bSeparateComments = bflag;
+			bSeparateComments &= 0x1;
+			bflag >>= 1;
+			bAllchannels = bflag;
+			bAllchannels &= 0x1;
 			ar >> selectedChannel;
-			ar >> fTimefirst; ar >> fTimelast;
+			ar >> fTimefirst;
+			ar >> fTimelast;
 		}
 		if (version >= 5)
 			ar >> path_wtoascii;
@@ -165,12 +191,18 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 			{
 				int nints;
 				ar >> nints;
-				ar >> iundersample; nints--;
+				ar >> iundersample;
+				nints--;
 				if (nints > 0)
 				{
-					ar >> bflag; nints--;
-					bDiscardDuplicateFiles = bflag; bDiscardDuplicateFiles &= 0x1; bflag >>= 1;
-					bDummy = bflag; bDummy &= 0x1; bflag >>= 1;
+					ar >> bflag;
+					nints--;
+					bDiscardDuplicateFiles = bflag;
+					bDiscardDuplicateFiles &= 0x1;
+					bflag >>= 1;
+					bDummy = bflag;
+					bDummy &= 0x1;
+					bflag >>= 1;
 				}
 			}
 			ntypes--;
@@ -178,12 +210,11 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 			if (ntypes > 0)
 			{
 				int nstrings;
-				ar >> nstrings;	
-				ar >> path; nstrings--;
+				ar >> nstrings;
+				ar >> path;
+				nstrings--;
 			}
 			ntypes--;
 		}
 	}
 }
-
-

@@ -17,27 +17,27 @@ public:
 
 	// Attributes
 public:
-	CMeasureHZtagsPage	m_measure_hz_tags_page;
+	CMeasureHZtagsPage m_measure_hz_tags_page;
 	CMeasureOptionsPage m_measure_options_page;
-	CMeasureVTtagsPage	m_measure_vt_tags_page;
+	CMeasureVTtagsPage m_measure_vt_tags_page;
 	CMeasureResultsPage m_measure_results_page;
 
 	// CMeasureResults
-	CChartDataWnd*	m_pChartDataWnd{};
-	CdbWaveDoc*		m_pdbDoc{};
-	CAcqDataDoc*	m_pdatDoc{};
+	ChartData* m_pChartDataWnd{};
+	CdbWaveDoc* m_pdbDoc{};
+	AcqDataDoc* m_pdatDoc{};
 
 	OPTIONS_VIEWDATAMEASURE* m_pMO{};
-	int				m_currentchan{};
-	float			m_samplingrate{};
+	int m_currentchan{};
+	float m_samplingrate{};
 
 	// Overrides
 public:
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 
 	// Implementation
 public:
-	virtual ~CMeasureProperties();
+	~CMeasureProperties() override;
 
 	DECLARE_MESSAGE_MAP()
 };

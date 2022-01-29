@@ -11,7 +11,7 @@
 // CdbNewFileDuplicateDlg dialog
 
 CdbNewFileDuplicateDlg::CdbNewFileDuplicateDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CdbNewFileDuplicateDlg::IDD, pParent)
+	: CDialog(IDD, pParent)
 {
 	m_option = -1;
 	m_pfilein = nullptr;
@@ -35,7 +35,7 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	((CButton*)GetDlgItem(IDC_RADIO3))->SetCheck(TRUE);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIO3))->SetCheck(TRUE);
 
 	// check if file requested is already there
 	CString csnew = m_pfilein;
@@ -53,7 +53,7 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 	// and iterate numbers until root+number is not found on disk
 	if (b_exist)
 	{
-		CString cs_root;	// root name of the file series
+		CString cs_root; // root name of the file series
 
 		// extract name without extension
 		csnew = m_csName;
@@ -68,7 +68,7 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 			cs_root = csnew;
 
 		// get root name without numbers
-		const auto j = cs_root.FindOneOf(_T("0123456789"));	// find the first numerical character
+		const auto j = cs_root.FindOneOf(_T("0123456789")); // find the first numerical character
 		// no numerical character is found, assume it is the first and add "1"
 		if (j < 0)
 			csnew = cs_root + _T("1");
@@ -81,7 +81,7 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 			cs_root = cs_root.Left(j);
 
 			auto b_exist2 = TRUE;
-			auto jiterations = 50;		// limit nb of iterations to 50
+			auto jiterations = 50; // limit nb of iterations to 50
 			while (b_exist2 && (jiterations > 0))
 			{
 				nb++;
@@ -97,8 +97,8 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 
 	// tentative name defined - display it and exit
 	GetDlgItem(IDC_EDIT1)->SetWindowText(csnew);
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CdbNewFileDuplicateDlg::OnOK()
@@ -115,5 +115,5 @@ void CdbNewFileDuplicateDlg::OnOK()
 
 void CdbNewFileDuplicateDlg::OnRadio3()
 {
-	GetDlgItem(IDC_EDIT1)->EnableWindow(((CButton*)GetDlgItem(IDC_RADIO3))->GetCheck());
+	GetDlgItem(IDC_EDIT1)->EnableWindow(static_cast<CButton*>(GetDlgItem(IDC_RADIO3))->GetCheck());
 }

@@ -15,7 +15,7 @@
 IMPLEMENT_DYNAMIC(CImportOptionsDlg, CDialogEx)
 
 CImportOptionsDlg::CImportOptionsDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CImportOptionsDlg::IDD, pParent)
+	: CDialogEx(IDD, pParent)
 {
 }
 

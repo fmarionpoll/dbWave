@@ -9,7 +9,7 @@
 #include "StdAfx.h"
 
 //#include "resource.h"
-#include "chart.h"
+#include "ChartWnd.h"
 #include "TemplateWnd.h"
 #include <math.h>
 
@@ -17,11 +17,12 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_SERIAL(CTemplateWnd, CChartWnd, 0 /* schema number*/)
+IMPLEMENT_SERIAL(CTemplateWnd, ChartWnd, 0 /* schema number*/)
 
-CTemplateWnd& CTemplateWnd::operator = (const CTemplateWnd& arg)
+CTemplateWnd& CTemplateWnd::operator =(const CTemplateWnd& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		m_nitems = arg.m_nitems;
 		m_classID = arg.m_classID;
 		m_csID = arg.m_csID;
@@ -43,24 +44,24 @@ void CTemplateWnd::Serialize(CArchive& ar)
 		const auto wversion = static_cast<WORD>(1);
 		ar << wversion;
 
-		const auto nstrings = static_cast<int>(1);
+		const auto nstrings = 1;
 		ar << nstrings;
-		ar << m_csID;		// 1
+		ar << m_csID; // 1
 
-		const auto nints = static_cast<int>(3);
+		const auto nints = 3;
 		ar << nints;
-		ar << m_tpllen;		// 1
-		ar << m_nitems;		// 2
-		ar << m_classID;	// 3
+		ar << m_tpllen; // 1
+		ar << m_nitems; // 2
+		ar << m_classID; // 3
 
-		const auto nfloats = static_cast<int>(1);
+		const auto nfloats = 1;
 		ar << nfloats;
-		ar << m_ktolerance;	// 1
+		ar << m_ktolerance; // 1
 
-		const auto ndoubles = static_cast<int>(2);
+		const auto ndoubles = 2;
 		ar << ndoubles;
-		ar << m_globalstd;	// 1
-		ar << m_power;		// 2
+		ar << m_globalstd; // 1
+		ar << m_power; // 2
 
 		mytype* p_spike_element = m_pSumArray;
 		for (auto i = 0; i < m_tpllen * 2; i++, p_spike_element++)
@@ -68,27 +69,29 @@ void CTemplateWnd::Serialize(CArchive& ar)
 	}
 	else
 	{
-		WORD version;  ar >> version;
+		WORD version;
+		ar >> version;
 
 		int nstrings;
 		ar >> nstrings;
-		ar >> m_csID;		// 1
+		ar >> m_csID; // 1
 
 		int nints;
 		ar >> nints;
-		int len; ar >> len;
+		int len;
+		ar >> len;
 		SetTemplateLength(len);
-		ar >> m_nitems;		// 2
-		ar >> m_classID;	// 3
+		ar >> m_nitems; // 2
+		ar >> m_classID; // 3
 
 		int nfloats;
 		ar >> nfloats;
-		ar >> m_ktolerance;	// 1
+		ar >> m_ktolerance; // 1
 
 		int ndoubles;
 		ar >> ndoubles;
-		ar >> m_globalstd;	// 1
-		ar >> m_power;		// 2
+		ar >> m_globalstd; // 1
+		ar >> m_power; // 2
 
 		mytype* p_spike_element = m_pSumArray;
 		for (auto i = 0; i < m_tpllen * 2; i++, p_spike_element++)
@@ -96,7 +99,7 @@ void CTemplateWnd::Serialize(CArchive& ar)
 	}
 }
 
-BEGIN_MESSAGE_MAP(CTemplateWnd, CChartWnd)
+BEGIN_MESSAGE_MAP(CTemplateWnd, ChartWnd)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
@@ -163,7 +166,7 @@ void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
 
 	// plot area between max and min in grey
 	const auto old_pen = p_dc->SelectObject(&m_penTable[SILVER_COLOR]);
-	const auto pold_b = (CBrush*)p_dc->SelectStockObject(LTGRAY_BRUSH);
+	const auto pold_b = static_cast<CBrush*>(p_dc->SelectStockObject(LTGRAY_BRUSH));
 	p_dc->Polygon(&m_ptsArea[0], m_tpllen * 2 + 1);
 	p_dc->SelectObject(pold_b);
 
@@ -226,7 +229,7 @@ void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 	auto p_min = m_pMin0;
 
 	auto i1 = 0;
-	auto i2 = m_ptsArea.GetUpperBound() -1;
+	auto i2 = m_ptsArea.GetUpperBound() - 1;
 
 	if (!bScale)
 	{
@@ -244,13 +247,12 @@ void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 	{
 		for (int i = 0; i < m_tpllen; i++, i1++, i2--)
 		{
-			m_ptsAvg[i].y = MulDiv(*p_avg - m_yWO, m_yVE, m_yWE) + m_yVO;;
+			m_ptsAvg[i].y = MulDiv(*p_avg - m_yWO, m_yVE, m_yWE) + m_yVO;
 			m_ptsArea[i1].y = MulDiv(*p_max - m_yWO, m_yVE, m_yWE) + m_yVO;
 			m_ptsArea[i2].y = MulDiv(*p_min - m_yWO, m_yVE, m_yWE) + m_yVO;
 			p_avg++;
 			p_max++;
 			p_min++;
-
 		}
 	}
 	m_ptsArea[m_ptsArea.GetUpperBound()].y = m_ptsArea[0].y;
@@ -264,7 +266,7 @@ void CTemplateWnd::SetTemplateLength(int len, int extent, int org)
 	{
 		DeleteArrays();
 
-		m_tpllen = len;	
+		m_tpllen = len;
 		m_nitems = 0;
 
 		m_pSumArray = new mytype[len * 2];
@@ -321,7 +323,7 @@ void CTemplateWnd::tSetdisplayData()
 
 	if (m_nitems < 5)
 	{
-		ysum2 = static_cast<mytype>(m_globalstd * m_ktolerance);
+		ysum2 = m_globalstd * m_ktolerance;
 		for (auto i = 0; i < m_tpllen; i++, p_sum++, p_mean++, p_sup++, p_inf++)
 		{
 			ysum = *p_sum / xn;
@@ -335,7 +337,7 @@ void CTemplateWnd::tSetdisplayData()
 		for (auto i = 0; i < m_tpllen; i++, p_sum++, p_sum2++, p_mean++, p_sup++, p_inf++)
 		{
 			ysum = *p_sum;
-			ysum2 = static_cast<mytype>(sqrt((*p_sum2 - ysum * ysum / xn) / (xn - 1.f)) * m_ktolerance);
+			ysum2 = sqrt((*p_sum2 - ysum * ysum / xn) / (xn - 1.f)) * m_ktolerance;
 			ysum /= xn;
 			*p_mean = static_cast<int>(ysum);
 			*p_inf = static_cast<int>(ysum - ysum2);
@@ -374,7 +376,7 @@ double CTemplateWnd::tPowerOfpSum()
 
 BOOL CTemplateWnd::tGetNumberOfPointsWithin(short* p_source, int* hitrate)
 {
-	if (!m_bValid)				// we need valid limits..
+	if (!m_bValid) // we need valid limits..
 		tSetdisplayData();
 
 	int last = m_xWE + m_xWO;
@@ -403,8 +405,8 @@ BOOL CTemplateWnd::tGetNumberOfPointsWithin(short* p_source, int* hitrate)
 double CTemplateWnd::tDist(short* p_source)
 {
 	// assume power correctly set by calling routine tMinDist
-//	if (!m_bValid)				// we need valid limits..
-//		tSetdisplayData();		// and also correct power
+	//	if (!m_bValid)				// we need valid limits..
+	//		tSetdisplayData();		// and also correct power
 
 	int last = m_xWE + m_xWO;
 	int* pMean = m_pAvg + m_xWO;
@@ -428,8 +430,8 @@ double CTemplateWnd::tDist(short* p_source)
 
 double CTemplateWnd::tMinDist(short* p_source, int* ioffsetmin, BOOL bJitter)
 {
-	if (!m_bValid)				// we need valid limits..
-		tSetdisplayData();		// and also correct power
+	if (!m_bValid) // we need valid limits..
+		tSetdisplayData(); // and also correct power
 
 	int jitter = (bJitter ? 2 : 0);
 	short* p_data = p_source - jitter;
@@ -460,7 +462,7 @@ void CTemplateWnd::tGlobalstats(double* gstd, double* gdist)
 {
 	double ysum = 0;
 	double ysum2 = 0;
-	double xn = (double)m_nitems;
+	double xn = m_nitems;
 
 	//... compute global std and global distance
 	int last = m_xWE + m_xWO;
@@ -475,7 +477,7 @@ void CTemplateWnd::tGlobalstats(double* gstd, double* gdist)
 		ystd += sqrt((*pSUM2 - *pSUM * *pSUM / xn) / (xn - 1.));
 	}
 
-	double x = xn * (double)m_xWE;
+	double x = xn * static_cast<double>(m_xWE);
 	*gstd = sqrt((ysum2 - (ysum * ysum / x)) / (x - 1.));
 
 	//.... compute global distance

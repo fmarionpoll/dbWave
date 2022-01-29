@@ -47,14 +47,14 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 			m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
 
 		// data encoding (binary or offset encoding)
-		pWFormat->mode_encoding = (int)GetEncoding();
+		pWFormat->mode_encoding = static_cast<int>(GetEncoding());
 		if (pWFormat->mode_encoding == OLx_ENC_BINARY)
 			pWFormat->binzero = pWFormat->binspan / 2 + 1;
 		else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
 			pWFormat->binzero = 0;
 
 		// load infos concerning frequency, dma chans, programmable gains
-		m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
+		m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT); // m_dfMaxThroughput
 
 		// TODO tell sourceview here under which format are data
 		// TODO save format of data into temp document
@@ -68,12 +68,12 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 		// Set up the ADC - no wrap so we can get buffer reused	
 		SetDataFlow(OLx_DF_CONTINUOUS);
 		SetWrapMode(OLx_WRP_NONE);
-		SetDmaUsage((short)GetSSCaps(OLSSC_NUMDMACHANS));
+		SetDmaUsage(static_cast<short>(GetSSCaps(OLSSC_NUMDMACHANS)));
 		SetClockSource(OLx_CLK_INTERNAL);
 
 		// set trigger mode
 		int trig = pWFormat->trig_mode;
-		if (trig > OLx_TRG_EXTRA) 		
+		if (trig > OLx_TRG_EXTRA)
 			trig = 0;
 		SetTrigger(trig);
 
@@ -94,10 +94,10 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 			pWFormat->scan_count = m_numchansMAX;
 
 		// set frequency to value requested, set frequency and get the value returned
-		double clockrate = double(pWFormat->chrate) * double(pWFormat->scan_count);
-		SetFrequency(clockrate);			// set sampling frequency (total throughput)
+		double clockrate = static_cast<double>(pWFormat->chrate) * static_cast<double>(pWFormat->scan_count);
+		SetFrequency(clockrate); // set sampling frequency (total throughput)
 		clockrate = GetFrequency();
-		pWFormat->chrate = (float)clockrate / pWFormat->scan_count;
+		pWFormat->chrate = static_cast<float>(clockrate) / pWFormat->scan_count;
 
 		// update channel list (chan & gain)
 
@@ -111,11 +111,13 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 			SetChannelList(i, pChannel->am_adchannel);
 			SetGainList(i, pChannel->am_gainAD);
 			const double dGain = GetGainList(i);
-			pChannel->am_gainAD = (short)dGain;
+			pChannel->am_gainAD = static_cast<short>(dGain);
 			// compute dependent parameters
-			pChannel->am_gainamplifier = double(pChannel->am_gainheadstage) * double(pChannel->am_gainpre) * double(pChannel->am_gainpost);
-			pChannel->am_gaintotal = pChannel->am_gainamplifier * double(pChannel->am_gainAD);
-			pChannel->am_resolutionV = double(pWFormat->fullscale_volts) / pChannel->am_gaintotal / double(pWFormat->binspan);
+			pChannel->am_gainamplifier = static_cast<double>(pChannel->am_gainheadstage) * static_cast<double>(pChannel
+				->am_gainpre) * static_cast<double>(pChannel->am_gainpost);
+			pChannel->am_gaintotal = pChannel->am_gainamplifier * static_cast<double>(pChannel->am_gainAD);
+			pChannel->am_resolutionV = static_cast<double>(pWFormat->fullscale_volts) / pChannel->am_gaintotal /
+				static_cast<double>(pWFormat->binspan);
 		}
 
 		// pass parameters to the board and check if errors
@@ -140,7 +142,8 @@ void DataTranslation_AD::DeclareBuffers(CWaveFormat* pWFormat)
 
 	// define buffer length
 	const float sweepduration = m_pOptions->sweepduration;
-	const long chsweeplength = long(float(sweepduration) * pWFormat->chrate / float(m_pOptions->iundersample));
+	const long chsweeplength = static_cast<long>(float(sweepduration) * pWFormat->chrate / float(
+		m_pOptions->iundersample));
 	m_chbuflen = chsweeplength * m_pOptions->iundersample / pWFormat->bufferNitems;
 	m_buflen = m_chbuflen * pWFormat->scan_count;
 
@@ -149,24 +152,27 @@ void DataTranslation_AD::DeclareBuffers(CWaveFormat* pWFormat)
 	{
 		ECODE ecode = olDmAllocBuffer(0, m_buflen, &m_bufhandle);
 		ecode = OLNOERROR;
-		if ((ecode == OLNOERROR) && (m_bufhandle != NULL))
+		if ((ecode == OLNOERROR) && (m_bufhandle != nullptr))
 			SetQueue(long(m_bufhandle)); // but buffer onto Ready queue
 	}
 }
 
 void DataTranslation_AD::DeleteBuffers()
 {
-	try {
+	try
+	{
 		if (GetHDass() == NULL)
 			return;
 		Flush();
-		HBUF hBuf = NULL;
-		do {
+		HBUF hBuf = nullptr;
+		do
+		{
 			hBuf = (HBUF)GetQueue();
-			if (hBuf != NULL)
+			if (hBuf != nullptr)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
-		} while (hBuf != NULL);
+		}
+		while (hBuf != nullptr);
 		m_bufhandle = hBuf;
 	}
 	catch (COleDispatchException* e)
@@ -180,14 +186,17 @@ void DataTranslation_AD::StopAndLiberateBuffers()
 	if (!m_inprogress)
 		return;
 
-	try {
+	try
+	{
 		Stop();
-		Flush();							// flush all buffers to Done Queue
+		Flush(); // flush all buffers to Done Queue
 		HBUF hBuf;
-		do {
+		do
+		{
 			hBuf = (HBUF)GetQueue();
-			if (hBuf != NULL) SetQueue(long(hBuf));
-		} while (hBuf != NULL);
+			if (hBuf != nullptr) SetQueue(long(hBuf));
+		}
+		while (hBuf != nullptr);
 	}
 	catch (COleDispatchException* e)
 	{
@@ -199,7 +208,7 @@ void DataTranslation_AD::StopAndLiberateBuffers()
 void DataTranslation_AD::DTLayerError(COleDispatchException* e)
 {
 	CString myError;
-	myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
+	myError.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError));
 	myError += e->m_strDescription;
 	AfxMessageBox(myError);
 	e->Delete();
@@ -215,8 +224,8 @@ void DataTranslation_AD::ConfigAndStart()
 short* DataTranslation_AD::OnBufferDone()
 {
 	// get buffer off done list	
-	m_bufhandle = (HBUF) GetQueue();
-	if (m_bufhandle == NULL)
+	m_bufhandle = (HBUF)GetQueue();
+	if (m_bufhandle == nullptr)
 		return nullptr;
 
 	// get pointer to buffer
@@ -231,15 +240,15 @@ short* DataTranslation_AD::OnBufferDone()
 
 long DataTranslation_AD::VoltsToValue(float fVolts, double dfGain)
 {
-	const long lRes = long(pow(2., double(GetResolution())));
+	const long lRes = static_cast<long>(pow(2., double(GetResolution())));
 
 	float f_min = 0.F;
 	if (GetMinRange() != 0.F)
-		f_min = GetMinRange() / float(dfGain);
+		f_min = GetMinRange() / static_cast<float>(dfGain);
 
 	float f_max = 0.F;
 	if (GetMaxRange() != 0.F)
-		f_max = GetMaxRange() / float(dfGain);
+		f_max = GetMaxRange() / static_cast<float>(dfGain);
 
 	//clip input to range
 	if (fVolts > f_max)
@@ -251,7 +260,7 @@ long DataTranslation_AD::VoltsToValue(float fVolts, double dfGain)
 	long l_value;
 	if (GetEncoding() == OLx_ENC_2SCOMP)
 	{
-		l_value = long((fVolts - (f_min + f_max) / 2) * lRes / (f_max - f_min));
+		l_value = static_cast<long>((fVolts - (f_min + f_max) / 2) * lRes / (f_max - f_min));
 		// adjust for binary wrap if any
 		if (l_value == (lRes / 2))
 			l_value -= 1;
@@ -259,7 +268,7 @@ long DataTranslation_AD::VoltsToValue(float fVolts, double dfGain)
 	else
 	{
 		// convert to offset binary
-		l_value = long((fVolts - f_min) * lRes / (f_max - f_min));
+		l_value = static_cast<long>((fVolts - f_min) * lRes / (f_max - f_min));
 		// adjust for binary wrap if any
 		if (l_value == lRes)
 			l_value -= 1;
@@ -269,14 +278,14 @@ long DataTranslation_AD::VoltsToValue(float fVolts, double dfGain)
 
 float DataTranslation_AD::ValueToVolts(long lVal, double dfGain)
 {
-	const long lRes = long(pow(2.0, double(GetResolution())));
+	const long lRes = static_cast<long>(pow(2.0, double(GetResolution())));
 	float f_min = 0.F;
 	if (GetMinRange() != 0.F)
-		f_min = GetMinRange() / float(dfGain);
+		f_min = GetMinRange() / static_cast<float>(dfGain);
 
 	float f_max = 0.F;
 	if (GetMaxRange() != 0.F)
-		f_max = GetMaxRange() / float(dfGain);
+		f_max = GetMaxRange() / static_cast<float>(dfGain);
 
 	//make sure value is sign extended if 2's comp
 	if (GetEncoding() == OLx_ENC_2SCOMP)
@@ -287,7 +296,7 @@ float DataTranslation_AD::ValueToVolts(long lVal, double dfGain)
 	}
 
 	// convert to volts
-	float f_volts = float(lVal) * (f_max - f_min) / lRes;
+	float f_volts = static_cast<float>(lVal) * (f_max - f_min) / lRes;
 	if (GetEncoding() == OLx_ENC_2SCOMP)
 		f_volts = f_volts + ((f_max + f_min) / 2);
 	else
@@ -295,6 +304,3 @@ float DataTranslation_AD::ValueToVolts(long lVal, double dfGain)
 
 	return f_volts;
 }
-
-
-

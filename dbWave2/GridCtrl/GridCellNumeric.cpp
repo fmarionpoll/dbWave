@@ -28,7 +28,7 @@ BOOL CGridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, 
 
 	// CInPlaceEdit auto-deletes itself
 	m_pEditWnd = new CInPlaceEdit(GetGrid(), rect, /*GetStyle() |*/ ES_NUMBER, nID, nRow, nCol,
-		GetText(), nChar);
+	                              GetText(), nChar);
 
 	return TRUE;
 }
@@ -37,5 +37,5 @@ BOOL CGridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, 
 void CGridCellNumeric::EndEdit()
 {
 	if (m_pEditWnd)
-		((CInPlaceEdit*)m_pEditWnd)->EndEdit();
+		static_cast<CInPlaceEdit*>(m_pEditWnd)->EndEdit();
 }

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "DlgAbout.h"
 
-CDlgAbout::CDlgAbout() : CDialogEx(CDlgAbout::IDD)
+CDlgAbout::CDlgAbout() : CDialogEx(IDD)
 {
 }
 

@@ -17,7 +17,7 @@ IMPLEMENT_DYNCREATE(CDTPlot32, CWnd)
 unsigned long CDTPlot32::GetBackColor()
 {
 	unsigned long result;
-	GetProperty(0x3, VT_I4, (void*)&result);
+	GetProperty(0x3, VT_I4, &result);
 	return result;
 }
 
@@ -29,7 +29,7 @@ void CDTPlot32::SetBackColor(unsigned long propVal)
 unsigned long CDTPlot32::GetForeColor()
 {
 	unsigned long result;
-	GetProperty(0x4, VT_I4, (void*)&result);
+	GetProperty(0x4, VT_I4, &result);
 	return result;
 }
 
@@ -41,7 +41,7 @@ void CDTPlot32::SetForeColor(unsigned long propVal)
 float CDTPlot32::GetYMin()
 {
 	float result;
-	GetProperty(0x5, VT_R4, (void*)&result);
+	GetProperty(0x5, VT_R4, &result);
 	return result;
 }
 
@@ -53,7 +53,7 @@ void CDTPlot32::SetYMin(float propVal)
 float CDTPlot32::GetYMax()
 {
 	float result;
-	GetProperty(0x6, VT_R4, (void*)&result);
+	GetProperty(0x6, VT_R4, &result);
 	return result;
 }
 
@@ -65,7 +65,7 @@ void CDTPlot32::SetYMax(float propVal)
 float CDTPlot32::GetXStart()
 {
 	float result;
-	GetProperty(0x7, VT_R4, (void*)&result);
+	GetProperty(0x7, VT_R4, &result);
 	return result;
 }
 
@@ -77,7 +77,7 @@ void CDTPlot32::SetXStart(float propVal)
 float CDTPlot32::GetXLength()
 {
 	float result;
-	GetProperty(0x8, VT_R4, (void*)&result);
+	GetProperty(0x8, VT_R4, &result);
 	return result;
 }
 
@@ -89,7 +89,7 @@ void CDTPlot32::SetXLength(float propVal)
 long CDTPlot32::GetLineStyle()
 {
 	long result;
-	GetProperty(0x9, VT_I4, (void*)&result);
+	GetProperty(0x9, VT_I4, &result);
 	return result;
 }
 
@@ -101,7 +101,7 @@ void CDTPlot32::SetLineStyle(long propVal)
 short CDTPlot32::GetLineWidth()
 {
 	short result;
-	GetProperty(0xa, VT_I2, (void*)&result);
+	GetProperty(0xa, VT_I2, &result);
 	return result;
 }
 
@@ -113,7 +113,7 @@ void CDTPlot32::SetLineWidth(short propVal)
 long CDTPlot32::GetDataType()
 {
 	long result;
-	GetProperty(0xb, VT_I4, (void*)&result);
+	GetProperty(0xb, VT_I4, &result);
 	return result;
 }
 
@@ -125,7 +125,7 @@ void CDTPlot32::SetDataType(long propVal)
 short CDTPlot32::GetNumChannels()
 {
 	short result;
-	GetProperty(0xc, VT_I2, (void*)&result);
+	GetProperty(0xc, VT_I2, &result);
 	return result;
 }
 
@@ -137,7 +137,7 @@ void CDTPlot32::SetNumChannels(short propVal)
 float CDTPlot32::GetXScale()
 {
 	float result;
-	GetProperty(0xd, VT_R4, (void*)&result);
+	GetProperty(0xd, VT_R4, &result);
 	return result;
 }
 
@@ -149,7 +149,7 @@ void CDTPlot32::SetXScale(float propVal)
 unsigned long CDTPlot32::GetMarkerColor()
 {
 	unsigned long result;
-	GetProperty(0xe, VT_I4, (void*)&result);
+	GetProperty(0xe, VT_I4, &result);
 	return result;
 }
 
@@ -161,7 +161,7 @@ void CDTPlot32::SetMarkerColor(unsigned long propVal)
 BOOL CDTPlot32::GetMarkerV1On()
 {
 	BOOL result;
-	GetProperty(0xf, VT_BOOL, (void*)&result);
+	GetProperty(0xf, VT_BOOL, &result);
 	return result;
 }
 
@@ -173,7 +173,7 @@ void CDTPlot32::SetMarkerV1On(BOOL propVal)
 float CDTPlot32::GetMarkerV1Pos()
 {
 	float result;
-	GetProperty(0x10, VT_R4, (void*)&result);
+	GetProperty(0x10, VT_R4, &result);
 	return result;
 }
 
@@ -185,7 +185,7 @@ void CDTPlot32::SetMarkerV1Pos(float propVal)
 BOOL CDTPlot32::GetMarkerV2On()
 {
 	BOOL result;
-	GetProperty(0x11, VT_BOOL, (void*)&result);
+	GetProperty(0x11, VT_BOOL, &result);
 	return result;
 }
 
@@ -197,7 +197,7 @@ void CDTPlot32::SetMarkerV2On(BOOL propVal)
 float CDTPlot32::GetMarkerV2Pos()
 {
 	float result;
-	GetProperty(0x12, VT_R4, (void*)&result);
+	GetProperty(0x12, VT_R4, &result);
 	return result;
 }
 
@@ -209,7 +209,7 @@ void CDTPlot32::SetMarkerV2Pos(float propVal)
 BOOL CDTPlot32::GetMarkerH1On()
 {
 	BOOL result;
-	GetProperty(0x13, VT_BOOL, (void*)&result);
+	GetProperty(0x13, VT_BOOL, &result);
 	return result;
 }
 
@@ -221,7 +221,7 @@ void CDTPlot32::SetMarkerH1On(BOOL propVal)
 float CDTPlot32::GetMarkerH1Pos()
 {
 	float result;
-	GetProperty(0x14, VT_R4, (void*)&result);
+	GetProperty(0x14, VT_R4, &result);
 	return result;
 }
 
@@ -233,7 +233,7 @@ void CDTPlot32::SetMarkerH1Pos(float propVal)
 BOOL CDTPlot32::GetMarkerH2On()
 {
 	BOOL result;
-	GetProperty(0x15, VT_BOOL, (void*)&result);
+	GetProperty(0x15, VT_BOOL, &result);
 	return result;
 }
 
@@ -245,7 +245,7 @@ void CDTPlot32::SetMarkerH2On(BOOL propVal)
 float CDTPlot32::GetMarkerH2Pos()
 {
 	float result;
-	GetProperty(0x16, VT_R4, (void*)&result);
+	GetProperty(0x16, VT_R4, &result);
 	return result;
 }
 
@@ -257,7 +257,7 @@ void CDTPlot32::SetMarkerH2Pos(float propVal)
 unsigned long CDTPlot32::GetGridColor()
 {
 	unsigned long result;
-	GetProperty(0x17, VT_I4, (void*)&result);
+	GetProperty(0x17, VT_I4, &result);
 	return result;
 }
 
@@ -269,7 +269,7 @@ void CDTPlot32::SetGridColor(unsigned long propVal)
 long CDTPlot32::GetGridStyle()
 {
 	long result;
-	GetProperty(0x18, VT_I4, (void*)&result);
+	GetProperty(0x18, VT_I4, &result);
 	return result;
 }
 
@@ -281,7 +281,7 @@ void CDTPlot32::SetGridStyle(long propVal)
 BOOL CDTPlot32::GetGridAutoScale()
 {
 	BOOL result;
-	GetProperty(0x19, VT_BOOL, (void*)&result);
+	GetProperty(0x19, VT_BOOL, &result);
 	return result;
 }
 
@@ -293,7 +293,7 @@ void CDTPlot32::SetGridAutoScale(BOOL propVal)
 BOOL CDTPlot32::GetGridXOn()
 {
 	BOOL result;
-	GetProperty(0x1a, VT_BOOL, (void*)&result);
+	GetProperty(0x1a, VT_BOOL, &result);
 	return result;
 }
 
@@ -305,7 +305,7 @@ void CDTPlot32::SetGridXOn(BOOL propVal)
 float CDTPlot32::GetGridXStart()
 {
 	float result;
-	GetProperty(0x1b, VT_R4, (void*)&result);
+	GetProperty(0x1b, VT_R4, &result);
 	return result;
 }
 
@@ -317,7 +317,7 @@ void CDTPlot32::SetGridXStart(float propVal)
 float CDTPlot32::GetGridXSpacing()
 {
 	float result;
-	GetProperty(0x1c, VT_R4, (void*)&result);
+	GetProperty(0x1c, VT_R4, &result);
 	return result;
 }
 
@@ -329,7 +329,7 @@ void CDTPlot32::SetGridXSpacing(float propVal)
 BOOL CDTPlot32::GetGridYOn()
 {
 	BOOL result;
-	GetProperty(0x1d, VT_BOOL, (void*)&result);
+	GetProperty(0x1d, VT_BOOL, &result);
 	return result;
 }
 
@@ -341,7 +341,7 @@ void CDTPlot32::SetGridYOn(BOOL propVal)
 float CDTPlot32::GetGridYStart()
 {
 	float result;
-	GetProperty(0x1e, VT_R4, (void*)&result);
+	GetProperty(0x1e, VT_R4, &result);
 	return result;
 }
 
@@ -353,7 +353,7 @@ void CDTPlot32::SetGridYStart(float propVal)
 float CDTPlot32::GetGridYSpacing()
 {
 	float result;
-	GetProperty(0x1f, VT_R4, (void*)&result);
+	GetProperty(0x1f, VT_R4, &result);
 	return result;
 }
 
@@ -365,7 +365,7 @@ void CDTPlot32::SetGridYSpacing(float propVal)
 BOOL CDTPlot32::GetUpdateMode()
 {
 	BOOL result;
-	GetProperty(0x20, VT_BOOL, (void*)&result);
+	GetProperty(0x20, VT_BOOL, &result);
 	return result;
 }
 
@@ -377,7 +377,7 @@ void CDTPlot32::SetUpdateMode(BOOL propVal)
 BOOL CDTPlot32::GetXAutoScale()
 {
 	BOOL result;
-	GetProperty(0x1, VT_BOOL, (void*)&result);
+	GetProperty(0x1, VT_BOOL, &result);
 	return result;
 }
 
@@ -389,7 +389,7 @@ void CDTPlot32::SetXAutoScale(BOOL propVal)
 BOOL CDTPlot32::GetYAutoScale()
 {
 	BOOL result;
-	GetProperty(0x2, VT_BOOL, (void*)&result);
+	GetProperty(0x2, VT_BOOL, &result);
 	return result;
 }
 
@@ -401,7 +401,7 @@ void CDTPlot32::SetYAutoScale(BOOL propVal)
 BOOL CDTPlot32::GetStripChartMode()
 {
 	BOOL result;
-	GetProperty(0x21, VT_BOOL, (void*)&result);
+	GetProperty(0x21, VT_BOOL, &result);
 	return result;
 }
 
@@ -413,7 +413,7 @@ void CDTPlot32::SetStripChartMode(BOOL propVal)
 long CDTPlot32::GetStripChartSize()
 {
 	long result;
-	GetProperty(0x22, VT_I4, (void*)&result);
+	GetProperty(0x22, VT_I4, &result);
 	return result;
 }
 
@@ -425,7 +425,7 @@ void CDTPlot32::SetStripChartSize(long propVal)
 OLE_HANDLE CDTPlot32::GetHWnd()
 {
 	OLE_HANDLE result;
-	GetProperty(DISPID_HWND, VT_I2, (void*)&result);
+	GetProperty(DISPID_HWND, VT_I2, &result);
 	return result;
 }
 
@@ -437,7 +437,7 @@ void CDTPlot32::SetHWnd(OLE_HANDLE propVal)
 long CDTPlot32::GetBuffer()
 {
 	long result;
-	GetProperty(0x23, VT_I4, (void*)&result);
+	GetProperty(0x23, VT_I4, &result);
 	return result;
 }
 
@@ -449,7 +449,7 @@ void CDTPlot32::SetBuffer(long propVal)
 float CDTPlot32::GetMouseXPos()
 {
 	float result;
-	GetProperty(0x24, VT_R4, (void*)&result);
+	GetProperty(0x24, VT_R4, &result);
 	return result;
 }
 
@@ -461,7 +461,7 @@ void CDTPlot32::SetMouseXPos(float propVal)
 float CDTPlot32::GetMouseYPos()
 {
 	float result;
-	GetProperty(0x25, VT_R4, (void*)&result);
+	GetProperty(0x25, VT_R4, &result);
 	return result;
 }
 
@@ -473,7 +473,7 @@ void CDTPlot32::SetMouseYPos(float propVal)
 short CDTPlot32::GetBorderStyle()
 {
 	short result;
-	GetProperty(DISPID_BORDERSTYLE, VT_I2, (void*)&result);
+	GetProperty(DISPID_BORDERSTYLE, VT_I2, &result);
 	return result;
 }
 
@@ -485,7 +485,7 @@ void CDTPlot32::SetBorderStyle(short propVal)
 float CDTPlot32::GetSinglePoint()
 {
 	float result;
-	GetProperty(0x26, VT_R4, (void*)&result);
+	GetProperty(0x26, VT_R4, &result);
 	return result;
 }
 
@@ -497,7 +497,7 @@ void CDTPlot32::SetSinglePoint(float propVal)
 BOOL CDTPlot32::GetForceRepaint()
 {
 	BOOL result;
-	GetProperty(0x27, VT_BOOL, (void*)&result);
+	GetProperty(0x27, VT_BOOL, &result);
 	return result;
 }
 
@@ -514,8 +514,8 @@ unsigned long CDTPlot32::GetPalette(short index)
 	unsigned long result;
 	static BYTE parms[] =
 		VTS_I2;
-	InvokeHelper(0x28, DISPATCH_PROPERTYGET, VT_I4, (void*)&result, parms,
-		index);
+	InvokeHelper(0x28, DISPATCH_PROPERTYGET, VT_I4, &result, parms,
+	             index);
 	return result;
 }
 
@@ -524,7 +524,7 @@ void CDTPlot32::SetPalette(short index, unsigned long newValue)
 	static BYTE parms[] =
 		VTS_I2 VTS_I4;
 	InvokeHelper(0x28, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
-		index, newValue);
+	             index, newValue);
 }
 
 float CDTPlot32::GetMarkerV1Data(short index)
@@ -532,8 +532,8 @@ float CDTPlot32::GetMarkerV1Data(short index)
 	float result;
 	static BYTE parms[] =
 		VTS_I2;
-	InvokeHelper(0x29, DISPATCH_PROPERTYGET, VT_R4, (void*)&result, parms,
-		index);
+	InvokeHelper(0x29, DISPATCH_PROPERTYGET, VT_R4, &result, parms,
+	             index);
 	return result;
 }
 
@@ -542,7 +542,7 @@ void CDTPlot32::SetMarkerV1Data(short index, float newValue)
 	static BYTE parms[] =
 		VTS_I2 VTS_R4;
 	InvokeHelper(0x29, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
-		index, newValue);
+	             index, newValue);
 }
 
 float CDTPlot32::GetMarkerV2Data(short index)
@@ -550,8 +550,8 @@ float CDTPlot32::GetMarkerV2Data(short index)
 	float result;
 	static BYTE parms[] =
 		VTS_I2;
-	InvokeHelper(0x2a, DISPATCH_PROPERTYGET, VT_R4, (void*)&result, parms,
-		index);
+	InvokeHelper(0x2a, DISPATCH_PROPERTYGET, VT_R4, &result, parms,
+	             index);
 	return result;
 }
 
@@ -560,7 +560,7 @@ void CDTPlot32::SetMarkerV2Data(short index, float newValue)
 	static BYTE parms[] =
 		VTS_I2 VTS_R4;
 	InvokeHelper(0x2a, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms,
-		index, newValue);
+	             index, newValue);
 }
 
 void CDTPlot32::AboutBox()

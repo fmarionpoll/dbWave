@@ -48,8 +48,8 @@
 //	min					1		0		1
 
 CDataViewOrdinatesDlg::CDataViewOrdinatesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CDataViewOrdinatesDlg::IDD, pParent), m_pChartDataWnd(nullptr), m_nChanmax(0), m_Channel(0), m_bChanged(0),
-	m_p10(0), m_voltsperpixel(0), m_VoltsperBin(0)
+	: CDialog(IDD, pParent), m_pChartDataWnd(nullptr), m_nChanmax(0), m_Channel(0), m_bChanged(0),
+	  m_p10(0), m_voltsperpixel(0), m_VoltsperBin(0)
 {
 	m_iUnit = -1;
 	m_xcenter = 0.0f;
@@ -87,30 +87,32 @@ BOOL CDataViewOrdinatesDlg::OnInitDialog()
 	// me, the parameters (zero and extent) of channel 0 / chanlist / lineview
 	// are MODIFIED after calling the base class CDialog::OnInitDialog
 	int i;
-	m_nChanmax = m_pChartDataWnd->GetChanlistSize();			// nb of data channels
-	for (i = 0; i < m_nChanmax; i++)						// browse through all chans
+	m_nChanmax = m_pChartDataWnd->GetChanlistSize(); // nb of data channels
+	for (i = 0; i < m_nChanmax; i++) // browse through all chans
 	{
 		CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(i);
-		m_settings.Add(chan->GetYzero());	// save zero
-		m_settings.Add(chan->GetYextent());// save extent
+		m_settings.Add(chan->GetYzero()); // save zero
+		m_settings.Add(chan->GetYextent()); // save extent
 	}
 	CDialog::OnInitDialog();
 
 	// load channel description CComboBox
-	int j = 0;											// index to restore parms
-	for (i = 0; i < m_nChanmax; i++)						// browse through all chans again
+	int j = 0; // index to restore parms
+	for (i = 0; i < m_nChanmax; i++) // browse through all chans again
 	{
 		CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(i);
-		chan->SetYzero( m_settings.GetAt(j)); j++;		// restore zero
-		chan->SetYextent(m_settings.GetAt(j)); j++;	// restore extent
-		m_chanSelect.AddString(chan->GetComment());	// load comment/chan
+		chan->SetYzero(m_settings.GetAt(j));
+		j++; // restore zero
+		chan->SetYextent(m_settings.GetAt(j));
+		j++; // restore extent
+		m_chanSelect.AddString(chan->GetComment()); // load comment/chan
 	}
-	m_chanSelect.SetCurSel(m_Channel);				// select chan zero
+	m_chanSelect.SetCurSel(m_Channel); // select chan zero
 
-	LoadChanlistData(m_Channel);					// compute data in volts
-	m_iUnit = 1;									// select "mV" as unit within combo box
-	((CComboBox*)GetDlgItem(IDC_VERTUNITS))->SetCurSel(m_iUnit);
-	ChangeUnits(m_iUnit, TRUE);						// adapt data/volts -> mv and fill controls
+	LoadChanlistData(m_Channel); // compute data in volts
+	m_iUnit = 1; // select "mV" as unit within combo box
+	static_cast<CComboBox*>(GetDlgItem(IDC_VERTUNITS))->SetCurSel(m_iUnit);
+	ChangeUnits(m_iUnit, TRUE); // adapt data/volts -> mv and fill controls
 	UpdateData(FALSE);
 	return TRUE;
 }
@@ -124,7 +126,7 @@ void CDataViewOrdinatesDlg::LoadChanlistData(int i)
 	const auto extent = static_cast<float>(chan->GetYextent());
 	//const auto binzero =  static_cast<float>(0.0)  /*m_plinev->GetChanlistBinZero(i)*/;
 
-	m_xcenter = (zero/*- binzero*/)*m_VoltsperBin / m_p10;
+	m_xcenter = (zero/*- binzero*/) * m_VoltsperBin / m_p10;
 	const auto xextent = (extent * m_VoltsperBin / m_p10) / 2.f;
 	m_xmin = m_xcenter - xextent;
 	m_xmax = m_xcenter + xextent;
@@ -134,13 +136,13 @@ void CDataViewOrdinatesDlg::LoadChanlistData(int i)
 
 void CDataViewOrdinatesDlg::SaveChanlistData(int indexlist)
 {
-	const auto bCheck = ((CButton*)GetDlgItem(IDC_CHECKALL))->GetCheck();
-	auto indexfirst = indexlist;				// prepare for loop (first chan)
-	auto indexlast = indexlist + 1;			// ibid (ending chan)
-	if (bCheck)								// if bCheck (TRUE) then
+	const auto bCheck = static_cast<CButton*>(GetDlgItem(IDC_CHECKALL))->GetCheck();
+	auto indexfirst = indexlist; // prepare for loop (first chan)
+	auto indexlast = indexlist + 1; // ibid (ending chan)
+	if (bCheck) // if bCheck (TRUE) then
 	{
-		indexfirst = 0;						// loop through all channels
-		indexlast = m_nChanmax;				// 0 to max
+		indexfirst = 0; // loop through all channels
+		indexlast = m_nChanmax; // 0 to max
 	}
 
 	for (auto j = indexfirst; j < indexlast; j++)
@@ -164,10 +166,14 @@ void CDataViewOrdinatesDlg::ChangeUnits(int iUnit, BOOL bNew)
 	{
 		switch (iUnit)
 		{
-		case 0:	newp10 = 1.0f; break; 		// volts
-		case 1:	newp10 = 0.001f; break;		// millivolts
-		case 2:	newp10 = 0.000001f; break;	// microvolts
-		default:newp10 = 1.0f; break;
+		case 0: newp10 = 1.0f;
+			break; // volts
+		case 1: newp10 = 0.001f;
+			break; // millivolts
+		case 2: newp10 = 0.000001f;
+			break; // microvolts
+		default: newp10 = 1.0f;
+			break;
 		}
 	}
 
@@ -183,7 +189,7 @@ void CDataViewOrdinatesDlg::ChangeUnits(int iUnit, BOOL bNew)
 
 void CDataViewOrdinatesDlg::OnSelchangeVertunits()
 {
-	m_iUnit = ((CComboBox*)GetDlgItem(IDC_VERTUNITS))->GetCurSel();
+	m_iUnit = static_cast<CComboBox*>(GetDlgItem(IDC_VERTUNITS))->GetCurSel();
 	ChangeUnits(m_iUnit, TRUE);
 	UpdateData(FALSE);
 }
@@ -191,11 +197,11 @@ void CDataViewOrdinatesDlg::OnSelchangeVertunits()
 void CDataViewOrdinatesDlg::OnSelchangeChanselect()
 {
 	if (m_bChanged)
-		SaveChanlistData(m_Channel);	// save current data
-	const auto new_index = ((CComboBox*)GetDlgItem(IDC_CHANSELECT))->GetCurSel();
-	m_Channel = new_index;				// new chan selected
-	LoadChanlistData(m_Channel);		// load new data from lineview
-	ChangeUnits(m_iUnit, FALSE);		// convert params
+		SaveChanlistData(m_Channel); // save current data
+	const auto new_index = static_cast<CComboBox*>(GetDlgItem(IDC_CHANSELECT))->GetCurSel();
+	m_Channel = new_index; // new chan selected
+	LoadChanlistData(m_Channel); // load new data from lineview
+	ChangeUnits(m_iUnit, FALSE); // convert params
 	UpdateData(FALSE);
 }
 
@@ -247,9 +253,9 @@ void CDataViewOrdinatesDlg::OnCancel()
 	for (auto i = 0; i < m_nChanmax; i++)
 	{
 		CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(i);
-		chan->SetYzero(static_cast<int>(m_settings[j]));
+		chan->SetYzero(m_settings[j]);
 		j++;
-		chan->SetYextent(static_cast<int>(m_settings[j]));
+		chan->SetYextent(m_settings[j]);
 		j++;
 	}
 	CDialog::OnCancel();
@@ -260,16 +266,16 @@ void CDataViewOrdinatesDlg::OnOK()
 	// trap CR to validate current field
 	switch (GetFocus()->GetDlgCtrlID())
 	{
-		// select was on OK
+	// select was on OK
 	case 1:
-	{
-		const auto b_check = ((CButton*)GetDlgItem(IDC_CHECKALL))->GetCheck();
-		// exit, do not store changes of current channel -- nothing was changed
-		if (m_bChanged || b_check)
-			SaveChanlistData(m_Channel);
-		CDialog::OnOK();
-	}
-	break;
+		{
+			const auto b_check = static_cast<CButton*>(GetDlgItem(IDC_CHECKALL))->GetCheck();
+			// exit, do not store changes of current channel -- nothing was changed
+			if (m_bChanged || b_check)
+				SaveChanlistData(m_Channel);
+			CDialog::OnOK();
+		}
+		break;
 	// trap return
 	case IDC_CHANSELECT:
 		break;

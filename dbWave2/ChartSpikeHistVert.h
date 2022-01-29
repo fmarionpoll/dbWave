@@ -14,36 +14,45 @@
 
 #include "dbWaveDoc.h"
 
-class CChartSpikeHistVert : public CChartWnd
+class CChartSpikeHistVert : public ChartWnd
 {
 	// Construction
 public:
 	CChartSpikeHistVert();
-	virtual ~CChartSpikeHistVert();
+	~CChartSpikeHistVert() override;
 
 protected:
-	CArray <CDWordArray*, CDWordArray*>	histogram_ptr_array;	// array of DWord array containing histogram
+	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
 	CSpikeList* m_pSL;
 
-	long 	m_lFirst;			// time index of first pt displayed
-	long 	m_lLast;			// time index of last pt displayed
-	int  	m_hitspk;			// no of spike selected
-	int		m_selclass;			// index class selected
+	long m_lFirst; // time index of first pt displayed
+	long m_lLast; // time index of last pt displayed
+	int m_hitspk; // no of spike selected
+	int m_selclass; // index class selected
 
-	int  	m_binsize{};			// size of one bin
-	int 	m_abcissaminval;	// minimum value from which histogram is built (abcissa)
-	int 	m_abcissamaxval;	// maximum value (abcissa max)
-	int  	m_nbins;			// n bins within histogram
+	int m_binsize{}; // size of one bin
+	int m_abcissaminval; // minimum value from which histogram is built (abcissa)
+	int m_abcissamaxval; // maximum value (abcissa max)
+	int m_nbins; // n bins within histogram
 
-	DWORD 	m_lmax;				// value max
-	int  	m_imax{};				// index max
-	int  	m_ifirst{};			// index first interval with data
-	int  	m_ilast{};			// index last interval with data
+	DWORD m_lmax; // value max
+	int m_imax{}; // index max
+	int m_ifirst{}; // index first interval with data
+	int m_ilast{}; // index last interval with data
 
 public:
-	void SetPlotMode(int mode, int selclass) { m_plotmode = mode; m_selclass = selclass; }
+	void SetPlotMode(int mode, int selclass)
+	{
+		m_plotmode = mode;
+		m_selclass = selclass;
+	}
 
-	void SetTimeIntervals(long l_first, long l_last) { m_lFirst = l_first; m_lLast = l_last; }
+	void SetTimeIntervals(long l_first, long l_last)
+	{
+		m_lFirst = l_first;
+		m_lLast = l_last;
+	}
+
 	long GetTimeFirst() const { return m_lFirst; }
 	long GetTimeLast() const { return m_lLast; }
 
@@ -51,13 +60,14 @@ public:
 	int GetBinMinval() const { return m_abcissaminval; }
 	int GetBinMaxVal() const { return m_abcissamaxval; }
 	int GetnBins() const { return m_nbins; }
-	int   GetHistMaxPos() const { return m_imax; }
+	int GetHistMaxPos() const { return m_imax; }
 	DWORD GetHistMax() const { return m_lmax; }
 
-	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL ballFiles, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL ballFiles, long l_first, long l_last, int max, int min,
+	                           int nbins, BOOL bNew);
 
 	void RemoveHistData();
-	LPTSTR ExportAscii(LPTSTR lp);					// export ascii data
+	LPTSTR ExportAscii(LPTSTR lp); // export ascii data
 	void MoveVTtagtoVal(int itag, int ival);
 	void MoveHZtagtoVal(int itag, int ival);
 
@@ -67,12 +77,13 @@ public:
 
 	// implementation
 protected:
-	int  hitCurve(CPoint point) override;
+	int hitCurve(CPoint point) override;
 	void reSize_And_Clear_Histograms(int nbins, int max, int min);
 	void getHistogLimits(int ihist);
 	void getClassArray(int iclass, CDWordArray*& pDW);
 	CDWordArray* initClassArray(int nbins, int spike_class);
-	void buildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins, BOOL bNew);
+	void buildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins,
+	                            BOOL bNew);
 	void getExtents();
 	void plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
 

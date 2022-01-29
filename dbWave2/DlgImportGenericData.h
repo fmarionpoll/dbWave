@@ -7,59 +7,60 @@
 
 class CDlgImportGenericData : public CDialog
 {
-	friend class CAcqDataDoc;
+	friend class AcqDataDoc;
 
 	// Construction
 public:
-	CDlgImportGenericData(CWnd* pParent = nullptr);   // standard constructor
+	CDlgImportGenericData(CWnd* pParent = nullptr);
 
-	OPTIONS_IMPORT* piivO;				// from caller
-	BOOL			bConvert;
-	CStringArray*	m_pfilenameArray;
-	CEditCtrl		mm_nbADchannels;
-	CEditCtrl		mm_adChannelChan;
-	CEditCtrl		mm_skipNbytes;
-	CAcqDataDoc		m_AcqDataFile;		// data document
-	CChartDataWnd	m_ChartDataWnd;			// data display
-	CString			m_filesource;
-	CString			m_filedest;
-	CString			m_fileold;
-	BOOL			m_bChanged;			// one parameter was changed
-	BOOL			m_bimportall;
+	OPTIONS_IMPORT* piivO;
+	BOOL bConvert;
+	CStringArray* m_pfilenameArray;
+	CEditCtrl mm_nbADchannels;
+	CEditCtrl mm_adChannelChan;
+	CEditCtrl mm_skipNbytes;
+	AcqDataDoc m_AcqDataFile;
+	ChartData m_ChartDataWnd;
+	CString m_filesource;
+	CString m_filedest;
+	CString m_fileold;
+	BOOL m_bChanged;
+	BOOL m_bimportall;
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTGENERICDATAFILE };
-	CComboBox		m_filedroplist;
-	CComboBox		m_ComboPrecision;
-	CString			m_adChannelComment;
-	float			m_adChannelGain;
-	UINT			m_adChannelChan;
-	UINT			m_nbADchannels;
-	UINT			m_nbRuns;
-	float			m_samplingrate;
-	UINT			m_skipNbytes;
-	float			m_voltageMax;
-	float			m_voltageMin;
-	CString			m_csFileTitle;
-	BOOL			m_bpreviewON;
+
+	CComboBox m_filedroplist;
+	CComboBox m_ComboPrecision;
+	CString m_adChannelComment;
+	float m_adChannelGain;
+	UINT m_adChannelChan;
+	UINT m_nbADchannels;
+	UINT m_nbRuns;
+	float m_samplingrate;
+	UINT m_skipNbytes;
+	float m_voltageMax;
+	float m_voltageMin;
+	CString m_csFileTitle;
+	BOOL m_bpreviewON;
 
 	// Overrides
 public:
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV supportTUAL
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV supportTUAL
 
-// Implementation
+	// Implementation
 protected:
 	void UpdateControlsFromStruct();
 	void UpdateStructFromControls();
 	void EnableRunParameters();
 	void UpdatePreview();
-	void UpdateWaveDescriptors(CAcqDataDoc* pDF);
+	void UpdateWaveDescriptors(AcqDataDoc* pDF);
 	void SetFileNames(int index);
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	BOOL OnInitDialog() override;
+	void OnOK() override;
 	afx_msg void OnSelchangePrecision();
 	afx_msg void OnEnChangeNumberofchannels();
 	afx_msg void OnMultipleruns();

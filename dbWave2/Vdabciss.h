@@ -9,28 +9,29 @@ class CDataViewAbcissaDlg : public CDialog
 {
 	// Construction
 public:
-	CDataViewAbcissaDlg(CWnd* pParent = nullptr);	// standard constructor
+	CDataViewAbcissaDlg(CWnd* pParent = nullptr); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_ABCISSADLG };
-	float	m_firstAbcissa;
-	float	m_frameDuration;
-	float	m_lastAbcissa;
-	int		m_abcissaUnitIndex;
-	float	m_centerAbcissa;
-	float   m_abcissaScale;
-	float	m_veryLastAbcissa;
-	int		m_previousIndex;
+
+	float m_firstAbcissa;
+	float m_frameDuration;
+	float m_lastAbcissa;
+	int m_abcissaUnitIndex;
+	float m_centerAbcissa;
+	float m_abcissaScale;
+	float m_veryLastAbcissa;
+	int m_previousIndex;
 
 	// Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
-	virtual BOOL OnInitDialog();
+	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	BOOL OnInitDialog() override;
 	void CheckLimits();
 
 	// Generated message map functions
 	afx_msg void OnSelchangeAbcissaunits();
-	virtual void OnOK();
+	void OnOK() override;
 	afx_msg void OnKillfocusAbcissa();
 	afx_msg void OnKillfocusDuration();
 	afx_msg void OnKillfocusCenter();

@@ -11,13 +11,13 @@ IMPLEMENT_SERIAL(CIntervalsAndLevels, CObject, 0)
 
 CIntervalsAndLevels::CIntervalsAndLevels()
 {
-	iID = 1;					// ID number of the array
-	csDescriptor = _T("stimulus intervals");	// descriptor of the array
-	nitems = 0;				// number of on & off events
-	intervalsArray.SetSize(0);	// time on, time off
+	iID = 1; // ID number of the array
+	csDescriptor = _T("stimulus intervals"); // descriptor of the array
+	nitems = 0; // number of on & off events
+	intervalsArray.SetSize(0); // time on, time off
 	npercycle = 1;
 	version = 4;
-	ichan = 0;				// otherwise: 0, 1...7
+	ichan = 0; // otherwise: 0, 1...7
 	chrate = 10000.;
 }
 
@@ -26,16 +26,17 @@ CIntervalsAndLevels::~CIntervalsAndLevels()
 	intervalsArray.RemoveAll();
 }
 
-CIntervalsAndLevels& CIntervalsAndLevels::operator = (const CIntervalsAndLevels& arg)
+CIntervalsAndLevels& CIntervalsAndLevels::operator =(const CIntervalsAndLevels& arg)
 {
-	if (this != &arg) {
-		iID = arg.iID;						// ID number of the array
-		csDescriptor = arg.csDescriptor;				// descriptor of the array
-		nitems = arg.nitems;					// number of on/off events
+	if (this != &arg)
+	{
+		iID = arg.iID; // ID number of the array
+		csDescriptor = arg.csDescriptor; // descriptor of the array
+		nitems = arg.nitems; // number of on/off events
 		intervalsArray.SetSize(arg.intervalsArray.GetSize());
 
 		for (auto i = 0; i < arg.intervalsArray.GetSize(); i++)
-			intervalsArray.SetAt(i, arg.intervalsArray.GetAt(i)); 	// time on, time off
+			intervalsArray.SetAt(i, arg.intervalsArray.GetAt(i)); // time on, time off
 		npercycle = arg.npercycle;
 		chrate = arg.chrate;
 	}
@@ -44,48 +45,61 @@ CIntervalsAndLevels& CIntervalsAndLevels::operator = (const CIntervalsAndLevels&
 
 void CIntervalsAndLevels::Serialize(CArchive& ar)
 {
-	auto iversion = static_cast<int>(2);
+	auto iversion = 2;
 	if (ar.IsStoring())
 	{
-		auto n = static_cast<int>(4);
+		auto n = 4;
 		ar << n;
 		ar << iID;
 		ar << nitems;
 		ar << npercycle;
 		ar << iversion;
 
-		n = 1; ar << n;
+		n = 1;
+		ar << n;
 		ar << csDescriptor;
 
-		n = 1; ar << n;
+		n = 1;
+		ar << n;
 		intervalsArray.Serialize(ar);
 
-		n = 1; ar << n;
+		n = 1;
+		ar << n;
 		ar << chrate;
 	}
 	else
 	{
-		int n; ar >> n;
-		ar >> iID; n--;
-		ar >> nitems; n--;
-		npercycle = 1; if (n > 0)  ar >> npercycle; n--;
+		int n;
+		ar >> n;
+		ar >> iID;
+		n--;
+		ar >> nitems;
+		n--;
+		npercycle = 1;
+		if (n > 0) ar >> npercycle;
+		n--;
 
-		if (n > 0) {
-			ar >> iversion; n--;
+		if (n > 0)
+		{
+			ar >> iversion;
+			n--;
 			ASSERT(iversion == 2);
 
 			ar >> n;
-			if (n > 0) ar >> csDescriptor; n--;
+			if (n > 0) ar >> csDescriptor;
+			n--;
 			ar >> n;
-			if (n > 0) intervalsArray.Serialize(ar); n--;
+			if (n > 0) intervalsArray.Serialize(ar);
+			n--;
 			if (iversion > 1)
 				ar >> n;
-			if (n > 0) ar >> chrate; n--;
+			if (n > 0) ar >> chrate;
+			n--;
 		}
 		else // old version
 		{
 			ar >> n;
-			ar >> csDescriptor;		// descriptor of the array
+			ar >> csDescriptor; // descriptor of the array
 			ar >> n;
 			intervalsArray.Serialize(ar);
 		}
@@ -162,10 +176,10 @@ CIntervalsAndWordsSeries::~CIntervalsAndWordsSeries()
 
 void CIntervalsAndWordsSeries::Serialize(CArchive& ar)
 {
-	auto lversion = static_cast<int>(2);
+	auto lversion = 2;
 	if (ar.IsStoring())
 	{
-		auto n = static_cast<int>(1);
+		auto n = 1;
 		ar << n;
 		ar << lversion;
 		n = 1;
@@ -179,15 +193,18 @@ void CIntervalsAndWordsSeries::Serialize(CArchive& ar)
 	{
 		int n;
 		ar >> n;
-		if (n > 0) ar >> lversion; n--;
+		if (n > 0) ar >> lversion;
+		n--;
 		ar >> n;
-		if (n > 0) intervalpoint_array.Serialize(ar); n--;
+		if (n > 0) intervalpoint_array.Serialize(ar);
+		n--;
 		if (lversion > 1) ar >> n;
-		if (n > 0) ar >> chrate; n--;
+		if (n > 0) ar >> chrate;
+		n--;
 	}
 }
 
-void CIntervalsAndWordsSeries::operator = (const CIntervalsAndWordsSeries& arg)
+void CIntervalsAndWordsSeries::operator =(const CIntervalsAndWordsSeries& arg)
 {
 	const auto nitems = arg.intervalpoint_array.GetSize();
 	intervalpoint_array.SetSize(nitems);
@@ -196,7 +213,7 @@ void CIntervalsAndWordsSeries::operator = (const CIntervalsAndWordsSeries& arg)
 	chrate = arg.chrate;
 }
 
-CIntervalPoint  CIntervalsAndWordsSeries::GetIntervalPointAt(int i)
+CIntervalPoint CIntervalsAndWordsSeries::GetIntervalPointAt(int i)
 {
 	return intervalpoint_array[i];
 }
@@ -243,7 +260,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	if (nseries > 8)
 		nseries = 8;
 	auto nintervals = 0;
-	CArray < CIntervalsAndWordsSeries*, CIntervalsAndWordsSeries*> intervalsandwordseries_ptr_array;
+	CArray<CIntervalsAndWordsSeries*, CIntervalsAndWordsSeries*> intervalsandwordseries_ptr_array;
 	intervalsandwordseries_ptr_array.SetSize(8);
 
 	// (1) transform series into CIntervalsAndWordSeries
@@ -251,7 +268,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	for (auto i = 0; i < nseries; i++)
 	{
 		// transform this series if not empty
-		auto* p_source = (CIntervalsAndLevels*)pSourceIntervals->GetAt(i);
+		auto* p_source = static_cast<CIntervalsAndLevels*>(pSourceIntervals->GetAt(i));
 		if (p_source->GetSize() == 0)
 			continue;
 
@@ -285,19 +302,19 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 			{
 				if (pt.ii < intervalpoint_array.GetAt(k).ii)
 				{
-					pt.w = output_state & pt.w;	// merge with previous status
+					pt.w = output_state & pt.w; // merge with previous status
 					intervalpoint_array.InsertAt(k, pt);
 					b_found = true;
 					break;
 				}
-				else if (pt.ii == intervalpoint_array.GetAt(k).ii)
+				if (pt.ii == intervalpoint_array.GetAt(k).ii)
 				{
-					pt.w = intervalpoint_array.GetAt(k).w & pt.w;	// merge with current status
+					pt.w = intervalpoint_array.GetAt(k).w & pt.w; // merge with current status
 					intervalpoint_array.SetAt(k, pt);
 					b_found = true;
 					break;
 				}
-				output_state = intervalpoint_array.GetAt(k).w;		// update output and continue
+				output_state = intervalpoint_array.GetAt(k).w; // update output and continue
 			}
 
 			// not found into existing intervals? add new interval

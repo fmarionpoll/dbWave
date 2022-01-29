@@ -9,8 +9,8 @@ public:
 
 	// Operations
 public:
-	BOOL    Open(LPCTSTR lpszModuleName);
-	void    Close();
+	BOOL Open(LPCTSTR lpszModuleName);
+	void Close();
 
 	CString QueryValue(LPCTSTR lpszValueName, DWORD dwLangCharset = 0);
 	CString GetFileDescription() { return QueryValue(_T("FileDescription")); };
@@ -22,14 +22,14 @@ public:
 	CString GetProductName() { return QueryValue(_T("ProductName")); };
 	CString GetProductVersion() { return QueryValue(_T("ProductVersion")); };
 
-	BOOL    GetFixedInfo(VS_FIXEDFILEINFO& vsffi);
+	BOOL GetFixedInfo(VS_FIXEDFILEINFO& vsffi);
 	CString GetFixedFileVersion();
 	CString GetFixedProductVersion();
 
 	// Attributes
 protected:
-	LPBYTE  m_lpVersionData;
-	DWORD   m_dwLangCharset;
+	LPBYTE m_lpVersionData;
+	DWORD m_dwLangCharset;
 
 	// Implementation
 public:

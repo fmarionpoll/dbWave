@@ -10,9 +10,10 @@ SCOPESTRUCT::SCOPESTRUCT()
 SCOPESTRUCT::~SCOPESTRUCT()
 = default;
 
-SCOPESTRUCT& SCOPESTRUCT::operator = (const SCOPESTRUCT & arg)
+SCOPESTRUCT& SCOPESTRUCT::operator =(const SCOPESTRUCT& arg)
 {
-	if (this != &arg) {
+	if (this != &arg)
+	{
 		iID = arg.iID;
 		iXCells = arg.iXCells;
 		iYCells = arg.iYCells;
@@ -33,7 +34,7 @@ SCOPESTRUCT& SCOPESTRUCT::operator = (const SCOPESTRUCT & arg)
 	return *this;
 }
 
-void SCOPESTRUCT::Serialize(CArchive & ar)
+void SCOPESTRUCT::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
@@ -61,34 +62,50 @@ void SCOPESTRUCT::Serialize(CArchive & ar)
 	}
 	else
 	{
-		WORD wwversion;  ar >> wwversion;
-		int nints; ar >> nints;
-		ar >> iID; nints--;
-		ar >> iXCells; nints--;
-		ar >> iYCells; nints--;
-		ar >> iXTicks; nints--;
-		ar >> iYTicks; nints--;
-		ar >> iXTickLine; nints--;
-		ar >> iYTickLine; nints--;
-		ar >> bDrawframe; nints--;
+		WORD wwversion;
+		ar >> wwversion;
+		int nints;
+		ar >> nints;
+		ar >> iID;
+		nints--;
+		ar >> iXCells;
+		nints--;
+		ar >> iYCells;
+		nints--;
+		ar >> iXTicks;
+		nints--;
+		ar >> iYTicks;
+		nints--;
+		ar >> iXTickLine;
+		nints--;
+		ar >> iYTickLine;
+		nints--;
+		ar >> bDrawframe;
+		nints--;
 		ASSERT(nints == 0);
 
-		int ncolor_items; ar >> ncolor_items;
-		ar >> crScopeFill; ncolor_items--;
-		ar >> crScopeGrid; ncolor_items--;
+		int ncolor_items;
+		ar >> ncolor_items;
+		ar >> crScopeFill;
+		ncolor_items--;
+		ar >> crScopeGrid;
+		ncolor_items--;
 		ASSERT(ncolor_items == 0);
 
 		if (wwversion > 1)
 		{
-			int nfloats; ar >> nfloats;
-			ar >> xScaleUnitValue; nfloats--;
-			ar >> yScaleUnitValue; nfloats--;
+			int nfloats;
+			ar >> nfloats;
+			ar >> xScaleUnitValue;
+			nfloats--;
+			ar >> yScaleUnitValue;
+			nfloats--;
 			while (nfloats > 0)
 			{
 				float x;
-				ar >> x; nfloats--;
+				ar >> x;
+				nfloats--;
 			}
 		}
 	}
 }
-

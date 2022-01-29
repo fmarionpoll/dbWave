@@ -41,62 +41,65 @@ class CGridCell : public CGridCellBase
 	// Construction/Destruction
 public:
 	CGridCell();
-	virtual ~CGridCell();
+	~CGridCell() override;
 
 	// Attributes
 public:
 	void operator=(const CGridCell& cell);
 
-	virtual void  SetText(LPCTSTR sz_text) { m_strText = sz_text; }
-	virtual void  SetImage(int nImage) { m_nImage = nImage; }
-	virtual void  SetData(LPARAM lParam) { m_lParam = lParam; }
-	virtual void  SetGrid(CGridCtrl* pGrid) { m_pGrid = pGrid; }
+	void SetText(LPCTSTR sz_text) override { m_strText = sz_text; }
+	void SetImage(int nImage) override { m_nImage = nImage; }
+	void SetData(LPARAM lParam) override { m_lParam = lParam; }
+	void SetGrid(CGridCtrl* pGrid) override { m_pGrid = pGrid; }
 	// virtual void SetState(const DWORD nState);  -  use base class version
-	virtual void  SetFormat(DWORD nFormat) { m_nFormat = nFormat; }
-	virtual void  SetTextClr(COLORREF clr) { m_crFgClr = clr; }
-	virtual void  SetBackClr(COLORREF clr) { m_crBkClr = clr; }
-	virtual void  SetFont(const LOGFONT* plf);
-	virtual void  SetMargin(UINT nMargin) { m_nMargin = nMargin; }
-	virtual CWnd* GetEditWnd() const { return m_pEditWnd; }
-	virtual void  SetCoords(int /*nRow*/, int /*nCol*/) {}  // don't need to know the row and
-															// column for base implementation
+	void SetFormat(DWORD nFormat) override { m_nFormat = nFormat; }
+	void SetTextClr(COLORREF clr) override { m_crFgClr = clr; }
+	void SetBackClr(COLORREF clr) override { m_crBkClr = clr; }
+	void SetFont(const LOGFONT* plf) override;
+	void SetMargin(UINT nMargin) override { m_nMargin = nMargin; }
+	CWnd* GetEditWnd() const override { return m_pEditWnd; }
 
-	virtual LPCTSTR     GetText() const { return (m_strText.IsEmpty()) ? _T("") : LPCTSTR(m_strText); }
-	virtual int         GetImage() const { return m_nImage; }
-	virtual LPARAM      GetData() const { return m_lParam; }
-	virtual CGridCtrl* GetGrid() const { return m_pGrid; }
+	void SetCoords(int /*nRow*/, int /*nCol*/) override
+	{
+	} // don't need to know the row and
+	// column for base implementation
+
+	LPCTSTR GetText() const override { return (m_strText.IsEmpty()) ? _T("") : static_cast<LPCTSTR>(m_strText); }
+	int GetImage() const override { return m_nImage; }
+	LPARAM GetData() const override { return m_lParam; }
+	CGridCtrl* GetGrid() const override { return m_pGrid; }
 	// virtual DWORD    GetState() const - use base class
-	virtual DWORD       GetFormat() const;
-	virtual COLORREF    GetTextClr() const { return m_crFgClr; } // TODO: change to use default cell
-	virtual COLORREF    GetBackClr() const { return m_crBkClr; }
-	virtual LOGFONT* GetFont() const;
-	virtual CFont* GetFontObject() const;
-	virtual UINT        GetMargin() const;
+	DWORD GetFormat() const override;
+	COLORREF GetTextClr() const override { return m_crFgClr; } // TODO: change to use default cell
+	COLORREF GetBackClr() const override { return m_crBkClr; }
+	LOGFONT* GetFont() const override;
+	CFont* GetFontObject() const override;
+	UINT GetMargin() const override;
 
-	virtual BOOL        IsEditing() const { return m_bEditing; }
-	virtual BOOL        IsDefaultFont() const { return (m_plfFont == nullptr); }
-	virtual void        Reset();
+	BOOL IsEditing() const override { return m_bEditing; }
+	BOOL IsDefaultFont() const override { return (m_plfFont == nullptr); }
+	void Reset() override;
 
 	// editing cells
 public:
-	virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-	virtual void EndEdit();
+	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+	void EndEdit() override;
 protected:
-	virtual void OnEndEdit();
+	void OnEndEdit() override;
 
 protected:
-	CString    m_strText{};      // Cell text (or binary data if you wish...)
-	LPARAM     m_lParam{};       // 32-bit value to associate with item
-	int        m_nImage;       // Index of the list view item’s icon
-	DWORD      m_nFormat{};
-	COLORREF   m_crFgClr{};
-	COLORREF   m_crBkClr{};
+	CString m_strText{}; // Cell text (or binary data if you wish...)
+	LPARAM m_lParam{}; // 32-bit value to associate with item
+	int m_nImage; // Index of the list view item’s icon
+	DWORD m_nFormat{};
+	COLORREF m_crFgClr{};
+	COLORREF m_crBkClr{};
 	LOGFONT* m_plfFont{};
-	UINT       m_nMargin{};
+	UINT m_nMargin{};
 
-	BOOL       m_bEditing{};     // Cell being edited?
+	BOOL m_bEditing{}; // Cell being edited?
 
-	CGridCtrl* m_pGrid{};        // Parent grid control
+	CGridCtrl* m_pGrid{}; // Parent grid control
 	CWnd* m_pEditWnd{};
 };
 
@@ -109,27 +112,40 @@ class CGridDefaultCell : public CGridCell
 	// Construction/Destruction
 public:
 	CGridDefaultCell();
-	virtual ~CGridDefaultCell();
+	~CGridDefaultCell() override;
 
 public:
 	virtual DWORD GetStyle() const { return m_dwStyle; }
-	virtual void  SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
-	virtual int   GetWidth() const { return m_Size.cx; }
-	virtual int   GetHeight() const { return m_Size.cy; }
-	virtual void  SetWidth(int nWidth) { m_Size.cx = nWidth; }
-	virtual void  SetHeight(int nHeight) { m_Size.cy = nHeight; }
+	virtual void SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
+	virtual int GetWidth() const { return m_Size.cx; }
+	virtual int GetHeight() const { return m_Size.cy; }
+	virtual void SetWidth(int nWidth) { m_Size.cx = nWidth; }
+	virtual void SetHeight(int nHeight) { m_Size.cy = nHeight; }
 
 	// Disable these properties
-	virtual void     SetData(LPARAM /*lParam*/) { ASSERT(FALSE); }
-	virtual void     SetState(DWORD /*nState*/) { ASSERT(FALSE); }
-	virtual DWORD    GetState() const { return CGridCell::GetState() | GVIS_READONLY; }
-	virtual void     SetCoords(int /*row*/, int /*col*/) { ASSERT(FALSE); }
-	virtual void     SetFont(const LOGFONT* /*plf*/);
-	virtual LOGFONT* GetFont() const;
-	virtual CFont* GetFontObject() const;
+	void SetData(LPARAM /*lParam*/) override
+	{
+		ASSERT(FALSE);
+	}
+
+	void SetState(DWORD /*nState*/) override
+	{
+		ASSERT(FALSE);
+	}
+
+	DWORD GetState() const override { return CGridCell::GetState() | GVIS_READONLY; }
+
+	void SetCoords(int /*row*/, int /*col*/) override
+	{
+		ASSERT(FALSE);
+	}
+
+	void SetFont(const LOGFONT* /*plf*/) override;
+	LOGFONT* GetFont() const override;
+	CFont* GetFontObject() const override;
 
 protected:
-	CSize m_Size;       // Default GetRectSize
-	CFont m_Font;       // Cached font
-	DWORD m_dwStyle;    // Cell Style - unused
+	CSize m_Size; // Default GetRectSize
+	CFont m_Font; // Cached font
+	DWORD m_dwStyle; // Cell Style - unused
 };

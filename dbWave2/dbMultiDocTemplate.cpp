@@ -11,8 +11,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // CdbMultiDocTemplate
 
-CdbMultiDocTemplate::CdbMultiDocTemplate(UINT nIDResource, CRuntimeClass* pDocClass, CRuntimeClass* pFrameClass, CRuntimeClass* pViewClass)
-	: CMultiDocTemplate(nIDResource, pDocClass, pFrameClass, pViewClass) {};
+CdbMultiDocTemplate::CdbMultiDocTemplate(UINT nIDResource, CRuntimeClass* pDocClass, CRuntimeClass* pFrameClass,
+                                         CRuntimeClass* pViewClass)
+	: CMultiDocTemplate(nIDResource, pDocClass, pFrameClass, pViewClass)
+{
+};
 
 CdbMultiDocTemplate::~CdbMultiDocTemplate()
 {
@@ -43,9 +46,9 @@ void CdbMultiDocTemplate::Dump(CDumpContext& dc) const
 BOOL CdbMultiDocTemplate::GetDocString(CString& rString, enum DocStringIndex i) const
 {
 	CString str_temp;
-	AfxExtractSubString(str_temp, m_strDocStrings, static_cast<int>(i));
+	AfxExtractSubString(str_temp, m_strDocStrings, i);
 
-	if (i == CDocTemplate::filterExt)
+	if (i == filterExt)
 	{
 		// string contains more than one extension?
 		auto n_find_pos = str_temp.Find(_T(";"));
@@ -78,16 +81,16 @@ CMultiDocTemplate::Confidence CdbMultiDocTemplate::MatchDocType(LPCTSTR lpszPath
 			rpDocMatch = p_document;
 			return yesAlreadyOpen;
 		}
-	}	// end while
+	} // end while
 
 	// not open - then see if it matches either suffix
 	CString str_filter_ext;
-	if (GetDocString(str_filter_ext, CDocTemplate::filterExt) && !str_filter_ext.IsEmpty())
+	if (GetDocString(str_filter_ext, filterExt) && !str_filter_ext.IsEmpty())
 	{
 		// make sure there is a dot in the filename
 		const auto n_dot = cs_path_name.ReverseFind(_T('.'));
 		if (n_dot <= 0)
-			return noAttempt;	// no extension found, exit
+			return noAttempt; // no extension found, exit
 
 		// loop over the different extensions stored into the template filter
 		auto cs_path_name_ext = cs_path_name.Right(cs_path_name.GetLength() - n_dot - 1);
@@ -97,7 +100,7 @@ CMultiDocTemplate::Confidence CdbMultiDocTemplate::MatchDocType(LPCTSTR lpszPath
 
 		while (n_semi != -1)
 		{
-			auto ext = str_filter_ext.Left(n_semi);	// get extension
+			auto ext = str_filter_ext.Left(n_semi); // get extension
 			ext.MakeLower();
 
 			// check for a match against extension

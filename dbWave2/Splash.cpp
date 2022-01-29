@@ -64,10 +64,10 @@ BOOL CSplashWnd::PreTranslateAppMessage(MSG* pMsg)
 		pMsg->message == WM_NCMBUTTONDOWN)
 	{
 		m_pSplashWnd->HideSplashScreen();
-		return TRUE;	// message handled here
+		return TRUE; // message handled here
 	}
 
-	return FALSE;	// message not handled
+	return FALSE; // message not handled
 }
 
 BOOL CSplashWnd::Create(CWnd* pParentWnd /*= NULL*/)
@@ -78,8 +78,8 @@ BOOL CSplashWnd::Create(CWnd* pParentWnd /*= NULL*/)
 	BITMAP bm;
 	auto idummy = m_bitmap.GetBitmap(&bm);
 	return CreateEx(0,
-		AfxRegisterWndClass(0, AfxGetApp()->LoadStandardCursor(IDC_ARROW)),
-		nullptr, WS_POPUP | WS_VISIBLE, 0, 0, bm.bmWidth, bm.bmHeight, pParentWnd->GetSafeHwnd(), nullptr);
+	                AfxRegisterWndClass(0, AfxGetApp()->LoadStandardCursor(IDC_ARROW)),
+	                nullptr, WS_POPUP | WS_VISIBLE, 0, 0, bm.bmWidth, bm.bmHeight, pParentWnd->GetSafeHwnd(), nullptr);
 }
 
 void CSplashWnd::HideSplashScreen()

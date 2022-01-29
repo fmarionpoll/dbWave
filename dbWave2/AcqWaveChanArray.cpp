@@ -17,7 +17,7 @@ CWaveChanArray::~CWaveChanArray()
 	ChanArray_removeAll();
 }
 
-long CWaveChanArray::Write(CFile * datafile)
+long CWaveChanArray::Write(CFile* datafile)
 {
 	const auto p1 = datafile->GetPosition();
 	short array_size = wavechan_ptr_array.GetSize();
@@ -32,7 +32,7 @@ long CWaveChanArray::Write(CFile * datafile)
 	return static_cast<long>(p2 - p1);
 }
 
-BOOL CWaveChanArray::Read(CFile * datafile)
+BOOL CWaveChanArray::Read(CFile* datafile)
 {
 	short array_size;
 	datafile->Read(&array_size, sizeof(short));
@@ -42,7 +42,7 @@ BOOL CWaveChanArray::Read(CFile * datafile)
 	// if size = 0, create dummy & empty channel
 	if (array_size == 0)
 	{
-		ChanArray_removeAll();					// erase existing data
+		ChanArray_removeAll(); // erase existing data
 		p_channel = new CWaveChan;
 		ASSERT(p_channel != NULL);
 		wavechan_ptr_array.Add(p_channel);
@@ -59,11 +59,12 @@ BOOL CWaveChanArray::Read(CFile * datafile)
 			if (!p_channel->Read(datafile))
 				return FALSE;
 			n++;
-		} while (n < array_size);
+		}
+		while (n < array_size);
 	}
 	else
 	{
-		ChanArray_removeAll();					// erase existing data
+		ChanArray_removeAll(); // erase existing data
 		do
 		{
 			p_channel = new CWaveChan;
@@ -72,7 +73,8 @@ BOOL CWaveChanArray::Read(CFile * datafile)
 				return FALSE;
 			wavechan_ptr_array.Add(p_channel);
 			n++;
-		} while (n < array_size);
+		}
+		while (n < array_size);
 	}
 	return TRUE;
 }
@@ -81,18 +83,19 @@ BOOL CWaveChanArray::Read(CFile * datafile)
 // otherwise the pointers would point to the same objects and
 // one of the array would be undefined when the other is destroyed
 
-CWaveChanArray& CWaveChanArray::operator = (const CWaveChanArray & arg)
+CWaveChanArray& CWaveChanArray::operator =(const CWaveChanArray& arg)
 {
-	if (this != &arg) {
-		const auto n_items = arg.wavechan_ptr_array.GetSize();// source size
-		ChanArray_removeAll();					// erase existing data
-		for (auto i = 0; i < n_items; i++)	// loop over n items
+	if (this != &arg)
+	{
+		const auto n_items = arg.wavechan_ptr_array.GetSize(); // source size
+		ChanArray_removeAll(); // erase existing data
+		for (auto i = 0; i < n_items; i++) // loop over n items
 		{
-			const auto  p_channel = new CWaveChan(); // create new object
+			const auto p_channel = new CWaveChan(); // create new object
 			ASSERT(p_channel != NULL);
 			*p_channel = *arg.Get_p_channel(i);
 
-			ChanArray_add(p_channel);		// store pointer into array
+			ChanArray_add(p_channel); // store pointer into array
 		}
 	}
 	return *this;
@@ -113,7 +116,7 @@ void CWaveChanArray::ChanArray_removeAll()
 	wavechan_ptr_array.RemoveAll();
 }
 
-int CWaveChanArray::ChanArray_add(CWaveChan * arg)
+int CWaveChanArray::ChanArray_add(CWaveChan* arg)
 {
 	return wavechan_ptr_array.Add(arg);
 }
@@ -157,29 +160,30 @@ int CWaveChanArray::ChanArray_setSize(const int i)
 	return wavechan_ptr_array.GetSize();
 }
 
-void CWaveChanArray::Serialize(CArchive & ar)
+void CWaveChanArray::Serialize(CArchive& ar)
 {
 	WORD version;
 	if (ar.IsStoring())
 	{
 		version = 1;
-		ar << version;				// save version number
+		ar << version; // save version number
 		const int n_items = wavechan_ptr_array.GetSize();
-		ar << n_items;				// save number of items
-		if (n_items > 0)			// loop to save each CWaveChan
+		ar << n_items; // save number of items
+		if (n_items > 0) // loop to save each CWaveChan
 		{
 			for (auto i = 0; i < n_items; i++)
 			{
-				auto* p_item = static_cast<CWaveChan*>(wavechan_ptr_array.GetAt(i));
+				auto* p_item = wavechan_ptr_array.GetAt(i);
 				p_item->Serialize(ar);
 			}
 		}
 	}
 	else
 	{
-		ar >> version;				// get version
-		int items; ar >> items;		// get number of items
-		if (items > 0)				// loop to read all CWaveChan items
+		ar >> version; // get version
+		int items;
+		ar >> items; // get number of items
+		if (items > 0) // loop to read all CWaveChan items
 		{
 			ChanArray_removeAll();
 			for (auto i = 0; i < items; i++)

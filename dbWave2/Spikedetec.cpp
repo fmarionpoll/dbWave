@@ -16,8 +16,8 @@
 #endif
 
 CSpikeDetectDlg::CSpikeDetectDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CSpikeDetectDlg::IDD, pParent), m_pDetectSettingsArray(nullptr), m_dbDoc(nullptr), mdPM(nullptr),
-	m_pChartDataDetectWnd(nullptr), m_pChartDataSourceWnd(nullptr), m_pspkD(nullptr), m_scancount(0)
+	: CDialog(IDD, pParent), m_pDetectSettingsArray(nullptr), m_dbDoc(nullptr), mdPM(nullptr),
+	  m_pChartDataDetectWnd(nullptr), m_pChartDataSourceWnd(nullptr), m_pspkD(nullptr), m_scancount(0)
 {
 	m_iDetectParmsDlg = 0;
 }
@@ -51,8 +51,8 @@ BOOL CSpikeDetectDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	// init chan list, select first detection channel
 	CString comment;
-	((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->ResetContent();
-	((CComboBox*)GetDlgItem(IDC_EXTRACTCHAN))->ResetContent();
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->ResetContent();
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->ResetContent();
 
 	const auto pwave_format = m_dbDoc->GetpWaveFormat();
 	const auto pchan_array = m_dbDoc->GetpWavechanArray();
@@ -62,7 +62,7 @@ BOOL CSpikeDetectDlg::OnInitDialog()
 	// load list of channels into combo boxes
 	for (auto i = 0; i < chanmax; i++)
 	{
-		comment.Format(_T("%i"), i);		// channel index CString
+		comment.Format(_T("%i"), i); // channel index CString
 		const auto pchan = pchan_array->Get_p_channel(i);
 		comment += _T(" - ") + pchan->am_csComment;
 		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->AddString(comment) != CB_ERR);
@@ -71,8 +71,8 @@ BOOL CSpikeDetectDlg::OnInitDialog()
 
 	// load list of transform methods
 	chanmax = m_dbDoc->GetTransfDataNTypes();
-	((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->ResetContent();
-	((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->ResetContent();
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->ResetContent();
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->ResetContent();
 	for (int i = 0; i < chanmax; i++)
 	{
 		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->AddString(m_dbDoc->GetTransfDataName(i)) != CB_ERR);
@@ -92,28 +92,28 @@ BOOL CSpikeDetectDlg::OnInitDialog()
 	LoadChanParameters(m_iDetectParmsDlg);
 	UpdateTabShiftButtons();
 
-	return TRUE;  	// return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 void CSpikeDetectDlg::SaveChanParameters(int chan)
 {
 	m_pspkD = m_pDetectSettingsArray->GetItem(chan);
 	GetDlgItem(IDC_COMMENT)->GetWindowText(m_pspkD->comment);
-	mdPM->bDetectWhileBrowse = ((CButton*)GetDlgItem(IDC_DETECTBROWSE))->GetCheck();
+	mdPM->bDetectWhileBrowse = static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->GetCheck();
 
 	// spikes detection parameters
-	const auto flag2 = ((CButton*)GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck();
+	const auto flag2 = static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck();
 	m_pspkD->detectFrom = flag2 ? 0 : 1;
-	m_pspkD->detectChan = ((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
-	m_pspkD->detectTransform = ((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
+	m_pspkD->detectChan = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
+	m_pspkD->detectTransform = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
 	m_pspkD->detectThreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
 
 	// detect spikes
-	if (((CButton*)GetDlgItem(IDC_SPIKESRADIO))->GetCheck() == BST_CHECKED)
+	if (static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->GetCheck() == BST_CHECKED)
 	{
 		m_pspkD->detectWhat = DETECT_SPIKES;
-		m_pspkD->extractChan = ((CComboBox*)GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
-		m_pspkD->extractTransform = ((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
+		m_pspkD->extractChan = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
+		m_pspkD->extractTransform = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
 		m_pspkD->extractNpoints = GetDlgItemInt(IDC_SPIKENPOINTS);
 		m_pspkD->prethreshold = GetDlgItemInt(IDC_PRETHRESHOLD);
 		m_pspkD->refractory = GetDlgItemInt(IDC_REFRACTORY);
@@ -122,7 +122,7 @@ void CSpikeDetectDlg::SaveChanParameters(int chan)
 	else
 	{
 		m_pspkD->detectWhat = DETECT_STIMULUS;
-		m_pspkD->detectMode = ((CComboBox*)GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
+		m_pspkD->detectMode = static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
 		m_pspkD->extractChan = m_pspkD->detectChan;
 	}
 }
@@ -135,34 +135,34 @@ void CSpikeDetectDlg::LoadChanParameters(int chan)
 
 	if (m_pspkD->detectWhat == DETECT_SPIKES)
 	{
-		((CButton*)GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_CHECKED);
-		((CButton*)GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_UNCHECKED);
+		static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_CHECKED);
+		static_cast<CButton*>(GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_UNCHECKED);
 	}
 	else
 	{
-		((CButton*)GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_UNCHECKED);
-		((CButton*)GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_CHECKED);
+		static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_UNCHECKED);
+		static_cast<CButton*>(GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_CHECKED);
 	}
 	SetDlgInterfaceState(m_pspkD->detectWhat);
 
 	// spikes detection parameters
 	const BOOL flag = (m_pspkD->detectFrom == 0);
-	((CButton*)GetDlgItem(IDC_DETECTFROMCHAN))->SetCheck(flag);
-	((CButton*)GetDlgItem(IDC_DETECTFROMTAG))->SetCheck(!flag);
+	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->SetCheck(flag);
+	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMTAG))->SetCheck(!flag);
 	DisplayDetectFromChan();
-	((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->SetCurSel(m_pspkD->detectChan);
-	((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(m_pspkD->detectTransform);
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->SetCurSel(m_pspkD->detectChan);
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(m_pspkD->detectTransform);
 	SetDlgItemInt(IDC_DETECTTHRESHOLD, m_pspkD->detectThreshold);
 
-	((CComboBox*)GetDlgItem(IDC_EXTRACTCHAN))->SetCurSel(m_pspkD->extractChan);
-	((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->SetCurSel(m_pspkD->extractTransform);
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->SetCurSel(m_pspkD->extractChan);
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->SetCurSel(m_pspkD->extractTransform);
 	SetDlgItemInt(IDC_SPIKENPOINTS, m_pspkD->extractNpoints);
 	SetDlgItemInt(IDC_PRETHRESHOLD, m_pspkD->prethreshold);
 	SetDlgItemInt(IDC_REFRACTORY, m_pspkD->refractory);
-	((CButton*)GetDlgItem(IDC_DETECTBROWSE))->SetCheck(mdPM->bDetectWhileBrowse);
+	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(mdPM->bDetectWhileBrowse);
 
 	// stimulus detection parameters
-	((CComboBox*)GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(m_pspkD->detectMode);
+	static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(m_pspkD->detectMode);
 
 	// select proper tab
 	m_cParameterTabCtrl.SetCurSel(chan);
@@ -178,7 +178,7 @@ void CSpikeDetectDlg::OnOK()
 void CSpikeDetectDlg::DisplayDetectFromChan()
 {
 	BOOL flag = FALSE;
-	if (((CButton*)GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck())
+	if (static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck())
 		flag = TRUE;
 	GetDlgItem(IDC_DETECTCHAN)->EnableWindow(flag);
 	GetDlgItem(IDC_DETECTTRANSFORM)->EnableWindow(flag);
@@ -274,8 +274,8 @@ void CSpikeDetectDlg::OnCbnSelchangeDetectchan()
 
 void CSpikeDetectDlg::UpdateSourceView()
 {
-	const auto icursel = ((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
-	const auto icursel2 = ((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
+	const auto icursel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
+	const auto icursel2 = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
 	// TODO not used??
 	//int icursel3 = ((CComboBox*) GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
 	m_pChartDataDetectWnd->SetChanlistOrdinates(0, icursel, icursel2);
@@ -316,7 +316,7 @@ void CSpikeDetectDlg::SetTabComment(int i, CString& cs)
 	TCITEM tc_item;
 	tc_item.mask = TCIF_TEXT;
 	CString cs1;
-	cs1.Format(_T("#%i %s"), m_iDetectParmsDlg, static_cast<LPCTSTR>(cs));
+	cs1.Format(_T("#%i %s"), m_iDetectParmsDlg, cs);
 	//  Set the new text for the item.
 	tc_item.pszText = cs1.GetBuffer(2);
 	m_cParameterTabCtrl.SetItem(i, &tc_item);
@@ -342,8 +342,8 @@ void CSpikeDetectDlg::OnBnClickedShiftleft()
 
 void CSpikeDetectDlg::ExchangeParms(int isource, int idest)
 {
-	SaveChanParameters(isource);				// save current data
-	const auto p_sp = new SPKDETECTPARM;		// create temporary data to exchange
+	SaveChanParameters(isource); // save current data
+	const auto p_sp = new SPKDETECTPARM; // create temporary data to exchange
 	const auto p_source = m_pDetectSettingsArray->GetItem(isource);
 	const auto p_destination = m_pDetectSettingsArray->GetItem(idest);
 	*p_sp = *p_source;

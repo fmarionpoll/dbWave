@@ -23,7 +23,7 @@ int CTagList::insertTag(CTag* pcur)
 	return tag_ptr_array.Add(pcur);
 }
 
-int  CTagList::AddTag(CTag& arg)
+int CTagList::AddTag(CTag& arg)
 {
 	const auto pcur = new CTag;
 	ASSERT(pcur != NULL);
@@ -49,7 +49,7 @@ int CTagList::AddLTag(long lval, int refchan)
 int CTagList::RemoveTag(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
-	delete pcur;				// delete object pointed at
+	delete pcur; // delete object pointed at
 	tag_ptr_array.RemoveAt(itag);
 	return tag_ptr_array.GetSize();
 }
@@ -72,8 +72,8 @@ int CTagList::RemoveChanTags(int refchan)
 		const auto pcur = tag_ptr_array.GetAt(i);
 		if (pcur != nullptr && pcur->m_refchan == refchan)
 		{
-			delete pcur;				// delete object pointed at
-			tag_ptr_array.RemoveAt(i);		// remove item
+			delete pcur; // delete object pointed at
+			tag_ptr_array.RemoveAt(i); // remove item
 		}
 	}
 	return tag_ptr_array.GetSize();
@@ -88,7 +88,7 @@ void CTagList::SetTagVal(int itag, int newval)
 		ASSERT(tag_ptr_array.GetSize() >= itag);
 	}
 	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)       // if the cursor exist change the m_value
+	if (pcur != nullptr) // if the cursor exist change the m_value
 		pcur->m_value = newval;
 }
 
@@ -113,14 +113,14 @@ int CTagList::GetChannel(int itag)
 void CTagList::SetTagChan(int itag, int newchan)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)       // if the cursor exist change the m_value
+	if (pcur != nullptr) // if the cursor exist change the m_value
 		pcur->m_refchan = newchan;
 }
 
 void CTagList::SetTagPix(int itag, int newval)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)       // if the cursor exist change the m_value
+	if (pcur != nullptr) // if the cursor exist change the m_value
 		pcur->m_pixel = newval;
 }
 
@@ -151,7 +151,7 @@ long CTagList::GetTagLVal(int itag)
 void CTagList::SetTagComment(int itag, CString comment)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)       // if the cursor exist change the m_value
+	if (pcur != nullptr) // if the cursor exist change the m_value
 		pcur->m_csComment = comment;
 }
 

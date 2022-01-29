@@ -57,10 +57,10 @@ void CSpikeElemt::Serialize(CArchive& ar)
 		ar << m_iitime;
 		ar << static_cast<WORD>(m_class);
 		ar << static_cast<WORD>(m_chanparm);
-		ar << static_cast<WORD> (m_max);
-		ar << static_cast<WORD> (m_min);
-		ar << static_cast<WORD> (m_offset);
-		ar << static_cast<WORD> (m_dmaxmin);
+		ar << static_cast<WORD>(m_max);
+		ar << static_cast<WORD>(m_min);
+		ar << static_cast<WORD>(m_offset);
+		ar << static_cast<WORD>(m_dmaxmin);
 		ar << static_cast<WORD>(2);
 		ar << y1_;
 		ar << dt_;
@@ -69,17 +69,26 @@ void CSpikeElemt::Serialize(CArchive& ar)
 	{
 		ar >> wVersion;
 		ar >> m_iitime;
-		ar >> w1; m_class = static_cast<int>(w1);
-		ar >> w1; m_chanparm = static_cast<int>(w1);
-		ar >> w1; m_max = static_cast<short>(w1);
-		ar >> w1; m_min = static_cast<short>(w1);
-		ar >> w1; m_offset = static_cast<short>(w1);
-		ar >> w1; m_dmaxmin = static_cast<short>(w1);
+		ar >> w1;
+		m_class = static_cast<int>(w1);
+		ar >> w1;
+		m_chanparm = static_cast<int>(w1);
+		ar >> w1;
+		m_max = static_cast<short>(w1);
+		ar >> w1;
+		m_min = static_cast<short>(w1);
+		ar >> w1;
+		m_offset = static_cast<short>(w1);
+		ar >> w1;
+		m_dmaxmin = static_cast<short>(w1);
 		if (wVersion > 1)
 		{
-			WORD nitems = 0; ar >> nitems;
-			ar >> y1_; nitems--;
-			ar >> dt_; nitems--;
+			WORD nitems = 0;
+			ar >> nitems;
+			ar >> y1_;
+			nitems--;
+			ar >> dt_;
+			nitems--;
 			ASSERT(nitems == 0);
 		}
 	}
@@ -92,10 +101,15 @@ void CSpikeElemt::Read0(CArchive& ar)
 	ASSERT(ar.IsStoring() == FALSE);
 
 	ar >> m_iitime;
-	ar >> w1; m_class = static_cast<int>(w1);
-	ar >> w1; m_chanparm = static_cast<int>(w1);
-	ar >> w1; m_max = static_cast<short>(w1);
-	ar >> w1; m_min = static_cast<short>(w1);
-	ar >> w1; m_offset = static_cast<short>(w1);
+	ar >> w1;
+	m_class = static_cast<int>(w1);
+	ar >> w1;
+	m_chanparm = static_cast<int>(w1);
+	ar >> w1;
+	m_max = static_cast<short>(w1);
+	ar >> w1;
+	m_min = static_cast<short>(w1);
+	ar >> w1;
+	m_offset = static_cast<short>(w1);
 	m_dmaxmin = 0;
 }

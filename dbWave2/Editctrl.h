@@ -9,16 +9,15 @@ public:
 
 	// Attributes
 public:
-	BOOL	m_bEntryDone;
-	UINT	m_nChar;
+	BOOL m_bEntryDone;
+	UINT m_nChar;
 
 	// Operations
 public:
 protected:
-
 	// Implementation
 public:
-	virtual ~CEditCtrl();
+	~CEditCtrl() override;
 	BOOL ProcessKeys(UINT nChar);
 
 	// Generated message map functions

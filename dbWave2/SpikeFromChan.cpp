@@ -39,29 +39,37 @@ void CSpikeFromChan::Serialize(CArchive& ar)
 	{
 		WORD w;
 		WORD version;
-		ar >> version;				// version number
+		ar >> version; // version number
 		if (version < 5)
 		{
-			ar >> w; binzero = w;
+			ar >> w;
+			binzero = w;
 		}
 		else
-			ar >> binzero;			// long (instead of word)
+			ar >> binzero; // long (instead of word)
 		if (version < 3)
 		{
-			ar >> w; parm.extractChan = w;
+			ar >> w;
+			parm.extractChan = w;
 		}
 		ar >> encoding;
 		ar >> voltsperbin;
 		ar >> samprate;
 		if (version < 3)
 		{
-			ar >> w; parm.detectTransform = w;
-			ar >> w; parm.detectFrom = w;
-			ar >> w; parm.detectThreshold = w;
-			ar >> w;	// unused parameter, removed at version 3
-			ar >> w; parm.extractNpoints = w;
-			ar >> w; parm.prethreshold = w;
-			ar >> w; parm.refractory = w;
+			ar >> w;
+			parm.detectTransform = w;
+			ar >> w;
+			parm.detectFrom = w;
+			ar >> w;
+			parm.detectThreshold = w;
+			ar >> w; // unused parameter, removed at version 3
+			ar >> w;
+			parm.extractNpoints = w;
+			ar >> w;
+			parm.prethreshold = w;
+			ar >> w;
+			parm.refractory = w;
 		}
 		else
 		{
@@ -78,7 +86,8 @@ void CSpikeFromChan::Serialize(CArchive& ar)
 
 CSpikeFromChan& CSpikeFromChan::operator =(const CSpikeFromChan& arg)
 {
-	if (&arg != this) {
+	if (&arg != this)
+	{
 		wversion = arg.wversion;
 		binzero = arg.binzero;
 		encoding = arg.encoding;
