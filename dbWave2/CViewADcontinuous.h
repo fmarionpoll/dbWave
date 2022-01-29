@@ -114,7 +114,7 @@ protected:
 	BOOL	Defineexperiment();
 	void	TransferFilesToDatabase();
 	void	UpdateViewDataFinal();
-	void	DisplayolDaErrorMessage(CHAR* errstr);
+	void	DisplayolDaErrorMessage(const CHAR* errstr);
 	void	ChainDialog(WORD iID);
 
 	void	ADC_Transfer(short* pDTbuf0);

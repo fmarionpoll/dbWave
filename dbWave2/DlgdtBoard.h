@@ -38,6 +38,7 @@ protected:
 	void GetSubsystemYNCapabilities(int numitems);
 	void GetSubsystemNumericalCapabilities(int numitems);
 	void ChangeSubsystem(int index);
+	void DispatchException(COleDispatchException* e);
 
 	afx_msg void OnSelchangeBoard();
 	afx_msg void OnLbnSelchangeListBoardcaps();

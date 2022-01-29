@@ -195,8 +195,8 @@ void CDlgADInputs::AdjustGridSize()
 
 BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 {
-	auto p_wnd = CWnd::FromHandle(h_wnd);
-	auto* p_translate = reinterpret_cast<CSize*>(lParam);
+	const auto p_wnd = CWnd::FromHandle(h_wnd);
+	const auto* p_translate = reinterpret_cast<CSize*>(lParam);
 
 	auto* p_dlg = (CDlgADInputs*)p_wnd->GetParent();
 	if (!p_dlg) return FALSE;

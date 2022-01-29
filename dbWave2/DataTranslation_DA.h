@@ -49,12 +49,12 @@ protected:
 	long	m_nBuffersFilledSinceStart = 0;
 	double	m_frequency = 1.;
 
-	void	DTLayerError(COleDispatchException* e);
+	void	DispatchException(COleDispatchException* e);
 
 public:
 	void	OnBufferDone();
 	int		GetDigitalChannel() const { return m_digitalchannel; }
 	bool	IsInProgress() const { return m_inprogress; }
 	void	SetInProgress() { m_inprogress = true; }
-};
 
+};

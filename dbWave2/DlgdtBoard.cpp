@@ -55,7 +55,7 @@ BOOL CDlgDataTranslationBoard::FindDTOpenLayersBoards()
 		m_cbBoard.AddString(_T("No Board"));
 	else
 	{
-		for (UINT i = 0; i < ui_num_boards; i++)
+		for (short i = 0; i < short(ui_num_boards); i++)
 			m_cbBoard.AddString(m_pDTAcq32->GetBoardList(i));
 	}
 	m_cbBoard.SetCurSel(0);
@@ -84,8 +84,8 @@ int CDlgDataTranslationBoard::GetBoardCapabilities()
 
 		nsubsystems = m_pDTAcq32->GetNumSubSystems();
 
-		CString subsystem_text[SS_LIST_SIZE] = SS_TEXT;
-		int ss_list[SS_LIST_SIZE] = SS_LIST;
+		const CString subsystem_text[SS_LIST_SIZE] = SS_TEXT;
+		const short ss_list[SS_LIST_SIZE] = SS_LIST;
 
 		for (auto i = 0; i < SS_LIST_SIZE; i++)
 		{
@@ -99,11 +99,7 @@ int CDlgDataTranslationBoard::GetBoardCapabilities()
 	}
 	catch (COleDispatchException* e)
 	{
-		CString my_error;
-		my_error.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError));
-		my_error += e->m_strDescription;
-		AfxMessageBox(my_error);
-		e->Delete();
+		DispatchException(e);
 		return nsubsystems;
 	}
 	return nsubsystems;
@@ -111,7 +107,7 @@ int CDlgDataTranslationBoard::GetBoardCapabilities()
 
 void CDlgDataTranslationBoard::ChangeSubsystem(int index)
 {
-	int ss_codes[SS_LIST_SIZE] = SS_CODES;
+	const int ss_codes[SS_LIST_SIZE] = SS_CODES;
 	const DWORD ss_info = ss_codes[index];
 	const int numitems = m_listBoardCaps.GetItemData(index);
 	const auto ol_ss = (ss_info & 0xffff);
@@ -127,12 +123,7 @@ void CDlgDataTranslationBoard::ChangeSubsystem(int index)
 		}
 		catch (COleDispatchException* e)
 		{
-			CString myError;
-			myError.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError));
-			myError += e->m_strDescription;
-			AfxMessageBox(myError);
-			e->Delete();
-			return;
+			DispatchException(e);
 		}
 	}
 	GetSubsystemYNCapabilities(numitems);
@@ -143,8 +134,8 @@ void CDlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
 {
 	m_listSSYNCaps.ResetContent();
 	if (numitems > 0) {
-		OLSSC	olssc[SUB_COUNT] = SUB_CAP;
-		CString	cap_text[SUB_COUNT] = SUB_TEXT;
+		const OLSSC	olssc[SUB_COUNT] = SUB_CAP;
+		const CString	cap_text[SUB_COUNT] = SUB_TEXT;
 		try {
 			for (UINT i = 0; i < SUB_COUNT; i++)
 				if (m_pDTAcq32->GetSSCaps(olssc[i]) != 0)
@@ -152,10 +143,7 @@ void CDlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
 		}
 		catch (COleDispatchException* e)
 		{
-			CString my_error;
-			my_error.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); my_error += e->m_strDescription;
-			AfxMessageBox(my_error);
-			e->Delete();
+			DispatchException(e);
 		}
 	}
 	m_listSSYNCaps.Invalidate();
@@ -165,8 +153,8 @@ void CDlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
 {
 	m_listSSNumCaps.ResetContent();
 	if (numitems > 0) {
-		OLSSC	olssc_num[SS_NUM_COUNT] = SS_NUM_CAP;
-		CString	num_text[SS_NUM_COUNT] = SS_NUM_TEXT;
+		const OLSSC	olssc_num[SS_NUM_COUNT] = SS_NUM_CAP;
+		const CString	num_text[SS_NUM_COUNT] = SS_NUM_TEXT;
 		try {
 			for (UINT i = 0; i < SS_NUM_COUNT; i++)
 			{
@@ -181,10 +169,7 @@ void CDlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
 		}
 		catch (COleDispatchException* e)
 		{
-			CString my_error;
-			my_error.Format(_T("DT-Open Layers Error: %i "), (int)e->m_scError); my_error += e->m_strDescription;
-			AfxMessageBox(my_error);
-			e->Delete();
+			DispatchException(e);
 		}
 	}
 	m_listSSNumCaps.Invalidate();
@@ -196,4 +181,13 @@ void CDlgDataTranslationBoard::OnLbnSelchangeListBoardcaps()
 	if (isel >= 0) {
 		ChangeSubsystem(isel);
 	}
+}
+
+void CDlgDataTranslationBoard::DispatchException(COleDispatchException* e)
+{
+	CString my_error;
+	my_error.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
+	my_error += e->m_strDescription;
+	AfxMessageBox(my_error);
+	e->Delete();
 }

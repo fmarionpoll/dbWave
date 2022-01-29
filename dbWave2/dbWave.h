@@ -13,7 +13,7 @@
 #include "OPTIONS_VIEWSPIKES.h"
 #include "spikepar.h"
 
-class CdbWaveApp : public CWinAppEx
+class CdbWaveApp final : public CWinAppEx
 {
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);

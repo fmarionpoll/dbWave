@@ -5,22 +5,7 @@
 IMPLEMENT_SERIAL(OPTIONS_VIEWDATA, CObject, 0 /* schema number*/)
 
 OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
-{
-	/*
-	int i = 0;
-	icolwidth[i] = 10;
-	i++; icolwidth[i] = 410;
-	i++; icolwidth[i] = 16;
-	i++; icolwidth[i] = 30;
-	i++; icolwidth[i] = 30;
-	i++; icolwidth[i] = 30;
-	i++; icolwidth[i] = 30;
-	i++; icolwidth[i] = 50;
-	i++; icolwidth[i] = 40;
-	i++; icolwidth[i] = 40;
-	i++; icolwidth[i] = 10;
-	*/
-}
+= default;
 
 OPTIONS_VIEWDATA::~OPTIONS_VIEWDATA()
 = default;

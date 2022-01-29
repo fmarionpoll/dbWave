@@ -10,7 +10,6 @@
 #include "Adexperi.h"
 #include "dtacq32.h"
 #include "CyberAmp.h"
-
 #include "ChartData.h"
 #include "CViewADcontinuous.h"
 #include "ChildFrm.h"
@@ -42,8 +41,7 @@ CADContView::CADContView()
 }
 
 CADContView::~CADContView()
-{
-}
+= default;
 
 void CADContView::DoDataExchange(CDataExchange* pDX)
 {
@@ -134,10 +132,10 @@ END_EVENTSINK_MAP()
 
 void CADContView::OnCbnSelchangeComboboard()
 {
-	int isel = m_ADcardCombo.GetCurSel();
-	CString csCardName;
-	m_ADcardCombo.GetLBText(isel, csCardName);
-	SelectDTOpenLayersBoard(csCardName);
+	const int isel = m_ADcardCombo.GetCurSel();
+	CString card_name;
+	m_ADcardCombo.GetLBText(isel, card_name);
+	SelectDTOpenLayersBoard(card_name);
 }
 
 BOOL CADContView::FindDTOpenLayersBoards()
@@ -145,7 +143,7 @@ BOOL CADContView::FindDTOpenLayersBoards()
 	m_ADcardCombo.ResetContent();
 
 	// load board name - skip dialog if only one is present
-	UINT uiNumBoards = m_Acq32_AD.GetNumBoards();
+	const short uiNumBoards = m_Acq32_AD.GetNumBoards();
 	if (uiNumBoards == 0)
 	{
 		m_ADcardCombo.AddString(_T("No Board"));
@@ -153,10 +151,10 @@ BOOL CADContView::FindDTOpenLayersBoards()
 		return FALSE;
 	}
 
-	for (UINT i = 0; i < uiNumBoards; i++)
+	for (short i = 0; i < uiNumBoards; i++)
 		m_ADcardCombo.AddString(m_Acq32_AD.GetBoardList(i));
 
-	int isel = 0;
+	short isel = 0;
 	// if name already defined, check if board present
 	if (!(m_pOptions_AD->waveFormat).csADcardName.IsEmpty())
 		isel = m_ADcardCombo.FindString(-1, (m_pOptions_AD->waveFormat).csADcardName);
@@ -169,7 +167,7 @@ BOOL CADContView::FindDTOpenLayersBoards()
 	return TRUE;
 }
 
-BOOL CADContView::SelectDTOpenLayersBoard(CString cardName)
+BOOL CADContView::SelectDTOpenLayersBoard(const CString cardName)
 {
 	// get infos
 	m_bFoundDTOPenLayerDLL = TRUE;
@@ -210,8 +208,7 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 	{
 		HSSLIST hSSlist;
 		CHAR errstr[255];
-		ECODE ecode;
-		ecode = olDaGetSSList(&hSSlist);
+		ECODE ecode = olDaGetSSList(&hSSlist);
 		olDaGetErrorString(ecode, errstr, 255);
 		ecode = olDaReleaseSSList(hSSlist);
 		olDaGetErrorString(ecode, errstr, 255);
@@ -241,7 +238,7 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 void CADContView::SaveAndCloseFile()
 {
 	m_inputDataFile.AcqDoc_DataAppendStop();
-	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
+	const CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 
 	// if burst data acquisition mode ------------------------------------
 	if (m_bhidesubsequent)
@@ -292,13 +289,11 @@ void CADContView::UpdateViewDataFinal()
 	CAcqDataDoc * pDocDat = pdbDoc->OpenCurrentDataFile();
 	if (pDocDat == nullptr)
 	{
-		CdbWdatabase* pDB = pdbDoc->m_pDB;
-		int nrecords = pDB->GetNRecords();
-		ATLTRACE2(_T("error reading current document"));
+		ATLTRACE2(_T("error reading current document "));
 		return;
 	}
 	pDocDat->ReadDataInfos();
-	long lsizeDOCchan = pDocDat->GetDOCchanLength();
+	const long lsizeDOCchan = pDocDat->GetDOCchanLength();
 	m_ADsourceView.AttachDataFile(pDocDat);
 	m_ADsourceView.ResizeChannels(m_ADsourceView.GetRectWidth(), lsizeDOCchan);
 	m_ADsourceView.GetDataFromDoc(0, lsizeDOCchan);
@@ -314,7 +309,7 @@ void CADContView::TransferFilesToDatabase()
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
 	pdbDoc->SetDB_CurrentRecordPosition(pdbDoc->m_pDB->GetNRecords() - 1);
-	pdbDoc->UpdateAllViews(NULL, HINT_DOCMOVERECORD, NULL);
+	pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
 BOOL CADContView::StartAcquisition()
@@ -333,7 +328,7 @@ BOOL CADContView::StartAcquisition()
 	if (!m_AD_present)
 		return FALSE;
 
-	m_DA_present = m_Acq32_DA.InitSubSystem(m_pOptions_AD->waveFormat.chrate, m_pOptions_AD->waveFormat.trig_mode);
+	m_DA_present = m_Acq32_DA.InitSubSystem(double(m_pOptions_AD->waveFormat.chrate), m_pOptions_AD->waveFormat.trig_mode);
 	if (m_bStartOutPutMode == 0 && m_DA_present)
 		m_Acq32_DA.DeclareAndFillBuffers(
 			m_pOptions_AD->sweepduration, 
@@ -346,8 +341,8 @@ BOOL CADContView::StartAcquisition()
 	m_ADsourceView.ADdisplayStart(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0;							// no samples yet
-	pWFormat->chrate = pWFormat->chrate / m_pOptions_AD->iundersample;
-	m_fclockrate = pWFormat->chrate * pWFormat->scan_count;
+	pWFormat->chrate = pWFormat->chrate / float(m_pOptions_AD->iundersample);
+	m_fclockrate = pWFormat->chrate * float(pWFormat->scan_count);
 	pWFormat->acqtime = CTime::GetCurrentTime();
 
 	// data format
@@ -430,10 +425,10 @@ BOOL CADContView::StartAcquisition()
 	return TRUE;
 }
 
-void CADContView::DisplayolDaErrorMessage(CHAR* errstr)
+void CADContView::DisplayolDaErrorMessage(const CHAR* errstr)
 {
 	CString csError;
-	CStringA cstringa(errstr);
+	const CStringA cstringa(errstr);
 	csError = cstringa;
 	AfxMessageBox(csError);
 }
@@ -491,25 +486,24 @@ void CADContView::OnInitialUpdate()
 	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
 	m_btnStartStop.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
 	m_btnStartStop.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
-	m_btnStartStop.EnableWindowsTheming(false); // true
-	m_btnStartStop.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D; //BUTTONSTYLE_SEMIFLAT;
+	CMFCButton::EnableWindowsTheming(false); 
+	m_btnStartStop.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
 
 	// scrollbar
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
 	m_scrolly.SetScrollRange(0, 100);
 
-	// CFormView init CFile
-	auto pApp = static_cast<CdbWaveApp*>(AfxGetApp());
-	m_pOptions_AD = &(pApp->options_acqdata);								// address of data acquisition parameters
-	m_pOptions_DA = &(pApp->options_outputdata);								// address of data output parameters
-	m_bFoundDTOPenLayerDLL = FALSE;								// assume there is no card
+	auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	m_pOptions_AD = &(pApp->options_acqdata);
+	m_pOptions_DA = &(pApp->options_outputdata);
+	m_bFoundDTOPenLayerDLL = FALSE;
 	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
 	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
 	((CComboBox*)GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(m_bStartOutPutMode);
 
 	// open document and remove database filters
-	CdbWaveDoc* pdbDoc = GetDocument();							// data document with database
-	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;					// database itself
+	CdbWaveDoc* pdbDoc = GetDocument();	
+	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
 	m_ptableSet->RefreshQuery();

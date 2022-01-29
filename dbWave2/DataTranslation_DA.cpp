@@ -1,10 +1,8 @@
 #include "StdAfx.h"
 #include "DataTranslation_DA.h"
-
 #include <OLERRORS.H>
 #include <Olmem.h>
 #include <Olxdadefs.h>
-
 #include "DlgDAChannels.h"
 
 
@@ -28,7 +26,7 @@ BOOL DataTranslation_DA::OpenSubSystem(const CString cardName)
 	}
 	catch (COleDispatchException* e)
 	{
-		DTLayerError(e);
+		DispatchException(e);
 		return FALSE;
 	}
 	return TRUE;
@@ -61,7 +59,7 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 	}
 	catch (COleDispatchException* e)
 	{
-		DTLayerError(e);
+		DispatchException(e);
 		return FALSE;
 	}
 	return TRUE;
@@ -112,7 +110,7 @@ BOOL DataTranslation_DA::InitSubSystem(double ADC_channel_samplingrate, int ADC_
 	}
 	catch (COleDispatchException* e)
 	{
-		DTLayerError(e);
+		DispatchException(e);
 		return FALSE;
 	}
 	return TRUE;
@@ -166,7 +164,7 @@ void DataTranslation_DA::SetChannelList()
 	}
 	catch (COleDispatchException* e)
 	{
-		DTLayerError(e);
+		DispatchException(e);
 	}
 }
 
@@ -188,7 +186,7 @@ void DataTranslation_DA::DeleteBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		DTLayerError(e);
+		DispatchException(e);
 	}
 }
 
@@ -644,13 +642,13 @@ void DataTranslation_DA::StopAndLiberateBuffers()
 	}
 	catch (COleDispatchException* e)
 	{
-		DTLayerError(e);
+		DispatchException(e);
 	}
 	m_inprogress = FALSE;
 }
 
 
-void DataTranslation_DA::DTLayerError(COleDispatchException* e)
+void DataTranslation_DA::DispatchException(COleDispatchException* e)
 {
 	CString myError;
 	myError.Format(_T("DT-Open Layers Error: %i "), int(e->m_scError));
