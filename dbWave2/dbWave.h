@@ -82,4 +82,5 @@ public:
 
 extern CdbWaveApp theApp;
 
+#pragma warning (disable : 4995)
 void DisplayDaoException(CDaoException* e, int iID);

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "OLERRORS.H"
-#include "OLDAAPI.H"
-#include "OLTYPES.H"
-#include "OLDADEFS.H"
+#include <OLERRORS.H>
+#include <OLxDAAPI.H>
+#include <OLTYPES.H>
+#include <OLxDADEFS.H>
 #include "WinUser.h"
 
 // Registration structure
