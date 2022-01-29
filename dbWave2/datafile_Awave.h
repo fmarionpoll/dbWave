@@ -1,10 +1,7 @@
-// AwaveFile.h
-// Definition of Awave files and I/O functions
+
 #pragma once
+#include "datafile_X.h"
 
-///////////////////////////////////////////////////////////////////
-
-// Proprietary data file
 class CDataFileAWAVE : public CDataFileX
 {
 public:

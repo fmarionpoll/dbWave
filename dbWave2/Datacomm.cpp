@@ -83,7 +83,7 @@ void CDataCommentsDlg::OnOK()
 		m_pvO->bfilesize = m_bfilesize;
 		m_pvO->btoExcel = m_btoExcel;
 		m_pvO->bdatabasecols = m_bdatabasecols;
-		m_pvO->bChanged = TRUE;	// save new params in app array
+		m_pvO->b_changed = TRUE;	// save new params in app array
 	}
 	CDialog::OnOK();
 }

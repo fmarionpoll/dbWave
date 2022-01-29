@@ -148,7 +148,7 @@ void CMeasureOptionsPage::SaveOptions()
 	}
 	m_pMO->wOption = i_id;
 	m_pMO->bAllChannels = ((CButton*)GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
-	m_pMO->bChanged = TRUE;
+	m_pMO->b_changed = TRUE;
 }
 
 BOOL CMeasureOptionsPage::OnKillActive()

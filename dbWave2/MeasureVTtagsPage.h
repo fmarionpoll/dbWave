@@ -1,11 +1,10 @@
 #pragma once
 #include "dbWaveDoc.h"
 #include "AcqDataDoc.h"
-#include "ChartData.h"
 #include "Editctrl.h"
+#include "OPTIONS_VIEWDATAMEASURE.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureVTtagsPage dialog
+
 
 class CMeasureVTtagsPage : public CPropertyPage
 {
@@ -14,7 +13,7 @@ class CMeasureVTtagsPage : public CPropertyPage
 	// Construction
 public:
 	CMeasureVTtagsPage();
-	~CMeasureVTtagsPage();
+	~CMeasureVTtagsPage() override;
 
 	// Dialog Data
 	enum { IDD = IDD_PROPPAGE2 };

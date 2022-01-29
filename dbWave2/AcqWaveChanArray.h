@@ -1,5 +1,6 @@
 
 #pragma once
+#include "AcqWaveChan.h"
 
 
 class CWaveChanArray : public CObject

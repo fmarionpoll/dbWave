@@ -2,6 +2,8 @@
 #include "dataheader_Atlab.H"
 #include "datafile_ASD.h"
 
+#include <Olxdadefs.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

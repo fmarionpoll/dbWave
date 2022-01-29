@@ -1,4 +1,6 @@
 #include "StdAfx.h"
+#include "dbWave.h"
+
 #include <winspool.h>
 #include "Fileversion.h"
 #include "MainFrm.h"

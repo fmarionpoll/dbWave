@@ -1,5 +1,7 @@
 #pragma once
+#include "dbWave_constants.h"
 #include "Ruler.h"
+#include "Taglist.h"
 
 // display parameters: m_rangemode
 constexpr auto RANGE_ALL = 0;

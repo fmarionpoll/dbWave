@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "DataTranslation_AD.h"
 
-#include "include/DataTranslation/OLERRORS.H"
-#include "include/DataTranslation/Olxdadefs.h"
+#include "OLERRORS.H"
+
 
 BOOL DataTranslation_AD::OpenSubSystem(const CString card_name)
 {

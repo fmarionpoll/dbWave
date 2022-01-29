@@ -1,12 +1,9 @@
-// CMeasureOptionsPage.cpp : implementation file
-//
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
-#include "chart.h"
+#include "Chart.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-//#include "NoteDoc.h"
 #include "dbWaveDoc.h"
 #include "resource.h"
 #include "MeasureHZtagsPage.h"
@@ -212,7 +209,7 @@ void CMeasureHZtagsPage::OnOK()
 {
 	auto p_tags_list = m_pdatDoc->GetpHZtags();
 	p_tags_list->CopyTagList(&m_pChartDataWnd->m_HZtags);
-	m_pMO->bChanged = TRUE;
+	m_pMO->b_changed = TRUE;
 	if (m_pMO->wOption != 1)
 	{
 		m_pChartDataWnd-> m_HZtags.RemoveAllTags();

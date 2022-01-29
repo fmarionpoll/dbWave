@@ -12,6 +12,7 @@
 #include "datafile_CEDSpike2.h"
 #include "DlgImportGenericData.h"
 #include "datafile_Awave.h"
+#include "dbWave.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

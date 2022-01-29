@@ -4,6 +4,8 @@
 #include "StdAfx.h"
 #include "Exportsp.h"
 
+#include "OPTIONS_VIEWSPIKES.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -97,7 +99,6 @@ BOOL CExportSpikeInfosDlg::OnInitDialog()
 	m_bacqchsettings = m_pvdS->bacqchsettings;
 	m_bacqcomments = m_pvdS->bacqcomments;
 	m_bacqdate = m_pvdS->bacqdate;
-	//m_bartefacts 	= m_pvdS->bartefacts;
 	m_classnb = m_pvdS->classnb;
 	m_classnb2 = m_pvdS->classnb2;
 	m_btotalspikes = m_pvdS->btotalspikes;
@@ -163,7 +164,7 @@ void CExportSpikeInfosDlg::OnOK()
 	}
 
 	// intervals OK - proceed
-	m_pvdS->bChanged = TRUE;
+	m_pvdS->b_changed = TRUE;
 	m_pvdS->bacqchsettings = m_bacqchsettings;
 	m_pvdS->bacqcomments = m_bacqcomments;
 	m_pvdS->bacqdate = m_bacqdate;

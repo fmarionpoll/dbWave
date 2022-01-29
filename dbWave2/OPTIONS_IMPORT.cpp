@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "OPTIONS_IMPORT.h"
 #include "include/DataTranslation/Olxdadefs.h"
 
@@ -6,58 +6,20 @@
 IMPLEMENT_SERIAL(OPTIONS_IMPORT, CObject, 0)
 
 OPTIONS_IMPORT::OPTIONS_IMPORT()
-{
-	wVersion = 6;
-
-	// Varian parameters
-	fGainFID = 10.f;
-	fGainEAD = 10.f;
-	// generic import options
-	bSingleRun = TRUE;
-	bPreview = TRUE;
-	bSapid3_5 = FALSE;
-	nbRuns = 1;
-	nbChannels = 1;
-	samplingRate = 10.0f;
-	encodingMode = OLx_ENC_BINARY;
-	bitsPrecision = 12;
-	voltageMax = 10.0f;
-	voltageMin = -10.0f;
-	skipNbytes = 5;
-	title = "";
-	pwaveChanArray = new (CWaveChanArray);
-	ASSERT(pwaveChanArray != NULL);
-	pwaveChanArray->ChanArray_add();	// add dummy channel
-	nSelectedFilter = 0;
-	// export options
-	exportType = 0;
-	bAllchannels = TRUE;
-	bSeparateComments = FALSE;
-	bincludeTime = FALSE;
-	bentireFile = TRUE;
-	selectedChannel = 0;
-	fTimefirst = 0.f;
-	fTimelast = 1.f;
-	pathWTOASCII.Empty();
-	iundersample = 1;
-	path.Empty();
-	bDummy = FALSE;
-	bDiscardDuplicateFiles = false;
-	bChanged = false;
-}
+= default;
 
 OPTIONS_IMPORT::~OPTIONS_IMPORT()
 {
-	SAFE_DELETE(pwaveChanArray);
+	SAFE_DELETE(pwave_chan_array)
 }
 
 OPTIONS_IMPORT& OPTIONS_IMPORT::operator = (const OPTIONS_IMPORT& arg)
 {
 	if (this != &arg) {
-		wVersion = arg.wVersion;
+		w_version = arg.w_version;
 		fGainFID = arg.fGainFID;
 		fGainEAD = arg.fGainEAD;
-		pathWTOASCII = arg.pathWTOASCII;
+		path_wtoascii = arg.path_wtoascii;
 
 		// generic import options
 		bSingleRun = arg.bSingleRun;
@@ -73,7 +35,7 @@ OPTIONS_IMPORT& OPTIONS_IMPORT::operator = (const OPTIONS_IMPORT& arg)
 		voltageMin = arg.voltageMin;
 		skipNbytes = arg.skipNbytes;
 		title = arg.title;
-		*pwaveChanArray = *(arg.pwaveChanArray);
+		*pwave_chan_array = *(arg.pwave_chan_array);
 		nSelectedFilter = arg.nSelectedFilter;
 
 		// export options
@@ -97,7 +59,7 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		wVersion = 6; ar << wVersion;
+		w_version = 6; ar << w_version;
 		ar << fGainFID;
 		ar << fGainEAD;
 
@@ -107,38 +69,40 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		bflag <<= 1; bflag += bSingleRun;
 		ar << bflag;
 
-		ar << (WORD)nbRuns;
-		ar << (WORD)nbChannels;
+		ar << WORD(nbRuns);
+		ar << WORD(nbChannels);
 		ar << samplingRate;
-		ar << (WORD)encodingMode;
-		ar << (WORD)bitsPrecision;
+		ar << WORD(encodingMode);
+		ar << WORD(bitsPrecision);
 		ar << voltageMax;
 		ar << voltageMin;
 		ar << skipNbytes;
 		ar << title;
-		pwaveChanArray->Serialize(ar);
+		if (pwave_chan_array == nullptr)
+			initialize_wave_chan_array();
+		pwave_chan_array->Serialize(ar);
 		ar << nSelectedFilter;
 
 		// generic data export options
 		ar << exportType;
-		bflag = bAllchannels;						// 1rst: allchannels
-		bflag <<= 1; bflag += bSeparateComments;	// 2nd: separatecomments
-		bflag <<= 1; bflag += bentireFile;			// 3rd: entirefile
-		bflag <<= 1; bflag += bincludeTime;			// 4th:	includetime
+		bflag = bAllchannels;
+		bflag <<= 1; bflag += bSeparateComments;
+		bflag <<= 1; bflag += bentireFile;
+		bflag <<= 1; bflag += bincludeTime;
 		ar << bflag;
 
 		ar << selectedChannel;
 		ar << fTimefirst; ar << fTimelast;
 
-		ar << pathWTOASCII;
+		ar << path_wtoascii;
 
 		// add extensible options
 		int ntypes = 2;
-		ar << ntypes;	// nb types
+		ar << ntypes;
 
 		// int
 		ntypes = 2;
-		ar << ntypes;	// nb of ints
+		ar << ntypes;
 		ar << iundersample;
 		bflag = bDummy;
 		bflag <<= 1; bflag += bDiscardDuplicateFiles;
@@ -146,7 +110,7 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 
 		// CStrings
 		ntypes = 1;
-		ar << ntypes;	// nb of strings
+		ar << ntypes;
 		ar << path;
 	}
 	else
@@ -165,16 +129,18 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 			bPreview = bflag;  bPreview &= 0x1; bflag >>= 1;
 			bSapid3_5 = bflag; bSapid3_5 &= 0x1;
 
-			ar >> w1; nbRuns = w1;
-			ar >> w1; nbChannels = w1;
+			ar >> w1; nbRuns = short(w1);
+			ar >> w1; nbChannels = short(w1);
 			ar >> samplingRate;
-			ar >> w1; encodingMode = w1;
-			ar >> w1; bitsPrecision = w1;
+			ar >> w1; encodingMode = short(w1);
+			ar >> w1; bitsPrecision = short(w1);
 			ar >> voltageMax;
 			ar >> voltageMin;
 			ar >> skipNbytes;
 			ar >> title;
-			pwaveChanArray->Serialize(ar);
+			if (pwave_chan_array == nullptr)
+				initialize_wave_chan_array();
+			pwave_chan_array->Serialize(ar);
 		}
 		if (version >= 3)
 			ar >> nSelectedFilter;
@@ -182,23 +148,23 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		{
 			ar >> exportType;
 			ar >> bflag;
-			bincludeTime = bflag; bincludeTime &= 0x1; bflag >>= 1;	// 4th:	includetime
-			bentireFile = bflag; bentireFile &= 0x1; bflag >>= 1;	// 3rd: entirefile
-			bSeparateComments = bflag; bSeparateComments &= 0x1; bflag >>= 1;// 2nd: separatecomments
-			bAllchannels = bflag; bAllchannels &= 0x1;				// 1rst: allchannels
+			bincludeTime = bflag; bincludeTime &= 0x1; bflag >>= 1;	
+			bentireFile = bflag; bentireFile &= 0x1; bflag >>= 1;
+			bSeparateComments = bflag; bSeparateComments &= 0x1; bflag >>= 1;
+			bAllchannels = bflag; bAllchannels &= 0x1;
 			ar >> selectedChannel;
 			ar >> fTimefirst; ar >> fTimelast;
 		}
 		if (version >= 5)
-			ar >> pathWTOASCII;
+			ar >> path_wtoascii;
 		if (version >= 6)
 		{
 			int ntypes;
-			ar >> ntypes;	// nb types
+			ar >> ntypes;
 			if (ntypes > 0)
 			{
 				int nints;
-				ar >> nints;		// first type: ints
+				ar >> nints;
 				ar >> iundersample; nints--;
 				if (nints > 0)
 				{
@@ -212,7 +178,7 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 			if (ntypes > 0)
 			{
 				int nstrings;
-				ar >> nstrings;		// second type: CString
+				ar >> nstrings;	
 				ar >> path; nstrings--;
 			}
 			ntypes--;

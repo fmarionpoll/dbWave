@@ -1,41 +1,12 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "OUTPUTPARMS.h"
 
 
-//------------------ class OUTPUTPARMS ---------------------------------
 
 IMPLEMENT_SERIAL(OUTPUTPARMS, CObject, 0 /* schema number*/)
 
-OUTPUTPARMS::OUTPUTPARMS() : bChanged(0), ampLow(0), lastamp(0), lastphase(0)
-{
-	wversion = 1;
-	bON = FALSE;
-	bDigital = FALSE;
-	noise_bExternal = FALSE;
-	iChan = 0;
-	iWaveform = 0;
-	mseq_iRatio = 1000;
-	mseq_iDelay = 0;
-	mseq_iSeed = 0;
-	noise_iDelay = 0;
-	dAmplitudeMaxV = 1.;
-	dAmplitudeMinV = -1.;
-	dFrequency = 1000.;
-	dummy1 = 1.;
-	dummy2 = 0.;
-	noise_dAmplitV = 1.;
-	noise_dFactor = 1.;
-	noise_dOffsetV = 0.;
-	value = 0;
-	num = 512;
-	bit33 = 1;
-	count = 1;
-	bStart = false;
-	dummy1 = 0;
-	dummy2 = 0;
-	bit1 = 0;
-	ampUp = 0;
-}
+OUTPUTPARMS::OUTPUTPARMS()
+= default;
 
 OUTPUTPARMS::~OUTPUTPARMS()
 = default;
@@ -75,15 +46,15 @@ void OUTPUTPARMS::Serialize(CArchive & ar)
 	{
 		ar << wversion;
 
-		ar << (WORD)1;			// CString
+		ar << WORD(1);			// CString
 		ar << csFilename;
 
-		ar << (WORD)3;			// BOOL
+		ar << WORD(3);			// BOOL
 		ar << noise_bExternal;
 		ar << bON;
 		ar << bDigital;
 
-		ar << (WORD)6;			// int
+		ar << WORD(6);			// int
 		ar << iChan;
 		ar << iWaveform;
 		ar << mseq_iRatio;
@@ -91,7 +62,7 @@ void OUTPUTPARMS::Serialize(CArchive & ar)
 		ar << mseq_iSeed;
 		ar << noise_iDelay;
 
-		ar << (WORD)9;			// double
+		ar << WORD(9);			// double
 		ar << dAmplitudeMaxV;
 		ar << dAmplitudeMinV;
 		ar << dFrequency;
@@ -102,18 +73,17 @@ void OUTPUTPARMS::Serialize(CArchive & ar)
 		ar << noise_dOffsetV;
 		ar << value;
 
-		ar << (WORD)2;			// 1 more object
+		ar << WORD(2);			// 1 more object
 		stimulussequence.Serialize(ar);
 		sti.Serialize(ar);
 	}
 	else
 	{
 		WORD version; ar >> version;
-		int n;
 		WORD wn;
 
-		// cstring parameters
-		ar >> wn; n = wn;
+		// string parameters
+		ar >> wn; int n = wn;
 		if (n > 0) ar >> csFilename; n--;
 		CString csdummy; while (n > 0) { n--; ar >> csdummy; }
 

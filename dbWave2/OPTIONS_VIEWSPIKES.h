@@ -16,74 +16,73 @@ class OPTIONS_VIEWSPIKES : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_VIEWSPIKES)
 	OPTIONS_VIEWSPIKES();
-	~OPTIONS_VIEWSPIKES();
+	~OPTIONS_VIEWSPIKES() override;
 	OPTIONS_VIEWSPIKES& operator = (const OPTIONS_VIEWSPIKES& arg);
 	void Serialize(CArchive& ar) override;
 
 public:
-	BOOL bChanged;				// flag set TRUE if contents has changed
-	WORD wversion;				// version number
-	int	 ichan;					// data channel from which we have detected spikes
+	BOOL b_changed{false};			// flag set TRUE if contents has changed
+	WORD wversion{3};				// version number
+	int	 ichan{0};					// data channel from which we have detected spikes
 
-	float timestart;			// interval definition
-	float timeend;				//
-	float timebin;				// bin size (sec)
-	float histampl_vmax;
-	float histampl_vmin;
+	float timestart{0.f};			// interval definition
+	float timeend{2.f};				//
+	float timebin{.1f};				// bin size (sec)
+	float histampl_vmax{1.f};
+	float histampl_vmin{0.f};
 
-	int  histampl_nbins;
-	int	 nbins;					// number of bins
-	int  classnb;				// class nb
-	int  classnb2;
-	int	 istimulusindex;
-	int	 exportdatatype;		// export 0=psth, 1=isi, 2=autocorr, 3=intervals, 4=extrema, 5=max-min, 6=hist ampl
-	int	 spikeclassoption;		// spike class: -1(one:selected); 0(all); 1(all:splitted)
+	int  histampl_nbins{20};
+	int	 nbins{20};					// number of bins
+	int  classnb{0};				// class nb
+	int  classnb2{1};
+	int	 istimulusindex{0};
+	int	 exportdatatype{0};			// export 0=psth, 1=isi, 2=autocorr, 3=intervals, 4=extrema, 5=max-min, 6=hist ampl
+	int	 spikeclassoption{0};		// spike class: -1(one:selected){}; 0(all){}; 1(all:splitted)
 
-	BOOL bacqcomments;			// source data comments
-	BOOL bacqdate;				// source data time and date
-	BOOL bacqchsettings;		// source data acq chan settings
-	BOOL bspkcomments;			// spike file comments
-	BOOL ballfiles;				// export number of spikes / interval
-	BOOL bexportzero;			// when exporting histogram, export zero (true) or empty cell (false)
-	BOOL bexportPivot;			// when exporting to excel, export pivot or not
-	BOOL bexporttoExcel;		// export to Excel (1/0)
-	BOOL bartefacts;			// eliminate artefacts (class < 0)
-	BOOL bcolumnheader;			// column headers ON/OFF
-	BOOL btotalspikes;			// total nb of spikes
-	BOOL babsolutetime;			// TRUE= absolute spk time, FALSE=relative to first stim
-	BOOL bincrflagonsave;		// increment database flag when spike file is saved
-	BOOL bSpikeDetectThreshold;	// spike detection threshold
+	BOOL bacqcomments{true};		// source data comments
+	BOOL bacqdate{true};			// source data time and date
+	BOOL bacqchsettings{false};		// source data acq chan settings
+	BOOL bspkcomments{false};		// spike file comments
+	BOOL ballfiles{false};			// export number of spikes / interval
+	BOOL bexportzero{false};		// when exporting histogram, export zero (true) or empty cell (false)
+	BOOL bexportPivot{false};		// when exporting to excel, export pivot or not
+	BOOL bexporttoExcel{false};		// export to Excel (1/0)
+	BOOL bartefacts{true};			// eliminate artefacts (class < 0)
+	BOOL bcolumnheader{true};		// column headers ON/OFF
+	BOOL btotalspikes{true};		// total nb of spikes
+	BOOL babsolutetime{true};		// TRUE= absolute spk time, FALSE=relative to first stim
+	BOOL bincrflagonsave{false};	// increment database flag when spike file is saved
+	BOOL bSpikeDetectThreshold{true};	// spike detection threshold
 
-	int  ncommentcolumns;		// number of comment columns in the table exported to excel
+	int  ncommentcolumns{1};		// number of comment columns in the table exported to excel
 
 	// print parameters
-	WORD wIntParms;				// count nb of int parameters stored
-	int  heightLine;			// height of one line
-	int  heightSeparator;		// separator height betw classes
-	WORD wBoolParms;
-	BOOL bdisplayBars;			// default(TRUE)
-	BOOL bdisplayShapes;		// default(TRUE)
-	BOOL bsplitClasses;			// separate classes
-	BOOL ballChannels;			// all spike channels (FALSE: only current)
+	int  heightLine{130};			// height of one line
+	int  heightSeparator{20};		// separator height betw classes
+	BOOL bdisplayBars{true};		// default(TRUE)
+	BOOL bdisplayShapes{true};		// default(TRUE)
+	BOOL bsplitClasses{true};		// separate classes
+	BOOL ballChannels{true};		// all spike channels (FALSE: only current)
 
 	// histogram and dot display
-	int		dotheight;
-	int		dotlineheight;
-	BOOL	bdotunderline;
-	int		nbinsISI;
-	float	binISI;
-	BOOL	bYmaxAuto;
-	float	Ymax;
+	int		dotheight{3};
+	int		dotlineheight{5};
+	BOOL	bdotunderline{false};
+	int		nbinsISI{100};
+	float	binISI{2.f};
+	BOOL	bYmaxAuto{true};
+	float	Ymax{1.f};
 
-	COLORREF crHistFill;
-	COLORREF crHistBorder;
-	COLORREF crStimFill;
-	COLORREF crStimBorder;
-	COLORREF crChartArea;
+	COLORREF crHistFill{ RGB(0x80, 0x80, 0x80) };
+	COLORREF crHistBorder{ RGB(0x80, 0x80, 0x80) };
+	COLORREF crStimFill{ RGB(117, 192, 239) };
+	COLORREF crStimBorder{ RGB(117, 192, 239) };
+	COLORREF crChartArea{ RGB(255, 255, 255) };
 	COLORREF crScale[18]{};
-	float	 fScalemax;
-	int		bhistType;			// type of histogram requested (PSTH, ISI, ...)
-	BOOL	bCycleHist;			// cycle histogram (TRUE/FALSE), default=FALSE
-	int		nstipercycle;		// n stimuli per cycle
+
+	float	 fScalemax{100.f};
+	int		bhistType{0};			// type of histogram requested (PSTH, ISI, ...)
+	BOOL	bCycleHist{false};		// cycle histogram (TRUE/FALSE), default=FALSE
+	int		nstipercycle{1};		// n stimuli per cycle
 };
 

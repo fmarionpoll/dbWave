@@ -110,7 +110,7 @@ void CMeasureVTtagsPage::OnOK()
 {
 	auto p_tag_list = m_pdatDoc->GetpVTtags();
 	p_tag_list->CopyTagList(&m_pChartDataWnd->m_VTtags);
-	m_pMO->bChanged = TRUE;
+	m_pMO->b_changed = TRUE;
 	if (m_pMO->wOption != 0)
 	{
 		m_pChartDataWnd->m_VTtags.RemoveAllTags();

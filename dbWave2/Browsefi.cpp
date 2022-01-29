@@ -63,6 +63,6 @@ void CBrowseFileDlg::OnOK()
 	mfBR->bMaximizeGain = m_maximizegain;
 	mfBR->bMultirowDisplay = m_multirowdisplay;
 	mfBR->bKeepForEachFile = m_keepforeachfile;
-	mfBR->bChanged = TRUE;
+	mfBR->b_changed = TRUE;
 	CDialog::OnOK();
 }

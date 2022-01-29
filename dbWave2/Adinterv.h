@@ -1,5 +1,6 @@
 #pragma once
 #include "Editctrl.h"
+#include "AcqWaveFormat.h"
 
 class ADIntervalsDlg : public CDialog
 {

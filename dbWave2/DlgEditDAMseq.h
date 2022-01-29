@@ -1,5 +1,6 @@
 #pragma once
 #include "afxwin.h"
+#include "OUTPUTPARMS.h"
 
 class CDlgEditDAMseq : public CDialogEx
 {

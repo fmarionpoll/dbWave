@@ -6,6 +6,8 @@
 #include "dataheader_Atlab.H"
 #include "Adinterv.h"
 
+#include <Olxdadefs.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

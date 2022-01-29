@@ -1,10 +1,6 @@
 
 #include "StdAfx.h"
-
-//#include "dataheader_Atlab.H"
-//#include "datafile_Atlab.h"
-//#include "Editctrl.h"
-//#include "dbMainTable.h"
+#include "dbWave.h"
 #include "dbWaveDoc.h"
 #include "DlgExportData.h"
 

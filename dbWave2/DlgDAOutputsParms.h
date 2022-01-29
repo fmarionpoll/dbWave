@@ -1,4 +1,5 @@
 #pragma once
+#include "OPTIONS_OUTPUTDATA.h"
 
 // CDAOutputsDlg dialog
 

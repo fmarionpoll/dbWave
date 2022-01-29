@@ -1,5 +1,6 @@
 #pragma once
 #include "Spikedoc.h"
+#include "StretchControls.h"
 
 // CEditStimArrayDlg dialog
 

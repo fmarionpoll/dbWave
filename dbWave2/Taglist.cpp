@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "Taglist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

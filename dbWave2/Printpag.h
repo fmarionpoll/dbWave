@@ -1,10 +1,5 @@
 #pragma once
-
-// printpag.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintPageMarginsDlg dialog
+#include "OPTIONS_VIEWDATA.h"
 
 class CPrintPageMarginsDlg : public CDialog
 {

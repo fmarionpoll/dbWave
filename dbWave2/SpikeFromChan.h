@@ -1,4 +1,5 @@
 #pragma once
+#include "spikepar.h"
 
 // CSpikeFromChan structure
 // parameters used for detection of spikes from data acquisition

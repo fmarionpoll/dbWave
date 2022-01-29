@@ -4,6 +4,8 @@
 #include "StdAfx.h"
 #include "CyberAmp.h"
 
+#include "AcqWaveChan.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

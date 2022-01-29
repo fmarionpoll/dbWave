@@ -1,8 +1,7 @@
 #include "StdAfx.h"
 #include <cmath>
-#include "OLERRORS.H"
-#include "Olxdadefs.h"
-#include "Olxdaapi.h"
+#include <OLERRORS.H>
+#include <Olxdaapi.h>
 
 #include "resource.h"
 #include "dbMainTable.h"
@@ -15,11 +14,13 @@
 #include "ChartData.h"
 #include "CViewADcontinuous.h"
 #include "ChildFrm.h"
+#include "dbWave.h"
 #include "DlgADInputParms.h"
 #include "DlgConfirmSave.h"
 #include "DlgDAChannels.h"
 #include "DlgdtBoard.h"
 #include "MainFrm.h"
+#include "StretchControls.h"
 #include "USBPxxS1.h"
 
 

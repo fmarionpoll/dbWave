@@ -442,31 +442,31 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OPTIONS_ACQDATA.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OPTIONS_OUTPUTDATA.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OUTPUTPARMS.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OPTIONS_IMPORT.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OPTIONS_VIEWDATAMEASURE.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OPTIONS_VIEWSPIKES.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OPTIONS_VIEWDATA.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SCOPESTRUCT.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SCOPECHANNEL.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SCOPESTRUCT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OUTPUTPARMS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_VIEWSPIKES.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_IMPORT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_OUTPUTDATA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_VIEWDATA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OPTIONS_VIEWDATAMEASURE.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

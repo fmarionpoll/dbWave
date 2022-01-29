@@ -5,6 +5,8 @@
 #include "dbMainTable.h"
 #include "dbWdatabase.h"
 
+#include "dbWave.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

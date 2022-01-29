@@ -78,6 +78,7 @@ BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName)
 // it assumes that CR LF TAB ";" are separators and that files have the same ext.
 
 #include "ImportOptions.h"
+#include "dbWave.h"
 BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 {
 	auto flag = FALSE;					// pessimistic flag

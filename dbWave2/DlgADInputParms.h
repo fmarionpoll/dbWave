@@ -1,8 +1,11 @@
 #pragma once
 
+#include <Olxdadefs.h>
+
+#include "AcqWaveChanArray.h"
+#include "AcqWaveFormat.h"
 #include "CyberAmp.h"
 #include "./GridCtrl/GridCtrl.h"
-#include "Olxdadefs.h"
 #include "USBPxxS1.h"
 
 class CDlgADInputs : public CDialog

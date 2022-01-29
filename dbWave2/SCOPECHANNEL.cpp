@@ -1,15 +1,13 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "SCOPECHANNEL.h"
 
 IMPLEMENT_SERIAL(SCOPECHANNEL, CObject, 0 /* schema number*/)
 
 SCOPECHANNEL::SCOPECHANNEL()
-{
-}
+= default;
 
 SCOPECHANNEL::~SCOPECHANNEL()
-{
-}
+= default;
 
 SCOPECHANNEL& SCOPECHANNEL::operator=(const SCOPECHANNEL& arg)
 {
@@ -25,14 +23,12 @@ void SCOPECHANNEL::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		int version = 1;
 		ar << version;
 		ar << iextent;
 		ar << izero;
 	}
 	else
 	{
-		int version;
 		ar >> version;
 		ar >> iextent;
 		ar >> izero;

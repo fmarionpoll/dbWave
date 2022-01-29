@@ -1,10 +1,9 @@
 #pragma once
 
-#include "editctrl.h"
-#include "cscale.h"
-#include "chart.h"
-#include "chartdata.h"
+#include "Editctrl.h"
+#include "ChartData.h"
 #include "AcqDataDoc.h"
+#include "OPTIONS_IMPORT.h"
 
 class CDlgImportGenericData : public CDialog
 {

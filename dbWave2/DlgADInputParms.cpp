@@ -1,10 +1,12 @@
 #include "StdAfx.h"
-#include "./include/DataTranslation/Olxdadefs.h"
+#include <Olxdadefs.h>
 #include "GridCtrl/GridCell.h"
 #include "GridCtrl/GridCellCombo_FMP.h"
 #include "GridCtrl/GridCellNumeric.h"
 #include "GridCtrl/GridCellCheck.h"
 #include "DlgADInputParms.h"
+
+#include "AcqWaveChan.h"
 
 
 #ifdef _DEBUG

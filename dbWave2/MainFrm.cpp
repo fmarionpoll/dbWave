@@ -10,6 +10,8 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include "dbWave.h"
+#include "dbWave_constants.h"
 
 IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
 

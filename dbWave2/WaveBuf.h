@@ -3,6 +3,7 @@
 #include <string>
 #include "AcqWaveFormat.h"
 #include "AcqWaveChanArray.h"
+#include "Taglist.h"
 
 constexpr auto MOVAVG30 = 13;
 

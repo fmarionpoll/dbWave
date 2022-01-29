@@ -1,35 +1,12 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "OPTIONS_ACQDATA.h"
-#include <Olxdadefs.h>
+
 
 
 IMPLEMENT_SERIAL(OPTIONS_ACQDATA, CObject, 0 /* schema number*/)
 
 OPTIONS_ACQDATA::OPTIONS_ACQDATA()
-{
-	bChanged = FALSE;
-	m_wversion = 2;
-	icsA_stimulus = 0;
-	icsA_concentration = 0;
-	icsA_insect = 0;
-	icsA_location = 0;
-	icsA_sensillum = 0;
-	icsA_strain = 0;
-	icsA_sex = 0;
-	icsA_operatorname = 0;
-	icsA_stimulus2 = 0;
-	icsA_concentration2 = 0;
-	iundersample = 1;
-	baudiblesound = 0;
-	bChannelType = OLx_CHNT_DIFFERENTIAL;
-	izoomCursel = 0;
-	sweepduration = 1.0f;
-	insectnumber = 0;
-	icsA_repeat = 0;
-	icsA_repeat2 = 0;
-	icsA_expt = 0;
-	exptnumber = 0;
-}
+= default;
 
 OPTIONS_ACQDATA::~OPTIONS_ACQDATA()
 = default;
@@ -83,11 +60,11 @@ void OPTIONS_ACQDATA::Serialize(CArchive & ar)
 	{
 		ar << m_wversion;
 
-		ar << (WORD)2;				// 1 - string parameters
+		ar << WORD(2);				// 1 - string parameters
 		ar << csBasename;
 		ar << csPathname;
 
-		ar << (WORD)19;			// 2 - int parameters
+		ar << WORD(19);			// 2 - int parameters
 		ar << exptnumber;			// 1
 		ar << icsA_stimulus;		// 2
 		ar << icsA_concentration;	// 3
@@ -108,22 +85,22 @@ void OPTIONS_ACQDATA::Serialize(CArchive & ar)
 		ar << icsA_expt;			// 18
 		ar << insectnumber;				// 19
 
-		ar << (WORD)11;			// 3 - CStringArray parameters
+		ar << WORD(11);			// 3 - CStringArray parameters
 		int nsize;
 		int i;
-		nsize = csA_stimulus.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_stimulus.GetAt(i); };
-		nsize = csA_concentration.GetSize(); ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_concentration.GetAt(i); };
-		nsize = csA_insect.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_insect.GetAt(i); };
-		nsize = csA_location.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_location.GetAt(i); };
-		nsize = csA_sensillum.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_sensillum.GetAt(i); };
-		nsize = csA_strain.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_strain.GetAt(i); };
-		nsize = csA_operatorname.GetSize();	ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_operatorname.GetAt(i); };
-		nsize = csA_stimulus2.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_stimulus2.GetAt(i); };
-		nsize = csA_concentration2.GetSize(); ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_concentration2.GetAt(i); };
-		nsize = csA_sex.GetSize();			ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_sex.GetAt(i); };
-		nsize = csA_expt.GetSize();			ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_expt.GetAt(i); };
+		nsize = csA_stimulus.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_stimulus.GetAt(i); }
+		nsize = csA_concentration.GetSize(); ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_concentration.GetAt(i); }
+		nsize = csA_insect.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_insect.GetAt(i); }
+		nsize = csA_location.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_location.GetAt(i); }
+		nsize = csA_sensillum.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_sensillum.GetAt(i); }
+		nsize = csA_strain.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_strain.GetAt(i); }
+		nsize = csA_operatorname.GetSize();	ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_operatorname.GetAt(i); }
+		nsize = csA_stimulus2.GetSize();		ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_stimulus2.GetAt(i); }
+		nsize = csA_concentration2.GetSize(); ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_concentration2.GetAt(i); }
+		nsize = csA_sex.GetSize();			ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_sex.GetAt(i); }
+		nsize = csA_expt.GetSize();			ar << nsize; for (i = 0; i < nsize; i++) { ar << csA_expt.GetAt(i); }
 
-		ar << (WORD)3;				// 4 - serialized objects
+		ar << WORD(3);				// 4 - serialized objects
 		chanArray.Serialize(ar);
 		waveFormat.Serialize(ar);
 		ar << sweepduration;
@@ -169,17 +146,17 @@ void OPTIONS_ACQDATA::Serialize(CArchive & ar)
 		int nsize;
 		int i;
 		CString dummy;
-		if (n > 0) { ar >> nsize; csA_stimulus.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_stimulus.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_concentration.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_concentration.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_insect.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_insect.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_location.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_location.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_sensillum.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_sensillum.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_strain.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_strain.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_operatorname.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_operatorname.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_stimulus2.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_stimulus2.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_concentration2.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_concentration2.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_sex.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_sex.SetAt(i, dummy); }; } n--;
-		if (n > 0) { ar >> nsize; csA_expt.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_expt.SetAt(i, dummy); }; } n--;
+		if (n > 0) { ar >> nsize; csA_stimulus.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_stimulus.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_concentration.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_concentration.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_insect.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_insect.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_location.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_location.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_sensillum.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_sensillum.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_strain.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_strain.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_operatorname.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_operatorname.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_stimulus2.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_stimulus2.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_concentration2.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_concentration2.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_sex.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_sex.SetAt(i, dummy); } } n--;
+		if (n > 0) { ar >> nsize; csA_expt.SetSize(nsize); for (i = 0; i < nsize; i++) { ar >> dummy; csA_expt.SetAt(i, dummy); } } n--;
 
 		while (n > 0) {
 			n--; ar >> nsize; for (i = 0; i < nsize; i++) { ar >> dummy; }

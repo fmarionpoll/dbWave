@@ -1,20 +1,18 @@
 #include "StdAfx.h"
 #include "dataheader_Atlab.H"
 #include "datafile_Atlab.h"
-
 #include <iomanip>
 
 
 IMPLEMENT_DYNCREATE(CDataFileATLAB, CDataFileX)
 
-CDataFileATLAB::CDataFileATLAB() : m_pArray(nullptr)
+CDataFileATLAB::CDataFileATLAB()
 {
 	m_bHeaderSize = 1024;
 	m_ulOffsetData = m_bHeaderSize;
 	m_ulOffsetHeader = 0;
 	m_idType = DOCTYPE_ATLAB;
 	m_csType = _T("ATLAB");
-	m_pWFormat = nullptr;
 }
 
 CDataFileATLAB::~CDataFileATLAB()

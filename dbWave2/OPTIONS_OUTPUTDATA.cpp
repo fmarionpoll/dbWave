@@ -1,22 +1,12 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "OPTIONS_OUTPUTDATA.h"
 
-//------------------ class OPTIONS_OUTPUTDATA ---------------------------------
+
 
 IMPLEMENT_SERIAL(OPTIONS_OUTPUTDATA, CObject, 0 /* schema number*/)
 
 OPTIONS_OUTPUTDATA::OPTIONS_OUTPUTDATA()
-{
-	bChanged = FALSE;						// flag set TRUE if contents has changed
-	wversion = 1;							// version number
-	bAllowDA = TRUE;
-	bPresetWave = TRUE;
-	iDAbufferlength = 10000;
-	iDAnbuffers = 10;
-	iDATriggermode = 0;
-	dDAFrequency_perchan = 1000.;
-	outputparms_array.SetSize(10);
-}
+= default;
 
 OPTIONS_OUTPUTDATA::~OPTIONS_OUTPUTDATA()
 = default;
@@ -26,13 +16,13 @@ OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator = (const OPTIONS_OUTPUTDATA & a
 	if (this != &arg) {
 		wversion = arg.wversion;
 		bAllowDA = arg.bAllowDA;
-		csOutputFile = arg.csOutputFile;;
+		csOutputFile = arg.csOutputFile;
 		bPresetWave = arg.bPresetWave;
 		iDAbufferlength = arg.iDAbufferlength;
 		iDAnbuffers = arg.iDAnbuffers;
 		iDATriggermode = arg.iDATriggermode;
 		dDAFrequency_perchan = arg.dDAFrequency_perchan;
-		int nchannels = arg.outputparms_array.GetSize();
+		const int nchannels = arg.outputparms_array.GetSize();
 		outputparms_array.SetSize(nchannels);
 
 		for (int i = 0; i < nchannels; i++) {
@@ -48,37 +38,36 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive & ar)
 	{
 		ar << wversion;
 
-		ar << (WORD)1;			// CString
+		ar << WORD(1);			// CString
 		ar << csOutputFile;
 
-		ar << (WORD)2;			// BOOL
+		ar << WORD(2);			// BOOL
 		ar << bAllowDA;
 		ar << bPresetWave;
 
-		ar << (WORD)3;			// int
+		ar << WORD(3);			// int
 		ar << iDAbufferlength;
 		ar << iDAnbuffers;
 		ar << iDATriggermode;
 
-		ar << (WORD)1;			// double
+		ar << WORD(1);			// double
 		ar << dDAFrequency_perchan;
 
-		int nchannels = outputparms_array.GetSize(); // OUTPUT_PARMS
-		ar << (WORD)nchannels;
+		const int nchannels = outputparms_array.GetSize(); 
+		ar << WORD(nchannels);
 		for (int i = 0; i < nchannels; i++)
 		{
 			outputparms_array.GetAt(i).Serialize(ar);
 		}
-		ar << (WORD)0;			// no more ...
+		ar << WORD(0);			// no more ...
 	}
 	else
 	{
 		WORD version;  ar >> version;
-		int n;
 		WORD wn;
 
-		// cstring parameters
-		ar >> wn; n = wn;
+		// string parameters
+		ar >> wn; int n = wn;
 		if (n > 0) ar >> csOutputFile;			n--;
 		CString csdummy; while (n > 0) { n--; ar >> csdummy; }
 

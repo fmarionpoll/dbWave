@@ -1,5 +1,7 @@
 #pragma once
 #include "datafile_X.h"
+#include "dbWave_structures.h"
+#include "WaveBuf.h"
 
 constexpr auto CHANTYPE_unused		= 0;
 constexpr auto CHANTYPE_Adc			= 1;

@@ -1,6 +1,8 @@
 #pragma once
 
 #define NTABLECOLS	29
+#include "AcqWaveFormat.h"
+
 typedef struct _TABCOL {
 	int		iID;
 	TCHAR* szTableCol;

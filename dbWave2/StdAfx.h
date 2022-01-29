@@ -48,35 +48,18 @@
 //#include "ImportExcelDefinitions.h"
 
 // commons for dbWave...
-#include <time.h>
+#include <ctime>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <stdio.h>
-#include <errno.h>
+#include <cstdio>
+#include <cerrno>
 #include <process.h>
 #include <afxdisp.h>
 
 #pragma warning(disable : 4995)
 #include <afxdao.h>			// MFC DAO database classes
 
-#include "dbWave_constants.h"
 
-#include "AcqWaveChan.h"
-#include "AcqWaveChanArray.h"
-#include "AcqWaveFormat.h"
-#include "StretchControls.h"
-#include "dbWave_structures.h"
-
-#include "Tag.h"
-#include "Taglist.h"		// tag structures
-#include "StimLevelArray.h"
-#include "WaveBuf.h"		// data file buffer structure
-#include "datafile_X.h"		// data file base class
-
-#include "spikepar.h"		// spike parameters options
-#include "dbMultiDocTemplate.h"
-
-#include "dbWave.h"
 #include "resource.h"
 
 #define SAFE_DELETE(ptr) if (ptr) { delete ptr; ptr = NULL; }

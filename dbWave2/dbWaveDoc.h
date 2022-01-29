@@ -5,6 +5,7 @@
 #include "Spikelist.h"		// list of spikes
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
+#include "dbWave_structures.h"
 
 struct sourceData 
 {

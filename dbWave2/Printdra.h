@@ -1,10 +1,6 @@
 #pragma once
+#include "OPTIONS_VIEWDATA.h"
 
-// printdra.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDrawAreaDlg dialog
 
 class CPrintDrawAreaDlg : public CDialog
 {

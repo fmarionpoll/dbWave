@@ -1,5 +1,6 @@
 
 #pragma once
+#include "WaveBuf.h"
 
 // Document types 
 constexpr auto DOCTYPE_UNKNOWN		= -1;	// document type not recognized;

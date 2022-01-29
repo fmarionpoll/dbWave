@@ -1,4 +1,5 @@
 #pragma once
+#include "OPTIONS_VIEWDATA.h"
 
 class CDataCommentsDlg : public CDialog
 {

@@ -1,11 +1,12 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "DataTranslation_DA.h"
 
-#include <olerrors.h>
-#include <olmem.h>
+#include <OLERRORS.H>
+#include <Olmem.h>
 #include <Olxdadefs.h>
 
 #include "DlgDAChannels.h"
+
 
 
 BOOL DataTranslation_DA::OpenSubSystem(const CString cardName)

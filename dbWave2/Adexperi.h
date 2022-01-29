@@ -1,5 +1,6 @@
 #pragma once
 #include "afxeditbrowsectrl.h"
+#include "OPTIONS_ACQDATA.h"
 
 class ADExperimentDlg : public CDialog
 {

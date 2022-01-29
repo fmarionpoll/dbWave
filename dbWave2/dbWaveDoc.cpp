@@ -11,6 +11,7 @@
 #include "DlgProg.h"
 #include "NoteDoc.h"
 #include "CViewNotedoc.h"
+#include "dbWave_constants.h"
 #include "MainFrm.h"
 
 #ifdef _DEBUG

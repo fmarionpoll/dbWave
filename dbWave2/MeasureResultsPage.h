@@ -1,8 +1,7 @@
 #pragma once
 #include "dbWaveDoc.h"
 #include "AcqDataDoc.h"
-#include "ChartData.h"
-#include "Editctrl.h"
+#include "OPTIONS_VIEWDATAMEASURE.h"
 
 class CMeasureResultsPage : public CPropertyPage
 {

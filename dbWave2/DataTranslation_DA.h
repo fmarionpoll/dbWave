@@ -1,6 +1,8 @@
 #pragma once
 #include <olmem.h>
 #include "dtacq32.h"
+#include "OPTIONS_OUTPUTDATA.h"
+#include "OUTPUTPARMS.h"
 
 
 class DataTranslation_DA :

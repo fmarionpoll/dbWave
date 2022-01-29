@@ -1,53 +1,57 @@
 ﻿#pragma once
+#include <Olxdadefs.h>
+#include "AcqWaveChanArray.h"
+#include "AcqWaveFormat.h"
+
 
 class OPTIONS_ACQDATA : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_ACQDATA)
 	OPTIONS_ACQDATA();
-	~OPTIONS_ACQDATA();
+	~OPTIONS_ACQDATA() override;
 	OPTIONS_ACQDATA& operator = (const OPTIONS_ACQDATA& arg);
 	void Serialize(CArchive& ar) override;
 
 public:
-	BOOL			bChanged;						// flag set TRUE if contents has changed
-	WORD			m_wversion;						// version number
+	BOOL			bChanged{false};	
+	WORD			m_wversion{2};	
 
-	CString			csBasename;
-	CString			csPathname;
-	int				exptnumber{};
-	int				insectnumber;
-	int				iundersample;
-	BOOL			baudiblesound;
-	BOOL			bChannelType;					// OLx_CHNT_SINGLEENDED or OLx_CHNT_DIFFERENTIAL
+	CString			csBasename{};
+	CString			csPathname{};
+	int				exptnumber{0};
+	int				insectnumber{0};
+	int				iundersample{1};
+	BOOL			baudiblesound{0};
+	BOOL			bChannelType{ OLx_CHNT_DIFFERENTIAL };
 
-	CStringArray	csA_stimulus;
-	CStringArray	csA_concentration;
-	CStringArray	csA_stimulus2;
-	CStringArray	csA_concentration2;
-	CStringArray	csA_insect;
-	CStringArray	csA_location;
-	CStringArray	csA_sensillum;
-	CStringArray	csA_strain;
-	CStringArray	csA_operatorname;
-	CStringArray	csA_sex;
-	CStringArray	csA_expt;
+	CStringArray	csA_stimulus{};
+	CStringArray	csA_concentration{};
+	CStringArray	csA_stimulus2{};
+	CStringArray	csA_concentration2{};
+	CStringArray	csA_insect{};
+	CStringArray	csA_location{};
+	CStringArray	csA_sensillum{};
+	CStringArray	csA_strain{};
+	CStringArray	csA_operatorname{};
+	CStringArray	csA_sex{};
+	CStringArray	csA_expt{};
 
-	int				icsA_stimulus;
-	int				icsA_concentration;
-	int				icsA_stimulus2;
-	int				icsA_concentration2;
-	int				icsA_insect;
-	int				icsA_location;
-	int				icsA_sensillum;
-	int				icsA_strain;
-	int				icsA_operatorname;
-	int				icsA_sex;
-	int				icsA_repeat;
-	int				icsA_repeat2;
-	int				icsA_expt;
-	int				izoomCursel;					// display zoom factor (acq)
+	int				icsA_stimulus{0};
+	int				icsA_concentration{0};
+	int				icsA_stimulus2{0};
+	int				icsA_concentration2{0};
+	int				icsA_insect{0};
+	int				icsA_location{0};
+	int				icsA_sensillum{0};
+	int				icsA_strain{0};
+	int				icsA_operatorname{0};
+	int				icsA_sex{0};
+	int				icsA_repeat{0};
+	int				icsA_repeat2{0};
+	int				icsA_expt{0};
+	int				izoomCursel{0};
 
-	CWaveFormat		waveFormat;						// wave format
-	CWaveChanArray	chanArray;						// channels descriptors
-	float			sweepduration;					// display parameter
+	CWaveFormat		waveFormat{};
+	CWaveChanArray	chanArray{};
+	float			sweepduration{2.f};
 };

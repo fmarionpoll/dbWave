@@ -1,28 +1,11 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "SCOPESTRUCT.h"
 
 
 IMPLEMENT_SERIAL(SCOPESTRUCT, CObject, 0 /* schema number*/)
 
 SCOPESTRUCT::SCOPESTRUCT()
-{
-	wversion = 2;
-	iID = 0;
-	iXCells = 0;
-	iYCells = 0;
-	iXTicks = 0;
-	iYTicks = 0;
-	iXTickLine = 0;
-	iYTickLine = 0;
-	crScopeFill = RGB(255, 255, 255);
-	crScopeGrid = RGB(255, 255, 255);
-	bDrawframe = TRUE;
-	xScaleUnitValue = 0.0f;
-	yScaleUnitValue = 0.0f;
-	yScaleSpan_v = 0.0f;
-	xScaleSpan_s = 0.0f;
-	bClipRect = false;
-}
+= default;
 
 SCOPESTRUCT::~SCOPESTRUCT()
 = default;
@@ -78,7 +61,7 @@ void SCOPESTRUCT::Serialize(CArchive & ar)
 	}
 	else
 	{
-		WORD wversion;  ar >> wversion;
+		WORD wwversion;  ar >> wwversion;
 		int nints; ar >> nints;
 		ar >> iID; nints--;
 		ar >> iXCells; nints--;
@@ -95,7 +78,7 @@ void SCOPESTRUCT::Serialize(CArchive & ar)
 		ar >> crScopeGrid; ncolor_items--;
 		ASSERT(ncolor_items == 0);
 
-		if (wversion > 1)
+		if (wwversion > 1)
 		{
 			int nfloats; ar >> nfloats;
 			ar >> xScaleUnitValue; nfloats--;

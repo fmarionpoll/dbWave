@@ -2,6 +2,7 @@
 //#include <afxdao.h>
 #pragma warning(disable : 4995)
 #include "CSpkListTabCtrl.h"
+#include "StretchControls.h"
 
 class CViewDAO : public CDaoRecordView
 {

@@ -4,6 +4,7 @@
 #include "resource.h"
 //#include "MainFrm.h"
 #include "dbWave.h"
+#include "dbWave_constants.h"
 #include "DlgdbEditRecord.h"
 
 #ifdef _DEBUG

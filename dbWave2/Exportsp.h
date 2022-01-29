@@ -1,4 +1,5 @@
 #pragma once
+#include "OPTIONS_VIEWSPIKES.h"
 
 
 class CExportSpikeInfosDlg : public CDialog

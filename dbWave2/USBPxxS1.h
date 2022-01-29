@@ -1,9 +1,9 @@
 // CUSBPxxS1.h  : Declaration of ActiveX Control wrapper class(es) created by Microsoft Visual C++
 
 #pragma once
-#include <objbase.h>
-#include <vector>
 
+#include <vector>
+#include "AcqWaveChan.h"
 #include "ImportAlligatorDefinitions.h"
 #include "USBPxxPARAMETERS.h"
 #import "USBPxxS1COM.dll" no_namespace raw_interfaces_only raw_native_types named_guids

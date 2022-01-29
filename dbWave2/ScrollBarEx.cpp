@@ -6,6 +6,8 @@
 #include "resource.h"
 #include "ScrollBarEx.h"
 
+#include "dbWave_constants.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

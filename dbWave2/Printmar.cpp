@@ -4,6 +4,8 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "Printmar.h"
+
+#include "dbWave.h"
 #include "Printpag.h"
 #include "Printdat.h"
 #include "Printdra.h"
@@ -47,7 +49,7 @@ BOOL CPrintMarginsDlg::OnInitDialog()
 
 void CPrintMarginsDlg::OnOK()
 {
-	mdPM->bChanged = TRUE;
+	mdPM->b_changed = TRUE;
 	CDialog::OnOK();
 }
 

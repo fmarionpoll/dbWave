@@ -3,22 +3,17 @@
 
 #include "StdAfx.h"
 #include "dbWave.h"
-#include "resource.h"
 
-//#include "Cscale.h"
-#include "chart.h"
-//#include "ChartData.h"
+#include "Chart.h"
 #include "Editctrl.h"
-//#include "dbMainTable.h"
 #include "dbWaveDoc.h"
-
 #include "Spikedoc.h"
 #include "FormatHistogram.h"
-
 #include "MainFrm.h"
 #include "ChildFrm.h"
 #include "DlgProg.h"
 #include "CViewSpikeHist.h"
+#include "StretchControls.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,8 +22,7 @@
 IMPLEMENT_DYNCREATE(CViewSpikeHist, CDaoRecordView)
 
 CViewSpikeHist::CViewSpikeHist()
-	: CDaoRecordView(CViewSpikeHist::IDD), m_pvdS(nullptr), mdPM(nullptr), m_bhistType(0), m_scrollFilePos_infos(),
-	m_nPSTH(0), m_nISI(0), m_logFont(), m_xfirst(0), m_xlast(0), m_logFontDisp()
+	: CDaoRecordView(CViewSpikeHist::IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }

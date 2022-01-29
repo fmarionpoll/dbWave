@@ -9,6 +9,8 @@
 #include "resource.h"
 #include "Spikedetec.h"
 
+#include "spikepar.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

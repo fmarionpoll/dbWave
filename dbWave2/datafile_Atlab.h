@@ -1,5 +1,9 @@
 
 #pragma once
+#include "AcqWaveChanArray.h"
+#include "AcqWaveFormat.h"
+#include "datafile_X.h"
+#include "WaveBuf.h"
 
 
 class CDataFileATLAB final : public CDataFileX
@@ -16,8 +20,8 @@ protected:
 	void init_channels_from_cyber_a320(char* p_header) const;
 	static CString get_cyber_a320_filter(int ncode);
 
-	CWaveFormat*	m_pWFormat;
-	CWaveChanArray* m_pArray;
+	CWaveFormat*	m_pWFormat {nullptr};
+	CWaveChanArray* m_pArray {nullptr};
 
 public:
 	~CDataFileATLAB() override;

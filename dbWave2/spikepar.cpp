@@ -18,13 +18,15 @@
 //#include "resource.h"
 //#include "chart.h"
 //#include "TemplateWnd.h"
+#include "spikepar.h"
+
 #include "TemplateListWnd.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-//------------------ class STIMDETECT ---------------------------------
+
 
 IMPLEMENT_SERIAL(STIMDETECT, CObject, 0)
 

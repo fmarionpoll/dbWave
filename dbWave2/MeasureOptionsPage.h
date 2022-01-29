@@ -3,6 +3,7 @@
 #include "AcqDataDoc.h"
 #include "ChartData.h"
 #include "Editctrl.h"
+#include "OPTIONS_VIEWDATAMEASURE.h"
 
 class CMeasureOptionsPage : public CPropertyPage
 {

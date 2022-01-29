@@ -4,12 +4,14 @@
 #error "include 'stdafx.h' before including this file for PCH"
 #endif
 
+#include "dbMultiDocTemplate.h"
 #include "OPTIONS_ACQDATA.h"
 #include "OPTIONS_VIEWDATAMEASURE.h"
 #include "OPTIONS_IMPORT.h"
 #include "OPTIONS_OUTPUTDATA.h"
 #include "OPTIONS_VIEWDATA.h"
 #include "OPTIONS_VIEWSPIKES.h"
+#include "spikepar.h"
 
 class CdbWaveApp : public CWinAppEx
 {

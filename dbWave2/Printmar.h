@@ -1,10 +1,6 @@
 #pragma once
+#include "OPTIONS_VIEWDATA.h"
 
-// printmar.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintMarginsDlg dialog
 
 class CPrintMarginsDlg : public CDialog
 {

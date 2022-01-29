@@ -1,7 +1,5 @@
-// CDataFileX.cpp : implementation file
-//
-
 #include "StdAfx.h"
+#include "datafile_X.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

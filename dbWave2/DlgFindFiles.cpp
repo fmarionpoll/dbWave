@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "DlgFindFiles.h"
 
+#include "dbWave.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

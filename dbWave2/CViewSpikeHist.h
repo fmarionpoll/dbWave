@@ -1,4 +1,5 @@
 #pragma once
+#include "StretchControls.h"
 
 class CViewSpikeHist : public CDaoRecordView
 {
@@ -8,24 +9,24 @@ protected:
 	virtual		~CViewSpikeHist() override;
 // Form Data
 public:
-	enum { IDD = IDD_VIEWSPKTIMESERIES };
+	enum {IDD = IDD_VIEWSPKTIMESERIES };
 	CComboBox	m_cbHistType;
-	float		m_timefirst = 0.f;
-	float		m_timelast = 2.5f;
-	int			m_spikeclass = 0;
-	int			m_dotheight = 0;
-	int			m_rowheight = 0;
-	float		m_binISIms = 0.f;
-	int			m_nbinsISI = 0;
-	float		m_timebinms = 0.f;
+	float		m_timefirst {0.f};
+	float		m_timelast {2.5f};
+	int			m_spikeclass {0};
+	int			m_dotheight {0};
+	int			m_rowheight {0};
+	float		m_binISIms {0.f};
+	int			m_nbinsISI {0};
+	float		m_timebinms {0.f};
 
 	CdbWaveDoc* GetDocument();
-	CSpikeDoc*	p_spike_doc_ = nullptr;	
+	CSpikeDoc*	p_spike_doc_ {nullptr};	
 
 // Attributes
 protected:
 	CStretchControl m_stretch;
-	BOOL		m_binit = false;
+	BOOL		m_binit {false};
 	CEditCtrl	mm_timebinms;		// bin size (ms)
 	CEditCtrl	mm_binISIms;		// bin size (ms)
 	CEditCtrl	mm_nbinsISI;		// nbins ISI
@@ -35,35 +36,35 @@ protected:
 	CEditCtrl	mm_spikeclass;		// selected spike class
 	CEditCtrl	mm_dotheight;		// dot height
 	CEditCtrl	mm_rowheight;		// row height
-	OPTIONS_VIEWSPIKES* m_pvdS = nullptr;		// histogram options
-	OPTIONS_VIEWDATA* mdPM = nullptr;			// view data options
-	int			m_bhistType = 0;
-	SCROLLINFO m_scrollFilePos_infos{};
+	int			m_bhistType {0};
+	SCROLLINFO			m_scrollFilePos_infos{};
+	OPTIONS_VIEWSPIKES*	m_pvdS{ nullptr };
+	OPTIONS_VIEWDATA*	 mdPM{ nullptr };
 
-	long*		m_pPSTH = nullptr;	// histogram data (pointer to array)
-	int			m_sizepPSTH = 0;	// nbins within histogram
-	long		m_nPSTH = 0;
-	long*		m_pISI = nullptr;
-	int			m_sizepISI = 0;
-	long		m_nISI = 0;
-	long*		m_parrayISI = nullptr;
-	int			m_sizeparrayISI = 0;
+	long*		m_pPSTH {nullptr};	// histogram data (pointer to array)
+	int			m_sizepPSTH {0};	// nbins within histogram
+	long		m_nPSTH {0};
+	long*		m_pISI {nullptr};
+	int			m_sizepISI {0};
+	long		m_nISI {0};
+	long*		m_parrayISI {nullptr};
+	int			m_sizeparrayISI {0};
 
-	CRect		m_displayRect = CRect(0, 0, 0, 0);
+	CRect		m_displayRect {CRect(0, 0, 0, 0)};
 	CPoint		m_topleft;			// top position of display area
-	BOOL		m_initiated = false;// flag / initial settings
-	BOOL		m_bmodified = true;	// flag ON-> compute data
-	CBitmap*	m_pbitmap = nullptr;// temp bitmap used to improve display speed
-	int			m_nfiles = 1;		// nb of files used to build histogram
-	const float	t1000 = 1000.f;
-	BOOL		m_bPrint = false;
+	BOOL		m_initiated {false};// flag / initial settings
+	BOOL		m_bmodified {true};	// flag ON-> compute data
+	CBitmap*	m_pbitmap {nullptr};// temp bitmap used to improve display speed
+	int			m_nfiles {1};		// nb of files used to build histogram
+	const float	t1000 {1000.f};
+	BOOL		m_bPrint {false};
 	CRect		m_commentRect;
 
 	LOGFONT		m_logFont{};		// onbegin/onendPrinting
 	CFont		m_fontPrint;
-	int			m_rectratio = 100;
-	float		m_xfirst = 0.f;
-	float		m_xlast = 0.f;
+	int			m_rectratio {100};
+	float		m_xfirst {0.f};
+	float		m_xlast {0.f};
 
 	LOGFONT		m_logFontDisp{};	// onbegin/onendPrinting
 	CFont		m_fontDisp{};		// display font

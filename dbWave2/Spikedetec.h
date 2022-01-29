@@ -9,6 +9,7 @@
 #include "cscale.h"
 #include "chart.h"
 #include "chartdata.h"
+#include "spikepar.h"
 
 class CSpikeDetectDlg : public CDialog
 {

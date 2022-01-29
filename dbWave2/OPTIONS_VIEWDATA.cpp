@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "OPTIONS_VIEWDATA.h"
 
 
@@ -6,68 +6,7 @@ IMPLEMENT_SERIAL(OPTIONS_VIEWDATA, CObject, 0 /* schema number*/)
 
 OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
 {
-	bChanged = FALSE;
-	m_wversion = 5;
-
-	// print options
-	bAcqComment = TRUE;		// print data acquisition comments
-	bAcqDateTime = TRUE;		// data acquisition date and time
-	bChansComment = TRUE;		// individual data acq channel description
-	bChanSettings = TRUE;		// amplifier's settings (CyberAmp conventions)
-	bDocName = TRUE;			// file name
-	bFrameRect = FALSE;		// draw a rectangle frame around the data
-	bClipRect = TRUE;			// clip data to the rectangle
-	bTimeScaleBar = TRUE;		// display time scale bar
-	bVoltageScaleBar = TRUE;	// display voltage scale bar
-	bPrintSelection = TRUE;
-	bPrintSpkBars = TRUE;
-	bFilterDataSource = TRUE;
-
-	// print parameters
-	HeightDoc = 300;			// height of one document
-	WidthDoc = 1500;			// width of one document
-	leftPageMargin = 100;		// page left margin (pixels)
-	bottomPageMargin = 40;	// bottom
-	rightPageMargin = 40;		// right
-	topPageMargin = 100;		// top
-	heightSeparator = 40;		// vertical space between consecutive displays
-	textseparator = 40;		// space between left margin of display and text
-	fontsize = 40;			// font size (pixels)
-
-	// how data are displayed from file to file	 [ stored in a word wBrowseflags]
-	bAllChannels = TRUE;		// display all channels
-	bEntireRecord = TRUE;		// display entire record
-	bMultirowDisplay = FALSE;	// display one record on consecutive lines
-	bSplitCurves = TRUE;		// arrange curves so that they are split vertically
-	bMaximizeGain = TRUE;		// maximize gain
-	bCenterCurves = TRUE;		// center curves
-	bKeepForEachFile = TRUE;	// keep parameters for each file
-	bDispOldDetectP = FALSE;	// display detection parms stored within file
-	bFilterDat = FALSE;		// display data filtered or not
-	bDetectWhileBrowse = TRUE;// detect spikes if browse and no spike file
-	bGotoRecordID = TRUE;		// goto Record ID instead of Record Absolute Pos
-	bDisplayFileName = FALSE;	// display file name in individual data widows of dbwaveview
-
-	// export textual infos from data files [stored in a word wInfoflags]
-	bacqcomments = TRUE;		// global comment
-	bacqdate = TRUE;			// acquisition date
-	bacqtime = TRUE;			// acquisition time
-	bfilesize = FALSE;		// file size
-	bacqchcomment = FALSE;	// acq channel indiv comment
-	bacqchsetting = FALSE;	// acq chan indiv settings (gain, filter, etc)
-	bunits = TRUE;			// TRUE=mV, FALSE=binary
-	bcontours = FALSE;		// TRUE=contours, FALSE=center
-	bgraphics = TRUE;			// TRUE=graphics (enh metafile), FALSE=ASCII
-	bdatabasecols = TRUE;	// TRUE = export database infos
-	btoExcel = FALSE;
-
 	// nb items
-	hzResolution = 600;
-	vtResolution = 400;
-	unitMode = 0;
-	spkheight = 0;
-	spkwidth = 0;
-	icolwidth.SetSize(NCOLS);
 	int i = 0;
 	icolwidth[i] = 10;
 	i++; icolwidth[i] = 410;
@@ -80,29 +19,6 @@ OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
 	i++; icolwidth[i] = 40;
 	i++; icolwidth[i] = 40;
 	i++; icolwidth[i] = 10;
-
-	irowheight = 50;
-
-	// splitters parameters
-	col0width = 200;
-	row0height = 50;
-	bcol0visible = TRUE;
-	brow0visible = TRUE;
-
-	// database view parameters
-	tFirst = 0.f;
-	tLast = 0.f;
-	mVspan = 0.f;
-	displaymode = 1;
-	bsetTimeSpan = FALSE;
-	bsetmVSpan = FALSE;
-	bDisplayAllClasses = TRUE;
-	spikeclass = 0;
-
-	n_scope_items = 0;
-	nfilterindex = 0;
-	vertRes = 1;
-	horzRes = 1;
 }
 
 OPTIONS_VIEWDATA::~OPTIONS_VIEWDATA()
@@ -204,69 +120,69 @@ void OPTIONS_VIEWDATA::Serialize(CArchive & ar)
 
 		// print options
 		WORD wPrintFlags, wMult;
-		wMult = 1;		wPrintFlags = bAcqComment * wMult;	//0
-		wMult += wMult; wPrintFlags += bAcqDateTime * wMult;	//2
-		wMult += wMult; wPrintFlags += bChansComment * wMult;	//4
-		wMult += wMult; wPrintFlags += bChanSettings * wMult;	//8
-		wMult += wMult; wPrintFlags += bDocName * wMult;	//16
-		wMult += wMult; wPrintFlags += bFrameRect * wMult;	//32
-		wMult += wMult; wPrintFlags += bClipRect * wMult;	//64
-		wMult += wMult; wPrintFlags += bTimeScaleBar * wMult;	//128
+		wMult = 1;		wPrintFlags = bAcqComment * wMult;			//0
+		wMult += wMult; wPrintFlags += bAcqDateTime * wMult;		//2
+		wMult += wMult; wPrintFlags += bChansComment * wMult;		//4
+		wMult += wMult; wPrintFlags += bChanSettings * wMult;		//8
+		wMult += wMult; wPrintFlags += bDocName * wMult;			//16
+		wMult += wMult; wPrintFlags += bFrameRect * wMult;			//32
+		wMult += wMult; wPrintFlags += bClipRect * wMult;			//64
+		wMult += wMult; wPrintFlags += bTimeScaleBar * wMult;		//128
 		wMult += wMult; wPrintFlags += bVoltageScaleBar * wMult;	//256
-		wMult += wMult; wPrintFlags += bPrintSelection * wMult;	//512
-		wMult += wMult; wPrintFlags += bPrintSpkBars * wMult;	//1024
+		wMult += wMult; wPrintFlags += bPrintSelection * wMult;		//512
+		wMult += wMult; wPrintFlags += bPrintSpkBars * wMult;		//1024
 		wMult += wMult; wPrintFlags += bFilterDataSource * wMult;	//2048
 		ar << wPrintFlags;
 
 		// print parameters
-		ar << (WORD)horzRes;
-		ar << (WORD)vertRes;
-		ar << (WORD)HeightDoc;			// height of one document
-		ar << (WORD)WidthDoc;			// width of one document
-		ar << (WORD)leftPageMargin;	// page left margin (pixels)
-		ar << (WORD)bottomPageMargin;	// bottom
-		ar << (WORD)rightPageMargin;	// right
-		ar << (WORD)topPageMargin;		// top
-		ar << (WORD)heightSeparator;	// vertical space between consecutive displays
-		ar << (WORD)textseparator;		// space between left margin of display and text
-		ar << (WORD)fontsize;			// font size (pixels)
+		ar << WORD(horzRes);
+		ar << WORD(vertRes);
+		ar << WORD(HeightDoc);			// height of one document
+		ar << WORD(WidthDoc);			// width of one document
+		ar << WORD(leftPageMargin);		// page left margin (pixels)
+		ar << WORD(bottomPageMargin);	// bottom
+		ar << WORD(rightPageMargin);	// right
+		ar << WORD(topPageMargin);		// top
+		ar << WORD(heightSeparator);	// vertical space between consecutive displays
+		ar << WORD(textseparator);		// space between left margin of display and text
+		ar << WORD(fontsize);			// font size (pixels)
 
 		// how data are displayed from file to file
 		WORD wBrowseFlags;
-		wMult = 1;		wBrowseFlags = bAllChannels * wMult;	//0
-		wMult += wMult; wBrowseFlags += bEntireRecord * wMult;	//2
+		wMult = 1;		wBrowseFlags = bAllChannels * wMult;		//0
+		wMult += wMult; wBrowseFlags += bEntireRecord * wMult;		//2
 		wMult += wMult; wBrowseFlags += bMultirowDisplay * wMult;	//4
-		wMult += wMult; wBrowseFlags += bSplitCurves * wMult;	//8
-		wMult += wMult; wBrowseFlags += bMaximizeGain * wMult;	//16
-		wMult += wMult; wBrowseFlags += bCenterCurves * wMult;	//32
+		wMult += wMult; wBrowseFlags += bSplitCurves * wMult;		//8
+		wMult += wMult; wBrowseFlags += bMaximizeGain * wMult;		//16
+		wMult += wMult; wBrowseFlags += bCenterCurves * wMult;		//32
 		wMult += wMult; wBrowseFlags += bKeepForEachFile * wMult;	//64
 		wMult += wMult; wBrowseFlags += bDispOldDetectP * wMult;	//128
-		wMult += wMult; wBrowseFlags += bFilterDat * wMult;	//256
+		wMult += wMult; wBrowseFlags += bFilterDat * wMult;			//256
 		wMult += wMult; wBrowseFlags += bDetectWhileBrowse * wMult;	//512
-		wMult += wMult; wBrowseFlags += bGotoRecordID * wMult;	//1024
+		wMult += wMult; wBrowseFlags += bGotoRecordID * wMult;		//1024
 		wMult += wMult; wBrowseFlags += bDisplayFileName * wMult;	//2048
-		wMult += wMult; wBrowseFlags += bsetTimeSpan * wMult;	//4096
-		wMult += wMult; wBrowseFlags += bsetmVSpan * wMult;	//8192
+		wMult += wMult; wBrowseFlags += bsetTimeSpan * wMult;		//4096
+		wMult += wMult; wBrowseFlags += bsetmVSpan * wMult;			//8192
 		wMult += wMult; wBrowseFlags += bDisplayAllClasses * wMult;	//16384
 		ar << wBrowseFlags;
 
 		// export infos from data files
 		WORD wInfoFlags;
 		wMult = 1;		wInfoFlags = bacqcomments * wMult;		// 0
-		wMult += wMult; wInfoFlags += bacqdate * wMult;		// 2
-		wMult += wMult; wInfoFlags += bacqtime * wMult;		// 4
+		wMult += wMult; wInfoFlags += bacqdate * wMult;			// 2
+		wMult += wMult; wInfoFlags += bacqtime * wMult;			// 4
 		wMult += wMult; wInfoFlags += bfilesize * wMult;		// 8
-		wMult += wMult; wInfoFlags += bacqchcomment * wMult;		// 16
-		wMult += wMult; wInfoFlags += bacqchsetting * wMult;		// 32
-		wMult += wMult; wInfoFlags += bunits * wMult;		// 64
+		wMult += wMult; wInfoFlags += bacqchcomment * wMult;	// 16
+		wMult += wMult; wInfoFlags += bacqchsetting * wMult;	// 32
+		wMult += wMult; wInfoFlags += bunits * wMult;			// 64
 		wMult += wMult; wInfoFlags += bcontours * wMult;		// 128
 		wMult += wMult; wInfoFlags += bgraphics * wMult;		// 256
-		wMult += wMult; wInfoFlags += btoExcel * wMult;		// 512
-		wMult += wMult; wInfoFlags += bdatabasecols * wMult;		// 1024
+		wMult += wMult; wInfoFlags += btoExcel * wMult;			// 512
+		wMult += wMult; wInfoFlags += bdatabasecols * wMult;	// 1024
 		ar << wInfoFlags;
 
 		// export int(s) WORD = nb of items
-		ar << (WORD)(13);
+		ar << WORD(13);
 		ar << hzResolution;	//1
 		ar << vtResolution;	//2
 		ar << unitMode;		//3
@@ -285,7 +201,7 @@ void OPTIONS_VIEWDATA::Serialize(CArchive & ar)
 		for (int ii = 0; ii < icolwidth.GetSize(); ii++)
 			ar << icolwidth[ii];
 
-		ar << (int)3;		// nb floats
+		ar << 3;			// nb floats
 		ar << tFirst;
 		ar << tLast;
 		ar << mVspan;

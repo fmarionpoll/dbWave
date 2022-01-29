@@ -1,5 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// classe controlprop
 
 #if !defined (_CONTROLP_H_)
 #define _CONTROLP_H_
@@ -36,8 +34,8 @@ constexpr auto BOTTOM_BAR = 9;
 #define SZEQ_YDH		14		// equal size -- constant distance with IDC_DISPLAYHISTOG
 #define SZPR_YDH		15		// proportional size -- constant distance with IDC_DISPLAYHISTOG
 */
-/////////////////////////////////////////////////////////////////////////////
-// CCtrlProp class
+
+
 class CCtrlProp :public CObject
 {
 protected:
@@ -83,14 +81,13 @@ public:
 	void	SetMasterRect(CRect rmaster) { m_rmaster = rmaster; }
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// CStretchControl class
+
 class CStretchControl :public CObject
 {
 public:
 	CStretchControl();
 	DECLARE_DYNCREATE(CStretchControl)
-	virtual ~CStretchControl();
+	~CStretchControl() override;
 
 	// Attributes
 protected:

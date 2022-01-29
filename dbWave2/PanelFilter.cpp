@@ -3,6 +3,9 @@
 #include "MainFrm.h"
 #include "resource.h"
 #include "PanelFilter.h"
+
+#include "dbWave.h"
+#include "dbWave_constants.h"
 #include "DlgProg.h"
 
 #ifdef _DEBUG

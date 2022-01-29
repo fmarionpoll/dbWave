@@ -5,6 +5,8 @@
 #include "resource.h"
 #include "Lsoption.h"
 
+#include "dbWave.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

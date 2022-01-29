@@ -5,6 +5,7 @@
 #include "WaveBuf.h"		// data acquisition buffer
 #include "SpikeBuffer.h"
 #include "SpikeElement.h"
+#include "spikepar.h"
 
 // CSpikeList CObject
 // this object stores spikes from one data acquisition channel

@@ -102,6 +102,7 @@
 #define ABUS_RCVTIMEOUT      	4
 #define ABUS_RCVBUFOVERFLOW		5
 #define ABUS_RCVOVERRUN			6
+#include "AcqWaveChan.h"
 
 // CCyberAmp command target
 

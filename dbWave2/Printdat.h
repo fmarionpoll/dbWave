@@ -1,10 +1,6 @@
 #pragma once
+#include "OPTIONS_VIEWDATA.h"
 
-// printdat.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDataOptionsDlg dialog
 
 class CPrintDataOptionsDlg : public CDialog
 {

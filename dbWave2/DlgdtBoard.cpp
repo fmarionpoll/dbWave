@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "resource.h"
-#include "DlgdtBoard.h"
 #include "CDTBoardParameters.h"
+#include "DlgdtBoard.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

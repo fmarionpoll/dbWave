@@ -1,49 +1,10 @@
-﻿#include "stdafx.h"
+﻿#include "StdAfx.h"
 #include "OPTIONS_VIEWDATAMEASURE.h"
 
 IMPLEMENT_SERIAL(OPTIONS_VIEWDATAMEASURE, CObject, 0 /* schema number*/)
 
 OPTIONS_VIEWDATAMEASURE::OPTIONS_VIEWDATAMEASURE()
-{
-	bChanged = FALSE;
-	wversion = 2;
-
-	// parameters to measure
-	bExtrema = TRUE;			// measure max and min (value, time)
-	bDiffExtrema = TRUE;		// difference between extrema (value, time)
-	bHalfrisetime = FALSE;	// time necessary to reach half of the amplitude
-	bHalfrecovery = FALSE;	// time necessary to regain half of the initial amplitude
-	bDatalimits = TRUE;		// data value at limits
-	bDiffDatalimits = TRUE;	// difference between data limits
-	btime = FALSE;
-	bKeepTags = TRUE;			// keep flags after measurement
-	bSaveTags = FALSE;		// save tags
-	bSetTagsforCompleteFile = FALSE; // dlg box option
-
-	// source data
-	bAllChannels = FALSE;		// measure on all chans (TRUE) or on single chan (FALSE)
-	wSourceChan = 0;			// if bAllChans=FALSE, source data chan
-	bAllFiles = FALSE;		// measure on all files (default=FALSE)
-
-	// limits
-	wOption = 2;				// 0=vertic tags, 1=horiz lines; 2=rectangle; 3=relative to stimulus
-	wStimuluschan = 0;		// if wOption=2: stimulus channel
-	wStimulusthresh = 2048;	// if wOption=2: stimulus threshold
-	fStimulusoffset = 0.0f;	// if wOption=2: offset interval (default=0)
-
-	// edit VT tags options (version 2)
-	duration = 0.8f;			// on/OFF duration (sec)
-	period = 3.0f;			// period (sec)
-	nperiods = 10;			// nb of duplicates
-	timeshift = 0.0f;			// shift tags
-
-	lLimitLeft = 0;
-	lLimitRight = 1;
-	wLimitSup = 0;			// rectangle limits
-	wLimitInf = 1;
-	lLimitLeft = 0;
-	lLimitRight = 1;
-}
+= default;
 
 OPTIONS_VIEWDATAMEASURE::~OPTIONS_VIEWDATAMEASURE()
 = default;
@@ -51,40 +12,40 @@ OPTIONS_VIEWDATAMEASURE::~OPTIONS_VIEWDATAMEASURE()
 OPTIONS_VIEWDATAMEASURE& OPTIONS_VIEWDATAMEASURE::operator = (const OPTIONS_VIEWDATAMEASURE & arg)
 {
 	if (this != &arg) {
-		bChanged = arg.bChanged;
+		b_changed = arg.b_changed;
 
 		// parameters to measure
 		bExtrema = arg.bExtrema;			// measure max and min (value, time)
 		bDiffExtrema = arg.bDiffExtrema;	// difference between extrema (value, time)
 		bDiffDatalimits = arg.bDiffDatalimits; // diff between tags/cursors
-		bHalfrisetime = arg.bHalfrisetime;// time necessary to reach half of the amplitude
-		bHalfrecovery = arg.bHalfrecovery;// time necessary to regain half of the initial amplitude
-		bDatalimits = arg.bDatalimits;	// data value at limits
+		bHalfrisetime = arg.bHalfrisetime;	// time necessary to reach half of the amplitude
+		bHalfrecovery = arg.bHalfrecovery;	// time necessary to regain half of the initial amplitude
+		bDatalimits = arg.bDatalimits;		// data value at limits
 		btime = arg.btime;
-		bKeepTags = arg.bKeepTags;		// keep flags after measurement
+		bKeepTags = arg.bKeepTags;			// keep flags after measurement
 		bSaveTags = arg.bSaveTags;
 		bSetTagsforCompleteFile = arg.bSetTagsforCompleteFile;
 
 		// source data
 		bAllChannels = arg.bAllChannels;	// measure on all chans (TRUE) or on single chan (FALSE)
-		wSourceChan = arg.wSourceChan;	// if bAllChans=FALSE, source data chan
-		bAllFiles = arg.bAllFiles;		// measure on all files (default=FALSE)
+		wSourceChan = arg.wSourceChan;		// if bAllChans=FALSE, source data chan
+		bAllFiles = arg.bAllFiles;			// measure on all files (default=FALSE)
 
 		// limits
-		wOption = arg.wOption;			// 0=between vertic tags, 1=between horiz lines, 2=relative to stimulus
-		wStimuluschan = arg.wStimuluschan;// if wOption=2: stimulus channel
+		wOption = arg.wOption;				// 0=between vertic tags, 1=between horiz lines, 2=relative to stimulus
+		wStimuluschan = arg.wStimuluschan;	// if wOption=2: stimulus channel
 		wStimulusthresh = arg.wStimulusthresh;// if wOption=2: stimulus threshold
 		fStimulusoffset = arg.fStimulusoffset;// if wOption=2: offset interval (default=0)
-		wLimitSup = arg.wLimitSup;		// rectangle limits
+		wLimitSup = arg.wLimitSup;			// rectangle limits
 		wLimitInf = arg.wLimitInf;
 		lLimitLeft = arg.lLimitLeft;
 		lLimitRight = arg.lLimitRight;
 
 		// dlg edit VT
-		duration = arg.duration;		// on/OFF duration (sec)
+		duration = arg.duration;			// on/OFF duration (sec)
 		period = arg.period;				// period (sec)
 		nperiods = arg.nperiods;			// nb of duplicates
-		timeshift = arg.timeshift;		// shift tags
+		timeshift = arg.timeshift;			// shift tags
 	}
 	return *this;
 }

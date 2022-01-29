@@ -141,13 +141,13 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;$(IncludePath);C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;$(IncludePath);C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -155,7 +155,7 @@
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
-    <LibraryPath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(LibraryPath)</LibraryPath>
     <ExecutablePath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(ExecutablePath)</ExecutablePath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
     <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
