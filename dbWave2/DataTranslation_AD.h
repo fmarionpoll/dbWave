@@ -12,10 +12,11 @@ public:
 	BOOL	InitSubSystem(OPTIONS_ACQDATA* pADC_options);
 	void	DeleteBuffers();
 	void	DeclareBuffers(CWaveFormat* pWFormat);
-	void	Transfer(short* pDTbuf);
 	void	StopAndLiberateBuffers();
 	void	ConfigAndStart();
 	short*	OnBufferDone();
+	long	VoltsToValue(float fVolts, double dfGain);
+	float	ValueToVolts(long lVal, double dfGain);
 
 protected:
 	void	DTLayerError(COleDispatchException* e);

@@ -40,7 +40,7 @@ protected:
 
 protected:
 	CChartDataWnd		m_ADsourceView;				// source data display button
-	int 				m_cursorstate  { 0 };			// source data cursor state	
+	int 				m_cursorstate  { 0 };		// source data cursor state	
 	float				m_sweepduration { 2 };
 	CEditCtrl			mm_yupper;					// edit control for max amplitude displayed	
 	CEditCtrl			mm_ylower;					// edit control for min amplitude displayed
@@ -97,9 +97,6 @@ protected:
 	BOOL	SelectDTOpenLayersBoard(CString cardName);
 
 	void	SetCombostartoutput(int option);
-
-	long	VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain);
-	float	ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain);
 
 	void	StopAcquisition(BOOL bDisplayErrorMsg);
 	void	SaveAndCloseFile();

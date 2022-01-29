@@ -1225,73 +1225,6 @@ void CADContView::UpdateChanLegends(int chan)
 	int binzero = 0;
 }
 
-float CADContView::ValueToVolts(CDTAcq32* pSS, long lVal, double dfGain)
-{
-	const long lRes = long(pow(2.0, double(pSS->GetResolution())));
-	float f_min = 0.F;
-	if (pSS->GetMinRange() != 0.F)
-		f_min = pSS->GetMinRange() / float(dfGain);
-
-	float f_max = 0.F;
-	if (pSS->GetMaxRange() != 0.F)
-		f_max = pSS->GetMaxRange() / float(dfGain);
-
-	//make sure value is sign extended if 2's comp
-	if (pSS->GetEncoding() == OLx_ENC_2SCOMP)
-	{
-		lVal = lVal & (lRes - 1);
-		if (lVal >= (lRes / 2))
-			lVal = lVal - lRes;
-	}
-
-	// convert to volts
-	float f_volts = float(lVal) * (f_max - f_min) / lRes;
-	if (pSS->GetEncoding() == OLx_ENC_2SCOMP)
-		f_volts = f_volts + ((f_max + f_min) / 2);
-	else
-		f_volts = f_volts + f_min;
-
-	return f_volts;
-}
-
-long CADContView::VoltsToValue(CDTAcq32* pSS, float fVolts, double dfGain)
-{
-	const long lRes = long(pow(2., double(pSS->GetResolution())));
-
-	float f_min = 0.F;
-	if (pSS->GetMinRange() != 0.F)
-		f_min = pSS->GetMinRange() / float(dfGain);
-
-	float f_max = 0.F;
-	if (pSS->GetMaxRange() != 0.F)
-		f_max = pSS->GetMaxRange() / float(dfGain);
-
-	//clip input to range
-	if (fVolts > f_max) 
-		fVolts = f_max;
-	if (fVolts < f_min) 
-		fVolts = f_min;
-
-	//if 2's comp encoding
-	long l_value;
-	if (pSS->GetEncoding() == OLx_ENC_2SCOMP)
-	{
-		l_value = long((fVolts - (f_min + f_max) / 2) * lRes / (f_max - f_min));
-		// adjust for binary wrap if any
-		if (l_value == (lRes / 2)) 
-			l_value -= 1;
-	}
-	else
-	{
-		// convert to offset binary
-		l_value = long((fVolts - f_min) * lRes / (f_max - f_min));
-		// adjust for binary wrap if any
-		if (l_value == lRes) 
-			l_value -= 1;
-	}
-	return l_value;
-}
-
 void CADContView::OnCbnSelchangeCombostartoutput()
 {
 	m_bStartOutPutMode = ((CComboBox*) GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
@@ -1402,8 +1335,7 @@ BOOL CADContView::InitAcquisitionSystemAndBuffers()
 		return false;
 
 	m_Acq32_AD.DeclareBuffers(&(m_pOptions_AD->waveFormat));
-	
-	return isPresent;
+	return true;
 }
 
 void CADContView::InitAcquisitionInputFile()

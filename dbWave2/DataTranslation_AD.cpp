@@ -32,17 +32,12 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 	{
 		ASSERT(GetHDass() != NULL);
 
-		// store all values within global parameters array
 		m_pOptions = pADC_options;
+		CWaveFormat* pWFormat = &(m_pOptions->waveFormat);
 
-		// save parameters into CWaveFormat
-		CWaveFormat* poptions_acqdatawaveFormat = &(m_pOptions->waveFormat);
-
-		poptions_acqdatawaveFormat->fullscale_volts = GetMaxRange() - GetMinRange();
-
-		// convert into bin scale (nb of divisions)
+		pWFormat->fullscale_volts = GetMaxRange() - GetMinRange();
 		int iresolution = GetResolution();
-		poptions_acqdatawaveFormat->binspan = ((1L << iresolution) - 1);
+		pWFormat->binspan = ((1L << iresolution) - 1);
 
 		// set max channel number according to input configuration m_numchansMAX
 		m_pOptions->bChannelType = GetChannelType();
@@ -52,11 +47,11 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 			m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
 
 		// data encoding (binary or offset encoding)
-		poptions_acqdatawaveFormat->mode_encoding = (int)GetEncoding();
-		if (poptions_acqdatawaveFormat->mode_encoding == OLx_ENC_BINARY)
-			poptions_acqdatawaveFormat->binzero = poptions_acqdatawaveFormat->binspan / 2 + 1;
-		else if (poptions_acqdatawaveFormat->mode_encoding == OLx_ENC_2SCOMP)
-			poptions_acqdatawaveFormat->binzero = 0;
+		pWFormat->mode_encoding = (int)GetEncoding();
+		if (pWFormat->mode_encoding == OLx_ENC_BINARY)
+			pWFormat->binzero = pWFormat->binspan / 2 + 1;
+		else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
+			pWFormat->binzero = 0;
 
 		// load infos concerning frequency, dma chans, programmable gains
 		m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT);	// m_dfMaxThroughput
@@ -70,8 +65,6 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 		//UpdateHorizontalRulerBar();
 		//UpdateVerticalRulerBar();
 
-		//------------------------------------------------------------------
-
 		// Set up the ADC - no wrap so we can get buffer reused	
 		SetDataFlow(OLx_DF_CONTINUOUS);
 		SetWrapMode(OLx_WRP_NONE);
@@ -79,8 +72,9 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 		SetClockSource(OLx_CLK_INTERNAL);
 
 		// set trigger mode
-		int trig = poptions_acqdatawaveFormat->trig_mode;
-		if (trig > OLx_TRG_EXTRA) 		trig = 0;
+		int trig = pWFormat->trig_mode;
+		if (trig > OLx_TRG_EXTRA) 		
+			trig = 0;
 		SetTrigger(trig);
 
 		// number of channels
@@ -96,19 +90,19 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 		// limit scan_count to m_numchansMAX -
 		// this limits the nb of data acquisition channels to max-1 if one wants to use the additional I/O input "pseudo"channel
 		// so far, it seems acceptable...
-		if (poptions_acqdatawaveFormat->scan_count > m_numchansMAX)
-			poptions_acqdatawaveFormat->scan_count = m_numchansMAX;
+		if (pWFormat->scan_count > m_numchansMAX)
+			pWFormat->scan_count = m_numchansMAX;
 
 		// set frequency to value requested, set frequency and get the value returned
-		double clockrate = double(poptions_acqdatawaveFormat->chrate) * double(poptions_acqdatawaveFormat->scan_count);
+		double clockrate = double(pWFormat->chrate) * double(pWFormat->scan_count);
 		SetFrequency(clockrate);			// set sampling frequency (total throughput)
 		clockrate = GetFrequency();
-		poptions_acqdatawaveFormat->chrate = (float)clockrate / poptions_acqdatawaveFormat->scan_count;
+		pWFormat->chrate = (float)clockrate / pWFormat->scan_count;
 
 		// update channel list (chan & gain)
 
-		SetListSize(poptions_acqdatawaveFormat->scan_count);
-		for (int i = 0; i < poptions_acqdatawaveFormat->scan_count; i++)
+		SetListSize(pWFormat->scan_count);
+		for (int i = 0; i < pWFormat->scan_count; i++)
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
 			CWaveChan* pChannel = (m_pOptions->chanArray).Get_p_channel(i);
@@ -121,7 +115,7 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 			// compute dependent parameters
 			pChannel->am_gainamplifier = double(pChannel->am_gainheadstage) * double(pChannel->am_gainpre) * double(pChannel->am_gainpost);
 			pChannel->am_gaintotal = pChannel->am_gainamplifier * double(pChannel->am_gainAD);
-			pChannel->am_resolutionV = double(poptions_acqdatawaveFormat->fullscale_volts) / pChannel->am_gaintotal / double(poptions_acqdatawaveFormat->binspan);
+			pChannel->am_resolutionV = double(pWFormat->fullscale_volts) / pChannel->am_gaintotal / double(pWFormat->binspan);
 		}
 
 		// pass parameters to the board and check if errors
@@ -141,7 +135,6 @@ void DataTranslation_AD::DeclareBuffers(CWaveFormat* pWFormat)
 	DeleteBuffers();
 
 	// make sure that buffer length contains at least nacq chans
-	//CWaveFormat* pWFormat = &(m_pOptions->waveFormat); // get pointer to m_pADC_options wave format
 	if (pWFormat->buffersize < pWFormat->scan_count * m_pOptions->iundersample)
 		pWFormat->buffersize = pWFormat->scan_count * m_pOptions->iundersample;
 
@@ -203,8 +196,6 @@ void DataTranslation_AD::StopAndLiberateBuffers()
 	m_inprogress = FALSE;
 }
 
-
-
 void DataTranslation_AD::DTLayerError(COleDispatchException* e)
 {
 	CString myError;
@@ -237,4 +228,73 @@ short* DataTranslation_AD::OnBufferDone()
 	}
 	return nullptr;
 }
+
+long DataTranslation_AD::VoltsToValue(float fVolts, double dfGain)
+{
+	const long lRes = long(pow(2., double(GetResolution())));
+
+	float f_min = 0.F;
+	if (GetMinRange() != 0.F)
+		f_min = GetMinRange() / float(dfGain);
+
+	float f_max = 0.F;
+	if (GetMaxRange() != 0.F)
+		f_max = GetMaxRange() / float(dfGain);
+
+	//clip input to range
+	if (fVolts > f_max)
+		fVolts = f_max;
+	if (fVolts < f_min)
+		fVolts = f_min;
+
+	//if 2's comp encoding
+	long l_value;
+	if (GetEncoding() == OLx_ENC_2SCOMP)
+	{
+		l_value = long((fVolts - (f_min + f_max) / 2) * lRes / (f_max - f_min));
+		// adjust for binary wrap if any
+		if (l_value == (lRes / 2))
+			l_value -= 1;
+	}
+	else
+	{
+		// convert to offset binary
+		l_value = long((fVolts - f_min) * lRes / (f_max - f_min));
+		// adjust for binary wrap if any
+		if (l_value == lRes)
+			l_value -= 1;
+	}
+	return l_value;
+}
+
+float DataTranslation_AD::ValueToVolts(long lVal, double dfGain)
+{
+	const long lRes = long(pow(2.0, double(GetResolution())));
+	float f_min = 0.F;
+	if (GetMinRange() != 0.F)
+		f_min = GetMinRange() / float(dfGain);
+
+	float f_max = 0.F;
+	if (GetMaxRange() != 0.F)
+		f_max = GetMaxRange() / float(dfGain);
+
+	//make sure value is sign extended if 2's comp
+	if (GetEncoding() == OLx_ENC_2SCOMP)
+	{
+		lVal = lVal & (lRes - 1);
+		if (lVal >= (lRes / 2))
+			lVal = lVal - lRes;
+	}
+
+	// convert to volts
+	float f_volts = float(lVal) * (f_max - f_min) / lRes;
+	if (GetEncoding() == OLx_ENC_2SCOMP)
+		f_volts = f_volts + ((f_max + f_min) / 2);
+	else
+		f_volts = f_volts + f_min;
+
+	return f_volts;
+}
+
+
 
