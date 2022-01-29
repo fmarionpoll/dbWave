@@ -336,14 +336,14 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 	// LINE 2.......... date
 	// LINE 3.......... file comment
 
-	csCharBuf.Format(_T("file :\t%s\r\n"), m_filesource);
+	csCharBuf.Format(_T("file :\t%hs\r\n"), m_filesource);
 	CWaveChanArray* pChanArray = m_pDat->GetpWavechanArray();
 	CWaveFormat* pwaveFormat = m_pDat->GetpWaveFormat();
 
 	CString csdate = (pwaveFormat->acqtime).Format("%#d %B %Y %X");
-	cs_dummy.Format(_T("date :\t%s\r\n"), csdate);
+	cs_dummy.Format(_T("date :\t%hs\r\n"), csdate);
 	csCharBuf += cs_dummy;
-	cs_dummy.Format(_T("comment :\t%s\r\n"), pwaveFormat->GetComments(_T("\t")));
+	cs_dummy.Format(_T("comment :\t%hs\r\n"), pwaveFormat->GetComments(_T("\t")));
 	csCharBuf += cs_dummy;
 	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
 	csCharBuf.Empty();
@@ -384,7 +384,7 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 
 	for (i = mm_firstchan; i <= mm_lastchan; i++)
 	{
-		cs_dummy.Format(_T("\t%s"), pChanArray->Get_p_channel(i)->am_csComment);
+		cs_dummy.Format(_T("\t%hs"), pChanArray->Get_p_channel(i)->am_csComment);
 		csCharBuf += cs_dummy;
 	}
 

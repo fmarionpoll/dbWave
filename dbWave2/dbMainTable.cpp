@@ -326,7 +326,7 @@ BOOL CdbMainTable::FindIDinColumn(long iID, int icolumn)
 	CString cs; // to construct insect and sensillum number (for example)
 	CString str; // to store FindFirst filter
 	const auto cscolhead = m_desc[icolumn].csColName;
-	str.Format(_T("%s=%li"), cscolhead, iID);
+	str.Format(_T("%hs=%li"), cscolhead, iID);
 	auto flag = FALSE;
 
 	try
@@ -374,7 +374,7 @@ void CdbMainTable::BuildFilters()
 			if (!m_strFilter.IsEmpty())
 				m_strFilter += _T(" AND ");
 			CString cs;
-			cs.Format(_T("%s IN ("), m_desc[ifield].csColNamewithBrackets);
+			cs.Format(_T("%hs IN ("), m_desc[ifield].csColNamewithBrackets);
 			m_strFilter += cs;
 			switch (m_desc[ifield].typeLocal)
 			{

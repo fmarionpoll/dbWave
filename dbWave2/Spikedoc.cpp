@@ -1113,7 +1113,7 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 		// source data file items
 		if (vdS->bacqdate) // source data time and date
 		{
-			cs_dummy.Format(_T("\t%s"), m_acqtime.Format(_T("%#d %m %Y\t%X")));
+			cs_dummy.Format(_T("\t%hs"), m_acqtime.Format(_T("%#d %m %Y\t%X")));
 			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		}
 		// source data comments
@@ -1174,7 +1174,7 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 	// spike list item, spike class
-	cs_dummy.Format(_T("\t%i \t%s \t%i"), vdS->ichan, pspklist->GetComment(), iclass);
+	cs_dummy.Format(_T("\t%i \t%hs \t%i"), vdS->ichan, pspklist->GetComment(), iclass);
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 
