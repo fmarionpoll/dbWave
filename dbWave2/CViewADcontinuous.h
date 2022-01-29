@@ -79,18 +79,18 @@ protected:
 	BOOL				m_bSimultaneousStart{ false };	//TRUE if the card is capable of this
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pOptions_AD{ nullptr };	// pointer to data acq options 
+	OPTIONS_ACQDATA*	m_pOptions_AD{ nullptr };	// pointer to data acq options 
 	OPTIONS_OUTPUTDATA* m_pOptions_DA{ nullptr };	// pointer to data output options
 	BOOL				m_bsimultaneousStartDA{ false };
 
 	// sweep
 	long				m_chsweeplength{ 0 };		// sweep length (per channel)
 	long				m_sweeplength{ 1000 };		// sweep length (all channels)
-	int					m_chsweep1{ 0 };				// indexes
+	int					m_chsweep1{ 0 };			// indexes
 	int					m_chsweep2{ 0 };
 	int					m_chsweepRefresh{ 0 };
 	int					m_bytesweepRefresh{ 0 };
-	float				m_fclockrate{ 10000.f };		// apparent clock rate
+	float				m_fclockrate{ 10000.f };	// apparent clock rate
 
 // functions for data acquisition
 	BOOL	FindDTOpenLayersBoards();

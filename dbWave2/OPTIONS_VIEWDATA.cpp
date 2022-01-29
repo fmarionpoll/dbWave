@@ -6,7 +6,7 @@ IMPLEMENT_SERIAL(OPTIONS_VIEWDATA, CObject, 0 /* schema number*/)
 
 OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
 {
-	// nb items
+	/*
 	int i = 0;
 	icolwidth[i] = 10;
 	i++; icolwidth[i] = 410;
@@ -19,6 +19,7 @@ OPTIONS_VIEWDATA::OPTIONS_VIEWDATA()
 	i++; icolwidth[i] = 40;
 	i++; icolwidth[i] = 40;
 	i++; icolwidth[i] = 10;
+	*/
 }
 
 OPTIONS_VIEWDATA::~OPTIONS_VIEWDATA()

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <OLERRORS.H>
-#include <OLxDAAPI.H>
+#include <Olxdaapi.h>
 #include <OLTYPES.H>
-#include <OLxDADEFS.H>
-#include "WinUser.h"
+#include <Olxdadefs.h>
+//#include "WinUser.h"
 
 // Registration structure
 typedef struct _REG_CODE {
@@ -121,6 +121,7 @@ typedef struct _IV {
 // MCID files have an optional application header that must be defined first
 // The application header must follow the main header
 // This is the sixth one defined for this program
+
 typedef struct _DAQ_MCID_HEADER_9 {
 	// M-sequence info
 	double	mSeqAmplitude;					// M-sequence amplitude
