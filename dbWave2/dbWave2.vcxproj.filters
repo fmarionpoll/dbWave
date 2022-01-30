@@ -54,7 +54,7 @@
     <ClCompile Include="GridCtrl\GridCellCombo_FMP.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="Adexperi.cpp">
+    <ClCompile Include="DlgADExperiment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Adinterv.cpp">
@@ -488,7 +488,7 @@
     <ClInclude Include="GridCtrl\GridCellCombo_FMP.h">
       <Filter>customctrl</Filter>
     </ClInclude>
-    <ClInclude Include="Adexperi.h">
+    <ClInclude Include="DlgADExperiment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Browsefi.h">

@@ -1,15 +1,11 @@
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "DlgImportFiles.h"
-#include "afxdialogex.h"
-#include "dbWave.h"
 #include "resource.h"
 
 #include "dataheader_Atlab.H"
-#include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "Spikedoc.h"
-#include "Adexperi.h"
+#include "DlgADExperiment.h"
 #include "DlgADInputParms.h"
 
 #ifdef _DEBUG
@@ -415,10 +411,10 @@ Emergency_exit:
 
 BOOL CDlgImportFiles::GetExperimentParameters(AcqDataDoc* pTo)
 {
-	ADExperimentDlg dlg; // create dialog box
-	dlg.m_bFilename = FALSE; // hide path name
-	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	OPTIONS_ACQDATA* pacqD = &(p_app->options_acqdata); // pointer to data acq options
+	DlgADExperiment dlg; 
+	dlg.m_bFilename = FALSE; 
+	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	OPTIONS_ACQDATA* pacqD = &(p_app->options_acqdata);
 	dlg.m_pADC_options = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
 	// ...

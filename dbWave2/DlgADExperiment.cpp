@@ -1,39 +1,22 @@
 // ADExperi.cpp : implementation file
 //
 #include "StdAfx.h"
-
-#include "dbMainTable.h"
-#include "dbWaveDoc.h"
+#include "DlgADExperiment.h"
 #include "DlgEditList.h"
-#include "Adexperi.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// ADExperimentDlg dialog
 
-// ----------------------------------- globals ---------------------------------
 
-ADExperimentDlg::ADExperimentDlg(CWnd* pParent /*=NULL*/)
+DlgADExperiment::DlgADExperiment(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
-	  , m_bhidesubsequent(FALSE)
 {
-	m_csBasename = _T("");
-	m_csMoreComment = _T("");
-	m_exptnumber = 0;
-	m_insectnumber = 0;
-	m_csPathname = _T("");
-	m_pADC_options = nullptr;
-	m_bADexpt = TRUE;
-	m_bFilename = TRUE;
-	m_pwaveFormat = nullptr;
-	m_pdbDoc = nullptr;
-	m_bEditMode = false;
 }
 
-void ADExperimentDlg::DoDataExchange(CDataExchange* pDX)
+void DlgADExperiment::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 
@@ -60,30 +43,27 @@ void ADExperimentDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_mfcBrowsePath);
 }
 
-BEGIN_MESSAGE_MAP(ADExperimentDlg, CDialog)
+BEGIN_MESSAGE_MAP(DlgADExperiment, CDialog)
 
-	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &ADExperimentDlg::OnBnClickedButtoninsectname)
-	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &ADExperimentDlg::OnBnClickedButtonstrain)
-	ON_BN_CLICKED(IDC_BUTTONSEX, &ADExperimentDlg::OnBnClickedButtonsex)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &ADExperimentDlg::OnBnClickedButtonsensillum)
-	ON_BN_CLICKED(IDC_BUTTONLOCATION, &ADExperimentDlg::OnBnClickedButtonlocation)
-	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &ADExperimentDlg::OnBnClickedButtonoperator)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &ADExperimentDlg::OnBnClickedButtonstimulus)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &ADExperimentDlg::OnBnClickedButtonconcentration)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &ADExperimentDlg::OnBnClickedButtonstimulus2)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &ADExperimentDlg::OnBnClickedButtonconcentration2)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT, &ADExperimentDlg::OnBnClickedButtonrepeat)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &ADExperimentDlg::OnBnClickedButtonrepeat2)
-	ON_BN_CLICKED(IDC_BUTTONEXPT3, &ADExperimentDlg::OnBnClickedButtonexpt)
+	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &DlgADExperiment::OnBnClickedButtoninsectname)
+	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &DlgADExperiment::OnBnClickedButtonstrain)
+	ON_BN_CLICKED(IDC_BUTTONSEX, &DlgADExperiment::OnBnClickedButtonsex)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &DlgADExperiment::OnBnClickedButtonsensillum)
+	ON_BN_CLICKED(IDC_BUTTONLOCATION, &DlgADExperiment::OnBnClickedButtonlocation)
+	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &DlgADExperiment::OnBnClickedButtonoperator)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &DlgADExperiment::OnBnClickedButtonstimulus)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &DlgADExperiment::OnBnClickedButtonconcentration)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &DlgADExperiment::OnBnClickedButtonstimulus2)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &DlgADExperiment::OnBnClickedButtonconcentration2)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT, &DlgADExperiment::OnBnClickedButtonrepeat)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &DlgADExperiment::OnBnClickedButtonrepeat2)
+	ON_BN_CLICKED(IDC_BUTTONEXPT3, &DlgADExperiment::OnBnClickedButtonexpt)
 
-	ON_EN_KILLFOCUS(IDC_MFCEDITBROWSE1, &ADExperimentDlg::OnEnKillfocusMfceditbrowse1)
-	ON_BN_CLICKED(IDC_BUTTON_NEXTID, &ADExperimentDlg::OnBnClickedButtonNextid)
+	ON_EN_KILLFOCUS(IDC_MFCEDITBROWSE1, &DlgADExperiment::OnEnKillfocusMfceditbrowse1)
+	ON_BN_CLICKED(IDC_BUTTON_NEXTID, &DlgADExperiment::OnBnClickedButtonNextid)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// ADExperimentDlg message handlers
-
-void ADExperimentDlg::OnOK()
+void DlgADExperiment::OnOK()
 {
 	UpdateData(TRUE);
 
@@ -178,12 +158,12 @@ void ADExperimentDlg::OnOK()
 	}
 }
 
-void ADExperimentDlg::OnCancel()
+void DlgADExperiment::OnCancel()
 {
 	CDialog::OnCancel();
 }
 
-BOOL ADExperimentDlg::OnInitDialog()
+BOOL DlgADExperiment::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -267,7 +247,7 @@ BOOL ADExperimentDlg::OnInitDialog()
 }
 
 // save content of the list
-int ADExperimentDlg::SaveList(CComboBox* p_combo, CStringArray* p_s)
+int DlgADExperiment::SaveList(CComboBox* p_combo, CStringArray* p_s)
 {
 	int iexist = -1;
 	if (p_s != nullptr)
@@ -295,7 +275,7 @@ int ADExperimentDlg::SaveList(CComboBox* p_combo, CStringArray* p_s)
 }
 
 // load content of the list and of the corresponding DAOrecordset
-void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel, CDaoRecordset* pm_set)
+void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel, CDaoRecordset* pm_set)
 {
 	// add string from the string array
 	p_combo->ResetContent();
@@ -342,7 +322,7 @@ void ADExperimentDlg::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 	p_combo->SetCurSel(i_sel);
 }
 
-void ADExperimentDlg::EditComboBox(CComboBox* pCo)
+void DlgADExperiment::EditComboBox(CComboBox* pCo)
 {
 	CDlgEditList dlg;
 	dlg.pCo = pCo;
@@ -360,74 +340,74 @@ void ADExperimentDlg::EditComboBox(CComboBox* pCo)
 }
 
 ///////////////////////////////////////////////////////////
-void ADExperimentDlg::OnBnClickedButtoninsectname()
+void DlgADExperiment::OnBnClickedButtoninsectname()
 {
 	EditComboBox(&m_coInsect);
 }
 
-void ADExperimentDlg::OnBnClickedButtonstrain()
+void DlgADExperiment::OnBnClickedButtonstrain()
 {
 	EditComboBox(&m_coStrain);
 }
 
-void ADExperimentDlg::OnBnClickedButtonsex()
+void DlgADExperiment::OnBnClickedButtonsex()
 {
 	EditComboBox(&m_coSex);
 }
 
-void ADExperimentDlg::OnBnClickedButtonsensillum()
+void DlgADExperiment::OnBnClickedButtonsensillum()
 {
 	EditComboBox(&m_coSensillum);
 }
 
-void ADExperimentDlg::OnBnClickedButtonlocation()
+void DlgADExperiment::OnBnClickedButtonlocation()
 {
 	EditComboBox(&m_coLocation);
 }
 
-void ADExperimentDlg::OnBnClickedButtonoperator()
+void DlgADExperiment::OnBnClickedButtonoperator()
 {
 	EditComboBox(&m_coOperator);
 }
 
-void ADExperimentDlg::OnBnClickedButtonstimulus()
+void DlgADExperiment::OnBnClickedButtonstimulus()
 {
 	EditComboBox(&m_coStimulus);
 }
 
-void ADExperimentDlg::OnBnClickedButtonconcentration()
+void DlgADExperiment::OnBnClickedButtonconcentration()
 {
 	EditComboBox(&m_coConcentration);
 }
 
-void ADExperimentDlg::OnBnClickedButtonstimulus2()
+void DlgADExperiment::OnBnClickedButtonstimulus2()
 {
 	EditComboBox(&m_coStimulus2);
 }
 
-void ADExperimentDlg::OnBnClickedButtonconcentration2()
+void DlgADExperiment::OnBnClickedButtonconcentration2()
 {
 	EditComboBox(&m_coConcentration2);
 }
 
-void ADExperimentDlg::OnBnClickedButtonrepeat()
+void DlgADExperiment::OnBnClickedButtonrepeat()
 {
 	EditComboBox(&m_coRepeat);
 }
 
-void ADExperimentDlg::OnBnClickedButtonrepeat2()
+void DlgADExperiment::OnBnClickedButtonrepeat2()
 {
 	EditComboBox(&m_coRepeat2);
 }
 
-void ADExperimentDlg::OnBnClickedButtonexpt()
+void DlgADExperiment::OnBnClickedButtonexpt()
 {
 	EditComboBox(&m_coExpt);
 }
 
 ////////////////////////////////////////////////////////////////
 
-void ADExperimentDlg::OnEnKillfocusMfceditbrowse1()
+void DlgADExperiment::OnEnKillfocusMfceditbrowse1()
 {
 	UpdateData(TRUE);
 	m_mfcBrowsePath.GetWindowTextW(m_csPathname);
@@ -447,7 +427,7 @@ void ADExperimentDlg::OnEnKillfocusMfceditbrowse1()
 	}
 }
 
-void ADExperimentDlg::OnBnClickedButtonNextid()
+void DlgADExperiment::OnBnClickedButtonNextid()
 {
 	auto p_database = m_pdbDoc->m_pDB;
 	p_database->m_mainTableSet.GetMaxIDs();

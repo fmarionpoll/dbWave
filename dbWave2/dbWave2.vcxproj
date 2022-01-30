@@ -797,7 +797,7 @@
     <ClCompile Include="AcqWaveChan.cpp" />
     <ClCompile Include="AcqWaveChanArray.cpp" />
     <ClCompile Include="AcqWaveFormat.cpp" />
-    <ClCompile Include="Adexperi.cpp">
+    <ClCompile Include="DlgADExperiment.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1375,7 +1375,7 @@
     <ClInclude Include="AcqWaveChan.h" />
     <ClInclude Include="AcqWaveChanArray.h" />
     <ClInclude Include="AcqWaveFormat.h" />
-    <ClInclude Include="Adexperi.h" />
+    <ClInclude Include="DlgADExperiment.h" />
     <ClInclude Include="DlgADInputParms.h" />
     <ClInclude Include="Adinterv.h" />
     <ClInclude Include="Browsefi.h" />

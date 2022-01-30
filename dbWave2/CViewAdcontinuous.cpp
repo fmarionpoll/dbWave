@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include <cmath>
 #include <OLERRORS.H>
 #include <Olxdaapi.h>
 
@@ -7,7 +6,7 @@
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "Adinterv.h"
-#include "Adexperi.h"
+#include "DlgADExperiment.h"
 #include "dtacq32.h"
 #include "CyberAmp.h"
 #include "ChartData.h"
@@ -711,7 +710,7 @@ BOOL CADContView::Defineexperiment()
 	// define experiment (dialog)
 	if (!m_bhidesubsequent)
 	{
-		ADExperimentDlg dlg; // create dialog box
+		DlgADExperiment dlg; 
 		dlg.m_pADC_options = m_pOptions_AD;
 		dlg.m_pdbDoc = GetDocument();
 		dlg.m_bhidesubsequent = m_bhidesubsequent;

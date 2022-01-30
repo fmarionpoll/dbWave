@@ -1,40 +1,41 @@
 #pragma once
 #include "afxeditbrowsectrl.h"
+#include "dbWaveDoc.h"
 #include "OPTIONS_ACQDATA.h"
 
-class ADExperimentDlg : public CDialog
+class DlgADExperiment : public CDialog
 {
 	// Construction
 public:
-	ADExperimentDlg(CWnd* pParent = nullptr); // standard constructor
+	DlgADExperiment(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_AD_EXPERIMENTDLG };
 
-	CString m_csBasename;
-	CString m_csMoreComment;
-	UINT m_exptnumber;
-	UINT m_insectnumber;
-	CString m_csPathname;
-	BOOL m_bhidesubsequent;
+	CString		m_csBasename {};
+	CString		m_csMoreComment{};
+	UINT		m_exptnumber {0};
+	UINT		m_insectnumber {0};
+	CString		m_csPathname {};
+	BOOL		m_bhidesubsequent{false};
 
-	CComboBox m_coStrain;
-	CComboBox m_coSex;
-	CComboBox m_coSensillum;
-	CComboBox m_coLocation;
-	CComboBox m_coOperator;
-	CComboBox m_coInsect;
-	CComboBox m_coStimulus;
-	CComboBox m_coConcentration;
-	CComboBox m_coStimulus2;
-	CComboBox m_coConcentration2;
-	CComboBox m_coRepeat;
-	CComboBox m_coRepeat2;
-	CComboBox m_coExpt;
+	CComboBox	m_coStrain;
+	CComboBox	m_coSex;
+	CComboBox	m_coSensillum;
+	CComboBox	m_coLocation;
+	CComboBox	m_coOperator;
+	CComboBox	m_coInsect;
+	CComboBox	m_coStimulus;
+	CComboBox	m_coConcentration;
+	CComboBox	m_coStimulus2;
+	CComboBox	m_coConcentration2;
+	CComboBox	m_coRepeat;
+	CComboBox	m_coRepeat2;
+	CComboBox	m_coExpt;
 	CMFCEditBrowseCtrl m_mfcBrowsePath;
 
-	CString m_szFileName;
-	BOOL m_bFilename;
+	CString		m_szFileName{};
+	BOOL		m_bFilename{false};
 
 	// Overrides
 public:
@@ -42,11 +43,11 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 public:
-	OPTIONS_ACQDATA* m_pADC_options;
-	BOOL m_bADexpt;
-	CWaveFormat* m_pwaveFormat;
-	CdbWaveDoc* m_pdbDoc;
-	BOOL m_bEditMode;
+	OPTIONS_ACQDATA* m_pADC_options{nullptr};
+	BOOL			m_bADexpt{true};
+	CWaveFormat*	m_pwaveFormat{nullptr};
+	CdbWaveDoc*		m_pdbDoc{nullptr};
+	BOOL			m_bEditMode{false};
 
 protected:
 	int SaveList(CComboBox* pCo, CStringArray* p_spike_element);
