@@ -7,7 +7,7 @@
 #endif
 
 
-CDlgGotoRecord::CDlgGotoRecord(CWnd* pParent /*=NULL*/)
+DlgGotoRecord::DlgGotoRecord(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
 {
 	m_recordID = 0;
@@ -15,19 +15,19 @@ CDlgGotoRecord::CDlgGotoRecord(CWnd* pParent /*=NULL*/)
 	m_bGotoRecordID = false;
 }
 
-void CDlgGotoRecord::DoDataExchange(CDataExchange* pDX)
+void DlgGotoRecord::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT2, m_recordID);
 	DDX_Text(pDX, IDC_EDIT1, m_recordPos);
 }
 
-BEGIN_MESSAGE_MAP(CDlgGotoRecord, CDialog)
+BEGIN_MESSAGE_MAP(DlgGotoRecord, CDialog)
 	ON_BN_CLICKED(IDC_RADIO1, OnClickedPosition)
 	ON_BN_CLICKED(IDC_RADIO2, OnClickedID)
 END_MESSAGE_MAP()
 
-BOOL CDlgGotoRecord::OnInitDialog()
+BOOL DlgGotoRecord::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetOptions();
@@ -36,7 +36,7 @@ BOOL CDlgGotoRecord::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgGotoRecord::SetOptions()
+void DlgGotoRecord::SetOptions()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->SetCheck(!m_bGotoRecordID);
 	static_cast<CButton*>(GetDlgItem(IDC_RADIO2))->SetCheck(m_bGotoRecordID);
@@ -54,13 +54,13 @@ void CDlgGotoRecord::SetOptions()
 	GetDlgItem(idisable)->EnableWindow(FALSE);
 }
 
-void CDlgGotoRecord::OnClickedPosition()
+void DlgGotoRecord::OnClickedPosition()
 {
 	m_bGotoRecordID = FALSE;
 	SetOptions();
 }
 
-void CDlgGotoRecord::OnClickedID()
+void DlgGotoRecord::OnClickedID()
 {
 	m_bGotoRecordID = TRUE;
 	SetOptions();

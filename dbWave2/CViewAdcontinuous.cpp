@@ -16,7 +16,7 @@
 #include "DlgADInputParms.h"
 #include "DlgConfirmSave.h"
 #include "DlgDAChannels.h"
-#include "DlgdtBoard.h"
+#include "DlgDataTranslationBoard.h"
 #include "MainFrm.h"
 #include "StretchControls.h"
 #include "USBPxxS1.h"
@@ -1346,7 +1346,7 @@ void CADContView::UpdateRadioButtons()
 
 void CADContView::OnBnClickedCardfeatures()
 {
-	CDlgDataTranslationBoard dlg;
+	DlgDataTranslationBoard dlg;
 	dlg.m_pAnalogIN = &m_Acq32_AD;
 	dlg.m_pAnalogOUT = &m_Acq32_DA;
 	dlg.DoModal();

@@ -6,29 +6,12 @@
 #define new DEBUG_NEW
 #endif
 
-CDlgImportGenericData::CDlgImportGenericData(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent), m_pfilenameArray(nullptr)
+DlgImportGenericData::DlgImportGenericData(CWnd* pParent /*=NULL*/)
+	: CDialog(IDD, pParent)
 {
-	m_adChannelComment = _T("");
-	m_adChannelGain = 0.0f;
-	m_adChannelChan = 0;
-	m_nbADchannels = 0;
-	m_nbRuns = 0;
-	m_samplingrate = 0.0f;
-	m_skipNbytes = 0;
-	m_voltageMax = 0.0f;
-	m_voltageMin = 0.0f;
-	m_csFileTitle = _T("");
-	m_bpreviewON = FALSE;
-	bConvert = FALSE;
-	m_bpreviewON = FALSE;
-	m_fileold = _T("");
-	m_bChanged = FALSE;
-	m_bimportall = FALSE;
-	piivO = nullptr;
 }
 
-void CDlgImportGenericData::DoDataExchange(CDataExchange* pDX)
+void DlgImportGenericData::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_FILELIST, m_filedroplist);
@@ -46,7 +29,7 @@ void CDlgImportGenericData::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK1, m_bpreviewON);
 }
 
-BEGIN_MESSAGE_MAP(CDlgImportGenericData, CDialog)
+BEGIN_MESSAGE_MAP(DlgImportGenericData, CDialog)
 	ON_CBN_SELCHANGE(IDC_PRECISION, OnSelchangePrecision)
 	ON_EN_CHANGE(IDC_NUMBEROFCHANNELS, OnEnChangeNumberofchannels)
 	ON_BN_CLICKED(IDC_MULTIPLERUNS, OnMultipleruns)
@@ -73,7 +56,7 @@ END_MESSAGE_MAP()
 // hide controls when the dialog box is called only to adjust parameters
 // otherwise, copy list of files into comboBox
 
-BOOL CDlgImportGenericData::OnInitDialog()
+BOOL DlgImportGenericData::OnInitDialog()
 {
 	CDialog::OnInitDialog(); // normal initialization CSpinButtonCtrl
 
@@ -135,7 +118,7 @@ BOOL CDlgImportGenericData::OnInitDialog()
 // corresponding edit control
 // otherwise disable them
 
-void CDlgImportGenericData::EnableRunParameters()
+void DlgImportGenericData::EnableRunParameters()
 {
 	int IDC_button = IDC_SINGLERUN; // check button concerning structure of
 	if (!piivO->bSingleRun) // file; either a single acquisition bout
@@ -150,7 +133,7 @@ void CDlgImportGenericData::EnableRunParameters()
 // copy values from structure iivO into controls
 // this routine is called when the dialog box is opened
 
-void CDlgImportGenericData::UpdateControlsFromStruct()
+void DlgImportGenericData::UpdateControlsFromStruct()
 {
 	// copy structure content into controls
 	m_nbRuns = piivO->nbRuns; // load number of repetitions & enable corresp
@@ -197,7 +180,7 @@ void CDlgImportGenericData::UpdateControlsFromStruct()
 // copy values from controls into structure iivO
 // this routine is called on exit
 
-void CDlgImportGenericData::UpdateStructFromControls()
+void DlgImportGenericData::UpdateStructFromControls()
 {
 	UpdateData(TRUE);
 	// copy controls into structure
@@ -242,7 +225,7 @@ void CDlgImportGenericData::UpdateStructFromControls()
 // save iivO parameters
 // copy names of the files converted back into the name array
 
-void CDlgImportGenericData::OnOK()
+void DlgImportGenericData::OnOK()
 {
 	if (m_bChanged)
 		UpdateStructFromControls(); // update structures with options
@@ -266,7 +249,7 @@ void CDlgImportGenericData::OnOK()
 // change parameter describing the precision of the data
 // convert CCombobox selection into a number of bits, store result into iivO
 
-void CDlgImportGenericData::OnSelchangePrecision()
+void DlgImportGenericData::OnSelchangePrecision()
 {
 	UpdateData(TRUE); // load data from controls
 	// set precision combox box
@@ -298,7 +281,7 @@ void CDlgImportGenericData::OnSelchangePrecision()
 
 // On check : set flag single / multiple run
 
-void CDlgImportGenericData::OnMultipleruns()
+void DlgImportGenericData::OnMultipleruns()
 {
 	if (IsDlgButtonChecked(IDC_MULTIPLERUNS)
 		&& piivO->bSingleRun != FALSE)
@@ -310,7 +293,7 @@ void CDlgImportGenericData::OnMultipleruns()
 	m_bChanged = TRUE;
 }
 
-void CDlgImportGenericData::OnSinglerun()
+void DlgImportGenericData::OnSinglerun()
 {
 	if (IsDlgButtonChecked(IDC_SINGLERUN)
 		&& piivO->bSingleRun != TRUE)
@@ -332,7 +315,7 @@ void CDlgImportGenericData::OnSinglerun()
 // this routine get the data from the edit control, evaluate the result and
 // restore flags to enable CEditCtrl to receive new data
 
-void CDlgImportGenericData::OnEnChangeNumberofchannels()
+void DlgImportGenericData::OnEnChangeNumberofchannels()
 {
 	if (!mm_nbADchannels.m_bEntryDone)
 		return;
@@ -388,7 +371,7 @@ void CDlgImportGenericData::OnEnChangeNumberofchannels()
 // - save current parameters
 // - load parameters for new channel
 
-void CDlgImportGenericData::OnEnChangeChannelno()
+void DlgImportGenericData::OnEnChangeChannelno()
 {
 	if (!mm_adChannelChan.m_bEntryDone)
 		return;
@@ -442,7 +425,7 @@ void CDlgImportGenericData::OnEnChangeChannelno()
 
 // change size of data header... ie offset from start of file to data
 
-void CDlgImportGenericData::OnEnChangeSkipnbytes()
+void DlgImportGenericData::OnEnChangeSkipnbytes()
 {
 	if (!mm_skipNbytes.m_bEntryDone)
 		return;
@@ -482,7 +465,7 @@ void CDlgImportGenericData::OnEnChangeSkipnbytes()
 // spin control associated with Edit control "nb of data channels"
 // convert notification message into flags adapted to the CEditCtrl
 
-void CDlgImportGenericData::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgImportGenericData::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	if (pNMUpDown->iDelta > 0)
@@ -496,7 +479,7 @@ void CDlgImportGenericData::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pRe
 // spin control associated with channel no
 // same remarks as above
 
-void CDlgImportGenericData::OnDeltaposSpinNoChan(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgImportGenericData::OnDeltaposSpinNoChan(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	if (pNMUpDown->iDelta > 0)
@@ -507,7 +490,7 @@ void CDlgImportGenericData::OnDeltaposSpinNoChan(NMHDR* pNMHDR, LRESULT* pResult
 	*pResult = 0;
 }
 
-void CDlgImportGenericData::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgImportGenericData::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	if (pNMUpDown->iDelta > 0)
@@ -529,7 +512,7 @@ void CDlgImportGenericData::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult
 // - select next item
 // if combobox is empty, exit dialog.
 
-void CDlgImportGenericData::OnImport()
+void DlgImportGenericData::OnImport()
 {
 	if (!m_bimportall)
 		UpdateStructFromControls();
@@ -556,7 +539,7 @@ void CDlgImportGenericData::OnImport()
 
 // import all files at once: loop through all members of the combo box
 
-void CDlgImportGenericData::OnImportall()
+void DlgImportGenericData::OnImportall()
 {
 	m_bimportall = TRUE;
 	UpdateStructFromControls();
@@ -568,7 +551,7 @@ void CDlgImportGenericData::OnImportall()
 
 // update preview file
 
-void CDlgImportGenericData::UpdatePreview()
+void DlgImportGenericData::UpdatePreview()
 {
 	// convert data
 	if (m_filesource != m_fileold)
@@ -608,7 +591,7 @@ void CDlgImportGenericData::UpdatePreview()
 	m_ChartDataWnd.Invalidate();
 }
 
-void CDlgImportGenericData::OnSetPreview()
+void DlgImportGenericData::OnSetPreview()
 {
 	// get latest from controls
 	piivO->bPreview = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
@@ -631,7 +614,7 @@ void CDlgImportGenericData::OnSetPreview()
 	}
 }
 
-void CDlgImportGenericData::OnSelchangeFilelist()
+void DlgImportGenericData::OnSelchangeFilelist()
 {
 	int cursel = m_filedroplist.GetCurSel();
 	int index = m_filedroplist.GetItemData(cursel);
@@ -643,7 +626,7 @@ void CDlgImportGenericData::OnSelchangeFilelist()
 	}
 }
 
-void CDlgImportGenericData::OnOffsetbinary()
+void DlgImportGenericData::OnOffsetbinary()
 {
 	UINT state = IsDlgButtonChecked(IDC_OFFSETBINARY);
 	if (state == 1
@@ -655,7 +638,7 @@ void CDlgImportGenericData::OnOffsetbinary()
 	m_bChanged = TRUE;
 }
 
-void CDlgImportGenericData::OnTwoscomplement()
+void DlgImportGenericData::OnTwoscomplement()
 {
 	UINT state = IsDlgButtonChecked(IDC_TWOSCOMPLEMENT);
 	if (state == 1
@@ -667,7 +650,7 @@ void CDlgImportGenericData::OnTwoscomplement()
 	m_bChanged = TRUE;
 }
 
-void CDlgImportGenericData::SetFileNames(int index)
+void DlgImportGenericData::SetFileNames(int index)
 {
 	m_filesource = m_pfilenameArray->GetAt(index);
 	int icount = m_filesource.ReverseFind('\\') + 1;
@@ -678,7 +661,7 @@ void CDlgImportGenericData::SetFileNames(int index)
 	m_filedest += _T("dat");
 }
 
-void CDlgImportGenericData::OnSapid3_5()
+void DlgImportGenericData::OnSapid3_5()
 {
 	// get latest from controls
 	if (piivO->bSapid3_5 != static_cast<CButton*>(GetDlgItem(IDC_CHECKSAPID))->GetCheck())
@@ -703,7 +686,7 @@ void CDlgImportGenericData::OnSapid3_5()
 // Update parameters that describe the structure of the data within data file
 // load parameters from user selected options
 
-void CDlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
+void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 {
 	CFileStatus status;
 	pDataF->m_pXFile->GetStatus(status);
@@ -765,7 +748,7 @@ void CDlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 // - transfer data from source file into destination
 // - close file and delete CDataFileAWAVE object
 
-void CDlgImportGenericData::OnEnChangeChannelcomment()
+void DlgImportGenericData::OnEnChangeChannelcomment()
 {
 	m_bChanged = TRUE;
 }

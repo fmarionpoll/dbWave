@@ -1,40 +1,40 @@
 #pragma once
 
 
-class CExportDataDlg : public CDialog
+class DlgExportData : public CDialog
 {
 	// Construction
 public:
-	CExportDataDlg(CWnd* pParent = nullptr);
+	DlgExportData(CWnd* pParent = nullptr);
 	BOOL DestroyWindow() override;
 
 	OPTIONS_IMPORT iivO;
-	CdbWaveDoc* m_dbDoc;
+	CdbWaveDoc* m_dbDoc {nullptr};
 	CString m_filesource;
 	CString m_filedest;
 	CString m_filetemp;
-	int m_icurrentfile;
-	int m_indexoldselectedfile;
-	BOOL m_bAllFiles;
+	int m_icurrentfile{ -1 };
+	int m_indexoldselectedfile {0};
+	BOOL m_bAllFiles{ true };
 
-	long mm_lFirst;
-	long mm_lLast;
-	float mm_timefirst;
-	float mm_timelast;
-	int mm_firstchan;
-	int mm_lastchan;
-	int mm_binzero;
-	AcqDataDoc* m_pDat;
+	long mm_lFirst {0};
+	long mm_lLast { 0 };
+	float mm_timefirst{ 0 };
+	float mm_timelast{ 0 };
+	int mm_firstchan{ 0 };
+	int mm_lastchan{ 0 };
+	int mm_binzero{ 0 };
+	AcqDataDoc* m_pDat{ nullptr };
 
 	// Dialog Data
 	enum { IDD = IDD_EXPORTDATAFILE };
 
 	CComboBox m_ComboExportas;
 	CComboBox m_filedroplist;
-	float m_timefirst;
-	float m_timelast;
-	int m_channelnumber;
-	int m_iundersample;
+	float m_timefirst{ 0.f };
+	float m_timelast{ 0.f };
+	int m_channelnumber{ 0 };
+	int m_iundersample{ 1 };
 
 
 protected:

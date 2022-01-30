@@ -1,18 +1,18 @@
 #pragma once
 
 
-class CdbNewFileDuplicateDlg : public CDialog
+class DlgdbNewFileDuplicate : public CDialog
 {
 	// Construction
 public:
-	CdbNewFileDuplicateDlg(CWnd* pParent = nullptr); // standard constructor
+	DlgdbNewFileDuplicate(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_DUPLICATEFOUND };
 
-	int m_option;
-	LPCTSTR m_pfilein;
-	CString m_fileout;
+	int m_option {-1};
+	LPCTSTR m_pfilein {nullptr};
+	CString m_fileout {_T("")};
 
 	// Overrides
 protected:
@@ -20,9 +20,9 @@ protected:
 
 	// Implementation
 protected:
-	CString m_csExt;
-	CString m_csPath;
-	CString m_csName;
+	CString m_csExt {_T("")};
+	CString m_csPath{ _T("") };
+	CString m_csName{ _T("") };
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;

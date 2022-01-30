@@ -1,11 +1,6 @@
 #include "StdAfx.h"
 //#include "dbWave.h"
 #include "resource.h"
-//#include "GridCtrl\GridCtrl.h"
-//#include "GridCtrl\GridCell.h"
-//#include "GridCtrl\GridCellCombo_FMP.h"
-//#include "GridCtrl\GridCellNumeric.h"
-//#include "GridCtrl\GridCellCheck.h"
 #include "afxdialogex.h"
 #include "DlgPivot.h"
 
@@ -13,37 +8,34 @@
 #define new DEBUG_NEW
 #endif
 
-// CPivotDlg dialog
 
-IMPLEMENT_DYNAMIC(CDlgPivot, CDialogEx)
 
-CDlgPivot::CDlgPivot(CWnd* pParent /*=NULL*/)
+IMPLEMENT_DYNAMIC(DlgPivot, CDialogEx)
+
+DlgPivot::DlgPivot(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD, pParent)
 {
-	m_nFixCols = 1;
-	m_nFixRows = 1;
-	m_nCols = 3;
-	m_nRows = 26;
+
 }
 
-CDlgPivot::~CDlgPivot()
+DlgPivot::~DlgPivot()
 {
 }
 
-void CDlgPivot::DoDataExchange(CDataExchange* pDX)
+void DlgPivot::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID, m_Grid);
 }
 
-BEGIN_MESSAGE_MAP(CDlgPivot, CDialogEx)
-	ON_BN_CLICKED(IDOK, &CDlgPivot::OnBnClickedOk)
+BEGIN_MESSAGE_MAP(DlgPivot, CDialogEx)
+	ON_BN_CLICKED(IDOK, &DlgPivot::OnBnClickedOk)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 // CPivotDlg message handlers
 
-BOOL CDlgPivot::OnInitDialog()
+BOOL DlgPivot::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -53,13 +45,13 @@ BOOL CDlgPivot::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgPivot::OnBnClickedOk()
+void DlgPivot::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
 	CDialogEx::OnOK();
 }
 
-bool CDlgPivot::VirtualCompare(int c1, int c2)
+bool DlgPivot::VirtualCompare(int c1, int c2)
 {
 	//CGridCtrl *pThis = CGridCtrl::m_This; // Mmm, in big virtual mode you must well optimize this function
 	//int col = pThis->m_CurCol;            // a first version with CStrings was catastrophic....
@@ -71,7 +63,7 @@ BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 	auto p_wnd = CWnd::FromHandle(hwnd);
 	const auto p_translate = reinterpret_cast<CSize*>(lParam);
 
-	auto p_dlg = static_cast<CDlgPivot*>(p_wnd->GetParent());
+	auto p_dlg = static_cast<DlgPivot*>(p_wnd->GetParent());
 	if (!p_dlg) return FALSE;
 
 	CRect rect;
@@ -103,7 +95,7 @@ BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 	return TRUE;
 }
 
-void CDlgPivot::OnSize(UINT nType, int cx, int cy)
+void DlgPivot::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
 	if (cx <= 1 || cy <= 1)

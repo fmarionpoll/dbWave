@@ -1,5 +1,3 @@
-// dbNewFileDuplicateDlg.cpp : implementation file
-
 #include "StdAfx.h"
 #include "DlgdbNewFileDuplicate.h"
 
@@ -7,31 +5,22 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbNewFileDuplicateDlg dialog
-
-CdbNewFileDuplicateDlg::CdbNewFileDuplicateDlg(CWnd* pParent /*=NULL*/)
+DlgdbNewFileDuplicate::DlgdbNewFileDuplicate(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
 {
-	m_option = -1;
-	m_pfilein = nullptr;
-	m_csExt.Empty();
 }
 
-void CdbNewFileDuplicateDlg::DoDataExchange(CDataExchange* pDX)
+void DlgdbNewFileDuplicate::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Radio(pDX, IDC_RADIO1, m_option);
 }
 
-BEGIN_MESSAGE_MAP(CdbNewFileDuplicateDlg, CDialog)
+BEGIN_MESSAGE_MAP(DlgdbNewFileDuplicate, CDialog)
 	ON_BN_CLICKED(IDC_RADIO3, OnRadio3)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CdbNewFileDuplicateDlg message handlers
-
-BOOL CdbNewFileDuplicateDlg::OnInitDialog()
+BOOL DlgdbNewFileDuplicate::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -101,7 +90,7 @@ BOOL CdbNewFileDuplicateDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CdbNewFileDuplicateDlg::OnOK()
+void DlgdbNewFileDuplicate::OnOK()
 {
 	UpdateData(TRUE);
 	GetDlgItem(IDC_EDIT1)->GetWindowText(m_csName);
@@ -113,7 +102,7 @@ void CdbNewFileDuplicateDlg::OnOK()
 	CDialog::OnOK();
 }
 
-void CdbNewFileDuplicateDlg::OnRadio3()
+void DlgdbNewFileDuplicate::OnRadio3()
 {
 	GetDlgItem(IDC_EDIT1)->EnableWindow(static_cast<CButton*>(GetDlgItem(IDC_RADIO3))->GetCheck());
 }

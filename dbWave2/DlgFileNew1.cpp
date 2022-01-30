@@ -1,8 +1,5 @@
-// FileNew1.cpp : implementation file
-//
 
 #include "StdAfx.h"
-//#include "dbWave.h"
 #include "DlgFileNew1.h"
 #include "afxdialogex.h"
 
@@ -12,31 +9,29 @@
 
 // CFileNew1 dialog
 
-IMPLEMENT_DYNAMIC(CDlgFileNew1, CDialogEx)
+IMPLEMENT_DYNAMIC(DlgFileNew1, CDialogEx)
 
-CDlgFileNew1::CDlgFileNew1(CWnd* pParent /*=NULL*/)
+DlgFileNew1::DlgFileNew1(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD, pParent)
 {
-	m_icursel = 0;
 }
 
-CDlgFileNew1::~CDlgFileNew1()
-{
-}
+DlgFileNew1::~DlgFileNew1()
+= default;
 
-void CDlgFileNew1::DoDataExchange(CDataExchange* pDX)
+void DlgFileNew1::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST, m_list);
 }
 
-BEGIN_MESSAGE_MAP(CDlgFileNew1, CDialogEx)
-	ON_BN_CLICKED(IDOK, &CDlgFileNew1::OnBnClickedOk)
+BEGIN_MESSAGE_MAP(DlgFileNew1, CDialogEx)
+	ON_BN_CLICKED(IDOK, &DlgFileNew1::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 // CFileNew1 message handlers
 
-BOOL CDlgFileNew1::OnInitDialog()
+BOOL DlgFileNew1::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -49,7 +44,7 @@ BOOL CDlgFileNew1::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgFileNew1::OnBnClickedOk()
+void DlgFileNew1::OnBnClickedOk()
 {
 	m_icursel = m_list.GetCurSel();
 	CDialogEx::OnOK();

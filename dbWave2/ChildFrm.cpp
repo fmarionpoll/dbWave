@@ -524,7 +524,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 {
 	// scan directories and rename files *.datdel into *.dat and *.spkdel into *.spk
 	CStringArray filenames;
-	CDlgFindFiles dlg;
+	DlgFindFiles dlg;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = 0;
 	dlg.m_ioption = 1;
@@ -533,7 +533,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 
 	if (IDOK == i_result)
 	{
-		CDlgProgress dlg_progress;
+		DlgProgress dlg_progress;
 		dlg_progress.Create();
 		dlg_progress.SetStep(1);
 		auto istep = 0;
@@ -596,7 +596,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		return;
 
 	// search
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
 	auto istep = 0;
@@ -676,7 +676,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 
 void CChildFrame::OnRecordGotorecord()
 {
-	CDlgGotoRecord dlg;
+	DlgGotoRecord dlg;
 	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	dlg.m_recordPos = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	dlg.m_recordID = p_dbwave_doc->GetDB_CurrentRecordID();
@@ -695,7 +695,7 @@ void CChildFrame::OnRecordGotorecord()
 
 void CChildFrame::OnToolsImportfiles(int ifilter)
 {
-	CDlgFindFiles dlg;
+	DlgFindFiles dlg;
 	CStringArray filenames;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = ifilter;
@@ -713,14 +713,14 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 
 void CChildFrame::OnToolsImportATFfiles()
 {
-	CDlgFindFiles dlg;
+	DlgFindFiles dlg;
 	CStringArray filenames;
 	dlg.m_pfilenames = &filenames;
 	dlg.m_selinit = 6;
 	dlg.m_pdbDoc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	if (IDOK == dlg.DoModal())
 	{
-		CDlgImportFiles dlg2;
+		DlgImportFiles dlg2;
 		CStringArray convertedFiles;
 		dlg2.m_pconvertedFiles = &convertedFiles;
 		dlg2.m_pfilenameArray = &filenames;
@@ -753,7 +753,7 @@ void CChildFrame::OnRecordDeletecurrent()
 	if (!m_bKeepChoice)
 	{
 		b_delete = FALSE;
-		CDeleteRecordOptionsDlg dlg;
+		DlgDeleteRecordOptions dlg;
 		dlg.m_bDeleteFile = m_bDeleteFile;
 		dlg.m_bKeepChoice = m_bKeepChoice;
 
@@ -1064,7 +1064,7 @@ void CChildFrame::OnToolsCopyAllProjectFiles()
 
 void CChildFrame::OnToolsExportdatafile()
 {
-	CExportDataDlg dlg;
+	DlgExportData dlg;
 	dlg.m_dbDoc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	dlg.DoModal();
 }

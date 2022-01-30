@@ -1,19 +1,19 @@
 #pragma once
 #include "afxwin.h"
 
-class CDlgFileNew1 : public CDialogEx
+class DlgFileNew1 : public CDialogEx
 {
 	DECLARE_DYNAMIC(CDlgFileNew1)
 
 public:
-	CDlgFileNew1(CWnd* pParent = nullptr); // standard constructor
-	~CDlgFileNew1() override;
+	DlgFileNew1(CWnd* pParent = nullptr); // standard constructor
+	~DlgFileNew1() override;
 
 	// Dialog Data
 	enum { IDD = IDD_FILE_NEW1 };
 
 	CListBox m_list;
-	int m_icursel;
+	int m_icursel{ 0 };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support

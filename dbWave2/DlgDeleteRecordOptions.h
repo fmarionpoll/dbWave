@@ -1,21 +1,19 @@
 #pragma once
 
-// CDeleteRecordOptionsDlg dialog
-
-class CDeleteRecordOptionsDlg : public CDialog
+class DlgDeleteRecordOptions : public CDialog
 {
-	DECLARE_DYNAMIC(CDeleteRecordOptionsDlg)
+	DECLARE_DYNAMIC(DlgDeleteRecordOptions)
 
 public:
-	CDeleteRecordOptionsDlg(CWnd* pParent = nullptr); // standard constructor
-	~CDeleteRecordOptionsDlg() override;
+	DlgDeleteRecordOptions(CWnd* pParent = nullptr); // standard constructor
+	~DlgDeleteRecordOptions() override;
 
 	// Dialog Data
 	enum { IDD = IDD_DELRECORDOPTIONS };
 
 public:
-	BOOL m_bKeepChoice;
-	BOOL m_bDeleteFile;
+	BOOL m_bKeepChoice {true};
+	BOOL m_bDeleteFile {false};
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support

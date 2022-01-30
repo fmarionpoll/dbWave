@@ -19,26 +19,19 @@
 
 // CdbEditRecordDlg dialog
 
-IMPLEMENT_DYNAMIC(CDlgdbEditRecord, CDialog)
+IMPLEMENT_DYNAMIC(DlgdbEditRecord, CDialog)
 
-CDlgdbEditRecord::CDlgdbEditRecord(CWnd* pParent /*=NULL*/)
+DlgdbEditRecord::DlgdbEditRecord(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
-	  , m_pSet(nullptr), m_cs_more(_T(""))
-	  , m_csnameDat(_T(""))
-	  , m_csnameSpk(_T(""))
 {
-	//m_pDaoView = NULL;
-	m_bshowIDC_NEXT = TRUE;
-	m_bshowIDC_PREVIOUS = TRUE;
-	m_pdbDoc = nullptr;
 }
 
-CDlgdbEditRecord::~CDlgdbEditRecord()
+DlgdbEditRecord::~DlgdbEditRecord()
 {
 	m_pdbDoc = nullptr;
 }
 
-void CDlgdbEditRecord::DoDataExchange(CDataExchange* pDX)
+void DlgdbEditRecord::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO_EXPT2, m_ctlexpt);
@@ -65,34 +58,34 @@ void CDlgdbEditRecord::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_NAMESPK, m_csnameSpk);
 }
 
-BEGIN_MESSAGE_MAP(CDlgdbEditRecord, CDialog)
-	ON_BN_CLICKED(IDC_BUTTONINSECTID, &CDlgdbEditRecord::OnBnClickedButtoninsectid)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUMID, &CDlgdbEditRecord::OnBnClickedButtonsensillumid)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &CDlgdbEditRecord::OnBnClickedButtonstimulus)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &CDlgdbEditRecord::OnBnClickedButtonconcentration)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &CDlgdbEditRecord::OnBnClickedButtonstimulus2)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &CDlgdbEditRecord::OnBnClickedButtonconcentration2)
-	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &CDlgdbEditRecord::OnBnClickedButtoninsectname)
-	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &CDlgdbEditRecord::OnBnClickedButtonstrain)
-	ON_BN_CLICKED(IDC_BUTTONSEX, &CDlgdbEditRecord::OnBnClickedButtonsex)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &CDlgdbEditRecord::OnBnClickedButtonsensillum)
-	ON_BN_CLICKED(IDC_BUTTONLOCATION, &CDlgdbEditRecord::OnBnClickedButtonlocation)
-	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &CDlgdbEditRecord::OnBnClickedButtonoperator)
-	ON_BN_CLICKED(IDC_BUTTON5, &CDlgdbEditRecord::OnBnClickedButton5)
-	ON_BN_CLICKED(IDC_BUTTON1, &CDlgdbEditRecord::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_SYNCHROSINGLE, &CDlgdbEditRecord::OnBnClickedSynchrosingle)
-	ON_BN_CLICKED(IDC_SYNCHROALL, &CDlgdbEditRecord::OnBnClickedSynchroall)
-	ON_BN_CLICKED(IDC_PREVIOUS, &CDlgdbEditRecord::OnBnClickedPrevious)
-	ON_BN_CLICKED(IDC_NEXT, &CDlgdbEditRecord::OnBnClickedNext)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT, &CDlgdbEditRecord::OnBnClickedButtonrepeat)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &CDlgdbEditRecord::OnBnClickedButtonrepeat2)
-	ON_BN_CLICKED(IDC_BUTTONFLAG, &CDlgdbEditRecord::OnBnClickedButtonflag)
-	ON_BN_CLICKED(IDC_BUTTONEXPT2, &CDlgdbEditRecord::OnBnClickedButtonexpt2)
+BEGIN_MESSAGE_MAP(DlgdbEditRecord, CDialog)
+	ON_BN_CLICKED(IDC_BUTTONINSECTID, &DlgdbEditRecord::OnBnClickedButtoninsectid)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUMID, &DlgdbEditRecord::OnBnClickedButtonsensillumid)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &DlgdbEditRecord::OnBnClickedButtonstimulus)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &DlgdbEditRecord::OnBnClickedButtonconcentration)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &DlgdbEditRecord::OnBnClickedButtonstimulus2)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &DlgdbEditRecord::OnBnClickedButtonconcentration2)
+	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &DlgdbEditRecord::OnBnClickedButtoninsectname)
+	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &DlgdbEditRecord::OnBnClickedButtonstrain)
+	ON_BN_CLICKED(IDC_BUTTONSEX, &DlgdbEditRecord::OnBnClickedButtonsex)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &DlgdbEditRecord::OnBnClickedButtonsensillum)
+	ON_BN_CLICKED(IDC_BUTTONLOCATION, &DlgdbEditRecord::OnBnClickedButtonlocation)
+	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &DlgdbEditRecord::OnBnClickedButtonoperator)
+	ON_BN_CLICKED(IDC_BUTTON5, &DlgdbEditRecord::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON1, &DlgdbEditRecord::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_SYNCHROSINGLE, &DlgdbEditRecord::OnBnClickedSynchrosingle)
+	ON_BN_CLICKED(IDC_SYNCHROALL, &DlgdbEditRecord::OnBnClickedSynchroall)
+	ON_BN_CLICKED(IDC_PREVIOUS, &DlgdbEditRecord::OnBnClickedPrevious)
+	ON_BN_CLICKED(IDC_NEXT, &DlgdbEditRecord::OnBnClickedNext)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT, &DlgdbEditRecord::OnBnClickedButtonrepeat)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &DlgdbEditRecord::OnBnClickedButtonrepeat2)
+	ON_BN_CLICKED(IDC_BUTTONFLAG, &DlgdbEditRecord::OnBnClickedButtonflag)
+	ON_BN_CLICKED(IDC_BUTTONEXPT2, &DlgdbEditRecord::OnBnClickedButtonexpt2)
 END_MESSAGE_MAP()
 
 // CdbEditRecordDlg message handlers
 
-BOOL CDlgdbEditRecord::OnInitDialog()
+BOOL DlgdbEditRecord::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_pSet = &m_pdbDoc->m_pDB->m_mainTableSet;
@@ -103,7 +96,7 @@ BOOL CDlgdbEditRecord::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgdbEditRecord::PopulateControls()
+void DlgdbEditRecord::PopulateControls()
 {
 	auto p_db = m_pdbDoc->m_pDB;
 	// fill combo boxes associated with a secondary table
@@ -139,7 +132,7 @@ void CDlgdbEditRecord::PopulateControls()
 		GetDlgItem(IDC_PREVIOUS)->EnableWindow(m_bshowIDC_PREVIOUS);
 }
 
-void CDlgdbEditRecord::PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, long>* pIDarray, long& lvar)
+void DlgdbEditRecord::PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, long>* pIDarray, long& lvar)
 {
 	combo.ResetContent();
 	CString cs;
@@ -158,7 +151,7 @@ void CDlgdbEditRecord::PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, 
 	combo.SetCurSel(isel);
 }
 
-void CDlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CComboBox& combo, int iID)
+void DlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CComboBox& combo, int iID)
 {
 	combo.ResetContent();
 	// fill combo box
@@ -194,7 +187,7 @@ void CDlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCo
 	combo.SetCurSel(isel);
 }
 
-void CDlgdbEditRecord::UpdateDatabaseFromDialog()
+void DlgdbEditRecord::UpdateDatabaseFromDialog()
 {
 	UpdateData(TRUE); // transfer data from dlg to variables
 
@@ -233,13 +226,13 @@ void CDlgdbEditRecord::UpdateDatabaseFromDialog()
 	m_pSet->Update();
 }
 
-void CDlgdbEditRecord::OnOK()
+void DlgdbEditRecord::OnOK()
 {
 	UpdateDatabaseFromDialog();
 	CDialog::OnOK();
 }
 
-void CDlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBox& combo, long& iIDset)
+void DlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBox& combo, long& iIDset)
 {
 	// search if content of edit window is listed in the combo
 	CString cs_combo;
@@ -283,27 +276,27 @@ void CDlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboB
 // if new item, update the corresponding array in document...
 // update
 
-void CDlgdbEditRecord::OnBnClickedButtoninsectid()
+void DlgdbEditRecord::OnBnClickedButtoninsectid()
 {
 	EditChangeItem_MainField(IDC_COMBO_INSECTID);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonsensillumid()
+void DlgdbEditRecord::OnBnClickedButtonsensillumid()
 {
 	EditChangeItem_MainField(IDC_COMBO_SENSILLUMID);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonflag()
+void DlgdbEditRecord::OnBnClickedButtonflag()
 {
 	EditChangeItem_MainField(IDC_COMBO_FLAG);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonrepeat()
+void DlgdbEditRecord::OnBnClickedButtonrepeat()
 {
 	EditChangeItem_MainField(IDC_COMBO_REPEATT);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonrepeat2()
+void DlgdbEditRecord::OnBnClickedButtonrepeat2()
 {
 	EditChangeItem_MainField(IDC_COMBO_REPEATT2);
 }
@@ -311,7 +304,7 @@ void CDlgdbEditRecord::OnBnClickedButtonrepeat2()
 // Edit item / linked lists
 // IDC = ID descriptor for combo box
 
-void CDlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
+void DlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
 {
 	DB_ITEMDESC* pdesc = GetItemDescriptors(IDC);
 	if (pdesc->pComboBox == nullptr)
@@ -327,7 +320,7 @@ void CDlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
 		PopulateCombo_WithText(*pdesc->plinkedSet, *pdesc->pComboBox, *pdesc->pdataItem);
 }
 
-void CDlgdbEditRecord::EditChangeItem_MainField(int IDC)
+void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
 {
 	auto pdesc = GetItemDescriptors(IDC);
 	if (pdesc->pComboBox == nullptr)
@@ -363,7 +356,7 @@ void CDlgdbEditRecord::EditChangeItem_MainField(int IDC)
 // return pointers to parameters useful to change/edit item
 // IDC = ID descriptor for check box
 
-DB_ITEMDESC* CDlgdbEditRecord::GetItemDescriptors(int IDC)
+DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 {
 	DB_ITEMDESC* pdesc = nullptr;
 	const auto p_dbwave_doc = m_pdbDoc;
@@ -455,52 +448,52 @@ DB_ITEMDESC* CDlgdbEditRecord::GetItemDescriptors(int IDC)
 	return pdesc;
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonstimulus()
+void DlgdbEditRecord::OnBnClickedButtonstimulus()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_STIMULUS);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonconcentration()
+void DlgdbEditRecord::OnBnClickedButtonconcentration()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_CONCENTRATION);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonstimulus2()
+void DlgdbEditRecord::OnBnClickedButtonstimulus2()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_STIMULUS2);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonconcentration2()
+void DlgdbEditRecord::OnBnClickedButtonconcentration2()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_CONCENTRATION2);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtoninsectname()
+void DlgdbEditRecord::OnBnClickedButtoninsectname()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_INSECTNAME);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonsensillum()
+void DlgdbEditRecord::OnBnClickedButtonsensillum()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_SENSILLUMNAME);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonlocation()
+void DlgdbEditRecord::OnBnClickedButtonlocation()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_LOCATION);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonoperator()
+void DlgdbEditRecord::OnBnClickedButtonoperator()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_OPERATOR);
 }
 
-void CDlgdbEditRecord::OnBnClickedButton5()
+void DlgdbEditRecord::OnBnClickedButton5()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_PATHDAT);
 }
 
-void CDlgdbEditRecord::OnBnClickedButton1()
+void DlgdbEditRecord::OnBnClickedButton1()
 {
 	if (AfxMessageBox(_T("Are spike files in the same directory as dat files?"), MB_YESNO, -1) != IDYES)
 		EditChangeItem_IndirectField(IDC_COMBO_PATHSPK);
@@ -510,34 +503,34 @@ void CDlgdbEditRecord::OnBnClickedButton1()
 	}
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonstrain()
+void DlgdbEditRecord::OnBnClickedButtonstrain()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_STRAIN);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonsex()
+void DlgdbEditRecord::OnBnClickedButtonsex()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_SEX);
 }
 
-void CDlgdbEditRecord::OnBnClickedButtonexpt2()
+void DlgdbEditRecord::OnBnClickedButtonexpt2()
 {
 	EditChangeItem_IndirectField(IDC_COMBO_EXPT2);
 }
 
-void CDlgdbEditRecord::OnBnClickedSynchrosingle()
+void DlgdbEditRecord::OnBnClickedSynchrosingle()
 {
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->SynchronizeSourceInfos(FALSE);
 }
 
-void CDlgdbEditRecord::OnBnClickedSynchroall()
+void DlgdbEditRecord::OnBnClickedSynchroall()
 {
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->SynchronizeSourceInfos(TRUE);
 }
 
-void CDlgdbEditRecord::OnBnClickedPrevious()
+void DlgdbEditRecord::OnBnClickedPrevious()
 {
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->DBMovePrev();
@@ -547,7 +540,7 @@ void CDlgdbEditRecord::OnBnClickedPrevious()
 	UpdateData(FALSE);
 }
 
-void CDlgdbEditRecord::OnBnClickedNext()
+void DlgdbEditRecord::OnBnClickedNext()
 {
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->DBMoveNext();

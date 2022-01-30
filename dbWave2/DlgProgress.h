@@ -1,16 +1,14 @@
 #pragma once
 
 
-class CDlgProgress : public CDialog
+class DlgProgress : public CDialog
 {
 	// Construction / Destruction
 public:
-	CDlgProgress(UINT nCaptionID = 0); // standard constructor
-	~CDlgProgress() override;
+	DlgProgress(UINT nCaptionID = 0); // standard constructor
+	~DlgProgress() override;
 
 	BOOL Create(CWnd* pParent = nullptr);
-
-	// Checking for Cancel button
 	BOOL CheckCancelButton();
 	// Progress Dialog manipulation
 	void SetStatus(LPCTSTR lpszMessage);
@@ -20,12 +18,9 @@ public:
 	int OffsetPos(int nPos);
 	int StepIt();
 
-	// Dialog Data
 	enum { IDD = IDD_PROGRESS };
 
 	CProgressCtrl m_Progress;
-
-	// Overrides
 public:
 	BOOL DestroyWindow() override;
 protected:
@@ -33,13 +28,13 @@ protected:
 
 	// Implementation
 protected:
-	UINT m_nCaptionID;
-	int m_nLower;
-	int m_nUpper;
-	int m_nStep;
+	UINT m_nCaptionID{ IDP_PROGRESS_CAPTION };
+	int m_nLower{ 0 };
+	int m_nUpper{ 100 };
+	int m_nStep{ 10 };
 
-	BOOL m_bCancel;
-	BOOL m_bParentDisabled;
+	BOOL m_bCancel{ false };
+	BOOL m_bParentDisabled{ false };
 
 	void ReEnableParent();
 

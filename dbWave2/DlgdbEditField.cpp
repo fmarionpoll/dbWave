@@ -193,7 +193,7 @@ void DlgdbEditField::OnBnClickedRadio6()
 
 void DlgdbEditField::OnBnClickedButton1()
 {
-	CDlgEditList dlg;
+	DlgEditList dlg;
 	dlg.pCo = &m_codictionary;
 	const auto iresult = dlg.DoModal();
 	if (IDOK == iresult)

@@ -119,7 +119,7 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 
 	while (b_exist)
 	{
-		CdbNewFileDuplicateDlg dlg;
+		DlgdbNewFileDuplicate dlg;
 		dlg.m_pfilein = cs_name;
 		if (IDOK == dlg.DoModal())
 		{
@@ -581,7 +581,7 @@ void CdbWaveDoc::SetDB_nbspikeclasses(long nclasses)
 
 void CdbWaveDoc::ExportDataAsciiComments(CSharedFile* p_shared_file)
 {
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	int istep = 0;
 	dlg.SetStep(1);
@@ -680,7 +680,7 @@ BOOL CdbWaveDoc::CreateDirectories(CString path)
 BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 {
 	// prepare dialog box to tell what is going on ----------------------
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	auto istep = 0;
 	dlg.SetStep(1);
@@ -1199,7 +1199,7 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 	const auto nfilesok = checkFilesCanbeOpened(fileList, psf, nColumns, bHeader);
 
 	// ---------------------------------------------file loop: read infos --------------------------------
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
 	dlg.SetPos(0);
@@ -1508,7 +1508,7 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 	}
 
 	// prepare progress dialog box
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
 	auto istep = 0;
@@ -1806,7 +1806,7 @@ CString CdbWaveDoc::ExportDatabaseData(const int ioption)
 
 void CdbWaveDoc::ExportNumberofSpikes(CSharedFile* pSF)
 {
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	auto istep = 0;
 	dlg.SetStep(1);
@@ -2160,7 +2160,7 @@ int CdbWaveDoc::checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf,
 	// prepare progress dialog box
 	auto nfilesok = 0;
 	const int nfiles = getSize2DArray(filenames, nColumns, bHeader);
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
 	dlg.SetRange(0, nfiles);
@@ -2343,7 +2343,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 	// discard if data acquisition the same day, same time
 
 	// display progress in a dialog box
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetWindowText(_T("Scan database to discard duplicate (or missing) data files..."));
 	CString cscomment;
@@ -2532,7 +2532,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 
 void CdbWaveDoc::RemoveMissingFiles()
 {
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	auto istep = 0;
 	dlg.SetStep(1);
@@ -2598,7 +2598,7 @@ void CdbWaveDoc::RemoveMissingFiles()
 
 void CdbWaveDoc::RemoveFalseSpkFiles()
 {
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	auto istep = 0;
 	dlg.SetStep(1);
@@ -2709,7 +2709,7 @@ void CdbWaveDoc::ExportDatafilesAsTXTfiles()
 	psf = new CSharedFile(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 
 	// prepare progress dialog box
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	CString cscomment;
 	const auto nfiles = GetDB_NRecords();

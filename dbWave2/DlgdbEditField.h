@@ -23,7 +23,6 @@ public:
 	DlgdbEditField(CWnd* pParent = nullptr);
 	~DlgdbEditField() override;
 
-	// Dialog Data
 	enum { IDD = IDD_DBEDITRECORDFIELD };
 
 protected:

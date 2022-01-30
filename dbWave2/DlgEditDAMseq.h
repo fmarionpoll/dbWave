@@ -2,13 +2,13 @@
 #include "afxwin.h"
 #include "OUTPUTPARMS.h"
 
-class CDlgEditDAMseq : public CDialogEx
+class DlgEditDAMseq : public CDialogEx
 {
-	DECLARE_DYNAMIC(CDlgEditDAMseq)
+	DECLARE_DYNAMIC(DlgEditDAMseq)
 
 public:
-	CDlgEditDAMseq(CWnd* pParent = nullptr); // standard constructor
-	~CDlgEditDAMseq() override;
+	DlgEditDAMseq(CWnd* pParent = nullptr); // standard constructor
+	~DlgEditDAMseq() override;
 
 	// Dialog Data
 	enum { IDD = IDD_DA_MSEQ };

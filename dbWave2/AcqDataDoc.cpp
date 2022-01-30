@@ -120,7 +120,7 @@ bool AcqDataDoc::dlgImportDataFile(CString& sz_path_name)
 	ASSERT(cs_array != NULL);
 	cs_array->Add(sz_path_name);
 
-	auto p_dlg = new CDlgImportGenericData;
+	auto p_dlg = new DlgImportGenericData;
 	p_dlg->m_pfilenameArray = cs_array; // address of array
 	p_dlg->bConvert = TRUE; // conversion is allowed
 	p_dlg->piivO = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import);

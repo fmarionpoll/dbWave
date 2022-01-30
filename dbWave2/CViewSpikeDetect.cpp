@@ -1208,7 +1208,7 @@ int CViewSpikeDetection::detectStim1(int ichan)
 	const auto l_data_last = m_ChartDataWnd_Detect.GetDataLast(); // index last pt to test
 
 	// plot progress dialog box
-	CDlgProgress dlg;
+	DlgProgress dlg;
 	dlg.Create();
 	//int istep = 0;
 	dlg.SetRange(0, 100);
@@ -3203,7 +3203,7 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 {
 	m_pSpkDoc->SortStimArray();
 
-	CDlgEditStimArray dlg;
+	DlgEditStimArray dlg;
 	dlg.intervalsandlevels_ptr_array.RemoveAll();
 	dlg.intervalsandlevels_ptr_array.Add(&m_pSpkDoc->m_stimIntervals);
 	dlg.m_rate = m_samplingRate;

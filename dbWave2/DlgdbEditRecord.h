@@ -5,18 +5,18 @@
 class CdbWaveDoc;
 class CdbMainTable;
 
-class CDlgdbEditRecord : public CDialog
+class DlgdbEditRecord : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgdbEditRecord)
+	DECLARE_DYNAMIC(DlgdbEditRecord)
 
 public:
-	CDlgdbEditRecord(CWnd* pParent = nullptr); // standard constructor
-	~CDlgdbEditRecord() override;
+	DlgdbEditRecord(CWnd* pParent = nullptr); // standard constructor
+	~DlgdbEditRecord() override;
 
-	CdbWaveDoc* m_pdbDoc;
-	CdbMainTable* m_pSet;
-	BOOL m_bshowIDC_NEXT;
-	BOOL m_bshowIDC_PREVIOUS;
+	CdbWaveDoc* m_pdbDoc{ nullptr };
+	CdbMainTable* m_pSet{ nullptr };
+	BOOL m_bshowIDC_NEXT{ true };
+	BOOL m_bshowIDC_PREVIOUS{ true };
 
 	// Dialog Data
 	enum { IDD = IDD_EDITRECORDDLG };
@@ -56,9 +56,9 @@ public:
 	CComboBox m_ctlrepeat2;
 	CComboBox m_ctlflag;
 
-	CString m_cs_more;
-	CString m_csnameDat;
-	CString m_csnameSpk;
+	CString m_cs_more{ _T("") };
+	CString m_csnameDat{ _T("") };
+	CString m_csnameSpk{ _T("") };
 
 	afx_msg void OnBnClickedButtoninsectid();
 	afx_msg void OnBnClickedButtonsensillumid();

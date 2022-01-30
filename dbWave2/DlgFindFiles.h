@@ -2,24 +2,24 @@
 #include "afxeditbrowsectrl.h"
 #include "dbWaveDoc.h"
 
-class CDlgFindFiles : public CDialog
+class DlgFindFiles : public CDialog
 {
 	// Construction
 public:
-	CDlgFindFiles(CWnd* pParent = nullptr); // standard constructor
+	DlgFindFiles(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_FINDFILES };
 
 	CComboBox m_fileext;
-	CString m_path = _T("");
+	CString m_path{ _T("")};
 	CMFCEditBrowseCtrl m_mfcbrowsecontrol;
-	int m_nfound = 0;
-	int m_selinit = 0;
-	CStringArray* m_pfilenames = nullptr;
-	BOOL m_ioption = 0;
-	BOOL m_banyformat = false;
-	CdbWaveDoc* m_pdbDoc = nullptr;
+	int m_nfound{ 0 };
+	int m_selinit{ 0 };
+	CStringArray* m_pfilenames{ nullptr };
+	BOOL m_ioption{ 0 };
+	BOOL m_banyformat{ false };
+	CdbWaveDoc* m_pdbDoc{ nullptr };
 
 	// Overrides
 protected:
@@ -28,7 +28,7 @@ protected:
 	// Implementation
 protected:
 	CString m_searchString;
-	BOOL m_bSubtreeSearch = false;
+	BOOL m_bSubtreeSearch{ false };
 	CStringArray m_ppath;
 	CString m_csrootSearch;
 

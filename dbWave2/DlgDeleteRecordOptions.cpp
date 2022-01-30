@@ -1,37 +1,28 @@
-// DeleteRecordOptionsDlg.cpp : implementation file
-//
-
 #include "StdAfx.h"
-//#include "dbWave.h"
 #include "DlgDeleteRecordOptions.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-// CDeleteRecordOptionsDlg dialog
 
-IMPLEMENT_DYNAMIC(CDeleteRecordOptionsDlg, CDialog)
+IMPLEMENT_DYNAMIC(DlgDeleteRecordOptions, CDialog)
 
-CDeleteRecordOptionsDlg::CDeleteRecordOptionsDlg(CWnd* pParent /*=NULL*/)
+DlgDeleteRecordOptions::DlgDeleteRecordOptions(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
-	  , m_bKeepChoice(FALSE)
-	  , m_bDeleteFile(FALSE)
 {
 }
 
-CDeleteRecordOptionsDlg::~CDeleteRecordOptionsDlg()
-{
-}
+DlgDeleteRecordOptions::~DlgDeleteRecordOptions()
+= default;
 
-void CDeleteRecordOptionsDlg::DoDataExchange(CDataExchange* pDX)
+void DlgDeleteRecordOptions::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Check(pDX, IDC_CHECK3, m_bKeepChoice);
 	DDX_Check(pDX, IDC_CHECK2, m_bDeleteFile);
 }
 
-BEGIN_MESSAGE_MAP(CDeleteRecordOptionsDlg, CDialog)
+BEGIN_MESSAGE_MAP(DlgDeleteRecordOptions, CDialog)
 END_MESSAGE_MAP()
 
-// CDeleteRecordOptionsDlg message handlers

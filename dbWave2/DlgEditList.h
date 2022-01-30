@@ -1,19 +1,18 @@
 #pragma once
 
-// CEditListDlg dialog
 
-class CDlgEditList : public CDialog
+class DlgEditList : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgEditList)
 
 public:
-	CDlgEditList(CWnd* pParent = nullptr); // standard constructor
-	~CDlgEditList() override;
-	CComboBox* pCo;
-	CString m_csNewString;
+	DlgEditList(CWnd* pParent = nullptr); // standard constructor
+	~DlgEditList() override;
+	CComboBox* pCo {nullptr};
+	CString m_csNewString {_T("")};
 	CListBox m_clStrings;
 	CStringArray m_csArray;
-	int m_selected;
+	int m_selected {0};
 
 	// Dialog Data
 	enum { IDD = IDD_EDITLISTDLG };
@@ -27,7 +26,6 @@ public:
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedAdditem();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	//	afx_msg void OnBnClickedButton1();
 
 	DECLARE_MESSAGE_MAP()
 };

@@ -7,36 +7,36 @@
 
 // CImportFilesDlg dialog
 
-class CDlgImportFiles : public CDialog
+class DlgImportFiles : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgImportFiles)
 
 public:
-	CDlgImportFiles(CWnd* pParent = nullptr); // standard constructor
-	~CDlgImportFiles() override;
+	DlgImportFiles(CWnd* pParent = nullptr); // standard constructor
+	~DlgImportFiles() override;
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTFILESDLG };
 
 	// values passed by caller
-	CStringArray* m_pfilenameArray = nullptr;
-	CStringArray* m_pconvertedFiles = nullptr;
-	CdbWaveDoc* m_pdbDoc = nullptr;
-	int		m_option = 0;
-	BOOL	m_bReadHeader = true;
+	CStringArray* m_pfilenameArray{ nullptr };
+	CStringArray* m_pconvertedFiles{ nullptr };
+	CdbWaveDoc* m_pdbDoc{ nullptr };
+	int		m_option{ 0 };
+	BOOL	m_bReadHeader{ true };
 
 	// Implementation
 protected:
-	BOOL	m_bconvert = false;
+	BOOL	m_bconvert{ false };
 	CString m_ext{};
-	int		m_ncurrent = 0;
-	int		m_nfiles = 0;
+	int		m_ncurrent{ 0 };
+	int		m_nfiles{ 0 };
 	CString m_filefrom{};
 	CString m_fileto{};
 
-	int		m_scan_count = 0;
-	double	m_xinstgain = 0.;
-	double	m_xrate = 0.;
+	int		m_scan_count{ 0 };
+	double	m_xinstgain{ 0. };
+	double	m_xrate{ 0. };
 	double	m_dspan[16]{};
 	double	m_dbinval[16]{};
 

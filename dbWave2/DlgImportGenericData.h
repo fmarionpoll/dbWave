@@ -5,17 +5,17 @@
 #include "AcqDataDoc.h"
 #include "OPTIONS_IMPORT.h"
 
-class CDlgImportGenericData : public CDialog
+class DlgImportGenericData : public CDialog
 {
 	friend class AcqDataDoc;
 
 	// Construction
 public:
-	CDlgImportGenericData(CWnd* pParent = nullptr);
+	DlgImportGenericData(CWnd* pParent = nullptr);
 
-	OPTIONS_IMPORT* piivO;
-	BOOL bConvert;
-	CStringArray* m_pfilenameArray;
+	OPTIONS_IMPORT* piivO{ nullptr };
+	BOOL bConvert{ false };
+	CStringArray* m_pfilenameArray{ nullptr };
 	CEditCtrl mm_nbADchannels;
 	CEditCtrl mm_adChannelChan;
 	CEditCtrl mm_skipNbytes;
@@ -23,26 +23,26 @@ public:
 	ChartData m_ChartDataWnd;
 	CString m_filesource;
 	CString m_filedest;
-	CString m_fileold;
-	BOOL m_bChanged;
-	BOOL m_bimportall;
+	CString m_fileold{ _T("")};
+	BOOL m_bChanged{ false };
+	BOOL m_bimportall{ false };
 
 	// Dialog Data
 	enum { IDD = IDD_IMPORTGENERICDATAFILE };
 
 	CComboBox m_filedroplist;
 	CComboBox m_ComboPrecision;
-	CString m_adChannelComment;
-	float m_adChannelGain;
-	UINT m_adChannelChan;
-	UINT m_nbADchannels;
-	UINT m_nbRuns;
-	float m_samplingrate;
-	UINT m_skipNbytes;
-	float m_voltageMax;
-	float m_voltageMin;
-	CString m_csFileTitle;
-	BOOL m_bpreviewON;
+	CString m_adChannelComment{ _T("")};
+	float m_adChannelGain{ 0.f };
+	UINT m_adChannelChan{ 0 };
+	UINT m_nbADchannels{ 0 };
+	UINT m_nbRuns{ 0 };
+	float m_samplingrate{ 0.f };
+	UINT m_skipNbytes{ 0 };
+	float m_voltageMax{ 0.f };
+	float m_voltageMin{ 0.f };
+	CString m_csFileTitle{ _T("")};
+	BOOL m_bpreviewON{ false };
 
 	// Overrides
 public:

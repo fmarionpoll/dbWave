@@ -6,35 +6,32 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNAMIC(CDlgEditList, CDialog)
+IMPLEMENT_DYNAMIC(DlgEditList, CDialog)
 
-CDlgEditList::CDlgEditList(CWnd* pParent /*=NULL*/)
+DlgEditList::DlgEditList(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
-	  , m_csNewString(_T("")), m_selected(0)
-{
-	pCo = nullptr;
-}
-
-CDlgEditList::~CDlgEditList()
 {
 }
 
-void CDlgEditList::DoDataExchange(CDataExchange* pDX)
+DlgEditList::~DlgEditList()
+= default;
+
+void DlgEditList::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT1, m_csNewString);
 	DDX_Control(pDX, IDC_LIST1, m_clStrings);
 }
 
-BEGIN_MESSAGE_MAP(CDlgEditList, CDialog)
+BEGIN_MESSAGE_MAP(DlgEditList, CDialog)
 	ON_WM_INITMENU()
-	ON_BN_CLICKED(IDC_DELETE, &CDlgEditList::OnBnClickedDelete)
-	ON_BN_CLICKED(IDC_ADDITEM, &CDlgEditList::OnBnClickedAdditem)
+	ON_BN_CLICKED(IDC_DELETE, &DlgEditList::OnBnClickedDelete)
+	ON_BN_CLICKED(IDC_ADDITEM, &DlgEditList::OnBnClickedAdditem)
 	ON_WM_SIZE()
 	//	ON_BN_CLICKED(IDC_BUTTON1, &CEditListDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
-BOOL CDlgEditList::OnInitDialog()
+BOOL DlgEditList::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -48,7 +45,7 @@ BOOL CDlgEditList::OnInitDialog()
 	return TRUE;
 }
 
-void CDlgEditList::OnOK()
+void DlgEditList::OnOK()
 {
 	m_selected = m_clStrings.GetCurSel();
 	const auto nitems = m_clStrings.GetCount();
@@ -62,7 +59,7 @@ void CDlgEditList::OnOK()
 	CDialog::OnOK();
 }
 
-void CDlgEditList::OnBnClickedDelete()
+void DlgEditList::OnBnClickedDelete()
 {
 	const auto ncount = m_clStrings.GetSelCount();
 	if (0 == ncount)
@@ -86,7 +83,7 @@ void CDlgEditList::OnBnClickedDelete()
 	UpdateData(FALSE);
 }
 
-void CDlgEditList::OnBnClickedAdditem()
+void DlgEditList::OnBnClickedAdditem()
 {
 	UpdateData(TRUE); // get data from dlg
 	if (!m_csNewString.IsEmpty()) // add string if not empty
@@ -98,7 +95,7 @@ void CDlgEditList::OnBnClickedAdditem()
 	GetDlgItem(IDC_EDIT1)->SetFocus();
 }
 
-void CDlgEditList::OnSize(UINT nType, int cx, int cy)
+void DlgEditList::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 }

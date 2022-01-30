@@ -447,14 +447,14 @@ void CViewSpikeSort::OnSort()
 	const auto currentlist = m_pSpkDoc->GetSpkList_CurrentIndex();
 
 	// change indexes if ALL files selected
-	CDlgProgress* pdlg = nullptr;
+	DlgProgress* pdlg = nullptr;
 	auto istep = 0;
 	CString cscomment;
 	if (m_bAllFiles)
 	{
 		firstfile = 0; // index first file
 		lastfile = pdb_doc->GetDB_NRecords() - 1; // index last file
-		pdlg = new CDlgProgress;
+		pdlg = new DlgProgress;
 		pdlg->Create();
 		pdlg->SetStep(1);
 	}

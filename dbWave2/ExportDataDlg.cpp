@@ -12,20 +12,12 @@
 #define EXPORT_TEXT		2
 #define EXPORT_EXCEL	3
 
-CExportDataDlg::CExportDataDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent), m_dbDoc(nullptr), m_indexoldselectedfile(0), mm_lFirst(0), mm_lLast(0),
-	  mm_timefirst(0), mm_timelast(0), mm_firstchan(0), mm_lastchan(0), mm_binzero(0)
+DlgExportData::DlgExportData(CWnd* pParent /*=NULL*/)
+	: CDialog(IDD, pParent)
 {
-	m_timefirst = 0.0f;
-	m_timelast = 0.0f;
-	m_channelnumber = 0;
-	m_iundersample = 1;
-	m_icurrentfile = -1;
-	m_bAllFiles = TRUE; //FALSE;
-	m_pDat = nullptr;
 }
 
-void CExportDataDlg::DoDataExchange(CDataExchange* pDX)
+void DlgExportData::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EXPORTAS, m_ComboExportas);
@@ -37,7 +29,7 @@ void CExportDataDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt(pDX, m_iundersample, 1, 20000);
 }
 
-BEGIN_MESSAGE_MAP(CExportDataDlg, CDialog)
+BEGIN_MESSAGE_MAP(DlgExportData, CDialog)
 	ON_BN_CLICKED(IDC_SINGLECHANNEL, OnSinglechannel)
 	ON_BN_CLICKED(IDC_ALLCHANNELS, OnAllchannels)
 	ON_BN_CLICKED(IDC_ENTIREFILE, OnEntirefile)
@@ -46,7 +38,7 @@ BEGIN_MESSAGE_MAP(CExportDataDlg, CDialog)
 	ON_BN_CLICKED(IDC_EXPORTALL, OnExportall)
 END_MESSAGE_MAP()
 
-void CExportDataDlg::UpdateStructFromControls()
+void DlgExportData::UpdateStructFromControls()
 {
 	UpdateData(TRUE);
 
@@ -60,7 +52,7 @@ void CExportDataDlg::UpdateStructFromControls()
 	iivO.fTimelast = m_timelast;
 }
 
-BOOL CExportDataDlg::DestroyWindow()
+BOOL DlgExportData::DestroyWindow()
 {
 	// restore initial conditions
 	if (m_icurrentfile >= 0)
@@ -79,7 +71,7 @@ BOOL CExportDataDlg::DestroyWindow()
 	return CDialog::DestroyWindow();
 }
 
-BOOL CExportDataDlg::OnInitDialog()
+BOOL DlgExportData::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -156,7 +148,7 @@ BOOL CExportDataDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CExportDataDlg::OnOK()
+void DlgExportData::OnOK()
 {
 	UpdateStructFromControls();
 	// copy data into awave structure
@@ -167,26 +159,26 @@ void CExportDataDlg::OnOK()
 	CDialog::OnOK();
 }
 
-void CExportDataDlg::OnSinglechannel()
+void DlgExportData::OnSinglechannel()
 {
 	iivO.bAllchannels = FALSE;
 	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(TRUE);
 }
 
-void CExportDataDlg::OnAllchannels()
+void DlgExportData::OnAllchannels()
 {
 	iivO.bAllchannels = FALSE;
 	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(FALSE);
 }
 
-void CExportDataDlg::OnEntirefile()
+void DlgExportData::OnEntirefile()
 {
 	iivO.bentireFile = !iivO.bentireFile;
 	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.bentireFile);
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.bentireFile);
 }
 
-void CExportDataDlg::OnSelchangeExportas()
+void DlgExportData::OnSelchangeExportas()
 {
 	UpdateData(TRUE); // convert result
 	iivO.exportType = m_ComboExportas.GetCurSel();
@@ -200,7 +192,7 @@ void CExportDataDlg::OnSelchangeExportas()
 //////////////////////////////////////////////////////////////
 // export files
 
-void CExportDataDlg::OnExportall()
+void DlgExportData::OnExportall()
 {
 	int nbitems = m_filedroplist.GetCount();
 	CWaitCursor wait;
@@ -217,7 +209,7 @@ void CExportDataDlg::OnExportall()
 	MessageBox(csdummy, _T("Export file"));
 }
 
-void CExportDataDlg::OnExport()
+void DlgExportData::OnExport()
 {
 	Export();
 	/*CString csdummy = "Done: \nFile exported as \n";
@@ -225,7 +217,7 @@ void CExportDataDlg::OnExport()
 	MessageBoxA(csdummy,"Export file");*/
 }
 
-void CExportDataDlg::Export()
+void DlgExportData::Export()
 {
 	UpdateStructFromControls();
 
@@ -315,7 +307,7 @@ void CExportDataDlg::Export()
 
 // export data into a text file
 
-BOOL CExportDataDlg::ExportDataAsTextFile()
+BOOL DlgExportData::ExportDataAsTextFile()
 {
 	// open destination file
 	CStdioFile dataDest; // destination file object
@@ -444,7 +436,7 @@ BOOL CExportDataDlg::ExportDataAsTextFile()
 	return TRUE;
 }
 
-BOOL CExportDataDlg::ExportDataAsSapidFile()
+BOOL DlgExportData::ExportDataAsSapidFile()
 {
 	// open destination file
 	CFile dataDest; // destination file object
@@ -497,7 +489,7 @@ BOOL CExportDataDlg::ExportDataAsSapidFile()
 #define	BIFF_CHARS		8
 #define	BIFF_BOOL		16
 
-BOOL CExportDataDlg::ExportDataAsExcelFile()
+BOOL DlgExportData::ExportDataAsExcelFile()
 {
 	// variables to receive data & or text
 
@@ -720,7 +712,7 @@ using ATTR = struct
 	unsigned long a : 24;
 };
 
-void CExportDataDlg::save_BIFF(CFile* fp, int type, int row, int col, char* data)
+void DlgExportData::save_BIFF(CFile* fp, int type, int row, int col, char* data)
 {
 	ATTR attribute = {0x000000};
 	WORD w1, w2, wrow, wcol;
@@ -779,7 +771,7 @@ void CExportDataDlg::save_BIFF(CFile* fp, int type, int row, int col, char* data
 	}
 }
 
-void CExportDataDlg::saveCString_BIFF(CFile* fp, int row, int col, CString& data)
+void DlgExportData::saveCString_BIFF(CFile* fp, int row, int col, CString& data)
 {
 	ATTR attribute = {0x000000};
 	WORD wi, wrow, wcol;
@@ -799,7 +791,7 @@ void CExportDataDlg::saveCString_BIFF(CFile* fp, int row, int col, CString& data
 	fp->Write(data, ichar);
 }
 
-BOOL CExportDataDlg::ExportDataAsdbWaveFile()
+BOOL DlgExportData::ExportDataAsdbWaveFile()
 {
 	// create new file
 	auto pDatDest = new AcqDataDoc;

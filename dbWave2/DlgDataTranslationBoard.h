@@ -2,13 +2,13 @@
 #include "dtacq32.h"
 
 
-class CDlgDataTranslationBoard : public CDialog
+class DlgDataTranslationBoard : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgDataTranslationBoard)
+	DECLARE_DYNAMIC(DlgDataTranslationBoard)
 
 public:
-	CDlgDataTranslationBoard(CWnd* pParent = nullptr);
-	~CDlgDataTranslationBoard() override;
+	DlgDataTranslationBoard(CWnd* pParent = nullptr);
+	~DlgDataTranslationBoard() override;
 
 	enum { IDD = IDD_DTBOARD_DLG };
 
@@ -17,22 +17,22 @@ public:
 	CListBox m_listSSNumCaps;
 	CListBox m_listSSYNCaps;
 
-	CDTAcq32* m_pAnalogIN = nullptr;
-	CDTAcq32* m_pAnalogOUT = nullptr;
-	CDTAcq32* m_pDTAcq32 = nullptr;
-	short m_subssystemIN = 0;
-	short m_subsystemelementIN = 0;
+	CDTAcq32* m_pAnalogIN {nullptr} ;
+	CDTAcq32* m_pAnalogOUT{ nullptr };
+	CDTAcq32* m_pDTAcq32{ nullptr };
+	short m_subssystemIN {0};
+	short m_subsystemelementIN {0};
 
 private:
-	UINT m_atodCount = 0;
-	UINT m_dtoaCount = 0;
-	int m_nsubsystems = 0;
+	UINT m_atodCount {0};
+	UINT m_dtoaCount {0};
+	int m_nsubsystems {0};
 	CString m_boardName;
 
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;
-	// Implementation
+	
 	BOOL OnInitDialog() override;
 	BOOL FindDTOpenLayersBoards();
 	int GetBoardCapabilities();

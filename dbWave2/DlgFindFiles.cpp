@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "DlgFindFiles.h"
-
 #include "dbWave.h"
 
 
@@ -8,14 +7,12 @@
 #define new DEBUG_NEW
 #endif
 
-CDlgFindFiles::CDlgFindFiles(CWnd* pParent /*=NULL*/)
+DlgFindFiles::DlgFindFiles(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
-
 {
 }
 
-
-void CDlgFindFiles::DoDataExchange(CDataExchange* pDX)
+void DlgFindFiles::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_fileext);
@@ -23,15 +20,13 @@ void CDlgFindFiles::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_mfcbrowsecontrol);
 }
 
-
-BEGIN_MESSAGE_MAP(CDlgFindFiles, CDialog)
+BEGIN_MESSAGE_MAP(DlgFindFiles, CDialog)
 
 	ON_BN_CLICKED(IDC_BUTTON2, OnSearch)
 
 END_MESSAGE_MAP()
 
-
-BOOL CDlgFindFiles::OnInitDialog()
+BOOL DlgFindFiles::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_pfilenames->RemoveAll();
@@ -67,7 +62,7 @@ BOOL CDlgFindFiles::OnInitDialog()
 	return TRUE;
 }
 
-void CDlgFindFiles::OnOK()
+void DlgFindFiles::OnOK()
 {
 	if (m_pfilenames->GetSize() == 0)
 		OnSearch();
@@ -80,7 +75,7 @@ void CDlgFindFiles::OnOK()
 	CDialog::OnOK();
 }
 
-void CDlgFindFiles::OnSearch()
+void DlgFindFiles::OnSearch()
 {
 	UpdateData(TRUE);
 
@@ -112,14 +107,14 @@ void CDlgFindFiles::OnSearch()
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 }
 
-void CDlgFindFiles::DisplaynFound()
+void DlgFindFiles::DisplaynFound()
 {
 	TCHAR sz[50];
 	wsprintf(sz, _T("n found = %i"), m_nfound);
 	GetDlgItem(IDC_STATIC1)->SetWindowText(sz);
 }
 
-void CDlgFindFiles::TraverseDirectory(CString path)
+void DlgFindFiles::TraverseDirectory(CString path)
 {
 	CFileFind finder;
 	CString str_wildcard = path;
@@ -143,7 +138,7 @@ void CDlgFindFiles::TraverseDirectory(CString path)
 	}
 }
 
-void CDlgFindFiles::FindFiles(CString path)
+void DlgFindFiles::FindFiles(CString path)
 {
 	CFileFind finder;
 	const auto str_wildcard = path + _T("\\") + m_searchString;

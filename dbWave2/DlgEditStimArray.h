@@ -2,19 +2,18 @@
 #include "Spikedoc.h"
 #include "StretchControls.h"
 
-// CEditStimArrayDlg dialog
 
-class CDlgEditStimArray : public CDialog
+class DlgEditStimArray : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgEditStimArray)
 
 public:
-	CDlgEditStimArray(CWnd* pParent = nullptr);
-	~CDlgEditStimArray() override;
+	DlgEditStimArray(CWnd* pParent = nullptr);
+	~DlgEditStimArray() override;
 
 	// data passed by caller
-	CTagList* m_pTagList = nullptr;
-	CIntervalsAndLevels* m_pstimsaved = nullptr;
+	CTagList* m_pTagList {nullptr};
+	CIntervalsAndLevels* m_pstimsaved { nullptr };
 	CArray<CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
 	float m_rate = 0.f;
 
@@ -22,16 +21,16 @@ public:
 	enum { IDD = IDD_EDITSTIMULUS };
 
 protected:
-	CIntervalsAndLevels* m_pstim = nullptr;
+	CIntervalsAndLevels* m_pstim {nullptr} ;
 
 	void DoDataExchange(CDataExchange* pDX) override;
 	CStretchControl m_stretch{};
-	BOOL m_binit = false;
+	BOOL m_binit { false };
 	CEdit m_csEdit{};
-	float m_value = 0;
-	int m_iItem = -1;
+	float m_value {0};
+	int m_iItem {-1};
 	CListCtrl m_stimarrayCtrl{};
-	CImageList* m_pimagelist = nullptr;
+	CImageList* m_pimagelist {nullptr};
 
 	void selectItem(int i);
 	void resetListOrder();

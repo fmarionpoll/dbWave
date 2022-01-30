@@ -819,7 +819,7 @@
     </ClCompile>
     <ClCompile Include="CSpkListTabCtrl.cpp" />
     <ClCompile Include="datafile_CEDSpike2.cpp" />
-    <ClCompile Include="DlgdtBoard.cpp" />
+    <ClCompile Include="DlgDataTranslationBoard.cpp" />
     <ClCompile Include="chanlistitem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1133,7 +1133,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DlgProg.cpp">
+    <ClCompile Include="DlgProgress.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1382,7 +1382,7 @@
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CSpkListTabCtrl.h" />
     <ClInclude Include="datafile_CEDSpike2.h" />
-    <ClInclude Include="DlgdtBoard.h" />
+    <ClInclude Include="DlgDataTranslationBoard.h" />
     <ClInclude Include="chanlistitem.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="DlgConfirmSave.h" />
@@ -1487,7 +1487,7 @@
     <ClInclude Include="Printdra.h" />
     <ClInclude Include="Printmar.h" />
     <ClInclude Include="Printpag.h" />
-    <ClInclude Include="DlgProg.h" />
+    <ClInclude Include="DlgProgress.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="QuadStateTree.h" />
     <ClInclude Include="DlgRejectRecord.h" />

@@ -339,7 +339,7 @@
     <ClCompile Include="DlgDeleteRecordOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DlgdtBoard.cpp">
+    <ClCompile Include="DlgDataTranslationBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgEditDAMseq.cpp">
@@ -369,7 +369,7 @@
     <ClCompile Include="DlgPivot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DlgProg.cpp">
+    <ClCompile Include="DlgProgress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgRejectRecord.cpp">
@@ -863,7 +863,7 @@
     <ClInclude Include="DlgDeleteRecordOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DlgdtBoard.h">
+    <ClInclude Include="DlgDataTranslationBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgEditDAMseq.h">
@@ -902,7 +902,7 @@
     <ClInclude Include="DlgFindFiles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DlgProg.h">
+    <ClInclude Include="DlgProgress.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgDAOutputsParms.h">

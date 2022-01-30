@@ -1163,7 +1163,7 @@ void CViewData::SaveModifiedFile()
 
 void CViewData::ADC_OnHardwareDefineexperiment()
 {
-	CDlgdbEditRecord dlg;
+	DlgdbEditRecord dlg;
 	dlg.m_pdbDoc = GetDocument();
 
 	if (IDOK == dlg.DoModal())

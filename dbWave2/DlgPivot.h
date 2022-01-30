@@ -2,21 +2,21 @@
 
 #include "GridCtrl/GridCtrl.h"
 
-class CDlgPivot : public CDialogEx
+class DlgPivot : public CDialogEx
 {
 	DECLARE_DYNAMIC(CDlgPivot)
 
 public:
-	CDlgPivot(CWnd* pParent = nullptr); // standard constructor
-	~CDlgPivot() override;
+	DlgPivot(CWnd* pParent = nullptr); // standard constructor
+	~DlgPivot() override;
 
 	// Dialog Data
 	enum { IDD = IDD_PIVOTDLG };
 
-	int m_nFixCols;
-	int m_nFixRows;
-	int m_nCols;
-	int m_nRows;
+	int m_nFixCols{ 1 };
+	int m_nFixRows{ 1 };
+	int m_nCols{ 3 };
+	int m_nRows{ 26 };
 
 	CGridCtrl m_Grid;
 	CSize m_OldSize;

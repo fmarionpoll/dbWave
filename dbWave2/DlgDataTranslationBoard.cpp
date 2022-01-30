@@ -1,20 +1,20 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "CDTBoardParameters.h"
-#include "DlgdtBoard.h"
+#include "DlgDataTranslationBoard.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNAMIC(CDlgDataTranslationBoard, CDialog)
+IMPLEMENT_DYNAMIC(DlgDataTranslationBoard, CDialog)
 
-CDlgDataTranslationBoard::CDlgDataTranslationBoard(CWnd* pParent /*=NULL*/)
+DlgDataTranslationBoard::DlgDataTranslationBoard(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
 {
 }
 
-CDlgDataTranslationBoard::~CDlgDataTranslationBoard()
+DlgDataTranslationBoard::~DlgDataTranslationBoard()
 {
 	const UINT ui_num_boards = m_pDTAcq32->GetNumBoards();
 	if (ui_num_boards > 0)
@@ -23,7 +23,7 @@ CDlgDataTranslationBoard::~CDlgDataTranslationBoard()
 	}
 }
 
-void CDlgDataTranslationBoard::DoDataExchange(CDataExchange* pDX)
+void DlgDataTranslationBoard::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_BOARD, m_cbBoard);
@@ -32,12 +32,12 @@ void CDlgDataTranslationBoard::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_SSCAPS, m_listSSYNCaps);
 }
 
-BEGIN_MESSAGE_MAP(CDlgDataTranslationBoard, CDialog)
-	ON_CBN_SELCHANGE(IDC_BOARD, &CDlgDataTranslationBoard::OnSelchangeBoard)
-	ON_LBN_SELCHANGE(IDC_LIST_BOARDCAPS, &CDlgDataTranslationBoard::OnLbnSelchangeListBoardcaps)
+BEGIN_MESSAGE_MAP(DlgDataTranslationBoard, CDialog)
+	ON_CBN_SELCHANGE(IDC_BOARD, &DlgDataTranslationBoard::OnSelchangeBoard)
+	ON_LBN_SELCHANGE(IDC_LIST_BOARDCAPS, &DlgDataTranslationBoard::OnLbnSelchangeListBoardcaps)
 END_MESSAGE_MAP()
 
-BOOL CDlgDataTranslationBoard::OnInitDialog()
+BOOL DlgDataTranslationBoard::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_subssystemIN = m_pAnalogIN->GetSubSysType();
@@ -47,7 +47,7 @@ BOOL CDlgDataTranslationBoard::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CDlgDataTranslationBoard::FindDTOpenLayersBoards()
+BOOL DlgDataTranslationBoard::FindDTOpenLayersBoards()
 {
 	m_cbBoard.ResetContent();
 	const UINT ui_num_boards = m_pDTAcq32->GetNumBoards();
@@ -63,7 +63,7 @@ BOOL CDlgDataTranslationBoard::FindDTOpenLayersBoards()
 	return flag;
 }
 
-void CDlgDataTranslationBoard::OnSelchangeBoard()
+void DlgDataTranslationBoard::OnSelchangeBoard()
 {
 	const auto isel = m_cbBoard.GetCurSel();
 	m_cbBoard.GetLBText(isel, m_boardName);
@@ -75,7 +75,7 @@ void CDlgDataTranslationBoard::OnSelchangeBoard()
 #define	SS_LIST	 {OLDC_ADELEMENTS, OLDC_DAELEMENTS, OLDC_DINELEMENTS,OLDC_DOUTELEMENTS, OLDC_CTELEMENTS, OLDC_SRLELEMENTS}
 #define SS_TEXT	 {_T("Analog Inputs"), _T("Analog outputs"), _T("Digital Inputs"),_T("Digital Outputs"),	_T("Counter/Trigger"), _T("Serial Port")}
 
-int CDlgDataTranslationBoard::GetBoardCapabilities()
+int DlgDataTranslationBoard::GetBoardCapabilities()
 {
 	int nsubsystems = 0;
 
@@ -107,7 +107,7 @@ int CDlgDataTranslationBoard::GetBoardCapabilities()
 	return nsubsystems;
 }
 
-void CDlgDataTranslationBoard::ChangeSubsystem(int index)
+void DlgDataTranslationBoard::ChangeSubsystem(int index)
 {
 	const int ss_codes[SS_LIST_SIZE] = SS_CODES;
 	const DWORD ss_info = ss_codes[index];
@@ -134,7 +134,7 @@ void CDlgDataTranslationBoard::ChangeSubsystem(int index)
 	GetSubsystemNumericalCapabilities(numitems);
 }
 
-void CDlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
+void DlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
 {
 	m_listSSYNCaps.ResetContent();
 	if (numitems > 0)
@@ -155,7 +155,7 @@ void CDlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
 	m_listSSYNCaps.Invalidate();
 }
 
-void CDlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
+void DlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
 {
 	m_listSSNumCaps.ResetContent();
 	if (numitems > 0)
@@ -183,7 +183,7 @@ void CDlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
 	m_listSSNumCaps.Invalidate();
 }
 
-void CDlgDataTranslationBoard::OnLbnSelchangeListBoardcaps()
+void DlgDataTranslationBoard::OnLbnSelchangeListBoardcaps()
 {
 	const auto isel = m_listBoardCaps.GetCurSel();
 	if (isel >= 0)
@@ -192,7 +192,7 @@ void CDlgDataTranslationBoard::OnLbnSelchangeListBoardcaps()
 	}
 }
 
-void CDlgDataTranslationBoard::DispatchException(COleDispatchException* e)
+void DlgDataTranslationBoard::DispatchException(COleDispatchException* e)
 {
 	CString my_error;
 	my_error.Format(_T("DT-Open Layers Error: %i "), static_cast<int>(e->m_scError));

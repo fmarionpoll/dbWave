@@ -1,24 +1,21 @@
 #pragma once
 
 
-class CDlgGotoRecord : public CDialog
+class DlgGotoRecord : public CDialog
 {
 	// Construction
 public:
-	CDlgGotoRecord(CWnd* pParent = nullptr); // standard constructor
+	DlgGotoRecord(CWnd* pParent = nullptr); // standard constructor
 
-	// Dialog Data
 	enum { IDD = IDD_GOTORECORDID };
 
-	long m_recordID;
-	int m_recordPos;
-	BOOL m_bGotoRecordID;
+	long m_recordID{ 0 };
+	int m_recordPos{ 0 };
+	BOOL m_bGotoRecordID{ false };
 
-	// Overrides)
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
-	// Implementation
 protected:
 	void SetOptions();
 

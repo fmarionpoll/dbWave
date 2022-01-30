@@ -4,9 +4,9 @@
 #include "afxdialogex.h"
 
 
-IMPLEMENT_DYNAMIC(CDlgEditDAMseq, CDialogEx)
+IMPLEMENT_DYNAMIC(DlgEditDAMseq, CDialogEx)
 
-CDlgEditDAMseq::CDlgEditDAMseq(CWnd* pParent /*=NULL*/)
+DlgEditDAMseq::DlgEditDAMseq(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD, pParent)
 
 	  , m_mSeqRatio(0)
@@ -16,11 +16,11 @@ CDlgEditDAMseq::CDlgEditDAMseq(CWnd* pParent /*=NULL*/)
 	m_pParent = pParent;
 }
 
-CDlgEditDAMseq::~CDlgEditDAMseq()
+DlgEditDAMseq::~DlgEditDAMseq()
 {
 }
 
-void CDlgEditDAMseq::DoDataExchange(CDataExchange* pDX)
+void DlgEditDAMseq::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
@@ -30,13 +30,13 @@ void CDlgEditDAMseq::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MSEQ_RANDOM_SEED, m_mSeqRandomSeed);
 }
 
-BEGIN_MESSAGE_MAP(CDlgEditDAMseq, CDialogEx)
+BEGIN_MESSAGE_MAP(DlgEditDAMseq, CDialogEx)
 
-	ON_BN_CLICKED(IDC_MSEQ_RANDOM_SEED, &CDlgEditDAMseq::OnBnClickedMseqRandomSeed)
+	ON_BN_CLICKED(IDC_MSEQ_RANDOM_SEED, &DlgEditDAMseq::OnBnClickedMseqRandomSeed)
 
 END_MESSAGE_MAP()
 
-BOOL CDlgEditDAMseq::OnInitDialog()
+BOOL DlgEditDAMseq::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -49,7 +49,7 @@ BOOL CDlgEditDAMseq::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgEditDAMseq::OnOK()
+void DlgEditDAMseq::OnOK()
 {
 	UpdateData(TRUE);
 
@@ -60,7 +60,7 @@ void CDlgEditDAMseq::OnOK()
 	CDialogEx::OnOK();
 }
 
-void CDlgEditDAMseq::OnBnClickedMseqRandomSeed()
+void DlgEditDAMseq::OnBnClickedMseqRandomSeed()
 {
 	UpdateData(TRUE);
 

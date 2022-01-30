@@ -277,7 +277,7 @@ void DlgDAChannels::EditSequence(int iID, int channel)
 	{
 	case DA_MSEQWAVE: // M-seq
 		{
-			CDlgEditDAMseq dlg;
+			DlgEditDAMseq dlg;
 			dlg.m_outDParms = outputparms_array.GetAt(channel);
 			if (IDOK == dlg.DoModal())
 			{
@@ -290,7 +290,7 @@ void DlgDAChannels::EditSequence(int iID, int channel)
 
 	case DA_SEQUENCEWAVE: // sequence
 		{
-			CDlgEditStimArray dlg;
+			DlgEditStimArray dlg;
 			dlg.intervalsandlevels_ptr_array.RemoveAll();
 			dlg.intervalsandlevels_ptr_array.Add(&outputparms_array.GetAt(channel).stimulussequence);
 			dlg.m_pstimsaved = &m_stimsaved;
