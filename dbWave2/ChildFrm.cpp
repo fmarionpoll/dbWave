@@ -122,18 +122,10 @@ BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 END_MESSAGE_MAP()
 
 CChildFrame::CChildFrame()
-{
-	m_viewON = ID_VIEW_DATABASE;
-	m_previousviewON = ID_VIEW_DATABASE;
-	m_cursorstate = 0;
-	m_bDeleteFile = FALSE;
-	m_bKeepChoice = FALSE;
-	m_nStatus = 0;
-}
+= default;
 
 CChildFrame::~CChildFrame()
-{
-}
+= default;
 
 BOOL CChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 {

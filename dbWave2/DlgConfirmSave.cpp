@@ -7,24 +7,24 @@
 #endif
 
 
-IMPLEMENT_DYNAMIC(CDlgConfirmSave, CDialog)
+IMPLEMENT_DYNAMIC(DlgConfirmSave, CDialog)
 
-CDlgConfirmSave::CDlgConfirmSave(CWnd* pParent /*=NULL*/)
+DlgConfirmSave::DlgConfirmSave(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
 {
 	m_timeleft = 5;
 }
 
-CDlgConfirmSave::~CDlgConfirmSave()
+DlgConfirmSave::~DlgConfirmSave()
 {
 }
 
-BEGIN_MESSAGE_MAP(CDlgConfirmSave, CDialog)
+BEGIN_MESSAGE_MAP(DlgConfirmSave, CDialog)
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
-BOOL CDlgConfirmSave::OnInitDialog()
+BOOL DlgConfirmSave::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_timeleft = 5; // number of seconds during which the routine will wait
@@ -35,7 +35,7 @@ BOOL CDlgConfirmSave::OnInitDialog()
 	return TRUE;
 }
 
-void CDlgConfirmSave::OnTimer(UINT nIDEvent)
+void DlgConfirmSave::OnTimer(UINT nIDEvent)
 {
 	// update variables
 	m_timeleft--;

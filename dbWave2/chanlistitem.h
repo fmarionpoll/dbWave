@@ -10,27 +10,27 @@ public:
 
 	void InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent, WORD new_drawmode = 1);
 public:
-	CEnvelope* pEnvelopeAbcissa = nullptr; // pointer to abcissa Envelope
-	CEnvelope* pEnvelopeOrdinates = nullptr; // pointer to ordinates	Envelope
+	CEnvelope* pEnvelopeAbcissa{ nullptr }; // pointer to abcissa Envelope
+	CEnvelope* pEnvelopeOrdinates{ nullptr }; // pointer to ordinates	Envelope
 	CString dl_comment{}; // comment (40 chars initially)
 	void GetEnvelopeArrayIndexes(int& x, int& y) const;
 	void SetEnvelopeArrays(CEnvelope* px, int x, CEnvelope* py, int y);
 
 protected:
-	int dl_yzero{}; // data bin value for zero volts
-	int dl_yextent{}; // max to min extent
-	WORD dl_penwidth = 0; // pen size
-	WORD dl_color{}; // color
-	WORD dl_bprint{}; // draw mode
+	int dl_yzero{2048}; // data bin value for zero volts
+	int dl_yextent{4096}; // max to min extent
+	WORD dl_penwidth{ 0 }; // pen size
+	WORD dl_color{0}; // color
+	WORD dl_bprint{1}; // draw mode
 
-	float dl_datavoltspbin{}; // scale factor (1 unit (0-4095) -> y volts)
-	float dl_datavoltspan{}; // amplitude of data displayed
-	long dl_databinzero{}; // value of zero volts
-	long dl_databinspan{}; // nb of bins encoding values within envelope
+	float dl_datavoltspbin{ float(20.) / dl_yextent }; // scale factor (1 unit (0-4095) -> y volts)
+	float dl_datavoltspan{0}; // amplitude of data displayed
+	long dl_databinzero{2048}; // value of zero volts
+	long dl_databinspan{4096}; // nb of bins encoding values within envelope
 
-	BOOL dl_bHZtagsPrint{}; // print HZ tags flag
-	int dl_indexabcissa{};
-	int dl_indexordinates{};
+	BOOL dl_bHZtagsPrint{false}; // print HZ tags flag
+	int dl_indexabcissa{0};
+	int dl_indexordinates{0};
 
 	// helpers
 public:

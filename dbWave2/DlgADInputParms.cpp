@@ -22,7 +22,7 @@
 // the numbers below are used in a "switch" to take action according to the row item
 // within OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 
-TCHAR* CDlgADInputs::pszRowTitle[] = {
+TCHAR* DlgADInputs::pszRowTitle[] = {
 	_T("Title"),
 	// 1: // title
 	_T("A/D channel (0-7) "),
@@ -46,33 +46,33 @@ TCHAR* CDlgADInputs::pszRowTitle[] = {
 	_T("")
 };
 
-TCHAR* CDlgADInputs::pszHighPass[] = {
+TCHAR* DlgADInputs::pszHighPass[] = {
 	_T("GND"),_T("DC"),_T("0.1"),_T("1"),_T("10"),_T("30"),_T("100"),_T("300"),
 	_T(""),_T(""),_T(""),_T(""),_T(""),_T(""),_T(""),_T("")
 };
-TCHAR* CDlgADInputs::pszADGains[] = {_T("1"),_T("2"),_T("4"),_T("8"),_T(""),_T(""),_T(""),_T("")};
-TCHAR* CDlgADInputs::pszAmplifier[] = {
+TCHAR* DlgADInputs::pszADGains[] = {_T("1"),_T("2"),_T("4"),_T("8"),_T(""),_T(""),_T(""),_T("")};
+TCHAR* DlgADInputs::pszAmplifier[] = {
 	_T("CyberAmp 320"),_T("Neurolog"),_T("IDAC"),_T("Dagan"),_T("Alligator"), _T("none"),_T(""),_T("")
 };
-TCHAR* CDlgADInputs::pszProbeType[] = {
+TCHAR* DlgADInputs::pszProbeType[] = {
 	_T("Syntech"),_T("DTP02"),_T("AI401"),_T("Neurolog"),_T("AD575"),_T("Dagan"),_T("none"),_T("")
 };
-TCHAR* CDlgADInputs::pszEncoding[] = {
+TCHAR* DlgADInputs::pszEncoding[] = {
 	_T("Offset binary"),_T("Two's complement"),_T("Unknown"),_T(""),_T(""),_T(""),_T(""),_T("")
 };
-int CDlgADInputs::iEncoding[] = {OLx_ENC_BINARY, OLx_ENC_2SCOMP, -1};
+int DlgADInputs::iEncoding[] = {OLx_ENC_BINARY, OLx_ENC_2SCOMP, -1};
 
-IMPLEMENT_DYNAMIC(CDlgADInputs, CDialog)
+IMPLEMENT_DYNAMIC(DlgADInputs, CDialog)
 
-CDlgADInputs::CDlgADInputs(CWnd* pParent /*=NULL*/)
+DlgADInputs::DlgADInputs(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
 {
 }
 
-CDlgADInputs::~CDlgADInputs()
+DlgADInputs::~DlgADInputs()
 = default;
 
-void CDlgADInputs::DoDataExchange(CDataExchange* pDX)
+void DlgADInputs::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_NACQCHANS, m_nacqchans);
@@ -82,7 +82,7 @@ void CDlgADInputs::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ENCODING, m_encodingCombo);
 }
 
-BEGIN_MESSAGE_MAP(CDlgADInputs, CDialog)
+BEGIN_MESSAGE_MAP(DlgADInputs, CDialog)
 	ON_EN_CHANGE(IDC_NACQCHANS, OnEnChangeNacqchans)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_SINGLEENDED, OnBnClickedSingleended)
@@ -95,7 +95,7 @@ END_MESSAGE_MAP()
 
 // CADInputParmsDlg message handlers
 
-BOOL CDlgADInputs::OnInitDialog()
+BOOL DlgADInputs::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -158,7 +158,7 @@ BOOL CDlgADInputs::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgADInputs::OnEnChangeNacqchans()
+void DlgADInputs::OnEnChangeNacqchans()
 {
 	if (!IsWindow(m_Grid.m_hWnd))
 		return;
@@ -184,7 +184,7 @@ void CDlgADInputs::OnEnChangeNacqchans()
 	UpdateData(FALSE);
 }
 
-void CDlgADInputs::AdjustGridSize()
+void DlgADInputs::AdjustGridSize()
 {
 	const auto n_old_columns = m_Grid.GetColumnCount();
 	// reduce size of the grid; delete last columns
@@ -209,7 +209,7 @@ BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 	const auto p_wnd = CWnd::FromHandle(h_wnd);
 	const auto* p_translate = reinterpret_cast<CSize*>(lParam);
 
-	auto* p_dlg = static_cast<CDlgADInputs*>(p_wnd->GetParent());
+	auto* p_dlg = static_cast<DlgADInputs*>(p_wnd->GetParent());
 	if (!p_dlg) return FALSE;
 
 	CRect rect;
@@ -250,7 +250,7 @@ BOOL CALLBACK EnumProc(const HWND h_wnd, LPARAM lParam)
 	return TRUE;
 }
 
-void CDlgADInputs::OnSize(UINT nType, int cx, int cy)
+void DlgADInputs::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 	if (cx <= 1 || cy <= 1)
@@ -267,7 +267,7 @@ void CDlgADInputs::OnSize(UINT nType, int cx, int cy)
 
 // set column with proper header, combos, etc and data
 
-void CDlgADInputs::InitADchannelCombo(int col, int iselect)
+void DlgADInputs::InitADchannelCombo(int col, int iselect)
 {
 	// build string array with channel list
 	CStringArray csArrayOptions;
@@ -293,7 +293,7 @@ void CDlgADInputs::InitADchannelCombo(int col, int iselect)
 	}
 }
 
-BOOL CDlgADInputs::InitGridColumnDefaults(int col)
+BOOL DlgADInputs::InitGridColumnDefaults(int col)
 {
 	if (col < 1 || col >= m_Grid.GetColumnCount())
 		return FALSE;
@@ -486,21 +486,21 @@ BOOL CDlgADInputs::InitGridColumnDefaults(int col)
 	return TRUE;
 }
 
-void CDlgADInputs::OnBnClickedSingleended()
+void DlgADInputs::OnBnClickedSingleended()
 {
 	m_maxchans = m_numchansMAXSE;
 	m_bchantype = OLx_CHNT_SINGLEENDED;
 	OnEnChangeNacqchans();
 }
 
-void CDlgADInputs::OnBnClickedDifferential()
+void DlgADInputs::OnBnClickedDifferential()
 {
 	m_maxchans = m_numchansMAXDI;
 	m_bchantype = OLx_CHNT_DIFFERENTIAL;
 	OnEnChangeNacqchans();
 }
 
-void CDlgADInputs::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
+void DlgADInputs::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 {
 	const auto p_item = reinterpret_cast<NM_GRIDVIEW*>(pNotifyStruct);
 	switch (p_item->iRow)
@@ -543,7 +543,7 @@ void CDlgADInputs::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 	m_Grid.Refresh();
 }
 
-void CDlgADInputs::OnCbnSelchangeResolution()
+void DlgADInputs::OnCbnSelchangeResolution()
 {
 	CString cs;
 	m_resolutionCombo.GetWindowText(cs);
@@ -560,7 +560,7 @@ void CDlgADInputs::OnCbnSelchangeResolution()
 }
 
 // load column data (index = 1, n)
-void CDlgADInputs::LoadGridWithWavechanData(int col)
+void DlgADInputs::LoadGridWithWavechanData(int col)
 {
 	// select channel and load parameters CComboBox
 	ASSERT(col <= m_pchArray->ChanArray_getSize());
@@ -578,7 +578,7 @@ void CDlgADInputs::LoadGridWithWavechanData(int col)
 	DisplayChannelReadOnlyFields(col);
 }
 
-void CDlgADInputs::SaveData()
+void DlgADInputs::SaveData()
 {
 	// if number of acq channels changed, change corresp structures
 	if (m_nacqchans != m_pwFormat->scan_count)
@@ -601,7 +601,7 @@ void CDlgADInputs::SaveData()
 }
 
 // save column data (index = 1, n)
-void CDlgADInputs::SaveGridToWavechanData(int col)
+void DlgADInputs::SaveGridToWavechanData(int col)
 {
 	// select channel and load parameters CComboBox
 	if (m_pchArray->ChanArray_getSize() < col)
@@ -666,14 +666,14 @@ void CDlgADInputs::SaveGridToWavechanData(int col)
 	p_chan->am_resolutionV = m_pwFormat->fullscale_volts / p_chan->am_gaintotal / m_pwFormat->binspan;
 }
 
-void CDlgADInputs::OnBnClickedOk()
+void DlgADInputs::OnBnClickedOk()
 {
 	UpdateData(TRUE);
 	SaveData();
 	OnOK();
 }
 
-void CDlgADInputs::OnBnClickedAdintervals()
+void DlgADInputs::OnBnClickedAdintervals()
 {
 	m_postmessage = IDC_ADINTERVALS;
 	UpdateData(TRUE);
@@ -681,7 +681,7 @@ void CDlgADInputs::OnBnClickedAdintervals()
 	OnOK();
 }
 
-void CDlgADInputs::SetAmplifierParms(int col)
+void DlgADInputs::SetAmplifierParms(int col)
 {
 	if (!m_bcommandAmplifier)
 		return;
@@ -707,7 +707,7 @@ void CDlgADInputs::SetAmplifierParms(int col)
 	}
 }
 
-void CDlgADInputs::GetAmplifierParms(CWaveChan* p_chan)
+void DlgADInputs::GetAmplifierParms(CWaveChan* p_chan)
 {
 	if (!m_bcommandAmplifier)
 		return;
@@ -728,7 +728,7 @@ void CDlgADInputs::GetAmplifierParms(CWaveChan* p_chan)
 	}
 }
 
-void CDlgADInputs::LoadADparameters_From_pwFormat()
+void DlgADInputs::LoadADparameters_From_pwFormat()
 {
 	if (m_pwFormat == nullptr)
 	{
@@ -773,7 +773,7 @@ void CDlgADInputs::LoadADparameters_From_pwFormat()
 	}
 }
 
-void CDlgADInputs::InitRowHeaders()
+void DlgADInputs::InitRowHeaders()
 {
 	// get font and create bold face
 	auto p_font = m_Grid.GetFont();
@@ -809,7 +809,7 @@ void CDlgADInputs::InitRowHeaders()
 	m_Grid.SetItemText(2, 0, cs);
 }
 
-void CDlgADInputs::InitColumns()
+void DlgADInputs::InitColumns()
 {
 	// init data columns
 	for (int col = 1; col <= m_nacqchans; col++)
@@ -820,7 +820,7 @@ void CDlgADInputs::InitColumns()
 	}
 }
 
-void CDlgADInputs::DisplayChannelADCard(GV_ITEM& item, const CWaveChan* p_chan)
+void DlgADInputs::DisplayChannelADCard(GV_ITEM& item, const CWaveChan* p_chan)
 {
 	item.row = 1;
 	item.nFormat = DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX;
@@ -837,7 +837,7 @@ void CDlgADInputs::DisplayChannelADCard(GV_ITEM& item, const CWaveChan* p_chan)
 	m_Grid.SetItem(&item);
 }
 
-void CDlgADInputs::DisplayChannelAmplifier(GV_ITEM& item, const CWaveChan* p_chan)
+void DlgADInputs::DisplayChannelAmplifier(GV_ITEM& item, const CWaveChan* p_chan)
 {
 	item.row = 4;
 	item.strText = p_chan->am_csamplifier;
@@ -873,7 +873,7 @@ void CDlgADInputs::DisplayChannelAmplifier(GV_ITEM& item, const CWaveChan* p_cha
 	m_Grid.SetItem(&item);
 }
 
-void CDlgADInputs::DisplayChannelProbe(GV_ITEM& item, const CWaveChan* p_chan)
+void DlgADInputs::DisplayChannelProbe(GV_ITEM& item, const CWaveChan* p_chan)
 {
 	item.row = 11;
 	item.strText = p_chan->am_csheadstage;
@@ -884,7 +884,7 @@ void CDlgADInputs::DisplayChannelProbe(GV_ITEM& item, const CWaveChan* p_chan)
 	m_Grid.SetItem(&item);
 }
 
-void CDlgADInputs::DisplayChannelReadOnlyFields(int col)
+void DlgADInputs::DisplayChannelReadOnlyFields(int col)
 {
 	// "Signal total gain" - read only / numeric
 	int row = m_row_readonly;

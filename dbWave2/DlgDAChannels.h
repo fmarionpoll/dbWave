@@ -15,13 +15,13 @@
 #define DA_ZERO			9
 #define DA_ONE			10
 
-class CDlgDAChannels : public CDialogEx
+class DlgDAChannels : public CDialogEx
 {
-	DECLARE_DYNAMIC(CDlgDAChannels)
+	DECLARE_DYNAMIC(DlgDAChannels)
 
 public:
-	CDlgDAChannels(CWnd* pParent = nullptr); // standard constructor
-	~CDlgDAChannels() override;
+	DlgDAChannels(CWnd* pParent = nullptr); // standard constructor
+	~DlgDAChannels() override;
 
 	// Dialog Data
 	enum { IDD = IDD_DA_CHANNELS };

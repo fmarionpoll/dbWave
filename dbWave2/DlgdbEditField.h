@@ -14,22 +14,20 @@
 #define	CHGE_TXT	1
 #define	CHGE_CLEAR	2
 
-// CdbEditFieldDlg dialog
-class CdbWaveDoc;
 
-class CDlgdbEditField : public CDialogEx
+class DlgdbEditField : public CDialogEx
 {
-	DECLARE_DYNAMIC(CDlgdbEditField)
+	DECLARE_DYNAMIC(DlgdbEditField)
 
 public:
-	CDlgdbEditField(CWnd* pParent = nullptr); // standard constructor
-	~CDlgdbEditField() override;
+	DlgdbEditField(CWnd* pParent = nullptr);
+	~DlgdbEditField() override;
 
 	// Dialog Data
 	enum { IDD = IDD_DBEDITRECORDFIELD };
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;
 	void DisplayElements();
 	void ModifyCurrent();
 	void ModifyAll();
@@ -54,33 +52,32 @@ protected:
 		m_pMainTable->SetBookmark(bookmark_current);
 	}
 
-	long m_sourceID;
-	long m_destID{};
-	long m_initialID;
+	long m_sourceID{ 0 };
+	long m_destID{ 0 };
+	long m_initialID {-1};
 
 public:
-	int m_sourceselect;
-	int m_sourcecondition;
-	int m_destaction;
-	BOOL m_bCaseSensitive;
+	int m_sourceselect{REC_CURRENT};
+	int m_sourcecondition{ COND_EQU };
+	int m_destaction{ CHGE_ID };
+	BOOL m_bCaseSensitive{ false };
 
-	CString m_csfieldvalue;
-	CString m_cstextsearch;
-	CString m_cstextreplacewith;
-	CComboBox m_codictionary;
-	BOOL m_bcodictchanged;
+	CString m_csfieldvalue { _T("") };
+	CString m_cstextsearch{ _T("") };
+	CString m_cstextreplacewith{ _T("") };
+	CComboBox m_codictionary{};
+	BOOL m_bcodictchanged{ false };
 	CComboBox m_cosource;
-	int m_first;
+	int m_first{ -1 };
 
-	//////////////////////////////////
-	// parameters passed
-	CdbMainTable* m_pMainTable{}; // address of main table
-	CString m_csColName; // name of the column
-	CdbIndexTable* m_pIndexTable{}; // address secondary table
-	CArray<long, long>* m_pliIDArray{}; // address uiArray storing IDs
-	BOOL m_bIndexTable; // TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
-	CdbWaveDoc* m_pdbDoc{};
-	/////////////////////////////////
+
+	CdbMainTable* m_pMainTable{ nullptr }; 
+	CString m_csColName; 
+	CdbIndexTable* m_pIndexTable{ nullptr }; 
+	CArray<long, long>* m_pliIDArray{ nullptr }; 
+	BOOL m_bIndexTable{ true }; // TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
+	CdbWaveDoc* m_pdbDoc{nullptr};
+
 
 	afx_msg void OnBnClickedRadio1();
 	BOOL OnInitDialog() override;

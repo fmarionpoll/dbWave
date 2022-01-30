@@ -8,13 +8,13 @@
 #include "./GridCtrl/GridCtrl.h"
 #include "USBPxxS1.h"
 
-class CDlgADInputs : public CDialog
+class DlgADInputs : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgADInputs)
+	DECLARE_DYNAMIC(DlgADInputs)
 
 public:
-	CDlgADInputs(CWnd* pParent = nullptr);
-	~CDlgADInputs() override;
+	DlgADInputs(CWnd* pParent = nullptr);
+	~DlgADInputs() override;
 
 	// Dialog Data
 	enum { IDD = IDD_AD_INPUTPARMSDLG };

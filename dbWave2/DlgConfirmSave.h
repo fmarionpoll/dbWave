@@ -1,14 +1,12 @@
 #pragma once
 
-// CConfirmSaveDlg dialog
-
-class CDlgConfirmSave : public CDialog
+class DlgConfirmSave : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgConfirmSave)
+	DECLARE_DYNAMIC(DlgConfirmSave)
 
 public:
-	CDlgConfirmSave(CWnd* pParent = nullptr); // standard constructor
-	~CDlgConfirmSave() override;
+	DlgConfirmSave(CWnd* pParent = nullptr); // standard constructor
+	~DlgConfirmSave() override;
 
 	// Dialog Data
 	enum { IDD = IDD_CONFIRMDIALOG };

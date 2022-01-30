@@ -7,7 +7,7 @@
 #include "dbWaveDoc.h"
 #include "Vdordina.h"
 #include "Vdseries.h"
-#include "Adinterv.h"
+#include "DlgADIntervals.h"
 #include "Dataseri.h"
 #include "MeasureProperties.h"
 #include "Copyasdl.h"
@@ -394,7 +394,7 @@ void CViewData::OnUpdateEditCopy(CCmdUI* pCmdUI)
 
 void CViewData::ADC_OnHardwareChannelsDlg()
 {
-	CDlgADInputs dlg;
+	DlgADInputs dlg;
 
 	// init dialog data
 	dlg.m_pwFormat = m_pdatDoc->GetpWaveFormat();
@@ -410,7 +410,7 @@ void CViewData::ADC_OnHardwareChannelsDlg()
 
 void CViewData::ADC_OnHardwareIntervalsDlg()
 {
-	ADIntervalsDlg dlg;
+	DlgADIntervals dlg;
 	// init dialog data
 	dlg.m_pwaveFormat = m_pdatDoc->GetpWaveFormat();
 

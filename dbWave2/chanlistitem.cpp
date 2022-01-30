@@ -21,25 +21,8 @@
 
 IMPLEMENT_SERIAL(CChanlistItem, CObject, 1)
 
-CChanlistItem::CChanlistItem() : dl_color(0), dl_datavoltspan(0)
-{
-	pEnvelopeAbcissa = nullptr;
-	pEnvelopeOrdinates = nullptr;
-	dl_yzero = 2048;
-	dl_yextent = 4096;
-	dl_datavoltspbin = static_cast<float>(20.) / dl_yextent; // scale factor (1 unit (0-4095) -> y volts)
-	dl_databinzero = 2048;
-	dl_databinspan = 4096;
-	dl_bprint = 1;
-	dl_bHZtagsPrint = FALSE; // do not print HZ tags
-	dl_indexabcissa = 0;
-	dl_indexordinates = 0;
-	dl_bHZtagsPrint = false;
-}
-
-//---------------------------------------------------------------------------
-// chan list item constructor: store pointer to 2 envelopes abcissa+ordinates
-//---------------------------------------------------------------------------
+CChanlistItem::CChanlistItem()
+= default;
 
 CChanlistItem::CChanlistItem(CEnvelope* p_envelope_X, const int index_x, CEnvelope* p_envelope_Y, const int index_y)
 {
@@ -48,10 +31,6 @@ CChanlistItem::CChanlistItem(CEnvelope* p_envelope_X, const int index_x, CEnvelo
 	dl_indexabcissa = index_x;
 	dl_indexordinates = index_y;
 }
-
-//---------------------------------------------------------------------------
-// init display parameters from chan list item
-//---------------------------------------------------------------------------
 
 void CChanlistItem::InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent,
                                      WORD new_drawmode)

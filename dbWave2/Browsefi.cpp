@@ -1,5 +1,3 @@
-// browsefi.cpp : implementation file
-//
 
 #include "StdAfx.h"
 #include "Browsefi.h"
@@ -51,7 +49,7 @@ BOOL CBrowseFileDlg::OnInitDialog()
 		m_keepforeachfile = mfBR->bKeepForEachFile;
 	}
 	UpdateData(FALSE);
-	return TRUE; // return TRUE  unless you set the focus to a control
+	return TRUE; 
 }
 
 void CBrowseFileDlg::OnOK()

@@ -1,6 +1,5 @@
 #include "StdAfx.h"
-//#include <afxconv.h>           // For LPTSTR -> LPSTR macros
-//#include "dbWave.h"
+
 #include "dbWaveDoc.h"
 #include "DlgdbEditField.h"
 #include "afxdialogex.h"
@@ -11,31 +10,19 @@
 #endif
 
 
-IMPLEMENT_DYNAMIC(CDlgdbEditField, CDialogEx)
+IMPLEMENT_DYNAMIC(DlgdbEditField, CDialogEx)
 
-CDlgdbEditField::CDlgdbEditField(CWnd* pParent /*=NULL*/)
+DlgdbEditField::DlgdbEditField(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD, pParent)
-	  , m_destID(0), m_csfieldvalue(_T(""))
-	  , m_cstextsearch(_T(""))
-	  , m_cstextreplacewith(_T("")), m_pMainTable(nullptr), m_pIndexTable(nullptr), m_pliIDArray(nullptr),
-	  m_pdbDoc(nullptr)
-{
-	m_sourceselect = REC_CURRENT;
-	m_sourcecondition = COND_EQU;
-	m_destaction = CHGE_ID;
-	m_bCaseSensitive = FALSE;
-	m_bcodictchanged = FALSE;
-	m_initialID = -1;
-	m_bIndexTable = TRUE;
-	m_first = -1;
-	m_sourceID = 0;
-}
-
-CDlgdbEditField::~CDlgdbEditField()
+	
 {
 }
 
-void CDlgdbEditField::DoDataExchange(CDataExchange* pDX)
+DlgdbEditField::~DlgdbEditField()
+{
+}
+
+void DlgdbEditField::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT1, m_csfieldvalue);
@@ -46,20 +33,20 @@ void CDlgdbEditField::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECKCASESENSITIV, m_bCaseSensitive);
 }
 
-BEGIN_MESSAGE_MAP(CDlgdbEditField, CDialogEx)
-	ON_BN_CLICKED(IDC_RADIO1, &CDlgdbEditField::OnBnClickedRadio1)
-	ON_BN_CLICKED(IDC_RADIO2, &CDlgdbEditField::OnBnClickedRadio2)
-	ON_BN_CLICKED(IDC_RADIO3, &CDlgdbEditField::OnBnClickedRadio3)
-	ON_BN_CLICKED(IDC_RADIO4, &CDlgdbEditField::OnBnClickedRadio4)
-	ON_BN_CLICKED(IDC_RADIO5, &CDlgdbEditField::OnBnClickedRadio5)
-	ON_BN_CLICKED(IDC_RADIO6, &CDlgdbEditField::OnBnClickedRadio6)
-	ON_BN_CLICKED(IDC_BUTTON1, &CDlgdbEditField::OnBnClickedButton1)
+BEGIN_MESSAGE_MAP(DlgdbEditField, CDialogEx)
+	ON_BN_CLICKED(IDC_RADIO1, &DlgdbEditField::OnBnClickedRadio1)
+	ON_BN_CLICKED(IDC_RADIO2, &DlgdbEditField::OnBnClickedRadio2)
+	ON_BN_CLICKED(IDC_RADIO3, &DlgdbEditField::OnBnClickedRadio3)
+	ON_BN_CLICKED(IDC_RADIO4, &DlgdbEditField::OnBnClickedRadio4)
+	ON_BN_CLICKED(IDC_RADIO5, &DlgdbEditField::OnBnClickedRadio5)
+	ON_BN_CLICKED(IDC_RADIO6, &DlgdbEditField::OnBnClickedRadio6)
+	ON_BN_CLICKED(IDC_BUTTON1, &DlgdbEditField::OnBnClickedButton1)
 	ON_WM_SIZE()
-	ON_BN_CLICKED(IDOK, &CDlgdbEditField::OnBnClickedOk)
-	ON_CBN_SELCHANGE(IDC_COMBO3, &CDlgdbEditField::OnCbnSelchangeCombo3)
+	ON_BN_CLICKED(IDOK, &DlgdbEditField::OnBnClickedOk)
+	ON_CBN_SELCHANGE(IDC_COMBO3, &DlgdbEditField::OnCbnSelchangeCombo3)
 END_MESSAGE_MAP()
 
-BOOL CDlgdbEditField::OnInitDialog()
+BOOL DlgdbEditField::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -150,7 +137,7 @@ BOOL CDlgdbEditField::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgdbEditField::DisplayElements()
+void DlgdbEditField::DisplayElements()
 {
 	GetDlgItem(IDC_EDIT1)->EnableWindow(m_sourcecondition == COND_EQU);
 	GetDlgItem(IDC_EDIT2)->EnableWindow(m_sourcecondition == COND_SEARCH);
@@ -162,49 +149,49 @@ void CDlgdbEditField::DisplayElements()
 	GetDlgItem(IDC_EDIT3)->EnableWindow(m_destaction == CHGE_TXT);
 }
 
-void CDlgdbEditField::OnCbnSelchangeCombo3()
+void DlgdbEditField::OnCbnSelchangeCombo3()
 {
 	m_sourceselect = m_cosource.GetCurSel();
 	DisplayElements();
 }
 
-void CDlgdbEditField::OnBnClickedRadio1()
+void DlgdbEditField::OnBnClickedRadio1()
 {
 	m_sourcecondition = COND_EQU;
 	DisplayElements();
 }
 
-void CDlgdbEditField::OnBnClickedRadio2()
+void DlgdbEditField::OnBnClickedRadio2()
 {
 	m_sourcecondition = COND_SEARCH;
 	DisplayElements();
 }
 
-void CDlgdbEditField::OnBnClickedRadio3()
+void DlgdbEditField::OnBnClickedRadio3()
 {
 	m_sourcecondition = COND_NONE;
 	DisplayElements();
 }
 
-void CDlgdbEditField::OnBnClickedRadio4()
+void DlgdbEditField::OnBnClickedRadio4()
 {
 	m_destaction = CHGE_ID;
 	DisplayElements();
 }
 
-void CDlgdbEditField::OnBnClickedRadio5()
+void DlgdbEditField::OnBnClickedRadio5()
 {
 	m_destaction = CHGE_TXT;
 	DisplayElements();
 }
 
-void CDlgdbEditField::OnBnClickedRadio6()
+void DlgdbEditField::OnBnClickedRadio6()
 {
 	m_destaction = CHGE_CLEAR;
 	DisplayElements();
 }
 
-void CDlgdbEditField::OnBnClickedButton1()
+void DlgdbEditField::OnBnClickedButton1()
 {
 	CDlgEditList dlg;
 	dlg.pCo = &m_codictionary;
@@ -223,12 +210,12 @@ void CDlgdbEditField::OnBnClickedButton1()
 	UpdateData(FALSE);
 }
 
-void CDlgdbEditField::OnSize(UINT nType, int cx, int cy)
+void DlgdbEditField::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
 }
 
-void CDlgdbEditField::OnBnClickedOk()
+void DlgdbEditField::OnBnClickedOk()
 {
 	UpdateData(TRUE);
 
@@ -288,7 +275,7 @@ void CDlgdbEditField::OnBnClickedOk()
 }
 
 
-void CDlgdbEditField::ModifyAll()
+void DlgdbEditField::ModifyAll()
 {
 	const auto iedit = m_pMainTable->GetEditMode();
 	if (iedit != dbEditNone)
@@ -305,7 +292,7 @@ void CDlgdbEditField::ModifyAll()
 	m_pMainTable->SetBookmark(bookmark_current);
 }
 
-void CDlgdbEditField::ModifyCurrent()
+void DlgdbEditField::ModifyCurrent()
 {
 	long id_current = 0; // ID of current record
 	auto ifound = 0;

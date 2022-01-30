@@ -2,11 +2,11 @@
 #include "Editctrl.h"
 #include "AcqWaveFormat.h"
 
-class ADIntervalsDlg : public CDialog
+class DlgADIntervals : public CDialog
 {
 	// Construction
 public:
-	ADIntervalsDlg(CWnd* pParent = nullptr); // standard constructor
+	DlgADIntervals(CWnd* pParent = nullptr); 
 
 	// Dialog Data
 	enum { IDD = IDD_AD_INTERVALS };
@@ -22,10 +22,10 @@ public:
 	int m_threshval;
 	CWaveFormat* m_pwaveFormat;
 
-	WORD m_postmessage; // parameter passed on exit to activate another dialog
-	float m_ratemax; // max sampling rate (per chan)
-	float m_ratemin; // min sampling rate (per chan)
-	UINT m_bufferWsizemax; // maximum buffer size
+	WORD m_postmessage; 
+	float m_ratemax; 
+	float m_ratemin; 
+	UINT m_bufferWsizemax; 
 	BOOL m_bchainDialog;
 
 	CEditCtrl mm_adratechan;

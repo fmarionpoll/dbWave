@@ -1,14 +1,14 @@
 #include "StdAfx.h"
 #include "DlgAbout.h"
 
-CDlgAbout::CDlgAbout() : CDialogEx(IDD)
+DlgAbout::DlgAbout() : CDialogEx(IDD)
 {
 }
 
-void CDlgAbout::DoDataExchange(CDataExchange* pDX)
+void DlgAbout::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CDlgAbout, CDialogEx)
+BEGIN_MESSAGE_MAP(DlgAbout, CDialogEx)
 END_MESSAGE_MAP()

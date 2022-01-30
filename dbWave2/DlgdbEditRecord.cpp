@@ -317,7 +317,7 @@ void CDlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
 	if (pdesc->pComboBox == nullptr)
 		return;
 
-	CDlgdbEditField dlg;
+	DlgdbEditField dlg;
 	dlg.m_pMainTable = m_pSet; // address main table
 	dlg.m_csColName = pdesc->csColName; // name of the column
 	dlg.m_pIndexTable = pdesc->plinkedSet; // address secondary table
@@ -333,7 +333,7 @@ void CDlgdbEditRecord::EditChangeItem_MainField(int IDC)
 	if (pdesc->pComboBox == nullptr)
 		return;
 
-	CDlgdbEditField dlg;
+	DlgdbEditField dlg;
 	dlg.m_pMainTable = m_pSet; // address main table
 	dlg.m_csColName = pdesc->csColName; // name of the column
 	dlg.m_pliIDArray = &pdesc->liArray; // address of table of ids

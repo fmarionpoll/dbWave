@@ -12,23 +12,23 @@
 
 // CDAOutputsDlg dialog
 
-IMPLEMENT_DYNAMIC(CDlgDAOutputParameters, CDialogEx)
+IMPLEMENT_DYNAMIC(DlgDAOutputParameters, CDialogEx)
 
-CDlgDAOutputParameters::CDlgDAOutputParameters(CWnd* pParent /*=NULL*/)
+DlgDAOutputParameters::DlgDAOutputParameters(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD, pParent)
 {
 }
 
-CDlgDAOutputParameters::~CDlgDAOutputParameters()
+DlgDAOutputParameters::~DlgDAOutputParameters()
 {
 }
 
-void CDlgDAOutputParameters::DoDataExchange(CDataExchange* pDX)
+void DlgDAOutputParameters::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CDlgDAOutputParameters, CDialogEx)
+BEGIN_MESSAGE_MAP(DlgDAOutputParameters, CDialogEx)
 END_MESSAGE_MAP()
 
 // CDAOutputsDlg message handlers

@@ -8,8 +8,6 @@
 #define new DEBUG_NEW
 #endif
 
-//------------------ class CWaveFormat ---------------------------------
-
 IMPLEMENT_SERIAL(CWaveFormat, CObject, 0 /* schema number*/)
 
 CWaveFormat::CWaveFormat()

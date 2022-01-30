@@ -8,10 +8,10 @@ public:
 
 	// Attributes
 public:
-	UINT m_viewON;
-	int m_previousviewON;
-	int m_cursorstate;
-	int m_nStatus;
+	UINT m_viewON{ ID_VIEW_DATABASE };
+	int m_previousviewON{ ID_VIEW_DATABASE };
+	int m_cursorstate{0};
+	int m_nStatus{0};
 
 	// Overrides
 public:
@@ -26,8 +26,8 @@ public:
 	void Dump(CDumpContext& dc) const override;
 #endif
 protected:
-	BOOL m_bDeleteFile;
-	BOOL m_bKeepChoice;
+	BOOL m_bDeleteFile{ false };
+	BOOL m_bKeepChoice{ false };
 
 	void replaceView(CRuntimeClass* pViewClass, HMENU hmenu);
 	void OnToolsImportfiles(int ifilter);
@@ -37,7 +37,6 @@ protected:
 	void buildExcelPivot(void* oApp, void* odataSheet, CString csSourceDataAddress, CString csNameSheet,
 	                     short XlConsolidationFunction, int col2);
 
-	// Generated message map functions
 protected:
 	afx_msg void OnViewCursormodeNormal();
 	afx_msg void OnUpdateViewCursormodeNormal(CCmdUI* pCmdUI);

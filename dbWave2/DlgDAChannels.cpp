@@ -14,20 +14,20 @@
 
 // CDAChannelsDlg dialog
 
-IMPLEMENT_DYNAMIC(CDlgDAChannels, CDialogEx)
+IMPLEMENT_DYNAMIC(DlgDAChannels, CDialogEx)
 
-CDlgDAChannels::CDlgDAChannels(CWnd* pParent /*=NULL*/)
+DlgDAChannels::DlgDAChannels(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD, pParent)
 	  , m_bChannel2(FALSE), m_iseldigital(0)
 {
 	m_samplingRate = 10E3;
 }
 
-CDlgDAChannels::~CDlgDAChannels()
+DlgDAChannels::~DlgDAChannels()
 {
 }
 
-void CDlgDAChannels::DoDataExchange(CDataExchange* pDX)
+void DlgDAChannels::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
@@ -63,39 +63,39 @@ void CDlgDAChannels::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBOSOURCE9, *combobox_ptr_array[9]);
 }
 
-BEGIN_MESSAGE_MAP(CDlgDAChannels, CDialogEx)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE0, &CDlgDAChannels::OnCbnSelchangeCombosource0)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE1, &CDlgDAChannels::OnCbnSelchangeCombosource1)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE2, &CDlgDAChannels::OnCbnSelchangeCombosource2)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE3, &CDlgDAChannels::OnCbnSelchangeCombosource3)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE4, &CDlgDAChannels::OnCbnSelchangeCombosource4)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE5, &CDlgDAChannels::OnCbnSelchangeCombosource5)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE6, &CDlgDAChannels::OnCbnSelchangeCombosource6)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE7, &CDlgDAChannels::OnCbnSelchangeCombosource7)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE8, &CDlgDAChannels::OnCbnSelchangeCombosource8)
-	ON_CBN_SELCHANGE(IDC_COMBOSOURCE9, &CDlgDAChannels::OnCbnSelchangeCombosource9)
+BEGIN_MESSAGE_MAP(DlgDAChannels, CDialogEx)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE0, &DlgDAChannels::OnCbnSelchangeCombosource0)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE1, &DlgDAChannels::OnCbnSelchangeCombosource1)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE2, &DlgDAChannels::OnCbnSelchangeCombosource2)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE3, &DlgDAChannels::OnCbnSelchangeCombosource3)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE4, &DlgDAChannels::OnCbnSelchangeCombosource4)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE5, &DlgDAChannels::OnCbnSelchangeCombosource5)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE6, &DlgDAChannels::OnCbnSelchangeCombosource6)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE7, &DlgDAChannels::OnCbnSelchangeCombosource7)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE8, &DlgDAChannels::OnCbnSelchangeCombosource8)
+	ON_CBN_SELCHANGE(IDC_COMBOSOURCE9, &DlgDAChannels::OnCbnSelchangeCombosource9)
 
-	ON_BN_CLICKED(IDC_CHECKCHAN0, &CDlgDAChannels::OnBnClickedCheckchan0)
-	ON_BN_CLICKED(IDC_CHECKCHAN1, &CDlgDAChannels::OnBnClickedCheckchan1)
-	ON_BN_CLICKED(IDC_CHECKDIGITAL, &CDlgDAChannels::OnBnClickedCheckchan2)
+	ON_BN_CLICKED(IDC_CHECKCHAN0, &DlgDAChannels::OnBnClickedCheckchan0)
+	ON_BN_CLICKED(IDC_CHECKCHAN1, &DlgDAChannels::OnBnClickedCheckchan1)
+	ON_BN_CLICKED(IDC_CHECKDIGITAL, &DlgDAChannels::OnBnClickedCheckchan2)
 
-	ON_BN_CLICKED(IDC_BUTTONSOURCE0, &CDlgDAChannels::OnBnClickedButtonsource0)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE1, &CDlgDAChannels::OnBnClickedButtonsource1)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE2, &CDlgDAChannels::OnBnClickedButtonsource2)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE3, &CDlgDAChannels::OnBnClickedButtonsource3)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE4, &CDlgDAChannels::OnBnClickedButtonsource4)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE5, &CDlgDAChannels::OnBnClickedButtonsource5)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE6, &CDlgDAChannels::OnBnClickedButtonsource6)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE7, &CDlgDAChannels::OnBnClickedButtonsource7)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE8, &CDlgDAChannels::OnBnClickedButtonsource8)
-	ON_BN_CLICKED(IDC_BUTTONSOURCE9, &CDlgDAChannels::OnBnClickedButtonsource9)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE0, &DlgDAChannels::OnBnClickedButtonsource0)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE1, &DlgDAChannels::OnBnClickedButtonsource1)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE2, &DlgDAChannels::OnBnClickedButtonsource2)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE3, &DlgDAChannels::OnBnClickedButtonsource3)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE4, &DlgDAChannels::OnBnClickedButtonsource4)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE5, &DlgDAChannels::OnBnClickedButtonsource5)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE6, &DlgDAChannels::OnBnClickedButtonsource6)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE7, &DlgDAChannels::OnBnClickedButtonsource7)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE8, &DlgDAChannels::OnBnClickedButtonsource8)
+	ON_BN_CLICKED(IDC_BUTTONSOURCE9, &DlgDAChannels::OnBnClickedButtonsource9)
 
-	ON_BN_CLICKED(IDOK, &CDlgDAChannels::OnBnClickedOk)
+	ON_BN_CLICKED(IDOK, &DlgDAChannels::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 // CDAChannelsDlg message handlers
 
-void CDlgDAChannels::OnBnClickedOk()
+void DlgDAChannels::OnBnClickedOk()
 {
 	auto channel = 0;
 	outputparms_array[channel].iChan = channel;
@@ -121,16 +121,16 @@ void CDlgDAChannels::OnBnClickedOk()
 	CDialogEx::OnOK();
 }
 
-CString CDlgDAChannels::comboText[] = {
+CString DlgDAChannels::comboText[] = {
 	_T("Stored sequence"), _T("Sinusoid"), _T("Square"), _T("Triangle"), _T("M-sequence"), _T("Noise"), _T("Data File"),
 	_T("Constant"), _T("OFF"), _T("ON")
 };
-DWORD CDlgDAChannels::comboVal[] = {
+DWORD DlgDAChannels::comboVal[] = {
 	DA_SEQUENCEWAVE, DA_SINEWAVE, DA_SQUAREWAVE, DA_TRIANGLEWAVE, DA_MSEQWAVE, DA_NOISEWAVE, DA_FILEWAVE, DA_CONSTANT,
 	DA_ZERO, DA_ONE
 };
 
-void CDlgDAChannels::FillCombo(int channel)
+void DlgDAChannels::FillCombo(int channel)
 {
 	auto p_combo = combobox_ptr_array[channel];
 	p_combo->ResetContent();
@@ -166,7 +166,7 @@ void CDlgDAChannels::FillCombo(int channel)
 	}
 }
 
-void CDlgDAChannels::SelectComboItemFromOutputParm(int ival)
+void DlgDAChannels::SelectComboItemFromOutputParm(int ival)
 {
 	auto p_combo = combobox_ptr_array[ival];
 	const DWORD val = outputparms_array[ival].iWaveform;
@@ -179,7 +179,7 @@ void CDlgDAChannels::SelectComboItemFromOutputParm(int ival)
 	p_combo->SetCurSel(isel);
 }
 
-BOOL CDlgDAChannels::OnInitDialog()
+BOOL DlgDAChannels::OnInitDialog()
 {
 	combobox_ptr_array.SetSize(10);
 	combobox_ptr_array[0] = static_cast<CComboBox*>(GetDlgItem(IDC_COMBOSOURCE0));
@@ -217,7 +217,7 @@ BOOL CDlgDAChannels::OnInitDialog()
 	return TRUE;
 }
 
-void CDlgDAChannels::OnBnClickedCheckchan0()
+void DlgDAChannels::OnBnClickedCheckchan0()
 {
 	UpdateData(TRUE);
 	const auto bchan = outputparms_array[0].bON;
@@ -231,7 +231,7 @@ void CDlgDAChannels::OnBnClickedCheckchan0()
 		OnCbnSelchangeCombosource0();
 }
 
-void CDlgDAChannels::OnBnClickedCheckchan1()
+void DlgDAChannels::OnBnClickedCheckchan1()
 {
 	UpdateData(TRUE);
 	const auto bchan = outputparms_array[1].bON;
@@ -245,7 +245,7 @@ void CDlgDAChannels::OnBnClickedCheckchan1()
 		OnCbnSelchangeCombosource1();
 }
 
-void CDlgDAChannels::OnBnClickedCheckchan2()
+void DlgDAChannels::OnBnClickedCheckchan2()
 {
 	UpdateData(TRUE);
 	const auto bchan = m_bChannel2;
@@ -271,7 +271,7 @@ void CDlgDAChannels::OnBnClickedCheckchan2()
 		OnCbnSelchangeCombosource2();
 }
 
-void CDlgDAChannels::EditSequence(int iID, int channel)
+void DlgDAChannels::EditSequence(int iID, int channel)
 {
 	switch (iID)
 	{
@@ -310,59 +310,59 @@ void CDlgDAChannels::EditSequence(int iID, int channel)
 	}
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource(int channel)
+void DlgDAChannels::OnBnClickedButtonsource(int channel)
 {
 	const auto p_combo = combobox_ptr_array[channel];
 	const auto isel = p_combo->GetCurSel();
 	EditSequence(p_combo->GetItemData(isel), channel);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource0()
+void DlgDAChannels::OnBnClickedButtonsource0()
 {
 	OnBnClickedButtonsource(0);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource1()
+void DlgDAChannels::OnBnClickedButtonsource1()
 {
 	OnBnClickedButtonsource(1);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource2()
+void DlgDAChannels::OnBnClickedButtonsource2()
 {
 	OnBnClickedButtonsource(2);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource3()
+void DlgDAChannels::OnBnClickedButtonsource3()
 {
 	OnBnClickedButtonsource(3);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource4()
+void DlgDAChannels::OnBnClickedButtonsource4()
 {
 	OnBnClickedButtonsource(4);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource5()
+void DlgDAChannels::OnBnClickedButtonsource5()
 {
 	OnBnClickedButtonsource(5);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource6()
+void DlgDAChannels::OnBnClickedButtonsource6()
 {
 	OnBnClickedButtonsource(6);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource7()
+void DlgDAChannels::OnBnClickedButtonsource7()
 {
 	OnBnClickedButtonsource(7);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource8()
+void DlgDAChannels::OnBnClickedButtonsource8()
 {
 	OnBnClickedButtonsource(8);
 }
 
-void CDlgDAChannels::OnBnClickedButtonsource9()
+void DlgDAChannels::OnBnClickedButtonsource9()
 {
 	OnBnClickedButtonsource(9);
 }
@@ -380,7 +380,7 @@ static int matrix[10][4] = {
 	{IDC_BUTTONSOURCE9, IDC_EDITFREQ9, 0, 0}
 };
 
-void CDlgDAChannels::OnCbnSelchangeCombosource(int ival)
+void DlgDAChannels::OnCbnSelchangeCombosource(int ival)
 {
 	const auto idbutton = matrix[ival][0];
 	const auto idfreq = matrix[ival][1];
@@ -435,52 +435,52 @@ void CDlgDAChannels::OnCbnSelchangeCombosource(int ival)
 	}
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource0()
+void DlgDAChannels::OnCbnSelchangeCombosource0()
 {
 	OnCbnSelchangeCombosource(0);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource1()
+void DlgDAChannels::OnCbnSelchangeCombosource1()
 {
 	OnCbnSelchangeCombosource(1);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource2()
+void DlgDAChannels::OnCbnSelchangeCombosource2()
 {
 	OnCbnSelchangeCombosource(2);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource3()
+void DlgDAChannels::OnCbnSelchangeCombosource3()
 {
 	OnCbnSelchangeCombosource(3);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource4()
+void DlgDAChannels::OnCbnSelchangeCombosource4()
 {
 	OnCbnSelchangeCombosource(4);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource5()
+void DlgDAChannels::OnCbnSelchangeCombosource5()
 {
 	OnCbnSelchangeCombosource(5);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource6()
+void DlgDAChannels::OnCbnSelchangeCombosource6()
 {
 	OnCbnSelchangeCombosource(6);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource7()
+void DlgDAChannels::OnCbnSelchangeCombosource7()
 {
 	OnCbnSelchangeCombosource(7);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource8()
+void DlgDAChannels::OnCbnSelchangeCombosource8()
 {
 	OnCbnSelchangeCombosource(8);
 }
 
-void CDlgDAChannels::OnCbnSelchangeCombosource9()
+void DlgDAChannels::OnCbnSelchangeCombosource9()
 {
 	OnCbnSelchangeCombosource(9);
 }

@@ -862,7 +862,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 		{
 			const auto parms_old = new SCOPESTRUCT();
 			*parms_old = m_scopestruct;
-			CDlgChartProps dlg;
+			DlgChartProps dlg;
 			dlg.m_pscope = this;
 			m_bAllowProps = FALSE; // inhibit properties
 

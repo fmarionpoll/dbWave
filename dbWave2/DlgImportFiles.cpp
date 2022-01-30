@@ -445,7 +445,7 @@ BOOL CDlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 
 BOOL CDlgImportFiles::GetAcquisitionParameters(AcqDataDoc* pTo)
 {
-	CDlgADInputs dlg2;
+	DlgADInputs dlg2;
 	dlg2.m_pwFormat = pTo->GetpWaveFormat();
 	dlg2.m_pchArray = pTo->GetpWavechanArray();
 

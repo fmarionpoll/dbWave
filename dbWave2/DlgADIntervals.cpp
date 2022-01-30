@@ -4,7 +4,7 @@
 #include "StdAfx.h"
 #include "Editctrl.h"
 #include "dataheader_Atlab.H"
-#include "Adinterv.h"
+#include "DlgADIntervals.h"
 
 #include <Olxdadefs.h>
 
@@ -15,7 +15,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // ADIntervalsDlg dialog
 
-ADIntervalsDlg::ADIntervalsDlg(CWnd* pParent /*=NULL*/)
+DlgADIntervals::DlgADIntervals(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
 {
 	m_bufferNitems = 0;
@@ -35,7 +35,7 @@ ADIntervalsDlg::ADIntervalsDlg(CWnd* pParent /*=NULL*/)
 	m_bufferWsizemax = 0;
 }
 
-void ADIntervalsDlg::DoDataExchange(CDataExchange* pDX)
+void DlgADIntervals::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 
@@ -51,7 +51,7 @@ void ADIntervalsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_THRESHOLDVAL, m_threshval);
 }
 
-BEGIN_MESSAGE_MAP(ADIntervalsDlg, CDialog)
+BEGIN_MESSAGE_MAP(DlgADIntervals, CDialog)
 	ON_BN_CLICKED(IDC_ADCHANNELS, OnAdchannels)
 	ON_EN_CHANGE(IDC_ADRATECHAN, OnEnChangeAdratechan)
 	ON_EN_CHANGE(IDC_SWEEPDURATION, OnEnChangeDuration)
@@ -68,13 +68,13 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ADIntervalsDlg message handlers
 
-void ADIntervalsDlg::OnAdchannels()
+void DlgADIntervals::OnAdchannels()
 {
 	m_postmessage = IDC_ADCHANNELS;
 	OnOK();
 }
 
-void ADIntervalsDlg::OnOK()
+void DlgADIntervals::OnOK()
 {
 	// save parameters into CWaveFormat structure
 	UpdateData(TRUE);
@@ -112,7 +112,7 @@ void ADIntervalsDlg::OnOK()
 	CDialog::OnOK();
 }
 
-BOOL ADIntervalsDlg::OnInitDialog()
+BOOL DlgADIntervals::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -184,7 +184,7 @@ BOOL ADIntervalsDlg::OnInitDialog()
 }
 
 // ------------------------------------------------------------------------
-void ADIntervalsDlg::OnEnChangeAdratechan()
+void DlgADIntervals::OnEnChangeAdratechan()
 {
 	if (mm_adratechan.m_bEntryDone)
 	{
@@ -221,7 +221,7 @@ void ADIntervalsDlg::OnEnChangeAdratechan()
 }
 
 // ------------------------------------------------------------------
-void ADIntervalsDlg::OnEnChangeDuration()
+void DlgADIntervals::OnEnChangeDuration()
 {
 	if (mm_sweepduration.m_bEntryDone)
 	{
@@ -276,7 +276,7 @@ void ADIntervalsDlg::OnEnChangeDuration()
 }
 
 // ------------------------------------------------------------------
-void ADIntervalsDlg::OnEnChangeBuffersize()
+void DlgADIntervals::OnEnChangeBuffersize()
 {
 	if (mm_bufferWsize.m_bEntryDone)
 	{
@@ -312,7 +312,7 @@ void ADIntervalsDlg::OnEnChangeBuffersize()
 }
 
 // -----------------------------------------------------------------------
-void ADIntervalsDlg::OnEnChangeNbuffers()
+void DlgADIntervals::OnEnChangeNbuffers()
 {
 	if (mm_bufferNitems.m_bEntryDone)
 	{
@@ -340,7 +340,7 @@ void ADIntervalsDlg::OnEnChangeNbuffers()
 	}
 }
 
-void ADIntervalsDlg::OnEnChangeAcqduration()
+void DlgADIntervals::OnEnChangeAcqduration()
 {
 	if (mm_acqduration.m_bEntryDone)
 	{
@@ -368,13 +368,13 @@ void ADIntervalsDlg::OnEnChangeAcqduration()
 	}
 }
 
-void ADIntervalsDlg::OnTrigthresholdOFF()
+void DlgADIntervals::OnTrigthresholdOFF()
 {
 	GetDlgItem(IDC_THRESHOLDCHAN)->EnableWindow(FALSE);
 	GetDlgItem(IDC_THRESHOLDVAL)->EnableWindow(FALSE);
 }
 
-void ADIntervalsDlg::OnTrigthresholdON()
+void DlgADIntervals::OnTrigthresholdON()
 {
 	GetDlgItem(IDC_THRESHOLDCHAN)->EnableWindow(TRUE);
 	GetDlgItem(IDC_THRESHOLDVAL)->EnableWindow(TRUE);

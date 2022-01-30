@@ -5,7 +5,7 @@
 #include "resource.h"
 #include "dbMainTable.h"
 #include "dbWaveDoc.h"
-#include "Adinterv.h"
+#include "DlgADIntervals.h"
 #include "DlgADExperiment.h"
 #include "dtacq32.h"
 #include "CyberAmp.h"
@@ -54,7 +54,7 @@ void CADContView::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_COMBOSTARTOUTPUT, m_ComboStartOutput);
 	DDX_Control(pDX, IDC_STARTSTOP2, m_Button_StartStop_DA);
 	DDX_Control(pDX, IDC_ADPARAMETERS, m_Button_SamplingMode);
-	DDX_Control(pDX, IDC_DAPARAMETERS2, m_Button_OutputChannels.);
+	DDX_Control(pDX, IDC_DAPARAMETERS2, m_Button_OutputChannels);
 	DDX_Control(pDX, IDC_WRITETODISK, m_Button_WriteToDisk);
 	DDX_Control(pDX, IDC_OSCILLOSCOPE, m_Button_Oscilloscope);
 }
@@ -261,7 +261,7 @@ void CADContView::SaveAndCloseFile()
 		int ires = IDCANCEL;
 		if (pWFormat->sample_count > 1) // make sure real data have been acquired
 		{
-			CDlgConfirmSave dlg;
+			DlgConfirmSave dlg;
 			dlg.m_csfilename = m_szFileName;
 			ires = dlg.DoModal();
 		}
@@ -801,7 +801,7 @@ void CADContView::OnHardwareAdchannels()
 {
 	UpdateData(TRUE);
 
-	CDlgADInputs dlg;
+	DlgADInputs dlg;
 	dlg.m_pwFormat = &(m_pOptions_AD->waveFormat);
 	dlg.m_pchArray = &(m_pOptions_AD->chanArray);
 	dlg.m_numchansMAXDI = m_Acq32_AD.GetSSCaps(OLSSC_MAXDICHANS);
@@ -831,7 +831,7 @@ void CADContView::OnHardwareAdchannels()
 
 void CADContView::OnHardwareAdintervals()
 {
-	ADIntervalsDlg dlg;
+	DlgADIntervals dlg;
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 	dlg.m_pwaveFormat = pWFormat;
 	dlg.m_ratemin = 1.0f;
@@ -1302,7 +1302,7 @@ void CADContView::SetCombostartoutput(int option)
 
 void CADContView::OnBnClickedDaparameters2()
 {
-	CDlgDAChannels dlg;
+	DlgDAChannels dlg;
 	const auto isize = m_pOptions_DA->outputparms_array.GetSize();
 	if (isize < 10)
 		m_pOptions_DA->outputparms_array.SetSize(10);

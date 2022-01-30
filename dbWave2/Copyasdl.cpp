@@ -8,16 +8,9 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CCopyAsDlg dialog
-
 CCopyAsDlg::CCopyAsDlg(CWnd* p_parent /*=NULL*/)
-	: CDialog(IDD, p_parent), m_bgraphics(0)
+	: CDialog(IDD, p_parent)
 {
-	m_nabcissa = 0;
-	m_nordinates = 0;
-	m_ioption = 0;
-	m_iunit = 0;
 }
 
 void CCopyAsDlg::DoDataExchange(CDataExchange* pDX)
@@ -30,9 +23,6 @@ void CCopyAsDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CCopyAsDlg, CDialog)
 
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CCopyAsDlg message handlers
 
 void CCopyAsDlg::OnOK()
 {

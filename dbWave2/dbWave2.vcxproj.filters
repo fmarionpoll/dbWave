@@ -57,7 +57,7 @@
     <ClCompile Include="DlgADExperiment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Adinterv.cpp">
+    <ClCompile Include="DlgADIntervals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Browsefi.cpp">
@@ -668,7 +668,7 @@
     <ClInclude Include="WaveBuf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Adinterv.h">
+    <ClInclude Include="DlgADIntervals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgFileNew1.h">

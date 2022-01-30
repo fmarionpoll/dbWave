@@ -1,15 +1,13 @@
 #pragma once
 #include "OPTIONS_OUTPUTDATA.h"
 
-// CDAOutputsDlg dialog
-
-class CDlgDAOutputParameters : public CDialogEx
+class DlgDAOutputParameters : public CDialogEx
 {
-	DECLARE_DYNAMIC(CDlgDAOutputParameters)
+	DECLARE_DYNAMIC(DlgDAOutputParameters)
 
 public:
-	CDlgDAOutputParameters(CWnd* pParent = nullptr); // standard constructor
-	~CDlgDAOutputParameters() override;
+	DlgDAOutputParameters(CWnd* pParent = nullptr); // standard constructor
+	~DlgDAOutputParameters() override;
 
 	// Dialog Data
 	enum { IDD = IDD_DA_OUTPUTPARMS };

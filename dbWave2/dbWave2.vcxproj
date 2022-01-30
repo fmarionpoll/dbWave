@@ -807,7 +807,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Adinterv.cpp">
+    <ClCompile Include="DlgADIntervals.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1377,7 +1377,7 @@
     <ClInclude Include="AcqWaveFormat.h" />
     <ClInclude Include="DlgADExperiment.h" />
     <ClInclude Include="DlgADInputParms.h" />
-    <ClInclude Include="Adinterv.h" />
+    <ClInclude Include="DlgADIntervals.h" />
     <ClInclude Include="Browsefi.h" />
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CSpkListTabCtrl.h" />

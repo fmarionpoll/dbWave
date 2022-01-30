@@ -12,7 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-CDlgChartProps::CDlgChartProps(CWnd* pParent /*=NULL*/)
+DlgChartProps::DlgChartProps(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent), m_pscope(nullptr), m_crScopeFill(0)
 {
 	m_xyticks = 0;
@@ -22,7 +22,7 @@ CDlgChartProps::CDlgChartProps(CWnd* pParent /*=NULL*/)
 	m_crScopeGrid = 0;
 }
 
-void CDlgChartProps::DoDataExchange(CDataExchange* pDX)
+void DlgChartProps::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT4, m_xyticks);
@@ -31,7 +31,7 @@ void CDlgChartProps::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT6, m_ycells);
 }
 
-BEGIN_MESSAGE_MAP(CDlgChartProps, CDialog)
+BEGIN_MESSAGE_MAP(DlgChartProps, CDialog)
 	ON_EN_CHANGE(IDC_EDIT3, OnEnChangeXCells)
 	ON_EN_CHANGE(IDC_EDIT4, OnEnChangeXYTicks)
 	ON_EN_CHANGE(IDC_EDIT5, OnEnChangeXYTicksLine)
@@ -40,7 +40,7 @@ BEGIN_MESSAGE_MAP(CDlgChartProps, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON2, OnGridColor)
 END_MESSAGE_MAP()
 
-BOOL CDlgChartProps::OnInitDialog()
+BOOL DlgChartProps::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
@@ -65,7 +65,7 @@ BOOL CDlgChartProps::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgChartProps::OnEnChangeXCells()
+void DlgChartProps::OnEnChangeXCells()
 {
 	if (mm_xcells.m_bEntryDone)
 	{
@@ -106,7 +106,7 @@ void CDlgChartProps::OnEnChangeXCells()
 	}
 }
 
-void CDlgChartProps::OnEnChangeXYTicks()
+void DlgChartProps::OnEnChangeXYTicks()
 {
 	if (mm_xyticks.m_bEntryDone)
 	{
@@ -148,7 +148,7 @@ void CDlgChartProps::OnEnChangeXYTicks()
 	}
 }
 
-void CDlgChartProps::OnEnChangeXYTicksLine()
+void DlgChartProps::OnEnChangeXYTicksLine()
 {
 	if (mm_xytickline.m_bEntryDone)
 	{
@@ -190,7 +190,7 @@ void CDlgChartProps::OnEnChangeXYTicksLine()
 	}
 }
 
-void CDlgChartProps::OnEnChangeYCells()
+void DlgChartProps::OnEnChangeYCells()
 {
 	if (mm_ycells.m_bEntryDone)
 	{
@@ -231,7 +231,7 @@ void CDlgChartProps::OnEnChangeYCells()
 	}
 }
 
-void CDlgChartProps::OnBackgroundColor()
+void DlgChartProps::OnBackgroundColor()
 {
 	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())
@@ -240,7 +240,7 @@ void CDlgChartProps::OnBackgroundColor()
 	m_pscope->Invalidate();
 }
 
-void CDlgChartProps::OnGridColor()
+void DlgChartProps::OnGridColor()
 {
 	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())
