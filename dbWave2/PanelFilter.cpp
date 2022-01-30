@@ -350,7 +350,7 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 		{
 			const auto i_id = pdesc->liArray.GetAt(i);
 			// add string only if found into p_maintable_set...
-			str.Format(_T("%hs=%li"), cscolhead, i_id);
+			str.Format(_T("%s=%li"), (LPCTSTR)cscolhead, i_id);
 			const auto flag = p_set->FindFirst(str);
 			if (flag != 0)
 			{
@@ -395,7 +395,7 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 				plinked_set->GetFieldValue(1, var_value1);
 				const auto i_id = var_value1.lVal;
 				// add string only if found into p_maintable_set...
-				cs.Format(_T("%hs=%li"), pdesc->csColName, i_id);
+				cs.Format(_T("%s=%li"), (LPCTSTR)pdesc->csColName, i_id);
 				const auto flag = p_set->FindFirst(cs);
 				if (flag != 0)
 				{
@@ -432,7 +432,7 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 		{
 			auto o_time = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
 			cs = o_time.Format(_T("%m/%d/%y")); // filter needs to be constructed as month-day-year
-			str.Format(_T("%hs=#%hs#"), cscolhead, cs);
+			str.Format(_T("%s=#%s#"), (LPCTSTR)cscolhead, (LPCTSTR)cs);
 			const auto flag = p_maintable_set->FindFirst(str);
 			if (flag != 0) // add string only if found into p_maintable_set...
 			{

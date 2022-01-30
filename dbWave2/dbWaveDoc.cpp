@@ -610,7 +610,7 @@ void CdbWaveDoc::ExportDataAsciiComments(CSharedFile* p_shared_file)
 		if (dlg.CheckCancelButton())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
-		cscomment.Format(_T("Processing file [%i / %i] %hs"), ifile + 1, n_files, m_currentDatafileName);
+		cscomment.Format(_T("Processing file [%i / %i] %s"), ifile + 1, n_files, (LPCTSTR)m_currentDatafileName);
 		dlg.SetStatus(cscomment);
 
 		cs_dummy.Empty();
@@ -891,7 +891,7 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 				break;
 		// get source name
 		const auto& source_file = old_names_array.GetAt(ifile);
-		cs_comment.Format(_T("Processing file [%i / %i] %hs"), ifile + 1, nfiles, source_file);
+		cs_comment.Format(_T("Processing file [%i / %i] %s"), ifile + 1, nfiles, (LPCTSTR)source_file);
 		dlg.SetStatus(cs_comment);
 
 		// get destination directory
@@ -1216,7 +1216,7 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 		int index = index2DArray(irec, nColumns, bHeader);
 		auto cs_filename = CString(fileList[index]);
 		CString cscomment;
-		cscomment.Format(_T("Import file [%i / %i] %hs"), irec + 1, nfilesok, cs_filename);
+		cscomment.Format(_T("Import file [%i / %i] %s"), irec + 1, nfilesok, (LPCTSTR)cs_filename);
 		dlg.SetStatus(cscomment);
 		dlg.StepIt();
 
@@ -1702,26 +1702,26 @@ void CdbWaveDoc::ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list
 	// number of spikes
 	if (options_viewspikes->btotalspikes)
 	{
-		cs_dummy.Format(_T("%hs%f"), cs_tab, p_spike_list->GetdetectThresholdmV());
+		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->GetdetectThresholdmV());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
-		cs_dummy.Format(_T("%hs%i"), cs_tab, p_spike_list->GetTotalSpikes());
+		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->GetTotalSpikes());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		cs_dummy.Format(_T("%hs%i"), cs_tab, p_spike_list->GetNbclasses());
+		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->GetNbclasses());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		const auto tduration = m_pSpk->GetAcqDuration();
-		cs_dummy.Format(_T("%hs%f"), cs_tab, tduration);
+		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, tduration);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 
 	// spike list iColumn, spike class
 	if (options_viewspikes->spikeclassoption != 0)
-		cs_dummy.Format(_T("%hs%i %s%hs %hs%i"), cs_tab, options_viewspikes->ichan,
-		                cs_tab, p_spike_list->GetComment(),
-		                cs_tab, kclass);
+		cs_dummy.Format(_T("%s%i %s%s %s%i"), (LPCTSTR)cs_tab, options_viewspikes->ichan,
+			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetComment(),
+			(LPCTSTR)cs_tab, kclass);
 	else
-		cs_dummy.Format(_T("%hs%i %hs%hs \t(all)"), cs_tab, options_viewspikes->ichan,
-		                cs_tab, p_spike_list->GetComment());
+		cs_dummy.Format(_T("%s%i %s%s \t(all)"), (LPCTSTR)cs_tab, options_viewspikes->ichan,
+			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetComment());
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 
@@ -1742,7 +1742,7 @@ CString CdbWaveDoc::ExportDatabaseData(const int ioption)
 	auto filename = desc.csVal;
 	m_pDB->GetRecordItemValue(CH_FILESPK, &desc);
 	filename = filename + _T('\\') + desc.csVal;
-	cs_file_comment.Format(_T("%i%s%hs"), m_pDB->m_mainTableSet.m_ID, separator, filename);
+	cs_file_comment.Format(_T("%i%s%s"), m_pDB->m_mainTableSet.m_ID, (LPCTSTR)separator, (LPCTSTR)filename);
 
 	// source data file items
 	if (options_viewspikes->bacqdate) // source data time and date
@@ -2176,7 +2176,7 @@ int CdbWaveDoc::checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf,
 			continue;
 
 		CString cscomment;
-		cscomment.Format(_T("Checking file type and status on disk [%i / %i] %hs"), nfiles - irec, nfiles, cs_filename);
+		cscomment.Format(_T("Checking file type and status on disk [%i / %i] %s"), nfiles - irec, nfiles, (LPCTSTR)cs_filename);
 		dlg.SetStatus(cscomment);
 		dlg.StepIt();
 
@@ -2212,7 +2212,7 @@ int CdbWaveDoc::checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf,
 CSharedFile* CdbWaveDoc::fileDiscardedMessage(CSharedFile* pSF, CString cs_filename, int irec)
 {
 	CString cs_dummy;
-	cs_dummy.Format(_T("file discarded=%i:\t%hs\t error reading file \r\n"), irec, cs_filename);
+	cs_dummy.Format(_T("file discarded=%i:\t%s\t error reading file \r\n"), irec, (LPCTSTR)cs_filename);
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	return pSF;
 }
@@ -2240,7 +2240,7 @@ void CdbWaveDoc::DeleteErasedFiles()
 			for (auto j = 0; j < 10; j++)
 			{
 				CString cs;
-				prompt.Format(_T("%hs%i"), file_new_name, j);
+				prompt.Format(_T("%s%i"), (LPCTSTR)file_new_name, j);
 				flag = CFile::GetStatus(prompt, status);
 				if (!flag)
 					break;
@@ -2389,7 +2389,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 			all_names.SetAt(kfile, m_currentDatafileName);
 
 			// process file
-			cscomment.Format(_T("Processing file [%i / %i] %hs"), kfile, nfiles, m_currentDatafileName);
+			cscomment.Format(_T("Processing file [%i / %i] %s"), kfile, nfiles, (LPCTSTR)m_currentDatafileName);
 			dlg.SetStatus(cscomment);
 			if (dlg.CheckCancelButton())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
@@ -2466,7 +2466,7 @@ void CdbWaveDoc::RemoveDuplicateFiles()
 		sf.Write(cs_dummy, cs_dummy.GetLength());
 		for (auto i = 0; i < nduplicates; i++)
 		{
-			cs_dummy.Format(_T("%s\t%hs\n"), deleted_names.GetAt(i), original_names.GetAt(i));
+			cs_dummy.Format(_T("%s\t%s\n"), (LPCTSTR)deleted_names.GetAt(i), (LPCTSTR)original_names.GetAt(i));
 			sf.Write(cs_dummy, cs_dummy.GetLength());
 		}
 		const auto dw_len = static_cast<DWORD>(sf.GetLength());
@@ -2569,7 +2569,7 @@ void CdbWaveDoc::RemoveMissingFiles()
 					break;
 			// load file names
 			m_pDB->GetFilenamesFromCurrentRecord();
-			cscomment.Format(_T("Processing file [%i / %i] %hs"), ifile, nfiles, m_currentDatafileName);
+			cscomment.Format(_T("Processing file [%i / %i] %s"), ifile, nfiles, (LPCTSTR)m_currentDatafileName);
 			dlg.SetStatus(cscomment);
 			// check if files are present
 			const auto b_dat_file = CFile::GetStatus(m_currentDatafileName, status); // check if data file is present
@@ -2635,7 +2635,7 @@ void CdbWaveDoc::RemoveFalseSpkFiles()
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 			m_pDB->GetFilenamesFromCurrentRecord();
-			cscomment.Format(_T("Processing file [%i / %i] %hs"), ifile, nfiles, m_currentDatafileName);
+			cscomment.Format(_T("Processing file [%i / %i] %s"), ifile, nfiles, (LPCTSTR)m_currentDatafileName);
 			dlg.SetStatus(cscomment);
 
 			// check if spike file is present

@@ -38,9 +38,9 @@ void DisplayDaoException(CDaoException* e, int iID = 0)
 	if (e->m_pErrorInfo != nullptr)
 	{
 		str_msg.Format(
-			_T("%hs   (%d) at line ID %i\n\n")
+			_T("%s   (%d) at line ID %i\n\n")
 			_T("Would you like to see help?"),
-			e->m_pErrorInfo->m_strDescription,
+			(LPCTSTR)e->m_pErrorInfo->m_strDescription,
 			e->m_pErrorInfo->m_lErrorCode, iID);
 
 		if (AfxMessageBox(str_msg, MB_YESNO) == IDYES)

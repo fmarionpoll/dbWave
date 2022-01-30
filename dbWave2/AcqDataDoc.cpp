@@ -237,11 +237,11 @@ CString AcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 				cs_out += sep + p_chan->am_csComment;
 			if (pVD->bacqchsetting)
 			{
-				cs.Format(_T("\theadstage=%hs\tgain=%.0f\tfilter= %hs\t%i Hz"),
-				          p_chan->am_csheadstage,
-				          p_chan->am_gaintotal,
-				          p_chan->am_csInputpos,
-				          p_chan->am_lowpass);
+				cs.Format(_T("\theadstage=%s\tgain=%.0f\tfilter= %s\t%i Hz"),
+						(LPCTSTR)p_chan->am_csheadstage,
+				        p_chan->am_gaintotal,
+						(LPCTSTR)p_chan->am_csInputpos,
+				        p_chan->am_lowpass);
 				cs_out += cs;
 			}
 		}

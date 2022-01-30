@@ -1401,8 +1401,8 @@ CString CViewData::PrintBars(CDC* p_dc, CRect* prect)
 				const WORD channb = m_ChartDataWnd.GetChanlistItem(ichan)->GetSourceChan();
 				const auto pchanArray = m_pdatDoc->GetpWavechanArray();
 				const auto pChan = pchanArray->Get_p_channel(channb);
-				cs.Format(_T("headstage=%hs gain=%.0f  filter= %hs - %i Hz"), pChan->am_csheadstage,
-				          pChan->am_gaintotal, pChan->am_csInputpos, pChan->am_lowpass);
+				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)pChan->am_csheadstage,
+				          pChan->am_gaintotal, (LPCTSTR)pChan->am_csInputpos, pChan->am_lowpass);
 				str_comment += cs;
 				str_comment += rc;
 			}

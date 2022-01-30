@@ -316,7 +316,7 @@ void CSpikeDetectDlg::SetTabComment(int i, CString& cs)
 	TCITEM tc_item;
 	tc_item.mask = TCIF_TEXT;
 	CString cs1;
-	cs1.Format(_T("#%i %hs"), m_iDetectParmsDlg, cs);
+	cs1.Format(_T("#%i %s"), m_iDetectParmsDlg, (LPCTSTR)cs);
 	//  Set the new text for the item.
 	tc_item.pszText = cs1.GetBuffer(2);
 	m_cParameterTabCtrl.SetItem(i, &tc_item);

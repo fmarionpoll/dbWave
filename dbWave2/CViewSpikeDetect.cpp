@@ -2180,8 +2180,8 @@ CString CViewSpikeDetection::PrintConvertFileIndex(const long l_first, const lon
 	// separate fractional part
 	const auto x2 = l_last / (m_samplingRate * x_scale_factor);
 	const auto fraction2 = static_cast<int>((x2 - static_cast<int>(x2)) * static_cast<float>(1000.));
-	cs_comment.Format(_T("time = %i.%03.3i - %i.%03.3i %hs"), static_cast<int>(x1), fraction1, static_cast<int>(x2),
-	                  fraction2, cs_unit);
+	cs_comment.Format(_T("time = %i.%03.3i - %i.%03.3i %s"), static_cast<int>(x1), fraction1, static_cast<int>(x2),
+	                  fraction2, (LPCTSTR)cs_unit);
 	return cs_comment;
 }
 
@@ -2298,7 +2298,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, 
 		ihorz_bar = static_cast<int>((static_cast<float>(k) * x_scale_factor) / xtperpixel);
 		// compute how much pixels it makes
 		// print out the scale and units
-		cs.Format(_T("horz bar = %i %hs"), k, cs_unit);
+		cs.Format(_T("horz bar = %i %s"), k, (LPCTSTR)cs_unit);
 		str_comment += cs + rc;
 		// draw horizontal line
 		ihorz_bar = MulDiv(ihorz_bar, rect->Width(), pDataChartWnd->GetRectWidth());
@@ -2343,7 +2343,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, 
 				const auto z = static_cast<float>(ivert_bar) * pDataChartWnd->GetChanlistVoltsperPixel(ichan);
 				const auto x = z / y_scale_factor;
 				const auto j = pDataChartWnd->NiceUnit(x);
-				cs.Format(_T("vert bar = %i %hs "), j, cs_unit); // store value into comment
+				cs.Format(_T("vert bar = %i %s "), j, (LPCTSTR)cs_unit); // store value into comment
 				str_comment += cs;
 			}
 			// print chan comment
@@ -2359,9 +2359,9 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, 
 				const WORD channb = pchan->GetSourceChan();
 				const auto pchan_array = GetDocument()->m_pDat->GetpWavechanArray();
 				const auto p_chan = pchan_array->Get_p_channel(channb);
-				cs.Format(_T("headstage=%hs  g=%li LP=%i  IN+=%hs  IN-=%hs"),
-				          p_chan->am_csheadstage, static_cast<long>(p_chan->am_gaintotal), p_chan->am_lowpass,
-				          p_chan->am_csInputpos, p_chan->am_csInputneg);
+				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"),
+				    (LPCTSTR)p_chan->am_csheadstage, static_cast<long>(p_chan->am_gaintotal), p_chan->am_lowpass,
+					(LPCTSTR)p_chan->am_csInputpos, (LPCTSTR)p_chan->am_csInputneg);
 				str_comment += cs;
 				str_comment += rc;
 			}
@@ -3332,7 +3332,7 @@ void CViewSpikeDetection::UpdateTabs()
 	{
 		CString cs;
 		const auto pspklist = m_pSpkDoc->SetSpkList_AsCurrent(i);
-		cs.Format(_T("#%i %hs"), i, pspklist->GetComment());
+		cs.Format(_T("#%i %s"), i, (LPCTSTR)pspklist->GetComment());
 		if (!b_replace)
 			m_tabCtrl.InsertItem(i, cs);
 		else

@@ -259,8 +259,8 @@ int CCyberAmp::C300_FlushCommandsAndAwaitResponse()
 	{
 		CString csError;
 		csError.Format(
-			_T("Error returned by CyberAmp= %i\n when issuing command:\n%hs\noutput port: %i\noutput speed: %d\n"),
-			m_C300nLastError, sz_text, m_C300nOutputPort, m_C300nOutputSpeed
+			_T("Error returned by CyberAmp= %i\n when issuing command:\n%s\noutput port: %i\noutput speed: %d\n"),
+			m_C300nLastError, (LPCTSTR)sz_text, m_C300nOutputPort, m_C300nOutputSpeed
 		);
 		AfxMessageBox(csError, MB_OK);
 	}

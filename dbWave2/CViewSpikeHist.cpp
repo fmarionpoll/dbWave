@@ -2215,7 +2215,7 @@ void CViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 			CString cs;
 			if (p_spike_list->GetdetectWhat() != DETECT_SPIKES)
 				continue;
-			cs.Format(_T("#%i %hs"), i, p_spike_list->GetComment());
+			cs.Format(_T("#%i %s"), i, (LPCTSTR)p_spike_list->GetComment());
 			m_tabCtrl.InsertItem(j, cs);
 			j++;
 		}

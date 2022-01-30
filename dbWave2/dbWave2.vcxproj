@@ -794,11 +794,6 @@
     <ClCompile Include="USBPxxS1.cpp" />
     <ClCompile Include="CViewDao.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
-    <ClCompile Include="AcqDataDoc.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="AcqWaveChan.cpp" />
     <ClCompile Include="AcqWaveChanArray.cpp" />
     <ClCompile Include="AcqWaveFormat.cpp" />
