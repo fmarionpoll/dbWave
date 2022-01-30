@@ -25,7 +25,7 @@ protected:
 	// Form Data
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 
-	CdbMainTable* m_ptableSet{nullptr};
+	CdbMainTable* m_ptableSet{ nullptr };
 	CString m_boardName;
 	DataTranslation_AD m_Acq32_AD;
 	DataTranslation_DA m_Acq32_DA;
@@ -33,25 +33,32 @@ protected:
 	CRulerBar m_AD_xRulerBar;
 	CRulerBar m_AD_yRulerBar;
 	CComboBox m_ADcardCombo;
-	CMFCButton m_btnStartStop;
-	BOOL m_bADwritetofile{false};
-	int m_bStartOutPutMode{0};
-	bool m_DA_present{false};
-	bool m_AD_present{false};
+	CButton m_GainButton;
+	CButton m_BiasButton;
+	CButton m_Button_StartStop_DA;
+	CButton m_Button_SamplingMode;
+	CButton m_Button_OutputChannels;
+	CComboBox m_ComboStartOutput;
+	CMFCButton m_btnStartStop_AD;
+
+	BOOL m_bADwritetofile{ false };
+	int m_bStartOutPutMode{ 0 };
+	bool m_DA_present{ false };
+	bool m_AD_present{ false };
 
 protected:
-	ChartDataAD m_chartDataAD; 
-	int m_cursorstate{0};	
-	float m_sweepduration{2};
-	CEditCtrl mm_yupper;	
+	ChartDataAD m_chartDataAD;
+	int m_cursorstate{ 0 };
+	float m_sweepduration{ 2 };
+	CEditCtrl mm_yupper; 	
 	CEditCtrl mm_ylower;
-	CStretchControl m_stretch; 
-	HICON m_hBias{nullptr};
-	HICON m_hZoom{nullptr};
-	float m_yscaleFactor{1}; 
-	int m_VBarMode{0};
-	CScrollBar m_scrolly;
-	COLORREF m_backgroundColor{ GetSysColor(COLOR_BTNFACE) };
+	CStretchControl m_stretch;
+	HICON m_hBias{ nullptr };
+	HICON m_hZoom{ nullptr };
+	float m_yscaleFactor{ 1 }; 
+	int m_VBarMode{ 0 }; 
+	CScrollBar m_scrolly; 
+	COLORREF m_backgroundColor = GetSysColor(COLOR_BTNFACE);
 	CBrush* m_pBackgroundBrush = new CBrush(m_backgroundColor);
 
 	void OnGainScroll(UINT nSBCode, UINT nPos);
@@ -66,32 +73,32 @@ protected:
 
 	// data	parameters
 protected:
-	BOOL m_bFoundDTOPenLayerDLL{false};
-	BOOL m_bhidesubsequent{false};
+	BOOL m_bFoundDTOPenLayerDLL{ false };
+	BOOL m_bhidesubsequent{ false };
 
 	AcqDataDoc m_inputDataFile; 
-	//AcqDataDoc m_outputDataFile;
+	//AcqDataDoc m_outputDataFile;	
 	CStringArray m_csNameArray;
-	BOOL m_bFileOpen{false}; 
+	BOOL m_bFileOpen{ false };
 	CString m_szFileName; 
 
-	BOOL m_bAskErase{false};
-	BOOL m_bchanged{false}; 	
-	BOOL m_bSimultaneousStart{false}; 
+	BOOL m_bAskErase{ false }; 
+	BOOL m_bchanged{ false }; 
+	BOOL m_bSimultaneousStart{ false }; 
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pOptions_AD{nullptr};
-	OPTIONS_OUTPUTDATA* m_pOptions_DA{nullptr};
-	BOOL m_bsimultaneousStartDA{false};
+	OPTIONS_ACQDATA* m_pOptions_AD{ nullptr };  
+	OPTIONS_OUTPUTDATA* m_pOptions_DA{ nullptr }; 
+	BOOL m_bsimultaneousStartDA{ false };
 
 	// sweep
-	long m_chsweeplength{0}; 
-	long m_sweeplength{1000}; 
-	int m_chsweep1{0}; 
-	int m_chsweep2{0};
-	int m_chsweepRefresh{0};
-	int m_bytesweepRefresh{0};
-	float m_fclockrate{10000.f};
+	long m_chsweeplength{ 0 }; 
+	long m_sweeplength{ 1000 }; 
+	int m_chsweep1{ 0 }; 
+	int m_chsweep2{ 0 };
+	int m_chsweepRefresh{ 0 };
+	int m_bytesweepRefresh{ 0 };
+	float m_fclockrate{ 10000.f }; 
 
 	// functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
@@ -118,6 +125,7 @@ protected:
 	void ChainDialog(WORD iID);
 
 	void ADC_Transfer(short* pDTbuf0);
+	void ADC_TransferToChart();
 	void ADC_TransferToFile();
 	void InitializeAmplifiers();
 
@@ -171,4 +179,7 @@ public:
 	afx_msg void OnBnClickedCardfeatures();
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void OnBnClickedStartstop2();
+
+	CButton m_Button_WriteToDisk;
+	CButton m_Button_Oscilloscope;
 };

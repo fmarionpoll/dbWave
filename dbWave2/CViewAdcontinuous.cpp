@@ -41,14 +41,22 @@ CADContView::CADContView()
 CADContView::~CADContView()
 = default;
 
-void CADContView::DoDataExchange(CDataExchange* pDX)
+void CADContView::DoDataExchange(CDataExchange * pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_AD);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DA);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
-	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop);
+	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop_AD);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
+	DDX_Control(pDX, IDC_GAIN_button, m_GainButton);
+	DDX_Control(pDX, IDC_BIAS_button, m_BiasButton);
+	DDX_Control(pDX, IDC_COMBOSTARTOUTPUT, m_ComboStartOutput);
+	DDX_Control(pDX, IDC_STARTSTOP2, m_Button_StartStop_DA);
+	DDX_Control(pDX, IDC_ADPARAMETERS, m_Button_SamplingMode);
+	DDX_Control(pDX, IDC_DAPARAMETERS2, m_Button_OutputChannels.);
+	DDX_Control(pDX, IDC_WRITETODISK, m_Button_WriteToDisk);
+	DDX_Control(pDX, IDC_OSCILLOSCOPE, m_Button_Oscilloscope);
 }
 
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
@@ -95,7 +103,7 @@ void CADContView::OnDestroy()
 	delete m_pBackgroundBrush;
 }
 
-HBRUSH CADContView::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+HBRUSH CADContView::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr;
 	switch (nCtlColor)
@@ -181,15 +189,15 @@ BOOL CADContView::SelectDTOpenLayersBoard(const CString cardName)
 
 	// display additional interface elements
 	int show = (flag_AD ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_ADPARAMETERS)->ShowWindow(show);
-	GetDlgItem(IDC_ADPARAMETERS2)->ShowWindow(show);
-	GetDlgItem(IDC_COMBOSTARTOUTPUT)->ShowWindow(show);
+	m_Button_SamplingMode.ShowWindow(show);
+	m_Button_OutputChannels.ShowWindow(show);
+	m_ComboStartOutput.ShowWindow(show);
 
 	show = (flag_DA ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_DAPARAMETERS2)->ShowWindow(show);
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(show);
-	GetDlgItem(IDC_COMBOSTARTOUTPUT)->ShowWindow(show);
-	GetDlgItem(IDC_STARTSTOP2)->ShowWindow(show);
+	m_ComboStartOutput.ShowWindow(show);
+	m_Button_StartStop_DA.ShowWindow(show);
 	if (show == SW_SHOW)
 		SetCombostartoutput(m_pOptions_DA->bAllowDA);
 
@@ -385,7 +393,7 @@ BOOL CADContView::StartAcquisition()
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0; // no samples yet
 	pWFormat->chrate = pWFormat->chrate / float(m_pOptions_AD->iundersample);
-	m_fclockrate = pWFormat->chrate * float (pWFormat->scan_count);
+	m_fclockrate = pWFormat->chrate * float(pWFormat->scan_count);
 	pWFormat->acqtime = CTime::GetCurrentTime();
 
 	// data format
@@ -471,7 +479,7 @@ ECODE CADContView::StartSimultaneousList()
 	return ecode;
 }
 
-void CADContView::DisplayolDaErrorMessage(const CHAR* errstr) const
+void CADContView::DisplayolDaErrorMessage(const CHAR * errstr) const
 {
 	CString csError;
 	const CStringA cstringa(errstr);
@@ -485,12 +493,12 @@ void CADContView::AssertValid() const
 	CFormView::AssertValid();
 }
 
-void CADContView::Dump(CDumpContext& dc) const
+void CADContView::Dump(CDumpContext & dc) const
 {
 	CFormView::Dump(dc);
 }
 
-CdbWaveDoc* CADContView::GetDocument() 
+CdbWaveDoc* CADContView::GetDocument()
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
 	return dynamic_cast<CdbWaveDoc*>(m_pDocument);
@@ -526,14 +534,14 @@ void CADContView::OnInitialUpdate()
 	// bitmap buttons: load icons & set buttons
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
-	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hBias)));
-	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
+	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hBias)));
+	m_GainButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
 
 	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
-	m_btnStartStop.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
-	m_btnStartStop.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
+	m_btnStartStop_AD.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
+	m_btnStartStop_AD.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
 	CMFCButton::EnableWindowsTheming(false);
-	m_btnStartStop.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
+	m_btnStartStop_AD.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
 
 	// scrollbar
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
@@ -545,7 +553,7 @@ void CADContView::OnInitialUpdate()
 	m_bFoundDTOPenLayerDLL = FALSE;
 	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
 	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
-	dynamic_cast<CComboBox*>(GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(m_bStartOutPutMode);
+	m_ComboStartOutput.SetCurSel(m_bStartOutPutMode);
 
 	// open document and remove database filters
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -591,13 +599,13 @@ void CADContView::OnInitialUpdate()
 	}
 	else
 	{
-		GetDlgItem(IDC_STARTSTOP)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_ADPARAMETERS)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_ADPARAMETERS2)->ShowWindow(SW_HIDE);
+		m_btnStartStop_AD.ShowWindow(SW_HIDE);
+		m_Button_SamplingMode.ShowWindow(SW_HIDE);
+		m_Button_OutputChannels.ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_ADGROUP)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_DAGROUP)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_COMBOSTARTOUTPUT)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_STARTSTOP2)->ShowWindow(SW_HIDE);
+		m_ComboStartOutput.ShowWindow(SW_HIDE);
+		m_Button_StartStop_DA.ShowWindow(SW_HIDE);
 	}
 
 	UpdateChanLegends(0);
@@ -607,7 +615,7 @@ void CADContView::OnInitialUpdate()
 	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
 
-void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CADContView::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 {
 	// update sent from within this class
 	if (pSender == this)
@@ -617,7 +625,7 @@ void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CADContView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void CADContView::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
 {
 	const auto pmF = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 	// activate view
@@ -671,7 +679,7 @@ LRESULT CADContView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	}
 	else {
-		if (lowp == 0) 
+		if (lowp == 0)
 			MessageBeep(MB_ICONEXCLAMATION);
 	}
 	return 0L;
@@ -679,7 +687,7 @@ LRESULT CADContView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void CADContView::OnBnClickedStartstop()
 {
-	if (m_btnStartStop.IsChecked())
+	if (m_btnStartStop_AD.IsChecked())
 	{
 		if (StartAcquisition())
 		{
@@ -711,20 +719,20 @@ void CADContView::UpdateStartStop(BOOL bStart)
 	//bool isrunning = m_Acq32_AD.IsInProgress();
 	if (bStart)
 	{
-		m_btnStartStop.SetWindowText(_T("STOP"));
+		m_btnStartStop_AD.SetWindowText(_T("STOP"));
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_SHOW);
 	}
 	else
 	{
-		m_btnStartStop.SetWindowText(_T("START"));
+		m_btnStartStop_AD.SetWindowText(_T("START"));
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 		if (m_pOptions_AD->baudiblesound)
 			Beep(500, 400);
 		ASSERT(m_Acq32_AD.IsInProgress() == FALSE);
 	}
-	m_btnStartStop.SetCheck(bStart);
+	m_btnStartStop_AD.SetCheck(bStart);
 	m_chartDataAD.Invalidate();
 }
 
@@ -918,19 +926,20 @@ void CADContView::OnBufferDone_ADC()
 
 	ADC_Transfer(pDTbuf);
 	ADC_TransferToFile();
+	ADC_TransferToChart();
 }
 
 void CADContView::ADC_Transfer(short* pDTbuf0)
 {
 	// get pointer to file waveFormat
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
-	short* pdataBuf = m_inputDataFile.GetpRawDataBUF(); // options_acqdataataDoc buffer
+	short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 
-	m_chsweep1 = m_chsweep2 + 1; // update data abcissa on the screen 
-	if (m_chsweep1 >= m_chsweeplength) // if data are out of the screen, wrap
+	m_chsweep1 = m_chsweep2 + 1;							// update data abcissa on the screen 
+	if (m_chsweep1 >= m_chsweeplength)						// if data are out of the screen, wrap
 		m_chsweep1 = 0;
 	m_chsweep2 = m_chsweep1 + m_Acq32_AD.Getchbuflen() - 1; // abcissa of the last data point
-	m_chsweepRefresh = m_chsweep2 - m_chsweep1 + 1; // number of data points to refresh on the screen
+	m_chsweepRefresh = m_chsweep2 - m_chsweep1 + 1;			// number of data points to refresh on the screen
 	pdataBuf += (m_chsweep1 * pWFormat->scan_count);
 
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
@@ -976,6 +985,22 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
+void CADContView::ADC_TransferToChart()
+{
+	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat(); // pointer to data descriptor
+
+	// then: display options_acqdataataDoc buffer
+	if (pWFormat->bOnlineDisplay) // display data if requested
+	{
+		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
+		m_chartDataAD.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
+	}
+	const float duration = float(pWFormat->sample_count) / m_fclockrate;
+	CString cs;
+	cs.Format(_T("%.3lf"), duration); // update total time on the screen
+	SetDlgItemText(IDC_STATIC1, cs);// update time elapsed
+}
+
 void CADContView::ADC_TransferToFile()
 {
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat(); // pointer to data descriptor
@@ -1015,13 +1040,6 @@ void CADContView::ADC_TransferToFile()
 			pWFormat->sample_count = 0;
 	}
 	m_Acq32_AD.ReleaseLastBufferToQueue(); // tell ADdriver that data buffer is free
-
-	// then: display options_acqdataataDoc buffer
-	if (pWFormat->bOnlineDisplay) // display data if requested
-		m_chartDataAD.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
-	CString cs;
-	cs.Format(_T("%.3lf"), duration); // update total time on the screen
-	SetDlgItemText(IDC_STATIC1, cs); // update time elapsed
 }
 
 void CADContView::OnBufferDone_DAC()
@@ -1064,7 +1082,7 @@ BOOL CADContView::InitCyberAmp()
 
 			m_cyber.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
 			m_cyber.SetGain(
-				pchan->am_amplifierchan, 
+				pchan->am_amplifierchan,
 				int(pchan->am_gaintotal / (double(pchan->am_gainheadstage) * double(pchan->am_gainAD))));
 			m_cyber.SetLPFilter(pchan->am_amplifierchan, int(pchan->am_lowpass));
 			int errorcode = m_cyber.C300_FlushCommandsAndAwaitResponse();
@@ -1075,20 +1093,20 @@ BOOL CADContView::InitCyberAmp()
 
 void CADContView::OnBnClickedGainbutton()
 {
-	dynamic_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(0);
-	dynamic_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(1);
+	m_BiasButton.SetState(0);
+	m_GainButton.SetState(1);
 	SetVBarMode(BAR_GAIN);
 }
 
 void CADContView::OnBnClickedBiasbutton()
 {
 	// set bias down and set gain up CButton	
-	dynamic_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(1);
-	static_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(0);
+	m_BiasButton.SetState(1);
+	m_GainButton.SetState(0);
 	SetVBarMode(BAR_BIAS);
 }
 
-void CADContView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CADContView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
 {
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
@@ -1128,29 +1146,29 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	// .................scroll to the start
+		// .................scroll to the start
 	case SB_LEFT: l_size = YEXTENT_MIN;
 		break;
-	// .................scroll one line left
+		// .................scroll one line left
 	case SB_LINELEFT: l_size -= l_size / 10 + 1;
 		break;
-	// .................scroll one line right
+		// .................scroll one line right
 	case SB_LINERIGHT: l_size += l_size / 10 + 1;
 		break;
-	// .................scroll one page left
+		// .................scroll one page left
 	case SB_PAGELEFT: l_size -= l_size / 2 + 1;
 		break;
-	// .................scroll one page right
+		// .................scroll one page right
 	case SB_PAGERIGHT: l_size += l_size + 1;
 		break;
-	// .................scroll to end right
+		// .................scroll to end right
 	case SB_RIGHT: l_size = YEXTENT_MAX;
 		break;
-	// .................scroll to pos = nPos or drag scroll box -- pos = nPos
+		// .................scroll to pos = nPos or drag scroll box -- pos = nPos
 	case SB_THUMBPOSITION:
 	case SB_THUMBTRACK: l_size = MulDiv(nPos - 50, YEXTENT_MAX, 100);
 		break;
-	// .................NOP: set position only
+		// .................NOP: set position only
 	default: break;
 	}
 
@@ -1268,18 +1286,18 @@ void CADContView::UpdateChanLegends(int chan)
 
 void CADContView::OnCbnSelchangeCombostartoutput()
 {
-	m_bStartOutPutMode = dynamic_cast<CComboBox*>(GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
+	m_bStartOutPutMode = m_ComboStartOutput.GetCurSel();
 	m_pOptions_DA->bAllowDA = m_bStartOutPutMode;
-	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(m_bStartOutPutMode != 0);
+	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
 void CADContView::SetCombostartoutput(int option)
 {
-	dynamic_cast<CComboBox*>(GetDlgItem(IDC_COMBOSTARTOUTPUT))->SetCurSel(option);
-	option = dynamic_cast<CComboBox*>(GetDlgItem(IDC_COMBOSTARTOUTPUT))->GetCurSel();
+	m_ComboStartOutput.SetCurSel(option);
+	option = m_ComboStartOutput.GetCurSel();
 	m_bStartOutPutMode = option;
 	m_pOptions_DA->bAllowDA = option;
-	GetDlgItem(IDC_STARTSTOP2)->EnableWindow(m_bStartOutPutMode != 0);
+	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
 void CADContView::OnBnClickedDaparameters2()
@@ -1299,7 +1317,7 @@ void CADContView::OnBnClickedDaparameters2()
 		for (int i = 0; i < 10; i++)
 			m_pOptions_DA->outputparms_array[i] = dlg.outputparms_array[i];
 		m_Acq32_DA.SetChannelList();
-		GetDlgItem(IDC_STARTSTOP2)->EnableWindow(m_Acq32_DA.GetDigitalChannel() > 0);
+		m_Button_StartStop_DA.EnableWindow(m_Acq32_DA.GetDigitalChannel() > 0);
 	}
 }
 
@@ -1320,9 +1338,9 @@ void CADContView::OnBnClickedOscilloscope()
 void CADContView::UpdateRadioButtons()
 {
 	if (m_bADwritetofile)
-		dynamic_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(BST_CHECKED);
+		m_Button_WriteToDisk.SetCheck(BST_CHECKED);
 	else
-		dynamic_cast<CButton*>(GetDlgItem(IDC_OSCILLOSCOPE))->SetCheck(BST_CHECKED);
+		m_Button_Oscilloscope.SetCheck(BST_CHECKED);
 	UpdateData(TRUE);
 }
 
@@ -1347,7 +1365,7 @@ void CADContView::OnBnClickedStartstop2()
 		cs = _T("Stop");
 		StartOutput();
 	}
-	GetDlgItem(IDC_STARTSTOP2)->SetWindowTextW(cs);
+	m_Button_StartStop_DA.SetWindowTextW(cs);
 }
 
 BOOL CADContView::StartOutput()
