@@ -9,7 +9,6 @@
 #include "TemplateWnd.h"
 #include "TemplateListWnd.h"
 #include "DlgEditSpikeClass.h"
-#include "Editspik.h"
 #include "CViewSpikeTemplate.h"
 
 #ifdef _DEBUG

@@ -9,10 +9,11 @@
 #include "ChartSpikeShape.h"
 #include "ChartSpikeHist.h"
 #include "ChartSpikeXY.h"
-#include "Editspik.h"
 #include "MainFrm.h"
-#include "DlgProg.h"
 #include "CViewSpikeSort.h"
+
+#include "DlgProgress.h"
+#include "DlgSpikeEdit.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
