@@ -132,10 +132,11 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 	return TRUE;
 }
 
-void DataTranslation_AD::DeclareBuffers(CWaveFormat* pWFormat)
+void DataTranslation_AD::DeclareBuffers(OPTIONS_ACQDATA* pADC_options)
 {
 	DeleteBuffers();
 
+	CWaveFormat* pWFormat = &(pADC_options->waveFormat);
 	// make sure that buffer length contains at least nacq chans
 	if (pWFormat->buffersize < pWFormat->scan_count * m_pOptions->iundersample)
 		pWFormat->buffersize = pWFormat->scan_count * m_pOptions->iundersample;
@@ -304,3 +305,6 @@ float DataTranslation_AD::ValueToVolts(long lVal, double dfGain)
 
 	return f_volts;
 }
+
+
+

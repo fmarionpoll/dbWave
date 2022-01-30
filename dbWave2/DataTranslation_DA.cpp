@@ -4,6 +4,7 @@
 #include <Olmem.h>
 #include <Olxdadefs.h>
 #include "DlgDAChannels.h"
+#include "OPTIONS_ACQDATA.h"
 
 
 BOOL DataTranslation_DA::OpenSubSystem(const CString cardName)
@@ -63,8 +64,10 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 	return TRUE;
 }
 
-BOOL DataTranslation_DA::InitSubSystem(double ADC_channel_samplingrate, int ADC_trigger_mode)
+BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_ACQDATA* pADC_options)
 {
+	const auto ADC_channel_samplingrate = double(pADC_options->waveFormat.chrate);
+	const int ADC_trigger_mode = int( pADC_options->waveFormat.trig_mode);
 	try
 	{
 		if (GetHDass() == NULL)
@@ -192,16 +195,16 @@ void DataTranslation_DA::DeleteBuffers()
 	}
 }
 
-void DataTranslation_DA::DeclareAndFillBuffers(float sweepduration, float chrate, int nbuffers)
+void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_ACQDATA* pADC_options)
 {
-	// close data buffers
+	const float sweepduration = pADC_options->sweepduration;
+	const float chrate = pADC_options->waveFormat.chrate;
+	const int nbuffers = pADC_options->waveFormat.bufferNitems;
+	
 	DeleteBuffers();
-
-	// get current parms from A/D conversion
 	m_frequency = chrate;
 
 	// define buffer length
-
 	long chsweeplength = static_cast<long>(sweepduration * chrate);
 	m_chbuflen = chsweeplength / nbuffers;
 	m_buflen = m_chbuflen * m_listsize;

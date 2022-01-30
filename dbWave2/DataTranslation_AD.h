@@ -1,22 +1,23 @@
 #pragma once
-#include <olmem.h>
+#include <Olmem.h>
 #include "dtacq32.h"
 #include "OPTIONS_ACQDATA.h"
 
 
-class DataTranslation_AD :
+class DataTranslation_AD final :
 	public CDTAcq32
 {
 public:
 	BOOL OpenSubSystem(CString card_name);
 	BOOL InitSubSystem(OPTIONS_ACQDATA* pADC_options);
 	void DeleteBuffers();
-	void DeclareBuffers(CWaveFormat* pWFormat);
+	void DeclareBuffers(OPTIONS_ACQDATA* pADC_options);
 	void StopAndLiberateBuffers();
 	void ConfigAndStart();
 	short* OnBufferDone();
 	long VoltsToValue(float fVolts, double dfGain);
 	float ValueToVolts(long lVal, double dfGain);
+
 
 protected:
 	void DTLayerError(COleDispatchException* e);

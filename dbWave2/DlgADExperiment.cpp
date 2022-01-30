@@ -84,7 +84,7 @@ void DlgADExperiment::OnOK()
 	}
 
 	// build file name
-	int i_experiment_number = m_exptnumber;
+	int i_experiment_number = int(m_exptnumber);
 	CString cs_buf_temp;
 	cs_buf_temp.Format(_T("%06.6lu"), i_experiment_number);
 	m_szFileName = m_csPathname + m_csBasename + cs_buf_temp + _T(".dat");
@@ -118,10 +118,10 @@ void DlgADExperiment::OnOK()
 		// update file descriptors
 		m_pADC_options->csPathname = m_csPathname;
 		m_pADC_options->csBasename = m_csBasename;
-		m_pADC_options->exptnumber = m_exptnumber + 1;
-		m_pADC_options->insectnumber = m_insectnumber;
+		m_pADC_options->exptnumber = int(m_exptnumber) + 1;
+		m_pADC_options->insectnumber = int(m_insectnumber);
 
-		m_pwaveFormat->insectID = m_insectnumber;
+		m_pwaveFormat->insectID = long(m_insectnumber);
 		m_pwaveFormat->repeat = m_pADC_options->icsA_repeat;
 		m_pwaveFormat->repeat2 = m_pADC_options->icsA_repeat2;
 		m_pwaveFormat->csMoreComment = m_csMoreComment;
@@ -167,7 +167,6 @@ BOOL DlgADExperiment::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// hide controls if no acquisition
 	if (!m_bFilename)
 	{
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
@@ -339,7 +338,6 @@ void DlgADExperiment::EditComboBox(CComboBox* pCo)
 	UpdateData(FALSE);
 }
 
-///////////////////////////////////////////////////////////
 void DlgADExperiment::OnBnClickedButtoninsectname()
 {
 	EditComboBox(&m_coInsect);
@@ -405,8 +403,6 @@ void DlgADExperiment::OnBnClickedButtonexpt()
 	EditComboBox(&m_coExpt);
 }
 
-////////////////////////////////////////////////////////////////
-
 void DlgADExperiment::OnEnKillfocusMfceditbrowse1()
 {
 	UpdateData(TRUE);
@@ -429,7 +425,7 @@ void DlgADExperiment::OnEnKillfocusMfceditbrowse1()
 
 void DlgADExperiment::OnBnClickedButtonNextid()
 {
-	auto p_database = m_pdbDoc->m_pDB;
+	const auto p_database = m_pdbDoc->m_pDB;
 	p_database->m_mainTableSet.GetMaxIDs();
 	m_insectnumber = p_database->m_mainTableSet.max_insectID + 1;
 	UpdateData(FALSE);

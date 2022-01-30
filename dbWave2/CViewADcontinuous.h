@@ -102,17 +102,19 @@ protected:
 	void StopAcquisition(BOOL bDisplayErrorMsg);
 	void SaveAndCloseFile();
 	BOOL StartAcquisition();
+	ECODE StartSimultaneousList();
 	BOOL StartOutput();
 	void StopOutput();
-	BOOL InitAcquisitionSystemAndBuffers();
-	void InitAcquisitionInputFile();
+	void InitAcquisitionInputFile() const;
 	void InitAcquisitionDisplay();
 
 	BOOL InitCyberAmp();
 	BOOL Defineexperiment();
 	void TransferFilesToDatabase();
+	BOOL InitOutput_DA();
+	BOOL InitOutput_AD();
 	void UpdateViewDataFinal();
-	void DisplayolDaErrorMessage(const CHAR* errstr);
+	void DisplayolDaErrorMessage(const CHAR* errstr) const;
 	void ChainDialog(WORD iID);
 
 	void ADC_Transfer(short* pDTbuf0);

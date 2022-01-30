@@ -409,7 +409,7 @@ Emergency_exit:
 	return flag;
 }
 
-BOOL CDlgImportFiles::GetExperimentParameters(AcqDataDoc* pTo)
+BOOL CDlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 {
 	DlgADExperiment dlg; 
 	dlg.m_bFilename = FALSE; 
@@ -417,12 +417,11 @@ BOOL CDlgImportFiles::GetExperimentParameters(AcqDataDoc* pTo)
 	OPTIONS_ACQDATA* pacqD = &(p_app->options_acqdata);
 	dlg.m_pADC_options = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
-	// ...
-	BOOL flag = dlg.DoModal();
+	const BOOL flag = dlg.DoModal();
 	if (IDOK == flag)
 	{
 		CWaveFormat* pwFTo = pTo->GetpWaveFormat();
-		CWaveFormat* pwFDlg = &pacqD->waveFormat;
+		const CWaveFormat* pwFDlg = &pacqD->waveFormat;
 
 		pwFTo->csADcardName = pwFDlg->csADcardName;
 		pwFTo->cs_comment = pwFDlg->cs_comment;
@@ -451,7 +450,7 @@ BOOL CDlgImportFiles::GetAcquisitionParameters(AcqDataDoc* pTo)
 	dlg2.m_pchArray = pTo->GetpWavechanArray();
 
 	// invoke dialog box
-	BOOL flag = dlg2.DoModal();
+	const BOOL flag = dlg2.DoModal();
 	if (IDOK == flag)
 	{
 		for (int i = 0; i < m_scan_count; i++)
