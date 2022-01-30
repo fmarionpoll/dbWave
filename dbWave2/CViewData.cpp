@@ -5,17 +5,18 @@
 #include "ChartData.h"
 #include "Editctrl.h"
 #include "dbWaveDoc.h"
-#include "Vdordina.h"
-#include "Vdseries.h"
 #include "DlgADIntervals.h"
-#include "Dataseri.h"
 #include "MeasureProperties.h"
-#include "Copyasdl.h"
-#include "Vdabciss.h"
 #include "RulerBar.h"
 #include "DlgdbEditRecord.h"
 #include "DlgADInputParms.h"
 #include "CViewData.h"
+
+#include "DlgCopyAs.h"
+#include "DlgDataSeries.h"
+#include "DlgDataSeriesFormat.h"
+#include "DlgDataViewAbcissa.h"
+#include "DlgDataViewOrdinates.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -252,7 +253,7 @@ void CViewData::UpdateChannel(int channel)
 
 void CViewData::OnFormatYscale()
 {
-	CDataViewOrdinatesDlg dlg;
+	DlgDataViewOrdinates dlg;
 	dlg.m_pChartDataWnd = &m_ChartDataWnd;
 	dlg.m_Channel = m_ichanselected;
 	if (IDOK == dlg.DoModal())
@@ -264,7 +265,7 @@ void CViewData::OnFormatYscale()
 void CViewData::OnToolsDataseries()
 {
 	// init dialog data
-	CDataSeriesDlg dlg;
+	DlgDataSeries dlg;
 	dlg.m_pChartDataWnd = &m_ChartDataWnd;
 	dlg.m_pdbDoc = m_pdatDoc;
 	dlg.m_listindex = m_ichanselected;
@@ -276,7 +277,7 @@ void CViewData::OnToolsDataseries()
 
 void CViewData::OnEditCopy()
 {
-	CCopyAsDlg dlg;
+	DlgCopyAs dlg;
 	dlg.m_nabcissa = options_viewdata->hzResolution;
 	dlg.m_nordinates = options_viewdata->vtResolution;
 	dlg.m_bgraphics = options_viewdata->bgraphics;
@@ -801,7 +802,7 @@ void CViewData::OnViewAlldata()
 
 void CViewData::OnFormatDataseriesattributes()
 {
-	CDataSeriesFormatDlg dlg;
+	DlgDataSeriesFormat dlg;
 	dlg.m_pChartDataWnd = &m_ChartDataWnd;
 	dlg.m_pdbDoc = m_pdatDoc;
 	dlg.m_listindex = m_ichanselected;
@@ -1179,7 +1180,7 @@ void CViewData::ADC_OnHardwareDefineexperiment()
 void CViewData::OnFormatXscale()
 {
 	// init dialog data
-	CDataViewAbcissaDlg dlg;
+	DlgDataViewAbcissa dlg;
 	dlg.m_firstAbcissa = m_timefirst;
 	dlg.m_lastAbcissa = m_timelast;
 	dlg.m_veryLastAbcissa = m_ChartDataWnd.GetDocumentLast() / m_samplingRate;

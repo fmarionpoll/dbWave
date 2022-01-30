@@ -1,18 +1,11 @@
-// lbspkcla.cpp : implementation file
-//
-
 #include "StdAfx.h"
-//#include "dbWave.h"
-//#include "resource.h"
-
-#include "Spikedoc.h"
 #include "dbWaveDoc.h"
-#include "Listbcla.h"
 #include "SpikeClassListBox.h"
 
 #include "ChartWnd.h"
 #include "ChartSpikeBar.h"
 #include "ChartSpikeShape.h"
+#include "DlgListBClaSize.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -516,7 +509,7 @@ void CSpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	CListBox::OnRButtonUp(nFlags, point);
 	// change row and col sizes
-	CListBClaSizeDlg dlg;
+	DlgListBClaSize dlg;
 	dlg.m_rowheight = GetRowHeight();
 	dlg.m_textcol = GetColsTextWidth();
 	dlg.m_superpcol = GetColsSpikesWidth();

@@ -28,8 +28,8 @@ public:
 	BOOL OnOpenDocument(CString& sz_path_name);
 	BOOL OnNewDocument() override;
 
-protected:
 	BOOL openAcqFile(CString& szfilename);
+protected:
 	bool dlgImportDataFile(CString& sz_path_name);
 	int importFile(CString& sz_path_name);
 	void removeFile(CString file1);
@@ -40,7 +40,7 @@ protected:
 	void Dump(CDumpContext& dc) const override;
 #endif
 
-protected:
+public:
 	// Data members and functions dealing with CDataFileX and data reading buffer
 
 	CDataFileX* m_pXFile = nullptr;

@@ -3,7 +3,7 @@
 
 class DlgEditSpikeClass : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgEditSpikeClass)
+	DECLARE_DYNAMIC(DlgEditSpikeClass)
 
 public:
 	DlgEditSpikeClass(CWnd* pParent = nullptr); // standard constructor

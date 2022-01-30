@@ -15,17 +15,18 @@
 #include "Editctrl.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
-#include "Xyparame.h"
 #include "ChartSpikeBar.h"
 #include "ChartSpikeShape.h"
-#include "Spikedetec.h"
-#include "Editspik.h"
-#include "Vdseries.h"
-#include "Copyasdl.h"
 #include "MainFrm.h"
 #include "DlgEditStimArray.h"
-#include "DlgProg.h"
 #include "CViewSpikeDetect.h"
+
+#include "DlgCopyAs.h"
+#include "DlgDataSeries.h"
+#include "DlgProgress.h"
+#include "DlgSpikeDetect.h"
+#include "DlgSpikeEdit.h"
+#include "DlgXYParameters.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1018,7 +1019,7 @@ void CViewSpikeDetection::updateDetectionParameters()
 
 void CViewSpikeDetection::OnToolsDetectionparameters()
 {
-	CSpikeDetectDlg dlg;
+	DlgSpikeDetect dlg;
 	dlg.m_dbDoc = GetDocument()->m_pDat;
 	dlg.m_iDetectParmsDlg = m_iDetectParms; // index spk detect parm currently selected / array
 	dlg.m_pDetectSettingsArray = &m_parmsCurrent; // spike detection parameters array
@@ -1449,7 +1450,7 @@ int CViewSpikeDetection::detectMethod1(WORD schan)
 
 void CViewSpikeDetection::OnToolsEdittransformspikes()
 {
-	CSpikeEditDlg dlg; // dialog box
+	DlgSpikeEdit dlg; // dialog box
 	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent(); // load display parameters
 	dlg.m_yzero = m_ChartSpkWnd_Shape.GetYWOrg(); // ordinates
 	dlg.m_xextent = m_ChartSpkWnd_Shape.GetXWExtent(); // and
@@ -1473,7 +1474,7 @@ void CViewSpikeDetection::OnToolsEdittransformspikes()
 
 void CViewSpikeDetection::OnFormatXscale()
 {
-	XYParametersDlg dlg;
+	DlgXYParameters dlg;
 	CWnd* pFocus = GetFocus();
 
 	if (pFocus != nullptr && m_ChartDataWnd_Detect.m_hWnd == pFocus->m_hWnd)
@@ -1889,7 +1890,7 @@ void CViewSpikeDetection::OnEnChangeTimelast()
 void CViewSpikeDetection::OnToolsDataseries()
 {
 	// init dialog data
-	CDataSeriesDlg dlg;
+	DlgDataSeries dlg;
 	dlg.m_pChartDataWnd = &m_ChartDataWnd_Detect;
 	dlg.m_pdbDoc = GetDocument()->m_pDat;
 	dlg.m_listindex = 0;
@@ -1932,7 +1933,7 @@ void CViewSpikeDetection::PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd
 
 void CViewSpikeDetection::OnEditCopy()
 {
-	CCopyAsDlg dlg;
+	DlgCopyAs dlg;
 	dlg.m_nabcissa = options_viewdata->hzResolution;
 	dlg.m_nordinates = options_viewdata->vtResolution;
 	dlg.m_bgraphics = options_viewdata->bgraphics;

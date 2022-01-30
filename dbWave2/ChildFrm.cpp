@@ -6,52 +6,31 @@
 #include "afxpriv.h"
 #include "dbWave.h"
 #include "dbWaveDoc.h"
-//#include "dbIndexTable.h"
 
 #include "MainFrm.h"
-//#include "dbMainTable.h"
-
-//#include "Cscale.h"
-//#include "chart.h"
 #include "ChartData.h"
 #include "CViewdbWave.h"
-//#include "Editctrl.h"
 #include "CViewData.h"
-#include "Browsefi.h"
-#include "Printmar.h"
-#include "Lsoption.h"
-
-//#include "TemplateWnd.h"
-//#include "TemplateListWnd.h"
 #include "NoteDoc.h"
 #include "CViewNotedoc.h"
-#include "Datacomm.h"
-#include "Exportsp.h"
 
 #include "DlgFindFiles.h"
-#include "DlgProg.h"
+#include "DlgProgress.h"
 #include "DlgRejectRecord.h"
 #include "DlgGotoRecord.h"
 #include "DlgImportFiles.h"
 #include "DlgDeleteRecordOptions.h"
 
-//#include <process.h>
 #include "CApplication.h"
 #include "CPivotCell.h"
 #include "CPivotField.h"
-//#include "CPivotFields.h"
-//#include "CPivotItem.h"
-//#include "CPivotItemList.h"
-//#include "CPivotItems.h"
 #include "CPivotTable.h"
-//#include "CPivotTables.h"
 #include "CRange.h"
 #include "CWorkbook.h"
 #include "CWorkbooks.h"
 #include "CWorksheet.h"
 #include "CWorksheets.h"
 #include "DlgTransferFiles.h"
-//#include "afxdialogex.h"
 #include "DlgExportData.h"
 #include "CViewADcontinuous.h"
 
@@ -62,12 +41,15 @@
 #include "CViewSpikeHist.h"
 #include "ChildFrm.h"
 
+#include "DlgBrowseFile.h"
+#include "DlgDataComments.h"
+#include "DlgExportSpikeInfos.h"
+#include "DlgLoadSaveOptions.h"
+#include "DlgPrintMargins.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CChildFrame
 
 IMPLEMENT_DYNCREATE(CChildFrame, CMDIChildWndEx)
 
@@ -182,14 +164,14 @@ void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI* pCmdUI)
 
 void CChildFrame::OnOptionsBrowsemode()
 {
-	CBrowseFileDlg dlg;
+	DlgBrowseFile dlg;
 	dlg.mfBR = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
 	dlg.DoModal();
 }
 
 void CChildFrame::OnOptionsPrintmargins()
 {
-	CPrintMarginsDlg dlg;
+	DlgPrintMargins dlg;
 	const auto psource = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
 	dlg.mdPM = psource;
 	dlg.DoModal();
@@ -197,7 +179,7 @@ void CChildFrame::OnOptionsPrintmargins()
 
 void CChildFrame::OnOptionsLoadsaveoptions()
 {
-	CLoadSaveOptionsDlg dlg;
+	DlgLoadSaveOptions dlg;
 	if (IDOK == dlg.DoModal())
 	{
 		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
@@ -210,7 +192,7 @@ void CChildFrame::OnOptionsLoadsaveoptions()
 
 void CChildFrame::OnToolsExportdatacomments()
 {
-	CDataCommentsDlg dlg;
+	DlgDataComments dlg;
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	dlg.m_pvO = &(p_app->options_viewdata);
 	if (IDOK == dlg.DoModal())
@@ -223,7 +205,7 @@ void CChildFrame::OnToolsExportdatacomments()
 
 void CChildFrame::OnToolsExportnumberofspikes()
 {
-	CExportSpikeInfosDlg dlg;
+	DlgExportSpikeInfos dlg;
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	dlg.m_pvdS = &p_app->options_viewspikes;
 	if (IDOK == dlg.DoModal())
@@ -578,7 +560,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 
 void CChildFrame::OnToolsRemoveartefactfiles()
 {
-	CDlgRejectRecord dlg1;
+	DlgRejectRecord dlg1;
 	long n_consecutive_points = 1000;
 	short jitter = 4;
 	BOOL flag_rejected_file_as;
@@ -977,43 +959,6 @@ void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSour
 	}
 }
 
-//#include "autospike_files\appdata.h"
-//#include "autospike_files\ASpkDoc.h"
-//void CChildFrame::OnToolsImportSyntechaspkfiles()
-//{
-//	CStringArray filenames;			// store file names in this array
-//	int iResult;					// local variable
-//	CFindFilesDlg dlg;
-//	dlg.m_pfilenames = &filenames;
-//	dlg.m_selinit = 7;
-//	iResult = dlg.DoModal();
-//	if (IDOK == iResult)
-//	{
-//		//CImportFilesDlg dlg2;
-//		//CStringArray convertedFiles;
-//		//dlg2.m_pconvertedFiles = &convertedFiles;
-//		//dlg2.m_pfilenameArray = &filenames;
-//		//dlg2.m_option = ATFFILE;
-//		//CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) GetMDIActiveDocument();// get pointer to document
-//		//dlg2.m_pdbDoc = p_dbwave_doc;
-//		//
-//		//iResult = dlg2.DoModal();
-//		//if (IDOK == iResult)
-//		//	{
-//		//		CdbWaveDoc* p_dbwave_doc = (CdbWaveDoc*) GetMDIActiveDocument();// get pointer to document
-//		//		p_dbwave_doc->ImportFileList(convertedFiles);
-//		//		p_dbwave_doc->BuilInsectAndSensillumIDArrays();
-//		//		p_dbwave_doc->MoveRecord(ID_RECORD_LAST);
-//		//		p_dbwave_doc->UpdateAllViews(NULL, HINT_REQUERY, NULL);
-//		//		// display files which were discarded in a separate document
-//		//		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, (LPARAM) NULL);
-//		//	}
-//		CAutoSpkDoc* pautospkDoc = new CAutoSpkDoc;
-//		CString cs = filenames.GetAt(0);
-//		pautospkDoc->ReadAspkFile(cs, NULL, FALSE);
-//		delete	pautospkDoc;
-//	}
-//}
 
 void CChildFrame::OnRecordAdd()
 {
@@ -1052,7 +997,7 @@ void CChildFrame::OnToolsImportDatabase()
 void CChildFrame::OnToolsCopyAllProjectFiles()
 {
 	CString destination_path = _T("c:\\Temp");
-	CTransferFilesDlg dlg;
+	DlgTransferFiles dlg;
 	dlg.m_csPathname = destination_path;
 	if (IDOK == dlg.DoModal())
 	{

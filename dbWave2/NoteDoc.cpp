@@ -3,6 +3,8 @@
 #include "NotedocCntrItem.h"
 #include "NoteDoc.h"
 
+#include "DlgImportOptions.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -76,7 +78,6 @@ BOOL CNoteDoc::OnOpenDocument(LPCTSTR lpszPathName)
 // current version (20-3-96) approach the pb by extracting names within CNoteDoc
 // it assumes that CR LF TAB ";" are separators and that files have the same ext.
 
-#include "ImportOptions.h"
 #include "dbWave.h"
 
 BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
@@ -85,7 +86,7 @@ BOOL CNoteDoc::OpenProjectFiles(CString& cspathname)
 	CRichEditCtrl& pEdit = static_cast<CRichEditView*>(m_viewList.GetHead())->GetRichEditCtrl();
 
 	// make sure the correct import options are selected
-	CImportOptionsDlg dlg;
+	DlgImportOptions dlg;
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	dlg.m_bAllowDuplicateFiles = p_app->options_import.bDiscardDuplicateFiles;
 	dlg.m_bHeader = p_app->options_import.bHeader;

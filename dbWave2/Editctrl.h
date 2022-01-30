@@ -9,14 +9,9 @@ public:
 
 	// Attributes
 public:
-	BOOL m_bEntryDone;
-	UINT m_nChar;
+	BOOL m_bEntryDone{ false };
+	UINT m_nChar{ 0 };
 
-	// Operations
-public:
-protected:
-	// Implementation
-public:
 	~CEditCtrl() override;
 	BOOL ProcessKeys(UINT nChar);
 

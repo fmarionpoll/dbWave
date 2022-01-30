@@ -3,7 +3,7 @@
 
 class DlgEditList : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgEditList)
+	DECLARE_DYNAMIC(DlgEditList)
 
 public:
 	DlgEditList(CWnd* pParent = nullptr); // standard constructor

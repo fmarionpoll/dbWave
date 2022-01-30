@@ -1,19 +1,18 @@
 #pragma once
 
-// CTransferFilesDlg dialog
 
-class CTransferFilesDlg : public CDialogEx
+class DlgTransferFiles : public CDialogEx
 {
-	DECLARE_DYNAMIC(CTransferFilesDlg)
+	DECLARE_DYNAMIC(DlgTransferFiles)
 
 public:
-	CTransferFilesDlg(CWnd* pParent = nullptr); // standard constructor
-	~CTransferFilesDlg() override;
+	DlgTransferFiles(CWnd* pParent = nullptr); // standard constructor
+	~DlgTransferFiles() override;
 
 	// Dialog Data
 	enum { IDD = IDD_TRANSFERFILES };
 
-	CString m_csPathname;
+	CString m_csPathname{ _T("")};
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support

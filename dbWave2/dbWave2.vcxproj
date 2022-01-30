@@ -812,7 +812,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Browsefi.cpp">
+    <ClCompile Include="DlgBrowseFile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -837,7 +837,7 @@
     </ClCompile>
     <ClCompile Include="Controls\cdxCRot90DC.cpp" />
     <ClCompile Include="Controls\cdxCRotBevelLine.cpp" />
-    <ClCompile Include="Copyasdl.cpp">
+    <ClCompile Include="DlgCopyAs.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -863,7 +863,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Datacomm.cpp">
+    <ClCompile Include="DlgDataComments.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -903,7 +903,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Dataseri.cpp">
+    <ClCompile Include="DlgDataSeriesFormat.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -933,7 +933,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbNewFileDuplicateDlg.cpp">
+    <ClCompile Include="DlgdbNewFileDuplicate.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -978,7 +978,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Editspik.cpp">
+    <ClCompile Include="DlgSpikeEdit.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -998,12 +998,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ExportDataDlg.cpp">
+    <ClCompile Include="DlgExportData.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Exportsp.cpp">
+    <ClCompile Include="DlgExportSpikeInfos.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1023,7 +1023,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="FormatHistogram.cpp">
+    <ClCompile Include="DlgFormatHistogram.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1054,7 +1054,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ImportOptions.cpp">
+    <ClCompile Include="DlgImportOptions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1064,12 +1064,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Listbcla.cpp">
+    <ClCompile Include="DlgListBClaSize.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Lsoption.cpp">
+    <ClCompile Include="DlgLoadSaveOptions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1108,27 +1108,22 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DlgPivot.cpp">
+    <ClCompile Include="DlgPrintDataOptions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Printdat.cpp">
+    <ClCompile Include="DlgPrintDrawArea.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Printdra.cpp">
+    <ClCompile Include="DlgPrintMargins.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Printmar.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Printpag.cpp">
+    <ClCompile Include="DlgPrintPageMargins.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1185,7 +1180,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Spikedetec.cpp">
+    <ClCompile Include="DlgSpikeDetect.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1269,23 +1264,23 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TransferFilesDlg.cpp">
+    <ClCompile Include="DlgTransferFiles.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="USBPxxPARAMETERS.cpp" />
-    <ClCompile Include="Vdabciss.cpp">
+    <ClCompile Include="DlgDataViewAbcissa.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vdordina.cpp">
+    <ClCompile Include="DlgDataViewOrdinates.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vdseries.cpp">
+    <ClCompile Include="DlgDataSeries.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1341,7 +1336,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ChartSpikeHistVert.cpp" />
-    <ClCompile Include="Xyparame.cpp">
+    <ClCompile Include="DlgXYParameters.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1378,7 +1373,7 @@
     <ClInclude Include="DlgADExperiment.h" />
     <ClInclude Include="DlgADInputParms.h" />
     <ClInclude Include="DlgADIntervals.h" />
-    <ClInclude Include="Browsefi.h" />
+    <ClInclude Include="DlgBrowseFile.h" />
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CSpkListTabCtrl.h" />
     <ClInclude Include="datafile_CEDSpike2.h" />
@@ -1386,7 +1381,7 @@
     <ClInclude Include="chanlistitem.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="DlgConfirmSave.h" />
-    <ClInclude Include="Copyasdl.h" />
+    <ClInclude Include="DlgCopyAs.h" />
     <ClInclude Include="CPivotCache.h" />
     <ClInclude Include="CPivotCaches.h" />
     <ClInclude Include="CPivotCell.h" />
@@ -1415,7 +1410,7 @@
     <ClInclude Include="DlgDAChannels.h" />
     <ClInclude Include="DlgEditDAMseq.h" />
     <ClInclude Include="DlgDAOutputsParms.h" />
-    <ClInclude Include="Datacomm.h" />
+    <ClInclude Include="DlgDataComments.h" />
     <ClInclude Include="datafile_ASD.h" />
     <ClInclude Include="datafile_Atlab.h" />
     <ClInclude Include="datafile_Awave.h" />
@@ -1425,7 +1420,7 @@
     <ClInclude Include="dataheader_Atlab.H" />
     <ClInclude Include="DataListCtrl.h" />
     <ClInclude Include="DataListCtrl_Row.h" />
-    <ClInclude Include="Dataseri.h" />
+    <ClInclude Include="DlgDataSeriesFormat.h" />
     <ClInclude Include="DlgdbEditField.h" />
     <ClInclude Include="DlgdbEditRecord.h" />
     <ClInclude Include="dbIndexTable.h" />
@@ -1444,16 +1439,16 @@
     <ClInclude Include="DTx-EZ\Include\OLTYPES.H" />
     <ClInclude Include="Editctrl.h" />
     <ClInclude Include="DlgEditList.h" />
-    <ClInclude Include="Editspik.h" />
+    <ClInclude Include="DlgSpikeEdit.h" />
     <ClInclude Include="DlgEditSpikeClass.h" />
     <ClInclude Include="DlgEditStimArray.h" />
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="DlgExportData.h" />
-    <ClInclude Include="Exportsp.h" />
+    <ClInclude Include="DlgExportSpikeInfos.h" />
     <ClInclude Include="DlgFileNew1.h" />
     <ClInclude Include="Fileversion.h" />
     <ClInclude Include="DlgFindFiles.h" />
-    <ClInclude Include="FormatHistogram.h" />
+    <ClInclude Include="DlgFormatHistogram.h" />
     <ClInclude Include="DlgGotoRecord.h" />
     <ClInclude Include="GridCtrl\GridCellCombo_FMP.h" />
     <ClInclude Include="GridCtrl\GridCellDateTime.h" />
@@ -1468,10 +1463,10 @@
     <ClInclude Include="ImportExcelDefinitions.h" />
     <ClInclude Include="DlgImportFiles.h" />
     <ClInclude Include="DlgImportGenericData.h" />
-    <ClInclude Include="ImportOptions.h" />
+    <ClInclude Include="DlgImportOptions.h" />
     <ClInclude Include="ChartData.h" />
-    <ClInclude Include="Listbcla.h" />
-    <ClInclude Include="Lsoption.h" />
+    <ClInclude Include="DlgListBClaSize.h" />
+    <ClInclude Include="DlgLoadSaveOptions.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MeasureHZtagsPage.h" />
     <ClInclude Include="MeasureOptionsPage.h" />
@@ -1483,10 +1478,10 @@
     <ClInclude Include="PanelFilter.h" />
     <ClInclude Include="PanelProperties.h" />
     <ClInclude Include="DlgPivot.h" />
-    <ClInclude Include="Printdat.h" />
-    <ClInclude Include="Printdra.h" />
-    <ClInclude Include="Printmar.h" />
-    <ClInclude Include="Printpag.h" />
+    <ClInclude Include="DlgPrintDataOptions.h" />
+    <ClInclude Include="DlgPrintDrawArea.h" />
+    <ClInclude Include="DlgPrintMargins.h" />
+    <ClInclude Include="DlgPrintPageMargins.h" />
     <ClInclude Include="DlgProgress.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="QuadStateTree.h" />
@@ -1503,7 +1498,7 @@
     <ClInclude Include="SpikeBuffer.h" />
     <ClInclude Include="Spikeclas.h" />
     <ClInclude Include="SpikeClassListBox.h" />
-    <ClInclude Include="Spikedetec.h" />
+    <ClInclude Include="DlgSpikeDetect.h" />
     <ClInclude Include="Spikedoc.h" />
     <ClInclude Include="SpikeElement.h" />
     <ClInclude Include="SpikeFromChan.h" />
@@ -1524,9 +1519,9 @@
     <ClInclude Include="TemplateWnd.h" />
     <ClInclude Include="DlgTransferFiles.h" />
     <ClInclude Include="USBPxxPARAMETERS.h" />
-    <ClInclude Include="Vdabciss.h" />
-    <ClInclude Include="Vdordina.h" />
-    <ClInclude Include="Vdseries.h" />
+    <ClInclude Include="DlgDataViewAbcissa.h" />
+    <ClInclude Include="DlgDataViewOrdinates.h" />
+    <ClInclude Include="DlgDataSeries.h" />
     <ClInclude Include="CViewADcontinuous.h" />
     <ClInclude Include="CViewData.h" />
     <ClInclude Include="CViewdbWave.h" />
@@ -1538,7 +1533,7 @@
     <ClInclude Include="CViewSpikeTemplate.h" />
     <ClInclude Include="WaveBuf.h" />
     <ClInclude Include="ChartSpikeHistVert.h" />
-    <ClInclude Include="Xyparame.h" />
+    <ClInclude Include="DlgXYParameters.h" />
     <CustomBuild Include="Resource.h">
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Help\HTMLDefines.h;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Help\HTMLDefines.h;%(Outputs)</Outputs>

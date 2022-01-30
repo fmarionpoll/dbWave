@@ -60,7 +60,7 @@
     <ClCompile Include="DlgADIntervals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Browsefi.cpp">
+    <ClCompile Include="DlgBrowseFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="chanlistitem.cpp">
@@ -69,7 +69,7 @@
     <ClCompile Include="ChildFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Copyasdl.cpp">
+    <ClCompile Include="DlgCopyAs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cscale.cpp">
@@ -78,7 +78,7 @@
     <ClCompile Include="CyberAmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Datacomm.cpp">
+    <ClCompile Include="DlgDataComments.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="datafile_ASD.cpp">
@@ -99,19 +99,19 @@
     <ClCompile Include="DataListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Dataseri.cpp">
+    <ClCompile Include="DlgDataSeriesFormat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dbMultiDocTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dbNewFileDuplicateDlg.cpp">
+    <ClCompile Include="DlgdbNewFileDuplicate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dbWave.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Printdra.cpp">
+    <ClCompile Include="DlgPrintDrawArea.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dbWaveDoc.cpp">
@@ -126,31 +126,31 @@
     <ClCompile Include="Editctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Editspik.cpp">
+    <ClCompile Include="DlgSpikeEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Envelope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExportDataDlg.cpp">
+    <ClCompile Include="DlgExportData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Exportsp.cpp">
+    <ClCompile Include="DlgExportSpikeInfos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Fileversion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FormatHistogram.cpp">
+    <ClCompile Include="DlgFormatHistogram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImportOptions.cpp">
+    <ClCompile Include="DlgImportOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Listbcla.cpp">
+    <ClCompile Include="DlgListBClaSize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lsoption.cpp">
+    <ClCompile Include="DlgLoadSaveOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainFrm.cpp">
@@ -165,13 +165,13 @@
     <ClCompile Include="NotedocCntrItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Printdat.cpp">
+    <ClCompile Include="DlgPrintDataOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Printmar.cpp">
+    <ClCompile Include="DlgPrintMargins.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Printpag.cpp">
+    <ClCompile Include="DlgPrintPageMargins.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Spikeclas.cpp">
@@ -180,7 +180,7 @@
     <ClCompile Include="SpikeClassListBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Spikedetec.cpp">
+    <ClCompile Include="DlgSpikeDetect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Spikedoc.cpp">
@@ -210,25 +210,25 @@
     <ClCompile Include="TemplateWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vdabciss.cpp">
+    <ClCompile Include="DlgDataViewAbcissa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vdordina.cpp">
+    <ClCompile Include="DlgDataViewOrdinates.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vdseries.cpp">
+    <ClCompile Include="DlgDataSeries.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WaveBuf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Xyparame.cpp">
+    <ClCompile Include="DlgXYParameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgFileNew1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransferFilesDlg.cpp">
+    <ClCompile Include="DlgTransferFiles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Controls\cdxCRot90DC.cpp">
@@ -366,9 +366,6 @@
     <ClCompile Include="DlgImportGenericData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DlgPivot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DlgProgress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -491,7 +488,7 @@
     <ClInclude Include="DlgADExperiment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Browsefi.h">
+    <ClInclude Include="DlgBrowseFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CApplication.h">
@@ -503,7 +500,7 @@
     <ClInclude Include="ChildFrm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Copyasdl.h">
+    <ClInclude Include="DlgCopyAs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cscale.h">
@@ -512,7 +509,7 @@
     <ClInclude Include="CyberAmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Datacomm.h">
+    <ClInclude Include="DlgDataComments.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="datafile_ASD.h">
@@ -539,7 +536,7 @@
     <ClInclude Include="DataListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Dataseri.h">
+    <ClInclude Include="DlgDataSeriesFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbMultiDocTemplate.h">
@@ -563,31 +560,31 @@
     <ClInclude Include="Editctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Editspik.h">
+    <ClInclude Include="DlgSpikeEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Envelope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Exportsp.h">
+    <ClInclude Include="DlgExportSpikeInfos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Fileversion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FormatHistogram.h">
+    <ClInclude Include="DlgFormatHistogram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImportExcelDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImportOptions.h">
+    <ClInclude Include="DlgImportOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Listbcla.h">
+    <ClInclude Include="DlgListBClaSize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lsoption.h">
+    <ClInclude Include="DlgLoadSaveOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainFrm.h">
@@ -602,16 +599,16 @@
     <ClInclude Include="NotedocCntrItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Printdat.h">
+    <ClInclude Include="DlgPrintDataOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Printdra.h">
+    <ClInclude Include="DlgPrintDrawArea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Printmar.h">
+    <ClInclude Include="DlgPrintMargins.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Printpag.h">
+    <ClInclude Include="DlgPrintPageMargins.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spikeclas.h">
@@ -620,7 +617,7 @@
     <ClInclude Include="SpikeClassListBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Spikedetec.h">
+    <ClInclude Include="DlgSpikeDetect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spikedoc.h">
@@ -632,7 +629,7 @@
     <ClInclude Include="spikepar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Xyparame.h">
+    <ClInclude Include="DlgXYParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Splash.h">
@@ -656,13 +653,13 @@
     <ClInclude Include="TemplateWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vdabciss.h">
+    <ClInclude Include="DlgDataViewAbcissa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vdordina.h">
+    <ClInclude Include="DlgDataViewOrdinates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vdseries.h">
+    <ClInclude Include="DlgDataSeries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WaveBuf.h">

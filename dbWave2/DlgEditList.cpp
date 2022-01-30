@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "dbWave.h"
 #include "DlgEditList.h"
 
 #ifdef _DEBUG

@@ -23,10 +23,10 @@ protected:
 	CQuadStateTree m_wndFilterView;
 	CFilterToolBar m_wndToolBar;
 
-	CdbWaveDoc* m_pDoc;
-	CdbWaveDoc* m_pDocOld;
+	CdbWaveDoc* m_pDoc{nullptr};
+	CdbWaveDoc* m_pDocOld{ nullptr };
 	static int m_noCol[]; // [26] succession of fields that can be filtered
-	HTREEITEM m_htreeitem[26];
+	HTREEITEM m_htreeitem[26]{};
 
 protected:
 	void InitFilterList();

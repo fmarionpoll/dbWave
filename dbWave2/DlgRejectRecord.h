@@ -1,19 +1,19 @@
 #pragma once
 
 
-class CDlgRejectRecord : public CDialog
+class DlgRejectRecord : public CDialog
 {
 	// Construction
 public:
-	CDlgRejectRecord(CWnd* pParent = nullptr); // standard constructor
+	DlgRejectRecord(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_DEFINEARTEFACTSLIMITS };
 
-	BOOL m_bconsecutivepoints;
-	int m_Nconsecutivepoints;
-	int m_jitter;
-	int m_flag;
+	BOOL m_bconsecutivepoints{ false };
+	int m_Nconsecutivepoints{ 0 };
+	int m_jitter{ 0 };
+	int m_flag{ 1 };
 
 	// Overrides
 protected:

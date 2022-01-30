@@ -1,23 +1,18 @@
-// Viewspikes.cpp : implementation file
-//
 
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
-//#include <math.h>
-//#include "Cscale.h"
 #include "ChartWnd.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-//#include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
 #include "SpikeClassListBox.h"
-#include "Editspik.h"
 #include "MainFrm.h"
-#include "Copyasdl.h"
-#include "ChildFrm.h"
 #include "CViewSpikes.h"
+
+#include "DlgCopyAs.h"
+#include "DlgSpikeEdit.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -794,7 +789,7 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	const auto l_first = m_spkClassListBox.GetTimeFirst();
 	const auto l_last = m_spkClassListBox.GetTimeLast();
 
-	CSpikeEditDlg dlg; // dialog box
+	DlgSpikeEdit dlg; // dialog box
 	dlg.m_yextent = m_spkClassListBox.GetYWExtent(); // load display parameters
 	dlg.m_yzero = m_spkClassListBox.GetYWOrg(); // ordinates
 	dlg.m_xextent = m_spkClassListBox.GetXWExtent(); // and
@@ -1832,7 +1827,7 @@ void CViewSpikes::updateFileScroll()
 
 void CViewSpikes::OnEditCopy()
 {
-	CCopyAsDlg dlg;
+	DlgCopyAs dlg;
 	dlg.m_nabcissa = options_viewdata->hzResolution;
 	dlg.m_nordinates = options_viewdata->vtResolution;
 	dlg.m_bgraphics = options_viewdata->bgraphics;

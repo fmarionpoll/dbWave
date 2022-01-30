@@ -955,7 +955,7 @@ void CViewSpikeSort::selectSpikeFromCurrentList(int spikeno)
 
 void CViewSpikeSort::OnToolsEdittransformspikes()
 {
-	CSpikeEditDlg dlg;
+	DlgSpikeEdit dlg;
 	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent();
 	dlg.m_yzero = m_ChartSpkWnd_Shape.GetYWOrg();
 	dlg.m_xextent = m_ChartSpkWnd_Shape.GetXWExtent();

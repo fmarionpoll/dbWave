@@ -38,13 +38,8 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CEditCtrl
-
 CEditCtrl::CEditCtrl()
 {
-	m_bEntryDone = FALSE;
-	m_nChar = 0;
 }
 
 CEditCtrl::~CEditCtrl()
@@ -60,8 +55,7 @@ BEGIN_MESSAGE_MAP(CEditCtrl, CWnd)
 	ON_WM_VSCROLL()
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CEditCtrl message handlers
+
 UINT CEditCtrl::OnGetDlgCode()
 {
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;

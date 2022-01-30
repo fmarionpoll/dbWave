@@ -3,7 +3,7 @@
 
 class DlgFileNew1 : public CDialogEx
 {
-	DECLARE_DYNAMIC(CDlgFileNew1)
+	DECLARE_DYNAMIC(DlgFileNew1)
 
 public:
 	DlgFileNew1(CWnd* pParent = nullptr); // standard constructor

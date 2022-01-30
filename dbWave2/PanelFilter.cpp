@@ -6,14 +6,12 @@
 
 #include "dbWave.h"
 #include "dbWave_constants.h"
-#include "DlgProg.h"
+#include "DlgProgress.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CFilterPanel
 
 // the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameteres
 int CFilterWnd::m_noCol[] = {
@@ -24,14 +22,11 @@ int CFilterWnd::m_noCol[] = {
 	CH_FLAG, CH_ACQDATE_DAY, -1
 };
 
-CFilterWnd::CFilterWnd() : m_pDocOld(nullptr), m_htreeitem{}
-{
-	m_pDoc = nullptr;
-}
+CFilterWnd::CFilterWnd()
+= default;
 
 CFilterWnd::~CFilterWnd()
-{
-}
+= default;
 
 BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
 	ON_WM_CREATE()

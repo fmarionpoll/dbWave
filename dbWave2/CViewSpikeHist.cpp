@@ -3,16 +3,15 @@
 
 #include "StdAfx.h"
 #include "dbWave.h"
-
 #include "ChartWnd.h"
 #include "Editctrl.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
-#include "FormatHistogram.h"
 #include "MainFrm.h"
-#include "ChildFrm.h"
-#include "DlgProg.h"
 #include "CViewSpikeHist.h"
+
+#include "DlgFormatHistogram.h"
+#include "DlgProgress.h"
 #include "StretchControls.h"
 
 #ifdef _DEBUG
@@ -1008,7 +1007,7 @@ void CViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 
 void CViewSpikeHist::OnFormatHistogram()
 {
-	CFormatHistogramDlg dlg;
+	DlgFormatHistogram dlg;
 	dlg.m_bYmaxAuto = m_pvdS->bYmaxAuto;
 	dlg.m_Ymax = m_pvdS->Ymax;
 	dlg.m_xfirst = m_pvdS->timestart;

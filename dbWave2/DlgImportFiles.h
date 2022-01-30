@@ -9,7 +9,7 @@
 
 class DlgImportFiles : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgImportFiles)
+	DECLARE_DYNAMIC(DlgImportFiles)
 
 public:
 	DlgImportFiles(CWnd* pParent = nullptr); // standard constructor
