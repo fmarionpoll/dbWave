@@ -35,7 +35,7 @@ CADContView::CADContView()
 	: CFormView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
-	m_AD_yRulerBar.AttachScopeWnd(&m_ADsourceView, FALSE);
+	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
 }
 
 CADContView::~CADContView()
@@ -214,7 +214,7 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 
 	// stop AD, liberate DTbuffers
 	m_Acq32_AD.StopAndLiberateBuffers();
-	m_ADsourceView.ADdisplayStop();
+	m_chartDataAD.ADdisplayStop();
 	m_bchanged = TRUE;
 
 	// stop DA, liberate buffers
@@ -227,9 +227,9 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 		SaveAndCloseFile();
 		// update view data	
 		const long lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
-		m_ADsourceView.AttachDataFile(&m_inputDataFile);
-		m_ADsourceView.ResizeChannels(m_ADsourceView.GetRectWidth(), lsizeDOCchan);
-		m_ADsourceView.GetDataFromDoc(0, lsizeDOCchan);
+		m_chartDataAD.AttachDataFile(&m_inputDataFile);
+		m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), lsizeDOCchan);
+		m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
 	}
 }
 
@@ -292,9 +292,9 @@ void CADContView::UpdateViewDataFinal()
 	}
 	pDocDat->ReadDataInfos();
 	const long lsizeDOCchan = pDocDat->GetDOCchanLength();
-	m_ADsourceView.AttachDataFile(pDocDat);
-	m_ADsourceView.ResizeChannels(m_ADsourceView.GetRectWidth(), lsizeDOCchan);
-	m_ADsourceView.GetDataFromDoc(0, lsizeDOCchan);
+	m_chartDataAD.AttachDataFile(pDocDat);
+	m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), lsizeDOCchan);
+	m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
 }
 
 void CADContView::TransferFilesToDatabase()
@@ -333,14 +333,14 @@ BOOL CADContView::InitOutput_AD()
 void CADContView::InitAcquisitionDisplay()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-	m_ADsourceView.AttachDataFile(&m_inputDataFile);
-	m_ADsourceView.ResizeChannels(0, m_chsweeplength);
-	if (m_ADsourceView.GetChanlistSize() != pWFormat->scan_count)
+	m_chartDataAD.AttachDataFile(&m_inputDataFile);
+	m_chartDataAD.ResizeChannels(0, m_chsweeplength);
+	if (m_chartDataAD.GetChanlistSize() != pWFormat->scan_count)
 	{
-		m_ADsourceView.RemoveAllChanlistItems();
+		m_chartDataAD.RemoveAllChanlistItems();
 		for (int j = 0; j < pWFormat->scan_count; j++)
 		{
-			m_ADsourceView.AddChanlistItem(j, 0);
+			m_chartDataAD.AddChanlistItem(j, 0);
 		}
 	}
 
@@ -352,7 +352,7 @@ void CADContView::InitAcquisitionDisplay()
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
 		constexpr int ioffset = 0;
-		CChanlistItem* pD = m_ADsourceView.GetChanlistItem(i);
+		CChanlistItem* pD = m_chartDataAD.GetChanlistItem(i);
 		pD->SetYzero(ioffset);
 		pD->SetYextent(iextent);
 		pD->SetColor(WORD(i));
@@ -361,7 +361,7 @@ void CADContView::InitAcquisitionDisplay()
 		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
 		pD->SetDataVoltsFormat(doc_voltsperb, pWFormat->fullscale_volts);
 	}
-	m_ADsourceView.Invalidate();
+	m_chartDataAD.Invalidate();
 }
 
 
@@ -381,7 +381,7 @@ BOOL CADContView::StartAcquisition()
 	// start AD display
 	m_chsweep1 = 0;
 	m_chsweep2 = -1;
-	m_ADsourceView.ADdisplayStart(m_chsweeplength);
+	m_chartDataAD.ADdisplayStart(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0; // no samples yet
 	pWFormat->chrate = pWFormat->chrate / float(m_pOptions_AD->iundersample);
@@ -506,14 +506,14 @@ CDaoRecordset* CADContView::OnGetRecordset()
 void CADContView::OnInitialUpdate()
 {
 	// attach controls
-	VERIFY(m_ADsourceView.SubclassDlgItem(IDC_DISPLAYDATA, this));
+	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
 	VERIFY(m_AD_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
 	VERIFY(m_AD_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
-	m_AD_yRulerBar.AttachScopeWnd(&m_ADsourceView, FALSE);
-	m_AD_xRulerBar.AttachScopeWnd(&m_ADsourceView, TRUE);
-	m_ADsourceView.AttachExternalXRuler(&m_AD_xRulerBar);
-	m_ADsourceView.AttachExternalYRuler(&m_AD_yRulerBar);
-	m_ADsourceView.m_bNiceGrid = TRUE;
+	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
+	m_AD_xRulerBar.AttachScopeWnd(&m_chartDataAD, TRUE);
+	m_chartDataAD.AttachExternalXRuler(&m_AD_xRulerBar);
+	m_chartDataAD.AttachExternalYRuler(&m_AD_yRulerBar);
+	m_chartDataAD.m_bNiceGrid = TRUE;
 
 	m_stretch.AttachParent(this);
 	m_stretch.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
@@ -576,7 +576,7 @@ void CADContView::OnInitialUpdate()
 	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat; // copy data formats into this file
 	m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
 	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
-	m_ADsourceView.AttachDataFile(&m_inputDataFile); // prepare display area
+	m_chartDataAD.AttachDataFile(&m_inputDataFile); // prepare display area
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();
 	if (pApp->m_bADcardFound)
@@ -613,7 +613,7 @@ void CADContView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	if (pSender == this)
 	{
 		ASSERT(GetDocument() != NULL);
-		m_ADsourceView.Invalidate(); // display data
+		m_chartDataAD.Invalidate(); // display data
 	}
 }
 
@@ -667,7 +667,7 @@ LRESULT CADContView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	if (code == HINT_SETMOUSECURSOR) {
 		if (lowp > CURSOR_ZOOM)
 			lowp = 0;
-		m_cursorstate = m_ADsourceView.SetMouseCursorType(lowp);
+		m_cursorstate = m_chartDataAD.SetMouseCursorType(lowp);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	}
 	else {
@@ -725,7 +725,7 @@ void CADContView::UpdateStartStop(BOOL bStart)
 		ASSERT(m_Acq32_AD.IsInProgress() == FALSE);
 	}
 	m_btnStartStop.SetCheck(bStart);
-	m_ADsourceView.Invalidate();
+	m_chartDataAD.Invalidate();
 }
 
 void CADContView::OnHardwareDefineexperiment()
@@ -1018,7 +1018,7 @@ void CADContView::ADC_TransferToFile()
 
 	// then: display options_acqdataataDoc buffer
 	if (pWFormat->bOnlineDisplay) // display data if requested
-		m_ADsourceView.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
+		m_chartDataAD.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
 	CString cs;
 	cs.Format(_T("%.3lf"), duration); // update total time on the screen
 	SetDlgItemText(IDC_STATIC1, cs); // update time elapsed
@@ -1123,7 +1123,7 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	// assume that all channels are displayed at the same gain & offset
 	const int ichan = 0; // TODO see which channel is selected
-	int l_size = m_ADsourceView.GetChanlistItem(ichan)->GetYextent();
+	int l_size = m_chartDataAD.GetChanlistItem(ichan)->GetYextent();
 
 	// get corresponding data
 	switch (nSBCode)
@@ -1164,10 +1164,10 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 
 		for (int channel = ichanfirst; channel <= ichanlast; channel++)
 		{
-			CChanlistItem* pChan = m_ADsourceView.GetChanlistItem(channel);
+			CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(channel);
 			pChan->SetYextent(l_size);
 		}
-		m_ADsourceView.Invalidate();
+		m_chartDataAD.Invalidate();
 		UpdateChanLegends(0);
 		m_pOptions_AD->izoomCursel = l_size;
 	}
@@ -1184,7 +1184,7 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
 	// assume that all channels are displayed at the same gain & offset
 	int ichan = 0; // TODO: see which channel is selected
-	CChanlistItem* pChan = m_ADsourceView.GetChanlistItem(ichan);
+	CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
 	int lSize = pChan->GetYzero() - pChan->GetDataBinZero();
 	const int yextent = pChan->GetYextent();
 	// get corresponding data
@@ -1224,10 +1224,10 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 		const int ichanlast = pWFormat->scan_count - 1;
 		for (int ichan = ichanfirst; ichan <= ichanlast; ichan++)
 		{
-			CChanlistItem* pChan = m_ADsourceView.GetChanlistItem(ichan);
+			CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
 			pChan->SetYzero(lSize + pChan->GetDataBinZero());
 		}
-		m_ADsourceView.Invalidate();
+		m_chartDataAD.Invalidate();
 	}
 	// update scrollBar
 	if (m_VBarMode == BAR_BIAS)
@@ -1242,7 +1242,7 @@ void CADContView::UpdateBiasScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
 	const int ichan = 0;	// TODO see which channel is selected
-	const CChanlistItem* pChan = m_ADsourceView.GetChanlistItem(ichan);
+	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
 	const int iPos = (pChan->GetYzero() - pChan->GetDataBinZero())
 		* 100 / static_cast<int>(YZERO_SPAN) + 50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
@@ -1252,14 +1252,14 @@ void CADContView::UpdateGainScroll()
 {
 	// assume that all channels are displayed at the same gain & offset
 	const int ichan = 0;
-	const CChanlistItem* pChan = m_ADsourceView.GetChanlistItem(ichan);
+	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
 	m_scrolly.SetScrollPos(MulDiv(pChan->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 }
 
 void CADContView::UpdateChanLegends(int chan)
 {
 	const int ichan = 0;
-	const CChanlistItem* pChan = m_ADsourceView.GetChanlistItem(ichan);
+	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
 	int yzero = pChan->GetYzero();
 	int yextent = pChan->GetYextent();
 	float mVperbin = pChan->GetVoltsperDataBin() * 1000.0f;

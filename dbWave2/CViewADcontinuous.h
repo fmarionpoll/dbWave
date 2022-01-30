@@ -40,18 +40,18 @@ protected:
 	bool m_AD_present{false};
 
 protected:
-	ChartDataAD m_ADsourceView; // source data display button
-	int m_cursorstate{0}; // source data cursor state	
+	ChartDataAD m_chartDataAD; 
+	int m_cursorstate{0};	
 	float m_sweepduration{2};
-	CEditCtrl mm_yupper; // edit control for max amplitude displayed	
-	CEditCtrl mm_ylower; // edit control for min amplitude displayed
-	CStretchControl m_stretch; // array of properties associated with controls
+	CEditCtrl mm_yupper;	
+	CEditCtrl mm_ylower;
+	CStretchControl m_stretch; 
 	HICON m_hBias{nullptr};
 	HICON m_hZoom{nullptr};
-	float m_yscaleFactor{1}; // div factor for y bar 
-	int m_VBarMode{0}; // flag V scrollbar state
-	CScrollBar m_scrolly; // V scrollbar
-	COLORREF m_backgroundColor = GetSysColor(COLOR_BTNFACE);
+	float m_yscaleFactor{1}; 
+	int m_VBarMode{0};
+	CScrollBar m_scrolly;
+	COLORREF m_backgroundColor{ GetSysColor(COLOR_BTNFACE) };
 	CBrush* m_pBackgroundBrush = new CBrush(m_backgroundColor);
 
 	void OnGainScroll(UINT nSBCode, UINT nPos);
@@ -69,29 +69,29 @@ protected:
 	BOOL m_bFoundDTOPenLayerDLL{false};
 	BOOL m_bhidesubsequent{false};
 
-	AcqDataDoc m_inputDataFile; // document
-	//AcqDataDoc		m_outputDataFile;			// D/A file...
+	AcqDataDoc m_inputDataFile; 
+	//AcqDataDoc m_outputDataFile;
 	CStringArray m_csNameArray;
-	BOOL m_bFileOpen{false}; // flag / file open
-	CString m_szFileName; // data filename
+	BOOL m_bFileOpen{false}; 
+	CString m_szFileName; 
 
-	BOOL m_bAskErase{false}; // ask erase when data may be lost (default = FALSE)
-	BOOL m_bchanged{false}; // flag: save data or not	
-	BOOL m_bSimultaneousStart{false}; //TRUE if the card is capable of this
+	BOOL m_bAskErase{false};
+	BOOL m_bchanged{false}; 	
+	BOOL m_bSimultaneousStart{false}; 
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pOptions_AD{nullptr}; // pointer to data acq options 
-	OPTIONS_OUTPUTDATA* m_pOptions_DA{nullptr}; // pointer to data output options
+	OPTIONS_ACQDATA* m_pOptions_AD{nullptr};
+	OPTIONS_OUTPUTDATA* m_pOptions_DA{nullptr};
 	BOOL m_bsimultaneousStartDA{false};
 
 	// sweep
-	long m_chsweeplength{0}; // sweep length (per channel)
-	long m_sweeplength{1000}; // sweep length (all channels)
-	int m_chsweep1{0}; // indexes
+	long m_chsweeplength{0}; 
+	long m_sweeplength{1000}; 
+	int m_chsweep1{0}; 
 	int m_chsweep2{0};
 	int m_chsweepRefresh{0};
 	int m_bytesweepRefresh{0};
-	float m_fclockrate{10000.f}; // apparent clock rate
+	float m_fclockrate{10000.f};
 
 	// functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
