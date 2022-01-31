@@ -18,10 +18,8 @@ public:
 	long VoltsToValue(float fVolts, double dfGain);
 	float ValueToVolts(long lVal, double dfGain);
 
-
 protected:
 	void DTLayerError(COleDispatchException* e);
-
 
 	OPTIONS_ACQDATA* m_pOptions = nullptr;
 	BOOL m_inprogress = false;
@@ -31,7 +29,6 @@ protected:
 	double m_freqmax = 50000.;
 	int m_numchansMAX = 8;
 	BOOL m_bsimultaneousStart_AD = false;
-
 
 public:
 	bool IsInProgress() const { return m_inprogress; }
