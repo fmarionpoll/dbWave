@@ -138,9 +138,9 @@ END_EVENTSINK_MAP()
 
 void CADContView::OnCbnSelchangeComboboard()
 {
-	const int isel = m_ADcardCombo.GetCurSel();
+	const int item_selected = m_ADcardCombo.GetCurSel();
 	CString card_name;
-	m_ADcardCombo.GetLBText(isel, card_name);
+	m_ADcardCombo.GetLBText(item_selected, card_name);
 	SelectDTOpenLayersBoard(card_name);
 }
 
@@ -432,20 +432,20 @@ BOOL CADContView::StartAcquisition()
 
 ECODE CADContView::StartSimultaneousList()
 {
-	ECODE retval;
+	ECODE code_returned;
 	HSSLIST hSSlist;
-	CHAR errstr[255];
+	CHAR error_string[255];
 
 	// create simultaneous starting list
 	ECODE ecode = olDaGetSSList(&hSSlist);
-	olDaGetErrorString(ecode, errstr, 255);
+	olDaGetErrorString(ecode, error_string, 255);
 
 	// DA system
 	m_Acq32_DA.Config();
 	ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_Acq32_DA.GetHDass());
 	if (ecode != OLNOERROR)
 	{
-		retval = olDaReleaseSSList(hSSlist);
+		code_returned = olDaReleaseSSList(hSSlist);
 		return ecode;
 	}
 
@@ -454,7 +454,7 @@ ECODE CADContView::StartSimultaneousList()
 	ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_Acq32_AD.GetHDass());
 	if (ecode != OLNOERROR)
 	{
-		retval = olDaReleaseSSList(hSSlist);
+		code_returned = olDaReleaseSSList(hSSlist);
 		return ecode;
 	}
 
@@ -462,16 +462,16 @@ ECODE CADContView::StartSimultaneousList()
 	ecode = olDaSimultaneousPrestart(hSSlist);
 	if (ecode != OLNOERROR)
 	{
-		olDaGetErrorString(ecode, errstr, 255);
-		DisplayolDaErrorMessage(errstr);
+		olDaGetErrorString(ecode, error_string, 255);
+		DisplayolDaErrorMessage(error_string);
 	}
 
 	// start simultaneously
 	ecode = olDaSimultaneousStart(hSSlist);
 	if (ecode != OLNOERROR)
 	{
-		olDaGetErrorString(ecode, errstr, 255);
-		DisplayolDaErrorMessage(errstr);
+		olDaGetErrorString(ecode, error_string, 255);
+		DisplayolDaErrorMessage(error_string);
 	}
 
 	m_Acq32_AD.SetInProgress();
@@ -961,22 +961,22 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	{
 		short* pdataBuf2 = pdataBuf;
 		short* pDTbuf = pDTbuf0;
-		const int iundersample = m_pOptions_AD->iundersample;
-		m_chsweepRefresh = m_chsweepRefresh / iundersample;
+		const int undersample_factor = m_pOptions_AD->iundersample;
+		m_chsweepRefresh = m_chsweepRefresh / undersample_factor;
 		// loop and compute average between consecutive points
 		for (int j = 0; j < pWFormat->scan_count; j++, pdataBuf2++, pDTbuf++)
 		{
 			short* pSource = pDTbuf;
 			short* pDest = pdataBuf2;
-			for (int i = 0; i < m_Acq32_AD.Getchbuflen(); i += iundersample)
+			for (int i = 0; i < m_Acq32_AD.Getchbuflen(); i += undersample_factor)
 			{
 				long SUM = 0;
-				for (int k = 0; k < iundersample; k++)
+				for (int k = 0; k < undersample_factor; k++)
 				{
 					SUM += *pSource;
 					pSource += pWFormat->scan_count;
 				}
-				*pDest = static_cast<short>(SUM / iundersample);
+				*pDest = static_cast<short>(SUM / undersample_factor);
 				pDest += pWFormat->scan_count;
 			}
 		}
@@ -987,7 +987,7 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 
 void CADContView::ADC_TransferToChart()
 {
-	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat(); // pointer to data descriptor
+	const CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat(); // pointer to data descriptor
 
 	// then: display options_acqdataataDoc buffer
 	if (pWFormat->bOnlineDisplay) // display data if requested
@@ -995,17 +995,17 @@ void CADContView::ADC_TransferToChart()
 		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 		m_chartDataAD.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
 	}
-	const float duration = float(pWFormat->sample_count) / m_fclockrate;
+	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
 	CString cs;
-	cs.Format(_T("%.3lf"), duration); // update total time on the screen
-	SetDlgItemText(IDC_STATIC1, cs);// update time elapsed
+	cs.Format(_T("%.3lf"), duration); 
+	SetDlgItemText(IDC_STATIC1, cs);
 }
 
 void CADContView::ADC_TransferToFile()
 {
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat(); // pointer to data descriptor
 	pWFormat->sample_count += m_bytesweepRefresh / 2; // update total sample count
-	const float duration = float(pWFormat->sample_count) / m_fclockrate;
+	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
 
 	short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 	pdataBuf += (m_chsweep1 * pWFormat->scan_count);

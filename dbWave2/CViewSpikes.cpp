@@ -123,7 +123,7 @@ void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 			m_ChartDataWnd.Serialize(ar);
 			ar.Close();
 		}
-		// set bincrflagonsave
+		
 		auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_viewspikes.bincrflagonsave = static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());

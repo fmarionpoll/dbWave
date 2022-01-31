@@ -202,8 +202,8 @@ void CViewSpikeSort::OnInitialUpdate()
 	if (nullptr != m_pSpkList)
 	{
 		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-		m_lower = m_psC->ilower * m_delta;
-		m_upper = m_psC->iupper * m_delta;
+		m_lower = float(m_psC->ilower) * m_delta;
+		m_upper = float(m_psC->iupper) * m_delta;
 		UpdateData(false);
 	}
 	activateMode4();
@@ -228,7 +228,7 @@ void CViewSpikeSort::activateMode4()
 
 		if (nullptr != m_pSpkList)
 		{
-			const auto spikelen_ms = (m_pSpkList->GetSpikeLength() * m_tunit) / m_pSpkList->GetAcqSampRate();
+			const auto spikelen_ms = (static_cast<float>(m_pSpkList->GetSpikeLength()) * m_tunit) / m_pSpkList->GetAcqSampRate();
 			CString cs_dummy;
 			cs_dummy.Format(_T("%0.1f ms"), spikelen_ms);
 			GetDlgItem(IDC_STATICRIGHT)->SetWindowText(cs_dummy);
@@ -332,7 +332,7 @@ void CViewSpikeSort::updateFileParameters()
 	if (bfirstupdate || m_pOptionsViewData->bEntireRecord)
 	{
 		m_timeFirst = 0.f;
-		m_timeLast = (m_pSpkDoc->GetAcqSize() - 1) / m_pSpkList->GetAcqSampRate();
+		m_timeLast = (m_pSpkDoc->GetAcqSize() - 1.f) / m_pSpkList->GetAcqSampRate();
 	}
 	m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->GetAcqSampRate());
 	m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
@@ -602,7 +602,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (shortValue == m_spkformtagleft) // first tag
 			{
 				m_psC->ileft = m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagleft);
-				m_t1 = m_psC->ileft * m_tunit / m_pSpkList->GetAcqSampRate();
+				m_t1 = static_cast<float>(m_psC->ileft) * m_tunit / m_pSpkList->GetAcqSampRate();
 				mm_t1.m_bEntryDone = TRUE;
 				OnEnChangeT1();
 			}
@@ -867,7 +867,7 @@ void CViewSpikeSort::buildHistogram()
 	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 	m_parmmax = static_cast<int>(m_mVMax / delta);
 	m_parmmin = static_cast<int>(m_mVMin / delta);
-	int nbins = static_cast<int>((m_mVMax - m_mVMin) / m_mVbin);
+	const int nbins = static_cast<int>((m_mVMax - m_mVMin) / m_mVbin);
 	if (nbins <= 0)
 		return;
 
@@ -1079,18 +1079,18 @@ void CViewSpikeSort::OnToolsAlignspikes()
 	// get parameters from document
 	auto p_dat_doc = GetDocument()->m_pDat;
 	p_dat_doc->OnOpenDocument(docname);
-	const auto doc_chan = m_pSpkList->GetextractChan(); // source channel
-	const auto nchans = p_dat_doc->GetpWaveFormat()->scan_count; // number of data chans / source buffer
+	const auto doc_chan = m_pSpkList->GetextractChan(); 
+	const auto number_channels = static_cast<int>(p_dat_doc->GetpWaveFormat()->scan_count); 
 	const auto method = m_pSpkList->GetextractTransform();
-	const auto pretrig = m_pSpkList->GetSpikePretrig();
-	const short offset = (method > 0) ? 1 : nchans; // offset between points / detection
-	const short nspan = p_dat_doc->GetTransfDataSpan(method); // nb pts to read before transf
+	const auto spike_pre_trigger = m_pSpkList->GetSpikePretrig();
+	const int offset = (method > 0) ? 1 : number_channels; 
+	const int span = p_dat_doc->GetTransfDataSpan(method); 
 
 	// pre-load data
 	auto iitime0 = m_pSpkList->GetSpikeTime(0); //-pretrig;
 	auto l_rw_first0 = iitime0 - spikelen;
 	auto l_rw_last0 = iitime0 + spikelen;
-	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, nspan))
+	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, span))
 		return; // exit if error reported
 	auto p_data = p_dat_doc->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
 
@@ -1103,14 +1103,14 @@ void CViewSpikeSort::OnToolsAlignspikes()
 			continue;
 
 		iitime0 = m_pSpkList->GetSpikeTime(ispk);
-		iitime0 -= pretrig; // offset beginning of spike
+		iitime0 -= spike_pre_trigger; // offset beginning of spike
 
 		// make sure that source data are loaded and get pointer to it (p_data)
 		auto l_rw_first = iitime0 - spikelen; // first point (eventually) needed
 		auto l_rw_last = iitime0 + spikelen; // last pt needed
 		if (iitime0 > m_lLast || iitime0 < m_lFirst)
 			continue;
-		if (!p_dat_doc->LoadRawData(&l_rw_first, &l_rw_last, nspan))
+		if (!p_dat_doc->LoadRawData(&l_rw_first, &l_rw_last, span))
 			break; // exit if error reported
 
 		// load data only if necessary
@@ -1171,7 +1171,7 @@ void CViewSpikeSort::OnToolsAlignspikes()
 		if (jdecal != 0)
 		{
 			p_data_spike0 = p_data + static_cast<WORD>(iitime0 + jdecal - l_rw_first) * offset + doc_chan;
-			m_pSpkList->TransferDataToSpikeBuffer(ispk, p_data_spike0, nchans);
+			m_pSpkList->TransferDataToSpikeBuffer(ispk, p_data_spike0, number_channels);
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			m_pSpkList->SetSpikeTime(ispk, iitime0 + spkpretrig);
 		}
