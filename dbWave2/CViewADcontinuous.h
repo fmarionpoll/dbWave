@@ -112,7 +112,7 @@ protected:
 	ECODE StartSimultaneousList();
 	BOOL StartOutput();
 	void StopOutput();
-	void InitAcquisitionInputFile() const;
+	void InitAcquisitionInputFile();
 	void InitAcquisitionDisplay();
 
 	BOOL InitCyberAmp();

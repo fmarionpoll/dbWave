@@ -49,9 +49,9 @@ void CADContView::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop_AD);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
-	DDX_Control(pDX, IDC_GAIN_button, m_GainButton);
-	DDX_Control(pDX, IDC_BIAS_button, m_BiasButton);
-	DDX_Control(pDX, IDC_COMBOSTARTOUTPUT, m_ComboStartOutput);
+	//DDX_Control(pDX, IDC_GAIN_button, m_GainButton);
+	//DDX_Control(pDX, IDC_BIAS_button, m_BiasButton);
+	//DDX_Control(pDX, IDC_COMBOSTARTOUTPUT, m_ComboStartOutput);
 	DDX_Control(pDX, IDC_STARTSTOP2, m_Button_StartStop_DA);
 	DDX_Control(pDX, IDC_ADPARAMETERS, m_Button_SamplingMode);
 	DDX_Control(pDX, IDC_DAPARAMETERS2, m_Button_OutputChannels);
@@ -135,6 +135,115 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::OnTriggerError_DAC, VTS_NONE)
 
 END_EVENTSINK_MAP()
+
+
+void CADContView::OnInitialUpdate()
+{
+	// attach controls
+	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
+	VERIFY(m_AD_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
+	VERIFY(m_AD_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
+	VERIFY(m_BiasButton.SubclassDlgItem(IDC_BIAS_button, this));
+	VERIFY(m_GainButton.SubclassDlgItem(IDC_GAIN_button, this));
+	VERIFY(m_ComboStartOutput.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
+
+	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
+	m_AD_xRulerBar.AttachScopeWnd(&m_chartDataAD, TRUE);
+	m_chartDataAD.AttachExternalXRuler(&m_AD_xRulerBar);
+	m_chartDataAD.AttachExternalYRuler(&m_AD_yRulerBar);
+	m_chartDataAD.m_bNiceGrid = TRUE;
+
+	m_stretch.AttachParent(this);
+	m_stretch.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
+	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
+
+	// bitmap buttons: load icons & set buttons
+	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
+	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
+	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hBias)));
+	m_GainButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
+
+	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
+	m_btnStartStop_AD.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
+	m_btnStartStop_AD.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
+	CMFCButton::EnableWindowsTheming(false);
+	m_btnStartStop_AD.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
+
+	// scrollbar
+	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
+	m_scrolly.SetScrollRange(0, 100);
+
+	const auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	m_pOptions_AD = &(pApp->options_acqdata);
+	m_pOptions_DA = &(pApp->options_outputdata);
+	m_bFoundDTOPenLayerDLL = FALSE;
+	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
+	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
+	m_ComboStartOutput.SetCurSel(m_bStartOutPutMode);
+
+	// open document and remove database filters
+	CdbWaveDoc* pdbDoc = GetDocument();
+	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
+	m_ptableSet->m_strFilter.Empty();
+	m_ptableSet->ClearFilters();
+	m_ptableSet->RefreshQuery();
+	CFormView::OnInitialUpdate();
+
+	// if current document, load parameters from current document into the local set of parameters
+	// if current document does not exist, do nothing
+	if (pdbDoc->m_pDB->GetNRecords() > 0)
+	{
+		pdbDoc->OpenCurrentDataFile(); // read data descriptors from current data file
+		AcqDataDoc* pDat = pdbDoc->m_pDat; // get a pointer to the data file itself
+		if (pDat != nullptr)
+		{
+			m_pOptions_AD->waveFormat = *(pDat->GetpWaveFormat()); // read data header
+			m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
+			m_pOptions_AD->chanArray = *pDat->GetpWavechanArray(); // get channel descriptors
+			// restore state of "write-to-file" parameter that was just erased
+			m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
+		}
+	}
+
+	// create data file and copy data acquisition parameters into it
+	m_inputDataFile.OnNewDocument(); // create a file to receive incoming data (A/D)
+	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat; // copy data formats into this file
+	m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
+	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
+	m_chartDataAD.AttachDataFile(&m_inputDataFile); // prepare display area
+
+	pApp->m_bADcardFound = FindDTOpenLayersBoards();
+	if (pApp->m_bADcardFound)
+	{
+		InitOutput_AD();
+		InitAcquisitionInputFile();
+		InitAcquisitionDisplay();
+		InitializeAmplifiers(); // control cyberamplifier OR Alligator Or none?
+
+		m_Acq32_DA.InitSubSystem(m_pOptions_AD);
+		m_Acq32_DA.ClearAllOutputs();
+	}
+	else
+	{
+		m_btnStartStop_AD.ShowWindow(SW_HIDE);
+		m_Button_SamplingMode.ShowWindow(SW_HIDE);
+		m_Button_OutputChannels.ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_ADGROUP)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_DAGROUP)->ShowWindow(SW_HIDE);
+		m_ComboStartOutput.ShowWindow(SW_HIDE);
+		m_Button_StartStop_DA.ShowWindow(SW_HIDE);
+	}
+
+	UpdateChanLegends(0);
+	UpdateRadioButtons();
+
+	// tell mmdi parent which cursor is active
+	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
+}
 
 void CADContView::OnCbnSelchangeComboboard()
 {
@@ -509,110 +618,6 @@ CdbWaveDoc* CADContView::GetDocument()
 CDaoRecordset* CADContView::OnGetRecordset()
 {
 	return m_ptableSet;
-}
-
-void CADContView::OnInitialUpdate()
-{
-	// attach controls
-	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
-	VERIFY(m_AD_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
-	VERIFY(m_AD_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
-	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
-	m_AD_xRulerBar.AttachScopeWnd(&m_chartDataAD, TRUE);
-	m_chartDataAD.AttachExternalXRuler(&m_AD_xRulerBar);
-	m_chartDataAD.AttachExternalYRuler(&m_AD_yRulerBar);
-	m_chartDataAD.m_bNiceGrid = TRUE;
-
-	m_stretch.AttachParent(this);
-	m_stretch.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
-
-	// bitmap buttons: load icons & set buttons
-	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
-	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
-	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hBias)));
-	m_GainButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
-
-	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
-	m_btnStartStop_AD.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
-	m_btnStartStop_AD.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
-	CMFCButton::EnableWindowsTheming(false);
-	m_btnStartStop_AD.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
-
-	// scrollbar
-	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
-	m_scrolly.SetScrollRange(0, 100);
-
-	const auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	m_pOptions_AD = &(pApp->options_acqdata);
-	m_pOptions_DA = &(pApp->options_outputdata);
-	m_bFoundDTOPenLayerDLL = FALSE;
-	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
-	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
-	m_ComboStartOutput.SetCurSel(m_bStartOutPutMode);
-
-	// open document and remove database filters
-	CdbWaveDoc* pdbDoc = GetDocument();
-	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
-	m_ptableSet->m_strFilter.Empty();
-	m_ptableSet->ClearFilters();
-	m_ptableSet->RefreshQuery();
-	CFormView::OnInitialUpdate();
-
-	// if current document, load parameters from current document into the local set of parameters
-	// if current document does not exist, do nothing
-	if (pdbDoc->m_pDB->GetNRecords() > 0)
-	{
-		pdbDoc->OpenCurrentDataFile(); // read data descriptors from current data file
-		AcqDataDoc* pDat = pdbDoc->m_pDat; // get a pointer to the data file itself
-		if (pDat != nullptr)
-		{
-			m_pOptions_AD->waveFormat = *(pDat->GetpWaveFormat()); // read data header
-			m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-			m_pOptions_AD->chanArray = *pDat->GetpWavechanArray(); // get channel descriptors
-			// restore state of "write-to-file" parameter that was just erased
-			m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
-		}
-	}
-
-	// create data file and copy data acquisition parameters into it
-	m_inputDataFile.OnNewDocument(); // create a file to receive incoming data (A/D)
-	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat; // copy data formats into this file
-	m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
-	m_chartDataAD.AttachDataFile(&m_inputDataFile); // prepare display area
-
-	pApp->m_bADcardFound = FindDTOpenLayersBoards();
-	if (pApp->m_bADcardFound)
-	{
-		InitOutput_AD();
-		InitAcquisitionInputFile();
-		InitAcquisitionDisplay();
-		InitializeAmplifiers(); // control cyberamplifier OR Alligator Or none?
-
-		m_Acq32_DA.InitSubSystem(m_pOptions_AD);
-		m_Acq32_DA.ClearAllOutputs();
-	}
-	else
-	{
-		m_btnStartStop_AD.ShowWindow(SW_HIDE);
-		m_Button_SamplingMode.ShowWindow(SW_HIDE);
-		m_Button_OutputChannels.ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_ADGROUP)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_DAGROUP)->ShowWindow(SW_HIDE);
-		m_ComboStartOutput.ShowWindow(SW_HIDE);
-		m_Button_StartStop_DA.ShowWindow(SW_HIDE);
-	}
-
-	UpdateChanLegends(0);
-	UpdateRadioButtons();
-
-	// tell mmdi parent which cursor is active
-	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
 
 void CADContView::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
@@ -1372,8 +1377,8 @@ BOOL CADContView::StartOutput()
 {
 	if (!m_Acq32_DA.InitSubSystem(m_pOptions_AD))
 		return FALSE;
-
 	m_Acq32_DA.DeclareAndFillBuffers(m_pOptions_AD);
+	m_Acq32_AD.DeclareBuffers(m_pOptions_AD);
 	m_Acq32_DA.ConfigAndStart();
 	return TRUE;
 }
@@ -1383,15 +1388,18 @@ void CADContView::StopOutput()
 	m_Acq32_DA.StopAndLiberateBuffers();
 }
 
-void CADContView::InitAcquisitionInputFile() const
+void CADContView::InitAcquisitionInputFile() 
 {
+	//TODO make sure m_chsweeplength > 0
+
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
 	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
 	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat;
-	// set sweep length to the nb of data buffers
+
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat); // get pointer to m_pADC_options wave format
+
+	// set sweep length to the nb of data buffers
 	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);
-	// ?m_inputDataFile.AdjustBUF(m_chsweeplength);
-	//m_Acq32_AD.DeclareBuffers(pWFormat);
+	m_inputDataFile.AdjustBUF(m_chsweeplength);
 }
 
