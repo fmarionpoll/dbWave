@@ -1391,7 +1391,7 @@ void CADContView::StopOutput()
 void CADContView::InitAcquisitionInputFile() 
 {
 	//TODO make sure m_chsweeplength > 0
-
+	m_chsweeplength = static_cast<long>(m_sweepduration * wave_format->chrate / static_cast<float>(m_pADC_options->iundersample));
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
 	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
 	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat;
