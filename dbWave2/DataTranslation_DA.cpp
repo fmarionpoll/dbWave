@@ -7,11 +7,11 @@
 #include "OPTIONS_ACQDATA.h"
 
 
-BOOL DataTranslation_DA::OpenSubSystem(const CString cardName)
+BOOL DataTranslation_DA::OpenSubSystem(const CString card_name)
 {
 	try
 	{
-		SetBoard(cardName);
+		SetBoard(card_name);
 		if (GetDevCaps(OLSS_DA) == 0)
 			return FALSE;
 

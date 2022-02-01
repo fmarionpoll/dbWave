@@ -10,7 +10,7 @@ class DataTranslation_DA :
 	public CDTAcq32
 {
 public:
-	BOOL OpenSubSystem(CString cardName);
+	BOOL OpenSubSystem(CString card_name);
 	BOOL ClearAllOutputs();
 	void SetChannelList();
 	BOOL InitSubSystem(const OPTIONS_ACQDATA* pADC_options);

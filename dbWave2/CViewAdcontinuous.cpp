@@ -1390,8 +1390,7 @@ void CADContView::StopOutput()
 
 void CADContView::InitAcquisitionInputFile() 
 {
-	//TODO make sure m_chsweeplength > 0
-	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat); // get pointer to m_pADC_options wave format
+	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 
 	m_chsweeplength = static_cast<long>(m_sweepduration * pWFormat->chrate / static_cast<float>(m_pOptions_AD->iundersample));
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop

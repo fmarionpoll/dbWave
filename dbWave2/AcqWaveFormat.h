@@ -9,7 +9,7 @@
 // Separate routines decode the headers from such files and store the
 // parameters in CWaveFormat structure
 
-class CWaveFormat : public CObject
+class CWaveFormat final : public CObject
 {
 	DECLARE_SERIAL(CWaveFormat);
 
@@ -21,7 +21,7 @@ public:
 	long binspan { 4096}; // 2^12, 2^16
 	long binzero { 2048}; // 2048, 32768 (0 if 2's complement)
 
-	short mode_encoding { 0}; // 0{offset binary/1{straight/2{2scomplement
+	short mode_encoding { 0}; // 0{offset binary/1{straight/2{2s complement
 	short mode_clock { 0}; // 0{internal, 1{external
 	short mode_trigger { 0}; // 0{internal, 1{external, 2{trigg_scan
 	short scan_count { 1}; // number of channels in scan list
@@ -54,6 +54,7 @@ public:
 	CString csStimulus2 { _T("")}; // 11 stimulus 2
 	CString csConcentration2 { _T("")}; // 12 concentration of stimulus 2
 	CString csSex { _T("")}; // 13 sex
+
 	long insectID { 0}; // 14
 	long sensillumID { 0}; // 15
 	long repeat { 0}; // 16
