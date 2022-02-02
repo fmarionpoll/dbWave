@@ -295,6 +295,8 @@
 #define IDC_FONTSIZE                    310
 #define IDS_CAPTION_BUTTON_TP           310
 #define IDS_CAPTION_BUTTON_TIP          310
+#define IDI_ZOOM1                       310
+#define IDI_UNZOOM                      310
 #define IDC_DETECTTRANSFORM             311
 #define IDS_CAPTION_TEXT                311
 #define IDC_EXTRACTTRANSFORM            312

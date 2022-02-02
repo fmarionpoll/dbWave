@@ -49,7 +49,7 @@ void CADContView::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop_AD);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
-	//DDX_Control(pDX, IDC_GAIN_button, m_GainButton);
+	//DDX_Control(pDX, IDC_GAIN_button, m_ZoomButton);
 	//DDX_Control(pDX, IDC_BIAS_button, m_BiasButton);
 	//DDX_Control(pDX, IDC_COMBOSTARTOUTPUT, m_ComboStartOutput);
 	DDX_Control(pDX, IDC_STARTSTOP2, m_Button_StartStop_DA);
@@ -144,7 +144,7 @@ void CADContView::OnInitialUpdate()
 	VERIFY(m_AD_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
 	VERIFY(m_AD_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
 	VERIFY(m_BiasButton.SubclassDlgItem(IDC_BIAS_button, this));
-	VERIFY(m_GainButton.SubclassDlgItem(IDC_GAIN_button, this));
+	VERIFY(m_ZoomButton.SubclassDlgItem(IDC_GAIN_button, this));
 	VERIFY(m_ComboStartOutput.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
 
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
@@ -160,12 +160,15 @@ void CADContView::OnInitialUpdate()
 	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
+	m_stretch.newProp(IDC_UNZOOM, SZEQ_XREQ, SZEQ_YTEQ);
 
 	// bitmap buttons: load icons & set buttons
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
+	m_hUnZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
 	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hBias)));
-	m_GainButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
+	m_ZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
+	m_UnZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hUnZoom)));
 
 	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
 	m_btnStartStop_AD.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
@@ -1099,7 +1102,7 @@ BOOL CADContView::InitCyberAmp()
 void CADContView::OnBnClickedGainbutton()
 {
 	m_BiasButton.SetState(0);
-	m_GainButton.SetState(1);
+	m_ZoomButton.SetState(1);
 	SetVBarMode(BAR_GAIN);
 }
 
@@ -1107,7 +1110,7 @@ void CADContView::OnBnClickedBiasbutton()
 {
 	// set bias down and set gain up CButton	
 	m_BiasButton.SetState(1);
-	m_GainButton.SetState(0);
+	m_ZoomButton.SetState(0);
 	SetVBarMode(BAR_BIAS);
 }
 

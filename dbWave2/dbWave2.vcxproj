@@ -155,7 +155,7 @@
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
-    <LibraryPath>C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Lib;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Lib;C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\fred\source\repos\dbWave2\dbWave2\include\CED\x86;C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;$(LibraryPath)</LibraryPath>
     <ExecutablePath>C:\Users\fred\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86;$(ExecutablePath)</ExecutablePath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
     <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
@@ -1762,6 +1762,7 @@
     <Image Include="res\toolbar_spk256.bmp" />
     <Image Include="res\writelarge.bmp" />
     <Image Include="res\writesmall.bmp" />
+    <Image Include="res\zoom1.ico" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.lib" />

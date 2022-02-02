@@ -33,8 +33,9 @@ protected:
 	CRulerBar m_AD_xRulerBar;
 	CRulerBar m_AD_yRulerBar;
 	CComboBox m_ADcardCombo;
-	CButton m_GainButton;
+	CButton m_ZoomButton;
 	CButton m_BiasButton;
+	CButton m_UnZoomButton;
 	CButton m_Button_StartStop_DA;
 	CButton m_Button_SamplingMode;
 	CButton m_Button_OutputChannels;
@@ -55,6 +56,7 @@ protected:
 	CStretchControl m_stretch;
 	HICON m_hBias{ nullptr };
 	HICON m_hZoom{ nullptr };
+	HICON m_hUnZoom{ nullptr };
 	float m_yscaleFactor{ 1 }; 
 	int m_VBarMode{ 0 }; 
 	CScrollBar m_scrolly; 

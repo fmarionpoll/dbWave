@@ -2424,6 +2424,8 @@ IDI_PROPERTIES_WND      ICON                    "res\\properties_wnd.ico"
 
 IDI_PROPERTIES_WND_HC   ICON                    "res\\properties_wnd_hc.ico"
 
+IDI_UNZOOM              ICON                    "res\\zoom1.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
