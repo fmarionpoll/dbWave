@@ -1321,6 +1321,9 @@
     <Image Include="res\toolbar_dat256.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\check1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.lib" />

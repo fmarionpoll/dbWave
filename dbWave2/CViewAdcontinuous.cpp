@@ -158,7 +158,7 @@ void CADContView::OnInitialUpdate()
 	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
 
 	// bitmap buttons: load icons & set buttons
@@ -1054,7 +1054,7 @@ void CADContView::OnBufferDone_DAC()
 
 void CADContView::InitializeAmplifiers()
 {
-	InitCyberAmp(); // TODO init others and look at pwaveformat
+	InitCyberAmp(); // TODO init other amplifiers and look at pwaveformat?
 }
 
 BOOL CADContView::InitCyberAmp()

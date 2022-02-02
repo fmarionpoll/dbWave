@@ -1722,6 +1722,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\buttons.bmp" />
+    <Image Include="res\check1.bmp" />
     <Image Include="res\classview.bmp" />
     <Image Include="res\classview_hc.bmp" />
     <Image Include="res\class_view.ico" />

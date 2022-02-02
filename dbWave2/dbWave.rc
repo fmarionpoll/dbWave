@@ -1167,8 +1167,8 @@ BEGIN
     LTEXT           "Time elapsed (s) :",IDC_STATIC2,126,3,56,8,NOT WS_VISIBLE
     LTEXT           "val",IDC_STATIC1,186,3,43,10,SS_SUNKEN | NOT WS_VISIBLE
     PUSHBUTTON      "zoom",IDC_GAIN_button,378,15,11,11,BS_ICON | NOT WS_TABSTOP
-    PUSHBUTTON      "bias",IDC_BIAS_button,378,26,11,11,BS_ICON | NOT WS_TABSTOP
-    SCROLLBAR       IDC_SCROLLY_scrollbar,378,37,11,140,SBS_TOPALIGN | SBS_VERT
+    PUSHBUTTON      "bias",IDC_BIAS_button,377,168,11,11,BS_ICON | NOT WS_TABSTOP
+    SCROLLBAR       IDC_SCROLLY_scrollbar,378,37,11,132,SBS_TOPALIGN | SBS_VERT
     GROUPBOX        "Inputs",IDC_ADGROUP,1,18,81,96
     GROUPBOX        "Outputs",IDC_DAGROUP,1,116,81,86
     PUSHBUTTON      "   O&uput channels...",IDC_DAPARAMETERS2,7,168,70,14,BS_LEFT | BS_MULTILINE | NOT WS_VISIBLE
@@ -1186,6 +1186,7 @@ BEGIN
     PUSHBUTTON      "?",IDC_CARDFEATURES,80,3,12,12
     COMBOBOX        IDC_COMBOSTARTOUTPUT,7,127,70,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&START",IDC_STARTSTOP2,"Button",BS_AUTOCHECKBOX | BS_BITMAP | BS_PUSHLIKE | WS_TABSTOP,7,143,70,23
+    PUSHBUTTON      "bias",IDC_UNZOOM,378,26,11,11,BS_ICON | NOT WS_TABSTOP
 END
 
 IDD_VIEWBROWSE DIALOGEX 0, 0, 494, 30
@@ -2349,6 +2350,8 @@ IDB_WRITESMALL          BITMAP                  "res\\writesmall.bmp"
 IDR_DBSPIKETYPE_256     BITMAP                  "res\\toolbar_spk256.bmp"
 
 IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
+
+IDB_CHECK1              BITMAP                  "res\\check1.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////

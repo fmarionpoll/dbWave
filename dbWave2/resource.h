@@ -74,6 +74,8 @@
 #define IDS_PARAMETERFILE_FAILEDTOSAVE  151
 #define IDC_BIAS2                       151
 #define ID_SORTPROPERTIES               151
+#define IDC_BIAS_button2                151
+#define IDC_UNZOOM                      151
 #define IDD_PROPPAGE3                   152
 #define IDS_BTTNDATABASE                152
 #define ID_PROPERTIES1                  152
@@ -439,6 +441,7 @@
 #define IDD_DTBOARD_DLG                 558
 #define IDR_DBDATATYPE_256              571
 #define IDR_DBSPIKETYPE_256             572
+#define IDB_CHECK1                      573
 #define ID_STARTSTOP                    1001
 #define IDC_VERSION                     1003
 #define IDC_SAMPLINGRATE                1003
