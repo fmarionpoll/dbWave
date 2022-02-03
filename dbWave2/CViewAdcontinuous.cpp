@@ -80,6 +80,7 @@ BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_BN_CLICKED(IDC_CARDFEATURES, &CADContView::OnBnClickedCardfeatures)
 	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &CADContView::OnCbnSelchangeCombostartoutput)
 	ON_BN_CLICKED(IDC_STARTSTOP2, &CADContView::OnBnClickedStartstop2)
+	ON_BN_CLICKED(IDC_UNZOOM, &CADContView::OnBnClickedUnzoom)
 END_MESSAGE_MAP()
 
 void CADContView::OnDestroy()
@@ -145,6 +146,7 @@ void CADContView::OnInitialUpdate()
 	VERIFY(m_AD_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
 	VERIFY(m_BiasButton.SubclassDlgItem(IDC_BIAS_button, this));
 	VERIFY(m_ZoomButton.SubclassDlgItem(IDC_GAIN_button, this));
+	VERIFY(m_UnZoomButton.SubclassDlgItem(IDC_UNZOOM, this));
 	VERIFY(m_ComboStartOutput.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
 
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
@@ -165,7 +167,7 @@ void CADContView::OnInitialUpdate()
 	// bitmap buttons: load icons & set buttons
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
-	m_hUnZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
+	m_hUnZoom = AfxGetApp()->LoadIcon(IDI_UNZOOM);
 	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hBias)));
 	m_ZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
 	m_UnZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hUnZoom)));
@@ -1406,3 +1408,19 @@ void CADContView::InitAcquisitionInputFile()
 	m_inputDataFile.AdjustBUF(m_chsweeplength);
 }
 
+
+
+void CADContView::OnBnClickedUnzoom()
+{
+	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+	const int iextent = pWFormat->binspan;
+
+	for (int i = 0; i < pWFormat->scan_count; i++)
+	{
+		constexpr int ioffset = 0;
+		CChanlistItem* pD = m_chartDataAD.GetChanlistItem(i);
+		pD->SetYzero(ioffset);
+		pD->SetYextent(iextent);
+	}
+	m_chartDataAD.Invalidate();
+}

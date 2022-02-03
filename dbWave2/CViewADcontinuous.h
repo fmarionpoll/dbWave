@@ -184,4 +184,5 @@ public:
 
 	CButton m_Button_WriteToDisk;
 	CButton m_Button_Oscilloscope;
+	afx_msg void OnBnClickedUnzoom();
 };
