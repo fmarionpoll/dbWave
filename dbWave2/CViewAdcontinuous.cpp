@@ -137,9 +137,11 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 
 END_EVENTSINK_MAP()
 
-
 void CADContView::OnInitialUpdate()
 {
+	// TODO: change place of call to parent to see if hWnd is no longer zero
+	//CFormView::OnInitialUpdate();
+
 	// attach controls
 	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
 	VERIFY(m_AD_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
@@ -327,11 +329,11 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 	if (m_bSimultaneousStart && m_bStartOutPutMode == 0)
 	{
 		HSSLIST hSSlist;
-		CHAR errstr[255];
+		CHAR error_string[255];
 		ECODE ecode = olDaGetSSList(&hSSlist);
-		olDaGetErrorString(ecode, errstr, 255);
+		olDaGetErrorString(ecode, error_string, 255);
 		ecode = olDaReleaseSSList(hSSlist);
-		olDaGetErrorString(ecode, errstr, 255);
+		olDaGetErrorString(ecode, error_string, 255);
 	}
 
 	// stop AD, liberate DTbuffers
@@ -347,11 +349,12 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 	if (m_bFileOpen)
 	{
 		SaveAndCloseFile();
-		// update view data	
-		const long lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
-		m_chartDataAD.AttachDataFile(&m_inputDataFile);
-		m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), lsizeDOCchan);
-		m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
+		// update view data
+		UpdateViewDataFinal();
+		//const long lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
+		//m_chartDataAD.AttachDataFile(&m_inputDataFile);
+		//m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), lsizeDOCchan);
+		//m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
 	}
 }
 

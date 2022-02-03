@@ -49,7 +49,7 @@ int ChartData::AddChanlistItem(int ns, int mode)
 		m_PolyPoints.SetSize(m_npixels * 4);
 		m_scale.SetScale(m_npixels, m_lxSize);
 		m_dataperpixel = 2;
-		auto* p_envelope = new CEnvelope(m_npixels * m_dataperpixel, m_dataperpixel, 0, -1, 0);
+		auto* p_envelope = new CEnvelope(static_cast<WORD>(m_npixels * m_dataperpixel), m_dataperpixel, 0, -1, 0);
 		ASSERT(p_envelope != NULL);
 		envelope_ptr_array.Add(p_envelope);
 		p_envelope->FillEnvelopeWithAbcissa(m_npixels * m_dataperpixel, m_lxSize);
@@ -59,7 +59,7 @@ int ChartData::AddChanlistItem(int ns, int mode)
 	auto span = 0;
 	if (m_pDataFile != nullptr)
 		span = m_pDataFile->GetTransfDataSpan(mode);
-	auto* p_envelope_y = new CEnvelope(m_npixels, m_dataperpixel, ns, mode, span);
+	auto* p_envelope_y = new CEnvelope(static_cast<WORD>(m_npixels), m_dataperpixel, ns, mode, span);
 	ASSERT(p_envelope_y != NULL);
 	const auto j = envelope_ptr_array.Add(p_envelope_y);
 
