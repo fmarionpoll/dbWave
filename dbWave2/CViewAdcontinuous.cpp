@@ -563,6 +563,7 @@ ECODE CADContView::StartSimultaneousList()
 	if (ecode != OLNOERROR)
 	{
 		code_returned = olDaReleaseSSList(hSSlist);
+		TRACE("error %i \n", code_returned);
 		return ecode;
 	}
 
@@ -572,6 +573,7 @@ ECODE CADContView::StartSimultaneousList()
 	if (ecode != OLNOERROR)
 	{
 		code_returned = olDaReleaseSSList(hSSlist);
+		TRACE("error %i \n", code_returned);
 		return ecode;
 	}
 
