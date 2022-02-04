@@ -16,18 +16,18 @@ public:
 protected:
 	void PreSubclassWindow() override;
 private:
-	COLORREF m_penColor;
+	COLORREF m_penColor { GetSysColor(COLOR_WINDOWTEXT) };
 	CFont m_hFont;
-	BOOL m_bHorizontal;
+	BOOL m_bHorizontal {-1};
 	CRect m_rcClient;
-	BOOL m_bCaptured;
-	BOOL m_bBottom;
-	int m_captureMode;
+	BOOL m_bCaptured {false};
+	BOOL m_bBottom {true};
+	int m_captureMode {-1};
 	CPoint oldpt;
 	CPoint newpt;
-	CRuler* m_pRuler;
-	ChartData* m_pChartDataWnd;
-
+	CRuler* m_pRuler { nullptr };
+	ChartData* m_pChartDataWnd { nullptr };
+	
 public:
 	BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
 	            DWORD dw_style, const RECT& rect, CWnd* pParentWnd,

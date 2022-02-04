@@ -4,12 +4,6 @@
 
 CRuler::CRuler()
 {
-	m_is_horizontal = TRUE;
-	m_dfirst = 0.;
-	m_dlast = 0.;
-	m_dscaleinc = 0.;
-	m_dscalefirst = 0.;
-	m_dscalelast = 0.;
 }
 
 CRuler::~CRuler()

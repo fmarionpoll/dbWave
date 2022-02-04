@@ -14,15 +14,8 @@ IMPLEMENT_DYNAMIC(CRulerBar, CWnd)
 
 CRulerBar::CRulerBar()
 {
-	m_penColor = GetSysColor(COLOR_WINDOWTEXT);
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY,
 	                   VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
-	m_bHorizontal = -1;
-	m_pChartDataWnd = nullptr;
-	m_pRuler = nullptr;
-	m_bCaptured = FALSE;
-	m_captureMode = -1;
-	m_bBottom = true;
 }
 
 CRulerBar::~CRulerBar()
