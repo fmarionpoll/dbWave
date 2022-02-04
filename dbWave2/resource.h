@@ -398,7 +398,9 @@
 #define IDC_SPIKEWINDOWLENGTH           432
 #define IDC_LOAD                        433
 #define IDC_ADPARAMETERS                504
+#define IDC_SAMPLINGMODE                504
 #define IDC_ADPARAMETERS2               505
+#define IDC_INPUTCHANNELS               505
 #define IDC_MAXMV                       506
 #define IDC_COPYMIDDLE                  507
 #define IDC_DAPARAMETERS                507

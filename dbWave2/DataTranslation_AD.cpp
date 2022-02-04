@@ -154,7 +154,7 @@ void DataTranslation_AD::DeclareBuffers(OPTIONS_ACQDATA* pADC_options)
 		ECODE ecode = olDmAllocBuffer(0, m_buflen, &m_bufhandle);
 		ecode = OLNOERROR;
 		if ((ecode == OLNOERROR) && (m_bufhandle != nullptr))
-			SetQueue(long(m_bufhandle)); // but buffer onto Ready queue
+			SetQueue(long(m_bufhandle));
 	}
 }
 

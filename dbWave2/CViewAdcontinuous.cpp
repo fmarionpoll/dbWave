@@ -49,11 +49,8 @@ void CADContView::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop_AD);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
-	//DDX_Control(pDX, IDC_GAIN_button, m_ZoomButton);
-	//DDX_Control(pDX, IDC_BIAS_button, m_BiasButton);
-	//DDX_Control(pDX, IDC_COMBOSTARTOUTPUT, m_ComboStartOutput);
 	DDX_Control(pDX, IDC_STARTSTOP2, m_Button_StartStop_DA);
-	DDX_Control(pDX, IDC_ADPARAMETERS, m_Button_SamplingMode);
+	DDX_Control(pDX, IDC_SAMPLINGMODE, m_Button_SamplingMode);
 	DDX_Control(pDX, IDC_DAPARAMETERS2, m_Button_OutputChannels);
 	DDX_Control(pDX, IDC_WRITETODISK, m_Button_WriteToDisk);
 	DDX_Control(pDX, IDC_OSCILLOSCOPE, m_Button_Oscilloscope);
@@ -61,14 +58,14 @@ void CADContView::DoDataExchange(CDataExchange * pDX)
 
 BEGIN_MESSAGE_MAP(CADContView, CFormView)
 	ON_MESSAGE(WM_MYMESSAGE, &CADContView::OnMyMessage)
-	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CADContView::OnHardwareAdchannels)
-	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CADContView::OnHardwareAdintervals)
+	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CADContView::OnInputChannels)
+	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CADContView::OnSamplingMode)
 	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CADContView::OnHardwareDefineexperiment)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_ADPARAMETERS, &CADContView::OnHardwareAdintervals)
-	ON_BN_CLICKED(IDC_ADPARAMETERS2, &CADContView::OnHardwareAdchannels)
+	ON_BN_CLICKED(IDC_SAMPLINGMODE, &CADContView::OnSamplingMode)
+	ON_BN_CLICKED(IDC_INPUTCHANNELS, &CADContView::OnInputChannels)
 	ON_BN_CLICKED(IDC_GAIN_button, &CADContView::OnBnClickedGainbutton)
 	ON_BN_CLICKED(IDC_BIAS_button, &CADContView::OnBnClickedBiasbutton)
 	ON_WM_VSCROLL()
@@ -227,8 +224,6 @@ void CADContView::OnInitialUpdate()
 	if (pApp->m_bADcardFound)
 	{
 		InitOutput_AD();
-		InitAcquisitionInputFile();
-		InitAcquisitionDisplay();
 		InitializeAmplifiers(); // control cyberamplifier OR Alligator Or none?
 
 		m_Acq32_DA.InitSubSystem(m_pOptions_AD);
@@ -812,7 +807,7 @@ BOOL CADContView::Defineexperiment()
 	return TRUE;
 }
 
-void CADContView::OnHardwareAdchannels()
+void CADContView::OnInputChannels()
 {
 	UpdateData(TRUE);
 
@@ -833,8 +828,6 @@ void CADContView::OnHardwareAdchannels()
 	{
 		m_pOptions_AD->bChannelType = dlg.m_bchantype;
 		InitOutput_AD();
-		InitAcquisitionInputFile();
-		InitAcquisitionDisplay();
 		UpdateData(FALSE);
 		UpdateChanLegends(0);
 	}
@@ -844,7 +837,7 @@ void CADContView::OnHardwareAdchannels()
 		ChainDialog(dlg.m_postmessage);
 }
 
-void CADContView::OnHardwareAdintervals()
+void CADContView::OnSamplingMode()
 {
 	DlgADIntervals dlg;
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
@@ -860,16 +853,16 @@ void CADContView::OnHardwareAdintervals()
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		StopAcquisition(TRUE);
-		UpdateStartStop(m_Acq32_AD.IsInProgress());
+		if (m_Acq32_AD.IsInProgress()) {
+			StopAcquisition(TRUE);
+			UpdateStartStop(m_Acq32_AD.IsInProgress());
+		}
 
 		m_pOptions_AD->iundersample = int(dlg.m_undersamplefactor);
 		m_pOptions_AD->baudiblesound = dlg.m_baudiblesound;
 		m_sweepduration = dlg.m_sweepduration;
 		m_pOptions_AD->sweepduration = m_sweepduration;
 		InitOutput_AD();
-		InitAcquisitionInputFile();
-		InitAcquisitionDisplay();
 		UpdateData(FALSE);
 	}
 
