@@ -118,8 +118,10 @@ public:
 
 	int GetChanlistPixeltoBin(WORD chan, int pixels)
 	{
-		return MulDiv(pixels - m_yVO, chanlistitem_ptr_array[chan]->GetYextent(), m_yVE) + chanlistitem_ptr_array[chan]
-			->GetYzero();
+		return chanlistitem_ptr_array[chan]->GetYzero() + 
+				MulDiv(pixels - m_yVO,
+					chanlistitem_ptr_array[chan]->GetYextent(), 
+					m_yVE);
 	}
 
 	SCOPESTRUCT* GetScopeParameters() override;

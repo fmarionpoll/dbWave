@@ -782,30 +782,22 @@ void ChartData::ZoomData(CRect* r1, CRect* r2)
 
 void ChartData::UpdateXRuler()
 {
-	if (m_bNiceGrid)
-	{
-		if (m_pXRulerBar != nullptr)
-		{
-			auto first = m_lxFirst / m_samplingrate;
-			auto last = m_lxLast / m_samplingrate;
-			m_xRuler.UpdateRange(first, last);
-		}
-	}
+	if (m_bNiceGrid && m_pXRulerBar != nullptr)
+		m_xRuler.UpdateRange(double(m_lxFirst) / m_samplingrate, double(m_lxLast) / m_samplingrate);
 }
 
 void ChartData::UpdateYRuler()
 {
-	if (m_bNiceGrid)
+	if (m_bNiceGrid && m_pYRulerBar != nullptr)
 	{
-		if (m_pYRulerBar != nullptr)
-		{
-			const auto binlow = GetChanlistPixeltoBin(0, 0);
-			const auto binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
-			CChanlistItem* pchan = GetChanlistItem(0);
-			auto yfirst = pchan->ConvertDataBinsToVolts(binlow);
-			auto ylast = pchan->ConvertDataBinsToVolts(binhigh);
-			m_yRuler.UpdateRange(yfirst, ylast);
-		}
+		const auto binlow = GetChanlistPixeltoBin(0, 0);
+		const auto binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
+		TRACE("binlow = %i binhigh=%i \n", binlow, binhigh);
+		CChanlistItem* pchan = GetChanlistItem(0);
+		auto yfirst = pchan->ConvertDataBinsToVolts(binlow);
+		auto ylast = pchan->ConvertDataBinsToVolts(binhigh);
+		TRACE("yfirst = %f ylast=%f \n", yfirst, ylast);
+		m_yRuler.UpdateRange(yfirst, ylast);
 	}
 }
 
@@ -855,22 +847,19 @@ void ChartData::PlotDatatoDC(CDC* p_dc)
 
 	p_dc->SetWindowOrg(0, 0);
 
-	// display all channels
-	auto worg = -1; // force origin
-	auto wext = -1; // force <= yextent
 	const auto yVE = m_displayRect.Height();
 	CEnvelope* pX = nullptr;
 	auto nelements = 0;
 
-	auto color = BLACK_COLOR;
+	constexpr auto color = BLACK_COLOR;
 	const auto poldpen = p_dc->SelectObject(&m_penTable[color]);
 
 	// display loop:
 	for (auto ichan = chanlistitem_ptr_array.GetUpperBound(); ichan >= 0; ichan--) // scan all channels
 	{
 		const auto chanlist_item = chanlistitem_ptr_array[ichan];
-		wext = chanlist_item->GetYextent();
-		worg = chanlist_item->GetYzero();
+		const auto wext = chanlist_item->GetYextent();
+		const auto worg = chanlist_item->GetYzero();
 		p_dc->SelectObject(&m_penTable[chanlist_item->GetColor()]);
 		if (chanlist_item->GetPenWidth() == 0)
 			continue;
@@ -884,7 +873,7 @@ void ChartData::PlotDatatoDC(CDC* p_dc)
 			pX->ExportToAbcissa(m_PolyPoints);
 		}
 
-		auto pY = chanlist_item->pEnvelopeOrdinates;
+		const auto pY = chanlist_item->pEnvelopeOrdinates;
 		pY->ExportToOrdinates(m_PolyPoints);
 
 		for (auto j = 0; j < nelements; j++)
@@ -925,8 +914,8 @@ void ChartData::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	auto wext = pChan->GetYextent();
-	auto worg = pChan->GetYzero();
+	const auto wext = pChan->GetYextent();
+	const auto worg = pChan->GetYzero();
 	const auto yVE = m_displayRect.Height();
 	for (auto i = m_HZtags.GetNTags() - 1; i >= 0; i--)
 	{
@@ -954,8 +943,7 @@ void ChartData::displayVTtags_LValue(CDC* p_dc)
 		const auto lk = m_VTtags.GetTagLVal(j);
 		if (lk < m_lxFirst || lk > m_lxLast)
 			continue;
-		const auto llk = (lk - m_lxFirst) * static_cast<float>(m_displayRect.Width()) / (m_lxLast - m_lxFirst + 1);
-		const auto k = static_cast<int>(llk);
+		const auto k = MulDiv(lk - m_lxFirst, m_displayRect.Width(), m_lxLast - m_lxFirst + 1);
 		p_dc->MoveTo(k, y0);
 		p_dc->LineTo(k, y1);
 	}
