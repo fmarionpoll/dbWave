@@ -83,22 +83,18 @@ BOOL CWaveChanArray::Read(CFile* datafile)
 // otherwise the pointers would point to the same objects and
 // one of the array would be undefined when the other is destroyed
 
-CWaveChanArray& CWaveChanArray::operator =(const CWaveChanArray& arg)
+void CWaveChanArray::Copy(const CWaveChanArray* arg)
 {
-	if (this != &arg)
+	const auto n_items = arg->wavechan_ptr_array.GetSize(); // source size
+	ChanArray_removeAll(); // erase existing data
+	for (auto i = 0; i < n_items; i++) // loop over n items
 	{
-		const auto n_items = arg.wavechan_ptr_array.GetSize(); // source size
-		ChanArray_removeAll(); // erase existing data
-		for (auto i = 0; i < n_items; i++) // loop over n items
-		{
-			const auto p_channel = new CWaveChan(); // create new object
-			ASSERT(p_channel != NULL);
-			*p_channel = *arg.Get_p_channel(i);
+		const auto p_channel = new CWaveChan(); // create new object
+		ASSERT(p_channel != NULL);
+		p_channel ->Copy( arg->Get_p_channel(i));
 
-			ChanArray_add(p_channel); // store pointer into array
-		}
-	}
-	return *this;
+		ChanArray_add(p_channel); // store pointer into array
+	};
 }
 
 CWaveChan* CWaveChanArray::Get_p_channel(int i) const

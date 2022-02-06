@@ -6,7 +6,7 @@ class CWaveChanArray : public CObject
 {
 	DECLARE_SERIAL(CWaveChanArray);
 protected:
-	CArray<CWaveChan*, CWaveChan*> wavechan_ptr_array; // array of channels
+	CArray<CWaveChan*, CWaveChan*> wavechan_ptr_array; 
 
 public:
 	CWaveChanArray();
@@ -14,7 +14,7 @@ public:
 	long Write(CFile* datafile);
 	BOOL Read(CFile* datafile);
 
-	CWaveChanArray& operator =(const CWaveChanArray& arg);
+	void Copy(const CWaveChanArray* arg);
 	CWaveChan* Get_p_channel(int i) const;
 
 	int ChanArray_add();

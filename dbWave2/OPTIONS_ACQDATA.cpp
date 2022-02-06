@@ -14,8 +14,8 @@ OPTIONS_ACQDATA& OPTIONS_ACQDATA::operator =(const OPTIONS_ACQDATA& arg)
 {
 	if (this != &arg)
 	{
-		chanArray = arg.chanArray;
-		waveFormat = arg.waveFormat;
+		chanArray.Copy( &arg.chanArray);
+		waveFormat.Copy( &arg.waveFormat);
 		csBasename = arg.csBasename;
 		csPathname = arg.csPathname;
 		exptnumber = arg.exptnumber;

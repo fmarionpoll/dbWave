@@ -802,8 +802,8 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 	auto pw_c_dest = pDatDest->GetpWavechanArray();
 	const auto pw_f_source = m_pDat->GetpWaveFormat();
 	const auto pw_c_source = m_pDat->GetpWavechanArray();
-	*pw_f_dest = *pw_f_source;
-	*pw_c_dest = *pw_c_source;
+	pw_f_dest->Copy(pw_f_source);
+	pw_c_dest->Copy(pw_c_source);
 
 	const auto nchans = mm_lastchan - mm_firstchan + 1;
 	if (pw_f_dest->scan_count != nchans)

@@ -231,56 +231,52 @@ void CWaveFormat::read_v8_and_before(CArchive& ar, WORD version)
 	}
 }
 
-CWaveFormat& CWaveFormat::operator =(const CWaveFormat& arg)
+void CWaveFormat::Copy(const CWaveFormat* arg)
 {
-	if (this != &arg)
-	{
-		acqtime = arg.acqtime;
-		wversion = arg.wversion;
-		fullscale_volts = arg.fullscale_volts;
-		binspan = arg.binspan;
-		binzero = arg.binzero;
+	acqtime = arg->acqtime;
+	wversion = arg->wversion;
+	fullscale_volts = arg->fullscale_volts;
+	binspan = arg->binspan;
+	binzero = arg->binzero;
 
-		mode_encoding = arg.mode_encoding;
-		mode_clock = arg.mode_clock;
-		mode_trigger = arg.mode_trigger;
+	mode_encoding = arg->mode_encoding;
+	mode_clock = arg->mode_clock;
+	mode_trigger = arg->mode_trigger;
 
-		sampling_rate_per_channel = arg.sampling_rate_per_channel;
-		scan_count = arg.scan_count;
-		sample_count = arg.sample_count;
-		duration = arg.duration;
-		duration_to_acquire = arg.duration_to_acquire;
+	sampling_rate_per_channel = arg->sampling_rate_per_channel;
+	scan_count = arg->scan_count;
+	sample_count = arg->sample_count;
+	duration = arg->duration;
+	duration_to_acquire = arg->duration_to_acquire;
 
-		trig_mode = arg.trig_mode;
-		trig_chan = arg.trig_chan;
-		trig_threshold = arg.trig_threshold;
+	trig_mode = arg->trig_mode;
+	trig_chan = arg->trig_chan;
+	trig_threshold = arg->trig_threshold;
 
-		data_flow = arg.data_flow;
-		bOnlineDisplay = arg.bOnlineDisplay;
-		bADwritetofile = arg.bADwritetofile;
-		bufferNitems = arg.bufferNitems;
-		buffersize = arg.buffersize;
+	data_flow = arg->data_flow;
+	bOnlineDisplay = arg->bOnlineDisplay;
+	bADwritetofile = arg->bADwritetofile;
+	bufferNitems = arg->bufferNitems;
+	buffersize = arg->buffersize;
 
-		cs_comment = arg.cs_comment;
-		csStimulus = arg.csStimulus;
-		csConcentration = arg.csConcentration;
-		csStimulus2 = arg.csStimulus2;
-		csConcentration2 = arg.csConcentration2;
+	cs_comment = arg->cs_comment;
+	csStimulus = arg->csStimulus;
+	csConcentration = arg->csConcentration;
+	csStimulus2 = arg->csStimulus2;
+	csConcentration2 = arg->csConcentration2;
 
-		csInsectname = arg.csInsectname;
-		csLocation = arg.csLocation;
-		csSensillum = arg.csSensillum;
-		csStrain = arg.csStrain;
-		csSex = arg.csSex;
-		csMoreComment = arg.csMoreComment;
-		csADcardName = arg.csADcardName;
-		csOperator = arg.csOperator;
-		insectID = arg.insectID;
-		sensillumID = arg.sensillumID;
-		repeat = arg.repeat;
-		repeat2 = arg.repeat2;
-	}
-	return *this;
+	csInsectname = arg->csInsectname;
+	csLocation = arg->csLocation;
+	csSensillum = arg->csSensillum;
+	csStrain = arg->csStrain;
+	csSex = arg->csSex;
+	csMoreComment = arg->csMoreComment;
+	csADcardName = arg->csADcardName;
+	csOperator = arg->csOperator;
+	insectID = arg->insectID;
+	sensillumID = arg->sensillumID;
+	repeat = arg->repeat;
+	repeat2 = arg->repeat2;
 }
 
 // Write CWaveFormat in a binary file

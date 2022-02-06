@@ -36,7 +36,7 @@ OPTIONS_IMPORT& OPTIONS_IMPORT::operator =(const OPTIONS_IMPORT& arg)
 		voltageMin = arg.voltageMin;
 		skipNbytes = arg.skipNbytes;
 		title = arg.title;
-		*pwave_chan_array = *(arg.pwave_chan_array);
+		pwave_chan_array->Copy( arg.pwave_chan_array);
 		nSelectedFilter = arg.nSelectedFilter;
 
 		// export options

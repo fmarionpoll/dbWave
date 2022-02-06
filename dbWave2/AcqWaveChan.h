@@ -45,7 +45,7 @@ public:
 	~CWaveChan() override;
 	virtual long Write(CFile* datafile);
 	virtual BOOL Read(CFile* datafile);
-	CWaveChan& operator =(const CWaveChan& arg);
+	void Copy(const CWaveChan* arg);
 	void Serialize(CArchive& ar) override;
 
 protected:

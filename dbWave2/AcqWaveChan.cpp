@@ -35,8 +35,7 @@ CWaveChan::CWaveChan()
 
 CWaveChan::CWaveChan(CWaveChan& arg)
 {
-	*this = arg;
-
+	this->Copy(&arg);
 	am_inputpos = arg.am_inputpos;
 	am_inputneg = arg.am_inputneg;
 	am_version = arg.am_version;
@@ -45,31 +44,27 @@ CWaveChan::CWaveChan(CWaveChan& arg)
 CWaveChan::~CWaveChan()
 = default;
 
-CWaveChan& CWaveChan::operator =(const CWaveChan& arg)
+void CWaveChan::Copy(const CWaveChan* arg)
 {
-	if (this != &arg)
-	{
-		am_csComment = arg.am_csComment;
-		am_adchannel = arg.am_adchannel;
-		am_gainAD = arg.am_gainAD;
+	am_csComment = arg->am_csComment;
+	am_adchannel = arg->am_adchannel;
+	am_gainAD = arg->am_gainAD;
 
-		am_csheadstage = arg.am_csheadstage;
-		am_gainheadstage = arg.am_gainheadstage;
+	am_csheadstage = arg->am_csheadstage;
+	am_gainheadstage = arg->am_gainheadstage;
 
-		am_csamplifier = arg.am_csamplifier;
-		am_amplifierchan = arg.am_amplifierchan;
-		am_gainpre = arg.am_gainpre;
-		am_gainpost = arg.am_gainpost;
-		am_notchfilt = arg.am_notchfilt;
-		am_lowpass = arg.am_lowpass;
-		am_offset = arg.am_offset;
-		am_csInputpos = arg.am_csInputpos;
-		am_csInputneg = arg.am_csInputneg;
-		am_gainamplifier = arg.am_gainamplifier;
-		am_gaintotal = arg.am_gaintotal;
-		am_resolutionV = arg.am_resolutionV;
-	}
-	return *this;
+	am_csamplifier = arg->am_csamplifier;
+	am_amplifierchan = arg->am_amplifierchan;
+	am_gainpre = arg->am_gainpre;
+	am_gainpost = arg->am_gainpost;
+	am_notchfilt = arg->am_notchfilt;
+	am_lowpass = arg->am_lowpass;
+	am_offset = arg->am_offset;
+	am_csInputpos = arg->am_csInputpos;
+	am_csInputneg = arg->am_csInputneg;
+	am_gainamplifier = arg->am_gainamplifier;
+	am_gaintotal = arg->am_gaintotal;
+	am_resolutionV = arg->am_resolutionV;
 }
 
 void CWaveChan::Serialize(CArchive& ar)

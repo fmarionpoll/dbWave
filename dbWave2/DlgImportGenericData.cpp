@@ -719,7 +719,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 		pwF->binzero = binspan / 2;
 
 	// copy ACQCHAN directly from iivO
-	*(pDataF->GetpWavechanArray()) = *(piivO->pwave_chan_array);
+	pDataF->GetpWavechanArray()->Copy(piivO->pwave_chan_array);
 
 	// UNUSED PARAMETERS FROM iivO :
 	//			BOOL	bSingleRun;

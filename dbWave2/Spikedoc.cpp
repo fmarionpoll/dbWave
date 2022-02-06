@@ -381,7 +381,7 @@ void CSpikeDoc::InitSourceDoc(AcqDataDoc* p_document)
 	m_acqsize = p_document->GetDOCchanLength();
 	m_acqrate = pwave_format->sampling_rate_per_channel;
 	m_acqcomment = pwave_format->cs_comment;
-	m_wformat = *pwave_format;
+	m_wformat.Copy( pwave_format);
 }
 
 CString CSpikeDoc::GetFileInfos()

@@ -196,37 +196,33 @@ void CADContView::OnInitialUpdate()
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
 	m_ptableSet->RefreshQuery();
-	//CFormView::OnInitialUpdate();
 
 	// if current document, load parameters from current document into the local set of parameters
-	// if current document does not exist, do nothing
 	if (pdbDoc->m_pDB->GetNRecords() > 0)
 	{
-		pdbDoc->OpenCurrentDataFile(); // read data descriptors from current data file
-		AcqDataDoc* pDat = pdbDoc->m_pDat; // get a pointer to the data file itself
+		pdbDoc->OpenCurrentDataFile(); 
+		AcqDataDoc* pDat = pdbDoc->m_pDat;
 		if (pDat != nullptr)
 		{
-			m_pOptions_AD->waveFormat = *(pDat->GetpWaveFormat()); // read data header
+			m_pOptions_AD->waveFormat.Copy( pDat->GetpWaveFormat()); 
 			m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-			m_pOptions_AD->chanArray = *pDat->GetpWavechanArray(); // get channel descriptors
-			// restore state of "write-to-file" parameter that was just erased
+			m_pOptions_AD->chanArray.Copy(pDat->GetpWavechanArray());
 			m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
 		}
 	}
 
 	// create data file and copy data acquisition parameters into it
-	m_inputDataFile.OnNewDocument(); // create a file to receive incoming data (A/D)
-	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat; // copy data formats into this file
+	m_inputDataFile.OnNewDocument(); 
+	m_inputDataFile.GetpWaveFormat()->Copy( &m_pOptions_AD->waveFormat);
 	m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
-	m_chartDataAD.AttachDataFile(&m_inputDataFile); // prepare display area
+	m_inputDataFile.GetpWavechanArray()->Copy(&m_pOptions_AD->chanArray);
+	m_chartDataAD.AttachDataFile(&m_inputDataFile);
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();
 	if (pApp->m_bADcardFound)
 	{
 		InitOutput_AD();
-		InitializeAmplifiers(); // control cyberamplifier OR Alligator Or none?
-
+		InitializeAmplifiers(); 
 		m_Acq32_DA.InitSubSystem(m_pOptions_AD);
 		m_Acq32_DA.ClearAllOutputs();
 	}
@@ -243,8 +239,6 @@ void CADContView::OnInitialUpdate()
 
 	UpdateChanLegends(0);
 	UpdateRadioButtons();
-
-	// tell mmdi parent which cursor is active
 	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
 
@@ -1352,8 +1346,8 @@ void CADContView::InitAcquisitionInputFile()
 
 	m_chsweeplength = static_cast<long>(m_sweepduration * pWFormat->sampling_rate_per_channel / static_cast<float>(m_pOptions_AD->iundersample));
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
-	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
-	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat;
+	m_inputDataFile.GetpWavechanArray()->Copy(&m_pOptions_AD->chanArray);
+	m_inputDataFile.GetpWaveFormat()->Copy( &m_pOptions_AD->waveFormat);
 
 	// set sweep length to the nb of data buffers
 	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);

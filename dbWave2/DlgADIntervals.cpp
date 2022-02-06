@@ -83,7 +83,7 @@ void DlgADIntervals::OnOK()
 	}
 	m_acqdef.trig_mode = i_id;
 
-	*m_pwaveFormat = m_acqdef;
+	m_pwaveFormat->Copy(&m_acqdef);
 	CDialog::OnOK();
 }
 
@@ -106,8 +106,7 @@ BOOL DlgADIntervals::OnInitDialog()
 	VERIFY(mm_bufferNitems.SubclassDlgItem(IDC_NBUFFERS, this));
 
 	// load data from document
-	m_acqdef = *m_pwaveFormat; // load parameters
-
+	m_acqdef.Copy(m_pwaveFormat);
 	m_adratechan = m_acqdef.sampling_rate_per_channel;
 	m_bufferNitems = m_acqdef.bufferNitems;
 	m_bufferWsize = static_cast<UINT>(m_sweepduration * m_adratechan / float(m_bufferNitems));
