@@ -726,7 +726,7 @@ BOOL CSpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
 		const auto pwave_format = p_data_file->GetpWaveFormat();
 		m_encoding = pwave_format->mode_encoding;
 		m_binzero = pwave_format->binzero;
-		m_samprate = pwave_format->chrate;
+		m_samprate = pwave_format->sampling_rate_per_channel;
 		flag = p_data_file->GetWBVoltsperBin(m_parm.detectChan, &m_voltsperbin);
 	}
 

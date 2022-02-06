@@ -506,8 +506,8 @@ BOOL CADContView::StartAcquisition()
 	m_chartDataAD.ADdisplayStart(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0; // no samples yet
-	pWFormat->chrate = pWFormat->chrate / float(m_pOptions_AD->iundersample);
-	m_fclockrate = pWFormat->chrate * float(pWFormat->scan_count);
+	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / float(m_pOptions_AD->iundersample);
+	m_fclockrate = pWFormat->sampling_rate_per_channel * float(pWFormat->scan_count);
 	pWFormat->acqtime = CTime::GetCurrentTime();
 
 	// data format
@@ -941,15 +941,15 @@ void CADContView::OnBufferDone_ADC()
 	ADC_TransferToChart(pWFormat);
 }
 
-void CADContView::ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat)
+void CADContView::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
 {
 	short* pRawDataBuf = m_inputDataFile.GetpRawDataBUF();
 
 	m_channel_sweep_start = m_channel_sweep_end + 1;
-	if (m_channel_sweep_start >= m_chsweeplength)	
+	if (m_channel_sweep_start >= m_chsweeplength)
 		m_channel_sweep_start = 0;
-	m_channel_sweep_end = m_channel_sweep_start + m_Acq32_AD.Getchbuflen() - 1; 
-	m_chsweepRefresh = m_channel_sweep_end - m_channel_sweep_start + 1;	
+	m_channel_sweep_end = m_channel_sweep_start + m_Acq32_AD.Getchbuflen() - 1;
+	m_chsweepRefresh = m_channel_sweep_end - m_channel_sweep_start + 1;
 	pRawDataBuf += (m_channel_sweep_start * pWFormat->scan_count);
 
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
@@ -995,33 +995,33 @@ void CADContView::ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat)
 	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
-void CADContView::ADC_TransferToChart(const CWaveFormat* pWFormat)
+void CADContView::ADC_TransferToChart(const CWaveFormat * pWFormat)
 {
-	if (pWFormat->bOnlineDisplay) 
+	if (pWFormat->bOnlineDisplay)
 	{
 		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 		m_chartDataAD.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
 	}
 	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
 	CString cs;
-	cs.Format(_T("%.3lf"), duration); 
+	cs.Format(_T("%.3lf"), duration);
 	SetDlgItemText(IDC_STATIC1, cs);
 }
 
-void CADContView::ADC_TransferToFile(CWaveFormat* pWFormat)
+void CADContView::ADC_TransferToFile(CWaveFormat * pWFormat)
 {
-	pWFormat->sample_count += m_bytesweepRefresh / 2; 
+	pWFormat->sample_count += m_bytesweepRefresh / 2;
 	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
 
 	short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 	pdataBuf += (m_channel_sweep_start * pWFormat->scan_count);
 
-	if (pWFormat->bADwritetofile) // write buffer to file
+	if (pWFormat->bADwritetofile)
 	{
 		const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_bytesweepRefresh);
 		ASSERT(flag);
 		// end of acquisition
-		if (duration >= pWFormat->duration)
+		if (duration >= pWFormat->duration_to_acquire)
 		{
 			StopAcquisition(TRUE);
 			if (m_bhidesubsequent)
@@ -1031,7 +1031,7 @@ void CADContView::ADC_TransferToFile(CWaveFormat* pWFormat)
 				else
 				{
 					if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
-						OnBufferDone_ADC(); 
+						OnBufferDone_ADC();
 				}
 				return;
 			}
@@ -1044,7 +1044,7 @@ void CADContView::ADC_TransferToFile(CWaveFormat* pWFormat)
 	//	if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
 	//		pWFormat->sample_count = 0;
 	//}
-	m_Acq32_AD.ReleaseLastBufferToQueue(); 
+	m_Acq32_AD.ReleaseLastBufferToQueue();
 }
 
 void CADContView::OnBufferDone_DAC()
@@ -1182,10 +1182,10 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 	{
 		// assume that all channels are displayed at the same gain & offset
 		const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-		const int ichanfirst = 0;
+		const int ichan = 0;
 		const int ichanlast = pWFormat->scan_count - 1;
 
-		for (int channel = ichanfirst; channel <= ichanlast; channel++)
+		for (int channel = ichan; channel <= ichanlast; channel++)
 		{
 			CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(channel);
 			pChan->SetYextent(l_size);
@@ -1266,8 +1266,7 @@ void CADContView::UpdateBiasScroll()
 	// assume that all channels are displayed at the same gain & offset
 	const int ichan = 0;	// TODO see which channel is selected
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
-	const int iPos = (pChan->GetYzero() - pChan->GetDataBinZero())
-		* 100 / static_cast<int>(YZERO_SPAN) + 50;
+	const int iPos = (pChan->GetYzero() - pChan->GetDataBinZero())* 100 / static_cast<int>(YZERO_SPAN) + 50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 
@@ -1315,7 +1314,7 @@ void CADContView::OnBnClickedDaparameters2()
 	for (auto i = 0; i < 10; i++)
 		dlg.outputparms_array[i] = m_pOptions_DA->outputparms_array[i];
 	const CWaveFormat* wave_format = &(m_pOptions_AD->waveFormat);
-	dlg.m_samplingRate = wave_format->chrate;
+	dlg.m_samplingRate = wave_format->sampling_rate_per_channel;
 
 	if (IDOK == dlg.DoModal())
 	{
@@ -1388,22 +1387,19 @@ void CADContView::StopOutput()
 	m_Acq32_DA.StopAndLiberateBuffers();
 }
 
-void CADContView::InitAcquisitionInputFile() 
+void CADContView::InitAcquisitionInputFile()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 
-	m_chsweeplength = static_cast<long>(m_sweepduration * pWFormat->chrate / static_cast<float>(m_pOptions_AD->iundersample));
+	m_chsweeplength = static_cast<long>(m_sweepduration * pWFormat->sampling_rate_per_channel / static_cast<float>(m_pOptions_AD->iundersample));
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
 	*(m_inputDataFile.GetpWavechanArray()) = m_pOptions_AD->chanArray;
 	*(m_inputDataFile.GetpWaveFormat()) = m_pOptions_AD->waveFormat;
 
-	
 	// set sweep length to the nb of data buffers
 	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);
 	m_inputDataFile.AdjustBUF(m_chsweeplength);
 }
-
-
 
 void CADContView::OnBnClickedUnzoom()
 {

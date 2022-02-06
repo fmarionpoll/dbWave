@@ -83,12 +83,12 @@ int CWaveBuf::GetWBNumChannels() const
 
 void CWaveBuf::SetWBSampleRate(const float fSampRate)
 {
-	m_waveFormat.chrate = fSampRate;
+	m_waveFormat.sampling_rate_per_channel = fSampRate;
 }
 
 float CWaveBuf::GetWBSampleRate() const
 {
-	return m_waveFormat.chrate;
+	return m_waveFormat.sampling_rate_per_channel;
 }
 
 void CWaveBuf::deleteBuffers()

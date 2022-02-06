@@ -1,6 +1,3 @@
-// adinterv.cpp : implementation file
-//
-
 #include "StdAfx.h"
 #include "Editctrl.h"
 #include "DlgADIntervals.h"
@@ -56,9 +53,10 @@ void DlgADIntervals::OnAdchannels()
 void DlgADIntervals::OnOK()
 {
 	UpdateData(TRUE);
-	m_acqdef.chrate = m_adratechan;
-	m_acqdef.buffersize = WORD(m_bufferWsize) * WORD(m_acqdef.scan_count);
+	m_acqdef.sampling_rate_per_channel = m_adratechan;
+	m_acqdef.buffersize = WORD(m_bufferWsize * UINT(m_acqdef.scan_count));
 	m_acqdef.bufferNitems = short(m_bufferNitems);
+	m_acqdef.duration_to_acquire = m_acqduration;
 	m_acqdef.sample_count = static_cast<long>(m_acqduration * float(m_acqdef.scan_count) * m_adratechan);
 	m_acqdef.bOnlineDisplay = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
 	m_acqdef.bADwritetofile = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
@@ -67,7 +65,7 @@ void DlgADIntervals::OnOK()
 
 	m_acqdef.trig_chan = short(m_threshchan);
 	m_acqdef.trig_threshold = short(m_threshval);
-	auto i_id = GetCheckedRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD);
+	short i_id = short(GetCheckedRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD));
 	switch (i_id)
 	{
 	case IDC_TRIGSOFT: i_id = OLx_TRG_SOFT;
@@ -83,9 +81,8 @@ void DlgADIntervals::OnOK()
 	default: i_id = OLx_TRG_SOFT;
 		break;
 	}
-	m_acqdef.trig_mode = short(i_id);
+	m_acqdef.trig_mode = i_id;
 
-	// copy data to data acq def structure
 	*m_pwaveFormat = m_acqdef;
 	CDialog::OnOK();
 }
@@ -111,13 +108,19 @@ BOOL DlgADIntervals::OnInitDialog()
 	// load data from document
 	m_acqdef = *m_pwaveFormat; // load parameters
 
-	m_adratechan = m_acqdef.chrate; // sampling rate (per chan)
+	m_adratechan = m_acqdef.sampling_rate_per_channel;
 	m_bufferNitems = m_acqdef.bufferNitems;
 	m_bufferWsize = static_cast<UINT>(m_sweepduration * m_adratechan / float(m_bufferNitems));
 
-	if (m_acqdef.sample_count == 0)
-		m_acqdef.sample_count = long(m_bufferWsize) * m_bufferNitems * m_acqdef.bufferNitems;
-	m_acqduration = float(m_acqdef.sample_count) / m_adratechan / float(m_acqdef.scan_count);
+	if (m_acqdef.duration_to_acquire == 0.f) {
+		if (m_acqdef.sample_count == 0)
+			m_acqdef.sample_count = long(m_bufferWsize) * m_bufferNitems * m_acqdef.bufferNitems;
+		m_acqduration = float(m_acqdef.sample_count) / m_adratechan / float(m_acqdef.scan_count);
+	}
+	else
+	{
+		m_acqduration = m_acqdef.duration_to_acquire;
+	}
 
 	// init parameters manually if there is no driver
 	if (0.0f == m_ratemin) m_ratemin = 0.1f;
@@ -158,7 +161,7 @@ BOOL DlgADIntervals::OnInitDialog()
 		m_threshval = 2048;
 
 	UpdateData(FALSE);
-	return TRUE; 
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 void DlgADIntervals::OnEnChangeAdratechan()
@@ -177,10 +180,11 @@ void DlgADIntervals::OnEnChangeAdratechan()
 			break;
 		default: break;
 		}
-		mm_adratechan.m_bEntryDone = FALSE; 
-		mm_adratechan.m_nChar = 0;
-		mm_adratechan.SetSel(0, -1);
+		mm_adratechan.m_bEntryDone = FALSE; // clear flag
+		mm_adratechan.m_nChar = 0; // empty buffer
+		mm_adratechan.SetSel(0, -1); // select all text
 
+		// check value and modifies dependent parameters
 		if (m_adratechan < m_ratemin)
 		{
 			m_adratechan = m_ratemin;
@@ -202,7 +206,7 @@ void DlgADIntervals::OnEnChangeDuration()
 	{
 		switch (mm_sweepduration.m_nChar)
 		{
-		// load data from edit controls
+			// load data from edit controls
 		case VK_UP:
 		case VK_PRIOR: m_sweepduration++;
 			break;
@@ -213,9 +217,9 @@ void DlgADIntervals::OnEnChangeDuration()
 			break;
 		default: break;
 		}
-		mm_sweepduration.m_bEntryDone = FALSE; 
-		mm_sweepduration.m_nChar = 0; 
-		mm_sweepduration.SetSel(0, -1); 
+		mm_sweepduration.m_bEntryDone = FALSE; // clear flag
+		mm_sweepduration.m_nChar = 0; // empty buffer
+		mm_sweepduration.SetSel(0, -1); // select all text
 
 		// check value and modifies dependent parameters
 		// leave adratechan constant, modifies m_bufferWsize & m_bufferNitems ...?
@@ -256,7 +260,7 @@ void DlgADIntervals::OnEnChangeBuffersize()
 	{
 		switch (mm_bufferWsize.m_nChar)
 		{
-		// load data from edit controls
+			// load data from edit controls
 		case VK_RETURN: UpdateData(TRUE);
 			break;
 		case VK_UP:
@@ -267,12 +271,12 @@ void DlgADIntervals::OnEnChangeBuffersize()
 			break;
 		default: break;
 		}
-		mm_bufferWsize.m_bEntryDone = FALSE; 
-		mm_bufferWsize.m_nChar = 0; 
-		mm_bufferWsize.SetSel(0, -1);
+		mm_bufferWsize.m_bEntryDone = FALSE; // clear flag
+		mm_bufferWsize.m_nChar = 0; // empty buffer
+		mm_bufferWsize.SetSel(0, -1); // select all text
 
 		// check value and update dependent parameter
-		const auto ui_w_size_min = static_cast<WORD>(m_adratechan * 0.05f); 
+		const auto ui_w_size_min = static_cast<WORD>(m_adratechan * 0.05f); // minimum buffer size = 50 ms (!?)
 		if (m_bufferWsize > m_bufferWsizemax)
 			m_bufferWsize = m_bufferWsizemax;
 		else if (m_bufferWsize < ui_w_size_min)
@@ -280,7 +284,7 @@ void DlgADIntervals::OnEnChangeBuffersize()
 		m_bufferWsize = (m_bufferWsize / m_undersamplefactor) * m_undersamplefactor;
 		if (m_bufferWsize == 0)
 			m_bufferWsize = m_undersamplefactor;
-		m_sweepduration = float(m_bufferWsize) * float(m_bufferNitems) / m_adratechan;
+		m_sweepduration = float(m_bufferWsize * m_bufferNitems) / m_adratechan;
 		UpdateData(FALSE);
 	}
 }
@@ -291,7 +295,7 @@ void DlgADIntervals::OnEnChangeNbuffers()
 	{
 		switch (mm_bufferNitems.m_nChar)
 		{
-		// load data from edit controls
+			// load data from edit controls
 		case VK_RETURN: UpdateData(TRUE);
 			break;
 		case VK_UP:
@@ -302,13 +306,13 @@ void DlgADIntervals::OnEnChangeNbuffers()
 			break;
 		default: break;
 		}
-		mm_bufferNitems.m_bEntryDone = FALSE; 
-		mm_bufferNitems.m_nChar = 0; 
-		mm_bufferNitems.SetSel(0, -1); 
+		mm_bufferNitems.m_bEntryDone = FALSE; // clear flag
+		mm_bufferNitems.m_nChar = 0; // empty buffer
+		mm_bufferNitems.SetSel(0, -1); // select all text
 		// update dependent parameters
 		if (m_bufferNitems < 1)
 			m_bufferNitems = 1;
-		m_sweepduration = float(m_bufferWsize) * float(m_bufferNitems) / m_adratechan;
+		m_sweepduration = float(m_bufferWsize * m_bufferNitems) / m_adratechan;
 		UpdateData(FALSE);
 	}
 }
@@ -319,7 +323,6 @@ void DlgADIntervals::OnEnChangeAcqduration()
 	{
 		switch (mm_acqduration.m_nChar)
 		{
-		// load data from edit controls
 		case VK_RETURN: UpdateData(TRUE);
 			break;
 		case VK_UP:
@@ -333,7 +336,6 @@ void DlgADIntervals::OnEnChangeAcqduration()
 		mm_acqduration.m_bEntryDone = FALSE; 
 		mm_acqduration.m_nChar = 0; 
 		mm_acqduration.SetSel(0, -1);
-		// at least one buffer...
 		const auto min_duration = float(m_bufferWsize) / m_adratechan;
 		if (m_acqduration < min_duration)
 			m_acqduration = min_duration;

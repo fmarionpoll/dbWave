@@ -26,9 +26,10 @@ public:
 	short mode_trigger { 0}; // 0{internal, 1{external, 2{trigg_scan
 	short scan_count { 1}; // number of channels in scan list
 
-	float chrate { 10000.}; // channel sampling rate (Hz)
+	float sampling_rate_per_channel { 10000.}; // channel sampling rate (Hz)
 	long sample_count { 1000}; // sample count
 	float duration { 0.}; // file duration (s)
+	float duration_to_acquire{ 0. }; // data acquisition duration objective(s)
 
 	short trig_mode { 0}; // 0{soft, 1{keyboard, 2{trig_ext(TTL), 3{input+, 4{input-
 	short trig_chan { 0}; // (trig_mode{input) A/D channel input

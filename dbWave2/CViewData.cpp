@@ -473,7 +473,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 
 	if (b_first_update)
 	{
-		m_samplingRate = pwave_format->chrate; // load sampling rate
+		m_samplingRate = pwave_format->sampling_rate_per_channel; // load sampling rate
 		m_timefirst = 0.0f; // init file size
 		m_timelast = (m_pdatDoc->GetDOCchanLength()) / m_samplingRate;
 	}
@@ -493,7 +493,7 @@ void CViewData::UpdateFileParameters(BOOL bUpdateInterface)
 		if (l_last > m_pdatDoc->GetDOCchanLength() - 1) // last OK?
 			l_last = m_pdatDoc->GetDOCchanLength() - 1; // clip to the end of the file
 	}
-	m_samplingRate = pwave_format->chrate; // update sampling rate
+	m_samplingRate = pwave_format->sampling_rate_per_channel; // update sampling rate
 
 	// display all channels
 	auto lnvchans = m_ChartDataWnd.GetChanlistSize();

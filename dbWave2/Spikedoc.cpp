@@ -379,7 +379,7 @@ void CSpikeDoc::InitSourceDoc(AcqDataDoc* p_document)
 	const auto pwave_format = p_document->GetpWaveFormat();
 	m_acqtime = pwave_format->acqtime;
 	m_acqsize = p_document->GetDOCchanLength();
-	m_acqrate = pwave_format->chrate;
+	m_acqrate = pwave_format->sampling_rate_per_channel;
 	m_acqcomment = pwave_format->cs_comment;
 	m_wformat = *pwave_format;
 }

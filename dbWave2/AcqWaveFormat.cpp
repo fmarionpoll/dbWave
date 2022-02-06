@@ -22,7 +22,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		const WORD version = 9;
+		constexpr WORD version = 10;
 		ar << version; // 1
 		ar << acqtime; // 2
 		ar << fullscale_volts; // 3
@@ -31,7 +31,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << static_cast<WORD>(mode_encoding); // 6
 		ar << static_cast<WORD>(mode_clock); // 7
 		ar << static_cast<WORD>(mode_trigger); // 8
-		ar << chrate; // 9
+		ar << sampling_rate_per_channel; // 9
 		ar << static_cast<WORD>(scan_count); // 10
 		ar << sample_count;
 		ar << duration;
@@ -44,7 +44,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << bufferNitems;
 		ar << buffersize;
 
-		const int n_comments = 14;
+		constexpr int n_comments = 14;
 		ar << n_comments;
 		// save "CString"
 		ar << cs_comment;
@@ -61,13 +61,14 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << csConcentration2;
 		ar << csSex;
 
-		const int n_items = 4;
+		constexpr int n_items = 5;
 		ar << n_items;
 		// save "long"
 		ar << insectID;
 		ar << sensillumID;
 		ar << repeat;
 		ar << repeat2;
+		ar <<  duration_to_acquire; 
 	}
 	else
 	{
@@ -89,7 +90,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 			mode_clock = static_cast<short>(w); // 7
 			ar >> w;
 			mode_trigger = static_cast<short>(w); // 8
-			ar >> chrate; // 9
+			ar >> sampling_rate_per_channel; // 9
 			ar >> w;
 			scan_count = static_cast<short>(w); // 10
 			ar >> sample_count;
@@ -123,13 +124,12 @@ void CWaveFormat::Serialize(CArchive& ar)
 			ar >> csConcentration2;
 			ar >> csSex;
 
-			int n_items;
-			ar >> n_items;
-			ASSERT(n_items == 4);
-			ar >> insectID;
-			ar >> sensillumID;
-			ar >> repeat;
-			ar >> repeat2;
+			int n_items; ar >> n_items;
+			n_items--; ar >> insectID;
+			n_items--; ar >> sensillumID; 
+			n_items--; ar >> repeat;
+			n_items--; ar >> repeat2; 
+			n_items--; if (n_items >= 0) ar >> duration_to_acquire;
 		}
 	}
 }
@@ -158,7 +158,7 @@ void CWaveFormat::read_v8_and_before(CArchive& ar, WORD version)
 	mode_clock = static_cast<short>(w); // 7
 	ar >> w;
 	mode_trigger = static_cast<short>(w); // 8
-	ar >> chrate; // 9
+	ar >> sampling_rate_per_channel; // 9
 	ar >> w;
 	scan_count = static_cast<short>(w); // 10
 	ar >> sample_count;
@@ -245,7 +245,7 @@ CWaveFormat& CWaveFormat::operator =(const CWaveFormat& arg)
 		mode_clock = arg.mode_clock;
 		mode_trigger = arg.mode_trigger;
 
-		chrate = arg.chrate;
+		sampling_rate_per_channel = arg.sampling_rate_per_channel;
 		scan_count = arg.scan_count;
 		sample_count = arg.sample_count;
 		duration = arg.duration;

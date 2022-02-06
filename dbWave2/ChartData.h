@@ -106,7 +106,7 @@ public:
 
 	float GetTimeperPixel()
 	{
-		return static_cast<float>(GetDataSize()) / m_pDataFile->GetpWaveFormat()->chrate / static_cast<float>(
+		return static_cast<float>(GetDataSize()) / m_pDataFile->GetpWaveFormat()->sampling_rate_per_channel / static_cast<float>(
 			GetRectWidth());
 	}
 

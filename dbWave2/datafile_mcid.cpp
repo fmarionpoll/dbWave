@@ -83,7 +83,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 	pWFormat->mode_encoding = OLx_ENC_BINARY;
 	pWFormat->mode_clock = INTERNAL_CLOCK;
 	pWFormat->mode_trigger = INTERNAL_TRIGGER;
-	pWFormat->chrate = static_cast<float>(1. / mcidHeader.sample_interval);
+	pWFormat->sampling_rate_per_channel = static_cast<float>(1. / mcidHeader.sample_interval);
 	pWFormat->sample_count = mcidHeader.number_of_samples;
 
 	pWFormat->cs_comment.Empty();

@@ -214,7 +214,7 @@ BOOL DlgImportFiles::ImportATFFile()
 	pwF->mode_clock = INTERNAL_CLOCK;
 	pwF->mode_trigger = INTERNAL_TRIGGER;
 	pwF->scan_count = m_scan_count; // number of channels in scan list
-	pwF->chrate = static_cast<float>(m_xrate); // channel sampling rate (Hz)
+	pwF->sampling_rate_per_channel = static_cast<float>(m_xrate); // channel sampling rate (Hz)
 	pwF->csADcardName = "Digidata Axon";
 
 	for (int i = 0; i < m_scan_count; i++)
@@ -387,7 +387,7 @@ line 11-	0	141.144	0.0317383
 			// update rate
 			CWaveFormat* pwF = pTo->GetpWaveFormat();
 			float xxrate = static_cast<float>(compteurtotal / (dtime_end - dtime_start));
-			pwF->chrate = xxrate;
+			pwF->sampling_rate_per_channel = xxrate;
 		}
 
 		// useless but ...

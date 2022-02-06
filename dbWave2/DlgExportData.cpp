@@ -107,7 +107,7 @@ BOOL DlgExportData::OnInitDialog()
 			m_timelast = static_cast<float>(pDat->GetpVTtags()->GetTagLVal(1));
 		else
 			m_timelast = static_cast<float>(pDat->GetDOCchanLength());
-		float chrate = pDat->GetpWaveFormat()->chrate;
+		float chrate = pDat->GetpWaveFormat()->sampling_rate_per_channel;
 		m_timefirst /= chrate;
 		m_timelast /= chrate;
 	}
@@ -264,8 +264,8 @@ void DlgExportData::Export()
 		mm_timelast = m_timelast;
 		if (mm_timelast < mm_timefirst)
 			mm_timelast = pwaveFormat->duration;
-		mm_lFirst = static_cast<long>(mm_timefirst * pwaveFormat->chrate);
-		mm_lLast = static_cast<long>(mm_timelast * pwaveFormat->chrate);
+		mm_lFirst = static_cast<long>(mm_timefirst * pwaveFormat->sampling_rate_per_channel);
+		mm_lLast = static_cast<long>(mm_timelast * pwaveFormat->sampling_rate_per_channel);
 	}
 
 	mm_firstchan = 0; // loop through all chans
@@ -352,7 +352,7 @@ BOOL DlgExportData::ExportDataAsTextFile()
 	// LINE 7.......... A/D channels:
 	// LINE 8.......... mV per bin for each channel
 
-	csCharBuf.Format(_T("Sampling rate (Hz):\t%f\r\n"), pwaveFormat->chrate);
+	csCharBuf.Format(_T("Sampling rate (Hz):\t%f\r\n"), pwaveFormat->sampling_rate_per_channel);
 	cs_dummy.Format(_T("A/D channels :\r\n")); // header for chans
 	csCharBuf += cs_dummy;
 	cs_dummy.Format(_T("mV per bin:")); // line title
@@ -463,7 +463,7 @@ BOOL DlgExportData::ExportDataAsSapidFile()
 		}
 	}
 	// last value is sampling rate
-	value = static_cast<short>(m_pDat->GetpWaveFormat()->chrate);
+	value = static_cast<short>(m_pDat->GetpWaveFormat()->sampling_rate_per_channel);
 	dataDest.Write(&value, sizeof(short));
 	dataDest.Flush();
 	dataDest.Close(); // close file
@@ -586,7 +586,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 
 	save_BIFF(&data_dest, BIFF_CHARS, row, col, "Sampling rate (Hz)");
 	col++;
-	fdouble = pwaveFormat->chrate;
+	fdouble = pwaveFormat->sampling_rate_per_channel;
 	save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
 	col--;
 	row++;
@@ -663,7 +663,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 		// iterate to read data and export to Excel file
 		auto iitime = 0;
 		float voltsper_bin;
-		const double rate = pwaveFormat->chrate;
+		const double rate = pwaveFormat->sampling_rate_per_channel;
 		auto dummy = m_pDat->BGetVal(0, -1); // init reading data
 
 		for (int k = mm_lFirst; k < boutlength; k++)

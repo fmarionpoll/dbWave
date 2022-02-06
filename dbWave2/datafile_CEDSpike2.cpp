@@ -162,7 +162,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 				auto pChan = pArray->Get_p_channel(i);
 				read_ChannelParameters(pChan, cedChan);
 				pWFormat->scan_count++;
-				pWFormat->chrate = static_cast<float>(1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
+				pWFormat->sampling_rate_per_channel = static_cast<float>(1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
 				pWFormat->sample_count = static_cast<long>(pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
 				adcChan = cedChan;
 			}

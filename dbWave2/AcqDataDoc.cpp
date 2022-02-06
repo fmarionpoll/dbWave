@@ -269,7 +269,7 @@ void AcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
-	cs_out.Format(_T("sampling rate(Hz)= %f"), p_wave_format->chrate);
+	cs_out.Format(_T("sampling rate(Hz)= %f"), p_wave_format->sampling_rate_per_channel);
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
@@ -370,7 +370,7 @@ BOOL AcqDataDoc::AdjustBUF(int i_num_elements)
 	const auto p_wf = GetpWaveFormat();
 	m_lDOCchanLength = p_wf->sample_count / static_cast<long>(p_wf->scan_count);
 	m_DOCnbchans = p_wf->scan_count;
-	p_wf->duration = static_cast<float>(m_lDOCchanLength) / p_wf->chrate;
+	p_wf->duration = static_cast<float>(m_lDOCchanLength) / p_wf->sampling_rate_per_channel;
 	m_lBUFSize = i_num_elements * p_wf->scan_count;
 
 	m_lBUFchanSize = m_lBUFSize / static_cast<long>(p_wf->scan_count);
@@ -395,7 +395,7 @@ BOOL AcqDataDoc::AllocBUF()
 
 	m_lDOCchanLength = pwF->sample_count / static_cast<long>(pwF->scan_count);
 	m_DOCnbchans = pwF->scan_count;
-	pwF->duration = static_cast<float>(m_lDOCchanLength) / pwF->chrate;
+	pwF->duration = static_cast<float>(m_lDOCchanLength) / pwF->sampling_rate_per_channel;
 
 	const int i_num_elements = m_lDOCchanLength;
 	if (i_num_elements * pwF->scan_count > m_lBUFSize)
@@ -773,7 +773,7 @@ BOOL AcqDataDoc::AcqDoc_DataAppendStop()
 	p_wave_format->sample_count = static_cast<long>(m_pXFile->m_ulbytescount / sizeof(short));
 	p_wave_format->duration = static_cast<float>(p_wave_format->sample_count) / static_cast<float>(p_wave_format->
 			scan_count)
-		/ p_wave_format->chrate;
+		/ p_wave_format->sampling_rate_per_channel;
 	m_pXFile->WriteDataInfos(p_wave_format, GetpWavechanArray());
 	m_pXFile->Flush();
 	return TRUE;

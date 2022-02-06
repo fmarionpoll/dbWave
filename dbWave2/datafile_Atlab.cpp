@@ -144,7 +144,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	plong = reinterpret_cast<long*>(pchar);
 	const auto clock_rate = 4.0E6f / static_cast<float>(*plong);
 
-	p_WaveFormat->chrate = clock_rate / static_cast<float>(p_WaveFormat->scan_count);
+	p_WaveFormat->sampling_rate_per_channel = clock_rate / static_cast<float>(p_WaveFormat->scan_count);
 	p_WaveFormat->duration = static_cast<float>(p_WaveFormat->sample_count) / clock_rate;
 
 	// fill channel description with minimal infos

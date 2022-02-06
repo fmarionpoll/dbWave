@@ -459,7 +459,7 @@ int ChartData::ResizeChannels(const int npixels, const long l_size)
 BOOL ChartData::AttachDataFile(AcqDataDoc* p_data_file)
 {
 	m_pDataFile = p_data_file;
-	m_samplingrate = m_pDataFile->GetpWaveFormat()->chrate;
+	m_samplingrate = m_pDataFile->GetpWaveFormat()->sampling_rate_per_channel;
 	m_pDataFile->SetReadingBufferDirty();
 	ASSERT(m_pDataFile->GetDOCchanLength() > 0);
 
@@ -1138,10 +1138,10 @@ BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("%s\t\r\n"), static_cast<LPCTSTR>(pwave_format->GetComments(_T("\t"), 0)));
 			// time interval
-			auto tt = GetDataFirst() / pwave_format->chrate; // first interval (sec)
+			auto tt = GetDataFirst() / pwave_format->sampling_rate_per_channel; // first interval (sec)
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("time start(s):\t%f\r\n"), tt);
-			tt = GetDataLast() / pwave_format->chrate; // last interval (sec)
+			tt = GetDataLast() / pwave_format->sampling_rate_per_channel; // last interval (sec)
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("time end(s):\t%f"), tt);
 			if (iunit == 0)

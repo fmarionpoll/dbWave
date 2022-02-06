@@ -124,7 +124,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	wave_format->mode_encoding = OLx_ENC_BINARY;
 	wave_format->mode_clock = INTERNAL_CLOCK;
 	wave_format->mode_trigger = INTERNAL_TRIGGER;
-	wave_format->chrate = static_cast<float>(sample_rate);
+	wave_format->sampling_rate_per_channel = static_cast<float>(sample_rate);
 	wave_format->sample_count = uicount;
 
 	//for (i = 0; i<wave_format->scan_count; i++)

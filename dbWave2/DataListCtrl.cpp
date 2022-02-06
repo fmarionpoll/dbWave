@@ -630,7 +630,7 @@ void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 		if (m_bsetTimeSpan)
 		{
 			const auto p_wave_format = ptr->pdataDoc->GetpWaveFormat();
-			const auto samplingrate = p_wave_format->chrate;
+			const auto samplingrate = p_wave_format->sampling_rate_per_channel;
 			l_first = static_cast<long>(m_tFirst * samplingrate);
 			l_last = static_cast<long>(m_tLast * samplingrate);
 			if (l_last == l_first)

@@ -735,7 +735,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 		pDataF->m_pXFile->Read(&wrate, sizeof(WORD));
 		piivO->samplingRate = wrate; // transfer rate
 	}
-	pwF->chrate = piivO->samplingRate;
+	pwF->sampling_rate_per_channel = piivO->samplingRate;
 	pwF->sample_count = static_cast<long>(lCompteur / 2);
 	m_AcqDataFile.ReadDataInfos();
 }

@@ -51,15 +51,15 @@ protected:
 	ChartDataAD m_chartDataAD;
 	int m_cursorstate{ 0 };
 	float m_sweepduration{ 2 };
-	CEditCtrl mm_yupper; 	
+	CEditCtrl mm_yupper;
 	CEditCtrl mm_ylower;
 	CStretchControl m_stretch;
 	HICON m_hBias{ nullptr };
 	HICON m_hZoom{ nullptr };
 	HICON m_hUnZoom{ nullptr };
-	float m_yscaleFactor{ 1 }; 
-	int m_VBarMode{ 0 }; 
-	CScrollBar m_scrolly; 
+	float m_yscaleFactor{ 1 };
+	int m_VBarMode{ 0 };
+	CScrollBar m_scrolly;
 	COLORREF m_backgroundColor = GetSysColor(COLOR_BTNFACE);
 	CBrush* m_pBackgroundBrush = new CBrush(m_backgroundColor);
 
@@ -78,29 +78,29 @@ protected:
 	BOOL m_bFoundDTOPenLayerDLL{ false };
 	BOOL m_bhidesubsequent{ false };
 
-	AcqDataDoc m_inputDataFile; 
+	AcqDataDoc m_inputDataFile;
 	//AcqDataDoc m_outputDataFile;	
 	CStringArray m_csNameArray;
 	BOOL m_bFileOpen{ false };
-	CString m_szFileName; 
+	CString m_szFileName;
 
-	BOOL m_bAskErase{ false }; 
-	BOOL m_bchanged{ false }; 
-	BOOL m_bSimultaneousStart{ false }; 
+	BOOL m_bAskErase{ false };
+	BOOL m_bchanged{ false };
+	BOOL m_bSimultaneousStart{ false };
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pOptions_AD{ nullptr };  
-	OPTIONS_OUTPUTDATA* m_pOptions_DA{ nullptr }; 
+	OPTIONS_ACQDATA* m_pOptions_AD{ nullptr };
+	OPTIONS_OUTPUTDATA* m_pOptions_DA{ nullptr };
 	BOOL m_bsimultaneousStartDA{ false };
 
 	// sweep
-	long m_chsweeplength{ 0 }; 
-	long m_sweeplength{ 1000 }; 
-	int m_channel_sweep_start{ 0 }; 
+	long m_chsweeplength{ 0 };
+	long m_sweeplength{ 1000 };
+	int m_channel_sweep_start{ 0 };
 	int m_channel_sweep_end{ 0 };
 	int m_chsweepRefresh{ 0 };
 	int m_bytesweepRefresh{ 0 };
-	float m_fclockrate{ 10000.f }; 
+	float m_fclockrate{ 10000.f };
 
 	// functions for data acquisition
 	BOOL FindDTOpenLayersBoards();

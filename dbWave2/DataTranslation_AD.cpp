@@ -86,10 +86,10 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 			pWFormat->scan_count = m_numchansMAX;
 
 		// set frequency to value requested, set frequency and get the value returned
-		double clockrate = static_cast<double>(pWFormat->chrate) * static_cast<double>(pWFormat->scan_count);
+		double clockrate = static_cast<double>(pWFormat->sampling_rate_per_channel) * static_cast<double>(pWFormat->scan_count);
 		SetFrequency(clockrate); // set sampling frequency (total throughput)
 		clockrate = GetFrequency();
-		pWFormat->chrate = static_cast<float>(clockrate) / float(pWFormat->scan_count);
+		pWFormat->sampling_rate_per_channel = static_cast<float>(clockrate) / float(pWFormat->scan_count);
 
 		// update channel list (chan & gain)
 
@@ -135,7 +135,7 @@ void DataTranslation_AD::DeclareBuffers(OPTIONS_ACQDATA* pADC_options)
 
 	// define buffer length
 	const float sweepduration = m_pOptions->sweepduration;
-	const long chsweeplength = static_cast<long>(float(sweepduration) * pWFormat->chrate / float(
+	const long chsweeplength = static_cast<long>(float(sweepduration) * pWFormat->sampling_rate_per_channel / float(
 		m_pOptions->iundersample));
 	m_chbuflen = chsweeplength * m_pOptions->iundersample / pWFormat->bufferNitems;
 	m_buflen = m_chbuflen * pWFormat->scan_count;
@@ -164,8 +164,7 @@ void DataTranslation_AD::DeleteBuffers()
 			if (hBuf != nullptr)
 				if (olDmFreeBuffer(hBuf) != OLNOERROR)
 					AfxMessageBox(_T("Error Freeing Buffer"));
-		}
-		while (hBuf != nullptr);
+		} while (hBuf != nullptr);
 		m_bufhandle = hBuf;
 	}
 	catch (COleDispatchException* e)
@@ -188,8 +187,7 @@ void DataTranslation_AD::StopAndLiberateBuffers()
 		{
 			hBuf = (HBUF)GetQueue();
 			if (hBuf != nullptr) SetQueue(long(hBuf));
-		}
-		while (hBuf != nullptr);
+		} while (hBuf != nullptr);
 	}
 	catch (COleDispatchException* e)
 	{

@@ -496,7 +496,7 @@ void CViewSpikeDetection::updateDataFile(BOOL bUpdateInterface)
 		m_filescroll.SetScrollInfo(&m_filescroll_infos);
 
 		m_datacomments = pwave_format->GetComments(_T(" "));
-		m_samplingRate = pwave_format->chrate;
+		m_samplingRate = pwave_format->sampling_rate_per_channel;
 		m_bValidThreshold = FALSE;
 	}
 }
