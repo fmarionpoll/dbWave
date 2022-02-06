@@ -82,19 +82,19 @@ int ChartData::AddChanlistItem(int ns, int mode)
 		if (ns >= pchan_array->ChanArray_getSize())
 			ns = 0;
 		const auto pchan = pchan_array->Get_p_channel(ns);
-		p_chan_list_item->dl_comment = pchan->am_csComment; // get comment however
-		UpdateChanlistMaxSpan(); // update span max
-		if (mode > 0) // modif comment if transform buffer
-			p_chan_list_item->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(8) + ": " + p_chan_list_item->
-				dl_comment;
+		p_chan_list_item->dl_comment = pchan->am_csComment; 
+		UpdateChanlistMaxSpan(); 
+		if (mode > 0) 
+			p_chan_list_item->dl_comment = 
+			(m_pDataFile->GetTransfDataName(mode)).Left(8) + ": " + p_chan_list_item->dl_comment;
 	}
 	return index_newchan;
 }
 
 int ChartData::RemoveChanlistItem(WORD i)
 {
-	const auto chanlist_size = chanlistitem_ptr_array.GetSize(); // get size of chan array
-	if (chanlist_size > 0) // delete Envelopes ordinates but make sure that it is not used
+	const auto chanlist_size = chanlistitem_ptr_array.GetSize(); 
+	if (chanlist_size > 0) 
 	{
 		const auto pa = chanlistitem_ptr_array[i]->pEnvelopeOrdinates;
 		// step 1: check that this envelope is not used by another channel
@@ -104,8 +104,8 @@ int ChartData::RemoveChanlistItem(WORD i)
 			const auto p_envelope_y = chanlistitem_ptr_array[i]->pEnvelopeOrdinates;
 			if (pa == p_envelope_y && lj != i)
 			{
-				b_used_only_once = FALSE; // the envelope is used by another channel
-				break; // stop search and exit loop
+				b_used_only_once = FALSE; 
+				break; 
 			}
 		}
 		// step 2: delete corresponding envelope only if envelope used only once.
@@ -114,11 +114,11 @@ int ChartData::RemoveChanlistItem(WORD i)
 			for (auto k = envelope_ptr_array.GetUpperBound(); k >= 0; k--)
 			{
 				const auto pb = envelope_ptr_array[k];
-				if (pa == pb) // search where this Envelope was stored
+				if (pa == pb) 
 				{
-					delete pa; // delete  object
-					envelope_ptr_array.RemoveAt(k); // remove pointer from array
-					break; // object is found, stop loop and delete chanlist item
+					delete pa; 
+					envelope_ptr_array.RemoveAt(k);
+					break; 
 				}
 			}
 		}
@@ -159,11 +159,11 @@ void ChartData::UpdateChanlistFromDoc()
 		const auto pchan = pchan_array->Get_p_channel(ns);
 		p_chanlist_item->dl_comment = pchan->am_csComment;
 		if (mode > 0)
-			p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) + ": " + p_chanlist_item->
-				dl_comment;
-		UpdateGainSettings(i); // keep physical value of yextent and zero constant
+			p_chanlist_item->dl_comment = 
+			 (m_pDataFile->GetTransfDataName(mode)).Left(6) + ": " + p_chanlist_item->dl_comment;
+		UpdateGainSettings(i);
 	}
-	UpdateChanlistMaxSpan(); // update max span
+	UpdateChanlistMaxSpan(); 
 }
 
 void ChartData::UpdateGainSettings(int ichanlist)
@@ -885,9 +885,9 @@ void ChartData::PlotDatatoDC(CDC* p_dc)
 		p_dc->Polyline(&m_PolyPoints[0], nelements);
 
 		if (m_HZtags.GetNTags() > 0)
-			displayHZtags_Chan(p_dc, ichan, chanlist_item);
+			display_hz_tags_for_channel(p_dc, ichan, chanlist_item);
 
-		highlightData(p_dc, ichan);
+		highlight_data(p_dc, ichan);
 	}
 
 	// restore DC
@@ -895,7 +895,7 @@ void ChartData::PlotDatatoDC(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 
 	if (m_VTtags.GetNTags() > 0)
-		displayVTtags_LValue(p_dc);
+		display_vt_tags_long_value(p_dc);
 
 	// temp tag
 	if (m_hwndReflect != nullptr && m_tempVTtag != nullptr)
@@ -910,7 +910,7 @@ void ChartData::PlotDatatoDC(CDC* p_dc)
 	//ATLTRACE2("end PlotDataToDC \n");
 }
 
-void ChartData::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
+void ChartData::display_hz_tags_for_channel(CDC* p_dc, int ichan, CChanlistItem* pChan)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -921,7 +921,6 @@ void ChartData::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
 	{
 		if (m_HZtags.GetChannel(i) != ichan)
 			continue;
-		//ATLTRACE2("display HZtag %i \n", i);
 		auto k = m_HZtags.GetValue(i);
 		k = MulDiv(static_cast<short>(k) - worg, yVE, wext);
 		p_dc->MoveTo(m_displayRect.left, k);
@@ -931,7 +930,7 @@ void ChartData::displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan)
 	p_dc->SelectObject(pold);
 }
 
-void ChartData::displayVTtags_LValue(CDC* p_dc)
+void ChartData::display_vt_tags_long_value(CDC* p_dc)
 {
 	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -1076,7 +1075,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			p_dc->SelectObject(pold_pen);
 		}
 		// highlight data ------------------------------------------------------
-		highlightData(p_dc, ichan);
+		highlight_data(p_dc, ichan);
 	}
 
 	// display vertical cursors ------------------------------------------------
@@ -1276,7 +1275,7 @@ LPTSTR ChartData::GetAsciiLine(LPTSTR lpCopy, int iunit)
 // client area by fast BitBlt. This latter method was less efficient (slower)
 // than XORing directly to the screen.
 
-void ChartData::curveXOR()
+void ChartData::curve_xor()
 {
 	// ------- client area (direct draw)
 	auto p_dc = GetDC(); // select dc
@@ -1332,7 +1331,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 	if (m_currCursorMode == 0 && m_HCtrapped < 0) // test if cursor hits a curve
 	{
 		m_trackMode = TRACK_RECT;
-		m_hitcurve = doesCursorHitCurve(point);
+		m_hitcurve = does_cursor_hit_curve(point);
 		if (m_hitcurve >= 0)
 		{
 			// cancel track rect mode (cursor captured)
@@ -1352,7 +1351,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 			m_ptFirst = point; // save first point
 			m_curTrack = m_zero; // use m_curTrack to store zero
 
-			curveXOR(); // xor curve
+			curve_xor(); // xor curve
 			postMyMessage(HINT_HITCHANNEL, m_hitcurve); // tell parent chan selected
 			return;
 		}
@@ -1372,9 +1371,9 @@ void ChartData::OnMouseMove(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_CURVE:
-		curveXOR(); // erase past curve and compute new zero
+		curve_xor(); // erase past curve and compute new zero
 		m_zero = MulDiv(point.y - m_ptFirst.y, m_XORyext, -m_yVE) + m_curTrack;
-		curveXOR(); // plot new curve
+		curve_xor(); // plot new curve
 		break;
 
 	default:
@@ -1390,7 +1389,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 	case TRACK_CURVE:
 		{
-			curveXOR(); // (clear) necessary since XORcurve can draw outside client area
+			curve_xor(); // (clear) necessary since XORcurve can draw outside client area
 			auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
 			chanlist_item->SetYzero(m_zero);
 			m_trackMode = TRACK_OFF;
@@ -1463,7 +1462,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-int ChartData::doesCursorHitCurve(CPoint point)
+int ChartData::does_cursor_hit_curve(CPoint point)
 {
 	auto chanfound = -1; // output value
 	const auto ichans = chanlistitem_ptr_array.GetUpperBound();
@@ -1570,7 +1569,7 @@ void ChartData::SetHighlightData(CDWordArray* pDWintervals)
 	}
 }
 
-void ChartData::highlightData(CDC* p_dc, int chan)
+void ChartData::highlight_data(CDC* p_dc, int chan)
 {
 	// skip if not the correct chan
 	if (chan != m_highlighted.channel || m_highlighted.l_first.GetSize() < 2)

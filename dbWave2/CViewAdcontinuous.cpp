@@ -26,9 +26,6 @@
 #define new DEBUG_NEW
 #endif
 
-constexpr auto MIN_DURATION = 0.1;
-constexpr auto MIN_BUFLEN = 32;
-
 IMPLEMENT_DYNCREATE(CADContView, CFormView)
 
 CADContView::CADContView()
@@ -83,7 +80,7 @@ END_MESSAGE_MAP()
 void CADContView::OnDestroy()
 {
 	if (m_Acq32_AD.IsInProgress())
-		StopAcquisition(TRUE);
+		StopAcquisition();
 
 	m_Acq32_DA.StopAndLiberateBuffers();
 
@@ -134,11 +131,8 @@ BEGIN_EVENTSINK_MAP(CADContView, CFormView)
 
 END_EVENTSINK_MAP()
 
-void CADContView::OnInitialUpdate()
+void CADContView::AttachControls()
 {
-	// TODO: change place of call to parent to see if hWnd is no longer zero
-	//CFormView::OnInitialUpdate();
-
 	// attach controls
 	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
 	VERIFY(m_AD_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
@@ -180,6 +174,13 @@ void CADContView::OnInitialUpdate()
 	// scrollbar
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
 	m_scrolly.SetScrollRange(0, 100);
+}
+
+void CADContView::OnInitialUpdate()
+{
+	CFormView::OnInitialUpdate();
+
+	AttachControls();
 
 	const auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_pOptions_AD = &(pApp->options_acqdata);
@@ -195,7 +196,7 @@ void CADContView::OnInitialUpdate()
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
 	m_ptableSet->RefreshQuery();
-	CFormView::OnInitialUpdate();
+	//CFormView::OnInitialUpdate();
 
 	// if current document, load parameters from current document into the local set of parameters
 	// if current document does not exist, do nothing
@@ -284,16 +285,16 @@ BOOL CADContView::FindDTOpenLayersBoards()
 	return TRUE;
 }
 
-BOOL CADContView::SelectDTOpenLayersBoard(const CString cardName)
+BOOL CADContView::SelectDTOpenLayersBoard(const CString& card_name)
 {
 	// get infos
 	m_bFoundDTOPenLayerDLL = TRUE;
-	(m_pOptions_AD->waveFormat).csADcardName = cardName;
+	(m_pOptions_AD->waveFormat).csADcardName = card_name;
 
 	// connect A/D subsystem and display/hide buttons
 	m_bStartOutPutMode = 0;
-	const BOOL flag_AD = m_Acq32_AD.OpenSubSystem(cardName);
-	const BOOL flag_DA = m_Acq32_DA.OpenSubSystem(cardName);
+	const BOOL flag_AD = m_Acq32_AD.OpenSubSystem(card_name);
+	const BOOL flag_DA = m_Acq32_DA.OpenSubSystem(card_name);
 	if (flag_DA)
 		m_bStartOutPutMode = 0;
 	m_bSimultaneousStart = m_bsimultaneousStartDA && m_Acq32_AD.IsSimultaneousStart();
@@ -315,7 +316,7 @@ BOOL CADContView::SelectDTOpenLayersBoard(const CString cardName)
 	return TRUE;
 }
 
-void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
+void CADContView::StopAcquisition()
 {
 	if (!m_Acq32_AD.IsInProgress())
 		return;
@@ -344,12 +345,7 @@ void CADContView::StopAcquisition(BOOL bDisplayErrorMsg)
 	if (m_bFileOpen)
 	{
 		SaveAndCloseFile();
-		// update view data
 		UpdateViewDataFinal();
-		//const long lsizeDOCchan = m_inputDataFile.GetDOCchanLength();
-		//m_chartDataAD.AttachDataFile(&m_inputDataFile);
-		//m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), lsizeDOCchan);
-		//m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
 	}
 }
 
@@ -486,13 +482,12 @@ void CADContView::InitAcquisitionDisplay()
 	m_chartDataAD.Invalidate();
 }
 
-
 BOOL CADContView::StartAcquisition()
 {
 	// set display
 	if (m_bADwritetofile && !Defineexperiment())
 	{
-		StopAcquisition(FALSE);
+		StopAcquisition();
 		UpdateStartStop(m_Acq32_AD.IsInProgress());
 		return FALSE;
 	}
@@ -523,7 +518,7 @@ BOOL CADContView::StartAcquisition()
 	{
 		if (AfxMessageBox(_T("Start data acquisition"), MB_OKCANCEL) != IDOK)
 		{
-			StopAcquisition(FALSE);
+			StopAcquisition();
 			UpdateStartStop(m_Acq32_AD.IsInProgress());
 			return FALSE;
 		}
@@ -640,7 +635,6 @@ void CADContView::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 void CADContView::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
 {
 	const auto pmF = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
-	// activate view
 	if (bActivate)
 	{
 		pmF->ActivatePropertyPane(FALSE);
@@ -657,7 +651,7 @@ void CADContView::OnSize(UINT nType, int cx, int cy)
 	case SIZE_RESTORED:
 		if (m_Acq32_AD.IsInProgress())
 		{
-			StopAcquisition(TRUE);
+			StopAcquisition();
 			UpdateStartStop(false);
 		}
 
@@ -708,12 +702,12 @@ void CADContView::OnBnClickedStartstop()
 		}
 		else
 		{
-			StopAcquisition(FALSE);
+			StopAcquisition();
 		}
 	}
 	else
 	{
-		StopAcquisition(TRUE);
+		StopAcquisition();
 		if (m_bhidesubsequent)
 		{
 			TransferFilesToDatabase();
@@ -781,7 +775,7 @@ BOOL CADContView::Defineexperiment()
 
 		// check if this file is already present, exit if not...
 		CFileStatus status;
-		int iIDresponse = IDYES; // default: go on if file not found
+		int iIDresponse = IDYES; 
 		if (CFile::GetStatus(csfilename, status))
 			iIDresponse = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
 		// no .. find first available number
@@ -856,7 +850,7 @@ void CADContView::OnSamplingMode()
 	if (IDOK == dlg.DoModal())
 	{
 		if (m_Acq32_AD.IsInProgress()) {
-			StopAcquisition(TRUE);
+			StopAcquisition();
 			UpdateStartStop(m_Acq32_AD.IsInProgress());
 		}
 
@@ -891,21 +885,21 @@ void CADContView::ChainDialog(WORD iID)
 
 void CADContView::OnTriggerError_ADC()
 {
-	StopAcquisition(TRUE);
+	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TRIGGERERROR, MB_ICONEXCLAMATION | MB_OK);
 }
 
 void CADContView::OnQueueDone_ADC()
 {
-	StopAcquisition(TRUE);
+	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TOOFAST);
 }
 
 void CADContView::OnOverrunError_ADC()
 {
-	StopAcquisition(TRUE);
+	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_OVERRUN);
 }
@@ -935,7 +929,6 @@ void CADContView::OnBufferDone_ADC()
 		return;
 
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
-	TRACE("duration requested:%f\n", pWFormat->duration);
 	ADC_Transfer(pDTbuf, pWFormat);
 	ADC_TransferToFile(pWFormat);
 	ADC_TransferToChart(pWFormat);
@@ -1004,7 +997,7 @@ void CADContView::ADC_TransferToChart(const CWaveFormat * pWFormat)
 	}
 	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
 	CString cs;
-	cs.Format(_T("%.3lf"), duration);
+	cs.Format(_T("%.3lf"), double(duration));
 	SetDlgItemText(IDC_STATIC1, cs);
 }
 
@@ -1023,11 +1016,11 @@ void CADContView::ADC_TransferToFile(CWaveFormat * pWFormat)
 		// end of acquisition
 		if (duration >= pWFormat->duration_to_acquire)
 		{
-			StopAcquisition(TRUE);
+			StopAcquisition();
 			if (m_bhidesubsequent)
 			{
 				if (!StartAcquisition())
-					StopAcquisition(TRUE);
+					StopAcquisition();
 				else
 				{
 					if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
@@ -1093,184 +1086,155 @@ BOOL CADContView::InitCyberAmp()
 
 void CADContView::OnBnClickedGainbutton()
 {
-	m_BiasButton.SetState(0);
-	m_ZoomButton.SetState(1);
 	SetVBarMode(BAR_GAIN);
 }
 
 void CADContView::OnBnClickedBiasbutton()
 {
-	// set bias down and set gain up CButton	
-	m_BiasButton.SetState(1);
-	m_ZoomButton.SetState(0);
 	SetVBarMode(BAR_BIAS);
 }
 
 void CADContView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
 {
-	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
 		CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
-	// CDataView scroll: vertical scroll bar
-	switch (m_VBarMode)
-	{
-	case BAR_GAIN:
+	if(m_VBarMode == BAR_GAIN)
 		OnGainScroll(nSBCode, nPos);
-		break;
-	case BAR_BIAS:
+	else
 		OnBiasScroll(nSBCode, nPos);
-	default:
-		break;
-	}
+
 }
 
 void CADContView::SetVBarMode(short bMode)
 {
-	if (bMode == BAR_BIAS)
-		m_VBarMode = bMode;
-	else
-		m_VBarMode = BAR_GAIN;
-	UpdateBiasScroll();
+	m_VBarMode = bMode;
+	m_BiasButton.SetState(bMode == BAR_BIAS);
+	m_ZoomButton.SetState(bMode == BAR_GAIN);
+	if (bMode == BAR_GAIN)
+		UpdateGainScroll();
+	else 
+		UpdateBiasScroll();
 }
 
 void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	// assume that all channels are displayed at the same gain & offset
-	const int ichan = 0; // TODO see which channel is selected
-	int l_size = m_chartDataAD.GetChanlistItem(ichan)->GetYextent();
+	int yextent = m_chartDataAD.GetChanlistItem(0)->GetYextent();
 
 	// get corresponding data
 	switch (nSBCode)
 	{
 		// .................scroll to the start
-	case SB_LEFT: l_size = YEXTENT_MIN;
-		break;
-		// .................scroll one line left
-	case SB_LINELEFT: l_size -= l_size / 10 + 1;
-		break;
-		// .................scroll one line right
-	case SB_LINERIGHT: l_size += l_size / 10 + 1;
-		break;
-		// .................scroll one page left
-	case SB_PAGELEFT: l_size -= l_size / 2 + 1;
-		break;
-		// .................scroll one page right
-	case SB_PAGERIGHT: l_size += l_size + 1;
-		break;
-		// .................scroll to end right
-	case SB_RIGHT: l_size = YEXTENT_MAX;
-		break;
-		// .................scroll to pos = nPos or drag scroll box -- pos = nPos
-	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: l_size = MulDiv(nPos - 50, YEXTENT_MAX, 100);
-		break;
-		// .................NOP: set position only
-	default: break;
+		case SB_LEFT: yextent = YEXTENT_MIN;
+			break;
+			// .................scroll one line left
+		case SB_LINELEFT: yextent -= 1;
+			break;
+			// .................scroll one line right
+		case SB_LINERIGHT: yextent += 1;
+			break;
+			// .................scroll one page left
+		case SB_PAGELEFT: yextent -= 10;
+			break;
+			// .................scroll one page right
+		case SB_PAGERIGHT: yextent += 10;
+			break;
+			// .................scroll to end right
+		case SB_RIGHT: yextent = YEXTENT_MAX;
+			break;
+			// .................scroll to pos = nPos or drag scroll box -- pos = nPos
+		case SB_THUMBPOSITION:
+		case SB_THUMBTRACK: yextent = MulDiv(int(nPos - 50), YEXTENT_MAX, 100);
+			break;
+			// .................NOP: set position only
+		default: break;
 	}
 
 	// change y extent
-	if (l_size > 0) //&& lSize<=YEXTENT_MAX)
+	if (yextent > 0) 
 	{
-		// assume that all channels are displayed at the same gain & offset
 		const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-		const int ichan = 0;
 		const int ichanlast = pWFormat->scan_count - 1;
 
-		for (int channel = ichan; channel <= ichanlast; channel++)
+		for (int channel = 0; channel <= ichanlast; channel++)
 		{
 			CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(channel);
-			pChan->SetYextent(l_size);
+			pChan->SetYextent(yextent);
 		}
 		m_chartDataAD.Invalidate();
 		UpdateChanLegends(0);
-		m_pOptions_AD->izoomCursel = l_size;
+		m_pOptions_AD->izoomCursel = yextent;
 	}
 	// update scrollBar
-	if (m_VBarMode == BAR_GAIN)
-	{
-		UpdateGainScroll();
-		UpdateChanLegends(0);
-		UpdateData(false);
-	}
+	UpdateGainScroll();
+	UpdateChanLegends(0);
+	UpdateData(false);
 }
 
 void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
-	// assume that all channels are displayed at the same gain & offset
-	int ichan = 0; // TODO: see which channel is selected
-	CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
-	int lSize = pChan->GetYzero() - pChan->GetDataBinZero();
-	const int yextent = pChan->GetYextent();
-	// get corresponding data
+	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	int yzero = pChan->GetYzero();
+	const int span = pChan->GetDataBinSpan() / 2;
+	const int initial = yzero;
 	switch (nSBCode)
 	{
-	case SB_LEFT: // scroll to the start
-		lSize = YZERO_MIN;
-		break;
-	case SB_LINELEFT: // scroll one line left
-		lSize -= yextent / 100 + 1;
-		break;
-	case SB_LINERIGHT: // scroll one line right
-		lSize += yextent / 100 + 1;
-		break;
-	case SB_PAGELEFT: // scroll one page left
-		lSize -= yextent / 10 + 1;
-		break;
-	case SB_PAGERIGHT: // scroll one page right
-		lSize += yextent / 10 + 1;
-		break;
-	case SB_RIGHT: // scroll to end right
-		lSize = YZERO_MAX;
-		break;
-	case SB_THUMBPOSITION: // scroll to pos = nPos			
-	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		lSize = static_cast<int>(nPos - 50) * (YZERO_SPAN / 100);
-		break;
-	default: // NOP: set position only
-		break;
+		case SB_LEFT: // scroll to the start
+			yzero = YZERO_MIN;
+			break;
+		case SB_LINELEFT: // scroll one line left
+			yzero -= int(float(span) / 100.f) + 1;
+			break;
+		case SB_LINERIGHT: // scroll one line right
+			yzero += int(float(span) / 100.f) + 1;
+			break;
+		case SB_PAGELEFT: // scroll one page left
+			yzero -= int(float(span) / 10.f) + 1;
+			break;
+		case SB_PAGERIGHT: // scroll one page right
+			yzero += int(float(span) / 10.f) + 1;
+			break;
+		case SB_RIGHT: 
+			yzero = YZERO_MAX;
+			break;
+		case SB_THUMBPOSITION: // scroll to pos = nPos			
+		case SB_THUMBTRACK: // drag scroll box -- pos = nPos
+			yzero = static_cast<int>(nPos - 50) * (YZERO_SPAN / 100);
+			break;
+		default: // NOP: set position only
+			break;
 	}
+	TRACE("from %i to %i\n", initial, yzero);
+	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+	constexpr int ichanfirst = 0;
+	const int ichanlast = pWFormat->scan_count - 1;
+	for (int i = ichanfirst; i <= ichanlast; i++)
+	{
+		CChanlistItem* pChani = m_chartDataAD.GetChanlistItem(i);
+		pChani->SetYzero(yzero);
+	}
+	m_chartDataAD.Invalidate();
 
-	// try to read data with this new size
-	if (lSize > YZERO_MIN && lSize < YZERO_MAX)
-	{
-		const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-		constexpr int ichanfirst = 0;
-		const int ichanlast = pWFormat->scan_count - 1;
-		for (int ichan = ichanfirst; ichan <= ichanlast; ichan++)
-		{
-			CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
-			pChan->SetYzero(lSize + pChan->GetDataBinZero());
-		}
-		m_chartDataAD.Invalidate();
-	}
-	// update scrollBar
-	if (m_VBarMode == BAR_BIAS)
-	{
-		UpdateBiasScroll();
-		UpdateChanLegends(0);
-		UpdateData(false);
-	}
+	UpdateBiasScroll();
+	UpdateChanLegends(0);
+	UpdateData(false);
 }
 
 void CADContView::UpdateBiasScroll()
 {
-	// assume that all channels are displayed at the same gain & offset
-	const int ichan = 0;	// TODO see which channel is selected
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
-	const int iPos = (pChan->GetYzero() - pChan->GetDataBinZero())* 100 / static_cast<int>(YZERO_SPAN) + 50;
+	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	const int iPos = MulDiv(pChan->GetYzero(), 100, pChan->GetDataBinSpan())+50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 
 void CADContView::UpdateGainScroll()
 {
-	// assume that all channels are displayed at the same gain & offset
-	const int ichan = 0;
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
-	m_scrolly.SetScrollPos(MulDiv(pChan->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
+	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	const int iPos = MulDiv(pChan->GetYextent(), 100, YEXTENT_MAX) + 50;
+	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 
 void CADContView::UpdateChanLegends(int chan)

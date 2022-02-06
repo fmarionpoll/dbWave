@@ -104,11 +104,11 @@ protected:
 
 	// functions for data acquisition
 	BOOL FindDTOpenLayersBoards();
-	BOOL SelectDTOpenLayersBoard(CString cardName);
+	BOOL SelectDTOpenLayersBoard(const CString& card_name);
 
 	void SetCombostartoutput(int option);
 
-	void StopAcquisition(BOOL bDisplayErrorMsg);
+	void StopAcquisition();
 	void SaveAndCloseFile();
 	BOOL StartAcquisition();
 	ECODE StartSimultaneousList();
@@ -134,6 +134,7 @@ protected:
 	// Overrides
 	CDaoRecordset* OnGetRecordset();
 	void DoDataExchange(CDataExchange* pDX) override;
+	void AttachControls();
 	void OnInitialUpdate() override;
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	~CADContView() override;

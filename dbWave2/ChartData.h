@@ -145,11 +145,11 @@ public:
 	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
 
 protected:
-	void	highlightData(CDC* p_dc, int chan);
-	int		doesCursorHitCurve(CPoint point);
-	void	curveXOR();
-	void	displayVTtags_LValue(CDC* p_dc);
-	void	displayHZtags_Chan(CDC* p_dc, int ichan, CChanlistItem* pChan);
+	void	highlight_data(CDC* p_dc, int chan);
+	int		does_cursor_hit_curve(CPoint point);
+	void	curve_xor();
+	void	display_vt_tags_long_value(CDC* p_dc);
+	void	display_hz_tags_for_channel(CDC* p_dc, int ichan, CChanlistItem* pChan);
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
