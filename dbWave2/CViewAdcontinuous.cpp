@@ -1116,43 +1116,34 @@ void CADContView::SetVBarMode(short bMode)
 
 void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	int yextent = m_chartDataAD.GetChanlistItem(0)->GetYextent();
+	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	int yextent = pChan->GetYextent();
+	const int span = pChan->GetDataBinSpan();
 
-	// get corresponding data
 	switch (nSBCode)
 	{
-		// .................scroll to the start
 		case SB_LEFT: yextent = YEXTENT_MIN;
 			break;
-			// .................scroll one line left
-		case SB_LINELEFT: yextent -= 1;
+		case SB_LINELEFT: yextent -= int(float(span) / 100.f) + 1;;
 			break;
-			// .................scroll one line right
-		case SB_LINERIGHT: yextent += 1;
+		case SB_LINERIGHT: yextent += int(float(span) / 100.f) + 1;;
 			break;
-			// .................scroll one page left
-		case SB_PAGELEFT: yextent -= 10;
+		case SB_PAGELEFT: yextent -= int(float(span) / 10.f) + 1;;
 			break;
-			// .................scroll one page right
-		case SB_PAGERIGHT: yextent += 10;
+		case SB_PAGERIGHT: yextent += int(float(span) / 10.f) + 1;;
 			break;
-			// .................scroll to end right
 		case SB_RIGHT: yextent = YEXTENT_MAX;
 			break;
-			// .................scroll to pos = nPos or drag scroll box -- pos = nPos
 		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK: yextent = MulDiv(int(nPos - 50), YEXTENT_MAX, 100);
+		case SB_THUMBTRACK: yextent = MulDiv(int(nPos - 50), pChan->GetDataBinSpan(), 100);
 			break;
-			// .................NOP: set position only
 		default: break;
 	}
 
-	// change y extent
 	if (yextent > 0) 
 	{
 		const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 		const int ichanlast = pWFormat->scan_count - 1;
-
 		for (int channel = 0; channel <= ichanlast; channel++)
 		{
 			CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(channel);
@@ -1162,7 +1153,7 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 		UpdateChanLegends(0);
 		m_pOptions_AD->izoomCursel = yextent;
 	}
-	// update scrollBar
+
 	UpdateGainScroll();
 	UpdateChanLegends(0);
 	UpdateData(false);
@@ -1176,32 +1167,32 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	const int initial = yzero;
 	switch (nSBCode)
 	{
-		case SB_LEFT: // scroll to the start
+		case SB_LEFT: 
 			yzero = YZERO_MIN;
 			break;
-		case SB_LINELEFT: // scroll one line left
+		case SB_LINELEFT: 
 			yzero -= int(float(span) / 100.f) + 1;
 			break;
-		case SB_LINERIGHT: // scroll one line right
+		case SB_LINERIGHT: 
 			yzero += int(float(span) / 100.f) + 1;
 			break;
-		case SB_PAGELEFT: // scroll one page left
+		case SB_PAGELEFT:
 			yzero -= int(float(span) / 10.f) + 1;
 			break;
-		case SB_PAGERIGHT: // scroll one page right
+		case SB_PAGERIGHT:
 			yzero += int(float(span) / 10.f) + 1;
 			break;
 		case SB_RIGHT: 
 			yzero = YZERO_MAX;
 			break;
-		case SB_THUMBPOSITION: // scroll to pos = nPos			
-		case SB_THUMBTRACK: // drag scroll box -- pos = nPos
+		case SB_THUMBPOSITION: 		
+		case SB_THUMBTRACK:
 			yzero = static_cast<int>(nPos - 50) * (YZERO_SPAN / 100);
 			break;
 		default: // NOP: set position only
 			break;
 	}
-	TRACE("from %i to %i\n", initial, yzero);
+	
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 	constexpr int ichanfirst = 0;
 	const int ichanlast = pWFormat->scan_count - 1;
@@ -1227,7 +1218,7 @@ void CADContView::UpdateBiasScroll()
 void CADContView::UpdateGainScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
-	const int iPos = MulDiv(pChan->GetYextent(), 100, YEXTENT_MAX) + 50;
+	const int iPos = MulDiv(pChan->GetYextent(), 100, pChan->GetDataBinSpan()) + 50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 

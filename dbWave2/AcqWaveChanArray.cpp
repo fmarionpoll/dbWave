@@ -20,11 +20,11 @@ CWaveChanArray::~CWaveChanArray()
 long CWaveChanArray::Write(CFile* datafile)
 {
 	const auto p1 = datafile->GetPosition();
-	short array_size = wavechan_ptr_array.GetSize();
+	const int array_size = wavechan_ptr_array.GetSize();
 	datafile->Write(&array_size, sizeof(short));
 	for (auto i = 0; i < array_size; i++)
 	{
-		auto p_channel = wavechan_ptr_array[i];
+		const auto p_channel = wavechan_ptr_array[i];
 		p_channel->Write(datafile);
 	}
 
@@ -64,7 +64,7 @@ BOOL CWaveChanArray::Read(CFile* datafile)
 	}
 	else
 	{
-		ChanArray_removeAll(); // erase existing data
+		ChanArray_removeAll(); 
 		do
 		{
 			p_channel = new CWaveChan;
@@ -79,22 +79,17 @@ BOOL CWaveChanArray::Read(CFile* datafile)
 	return TRUE;
 }
 
-// this routine must duplicate the content of the array
-// otherwise the pointers would point to the same objects and
-// one of the array would be undefined when the other is destroyed
-
 void CWaveChanArray::Copy(const CWaveChanArray* arg)
 {
-	const auto n_items = arg->wavechan_ptr_array.GetSize(); // source size
-	ChanArray_removeAll(); // erase existing data
-	for (auto i = 0; i < n_items; i++) // loop over n items
+	const auto n_items = arg->wavechan_ptr_array.GetSize(); 
+	ChanArray_removeAll(); 
+	for (auto i = 0; i < n_items; i++) 
 	{
-		const auto p_channel = new CWaveChan(); // create new object
+		const auto p_channel = new CWaveChan();
 		ASSERT(p_channel != NULL);
 		p_channel ->Copy( arg->Get_p_channel(i));
-
-		ChanArray_add(p_channel); // store pointer into array
-	};
+		ChanArray_add(p_channel);
+	}
 }
 
 CWaveChan* CWaveChanArray::Get_p_channel(int i) const
@@ -162,10 +157,10 @@ void CWaveChanArray::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		version = 1;
-		ar << version; // save version number
+		ar << version; 
 		const int n_items = wavechan_ptr_array.GetSize();
-		ar << n_items; // save number of items
-		if (n_items > 0) // loop to save each CWaveChan
+		ar << n_items; 
+		if (n_items > 0)
 		{
 			for (auto i = 0; i < n_items; i++)
 			{
@@ -176,15 +171,15 @@ void CWaveChanArray::Serialize(CArchive& ar)
 	}
 	else
 	{
-		ar >> version; // get version
+		ar >> version;
 		int items;
-		ar >> items; // get number of items
-		if (items > 0) // loop to read all CWaveChan items
+		ar >> items;
+		if (items > 0) 
 		{
 			ChanArray_removeAll();
 			for (auto i = 0; i < items; i++)
 			{
-				auto pItem = new CWaveChan;
+				const auto pItem = new CWaveChan;
 				ASSERT(pItem != NULL);
 				pItem->Serialize(ar);
 				wavechan_ptr_array.Add(pItem);

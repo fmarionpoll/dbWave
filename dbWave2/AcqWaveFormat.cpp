@@ -1,7 +1,4 @@
-// aqcparam.cpp    implementation file
-
 #include "StdAfx.h"
-#include "dataheader_Atlab.H"
 #include "AcqWaveFormat.h"
 
 #ifdef _DEBUG
@@ -279,7 +276,6 @@ void CWaveFormat::Copy(const CWaveFormat* arg)
 	repeat2 = arg->repeat2;
 }
 
-// Write CWaveFormat in a binary file
 long CWaveFormat::Write(CFile* datafile)
 {
 	const auto p1 = datafile->GetPosition();
@@ -290,7 +286,6 @@ long CWaveFormat::Write(CFile* datafile)
 	return static_cast<long>(p2 - p1);
 }
 
-// Read CWaveFormat from a binary file
 BOOL CWaveFormat::Read(CFile* datafile)
 {
 	CArchive ar(datafile, CArchive::load);
