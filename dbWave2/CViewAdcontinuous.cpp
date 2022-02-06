@@ -1039,11 +1039,6 @@ void CADContView::ADC_TransferToFile(CWaveFormat * pWFormat)
 			return;
 		}
 	}
-	//else // no file I/O: refresh screen pos
-	//{
-	//	if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
-	//		pWFormat->sample_count = 0;
-	//}
 	m_Acq32_AD.ReleaseLastBufferToQueue();
 }
 

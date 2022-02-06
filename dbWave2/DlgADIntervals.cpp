@@ -56,16 +56,16 @@ void DlgADIntervals::OnOK()
 	m_acqdef.sampling_rate_per_channel = m_adratechan;
 	m_acqdef.buffersize = WORD(m_bufferWsize * UINT(m_acqdef.scan_count));
 	m_acqdef.bufferNitems = short(m_bufferNitems);
-	m_acqdef.duration_to_acquire = m_acqduration;
 	m_acqdef.sample_count = static_cast<long>(m_acqduration * float(m_acqdef.scan_count) * m_adratechan);
 	m_acqdef.bOnlineDisplay = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
 	m_acqdef.bADwritetofile = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
 	m_acqdef.data_flow = (GetCheckedRadioButton(IDC_CONTINUOUS, IDC_BURST) == IDC_CONTINUOUS) ? 0 : 1;
+	m_acqdef.duration_to_acquire = m_acqduration;
 	m_acqdef.duration = m_acqduration;
 
 	m_acqdef.trig_chan = short(m_threshchan);
 	m_acqdef.trig_threshold = short(m_threshval);
-	short i_id = short(GetCheckedRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD));
+	auto i_id = short(GetCheckedRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD));
 	switch (i_id)
 	{
 	case IDC_TRIGSOFT: i_id = OLx_TRG_SOFT;
@@ -112,7 +112,8 @@ BOOL DlgADIntervals::OnInitDialog()
 	m_bufferNitems = m_acqdef.bufferNitems;
 	m_bufferWsize = static_cast<UINT>(m_sweepduration * m_adratechan / float(m_bufferNitems));
 
-	if (m_acqdef.duration_to_acquire == 0.f) {
+	if (m_acqdef.duration_to_acquire == 0.f) 
+	{
 		if (m_acqdef.sample_count == 0)
 			m_acqdef.sample_count = long(m_bufferWsize) * m_bufferNitems * m_acqdef.bufferNitems;
 		m_acqduration = float(m_acqdef.sample_count) / m_adratechan / float(m_acqdef.scan_count);

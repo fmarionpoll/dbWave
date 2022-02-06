@@ -249,6 +249,7 @@ CWaveFormat& CWaveFormat::operator =(const CWaveFormat& arg)
 		scan_count = arg.scan_count;
 		sample_count = arg.sample_count;
 		duration = arg.duration;
+		duration_to_acquire = arg.duration_to_acquire;
 
 		trig_mode = arg.trig_mode;
 		trig_chan = arg.trig_chan;
