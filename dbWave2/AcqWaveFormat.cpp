@@ -68,7 +68,7 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << sensillumID;
 		ar << repeat;
 		ar << repeat2;
-		ar <<  duration_to_acquire; 
+		ar << duration_to_acquire; 
 	}
 	else
 	{
@@ -125,10 +125,10 @@ void CWaveFormat::Serialize(CArchive& ar)
 			ar >> csSex;
 
 			int n_items; ar >> n_items;
-			n_items--; ar >> insectID;
-			n_items--; ar >> sensillumID; 
-			n_items--; ar >> repeat;
-			n_items--; ar >> repeat2; 
+			n_items--; ar >> insectID;		// 4
+			n_items--; ar >> sensillumID;	// 3
+			n_items--; ar >> repeat;		// 2
+			n_items--; ar >> repeat2;		// 1
 			n_items--; if (n_items >= 0) ar >> duration_to_acquire;
 		}
 	}
