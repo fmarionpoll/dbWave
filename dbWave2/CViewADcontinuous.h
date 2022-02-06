@@ -96,8 +96,8 @@ protected:
 	// sweep
 	long m_chsweeplength{ 0 }; 
 	long m_sweeplength{ 1000 }; 
-	int m_chsweep1{ 0 }; 
-	int m_chsweep2{ 0 };
+	int m_channel_sweep_start{ 0 }; 
+	int m_channel_sweep_end{ 0 };
 	int m_chsweepRefresh{ 0 };
 	int m_bytesweepRefresh{ 0 };
 	float m_fclockrate{ 10000.f }; 
@@ -126,9 +126,9 @@ protected:
 	void DisplayolDaErrorMessage(const CHAR* errstr) const;
 	void ChainDialog(WORD iID);
 
-	void ADC_Transfer(short* pDTbuf0);
-	void ADC_TransferToChart();
-	void ADC_TransferToFile();
+	void ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat);
+	void ADC_TransferToChart(const CWaveFormat* pWFormat);
+	void ADC_TransferToFile(CWaveFormat* pWFormat);
 	void InitializeAmplifiers();
 
 	// Overrides

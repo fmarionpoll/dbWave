@@ -3,7 +3,6 @@
 
 #include "StdAfx.h"
 #include "Editctrl.h"
-#include "dataheader_Atlab.H"
 #include "DlgADIntervals.h"
 
 #include <Olxdadefs.h>
@@ -12,27 +11,10 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// ADIntervalsDlg dialog
 
 DlgADIntervals::DlgADIntervals(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD, pParent)
 {
-	m_bufferNitems = 0;
-	m_adratechan = 0.0f;
-	m_acqduration = 0.0f;
-	m_sweepduration = 1.0f;
-	m_bufferWsize = 0;
-	m_undersamplefactor = 1;
-	m_baudiblesound = FALSE;
-	m_threshchan = 0;
-	m_threshval = 0;
-	m_ratemin = 0.f;
-	m_ratemax = 0.f;
-	m_bchainDialog = FALSE;
-	m_pwaveFormat = nullptr;
-	m_postmessage = 0;
-	m_bufferWsizemax = 0;
 }
 
 void DlgADIntervals::DoDataExchange(CDataExchange* pDX)
@@ -65,9 +47,6 @@ BEGIN_MESSAGE_MAP(DlgADIntervals, CDialog)
 	ON_BN_CLICKED(IDC_TRIGINFTHRESHOLD, OnTrigthresholdON)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// ADIntervalsDlg message handlers
-
 void DlgADIntervals::OnAdchannels()
 {
 	m_postmessage = IDC_ADCHANNELS;
@@ -76,19 +55,18 @@ void DlgADIntervals::OnAdchannels()
 
 void DlgADIntervals::OnOK()
 {
-	// save parameters into CWaveFormat structure
 	UpdateData(TRUE);
 	m_acqdef.chrate = m_adratechan;
-	m_acqdef.buffersize = m_bufferWsize * m_acqdef.scan_count;
-	m_acqdef.bufferNitems = m_bufferNitems;
-	m_acqdef.sample_count = static_cast<long>(m_acqduration * m_acqdef.scan_count * m_adratechan);
+	m_acqdef.buffersize = WORD(m_bufferWsize) * WORD(m_acqdef.scan_count);
+	m_acqdef.bufferNitems = short(m_bufferNitems);
+	m_acqdef.sample_count = static_cast<long>(m_acqduration * float(m_acqdef.scan_count) * m_adratechan);
 	m_acqdef.bOnlineDisplay = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
 	m_acqdef.bADwritetofile = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
 	m_acqdef.data_flow = (GetCheckedRadioButton(IDC_CONTINUOUS, IDC_BURST) == IDC_CONTINUOUS) ? 0 : 1;
 	m_acqdef.duration = m_acqduration;
 
-	m_acqdef.trig_chan = m_threshchan;
-	m_acqdef.trig_threshold = m_threshval;
+	m_acqdef.trig_chan = short(m_threshchan);
+	m_acqdef.trig_threshold = short(m_threshval);
 	auto i_id = GetCheckedRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD);
 	switch (i_id)
 	{
@@ -105,7 +83,7 @@ void DlgADIntervals::OnOK()
 	default: i_id = OLx_TRG_SOFT;
 		break;
 	}
-	m_acqdef.trig_mode = i_id;
+	m_acqdef.trig_mode = short(i_id);
 
 	// copy data to data acq def structure
 	*m_pwaveFormat = m_acqdef;
@@ -135,11 +113,11 @@ BOOL DlgADIntervals::OnInitDialog()
 
 	m_adratechan = m_acqdef.chrate; // sampling rate (per chan)
 	m_bufferNitems = m_acqdef.bufferNitems;
-	m_bufferWsize = static_cast<UINT>(m_sweepduration * m_adratechan / m_bufferNitems);
+	m_bufferWsize = static_cast<UINT>(m_sweepduration * m_adratechan / float(m_bufferNitems));
 
 	if (m_acqdef.sample_count == 0)
-		m_acqdef.sample_count = m_bufferWsize * m_bufferNitems * m_acqdef.bufferNitems;
-	m_acqduration = m_acqdef.sample_count / m_adratechan / m_acqdef.scan_count;
+		m_acqdef.sample_count = long(m_bufferWsize) * m_bufferNitems * m_acqdef.bufferNitems;
+	m_acqduration = float(m_acqdef.sample_count) / m_adratechan / float(m_acqdef.scan_count);
 
 	// init parameters manually if there is no driver
 	if (0.0f == m_ratemin) m_ratemin = 0.1f;
@@ -180,10 +158,9 @@ BOOL DlgADIntervals::OnInitDialog()
 		m_threshval = 2048;
 
 	UpdateData(FALSE);
-	return TRUE; // return TRUE  unless you set the focus to a control
+	return TRUE; 
 }
 
-// ------------------------------------------------------------------------
 void DlgADIntervals::OnEnChangeAdratechan()
 {
 	if (mm_adratechan.m_bEntryDone)
@@ -200,11 +177,10 @@ void DlgADIntervals::OnEnChangeAdratechan()
 			break;
 		default: break;
 		}
-		mm_adratechan.m_bEntryDone = FALSE; // clear flag
-		mm_adratechan.m_nChar = 0; // empty buffer
-		mm_adratechan.SetSel(0, -1); // select all text
+		mm_adratechan.m_bEntryDone = FALSE; 
+		mm_adratechan.m_nChar = 0;
+		mm_adratechan.SetSel(0, -1);
 
-		// check value and modifies dependent parameters
 		if (m_adratechan < m_ratemin)
 		{
 			m_adratechan = m_ratemin;
@@ -215,12 +191,11 @@ void DlgADIntervals::OnEnChangeAdratechan()
 			m_adratechan = m_ratemax;
 			MessageBeep(MB_ICONEXCLAMATION);
 		}
-		m_sweepduration = m_bufferWsize * m_bufferNitems / m_adratechan;
+		m_sweepduration = float(m_bufferWsize) * float(m_bufferNitems) / m_adratechan;
 		UpdateData(FALSE);
 	}
 }
 
-// ------------------------------------------------------------------
 void DlgADIntervals::OnEnChangeDuration()
 {
 	if (mm_sweepduration.m_bEntryDone)
@@ -238,9 +213,9 @@ void DlgADIntervals::OnEnChangeDuration()
 			break;
 		default: break;
 		}
-		mm_sweepduration.m_bEntryDone = FALSE; // clear flag
-		mm_sweepduration.m_nChar = 0; // empty buffer
-		mm_sweepduration.SetSel(0, -1); // select all text
+		mm_sweepduration.m_bEntryDone = FALSE; 
+		mm_sweepduration.m_nChar = 0; 
+		mm_sweepduration.SetSel(0, -1); 
 
 		// check value and modifies dependent parameters
 		// leave adratechan constant, modifies m_bufferWsize & m_bufferNitems ...?
@@ -248,7 +223,7 @@ void DlgADIntervals::OnEnChangeDuration()
 		const auto l_total_points = static_cast<long>(m_sweepduration * m_adratechan);
 		long n_buffers = m_bufferNitems;
 		auto l_w_size = l_total_points / n_buffers;
-		const auto l_w_size_min = static_cast<long>(m_adratechan * 0.05); // minimum buffer size = 50 ms (!?)
+		const auto l_w_size_min = static_cast<long>(m_adratechan * 0.05f); // minimum buffer size = 50 ms (!?)
 		// corresponding buffer size is too much: add one buffer and decrease buffer size
 		if (l_w_size > static_cast<long>(m_bufferWsizemax))
 		{
@@ -270,12 +245,11 @@ void DlgADIntervals::OnEnChangeDuration()
 		}
 		m_bufferWsize = static_cast<WORD>(l_w_size);
 		m_bufferNitems = static_cast<int>(n_buffers);
-		m_sweepduration = l_w_size * n_buffers / m_adratechan;
+		m_sweepduration = float(l_w_size) * float(n_buffers) / m_adratechan;
 		UpdateData(FALSE);
 	}
 }
 
-// ------------------------------------------------------------------
 void DlgADIntervals::OnEnChangeBuffersize()
 {
 	if (mm_bufferWsize.m_bEntryDone)
@@ -293,12 +267,12 @@ void DlgADIntervals::OnEnChangeBuffersize()
 			break;
 		default: break;
 		}
-		mm_bufferWsize.m_bEntryDone = FALSE; // clear flag
-		mm_bufferWsize.m_nChar = 0; // empty buffer
-		mm_bufferWsize.SetSel(0, -1); // select all text
+		mm_bufferWsize.m_bEntryDone = FALSE; 
+		mm_bufferWsize.m_nChar = 0; 
+		mm_bufferWsize.SetSel(0, -1);
 
 		// check value and update dependent parameter
-		const auto ui_w_size_min = static_cast<WORD>(m_adratechan * 0.05); // minimum buffer size = 50 ms (!?)
+		const auto ui_w_size_min = static_cast<WORD>(m_adratechan * 0.05f); 
 		if (m_bufferWsize > m_bufferWsizemax)
 			m_bufferWsize = m_bufferWsizemax;
 		else if (m_bufferWsize < ui_w_size_min)
@@ -306,12 +280,11 @@ void DlgADIntervals::OnEnChangeBuffersize()
 		m_bufferWsize = (m_bufferWsize / m_undersamplefactor) * m_undersamplefactor;
 		if (m_bufferWsize == 0)
 			m_bufferWsize = m_undersamplefactor;
-		m_sweepduration = m_bufferWsize * m_bufferNitems / m_adratechan;
+		m_sweepduration = float(m_bufferWsize) * float(m_bufferNitems) / m_adratechan;
 		UpdateData(FALSE);
 	}
 }
 
-// -----------------------------------------------------------------------
 void DlgADIntervals::OnEnChangeNbuffers()
 {
 	if (mm_bufferNitems.m_bEntryDone)
@@ -329,13 +302,13 @@ void DlgADIntervals::OnEnChangeNbuffers()
 			break;
 		default: break;
 		}
-		mm_bufferNitems.m_bEntryDone = FALSE; // clear flag
-		mm_bufferNitems.m_nChar = 0; // empty buffer
-		mm_bufferNitems.SetSel(0, -1); // select all text
+		mm_bufferNitems.m_bEntryDone = FALSE; 
+		mm_bufferNitems.m_nChar = 0; 
+		mm_bufferNitems.SetSel(0, -1); 
 		// update dependent parameters
 		if (m_bufferNitems < 1)
 			m_bufferNitems = 1;
-		m_sweepduration = m_bufferWsize * m_bufferNitems / m_adratechan;
+		m_sweepduration = float(m_bufferWsize) * float(m_bufferNitems) / m_adratechan;
 		UpdateData(FALSE);
 	}
 }
@@ -357,11 +330,11 @@ void DlgADIntervals::OnEnChangeAcqduration()
 			break;
 		default: break;
 		}
-		mm_acqduration.m_bEntryDone = FALSE; // clear flag
-		mm_acqduration.m_nChar = 0; // empty buffer
-		mm_acqduration.SetSel(0, -1); // select all text
+		mm_acqduration.m_bEntryDone = FALSE; 
+		mm_acqduration.m_nChar = 0; 
+		mm_acqduration.SetSel(0, -1);
 		// at least one buffer...
-		const auto min_duration = m_bufferWsize / m_adratechan;
+		const auto min_duration = float(m_bufferWsize) / m_adratechan;
 		if (m_acqduration < min_duration)
 			m_acqduration = min_duration;
 		UpdateData(FALSE);

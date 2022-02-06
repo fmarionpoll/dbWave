@@ -56,14 +56,6 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 		// load infos concerning frequency, dma chans, programmable gains
 		m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT); // m_dfMaxThroughput
 
-		// TODO tell sourceview here under which format are data
-		// TODO save format of data into temp document
-		// float volts = (float) ((pWFormat->fullscale_Volts) 
-		//				/(pWFormat->binspan) * value  -pWFormat->fullscale_Volts/2);
-		// TODO: update max min of chan 1 with gain && instrumental gain
-		//UpdateChanLegends(0);
-		//UpdateHorizontalRulerBar();
-		//UpdateVerticalRulerBar();
 
 		// Set up the ADC - no wrap so we can get buffer reused	
 		SetDataFlow(OLx_DF_CONTINUOUS);
@@ -97,7 +89,7 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 		double clockrate = static_cast<double>(pWFormat->chrate) * static_cast<double>(pWFormat->scan_count);
 		SetFrequency(clockrate); // set sampling frequency (total throughput)
 		clockrate = GetFrequency();
-		pWFormat->chrate = static_cast<float>(clockrate) / pWFormat->scan_count;
+		pWFormat->chrate = static_cast<float>(clockrate) / float(pWFormat->scan_count);
 
 		// update channel list (chan & gain)
 

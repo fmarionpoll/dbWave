@@ -481,6 +481,8 @@ void CADContView::InitAcquisitionDisplay()
 		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
 		pD->SetDataVoltsFormat(doc_voltsperb, pWFormat->fullscale_volts);
 	}
+
+	UpdateChanLegends(0);
 	m_chartDataAD.Invalidate();
 }
 
@@ -499,8 +501,8 @@ BOOL CADContView::StartAcquisition()
 	InitOutput_AD();
 
 	// start AD display
-	m_chsweep1 = 0;
-	m_chsweep2 = -1;
+	m_channel_sweep_start = 0;
+	m_channel_sweep_end = -1;
 	m_chartDataAD.ADdisplayStart(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0; // no samples yet
@@ -932,23 +934,23 @@ void CADContView::OnBufferDone_ADC()
 	if (pDTbuf == nullptr)
 		return;
 
-	ADC_Transfer(pDTbuf);
-	ADC_TransferToFile();
-	ADC_TransferToChart();
+	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
+	TRACE("duration requested:%f\n", pWFormat->duration);
+	ADC_Transfer(pDTbuf, pWFormat);
+	ADC_TransferToFile(pWFormat);
+	ADC_TransferToChart(pWFormat);
 }
 
-void CADContView::ADC_Transfer(short* pDTbuf0)
+void CADContView::ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat)
 {
-	// get pointer to file waveFormat
-	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
-	short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
+	short* pRawDataBuf = m_inputDataFile.GetpRawDataBUF();
 
-	m_chsweep1 = m_chsweep2 + 1;							// update data abcissa on the screen 
-	if (m_chsweep1 >= m_chsweeplength)						// if data are out of the screen, wrap
-		m_chsweep1 = 0;
-	m_chsweep2 = m_chsweep1 + m_Acq32_AD.Getchbuflen() - 1; // abcissa of the last data point
-	m_chsweepRefresh = m_chsweep2 - m_chsweep1 + 1;			// number of data points to refresh on the screen
-	pdataBuf += (m_chsweep1 * pWFormat->scan_count);
+	m_channel_sweep_start = m_channel_sweep_end + 1;
+	if (m_channel_sweep_start >= m_chsweeplength)	
+		m_channel_sweep_start = 0;
+	m_channel_sweep_end = m_channel_sweep_start + m_Acq32_AD.Getchbuflen() - 1; 
+	m_chsweepRefresh = m_channel_sweep_end - m_channel_sweep_start + 1;	
+	pRawDataBuf += (m_channel_sweep_start * pWFormat->scan_count);
 
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
 	if ((m_pOptions_AD->waveFormat).binzero != NULL)
@@ -962,12 +964,12 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	// no undersampling.. copy DTbuffer into data file buffer
 	if (m_pOptions_AD->iundersample <= 1)
 	{
-		memcpy(pdataBuf, pDTbuf0, m_Acq32_AD.Getbuflen() * sizeof(short));
+		memcpy(pRawDataBuf, pDTbuf0, m_Acq32_AD.Getbuflen() * sizeof(short));
 	}
 	// undersampling (assume that buffer length is a multiple of iundersample) and copy into data file buffer
 	else
 	{
-		short* pdataBuf2 = pdataBuf;
+		short* pdataBuf2 = pRawDataBuf;
 		short* pDTbuf = pDTbuf0;
 		const int undersample_factor = m_pOptions_AD->iundersample;
 		m_chsweepRefresh = m_chsweepRefresh / undersample_factor;
@@ -993,12 +995,9 @@ void CADContView::ADC_Transfer(short* pDTbuf0)
 	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
-void CADContView::ADC_TransferToChart()
+void CADContView::ADC_TransferToChart(const CWaveFormat* pWFormat)
 {
-	const CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat(); // pointer to data descriptor
-
-	// then: display options_acqdataataDoc buffer
-	if (pWFormat->bOnlineDisplay) // display data if requested
+	if (pWFormat->bOnlineDisplay) 
 	{
 		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 		m_chartDataAD.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
@@ -1009,16 +1008,14 @@ void CADContView::ADC_TransferToChart()
 	SetDlgItemText(IDC_STATIC1, cs);
 }
 
-void CADContView::ADC_TransferToFile()
+void CADContView::ADC_TransferToFile(CWaveFormat* pWFormat)
 {
-	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat(); // pointer to data descriptor
-	pWFormat->sample_count += m_bytesweepRefresh / 2; // update total sample count
+	pWFormat->sample_count += m_bytesweepRefresh / 2; 
 	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
 
 	short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
-	pdataBuf += (m_chsweep1 * pWFormat->scan_count);
+	pdataBuf += (m_channel_sweep_start * pWFormat->scan_count);
 
-	// first thing to do: save data to file
 	if (pWFormat->bADwritetofile) // write buffer to file
 	{
 		const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_bytesweepRefresh);
@@ -1030,11 +1027,11 @@ void CADContView::ADC_TransferToFile()
 			if (m_bhidesubsequent)
 			{
 				if (!StartAcquisition())
-					StopAcquisition(TRUE); // if bADStart = wrong, then stop AD
+					StopAcquisition(TRUE);
 				else
 				{
 					if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
-						OnBufferDone_ADC(); // TODO check what was that: ADC_OnBufferDone();
+						OnBufferDone_ADC(); 
 				}
 				return;
 			}
@@ -1042,12 +1039,12 @@ void CADContView::ADC_TransferToFile()
 			return;
 		}
 	}
-	else // no file I/O: refresh screen pos
-	{
-		if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
-			pWFormat->sample_count = 0;
-	}
-	m_Acq32_AD.ReleaseLastBufferToQueue(); // tell ADdriver that data buffer is free
+	//else // no file I/O: refresh screen pos
+	//{
+	//	if (pWFormat->sample_count >= m_chsweeplength * pWFormat->scan_count)
+	//		pWFormat->sample_count = 0;
+	//}
+	m_Acq32_AD.ReleaseLastBufferToQueue(); 
 }
 
 void CADContView::OnBufferDone_DAC()
