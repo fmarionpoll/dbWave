@@ -1341,7 +1341,7 @@ void CADContView::InitAcquisitionInputFile()
 	m_inputDataFile.GetpWaveFormat()->Copy( &m_pOptions_AD->waveFormat);
 
 	// set sweep length to the nb of data buffers
-	(m_inputDataFile.GetpWaveFormat())->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);
+	m_inputDataFile.GetpWaveFormat()->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);
 	m_inputDataFile.AdjustBUF(m_chsweeplength);
 }
 
