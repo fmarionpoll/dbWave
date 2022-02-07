@@ -91,18 +91,18 @@ int ChartData::AddChanlistItem(int ns, int mode)
 	return index_newchan;
 }
 
-int ChartData::RemoveChanlistItem(WORD i)
+int ChartData::RemoveChanlistItem(int ichan)
 {
 	const auto chanlist_size = chanlistitem_ptr_array.GetSize(); 
 	if (chanlist_size > 0) 
 	{
-		const auto pa = chanlistitem_ptr_array[i]->pEnvelopeOrdinates;
+		const auto pa = chanlistitem_ptr_array[ichan]->pEnvelopeOrdinates;
 		// step 1: check that this envelope is not used by another channel
 		auto b_used_only_once = TRUE;
 		for (auto lj = chanlist_size; lj >= 0; lj--)
 		{
-			const auto p_envelope_y = chanlistitem_ptr_array[i]->pEnvelopeOrdinates;
-			if (pa == p_envelope_y && lj != i)
+			const auto p_envelope_y = chanlistitem_ptr_array[ichan]->pEnvelopeOrdinates;
+			if (pa == p_envelope_y && lj != ichan)
 			{
 				b_used_only_once = FALSE; 
 				break; 
@@ -123,8 +123,8 @@ int ChartData::RemoveChanlistItem(WORD i)
 			}
 		}
 		// step 3: delete channel
-		delete chanlistitem_ptr_array[i];
-		chanlistitem_ptr_array.RemoveAt(i);
+		delete chanlistitem_ptr_array[ichan];
+		chanlistitem_ptr_array.RemoveAt(ichan);
 	}
 	UpdateChanlistMaxSpan();
 	return chanlist_size - 1;
@@ -134,7 +134,7 @@ void ChartData::UpdateChanlistMaxSpan()
 {
 	if (envelope_ptr_array.GetSize() <= 1)
 		return;
-	// get spanmax stored in Envelope(0)
+
 	auto imax = 0;
 	for (auto i = envelope_ptr_array.GetUpperBound(); i > 0; i--)
 	{
@@ -142,8 +142,7 @@ void ChartData::UpdateChanlistMaxSpan()
 		if (j > imax)
 			imax = j;
 	}
-	// store imax
-	envelope_ptr_array[0]->SetDocbufferSpan(imax); //store max
+	envelope_ptr_array[0]->SetDocbufferSpan(imax);
 }
 
 void ChartData::UpdateChanlistFromDoc()
@@ -166,9 +165,9 @@ void ChartData::UpdateChanlistFromDoc()
 	UpdateChanlistMaxSpan(); 
 }
 
-void ChartData::UpdateGainSettings(int ichanlist)
+void ChartData::UpdateGainSettings(int ichan)
 {
-	CChanlistItem* pchan = chanlistitem_ptr_array[ichanlist];
+	CChanlistItem* pchan = chanlistitem_ptr_array[ichan];
 	const auto p_ord = pchan->pEnvelopeOrdinates;
 	const auto ns = p_ord->GetSourceChan();
 	const auto mode = p_ord->GetSourceMode();
@@ -186,7 +185,7 @@ void ChartData::UpdateGainSettings(int ichanlist)
 	}
 }
 
-int ChartData::SetChanlistSourceChan(WORD ichanlist, int acqchan)
+int ChartData::SetChanlistSourceChan(int ichan, int acqchan)
 {
 	// check if channel is allowed
 	const auto pwave_format = m_pDataFile->GetpWaveFormat();
@@ -194,13 +193,13 @@ int ChartData::SetChanlistSourceChan(WORD ichanlist, int acqchan)
 		return -1;
 
 	// make sure we have enough data channels...
-	if (GetChanlistSize() <= ichanlist)
-		for (auto j = GetChanlistSize(); j <= ichanlist; j++)
+	if (GetChanlistSize() <= ichan)
+		for (auto j = GetChanlistSize(); j <= ichan; j++)
 			AddChanlistItem(j, 0);
 
 	// change channel
-	auto p_chanlist_item = chanlistitem_ptr_array[ichanlist];
-	auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
+	const auto p_chanlist_item = chanlistitem_ptr_array[ichan];
+	const auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
 	p_ord->SetSourceChan(acqchan);
 	const auto mode = p_ord->GetSourceMode();
 	// modify comment
@@ -210,14 +209,14 @@ int ChartData::SetChanlistSourceChan(WORD ichanlist, int acqchan)
 	if (mode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) + _T(": ") + p_chanlist_item->
 			dl_comment;
-	UpdateGainSettings(ichanlist);
+	UpdateGainSettings(ichan);
 	return acqchan;
 }
 
-void ChartData::SetChanlistOrdinates(WORD ichanlist, int acqchan, int transform)
+void ChartData::SetChanlistOrdinates(int ichan, int acqchan, int transform)
 {
 	// change channel
-	auto chanlist_item = chanlistitem_ptr_array[ichanlist];
+	const auto chanlist_item = chanlistitem_ptr_array[ichan];
 	chanlist_item->SetOrdinatesSourceData(acqchan, transform);
 	// modify comment
 	const auto pchanArray = m_pDataFile->GetpWavechanArray();
@@ -230,11 +229,11 @@ void ChartData::SetChanlistOrdinates(WORD ichanlist, int acqchan, int transform)
 			dl_comment;
 }
 
-void ChartData::SetChanlistVoltsExtent(const int ichanlist, const float* pvalue)
+void ChartData::SetChanlistVoltsExtent(const int ichan, const float* pvalue)
 {
-	auto ichanfirst = ichanlist;
-	auto ichanlast = ichanlist;
-	if (ichanlist < 0)
+	auto ichanfirst = ichan;
+	auto ichanlast = ichan;
+	if (ichan < 0)
 	{
 		ichanfirst = 0;
 		ichanlast = chanlistitem_ptr_array.GetUpperBound();
@@ -244,21 +243,21 @@ void ChartData::SetChanlistVoltsExtent(const int ichanlist, const float* pvalue)
 		voltsextent = *pvalue;
 	for (auto i = ichanfirst; i <= ichanlast; i++)
 	{
-		auto p_chanlist_item = chanlistitem_ptr_array[i];
+		const auto p_chanlist_item = chanlistitem_ptr_array[i];
 		const auto yvoltsperbin = p_chanlist_item->GetVoltsperDataBin();
 		if (pvalue == nullptr)
-			voltsextent = yvoltsperbin * p_chanlist_item->GetYextent();
+			voltsextent = yvoltsperbin * float(p_chanlist_item->GetYextent());
 
 		const auto yextent = static_cast<int>(voltsextent / yvoltsperbin);
 		p_chanlist_item->SetYextent(yextent);
 	}
 }
 
-void ChartData::SetChanlistVoltsZero(const int ichanlist, const float* pvalue)
+void ChartData::SetChanlistVoltsZero(const int ichan, const float* pvalue)
 {
-	auto ichanfirst = ichanlist;
-	auto ichanlast = ichanlist;
-	if (ichanlist < 0)
+	auto ichanfirst = ichan;
+	auto ichanlast = ichan;
+	if (ichan < 0)
 	{
 		ichanfirst = 0;
 		ichanlast = chanlistitem_ptr_array.GetUpperBound();
@@ -269,17 +268,17 @@ void ChartData::SetChanlistVoltsZero(const int ichanlist, const float* pvalue)
 		voltsextent = *pvalue;
 	for (auto i = ichanfirst; i <= ichanlast; i++)
 	{
-		auto p_chanlist_item = chanlistitem_ptr_array[i];
+		const auto p_chanlist_item = chanlistitem_ptr_array[i];
 		const auto yvoltsperbin = p_chanlist_item->GetVoltsperDataBin();
 		if (pvalue == nullptr)
-			voltsextent = yvoltsperbin * p_chanlist_item->GetDataBinZero();
+			voltsextent = yvoltsperbin * float(p_chanlist_item->GetDataBinZero());
 
 		const auto iyzero = static_cast<int>(voltsextent / yvoltsperbin);
 		p_chanlist_item->SetYzero(iyzero);
 	}
 }
 
-int ChartData::SetChanlistTransformMode(WORD ichanlist, int imode)
+int ChartData::SetChanlistTransformMode(int ichan, int imode)
 {
 	// check if transform is allowed
 	if (!m_pDataFile->IsWBTransformAllowed(imode) || // ? is transform allowed
@@ -290,10 +289,9 @@ int ChartData::SetChanlistTransformMode(WORD ichanlist, int imode)
 	}
 
 	// change transform mode
-	auto p_chanlist_item = chanlistitem_ptr_array[ichanlist];
-	auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
+	const auto p_chanlist_item = chanlistitem_ptr_array[ichan];
+	const auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
 	const auto ns = p_ord->GetSourceChan();
-	// change transform
 	p_ord->SetSourceMode(imode, m_pDataFile->GetTransfDataSpan(imode));
 
 	// modify comment
@@ -303,18 +301,18 @@ int ChartData::SetChanlistTransformMode(WORD ichanlist, int imode)
 	if (imode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(imode)).Left(8)
 			+ _T(": ") + p_chanlist_item->dl_comment;
-	UpdateGainSettings(ichanlist);
+	UpdateGainSettings(ichan);
 	UpdateChanlistMaxSpan();
 	return imode;
 }
 
 SCOPESTRUCT* ChartData::GetScopeParameters()
 {
-	auto nchannels = chanlistitem_ptr_array.GetSize();
+	const auto nchannels = chanlistitem_ptr_array.GetSize();
 	m_scopestruct.channels.SetSize(nchannels);
 	for (auto i = 0; i < nchannels; i++)
 	{
-		auto p_chanlist_item = chanlistitem_ptr_array[i];
+		const auto p_chanlist_item = chanlistitem_ptr_array[i];
 		m_scopestruct.channels[i].izero = p_chanlist_item->GetYzero();
 		m_scopestruct.channels[i].iextent = p_chanlist_item->GetYextent();
 	}
@@ -324,19 +322,19 @@ SCOPESTRUCT* ChartData::GetScopeParameters()
 
 void ChartData::SetScopeParameters(SCOPESTRUCT* pStruct)
 {
-	auto nchannels_struct = pStruct->channels.GetSize();
-	auto nchannels_chanlist = chanlistitem_ptr_array.GetSize();
+	const auto nchannels_struct = pStruct->channels.GetSize();
+	const auto nchannels_chanlist = chanlistitem_ptr_array.GetSize();
 	for (auto i = 0; i < nchannels_struct; i++)
 	{
 		if (i >= nchannels_chanlist)
 			break;
-		auto p_chanlist_item = chanlistitem_ptr_array[i];
+		const auto p_chanlist_item = chanlistitem_ptr_array[i];
 		p_chanlist_item->SetYzero(pStruct->channels[i].izero);
 		p_chanlist_item->SetYextent(pStruct->channels[i].iextent);
 	}
 }
 
-void ChartData::AutoZoomChan(int j)
+void ChartData::AutoZoomChan(int j) const
 {
 	auto i1 = j;
 	auto i2 = j;
@@ -356,7 +354,7 @@ void ChartData::AutoZoomChan(int j)
 	}
 }
 
-void ChartData::SplitChans()
+void ChartData::SplitChans() const
 {
 	int max, min;
 	const auto nchans = GetChanlistSize();
@@ -372,7 +370,7 @@ void ChartData::SplitChans()
 	}
 }
 
-void ChartData::CenterChan(int j)
+void ChartData::CenterChan(int j) const
 {
 	auto i1 = j;
 	auto i2 = j;
@@ -392,7 +390,7 @@ void ChartData::CenterChan(int j)
 	}
 }
 
-void ChartData::MaxgainChan(int j)
+void ChartData::MaxgainChan(int j) const
 {
 	auto i1 = j;
 	auto i2 = j;
@@ -463,7 +461,7 @@ BOOL ChartData::AttachDataFile(AcqDataDoc* p_data_file)
 	m_pDataFile->SetReadingBufferDirty();
 	ASSERT(m_pDataFile->GetDOCchanLength() > 0);
 
-	long l_size = m_pDataFile->GetDOCchanLength();
+	const long l_size = m_pDataFile->GetDOCchanLength();
 
 	// init parameters used to display Envelopes
 	const int l_very_last = m_lxVeryLast;
@@ -563,17 +561,15 @@ BOOL ChartData::GetDataFromDoc()
 			{
 				p_cont = envelope_ptr_array.GetAt(i_envelope);
 
-				const auto source_chan = p_cont->GetSourceChan(); // get source channel
-				const auto itransf = p_cont->GetSourceMode(); // get transform mode
-				if (itransf > 0) // if transformation, compute transf
+				const auto source_chan = p_cont->GetSourceChan(); 
+				const auto itransf = p_cont->GetSourceMode(); 
+				if (itransf > 0)
 				{
-					// and then build envelope
 					const auto lp_data = m_pDataFile->LoadTransfData(l_first, lBUFchanLast, itransf, source_chan);
 					p_cont->FillEnvelopeWithMxMi(ipixel, lp_data, 1, npoints, b_new);
 				}
-				else // no transformation: compute max min
+				else 
 				{
-					// and then build envelope
 					const auto lp_data = m_pDataFile->GetpRawDataElmt(source_chan, l_first);
 					p_cont->FillEnvelopeWithMxMi(ipixel, lp_data, nchans, npoints, b_new);
 				}
@@ -646,13 +642,12 @@ BOOL ChartData::GetSmoothDataFromDoc(int ioption)
 				const auto source_chan = p_cont->GetSourceChan();
 				const auto itransf = p_cont->GetSourceMode();
 				int intervals = nchans;
-				if (itransf > 0) // if transformation, compute transf
+				if (itransf > 0) 
 				{
-					// and then build envelope
 					lp_data = m_pDataFile->LoadTransfData(l_first, l_buf_chan_last, itransf, source_chan);
 					intervals = 1;
 				}
-				else // no transformation: compute max min
+				else 
 					lp_data = m_pDataFile->GetpRawDataElmt(source_chan, l_first);
 				p_cont->FillEnvelopeWithSmoothMxMi(pixel, lp_data, intervals, npoints, b_new, ioption);
 			}
@@ -673,10 +668,9 @@ BOOL ChartData::GetDataFromDoc(long l_first)
 
 BOOL ChartData::GetDataFromDoc(long l_first, long l_last)
 {
-	// check if size has changed
-	if (l_first < 0) // first check limits across document's
-		l_first = 0; // minimum
-	if (l_last > m_lxVeryLast) // maximum
+	if (l_first < 0) 
+		l_first = 0;
+	if (l_last > m_lxVeryLast) 
 		l_last = m_lxVeryLast;
 	if ((l_first > m_lxVeryLast) || (l_last < l_first))
 	{
@@ -687,11 +681,10 @@ BOOL ChartData::GetDataFromDoc(long l_first, long l_last)
 		l_last = l_first + m_lxSize - 1;
 	}
 
-	// requested size different from current one?
 	if (m_lxSize != (l_last - l_first + 1))
 	{
 		m_lxFirst = l_first;
-		ResizeChannels(0, (l_last - l_first + 1)); // n pixels = m_npixels
+		ResizeChannels(0, (l_last - l_first + 1));
 	}
 	// load data
 	m_lxFirst = l_first;
@@ -704,22 +697,22 @@ BOOL ChartData::ScrollDataFromDoc(WORD nSBCode)
 	auto l_first = m_lxFirst;
 	switch (nSBCode)
 	{
-	case SB_LEFT: // Scroll to far left.
+	case SB_LEFT: 
 		l_first = 0;
 		break;
-	case SB_LINELEFT: // Scroll left.
+	case SB_LINELEFT:
 		l_first -= m_lxLine;
 		break;
-	case SB_LINERIGHT: // Scroll right.
+	case SB_LINERIGHT: 
 		l_first += m_lxLine;
 		break;
-	case SB_PAGELEFT: // Scroll one page left.
+	case SB_PAGELEFT:
 		l_first -= m_lxPage;
 		break;
-	case SB_PAGERIGHT: // Scroll one page right.
+	case SB_PAGERIGHT:
 		l_first += m_lxPage;
 		break;
-	case SB_RIGHT: // Scroll to far right.
+	case SB_RIGHT:
 		l_first = m_lxVeryLast - m_lxSize + 1;
 		break;
 	default:
@@ -748,10 +741,9 @@ void ChartData::ZoomData(CRect* r1, CRect* r2)
 	r2->NormalizeRect();
 
 	// change gain & offset of all channels:
-	for (auto i = chanlistitem_ptr_array.GetUpperBound(); i >= 0; i--) // scan all channels
+	for (auto i = chanlistitem_ptr_array.GetUpperBound(); i >= 0; i--)
 	{
-		// display loop: load abcissa
-		auto chanlist_item = chanlistitem_ptr_array[i];
+		const auto chanlist_item = chanlistitem_ptr_array[i];
 		const auto extent = chanlist_item->GetYextent();
 		const auto newext = MulDiv(extent, r2->Height(), r1->Height());
 		chanlist_item->SetYextent(newext);
@@ -783,7 +775,7 @@ void ChartData::ZoomData(CRect* r1, CRect* r2)
 void ChartData::UpdateXRuler()
 {
 	if (m_bNiceGrid && m_pXRulerBar != nullptr)
-		m_xRuler.UpdateRange(double(m_lxFirst) / m_samplingrate, double(m_lxLast) / m_samplingrate);
+		m_xRuler.UpdateRange(double(m_lxFirst) / double(m_samplingrate), double(m_lxLast) / double(m_samplingrate));
 }
 
 void ChartData::UpdateYRuler()
@@ -792,11 +784,12 @@ void ChartData::UpdateYRuler()
 	{
 		const auto binlow = GetChanlistPixeltoBin(0, 0);
 		const auto binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
-		TRACE("binlow = %i binhigh=%i \n", binlow, binhigh);
-		CChanlistItem* pchan = GetChanlistItem(0);
-		auto yfirst = pchan->ConvertDataBinsToVolts(binlow);
-		auto ylast = pchan->ConvertDataBinsToVolts(binhigh);
-		TRACE("yfirst = %f ylast=%f \n", yfirst, ylast);
+		//TRACE("binlow = %i binhigh=%i \n", binlow, binhigh);
+
+		const CChanlistItem* pchan = GetChanlistItem(0);
+		const auto yfirst = double(pchan->ConvertDataBinsToVolts(binlow));
+		const auto ylast = double(pchan->ConvertDataBinsToVolts(binhigh));
+		//TRACE("yfirst = %f ylast=%f \n", yfirst, ylast);
 		m_yRuler.UpdateRange(yfirst, ylast);
 	}
 }
@@ -910,7 +903,7 @@ void ChartData::PlotDatatoDC(CDC* p_dc)
 	//ATLTRACE2("end PlotDataToDC \n");
 }
 
-void ChartData::display_hz_tags_for_channel(CDC* p_dc, int ichan, CChanlistItem* pChan)
+void ChartData::display_hz_tags_for_channel(CDC* p_dc, int ichan, const CChanlistItem* pChan)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -934,11 +927,11 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 {
 	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto y0 = 0;
 	const int y1 = m_displayRect.bottom;
 
 	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
 	{
+		constexpr auto y0 = 0;
 		const auto lk = m_VTtags.GetTagLVal(j);
 		if (lk < m_lxFirst || lk > m_lxLast)
 			continue;
@@ -1002,7 +995,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	else
 		GetSmoothDataFromDoc(bCenterLine);
 
-	auto p_envelope = envelope_ptr_array.GetAt(0);
+	const auto p_envelope = envelope_ptr_array.GetAt(0);
 	p_envelope->FillEnvelopeWithAbcissaEx(xVO, xVE, m_lxSize);
 
 	// display all channels
@@ -1027,7 +1020,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			nelements = pX->GetEnvelopeSize(); // update nb of elements
 		}
 		// display: load ordinates ---------------------------------------------
-		auto pY = chanlist_item->pEnvelopeOrdinates; // load pointer to ordinates
+		const auto pY = chanlist_item->pEnvelopeOrdinates; // load pointer to ordinates
 		pY->ExportToOrdinates(m_PolyPoints); // copy ordinates to polypts buffer
 
 		// change extent, org and color ----------------------------------------
@@ -1116,10 +1109,10 @@ BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
 	if (OpenClipboard())
 	{
 		BeginWaitCursor();
-		const auto oldcx = ResizeChannels(nabcissa, 0); // compute new Envelopes
+		const auto oldcx = ResizeChannels(nabcissa, 0); 
 		GetDataFromDoc();
-		EmptyClipboard(); // prepare clipboard
-		const DWORD dw_len = 32768; // 32 Kb
+		EmptyClipboard(); 
+		constexpr DWORD dw_len = 32768; // 32 Kb
 		size_t pcch_remaining = dw_len / sizeof(TCHAR);
 		const auto h_copy = GlobalAlloc(GHND, dw_len);
 		const auto pwave_format = m_pDataFile->GetpWaveFormat();
@@ -1137,24 +1130,24 @@ BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("%s\t\r\n"), static_cast<LPCTSTR>(pwave_format->GetComments(_T("\t"), 0)));
 			// time interval
-			auto tt = GetDataFirst() / pwave_format->sampling_rate_per_channel; // first interval (sec)
+			auto tt = float(GetDataFirst()) / pwave_format->sampling_rate_per_channel; 
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("time start(s):\t%f\r\n"), tt);
-			tt = GetDataLast() / pwave_format->sampling_rate_per_channel; // last interval (sec)
+			tt = float(GetDataLast()) / pwave_format->sampling_rate_per_channel; 
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("time end(s):\t%f"), tt);
 			if (iunit == 0)
 			{
 				// zero volt for document
 				StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
-				                  _T("\r\nzero volts(bin):\t%i\r\n"), 0 /*pwaveFormat->binzero*/);
+				                  _T("\r\nzero volts(bin):\t%i\r\n"), 0 );
 				// unit for each channel
 				StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 				                  _T("mvolts per bin:\r\n"));
 				for (auto i = 0; i < GetChanlistSize(); i++)
 					StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 					                  _T("%f\t"),
-					                  static_cast<double>(GetChanlistItem(i)->GetVoltsperDataBin()) * 1000.f);
+					                  static_cast<double>(GetChanlistItem(i)->GetVoltsperDataBin()) * 1000.);
 				lp_copy--; // erase last tab
 			}
 
@@ -1188,13 +1181,13 @@ BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
 					break;
 				}
 			}
-			// un-allock array
+			// un-alloc array
 			GlobalUnlock(static_cast<HGLOBAL>(h_copy));
 			flag = TRUE;
 			SetClipboardData(CF_TEXT, h_copy);
 		}
-		CloseClipboard(); // close connect w.clipboard
-		ResizeChannels(oldcx, 0); // restore initial conditions
+		CloseClipboard();
+		ResizeChannels(oldcx, 0);
 		GetDataFromDoc();
 		EndWaitCursor();
 	}
@@ -1217,7 +1210,7 @@ LPTSTR ChartData::GetAsciiEnvelope(LPTSTR lpCopy, int iunit)
 			if (iunit == 1)
 			{
 				lpCopy += wsprintf(lpCopy, _T("%f\t"),
-				                   static_cast<double>(k) * GetChanlistItem(i)->GetVoltsperDataBin() * 1000.f);
+				                   static_cast<double>(k) * double(GetChanlistItem(i)->GetVoltsperDataBin()) * 1000.);
 			}
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);
@@ -1251,7 +1244,7 @@ LPTSTR ChartData::GetAsciiLine(LPTSTR lpCopy, int iunit)
 			}
 			if (iunit == 1)
 				lpCopy += wsprintf(lpCopy, _T("%f\t"),
-				                   static_cast<double>(k) * GetChanlistItem(i)->GetVoltsperDataBin() * 1000.f);
+				                   static_cast<double>(k) * double(GetChanlistItem(i)->GetVoltsperDataBin()) * 1000.);
 			else
 				lpCopy += wsprintf(lpCopy, _T("%i\t"), k);
 		}
@@ -1264,7 +1257,6 @@ LPTSTR ChartData::GetAsciiLine(LPTSTR lpCopy, int iunit)
 	return lpCopy;
 }
 
-// XORcurve
 // in order to move a curve vertically with the cursor, a special envelope is
 // stored within the p_data array and displayed using XOR mode.
 // this curve has 2 times less points (median) to speed up the display
@@ -1277,16 +1269,15 @@ LPTSTR ChartData::GetAsciiLine(LPTSTR lpCopy, int iunit)
 
 void ChartData::curve_xor()
 {
-	// ------- client area (direct draw)
-	auto p_dc = GetDC(); // select dc
-	const auto n_saved_dc = p_dc->SaveDC(); // preserve current settings
+	const auto p_dc = GetDC();
+	const auto n_saved_dc = p_dc->SaveDC();
 	CPen temp_pen;
 	temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
-	const auto poldpen = p_dc->SelectObject(&temp_pen); // load pen
+	const auto poldpen = p_dc->SelectObject(&temp_pen);
 	p_dc->IntersectClipRect(&m_displayRect);
 
-	p_dc->SetMapMode(MM_ANISOTROPIC); // prepare display with appropriate
-	p_dc->SetViewportOrg(m_displayRect.left, m_yVO); // scaling
+	p_dc->SetMapMode(MM_ANISOTROPIC);
+	p_dc->SetViewportOrg(m_displayRect.left, m_yVO);
 	p_dc->SetViewportExt(GetRectWidth(), m_yVE);
 	p_dc->SetWindowExt(m_XORxext, m_XORyext);
 	p_dc->SetWindowOrg(0, 0);
@@ -1297,9 +1288,9 @@ void ChartData::curve_xor()
 	p_dc->Polyline(&m_PolyPoints[0], m_XORnelmts);
 	p_dc->SetROP2(nold_rop);
 
-	p_dc->SelectObject(poldpen); // restore resources - pen
-	p_dc->RestoreDC(n_saved_dc); // restore DC in previous mode
-	ReleaseDC(p_dc); // release DC
+	p_dc->SelectObject(poldpen); 
+	p_dc->RestoreDC(n_saved_dc); 
+	ReleaseDC(p_dc);
 	temp_pen.DeleteObject();
 }
 
@@ -1311,7 +1302,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 		for (auto icur = 0; icur < m_HZtags.GetNTags(); icur++)
 		{
 			const auto pixval = GetChanlistBintoPixel(
-				m_HZtags.GetChannel(icur),
+				WORD(m_HZtags.GetChannel(icur)),
 				m_HZtags.GetValue(icur));
 			m_HZtags.SetTagPix(icur, pixval);
 		}
@@ -1339,12 +1330,12 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 
 			// modify polypoint and prepare for XORing curve tracked with mouse
 			const auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
-			auto pX = chanlist_item->pEnvelopeAbcissa; // display: load abcissa
+			const auto pX = chanlist_item->pEnvelopeAbcissa; // display: load abcissa
 			pX->GetMeanToAbcissa(m_PolyPoints);
 			m_XORnelmts = pX->GetEnvelopeSize() / 2; // nb of elements
 			m_XORxext = pX->GetnElements() / 2; // extent
 
-			auto pY = chanlist_item->pEnvelopeOrdinates; // load ordinates
+			const auto pY = chanlist_item->pEnvelopeOrdinates; // load ordinates
 			pY->GetMeanToOrdinates(m_PolyPoints);
 			m_XORyext = chanlist_item->GetYextent(); // store extent
 			m_zero = chanlist_item->GetYzero(); // store zero
@@ -1389,11 +1380,11 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 	case TRACK_CURVE:
 		{
-			curve_xor(); // (clear) necessary since XORcurve can draw outside client area
-			auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
+			curve_xor(); 
+			const auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
 			chanlist_item->SetYzero(m_zero);
 			m_trackMode = TRACK_OFF;
-			postMyMessage(HINT_HITCHANNEL, m_hitcurve); // tell parent chan selected
+			postMyMessage(HINT_HITCHANNEL, m_hitcurve);
 			Invalidate();
 		}
 		break;
@@ -1419,7 +1410,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 		{
 			// skip too small a rectangle (5 pixels?)
 			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
-			const auto jitter = 3;
+			constexpr auto jitter = 3;
 			const BOOL b_rect_ok = ((abs(rect_out.Height()) > jitter) || (abs(rect_out.Width()) > jitter));
 
 			// perform action according to cursor type
@@ -1467,11 +1458,12 @@ int ChartData::does_cursor_hit_curve(CPoint point)
 	auto chanfound = -1; // output value
 	const auto ichans = chanlistitem_ptr_array.GetUpperBound();
 	auto chanlist_item = chanlistitem_ptr_array[0]->pEnvelopeAbcissa;
-	const auto xextent = chanlist_item->GetnElements(); // n elements stored in one Envelope
-	int index1 = point.x - m_cxjitter; // horizontal jitter backwards
-	auto index2 = index1 + m_cxjitter; // horiz jitter forwards
-	if (index1 < 0) index1 = 0; // clip to windows limits
+	const auto xextent = chanlist_item->GetnElements();
+	int index1 = point.x - m_cxjitter;
+	auto index2 = index1 + m_cxjitter;
+	if (index1 < 0) index1 = 0; 
 	if (index2 > (GetRectWidth() - 1)) index2 = GetRectWidth() - 1;
+
 	// convert index1 into Envelope indexes
 	index1 = index1 * m_dataperpixel; // start from
 	index2 = (index2 + 1) * m_dataperpixel; // stop at
@@ -1514,9 +1506,9 @@ int ChartData::does_cursor_hit_curve(CPoint point)
 				int kmin = chanlist_item->GetPointAt(index); // get min
 				if (kmin > kmax) // ensure that k1=max
 				{
-					const auto k = kmax; // exchange data between
-					kmax = kmin; // kmax and kmin
-					kmin = k; // discard k then
+					const auto k = kmax;
+					kmax = kmin; 
+					kmin = k;
 				}
 				// test if mouse interval crosses data interval!
 				if (!(valmin > kmax || valmax < kmin))
@@ -1543,7 +1535,7 @@ void ChartData::MoveHZtagtoVal(int i, int val)
 	m_HZtags.SetTagVal(i, val);
 }
 
-void ChartData::SetHighlightData(CHighLight& source)
+void ChartData::SetHighlightData(const CHighLight& source)
 {
 	m_highlighted = source;
 }
@@ -1555,17 +1547,17 @@ void ChartData::SetHighlightData(CDWordArray* pDWintervals)
 	if (pDWintervals == nullptr)
 		return;
 
-	m_highlighted.channel = pDWintervals->GetAt(0);
+	m_highlighted.channel = int(pDWintervals->GetAt(0));
 	m_highlighted.color = pDWintervals->GetAt(1);
-	m_highlighted.pensize = pDWintervals->GetAt(2);
+	m_highlighted.pensize = int(pDWintervals->GetAt(2));
 	const auto size = (pDWintervals->GetSize() - 3) / 2;
 	m_highlighted.l_first.SetSize(size);
 	m_highlighted.l_last.SetSize(size);
 
 	for (auto i = 3; i < pDWintervals->GetSize(); i += 2)
 	{
-		m_highlighted.l_first.Add(pDWintervals->GetAt(i));
-		m_highlighted.l_last.Add(pDWintervals->GetAt(i + 1));
+		m_highlighted.l_first.Add(long(pDWintervals->GetAt(i)));
+		m_highlighted.l_last.Add(long(pDWintervals->GetAt(i + 1)));
 	}
 }
 
@@ -1703,7 +1695,7 @@ void ChartData::Serialize(CArchive& ar)
 			const auto nchanlistItems0 = chanlistitem_ptr_array.GetSize();
 			chanlistitem_ptr_array.SetSize(nchanlistItems);
 			for (auto i = nchanlistItems0; i < nchanlistItems; i++)
-				chanlistitem_ptr_array[i] = new CChanlistItem; // (CChanlistItem*)
+				chanlistitem_ptr_array[i] = new CChanlistItem; 
 		}
 		auto ix = 0;
 		auto iy = 0;

@@ -89,16 +89,16 @@ public:
 	int		GetChanlistSize() const { return chanlistitem_ptr_array.GetSize(); }
 	void	RemoveAllChanlistItems();
 	int		AddChanlistItem(int ns, int mode);
-	int		RemoveChanlistItem(WORD i);
+	int		RemoveChanlistItem(int ichan);
 	CChanlistItem* GetChanlistItem(int i) const { return chanlistitem_ptr_array.GetAt(i); }
 
-	int		SetChanlistTransformMode(WORD i, int imode);
-	int		SetChanlistSourceChan(WORD ichanlist, int acqchan);
-	void	SetChanlistOrdinates(WORD i, int chan, int transform);
-	void	SetChanlistVoltsExtent(int ichanlist, const float* pvalue);
-	void	SetChanlistVoltsZero(int ichanlist, const float* pvalue);
+	int		SetChanlistTransformMode(int i, int imode);
+	int		SetChanlistSourceChan(int ichan, int acqchan);
+	void	SetChanlistOrdinates(int i, int chan, int transform);
+	void	SetChanlistVoltsExtent(int ichan, const float* pvalue);
+	void	SetChanlistVoltsZero(int ichan, const float* pvalue);
 
-	float GetChanlistVoltsperPixel(WORD i)
+	float GetChanlistVoltsperPixel(int i)
 	{
 		const CChanlistItem* pchan = GetChanlistItem(i);
 		return (static_cast<float>(pchan->GetYextent()) * pchan->GetVoltsperDataBin() / static_cast<float>(-m_yVE));
@@ -110,13 +110,13 @@ public:
 			GetRectWidth());
 	}
 
-	int GetChanlistBintoPixel(WORD chan, int bin)
+	int GetChanlistBintoPixel(int chan, int bin)
 	{
 		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_yVE,
 		              chanlistitem_ptr_array[chan]->GetYextent()) + m_yVO;
 	}
 
-	int GetChanlistPixeltoBin(WORD chan, int pixels)
+	int GetChanlistPixeltoBin(int chan, int pixels)
 	{
 		return chanlistitem_ptr_array[chan]->GetYzero() + 
 				MulDiv(pixels - m_yVO,
@@ -126,15 +126,15 @@ public:
 
 	SCOPESTRUCT* GetScopeParameters() override;
 	void	SetScopeParameters(SCOPESTRUCT* pStruct) override;
-	void	AutoZoomChan(int i);
-	void	CenterChan(int i);
-	void	MaxgainChan(int i);
-	void	SplitChans();
+	void	AutoZoomChan(int i) const;
+	void	CenterChan(int i) const;
+	void	MaxgainChan(int i) const;
+	void	SplitChans() const;
 	void	UpdateChanlistFromDoc();
 	void	UpdateChanlistMaxSpan();
 	void	UpdateGainSettings(int i);
 	void	SetHighlightData(CDWordArray* pIntervals);
-	void	SetHighlightData(CHighLight& source);
+	void	SetHighlightData(const CHighLight& source);
 	void	SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, int trackchannel);
 	void	MoveHZtagtoVal(int itag, int ival);
 	void	UpdateXRuler();
@@ -149,7 +149,7 @@ protected:
 	int		does_cursor_hit_curve(CPoint point);
 	void	curve_xor();
 	void	display_vt_tags_long_value(CDC* p_dc);
-	void	display_hz_tags_for_channel(CDC* p_dc, int ichan, CChanlistItem* pChan);
+	void	display_hz_tags_for_channel(CDC* p_dc, int ichan, const CChanlistItem* pChan);
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

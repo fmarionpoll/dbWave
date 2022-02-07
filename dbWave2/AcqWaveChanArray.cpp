@@ -1,4 +1,3 @@
-// aqcparam.cpp    implementation file
 
 #include "StdAfx.h"
 #include "AcqWaveChanArray.h"
