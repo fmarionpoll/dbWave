@@ -3,6 +3,7 @@
 #ifndef __AFXEXT_H__
 #include <afxext.h>
 #endif
+
 #include "RulerBar.h"
 #include "afxwin.h"
 #include "ChartDataAD.h"
@@ -22,7 +23,6 @@ protected:
 	CADContView();
 	DECLARE_DYNCREATE(CADContView)
 
-	// Form Data
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 
 	CdbMainTable* m_ptableSet{ nullptr };
@@ -32,15 +32,18 @@ protected:
 
 	CRulerBar m_AD_xRulerBar;
 	CRulerBar m_AD_yRulerBar;
-	CComboBox m_ADcardCombo;
 	CButton m_ZoomButton;
 	CButton m_BiasButton;
 	CButton m_UnZoomButton;
 	CButton m_Button_StartStop_DA;
 	CButton m_Button_SamplingMode;
 	CButton m_Button_OutputChannels;
+	CButton m_Button_WriteToDisk;
+	CButton m_Button_Oscilloscope;
 	CComboBox m_ComboStartOutput;
+	CComboBox m_ADcardCombo;
 	CMFCButton m_btnStartStop_AD;
+	
 
 	BOOL m_bADwritetofile{ false };
 	int m_bStartOutPutMode{ 0 };
@@ -68,7 +71,6 @@ protected:
 	void UpdateGainScroll();
 	void UpdateBiasScroll();
 	void SetVBarMode(short bMode);
-	void UpdateChanLegends(int ichan);
 
 	void UpdateStartStop(BOOL bStart);
 	void UpdateRadioButtons();
@@ -117,7 +119,7 @@ protected:
 	void InitAcquisitionInputFile();
 	void InitAcquisitionDisplay();
 
-	BOOL InitCyberAmp();
+	BOOL InitCyberAmp() const;
 	BOOL Defineexperiment();
 	void TransferFilesToDatabase();
 	BOOL InitOutput_DA();
@@ -182,8 +184,5 @@ public:
 	afx_msg void OnBnClickedCardfeatures();
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void OnBnClickedStartstop2();
-
-	CButton m_Button_WriteToDisk;
-	CButton m_Button_Oscilloscope;
 	afx_msg void OnBnClickedUnzoom();
 };

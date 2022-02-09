@@ -286,7 +286,7 @@ void ChartWnd::EraseBkgnd(CDC* p_dc)
 	DrawGrid(p_dc);
 }
 
-void ChartWnd::drawGridEvenlySpaced(CDC* p_dc)
+void ChartWnd::drawGridEvenlySpaced(CDC* p_dc) const
 {
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
@@ -296,8 +296,6 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc)
 	const auto ppen_old = p_dc->SelectObject(&pen_scale);
 	const auto i_x_ticks = m_scopestruct.iXCells * m_scopestruct.iXTicks;
 	const auto i_y_ticks = m_scopestruct.iYCells * m_scopestruct.iYTicks;
-	const auto i_tick_width = 2;
-	const auto i_tick_height = 2;
 
 	// do the grid lines
 	for (auto i = 1; i < m_scopestruct.iXCells; i++)
@@ -314,12 +312,14 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc)
 	// Put tick marks on the axis lines
 	for (auto i = 1; i < i_x_ticks; i++)
 	{
+		constexpr auto i_tick_width = 2;
 		const int y = rect.bottom - rect.bottom * m_scopestruct.iXTickLine / m_scopestruct.iYCells;
 		p_dc->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
 		p_dc->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
 	}
 	for (auto i = 1; i < i_y_ticks; i++)
 	{
+		constexpr auto i_tick_height = 2;
 		const int x = rect.right * m_scopestruct.iYTickLine / m_scopestruct.iXCells;
 		p_dc->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
 		p_dc->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
@@ -331,7 +331,7 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc)
 	{
 		// convert value into text
 		CString cs;
-		cs.Format(_T("%.3f mV; %.3f ms"), m_scopestruct.yScaleUnitValue, m_scopestruct.xScaleUnitValue);
+		cs.Format(_T("%.3f mV; %.3f ms"), double(m_scopestruct.yScaleUnitValue), double(m_scopestruct.xScaleUnitValue));
 		const auto textlen = cs.GetLength();
 		// plot text
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
@@ -341,13 +341,13 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc)
 	}
 }
 
-void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
+void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler) const
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
 
 	// exit if length is not properly defined
-	if (pRuler->m_dlast == pRuler->m_dfirst)
+	if (pRuler->m_highest_value == pRuler->m_lowest_value)
 		return;
 
 	CPen a_pen2;
@@ -364,16 +364,16 @@ void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 
 	// draw scale
 	//double smallscaleinc = pRuler->m_dscaleinc / 5.;
-	auto dpos = floor(pRuler->m_dscalefirst);
-	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
+	auto dpos = floor(pRuler->m_first_major_scale);
+	const auto dlen = pRuler->m_highest_value - pRuler->m_lowest_value;
 	p_dc->SetBkMode(TRANSPARENT);
 
-	while (dpos <= pRuler->m_dlast)
+	while (dpos <= pRuler->m_highest_value)
 	{
 		int tick_pos;
 		if (pRuler->m_is_horizontal) // horizontal
 		{
-			tick_pos = static_cast<int>(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+			tick_pos = static_cast<int>(rc_client.Width() * (dpos - pRuler->m_lowest_value) / dlen) + rc_client.left;
 			if (tick_pos >= 0 && tick_pos <= tickmax)
 			{
 				p_dc->MoveTo(tick_pos, rc_client.bottom - 1); // line
@@ -382,7 +382,7 @@ void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 		}
 		else // vertical
 		{
-			tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
+			tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_highest_value - dpos) / dlen) + rc_client.top;
 			if (tick_pos >= 0 && tick_pos <= tickmax)
 			{
 				p_dc->MoveTo(rc_client.left + 1, tick_pos); // line
@@ -391,7 +391,7 @@ void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler)
 		}
 		if (dpos != 0. && fabs(dpos) < 1E-10)
 			dpos = 0;
-		dpos += pRuler->m_dscaleinc;
+		dpos += pRuler->m_length_major_scale;
 	}
 	// restore objects used in this routine
 	p_dc->SelectObject(p_old_pen);
@@ -403,7 +403,7 @@ void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 	rc_client.DeflateRect(1, 1);
 
 	// exit if length is not properly defined
-	if (pRuler->m_dlast == pRuler->m_dfirst)
+	if (pRuler->m_highest_value == pRuler->m_lowest_value)
 		return;
 
 	CPen a_pen1;
@@ -424,12 +424,12 @@ void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 		tickmax = rc_client.Height();
 
 	// draw scale
-	const auto smallscaleinc = pRuler->m_dscaleinc / 5.;
-	auto dpos = floor(pRuler->m_dscalefirst);
-	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
+	const auto smallscaleinc = pRuler->m_length_major_scale / 5.;
+	auto dpos = floor(pRuler->m_first_major_scale);
+	const auto dlen = pRuler->m_highest_value - pRuler->m_lowest_value;
 	p_dc->SetBkMode(TRANSPARENT);
 
-	while (dpos <= pRuler->m_dlast)
+	while (dpos <= pRuler->m_highest_value)
 	{
 		// display small tick marks
 		p_dc->SelectObject(&a_pen1);
@@ -440,7 +440,7 @@ void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 			dsmallpos += smallscaleinc;
 			if (pRuler->m_is_horizontal) // ---------------------------- horizontal
 			{
-				tick_pos = static_cast<int>(rc_client.Width() * (dsmallpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+				tick_pos = static_cast<int>(rc_client.Width() * (dsmallpos - pRuler->m_lowest_value) / dlen) + rc_client.left;
 				if (tick_pos >= rc_client.left && tick_pos <= tickmax)
 				{
 					p_dc->MoveTo(tick_pos, rc_client.bottom - 1);
@@ -449,7 +449,7 @@ void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 			}
 			else // --------------------------------------------------- vertical
 			{
-				tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_dlast - dsmallpos) / dlen) + rc_client.top;
+				tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_highest_value - dsmallpos) / dlen) + rc_client.top;
 				if (tick_pos >= rc_client.top && tick_pos <= tickmax)
 				{
 					p_dc->MoveTo(rc_client.left + 1, tick_pos);
@@ -461,9 +461,9 @@ void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 		// display large ticks and text
 		p_dc->SelectObject(&a_pen2);
 		if (pRuler->m_is_horizontal) // horizontal
-			tick_pos = static_cast<int>(rc_client.Width() * (dpos - pRuler->m_dfirst) / dlen) + rc_client.left;
+			tick_pos = static_cast<int>(rc_client.Width() * (dpos - pRuler->m_lowest_value) / dlen) + rc_client.left;
 		else // vertical
-			tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_dlast - dpos) / dlen) + rc_client.top;
+			tick_pos = static_cast<int>(rc_client.Height() * (pRuler->m_highest_value - dpos) / dlen) + rc_client.top;
 		if (tick_pos >= 0 && tick_pos <= tickmax)
 		{
 			str.Format(_T("%g"), dpos);
@@ -491,7 +491,7 @@ void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
 		}
 		if (dpos != 0. && fabs(dpos) < 1E-10)
 			dpos = 0;
-		dpos += pRuler->m_dscaleinc;
+		dpos += pRuler->m_length_major_scale;
 	}
 
 	// restore objects used in this routine
@@ -533,6 +533,7 @@ void ChartWnd::AdjustDisplayRect(CRect* pRect)
 
 void ChartWnd::DrawGrid(CDC* p_dc)
 {
+	// TODO: get major intervals from rulerbar is not nullptr
 	if (m_bNiceGrid)
 		drawGridNicelySpaced(p_dc);
 	else

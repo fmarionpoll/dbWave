@@ -98,28 +98,28 @@ public:
 	void	SetChanlistVoltsExtent(int ichan, const float* pvalue);
 	void	SetChanlistVoltsZero(int ichan, const float* pvalue);
 
-	float GetChanlistVoltsperPixel(int i)
+	float GetChanlistVoltsperPixel(int i) const
 	{
 		const CChanlistItem* pchan = GetChanlistItem(i);
 		return (static_cast<float>(pchan->GetYextent()) * pchan->GetVoltsperDataBin() / static_cast<float>(-m_yVE));
 	}
 
-	float GetTimeperPixel()
+	float GetTimeperPixel() const
 	{
 		return static_cast<float>(GetDataSize()) / m_pDataFile->GetpWaveFormat()->sampling_rate_per_channel / static_cast<float>(
 			GetRectWidth());
 	}
 
-	int GetChanlistBintoPixel(int chan, int bin)
+	int GetChanlistBintoYPixel(int chan, int bin)
 	{
 		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_yVE,
 		              chanlistitem_ptr_array[chan]->GetYextent()) + m_yVO;
 	}
 
-	int GetChanlistPixeltoBin(int chan, int pixels)
+	int GetChanlistYPixeltoBin(int chan, int ypixel_relative_to_top_clientwindow)
 	{
 		return chanlistitem_ptr_array[chan]->GetYzero() + 
-				MulDiv(pixels - m_yVO,
+				MulDiv(ypixel_relative_to_top_clientwindow - m_yVO,
 					chanlistitem_ptr_array[chan]->GetYextent(), 
 					m_yVE);
 	}

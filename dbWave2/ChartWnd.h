@@ -222,8 +222,8 @@ protected:
 	void zoomIn();
 	void zoomOut();
 	void zoomPop();
-	void drawGridEvenlySpaced(CDC* p_dc);
-	void drawGridFromRuler(CDC* p_dc, CRuler* pRuler);
+	void drawGridEvenlySpaced(CDC* p_dc) const;
+	void drawGridFromRuler(CDC* p_dc, CRuler* pRuler) const;
 	void drawGridNicelySpaced(CDC* p_dc);
 	void drawScalefromRuler(CDC* p_dc, CRuler* scale);
 

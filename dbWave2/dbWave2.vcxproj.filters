@@ -19,6 +19,9 @@
     <Filter Include="Excel Header Files">
       <UniqueIdentifier>{3f1e32d8-5bad-4d1b-b49a-503539d49ad4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="devices">
+      <UniqueIdentifier>{f1858a69-53ba-4737-b414-f64c58d1e1ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GridCtrl\GridCell.cpp">
@@ -75,9 +78,6 @@
     <ClCompile Include="Cscale.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CyberAmp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DlgDataComments.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,12 +115,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dbWaveDoc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dtacq32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dtplot32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Editctrl.cpp">
@@ -429,15 +423,6 @@
     <ClCompile Include="USBPxxPARAMETERS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="USBPxxS1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataTranslation_DA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataTranslation_AD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OPTIONS_ACQDATA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -467,6 +452,24 @@
     </ClCompile>
     <ClCompile Include="ChartDataAD.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="USBPxxS1.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="CyberAmp.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTranslation_AD.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTranslation_DA.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="dtacq32.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="dtplot32.cpp">
+      <Filter>devices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -504,9 +507,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cscale.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CyberAmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgDataComments.h">
@@ -549,12 +549,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbWaveDoc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dtacq32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dtplot32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Editctrl.h">
@@ -800,9 +794,6 @@
     <ClInclude Include="CSpkListTabCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="datafile_CEDSpike2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -983,18 +974,6 @@
     <ClInclude Include="CDTBoardParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="USBPxxPARAMETERS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="USBPxxS1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataTranslation_DA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataTranslation_AD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OPTIONS_ACQDATA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1027,6 +1006,30 @@
     </ClInclude>
     <ClInclude Include="AcqDataDoc.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="USBPxxS1.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="USBPxxPARAMETERS.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="dtplot32.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="dtacq32.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTranslation_DA.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTranslation_AD.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="CyberAmp.h">
+      <Filter>devices</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

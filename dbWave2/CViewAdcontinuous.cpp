@@ -237,7 +237,7 @@ void CADContView::OnInitialUpdate()
 		m_Button_StartStop_DA.ShowWindow(SW_HIDE);
 	}
 
-	UpdateChanLegends(0);
+	UpdateGainScroll();
 	UpdateRadioButtons();
 	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
@@ -472,7 +472,7 @@ void CADContView::InitAcquisitionDisplay()
 		pD->SetDataVoltsFormat(doc_voltsperb, pWFormat->fullscale_volts);
 	}
 
-	UpdateChanLegends(0);
+	UpdateGainScroll();
 	m_chartDataAD.Invalidate();
 }
 
@@ -819,7 +819,7 @@ void CADContView::OnInputChannels()
 		m_pOptions_AD->bChannelType = dlg.m_bchantype;
 		InitOutput_AD();
 		UpdateData(FALSE);
-		UpdateChanLegends(0);
+		UpdateGainScroll();
 	}
 	delete p_alligator;
 
@@ -1039,7 +1039,7 @@ void CADContView::InitializeAmplifiers()
 	InitCyberAmp(); // TODO init other amplifiers and look at pwaveformat?
 }
 
-BOOL CADContView::InitCyberAmp()
+BOOL CADContView::InitCyberAmp() const
 {
 	CCyberAmp m_cyber;
 	BOOL bcyberPresent = FALSE;
@@ -1124,13 +1124,13 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 	{
 		case SB_LEFT: yextent = YEXTENT_MIN;
 			break;
-		case SB_LINELEFT: yextent -= int(float(span) / 100.f) + 1;;
+		case SB_LINELEFT: yextent -= int(float(span) / 100.f) + 1;
 			break;
-		case SB_LINERIGHT: yextent += int(float(span) / 100.f) + 1;;
+		case SB_LINERIGHT: yextent += int(float(span) / 100.f) + 1;
 			break;
-		case SB_PAGELEFT: yextent -= int(float(span) / 10.f) + 1;;
+		case SB_PAGELEFT: yextent -= int(float(span) / 10.f) + 1;
 			break;
-		case SB_PAGERIGHT: yextent += int(float(span) / 10.f) + 1;;
+		case SB_PAGERIGHT: yextent += int(float(span) / 10.f) + 1;
 			break;
 		case SB_RIGHT: yextent = YEXTENT_MAX;
 			break;
@@ -1150,12 +1150,10 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 			pChan->SetYextent(yextent);
 		}
 		m_chartDataAD.Invalidate();
-		UpdateChanLegends(0);
 		m_pOptions_AD->izoomCursel = yextent;
 	}
 
 	UpdateGainScroll();
-	UpdateChanLegends(0);
 	UpdateData(false);
 }
 
@@ -1204,13 +1202,13 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	m_chartDataAD.Invalidate();
 
 	UpdateBiasScroll();
-	UpdateChanLegends(0);
 	UpdateData(false);
 }
 
 void CADContView::UpdateBiasScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	m_chartDataAD.UpdateYRuler();
 	const int iPos = MulDiv(pChan->GetYzero(), 100, pChan->GetDataBinSpan())+50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
@@ -1218,18 +1216,9 @@ void CADContView::UpdateBiasScroll()
 void CADContView::UpdateGainScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	m_chartDataAD.UpdateYRuler();
 	const int iPos = MulDiv(pChan->GetYextent(), 100, pChan->GetDataBinSpan()) + 50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
-}
-
-void CADContView::UpdateChanLegends(int chan)
-{
-	const int ichan = 0;
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
-	int yzero = pChan->GetYzero();
-	int yextent = pChan->GetYextent();
-	float mVperbin = pChan->GetVoltsperDataBin() * 1000.0f;
-	int binzero = 0;
 }
 
 void CADContView::OnCbnSelchangeCombostartoutput()
@@ -1357,5 +1346,6 @@ void CADContView::OnBnClickedUnzoom()
 		pD->SetYzero(ioffset);
 		pD->SetYextent(iextent);
 	}
-	m_chartDataAD.Invalidate();
+
+	SetVBarMode(BAR_GAIN);
 }

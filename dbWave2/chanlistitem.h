@@ -23,7 +23,7 @@ protected:
 	WORD dl_color{0}; // color
 	WORD dl_bprint{1}; // draw mode
 
-	float dl_datavoltspbin{ float(20.) / dl_yextent }; // scale factor (1 unit (0-4095) -> y volts)
+	float dl_datavoltspbin{ 20.f / float(dl_yextent) }; // scale factor (1 unit (0-4095) -> y volts)
 	float dl_datavoltspan{0}; // amplitude of data displayed
 	long dl_databinzero{2048}; // value of zero volts
 	long dl_databinspan{4096}; // nb of bins encoding values within envelope
@@ -41,11 +41,11 @@ public:
 	WORD GetflagPrintVisible() const { return dl_bprint; }
 	float GetVoltsperDataBin() const { return dl_datavoltspbin; }
 	BOOL GetHZtagsPrintFlag() const { return dl_bHZtagsPrint; }
-	void GetMaxMin(int* pmax, int* pmin) { pEnvelopeOrdinates->GetEnvelopeMaxMin(pmax, pmin); }
-	int GetBinAt(int index) { return pEnvelopeOrdinates->GetPointAt(index); }
+	void GetMaxMin(int* pmax, int* pmin) const { pEnvelopeOrdinates->GetEnvelopeMaxMin(pmax, pmin); }
+	int GetBinAt(int index) const { return pEnvelopeOrdinates->GetPointAt(index); }
 	CString GetComment() { return dl_comment; }
-	int GetSourceChan() { return pEnvelopeOrdinates->GetSourceChan(); }
-	int GetTransformMode() { return pEnvelopeOrdinates->GetSourceMode(); }
+	int GetSourceChan() const { return pEnvelopeOrdinates->GetSourceChan(); }
+	int GetTransformMode() const { return pEnvelopeOrdinates->GetSourceMode(); }
 
 	int GetDataBinZero() const { return dl_databinzero; }
 	int GetDataBinSpan() const { return dl_databinspan; }
@@ -69,7 +69,7 @@ public:
 	void SetColor(WORD color) { dl_color = color; }
 	void SetflagPrintVisible(WORD drawmode) { dl_bprint = drawmode; }
 	void SetHZtagsPrintFlag(BOOL bPrint) { dl_bHZtagsPrint = bPrint; }
-	void SetOrdinatesSourceData(int chan, int transform) { pEnvelopeOrdinates->SetSourceData(chan, transform); }
+	void SetOrdinatesSourceData(int chan, int transform) const { pEnvelopeOrdinates->SetSourceData(chan, transform); }
 
 	float ConvertDataBinsToVolts(int bins) const { return static_cast<float>(bins) * dl_datavoltspbin; }
 	int ConvertVoltsToDataBins(float volts) const { return static_cast<int>(volts / dl_datavoltspbin); }

@@ -62,7 +62,6 @@ void ChartDataAD::ADdisplayBuffer(short* samples_buffer, long samples_number)
 	const int display_pixels = ad_pixel_last - ad_pixel_first + 1;
 	const int display_data_points = display_pixels * m_dataperpixel;
 
-	//////////////////////////// prepare display ///////////////////////////////////
 
 	const auto points_to_display = &m_PolyPoints[ad_pixel_first * m_dataperpixel * 2];
 
