@@ -61,6 +61,7 @@ OPTIONS_ACQDATA& OPTIONS_ACQDATA::operator =(const OPTIONS_ACQDATA& arg)
 
 		sweepduration = arg.sweepduration;
 		insectnumber = arg.insectnumber;
+		duration_to_acquire = arg.duration_to_acquire;
 	}
 	return *this;
 }
@@ -75,68 +76,18 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 		ar << csBasename;
 		ar << csPathname;
 
+		int dummy_n = 0;
 		ar << static_cast<WORD>(19); // 2 - int parameters
-		ar << exptnumber; // 1
-		ar << icsA_stimulus; // 2
-		ar << icsA_concentration; // 3
-		ar << icsA_insect; // 4
-		ar << icsA_location; // 5
-		ar << icsA_sensillum; // 6
-		ar << icsA_strain; // 7
-		ar << icsA_operatorname; // 8
-		ar << iundersample; // 9
-		ar << baudiblesound; // 10
-		ar << bChannelType; // 11
-		ar << icsA_stimulus2; // 12
-		ar << icsA_concentration2; // 13
-		ar << izoomCursel; // 14
-		ar << icsA_sex; // 15
-		ar << icsA_repeat; // 16
-		ar << icsA_repeat2; // 17
-		ar << icsA_expt; // 18
-		ar << insectnumber; // 19
+		serialize_all_int(ar, dummy_n);
 
 		ar << static_cast<WORD>(11); // 3 - CStringArray parameters
-		int nsize;
-		int i;
-		nsize = csA_stimulus.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_stimulus.GetAt(i); }
-		nsize = csA_concentration.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_concentration.GetAt(i); }
-		nsize = csA_insect.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_insect.GetAt(i); }
-		nsize = csA_location.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_location.GetAt(i); }
-		nsize = csA_sensillum.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_sensillum.GetAt(i); }
-		nsize = csA_strain.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_strain.GetAt(i); }
-		nsize = csA_operatorname.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_operatorname.GetAt(i); }
-		nsize = csA_stimulus2.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_stimulus2.GetAt(i); }
-		nsize = csA_concentration2.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_concentration2.GetAt(i); }
-		nsize = csA_sex.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_sex.GetAt(i); }
-		nsize = csA_expt.GetSize();
-		ar << nsize;
-		for (i = 0; i < nsize; i++) { ar << csA_expt.GetAt(i); }
+		serialize_all_string_arrays(ar, dummy_n);
 
-		ar << static_cast<WORD>(3); // 4 - serialized objects
+		ar << static_cast<WORD>(4); // 4 - serialized objects
 		chanArray.Serialize(ar);
 		waveFormat.Serialize(ar);
 		ar << sweepduration;
+		ar << duration_to_acquire;
 	}
 	else
 	{
@@ -163,44 +114,8 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 		// int parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> exptnumber;
-		n--;
-		if (n > 0) ar >> icsA_stimulus;
-		n--;
-		if (n > 0) ar >> icsA_concentration;
-		n--;
-		if (n > 0) ar >> icsA_insect;
-		n--;
-		if (n > 0) ar >> icsA_location;
-		n--;
-		if (n > 0) ar >> icsA_sensillum;
-		n--;
-		if (n > 0) ar >> icsA_strain;
-		n--;
-		if (n > 0) ar >> icsA_operatorname;
-		n--;
-		if (n > 0) ar >> iundersample;
-		n--;
-		if (n > 0) ar >> baudiblesound;
-		n--;
-		if (n > 0) ar >> bChannelType;
-		n--;
-		if (n > 0) ar >> icsA_stimulus2;
-		n--;
-		if (n > 0) ar >> icsA_concentration2;
-		n--;
-		if (n > 0) ar >> izoomCursel;
-		n--;
-		if (n > 0) ar >> icsA_sex;
-		n--;
-		if (n > 0) ar >> icsA_repeat;
-		n--;
-		if (n > 0) ar >> icsA_repeat2;
-		n--;
-		if (n > 0) ar >> icsA_expt;
-		n--;
-		if (n > 0) ar >> insectnumber;
-		n--;
+		serialize_all_int(ar, n);
+
 		int idummy;
 		while (n > 0)
 		{
@@ -211,136 +126,11 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 		// CStringArray parameters
 		ar >> wn;
 		n = wn;
-		int nsize;
-		int i;
-		CString dummy;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_stimulus.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_stimulus.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_concentration.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_concentration.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_insect.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_insect.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_location.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_location.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_sensillum.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_sensillum.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_strain.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_strain.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_operatorname.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_operatorname.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_stimulus2.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_stimulus2.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_concentration2.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_concentration2.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_sex.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_sex.SetAt(i, dummy);
-			}
-		}
-		n--;
-		if (n > 0)
-		{
-			ar >> nsize;
-			csA_expt.SetSize(nsize);
-			for (i = 0; i < nsize; i++)
-			{
-				ar >> dummy;
-				csA_expt.SetAt(i, dummy);
-			}
-		}
-		n--;
-
+		serialize_all_string_arrays(ar, n);
 		while (n > 0)
 		{
-			n--;
-			ar >> nsize;
-			for (i = 0; i < nsize; i++) { ar >> dummy; }
+			CStringArray dummy_array;
+			serialize_one_string_array(ar, dummy_array, n);
 		}
 		// serialized objects
 		ar >> wn;
@@ -351,5 +141,95 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 		n--;
 		if (n > 0) ar >> sweepduration;
 		n--;
+		if (n > 0) ar >> duration_to_acquire;
 	}
 }
+
+int OPTIONS_ACQDATA::serialize_all_string_arrays(CArchive& ar, int& n)
+{
+	serialize_one_string_array(ar, csA_stimulus, n);
+	serialize_one_string_array(ar, csA_concentration, n);
+	serialize_one_string_array(ar, csA_insect, n);
+	serialize_one_string_array(ar, csA_location, n);
+	serialize_one_string_array(ar, csA_sensillum, n);
+	serialize_one_string_array(ar, csA_strain, n);
+	serialize_one_string_array(ar, csA_operatorname, n);
+	serialize_one_string_array(ar, csA_stimulus2, n);
+	serialize_one_string_array(ar, csA_concentration2, n);
+	serialize_one_string_array(ar, csA_sex, n);
+	serialize_one_string_array(ar, csA_expt, n);
+	return n;
+}
+
+int OPTIONS_ACQDATA::serialize_one_string_array(CArchive& ar, CStringArray& string_array, int& n)
+{
+	if (ar.IsStoring())
+	{
+		const int number_items = string_array.GetSize();
+		ar << number_items;
+		for (int i = 0; i < number_items; i++)
+		{
+			ar << string_array.GetAt(i);
+		}
+		n++;
+	}
+	else
+	{
+		if (n > 0)
+		{
+			int number_items = 0;
+			ar >> number_items;
+			string_array.SetSize(number_items);
+			for (int i = 0; i < number_items; i++)
+			{
+				CString dummy;
+				ar >> dummy;
+				string_array.SetAt(i, dummy);
+			}
+		}
+		n--;
+	}
+	return n;
+}
+
+
+int OPTIONS_ACQDATA::serialize_all_int(CArchive& ar, int& n)
+{
+	serialize_one_int(ar, exptnumber, n);
+	serialize_one_int(ar,icsA_stimulus, n);
+	serialize_one_int(ar,icsA_concentration, n);
+	serialize_one_int(ar,icsA_insect, n);
+	serialize_one_int(ar,icsA_location, n);
+	serialize_one_int(ar,icsA_sensillum, n);
+	serialize_one_int(ar,icsA_strain, n);
+	serialize_one_int(ar,icsA_operatorname, n);
+	serialize_one_int(ar,iundersample, n);
+	serialize_one_int(ar,baudiblesound, n);
+	serialize_one_int(ar,bChannelType, n);
+	serialize_one_int(ar,icsA_stimulus2, n);
+	serialize_one_int(ar,icsA_concentration2, n);
+	serialize_one_int(ar,izoomCursel, n);
+	serialize_one_int(ar,icsA_sex, n);
+	serialize_one_int(ar,icsA_repeat, n);
+	serialize_one_int(ar,icsA_repeat2, n);
+	serialize_one_int(ar,icsA_expt, n);
+	serialize_one_int(ar,insectnumber, n);
+	return n;
+}
+
+int OPTIONS_ACQDATA::serialize_one_int(CArchive& ar, int& value, int& n)
+{
+	if (ar.IsStoring())
+	{
+		ar << value;
+		n++;
+	}
+	else
+	{
+		if (n > 0) 
+			ar >> value;
+		n--;
+	}
+	return n;
+}
+

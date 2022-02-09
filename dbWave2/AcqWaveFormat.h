@@ -29,7 +29,6 @@ public:
 	float sampling_rate_per_channel { 10000.}; // channel sampling rate (Hz)
 	long sample_count { 1000}; // sample count
 	float duration { 0.}; // file duration (s)
-	float duration_to_acquire{ 0. }; // data acquisition duration objective(s)
 
 	short trig_mode { 0}; // 0{soft, 1{keyboard, 2{trig_ext(TTL), 3{input+, 4{input-
 	short trig_chan { 0}; // (trig_mode{input) A/D channel input
@@ -62,7 +61,7 @@ public:
 	long repeat2 { 0}; // 17
 	int flag { 0}; // 18
 
-	//------------------- Total : 33 variable members
+	//------------------- Total : 32 variable members
 protected:
 	static CString addComments(const CString& p_separator, BOOL b_explanation, const CString& cs_explanation,
 	                           const CString& cs_comment);

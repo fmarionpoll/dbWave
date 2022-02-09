@@ -21,6 +21,7 @@ class CADContView final : public CFormView
 
 protected:
 	CADContView();
+	~CADContView() override;
 	DECLARE_DYNCREATE(CADContView)
 
 	enum { IDD = IDD_VIEWADCONTINUOUS };
@@ -44,7 +45,6 @@ protected:
 	CComboBox m_ADcardCombo;
 	CMFCButton m_btnStartStop_AD;
 	
-
 	BOOL m_bADwritetofile{ false };
 	int m_bStartOutPutMode{ 0 };
 	bool m_DA_present{ false };
@@ -125,7 +125,7 @@ protected:
 	BOOL InitOutput_DA();
 	BOOL InitOutput_AD();
 	void UpdateViewDataFinal();
-	void DisplayolDaErrorMessage(const CHAR* errstr) const;
+	void DisplayolDaErrorMessage(const CHAR* error_string) const;
 	void ChainDialog(WORD iID);
 
 	void ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat);
@@ -139,7 +139,7 @@ protected:
 	void AttachControls();
 	void OnInitialUpdate() override;
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	~CADContView() override;
+	
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
 #ifdef _DEBUG
