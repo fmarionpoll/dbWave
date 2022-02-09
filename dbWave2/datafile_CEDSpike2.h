@@ -85,10 +85,10 @@ protected:
 	long long m_llFileOffset = 0;
 
 	void read_ChannelParameters(CWaveChan* pChan, int cedChan);
-	CString read_FileComment(int nInd);
+	CString read_FileComment(int nInd) const;
 	CString read_ChannelComment(int cedChan);
 	CString read_ChannelTitle(int cedChan);
-	long read_ChannelData(CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
+	long read_ChannelData(const CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
 	long relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead,
 	                          long long ticksPerSample);
 	CString getErrorMessage(int flag);

@@ -67,7 +67,6 @@ void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const
 
 bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
 {
-	//ATLTRACE2("--- CED OpenDataFile (old nFid= %i) \n", m_nFid );
 	m_nFid = S64Open(CT2A(sz_path_name), -1);
 	if (m_nFid <= 0)
 	{
@@ -82,13 +81,9 @@ void CDataFileFromCEDSpike2::CloseDataFile()
 {
 	if (m_nFid >= 0)
 	{
-		//ATLTRACE2("--- CED CloseDataFile (old nFid= %i) \n", m_nFid);
-		int flag = S64Close(m_nFid);
+		const int flag = S64Close(m_nFid);
 		if (flag < 0)
-		{
-			CString message = CString("CloseCEDDataFile error: ") + getErrorMessage(flag);
-			AfxMessageBox(message, MB_OK);
-		}
+			AfxMessageBox(CString("CloseCEDDataFile error: ") + getErrorMessage(flag), MB_OK);
 		m_nFid = -1;
 	}
 }
@@ -106,9 +101,7 @@ int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
 BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 {
 	CWaveFormat* pWFormat = pBuf->GetpWaveFormat();
-	CWaveChanArray* pArray = pBuf->GetpWavechanArray();
-	// Read file header
-	auto bflag = TRUE;
+	CWaveChanArray* p_array = pBuf->GetpWavechanArray();
 
 	//	tentative
 	pWFormat->fullscale_volts = 5.0f; // 10 V full scale
@@ -126,26 +119,26 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 	pWFormat->csSensillum.Empty();
 
 	// get global data and n channels
-	double timeBase = S64GetTimeBase(m_nFid);
-	int lowestFreeChan = S64GetFreeChan(m_nFid);
-	int maxChan = S64MaxChans(m_nFid);
+	double time_base = S64GetTimeBase(m_nFid);
+	int lowest_free_chan = S64GetFreeChan(m_nFid);
+	const int max_chan = S64MaxChans(m_nFid);
 
-	TTimeDate arrayGetTimeDate{};
-	int flag = S64TimeDate(m_nFid, (long long*)&arrayGetTimeDate, nullptr, -1);
+	TTimeDate array_get_time_date{};
+	const int flag = S64TimeDate(m_nFid, reinterpret_cast<long long*>(&array_get_time_date), nullptr, -1);
 	if (flag < 0)
 	{
-		CString message = CString("Error reading date ") + getErrorMessage(flag) + CString(" \n");
+		const CString message = CString("Error reading date ") + getErrorMessage(flag) + CString(" \n");
 		AfxMessageBox(message, MB_OK);
 		return false;
 	}
 	pWFormat->acqtime = CTime(
-		arrayGetTimeDate.wYear, arrayGetTimeDate.ucMon, arrayGetTimeDate.ucDay,
-		arrayGetTimeDate.ucHour, arrayGetTimeDate.ucMin, arrayGetTimeDate.ucSec);
+		array_get_time_date.wYear, array_get_time_date.ucMon, array_get_time_date.ucDay,
+		array_get_time_date.ucHour, array_get_time_date.ucMin, array_get_time_date.ucSec);
 	pWFormat->scan_count = 0;
-	pArray->ChanArray_removeAll();
+	p_array->ChanArray_removeAll();
 	int adcChan = -1;
 
-	for (int cedChan = 1; cedChan < maxChan; cedChan++)
+	for (int cedChan = 1; cedChan < max_chan; cedChan++)
 	{
 		// lowestFreeChan
 		int chanType = S64ChanType(m_nFid, cedChan);
@@ -158,11 +151,11 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		case CHANTYPE_Adc:
 			{
 				descriptor = "Adc data";
-				int i = pArray->ChanArray_add();
-				auto pChan = pArray->Get_p_channel(i);
+				const int i = p_array->ChanArray_add();
+				const auto pChan = p_array->Get_p_channel(i);
 				read_ChannelParameters(pChan, cedChan);
 				pWFormat->scan_count++;
-				pWFormat->sampling_rate_per_channel = static_cast<float>(1.0 / (pChan->am_CEDticksPerSample * S64GetTimeBase(m_nFid)));
+				pWFormat->sampling_rate_per_channel = static_cast<float>(1.0 / (static_cast<double>(pChan->am_CEDticksPerSample) * S64GetTimeBase(m_nFid)));
 				pWFormat->sample_count = static_cast<long>(pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
 				adcChan = cedChan;
 			}
@@ -197,11 +190,6 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 			descriptor = "unused channel";
 			break;
 		}
-		//CString comment;
-		//comment.Format(_T(" chan %i ["), cedChan);
-		//comment += _T("] title = ") + descriptor + read_ChannelTitle(cedChan);
-		//comment += _T(" comment =") + read_ChannelComment(cedChan) + _T("\n");
-		//ATLTRACE2(comment);
 	}
 	if (adcChan >= 0)
 		convert_VTtags_Ticks_to_ADintervals(pBuf, adcChan);
@@ -209,15 +197,15 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 	CTagList* pTags = pBuf->GetpVTtags();
 	if (pTags != nullptr && pTags->GetNTags() > 0 && pWFormat->scan_count > 0)
 	{
-		for (int i = 0; i < pArray->ChanArray_getSize(); i++)
+		for (int i = 0; i < p_array->ChanArray_getSize(); i++)
 		{
-			auto pChan = pArray->Get_p_channel(i);
+			const auto pChan = p_array->Get_p_channel(i);
 			if (m_ticksPerSample != pChan->am_CEDticksPerSample)
 				m_ticksPerSample = pChan->am_CEDticksPerSample;
 		}
-		CTag* pTag = pTags->GetTag(0);
+		const CTag* pTag = pTags->GetTag(0);
 		m_llFileOffset = pTag->m_lTicks / m_ticksPerSample;
-		int newlength = pWFormat->sample_count - static_cast<int>(m_llFileOffset);
+		const int newlength = pWFormat->sample_count - static_cast<int>(m_llFileOffset);
 		pWFormat->sample_count = newlength;
 	}
 
@@ -257,11 +245,11 @@ void CDataFileFromCEDSpike2::read_ChannelParameters(CWaveChan* pChan, int cedCha
 
 CString CDataFileFromCEDSpike2::read_ChannelComment(int cedChan)
 {
-	int sizeComment = S64GetChanComment(m_nFid, cedChan, nullptr, -1);
+	const int size_comment = S64GetChanComment(m_nFid, cedChan, nullptr, -1);
 	CString comment;
-	if (sizeComment > 0)
+	if (size_comment > 0)
 	{
-		auto buffer = new char[sizeComment];
+		const auto buffer = new char[size_comment];
 		int flag = S64GetChanComment(m_nFid, cedChan, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
@@ -271,11 +259,11 @@ CString CDataFileFromCEDSpike2::read_ChannelComment(int cedChan)
 
 CString CDataFileFromCEDSpike2::read_ChannelTitle(int cedChan)
 {
-	int sizeComment = S64GetChanTitle(m_nFid, cedChan, nullptr, -1);
+	const int size_comment = S64GetChanTitle(m_nFid, cedChan, nullptr, -1);
 	CString comment;
-	if (sizeComment > 0)
+	if (size_comment > 0)
 	{
-		auto buffer = new char[sizeComment];
+		const auto buffer = new char[size_comment];
 		int flag = S64GetChanTitle(m_nFid, cedChan, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
@@ -283,13 +271,13 @@ CString CDataFileFromCEDSpike2::read_ChannelTitle(int cedChan)
 	return comment;
 }
 
-CString CDataFileFromCEDSpike2::read_FileComment(int nInd)
+CString CDataFileFromCEDSpike2::read_FileComment(int nInd) const
 {
-	int sizeComment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
+	const int size_comment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
 	CString comment;
-	if (sizeComment > 0)
+	if (size_comment > 0)
 	{
-		auto buffer = new char[sizeComment];
+		const auto buffer = new char[size_comment];
 		int flag = S64GetFileComment(m_nFid, nInd, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
@@ -299,68 +287,61 @@ CString CDataFileFromCEDSpike2::read_FileComment(int nInd)
 
 long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
-	int scan_count = pArray->ChanArray_getSize();
-	long long llDataNValues = nbPointsAllChannels / scan_count / sizeof(short);
-	int nValuesRead = -1;
-	long long tFirst{};
-	long long ll_First = l_First + m_llFileOffset;
+	const int scan_count = pArray->ChanArray_getSize();
+	const long long ll_data_n_values = nbPointsAllChannels / scan_count / sizeof(short);
+	int n_values_read = -1;
 
-	for (int ichan = 0; ichan < scan_count; ichan++)
+	const long long ll_First = l_First + m_llFileOffset;
+
+	for (int channel = 0; channel < scan_count; channel++)
 	{
-		CWaveChan* pChan = pArray->Get_p_channel(ichan);
+		CWaveChan* pChan = pArray->Get_p_channel(channel);
 		// TODO: create channel buffer
-		size_t numberBytes = static_cast<int>(llDataNValues) * sizeof(short);
+		const size_t numberBytes = static_cast<int>(ll_data_n_values) * sizeof(short);
 		memset(pBuffer, 0, numberBytes);
-		nValuesRead = read_ChannelData(pChan, pBuffer, ll_First, llDataNValues);
+		n_values_read = read_ChannelData(pChan, pBuffer, ll_First, ll_data_n_values);
 	}
 	// TODO: combine channels buffers to build interleaved data 
-	return nValuesRead;
+	return n_values_read;
 }
 
-long CDataFileFromCEDSpike2::read_ChannelData(CWaveChan* pChan, short* pData, long long ll_First, long long llNValues)
+long CDataFileFromCEDSpike2::read_ChannelData(const CWaveChan* pChan, short* pData, long long ll_First, long long llNValues)
 {
-	const int chanID = pChan->am_CEDchanID;
-	const long long ticksPerSample = S64ChanDivide(m_nFid, chanID);
-	const long long tUpTo = (ll_First + llNValues - 1) * ticksPerSample;
-	const int nMask = 0;
-	int numberOfValuesRead = 0;
+	const int chan_id = pChan->am_CEDchanID;
+	const long long ticks_per_sample = S64ChanDivide(m_nFid, chan_id);
+	const long long t_up_to = (ll_First + llNValues - 1) * ticks_per_sample;
+	int number_of_values_read = 0;
 
-	while (numberOfValuesRead < llNValues)
+	while (number_of_values_read < llNValues)
 	{
-		int nMax = static_cast<int>(llNValues) - numberOfValuesRead;
-		long long tFrom = (ll_First + numberOfValuesRead) * ticksPerSample;
-		if (tFrom >= tUpTo)
+		constexpr int n_mask = 0;
+		const int n_max = static_cast<int>(llNValues) - number_of_values_read;
+		const long long t_from = (ll_First + number_of_values_read) * ticks_per_sample;
+		if (t_from >= t_up_to)
 			break;
 
-		short* pBuffer = pData + numberOfValuesRead;
-		long long tFirst{};
-		int nValuesRead = S64ReadWaveS(m_nFid, chanID, pBuffer, nMax, tFrom, tUpTo, &tFirst, nMask);
+		short* p_buffer = pData + number_of_values_read;
+		long long t_first{};
+		const int n_values_read = S64ReadWaveS(m_nFid, chan_id, p_buffer, n_max, t_from, t_up_to, &t_first, n_mask);
 
-		//CString message;
-		//message.Format(_T("nValuesRead= %i tFrom= %i tUpTo= %i  tFirst= %i\n"), 
-		//	nValuesRead, (int) (tFrom/ticksPerSample), 
-		//	(int) (tUpTo / ticksPerSample), 
-		//	(int) (tFirst / ticksPerSample));
-		//ATLTRACE2(message);
-
-		if (nValuesRead <= 0)
+		if (n_values_read <= 0)
 			break;
 
-		numberOfValuesRead += nValuesRead;
-		if (tFirst > tFrom)
+		number_of_values_read += n_values_read;
+		if (t_first > t_from)
 		{
 			if (m_bRelocate_if_StartWithGap)
-				relocate_ChannelData(pBuffer, tFrom, tFirst, nValuesRead, ticksPerSample);
-			numberOfValuesRead += static_cast<long>(tFirst / ticksPerSample);
+				relocate_ChannelData(p_buffer, t_from, t_first, n_values_read, ticks_per_sample);
+			number_of_values_read += static_cast<long>(t_first / ticks_per_sample);
 		}
 	}
-	return numberOfValuesRead;
+	return number_of_values_read;
 }
 
 long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead,
                                                   long long ticksPerSample)
 {
-	long offset = static_cast<long>((tFirst - tFrom) / ticksPerSample);
+	const long offset = static_cast<long>((tFirst - tFrom) / ticksPerSample);
 	size_t count = nValuesRead * sizeof(short);
 	memmove(pBuffer + offset, pBuffer, count);
 
@@ -371,45 +352,45 @@ long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFro
 
 CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 {
-	int nItems = sizeof(errorMessages) / sizeof(errorMessages[0]);
-	ASSERT(nItems == 20);
-	CString errorMsg = _T("error not found");
-	for (int i = 0; i < nItems; i++)
+	constexpr int n_items = sizeof(errorMessages) / sizeof(errorMessages[0]);
+	ASSERT(n_items == 20);
+	CString error_msg = _T("error not found");
+	for (int i = 0; i < n_items; i++)
 	{
 		if (flag == errorMessages[i].value)
 		{
-			errorMsg = errorMessages[i].csText;
+			error_msg = errorMessages[i].csText;
 			break;
 		}
 	}
-	return errorMsg;
+	return error_msg;
 }
 
 void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 {
 	CTagList* pTags = pBuf->GetpVTtags();
 	pTags->RemoveAllTags();
-	int nRead = 0;
-	long long Data = -1;
+	int n_read = 0;
+	long long data = -1;
 	do
 	{
-		nRead = S64ReadEvents(m_nFid, cedChan, &Data, 1, Data + 1, -1, 0);
-		if (nRead > 0)
-			pTags->AddTag(CTag(Data));
+		n_read = S64ReadEvents(m_nFid, cedChan, &data, 1, data + 1, -1, 0);
+		if (n_read > 0)
+			pTags->AddTag(CTag(data));
 	}
-	while (nRead > 0);
+	while (n_read > 0);
 }
 
 void CDataFileFromCEDSpike2::convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf, int cedChan)
 {
-	CTagList* pTags = pBuf->GetpVTtags();
-	int ntags = pTags->GetNTags();
-	if (ntags > 0)
+	CTagList* p_tags = pBuf->GetpVTtags();
+	const int n_tags = p_tags->GetNTags();
+	if (n_tags > 0)
 	{
 		const long long ticksPerSample = S64ChanDivide(m_nFid, cedChan);
-		for (int i = 0; i < ntags; i++)
+		for (int i = 0; i < n_tags; i++)
 		{
-			CTag* ptag = pTags->GetTag(i);
+			CTag* ptag = p_tags->GetTag(i);
 			ptag->m_lvalue = static_cast<long>(ptag->m_lTicks / ticksPerSample);
 			ptag->m_refchan = cedChan;
 		}
