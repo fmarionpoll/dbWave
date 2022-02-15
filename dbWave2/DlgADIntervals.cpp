@@ -20,7 +20,7 @@ void DlgADIntervals::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Text(pDX, IDC_NBUFFERS, m_bufferNitems);
 	DDX_Text(pDX, IDC_ADRATECHAN, m_adratechan);
-	DDX_Text(pDX, IDC_ACQDURATION, m_acqduration);
+	DDX_Text(pDX, IDC_ACQDURATION, m_duration_to_acquire);
 	DDX_Text(pDX, IDC_SWEEPDURATION, m_sweepduration);
 	DDX_Text(pDX, IDC_BUFFERSIZE, m_bufferWsize);
 	DDX_Text(pDX, IDC_EDIT1, m_undersamplefactor);
@@ -56,12 +56,11 @@ void DlgADIntervals::OnOK()
 	m_acqdef.sampling_rate_per_channel = m_adratechan;
 	m_acqdef.buffersize = WORD(m_bufferWsize * UINT(m_acqdef.scan_count));
 	m_acqdef.bufferNitems = short(m_bufferNitems);
-	m_acqdef.sample_count = static_cast<long>(m_acqduration * float(m_acqdef.scan_count) * m_adratechan);
+	m_acqdef.sample_count = static_cast<long>(m_duration_to_acquire * float(m_acqdef.scan_count) * m_adratechan);
 	m_acqdef.bOnlineDisplay = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
 	m_acqdef.bADwritetofile = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
 	m_acqdef.data_flow = (GetCheckedRadioButton(IDC_CONTINUOUS, IDC_BURST) == IDC_CONTINUOUS) ? 0 : 1;
-	m_acqdef.duration_to_acquire = m_acqduration;
-	m_acqdef.duration = m_acqduration;
+	m_acqdef.duration = m_duration_to_acquire;
 
 	m_acqdef.trig_chan = short(m_threshchan);
 	m_acqdef.trig_threshold = short(m_threshval);
@@ -110,17 +109,6 @@ BOOL DlgADIntervals::OnInitDialog()
 	m_adratechan = m_acqdef.sampling_rate_per_channel;
 	m_bufferNitems = m_acqdef.bufferNitems;
 	m_bufferWsize = static_cast<UINT>(m_sweepduration * m_adratechan / float(m_bufferNitems));
-
-	if (m_acqdef.duration_to_acquire == 0.f) 
-	{
-		if (m_acqdef.sample_count == 0)
-			m_acqdef.sample_count = long(m_bufferWsize) * m_bufferNitems * m_acqdef.bufferNitems;
-		m_acqduration = float(m_acqdef.sample_count) / m_adratechan / float(m_acqdef.scan_count);
-	}
-	else
-	{
-		m_acqduration = m_acqdef.duration_to_acquire;
-	}
 
 	// init parameters manually if there is no driver
 	if (0.0f == m_ratemin) m_ratemin = 0.1f;
@@ -326,10 +314,10 @@ void DlgADIntervals::OnEnChangeAcqduration()
 		case VK_RETURN: UpdateData(TRUE);
 			break;
 		case VK_UP:
-		case VK_PRIOR: m_acqduration++;
+		case VK_PRIOR: m_duration_to_acquire++;
 			break;
 		case VK_DOWN:
-		case VK_NEXT: m_acqduration--;
+		case VK_NEXT: m_duration_to_acquire--;
 			break;
 		default: break;
 		}
@@ -337,8 +325,8 @@ void DlgADIntervals::OnEnChangeAcqduration()
 		mm_acqduration.m_nChar = 0; 
 		mm_acqduration.SetSel(0, -1);
 		const auto min_duration = float(m_bufferWsize) / m_adratechan;
-		if (m_acqduration < min_duration)
-			m_acqduration = min_duration;
+		if (m_duration_to_acquire < min_duration)
+			m_duration_to_acquire = min_duration;
 		UpdateData(FALSE);
 	}
 }

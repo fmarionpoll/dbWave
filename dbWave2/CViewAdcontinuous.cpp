@@ -838,6 +838,7 @@ void CADContView::OnSamplingMode()
 	dlg.m_bufferWsizemax = static_cast<UINT>(65536) * 4;
 	dlg.m_undersamplefactor = m_pOptions_AD->iundersample;
 	dlg.m_baudiblesound = m_pOptions_AD->baudiblesound;
+	dlg.m_duration_to_acquire = m_pOptions_AD->duration_to_acquire;
 	dlg.m_sweepduration = m_sweepduration;
 	dlg.m_bchainDialog = TRUE;
 
@@ -851,6 +852,7 @@ void CADContView::OnSamplingMode()
 
 		m_pOptions_AD->iundersample = static_cast<int>(dlg.m_undersamplefactor);
 		m_pOptions_AD->baudiblesound = dlg.m_baudiblesound;
+		m_pOptions_AD->duration_to_acquire = dlg.m_duration_to_acquire;
 		m_sweepduration = dlg.m_sweepduration;
 		m_pOptions_AD->sweepduration = m_sweepduration;
 		InitOutput_AD();
@@ -1009,7 +1011,7 @@ void CADContView::ADC_TransferToFile(CWaveFormat * pWFormat)
 		const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_bytesweepRefresh);
 		ASSERT(flag);
 		// end of acquisition
-		if (duration >= pWFormat->duration_to_acquire)
+		if (duration >= m_pOptions_AD->duration_to_acquire)
 		{
 			StopAcquisition();
 			if (m_bhidesubsequent)

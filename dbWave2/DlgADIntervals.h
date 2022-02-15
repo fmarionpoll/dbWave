@@ -13,7 +13,7 @@ public:
 
 	int m_bufferNitems{ 0 };
 	float m_adratechan{ 0.f };
-	float m_acqduration{ 0.f };
+	float m_duration_to_acquire{ 0.f };
 	float m_sweepduration{ 1.f };
 	UINT m_bufferWsize{ 0 };
 	UINT m_undersamplefactor{ 1 };
