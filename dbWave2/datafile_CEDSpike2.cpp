@@ -353,7 +353,7 @@ long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFro
 CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 {
 	constexpr int n_items = sizeof(errorMessages) / sizeof(errorMessages[0]);
-	ASSERT(nItems == 20);
+	ASSERT(n_items == 20);
 	CString error_msg = _T("error not found");
 	for (int i = 0; i < n_items; i++)
 	{
