@@ -1,5 +1,5 @@
 #pragma once
-#include <olmem.h>
+#include <Olmem.h>
 #include "dtacq32.h"
 #include "OPTIONS_ACQDATA.h"
 #include "OPTIONS_OUTPUTDATA.h"

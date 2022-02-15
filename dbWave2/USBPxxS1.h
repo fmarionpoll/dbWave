@@ -1,5 +1,3 @@
-// CUSBPxxS1.h  : Declaration of ActiveX Control wrapper class(es) created by Microsoft Visual C++
-
 #pragma once
 
 #include <vector>

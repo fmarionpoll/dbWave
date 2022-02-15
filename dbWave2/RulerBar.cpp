@@ -58,7 +58,7 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 		else
 			return;
 	}
-	if (pRuler->m_dlast == pRuler->m_dfirst)
+	if (pRuler->m_highest_value == pRuler->m_lowest_value)
 	{
 		return;
 	}
@@ -94,12 +94,12 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 	}
 
 	// draw scale
-	auto dpos = floor(pRuler->m_dscalefirst);
-	const auto dlen = pRuler->m_dlast - pRuler->m_dfirst;
-	const auto smallscaleinc = pRuler->m_dscaleinc / 5.;
+	auto dpos = floor(pRuler->m_first_major_scale);
+	const auto dlen = pRuler->m_highest_value - pRuler->m_lowest_value;
+	const auto smallscaleinc = pRuler->m_length_major_scale / 5.;
 	dc.SetBkMode(TRANSPARENT);
 
-	while (dpos <= pRuler->m_dlast)
+	while (dpos <= pRuler->m_highest_value)
 	{
 		// display small ticks
 		auto dsmallpos = dpos;
@@ -107,16 +107,16 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 		for (auto i = 0; i < 4; i++)
 		{
 			dsmallpos += smallscaleinc;
-			auto ratio = (pRuler->m_dlast - dsmallpos) / dlen;
+			auto ratio = (pRuler->m_highest_value - dsmallpos) / dlen;
 			if (!m_bHorizontal)
 			{
-				tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_dlast - dsmallpos) / dlen);
+				tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_highest_value - dsmallpos) / dlen);
 				dc.MoveTo(m_rcClient.right, tick_pos);
 				dc.LineTo(m_rcClient.right - tick_small_height, tick_pos);
 			}
 			else
 			{
-				tick_pos = static_cast<int>(m_rcClient.Width() * (dsmallpos - pRuler->m_dfirst) / dlen);
+				tick_pos = static_cast<int>(m_rcClient.Width() * (dsmallpos - pRuler->m_lowest_value) / dlen);
 				dc.MoveTo(tick_pos, m_rcClient.top);
 				dc.LineTo(tick_pos, m_rcClient.top + tick_small_height);
 			}
@@ -124,9 +124,9 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 
 		// display large ticks and text
 		if (!m_bHorizontal)
-			tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_dlast - dpos) / dlen);
+			tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_highest_value - dpos) / dlen);
 		else
-			tick_pos = static_cast<int>(m_rcClient.Width() * (dpos - pRuler->m_dfirst) / dlen);
+			tick_pos = static_cast<int>(m_rcClient.Width() * (dpos - pRuler->m_lowest_value) / dlen);
 
 		if (tick_pos >= 0)
 		{
@@ -161,7 +161,7 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 			}
 			dc.TextOut(x, y, str);
 		}
-		dpos += pRuler->m_dscaleinc;
+		dpos += pRuler->m_length_major_scale;
 	}
 
 	// restore objects used in this routine

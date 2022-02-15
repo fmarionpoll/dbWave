@@ -184,6 +184,7 @@ void CADContView::OnInitialUpdate()
 
 	const auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_pOptions_AD = &(pApp->options_acqdata);
+
 	m_pOptions_DA = &(pApp->options_outputdata);
 	m_bFoundDTOPenLayerDLL = FALSE;
 	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
@@ -237,7 +238,7 @@ void CADContView::OnInitialUpdate()
 		m_Button_StartStop_DA.ShowWindow(SW_HIDE);
 	}
 
-	UpdateChanLegends(0);
+	UpdateGainScroll();
 	UpdateRadioButtons();
 	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
@@ -472,7 +473,7 @@ void CADContView::InitAcquisitionDisplay()
 		pD->SetDataVoltsFormat(doc_voltsperb, pWFormat->fullscale_volts);
 	}
 
-	UpdateChanLegends(0);
+	UpdateGainScroll();
 	m_chartDataAD.Invalidate();
 }
 
@@ -584,10 +585,10 @@ ECODE CADContView::StartSimultaneousList()
 	return ecode;
 }
 
-void CADContView::DisplayolDaErrorMessage(const CHAR * errstr) const
+void CADContView::DisplayolDaErrorMessage(const CHAR * error_string) const
 {
 	CString csError;
-	const CStringA cstringa(errstr);
+	const CStringA cstringa(error_string);
 	csError = cstringa;
 	AfxMessageBox(csError);
 }
@@ -743,7 +744,7 @@ void CADContView::OnHardwareDefineexperiment()
 
 BOOL CADContView::Defineexperiment()
 {
-	CString csfilename;
+	CString file_name;
 	m_bFileOpen = FALSE;
 	if (!m_bhidesubsequent)
 	{
@@ -755,7 +756,7 @@ BOOL CADContView::Defineexperiment()
 		if (IDOK != dlg.DoModal())
 			return FALSE;
 		m_bhidesubsequent = dlg.m_bhidesubsequent;
-		csfilename = dlg.m_szFileName;
+		file_name = dlg.m_szFileName;
 	}
 
 	// hide define experiment dialog
@@ -765,33 +766,33 @@ BOOL CADContView::Defineexperiment()
 		CString csBufTemp;
 		m_pOptions_AD->exptnumber++;
 		csBufTemp.Format(_T("%06.6lu"), m_pOptions_AD->exptnumber);
-		csfilename = m_pOptions_AD->csPathname + m_pOptions_AD->csBasename + csBufTemp + _T(".dat");
+		file_name = m_pOptions_AD->csPathname + m_pOptions_AD->csBasename + csBufTemp + _T(".dat");
 
 		// check if this file is already present, exit if not...
 		CFileStatus status;
 		int iIDresponse = IDYES; 
-		if (CFile::GetStatus(csfilename, status))
+		if (CFile::GetStatus(file_name, status))
 			iIDresponse = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
 		// no .. find first available number
-		if (IDNO == iIDresponse)
+		while (IDNO == iIDresponse)
 		{
 			BOOL flag = TRUE;
 			while (flag)
 			{
 				m_pOptions_AD->exptnumber++;
 				csBufTemp.Format(_T("%06.6lu"), m_pOptions_AD->exptnumber);
-				csfilename = m_pOptions_AD->csPathname + m_pOptions_AD->csBasename + csBufTemp + _T(".dat");
-				flag = CFile::GetStatus(csfilename, status);
+				file_name = m_pOptions_AD->csPathname + m_pOptions_AD->csBasename + csBufTemp + _T(".dat");
+				flag = CFile::GetStatus(file_name, status);
 			}
-			const CString cs = _T("The Next available file name is: ") + csfilename;
+			const CString cs = _T("Next available file name: ") + file_name;
 			iIDresponse = AfxMessageBox(cs, MB_YESNO | MB_ICONWARNING);
 		}
 	}
 	// close current file and open new file to prepare it for adding chunks of data
 	m_inputDataFile.AcqCloseFile();
-	if (!m_inputDataFile.CreateAcqFile(csfilename))
+	if (!m_inputDataFile.CreateAcqFile(file_name))
 		return FALSE;
-	m_szFileName = csfilename;
+	m_szFileName = file_name;
 	m_inputDataFile.AcqDoc_DataAppendStart();
 	m_bFileOpen = TRUE;
 	return TRUE;
@@ -819,7 +820,7 @@ void CADContView::OnInputChannels()
 		m_pOptions_AD->bChannelType = dlg.m_bchantype;
 		InitOutput_AD();
 		UpdateData(FALSE);
-		UpdateChanLegends(0);
+		UpdateGainScroll();
 	}
 	delete p_alligator;
 
@@ -833,8 +834,8 @@ void CADContView::OnSamplingMode()
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 	dlg.m_pwaveFormat = pWFormat;
 	dlg.m_ratemin = 1.0f;
-	dlg.m_ratemax = float(m_Acq32_AD.GetMaximumFrequency() / pWFormat->scan_count);
-	dlg.m_bufferWsizemax = UINT(65536) * 4;
+	dlg.m_ratemax = static_cast<float>(m_Acq32_AD.GetMaximumFrequency() / pWFormat->scan_count);
+	dlg.m_bufferWsizemax = static_cast<UINT>(65536) * 4;
 	dlg.m_undersamplefactor = m_pOptions_AD->iundersample;
 	dlg.m_baudiblesound = m_pOptions_AD->baudiblesound;
 	dlg.m_sweepduration = m_sweepduration;
@@ -848,7 +849,7 @@ void CADContView::OnSamplingMode()
 			UpdateStartStop(m_Acq32_AD.IsInProgress());
 		}
 
-		m_pOptions_AD->iundersample = int(dlg.m_undersamplefactor);
+		m_pOptions_AD->iundersample = static_cast<int>(dlg.m_undersamplefactor);
 		m_pOptions_AD->baudiblesound = dlg.m_baudiblesound;
 		m_sweepduration = dlg.m_sweepduration;
 		m_pOptions_AD->sweepduration = m_sweepduration;
@@ -1039,7 +1040,7 @@ void CADContView::InitializeAmplifiers()
 	InitCyberAmp(); // TODO init other amplifiers and look at pwaveformat?
 }
 
-BOOL CADContView::InitCyberAmp()
+BOOL CADContView::InitCyberAmp() const
 {
 	CCyberAmp m_cyber;
 	BOOL bcyberPresent = FALSE;
@@ -1124,13 +1125,13 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 	{
 		case SB_LEFT: yextent = YEXTENT_MIN;
 			break;
-		case SB_LINELEFT: yextent -= int(float(span) / 100.f) + 1;;
+		case SB_LINELEFT: yextent -= int(float(span) / 100.f) + 1;
 			break;
-		case SB_LINERIGHT: yextent += int(float(span) / 100.f) + 1;;
+		case SB_LINERIGHT: yextent += int(float(span) / 100.f) + 1;
 			break;
-		case SB_PAGELEFT: yextent -= int(float(span) / 10.f) + 1;;
+		case SB_PAGELEFT: yextent -= int(float(span) / 10.f) + 1;
 			break;
-		case SB_PAGERIGHT: yextent += int(float(span) / 10.f) + 1;;
+		case SB_PAGERIGHT: yextent += int(float(span) / 10.f) + 1;
 			break;
 		case SB_RIGHT: yextent = YEXTENT_MAX;
 			break;
@@ -1150,12 +1151,10 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 			pChan->SetYextent(yextent);
 		}
 		m_chartDataAD.Invalidate();
-		UpdateChanLegends(0);
 		m_pOptions_AD->izoomCursel = yextent;
 	}
 
 	UpdateGainScroll();
-	UpdateChanLegends(0);
 	UpdateData(false);
 }
 
@@ -1204,13 +1203,13 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	m_chartDataAD.Invalidate();
 
 	UpdateBiasScroll();
-	UpdateChanLegends(0);
 	UpdateData(false);
 }
 
 void CADContView::UpdateBiasScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	m_chartDataAD.UpdateYRuler();
 	const int iPos = MulDiv(pChan->GetYzero(), 100, pChan->GetDataBinSpan())+50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
@@ -1218,18 +1217,9 @@ void CADContView::UpdateBiasScroll()
 void CADContView::UpdateGainScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	m_chartDataAD.UpdateYRuler();
 	const int iPos = MulDiv(pChan->GetYextent(), 100, pChan->GetDataBinSpan()) + 50;
 	m_scrolly.SetScrollPos(iPos, TRUE);
-}
-
-void CADContView::UpdateChanLegends(int chan)
-{
-	const int ichan = 0;
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(ichan);
-	int yzero = pChan->GetYzero();
-	int yextent = pChan->GetYextent();
-	float mVperbin = pChan->GetVoltsperDataBin() * 1000.0f;
-	int binzero = 0;
 }
 
 void CADContView::OnCbnSelchangeCombostartoutput()
@@ -1357,5 +1347,6 @@ void CADContView::OnBnClickedUnzoom()
 		pD->SetYzero(ioffset);
 		pD->SetYextent(iextent);
 	}
-	m_chartDataAD.Invalidate();
+
+	SetVBarMode(BAR_GAIN);
 }

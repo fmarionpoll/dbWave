@@ -745,11 +745,11 @@ LRESULT CViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		case 1: // if no HZcursors, take those of rectangle or limits of lineview
 			{
 				CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_ichanselected);
-				m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitSup),
+				m_ChartDataWnd.m_HZtags.AddTag(m_ChartDataWnd.GetChanlistYPixeltoBin(m_ichanselected, mdMO->wLimitSup),
 				                               m_ichanselected);
 				if (mdMO->wLimitInf != mdMO->wLimitSup)
 					m_ChartDataWnd.m_HZtags.AddTag(
-						m_ChartDataWnd.GetChanlistPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
+						m_ChartDataWnd.GetChanlistYPixeltoBin(m_ichanselected, mdMO->wLimitInf), m_ichanselected);
 				m_pdatDoc->GetpHZtags()->CopyTagList(&m_ChartDataWnd.m_HZtags);
 				if (m_ChartDataWnd.m_HZtags.GetNTags() == 2)
 					SetCursorAssociatedWindows();

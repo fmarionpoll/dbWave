@@ -3,38 +3,28 @@
 
 
 CRuler::CRuler()
-{
-}
+= default;
 
 CRuler::~CRuler()
 = default;
 
 void CRuler::SetRange(double dfirst, double dlast)
 {
-	m_dfirst = dfirst;
-	m_dlast = dlast;
-	if (m_dfirst > m_dlast)
+	m_lowest_value = dfirst;
+	m_highest_value = dlast;
+	if (m_lowest_value > m_highest_value)
 	{
-		const auto x = m_dfirst;
-		m_dfirst = m_dlast;
-		m_dlast = x;
+		const auto x = m_lowest_value;
+		m_lowest_value = m_highest_value;
+		m_highest_value = x;
 	}
 	AdjustScale();
 }
 
-int CRuler::GetScaleUnitPixels(int cx) const
-{
-	return static_cast<int>(m_dscaleinc * cx / (m_dlast - m_dfirst));
-}
-
-double CRuler::GetScaleIncrement() const
-{
-	return m_dscaleinc;
-}
 
 void CRuler::UpdateRange(double dfirst, double dlast)
 {
-	if (dfirst != m_dfirst || dlast != m_dlast)
+	if (dfirst != m_lowest_value || dlast != m_highest_value)
 		SetRange(dfirst, dlast);
 }
 
@@ -43,46 +33,46 @@ BOOL CRuler::AdjustScale()
 	// cf Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
 	// http://drdobbs.com/184401258
 
-	const auto last = m_dlast;
-	const auto first = m_dfirst;
+	const auto last = m_highest_value;
+	const auto first = m_lowest_value;
 	const auto range = last - first;
 
 	// deal with repeated values
-	if (range == 0)
+	if (range == 0.)
 	{
-		m_dfirst = ceil(last) - 1;
-		m_dlast = m_dfirst + 1;
-		m_dscaleinc = 1;
+		m_lowest_value = ceil(last) - 1;
+		m_highest_value = m_lowest_value + 1;
+		m_length_major_scale = 1;
 		return TRUE;
 	}
 
 	// compute increment
 	const auto exponent = ceil(log10(range / 10));
-	m_dscaleinc = pow(10, exponent);
+	m_length_major_scale = pow(10, exponent);
 
 	// set min scale
-	m_dscalefirst = static_cast<long>(first / m_dscaleinc) * m_dscaleinc;
-	if (m_dscalefirst > first)
-		m_dscalefirst -= m_dscaleinc;
+	m_first_major_scale = static_cast<long>(first / m_length_major_scale) * m_length_major_scale;
+	if (m_first_major_scale > first)
+		m_first_major_scale -= m_length_major_scale;
 	// set max scale
-	m_dscalelast = m_dscalefirst;
+	m_last_major_scale = m_first_major_scale;
 	int i = 0;
 	do
 	{
 		++i;
-		m_dscalelast += m_dscaleinc;
+		m_last_major_scale += m_length_major_scale;
 	}
-	while (m_dscalelast < last);
+	while (m_last_major_scale < last);
 
 	// adjust for too few tickmarks
 	constexpr auto i_toofew = 5;
 	if (i < i_toofew)
 	{
-		m_dscaleinc /= 2;
-		if ((m_dscalefirst + m_dscaleinc) <= first)
-			m_dscalefirst += m_dscaleinc;
-		if ((m_dscalelast - m_dscaleinc) >= last)
-			m_dscalelast -= m_dscaleinc;
+		m_length_major_scale /= 2;
+		if ((m_first_major_scale + m_length_major_scale) <= first)
+			m_first_major_scale += m_length_major_scale;
+		if ((m_last_major_scale - m_length_major_scale) >= last)
+			m_last_major_scale -= m_length_major_scale;
 	}
 	return TRUE;
 }

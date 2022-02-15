@@ -3,6 +3,7 @@
 #ifndef __AFXEXT_H__
 #include <afxext.h>
 #endif
+
 #include "RulerBar.h"
 #include "afxwin.h"
 #include "ChartDataAD.h"
@@ -20,9 +21,9 @@ class CADContView final : public CFormView
 
 protected:
 	CADContView();
+	~CADContView() override;
 	DECLARE_DYNCREATE(CADContView)
 
-	// Form Data
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 
 	CdbMainTable* m_ptableSet{ nullptr };
@@ -32,16 +33,18 @@ protected:
 
 	CRulerBar m_AD_xRulerBar;
 	CRulerBar m_AD_yRulerBar;
-	CComboBox m_ADcardCombo;
 	CButton m_ZoomButton;
 	CButton m_BiasButton;
 	CButton m_UnZoomButton;
 	CButton m_Button_StartStop_DA;
 	CButton m_Button_SamplingMode;
 	CButton m_Button_OutputChannels;
+	CButton m_Button_WriteToDisk;
+	CButton m_Button_Oscilloscope;
 	CComboBox m_ComboStartOutput;
+	CComboBox m_ADcardCombo;
 	CMFCButton m_btnStartStop_AD;
-
+	
 	BOOL m_bADwritetofile{ false };
 	int m_bStartOutPutMode{ 0 };
 	bool m_DA_present{ false };
@@ -68,7 +71,6 @@ protected:
 	void UpdateGainScroll();
 	void UpdateBiasScroll();
 	void SetVBarMode(short bMode);
-	void UpdateChanLegends(int ichan);
 
 	void UpdateStartStop(BOOL bStart);
 	void UpdateRadioButtons();
@@ -117,13 +119,13 @@ protected:
 	void InitAcquisitionInputFile();
 	void InitAcquisitionDisplay();
 
-	BOOL InitCyberAmp();
+	BOOL InitCyberAmp() const;
 	BOOL Defineexperiment();
 	void TransferFilesToDatabase();
 	BOOL InitOutput_DA();
 	BOOL InitOutput_AD();
 	void UpdateViewDataFinal();
-	void DisplayolDaErrorMessage(const CHAR* errstr) const;
+	void DisplayolDaErrorMessage(const CHAR* error_string) const;
 	void ChainDialog(WORD iID);
 
 	void ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat);
@@ -137,7 +139,7 @@ protected:
 	void AttachControls();
 	void OnInitialUpdate() override;
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	~CADContView() override;
+	
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
 #ifdef _DEBUG
@@ -182,8 +184,5 @@ public:
 	afx_msg void OnBnClickedCardfeatures();
 	afx_msg void OnCbnSelchangeCombostartoutput();
 	afx_msg void OnBnClickedStartstop2();
-
-	CButton m_Button_WriteToDisk;
-	CButton m_Button_Oscilloscope;
 	afx_msg void OnBnClickedUnzoom();
 };

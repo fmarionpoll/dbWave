@@ -58,14 +58,13 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << csConcentration2;
 		ar << csSex;
 
-		constexpr int n_items = 5;
+		constexpr int n_items = 4;
 		ar << n_items;
 		// save "long"
 		ar << insectID;
 		ar << sensillumID;
 		ar << repeat;
 		ar << repeat2;
-		ar << duration_to_acquire; 
 	}
 	else
 	{
@@ -126,7 +125,8 @@ void CWaveFormat::Serialize(CArchive& ar)
 			n_items--; ar >> sensillumID;	// 3
 			n_items--; ar >> repeat;		// 2
 			n_items--; ar >> repeat2;		// 1
-			n_items--; if (n_items >= 0) ar >> duration_to_acquire;
+			float dummy;
+			n_items--; if (n_items >= 0) ar >> dummy;
 		}
 	}
 }
@@ -244,7 +244,6 @@ void CWaveFormat::Copy(const CWaveFormat* arg)
 	scan_count = arg->scan_count;
 	sample_count = arg->sample_count;
 	duration = arg->duration;
-	duration_to_acquire = arg->duration_to_acquire;
 
 	trig_mode = arg->trig_mode;
 	trig_chan = arg->trig_chan;

@@ -774,37 +774,40 @@ void ChartData::ZoomData(CRect* r1, CRect* r2)
 
 void ChartData::UpdateXRuler()
 {
-	if (m_bNiceGrid && m_pXRulerBar != nullptr)
-		m_xRuler.UpdateRange(double(m_lxFirst) / double(m_samplingrate), double(m_lxLast) / double(m_samplingrate));
+	if (m_pXRulerBar == nullptr) return;
+
+	m_xRuler.UpdateRange(double(m_lxFirst) / double(m_samplingrate), double(m_lxLast) / double(m_samplingrate));
+	m_pXRulerBar->Invalidate();
 }
 
 void ChartData::UpdateYRuler()
 {
-	if (m_bNiceGrid && m_pYRulerBar != nullptr)
-	{
-		const auto binlow = GetChanlistPixeltoBin(0, 0);
-		const auto binhigh = GetChanlistPixeltoBin(0, m_clientRect.Height());
-		//TRACE("binlow = %i binhigh=%i \n", binlow, binhigh);
+	if (m_pYRulerBar == nullptr)
+		return;
+	
+	const auto binlow = GetChanlistYPixeltoBin(0, 0);
+	const auto binhigh = GetChanlistYPixeltoBin(0, m_clientRect.Height());
 
-		const CChanlistItem* pchan = GetChanlistItem(0);
-		const auto yfirst = double(pchan->ConvertDataBinsToVolts(binlow));
-		const auto ylast = double(pchan->ConvertDataBinsToVolts(binhigh));
-		//TRACE("yfirst = %f ylast=%f \n", yfirst, ylast);
-		m_yRuler.UpdateRange(yfirst, ylast);
-	}
+	const CChanlistItem* pchan = GetChanlistItem(0);
+	const auto yfirst = double(pchan->ConvertDataBinsToVolts(binlow));
+	const auto ylast = double(pchan->ConvertDataBinsToVolts(binhigh));
+	
+	m_yRuler.UpdateRange(yfirst, ylast);
+	m_pYRulerBar->Invalidate();
 }
 
 void ChartData::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_bADbuffers)
 		return;
-	//ATLTRACE2("start PlotDataToDC \n");
-	// erase background
+
 	if (m_erasebkgnd)
+		EraseBkgnd(p_dc);
+
+	if (m_bNiceGrid) 
 	{
 		UpdateXRuler();
 		UpdateYRuler();
-		EraseBkgnd(p_dc);
 	}
 
 	auto rect = m_displayRect;
@@ -1301,7 +1304,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		for (auto icur = 0; icur < m_HZtags.GetNTags(); icur++)
 		{
-			const auto pixval = GetChanlistBintoPixel(
+			const auto pixval = GetChanlistBintoYPixel(
 				WORD(m_HZtags.GetChannel(icur)),
 				m_HZtags.GetValue(icur));
 			m_HZtags.SetTagPix(icur, pixval);
@@ -1479,7 +1482,7 @@ int ChartData::does_cursor_hit_curve(CPoint point)
 	for (auto chan = 0; chan <= ichans; chan++) // scan all channels
 	{
 		// convert device coordinates into value
-		const auto ival = GetChanlistPixeltoBin(chan, point.y);
+		const auto ival = GetChanlistYPixeltoBin(chan, point.y);
 		const auto ijitter = MulDiv(m_cyjitter, GetChanlistItem(chan)->GetYextent(), -m_yVE);
 		const auto valmax = ival + ijitter; // mouse max
 		const auto valmin = ival - ijitter; // mouse min
