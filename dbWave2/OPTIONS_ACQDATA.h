@@ -58,7 +58,7 @@ public:
 	float duration_to_acquire{ 2. };
 
 private:
-	int save_string_array(CArchive& ar, const CStringArray& string_array, int& n);
+	int serialize_all_string_arrays(CArchive& ar, const CStringArray& string_array, int& n);
 	int serialize_one_string_array(CArchive& ar, CStringArray& string_array, int& n);
 	int serialize_all_int(CArchive& ar, int& n);
 	int serialize_one_int(CArchive& ar, int& value, int& n);
