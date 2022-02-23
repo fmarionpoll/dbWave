@@ -1503,13 +1503,13 @@ void CViewSpikeSort::OnEnChangelower()
 		default: ;
 		}
 		// check boundaries
-		if (lower < 0) lower = 0;
+		//if (lower < 0) lower = 0;
 		if (lower >= m_upper)
 			lower = m_upper - m_delta * 10.f;
 		// change display if necessary
-		mm_lower.m_bEntryDone = FALSE; // clear flag
-		mm_lower.m_nChar = 0; // empty buffer
-		mm_lower.SetSel(0, -1); // select all text
+		mm_lower.m_bEntryDone = FALSE; 
+		mm_lower.m_nChar = 0; 
+		mm_lower.SetSel(0, -1);
 		m_lower = lower;
 		m_psC->ilower = static_cast<int>(m_lower / m_delta);
 		if (m_psC->ilower != xygraph_wnd_.m_HZtags.GetValue(m_itaglow))
@@ -1544,15 +1544,14 @@ void CViewSpikeSort::OnEnChangeupper()
 		}
 
 		// check boundaries
-		if (upper < 0)
-			upper = 0;
+		//if (upper < 0) upper = 0;
 		if (upper <= m_lower)
 			upper = m_lower + m_delta * 10.f;
 
 		// change display if necessary
-		mm_upper.m_bEntryDone = FALSE; // clear flag
-		mm_upper.m_nChar = 0; // empty buffer
-		mm_upper.SetSel(0, -1); // select all text
+		mm_upper.m_bEntryDone = FALSE;
+		mm_upper.m_nChar = 0;
+		mm_upper.SetSel(0, -1);
 		m_upper = upper;
 		m_psC->iupper = static_cast<int>(m_upper / m_delta);
 		if (m_psC->iupper != xygraph_wnd_.m_HZtags.GetValue(m_itagup))
