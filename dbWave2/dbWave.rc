@@ -2360,8 +2360,8 @@ IDB_CHECK1              BITMAP                  "res\\check1.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,2022,1,14
- PRODUCTVERSION 4,2022,1,14
+ FILEVERSION 4,2022,2,25
+ PRODUCTVERSION 4,2022,2,25
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2378,12 +2378,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "AgroParisTech - EGCE UMR 9191 (CNRS-Paris Saclay-IRD)"
             VALUE "FileDescription", "Database-oriented  data acquisition and analysis for extracellular electrophysiology"
-            VALUE "FileVersion", "4.2022.1.14"
+            VALUE "FileVersion", "4.2022.2.25"
             VALUE "InternalName", "dbWave2"
             VALUE "LegalCopyright", "Copyright (C) 2022-2028"
             VALUE "OriginalFilename", "dbWave2.exe"
             VALUE "ProductName", " dbWave Application"
-            VALUE "ProductVersion", "4.2022.1.14"
+            VALUE "ProductVersion", "4.2022.2.25"
         END
     END
     BLOCK "VarFileInfo"

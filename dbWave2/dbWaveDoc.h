@@ -12,7 +12,7 @@ struct sourceData
 	CString cs_dat_file{};
 	CString cs_spk_file{};
 	CString cs_path{};
-	int ilastbackslashposition = -1;
+	int i_last_backslash_position = -1;
 	boolean b_dat_present = false;
 	boolean b_spik_present = false;
 	CWaveFormat* p_wave_format = nullptr;
@@ -26,14 +26,14 @@ protected: // create from serialization only
 
 	// Attributes
 public:
-	AcqDataDoc* m_pDat;
-	CSpikeDoc* m_pSpk;
-	HMENU m_hMyMenu;
+	AcqDataDoc* m_pDat = nullptr;
+	CSpikeDoc* m_pSpk = nullptr;
+	HMENU m_hMyMenu = nullptr;
 	CIntervalsAndLevels m_stimsaved;
 
 	// database
-	CdbWdatabase* m_pDB;
-	BOOL m_validTables;
+	CdbWdatabase* m_pDB = nullptr;
+	BOOL m_validTables = false;
 	CDWordArray m_selectedRecords;
 	CString m_dbFilename;
 	CString m_ProposedDataPathName;
@@ -42,10 +42,10 @@ protected:
 	CString m_currentDatafileName;
 	CString m_currentSpikefileName;
 
-	BOOL m_bcallnew;
+	BOOL m_bcallnew = true;
 	CStringArray m_csfiles_to_delete;
-	BOOL m_bClearMdbOnExit;
-	BOOL m_bTranspose;
+	BOOL m_bClearMdbOnExit = false;
+	BOOL m_bTranspose = false;
 
 	// Operations
 public:

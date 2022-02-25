@@ -161,7 +161,8 @@ void CViewDAO::saveCurrentSpkFile()
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
 		auto p_doc = GetDocument();
-		const auto currentlist = m_tabCtrl.GetCurSel();
+		auto currentlist = 0;
+		if (m_tabCtrl.m_hWnd != nullptr) currentlist = m_tabCtrl.GetCurSel();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		if (m_pSpkList != nullptr && !m_pSpkList->IsClassListValid())
 			m_pSpkList->UpdateClassList();

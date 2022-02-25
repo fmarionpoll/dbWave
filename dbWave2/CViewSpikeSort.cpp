@@ -656,14 +656,14 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (shortValue == m_itaglow) // first tag
 			{
-				m_psC->ilower = xygraph_wnd_.m_HZtags.GetValue(m_itaglow); // load new value
+				m_psC->ilower = xygraph_wnd_.m_HZtags.GetValue(m_itaglow);
 				m_lower = m_psC->ilower * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				mm_lower.m_bEntryDone = TRUE;
 				OnEnChangelower();
 			}
 			else if (shortValue == m_itagup) // second tag
 			{
-				m_psC->iupper = xygraph_wnd_.m_HZtags.GetValue(m_itagup); // load new value
+				m_psC->iupper = xygraph_wnd_.m_HZtags.GetValue(m_itagup); 
 				m_upper = m_psC->iupper * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				mm_upper.m_bEntryDone = TRUE;
 				OnEnChangeupper();
@@ -985,8 +985,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		const auto currentlist = m_tabCtrl.GetCurSel();
-		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-		const auto nspikes = spike_list->GetTotalSpikes();
+		m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 	}
 
 	if (!dlg.m_bartefact && m_spikeno != dlg.m_spikeno)
@@ -1186,7 +1185,7 @@ void CViewSpikeSort::OnToolsAlignspikes()
 		p_spk = m_pSpkList->GetpSpikeData(ispk);
 		const auto val = static_cast<short>(l_diff);
 		for (auto i = 0; i < spikelen; i++, p_spk++)
-			*p_spk -= val;
+			*p_spk -= short(val);
 	}
 
 	// exit : delete resources used locally
@@ -1220,7 +1219,7 @@ void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	case SB_THUMBPOSITION:
 		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL);
 		m_lFirst = m_filescroll_infos.nPos;
-		m_lLast = m_lFirst + m_filescroll_infos.nPage - 1;
+		m_lLast = m_lFirst + long(m_filescroll_infos.nPage) - 1;
 		break;
 
 	default:
@@ -1232,7 +1231,6 @@ void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void CViewSpikeSort::scrollFile(UINT nSBCode, UINT nPos)
 {
-	auto b_result = FALSE;
 	// get corresponding data
 	const auto total_scroll = m_pSpkDoc->GetAcqSize();
 	const auto page_scroll = (m_lLast - m_lFirst);
@@ -1634,7 +1632,7 @@ void CViewSpikeSort::OnEnChangeT2()
 		// check boundaries
 		if (t2 < m_t1)
 			t2 = m_t1 + delta;
-		const auto tmax = (m_pSpkList->GetSpikeLength() - 1) * delta;
+		const auto tmax = (float(m_pSpkList->GetSpikeLength()) - 1.f) * delta;
 		if (t2 >= tmax)
 			t2 = tmax;
 		// change display if necessary
@@ -1709,7 +1707,7 @@ void CViewSpikeSort::OnEnChangetimeLast()
 
 		// check boundaries
 		if (time_last <= m_timeFirst)
-			m_lLast = static_cast<long>((m_pSpkDoc->GetAcqSize() - 1) / m_pSpkList->GetAcqSampRate());
+			m_lLast = static_cast<long>(float((m_pSpkDoc->GetAcqSize()) - 1.f) / m_pSpkList->GetAcqSampRate());
 
 		// change display if necessary
 		mm_timeLast.m_bEntryDone = FALSE;
