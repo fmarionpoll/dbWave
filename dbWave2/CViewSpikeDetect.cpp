@@ -261,7 +261,7 @@ void CViewSpikeDetection::updateSpikeFile(BOOL bUpdateInterface)
 	}
 
 	// select a spikelist
-	//int icurspklist = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	//int icurspklist = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	if (m_pSpkList == nullptr && m_pSpkDoc->GetSpkList_Size() > 0)
 	{
@@ -366,7 +366,7 @@ BOOL CViewSpikeDetection::checkDetectionSettings()
 	ASSERT_VALID(m_pDetectParms);
 	if (nullptr == m_pDetectParms)
 	{
-		m_iDetectParms = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		m_iDetectParms = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 		m_pDetectParms = m_parmsCurrent.GetItem(m_iDetectParms);
 	}
 
@@ -1083,7 +1083,7 @@ void CViewSpikeDetection::detectAll(BOOL bAll)
 	m_pSpkDoc->InitSourceDoc(pdat_doc);
 
 	m_pSpkDoc->SetDetectionDate(CTime::GetCurrentTime());
-	auto ioldlist = p_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	auto ioldlist = p_doc->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 	m_spikeno = -1;
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
@@ -1994,7 +1994,7 @@ void CViewSpikeDetection::OnEditCopy()
 			const auto xcol = 10;
 
 			// comment and descriptors
-			auto comments = GetDocument()->ExportDatabaseData(1);
+			auto comments = GetDocument()->Export_DatabaseData(1);
 			m_dc.TextOut(xcol, ypxrow, comments);
 			ypxrow += lineheight;
 
@@ -2266,7 +2266,7 @@ CString CViewSpikeDetection::PrintGetFileInfos()
 
 	// document's main comment (print on multiple lines if necessary)
 	if (options_viewdata->bAcqComment)
-		str_comment += GetDocument()->ExportDatabaseData(); //pwaveFormat->GetComments(" ") +rc;
+		str_comment += GetDocument()->Export_DatabaseData(); //pwaveFormat->GetComments(" ") +rc;
 
 	return str_comment;
 }
@@ -3146,7 +3146,7 @@ void CViewSpikeDetection::updateDetectionSettings(int iSelParms)
 	// set new parameters
 	m_pSpkList->m_selspike = m_spikeno; // save spike selected
 	m_iDetectParms = iSelParms;
-	//GetDocument()->GetcurrentSpkDocument()->SetSpkList_CurrentIndex(iSelParms);
+	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(iSelParms);
 	m_pDetectParms = m_parmsCurrent.GetItem(iSelParms);
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(iSelParms);
 	if (m_pSpkList != nullptr)
@@ -3348,6 +3348,6 @@ void CViewSpikeDetection::UpdateTabs()
 	}
 	m_pSpkDoc->SetSpkList_AsCurrent(currlist);
 
-	m_iDetectParms = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	m_iDetectParms = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 	m_tabCtrl.SetCurSel(m_iDetectParms);
 }

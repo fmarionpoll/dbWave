@@ -219,7 +219,7 @@ void CChildFrame::OnToolsExportnumberofspikes()
 void CChildFrame::OnToolsExportdataAsText()
 {
 	auto pdb_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
-	pdb_doc->ExportDatafilesAsTXTfiles();
+	pdb_doc->Export_DatafilesAsTXTfiles();
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 }
@@ -232,10 +232,10 @@ void CChildFrame::exportASCII(int option)
 	switch (option)
 	{
 	case 0:
-		pdb_doc->ExportDataAsciiComments(&sf);
+		pdb_doc->Export_DataAsciiComments(&sf);
 		break;
 	case 1:
-		pdb_doc->ExportNumberofSpikes(&sf);
+		pdb_doc->Export_NumberOfSpikes(&sf);
 		break;
 	default:
 		break;
@@ -482,7 +482,7 @@ void CChildFrame::OnToolsRemoveMissingFiles()
 	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument()); // get pointer to document
 	ASSERT(p_dbwave_doc); // debug: check that doc is defined
 
-	p_dbwave_doc->RemoveMissingFiles();
+	p_dbwave_doc->Remove_MissingFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -490,7 +490,7 @@ void CChildFrame::OnToolsRemoveduplicatefiles()
 {
 	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc);
-	p_dbwave_doc->RemoveDuplicateFiles();
+	p_dbwave_doc->Remove_DuplicateFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -498,7 +498,7 @@ void CChildFrame::OnToolsCheckFilelistsConsistency()
 {
 	auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
 	ASSERT(p_dbwave_doc);
-	p_dbwave_doc->RemoveFalseSpkFiles();
+	p_dbwave_doc->Remove_FalseSpkFiles();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -763,7 +763,7 @@ void CChildFrame::OnRecordDeletecurrent()
 
 		// delete erased files
 		if (m_bDeleteFile)
-			p_dbwave_doc->DeleteErasedFiles();
+			p_dbwave_doc->Delete_ErasedFiles();
 	}
 }
 

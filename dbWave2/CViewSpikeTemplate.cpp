@@ -215,7 +215,7 @@ void CViewSpikeTemplates::updateSpikeFile()
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
-		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		int icur = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 
 		// update Tab at the bottom

@@ -309,7 +309,7 @@ void CViewSpikeSort::updateSpikeFile()
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
-		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		int icur = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 
 		// update Tab at the bottom
@@ -1291,7 +1291,7 @@ void CViewSpikeSort::updateFileScroll()
 void CViewSpikeSort::selectSpkList(int icursel)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icursel);
-	//GetDocument()->GetcurrentSpkDocument()->SetSpkList_CurrentIndex(icursel);
+	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(icursel);
 	ASSERT(m_pSpkList != NULL);
 	OnMeasure();
 

@@ -222,7 +222,7 @@ void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		break;
 	case HINT_DOCHASCHANGED: // file has changed?
 	case HINT_DOCMOVERECORD:
-		selectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
+		selectSpkList(GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex(), TRUE);
 		buildDataAndDisplay();
 		break;
 
@@ -244,7 +244,7 @@ BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand)
 	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	if (!m_pvdS->ballfiles)
 		buildDataAndDisplay();
-	selectSpkList(GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex(), TRUE);
+	selectSpkList(GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex(), TRUE);
 	return flag;
 }
 
@@ -1142,7 +1142,7 @@ void CViewSpikeHist::buildData()
 		lastfile = m_nfiles - 1;
 	}
 
-	auto currentlist_index = p_dbwave_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	auto currentlist_index = p_dbwave_doc->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 
 	for (auto ifile = firstfile; ifile <= lastfile; ifile++)
 	{
@@ -1531,7 +1531,7 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	}
 
 	// external loop: browse from file to file
-	auto currentlist_index = p_dbwave_doc->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+	auto currentlist_index = p_dbwave_doc->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 	for (auto ifile = firstfile;
 	     ifile <= lastfile && row < disp_rect.bottom;
 	     ifile++)
@@ -2221,7 +2221,7 @@ void CViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 	}
 
 	// select spike list
-	GetDocument()->GetcurrentSpkDocument()->SetSpkList_AsCurrent(icur);
+	GetDocument()->GetCurrent_Spk_Document()->SetSpkList_AsCurrent(icur);
 	m_tabCtrl.SetCurSel(icur);
 }
 

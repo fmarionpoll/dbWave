@@ -63,18 +63,18 @@ public:
 	BOOL ImportDatabase(CString& filename);
 	BOOL OnNewDocument(LPCTSTR lpszPathName);
 	AcqDataDoc* OpenCurrentDataFile();
-	AcqDataDoc* GetcurrentDataDocument() const { return m_pDat; }
+	AcqDataDoc* GetCurrent_Dat_Document() const { return m_pDat; }
 	void CloseCurrentDataFile();
 	CSpikeDoc* OpenCurrentSpikeFile();
-	CSpikeDoc* GetcurrentSpkDocument() const { return m_pSpk; }
+	CSpikeDoc* GetCurrent_Spk_Document() const { return m_pSpk; }
 
-	void RemoveDuplicateFiles();
-	void RemoveMissingFiles();
-	void RemoveFalseSpkFiles();
-	void DeleteErasedFiles();
+	void Remove_DuplicateFiles();
+	void Remove_MissingFiles();
+	void Remove_FalseSpkFiles();
+	void Delete_ErasedFiles();
 
-	long GetDB_nbspikes(); // assuming only 1 spike list / spike file (which might be wrong)
-	void SetDB_nbspikes(long nspikes); // assuming only 1 spike list / file
+	long GetDB_nbspikes(); 
+	void SetDB_nbspikes(long nspikes); 
 	long GetDB_nbspikeclasses();
 	void SetDB_nbspikeclasses(long nclasses);
 	void GetAllSpkMaxMin(BOOL bAll, BOOL bRecalc, int* max, int* min);
@@ -82,14 +82,14 @@ public:
 
 	void SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
 
-	void ExportDataAsciiComments(CSharedFile* pSF); //, OPTIONS_VIEWDATA* pVD);
-	void ExportNumberofSpikes(CSharedFile* pSF);
-	CString ExportDatabaseData(int ioption = 0);
-	void ExportSpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass);
+	void Export_DataAsciiComments(CSharedFile* p_shared_file);
+	void Export_NumberOfSpikes(CSharedFile* pSF);
+	CString Export_DatabaseData(int ioption = 0);
+	void Export_SpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass);
 	void SynchronizeSourceInfos(BOOL bAll);
 	BOOL UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 
-	void ExportDatafilesAsTXTfiles();
+	void Export_DatafilesAsTXTfiles();
 	BOOL CopyAllFilesintoDirectory(const CString& path);
 	bool BinaryFileCopy(LPCTSTR pszSource, LPCTSTR pszDest);
 	BOOL CreateDirectories(CString path);
@@ -120,6 +120,7 @@ protected:
 	void getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns,
 	                             boolean bHeader);
 	int findHeader(CString& text);
+	void remove_file_from_disk(CString file_name);
 
 	// Overrides
 public:

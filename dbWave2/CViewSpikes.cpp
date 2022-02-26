@@ -605,7 +605,7 @@ void CViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 
-		int icur = GetDocument()->GetcurrentSpkDocument()->GetSpkList_CurrentIndex();
+		int icur = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 		m_pspkDP = m_pSpkList->GetDetectParms();
 

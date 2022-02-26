@@ -178,7 +178,7 @@ void CViewdbWave::OnInitialUpdate()
 	// init display controls
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* pSpkDoc = GetDocument()->GetcurrentSpkDocument();
+		CSpikeDoc* pSpkDoc = GetDocument()->GetCurrent_Spk_Document();
 		// update tab control
 		m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
 		m_tabCtrl.ShowWindow(SW_SHOW);
@@ -306,7 +306,7 @@ LRESULT CViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_VIEWTABHASCHANGED:
-		GetDocument()->GetcurrentSpkDocument()->SetSpkList_AsCurrent(threshold);
+		GetDocument()->GetCurrent_Spk_Document()->SetSpkList_AsCurrent(threshold);
 		m_dataListCtrl.RefreshDisplay();
 		break;
 
