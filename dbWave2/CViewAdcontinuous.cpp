@@ -832,15 +832,15 @@ void CADContView::OnSamplingMode()
 {
 	DlgADIntervals dlg;
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-	dlg.m_pwaveFormat = pWFormat;
-	dlg.m_ratemin = 1.0f;
-	dlg.m_ratemax = static_cast<float>(m_Acq32_AD.GetMaximumFrequency() / pWFormat->scan_count);
-	dlg.m_bufferWsizemax = static_cast<UINT>(65536) * 4;
-	dlg.m_undersamplefactor = m_pOptions_AD->iundersample;
-	dlg.m_baudiblesound = m_pOptions_AD->baudiblesound;
+	dlg.m_p_wave_format = pWFormat;
+	dlg.m_rate_minimum = 1.0f;
+	dlg.m_rate_maximum = static_cast<float>(m_Acq32_AD.GetMaximumFrequency() / pWFormat->scan_count);
+	dlg.m_buffer_W_size_maximum = static_cast<UINT>(65536) * 4;
+	dlg.m_under_sample_factor = m_pOptions_AD->iundersample;
+	dlg.m_b_audible_sound = m_pOptions_AD->baudiblesound;
 	dlg.m_duration_to_acquire = m_pOptions_AD->duration_to_acquire;
-	dlg.m_sweepduration = m_sweepduration;
-	dlg.m_bchainDialog = TRUE;
+	dlg.m_sweep_duration = m_sweepduration;
+	dlg.m_b_chain_dialog = TRUE;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
@@ -850,10 +850,10 @@ void CADContView::OnSamplingMode()
 			UpdateStartStop(m_Acq32_AD.IsInProgress());
 		}
 
-		m_pOptions_AD->iundersample = static_cast<int>(dlg.m_undersamplefactor);
-		m_pOptions_AD->baudiblesound = dlg.m_baudiblesound;
+		m_pOptions_AD->iundersample = static_cast<int>(dlg.m_under_sample_factor);
+		m_pOptions_AD->baudiblesound = dlg.m_b_audible_sound;
 		m_pOptions_AD->duration_to_acquire = dlg.m_duration_to_acquire;
-		m_sweepduration = dlg.m_sweepduration;
+		m_sweepduration = dlg.m_sweep_duration;
 		m_pOptions_AD->sweepduration = m_sweepduration;
 		InitOutput_AD();
 		UpdateData(FALSE);

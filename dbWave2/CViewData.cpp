@@ -413,7 +413,7 @@ void CViewData::ADC_OnHardwareIntervalsDlg()
 {
 	DlgADIntervals dlg;
 	// init dialog data
-	dlg.m_pwaveFormat = m_pdatDoc->GetpWaveFormat();
+	dlg.m_p_wave_format = m_pdatDoc->GetpWaveFormat();
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())

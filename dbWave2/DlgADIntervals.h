@@ -11,28 +11,28 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_AD_INTERVALS };
 
-	int m_bufferNitems{ 0 };
-	float m_adratechan{ 0.f };
+	int m_buffer_N_items{ 0 };
+	float m_ad_rate_channel{ 0.f };
 	float m_duration_to_acquire{ 0.f };
-	float m_sweepduration{ 1.f };
-	UINT m_bufferWsize{ 0 };
-	UINT m_undersamplefactor{ 1 };
-	BOOL m_baudiblesound{ false };
-	int m_threshchan{ 0 };
-	int m_threshval{ 0 };
-	CWaveFormat* m_pwaveFormat{ nullptr };
+	float m_sweep_duration{ 1.f };
+	UINT m_buffer_W_size{ 0 };
+	UINT m_under_sample_factor{ 1 };
+	BOOL m_b_audible_sound{ false };
+	int m_threshold_channel{ 0 };
+	int m_threshold_value{ 0 };
+	CWaveFormat* m_p_wave_format{ nullptr };
 
 	WORD m_postmessage{ 0 };
-	float m_ratemax{ 50000.f };
-	float m_ratemin{ 0.1f };
-	UINT m_bufferWsizemax{ 0 };
-	BOOL m_bchainDialog{ false };
+	float m_rate_maximum{ 50000.f };
+	float m_rate_minimum{ 0.1f };
+	UINT m_buffer_W_size_maximum{ 0 };
+	BOOL m_b_chain_dialog{ false };
 
-	CEditCtrl mm_adratechan;
-	CEditCtrl mm_sweepduration;
-	CEditCtrl mm_bufferWsize;
-	CEditCtrl mm_bufferNitems;
-	CEditCtrl mm_acqduration;
+	CEditCtrl mm_ad_rate_channel;
+	CEditCtrl mm_sweep_duration;
+	CEditCtrl mm_buffer_W_size;
+	CEditCtrl mm_buffer_N_items;
+	CEditCtrl mm_acquisition_duration;
 
 	// Implementation
 protected:
