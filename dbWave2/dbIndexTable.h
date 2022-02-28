@@ -9,21 +9,17 @@ public:
 	DECLARE_DYNAMIC(CdbIndexTable)
 
 	// Field/Param Data
-	CString m_cs;
-	long m_ID;
+	CString m_cs = _T("");
+	long m_ID = 0;
+	CString m_defaultSQL = _T("[name]");
+	CString m_DFX_cs = _T("[cs]");
+	CString m_DFX_ID = _T("[ID]");
+	CString m_defaultName = _T("");
 
-	CString m_defaultSQL;
-	CString m_DFX_cs;
-	CString m_DFX_ID;
-
-	// temp value
-	CString m_defaultName;
-
-	// Overrides
 public:
-	CString GetDefaultDBName() override; // Default database name
-	CString GetDefaultSQL() override; // Default SQL for Recordset
-	void DoFieldExchange(CDaoFieldExchange* pFX) override; // RFX support
+	CString GetDefaultDBName() override;
+	CString GetDefaultSQL() override;
+	void DoFieldExchange(CDaoFieldExchange* pFX) override; 
 
 	// operations
 	void SetNames(CString csdefaultSQL, CString DFX_cs, CString DFX_ID);

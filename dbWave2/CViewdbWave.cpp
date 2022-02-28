@@ -1,5 +1,3 @@
-// dbWaveView.cpp : implementation of the CViewdbWave class
-//
 
 #include "StdAfx.h"
 #include "dbWave.h"
@@ -60,8 +58,7 @@ CViewdbWave::CViewdbWave()
 }
 
 CViewdbWave::~CViewdbWave()
-{
-}
+= default;
 
 void CViewdbWave::DoDataExchange(CDataExchange* pDX)
 {
@@ -412,12 +409,6 @@ void CViewdbWave::DeleteRecords()
 		pdb_doc->DBDeleteCurrentRecord();
 		ndel++;
 	}
-
-	// If the recordset is now empty, clear the fields left over
-	// from the deleted record
-	/*if (m_pSet->IsBOF())
-		m_pSet->SetFieldNull(NULL);
-	m_pSet->RefreshQuery();*/
 
 	pdb_doc->SetDB_CurrentRecordPosition(currentindex);
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);

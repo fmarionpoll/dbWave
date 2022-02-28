@@ -1,5 +1,3 @@
-// dbWdatabase.cpp : implementation file
-//
 #include "StdAfx.h"
 #include "dbIndexTable.h"
 #include "dbMainTable.h"
@@ -11,7 +9,6 @@
 #define new DEBUG_NEW
 #endif
 
-// CdbWdatabase
 
 TABCOL CdbWdatabase::m_desctab[NTABLECOLS] =
 {
@@ -299,7 +296,7 @@ BOOL CdbWdatabase::OpenTables()
 		const int field_count = record_set.GetFieldCount();
 		record_set.Close();
 
-		// less columns are present: add missing columns
+		// less columns are present? add missing columns
 		CdbMainTable rs2; // CDaoRecordSet
 		if (field_count < rs2.m_nFields)
 		{
@@ -307,103 +304,22 @@ BOOL CdbWdatabase::OpenTables()
 			// open table definition
 			CDaoTableDef table_def(this);
 			CString cs_rel;
-			const long l_attr = dbRelationUpdateCascade;
+			constexpr long l_attr = dbRelationUpdateCascade;
 
 			switch (field_count)
 			{
-			// only 19 fields - create 2 additional fields for secondary stim and conc
 			case 19:
-				{
-					table_def.Open(cs_table);
-					cs_rel = _T("table_Rel1");
-					const auto i_pos = cs_rel.GetLength() - 1;
-					table_def.CreateField(m_mainTableSet.m_desc[CH_STIM2_ID].csColName, dbLong, 4, 0); // stim2_ID
-					table_def.CreateField(m_mainTableSet.m_desc[CH_CONC2_ID].csColName, dbLong, 4, 0); // conc2_ID
-					cs_rel.SetAt(i_pos, '9');
-					CreateRelation(cs_rel, _T("stim"), cs_table, l_attr, _T("stimID"),
-					               m_mainTableSet.m_desc[CH_STIM2_ID].csColName); // stim2_ID
-					cs_rel.SetAt(i_pos, 'A');
-					CreateRelation(cs_rel, _T("conc"), cs_table, l_attr, _T("concID"),
-					               m_mainTableSet.m_desc[CH_CONC2_ID].csColName); // conc2_ID
-					table_def.Close();
-				}
-			// only 21 fields (instead of 22) - add one field for flags
+				add_19_20(table_def, cs_table, l_attr);
 			case 21:
-				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_FLAG].csColName, dbLong, 4, 0); // flag
-				table_def.Close();
-
-			// only 22 fields (instead of 24) - add 2 fields for strain and sex
+				add_21(table_def, cs_table, l_attr);
 			case 22:
-				{
-					table_def.Open(cs_table);
-
-					// add fields in the maintable, add the corresponding tables and the relations between the main table and the new index tables
-					table_def.CreateField(m_mainTableSet.m_desc[CH_STRAIN_ID].csColName, dbLong, 4, 0); // strain_ID
-					table_def.CreateField(m_mainTableSet.m_desc[CH_SEX_ID].csColName, dbLong, 4, 0); // sex_ID
-					m_strainSet.CreateIndextable(_T("strain"), _T("strain"), _T("strainID"), 100, this);
-					m_sexSet.CreateIndextable(_T("sex"), _T("sex"), _T("sexID"), 10, this);
-					CreateRelation(_T("table_strain"), _T("strain"), cs_table, l_attr, _T("strainID"),
-					               m_mainTableSet.m_desc[CH_STRAIN_ID].csColName); // strain_ID
-					CreateRelation(_T("table_sex"), _T("sex"), cs_table, l_attr, _T("sexID"),
-					               m_mainTableSet.m_desc[CH_SEX_ID].csColName); // sex_ID
-					// type -> location
-					DeleteRelation(_T("table_type")); // delete relationship
-					table_def.DeleteField(CH_LOCATION_ID);
-					// delete the field (index is different because we deleted one field)
-					table_def.CreateField(m_mainTableSet.m_desc[CH_LOCATION_ID].csColName, dbLong, 4, 0); // locationID
-					// stage -> sensillumname
-					DeleteRelation(_T("table_stage")); // delete relationship
-					table_def.DeleteField(CH_SENSILLUM_ID); // delete field
-					table_def.CreateField(m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName, dbLong, 4, 0);
-					// sensillumID
-					table_def.Close();
-
-					// rename table stage into sensillumname
-					table_def.Open(_T("stage"));
-					table_def.SetName(_T("sensillumname"));
-					table_def.Close();
-
-					// rename table type into location
-					table_def.Open(_T("type"));
-					table_def.SetName(_T("location"));
-					table_def.Close();
-
-					// rename existing fields into "sensillumname" table (sensillum/sensillumID instead of stage/stageID)
-					// rename existing fields into "location" table (location/locationID instead type/typeID)
-					// create relations
-					table_def.Open(cs_table);
-					cs_rel = _T("table_sensillumname");
-					CreateRelation(cs_rel, _T("sensillumname"), cs_table, l_attr, _T("stageID"),
-					               m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName); // sensillumname_ID
-					cs_rel = _T("table_location");
-					CreateRelation(cs_rel, _T("location"), cs_table, l_attr, _T("typeID"),
-					               m_mainTableSet.m_desc[CH_LOCATION_ID].csColName); //location_ID
-					table_def.Close();
-				}
-
-			// only 24 fields instead of 26
+				add_22_23(table_def, cs_table, l_attr);
 			case 24:
-				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].csColName, dbLong, 4, 0); // repeatID
-				table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].csColName, dbLong, 4, 0); // repeat2ID
-				table_def.Close();
-
-			// only 26 instead of 28
+				add_24_25(table_def, cs_table, l_attr);
 			case 26:
-				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_DAY].csColName, dbDate, 8, 0); // acqdate_day
-				table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_TIME].csColName, dbDate, 8, 0); // acqdate_time
-				table_def.Close();
-
-			// only 28 instead of 29: add "exptID" column and 1 table
+				add_26_27(table_def, cs_table, l_attr);
 			case 28:
-				table_def.Open(cs_table);
-				table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].csColName, dbLong, 4, 0); // expt_ID
-				m_exptSet.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
-				CreateRelation(_T("table_expt"), _T("expt"), cs_table, l_attr, _T("exptID"),
-				               m_mainTableSet.m_desc[CH_EXPT_ID].csColName); // strain_ID
-				table_def.Close();
+				add_28(table_def, cs_table, l_attr);
 				break;
 
 			default:
@@ -452,6 +368,103 @@ BOOL CdbWdatabase::OpenTables()
 		GetRecordItemDescriptor(column);
 
 	return TRUE;
+}
+
+void CdbWdatabase::add_28(CDaoTableDef& table_def, CString cs_table, long l_attr)
+{
+	table_def.Open(cs_table);
+	table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].csColName, dbLong, 4, 0); // expt_ID
+	m_exptSet.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
+	CreateRelation(_T("table_expt"), _T("expt"), cs_table, l_attr, _T("exptID"),
+		m_mainTableSet.m_desc[CH_EXPT_ID].csColName); // strain_ID
+	table_def.Close();
+}
+
+void CdbWdatabase::add_26_27(CDaoTableDef& table_def, CString cs_table, long l_attr)
+{
+	table_def.Open(cs_table);
+	table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_DAY].csColName, dbDate, 8, 0); // acqdate_day
+	table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_TIME].csColName, dbDate, 8, 0); // acqdate_time
+	table_def.Close();
+}
+
+void CdbWdatabase::add_24_25(CDaoTableDef& table_def, CString cs_table, long l_attr)
+{
+	table_def.Open(cs_table);
+	table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].csColName, dbLong, 4, 0); // repeatID
+	table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].csColName, dbLong, 4, 0); // repeat2ID
+	table_def.Close();
+}
+
+void CdbWdatabase::add_22_23(CDaoTableDef& table_def, CString cs_table, long l_attr)
+{
+	table_def.Open(cs_table);
+
+	// add fields in the maintable, add the corresponding tables and the relations between the main table and the new index tables
+	table_def.CreateField(m_mainTableSet.m_desc[CH_STRAIN_ID].csColName, dbLong, 4, 0); // strain_ID
+	table_def.CreateField(m_mainTableSet.m_desc[CH_SEX_ID].csColName, dbLong, 4, 0); // sex_ID
+	m_strainSet.CreateIndextable(_T("strain"), _T("strain"), _T("strainID"), 100, this);
+	m_sexSet.CreateIndextable(_T("sex"), _T("sex"), _T("sexID"), 10, this);
+	CreateRelation(_T("table_strain"), _T("strain"), cs_table, l_attr, _T("strainID"),
+		m_mainTableSet.m_desc[CH_STRAIN_ID].csColName); // strain_ID
+	CreateRelation(_T("table_sex"), _T("sex"), cs_table, l_attr, _T("sexID"),
+		m_mainTableSet.m_desc[CH_SEX_ID].csColName); // sex_ID
+// type -> location
+	DeleteRelation(_T("table_type")); // delete relationship
+	table_def.DeleteField(CH_LOCATION_ID);
+	// delete the field (index is different because we deleted one field)
+	table_def.CreateField(m_mainTableSet.m_desc[CH_LOCATION_ID].csColName, dbLong, 4, 0); // locationID
+	// stage -> sensillumname
+	DeleteRelation(_T("table_stage")); // delete relationship
+	table_def.DeleteField(CH_SENSILLUM_ID); // delete field
+	table_def.CreateField(m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName, dbLong, 4, 0);
+	// sensillumID
+	table_def.Close();
+
+	// rename table stage into sensillumname
+	table_def.Open(_T("stage"));
+	table_def.SetName(_T("sensillumname"));
+	table_def.Close();
+
+	// rename table type into location
+	table_def.Open(_T("type"));
+	table_def.SetName(_T("location"));
+	table_def.Close();
+
+	// rename existing fields into "sensillumname" table (sensillum/sensillumID instead of stage/stageID)
+	// rename existing fields into "location" table (location/locationID instead type/typeID)
+	// create relations
+	table_def.Open(cs_table);
+	CString cs_rel = _T("table_sensillumname");
+	CreateRelation(cs_rel, _T("sensillumname"), cs_table, l_attr, _T("stageID"),
+		m_mainTableSet.m_desc[CH_SENSILLUM_ID].csColName); // sensillumname_ID
+	cs_rel = _T("table_location");
+	CreateRelation(cs_rel, _T("location"), cs_table, l_attr, _T("typeID"),
+		m_mainTableSet.m_desc[CH_LOCATION_ID].csColName); //location_ID
+	table_def.Close();
+}
+
+void CdbWdatabase::add_21(CDaoTableDef& table_def, CString cs_table, long l_attr)
+{
+	table_def.Open(cs_table);
+	table_def.CreateField(m_mainTableSet.m_desc[CH_FLAG].csColName, dbLong, 4, 0); // flag
+	table_def.Close();
+}
+
+void CdbWdatabase::add_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr)
+{
+	table_def.Open(cs_table);
+	CString cs_rel = _T("table_Rel1");
+	const auto i_pos = cs_rel.GetLength() - 1;
+	table_def.CreateField(m_mainTableSet.m_desc[CH_STIM2_ID].csColName, dbLong, 4, 0); // stim2_ID
+	table_def.CreateField(m_mainTableSet.m_desc[CH_CONC2_ID].csColName, dbLong, 4, 0); // conc2_ID
+	cs_rel.SetAt(i_pos, '9');
+	CreateRelation(cs_rel, _T("stim"), cs_table, l_attr, _T("stimID"),
+		m_mainTableSet.m_desc[CH_STIM2_ID].csColName); // stim2_ID
+	cs_rel.SetAt(i_pos, 'A');
+	CreateRelation(cs_rel, _T("conc"), cs_table, l_attr, _T("concID"),
+		m_mainTableSet.m_desc[CH_CONC2_ID].csColName); // conc2_ID
+	table_def.Close();
 }
 
 void CdbWdatabase::OpenIndexTable(CdbIndexTable* p_index_table_set)

@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-//#include <afxconv.h>           // For LPTSTR -> LPSTR macros
 #include "dbWave.h"
 #include "dbIndexTable.h"
 
@@ -13,16 +12,8 @@ IMPLEMENT_DYNAMIC(CdbIndexTable, CDaoRecordset)
 CdbIndexTable::CdbIndexTable(CDaoDatabase* pdb)
 	: CDaoRecordset(pdb)
 {
-	m_cs = _T("");
-	m_ID = 0;
 	m_nFields = 2;
-
 	m_nDefaultType = dbOpenTable;
-	m_defaultSQL = _T("[name]");
-	m_DFX_cs = _T("[cs]");
-	m_DFX_ID = _T("[ID]");
-
-	m_defaultName.Empty();
 }
 
 // store strings and add "[" and "]"

@@ -37,14 +37,13 @@ BEGIN_MESSAGE_MAP(CdbWaveDoc, COleDocument)
 END_MESSAGE_MAP()
 
 CdbWaveDoc::CdbWaveDoc()
-{
-}
+= default;
 
 CdbWaveDoc::~CdbWaveDoc()
 {
-	SAFE_DELETE(m_pDB);
-	SAFE_DELETE(m_pDat);
-	SAFE_DELETE(m_pSpk);
+	SAFE_DELETE(m_pDB)
+	SAFE_DELETE(m_pDat)
+	SAFE_DELETE(m_pSpk)
 
 	// store temp mdb filename to delete on exit within the application
 	// (it seems it is not possible to erase the file from here)

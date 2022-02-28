@@ -52,6 +52,13 @@ public:
 	BOOL CreateMainTable(CString cs);
 	void CreateTables();
 	BOOL OpenTables();
+	void add_28(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_26_27(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_24_25(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_22_23(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_21(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr);
+
 	void OpenIndexTable(CdbIndexTable* pIndexTableSet);
 	void CloseDatabase();
 	void UpdateTables();
