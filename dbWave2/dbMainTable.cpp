@@ -56,7 +56,7 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 		m_desc[i].lfilterParam1 = 0;
 		m_desc[i].bFilter2 = FALSE;
 		m_desc[i].pdataItem = nullptr;
-		m_desc[i].icol = i;
+		m_desc[i].index = i;
 		m_desc[i].pComboBox = nullptr;
 		m_desc[i].csColParam.Empty();
 		m_desc[i].csfilterParam1.Empty();
@@ -111,54 +111,54 @@ CString CdbMainTable::GetDefaultSQL()
 void CdbMainTable::DoFieldExchange(CDaoFieldExchange* pFX)
 {
 	pFX->SetFieldType(CDaoFieldExchange::outputColumn);
-	DFX_Text(pFX, m_desc[CH_FILENAME].csColNamewithBrackets, m_Filedat);
-	DFX_Text(pFX, m_desc[CH_FILESPK].csColNamewithBrackets, m_Filespk);
-	DFX_Text(pFX, m_desc[CH_ACQ_COMMENTS].csColNamewithBrackets, m_acq_comment);
-	DFX_Text(pFX, m_desc[CH_MORE].csColNamewithBrackets, m_more);
-	DFX_Long(pFX, m_desc[CH_ID].csColNamewithBrackets, m_ID);
-	DFX_Long(pFX, m_desc[CH_DATALEN].csColNamewithBrackets, m_datalen);
-	DFX_Long(pFX, m_desc[CH_NSPIKES].csColNamewithBrackets, m_nspikes);
-	DFX_Long(pFX, m_desc[CH_NSPIKECLASSES].csColNamewithBrackets, m_nspikeclasses);
-	DFX_Long(pFX, m_desc[CH_PATH_ID].csColNamewithBrackets, m_path_ID);
-	DFX_Long(pFX, m_desc[CH_PATH2_ID].csColNamewithBrackets, m_path2_ID);
-	DFX_DateTime(pFX, m_desc[CH_ACQDATE].csColNamewithBrackets, m_acq_date);
+	DFX_Text(pFX, m_desc[CH_FILENAME].dfx_name_with_brackets, m_Filedat);
+	DFX_Text(pFX, m_desc[CH_FILESPK].dfx_name_with_brackets, m_Filespk);
+	DFX_Text(pFX, m_desc[CH_ACQ_COMMENTS].dfx_name_with_brackets, m_acq_comment);
+	DFX_Text(pFX, m_desc[CH_MORE].dfx_name_with_brackets, m_more);
+	DFX_Long(pFX, m_desc[CH_ID].dfx_name_with_brackets, m_ID);
+	DFX_Long(pFX, m_desc[CH_DATALEN].dfx_name_with_brackets, m_datalen);
+	DFX_Long(pFX, m_desc[CH_NSPIKES].dfx_name_with_brackets, m_nspikes);
+	DFX_Long(pFX, m_desc[CH_NSPIKECLASSES].dfx_name_with_brackets, m_nspikeclasses);
+	DFX_Long(pFX, m_desc[CH_PATH_ID].dfx_name_with_brackets, m_path_ID);
+	DFX_Long(pFX, m_desc[CH_PATH2_ID].dfx_name_with_brackets, m_path2_ID);
+	DFX_DateTime(pFX, m_desc[CH_ACQDATE].dfx_name_with_brackets, m_acq_date);
 
 	int i = CH_IDINSECT;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_IDinsect);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_IDinsect);
 	i = CH_IDSENSILLUM;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_IDsensillum);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_IDsensillum);
 	i = CH_LOCATION_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_location_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_location_ID);
 	i = CH_STIM_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_stim_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_stim_ID);
 	i = CH_CONC_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_conc_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_conc_ID);
 	i = CH_STIM2_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_stim2_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_stim2_ID);
 	i = CH_CONC2_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_conc2_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_conc2_ID);
 	i = CH_OPERATOR_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_operator_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_operator_ID);
 	i = CH_INSECT_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_insect_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_insect_ID);
 	i = CH_SENSILLUM_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_sensillum_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_sensillum_ID);
 	i = CH_STRAIN_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_strain_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_strain_ID);
 	i = CH_SEX_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_sex_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_sex_ID);
 	i = CH_FLAG;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_flag);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_flag);
 	i = CH_REPEAT;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_repeat);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_repeat);
 	i = CH_REPEAT2;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_repeat2);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_repeat2);
 	i = CH_ACQDATE_DAY;
-	DFX_DateTime(pFX, m_desc[CH_ACQDATE_DAY].csColNamewithBrackets, m_acqdate_day);
+	DFX_DateTime(pFX, m_desc[CH_ACQDATE_DAY].dfx_name_with_brackets, m_acqdate_day);
 	i = CH_ACQDATE_TIME;
-	DFX_DateTime(pFX, m_desc[i].csColNamewithBrackets, m_acqdate_time);
+	DFX_DateTime(pFX, m_desc[i].dfx_name_with_brackets, m_acqdate_time);
 	i = CH_EXPT_ID;
-	DFX_Long(pFX, m_desc[i].csColNamewithBrackets, m_expt_ID);
+	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_expt_ID);
 	
 	pFX->SetFieldType(CDaoFieldExchange::param);
 	i = CH_IDINSECT;
@@ -311,7 +311,7 @@ BOOL CdbMainTable::FindIDinColumn(long iID, int icolumn)
 {
 	CString cs; // to construct insect and sensillum number (for example)
 	CString str; // to store FindFirst filter
-	const auto cscolhead = m_desc[icolumn].csColName;
+	const auto cscolhead = m_desc[icolumn].header_name;
 	str.Format(_T("%s=%li"), (LPCTSTR)cscolhead, iID);
 	auto flag = FALSE;
 
@@ -360,7 +360,7 @@ void CdbMainTable::BuildFilters()
 			if (!m_strFilter.IsEmpty())
 				m_strFilter += _T(" AND ");
 			CString cs;
-			cs.Format(_T("%s IN ("), (LPCTSTR)m_desc[ifield].csColNamewithBrackets);
+			cs.Format(_T("%s IN ("), (LPCTSTR)m_desc[ifield].dfx_name_with_brackets);
 			m_strFilter += cs;
 			switch (m_desc[ifield].typeLocal)
 			{
@@ -494,7 +494,7 @@ void CdbMainTable::AddDaytoDateArray(COleDateTime& o_time)
 void CdbMainTable::AddtoliArray(int icol)
 {
 	COleVariant var_value;
-	GetFieldValue(m_desc[icol].csColName, var_value);
+	GetFieldValue(m_desc[icol].header_name, var_value);
 	int l_val = var_value.lVal;
 	if (var_value.vt == VT_NULL)
 		l_val = 0;
@@ -566,11 +566,11 @@ void CdbMainTable::AddCurrentRecordtoIDArrays()
 	AddtoliArray(CH_FLAG);
 
 	// look for date
-	GetFieldValue(m_desc[CH_ACQDATE_DAY].csColName, var_value);
+	GetFieldValue(m_desc[CH_ACQDATE_DAY].header_name, var_value);
 	if (var_value.vt == VT_NULL)
 	{
 		// transfer date from field 1 and copy date and time in 2 separate columns
-		GetFieldValue(m_desc[CH_ACQDATE].csColName, var_value);
+		GetFieldValue(m_desc[CH_ACQDATE].header_name, var_value);
 		if (var_value.vt != VT_NULL)
 		{
 			COleDateTime o_time = var_value.date;

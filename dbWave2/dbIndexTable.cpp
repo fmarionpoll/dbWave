@@ -68,7 +68,7 @@ void CdbIndexTable::Dump(CDumpContext& dc) const
 // Parameters (out):
 //		iID			assoc table index or -1
 
-long CdbIndexTable::GetIDorCreateIDforString(const CString& cs)
+long CdbIndexTable::GetStringInLinkedTable(const CString& cs)
 {
 	// string is empty - return nothing!
 	if (cs.IsEmpty())
@@ -252,7 +252,7 @@ int CdbIndexTable::AddStringsFromCombo(CComboBox* pcombo)
 			pcombo->GetLBText(i, cs);
 			if (!GetIDFromString(cs, i_id))
 			{
-				i_id = GetIDorCreateIDforString(cs);
+				i_id = GetStringInLinkedTable(cs);
 				nadded++;
 			}
 		}

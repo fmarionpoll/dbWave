@@ -190,32 +190,33 @@ void CPropertiesWnd::UpdatePropList()
 	m_bUpdateCombos = FALSE;
 }
 
-void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup)
+void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) const
 {
 	auto p_db = m_pDoc->m_pDB;
 	DB_ITEMDESC desc;
-	const auto nsubitems = pGroup->GetSubItemsCount();
+	const auto n_sub_items = pGroup->GetSubItemsCount();
 	CdbIndexTable* p2linkedSet;
 
-	for (auto i = 0; i < nsubitems; i++)
+	for (auto i = 0; i < n_sub_items; i++)
 	{
 		auto p_prop = pGroup->GetSubItem(i);
-		const int icol = p_prop->GetData();
-		p_db->GetRecordItemValue(icol, &desc);
+		const int i_column = p_prop->GetData();
+		p_db->GetRecordItemValue(i_column, &desc);
 		p_prop->ResetOriginalValue();
-		switch (p_db->m_mainTableSet.m_desc[icol].typeLocal)
+		switch (p_db->m_mainTableSet.m_desc[i_column].typeLocal)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
 			p_prop->SetValue(desc.csVal);
 			p_prop->SetOriginalValue(desc.csVal);
-			p2linkedSet = p_db->m_mainTableSet.m_desc[icol].plinkedSet;
+			p2linkedSet = p_db->m_mainTableSet.m_desc[i_column].plinkedSet;
 			if (m_bUpdateCombos || (p_prop->GetOptionCount() != p2linkedSet->GetRecordCount()))
 			{
 				p_prop->RemoveAllOptions();
-				COleVariant var_value0, var_value1;
+				COleVariant var_value1;
 				if (p2linkedSet->IsOpen() && !p2linkedSet->IsBOF())
 				{
+					COleVariant var_value0;
 					p2linkedSet->MoveFirst();
 					while (!p2linkedSet->IsEOF())
 					{

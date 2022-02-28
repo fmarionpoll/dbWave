@@ -312,7 +312,7 @@ void DlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
 
 	DlgdbEditField dlg;
 	dlg.m_pMainTable = m_pSet; // address main table
-	dlg.m_csColName = pdesc->csColName; // name of the column
+	dlg.m_csColName = pdesc->header_name; // name of the column
 	dlg.m_pIndexTable = pdesc->plinkedSet; // address secondary table
 	dlg.m_pliIDArray = nullptr; // not a primary field
 	dlg.m_pdbDoc = m_pdbDoc;
@@ -328,7 +328,7 @@ void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
 
 	DlgdbEditField dlg;
 	dlg.m_pMainTable = m_pSet; // address main table
-	dlg.m_csColName = pdesc->csColName; // name of the column
+	dlg.m_csColName = pdesc->header_name; // name of the column
 	dlg.m_pliIDArray = &pdesc->liArray; // address of table of ids
 	dlg.m_pIndexTable = nullptr;
 	dlg.m_pdbDoc = m_pdbDoc;

@@ -345,7 +345,7 @@ void DlgdbEditField::ModifyCurrent()
 			const auto csnew = csvalue.Left(ifound)
 				+ m_cstextreplacewith
 				+ csvalue.Right(csvalue.GetLength() - (m_cstextsearch.GetLength() + ifound));
-			const auto id_new = m_pIndexTable->GetIDorCreateIDforString(csnew);
+			const auto id_new = m_pIndexTable->GetStringInLinkedTable(csnew);
 			if (id_new >= 0)
 			{
 				m_pMainTable->SetLongValue(id_new, m_csColName);

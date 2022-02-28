@@ -331,6 +331,8 @@ void CViewSpikeSort::updateFileParameters()
 
 	if (bfirstupdate || m_pOptionsViewData->bEntireRecord)
 	{
+		if (m_pSpkDoc == nullptr)
+			return;
 		m_timeFirst = 0.f;
 		m_timeLast = (m_pSpkDoc->GetAcqSize() - 1.f) / m_pSpkList->GetAcqSampRate();
 	}

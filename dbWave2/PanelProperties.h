@@ -43,7 +43,7 @@ protected:
 	BOOL m_bchangedProperty;
 
 	int InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0);
-	void UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup);
+	void UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) const;
 	void InitPropList();
 	void UpdatePropList();
 	void SetPropListFont();

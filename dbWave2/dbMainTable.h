@@ -48,23 +48,23 @@ constexpr int NCOLUMNS = 30;
 #include "dbIndexTable.h"
 
 // Used for GetItemDescriptors calls to identify database items
-using DB_ITEMDESC = struct _DB_ITEMDESC
+using DB_ITEMDESC = struct db_item_descriptor
 {
 	// -----------------descriptor and DFX parameters
-	int icol = 0;						// column number in the table
-	CString csColName;					// x - "name" of the column in the main table
-	CString csColNamewithBrackets;		// x - "[name]" used by DFX exchange mechanism
+	int		index = 0;					// column number in the table
+	CString header_name;				// x - "name" of the column in the main table
+	CString dfx_name_with_brackets;		// x - "[name]" used by DFX exchange mechanism
 	CString csColParam;					// x - "nameParam"
 	CString csEQUcondition;				// x - "name = nameParam"
-	CString csAssocTable;
+	CString associated_table_name;
 
 	// ------------------filtering
-	BOOL bFilter1 = false;				// TRUE: only 1 value  selected - stored in lfilterParam1
-	long lfilterParam1 = 0;
+	BOOL	bFilter1 = false;			// TRUE: only 1 value  selected - stored in lfilterParam1
+	long	lfilterParam1 = 0;
 	COleDateTime otfilterParam1;
 	CString csfilterParam1 = nullptr;
 
-	BOOL bFilter2 = false;				// TRUE: selected values - stored in lfilterParam2 ;
+	BOOL	bFilter2 = false;			// TRUE: selected values - stored in lfilterParam2 ;
 	CArray<long, long> lfilterParam2;
 	CArray<COleDateTime, COleDateTime> otfilterParam2;
 	CStringArray csfilterParam2;
@@ -179,7 +179,7 @@ public:
 
 	void SetFilterSingleItem(DB_ITEMDESC* pdesc)
 	{
-		m_desc[pdesc->icol].bFilter1 = pdesc->bFilter1;
-		m_desc[pdesc->icol].lfilterParam1 = pdesc->lfilterParam1;
+		m_desc[pdesc->index].bFilter1 = pdesc->bFilter1;
+		m_desc[pdesc->index].lfilterParam1 = pdesc->lfilterParam1;
 	}
 };

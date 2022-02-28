@@ -49,88 +49,86 @@ protected:
 
 	// Operations
 public:
-	void ImportFileList(CStringArray& fileList, int nColumns = 1, boolean bHeader = false);
-	BOOL IsExtensionRecognizedAsDataFile(CString string) const;
+	void	ImportFileList(CStringArray& fileList, int nColumns = 1, boolean bHeader = false);
+	BOOL	IsExtensionRecognizedAsDataFile(CString string) const;
 
-	BOOL IsFilePresent(CString csFilename)
-	{
+	BOOL	IsFilePresent(CString csFilename) {
 		CFileStatus status;
-		return CFile::GetStatus(csFilename, status);
-	}
+		return CFile::GetStatus(csFilename, status); }
 
 	CWaveFormat* GetWaveFormat(CString filename, BOOL bIsDatFile);
-	BOOL ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
-	BOOL ImportDatabase(CString& filename);
-	BOOL OnNewDocument(LPCTSTR lpszPathName);
+	BOOL	ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
+	BOOL	ImportDatabase(CString& filename);
+	BOOL	OnNewDocument(LPCTSTR lpszPathName);
 	AcqDataDoc* OpenCurrentDataFile();
 	AcqDataDoc* GetCurrent_Dat_Document() const { return m_pDat; }
-	void CloseCurrentDataFile();
+	void	CloseCurrentDataFile();
 	CSpikeDoc* OpenCurrentSpikeFile();
 	CSpikeDoc* GetCurrent_Spk_Document() const { return m_pSpk; }
 
-	void Remove_DuplicateFiles();
-	void Remove_MissingFiles();
-	void Remove_FalseSpkFiles();
-	void Delete_ErasedFiles();
+	void	Remove_DuplicateFiles();
+	void	Remove_MissingFiles();
+	void	Remove_FalseSpkFiles();
+	void	Delete_ErasedFiles();
 
-	long GetDB_nbspikes(); 
-	void SetDB_nbspikes(long nspikes); 
-	long GetDB_nbspikeclasses();
-	void SetDB_nbspikeclasses(long nclasses);
-	void GetAllSpkMaxMin(BOOL bAll, BOOL bRecalc, int* max, int* min);
-	CSize GetSpkMaxMin_y1(BOOL bAll);
+	long	GetDB_nbspikes(); 
+	void	SetDB_nbspikes(long nspikes); 
+	long	GetDB_nbspikeclasses();
+	void	SetDB_nbspikeclasses(long nclasses);
+	void	GetAllSpkMaxMin(BOOL bAll, BOOL bRecalc, int* max, int* min);
+	CSize	GetSpkMaxMin_y1(BOOL bAll);
 
-	void SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
+	void	SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
 
-	void Export_DataAsciiComments(CSharedFile* p_shared_file);
-	void Export_NumberOfSpikes(CSharedFile* pSF);
+	void	Export_DataAsciiComments(CSharedFile* p_shared_file);
+	void	Export_NumberOfSpikes(CSharedFile* pSF);
 	CString Export_DatabaseData(int ioption = 0);
-	void Export_SpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass);
-	void SynchronizeSourceInfos(BOOL bAll);
-	BOOL UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
+	void	Export_SpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass);
+	void	SynchronizeSourceInfos(BOOL bAll);
+	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 
-	void Export_DatafilesAsTXTfiles();
-	BOOL CopyAllFilesintoDirectory(const CString& path);
-	bool BinaryFileCopy(LPCTSTR pszSource, LPCTSTR pszDest);
-	BOOL CreateDirectories(CString path);
+	void	Export_DatafilesAsTXTfiles();
+	BOOL	CopyAllFilesintoDirectory(const CString& path);
+	bool	BinaryFileCopy(LPCTSTR pszSource, LPCTSTR pszDest);
+	BOOL	CreateDirectories(CString path);
 
 protected:
 	static numberIDToText headers[];
-	BOOL transposeFileForExcel(CSharedFile* pSF);
-	sourceData getWaveFormatFromEitherFile(CString cs_filename);
-	void setRecordFileNames(sourceData* record);
-	boolean setRecordSpkClasses(sourceData* record);
-	void setRecordWaveFormat(sourceData* record);
-	boolean importFileSingle(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns,
+	BOOL	transpose_file_for_excel(CSharedFile* pSF);
+	sourceData get_wave_format_from_either_file(CString cs_filename);
+	void	set_record_file_names(sourceData* record);
+	boolean set_record_spk_classes(sourceData* record);
+	void	set_record_wave_format(sourceData* record);
+	boolean import_file_single(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns,
 	                         boolean bHeader);
-	int checkFilesCanbeOpened(CStringArray& filenames, CSharedFile* psf, int nColumns, boolean bHeader);
+	int		check_files_can_be_opened(CStringArray& filenames, CSharedFile* psf, int nColumns, boolean bHeader);
 
-	int index2DArray(int iRow, int nColumns, boolean bHeader)
-	{
-		return (iRow + (bHeader ? 1 : 0)) * nColumns;
-	};
-
-	int getSize2DArray(CStringArray& csArray, int nColumns, boolean bHeader)
-	{
-		return csArray.GetSize() / nColumns - (bHeader ? 1 : 0);
-	}
-
-	void removeRowAt(CStringArray& filenames, int iRow, int nColumns, boolean bHeader);
-	CSharedFile* fileDiscardedMessage(CSharedFile* pSF, CString cs_filename, int irec);
-	void getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns,
+	int		index_2d_array(int iRow, int nColumns, boolean bHeader) {
+		return (iRow + (bHeader ? 1 : 0)) * nColumns; };
+	int		get_size_2d_array(CStringArray& csArray, int nColumns, boolean bHeader) {
+		return csArray.GetSize() / nColumns - (bHeader ? 1 : 0); }
+	void	remove_row_at(CStringArray& filenames, int iRow, int nColumns, boolean bHeader);
+	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
+	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns,
 	                             boolean bHeader);
-	int findHeader(CString& text);
-	void remove_file_from_disk(CString file_name);
+	int		find_header(CString& text);
+	void	remove_file_from_disk(CString file_name);
 
 	// Overrides
 public:
-	void Serialize(CArchive& ar) override;
+	void	Serialize(CArchive& ar) override;
 
-	BOOL OnNewDocument() override;
-	BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
-	BOOL OnSaveDocument(LPCTSTR lpszPathName) override;
-	HMENU GetDefaultMenu() override; // get menu depending on state
-	void UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint);
+	BOOL	OnNewDocument() override;
+	BOOL	OnOpenDocument(LPCTSTR lpszPathName) override;
+	BOOL	OnSaveDocument(LPCTSTR lpszPathName) override;
+	HMENU	GetDefaultMenu() override; // get menu depending on state
+	/**
+	 * \brief 
+	 * \param pSender 
+	 * \param lHint 
+	 * \param pHint 
+	 */
+	void	UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint);
 
 	// Implementation
 public:
@@ -142,39 +140,39 @@ public:
 
 	// DAO database functions
 public:
-	long GetDB_NRecords() { return m_pDB->GetNRecords(); }
-	CDaoRecordset* GetDB_Recordset() { return &m_pDB->m_mainTableSet; }
+	long	GetDB_NRecords() const { return m_pDB->GetNRecords(); }
+	CDaoRecordset* GetDB_Recordset() const { return &m_pDB->m_mainTableSet; }
 
-	void DBRefreshQuery()
+	void	 DBRefreshQuery() const
 	{
 		if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
 		m_pDB->m_mainTableSet.RefreshQuery();
 	}
 
-	void DBDeleteCurrentRecord();
+	void	DBDeleteCurrentRecord();
 	CString GetDB_CurrentDatFileName(BOOL bTest = FALSE);
 	CString GetDB_CurrentSpkFileName(BOOL bTest = FALSE);
 	CString SetDB_CurrentSpikeFileName();
-	void SetDB_DataLen(long len) { m_pDB->SetDataLen(len); }
-	long GetDB_DataLen();
-	void SetDB_CurrentRecordFlag(int flag);
-	int GetDB_CurrentRecordFlag() { return m_pDB->m_mainTableSet.m_flag; }
-	void SetDB_PathsRelative_to_DataBaseFile();
-	void SetDB_PathsAbsolute();
-	void DBTransferDatPathToSpkPath();
-	void DBDeleteUnusedEntries();
+	void	SetDB_DataLen(long len) const { m_pDB->SetDataLen(len); }
+	long	GetDB_DataLen();
+	void	SetDB_CurrentRecordFlag(int flag);
+	int		GetDB_CurrentRecordFlag() const { return m_pDB->m_mainTableSet.m_flag; }
+	void	SetDB_PathsRelative_to_DataBaseFile();
+	void	SetDB_PathsAbsolute();
+	void	DBTransferDatPathToSpkPath();
+	void	DBDeleteUnusedEntries();
 
-	long GetDB_CurrentRecordPosition();
-	long GetDB_CurrentRecordID();
-	BOOL SetDB_CurrentRecordPosition(long ifile) { return m_pDB->SetIndexCurrentFile(ifile); }
-	BOOL DBMoveToID(long recordID) { return m_pDB->MoveToID(recordID); }
-	BOOL DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
-	BOOL DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
-	BOOL DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
-	BOOL DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
+	long	GetDB_CurrentRecordPosition();
+	long	GetDB_CurrentRecordID();
+	BOOL	SetDB_CurrentRecordPosition(long i_file) { return m_pDB->SetIndexCurrentFile(i_file); }
+	BOOL	DBMoveToID(long record_id) { return m_pDB->MoveToID(record_id); }
+	BOOL	DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
+	BOOL	DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
+	BOOL	DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
+	BOOL	DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
 
 protected:
-	BOOL OpenDatabase(LPCTSTR lpszPathName);
+	BOOL	OpenDatabase(LPCTSTR lpszPathName);
 
 	// Generated message map functions
 protected:

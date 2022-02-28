@@ -16,18 +16,18 @@ public:
 
 	// Attributes
 public:
-	WORD m_wVersion;
+	WORD m_wVersion = 7;
 	CTime m_detectiondate; // date of creation
-	CString m_comment; // spike comments
-	CString m_acqfile; // data source file
-	CString m_newpath;
-	CString m_acqcomment; // data acquisition comment
-	CWaveFormat m_wformat;
-	CTime m_acqtime; // data acquisition time
-	float m_acqrate; // acquisition sampling rate
-	long m_acqsize; // duration (nb of pts/chan)
+	CString m_comment = _T(""); // spike comments
+	CString m_acqfile = _T(""); // data source file
+	CString m_newpath = _T("");
+	CString m_acqcomment = _T(""); // data acquisition comment
+	CWaveFormat m_wformat {};
+	CTime m_acqtime {}; // data acquisition time
+	float m_acqrate = 1.f; // acquisition sampling rate
+	long m_acqsize = 0; // duration (nb of pts/chan)
 	CSpikeClass m_spkclass; // list of templates
-	int m_currspklist;
+	int m_currspklist = -1;
 	CIntervalsAndLevels m_stimIntervals; // stimulus array
 
 protected:
@@ -42,7 +42,7 @@ public:
 	CTime GetDate() const { return m_detectiondate; }
 	CString GetComment() const { return m_comment; }
 	CTime GetAcqTime() const { return m_acqtime; }
-	float GetAcqDuration() const { return m_acqsize / m_acqrate; }
+	float GetAcqDuration() const { return static_cast<float>(m_acqsize) / m_acqrate; }
 	long GetAcqSize() const { return m_acqsize; }
 	float GetAcqRate() const { return m_acqrate; }
 
@@ -76,10 +76,10 @@ public:
 	void ExportTableTitle(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nfiles);
 	void ExportTableColHeaders_db(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
 	void ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
-	void _ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, int ispklist, int iclass);
-	void _ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist, int iclass);
-	void _ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
-	void _ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass);
+	void export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, int ispklist, int iclass);
+	void export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist, int iclass);
+	void export_spk_psth(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
+	void export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass);
 
 	// Implementation
 public:

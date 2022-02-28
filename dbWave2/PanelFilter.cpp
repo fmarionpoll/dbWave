@@ -328,7 +328,7 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 	CString cs; // to construct insect and sensillum number (for example)
 	CString str; // to store FindFirst filter
 	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
-	const auto cscolhead = pdesc->csColName;
+	const auto cscolhead = pdesc->header_name;
 	const auto array_size = pdesc->liArray.GetSize();
 	if (pdesc->bFilter2)
 	{
@@ -363,7 +363,7 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 {
 	CString cs;
-	auto str2 = pdesc->csColName;
+	auto str2 = pdesc->header_name;
 	ASSERT(!str2.IsEmpty());
 
 	auto plinked_set = pdesc->plinkedSet;
@@ -390,7 +390,7 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 				plinked_set->GetFieldValue(1, var_value1);
 				const auto i_id = var_value1.lVal;
 				// add string only if found into p_maintable_set...
-				cs.Format(_T("%s=%li"), (LPCTSTR)pdesc->csColName, i_id);
+				cs.Format(_T("%s=%li"), (LPCTSTR)pdesc->header_name, i_id);
 				const auto flag = p_set->FindFirst(cs);
 				if (flag != 0)
 				{
@@ -406,7 +406,7 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 {
 	CString cs; // to construct date
-	const auto cscolhead = pdesc->csColName;
+	const auto cscolhead = pdesc->header_name;
 	CString str; // to construct filter
 	auto p_maintable_set = &m_pDoc->m_pDB->m_mainTableSet;
 	const auto array_size = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();

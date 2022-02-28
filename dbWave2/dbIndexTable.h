@@ -23,7 +23,7 @@ public:
 
 	// operations
 	void SetNames(CString csdefaultSQL, CString DFX_cs, CString DFX_ID);
-	long GetIDorCreateIDforString(const CString& cs);
+	long GetStringInLinkedTable(const CString& cs);
 	BOOL GetIDFromString(CString cs, long& iID);
 	BOOL SeekID(long iID);
 	CString GetStringFromID(long iID);

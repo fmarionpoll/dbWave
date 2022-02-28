@@ -15,16 +15,9 @@ IMPLEMENT_SERIAL(CSpikeDoc, CDocument, 1 /* schema number*/)
 
 CSpikeDoc::CSpikeDoc()
 {
-	m_wVersion = 7;
 	m_detectiondate = CTime::GetCurrentTime();
-	m_comment = "";
-	m_acqfile = "";
 	m_acqtime = m_detectiondate;
-	m_acqrate = 1.f;
-	m_acqsize = 0;
-	m_newpath = "";
 	spikelist_array.SetSize(1);
-	m_currspklist = -1; //0;
 }
 
 void CSpikeDoc::ClearData()
@@ -105,10 +98,9 @@ void CSpikeDoc::Serialize(CArchive& ar)
 			readBeforeVersion6(ar, wwVersion);
 		else
 		{
-			//ASSERT(FALSE);
-			//CString message;
-			//message.Format(_T("Spike file version not recognized: %i"), wwVersion);
-			//AfxMessageBox(message, MB_OK);
+			CString message;
+			message.Format(_T("Spike file version not recognized: %i"), wwVersion);
+			AfxMessageBox(message, MB_OK);
 		}
 	}
 }
@@ -418,7 +410,7 @@ CString CSpikeDoc::GetFileInfos()
 // each line represents 1 recording
 // we start with a header, then each file is scanned and exported
 // if nintervals < 0: export all spikes // feb 23, 2009
-void CSpikeDoc::_ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass)
+void CSpikeDoc::export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass)
 {
 	CString cs_dummy;
 	const auto pspklist = &spikelist_array[ispklist];
@@ -481,11 +473,11 @@ void CSpikeDoc::ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, in
 			continue;
 		const auto iclass = pspklist->GetclassID(kclass);
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
-		_ExportSpkLatencies(pSF, vdS, nintervals, m_currspklist, iclass);
+		export_spk_latencies(pSF, vdS, nintervals, m_currspklist, iclass);
 	}
 }
 
-void CSpikeDoc::_ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass)
+void CSpikeDoc::export_spk_psth(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass)
 {
 	CString cs_dummy;
 	const auto pspklist = &spikelist_array[ispklist];
@@ -634,7 +626,7 @@ void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* p
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
 		// test if we should continue
 		if (!(FALSE == vdS->bexportzero) && (nbspk_for_thisclass == 0))
-			_ExportSpkPSTH(pSF, vdS, plSum0, m_currspklist, iclass);
+			export_spk_psth(pSF, vdS, plSum0, m_currspklist, iclass);
 
 		cs_dummy = _T("\r\n");
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -644,7 +636,7 @@ void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* p
 // export histograms of the amplitude of the spikes found in each file of the file series
 // export type = 4
 // same tb as PSTH: each line represents one record, 1 class
-void CSpikeDoc::_ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist0, int ispklist,
+void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist0, int ispklist,
                                           int iclass)
 {
 	// ................................DATA
@@ -777,7 +769,7 @@ void CSpikeDoc::ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* v
 	{
 		const auto iclass = pspklist->GetclassID(kclass);
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
-		_ExportSpkAmplitHistogram(pSF, vdS, pHist0, m_currspklist, iclass);
+		export_spk_amplitude_histogram(pSF, vdS, pHist0, m_currspklist, iclass);
 	}
 }
 
@@ -1591,7 +1583,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 	return n;
 }
 
-void CSpikeDoc::_ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist,
+void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist,
                                       int iclass)
 {
 	CString cs_dummy;
@@ -1717,7 +1709,7 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 		// ................................COMMENTS
 		const auto iclass = pspklist->GetclassID(kclass);
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
-		_ExportSpkAverageWave(pSF, vdS, pDoubl0, m_currspklist, iclass);
+		export_spk_average_wave(pSF, vdS, pDoubl0, m_currspklist, iclass);
 	}
 }
 
