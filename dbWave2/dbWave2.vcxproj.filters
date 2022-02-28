@@ -231,13 +231,13 @@
     <ClCompile Include="Controls\cdxCRotBevelLine.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="dbIndexTable.cpp">
+    <ClCompile Include="dbWaveDatabaseIndexTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dbMainTable.cpp">
+    <ClCompile Include="dbWaveDatabaseMainTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dbWdatabase.cpp">
+    <ClCompile Include="dbWaveDatabase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StretchControls.cpp">
@@ -665,13 +665,13 @@
     <ClInclude Include="DlgFileNew1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbIndexTable.h">
+    <ClInclude Include="dbWaveDatabaseIndexTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbMainTable.h">
+    <ClInclude Include="dbWaveDatabaseMainTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbWdatabase.h">
+    <ClInclude Include="dbWaveDatabase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CPivotCache.h">

@@ -423,8 +423,8 @@ int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int ico
 
 		CMFCPropertyGridProperty* p_prop;
 		CString cs_comment;
-		CString cs_title = CdbWdatabase::m_desctab[idesctab].szDescriptor;
-		//CString cs_title = p_database->m_desctab[idesctab].szDescriptor;
+		CString cs_title = CdbWaveDatabase::m_desctab[idesctab].description;
+		//CString cs_title = p_database->m_desctab[idesctab].descriptor;
 
 		switch (desc.typeLocal)
 		{

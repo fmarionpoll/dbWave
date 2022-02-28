@@ -1,7 +1,7 @@
 #include "StdAfx.h"
-#include "dbIndexTable.h"
-#include "dbMainTable.h"
-#include "dbWdatabase.h"
+#include "dbWaveDatabaseIndexTable.h"
+#include "dbWaveDataBaseMainTable.h"
+#include "dbWaveDatabase.h"
 
 #include "dbWave.h"
 
@@ -9,17 +9,8 @@
 #define new DEBUG_NEW
 #endif
 
-struct ColumnDefinition
-{
-	int		number;
-	CString header_name;
-	CString descriptor;
-	int		format_code;
-	CString secondary_table_name;
 
-};
-
-TABCOL CdbWdatabase::m_desctab[NTABLECOLS] =
+database_column_properties CdbWaveDatabase::m_desctab[NTABLECOLS] =
 {
 	//table col header---friendly description for properties--type of field--name of attached table
 	CH_ID, _T("ID"), _T("ID record"), FIELD_LONG, _T(""), // 0
@@ -53,49 +44,47 @@ TABCOL CdbWdatabase::m_desctab[NTABLECOLS] =
 	CH_EXPT_ID, _T("expt_ID"), _T("Experiment"), FIELD_IND_TEXT, _T("expt") // 28
 };
 
-CdbWdatabase::CdbWdatabase() : m_pcurrentDataFilename(nullptr)
+CdbWaveDatabase::CdbWaveDatabase() 
 {
 	for (auto i = 0; i < NTABLECOLS; i++)
 	{
-		CString dummy = m_desctab[i].szTableCol;
+		CString dummy = m_desctab[i].header_name;
 		m_mainTableSet.m_desc[i].header_name = dummy;
 		m_mainTableSet.m_desc[i].dfx_name_with_brackets = _T("[") + dummy + _T("]");
 		m_mainTableSet.m_desc[i].csColParam = dummy + _T("Param");
 		m_mainTableSet.m_desc[i].csEQUcondition = dummy + _T("=") + m_mainTableSet.m_desc[i].csColParam;
-		m_mainTableSet.m_desc[i].typeLocal = m_desctab[i].propCol;
+		m_mainTableSet.m_desc[i].typeLocal = m_desctab[i].format_code_number;
 	}
 
 	// SetNames(CString defaultSQL /* or table name*/, CString DFX_cs, CString DFX_ID)
-	m_stimSet.SetNames(m_desctab[CH_STIM_ID].szRelTable, _T("stim"), _T("stimID"));
-	m_concSet.SetNames(m_desctab[CH_CONC_ID].szRelTable, _T("conc"), _T("concID"));
-	m_operatorSet.SetNames(m_desctab[CH_OPERATOR_ID].szRelTable, _T("operator"), _T("operatorID"));
-	m_insectSet.SetNames(m_desctab[CH_INSECT_ID].szRelTable, _T("insect"), _T("insectID"));
-	m_locationSet.SetNames(m_desctab[CH_LOCATION_ID].szRelTable, _T("type"), _T("typeID"));
-	m_pathSet.SetNames(m_desctab[CH_PATH_ID].szRelTable, _T("path"), _T("pathID"));
-	m_sensillumSet.SetNames(m_desctab[CH_SENSILLUM_ID].szRelTable, _T("stage"), _T("stageID"));
-	m_sexSet.SetNames(m_desctab[CH_SEX_ID].szRelTable, _T("sex"), _T("sexID"));
-	m_strainSet.SetNames(m_desctab[CH_STRAIN_ID].szRelTable, _T("strain"), _T("strainID"));
-	m_exptSet.SetNames(m_desctab[CH_EXPT_ID].szRelTable, _T("expt"), _T("exptID"));
+	m_stimSet.SetNames(m_desctab[CH_STIM_ID].attached_table, _T("stim"), _T("stimID"));
+	m_concSet.SetNames(m_desctab[CH_CONC_ID].attached_table, _T("conc"), _T("concID"));
+	m_operatorSet.SetNames(m_desctab[CH_OPERATOR_ID].attached_table, _T("operator"), _T("operatorID"));
+	m_insectSet.SetNames(m_desctab[CH_INSECT_ID].attached_table, _T("insect"), _T("insectID"));
+	m_locationSet.SetNames(m_desctab[CH_LOCATION_ID].attached_table, _T("type"), _T("typeID"));
+	m_pathSet.SetNames(m_desctab[CH_PATH_ID].attached_table, _T("path"), _T("pathID"));
+	m_sensillumSet.SetNames(m_desctab[CH_SENSILLUM_ID].attached_table, _T("stage"), _T("stageID"));
+	m_sexSet.SetNames(m_desctab[CH_SEX_ID].attached_table, _T("sex"), _T("sexID"));
+	m_strainSet.SetNames(m_desctab[CH_STRAIN_ID].attached_table, _T("strain"), _T("strainID"));
+	m_exptSet.SetNames(m_desctab[CH_EXPT_ID].attached_table, _T("expt"), _T("exptID"));
 
-	m_mainTableSet.m_strSort = m_desctab[CH_ACQDATE].szTableCol;
-	m_databasePath.Empty();
-	m_pcurrentSpkFileName = nullptr;
+	m_mainTableSet.m_strSort = m_desctab[CH_ACQDATE].header_name;
 }
 
-void CdbWdatabase::Attach(CString* pstrDataName, CString* pstrSpkName)
+void CdbWaveDatabase::Attach(CString* pstrDataName, CString* pstrSpkName)
 {
-	m_pcurrentDataFilename = pstrDataName;
-	m_pcurrentSpkFileName = pstrSpkName;
+	m_current_data_filename = pstrDataName;
+	m_p_current_spike_filename = pstrSpkName;
 }
 
-CdbWdatabase::~CdbWdatabase()
+CdbWaveDatabase::~CdbWaveDatabase()
 {
 	CloseDatabase();
 }
 
-// CdbWdatabase member functions
+// CdbWaveDatabase member functions
 
-BOOL CdbWdatabase::CreateMainTable(CString csTable)
+BOOL CdbWaveDatabase::CreateMainTable(CString csTable)
 {
 	CDaoTableDef table_def(this);
 	table_def.Create(csTable);
@@ -188,12 +177,12 @@ BOOL CdbWdatabase::CreateMainTable(CString csTable)
 	return TRUE;
 }
 
-BOOL CdbWdatabase::CreateRelationwith2AssocTables(const LPCTSTR lpsz_foreign_table, const int column_first,
+BOOL CdbWaveDatabase::CreateRelationwith2AssocTables(const LPCTSTR lpsz_foreign_table, const int column_first,
                                                   const int column_last)
 {
 	try
 	{
-		const LPCTSTR lpsz_table = m_desctab[column_first].szRelTable;
+		const LPCTSTR lpsz_table = m_desctab[column_first].attached_table;
 		CDaoRelationInfo rl_info;
 		rl_info.m_strTable = lpsz_table;
 		rl_info.m_strName.Format(_T("%s_%s"), lpsz_foreign_table, lpsz_table);
@@ -226,12 +215,12 @@ BOOL CdbWdatabase::CreateRelationwith2AssocTables(const LPCTSTR lpsz_foreign_tab
 }
 
 // insect name: "table_insectname" relates "insect" table with "ID" and "insectname_ID"
-BOOL CdbWdatabase::CreateRelationwithAssocTable(const LPCTSTR lpsz_foreign_table, const int column,
+BOOL CdbWaveDatabase::CreateRelationwithAssocTable(const LPCTSTR lpsz_foreign_table, const int column,
                                                 const long l_attributes, CdbIndexTable* p_link)
 {
 	try
 	{
-		const LPCTSTR lpsz_table = m_desctab[column].szRelTable;
+		const LPCTSTR lpsz_table = m_desctab[column].attached_table;
 		m_mainTableSet.m_desc[column].associated_table_name = lpsz_table;
 		CString cs_rel; // unique name of the relation object (max 40 chars)
 		cs_rel.Format(_T("%s_%s"), lpsz_foreign_table, lpsz_table);
@@ -250,20 +239,20 @@ BOOL CdbWdatabase::CreateRelationwithAssocTable(const LPCTSTR lpsz_foreign_table
 	return TRUE;
 }
 
-CString CdbWdatabase::GetDataBasePath()
+CString CdbWaveDatabase::GetDataBasePath()
 {
-	return m_databasePath;
+	return m_database_path;
 }
 
-void CdbWdatabase::SetDataBasePath()
+void CdbWaveDatabase::SetDataBasePath()
 {
 	auto filename = GetName();
 	const auto last_slash = filename.ReverseFind('\\');
-	m_databasePath = filename.Left(last_slash + 1);
-	m_databasePath.MakeLower();
+	m_database_path = filename.Left(last_slash + 1);
+	m_database_path.MakeLower();
 }
 
-void CdbWdatabase::CreateTables()
+void CdbWaveDatabase::CreateTables()
 {
 	SetDataBasePath();
 
@@ -286,7 +275,7 @@ void CdbWdatabase::CreateTables()
 		GetRecordItemDescriptor(column);
 }
 
-BOOL CdbWdatabase::OpenTables()
+BOOL CdbWaveDatabase::OpenTables()
 {
 	SetDataBasePath();
 
@@ -318,17 +307,17 @@ BOOL CdbWdatabase::OpenTables()
 			switch (field_count)
 			{
 			case 19:
-				add_19_20(table_def, cs_table, l_attr);
+				add_column_19_20(table_def, cs_table, l_attr);
 			case 21:
-				add_21(table_def, cs_table, l_attr);
+				add_column_21(table_def, cs_table, l_attr);
 			case 22:
-				add_22_23(table_def, cs_table, l_attr);
+				add_column_22_23(table_def, cs_table, l_attr);
 			case 24:
-				add_24_25(table_def, cs_table, l_attr);
+				add_column_24_25(table_def, cs_table, l_attr);
 			case 26:
-				add_26_27(table_def, cs_table, l_attr);
+				add_column_26_27(table_def, cs_table, l_attr);
 			case 28:
-				add_28(table_def, cs_table, l_attr);
+				add_column_28(table_def, cs_table, l_attr);
 				break;
 
 			default:
@@ -379,7 +368,7 @@ BOOL CdbWdatabase::OpenTables()
 	return TRUE;
 }
 
-void CdbWdatabase::add_28(CDaoTableDef& table_def, CString cs_table, long l_attr)
+void CdbWaveDatabase::add_column_28(CDaoTableDef& table_def, CString cs_table, long l_attr)
 {
 	table_def.Open(cs_table);
 	table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].header_name, dbLong, 4, 0); // expt_ID
@@ -389,7 +378,7 @@ void CdbWdatabase::add_28(CDaoTableDef& table_def, CString cs_table, long l_attr
 	table_def.Close();
 }
 
-void CdbWdatabase::add_26_27(CDaoTableDef& table_def, CString cs_table, long l_attr)
+void CdbWaveDatabase::add_column_26_27(CDaoTableDef& table_def, CString cs_table, long l_attr)
 {
 	table_def.Open(cs_table);
 	table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_DAY].header_name, dbDate, 8, 0); // acqdate_day
@@ -397,7 +386,7 @@ void CdbWdatabase::add_26_27(CDaoTableDef& table_def, CString cs_table, long l_a
 	table_def.Close();
 }
 
-void CdbWdatabase::add_24_25(CDaoTableDef& table_def, CString cs_table, long l_attr)
+void CdbWaveDatabase::add_column_24_25(CDaoTableDef& table_def, CString cs_table, long l_attr)
 {
 	table_def.Open(cs_table);
 	table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].header_name, dbLong, 4, 0); // repeatID
@@ -405,7 +394,7 @@ void CdbWdatabase::add_24_25(CDaoTableDef& table_def, CString cs_table, long l_a
 	table_def.Close();
 }
 
-void CdbWdatabase::add_22_23(CDaoTableDef& table_def, CString cs_table, long l_attr)
+void CdbWaveDatabase::add_column_22_23(CDaoTableDef& table_def, CString cs_table, long l_attr)
 {
 	table_def.Open(cs_table);
 
@@ -453,14 +442,14 @@ void CdbWdatabase::add_22_23(CDaoTableDef& table_def, CString cs_table, long l_a
 	table_def.Close();
 }
 
-void CdbWdatabase::add_21(CDaoTableDef& table_def, CString cs_table, long l_attr)
+void CdbWaveDatabase::add_column_21(CDaoTableDef& table_def, CString cs_table, long l_attr)
 {
 	table_def.Open(cs_table);
 	table_def.CreateField(m_mainTableSet.m_desc[CH_FLAG].header_name, dbLong, 4, 0); // flag
 	table_def.Close();
 }
 
-void CdbWdatabase::add_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr)
+void CdbWaveDatabase::add_column_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr)
 {
 	table_def.Open(cs_table);
 	CString cs_rel = _T("table_Rel1");
@@ -476,13 +465,13 @@ void CdbWdatabase::add_19_20(CDaoTableDef& table_def, CString cs_table, long l_a
 	table_def.Close();
 }
 
-void CdbWdatabase::OpenIndexTable(CdbIndexTable* p_index_table_set)
+void CdbWaveDatabase::OpenIndexTable(CdbIndexTable* p_index_table_set)
 {
 	p_index_table_set->m_defaultName = GetName();
 	p_index_table_set->Open(dbOpenTable, nullptr, 0);
 }
 
-void CdbWdatabase::CloseDatabase()
+void CdbWaveDatabase::CloseDatabase()
 {
 	if (IsOpen())
 	{
@@ -506,7 +495,7 @@ void CdbWdatabase::CloseDatabase()
 	}
 }
 
-void CdbWdatabase::UpdateTables()
+void CdbWaveDatabase::UpdateTables()
 {
 	// For each table, call Update() if GetEditMode ()
 	//	= dbEditInProgress (Edit has been called)
@@ -532,7 +521,7 @@ void CdbWdatabase::UpdateTables()
 		m_exptSet.Update();
 }
 
-BOOL CdbWdatabase::MoveToID(const long record_id)
+BOOL CdbWaveDatabase::MoveToID(const long record_id)
 {
 	CString str;
 	str.Format(_T("ID=%li"), record_id);
@@ -550,21 +539,21 @@ BOOL CdbWdatabase::MoveToID(const long record_id)
 	return TRUE;
 }
 
-CString CdbWdatabase::GetFilePath(const int i_id)
+CString CdbWaveDatabase::GetFilePath(const int i_id)
 {
 	auto cs_path = m_pathSet.GetStringFromID(i_id);
 	if (IsRelativePath(cs_path))
-		cs_path = m_databasePath + cs_path;
+		cs_path = m_database_path + cs_path;
 	return cs_path;
 }
 
-CString CdbWdatabase::GetRelativePathFromString(const CString& cs_path)
+CString CdbWaveDatabase::GetRelativePathFromString(const CString& cs_path)
 {
 	TCHAR sz_out[MAX_PATH] = _T("");
 	if (cs_path.IsEmpty())
 		return cs_path;
 
-	const auto flag = PathRelativePathTo(sz_out, m_databasePath, FILE_ATTRIBUTE_DIRECTORY, cs_path,
+	const auto flag = PathRelativePathTo(sz_out, m_database_path, FILE_ATTRIBUTE_DIRECTORY, cs_path,
 	                                     FILE_ATTRIBUTE_DIRECTORY);
 	CString cs_out = sz_out;
 	if (!flag)
@@ -573,7 +562,7 @@ CString CdbWdatabase::GetRelativePathFromString(const CString& cs_path)
 	return cs_out;
 }
 
-long CdbWdatabase::GetRelativePathFromID(const long i_id)
+long CdbWaveDatabase::GetRelativePathFromID(const long i_id)
 {
 	long inew_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
@@ -590,7 +579,7 @@ long CdbWdatabase::GetRelativePathFromID(const long i_id)
 	return inew_id;
 }
 
-void CdbWdatabase::ConvertPathtoRelativePath(const long i_col_path)
+void CdbWaveDatabase::ConvertPathtoRelativePath(const long i_col_path)
 {
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
@@ -605,7 +594,7 @@ void CdbWdatabase::ConvertPathtoRelativePath(const long i_col_path)
 	}
 }
 
-void CdbWdatabase::ConvertPathTabletoRelativePath()
+void CdbWaveDatabase::ConvertPathTabletoRelativePath()
 {
 	const auto cs_origin = GetDataBasePath();
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
@@ -636,13 +625,13 @@ void CdbWdatabase::ConvertPathTabletoRelativePath()
 	}
 }
 
-CString CdbWdatabase::GetAbsolutePathFromString(CString cs_path)
+CString CdbWaveDatabase::GetAbsolutePathFromString(CString cs_path)
 {
 	TCHAR sz_out[MAX_PATH] = _T("");
 	if (cs_path.IsEmpty())
 		return cs_path;
 
-	const auto cs_relative = m_databasePath + cs_path;
+	const auto cs_relative = m_database_path + cs_path;
 	const auto flag = PathCanonicalize(sz_out, cs_relative);
 	CString cs_out = sz_out;
 	if (!flag)
@@ -650,7 +639,7 @@ CString CdbWdatabase::GetAbsolutePathFromString(CString cs_path)
 	return cs_out;
 }
 
-long CdbWdatabase::GetAbsolutePathFromID(const long i_id)
+long CdbWaveDatabase::GetAbsolutePathFromID(const long i_id)
 {
 	long new_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
@@ -667,7 +656,7 @@ long CdbWdatabase::GetAbsolutePathFromID(const long i_id)
 	return new_id;
 }
 
-void CdbWdatabase::ConvertPathtoAbsolutePath(const int i_col_path)
+void CdbWaveDatabase::ConvertPathtoAbsolutePath(const int i_col_path)
 {
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
@@ -682,7 +671,7 @@ void CdbWdatabase::ConvertPathtoAbsolutePath(const int i_col_path)
 	}
 }
 
-void CdbWdatabase::ConvertPathTabletoAbsolutePath()
+void CdbWaveDatabase::ConvertPathTabletoAbsolutePath()
 {
 	const auto cs_origin = GetDataBasePath();
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
@@ -713,13 +702,13 @@ void CdbWdatabase::ConvertPathTabletoAbsolutePath()
 	}
 }
 
-void CdbWdatabase::GetFilenamesFromCurrentRecord()
+void CdbWaveDatabase::GetFilenamesFromCurrentRecord()
 {
-	*m_pcurrentDataFilename = GetDatFilenameFromCurrentRecord();
-	*m_pcurrentSpkFileName = GetSpkFilenameFromCurrentRecord();
+	*m_current_data_filename = GetDatFilenameFromCurrentRecord();
+	*m_p_current_spike_filename = GetSpkFilenameFromCurrentRecord();
 }
 
-CString CdbWdatabase::GetDatFilenameFromCurrentRecord()
+CString CdbWaveDatabase::GetDatFilenameFromCurrentRecord()
 {
 	CString filename;
 	filename.Empty();
@@ -730,7 +719,7 @@ CString CdbWdatabase::GetDatFilenameFromCurrentRecord()
 	return filename;
 }
 
-CString CdbWdatabase::GetSpkFilenameFromCurrentRecord()
+CString CdbWaveDatabase::GetSpkFilenameFromCurrentRecord()
 {
 	CString filename;
 	filename.Empty();
@@ -749,7 +738,7 @@ CString CdbWdatabase::GetSpkFilenameFromCurrentRecord()
 	return filename;
 }
 
-BOOL CdbWdatabase::MoveRecord(UINT nIDMoveCommand)
+BOOL CdbWaveDatabase::MoveRecord(UINT nIDMoveCommand)
 {
 	UpdateTables();
 	auto flag = TRUE;
@@ -786,7 +775,7 @@ BOOL CdbWdatabase::MoveRecord(UINT nIDMoveCommand)
 	return flag;
 }
 
-BOOL CdbWdatabase::SetIndexCurrentFile(long ifile)
+BOOL CdbWaveDatabase::SetIndexCurrentFile(long ifile)
 {
 	// save any pending edit or add operation
 	UpdateTables();
@@ -820,7 +809,7 @@ BOOL CdbWdatabase::SetIndexCurrentFile(long ifile)
 // DB_ITEMDESC filled
 // flag = FALSE if the column is not found
 
-DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
+DB_ITEMDESC* CdbWaveDatabase::GetRecordItemDescriptor(int icol)
 {
 	const auto p_desc = &m_mainTableSet.m_desc[icol];
 	p_desc->index = icol;
@@ -957,7 +946,7 @@ DB_ITEMDESC* CdbWdatabase::GetRecordItemDescriptor(int icol)
 	return p_desc;
 }
 
-BOOL CdbWdatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_desc)
+BOOL CdbWaveDatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_desc)
 {
 	auto flag = TRUE;
 	COleVariant var_value;
@@ -1027,7 +1016,7 @@ BOOL CdbWdatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_desc)
 	return flag;
 }
 
-BOOL CdbWdatabase::SetRecordItemValue(const int ich, DB_ITEMDESC* p_desc)
+BOOL CdbWaveDatabase::SetRecordItemValue(const int ich, DB_ITEMDESC* p_desc)
 {
 	auto flag = TRUE;
 	long dummy_id;
@@ -1092,7 +1081,7 @@ BOOL CdbWdatabase::SetRecordItemValue(const int ich, DB_ITEMDESC* p_desc)
 	return flag;
 }
 
-BOOL CdbWdatabase::ImportRecordfromDatabase(CdbWdatabase* p_w_database)
+BOOL CdbWaveDatabase::ImportRecordfromDatabase(CdbWaveDatabase* p_w_database)
 {
 	// variables
 	DB_ITEMDESC desc;
@@ -1110,7 +1099,7 @@ BOOL CdbWdatabase::ImportRecordfromDatabase(CdbWdatabase* p_w_database)
 	return flag;
 }
 
-void CdbWdatabase::TransferWaveFormatDataToRecord(CWaveFormat* p_wf)
+void CdbWaveDatabase::TransferWaveFormatDataToRecord(CWaveFormat* p_wf)
 {
 	// set time -- o_time
 	COleDateTime o_time;
@@ -1150,7 +1139,7 @@ void CdbWdatabase::TransferWaveFormatDataToRecord(CWaveFormat* p_wf)
 	m_mainTableSet.m_flag = p_wf->flag;
 }
 
-void CdbWdatabase::DeleteUnusedEntriesInAccessoryTables()
+void CdbWaveDatabase::DeleteUnusedEntriesInAccessoryTables()
 {
 	DeleteUnusedEntriesInAttachedTable(&m_operatorSet, CH_OPERATOR_ID, -1);
 	DeleteUnusedEntriesInAttachedTable(&m_insectSet, CH_INSECT_ID, -1);
@@ -1164,7 +1153,7 @@ void CdbWdatabase::DeleteUnusedEntriesInAccessoryTables()
 	DeleteUnusedEntriesInAttachedTable(&m_pathSet, CH_PATH_ID, CH_PATH2_ID);
 }
 
-void CdbWdatabase::DeleteUnusedEntriesInAttachedTable(CdbIndexTable* p_index_table, const int first_column,
+void CdbWaveDatabase::DeleteUnusedEntriesInAttachedTable(CdbIndexTable* p_index_table, const int first_column,
                                                       const int last_column)
 {
 	COleVariant var_value0, var_value1;

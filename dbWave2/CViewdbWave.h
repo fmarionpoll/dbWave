@@ -1,10 +1,6 @@
 #pragma once
 
 #include "DataListCtrl.h"
-#include "dbMainTable.h"
-#include "ChartData.h"
-#include "ChartSpikeBar.h"
-#include "ChartSpikeShape.h"
 #include "Editctrl.h"
 #include "CViewDao.h"
 

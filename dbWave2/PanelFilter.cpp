@@ -227,8 +227,8 @@ void CFilterWnd::InitFilterList()
 	{
 		for (auto i = 0; i < NTABLECOLS; i++)
 		{
-			//p_combo->AddSortedItem(p_db->m_desctab[i].szDescriptor, i);
-			p_combo->AddSortedItem(CdbWdatabase::m_desctab[i].szDescriptor, i);
+			//p_combo->AddSortedItem(p_db->m_desctab[i].descriptor, i);
+			p_combo->AddSortedItem(CdbWaveDatabase::m_desctab[i].description, i);
 		}
 	}
 	p_combo->SelectItem(p_db->m_mainTableSet.m_strSort);
@@ -249,13 +249,13 @@ void CFilterWnd::InitFilterList()
 	{
 		const auto icol = m_noCol[i];
 		const auto pdesc = p_db->GetRecordItemDescriptor(icol);
-		m_htreeitem[i] = m_wndFilterView.InsertItem(CdbWdatabase::m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
-		//m_htreeitem[i] = m_wndFilterView.InsertItem(p_db->m_desctab[icol].szDescriptor, TVI_ROOT); //hRoot);
+		m_htreeitem[i] = m_wndFilterView.InsertItem(CdbWaveDatabase::m_desctab[icol].description, TVI_ROOT); //hRoot);
+		//m_htreeitem[i] = m_wndFilterView.InsertItem(p_db->m_desctab[icol].descriptor, TVI_ROOT); //hRoot);
 		m_wndFilterView.SetItemData(m_htreeitem[i], m_noCol[i]); // save table index into head of the list
 
 		cs_comment.Format(_T("Category %i: "), i);
-		cs_comment += CdbWdatabase::m_desctab[icol].szDescriptor;
-		//cs_comment += p_db->m_desctab[icol].szDescriptor;
+		cs_comment += CdbWaveDatabase::m_desctab[icol].description;
+		//cs_comment += p_db->m_desctab[icol].descriptor;
 		dlg.SetStatus(cs_comment);
 
 		// collect data (array of unique descriptors)
@@ -571,7 +571,7 @@ void CFilterWnd::OnSortRecords()
 	const auto isel = p_combo->GetCurSel();
 	ASSERT(isel != CB_ERR);
 	const int i = p_combo->GetItemData(isel);
-	p_database->m_mainTableSet.m_strSort = p_database->m_desctab[i].szTableCol;
+	p_database->m_mainTableSet.m_strSort = p_database->m_desctab[i].header_name;
 
 	p_database->m_mainTableSet.RefreshQuery();
 	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);

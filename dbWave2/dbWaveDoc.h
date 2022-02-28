@@ -1,8 +1,8 @@
 #pragma once
 
-#include "dbMainTable.h"
-#include "dbWdatabase.h"
-#include "Spikelist.h"		// list of spikes
+#include "dbWaveDatabaseMainTable.h"
+#include "dbWaveDatabase.h"
+#include "Spikelist.h"
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
 #include "dbWave_structures.h"
@@ -32,7 +32,7 @@ public:
 	CIntervalsAndLevels m_stimsaved;
 
 	// database
-	CdbWdatabase* m_pDB = nullptr;
+	CdbWaveDatabase* m_pDB = nullptr;
 	BOOL m_validTables = false;
 	CDWordArray m_selectedRecords;
 	CString m_dbFilename;

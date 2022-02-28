@@ -1,10 +1,6 @@
 #pragma once
 
-#include "dbIndexTable.h"
-#include "dbMainTable.h"
-#include "dbWdatabase.h"
 #include "dbWaveDoc.h"
-
 #include "PanelFilter.h"
 #include "PanelProperties.h"
 

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "dbWave.h"
 
-#include "dbMainTable.h"
+#include "dbWaveDatabaseMainTable.h"
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"	
 #include "DlgdbNewFileDuplicate.h"
@@ -113,7 +113,7 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 			switch (dlg.m_option)
 			{
 			case 0: // open file
-				m_pDB = new CdbWdatabase;
+				m_pDB = new CdbWaveDatabase;
 				m_pDB->Attach(&m_currentDatafileName, &m_currentSpikefileName);
 				return OpenDatabase(cs_name);
 			//break;
@@ -140,7 +140,7 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 	}
 
 	// create dbFile
-	m_pDB = new CdbWdatabase;
+	m_pDB = new CdbWaveDatabase;
 	m_pDB->Attach(&m_currentDatafileName, &m_currentSpikefileName);
 	m_pDB->Create(cs_name, dbLangGeneral, dbVersion30);
 	m_dbFilename = cs_name;
@@ -222,7 +222,7 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL CdbWaveDoc::OpenDatabase(LPCTSTR lpszPathName)
 {
-	auto tmp_db = new CdbWdatabase;
+	auto tmp_db = new CdbWaveDatabase;
 	tmp_db->Attach(&m_currentDatafileName, &m_currentSpikefileName);
 
 	// Attempt to open the new database before replacing our ptr

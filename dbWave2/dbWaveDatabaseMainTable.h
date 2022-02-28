@@ -45,7 +45,7 @@ constexpr auto FIELD_DATE_YMD = 7;
 
 constexpr int NCOLUMNS = 30;
 
-#include "dbIndexTable.h"
+#include "dbWaveDatabaseIndexTable.h"
 
 // Used for GetItemDescriptors calls to identify database items
 using DB_ITEMDESC = struct db_item_descriptor

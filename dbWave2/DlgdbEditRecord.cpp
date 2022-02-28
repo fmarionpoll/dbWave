@@ -5,7 +5,7 @@
 //#include <afxconv.h>           // For LPTSTR -> LPSTR macros
 
 #include "dbWave.h"
-#include "dbMainTable.h"
+#include "dbWaveDatabaseMainTable.h"
 #include "dbWaveDoc.h"
 #include "DlgdbEditField.h"
 //#include "DlgFindFiles.h"
@@ -194,7 +194,7 @@ void DlgdbEditRecord::UpdateDatabaseFromDialog()
 	// update combo boxes associated with a secondary table
 	m_pSet->Edit();
 
-	CdbWdatabase* p_database = m_pdbDoc->m_pDB;
+	CdbWaveDatabase* p_database = m_pdbDoc->m_pDB;
 	UpdateSetFromCombo(p_database->m_stimSet, m_ctlstim, m_pSet->m_stim_ID);
 	UpdateSetFromCombo(p_database->m_concSet, m_ctlconc, m_pSet->m_conc_ID);
 	UpdateSetFromCombo(p_database->m_stimSet, m_ctlstim2, m_pSet->m_stim2_ID);

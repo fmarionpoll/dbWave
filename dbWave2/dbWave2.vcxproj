@@ -918,12 +918,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbIndexTable.cpp">
+    <ClCompile Include="dbWaveDatabaseIndexTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbMainTable.cpp">
+    <ClCompile Include="dbWaveDatabaseMainTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -948,7 +948,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbWdatabase.cpp">
+    <ClCompile Include="dbWaveDatabase.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1423,14 +1423,14 @@
     <ClInclude Include="DlgDataSeriesFormat.h" />
     <ClInclude Include="DlgdbEditField.h" />
     <ClInclude Include="DlgdbEditRecord.h" />
-    <ClInclude Include="dbIndexTable.h" />
-    <ClInclude Include="dbMainTable.h" />
+    <ClInclude Include="dbWaveDatabaseIndexTable.h" />
+    <ClInclude Include="dbWaveDatabaseMainTable.h" />
     <ClInclude Include="dbMultiDocTemplate.h" />
     <ClInclude Include="DlgdbNewFileDuplicate.h" />
     <ClInclude Include="dbWave.h" />
     <ClInclude Include="dbWaveDoc.h" />
     <ClInclude Include="dbWave_constants.h" />
-    <ClInclude Include="dbWdatabase.h" />
+    <ClInclude Include="dbWaveDatabase.h" />
     <ClInclude Include="DlgDeleteRecordOptions.h" />
     <ClInclude Include="dtacq32.h" />
     <ClInclude Include="dtplot32.h" />

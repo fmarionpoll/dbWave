@@ -3,25 +3,25 @@
 #define NTABLECOLS	29
 #include "AcqWaveFormat.h"
 
-typedef struct _TABCOL
+typedef struct 
 {
-	int iID;
-	TCHAR* szTableCol;
-	TCHAR* szDescriptor;
-	int propCol;
-	TCHAR* szRelTable;
-} TABCOL, *LPTABCOL;
+	int column_number;
+	CString header_name;
+	CString description;
+	int format_code_number;
+	CString attached_table;
+} database_column_properties, *lp_database_column_properties;
 
-// CdbWdatabase command target
+// CdbWaveDatabase command target
 #pragma warning(disable : 4995)
 
-class CdbWdatabase : public CDaoDatabase
+class CdbWaveDatabase : public CDaoDatabase
 {
 public:
-	CdbWdatabase();
-	~CdbWdatabase() override;
+	CdbWaveDatabase();
+	~CdbWaveDatabase() override;
 
-	static TABCOL m_desctab[];
+	static database_column_properties m_desctab[];
 
 	// CDaoRecordSets
 	CdbMainTable m_mainTableSet;
@@ -40,11 +40,9 @@ public:
 	//CdbIndexTable	m_stim2Set; // TODO
 	//CdbIndexTable	m_conc2Set;	// TODO
 
-	// parent
-	CString* m_pcurrentDataFilename;
-	CString* m_pcurrentSpkFileName;
-	// local
-	CString m_databasePath;
+	CString* m_current_data_filename = nullptr;
+	CString* m_p_current_spike_filename = nullptr;
+	CString m_database_path = _T("");
 
 	void Attach(CString* pstrData, CString* pstrSpk);
 
@@ -52,14 +50,14 @@ public:
 	BOOL CreateMainTable(CString cs);
 	void CreateTables();
 	BOOL OpenTables();
-	void add_28(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_26_27(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_24_25(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_22_23(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_21(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_column_28(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_column_26_27(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_column_24_25(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_column_22_23(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_column_21(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_column_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr);
 
-	void OpenIndexTable(CdbIndexTable* pIndexTableSet);
+	void OpenIndexTable(CdbIndexTable* p_index_table_set);
 	void CloseDatabase();
 	void UpdateTables();
 
@@ -97,7 +95,7 @@ public:
 	DB_ITEMDESC* GetRecordItemDescriptor(int icol);
 	BOOL GetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
 	BOOL SetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
-	BOOL ImportRecordfromDatabase(CdbWdatabase* pdbW);
+	BOOL ImportRecordfromDatabase(CdbWaveDatabase* pdbW);
 	void TransferWaveFormatDataToRecord(CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbIndexTable* pIndexTable, int column1, int column2);
