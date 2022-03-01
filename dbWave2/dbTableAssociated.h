@@ -2,11 +2,11 @@
 
 #pragma warning(disable : 4995)
 
-class CdbIndexTable : public CDaoRecordset
+class CdbTableAssociated : public CDaoRecordset
 {
 public:
-	CdbIndexTable(CDaoDatabase* pDatabase = nullptr);
-	DECLARE_DYNAMIC(CdbIndexTable)
+	CdbTableAssociated(CDaoDatabase* pDatabase = nullptr);
+	DECLARE_DYNAMIC(CdbTableAssociated)
 
 	// Field/Param Data
 	CString m_cs = _T("");

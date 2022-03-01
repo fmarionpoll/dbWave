@@ -32,7 +32,7 @@ public:
 	CIntervalsAndLevels m_stimsaved;
 
 	// database
-	CdbWaveDatabase* m_pDB = nullptr;
+	CdbTable* m_pDB = nullptr;
 	BOOL m_validTables = false;
 	CDWordArray m_selectedRecords;
 	CString m_dbFilename;

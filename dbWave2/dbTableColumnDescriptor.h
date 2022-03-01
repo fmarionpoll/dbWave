@@ -1,6 +1,14 @@
 #pragma once
 #include "dbTableAssociated.h"
-#include "dbTableMain.h"
+
+
+constexpr auto FIELD_IND_TEXT = 1;
+constexpr auto FIELD_LONG = 2;
+constexpr auto FIELD_TEXT = 3;
+constexpr auto FIELD_DATE = 4;
+constexpr auto FIELD_IND_FILEPATH = 5;
+constexpr auto FIELD_DATE_HMS = 6;
+constexpr auto FIELD_DATE_YMD = 7;
 
 // Used for GetItemDescriptors calls to identify database items
 using DB_ITEMDESC = struct db_item_descriptor
@@ -31,14 +39,14 @@ using DB_ITEMDESC = struct db_item_descriptor
 	BOOL bIsFieldNull = false;
 
 	// helpers
-	int typeLocal = FIELD_LONG;			// field type (FIELD_IND_TEXT, FIELD_LONG, FIELD_TEXT, FIELD_DATE, FIELD_IND_FILEPATH)
+	int data_code_number = FIELD_LONG;			// field type (FIELD_IND_TEXT, FIELD_LONG, FIELD_TEXT, FIELD_DATE, FIELD_IND_FILEPATH)
 	CArray<long, long> liArray;			// different elements of this field (if long or indirection)
 	CArray<COleDateTime, COleDateTime> tiArray; // array storing the different elements of this field (if date(day))
 	CStringArray csElementsArray;		// string version of the list different elements (to compare with filter - either csfilterParam1, or csFilterParam2)
 
 	// --------------------temporary pointers
 	long* pdataItem = nullptr;			// x - address of the field in the main table
-	CdbIndexTable* plinkedSet = nullptr;// x - address of the linked table (indirection)
+	CdbTableAssociated* plinkedSet = nullptr;// x - address of the linked table (indirection)
 	CComboBox* pComboBox = nullptr;		// address of combobox associated with the item
 };
 

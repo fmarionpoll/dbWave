@@ -7,9 +7,9 @@
 #endif
 
 
-IMPLEMENT_DYNAMIC(CdbIndexTable, CDaoRecordset)
+IMPLEMENT_DYNAMIC(CdbTableAssociated, CDaoRecordset)
 
-CdbIndexTable::CdbIndexTable(CDaoDatabase* pdb)
+CdbTableAssociated::CdbTableAssociated(CDaoDatabase* pdb)
 	: CDaoRecordset(pdb)
 {
 	m_nFields = 2;
@@ -17,14 +17,14 @@ CdbIndexTable::CdbIndexTable(CDaoDatabase* pdb)
 }
 
 // store strings and add "[" and "]"
-void CdbIndexTable::SetNames(CString defaultSQL, CString DFX_cs, CString DFX_ID)
+void CdbTableAssociated::SetNames(CString defaultSQL, CString DFX_cs, CString DFX_ID)
 {
 	m_defaultSQL = _T("[") + defaultSQL + _T("]");
 	m_DFX_cs = _T("[") + DFX_cs + _T("]");
 	m_DFX_ID = _T("[") + DFX_ID + _T("]");
 }
 
-CString CdbIndexTable::GetDefaultDBName()
+CString CdbTableAssociated::GetDefaultDBName()
 {
 	auto cs = m_defaultName;
 	if (m_pDatabase->m_pDAODatabase != nullptr)
@@ -33,12 +33,12 @@ CString CdbIndexTable::GetDefaultDBName()
 	return cs;
 }
 
-CString CdbIndexTable::GetDefaultSQL()
+CString CdbTableAssociated::GetDefaultSQL()
 {
 	return m_defaultSQL;
 }
 
-void CdbIndexTable::DoFieldExchange(CDaoFieldExchange* pFX)
+void CdbTableAssociated::DoFieldExchange(CDaoFieldExchange* pFX)
 {
 	pFX->SetFieldType(CDaoFieldExchange::outputColumn);
 	DFX_Text(pFX, m_DFX_cs, m_cs);
@@ -46,12 +46,12 @@ void CdbIndexTable::DoFieldExchange(CDaoFieldExchange* pFX)
 }
 
 #ifdef _DEBUG
-void CdbIndexTable::AssertValid() const
+void CdbTableAssociated::AssertValid() const
 {
 	CDaoRecordset::AssertValid();
 }
 
-void CdbIndexTable::Dump(CDumpContext& dc) const
+void CdbTableAssociated::Dump(CDumpContext& dc) const
 {
 	CDaoRecordset::Dump(dc);
 }
@@ -68,7 +68,7 @@ void CdbIndexTable::Dump(CDumpContext& dc) const
 // Parameters (out):
 //		iID			assoc table index or -1
 
-long CdbIndexTable::GetStringInLinkedTable(const CString& cs)
+long CdbTableAssociated::GetStringInLinkedTable(const CString& cs)
 {
 	// string is empty - return nothing!
 	if (cs.IsEmpty())
@@ -109,7 +109,7 @@ long CdbIndexTable::GetStringInLinkedTable(const CString& cs)
 //		BOOL	record found (TRUE) or not (FALSE)
 //		iID		record ID (if found in the table) or unchanged (if not found)
 
-BOOL CdbIndexTable::GetIDFromString(CString cs, long& i_id)
+BOOL CdbTableAssociated::GetIDFromString(CString cs, long& i_id)
 {
 	if (IsEOF() && IsBOF())
 		return FALSE;
@@ -140,7 +140,7 @@ BOOL CdbIndexTable::GetIDFromString(CString cs, long& i_id)
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CdbIndexTable::SeekID(long iID)
+BOOL CdbTableAssociated::SeekID(long iID)
 {
 	auto bfound = FALSE;
 	// find record with this ID and make it current
@@ -160,7 +160,7 @@ BOOL CdbIndexTable::SeekID(long iID)
 
 /////////////////////////////////////////////////////////////////////////////
 
-CString CdbIndexTable::GetStringFromID(long iID)
+CString CdbTableAssociated::GetStringFromID(long iID)
 {
 	auto bfound = SeekID(iID);
 	CString cs;
@@ -173,7 +173,7 @@ CString CdbIndexTable::GetStringFromID(long iID)
 	return cs;
 }
 
-void CdbIndexTable::CreateIndextable(const CString& cstablename, const CString& cscol1, const CString& csIDcol2,
+void CdbTableAssociated::CreateIndextable(const CString& cstablename, const CString& cscol1, const CString& csIDcol2,
                                      int textSize, CDaoDatabase* p_db)
 {
 	SetNames(cstablename, cscol1, csIDcol2); // change name of table, col1, col2
@@ -239,7 +239,7 @@ void CdbIndexTable::CreateIndextable(const CString& cstablename, const CString& 
 	tb.Append();
 }
 
-int CdbIndexTable::AddStringsFromCombo(CComboBox* pcombo)
+int CdbTableAssociated::AddStringsFromCombo(CComboBox* pcombo)
 {
 	const auto nitems = pcombo->GetCount();
 	auto nadded = 0;
@@ -265,7 +265,7 @@ int CdbIndexTable::AddStringsFromCombo(CComboBox* pcombo)
 	return nadded;
 }
 
-int CdbIndexTable::RemoveStringsNotInCombo(CComboBox* pcombo)
+int CdbTableAssociated::RemoveStringsNotInCombo(CComboBox* pcombo)
 {
 	if (IsBOF() && IsEOF())
 		return 0;

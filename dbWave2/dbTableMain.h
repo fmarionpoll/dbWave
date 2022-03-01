@@ -36,25 +36,15 @@ constexpr auto CH_ACQDATE_DAY = 26;
 constexpr auto CH_ACQDATE_TIME = 27;
 constexpr auto CH_EXPT_ID = 28;
 
-constexpr auto FIELD_IND_TEXT = 1;
-constexpr auto FIELD_LONG = 2;
-constexpr auto FIELD_TEXT = 3;
-constexpr auto FIELD_DATE = 4;
-constexpr auto FIELD_IND_FILEPATH = 5;
-constexpr auto FIELD_DATE_HMS = 6;
-constexpr auto FIELD_DATE_YMD = 7;
-
 constexpr int NCOLUMNS = 30;
-
-
 
 #pragma warning(disable : 4995)
 
-class CdbMainTable : public CDaoRecordset
+class CdbTableMain : public CDaoRecordset
 {
 public:
-	CdbMainTable(CDaoDatabase* pDatabase = nullptr);
-	DECLARE_DYNAMIC(CdbMainTable)
+	CdbTableMain(CDaoDatabase* pDatabase = nullptr);
+	DECLARE_DYNAMIC(CdbTableMain)
 
 	// Field/Param Data - these parameters are equivalent to column headers in a table, where each row is a record
 
@@ -118,7 +108,7 @@ public:
 	void DoFieldExchange(CDaoFieldExchange* pFX) override; // RFX support
 
 	// Implementation
-	~CdbMainTable() override;
+	~CdbTableMain() override;
 #ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;

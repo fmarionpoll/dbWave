@@ -414,7 +414,7 @@ void CADContView::TransferFilesToDatabase()
 	pdbDoc->ImportFileList(m_csNameArray); // add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll(); // clear file names
 
-	CdbMainTable* pSet = &(GetDocument()->m_pDB->m_mainTableSet);
+	CdbTableMain* pSet = &(GetDocument()->m_pDB->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
 	pdbDoc->SetDB_CurrentRecordPosition(pdbDoc->m_pDB->GetNRecords() - 1);

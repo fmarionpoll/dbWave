@@ -7,9 +7,9 @@
 #endif
 
 
-IMPLEMENT_DYNAMIC(CdbMainTable, CDaoRecordset)
+IMPLEMENT_DYNAMIC(CdbTableMain, CDaoRecordset)
 
-CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
+CdbTableMain::CdbTableMain(CDaoDatabase* pdb)
 	: CDaoRecordset(pdb)
 {
 	m_desc[CH_ID].pdataItem					= &m_ID;
@@ -73,12 +73,12 @@ CdbMainTable::CdbMainTable(CDaoDatabase* pdb)
 	m_nDefaultType = dbOpenDynaset;
 }
 
-CdbMainTable::~CdbMainTable()
+CdbTableMain::~CdbTableMain()
 {
 	DeleteDateArray();
 }
 
-boolean CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
+boolean CdbTableMain::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
 {
 	boolean flag = true;
 	try
@@ -94,7 +94,7 @@ boolean CdbMainTable::OpenTable(int nOpenType, LPCTSTR lpszSQL, int nOptions)
 	return flag;
 }
 
-CString CdbMainTable::GetDefaultDBName()
+CString CdbTableMain::GetDefaultDBName()
 {
 	auto cs = m_defaultName;
 	if (m_pDatabase->m_pDAODatabase != nullptr)
@@ -103,12 +103,12 @@ CString CdbMainTable::GetDefaultDBName()
 	return cs;
 }
 
-CString CdbMainTable::GetDefaultSQL()
+CString CdbTableMain::GetDefaultSQL()
 {
 	return m_csdefaultSQL;
 }
 
-void CdbMainTable::DoFieldExchange(CDaoFieldExchange* pFX)
+void CdbTableMain::DoFieldExchange(CDaoFieldExchange* pFX)
 {
 	pFX->SetFieldType(CDaoFieldExchange::outputColumn);
 	DFX_Text(pFX, m_desc[CH_FILENAME].dfx_name_with_brackets, m_Filedat);
@@ -200,22 +200,22 @@ void CdbMainTable::DoFieldExchange(CDaoFieldExchange* pFX)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CdbMainTable diagnostics
+// CdbTableMain diagnostics
 
 #ifdef _DEBUG
-void CdbMainTable::AssertValid() const
+void CdbTableMain::AssertValid() const
 {
 	CDaoRecordset::AssertValid();
 }
 
-void CdbMainTable::Dump(CDumpContext& dc) const
+void CdbTableMain::Dump(CDumpContext& dc) const
 {
 	CDaoRecordset::Dump(dc);
 }
 #endif //_DEBUG
 
 // TODO: remove
-BOOL CdbMainTable::SetLongValue(long iID, CString cscolname)
+BOOL CdbTableMain::SetLongValue(long iID, CString cscolname)
 {
 	try
 	{
@@ -232,7 +232,7 @@ BOOL CdbMainTable::SetLongValue(long iID, CString cscolname)
 	return TRUE;
 }
 
-BOOL CdbMainTable::SetValueNull(const CString cscolname)
+BOOL CdbTableMain::SetValueNull(const CString cscolname)
 {
 	try
 	{
@@ -249,7 +249,7 @@ BOOL CdbMainTable::SetValueNull(const CString cscolname)
 	return TRUE;
 }
 
-void CdbMainTable::GetAcqdateArray(CPtrArray* pacqdate)
+void CdbTableMain::GetAcqdateArray(CPtrArray* pacqdate)
 {
 	const auto nrecords = GetNRecords();
 	if (0 == nrecords)
@@ -267,7 +267,7 @@ void CdbMainTable::GetAcqdateArray(CPtrArray* pacqdate)
 	}
 }
 
-BOOL CdbMainTable::CheckIfAcqDateTimeIsUnique(COleDateTime* ptimeNewVal)
+BOOL CdbTableMain::CheckIfAcqDateTimeIsUnique(COleDateTime* ptimeNewVal)
 {
 	if (IsBOF() && IsEOF())
 		return TRUE;
@@ -282,7 +282,7 @@ BOOL CdbMainTable::CheckIfAcqDateTimeIsUnique(COleDateTime* ptimeNewVal)
 	return TRUE;
 }
 
-void CdbMainTable::GetMaxIDs()
+void CdbTableMain::GetMaxIDs()
 {
 	max_insectID = -1;
 	max_sensillumID = -1;
@@ -307,7 +307,7 @@ void CdbMainTable::GetMaxIDs()
 	}
 }
 
-BOOL CdbMainTable::FindIDinColumn(long iID, int icolumn)
+BOOL CdbTableMain::FindIDinColumn(long iID, int icolumn)
 {
 	CString cs; // to construct insect and sensillum number (for example)
 	CString str; // to store FindFirst filter
@@ -331,7 +331,7 @@ BOOL CdbMainTable::FindIDinColumn(long iID, int icolumn)
 	return flag;
 }
 
-int CdbMainTable::GetColumnIndex(CString csName)
+int CdbTableMain::GetColumnIndex(CString csName)
 {
 	CDaoFieldInfo fieldInfo;
 	GetFieldInfo(csName, fieldInfo, AFX_DAO_SECONDARY_INFO);
@@ -339,7 +339,7 @@ int CdbMainTable::GetColumnIndex(CString csName)
 	return fieldInfo.m_nOrdinalPosition;
 }
 
-void CdbMainTable::RefreshQuery()
+void CdbTableMain::RefreshQuery()
 {
 	if (CanRestart())
 		Requery();
@@ -350,7 +350,7 @@ void CdbMainTable::RefreshQuery()
 	}
 }
 
-void CdbMainTable::BuildFilters()
+void CdbTableMain::BuildFilters()
 {
 	m_strFilter.Empty();
 	for (auto ifield = 0; ifield < m_nFields; ifield++)
@@ -362,7 +362,7 @@ void CdbMainTable::BuildFilters()
 			CString cs;
 			cs.Format(_T("%s IN ("), (LPCTSTR)m_desc[ifield].dfx_name_with_brackets);
 			m_strFilter += cs;
-			switch (m_desc[ifield].typeLocal)
+			switch (m_desc[ifield].data_code_number)
 			{
 			case FIELD_IND_TEXT:
 			case FIELD_IND_FILEPATH:
@@ -410,7 +410,7 @@ void CdbMainTable::BuildFilters()
 	m_bFilterON = !m_strFilter.IsEmpty();
 }
 
-void CdbMainTable::ClearFilters()
+void CdbTableMain::ClearFilters()
 {
 	for (auto i = 0; i < m_nFields; i++)
 		m_desc[i].bFilter1 = FALSE;
@@ -418,7 +418,7 @@ void CdbMainTable::ClearFilters()
 	m_bFilterON = FALSE;
 }
 
-void CdbMainTable::SetDataLen(long datalen)
+void CdbTableMain::SetDataLen(long datalen)
 {
 	try
 	{
@@ -433,7 +433,7 @@ void CdbMainTable::SetDataLen(long datalen)
 	}
 }
 
-long CdbMainTable::GetNRecords()
+long CdbTableMain::GetNRecords()
 {
 	CWaitCursor wait;
 	long nrecords = 0;
@@ -458,7 +458,7 @@ long CdbMainTable::GetNRecords()
 	return nrecords;
 }
 
-void CdbMainTable::AddDaytoDateArray(COleDateTime& o_time)
+void CdbTableMain::AddDaytoDateArray(COleDateTime& o_time)
 {
 	auto b_flag = FALSE;
 	COleDateTime day_time;
@@ -491,7 +491,7 @@ void CdbMainTable::AddDaytoDateArray(COleDateTime& o_time)
 }
 
 // Add element only if new and insert it so that the array is sorted (low to high value)
-void CdbMainTable::AddtoliArray(int icol)
+void CdbTableMain::AddtoliArray(int icol)
 {
 	COleVariant var_value;
 	GetFieldValue(m_desc[icol].header_name, var_value);
@@ -526,7 +526,7 @@ void CdbMainTable::AddtoliArray(int icol)
 		pli_array->Add(l_val);
 }
 
-void CdbMainTable::AddtoIDArray(CUIntArray* puiIDArray, long iID)
+void CdbTableMain::AddtoIDArray(CUIntArray* puiIDArray, long iID)
 {
 	auto b_flag = FALSE;
 	// value is greater than current value -> loop forwards
@@ -555,7 +555,7 @@ void CdbMainTable::AddtoIDArray(CUIntArray* puiIDArray, long iID)
 		puiIDArray->Add(ui_id);
 }
 
-void CdbMainTable::AddCurrentRecordtoIDArrays()
+void CdbTableMain::AddCurrentRecordtoIDArrays()
 {
 	COleVariant var_value;
 
@@ -593,14 +593,14 @@ void CdbMainTable::AddCurrentRecordtoIDArrays()
 	}
 }
 
-void CdbMainTable::DeleteDateArray()
+void CdbTableMain::DeleteDateArray()
 {
 	if (m_desc[CH_ACQDATE_DAY].tiArray.GetSize() > 0)
 		m_desc[CH_ACQDATE_DAY].tiArray.RemoveAll();
 }
 
 // loop over the entire database and save descriptors
-void CdbMainTable::BuildAndSortIDArrays()
+void CdbTableMain::BuildAndSortIDArrays()
 {
 	if (IsBOF())
 		return;
@@ -645,7 +645,7 @@ void CdbMainTable::BuildAndSortIDArrays()
 }
 
 // loop over the entire database and copy field m_math into m_path2
-void CdbMainTable::CopyPathToPath2()
+void CdbTableMain::CopyPathToPath2()
 {
 	if (IsBOF())
 		return;

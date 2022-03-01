@@ -195,7 +195,7 @@ void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) 
 	auto p_db = m_pDoc->m_pDB;
 	DB_ITEMDESC desc;
 	const auto n_sub_items = pGroup->GetSubItemsCount();
-	CdbIndexTable* p2linkedSet;
+	CdbTableAssociated* p2linkedSet;
 
 	for (auto i = 0; i < n_sub_items; i++)
 	{
@@ -203,7 +203,7 @@ void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) 
 		const int i_column = p_prop->GetData();
 		p_db->GetRecordItemValue(i_column, &desc);
 		p_prop->ResetOriginalValue();
-		switch (p_db->m_mainTableSet.m_desc[i_column].typeLocal)
+		switch (p_db->m_mainTableSet.m_desc[i_column].data_code_number)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
@@ -287,7 +287,7 @@ void CPropertiesWnd::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 		if (pdesc == nullptr)
 			continue;
 
-		switch (pdesc->typeLocal)
+		switch (pdesc->data_code_number)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
@@ -419,13 +419,13 @@ int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int ico
 		DB_ITEMDESC desc;
 		desc.csVal = _T("undefined");
 		desc.lVal = 0;
-		desc.typeLocal = p_database->m_mainTableSet.m_desc[idesctab].typeLocal;
+		desc.data_code_number = p_database->m_mainTableSet.m_desc[idesctab].data_code_number;
 
 		CMFCPropertyGridProperty* p_prop = nullptr;
 		CString cs_comment;
-		CString cs_title = CdbWaveDatabase::m_desctab[idesctab].description;
+		CString cs_title = CdbTable::m_desctab[idesctab].description;
 
-		switch (desc.typeLocal)
+		switch (desc.data_code_number)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:

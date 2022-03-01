@@ -12,33 +12,33 @@ typedef struct
 	CString attached_table;
 } database_column_properties, *lp_database_column_properties;
 
-// CdbWaveDatabase command target
+// CdbTable command target
 #pragma warning(disable : 4995)
 
-class CdbWaveDatabase : public CDaoDatabase
+class CdbTable : public CDaoDatabase
 {
 public:
-	CdbWaveDatabase();
-	~CdbWaveDatabase() override;
+	CdbTable();
+	~CdbTable() override;
 
 	static database_column_properties m_desctab[];
 
 	// CDaoRecordSets
-	CdbMainTable m_mainTableSet;
+	CdbTableMain m_mainTableSet;
 
-	CdbIndexTable m_operatorSet;
-	CdbIndexTable m_insectSet;
-	CdbIndexTable m_locationSet;
-	CdbIndexTable m_sensillumSet;
-	CdbIndexTable m_stimSet;
-	CdbIndexTable m_concSet;
-	CdbIndexTable m_sexSet;
-	CdbIndexTable m_strainSet;
-	CdbIndexTable m_exptSet;
-	CdbIndexTable m_pathSet;
+	CdbTableAssociated m_operatorSet;
+	CdbTableAssociated m_insectSet;
+	CdbTableAssociated m_locationSet;
+	CdbTableAssociated m_sensillumSet;
+	CdbTableAssociated m_stimSet;
+	CdbTableAssociated m_concSet;
+	CdbTableAssociated m_sexSet;
+	CdbTableAssociated m_strainSet;
+	CdbTableAssociated m_exptSet;
+	CdbTableAssociated m_pathSet;
 
-	//CdbIndexTable	m_stim2Set; // TODO
-	//CdbIndexTable	m_conc2Set;	// TODO
+	//CdbTableAssociated	m_stim2Set; // TODO
+	//CdbTableAssociated	m_conc2Set;	// TODO
 
 	CString* m_current_data_filename = nullptr;
 	CString* m_p_current_spike_filename = nullptr;
@@ -57,7 +57,7 @@ public:
 	void add_column_21(CDaoTableDef& table_def, CString cs_table, long l_attr);
 	void add_column_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr);
 
-	void OpenIndexTable(CdbIndexTable* p_index_table_set);
+	void OpenIndexTable(CdbTableAssociated* p_index_table_set);
 	void CloseDatabase();
 	void UpdateTables();
 
@@ -95,12 +95,12 @@ public:
 	DB_ITEMDESC* GetRecordItemDescriptor(int icol);
 	BOOL GetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
 	BOOL SetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
-	BOOL ImportRecordfromDatabase(CdbWaveDatabase* pdbW);
+	BOOL ImportRecordfromDatabase(CdbTable* pdbW);
 	void TransferWaveFormatDataToRecord(CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
-	void DeleteUnusedEntriesInAttachedTable(CdbIndexTable* pIndexTable, int column1, int column2);
+	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* pIndexTable, int column1, int column2);
 
 protected:
-	BOOL CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbIndexTable* plink);
+	BOOL CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbTableAssociated* plink);
 	BOOL CreateRelationwith2AssocTables(LPCTSTR lpszForeignTable, int icol1, int icol2);
 };

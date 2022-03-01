@@ -14,7 +14,7 @@ protected:
 	~CViewDAO() override;
 
 public:
-	CdbMainTable* m_pSet = nullptr;
+	CdbTableMain* m_pSet = nullptr;
 	boolean m_autoDetect = false;
 	boolean m_autoIncrement = false;
 

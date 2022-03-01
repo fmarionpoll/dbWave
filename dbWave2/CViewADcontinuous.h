@@ -26,7 +26,7 @@ protected:
 
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 
-	CdbMainTable* m_ptableSet{ nullptr };
+	CdbTableMain* m_ptableSet{ nullptr };
 	CString m_boardName;
 	DataTranslation_AD m_Acq32_AD;
 	DataTranslation_DA m_Acq32_DA;

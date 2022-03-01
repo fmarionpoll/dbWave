@@ -3,7 +3,7 @@
 // CdbEditRecordDlg dialog
 
 class CdbWaveDoc;
-class CdbMainTable;
+class CdbTableMain;
 
 class DlgdbEditRecord : public CDialog
 {
@@ -14,7 +14,7 @@ public:
 	~DlgdbEditRecord() override;
 
 	CdbWaveDoc* m_pdbDoc{ nullptr };
-	CdbMainTable* m_pSet{ nullptr };
+	CdbTableMain* m_pSet{ nullptr };
 	BOOL m_bshowIDC_NEXT{ true };
 	BOOL m_bshowIDC_PREVIOUS{ true };
 

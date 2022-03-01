@@ -70,9 +70,9 @@ public:
 	int m_first{ -1 };
 
 
-	CdbMainTable* m_pMainTable{ nullptr }; 
+	CdbTableMain* m_pMainTable{ nullptr }; 
 	CString m_csColName; 
-	CdbIndexTable* m_pIndexTable{ nullptr }; 
+	CdbTableAssociated* m_pIndexTable{ nullptr }; 
 	CArray<long, long>* m_pliIDArray{ nullptr }; 
 	BOOL m_bIndexTable{ true }; // TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
 	CdbWaveDoc* m_pdbDoc{nullptr};
