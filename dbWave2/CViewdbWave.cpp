@@ -3,7 +3,7 @@
 #include "dbWave.h"
 #include "resource.h"
 
-#include "dbWaveDatabaseMainTable.h"
+#include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
 

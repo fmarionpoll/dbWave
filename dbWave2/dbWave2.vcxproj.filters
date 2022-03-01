@@ -231,10 +231,10 @@
     <ClCompile Include="Controls\cdxCRotBevelLine.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="dbWaveDatabaseIndexTable.cpp">
+    <ClCompile Include="dbIndexTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dbWaveDatabaseMainTable.cpp">
+    <ClCompile Include="dbMainTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dbWaveDatabase.cpp">
@@ -665,10 +665,10 @@
     <ClInclude Include="DlgFileNew1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbWaveDatabaseIndexTable.h">
+    <ClInclude Include="dbIndexTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbWaveDatabaseMainTable.h">
+    <ClInclude Include="dbMainTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbWaveDatabase.h">

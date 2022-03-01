@@ -1,8 +1,8 @@
 #pragma once
 
 #include "afxwin.h"
-#include "dbWaveDatabaseMainTable.h"
-#include "dbWaveDatabaseIndexTable.h"
+#include "dbMainTable.h"
+#include "dbIndexTable.h"
 
 #define REC_ALL		0
 #define REC_CURRENT	1

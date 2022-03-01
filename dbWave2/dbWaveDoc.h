@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dbWaveDatabaseMainTable.h"
+#include "dbMainTable.h"
 #include "dbWaveDatabase.h"
 #include "Spikelist.h"
 #include "Spikedoc.h"
@@ -122,12 +122,6 @@ public:
 	BOOL	OnOpenDocument(LPCTSTR lpszPathName) override;
 	BOOL	OnSaveDocument(LPCTSTR lpszPathName) override;
 	HMENU	GetDefaultMenu() override; // get menu depending on state
-	/**
-	 * \brief 
-	 * \param pSender 
-	 * \param lHint 
-	 * \param pHint 
-	 */
 	void	UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint);
 
 	// Implementation
@@ -142,13 +136,6 @@ public:
 public:
 	long	GetDB_NRecords() const { return m_pDB->GetNRecords(); }
 	CDaoRecordset* GetDB_Recordset() const { return &m_pDB->m_mainTableSet; }
-
-	void	 DBRefreshQuery() const
-	{
-		if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
-		m_pDB->m_mainTableSet.RefreshQuery();
-	}
-
 	void	DBDeleteCurrentRecord();
 	CString GetDB_CurrentDatFileName(BOOL bTest = FALSE);
 	CString GetDB_CurrentSpkFileName(BOOL bTest = FALSE);
@@ -170,6 +157,10 @@ public:
 	BOOL	DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
 	BOOL	DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
 	BOOL	DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
+	void	 DBRefreshQuery() const {
+		if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
+		m_pDB->m_mainTableSet.RefreshQuery();
+	}
 
 protected:
 	BOOL	OpenDatabase(LPCTSTR lpszPathName);

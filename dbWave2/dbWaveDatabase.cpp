@@ -1,6 +1,6 @@
 #include "StdAfx.h"
-#include "dbWaveDatabaseIndexTable.h"
-#include "dbWaveDataBaseMainTable.h"
+#include "dbIndexTable.h"
+#include "dbMainTable.h"
 #include "dbWaveDatabase.h"
 
 #include "dbWave.h"

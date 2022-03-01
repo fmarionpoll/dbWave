@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "dbWave.h"
-#include "dbWaveDatabaseIndexTable.h"
+#include "dbIndexTable.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

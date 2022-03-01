@@ -918,12 +918,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbWaveDatabaseIndexTable.cpp">
+    <ClCompile Include="dbIndexTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbWaveDatabaseMainTable.cpp">
+    <ClCompile Include="dbMainTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1423,8 +1423,8 @@
     <ClInclude Include="DlgDataSeriesFormat.h" />
     <ClInclude Include="DlgdbEditField.h" />
     <ClInclude Include="DlgdbEditRecord.h" />
-    <ClInclude Include="dbWaveDatabaseIndexTable.h" />
-    <ClInclude Include="dbWaveDatabaseMainTable.h" />
+    <ClInclude Include="dbIndexTable.h" />
+    <ClInclude Include="dbMainTable.h" />
     <ClInclude Include="dbMultiDocTemplate.h" />
     <ClInclude Include="DlgdbNewFileDuplicate.h" />
     <ClInclude Include="dbWave.h" />

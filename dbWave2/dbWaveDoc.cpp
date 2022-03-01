@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "dbWave.h"
 
-#include "dbWaveDatabaseMainTable.h"
+#include "dbMainTable.h"
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"	
 #include "DlgdbNewFileDuplicate.h"

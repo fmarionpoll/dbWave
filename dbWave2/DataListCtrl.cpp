@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include "DataListCtrl.h"
-#include "dbWaveDatabaseMainTable.h"
+#include "dbMainTable.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
 #include "ChartWnd.h"
