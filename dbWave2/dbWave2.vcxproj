@@ -782,6 +782,7 @@
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="DataTranslation_AD.cpp" />
     <ClCompile Include="DataTranslation_DA.cpp" />
+    <ClCompile Include="dbTableColumnDescriptor.cpp" />
     <ClCompile Include="OPTIONS_ACQDATA.cpp" />
     <ClCompile Include="OPTIONS_IMPORT.cpp" />
     <ClCompile Include="OPTIONS_OUTPUTDATA.cpp" />
@@ -918,12 +919,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbIndexTable.cpp">
+    <ClCompile Include="dbTableAssociated.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbMainTable.cpp">
+    <ClCompile Include="dbTableMain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -948,7 +949,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dbWaveDatabase.cpp">
+    <ClCompile Include="dbTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1354,6 +1355,7 @@
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="DataTranslation_AD.h" />
     <ClInclude Include="DataTranslation_DA.h" />
+    <ClInclude Include="dbTableColumnDescriptor.h" />
     <ClInclude Include="OPTIONS_ACQDATA.h" />
     <ClInclude Include="OPTIONS_IMPORT.h" />
     <ClInclude Include="OPTIONS_OUTPUTDATA.h" />
@@ -1423,14 +1425,14 @@
     <ClInclude Include="DlgDataSeriesFormat.h" />
     <ClInclude Include="DlgdbEditField.h" />
     <ClInclude Include="DlgdbEditRecord.h" />
-    <ClInclude Include="dbIndexTable.h" />
-    <ClInclude Include="dbMainTable.h" />
+    <ClInclude Include="dbTableAssociated.h" />
+    <ClInclude Include="dbTableMain.h" />
     <ClInclude Include="dbMultiDocTemplate.h" />
     <ClInclude Include="DlgdbNewFileDuplicate.h" />
     <ClInclude Include="dbWave.h" />
     <ClInclude Include="dbWaveDoc.h" />
     <ClInclude Include="dbWave_constants.h" />
-    <ClInclude Include="dbWaveDatabase.h" />
+    <ClInclude Include="dbTable.h" />
     <ClInclude Include="DlgDeleteRecordOptions.h" />
     <ClInclude Include="dtacq32.h" />
     <ClInclude Include="dtplot32.h" />

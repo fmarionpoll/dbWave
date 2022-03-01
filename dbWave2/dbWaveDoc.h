@@ -1,7 +1,7 @@
 #pragma once
 
-#include "dbMainTable.h"
-#include "dbWaveDatabase.h"
+#include "dbTableMain.h"
+#include "dbTable.h"
 #include "Spikelist.h"
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"

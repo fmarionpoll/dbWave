@@ -1,8 +1,8 @@
 #pragma once
 
 #include "afxwin.h"
-#include "dbMainTable.h"
-#include "dbIndexTable.h"
+#include "dbTableMain.h"
+#include "dbTableAssociated.h"
 
 #define REC_ALL		0
 #define REC_CURRENT	1

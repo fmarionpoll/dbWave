@@ -231,13 +231,13 @@
     <ClCompile Include="Controls\cdxCRotBevelLine.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="dbIndexTable.cpp">
+    <ClCompile Include="dbTableAssociated.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dbMainTable.cpp">
+    <ClCompile Include="dbTableMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dbWaveDatabase.cpp">
+    <ClCompile Include="dbTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StretchControls.cpp">
@@ -471,6 +471,9 @@
     <ClCompile Include="dtplot32.cpp">
       <Filter>devices</Filter>
     </ClCompile>
+    <ClCompile Include="dbTableColumnDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -665,13 +668,13 @@
     <ClInclude Include="DlgFileNew1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbIndexTable.h">
+    <ClInclude Include="dbTableAssociated.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbMainTable.h">
+    <ClInclude Include="dbTableMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbWaveDatabase.h">
+    <ClInclude Include="dbTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CPivotCache.h">
@@ -1030,6 +1033,9 @@
     </ClInclude>
     <ClInclude Include="CyberAmp.h">
       <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="dbTableColumnDescriptor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,9 @@
 #include "StdAfx.h"
-#include "dbIndexTable.h"
-#include "dbMainTable.h"
-#include "dbWaveDatabase.h"
+#include "dbTableAssociated.h"
+#include "dbTableMain.h"
+#include "dbTable.h"
 
+#include "dbTableColumnDescriptor.h"
 #include "dbWave.h"
 
 #ifdef _DEBUG
@@ -941,17 +942,16 @@ DB_ITEMDESC* CdbWaveDatabase::GetRecordItemDescriptor(int icol)
 	default:
 		return nullptr;
 	}
-	////////////
 
 	return p_desc;
 }
 
-BOOL CdbWaveDatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_desc)
+BOOL CdbWaveDatabase::GetRecordItemValue(const int i_column, DB_ITEMDESC* p_desc)
 {
 	auto flag = TRUE;
 	COleVariant var_value;
-	m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_channel].header_name, var_value);
-	switch (i_channel)
+	m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
+	switch (i_column)
 	{
 	case CH_INSECT_ID:
 	case CH_SENSILLUM_ID:
@@ -966,7 +966,7 @@ BOOL CdbWaveDatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_des
 	case CH_STRAIN_ID:
 	case CH_SEX_ID:
 		p_desc->lVal = var_value.lVal;
-		p_desc->csVal = m_mainTableSet.m_desc[i_channel].plinkedSet->GetStringFromID(var_value.lVal);
+		p_desc->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
 		break;
 
 	case CH_NSPIKES:
@@ -993,13 +993,13 @@ BOOL CdbWaveDatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_des
 	case CH_FILESPK:
 	case CH_ACQ_COMMENTS:
 	case CH_MORE:
-		m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_channel].header_name, var_value);
+		m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
 		p_desc->csVal = V_BSTRT(&var_value);
 		break;
 
 	case CH_EXPT_ID:
 		p_desc->lVal = var_value.lVal;
-		p_desc->csVal = m_mainTableSet.m_desc[i_channel].plinkedSet->GetStringFromID(var_value.lVal);
+		p_desc->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
 		if (p_desc->csVal.IsEmpty())
 		{
 			auto cs = p_desc->csVal = GetName();
@@ -1019,8 +1019,6 @@ BOOL CdbWaveDatabase::GetRecordItemValue(const int i_channel, DB_ITEMDESC* p_des
 BOOL CdbWaveDatabase::SetRecordItemValue(const int ich, DB_ITEMDESC* p_desc)
 {
 	auto flag = TRUE;
-	long dummy_id;
-	COleVariant var_value;
 
 	switch (ich)
 	{
@@ -1033,23 +1031,23 @@ BOOL CdbWaveDatabase::SetRecordItemValue(const int ich, DB_ITEMDESC* p_desc)
 	case CH_FLAG:
 	case CH_REPEAT:
 	case CH_REPEAT2:
-		var_value = p_desc->lVal;
-		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].header_name, var_value);
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].header_name, p_desc->lVal);
 		break;
 
 	case CH_ACQDATE_DAY:
 	case CH_ACQDATE_TIME:
 	case CH_ACQDATE:
-		var_value = p_desc->oVal;
-		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].header_name, var_value);
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].header_name, p_desc->oVal);
 		break;
 
 	case CH_FILENAME:
 	case CH_FILESPK:
 	case CH_ACQ_COMMENTS:
 	case CH_MORE:
-		var_value = p_desc->csVal;
-		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].header_name, var_value);
+		{
+			COleVariant var_value = p_desc->csVal;
+			m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].header_name, var_value);
+		}
 		break;
 
 	case CH_INSECT_ID:
@@ -1065,9 +1063,10 @@ BOOL CdbWaveDatabase::SetRecordItemValue(const int ich, DB_ITEMDESC* p_desc)
 	case CH_STRAIN_ID:
 	case CH_SEX_ID:
 	case CH_EXPT_ID:
-		dummy_id = m_mainTableSet.m_desc[ich].plinkedSet->GetStringInLinkedTable(p_desc->csVal);
+		long dummy_id = m_mainTableSet.m_desc[ich].plinkedSet->GetStringInLinkedTable(p_desc->csVal);
 		if (dummy_id >= 0)
 		{
+			COleVariant var_value;
 			var_value.lVal = dummy_id;
 			m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[ich].header_name, var_value.lVal);
 		}
@@ -1077,7 +1076,7 @@ BOOL CdbWaveDatabase::SetRecordItemValue(const int ich, DB_ITEMDESC* p_desc)
 		flag = FALSE;
 		break;
 	}
-	////////////
+	
 	return flag;
 }
 

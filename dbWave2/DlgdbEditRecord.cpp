@@ -5,7 +5,7 @@
 //#include <afxconv.h>           // For LPTSTR -> LPSTR macros
 
 #include "dbWave.h"
-#include "dbMainTable.h"
+#include "dbTableMain.h"
 #include "dbWaveDoc.h"
 #include "DlgdbEditField.h"
 //#include "DlgFindFiles.h"
