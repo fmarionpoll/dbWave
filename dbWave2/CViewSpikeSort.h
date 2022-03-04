@@ -2,9 +2,7 @@
 #include "ChartSpikeHist.h"
 #include "ChartSpikeXY.h"
 #include "ChartSpikeShape.h"
-#include "dbWaveDoc.h"
 #include "ChartSpikeBar.h"
-#include "ChartSpikeHistVert.h"
 #include "ScrollBarEx.h"
 #include "dbTableView.h"
 
@@ -37,7 +35,7 @@ public:
 	int m_spikenoclass = 0;
 	float m_txyright = 1.f;
 	float m_txyleft = 0.f;
-	float m_mVbin = .1f;
+	float m_mVbin = 0.01f;
 
 	// Attributes
 protected:
