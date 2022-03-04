@@ -21,10 +21,10 @@
 
 // TODO limit size of measure array to nbspikes within currently selected spikelist
 
-IMPLEMENT_DYNCREATE(CViewSpikeSort, CViewDAO)
+IMPLEMENT_DYNCREATE(CViewSpikeSort, CdbTableView)
 
 CViewSpikeSort::CViewSpikeSort()
-	: CViewDAO(IDD)
+	: CdbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -44,7 +44,7 @@ CViewSpikeSort::~CViewSpikeSort()
 
 void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 {
-	CDaoRecordView::DoDataExchange(pDX);
+	CdbTableView::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_PARAMETER, m_CBparameter);
 	DDX_Text(pDX, IDC_T1, m_t1);
@@ -67,7 +67,7 @@ void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeSort, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikeSort, CdbTableView)
 
 	ON_MESSAGE(WM_MYMESSAGE, &CViewSpikeSort::OnMyMessage)
 	ON_WM_SIZE()
@@ -152,7 +152,7 @@ void CViewSpikeSort::defineStretchParameters()
 
 void CViewSpikeSort::OnInitialUpdate()
 {
-	CDaoRecordView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -271,7 +271,7 @@ void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 		ar.Close();
 		p_app->options_viewspikes.bincrflagonsave = static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
-	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void CViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -298,7 +298,7 @@ void CViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 BOOL CViewSpikeSort::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CViewDAO::OnMove(nIDMoveCommand);
+	return CdbTableView::OnMove(nIDMoveCommand);
 }
 
 void CViewSpikeSort::updateSpikeFile()
@@ -1210,7 +1210,7 @@ void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 	// trap messages from CScrollBarEx

@@ -99,6 +99,7 @@ public:
 	void TransferWaveFormatDataToRecord(CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* pIndexTable, int column1, int column2);
+	static void CompactDataBase(CString file_name, CString file_name_new);
 
 protected:
 	BOOL CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbTableAssociated* plink);

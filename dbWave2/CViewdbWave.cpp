@@ -20,17 +20,17 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewdbWave, CViewDAO)
+IMPLEMENT_DYNCREATE(CViewdbWave, CdbTableView)
 
-BEGIN_MESSAGE_MAP(CViewdbWave, CViewDAO)
+BEGIN_MESSAGE_MAP(CViewdbWave, CdbTableView)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_RECORD_PAGEUP, &CViewdbWave::OnRecordPageup)
 	ON_COMMAND(ID_RECORD_PAGEDOWN, &CViewdbWave::OnRecordPagedown)
-	ON_COMMAND(ID_FILE_PRINT, CDaoRecordView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_DIRECT, CDaoRecordView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CDaoRecordView::OnFilePrintPreview)
+	ON_COMMAND(ID_FILE_PRINT, CdbTableView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_DIRECT, CdbTableView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CdbTableView::OnFilePrintPreview)
 	ON_BN_CLICKED(IDC_RADIO1, &CViewdbWave::OnBnClickedRadio1)
 	ON_BN_CLICKED(IDC_RADIO3, &CViewdbWave::OnBnClickedRadio3)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewdbWave::OnEnChangeTimefirst)
@@ -49,11 +49,11 @@ BEGIN_MESSAGE_MAP(CViewdbWave, CViewDAO)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LISTCTRL, &CViewdbWave::OnItemActivateListctrl)
 	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL, &CViewdbWave::OnDblclkListctrl)
 
-	//ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewDAO::OnNMClickTab1)
+	//ON_NOTIFY(NM_CLICK, IDC_TAB1, &CdbTableView::OnNMClickTab1)
 END_MESSAGE_MAP()
 
 CViewdbWave::CViewdbWave()
-	: CViewDAO(IDD)
+	: CdbTableView(IDD)
 {
 }
 
@@ -62,7 +62,7 @@ CViewdbWave::~CViewdbWave()
 
 void CViewdbWave::DoDataExchange(CDataExchange* pDX)
 {
-	CDaoRecordView::DoDataExchange(pDX);
+	CdbTableView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
 	DDX_Text(pDX, IDC_AMPLITUDESPAN, m_amplitudespan);
@@ -72,10 +72,10 @@ void CViewdbWave::DoDataExchange(CDataExchange* pDX)
 
 void CViewdbWave::OnInitialUpdate()
 {
-	// init document and DaoRecordView
+	// init document and CdbTableView
 	CdbWaveDoc* p_dbwave_doc = GetDocument();
 	m_pSet = &p_dbwave_doc->m_pDB->m_mainTableSet;
-	CDaoRecordView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 
 	// subclass display controls and attach them to stretch CFolderview
 	VERIFY(m_dataListCtrl.SubclassDlgItem(IDC_LISTCTRL, this));
@@ -187,7 +187,7 @@ void CViewdbWave::OnInitialUpdate()
 void CViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 {
 	// do other resizing
-	CViewDAO::OnSize(n_type, cx, cy);
+	CdbTableView::OnSize(n_type, cx, cy);
 	if (IsWindow(m_dataListCtrl.m_hWnd))
 	{
 		CRect rect;
@@ -267,7 +267,7 @@ void CViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 		if (pActivateView != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;
 	}
-	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void CViewdbWave::fillListBox()
@@ -284,7 +284,7 @@ void CViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	if (p_item_activate->iItem >= 0)
 		GetDocument()->SetDB_CurrentRecordPosition(p_item_activate->iItem);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
-	CDaoRecordView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 	*pResult = 0;
 }
 

@@ -435,7 +435,7 @@ void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 
 void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 {
-	// assume that the views replaced are of CDaoRecordView type
+	// assume that the views replaced are of CdbTableView type
 	auto p_current_view = GetActiveView();
 	if ((p_current_view->IsKindOf(pViewClass)) == TRUE)
 		return;
@@ -1083,12 +1083,12 @@ void CChildFrame::OnToolsCompactdatabase()
 
 	if (result == IDOK)
 	{
-		file_name = dlg.GetPathName(); // return full path and filename
+		file_name = dlg.GetPathName(); 
 		const auto ipos = file_name.ReverseFind('.');
 		const auto file_name_new = file_name.Left(ipos) + _T("_new.mdb");
 
 		// compact database and save new file
-		CDaoWorkspace::CompactDatabase(file_name, file_name_new, dbLangGeneral, 0);
+		CdbTable::CompactDataBase(file_name, file_name_new);
 
 		const auto cs = file_name + _T(" database compacted and saved as ") + file_name_new;
 		AfxMessageBox(cs);

@@ -35,10 +35,10 @@
 constexpr auto BRESTORE = 0;
 constexpr auto BSAVE = 1;
 
-IMPLEMENT_DYNCREATE(CViewSpikeDetection, CViewDAO)
+IMPLEMENT_DYNCREATE(CViewSpikeDetection, CdbTableView)
 
 CViewSpikeDetection::CViewSpikeDetection()
-	: CViewDAO(IDD)
+	: CdbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 }
@@ -54,7 +54,7 @@ CViewSpikeDetection::~CViewSpikeDetection()
 
 void CViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
 {
-	CDaoRecordView::DoDataExchange(pDX);
+	CdbTableView::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_COMBO1, m_CBdetectWhat);
 	DDX_Control(pDX, IDC_SOURCECHAN, m_CBdetectChan);
@@ -74,7 +74,7 @@ void CViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeDetection, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikeDetection, CdbTableView)
 	ON_WM_SIZE()
 	ON_WM_HSCROLL()
 	ON_WM_VSCROLL()
@@ -126,7 +126,7 @@ BEGIN_MESSAGE_MAP(CViewSpikeDetection, CDaoRecordView)
 	ON_BN_CLICKED(IDC_GAIN2, &CViewSpikeDetection::OnBnClickedGain2)
 	ON_BN_CLICKED(IDC_BIAS2, &CViewSpikeDetection::OnBnClickedBias2)
 
-	//ON_NOTIFY(NM_CLICK, IDC_TAB1,		&CViewDAO::OnNMClickTab1)
+	//ON_NOTIFY(NM_CLICK, IDC_TAB1,		&CdbTableView::OnNMClickTab1)
 END_MESSAGE_MAP()
 
 void CViewSpikeDetection::OnFileSave()
@@ -150,7 +150,7 @@ void CViewSpikeDetection::OnFileSave()
 BOOL CViewSpikeDetection::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CViewDAO::OnMove(nIDMoveCommand);
+	return CdbTableView::OnMove(nIDMoveCommand);
 }
 
 void CViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -190,7 +190,7 @@ void CViewSpikeDetection::OnActivateView(BOOL bActivate, CView* pActivateView, C
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd_Source.
 			GetScopeParameters());
 	}
-	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void CViewSpikeDetection::updateLegends()
@@ -641,7 +641,7 @@ void CViewSpikeDetection::OnInitialUpdate()
 	static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// load data file parameters and build curves
-	CDaoRecordView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 
 	// load file data
 	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
@@ -855,7 +855,7 @@ void CViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	// CDaoRecordView scroll bar: pointer null
 	if (pScrollBar == nullptr)
 	{
-		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -2596,16 +2596,8 @@ int CViewSpikeDetection::PrintGetNPages()
 
 	if (m_file0 >= 0)
 	{
-		try
-		{
-			pdb_doc->SetDB_CurrentRecordPosition(m_file0);
-			pdb_doc->OpenCurrentDataFile();
-		}
-		catch (CDaoException* e)
-		{
-			DisplayDaoException(e, 3);
-			e->Delete();
-		}
+		pdb_doc->SetDB_CurrentRecordPosition(m_file0);
+		pdb_doc->OpenCurrentDataFile();
 	}
 
 	// npages
@@ -2875,7 +2867,7 @@ void CViewSpikeDetection::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		}
 	}
 	else
-		CDaoRecordView::OnVScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CViewSpikeDetection::SetVBarMode(short bMode, int iID)

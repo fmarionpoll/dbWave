@@ -18,10 +18,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikeHist, CDaoRecordView)
+IMPLEMENT_DYNCREATE(CViewSpikeHist, CdbTableView)
 
 CViewSpikeHist::CViewSpikeHist()
-	: CDaoRecordView(IDD)
+	: CdbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -37,12 +37,12 @@ CViewSpikeHist::~CViewSpikeHist()
 
 BOOL CViewSpikeHist::PreCreateWindow(CREATESTRUCT& cs)
 {
-	return CDaoRecordView::PreCreateWindow(cs);
+	return CdbTableView::PreCreateWindow(cs);
 }
 
 void CViewSpikeHist::DoDataExchange(CDataExchange* pDX)
 {
-	CDaoRecordView::DoDataExchange(pDX);
+	CdbTableView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
 	DDX_Text(pDX, IDC_SPIKECLASS, m_spikeclass);
@@ -54,7 +54,7 @@ void CViewSpikeHist::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeHist, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikeHist, CdbTableView)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
@@ -158,7 +158,7 @@ void CViewSpikeHist::OnInitialUpdate()
 	m_binit = TRUE;
 
 	// init database and load documents
-	CDaoRecordView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 
 	const auto p_dbwave_doc = GetDocument();
 	if (p_dbwave_doc->m_pSpk == nullptr)
@@ -188,7 +188,7 @@ void CViewSpikeHist::OnSize(UINT nType, int cx, int cy)
 			break;
 		}
 	}
-	CDaoRecordView::OnSize(nType, cx, cy);
+	CdbTableView::OnSize(nType, cx, cy);
 }
 
 void CViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
@@ -204,7 +204,7 @@ void CViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_viewspikes.ballfiles = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	}
-	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -233,7 +233,7 @@ void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand)
 {
-	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
+	const auto flag = CdbTableView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
 	if (p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 	{
@@ -250,18 +250,18 @@ BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand)
 
 void CViewSpikeHist::OnDestroy()
 {
-	CDaoRecordView::OnDestroy();
+	CdbTableView::OnDestroy();
 }
 
 #ifdef _DEBUG
 void CViewSpikeHist::AssertValid() const
 {
-	CDaoRecordView::AssertValid();
+	CdbTableView::AssertValid();
 }
 
 void CViewSpikeHist::Dump(CDumpContext& dc) const
 {
-	CDaoRecordView::Dump(dc);
+	CdbTableView::Dump(dc);
 }
 
 CdbWaveDoc* CViewSpikeHist::GetDocument()
@@ -271,10 +271,6 @@ CdbWaveDoc* CViewSpikeHist::GetDocument()
 
 #endif //_DEBUG
 
-CDaoRecordset* CViewSpikeHist::OnGetRecordset()
-{
-	return GetDocument()->GetDB_Recordset();
-}
 
 void CViewSpikeHist::OnEnChangeTimefirst()
 {
@@ -993,7 +989,7 @@ void CViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	m_bPrint = FALSE;
-	CDaoRecordView::OnEndPrinting(p_dc, pInfo);
+	CdbTableView::OnEndPrinting(p_dc, pInfo);
 }
 
 void CViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
@@ -2148,7 +2144,7 @@ void CViewSpikeHist::OnEnChangeEditlockonstim()
 void CViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (static_cast<CScrollBar*>(GetDlgItem(IDC_SCROLLBAR1)) != pScrollBar)
-		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 
 	// Get the current position of scroll box.
 	auto curpos = pScrollBar->GetScrollPos();

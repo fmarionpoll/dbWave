@@ -793,7 +793,7 @@
     <ClCompile Include="SCOPECHANNEL.cpp" />
     <ClCompile Include="SCOPESTRUCT.cpp" />
     <ClCompile Include="USBPxxS1.cpp" />
-    <ClCompile Include="CViewDao.cpp" />
+    <ClCompile Include="dbTableView.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
     <ClCompile Include="AcqWaveChan.cpp" />
     <ClCompile Include="AcqWaveChanArray.cpp" />
@@ -1366,7 +1366,7 @@
     <ClInclude Include="SCOPECHANNEL.h" />
     <ClInclude Include="SCOPESTRUCT.h" />
     <ClInclude Include="USBPxxS1.h" />
-    <ClInclude Include="CViewDao.h" />
+    <ClInclude Include="dbTableView.h" />
     <ClInclude Include="dbWave_structures.h" />
     <ClInclude Include="DlgAbout.h" />
     <ClInclude Include="AcqWaveChan.h" />

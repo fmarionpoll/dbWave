@@ -1,9 +1,9 @@
 #pragma once
 
 #include "TemplateListWnd.h"
-#include "CViewDao.h"
+#include "dbTableView.h"
 
-class CViewSpikeTemplates : public CViewDAO
+class CViewSpikeTemplates : public CdbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikeTemplates)

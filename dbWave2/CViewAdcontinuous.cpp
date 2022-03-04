@@ -612,7 +612,7 @@ CdbWaveDoc* CADContView::GetDocument()
 
 #endif //_DEBUG
 
-CDaoRecordset* CADContView::OnGetRecordset()
+CdbTableMain* CADContView::OnGetRecordset()
 {
 	return m_ptableSet;
 }

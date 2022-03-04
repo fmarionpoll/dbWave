@@ -414,7 +414,7 @@
     <ClCompile Include="CViewSpikeTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewDao.cpp">
+    <ClCompile Include="dbTableView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Ruler.cpp">
@@ -965,7 +965,7 @@
     <ClInclude Include="CViewSpikeTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewDao.h">
+    <ClInclude Include="dbTableView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbWave_structures.h">

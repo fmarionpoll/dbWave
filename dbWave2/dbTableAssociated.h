@@ -1,6 +1,6 @@
 #pragma once
-
 #pragma warning(disable : 4995)
+#include <afxdao.h>			// MFC DAO database classes
 
 class CdbTableAssociated : public CDaoRecordset
 {

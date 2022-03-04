@@ -2,10 +2,10 @@
 
 #include "DataListCtrl.h"
 #include "Editctrl.h"
-#include "CViewDao.h"
+#include "dbTableView.h"
 
 
-class CViewdbWave : public CViewDAO
+class CViewdbWave : public CdbTableView
 {
 protected: // create from serialization only
 	DECLARE_DYNCREATE(CViewdbWave)

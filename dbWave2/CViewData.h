@@ -5,10 +5,10 @@
 #include "afxwin.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-#include "CViewDao.h"
+#include "dbTableView.h"
 
 
-class CViewData : public CViewDAO
+class CViewData : public CdbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewData)
@@ -18,22 +18,21 @@ protected:
 public:
 	enum { IDD = IDD_VIEWDATA };
 
-	int m_ichanselected = 0;
-	float m_v1 = 0.;
-	float m_v2 = 0.;
-	float m_diff = 0.;
-	float m_timefirst = 0.;
-	float m_timelast = 0.;
+	int m_channel_selected = 0;
+	float m_first_Hz_cursor = 0.;
+	float m_second_Hz_cursor = 0.;
+	float m_difference_second_minus_first = 0.;
+	float m_time_first_abcissa = 0.;
+	float m_time_last_abcissa = 0.;
 	float m_floatNDigits = 1000.; // 10(000) -> n digits displayed
 	BOOL m_bInitComment = true;
 
-	// subclassed controls within CDaoRecordView
-	ChartData m_ChartDataWnd{}; // data display
-	CEditCtrl mm_v1; // first HZ cursor
-	CEditCtrl mm_v2; // second HZ cursor
-	CEditCtrl mm_diff; // difference v1-v2
-	CEditCtrl mm_timefirst; // first abcissa value
-	CEditCtrl mm_timelast; // last abcissa value
+	ChartData m_ChartDataWnd{}; 
+	CEditCtrl mm_first_Hz_cursor; 
+	CEditCtrl mm_second_Hz_cursor;
+	CEditCtrl mm_difference_second_minus_first; 
+	CEditCtrl mm_time_first_abcissa;
+	CEditCtrl mm_time_last_abcissa;
 	CComboBox m_comboSelectChan;
 	CRulerBar m_ADC_yRulerBar;
 	CRulerBar m_ADC_xRulerBar;
@@ -43,18 +42,18 @@ protected:
 	AcqDataDoc* m_pdatDoc = nullptr;
 	BOOL m_bvalidDoc = false;
 	float m_samplingRate = 1.;
-	int m_cursorstate = 0; // cursor = system arrow
-	int m_VBarpixelratio = 30; // vertical bar pixel ratio
-	int m_HBarpixelratio = 10; // horizontal bar pixel ratio
+	int m_cursorstate = 0;
+	int m_VBarpixelratio = 30; 
+	int m_HBarpixelratio = 10; 
 	int m_currentfileindex = 0;
 
 	HICON m_hBias = nullptr;
 	HICON m_hZoom = nullptr;
 	int scan_count = 0;
-	float chrate = 0.;
+	float channel_rate = 0.;
 
 	OPTIONS_VIEWDATA* options_viewdata = nullptr;
-	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; // measure options
+	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;
 
 protected:
 	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);

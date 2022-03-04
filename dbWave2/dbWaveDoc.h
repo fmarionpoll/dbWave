@@ -135,7 +135,7 @@ public:
 	// DAO database functions
 public:
 	long	GetDB_NRecords() const { return m_pDB->GetNRecords(); }
-	CDaoRecordset* GetDB_Recordset() const { return &m_pDB->m_mainTableSet; }
+	CdbTableMain* GetDB_Recordset() const { return &m_pDB->m_mainTableSet; }
 	void	DBDeleteCurrentRecord();
 	CString GetDB_CurrentDatFileName(BOOL bTest = FALSE);
 	CString GetDB_CurrentSpkFileName(BOOL bTest = FALSE);

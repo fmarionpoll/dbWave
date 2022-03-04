@@ -274,7 +274,7 @@ int DlgADExperiment::SaveList(CComboBox* p_combo, CStringArray* p_s)
 }
 
 // load content of the list and of the corresponding DAOrecordset
-void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel, CDaoRecordset* pm_set)
+void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel, CdbTableAssociated* pm_set)
 {
 	// add string from the string array
 	p_combo->ResetContent();

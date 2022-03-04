@@ -1,17 +1,19 @@
 #pragma once
-//#include <afxdao.h>
+#include <afxdao.h>
+
 #pragma warning(disable : 4995)
 #include "CSpkListTabCtrl.h"
+#include "dbTableMain.h"
 #include "StretchControls.h"
 
-class CViewDAO : public CDaoRecordView
+class CdbTableView : public CDaoRecordView
 {
-	DECLARE_DYNAMIC(CViewDAO)
+	DECLARE_DYNAMIC(CdbTableView)
 
 protected:
-	explicit CViewDAO(LPCTSTR lpszTemplateName);
-	explicit CViewDAO(UINT nIDTemplate);
-	~CViewDAO() override;
+	explicit CdbTableView(LPCTSTR lpszTemplateName);
+	explicit CdbTableView(UINT nIDTemplate);
+	~CdbTableView() override;
 
 public:
 	CdbTableMain* m_pSet = nullptr;
@@ -79,7 +81,7 @@ protected:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CViewDAO::GetDocument()
+inline CdbWaveDoc* CdbTableView::GetDocument()
 {
 	return (CdbWaveDoc*)m_pDocument;
 }

@@ -1,7 +1,8 @@
 #pragma once
+#include "dbTableView.h"
 #include "StretchControls.h"
 
-class CViewSpikeHist : public CDaoRecordView
+class CViewSpikeHist : public CdbTableView
 {
 	DECLARE_DYNCREATE(CViewSpikeHist)
 protected:
@@ -72,7 +73,6 @@ protected:
 
 	// Overrides
 public:
-	CDaoRecordset* OnGetRecordset() override;
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	BOOL OnMove(UINT nIDMoveCommand) override;
 protected:

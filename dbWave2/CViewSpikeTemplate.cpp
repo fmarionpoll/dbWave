@@ -15,10 +15,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikeTemplates, CViewDAO)
+IMPLEMENT_DYNCREATE(CViewSpikeTemplates, CdbTableView)
 
 CViewSpikeTemplates::CViewSpikeTemplates()
-	: CViewDAO(IDD)
+	: CdbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -32,7 +32,7 @@ CViewSpikeTemplates::~CViewSpikeTemplates()
 
 void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 {
-	CDaoRecordView::DoDataExchange(pDX);
+	CdbTableView::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_T1, m_t1);
 	DDX_Text(pDX, IDC_T2, m_t2);
@@ -49,7 +49,7 @@ void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_DISPLAYSINGLECLASS, m_bDisplaySingleClass);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CViewDAO)
+BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CdbTableView)
 
 	ON_MESSAGE(WM_MYMESSAGE, &CViewSpikeTemplates::OnMyMessage)
 	ON_WM_SIZE()
@@ -86,13 +86,13 @@ void CViewSpikeTemplates::OnDestroy()
 			m_psC->CreateTPL();
 		*static_cast<CTemplateListWnd*>(m_psC->ptpl) = m_templList;
 	}
-	CDaoRecordView::OnDestroy();
+	CdbTableView::OnDestroy();
 }
 
 BOOL CViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CViewDAO::OnMove(nIDMoveCommand);
+	return CdbTableView::OnMove(nIDMoveCommand);
 }
 
 void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -156,7 +156,7 @@ void CViewSpikeTemplates::defineStretchParameters()
 
 void CViewSpikeTemplates::OnInitialUpdate()
 {
-	CDaoRecordView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -488,7 +488,7 @@ void CViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 

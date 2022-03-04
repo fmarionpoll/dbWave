@@ -18,9 +18,9 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikes, CViewDAO)
+IMPLEMENT_DYNCREATE(CViewSpikes, CdbTableView)
 
-CViewSpikes::CViewSpikes() : CViewDAO(IDD)
+CViewSpikes::CViewSpikes() : CdbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -35,7 +35,7 @@ CViewSpikes::~CViewSpikes()
 
 void CViewSpikes::DoDataExchange(CDataExchange* pDX)
 {
-	CDaoRecordView::DoDataExchange(pDX);
+	CdbTableView::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
@@ -51,7 +51,7 @@ void CViewSpikes::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_SAMECLASS, m_bKeepSameClass);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikes, CDaoRecordView)
+BEGIN_MESSAGE_MAP(CViewSpikes, CdbTableView)
 
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
@@ -128,13 +128,13 @@ void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 		p_app->options_viewspikes.bincrflagonsave = static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());
 	}
-	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 BOOL CViewSpikes::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CViewDAO::OnMove(nIDMoveCommand);
+	return CdbTableView::OnMove(nIDMoveCommand);
 }
 
 void CViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -210,7 +210,7 @@ void CViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		m_ChartDataWnd.XorTempVTtag(m_ptVT);
 		m_spkClassListBox.XorTempVTtag(m_ptVT);
 	}
-	CDaoRecordView::OnMouseMove(nFlags, point);
+	CdbTableView::OnMouseMove(nFlags, point);
 }
 
 void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
@@ -228,14 +228,14 @@ void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 		addSpiketoList(iitime, b_check);
 		m_bdummy = FALSE;
 	}
-	CDaoRecordView::OnLButtonUp(nFlags, point);
+	CdbTableView::OnLButtonUp(nFlags, point);
 }
 
 void CViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_rectVTtrack.PtInRect(point))
 		SetCapture();
-	CDaoRecordView::OnLButtonDown(nFlags, point);
+	CdbTableView::OnLButtonDown(nFlags, point);
 }
 
 LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
@@ -458,7 +458,7 @@ void CViewSpikes::defineStretchParameters()
 
 void CViewSpikes::OnInitialUpdate()
 {
-	CDaoRecordView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -1759,7 +1759,7 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CDaoRecordView::OnHScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -2130,7 +2130,7 @@ void CViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CDaoRecordView::OnVScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -2145,7 +2145,7 @@ void CViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	default:
 		break;
 	}
-	CDaoRecordView::OnVScroll(nSBCode, nPos, pScrollBar);
+	CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CViewSpikes::OnArtefact()

@@ -6,9 +6,9 @@
 #include "ChartSpikeBar.h"
 #include "ChartSpikeHistVert.h"
 #include "ScrollBarEx.h"
-#include "CViewDao.h"
+#include "dbTableView.h"
 
-class CViewSpikeSort : public CViewDAO
+class CViewSpikeSort : public CdbTableView
 {
 	DECLARE_DYNCREATE(CViewSpikeSort)
 protected:

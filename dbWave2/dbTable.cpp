@@ -1123,3 +1123,9 @@ void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_ta
 		p_index_table->MoveNext();
 	}
 }
+
+void CdbTable::CompactDataBase(CString file_name, CString file_name_new)
+{
+	// compact database and save new file
+	CDaoWorkspace::CompactDatabase(file_name, file_name_new, dbLangGeneral, 0);
+}

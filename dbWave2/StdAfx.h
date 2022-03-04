@@ -56,10 +56,6 @@
 #include <process.h>
 #include <afxdisp.h>
 
-#pragma warning(disable : 4995)
-#include <afxdao.h>			// MFC DAO database classes
-
-
 #include "resource.h"
 
 #define SAFE_DELETE(ptr) if (ptr) { delete ptr; ptr = NULL; }

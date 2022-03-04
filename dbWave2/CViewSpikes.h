@@ -2,9 +2,9 @@
 
 #include "SpikeClassListBox.h"
 #include "ScrollBarEx.h"
-#include "CViewDao.h"
+#include "dbTableView.h"
 
-class CViewSpikes : public CViewDAO
+class CViewSpikes : public CdbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikes)

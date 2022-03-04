@@ -505,10 +505,10 @@ void CDataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	switch (nSBCode)
 	{
 	case SB_LINEUP:
-		static_cast<CDaoRecordView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case SB_LINEDOWN:
-		static_cast<CDaoRecordView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 	default:
 		CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -527,10 +527,10 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		SendMessage(WM_VSCROLL, SB_PAGEDOWN, NULL);
 		break;
 	case VK_UP:
-		static_cast<CDaoRecordView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case VK_DOWN:
-		static_cast<CDaoRecordView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 
 	default:

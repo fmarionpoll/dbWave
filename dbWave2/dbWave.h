@@ -3,6 +3,8 @@
 #ifndef __AFXWIN_H__
 #error "include 'stdafx.h' before including this file for PCH"
 #endif
+#pragma warning (disable : 4995)
+#include <afxdao.h>
 
 #include "dbMultiDocTemplate.h"
 #include "OPTIONS_ACQDATA.h"
@@ -82,5 +84,4 @@ public:
 
 extern CdbWaveApp theApp;
 
-#pragma warning (disable : 4995)
 void DisplayDaoException(CDaoException* e, int iID);

@@ -134,7 +134,7 @@ protected:
 	void InitializeAmplifiers();
 
 	// Overrides
-	CDaoRecordset* OnGetRecordset();
+	CdbTableMain* OnGetRecordset();
 	void DoDataExchange(CDataExchange* pDX) override;
 	void AttachControls();
 	void OnInitialUpdate() override;

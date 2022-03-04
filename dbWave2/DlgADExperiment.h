@@ -51,7 +51,7 @@ public:
 
 protected:
 	int SaveList(CComboBox* pCo, CStringArray* p_spike_element);
-	void LoadList(CComboBox* pCo, CStringArray* p_spike_element, int isel, CDaoRecordset* pmSet = nullptr);
+	void LoadList(CComboBox* pCo, CStringArray* p_spike_element, int isel, CdbTableAssociated* pmSet = nullptr);
 	void EditComboBox(CComboBox* pCo);
 
 	// Generated message map functions

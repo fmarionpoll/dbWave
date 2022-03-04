@@ -2,9 +2,9 @@
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "./Controls/cdxCRotBevelLine.h"
-#include "CViewDao.h"
+#include "dbTableView.h"
 
-class CViewSpikeDetection : public CViewDAO
+class CViewSpikeDetection : public CdbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikeDetection)

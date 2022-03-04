@@ -10,6 +10,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include "dbTableView.h"
 #include "dbWave.h"
 #include "dbWave_constants.h"
 
@@ -241,8 +242,8 @@ CdbWaveDoc* CMainFrame::GetMDIActiveDocument()
 	const auto p_child = MDIGetActive();
 	if (p_child == nullptr)
 		return nullptr;
-	auto* p_view = static_cast<CDaoRecordView*>(p_child->GetActiveView());
-	return static_cast<CdbWaveDoc*>(p_view->GetDocument());
+	auto* p_view = static_cast<CdbTableView*>(p_child->GetActiveView());
+	return p_view->GetDocument();
 }
 
 BOOL CMainFrame::CreateOutlookBar()
