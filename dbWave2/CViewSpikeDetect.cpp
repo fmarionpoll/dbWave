@@ -45,8 +45,11 @@ CViewSpikeDetection::CViewSpikeDetection()
 
 CViewSpikeDetection::~CViewSpikeDetection()
 {
-	if (m_pSpkDoc != nullptr)
+	if (m_pSpkDoc != nullptr) {
 		saveCurrentSpkFile();
+		//if (static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
+		//	IncrementSpikeFlag();
+	}
 	// save spike detection parameters
 	const auto parray = m_pArrayFromApp->GetChanArray(m_scancount_doc);
 	*parray = m_parmsCurrent;
@@ -186,7 +189,6 @@ void CViewSpikeDetection::OnActivateView(BOOL bActivate, CView* pActivateView, C
 	{
 		serializeWindowsState(BSAVE);
 		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-		p_app->options_viewspikes.bincrflagonsave = static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd_Source.
 			GetScopeParameters());
 	}
@@ -637,8 +639,6 @@ void CViewSpikeDetection::OnInitialUpdate()
 	m_autoDetect = true;
 
 	defineSubClassedItems();
-	// set bin_cr_flag_on_save
-	static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	// load data file parameters and build curves
 	CdbTableView::OnInitialUpdate();

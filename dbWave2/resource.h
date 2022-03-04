@@ -718,7 +718,6 @@
 #define IDC_LOAD_SAVE                   1390
 #define IDC_MEASUREALL                  1391
 #define IDC_TFIRSTSORTEDCLASS           1391
-#define IDC_INCREMENTFLAG               1392
 #define IDC_XLAST                       1394
 #define IDC_DIGITTOANALOG               1397
 #define IDC_ENABLEOUTPUT                1398

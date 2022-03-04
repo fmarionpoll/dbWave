@@ -29,6 +29,7 @@ public:
 	CSpikeDoc* m_pSpkDoc = nullptr;
 	CSpikeList* m_pSpkList = nullptr;
 	void saveCurrentSpkFile();
+	void IncrementSpikeFlag();
 	CSpkListTabCtrl m_tabCtrl{};
 
 #ifdef _DEBUG

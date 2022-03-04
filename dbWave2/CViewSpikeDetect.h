@@ -33,37 +33,37 @@ public:
 
 	// form variables
 protected:
-	int m_scancount_doc = -1; // number of channels in the data document
-	CDWordArray m_DWintervals; // intervals to draw detected spikes
+	int m_scancount_doc = -1; 
+	CDWordArray m_DWintervals; 
 
 	ChartData m_ChartDataWnd_Detect;
 	ChartData m_ChartDataWnd_Source;
 	CChartSpikeBarWnd m_ChartSpkWnd_Bar;
 	CChartSpikeShapeWnd m_ChartSpkWnd_Shape;
 
-	CScrollBarEx m_filescroll; // data position within file
-	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
+	CScrollBarEx m_filescroll; 
+	SCROLLINFO m_filescroll_infos{}; 
 
-	CEditCtrl mm_spikeno; // spike selected
-	CEditCtrl mm_thresholdval; // value of threshold
-	CEditCtrl mm_timefirst; // first abcissa value
-	CEditCtrl mm_timelast; // last abcissa value
-	CEditCtrl mm_spkWndDuration; // duration of the spike shape window
-	CEditCtrl mm_spkWndAmplitude; // amplitude of the spike shape window
-	CEditCtrl mm_ichanselected; // channel selected
+	CEditCtrl mm_spikeno; 
+	CEditCtrl mm_thresholdval; 
+	CEditCtrl mm_timefirst;
+	CEditCtrl mm_timelast; 
+	CEditCtrl mm_spkWndDuration; 
+	CEditCtrl mm_spkWndAmplitude; 
+	CEditCtrl mm_ichanselected; 
 	CEditCtrl mm_ichanselected2;
 
-	int m_zoominteger = 0; // zoom length (nb data acq points)
+	int m_zoominteger = 0; 
 	SPKDETECTARRAY* m_pArrayFromApp = nullptr;
 	CSpkDetectArray m_parmsCurrent;
 	SPKDETECTPARM* m_pDetectParms = nullptr;
-	int m_iDetectParms = 0; // index spk detect parm currently selected / array
+	int m_iDetectParms = 0; 
 
-	OPTIONS_VIEWDATA* options_viewdata = nullptr; // browse options
-	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; // measure options
+	OPTIONS_VIEWDATA* options_viewdata = nullptr; 
+	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; 
 
-	float m_samplingRate = 0.f; // data sampling rate
-	BOOL m_bValidThreshold = false; // flag: TRUE=threshold should be evaluated
+	float m_samplingRate = 0.f; 
+	BOOL m_bValidThreshold = false; 
 	BOOL m_bDetected = false;
 	TCHAR m_szbuf[64]{};
 
@@ -140,15 +140,15 @@ protected:
 	// gain and bias setting: data and functions
 	HICON m_hBias = nullptr;
 	HICON m_hZoom = nullptr;
-	CScrollBar m_scrolly; // V scrollbar
-	float m_yscaleFactor = 0.f; // div factor for y bar
-	int m_VBarMode = 0; // flag V scrollbar state
+	CScrollBar m_scrolly; 
+	float m_yscaleFactor = 0.f; 
+	int m_VBarMode = 0; 
 
 	HICON m_hBias2 = nullptr;
 	HICON m_hZoom2 = nullptr;
-	CScrollBar m_scrolly2; // V scrollbar
-	float m_yscaleFactor2 = 0.f; // div factor for y bar
-	int m_VBarMode2 = 0; // flag V scrollbar state
+	CScrollBar m_scrolly2; 
+	float m_yscaleFactor2 = 0.f; 
+	int m_VBarMode2 = 0; 
 
 	void OnGainScroll(UINT nSBCode, UINT nPos, int iID);
 	void OnBiasScroll(UINT nSBCode, UINT nPos, int iID);

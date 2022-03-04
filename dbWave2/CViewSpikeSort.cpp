@@ -191,9 +191,6 @@ void CViewSpikeSort::OnInitialUpdate()
 	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 	yhistogram_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1hist));
 
-	// set bincrflagonsave
-	static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
-
 	// display tag lines at proper places
 	m_spkhistupper = yhistogram_wnd_.m_VTtags.AddTag(m_psC->iupper, 0);
 	m_spkhistlower = yhistogram_wnd_.m_VTtags.AddTag(m_psC->ilower, 0);
@@ -269,7 +266,6 @@ void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 		CArchive ar(p_app->m_psort1spikesMemFile, CArchive::store);
 		p_app->m_psort1spikesMemFile->SeekToBegin();
 		ar.Close();
-		p_app->options_viewspikes.bincrflagonsave = static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
 	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }

@@ -112,9 +112,6 @@ void CdbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p
 	}
 	else
 	{
-		if (m_autoIncrement)
-			static_cast<CdbWaveApp*>(AfxGetApp())->options_viewspikes.bincrflagonsave = static_cast<CButton*>(
-				GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -183,13 +180,18 @@ void CdbTableView::saveCurrentSpkFile()
 		p_doc->SetDB_nbspikes(ntotalspikes);
 		p_doc->SetDB_nbspikeclasses(nclasses);
 
+	}
+}
+
+void CdbTableView::IncrementSpikeFlag()
+{
+	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
+	{
+		auto p_doc = GetDocument();
 		// change flag is button is checked
-		if (static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck())
-		{
-			int flag = p_doc->GetDB_CurrentRecordFlag();
-			flag++;
-			p_doc->SetDB_CurrentRecordFlag(flag);
-		}
+		int flag = p_doc->GetDB_CurrentRecordFlag();
+		flag++;
+		p_doc->SetDB_CurrentRecordFlag(flag);
 	}
 }
 

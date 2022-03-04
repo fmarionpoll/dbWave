@@ -125,7 +125,6 @@ void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 		}
 		
 		auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		p_app->options_viewspikes.bincrflagonsave = static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->GetCheck();
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());
 	}
 	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
@@ -501,9 +500,6 @@ void CViewSpikes::OnInitialUpdate()
 	// init relation with document, display data, adjust parameters
 	m_ChartDataWnd.SetScopeParameters(&(options_viewdata->viewdata));
 	m_ChartDataWnd.SetCursorMaxOnDblClick(3);
-
-	// set bincrflagonsave
-	static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
 
 	updateFileParameters(TRUE);
 	if (m_baddspikemode)

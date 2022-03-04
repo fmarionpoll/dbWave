@@ -171,9 +171,6 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	if (m_psC->ptpl != nullptr)
 		m_templList = *static_cast<CTemplateListWnd*>(m_psC->ptpl);
 
-	// set bincrflagonsave
-	static_cast<CButton*>(GetDlgItem(IDC_INCREMENTFLAG))->SetCheck(p_app->options_viewspikes.bincrflagonsave);
-
 	// set ctrlTab values and extend its size
 	CString cs = _T("Create");
 	m_tab1Ctrl.InsertItem(0, cs);
