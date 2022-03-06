@@ -41,8 +41,6 @@ BEGIN_MESSAGE_MAP(DlgEditStimArray, CDialog)
 	ON_BN_CLICKED(IDC_IMPORTFROMDATA, &DlgEditStimArray::OnBnClickedImportfromdata)
 END_MESSAGE_MAP()
 
-// CEditStimArrayDlg message handlers
-
 void DlgEditStimArray::make_dialog_stretchable()
 {
 	// init dialog size
@@ -86,7 +84,7 @@ BOOL DlgEditStimArray::OnInitDialog()
 	LVCOLUMN lv_column;
 	lv_column.mask = LVCF_FMT | LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH | LVCF_ORDER;
 	lv_column.iOrder = 1;
-	lv_column.cx = 150;
+	lv_column.cx = 80;
 	lv_column.pszText = _T("time (s)");
 	lv_column.fmt = LVCFMT_LEFT;
 	m_stimulus_array_control.InsertColumn(0, &lv_column);
@@ -190,7 +188,8 @@ void DlgEditStimArray::set_active_edit_overlay()
 
 	CRect rect;
 	m_stimulus_array_control.GetSubItemRect(m_item_index, 1, LVIR_LABEL, rect);
-	// TODO reduce rect
+	int column_width = m_stimulus_array_control.GetColumnWidth(1);
+	rect.right = rect.left + column_width;
 	m_stimulus_array_control.MapWindowPoints(this, rect);
 	m_edit_control.MoveWindow(&rect);
 }

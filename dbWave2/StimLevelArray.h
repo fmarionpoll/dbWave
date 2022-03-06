@@ -24,7 +24,7 @@ public:
 	int iID; // ID number of the array
 	int ichan;
 	CString csDescriptor; // descriptor of the array
-	int nitems; // number of on/off events
+	int nitems;		// number of on/off events
 	int npercycle; // repeat sequence parameter
 	float chrate; // n clock cycles per second
 protected:
