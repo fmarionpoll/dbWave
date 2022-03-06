@@ -1218,9 +1218,9 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 	}
 
 	// close files opened here
-	SAFE_DELETE(m_pDat);
-	SAFE_DELETE(m_pSpk);
-	SAFE_DELETE(psf);
+	SAFE_DELETE(m_pDat)
+	SAFE_DELETE(m_pSpk)
+	SAFE_DELETE(psf)
 }
 
 boolean CdbWaveDoc::import_file_single(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns,

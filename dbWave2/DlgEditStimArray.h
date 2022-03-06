@@ -7,7 +7,6 @@ class DlgEditStimArray : public CDialog
 {
 	DECLARE_DYNAMIC(DlgEditStimArray)
 
-public:
 	DlgEditStimArray(CWnd* pParent = nullptr);
 	~DlgEditStimArray() override;
 

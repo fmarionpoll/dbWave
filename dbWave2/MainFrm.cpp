@@ -69,7 +69,7 @@ CMainFrame::~CMainFrame()
 {
 	m_wndOutlookPane.ClearAll();
 	m_wndOutlookPane.RemoveAllButtons();
-	SAFE_DELETE(m_pSecondToolBar);
+	SAFE_DELETE(m_pSecondToolBar)
 }
 
 void CMainFrame::OnDestroy()

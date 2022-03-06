@@ -79,7 +79,7 @@ void CDataListCtrl::OnDestroy()
 		for (auto i = 0; i < NCOLS; i++)
 			m_picolwidth->SetAt(i, GetColumnWidth(i));
 	}
-	SAFE_DELETE(m_pEmptyBitmap);
+	SAFE_DELETE(m_pEmptyBitmap)
 	//CListCtrl::OnDestroy();
 }
 
@@ -91,7 +91,7 @@ void CDataListCtrl::deletePtrArray()
 	for (auto i = 0; i < imax; i++)
 	{
 		auto* ptr = ptrArray.GetAt(i);
-		SAFE_DELETE(ptr);
+		SAFE_DELETE(ptr)
 	}
 	ptrArray.RemoveAll();
 }
@@ -447,7 +447,7 @@ void CDataListCtrl::setEmptyBitmap(const BOOL b_forced_update)
 	if (m_pEmptyBitmap != nullptr && !b_forced_update)
 		return;
 
-	SAFE_DELETE(m_pEmptyBitmap);
+	SAFE_DELETE(m_pEmptyBitmap)
 	m_pEmptyBitmap = new CBitmap;
 
 	CWindowDC dc(this);
@@ -781,8 +781,8 @@ void CDataListCtrl::ResizeSignalColumn(int npixels)
 	for (int i = 0; i < ptrArray.GetSize(); i++)
 	{
 		auto* ptr = ptrArray.GetAt(i);
-		SAFE_DELETE(ptr->pDataChartWnd);
-		SAFE_DELETE(ptr->pSpikeChartWnd);
+		SAFE_DELETE(ptr->pDataChartWnd)
+		SAFE_DELETE(ptr->pSpikeChartWnd)
 	}
 	RefreshDisplay();
 }

@@ -27,8 +27,8 @@ AcqDataDoc::AcqDataDoc()
 AcqDataDoc::~AcqDataDoc()
 {
 	// delete structures created
-	SAFE_DELETE(m_pWBuf);
-	SAFE_DELETE(m_pXFile);
+	SAFE_DELETE(m_pWBuf)
+	SAFE_DELETE(m_pXFile)
 }
 
 BOOL AcqDataDoc::OnSaveDocument(CString& szPathName)
@@ -53,7 +53,7 @@ BOOL AcqDataDoc::OnOpenDocument(CString& sz_path_name)
 	const auto b_open = CFile::GetStatus(sz_path_name, status);
 	if (!b_open || status.m_size <= 4096) // patch to avoid to open 1kb files ...
 	{
-		SAFE_DELETE(m_pXFile);
+		SAFE_DELETE(m_pXFile)
 		return FALSE;
 	}
 	ASSERT(sz_path_name.Right(3) != _T("del"));
@@ -68,7 +68,7 @@ BOOL AcqDataDoc::OnOpenDocument(CString& sz_path_name)
 int AcqDataDoc::importFile(CString& sz_path_name)
 {
 	m_pXFile->CloseDataFile();
-	SAFE_DELETE(m_pXFile);
+	SAFE_DELETE(m_pXFile)
 	CString filename_new = sz_path_name;
 	if (!dlgImportDataFile(filename_new))
 		return FALSE;
@@ -920,7 +920,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 
 		// delete current file object and open saved-as file ??
 		m_pXFile->CloseDataFile();
-		SAFE_DELETE(m_pXFile);
+		SAFE_DELETE(m_pXFile)
 
 		// create / update CDataFileX associated object
 		m_pXFile = new CDataFileAWAVE; //((CFile*) this);

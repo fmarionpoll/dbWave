@@ -1,6 +1,3 @@
-// EditStimArrayDlg.cpp : implementation file
-//
-
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "DlgEditStimArray.h"
@@ -9,7 +6,6 @@
 #define new DEBUG_NEW
 #endif
 
-// CEditStimArrayDlg dialog
 
 IMPLEMENT_DYNAMIC(DlgEditStimArray, CDialog)
 
@@ -20,7 +16,7 @@ DlgEditStimArray::DlgEditStimArray(CWnd* pParent /*=NULL*/)
 
 DlgEditStimArray::~DlgEditStimArray()
 {
-	SAFE_DELETE(m_pimagelist);
+	SAFE_DELETE(m_pimagelist)
 }
 
 void DlgEditStimArray::DoDataExchange(CDataExchange* pDX)

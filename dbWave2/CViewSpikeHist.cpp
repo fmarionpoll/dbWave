@@ -1215,7 +1215,7 @@ void CViewSpikeHist::buildData()
 		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
 		p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
 	}
-	SAFE_DELETE(pdlg);
+	SAFE_DELETE(pdlg)
 }
 
 // plot histogram (generic)

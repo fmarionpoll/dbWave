@@ -27,8 +27,8 @@ CDataListCtrl_Row::~CDataListCtrl_Row()
 	{
 		delete pSpikeChartWnd;
 	}
-	SAFE_DELETE(pdataDoc);
-	SAFE_DELETE(pspikeDoc);
+	SAFE_DELETE(pdataDoc)
+	SAFE_DELETE(pspikeDoc)
 	cs_comment.Empty();
 	csDatafileName.Empty();
 	csSpikefileName.Empty();

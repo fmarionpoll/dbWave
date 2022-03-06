@@ -221,8 +221,8 @@ int CdbWaveApp::ExitInstance()
 	Defaultparameters(FALSE);
 	AfxOleTerm(FALSE);
 
-	SAFE_DELETE(m_pviewdataMemFile);
-	SAFE_DELETE(m_psf);
+	SAFE_DELETE(m_pviewdataMemFile)
+	SAFE_DELETE(m_psf)
 
 	if (viewspikesmemfile_ptr_array.GetSize() != NULL)
 	{
@@ -230,8 +230,8 @@ int CdbWaveApp::ExitInstance()
 			delete viewspikesmemfile_ptr_array.GetAt(i);
 	}
 
-	SAFE_DELETE(m_pviewspikesMemFile);
-	SAFE_DELETE(m_psort1spikesMemFile);
+	SAFE_DELETE(m_pviewspikesMemFile)
+	SAFE_DELETE(m_psort1spikesMemFile)
 
 	// erase temporary "mdb" files
 	const auto i0 = m_tempMDBfiles.GetCount() - 1;
