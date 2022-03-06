@@ -3197,12 +3197,12 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 	m_pSpkDoc->SortStimArray();
 
 	DlgEditStimArray dlg;
-	dlg.intervalsandlevels_ptr_array.RemoveAll();
-	dlg.intervalsandlevels_ptr_array.Add(&m_pSpkDoc->m_stimIntervals);
-	dlg.m_rate = m_samplingRate;
-	dlg.m_pstimsaved = &GetDocument()->m_stimsaved;
+	dlg.intervals_and_levels_array.RemoveAll();
+	dlg.intervals_and_levels_array.Add(&m_pSpkDoc->m_stimIntervals);
+	dlg.m_sampling_rate = m_samplingRate;
+	dlg.intervals_and_levels_saved = &GetDocument()->m_stimsaved;
 	if (GetDocument()->m_pDat != nullptr)
-		dlg.m_pTagList = GetDocument()->m_pDat->GetpVTtags();
+		dlg.tag_list = GetDocument()->m_pDat->GetpVTtags();
 
 	if (IDOK == dlg.DoModal())
 	{

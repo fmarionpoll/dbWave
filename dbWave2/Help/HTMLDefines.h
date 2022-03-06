@@ -250,7 +250,6 @@
 #define HIDD_IMPORTFILESDLG                     0x20100
 #define HIDD_FILE_NEW1                          0x20105
 #define HIDD_TRANSFERFILES                      0x20107
-#define HIDD_PIVOTDLG                           0x2010B
 #define HIDD_IMPORTOPTIONS                      0x20215
 #define HIDD_DBEDITRECORDFIELD                  0x20217
 #define HIDD_DTBOARD_DLG                        0x2022E

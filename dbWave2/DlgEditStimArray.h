@@ -11,37 +11,45 @@ class DlgEditStimArray : public CDialog
 	~DlgEditStimArray() override;
 
 	// data passed by caller
-	CTagList* m_pTagList {nullptr};
-	CIntervalsAndLevels* m_pstimsaved { nullptr };
-	CArray<CIntervalsAndLevels*, CIntervalsAndLevels*> intervalsandlevels_ptr_array{};
-	float m_rate = 0.f;
+	CTagList* tag_list {nullptr};
+	CIntervalsAndLevels* intervals_and_levels_saved { nullptr };
+	CArray<CIntervalsAndLevels*, CIntervalsAndLevels*> intervals_and_levels_array{};
+	float m_sampling_rate = 0.f;
 
 	// Dialog Data
 	enum { IDD = IDD_EDITSTIMULUS };
 
 protected:
-	CIntervalsAndLevels* m_pstim {nullptr} ;
+	CIntervalsAndLevels* intervals_and_levels {nullptr} ;
 
 	void DoDataExchange(CDataExchange* pDX) override;
-	CStretchControl m_stretch{};
-	BOOL m_binit { false };
-	CEdit m_csEdit{};
-	float m_value {0};
-	int m_iItem {-1};
-	CListCtrl m_stimarrayCtrl{};
-	CImageList* m_pimagelist {nullptr};
+	CEdit m_edit_control{};
+	bool mode_edit = false;
+	CListCtrl m_stimulus_array_control{};
 
-	void selectItem(int i);
+	CStretchControl m_stretch{};
+	BOOL m_initialized { false };
+	float m_item_value {0};
+	int m_item_index {-1};
+	CImageList* m_image_list {nullptr};
+
+	void make_dialog_stretchable();
+	void select_item(int i);
 	void resetListOrder();
 	void addNewItem(int i, long lInterval);
-	void transferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
-	void setSubItem0(LVITEM& lvi, int i, CString& cs);
+	void transfer_intervals_array_to_dialog_list();
+	void setSubItem0(LVITEM& lvi, int item, CString& cs);
 	void setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs) const;
+	void set_edit_value();
+	void get_edit_value();
+	void set_active_edit_overlay();
+	void set_inactive_edit_overlay();
+	int	 get_row_selected();
 
 public:
 	BOOL OnInitDialog() override;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnBnClickedEdit();
+	afx_msg void OnBnClickedEditButton();
 	afx_msg void OnEnKillfocusReOrder();
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedInsert();

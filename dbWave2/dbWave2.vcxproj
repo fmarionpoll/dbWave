@@ -1479,7 +1479,6 @@
     <ClInclude Include="NotedocCntrItem.h" />
     <ClInclude Include="PanelFilter.h" />
     <ClInclude Include="PanelProperties.h" />
-    <ClInclude Include="DlgPivot.h" />
     <ClInclude Include="DlgPrintDataOptions.h" />
     <ClInclude Include="DlgPrintDrawArea.h" />
     <ClInclude Include="DlgPrintMargins.h" />

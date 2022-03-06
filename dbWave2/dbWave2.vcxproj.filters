@@ -899,9 +899,6 @@
     <ClInclude Include="DlgDAOutputsParms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DlgPivot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DataListCtrl_Row.h">
       <Filter>Header Files</Filter>
     </ClInclude>

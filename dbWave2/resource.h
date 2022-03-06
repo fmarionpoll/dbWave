@@ -232,7 +232,6 @@
 #define IDC_ROWHEIGHT                   266
 #define IDC_SOURCECHANNEL               267
 #define IDC_LEFTPAGEMARGIN              267
-#define IDD_PIVOTDLG                    267
 #define IDC_NBCURSORS                   268
 #define IDC_TIMEFIRST                   268
 #define IDC_PARAMETER                   269
@@ -686,6 +685,7 @@
 #define IDC_INSERT                      1354
 #define IDC_DELETE                      1355
 #define IDC_EDIT                        1356
+#define IDC_EDIT_BUTTON                 1356
 #define IDC_SYNCHROALL                  1357
 #define IDC_DELETE3                     1357
 #define IDC_SYNCHROSINGLE               1358
@@ -770,8 +770,6 @@
 #define IDC_LIST                        1448
 #define IDC_COPY                        1451
 #define IDC_PASTE                       1452
-#define IDC_RADIOCOUNTITEMS             1453
-#define IDC_RADIOAVERAGE                1454
 #define IDC_CHECKOTHERFORMATS           1461
 #define IDC_EXCLUDECLOUD                1462
 #define IDC_STATICDISPLAYDATA           1463
@@ -820,6 +818,8 @@
 #define IDC_DISPLAYSINGLECLASS          1514
 #define IDC_REORDER                     1515
 #define IDC_USBPXXS1CTL1                1516
+#define IDC_EDIT_CONTROL                1519
+#define IDC_EDIT_TEXT                   1519
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -944,9 +944,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        577
+#define _APS_NEXT_RESOURCE_VALUE        579
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1517
+#define _APS_NEXT_CONTROL_VALUE         1520
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif
