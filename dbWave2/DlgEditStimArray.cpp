@@ -327,17 +327,17 @@ void DlgEditStimArray::setSubItem0(LVITEM& lvi, int i, CString& cs)
 	lvi.iSubItem = 0;
 	lvi.mask = LVIF_IMAGE | LVIF_TEXT;
 	cs.Format(_T("%i"), i);
-	lvi.pszText = (LPTSTR)static_cast<LPCTSTR>(cs);
+	lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
 	lvi.iImage = i % 2;
 }
 
-void DlgEditStimArray::setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs)
+void DlgEditStimArray::setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs) const
 {
 	lvi.iItem = iItem;
 	lvi.iSubItem = 1;
 	lvi.mask = LVIF_TEXT;
 	cs.Format(_T("%10.3f"), (static_cast<float>(lInterval) / m_rate));
-	lvi.pszText = (LPTSTR)static_cast<LPCTSTR>(cs);
+	lvi.pszText = const_cast<LPTSTR>(static_cast<LPCTSTR>(cs));
 }
 
 void DlgEditStimArray::addNewItem(int i, long lInterval)

@@ -36,7 +36,7 @@ protected:
 	void addNewItem(int i, long lInterval);
 	void transferIntervalsArrayToDialogList(CIntervalsAndLevels* pstim);
 	void setSubItem0(LVITEM& lvi, int i, CString& cs);
-	void setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs);
+	void setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs) const;
 
 public:
 	BOOL OnInitDialog() override;
