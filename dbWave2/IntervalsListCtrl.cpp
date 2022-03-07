@@ -81,7 +81,7 @@ void CIntervalsListCtrl::set_sub_item_1_value(int index, float time_interval)
 	SetItem(&lvi);
 }
 
-int CIntervalsListCtrl::get_row_selected()
+int CIntervalsListCtrl::get_index_item_selected()
 {
 	int item_index = -1;
 	auto pos = GetFirstSelectedItemPosition();
@@ -105,6 +105,45 @@ int CIntervalsListCtrl::select_item(int i)
 	return i;
 }
 
+void CIntervalsListCtrl::set_edit_value()
+{
+	m_edit_control.SetFocus();
+	m_edit_control.SetSel(0, -1, FALSE);
+	const int index_selected = get_index_item_selected();
+	CString cs = get_sub_item_1(index_selected);
+	m_edit_control.SetWindowTextW(cs);
+}
+
+float CIntervalsListCtrl::get_edit_value()
+{
+	CString cs;
+	m_edit_control.GetWindowText(cs);
+	const float value = _ttof(cs);
+
+	const int item_selected = get_index_item_selected();
+	set_sub_item_1_value(item_selected, value);
+	return value;
+}
+
+void CIntervalsListCtrl::set_active_edit_overlay()
+{
+	CRect rect;
+	const int item_selected = get_index_item_selected();
+	GetSubItemRect(item_selected, 1, LVIR_LABEL, rect);
+	const int column_width = GetColumnWidth(1);
+	rect.right = rect.left + column_width;
+	MapWindowPoints(this, rect);
+	m_edit_control.MoveWindow(&rect);
+	m_edit_control.ShowWindow(SW_SHOW);
+	mode_edit = true;
+}
+
+void CIntervalsListCtrl::set_inactive_edit_overlay()
+{
+	m_edit_control.ShowWindow(SW_HIDE);
+	mode_edit = false;
+}
+
 void CIntervalsListCtrl::set_sub_item_0(LVITEM& lvi, const int item, CString& cs)
 {
 	lvi.iItem = item;
@@ -113,4 +152,15 @@ void CIntervalsListCtrl::set_sub_item_0(LVITEM& lvi, const int item, CString& cs
 	cs.Format(_T("%i"), item);
 	lvi.pszText = const_cast<LPTSTR>((LPCTSTR)cs);
 	lvi.iImage = item % 2;
+}
+
+CString CIntervalsListCtrl::get_sub_item_1(int item)
+{
+	const int i = GetSelectionMark();
+	if (i != -1)
+	{
+		CString strSubItem = GetItemText(0, 1);
+		return strSubItem;
+	}
+	return nullptr;
 }

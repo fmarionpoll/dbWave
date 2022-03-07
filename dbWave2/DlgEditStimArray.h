@@ -23,7 +23,7 @@ protected:
 	CIntervals* intervals {nullptr} ;
 
 	void DoDataExchange(CDataExchange* pDX) override;
-	CEdit m_edit_control{};
+
 	bool mode_edit = false;
 	CIntervalsListCtrl list_control{};
 

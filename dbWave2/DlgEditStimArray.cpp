@@ -22,7 +22,6 @@ void DlgEditStimArray::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LISTSTIM, list_control);
-	DDX_Control(pDX, IDC_EDIT_TEXT, m_edit_control);
 	DDX_Text(pDX, IDC_EDIT_TEXT, m_item_value);
 }
 
@@ -132,7 +131,7 @@ void DlgEditStimArray::OnBnClickedEditButton()
 {
 	if (!mode_edit)
 	{
-		m_item_index = list_control.get_row_selected();
+		m_item_index = list_control.get_index_item_selected();
 		if (m_item_index < 0) 
 			return;
 		set_edit_value();
@@ -147,44 +146,29 @@ void DlgEditStimArray::OnBnClickedEditButton()
 
 void DlgEditStimArray::set_edit_value ()
 {
-	m_item_value = static_cast<float>(intervals->intervalsArray[m_item_index]) / m_sampling_rate;
-
 	UpdateData(FALSE);
-	m_edit_control.SetFocus();
-	m_edit_control.SetSel(0, -1, FALSE);
+	list_control.set_edit_value();
 }
 
 void DlgEditStimArray::get_edit_value()
 {
 	UpdateData(TRUE);
-	CString cs;
-	m_edit_control.GetWindowText(cs);
+	m_item_value = list_control.get_edit_value();
 	intervals->intervalsArray[m_item_index] = static_cast<long>(m_item_value * m_sampling_rate);
-	
-	const float time_interval = float(intervals->intervalsArray[m_item_index]) / m_sampling_rate;
-	list_control.set_sub_item_1_value(m_item_index, time_interval);
-
 	list_control.SetFocus();
 }
 
 void DlgEditStimArray::set_active_edit_overlay()
 {
-	m_edit_control.ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_EDIT_BUTTON)->SetWindowText(_T("&Validate"));
 	mode_edit = true;
-
-	CRect rect;
-	list_control.GetSubItemRect(m_item_index, 1, LVIR_LABEL, rect);
-	const int column_width = list_control.GetColumnWidth(1);
-	rect.right = rect.left + column_width;
-	list_control.MapWindowPoints(this, rect);
-	m_edit_control.MoveWindow(&rect);
+	list_control.set_active_edit_overlay();
 }
 
 void DlgEditStimArray::set_inactive_edit_overlay()
 {
-	m_edit_control.ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_EDIT_BUTTON)->SetWindowText(_T("&Edit"));
+	list_control.set_inactive_edit_overlay();
 	mode_edit = false;
 }
 
@@ -197,7 +181,7 @@ void DlgEditStimArray::OnEnKillfocusReOrder()
 
 void DlgEditStimArray::OnBnClickedDelete()
 {
-	m_item_index = list_control.get_row_selected();
+	m_item_index = list_control.get_index_item_selected();
 	if (m_item_index < 0)
 		return;
 
@@ -214,7 +198,7 @@ void DlgEditStimArray::OnBnClickedDelete()
 
 void DlgEditStimArray::OnBnClickedInsert()
 {
-	m_item_index = list_control.get_row_selected() +1;
+	m_item_index = list_control.get_index_item_selected() +1;
 
 	const float time_interval = static_cast<float>(intervals->intervalsArray[m_item_index]) / m_sampling_rate;
 	list_control.set_list_control_item(m_item_index, time_interval);
