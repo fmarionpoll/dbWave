@@ -1,25 +1,25 @@
 // StimLevelArray.cpp : implementation file
 
 #include "StdAfx.h"
-#include "IntervalsAndLevels.h"
+#include "Intervals.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_SERIAL(CIntervalsAndLevels, CObject, 0)
+IMPLEMENT_SERIAL(CIntervals, CObject, 0)
 
-CIntervalsAndLevels::CIntervalsAndLevels()
+CIntervals::CIntervals()
 {
 	intervalsArray.SetSize(0); // time on, time off
 }
 
-CIntervalsAndLevels::~CIntervalsAndLevels()
+CIntervals::~CIntervals()
 {
 	intervalsArray.RemoveAll();
 }
 
-CIntervalsAndLevels& CIntervalsAndLevels::operator =(const CIntervalsAndLevels& arg)
+CIntervals& CIntervals::operator =(const CIntervals& arg)
 {
 	if (this != &arg)
 	{
@@ -36,7 +36,7 @@ CIntervalsAndLevels& CIntervalsAndLevels::operator =(const CIntervalsAndLevels& 
 	return *this;
 }
 
-void CIntervalsAndLevels::Serialize(CArchive& ar)
+void CIntervals::Serialize(CArchive& ar)
 {
 	auto iversion = 2;
 	if (ar.IsStoring())

@@ -291,9 +291,9 @@ void DlgDAChannels::EditSequence(int iID, int channel)
 	case DA_SEQUENCEWAVE: // sequence
 		{
 			DlgEditStimArray dlg;
-			dlg.intervals_and_levels_array.RemoveAll();
-			dlg.intervals_and_levels_array.Add(&outputparms_array.GetAt(channel).stimulussequence);
-			dlg.intervals_and_levels_saved = &m_stimsaved;
+			dlg.intervals_array.RemoveAll();
+			dlg.intervals_array.Add(&outputparms_array.GetAt(channel).stimulussequence);
+			dlg.intervals_saved = &m_stimsaved;
 			dlg.m_sampling_rate = m_samplingRate;
 			if (IDOK == dlg.DoModal())
 			{

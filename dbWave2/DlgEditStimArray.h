@@ -1,4 +1,5 @@
 #pragma once
+#include "CIntervalsListCtrl.h"
 #include "Spikedoc.h"
 #include "StretchControls.h"
 
@@ -11,40 +12,37 @@ class DlgEditStimArray : public CDialog
 	~DlgEditStimArray() override;
 
 	// data passed by caller
-	CTagList* tag_list {nullptr};
-	CIntervalsAndLevels* intervals_and_levels_saved { nullptr };
-	CArray<CIntervalsAndLevels*, CIntervalsAndLevels*> intervals_and_levels_array{};
-	float m_sampling_rate = 0.f;
+	CTagList*		tag_list {nullptr};
+	CIntervals*		intervals_saved { nullptr };
+	CArray<CIntervals*, CIntervals*> intervals_array{};
+	float			m_sampling_rate = 0.f;
 
 	enum { IDD = IDD_DLGEDITSTIMARRAY};
 
 protected:
-	CIntervalsAndLevels* intervals_and_levels {nullptr} ;
+	CIntervals* intervals {nullptr} ;
 
 	void DoDataExchange(CDataExchange* pDX) override;
 	CEdit m_edit_control{};
 	bool mode_edit = false;
-	CListCtrl m_stimulus_array_control{};
+	CIntervalsListCtrl list_control{};
 
 	CStretchControl m_stretch{};
 	BOOL m_initialized { false };
 	float m_item_value {0};
 	int m_item_index {-1};
-	CImageList* m_image_list {nullptr};
 
 	void make_dialog_stretchable();
-	void init_listbox();
-	void select_item(int i);
-	void resetListOrder();
-	void addNewItem(int i, long lInterval);
+
+	void reset_list_order();
+
 	void transfer_intervals_array_to_dialog_list();
-	void setSubItem0(LVITEM& lvi, int item, CString& cs);
-	void setSubItem1(LVITEM& lvi, int iItem, long lInterval, CString& cs) const;
+	void transfer_dialog_list_to_intervals_array();
+
 	void set_edit_value();
 	void get_edit_value();
 	void set_active_edit_overlay();
 	void set_inactive_edit_overlay();
-	int	 get_row_selected();
 
 public:
 	BOOL OnInitDialog() override;

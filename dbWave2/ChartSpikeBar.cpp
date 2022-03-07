@@ -110,7 +110,7 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 
 		displayBars(p_dc, &m_displayRect);
 
-		CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
+		CIntervals* pintervals = &(p_spike_doc_->m_stimIntervals);
 
 		if (pintervals->n_items > 0)
 			displayStimulus(p_dc, &m_displayRect);
@@ -210,7 +210,7 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 
 	if (p_spike_doc_ == nullptr)
 		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
-	CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
+	CIntervals* pintervals = &(p_spike_doc_->m_stimIntervals);
 
 	if (pintervals->n_items > 0)
 		displayStimulus(p_dc, &m_displayRect);

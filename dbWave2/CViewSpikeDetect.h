@@ -104,7 +104,7 @@ protected:
 	void updateSpkShapeWndScale(BOOL bSetFromControls = TRUE);
 	void updateVTtags();
 	void updateSpikeDisplay();
-	void transfer_array_data_to_spkDoc(const CIntervalsAndLevels* intervals) const;
+	void transfer_array_data_to_spkDoc(const CIntervals* intervals) const;
 
 	// public interface to view
 public:

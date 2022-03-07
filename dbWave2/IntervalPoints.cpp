@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "IntervalsAndWordsSeries.h"
+#include "IntervalPoints.h"
 
 
 // -------------------------------------------------------
@@ -48,16 +48,16 @@
 
 // --------------------------------------------------------
 
-IMPLEMENT_SERIAL(CIntervalsAndWordsSeries, CObject, 0)
+IMPLEMENT_SERIAL(CIntervalPoints, CObject, 0)
 
-CIntervalsAndWordsSeries::CIntervalsAndWordsSeries()
+CIntervalPoints::CIntervalPoints()
 {
 	version = 2;
 	intervalpoint_array.SetSize(0);
 	chrate = 10000.;
 }
 
-CIntervalsAndWordsSeries::CIntervalsAndWordsSeries(const CIntervalsAndWordsSeries& arg) : version(0)
+CIntervalPoints::CIntervalPoints(const CIntervalPoints& arg) : version(0)
 {
 	const auto nitems = arg.intervalpoint_array.GetSize();
 	intervalpoint_array.SetSize(nitems);
@@ -66,11 +66,11 @@ CIntervalsAndWordsSeries::CIntervalsAndWordsSeries(const CIntervalsAndWordsSerie
 	chrate = arg.chrate;
 }
 
-CIntervalsAndWordsSeries::~CIntervalsAndWordsSeries()
+CIntervalPoints::~CIntervalPoints()
 {
 }
 
-void CIntervalsAndWordsSeries::Serialize(CArchive& ar)
+void CIntervalPoints::Serialize(CArchive& ar)
 {
 	auto lversion = 2;
 	if (ar.IsStoring())
@@ -100,7 +100,7 @@ void CIntervalsAndWordsSeries::Serialize(CArchive& ar)
 	}
 }
 
-void CIntervalsAndWordsSeries::operator =(const CIntervalsAndWordsSeries& arg)
+void CIntervalPoints::operator =(const CIntervalPoints& arg)
 {
 	const auto nitems = arg.intervalpoint_array.GetSize();
 	intervalpoint_array.SetSize(nitems);
@@ -109,17 +109,17 @@ void CIntervalsAndWordsSeries::operator =(const CIntervalsAndWordsSeries& arg)
 	chrate = arg.chrate;
 }
 
-CIntervalPoint CIntervalsAndWordsSeries::GetIntervalPointAt(int i)
+CIntervalPoint CIntervalPoints::GetIntervalPointAt(int i)
 {
 	return intervalpoint_array[i];
 }
 
-void CIntervalsAndWordsSeries::EraseAllData()
+void CIntervalPoints::EraseAllData()
 {
 	intervalpoint_array.RemoveAll();
 }
 
-void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP, BOOL bcopyRate)
+void CIntervalPoints::ImportIntervalsSeries(CIntervals* pIntervals, WORD valUP, BOOL bcopyRate)
 {
 	const auto ichrate = pIntervals->channel_sampling_rate;
 	if (bcopyRate)
@@ -143,20 +143,20 @@ void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels* pInter
 	}
 }
 
-// combine up to 8 chans stored into CIntervalsAndLevels(s).
+// combine up to 8 chans stored into CIntervals(s).
 // in the resulting CIntervaAndWordsSeries, each bit is coding for a channel
-// the channel number is sotred in the CIntervalsAndLevels (parameter "channel")
-// 1) create separate CIntervalsAndWordsSeries objects with bits set
+// the channel number is sotred in the CIntervals (parameter "channel")
+// 1) create separate CIntervalPoints objects with bits set
 // 2) merge the series
 
-void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceIntervals)
+void CIntervalPoints::ImportAndMergeIntervalsArrays(CPtrArray* pSourceIntervals)
 {
 	intervalpoint_array.RemoveAll();
 	auto nseries = pSourceIntervals->GetSize();
 	if (nseries > 8)
 		nseries = 8;
 	auto nintervals = 0;
-	CArray<CIntervalsAndWordsSeries*, CIntervalsAndWordsSeries*> intervalsandwordseries_ptr_array;
+	CArray<CIntervalPoints*, CIntervalPoints*> intervalsandwordseries_ptr_array;
 	intervalsandwordseries_ptr_array.SetSize(8);
 
 	// (1) transform series into CIntervalsAndWordSeries
@@ -164,11 +164,11 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	for (auto i = 0; i < nseries; i++)
 	{
 		// transform this series if not empty
-		auto* p_source = static_cast<CIntervalsAndLevels*>(pSourceIntervals->GetAt(i));
+		auto* p_source = static_cast<CIntervals*>(pSourceIntervals->GetAt(i));
 		if (p_source->GetSize() == 0)
 			continue;
 
-		auto pTransf = new CIntervalsAndWordsSeries();
+		auto pTransf = new CIntervalPoints();
 		const WORD val_up = 2 << p_source->GetChannel();
 		pTransf->ImportIntervalsSeries(p_source, val_up, FALSE);
 		intervalsandwordseries_ptr_array[iseries] = pTransf;
@@ -233,7 +233,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 	intervalsandwordseries_ptr_array.RemoveAll();
 }
 
-void CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan, CIntervalsAndLevels* pOut)
+void CIntervalPoints::ExportIntervalsSeries(int chan, CIntervals* pOut)
 {
 	const WORD ifilter = 2 << chan;
 	WORD istatus = 0;

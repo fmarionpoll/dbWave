@@ -5,7 +5,7 @@
 #include <Olxdadefs.h>
 #include "DlgDAChannels.h"
 #include "OPTIONS_ACQDATA.h"
-#include "IntervalsAndWordsSeries.h"
+#include "IntervalPoints.h"
 
 
 BOOL DataTranslation_DA::OpenSubSystem(const CString card_name)
@@ -355,7 +355,7 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 	double ampLow = outputparms_array->ampLow;
 	int nchans = m_listsize;
 
-	CIntervalsAndWordsSeries* pstim = &outputparms_array->sti;
+	CIntervalPoints* pstim = &outputparms_array->sti;
 	double chFreqRatio = m_frequency / pstim->chrate;
 	long buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
 	long buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
@@ -456,7 +456,7 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OU
 	ampUp = ampUp << outputparms_array->iChan;
 	int nchans = m_listsize;
 
-	CIntervalsAndWordsSeries* pstim = &outputparms_array->sti;
+	CIntervalPoints* pstim = &outputparms_array->sti;
 	double chFreqRatio = m_frequency / pstim->chrate;
 	long buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
 	long buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;

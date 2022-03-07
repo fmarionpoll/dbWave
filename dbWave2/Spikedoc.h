@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IntervalsAndLevels.h"
+#include "Intervals.h"
 //#include "spikepar.h"	
 #include "Spikelist.h"
 #include "Spikeclas.h"
@@ -28,7 +28,7 @@ public:
 	long m_acqsize = 0;
 	CSpikeClass m_spkclass;
 	int m_currspklist = -1;
-	CIntervalsAndLevels m_stimIntervals; 
+	CIntervals m_stimIntervals; 
 
 protected:
 	CArray<CSpikeList, CSpikeList> spikelist_array = {};

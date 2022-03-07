@@ -29,7 +29,7 @@ public:
 	AcqDataDoc* m_pDat = nullptr;
 	CSpikeDoc* m_pSpk = nullptr;
 	HMENU m_hMyMenu = nullptr;
-	CIntervalsAndLevels m_stimsaved;
+	CIntervals m_stimsaved;
 
 	// database
 	CdbTable* m_pDB = nullptr;

@@ -3197,26 +3197,23 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 	m_pSpkDoc->SortStimArray();
 
 	DlgEditStimArray dlg;
-	dlg.intervals_and_levels_array.RemoveAll();
-	dlg.intervals_and_levels_array.Add(&m_pSpkDoc->m_stimIntervals);
+	dlg.intervals_array.RemoveAll();
+	dlg.intervals_array.Add(&m_pSpkDoc->m_stimIntervals);
 	dlg.m_sampling_rate = m_samplingRate;
-	dlg.intervals_and_levels_saved = &GetDocument()->m_stimsaved;
-	//if (GetDocument()->m_pDat != nullptr)
-	//	dlg.tag_list = GetDocument()->m_pDat->GetpVTtags();
-
+	dlg.intervals_saved = &GetDocument()->m_stimsaved;
+;
 	if (IDOK == dlg.DoModal())
 	{
-		transfer_array_data_to_spkDoc(dlg.intervals_and_levels_array.GetAt(0));
+		transfer_array_data_to_spkDoc(dlg.intervals_array.GetAt(0));
+		updateVTtags();
+		m_ChartSpkWnd_Bar.Invalidate();
+		m_ChartDataWnd_Detect.Invalidate();
+		m_ChartDataWnd_Source.Invalidate();
+		m_pSpkDoc->SetModifiedFlag(TRUE);
 	}
-	
-	updateVTtags();
-	m_ChartSpkWnd_Bar.Invalidate();
-	m_ChartDataWnd_Detect.Invalidate();
-	m_ChartDataWnd_Source.Invalidate();
-	m_pSpkDoc->SetModifiedFlag(TRUE);
 }
 
-void CViewSpikeDetection::transfer_array_data_to_spkDoc(const CIntervalsAndLevels* intervals) const
+void CViewSpikeDetection::transfer_array_data_to_spkDoc(const CIntervals* intervals) const
 {
 	m_pSpkDoc->m_stimIntervals.intervalsArray.RemoveAll();
 	m_pSpkDoc->m_stimIntervals = *intervals;

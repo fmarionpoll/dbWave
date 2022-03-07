@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "IntervalsAndLevels.h"
-#include "IntervalsAndWordsSeries.h"
+#include "Intervals.h"
+#include "IntervalPoints.h"
 
 class OUTPUTPARMS : public CObject
 {
@@ -22,8 +22,8 @@ public:
 	double dFrequency{1000.}; // frequency of the output signal
 	int iWaveform{0}; // 0=sinusoid, 1=square, 2=triangle, 3=m_sequence, 4=noise
 	CString csFilename{}; // filename to output
-	CIntervalsAndLevels stimulussequence{};
-	CIntervalsAndWordsSeries sti{};
+	CIntervals stimulussequence{};
+	CIntervalPoints sti{};
 
 	int mseq_iRatio{1000}; // m_mSeqRatio{};		// Shifts/sample interval
 	int mseq_iDelay{0}; // m_mSeqDelay{};		// Delay M-sequence and offset by this number of samples

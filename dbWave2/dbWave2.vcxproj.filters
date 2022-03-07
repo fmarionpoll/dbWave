@@ -192,7 +192,7 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IntervalsAndLevels.cpp">
+    <ClCompile Include="Intervals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="subfileitem.cpp">
@@ -474,7 +474,10 @@
     <ClCompile Include="dbTableColumnDescriptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IntervalsAndWordsSeries.cpp">
+    <ClCompile Include="IntervalPoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CIntervalsListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -638,7 +641,7 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IntervalsAndLevels.h">
+    <ClInclude Include="Intervals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="subfileitem.h">
@@ -1037,7 +1040,10 @@
     <ClInclude Include="dbTableColumnDescriptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IntervalsAndWordsSeries.h">
+    <ClInclude Include="IntervalPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CIntervalsListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

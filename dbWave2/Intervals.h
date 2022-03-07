@@ -1,16 +1,16 @@
 #pragma once
 
 
-class CIntervalsAndLevels : public CObject
+class CIntervals : public CObject
 {
-	DECLARE_SERIAL(CIntervalsAndLevels)
+	DECLARE_SERIAL(CIntervals)
 
 public:
-	CIntervalsAndLevels();
-	~CIntervalsAndLevels() override;
+	CIntervals();
+	~CIntervals() override;
 	void Serialize(CArchive& ar) override;
 
-	CIntervalsAndLevels& operator =(const CIntervalsAndLevels& arg);
+	CIntervals& operator =(const CIntervals& arg);
 
 	long GetTimeIntervalAt(int i) { return intervalsArray.GetAt(i); }
 	void SetTimeIntervalAt(int i, long iitime) { intervalsArray.SetAt(i, iitime); }
@@ -27,6 +27,7 @@ public:
 	int n_items = 0;		
 	int n_per_cycle = 1; 
 	float channel_sampling_rate = 10000.f;
+
 protected:
 	int version = 4;
 };
