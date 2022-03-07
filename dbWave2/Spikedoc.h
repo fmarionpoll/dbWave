@@ -1,6 +1,6 @@
 #pragma once
 
-#include "StimLevelArray.h"
+#include "IntervalsAndLevels.h"
 //#include "spikepar.h"	
 #include "Spikelist.h"
 #include "Spikeclas.h"
@@ -17,18 +17,18 @@ public:
 	// Attributes
 public:
 	WORD m_wVersion = 7;
-	CTime m_detectiondate; // date of creation
-	CString m_comment = _T(""); // spike comments
-	CString m_acqfile = _T(""); // data source file
+	CTime m_detectiondate;
+	CString m_comment = _T(""); 
+	CString m_acqfile = _T("");
 	CString m_newpath = _T("");
-	CString m_acqcomment = _T(""); // data acquisition comment
+	CString m_acqcomment = _T("");
 	CWaveFormat m_wformat {};
-	CTime m_acqtime {}; // data acquisition time
-	float m_acqrate = 1.f; // acquisition sampling rate
-	long m_acqsize = 0; // duration (nb of pts/chan)
-	CSpikeClass m_spkclass; // list of templates
+	CTime m_acqtime {}; 
+	float m_acqrate = 1.f;
+	long m_acqsize = 0;
+	CSpikeClass m_spkclass;
 	int m_currspklist = -1;
-	CIntervalsAndLevels m_stimIntervals; // stimulus array
+	CIntervalsAndLevels m_stimIntervals; 
 
 protected:
 	CArray<CSpikeList, CSpikeList> spikelist_array = {};

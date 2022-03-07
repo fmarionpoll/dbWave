@@ -112,7 +112,7 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 
 		CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
 
-		if (pintervals->nitems > 0)
+		if (pintervals->n_items > 0)
 			displayStimulus(p_dc, &m_displayRect);
 
 		// display vertical cursors
@@ -212,7 +212,7 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
 	CIntervalsAndLevels* pintervals = &(p_spike_doc_->m_stimIntervals);
 
-	if (pintervals->nitems > 0)
+	if (pintervals->n_items > 0)
 		displayStimulus(p_dc, &m_displayRect);
 
 	// display vertical cursors
@@ -891,7 +891,7 @@ void CChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 	const auto n_saved_dc = p_dc->SaveDC(); // save display context
 	displayBars(p_dc, rect);
 
-	if (p_dbwave_doc_->m_pSpk->m_stimIntervals.nitems > 0)
+	if (p_dbwave_doc_->m_pSpk->m_stimIntervals.n_items > 0)
 		displayStimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);

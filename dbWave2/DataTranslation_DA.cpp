@@ -5,6 +5,7 @@
 #include <Olxdadefs.h>
 #include "DlgDAChannels.h"
 #include "OPTIONS_ACQDATA.h"
+#include "IntervalsAndWordsSeries.h"
 
 
 BOOL DataTranslation_DA::OpenSubSystem(const CString card_name)

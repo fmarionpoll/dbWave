@@ -738,10 +738,10 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				l_limit_right = l_limit_left;
 				l_limit_left = i;
 			}
-			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.nitems, l_limit_left);
-			m_pSpkDoc->m_stimIntervals.nitems++;
-			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.nitems, l_limit_right);
-			m_pSpkDoc->m_stimIntervals.nitems++;
+			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
+			m_pSpkDoc->m_stimIntervals.n_items++;
+			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_right);
+			m_pSpkDoc->m_stimIntervals.n_items++;
 			updateVTtags();
 
 			m_ChartSpkWnd_Bar.Invalidate();
@@ -780,8 +780,8 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		{
 			const int cx = LOWORD(lParam);
 			const int l_limit_left = m_ChartDataWnd_Detect.GetDataOffsetfromPixel(cx);
-			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.nitems, l_limit_left);
-			m_pSpkDoc->m_stimIntervals.nitems++;
+			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
+			m_pSpkDoc->m_stimIntervals.n_items++;
 			updateVTtags();
 
 			m_ChartSpkWnd_Bar.Invalidate();
@@ -1269,7 +1269,7 @@ int CViewSpikeDetection::detectStim1(int ichan)
 			const int cxpos = (cx - l_data_first0) * 100 / l_data_len;
 			dlg.SetPos(cxpos);
 			CString cscomment;
-			cscomment.Format(_T("Processing stimulus event: %i"), m_pSpkDoc->m_stimIntervals.nitems + 1);
+			cscomment.Format(_T("Processing stimulus event: %i"), m_pSpkDoc->m_stimIntervals.n_items + 1);
 			dlg.SetStatus(cscomment);
 
 			if (dlg.CheckCancelButton())
@@ -1280,7 +1280,7 @@ int CViewSpikeDetection::detectStim1(int ichan)
 					// clear stimulus detected
 					auto p_sti = &(m_pSpkDoc->m_stimIntervals);
 					p_sti->intervalsArray.RemoveAll();
-					m_pSpkDoc->m_stimIntervals.nitems = 0;
+					m_pSpkDoc->m_stimIntervals.n_items = 0;
 					break;
 				}
 
@@ -1306,14 +1306,14 @@ int CViewSpikeDetection::detectStim1(int ichan)
 			if (flag)
 			{
 				p_sti->intervalsArray.InsertAt(i2, cx);
-				m_pSpkDoc->m_stimIntervals.nitems++;
+				m_pSpkDoc->m_stimIntervals.n_items++;
 			}
 		}
 		///////////////////////////////////////////////////////////////
 		l_data_first = l_last + 1; // update for next loop
 	}
 
-	return m_pSpkDoc->m_stimIntervals.nitems;
+	return m_pSpkDoc->m_stimIntervals.n_items;
 }
 
 int CViewSpikeDetection::detectMethod1(WORD schan)
@@ -1541,7 +1541,7 @@ void CViewSpikeDetection::OnBnClickedClearall()
 
 	highlightSpikes(FALSE); // remove display of spikes
 	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
-	m_pSpkDoc->m_stimIntervals.nitems = 0; // zero stimuli
+	m_pSpkDoc->m_stimIntervals.n_items = 0; // zero stimuli
 	m_pSpkDoc->m_stimIntervals.intervalsArray.RemoveAll();
 
 	updateDetectionParameters();
@@ -1562,7 +1562,7 @@ void CViewSpikeDetection::OnClear()
 
 	if (m_pSpkList->GetdetectWhat() == DETECT_STIMULUS)
 	{
-		m_pSpkDoc->m_stimIntervals.nitems = 0;
+		m_pSpkDoc->m_stimIntervals.n_items = 0;
 		m_pSpkDoc->m_stimIntervals.intervalsArray.RemoveAll();
 		updateVTtags();
 	}
@@ -2123,7 +2123,7 @@ void CViewSpikeDetection::updateVTtags()
 	m_ChartSpkWnd_Bar.m_VTtags.RemoveAllTags();
 	m_ChartDataWnd_Detect.m_VTtags.RemoveAllTags();
 	m_ChartDataWnd_Source.m_VTtags.RemoveAllTags();
-	if (m_pSpkDoc->m_stimIntervals.nitems == 0)
+	if (m_pSpkDoc->m_stimIntervals.n_items == 0)
 		return;
 
 	for (auto i = 0; i < m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize(); i++)
@@ -3186,9 +3186,9 @@ void CViewSpikeDetection::updateDetectionControls()
 void CViewSpikeDetection::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	serializeWindowsState(BSAVE, m_iDetectParms);
-	const auto icursel = m_tabCtrl.GetCurSel();
-	serializeWindowsState(BRESTORE, icursel);
-	updateDetectionSettings(icursel);
+	const auto selected_tab = m_tabCtrl.GetCurSel();
+	serializeWindowsState(BRESTORE, selected_tab);
+	updateDetectionSettings(selected_tab);
 	*pResult = 0;
 }
 
@@ -3201,17 +3201,26 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 	dlg.intervals_and_levels_array.Add(&m_pSpkDoc->m_stimIntervals);
 	dlg.m_sampling_rate = m_samplingRate;
 	dlg.intervals_and_levels_saved = &GetDocument()->m_stimsaved;
-	if (GetDocument()->m_pDat != nullptr)
-		dlg.tag_list = GetDocument()->m_pDat->GetpVTtags();
+	//if (GetDocument()->m_pDat != nullptr)
+	//	dlg.tag_list = GetDocument()->m_pDat->GetpVTtags();
 
 	if (IDOK == dlg.DoModal())
 	{
-		updateVTtags();
-		m_ChartSpkWnd_Bar.Invalidate();
-		m_ChartDataWnd_Detect.Invalidate();
-		m_ChartDataWnd_Source.Invalidate();
-		m_pSpkDoc->SetModifiedFlag(TRUE);
+		transfer_array_data_to_spkDoc(dlg.intervals_and_levels_array.GetAt(0));
 	}
+	
+	updateVTtags();
+	m_ChartSpkWnd_Bar.Invalidate();
+	m_ChartDataWnd_Detect.Invalidate();
+	m_ChartDataWnd_Source.Invalidate();
+	m_pSpkDoc->SetModifiedFlag(TRUE);
+}
+
+void CViewSpikeDetection::transfer_array_data_to_spkDoc(const CIntervalsAndLevels* intervals) const
+{
+	m_pSpkDoc->m_stimIntervals.intervalsArray.RemoveAll();
+	m_pSpkDoc->m_stimIntervals = *intervals;
+	m_pSpkDoc->m_stimIntervals.n_items = intervals->GetSize();
 }
 
 void CViewSpikeDetection::OnEnChangeChanselected()

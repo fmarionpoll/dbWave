@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(DlgEditStimArray, CDialog)
 	ON_BN_CLICKED(IDC_PASTE, &DlgEditStimArray::OnBnClickedPaste)
 	ON_BN_CLICKED(IDC_EXPORT, &DlgEditStimArray::OnBnClickedExport)
 	ON_BN_CLICKED(IDC_IMPORTFROMDATA, &DlgEditStimArray::OnBnClickedImportfromdata)
+	ON_BN_CLICKED(IDOK, &DlgEditStimArray::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 void DlgEditStimArray::make_dialog_stretchable()
@@ -61,13 +62,8 @@ void DlgEditStimArray::make_dialog_stretchable()
 	m_stretch.newProp(IDC_EDIT_TEXT, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
-BOOL DlgEditStimArray::OnInitDialog()
+void DlgEditStimArray::init_listbox()
 {
-	CDialog::OnInitDialog();
-	make_dialog_stretchable();
-	m_initialized = TRUE;
-
-	// change style of listbox
 	const DWORD dw_style = m_stimulus_array_control.GetExtendedStyle();
 	m_stimulus_array_control.SetExtendedStyle(dw_style | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 
@@ -96,10 +92,18 @@ BOOL DlgEditStimArray::OnInitDialog()
 	m_stimulus_array_control.InsertColumn(0, &lv_column);
 
 	m_stimulus_array_control.SetImageList(m_image_list, LVSIL_SMALL);
+}
+
+BOOL DlgEditStimArray::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	make_dialog_stretchable();
+	m_initialized = TRUE;
+	init_listbox();
 
 	// hide/display combo and load data into listbox
-	const auto n_arrays = intervals_and_levels_array.GetSize();
-	ASSERT(n_arrays == 1);
+	ASSERT(1 == intervals_and_levels_array.GetSize());
 	intervals_and_levels = intervals_and_levels_array.GetAt(0);
 	transfer_intervals_array_to_dialog_list();
 
@@ -131,7 +135,7 @@ void DlgEditStimArray::transfer_intervals_array_to_dialog_list()
 {
 	m_stimulus_array_control.DeleteAllItems();
 	const auto n_items = intervals_and_levels->intervalsArray.GetSize();
-	intervals_and_levels->chrate = m_sampling_rate;
+	intervals_and_levels->channel_sampling_rate = m_sampling_rate;
 	for (int i = 0; i < n_items; i++)
 		addNewItem(i, intervals_and_levels->intervalsArray[i]);
 }
@@ -224,9 +228,9 @@ void DlgEditStimArray::OnBnClickedDelete()
 	m_stimulus_array_control.SetItemState(m_item_index, 0, LVIS_SELECTED | LVIS_FOCUSED);
 	m_stimulus_array_control.DeleteItem(m_item_index);
 	intervals_and_levels->intervalsArray.RemoveAt(m_item_index);
-	const auto ilast = m_stimulus_array_control.GetItemCount() - 1;
-	if (m_item_index > ilast)
-		m_item_index = ilast;
+	const auto last_index = m_stimulus_array_control.GetItemCount() - 1;
+	if (m_item_index > last_index)
+		m_item_index = last_index;
 
 	resetListOrder();
 	select_item(m_item_index);
@@ -302,7 +306,7 @@ void DlgEditStimArray::OnBnClickedCopy()
 
 void DlgEditStimArray::OnBnClickedPaste()
 {
-	const auto n_items = intervals_and_levels_saved->nitems;
+	const auto n_items = intervals_and_levels_saved->n_items;
 	for (auto j = n_items - 1; j >= 0; j--)
 	{
 		auto pos = m_stimulus_array_control.GetFirstSelectedItemPosition();
@@ -345,13 +349,13 @@ void DlgEditStimArray::OnBnClickedExport()
 
 void DlgEditStimArray::OnBnClickedImportfromdata()
 {
-	intervals_and_levels->chrate = m_sampling_rate;
+	intervals_and_levels->channel_sampling_rate = m_sampling_rate;
 
 	const int n_tags = tag_list->GetNTags();
 	for (int i = 0; i < n_tags; i++)
 	{
 		const long l_interval = tag_list->GetTagLVal(i);
-		intervals_and_levels->AddInterval(l_interval);
+		intervals_and_levels->AddTimeInterval(l_interval);
 		addNewItem(i, l_interval);
 	}
 }
@@ -395,4 +399,11 @@ void DlgEditStimArray::resetListOrder()
 		setSubItem0(lvi, i, cs);
 		m_stimulus_array_control.SetItem(&lvi);
 	}
+}
+
+
+void DlgEditStimArray::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+	CDialog::OnOK();
 }

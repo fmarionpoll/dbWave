@@ -163,6 +163,7 @@
 #define IDD_VIEWSPKSORT1                205
 #define IDD_EDITRECORDDLG               206
 #define IDD_EDITSTIMULUS                208
+#define IDD_DLGEDITSTIMARRAY            208
 #define IDB_STIMON                      209
 #define IDB_STIMOFF                     210
 #define IDD_PRINTPAGEMARGINS            211
@@ -818,7 +819,6 @@
 #define IDC_DISPLAYSINGLECLASS          1514
 #define IDC_REORDER                     1515
 #define IDC_USBPXXS1CTL1                1516
-#define IDC_EDIT_CONTROL                1519
 #define IDC_EDIT_TEXT                   1519
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981

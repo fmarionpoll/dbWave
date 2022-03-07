@@ -1656,10 +1656,10 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const
 	// long	m_repeat2;
 	p_wave_format->repeat2 = m_pDB->m_mainTableSet.m_repeat2;
 
-	const auto npercycle = static_cast<int>(m_pSpk->m_stimIntervals.nitems / 2.f
+	const auto npercycle = static_cast<int>(m_pSpk->m_stimIntervals.n_items / 2.f
 		/ m_pSpk->GetAcqDuration() / 8.192f);
-	b_changed |= (npercycle != m_pSpk->m_stimIntervals.npercycle);
-	m_pSpk->m_stimIntervals.npercycle = npercycle;
+	b_changed |= (npercycle != m_pSpk->m_stimIntervals.n_per_cycle);
+	m_pSpk->m_stimIntervals.n_per_cycle = npercycle;
 
 	return b_changed;
 }

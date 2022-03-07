@@ -783,6 +783,7 @@
     <ClCompile Include="DataTranslation_AD.cpp" />
     <ClCompile Include="DataTranslation_DA.cpp" />
     <ClCompile Include="dbTableColumnDescriptor.cpp" />
+    <ClCompile Include="IntervalsAndWordsSeries.cpp" />
     <ClCompile Include="OPTIONS_ACQDATA.cpp" />
     <ClCompile Include="OPTIONS_IMPORT.cpp" />
     <ClCompile Include="OPTIONS_OUTPUTDATA.cpp" />
@@ -1234,7 +1235,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Template|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Template|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StimLevelArray.cpp">
+    <ClCompile Include="IntervalsAndLevels.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1356,6 +1357,7 @@
     <ClInclude Include="DataTranslation_AD.h" />
     <ClInclude Include="DataTranslation_DA.h" />
     <ClInclude Include="dbTableColumnDescriptor.h" />
+    <ClInclude Include="IntervalsAndWordsSeries.h" />
     <ClInclude Include="OPTIONS_ACQDATA.h" />
     <ClInclude Include="OPTIONS_IMPORT.h" />
     <ClInclude Include="OPTIONS_OUTPUTDATA.h" />
@@ -1510,7 +1512,7 @@
     <ClInclude Include="ChartSpikeXY.h" />
     <ClInclude Include="Splash.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="StimLevelArray.h" />
+    <ClInclude Include="IntervalsAndLevels.h" />
     <ClInclude Include="StretchControls.h" />
     <ClInclude Include="subfileitem.h" />
     <ClInclude Include="Tag.h" />

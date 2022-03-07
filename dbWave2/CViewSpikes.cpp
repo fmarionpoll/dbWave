@@ -1333,7 +1333,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// ------------------------ print stimulus
 
-		if (m_pSpkDoc->m_stimIntervals.nitems > 0)
+		if (m_pSpkDoc->m_stimIntervals.n_items > 0)
 		{
 			CBrush bluebrush; // create and select a solid blue brush
 			bluebrush.CreateSolidBrush(RGB(0, 0, 255));

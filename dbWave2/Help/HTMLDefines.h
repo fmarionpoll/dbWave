@@ -222,6 +222,7 @@
 #define HIDD_VIEWSPKSORT1                       0x200CD
 #define HIDD_EDITRECORDDLG                      0x200CE
 #define HIDD_EDITSTIMULUS                       0x200D0
+#define HIDD_DLGEDITSTIMARRAY                   0x200D0
 #define HIDD_PRINTPAGEMARGINS                   0x200D3
 #define HIDD_PRINTDRAWAREA                      0x200D5
 #define HIDD_DATASERIESFORMAT                   0x200D6

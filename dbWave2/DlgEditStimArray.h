@@ -16,8 +16,7 @@ class DlgEditStimArray : public CDialog
 	CArray<CIntervalsAndLevels*, CIntervalsAndLevels*> intervals_and_levels_array{};
 	float m_sampling_rate = 0.f;
 
-	// Dialog Data
-	enum { IDD = IDD_EDITSTIMULUS };
+	enum { IDD = IDD_DLGEDITSTIMARRAY};
 
 protected:
 	CIntervalsAndLevels* intervals_and_levels {nullptr} ;
@@ -34,6 +33,7 @@ protected:
 	CImageList* m_image_list {nullptr};
 
 	void make_dialog_stretchable();
+	void init_listbox();
 	void select_item(int i);
 	void resetListOrder();
 	void addNewItem(int i, long lInterval);
@@ -61,4 +61,5 @@ public:
 	afx_msg void OnBnClickedImportfromdata();
 
 	DECLARE_MESSAGE_MAP()
+	afx_msg void OnBnClickedOk();
 };

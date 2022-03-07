@@ -192,7 +192,7 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StimLevelArray.cpp">
+    <ClCompile Include="IntervalsAndLevels.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="subfileitem.cpp">
@@ -474,6 +474,9 @@
     <ClCompile Include="dbTableColumnDescriptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IntervalsAndWordsSeries.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -635,7 +638,7 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StimLevelArray.h">
+    <ClInclude Include="IntervalsAndLevels.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="subfileitem.h">
@@ -1032,6 +1035,9 @@
       <Filter>devices</Filter>
     </ClInclude>
     <ClInclude Include="dbTableColumnDescriptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntervalsAndWordsSeries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

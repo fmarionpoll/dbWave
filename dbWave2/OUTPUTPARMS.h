@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "StimLevelArray.h"
+#include "IntervalsAndLevels.h"
+#include "IntervalsAndWordsSeries.h"
 
 class OUTPUTPARMS : public CObject
 {

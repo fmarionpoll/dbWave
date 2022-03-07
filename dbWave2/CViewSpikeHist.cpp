@@ -1241,7 +1241,7 @@ void CViewSpikeHist::buildData()
 //		m_xfirst
 //		m_xlast
 //		m_pvdS->babsolutetime
-//		m_pSpkDoc->m_stimIntervals.nitems
+//		m_pSpkDoc->m_stimIntervals.n_items
 //		m_pvdS->crStimFill
 //		m_pvdS->crStimBorder
 //		m_pSpkDoc->m_spklist
@@ -1400,7 +1400,7 @@ long CViewSpikeHist::plotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, lo
 		rectmax = MulDiv(pdispRect->Height(), m_rectratio, 100);
 
 	// display stimulus
-		if (btype == 0 && p_spike_doc_->m_stimIntervals.nitems > 0)
+		if (btype == 0 && p_spike_doc_->m_stimIntervals.n_items > 0)
 		{
 			const auto p_spk_list = p_spike_doc_->GetSpkList_Current();
 			const auto samprate = p_spk_list->GetAcqSampRate();
@@ -1560,7 +1560,7 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 			for (auto irow = 0; irow < nrows; irow++)
 			{
 				// display stimuli
-				if (p_spike_doc_->m_stimIntervals.nitems > 0)
+				if (p_spike_doc_->m_stimIntervals.n_items > 0)
 				{
 					CRect rect(rcleft, row + vt_bottom,
 					           rectlen + rcleft, row + vt_top);
@@ -1616,9 +1616,9 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				if (last_stim == 0)
 					last_stim = 1;
 				increment = m_pvdS->nstipercycle;
-				if (p_spike_doc_->m_stimIntervals.npercycle > 1
-					&& increment > p_spike_doc_->m_stimIntervals.npercycle)
-					increment = p_spike_doc_->m_stimIntervals.npercycle;
+				if (p_spike_doc_->m_stimIntervals.n_per_cycle > 1
+					&& increment > p_spike_doc_->m_stimIntervals.n_per_cycle)
+					increment = p_spike_doc_->m_stimIntervals.n_per_cycle;
 				increment *= 2;
 			}
 
@@ -1627,7 +1627,7 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 			{
 				// compute temp parameters
 				long istart;
-				if (p_spike_doc_->m_stimIntervals.nitems > 0)
+				if (p_spike_doc_->m_stimIntervals.n_items > 0)
 					istart = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(istim);
 				else
 					istart = static_cast<long>(-(m_pvdS->timestart * samprate));
@@ -1663,7 +1663,7 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				row += dotlineheight;
 			}
 
-			if (p_spike_doc_->m_stimIntervals.nitems > 1)
+			if (p_spike_doc_->m_stimIntervals.n_items > 1)
 			{
 				// stimulus
 				auto istart = p_spike_doc_->m_stimIntervals.intervalsArray.GetAt(m_pvdS->istimulusindex);
@@ -2037,7 +2037,7 @@ void CViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 void CViewSpikeHist::displayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last)
 {
 	// draw rectangle for stimulus
-	if (p_spike_doc_->m_stimIntervals.nitems <= 0)
+	if (p_spike_doc_->m_stimIntervals.n_items <= 0)
 		return;
 
 	CPen bluepen;

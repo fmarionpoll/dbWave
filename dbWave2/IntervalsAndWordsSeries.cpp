@@ -1,110 +1,6 @@
-// StimLevelArray.cpp : implementation file
-
 #include "StdAfx.h"
-#include "StimLevelArray.h"
+#include "IntervalsAndWordsSeries.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
-IMPLEMENT_SERIAL(CIntervalsAndLevels, CObject, 0)
-
-CIntervalsAndLevels::CIntervalsAndLevels()
-{
-	iID = 1; // ID number of the array
-	csDescriptor = _T("stimulus intervals"); // descriptor of the array
-	nitems = 0; // number of on & off events
-	intervalsArray.SetSize(0); // time on, time off
-	npercycle = 1;
-	version = 4;
-	ichan = 0; // otherwise: 0, 1...7
-	chrate = 10000.;
-}
-
-CIntervalsAndLevels::~CIntervalsAndLevels()
-{
-	intervalsArray.RemoveAll();
-}
-
-CIntervalsAndLevels& CIntervalsAndLevels::operator =(const CIntervalsAndLevels& arg)
-{
-	if (this != &arg)
-	{
-		iID = arg.iID; // ID number of the array
-		csDescriptor = arg.csDescriptor; // descriptor of the array
-		nitems = arg.nitems; // number of on/off events
-		intervalsArray.SetSize(arg.intervalsArray.GetSize());
-
-		for (auto i = 0; i < arg.intervalsArray.GetSize(); i++)
-			intervalsArray.SetAt(i, arg.intervalsArray.GetAt(i)); // time on, time off
-		npercycle = arg.npercycle;
-		chrate = arg.chrate;
-	}
-	return *this;
-}
-
-void CIntervalsAndLevels::Serialize(CArchive& ar)
-{
-	auto iversion = 2;
-	if (ar.IsStoring())
-	{
-		auto n = 4;
-		ar << n;
-		ar << iID;
-		ar << nitems;
-		ar << npercycle;
-		ar << iversion;
-
-		n = 1;
-		ar << n;
-		ar << csDescriptor;
-
-		n = 1;
-		ar << n;
-		intervalsArray.Serialize(ar);
-
-		n = 1;
-		ar << n;
-		ar << chrate;
-	}
-	else
-	{
-		int n;
-		ar >> n;
-		ar >> iID;
-		n--;
-		ar >> nitems;
-		n--;
-		npercycle = 1;
-		if (n > 0) ar >> npercycle;
-		n--;
-
-		if (n > 0)
-		{
-			ar >> iversion;
-			n--;
-			ASSERT(iversion == 2);
-
-			ar >> n;
-			if (n > 0) ar >> csDescriptor;
-			n--;
-			ar >> n;
-			if (n > 0) intervalsArray.Serialize(ar);
-			n--;
-			if (iversion > 1)
-				ar >> n;
-			if (n > 0) ar >> chrate;
-			n--;
-		}
-		else // old version
-		{
-			ar >> n;
-			ar >> csDescriptor; // descriptor of the array
-			ar >> n;
-			intervalsArray.Serialize(ar);
-		}
-	}
-}
 
 // -------------------------------------------------------
 //
@@ -225,9 +121,9 @@ void CIntervalsAndWordsSeries::EraseAllData()
 
 void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels* pIntervals, WORD valUP, BOOL bcopyRate)
 {
-	const auto ichrate = pIntervals->chrate;
+	const auto ichrate = pIntervals->channel_sampling_rate;
 	if (bcopyRate)
-		chrate = pIntervals->chrate;
+		chrate = pIntervals->channel_sampling_rate;
 	const double ratio = chrate / ichrate;
 	const int nitems = pIntervals->GetSize();
 	intervalpoint_array.SetSize(nitems);
@@ -237,7 +133,7 @@ void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels* pInter
 	CIntervalPoint dummy{};
 	for (auto i = 0; i < nitems; i++)
 	{
-		dummy.ii = static_cast<long>(pIntervals->GetiiTime(i) * ratio);
+		dummy.ii = static_cast<long>(pIntervals->GetTimeIntervalAt(i) * ratio);
 		dummy.w = w_state;
 		intervalpoint_array[i] = dummy;
 		if (w_state == w_low)
@@ -249,7 +145,7 @@ void CIntervalsAndWordsSeries::ImportIntervalsSeries(CIntervalsAndLevels* pInter
 
 // combine up to 8 chans stored into CIntervalsAndLevels(s).
 // in the resulting CIntervaAndWordsSeries, each bit is coding for a channel
-// the channel number is sotred in the CIntervalsAndLevels (parameter "ichan")
+// the channel number is sotred in the CIntervalsAndLevels (parameter "channel")
 // 1) create separate CIntervalsAndWordsSeries objects with bits set
 // 2) merge the series
 
@@ -273,7 +169,7 @@ void CIntervalsAndWordsSeries::ImportAndMergeIntervalsArrays(CPtrArray* pSourceI
 			continue;
 
 		auto pTransf = new CIntervalsAndWordsSeries();
-		const WORD val_up = 2 << p_source->GetChan();
+		const WORD val_up = 2 << p_source->GetChannel();
 		pTransf->ImportIntervalsSeries(p_source, val_up, FALSE);
 		intervalsandwordseries_ptr_array[iseries] = pTransf;
 		nintervals += pTransf->GetSize();
@@ -346,7 +242,7 @@ void CIntervalsAndWordsSeries::ExportIntervalsSeries(int chan, CIntervalsAndLeve
 		if ((ifilter & intervalpoint_array[i].w) != istatus)
 		{
 			istatus = ifilter & intervalpoint_array[i].w;
-			pOut->AddInterval(intervalpoint_array[i].ii);
+			pOut->AddTimeInterval(intervalpoint_array[i].ii);
 		}
 	}
 }
