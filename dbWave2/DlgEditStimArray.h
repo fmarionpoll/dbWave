@@ -1,5 +1,5 @@
 #pragma once
-#include "CIntervalsListCtrl.h"
+#include "IntervalsListCtrl.h"
 #include "Spikedoc.h"
 #include "StretchControls.h"
 

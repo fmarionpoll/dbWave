@@ -4,6 +4,8 @@ class CIntervalsListCtrl :
     public CListCtrl
 {
     CImageList* m_image_list{ nullptr };
+    CEdit m_edit_control{};
+    bool mode_edit = false;
 
 public:
     void init_listbox(const CString header1, const int size1, const CString header2, const int size2);

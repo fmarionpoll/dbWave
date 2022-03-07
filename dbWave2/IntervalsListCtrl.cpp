@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "CIntervalsListCtrl.h"
+#include "IntervalsListCtrl.h"
 
 
 

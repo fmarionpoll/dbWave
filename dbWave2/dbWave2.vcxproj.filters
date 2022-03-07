@@ -477,7 +477,7 @@
     <ClCompile Include="IntervalPoints.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CIntervalsListCtrl.cpp">
+    <ClCompile Include="IntervalsListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1043,7 +1043,7 @@
     <ClInclude Include="IntervalPoints.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CIntervalsListCtrl.h">
+    <ClInclude Include="IntervalsListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

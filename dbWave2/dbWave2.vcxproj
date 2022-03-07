@@ -780,7 +780,7 @@
   <ItemGroup>
     <ClCompile Include="AcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
-    <ClCompile Include="CIntervalsListCtrl.cpp" />
+    <ClCompile Include="IntervalsListCtrl.cpp" />
     <ClCompile Include="DataTranslation_AD.cpp" />
     <ClCompile Include="DataTranslation_DA.cpp" />
     <ClCompile Include="dbTableColumnDescriptor.cpp" />
@@ -1355,7 +1355,7 @@
     <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
-    <ClInclude Include="CIntervalsListCtrl.h" />
+    <ClInclude Include="IntervalsListCtrl.h" />
     <ClInclude Include="DataTranslation_AD.h" />
     <ClInclude Include="DataTranslation_DA.h" />
     <ClInclude Include="dbTableColumnDescriptor.h" />
