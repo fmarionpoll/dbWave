@@ -12,10 +12,6 @@ class CIntervalsListCtrl : public CListCtrl
 
     int HitTestEx(CPoint& point, int* col) const;
     CEdit* EditSubLabel(int nItem, int nCol);
-    void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-    void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-    void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
-    void OnLButtonDown(UINT nFlags, CPoint point);
 
 public:
     void init_listbox(const CString header1, const int size1, const CString header2, const int size2);
@@ -42,5 +38,12 @@ protected:
 
     void set_sub_item_1_value(LVITEM& lvi, int iItem, float time_interval, CString& cs);
     void set_sub_item_0_value(LVITEM& lvi, const int item, CString& cs);
+
+public:
+    afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+    afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
+    DECLARE_MESSAGE_MAP()
 };
 

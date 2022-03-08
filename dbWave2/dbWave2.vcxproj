@@ -1355,6 +1355,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="AcqDataDoc.h" />
+    <ClInclude Include="CCIntervalsListCtrl.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="InPlaceEdit.h" />

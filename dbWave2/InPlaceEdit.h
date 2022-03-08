@@ -6,7 +6,7 @@ class CInPlaceEdit : public CEdit
 public:
     CInPlaceEdit(int iItem, int iSubItem, CString sInitText);
     ~CInPlaceEdit() override;
-    // void EndEdit();
+    //void EndEdit();
 
 protected:
 	BOOL PreTranslateMessage(MSG* pMsg) override;

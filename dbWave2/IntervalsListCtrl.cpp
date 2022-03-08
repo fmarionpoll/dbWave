@@ -4,6 +4,14 @@
 
 IMPLEMENT_DYNCREATE(CIntervalsListCtrl, CListCtrl)
 
+BEGIN_MESSAGE_MAP(CIntervalsListCtrl, CListCtrl)
+	ON_WM_HSCROLL()
+	ON_WM_VSCROLL()
+	ON_WM_LBUTTONDOWN()
+	ON_NOTIFY()
+END_MESSAGE_MAP()
+
+
 void CIntervalsListCtrl::init_listbox(const CString header1, int size1, const CString header2, int size2)
 {
 	const DWORD dw_style = GetExtendedStyle();
@@ -300,13 +308,13 @@ int CIntervalsListCtrl::HitTestEx(CPoint& point, int* col) const
 
 CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
 {
-	// The returned pointer should not be saved, make sure item visible
-	if (!EnsureVisible(nItem, TRUE)) return NULL;
+	if (!EnsureVisible(nItem, TRUE)) 
+		return NULL;
 
-	// Make sure that column number is valid    
 	CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
 	int nColumnCount = pHeader->GetItemCount();
-	if (nCol >= nColumnCount || GetColumnWidth(nCol) < 5) return NULL;
+	if (nCol >= nColumnCount || GetColumnWidth(nCol) < 5) 
+		return NULL;
 
 	// Get the column offset        
 	int offset = 0;
@@ -366,21 +374,9 @@ CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
 	return pEdit;
 }
 
-void CIntervalsListCtrl::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	if (GetFocus() != this) SetFocus();
-	CListCtrl::OnHScroll(nSBCode, nPos, pScrollBar);
-}
-
-void CIntervalsListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	if (GetFocus() != this) SetFocus();
-	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
-}
-
 void CIntervalsListCtrl::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LV_DISPINFO* plvDispInfo = (LV_DISPINFO*)pNMHDR;
+	auto* plvDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* plvItem = &plvDispInfo->item;
 
 	if (plvItem->pszText != NULL)
@@ -403,7 +399,7 @@ void CIntervalsListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 			// Add check for LVS_EDITLABELS
 			if (GetWindowLong(m_hWnd, GWL_STYLE) & LVS_EDITLABELS)
-				EditSubLabel(index, colnum);
+				m_p_edit = EditSubLabel(index, colnum);
 		}
 		else
 			SetItemState(index, LVIS_SELECTED | LVIS_FOCUSED,
@@ -411,30 +407,14 @@ void CIntervalsListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-//void CIntervalsListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
-//{
-//	int index;
-//	CListCtrl::OnLButtonDown(nFlags, point);
-//
-//	ModifyStyle(0, LVS_EDITLABELS);
-//
-//	int colnum;
-//
-//	if ((index = GetRowFromPoint(point, &colnum)) != -1)
-//	{
-//		UINT flag = LVIS_FOCUSED;
-//
-//		if ((GetItemState(index, flag) & flag) == flag /*&& colnum == 2*/)
-//		{
-//			// Add check for LVS_EDITLABELS         
-//			if (GetWindowLong(m_hWnd, GWL_STYLE) & LVS_EDITLABELS)
-//			{
-//				EditSubLabel(index, colnum);
-//			}
-//		}
-//		else
-//		{
-//			SetItemState(index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-//		}
-//	}
-//}
+void CIntervalsListCtrl::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	if (GetFocus() != this) SetFocus();
+	CListCtrl::OnHScroll(nSBCode, nPos, pScrollBar);
+}
+
+void CIntervalsListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	if (GetFocus() != this) SetFocus();
+	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
+}

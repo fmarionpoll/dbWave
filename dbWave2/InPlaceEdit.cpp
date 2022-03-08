@@ -73,7 +73,6 @@ void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 void CInPlaceEdit::OnNcDestroy()
 {
 	CEdit::OnNcDestroy();
-
 	delete this;
 }
 
