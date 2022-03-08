@@ -17,7 +17,7 @@ class DlgEditStimArray : public CDialog
 	CArray<CIntervals*, CIntervals*> intervals_array{};
 	float			m_sampling_rate = 0.f;
 
-	enum { IDD = IDD_DLGEDITSTIMARRAY};
+	enum { IDD = IDD_EDITSTIMARRAY};
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;

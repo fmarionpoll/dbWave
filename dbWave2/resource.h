@@ -5,6 +5,7 @@
 #define IDR_DBWAVETYPE_CNTR_IP          6
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_ABOUTBOXDLG                 100
+#define IDD_ABOUTBOX                    100
 #define IDD_VIEWDBWAVE                  101
 #define IDS_CLASS_VIEW                  102
 #define IDD_VIEWADCONTINUOUS            103
@@ -82,6 +83,7 @@
 #define IDD_ABCISSADLG                  153
 #define IDS_BTTNDATA                    153
 #define ID_PROPERTIES2                  153
+#define IDD_ABCISSA                     153
 #define IDS_BTTNDETECT                  154
 #define ID_EXPAND_ALL                   154
 #define IDC_FIRSTABCISSA                155
@@ -117,6 +119,7 @@
 #define IDR_EXPLORER                    169
 #define IDD_AD_EXPERIMENTDLG            169
 #define ID_VIEW_PROPERTIESWND           169
+#define IDD_AD_EXPERIMENT               169
 #define IDC_VERTMAX                     170
 #define IDD_VIEWSPKTEMPLATES            170
 #define ID_VIEW_OUTLOOKBAR              170
@@ -154,16 +157,20 @@
 #define IDD_XYPARAMETERS                192
 #define IDC_NACQCHANS                   193
 #define IDD_AD_INPUTPARMSDLG            193
+#define IDD_AD_INPUTPARMS               193
 #define IDD_EDITSPIKE                   194
 #define IDD_DATACOMMENTS                196
 #define IDS_FILEOVERWRITE               199
 #define IDD_VIEWSPIKES                  200
 #define IDD_CONFIRMDIALOG               201
+#define IDD_CONFIRM                     201
 #define IDD_EXPORTSPIKEINFOS            202
 #define IDD_VIEWSPKSORT1                205
 #define IDD_EDITRECORDDLG               206
+#define IDD_EDITRECORD                  206
 #define IDD_EDITSTIMULUS                208
 #define IDD_DLGEDITSTIMARRAY            208
+#define IDD_EDITSTIMARRAY               208
 #define IDB_STIMON                      209
 #define IDB_STIMOFF                     210
 #define IDD_PRINTPAGEMARGINS            211
@@ -174,6 +181,7 @@
 #define IDD_PRINTDATADRAWOPTIONS        215
 #define IDC_ADRATECHAN                  216
 #define IDD_EDITLISTDLG                 216
+#define IDD_EDITLIST                    216
 #define IDD_PRINTDATACOMMENTSOPTIONS    217
 #define IDD_EDITSPIKECLASS              218
 #define IDD_DUPLICATEFOUND              220
@@ -182,6 +190,7 @@
 #define IDD_LOADSAVEOPTIONS             223
 #define IDC_TRIGKEYBOARD                224
 #define IDD_ERASEFILEDLG                224
+#define IDD_ERASEFILE                   224
 #define IDC_TRIGEXTERNAL                225
 #define IDD_LISTBCLAPARAMETERS          225
 #define IDD_ORDINATES                   226
@@ -217,6 +226,7 @@
 #define IDB_SPLASH                      255
 #define IDC_BUFFERSIZE                  256
 #define IDD_IMPORTFILESDLG              256
+#define IDD_IMPORTFILES                 256
 #define IDC_NBUFFERS                    257
 #define IDC_STATIC1                     260
 #define IDC_STATIC14                    261
@@ -443,6 +453,7 @@
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA   553
 #define ID_VIEW_APPLOOK_WINDOWS_7       554
 #define IDD_DTBOARD_DLG                 558
+#define IDD_DTBOARD                     558
 #define IDR_DBDATATYPE_256              571
 #define IDR_DBSPIKETYPE_256             572
 #define IDB_CHECK1                      573

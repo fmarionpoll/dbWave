@@ -213,7 +213,7 @@ void CIntervalsListCtrl::set_sub_item_1_value(LVITEM& lvi, int iItem, float time
 int CIntervalsListCtrl::GetRowFromPoint(CPoint& point, int* col) const
 {
 	int column = 0;
-	int row = HitTest(point, NULL);
+	int row = HitTest(point, nullptr);
 
 	if (col) *col = 0;
 	if ((GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK) != LVS_REPORT)
@@ -265,7 +265,6 @@ int CIntervalsListCtrl::GetRowFromPoint(CPoint& point, int* col) const
 // col		- to hold the column index
 int CIntervalsListCtrl::HitTestEx(CPoint& point, int* col) const
 {
-	int colnum = 0;
 	int row = HitTest(point, NULL);
 
 	if (col) *col = 0;
@@ -281,8 +280,8 @@ int CIntervalsListCtrl::HitTestEx(CPoint& point, int* col) const
 		bottom = GetItemCount();
 
 	// Get the number of columns
-	CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
-	int nColumnCount = pHeader->GetItemCount();
+	auto pHeader = static_cast<CHeaderCtrl*>(GetDlgItem(0));
+	const int nColumnCount = pHeader->GetItemCount();
 
 	// Loop through the visible rows
 	for (; row <= bottom; row++)
@@ -293,7 +292,7 @@ int CIntervalsListCtrl::HitTestEx(CPoint& point, int* col) const
 		if (rect.PtInRect(point))
 		{
 			// Now find the column
-			for (colnum = 0; colnum < nColumnCount; colnum++)
+			for (int colnum = 0; colnum < nColumnCount; colnum++)
 			{
 				int colwidth = GetColumnWidth(colnum);
 				if (point.x >= rect.left
