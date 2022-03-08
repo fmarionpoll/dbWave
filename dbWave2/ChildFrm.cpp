@@ -9,10 +9,10 @@
 
 #include "MainFrm.h"
 #include "ChartData.h"
-#include "CViewdbWave.h"
-#include "CViewData.h"
+#include "ViewdbWave.h"
+#include "ViewData.h"
 #include "NoteDoc.h"
-#include "CViewNotedoc.h"
+#include "ViewNotedoc.h"
 
 #include "DlgFindFiles.h"
 #include "DlgProgress.h"
@@ -32,13 +32,13 @@
 #include "CWorksheets.h"
 #include "DlgTransferFiles.h"
 #include "DlgExportData.h"
-#include "CViewADcontinuous.h"
+#include "ViewADcontinuous.h"
 
-#include "CViewSpikeSort.h"
-#include "CViewSpikeDetect.h"
-#include "CViewSpikes.h"
-#include "CViewSpikeTemplate.h"
-#include "CViewSpikeHist.h"
+#include "ViewSpikeSort.h"
+#include "ViewSpikeDetect.h"
+#include "ViewSpikes.h"
+#include "ViewSpikeTemplate.h"
+#include "ViewSpikeHist.h"
 #include "ChildFrm.h"
 
 #include "DlgBrowseFile.h"

@@ -10,7 +10,7 @@
 #include "RulerBar.h"
 #include "DlgdbEditRecord.h"
 #include "DlgADInputParms.h"
-#include "CViewData.h"
+#include "ViewData.h"
 
 #include "DlgCopyAs.h"
 #include "DlgDataSeries.h"

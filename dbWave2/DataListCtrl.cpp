@@ -7,7 +7,7 @@
 #include "ChartWnd.h"
 #include "ChartData.h"
 #include "ChartSpikeBar.h"
-#include "CViewdbWave.h"
+#include "ViewdbWave.h"
 
 #include "DataListCtrl_Row.h"
 //#include "DataListCtrl.h"

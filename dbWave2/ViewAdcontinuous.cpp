@@ -10,7 +10,7 @@
 #include "dtacq32.h"
 #include "CyberAmp.h"
 #include "ChartData.h"
-#include "CViewADcontinuous.h"
+#include "ViewADcontinuous.h"
 #include "ChildFrm.h"
 #include "dbWave.h"
 #include "DlgADInputParms.h"

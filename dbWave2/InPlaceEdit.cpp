@@ -1,5 +1,5 @@
-#include <stdafx.h>
-#include "CInPlaceEdit.h"
+#include <StdAfx.h>
+#include "InPlaceEdit.h"
 
 // The code contained in this file is based on the original
 // CInPlaceEdit from
@@ -17,18 +17,13 @@ CInPlaceEdit::~CInPlaceEdit()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CInPlaceEdit, CEdit)
-	//{{AFX_MSG_MAP(CInPlaceEdit)
 	ON_WM_KILLFOCUS()
 	ON_WM_NCDESTROY()
 	ON_WM_CHAR()
 	ON_WM_CREATE()
-	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CInPlaceEdit message handlers
 
 BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 {
@@ -42,7 +37,7 @@ BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 		{
 			::TranslateMessage(pMsg);
 			::DispatchMessage(pMsg);
-			return TRUE;		    	// DO NOT process further
+			return TRUE;
 		}
 	}
 

@@ -38,20 +38,16 @@ class CGridCell : public CGridCellBase
 	friend class CGridCtrl;
 	DECLARE_DYNCREATE(CGridCell)
 
-	// Construction/Destruction
-public:
 	CGridCell();
 	~CGridCell() override;
 
-	// Attributes
-public:
 	void operator=(const CGridCell& cell);
 
 	void SetText(LPCTSTR sz_text) override { m_strText = sz_text; }
 	void SetImage(int nImage) override { m_nImage = nImage; }
 	void SetData(LPARAM lParam) override { m_lParam = lParam; }
 	void SetGrid(CGridCtrl* pGrid) override { m_pGrid = pGrid; }
-	// virtual void SetState(const DWORD nState);  -  use base class version
+
 	void SetFormat(DWORD nFormat) override { m_nFormat = nFormat; }
 	void SetTextClr(COLORREF clr) override { m_crFgClr = clr; }
 	void SetBackClr(COLORREF clr) override { m_crBkClr = clr; }
@@ -68,7 +64,7 @@ public:
 	int GetImage() const override { return m_nImage; }
 	LPARAM GetData() const override { return m_lParam; }
 	CGridCtrl* GetGrid() const override { return m_pGrid; }
-	// virtual DWORD    GetState() const - use base class
+
 	DWORD GetFormat() const override;
 	COLORREF GetTextClr() const override { return m_crFgClr; } // TODO: change to use default cell
 	COLORREF GetBackClr() const override { return m_crBkClr; }
@@ -88,64 +84,18 @@ protected:
 	void OnEndEdit() override;
 
 protected:
-	CString m_strText{}; // Cell text (or binary data if you wish...)
-	LPARAM m_lParam{}; // 32-bit value to associate with item
-	int m_nImage; // Index of the list view item’s icon
+	CString m_strText{};			// Cell text (or binary data if you wish...)
+	LPARAM m_lParam{};				// 32-bit value to associate with item
+	int m_nImage = 0;				// Index of the list view item’s icon
 	DWORD m_nFormat{};
 	COLORREF m_crFgClr{};
 	COLORREF m_crBkClr{};
-	LOGFONT* m_plfFont{};
+	LOGFONT* m_plfFont = nullptr;
 	UINT m_nMargin{};
 
-	BOOL m_bEditing{}; // Cell being edited?
+	BOOL m_bEditing{};
 
-	CGridCtrl* m_pGrid{}; // Parent grid control
+	CGridCtrl* m_pGrid{};
 	CWnd* m_pEditWnd{};
 };
 
-// This class is for storing grid default values. It's a little heavy weight, so
-// don't use it in bulk
-class CGridDefaultCell : public CGridCell
-{
-	DECLARE_DYNCREATE(CGridDefaultCell)
-
-	// Construction/Destruction
-public:
-	CGridDefaultCell();
-	~CGridDefaultCell() override;
-
-public:
-	virtual DWORD GetStyle() const { return m_dwStyle; }
-	virtual void SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
-	virtual int GetWidth() const { return m_Size.cx; }
-	virtual int GetHeight() const { return m_Size.cy; }
-	virtual void SetWidth(int nWidth) { m_Size.cx = nWidth; }
-	virtual void SetHeight(int nHeight) { m_Size.cy = nHeight; }
-
-	// Disable these properties
-	void SetData(LPARAM /*lParam*/) override
-	{
-		ASSERT(FALSE);
-	}
-
-	void SetState(DWORD /*nState*/) override
-	{
-		ASSERT(FALSE);
-	}
-
-	DWORD GetState() const override { return CGridCell::GetState() | GVIS_READONLY; }
-
-	void SetCoords(int /*row*/, int /*col*/) override
-	{
-		ASSERT(FALSE);
-	}
-
-	void SetFont(const LOGFONT* /*plf*/) override;
-	LOGFONT* GetFont() const override;
-	CFont* GetFontObject() const override;
-
-protected:
-	CSize m_Size; // Default GetRectSize
-	CFont m_Font; // Cached font
-	DWORD m_dwStyle; // Cell Style - unused
-};

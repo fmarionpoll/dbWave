@@ -9,7 +9,7 @@
 #include "Spikedoc.h"
 #include "SpikeClassListBox.h"
 #include "MainFrm.h"
-#include "CViewSpikes.h"
+#include "ViewSpikes.h"
 
 #include "DlgCopyAs.h"
 #include "DlgSpikeEdit.h"
@@ -214,7 +214,7 @@ void CViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 
 void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	ATLTRACE("CViewSpikes OnLButtonUp \n");
+	ATLTRACE("ViewSpikes OnLButtonUp \n");
 
 	if (m_rectVTtrack.PtInRect(point))
 	{

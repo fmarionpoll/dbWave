@@ -2,7 +2,7 @@
 
 #include "NotedocCntrItem.h"
 #include "NoteDoc.h"
-//#include "CViewNotedoc.h"
+//#include "ViewNotedoc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

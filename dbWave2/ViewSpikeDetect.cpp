@@ -19,7 +19,7 @@
 #include "ChartSpikeShape.h"
 #include "MainFrm.h"
 #include "DlgEditStimArray.h"
-#include "CViewSpikeDetect.h"
+#include "ViewSpikeDetect.h"
 
 #include "DlgCopyAs.h"
 #include "DlgDataSeries.h"

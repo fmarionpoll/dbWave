@@ -1,10 +1,11 @@
 #pragma once
 #include <afxcmn.h>
-class CIntervalsListCtrl :
-    public CListCtrl
+class CIntervalsListCtrl : public CListCtrl
 {
+    DECLARE_DYNCREATE(CIntervalsListCtrl)
+
     CImageList* m_image_list{ nullptr };
-    CEdit m_edit_control{};
+    CEdit* m_p_edit = nullptr;
     bool mode_edit = false;
 
     int GetRowFromPoint(CPoint& point, int* col) const;
@@ -41,9 +42,5 @@ protected:
 
     void set_sub_item_1_value(LVITEM& lvi, int iItem, float time_interval, CString& cs);
     void set_sub_item_0_value(LVITEM& lvi, const int item, CString& cs);
-    
- 
-
-
 };
 

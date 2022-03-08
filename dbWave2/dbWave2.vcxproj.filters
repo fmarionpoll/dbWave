@@ -387,31 +387,31 @@
     <ClCompile Include="RulerBar.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="CViewAdcontinuous.cpp">
+    <ClCompile Include="ViewAdcontinuous.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewData.cpp">
+    <ClCompile Include="ViewData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewdbWave.cpp">
+    <ClCompile Include="ViewdbWave.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewNotedoc.cpp">
+    <ClCompile Include="ViewNotedoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewSpikeDetect.cpp">
+    <ClCompile Include="ViewSpikeDetect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewSpikeHist.cpp">
+    <ClCompile Include="ViewSpikeHist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewSpikes.cpp">
+    <ClCompile Include="ViewSpikes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewSpikeSort.cpp">
+    <ClCompile Include="ViewSpikeSort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CViewSpikeTemplate.cpp">
+    <ClCompile Include="ViewSpikeTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dbTableView.cpp">
@@ -480,7 +480,10 @@
     <ClCompile Include="IntervalsListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CInPlaceEdit.cpp">
+    <ClCompile Include="InPlaceEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridDefaultCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -944,31 +947,31 @@
     <ClInclude Include="RulerBar.h">
       <Filter>customctrl</Filter>
     </ClInclude>
-    <ClInclude Include="CViewADcontinuous.h">
+    <ClInclude Include="ViewADcontinuous.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewData.h">
+    <ClInclude Include="ViewData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewdbWave.h">
+    <ClInclude Include="ViewdbWave.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewNotedoc.h">
+    <ClInclude Include="ViewNotedoc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewSpikeDetect.h">
+    <ClInclude Include="ViewSpikeDetect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewSpikeHist.h">
+    <ClInclude Include="ViewSpikeHist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewSpikes.h">
+    <ClInclude Include="ViewSpikes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewSpikeSort.h">
+    <ClInclude Include="ViewSpikeSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CViewSpikeTemplate.h">
+    <ClInclude Include="ViewSpikeTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbTableView.h">
@@ -1049,7 +1052,10 @@
     <ClInclude Include="IntervalsListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CInPlaceEdit.h">
+    <ClInclude Include="InPlaceEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridDefaultCell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

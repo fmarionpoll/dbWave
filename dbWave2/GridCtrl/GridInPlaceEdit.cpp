@@ -44,7 +44,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
-#include "TCHAR.h"
+#include "tchar.h"
 #include "GridInPlaceEdit.h"
 
 #include "GridCtrl.h"
@@ -55,8 +55,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CGridInPlaceEdit
+
 
 CGridInPlaceEdit::CGridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
                            int nRow, int nColumn, CString sInitText,

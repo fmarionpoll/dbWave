@@ -30,10 +30,11 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "GridCell.h"
 #include "GridInPlaceEdit.h"
 #include "GridCtrl.h"
+#include "GridDefaultCell.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,15 +43,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 IMPLEMENT_DYNCREATE(CGridCell, CGridCellBase)
-IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
-
-/////////////////////////////////////////////////////////////////////////////
-// GridCell
 
 CGridCell::CGridCell()
 {
-	m_plfFont = nullptr;
-	m_nImage = 0;
 	CGridCell::Reset();
 }
 
@@ -58,9 +53,6 @@ CGridCell::~CGridCell()
 {
 	delete m_plfFont;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// GridCell Attributes
 
 void CGridCell::operator=(const CGridCell& cell)
 {
@@ -162,9 +154,6 @@ UINT CGridCell::GetMargin() const
 	return m_nMargin;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// GridCell Operations
-
 BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
 	if (m_bEditing)
@@ -201,79 +190,3 @@ void CGridCell::OnEndEdit()
 	m_pEditWnd = nullptr;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CGridDefaultCell
-
-CGridDefaultCell::CGridDefaultCell()
-{
-#ifdef _WIN32_WCE
-	m_nFormat = DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
-#else
-	m_nFormat = DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS;
-#endif
-	m_crFgClr = CLR_DEFAULT;
-	m_crBkClr = CLR_DEFAULT;
-	m_Size = CSize(30, 10);
-	m_dwStyle = 0;
-
-#ifdef _WIN32_WCE
-	LOGFONT lf;
-	GetObject(GetStockObject(SYSTEM_FONT), sizeof(LOGFONT), &lf);
-	SetFont(&lf);
-#else // not CE
-
-	NONCLIENTMETRICS ncm;
-	ncm.cbSize = sizeof(NONCLIENTMETRICS);
-	VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0));
-
-	SetFont(&(ncm.lfMessageFont));
-#endif
-}
-
-CGridDefaultCell::~CGridDefaultCell()
-{
-	m_Font.DeleteObject();
-}
-
-void CGridDefaultCell::SetFont(const LOGFONT* plf)
-{
-	ASSERT(plf);
-
-	if (!plf) return;
-
-	m_Font.DeleteObject();
-	m_Font.CreateFontIndirect(plf);
-
-	CGridCell::SetFont(plf);
-
-	// Get the font size and hence the default cell size
-	CDC* p_dc = CDC::FromHandle(GetDC(nullptr));
-	if (p_dc)
-	{
-		CFont* pOldFont = p_dc->SelectObject(&m_Font);
-
-		SetMargin(p_dc->GetTextExtent(_T(" "), 1).cx);
-		m_Size = p_dc->GetTextExtent(_T(" XXXXXXXXXXXX "), 14);
-		m_Size.cy = (m_Size.cy * 3) / 2;
-
-		p_dc->SelectObject(pOldFont);
-		ReleaseDC(nullptr, p_dc->GetSafeHdc());
-	}
-	else
-	{
-		SetMargin(3);
-		m_Size = CSize(40, 16);
-	}
-}
-
-LOGFONT* CGridDefaultCell::GetFont() const
-{
-	ASSERT(m_plfFont); // This is the default - it CAN'T be NULL!
-	return m_plfFont;
-}
-
-CFont* CGridDefaultCell::GetFontObject() const
-{
-	ASSERT(m_Font.GetSafeHandle());
-	return (CFont*)&m_Font;
-}

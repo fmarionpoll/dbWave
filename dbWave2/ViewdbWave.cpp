@@ -14,7 +14,7 @@
 #include "MainFrm.h"
 #include "ChildFrm.h"
 
-#include "CViewdbWave.h"
+#include "ViewdbWave.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

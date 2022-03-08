@@ -10,7 +10,7 @@
 #include "ChartSpikeHist.h"
 #include "ChartSpikeXY.h"
 #include "MainFrm.h"
-#include "CViewSpikeSort.h"
+#include "ViewSpikeSort.h"
 
 #include "DlgProgress.h"
 #include "DlgSpikeEdit.h"

@@ -2,6 +2,7 @@
 
 #include "TemplateListWnd.h"
 #include "dbTableView.h"
+#include "Editctrl.h"
 
 class CViewSpikeTemplates : public CdbTableView
 {

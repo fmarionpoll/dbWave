@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "IntervalsListCtrl.h"
+#include "InPlaceEdit.h"
 
-#include "CInPlaceEdit.h"
-
+IMPLEMENT_DYNCREATE(CIntervalsListCtrl, CListCtrl)
 
 void CIntervalsListCtrl::init_listbox(const CString header1, int size1, const CString header2, int size2)
 {
@@ -113,13 +113,13 @@ int CIntervalsListCtrl::get_item_index(int item) const
 void CIntervalsListCtrl::set_edit_overlay_value(int item_selected)
 {
 	CString cs = GetItemText(item_selected, 1);
-	m_edit_control.SetWindowTextW(cs);
+	m_p_edit->SetWindowTextW(cs);
 }
 
 float CIntervalsListCtrl::get_edit_value()
 {
 	CString cs;
-	m_edit_control.GetWindowText(cs);
+	m_p_edit->GetWindowText(cs);
 	const int item_selected = get_index_item_selected();
 	SetItemText(item_selected, 1, cs);
 	const auto value = static_cast<float>(_ttof(cs));
@@ -131,7 +131,8 @@ void CIntervalsListCtrl::enable_edit_overlay()
 	const int item_selected = get_index_item_selected();
 	if (item_selected < 0) return;
 
-	// TODO create hWnd??
+	CString cs = GetItemText(item_selected, 1);
+	m_p_edit = new CInPlaceEdit (item_selected, 1, cs);
 	set_edit_overlay_value(item_selected);
 	move_edit_overlay_over_selected_item(item_selected);
 	init_edit_overlay();
@@ -146,26 +147,27 @@ void CIntervalsListCtrl::move_edit_overlay_over_selected_item(int item_selected)
 	const int column_width = GetColumnWidth(1);
 	rect.right = rect.left + column_width;
 	MapWindowPoints(this, rect);
-	m_edit_control.MoveWindow(&rect);
+	m_p_edit->MoveWindow(&rect);
 }
 
 void CIntervalsListCtrl::init_edit_overlay()
 {
-	m_edit_control.ShowWindow(SW_SHOW);
-	m_edit_control.SetFocus();
-	m_edit_control.SetSel(0, -1, FALSE);
+	m_p_edit->ShowWindow(SW_SHOW);
+	m_p_edit->SetFocus();
+	m_p_edit->SetSel(0, -1, FALSE);
 }
 
 void CIntervalsListCtrl::disable_edit_overlay()
 {
-	m_edit_control.ShowWindow(SW_HIDE);
+	m_p_edit->CloseWindow();
 	mode_edit = false;
+	delete m_p_edit;
 }
 
 void CIntervalsListCtrl::validate_edit_overlay()
 {
 	CString cs;
-	m_edit_control.GetWindowText(cs);
+	m_p_edit->GetWindowText(cs);
 	const float value = static_cast<float>(_ttof(cs));
 
 	const int item_selected = get_index_item_selected();
@@ -199,12 +201,8 @@ int CIntervalsListCtrl::GetRowFromPoint(CPoint& point, int* col) const
 	int row = HitTest(point, NULL);
 
 	if (col) *col = 0;
-
-	// Make sure that the ListView is in LVS_REPORT 
 	if ((GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK) != LVS_REPORT)
-	{
 		return row;
-	}
 
 	// Get the top and bottom row visible   
 	row = GetTopIndex();

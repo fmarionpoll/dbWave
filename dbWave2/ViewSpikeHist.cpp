@@ -8,7 +8,7 @@
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
 #include "MainFrm.h"
-#include "CViewSpikeHist.h"
+#include "ViewSpikeHist.h"
 
 #include "DlgFormatHistogram.h"
 #include "DlgProgress.h"

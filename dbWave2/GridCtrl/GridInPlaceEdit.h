@@ -26,10 +26,13 @@
 
 class CGridInPlaceEdit : public CEdit
 {
-	// Construction
 public:
 	CGridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 	             int nRow, int nColumn, CString sInitText, UINT nFirstChar);
+	~CGridInPlaceEdit() override;
+
+	void EndEdit();
+
 private:
 	int m_nRow;
 	int m_nColumn;
@@ -38,21 +41,11 @@ private:
 	BOOL m_bExitOnArrows;
 	CRect m_Rect;
 
-public:
-	void EndEdit();
-
-	// Overrides
-public:
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 protected:
 	void PostNcDestroy() override;
 
-	// Implementation
-public:
-	~CGridInPlaceEdit() override;
-
 	// Generated message map functions
-protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
