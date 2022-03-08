@@ -20,29 +20,22 @@ class DlgEditStimArray : public CDialog
 	enum { IDD = IDD_DLGEDITSTIMARRAY};
 
 protected:
-	CIntervals* intervals {nullptr} ;
-
 	void DoDataExchange(CDataExchange* pDX) override;
 
-	bool mode_edit = false;
+	CIntervals* intervals{ nullptr };
 	CIntervalsListCtrl list_control{};
-
 	CStretchControl m_stretch{};
 	BOOL m_initialized { false };
 	float m_item_value {0};
 	int m_item_index {-1};
+	bool mode_edit = false;
 
 	void make_dialog_stretchable();
-
 	void reset_list_order();
-
 	void transfer_intervals_array_to_dialog_list();
 	void transfer_dialog_list_to_intervals_array();
-
-	void set_edit_value();
-	void get_edit_value();
-	void set_active_edit_overlay();
-	void set_inactive_edit_overlay();
+	void start_edit_value();
+	void stop_edit_value();
 
 public:
 	BOOL OnInitDialog() override;

@@ -4,7 +4,7 @@
 // Copyright (c) 1998-2002. All Rights Reserved.
 //
 // The code contained in this file is based on the original
-// CInPlaceEdit from http://www.codeguru.com/listview/edit_subitems.shtml
+// CGridInPlaceEdit from http://www.codeguru.com/listview/edit_subitems.shtml
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is
@@ -39,11 +39,11 @@
 //          6 Aug 1998  Added nID to the constructor param list
 //          6 Sep 1998  Space no longer clears selection when starting edit (Franco Bez)
 //         10 Apr 1999  Enter, tab and Esc key prob fixed (Koay Kah Hoe)
-//                      Workaround for bizzare "shrinking window" problem in CE
+//                      Workaround for bizarre "shrinking window" problem in CE
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "TCHAR.h"
 #include "GridInPlaceEdit.h"
 
@@ -56,9 +56,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CInPlaceEdit
+// CGridInPlaceEdit
 
-CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+CGridInPlaceEdit::CGridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
                            int nRow, int nColumn, CString sInitText,
                            UINT nFirstChar)
 {
@@ -109,11 +109,11 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 		PostMessage(WM_IME_CHAR, nFirstChar);
 }
 
-CInPlaceEdit::~CInPlaceEdit()
+CGridInPlaceEdit::~CGridInPlaceEdit()
 {
 }
 
-BEGIN_MESSAGE_MAP(CInPlaceEdit, CEdit)
+BEGIN_MESSAGE_MAP(CGridInPlaceEdit, CEdit)
 	ON_WM_KILLFOCUS()
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
@@ -122,12 +122,12 @@ BEGIN_MESSAGE_MAP(CInPlaceEdit, CEdit)
 END_MESSAGE_MAP()
 
 ////////////////////////////////////////////////////////////////////////////
-// CInPlaceEdit message handlers
+// CGridInPlaceEdit message handlers
 
 // If an arrow key (or associated) is pressed, then exit if
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
-void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CGridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 			nChar == VK_DOWN || nChar == VK_UP ||
@@ -143,13 +143,13 @@ void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // As soon as this edit loses focus, kill it.
-void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
+void CGridInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 {
 	CEdit::OnKillFocus(pNewWnd);
 	EndEdit();
 }
 
-void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CGridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar == VK_TAB || nChar == VK_RETURN)
 	{
@@ -197,16 +197,16 @@ void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-UINT CInPlaceEdit::OnGetDlgCode()
+UINT CGridInPlaceEdit::OnGetDlgCode()
 {
 	return DLGC_WANTALLKEYS;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// CInPlaceEdit overrides
+// CGridInPlaceEdit overrides
 
 // Stoopid win95 accelerator key problem workaround - Matt Weagle.
-BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
+BOOL CGridInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 {
 	// Catch the Alt key so we don't choke if focus is going to an owner drawn button
 	if (pMsg->message == WM_SYSCHAR)
@@ -216,16 +216,16 @@ BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 }
 
 // Auto delete
-void CInPlaceEdit::PostNcDestroy()
+void CGridInPlaceEdit::PostNcDestroy()
 {
 	CEdit::PostNcDestroy();
 	delete this;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// CInPlaceEdit implementation
+// CGridInPlaceEdit implementation
 
-void CInPlaceEdit::EndEdit()
+void CGridInPlaceEdit::EndEdit()
 {
 	CString str;
 

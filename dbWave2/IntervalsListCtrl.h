@@ -7,22 +7,43 @@ class CIntervalsListCtrl :
     CEdit m_edit_control{};
     bool mode_edit = false;
 
+    int GetRowFromPoint(CPoint& point, int* col) const;
+
+    int HitTestEx(CPoint& point, int* col) const;
+    CEdit* EditSubLabel(int nItem, int nCol);
+    void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+    void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+    void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
+    void OnLButtonDown(UINT nFlags, CPoint point);
+
 public:
     void init_listbox(const CString header1, const int size1, const CString header2, const int size2);
-    void set_sub_item_0(LVITEM& lvi, const int item, CString& cs);
-    CString get_sub_item_1(int item);
-    void set_sub_item_1(LVITEM& lvi, int iItem, float time_interval, CString& cs);
-    void set_list_control_item(int i, float time_interval);
-    void add_new_item(int i, float time_interval);
-    void set_sub_item_0_value(int i);
-    void set_sub_item_1_value(int index, float time_interval);
-    int get_index_item_selected();
-    int select_item(int i);
+    void add_new_item(int index, float time_interval);
+    int get_index_item_selected() const;
+	int select_item(int index);
+
+    void set_item(int index, float time_interval);
+    void set_item_index(int index);
+    void set_item_value(int index, float time_interval);
+
+    float get_item_value(int item) const;
+    int   get_item_index(int item) const;
+
+    void enable_edit_overlay();
+    void disable_edit_overlay();
+    void validate_edit_overlay();
 
 protected:
-    void set_edit_value();
+    void set_edit_overlay_value(int item_selected);
+    void move_edit_overlay_over_selected_item(int item_selected);
+    void init_edit_overlay();
     float get_edit_value();
-    void set_active_edit_overlay();
-    void set_inactive_edit_overlay();
+
+    void set_sub_item_1_value(LVITEM& lvi, int iItem, float time_interval, CString& cs);
+    void set_sub_item_0_value(LVITEM& lvi, const int item, CString& cs);
+    
+ 
+
+
 };
 

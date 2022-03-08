@@ -184,7 +184,7 @@ BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
 
 		// InPlaceEdit auto-deletes itself
 		CGridCtrl* pGrid = GetGrid();
-		m_pEditWnd = new CInPlaceEdit(pGrid, rect, dw_style, nID, nRow, nCol, GetText(), nChar);
+		m_pEditWnd = new CGridInPlaceEdit(pGrid, rect, dw_style, nID, nRow, nCol, GetText(), nChar);
 	}
 	return TRUE;
 }
@@ -192,7 +192,7 @@ BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
 void CGridCell::EndEdit()
 {
 	if (m_pEditWnd)
-		static_cast<CInPlaceEdit*>(m_pEditWnd)->EndEdit();
+		static_cast<CGridInPlaceEdit*>(m_pEditWnd)->EndEdit();
 }
 
 void CGridCell::OnEndEdit()

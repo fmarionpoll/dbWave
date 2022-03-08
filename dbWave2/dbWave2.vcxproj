@@ -230,7 +230,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\fred\source\repos\dbWave2\dbWave2\Controls;C:\Users\fred\source\repos\dbWave2\dbWave2\GridCtrl;C:\Users\fred\source\repos\dbWave2\dbWave2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -780,6 +780,7 @@
   <ItemGroup>
     <ClCompile Include="AcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
+    <ClCompile Include="CInPlaceEdit.cpp" />
     <ClCompile Include="IntervalsListCtrl.cpp" />
     <ClCompile Include="DataTranslation_AD.cpp" />
     <ClCompile Include="DataTranslation_DA.cpp" />
@@ -1355,6 +1356,7 @@
     <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
+    <ClInclude Include="CInPlaceEdit.h" />
     <ClInclude Include="IntervalsListCtrl.h" />
     <ClInclude Include="DataTranslation_AD.h" />
     <ClInclude Include="DataTranslation_DA.h" />

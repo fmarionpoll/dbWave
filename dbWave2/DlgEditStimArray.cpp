@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(DlgEditStimArray, CDialog)
 	ON_BN_CLICKED(IDC_EXPORT, &DlgEditStimArray::OnBnClickedExport)
 	ON_BN_CLICKED(IDC_IMPORTFROMDATA, &DlgEditStimArray::OnBnClickedImportfromdata)
 	ON_BN_CLICKED(IDOK, &DlgEditStimArray::OnBnClickedOk)
+
 END_MESSAGE_MAP()
 
 void DlgEditStimArray::make_dialog_stretchable()
@@ -134,48 +135,33 @@ void DlgEditStimArray::OnBnClickedEditButton()
 		m_item_index = list_control.get_index_item_selected();
 		if (m_item_index < 0) 
 			return;
-		set_edit_value();
-		set_active_edit_overlay();
+		
+		start_edit_value();
 	}
 	else
 	{
-		get_edit_value();
-		set_inactive_edit_overlay();
+		list_control.validate_edit_overlay();
+		stop_edit_value();
 	}
 }
 
-void DlgEditStimArray::set_edit_value ()
-{
-	UpdateData(FALSE);
-	list_control.set_edit_value();
-}
-
-void DlgEditStimArray::get_edit_value()
-{
-	UpdateData(TRUE);
-	m_item_value = list_control.get_edit_value();
-	intervals->intervalsArray[m_item_index] = static_cast<long>(m_item_value * m_sampling_rate);
-	list_control.SetFocus();
-}
-
-void DlgEditStimArray::set_active_edit_overlay()
+void DlgEditStimArray::start_edit_value()
 {
 	GetDlgItem(IDC_EDIT_BUTTON)->SetWindowText(_T("&Validate"));
 	mode_edit = true;
-	list_control.set_active_edit_overlay();
+	list_control.enable_edit_overlay();
 }
 
-void DlgEditStimArray::set_inactive_edit_overlay()
+void DlgEditStimArray::stop_edit_value()
 {
 	GetDlgItem(IDC_EDIT_BUTTON)->SetWindowText(_T("&Edit"));
-	list_control.set_inactive_edit_overlay();
+	list_control.disable_edit_overlay();
 	mode_edit = false;
 }
 
 void DlgEditStimArray::OnEnKillfocusReOrder()
 {
-	get_edit_value();
-	set_inactive_edit_overlay();
+	stop_edit_value();
 }
 
 
@@ -201,7 +187,7 @@ void DlgEditStimArray::OnBnClickedInsert()
 	m_item_index = list_control.get_index_item_selected() +1;
 	float time_interval = 0.;
 	if (list_control.GetItemCount() >= m_item_index)
-		time_interval = list_control.get_edit_value() / m_sampling_rate;
+		time_interval = list_control.get_item_value(m_item_index) / m_sampling_rate;
 	list_control.add_new_item(m_item_index, time_interval);
 	reset_list_order();
 	list_control.select_item(m_item_index);
@@ -233,13 +219,11 @@ void DlgEditStimArray::OnBnClickedReOrder()
 		}
 	}
 
-	// Use the LV_ITEM structure to insert the items
-
 	CString cs;
 	ASSERT(n_items == list_control.GetItemCount());
 	for (auto i = 0; i < n_items; i++) {
 		const float time_interval = static_cast<float>(intervals->intervalsArray[i]) / m_sampling_rate;
-		list_control.set_list_control_item(i, time_interval);
+		list_control.set_item(i, time_interval);
 	}
 	
 	//ResetListOrder();
@@ -266,7 +250,7 @@ void DlgEditStimArray::OnBnClickedPaste()
 		else
 			m_item_index = 0;
 		const float time_interval = static_cast<float>(intervals->intervalsArray[m_item_index]) / m_sampling_rate;
-		list_control.set_list_control_item(m_item_index, time_interval);
+		list_control.set_item(m_item_index, time_interval);
 
 		// add item in the list
 		intervals->intervalsArray.InsertAt(m_item_index, 0L);
@@ -314,7 +298,7 @@ void DlgEditStimArray::reset_list_order()
 {
 	const auto n_items = list_control.GetItemCount();
 	for (int i = 0; i < n_items; i++)
-		list_control.set_sub_item_0_value(i);
+		list_control.set_item_index(i);
 }
 
 void DlgEditStimArray::OnBnClickedOk()
@@ -322,3 +306,4 @@ void DlgEditStimArray::OnBnClickedOk()
 	// TODO: Add your control notification handler code here
 	CDialog::OnOK();
 }
+

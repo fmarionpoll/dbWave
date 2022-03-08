@@ -24,11 +24,11 @@
 
 #pragma once
 
-class CInPlaceEdit : public CEdit
+class CGridInPlaceEdit : public CEdit
 {
 	// Construction
 public:
-	CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+	CGridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 	             int nRow, int nColumn, CString sInitText, UINT nFirstChar);
 private:
 	int m_nRow;
@@ -49,7 +49,7 @@ protected:
 
 	// Implementation
 public:
-	~CInPlaceEdit() override;
+	~CGridInPlaceEdit() override;
 
 	// Generated message map functions
 protected:
