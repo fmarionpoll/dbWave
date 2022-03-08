@@ -19,6 +19,7 @@ public:
     int get_index_item_selected();
     int select_item(int i);
 
+protected:
     void set_edit_value();
     float get_edit_value();
     void set_active_edit_overlay();

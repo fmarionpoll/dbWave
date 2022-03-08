@@ -199,9 +199,10 @@ void DlgEditStimArray::OnBnClickedDelete()
 void DlgEditStimArray::OnBnClickedInsert()
 {
 	m_item_index = list_control.get_index_item_selected() +1;
-	// TODO : error if no interval was defined
-	const float time_interval = static_cast<float>(intervals->intervalsArray[m_item_index]) / m_sampling_rate;
-	list_control.set_list_control_item(m_item_index, time_interval);
+	float time_interval = 0.;
+	if (list_control.GetItemCount() >= m_item_index)
+		time_interval = list_control.get_edit_value() / m_sampling_rate;
+	list_control.add_new_item(m_item_index, time_interval);
 	reset_list_order();
 	list_control.select_item(m_item_index);
 }
