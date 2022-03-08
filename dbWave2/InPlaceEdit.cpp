@@ -1,16 +1,19 @@
 #include <StdAfx.h>
 #include "InPlaceEdit.h"
 
+#include "GridCtrl.h"
+
 // The code contained in this file is based on the original
 // CInPlaceEdit from
 // https://www.codeguru.com/cplusplus/editable-subitems/
 
-CInPlaceEdit::CInPlaceEdit(int iItem, int iSubItem, CString sInitText)
+CInPlaceEdit::CInPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText)
 	:m_sInitText(sInitText)
 {
 	m_iItem = iItem;
 	m_iSubItem = iSubItem;
-	m_bESC = FALSE;
+	m_sInitText = sInitText;
+	m_parent = parent;
 }
 
 CInPlaceEdit::~CInPlaceEdit()
@@ -54,8 +57,8 @@ void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 
 	// Send Notification to parent of ListView ctrl
 	LV_DISPINFO dispinfo;
-	dispinfo.hdr.hwndFrom = GetParent()->m_hWnd;
-	dispinfo.hdr.idFrom = GetDlgCtrlID();
+	dispinfo.hdr.hwndFrom = m_hWnd; // GetParent()->m_hWnd;
+	dispinfo.hdr.idFrom = IDC_INPLACE_CONTROL; // GetDlgCtrlID();
 	dispinfo.hdr.code = LVN_ENDLABELEDIT;
 
 	dispinfo.item.mask = LVIF_TEXT;
@@ -64,9 +67,7 @@ void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 	dispinfo.item.pszText = m_bESC ? NULL : LPTSTR((LPCTSTR)str);
 	dispinfo.item.cchTextMax = str.GetLength();
 
-	GetParent()->GetParent()->SendMessage(WM_NOTIFY, GetParent()->GetDlgCtrlID(),
-		(LPARAM)&dispinfo);
-
+	m_parent -> SendMessage(WM_NOTIFY, IDC_INPLACE_CONTROL, (LPARAM)&dispinfo);
 	DestroyWindow();
 }
 
@@ -94,26 +95,22 @@ void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	// Get text extent
 	CString str;
-
 	GetWindowText(str);
 	CWindowDC dc(this);
 	CFont* pFont = GetParent()->GetFont();
 	CFont* pFontDC = dc.SelectObject(pFont);
 	CSize size = dc.GetTextExtent(str);
 	dc.SelectObject(pFontDC);
-	size.cx += 5;			   	// add some extra buffer
+	size.cx += 5;
 
 	// Get client rect
 	CRect rect, parentrect;
 	GetClientRect(&rect);
 	GetParent()->GetClientRect(&parentrect);
-
-	// Transform rect to parent coordinates
 	ClientToScreen(&rect);
 	GetParent()->ScreenToClient(&rect);
 
 	// Check whether control needs to be resized
-	// and whether there is space to grow
 	if (size.cx > rect.Width())
 	{
 		if (size.cx + rect.left < parentrect.right)
@@ -129,13 +126,13 @@ int CInPlaceEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CEdit::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	// Set the proper font
 	CFont* font = GetParent()->GetFont();
 	SetFont(font);
 
 	SetWindowText(m_sInitText);
 	SetFocus();
 	SetSel(0, -1);
+	SetDlgCtrlID(IDC_INPLACE_CONTROL);
 	return 0;
 }
 

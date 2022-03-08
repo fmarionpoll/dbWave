@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include "IntervalsListCtrl.h"
+
+#include "GridCtrl.h"
 #include "InPlaceEdit.h"
 
 IMPLEMENT_DYNCREATE(CIntervalsListCtrl, CListCtrl)
@@ -8,9 +10,14 @@ BEGIN_MESSAGE_MAP(CIntervalsListCtrl, CListCtrl)
 	ON_WM_HSCROLL()
 	ON_WM_VSCROLL()
 	ON_WM_LBUTTONDOWN()
-	ON_NOTIFY()
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_INPLACE_CONTROL, OnEndLabelEdit)
 END_MESSAGE_MAP()
 
+
+CIntervalsListCtrl::~CIntervalsListCtrl()
+{
+	SAFE_DELETE(m_image_list)
+}
 
 void CIntervalsListCtrl::init_listbox(const CString header1, int size1, const CString header2, int size2)
 {
@@ -140,7 +147,7 @@ void CIntervalsListCtrl::enable_edit_overlay()
 	if (item_selected < 0) return;
 
 	CString cs = GetItemText(item_selected, 1);
-	m_p_edit = new CInPlaceEdit (item_selected, 1, cs);
+	m_p_edit = new CInPlaceEdit (this, item_selected, 1, cs);
 	set_edit_overlay_value(item_selected);
 	move_edit_overlay_over_selected_item(item_selected);
 	init_edit_overlay();
@@ -215,11 +222,8 @@ int CIntervalsListCtrl::GetRowFromPoint(CPoint& point, int* col) const
 	// Get the top and bottom row visible   
 	row = GetTopIndex();
 	int bottom = row + GetCountPerPage();
-
 	if (bottom > GetItemCount())
-	{
 		bottom = GetItemCount();
-	}
 
 	// Get the number of columns    
 	CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
@@ -237,8 +241,7 @@ int CIntervalsListCtrl::GetRowFromPoint(CPoint& point, int* col) const
 			// Find the column      
 			for (column = 0; column < nColumnCount; column++)
 			{
-				int colwidth = GetColumnWidth(column);
-
+				const int colwidth = GetColumnWidth(column);
 				if (point.x >= rect.left && point.x <= (rect.left + colwidth))
 				{
 					if (col) *col = column;
@@ -368,8 +371,8 @@ CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
 
 	dwStyle |= WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
 
-	CEdit* pEdit = new CInPlaceEdit(nItem, nCol, GetItemText(nItem, nCol));
-	pEdit->Create(dwStyle, rect, this, IDC_LIST1);
+	const auto pEdit = new CInPlaceEdit(this, nItem, nCol, GetItemText(nItem, nCol));
+	pEdit->Create(dwStyle, rect, this, IDC_INPLACE_CONTROL);
 
 	return pEdit;
 }

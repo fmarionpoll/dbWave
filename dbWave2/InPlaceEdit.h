@@ -4,18 +4,18 @@
 class CInPlaceEdit : public CEdit
 {
 public:
-    CInPlaceEdit(int iItem, int iSubItem, CString sInitText);
+    CInPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText);
     ~CInPlaceEdit() override;
-    //void EndEdit();
 
 protected:
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 
 private:
-    int m_iItem;
-    int m_iSubItem;
-    CString m_sInitText;
-    BOOL m_bESC;
+    int m_iItem = 0;
+    int m_iSubItem = 1;
+    CString m_sInitText = _T("");
+    BOOL m_bESC = false;
+    CWnd* m_parent = nullptr;
 
 protected:
     afx_msg void OnKillFocus(CWnd* pNewWnd);

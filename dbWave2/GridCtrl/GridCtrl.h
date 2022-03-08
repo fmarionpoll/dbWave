@@ -61,7 +61,7 @@
 // Use this as the classname when inserting this control as a custom control
 // in the MSVC++ dialog editor
 #define GRIDCTRL_CLASSNAME    _T("MFCGridCtrl")  // Window class name
-#define IDC_INPLACE_CONTROL   8                  // ID of inplace edit controls
+#define IDC_INPLACE_CONTROL   8                  // ID of in-place edit controls
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Conditional includes

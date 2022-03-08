@@ -1,15 +1,19 @@
 #pragma once
 #include <afxcmn.h>
+
+
 class CIntervalsListCtrl : public CListCtrl
 {
     DECLARE_DYNCREATE(CIntervalsListCtrl)
+
+    ~CIntervalsListCtrl() override;
+
 
     CImageList* m_image_list{ nullptr };
     CEdit* m_p_edit = nullptr;
     bool mode_edit = false;
 
     int GetRowFromPoint(CPoint& point, int* col) const;
-
     int HitTestEx(CPoint& point, int* col) const;
     CEdit* EditSubLabel(int nItem, int nCol);
 
