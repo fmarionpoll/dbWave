@@ -13,7 +13,7 @@ class CIntervalsListCtrl : public CListCtrl
     CEdit* m_p_edit = nullptr;
     bool mode_edit = false;
 
-    int HitTestEx(const CPoint& point, int* col) const;
+    int HitTestEx(const CPoint& point_to_be_tested, int* column) const;
     CEdit* EditSubLabel(int nItem, int nCol);
 
 public:

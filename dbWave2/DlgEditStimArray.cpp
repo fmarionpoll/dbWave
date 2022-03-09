@@ -68,7 +68,7 @@ BOOL DlgEditStimArray::OnInitDialog()
 
 	ASSERT(1 == intervals_array.GetSize());
 	intervals = intervals_array.GetAt(0);
-	transfer_intervals_array_to_dialog_list();
+	transfer_intervals_array_to_control_list();
 
 	if (intervals_saved->intervalsArray.GetSize() < 1)
 		GetDlgItem(IDC_PASTE)->EnableWindow(FALSE);
@@ -80,42 +80,31 @@ BOOL DlgEditStimArray::OnInitDialog()
 	return FALSE;
 }
 
-
-
-void DlgEditStimArray::transfer_intervals_array_to_dialog_list()
+void DlgEditStimArray::transfer_intervals_array_to_control_list()
 {
 	list_control.DeleteAllItems();
 	const auto n_items = intervals->intervalsArray.GetSize();
 	intervals->channel_sampling_rate = m_sampling_rate;
-	for (int i = 0; i < n_items; i++) {
+	for (int i = 0; i < n_items; i++) 
+	{
 		const float time_interval = static_cast<float>(intervals->intervalsArray[i]) / m_sampling_rate;
 		list_control.add_new_item(i, time_interval);
 	}
 }
 
-void DlgEditStimArray::transfer_dialog_list_to_intervals_array()
+void DlgEditStimArray::transfer_control_list_to_intervals_array()
 {
-	//CString cs;
-	//const int n_items = list_control.GetItemCount();
-	//CArray<long, long>* p_intervals = &(intervals->intervalsArray);
-	//p_intervals->RemoveAll();
-	//p_intervals->SetSize(n_items);
+	const int n_items = list_control.GetItemCount();
+	CArray<long, long>* p_intervals = &(intervals->intervalsArray);
+	p_intervals->RemoveAll();
+	p_intervals->SetSize(n_items);
 
-	//LVITEM lvi{};
-	//for (auto i = 0; i < n_items; i++) 
-	//{
-	//	lvi.iItem = i;
-	//	list_control.GetItem(&lvi);
-
-	//	lvi.iSubItem = 1;
-	//	lvi.mask = LVIF_TEXT;
-	//	cs.Format(_T("%10.3f"), (static_cast<float>(lInterval) / m_sampling_rate));
-	//	lvi.pszText = const_cast<LPTSTR>((LPCTSTR)cs);
-	//	
-
-	//	intervals->AddTimeInterval(ii);
-	//}
-	
+	for (auto i = 0; i < n_items; i++) 
+	{
+		const float value = list_control.get_item_value(i);
+		const long ii = static_cast<long>(value * m_sampling_rate);
+		intervals->AddTimeInterval(ii);
+	}
 }
 
 void DlgEditStimArray::OnSize(UINT nType, int cx, int cy)
@@ -263,7 +252,7 @@ void DlgEditStimArray::reset_list_order()
 
 void DlgEditStimArray::OnBnClickedOk()
 {
-	// TODO: Add your control notification handler code here
+	transfer_control_list_to_intervals_array();
 	CDialog::OnOK();
 }
 

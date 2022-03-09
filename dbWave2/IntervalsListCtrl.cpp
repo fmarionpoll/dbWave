@@ -214,14 +214,14 @@ void CIntervalsListCtrl::set_sub_item_1_value(LVITEM& lvi, int iItem, float time
 // https://www.codeguru.com/cplusplus/editable-subitems/
 
 // HitTestEx	- Determine the row index and column index for a point
-// Returns	- the row index or -1 if point is not over a row
+// Returns	- listctrl_row = row index (-1 if point is not over a row) + listctrl_column
 // point	- point to be tested.
 // col		- to hold the column index
 
-int CIntervalsListCtrl::HitTestEx(const CPoint& point, int* col) const
+int CIntervalsListCtrl::HitTestEx(const CPoint& point_to_be_tested, int* column) const
 {
-	int row = HitTest(point, nullptr);
-	if (col) *col = 0;
+	int row = HitTest(point_to_be_tested, nullptr);
+	if (column) *column = 0;
 	if ((GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK) != LVS_REPORT)
 		return row;
 
@@ -236,19 +236,19 @@ int CIntervalsListCtrl::HitTestEx(const CPoint& point, int* col) const
 	// Loop through the visible rows
 	for (; row <= bottom; row++)
 	{
-		// Get bounding rect of item and check whether point falls in it.
+		// Get bounding rect of item and check whether point_to_be_tested falls in it.
 		CRect rect;
 		GetItemRect(row, &rect, LVIR_BOUNDS);
-		if (rect.PtInRect(point))
+		if (rect.PtInRect(point_to_be_tested))
 		{
 			// Now find the column
 			for (int column_index = 0; column_index < column_count; column_index++)
 			{
 				const int column_width = GetColumnWidth(column_index);
-				if (point.x >= rect.left
-					&& point.x <= (rect.left + column_width))
+				if (point_to_be_tested.x >= rect.left
+					&& point_to_be_tested.x <= (rect.left + column_width))
 				{
-					if (col) *col = column_index;
+					if (column) *column = column_index;
 					return row;
 				}
 				rect.left += column_width;

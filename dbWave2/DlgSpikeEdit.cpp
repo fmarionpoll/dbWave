@@ -1,13 +1,7 @@
-// editspik.cpp : implementation file
-//
-
 #include "StdAfx.h"
-//#include "dbWave.h"
-//#include "Spikedoc.h"
 #include "dbWaveDoc.h"
 #include "AcqDataDoc.h"
 #include "Editctrl.h"
-//#include "Cscale.h"
 #include "ChartWnd.h"
 #include "ChartData.h"
 #include "ChartSpikeShape.h"
@@ -45,13 +39,7 @@ BEGIN_MESSAGE_MAP(DlgSpikeEdit, CDialog)
 	ON_WM_VSCROLL()
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// implementation functions
 
-// --------------------------------------------------------------------------
-// LoadSpikeParms() load parameters from current spike
-// get class, set artefact flag and load data from source file
-// --------------------------------------------------------------------------
 void DlgSpikeEdit::LoadSpikeParms()
 {
 	CSpikeElemt* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
@@ -64,15 +52,6 @@ void DlgSpikeEdit::LoadSpikeParms()
 	LoadSourceData(); // load data from source file
 	UpdateData(FALSE); // update screen
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// DlgSpikeEdit message handlers
-
-// --------------------------------------------------------------------------
-// OnInitDialog()
-// load data from caller, subclass display buttons and CMyEdit edit fields
-// load data from source files
-// --------------------------------------------------------------------------
 
 BOOL DlgSpikeEdit::OnInitDialog()
 {
@@ -121,11 +100,11 @@ BOOL DlgSpikeEdit::OnInitDialog()
 			m_ChartDataWnd.GetChanlistItem(1)->SetPenWidth(1);
 			static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
 		}
-		m_DWintervals.SetSize(3 + 2); // total size
-		m_DWintervals.SetAt(0, 0); // source channel
-		m_DWintervals.SetAt(1, RGB(255, 0, 0)); // red color
-		m_DWintervals.SetAt(2, 1); // pen size
-		m_ChartDataWnd.SetHighlightData(&m_DWintervals); // tell sourceview to highlight spk
+		m_intervals_to_highlight_spikes.SetSize(3 + 2); // total size
+		m_intervals_to_highlight_spikes.SetAt(0, 0); // source channel
+		m_intervals_to_highlight_spikes.SetAt(1, RGB(255, 0, 0)); // red color
+		m_intervals_to_highlight_spikes.SetAt(2, 1); // pen size
+		m_ChartDataWnd.SetHighlightData(&m_intervals_to_highlight_spikes); // tell sourceview to highlight spk
 
 		// validate associated controls
 		VERIFY(mm_yvextent.SubclassDlgItem(IDC_YEXTENT, this));
@@ -179,12 +158,6 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-// --------------------------------------------------------------------------
-// OnEnChangeSpikeno
-// update edit control and update all infos displayed (check boundaries)
-// spikeno = spike index displayed
-// --------------------------------------------------------------------------
-
 void DlgSpikeEdit::OnEnChangeSpikeno()
 {
 	if (mm_spikeno.m_bEntryDone)
@@ -224,11 +197,6 @@ void DlgSpikeEdit::OnEnChangeSpikeno()
 	}
 }
 
-// --------------------------------------------------------------------------
-// OnEnChangeSpikeclass()
-// update edit control and modifies spike class
-// --------------------------------------------------------------------------
-
 void DlgSpikeEdit::OnEnChangeSpikeclass()
 {
 	if (mm_spikeclass.m_bEntryDone)
@@ -257,11 +225,6 @@ void DlgSpikeEdit::OnEnChangeSpikeclass()
 	}
 }
 
-// --------------------------------------------------------------------------
-// OnArtefact()
-// Update button and change spike class
-// --------------------------------------------------------------------------
-
 void DlgSpikeEdit::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
@@ -270,11 +233,6 @@ void DlgSpikeEdit::OnArtefact()
 	UpdateData(FALSE); // update value
 	m_bchanged = TRUE;
 }
-
-// --------------------------------------------------------------------------
-// OnEnChangeDisplayratio()
-// update edit control and change display ratio / source view
-// --------------------------------------------------------------------------
 
 void DlgSpikeEdit::OnEnChangeDisplayratio()
 {
@@ -303,11 +261,6 @@ void DlgSpikeEdit::OnEnChangeDisplayratio()
 		LoadSourceData();
 	}
 }
-
-// --------------------------------------------------------------------------
-// OnEnChangeYextent
-// update edit control and modifies gain of source view window
-// --------------------------------------------------------------------------
 
 void DlgSpikeEdit::OnEnChangeYextent()
 {
@@ -353,9 +306,9 @@ void DlgSpikeEdit::LoadSourceData()
 
 	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
 	const auto l_first = p_spike_element->get_time() - m_spkpretrig; // change selection
-	m_DWintervals.SetAt(3, l_first); // store interval
+	m_intervals_to_highlight_spikes.SetAt(3, l_first); // store interval
 	const auto l_last = l_first + m_spklen; // end interval
-	m_DWintervals.SetAt(4, l_last); // store
+	m_intervals_to_highlight_spikes.SetAt(4, l_last); // store
 
 	// compute limits of m_sourceView
 	auto l_v_first = l_first + m_spklen / 2 - m_viewdatalen / 2;
@@ -386,9 +339,6 @@ void DlgSpikeEdit::LoadSourceData()
 	}
 	m_ChartDataWnd.Invalidate();
 }
-
-// ----------------------------------------------------------------------
-// shift spike horizontally one interval backwards or forwards
 
 void DlgSpikeEdit::LoadSpikeFromData(int shift)
 {
@@ -429,14 +379,10 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 	}
 }
 
-// ----------------------------------------------------------------------
-
 void DlgSpikeEdit::OnDestroy()
 {
 	CDialog::OnDestroy();
 }
-
-// ----------------------------------------------------------------------
 
 void DlgSpikeEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
@@ -473,8 +419,6 @@ void DlgSpikeEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 	LoadSpikeFromData(shift);
 }
-
-// ----------------------------------------------------------------------
 
 void DlgSpikeEdit::UpdateSpikeScroll()
 {

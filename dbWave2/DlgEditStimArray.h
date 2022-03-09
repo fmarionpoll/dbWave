@@ -30,8 +30,8 @@ protected:
 
 	void make_dialog_stretchable();
 	void reset_list_order();
-	void transfer_intervals_array_to_dialog_list();
-	void transfer_dialog_list_to_intervals_array();
+	void transfer_intervals_array_to_control_list();
+	void transfer_control_list_to_intervals_array();
 
 public:
 	BOOL OnInitDialog() override;

@@ -186,7 +186,6 @@
  
 // Dialogs (IDD_*) 
 #define HIDD_ABOUTBOX                           0x20064
-#define HIDD_ABOUTBOX                           0x20064
 #define HIDD_VIEWDBWAVE                         0x20065
 #define HIDD_VIEWADCONTINUOUS                   0x20067
 #define HIDD_VIEWDATA                           0x2006A
@@ -197,7 +196,6 @@
 #define HIDD_IMPORTGENERICDATAFILE              0x20097
 #define HIDD_PROPPAGE3                          0x20098
 #define HIDD_ABCISSA                            0x20099
-#define HIDD_ABCISSA                            0x20099
 #define HIDD_EXPORTDATAFILE                     0x2009B
 #define HIDD_GOTORECORDID                       0x2009C
 #define HIDD_DATASERIES                         0x2009D
@@ -205,7 +203,6 @@
 #define HIDD_COPYAS                             0x200A0
 #define HIDD_FINDFILES                          0x200A7
 #define HIDD_AD_INTERVALS                       0x200A8
-#define HIDD_AD_EXPERIMENT                      0x200A9
 #define HIDD_AD_EXPERIMENT                      0x200A9
 #define HIDD_VIEWSPKTEMPLATES                   0x200AA
 #define HIDD_BROWSEFILE                         0x200B2
@@ -217,7 +214,6 @@
 #define HIDD_PROPPAGE4                          0x200BF
 #define HIDD_XYPARAMETERS                       0x200C0
 #define HIDD_AD_INPUTPARMS                      0x200C1
-#define HIDD_AD_INPUTPARMS                      0x200C1
 #define HIDD_EDITSPIKE                          0x200C2
 #define HIDD_DATACOMMENTS                       0x200C4
 #define HIDD_VIEWSPIKES                         0x200C8
@@ -225,22 +221,18 @@
 #define HIDD_EXPORTSPIKEINFOS                   0x200CA
 #define HIDD_VIEWSPKSORT1                       0x200CD
 #define HIDD_EDITRECORD                         0x200CE
-#define HIDD_EDITRECORD                         0x200CE
 #define HIDD_EDITSTIMULUS                       0x200D0
-#define HIDD_EDITSTIMARRAY                      0x200D0
 #define HIDD_EDITSTIMARRAY                      0x200D0
 #define HIDD_PRINTPAGEMARGINS                   0x200D3
 #define HIDD_PRINTDRAWAREA                      0x200D5
 #define HIDD_DATASERIESFORMAT                   0x200D6
 #define HIDD_PRINTDATADRAWOPTIONS               0x200D7
 #define HIDD_EDITLIST                           0x200D8
-#define HIDD_EDITLIST                           0x200D8
 #define HIDD_PRINTDATACOMMENTSOPTIONS           0x200D9
 #define HIDD_EDITSPIKECLASS                     0x200DA
 #define HIDD_DUPLICATEFOUND                     0x200DC
 #define HIDD_DELRECORDOPTIONS                   0x200DD
 #define HIDD_LOADSAVEOPTIONS                    0x200DF
-#define HIDD_ERASEFILE                          0x200E0
 #define HIDD_ERASEFILE                          0x200E0
 #define HIDD_LISTBCLAPARAMETERS                 0x200E1
 #define HIDD_ORDINATES                          0x200E2
@@ -256,7 +248,6 @@
 #define HIDD_DA_NOISE                           0x200F7
 #define HIDD_DAMSEQ                             0x200F8
 #define HIDD_DA_MSEQ                            0x200F8
-#define HIDD_IMPORTFILES                        0x20100
 #define HIDD_IMPORTFILES                        0x20100
 #define HIDD_FILE_NEW1                          0x20105
 #define HIDD_TRANSFERFILES                      0x20107

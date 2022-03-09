@@ -5,11 +5,9 @@
 
 class DlgSpikeEdit : public CDialog
 {
-	// Construction
 public:
 	DlgSpikeEdit(CWnd* pParent = nullptr);
 
-	// Dialog Data
 	enum { IDD = IDD_EDITSPIKE };
 
 	int m_spikeclass{ 0 };
@@ -33,22 +31,21 @@ public:
 	BOOL m_bchanged{ 0 };
 
 protected:
-	CSpikeList* m_pSpkList{ nullptr }; // spike list
-	AcqDataDoc* m_pAcqDatDoc{ nullptr }; // source data doc cDocument
+	CSpikeList* m_pSpkList{ nullptr };
+	AcqDataDoc* m_pAcqDatDoc{ nullptr };
 	int m_spkpretrig{ 0 };
 	int m_spklen{ 0 };
 	int m_viewdatalen{ 0 };
-	CDWordArray m_DWintervals; // intervals to highlight spikes / CLineviewWnd
-	CChartSpikeShapeWnd m_SpkChartWnd; // all spikes in displayspikes
-	ChartData m_ChartDataWnd; // source data
+	CDWordArray m_intervals_to_highlight_spikes;
+	CChartSpikeShapeWnd m_SpkChartWnd;
+	ChartData m_ChartDataWnd;
 	long m_iitimeold{ 0 };
 	long m_iitime{ 0 };
 	CScrollBar m_HScroll;
 	CScrollBar m_VScroll;
-	SCROLLINFO m_HScroll_infos{}; // infos for scrollbar
+	SCROLLINFO m_HScroll_infos{}; 
 	SCROLLINFO m_VScroll_infos{};
 
-	// Implementation
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 	void LoadSpikeParms();
