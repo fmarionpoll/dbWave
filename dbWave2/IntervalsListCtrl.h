@@ -13,8 +13,7 @@ class CIntervalsListCtrl : public CListCtrl
     CEdit* m_p_edit = nullptr;
     bool mode_edit = false;
 
-    int GetRowFromPoint(CPoint& point, int* col) const;
-    int HitTestEx(CPoint& point, int* col) const;
+    int HitTestEx(const CPoint& point, int* col) const;
     CEdit* EditSubLabel(int nItem, int nCol);
 
 public:

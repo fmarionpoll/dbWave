@@ -210,52 +210,6 @@ void CIntervalsListCtrl::set_sub_item_1_value(LVITEM& lvi, int iItem, float time
 
 // ------------------------------------
 
-int CIntervalsListCtrl::GetRowFromPoint(CPoint& point, int* col) const
-{
-	int column = 0;
-	int row = HitTest(point, nullptr);
-
-	if (col) *col = 0;
-	if ((GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK) != LVS_REPORT)
-		return row;
-
-	// Get the top and bottom row visible   
-	row = GetTopIndex();
-	int bottom = row + GetCountPerPage();
-	if (bottom > GetItemCount())
-		bottom = GetItemCount();
-
-	// Get the number of columns    
-	CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
-	int nColumnCount = pHeader->GetItemCount();
-
-	// Loop through the visible rows    
-	for (; row <= bottom; row++)
-	{
-		// Get bounding rectangle of item and check whether point falls in it.
-		CRect rect;
-		GetItemRect(row, &rect, LVIR_BOUNDS);
-
-		if (rect.PtInRect(point))
-		{
-			// Find the column      
-			for (column = 0; column < nColumnCount; column++)
-			{
-				const int colwidth = GetColumnWidth(column);
-				if (point.x >= rect.left && point.x <= (rect.left + colwidth))
-				{
-					if (col) *col = column;
-					return row;
-				}
-
-				rect.left += colwidth;
-			}
-		}
-	}
-
-	return -1;
-}
-
 // from codeguru:
 // https://www.codeguru.com/cplusplus/editable-subitems/
 
@@ -263,25 +217,21 @@ int CIntervalsListCtrl::GetRowFromPoint(CPoint& point, int* col) const
 // Returns	- the row index or -1 if point is not over a row
 // point	- point to be tested.
 // col		- to hold the column index
-int CIntervalsListCtrl::HitTestEx(CPoint& point, int* col) const
+
+int CIntervalsListCtrl::HitTestEx(const CPoint& point, int* col) const
 {
-	int row = HitTest(point, NULL);
-
+	int row = HitTest(point, nullptr);
 	if (col) *col = 0;
-
-	// Make sure that the ListView is in LVS_REPORT
 	if ((GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK) != LVS_REPORT)
 		return row;
 
-	// Get the top and bottom row visible
 	row = GetTopIndex();
 	int bottom = row + GetCountPerPage();
 	if (bottom > GetItemCount())
 		bottom = GetItemCount();
 
-	// Get the number of columns
-	auto pHeader = static_cast<CHeaderCtrl*>(GetDlgItem(0));
-	const int nColumnCount = pHeader->GetItemCount();
+	const auto p_header = static_cast<CHeaderCtrl*>(GetDlgItem(0));
+	const int column_count = p_header->GetItemCount();
 
 	// Loop through the visible rows
 	for (; row <= bottom; row++)
@@ -292,16 +242,16 @@ int CIntervalsListCtrl::HitTestEx(CPoint& point, int* col) const
 		if (rect.PtInRect(point))
 		{
 			// Now find the column
-			for (int colnum = 0; colnum < nColumnCount; colnum++)
+			for (int column_index = 0; column_index < column_count; column_index++)
 			{
-				int colwidth = GetColumnWidth(colnum);
+				const int column_width = GetColumnWidth(column_index);
 				if (point.x >= rect.left
-					&& point.x <= (rect.left + colwidth))
+					&& point.x <= (rect.left + column_width))
 				{
-					if (col) *col = colnum;
+					if (col) *col = column_index;
 					return row;
 				}
-				rect.left += colwidth;
+				rect.left += column_width;
 			}
 		}
 	}
@@ -311,100 +261,88 @@ int CIntervalsListCtrl::HitTestEx(CPoint& point, int* col) const
 CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
 {
 	if (!EnsureVisible(nItem, TRUE)) 
-		return NULL;
+		return nullptr;
 
-	CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
-	int nColumnCount = pHeader->GetItemCount();
-	if (nCol >= nColumnCount || GetColumnWidth(nCol) < 5) 
-		return NULL;
+	const auto p_header = (CHeaderCtrl*)GetDlgItem(0);
+	const int column_count = p_header->GetItemCount();
+	if (nCol >= column_count || GetColumnWidth(nCol) < 5) 
+		return nullptr;
 
 	// Get the column offset        
-	int offset = 0;
+	int column_left_offset = 0;
 	for (int i = 0; i < nCol; i++)
-	{
-		offset += GetColumnWidth(i);
-	}
+		column_left_offset += GetColumnWidth(i);
 
 	CRect rect;
 	GetItemRect(nItem, &rect, LVIR_BOUNDS);
 
 	// Scroll horizontally if we need to expose the column  
-	CRect rcClient;
-	GetClientRect(&rcClient);
+	CRect rc_client;
+	GetClientRect(&rc_client);
 
-	if (offset + rect.left < 0 || offset + rect.left > rcClient.right)
+	if (column_left_offset + rect.left < 0 || column_left_offset + rect.left > rc_client.right)
 	{
 		CSize size;
-		size.cx = offset + rect.left;
+		size.cx = column_left_offset + rect.left;
 		size.cy = 0;
 		Scroll(size);
 		rect.left -= size.cx;
 	}
 
 	// Get Column alignment 
-	LV_COLUMN lvcol;
-	lvcol.mask = LVCF_FMT;
-	GetColumn(nCol, &lvcol);
-	DWORD dwStyle;
+	LV_COLUMN lv_column;
+	lv_column.mask = LVCF_FMT;
+	GetColumn(nCol, &lv_column);
+	DWORD dw_style;
 
-	if ((lvcol.fmt & LVCFMT_JUSTIFYMASK) == LVCFMT_LEFT)
-	{
-		dwStyle = ES_LEFT;
-	}
-	else if ((lvcol.fmt & LVCFMT_JUSTIFYMASK) == LVCFMT_RIGHT)
-	{
-		dwStyle = ES_RIGHT;
-	}
+	if ((lv_column.fmt & LVCFMT_JUSTIFYMASK) == LVCFMT_LEFT)
+		dw_style = ES_LEFT;
+	else if ((lv_column.fmt & LVCFMT_JUSTIFYMASK) == LVCFMT_RIGHT)
+		dw_style = ES_RIGHT;
 	else
-	{
-		dwStyle = ES_CENTER;
-	}
+		dw_style = ES_CENTER;
 
-	rect.left += offset + 4;
+	rect.left += column_left_offset + 4;
 	rect.right = rect.left + GetColumnWidth(nCol) - 3;
 
-	if (rect.right > rcClient.right)
-	{
-		rect.right = rcClient.right;
-	}
+	if (rect.right > rc_client.right)
+		rect.right = rc_client.right;
 
-	dwStyle |= WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
+	dw_style |= WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
 
 	const auto pEdit = new CInPlaceEdit(this, nItem, nCol, GetItemText(nItem, nCol));
-	pEdit->Create(dwStyle, rect, this, IDC_INPLACE_CONTROL);
+	pEdit->Create(dw_style, rect, this, IDC_INPLACE_CONTROL);
 
 	return pEdit;
 }
 
 void CIntervalsListCtrl::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	auto* plvDispInfo = (LV_DISPINFO*)pNMHDR;
-	LV_ITEM* plvItem = &plvDispInfo->item;
+	const auto* p_lv_dispinfo = (LV_DISPINFO*)pNMHDR;
+	const LV_ITEM* p_lv_item = &p_lv_dispinfo->item;
 
-	if (plvItem->pszText != NULL)
-	{
-		SetItemText(plvItem->iItem, plvItem->iSubItem, plvItem->pszText);
-	}
+	if (p_lv_item->pszText != nullptr)
+		SetItemText(p_lv_item->iItem, p_lv_item->iSubItem, p_lv_item->pszText);
+	
 	*pResult = FALSE;
 }
 
 void CIntervalsListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	int index;
 	CListCtrl::OnLButtonDown(nFlags, point);
 
-	int colnum;
-	if ((index = HitTestEx(point, &colnum)) != -1)
+	int column;
+	int row;
+	if ((row = HitTestEx(point, &column)) != -1)
 	{
-		UINT flag = LVIS_FOCUSED;
-		if ((GetItemState(index, flag) & flag) == flag && colnum > 0)
+		constexpr UINT flag = LVIS_FOCUSED;
+		if ((GetItemState(row, flag) & flag) == flag && column > 0)
 		{
-			// Add check for LVS_EDITLABELS
 			if (GetWindowLong(m_hWnd, GWL_STYLE) & LVS_EDITLABELS)
-				m_p_edit = EditSubLabel(index, colnum);
+				m_p_edit = EditSubLabel(row, column);
 		}
 		else
-			SetItemState(index, LVIS_SELECTED | LVIS_FOCUSED,
+			SetItemState(row, LVIS_SELECTED | LVIS_FOCUSED,
 				LVIS_SELECTED | LVIS_FOCUSED);
 	}
 }

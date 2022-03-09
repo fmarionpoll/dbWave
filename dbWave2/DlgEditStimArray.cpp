@@ -22,13 +22,10 @@ void DlgEditStimArray::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LISTSTIM, list_control);
-	DDX_Text(pDX, IDC_EDIT_TEXT, m_item_value);
 }
 
 BEGIN_MESSAGE_MAP(DlgEditStimArray, CDialog)
 	ON_WM_SIZE()
-	ON_BN_CLICKED(IDC_EDIT_BUTTON, &DlgEditStimArray::OnBnClickedEditButton)
-	ON_EN_KILLFOCUS(IDC_REORDER, &DlgEditStimArray::OnEnKillfocusReOrder)
 	ON_BN_CLICKED(IDC_DELETE, &DlgEditStimArray::OnBnClickedDelete)
 	ON_BN_CLICKED(IDC_INSERT, &DlgEditStimArray::OnBnClickedInsert)
 	ON_BN_CLICKED(IDC_DELETE3, &DlgEditStimArray::OnBnClickedDelete3)
@@ -127,43 +124,6 @@ void DlgEditStimArray::OnSize(UINT nType, int cx, int cy)
 		m_stretch.ResizeControls(nType, cx, cy);
 	CDialog::OnSize(nType, cx, cy);
 }
-
-void DlgEditStimArray::OnBnClickedEditButton()
-{
-	if (!mode_edit)
-	{
-		m_item_index = list_control.get_index_item_selected();
-		if (m_item_index < 0) 
-			return;
-		
-		start_edit_value();
-	}
-	else
-	{
-		list_control.validate_edit_overlay();
-		stop_edit_value();
-	}
-}
-
-void DlgEditStimArray::start_edit_value()
-{
-	GetDlgItem(IDC_EDIT_BUTTON)->SetWindowText(_T("&Validate"));
-	mode_edit = true;
-	list_control.enable_edit_overlay();
-}
-
-void DlgEditStimArray::stop_edit_value()
-{
-	GetDlgItem(IDC_EDIT_BUTTON)->SetWindowText(_T("&Edit"));
-	list_control.disable_edit_overlay();
-	mode_edit = false;
-}
-
-void DlgEditStimArray::OnEnKillfocusReOrder()
-{
-	stop_edit_value();
-}
-
 
 void DlgEditStimArray::OnBnClickedDelete()
 {
