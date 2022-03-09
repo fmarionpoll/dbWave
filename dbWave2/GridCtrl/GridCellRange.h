@@ -43,6 +43,7 @@ public:
 	// Operations
 public:
 	explicit CCellID(int nRow = -1, int nCol = -1) : row(nRow), col(nCol)
+
 	{
 	}
 

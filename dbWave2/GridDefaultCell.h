@@ -1,7 +1,6 @@
 #pragma once
 #include <afx.h>
-
-#include "GridCell.h"
+#include "GridCtrl/GridCell.h"
 
 
 // This class is for storing grid default values. It's a little heavy weight, so

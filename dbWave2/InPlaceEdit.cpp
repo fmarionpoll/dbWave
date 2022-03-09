@@ -1,7 +1,8 @@
 #include <StdAfx.h>
 #include "InPlaceEdit.h"
 
-#include "GridCtrl.h"
+#include "GridCtrl/GridCtrl.h"
+
 
 // The code contained in this file is based on the original
 // CInPlaceEdit from

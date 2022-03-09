@@ -31,10 +31,7 @@
 
 #include "GridCellRange.h"
 #include "GridCell.h"
-#include "GridDefaultCell.h"
-
 #include <vector>
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +76,7 @@
 #ifndef GRIDCONTROL_NO_CLIPBOARD
 #include <afxole.h>
 #endif
+#include "../GridDefaultCell.h"
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Helper functions

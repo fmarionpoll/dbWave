@@ -1,3 +1,8 @@
+#include "StdAfx.h"
+#include "GridCell.h"
+#include "GridInPlaceEdit.h"
+#include "GridCtrl.h"
+
 // GridCell.cpp : implementation file
 //
 // MFC Grid Control - Main grid cell class
@@ -30,11 +35,8 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
-#include "GridCell.h"
-#include "GridInPlaceEdit.h"
-#include "GridCtrl.h"
-#include "GridDefaultCell.h"
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
