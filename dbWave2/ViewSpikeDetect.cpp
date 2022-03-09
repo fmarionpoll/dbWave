@@ -738,9 +738,9 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				l_limit_right = l_limit_left;
 				l_limit_left = i;
 			}
-			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
+			m_pSpkDoc->m_stimIntervals.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
 			m_pSpkDoc->m_stimIntervals.n_items++;
-			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_right);
+			m_pSpkDoc->m_stimIntervals.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_right);
 			m_pSpkDoc->m_stimIntervals.n_items++;
 			updateVTtags();
 
@@ -759,13 +759,13 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	//case HINT_MOVEVERTTAG: //12	// vertical tag has moved 		lowp = new pixel / selected tag
 	case HINT_CHANGEVERTTAG: //13
 		{
-			int lvalue = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(threshold);
+			int lvalue = m_pSpkDoc->m_stimIntervals.GetAt(threshold);
 			if (i_id == m_ChartDataWnd_Detect.GetDlgCtrlID())
 				lvalue = m_ChartDataWnd_Detect.m_VTtags.GetTagLVal(threshold);
 			else if (i_id == m_ChartDataWnd_Source.GetDlgCtrlID())
 				lvalue = m_ChartDataWnd_Source.m_VTtags.GetTagLVal(threshold);
 
-			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAt(threshold, lvalue);
+			m_pSpkDoc->m_stimIntervals.SetAt(threshold, lvalue);
 			updateVTtags();
 
 			m_ChartSpkWnd_Bar.Invalidate();
@@ -780,7 +780,7 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		{
 			const int cx = LOWORD(lParam);
 			const int l_limit_left = m_ChartDataWnd_Detect.GetDataOffsetfromPixel(cx);
-			m_pSpkDoc->m_stimIntervals.intervalsArray.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
+			m_pSpkDoc->m_stimIntervals.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
 			m_pSpkDoc->m_stimIntervals.n_items++;
 			updateVTtags();
 
@@ -1279,7 +1279,7 @@ int CViewSpikeDetection::detectStim1(int ichan)
 					l_last = l_data_last;
 					// clear stimulus detected
 					auto p_sti = &(m_pSpkDoc->m_stimIntervals);
-					p_sti->intervalsArray.RemoveAll();
+					p_sti->RemoveAll();
 					m_pSpkDoc->m_stimIntervals.n_items = 0;
 					break;
 				}
@@ -1289,9 +1289,9 @@ int CViewSpikeDetection::detectStim1(int ichan)
 			const auto jitter = 2; // allow some jitter in the detection (+-2)
 			auto flag = TRUE;
 			int i2;
-			for (i2 = 0; i2 < p_sti->intervalsArray.GetSize(); i2++)
+			for (i2 = 0; i2 < p_sti->GetSize(); i2++)
 			{
-				const auto lval = p_sti->intervalsArray.GetAt(i2);
+				const auto lval = p_sti->GetAt(i2);
 				if (cx <= (lval + jitter) && cx >= (lval - jitter))
 				{
 					flag = FALSE; // no new stim - already detected at that time
@@ -1305,7 +1305,7 @@ int CViewSpikeDetection::detectStim1(int ichan)
 			}
 			if (flag)
 			{
-				p_sti->intervalsArray.InsertAt(i2, cx);
+				p_sti->InsertAt(i2, cx);
 				m_pSpkDoc->m_stimIntervals.n_items++;
 			}
 		}
@@ -1542,7 +1542,7 @@ void CViewSpikeDetection::OnBnClickedClearall()
 	highlightSpikes(FALSE); // remove display of spikes
 	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
 	m_pSpkDoc->m_stimIntervals.n_items = 0; // zero stimuli
-	m_pSpkDoc->m_stimIntervals.intervalsArray.RemoveAll();
+	m_pSpkDoc->m_stimIntervals.RemoveAll();
 
 	updateDetectionParameters();
 	updateVTtags(); // update display of vertical tags
@@ -1563,7 +1563,7 @@ void CViewSpikeDetection::OnClear()
 	if (m_pSpkList->GetdetectWhat() == DETECT_STIMULUS)
 	{
 		m_pSpkDoc->m_stimIntervals.n_items = 0;
-		m_pSpkDoc->m_stimIntervals.intervalsArray.RemoveAll();
+		m_pSpkDoc->m_stimIntervals.RemoveAll();
 		updateVTtags();
 	}
 
@@ -2126,9 +2126,9 @@ void CViewSpikeDetection::updateVTtags()
 	if (m_pSpkDoc->m_stimIntervals.n_items == 0)
 		return;
 
-	for (auto i = 0; i < m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize(); i++)
+	for (auto i = 0; i < m_pSpkDoc->m_stimIntervals.GetSize(); i++)
 	{
-		const int cx = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(i);
+		const int cx = m_pSpkDoc->m_stimIntervals.GetAt(i);
 		m_ChartSpkWnd_Bar.m_VTtags.AddLTag(cx, 0);
 		m_ChartDataWnd_Detect.m_VTtags.AddLTag(cx, 0);
 		m_ChartDataWnd_Source.m_VTtags.AddLTag(cx, 0);
@@ -3197,14 +3197,13 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 	m_pSpkDoc->SortStimArray();
 
 	DlgEditStimArray dlg;
-	dlg.intervals_array.RemoveAll();
-	dlg.intervals_array.Add(&m_pSpkDoc->m_stimIntervals);
+	dlg.intervals = m_pSpkDoc->m_stimIntervals;
 	dlg.m_sampling_rate = m_samplingRate;
-	dlg.intervals_saved = &GetDocument()->m_stimsaved;
+	dlg.intervals_saved = GetDocument()->m_stimsaved;
 ;
 	if (IDOK == dlg.DoModal())
 	{
-		transfer_array_data_to_spkDoc(dlg.intervals_array.GetAt(0));
+		m_pSpkDoc->m_stimIntervals = dlg.intervals;
 		updateVTtags();
 		m_ChartSpkWnd_Bar.Invalidate();
 		m_ChartDataWnd_Detect.Invalidate();
@@ -3212,14 +3211,6 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 	}
 }
-
-void CViewSpikeDetection::transfer_array_data_to_spkDoc(const CIntervals* intervals) const
-{
-	m_pSpkDoc->m_stimIntervals.intervalsArray.RemoveAll();
-	m_pSpkDoc->m_stimIntervals = *intervals;
-	m_pSpkDoc->m_stimIntervals.n_items = intervals->GetSize();
-}
-
 void CViewSpikeDetection::OnEnChangeChanselected()
 {
 	if (mm_ichanselected.m_bEntryDone)

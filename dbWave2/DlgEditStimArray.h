@@ -12,17 +12,16 @@ class DlgEditStimArray : public CDialog
 	~DlgEditStimArray() override;
 
 	// data passed by caller
-	CTagList*		tag_list {nullptr};
-	CIntervals*		intervals_saved { nullptr };
-	CArray<CIntervals*, CIntervals*> intervals_array{};
-	float			m_sampling_rate = 0.f;
+	CTagList*	tag_list {nullptr};
+	CIntervals	intervals_saved {};
+	CIntervals	intervals{};
+	float		m_sampling_rate = 0.f;
 
 	enum { IDD = IDD_EDITSTIMARRAY};
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;
-
-	CIntervals* intervals{ nullptr };
+	
 	CIntervalsListCtrl list_control{};
 	CStretchControl m_stretch{};
 	BOOL m_initialized { false };
@@ -34,6 +33,8 @@ protected:
 	void transfer_control_list_to_intervals_array();
 
 public:
+	DECLARE_MESSAGE_MAP()
+
 	BOOL OnInitDialog() override;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedDelete();
@@ -44,7 +45,5 @@ public:
 	afx_msg void OnBnClickedPaste();
 	afx_msg void OnBnClickedExport();
 	afx_msg void OnBnClickedImportfromdata();
-
-	DECLARE_MESSAGE_MAP()
 	afx_msg void OnBnClickedOk();
 };

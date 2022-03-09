@@ -15,8 +15,8 @@ DlgEditStimArray::DlgEditStimArray(CWnd* pParent /*=NULL*/)
 }
 
 DlgEditStimArray::~DlgEditStimArray()
-{
-}
+= default;
+
 
 void DlgEditStimArray::DoDataExchange(CDataExchange* pDX)
 {
@@ -43,7 +43,6 @@ void DlgEditStimArray::make_dialog_stretchable()
 	// init dialog size
 	m_stretch.AttachDialogParent(this); // attach dialog pointer
 	m_stretch.newProp(IDC_LISTSTIM, XLEQ_XREQ, YTEQ_YBEQ);
-
 	m_stretch.newProp(IDOK, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDCANCEL, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_INSERT, SZEQ_XREQ, SZEQ_YTEQ);
@@ -54,8 +53,6 @@ void DlgEditStimArray::make_dialog_stretchable()
 	m_stretch.newProp(IDC_REORDER, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_EXPORT, SZEQ_XREQ, SZEQ_YTEQ);
 	m_stretch.newProp(IDC_SIZEBOX, SZEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_EDIT_BUTTON, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_EDIT_TEXT, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
 BOOL DlgEditStimArray::OnInitDialog()
@@ -66,11 +63,9 @@ BOOL DlgEditStimArray::OnInitDialog()
 	m_initialized = TRUE;
 	list_control.init_listbox(_T("i"), 60, _T("time (s)"), 80);
 
-	ASSERT(1 == intervals_array.GetSize());
-	intervals = intervals_array.GetAt(0);
 	transfer_intervals_array_to_control_list();
 
-	if (intervals_saved->intervalsArray.GetSize() < 1)
+	if (intervals_saved.GetSize() < 1)
 		GetDlgItem(IDC_PASTE)->EnableWindow(FALSE);
 
 	if (tag_list == nullptr)
@@ -83,11 +78,11 @@ BOOL DlgEditStimArray::OnInitDialog()
 void DlgEditStimArray::transfer_intervals_array_to_control_list()
 {
 	list_control.DeleteAllItems();
-	const auto n_items = intervals->intervalsArray.GetSize();
-	intervals->channel_sampling_rate = m_sampling_rate;
+	const auto n_items = intervals.GetSize();
+	intervals.channel_sampling_rate = m_sampling_rate;
 	for (int i = 0; i < n_items; i++) 
 	{
-		const float time_interval = static_cast<float>(intervals->intervalsArray[i]) / m_sampling_rate;
+		const float time_interval = static_cast<float>(intervals.GetAt(i)) / m_sampling_rate;
 		list_control.add_new_item(i, time_interval);
 	}
 }
@@ -95,15 +90,13 @@ void DlgEditStimArray::transfer_intervals_array_to_control_list()
 void DlgEditStimArray::transfer_control_list_to_intervals_array()
 {
 	const int n_items = list_control.GetItemCount();
-	CArray<long, long>* p_intervals = &(intervals->intervalsArray);
-	p_intervals->RemoveAll();
-	p_intervals->SetSize(n_items);
+	intervals.RemoveAll();
 
 	for (auto i = 0; i < n_items; i++) 
 	{
 		const float value = list_control.get_item_value(i);
 		const long ii = static_cast<long>(value * m_sampling_rate);
-		intervals->AddTimeInterval(ii);
+		intervals.Add(ii);
 	}
 }
 
@@ -122,7 +115,7 @@ void DlgEditStimArray::OnBnClickedDelete()
 
 	list_control.SetItemState(m_item_index, 0, LVIS_SELECTED | LVIS_FOCUSED);
 	list_control.DeleteItem(m_item_index);
-	intervals->intervalsArray.RemoveAt(m_item_index);
+	intervals.RemoveAt(m_item_index);
 	const auto last_index = list_control.GetItemCount() - 1;
 	if (m_item_index > last_index)
 		m_item_index = last_index;
@@ -145,7 +138,7 @@ void DlgEditStimArray::OnBnClickedInsert()
 void DlgEditStimArray::OnBnClickedDelete3()
 {
 	list_control.DeleteAllItems();
-	intervals->intervalsArray.RemoveAll();
+	intervals.RemoveAll();
 }
 
 void DlgEditStimArray::OnBnClickedReOrder()
@@ -153,17 +146,17 @@ void DlgEditStimArray::OnBnClickedReOrder()
 	// TODO: algorithm wrong: it assumes intervals contains updated data
 
 	// sort sti
-	const auto n_items = intervals->intervalsArray.GetSize();
+	auto n_items = intervals.GetSize();
 	for (auto i = 0; i < n_items - 1; i++)
 	{
-		auto i_min = intervals->intervalsArray[i];
+		auto i_min = intervals.GetAt(i);
 		for (auto j = i + 1; j < n_items; j++)
 		{
-			if (intervals->intervalsArray[j] < i_min)
+			if (intervals.GetAt(j) < i_min)
 			{
-				intervals->intervalsArray[i] = intervals->intervalsArray[j];
-				intervals->intervalsArray[j] = i_min;
-				i_min = intervals->intervalsArray[i];
+				intervals.SetAt(i, intervals.GetAt(j));
+				intervals.SetAt(j, i_min);
+				i_min = intervals.GetAt(i);
 			}
 		}
 	}
@@ -171,7 +164,7 @@ void DlgEditStimArray::OnBnClickedReOrder()
 	CString cs;
 	ASSERT(n_items == list_control.GetItemCount());
 	for (auto i = 0; i < n_items; i++) {
-		const float time_interval = static_cast<float>(intervals->intervalsArray[i]) / m_sampling_rate;
+		const float time_interval = static_cast<float>(intervals.GetAt(i)) / m_sampling_rate;
 		list_control.set_item(i, time_interval);
 	}
 	
@@ -183,14 +176,13 @@ void DlgEditStimArray::OnBnClickedReOrder()
 
 void DlgEditStimArray::OnBnClickedCopy()
 {
-	// TODO: algorithm wrong - data are not up-to-date in intervals
-	*intervals_saved = *intervals;
+	intervals_saved = intervals;
 	GetDlgItem(IDC_PASTE)->EnableWindow(TRUE);
 }
 
 void DlgEditStimArray::OnBnClickedPaste()
 {
-	const auto n_items = intervals_saved->n_items;
+	const auto n_items = intervals_saved.n_items;
 	for (auto j = n_items - 1; j >= 0; j--)
 	{
 		auto pos = list_control.GetFirstSelectedItemPosition();
@@ -198,13 +190,11 @@ void DlgEditStimArray::OnBnClickedPaste()
 			m_item_index = list_control.GetNextSelectedItem(pos) + 1;
 		else
 			m_item_index = 0;
-		const float time_interval = static_cast<float>(intervals->intervalsArray[m_item_index]) / m_sampling_rate;
+		const float time_interval = static_cast<float>(intervals.GetAt(m_item_index)) / m_sampling_rate;
 		list_control.set_item(m_item_index, time_interval);
 
-		// add item in the list
-		intervals->intervalsArray.InsertAt(m_item_index, 0L);
-		intervals->intervalsArray[m_item_index] = intervals_saved->intervalsArray[j];
-
+		intervals.InsertAt(m_item_index, 0L);
+		intervals.SetAt(m_item_index, intervals_saved.GetAt(j));
 	}
 	reset_list_order();
 }
@@ -231,13 +221,13 @@ void DlgEditStimArray::OnBnClickedExport()
 
 void DlgEditStimArray::OnBnClickedImportfromdata()
 {
-	intervals->channel_sampling_rate = m_sampling_rate;
+	intervals.channel_sampling_rate = m_sampling_rate;
 
 	const int n_tags = tag_list->GetNTags();
 	for (int i = 0; i < n_tags; i++)
 	{
 		const long l_interval = tag_list->GetTagLVal(i);
-		intervals->AddTimeInterval(l_interval);
+		intervals.Add(l_interval);
 		const float time_interval = static_cast<float>(l_interval) / m_sampling_rate;
 		list_control.add_new_item(i, time_interval);
 	}

@@ -11,27 +11,28 @@ IMPLEMENT_SERIAL(CIntervals, CObject, 0)
 
 CIntervals::CIntervals()
 {
-	intervalsArray.SetSize(0); // time on, time off
+	array.SetSize(0); // time on, time off
 }
 
 CIntervals::~CIntervals()
 {
-	intervalsArray.RemoveAll();
+	array.RemoveAll();
 }
 
 CIntervals& CIntervals::operator =(const CIntervals& arg)
 {
 	if (this != &arg)
 	{
-		iID = arg.iID; // ID number of the array
-		cs_descriptor = arg.cs_descriptor; // descriptor of the array
-		n_items = arg.n_items; // number of on/off events
-		intervalsArray.SetSize(arg.intervalsArray.GetSize());
-
-		for (auto i = 0; i < arg.intervalsArray.GetSize(); i++)
-			intervalsArray.SetAt(i, arg.intervalsArray.GetAt(i)); // time on, time off
+		iID	= arg.iID;
+		channel = arg.channel;
+		cs_descriptor = arg.cs_descriptor; 
+		n_items = arg.n_items;
 		n_per_cycle = arg.n_per_cycle;
 		channel_sampling_rate = arg.channel_sampling_rate;
+
+		array.SetSize(arg.array.GetSize());
+		for (auto i = 0; i < arg.array.GetSize(); i++)
+			array.SetAt(i, arg.array.GetAt(i)); 
 	}
 	return *this;
 }
@@ -54,7 +55,7 @@ void CIntervals::Serialize(CArchive& ar)
 
 		n = 1;
 		ar << n;
-		intervalsArray.Serialize(ar);
+		array.Serialize(ar);
 
 		n = 1;
 		ar << n;
@@ -82,7 +83,7 @@ void CIntervals::Serialize(CArchive& ar)
 			if (n > 0) ar >> cs_descriptor;
 			n--;
 			ar >> n;
-			if (n > 0) intervalsArray.Serialize(ar);
+			if (n > 0) array.Serialize(ar);
 			n--;
 			if (iversion > 1)
 				ar >> n;
@@ -94,7 +95,7 @@ void CIntervals::Serialize(CArchive& ar)
 			ar >> n;
 			ar >> cs_descriptor; // descriptor of the array
 			ar >> n;
-			intervalsArray.Serialize(ar);
+			array.Serialize(ar);
 		}
 	}
 }

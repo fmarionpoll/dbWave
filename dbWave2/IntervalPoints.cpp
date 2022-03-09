@@ -133,7 +133,7 @@ void CIntervalPoints::ImportIntervalsSeries(CIntervals* pIntervals, WORD valUP, 
 	CIntervalPoint dummy{};
 	for (auto i = 0; i < nitems; i++)
 	{
-		dummy.ii = static_cast<long>(pIntervals->GetTimeIntervalAt(i) * ratio);
+		dummy.ii = static_cast<long>(pIntervals->GetAt(i) * ratio);
 		dummy.w = w_state;
 		intervalpoint_array[i] = dummy;
 		if (w_state == w_low)
@@ -242,7 +242,7 @@ void CIntervalPoints::ExportIntervalsSeries(int chan, CIntervals* pOut)
 		if ((ifilter & intervalpoint_array[i].w) != istatus)
 		{
 			istatus = ifilter & intervalpoint_array[i].w;
-			pOut->AddTimeInterval(intervalpoint_array[i].ii);
+			pOut->Add(intervalpoint_array[i].ii);
 		}
 	}
 }

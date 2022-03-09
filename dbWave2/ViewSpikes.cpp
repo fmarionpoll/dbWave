@@ -1349,12 +1349,12 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			if (rw_spikes.top == rw_spikes.bottom)
 				rw_spikes.bottom++;
 
-			for (auto ii = 0; ii < m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize(); ii++, ii++)
+			for (auto ii = 0; ii < m_pSpkDoc->m_stimIntervals.GetSize(); ii++, ii++)
 			{
-				int iifirst = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(ii);
-				if ((ii + 1) >= m_pSpkDoc->m_stimIntervals.intervalsArray.GetSize())
+				int iifirst = m_pSpkDoc->m_stimIntervals.GetAt(ii);
+				if ((ii + 1) >= m_pSpkDoc->m_stimIntervals.GetSize())
 					continue;
-				int iilast = m_pSpkDoc->m_stimIntervals.intervalsArray.GetAt(ii + 1);
+				int iilast = m_pSpkDoc->m_stimIntervals.GetAt(ii + 1);
 				if (iifirst > l_last || iilast < l_first)
 					continue;
 				if (iifirst < l_first)

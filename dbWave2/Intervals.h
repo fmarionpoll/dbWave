@@ -12,15 +12,19 @@ public:
 
 	CIntervals& operator =(const CIntervals& arg);
 
-	long GetTimeIntervalAt(int i) { return intervalsArray.GetAt(i); }
-	void SetTimeIntervalAt(int i, long iitime) { intervalsArray.SetAt(i, iitime); }
-	long GetSize() const { return intervalsArray.GetSize(); }
+	long GetAt(int i) { return array.GetAt(i); }
+	void SetAt(int i, long iitime) {array.SetAt(i, iitime); }
+	void SetAtGrow(int i, long value) { array.SetAtGrow(i, value); }
+	long GetSize() const { return array.GetSize(); }
+	void Add(long ii) { array.Add(ii); n_items++; }
+	void RemoveAll() { array.RemoveAll(); n_items = 0; }
+	void RemoveAt(int i) { array.RemoveAt(i); n_items--; }
+	void InsertAt(int i, long value) { array.InsertAt(i, value); }
+
 	int  GetChannel() { return channel; }
 	void SetChannel(int chan) { channel = chan; }
-	void AddTimeInterval(long ii) { intervalsArray.Add(ii); }
 
 public:
-	CArray<long, long> intervalsArray ; // time on, time off (n clock intervals)
 	int iID = 1;
 	int channel = 0;
 	CString cs_descriptor = _T("stimulus intervals"); 
@@ -29,6 +33,7 @@ public:
 	float channel_sampling_rate = 10000.f;
 
 protected:
+	CArray<long, long> array; // time on, time off (n clock intervals)
 	int version = 4;
 };
 

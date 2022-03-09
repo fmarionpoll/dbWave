@@ -25,7 +25,7 @@ void CSpikeDoc::ClearData()
 	m_spkclass.EraseData();
 	if (m_stimIntervals.n_items > 0)
 	{
-		m_stimIntervals.intervalsArray.RemoveAll();
+		m_stimIntervals.RemoveAll();
 		m_stimIntervals.n_items = 0;
 	}
 	spikelist_array.SetSize(1);
@@ -107,21 +107,21 @@ void CSpikeDoc::Serialize(CArchive& ar)
 
 void CSpikeDoc::SortStimArray()
 {
-	const auto nsti = m_stimIntervals.intervalsArray.GetSize();
-	if (nsti == 0 || (m_stimIntervals.intervalsArray[nsti - 1] > m_stimIntervals.intervalsArray[0]))
+	const auto nsti = m_stimIntervals.GetSize();
+	if (nsti == 0 || (m_stimIntervals.GetAt(nsti - 1) > m_stimIntervals.GetAt(0)))
 		return;
 
 	// bubble sort from bottom to top
 	for (auto j = 0; j < nsti; j++)
 	{
-		int imin = m_stimIntervals.intervalsArray[j];
+		int imin = m_stimIntervals.GetAt(j);
 		for (auto k = j + 1; k < nsti; k++)
 		{
-			if (m_stimIntervals.intervalsArray[k] < imin)
+			if (m_stimIntervals.GetAt(k) < imin)
 			{
-				imin = m_stimIntervals.intervalsArray[k];
-				m_stimIntervals.intervalsArray[k] = m_stimIntervals.intervalsArray[j];
-				m_stimIntervals.intervalsArray[j] = imin;
+				imin = m_stimIntervals.GetAt(k);
+				m_stimIntervals.SetAt(k, m_stimIntervals.GetAt(j));
+				m_stimIntervals.SetAt(j, imin);
 			}
 		}
 	}
@@ -141,7 +141,7 @@ void CSpikeDoc::readBeforeVersion6(CArchive& ar, WORD wwVersion)
 	if (wwVersion >= 3 && wwVersion <= 5)
 	{
 		ar >> m_stimIntervals.n_items; // R9 - load number of items
-		m_stimIntervals.intervalsArray.Serialize(ar); // R10 - read data from file
+		m_stimIntervals.Serialize(ar); // R10 - read data from file
 		SortStimArray();
 	}
 
@@ -536,7 +536,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long*
 	}
 
 	// export stimulus occurence time(s) that fit(s) into the time interval requested
-	if (vdS->exportdatatype == EXPORT_PSTH && m_stimIntervals.intervalsArray.GetSize() > 0)
+	if (vdS->exportdatatype == EXPORT_PSTH && m_stimIntervals.GetSize() > 0)
 	{
 		auto samprate = pspklist->GetAcqSampRate();
 		if (samprate == 0.f)
@@ -545,17 +545,17 @@ void CSpikeDoc::export_spk_psth(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long*
 		}
 		ASSERT(samprate != 0.f);
 		const auto istim0 = 0;
-		const auto istim1 = m_stimIntervals.intervalsArray.GetSize() - 1;
+		const auto istim1 = m_stimIntervals.GetSize() - 1;
 		auto iioffset0 = 0;
 		if (!vdS->babsolutetime)
-			iioffset0 = m_stimIntervals.intervalsArray.GetAt(vdS->istimulusindex);
+			iioffset0 = m_stimIntervals.GetAt(vdS->istimulusindex);
 		const auto iistart = static_cast<long>(vdS->timestart * samprate) + iioffset0;
 		const auto iiend = static_cast<long>(vdS->timeend * samprate) + iioffset0;
 		auto b_up = -1;
 
 		for (auto istim = istim0; istim <= istim1; istim++)
 		{
-			const int iistim = m_stimIntervals.intervalsArray.GetAt(istim);
+			const int iistim = m_stimIntervals.GetAt(istim);
 			b_up *= -1;
 			if (iistim < iistart)
 				continue;
@@ -650,7 +650,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPI
 	// update offset
 	auto iioffset0 = 0;
 	if (!vdS->babsolutetime && m_stimIntervals.n_items > 0)
-		iioffset0 = m_stimIntervals.intervalsArray.GetAt(vdS->istimulusindex);
+		iioffset0 = m_stimIntervals.GetAt(vdS->istimulusindex);
 
 	// clear histogram area
 	ASSERT(vdS->exportdatatype == EXPORT_HISTAMPL);
@@ -783,7 +783,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 	int iioffset0 = 0;
 	if (!vdS->babsolutetime && m_stimIntervals.n_items > 0)
 	{
-		iioffset0 = m_stimIntervals.intervalsArray.GetAt(vdS->istimulusindex);
+		iioffset0 = m_stimIntervals.GetAt(vdS->istimulusindex);
 	}
 
 	// ................................DATA
@@ -1200,8 +1200,8 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 
 	// check validity of istimulusindex
 	auto istimulusindex = vdS->istimulusindex;
-	if (istimulusindex > m_stimIntervals.intervalsArray.GetSize() - 1)
-		istimulusindex = m_stimIntervals.intervalsArray.GetSize() - 1;
+	if (istimulusindex > m_stimIntervals.GetSize() - 1)
+		istimulusindex = m_stimIntervals.GetSize() - 1;
 	if (istimulusindex < 0)
 		istimulusindex = 0;
 	const auto istim0 = istimulusindex;
@@ -1209,7 +1209,7 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 	auto increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stimIntervals.intervalsArray.GetSize();
+		istim1 = m_stimIntervals.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stimIntervals.n_per_cycle > 1 && increment > m_stimIntervals.n_per_cycle)
 			increment = m_stimIntervals.n_per_cycle;
@@ -1222,7 +1222,7 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		if (!vdS->babsolutetime)
 		{
 			if (m_stimIntervals.n_items > 0)
-				iioffset0 = m_stimIntervals.intervalsArray.GetAt(istim);
+				iioffset0 = m_stimIntervals.GetAt(istim);
 			else
 				iioffset0 = static_cast<long>(-(vdS->timestart * rate));
 		}
@@ -1294,7 +1294,7 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 	auto increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stimIntervals.intervalsArray.GetSize();
+		istim1 = m_stimIntervals.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stimIntervals.n_per_cycle > 1 && increment > m_stimIntervals.n_per_cycle)
 			increment = m_stimIntervals.n_per_cycle;
@@ -1308,8 +1308,8 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		if (!vdS->babsolutetime && m_stimIntervals.n_items > 0) // adjust boundaries if ref is made to
 		{
 			// a stimulus
-			iistart += m_stimIntervals.intervalsArray.GetAt(istim);
-			iiend += m_stimIntervals.intervalsArray.GetAt(istim);
+			iistart += m_stimIntervals.GetAt(istim);
+			iiend += m_stimIntervals.GetAt(istim);
 		}
 
 		// find first spike within interval requested
@@ -1383,7 +1383,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 	auto increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stimIntervals.intervalsArray.GetSize();
+		istim1 = m_stimIntervals.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stimIntervals.n_per_cycle > 1 && increment > m_stimIntervals.n_per_cycle)
 			increment = m_stimIntervals.n_per_cycle;
@@ -1397,7 +1397,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		{
 			// get time of reference stim
 			if (m_stimIntervals.n_items > 0)
-				iioffset0 = m_stimIntervals.intervalsArray.GetAt(istim);
+				iioffset0 = m_stimIntervals.GetAt(istim);
 			else
 				iioffset0 = static_cast<long>(-(vdS->timestart * samprate));
 		}
@@ -1493,7 +1493,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 	auto increment = 2;
 	if (vdS->bCycleHist && !vdS->babsolutetime)
 	{
-		istim1 = m_stimIntervals.intervalsArray.GetSize();
+		istim1 = m_stimIntervals.GetSize();
 		increment = vdS->nstipercycle;
 		if (m_stimIntervals.n_per_cycle > 1 && increment > m_stimIntervals.n_per_cycle)
 			increment = m_stimIntervals.n_per_cycle;
@@ -1506,7 +1506,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 		if (!vdS->babsolutetime)
 		{
 			if (m_stimIntervals.n_items > 0)
-				iioffset0 = m_stimIntervals.intervalsArray.GetAt(istim);
+				iioffset0 = m_stimIntervals.GetAt(istim);
 			else
 				iioffset0 = static_cast<long>(-(vdS->timestart * samprate));
 		}
@@ -1591,7 +1591,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vd
 	// update offset
 	auto iioffset0 = 0;
 	if (!vdS->babsolutetime && m_stimIntervals.n_items > 0)
-		iioffset0 = m_stimIntervals.intervalsArray.GetAt(vdS->istimulusindex);
+		iioffset0 = m_stimIntervals.GetAt(vdS->istimulusindex);
 	// prepare parameters
 	const auto rate = pspklist->GetAcqSampRate();
 	const auto iitime_start = static_cast<long>(vdS->timestart * rate) + iioffset0;

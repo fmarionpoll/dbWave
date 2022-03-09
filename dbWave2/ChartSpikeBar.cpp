@@ -268,12 +268,12 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 	const auto iiend = m_lLast;
 	const auto iilen = iiend - iistart;
 	auto i0 = 0;
-	//CArray <long, long>* pintervalsArray = &(p_dbwave_doc_->m_pSpk->m_stimIntervals.intervalsArray);
-	CArray<long, long>* pintervalsArray = &(p_spike_doc_->m_stimIntervals.intervalsArray);
+	//CArray <long, long>* pintervalsArray = &(p_dbwave_doc_->m_pSpk->m_stimIntervals.array);
+	CIntervals* p_intervals = &(p_spike_doc_->m_stimIntervals);
 
 
-	while (i0 < pintervalsArray->GetSize()
-		&& pintervalsArray->GetAt(i0) < iistart)
+	while (i0 < p_intervals->GetSize()
+		&& p_intervals->GetAt(i0) < iistart)
 		i0++; // loop until found
 
 	auto istate = bottom; // use this variable to keep track of pulse broken by display limits
@@ -282,11 +282,11 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 		istate = top;
 	p_dc->MoveTo(rect->left, istate);
 
-	const auto nsti = ((pintervalsArray->GetSize()) / 2) * 2;
+	const auto nsti = ((p_intervals->GetSize()) / 2) * 2;
 	for (auto ii = jj; ii < nsti; ii += 2)
 	{
 		// stim starts here
-		int iix0 = pintervalsArray->GetAt(ii) - iistart;
+		int iix0 = p_intervals->GetAt(ii) - iistart;
 		if (iix0 >= iilen) // first transition ON after last graph pt?
 			break; // yes = exit loop
 		if (iix0 < 0) // first transition off graph?
@@ -298,7 +298,7 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 
 		// stim ends here
 		istate = bottom; // after pulse, descend to bottom level
-		int iix1 = pintervalsArray->GetAt(ii + 1) - iistart;
+		int iix1 = p_intervals->GetAt(ii + 1) - iistart;
 		if (iix1 > iilen) // last transition off graph?
 		{
 			iix1 = iilen; // yes = clip
