@@ -16,7 +16,7 @@ public:
 	~DlgImportFiles() override;
 
 	// Dialog Data
-	enum { IDD = IDD_IMPORTFILESDLG };
+	enum { IDD = IDD_IMPORTFILES };
 
 	// values passed by caller
 	CStringArray* m_pfilenameArray{ nullptr };

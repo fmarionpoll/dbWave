@@ -15,7 +15,7 @@ public:
 	int m_selected {0};
 
 	// Dialog Data
-	enum { IDD = IDD_EDITLISTDLG };
+	enum { IDD = IDD_EDITLIST };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support

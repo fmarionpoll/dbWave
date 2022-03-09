@@ -6,7 +6,7 @@ public:
 	DlgAbout();
 
 	// Dialog Data
-	enum { IDD = IDD_ABOUTBOXDLG };
+	enum { IDD = IDD_ABOUTBOX };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support

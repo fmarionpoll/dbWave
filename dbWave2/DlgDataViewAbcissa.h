@@ -8,7 +8,7 @@ public:
 	DlgDataViewAbcissa(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
-	enum { IDD = IDD_ABCISSADLG };
+	enum { IDD = IDD_ABCISSA };
 
 	float m_firstAbcissa{ 0.f };
 	float m_frameDuration{ 0.f };

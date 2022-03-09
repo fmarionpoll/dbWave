@@ -17,7 +17,7 @@ public:
 	~DlgADInputs() override;
 
 	// Dialog Data
-	enum { IDD = IDD_AD_INPUTPARMSDLG };
+	enum { IDD = IDD_AD_INPUTPARMS };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;

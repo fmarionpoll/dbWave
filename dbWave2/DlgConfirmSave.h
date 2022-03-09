@@ -9,7 +9,7 @@ public:
 	~DlgConfirmSave() override;
 
 	// Dialog Data
-	enum { IDD = IDD_CONFIRMDIALOG };
+	enum { IDD = IDD_CONFIRM };
 
 public:
 	BOOL OnInitDialog() override;

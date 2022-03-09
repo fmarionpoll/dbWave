@@ -10,7 +10,7 @@ public:
 	DlgADExperiment(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
-	enum { IDD = IDD_AD_EXPERIMENTDLG };
+	enum { IDD = IDD_AD_EXPERIMENT };
 
 	CString		m_csBasename {};
 	CString		m_csMoreComment{};

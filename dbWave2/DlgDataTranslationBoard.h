@@ -10,7 +10,7 @@ public:
 	DlgDataTranslationBoard(CWnd* pParent = nullptr);
 	~DlgDataTranslationBoard() override;
 
-	enum { IDD = IDD_DTBOARD_DLG };
+	enum { IDD = IDD_DTBOARD };
 
 	CComboBox m_cbBoard;
 	CListBox m_listBoardCaps;

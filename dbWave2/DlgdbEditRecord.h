@@ -19,7 +19,7 @@ public:
 	BOOL m_bshowIDC_PREVIOUS{ true };
 
 	// Dialog Data
-	enum { IDD = IDD_EDITRECORDDLG };
+	enum { IDD = IDD_EDITRECORD };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
