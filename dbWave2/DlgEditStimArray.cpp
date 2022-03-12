@@ -144,6 +144,7 @@ void DlgEditStimArray::OnBnClickedDelete3()
 void DlgEditStimArray::OnBnClickedReOrder()
 {
 	// TODO: algorithm wrong: it assumes intervals contains updated data
+	transfer_control_list_to_intervals_array();
 
 	// sort sti
 	auto n_items = intervals.GetSize();
@@ -161,12 +162,7 @@ void DlgEditStimArray::OnBnClickedReOrder()
 		}
 	}
 
-	CString cs;
-	ASSERT(n_items == list_control.GetItemCount());
-	for (auto i = 0; i < n_items; i++) {
-		const float time_interval = static_cast<float>(intervals.GetAt(i)) / m_sampling_rate;
-		list_control.set_item(i, time_interval);
-	}
+	transfer_intervals_array_to_control_list();
 	
 	//ResetListOrder();
 	list_control.select_item(0);
