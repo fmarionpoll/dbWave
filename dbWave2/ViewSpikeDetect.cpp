@@ -145,7 +145,7 @@ void CViewSpikeDetection::OnFileSave()
 	{
 		m_pSpkDoc->OnSaveDocument(dlg.GetPathName());
 		GetDocument()->SetDB_nbspikes(m_pSpkDoc->GetSpkList_Current()->GetTotalSpikes());
-		GetDocument()->SetDB_nbspikeclasses(1);
+		GetDocument()->SetDB_n_spike_classes(1);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 	}
 }

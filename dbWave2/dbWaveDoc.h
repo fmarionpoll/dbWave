@@ -62,7 +62,7 @@ public:
 	BOOL	OnNewDocument(LPCTSTR lpszPathName);
 	AcqDataDoc* OpenCurrentDataFile();
 	AcqDataDoc* GetCurrent_Dat_Document() const { return m_pDat; }
-	void	CloseCurrentDataFile();
+	void	CloseCurrentDataFile() const;
 	CSpikeDoc* OpenCurrentSpikeFile();
 	CSpikeDoc* GetCurrent_Spk_Document() const { return m_pSpk; }
 
@@ -71,11 +71,11 @@ public:
 	void	Remove_FalseSpkFiles();
 	void	Delete_ErasedFiles();
 
-	long	GetDB_nbspikes(); 
-	void	SetDB_nbspikes(long nspikes); 
-	long	GetDB_nbspikeclasses();
-	void	SetDB_nbspikeclasses(long nclasses);
-	void	GetAllSpkMaxMin(BOOL bAll, BOOL bRecalc, int* max, int* min);
+	long	GetDB_n_spikes() const; 
+	void	SetDB_nbspikes(long n_spikes) const; 
+	long	GetDB_n_spike_classes() const;
+	void	SetDB_n_spike_classes(long n_classes) const;
+	void	GetAllSpkMaxMin(BOOL bAll, BOOL b_recalculate, int* max, int* min);
 	CSize	GetSpkMaxMin_y1(BOOL bAll);
 
 	void	SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
@@ -88,9 +88,9 @@ public:
 	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 
 	void	Export_DatafilesAsTXTfiles();
-	BOOL	CopyAllFilesintoDirectory(const CString& path);
+	BOOL	CopyAllFilesToDirectory(const CString& path);
 	bool	BinaryFileCopy(LPCTSTR pszSource, LPCTSTR pszDest);
-	BOOL	CreateDirectories(CString path);
+	BOOL	CreateDirectories(const CString& path) const;
 
 protected:
 	static numberIDToText headers[];
@@ -142,15 +142,15 @@ public:
 	CString SetDB_CurrentSpikeFileName();
 	void	SetDB_DataLen(long len) const { m_pDB->SetDataLen(len); }
 	long	GetDB_DataLen();
-	void	SetDB_CurrentRecordFlag(int flag);
+	void	SetDB_CurrentRecordFlag(int flag) const;
 	int		GetDB_CurrentRecordFlag() const { return m_pDB->m_mainTableSet.m_flag; }
-	void	SetDB_PathsRelative_to_DataBaseFile();
-	void	SetDB_PathsAbsolute();
-	void	DBTransferDatPathToSpkPath();
-	void	DBDeleteUnusedEntries();
+	void	SetDB_PathsRelative_to_DataBaseFile() const;
+	void	SetDB_PathsAbsolute() const;
+	void	DBTransferDatPathToSpkPath() const;
+	void	DBDeleteUnusedEntries() const;
 
-	long	GetDB_CurrentRecordPosition();
-	long	GetDB_CurrentRecordID();
+	long	GetDB_CurrentRecordPosition() const;
+	long	GetDB_CurrentRecordID() const;
 	BOOL	SetDB_CurrentRecordPosition(long i_file) { return m_pDB->SetIndexCurrentFile(i_file); }
 	BOOL	DBMoveToID(long record_id) { return m_pDB->MoveToID(record_id); }
 	BOOL	DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }

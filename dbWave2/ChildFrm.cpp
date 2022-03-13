@@ -1003,7 +1003,7 @@ void CChildFrame::OnToolsCopyAllProjectFiles()
 	{
 		destination_path = dlg.m_csPathname;
 		auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
-		p_dbwave_doc->CopyAllFilesintoDirectory(destination_path);
+		p_dbwave_doc->CopyAllFilesToDirectory(destination_path);
 	}
 }
 

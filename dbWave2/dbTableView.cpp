@@ -178,7 +178,7 @@ void CdbTableView::saveCurrentSpkFile()
 				nclasses = m_pSpkList->GetNbclasses();
 		}
 		p_doc->SetDB_nbspikes(ntotalspikes);
-		p_doc->SetDB_nbspikeclasses(nclasses);
+		p_doc->SetDB_n_spike_classes(nclasses);
 
 	}
 }

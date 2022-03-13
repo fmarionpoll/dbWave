@@ -96,8 +96,8 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 	if (cs_name.Find(_T(':')) < 0
 		&& cs_name.Find(_T("\\\\")) < 0)
 	{
-		const auto cspath = dynamic_cast<CdbWaveApp*>(AfxGetApp())->Get_MyDocuments_MydbWavePath();
-		cs_name = cspath + _T('\\') + cs_name;
+		const auto cs_path = dynamic_cast<CdbWaveApp*>(AfxGetApp())->Get_MyDocuments_MydbWavePath();
+		cs_name = cs_path + _T('\\') + cs_name;
 	}
 
 	// check if this file is already present, exit if not...
@@ -182,17 +182,17 @@ void CdbWaveDoc::Dump(CDumpContext& dc) const
 BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 	// open database document
-	CString csnew = lpszPathName;
+	CString cs_new = lpszPathName;
 	CFileStatus status;
 	if (!CFile::GetStatus(lpszPathName, status))
 		return FALSE;
 
-	csnew.MakeLower();
+	cs_new.MakeLower();
 	CString cs_ext;
 	cs_ext.Empty();
-	const auto iext = csnew.ReverseFind('.');
-	if (iext > 0)
-		cs_ext = csnew.Right(csnew.GetLength() - iext - 1);
+	const auto i_ext = cs_new.ReverseFind('.');
+	if (i_ext > 0)
+		cs_ext = cs_new.Right(cs_new.GetLength() - i_ext - 1);
 
 	if ((cs_ext.Compare(_T("mdb")) == 0) || (cs_ext.Compare(_T("accdb")) == 0))
 	{
@@ -206,14 +206,14 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		|| (cs_ext.Compare(_T("asd")) == 0) || (cs_ext.Compare(_T("smr")) == 0)
 		|| (cs_ext.Compare(_T("smrx")) == 0))
 	{
-		if (iext > 0)
-			csnew = csnew.Left(iext);
-		const auto flag = OnNewDocument(csnew);
+		if (i_ext > 0)
+			cs_new = cs_new.Left(i_ext);
+		const auto flag = OnNewDocument(cs_new);
 		if (flag)
 		{
-			CStringArray filenames;
-			filenames.Add(lpszPathName);
-			ImportFileList(filenames);
+			CStringArray file_names;
+			file_names.Add(lpszPathName);
+			ImportFileList(file_names);
 		}
 		return flag;
 	}
@@ -260,10 +260,10 @@ BOOL CdbWaveDoc::OpenDatabase(LPCTSTR lpszPathName)
 BOOL CdbWaveDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 	// now duplicate file
-	const auto csoldname = GetPathName();
-	const auto b_fail_if_exists = TRUE;
+	const auto cs_old_name = GetPathName();
+	constexpr auto b_fail_if_exists = TRUE;
 
-	const auto b_done = ::CopyFile(csoldname, lpszPathName, b_fail_if_exists);
+	const auto b_done = ::CopyFile(cs_old_name, lpszPathName, b_fail_if_exists);
 	if (b_done == 0)
 	{
 		LPVOID lp_msg_buf;
@@ -278,7 +278,7 @@ BOOL CdbWaveDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 		// Process any inserts in lpMsgBuf.
 		CString cs_error = static_cast<LPTSTR>(lp_msg_buf);
-		cs_error = _T("Error when copying:\n") + csoldname + _T("\ninto:\n") + lpszPathName + _T("\n\n") + cs_error;
+		cs_error = _T("Error when copying:\n") + cs_old_name + _T("\ninto:\n") + lpszPathName + _T("\n\n") + cs_error;
 
 		// Display the string.
 		MessageBox(nullptr, cs_error, _T("Error"), MB_OK | MB_ICONINFORMATION);
@@ -373,7 +373,7 @@ AcqDataDoc* CdbWaveDoc::OpenCurrentDataFile()
 	return m_pDat;
 }
 
-void CdbWaveDoc::CloseCurrentDataFile()
+void CdbWaveDoc::CloseCurrentDataFile() const
 {
 	if (m_pDat != nullptr)
 		m_pDat->AcqCloseFile();
@@ -388,7 +388,7 @@ CSpikeDoc* CdbWaveDoc::OpenCurrentSpikeFile()
 		ASSERT(m_pSpk != NULL);
 	}
 	// open document; erase object if operation fails
-	const auto currentfile = GetDB_CurrentRecordPosition();
+	GetDB_CurrentRecordPosition();
 	GetDB_CurrentSpkFileName(TRUE);
 	if (m_currentSpikefileName.IsEmpty()
 		|| !m_pSpk->OnOpenDocument(m_currentSpikefileName))
@@ -401,31 +401,31 @@ CSpikeDoc* CdbWaveDoc::OpenCurrentSpikeFile()
 	return m_pSpk;
 }
 
-void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* min)
+void CdbWaveDoc::GetAllSpkMaxMin(BOOL b_all_files, BOOL b_recalculate, int* max, int* min)
 {
-	long nfiles = 1;
-	long ncurrentfile = 0;
-	if (bAllFiles)
+	long n_files = 1;
+	long n_current_file = 0;
+	if (b_all_files)
 	{
-		nfiles = GetDB_NRecords();
-		ncurrentfile = GetDB_CurrentRecordPosition();
+		n_files = GetDB_NRecords();
+		n_current_file = GetDB_CurrentRecordPosition();
 	}
 
-	for (long ifile = 0; ifile < nfiles; ifile++)
+	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (bAllFiles)
+		if (b_all_files)
 		{
-			SetDB_CurrentRecordPosition(ifile);
+			SetDB_CurrentRecordPosition(i_file);
 			OpenCurrentSpikeFile();
 			m_pSpk->SetSpkList_AsCurrent(0);
 		}
-		auto p_spk_list = m_pSpk->GetSpkList_Current();
-		p_spk_list->GetTotalMaxMin(bRecalc, max, min);
+		const auto p_spk_list = m_pSpk->GetSpkList_Current();
+		p_spk_list->GetTotalMaxMin(b_recalculate, max, min);
 	}
 
-	if (bAllFiles)
+	if (b_all_files)
 	{
-		SetDB_CurrentRecordPosition(ncurrentfile);
+		SetDB_CurrentRecordPosition(n_current_file);
 		OpenCurrentSpikeFile();
 		m_pSpk->SetSpkList_AsCurrent(0);
 	}
@@ -433,29 +433,29 @@ void CdbWaveDoc::GetAllSpkMaxMin(BOOL bAllFiles, BOOL bRecalc, int* max, int* mi
 
 CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 {
-	long nfiles = 1;
-	long ncurrentfile = 0;
+	long n_files = 1;
+	long n_current_file = 0;
 	if (bAll)
 	{
-		nfiles = GetDB_NRecords();
-		ncurrentfile = GetDB_CurrentRecordPosition();
+		n_files = GetDB_NRecords();
+		n_current_file = GetDB_CurrentRecordPosition();
 	}
 
 	CSize dummy(0, 0);
 	BOOL initialized = false;
-	for (long ifile = 0; ifile < nfiles; ifile++)
+	for (long i_file = 0; i_file < n_files; i_file++)
 	{
 		if (bAll)
 		{
-			SetDB_CurrentRecordPosition(ifile);
+			SetDB_CurrentRecordPosition(i_file);
 			OpenCurrentSpikeFile();
 			m_pSpk->SetSpkList_AsCurrent(0);
 		}
-		auto p_spk_list = m_pSpk->GetSpkList_Current();
+		const auto p_spk_list = m_pSpk->GetSpkList_Current();
 		if (p_spk_list->GetTotalSpikes() == 0)
 			continue;
 
-		CSize measure = p_spk_list->Measure_Y1_MaxMin();
+		const CSize measure = p_spk_list->Measure_Y1_MaxMin();
 		if (initialized)
 		{
 			if (dummy.cx < measure.cx) dummy.cx = measure.cx;
@@ -471,7 +471,7 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 
 	if (bAll)
 	{
-		SetDB_CurrentRecordPosition(ncurrentfile);
+		SetDB_CurrentRecordPosition(n_current_file);
 		OpenCurrentSpikeFile();
 		m_pSpk->SetSpkList_AsCurrent(0);
 	}
@@ -479,7 +479,7 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 	return dummy;
 }
 
-long CdbWaveDoc::GetDB_CurrentRecordPosition()
+long CdbWaveDoc::GetDB_CurrentRecordPosition() const
 {
 	long ifile = -1;
 	try
@@ -494,44 +494,44 @@ long CdbWaveDoc::GetDB_CurrentRecordPosition()
 	return ifile;
 }
 
-long CdbWaveDoc::GetDB_CurrentRecordID()
+long CdbWaveDoc::GetDB_CurrentRecordID() const
 {
 	return m_pDB->m_mainTableSet.m_ID;
 }
 
-void CdbWaveDoc::SetDB_CurrentRecordFlag(const int flag)
+void CdbWaveDoc::SetDB_CurrentRecordFlag(const int flag) const
 {
 	m_pDB->m_mainTableSet.Edit();
 	m_pDB->m_mainTableSet.m_flag = flag;
 	m_pDB->m_mainTableSet.Update();
 }
 
-void CdbWaveDoc::SetDB_PathsRelative_to_DataBaseFile()
+void CdbWaveDoc::SetDB_PathsRelative_to_DataBaseFile() const
 {
 	m_pDB->ConvertPathTabletoRelativePath();
 }
 
-void CdbWaveDoc::SetDB_PathsAbsolute()
+void CdbWaveDoc::SetDB_PathsAbsolute() const
 {
 	m_pDB->ConvertPathTabletoAbsolutePath();
 }
 
-void CdbWaveDoc::DBTransferDatPathToSpkPath()
+void CdbWaveDoc::DBTransferDatPathToSpkPath() const
 {
 	m_pDB->m_mainTableSet.CopyPathToPath2();
 }
 
-void CdbWaveDoc::DBDeleteUnusedEntries()
+void CdbWaveDoc::DBDeleteUnusedEntries() const
 {
 	m_pDB->DeleteUnusedEntriesInAccessoryTables();
 }
 
-void CdbWaveDoc::SetDB_nbspikes(long nspikes)
+void CdbWaveDoc::SetDB_nbspikes(long n_spikes) const
 {
 	try
 	{
 		m_pDB->m_mainTableSet.Edit();
-		m_pDB->m_mainTableSet.m_nspikes = nspikes;
+		m_pDB->m_mainTableSet.m_nspikes = n_spikes;
 		m_pDB->m_mainTableSet.Update();
 	}
 	catch (CDaoException* e)
@@ -541,22 +541,22 @@ void CdbWaveDoc::SetDB_nbspikes(long nspikes)
 	}
 }
 
-long CdbWaveDoc::GetDB_nbspikes()
+long CdbWaveDoc::GetDB_n_spikes() const
 {
 	return m_pDB->m_mainTableSet.m_nspikes;
 }
 
-long CdbWaveDoc::GetDB_nbspikeclasses()
+long CdbWaveDoc::GetDB_n_spike_classes() const
 {
 	return m_pDB->m_mainTableSet.m_nspikeclasses;
 }
 
-void CdbWaveDoc::SetDB_nbspikeclasses(long nclasses)
+void CdbWaveDoc::SetDB_n_spike_classes(long n_classes) const
 {
 	try
 	{
 		m_pDB->m_mainTableSet.Edit();
-		m_pDB->m_mainTableSet.m_nspikeclasses = nclasses;
+		m_pDB->m_mainTableSet.m_nspikeclasses = n_classes;
 		m_pDB->m_mainTableSet.Update();
 	}
 	catch (CDaoException* e)
@@ -570,10 +570,10 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 {
 	DlgProgress dlg;
 	dlg.Create();
-	int istep = 0;
+	int i_step = 0;
 	dlg.SetStep(1);
-	CString cscomment;
-	CString csfilecomment = _T("Analyze file: ");
+	CString cs_comment;
+	CString cs_file_comment = _T("Analyze file: ");
 	CString cs_dummy;
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	const auto p_view_data_options = &(p_app->options_viewdata);
@@ -585,11 +585,11 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 	p_shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
 	// loop over all files of the multi-document
-	for (auto ifile = 0; ifile < n_files; ifile++)
+	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
 		// get ith file's comment
-		SetDB_CurrentRecordPosition(ifile);
-		cs_dummy.Format(_T("%i\t%i\t"), ifile + 1, m_pDB->m_mainTableSet.m_ID);
+		SetDB_CurrentRecordPosition(i_file);
+		cs_dummy.Format(_T("%i\t%i\t"), i_file + 1, m_pDB->m_mainTableSet.m_ID);
 		p_shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
 		// set message for dialog box
@@ -597,8 +597,8 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 		if (dlg.CheckCancelButton())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
-		cscomment.Format(_T("Processing file [%i / %i] %s"), ifile + 1, n_files, (LPCTSTR)m_currentDatafileName);
-		dlg.SetStatus(cscomment);
+		cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file + 1, n_files, (LPCTSTR)m_currentDatafileName);
+		dlg.SetStatus(cs_comment);
 
 		cs_dummy.Empty();
 		if (OpenCurrentDataFile() != nullptr)
@@ -613,10 +613,10 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 		cs_dummy += _T("\r\n"); // next line
 		p_shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
-		if (MulDiv(ifile, 100, n_files) > istep)
+		if (MulDiv(i_file, 100, n_files) > i_step)
 		{
 			dlg.StepIt();
-			istep = MulDiv(ifile, 100, n_files);
+			i_step = MulDiv(i_file, 100, n_files);
 		}
 	}
 
@@ -624,31 +624,31 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 	OpenCurrentDataFile();
 }
 
-BOOL CdbWaveDoc::CreateDirectories(CString path)
+BOOL CdbWaveDoc::CreateDirectories(const CString& path) const
 {
 	// first decompose the path into subdirectories
 	CStringArray cs_sub_paths;
 	auto cs_new_path = path;
-	auto fpos = 1;
+	auto f_pos = 1;
 	BOOL b_exists;
 	do
 	{
 		// test if directory already present
 		b_exists = PathFileExists(cs_new_path);
 
-		// if not, strip the chain down from one subdirectory
+		// if not, strip the chain down from one sub_directory
 		if (!b_exists)
 		{
-			fpos = cs_new_path.ReverseFind(_T('\\'));
-			if (fpos != -1)
+			f_pos = cs_new_path.ReverseFind(_T('\\'));
+			if (f_pos != -1)
 			{
-				auto subpath = cs_new_path.Right(cs_new_path.GetLength() - fpos);
-				cs_sub_paths.Add(subpath);
-				cs_new_path = cs_new_path.Left(fpos);
+				auto sub_path = cs_new_path.Right(cs_new_path.GetLength() - f_pos);
+				cs_sub_paths.Add(sub_path);
+				cs_new_path = cs_new_path.Left(f_pos);
 			}
 		}
 	}
-	while (fpos > 0 && b_exists == FALSE);
+	while (f_pos > 0 && b_exists == FALSE);
 
 	// now, newPath should be something like "c:" (if data are on a disk) or "" (if data are on a network like "\\partage" )
 	for (auto i = cs_sub_paths.GetUpperBound(); i >= 0; i--)
@@ -664,12 +664,12 @@ BOOL CdbWaveDoc::CreateDirectories(CString path)
 	return TRUE;
 }
 
-BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
+BOOL CdbWaveDoc::CopyAllFilesToDirectory(const CString& path)
 {
 	// prepare dialog box to tell what is going on ----------------------
 	DlgProgress dlg;
 	dlg.Create();
-	auto istep = 0;
+	auto i_step = 0;
 	dlg.SetStep(1);
 	CString cs_comment;
 	CString cs_file_comment = _T("Copy files");
@@ -687,19 +687,19 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 
 	// loop over database pathSet : copy paths into 2 string arrays and create subdirectories
 	m_pDB->m_pathSet.MoveFirst();
-	auto nrecords = 0;
+	auto n_records = 0;
 	while (!m_pDB->m_pathSet.IsEOF())
 	{
 		cs_source_path_array.Add(m_pDB->m_pathSet.m_cs);
 		ui_id_array.Add(m_pDB->m_pathSet.m_ID);
-		nrecords++;
+		n_records++;
 		m_pDB->m_pathSet.MoveNext();
 	}
 
 	// find root & build new directories
 	auto cs_root = cs_source_path_array[0];
 	auto cs_root_length = cs_root.GetLength();
-	for (auto i = 1; i < nrecords; i++)
+	for (auto i = 1; i < n_records; i++)
 	{
 		// trim strings to the same length from the left
 		auto cs_current = cs_source_path_array[i];
@@ -716,12 +716,12 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 		{
 			if (0 == cs_current.CompareNoCase(cs_root))
 				break;
-			// not found, search next subfolder in rootstring and clip current
-			const auto fpos = cs_root.ReverseFind(_T('\\'));
-			if (fpos != -1)
+			// not found, search next subfolder in root string and clip current
+			const auto f_pos = cs_root.ReverseFind(_T('\\'));
+			if (f_pos != -1)
 			{
-				cs_root = cs_root.Left(fpos);
-				cs_root_length = fpos;
+				cs_root = cs_root.Left(f_pos);
+				cs_root_length = f_pos;
 			}
 			cs_current = cs_current.Left(cs_root_length);
 		}
@@ -731,40 +731,40 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 	if (cs_root_length <= 2)
 	{
 		CString cs_buf_temp;
-		for (auto i = 0; i < nrecords; i++)
+		for (auto i = 0; i < n_records; i++)
 		{
 			cs_buf_temp.Format(_T("%06.6lu"), i);
-			auto csdummy = cs_path + cs_buf_temp;
-			cs_dest_path_array.Add(csdummy);
+			auto cs_dummy = cs_path + cs_buf_temp;
+			cs_dest_path_array.Add(cs_dummy);
 		}
 	}
 	else
 	{
-		for (auto i = 0; i < nrecords; i++)
+		for (auto i = 0; i < n_records; i++)
 		{
 			auto sub_path = cs_source_path_array.GetAt(i);
 			sub_path = sub_path.Right(sub_path.GetLength() - cs_root_length - 1);
-			auto csdummy = cs_path + sub_path;
-			cs_dest_path_array.Add(csdummy);
+			auto cs_dummy = cs_path + sub_path;
+			cs_dest_path_array.Add(cs_dummy);
 		}
 	}
 
 	// copy database into new database ------------------------------------
 	dlg.SetStatus(_T("Copy database ..."));
-	auto olddatabase = GetPathName();
-	const auto icount = olddatabase.ReverseFind(_T('\\')) + 1;
-	auto newpath = path;
-	auto newname = olddatabase.Right(olddatabase.GetLength() - icount);
-	const auto fpos = path.ReverseFind(_T('\\'));
-	if (fpos != -1)
+	auto old_database = GetPathName();
+	const auto i_count = old_database.ReverseFind(_T('\\')) + 1;
+	auto new_path = path;
+	auto new_name = old_database.Right(old_database.GetLength() - i_count);
+	const auto f_pos = path.ReverseFind(_T('\\'));
+	if (f_pos != -1)
 	{
-		newname = path.Right(path.GetLength() - fpos) + _T(".mdb");
-		newpath = path.Left(fpos);
+		new_name = path.Right(path.GetLength() - f_pos) + _T(".mdb");
+		new_path = path.Left(f_pos);
 	}
-	const auto destdatabase = newpath + newname;
+	const auto destination_database = new_path + new_name;
 
 	// create database and copy all records
-	flag = OnSaveDocument(destdatabase);
+	flag = OnSaveDocument(destination_database);
 	if (!flag)
 		return FALSE;
 
@@ -774,7 +774,7 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 
 	// create new document and open it to update the paths
 	auto* p_new = new CdbWaveDoc;
-	flag = p_new->OnOpenDocument(destdatabase);
+	flag = p_new->OnOpenDocument(destination_database);
 	if (!flag)
 	{
 		delete p_new;
@@ -840,19 +840,19 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 		{
 			auto cs_path_local = p_new->m_pDB->m_pathSet.m_cs;
 			// find corresponding path in old paths
-			auto ifound = -1;
+			auto i_found = -1;
 			for (auto i = 0; i < cs_source_path_array.GetSize(); i++)
 			{
 				if (cs_path_local.Compare(cs_source_path_array.GetAt(i)) == 0)
 				{
-					ifound = i;
+					i_found = i;
 					break;
 				}
 			}
-			if (ifound > -1)
+			if (i_found > -1)
 			{
 				p_new->m_pDB->m_pathSet.Edit();
-				p_new->m_pDB->m_pathSet.m_cs = cs_dest_path_array.GetAt(ifound);
+				p_new->m_pDB->m_pathSet.m_cs = cs_dest_path_array.GetAt(i_found);
 				p_new->m_pDB->m_pathSet.Update();
 			}
 			p_new->m_pDB->m_pathSet.MoveNext();
@@ -866,37 +866,37 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 
 	//-------------------------------------------------------
 	// memory allocated -- get pointer to it
-	const auto nfiles = old_names_array.GetSize();
-	cs_dummy.Format(_T("n files (*.dat & *.spk) = %i\r\n\r\n"), nfiles);
+	const auto n_files = old_names_array.GetSize();
+	cs_dummy.Format(_T("n files (*.dat & *.spk) = %i\r\n\r\n"), n_files);
 
 	// loop over all files of the multi-document
-	for (auto ifile = 0; ifile < nfiles; ifile++)
+	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
 		// set message for dialog box and check if user wants to stop
 		if (dlg.CheckCancelButton())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
 		// get source name
-		const auto& source_file = old_names_array.GetAt(ifile);
-		cs_comment.Format(_T("Processing file [%i / %i] %s"), ifile + 1, nfiles, (LPCTSTR)source_file);
+		const auto& source_file = old_names_array.GetAt(i_file);
+		cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file + 1, n_files, (LPCTSTR)source_file);
 		dlg.SetStatus(cs_comment);
 
 		// get destination directory
-		const int i_path = int(ui_id_new_path_array.GetAt(ifile));
+		const int i_path = static_cast<int>(ui_id_new_path_array.GetAt(i_file));
 		const auto& path_local = cs_dest_path_array.GetAt(i_path);
 		// create directory if necessary or exit if not possible
 		if (!CreateDirectories(path_local))
 			return FALSE;
 
 		// copy file
-		auto destination_file = path_local + _T("\\") + new_names_array.GetAt(ifile);
+		auto destination_file = path_local + _T("\\") + new_names_array.GetAt(i_file);
 		BinaryFileCopy(source_file, destination_file);
 
 		// update count
-		if (MulDiv(ifile, 100, nfiles) > istep)
+		if (MulDiv(i_file, 100, n_files) > i_step)
 		{
 			dlg.StepIt();
-			istep = MulDiv(ifile, 100, nfiles);
+			i_step = MulDiv(i_file, 100, n_files);
 		}
 	}
 
@@ -936,16 +936,16 @@ BOOL CdbWaveDoc::CopyAllFilesintoDirectory(const CString& path)
 
 bool CdbWaveDoc::BinaryFileCopy(const LPCTSTR pszSource, LPCTSTR pszDest)
 {
-	// check that destfile does not exist
+	// check that destination file does not exist
 	// check if same file already exists: if yes, destroy it
 	CFileStatus status;
-	const CString cs_newname = pszDest;
-	if (CFile::GetStatus(cs_newname, status))
+	const CString cs_new_name = pszDest;
+	if (CFile::GetStatus(cs_new_name, status))
 	{
-		auto prompt = cs_newname;
+		auto prompt = cs_new_name;
 		prompt += _T("\nThis file seems to exist already.\nDelete the old file?");
 		if (AfxMessageBox(prompt, MB_YESNO) == IDYES)
-			CFile::Remove(cs_newname);
+			CFile::Remove(cs_new_name);
 		else
 			return false;
 	}
@@ -979,7 +979,6 @@ bool CdbWaveDoc::BinaryFileCopy(const LPCTSTR pszSource, LPCTSTR pszDest)
 		return false;
 	}
 
-	BYTE buffer[4096];
 	DWORD dw_read;
 
 	// Read in 4096-byte blocks,
@@ -988,6 +987,7 @@ bool CdbWaveDoc::BinaryFileCopy(const LPCTSTR pszSource, LPCTSTR pszDest)
 	// when there are no more bytes to read.
 	do
 	{
+		BYTE buffer[4096];
 		dw_read = source_file.Read(buffer, 4096);
 		destination_file.Write(buffer, dw_read);
 	}
@@ -1011,22 +1011,22 @@ sourceData CdbWaveDoc::get_wave_format_from_either_file(CString cs_filename)
 	sourceData record;
 
 	record.i_last_backslash_position = cs_filename.ReverseFind('\\');
-	const auto idotposition = cs_filename.ReverseFind('.');
-	const auto namelen = idotposition - record.i_last_backslash_position - 1;
+	const auto i_dot_position = cs_filename.ReverseFind('.');
+	const auto name_length = i_dot_position - record.i_last_backslash_position - 1;
 	record.cs_path = cs_filename.Left(record.i_last_backslash_position);
 	record.cs_path.MakeLower();
-	auto cs_extent = cs_filename.Right(cs_filename.GetLength() - idotposition - 1);
-	auto cs_root_name = cs_filename.Mid(record.i_last_backslash_position + 1, namelen);
+	const auto cs_extent = cs_filename.Right(cs_filename.GetLength() - i_dot_position - 1);
+	auto cs_root_name = cs_filename.Mid(record.i_last_backslash_position + 1, name_length);
 
 	const auto b_is_dat_file = IsExtensionRecognizedAsDataFile(cs_extent);
 	if (b_is_dat_file)
 	{
 		record.cs_dat_file = cs_filename;
-		record.cs_spk_file = cs_filename.Left(idotposition) + _T(".spk");
+		record.cs_spk_file = cs_filename.Left(i_dot_position) + _T(".spk");
 	}
 	else
 	{
-		record.cs_dat_file = cs_filename.Left(idotposition) + _T(".") + cs_extent;
+		record.cs_dat_file = cs_filename.Left(i_dot_position) + _T(".") + cs_extent;
 		record.cs_spk_file = cs_filename;
 	}
 
@@ -1063,53 +1063,53 @@ void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file
                                          boolean bHeader)
 {
 	CWaveFormat* p_wave_format = pRecord->p_wave_format;
-	int index = index_2d_array(irecord, nColumns, bHeader);
+	const int index = index_2d_array(irecord, nColumns, bHeader);
 
 	for (int i = 1; i < nColumns; i++)
 	{
-		int iColumn = i;
+		int i_column = i;
 		if (bHeader)
 		{
 			CString text = filenames.GetAt(i);
-			iColumn = find_header(text);
+			i_column = find_header(text);
 		}
-		int index_irecord = index + i;
-		CString csItem = filenames.GetAt(index_irecord);
-		switch (iColumn)
+		const int index_i_record = index + i;
+		CString cs_item = filenames.GetAt(index_i_record);
+		switch (i_column)
 		{
-		case 1: p_wave_format->cs_comment = csItem;
+		case 1: p_wave_format->cs_comment = cs_item;
 			break;
-		case 2: p_wave_format->insectID = _ttoi(csItem);
+		case 2: p_wave_format->insectID = _ttoi(cs_item);
 			break;
-		case 3: p_wave_format->sensillumID = _ttoi(csItem);
+		case 3: p_wave_format->sensillumID = _ttoi(cs_item);
 			break;
-		case 4: p_wave_format->csInsectname = csItem;
+		case 4: p_wave_format->csInsectname = cs_item;
 			break;
-		case 5: p_wave_format->csStrain = csItem;
+		case 5: p_wave_format->csStrain = cs_item;
 			break;
-		case 6: p_wave_format->csSex = csItem;
+		case 6: p_wave_format->csSex = cs_item;
 			break;
-		case 7: p_wave_format->csLocation = csItem;
+		case 7: p_wave_format->csLocation = cs_item;
 			break;
-		case 8: p_wave_format->csOperator = csItem;
+		case 8: p_wave_format->csOperator = cs_item;
 			break;
-		case 9: p_wave_format->csMoreComment = csItem;
+		case 9: p_wave_format->csMoreComment = cs_item;
 			break;
-		case 10: p_wave_format->csStimulus = csItem;
+		case 10: p_wave_format->csStimulus = cs_item;
 			break;
-		case 11: p_wave_format->csConcentration = csItem;
+		case 11: p_wave_format->csConcentration = cs_item;
 			break;
-		case 12: p_wave_format->repeat = _ttoi(csItem);
+		case 12: p_wave_format->repeat = _ttoi(cs_item);
 			break;
-		case 13: p_wave_format->csStimulus2 = csItem;
+		case 13: p_wave_format->csStimulus2 = cs_item;
 			break;
-		case 14: p_wave_format->csConcentration2 = csItem;
+		case 14: p_wave_format->csConcentration2 = cs_item;
 			break;
-		case 15: p_wave_format->repeat2 = _ttoi(csItem);
+		case 15: p_wave_format->repeat2 = _ttoi(cs_item);
 			break;
-		case 16: p_wave_format->csSensillum = csItem;
+		case 16: p_wave_format->csSensillum = cs_item;
 			break;
-		case 17: p_wave_format->flag = _ttoi(csItem);
+		case 17: p_wave_format->flag = _ttoi(cs_item);
 			break;
 		default:
 			break;

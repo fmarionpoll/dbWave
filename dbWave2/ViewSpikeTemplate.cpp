@@ -1061,7 +1061,7 @@ void CViewSpikeTemplates::sortSpikes()
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
 			GetDocument()->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
-			GetDocument()->SetDB_nbspikeclasses(m_pSpkList->GetNbclasses());
+			GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
 		}
 	}
 
@@ -1198,7 +1198,7 @@ void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 					m_pSpkDoc->SetModifiedFlag(FALSE);
 
 					GetDocument()->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
-					GetDocument()->SetDB_nbspikeclasses(m_pSpkList->GetNbclasses());
+					GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
 				}
 			}
 

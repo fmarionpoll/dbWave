@@ -352,7 +352,7 @@ BOOL CViewSpikes::addSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 		m_pSpkDoc->OnSaveDocument(GetDocument()->GetDB_CurrentSpkFileName(FALSE));
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		GetDocument()->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
-		GetDocument()->SetDB_nbspikeclasses(m_pSpkList->GetNbclasses());
+		GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
 		const auto boldparm = m_bresetzoom;
 		m_bresetzoom = FALSE;
 		updateSpikeFile(TRUE);
@@ -1114,7 +1114,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	for (auto i = m_printFirst; i <= m_printLast; i++, p_dbwave_doc->DBMoveNext())
 	{
 		// get number of classes
-		if (p_dbwave_doc->GetDB_nbspikeclasses() <= 0)
+		if (p_dbwave_doc->GetDB_n_spike_classes() <= 0)
 		{
 			m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 			m_pSpkList = m_pSpkDoc->GetSpkList_Current();
@@ -1128,12 +1128,12 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 			if (m_pSpkList->GetTotalSpikes() > 0)
 				nclasses = m_pSpkList->GetNbclasses();
 			ASSERT(nclasses > 0);
-			p_dbwave_doc->SetDB_nbspikeclasses(nclasses);
+			p_dbwave_doc->SetDB_n_spike_classes(nclasses);
 			nnclasses += nclasses;
 		}
 
-		if (p_dbwave_doc->GetDB_nbspikeclasses() > m_maxclasses)
-			m_maxclasses = p_dbwave_doc->GetDB_nbspikeclasses();
+		if (p_dbwave_doc->GetDB_n_spike_classes() > m_maxclasses)
+			m_maxclasses = p_dbwave_doc->GetDB_n_spike_classes();
 
 		if (options_viewdata->bMultirowDisplay)
 		{
