@@ -288,21 +288,21 @@ void CFilterWnd::InitFilterList()
 			htree_item = m_wndFilterView.InsertItem(pdesc->csElementsArray.GetAt(j), m_htreeitem[i]);
 			bcheck = TVCS_CHECKED;
 			auto cs_elmtj = pdesc->csElementsArray.GetAt(j);
-			if (pdesc->bFilter2)
+			if (pdesc->b_array_filter)
 			{
 				bcheck = TVCS_UNCHECKED;
-				for (auto k = 0; k < pdesc->csfilterParam2.GetSize(); k++)
+				for (auto k = 0; k < pdesc->cs_array_filter.GetSize(); k++)
 				{
-					if (cs_elmtj.CompareNoCase(pdesc->csfilterParam2.GetAt(k)) == 0)
+					if (cs_elmtj.CompareNoCase(pdesc->cs_array_filter.GetAt(k)) == 0)
 					{
 						bcheck = TVCS_CHECKED;
 						break;
 					}
 				}
 			}
-			else if (pdesc->bFilter1)
+			else if (pdesc->b_single_filter)
 			{
-				if (cs_elmtj.CompareNoCase(pdesc->csfilterParam1) != 0)
+				if (cs_elmtj.CompareNoCase(pdesc->cs_param_single_filter) != 0)
 					bcheck = TVCS_UNCHECKED;
 			}
 			m_wndFilterView.SetCheck(htree_item, bcheck);
@@ -330,13 +330,13 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
 	const auto cscolhead = pdesc->header_name;
 	const auto array_size = pdesc->liArray.GetSize();
-	if (pdesc->bFilter2)
+	if (pdesc->b_array_filter)
 	{
 		return;
 	}
-	if (pdesc->bFilter1)
+	if (pdesc->b_single_filter)
 	{
-		pdesc->csfilterParam1.Format(_T("%i"), pdesc->lfilterParam1);
+		pdesc->cs_param_single_filter.Format(_T("%i"), pdesc->l_param_single_filter);
 	}
 	else
 	{
@@ -351,9 +351,9 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 			{
 				cs.Format(_T("%i"), i_id);
 				pdesc->csElementsArray.Add(cs);
-				if (pdesc->bFilter1 && pdesc->lfilterParam1 != i_id)
+				if (pdesc->b_single_filter && pdesc->l_param_single_filter != i_id)
 				{
-					pdesc->csfilterParam1.Format(_T("%i"), i_id);
+					pdesc->cs_param_single_filter.Format(_T("%i"), i_id);
 				}
 			}
 		}
@@ -368,12 +368,12 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 
 	auto plinked_set = pdesc->plinkedSet;
 	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
-	if (pdesc->bFilter2)
+	if (pdesc->b_array_filter)
 		return;
 
-	if (pdesc->bFilter1)
+	if (pdesc->b_single_filter)
 	{
-		pdesc->csfilterParam1 = plinked_set->GetStringFromID(pdesc->lfilterParam1);
+		pdesc->cs_param_single_filter = plinked_set->GetStringFromID(pdesc->l_param_single_filter);
 	}
 	else
 	{
@@ -411,14 +411,14 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 	auto p_maintable_set = &m_pDoc->m_pDB->m_mainTableSet;
 	const auto array_size = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
-	if (pdesc->bFilter2)
+	if (pdesc->b_array_filter)
 	{
 		return;
 	}
-	if (pdesc->bFilter1)
+	if (pdesc->b_single_filter)
 	{
-		cs = pdesc->otfilterParam1.Format(VAR_DATEVALUEONLY);
-		pdesc->csfilterParam1 = cs;
+		cs = pdesc->date_time_param_single_filter.Format(VAR_DATEVALUEONLY);
+		pdesc->cs_param_single_filter = cs;
 	}
 	else
 	{
@@ -466,8 +466,8 @@ void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITE
 				auto str = pdesc->plinkedSet->GetStringFromID(li);
 				if (str == cs)
 				{
-					pdesc->lfilterParam2.Add(li);
-					pdesc->csfilterParam2.Add(cs);
+					pdesc->l_param_filter_array.Add(li);
+					pdesc->cs_array_filter.Add(cs);
 					break;
 				}
 			}
@@ -485,8 +485,8 @@ void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 		{
 			auto cs = m_wndFilterView.GetItemText(item);
 			const auto li = pdesc->liArray.GetAt(i);
-			pdesc->lfilterParam2.Add(li);
-			pdesc->csfilterParam2.Add(cs);
+			pdesc->l_param_filter_array.Add(li);
+			pdesc->cs_array_filter.Add(cs);
 		}
 	}
 }
@@ -502,8 +502,8 @@ void CFilterWnd::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 			auto cs_filter_checked = m_wndFilterView.GetItemText(item);
 			COleDateTime o_time;
 			o_time.ParseDateTime(cs_filter_checked);
-			pdesc->otfilterParam2.Add(o_time);
-			pdesc->csfilterParam2.Add(cs_filter_checked);
+			pdesc->data_time_array_filter.Add(o_time);
+			pdesc->cs_array_filter.Add(cs_filter_checked);
 		}
 	}
 }
@@ -526,15 +526,15 @@ void CFilterWnd::OnApplyFilter()
 		const auto state_root = m_wndFilterView.GetCheck(h_parent);
 		if ((state_root == TVCS_CHECKED) || (state_root == TVCS_UNCHECKED))
 		{
-			pdesc->bFilter2 = FALSE;
+			pdesc->b_array_filter = FALSE;
 		}
 		// else if foot is undeterminate build filter
 		else
 		{
-			pdesc->bFilter2 = TRUE;
-			pdesc->lfilterParam2.RemoveAll();
-			pdesc->csfilterParam2.RemoveAll();
-			pdesc->otfilterParam2.RemoveAll();
+			pdesc->b_array_filter = TRUE;
+			pdesc->l_param_filter_array.RemoveAll();
+			pdesc->cs_array_filter.RemoveAll();
+			pdesc->data_time_array_filter.RemoveAll();
 			const auto start_item = m_wndFilterView.GetNextItem(h_parent, TVGN_CHILD);
 			switch (pdesc->data_code_number)
 			{

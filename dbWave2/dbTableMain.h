@@ -129,7 +129,7 @@ public:
 
 	void SetFilterSingleItem(DB_ITEMDESC* pdesc)
 	{
-		m_desc[pdesc->index].bFilter1 = pdesc->bFilter1;
-		m_desc[pdesc->index].lfilterParam1 = pdesc->lfilterParam1;
+		m_desc[pdesc->index].b_single_filter = pdesc->b_single_filter;
+		m_desc[pdesc->index].l_param_single_filter = pdesc->l_param_single_filter;
 	}
 };
