@@ -10,7 +10,7 @@ typedef struct
 	CString description;
 	int format_code_number;
 	CString attached_table;
-} database_column_properties, *lp_database_column_properties;
+} db_column_properties, *lp_database_column_properties;
 
 // CdbTable command target
 #pragma warning(disable : 4995)
@@ -21,11 +21,12 @@ public:
 	CdbTable();
 	~CdbTable() override;
 
-	static database_column_properties m_desctab[];
+	static db_column_properties m_desctab[];
 
 	// CDaoRecordSets
 	CdbTableMain m_mainTableSet;
 
+//protected:
 	CdbTableAssociated m_operatorSet;
 	CdbTableAssociated m_insectSet;
 	CdbTableAssociated m_locationSet;
@@ -40,6 +41,7 @@ public:
 	//CdbTableAssociated	m_stim2Set; // TODO
 	//CdbTableAssociated	m_conc2Set;	// TODO
 
+public:
 	CString* m_current_data_filename = nullptr;
 	CString* m_p_current_spike_filename = nullptr;
 	CString m_database_path = _T("");
@@ -95,6 +97,11 @@ public:
 	DB_ITEMDESC* GetRecordItemDescriptor(int icol);
 	BOOL GetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
 	BOOL SetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
+	boolean GetRecordValueString(int column_index, CString& output_string);
+	boolean GetRecordValueLong(int column_index, long& value);
+
+
+
 	BOOL ImportRecordfromDatabase(CdbTable* pdbW);
 	void TransferWaveFormatDataToRecord(CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
@@ -104,4 +111,6 @@ public:
 protected:
 	BOOL CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbTableAssociated* plink);
 	BOOL CreateRelationwith2AssocTables(LPCTSTR lpszForeignTable, int icol1, int icol2);
+	void SetAttachedTablesNames();
+	boolean CreateRelationsWithAttachedTables(CString csTable);
 };

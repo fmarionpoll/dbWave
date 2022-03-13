@@ -11,7 +11,7 @@
 #endif
 
 
-database_column_properties CdbTable::m_desctab[NTABLECOLS] =
+db_column_properties CdbTable::m_desctab[NTABLECOLS] =
 {
 	//table col header---friendly description for properties--type of field--name of attached table
 	{CH_ID, _T("ID"), _T("ID record"), FIELD_LONG, _T("")}, // 0
@@ -57,19 +57,44 @@ CdbTable::CdbTable()
 		m_mainTableSet.m_desc[i].data_code_number = m_desctab[i].format_code_number;
 	}
 
-	// SetNames(CString defaultSQL /* or table name*/, CString DFX_cs, CString DFX_ID)
-	m_stimSet.SetNames(m_desctab[CH_STIM_ID].attached_table, _T("stim"), _T("stimID"));
-	m_concSet.SetNames(m_desctab[CH_CONC_ID].attached_table, _T("conc"), _T("concID"));
-	m_operatorSet.SetNames(m_desctab[CH_OPERATOR_ID].attached_table, _T("operator"), _T("operatorID"));
-	m_insectSet.SetNames(m_desctab[CH_INSECT_ID].attached_table, _T("insect"), _T("insectID"));
-	m_locationSet.SetNames(m_desctab[CH_LOCATION_ID].attached_table, _T("type"), _T("typeID"));
-	m_pathSet.SetNames(m_desctab[CH_PATH_ID].attached_table, _T("path"), _T("pathID"));
-	m_sensillumSet.SetNames(m_desctab[CH_SENSILLUM_ID].attached_table, _T("stage"), _T("stageID"));
-	m_sexSet.SetNames(m_desctab[CH_SEX_ID].attached_table, _T("sex"), _T("sexID"));
-	m_strainSet.SetNames(m_desctab[CH_STRAIN_ID].attached_table, _T("strain"), _T("strainID"));
-	m_exptSet.SetNames(m_desctab[CH_EXPT_ID].attached_table, _T("expt"), _T("exptID"));
-
+	SetAttachedTablesNames();
+	
 	m_mainTableSet.m_strSort = m_desctab[CH_ACQDATE].header_name;
+}
+
+void CdbTable::SetAttachedTablesNames()
+{
+	// Set_DFX_SQL_Names(CString defaultSQL /* or table name*/, CString DFX_cs, CString DFX_ID)
+	m_stimSet.Set_DFX_SQL_Names(m_desctab[CH_STIM_ID].attached_table, _T("stim"), _T("stimID"));
+	m_concSet.Set_DFX_SQL_Names(m_desctab[CH_CONC_ID].attached_table, _T("conc"), _T("concID"));
+	m_operatorSet.Set_DFX_SQL_Names(m_desctab[CH_OPERATOR_ID].attached_table, _T("operator"), _T("operatorID"));
+	m_insectSet.Set_DFX_SQL_Names(m_desctab[CH_INSECT_ID].attached_table, _T("insect"), _T("insectID"));
+	m_locationSet.Set_DFX_SQL_Names(m_desctab[CH_LOCATION_ID].attached_table, _T("type"), _T("typeID"));
+	m_pathSet.Set_DFX_SQL_Names(m_desctab[CH_PATH_ID].attached_table, _T("path"), _T("pathID"));
+	m_sensillumSet.Set_DFX_SQL_Names(m_desctab[CH_SENSILLUM_ID].attached_table, _T("stage"), _T("stageID"));
+	m_sexSet.Set_DFX_SQL_Names(m_desctab[CH_SEX_ID].attached_table, _T("sex"), _T("sexID"));
+	m_strainSet.Set_DFX_SQL_Names(m_desctab[CH_STRAIN_ID].attached_table, _T("strain"), _T("strainID"));
+	m_exptSet.Set_DFX_SQL_Names(m_desctab[CH_EXPT_ID].attached_table, _T("expt"), _T("exptID"));
+
+}
+
+boolean CdbTable::CreateRelationsWithAttachedTables(CString csTable)
+{
+	// create relations
+	const long l_attr = dbRelationDontEnforce; //dbRelationUpdateCascade;
+	if (!CreateRelationwithAssocTable(csTable, CH_INSECT_ID, l_attr, &m_insectSet)) return FALSE;
+	if (!CreateRelationwithAssocTable(csTable, CH_SENSILLUM_ID, l_attr, &m_sensillumSet)) return FALSE;
+	if (!CreateRelationwithAssocTable(csTable, CH_OPERATOR_ID, l_attr, &m_operatorSet)) return FALSE;
+	if (!CreateRelationwithAssocTable(csTable, CH_LOCATION_ID, l_attr, &m_locationSet)) return FALSE;
+	if (!CreateRelationwithAssocTable(csTable, CH_STRAIN_ID, l_attr, &m_strainSet)) return FALSE;
+	if (!CreateRelationwithAssocTable(csTable, CH_SEX_ID, l_attr, &m_sexSet)) return FALSE;
+	if (!CreateRelationwithAssocTable(csTable, CH_EXPT_ID, l_attr, &m_exptSet)) return FALSE;
+
+	if (!CreateRelationwith2AssocTables(csTable, CH_PATH_ID, CH_PATH2_ID)) return FALSE;
+	if (!CreateRelationwith2AssocTables(csTable, CH_STIM_ID, CH_STIM2_ID)) return FALSE;
+	if (!CreateRelationwith2AssocTables(csTable, CH_CONC_ID, CH_CONC2_ID)) return FALSE;
+
+	return true;
 }
 
 void CdbTable::Attach(CString* pstrDataName, CString* pstrSpkName)
@@ -82,8 +107,6 @@ CdbTable::~CdbTable()
 {
 	CloseDatabase();
 }
-
-// CdbTable member functions
 
 BOOL CdbTable::CreateMainTable(CString csTable)
 {
@@ -144,7 +167,6 @@ BOOL CdbTable::CreateMainTable(CString csTable)
 
 	// create the corresponding indexes
 	CDaoIndexFieldInfo index_field0;
-	//index_field0.m_strName = m_mainTableSet.m_desc[CH_IDINSECT].header_name;			// insectID
 	index_field0.m_bDescending = FALSE;
 
 	CDaoIndexInfo index_fd0;
@@ -161,21 +183,7 @@ BOOL CdbTable::CreateMainTable(CString csTable)
 	table_def.CreateIndex(index_fd0);
 	table_def.Append();
 
-	// create relations
-	const long l_attr = dbRelationDontEnforce; //dbRelationUpdateCascade;
-	if (!CreateRelationwithAssocTable(csTable, CH_INSECT_ID, l_attr, &m_insectSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_SENSILLUM_ID, l_attr, &m_sensillumSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_OPERATOR_ID, l_attr, &m_operatorSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_LOCATION_ID, l_attr, &m_locationSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_STRAIN_ID, l_attr, &m_strainSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_SEX_ID, l_attr, &m_sexSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_EXPT_ID, l_attr, &m_exptSet)) return FALSE;
-
-	if (!CreateRelationwith2AssocTables(csTable, CH_PATH_ID, CH_PATH2_ID)) return FALSE;
-	if (!CreateRelationwith2AssocTables(csTable, CH_STIM_ID, CH_STIM2_ID)) return FALSE;
-	if (!CreateRelationwith2AssocTables(csTable, CH_CONC_ID, CH_CONC2_ID)) return FALSE;
-
-	return TRUE;
+	return CreateRelationsWithAttachedTables(csTable);
 }
 
 BOOL CdbTable::CreateRelationwith2AssocTables(const LPCTSTR lpsz_foreign_table, const int column_first,
@@ -1128,4 +1136,25 @@ void CdbTable::CompactDataBase(CString file_name, CString file_name_new)
 {
 	// compact database and save new file
 	CDaoWorkspace::CompactDatabase(file_name, file_name_new, dbLangGeneral, 0);
+}
+
+boolean CdbTable::GetRecordValueString(int column_index, CString& output_string)
+{
+	bool b_changed = false;
+	DB_ITEMDESC desc;
+	if (GetRecordItemValue(column_index, &desc))
+	{
+		b_changed = (output_string.Compare(desc.csVal) != 0);
+		output_string = desc.csVal;
+	}
+	return b_changed;
+}
+
+boolean CdbTable::GetRecordValueLong(int column_index, long& value)
+{
+	DB_ITEMDESC desc;
+	GetRecordItemValue(column_index, &desc);
+	const boolean b_changed = value != desc.lVal;
+	value = desc.lVal;
+	return b_changed;
 }

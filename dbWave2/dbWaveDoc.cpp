@@ -1331,7 +1331,7 @@ BOOL CdbWaveDoc::ExtractFilenamesFromDatabase(const LPCSTR filename, CStringArra
 	CDaoRecordset record_set(p_temp_database); // CDaoDatabase
 	CdbTableMain table_set(p_temp_database);
 	CdbTableAssociated path_set(p_temp_database);
-	path_set.SetNames(_T("path"), _T("path"), _T("pathID"));
+	path_set.Set_DFX_SQL_Names(_T("path"), _T("path"), _T("pathID"));
 	CDaoFieldInfo fieldinfo_filename; // 2
 	CDaoFieldInfo fieldinfo_filespk; // 3
 	CDaoFieldInfo fieldinfo_path_id; // 18
@@ -1552,109 +1552,24 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const
 {
 	auto b_changed = FALSE;
-	// long: experiment
-	if (m_pDB->m_exptSet.SeekID(m_pDB->m_mainTableSet.m_expt_ID))
-	{
-		b_changed = (p_wave_format->cs_comment.Compare(m_pDB->m_exptSet.m_cs) != 0);
-		p_wave_format->cs_comment = m_pDB->m_exptSet.m_cs;
-	}
-
-	// CString:	m_more;
-	b_changed |= (p_wave_format->csMoreComment.Compare(m_pDB->m_mainTableSet.m_more) != 0);
-	p_wave_format->csMoreComment = m_pDB->m_mainTableSet.m_more;
-
-	// long:	m_operator_ID;
-	if (m_pDB->m_operatorSet.SeekID(m_pDB->m_mainTableSet.m_operator_ID))
-	{
-		b_changed |= (p_wave_format->csOperator.Compare(m_pDB->m_operatorSet.m_cs) != 0);
-		p_wave_format->csOperator = m_pDB->m_operatorSet.m_cs;
-	}
-
-	// long:	m_insect_ID;
-	if (m_pDB->m_insectSet.SeekID(m_pDB->m_mainTableSet.m_insect_ID))
-	{
-		b_changed |= (p_wave_format->csInsectname.Compare(m_pDB->m_insectSet.m_cs) != 0);
-		p_wave_format->csInsectname = m_pDB->m_insectSet.m_cs;
-	}
-
-	// long:	m_strain_ID;
-	if (m_pDB->m_strainSet.SeekID(m_pDB->m_mainTableSet.m_strain_ID))
-	{
-		b_changed |= (p_wave_format->csStrain.Compare(m_pDB->m_strainSet.m_cs) != 0);
-		p_wave_format->csStrain = m_pDB->m_strainSet.m_cs;
-	}
-
-	// long:	m_expt_ID;
-	if (m_pDB->m_exptSet.SeekID(m_pDB->m_mainTableSet.m_expt_ID))
-	{
-		b_changed |= (p_wave_format->cs_comment.Compare(m_pDB->m_exptSet.m_cs) != 0);
-		p_wave_format->cs_comment = m_pDB->m_exptSet.m_cs;
-	}
-
-	// long:	m_sex_ID;
-	if (m_pDB->m_sexSet.SeekID(m_pDB->m_mainTableSet.m_sex_ID))
-	{
-		b_changed |= (p_wave_format->csSex.Compare(m_pDB->m_sexSet.m_cs) != 0);
-		p_wave_format->csSex = m_pDB->m_sexSet.m_cs;
-	}
-
-	// long	m_location_ID;
-	if (m_pDB->m_locationSet.SeekID(m_pDB->m_mainTableSet.m_location_ID))
-	{
-		b_changed |= (p_wave_format->csLocation.Compare(m_pDB->m_locationSet.m_cs) != 0);
-		p_wave_format->csLocation = m_pDB->m_locationSet.m_cs;
-	}
-
-	// long	m_sensillum_ID;
-	if (m_pDB->m_sensillumSet.SeekID(m_pDB->m_mainTableSet.m_sensillum_ID))
-	{
-		b_changed |= (p_wave_format->csSensillum.Compare(m_pDB->m_sensillumSet.m_cs) != 0);
-		p_wave_format->csSensillum = m_pDB->m_sensillumSet.m_cs;
-	}
-
-	//long	m_stim_ID;
-	if (m_pDB->m_stimSet.SeekID(m_pDB->m_mainTableSet.m_stim_ID))
-	{
-		b_changed |= (p_wave_format->csStimulus.Compare(m_pDB->m_stimSet.m_cs) != 0);
-		p_wave_format->csStimulus = m_pDB->m_stimSet.m_cs;
-	}
-
-	// long	m_conc_ID;
-	if (m_pDB->m_concSet.SeekID(m_pDB->m_mainTableSet.m_conc_ID))
-	{
-		b_changed |= (p_wave_format->csConcentration.Compare(m_pDB->m_concSet.m_cs) != 0);
-		p_wave_format->csConcentration = m_pDB->m_concSet.m_cs;
-	}
-
-	// long	m_stim2_ID;
-	if (m_pDB->m_stimSet.SeekID(m_pDB->m_mainTableSet.m_stim2_ID))
-	{
-		b_changed |= (p_wave_format->csStimulus2.Compare(m_pDB->m_stimSet.m_cs) != 0);
-		p_wave_format->csStimulus2 = m_pDB->m_stimSet.m_cs;
-	}
-
-	// long	m_conc2_ID;
-	if (m_pDB->m_concSet.SeekID(m_pDB->m_mainTableSet.m_conc2_ID))
-	{
-		b_changed |= (p_wave_format->csConcentration2.Compare(m_pDB->m_concSet.m_cs) != 0);
-		p_wave_format->csConcentration2 = m_pDB->m_concSet.m_cs;
-	}
-
-	b_changed |= (p_wave_format->insectID != m_pDB->m_mainTableSet.m_IDinsect);
-	// long	m_insectnumber;
-	p_wave_format->insectID = m_pDB->m_mainTableSet.m_IDinsect;
-
-	b_changed |= (p_wave_format->sensillumID != m_pDB->m_mainTableSet.m_IDsensillum);
-	// long	m_IDsensillum;
-	p_wave_format->sensillumID = m_pDB->m_mainTableSet.m_IDsensillum;
-
-	b_changed |= (p_wave_format->repeat != m_pDB->m_mainTableSet.m_repeat);
-	// long	m_repeat;
-	p_wave_format->repeat = m_pDB->m_mainTableSet.m_repeat;
-
-	b_changed |= (p_wave_format->repeat2 != m_pDB->m_mainTableSet.m_repeat2);
-	// long	m_repeat2;
-	p_wave_format->repeat2 = m_pDB->m_mainTableSet.m_repeat2;
+	//GetRecordItemValue(const int i_column, DB_ITEMDESC * p_desc)
+	// CH_EXPT_ID long/CString: experiment
+	b_changed = m_pDB->GetRecordValueString(CH_EXPT_ID, p_wave_format->cs_comment);
+	b_changed |= m_pDB->GetRecordValueString(CH_MORE, p_wave_format->csMoreComment);
+	b_changed |= m_pDB->GetRecordValueString(CH_OPERATOR_ID, p_wave_format->csOperator);
+	b_changed |= m_pDB->GetRecordValueString(CH_INSECT_ID, p_wave_format->csInsectname);
+	b_changed |= m_pDB->GetRecordValueString(CH_STRAIN_ID, p_wave_format->csStrain);
+	b_changed |= m_pDB->GetRecordValueString(CH_SEX_ID, p_wave_format->csSex);
+	b_changed |= m_pDB->GetRecordValueString(CH_LOCATION_ID, p_wave_format->csLocation);
+	b_changed |= m_pDB->GetRecordValueString(CH_SENSILLUM_ID, p_wave_format->csSensillum);
+	b_changed |= m_pDB->GetRecordValueString(CH_STIM_ID, p_wave_format->csStimulus);
+	b_changed |= m_pDB->GetRecordValueString(CH_CONC_ID, p_wave_format->csConcentration);
+	b_changed |= m_pDB->GetRecordValueString(CH_STIM2_ID, p_wave_format->csStimulus2);
+	b_changed |= m_pDB->GetRecordValueString(CH_CONC2_ID, p_wave_format->csConcentration2);
+	b_changed |= m_pDB->GetRecordValueLong(CH_IDINSECT, p_wave_format->insectID);
+	b_changed |= m_pDB->GetRecordValueLong(CH_IDSENSILLUM, p_wave_format->sensillumID);
+	b_changed |= m_pDB->GetRecordValueLong(CH_REPEAT, p_wave_format->repeat);
+	b_changed |= m_pDB->GetRecordValueLong(CH_REPEAT2, p_wave_format->repeat2);
 
 	const auto npercycle = static_cast<int>(m_pSpk->m_stimIntervals.n_items / 2.f
 		/ m_pSpk->GetAcqDuration() / 8.192f);

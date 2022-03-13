@@ -22,7 +22,7 @@ public:
 	void DoFieldExchange(CDaoFieldExchange* pFX) override; 
 
 	// operations
-	void SetNames(CString csdefaultSQL, CString DFX_cs, CString DFX_ID);
+	void Set_DFX_SQL_Names(CString csdefaultSQL, CString DFX_cs, CString DFX_ID);
 	long GetStringInLinkedTable(const CString& cs);
 	BOOL GetIDFromString(CString cs, long& iID);
 	BOOL SeekID(long iID);

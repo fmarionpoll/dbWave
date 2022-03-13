@@ -11,7 +11,7 @@ constexpr auto FIELD_DATE_HMS = 6;
 constexpr auto FIELD_DATE_YMD = 7;
 
 // Used for GetItemDescriptors calls to identify database items
-using DB_ITEMDESC = struct db_column_descriptor
+using DB_ITEMDESC = struct db_table_column_descriptor
 {
 	// -----------------descriptor and DFX parameters
 	int		index = 0;					// column number in the table

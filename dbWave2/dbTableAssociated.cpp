@@ -17,7 +17,7 @@ CdbTableAssociated::CdbTableAssociated(CDaoDatabase* pdb)
 }
 
 // store strings and add "[" and "]"
-void CdbTableAssociated::SetNames(CString defaultSQL, CString DFX_cs, CString DFX_ID)
+void CdbTableAssociated::Set_DFX_SQL_Names(CString defaultSQL, CString DFX_cs, CString DFX_ID)
 {
 	m_defaultSQL = _T("[") + defaultSQL + _T("]");
 	m_DFX_cs = _T("[") + DFX_cs + _T("]");
@@ -176,7 +176,7 @@ CString CdbTableAssociated::GetStringFromID(long iID)
 void CdbTableAssociated::CreateIndextable(const CString& cstablename, const CString& cscol1, const CString& csIDcol2,
                                      int textSize, CDaoDatabase* p_db)
 {
-	SetNames(cstablename, cscol1, csIDcol2); // change name of table, col1, col2
+	Set_DFX_SQL_Names(cstablename, cscol1, csIDcol2); // change name of table, col1, col2
 
 	CDaoTableDef tb(p_db);
 	tb.Create(cstablename);
