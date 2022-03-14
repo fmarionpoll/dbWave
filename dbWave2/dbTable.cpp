@@ -573,19 +573,19 @@ CString CdbTable::GetRelativePathFromString(const CString& cs_path)
 
 long CdbTable::GetRelativePathFromID(const long i_id)
 {
-	long inew_id = -1;
+	long new_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
 	if (!IsRelativePath(cs_path))
 	{
-		auto cs_relative_path = GetRelativePathFromString(cs_path);
+		const auto cs_relative_path = GetRelativePathFromString(cs_path);
 		if (!cs_relative_path.IsEmpty())
 		{
-			inew_id = m_pathSet.GetStringInLinkedTable(cs_relative_path);
+			new_id = m_pathSet.GetStringInLinkedTable(cs_relative_path);
 		}
 	}
 	else
-		inew_id = i_id;
-	return inew_id;
+		new_id = i_id;
+	return new_id;
 }
 
 void CdbTable::ConvertPathtoRelativePath(const long i_col_path)
@@ -952,6 +952,11 @@ DB_ITEMDESC* CdbTable::GetRecordItemDescriptor(int icol)
 	}
 
 	return p_desc;
+}
+
+DB_ITEMDESC* CdbTable::GetRecordItemValue(const int i_column)
+{
+	
 }
 
 BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* p_desc)

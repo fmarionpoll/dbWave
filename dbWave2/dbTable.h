@@ -96,6 +96,7 @@ public:
 	BOOL SetIndexCurrentFile(long ifile);
 	DB_ITEMDESC* GetRecordItemDescriptor(int icol);
 	BOOL GetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
+	DB_ITEMDESC* GetRecordItemValue(const int i_column);
 	BOOL SetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
 	boolean GetRecordValueString(int column_index, CString& output_string);
 	boolean GetRecordValueLong(int column_index, long& value);

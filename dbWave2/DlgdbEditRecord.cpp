@@ -438,7 +438,7 @@ DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 		break;
 	}
 	if (ich >= 0)
-		pdesc = p_db->GetRecordItemDescriptor(ich);
+		p_db->GetRecordItemValue(ich, pdesc);
 
 	return pdesc;
 }
