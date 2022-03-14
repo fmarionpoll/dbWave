@@ -55,8 +55,8 @@ void CDataListCtrl::OnDestroy()
 {
 	if (m_p_columns_width != nullptr)
 	{
-		const auto nbcols_stored = m_p_columns_width->GetSize();
-		if (nbcols_stored != NCOLS)
+		const auto n_columns_stored = m_p_columns_width->GetSize();
+		if (n_columns_stored != NCOLS)
 			m_p_columns_width->SetSize(NCOLS);
 		for (auto i = 0; i < NCOLS; i++)
 			m_p_columns_width->SetAt(i, GetColumnWidth(i));
@@ -69,8 +69,8 @@ void CDataListCtrl::deletePtrArray()
 {
 	if (ptr_rows.GetSize() == NULL)
 		return;
-	const auto imax = ptr_rows.GetSize();
-	for (auto i = 0; i < imax; i++)
+	const auto n_rows = ptr_rows.GetSize();
+	for (auto i = 0; i < n_rows; i++)
 	{
 		auto* ptr = ptr_rows.GetAt(i);
 		SAFE_DELETE(ptr)
@@ -96,12 +96,12 @@ void CDataListCtrl::resizePtrArray(int nitems)
 	// grow size
 	else
 	{
-		const auto lowernew = ptr_rows.GetSize();
+		const auto size_before_change = ptr_rows.GetSize();
 		ptr_rows.SetSize(nitems);
 		auto index = 0;
-		if (lowernew > 0)
-			index = ptr_rows.GetAt(lowernew - 1)->index;
-		for (auto i = lowernew; i < nitems; i++)
+		if (size_before_change > 0)
+			index = ptr_rows.GetAt(size_before_change - 1)->index;
+		for (auto i = size_before_change; i < nitems; i++)
 		{
 			auto* ptr = new CDataListCtrl_Row;
 			ASSERT(ptr != NULL);

@@ -16,7 +16,7 @@ public:
 	BOOL bChanged = false;
 	WORD wversion = 0;
 	BOOL bInit = false;
-	UINT index = 0;
+	int index = 0;
 	long insectID = 0;
 
 	CString cs_comment{};

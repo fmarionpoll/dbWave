@@ -956,7 +956,10 @@ DB_ITEMDESC* CdbTable::GetRecordItemDescriptor(int icol)
 
 DB_ITEMDESC* CdbTable::GetRecordItemValue(const int i_column)
 {
-	
+	const auto p_desc = &m_mainTableSet.m_desc[i_column];
+	p_desc->index = i_column;
+	GetRecordItemValue(i_column, p_desc);
+	return p_desc;
 }
 
 BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* p_desc)
@@ -965,38 +968,38 @@ BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* p_desc)
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
 	const int data_code_number = m_desctab[i_column].format_code_number;
-	//ASSERT(p_desc->data_code_number == data_code_number);
 
-	switch (data_code_number) {
-	case FIELD_IND_TEXT:
-	case FIELD_IND_FILEPATH:
-		p_desc->lVal = var_value.lVal;
-		p_desc->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
-		if (i_column == CH_EXPT_ID && p_desc->csVal.IsEmpty() )
-		{
-			auto cs = p_desc->csVal = GetName();
-			const auto left = cs.ReverseFind(_T('\\'));
-			const auto right = cs.ReverseFind(_T('.'));
-			p_desc->csVal = cs.Mid(left + 1, right - left - 1);
-		}
-		break;
-	case FIELD_LONG:
-		p_desc->lVal = var_value.lVal;
-		if (var_value.vt == VT_NULL)
-			p_desc->lVal = 0;
-		break;
-	case FIELD_TEXT:
-		m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
-		p_desc->csVal = V_BSTRT(&var_value);
-		break;
-	case FIELD_DATE:
-	case FIELD_DATE_HMS:
-	case FIELD_DATE_YMD:
-		p_desc->oVal = var_value.date;
-		break;
-	default:
-		flag = FALSE;
-		break;
+	switch (data_code_number)
+	{
+		case FIELD_IND_TEXT:
+		case FIELD_IND_FILEPATH:
+			p_desc->lVal = var_value.lVal;
+			p_desc->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
+			if (i_column == CH_EXPT_ID && p_desc->csVal.IsEmpty() )
+			{
+				auto cs = p_desc->csVal = GetName();
+				const auto left = cs.ReverseFind(_T('\\'));
+				const auto right = cs.ReverseFind(_T('.'));
+				p_desc->csVal = cs.Mid(left + 1, right - left - 1);
+			}
+			break;
+		case FIELD_LONG:
+			p_desc->lVal = var_value.lVal;
+			if (var_value.vt == VT_NULL)
+				p_desc->lVal = 0;
+			break;
+		case FIELD_TEXT:
+			m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
+			p_desc->csVal = V_BSTRT(&var_value);
+			break;
+		case FIELD_DATE:
+		case FIELD_DATE_HMS:
+		case FIELD_DATE_YMD:
+			p_desc->oVal = var_value.date;
+			break;
+		default:
+			flag = FALSE;
+			break;
 	}
 
 	return flag;
