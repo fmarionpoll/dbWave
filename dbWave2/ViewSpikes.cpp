@@ -351,7 +351,7 @@ BOOL CViewSpikes::addSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 		m_pSpkList->UpdateClassList();
 		m_pSpkDoc->OnSaveDocument(GetDocument()->GetDB_CurrentSpkFileName(FALSE));
 		m_pSpkDoc->SetModifiedFlag(FALSE);
-		GetDocument()->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
+		GetDocument()->SetDB_n_spikes(m_pSpkList->GetTotalSpikes());
 		GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
 		const auto boldparm = m_bresetzoom;
 		m_bresetzoom = FALSE;

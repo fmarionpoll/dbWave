@@ -506,7 +506,7 @@ void CViewSpikeSort::OnSort()
 		if (flagchanged)
 		{
 			m_pSpkDoc->OnSaveDocument(pdb_doc->GetDB_CurrentSpkFileName(FALSE));
-			pdb_doc->SetDB_nbspikes(m_pSpkList->GetTotalSpikes());
+			pdb_doc->SetDB_n_spikes(m_pSpkList->GetTotalSpikes());
 		}
 	}
 

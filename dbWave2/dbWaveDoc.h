@@ -72,7 +72,7 @@ public:
 	void	Delete_ErasedFiles();
 
 	long	GetDB_n_spikes() const; 
-	void	SetDB_nbspikes(long n_spikes) const; 
+	void	SetDB_n_spikes(long n_spikes) const; 
 	long	GetDB_n_spike_classes() const;
 	void	SetDB_n_spike_classes(long n_classes) const;
 	void	GetAllSpkMaxMin(BOOL bAll, BOOL b_recalculate, int* max, int* min);

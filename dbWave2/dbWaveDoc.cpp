@@ -526,7 +526,7 @@ void CdbWaveDoc::DBDeleteUnusedEntries() const
 	m_pDB->DeleteUnusedEntriesInAccessoryTables();
 }
 
-void CdbWaveDoc::SetDB_nbspikes(long n_spikes) const
+void CdbWaveDoc::SetDB_n_spikes(long n_spikes) const
 {
 	try
 	{
