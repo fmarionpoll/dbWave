@@ -906,7 +906,7 @@ CString CViewSpikes::PrintGetFileInfos()
 	CString str_comment; // scratch pad
 	const CString tab("    "); // use 4 spaces as tabulation character
 	const CString rc("\n"); // next line
-	const auto p_wave_format = &m_pSpkDoc->m_wformat; // get data description
+	const auto p_wave_format = &m_pSpkDoc->m_wave_format; // get data description
 
 	// document's name, date and time
 	if (options_viewdata->bDocName || options_viewdata->bAcqDateTime) // print doc infos?
@@ -1333,7 +1333,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// ------------------------ print stimulus
 
-		if (m_pSpkDoc->m_stimIntervals.n_items > 0)
+		if (m_pSpkDoc->m_stimulus_intervals.n_items > 0)
 		{
 			CBrush bluebrush; // create and select a solid blue brush
 			bluebrush.CreateSolidBrush(RGB(0, 0, 255));
@@ -1349,12 +1349,12 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			if (rw_spikes.top == rw_spikes.bottom)
 				rw_spikes.bottom++;
 
-			for (auto ii = 0; ii < m_pSpkDoc->m_stimIntervals.GetSize(); ii++, ii++)
+			for (auto ii = 0; ii < m_pSpkDoc->m_stimulus_intervals.GetSize(); ii++, ii++)
 			{
-				int iifirst = m_pSpkDoc->m_stimIntervals.GetAt(ii);
-				if ((ii + 1) >= m_pSpkDoc->m_stimIntervals.GetSize())
+				int iifirst = m_pSpkDoc->m_stimulus_intervals.GetAt(ii);
+				if ((ii + 1) >= m_pSpkDoc->m_stimulus_intervals.GetSize())
 					continue;
-				int iilast = m_pSpkDoc->m_stimIntervals.GetAt(ii + 1);
+				int iilast = m_pSpkDoc->m_stimulus_intervals.GetAt(ii + 1);
 				if (iifirst > l_last || iilast < l_first)
 					continue;
 				if (iifirst < l_first)

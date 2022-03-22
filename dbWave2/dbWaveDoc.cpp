@@ -1147,7 +1147,7 @@ boolean CdbWaveDoc::set_record_spk_classes(sourceData* record)
 		if (m_pSpk->GetSpkList_Current()->GetNbclasses() < 0)
 			m_pSpk->GetSpkList_Current()->UpdateClassList();
 		m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->GetNbclasses();
-		m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_acqsize;
+		m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_acquisition_size;
 	}
 	return flag;
 }
@@ -1301,7 +1301,7 @@ CWaveFormat* CdbWaveDoc::GetWaveFormat(CString csFilename, BOOL bIsDatFile)
 	{
 		const auto b_is_read_ok = m_pSpk->OnOpenDocument(csFilename);
 		if (b_is_read_ok)
-			p_wave_format = &(m_pSpk->m_wformat);
+			p_wave_format = &(m_pSpk->m_wave_format);
 	}
 	return p_wave_format;
 }
@@ -1484,7 +1484,7 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 		{
 			const auto pSpk = OpenCurrentSpikeFile();
 			ASSERT(pSpk != nullptr);
-			wave_format = &(m_pSpk->m_wformat);
+			wave_format = &(m_pSpk->m_wave_format);
 			if (UpdateWaveFmtFromDatabase(wave_format))
 				m_pSpk->OnSaveDocument(m_currentSpikefileName);
 		}
@@ -1529,7 +1529,7 @@ void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)
 		{
 			const auto pSpk = OpenCurrentSpikeFile();
 			ASSERT(pSpk != nullptr);
-			p_wave_format = &(m_pSpk->m_wformat);
+			p_wave_format = &(m_pSpk->m_wave_format);
 			if (UpdateWaveFmtFromDatabase(p_wave_format))
 				m_pSpk->OnSaveDocument(m_currentSpikefileName);
 		}
@@ -1571,10 +1571,10 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const
 	b_changed |= m_pDB->GetRecordValueLong(CH_REPEAT, p_wave_format->repeat);
 	b_changed |= m_pDB->GetRecordValueLong(CH_REPEAT2, p_wave_format->repeat2);
 
-	const auto npercycle = static_cast<int>(m_pSpk->m_stimIntervals.n_items / 2.f
+	const auto npercycle = static_cast<int>(m_pSpk->m_stimulus_intervals.n_items / 2.f
 		/ m_pSpk->GetAcqDuration() / 8.192f);
-	b_changed |= (npercycle != m_pSpk->m_stimIntervals.n_per_cycle);
-	m_pSpk->m_stimIntervals.n_per_cycle = npercycle;
+	b_changed |= (npercycle != m_pSpk->m_stimulus_intervals.n_per_cycle);
+	m_pSpk->m_stimulus_intervals.n_per_cycle = npercycle;
 
 	return b_changed;
 }
@@ -1850,7 +1850,7 @@ void CdbWaveDoc::Export_NumberOfSpikes(CSharedFile* pSF)
 					case EXPORT_PSTH: // PSTH
 					case EXPORT_ISI: // ISI
 					case EXPORT_AUTOCORR: // Autocorr
-						m_pSpk->export_spk_psth(pSF, options_viewspikes, p_hist0, ispikelist, kclass);
+						m_pSpk->export_spk_PSTH(pSF, options_viewspikes, p_hist0, ispikelist, kclass);
 						break;
 					default:
 						ATLTRACE2(_T("option selected not implemented: %i /n"), options_viewspikes->exportdatatype);

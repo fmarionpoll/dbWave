@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Intervals.h"
-//#include "spikepar.h"	
 #include "Spikelist.h"
 #include "Spikeclas.h"
 #include "OPTIONS_VIEWSPIKES.h"
@@ -14,54 +13,52 @@ public:
 	CSpikeDoc();
 	~CSpikeDoc() override;
 
-	// Attributes
-public:
 	WORD m_wVersion = 7;
-	CTime m_detectiondate;
+	CTime m_detection_date;
 	CString m_comment = _T(""); 
-	CString m_acqfile = _T("");
-	CString m_newpath = _T("");
-	CString m_acqcomment = _T("");
-	CWaveFormat m_wformat {};
-	CTime m_acqtime {}; 
-	float m_acqrate = 1.f;
-	long m_acqsize = 0;
-	CSpikeClass m_spkclass;
-	int m_currspklist = -1;
-	CIntervals m_stimIntervals; 
+	CString m_acquisition_file = _T("");
+	CString m_new_path = _T("");
+	CString m_acquisition_comment = _T("");
+	CWaveFormat m_wave_format {};
+	CTime m_acquisition_time {}; 
+	float m_acquisition_rate = 1.f;
+	long m_acquisition_size = 0;
+	CSpikeClass m_spike_class{};
+	int m_current_spike_list = -1;
+	CIntervals m_stimulus_intervals{}; 
 
 protected:
-	CArray<CSpikeList, CSpikeList> spikelist_array = {};
+	CArray<CSpikeList, CSpikeList> spike_list_array = {};
 
 	// Operations
 public:
 	CString GetFileInfos();
 	void InitSourceDoc(AcqDataDoc* p_document);
 
-	CString GetSourceFilename() const { return m_acqfile; }
-	CTime GetDate() const { return m_detectiondate; }
+	CString GetSourceFilename() const { return m_acquisition_file; }
+	CTime GetDate() const { return m_detection_date; }
 	CString GetComment() const { return m_comment; }
-	CTime GetAcqTime() const { return m_acqtime; }
-	float GetAcqDuration() const { return static_cast<float>(m_acqsize) / m_acqrate; }
-	long GetAcqSize() const { return m_acqsize; }
-	float GetAcqRate() const { return m_acqrate; }
+	CTime GetAcqTime() const { return m_acquisition_time; }
+	float GetAcqDuration() const { return static_cast<float>(m_acquisition_size) / m_acquisition_rate; }
+	long GetAcqSize() const { return m_acquisition_size; }
+	float GetAcqRate() const { return m_acquisition_rate; }
 
-	int GetSpkList_Size() const { return spikelist_array.GetSize(); }
-	void SetSpkList_Size(int i) { return spikelist_array.SetSize(i); }
-	CSpikeList* SetSpkList_AsCurrent(int ichan);
+	int GetSpkList_Size() const { return spike_list_array.GetSize(); }
+	void SetSpkList_Size(int i) { return spike_list_array.SetSize(i); }
+	CSpikeList* SetSpkList_AsCurrent(int channel);
 	CSpikeList* GetSpkList_Current();
-	CSpikeList* GetSpkList_At(int ichan);
-	int GetSpkList_CurrentIndex() const { return m_currspklist; }
+	CSpikeList* GetSpkList_At(int channel);
+	int GetSpkList_CurrentIndex() const { return m_current_spike_list; }
 
 	int AddSpkList()
 	{
-		spikelist_array.SetSize(GetSpkList_Size() + 1);
+		spike_list_array.SetSize(GetSpkList_Size() + 1);
 		return GetSpkList_Size();
 	}
 
-	void SetSourceFilename(CString cs) { m_acqfile = cs; }
-	void SetDetectionDate(CTime t) { m_detectiondate = t; }
-	void SetComment(CString cs) { m_comment = cs; }
+	void SetSourceFilename(CString file_name) { m_acquisition_file = file_name; }
+	void SetDetectionDate(CTime time) { m_detection_date = time; }
+	void SetComment(CString comment) { m_comment = comment; }
 
 	void SortStimArray();
 
@@ -78,7 +75,7 @@ public:
 	void ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
 	void export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, int ispklist, int iclass);
 	void export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist, int iclass);
-	void export_spk_psth(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
+	void export_spk_PSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
 	void export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass);
 
 	// Implementation
@@ -94,9 +91,9 @@ public:
 
 protected:
 	void Serialize(CArchive& ar) override;
-	void readBeforeVersion6(CArchive& ar, WORD wwVersion);
-	void readVersion6(CArchive& ar);
-	void readVersion7(CArchive& ar);
+	void read_before_version6(CArchive& ar, WORD wwVersion);
+	void read_version6(CArchive& ar);
+	void read_version7(CArchive& ar);
 	void set_file_extension_as_spk(CString& filename);
 
 	// Generated message map functions

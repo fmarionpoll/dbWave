@@ -725,10 +725,10 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				l_limit_right = l_limit_left;
 				l_limit_left = i;
 			}
-			m_pSpkDoc->m_stimIntervals.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
-			m_pSpkDoc->m_stimIntervals.n_items++;
-			m_pSpkDoc->m_stimIntervals.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_right);
-			m_pSpkDoc->m_stimIntervals.n_items++;
+			m_pSpkDoc->m_stimulus_intervals.SetAtGrow(m_pSpkDoc->m_stimulus_intervals.n_items, l_limit_left);
+			m_pSpkDoc->m_stimulus_intervals.n_items++;
+			m_pSpkDoc->m_stimulus_intervals.SetAtGrow(m_pSpkDoc->m_stimulus_intervals.n_items, l_limit_right);
+			m_pSpkDoc->m_stimulus_intervals.n_items++;
 			update_VT_tags();
 
 			m_ChartSpkWnd_Bar.Invalidate();
@@ -746,13 +746,13 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		//case HINT_MOVEVERTTAG: //12	// vertical tag has moved 		lowp = new pixel / selected tag
 	case HINT_CHANGEVERTTAG: //13
 	{
-		int lvalue = m_pSpkDoc->m_stimIntervals.GetAt(threshold);
+		int lvalue = m_pSpkDoc->m_stimulus_intervals.GetAt(threshold);
 		if (i_id == m_ChartDataWnd_Detect.GetDlgCtrlID())
 			lvalue = m_ChartDataWnd_Detect.m_VTtags.GetTagLVal(threshold);
 		else if (i_id == m_ChartDataWnd_Source.GetDlgCtrlID())
 			lvalue = m_ChartDataWnd_Source.m_VTtags.GetTagLVal(threshold);
 
-		m_pSpkDoc->m_stimIntervals.SetAt(threshold, lvalue);
+		m_pSpkDoc->m_stimulus_intervals.SetAt(threshold, lvalue);
 		update_VT_tags();
 
 		m_ChartSpkWnd_Bar.Invalidate();
@@ -767,8 +767,8 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	{
 		const int cx = LOWORD(lParam);
 		const int l_limit_left = m_ChartDataWnd_Detect.GetDataOffsetfromPixel(cx);
-		m_pSpkDoc->m_stimIntervals.SetAtGrow(m_pSpkDoc->m_stimIntervals.n_items, l_limit_left);
-		m_pSpkDoc->m_stimIntervals.n_items++;
+		m_pSpkDoc->m_stimulus_intervals.SetAtGrow(m_pSpkDoc->m_stimulus_intervals.n_items, l_limit_left);
+		m_pSpkDoc->m_stimulus_intervals.n_items++;
 		update_VT_tags();
 
 		m_ChartSpkWnd_Bar.Invalidate();
@@ -1064,7 +1064,7 @@ void CViewSpikeDetection::detect_all(BOOL bAll)
 	const auto db_document = GetDocument();
 	const auto data_document = db_document->m_pDat;
 	const auto data_document_name = db_document->GetDB_CurrentDatFileName();
-	m_pSpkDoc->m_acqfile = data_document_name;
+	m_pSpkDoc->m_acquisition_file = data_document_name;
 	m_pSpkDoc->InitSourceDoc(data_document);
 
 	m_pSpkDoc->SetDetectionDate(CTime::GetCurrentTime());
@@ -1242,21 +1242,21 @@ int CViewSpikeDetection::detect_stimulus_1(int channel_index)
 			const int pct_achieved = (cx - l_data_first0) * 100 / l_data_len;
 			dlg.SetPos(pct_achieved);
 			CString comment;
-			comment.Format(_T("Processing stimulus event: %i"), m_pSpkDoc->m_stimIntervals.n_items + 1);
+			comment.Format(_T("Processing stimulus event: %i"), m_pSpkDoc->m_stimulus_intervals.n_items + 1);
 			dlg.SetStatus(comment);
 
 			if (dlg.CheckCancelButton())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				{
 					l_last = l_data_last;
-					const auto stimulus_intervals = &(m_pSpkDoc->m_stimIntervals);
+					const auto stimulus_intervals = &(m_pSpkDoc->m_stimulus_intervals);
 					stimulus_intervals->RemoveAll();
-					m_pSpkDoc->m_stimIntervals.n_items = 0;
+					m_pSpkDoc->m_stimulus_intervals.n_items = 0;
 					break;
 				}
 
 			// check if already present and insert it at the proper place
-			const auto stimulus_intervals = &(m_pSpkDoc->m_stimIntervals);
+			const auto stimulus_intervals = &(m_pSpkDoc->m_stimulus_intervals);
 			auto flag = TRUE;
 			int i2;
 			for (i2 = 0; i2 < stimulus_intervals->GetSize(); i2++)
@@ -1277,13 +1277,13 @@ int CViewSpikeDetection::detect_stimulus_1(int channel_index)
 			if (flag)
 			{
 				stimulus_intervals->InsertAt(i2, cx);
-				m_pSpkDoc->m_stimIntervals.n_items++;
+				m_pSpkDoc->m_stimulus_intervals.n_items++;
 			}
 		}
 		l_data_first = l_last + 1; // update for next loop
 	}
 
-	return m_pSpkDoc->m_stimIntervals.n_items;
+	return m_pSpkDoc->m_stimulus_intervals.n_items;
 }
 
 int CViewSpikeDetection::detect_method_1(WORD schan)
@@ -1511,8 +1511,8 @@ void CViewSpikeDetection::OnBnClickedClearall()
 
 	highlight_spikes(FALSE); // remove display of spikes
 	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
-	m_pSpkDoc->m_stimIntervals.n_items = 0; // zero stimuli
-	m_pSpkDoc->m_stimIntervals.RemoveAll();
+	m_pSpkDoc->m_stimulus_intervals.n_items = 0; // zero stimuli
+	m_pSpkDoc->m_stimulus_intervals.RemoveAll();
 
 	update_detection_parameters();
 	update_VT_tags(); // update display of vertical tags
@@ -1532,8 +1532,8 @@ void CViewSpikeDetection::OnClear()
 
 	if (m_pSpkList->GetdetectWhat() == DETECT_STIMULUS)
 	{
-		m_pSpkDoc->m_stimIntervals.n_items = 0;
-		m_pSpkDoc->m_stimIntervals.RemoveAll();
+		m_pSpkDoc->m_stimulus_intervals.n_items = 0;
+		m_pSpkDoc->m_stimulus_intervals.RemoveAll();
 		update_VT_tags();
 	}
 
@@ -2093,12 +2093,12 @@ void CViewSpikeDetection::update_VT_tags()
 	m_ChartSpkWnd_Bar.m_VTtags.RemoveAllTags();
 	m_ChartDataWnd_Detect.m_VTtags.RemoveAllTags();
 	m_ChartDataWnd_Source.m_VTtags.RemoveAllTags();
-	if (m_pSpkDoc->m_stimIntervals.n_items == 0)
+	if (m_pSpkDoc->m_stimulus_intervals.n_items == 0)
 		return;
 
-	for (auto i = 0; i < m_pSpkDoc->m_stimIntervals.GetSize(); i++)
+	for (auto i = 0; i < m_pSpkDoc->m_stimulus_intervals.GetSize(); i++)
 	{
-		const int cx = m_pSpkDoc->m_stimIntervals.GetAt(i);
+		const int cx = m_pSpkDoc->m_stimulus_intervals.GetAt(i);
 		m_ChartSpkWnd_Bar.m_VTtags.AddLTag(cx, 0);
 		m_ChartDataWnd_Detect.m_VTtags.AddLTag(cx, 0);
 		m_ChartDataWnd_Source.m_VTtags.AddLTag(cx, 0);
@@ -3167,13 +3167,13 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 	m_pSpkDoc->SortStimArray();
 
 	DlgEditStimArray dlg;
-	dlg.intervals = m_pSpkDoc->m_stimIntervals;
+	dlg.intervals = m_pSpkDoc->m_stimulus_intervals;
 	dlg.m_sampling_rate = m_samplingRate;
 	dlg.intervals_saved = GetDocument()->m_stimsaved;
 	;
 	if (IDOK == dlg.DoModal())
 	{
-		m_pSpkDoc->m_stimIntervals = dlg.intervals;
+		m_pSpkDoc->m_stimulus_intervals = dlg.intervals;
 		update_VT_tags();
 		m_ChartSpkWnd_Bar.Invalidate();
 		m_ChartDataWnd_Detect.Invalidate();

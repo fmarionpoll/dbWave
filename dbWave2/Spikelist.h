@@ -56,7 +56,7 @@ protected:
 	BOOL m_extrema_valid = false;
 	int m_minimum_over_all_spikes = 0; 
 	int m_maximum_over_all_spikes = 0; 
-	CArray<CSpikeElemt*, CSpikeElemt*> m_spike_elements{}; // array of SpikeElemts
+	CArray<CSpikeElemt*, CSpikeElemt*> m_spike_elements{}; 
 
 	// (3) -------------unordered data buffers with spikes extracted from acq data-----------
 
@@ -67,7 +67,7 @@ protected:
 	BOOL m_b_save_artefacts = false; // save (yes/no) artefacts - default = FALSE
 	BOOL m_valid_classes = false; // class list (array with classnb & nb spikes/class)
 	int m_n_classes = 0;
-	CArray<int, int> m_classes_array{}; // classes found and nb of spikes within them
+	CArray<int, int> m_classes_array{}; 
 	// TODO enrich class to make use of indexes et al apparent into a class
 
 	//  (5) list of spikes flagged

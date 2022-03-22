@@ -110,7 +110,7 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 
 		displayBars(p_dc, &m_displayRect);
 
-		CIntervals* pintervals = &(p_spike_doc_->m_stimIntervals);
+		CIntervals* pintervals = &(p_spike_doc_->m_stimulus_intervals);
 
 		if (pintervals->n_items > 0)
 			displayStimulus(p_dc, &m_displayRect);
@@ -210,7 +210,7 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 
 	if (p_spike_doc_ == nullptr)
 		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
-	CIntervals* pintervals = &(p_spike_doc_->m_stimIntervals);
+	CIntervals* pintervals = &(p_spike_doc_->m_stimulus_intervals);
 
 	if (pintervals->n_items > 0)
 		displayStimulus(p_dc, &m_displayRect);
@@ -268,8 +268,8 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 	const auto iiend = m_lLast;
 	const auto iilen = iiend - iistart;
 	auto i0 = 0;
-	//CArray <long, long>* pintervalsArray = &(p_dbwave_doc_->m_pSpk->m_stimIntervals.array);
-	CIntervals* p_intervals = &(p_spike_doc_->m_stimIntervals);
+	//CArray <long, long>* pintervalsArray = &(p_dbwave_doc_->m_pSpk->m_stimulus_intervals.array);
+	CIntervals* p_intervals = &(p_spike_doc_->m_stimulus_intervals);
 
 
 	while (i0 < p_intervals->GetSize()
@@ -891,7 +891,7 @@ void CChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 	const auto n_saved_dc = p_dc->SaveDC(); // save display context
 	displayBars(p_dc, rect);
 
-	if (p_dbwave_doc_->m_pSpk->m_stimIntervals.n_items > 0)
+	if (p_dbwave_doc_->m_pSpk->m_stimulus_intervals.n_items > 0)
 		displayStimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);

@@ -129,16 +129,16 @@ void CSpikeList::write_file_version6(CArchive& ar)
 			// // skip artefacts if option set
 			if (m_classes_array.GetAt(j) >= 0)
 			{
-				long idummy = m_classes_array.GetAt(j);
-				ar << idummy;
-				idummy = m_classes_array.GetAt(j + 1);
-				ar << idummy;
+				long dummy = m_classes_array.GetAt(j);
+				ar << dummy;
+				dummy = m_classes_array.GetAt(j + 1);
+				ar << dummy;
 			}
 			j += 2;
 		}
 	}
-	const auto n_parms = 4; // save misc additional data (version 3 - feb 2003)
-	ar << n_parms;
+	constexpr auto n_parameters = 4; // save misc additional data (version 3 - feb 2003)
+	ar << n_parameters;
 	ar << m_icenter1SL;
 	ar << m_icenter2SL;
 	ar << m_imaxmin1SL;
@@ -177,45 +177,45 @@ void CSpikeList::read_file_version6(CArchive& ar)
 	const auto n_bytes = w1 * sizeof(short) * n_spikes;
 	const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
 
-	ar.Read(lp_dest, n_bytes); // read data from disk
+	ar.Read(lp_dest, n_bytes); 
 	m_extrema_valid = FALSE;
-	m_valid_classes = FALSE; // default: no valid array
+	m_valid_classes = FALSE; 
 	m_n_classes = 1;
-	m_classes_array.SetSize(2); // default size - some functions
-	m_classes_array.SetAt(0, 0); // access this array anyway so provide
-	m_classes_array.SetAt(1, 0); // dummy values for them
+	m_classes_array.SetSize(2); 
+	m_classes_array.SetAt(0, 0);
+	m_classes_array.SetAt(1, 0); 
 	long dummy;
 	ar >> dummy;
 	m_valid_classes = dummy;
-	if (m_valid_classes) // read class list
+	if (m_valid_classes == true)
 	{
 		ar >> dummy;
 		m_n_classes = dummy;
 		if (m_n_classes != 0)
 		{
 			m_classes_array.SetSize(m_n_classes * 2);
-			auto j = 0; // index to array elements
+			auto j = 0;
 			for (auto i = 0; i < m_n_classes; i++)
 			{
 				ar >> dummy;
 				m_classes_array.SetAt(j, dummy);
-				j++; // class nb
+				j++;
 				ar >> dummy;
 				m_classes_array.SetAt(j, dummy);
-				j++; // nb spikes
+				j++; 
 			}
 		}
 	}
-	int nparms;
-	ar >> nparms;
+	int n_parameters;
+	ar >> n_parameters;
 	ar >> m_icenter1SL;
-	nparms--;
+	n_parameters--;
 	ar >> m_icenter2SL;
-	nparms--;
+	n_parameters--;
 	ar >> m_imaxmin1SL;
-	nparms--;
+	n_parameters--;
 	ar >> m_imaxmin2SL;
-	nparms--;
+	n_parameters--;
 }
 
 void CSpikeList::read_file_version5(CArchive& ar)
