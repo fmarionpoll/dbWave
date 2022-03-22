@@ -231,7 +231,7 @@ int CSpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 	return iresult;
 }
 
-void CSpikeClassListBox::SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc)
+void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 {
 	// erase content of the list box
 	SetRedraw(FALSE);
@@ -329,7 +329,7 @@ int CSpikeClassListBox::GetHowManyClassesInCurrentSpikeList()
 	return nbclasses;
 }
 
-void CSpikeClassListBox::SetSpkList(CSpikeList* p_spike_list)
+void CSpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
 {
 	p_spikelist_ = p_spike_list;
 	int nbclasses = GetHowManyClassesInCurrentSpikeList();

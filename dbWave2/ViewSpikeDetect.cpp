@@ -1102,7 +1102,7 @@ void CViewSpikeDetection::detect_all(BOOL bAll)
 			continue;
 
 		// select new spike list (list with no spikes for stimulus channel)
-		CSpikeList* spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
+		SpikeList* spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
 		if (spike_list == nullptr)
 		{
 			m_pSpkDoc->AddSpkList();
@@ -1503,7 +1503,7 @@ void CViewSpikeDetection::OnBnClickedClearall()
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
 	{
-		CSpikeList* pspklist = m_pSpkDoc->SetSpkList_AsCurrent(i);
+		SpikeList* pspklist = m_pSpkDoc->SetSpkList_AsCurrent(i);
 		pspklist->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	}
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();

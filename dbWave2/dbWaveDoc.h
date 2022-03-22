@@ -83,7 +83,7 @@ public:
 	void	Export_DataAsciiComments(CSharedFile* p_shared_file);
 	void	Export_NumberOfSpikes(CSharedFile* pSF);
 	CString Export_DatabaseData(int ioption = 0);
-	void	Export_SpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass);
+	void	Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list, int kclass);
 	void	SynchronizeSourceInfos(BOOL bAll);
 	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 

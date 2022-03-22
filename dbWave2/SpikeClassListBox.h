@@ -28,14 +28,14 @@ protected:
 
 	long m_lFirst = 0;
 	long m_lLast = 0;
-	CSpikeList* p_spikelist_ = nullptr;
+	SpikeList* p_spikelist_ = nullptr;
 	CSpikeDoc* p_spike_doc_ = nullptr;
 	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 	HWND m_hwndBarsReflect = nullptr;
 
 public:
-	void SetSourceData(CSpikeList* pSList, CdbWaveDoc* pdbDoc);
-	void SetSpkList(CSpikeList* p_spike_list);
+	void SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc);
+	void SetSpkList(SpikeList* p_spike_list);
 
 	void SetTimeIntervals(long l_first, long l_last);
 	int GetHowManyClassesInCurrentSpikeList();

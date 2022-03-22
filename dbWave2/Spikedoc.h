@@ -23,12 +23,12 @@ public:
 	CTime m_acquisition_time {}; 
 	float m_acquisition_rate = 1.f;
 	long m_acquisition_size = 0;
-	CSpikeClass m_spike_class{};
+	SpikeClass m_spike_class{};
 	int m_current_spike_list = -1;
 	CIntervals m_stimulus_intervals{}; 
 
 protected:
-	CArray<CSpikeList, CSpikeList> spike_list_array = {};
+	CArray<SpikeList, SpikeList> spike_list_array = {};
 
 	// Operations
 public:
@@ -45,9 +45,9 @@ public:
 
 	int GetSpkList_Size() const { return spike_list_array.GetSize(); }
 	void SetSpkList_Size(int i) { return spike_list_array.SetSize(i); }
-	CSpikeList* SetSpkList_AsCurrent(int channel);
-	CSpikeList* GetSpkList_Current();
-	CSpikeList* GetSpkList_At(int channel);
+	SpikeList* SetSpkList_AsCurrent(int channel);
+	SpikeList* GetSpkList_Current();
+	SpikeList* GetSpkList_At(int channel);
 	int GetSpkList_CurrentIndex() const { return m_current_spike_list; }
 
 	int AddSpkList()

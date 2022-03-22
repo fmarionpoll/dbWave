@@ -1,27 +1,24 @@
 #pragma once
 
 
-class CSpikeClass : public CObject
+class SpikeClass : public CObject
 {
-	DECLARE_SERIAL(CSpikeClass);
+	DECLARE_SERIAL(SpikeClass)
 
-	// attributes
 protected:
-	int m_NClass; // Number of different classes of spikes
-	int m_SpikeSize; // size of spike
-	long m_BufferSize; // GetRectSize of the buffer
-	short* m_pRWBuffer; // pointer to the buffer
-	int m_EArraySize;
-	int* m_pEArray; // array of class elemt
+	int m_NClass = -1; // Number of different classes of spikes
+	int m_SpikeSize = 0; // size of spike
+	long m_BufferSize = 0; // GetRectSize of the buffer
+	short* m_pRWBuffer = nullptr; // pointer to the buffer
+	int m_EArraySize = 0;
+	int* m_pEArray = nullptr; // array of class elemt
 	BOOL SizeNclasses(int nclasses, int spikesize);
 
 public:
 	void EraseData();
 
-	// constructor /destructor
-public:
-	CSpikeClass();
-	CSpikeClass(int SpikeSize);
-	~CSpikeClass() override;
+	SpikeClass();
+	SpikeClass(int SpikeSize);
+	~SpikeClass() override;
 	void Serialize(CArchive& ar) override;
 };

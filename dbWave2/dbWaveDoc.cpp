@@ -1579,7 +1579,7 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const
 	return b_changed;
 }
 
-void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, CSpikeList* p_spike_list, int kclass)
+void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list, int kclass)
 {
 	CString cs_dummy;
 	const CString cs_tab = _T("\t");

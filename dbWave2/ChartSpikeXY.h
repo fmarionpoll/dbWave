@@ -25,7 +25,7 @@ protected:
 	int m_rwidth = 6; // dot width
 	BOOL m_ballFiles = false; // display data from all files in CdbWaveDoc*
 
-	CSpikeList* p_spikelist_ = nullptr;
+	SpikeList* p_spikelist_ = nullptr;
 	CSpikeDoc* p_spike_doc_ = nullptr;
 	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 
@@ -61,14 +61,14 @@ public:
 	int GetSelectedSpike() const { return m_selectedspike; }
 	int GetHitSpike() const { return m_hitspk; }
 
-	void SetSourceData(CSpikeList* p_spk_list, CdbWaveDoc* p_document)
+	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	{
 		p_dbwave_doc_ = p_document;
 		p_spikelist_ = p_spk_list;
 		m_selectedspike = -1;
 	}
 
-	void SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
 
 	int SelectSpike(int spikeno);
 	void DisplaySpike(int nospike, BOOL bselect);

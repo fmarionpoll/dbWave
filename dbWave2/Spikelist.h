@@ -1,14 +1,13 @@
 #pragma once
 
-// spikelist.h : header file
-
-#include "WaveBuf.h"		// data acquisition buffer
+#include "WaveBuf.h"
 #include "SpikeBuffer.h"
+#include "SpikeClassDescriptor.h"
 #include "SpikeElement.h"
 #include "spikepar.h"
 
-// CSpikeList CObject
-// this object stores spikes from one data acquisition channel
+
+// spikes from one data acquisition channel
 // it contains a description of the original data acqusition set,
 // how spikes were initially detected
 // parameters associated to each spike and data describing the spikes
@@ -17,17 +16,16 @@
 // this object has procedures to manage the list of spikes and to
 // measure certain parameters on them
 // as well as storing/reading them
-//
-// Two independent structures are associated to manage infos related to individual spikes
 
-class CSpikeList : public CObject
+
+class SpikeList : public CObject
 {
 public:
 	void Serialize(CArchive& ar) override;
-	DECLARE_SERIAL(CSpikeList)
+	DECLARE_SERIAL(SpikeList)
 
-	CSpikeList();
-	~CSpikeList() override;
+	SpikeList();
+	~SpikeList() override;
 
 	int m_selected_spike = -1;
 	int m_jitterSL = 2;
@@ -56,7 +54,7 @@ protected:
 	BOOL m_extrema_valid = false;
 	int m_minimum_over_all_spikes = 0; 
 	int m_maximum_over_all_spikes = 0; 
-	CArray<CSpikeElemt*, CSpikeElemt*> m_spike_elements{}; 
+	CArray<SpikeElement*, SpikeElement*> m_spike_elements{}; 
 
 	// (3) -------------unordered data buffers with spikes extracted from acq data-----------
 
@@ -65,9 +63,9 @@ protected:
 	// (4) miscellaneous
 
 	BOOL m_b_save_artefacts = false; // save (yes/no) artefacts - default = FALSE
-	BOOL m_valid_classes = false; // class list (array with classnb & nb spikes/class)
+	BOOL m_only_valid_classes = false; // class list (array with classnb & nb spikes/class)
 	int m_n_classes = 0;
-	CArray<int, int> m_classes_array{}; 
+	CArray<SpikeClassDescriptor, SpikeClassDescriptor> m_spike_class_descriptor_array{};
 	// TODO enrich class to make use of indexes et al apparent into a class
 
 	//  (5) list of spikes flagged
@@ -77,17 +75,18 @@ protected:
 	// Operations
 public:
 	WORD GetVersion() const { return m_version; }
-	BOOL IsClassListValid() const { return m_valid_classes; }
+	BOOL IsClassListValid() const { return m_only_valid_classes; }
 
 	int GetNbclasses() const
 	{
-		if (m_valid_classes) return m_n_classes;
+		if (m_only_valid_classes) 
+			return m_n_classes;
 		return -1;
 	}
 
-	int GetclassID(int i) const { return m_classes_array.GetAt(i * 2); }
-	int GetclassNbspk(int i) const { return m_classes_array.GetAt(i * 2 + 1); }
-	void SetclassNbspk(int no, int nbspk) { m_classes_array.SetAt(no * 2 + 1, nbspk); }
+	int GetclassID(int i) const { return m_spike_class_descriptor_array.GetAt(i).id_number; }
+	int GetclassNbspk(int i) const { return m_spike_class_descriptor_array.GetAt(i).n_items; }
+	void SetclassNbspk(int i, int n_spikes) { m_spike_class_descriptor_array.GetAt(i).n_items = n_spikes; }
 
 	int GetSpikeClass(int no) const { return m_spike_elements[no]->get_class(); }
 	long GetSpikeTime(int no) const { return m_spike_elements[no]->get_time(); }
@@ -99,15 +98,15 @@ public:
 	int GetSpikeLength() const { return m_spike_buffer.GetSpklen(); }
 	int GetTotalSpikes() const { return m_spike_elements.GetCount(); }
 
-	void SetSpikeClass(int no, int nclass)
+	void SetSpikeClass(int no, const int nclass)
 	{
 		m_spike_elements[no]->set_class(nclass);
-		m_valid_classes = FALSE;
+		m_only_valid_classes = FALSE;
 	}
 
 	void SetSpikeTime(int no, long iitime) { m_spike_elements[no]->set_time(iitime); }
 
-	CSpikeElemt* GetSpikeElemt(int no) { return m_spike_elements.GetAt(no); }
+	SpikeElement* GetSpikeElemt(int no) { return m_spike_elements.GetAt(no); }
 
 	WORD GetAcqEncoding() const { return m_data_encoding_mode; }
 	float GetAcqSampRate() const { return m_sampling_rate; }

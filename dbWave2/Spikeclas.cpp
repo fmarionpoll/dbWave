@@ -1,5 +1,3 @@
-//////////////////////////////////////////////////////////////////////
-// CSpikeClass : implementation file
 
 #include "StdAfx.h"
 #include "Spikeclas.h"
@@ -8,32 +6,21 @@
 #define new DEBUG_NEW
 #endif
 
-CSpikeClass::CSpikeClass()
-{
-	m_NClass = -1;
-	m_SpikeSize = 0;
-	m_BufferSize = 0;
-	m_pRWBuffer = nullptr;
-	m_EArraySize = 0;
-	m_pEArray = nullptr;
-}
 
-CSpikeClass::CSpikeClass(int SpikeSize)
+SpikeClass::SpikeClass()
+= default;
+
+SpikeClass::SpikeClass(int SpikeSize)
 {
-	m_NClass = -1;
 	m_SpikeSize = SpikeSize;
-	m_BufferSize = 0;
-	m_pRWBuffer = nullptr;
-	m_EArraySize = 0;
-	m_pEArray = nullptr;
 }
 
-CSpikeClass::~CSpikeClass()
+SpikeClass::~SpikeClass()
 {
 	EraseData();
 }
 
-void CSpikeClass::EraseData()
+void SpikeClass::EraseData()
 {
 	// delete buffer and array
 	if (m_pRWBuffer != nullptr)
@@ -46,9 +33,9 @@ void CSpikeClass::EraseData()
 	m_EArraySize = NULL;
 }
 
-IMPLEMENT_SERIAL(CSpikeClass, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(SpikeClass, CObject, 0 /* schema number*/)
 
-void CSpikeClass::Serialize(CArchive& ar)
+void SpikeClass::Serialize(CArchive& ar)
 {
 	WORD w1, w2;
 	if (ar.IsStoring())
@@ -86,7 +73,7 @@ void CSpikeClass::Serialize(CArchive& ar)
 	}
 }
 
-BOOL CSpikeClass::SizeNclasses(int nclasses, int spikesize)
+BOOL SpikeClass::SizeNclasses(int nclasses, int spikesize)
 {
 	if (nclasses * spikesize == 0)
 		return FALSE;

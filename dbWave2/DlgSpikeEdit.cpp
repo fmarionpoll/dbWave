@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::LoadSpikeParms()
 {
-	CSpikeElemt* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
+	SpikeElement* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
 	m_spikeclass = p_spike_element->get_class(); // class number
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = p_spike_element->get_time();

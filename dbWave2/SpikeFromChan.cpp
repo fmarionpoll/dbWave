@@ -6,20 +6,17 @@
 #define new DEBUG_NEW
 #endif
 
-// CSpikeFromChan
 
-CSpikeFromChan::CSpikeFromChan() : encoding(0), binzero(0), samprate(0), voltsperbin(0)
-{
-	wversion = 5;
-}
 
-CSpikeFromChan::~CSpikeFromChan()
-{
-}
+SpikeFromChan::SpikeFromChan()
+= default;
 
-IMPLEMENT_SERIAL(CSpikeFromChan, CObject, 0 /* schema number*/)
+SpikeFromChan::~SpikeFromChan()
+= default;
 
-void CSpikeFromChan::Serialize(CArchive& ar)
+IMPLEMENT_SERIAL(SpikeFromChan, CObject, 0 /* schema number*/)
+
+void SpikeFromChan::Serialize(CArchive& ar)
 {
 	// store elements
 	if (ar.IsStoring())
@@ -30,8 +27,8 @@ void CSpikeFromChan::Serialize(CArchive& ar)
 		ar << voltsperbin;
 		ar << samprate;
 		parm.Serialize(ar);
-		const int nitems = 1;
-		ar << nitems;
+		constexpr int n_items = 1;
+		ar << n_items;
 		ar << comment;
 	}
 	// load data
@@ -77,14 +74,15 @@ void CSpikeFromChan::Serialize(CArchive& ar)
 		}
 		if (version > 3)
 		{
-			int nitems;
-			ar >> nitems;
+			int n_items;
+			ar >> n_items;
 			ar >> comment;
+			n_items--;
 		}
 	}
 }
 
-CSpikeFromChan& CSpikeFromChan::operator =(const CSpikeFromChan& arg)
+SpikeFromChan& SpikeFromChan::operator =(const SpikeFromChan& arg)
 {
 	if (&arg != this)
 	{

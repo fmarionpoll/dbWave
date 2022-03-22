@@ -27,7 +27,7 @@ public:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 
 	CSpikeDoc* m_pSpkDoc = nullptr;
-	CSpikeList* m_pSpkList = nullptr;
+	SpikeList* m_pSpkList = nullptr;
 	void saveCurrentSpkFile();
 	void IncrementSpikeFlag();
 	CSpkListTabCtrl m_tabCtrl{};

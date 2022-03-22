@@ -31,7 +31,7 @@ public:
 	BOOL m_bchanged{ 0 };
 
 protected:
-	CSpikeList* m_pSpkList{ nullptr };
+	SpikeList* m_pSpkList{ nullptr };
 	AcqDataDoc* m_pAcqDatDoc{ nullptr };
 	int m_spkpretrig{ 0 };
 	int m_spklen{ 0 };

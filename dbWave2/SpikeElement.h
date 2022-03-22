@@ -1,9 +1,7 @@
 #pragma once
 
-/////////////////////////////////////////////////////////////////////////////
-// CSpikeElemt CObject
-// this object is a serialized structure containing parameters associated to
-// each spike detected from a data document
+
+// parameters associated to each spike detected 
 // stores:  time of occurence, initial data acq chan and a modifiable parameter
 // the class
 // this basic object is part of a CSpikelist object that stores parameters
@@ -11,24 +9,24 @@
 // eventually the source data extracted from the data file
 // real data are stored in a separate object managing data buffers
 
-class CSpikeElemt : public CObject
+class SpikeElement : public CObject
 {
-	DECLARE_SERIAL(CSpikeElemt)
-public:
-	CSpikeElemt();
-	CSpikeElemt(long time, WORD channel);
-	CSpikeElemt(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin);
-	~CSpikeElemt() override;
+	DECLARE_SERIAL(SpikeElement)
+
+	SpikeElement();
+	SpikeElement(long time, WORD channel);
+	SpikeElement(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin);
+	~SpikeElement() override;
 
 	// Attributes
 private:
-	long m_iitime; // occurence time - multiply by rate to get time in seconds
-	int m_class; // spike class - init to zero at first
-	int m_chanparm; // spike detection array index
-	int m_max; // spike max (used to scan rapidly to adjust display)
-	int m_min; // spike min (used to scan rapidly to adjust display)
-	int m_dmaxmin;
-	int m_offset; // offset voltage pt 1
+	long m_iitime = 0; // occurence time - multiply by rate to get time in seconds
+	int m_class = 0; // spike class - init to zero at first
+	int m_chanparm = 0; // spike detection array index
+	int m_max = 4096; // spike max (used to scan rapidly to adjust display)
+	int m_min = 0; // spike min (used to scan rapidly to adjust display)
+	int m_dmaxmin = 0;
+	int m_offset = 2048; // offset voltage pt 1
 	int y1_ = 0; // parameter measured and stored
 	int y2_ = 0;
 	int dt_ = 0;

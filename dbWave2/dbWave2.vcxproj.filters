@@ -486,6 +486,9 @@
     <ClCompile Include="GridDefaultCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpikeClassDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1059,6 +1062,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CCIntervalsListCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikeClassDescriptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

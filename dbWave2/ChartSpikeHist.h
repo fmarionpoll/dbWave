@@ -21,7 +21,7 @@ public:
 
 protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
-	CSpikeList* p_spikelist_;
+	SpikeList* p_spikelist_;
 
 	long m_lFirst = 0; // time index of first pt displayed
 	long m_lLast = 0; // time index of last pt displayed
@@ -69,7 +69,7 @@ public:
 	void MoveVTtagtoVal(int itag, int ival);
 	void MoveHZtagtoVal(int itag, int ival);
 
-	void SetSpkList(CSpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 	// implementation
 protected:
@@ -81,7 +81,7 @@ protected:
 
 	void getClassArray(int iclass, CDWordArray*& pDW);
 	CDWordArray* initClassArray(int nbins, int spike_class);
-	void buildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins,
+	void buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins,
 	                            BOOL bNew);
 
 public:

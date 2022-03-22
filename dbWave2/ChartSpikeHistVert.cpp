@@ -532,7 +532,7 @@ CDWordArray* CChartSpikeHistVert::initClassArray(int nbins, int spike_class)
 	return p_dw;
 }
 
-void CChartSpikeHistVert::buildHistFromSpikeList(CSpikeList* p_spk_list, long l_first, long l_last, int max, int min,
+void CChartSpikeHistVert::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min,
                                                  int nbins, BOOL bNew)
 {
 	// erase data and arrays if bnew:
@@ -616,7 +616,7 @@ void CChartSpikeHistVert::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFile
 			p_doc->SetDB_CurrentRecordPosition(ifile);
 			p_doc->OpenCurrentSpikeFile();
 		}
-		CSpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
+		SpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
 		if (p_spikelist != nullptr && p_spikelist->GetTotalSpikes() > 0)
 			buildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
 	}

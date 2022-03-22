@@ -5,31 +5,17 @@
 #define new DEBUG_NEW
 #endif
 
-// CSpikeElemt
 
-CSpikeElemt::CSpikeElemt()
-{
-	m_iitime = 0;
-	m_class = 0;
-	m_chanparm = 0;
-	m_min = 0;
-	m_max = 4096;
-	m_offset = 2048;
-	m_dmaxmin = 0;
-}
+SpikeElement::SpikeElement()
+= default;
 
-CSpikeElemt::CSpikeElemt(long time, WORD channel)
+SpikeElement::SpikeElement(long time, WORD channel)
 {
 	m_iitime = time;
 	m_chanparm = channel;
-	m_class = 0;
-	m_min = 0;
-	m_max = 4096;
-	m_offset = 2048;
-	m_dmaxmin = 0;
 }
 
-CSpikeElemt::CSpikeElemt(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin)
+SpikeElement::SpikeElement(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin)
 {
 	m_iitime = time;
 	m_chanparm = channel;
@@ -40,13 +26,12 @@ CSpikeElemt::CSpikeElemt(long time, WORD channel, int max, int min, int offset, 
 	m_dmaxmin = dmaxmin;
 }
 
-CSpikeElemt::~CSpikeElemt()
-{
-}
+SpikeElement::~SpikeElement()
+= default;
 
-IMPLEMENT_SERIAL(CSpikeElemt, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(SpikeElement, CObject, 0 /* schema number*/)
 
-void CSpikeElemt::Serialize(CArchive& ar)
+void SpikeElement::Serialize(CArchive& ar)
 {
 	WORD w1;
 	WORD wVersion = 2;
@@ -83,18 +68,18 @@ void CSpikeElemt::Serialize(CArchive& ar)
 		m_dmaxmin = static_cast<short>(w1);
 		if (wVersion > 1)
 		{
-			WORD nitems = 0;
-			ar >> nitems;
+			WORD n_items = 0;
+			ar >> n_items;
 			ar >> y1_;
-			nitems--;
+			n_items--;
 			ar >> dt_;
-			nitems--;
-			ASSERT(nitems == 0);
+			n_items--;
+			ASSERT(n_items == 0);
 		}
 	}
 }
 
-void CSpikeElemt::Read0(CArchive& ar)
+void SpikeElement::Read0(CArchive& ar)
 {
 	WORD w1;
 

@@ -796,6 +796,7 @@
     <ClCompile Include="OUTPUTPARMS.cpp" />
     <ClCompile Include="SCOPECHANNEL.cpp" />
     <ClCompile Include="SCOPESTRUCT.cpp" />
+    <ClCompile Include="SpikeClassDescriptor.cpp" />
     <ClCompile Include="USBPxxS1.cpp" />
     <ClCompile Include="dbTableView.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
@@ -1374,6 +1375,7 @@
     <ClInclude Include="OUTPUTPARMS.h" />
     <ClInclude Include="SCOPECHANNEL.h" />
     <ClInclude Include="SCOPESTRUCT.h" />
+    <ClInclude Include="SpikeClassDescriptor.h" />
     <ClInclude Include="USBPxxS1.h" />
     <ClInclude Include="dbTableView.h" />
     <ClInclude Include="dbWave_structures.h" />
