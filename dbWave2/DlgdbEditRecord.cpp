@@ -301,18 +301,18 @@ void DlgdbEditRecord::OnBnClickedButtonrepeat2()
 
 void DlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
 {
-	DB_ITEMDESC* pdesc = GetItemDescriptors(IDC);
-	if (pdesc->pComboBox == nullptr)
+	const DB_ITEMDESC* item_descriptor = GetItemDescriptors(IDC);
+	if (item_descriptor->pComboBox == nullptr)
 		return;
 
 	DlgdbEditField dlg;
-	dlg.m_pMainTable = m_pSet; // address main table
-	dlg.m_csColName = pdesc->header_name; // name of the column
-	dlg.m_pIndexTable = pdesc->plinkedSet; // address secondary table
-	dlg.m_pliIDArray = nullptr; // not a primary field
+	dlg.m_pMainTable = m_pSet;
+	dlg.m_csColName = item_descriptor->header_name; 
+	dlg.m_pIndexTable = item_descriptor->plinkedSet; 
+	dlg.m_pliIDArray = nullptr; 
 	dlg.m_pdbDoc = m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
-		PopulateCombo_WithText(*pdesc->plinkedSet, *pdesc->pComboBox, *pdesc->pdataItem);
+		PopulateCombo_WithText(*item_descriptor->plinkedSet, *item_descriptor->pComboBox, *item_descriptor->pdataItem);
 }
 
 void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
@@ -322,9 +322,9 @@ void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
 		return;
 
 	DlgdbEditField dlg;
-	dlg.m_pMainTable = m_pSet; // address main table
-	dlg.m_csColName = pdesc->header_name; // name of the column
-	dlg.m_pliIDArray = &pdesc->liArray; // address of table of ids
+	dlg.m_pMainTable = m_pSet; 
+	dlg.m_csColName = pdesc->header_name;
+	dlg.m_pliIDArray = &pdesc->liArray; 
 	dlg.m_pIndexTable = nullptr;
 	dlg.m_pdbDoc = m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
@@ -437,8 +437,11 @@ DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 		ich = -1;
 		break;
 	}
-	if (ich >= 0)
+	if (ich >= 0) 
+	{
+		pdesc = &m_pSet->m_desc[ich];
 		p_db->GetRecordItemValue(ich, pdesc);
+	}
 
 	return pdesc;
 }

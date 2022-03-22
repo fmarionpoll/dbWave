@@ -13,136 +13,132 @@ IMPLEMENT_SERIAL(CSpikeList, CObject, 0)
 
 CSpikeList::CSpikeList()
 {
-	//m_spkelmts.SetSize(0, 128);
-	//m_classArray.SetSize(0, 128);
-	m_classArray.SetSize(2); // default size - some functions
-	m_classArray.SetAt(0, 0); // access this array anyway so provide
-	m_classArray.SetAt(1, 0); // dummy values for them
+	m_classes_array.SetSize(2); // default size - some functions
+	m_classes_array.SetAt(0, 0); // access this array anyway so provide
+	m_classes_array.SetAt(1, 0); // dummy values for them
 }
 
 CSpikeList::~CSpikeList()
 {
-	deleteArrays();
+	delete_arrays();
 }
 
 void CSpikeList::Serialize(CArchive& ar)
 {
-	m_wversion = 6; // version=6 - aug 2013 change spike element
 	if (ar.IsStoring())
 	{
-		writefileVersion6(ar);
+		write_file_version6(ar);
 	}
 
 	else
 	{
-		deleteArrays();
+		delete_arrays();
 		CString cs_id;
 		ar >> cs_id;
-		if (cs_id != m_IDstring)
-			readfileVersion1(ar);
+		if (cs_id != ID_string)
+			read_file_version1(ar);
 		else
 		{
-			WORD iversion;
-			ar >> iversion;
-			if (iversion > 0 && iversion < 5)
-				readfileVersion_before5(ar, iversion);
-			else if (iversion == 5)
-				readfileVersion5(ar);
-			else if (iversion == 6)
-				readfileVersion6(ar);
+			WORD version;
+			ar >> version;
+			if (version > 0 && version < 5)
+				read_file_version_before5(ar, version);
+			else if (version == 5)
+				read_file_version5(ar);
+			else if (version == 6)
+				read_file_version6(ar);
 			else
 			{
 				ASSERT(FALSE);
 				CString message;
-				message.Format(_T("reading spike list: unrecognizable version %i"), iversion);
+				message.Format(_T("reading spike list: unrecognizable version %i"), version);
 				AfxMessageBox(message, MB_OK);
 			}
 		}
 	}
 }
 
-void CSpikeList::readfileVersion1(CArchive& ar)
+void CSpikeList::read_file_version1(CArchive& ar)
 {
 	m_icenter1SL = 0;
-	m_icenter2SL = m_parm.prethreshold;
+	m_icenter2SL = m_detection_parameters.prethreshold;
 	m_imaxmin1SL = m_icenter2SL;
-	m_imaxmin2SL = m_spikebuffer.GetSpklen() - 1;
+	m_imaxmin2SL = m_spike_buffer.GetSpklen() - 1;
 }
 
-void CSpikeList::removeArtefacts()
+void CSpikeList::remove_artefacts()
 {
-	auto nspikes = m_spkelmts.GetSize();
+	auto nspikes = m_spike_elements.GetSize();
 	auto save_nbspikes = nspikes;
 
 	for (auto i = nspikes - 1; i >= 0; i--)
 	{
-		if (m_spkelmts.GetAt(i)->get_class() < 0)
+		if (m_spike_elements.GetAt(i)->get_class() < 0)
 		{
-			const auto se = m_spkelmts.GetAt(i);
+			const auto se = m_spike_elements.GetAt(i);
 			delete se;
-			m_spkelmts.RemoveAt(i);
-			m_spikebuffer.DeleteSpike(i);
+			m_spike_elements.RemoveAt(i);
+			m_spike_buffer.DeleteSpike(i);
 			save_nbspikes--;
 		}
 	}
-	nspikes = m_spkelmts.GetSize();
+	nspikes = m_spike_elements.GetSize();
 	ASSERT(save_nbspikes == nspikes);
 	UpdateClassList();
 }
 
-void CSpikeList::writefileVersion6(CArchive& ar)
+void CSpikeList::write_file_version6(CArchive& ar)
 {
-	ar << m_IDstring; // (1) save version ID
-	ar << m_wversion; // current version: 4 (aug 2005)
+	ar << ID_string;
+	ar << m_version; 
 
-	ar << m_encoding; // data encoding mode
-	ar << m_binzero; //
-	ar << m_samprate; // data acq sampling rate (Hz)
-	ar << m_voltsperbin; // nb volts per bin (data)
-	ar << m_cscomment; // spike channel descriptor
+	ar << m_data_encoding_mode; 
+	ar << m_bin_zero; 
+	ar << m_sampling_rate; 
+	ar << m_volts_per_bin; 
+	ar << m_spike_channel_description; 
 
-	m_parm.Serialize(ar); // spike detection parameters
-	m_acqchan.Serialize(ar); // data acq def
+	m_detection_parameters.Serialize(ar); 
+	m_acquisition_channel.Serialize(ar); 
 
 	// save spike elements
-	if (!m_bsaveartefacts)
-		removeArtefacts();
-	const auto nspikes = m_spkelmts.GetSize();
-	ar << static_cast<WORD>(nspikes);
-	for (auto i = 0; i < nspikes; i++)
-		m_spkelmts.GetAt(i)->Serialize(ar);
+	if (!m_b_save_artefacts)
+		remove_artefacts();
+	const auto n_spikes = m_spike_elements.GetSize();
+	ar << static_cast<WORD>(n_spikes);
+	for (auto i = 0; i < n_spikes; i++)
+		m_spike_elements.GetAt(i)->Serialize(ar);
 
-	ar << static_cast<WORD>(m_spikebuffer.GetSpklen()); // (4) save spike raw data
-	const auto nbytes = m_spikebuffer.GetSpklen() * sizeof(short);
-	if (nbytes > 0) // store data
+	ar << static_cast<WORD>(m_spike_buffer.GetSpklen()); 
+	const auto n_bytes = m_spike_buffer.GetSpklen() * sizeof(short);
+	if (n_bytes > 0) 
 	{
-		for (auto i = 0; i < nspikes; i++) // loop through all spikes
-			ar.Write(m_spikebuffer.GetSpike(i), nbytes);
+		for (auto i = 0; i < n_spikes; i++) 
+			ar.Write(m_spike_buffer.GetSpike(i), n_bytes);
 	}
 
-	// save spike classes
-	if (m_classArray.GetAt(0) < 0)
-		m_bvalidclasslist = FALSE; // (5) save class list if parameters are valid
-	ar << static_cast<long>(m_bvalidclasslist);
-	if (m_bvalidclasslist) // save class list if valid
+	if (m_classes_array.GetAt(0) < 0)
+		m_valid_classes = FALSE; 
+	ar << static_cast<long>(m_valid_classes);
+	if (m_valid_classes) 
 	{
-		ar << static_cast<long>(m_nbclasses); // number of classes
+		ar << static_cast<long>(m_n_classes); 
 		auto j = 0;
-		for (auto i = 0; i < m_nbclasses; i++)
+		for (auto i = 0; i < m_n_classes; i++)
 		{
 			// // skip artefacts if option set
-			if (m_classArray.GetAt(j) >= 0)
+			if (m_classes_array.GetAt(j) >= 0)
 			{
-				long idummy = m_classArray.GetAt(j);
+				long idummy = m_classes_array.GetAt(j);
 				ar << idummy;
-				idummy = m_classArray.GetAt(j + 1);
+				idummy = m_classes_array.GetAt(j + 1);
 				ar << idummy;
 			}
 			j += 2;
 		}
 	}
-	const auto nparms = 4; // save misc additional data (version 3 - feb 2003)
-	ar << nparms;
+	const auto n_parms = 4; // save misc additional data (version 3 - feb 2003)
+	ar << n_parms;
 	ar << m_icenter1SL;
 	ar << m_icenter2SL;
 	ar << m_imaxmin1SL;
@@ -151,60 +147,61 @@ void CSpikeList::writefileVersion6(CArchive& ar)
 	ar.Flush(); // end of storing -- flush data
 }
 
-void CSpikeList::readfileVersion6(CArchive& ar)
+void CSpikeList::read_file_version6(CArchive& ar)
 {
 	// read spike detection parameters array
-	ar >> m_encoding; // data encoding mode
-	ar >> m_binzero; //
-	ar >> m_samprate; // data acq sampling rate (Hz)
-	ar >> m_voltsperbin; // nb volts per bin (data)
-	ar >> m_cscomment; // spike channel descriptor
-	m_parm.Serialize(ar); // spike detection parameters
-	m_acqchan.Serialize(ar);
+	ar >> m_data_encoding_mode; 
+	ar >> m_bin_zero;
+	ar >> m_sampling_rate; 
+	ar >> m_volts_per_bin; 
+	ar >> m_spike_channel_description; 
+	m_detection_parameters.Serialize(ar); 
+	m_acquisition_channel.Serialize(ar);
 
 	WORD w1;
 	ar >> w1;
-	const int nspikes = w1;
-	m_spkelmts.SetSize(nspikes); // change size of the list
-	for (auto i = 0; i < nspikes; i++) // loop to save spike descriptors
+	const int n_spikes = w1;
+	m_spike_elements.SetSize(n_spikes);
+	for (auto i = 0; i < n_spikes; i++)
 	{
 		auto* se = new(CSpikeElemt);
 		ASSERT(se != NULL);
 		se->Serialize(ar);
-		m_spkelmts[i] = se;
+		m_spike_elements[i] = se;
 	}
-	m_spikebuffer.DeleteAllSpikes(); // delete data buffers
-	ar >> w1; // read spike length
-	m_spikebuffer.SetSpklen(w1); // reset parms/buffer
-	m_spikebuffer.m_binzero = GetAcqBinzero();
-	const auto nbytes = w1 * sizeof(short) * nspikes;
-	const auto lp_dest = m_spikebuffer.AllocateSpaceForSeveralSpikes(nspikes);
+	m_spike_buffer.DeleteAllSpikes();
+	WORD spike_length = 1;
+	ar >> spike_length; 
+	m_spike_buffer.SetSpklen(spike_length); 
+	m_spike_buffer.m_binzero = GetAcqBinzero();
+	const auto n_bytes = w1 * sizeof(short) * n_spikes;
+	const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
 
-	ar.Read(lp_dest, nbytes); // read data from disk
-	m_bextrema = FALSE;
-	m_bvalidclasslist = FALSE; // default: no valid array
-	m_nbclasses = 1;
-	m_classArray.SetSize(2); // default size - some functions
-	m_classArray.SetAt(0, 0); // access this array anyway so provide
-	m_classArray.SetAt(1, 0); // dummy values for them
+	ar.Read(lp_dest, n_bytes); // read data from disk
+	m_extrema_valid = FALSE;
+	m_valid_classes = FALSE; // default: no valid array
+	m_n_classes = 1;
+	m_classes_array.SetSize(2); // default size - some functions
+	m_classes_array.SetAt(0, 0); // access this array anyway so provide
+	m_classes_array.SetAt(1, 0); // dummy values for them
 	long dummy;
 	ar >> dummy;
-	m_bvalidclasslist = dummy;
-	if (m_bvalidclasslist) // read class list
+	m_valid_classes = dummy;
+	if (m_valid_classes) // read class list
 	{
 		ar >> dummy;
-		m_nbclasses = dummy;
-		if (m_nbclasses != 0)
+		m_n_classes = dummy;
+		if (m_n_classes != 0)
 		{
-			m_classArray.SetSize(m_nbclasses * 2);
+			m_classes_array.SetSize(m_n_classes * 2);
 			auto j = 0; // index to array elements
-			for (auto i = 0; i < m_nbclasses; i++)
+			for (auto i = 0; i < m_n_classes; i++)
 			{
 				ar >> dummy;
-				m_classArray.SetAt(j, dummy);
+				m_classes_array.SetAt(j, dummy);
 				j++; // class nb
 				ar >> dummy;
-				m_classArray.SetAt(j, dummy);
+				m_classes_array.SetAt(j, dummy);
 				j++; // nb spikes
 			}
 		}
@@ -221,60 +218,60 @@ void CSpikeList::readfileVersion6(CArchive& ar)
 	nparms--;
 }
 
-void CSpikeList::readfileVersion5(CArchive& ar)
+void CSpikeList::read_file_version5(CArchive& ar)
 {
 	// read spike detection parameters array
-	ar >> m_encoding; // data encoding mode
-	ar >> m_binzero; //
-	ar >> m_samprate; // data acq sampling rate (Hz)
-	ar >> m_voltsperbin; // nb volts per bin (data)
-	ar >> m_cscomment; // spike channel descriptor
-	m_parm.Serialize(ar); // spike detection parameters
-	m_acqchan.Serialize(ar);
+	ar >> m_data_encoding_mode; 
+	ar >> m_bin_zero; 
+	ar >> m_sampling_rate; 
+	ar >> m_volts_per_bin; 
+	ar >> m_spike_channel_description; 
+	m_detection_parameters.Serialize(ar); 
+	m_acquisition_channel.Serialize(ar);
 
 	WORD w1;
 	ar >> w1;
-	const int nspikes = w1;
-	m_spkelmts.SetSize(nspikes); // change size of the list
-	for (auto i = 0; i < nspikes; i++) // loop to save spike descriptors
+	const int n_spikes = w1;
+	m_spike_elements.SetSize(n_spikes); 
+	for (auto i = 0; i < n_spikes; i++) 
 	{
 		auto* se = new(CSpikeElemt);
 		ASSERT(se != NULL);
 		se->Read0(ar); // read spike element before version 6
-		m_spkelmts[i] = se;
+		m_spike_elements[i] = se;
 	}
-	m_spikebuffer.DeleteAllSpikes(); // delete data buffers
-	ar >> w1; // read spike length
-	m_spikebuffer.SetSpklen(w1); // reset parms/buffer
-	m_spikebuffer.m_binzero = GetAcqBinzero();
-	const auto nbytes = w1 * sizeof(short) * nspikes;
-	const auto lp_dest = m_spikebuffer.AllocateSpaceForSeveralSpikes(nspikes);
+	m_spike_buffer.DeleteAllSpikes();
+	ar >> w1;
+	m_spike_buffer.SetSpklen(w1); 
+	m_spike_buffer.m_binzero = GetAcqBinzero();
+	const auto nbytes = w1 * sizeof(short) * n_spikes;
+	const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
 
-	ar.Read(lp_dest, nbytes); // read data from disk
-	m_bextrema = FALSE;
-	m_bvalidclasslist = FALSE; // default: no valid array
-	m_nbclasses = 1;
-	m_classArray.SetSize(2); // default size - some functions
-	m_classArray.SetAt(0, 0); // access this array anyway so provide
-	m_classArray.SetAt(1, 0); // dummy values for them
+	ar.Read(lp_dest, nbytes);
+	m_extrema_valid = FALSE;
+	m_valid_classes = FALSE; // default: no valid array
+	m_n_classes = 1;
+	m_classes_array.SetSize(2); // default size - some functions
+	m_classes_array.SetAt(0, 0); // access this array anyway so provide
+	m_classes_array.SetAt(1, 0); // dummy values for them
 	long dummy;
 	ar >> dummy;
-	m_bvalidclasslist = dummy;
-	if (m_bvalidclasslist) // read class list
+	m_valid_classes = dummy;
+	if (m_valid_classes) // read class list
 	{
 		ar >> dummy;
-		m_nbclasses = dummy;
-		if (m_nbclasses != 0)
+		m_n_classes = dummy;
+		if (m_n_classes != 0)
 		{
-			m_classArray.SetSize(m_nbclasses * 2);
+			m_classes_array.SetSize(m_n_classes * 2);
 			int j = 0; // index to array elements
-			for (int i = 0; i < m_nbclasses; i++)
+			for (int i = 0; i < m_n_classes; i++)
 			{
 				ar >> dummy;
-				m_classArray.SetAt(j, dummy);
+				m_classes_array.SetAt(j, dummy);
 				j++; // class nb
 				ar >> dummy;
-				m_classArray.SetAt(j, dummy);
+				m_classes_array.SetAt(j, dummy);
 				j++; // nb spikes
 			}
 		}
@@ -291,91 +288,90 @@ void CSpikeList::readfileVersion5(CArchive& ar)
 	nparms--;
 }
 
-void CSpikeList::readfileVersion_before5(CArchive& ar, int iversion)
+void CSpikeList::read_file_version_before5(CArchive& ar, int version)
 {
 	// (1) version ID already loaded
 
 	// (2) load parameters associated to data acquisition
 	auto* pf_c = new CSpikeFromChan;
-	auto iobjects = 1;
-	if (iversion == 4)
-		ar >> iobjects;
-	for (auto i = 0; i < iobjects; i++)
+	auto i_objects = 1;
+	if (version == 4)
+		ar >> i_objects;
+	for (auto i = 0; i < i_objects; i++)
 	{
 		pf_c->Serialize(ar);
 		if (i > 0)
 			continue;
-		m_encoding = pf_c->encoding; // data encoding mode
-		m_binzero = pf_c->binzero; // 2048
-		m_samprate = pf_c->samprate; // data acq sampling rate (Hz)
-		m_voltsperbin = pf_c->voltsperbin; // nb volts per bin (data)
-		m_cscomment = pf_c->comment; // spike channel descriptor
-		m_parm = pf_c->parm; // spike detection parameters
+		m_data_encoding_mode = pf_c->encoding; 
+		m_bin_zero = pf_c->binzero; 
+		m_sampling_rate = pf_c->samprate; 
+		m_volts_per_bin = pf_c->voltsperbin;
+		m_spike_channel_description = pf_c->comment; 
+		m_detection_parameters = pf_c->parm; 
 	}
 	delete pf_c;
-	// acquisition parameters
-	m_acqchan.Serialize(ar);
+	m_acquisition_channel.Serialize(ar);
 
 	// ----------------------------------------------------
 	// (3) load SpikeElement items
 	WORD w1;
 	ar >> w1;
 	const int nspikes = w1;
-	m_spkelmts.SetSize(nspikes); // change size of the list
+	m_spike_elements.SetSize(nspikes); // change size of the list
 	for (auto i = 0; i < nspikes; i++)
 	{
 		auto se = new(CSpikeElemt);
 		ASSERT(se != NULL);
 		se->Read0(ar); // read spike element before version 1
-		m_spkelmts[i] = se;
+		m_spike_elements[i] = se;
 	}
 
 	// ----------------------------------------------------
 	// (4) load spike raw data
-	m_spikebuffer.DeleteAllSpikes(); // delete data buffers
+	m_spike_buffer.DeleteAllSpikes(); // delete data buffers
 	ar >> w1; // read spike length
-	m_spikebuffer.SetSpklen(w1); // reset parms/buffer
-	m_spikebuffer.m_binzero = GetAcqBinzero();
+	m_spike_buffer.SetSpklen(w1); // reset parms/buffer
+	m_spike_buffer.m_binzero = GetAcqBinzero();
 
 	// loop through all data buffers
 	const auto nbytes = w1 * sizeof(short) * nspikes;
-	auto lp_dest = m_spikebuffer.AllocateSpaceForSeveralSpikes(nspikes);
+	auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(nspikes);
 	ar.Read(lp_dest, nbytes); // read data from disk
-	m_bextrema = FALSE;
+	m_extrema_valid = FALSE;
 
 	// ----------------------------------------------------
 	// (5) load class array if valid flag
 	// reset elements of the list
-	m_bvalidclasslist = FALSE; // default: no valid array
-	m_nbclasses = 1;
-	m_classArray.SetSize(2); // default size - some functions
-	m_classArray.SetAt(0, 0); // access this array anyway so provide
-	m_classArray.SetAt(1, 0); // dummy values for them
+	m_valid_classes = FALSE; // default: no valid array
+	m_n_classes = 1;
+	m_classes_array.SetSize(2); // default size - some functions
+	m_classes_array.SetAt(0, 0); // access this array anyway so provide
+	m_classes_array.SetAt(1, 0); // dummy values for them
 
 	// load flag and load elements only if valid
 	long dummy;
 	ar >> dummy;
-	m_bvalidclasslist = dummy;
-	if (m_bvalidclasslist) // read class list
+	m_valid_classes = dummy;
+	if (m_valid_classes) // read class list
 	{
 		ar >> dummy;
-		m_nbclasses = dummy;
-		if (m_nbclasses != 0)
+		m_n_classes = dummy;
+		if (m_n_classes != 0)
 		{
-			m_classArray.SetSize(m_nbclasses * 2);
+			m_classes_array.SetSize(m_n_classes * 2);
 			int j = 0; // index to array elements
-			for (int i = 0; i < m_nbclasses; i++)
+			for (int i = 0; i < m_n_classes; i++)
 			{
 				ar >> dummy;
-				m_classArray.SetAt(j, dummy);
+				m_classes_array.SetAt(j, dummy);
 				j++; // class nb
 				ar >> dummy;
-				m_classArray.SetAt(j, dummy);
+				m_classes_array.SetAt(j, dummy);
 				j++; // nb spikes
 			}
 		}
 	}
-	if (iversion > 2)
+	if (version > 2)
 	{
 		int nparms;
 		ar >> nparms;
@@ -388,51 +384,51 @@ void CSpikeList::readfileVersion_before5(CArchive& ar, int iversion)
 		ar >> m_imaxmin2SL;
 		nparms--;
 	}
-	if (iversion < 3)
+	if (version < 3)
 	{
 		m_icenter1SL = 0;
-		m_icenter2SL = m_parm.prethreshold;
+		m_icenter2SL = m_detection_parameters.prethreshold;
 		m_imaxmin1SL = m_icenter2SL;
-		m_imaxmin2SL = m_spikebuffer.GetSpklen() - 1;
+		m_imaxmin2SL = m_spike_buffer.GetSpklen() - 1;
 	}
 }
 
-void CSpikeList::deleteArrays()
+void CSpikeList::delete_arrays()
 {
-	int nspikes = m_spkelmts.GetSize();
+	int nspikes = m_spike_elements.GetSize();
 	if (nspikes > 0)
 	{
 		for (auto i = nspikes - 1; i >= 0; i--)
 		{
-			auto* pspk_element = m_spkelmts.GetAt(i);
+			auto* pspk_element = m_spike_elements.GetAt(i);
 			delete pspk_element;
 		}
-		m_spkelmts.RemoveAll();
+		m_spike_elements.RemoveAll();
 	}
 }
 
 int CSpikeList::RemoveSpike(int spikeindex)
 {
-	if (spikeindex <= m_spkelmts.GetUpperBound())
+	if (spikeindex <= m_spike_elements.GetUpperBound())
 	{
-		const auto pspk_element = m_spkelmts.GetAt(spikeindex);
+		const auto pspk_element = m_spike_elements.GetAt(spikeindex);
 		delete pspk_element;
-		m_spkelmts.RemoveAt(spikeindex);
+		m_spike_elements.RemoveAt(spikeindex);
 	}
-	return m_spkelmts.GetSize();
+	return m_spike_elements.GetSize();
 }
 
 BOOL CSpikeList::IsAnySpikeAround(long iitime, int jitter, int& jspk, int ichan)
 {
 	// search spike index of first spike which time is > to present one
 	jspk = 0;
-	if (m_spkelmts.GetSize() > 0)
+	if (m_spike_elements.GetSize() > 0)
 	{
 		// loop to find position of the new spike
-		for (auto j = m_spkelmts.GetUpperBound(); j >= 0; j--)
+		for (auto j = m_spike_elements.GetUpperBound(); j >= 0; j--)
 		{
 			// assumed ordered list
-			if (iitime >= m_spkelmts[j]->get_time())
+			if (iitime >= m_spike_elements[j]->get_time())
 			{
 				jspk = j + 1; // new spike should be inserted in the array
 				break; // break loop, keep jspk as final index
@@ -444,7 +440,7 @@ BOOL CSpikeList::IsAnySpikeAround(long iitime, int jitter, int& jspk, int ichan)
 	long deltatime; // estimate dist of new spike / neighbours
 	if (jspk > 0) // skip case where no spikes are in the list
 	{
-		deltatime = m_spkelmts[jspk - 1]->get_time() - iitime;
+		deltatime = m_spike_elements[jspk - 1]->get_time() - iitime;
 		if (labs(deltatime) <= jitter) // allow a detection jitter of 2 (?)
 		{
 			jspk--; // exit if condition met
@@ -452,10 +448,10 @@ BOOL CSpikeList::IsAnySpikeAround(long iitime, int jitter, int& jspk, int ichan)
 		}
 	}
 
-	if (jspk <= m_spkelmts.GetUpperBound()) // deal only with case of jspk within the list
+	if (jspk <= m_spike_elements.GetUpperBound()) // deal only with case of jspk within the list
 	{
-		deltatime = m_spkelmts[jspk]->get_time() - iitime;
-		const auto ichan2 = m_spkelmts[jspk]->get_source_channel();
+		deltatime = m_spike_elements[jspk]->get_time() - iitime;
+		const auto ichan2 = m_spike_elements[jspk]->get_source_channel();
 		if (ichan2 == ichan && labs(deltatime) <= jitter) // allow a detection jitter of 2 (?)
 			return TRUE; // exit if condition met
 	}
@@ -476,13 +472,13 @@ int CSpikeList::AddSpike(short* lp_source, const int nchans, const long iitime, 
 	if (!bfound)
 	{
 		// create spike element and add pointer to array
-		auto* se = new CSpikeElemt(iitime, sourcechan, m_totalmax, m_totalmin, 0, iclass, 0);
+		auto* se = new CSpikeElemt(iitime, sourcechan, m_maximum_over_all_spikes, m_minimum_over_all_spikes, 0, iclass, 0);
 		ASSERT(se != NULL);
-		m_spkelmts.InsertAt(jspk, se); // add element to the list of spikes
+		m_spike_elements.InsertAt(jspk, se); // add element to the list of spikes
 
 		if (lp_source != nullptr)
 		{
-			m_spikebuffer.AllocateSpaceForSpikeAt(jspk); // add buffer area
+			m_spike_buffer.AllocateSpaceForSpikeAt(jspk); // add buffer area
 			TransferDataToSpikeBuffer(jspk, lp_source, nchans, TRUE); // add spike
 		}
 	}
@@ -491,7 +487,7 @@ int CSpikeList::AddSpike(short* lp_source, const int nchans, const long iitime, 
 
 BOOL CSpikeList::TransferDataToSpikeBuffer(const int no, short* lp_source, const int nchans, const BOOL b_adjust)
 {
-	if (no < 0 || no >= m_spkelmts.GetSize())
+	if (no < 0 || no >= m_spike_elements.GetSize())
 		return FALSE;
 
 	// compute avg from m_icenter1SL to m_icenter2SL
@@ -534,16 +530,16 @@ BOOL CSpikeList::TransferDataToSpikeBuffer(const int no, short* lp_source, const
 		if (m_icenter1SL - m_icenter2SL != 0)
 		{
 			offset = lavg / (m_icenter2SL - m_icenter1SL + 1);
-			offset -= m_spikebuffer.m_binzero;
+			offset -= m_spike_buffer.m_binzero;
 		}
 	}
 
 	// save values computed here within spike element structure
-	auto* se = m_spkelmts.GetAt(no);
+	auto* se = m_spike_elements.GetAt(no);
 	se->SetSpikeMaxMin(max - offset, min - offset, dmaxmin);
 	se->SetSpikeAmplitudeOffset(offset);
-	auto lp_dest = m_spikebuffer.GetSpike(no); // get pointer to buffer
-	for (auto i = m_spikebuffer.GetSpklen(); i > 0; i--) // loop to copy data
+	auto lp_dest = m_spike_buffer.GetSpike(no); // get pointer to buffer
+	for (auto i = m_spike_buffer.GetSpklen(); i > 0; i--) // loop to copy data
 	{
 		*lp_dest = *lp_source - offset; // copy data
 		lp_dest++; // update destination pointer
@@ -554,12 +550,12 @@ BOOL CSpikeList::TransferDataToSpikeBuffer(const int no, short* lp_source, const
 
 void CSpikeList::MeasureSpikeMaxMin(const int index, int* max, int* imax, int* min, int* imin)
 {
-	auto lp_buffer = m_spikebuffer.GetSpike(index); // get pointer to buffer
+	auto lp_buffer = m_spike_buffer.GetSpike(index); // get pointer to buffer
 	int val = *lp_buffer;
 	*max = val; // assume offset between points = 1 (short)
 	*min = val; // init max and min value
 	*imin = *imax = 0;
-	for (auto i = 1; i < m_spikebuffer.GetSpklen(); i++) // loop to scan data
+	for (auto i = 1; i < m_spike_buffer.GetSpklen(); i++) // loop to scan data
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -578,14 +574,14 @@ void CSpikeList::MeasureSpikeMaxMin(const int index, int* max, int* imax, int* m
 
 void CSpikeList::MeasureSpikeMaxThenMin(const int index, int* max, int* imax, int* min, int* imin)
 {
-	auto lp_buffer = m_spikebuffer.GetSpike(index); // get pointer to buffer
+	auto lp_buffer = m_spike_buffer.GetSpike(index); // get pointer to buffer
 	auto lp_bmax = lp_buffer;
 	int val = *lp_buffer;
 	*max = val; // assume offset between points = 1 (short)
 	*imax = 0;
 
 	// first search for max
-	for (auto i = 1; i < m_spikebuffer.GetSpklen(); i++) // loop to scan data
+	for (auto i = 1; i < m_spike_buffer.GetSpklen(); i++) // loop to scan data
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -601,7 +597,7 @@ void CSpikeList::MeasureSpikeMaxThenMin(const int index, int* max, int* imax, in
 	lp_buffer = lp_bmax;
 	*min = *max;
 	*imin = *imax;
-	for (auto i = *imax; i < m_spikebuffer.GetSpklen(); i++) // loop to scan data
+	for (auto i = *imax; i < m_spike_buffer.GetSpklen(); i++) // loop to scan data
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -616,7 +612,7 @@ void CSpikeList::MeasureSpikeMaxThenMin(const int index, int* max, int* imax, in
 void CSpikeList::MeasureSpikeMaxMinEx(const int index, int* max, int* imax, int* min, int* imin, const int ifirst,
                                       const int ilast)
 {
-	auto lp_buffer = m_spikebuffer.GetSpike(index);
+	auto lp_buffer = m_spike_buffer.GetSpike(index);
 	lp_buffer += ifirst; // get pointer to buffer
 	int val = *lp_buffer;
 	*max = val; // assume offset between points = 1 (short)
@@ -642,7 +638,7 @@ void CSpikeList::MeasureSpikeMaxMinEx(const int index, int* max, int* imax, int*
 void CSpikeList::MeasureSpikeMaxThenMinEx(const int index, int* max, int* imax, int* min, int* imin, const int ifirst,
                                           const int ilast)
 {
-	auto lp_buffer = m_spikebuffer.GetSpike(index);
+	auto lp_buffer = m_spike_buffer.GetSpike(index);
 	lp_buffer += ifirst; // get pointer to buffer
 	auto lp_bmax = lp_buffer;
 	int val = *lp_buffer;
@@ -680,10 +676,10 @@ void CSpikeList::MeasureSpikeMaxThenMinEx(const int index, int* max, int* imax, 
 
 void CSpikeList::GetTotalMaxMin(const BOOL b_recalc, int* max, int* min)
 {
-	if (b_recalc || !m_bextrema)
+	if (b_recalc || !m_extrema_valid)
 	{
 		auto lmin = 0, lmax = 65535;
-		int nspikes = m_spkelmts.GetCount();
+		int nspikes = m_spike_elements.GetCount();
 		// first find valid max and min
 		for (auto index = 0; index < nspikes; index++)
 		{
@@ -693,21 +689,21 @@ void CSpikeList::GetTotalMaxMin(const BOOL b_recalc, int* max, int* min)
 				break;
 			}
 		}
-		m_totalmin = lmin; // init max with first value
-		m_totalmax = lmax; // init min with first value
+		m_minimum_over_all_spikes = lmin; // init max with first value
+		m_maximum_over_all_spikes = lmax; // init min with first value
 		for (auto index = 0; index < nspikes; index++)
 		{
 			if (GetSpikeClass(index) >= 0)
 			{
 				GetSpikeExtrema(index, &lmax, &lmin);
-				if (lmax > m_totalmax) m_totalmax = lmax;
-				if (lmin < m_totalmin) m_totalmin = lmin;
+				if (lmax > m_maximum_over_all_spikes) m_maximum_over_all_spikes = lmax;
+				if (lmin < m_minimum_over_all_spikes) m_minimum_over_all_spikes = lmin;
 			}
 		}
-		m_bextrema = TRUE;
+		m_extrema_valid = TRUE;
 	}
-	*max = m_totalmax;
-	*min = m_totalmin;
+	*max = m_maximum_over_all_spikes;
+	*min = m_minimum_over_all_spikes;
 }
 
 BOOL CSpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
@@ -718,43 +714,43 @@ BOOL CSpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
 
 	// copy data from CObArray
 	if (pFC != nullptr)
-		m_parm = *pFC;
+		m_detection_parameters = *pFC;
 
 	auto flag = false;
 	if (p_data_file != nullptr)
 	{
 		const auto pwave_format = p_data_file->GetpWaveFormat();
-		m_encoding = pwave_format->mode_encoding;
-		m_binzero = pwave_format->binzero;
-		m_samprate = pwave_format->sampling_rate_per_channel;
-		flag = p_data_file->GetWBVoltsperBin(m_parm.detectChan, &m_voltsperbin);
+		m_data_encoding_mode = pwave_format->mode_encoding;
+		m_bin_zero = pwave_format->binzero;
+		m_sampling_rate = pwave_format->sampling_rate_per_channel;
+		flag = p_data_file->GetWBVoltsperBin(m_detection_parameters.detectChan, &m_volts_per_bin);
 	}
 
 	if (!flag)
 	{
-		m_bextrema = TRUE;
-		m_totalmin = 2048;
-		m_totalmax = 2100;
+		m_extrema_valid = TRUE;
+		m_minimum_over_all_spikes = 2048;
+		m_maximum_over_all_spikes = 2100;
 	}
 
 	// reset buffers, list, spk params
-	m_spikebuffer.SetSpklen(m_parm.extractNpoints);
-	m_spikebuffer.m_binzero = m_binzero;
+	m_spike_buffer.SetSpklen(m_detection_parameters.extractNpoints);
+	m_spike_buffer.m_binzero = m_bin_zero;
 
 	// reset classes
-	m_bvalidclasslist = FALSE; // default: no valid array
-	m_nbclasses = 0;
-	m_classArray.SetSize(2); // default size - some functions
-	m_classArray.SetAt(0, 0); // access this array anyway so provide
-	m_classArray.SetAt(1, 0); // dummy values for them
+	m_valid_classes = FALSE; // default: no valid array
+	m_n_classes = 0;
+	m_classes_array.SetSize(2); // default size - some functions
+	m_classes_array.SetAt(0, 0); // access this array anyway so provide
+	m_classes_array.SetAt(1, 0); // dummy values for them
 	return TRUE;
 }
 
 void CSpikeList::EraseData()
 {
-	deleteArrays();
-	m_spikebuffer.DeleteAllSpikes();
-	m_selspike = -1;
+	delete_arrays();
+	m_spike_buffer.DeleteAllSpikes();
+	m_selected_spike = -1;
 }
 
 int CSpikeList::SetSpikeFlag(int spikeno, BOOL bFlag)
@@ -764,7 +760,7 @@ int CSpikeList::SetSpikeFlag(int spikeno, BOOL bFlag)
 	{
 		// first look if spikeno is already flagged
 		if (!GetSpikeFlag(spikeno))
-			m_spike_flagged.Add(spikeno);
+			m_spikes_flagged_.Add(spikeno);
 	}
 
 	// remove flag
@@ -772,16 +768,16 @@ int CSpikeList::SetSpikeFlag(int spikeno, BOOL bFlag)
 	{
 		// find spikeno within the array and remove it
 		auto index = -1;
-		for (auto i = m_spike_flagged.GetCount() - 1; i >= 0; i--)
+		for (auto i = m_spikes_flagged_.GetCount() - 1; i >= 0; i--)
 		{
-			if (m_spike_flagged.GetAt(i) == spikeno)
+			if (m_spikes_flagged_.GetAt(i) == spikeno)
 			{
 				index = i;
 				break;
 			}
 		}
 		if (index >= 0)
-			m_spike_flagged.RemoveAt(index);
+			m_spikes_flagged_.RemoveAt(index);
 	}
 	// return the number of elements within the array
 	return GetSpikeFlagArrayCount();
@@ -791,9 +787,9 @@ int CSpikeList::ToggleSpikeFlag(int spikeno)
 {
 	// find spike within array
 	auto index = -1;
-	for (auto i = m_spike_flagged.GetCount() - 1; i >= 0; i--)
+	for (auto i = m_spikes_flagged_.GetCount() - 1; i >= 0; i--)
 	{
-		if (m_spike_flagged.GetAt(i) == spikeno)
+		if (m_spikes_flagged_.GetAt(i) == spikeno)
 		{
 			index = i;
 			break;
@@ -802,29 +798,29 @@ int CSpikeList::ToggleSpikeFlag(int spikeno)
 
 	// if found: remove it
 	if (index >= 0)
-		m_spike_flagged.RemoveAt(index);
+		m_spikes_flagged_.RemoveAt(index);
 
 		// if not found, add it
 	else
-		m_spike_flagged.Add(spikeno);
+		m_spikes_flagged_.Add(spikeno);
 
 	return GetSpikeFlagArrayCount();
 }
 
 void CSpikeList::SetSingleSpikeFlag(int spikeno)
 {
-	if (m_spike_flagged.GetCount() != 1)
-		m_spike_flagged.SetSize(1);
-	m_spike_flagged.SetAt(0, spikeno);
+	if (m_spikes_flagged_.GetCount() != 1)
+		m_spikes_flagged_.SetSize(1);
+	m_spikes_flagged_.SetAt(0, spikeno);
 }
 
 BOOL CSpikeList::GetSpikeFlag(int spikeno)
 {
 	BOOL bFlag = FALSE;
 	// search if spikeno is in the list
-	for (int i = m_spike_flagged.GetCount() - 1; i >= 0; i--)
+	for (int i = m_spikes_flagged_.GetCount() - 1; i >= 0; i--)
 	{
-		if (m_spike_flagged.GetAt(i) == spikeno)
+		if (m_spikes_flagged_.GetAt(i) == spikeno)
 		{
 			bFlag = TRUE;
 			break;
@@ -837,13 +833,13 @@ void CSpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 {
 	// first clear flags of spikes within the flagged array which fall within limits
 	long l_time;
-	for (auto i = m_spike_flagged.GetCount() - 1; i >= 0; i--)
+	for (auto i = m_spikes_flagged_.GetCount() - 1; i >= 0; i--)
 	{
-		const int ispik = m_spike_flagged.GetAt(i);
+		const int ispik = m_spikes_flagged_.GetAt(i);
 		l_time = GetSpikeTime(ispik);
 		if (l_time < l_first || l_time > l_last)
 			continue;
-		m_spike_flagged.RemoveAt(i);
+		m_spikes_flagged_.RemoveAt(i);
 	}
 	// if bSet was set to FALSE, the job is done
 	if (bSet == FALSE)
@@ -855,7 +851,7 @@ void CSpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 		l_time = GetSpikeTime(i);
 		if (l_time < l_first || l_time > l_last)
 			continue;
-		m_spike_flagged.Add(i);
+		m_spikes_flagged_.Add(i);
 	}
 }
 
@@ -874,14 +870,14 @@ void CSpikeList::SelectSpikeswithinRect(int vmin, int vmax, long l_first, long l
 		if (max > vmax) continue;
 		if (min < vmin) continue;
 		// found within boundaries= remove spike from array
-		m_spike_flagged.Add(i);
+		m_spikes_flagged_.Add(i);
 	}
 }
 
 void CSpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 {
 	// no spikes flagged, return dummy values
-	if (m_spike_flagged.GetCount() < 1)
+	if (m_spikes_flagged_.GetCount() < 1)
 	{
 		l_first = -1;
 		l_last = -1;
@@ -889,13 +885,13 @@ void CSpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 	}
 
 	// spikes flagged: init max and min to the first spike time
-	l_first = GetSpikeTime(m_spike_flagged.GetAt(0));
+	l_first = GetSpikeTime(m_spikes_flagged_.GetAt(0));
 	l_last = l_first;
 
 	// search if spikeno is in the list
-	for (auto i = m_spike_flagged.GetCount() - 1; i >= 0; i--)
+	for (auto i = m_spikes_flagged_.GetCount() - 1; i >= 0; i--)
 	{
-		const auto lTime = GetSpikeTime(m_spike_flagged.GetAt(i));
+		const auto lTime = GetSpikeTime(m_spikes_flagged_.GetAt(i));
 		if (lTime < l_first)
 			l_first = lTime;
 		if (lTime > l_last)
@@ -905,16 +901,16 @@ void CSpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 
 void CSpikeList::OffsetSpikeAmplitude(int index, int valfirst, int vallast, int center)
 {
-	auto lp_buffer = m_spikebuffer.GetSpike(index); // get pointer to buffer
+	auto lp_buffer = m_spike_buffer.GetSpike(index); // get pointer to buffer
 	const auto diff = vallast - valfirst; // difference
 	int max = *lp_buffer; // compute max/min on the fly
 	auto min = max; // provisional max and minimum
 	auto imax = 0;
 	auto imin = vallast - valfirst;
-	for (auto i = 0; i < m_spikebuffer.GetSpklen(); i++) // loop to scan data
+	for (auto i = 0; i < m_spike_buffer.GetSpklen(); i++) // loop to scan data
 	{
 		// offset point i
-		*lp_buffer += valfirst + MulDiv(diff, i, m_spikebuffer.GetSpklen());
+		*lp_buffer += valfirst + MulDiv(diff, i, m_spike_buffer.GetSpklen());
 		if (*lp_buffer > max) // new max?
 		{
 			max = *lp_buffer;
@@ -929,16 +925,16 @@ void CSpikeList::OffsetSpikeAmplitude(int index, int valfirst, int vallast, int 
 	}
 	const auto dmaxmin = imin - imax; // assume that min comes after max in a "normal" spike
 
-	auto offset = m_spkelmts[index]->get_amplitude_offset();
+	auto offset = m_spike_elements[index]->get_amplitude_offset();
 	offset -= valfirst; // change spike offset
-	m_spkelmts[index]->SetSpikeAmplitudeOffset(offset);
-	m_bextrema = FALSE;
-	m_spkelmts[index]->SetSpikeMaxMin(max, min, dmaxmin);
+	m_spike_elements[index]->SetSpikeAmplitudeOffset(offset);
+	m_extrema_valid = FALSE;
+	m_spike_elements[index]->SetSpikeMaxMin(max, min, dmaxmin);
 }
 
 void CSpikeList::CenterSpikeAmplitude(int spkindex, int ifirst, int ilast, WORD method)
 {
-	auto lp_buffer = m_spikebuffer.GetSpike(spkindex); // get pointer to buffer
+	auto lp_buffer = m_spike_buffer.GetSpike(spkindex); // get pointer to buffer
 	lp_buffer += ifirst;
 	int valfirst; // contains offset
 	auto imax = 0;
@@ -990,29 +986,29 @@ void CSpikeList::CenterSpikeAmplitude(int spkindex, int ifirst, int ilast, WORD 
 	p_se->SetSpikeAmplitudeOffset(p_se->get_amplitude_offset() + valfirst);
 	// then offset data (max & min ibidem)
 	p_se->SetSpikeMaxMin(max - valfirst, min - valfirst, dmaxmin);
-	lp_buffer = m_spikebuffer.GetSpike(spkindex); // get pointer to buffer
-	for (auto i = 0; i < m_spikebuffer.GetSpklen(); i++, lp_buffer++)
+	lp_buffer = m_spike_buffer.GetSpike(spkindex); // get pointer to buffer
+	for (auto i = 0; i < m_spike_buffer.GetSpklen(); i++, lp_buffer++)
 		*lp_buffer -= valfirst;
-	m_bextrema = FALSE;
+	m_extrema_valid = FALSE;
 }
 
 long CSpikeList::UpdateClassList()
 {
 	const auto nspikes = GetTotalSpikes();
-	m_nbclasses = 1; // erase nb of classes
-	m_classArray.SetSize(0); // erase array
-	m_bvalidclasslist = TRUE; // class list OK when exit
+	m_n_classes = 1; // erase nb of classes
+	m_classes_array.SetSize(0); // erase array
+	m_valid_classes = TRUE; // class list OK when exit
 	if (nspikes == 0)
 	{
 		// no spikes? dummy parameters
-		m_classArray.Add(0); // dummy class
-		m_classArray.Add(0); // zero spikes
+		m_classes_array.Add(0); // dummy class
+		m_classes_array.Add(0); // zero spikes
 		return 0L; // done
 	}
 
-	m_classArray.Add(GetSpikeClass(0)); // init with class of first spike
-	m_classArray.Add(1); // nb items found yet = 1
-	m_nbclasses = 1; // total nb of classes
+	m_classes_array.Add(GetSpikeClass(0)); // init with class of first spike
+	m_classes_array.Add(1); // nb items found yet = 1
+	m_n_classes = 1; // total nb of classes
 
 	// loop over all spikes of the list
 	for (auto i = 1; i < nspikes; i++)
@@ -1021,37 +1017,37 @@ long CSpikeList::UpdateClassList()
 		auto arrayclass = 0;
 
 		// loop over all existing classes to find if there is one
-		for (auto j = 0; j < m_nbclasses; j++)
+		for (auto j = 0; j < m_n_classes; j++)
 		{
 			arrayclass = GetclassID(j); // class ID
 			if (cla == arrayclass) // class OK?
 			{
-				m_classArray[j * 2 + 1]++; // increment spike count
+				m_classes_array[j * 2 + 1]++; // increment spike count
 				break; // exit spk class loop
 			}
 			if (cla < arrayclass) // insert new class?
 			{
-				m_classArray.InsertAt(j * 2, cla); // build new item
-				m_classArray.InsertAt(j * 2 + 1, 1); // set nb spk
-				m_nbclasses++; // exit spk class loop
+				m_classes_array.InsertAt(j * 2, cla); // build new item
+				m_classes_array.InsertAt(j * 2 + 1, 1); // set nb spk
+				m_n_classes++; // exit spk class loop
 				break;
 			}
 		}
 		// test if cla not found within array
 		if (cla > arrayclass)
 		{
-			m_classArray.Add(cla); // build new item
-			m_classArray.Add(1); // set nb spk
-			m_nbclasses++; // update nb classes
+			m_classes_array.Add(cla); // build new item
+			m_classes_array.Add(1); // set nb spk
+			m_n_classes++; // update nb classes
 		}
 	}
-	return m_nbclasses;
+	return m_n_classes;
 }
 
 void CSpikeList::ChangeSpikeClassID(int oldclaID, int newclaID)
 {
 	// first find valid max and min
-	for (auto index = 0; index < m_spkelmts.GetSize(); index++)
+	for (auto index = 0; index < m_spike_elements.GetSize(); index++)
 	{
 		if (GetSpikeClass(index) == oldclaID)
 			SetSpikeClass(index, newclaID);
@@ -1064,7 +1060,7 @@ void CSpikeList::Measure_case0_AmplitudeMinToMax(const int t1, const int t2)
 	for (auto ispike = 0; ispike < nspikes; ispike++)
 	{
 		const auto spike_element = GetSpikeElemt(ispike);
-		auto lp_buffer = m_spikebuffer.GetSpike(ispike);
+		auto lp_buffer = m_spike_buffer.GetSpike(ispike);
 		lp_buffer += t1;
 		int val = *lp_buffer;
 		auto max = val;
@@ -1099,7 +1095,7 @@ void CSpikeList::Measure_case1_AmplitudeAtT(const int t)
 	for (auto ispike = 0; ispike < nspikes; ispike++)
 	{
 		const auto spike_element = GetSpikeElemt(ispike);
-		auto lp_buffer = m_spikebuffer.GetSpike(ispike);
+		auto lp_buffer = m_spike_buffer.GetSpike(ispike);
 		lp_buffer += t;
 		const int val = *lp_buffer;
 		spike_element->set_y1(val);
@@ -1113,7 +1109,7 @@ void CSpikeList::Measure_case2_AmplitudeAtT2MinusAtT1(const int t1, const int t2
 	for (auto ispike = 0; ispike < nspikes; ispike++)
 	{
 		const auto spike_element = GetSpikeElemt(ispike);
-		const auto lp_buffer = m_spikebuffer.GetSpike(ispike);
+		const auto lp_buffer = m_spike_buffer.GetSpike(ispike);
 		const int val1 = *(lp_buffer + t1);
 		const int val2 = *(lp_buffer + t2);
 		spike_element->set_y1(val2 - val1);

@@ -373,7 +373,7 @@ void CViewSpikes::selectSpike(int spikeno)
 	if (spikeno >= m_pSpkList->GetTotalSpikes())
 		spikeno = -1;
 	m_spikeno = spikeno;
-	m_pSpkList->m_selspike = spikeno;
+	m_pSpkList->m_selected_spike = spikeno;
 	m_spkClassListBox.SelectSpike(spikeno);
 
 	m_spikenoclass = -1;

@@ -29,7 +29,7 @@ public:
 	CSpikeList();
 	~CSpikeList() override;
 
-	int m_selspike = -1;
+	int m_selected_spike = -1;
 	int m_jitterSL = 2;
 	int m_icenter1SL = 0;
 	int m_icenter2SL = 60;
@@ -39,104 +39,104 @@ public:
 	// Description
 protected:
 	// (0) ---------------infos about file version and ID
-	WORD m_wversion{};
-	CString m_IDstring = _T("Awave Spike file v");
+	WORD m_version = 6;		// aug 2013 change spike element
+	CString ID_string = _T("Awave Spike file v");
 
 	// (1) ---------------infos about data acquisition and spike detection ------------------
-	CWaveChan m_acqchan{}; // description acquisition channel
-	WORD m_encoding{}; // data encoding mode
-	long m_binzero{}; // 2048
-	float m_samprate{}; // data acq sampling rate (Hz)
-	float m_voltsperbin{}; // nb volts per bin (data)
-	SPKDETECTPARM m_parm{}; // detection parameters
-	CString m_cscomment; // spike channel descriptor (unused but archived)
+	CWaveChan m_acquisition_channel{};	
+	WORD m_data_encoding_mode{};
+	long m_bin_zero = 4096; 
+	float m_sampling_rate = 10000.f;
+	float m_volts_per_bin = 0.001f; 
+	SPKDETECTPARM m_detection_parameters{};
+	CString m_spike_channel_description;
 
 	// (2) -------------ordered spike list with class, time, etc-----------------------------
 
-	BOOL m_bextrema = false; // extrema valid / no
-	int m_totalmin = 0; // min of all spikes
-	int m_totalmax = 0; // max of all spikes
-	CArray<CSpikeElemt*, CSpikeElemt*> m_spkelmts{}; // array of SpikeElemts
+	BOOL m_extrema_valid = false;
+	int m_minimum_over_all_spikes = 0; 
+	int m_maximum_over_all_spikes = 0; 
+	CArray<CSpikeElemt*, CSpikeElemt*> m_spike_elements{}; // array of SpikeElemts
 
 	// (3) -------------unordered data buffers with spikes extracted from acq data-----------
 
-	CSpikeBuffer m_spikebuffer{}; // spike data buffer
+	CSpikeBuffer m_spike_buffer{}; // spike data buffer
 
 	// (4) miscellaneous
 
-	BOOL m_bsaveartefacts = false; // save (yes/no) artefacts - default = FALSE
-	BOOL m_bvalidclasslist = false; // class list (array with classnb & nb spikes/class)
-	int m_nbclasses = 0;
-	CArray<int, int> m_classArray{}; // classes found and nb of spikes within them
+	BOOL m_b_save_artefacts = false; // save (yes/no) artefacts - default = FALSE
+	BOOL m_valid_classes = false; // class list (array with classnb & nb spikes/class)
+	int m_n_classes = 0;
+	CArray<int, int> m_classes_array{}; // classes found and nb of spikes within them
 	// TODO enrich class to make use of indexes et al apparent into a class
 
 	//  (5) list of spikes flagged
 
-	CArray<int, int> m_spike_flagged;
+	CArray<int, int> m_spikes_flagged_;
 
 	// Operations
 public:
-	WORD GetVersion() const { return m_wversion; }
-	BOOL IsClassListValid() const { return m_bvalidclasslist; }
+	WORD GetVersion() const { return m_version; }
+	BOOL IsClassListValid() const { return m_valid_classes; }
 
 	int GetNbclasses() const
 	{
-		if (m_bvalidclasslist) return m_nbclasses;
+		if (m_valid_classes) return m_n_classes;
 		return -1;
 	}
 
-	int GetclassID(int i) const { return m_classArray.GetAt(i * 2); }
-	int GetclassNbspk(int i) const { return m_classArray.GetAt(i * 2 + 1); }
-	void SetclassNbspk(int no, int nbspk) { m_classArray.SetAt(no * 2 + 1, nbspk); }
+	int GetclassID(int i) const { return m_classes_array.GetAt(i * 2); }
+	int GetclassNbspk(int i) const { return m_classes_array.GetAt(i * 2 + 1); }
+	void SetclassNbspk(int no, int nbspk) { m_classes_array.SetAt(no * 2 + 1, nbspk); }
 
-	int GetSpikeClass(int no) const { return m_spkelmts[no]->get_class(); }
-	long GetSpikeTime(int no) const { return m_spkelmts[no]->get_time(); }
-	int GetSpikeChan(int no) const { return m_spkelmts[no]->get_source_channel(); }
-	void GetSpikeExtrema(int no, int* max, int* min) { m_spkelmts[no]->GetSpikeExtrema(max, min); }
-	void GetSpikeMaxmin(int no, int* max, int* min, int* dmaxmin) { m_spkelmts[no]->GetSpikeMaxMin(max, min, dmaxmin); }
-	int GetSpikeAmplitudeOffset(int no) const { return m_spkelmts[no]->get_amplitude_offset(); }
+	int GetSpikeClass(int no) const { return m_spike_elements[no]->get_class(); }
+	long GetSpikeTime(int no) const { return m_spike_elements[no]->get_time(); }
+	int GetSpikeChan(int no) const { return m_spike_elements[no]->get_source_channel(); }
+	void GetSpikeExtrema(int no, int* max, int* min) { m_spike_elements[no]->GetSpikeExtrema(max, min); }
+	void GetSpikeMaxmin(int no, int* max, int* min, int* dmaxmin) { m_spike_elements[no]->GetSpikeMaxMin(max, min, dmaxmin); }
+	int GetSpikeAmplitudeOffset(int no) const { return m_spike_elements[no]->get_amplitude_offset(); }
 	int GetSpikeValAt(int no, int index) const { return *(GetpSpikeData(no) + index); }
-	int GetSpikeLength() const { return m_spikebuffer.GetSpklen(); }
-	int GetTotalSpikes() const { return m_spkelmts.GetCount(); }
+	int GetSpikeLength() const { return m_spike_buffer.GetSpklen(); }
+	int GetTotalSpikes() const { return m_spike_elements.GetCount(); }
 
 	void SetSpikeClass(int no, int nclass)
 	{
-		m_spkelmts[no]->set_class(nclass);
-		m_bvalidclasslist = FALSE;
+		m_spike_elements[no]->set_class(nclass);
+		m_valid_classes = FALSE;
 	}
 
-	void SetSpikeTime(int no, long iitime) { m_spkelmts[no]->set_time(iitime); }
+	void SetSpikeTime(int no, long iitime) { m_spike_elements[no]->set_time(iitime); }
 
-	CSpikeElemt* GetSpikeElemt(int no) { return m_spkelmts.GetAt(no); }
+	CSpikeElemt* GetSpikeElemt(int no) { return m_spike_elements.GetAt(no); }
 
-	WORD GetAcqEncoding() const { return m_encoding; }
-	float GetAcqSampRate() const { return m_samprate; }
-	float GetAcqVoltsperBin() const { return m_voltsperbin; }
-	int GetSpikePretrig() const { return m_parm.prethreshold; }
-	int GetSpikeRefractory() const { return m_parm.refractory; }
-	int GetAcqBinzero() const { return m_binzero; }
-	int GetdetectTransform() const { return m_parm.detectTransform; }
-	int GetextractNpoints() const { return m_parm.extractNpoints; }
-	int GetextractChan() const { return m_parm.extractChan; }
-	int GetextractTransform() const { return m_parm.extractTransform; }
-	int GetcompensateBaseline() const { return m_parm.compensateBaseline; }
-	CString GetComment() const { return m_parm.comment; }
-	int GetdetectWhat() const { return m_parm.detectWhat; }
-	int GetdetectChan() const { return m_parm.detectChan; }
-	int GetdetectThreshold() const { return m_parm.detectThreshold; }
-	float GetdetectThresholdmV() const { return m_parm.detectThresholdmV; }
+	WORD GetAcqEncoding() const { return m_data_encoding_mode; }
+	float GetAcqSampRate() const { return m_sampling_rate; }
+	float GetAcqVoltsperBin() const { return m_volts_per_bin; }
+	int GetSpikePretrig() const { return m_detection_parameters.prethreshold; }
+	int GetSpikeRefractory() const { return m_detection_parameters.refractory; }
+	int GetAcqBinzero() const { return m_bin_zero; }
+	int GetdetectTransform() const { return m_detection_parameters.detectTransform; }
+	int GetextractNpoints() const { return m_detection_parameters.extractNpoints; }
+	int GetextractChan() const { return m_detection_parameters.extractChan; }
+	int GetextractTransform() const { return m_detection_parameters.extractTransform; }
+	int GetcompensateBaseline() const { return m_detection_parameters.compensateBaseline; }
+	CString GetComment() const { return m_detection_parameters.comment; }
+	int GetdetectWhat() const { return m_detection_parameters.detectWhat; }
+	int GetdetectChan() const { return m_detection_parameters.detectChan; }
+	int GetdetectThreshold() const { return m_detection_parameters.detectThreshold; }
+	float GetdetectThresholdmV() const { return m_detection_parameters.detectThresholdmV; }
 
-	void SetFlagSaveArtefacts(BOOL bflag) { m_bsaveartefacts = bflag; }
-	void SetextractChan(int echan) { m_parm.extractChan = echan; }
-	void SetdetectChan(int dchan) { m_parm.detectChan = dchan; }
-	void SetextractTransform(int extractTransform) { m_parm.extractTransform = extractTransform; }
+	void SetFlagSaveArtefacts(BOOL flag) { m_b_save_artefacts = flag; }
+	void SetextractChan(int echan) { m_detection_parameters.extractChan = echan; }
+	void SetdetectChan(int dchan) { m_detection_parameters.detectChan = dchan; }
+	void SetextractTransform(int extractTransform) { m_detection_parameters.extractTransform = extractTransform; }
 
-	void SetDetectParms(SPKDETECTPARM* pSd) { m_parm = *pSd; }
-	SPKDETECTPARM* GetDetectParms() { return &m_parm; }
+	void SetDetectParms(SPKDETECTPARM* pSd) { m_detection_parameters = *pSd; }
+	SPKDETECTPARM* GetDetectParms() { return &m_detection_parameters; }
 
 	int AddSpike(short* lpsource, int nchans, long iitime, int sourcechan, int iclass, BOOL bCheck);
 	BOOL TransferDataToSpikeBuffer(int no, short* lpsource, int nchans, BOOL badjust = FALSE);
-	short* GetpSpikeData(int no) const { return m_spikebuffer.GetSpike(no); }
+	short* GetpSpikeData(int no) const { return m_spike_buffer.GetSpike(no); }
 	int RemoveSpike(int spikeindex);
 	BOOL IsAnySpikeAround(long iitime, int jitter, int& spikeindex, int ichan);
 
@@ -171,21 +171,21 @@ public:
 	int ToggleSpikeFlag(int spikeno);
 	void SetSingleSpikeFlag(int spikeno);
 	BOOL GetSpikeFlag(int spikeno);
-	void RemoveAllSpikeFlags() { if (m_spike_flagged.GetCount() > 0) m_spike_flagged.RemoveAll(); }
+	void RemoveAllSpikeFlags() { if (m_spikes_flagged_.GetCount() > 0) m_spikes_flagged_.RemoveAll(); }
 	void FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
 	void SelectSpikeswithinRect(int vmin, int vmax, long l_first, long l_ast, BOOL bAdd);
 
 	void GetRangeOfSpikeFlagged(long& l_first, long& l_last);
-	BOOL GetSpikeFlagArrayAt(int i) const { return m_spike_flagged.GetAt(i); }
-	int GetSpikeFlagArrayCount() const { return m_spike_flagged.GetCount(); }
+	BOOL GetSpikeFlagArrayAt(int i) const { return m_spikes_flagged_.GetAt(i); }
+	int GetSpikeFlagArrayCount() const { return m_spikes_flagged_.GetCount(); }
 
 protected:
-	void readfileVersion1(CArchive& ar);
-	void removeArtefacts();
-	void readfileVersion_before5(CArchive& ar, int iversion);
-	void readfileVersion5(CArchive& ar);
-	void readfileVersion6(CArchive& ar);
+	void read_file_version1(CArchive& ar);
+	void remove_artefacts();
+	void read_file_version_before5(CArchive& ar, int version);
+	void read_file_version5(CArchive& ar);
+	void read_file_version6(CArchive& ar);
 
-	void writefileVersion6(CArchive& ar);
-	void deleteArrays();
+	void write_file_version6(CArchive& ar);
+	void delete_arrays();
 };

@@ -199,7 +199,7 @@ void CViewSpikeDetection::update_legends()
 	// update text abscissa and horizontal scroll position
 	m_timefirst = static_cast<float>(l_first) / m_samplingRate;
 	m_timelast = static_cast<float>(l_last + 1) / m_samplingRate;
-	m_spikeno = m_pSpkList->m_selspike;
+	m_spikeno = m_pSpkList->m_selected_spike;
 	m_bartefact = FALSE;
 	if (m_spikeno > 0)
 	{
@@ -3106,7 +3106,7 @@ void CViewSpikeDetection::update_detection_settings(int iSelParms)
 	}
 
 	// set new parameters
-	m_pSpkList->m_selspike = m_spikeno; // save spike selected
+	m_pSpkList->m_selected_spike = m_spikeno; // save spike selected
 	m_i_detect_parameters = iSelParms;
 	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(iSelParms);
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(iSelParms);

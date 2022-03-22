@@ -336,7 +336,7 @@ void CViewSpikeSort::updateFileParameters()
 	m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
 
 	// spike and classes
-	auto spikeno = m_pSpkList->m_selspike;
+	auto spikeno = m_pSpkList->m_selected_spike;
 	if (m_pSpkList->GetTotalSpikes() < spikeno || 0 > spikeno)
 	{
 		spikeno = -1;
@@ -936,7 +936,7 @@ void CViewSpikeSort::selectSpikeFromCurrentList(int spikeno)
 	m_ChartSpkWnd_Shape.SelectSpikeShape(ispike_local);
 	m_ChartSpkWnd_Bar.SelectSpike(ispike_local);
 	xygraph_wnd_.SelectSpike(ispike_local);
-	m_pSpkList->m_selspike = ispike_local;
+	m_pSpkList->m_selected_spike = ispike_local;
 
 	m_spikenoclass = -1;
 	auto n_cmd_show = SW_HIDE;

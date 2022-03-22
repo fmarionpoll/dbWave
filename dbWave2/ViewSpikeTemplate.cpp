@@ -233,7 +233,7 @@ void CViewSpikeTemplates::selectSpikeList(int icur)
 	}
 
 	// change pointer to select new spike list & test if one spike is selected
-	int spikeno = m_pSpkList->m_selspike;
+	int spikeno = m_pSpkList->m_selected_spike;
 	if (spikeno > m_pSpkList->GetTotalSpikes() - 1 || spikeno < 0)
 		spikeno = -1;
 	else
@@ -325,7 +325,7 @@ void CViewSpikeTemplates::selectSpike(short spikeno)
 {
 	m_ChartSpkWnd_Shape.SelectSpikeShape(spikeno);
 	m_spikeno = spikeno;
-	m_pSpkList->m_selspike = spikeno;
+	m_pSpkList->m_selected_spike = spikeno;
 }
 
 LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
