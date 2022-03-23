@@ -54,26 +54,18 @@ void SpikeElement::Serialize(CArchive& ar)
 	{
 		ar >> wVersion;
 		ar >> m_iitime;
-		ar >> w1;
-		m_class = static_cast<int>(w1);
-		ar >> w1;
-		m_chanparm = static_cast<int>(w1);
-		ar >> w1;
-		m_max = static_cast<short>(w1);
-		ar >> w1;
-		m_min = static_cast<short>(w1);
-		ar >> w1;
-		m_offset = static_cast<short>(w1);
-		ar >> w1;
-		m_dmaxmin = static_cast<short>(w1);
+		ar >> w1; m_class = static_cast<int>(w1);
+		ar >> w1; m_chanparm = static_cast<int>(w1);
+		ar >> w1; m_max = static_cast<short>(w1);
+		ar >> w1; m_min = static_cast<short>(w1);
+		ar >> w1; m_offset = static_cast<short>(w1);
+		ar >> w1; m_dmaxmin = static_cast<short>(w1);
 		if (wVersion > 1)
 		{
 			WORD n_items = 0;
 			ar >> n_items;
-			ar >> y1_;
-			n_items--;
-			ar >> dt_;
-			n_items--;
+			ar >> y1_; n_items--;
+			ar >> dt_; n_items--;
 			ASSERT(n_items == 0);
 		}
 	}

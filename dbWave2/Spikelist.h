@@ -144,7 +144,7 @@ public:
 	void MeasureSpikeMaxThenMin(int no, int* max, int* imax, int* min, int* imin);
 	void MeasureSpikeMaxThenMinEx(int no, int* max, int* imax, int* min, int* imin, int ifirst, int ilast);
 
-	void GetTotalMaxMin(BOOL bRecalc, int* max, int* min);
+	void GetTotalMaxMin(BOOL b_recalculate, int* max, int* min);
 	void OffsetSpikeAmplitude(int no, int valfirst, int vallast, int center = 0);
 	void CenterSpikeAmplitude(int spkindex, int ifirst, int ilast, WORD method = 0);
 	BOOL InitSpikeList(AcqDataDoc* pDataFile, SPKDETECTPARM* pFC);
@@ -187,4 +187,9 @@ protected:
 
 	void write_file_version6(CArchive& ar);
 	void delete_arrays();
+	void serialize_data_parameters(CArchive& ar);
+	void serialize_spike_elements(CArchive& ar);
+	void serialize_spike_data(CArchive& ar);
+	void serialize_spike_class_descriptors(CArchive& ar);
+	void serialize_additional_data(CArchive& ar);
 };
