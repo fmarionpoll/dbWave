@@ -9,21 +9,21 @@
 SpikeElement::SpikeElement()
 = default;
 
-SpikeElement::SpikeElement(long time, WORD channel)
+SpikeElement::SpikeElement(const long time, const int channel)
 {
 	m_iitime = time;
 	m_chanparm = channel;
 }
 
-SpikeElement::SpikeElement(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin)
+SpikeElement::SpikeElement(const long time, const int channel, const int max, const int min, const int offset, const int class_i, int d_maxmin)
 {
 	m_iitime = time;
 	m_chanparm = channel;
 	m_min = min;
 	m_max = max;
 	m_offset = offset;
-	m_class = iclass;
-	m_dmaxmin = dmaxmin;
+	m_class = class_i;
+	m_dmaxmin = d_maxmin;
 }
 
 SpikeElement::~SpikeElement()

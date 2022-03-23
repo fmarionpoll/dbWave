@@ -21,7 +21,7 @@ public:
 
 protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
-	SpikeList* p_spikelist_;
+	SpikeList* p_spikelist_ = nullptr;
 
 	long m_lFirst = 0; // time index of first pt displayed
 	long m_lLast = 0; // time index of last pt displayed
@@ -61,7 +61,7 @@ public:
 	int GetHistMaxPos() const { return m_imax; }
 	DWORD GetHistMax() const { return m_lmax; }
 
-	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL ballFiles, long l_first, long l_last, int max, int min,
+	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, int max, int min,
 	                           int nbins, BOOL bNew);
 
 	void RemoveHistData();

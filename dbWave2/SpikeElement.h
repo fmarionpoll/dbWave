@@ -14,20 +14,20 @@ class SpikeElement : public CObject
 	DECLARE_SERIAL(SpikeElement)
 
 	SpikeElement();
-	SpikeElement(long time, WORD channel);
-	SpikeElement(long time, WORD channel, int max, int min, int offset, int iclass, int dmaxmin);
+	SpikeElement(long time, int channel);
+	SpikeElement(long time, int channel, int max, int min, int offset, int class_i, int d_maxmin);
 	~SpikeElement() override;
 
 	// Attributes
 private:
-	long m_iitime = 0; // occurence time - multiply by rate to get time in seconds
-	int m_class = 0; // spike class - init to zero at first
-	int m_chanparm = 0; // spike detection array index
-	int m_max = 4096; // spike max (used to scan rapidly to adjust display)
-	int m_min = 0; // spike min (used to scan rapidly to adjust display)
+	long m_iitime = 0;		// occurence time - multiply by rate to get time in seconds
+	int m_class = 0;		// spike class - init to zero at first
+	int m_chanparm = 0;		// spike detection array index
+	int m_max = 4096;		// spike max (used to scan rapidly to adjust display)
+	int m_min = 0;			// spike min (used to scan rapidly to adjust display)
 	int m_dmaxmin = 0;
-	int m_offset = 2048; // offset voltage pt 1
-	int y1_ = 0; // parameter measured and stored
+	int m_offset = 2048;	// offset voltage pt 1
+	int y1_ = 0;			// parameter measured and stored
 	int y2_ = 0;
 	int dt_ = 0;
 

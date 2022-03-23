@@ -30,9 +30,8 @@ END_MESSAGE_MAP()
 
 CChartSpikeHist::CChartSpikeHist()
 {
-	p_spikelist_ = nullptr; // source spk list
 	SetbUseDIB(FALSE);
-	m_csEmpty = _T("no \nspikes (spikehist)");
+	m_csEmpty = _T("no \n_spikes (spikehist)");
 }
 
 CChartSpikeHist::~CChartSpikeHist()
@@ -42,9 +41,8 @@ CChartSpikeHist::~CChartSpikeHist()
 
 void CChartSpikeHist::RemoveHistData()
 {
-	if (histogram_ptr_array.GetSize() > 0) // delete objects pointed by elements
+	if (histogram_ptr_array.GetSize() > 0) 
 	{
-		// of m_pHistarray
 		for (auto i = histogram_ptr_array.GetUpperBound(); i >= 0; i--)
 			delete histogram_ptr_array[i];
 		histogram_ptr_array.RemoveAll();
@@ -59,22 +57,22 @@ void CChartSpikeHist::PlotDatatoDC(CDC* p_dc)
 		GetWindowRect(&r);
 		OnSize(SIZE_RESTORED, r.Width(), r.Height());
 	}
-	if (m_erasebkgnd) // erase background
+	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
 
 	// load resources
-	CRect rect;
-	GetWindowRect(rect);
-	m_yVO = rect.Height();
+	CRect rect1;
+	GetWindowRect(rect1);
+	m_yVO = rect1.Height();
 
 	getExtents();
 	if (m_lmax == 0)
 	{
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-		auto rect = m_displayRect;
-		rect.DeflateRect(1, 1);
-		const auto textlen = m_csEmpty.GetLength();
-		p_dc->DrawText(m_csEmpty, textlen, rect, DT_LEFT); //|DT_WORDBREAK);
+		auto rect2 = m_displayRect;
+		rect2.DeflateRect(1, 1);
+		const auto text_length = m_csEmpty.GetLength();
+		p_dc->DrawText(m_csEmpty, text_length, rect2, DT_LEFT);
 		return;
 	}
 	const int n_saved_dc = p_dc->SaveDC();
@@ -83,7 +81,7 @@ void CChartSpikeHist::PlotDatatoDC(CDC* p_dc)
 	// save background color which is changed by later calls to FillSolidRect
 	// when doing so, pens created with PS_DOT pattern and with XOR_PEN do
 	// not work properly. Restoring the background color solves the pb.
-	const auto bkcolor = p_dc->GetBkColor();
+	const auto background_color = p_dc->GetBkColor();
 	switch (m_plotmode)
 	{
 	case PLOT_BLACK:
@@ -96,22 +94,22 @@ void CChartSpikeHist::PlotDatatoDC(CDC* p_dc)
 	}
 
 	//loop to display all histograms (but not the selected one)
-	for (auto ihist = 0; ihist < histogram_ptr_array.GetSize(); ihist++)
+	for (auto i_histogram = 0; i_histogram < histogram_ptr_array.GetSize(); i_histogram++)
 	{
-		const auto p_dw = histogram_ptr_array.GetAt(ihist);
+		const auto p_dw = histogram_ptr_array.GetAt(i_histogram);
 		if (0 == p_dw->GetSize())
 			continue;
 
 		// select correct color
-		if (ihist > 0)
+		if (i_histogram > 0)
 		{
-			const auto spkcla = static_cast<int>(p_dw->GetAt(0));
+			const auto spike_class = static_cast<int>(p_dw->GetAt(0));
 			color = BLACK_COLOR;
-			if (PLOT_ONECLASSONLY == m_plotmode && spkcla != m_selclass)
+			if (PLOT_ONECLASSONLY == m_plotmode && spike_class != m_selclass)
 				continue;
 			if (PLOT_CLASSCOLORS == m_plotmode)
-				color = spkcla % NB_COLORS;
-			else if (m_plotmode == PLOT_ONECLASS && spkcla == m_selclass)
+				color = spike_class % NB_COLORS;
+			else if (m_plotmode == PLOT_ONECLASS && spike_class == m_selclass)
 			{
 				color = BLACK_COLOR;
 				continue;
@@ -134,7 +132,7 @@ void CChartSpikeHist::PlotDatatoDC(CDC* p_dc)
 	}
 
 	// display cursors
-	p_dc->SetBkColor(bkcolor); // restore background color
+	p_dc->SetBkColor(background_color); // restore background color
 	if (m_HZtags.GetNTags() > 0) // display horizontal tags
 		DisplayHZtags(p_dc);
 	if (m_VTtags.GetNTags() > 0) // display vertical tags
@@ -198,7 +196,7 @@ void CChartSpikeHist::getClassArray(int iclass, CDWordArray*& pDW)
 LPTSTR CChartSpikeHist::ExportAscii(LPTSTR lp)
 {
 	// print all ordinates line-by-line, differnt classes on same line
-	lp += wsprintf(lp, _T("Histogram\nnbins=%i\nnclasses=%i"), m_nbins, histogram_ptr_array.GetSize());
+	lp += wsprintf(lp, _T("Histogram\nn_bins=%i\nnclasses=%i"), m_nbins, histogram_ptr_array.GetSize());
 	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), m_abcissamaxval, m_abcissaminval);
 	// export classes & points
 	lp += wsprintf(lp, _T("classes;\n"));
@@ -485,19 +483,19 @@ void CChartSpikeHist::getHistogLimits(int ihist)
 	}
 }
 
-void CChartSpikeHist::reSize_And_Clear_Histograms(int nbins, int max, int min)
+void CChartSpikeHist::reSize_And_Clear_Histograms(int n_bins, int max, int min)
 {
-	m_binsize = (max - min + 1) / nbins + 1; // set bin size
+	m_binsize = (max - min + 1) / n_bins + 1; // set bin size
 	m_abcissaminval = min; // set min
-	m_abcissamaxval = min + nbins * m_binsize; // set max
+	m_abcissamaxval = min + n_bins * m_binsize; // set max
 
-	m_nbins = nbins;
+	m_nbins = n_bins;
 	for (auto j = histogram_ptr_array.GetUpperBound(); j >= 0; j--)
 	{
 		auto p_dw = histogram_ptr_array[j];
-		p_dw->SetSize(nbins + 1);
+		p_dw->SetSize(n_bins + 1);
 		// erase all data from histogram
-		for (auto i = 1; i <= nbins; i++)
+		for (auto i = 1; i <= n_bins; i++)
 			p_dw->SetAt(i, 0);
 	}
 }
@@ -508,20 +506,20 @@ void CChartSpikeHist::OnSize(UINT nType, int cx, int cy)
 	m_yVO = cy;
 }
 
-CDWordArray* CChartSpikeHist::initClassArray(int nbins, int spike_class)
+CDWordArray* CChartSpikeHist::initClassArray(int n_bins, int spike_class)
 {
 	auto p_dw = new (CDWordArray); // init array
 	ASSERT(p_dw != NULL);
 	histogram_ptr_array.Add(p_dw); // save pointer to this new array
-	p_dw->SetSize(nbins + 1);
-	for (auto j = 1; j <= nbins; j++)
+	p_dw->SetSize(n_bins + 1);
+	for (auto j = 1; j <= n_bins; j++)
 		p_dw->SetAt(j, 0);
 	p_dw->SetAt(0, spike_class);
 	return p_dw;
 }
 
 void CChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min,
-                                             int nbins, BOOL bNew)
+                                             int n_bins, BOOL bNew)
 {
 	// erase data and arrays if bnew:
 	if (bNew)
@@ -535,40 +533,38 @@ void CChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first
 		ASSERT(histogram_ptr_array.GetSize() > 0);
 	}
 	auto* p_dword_array = histogram_ptr_array[0];
-	if (nbins == 0)
+	if (n_bins == 0)
 	{
 		return;
 	}
 
-	if (nbins != m_nbins || p_dword_array->GetSize() != (nbins + 1))
-		reSize_And_Clear_Histograms(nbins, max, min);
+	if (n_bins != m_nbins || p_dword_array->GetSize() != (n_bins + 1))
+		reSize_And_Clear_Histograms(n_bins, max, min);
 
 	CDWordArray* p_dw = nullptr;
-	auto nspikes = p_spk_list->GetTotalSpikes();
-	for (auto ispk = 0; ispk < nspikes; ispk++)
+	auto n_spikes = p_spk_list->GetTotalSpikes();
+	for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
 	{
-		const auto spike_element = p_spk_list->GetSpikeElemt(ispk);
-
-		// check that the corresp spike fits within the time limits requested
-		const auto iitime = spike_element->get_time();
-		if (iitime < l_first || iitime > l_last)
+		const auto spike_element = p_spk_list->GetSpikeElemt(i_spike);
+		const auto ii_time = spike_element->get_time();
+		if (ii_time < l_first || ii_time > l_last)
 			continue;
 		auto y1 = spike_element->get_y1();
 		if (y1 > m_abcissamaxval || y1 < m_abcissaminval)
 			continue;
 
-		// increment corresponding histogram interval into the first histogram (general, displayed in grey)
+		// increment corresponding histogram interval in the first histogram (general, displayed in grey)
 		auto index = (y1 - m_abcissaminval) / m_binsize + 1;
 		if (index >= p_dword_array->GetSize())
 			index = p_dword_array->GetSize() - 1;
 		auto dw_data = p_dword_array->GetAt(index) + 1;
 		p_dword_array->SetAt(index, dw_data);
 
-		// dispatch into corresp class histogram (create one if necessary)
+		// dispatch into corresponding class histogram (create one if necessary)
 		const auto spike_class = spike_element->get_class();
 		getClassArray(spike_class, p_dw);
 		if (p_dw == nullptr)
-			p_dw = initClassArray(nbins, spike_class);
+			p_dw = initClassArray(n_bins, spike_class);
 
 		if (p_dw != nullptr)
 		{
@@ -587,11 +583,11 @@ void CChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first
 //		long l_last 		= index last pt from file
 //		int max				= maximum
 //		int min				= minimum
-//		int nbins			= number of bins -> bin size
+//		int n_bins			= number of bins -> bin size
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
 
-void CChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles, long l_first, long l_last, int max,
-                                            int min, int nbins, BOOL bNew)
+void CChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_files, const long l_first, const long l_last, 
+											int max, int min, int n_bins, BOOL bNew)
 {
 	// erase data and arrays if bnew:
 	if (bNew)
@@ -600,31 +596,31 @@ void CChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles, l
 		bNew = false;
 	}
 
-	auto ncurrentfile = 0;
-	auto file_first = ncurrentfile;
-	auto file_last = ncurrentfile;
-	if (ballFiles)
+	auto current_file = 0;
+	auto file_first = current_file;
+	auto file_last = current_file;
+	if (b_all_files)
 	{
 		file_first = 0;
 		file_last = p_doc->GetDB_NRecords() - 1;
-		ncurrentfile = p_doc->GetDB_CurrentRecordPosition();
+		current_file = p_doc->GetDB_CurrentRecordPosition();
 	}
 
-	for (auto ifile = file_first; ifile <= file_last; ifile++)
+	for (auto i_file = file_first; i_file <= file_last; i_file++)
 	{
-		if (ballFiles)
+		if (b_all_files)
 		{
-			p_doc->SetDB_CurrentRecordPosition(ifile);
+			p_doc->SetDB_CurrentRecordPosition(i_file);
 			p_doc->OpenCurrentSpikeFile();
 		}
 		SpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
 		if (p_spikelist != nullptr && p_spikelist->GetTotalSpikes() > 0)
-			buildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
+			buildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, n_bins, bNew);
 	}
 
-	if (ballFiles)
+	if (b_all_files)
 	{
-		p_doc->SetDB_CurrentRecordPosition(ncurrentfile);
+		p_doc->SetDB_CurrentRecordPosition(current_file);
 		p_doc->OpenCurrentSpikeFile();
 	}
 }

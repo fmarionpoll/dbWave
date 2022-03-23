@@ -681,10 +681,10 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 {
 	if (b_recalculate || !m_extrema_valid)
 	{
-		int min1 = 0, max1 = 65535;
+		int min1 = 0;
+		int max1 = 65535;
 		const int n_spikes = m_spike_elements.GetCount();
 
-		// first find valid max and min
 		for (auto index = 0; index < n_spikes; index++)
 		{
 			if (GetSpikeClass(index) >= 0)
