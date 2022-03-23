@@ -183,7 +183,7 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 
 		m_spike_buffer.DeleteAllSpikes();
 		m_spike_buffer.SetSpklen(spike_length);
-		m_spike_buffer.m_binzero = GetAcqBinzero();
+		m_spike_buffer.m_bin_zero = GetAcqBinzero();
 
 		const auto n_bytes = spike_length * sizeof(short) * n_spikes;
 		const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
@@ -344,7 +344,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	m_spike_buffer.DeleteAllSpikes(); // delete data buffers
 	ar >> w1; // read spike length
 	m_spike_buffer.SetSpklen(w1); // reset parms/buffer
-	m_spike_buffer.m_binzero = GetAcqBinzero();
+	m_spike_buffer.m_bin_zero = GetAcqBinzero();
 
 	// loop through all data buffers
 	const auto nbytes = w1 * sizeof(short) * n_spikes;
@@ -531,13 +531,13 @@ BOOL SpikeList::TransferDataToSpikeBuffer(const int no, short* lp_source, const 
 	const auto dmaxmin = imin - imax;
 
 	// get offset over zero at the requested index
-	auto offset = 0;
+	short offset = 0;
 	if (b_adjust)
 	{
 		if (m_icenter1SL - m_icenter2SL != 0)
 		{
 			offset = lavg / (m_icenter2SL - m_icenter1SL + 1);
-			offset -= m_spike_buffer.m_binzero;
+			offset -= m_spike_buffer.m_bin_zero;
 		}
 	}
 
@@ -739,7 +739,7 @@ BOOL SpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
 
 	// reset buffers, list, spk params
 	m_spike_buffer.SetSpklen(m_detection_parameters.extractNpoints);
-	m_spike_buffer.m_binzero = m_bin_zero;
+	m_spike_buffer.m_bin_zero = m_bin_zero;
 
 	// reset classes
 	m_only_valid_classes = FALSE; // default: no valid array

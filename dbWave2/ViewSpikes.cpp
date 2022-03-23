@@ -480,20 +480,20 @@ void CViewSpikes::OnInitialUpdate()
 	m_spkClassListBox.SetRowHeight(m_psC->rowheight);
 	CRect rect2;
 	GetDlgItem(IDC_DISPLAYDAT)->GetWindowRect(&rect2);
-	const int leftcolwidth = rect2.left - rect.left - 2;
-	m_spkClassListBox.SetLeftColWidth(leftcolwidth);
+	const int left_col_width = rect2.left - rect.left - 2;
+	m_spkClassListBox.SetLeftColWidth(left_col_width);
 	if (m_psC->coltext < 0)
 	{
 		m_psC->colspikes = m_psC->rowheight;
-		m_psC->coltext = leftcolwidth - 2 * m_psC->colseparator - m_psC->colspikes;
+		m_psC->coltext = left_col_width - 2 * m_psC->colseparator - m_psC->colspikes;
 		if (m_psC->coltext < 20)
 		{
-			const auto half = leftcolwidth - m_psC->colseparator;
+			const auto half = left_col_width - m_psC->colseparator;
 			m_psC->colspikes = half;
 			m_psC->coltext = half;
 		}
 	}
-	m_psC->coltext = leftcolwidth - m_psC->colspikes - 2 * m_psC->colseparator;
+	m_psC->coltext = left_col_width - m_psC->colspikes - 2 * m_psC->colseparator;
 	m_spkClassListBox.SetColsWidth(m_psC->coltext, m_psC->colspikes, m_psC->colseparator);
 	m_spkClassListBox.SetCursorMaxOnDblClick(3);
 

@@ -12,13 +12,13 @@ IMPLEMENT_SERIAL(CSpikeBuffer, CObject, 0 /* schema number*/)
 CSpikeBuffer::CSpikeBuffer()
 {
 	SetSpklen(1); // init with spike len = 1
-	m_spikedata_positions.SetSize(0, 128);
+	m_spike_data_positions.SetSize(0, 128);
 }
 
 CSpikeBuffer::CSpikeBuffer(int lenspk)
 {
 	SetSpklen(lenspk);
-	m_spikedata_positions.SetSize(0, 128);
+	m_spike_data_positions.SetSize(0, 128);
 }
 
 CSpikeBuffer::~CSpikeBuffer()
@@ -40,63 +40,63 @@ void CSpikeBuffer::Serialize(CArchive& ar)
 
 void CSpikeBuffer::SetSpklen(int lenspik)
 {
-	m_lenspk = lenspik;
+	m_spike_length = lenspik;
 	DeleteAllSpikes();
-	if (m_lenspk > 0)
+	if (m_spike_length > 0)
 	{
 		// allocate memory by 64 Kb chunks
-		m_spkbufferincrement = static_cast<WORD>(32767);
-		m_spkbufferincrement = (m_spkbufferincrement / m_lenspk) * m_lenspk;
-		m_spkbufferlength = m_spkbufferincrement;
-		m_spikedata_buffer = static_cast<short*>(malloc(sizeof(short) * m_spkbufferlength));
-		ASSERT(m_spikedata_buffer != NULL);
-		m_nextindex = 0;
-		m_lastindex = m_spkbufferlength / m_lenspk - 1;
+		m_spk_buffer_increment = static_cast<WORD>(32767);
+		m_spk_buffer_increment = (m_spk_buffer_increment / m_spike_length) * m_spike_length;
+		m_spk_buffer_length = m_spk_buffer_increment;
+		m_spike_data_buffer = static_cast<short*>(malloc(sizeof(short) * m_spk_buffer_length));
+		ASSERT(m_spike_data_buffer != NULL);
+		m_next_index = 0;
+		m_last_index = m_spk_buffer_length / m_spike_length - 1;
 	}
 }
 
 short* CSpikeBuffer::AllocateSpaceForSpikeAt(int spkindex)
 {
 	// get pointer to next available buffer area for this spike
-	// CAUTION: spkindex != m_nextindex
-	if (m_nextindex > m_lastindex)
+	// CAUTION: spkindex != m_next_index
+	if (m_next_index > m_last_index)
 	{
-		m_spkbufferlength += m_spkbufferincrement;
-		auto* pspkbuffer = static_cast<short*>(realloc(m_spikedata_buffer, sizeof(short) * m_spkbufferlength));
+		m_spk_buffer_length += m_spk_buffer_increment;
+		auto* pspkbuffer = static_cast<short*>(realloc(m_spike_data_buffer, sizeof(short) * m_spk_buffer_length));
 		if (pspkbuffer != nullptr)
-			m_spikedata_buffer = pspkbuffer;
-		m_lastindex = m_spkbufferlength / m_lenspk - 1;
+			m_spike_data_buffer = pspkbuffer;
+		m_last_index = m_spk_buffer_length / m_spike_length - 1;
 	}
 
 	// compute destination address
-	const auto offset = m_nextindex * m_lenspk;
-	const auto lp_dest = m_spikedata_buffer + offset;
-	m_spikedata_positions.InsertAt(spkindex, offset);
-	m_nextindex++;
+	const auto offset = m_next_index * m_spike_length;
+	const auto lp_dest = m_spike_data_buffer + offset;
+	m_spike_data_positions.InsertAt(spkindex, offset);
+	m_next_index++;
 	return lp_dest;
 }
 
 short* CSpikeBuffer::AllocateSpaceForSeveralSpikes(int nspikes)
 {
 	// get pointer to next available buffer area for these spikes
-	const auto currentindex = m_nextindex;
-	m_nextindex += nspikes;
-	while (m_nextindex > m_lastindex)
+	const auto currentindex = m_next_index;
+	m_next_index += nspikes;
+	while (m_next_index > m_last_index)
 	{
-		m_spkbufferlength += m_spkbufferincrement;
-		const auto pspkbuffer = static_cast<short*>(realloc(m_spikedata_buffer, sizeof(short) * m_spkbufferlength));
+		m_spk_buffer_length += m_spk_buffer_increment;
+		const auto pspkbuffer = static_cast<short*>(realloc(m_spike_data_buffer, sizeof(short) * m_spk_buffer_length));
 		if (pspkbuffer != nullptr)
-			m_spikedata_buffer = pspkbuffer;
-		m_lastindex = m_spkbufferlength / m_lenspk - 1;
+			m_spike_data_buffer = pspkbuffer;
+		m_last_index = m_spk_buffer_length / m_spike_length - 1;
 	}
 
 	// compute destination address
-	const auto lp_dest = m_spikedata_buffer + (currentindex * m_lenspk);
-	auto ioffset = currentindex * m_lenspk;
-	for (auto i = currentindex; i < m_nextindex; i++)
+	const auto lp_dest = m_spike_data_buffer + (currentindex * m_spike_length);
+	auto ioffset = currentindex * m_spike_length;
+	for (auto i = currentindex; i < m_next_index; i++)
 	{
-		m_spikedata_positions.InsertAt(i, ioffset);
-		ioffset += m_lenspk;
+		m_spike_data_positions.InsertAt(i, ioffset);
+		ioffset += m_spike_length;
 	}
 	return lp_dest;
 }
@@ -104,30 +104,30 @@ short* CSpikeBuffer::AllocateSpaceForSeveralSpikes(int nspikes)
 void CSpikeBuffer::DeleteAllSpikes()
 {
 	// delete handle array and liberate corresponding memory
-	if (m_spikedata_buffer != nullptr)
-		free(m_spikedata_buffer);
-	m_spikedata_buffer = nullptr;
+	if (m_spike_data_buffer != nullptr)
+		free(m_spike_data_buffer);
+	m_spike_data_buffer = nullptr;
 
 	// delete array of pointers
-	m_spikedata_positions.RemoveAll();
-	m_nextindex = 0;
+	m_spike_data_positions.RemoveAll();
+	m_next_index = 0;
 }
 
 BOOL CSpikeBuffer::DeleteSpike(int spkindex)
 {
-	if (spkindex > m_spikedata_positions.GetUpperBound() || spkindex < 0)
+	if (spkindex > m_spike_data_positions.GetUpperBound() || spkindex < 0)
 		return FALSE;
-	m_spikedata_positions.RemoveAt(spkindex);
+	m_spike_data_positions.RemoveAt(spkindex);
 	return TRUE;
 }
 
 BOOL CSpikeBuffer::ExchangeSpikes(int spk1, int spk2)
 {
-	if (spk1 > m_spikedata_positions.GetUpperBound() || spk1 < 0
-		|| spk2 > m_spikedata_positions.GetUpperBound() || spk2 < 0)
+	if (spk1 > m_spike_data_positions.GetUpperBound() || spk1 < 0
+		|| spk2 > m_spike_data_positions.GetUpperBound() || spk2 < 0)
 		return FALSE;
-	const DWORD dummy = m_spikedata_positions[spk1];
-	m_spikedata_positions[spk1] = m_spikedata_positions[spk2];
-	m_spikedata_positions[spk2] = dummy;
+	const DWORD dummy = m_spike_data_positions[spk1];
+	m_spike_data_positions[spk1] = m_spike_data_positions[spk2];
+	m_spike_data_positions[spk2] = dummy;
 	return TRUE;
 }

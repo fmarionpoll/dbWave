@@ -12,28 +12,28 @@ public:
 
 	// Attributes
 protected:
-	int m_lenspk{}; // length of one spike
+	int m_spike_length{}; // length of one spike
 public:
-	int m_spkbufferincrement{};
-	int m_spkbufferlength{}; // current buffer length
-	int m_nextindex{}; // next available index
-	int m_lastindex{}; // index last free space for spike data
-	int m_binzero = 2048; // zero (if 12 bits scale = 0-4095)
-	int m_currentfilter{}; // ID of last transform
-	short* m_spikedata_buffer = nullptr; // buffer address
-	CArray<int, int> m_spikedata_positions;
+	int m_spk_buffer_increment{};
+	int m_spk_buffer_length{}; // current buffer length
+	int m_next_index{}; // next available index
+	int m_last_index{}; // index last free space for spike data
+	int m_bin_zero = 2048; // zero (if 12 bits scale = 0-4095)
+	int m_current_filter{}; // ID of last transform
+	short* m_spike_data_buffer = nullptr; // buffer address
+	CArray<int, int> m_spike_data_positions;
 	// offsets to individual spike data - used to exchange, add, remove spikes without modifying buffer
 
-	void SetSpklen(int lenspik);
-	int GetSpklen() const { return m_lenspk; }
+	void SetSpklen(int spike_length);
+	int GetSpklen() const { return m_spike_length; }
 
 	// Implementation
 public:
 	void Serialize(CArchive& ar) override;
 	void DeleteAllSpikes();
-	short* AllocateSpaceForSpikeAt(int spkindex);
-	short* AllocateSpaceForSeveralSpikes(int spkindex);
-	BOOL DeleteSpike(int spkindex);
+	short* AllocateSpaceForSpikeAt(int spike_index);
+	short* AllocateSpaceForSeveralSpikes(int spike_index);
+	BOOL DeleteSpike(int spike_index);
 	BOOL ExchangeSpikes(int spk1, int spk2);
-	short* GetSpike(int index) const { return (m_spikedata_buffer + m_spikedata_positions[index]); }
+	short* GetSpike(int spike_index) const { return (m_spike_data_buffer + m_spike_data_positions[spike_index]); }
 };
