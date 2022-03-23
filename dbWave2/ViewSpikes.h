@@ -33,24 +33,24 @@ protected:
 	CSpikeClassListBox m_spkClassListBox;
 	int m_max_classes = 1;
 
-	CEditCtrl mm_spikeno;
-	CEditCtrl mm_spikenoclass;
-	CEditCtrl mm_timefirst; 
-	CEditCtrl mm_timelast; 
+	CEditCtrl mm_spike_index;
+	CEditCtrl mm_spike_index_class;
+	CEditCtrl mm_time_first; 
+	CEditCtrl mm_time_last; 
 	CEditCtrl mm_zoom;
-	CEditCtrl mm_sourceclass;
-	CEditCtrl mm_destclass;
+	CEditCtrl mm_source_class;
+	CEditCtrl mm_dest_class;
 	CEditCtrl mm_jitter_ms;
 
-	CScrollBarEx m_filescroll; 
-	SCROLLINFO m_filescroll_infos{}; 
+	CScrollBarEx m_file_scroll; 
+	SCROLLINFO m_file_scroll_infos{}; 
 
-	int m_zoominteger = 1; 
+	int m_zoom_factor = 1; 
 	HICON m_hBias = nullptr;
 	HICON m_hZoom = nullptr;
-	float m_yscaleFactor = 0.f; 
+	float m_y_scale_factor = 0.f; 
 	int m_VBarMode = 0; 
-	CScrollBar m_scrolly; 
+	CScrollBar m_scroll_y; 
 
 	AcqDataDoc* m_pDataDoc = nullptr; 
 
@@ -58,8 +58,8 @@ protected:
 	int m_lFirst = 0;
 	int m_lLast = -1;
 
-	CDWordArray m_DWintervals; // intervals to highlight spikes
-	BOOL m_baddspikemode = false;
+	CDWordArray m_DW_intervals; // intervals to highlight spikes
+	BOOL m_b_add_spike_mode = false;
 
 	int m_yWE = 1;
 	int m_yWO = 0;

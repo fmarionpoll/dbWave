@@ -160,9 +160,9 @@ void CViewSpikes::setAddspikesMode(int mousecursorType)
 {
 	// display or hide corresponding controls within this view
 	const BOOL bSetAddspikemode = (mousecursorType == CURSOR_CROSS);
-	if (m_baddspikemode != bSetAddspikemode)
+	if (m_b_add_spike_mode != bSetAddspikemode)
 	{
-		m_baddspikemode = bSetAddspikemode;
+		m_b_add_spike_mode = bSetAddspikemode;
 		int n_cmd_show = bSetAddspikemode ? SW_SHOW : SW_HIDE;
 		GetDlgItem(IDC_SOURCECLASS)->ShowWindow(n_cmd_show);
 		GetDlgItem(IDC_DESTCLASS)->ShowWindow(n_cmd_show);
@@ -173,14 +173,14 @@ void CViewSpikes::setAddspikesMode(int mousecursorType)
 		GetDlgItem(IDC_JITTERSTATIC)->ShowWindow(n_cmd_show);
 
 		auto hwnd = GetSafeHwnd();
-		if (!m_baddspikemode)
+		if (!m_b_add_spike_mode)
 			hwnd = nullptr;
 		m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
 		m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-		m_ChartDataWnd.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
+		m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
 		                             m_pspkDP->extractChan);
 
-		if (m_baddspikemode)
+		if (m_b_add_spike_mode)
 			setTrackRectangle();
 	}
 }
@@ -199,7 +199,7 @@ void CViewSpikes::setTrackRectangle()
 
 void CViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (m_baddspikemode)
+	if (m_b_add_spike_mode)
 	{
 		if (m_bdummy && m_rectVTtrack.PtInRect(point))
 			m_ptVT = point.x - m_rectVTtrack.left;
@@ -389,9 +389,9 @@ void CViewSpikes::selectSpike(int spikeno)
 		n_cmd_show = SW_SHOW;
 		if (m_pDataDoc != nullptr)
 		{
-			m_DWintervals.SetAt(3, spk_first);
-			m_DWintervals.SetAt(4, spk_last);
-			m_ChartDataWnd.SetHighlightData(&m_DWintervals);
+			m_DW_intervals.SetAt(3, spk_first);
+			m_DW_intervals.SetAt(4, spk_last);
+			m_ChartDataWnd.SetHighlightData(&m_DW_intervals);
 			m_ChartDataWnd.Invalidate();
 		}
 	}
@@ -409,27 +409,27 @@ void CViewSpikes::selectSpike(int spikeno)
 void CViewSpikes::defineSubClassedItems()
 {
 	// attach controls
-	VERIFY(m_filescroll.SubclassDlgItem(IDC_FILESCROLL, this));
-	m_filescroll.SetScrollRange(0, 100, FALSE);
-	VERIFY(mm_spikeno.SubclassDlgItem(IDC_NSPIKES, this));
-	mm_spikeno.ShowScrollBar(SB_VERT);
-	VERIFY(mm_spikenoclass.SubclassDlgItem(IDC_EDIT2, this));
-	mm_spikenoclass.ShowScrollBar(SB_VERT);
+	VERIFY(m_file_scroll.SubclassDlgItem(IDC_FILESCROLL, this));
+	m_file_scroll.SetScrollRange(0, 100, FALSE);
+	VERIFY(mm_spike_index.SubclassDlgItem(IDC_NSPIKES, this));
+	mm_spike_index.ShowScrollBar(SB_VERT);
+	VERIFY(mm_spike_index_class.SubclassDlgItem(IDC_EDIT2, this));
+	mm_spike_index_class.ShowScrollBar(SB_VERT);
 	VERIFY(m_spkClassListBox.SubclassDlgItem(IDC_LISTCLASSES, this));
-	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
-	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
+	VERIFY(mm_time_first.SubclassDlgItem(IDC_TIMEFIRST, this));
+	VERIFY(mm_time_last.SubclassDlgItem(IDC_TIMELAST, this));
 	VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAYDAT, this));
 	VERIFY(mm_zoom.SubclassDlgItem(IDC_EDIT3, this));
 	mm_zoom.ShowScrollBar(SB_VERT);
-	VERIFY(mm_sourceclass.SubclassDlgItem(IDC_EDIT4, this));
-	mm_sourceclass.ShowScrollBar(SB_VERT);
-	VERIFY(mm_destclass.SubclassDlgItem(IDC_EDIT5, this));
-	mm_destclass.ShowScrollBar(SB_VERT);
+	VERIFY(mm_source_class.SubclassDlgItem(IDC_EDIT4, this));
+	mm_source_class.ShowScrollBar(SB_VERT);
+	VERIFY(mm_dest_class.SubclassDlgItem(IDC_EDIT5, this));
+	mm_dest_class.ShowScrollBar(SB_VERT);
 	VERIFY(mm_jitter_ms.SubclassDlgItem(IDC_JITTER, this));
 
 	// left scrollbar and button
-	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
-	m_scrolly.SetScrollRange(0, 100);
+	VERIFY(m_scroll_y.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
+	m_scroll_y.SetScrollRange(0, 100);
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
 	GetDlgItem(IDC_BIAS_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON),
@@ -502,10 +502,10 @@ void CViewSpikes::OnInitialUpdate()
 	m_ChartDataWnd.SetCursorMaxOnDblClick(3);
 
 	updateFileParameters(TRUE);
-	if (m_baddspikemode)
+	if (m_b_add_spike_mode)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
-		m_ChartDataWnd.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
+		m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
 		                             m_pspkDP->extractChan);
 	}
 }
@@ -571,20 +571,20 @@ void CViewSpikes::updateDataFile(BOOL bUpdateInterface)
 		m_ChartDataWnd.Invalidate();
 
 		// adjust scroll bar (size of button and left/right limits)
-		m_filescroll_infos.fMask = SIF_ALL;
-		m_filescroll_infos.nMin = 0;
-		m_filescroll_infos.nMax = m_pDataDoc->GetDOCchanLength() - 1;
-		m_filescroll_infos.nPos = 0;
-		m_filescroll_infos.nPage = m_ChartDataWnd.GetDataLast() - m_ChartDataWnd.GetDataFirst() + 1;
-		m_filescroll.SetScrollInfo(&m_filescroll_infos);
+		m_file_scroll_infos.fMask = SIF_ALL;
+		m_file_scroll_infos.nMin = 0;
+		m_file_scroll_infos.nMax = m_pDataDoc->GetDOCchanLength() - 1;
+		m_file_scroll_infos.nPos = 0;
+		m_file_scroll_infos.nPage = m_ChartDataWnd.GetDataLast() - m_ChartDataWnd.GetDataFirst() + 1;
+		m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 	}
 
-	m_DWintervals.SetSize(3 + 2); // total size
-	m_DWintervals.SetAt(0, 0); // source channel
-	m_DWintervals.SetAt(1, RGB(255, 0, 0)); // red color
-	m_DWintervals.SetAt(2, 1); // pen size
-	m_DWintervals.SetAt(3, 0); // pen size
-	m_DWintervals.SetAt(4, 0); // pen size
+	m_DW_intervals.SetSize(3 + 2); // total size
+	m_DW_intervals.SetAt(0, 0); // source channel
+	m_DW_intervals.SetAt(1, RGB(255, 0, 0)); // red color
+	m_DW_intervals.SetAt(2, 1); // pen size
+	m_DW_intervals.SetAt(3, 0); // pen size
+	m_DW_intervals.SetAt(4, 0); // pen size
 }
 
 void CViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
@@ -646,11 +646,11 @@ void CViewSpikes::updateLegends(BOOL bUpdateInterface)
 
 	// set cursor
 	auto hwnd = GetSafeHwnd();
-	if (!m_baddspikemode)
+	if (!m_b_add_spike_mode)
 		hwnd = nullptr;
 	m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
 	m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-	m_ChartDataWnd.SetTrackSpike(m_baddspikemode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
+	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
 	                             m_pspkDP->extractChan);
 
 	// update spike bars & forms CListBox
@@ -1493,11 +1493,11 @@ float CViewSpikes::PrintChangeUnit(float xVal, CString* xUnit, float* xScalefact
 
 void CViewSpikes::OnEnChangeNOspike()
 {
-	if (mm_spikeno.m_bEntryDone)
+	if (mm_spike_index.m_bEntryDone)
 	{
 		const auto spikeno = m_spike_index;
 
-		switch (mm_spikeno.m_nChar)
+		switch (mm_spike_index.m_nChar)
 		{
 		// load data from edit controls
 		case VK_RETURN:
@@ -1515,9 +1515,9 @@ void CViewSpikes::OnEnChangeNOspike()
 			break;
 		}
 
-		mm_spikeno.m_bEntryDone = FALSE;
-		mm_spikeno.m_nChar = 0;
-		mm_spikeno.SetSel(0, -1);
+		mm_spike_index.m_bEntryDone = FALSE;
+		mm_spike_index.m_nChar = 0;
+		mm_spike_index.SetSel(0, -1);
 
 		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
 		if (m_spike_index != spikeno)
@@ -1566,10 +1566,10 @@ void CViewSpikes::centerDataDisplayOnSpike(int spikeno)
 
 void CViewSpikes::OnEnChangeSpikenoclass()
 {
-	if (!mm_spikenoclass.m_bEntryDone)
+	if (!mm_spike_index_class.m_bEntryDone)
 		return;
 	const auto spikenoclass = m_spike_index_class;
-	switch (mm_spikenoclass.m_nChar)
+	switch (mm_spike_index_class.m_nChar)
 	{
 	// load data from edit controls
 	case VK_RETURN: UpdateData(TRUE);
@@ -1583,9 +1583,9 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 	default: ;
 	}
 
-	mm_spikenoclass.m_bEntryDone = FALSE; // clear flag
-	mm_spikenoclass.m_nChar = 0; // empty buffer
-	mm_spikenoclass.SetSel(0, -1); // select all text
+	mm_spike_index_class.m_bEntryDone = FALSE; // clear flag
+	mm_spike_index_class.m_nChar = 0; // empty buffer
+	mm_spike_index_class.SetSel(0, -1); // select all text
 
 	if (m_spike_index_class != spikenoclass) // change display if necessary
 	{
@@ -1599,9 +1599,9 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 
 void CViewSpikes::OnEnChangeTimefirst()
 {
-	if (mm_timefirst.m_bEntryDone)
+	if (mm_time_first.m_bEntryDone)
 	{
-		switch (mm_timefirst.m_nChar)
+		switch (mm_time_first.m_nChar)
 		{
 		case VK_RETURN:
 			UpdateData(TRUE); // load data from edit controls
@@ -1617,9 +1617,9 @@ void CViewSpikes::OnEnChangeTimefirst()
 		default: ;
 		}
 
-		mm_timefirst.m_bEntryDone = FALSE;
-		mm_timefirst.m_nChar = 0;
-		mm_timefirst.SetSel(0, -1); //select all text
+		mm_time_first.m_bEntryDone = FALSE;
+		mm_time_first.m_nChar = 0;
+		mm_time_first.SetSel(0, -1); //select all text
 
 		const auto l_first = static_cast<long>(m_time_first * m_pSpkDoc->GetAcqRate());
 		if (l_first != m_lFirst)
@@ -1634,9 +1634,9 @@ void CViewSpikes::OnEnChangeTimefirst()
 
 void CViewSpikes::OnEnChangeTimelast()
 {
-	if (mm_timelast.m_bEntryDone)
+	if (mm_time_last.m_bEntryDone)
 	{
-		switch (mm_timelast.m_nChar)
+		switch (mm_time_last.m_nChar)
 		{
 		case VK_RETURN:
 			UpdateData(TRUE);
@@ -1651,9 +1651,9 @@ void CViewSpikes::OnEnChangeTimelast()
 			break;
 		default: ;
 		}
-		mm_timelast.m_bEntryDone = FALSE;
-		mm_timelast.m_nChar = 0;
-		mm_timelast.SetSel(0, -1);
+		mm_time_last.m_bEntryDone = FALSE;
+		mm_time_last.m_nChar = 0;
+		mm_time_last.SetSel(0, -1);
 
 		const auto l_last = static_cast<long>(m_time_last * m_pSpkDoc->GetAcqRate());
 		if (l_last != m_lLast)
@@ -1701,9 +1701,9 @@ void CViewSpikes::OnEnChangeZoom()
 
 void CViewSpikes::OnEnChangeSourceclass()
 {
-	if (mm_sourceclass.m_bEntryDone)
+	if (mm_source_class.m_bEntryDone)
 	{
-		switch (mm_sourceclass.m_nChar)
+		switch (mm_source_class.m_nChar)
 		{
 		case VK_RETURN: UpdateData(TRUE);
 			break;
@@ -1717,18 +1717,18 @@ void CViewSpikes::OnEnChangeSourceclass()
 		}
 
 		// check boundaries
-		mm_sourceclass.m_bEntryDone = FALSE; // clear flag
-		mm_sourceclass.m_nChar = 0; // empty buffer
-		mm_sourceclass.SetSel(0, -1); // select all text
+		mm_source_class.m_bEntryDone = FALSE; // clear flag
+		mm_source_class.m_nChar = 0; // empty buffer
+		mm_source_class.SetSel(0, -1); // select all text
 		UpdateData(FALSE);
 	}
 }
 
 void CViewSpikes::OnEnChangeDestclass()
 {
-	if (mm_destclass.m_bEntryDone)
+	if (mm_dest_class.m_bEntryDone)
 	{
-		switch (mm_destclass.m_nChar)
+		switch (mm_dest_class.m_nChar)
 		{
 		// load data from edit controls
 		case VK_RETURN: UpdateData(TRUE);
@@ -1743,9 +1743,9 @@ void CViewSpikes::OnEnChangeDestclass()
 		}
 
 		// check boundaries
-		mm_destclass.m_bEntryDone = FALSE; // clear flag
-		mm_destclass.m_nChar = 0; // empty buffer
-		mm_destclass.SetSel(0, -1); // select all text
+		mm_dest_class.m_bEntryDone = FALSE; // clear flag
+		mm_dest_class.m_nChar = 0; // empty buffer
+		mm_dest_class.SetSel(0, -1); // select all text
 		UpdateData(FALSE);
 	}
 }
@@ -1767,9 +1767,9 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 	case SB_THUMBTRACK:
 	case SB_THUMBPOSITION:
-		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL);
-		l_first = m_filescroll_infos.nPos;
-		l_last = l_first + m_filescroll_infos.nPage - 1;
+		m_file_scroll.GetScrollInfo(&m_file_scroll_infos, SIF_ALL);
+		l_first = m_file_scroll_infos.nPos;
+		l_last = l_first + m_file_scroll_infos.nPage - 1;
 		m_ChartDataWnd.GetDataFromDoc(l_first, l_last);
 		break;
 
@@ -1815,10 +1815,10 @@ void CViewSpikes::scrollFile(UINT nSBCode, UINT nPos)
 
 void CViewSpikes::updateFileScroll()
 {
-	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
-	m_filescroll_infos.nPos = m_ChartDataWnd.GetDataFirst();
-	m_filescroll_infos.nPage = m_ChartDataWnd.GetDataLast() - m_ChartDataWnd.GetDataFirst() + 1;
-	m_filescroll.SetScrollInfo(&m_filescroll_infos);
+	m_file_scroll_infos.fMask = SIF_PAGE | SIF_POS;
+	m_file_scroll_infos.nPos = m_ChartDataWnd.GetDataFirst();
+	m_file_scroll_infos.nPage = m_ChartDataWnd.GetDataLast() - m_ChartDataWnd.GetDataFirst() + 1;
+	m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 }
 
 void CViewSpikes::OnEditCopy()
@@ -2015,7 +2015,7 @@ void CViewSpikes::setVBarMode(short bMode)
 
 void CViewSpikes::updateGainScroll()
 {
-	m_scrolly.SetScrollPos(
+	m_scroll_y.SetScrollPos(
 		MulDiv(m_ChartDataWnd.GetChanlistItem(0)->GetYextent(),
 		       100,
 		       YEXTENT_MAX)
@@ -2073,7 +2073,7 @@ void CViewSpikes::updateBiasScroll()
 	const auto i_pos = (pchan->GetYzero()
 			- pchan->GetDataBinZero())
 		* 100 / static_cast<int>(YZERO_SPAN) + 50;
-	m_scrolly.SetScrollPos(i_pos, TRUE);
+	m_scroll_y.SetScrollPos(i_pos, TRUE);
 }
 
 void CViewSpikes::scrollBias(UINT nSBCode, UINT nPos)
