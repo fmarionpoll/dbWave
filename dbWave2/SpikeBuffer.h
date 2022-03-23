@@ -24,8 +24,8 @@ public:
 	CArray<int, int> m_spike_data_positions;
 	// offsets to individual spike data - used to exchange, add, remove spikes without modifying buffer
 
-	void SetSpklen(int spike_length);
-	int GetSpklen() const { return m_spike_length; }
+	void SetSpikeLength(int spike_length);
+	int GetSpikeLength() const { return m_spike_length; }
 
 	// Implementation
 public:

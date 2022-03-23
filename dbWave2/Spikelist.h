@@ -95,7 +95,7 @@ public:
 	void GetSpikeMaxmin(int no, int* max, int* min, int* dmaxmin) { m_spike_elements[no]->GetSpikeMaxMin(max, min, dmaxmin); }
 	int GetSpikeAmplitudeOffset(int no) const { return m_spike_elements[no]->get_amplitude_offset(); }
 	int GetSpikeValAt(int no, int index) const { return *(GetpSpikeData(no) + index); }
-	int GetSpikeLength() const { return m_spike_buffer.GetSpklen(); }
+	int GetSpikeLength() const { return m_spike_buffer.GetSpikeLength(); }
 	int GetTotalSpikes() const { return m_spike_elements.GetCount(); }
 
 	void SetSpikeClass(int no, const int nclass)
@@ -104,7 +104,7 @@ public:
 		m_only_valid_classes = FALSE;
 	}
 
-	void SetSpikeTime(int no, long iitime) { m_spike_elements[no]->set_time(iitime); }
+	void SetSpikeTime(int no, long ii_time) { m_spike_elements[no]->set_time(ii_time); }
 
 	SpikeElement* GetSpikeElemt(int no) { return m_spike_elements.GetAt(no); }
 
@@ -133,11 +133,11 @@ public:
 	void SetDetectParms(SPKDETECTPARM* pSd) { m_detection_parameters = *pSd; }
 	SPKDETECTPARM* GetDetectParms() { return &m_detection_parameters; }
 
-	int AddSpike(short* lpsource, int nchans, long iitime, int sourcechan, int iclass, BOOL bCheck);
+	int AddSpike(short* lpsource, int nchans, long ii_time, int sourcechan, int iclass, BOOL bCheck);
 	BOOL TransferDataToSpikeBuffer(int no, short* lpsource, int nchans, BOOL badjust = FALSE);
 	short* GetpSpikeData(int no) const { return m_spike_buffer.GetSpike(no); }
 	int RemoveSpike(int spikeindex);
-	BOOL IsAnySpikeAround(long iitime, int jitter, int& spikeindex, int ichan);
+	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spikeindex, int ichan);
 
 	void MeasureSpikeMaxMin(int no, int* max, int* imax, int* min, int* imin);
 	void MeasureSpikeMaxMinEx(int no, int* max, int* imax, int* min, int* imin, int ifirst, int ilast);

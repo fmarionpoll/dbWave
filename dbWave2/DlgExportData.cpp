@@ -411,17 +411,17 @@ BOOL DlgExportData::ExportDataAsTextFile()
 		short value;
 		m_pDat->BGetVal(0, -1); // force reading buffer anew
 		// loop over all values
-		for (int iitime = mm_lFirst; iitime < mm_lLast; iitime++)
+		for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
 		{
 			if (iivO.bincludeTime) // add time stamp
 			{
-				cs_dummy.Format(_T("%li"), iitime);
+				cs_dummy.Format(_T("%li"), ii_time);
 				csCharBuf += cs_dummy;
 			}
 			for (i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 			{
 				// get value and convert into ascii
-				value = m_pDat->BGetVal(i, iitime) - mm_binzero;
+				value = m_pDat->BGetVal(i, ii_time) - mm_binzero;
 				cs_dummy.Format(_T("\t%i"), value);
 				csCharBuf += cs_dummy;
 			}
@@ -453,12 +453,12 @@ BOOL DlgExportData::ExportDataAsSapidFile()
 
 	short value;
 	//int dummy = m_pDat->BGetVal(0, -1);		// init reading data
-	for (int iitime = mm_lFirst; iitime < mm_lLast; iitime++)
+	for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
 	{
 		for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 		{
 			// get value and convert into ascii
-			value = m_pDat->BGetVal(i, iitime) - mm_binzero;
+			value = m_pDat->BGetVal(i, ii_time) - mm_binzero;
 			dataDest.Write(&value, sizeof(short));
 		}
 	}
@@ -661,24 +661,24 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 		row++;
 
 		// iterate to read data and export to Excel file
-		auto iitime = 0;
+		auto ii_time = 0;
 		float voltsper_bin;
 		const double rate = pwaveFormat->sampling_rate_per_channel;
 		auto dummy = m_pDat->BGetVal(0, -1); // init reading data
 
 		for (int k = mm_lFirst; k < boutlength; k++)
 		{
-			iitime = k;
+			ii_time = k;
 			saveCString_BIFF(&data_dest, row, col, comment);
 			col++;
 		}
 		for (auto i = 0; i < nbouts; i++)
 		{
-			if (iitime >= mm_lLast)
+			if (ii_time >= mm_lLast)
 				continue;
 			if (iivO.bincludeTime)
 			{
-				fdouble = iitime / rate;
+				fdouble = ii_time / rate;
 				save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
 				col++;
 			}
@@ -686,12 +686,12 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 			for (auto j = j0; j < ncolsperbout; j++)
 			{
 				m_pDat->GetWBVoltsperBin(j - j0, &voltsper_bin, 0);
-				fdouble = (static_cast<double>(m_pDat->BGetVal(j - j0, iitime)) - static_cast<double>(mm_binzero)) *
+				fdouble = (static_cast<double>(m_pDat->BGetVal(j - j0, ii_time)) - static_cast<double>(mm_binzero)) *
 					static_cast<double>(voltsper_bin);
 				save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
 				col++;
 			}
-			iitime += boutlength;
+			ii_time += boutlength;
 		}
 		row++;
 		col = 0;
@@ -828,11 +828,11 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 	pDatDest->AcqDoc_DataAppendStart();
 	auto dummy = m_pDat->BGetVal(0, -1); // init reading data
 
-	for (int iitime = mm_lFirst; iitime < mm_lLast; iitime++)
+	for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
 	{
 		for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 		{
-			*pdat = m_pDat->BGetVal(i, iitime) - mm_binzero;
+			*pdat = m_pDat->BGetVal(i, ii_time) - mm_binzero;
 			datlen++;
 			pdat++;
 			if (datlen >= LEN)

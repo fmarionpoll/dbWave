@@ -15,7 +15,6 @@
 #include "StdAfx.h"
 #include "ChartWnd.h"
 #include "Spikedoc.h"
-//#include "ChartSpikeHist.h"
 #include "ChartSpikeHistVert.h"
 
 #ifdef _DEBUG
@@ -31,18 +30,7 @@ END_MESSAGE_MAP()
 
 CChartSpikeHistVert::CChartSpikeHistVert()
 {
-	m_pSL = nullptr; // source spk list
-	m_lFirst = 0; // source data intervals
-	m_lLast = 0; // last interval
-	m_selclass = 0; // selected class
-	m_hitspk = -1; // hit spike?
 	SetbUseDIB(FALSE);
-
-	// set bin size initial conditions
-	m_nbins = 0; // with 0 bins
-	m_abcissaminval = 0; // first abcissa
-	m_abcissamaxval = 0; // last abbcissa
-	m_lmax = 0; // histogram max
 	m_csEmpty = _T("no spikes (WndVerticalHistogram)");
 }
 
@@ -562,8 +550,8 @@ void CChartSpikeHistVert::buildHistFromSpikeList(SpikeList* p_spk_list, long l_f
 		const auto spike_element = p_spk_list->GetSpikeElemt(ispk);
 
 		// check that the corresp spike fits within the time limits requested
-		const auto iitime = spike_element->get_time();
-		if (iitime < l_first || iitime > l_last)
+		const auto ii_time = spike_element->get_time();
+		if (ii_time < l_first || ii_time > l_last)
 			continue;
 		auto y1 = spike_element->get_y1();
 		if (y1 > m_abcissamaxval || y1 < m_abcissaminval)

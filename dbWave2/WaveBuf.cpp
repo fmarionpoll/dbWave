@@ -1,31 +1,16 @@
-// WaveBuf.cpp : implementation file
-//
-
 #include "StdAfx.h"
-#include <math.h>
+#include <cmath>
 #include "WaveBuf.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-//////////////////////////////////////////////////////////////
-// CWaveBuf
 
 IMPLEMENT_SERIAL(CWaveBuf, CObject, 0)
 
 CWaveBuf::CWaveBuf()
-{
-	m_pWData = nullptr;
-	m_pWTransf = nullptr;
-	m_wversion = 0;
-	m_bTransf = FALSE;
-	m_iNumElements = 0;
-	m_parraySorted = nullptr;
-	m_parrayCircular = nullptr;
-	m_parray_size = 0;
-	m_dwBufferSize = 0;
-}
+= default;
 
 CWaveBuf::~CWaveBuf()
 {
@@ -107,14 +92,14 @@ void CWaveBuf::deleteBuffers()
 }
 
 // -----------------------------------------------------------
-BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int nchannels)
+BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int n_channels)
 {
 	ASSERT(this);
 	ASSERT(i_num_elements >= 1); // must have at least one
-	m_waveFormat.scan_count = nchannels;
+	m_waveFormat.scan_count = n_channels;
 
 	const DWORD dwSafeFactor = 256; // safety factor to fit data in buffer
-	const size_t dwBufferSize = i_num_elements * nchannels * sizeof(short) + dwSafeFactor;
+	const size_t dwBufferSize = i_num_elements * n_channels * sizeof(short) + dwSafeFactor;
 	if (m_dwBufferSize != dwBufferSize)
 	{
 		deleteBuffers();
@@ -134,7 +119,7 @@ BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int nchannels)
 		}
 		m_iNumElements = i_num_elements;
 	}
-	m_waveFormat.buffersize = i_num_elements * nchannels;
+	m_waveFormat.buffersize = i_num_elements * n_channels;
 	return TRUE;
 }
 
@@ -676,7 +661,7 @@ void CWaveBuf::BMedian30(short* lp_source, short* lp_dest, const int cx)
 }
 
 // Compute median of a curve
-// lp_source = pointer to source data buffer (interleaved channels) [iitime = l_first]
+// lp_source = pointer to source data buffer (interleaved channels) [ii_time = l_first]
 // lp_dest = pointer to destination data buffer (only one channel)
 // nbspan = number of points to take into account on each side of each data point
 // assume: m_waveFormat set

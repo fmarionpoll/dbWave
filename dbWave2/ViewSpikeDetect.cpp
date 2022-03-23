@@ -1344,7 +1344,7 @@ int CViewSpikeDetection::detect_method_1(WORD schan)
 
 		// DETECT SPIKES ---------------------------------------------------------------
 		// detect event if value above threshold
-		long iitime;
+		long ii_time;
 		long cx;
 		for (cx = l_data_first; cx <= l_last; cx++)
 		{
@@ -1360,7 +1360,7 @@ int CViewSpikeDetection::detect_method_1(WORD schan)
 				// search max and threshold crossing
 				auto max = *p_data; // init max
 				auto p_data1 = p_data; // init pointer
-				iitime = cx; // init spike time
+				ii_time = cx; // init spike time
 				// loop to search max
 				for (auto i = cx; i < cx + refractory; i++, p_data1++)
 				{
@@ -1368,7 +1368,7 @@ int CViewSpikeDetection::detect_method_1(WORD schan)
 					{
 						max = *p_data1;
 						p_data = p_data1; // p_data = "center" of spike
-						iitime = i; // iitime = time of spike
+						ii_time = i; // ii_time = time of spike
 					}
 				}
 			}
@@ -1381,14 +1381,14 @@ int CViewSpikeDetection::detect_method_1(WORD schan)
 				// search min and threshold crossing
 				auto min = *p_data;
 				auto p_data1 = p_data;
-				iitime = cx;
+				ii_time = cx;
 				for (auto i = cx; i < cx + refractory; i++, p_data1++)
 				{
 					if (min > *p_data1)
 					{
 						min = *p_data1;
 						p_data = p_data1; // p_data = "center" of spike
-						iitime = i;
+						ii_time = i;
 					}
 				}
 			}
@@ -1397,18 +1397,18 @@ int CViewSpikeDetection::detect_method_1(WORD schan)
 			if (pspkDP->extractTransform == pspkDP->detectTransform)
 			{
 				const auto p_m = p_data - prethreshold;
-				m_pSpkList->AddSpike(p_m, 1, iitime, sourcechan, 0, TRUE);
+				m_pSpkList->AddSpike(p_m, 1, ii_time, sourcechan, 0, TRUE);
 			}
 			else // extract from raw data
 			{
 				const auto pM = p_buf
-					+ nchans * (iitime - prethreshold - l_rw_first + nspan)
+					+ nchans * (ii_time - prethreshold - l_rw_first + nspan)
 					+ pspkDP->extractChan;
-				m_pSpkList->AddSpike(pM, nchans, iitime, sourcechan, 0, TRUE);
+				m_pSpkList->AddSpike(pM, nchans, ii_time, sourcechan, 0, TRUE);
 			}
 
 			// update loop parameters
-			cx = iitime + refractory;
+			cx = ii_time + refractory;
 		}
 
 		///////////////////////////////////////////////////////////////
@@ -3241,9 +3241,9 @@ void CViewSpikeDetection::OnCbnSelchangeTransform2()
 	// pre-load data
 	const auto spikelen = m_pSpkList->GetSpikeLength();
 	const auto spkpretrig = m_pSpkList->GetSpikePretrig();
-	auto iitime = m_pSpkList->GetSpikeTime(0) - spkpretrig;
-	auto l_rw_first0 = iitime - spikelen;
-	auto l_rw_last0 = iitime + spikelen;
+	auto ii_time = m_pSpkList->GetSpikeTime(0) - spkpretrig;
+	auto l_rw_first0 = ii_time - spikelen;
+	auto l_rw_last0 = ii_time + spikelen;
 	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, nspan))
 		return; // exit if error reported
 	auto p_data = p_dat_doc->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
@@ -3253,14 +3253,14 @@ void CViewSpikeDetection::OnCbnSelchangeTransform2()
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
 		// make sure that source data are loaded and get pointer to it (p_data)
-		iitime = m_pSpkList->GetSpikeTime(ispk);
-		auto l_rw_first = iitime - spkpretrig; // first point
+		ii_time = m_pSpkList->GetSpikeTime(ispk);
+		auto l_rw_first = ii_time - spkpretrig; // first point
 		auto l_rw_last = l_rw_first + spikelen; // last pt needed
 		if (!p_dat_doc->LoadRawData(&l_rw_first, &l_rw_last, nspan))
 			break; // exit loop if error reported
 
 		p_data = p_dat_doc->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
-		const auto p_data_spike0 = p_data + (iitime - spkpretrig - l_rw_first) * offset;
+		const auto p_data_spike0 = p_data + (ii_time - spkpretrig - l_rw_first) * offset;
 		m_pSpkList->TransferDataToSpikeBuffer(ispk, p_data_spike0, offset);
 		// nchans should be 1 if they come from the transform buffer as data are not interleaved...
 		m_pSpkList->CenterSpikeAmplitude(ispk, 0, spikelen, 1); // 1=center average

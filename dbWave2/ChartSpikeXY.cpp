@@ -1,4 +1,3 @@
-// spikexyp.cpp Implementation File
 
 #include "StdAfx.h"
 #include "ChartWnd.h"
@@ -21,7 +20,6 @@ CChartSpikeXYWnd::CChartSpikeXYWnd()
 {
 	SetbUseDIB(FALSE);
 	m_csEmpty = _T("no spikes (spikexp)");
-	p_spikelist_ = nullptr;
 }
 
 CChartSpikeXYWnd::~CChartSpikeXYWnd()
@@ -214,9 +212,9 @@ BOOL CChartSpikeXYWnd::IsSpikeWithinRange(int spikeno)
 		return FALSE;
 
 	const auto spike_element = p_spikelist_->GetSpikeElemt(spikeno);
-	const auto iitime = spike_element->get_time();
+	const auto ii_time = spike_element->get_time();
 	if (m_rangemode == RANGE_TIMEINTERVALS
-		&& (iitime < m_lFirst || iitime > m_lLast))
+		&& (ii_time < m_lFirst || ii_time > m_lLast))
 		return FALSE;
 
 	if (m_rangemode == RANGE_INDEX

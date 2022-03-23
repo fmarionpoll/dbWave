@@ -883,8 +883,8 @@ void CViewSpikeTemplates::OnBuildTemplates()
 				if (m_pSpkList->GetSpikeClass(i) != m_spikenoclass)
 					continue;
 			}
-			const auto iitime = m_pSpkList->GetSpikeTime(i);
-			if (iitime < m_lFirst || iitime > m_lLast)
+			const auto ii_time = m_pSpkList->GetSpikeTime(i);
+			if (ii_time < m_lFirst || ii_time > m_lLast)
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
@@ -1004,8 +1004,8 @@ void CViewSpikeTemplates::sortSpikes()
 			}
 
 			// skip spikes that do not fit into time interval selected
-			const auto iitime = m_pSpkList->GetSpikeTime(ispike);
-			if (iitime < m_lFirst || iitime > m_lLast)
+			const auto ii_time = m_pSpkList->GetSpikeTime(ispike);
+			if (ii_time < m_lFirst || ii_time > m_lLast)
 				continue;
 
 			// get pointer to spike data and search if any template is suitable

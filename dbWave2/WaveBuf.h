@@ -72,7 +72,7 @@ private:
 	void deleteBuffers();
 
 protected:
-	BOOL createWBuffer(int i_num_elements, int nchannels = 1);
+	BOOL createWBuffer(int i_num_elements, int n_channels = 1);
 
 	CWaveChanArray m_chanArray{}; // array of structures with the channel description
 	CWaveFormat m_waveFormat{}; // structure with data acquisition def & parameters
@@ -80,20 +80,20 @@ protected:
 	CTagList m_vt_tags{}; // list of vertical tags
 
 
-	static int m_maxtransform; // number of transmformation allowed
+	static int m_maxtransform; // number of transformations allowed
 	static std::string m_pTransformsAllowed[]; // ASCII description of each transformation
 	static int m_TransformBufferSpan[]; // size of sliding window necessary to filter data
 	static float m_correctionFact[]; // correction factor to transform binary data into voltage
 	static int m_bvariableSpan[]; // flag to tell if the sliding window size can be changed
 
 private:
-	short* m_pWData; // Pointer to the origin of the primary data array
-	short* m_pWTransf; // primary transform buffer
-	BOOL m_bTransf;
-	WORD m_wversion;
-	int m_iNumElements; // n elements within buffer
-	size_t m_dwBufferSize;
-	short* m_parraySorted; // array used by BMedian to store a sorted array of data
-	short* m_parrayCircular; // array used by BMedian to store a sliding window array of data
-	int m_parray_size;
+	short* m_pWData = nullptr; // Pointer to the origin of the primary data array
+	short* m_pWTransf = nullptr; // primary transform buffer
+	BOOL m_bTransf = FALSE;
+	WORD m_wversion = 0;
+	int m_iNumElements = 0; // n elements within buffer
+	size_t m_dwBufferSize = 0;
+	short* m_parraySorted = nullptr; // array used by BMedian to store a sorted array of data
+	short* m_parrayCircular = nullptr; // array used by BMedian to store a sliding window array of data
+	int m_parray_size = 0;
 };

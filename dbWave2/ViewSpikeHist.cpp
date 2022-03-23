@@ -1,6 +1,3 @@
-// SpikeHistView.cpp : implementation file
-//
-
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "ChartWnd.h"
@@ -1570,12 +1567,12 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				auto iitime0 = -1;
 				for (auto i = ispikefirst; i < nspikes; i++)
 				{
-					auto iitime = p_spk_list->GetSpikeTime(i) - ii_first;
+					auto ii_time = p_spk_list->GetSpikeTime(i) - ii_first;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
-					if (iitime < 0)
+					if (ii_time < 0)
 						continue;
-					if (iitime > ii_frame_length)
+					if (ii_time > ii_frame_length)
 					{
 						ispikefirst = i;
 						break;
@@ -1585,13 +1582,13 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 						&& p_spk_list->GetSpikeClass(i) != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
-					const auto spktime = iitime / samprate;
-					iitime = static_cast<int>(spktime * rectlen / span) + rcleft;
-					if (iitime != iitime0) // avoid multiple drawing of the same dots
+					const auto spktime = ii_time / samprate;
+					ii_time = static_cast<int>(spktime * rectlen / span) + rcleft;
+					if (ii_time != iitime0) // avoid multiple drawing of the same dots
 					{
-						p_dc->MoveTo(iitime, row);
-						p_dc->LineTo(iitime, row + dotheight);
-						iitime0 = iitime;
+						p_dc->MoveTo(ii_time, row);
+						p_dc->LineTo(ii_time, row + dotheight);
+						iitime0 = ii_time;
 					}
 				}
 
@@ -1638,25 +1635,25 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				auto iitime0 = -1;
 				for (auto i = 0; i < nspikes; i++)
 				{
-					auto iitime = p_spk_list->GetSpikeTime(i) - istart;
+					auto ii_time = p_spk_list->GetSpikeTime(i) - istart;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
-					if (iitime < 0)
+					if (ii_time < 0)
 						continue;
-					if (iitime > ii_frame_length)
+					if (ii_time > ii_frame_length)
 						break;
 					// check spike class
 					if (m_pvdS->spikeclassoption
 						&& p_spk_list->GetSpikeClass(i) != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
-					const auto spktime = iitime / samprate;
-					iitime = static_cast<int>(spktime * rectlen / span) + rcleft;
-					if (iitime != iitime0) // avoid multiple drawing of the same dots
+					const auto spktime = ii_time / samprate;
+					ii_time = static_cast<int>(spktime * rectlen / span) + rcleft;
+					if (ii_time != iitime0) // avoid multiple drawing of the same dots
 					{
-						p_dc->MoveTo(iitime, row);
-						p_dc->LineTo(iitime, row + dotheight);
-						iitime0 = iitime;
+						p_dc->MoveTo(ii_time, row);
+						p_dc->LineTo(ii_time, row + dotheight);
+						iitime0 = ii_time;
 					}
 				}
 				// next stim set -- jump to next line

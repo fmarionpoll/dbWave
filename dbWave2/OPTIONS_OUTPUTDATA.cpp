@@ -22,10 +22,10 @@ OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator =(const OPTIONS_OUTPUTDATA& arg
 		iDAnbuffers = arg.iDAnbuffers;
 		iDATriggermode = arg.iDATriggermode;
 		dDAFrequency_perchan = arg.dDAFrequency_perchan;
-		const int nchannels = arg.outputparms_array.GetSize();
-		outputparms_array.SetSize(nchannels);
+		const int n_channels = arg.outputparms_array.GetSize();
+		outputparms_array.SetSize(n_channels);
 
-		for (int i = 0; i < nchannels; i++)
+		for (int i = 0; i < n_channels; i++)
 		{
 			outputparms_array[i] = arg.outputparms_array[i];
 		}
@@ -54,9 +54,9 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 		ar << static_cast<WORD>(1); // double
 		ar << dDAFrequency_perchan;
 
-		const int nchannels = outputparms_array.GetSize();
-		ar << static_cast<WORD>(nchannels);
-		for (int i = 0; i < nchannels; i++)
+		const int n_channels = outputparms_array.GetSize();
+		ar << static_cast<WORD>(n_channels);
+		for (int i = 0; i < n_channels; i++)
 		{
 			outputparms_array.GetAt(i).Serialize(ar);
 		}

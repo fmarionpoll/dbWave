@@ -15,44 +15,44 @@ protected:
 public:
 	enum { IDD = IDD_VIEWSPIKES };
 
-	float m_timefirst = 0.f;
-	float m_timelast = 0.f;
-	int m_spikeno = -1;
-	int m_spikenoclass = 0;
+	float m_time_first = 0.f;
+	float m_time_last = 0.f;
+	int m_spike_index = -1;
+	int m_spike_index_class = 0;
 	float m_zoom = .2f;
-	int m_sourceclass = 0;
-	int m_destclass = 1;
-	BOOL m_bresetzoom = true;
-	BOOL m_bartefact = false;
-	BOOL m_bKeepSameClass = false;
+	int m_class_source = 0;
+	int m_class_destination = 1;
+	BOOL m_b_reset_zoom = true;
+	BOOL m_b_artefact = false;
+	BOOL m_b_keep_same_class = false;
 	float m_jitter_ms = 1.f;
 
 	// Attributes
 protected:
-	ChartData m_ChartDataWnd; // data display
-	CSpikeClassListBox m_spkClassListBox; // listbox of spike classes
-	int m_maxclasses = 1;
+	ChartData m_ChartDataWnd;
+	CSpikeClassListBox m_spkClassListBox;
+	int m_max_classes = 1;
 
 	CEditCtrl mm_spikeno;
 	CEditCtrl mm_spikenoclass;
-	CEditCtrl mm_timefirst; // first abcissa value
-	CEditCtrl mm_timelast; // last abcissa value
-	CEditCtrl mm_zoom; // zoom factor
+	CEditCtrl mm_timefirst; 
+	CEditCtrl mm_timelast; 
+	CEditCtrl mm_zoom;
 	CEditCtrl mm_sourceclass;
 	CEditCtrl mm_destclass;
 	CEditCtrl mm_jitter_ms;
 
-	CScrollBarEx m_filescroll; // data position within file
-	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
+	CScrollBarEx m_filescroll; 
+	SCROLLINFO m_filescroll_infos{}; 
 
-	int m_zoominteger = 1; // zoom length (nb data acq points)
+	int m_zoominteger = 1; 
 	HICON m_hBias = nullptr;
 	HICON m_hZoom = nullptr;
-	float m_yscaleFactor = 0.f; // div factor for y bar
-	int m_VBarMode = 0; // flag V scrollbar state
-	CScrollBar m_scrolly; // V scrollbar
+	float m_yscaleFactor = 0.f; 
+	int m_VBarMode = 0; 
+	CScrollBar m_scrolly; 
 
-	AcqDataDoc* m_pDataDoc = nullptr; // data document pointer
+	AcqDataDoc* m_pDataDoc = nullptr; 
 
 	BOOL m_bInitSourceView = true;
 	int m_lFirst = 0;
@@ -61,7 +61,7 @@ protected:
 	CDWordArray m_DWintervals; // intervals to highlight spikes
 	BOOL m_baddspikemode = false;
 
-	int m_yWE = 1; // offset and gain to display spikes
+	int m_yWE = 1;
 	int m_yWO = 0;
 	int m_ptVT = -1;
 	CRect m_rectVTtrack = CRect(0, 0, 0, 0);
@@ -84,7 +84,7 @@ protected:
 	void scrollGain(UINT nSBCode, UINT nPos);
 	void scrollBias(UINT nSBCode, UINT nPos);
 	void setVBarMode(short bMode);
-	BOOL addSpiketoList(long iitime, BOOL bcheck_if_otheraround);
+	BOOL addSpiketoList(long ii_time, BOOL bcheck_if_otheraround);
 	void setAddspikesMode(int mousecursorType);
 	void selectSpkList(int icursel);
 	void setTrackRectangle();

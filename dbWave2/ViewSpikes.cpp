@@ -27,9 +27,9 @@ CViewSpikes::CViewSpikes() : CdbTableView(IDD)
 
 CViewSpikes::~CViewSpikes()
 {
-	m_psC->vdestclass = m_destclass;
-	m_psC->vsourceclass = m_sourceclass;
-	m_psC->bresetzoom = m_bresetzoom;
+	m_psC->vdestclass = m_class_destination;
+	m_psC->vsourceclass = m_class_source;
+	m_psC->bresetzoom = m_b_reset_zoom;
 	m_psC->fjitter_ms = m_jitter_ms;
 }
 
@@ -37,18 +37,18 @@ void CViewSpikes::DoDataExchange(CDataExchange* pDX)
 {
 	CdbTableView::DoDataExchange(pDX);
 
-	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
-	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
-	DDX_Text(pDX, IDC_NSPIKES, m_spikeno);
-	DDX_Text(pDX, IDC_EDIT2, m_spikenoclass);
+	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first);
+	DDX_Text(pDX, IDC_TIMELAST, m_time_last);
+	DDX_Text(pDX, IDC_NSPIKES, m_spike_index);
+	DDX_Text(pDX, IDC_EDIT2, m_spike_index_class);
 	DDX_Text(pDX, IDC_EDIT3, m_zoom);
-	DDX_Text(pDX, IDC_EDIT4, m_sourceclass);
-	DDX_Text(pDX, IDC_EDIT5, m_destclass);
-	DDX_Check(pDX, IDC_CHECK1, m_bresetzoom);
-	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
+	DDX_Text(pDX, IDC_EDIT4, m_class_source);
+	DDX_Text(pDX, IDC_EDIT5, m_class_destination);
+	DDX_Check(pDX, IDC_CHECK1, m_b_reset_zoom);
+	DDX_Check(pDX, IDC_ARTEFACT, m_b_artefact);
 	DDX_Text(pDX, IDC_JITTER, m_jitter_ms);
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
-	DDX_Check(pDX, IDC_SAMECLASS, m_bKeepSameClass);
+	DDX_Check(pDX, IDC_SAMECLASS, m_b_keep_same_class);
 }
 
 BEGIN_MESSAGE_MAP(CViewSpikes, CdbTableView)
@@ -219,12 +219,12 @@ void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 	if (m_rectVTtrack.PtInRect(point))
 	{
 		ReleaseCapture();
-		const int iitime = m_ChartDataWnd.GetDataOffsetfromPixel(point.x - m_rectVTtrack.left);
+		const int ii_time = m_ChartDataWnd.GetDataOffsetfromPixel(point.x - m_rectVTtrack.left);
 		m_jitter = m_jitter_ms;
 		auto b_check = TRUE;
 		if (nFlags & MK_CONTROL)
 			b_check = FALSE;
-		addSpiketoList(iitime, b_check);
+		addSpiketoList(ii_time, b_check);
 		m_bdummy = FALSE;
 	}
 	CdbTableView::OnLButtonUp(nFlags, point);
@@ -280,13 +280,13 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_DBLCLKSEL:
 		if (shortValue < 0)
 			shortValue = 0;
-		m_spikeno = shortValue;
+		m_spike_index = shortValue;
 		OnToolsEdittransformspikes();
 		break;
 
 	case HINT_DROPPED:
 		m_pSpkDoc->SetModifiedFlag();
-		m_spikenoclass = m_pSpkList->GetSpikeClass(m_spikeno);
+		m_spike_index_class = m_pSpkList->GetSpikeClass(m_spike_index);
 		UpdateData(FALSE);
 		break;
 
@@ -304,14 +304,14 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-BOOL CViewSpikes::addSpiketoList(long iitime, BOOL bcheck_if_otheraround)
+BOOL CViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
 {
 	const int method = m_pSpkList->GetdetectTransform();
 	const int doc_channel = m_pSpkList->GetextractChan();
 	const int prethreshold = m_pSpkList->GetSpikePretrig();
 	const int spikelen = m_pSpkList->GetSpikeLength();
 	const int nspan = m_pDataDoc->GetTransfDataSpan(method);
-	const auto iitime0 = iitime - prethreshold;
+	const auto iitime0 = ii_time - prethreshold;
 	auto l_read_write_first = iitime0;
 	auto l_read_write_last = iitime0 + spikelen;
 	if (!m_pDataDoc->LoadRawData(&l_read_write_first, &l_read_write_last, nspan))
@@ -335,13 +335,13 @@ BOOL CViewSpikes::addSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 		                                  1, //offset, /*nchans,*/							//nchans	= nb of interleaved channels
 		                                  iitime0 + prethreshold, //time = file index of first pt of the spk
 		                                  doc_channel, //detectChan	= data source chan index
-		                                  m_destclass, bcheck_if_otheraround);
+		                                  m_class_destination, bcheck_if_otheraround);
 
 		m_pSpkDoc->SetModifiedFlag();
 	}
-	else if (m_pSpkList->GetSpikeClass(spikeindex) != m_destclass)
+	else if (m_pSpkList->GetSpikeClass(spikeindex) != m_class_destination)
 	{
-		m_pSpkList->SetSpikeClass(spikeindex, m_destclass);
+		m_pSpkList->SetSpikeClass(spikeindex, m_class_destination);
 		m_pSpkDoc->SetModifiedFlag();
 	}
 
@@ -353,12 +353,12 @@ BOOL CViewSpikes::addSpiketoList(long iitime, BOOL bcheck_if_otheraround)
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		GetDocument()->SetDB_n_spikes(m_pSpkList->GetTotalSpikes());
 		GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
-		const auto boldparm = m_bresetzoom;
-		m_bresetzoom = FALSE;
+		const auto boldparm = m_b_reset_zoom;
+		m_b_reset_zoom = FALSE;
 		updateSpikeFile(TRUE);
-		m_bresetzoom = boldparm;
+		m_b_reset_zoom = boldparm;
 	}
-	m_spikeno = spikeindex;
+	m_spike_index = spikeindex;
 
 	updateDataFile(TRUE);
 	updateLegends(TRUE);
@@ -372,18 +372,18 @@ void CViewSpikes::selectSpike(int spikeno)
 		return;
 	if (spikeno >= m_pSpkList->GetTotalSpikes())
 		spikeno = -1;
-	m_spikeno = spikeno;
+	m_spike_index = spikeno;
 	m_pSpkList->m_selected_spike = spikeno;
 	m_spkClassListBox.SelectSpike(spikeno);
 
-	m_spikenoclass = -1;
+	m_spike_index_class = -1;
 	int n_cmd_show;
 	if (spikeno >= 0 && spikeno < m_pSpkList->GetTotalSpikes())
 	{
 		// get address of spike parms
-		const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);
-		m_spikenoclass = p_spike_element->get_class();
-		m_bartefact = (m_spikenoclass < 0);
+		const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spike_index);
+		m_spike_index_class = p_spike_element->get_class();
+		m_b_artefact = (m_spike_index_class < 0);
 		const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetSpikePretrig();
 		const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 		n_cmd_show = SW_SHOW;
@@ -469,9 +469,9 @@ void CViewSpikes::OnInitialUpdate()
 	options_viewdata = &(p_app->options_viewdata); // viewdata options
 	mdMO = &(p_app->options_viewdata_measure); // measure options
 	m_psC = &(p_app->spkC); // get address of spike classif parms
-	m_destclass = m_psC->vdestclass;
-	m_sourceclass = m_psC->vsourceclass;
-	m_bresetzoom = m_psC->bresetzoom;
+	m_class_destination = m_psC->vdestclass;
+	m_class_source = m_psC->vsourceclass;
+	m_b_reset_zoom = m_psC->bresetzoom;
 	m_jitter_ms = m_psC->fjitter_ms;
 
 	// adjust size of the row and cols with text, spikes, and bars
@@ -611,7 +611,7 @@ void CViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 			m_tabCtrl.SetCurSel(icur);
 			// adjust Y zoom
 			ASSERT(m_lFirst >= 0);
-			if (m_bresetzoom)
+			if (m_b_reset_zoom)
 			{
 				m_spkClassListBox.SetRedraw(FALSE);
 				zoomOnPresetInterval(0);
@@ -659,12 +659,12 @@ void CViewSpikes::updateLegends(BOOL bUpdateInterface)
 		m_spkClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
 
 	// update text abcissa and horizontal scroll position
-	m_timefirst = m_lFirst / m_pSpkDoc->GetAcqRate();
-	m_timelast = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
+	m_time_first = static_cast<float>(m_lFirst) / m_pSpkDoc->GetAcqRate();
+	m_time_last = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
 	m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
 
 	// update scrollbar and select spikes
-	selectSpike(m_spikeno);
+	selectSpike(m_spike_index);
 	updateFileScroll();
 }
 
@@ -790,14 +790,14 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	dlg.m_yzero = m_spkClassListBox.GetYWOrg(); // ordinates
 	dlg.m_xextent = m_spkClassListBox.GetXWExtent(); // and
 	dlg.m_xzero = m_spkClassListBox.GetXWOrg(); // abcissa
-	dlg.m_spikeno = m_spikeno; // load index of selected spike
+	dlg.m_spikeno = m_spike_index; // load index of selected spike
 	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();
 
 	// open dialog box and wait for response
 	dlg.DoModal();
 	if (!dlg.m_bartefact)
-		m_spikeno = dlg.m_spikeno; // set no spike selected
+		m_spike_index = dlg.m_spikeno; // set no spike selected
 
 	if (dlg.m_bchanged)
 	{
@@ -1108,7 +1108,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	}
 
 	// update the nb of classes per file selected and add this number
-	m_maxclasses = 1;
+	m_max_classes = 1;
 	p_dbwave_doc->SetDB_CurrentRecordPosition(m_printFirst);
 	auto nbrect = 0; // total nb of rows
 	for (auto i = m_printFirst; i <= m_printLast; i++, p_dbwave_doc->DBMoveNext())
@@ -1132,8 +1132,8 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 			nnclasses += nclasses;
 		}
 
-		if (p_dbwave_doc->GetDB_n_spike_classes() > m_maxclasses)
-			m_maxclasses = p_dbwave_doc->GetDB_n_spike_classes();
+		if (p_dbwave_doc->GetDB_n_spike_classes() > m_max_classes)
+			m_max_classes = p_dbwave_doc->GetDB_n_spike_classes();
 
 		if (options_viewdata->bMultirowDisplay)
 		{
@@ -1254,9 +1254,9 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		auto rw2 = r_where; // printing rectangle - constant
 		rw2.OffsetRect(-r_where.left, -r_where.top); // set RW2 origin = 0,0
-		auto rheight = rw2.Height() / m_maxclasses; // ncount;
+		auto rheight = rw2.Height() / m_max_classes; // ncount;
 		if (m_pDataDoc != nullptr)
-			rheight = rw2.Height() / (m_maxclasses + 1);
+			rheight = rw2.Height() / (m_max_classes + 1);
 		const auto rseparator = rheight / 8;
 		const auto rcol = rw2.Width() / 8;
 
@@ -1495,7 +1495,7 @@ void CViewSpikes::OnEnChangeNOspike()
 {
 	if (mm_spikeno.m_bEntryDone)
 	{
-		const auto spikeno = m_spikeno;
+		const auto spikeno = m_spike_index;
 
 		switch (mm_spikeno.m_nChar)
 		{
@@ -1505,11 +1505,11 @@ void CViewSpikes::OnEnChangeNOspike()
 			break;
 		case VK_UP:
 		case VK_PRIOR:
-			m_spikeno = m_pSpkList->GetNextSpike(spikeno, 1, m_bKeepSameClass);
+			m_spike_index = m_pSpkList->GetNextSpike(spikeno, 1, m_b_keep_same_class);
 			break;
 		case VK_DOWN:
 		case VK_NEXT:
-			m_spikeno = m_pSpkList->GetNextSpike(spikeno, -1, m_bKeepSameClass);
+			m_spike_index = m_pSpkList->GetNextSpike(spikeno, -1, m_b_keep_same_class);
 			break;
 		default:
 			break;
@@ -1519,12 +1519,12 @@ void CViewSpikes::OnEnChangeNOspike()
 		mm_spikeno.m_nChar = 0;
 		mm_spikeno.SetSel(0, -1);
 
-		m_spikeno = m_pSpkList->GetValidSpikeNumber(m_spikeno);
-		if (m_spikeno != spikeno)
+		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
+		if (m_spike_index != spikeno)
 		{
-			selectSpike(m_spikeno);
-			if (m_spikeno >= 0)
-				centerDataDisplayOnSpike(m_spikeno);
+			selectSpike(m_spike_index);
+			if (m_spike_index >= 0)
+				centerDataDisplayOnSpike(m_spike_index);
 		}
 		else
 			UpdateData(FALSE);
@@ -1568,17 +1568,17 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 {
 	if (!mm_spikenoclass.m_bEntryDone)
 		return;
-	const auto spikenoclass = m_spikenoclass;
+	const auto spikenoclass = m_spike_index_class;
 	switch (mm_spikenoclass.m_nChar)
 	{
 	// load data from edit controls
 	case VK_RETURN: UpdateData(TRUE);
 		break;
 	case VK_UP:
-	case VK_PRIOR: m_spikenoclass++;
+	case VK_PRIOR: m_spike_index_class++;
 		break;
 	case VK_DOWN:
-	case VK_NEXT: m_spikenoclass--;
+	case VK_NEXT: m_spike_index_class--;
 		break;
 	default: ;
 	}
@@ -1587,9 +1587,9 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 	mm_spikenoclass.m_nChar = 0; // empty buffer
 	mm_spikenoclass.SetSel(0, -1); // select all text
 
-	if (m_spikenoclass != spikenoclass) // change display if necessary
+	if (m_spike_index_class != spikenoclass) // change display if necessary
 	{
-		m_spkClassListBox.ChangeSpikeClass(m_spikeno, m_spikenoclass);
+		m_spkClassListBox.ChangeSpikeClass(m_spike_index, m_spike_index_class);
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		updateLegends(TRUE);
 		m_spkClassListBox.Invalidate();
@@ -1608,11 +1608,11 @@ void CViewSpikes::OnEnChangeTimefirst()
 			break;
 		case VK_UP:
 		case VK_PRIOR:
-			m_timefirst++;
+			m_time_first++;
 			break;
 		case VK_DOWN:
 		case VK_NEXT:
-			m_timefirst--;
+			m_time_first--;
 			break;
 		default: ;
 		}
@@ -1621,7 +1621,7 @@ void CViewSpikes::OnEnChangeTimefirst()
 		mm_timefirst.m_nChar = 0;
 		mm_timefirst.SetSel(0, -1); //select all text
 
-		const auto l_first = static_cast<long>(m_timefirst * m_pSpkDoc->GetAcqRate());
+		const auto l_first = static_cast<long>(m_time_first * m_pSpkDoc->GetAcqRate());
 		if (l_first != m_lFirst)
 		{
 			m_lFirst = l_first;
@@ -1643,11 +1643,11 @@ void CViewSpikes::OnEnChangeTimelast()
 			break;
 		case VK_UP:
 		case VK_PRIOR:
-			m_timelast++;
+			m_time_last++;
 			break;
 		case VK_DOWN:
 		case VK_NEXT:
-			m_timelast--;
+			m_time_last--;
 			break;
 		default: ;
 		}
@@ -1655,7 +1655,7 @@ void CViewSpikes::OnEnChangeTimelast()
 		mm_timelast.m_nChar = 0;
 		mm_timelast.SetSel(0, -1);
 
-		const auto l_last = static_cast<long>(m_timelast * m_pSpkDoc->GetAcqRate());
+		const auto l_last = static_cast<long>(m_time_last * m_pSpkDoc->GetAcqRate());
 		if (l_last != m_lLast)
 		{
 			m_lLast = l_last;
@@ -1708,10 +1708,10 @@ void CViewSpikes::OnEnChangeSourceclass()
 		case VK_RETURN: UpdateData(TRUE);
 			break;
 		case VK_UP:
-		case VK_PRIOR: m_sourceclass++;
+		case VK_PRIOR: m_class_source++;
 			break;
 		case VK_DOWN:
-		case VK_NEXT: m_sourceclass--;
+		case VK_NEXT: m_class_source--;
 			break;
 		default: ;
 		}
@@ -1734,10 +1734,10 @@ void CViewSpikes::OnEnChangeDestclass()
 		case VK_RETURN: UpdateData(TRUE);
 			break;
 		case VK_UP:
-		case VK_PRIOR: m_destclass++;
+		case VK_PRIOR: m_class_destination++;
 			break;
 		case VK_DOWN:
-		case VK_NEXT: m_destclass--;
+		case VK_NEXT: m_class_destination--;
 			break;
 		default: ;
 		}
@@ -2147,24 +2147,24 @@ void CViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CViewSpikes::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
-	if (m_spikeno < 0)
+	if (m_spike_index < 0)
 	{
-		m_bartefact = FALSE; // no action if spike index < 0
+		m_b_artefact = FALSE; // no action if spike index < 0
 	}
 	else
 	{
 		// load old class nb
-		auto spkclass = m_pSpkList->GetSpikeClass(m_spikeno);
+		auto spkclass = m_pSpkList->GetSpikeClass(m_spike_index);
 		// if artefact: set class to negative value
-		if (m_bartefact && spkclass >= 0)
+		if (m_b_artefact && spkclass >= 0)
 			spkclass = -(spkclass + 1);
 
 			// if not artefact: if spike has negative class, set to positive value
 		else if (spkclass < 0)
 			spkclass = -(spkclass + 1);
-		m_pSpkList->SetSpikeClass(m_spikeno, spkclass);
+		m_pSpkList->SetSpikeClass(m_spike_index, spkclass);
 	}
-	CheckDlgButton(IDC_ARTEFACT, m_bartefact);
+	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 	updateLegends(TRUE);
 	m_spkClassListBox.Invalidate();
@@ -2208,5 +2208,5 @@ void CViewSpikes::OnHScrollRight()
 
 void CViewSpikes::OnBnClickedSameclass()
 {
-	m_bKeepSameClass = static_cast<CButton*>(GetDlgItem(IDC_SAMECLASS))->GetCheck();
+	m_b_keep_same_class = static_cast<CButton*>(GetDlgItem(IDC_SAMECLASS))->GetCheck();
 }

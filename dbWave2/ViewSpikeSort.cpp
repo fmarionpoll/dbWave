@@ -1133,7 +1133,7 @@ void CViewSpikeSort::OnToolsAlignspikes()
 		{
 			*p_cxy_lag = 0;
 
-			// add cross product for each point: data * meanlong iitime
+			// add cross product for each point: data * meanlong ii_time
 			auto p_mean_k = p_mean0 + kstart; // first point / template
 			short* pdat_k = pdat_k0; // first data point
 			double cxx_spike = 0; // autocorrelation

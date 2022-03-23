@@ -162,8 +162,8 @@ protected:
 	int m_plotmode = 0;
 	int m_colorbackgr = SILVER_COLOR;
 	int m_colorselected = BLACK_COLOR;
-	BOOL m_erasebkgnd = true; // erase backgroung (flag)
-	BOOL m_bVTtagsLONG = false; // flag: TRUE if VTtags are defined as long
+	BOOL m_erasebkgnd = TRUE; // erase background (flag)
+	BOOL m_bVTtagsLONG = FALSE; // flag: TRUE if VTtags are defined as long
 	long m_liFirst = 0; // file position of first left pixel
 	long m_liLast = 0; // file position of last right pixel
 	long m_liJitter{}; // file position range corresponding mouse jitter

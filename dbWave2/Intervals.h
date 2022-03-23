@@ -13,7 +13,7 @@ public:
 	CIntervals& operator =(const CIntervals& arg);
 
 	long GetAt(int i) { return array.GetAt(i); }
-	void SetAt(int i, long iitime) {array.SetAt(i, iitime); }
+	void SetAt(int i, long ii_time) {array.SetAt(i, ii_time); }
 	void SetAtGrow(int i, long value) { array.SetAtGrow(i, value); }
 	long GetSize() const { return array.GetSize(); }
 	void Add(long ii) { array.Add(ii); n_items++; }

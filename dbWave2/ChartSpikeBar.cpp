@@ -1,5 +1,3 @@
-// spikebar.cpp Implementation File
-
 #include "StdAfx.h"
 #include "ChartWnd.h"
 #include "Spikedoc.h"
@@ -274,7 +272,7 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 
 	while (i0 < p_intervals->GetSize()
 		&& p_intervals->GetAt(i0) < iistart)
-		i0++; // loop until found
+		i0++; 
 
 	auto istate = bottom; // use this variable to keep track of pulse broken by display limits
 	const auto jj = (i0 / 2) * 2; // keep index of the ON transition
@@ -804,8 +802,8 @@ int CChartSpikeBarWnd::hitCurve(const CPoint point)
 	const auto deltay = MulDiv(3, m_yWE, m_yVE);
 
 	// for x coordinates, the formula is in 2 steps:
-	// 1) time -> relative time: iitime = (spiketime-m_lFirst) [-offset]
-	// 2) rel time -> logical coordinate(LC): LC = iitime* m_xWE / len + m_xWO
+	// 1) time -> relative time: ii_time = (spiketime-m_lFirst) [-offset]
+	// 2) rel time -> logical coordinate(LC): LC = ii_time* m_xWE / len + m_xWO
 	// formula used to display: time (long) --> abcissa (int)
 	// 		long len =  (m_lLast - m_lFirst + 1);
 	// 		int abcissa = (int) (((lSpikeTime - m_lFirst) * (long) m_xWE) / len) + m_xWO;

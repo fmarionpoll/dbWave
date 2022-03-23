@@ -12,7 +12,6 @@ IMPLEMENT_SERIAL(ChartData, ChartWnd, 1)
 
 ChartData::ChartData()
 {
-	m_bVTtagsLONG = TRUE;
 	AddChanlistItem(0, 0);
 	ResizeChannels(m_npixels, 1024);
 	m_csEmpty = _T("no data to display");
@@ -308,9 +307,9 @@ int ChartData::SetChanlistTransformMode(int ichan, int imode)
 
 SCOPESTRUCT* ChartData::GetScopeParameters()
 {
-	const auto nchannels = chanlistitem_ptr_array.GetSize();
-	m_scopestruct.channels.SetSize(nchannels);
-	for (auto i = 0; i < nchannels; i++)
+	const auto n_channels = chanlistitem_ptr_array.GetSize();
+	m_scopestruct.channels.SetSize(n_channels);
+	for (auto i = 0; i < n_channels; i++)
 	{
 		const auto p_chanlist_item = chanlistitem_ptr_array[i];
 		m_scopestruct.channels[i].izero = p_chanlist_item->GetYzero();
