@@ -216,19 +216,16 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		long dummy;
 		ar >> dummy;
 		m_only_valid_classes = dummy;
-		if (m_only_valid_classes == TRUE)
+		ar >> dummy;
+		m_n_classes = dummy;
+		
+		if (m_n_classes >= 0)
 		{
-			ar >> dummy;
-			m_n_classes = dummy;
-			if (m_n_classes != 0)
+			for (auto i = 0; i < m_n_classes; i++)
 			{
-				m_spike_class_descriptor_array.SetSize(m_n_classes);
-				for (auto i = 0; i < m_n_classes; i++)
-				{
-					SpikeClassDescriptor item;
-					item.Serialize(ar);
-					m_spike_class_descriptor_array.SetAt(i, item);
-				}
+				SpikeClassDescriptor item;
+				item.Serialize(ar);
+				m_spike_class_descriptor_array.Add(item);
 			}
 		}
 	}
