@@ -23,7 +23,7 @@ class ViewADcontinuous : public dbTableView
 protected:
 	ViewADcontinuous();
 	~ViewADcontinuous() override;
-	DECLARE_DYNCREATE(CViewADcontinuous)
+	DECLARE_DYNCREATE(ViewADcontinuous)
 
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 

@@ -8,7 +8,7 @@
 
 class dbTableView : public CDaoRecordView
 {
-	DECLARE_DYNAMIC(CdbTableView)
+	DECLARE_DYNAMIC(dbTableView)
 
 protected:
 	explicit dbTableView(LPCTSTR lpszTemplateName);

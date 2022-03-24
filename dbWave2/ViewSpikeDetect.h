@@ -7,7 +7,7 @@
 class ViewSpikeDetection : public dbTableView
 {
 protected:
-	DECLARE_DYNCREATE(CViewSpikeDetection)
+	DECLARE_DYNCREATE(ViewSpikeDetection)
 	ViewSpikeDetection();
 
 	// Form Data

@@ -8,7 +8,7 @@
 class ViewdbWave : public dbTableView
 {
 protected: // create from serialization only
-	DECLARE_DYNCREATE(CViewdbWave)
+	DECLARE_DYNCREATE(ViewdbWave)
 	ViewdbWave();
 	~ViewdbWave() override;
 

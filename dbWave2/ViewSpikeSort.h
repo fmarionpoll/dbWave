@@ -8,7 +8,7 @@
 
 class ViewSpikeSort : public dbTableView
 {
-	DECLARE_DYNCREATE(CViewSpikeSort)
+	DECLARE_DYNCREATE(ViewSpikeSort)
 protected:
 	ViewSpikeSort();
 	~ViewSpikeSort() override;

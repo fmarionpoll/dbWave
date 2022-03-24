@@ -362,7 +362,7 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 		break;
 	case ID_VIEW_SPIKEDETECTION:
 		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(ViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())

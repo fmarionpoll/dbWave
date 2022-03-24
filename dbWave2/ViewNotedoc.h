@@ -4,7 +4,7 @@
 class ViewNoteDoc : public CRichEditView
 {
 	ViewNoteDoc();
-	DECLARE_DYNCREATE(CViewNoteDoc)
+	DECLARE_DYNCREATE(ViewNoteDoc)
 
 protected:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;

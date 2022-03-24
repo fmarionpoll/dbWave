@@ -4,7 +4,7 @@
 
 class ViewSpikeHist : public dbTableView
 {
-	DECLARE_DYNCREATE(CViewSpikeHist)
+	DECLARE_DYNCREATE(ViewSpikeHist)
 protected:
 	ViewSpikeHist();
 	~ViewSpikeHist() override;

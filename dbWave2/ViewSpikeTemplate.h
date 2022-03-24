@@ -7,7 +7,7 @@
 class ViewSpikeTemplates : public dbTableView
 {
 protected:
-	DECLARE_DYNCREATE(CViewSpikeTemplates)
+	DECLARE_DYNCREATE(ViewSpikeTemplates)
 	ViewSpikeTemplates();
 	~ViewSpikeTemplates() override;
 public:

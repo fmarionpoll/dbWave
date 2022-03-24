@@ -11,7 +11,7 @@
 class ViewData : public dbTableView
 {
 protected:
-	DECLARE_DYNCREATE(CViewData)
+	DECLARE_DYNCREATE(ViewData)
 	ViewData();
 
 	// Form Data

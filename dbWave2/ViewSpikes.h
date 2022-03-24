@@ -7,7 +7,7 @@
 class ViewSpikes : public dbTableView
 {
 protected:
-	DECLARE_DYNCREATE(CViewSpikes)
+	DECLARE_DYNCREATE(ViewSpikes)
 	ViewSpikes();
 	~ViewSpikes() override;
 
