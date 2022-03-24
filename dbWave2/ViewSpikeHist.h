@@ -2,12 +2,12 @@
 #include "dbTableView.h"
 #include "StretchControls.h"
 
-class CViewSpikeHist : public CdbTableView
+class ViewSpikeHist : public dbTableView
 {
 	DECLARE_DYNCREATE(CViewSpikeHist)
 protected:
-	CViewSpikeHist();
-	~CViewSpikeHist() override;
+	ViewSpikeHist();
+	~ViewSpikeHist() override;
 	// Form Data
 public:
 	enum { IDD = IDD_VIEWSPKTIMESERIES };

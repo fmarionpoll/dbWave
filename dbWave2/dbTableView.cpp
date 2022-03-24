@@ -3,31 +3,31 @@
 #include "dbTableView.h"
 #include "dbWave_constants.h"
 
-IMPLEMENT_DYNAMIC(CdbTableView, CDaoRecordView)
+IMPLEMENT_DYNAMIC(dbTableView, CDaoRecordView)
 
-CdbTableView::CdbTableView(LPCTSTR lpszTemplateName)
+dbTableView::dbTableView(LPCTSTR lpszTemplateName)
 	: CDaoRecordView(lpszTemplateName)
 {
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-CdbTableView::CdbTableView(UINT nIDTemplate)
+dbTableView::dbTableView(UINT nIDTemplate)
 	: CDaoRecordView(nIDTemplate)
 {
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-CdbTableView::~CdbTableView()
+dbTableView::~dbTableView()
 = default;
 
-BEGIN_MESSAGE_MAP(CdbTableView, CDaoRecordView)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CdbTableView::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CdbTableView::OnTcnSelchangeTab1)
+BEGIN_MESSAGE_MAP(dbTableView, CDaoRecordView)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &dbTableView::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &dbTableView::OnTcnSelchangeTab1)
 
 END_MESSAGE_MAP()
 
 //  drawing
-void CdbTableView::OnDraw(CDC* pDC)
+void dbTableView::OnDraw(CDC* pDC)
 {
 	CDocument* pDoc = GetDocument();
 	// TODO: add draw code here
@@ -35,35 +35,35 @@ void CdbTableView::OnDraw(CDC* pDC)
 
 // diagnostics
 #ifdef _DEBUG
-void CdbTableView::AssertValid() const
+void dbTableView::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
 
-CdbWaveDoc* CdbTableView::GetDocument()
+CdbWaveDoc* dbTableView::GetDocument()
 {
 	return static_cast<CdbWaveDoc*>(m_pDocument);
 }
 
-void CdbTableView::Dump(CDumpContext& dc) const
+void dbTableView::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
 
 #endif //_DEBUG
 
-BOOL CdbTableView::PreCreateWindow(CREATESTRUCT& cs)
+BOOL dbTableView::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Modify the Window class or styles here by modifying the CREATESTRUCT cs
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
-CDaoRecordset* CdbTableView::OnGetRecordset()
+CDaoRecordset* dbTableView::OnGetRecordset()
 {
 	return GetDocument()->GetDB_Recordset();
 }
 
-void CdbTableView::OnSize(UINT nType, int cx, int cy)
+void dbTableView::OnSize(UINT nType, int cx, int cy)
 {
 	if (m_binit)
 	{
@@ -82,7 +82,7 @@ void CdbTableView::OnSize(UINT nType, int cx, int cy)
 	CDaoRecordView::OnSize(nType, cx, cy);
 }
 
-BOOL CdbTableView::OnMove(UINT nIDMoveCommand)
+BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 {
 	//const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	//GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -98,7 +98,7 @@ BOOL CdbTableView::OnMove(UINT nIDMoveCommand)
 	return flag;
 }
 
-void CdbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void dbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -111,14 +111,14 @@ void CdbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CdbTableView::OnDestroy()
+void dbTableView::OnDestroy()
 {
 	// Deactivate the item on destruction; this is important
 	// when a splitter view is being used.
 	CDaoRecordView::OnDestroy();
 }
 
-BOOL CdbTableView::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL dbTableView::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	if (!DoPreparePrinting(pInfo))
 		return FALSE;
@@ -129,17 +129,17 @@ BOOL CdbTableView::OnPreparePrinting(CPrintInfo* pInfo)
 	return TRUE;
 }
 
-void CdbTableView::OnBeginPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
+void dbTableView::OnBeginPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add extra initialization before printing
 }
 
-void CdbTableView::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
+void dbTableView::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add cleanup after printing
 }
 
-void CdbTableView::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
+void dbTableView::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	// TODO: add customized printing code here
 	if (pInfo->m_bDocObject)
@@ -148,7 +148,7 @@ void CdbTableView::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		CView::OnPrint(p_dc, pInfo);
 }
 
-void CdbTableView::saveCurrentSpkFile()
+void dbTableView::saveCurrentSpkFile()
 {
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
@@ -178,7 +178,7 @@ void CdbTableView::saveCurrentSpkFile()
 	}
 }
 
-void CdbTableView::IncrementSpikeFlag()
+void dbTableView::IncrementSpikeFlag()
 {
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
@@ -190,14 +190,14 @@ void CdbTableView::IncrementSpikeFlag()
 	}
 }
 
-void CdbTableView::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void dbTableView::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	auto icursel = m_tabCtrl.GetCurSel();
 	SendMessage(WM_MYMESSAGE, HINT_VIEWTABCHANGE, MAKELPARAM(icursel, 0));
 	*pResult = 0;
 }
 
-void CdbTableView::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void dbTableView::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
 	PostMessage(WM_MYMESSAGE, HINT_VIEWTABHASCHANGED, MAKELPARAM(icursel, 0));

@@ -21,15 +21,15 @@
 
 // TODO limit size of measure array to nbspikes within currently selected spikelist
 
-IMPLEMENT_DYNCREATE(CViewSpikeSort, CdbTableView)
+IMPLEMENT_DYNCREATE(ViewSpikeSort, dbTableView)
 
-CViewSpikeSort::CViewSpikeSort()
-	: CdbTableView(IDD)
+ViewSpikeSort::ViewSpikeSort()
+	: dbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
-CViewSpikeSort::~CViewSpikeSort()
+ViewSpikeSort::~ViewSpikeSort()
 {
 	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
@@ -42,9 +42,9 @@ CViewSpikeSort::~CViewSpikeSort()
 	m_psC->mvmin = m_mVMin;
 }
 
-void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
+void ViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 {
-	CdbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_PARAMETER, m_CBparameter);
 	DDX_Text(pDX, IDC_T1, m_t1);
@@ -67,41 +67,41 @@ void CViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeSort, CdbTableView)
+BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 
-	ON_MESSAGE(WM_MYMESSAGE, &CViewSpikeSort::OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeSort::OnMyMessage)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_SOURCECLASS, &CViewSpikeSort::OnEnChangeSourceclass)
-	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &CViewSpikeSort::OnEnChangeDestinationclass)
-	ON_CBN_SELCHANGE(IDC_PARAMETER, &CViewSpikeSort::OnSelchangeParameter)
-	ON_EN_CHANGE(IDC_LIMITLOWER, &CViewSpikeSort::OnEnChangelower)
-	ON_EN_CHANGE(IDC_LIMITUPPER, &CViewSpikeSort::OnEnChangeupper)
-	ON_EN_CHANGE(IDC_T1, &CViewSpikeSort::OnEnChangeT1)
-	ON_EN_CHANGE(IDC_T2, &CViewSpikeSort::OnEnChangeT2)
-	ON_BN_CLICKED(IDC_EXECUTE, &CViewSpikeSort::OnSort)
-	ON_BN_CLICKED(IDC_MEASURE, &CViewSpikeSort::OnMeasure)
-	ON_BN_CLICKED(IDC_CHECK1, &CViewSpikeSort::OnSelectAllFiles)
-	ON_COMMAND(ID_FORMAT_ALLDATA, &CViewSpikeSort::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &CViewSpikeSort::OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &CViewSpikeSort::OnFormatGainadjust)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, &CViewSpikeSort::OnToolsEdittransformspikes)
-	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &CViewSpikeSort::OnToolsAlignspikes)
-	ON_EN_CHANGE(IDC_EDIT2, &CViewSpikeSort::OnEnChangetimeFirst)
-	ON_EN_CHANGE(IDC_EDIT3, &CViewSpikeSort::OnEnChangetimeLast)
-	ON_EN_CHANGE(IDC_EDIT7, &CViewSpikeSort::OnEnChangemVMin)
-	ON_EN_CHANGE(IDC_EDIT6, &CViewSpikeSort::OnEnChangemVMax)
-	ON_EN_CHANGE(IDC_EDITLEFT2, &CViewSpikeSort::OnEnChangeEditleft2)
-	ON_EN_CHANGE(IDC_EDITRIGHT2, &CViewSpikeSort::OnEnChangeEditright2)
-	ON_EN_CHANGE(IDC_NSPIKES, &CViewSpikeSort::OnEnChangeNOspike)
-	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &CViewSpikeSort::OnToolsEdittransformspikes)
-	ON_EN_CHANGE(IDC_SPIKECLASS, &CViewSpikeSort::OnEnChangeSpikenoclass)
-	ON_EN_CHANGE(IDC_BINMV, &CViewSpikeSort::OnEnChangeNBins)
+	ON_EN_CHANGE(IDC_SOURCECLASS, &ViewSpikeSort::OnEnChangeSourceclass)
+	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &ViewSpikeSort::OnEnChangeDestinationclass)
+	ON_CBN_SELCHANGE(IDC_PARAMETER, &ViewSpikeSort::OnSelchangeParameter)
+	ON_EN_CHANGE(IDC_LIMITLOWER, &ViewSpikeSort::OnEnChangelower)
+	ON_EN_CHANGE(IDC_LIMITUPPER, &ViewSpikeSort::OnEnChangeupper)
+	ON_EN_CHANGE(IDC_T1, &ViewSpikeSort::OnEnChangeT1)
+	ON_EN_CHANGE(IDC_T2, &ViewSpikeSort::OnEnChangeT2)
+	ON_BN_CLICKED(IDC_EXECUTE, &ViewSpikeSort::OnSort)
+	ON_BN_CLICKED(IDC_MEASURE, &ViewSpikeSort::OnMeasure)
+	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeSort::OnSelectAllFiles)
+	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikeSort::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeSort::OnFormatCentercurve)
+	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeSort::OnFormatGainadjust)
+	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikeSort::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &ViewSpikeSort::OnToolsAlignspikes)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeSort::OnEnChangetimeFirst)
+	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeSort::OnEnChangetimeLast)
+	ON_EN_CHANGE(IDC_EDIT7, &ViewSpikeSort::OnEnChangemVMin)
+	ON_EN_CHANGE(IDC_EDIT6, &ViewSpikeSort::OnEnChangemVMax)
+	ON_EN_CHANGE(IDC_EDITLEFT2, &ViewSpikeSort::OnEnChangeEditleft2)
+	ON_EN_CHANGE(IDC_EDITRIGHT2, &ViewSpikeSort::OnEnChangeEditright2)
+	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikeSort::OnEnChangeNOspike)
+	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &ViewSpikeSort::OnToolsEdittransformspikes)
+	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeSort::OnEnChangeSpikenoclass)
+	ON_EN_CHANGE(IDC_BINMV, &ViewSpikeSort::OnEnChangeNBins)
 END_MESSAGE_MAP()
 
-void CViewSpikeSort::defineSubClassedItems()
+void ViewSpikeSort::defineSubClassedItems()
 {
 	// subclass some controls
 	VERIFY(yhistogram_wnd_.SubclassDlgItem(IDC_HISTOGRAM, this));
@@ -132,7 +132,7 @@ void CViewSpikeSort::defineSubClassedItems()
 	m_filescroll.SetScrollRange(0, 100, FALSE);
 }
 
-void CViewSpikeSort::defineStretchParameters()
+void ViewSpikeSort::defineStretchParameters()
 {
 	m_stretch.AttachParent(this);
 
@@ -150,9 +150,9 @@ void CViewSpikeSort::defineStretchParameters()
 	m_stretch.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
-void CViewSpikeSort::OnInitialUpdate()
+void ViewSpikeSort::OnInitialUpdate()
 {
-	CdbTableView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -206,7 +206,7 @@ void CViewSpikeSort::OnInitialUpdate()
 	activateMode4();
 }
 
-void CViewSpikeSort::activateMode4()
+void ViewSpikeSort::activateMode4()
 {
 	auto n_cmd_show = SW_HIDE;
 	if (4 == m_psC->iparameter)
@@ -246,7 +246,7 @@ void CViewSpikeSort::activateMode4()
 	xygraph_wnd_.Invalidate();
 }
 
-void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -267,10 +267,10 @@ void CViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 		p_app->m_psort1spikesMemFile->SeekToBegin();
 		ar.Close();
 	}
-	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (m_binit)
 	{
@@ -291,13 +291,13 @@ void CViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-BOOL CViewSpikeSort::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikeSort::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CdbTableView::OnMove(nIDMoveCommand);
+	return dbTableView::OnMove(nIDMoveCommand);
 }
 
-void CViewSpikeSort::updateSpikeFile()
+void ViewSpikeSort::updateSpikeFile()
 {
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 
@@ -314,7 +314,7 @@ void CViewSpikeSort::updateSpikeFile()
 	}
 }
 
-void CViewSpikeSort::updateFileParameters()
+void ViewSpikeSort::updateFileParameters()
 {
 	// reset parms ? flag = single file or file list has changed
 	if (!m_bAllFiles)
@@ -411,7 +411,7 @@ void CViewSpikeSort::updateFileParameters()
 	selectSpikeFromCurrentList(spikeno);
 }
 
-void CViewSpikeSort::updateLegends()
+void ViewSpikeSort::updateLegends()
 {
 	// update text abcissa and horizontal scroll position
 	m_timeFirst = m_lFirst / m_pSpkList->GetAcqSampRate();
@@ -435,7 +435,7 @@ void CViewSpikeSort::updateLegends()
 	UpdateData(FALSE); // copy view object to controls
 }
 
-void CViewSpikeSort::OnSort()
+void ViewSpikeSort::OnSort()
 {
 	// set file indexes - assume only one file selected
 	auto pdb_doc = GetDocument();
@@ -530,7 +530,7 @@ void CViewSpikeSort::OnSort()
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 }
 
-LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
+LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 {
 	short shortValue = LOWORD(lParam);
 	switch (code)
@@ -689,7 +689,7 @@ LRESULT CViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	return 0L;
 }
 
-void CViewSpikeSort::unflagAllSpikes()
+void ViewSpikeSort::unflagAllSpikes()
 {
 	if (m_bAllFiles)
 	{
@@ -713,7 +713,7 @@ void CViewSpikeSort::unflagAllSpikes()
 	m_ChartSpkWnd_Bar.Invalidate();
 }
 
-void CViewSpikeSort::OnMeasure()
+void ViewSpikeSort::OnMeasure()
 {
 	// set file indexes - assume only one file selected
 	auto pdb_doc = GetDocument();
@@ -799,7 +799,7 @@ void CViewSpikeSort::OnMeasure()
 	UpdateData(FALSE);
 }
 
-void CViewSpikeSort::updateGain()
+void ViewSpikeSort::updateGain()
 {
 	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 	const auto max = static_cast<int>(m_mVMax / delta);
@@ -817,7 +817,7 @@ void CViewSpikeSort::updateGain()
 	yhistogram_wnd_.Invalidate();
 }
 
-void CViewSpikeSort::OnFormatAlldata()
+void ViewSpikeSort::OnFormatAlldata()
 {
 	// build new histogram only if necessary
 	auto build_histogram = FALSE;
@@ -856,7 +856,7 @@ void CViewSpikeSort::OnFormatAlldata()
 	updateLegends();
 }
 
-void CViewSpikeSort::buildHistogram()
+void ViewSpikeSort::buildHistogram()
 {
 	auto pdb_doc = GetDocument();
 	if (pdb_doc == nullptr)
@@ -872,7 +872,7 @@ void CViewSpikeSort::buildHistogram()
 	yhistogram_wnd_.BuildHistFromDocument(pdb_doc, m_bAllFiles, m_lFirst, m_lLast, m_parmmax, m_parmmin, nbins, TRUE);
 }
 
-void CViewSpikeSort::OnFormatCentercurve()
+void ViewSpikeSort::OnFormatCentercurve()
 {
 	// loop over all spikes of the list
 	const auto nspikes = m_pSpkList->GetTotalSpikes();
@@ -888,7 +888,7 @@ void CViewSpikeSort::OnFormatCentercurve()
 	updateLegends();
 }
 
-void CViewSpikeSort::OnFormatGainadjust()
+void ViewSpikeSort::OnFormatGainadjust()
 {
 	// adjust gain of spkform and spkbar: data = raw signal
 	int maxval, minval;
@@ -929,7 +929,7 @@ void CViewSpikeSort::OnFormatGainadjust()
 	updateLegends();
 }
 
-void CViewSpikeSort::selectSpikeFromCurrentList(int spikeno)
+void ViewSpikeSort::selectSpikeFromCurrentList(int spikeno)
 {
 	const auto ispike_local = spikeno;
 
@@ -952,7 +952,7 @@ void CViewSpikeSort::selectSpikeFromCurrentList(int spikeno)
 	UpdateData(FALSE);
 }
 
-void CViewSpikeSort::OnToolsEdittransformspikes()
+void ViewSpikeSort::OnToolsEdittransformspikes()
 {
 	DlgSpikeEdit dlg;
 	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent();
@@ -992,7 +992,7 @@ void CViewSpikeSort::OnToolsEdittransformspikes()
 	updateLegends();
 }
 
-void CViewSpikeSort::OnSelectAllFiles()
+void ViewSpikeSort::OnSelectAllFiles()
 {
 	m_bAllFiles = dynamic_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	m_ChartSpkWnd_Bar.DisplayAllFiles(m_bAllFiles, GetDocument());
@@ -1003,7 +1003,7 @@ void CViewSpikeSort::OnSelectAllFiles()
 	OnMeasure();
 }
 
-void CViewSpikeSort::OnToolsAlignspikes()
+void ViewSpikeSort::OnToolsAlignspikes()
 {
 	// get source data
 	auto b_doc_exist = FALSE;
@@ -1201,12 +1201,12 @@ void CViewSpikeSort::OnToolsAlignspikes()
 	OnMeasure();
 }
 
-void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 	// trap messages from CScrollBarEx
@@ -1227,7 +1227,7 @@ void CViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	updateLegends();
 }
 
-void CViewSpikeSort::scrollFile(UINT nSBCode, UINT nPos)
+void ViewSpikeSort::scrollFile(UINT nSBCode, UINT nPos)
 {
 	// get corresponding data
 	const auto total_scroll = m_pSpkDoc->GetAcqSize();
@@ -1278,7 +1278,7 @@ void CViewSpikeSort::scrollFile(UINT nSBCode, UINT nPos)
 	m_lLast = l_last;
 }
 
-void CViewSpikeSort::updateFileScroll()
+void ViewSpikeSort::updateFileScroll()
 {
 	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
 	m_filescroll_infos.nPos = m_lFirst;
@@ -1286,7 +1286,7 @@ void CViewSpikeSort::updateFileScroll()
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 
-void CViewSpikeSort::selectSpkList(int icursel)
+void ViewSpikeSort::selectSpkList(int icursel)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icursel);
 	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(icursel);
@@ -1305,7 +1305,7 @@ void CViewSpikeSort::selectSpkList(int icursel)
 	m_ChartSpkWnd_Bar.Invalidate();
 }
 
-void CViewSpikeSort::OnEnChangeEditleft2()
+void ViewSpikeSort::OnEnChangeEditleft2()
 {
 	if (mm_txyleft.m_bEntryDone)
 	{
@@ -1345,7 +1345,7 @@ void CViewSpikeSort::OnEnChangeEditleft2()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeEditright2()
+void ViewSpikeSort::OnEnChangeEditright2()
 {
 	if (mm_txyright.m_bEntryDone)
 	{
@@ -1387,7 +1387,7 @@ void CViewSpikeSort::OnEnChangeEditright2()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeSourceclass()
+void ViewSpikeSort::OnEnChangeSourceclass()
 {
 	if (mm_sourceclass.m_bEntryDone)
 	{
@@ -1430,7 +1430,7 @@ void CViewSpikeSort::OnEnChangeSourceclass()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeDestinationclass()
+void ViewSpikeSort::OnEnChangeDestinationclass()
 {
 	if (mm_destinationclass.m_bEntryDone)
 	{
@@ -1460,7 +1460,7 @@ void CViewSpikeSort::OnEnChangeDestinationclass()
 	}
 }
 
-void CViewSpikeSort::OnSelchangeParameter()
+void ViewSpikeSort::OnSelchangeParameter()
 {
 	const auto iparameter = m_CBparameter.GetCurSel();
 	if (iparameter != m_psC->iparameter)
@@ -1477,7 +1477,7 @@ void CViewSpikeSort::OnSelchangeParameter()
 	// 2  mS      vis    mS      vis    vis     vis  vis   vis
 }
 
-void CViewSpikeSort::OnEnChangelower()
+void ViewSpikeSort::OnEnChangelower()
 {
 	if (mm_lower.m_bEntryDone)
 	{
@@ -1516,7 +1516,7 @@ void CViewSpikeSort::OnEnChangelower()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeupper()
+void ViewSpikeSort::OnEnChangeupper()
 {
 	if (mm_upper.m_bEntryDone)
 	{
@@ -1558,7 +1558,7 @@ void CViewSpikeSort::OnEnChangeupper()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeT1()
+void ViewSpikeSort::OnEnChangeT1()
 {
 	if (mm_t1.m_bEntryDone)
 	{
@@ -1603,7 +1603,7 @@ void CViewSpikeSort::OnEnChangeT1()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeT2()
+void ViewSpikeSort::OnEnChangeT2()
 {
 	if (mm_t2.m_bEntryDone)
 	{
@@ -1649,7 +1649,7 @@ void CViewSpikeSort::OnEnChangeT2()
 	}
 }
 
-void CViewSpikeSort::OnEnChangetimeFirst()
+void ViewSpikeSort::OnEnChangetimeFirst()
 {
 	if (mm_timeFirst.m_bEntryDone)
 	{
@@ -1684,7 +1684,7 @@ void CViewSpikeSort::OnEnChangetimeFirst()
 	}
 }
 
-void CViewSpikeSort::OnEnChangetimeLast()
+void ViewSpikeSort::OnEnChangetimeLast()
 {
 	if (mm_timeLast.m_bEntryDone)
 	{
@@ -1717,7 +1717,7 @@ void CViewSpikeSort::OnEnChangetimeLast()
 	}
 }
 
-void CViewSpikeSort::OnEnChangemVMin()
+void ViewSpikeSort::OnEnChangemVMin()
 {
 	if (mm_mVMin.m_bEntryDone)
 	{
@@ -1751,7 +1751,7 @@ void CViewSpikeSort::OnEnChangemVMin()
 	}
 }
 
-void CViewSpikeSort::OnEnChangemVMax()
+void ViewSpikeSort::OnEnChangemVMax()
 {
 	if (mm_mVMax.m_bEntryDone)
 	{
@@ -1786,7 +1786,7 @@ void CViewSpikeSort::OnEnChangemVMax()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeNOspike()
+void ViewSpikeSort::OnEnChangeNOspike()
 {
 	if (mm_spikeno.m_bEntryDone)
 	{
@@ -1837,7 +1837,7 @@ void CViewSpikeSort::OnEnChangeNOspike()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeSpikenoclass()
+void ViewSpikeSort::OnEnChangeSpikenoclass()
 {
 	if (mm_spikenoclass.m_bEntryDone)
 	{
@@ -1870,7 +1870,7 @@ void CViewSpikeSort::OnEnChangeSpikenoclass()
 	}
 }
 
-void CViewSpikeSort::OnEnChangeNBins()
+void ViewSpikeSort::OnEnChangeNBins()
 {
 	if (mm_mVbin.m_bEntryDone)
 	{

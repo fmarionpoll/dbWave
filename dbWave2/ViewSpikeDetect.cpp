@@ -30,15 +30,15 @@
 constexpr auto b_restore = 0;
 constexpr auto b_save = 1;
 
-IMPLEMENT_DYNCREATE(CViewSpikeDetection, CdbTableView)
+IMPLEMENT_DYNCREATE(ViewSpikeDetection, dbTableView)
 
-CViewSpikeDetection::CViewSpikeDetection()
-	: CdbTableView(IDD)
+ViewSpikeDetection::ViewSpikeDetection()
+	: dbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-CViewSpikeDetection::~CViewSpikeDetection()
+ViewSpikeDetection::~ViewSpikeDetection()
 {
 	if (m_pSpkDoc != nullptr) {
 		saveCurrentSpkFile();
@@ -48,9 +48,9 @@ CViewSpikeDetection::~CViewSpikeDetection()
 	*p_array = m_spk_detect_array_current;
 }
 
-void CViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
+void ViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
 {
-	CdbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_COMBO1, m_CBdetectWhat);
 	DDX_Control(pDX, IDC_SOURCECHAN, m_CBdetectChan);
@@ -70,62 +70,62 @@ void CViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeDetection, CdbTableView)
+BEGIN_MESSAGE_MAP(ViewSpikeDetection, dbTableView)
 	ON_WM_SIZE()
 	ON_WM_HSCROLL()
 	ON_WM_VSCROLL()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 
-	ON_MESSAGE(WM_MYMESSAGE, &CViewSpikeDetection::OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeDetection::OnMyMessage)
 
-	ON_COMMAND(ID_FORMAT_FIRSTFRAME, &CViewSpikeDetection::OnFirstFrame)
-	ON_COMMAND(ID_FORMAT_LASTFRAME, &CViewSpikeDetection::OnLastFrame)
-	ON_COMMAND(ID_FORMAT_SETORDINATES, &CViewSpikeDetection::OnFormatXscale)
-	ON_COMMAND(ID_FORMAT_ALLDATA, &CViewSpikeDetection::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &CViewSpikeDetection::OnFormatYscaleCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &CViewSpikeDetection::OnFormatYscaleGainadjust)
-	ON_COMMAND(ID_FORMAT_SPLITCURVES, &CViewSpikeDetection::OnFormatSplitcurves)
-	ON_COMMAND(ID_TOOLS_DETECT_PARMS, &CViewSpikeDetection::OnToolsDetectionparameters)
-	ON_COMMAND(ID_TOOLS_DETECT, &CViewSpikeDetection::OnMeasureAll)
-	ON_COMMAND(ID_TOOLS_EDITSTIMULUS, &CViewSpikeDetection::OnToolsEditstimulus)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, &CViewSpikeDetection::OnToolsEdittransformspikes)
-	ON_COMMAND(ID_TOOLS_DATASERIES, &CViewSpikeDetection::OnToolsDataseries)
-	ON_COMMAND(ID_EDIT_COPY, &CViewSpikeDetection::OnEditCopy)
-	ON_COMMAND(ID_FILE_SAVE, &CViewSpikeDetection::OnFileSave)
-	ON_COMMAND(ID_FORMAT_XSCALE, &CViewSpikeDetection::OnFormatXscale)
+	ON_COMMAND(ID_FORMAT_FIRSTFRAME, &ViewSpikeDetection::OnFirstFrame)
+	ON_COMMAND(ID_FORMAT_LASTFRAME, &ViewSpikeDetection::OnLastFrame)
+	ON_COMMAND(ID_FORMAT_SETORDINATES, &ViewSpikeDetection::OnFormatXscale)
+	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikeDetection::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeDetection::OnFormatYscaleCentercurve)
+	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeDetection::OnFormatYscaleGainadjust)
+	ON_COMMAND(ID_FORMAT_SPLITCURVES, &ViewSpikeDetection::OnFormatSplitcurves)
+	ON_COMMAND(ID_TOOLS_DETECT_PARMS, &ViewSpikeDetection::OnToolsDetectionparameters)
+	ON_COMMAND(ID_TOOLS_DETECT, &ViewSpikeDetection::OnMeasureAll)
+	ON_COMMAND(ID_TOOLS_EDITSTIMULUS, &ViewSpikeDetection::OnToolsEditstimulus)
+	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikeDetection::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_TOOLS_DATASERIES, &ViewSpikeDetection::OnToolsDataseries)
+	ON_COMMAND(ID_EDIT_COPY, &ViewSpikeDetection::OnEditCopy)
+	ON_COMMAND(ID_FILE_SAVE, &ViewSpikeDetection::OnFileSave)
+	ON_COMMAND(ID_FORMAT_XSCALE, &ViewSpikeDetection::OnFormatXscale)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
-	ON_CBN_SELCHANGE(IDC_SOURCECHAN, &CViewSpikeDetection::OnSelchangeDetectchan)
-	ON_CBN_SELCHANGE(IDC_TRANSFORM, &CViewSpikeDetection::OnSelchangeTransform)
-	ON_CBN_SELCHANGE(IDC_COMBO1, &CViewSpikeDetection::OnSelchangeDetectMode)
-	ON_CBN_SELCHANGE(IDC_TRANSFORM2, &CViewSpikeDetection::OnCbnSelchangeTransform2)
+	ON_CBN_SELCHANGE(IDC_SOURCECHAN, &ViewSpikeDetection::OnSelchangeDetectchan)
+	ON_CBN_SELCHANGE(IDC_TRANSFORM, &ViewSpikeDetection::OnSelchangeTransform)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &ViewSpikeDetection::OnSelchangeDetectMode)
+	ON_CBN_SELCHANGE(IDC_TRANSFORM2, &ViewSpikeDetection::OnCbnSelchangeTransform2)
 
-	ON_EN_CHANGE(IDC_THRESHOLDVAL, &CViewSpikeDetection::OnEnChangeThresholdval)
-	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewSpikeDetection::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &CViewSpikeDetection::OnEnChangeTimelast)
-	ON_EN_CHANGE(IDC_SPIKENO, &CViewSpikeDetection::OnEnChangeSpikeno)
-	ON_EN_CHANGE(IDC_SPIKEWINDOWAMPLITUDE, &CViewSpikeDetection::OnEnChangeSpkWndAmplitude)
-	ON_EN_CHANGE(IDC_SPIKEWINDOWLENGTH, &CViewSpikeDetection::OnEnChangeSpkWndLength)
-	ON_EN_CHANGE(IDC_CHANSELECTED, &CViewSpikeDetection::OnEnChangeChanselected)
-	ON_EN_CHANGE(IDC_CHANSELECTED2, &CViewSpikeDetection::OnEnChangeChanselected2)
+	ON_EN_CHANGE(IDC_THRESHOLDVAL, &ViewSpikeDetection::OnEnChangeThresholdval)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikeDetection::OnEnChangeTimefirst)
+	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikeDetection::OnEnChangeTimelast)
+	ON_EN_CHANGE(IDC_SPIKENO, &ViewSpikeDetection::OnEnChangeSpikeno)
+	ON_EN_CHANGE(IDC_SPIKEWINDOWAMPLITUDE, &ViewSpikeDetection::OnEnChangeSpkWndAmplitude)
+	ON_EN_CHANGE(IDC_SPIKEWINDOWLENGTH, &ViewSpikeDetection::OnEnChangeSpkWndLength)
+	ON_EN_CHANGE(IDC_CHANSELECTED, &ViewSpikeDetection::OnEnChangeChanselected)
+	ON_EN_CHANGE(IDC_CHANSELECTED2, &ViewSpikeDetection::OnEnChangeChanselected2)
 
-	ON_BN_CLICKED(IDC_MEASUREALL, &CViewSpikeDetection::OnMeasureAll)
-	ON_BN_CLICKED(IDC_CLEAR, &CViewSpikeDetection::OnClear)
-	ON_BN_CLICKED(IDC_ARTEFACT, &CViewSpikeDetection::OnArtefact)
-	ON_BN_CLICKED(IDC_BIAS, &CViewSpikeDetection::OnBnClickedBiasbutton)
-	ON_BN_CLICKED(IDC_GAIN, &CViewSpikeDetection::OnBnClickedGainbutton)
-	ON_BN_CLICKED(IDC_LOCATEBTTN, &CViewSpikeDetection::OnBnClickedLocatebttn)
-	ON_BN_CLICKED(IDC_CLEARALL, &CViewSpikeDetection::OnBnClickedClearall)
-	ON_BN_CLICKED(IDC_MEASURE, &CViewSpikeDetection::OnMeasure)
-	ON_BN_CLICKED(IDC_GAIN2, &CViewSpikeDetection::OnBnClickedGain2)
-	ON_BN_CLICKED(IDC_BIAS2, &CViewSpikeDetection::OnBnClickedBias2)
+	ON_BN_CLICKED(IDC_MEASUREALL, &ViewSpikeDetection::OnMeasureAll)
+	ON_BN_CLICKED(IDC_CLEAR, &ViewSpikeDetection::OnClear)
+	ON_BN_CLICKED(IDC_ARTEFACT, &ViewSpikeDetection::OnArtefact)
+	ON_BN_CLICKED(IDC_BIAS, &ViewSpikeDetection::OnBnClickedBiasbutton)
+	ON_BN_CLICKED(IDC_GAIN, &ViewSpikeDetection::OnBnClickedGainbutton)
+	ON_BN_CLICKED(IDC_LOCATEBTTN, &ViewSpikeDetection::OnBnClickedLocatebttn)
+	ON_BN_CLICKED(IDC_CLEARALL, &ViewSpikeDetection::OnBnClickedClearall)
+	ON_BN_CLICKED(IDC_MEASURE, &ViewSpikeDetection::OnMeasure)
+	ON_BN_CLICKED(IDC_GAIN2, &ViewSpikeDetection::OnBnClickedGain2)
+	ON_BN_CLICKED(IDC_BIAS2, &ViewSpikeDetection::OnBnClickedBias2)
 
-	//ON_NOTIFY(NM_CLICK, IDC_TAB1,		&CdbTableView::OnNMClickTab1)
+	//ON_NOTIFY(NM_CLICK, IDC_TAB1,		&dbTableView::OnNMClickTab1)
 END_MESSAGE_MAP()
 
-void CViewSpikeDetection::OnFileSave()
+void ViewSpikeDetection::OnFileSave()
 {
 	CFile f;
 	CFileDialog dlg(FALSE,
@@ -143,13 +143,13 @@ void CViewSpikeDetection::OnFileSave()
 	}
 }
 
-BOOL CViewSpikeDetection::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikeDetection::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CdbTableView::OnMove(nIDMoveCommand);
+	return dbTableView::OnMove(nIDMoveCommand);
 }
 
-void CViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (m_binit)
 	{
@@ -169,7 +169,7 @@ void CViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CView* de_activated_view)
+void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CView* de_activated_view)
 {
 	if (activate)
 	{
@@ -182,10 +182,10 @@ void CViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, C
 		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_viewdata.viewdata = *(m_ChartDataWnd_Source.GetScopeParameters());
 	}
-	CdbTableView::OnActivateView(activate, activated_view, de_activated_view);
+	dbTableView::OnActivateView(activate, activated_view, de_activated_view);
 }
 
-void CViewSpikeDetection::update_legends()
+void ViewSpikeDetection::update_legends()
 {
 	const auto l_first = m_ChartDataWnd_Source.GetDataFirst();
 	const auto l_last = m_ChartDataWnd_Source.GetDataLast();
@@ -228,7 +228,7 @@ void CViewSpikeDetection::update_legends()
 	}
 }
 
-void CViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
+void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 {
 	// update spike doc and temporary spike list
 	const auto pdb_doc = GetDocument();
@@ -305,7 +305,7 @@ void CViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		SetDlgItemInt(IDC_NBSPIKES_NB, n_spikes);
 }
 
-void CViewSpikeDetection::highlight_spikes(BOOL flag)
+void ViewSpikeDetection::highlight_spikes(BOOL flag)
 {
 	if (flag && m_pSpkList != nullptr && m_pSpkList->GetTotalSpikes() < 1)
 	{
@@ -341,7 +341,7 @@ void CViewSpikeDetection::highlight_spikes(BOOL flag)
 	}
 }
 
-void CViewSpikeDetection::update_file_parameters(BOOL bUpdateInterface)
+void ViewSpikeDetection::update_file_parameters(BOOL bUpdateInterface)
 {
 	update_data_file(bUpdateInterface);
 	update_spike_file(bUpdateInterface);
@@ -349,7 +349,7 @@ void CViewSpikeDetection::update_file_parameters(BOOL bUpdateInterface)
 		update_legends();
 }
 
-BOOL CViewSpikeDetection::check_detection_settings()
+BOOL ViewSpikeDetection::check_detection_settings()
 {
 	auto flag = TRUE;
 	ASSERT(m_p_detect_parameters != NULL);
@@ -384,7 +384,7 @@ BOOL CViewSpikeDetection::check_detection_settings()
 	return flag;
 }
 
-void CViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
+void ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 {
 	const auto pdb_doc = GetDocument();
 	//CString filename = pdb_doc->GetDB_CurrentDatFileName();
@@ -490,7 +490,7 @@ void CViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 	}
 }
 
-void CViewSpikeDetection::update_combos_detect_and_transforms()
+void ViewSpikeDetection::update_combos_detect_and_transforms()
 {
 	const auto db_document = GetDocument();
 	const auto p_data_file = db_document->m_pDat;
@@ -520,7 +520,7 @@ void CViewSpikeDetection::update_combos_detect_and_transforms()
 	m_CBdetectChan.SetCurSel(m_p_detect_parameters->detectChan);
 }
 
-void CViewSpikeDetection::define_stretch_parameters()
+void ViewSpikeDetection::define_stretch_parameters()
 {
 	m_stretch.AttachParent(this);
 
@@ -569,7 +569,7 @@ void CViewSpikeDetection::define_stretch_parameters()
 	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
 }
 
-void CViewSpikeDetection::define_sub_classed_items()
+void ViewSpikeDetection::define_sub_classed_items()
 {
 	// attach controls
 	VERIFY(m_filescroll.SubclassDlgItem(IDC_FILESCROLL, this));
@@ -614,7 +614,7 @@ void CViewSpikeDetection::define_sub_classed_items()
 		(LPARAM)static_cast<HANDLE>(m_hZoom2));
 }
 
-void CViewSpikeDetection::OnInitialUpdate()
+void ViewSpikeDetection::OnInitialUpdate()
 {
 	// load spike detection parameters from .INI file
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
@@ -628,7 +628,7 @@ void CViewSpikeDetection::OnInitialUpdate()
 
 	define_sub_classed_items();
 
-	CdbTableView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 
 	// load file data
 	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
@@ -641,7 +641,7 @@ void CViewSpikeDetection::OnInitialUpdate()
 	m_ChartDataWnd_Source.Invalidate();
 }
 
-LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	int threshold = LOWORD(lParam); // value associated
 	const int i_id = HIWORD(lParam);
@@ -827,21 +827,21 @@ LRESULT CViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CViewSpikeDetection::OnFirstFrame()
+void ViewSpikeDetection::OnFirstFrame()
 {
 	scroll_File(SB_LEFT, 1L);
 }
 
-void CViewSpikeDetection::OnLastFrame()
+void ViewSpikeDetection::OnLastFrame()
 {
 	scroll_File(SB_RIGHT, 1L);
 }
 
-void CViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (pScrollBar == nullptr)
 	{
-		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -866,7 +866,7 @@ void CViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	}
 }
 
-void CViewSpikeDetection::update_file_scroll()
+void ViewSpikeDetection::update_file_scroll()
 {
 	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
 	m_filescroll_infos.nPos = m_ChartDataWnd_Detect.GetDataFirst();
@@ -874,7 +874,7 @@ void CViewSpikeDetection::update_file_scroll()
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 
-void CViewSpikeDetection::scroll_File(UINT nSBCode, UINT nPos)
+void ViewSpikeDetection::scroll_File(UINT nSBCode, UINT nPos)
 {
 	auto b_result = FALSE;
 	// get corresponding data
@@ -901,7 +901,7 @@ void CViewSpikeDetection::scroll_File(UINT nSBCode, UINT nPos)
 		update_legends();
 }
 
-void CViewSpikeDetection::OnFormatYscaleCentercurve()
+void ViewSpikeDetection::OnFormatYscaleCentercurve()
 {
 	m_ChartDataWnd_Detect.CenterChan(0);
 	m_ChartDataWnd_Detect.Invalidate();
@@ -918,7 +918,7 @@ void CViewSpikeDetection::OnFormatYscaleCentercurve()
 	m_ChartSpkWnd_Shape.Invalidate();
 }
 
-void CViewSpikeDetection::OnFormatYscaleGainadjust()
+void ViewSpikeDetection::OnFormatYscaleGainadjust()
 {
 	m_ChartDataWnd_Detect.MaxgainChan(0);
 	m_ChartDataWnd_Detect.SetChanlistVoltsExtent(-1, nullptr);
@@ -938,7 +938,7 @@ void CViewSpikeDetection::OnFormatYscaleGainadjust()
 	m_ChartSpkWnd_Shape.Invalidate();
 }
 
-void CViewSpikeDetection::OnFormatSplitcurves()
+void ViewSpikeDetection::OnFormatSplitcurves()
 {
 	m_ChartDataWnd_Detect.SplitChans();
 	m_ChartDataWnd_Detect.SetChanlistVoltsExtent(-1, nullptr);
@@ -957,7 +957,7 @@ void CViewSpikeDetection::OnFormatSplitcurves()
 	m_ChartSpkWnd_Shape.Invalidate();
 }
 
-void CViewSpikeDetection::OnFormatAlldata()
+void ViewSpikeDetection::OnFormatAlldata()
 {
 	const auto l_last = GetDocument()->m_pDat->GetDOCchanLength();
 	m_ChartDataWnd_Detect.ResizeChannels(0, l_last);
@@ -975,7 +975,7 @@ void CViewSpikeDetection::OnFormatAlldata()
 	update_legends();
 }
 
-void CViewSpikeDetection::update_detection_parameters()
+void ViewSpikeDetection::update_detection_parameters()
 {
 	// refresh pointer to spike detection array
 	const auto detect_array_size = m_spk_detect_array_current.GetSize();
@@ -1002,7 +1002,7 @@ void CViewSpikeDetection::update_detection_parameters()
 	mm_thresholdval.Invalidate();
 }
 
-void CViewSpikeDetection::OnToolsDetectionparameters()
+void ViewSpikeDetection::OnToolsDetectionparameters()
 {
 	DlgSpikeDetect dlg;
 	dlg.m_dbDoc = GetDocument()->m_pDat;
@@ -1019,7 +1019,7 @@ void CViewSpikeDetection::OnToolsDetectionparameters()
 	}
 }
 
-void CViewSpikeDetection::OnSelchangeDetectchan()
+void ViewSpikeDetection::OnSelchangeDetectchan()
 {
 	UpdateData(TRUE);
 	m_p_detect_parameters->detectChan = m_CBdetectChan.GetCurSel();
@@ -1033,7 +1033,7 @@ void CViewSpikeDetection::OnSelchangeDetectchan()
 	m_ChartDataWnd_Detect.Invalidate();
 }
 
-void CViewSpikeDetection::OnSelchangeTransform()
+void ViewSpikeDetection::OnSelchangeTransform()
 {
 	UpdateData(TRUE);
 	m_p_detect_parameters->detectTransform = m_CBtransform.GetCurSel();
@@ -1045,17 +1045,17 @@ void CViewSpikeDetection::OnSelchangeTransform()
 	update_legend_detection_wnd();
 }
 
-void CViewSpikeDetection::OnMeasureAll()
+void ViewSpikeDetection::OnMeasureAll()
 {
 	detect_all(TRUE);
 }
 
-void CViewSpikeDetection::OnMeasure()
+void ViewSpikeDetection::OnMeasure()
 {
 	detect_all(FALSE);
 }
 
-void CViewSpikeDetection::detect_all(BOOL bAll)
+void ViewSpikeDetection::detect_all(BOOL bAll)
 {
 	// init spike document (erase spike list data & intervals)
 	m_bDetected = TRUE;
@@ -1164,7 +1164,7 @@ void CViewSpikeDetection::detect_all(BOOL bAll)
 	UpdateTabs();
 }
 
-int CViewSpikeDetection::detect_stimulus_1(int channel_index)
+int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 {
 	const auto detect_parameters = m_spk_detect_array_current.GetItem(channel_index);
 	const auto threshold = detect_parameters->detectThreshold;
@@ -1286,7 +1286,7 @@ int CViewSpikeDetection::detect_stimulus_1(int channel_index)
 	return m_pSpkDoc->m_stimulus_intervals.n_items;
 }
 
-int CViewSpikeDetection::detect_method_1(WORD schan)
+int ViewSpikeDetection::detect_method_1(WORD schan)
 {
 	SPKDETECTPARM* pspkDP = m_spk_detect_array_current.GetItem(schan);
 	if (pspkDP->extractTransform != pspkDP->detectTransform &&
@@ -1418,7 +1418,7 @@ int CViewSpikeDetection::detect_method_1(WORD schan)
 	return m_pSpkList->GetTotalSpikes();
 }
 
-void CViewSpikeDetection::OnToolsEdittransformspikes()
+void ViewSpikeDetection::OnToolsEdittransformspikes()
 {
 	DlgSpikeEdit dlg; // dialog box
 	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent(); // load display parameters
@@ -1442,7 +1442,7 @@ void CViewSpikeDetection::OnToolsEdittransformspikes()
 	update_legends();
 }
 
-void CViewSpikeDetection::OnFormatXscale()
+void ViewSpikeDetection::OnFormatXscale()
 {
 	DlgXYParameters dlg;
 	CWnd* pFocus = GetFocus();
@@ -1494,7 +1494,7 @@ void CViewSpikeDetection::OnFormatXscale()
 	}
 }
 
-void CViewSpikeDetection::OnBnClickedClearall()
+void ViewSpikeDetection::OnBnClickedClearall()
 {
 	m_spikeno = -1; // unselect spike
 	m_ChartSpkWnd_Bar.SelectSpike(-1); // deselect spike bars
@@ -1520,7 +1520,7 @@ void CViewSpikeDetection::OnBnClickedClearall()
 	m_pSpkDoc->SetModifiedFlag(TRUE); // mark spike document as changed
 }
 
-void CViewSpikeDetection::OnClear()
+void ViewSpikeDetection::OnClear()
 {
 	m_spikeno = -1;
 	m_ChartSpkWnd_Bar.SelectSpike(-1);
@@ -1542,7 +1542,7 @@ void CViewSpikeDetection::OnClear()
 	// TODO : upate database?
 }
 
-void CViewSpikeDetection::OnEnChangeSpikeno()
+void ViewSpikeDetection::OnEnChangeSpikeno()
 {
 	if (mm_spikeno.m_bEntryDone)
 	{
@@ -1581,7 +1581,7 @@ void CViewSpikeDetection::OnEnChangeSpikeno()
 	}
 }
 
-void CViewSpikeDetection::OnArtefact()
+void ViewSpikeDetection::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
 	const auto nspikes = m_pSpkList->GetSpikeFlagArrayCount();
@@ -1625,7 +1625,7 @@ void CViewSpikeDetection::OnArtefact()
 		SetDlgItemInt(IDC_NBSPIKES_NB, unspikes);
 }
 
-void CViewSpikeDetection::align_display_to_current_spike()
+void ViewSpikeDetection::align_display_to_current_spike()
 {
 	if (m_spikeno < 0)
 		return;
@@ -1653,7 +1653,7 @@ void CViewSpikeDetection::align_display_to_current_spike()
 	}
 }
 
-void CViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_controls)
+void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_controls)
 {
 	// get current values
 	int ix_we;
@@ -1709,7 +1709,7 @@ void CViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_
 	m_ChartSpkWnd_Shape.SetxScaleUnitValue(xunit);
 }
 
-void CViewSpikeDetection::select_spike_no(int spikeno, BOOL bMultipleSelection)
+void ViewSpikeDetection::select_spike_no(int spikeno, BOOL bMultipleSelection)
 {
 	// load spike parameters
 	if (spikeno >= 0)
@@ -1740,7 +1740,7 @@ void CViewSpikeDetection::select_spike_no(int spikeno, BOOL bMultipleSelection)
 	}
 }
 
-void CViewSpikeDetection::update_spike_display()
+void ViewSpikeDetection::update_spike_display()
 {
 	// update spike display windows
 	m_ChartSpkWnd_Bar.Invalidate(TRUE);
@@ -1752,7 +1752,7 @@ void CViewSpikeDetection::update_spike_display()
 	CheckDlgButton(IDC_ARTEFACT, m_bartefact);
 }
 
-void CViewSpikeDetection::OnEnChangeThresholdval()
+void ViewSpikeDetection::OnEnChangeThresholdval()
 {
 	if (mm_thresholdval.m_bEntryDone)
 	{
@@ -1795,7 +1795,7 @@ void CViewSpikeDetection::OnEnChangeThresholdval()
 	}
 }
 
-void CViewSpikeDetection::OnEnChangeTimefirst()
+void ViewSpikeDetection::OnEnChangeTimefirst()
 {
 	if (mm_timefirst.m_bEntryDone)
 	{
@@ -1826,7 +1826,7 @@ void CViewSpikeDetection::OnEnChangeTimefirst()
 	}
 }
 
-void CViewSpikeDetection::OnEnChangeTimelast()
+void ViewSpikeDetection::OnEnChangeTimelast()
 {
 	if (mm_timelast.m_bEntryDone)
 	{
@@ -1857,7 +1857,7 @@ void CViewSpikeDetection::OnEnChangeTimelast()
 	}
 }
 
-void CViewSpikeDetection::OnToolsDataseries()
+void ViewSpikeDetection::OnToolsDataseries()
 {
 	// init dialog data
 	DlgDataSeries dlg;
@@ -1875,7 +1875,7 @@ void CViewSpikeDetection::OnToolsDataseries()
 	update_legends();
 }
 
-void CViewSpikeDetection::PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd, CRect* prect, BOOL bComments,
+void ViewSpikeDetection::PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd, CRect* prect, BOOL bComments,
 	BOOL bBars)
 {
 	SCOPESTRUCT* pStruct = pDataChartWnd->GetScopeParameters();
@@ -1901,7 +1901,7 @@ void CViewSpikeDetection::PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd
 	//rect_comment.right = prect->left;
 }
 
-void CViewSpikeDetection::OnEditCopy()
+void ViewSpikeDetection::OnEditCopy()
 {
 	DlgCopyAs dlg;
 	dlg.m_nabcissa = options_view_data->hzResolution;
@@ -2052,7 +2052,7 @@ void CViewSpikeDetection::OnEditCopy()
 	}
 }
 
-void CViewSpikeDetection::OnSelchangeDetectMode()
+void ViewSpikeDetection::OnSelchangeDetectMode()
 {
 	UpdateData(TRUE);
 	m_p_detect_parameters->detectWhat = m_CBdetectWhat.GetCurSel();
@@ -2063,7 +2063,7 @@ void CViewSpikeDetection::OnSelchangeDetectMode()
 	m_ChartDataWnd_Detect.Invalidate();
 }
 
-void CViewSpikeDetection::update_combo_box()
+void ViewSpikeDetection::update_combo_box()
 {
 	m_CBdetectChan.SetCurSel(m_p_detect_parameters->detectChan);
 	m_CBtransform.SetCurSel(m_p_detect_parameters->detectTransform);
@@ -2075,7 +2075,7 @@ void CViewSpikeDetection::update_combo_box()
 	m_p_detect_parameters->detectThresholdmV = m_thresholdval;
 }
 
-void CViewSpikeDetection::update_legend_detection_wnd()
+void ViewSpikeDetection::update_legend_detection_wnd()
 {
 	CString text;
 	GetDlgItem(IDC_TRANSFORM)->GetWindowTextW(text);
@@ -2088,7 +2088,7 @@ void CViewSpikeDetection::update_legend_detection_wnd()
 	}
 }
 
-void CViewSpikeDetection::update_VT_tags()
+void ViewSpikeDetection::update_VT_tags()
 {
 	m_ChartSpkWnd_Bar.m_VTtags.RemoveAllTags();
 	m_ChartDataWnd_Detect.m_VTtags.RemoveAllTags();
@@ -2105,7 +2105,7 @@ void CViewSpikeDetection::update_VT_tags()
 	}
 }
 
-void CViewSpikeDetection::PrintComputePageSize()
+void ViewSpikeDetection::PrintComputePageSize()
 {
 	// magic to get printer dialog that would be used if we were printing!
 	CPrintDialog dlg(FALSE);
@@ -2128,7 +2128,7 @@ void CViewSpikeDetection::PrintComputePageSize()
 	m_printRect.top = options_view_data->topPageMargin;
 }
 
-void CViewSpikeDetection::PrintFileBottomPage(CDC* p_dc, CPrintInfo* p_info)
+void ViewSpikeDetection::PrintFileBottomPage(CDC* p_dc, CPrintInfo* p_info)
 {
 	auto t = CTime::GetCurrentTime();
 	CString ch;
@@ -2140,7 +2140,7 @@ void CViewSpikeDetection::PrintFileBottomPage(CDC* p_dc, CPrintInfo* p_info)
 	p_dc->TextOut(options_view_data->horzRes / 2, options_view_data->vertRes - 57, ch_date);
 }
 
-CString CViewSpikeDetection::PrintConvertFileIndex(const long l_first, const long l_last)
+CString ViewSpikeDetection::PrintConvertFileIndex(const long l_first, const long l_last)
 {
 	CString cs_unit = _T(" s"); // get time,  prepare time unit
 	CString cs_comment;
@@ -2156,7 +2156,7 @@ CString CViewSpikeDetection::PrintConvertFileIndex(const long l_first, const lon
 	return cs_comment;
 }
 
-BOOL CViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first)
+BOOL ViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first)
 {
 	// loop until we get all rows
 	const auto totalrows = m_nbrowsperpage * (page - 1);
@@ -2180,7 +2180,7 @@ BOOL CViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int& filenum
 	return TRUE;
 }
 
-BOOL CViewSpikeDetection::PrintGetNextRow(int& filenumber, long& l_first, long& very_last)
+BOOL ViewSpikeDetection::PrintGetNextRow(int& filenumber, long& l_first, long& very_last)
 {
 	if (!options_view_data->bMultirowDisplay || !options_view_data->bEntireRecord)
 	{
@@ -2212,7 +2212,7 @@ BOOL CViewSpikeDetection::PrintGetNextRow(int& filenumber, long& l_first, long& 
 	return TRUE;
 }
 
-CString CViewSpikeDetection::PrintGetFileInfos()
+CString ViewSpikeDetection::PrintGetFileInfos()
 {
 	CString str_comment; // scratch pad
 	const CString tab(_T("    ")); // use 4 spaces as tabulation character
@@ -2241,7 +2241,7 @@ CString CViewSpikeDetection::PrintGetFileInfos()
 	return str_comment;
 }
 
-CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, CRect* rect)
+CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, CRect* rect)
 {
 	CString cs;
 	const CString rc(_T("\r"));
@@ -2342,7 +2342,7 @@ CString CViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, 
 	return str_comment;
 }
 
-CString CViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
+CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
 {
 	const CString rc("\n");
 	CString str_comment;
@@ -2412,7 +2412,7 @@ CString CViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll
 	return str_comment;
 }
 
-void CViewSpikeDetection::serialize_windows_state(BOOL bSave, int itab)
+void ViewSpikeDetection::serialize_windows_state(BOOL bSave, int itab)
 {
 	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp()); // pointer to list of pointers to store parameters
 	if (itab < 0 || itab >= m_tabCtrl.GetItemCount())
@@ -2476,7 +2476,7 @@ void CViewSpikeDetection::serialize_windows_state(BOOL bSave, int itab)
 	}
 }
 
-BOOL CViewSpikeDetection::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewSpikeDetection::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// save current state of the windows
 	serialize_windows_state(b_save);
@@ -2509,7 +2509,7 @@ BOOL CViewSpikeDetection::OnPreparePrinting(CPrintInfo* pInfo)
 	return TRUE;
 }
 
-int CViewSpikeDetection::PrintGetNPages()
+int ViewSpikeDetection::PrintGetNPages()
 {
 	// how many rows per page?
 	const auto size_row = options_view_data->HeightDoc + options_view_data->heightSeparator;
@@ -2578,7 +2578,7 @@ int CViewSpikeDetection::PrintGetNPages()
 	return npages;
 }
 
-void CViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_ChartDataWnd_Detect.GetDataFirst();
@@ -2588,7 +2588,7 @@ void CViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	p_dc->SetBkMode(TRANSPARENT);
 }
 
-void CViewSpikeDetection::PrintCreateFont()
+void ViewSpikeDetection::PrintCreateFont()
 {
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT)); // prepare font
@@ -2598,7 +2598,7 @@ void CViewSpikeDetection::PrintCreateFont()
 	m_fontPrint.CreateFontIndirect(&m_logFont);
 }
 
-void CViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
 
@@ -2772,7 +2772,7 @@ void CViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		p_dc->SelectObject(m_pOldFont);
 }
 
-void CViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	// restore file from index and display parameters
@@ -2787,35 +2787,35 @@ void CViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	serialize_windows_state(b_restore);
 }
 
-void CViewSpikeDetection::OnBnClickedBiasbutton()
+void ViewSpikeDetection::OnBnClickedBiasbutton()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS))->SetState(1);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN))->SetState(0);
 	SetVBarMode(BAR_BIAS, IDC_SCROLLY);
 }
 
-void CViewSpikeDetection::OnBnClickedBias2()
+void ViewSpikeDetection::OnBnClickedBias2()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS2))->SetState(1);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN2))->SetState(0);
 	SetVBarMode(BAR_BIAS, IDC_SCROLLY2);
 }
 
-void CViewSpikeDetection::OnBnClickedGainbutton()
+void ViewSpikeDetection::OnBnClickedGainbutton()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS))->SetState(0);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN))->SetState(1);
 	SetVBarMode(BAR_GAIN, IDC_SCROLLY);
 }
 
-void CViewSpikeDetection::OnBnClickedGain2()
+void ViewSpikeDetection::OnBnClickedGain2()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS2))->SetState(0);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN2))->SetState(1);
 	SetVBarMode(BAR_GAIN, IDC_SCROLLY2);
 }
 
-void CViewSpikeDetection::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeDetection::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
 	if (pScrollBar != nullptr)
@@ -2837,10 +2837,10 @@ void CViewSpikeDetection::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		}
 	}
 	else
-		CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CViewSpikeDetection::SetVBarMode(short bMode, int iID)
+void ViewSpikeDetection::SetVBarMode(short bMode, int iID)
 {
 	if (bMode == BAR_BIAS)
 		m_VBarMode = bMode;
@@ -2849,7 +2849,7 @@ void CViewSpikeDetection::SetVBarMode(short bMode, int iID)
 	UpdateBiasScroll(iID);
 }
 
-void CViewSpikeDetection::UpdateGainScroll(int iID)
+void ViewSpikeDetection::UpdateGainScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 		m_scrolly.SetScrollPos(
@@ -2859,7 +2859,7 @@ void CViewSpikeDetection::UpdateGainScroll(int iID)
 			MulDiv(m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected2)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 }
 
-void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
+void ViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 {
 	ChartData* p_view = &m_ChartDataWnd_Detect;
 	int ichan = m_ichanselected;
@@ -2901,7 +2901,7 @@ void CViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 		UpdateGainScroll(iID);
 }
 
-void CViewSpikeDetection::UpdateBiasScroll(int iID)
+void ViewSpikeDetection::UpdateBiasScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 	{
@@ -2919,7 +2919,7 @@ void CViewSpikeDetection::UpdateBiasScroll(int iID)
 	}
 }
 
-void CViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
+void ViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 {
 	auto p_view = &m_ChartDataWnd_Detect;
 	auto ichan = m_ichanselected;
@@ -2965,7 +2965,7 @@ void CViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 		UpdateBiasScroll(iID);
 }
 
-void CViewSpikeDetection::OnEnChangeSpkWndAmplitude()
+void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 {
 	if (mm_spkWndAmplitude.m_bEntryDone)
 	{
@@ -3009,7 +3009,7 @@ void CViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 	}
 }
 
-void CViewSpikeDetection::OnEnChangeSpkWndLength()
+void ViewSpikeDetection::OnEnChangeSpkWndLength()
 {
 	if (mm_spkWndDuration.m_bEntryDone)
 	{
@@ -3053,7 +3053,7 @@ void CViewSpikeDetection::OnEnChangeSpkWndLength()
 	}
 }
 
-void CViewSpikeDetection::OnBnClickedLocatebttn()
+void ViewSpikeDetection::OnBnClickedLocatebttn()
 {
 	int max, min;
 	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
@@ -3071,7 +3071,7 @@ void CViewSpikeDetection::OnBnClickedLocatebttn()
 	m_ChartDataWnd_Detect.Invalidate();
 }
 
-void CViewSpikeDetection::update_detection_settings(int iSelParms)
+void ViewSpikeDetection::update_detection_settings(int iSelParms)
 {
 	// check size of spike detection parameters
 	if (iSelParms >= m_spk_detect_array_current.GetSize())
@@ -3118,7 +3118,7 @@ void CViewSpikeDetection::update_detection_settings(int iSelParms)
 	update_legends();
 }
 
-void CViewSpikeDetection::update_detection_controls()
+void ViewSpikeDetection::update_detection_controls()
 {
 	m_CBdetectWhat.SetCurSel(m_pSpkList->GetdetectWhat());
 	m_CBdetectChan.SetCurSel(m_pSpkList->GetdetectChan());
@@ -3153,7 +3153,7 @@ void CViewSpikeDetection::update_detection_controls()
 	m_ChartSpkWnd_Shape.SetSpkList(m_pSpkList);
 }
 
-void CViewSpikeDetection::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeDetection::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	serialize_windows_state(b_save, m_i_detect_parameters);
 	const auto selected_tab = m_tabCtrl.GetCurSel();
@@ -3162,7 +3162,7 @@ void CViewSpikeDetection::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CViewSpikeDetection::OnToolsEditstimulus()
+void ViewSpikeDetection::OnToolsEditstimulus()
 {
 	m_pSpkDoc->SortStimArray();
 
@@ -3181,7 +3181,7 @@ void CViewSpikeDetection::OnToolsEditstimulus()
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 	}
 }
-void CViewSpikeDetection::OnEnChangeChanselected()
+void ViewSpikeDetection::OnEnChangeChanselected()
 {
 	if (mm_ichanselected.m_bEntryDone)
 	{
@@ -3204,7 +3204,7 @@ void CViewSpikeDetection::OnEnChangeChanselected()
 	}
 }
 
-void CViewSpikeDetection::OnEnChangeChanselected2()
+void ViewSpikeDetection::OnEnChangeChanselected2()
 {
 	if (mm_ichanselected2.m_bEntryDone)
 	{
@@ -3227,7 +3227,7 @@ void CViewSpikeDetection::OnEnChangeChanselected2()
 	}
 }
 
-void CViewSpikeDetection::OnCbnSelchangeTransform2()
+void ViewSpikeDetection::OnCbnSelchangeTransform2()
 {
 	const auto method = m_CBtransform2.GetCurSel(); // this is the extract method requested
 	auto p_dat_doc = GetDocument()->m_pDat;
@@ -3279,7 +3279,7 @@ void CViewSpikeDetection::OnCbnSelchangeTransform2()
 	UpdateTabs();
 }
 
-void CViewSpikeDetection::UpdateTabs()
+void ViewSpikeDetection::UpdateTabs()
 {
 	// load initial data
 	const BOOL b_replace = (m_tabCtrl.GetItemCount() == m_pSpkDoc->GetSpkList_Size());

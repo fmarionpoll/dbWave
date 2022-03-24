@@ -4,11 +4,11 @@
 #include "./Controls/cdxCRotBevelLine.h"
 #include "dbTableView.h"
 
-class CViewSpikeDetection : public CdbTableView
+class ViewSpikeDetection : public dbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikeDetection)
-	CViewSpikeDetection();
+	ViewSpikeDetection();
 
 	// Form Data
 public:
@@ -121,7 +121,7 @@ protected:
 
 	// Implementation
 public:
-	~CViewSpikeDetection() override;
+	~ViewSpikeDetection() override;
 	// print view
 protected:
 	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);

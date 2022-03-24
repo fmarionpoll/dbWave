@@ -265,7 +265,7 @@ void CChildFrame::exportASCII(int option)
 				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
 				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
 				auto pos = pdb_doc_export->GetFirstViewPosition();
-				const auto p_view = static_cast<CViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
+				const auto p_view = static_cast<ViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
 				auto& p_edit = p_view->GetRichEditCtrl();
 				p_edit.Paste();
 			}
@@ -282,7 +282,7 @@ void CChildFrame::exportASCII(int option)
 				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
 				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
 				auto pos = pdb_doc_export->GetFirstViewPosition();
-				const auto p_view = static_cast<CViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
+				const auto p_view = static_cast<ViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
 				auto& p_edit = p_view->GetRichEditCtrl();
 				p_edit.Paste();
 			}
@@ -329,7 +329,7 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
 				const auto p_doc_export = p_templ->OpenDocumentFile(nullptr);
 				auto pos = p_doc_export->GetFirstViewPosition();
-				auto* p_view = static_cast<CViewNoteDoc*>(p_doc_export->GetNextView(pos));
+				auto* p_view = static_cast<ViewNoteDoc*>(p_doc_export->GetNextView(pos));
 				auto& p_edit = p_view->GetRichEditCtrl();
 				OpenClipboard();
 				EmptyClipboard();
@@ -354,11 +354,11 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 	switch (iID)
 	{
 	case ID_VIEW_DATABASE:
-		replaceView(RUNTIME_CLASS(CViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
+		replaceView(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATAFILE:
 		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewData), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(ViewData), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDETECTION:
 		if (!pdb_doc->GetDB_CurrentDatFileName(TRUE).IsEmpty())
@@ -366,28 +366,28 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
 		if (!pdb_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(CViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
-		replaceView(RUNTIME_CLASS(CViewADcontinuous), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(ViewADcontinuous), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		b_active_panes = FALSE;
 		break;
 
 	default:
 		iID = 0;
-		replaceView(RUNTIME_CLASS(CViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	}
 	p_mainframe->ActivatePropertyPane(b_active_panes);
@@ -435,7 +435,7 @@ void CChildFrame::OnUpdateViewmenu(CCmdUI* pCmdUI)
 
 void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 {
-	// assume that the views replaced are of CdbTableView type
+	// assume that the views replaced are of dbTableView type
 	auto p_current_view = GetActiveView();
 	if ((p_current_view->IsKindOf(pViewClass)) == TRUE)
 		return;
@@ -751,8 +751,8 @@ void CChildFrame::OnRecordDeletecurrent()
 	{
 		// delete records from the database and collect names of files to change
 		// save list of data files to delete into a temporary array
-		if (p_view->IsKindOf(RUNTIME_CLASS(CViewdbWave)))
-			static_cast<CViewdbWave*>(p_view)->DeleteRecords();
+		if (p_view->IsKindOf(RUNTIME_CLASS(ViewdbWave)))
+			static_cast<ViewdbWave*>(p_view)->DeleteRecords();
 		else
 			p_dbwave_doc->DBDeleteCurrentRecord();
 

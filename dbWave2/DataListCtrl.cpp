@@ -184,7 +184,7 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 
 	// now, the requested item is in the cache
 	// get data from database
-	const auto pdb_doc = static_cast<CViewdbWave*>(GetParent())->GetDocument();
+	const auto pdb_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
 	if (pdb_doc == nullptr)
 		return;
 
@@ -284,7 +284,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	}
 
 	// get data file pointer and pointer to database
-	const auto p_dbwave_doc = static_cast<CViewdbWave*>(GetParent())->GetDocument();
+	const auto p_dbwave_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
 	if (p_dbwave_doc == nullptr)
 		return;
 	const int index_current_file = p_dbwave_doc->GetDB_CurrentRecordPosition();
@@ -483,10 +483,10 @@ void CDataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	switch (nSBCode)
 	{
 	case SB_LINEUP:
-		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case SB_LINEDOWN:
-		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 	default:
 		CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -505,10 +505,10 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		SendMessage(WM_VSCROLL, SB_PAGEDOWN, NULL);
 		break;
 	case VK_UP:
-		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case VK_DOWN:
-		static_cast<CdbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 
 	default:
@@ -693,7 +693,7 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 	else
 	{
-		auto pParent = static_cast<CViewdbWave*>(GetParent());
+		auto pParent = static_cast<ViewdbWave*>(GetParent());
 		int iTab = pParent->m_tabCtrl.GetCurSel();
 		if (iTab < 0)
 			iTab = 0;

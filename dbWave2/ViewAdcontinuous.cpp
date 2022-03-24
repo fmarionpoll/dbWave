@@ -26,21 +26,21 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewADcontinuous, CdbTableView)
+IMPLEMENT_DYNCREATE(ViewADcontinuous, dbTableView)
 
-CViewADcontinuous::CViewADcontinuous()
-	: CdbTableView(IDD)
+ViewADcontinuous::ViewADcontinuous()
+	: dbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
 }
 
-CViewADcontinuous::~CViewADcontinuous()
+ViewADcontinuous::~ViewADcontinuous()
 = default;
 
-void CViewADcontinuous::DoDataExchange(CDataExchange * pDX)
+void ViewADcontinuous::DoDataExchange(CDataExchange * pDX)
 {
-	CdbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_AD);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DA);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
@@ -53,31 +53,31 @@ void CViewADcontinuous::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_OSCILLOSCOPE, m_Button_Oscilloscope);
 }
 
-BEGIN_MESSAGE_MAP(CViewADcontinuous, CdbTableView)
-	ON_MESSAGE(WM_MYMESSAGE, &CViewADcontinuous::OnMyMessage)
-	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CViewADcontinuous::OnInputChannels)
-	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CViewADcontinuous::OnSamplingMode)
-	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CViewADcontinuous::OnHardwareDefineexperiment)
+BEGIN_MESSAGE_MAP(ViewADcontinuous, dbTableView)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewADcontinuous::OnMyMessage)
+	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewADcontinuous::OnInputChannels)
+	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &ViewADcontinuous::OnSamplingMode)
+	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &ViewADcontinuous::OnHardwareDefineexperiment)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_SAMPLINGMODE, &CViewADcontinuous::OnSamplingMode)
-	ON_BN_CLICKED(IDC_INPUTCHANNELS, &CViewADcontinuous::OnInputChannels)
-	ON_BN_CLICKED(IDC_GAIN_button, &CViewADcontinuous::OnBnClickedGainbutton)
-	ON_BN_CLICKED(IDC_BIAS_button, &CViewADcontinuous::OnBnClickedBiasbutton)
+	ON_BN_CLICKED(IDC_SAMPLINGMODE, &ViewADcontinuous::OnSamplingMode)
+	ON_BN_CLICKED(IDC_INPUTCHANNELS, &ViewADcontinuous::OnInputChannels)
+	ON_BN_CLICKED(IDC_GAIN_button, &ViewADcontinuous::OnBnClickedGainbutton)
+	ON_BN_CLICKED(IDC_BIAS_button, &ViewADcontinuous::OnBnClickedBiasbutton)
 	ON_WM_VSCROLL()
-	ON_BN_CLICKED(IDC_DAPARAMETERS2, &CViewADcontinuous::OnBnClickedDaparameters2)
-	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &CViewADcontinuous::OnCbnSelchangeComboboard)
-	ON_BN_CLICKED(IDC_STARTSTOP, &CViewADcontinuous::OnBnClickedStartstop)
-	ON_BN_CLICKED(IDC_WRITETODISK, &CViewADcontinuous::OnBnClickedWriteToDisk)
-	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &CViewADcontinuous::OnBnClickedOscilloscope)
-	ON_BN_CLICKED(IDC_CARDFEATURES, &CViewADcontinuous::OnBnClickedCardfeatures)
-	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &CViewADcontinuous::OnCbnSelchangeCombostartoutput)
-	ON_BN_CLICKED(IDC_STARTSTOP2, &CViewADcontinuous::OnBnClickedStartstop2)
-	ON_BN_CLICKED(IDC_UNZOOM, &CViewADcontinuous::OnBnClickedUnzoom)
+	ON_BN_CLICKED(IDC_DAPARAMETERS2, &ViewADcontinuous::OnBnClickedDaparameters2)
+	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &ViewADcontinuous::OnCbnSelchangeComboboard)
+	ON_BN_CLICKED(IDC_STARTSTOP, &ViewADcontinuous::OnBnClickedStartstop)
+	ON_BN_CLICKED(IDC_WRITETODISK, &ViewADcontinuous::OnBnClickedWriteToDisk)
+	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &ViewADcontinuous::OnBnClickedOscilloscope)
+	ON_BN_CLICKED(IDC_CARDFEATURES, &ViewADcontinuous::OnBnClickedCardfeatures)
+	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &ViewADcontinuous::OnCbnSelchangeCombostartoutput)
+	ON_BN_CLICKED(IDC_STARTSTOP2, &ViewADcontinuous::OnBnClickedStartstop2)
+	ON_BN_CLICKED(IDC_UNZOOM, &ViewADcontinuous::OnBnClickedUnzoom)
 END_MESSAGE_MAP()
 
-void CViewADcontinuous::OnDestroy()
+void ViewADcontinuous::OnDestroy()
 {
 	if (m_Acq32_AD.IsInProgress())
 		StopAcquisition();
@@ -94,11 +94,11 @@ void CViewADcontinuous::OnDestroy()
 			m_Acq32_DA.DeleteBuffers();
 	}
 
-	CdbTableView::OnDestroy();
+	dbTableView::OnDestroy();
 	delete m_pBackgroundBrush;
 }
 
-HBRUSH CViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
+HBRUSH ViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr;
 	switch (nCtlColor)
@@ -111,27 +111,27 @@ HBRUSH CViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 		break;
 
 	default:
-		hbr = CdbTableView::OnCtlColor(pDC, pWnd, nCtlColor);
+		hbr = dbTableView::OnCtlColor(pDC, pWnd, nCtlColor);
 		break;
 	}
 	return hbr;
 }
 
-BEGIN_EVENTSINK_MAP(CViewADcontinuous, CdbTableView)
+BEGIN_EVENTSINK_MAP(ViewADcontinuous, dbTableView)
 
-	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 1, CViewADcontinuous::OnBufferDone_ADC, VTS_NONE)
-	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 2, CViewADcontinuous::OnQueueDone_ADC, VTS_NONE)
-	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 4, CViewADcontinuous::OnTriggerError_ADC, VTS_NONE)
-	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 5, CViewADcontinuous::OnOverrunError_ADC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 1, ViewADcontinuous::OnBufferDone_ADC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 2, ViewADcontinuous::OnQueueDone_ADC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 4, ViewADcontinuous::OnTriggerError_ADC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 5, ViewADcontinuous::OnOverrunError_ADC, VTS_NONE)
 
-	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 1, CViewADcontinuous::OnBufferDone_DAC, VTS_NONE)
-	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 5, CViewADcontinuous::OnOverrunError_DAC, VTS_NONE)
-	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 2, CViewADcontinuous::OnQueueDone_DAC, VTS_NONE)
-	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 4, CViewADcontinuous::OnTriggerError_DAC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 1, ViewADcontinuous::OnBufferDone_DAC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 5, ViewADcontinuous::OnOverrunError_DAC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 2, ViewADcontinuous::OnQueueDone_DAC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 4, ViewADcontinuous::OnTriggerError_DAC, VTS_NONE)
 
 END_EVENTSINK_MAP()
 
-void CViewADcontinuous::AttachControls()
+void ViewADcontinuous::AttachControls()
 {
 	// attach controls
 	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
@@ -176,9 +176,9 @@ void CViewADcontinuous::AttachControls()
 	m_scrolly.SetScrollRange(0, 100);
 }
 
-void CViewADcontinuous::OnInitialUpdate()
+void ViewADcontinuous::OnInitialUpdate()
 {
-	CdbTableView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 
 	AttachControls();
 
@@ -243,7 +243,7 @@ void CViewADcontinuous::OnInitialUpdate()
 	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
 
-void CViewADcontinuous::OnCbnSelchangeComboboard()
+void ViewADcontinuous::OnCbnSelchangeComboboard()
 {
 	const int item_selected = m_ADcardCombo.GetCurSel();
 	CString card_name;
@@ -251,7 +251,7 @@ void CViewADcontinuous::OnCbnSelchangeComboboard()
 	SelectDTOpenLayersBoard(card_name);
 }
 
-BOOL CViewADcontinuous::FindDTOpenLayersBoards()
+BOOL ViewADcontinuous::FindDTOpenLayersBoards()
 {
 	m_ADcardCombo.ResetContent();
 
@@ -280,7 +280,7 @@ BOOL CViewADcontinuous::FindDTOpenLayersBoards()
 	return TRUE;
 }
 
-BOOL CViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
+BOOL ViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
 {
 	// get infos
 	m_bFoundDTOPenLayerDLL = TRUE;
@@ -311,7 +311,7 @@ BOOL CViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
 	return TRUE;
 }
 
-void CViewADcontinuous::StopAcquisition()
+void ViewADcontinuous::StopAcquisition()
 {
 	if (!m_Acq32_AD.IsInProgress())
 		return;
@@ -344,7 +344,7 @@ void CViewADcontinuous::StopAcquisition()
 	}
 }
 
-void CViewADcontinuous::SaveAndCloseFile()
+void ViewADcontinuous::SaveAndCloseFile()
 {
 	m_inputDataFile.AcqDoc_DataAppendStop();
 	const CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
@@ -391,7 +391,7 @@ void CViewADcontinuous::SaveAndCloseFile()
 	}
 }
 
-void CViewADcontinuous::UpdateViewDataFinal()
+void ViewADcontinuous::UpdateViewDataFinal()
 {
 	// update view data	
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -408,7 +408,7 @@ void CViewADcontinuous::UpdateViewDataFinal()
 	m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
 }
 
-void CViewADcontinuous::TransferFilesToDatabase()
+void ViewADcontinuous::TransferFilesToDatabase()
 {
 	CdbWaveDoc* pdbDoc = GetDocument();
 	pdbDoc->ImportFileList(m_csNameArray); // add file name(s) to the list of records in the database
@@ -421,7 +421,7 @@ void CViewADcontinuous::TransferFilesToDatabase()
 	pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
-BOOL CViewADcontinuous::InitOutput_DA()
+BOOL ViewADcontinuous::InitOutput_DA()
 {
 	m_DA_present = m_Acq32_DA.InitSubSystem(m_pOptions_AD);
 	if (m_bStartOutPutMode == 0 && m_DA_present)
@@ -429,7 +429,7 @@ BOOL CViewADcontinuous::InitOutput_DA()
 	return m_DA_present;
 }
 
-BOOL CViewADcontinuous::InitOutput_AD()
+BOOL ViewADcontinuous::InitOutput_AD()
 {
 	m_AD_present = m_Acq32_AD.InitSubSystem(m_pOptions_AD);
 	if (m_AD_present)
@@ -441,7 +441,7 @@ BOOL CViewADcontinuous::InitOutput_AD()
 	return m_AD_present;
 }
 
-void CViewADcontinuous::InitAcquisitionDisplay()
+void ViewADcontinuous::InitAcquisitionDisplay()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
@@ -477,7 +477,7 @@ void CViewADcontinuous::InitAcquisitionDisplay()
 	m_chartDataAD.Invalidate();
 }
 
-BOOL CViewADcontinuous::StartAcquisition()
+BOOL ViewADcontinuous::StartAcquisition()
 {
 	// set display
 	if (m_bADwritetofile && !Defineexperiment())
@@ -534,7 +534,7 @@ BOOL CViewADcontinuous::StartAcquisition()
 	return TRUE;
 }
 
-ECODE CViewADcontinuous::StartSimultaneousList()
+ECODE ViewADcontinuous::StartSimultaneousList()
 {
 	ECODE code_returned;
 	HSSLIST hSSlist;
@@ -585,7 +585,7 @@ ECODE CViewADcontinuous::StartSimultaneousList()
 	return ecode;
 }
 
-void CViewADcontinuous::DisplayolDaErrorMessage(const CHAR * error_string) const
+void ViewADcontinuous::DisplayolDaErrorMessage(const CHAR * error_string) const
 {
 	CString csError;
 	const CStringA cstringa(error_string);
@@ -594,24 +594,24 @@ void CViewADcontinuous::DisplayolDaErrorMessage(const CHAR * error_string) const
 }
 
 #ifdef _DEBUG
-void CViewADcontinuous::AssertValid() const
+void ViewADcontinuous::AssertValid() const
 {
-	CdbTableView::AssertValid();
+	dbTableView::AssertValid();
 }
 
-void CViewADcontinuous::Dump(CDumpContext & dc) const
+void ViewADcontinuous::Dump(CDumpContext & dc) const
 {
-	CdbTableView::Dump(dc);
+	dbTableView::Dump(dc);
 }
 
 #endif //_DEBUG
 
-CdbTableMain* CViewADcontinuous::OnGetRecordset()
+CdbTableMain* ViewADcontinuous::OnGetRecordset()
 {
 	return m_ptableSet;
 }
 
-void CViewADcontinuous::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
+void ViewADcontinuous::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 {
 	// update sent from within this class
 	if (pSender == this)
@@ -621,7 +621,7 @@ void CViewADcontinuous::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 	}
 }
 
-void CViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
+void ViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
 {
 	const auto pmF = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
@@ -629,10 +629,10 @@ void CViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CV
 		pmF->ActivatePropertyPane(FALSE);
 		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursorstate = 0;
 	}
-	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CViewADcontinuous::OnSize(UINT nType, int cx, int cy)
+void ViewADcontinuous::OnSize(UINT nType, int cx, int cy)
 {
 	switch (nType)
 	{
@@ -651,10 +651,10 @@ void CViewADcontinuous::OnSize(UINT nType, int cx, int cy)
 	default:
 		break;
 	}
-	CdbTableView::OnSize(nType, cx, cy);
+	dbTableView::OnSize(nType, cx, cy);
 }
 
-LRESULT CViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	// message emitted by IDC_DISPLAREA_button	
 	//if (j == IDC_DISPLAREA_button)		// always true here...
@@ -680,7 +680,7 @@ LRESULT CViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CViewADcontinuous::OnBnClickedStartstop()
+void ViewADcontinuous::OnBnClickedStartstop()
 {
 	if (m_btnStartStop_AD.IsChecked())
 	{
@@ -709,7 +709,7 @@ void CViewADcontinuous::OnBnClickedStartstop()
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 }
 
-void CViewADcontinuous::UpdateStartStop(BOOL bStart)
+void ViewADcontinuous::UpdateStartStop(BOOL bStart)
 {
 	//bool isrunning = m_Acq32_AD.IsInProgress();
 	if (bStart)
@@ -731,12 +731,12 @@ void CViewADcontinuous::UpdateStartStop(BOOL bStart)
 	m_chartDataAD.Invalidate();
 }
 
-void CViewADcontinuous::OnHardwareDefineexperiment()
+void ViewADcontinuous::OnHardwareDefineexperiment()
 {
 	Defineexperiment();
 }
 
-BOOL CViewADcontinuous::Defineexperiment()
+BOOL ViewADcontinuous::Defineexperiment()
 {
 	CString file_name;
 	m_bFileOpen = FALSE;
@@ -792,7 +792,7 @@ BOOL CViewADcontinuous::Defineexperiment()
 	return TRUE;
 }
 
-void CViewADcontinuous::OnInputChannels()
+void ViewADcontinuous::OnInputChannels()
 {
 	UpdateData(TRUE);
 
@@ -822,7 +822,7 @@ void CViewADcontinuous::OnInputChannels()
 		ChainDialog(dlg.m_postmessage);
 }
 
-void CViewADcontinuous::OnSamplingMode()
+void ViewADcontinuous::OnSamplingMode()
 {
 	DlgADIntervals dlg;
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
@@ -857,7 +857,7 @@ void CViewADcontinuous::OnSamplingMode()
 		ChainDialog(dlg.m_postmessage);
 }
 
-void CViewADcontinuous::ChainDialog(WORD iID)
+void ViewADcontinuous::ChainDialog(WORD iID)
 {
 	WORD menuID;
 	switch (iID)
@@ -874,46 +874,46 @@ void CViewADcontinuous::ChainDialog(WORD iID)
 	PostMessage(WM_COMMAND, menuID, NULL);
 }
 
-void CViewADcontinuous::OnTriggerError_ADC()
+void ViewADcontinuous::OnTriggerError_ADC()
 {
 	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TRIGGERERROR, MB_ICONEXCLAMATION | MB_OK);
 }
 
-void CViewADcontinuous::OnQueueDone_ADC()
+void ViewADcontinuous::OnQueueDone_ADC()
 {
 	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TOOFAST);
 }
 
-void CViewADcontinuous::OnOverrunError_ADC()
+void ViewADcontinuous::OnOverrunError_ADC()
 {
 	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_OVERRUN);
 }
 
-void CViewADcontinuous::OnOverrunError_DAC()
+void ViewADcontinuous::OnOverrunError_DAC()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_OVERRUN);
 }
 
-void CViewADcontinuous::OnQueueDone_DAC()
+void ViewADcontinuous::OnQueueDone_DAC()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_TOOFAST);
 }
 
-void CViewADcontinuous::OnTriggerError_DAC()
+void ViewADcontinuous::OnTriggerError_DAC()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_TRIGGERERROR, MB_ICONEXCLAMATION | MB_OK);
 }
 
-void CViewADcontinuous::OnBufferDone_ADC()
+void ViewADcontinuous::OnBufferDone_ADC()
 {
 	short* pDTbuf = m_Acq32_AD.OnBufferDone();
 	if (pDTbuf == nullptr)
@@ -925,7 +925,7 @@ void CViewADcontinuous::OnBufferDone_ADC()
 	ADC_TransferToChart(pWFormat);
 }
 
-void CViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
+void ViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
 {
 	short* pRawDataBuf = m_inputDataFile.GetpRawDataBUF();
 
@@ -979,7 +979,7 @@ void CViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWForma
 	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
-void CViewADcontinuous::ADC_TransferToChart(const CWaveFormat * pWFormat)
+void ViewADcontinuous::ADC_TransferToChart(const CWaveFormat * pWFormat)
 {
 	if (pWFormat->bOnlineDisplay)
 	{
@@ -992,7 +992,7 @@ void CViewADcontinuous::ADC_TransferToChart(const CWaveFormat * pWFormat)
 	SetDlgItemText(IDC_STATIC1, cs);
 }
 
-void CViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
+void ViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 {
 	pWFormat->sample_count += m_bytesweepRefresh / 2;
 	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
@@ -1026,17 +1026,17 @@ void CViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 	m_Acq32_AD.ReleaseLastBufferToQueue();
 }
 
-void CViewADcontinuous::OnBufferDone_DAC()
+void ViewADcontinuous::OnBufferDone_DAC()
 {
 	m_Acq32_DA.OnBufferDone();
 }
 
-void CViewADcontinuous::InitializeAmplifiers()
+void ViewADcontinuous::InitializeAmplifiers()
 {
 	InitCyberAmp(); // TODO init other amplifiers and look at pwaveformat?
 }
 
-BOOL CViewADcontinuous::InitCyberAmp() const
+BOOL ViewADcontinuous::InitCyberAmp() const
 {
 	CCyberAmp m_cyber;
 	BOOL bcyberPresent = FALSE;
@@ -1075,21 +1075,21 @@ BOOL CViewADcontinuous::InitCyberAmp() const
 	return bcyberPresent;
 }
 
-void CViewADcontinuous::OnBnClickedGainbutton()
+void ViewADcontinuous::OnBnClickedGainbutton()
 {
 	SetVBarMode(BAR_GAIN);
 }
 
-void CViewADcontinuous::OnBnClickedBiasbutton()
+void ViewADcontinuous::OnBnClickedBiasbutton()
 {
 	SetVBarMode(BAR_BIAS);
 }
 
-void CViewADcontinuous::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
+void ViewADcontinuous::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
 {
 	if (pScrollBar == nullptr)
 	{
-		CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -1100,7 +1100,7 @@ void CViewADcontinuous::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollB
 
 }
 
-void CViewADcontinuous::SetVBarMode(short bMode)
+void ViewADcontinuous::SetVBarMode(short bMode)
 {
 	m_VBarMode = bMode;
 	m_BiasButton.SetState(bMode == BAR_BIAS);
@@ -1111,7 +1111,7 @@ void CViewADcontinuous::SetVBarMode(short bMode)
 		UpdateBiasScroll();
 }
 
-void CViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
+void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	int yextent = pChan->GetYextent();
@@ -1154,7 +1154,7 @@ void CViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 	UpdateData(false);
 }
 
-void CViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
+void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	int yzero = pChan->GetYzero();
@@ -1202,7 +1202,7 @@ void CViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 	UpdateData(false);
 }
 
-void CViewADcontinuous::UpdateBiasScroll()
+void ViewADcontinuous::UpdateBiasScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	m_chartDataAD.UpdateYRuler();
@@ -1210,7 +1210,7 @@ void CViewADcontinuous::UpdateBiasScroll()
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 
-void CViewADcontinuous::UpdateGainScroll()
+void ViewADcontinuous::UpdateGainScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	m_chartDataAD.UpdateYRuler();
@@ -1218,14 +1218,14 @@ void CViewADcontinuous::UpdateGainScroll()
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 
-void CViewADcontinuous::OnCbnSelchangeCombostartoutput()
+void ViewADcontinuous::OnCbnSelchangeCombostartoutput()
 {
 	m_bStartOutPutMode = m_ComboStartOutput.GetCurSel();
 	m_pOptions_DA->bAllowDA = m_bStartOutPutMode;
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
-void CViewADcontinuous::SetCombostartoutput(int option)
+void ViewADcontinuous::SetCombostartoutput(int option)
 {
 	m_ComboStartOutput.SetCurSel(option);
 	option = m_ComboStartOutput.GetCurSel();
@@ -1234,7 +1234,7 @@ void CViewADcontinuous::SetCombostartoutput(int option)
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
-void CViewADcontinuous::OnBnClickedDaparameters2()
+void ViewADcontinuous::OnBnClickedDaparameters2()
 {
 	DlgDAChannels dlg;
 	const auto isize = m_pOptions_DA->outputparms_array.GetSize();
@@ -1255,21 +1255,21 @@ void CViewADcontinuous::OnBnClickedDaparameters2()
 	}
 }
 
-void CViewADcontinuous::OnBnClickedWriteToDisk()
+void ViewADcontinuous::OnBnClickedWriteToDisk()
 {
 	m_bADwritetofile = TRUE;
 	m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
 	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
 }
 
-void CViewADcontinuous::OnBnClickedOscilloscope()
+void ViewADcontinuous::OnBnClickedOscilloscope()
 {
 	m_bADwritetofile = FALSE;
 	m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
 	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
 }
 
-void CViewADcontinuous::UpdateRadioButtons()
+void ViewADcontinuous::UpdateRadioButtons()
 {
 	if (m_bADwritetofile)
 		m_Button_WriteToDisk.SetCheck(BST_CHECKED);
@@ -1278,7 +1278,7 @@ void CViewADcontinuous::UpdateRadioButtons()
 	UpdateData(TRUE);
 }
 
-void CViewADcontinuous::OnBnClickedCardfeatures()
+void ViewADcontinuous::OnBnClickedCardfeatures()
 {
 	DlgDataTranslationBoard dlg;
 	dlg.m_pAnalogIN = &m_Acq32_AD;
@@ -1286,7 +1286,7 @@ void CViewADcontinuous::OnBnClickedCardfeatures()
 	dlg.DoModal();
 }
 
-void CViewADcontinuous::OnBnClickedStartstop2()
+void ViewADcontinuous::OnBnClickedStartstop2()
 {
 	CString cs;
 	if (m_Acq32_DA.IsInProgress())
@@ -1302,7 +1302,7 @@ void CViewADcontinuous::OnBnClickedStartstop2()
 	m_Button_StartStop_DA.SetWindowTextW(cs);
 }
 
-BOOL CViewADcontinuous::StartOutput()
+BOOL ViewADcontinuous::StartOutput()
 {
 	if (!m_Acq32_DA.InitSubSystem(m_pOptions_AD))
 		return FALSE;
@@ -1312,12 +1312,12 @@ BOOL CViewADcontinuous::StartOutput()
 	return TRUE;
 }
 
-void CViewADcontinuous::StopOutput()
+void ViewADcontinuous::StopOutput()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 }
 
-void CViewADcontinuous::InitAcquisitionInputFile()
+void ViewADcontinuous::InitAcquisitionInputFile()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 
@@ -1331,7 +1331,7 @@ void CViewADcontinuous::InitAcquisitionInputFile()
 	m_inputDataFile.AdjustBUF(m_chsweeplength);
 }
 
-void CViewADcontinuous::OnBnClickedUnzoom()
+void ViewADcontinuous::OnBnClickedUnzoom()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 	const int iextent = pWFormat->binspan;

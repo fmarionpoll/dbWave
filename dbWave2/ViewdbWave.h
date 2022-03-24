@@ -5,12 +5,12 @@
 #include "dbTableView.h"
 
 
-class CViewdbWave : public CdbTableView
+class ViewdbWave : public dbTableView
 {
 protected: // create from serialization only
 	DECLARE_DYNCREATE(CViewdbWave)
-	CViewdbWave();
-	~CViewdbWave() override;
+	ViewdbWave();
+	~ViewdbWave() override;
 
 
 	enum { IDD = IDD_VIEWDBWAVE };

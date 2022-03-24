@@ -4,12 +4,12 @@
 #include "ScrollBarEx.h"
 #include "dbTableView.h"
 
-class CViewSpikes : public CdbTableView
+class ViewSpikes : public dbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikes)
-	CViewSpikes();
-	~CViewSpikes() override;
+	ViewSpikes();
+	~ViewSpikes() override;
 
 	// Form Data
 public:

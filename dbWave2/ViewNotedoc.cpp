@@ -7,9 +7,9 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewNoteDoc, CRichEditView)
+IMPLEMENT_DYNCREATE(ViewNoteDoc, CRichEditView)
 
-BEGIN_MESSAGE_MAP(CViewNoteDoc, CRichEditView)
+BEGIN_MESSAGE_MAP(ViewNoteDoc, CRichEditView)
 	ON_WM_DESTROY()
 	ON_COMMAND(ID_TOOLS_OPENDATAFILES, OnToolsOpendatafiles)
 	ON_COMMAND(ID_FILE_PRINT, CRichEditView::OnFilePrint)
@@ -17,55 +17,55 @@ BEGIN_MESSAGE_MAP(CViewNoteDoc, CRichEditView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CRichEditView::OnFilePrintPreview)
 END_MESSAGE_MAP()
 
-CViewNoteDoc::CViewNoteDoc()
+ViewNoteDoc::ViewNoteDoc()
 {
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-CViewNoteDoc::~CViewNoteDoc()
+ViewNoteDoc::~ViewNoteDoc()
 {
 }
 
-BOOL CViewNoteDoc::PreCreateWindow(CREATESTRUCT& cs)
+BOOL ViewNoteDoc::PreCreateWindow(CREATESTRUCT& cs)
 {
 	return CRichEditView::PreCreateWindow(cs);
 }
 
-void CViewNoteDoc::OnInitialUpdate()
+void ViewNoteDoc::OnInitialUpdate()
 {
 	CRichEditView::OnInitialUpdate();
 	SetMargins(CRect(720, 720, 720, 720));
 }
 
-BOOL CViewNoteDoc::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewNoteDoc::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	return DoPreparePrinting(pInfo);
 }
 
-void CViewNoteDoc::OnDestroy()
+void ViewNoteDoc::OnDestroy()
 {
 	CRichEditView::OnDestroy();
 }
 
 #ifdef _DEBUG
-void CViewNoteDoc::AssertValid() const
+void ViewNoteDoc::AssertValid() const
 {
 	CRichEditView::AssertValid();
 }
 
-void CViewNoteDoc::Dump(CDumpContext& dc) const
+void ViewNoteDoc::Dump(CDumpContext& dc) const
 {
 	CRichEditView::Dump(dc);
 }
 
-CNoteDoc* CViewNoteDoc::GetDocument() // non-debug version is inline
+CNoteDoc* ViewNoteDoc::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CNoteDoc)));
 	return static_cast<CNoteDoc*>(m_pDocument);
 }
 #endif //_DEBUG
 
-void CViewNoteDoc::OnToolsOpendatafiles()
+void ViewNoteDoc::OnToolsOpendatafiles()
 {
 	auto p_document = GetDocument();
 	CString csname = p_document->GetPathName();

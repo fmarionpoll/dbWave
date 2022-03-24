@@ -6,12 +6,12 @@
 #include "ScrollBarEx.h"
 #include "dbTableView.h"
 
-class CViewSpikeSort : public CdbTableView
+class ViewSpikeSort : public dbTableView
 {
 	DECLARE_DYNCREATE(CViewSpikeSort)
 protected:
-	CViewSpikeSort();
-	~CViewSpikeSort() override;
+	ViewSpikeSort();
+	~ViewSpikeSort() override;
 
 	// Form Data
 public:

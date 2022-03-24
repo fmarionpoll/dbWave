@@ -6,14 +6,14 @@
 #include "dbTableMain.h"
 #include "StretchControls.h"
 
-class CdbTableView : public CDaoRecordView
+class dbTableView : public CDaoRecordView
 {
 	DECLARE_DYNAMIC(CdbTableView)
 
 protected:
-	explicit CdbTableView(LPCTSTR lpszTemplateName);
-	explicit CdbTableView(UINT nIDTemplate);
-	~CdbTableView() override;
+	explicit dbTableView(LPCTSTR lpszTemplateName);
+	explicit dbTableView(UINT nIDTemplate);
+	~dbTableView() override;
 
 public:
 	CdbTableMain* m_pSet = nullptr;
@@ -82,7 +82,7 @@ protected:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CdbTableView::GetDocument()
+inline CdbWaveDoc* dbTableView::GetDocument()
 {
 	return (CdbWaveDoc*)m_pDocument;
 }

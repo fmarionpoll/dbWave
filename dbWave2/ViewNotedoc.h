@@ -1,9 +1,9 @@
 #pragma once
 #include "NoteDoc.h"
 
-class CViewNoteDoc : public CRichEditView
+class ViewNoteDoc : public CRichEditView
 {
-	CViewNoteDoc();
+	ViewNoteDoc();
 	DECLARE_DYNCREATE(CViewNoteDoc)
 
 protected:
@@ -19,9 +19,9 @@ public:
 	CNoteDoc* GetDocument();
 #endif
 #ifndef _DEBUG  // debug version in NotedocView.cpp
-	CNoteDoc* CViewNoteDoc::GetDocument() { return (CNoteDoc*)m_pDocument; }
+	CNoteDoc* ViewNoteDoc::GetDocument() { return (CNoteDoc*)m_pDocument; }
 #endif
-	~CViewNoteDoc() override;
+	~ViewNoteDoc() override;
 
 	// Generated message map functions
 protected:

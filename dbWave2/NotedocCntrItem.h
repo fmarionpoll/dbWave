@@ -6,7 +6,7 @@
 #include <afxrich.h>		// MFC rich edit classes
 
 class CNoteDoc;
-class CViewNoteDoc;
+class ViewNoteDoc;
 
 class CNotedocCntrItem : public CRichEditCntrItem
 {
@@ -27,9 +27,9 @@ public:
 		return (CNoteDoc*)CRichEditCntrItem::GetDocument();
 	}
 
-	CViewNoteDoc* GetActiveView()
+	ViewNoteDoc* GetActiveView()
 	{
-		return (CViewNoteDoc*)CRichEditCntrItem::GetActiveView();
+		return (ViewNoteDoc*)CRichEditCntrItem::GetActiveView();
 	}
 
 	// Implementation

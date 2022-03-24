@@ -15,23 +15,23 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikeTemplates, CdbTableView)
+IMPLEMENT_DYNCREATE(ViewSpikeTemplates, dbTableView)
 
-CViewSpikeTemplates::CViewSpikeTemplates()
-	: CdbTableView(IDD)
+ViewSpikeTemplates::ViewSpikeTemplates()
+	: dbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
-CViewSpikeTemplates::~CViewSpikeTemplates()
+ViewSpikeTemplates::~ViewSpikeTemplates()
 {
 	if (m_pSpkDoc != nullptr)
 		saveCurrentSpkFile(); 
 }
 
-void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
+void ViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 {
-	CdbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_T1, m_t1);
 	DDX_Text(pDX, IDC_T2, m_t2);
@@ -48,36 +48,36 @@ void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_DISPLAYSINGLECLASS, m_bDisplaySingleClass);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeTemplates, CdbTableView)
+BEGIN_MESSAGE_MAP(ViewSpikeTemplates, dbTableView)
 
-	ON_MESSAGE(WM_MYMESSAGE, &CViewSpikeTemplates::OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeTemplates::OnMyMessage)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_EDIT2, &CViewSpikeTemplates::OnEnChangeclassno)
-	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewSpikeTemplates::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &CViewSpikeTemplates::OnEnChangeTimelast)
-	ON_COMMAND(ID_FORMAT_ALLDATA, &CViewSpikeTemplates::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &CViewSpikeTemplates::OnFormatGainadjust)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &CViewSpikeTemplates::OnFormatCentercurve)
-	ON_BN_CLICKED(IDC_BUILD, &CViewSpikeTemplates::OnBuildTemplates)
-	ON_EN_CHANGE(IDC_HITRATE, &CViewSpikeTemplates::OnEnChangeHitrate)
-	ON_EN_CHANGE(IDC_TOLERANCE, &CViewSpikeTemplates::OnEnChangeTolerance)
-	ON_EN_CHANGE(IDC_HITRATE2, &CViewSpikeTemplates::OnEnChangeHitrateSort)
-	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST2, &CViewSpikeTemplates::OnKeydownTemplateList)
-	ON_BN_CLICKED(IDC_CHECK1, &CViewSpikeTemplates::OnCheck1)
-	ON_BN_CLICKED(IDC_SORT, &CViewSpikeTemplates::OnBnClickedSort)
-	ON_BN_CLICKED(IDC_DISPLAY, &CViewSpikeTemplates::OnBnClickedDisplay)
-	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &CViewSpikeTemplates::OnEnChangeIfirstsortedclass)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &CViewSpikeTemplates::OnTcnSelchangeTab2)
-	ON_NOTIFY(NM_CLICK, IDC_TAB2, &CViewSpikeTemplates::OnNMClickTab2)
-	ON_BN_CLICKED(IDC_DISPLAYSINGLECLASS, &CViewSpikeTemplates::OnBnClickedDisplaysingleclass)
-	ON_EN_CHANGE(IDC_T1, &CViewSpikeTemplates::OnEnChangeT1)
-	ON_EN_CHANGE(IDC_T2, &CViewSpikeTemplates::OnEnChangeT2)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeTemplates::OnEnChangeclassno)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikeTemplates::OnEnChangeTimefirst)
+	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikeTemplates::OnEnChangeTimelast)
+	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikeTemplates::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeTemplates::OnFormatGainadjust)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeTemplates::OnFormatCentercurve)
+	ON_BN_CLICKED(IDC_BUILD, &ViewSpikeTemplates::OnBuildTemplates)
+	ON_EN_CHANGE(IDC_HITRATE, &ViewSpikeTemplates::OnEnChangeHitrate)
+	ON_EN_CHANGE(IDC_TOLERANCE, &ViewSpikeTemplates::OnEnChangeTolerance)
+	ON_EN_CHANGE(IDC_HITRATE2, &ViewSpikeTemplates::OnEnChangeHitrateSort)
+	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST2, &ViewSpikeTemplates::OnKeydownTemplateList)
+	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeTemplates::OnCheck1)
+	ON_BN_CLICKED(IDC_SORT, &ViewSpikeTemplates::OnBnClickedSort)
+	ON_BN_CLICKED(IDC_DISPLAY, &ViewSpikeTemplates::OnBnClickedDisplay)
+	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &ViewSpikeTemplates::OnEnChangeIfirstsortedclass)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &ViewSpikeTemplates::OnTcnSelchangeTab2)
+	ON_NOTIFY(NM_CLICK, IDC_TAB2, &ViewSpikeTemplates::OnNMClickTab2)
+	ON_BN_CLICKED(IDC_DISPLAYSINGLECLASS, &ViewSpikeTemplates::OnBnClickedDisplaysingleclass)
+	ON_EN_CHANGE(IDC_T1, &ViewSpikeTemplates::OnEnChangeT1)
+	ON_EN_CHANGE(IDC_T2, &ViewSpikeTemplates::OnEnChangeT2)
 END_MESSAGE_MAP()
 
-void CViewSpikeTemplates::OnDestroy()
+void ViewSpikeTemplates::OnDestroy()
 {
 	if (m_templList.GetNtemplates() != 0)
 	{
@@ -85,16 +85,16 @@ void CViewSpikeTemplates::OnDestroy()
 			m_psC->CreateTPL();
 		*static_cast<CTemplateListWnd*>(m_psC->ptpl) = m_templList;
 	}
-	CdbTableView::OnDestroy();
+	dbTableView::OnDestroy();
 }
 
-BOOL CViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CdbTableView::OnMove(nIDMoveCommand);
+	return dbTableView::OnMove(nIDMoveCommand);
 }
 
-void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (m_binit)
 	{
@@ -114,7 +114,7 @@ void CViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CViewSpikeTemplates::defineSubClassedItems()
+void ViewSpikeTemplates::defineSubClassedItems()
 {
 	VERIFY(m_ChartSpkWnd_Shape.SubclassDlgItem(IDC_DISPLAYSPIKE, this));
 	VERIFY(mm_spikenoclass.SubclassDlgItem(IDC_EDIT2, this));
@@ -139,7 +139,7 @@ void CViewSpikeTemplates::defineSubClassedItems()
 	mm_ifirstsortedclass.ShowScrollBar(SB_VERT);
 }
 
-void CViewSpikeTemplates::defineStretchParameters()
+void ViewSpikeTemplates::defineStretchParameters()
 {
 	m_stretch.AttachParent(this); // attach formview pointer
 	m_stretch.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
@@ -148,9 +148,9 @@ void CViewSpikeTemplates::defineStretchParameters()
 	m_stretch.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
 }
 
-void CViewSpikeTemplates::OnInitialUpdate()
+void ViewSpikeTemplates::OnInitialUpdate()
 {
-	CdbTableView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -190,7 +190,7 @@ void CViewSpikeTemplates::OnInitialUpdate()
 	updateCtrlTab1(0);
 }
 
-void CViewSpikeTemplates::updateFileParameters()
+void ViewSpikeTemplates::updateFileParameters()
 {
 	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
 	updateSpikeFile();
@@ -198,7 +198,7 @@ void CViewSpikeTemplates::updateFileParameters()
 	selectSpikeList(icur);
 }
 
-void CViewSpikeTemplates::updateSpikeFile()
+void ViewSpikeTemplates::updateSpikeFile()
 {
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 
@@ -215,7 +215,7 @@ void CViewSpikeTemplates::updateSpikeFile()
 	}
 }
 
-void CViewSpikeTemplates::selectSpikeList(int icur)
+void ViewSpikeTemplates::selectSpikeList(int icur)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 	m_tabCtrl.SetCurSel(icur);
@@ -270,7 +270,7 @@ void CViewSpikeTemplates::selectSpikeList(int icur)
 	updateTemplates();
 }
 
-void CViewSpikeTemplates::updateTemplates()
+void ViewSpikeTemplates::updateTemplates()
 {
 	auto n_cmd_show = SW_HIDE;
 	if (m_templList.GetNtemplates() > 0)
@@ -294,7 +294,7 @@ void CViewSpikeTemplates::updateTemplates()
 	GetDlgItem(IDC_NTEMPLATES)->ShowWindow(n_cmd_show);
 }
 
-void CViewSpikeTemplates::updateLegends()
+void ViewSpikeTemplates::updateLegends()
 {
 	if (m_lFirst < 0)
 		m_lFirst = 0;
@@ -315,14 +315,14 @@ void CViewSpikeTemplates::updateLegends()
 	updateScrollBar();
 }
 
-void CViewSpikeTemplates::selectSpike(short spikeno)
+void ViewSpikeTemplates::selectSpike(short spikeno)
 {
 	m_ChartSpkWnd_Shape.SelectSpikeShape(spikeno);
 	m_spikeno = spikeno;
 	m_pSpkList->m_selected_spike = spikeno;
 }
 
-LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	short shortValue = LOWORD(lParam);
 	switch (wParam)
@@ -376,7 +376,7 @@ LRESULT CViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CViewSpikeTemplates::OnEnChangeclassno()
+void ViewSpikeTemplates::OnEnChangeclassno()
 {
 	if (mm_spikenoclass.m_bEntryDone)
 	{
@@ -408,7 +408,7 @@ void CViewSpikeTemplates::OnEnChangeclassno()
 	}
 }
 
-void CViewSpikeTemplates::OnEnChangeTimefirst()
+void ViewSpikeTemplates::OnEnChangeTimefirst()
 {
 	if (mm_timefirst.m_bEntryDone)
 	{
@@ -441,7 +441,7 @@ void CViewSpikeTemplates::OnEnChangeTimefirst()
 	}
 }
 
-void CViewSpikeTemplates::OnEnChangeTimelast()
+void ViewSpikeTemplates::OnEnChangeTimelast()
 {
 	if (mm_timelast.m_bEntryDone)
 	{
@@ -474,12 +474,12 @@ void CViewSpikeTemplates::OnEnChangeTimelast()
 	}
 }
 
-void CViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -533,7 +533,7 @@ void CViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 		updateScrollBar();
 }
 
-void CViewSpikeTemplates::updateScrollBar()
+void ViewSpikeTemplates::updateScrollBar()
 {
 	if (m_lFirst == 0 && m_lLast >= m_pSpkDoc->GetAcqSize() - 1)
 		GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_HIDE);
@@ -547,7 +547,7 @@ void CViewSpikeTemplates::updateScrollBar()
 	}
 }
 
-void CViewSpikeTemplates::OnFormatAlldata()
+void ViewSpikeTemplates::OnFormatAlldata()
 {
 	// dots: spk file length
 	m_lFirst = 0;
@@ -559,7 +559,7 @@ void CViewSpikeTemplates::OnFormatAlldata()
 	updateLegends();
 }
 
-void CViewSpikeTemplates::OnFormatGainadjust()
+void ViewSpikeTemplates::OnFormatGainadjust()
 {
 	int maxval, minval;
 	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
@@ -569,7 +569,7 @@ void CViewSpikeTemplates::OnFormatGainadjust()
 	setExtentZeroAllDisplay(extent, zero);
 }
 
-void CViewSpikeTemplates::OnFormatCentercurve()
+void ViewSpikeTemplates::OnFormatCentercurve()
 {
 	int maxval, minval;
 	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
@@ -578,7 +578,7 @@ void CViewSpikeTemplates::OnFormatCentercurve()
 	setExtentZeroAllDisplay(extent, zero);
 }
 
-void CViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero)
+void ViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero)
 {
 	m_ChartSpkWnd_Shape.SetYWExtOrg(extent, zero);
 	m_templList.SetYWExtOrg(extent, zero);
@@ -591,7 +591,7 @@ void CViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero)
 	m_avgAllList.Invalidate();
 }
 
-void CViewSpikeTemplates::OnEnChangeHitrate()
+void ViewSpikeTemplates::OnEnChangeHitrate()
 {
 	if (mm_hitrate.m_bEntryDone)
 	{
@@ -621,7 +621,7 @@ void CViewSpikeTemplates::OnEnChangeHitrate()
 	}
 }
 
-void CViewSpikeTemplates::OnEnChangeHitrateSort()
+void ViewSpikeTemplates::OnEnChangeHitrateSort()
 {
 	if (mm_hitratesort.m_bEntryDone)
 	{
@@ -651,7 +651,7 @@ void CViewSpikeTemplates::OnEnChangeHitrateSort()
 	}
 }
 
-void CViewSpikeTemplates::OnEnChangeTolerance()
+void ViewSpikeTemplates::OnEnChangeTolerance()
 {
 	if (mm_ktolerance.m_bEntryDone)
 	{
@@ -683,7 +683,7 @@ void CViewSpikeTemplates::OnEnChangeTolerance()
 	}
 }
 
-void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList)
+void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList)
 {
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 
@@ -801,7 +801,7 @@ void CViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) 
 	pTPList->UpdateTemplateLegends("cx");
 }
 
-void CViewSpikeTemplates::OnBuildTemplates()
+void ViewSpikeTemplates::OnBuildTemplates()
 {
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 
@@ -941,7 +941,7 @@ void CViewSpikeTemplates::OnBuildTemplates()
 	updateTemplates();
 }
 
-void CViewSpikeTemplates::sortSpikes()
+void ViewSpikeTemplates::sortSpikes()
 {
 	// set tolerance to sort tolerance
 	m_templList.SetHitRate_Tolerance(&m_hitratesort, &m_ktolerance);
@@ -1074,7 +1074,7 @@ void CViewSpikeTemplates::sortSpikes()
 	m_ChartSpkWnd_Shape.Invalidate();
 }
 
-void CViewSpikeTemplates::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	auto* p_lv_key_dow = reinterpret_cast<LV_KEYDOWN*>(pNMHDR);
 
@@ -1106,12 +1106,12 @@ void CViewSpikeTemplates::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CViewSpikeTemplates::OnCheck1()
+void ViewSpikeTemplates::OnCheck1()
 {
 	UpdateData(TRUE);
 }
 
-void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
+void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 {
 	// find which item has been selected
 	CTemplateListWnd* pList = nullptr;
@@ -1207,7 +1207,7 @@ void CViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 	}
 }
 
-void CViewSpikeTemplates::updateCtrlTab1(int iselect)
+void ViewSpikeTemplates::updateCtrlTab1(int iselect)
 {
 	WORD i_templ = SW_SHOW;
 	WORD i_avg = SW_HIDE;
@@ -1259,17 +1259,17 @@ void CViewSpikeTemplates::updateCtrlTab1(int iselect)
 	GetDlgItem(IDC_DISPLAY)->ShowWindow(i_avg);
 }
 
-void CViewSpikeTemplates::OnBnClickedSort()
+void ViewSpikeTemplates::OnBnClickedSort()
 {
 	sortSpikes();
 }
 
-void CViewSpikeTemplates::OnBnClickedDisplay()
+void ViewSpikeTemplates::OnBnClickedDisplay()
 {
 	displayAvg(TRUE, &m_avgAllList); //, &m_ImListAll);
 }
 
-void CViewSpikeTemplates::OnEnChangeIfirstsortedclass()
+void ViewSpikeTemplates::OnEnChangeIfirstsortedclass()
 {
 	if (mm_ifirstsortedclass.m_bEntryDone)
 	{
@@ -1300,21 +1300,21 @@ void CViewSpikeTemplates::OnEnChangeIfirstsortedclass()
 	}
 }
 
-void CViewSpikeTemplates::OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
 	selectSpikeList(icursel);
 	*pResult = 0;
 }
 
-void CViewSpikeTemplates::OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
 	selectSpikeList(icursel);
 	*pResult = 0;
 }
 
-void CViewSpikeTemplates::OnBnClickedDisplaysingleclass()
+void ViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 {
 	UpdateData(TRUE);
 	if (m_bDisplaySingleClass)
@@ -1330,7 +1330,7 @@ void CViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 	m_ChartSpkWnd_Shape.Invalidate();
 }
 
-void CViewSpikeTemplates::OnEnChangeT1()
+void ViewSpikeTemplates::OnEnChangeT1()
 {
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 
@@ -1377,7 +1377,7 @@ void CViewSpikeTemplates::OnEnChangeT1()
 	}
 }
 
-void CViewSpikeTemplates::OnEnChangeT2()
+void ViewSpikeTemplates::OnEnChangeT2()
 {
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 

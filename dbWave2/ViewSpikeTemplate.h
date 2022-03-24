@@ -4,12 +4,12 @@
 #include "dbTableView.h"
 #include "Editctrl.h"
 
-class CViewSpikeTemplates : public CdbTableView
+class ViewSpikeTemplates : public dbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewSpikeTemplates)
-	CViewSpikeTemplates();
-	~CViewSpikeTemplates() override;
+	ViewSpikeTemplates();
+	~ViewSpikeTemplates() override;
 public:
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
 

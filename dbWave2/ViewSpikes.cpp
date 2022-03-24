@@ -18,14 +18,14 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikes, CdbTableView)
+IMPLEMENT_DYNCREATE(ViewSpikes, dbTableView)
 
-CViewSpikes::CViewSpikes() : CdbTableView(IDD)
+ViewSpikes::ViewSpikes() : dbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
-CViewSpikes::~CViewSpikes()
+ViewSpikes::~ViewSpikes()
 {
 	m_psC->vdestclass = m_class_destination;
 	m_psC->vsourceclass = m_class_source;
@@ -33,9 +33,9 @@ CViewSpikes::~CViewSpikes()
 	m_psC->fjitter_ms = m_jitter_ms;
 }
 
-void CViewSpikes::DoDataExchange(CDataExchange* pDX)
+void ViewSpikes::DoDataExchange(CDataExchange* pDX)
 {
-	CdbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first);
 	DDX_Text(pDX, IDC_TIMELAST, m_time_last);
@@ -51,7 +51,7 @@ void CViewSpikes::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_SAMECLASS, m_b_keep_same_class);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikes, CdbTableView)
+BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
@@ -62,38 +62,38 @@ BEGIN_MESSAGE_MAP(CViewSpikes, CdbTableView)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 
-	ON_MESSAGE(WM_MYMESSAGE, &CViewSpikes::OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikes::OnMyMessage)
 
-	ON_COMMAND(ID_FORMAT_ALLDATA, &CViewSpikes::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &CViewSpikes::OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &CViewSpikes::OnFormatGainadjust)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, &CViewSpikes::OnToolsEdittransformspikes)
-	ON_COMMAND(ID_EDIT_COPY, &CViewSpikes::OnEditCopy)
-	ON_COMMAND(ID_FORMAT_PREVIOUSFRAME, &CViewSpikes::OnFormatPreviousframe)
-	ON_COMMAND(ID_FORMAT_NEXTFRAME, &CViewSpikes::OnFormatNextframe)
-	ON_COMMAND(ID_RECORD_SHIFTLEFT, &CViewSpikes::OnHScrollLeft)
-	ON_COMMAND(ID_RECORD_SHIFTRIGHT, &CViewSpikes::OnHScrollRight)
+	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikes::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikes::OnFormatCentercurve)
+	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikes::OnFormatGainadjust)
+	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikes::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_EDIT_COPY, &ViewSpikes::OnEditCopy)
+	ON_COMMAND(ID_FORMAT_PREVIOUSFRAME, &ViewSpikes::OnFormatPreviousframe)
+	ON_COMMAND(ID_FORMAT_NEXTFRAME, &ViewSpikes::OnFormatNextframe)
+	ON_COMMAND(ID_RECORD_SHIFTLEFT, &ViewSpikes::OnHScrollLeft)
+	ON_COMMAND(ID_RECORD_SHIFTRIGHT, &ViewSpikes::OnHScrollRight)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
-	ON_EN_CHANGE(IDC_NSPIKES, &CViewSpikes::OnEnChangeNOspike)
-	ON_EN_CHANGE(IDC_EDIT2, &CViewSpikes::OnEnChangeSpikenoclass)
-	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewSpikes::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &CViewSpikes::OnEnChangeTimelast)
-	ON_EN_CHANGE(IDC_EDIT3, &CViewSpikes::OnEnChangeZoom)
-	ON_EN_CHANGE(IDC_EDIT4, &CViewSpikes::OnEnChangeSourceclass)
-	ON_EN_CHANGE(IDC_EDIT5, &CViewSpikes::OnEnChangeDestclass)
-	ON_EN_CHANGE(IDC_JITTER, &CViewSpikes::OnEnChangeJitter)
+	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikes::OnEnChangeNOspike)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikes::OnEnChangeSpikenoclass)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikes::OnEnChangeTimefirst)
+	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikes::OnEnChangeTimelast)
+	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikes::OnEnChangeZoom)
+	ON_EN_CHANGE(IDC_EDIT4, &ViewSpikes::OnEnChangeSourceclass)
+	ON_EN_CHANGE(IDC_EDIT5, &ViewSpikes::OnEnChangeDestclass)
+	ON_EN_CHANGE(IDC_JITTER, &ViewSpikes::OnEnChangeJitter)
 
-	ON_BN_CLICKED(IDC_BUTTON2, &CViewSpikes::OnZoom)
-	ON_BN_CLICKED(IDC_GAIN_button, &CViewSpikes::OnGAINbutton)
-	ON_BN_CLICKED(IDC_BIAS_button, &CViewSpikes::OnBIASbutton)
-	ON_BN_CLICKED(IDC_ARTEFACT, &CViewSpikes::OnArtefact)
+	ON_BN_CLICKED(IDC_BUTTON2, &ViewSpikes::OnZoom)
+	ON_BN_CLICKED(IDC_GAIN_button, &ViewSpikes::OnGAINbutton)
+	ON_BN_CLICKED(IDC_BIAS_button, &ViewSpikes::OnBIASbutton)
+	ON_BN_CLICKED(IDC_ARTEFACT, &ViewSpikes::OnArtefact)
 
-	ON_BN_CLICKED(IDC_SAMECLASS, &CViewSpikes::OnBnClickedSameclass)
+	ON_BN_CLICKED(IDC_SAMECLASS, &ViewSpikes::OnBnClickedSameclass)
 END_MESSAGE_MAP()
 
-void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -127,16 +127,16 @@ void CViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 		auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());
 	}
-	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-BOOL CViewSpikes::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikes::OnMove(UINT nIDMoveCommand)
 {
 	saveCurrentSpkFile();
-	return CdbTableView::OnMove(nIDMoveCommand);
+	return dbTableView::OnMove(nIDMoveCommand);
 }
 
-void CViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (m_binit)
 	{
@@ -156,7 +156,7 @@ void CViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CViewSpikes::setAddspikesMode(int mousecursorType)
+void ViewSpikes::setAddspikesMode(int mousecursorType)
 {
 	// display or hide corresponding controls within this view
 	const BOOL bSetAddspikemode = (mousecursorType == CURSOR_CROSS);
@@ -185,7 +185,7 @@ void CViewSpikes::setAddspikesMode(int mousecursorType)
 	}
 }
 
-void CViewSpikes::setTrackRectangle()
+void ViewSpikes::setTrackRectangle()
 {
 	CRect rect0, rect1, rect2;
 	GetWindowRect(&rect0);
@@ -197,7 +197,7 @@ void CViewSpikes::setTrackRectangle()
 	m_rectVTtrack.right = rect1.right - rect0.left;
 }
 
-void CViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
+void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_b_add_spike_mode)
 	{
@@ -209,10 +209,10 @@ void CViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		m_ChartDataWnd.XorTempVTtag(m_ptVT);
 		m_spkClassListBox.XorTempVTtag(m_ptVT);
 	}
-	CdbTableView::OnMouseMove(nFlags, point);
+	dbTableView::OnMouseMove(nFlags, point);
 }
 
-void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
+void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	ATLTRACE("ViewSpikes OnLButtonUp \n");
 
@@ -227,17 +227,17 @@ void CViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 		addSpiketoList(ii_time, b_check);
 		m_bdummy = FALSE;
 	}
-	CdbTableView::OnLButtonUp(nFlags, point);
+	dbTableView::OnLButtonUp(nFlags, point);
 }
 
-void CViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
+void ViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_rectVTtrack.PtInRect(point))
 		SetCapture();
-	CdbTableView::OnLButtonDown(nFlags, point);
+	dbTableView::OnLButtonDown(nFlags, point);
 }
 
-LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	short shortValue = LOWORD(lParam);
 	switch (wParam)
@@ -304,7 +304,7 @@ LRESULT CViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-BOOL CViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
+BOOL ViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
 {
 	const int method = m_pSpkList->GetdetectTransform();
 	const int doc_channel = m_pSpkList->GetextractChan();
@@ -366,7 +366,7 @@ BOOL CViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
 	return TRUE;
 }
 
-void CViewSpikes::selectSpike(int spikeno)
+void ViewSpikes::selectSpike(int spikeno)
 {
 	if (m_pSpkDoc == nullptr)
 		return;
@@ -406,7 +406,7 @@ void CViewSpikes::selectSpike(int spikeno)
 	UpdateData(FALSE);
 }
 
-void CViewSpikes::defineSubClassedItems()
+void ViewSpikes::defineSubClassedItems()
 {
 	// attach controls
 	VERIFY(m_file_scroll.SubclassDlgItem(IDC_FILESCROLL, this));
@@ -438,7 +438,7 @@ void CViewSpikes::defineSubClassedItems()
 	                                         (LPARAM)static_cast<HANDLE>(m_hZoom));
 }
 
-void CViewSpikes::defineStretchParameters()
+void ViewSpikes::defineStretchParameters()
 {
 	m_stretch.AttachParent(this); // attach formview pointer
 	m_stretch.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
@@ -455,9 +455,9 @@ void CViewSpikes::defineStretchParameters()
 	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, SZEQ_YTEQ);
 }
 
-void CViewSpikes::OnInitialUpdate()
+void ViewSpikes::OnInitialUpdate()
 {
-	CdbTableView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -510,14 +510,14 @@ void CViewSpikes::OnInitialUpdate()
 	}
 }
 
-void CViewSpikes::updateFileParameters(BOOL bUpdateInterface)
+void ViewSpikes::updateFileParameters(BOOL bUpdateInterface)
 {
 	updateSpikeFile(bUpdateInterface);
 	updateDataFile(bUpdateInterface);
 	updateLegends(bUpdateInterface);
 }
 
-void CViewSpikes::updateDataFile(BOOL bUpdateInterface)
+void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 {
 	m_pDataDoc = GetDocument()->OpenCurrentDataFile();
 	if (m_pDataDoc == nullptr)
@@ -587,7 +587,7 @@ void CViewSpikes::updateDataFile(BOOL bUpdateInterface)
 	m_DW_intervals.SetAt(4, 0); // pen size
 }
 
-void CViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
+void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 {
 	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
 
@@ -630,7 +630,7 @@ void CViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_spkClassListBox.SetCurSel(0);
 }
 
-void CViewSpikes::updateLegends(BOOL bUpdateInterface)
+void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 {
 	if (!bUpdateInterface)
 		return;
@@ -668,7 +668,7 @@ void CViewSpikes::updateLegends(BOOL bUpdateInterface)
 	updateFileScroll();
 }
 
-void CViewSpikes::adjustYZoomToMaxMin(BOOL bForceSearchMaxMin)
+void ViewSpikes::adjustYZoomToMaxMin(BOOL bForceSearchMaxMin)
 {
 	if (m_yWE == 1 || bForceSearchMaxMin)
 	{
@@ -681,7 +681,7 @@ void CViewSpikes::adjustYZoomToMaxMin(BOOL bForceSearchMaxMin)
 	m_spkClassListBox.SetYzoom(m_yWE, m_yWO);
 }
 
-void CViewSpikes::selectSpkList(int icursel)
+void ViewSpikes::selectSpkList(int icursel)
 {
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icursel);
 	ASSERT(m_pSpkList != NULL);
@@ -718,7 +718,7 @@ void CViewSpikes::selectSpkList(int icursel)
 	m_ChartDataWnd.Invalidate();
 }
 
-void CViewSpikes::OnFormatAlldata()
+void ViewSpikes::OnFormatAlldata()
 {
 	// dots: spk file length
 	m_lFirst = 0;
@@ -734,7 +734,7 @@ void CViewSpikes::OnFormatAlldata()
 	m_ChartDataWnd.Invalidate();
 }
 
-void CViewSpikes::OnFormatCentercurve()
+void ViewSpikes::OnFormatCentercurve()
 {
 	/*
 	if (m_bSpkDocExists)
@@ -762,7 +762,7 @@ void CViewSpikes::OnFormatCentercurve()
 	m_ChartDataWnd.Invalidate();
 }
 
-void CViewSpikes::OnFormatGainadjust()
+void ViewSpikes::OnFormatGainadjust()
 {
 	if (m_pSpkDoc != nullptr)
 	{
@@ -776,7 +776,7 @@ void CViewSpikes::OnFormatGainadjust()
 	m_ChartDataWnd.Invalidate();
 }
 
-void CViewSpikes::OnToolsEdittransformspikes()
+void ViewSpikes::OnToolsEdittransformspikes()
 {
 	// return if no spike shape
 	if (m_spkClassListBox.GetXWExtent() == 0) // if no spike shape, return
@@ -814,7 +814,7 @@ void CViewSpikes::OnToolsEdittransformspikes()
 	m_ChartDataWnd.Invalidate();
 }
 
-void CViewSpikes::PrintComputePageSize()
+void ViewSpikes::PrintComputePageSize()
 {
 	// magic to get printer dialog that would be used if we were printing!
 	CPrintDialog dlg(FALSE);
@@ -837,7 +837,7 @@ void CViewSpikes::PrintComputePageSize()
 	m_printRect.top = options_viewdata->topPageMargin;
 }
 
-void CViewSpikes::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikes::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
 {
 	auto t = CTime::GetCurrentTime();
 	CString ch;
@@ -849,7 +849,7 @@ void CViewSpikes::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
 	p_dc->TextOut(options_viewdata->horzRes / 2, options_viewdata->vertRes - 57, ch_date);
 }
 
-CString CViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
+CString ViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
 {
 	CString cs_unit = _T(" s");
 	TCHAR sz_value[64];
@@ -868,7 +868,7 @@ CString CViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
 	return cs_comment;
 }
 
-long CViewSpikes::PrintGetFileSeriesIndexFromPage(int page, int* filenumber)
+long ViewSpikes::PrintGetFileSeriesIndexFromPage(int page, int* filenumber)
 {
 	auto l_first = m_lprintFirst;
 
@@ -901,7 +901,7 @@ long CViewSpikes::PrintGetFileSeriesIndexFromPage(int page, int* filenumber)
 	return l_first; // return index first point / data file
 }
 
-CString CViewSpikes::PrintGetFileInfos()
+CString ViewSpikes::PrintGetFileInfos()
 {
 	CString str_comment; // scratch pad
 	const CString tab("    "); // use 4 spaces as tabulation character
@@ -933,7 +933,7 @@ CString CViewSpikes::PrintGetFileInfos()
 	return str_comment;
 }
 
-CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
+CString ViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 {
 	CString str_comment;
 	const CString rc(_T("\n"));
@@ -1052,7 +1052,7 @@ CString CViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 	return str_comment;
 }
 
-BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	if (!DoPreparePrinting(pInfo))
 		return FALSE;
@@ -1190,7 +1190,7 @@ BOOL CViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	return flag;
 }
 
-void CViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_spkClassListBox.GetTimeFirst();
@@ -1205,7 +1205,7 @@ void CViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	p_dc->SetBkMode(TRANSPARENT);
 }
 
-void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
 	p_dc->SetMapMode(MM_TEXT); // (1 pixel = 1 logical point)
@@ -1434,7 +1434,7 @@ void CViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		p_dc->SelectObject(m_pOldFont);
 }
 
-void CViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	m_bIsPrinting = FALSE;
@@ -1462,7 +1462,7 @@ static int vsmax_index = 8; // nb of elmts
 //						100, 200, 250, 300, 400, 500,  /*600,*/ /*700,*//* 800, *//*900,*/
 //						0};
 
-float CViewSpikes::PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
+float ViewSpikes::PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 {
 	if (xVal == 0) // prevent diviion by zero
 	{
@@ -1491,7 +1491,7 @@ float CViewSpikes::PrintChangeUnit(float xVal, CString* xUnit, float* xScalefact
 	return xVal * isign / *xScalefactor; // return value/scale_factor
 }
 
-void CViewSpikes::OnEnChangeNOspike()
+void ViewSpikes::OnEnChangeNOspike()
 {
 	if (mm_spike_index.m_bEntryDone)
 	{
@@ -1531,7 +1531,7 @@ void CViewSpikes::OnEnChangeNOspike()
 	}
 }
 
-void CViewSpikes::centerDataDisplayOnSpike(int spikeno)
+void ViewSpikes::centerDataDisplayOnSpike(int spikeno)
 {
 	// test if spike visible in the current time interval
 	SpikeElement* p_spike_element = m_pSpkList->GetSpikeElemt(spikeno);
@@ -1564,7 +1564,7 @@ void CViewSpikes::centerDataDisplayOnSpike(int spikeno)
 	m_ChartDataWnd.Invalidate();
 }
 
-void CViewSpikes::OnEnChangeSpikenoclass()
+void ViewSpikes::OnEnChangeSpikenoclass()
 {
 	if (!mm_spike_index_class.m_bEntryDone)
 		return;
@@ -1597,7 +1597,7 @@ void CViewSpikes::OnEnChangeSpikenoclass()
 	}
 }
 
-void CViewSpikes::OnEnChangeTimefirst()
+void ViewSpikes::OnEnChangeTimefirst()
 {
 	if (mm_time_first.m_bEntryDone)
 	{
@@ -1632,7 +1632,7 @@ void CViewSpikes::OnEnChangeTimefirst()
 	}
 }
 
-void CViewSpikes::OnEnChangeTimelast()
+void ViewSpikes::OnEnChangeTimelast()
 {
 	if (mm_time_last.m_bEntryDone)
 	{
@@ -1666,7 +1666,7 @@ void CViewSpikes::OnEnChangeTimelast()
 	}
 }
 
-void CViewSpikes::OnEnChangeZoom()
+void ViewSpikes::OnEnChangeZoom()
 {
 	if (mm_zoom.m_bEntryDone)
 	{
@@ -1699,7 +1699,7 @@ void CViewSpikes::OnEnChangeZoom()
 	}
 }
 
-void CViewSpikes::OnEnChangeSourceclass()
+void ViewSpikes::OnEnChangeSourceclass()
 {
 	if (mm_source_class.m_bEntryDone)
 	{
@@ -1724,7 +1724,7 @@ void CViewSpikes::OnEnChangeSourceclass()
 	}
 }
 
-void CViewSpikes::OnEnChangeDestclass()
+void ViewSpikes::OnEnChangeDestclass()
 {
 	if (mm_dest_class.m_bEntryDone)
 	{
@@ -1750,12 +1750,12 @@ void CViewSpikes::OnEnChangeDestclass()
 	}
 }
 
-void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -1789,7 +1789,7 @@ void CViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_ChartDataWnd.CenterChan(0);
 }
 
-void CViewSpikes::scrollFile(UINT nSBCode, UINT nPos)
+void ViewSpikes::scrollFile(UINT nSBCode, UINT nPos)
 {
 	auto b_result = FALSE;
 	// get corresponding data
@@ -1813,7 +1813,7 @@ void CViewSpikes::scrollFile(UINT nSBCode, UINT nPos)
 	}
 }
 
-void CViewSpikes::updateFileScroll()
+void ViewSpikes::updateFileScroll()
 {
 	m_file_scroll_infos.fMask = SIF_PAGE | SIF_POS;
 	m_file_scroll_infos.nPos = m_ChartDataWnd.GetDataFirst();
@@ -1821,7 +1821,7 @@ void CViewSpikes::updateFileScroll()
 	m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 }
 
-void CViewSpikes::OnEditCopy()
+void ViewSpikes::OnEditCopy()
 {
 	DlgCopyAs dlg;
 	dlg.m_nabcissa = options_viewdata->hzResolution;
@@ -1958,12 +1958,12 @@ void CViewSpikes::OnEditCopy()
 	}
 }
 
-void CViewSpikes::OnZoom()
+void ViewSpikes::OnZoom()
 {
 	zoomOnPresetInterval(0);
 }
 
-void CViewSpikes::zoomOnPresetInterval(int iistart)
+void ViewSpikes::zoomOnPresetInterval(int iistart)
 {
 	if (iistart < 0)
 		iistart = 0;
@@ -1976,12 +1976,12 @@ void CViewSpikes::zoomOnPresetInterval(int iistart)
 	m_ChartDataWnd.Invalidate();
 }
 
-void CViewSpikes::OnFormatPreviousframe()
+void ViewSpikes::OnFormatPreviousframe()
 {
 	zoomOnPresetInterval(m_lFirst * 2 - m_lLast);
 }
 
-void CViewSpikes::OnFormatNextframe()
+void ViewSpikes::OnFormatNextframe()
 {
 	const long len = m_lLast - m_lFirst;
 	auto last = m_lLast + len;
@@ -1990,21 +1990,21 @@ void CViewSpikes::OnFormatNextframe()
 	zoomOnPresetInterval(last);
 }
 
-void CViewSpikes::OnGAINbutton()
+void ViewSpikes::OnGAINbutton()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(0);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(1);
 	setVBarMode(BAR_GAIN);
 }
 
-void CViewSpikes::OnBIASbutton()
+void ViewSpikes::OnBIASbutton()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(1);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(0);
 	setVBarMode(BAR_BIAS);
 }
 
-void CViewSpikes::setVBarMode(short bMode)
+void ViewSpikes::setVBarMode(short bMode)
 {
 	if (bMode == BAR_BIAS)
 		m_VBarMode = bMode;
@@ -2013,7 +2013,7 @@ void CViewSpikes::setVBarMode(short bMode)
 	updateBiasScroll();
 }
 
-void CViewSpikes::updateGainScroll()
+void ViewSpikes::updateGainScroll()
 {
 	m_scroll_y.SetScrollPos(
 		MulDiv(m_ChartDataWnd.GetChanlistItem(0)->GetYextent(),
@@ -2023,7 +2023,7 @@ void CViewSpikes::updateGainScroll()
 		TRUE);
 }
 
-void CViewSpikes::scrollGain(UINT nSBCode, UINT nPos)
+void ViewSpikes::scrollGain(UINT nSBCode, UINT nPos)
 {
 	int lSize = m_ChartDataWnd.GetChanlistItem(0)->GetYextent();
 	// get corresponding data
@@ -2067,7 +2067,7 @@ void CViewSpikes::scrollGain(UINT nSBCode, UINT nPos)
 		updateGainScroll();
 }
 
-void CViewSpikes::updateBiasScroll()
+void ViewSpikes::updateBiasScroll()
 {
 	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(0);
 	const auto i_pos = (pchan->GetYzero()
@@ -2076,7 +2076,7 @@ void CViewSpikes::updateBiasScroll()
 	m_scroll_y.SetScrollPos(i_pos, TRUE);
 }
 
-void CViewSpikes::scrollBias(UINT nSBCode, UINT nPos)
+void ViewSpikes::scrollBias(UINT nSBCode, UINT nPos)
 {
 	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
 	auto l_size = chan->GetYzero() - chan->GetDataBinZero();
@@ -2121,12 +2121,12 @@ void CViewSpikes::scrollBias(UINT nSBCode, UINT nPos)
 		updateBiasScroll();
 }
 
-void CViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// formview scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -2141,10 +2141,10 @@ void CViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	default:
 		break;
 	}
-	CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+	dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CViewSpikes::OnArtefact()
+void ViewSpikes::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
 	if (m_spike_index < 0)
@@ -2170,7 +2170,7 @@ void CViewSpikes::OnArtefact()
 	m_spkClassListBox.Invalidate();
 }
 
-void CViewSpikes::OnEnChangeJitter()
+void ViewSpikes::OnEnChangeJitter()
 {
 	if (mm_jitter_ms.m_bEntryDone)
 	{
@@ -2196,17 +2196,17 @@ void CViewSpikes::OnEnChangeJitter()
 	}
 }
 
-void CViewSpikes::OnHScrollLeft()
+void ViewSpikes::OnHScrollLeft()
 {
 	OnHScroll(SB_PAGELEFT, NULL, static_cast<CScrollBar*>(GetDlgItem(IDC_FILESCROLL)));
 }
 
-void CViewSpikes::OnHScrollRight()
+void ViewSpikes::OnHScrollRight()
 {
 	OnHScroll(SB_PAGERIGHT, NULL, static_cast<CScrollBar*>(GetDlgItem(IDC_FILESCROLL)));
 }
 
-void CViewSpikes::OnBnClickedSameclass()
+void ViewSpikes::OnBnClickedSameclass()
 {
 	m_b_keep_same_class = static_cast<CButton*>(GetDlgItem(IDC_SAMECLASS))->GetCheck();
 }

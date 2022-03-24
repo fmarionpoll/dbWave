@@ -16,13 +16,13 @@
 #include "dbTableView.h"
 
 
-class CViewADcontinuous : public CdbTableView
+class ViewADcontinuous : public dbTableView
 {
 	friend class CBoard;
 
 protected:
-	CViewADcontinuous();
-	~CViewADcontinuous() override;
+	ViewADcontinuous();
+	~ViewADcontinuous() override;
 	DECLARE_DYNCREATE(CViewADcontinuous)
 
 	enum { IDD = IDD_VIEWADCONTINUOUS };

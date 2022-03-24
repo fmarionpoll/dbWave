@@ -242,7 +242,7 @@ CdbWaveDoc* CMainFrame::GetMDIActiveDocument()
 	const auto p_child = MDIGetActive();
 	if (p_child == nullptr)
 		return nullptr;
-	auto* p_view = static_cast<CdbTableView*>(p_child->GetActiveView());
+	auto* p_view = static_cast<dbTableView*>(p_child->GetActiveView());
 	return p_view->GetDocument();
 }
 

@@ -8,11 +8,11 @@
 #include "dbTableView.h"
 
 
-class CViewData : public CdbTableView
+class ViewData : public dbTableView
 {
 protected:
 	DECLARE_DYNCREATE(CViewData)
-	CViewData();
+	ViewData();
 
 	// Form Data
 public:
@@ -107,7 +107,7 @@ protected:
 
 	// Implementation
 public:
-	~CViewData() override;
+	~ViewData() override;
 
 	afx_msg void OnClickedBias();
 	afx_msg void OnClickedGain();

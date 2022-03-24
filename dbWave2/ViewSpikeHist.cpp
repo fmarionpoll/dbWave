@@ -15,15 +15,15 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CViewSpikeHist, CdbTableView)
+IMPLEMENT_DYNCREATE(ViewSpikeHist, dbTableView)
 
-CViewSpikeHist::CViewSpikeHist()
-	: CdbTableView(IDD)
+ViewSpikeHist::ViewSpikeHist()
+	: dbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
 
-CViewSpikeHist::~CViewSpikeHist()
+ViewSpikeHist::~ViewSpikeHist()
 {
 	delete[] m_pPSTH;
 	delete[] m_pISI;
@@ -32,14 +32,14 @@ CViewSpikeHist::~CViewSpikeHist()
 	m_fontDisp.DeleteObject();
 }
 
-BOOL CViewSpikeHist::PreCreateWindow(CREATESTRUCT& cs)
+BOOL ViewSpikeHist::PreCreateWindow(CREATESTRUCT& cs)
 {
-	return CdbTableView::PreCreateWindow(cs);
+	return dbTableView::PreCreateWindow(cs);
 }
 
-void CViewSpikeHist::DoDataExchange(CDataExchange* pDX)
+void ViewSpikeHist::DoDataExchange(CDataExchange* pDX)
 {
-	CdbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
 	DDX_Text(pDX, IDC_SPIKECLASS, m_spikeclass);
@@ -51,40 +51,40 @@ void CViewSpikeHist::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BEGIN_MESSAGE_MAP(CViewSpikeHist, CdbTableView)
+BEGIN_MESSAGE_MAP(ViewSpikeHist, dbTableView)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewSpikeHist::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &CViewSpikeHist::OnEnChangeTimelast)
-	ON_EN_CHANGE(IDC_EDIT4, &CViewSpikeHist::OnEnChangeTimebin)
-	ON_EN_CHANGE(IDC_BINSIZE, &CViewSpikeHist::OnEnChangebinISI)
-	ON_BN_CLICKED(IDC_CHECK1, &CViewSpikeHist::OnClickAllfiles)
-	ON_BN_CLICKED(IDC_RADIOABSOLUTE, &CViewSpikeHist::OnabsoluteTime)
-	ON_BN_CLICKED(IDC_RADIORELATIVE, &CViewSpikeHist::OnrelativeTime)
-	ON_BN_CLICKED(IDC_RADIOONECLASS, &CViewSpikeHist::OnClickOneclass)
-	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &CViewSpikeHist::OnClickAllclasses)
-	ON_EN_CHANGE(IDC_SPIKECLASS, &CViewSpikeHist::OnEnChangeSpikeclass)
-	ON_EN_CHANGE(IDC_EDIT1, &CViewSpikeHist::OnEnChangenbins)
-	ON_EN_CHANGE(IDC_EDIT3, &CViewSpikeHist::OnEnChangerowheight)
-	ON_EN_CHANGE(IDC_EDIT2, &CViewSpikeHist::OnEnChangeDotheight)
-	ON_COMMAND(ID_FORMAT_HISTOGRAM, &CViewSpikeHist::OnFormatHistogram)
-	ON_BN_CLICKED(IDC_CHECK2, &CViewSpikeHist::OnClickCycleHist)
-	ON_COMMAND(ID_EDIT_COPY, &CViewSpikeHist::OnEditCopy)
-	ON_LBN_SELCHANGE(IDC_LIST1, &CViewSpikeHist::OnSelchangeHistogramtype)
-	ON_EN_CHANGE(IDC_EDITNSTIPERCYCLE, &CViewSpikeHist::OnEnChangeEditnstipercycle)
-	ON_EN_CHANGE(IDC_EDITLOCKONSTIM, &CViewSpikeHist::OnEnChangeEditlockonstim)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikeHist::OnEnChangeTimefirst)
+	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikeHist::OnEnChangeTimelast)
+	ON_EN_CHANGE(IDC_EDIT4, &ViewSpikeHist::OnEnChangeTimebin)
+	ON_EN_CHANGE(IDC_BINSIZE, &ViewSpikeHist::OnEnChangebinISI)
+	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeHist::OnClickAllfiles)
+	ON_BN_CLICKED(IDC_RADIOABSOLUTE, &ViewSpikeHist::OnabsoluteTime)
+	ON_BN_CLICKED(IDC_RADIORELATIVE, &ViewSpikeHist::OnrelativeTime)
+	ON_BN_CLICKED(IDC_RADIOONECLASS, &ViewSpikeHist::OnClickOneclass)
+	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &ViewSpikeHist::OnClickAllclasses)
+	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeHist::OnEnChangeSpikeclass)
+	ON_EN_CHANGE(IDC_EDIT1, &ViewSpikeHist::OnEnChangenbins)
+	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeHist::OnEnChangerowheight)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeHist::OnEnChangeDotheight)
+	ON_COMMAND(ID_FORMAT_HISTOGRAM, &ViewSpikeHist::OnFormatHistogram)
+	ON_BN_CLICKED(IDC_CHECK2, &ViewSpikeHist::OnClickCycleHist)
+	ON_COMMAND(ID_EDIT_COPY, &ViewSpikeHist::OnEditCopy)
+	ON_LBN_SELCHANGE(IDC_LIST1, &ViewSpikeHist::OnSelchangeHistogramtype)
+	ON_EN_CHANGE(IDC_EDITNSTIPERCYCLE, &ViewSpikeHist::OnEnChangeEditnstipercycle)
+	ON_EN_CHANGE(IDC_EDITLOCKONSTIM, &ViewSpikeHist::OnEnChangeEditlockonstim)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CViewSpikeHist::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CViewSpikeHist::OnTcnSelchangeTab1)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &ViewSpikeHist::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &ViewSpikeHist::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CViewSpikeHist message handlers
+// ViewSpikeHist message handlers
 
-void CViewSpikeHist::OnInitialUpdate()
+void ViewSpikeHist::OnInitialUpdate()
 {
 	VERIFY(mm_binISIms.SubclassDlgItem(IDC_BINSIZE, this));
 	VERIFY(mm_timebinms.SubclassDlgItem(IDC_EDIT4, this));
@@ -155,7 +155,7 @@ void CViewSpikeHist::OnInitialUpdate()
 	m_binit = TRUE;
 
 	// init database and load documents
-	CdbTableView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 
 	const auto p_dbwave_doc = GetDocument();
 	if (p_dbwave_doc->m_pSpk == nullptr)
@@ -169,7 +169,7 @@ void CViewSpikeHist::OnInitialUpdate()
 	selectSpkList(p_spike_doc_->GetSpkList_CurrentIndex(), TRUE);
 }
 
-void CViewSpikeHist::OnSize(UINT nType, int cx, int cy)
+void ViewSpikeHist::OnSize(UINT nType, int cx, int cy)
 {
 	if (m_binit)
 	{
@@ -185,10 +185,10 @@ void CViewSpikeHist::OnSize(UINT nType, int cx, int cy)
 			break;
 		}
 	}
-	CdbTableView::OnSize(nType, cx, cy);
+	dbTableView::OnSize(nType, cx, cy);
 }
 
-void CViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -201,10 +201,10 @@ void CViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView*
 		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_viewspikes.ballfiles = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	}
-	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (!m_binit)
 		return;
@@ -228,9 +228,9 @@ void CViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 {
-	const auto flag = CdbTableView::OnMove(nIDMoveCommand);
+	const auto flag = dbTableView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
 	if (p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 	{
@@ -245,25 +245,25 @@ BOOL CViewSpikeHist::OnMove(UINT nIDMoveCommand)
 	return flag;
 }
 
-void CViewSpikeHist::OnDestroy()
+void ViewSpikeHist::OnDestroy()
 {
-	CdbTableView::OnDestroy();
+	dbTableView::OnDestroy();
 }
 
 #ifdef _DEBUG
-void CViewSpikeHist::AssertValid() const
+void ViewSpikeHist::AssertValid() const
 {
-	CdbTableView::AssertValid();
+	dbTableView::AssertValid();
 }
 
-void CViewSpikeHist::Dump(CDumpContext& dc) const
+void ViewSpikeHist::Dump(CDumpContext& dc) const
 {
-	CdbTableView::Dump(dc);
+	dbTableView::Dump(dc);
 }
 #endif //_DEBUG
 
 
-void CViewSpikeHist::OnEnChangeTimefirst()
+void ViewSpikeHist::OnEnChangeTimefirst()
 {
 	if (mm_timefirst.m_bEntryDone)
 	{
@@ -298,7 +298,7 @@ void CViewSpikeHist::OnEnChangeTimefirst()
 	}
 }
 
-void CViewSpikeHist::OnEnChangeTimelast()
+void ViewSpikeHist::OnEnChangeTimelast()
 {
 	if (mm_timelast.m_bEntryDone)
 	{
@@ -333,7 +333,7 @@ void CViewSpikeHist::OnEnChangeTimelast()
 	}
 }
 
-void CViewSpikeHist::OnEnChangeTimebin()
+void ViewSpikeHist::OnEnChangeTimebin()
 {
 	if (mm_timebinms.m_bEntryDone)
 	{
@@ -363,7 +363,7 @@ void CViewSpikeHist::OnEnChangeTimebin()
 	}
 }
 
-void CViewSpikeHist::OnEnChangebinISI()
+void ViewSpikeHist::OnEnChangebinISI()
 {
 	if (mm_binISIms.m_bEntryDone)
 	{
@@ -393,7 +393,7 @@ void CViewSpikeHist::OnEnChangebinISI()
 	}
 }
 
-void CViewSpikeHist::OnEnChangeSpikeclass()
+void ViewSpikeHist::OnEnChangeSpikeclass()
 {
 	if (mm_spikeclass.m_bEntryDone)
 	{
@@ -423,7 +423,7 @@ void CViewSpikeHist::OnEnChangeSpikeclass()
 	}
 }
 
-void CViewSpikeHist::buildDataAndDisplay()
+void ViewSpikeHist::buildDataAndDisplay()
 {
 	if (!m_binit)
 		return;
@@ -432,7 +432,7 @@ void CViewSpikeHist::buildDataAndDisplay()
 	InvalidateRect(&m_displayRect); // display
 }
 
-void CViewSpikeHist::OnDraw(CDC* p_dc)
+void ViewSpikeHist::OnDraw(CDC* p_dc)
 {
 	CRect rect; // get coordinates of display area
 	auto p_wnd = GetDlgItem(IDC_STATIC12); // get pointer to display static control
@@ -508,7 +508,7 @@ void CViewSpikeHist::OnDraw(CDC* p_dc)
 	dcMem.SelectObject(poldbitmap); // release bitmap
 }
 
-void CViewSpikeHist::getFileInfos(CString& str_comment)
+void ViewSpikeHist::getFileInfos(CString& str_comment)
 {
 	if (m_nfiles == 1)
 	{
@@ -534,7 +534,7 @@ void CViewSpikeHist::getFileInfos(CString& str_comment)
 	}
 }
 
-void CViewSpikeHist::OnClickAllfiles()
+void ViewSpikeHist::OnClickAllfiles()
 {
 	if (static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck())
 	{
@@ -549,7 +549,7 @@ void CViewSpikeHist::OnClickAllfiles()
 	buildDataAndDisplay();
 }
 
-void CViewSpikeHist::OnClickCycleHist()
+void ViewSpikeHist::OnClickCycleHist()
 {
 	if (static_cast<CButton*>(GetDlgItem(IDC_CHECK2))->GetCheck())
 	{
@@ -562,7 +562,7 @@ void CViewSpikeHist::OnClickCycleHist()
 	buildDataAndDisplay();
 }
 
-void CViewSpikeHist::OnClickOneclass()
+void ViewSpikeHist::OnClickOneclass()
 {
 	if (!m_pvdS->spikeclassoption)
 	{
@@ -572,7 +572,7 @@ void CViewSpikeHist::OnClickOneclass()
 	}
 }
 
-void CViewSpikeHist::OnClickAllclasses()
+void ViewSpikeHist::OnClickAllclasses()
 {
 	if (m_pvdS->spikeclassoption)
 	{
@@ -582,7 +582,7 @@ void CViewSpikeHist::OnClickAllclasses()
 	}
 }
 
-void CViewSpikeHist::OnabsoluteTime()
+void ViewSpikeHist::OnabsoluteTime()
 {
 	if (!m_pvdS->babsolutetime)
 	{
@@ -591,7 +591,7 @@ void CViewSpikeHist::OnabsoluteTime()
 	}
 }
 
-void CViewSpikeHist::OnrelativeTime()
+void ViewSpikeHist::OnrelativeTime()
 {
 	if (m_pvdS->babsolutetime)
 	{
@@ -600,7 +600,7 @@ void CViewSpikeHist::OnrelativeTime()
 	}
 }
 
-void CViewSpikeHist::showControls(int iselect)
+void ViewSpikeHist::showControls(int iselect)
 {
 	m_bhistType = iselect;
 	switch (iselect)
@@ -672,7 +672,7 @@ void CViewSpikeHist::showControls(int iselect)
 	GetDlgItem(IDC_STATIC13)->ShowWindow(bsettings[iselect][i]); /*i++;*/ // 11 autoc. &bin size (ms)
 }
 
-void CViewSpikeHist::OnEnChangenbins()
+void ViewSpikeHist::OnEnChangenbins()
 {
 	if (mm_nbinsISI.m_bEntryDone)
 	{
@@ -702,7 +702,7 @@ void CViewSpikeHist::OnEnChangenbins()
 	}
 }
 
-void CViewSpikeHist::OnEnChangerowheight()
+void ViewSpikeHist::OnEnChangerowheight()
 {
 	if (mm_rowheight.m_bEntryDone)
 	{
@@ -732,7 +732,7 @@ void CViewSpikeHist::OnEnChangerowheight()
 	}
 }
 
-void CViewSpikeHist::OnEnChangeDotheight()
+void ViewSpikeHist::OnEnChangeDotheight()
 {
 	if (mm_dotheight.m_bEntryDone)
 	{
@@ -763,7 +763,7 @@ void CViewSpikeHist::OnEnChangeDotheight()
 	}
 }
 
-void CViewSpikeHist::OnEditCopy()
+void ViewSpikeHist::OnEditCopy()
 {
 	// create metafile
 	CMetaFileDC m_dc;
@@ -825,7 +825,7 @@ void CViewSpikeHist::OnEditCopy()
 	}
 }
 
-BOOL CViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	if (!DoPreparePrinting(pInfo))
 		return FALSE;
@@ -880,7 +880,7 @@ BOOL CViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 	return flag;
 }
 
-void CViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	// select font, set print flag, save current file index
 	const auto p_old_font = p_dc->SelectObject(&m_fontPrint);
@@ -976,14 +976,14 @@ void CViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
 }
 
-void CViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	m_bPrint = FALSE;
-	CdbTableView::OnEndPrinting(p_dc, pInfo);
+	dbTableView::OnEndPrinting(p_dc, pInfo);
 }
 
-void CViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	memset(&m_logFont, 0, sizeof(LOGFONT)); // prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial")); // Arial font
@@ -992,7 +992,7 @@ void CViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	p_dc->SetBkMode(TRANSPARENT);
 }
 
-void CViewSpikeHist::OnFormatHistogram()
+void ViewSpikeHist::OnFormatHistogram()
 {
 	DlgFormatHistogram dlg;
 	dlg.m_bYmaxAuto = m_pvdS->bYmaxAuto;
@@ -1022,7 +1022,7 @@ void CViewSpikeHist::OnFormatHistogram()
 	}
 }
 
-void CViewSpikeHist::buildData()
+void ViewSpikeHist::buildData()
 {
 	auto nbins = static_cast<int>((m_timelast - m_timefirst) * t1000 / m_timebinms);
 	if (nbins <= 0)
@@ -1243,7 +1243,7 @@ void CViewSpikeHist::buildData()
 // output (modified internal parameters)
 //		m_rectratio	 % of histogram height versus plotting area
 
-long CViewSpikeHist::plotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, long* phistog0, int orientation,
+long ViewSpikeHist::plotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, long* phistog0, int orientation,
                                 int btype)
 {
 	CPen penbars;
@@ -1432,7 +1432,7 @@ long CViewSpikeHist::plotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, lo
 	return max;
 }
 
-void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
+void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 {
 	CWaitCursor wait;
 
@@ -1679,7 +1679,7 @@ void CViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	p_dc->SelectObject(pold_brush);
 }
 
-void CViewSpikeHist::displayHistogram(CDC* p_dc, CRect* pRect)
+void ViewSpikeHist::displayHistogram(CDC* p_dc, CRect* pRect)
 {
 	auto disp_rect = *pRect; // this will be the display rect for histogram
 
@@ -1821,7 +1821,7 @@ void CViewSpikeHist::displayHistogram(CDC* p_dc, CRect* pRect)
 	v_font.DeleteObject();
 }
 
-void CViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
+void ViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 {
 	// print text on horizontal lines
 	TEXTMETRIC tm; // load characteristics of the font
@@ -2025,7 +2025,7 @@ void CViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 	p_dc->SetBkMode(OPAQUE);
 }
 
-void CViewSpikeHist::displayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last)
+void ViewSpikeHist::displayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last)
 {
 	// draw rectangle for stimulus
 	if (p_spike_doc_->m_stimulus_intervals.n_items <= 0)
@@ -2100,7 +2100,7 @@ void CViewSpikeHist::displayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l
 	p_dc->SelectObject(pold_p);
 }
 
-void CViewSpikeHist::OnSelchangeHistogramtype()
+void ViewSpikeHist::OnSelchangeHistogramtype()
 {
 	const auto i = static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->GetCurSel();
 	if (m_bhistType == i)
@@ -2109,13 +2109,13 @@ void CViewSpikeHist::OnSelchangeHistogramtype()
 	buildDataAndDisplay();
 }
 
-void CViewSpikeHist::OnEnChangeEditnstipercycle()
+void ViewSpikeHist::OnEnChangeEditnstipercycle()
 {
 	m_pvdS->nstipercycle = GetDlgItemInt(IDC_EDITNSTIPERCYCLE);
 	buildDataAndDisplay();
 }
 
-void CViewSpikeHist::OnEnChangeEditlockonstim()
+void ViewSpikeHist::OnEnChangeEditlockonstim()
 {
 	if (p_spike_doc_ == nullptr)
 		return;
@@ -2132,10 +2132,10 @@ void CViewSpikeHist::OnEnChangeEditlockonstim()
 	buildDataAndDisplay();
 }
 
-void CViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (static_cast<CScrollBar*>(GetDlgItem(IDC_SCROLLBAR1)) != pScrollBar)
-		CdbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 
 	// Get the current position of scroll box.
 	auto curpos = pScrollBar->GetScrollPos();
@@ -2187,7 +2187,7 @@ void CViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	UpdateData(FALSE);
 }
 
-void CViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
+void ViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 {
 	if (bRefreshInterface)
 	{
@@ -2212,7 +2212,7 @@ void CViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 	m_tabCtrl.SetCurSel(icur);
 }
 
-void CViewSpikeHist::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeHist::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
 	selectSpkList(icursel);
@@ -2220,7 +2220,7 @@ void CViewSpikeHist::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CViewSpikeHist::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeHist::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
 	selectSpkList(icursel);
