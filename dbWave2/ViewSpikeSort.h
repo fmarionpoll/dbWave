@@ -39,10 +39,10 @@ public:
 
 	// Attributes
 protected:
-	CChartSpikeHist yhistogram_wnd_; // spike histogram
-	CChartSpikeXYWnd xygraph_wnd_; // points with spike height or different measures
-	CChartSpikeShapeWnd m_ChartSpkWnd_Shape; // spike shapes
-	CChartSpikeBarWnd m_ChartSpkWnd_Bar; // bars with spike height
+	ChartSpikeHist yhistogram_wnd_; // spike histogram
+	ChartSpikeXYWnd xygraph_wnd_; // points with spike height or different measures
+	ChartSpikeShapeWnd m_ChartSpkWnd_Shape; // spike shapes
+	ChartSpikeBarWnd m_ChartSpkWnd_Bar; // bars with spike height
 
 	CEditCtrl mm_t1;
 	CEditCtrl mm_t2;

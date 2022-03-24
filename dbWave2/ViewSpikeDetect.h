@@ -38,8 +38,8 @@ protected:
 
 	ChartData m_ChartDataWnd_Detect;
 	ChartData m_ChartDataWnd_Source;
-	CChartSpikeBarWnd m_ChartSpkWnd_Bar;
-	CChartSpikeShapeWnd m_ChartSpkWnd_Shape;
+	ChartSpikeBarWnd m_ChartSpkWnd_Bar;
+	ChartSpikeShapeWnd m_ChartSpkWnd_Shape;
 
 	CScrollBarEx m_filescroll;
 	SCROLLINFO m_filescroll_infos{};

@@ -14,8 +14,8 @@
 struct rowStruct
 {
 	CString* pcs;
-	CChartSpikeShapeWnd* pspk_shapes;
-	CChartSpikeBarWnd* pspk_bars;
+	ChartSpikeShapeWnd* pspk_shapes;
+	ChartSpikeBarWnd* pspk_bars;
 };
 
 BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
@@ -255,10 +255,10 @@ void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 		const auto iclass = p_spikelist_->GetclassID(i);
 
 		// 1) create spike form button
-		CChartSpikeShapeWnd* pspkShapes = nullptr;
+		ChartSpikeShapeWnd* pspkShapes = nullptr;
 		if (p_spikelist_->GetSpikeLength() > 0)
 		{
-			pspkShapes = new (CChartSpikeShapeWnd);
+			pspkShapes = new (ChartSpikeShapeWnd);
 			ASSERT(pspkShapes != NULL);
 			pspkShapes->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i_id);
 
@@ -272,7 +272,7 @@ void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 		}
 
 		// 2) bars with spike height
-		auto* pspk_bars = new (CChartSpikeBarWnd);
+		auto* pspk_bars = new (ChartSpikeBarWnd);
 		ASSERT(pspk_bars != NULL);
 		pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
 

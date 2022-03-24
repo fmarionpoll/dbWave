@@ -1,6 +1,6 @@
 #pragma once
 
-// CChartSpikeHist build, stores and display a list of histograms
+// ChartSpikeHist build, stores and display a list of histograms
 // each histogram has the same abcissa limits (same nb of bins also)
 // they are intended to store and display histograms of parameters measured
 // from spike classes and follow the same display conventions as CSpikFormButton
@@ -12,12 +12,12 @@
 #include "ChartWnd.h"
 #include "dbWaveDoc.h"
 
-class CChartSpikeHist : public ChartWnd
+class ChartSpikeHist : public ChartWnd
 {
 	// Construction
 public:
-	CChartSpikeHist();
-	~CChartSpikeHist() override;
+	ChartSpikeHist();
+	~ChartSpikeHist() override;
 
 protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram

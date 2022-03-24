@@ -44,7 +44,7 @@ protected:
 	CTemplateListWnd m_templList{};
 	CTemplateListWnd m_avgAllList{};
 
-	CChartSpikeShapeWnd m_ChartSpkWnd_Shape; // all spikes in displayspikes
+	ChartSpikeShapeWnd m_ChartSpkWnd_Shape; // all spikes in displayspikes
 
 	OPTIONS_VIEWDATA* mdPM = nullptr; // view data options
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; // measure options

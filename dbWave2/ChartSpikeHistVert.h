@@ -1,9 +1,6 @@
 #pragma once
 
-// ChartSpikeHistVert.h : header file
-// CChartSpikeHistVert button
-//
-// CChartSpikeHistVert build, stores and display a list of histograms
+// ChartSpikeHistVert build, stores and display a list of histograms
 // each histogram has the same abcissa limits (same nb of bins also)
 // they are intended to store and display histograms of parameters measured
 // from spike classes and follow the same display conventions as CSpikFormButton
@@ -14,12 +11,12 @@
 
 #include "dbWaveDoc.h"
 
-class CChartSpikeHistVert : public ChartWnd
+class ChartSpikeHistVert : public ChartWnd
 {
 	// Construction
 public:
-	CChartSpikeHistVert();
-	~CChartSpikeHistVert() override;
+	ChartSpikeHistVert();
+	~ChartSpikeHistVert() override;
 
 protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram

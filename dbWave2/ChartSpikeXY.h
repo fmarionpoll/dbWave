@@ -1,14 +1,13 @@
 #pragma once
 #include "dbWaveDoc.h"
 
-// CChartSpikeXYWnd button
 
-class CChartSpikeXYWnd : public ChartWnd
+class ChartSpikeXYWnd : public ChartWnd
 {
 	//Construction
 public:
-	CChartSpikeXYWnd();
-	~CChartSpikeXYWnd() override;
+	ChartSpikeXYWnd();
+	~ChartSpikeXYWnd() override;
 
 	// parameters
 protected:

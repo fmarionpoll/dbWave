@@ -37,7 +37,7 @@ protected:
 	int m_spklen{ 0 };
 	int m_viewdatalen{ 0 };
 	CDWordArray m_intervals_to_highlight_spikes;
-	CChartSpikeShapeWnd m_SpkChartWnd;
+	ChartSpikeShapeWnd m_SpkChartWnd;
 	ChartData m_ChartDataWnd;
 	long m_iitimeold{ 0 };
 	long m_iitime{ 0 };

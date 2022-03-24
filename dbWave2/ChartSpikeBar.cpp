@@ -10,21 +10,21 @@
 
 // TODO loop through files when m_ballfiles is true: spike hit
 
-IMPLEMENT_SERIAL(CChartSpikeBarWnd, ChartWnd, 1)
+IMPLEMENT_SERIAL(ChartSpikeBarWnd, ChartWnd, 1)
 
-BEGIN_MESSAGE_MAP(CChartSpikeBarWnd, ChartWnd)
+BEGIN_MESSAGE_MAP(ChartSpikeBarWnd, ChartWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
-CChartSpikeBarWnd::CChartSpikeBarWnd()
+ChartSpikeBarWnd::ChartSpikeBarWnd()
 {
 	SetbUseDIB(FALSE);
 	m_csEmpty = _T("no spikes (spikebar)");
 }
 
-CChartSpikeBarWnd::~CChartSpikeBarWnd()
+ChartSpikeBarWnd::~ChartSpikeBarWnd()
 {
 	if (p_envelope_ != nullptr)
 	{
@@ -33,7 +33,7 @@ CChartSpikeBarWnd::~CChartSpikeBarWnd()
 	}
 }
 
-void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
+void ChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
@@ -160,7 +160,7 @@ void CChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 }
 
 
-void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
+void ChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
@@ -252,7 +252,7 @@ void CChartSpikeBarWnd::PlotSingleSpkDatatoDC(CDC* p_dc)
 }
 
 
-void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
+void ChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 {
 	CPen bluepen;
 	bluepen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
@@ -310,7 +310,7 @@ void CChartSpikeBarWnd::displayStimulus(CDC* p_dc, CRect* rect) const
 	p_dc->SelectObject(pold_p);
 }
 
-void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
+void ChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 {
 	// prepare loop to display spikes
 	auto* pold_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
@@ -407,7 +407,7 @@ void CChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 	p_dc->SelectObject(pold_pen);
 }
 
-void CChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
+void ChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 {
 	if (p_spikelist_->GetSpikeFlagArrayCount() < 1)
 		return;
@@ -471,7 +471,7 @@ void CChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 	}
 }
 
-void CChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
+void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 {
 	if (!IsSpikeWithinRange(nospike))
 		return;
@@ -543,7 +543,7 @@ void CChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 	dc.SelectObject(oldpen);
 }
 
-BOOL CChartSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
+BOOL ChartSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 {
 	if (p_spikelist_->GetTotalSpikes() < 1)
 		return false;
@@ -565,7 +565,7 @@ BOOL CChartSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 	return TRUE;
 }
 
-void CChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
+void ChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
 {
 	const auto old_rop = p_dc->GetROP2();
 	p_dc->SetROP2(R2_NOTXORPEN);
@@ -593,7 +593,7 @@ void CChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
 	p_dc->SetROP2(old_rop);
 }
 
-int CChartSpikeBarWnd::SelectSpike(const int spikeno)
+int ChartSpikeBarWnd::SelectSpike(const int spikeno)
 {
 	// erase old selected spike
 	const auto oldselected = m_selectedspike;
@@ -607,7 +607,7 @@ int CChartSpikeBarWnd::SelectSpike(const int spikeno)
 }
 
 // flag all spikes within a rectangle in screen coordinates
-void CChartSpikeBarWnd::SelectSpikesWithinRect(CRect* p_rect, const UINT n_flags) const
+void ChartSpikeBarWnd::SelectSpikesWithinRect(CRect* p_rect, const UINT n_flags) const
 {
 	// make sure that the rectangle is ok
 	int i;
@@ -633,7 +633,7 @@ void CChartSpikeBarWnd::SelectSpikesWithinRect(CRect* p_rect, const UINT n_flags
 	p_spikelist_->SelectSpikeswithinRect(vmin, vmax, l_first, l_last, b_flag);
 }
 
-void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
+void ChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	if (!m_bLmouseDown)
 	{
@@ -679,7 +679,7 @@ void CChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 	}
 }
 
-void CChartSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
+void ChartSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
 {
 	m_bLmouseDown = TRUE;
 
@@ -713,7 +713,7 @@ void CChartSpikeBarWnd::OnLButtonDown(const UINT nFlags, CPoint point)
 // with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 
-void CChartSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
+void ChartSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
 {
 	rFrom->NormalizeRect();
 	rDest->NormalizeRect();
@@ -736,7 +736,7 @@ void CChartSpikeBarWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	postMyMessage(HINT_CHANGEHZLIMITS, NULL);
 }
 
-void CChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if ((m_selectedspike < 0 && p_spikelist_->GetSpikeFlagArrayCount() < 1) || m_hitspk < 0)
 		ChartWnd::OnLButtonDblClk(nFlags, point);
@@ -755,7 +755,7 @@ void CChartSpikeBarWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
-int CChartSpikeBarWnd::hitCurveInDoc(CPoint point)
+int ChartSpikeBarWnd::hitCurveInDoc(CPoint point)
 {
 	long nfiles = 1;
 	long ncurrentfile = 0;
@@ -794,7 +794,7 @@ int CChartSpikeBarWnd::hitCurveInDoc(CPoint point)
 	return result;
 }
 
-int CChartSpikeBarWnd::hitCurve(const CPoint point)
+int ChartSpikeBarWnd::hitCurve(const CPoint point)
 {
 	auto hitspk = -1;
 	// for y coordinates, conversion is straightforward:
@@ -851,7 +851,7 @@ int CChartSpikeBarWnd::hitCurve(const CPoint point)
 	return hitspk;
 }
 
-void CChartSpikeBarWnd::CenterCurve()
+void ChartSpikeBarWnd::CenterCurve()
 {
 	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() <= 0)
 		return;
@@ -860,7 +860,7 @@ void CChartSpikeBarWnd::CenterCurve()
 	m_yWO = max / 2 + min / 2;
 }
 
-void CChartSpikeBarWnd::MaxGain()
+void ChartSpikeBarWnd::MaxGain()
 {
 	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() <= 0)
 		return;
@@ -869,7 +869,7 @@ void CChartSpikeBarWnd::MaxGain()
 	m_yWE = MulDiv(max - min + 1, 10, 8);
 }
 
-void CChartSpikeBarWnd::MaxCenter()
+void ChartSpikeBarWnd::MaxCenter()
 {
 	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() <= 0)
 		return;
@@ -879,7 +879,7 @@ void CChartSpikeBarWnd::MaxCenter()
 	m_yWO = max / 2 + min / 2;
 }
 
-void CChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
+void ChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 {
 	// check if there are valid data to display
 	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
@@ -895,7 +895,7 @@ void CChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void CChartSpikeBarWnd::Serialize(CArchive& ar)
+void ChartSpikeBarWnd::Serialize(CArchive& ar)
 {
 	ChartWnd::Serialize(ar);
 

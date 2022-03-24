@@ -1,5 +1,4 @@
-// ChartSpikeHist.cpp : implementation file
-//
+
 // Purpose:
 // 		contains and display histograms
 // 		histogram bins are stored into an array of "long"
@@ -21,25 +20,25 @@
 #define new DEBUG_NEW
 #endif
 
-BEGIN_MESSAGE_MAP(CChartSpikeHist, ChartWnd)
+BEGIN_MESSAGE_MAP(ChartSpikeHist, ChartWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-CChartSpikeHist::CChartSpikeHist()
+ChartSpikeHist::ChartSpikeHist()
 {
 	SetbUseDIB(FALSE);
 	m_csEmpty = _T("no \n_spikes (spikehist)");
 }
 
-CChartSpikeHist::~CChartSpikeHist()
+ChartSpikeHist::~ChartSpikeHist()
 {
 	RemoveHistData();
 }
 
-void CChartSpikeHist::RemoveHistData()
+void ChartSpikeHist::RemoveHistData()
 {
 	if (histogram_ptr_array.GetSize() > 0) 
 	{
@@ -49,7 +48,7 @@ void CChartSpikeHist::RemoveHistData()
 	}
 }
 
-void CChartSpikeHist::PlotDatatoDC(CDC* p_dc)
+void ChartSpikeHist::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_displayRect.right <= 0 && m_displayRect.bottom <= 0)
 	{
@@ -140,7 +139,7 @@ void CChartSpikeHist::PlotDatatoDC(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void CChartSpikeHist::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
+void ChartSpikeHist::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
 {
 	CRect rect_histog;
 	rect_histog.left = m_abcissaminval - m_binsize;
@@ -159,7 +158,7 @@ void CChartSpikeHist::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
 	}
 }
 
-void CChartSpikeHist::MoveHZtagtoVal(int i, int val)
+void ChartSpikeHist::MoveHZtagtoVal(int i, int val)
 {
 	m_ptLast.y = MulDiv(m_HZtags.GetValue(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto j = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
@@ -167,7 +166,7 @@ void CChartSpikeHist::MoveHZtagtoVal(int i, int val)
 	m_HZtags.SetTagVal(i, val);
 }
 
-void CChartSpikeHist::MoveVTtagtoVal(int itag, int ival)
+void ChartSpikeHist::MoveVTtagtoVal(int itag, int ival)
 {
 	m_ptLast.x = MulDiv(m_VTtags.GetValue(itag) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto j = MulDiv(ival - m_xWO, m_xVE, m_xWE) + m_xVO;
@@ -175,7 +174,7 @@ void CChartSpikeHist::MoveVTtagtoVal(int itag, int ival)
 	m_VTtags.SetTagVal(itag, ival);
 }
 
-void CChartSpikeHist::getClassArray(int iclass, CDWordArray*& pDW)
+void ChartSpikeHist::getClassArray(int iclass, CDWordArray*& pDW)
 {
 	// test if pDW at 0 position is the right one
 	if ((nullptr != pDW) && (static_cast<int>(pDW->GetAt(0)) == iclass))
@@ -193,7 +192,7 @@ void CChartSpikeHist::getClassArray(int iclass, CDWordArray*& pDW)
 	}
 }
 
-LPTSTR CChartSpikeHist::ExportAscii(LPTSTR lp)
+LPTSTR ChartSpikeHist::ExportAscii(LPTSTR lp)
 {
 	// print all ordinates line-by-line, differnt classes on same line
 	lp += wsprintf(lp, _T("Histogram\nn_bins=%i\nnclasses=%i"), m_nbins, histogram_ptr_array.GetSize());
@@ -218,7 +217,7 @@ LPTSTR CChartSpikeHist::ExportAscii(LPTSTR lp)
 	return lp;
 }
 
-void CChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// test if horizontal tag was tracked
 	switch (m_trackMode)
@@ -282,7 +281,7 @@ void CChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void CChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
+void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// compute pixel position of horizontal tags
 	if (m_HZtags.GetNTags() > 0)
@@ -320,7 +319,7 @@ void CChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 // wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
 // with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 
-void CChartSpikeHist::ZoomData(CRect* rFrom, CRect* rDest)
+void ChartSpikeHist::ZoomData(CRect* rFrom, CRect* rDest)
 {
 	rFrom->NormalizeRect();
 	rDest->NormalizeRect();
@@ -344,7 +343,7 @@ void CChartSpikeHist::ZoomData(CRect* rFrom, CRect* rDest)
 	postMyMessage(HINT_CHANGEZOOM, 0);
 }
 
-void CChartSpikeHist::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartSpikeHist::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if (m_hitspk < 0)
 		ChartWnd::OnLButtonDblClk(nFlags, point);
@@ -355,7 +354,7 @@ void CChartSpikeHist::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
-int CChartSpikeHist::hitCurve(CPoint point)
+int ChartSpikeHist::hitCurve(CPoint point)
 {
 	auto hitspk = -1;
 	// convert device coordinates into logical coordinates
@@ -427,7 +426,7 @@ int CChartSpikeHist::hitCurve(CPoint point)
 	return hitspk;
 }
 
-void CChartSpikeHist::getExtents()
+void ChartSpikeHist::getExtents()
 {
 	if (m_yWE == 1) // && m_yWO == 0)
 	{
@@ -444,7 +443,7 @@ void CChartSpikeHist::getExtents()
 	}
 }
 
-void CChartSpikeHist::getHistogLimits(int ihist)
+void ChartSpikeHist::getHistogLimits(int ihist)
 {
 	// for some unknown reason, m_pHistarray is set at zero when arriving here
 	if (histogram_ptr_array.GetSize() <= 0)
@@ -483,7 +482,7 @@ void CChartSpikeHist::getHistogLimits(int ihist)
 	}
 }
 
-void CChartSpikeHist::reSize_And_Clear_Histograms(int n_bins, int max, int min)
+void ChartSpikeHist::reSize_And_Clear_Histograms(int n_bins, int max, int min)
 {
 	m_binsize = (max - min + 1) / n_bins + 1; // set bin size
 	m_abcissaminval = min; // set min
@@ -500,13 +499,13 @@ void CChartSpikeHist::reSize_And_Clear_Histograms(int n_bins, int max, int min)
 	}
 }
 
-void CChartSpikeHist::OnSize(UINT nType, int cx, int cy)
+void ChartSpikeHist::OnSize(UINT nType, int cx, int cy)
 {
 	ChartWnd::OnSize(nType, cx, cy);
 	m_yVO = cy;
 }
 
-CDWordArray* CChartSpikeHist::initClassArray(int n_bins, int spike_class)
+CDWordArray* ChartSpikeHist::initClassArray(int n_bins, int spike_class)
 {
 	auto p_dw = new (CDWordArray); // init array
 	ASSERT(p_dw != NULL);
@@ -518,7 +517,7 @@ CDWordArray* CChartSpikeHist::initClassArray(int n_bins, int spike_class)
 	return p_dw;
 }
 
-void CChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min,
+void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min,
                                              int n_bins, BOOL bNew)
 {
 	// erase data and arrays if bnew:
@@ -586,7 +585,7 @@ void CChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first
 //		int n_bins			= number of bins -> bin size
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
 
-void CChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_files, const long l_first, const long l_last, 
+void ChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_files, const long l_first, const long l_last, 
 											int max, int min, int n_bins, BOOL bNew)
 {
 	// erase data and arrays if bnew:

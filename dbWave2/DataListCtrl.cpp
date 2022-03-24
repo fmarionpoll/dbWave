@@ -673,7 +673,7 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 	// create spike window and spike document if necessary
 	if (ptr->pSpikeChartWnd == nullptr)
 	{
-		ptr->pSpikeChartWnd = new CChartSpikeBarWnd;
+		ptr->pSpikeChartWnd = new ChartSpikeBarWnd;
 		ASSERT(ptr->pSpikeChartWnd != NULL);
 		ptr->pSpikeChartWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_image_width, m_image_height), this, ptr->index * 1000);
 		ptr->pSpikeChartWnd->SetbUseDIB(FALSE);

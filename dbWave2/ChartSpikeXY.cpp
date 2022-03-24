@@ -10,22 +10,22 @@
 
 // TODO loop through files when m_ballfiles is true: display and spike hit
 
-BEGIN_MESSAGE_MAP(CChartSpikeXYWnd, ChartWnd)
+BEGIN_MESSAGE_MAP(ChartSpikeXYWnd, ChartWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
-CChartSpikeXYWnd::CChartSpikeXYWnd()
+ChartSpikeXYWnd::ChartSpikeXYWnd()
 {
 	SetbUseDIB(FALSE);
 	m_csEmpty = _T("no spikes (spikexp)");
 }
 
-CChartSpikeXYWnd::~CChartSpikeXYWnd()
+ChartSpikeXYWnd::~ChartSpikeXYWnd()
 = default;
 
-void CChartSpikeXYWnd::PlotDatatoDC(CDC* p_dc)
+void ChartSpikeXYWnd::PlotDatatoDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
@@ -167,7 +167,7 @@ void CChartSpikeXYWnd::PlotDatatoDC(CDC* p_dc)
 	}
 }
 
-void CChartSpikeXYWnd::displayVTtags(CDC* p_dc)
+void ChartSpikeXYWnd::displayVTtags(CDC* p_dc)
 {
 	// select pen and display mode
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -189,7 +189,7 @@ void CChartSpikeXYWnd::displayVTtags(CDC* p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-void CChartSpikeXYWnd::displayHZtags(CDC* p_dc)
+void ChartSpikeXYWnd::displayHZtags(CDC* p_dc)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -206,7 +206,7 @@ void CChartSpikeXYWnd::displayHZtags(CDC* p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-BOOL CChartSpikeXYWnd::IsSpikeWithinRange(int spikeno)
+BOOL ChartSpikeXYWnd::IsSpikeWithinRange(int spikeno)
 {
 	if (p_spikelist_->GetTotalSpikes() < 1)
 		return FALSE;
@@ -228,7 +228,7 @@ BOOL CChartSpikeXYWnd::IsSpikeWithinRange(int spikeno)
 	return TRUE;
 }
 
-void CChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
+void ChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
 {
 	if (!IsSpikeWithinRange(spikeno))
 		return;
@@ -273,7 +273,7 @@ void CChartSpikeXYWnd::DisplaySpike(int spikeno, BOOL bselect)
 	drawSelectedSpike(spikeno, color, &dc);
 }
 
-void CChartSpikeXYWnd::highlightOnePoint(int nospike, CDC* p_dc)
+void ChartSpikeXYWnd::highlightOnePoint(int nospike, CDC* p_dc)
 {
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
@@ -300,7 +300,7 @@ void CChartSpikeXYWnd::highlightOnePoint(int nospike, CDC* p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-void CChartSpikeXYWnd::drawSelectedSpike(int nospike, int color, CDC* p_dc)
+void ChartSpikeXYWnd::drawSelectedSpike(int nospike, int color, CDC* p_dc)
 {
 	const auto spike_element = p_spikelist_->GetSpikeElemt(nospike);
 	const auto l_spike_time = spike_element->get_time();
@@ -316,7 +316,7 @@ void CChartSpikeXYWnd::drawSelectedSpike(int nospike, int color, CDC* p_dc)
 	p_dc->SetBkColor(bkcolor);
 }
 
-void CChartSpikeXYWnd::MoveHZtagtoVal(int i, int val)
+void ChartSpikeXYWnd::MoveHZtagtoVal(int i, int val)
 {
 	m_ptLast.y = MulDiv(m_HZtags.GetValue(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto ypix = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
@@ -324,7 +324,7 @@ void CChartSpikeXYWnd::MoveHZtagtoVal(int i, int val)
 	m_HZtags.SetTagVal(i, val);
 }
 
-void CChartSpikeXYWnd::MoveVTtagtoVal(int i, int val)
+void ChartSpikeXYWnd::MoveVTtagtoVal(int i, int val)
 {
 	m_ptLast.x = MulDiv(m_VTtags.GetValue(i) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto xpix = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
@@ -332,7 +332,7 @@ void CChartSpikeXYWnd::MoveVTtagtoVal(int i, int val)
 	m_VTtags.SetTagVal(i, val);
 }
 
-int CChartSpikeXYWnd::SelectSpike(int spikeno)
+int ChartSpikeXYWnd::SelectSpike(int spikeno)
 {
 	// erase old selected spike (eventually)
 	const auto oldselected = m_selectedspike;
@@ -346,7 +346,7 @@ int CChartSpikeXYWnd::SelectSpike(int spikeno)
 	return oldselected;
 }
 
-void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	switch (m_trackMode)
 	{
@@ -403,7 +403,7 @@ void CChartSpikeXYWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
+void ChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// compute pixel position of tags
 	if (m_HZtags.GetNTags() > 0)
@@ -454,7 +454,7 @@ void CChartSpikeXYWnd::OnLButtonDown(UINT nFlags, CPoint point)
 // with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 
-void CChartSpikeXYWnd::ZoomData(CRect* rFrom, CRect* rDest)
+void ChartSpikeXYWnd::ZoomData(CRect* rFrom, CRect* rDest)
 {
 	rFrom->NormalizeRect(); // make sure that rect is not inverted
 	rDest->NormalizeRect();
@@ -476,7 +476,7 @@ void CChartSpikeXYWnd::ZoomData(CRect* rFrom, CRect* rDest)
 	postMyMessage(HINT_CHANGEHZLIMITS, NULL);
 }
 
-void CChartSpikeXYWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartSpikeXYWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if (m_selectedspike < 0 || m_hitspk < 0)
 		ChartWnd::OnLButtonDblClk(nFlags, point);
@@ -485,7 +485,7 @@ void CChartSpikeXYWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 		                         reinterpret_cast<LPARAM>(m_hWnd));
 }
 
-int CChartSpikeXYWnd::hitCurveInDoc(CPoint point)
+int ChartSpikeXYWnd::hitCurveInDoc(CPoint point)
 {
 	long nfiles = 1;
 	long ncurrentfile = 0;
@@ -524,7 +524,7 @@ int CChartSpikeXYWnd::hitCurveInDoc(CPoint point)
 	return result;
 }
 
-int CChartSpikeXYWnd::hitCurve(CPoint point)
+int ChartSpikeXYWnd::hitCurve(CPoint point)
 {
 	// abcissa
 	const auto taille = (m_lLast - m_lFirst + 1);
@@ -561,7 +561,7 @@ int CChartSpikeXYWnd::hitCurve(CPoint point)
 	return -1;
 }
 
-BOOL CChartSpikeXYWnd::is_spike_within_limits(const int ispike)
+BOOL ChartSpikeXYWnd::is_spike_within_limits(const int ispike)
 {
 	const auto spike_element = p_spikelist_->GetSpikeElemt(ispike);
 	const auto l_spike_time = spike_element->get_time();
@@ -574,7 +574,7 @@ BOOL CChartSpikeXYWnd::is_spike_within_limits(const int ispike)
 	return true;
 }
 
-void CChartSpikeXYWnd::getExtents()
+void ChartSpikeXYWnd::getExtents()
 {
 	if (m_yWE == 1) // && m_yWO == 0)
 	{

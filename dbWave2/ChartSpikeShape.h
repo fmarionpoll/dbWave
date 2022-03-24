@@ -5,36 +5,36 @@ constexpr auto DISPLAY_TIMEINTERVAL = 0; // mask: ON: display spikes within spk 
 constexpr auto DISPLAY_INDEXRANGE = 1; // mask: ON: display spikes within spk index range/OFF=within time interval;
 constexpr auto DISP_SELECTEDCLASS = 2; // mask: ON: display only selected spike/OFF=all classes
 
-class CChartSpikeShapeWnd : public ChartWnd
+class ChartSpikeShapeWnd : public ChartWnd
 {
 	//Construction
 public:
-	CChartSpikeShapeWnd();
-	~CChartSpikeShapeWnd() override;
-	DECLARE_SERIAL(CChartSpikeShapeWnd)
+	ChartSpikeShapeWnd();
+	~ChartSpikeShapeWnd() override;
+	DECLARE_SERIAL(ChartSpikeShapeWnd)
 	void Serialize(CArchive& ar) override;
 
 	// parameters
 
 protected:
-	int m_rangemode; // display range (time OR storage index)
-	long m_lFirst; // time first (real time = index/sampling rate)
-	long m_lLast; // time last
+	int m_rangemode = RANGE_TIMEINTERVALS; // display range (time OR storage index)
+	long m_lFirst = 0; // time first (real time = index/sampling rate)
+	long m_lLast = 0; // time last
 	int m_spkfirst{}; // index first spike
 	int m_spklast{}; // index last spike
-	int m_currentclass; // selected class (different color) (-1 = display all)
-	int m_selectedspike; // selected spike (display differently)
-	int m_colorselectedspike; // color selected spike (index / color table)
-	int m_hitspk; // index spike
+	int m_currentclass = -1; // selected class (different color) (-1 = display all)
+	int m_selectedspike = -1;  // selected spike (display differently)
+	int m_colorselectedspike = RED_COLOR; // color selected spike (index / color table)
+	int m_hitspk = -1; // index spike
 	int m_selclass{}; // index class selected
-	BOOL m_btrackCurve; // track curve ?
-	BOOL m_bText; // allow text default false
+	BOOL m_btrackCurve = FALSE; // track curve ?
+	BOOL m_bText = FALSE; // allow text default false
 	int m_ndisplayedspikes{}; // number of spikes displayed
-	BOOL m_ballFiles; // display data from all files in CdbWaveDoc*
+	BOOL m_ballFiles = FALSE; // display data from all files in CdbWaveDoc*
 	CArray<CPoint, CPoint> polypoints_; // points displayed with polyline
 
-	SpikeList* p_spikelist_;
-	CdbWaveDoc* p_dbwave_doc_;
+	SpikeList* p_spikelist_ = nullptr;
+	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 
 	// Helpers
 public:

@@ -2,13 +2,13 @@
 
 #include "dbWaveDoc.h"
 
-class CChartSpikeBarWnd : public ChartWnd
+class ChartSpikeBarWnd : public ChartWnd
 {
 	//Construction
 public:
-	CChartSpikeBarWnd();
-	~CChartSpikeBarWnd() override;
-	DECLARE_SERIAL(CChartSpikeBarWnd)
+	ChartSpikeBarWnd();
+	~ChartSpikeBarWnd() override;
+	DECLARE_SERIAL(ChartSpikeBarWnd)
 	void Serialize(CArchive& archive) override;
 
 	// parameters
