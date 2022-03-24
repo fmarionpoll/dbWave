@@ -315,7 +315,7 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 		pe->Delete();
 		return FALSE;
 	}
-	SetModifiedFlag(FALSE); // mark the document as clean
+	SetModifiedFlag(FALSE);
 	return TRUE;
 }
 
@@ -344,10 +344,10 @@ BOOL CSpikeDoc::OnOpenDocument(LPCTSTR pszPathName)
 			// update nb of classes
 			for (auto i = 0; i < spike_list_array.GetSize(); i++)
 			{
-				if (!spike_list_array[i].IsClassListValid()) // if class list not valid:
+				if (!spike_list_array[i].IsClassListValid()) 
 				{
-					spike_list_array[i].UpdateClassList(); // rebuild list of classes
-					SetModifiedFlag(); // and set modified flag
+					spike_list_array[i].UpdateClassList();
+					SetModifiedFlag(); 
 				}
 			}
 		}

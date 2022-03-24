@@ -3,17 +3,17 @@
 class CScale : public CObject
 {
 public:
-	CScale(); // protected constructor used by dynamic creation
-	CScale(int npixels); // create Envelope with npoints
+	CScale();
+	CScale(int npixels); 
 	DECLARE_SERIAL(CScale)
 	void Serialize(CArchive& ar) override;
 
 protected:
-	int m_npixels; // scale built for n pixels
-	int m_nintervals; // nb of elements within Scale
-	long m_lNdatapoints{}; // Ndatapoints are mapped to m_nintervals
-	CWordArray m_intervals; // scale array: npts within each interval
-	CDWordArray m_position; // interval array: consecutive file index (long)
+	int m_npixels = 1; 
+	int m_nintervals = 0; 
+	long m_lNdatapoints = 0; 
+	CWordArray m_intervals; 
+	CDWordArray m_position; 
 
 public:
 	int SetScale(int n_pixels, long n_points);

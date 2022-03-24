@@ -42,16 +42,32 @@ int CDataListCtrl::m_column_index[] = {
 	COL_NBSPK, COL_FLAG
 };
 
+BEGIN_MESSAGE_MAP(CDataListCtrl, CListCtrl)
+
+	ON_WM_VSCROLL()
+	ON_WM_KEYUP()
+	ON_WM_CHAR()
+	ON_WM_KEYDOWN()
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnGetdispinfo)
+	ON_WM_DESTROY()
+
+END_MESSAGE_MAP()
+
 CDataListCtrl::CDataListCtrl()
-{
-}
+= default;
 
 CDataListCtrl::~CDataListCtrl()
 {
-	deletePtrArray();
+	delete_ptr_array();
+	SAFE_DELETE(m_p_empty_bitmap)
 }
 
 void CDataListCtrl::OnDestroy()
+{
+	save_columns_width();
+}
+
+void CDataListCtrl::save_columns_width() const
 {
 	if (m_p_columns_width != nullptr)
 	{
@@ -61,11 +77,9 @@ void CDataListCtrl::OnDestroy()
 		for (auto i = 0; i < NCOLS; i++)
 			m_p_columns_width->SetAt(i, GetColumnWidth(i));
 	}
-	SAFE_DELETE(m_p_empty_bitmap)
-	//CListCtrl::OnDestroy();
 }
 
-void CDataListCtrl::deletePtrArray()
+void CDataListCtrl::delete_ptr_array()
 {
 	if (ptr_rows.GetSize() == NULL)
 		return;
@@ -78,7 +92,7 @@ void CDataListCtrl::deletePtrArray()
 	ptr_rows.RemoveAll();
 }
 
-void CDataListCtrl::resizePtrArray(int nitems)
+void CDataListCtrl::resize_ptr_array(int nitems)
 {
 	if (nitems == ptr_rows.GetSize())
 		return;
@@ -129,25 +143,10 @@ void CDataListCtrl::InitColumns(CUIntArray* picolwidth)
 		InsertColumn(nCol, m_column_headers[nCol], m_column_format[nCol], m_column_width[nCol], -1);
 	}
 
-	m_cx = m_column_width[COL_CURVE];
-	m_image_list.Create(m_cx, m_cy, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
+	m_image_width = m_column_width[COL_CURVE];
+	m_image_list.Create(m_image_width, m_image_height, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
 	SetImageList(&m_image_list, LVSIL_SMALL);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataListCtrl message handlers
-
-BEGIN_MESSAGE_MAP(CDataListCtrl, CListCtrl)
-
-	ON_WM_DESTROY()
-	ON_WM_VSCROLL()
-	ON_WM_KEYUP()
-	ON_WM_CHAR()
-	ON_WM_KEYDOWN()
-	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnGetdispinfo)
-
-END_MESSAGE_MAP()
-
 
 void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -281,7 +280,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		if (inb_visible > ptr_rows.GetSize())
 			b_forced_update = TRUE;
 		// if cache size decreases, just delete extra rows
-		resizePtrArray(inb_visible);
+		resize_ptr_array(inb_visible);
 	}
 
 	// get data file pointer and pointer to database
@@ -352,7 +351,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	int index = new1;
 
 	// left, top, right, bottom
-	setEmptyBitmap();
+	set_empty_bitmap();
 	DB_ITEMDESC desc;
 
 	while (n_to_rebuild > 0)
@@ -401,14 +400,14 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		{
 		// data mode
 		case 1:
-			displayDataWnd(ptr, index);
+			display_data_wnd(ptr, index);
 			break;
 		// spike bars
 		case 2:
-			displaySpikeWnd(ptr, index);
+			display_spike_wnd(ptr, index);
 			break;
 		default:
-			displayEmptyWnd(ptr, index);
+			display_empty_wnd(ptr, index);
 			break;
 		}
 		index++;
@@ -421,7 +420,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CDataListCtrl::setEmptyBitmap(const BOOL b_forced_update)
+void CDataListCtrl::set_empty_bitmap(const BOOL b_forced_update)
 {
 	if (m_p_empty_bitmap != nullptr && !b_forced_update)
 		return;
@@ -432,7 +431,7 @@ void CDataListCtrl::setEmptyBitmap(const BOOL b_forced_update)
 	CWindowDC dc(this);
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(&dc));
-	m_p_empty_bitmap->CreateBitmap(m_cx, m_cy, dc.GetDeviceCaps(PLANES), dc.GetDeviceCaps(BITSPIXEL), nullptr);
+	m_p_empty_bitmap->CreateBitmap(m_image_width, m_image_height, dc.GetDeviceCaps(PLANES), dc.GetDeviceCaps(BITSPIXEL), nullptr);
 	mem_dc.SelectObject(m_p_empty_bitmap);
 	mem_dc.SetMapMode(dc.GetMapMode());
 
@@ -441,7 +440,7 @@ void CDataListCtrl::setEmptyBitmap(const BOOL b_forced_update)
 	CPen pen;
 	pen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0)); // black
 	mem_dc.SelectObject(&pen);
-	auto rect_data = CRect(1, 0, m_cx, m_cy);
+	auto rect_data = CRect(1, 0, m_image_width, m_image_height);
 	mem_dc.Rectangle(&rect_data);
 }
 
@@ -453,7 +452,7 @@ void CDataListCtrl::RefreshDisplay()
 	const int ilast_row = ptr_rows.GetAt(ptr_rows.GetUpperBound())->index;
 
 	// left, top, right, bottom
-	setEmptyBitmap();
+	set_empty_bitmap();
 
 	const auto nrows = ptr_rows.GetSize();
 	for (auto index = 0; index < nrows; index++)
@@ -464,13 +463,13 @@ void CDataListCtrl::RefreshDisplay()
 		switch (m_display_mode)
 		{
 		case 1:
-			displayDataWnd(ptr, index);
+			display_data_wnd(ptr, index);
 			break;
 		case 2:
-			displaySpikeWnd(ptr, index);
+			display_spike_wnd(ptr, index);
 			break;
 		default:
-			displayEmptyWnd(ptr, index);
+			display_empty_wnd(ptr, index);
 			break;
 		}
 	}
@@ -536,14 +535,14 @@ ChartData* CDataListCtrl::GetDataViewCurrentRecord()
 	return ptr;
 }
 
-void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
+void CDataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	// create objects if necessary : CLineView and AcqDataDoc
 	if (ptr->pDataChartWnd == nullptr)
 	{
 		ptr->pDataChartWnd = new ChartData;
 		ASSERT(ptr->pDataChartWnd != NULL);
-		ptr->pDataChartWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, iImage * 100);
+		ptr->pDataChartWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_image_width, m_image_height), this, iImage * 100);
 		ptr->pDataChartWnd->SetbUseDIB(FALSE);
 	}
 	auto p_wnd = ptr->pDataChartWnd;
@@ -669,14 +668,14 @@ void CDataListCtrl::displayDataWnd(CDataListCtrl_Row* ptr, int iImage)
 	m_image_list.Replace(iImage, &bitmap_plot, nullptr);
 }
 
-void CDataListCtrl::displaySpikeWnd(CDataListCtrl_Row* ptr, int iImage)
+void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	// create spike window and spike document if necessary
 	if (ptr->pSpikeChartWnd == nullptr)
 	{
 		ptr->pSpikeChartWnd = new CChartSpikeBarWnd;
 		ASSERT(ptr->pSpikeChartWnd != NULL);
-		ptr->pSpikeChartWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_cx, m_cy), this, ptr->index * 1000);
+		ptr->pSpikeChartWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_image_width, m_image_height), this, ptr->index * 1000);
 		ptr->pSpikeChartWnd->SetbUseDIB(FALSE);
 	}
 	auto p_wnd = ptr->pSpikeChartWnd;
@@ -743,7 +742,7 @@ void CDataListCtrl::displaySpikeWnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 }
 
-void CDataListCtrl::displayEmptyWnd(CDataListCtrl_Row* ptr, int iImage)
+void CDataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	m_image_list.Replace(iImage, m_p_empty_bitmap, nullptr);
 }
@@ -752,8 +751,8 @@ void CDataListCtrl::ResizeSignalColumn(int npixels)
 {
 	m_column_width[COL_CURVE] = npixels;
 	m_image_list.DeleteImageList();
-	m_cx = m_column_width[COL_CURVE];
-	m_image_list.Create(m_cx, m_cy, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
+	m_image_width = m_column_width[COL_CURVE];
+	m_image_list.Create(m_image_width, m_image_height, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
 	SetImageList(&m_image_list, LVSIL_SMALL);
 	m_image_list.SetImageCount(ptr_rows.GetSize());
 

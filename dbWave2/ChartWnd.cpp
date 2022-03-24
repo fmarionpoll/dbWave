@@ -147,7 +147,6 @@ ChartWnd::ChartWnd()
 
 ChartWnd::~ChartWnd()
 {
-	// remove static objects
 	m_countcurs--;
 	if (m_countcurs == 0)
 	{
@@ -157,8 +156,8 @@ ChartWnd::~ChartWnd()
 				DestroyCursor(m_cursor[i]);
 		}
 	}
-	m_HZtags.RemoveAllTags(); // remove horizontal tags
-	m_VTtags.RemoveAllTags(); // remove vertical tags
+	m_HZtags.RemoveAllTags(); 
+	m_VTtags.RemoveAllTags(); 
 	delete m_tempVTtag;
 
 	// delete array of pens

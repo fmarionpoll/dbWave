@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ChartWnd.h"
-#include "Envelope.h"
-#include "chanlistitem.h"
 #include "ChartData.h"
 #include "DataListCtrl_Row.h"
 
@@ -73,11 +71,11 @@ protected:
 	CUIntArray* m_p_columns_width = nullptr;
 	CBitmap* m_p_empty_bitmap = nullptr;
 
-	int m_cx = 400; // image height
-	int m_cy = 50; // image width
+	int m_image_width = 400;
+	int m_image_height = 50; 
 	int m_data_transform = 0;
 	int m_display_mode = 1;
-	int m_spike_plot_mode =PLOT_BLACK;
+	int m_spike_plot_mode = PLOT_BLACK;
 	int m_selected_class = 0;
 	float m_tFirst = 0.f;
 	float m_tLast = 0.f;
@@ -86,18 +84,19 @@ protected:
 	BOOL m_b_set_mV_span = false;
 	BOOL m_b_display_file_name = false;
 
-	void deletePtrArray();
-	void resizePtrArray(int nitems);
-	void setEmptyBitmap(BOOL bForcedUpdate = FALSE);
-	void displaySpikeWnd(CDataListCtrl_Row* ptr, int iImage);
-	void displayDataWnd(CDataListCtrl_Row* ptr, int iImage);
-	void displayEmptyWnd(CDataListCtrl_Row* ptr, int iImage);
+	void delete_ptr_array();
+	void save_columns_width() const;
+	void resize_ptr_array(int nitems);
+	void set_empty_bitmap(BOOL bForcedUpdate = FALSE);
+	void display_spike_wnd(CDataListCtrl_Row* ptr, int iImage);
+	void display_data_wnd(CDataListCtrl_Row* ptr, int iImage);
+	void display_empty_wnd(CDataListCtrl_Row* ptr, int iImage);
 
 	// Generated message map functions
 	afx_msg void OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDestroy();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnDestroy();
 
 	DECLARE_MESSAGE_MAP()
 };

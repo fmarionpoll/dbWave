@@ -9,8 +9,7 @@
 IMPLEMENT_SERIAL(CDataListCtrl_Row, CObject, 0)
 
 CDataListCtrl_Row::CDataListCtrl_Row()
-{
-}
+= default;
 
 CDataListCtrl_Row::CDataListCtrl_Row(int i)
 {

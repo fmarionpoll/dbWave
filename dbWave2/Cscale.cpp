@@ -1,5 +1,3 @@
-// CScale methods
-
 #include "StdAfx.h"
 #include "Cscale.h"
 
@@ -10,19 +8,15 @@
 IMPLEMENT_SERIAL(CScale, CObject, 1 /* schema number*/)
 
 // create CScale with zero points
-CScale::CScale() : m_lNdatapoints(0)
+CScale::CScale()
 {
-	m_nintervals = 0;
-	m_npixels = 1;
 }
 
 // create CScale with npoints
-CScale::CScale(const int n_pixels) : m_lNdatapoints(0)
+CScale::CScale(const int n_pixels) : m_npixels(n_pixels)
 {
-	m_npixels = 1;
 	m_intervals.SetSize(n_pixels);
 	m_position.SetSize(n_pixels + 1);
-	m_nintervals = 0;
 }
 
 //---------------------------------------------------------------------------

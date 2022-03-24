@@ -5,22 +5,15 @@ class CChildFrame : public CMDIChildWndEx
 	DECLARE_DYNCREATE(CChildFrame)
 public:
 	CChildFrame();
-
-	// Attributes
-public:
-	UINT m_viewON{ ID_VIEW_DATABASE };
-	int m_previousviewON{ ID_VIEW_DATABASE };
-	int m_cursorstate{0};
-	int m_nStatus{0};
-
-	// Overrides
-public:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	void ActivateFrame(int n_cmd_show = -1) override;
-
-	// Implementation
-public:
 	~CChildFrame() override;
+
+	UINT m_viewON =  ID_VIEW_DATABASE;
+	int m_previousviewON = ID_VIEW_DATABASE ;
+	int m_cursorstate = 0;
+	int m_nStatus = 0;
+
 #ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
