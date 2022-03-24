@@ -22,7 +22,6 @@ public:
 	int m_nbinsISI{0};
 	float m_timebinms{0.f};
 
-	CdbWaveDoc* GetDocument();
 	CSpikeDoc* p_spike_doc_{nullptr};
 
 	// Attributes
@@ -137,9 +136,3 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* CViewSpikeHist::GetDocument()
-{
-	return (CdbWaveDoc*)m_pDocument;
-}
-#endif

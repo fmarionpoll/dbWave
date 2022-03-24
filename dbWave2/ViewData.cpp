@@ -51,7 +51,6 @@ BEGIN_MESSAGE_MAP(CViewData, CdbTableView)
 	ON_UPDATE_COMMAND_UI(ID_TOOLS_HORIZONTALCURSORS, &CViewData::OnUpdateToolsHorizontalcursors)
 	ON_UPDATE_COMMAND_UI(ID_TOOLS_VERTICALTAGS, &CViewData::OnUpdateToolsVerticaltags)
 	ON_WM_HSCROLL()
-	ON_WM_DESTROY()
 	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CViewData::ADC_OnHardwareDefineexperiment)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewData::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &CViewData::OnEnChangeTimelast)
@@ -71,6 +70,8 @@ CViewData::CViewData()
 CViewData::~CViewData()
 {
 	m_pdatDoc->AcqCloseFile();
+	DeleteObject(m_hBias);
+	DeleteObject(m_hZoom);
 }
 
 void CViewData::DoDataExchange(CDataExchange* pDX)
@@ -151,13 +152,6 @@ void CViewData::OnInitialUpdate()
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_ChartDataWnd.GetChanlistSize());
 	UpdateLegends(ioperation);
-}
-
-void CViewData::OnDestroy()
-{
-	CdbTableView::OnDestroy();
-	DeleteObject(m_hBias); // bias button (handle)
-	DeleteObject(m_hZoom); // zoom button (handle)
 }
 
 void CViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)

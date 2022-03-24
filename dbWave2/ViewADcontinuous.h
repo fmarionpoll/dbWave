@@ -13,16 +13,17 @@
 #include "USBPxxS1Ctl.h"
 #include "OPTIONS_ACQDATA.h"
 #include "OPTIONS_OUTPUTDATA.h"
+#include "dbTableView.h"
 
 
-class CADContView final : public CFormView
+class CViewADcontinuous : public CdbTableView
 {
 	friend class CBoard;
 
 protected:
-	CADContView();
-	~CADContView() override;
-	DECLARE_DYNCREATE(CADContView)
+	CViewADcontinuous();
+	~CViewADcontinuous() override;
+	DECLARE_DYNCREATE(CViewADcontinuous)
 
 	enum { IDD = IDD_VIEWADCONTINUOUS };
 
@@ -145,12 +146,6 @@ protected:
 #ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
-	CdbWaveDoc* GetDocument();
-#else
-	inline CdbWaveDoc* CADContView::GetDocument()
-	{
-		return (CdbWaveDoc*)m_pDocument;
-	}
 #endif
 
 	// Generated message map functions

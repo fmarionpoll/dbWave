@@ -26,21 +26,21 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CADContView, CFormView)
+IMPLEMENT_DYNCREATE(CViewADcontinuous, CdbTableView)
 
-CADContView::CADContView()
-	: CFormView(IDD)
+CViewADcontinuous::CViewADcontinuous()
+	: CdbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
 }
 
-CADContView::~CADContView()
+CViewADcontinuous::~CViewADcontinuous()
 = default;
 
-void CADContView::DoDataExchange(CDataExchange * pDX)
+void CViewADcontinuous::DoDataExchange(CDataExchange * pDX)
 {
-	CFormView::DoDataExchange(pDX);
+	CdbTableView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_AD);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DA);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
@@ -53,31 +53,31 @@ void CADContView::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_OSCILLOSCOPE, m_Button_Oscilloscope);
 }
 
-BEGIN_MESSAGE_MAP(CADContView, CFormView)
-	ON_MESSAGE(WM_MYMESSAGE, &CADContView::OnMyMessage)
-	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CADContView::OnInputChannels)
-	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CADContView::OnSamplingMode)
-	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CADContView::OnHardwareDefineexperiment)
+BEGIN_MESSAGE_MAP(CViewADcontinuous, CdbTableView)
+	ON_MESSAGE(WM_MYMESSAGE, &CViewADcontinuous::OnMyMessage)
+	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &CViewADcontinuous::OnInputChannels)
+	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &CViewADcontinuous::OnSamplingMode)
+	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &CViewADcontinuous::OnHardwareDefineexperiment)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_SAMPLINGMODE, &CADContView::OnSamplingMode)
-	ON_BN_CLICKED(IDC_INPUTCHANNELS, &CADContView::OnInputChannels)
-	ON_BN_CLICKED(IDC_GAIN_button, &CADContView::OnBnClickedGainbutton)
-	ON_BN_CLICKED(IDC_BIAS_button, &CADContView::OnBnClickedBiasbutton)
+	ON_BN_CLICKED(IDC_SAMPLINGMODE, &CViewADcontinuous::OnSamplingMode)
+	ON_BN_CLICKED(IDC_INPUTCHANNELS, &CViewADcontinuous::OnInputChannels)
+	ON_BN_CLICKED(IDC_GAIN_button, &CViewADcontinuous::OnBnClickedGainbutton)
+	ON_BN_CLICKED(IDC_BIAS_button, &CViewADcontinuous::OnBnClickedBiasbutton)
 	ON_WM_VSCROLL()
-	ON_BN_CLICKED(IDC_DAPARAMETERS2, &CADContView::OnBnClickedDaparameters2)
-	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &CADContView::OnCbnSelchangeComboboard)
-	ON_BN_CLICKED(IDC_STARTSTOP, &CADContView::OnBnClickedStartstop)
-	ON_BN_CLICKED(IDC_WRITETODISK, &CADContView::OnBnClickedWriteToDisk)
-	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &CADContView::OnBnClickedOscilloscope)
-	ON_BN_CLICKED(IDC_CARDFEATURES, &CADContView::OnBnClickedCardfeatures)
-	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &CADContView::OnCbnSelchangeCombostartoutput)
-	ON_BN_CLICKED(IDC_STARTSTOP2, &CADContView::OnBnClickedStartstop2)
-	ON_BN_CLICKED(IDC_UNZOOM, &CADContView::OnBnClickedUnzoom)
+	ON_BN_CLICKED(IDC_DAPARAMETERS2, &CViewADcontinuous::OnBnClickedDaparameters2)
+	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &CViewADcontinuous::OnCbnSelchangeComboboard)
+	ON_BN_CLICKED(IDC_STARTSTOP, &CViewADcontinuous::OnBnClickedStartstop)
+	ON_BN_CLICKED(IDC_WRITETODISK, &CViewADcontinuous::OnBnClickedWriteToDisk)
+	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &CViewADcontinuous::OnBnClickedOscilloscope)
+	ON_BN_CLICKED(IDC_CARDFEATURES, &CViewADcontinuous::OnBnClickedCardfeatures)
+	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &CViewADcontinuous::OnCbnSelchangeCombostartoutput)
+	ON_BN_CLICKED(IDC_STARTSTOP2, &CViewADcontinuous::OnBnClickedStartstop2)
+	ON_BN_CLICKED(IDC_UNZOOM, &CViewADcontinuous::OnBnClickedUnzoom)
 END_MESSAGE_MAP()
 
-void CADContView::OnDestroy()
+void CViewADcontinuous::OnDestroy()
 {
 	if (m_Acq32_AD.IsInProgress())
 		StopAcquisition();
@@ -94,11 +94,11 @@ void CADContView::OnDestroy()
 			m_Acq32_DA.DeleteBuffers();
 	}
 
-	CFormView::OnDestroy();
+	CdbTableView::OnDestroy();
 	delete m_pBackgroundBrush;
 }
 
-HBRUSH CADContView::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
+HBRUSH CViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr;
 	switch (nCtlColor)
@@ -111,27 +111,27 @@ HBRUSH CADContView::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 		break;
 
 	default:
-		hbr = CFormView::OnCtlColor(pDC, pWnd, nCtlColor);
+		hbr = CdbTableView::OnCtlColor(pDC, pWnd, nCtlColor);
 		break;
 	}
 	return hbr;
 }
 
-BEGIN_EVENTSINK_MAP(CADContView, CFormView)
+BEGIN_EVENTSINK_MAP(CViewADcontinuous, CdbTableView)
 
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 1, CADContView::OnBufferDone_ADC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 2, CADContView::OnQueueDone_ADC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 4, CADContView::OnTriggerError_ADC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_ANALOGTODIGIT, 5, CADContView::OnOverrunError_ADC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 1, CViewADcontinuous::OnBufferDone_ADC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 2, CViewADcontinuous::OnQueueDone_ADC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 4, CViewADcontinuous::OnTriggerError_ADC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_ANALOGTODIGIT, 5, CViewADcontinuous::OnOverrunError_ADC, VTS_NONE)
 
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 1, CADContView::OnBufferDone_DAC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 5, CADContView::OnOverrunError_DAC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 2, CADContView::OnQueueDone_DAC, VTS_NONE)
-	ON_EVENT(CADContView, IDC_DIGITTOANALOG, 4, CADContView::OnTriggerError_DAC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 1, CViewADcontinuous::OnBufferDone_DAC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 5, CViewADcontinuous::OnOverrunError_DAC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 2, CViewADcontinuous::OnQueueDone_DAC, VTS_NONE)
+	ON_EVENT(CViewADcontinuous, IDC_DIGITTOANALOG, 4, CViewADcontinuous::OnTriggerError_DAC, VTS_NONE)
 
 END_EVENTSINK_MAP()
 
-void CADContView::AttachControls()
+void CViewADcontinuous::AttachControls()
 {
 	// attach controls
 	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
@@ -176,9 +176,9 @@ void CADContView::AttachControls()
 	m_scrolly.SetScrollRange(0, 100);
 }
 
-void CADContView::OnInitialUpdate()
+void CViewADcontinuous::OnInitialUpdate()
 {
-	CFormView::OnInitialUpdate();
+	CdbTableView::OnInitialUpdate();
 
 	AttachControls();
 
@@ -243,7 +243,7 @@ void CADContView::OnInitialUpdate()
 	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
 }
 
-void CADContView::OnCbnSelchangeComboboard()
+void CViewADcontinuous::OnCbnSelchangeComboboard()
 {
 	const int item_selected = m_ADcardCombo.GetCurSel();
 	CString card_name;
@@ -251,7 +251,7 @@ void CADContView::OnCbnSelchangeComboboard()
 	SelectDTOpenLayersBoard(card_name);
 }
 
-BOOL CADContView::FindDTOpenLayersBoards()
+BOOL CViewADcontinuous::FindDTOpenLayersBoards()
 {
 	m_ADcardCombo.ResetContent();
 
@@ -280,7 +280,7 @@ BOOL CADContView::FindDTOpenLayersBoards()
 	return TRUE;
 }
 
-BOOL CADContView::SelectDTOpenLayersBoard(const CString& card_name)
+BOOL CViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
 {
 	// get infos
 	m_bFoundDTOPenLayerDLL = TRUE;
@@ -311,7 +311,7 @@ BOOL CADContView::SelectDTOpenLayersBoard(const CString& card_name)
 	return TRUE;
 }
 
-void CADContView::StopAcquisition()
+void CViewADcontinuous::StopAcquisition()
 {
 	if (!m_Acq32_AD.IsInProgress())
 		return;
@@ -344,7 +344,7 @@ void CADContView::StopAcquisition()
 	}
 }
 
-void CADContView::SaveAndCloseFile()
+void CViewADcontinuous::SaveAndCloseFile()
 {
 	m_inputDataFile.AcqDoc_DataAppendStop();
 	const CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
@@ -391,7 +391,7 @@ void CADContView::SaveAndCloseFile()
 	}
 }
 
-void CADContView::UpdateViewDataFinal()
+void CViewADcontinuous::UpdateViewDataFinal()
 {
 	// update view data	
 	CdbWaveDoc* pdbDoc = GetDocument();
@@ -408,7 +408,7 @@ void CADContView::UpdateViewDataFinal()
 	m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
 }
 
-void CADContView::TransferFilesToDatabase()
+void CViewADcontinuous::TransferFilesToDatabase()
 {
 	CdbWaveDoc* pdbDoc = GetDocument();
 	pdbDoc->ImportFileList(m_csNameArray); // add file name(s) to the list of records in the database
@@ -421,7 +421,7 @@ void CADContView::TransferFilesToDatabase()
 	pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
-BOOL CADContView::InitOutput_DA()
+BOOL CViewADcontinuous::InitOutput_DA()
 {
 	m_DA_present = m_Acq32_DA.InitSubSystem(m_pOptions_AD);
 	if (m_bStartOutPutMode == 0 && m_DA_present)
@@ -429,7 +429,7 @@ BOOL CADContView::InitOutput_DA()
 	return m_DA_present;
 }
 
-BOOL CADContView::InitOutput_AD()
+BOOL CViewADcontinuous::InitOutput_AD()
 {
 	m_AD_present = m_Acq32_AD.InitSubSystem(m_pOptions_AD);
 	if (m_AD_present)
@@ -441,7 +441,7 @@ BOOL CADContView::InitOutput_AD()
 	return m_AD_present;
 }
 
-void CADContView::InitAcquisitionDisplay()
+void CViewADcontinuous::InitAcquisitionDisplay()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
@@ -477,7 +477,7 @@ void CADContView::InitAcquisitionDisplay()
 	m_chartDataAD.Invalidate();
 }
 
-BOOL CADContView::StartAcquisition()
+BOOL CViewADcontinuous::StartAcquisition()
 {
 	// set display
 	if (m_bADwritetofile && !Defineexperiment())
@@ -534,7 +534,7 @@ BOOL CADContView::StartAcquisition()
 	return TRUE;
 }
 
-ECODE CADContView::StartSimultaneousList()
+ECODE CViewADcontinuous::StartSimultaneousList()
 {
 	ECODE code_returned;
 	HSSLIST hSSlist;
@@ -585,7 +585,7 @@ ECODE CADContView::StartSimultaneousList()
 	return ecode;
 }
 
-void CADContView::DisplayolDaErrorMessage(const CHAR * error_string) const
+void CViewADcontinuous::DisplayolDaErrorMessage(const CHAR * error_string) const
 {
 	CString csError;
 	const CStringA cstringa(error_string);
@@ -594,30 +594,24 @@ void CADContView::DisplayolDaErrorMessage(const CHAR * error_string) const
 }
 
 #ifdef _DEBUG
-void CADContView::AssertValid() const
+void CViewADcontinuous::AssertValid() const
 {
-	CFormView::AssertValid();
+	CdbTableView::AssertValid();
 }
 
-void CADContView::Dump(CDumpContext & dc) const
+void CViewADcontinuous::Dump(CDumpContext & dc) const
 {
-	CFormView::Dump(dc);
-}
-
-CdbWaveDoc* CADContView::GetDocument()
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)));
-	return dynamic_cast<CdbWaveDoc*>(m_pDocument);
+	CdbTableView::Dump(dc);
 }
 
 #endif //_DEBUG
 
-CdbTableMain* CADContView::OnGetRecordset()
+CdbTableMain* CViewADcontinuous::OnGetRecordset()
 {
 	return m_ptableSet;
 }
 
-void CADContView::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
+void CViewADcontinuous::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 {
 	// update sent from within this class
 	if (pSender == this)
@@ -627,7 +621,7 @@ void CADContView::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 	}
 }
 
-void CADContView::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
+void CViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
 {
 	const auto pmF = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
@@ -635,10 +629,10 @@ void CADContView::OnActivateView(BOOL bActivate, CView * pActivateView, CView * 
 		pmF->ActivatePropertyPane(FALSE);
 		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursorstate = 0;
 	}
-	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CdbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-void CADContView::OnSize(UINT nType, int cx, int cy)
+void CViewADcontinuous::OnSize(UINT nType, int cx, int cy)
 {
 	switch (nType)
 	{
@@ -657,10 +651,10 @@ void CADContView::OnSize(UINT nType, int cx, int cy)
 	default:
 		break;
 	}
-	CFormView::OnSize(nType, cx, cy);
+	CdbTableView::OnSize(nType, cx, cy);
 }
 
-LRESULT CADContView::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT CViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	// message emitted by IDC_DISPLAREA_button	
 	//if (j == IDC_DISPLAREA_button)		// always true here...
@@ -686,7 +680,7 @@ LRESULT CADContView::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CADContView::OnBnClickedStartstop()
+void CViewADcontinuous::OnBnClickedStartstop()
 {
 	if (m_btnStartStop_AD.IsChecked())
 	{
@@ -715,7 +709,7 @@ void CADContView::OnBnClickedStartstop()
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 }
 
-void CADContView::UpdateStartStop(BOOL bStart)
+void CViewADcontinuous::UpdateStartStop(BOOL bStart)
 {
 	//bool isrunning = m_Acq32_AD.IsInProgress();
 	if (bStart)
@@ -737,12 +731,12 @@ void CADContView::UpdateStartStop(BOOL bStart)
 	m_chartDataAD.Invalidate();
 }
 
-void CADContView::OnHardwareDefineexperiment()
+void CViewADcontinuous::OnHardwareDefineexperiment()
 {
 	Defineexperiment();
 }
 
-BOOL CADContView::Defineexperiment()
+BOOL CViewADcontinuous::Defineexperiment()
 {
 	CString file_name;
 	m_bFileOpen = FALSE;
@@ -798,7 +792,7 @@ BOOL CADContView::Defineexperiment()
 	return TRUE;
 }
 
-void CADContView::OnInputChannels()
+void CViewADcontinuous::OnInputChannels()
 {
 	UpdateData(TRUE);
 
@@ -828,7 +822,7 @@ void CADContView::OnInputChannels()
 		ChainDialog(dlg.m_postmessage);
 }
 
-void CADContView::OnSamplingMode()
+void CViewADcontinuous::OnSamplingMode()
 {
 	DlgADIntervals dlg;
 	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
@@ -863,7 +857,7 @@ void CADContView::OnSamplingMode()
 		ChainDialog(dlg.m_postmessage);
 }
 
-void CADContView::ChainDialog(WORD iID)
+void CViewADcontinuous::ChainDialog(WORD iID)
 {
 	WORD menuID;
 	switch (iID)
@@ -880,46 +874,46 @@ void CADContView::ChainDialog(WORD iID)
 	PostMessage(WM_COMMAND, menuID, NULL);
 }
 
-void CADContView::OnTriggerError_ADC()
+void CViewADcontinuous::OnTriggerError_ADC()
 {
 	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TRIGGERERROR, MB_ICONEXCLAMATION | MB_OK);
 }
 
-void CADContView::OnQueueDone_ADC()
+void CViewADcontinuous::OnQueueDone_ADC()
 {
 	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TOOFAST);
 }
 
-void CADContView::OnOverrunError_ADC()
+void CViewADcontinuous::OnOverrunError_ADC()
 {
 	StopAcquisition();
 	UpdateStartStop(m_Acq32_AD.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_OVERRUN);
 }
 
-void CADContView::OnOverrunError_DAC()
+void CViewADcontinuous::OnOverrunError_DAC()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_OVERRUN);
 }
 
-void CADContView::OnQueueDone_DAC()
+void CViewADcontinuous::OnQueueDone_DAC()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_TOOFAST);
 }
 
-void CADContView::OnTriggerError_DAC()
+void CViewADcontinuous::OnTriggerError_DAC()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_TRIGGERERROR, MB_ICONEXCLAMATION | MB_OK);
 }
 
-void CADContView::OnBufferDone_ADC()
+void CViewADcontinuous::OnBufferDone_ADC()
 {
 	short* pDTbuf = m_Acq32_AD.OnBufferDone();
 	if (pDTbuf == nullptr)
@@ -931,7 +925,7 @@ void CADContView::OnBufferDone_ADC()
 	ADC_TransferToChart(pWFormat);
 }
 
-void CADContView::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
+void CViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
 {
 	short* pRawDataBuf = m_inputDataFile.GetpRawDataBUF();
 
@@ -985,7 +979,7 @@ void CADContView::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
 	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
-void CADContView::ADC_TransferToChart(const CWaveFormat * pWFormat)
+void CViewADcontinuous::ADC_TransferToChart(const CWaveFormat * pWFormat)
 {
 	if (pWFormat->bOnlineDisplay)
 	{
@@ -998,7 +992,7 @@ void CADContView::ADC_TransferToChart(const CWaveFormat * pWFormat)
 	SetDlgItemText(IDC_STATIC1, cs);
 }
 
-void CADContView::ADC_TransferToFile(CWaveFormat * pWFormat)
+void CViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 {
 	pWFormat->sample_count += m_bytesweepRefresh / 2;
 	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
@@ -1032,17 +1026,17 @@ void CADContView::ADC_TransferToFile(CWaveFormat * pWFormat)
 	m_Acq32_AD.ReleaseLastBufferToQueue();
 }
 
-void CADContView::OnBufferDone_DAC()
+void CViewADcontinuous::OnBufferDone_DAC()
 {
 	m_Acq32_DA.OnBufferDone();
 }
 
-void CADContView::InitializeAmplifiers()
+void CViewADcontinuous::InitializeAmplifiers()
 {
 	InitCyberAmp(); // TODO init other amplifiers and look at pwaveformat?
 }
 
-BOOL CADContView::InitCyberAmp() const
+BOOL CViewADcontinuous::InitCyberAmp() const
 {
 	CCyberAmp m_cyber;
 	BOOL bcyberPresent = FALSE;
@@ -1081,21 +1075,21 @@ BOOL CADContView::InitCyberAmp() const
 	return bcyberPresent;
 }
 
-void CADContView::OnBnClickedGainbutton()
+void CViewADcontinuous::OnBnClickedGainbutton()
 {
 	SetVBarMode(BAR_GAIN);
 }
 
-void CADContView::OnBnClickedBiasbutton()
+void CViewADcontinuous::OnBnClickedBiasbutton()
 {
 	SetVBarMode(BAR_BIAS);
 }
 
-void CADContView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
+void CViewADcontinuous::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
 {
 	if (pScrollBar == nullptr)
 	{
-		CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
+		CdbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -1106,7 +1100,7 @@ void CADContView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
 
 }
 
-void CADContView::SetVBarMode(short bMode)
+void CViewADcontinuous::SetVBarMode(short bMode)
 {
 	m_VBarMode = bMode;
 	m_BiasButton.SetState(bMode == BAR_BIAS);
@@ -1117,7 +1111,7 @@ void CADContView::SetVBarMode(short bMode)
 		UpdateBiasScroll();
 }
 
-void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
+void CViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	int yextent = pChan->GetYextent();
@@ -1160,7 +1154,7 @@ void CADContView::OnGainScroll(UINT nSBCode, UINT nPos)
 	UpdateData(false);
 }
 
-void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
+void CViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	int yzero = pChan->GetYzero();
@@ -1208,7 +1202,7 @@ void CADContView::OnBiasScroll(UINT nSBCode, UINT nPos)
 	UpdateData(false);
 }
 
-void CADContView::UpdateBiasScroll()
+void CViewADcontinuous::UpdateBiasScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	m_chartDataAD.UpdateYRuler();
@@ -1216,7 +1210,7 @@ void CADContView::UpdateBiasScroll()
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 
-void CADContView::UpdateGainScroll()
+void CViewADcontinuous::UpdateGainScroll()
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
 	m_chartDataAD.UpdateYRuler();
@@ -1224,14 +1218,14 @@ void CADContView::UpdateGainScroll()
 	m_scrolly.SetScrollPos(iPos, TRUE);
 }
 
-void CADContView::OnCbnSelchangeCombostartoutput()
+void CViewADcontinuous::OnCbnSelchangeCombostartoutput()
 {
 	m_bStartOutPutMode = m_ComboStartOutput.GetCurSel();
 	m_pOptions_DA->bAllowDA = m_bStartOutPutMode;
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
-void CADContView::SetCombostartoutput(int option)
+void CViewADcontinuous::SetCombostartoutput(int option)
 {
 	m_ComboStartOutput.SetCurSel(option);
 	option = m_ComboStartOutput.GetCurSel();
@@ -1240,7 +1234,7 @@ void CADContView::SetCombostartoutput(int option)
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
-void CADContView::OnBnClickedDaparameters2()
+void CViewADcontinuous::OnBnClickedDaparameters2()
 {
 	DlgDAChannels dlg;
 	const auto isize = m_pOptions_DA->outputparms_array.GetSize();
@@ -1261,21 +1255,21 @@ void CADContView::OnBnClickedDaparameters2()
 	}
 }
 
-void CADContView::OnBnClickedWriteToDisk()
+void CViewADcontinuous::OnBnClickedWriteToDisk()
 {
 	m_bADwritetofile = TRUE;
 	m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
 	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
 }
 
-void CADContView::OnBnClickedOscilloscope()
+void CViewADcontinuous::OnBnClickedOscilloscope()
 {
 	m_bADwritetofile = FALSE;
 	m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
 	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
 }
 
-void CADContView::UpdateRadioButtons()
+void CViewADcontinuous::UpdateRadioButtons()
 {
 	if (m_bADwritetofile)
 		m_Button_WriteToDisk.SetCheck(BST_CHECKED);
@@ -1284,7 +1278,7 @@ void CADContView::UpdateRadioButtons()
 	UpdateData(TRUE);
 }
 
-void CADContView::OnBnClickedCardfeatures()
+void CViewADcontinuous::OnBnClickedCardfeatures()
 {
 	DlgDataTranslationBoard dlg;
 	dlg.m_pAnalogIN = &m_Acq32_AD;
@@ -1292,7 +1286,7 @@ void CADContView::OnBnClickedCardfeatures()
 	dlg.DoModal();
 }
 
-void CADContView::OnBnClickedStartstop2()
+void CViewADcontinuous::OnBnClickedStartstop2()
 {
 	CString cs;
 	if (m_Acq32_DA.IsInProgress())
@@ -1308,7 +1302,7 @@ void CADContView::OnBnClickedStartstop2()
 	m_Button_StartStop_DA.SetWindowTextW(cs);
 }
 
-BOOL CADContView::StartOutput()
+BOOL CViewADcontinuous::StartOutput()
 {
 	if (!m_Acq32_DA.InitSubSystem(m_pOptions_AD))
 		return FALSE;
@@ -1318,12 +1312,12 @@ BOOL CADContView::StartOutput()
 	return TRUE;
 }
 
-void CADContView::StopOutput()
+void CViewADcontinuous::StopOutput()
 {
 	m_Acq32_DA.StopAndLiberateBuffers();
 }
 
-void CADContView::InitAcquisitionInputFile()
+void CViewADcontinuous::InitAcquisitionInputFile()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 
@@ -1337,7 +1331,7 @@ void CADContView::InitAcquisitionInputFile()
 	m_inputDataFile.AdjustBUF(m_chsweeplength);
 }
 
-void CADContView::OnBnClickedUnzoom()
+void CViewADcontinuous::OnBnClickedUnzoom()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
 	const int iextent = pWFormat->binspan;

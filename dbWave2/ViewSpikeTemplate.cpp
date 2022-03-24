@@ -25,9 +25,8 @@ CViewSpikeTemplates::CViewSpikeTemplates()
 
 CViewSpikeTemplates::~CViewSpikeTemplates()
 {
-	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
-		saveCurrentSpkFile(); // save file if modified
+		saveCurrentSpkFile(); 
 }
 
 void CViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
@@ -143,11 +142,6 @@ void CViewSpikeTemplates::defineSubClassedItems()
 void CViewSpikeTemplates::defineStretchParameters()
 {
 	m_stretch.AttachParent(this); // attach formview pointer
-	//m_stretch.newProp(IDC_LIST1, XLEQ_XREQ, SZEQ_YTEQ);
-	//m_stretch.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
-	//m_stretch.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
-	//m_stretch.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
-
 	m_stretch.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);

@@ -260,12 +260,6 @@ void CViewSpikeHist::Dump(CDumpContext& dc) const
 {
 	CdbTableView::Dump(dc);
 }
-
-CdbWaveDoc* CViewSpikeHist::GetDocument()
-{
-	return static_cast<CdbWaveDoc*>(m_pDocument);
-}
-
 #endif //_DEBUG
 
 

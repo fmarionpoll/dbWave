@@ -20,7 +20,7 @@ public:
 	boolean m_autoDetect = false;
 	boolean m_autoIncrement = false;
 
-	CdbWaveDoc* GetDocument();
+	virtual CdbWaveDoc* GetDocument();
 	CDaoRecordset* OnGetRecordset() override;
 	BOOL OnMove(UINT nIDMoveCommand) override;
 	void OnDraw(CDC* pDC) override;

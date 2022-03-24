@@ -1,8 +1,6 @@
 #include "StdAfx.h"
 #include "dbWaveDoc.h"
 #include "dbTableView.h"
-
-#include "dbWave.h"
 #include "dbWave_constants.h"
 
 IMPLEMENT_DYNAMIC(CdbTableView, CDaoRecordView)
@@ -20,8 +18,7 @@ CdbTableView::CdbTableView(UINT nIDTemplate)
 }
 
 CdbTableView::~CdbTableView()
-{
-}
+= default;
 
 BEGIN_MESSAGE_MAP(CdbTableView, CDaoRecordView)
 	ON_NOTIFY(NM_CLICK, IDC_TAB1, &CdbTableView::OnNMClickTab1)
@@ -48,18 +45,16 @@ CdbWaveDoc* CdbTableView::GetDocument()
 	return static_cast<CdbWaveDoc*>(m_pDocument);
 }
 
-#ifndef _WIN32_WCE
 void CdbTableView::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
-#endif
+
 #endif //_DEBUG
 
 BOOL CdbTableView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
+	// TODO: Modify the Window class or styles here by modifying the CREATESTRUCT cs
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
