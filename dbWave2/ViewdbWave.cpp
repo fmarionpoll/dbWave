@@ -31,8 +31,8 @@ BEGIN_MESSAGE_MAP(CViewdbWave, CdbTableView)
 	ON_COMMAND(ID_FILE_PRINT, CdbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CdbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CdbTableView::OnFilePrintPreview)
-	ON_BN_CLICKED(IDC_RADIO1, &CViewdbWave::OnBnClickedRadio1)
-	ON_BN_CLICKED(IDC_RADIO3, &CViewdbWave::OnBnClickedRadio3)
+	ON_BN_CLICKED(IDC_DISPLAYDATA, &CViewdbWave::OnBnClickedData)
+	ON_BN_CLICKED(IDC_DISPLAYNOTHING, &CViewdbWave::OnBnClickedDisplayNothing)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &CViewdbWave::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &CViewdbWave::OnEnChangeTimelast)
 	ON_EN_CHANGE(IDC_AMPLITUDESPAN, &CViewdbWave::OnEnChangeAmplitudespan)
@@ -43,7 +43,7 @@ BEGIN_MESSAGE_MAP(CViewdbWave, CdbTableView)
 	ON_BN_CLICKED(IDC_CHECK1, &CViewdbWave::OnBnClickedCheck1)
 	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &CViewdbWave::OnBnClickedRadioallclasses)
 	ON_BN_CLICKED(IDC_RADIOONECLASS, &CViewdbWave::OnBnClickedRadiooneclass)
-	ON_BN_CLICKED(IDC_RADIO2, &CViewdbWave::OnBnClickedDisplaySpikes)
+	ON_BN_CLICKED(IDC_DISPLAYSPIKES, &CViewdbWave::OnBnClickedDisplaySpikes)
 	ON_NOTIFY(HDN_ENDTRACK, 0, &CViewdbWave::OnHdnEndtrackListctrl)
 	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTCTRL, &CViewdbWave::OnLvnColumnclickListctrl)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LISTCTRL, &CViewdbWave::OnItemActivateListctrl)
@@ -73,21 +73,12 @@ void CViewdbWave::DoDataExchange(CDataExchange* pDX)
 void CViewdbWave::OnInitialUpdate()
 {
 	// init document and CdbTableView
-	CdbWaveDoc* p_dbwave_doc = GetDocument();
+	const CdbWaveDoc* p_dbwave_doc = GetDocument();
 	m_pSet = &p_dbwave_doc->m_pDB->m_mainTableSet;
 	CdbTableView::OnInitialUpdate();
 
-	// subclass display controls and attach them to stretch CFolderview
-	VERIFY(m_dataListCtrl.SubclassDlgItem(IDC_LISTCTRL, this));
-	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
-	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
-	VERIFY(mm_amplitudespan.SubclassDlgItem(IDC_AMPLITUDESPAN, this));
-	VERIFY(mm_spikeclass.SubclassDlgItem(IDC_SPIKECLASS, this));
-
-	m_stretch.AttachParent(this); // attach formview pointer
-	m_stretch.newProp(IDC_LISTCTRL, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
-	m_binit = TRUE;
+	subclass_dialog_controls();
+	make_controls_stretchable();
 
 	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_options_viewdata = &p_app->options_viewdata;
@@ -114,9 +105,6 @@ void CViewdbWave::OnInitialUpdate()
 	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_viewdata->bsetmVSpan);
 	m_dataListCtrl.SetAmplitudeAdjustMode(m_options_viewdata->bsetmVSpan);
 
-	// adjust size of dataviewlistbox
-	//UINT cy_item_height = 50; // n pixels
-	//auto n_index = 0;
 	m_dataListCtrl.SetExtendedStyle
 	(m_dataListCtrl.GetExtendedStyle()
 		| LVS_EX_FULLROWSELECT
@@ -129,43 +117,15 @@ void CViewdbWave::OnInitialUpdate()
 	switch (m_options_viewdata->displaymode)
 	{
 	case 1:
-		static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
-		GetDlgItem(IDC_FILTERCHECK)->EnableWindow(TRUE);
-		static_cast<CButton*>(GetDlgItem(IDC_FILTERCHECK))->SetCheck(m_options_viewdata->bFilterDat);
-		if (m_options_viewdata->bFilterDat)
-			m_dattransform = 13; // apply median filter to data displayed
-		else
-			m_dattransform = 0; // no filter (raw data)
-		m_dataListCtrl.SetTransformMode(m_dattransform);
+		display_data();
 		break;
 	case 2:
-		static_cast<CButton*>(GetDlgItem(IDC_RADIO2))->SetCheck(BST_CHECKED);
-		GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
-		GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(TRUE);
-		GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(TRUE);
-	// display all spike classes
-		if (m_options_viewdata->bDisplayAllClasses)
-		{
-			static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCLASSES))->SetCheck(BST_CHECKED);
-			static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_UNCHECKED);
-			m_dataListCtrl.SetSpikePlotMode(PLOT_BLACK, m_spikeclass);
-		}
-		else
-		{
-			static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCLASSES))->SetCheck(BST_UNCHECKED);
-			static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_CHECKED);
-			m_spikeclass = m_options_viewdata->spikeclass;
-			mm_spikeclass.EnableWindow(TRUE);
-			m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
-		}
+		display_spikes();
 		break;
 	default:
-		static_cast<CButton*>(GetDlgItem(IDC_RADIO3))->SetCheck(BST_CHECKED);
-		GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
+		display_nothing();
 		break;
 	}
-
-	// close data file if opened?
 
 	// select the proper record
 	fillListBox();
@@ -184,9 +144,84 @@ void CViewdbWave::OnInitialUpdate()
 	}
 }
 
+void CViewdbWave::subclass_dialog_controls()
+{
+	VERIFY(m_dataListCtrl.SubclassDlgItem(IDC_LISTCTRL, this));
+	VERIFY(mm_timefirst.SubclassDlgItem(IDC_TIMEFIRST, this));
+	VERIFY(mm_timelast.SubclassDlgItem(IDC_TIMELAST, this));
+	VERIFY(mm_amplitudespan.SubclassDlgItem(IDC_AMPLITUDESPAN, this));
+	VERIFY(mm_spikeclass.SubclassDlgItem(IDC_SPIKECLASS, this));
+}
+
+void CViewdbWave::make_controls_stretchable()
+{
+	m_stretch.AttachParent(this);
+	m_stretch.newProp(IDC_LISTCTRL, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	m_binit = TRUE;
+}
+
+void CViewdbWave::display_data()
+{
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_CHECKED);
+
+	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
+	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(FALSE);
+	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
+	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(TRUE);
+	m_options_viewdata->displaymode = 1;
+	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+
+	static_cast<CButton*>(GetDlgItem(IDC_FILTERCHECK))->SetCheck(m_options_viewdata->bFilterDat);
+	m_dattransform = m_options_viewdata->bFilterDat ? 13 : 0;
+	m_dataListCtrl.SetTransformMode(m_dattransform);
+	m_tabCtrl.ShowWindow(SW_HIDE);
+}
+
+void CViewdbWave::display_spikes()
+{
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_CHECKED);
+
+	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
+	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(TRUE);
+	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(TRUE);
+	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
+
+	// display all spike classes
+	m_options_viewdata->displaymode = 2;
+	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	if (m_options_viewdata->bDisplayAllClasses)
+	{
+		static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCLASSES))->SetCheck(BST_CHECKED);
+		static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_UNCHECKED);
+		m_dataListCtrl.SetSpikePlotMode(PLOT_BLACK, m_spikeclass);
+	}
+	else
+	{
+		static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCLASSES))->SetCheck(BST_UNCHECKED);
+		static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_CHECKED);
+		m_spikeclass = m_options_viewdata->spikeclass;
+		mm_spikeclass.EnableWindow(TRUE);
+		m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
+	}
+}
+
+void CViewdbWave::display_nothing() 
+{
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_CHECKED);
+
+	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
+	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
+	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(FALSE);
+	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
+
+	m_options_viewdata->displaymode = 0;
+	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	m_tabCtrl.ShowWindow(SW_HIDE);
+}
+
 void CViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 {
-	// do other resizing
 	CdbTableView::OnSize(n_type, cx, cy);
 	if (IsWindow(m_dataListCtrl.m_hWnd))
 	{
@@ -449,32 +484,16 @@ void CViewdbWave::OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CViewdbWave::OnBnClickedRadio1()
+void CViewdbWave::OnBnClickedData()
 {
-	static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
-	m_options_viewdata->displaymode = 1;
-	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	display_data();
 	m_dataListCtrl.RefreshDisplay();
-	m_tabCtrl.ShowWindow(SW_HIDE);
-
-	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(TRUE);
-	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
-	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(FALSE);
-	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 }
 
-void CViewdbWave::OnBnClickedRadio3()
+void CViewdbWave::OnBnClickedDisplayNothing()
 {
-	static_cast<CButton*>(GetDlgItem(IDC_RADIO3))->SetCheck(BST_CHECKED);
-	m_options_viewdata->displaymode = 0;
-	m_tabCtrl.ShowWindow(SW_HIDE);
-	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	display_nothing();
 	m_dataListCtrl.RefreshDisplay();
-
-	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
-	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
-	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(FALSE);
-	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 }
 
 void CViewdbWave::OnEnChangeTimefirst()
@@ -635,29 +654,7 @@ void CViewdbWave::OnBnClickedRadiooneclass()
 
 void CViewdbWave::OnBnClickedDisplaySpikes()
 {
-	static_cast<CButton*>(GetDlgItem(IDC_RADIO2))->SetCheck(BST_CHECKED);
-
-	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(TRUE);
-	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(TRUE);
-	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
-	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
-
-	// display spikes
-	m_options_viewdata->displaymode = 2;
-	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
-	if (m_options_viewdata->bDisplayAllClasses)
-	{
-		static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCLASSES))->SetCheck(BST_CHECKED);
-		static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_UNCHECKED);
-		m_dataListCtrl.SetSpikePlotMode(PLOT_BLACK, 0);
-	}
-	else
-	{
-		static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCLASSES))->SetCheck(BST_UNCHECKED);
-		static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_CHECKED);
-		m_spikeclass = m_options_viewdata->spikeclass;
-		m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
-	}
+	display_spikes();
 	m_dataListCtrl.RefreshDisplay();
 
 	// update tab control

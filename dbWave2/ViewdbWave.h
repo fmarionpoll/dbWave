@@ -12,18 +12,15 @@ protected: // create from serialization only
 	CViewdbWave();
 	~CViewdbWave() override;
 
-public:
-	enum { IDD = IDD_VIEWDBWAVE };
 
-	// Attributes
-public:
+	enum { IDD = IDD_VIEWDBWAVE };
 	CDataListCtrl m_dataListCtrl;
 
 protected:
-	CEditCtrl mm_spikeclass; // selected spike class
-	CEditCtrl mm_timefirst; // first abcissa value
-	CEditCtrl mm_timelast; // last abcissa value
-	CEditCtrl mm_amplitudespan; // amplitude
+	CEditCtrl mm_spikeclass;
+	CEditCtrl mm_timefirst; 
+	CEditCtrl mm_timelast; 
+	CEditCtrl mm_amplitudespan;
 	OPTIONS_VIEWDATA* m_options_viewdata = nullptr;
 
 	BOOL m_bvalidDat = false;
@@ -36,13 +33,18 @@ protected:
 	float m_amplitudespan = 0.;
 	int m_spikeclass = 0;
 
-protected:
 	void DoDataExchange(CDataExchange* pDX) override;
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+
 	void updateControls();
 	void fillListBox();
+	void display_data();
+	void display_spikes();
+	void display_nothing();
+	void subclass_dialog_controls();
+	void make_controls_stretchable();
 
 public:
 	void DeleteRecords();
@@ -59,9 +61,9 @@ protected:
 public:
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedRadio1();
+	afx_msg void OnBnClickedData();
 	afx_msg void OnBnClickedDisplaySpikes();
-	afx_msg void OnBnClickedRadio3();
+	afx_msg void OnBnClickedDisplayNothing();
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();
 	afx_msg void OnEnChangeAmplitudespan();

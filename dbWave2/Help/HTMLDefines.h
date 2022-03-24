@@ -254,7 +254,6 @@
 #define HIDD_IMPORTOPTIONS                      0x20215
 #define HIDD_DBEDITRECORDFIELD                  0x20217
 #define HIDD_DTBOARD                            0x2022E
-#define HIDD_DTBOARD                            0x2022E
 #define HIDD_STATICLEFT2                        0x203F4
 #define HIDD_STATICRIGHT2                       0x2052F
  
