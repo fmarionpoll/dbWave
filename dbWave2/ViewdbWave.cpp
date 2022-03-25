@@ -136,11 +136,12 @@ void ViewdbWave::OnInitialUpdate()
 	if (m_options_viewdata->displaymode == 2)
 	{
 		CSpikeDoc* pSpkDoc = GetDocument()->GetCurrent_Spk_Document();
-		// update tab control
-		m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
-		m_tabCtrl.ShowWindow(SW_SHOW);
-		int icur = pSpkDoc->GetSpkList_CurrentIndex();
-		m_tabCtrl.SetCurSel(icur);
+		if (pSpkDoc != nullptr) 
+		{
+			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
+			m_tabCtrl.SetCurSel(pSpkDoc->GetSpkList_CurrentIndex());
+		}
+		m_tabCtrl.ShowWindow(pSpkDoc != nullptr ? SW_SHOW: SW_HIDE);
 	}
 }
 

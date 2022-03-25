@@ -39,12 +39,12 @@ void SpikeList::Serialize(CArchive& ar)
 		{
 			WORD version;
 			ar >> version;
-			if (version > 0 && version < 5)
-				read_file_version_before5(ar, version);
+			if (version == 6)
+				read_file_version6(ar);
 			else if (version == 5)
 				read_file_version5(ar);
-			else if (version == 6)
-				read_file_version6(ar);
+			else if (version > 0 && version < 5)
+				read_file_version_before5(ar, version);
 			else
 			{
 				ASSERT(FALSE);
@@ -101,156 +101,241 @@ void SpikeList::write_file_version6(CArchive& ar)
 
 void SpikeList::read_file_version6(CArchive& ar)
 {
-	serialize_data_parameters(ar);
-	serialize_spike_elements(ar);
-	serialize_spike_data(ar);
-	serialize_spike_class_descriptors(ar);
+	if (!serialize_data_parameters(ar)) return;
+	if (serialize_spike_elements(ar)) return;
+	if (serialize_spike_data(ar)) return;
+	if (serialize_spike_class_descriptors(ar)) return;
 	serialize_additional_data(ar);
 }
 
-void SpikeList::serialize_data_parameters(CArchive& ar)
+bool SpikeList::serialize_data_parameters(CArchive& ar)
 {
-	if (ar.IsStoring())
+	try
 	{
-		ar << m_data_encoding_mode;
-		ar << m_bin_zero;
-		ar << m_sampling_rate;
-		ar << m_volts_per_bin;
-		ar << m_spike_channel_description;
-
-		m_detection_parameters.Serialize(ar);
-		m_acquisition_channel.Serialize(ar);
-	}
-	else 
-	{
-		ar >> m_data_encoding_mode;
-		ar >> m_bin_zero;
-		ar >> m_sampling_rate;
-		ar >> m_volts_per_bin;
-		ar >> m_spike_channel_description;
-
-		m_detection_parameters.Serialize(ar);
-		m_acquisition_channel.Serialize(ar);
-	}
-}
-
-void SpikeList::serialize_spike_elements(CArchive& ar)
-{
-	if (ar.IsStoring())
-	{
-		if (!m_b_save_artefacts)
-			remove_artefacts();
-		const auto n_spikes = m_spike_elements.GetSize();
-		ar << static_cast<WORD>(n_spikes);
-		for (auto i = 0; i < n_spikes; i++)
-			m_spike_elements.GetAt(i)->Serialize(ar);
-	}
-	else
-	{
-		WORD w1;
-		ar >> w1;
-		const int n_spikes = w1;
-		m_spike_elements.SetSize(n_spikes);
-		for (auto i = 0; i < n_spikes; i++)
+		if (ar.IsStoring())
 		{
-			auto* se = new(SpikeElement);
-			ASSERT(se != NULL);
-			se->Serialize(ar);
-			m_spike_elements[i] = se;
+			ar << m_data_encoding_mode;
+			ar << m_bin_zero;
+			ar << m_sampling_rate;
+			ar << m_volts_per_bin;
+			ar << m_spike_channel_description;
+
+			m_detection_parameters.Serialize(ar);
+			m_acquisition_channel.Serialize(ar);
+		}
+		else
+		{
+			ar >> m_data_encoding_mode;
+			ar >> m_bin_zero;
+			ar >> m_sampling_rate;
+			ar >> m_volts_per_bin;
+			ar >> m_spike_channel_description;
+
+			m_detection_parameters.Serialize(ar);
+			m_acquisition_channel.Serialize(ar);
 		}
 	}
+	catch (CArchiveException& e)
+	{
+		if (e.m_cause == CArchiveException::endOfFile)
+		{
+			TRACE("EOF data parameters\n");
+			e.Delete();
+		}
+		else
+		{
+			THROW_LAST();
+		}
+		return false;
+	}
+	return true;
 }
 
-void SpikeList::serialize_spike_data(CArchive& ar) 
+bool SpikeList::serialize_spike_elements(CArchive& ar)
 {
-	const auto n_spikes = m_spike_elements.GetSize();
-	if (ar.IsStoring())
+	try
 	{
-		const auto spike_length = m_spike_buffer.GetSpikeLength();
-		ar << spike_length;
-
-		const auto n_bytes = spike_length * sizeof(short);
-		if (n_bytes > 0)
+		if (ar.IsStoring())
 		{
+			if (!m_b_save_artefacts)
+				remove_artefacts();
+			const auto n_spikes = m_spike_elements.GetSize();
+			ar << static_cast<WORD>(n_spikes);
 			for (auto i = 0; i < n_spikes; i++)
-				ar.Write(m_spike_buffer.GetSpike(i), n_bytes);
+				m_spike_elements.GetAt(i)->Serialize(ar);
 		}
-	}
-	else
-	{
-		WORD spike_length = 1;
-		ar >> spike_length;
-
-		m_spike_buffer.DeleteAllSpikes();
-		m_spike_buffer.SetSpikeLength(spike_length);
-		m_spike_buffer.m_bin_zero = GetAcqBinzero();
-
-		const auto n_bytes = spike_length * sizeof(short) * n_spikes;
-		const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
-		ar.Read(lp_dest, n_bytes);
-	}
-}
-
-void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
-{
-	if (ar.IsStoring())
-	{
-		m_only_valid_classes = FALSE;
-		ar << static_cast<long>(m_only_valid_classes);
-		ar << static_cast<long>(m_n_classes);
-		for (auto i = 0; i < m_n_classes; i++)
+		else
 		{
-			SpikeClassDescriptor item = m_spike_class_descriptor_array.GetAt(i);
-			if (item.n_items > 0 && !(m_only_valid_classes && item.id_number < 0))
-				item.Serialize(ar);
-		}
-	}
-	else
-	{
-		m_extrema_valid = FALSE;
-		m_only_valid_classes = FALSE;
-		m_n_classes = 1;
-		m_spike_class_descriptor_array.SetSize(1);
-		m_spike_class_descriptor_array.SetAt(0, SpikeClassDescriptor(0, 0));
-		long dummy;
-		ar >> dummy;
-		m_only_valid_classes = dummy;
-		ar >> dummy;
-		m_n_classes = dummy;
-		
-		if (m_n_classes >= 0)
-		{
-			for (auto i = 0; i < m_n_classes; i++)
+			WORD w1;
+			ar >> w1;
+			const int n_spikes = w1;
+			m_spike_elements.SetSize(n_spikes);
+			for (auto i = 0; i < n_spikes; i++)
 			{
-				SpikeClassDescriptor item;
-				item.Serialize(ar);
-				m_spike_class_descriptor_array.Add(item);
+				auto* se = new(SpikeElement);
+				ASSERT(se != NULL);
+				se->Serialize(ar);
+				m_spike_elements[i] = se;
 			}
 		}
 	}
+	catch (CArchiveException& e)
+	{
+		if (e.m_cause == CArchiveException::endOfFile)
+		{
+			TRACE("EOF spike elements\n");
+			e.Delete();
+		}
+		else
+		{
+			THROW_LAST();
+		}
+		return false;
+	}
+	return true;
 }
 
-void SpikeList::serialize_additional_data(CArchive& ar)
+bool SpikeList::serialize_spike_data(CArchive& ar) 
 {
-	if (ar.IsStoring())
+	try 
 	{
-		constexpr auto n_parameters = 4;
-		ar << n_parameters;
-		ar << m_icenter1SL;
-		ar << m_icenter2SL;
-		ar << m_imaxmin1SL;
-		ar << m_imaxmin2SL;
+		const auto n_spikes = m_spike_elements.GetSize();
+		if (ar.IsStoring())
+		{
+			const auto spike_length = m_spike_buffer.GetSpikeLength();
+			ar << spike_length;
+
+			const auto n_bytes = spike_length * sizeof(short);
+			if (n_bytes > 0)
+			{
+				for (auto i = 0; i < n_spikes; i++)
+					ar.Write(m_spike_buffer.GetSpike(i), n_bytes);
+			}
+		}
+		else
+		{
+			WORD spike_length = 1;
+			ar >> spike_length;
+
+			m_spike_buffer.DeleteAllSpikes();
+			m_spike_buffer.SetSpikeLength(spike_length);
+			m_spike_buffer.m_bin_zero = GetAcqBinzero();
+
+			const auto n_bytes = spike_length * sizeof(short) * n_spikes;
+			const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
+			ar.Read(lp_dest, n_bytes);
+		}
 	}
-	else
+	catch (CArchiveException& e)
 	{
-		int n_parameters;
-		ar >> n_parameters;
-		ar >> m_icenter1SL; n_parameters--;
-		ar >> m_icenter2SL; n_parameters--;
-		ar >> m_imaxmin1SL; n_parameters--;
-		ar >> m_imaxmin2SL; n_parameters--;
-		ASSERT(n_parameters < 1);
+		if (e.m_cause == CArchiveException::endOfFile)
+		{
+			TRACE("EOF spike data\n");
+			e.Delete();
+		}
+		else
+		{
+			THROW_LAST();
+		}
+		return false;
 	}
+	return true;
+}
+
+bool SpikeList::serialize_spike_class_descriptors(CArchive& ar)
+{
+	try 
+	{
+		if (ar.IsStoring())
+		{
+			m_only_valid_classes = FALSE;
+			ar << static_cast<long>(m_only_valid_classes);
+			ar << static_cast<long>(m_n_classes);
+			for (auto i = 0; i < m_n_classes; i++)
+			{
+				SpikeClassDescriptor item = m_spike_class_descriptor_array.GetAt(i);
+				if (item.n_items > 0 && !(m_only_valid_classes && item.id_number < 0))
+					item.Serialize(ar);
+			}
+		}
+		else
+		{
+			m_extrema_valid = FALSE;
+			m_only_valid_classes = FALSE;
+			m_n_classes = 1;
+			m_spike_class_descriptor_array.SetSize(1);
+			m_spike_class_descriptor_array.SetAt(0, SpikeClassDescriptor(0, 0));
+			long dummy;
+			ar >> dummy;
+			m_only_valid_classes = dummy;
+			ar >> dummy;
+			m_n_classes = dummy;
+			
+			if (m_n_classes >= 0)
+			{
+				for (auto i = 0; i < m_n_classes; i++)
+				{
+					SpikeClassDescriptor item;
+					item.Serialize(ar);
+					m_spike_class_descriptor_array.Add(item);
+				}
+			}
+		}
+	}
+	catch (CArchiveException& e)
+	{
+		if (e.m_cause == CArchiveException::endOfFile)
+		{
+			TRACE("EOF class descriptors\n");
+			e.Delete();
+		}
+		else
+		{
+			THROW_LAST();
+		}
+		return false;
+	}
+	return true;
+}
+
+bool SpikeList::serialize_additional_data(CArchive& ar)
+{
+	try 
+	{
+		if (ar.IsStoring())
+		{
+			constexpr auto n_parameters = 4;
+			ar << n_parameters;
+			ar << m_icenter1SL;
+			ar << m_icenter2SL;
+			ar << m_imaxmin1SL;
+			ar << m_imaxmin2SL;
+		}
+		else
+		{
+			int n_parameters;
+			ar >> n_parameters;
+			ar >> m_icenter1SL; n_parameters--;
+			ar >> m_icenter2SL; n_parameters--;
+			ar >> m_imaxmin1SL; n_parameters--;
+			ar >> m_imaxmin2SL; n_parameters--;
+			ASSERT(n_parameters < 1);
+		}
+	}
+	catch (CArchiveException& e)
+	{
+		if (e.m_cause == CArchiveException::endOfFile)
+		{
+			TRACE("EOF additional data\n");
+			e.Delete();
+		}
+		else
+		{
+			THROW_LAST();
+		}
+		return false;
+	}
+	return true;
 }
 
 void SpikeList::read_file_version5(CArchive& ar)

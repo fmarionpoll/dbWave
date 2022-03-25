@@ -187,9 +187,9 @@ protected:
 
 	void write_file_version6(CArchive& ar);
 	void delete_arrays();
-	void serialize_data_parameters(CArchive& ar);
-	void serialize_spike_elements(CArchive& ar);
-	void serialize_spike_data(CArchive& ar);
-	void serialize_spike_class_descriptors(CArchive& ar);
-	void serialize_additional_data(CArchive& ar);
+	bool serialize_data_parameters(CArchive& ar);
+	bool serialize_spike_elements(CArchive& ar);
+	bool serialize_spike_data(CArchive& ar);
+	bool serialize_spike_class_descriptors(CArchive& ar);
+	bool serialize_additional_data(CArchive& ar);
 };

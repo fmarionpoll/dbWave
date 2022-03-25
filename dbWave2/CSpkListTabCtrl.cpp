@@ -24,6 +24,7 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc)
 {
 	DeleteAllItems();
 	auto j = 0;
+	if (pSpkDoc == nullptr) return;
 
 	const auto curr_listsize = pSpkDoc->GetSpkList_Size();
 	for (auto i = 0; i < curr_listsize; i++)
