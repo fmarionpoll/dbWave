@@ -53,10 +53,11 @@ void SpikeClass::Serialize(CArchive& ar)
 	else
 	{
 		// load attributes
-		ar >> w1;
-		ar >> w2;
+		ar >> w1; m_NClass = w1;
+		ar >> w2; m_SpikeSize = w2;
 		ar >> m_BufferSize;
 		SizeNclasses(w1, w2);
+
 		// load array
 		for (auto i = 0; i < m_NClass; i++)
 		{

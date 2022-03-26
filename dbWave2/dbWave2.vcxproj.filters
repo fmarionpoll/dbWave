@@ -761,9 +761,6 @@
     <ClInclude Include="CWorksheets.h">
       <Filter>Excel Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertiesWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StretchControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1059,9 +1056,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GridDefaultCell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CCIntervalsListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassDescriptor.h">

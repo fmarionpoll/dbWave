@@ -1356,7 +1356,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="AcqDataDoc.h" />
-    <ClInclude Include="CCIntervalsListCtrl.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="InPlaceEdit.h" />
@@ -1495,7 +1494,6 @@
     <ClInclude Include="DlgPrintMargins.h" />
     <ClInclude Include="DlgPrintPageMargins.h" />
     <ClInclude Include="DlgProgress.h" />
-    <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="QuadStateTree.h" />
     <ClInclude Include="DlgRejectRecord.h" />
     <ClInclude Include="GridCtrl\GridCell.h" />
