@@ -2,7 +2,7 @@
 
 #include "Intervals.h"
 #include "Spikelist.h"
-#include "Spikeclas.h"
+#include "SpikeClass.h"
 #include "OPTIONS_VIEWSPIKES.h"
 
 class CSpikeDoc : public CDocument

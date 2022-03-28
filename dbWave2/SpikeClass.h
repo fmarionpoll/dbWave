@@ -6,12 +6,12 @@ class SpikeClass : public CObject
 	DECLARE_SERIAL(SpikeClass)
 
 protected:
-	int m_NClass = -1; // Number of different classes of spikes
-	int m_SpikeSize = 0; // size of spike
-	long m_BufferSize = 0; // GetRectSize of the buffer
-	short* m_pRWBuffer = nullptr; // pointer to the buffer
+	int m_n_classes = -1;					// Number of different classes of spikes
+	int m_spike_size = 0;					// size of spike
+	long m_buffer_size = 0;					// GetRectSize of the buffer
+	short* m_class_buffer = nullptr;		// pointer to the buffer
 	int m_EArraySize = 0;
-	int* m_pEArray = nullptr; // array of class elemt
+	int* m_elements_array = nullptr;		// array of class elemt
 	BOOL SizeNclasses(int nclasses, int spikesize);
 
 public:

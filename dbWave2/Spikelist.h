@@ -4,7 +4,8 @@
 #include "SpikeBuffer.h"
 #include "SpikeClassDescriptor.h"
 #include "SpikeElement.h"
-#include "spikepar.h"
+#include "SPKDETECTPARM.h"
+
 
 
 // spikes from one data acquisition channel

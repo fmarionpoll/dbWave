@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ChartWnd.h"
+
 #include "ChartData.h"
-#include "spikepar.h"
+#include "SpikeDetectArray.h"
+
 
 class DlgSpikeDetect : public CDialog
 {
@@ -13,7 +14,7 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_SPKDETECTPARM };
 
-	CSpkDetectArray* m_pDetectSettingsArray{ nullptr }; // parameter set by caller
+	SpikeDetectArray* m_pDetectSettingsArray{ nullptr }; // parameter set by caller
 	AcqDataDoc* m_dbDoc{ nullptr }; 
 	int m_iDetectParmsDlg{ 0 };
 	OPTIONS_VIEWDATA* mdPM{ nullptr };

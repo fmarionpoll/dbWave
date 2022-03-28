@@ -8,7 +8,6 @@
 #include "resource.h"
 #include "DlgSpikeDetect.h"
 
-#include "spikepar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

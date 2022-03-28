@@ -168,7 +168,7 @@
     <ClCompile Include="DlgPrintPageMargins.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Spikeclas.cpp">
+    <ClCompile Include="SpikeClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpikeClassListBox.cpp">
@@ -181,9 +181,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Spikelist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="spikepar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Splash.cpp">
@@ -489,6 +486,21 @@
     <ClCompile Include="SpikeClassDescriptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="STIMDETECT.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SPKDETECTPARM.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SPKDETECTARRAY.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SPKCLASSIF.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpikeDetectArray.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -623,7 +635,7 @@
     <ClInclude Include="DlgPrintPageMargins.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Spikeclas.h">
+    <ClInclude Include="SpikeClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassListBox.h">
@@ -636,9 +648,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spikelist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="spikepar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgXYParameters.h">
@@ -1059,6 +1068,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassDescriptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="STIMDETECT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SPKDETECTPARM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SPKDETECTARRAY.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SPKCLASSIF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikeDetectArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

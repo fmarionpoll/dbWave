@@ -55,7 +55,7 @@ protected:
 
 	int m_zoom_integer = 0;
 	SPKDETECTARRAY* m_pArrayFromApp = nullptr;
-	CSpkDetectArray m_spk_detect_array_current;
+	SpikeDetectArray m_spk_detect_array_current;
 	SPKDETECTPARM* m_p_detect_parameters = nullptr;
 	int m_i_detect_parameters = 0;
 

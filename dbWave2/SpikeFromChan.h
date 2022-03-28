@@ -1,5 +1,6 @@
 #pragma once
-#include "spikepar.h"
+#include "SPKDETECTPARM.h"
+
 
 // parameters used for detection of spikes from data acquisition
 

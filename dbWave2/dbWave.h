@@ -13,7 +13,10 @@
 #include "OPTIONS_OUTPUTDATA.h"
 #include "OPTIONS_VIEWDATA.h"
 #include "OPTIONS_VIEWSPIKES.h"
-#include "spikepar.h"
+#include "SPKCLASSIF.h"
+#include "SPKDETECTARRAY.h"
+#include "STIMDETECT.h"
+
 
 class CdbWaveApp final : public CWinAppEx
 {
