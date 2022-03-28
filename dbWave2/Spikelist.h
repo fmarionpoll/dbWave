@@ -8,10 +8,11 @@
 
 
 
-// spikes from one data acquisition channel
-// it contains a description of the original data acqusition set,
-// how spikes were initially detected
-// parameters associated to each spike and data describing the spikes
+// spikes from one data acquisition channel:
+// - description of the original data acquisition set,
+// - how spikes were initially detected
+// - parameters associated to each spike
+// - data describing the spikes
 // only one data spike buffer (64Kb max) opened at a time
 //
 // this object has procedures to manage the list of spikes and to
