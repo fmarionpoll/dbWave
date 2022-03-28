@@ -24,12 +24,12 @@ public:
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	CdbWaveApp();
 
-	CdbMultiDocTemplate* m_pdbWaveViewTemplate;
-	CdbMultiDocTemplate* m_pdbBrowseViewTemplate{};
-	CdbMultiDocTemplate* m_pNoteViewTemplate{};
-	CdbMultiDocTemplate* m_pdataViewTemplate{};
-	CdbMultiDocTemplate* m_pspikeViewTemplate{};
-	CdbMultiDocTemplate* m_pADViewTemplate{};
+	CdbMultiDocTemplate* m_pdbWaveViewTemplate = nullptr;
+	CdbMultiDocTemplate* m_pdbBrowseViewTemplate = nullptr;
+	CdbMultiDocTemplate* m_pNoteViewTemplate = nullptr;
+	CdbMultiDocTemplate* m_pdataViewTemplate = nullptr;
+	CdbMultiDocTemplate* m_pspikeViewTemplate = nullptr;
+	CdbMultiDocTemplate* m_pADViewTemplate = nullptr;
 
 	HMENU m_hDBView{};
 	HMENU m_hDataView{};
@@ -44,7 +44,7 @@ public:
 
 	// Implementation
 	UINT m_nAppLook{};
-	BOOL m_bHiColorIcons;
+	BOOL m_bHiColorIcons = TRUE;
 
 	void PreLoadState() override;
 	void LoadCustomState() override;
@@ -63,13 +63,13 @@ public:
 	OPTIONS_ACQDATA options_acqdata;
 	OPTIONS_OUTPUTDATA options_outputdata;
 
-	CMemFile* m_pviewdataMemFile;
+	CMemFile* m_pviewdataMemFile = nullptr;
 	CArray<CMemFile*, CMemFile*> viewspikesmemfile_ptr_array;
-	CMemFile* m_pviewspikesMemFile;
-	CMemFile* m_psort1spikesMemFile;
+	CMemFile* m_pviewspikesMemFile = nullptr;
+	CMemFile* m_psort1spikesMemFile = nullptr;
 	CStringArray m_tempMDBfiles;
-	CSharedFile* m_psf{};
-	BOOL m_bADcardFound;
+	CSharedFile* m_psf = nullptr;
+	BOOL m_bADcardFound = TRUE;
 
 	void Defaultparameters(BOOL b_read);
 	BOOL ParmFile(CString& filename, BOOL b_read);

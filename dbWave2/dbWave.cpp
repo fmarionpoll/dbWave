@@ -70,8 +70,6 @@ void DisplayDaoException(CDaoException* e, int iID = 0)
 CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 {
 	EnableHtmlHelp();
-	m_bHiColorIcons = TRUE;
-
 	// support Restart Manager: yes
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_ALL_ASPECTS;
 #ifdef _MANAGED
@@ -82,12 +80,6 @@ CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 #endif
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
 	SetAppID(_T("FMP.dbWave2.VS2019.Jan-2019"));
-
-	m_pviewdataMemFile = nullptr;
-	m_pviewspikesMemFile = nullptr;
-	m_psort1spikesMemFile = nullptr;
-	m_pdbWaveViewTemplate = nullptr;
-	m_bADcardFound = TRUE;
 }
 
 BOOL CdbWaveApp::InitInstance()
