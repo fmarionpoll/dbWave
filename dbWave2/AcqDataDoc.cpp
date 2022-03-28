@@ -731,7 +731,7 @@ BOOL AcqDataDoc::CreateAcqFile(CString& cs_file_name)
 	return TRUE;
 }
 
-BOOL AcqDataDoc::WriteHZtags(CTagList* p_tags)
+BOOL AcqDataDoc::WriteHZtags(TagList* p_tags)
 {
 	if (p_tags == nullptr)
 		p_tags = m_pWBuf->GetpHZtags();
@@ -740,7 +740,7 @@ BOOL AcqDataDoc::WriteHZtags(CTagList* p_tags)
 	return m_pXFile->WriteHZtags(p_tags);
 }
 
-BOOL AcqDataDoc::WriteVTtags(CTagList* p_tags)
+BOOL AcqDataDoc::WriteVTtags(TagList* p_tags)
 {
 	if (p_tags == nullptr)
 		p_tags = m_pWBuf->GetpVTtags();

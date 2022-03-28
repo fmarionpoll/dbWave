@@ -11,11 +11,11 @@ public:
 
 	int CheckFileType(CString& cs_filename) override;
 	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
-	BOOL ReadHZtags(CTagList* pHZtags) override;
-	BOOL ReadVTtags(CTagList* pVTtags) override;
+	BOOL ReadHZtags(TagList* pHZtags) override;
+	BOOL ReadVTtags(TagList* pVTtags) override;
 	BOOL WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC) override;
-	BOOL WriteHZtags(CTagList* ptags) override;
-	BOOL WriteVTtags(CTagList* ptags) override;
+	BOOL WriteHZtags(TagList* ptags) override;
+	BOOL WriteVTtags(TagList* ptags) override;
 
 	// I/O operations to be updated by Save
 	BOOL InitFile() override;

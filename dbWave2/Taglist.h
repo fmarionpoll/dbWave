@@ -2,22 +2,22 @@
 
 #include "Tag.h"
 
-class CTagList : public CObject
+class TagList : public CObject
 {
 protected:
-	CArray<CTag*, CTag*> tag_ptr_array;
+	CArray<Tag*, Tag*> tag_ptr_array;
 	int m_version;
-	int insertTag(CTag* pcur);
+	int insertTag(Tag* pcur);
 
 	// Construction, Destruction
 public:
-	CTagList();
-	~CTagList() override;
+	TagList();
+	~TagList() override;
 
 	int AddTag(int val, int refchan); // Add a new tag, with  value and attached channel
 	int AddLTag(long lval, int refchan); // Add a new tag, with  value and attached channel
-	int AddTag(CTag& arg); // add a tag
-	void CopyTagList(CTagList* pTList); // copy list into current object; delete old objects
+	int AddTag(Tag& arg); // add a tag
+	void CopyTagList(TagList* pTList); // copy list into current object; delete old objects
 
 	int RemoveTag(int itag); // remove tag
 	void RemoveAllTags(); // remove all tags
@@ -36,7 +36,7 @@ public:
 	CString GetTagComment(int itag); // get comment
 
 	int GetNTags();
-	CTag* GetTag(int itag);
+	Tag* GetTag(int itag);
 
 	long Write(CFile* pdatafile);
 	BOOL Read(CFile* pdatafile);

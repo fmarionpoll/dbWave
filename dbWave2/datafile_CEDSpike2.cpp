@@ -194,7 +194,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 	if (adcChan >= 0)
 		convert_VTtags_Ticks_to_ADintervals(pBuf, adcChan);
 
-	CTagList* pTags = pBuf->GetpVTtags();
+	TagList* pTags = pBuf->GetpVTtags();
 	if (pTags != nullptr && pTags->GetNTags() > 0 && pWFormat->scan_count > 0)
 	{
 		for (int i = 0; i < p_array->ChanArray_getSize(); i++)
@@ -203,7 +203,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 			if (m_ticksPerSample != pChan->am_CEDticksPerSample)
 				m_ticksPerSample = pChan->am_CEDticksPerSample;
 		}
-		const CTag* pTag = pTags->GetTag(0);
+		const Tag* pTag = pTags->GetTag(0);
 		m_llFileOffset = pTag->m_lTicks / m_ticksPerSample;
 		const int newlength = pWFormat->sample_count - static_cast<int>(m_llFileOffset);
 		pWFormat->sample_count = newlength;
@@ -368,7 +368,7 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 
 void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 {
-	CTagList* pTags = pBuf->GetpVTtags();
+	TagList* pTags = pBuf->GetpVTtags();
 	pTags->RemoveAllTags();
 	int n_read = 0;
 	long long data = -1;
@@ -376,21 +376,21 @@ void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 	{
 		n_read = S64ReadEvents(m_nFid, cedChan, &data, 1, data + 1, -1, 0);
 		if (n_read > 0)
-			pTags->AddTag(CTag(data));
+			pTags->AddTag(Tag(data));
 	}
 	while (n_read > 0);
 }
 
 void CDataFileFromCEDSpike2::convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf, int cedChan)
 {
-	CTagList* p_tags = pBuf->GetpVTtags();
+	TagList* p_tags = pBuf->GetpVTtags();
 	const int n_tags = p_tags->GetNTags();
 	if (n_tags > 0)
 	{
 		const long long ticksPerSample = S64ChanDivide(m_nFid, cedChan);
 		for (int i = 0; i < n_tags; i++)
 		{
-			CTag* ptag = p_tags->GetTag(i);
+			Tag* ptag = p_tags->GetTag(i);
 			ptag->m_lvalue = static_cast<long>(ptag->m_lTicks / ticksPerSample);
 			ptag->m_refchan = cedChan;
 		}

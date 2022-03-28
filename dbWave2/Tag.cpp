@@ -5,31 +5,29 @@
 #define new DEBUG_NEW
 #endif
 
-// CTag : base element of CTagList
 
-IMPLEMENT_SERIAL(CTag, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(Tag, CObject, 0 /* schema number*/)
 
-CTag::CTag()
-{
-}
+Tag::Tag()
+= default;
 
-CTag::CTag(int ref_chan)
+Tag::Tag(int ref_chan)
 {
 	m_refchan = ref_chan;
 }
 
-CTag::CTag(int val, int ref_chan)
+Tag::Tag(int val, int ref_chan)
 {
 	m_refchan = ref_chan;
 	m_value = val;
 }
 
-CTag::CTag(long long lTicks)
+Tag::Tag(long long lTicks)
 {
 	m_lTicks = lTicks;
 }
 
-CTag::CTag(const CTag& hc)
+Tag::Tag(const Tag& hc)
 {
 	m_refchan = hc.m_refchan;
 	m_value = hc.m_value;
@@ -38,11 +36,11 @@ CTag::CTag(const CTag& hc)
 	m_csComment = hc.m_csComment;
 }
 
-CTag::~CTag()
+Tag::~Tag()
 {
 }
 
-CTag& CTag::operator =(const CTag& arg)
+Tag& Tag::operator =(const Tag& arg)
 {
 	if (this != &arg)
 	{
@@ -56,7 +54,7 @@ CTag& CTag::operator =(const CTag& arg)
 	return *this;
 }
 
-void CTag::Serialize(CArchive& ar)
+void Tag::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
@@ -80,7 +78,7 @@ void CTag::Serialize(CArchive& ar)
 	}
 }
 
-long CTag::Write(CFile* datafile)
+long Tag::Write(CFile* datafile)
 {
 	const auto p1 = datafile->GetPosition();
 	CArchive ar(datafile, CArchive::store);
@@ -90,7 +88,7 @@ long CTag::Write(CFile* datafile)
 	return static_cast<long>(p2 - p1);
 }
 
-BOOL CTag::Read(CFile* datafile)
+BOOL Tag::Read(CFile* datafile)
 {
 	CArchive ar(datafile, CArchive::load);
 	Serialize(ar);

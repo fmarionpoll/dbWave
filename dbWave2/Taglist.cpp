@@ -6,47 +6,45 @@
 #endif
 
 
-// Class CTagList implementation
-
-CTagList::CTagList()
+TagList::TagList()
 {
 	m_version = 1;
 }
 
-CTagList::~CTagList()
+TagList::~TagList()
 {
 	RemoveAllTags();
 }
 
-int CTagList::insertTag(CTag* pcur)
+int TagList::insertTag(Tag* pcur)
 {
 	return tag_ptr_array.Add(pcur);
 }
 
-int CTagList::AddTag(CTag& arg)
+int TagList::AddTag(Tag& arg)
 {
-	const auto pcur = new CTag;
+	const auto pcur = new Tag;
 	ASSERT(pcur != NULL);
 	*pcur = arg;
 	return insertTag(pcur);
 }
 
-int CTagList::AddTag(int val, int refChannel)
+int TagList::AddTag(int val, int refChannel)
 {
-	const auto pcur = new CTag(val, refChannel);
+	const auto pcur = new Tag(val, refChannel);
 	ASSERT(pcur != NULL);
 	return insertTag(pcur);
 }
 
 // Add a new cursor, with  value and attached channel
-int CTagList::AddLTag(long lval, int refchan)
+int TagList::AddLTag(long lval, int refchan)
 {
-	const auto pcur = new CTag(lval, refchan);
+	const auto pcur = new Tag(lval, refchan);
 	ASSERT(pcur != NULL);
 	return insertTag(pcur);
 }
 
-int CTagList::RemoveTag(int itag)
+int TagList::RemoveTag(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	delete pcur; // delete object pointed at
@@ -54,7 +52,7 @@ int CTagList::RemoveTag(int itag)
 	return tag_ptr_array.GetSize();
 }
 
-void CTagList::RemoveAllTags()
+void TagList::RemoveAllTags()
 {
 	const auto pos0 = tag_ptr_array.GetUpperBound();
 	if (pos0 >= 0)
@@ -65,7 +63,7 @@ void CTagList::RemoveAllTags()
 	}
 }
 
-int CTagList::RemoveChanTags(int refchan)
+int TagList::RemoveChanTags(int refchan)
 {
 	for (auto i = tag_ptr_array.GetUpperBound(); i >= 0; i--)
 	{
@@ -79,7 +77,7 @@ int CTagList::RemoveChanTags(int refchan)
 	return tag_ptr_array.GetSize();
 }
 
-void CTagList::SetTagVal(int itag, int newval)
+void TagList::SetTagVal(int itag, int newval)
 {
 	if (tag_ptr_array.GetSize() <= itag)
 	{
@@ -92,7 +90,7 @@ void CTagList::SetTagVal(int itag, int newval)
 		pcur->m_value = newval;
 }
 
-int CTagList::GetValue(int itag)
+int TagList::GetValue(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
@@ -101,7 +99,7 @@ int CTagList::GetValue(int itag)
 	return NULL;
 }
 
-int CTagList::GetChannel(int itag)
+int TagList::GetChannel(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
@@ -110,21 +108,21 @@ int CTagList::GetChannel(int itag)
 	return NULL;
 }
 
-void CTagList::SetTagChan(int itag, int newchan)
+void TagList::SetTagChan(int itag, int newchan)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr) // if the cursor exist change the m_value
 		pcur->m_refchan = newchan;
 }
 
-void CTagList::SetTagPix(int itag, int newval)
+void TagList::SetTagPix(int itag, int newval)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr) // if the cursor exist change the m_value
 		pcur->m_pixel = newval;
 }
 
-int CTagList::GetTagPix(int itag)
+int TagList::GetTagPix(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
@@ -132,7 +130,7 @@ int CTagList::GetTagPix(int itag)
 	return NULL;
 }
 
-void CTagList::SetTagLVal(int itag, long longval)
+void TagList::SetTagLVal(int itag, long longval)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	// if the cursor exist change the m_value
@@ -140,7 +138,7 @@ void CTagList::SetTagLVal(int itag, long longval)
 		pcur->m_lvalue = longval;
 }
 
-long CTagList::GetTagLVal(int itag)
+long TagList::GetTagLVal(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr)
@@ -148,14 +146,14 @@ long CTagList::GetTagLVal(int itag)
 	return NULL;
 }
 
-void CTagList::SetTagComment(int itag, CString comment)
+void TagList::SetTagComment(int itag, CString comment)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	if (pcur != nullptr) // if the cursor exist change the m_value
 		pcur->m_csComment = comment;
 }
 
-CString CTagList::GetTagComment(int itag)
+CString TagList::GetTagComment(int itag)
 {
 	const auto pcur = tag_ptr_array.GetAt(itag);
 	CString cs;
@@ -164,19 +162,19 @@ CString CTagList::GetTagComment(int itag)
 	return cs;
 }
 
-int CTagList::GetNTags()
+int TagList::GetNTags()
 {
 	return tag_ptr_array.GetSize();
 }
 
-CTag* CTagList::GetTag(int itag)
+Tag* TagList::GetTag(int itag)
 {
 	if (itag >= 0 && itag < tag_ptr_array.GetSize())
 		return tag_ptr_array.GetAt(itag);
 	return nullptr;
 }
 
-void CTagList::CopyTagList(CTagList* pTList)
+void TagList::CopyTagList(TagList* pTList)
 {
 	if (pTList == this || pTList == nullptr)
 		return;
@@ -189,7 +187,7 @@ void CTagList::CopyTagList(CTagList* pTList)
 		const auto ptag = pTList->GetTag(i);
 		if (ptag != nullptr)
 		{
-			const auto pcur = new CTag;
+			const auto pcur = new Tag;
 			ASSERT(pcur != NULL);
 			pcur->m_refchan = ptag->m_refchan;
 			pcur->m_pixel = ptag->m_pixel;
@@ -200,7 +198,7 @@ void CTagList::CopyTagList(CTagList* pTList)
 	}
 }
 
-long CTagList::Write(CFile* pdatafile)
+long TagList::Write(CFile* pdatafile)
 {
 	long l_size = sizeof(int);
 	pdatafile->Write(&m_version, l_size);
@@ -216,7 +214,7 @@ long CTagList::Write(CFile* pdatafile)
 	return l_size;
 }
 
-BOOL CTagList::Read(CFile* pdatafile)
+BOOL TagList::Read(CFile* pdatafile)
 {
 	int version;
 	pdatafile->Read(&version, sizeof(int));
@@ -225,7 +223,7 @@ BOOL CTagList::Read(CFile* pdatafile)
 
 	for (auto i = 0; i < nelemts; i++)
 	{
-		auto ptag = new CTag;
+		auto ptag = new Tag;
 		ASSERT(ptag != NULL);
 		ptag->Read(pdatafile);
 		tag_ptr_array.Add(ptag);

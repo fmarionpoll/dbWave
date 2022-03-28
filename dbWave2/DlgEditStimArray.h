@@ -1,7 +1,7 @@
 #pragma once
 #include "IntervalsListCtrl.h"
-#include "Spikedoc.h"
 #include "StretchControls.h"
+#include "Taglist.h"
 
 
 class DlgEditStimArray : public CDialog
@@ -12,7 +12,7 @@ class DlgEditStimArray : public CDialog
 	~DlgEditStimArray() override;
 
 	// data passed by caller
-	CTagList*	tag_list {nullptr};
+	TagList*	tag_list {nullptr};
 	CIntervals	intervals_saved {};
 	CIntervals	intervals{};
 	float		m_sampling_rate = 0.f;

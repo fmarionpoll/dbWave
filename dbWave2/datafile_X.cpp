@@ -63,12 +63,12 @@ BOOL CDataFileX::ReadDataInfos(CWaveBuf* pBuf)
 	return TRUE;
 }
 
-BOOL CDataFileX::ReadHZtags(CTagList* pHZtags)
+BOOL CDataFileX::ReadHZtags(TagList* pHZtags)
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::ReadVTtags(CTagList* pVTtags)
+BOOL CDataFileX::ReadVTtags(TagList* pVTtags)
 {
 	return FALSE;
 }
@@ -99,12 +99,12 @@ BOOL CDataFileX::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 	return FALSE;
 }
 
-BOOL CDataFileX::WriteHZtags(CTagList* ptags)
+BOOL CDataFileX::WriteHZtags(TagList* ptags)
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::WriteVTtags(CTagList* ptags)
+BOOL CDataFileX::WriteVTtags(TagList* ptags)
 {
 	return FALSE;
 }

@@ -128,8 +128,8 @@ public:
 	CRulerBar* m_pXRulerBar = nullptr;
 	CRulerBar* m_pYRulerBar = nullptr;
 
-	CTagList m_HZtags{}; // List of horizontal tag lines
-	CTagList m_VTtags{}; // List of vertical tag lines
+	TagList m_HZtags{}; // List of horizontal tag lines
+	TagList m_VTtags{}; // List of vertical tag lines
 	CString m_csBottomComment{};
 	BOOL m_bBottomComment = false;
 
@@ -203,7 +203,7 @@ protected:
 
 	BOOL m_bAllowProps = true;
 	HWND m_hwndReflect = nullptr;
-	CTag* m_tempVTtag = nullptr;
+	Tag* m_tempVTtag = nullptr;
 
 protected:
 	void PreSubclassWindow() override;

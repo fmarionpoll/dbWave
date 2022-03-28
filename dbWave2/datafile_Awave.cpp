@@ -79,7 +79,7 @@ int CDataFileAWAVE::CheckFileType(CString& csFileName)
 
 // load horizontal tags if they are present
 
-BOOL CDataFileAWAVE::ReadHZtags(CTagList* pHZtags)
+BOOL CDataFileAWAVE::ReadHZtags(TagList* pHZtags)
 {
 	CSubfileItem* p_struct; // CStruct pointer
 	if (!m_structMap.Lookup(STRUCT_HZTAGS, reinterpret_cast<CObject*&>(p_struct)))
@@ -96,7 +96,7 @@ BOOL CDataFileAWAVE::ReadHZtags(CTagList* pHZtags)
 
 // load vertical tags if they are present
 
-BOOL CDataFileAWAVE::ReadVTtags(CTagList* pVTtags)
+BOOL CDataFileAWAVE::ReadVTtags(TagList* pVTtags)
 {
 	CSubfileItem* p_struct; // CStruct pointer
 	if (!m_structMap.Lookup(STRUCT_VTAGS, reinterpret_cast<CObject*&>(p_struct)))
@@ -209,7 +209,7 @@ void CDataFileAWAVE::WriteFileMap()
 
 // write tags horizontal or vertical
 
-BOOL CDataFileAWAVE::WriteHZtags(CTagList* ptags)
+BOOL CDataFileAWAVE::WriteHZtags(TagList* ptags)
 {
 	CSubfileItem* p_struct;
 
@@ -227,7 +227,7 @@ BOOL CDataFileAWAVE::WriteHZtags(CTagList* ptags)
 	return TRUE;
 }
 
-BOOL CDataFileAWAVE::WriteVTtags(CTagList* ptags)
+BOOL CDataFileAWAVE::WriteVTtags(TagList* ptags)
 {
 	CSubfileItem* p_struct;
 

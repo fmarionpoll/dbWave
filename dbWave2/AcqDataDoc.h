@@ -76,8 +76,8 @@ public:
 	short* LoadRawDataParams(int* n_channels);
 
 	// write data
-	BOOL WriteHZtags(CTagList* ptags);
-	BOOL WriteVTtags(CTagList* ptags);
+	BOOL WriteHZtags(TagList* ptags);
+	BOOL WriteVTtags(TagList* ptags);
 	BOOL AcqDoc_DataAppendStart();
 	BOOL AcqDoc_DataAppend(short* pBU, UINT uilbytesLength) const;
 	BOOL AcqDoc_DataAppendStop();
@@ -98,8 +98,8 @@ public:
 
 	CWaveChanArray* GetpWavechanArray() const { return &m_pWBuf->m_chanArray; }
 	CWaveFormat* GetpWaveFormat() const { return &m_pWBuf->m_waveFormat; }
-	CTagList* GetpHZtags() { return m_pWBuf->GetpHZtags(); }
-	CTagList* GetpVTtags() { return m_pWBuf->GetpVTtags(); }
+	TagList* GetpHZtags() { return m_pWBuf->GetpHZtags(); }
+	TagList* GetpVTtags() { return m_pWBuf->GetpVTtags(); }
 
 	int GetScanCount() const { return m_pWBuf->m_waveFormat.scan_count; }
 

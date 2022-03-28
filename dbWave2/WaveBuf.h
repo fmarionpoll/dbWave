@@ -25,8 +25,8 @@ public:
 	void SetWBSampleRate(float fSampRate);
 	float GetWBSampleRate() const;
 	BOOL GetWBVoltsperBin(int ch_index, float* volts_per_bin, int mode = 0) const;
-	CTagList* GetpHZtags() { return &m_hz_tags; }
-	CTagList* GetpVTtags() { return &m_vt_tags; }
+	TagList* GetpHZtags() { return &m_hz_tags; }
+	TagList* GetpVTtags() { return &m_vt_tags; }
 	CWaveChanArray* GetpWavechanArray() { return &m_chanArray; }
 	CWaveFormat* GetpWaveFormat() { return &m_waveFormat; }
 
@@ -76,8 +76,8 @@ protected:
 
 	CWaveChanArray m_chanArray{}; // array of structures with the channel description
 	CWaveFormat m_waveFormat{}; // structure with data acquisition def & parameters
-	CTagList m_hz_tags{}; // list of horizontal cursors
-	CTagList m_vt_tags{}; // list of vertical tags
+	TagList m_hz_tags{}; // list of horizontal cursors
+	TagList m_vt_tags{}; // list of vertical tags
 
 
 	static int m_maxtransform; // number of transformations allowed

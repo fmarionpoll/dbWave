@@ -1074,7 +1074,7 @@ void ChartWnd::XorTempVTtag(int xpoint)
 {
 	if (m_tempVTtag == nullptr)
 	{
-		m_tempVTtag = new CTag;
+		m_tempVTtag = new Tag;
 		m_ptLast.x = -1;
 	}
 	XorVTtag(xpoint);

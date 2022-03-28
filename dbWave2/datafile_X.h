@@ -23,8 +23,8 @@ public:
 	virtual int CheckFileType(CString& cs_filename);
 	virtual BOOL ReadDataInfos(CWaveBuf* pBuf);
 	virtual long ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray);
-	virtual BOOL ReadHZtags(CTagList* pHZtags);
-	virtual BOOL ReadVTtags(CTagList* pVTtags);
+	virtual BOOL ReadHZtags(TagList* pHZtags);
+	virtual BOOL ReadVTtags(TagList* pVTtags);
 
 	// I/O operations to be updated by Save
 	virtual BOOL InitFile();
@@ -32,8 +32,8 @@ public:
 	virtual BOOL DataAppend(short* pBU, UINT uibytesLength);
 	virtual BOOL DataAppendStop();
 	virtual BOOL WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC);
-	virtual BOOL WriteHZtags(CTagList* ptags);
-	virtual BOOL WriteVTtags(CTagList* ptags);
+	virtual BOOL WriteHZtags(TagList* ptags);
+	virtual BOOL WriteVTtags(TagList* ptags);
 
 	//data parameters
 	UINT m_u_open_flag;
