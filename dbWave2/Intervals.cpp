@@ -93,7 +93,7 @@ void CIntervals::Serialize(CArchive& ar)
 		else // old version
 		{
 			ar >> n;
-			ar >> cs_descriptor; // descriptor of the array
+			ar >> cs_descriptor; 
 			ar >> n;
 			array.Serialize(ar);
 		}

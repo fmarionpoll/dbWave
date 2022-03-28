@@ -41,17 +41,22 @@ void SpikeClass::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		// store attributes
-		ar << static_cast<WORD>(m_n_classes);
-		ar << static_cast<WORD>(m_spike_size);
+		w1 = static_cast<WORD>(m_n_classes);  ar << w1;
+		w2 = static_cast<WORD>(m_spike_size); ar << w2;
 		ar << m_buffer_size;
+
 		// store array
 		for (auto i = 0; i < m_n_classes; i++)
+		{
 			ar << static_cast<WORD>(*(m_elements_array + i));
+		}
 
 		// store buffer
 		const int buffer_total_size = m_n_classes * m_spike_size;
 		for (auto i = 0; i < buffer_total_size; i++)
+		{
 			ar << static_cast<WORD>(*(m_class_buffer + i));
+		}
 	}
 	else
 	{

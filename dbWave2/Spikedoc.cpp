@@ -53,14 +53,6 @@ END_MESSAGE_MAP()
 
 void CSpikeDoc::Serialize(CArchive& ar)
 {
-	// ---------------------  spike file ---------------------
-	// header
-	// spikes
-	// classes
-	// stimulus
-	// comments...
-	// ---------------------  spike file ---------------------
-
 	if (ar.IsStoring())
 	{
 		m_wVersion = 7;
@@ -146,7 +138,7 @@ void CSpikeDoc::read_before_version6(CArchive& ar, WORD wwVersion)
 	spike_list_array.RemoveAll();
 	spike_list_array.SetSize(1);
 	spike_list_array[0].Serialize(ar);
-	m_spike_class.Serialize(ar);
+	//m_spike_class.Serialize(ar);
 }
 
 void CSpikeDoc::read_version6(CArchive& ar)
@@ -180,11 +172,12 @@ void CSpikeDoc::read_version6(CArchive& ar)
 	spike_list_array.SetSize(1);
 	spike_list_array[0].Serialize(ar);
 	SortStimArray();
-	m_spike_class.Serialize(ar);
+	//m_spike_class.Serialize(ar);
 }
 
 void CSpikeDoc::serialize_v7(CArchive& ar)
 {
+	int n_spike_arrays = 0;
 	if (ar.IsStoring())
 	{
 		ar << m_detection_date;			// W2
@@ -201,10 +194,8 @@ void CSpikeDoc::serialize_v7(CArchive& ar)
 		n_items = 1; ar << n_items;
 		m_stimulus_intervals.Serialize(ar);
 
-		n_items = spike_list_array.GetSize(); ar << n_items;
-		for (int i = 0; i < n_items; i++)
-			spike_list_array[i].Serialize(ar);
-		m_spike_class.Serialize(ar);
+		n_spike_arrays = spike_list_array.GetSize(); ar << n_spike_arrays;
+		n_spike_arrays = n_items;
 	}
 	else
 	{
@@ -224,11 +215,13 @@ void CSpikeDoc::serialize_v7(CArchive& ar)
 		SortStimArray();
 
 		spike_list_array.RemoveAll();
-		ar >> n_items; spike_list_array.SetSize(n_items);
-		for (int i = 0; i < n_items; i++)
-			spike_list_array[i].Serialize(ar);
-		m_spike_class.Serialize(ar);
+		ar >> n_items; n_spike_arrays = n_items;
+		spike_list_array.SetSize(n_items);		
 	}
+
+	for (int i = 0; i < n_spike_arrays; i++)
+		spike_list_array[i].Serialize(ar);
+	//m_spike_class.Serialize(ar);
 }
 
 // CSpikeDoc commands

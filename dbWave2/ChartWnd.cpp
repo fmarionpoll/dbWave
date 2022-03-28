@@ -247,10 +247,8 @@ void ChartWnd::OnPaint()
 	CPaintDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
 
-	// plot directly on the screen
 	if (!m_bUseDIB)
 		PlotDatatoDC(&dc);
-		// display the bitmap
 	else
 		PlotToBitmap(&dc);
 }
