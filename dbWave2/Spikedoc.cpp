@@ -63,35 +63,15 @@ void CSpikeDoc::Serialize(CArchive& ar)
 
 	if (ar.IsStoring())
 	{
+		m_wVersion = 7;
 		ar << m_wVersion; // W1
-		ar << m_detection_date; // W2
-		ar << m_comment; // W3
-		ar << m_acquisition_file; // W4
-		ar << m_acquisition_comment; // W5
-		ar << m_acquisition_time; // W6
-		ar << m_acquisition_rate; // W7
-		ar << m_acquisition_size; // W8
-
-		int nitems = 1;
-		ar << nitems; // W9
-		m_wave_format.Serialize(ar); // W10
-
-		nitems = 1;
-		ar << nitems; // W11
-		m_stimulus_intervals.Serialize(ar);
-
-		nitems = spike_list_array.GetSize(); // added Aug 23, 2005
-		ar << nitems;
-		for (int i = 0; i < nitems; i++)
-			spike_list_array[i].Serialize(ar);
-		m_spike_class.Serialize(ar);
+		serialize_v7(ar);
 	}
 	else
 	{
-		WORD wwVersion;
-		ar >> wwVersion; // R1
+		WORD wwVersion; ar >> wwVersion; // W1
 		if (wwVersion == 7)
-			read_version7(ar);
+			serialize_v7(ar);
 		else if (wwVersion == 6)
 			read_version6(ar);
 		else if (wwVersion < 6)
@@ -203,35 +183,52 @@ void CSpikeDoc::read_version6(CArchive& ar)
 	m_spike_class.Serialize(ar);
 }
 
-void CSpikeDoc::read_version7(CArchive& ar)
+void CSpikeDoc::serialize_v7(CArchive& ar)
 {
-	ar >> m_detection_date; // W2
-	ar >> m_comment; // W3
-	ar >> m_acquisition_file; // W4
-	ar >> m_acquisition_comment; // W5
-	ar >> m_acquisition_time; // W6
-	ar >> m_acquisition_rate; // W7
-	ar >> m_acquisition_size; // W8
+	if (ar.IsStoring())
+	{
+		ar << m_detection_date;			// W2
+		ar << m_comment;				// W3
+		ar << m_acquisition_file;		// W4
+		ar << m_acquisition_comment;	// W5
+		ar << m_acquisition_time;		// W6
+		ar << m_acquisition_rate;		// W7
+		ar << m_acquisition_size;		// W8
 
-	int n_items;
-	ar >> n_items; // W9
-	ASSERT(n_items == 1);
-	m_wave_format.Serialize(ar);
+		int n_items = 1; ar << n_items;
+		m_wave_format.Serialize(ar); 
 
-	int i_size;
-	ar >> i_size;
-	ASSERT(i_size <= 1);
-	for (int i = 0; i < i_size; i++)
+		n_items = 1; ar << n_items;
 		m_stimulus_intervals.Serialize(ar);
-	SortStimArray();
 
-	spike_list_array.RemoveAll();
-	ar >> i_size;
+		n_items = spike_list_array.GetSize(); ar << n_items;
+		for (int i = 0; i < n_items; i++)
+			spike_list_array[i].Serialize(ar);
+		m_spike_class.Serialize(ar);
+	}
+	else
+	{
+		ar >> m_detection_date;
+		ar >> m_comment;
+		ar >> m_acquisition_file;
+		ar >> m_acquisition_comment;
+		ar >> m_acquisition_time;
+		ar >> m_acquisition_rate;
+		ar >> m_acquisition_size;
 
-	spike_list_array.SetSize(i_size);
-	for (int i = 0; i < i_size; i++)
-		spike_list_array[i].Serialize(ar);
-	m_spike_class.Serialize(ar);
+		int n_items; ar >> n_items; 
+		m_wave_format.Serialize(ar);
+
+		ar >> n_items;
+		m_stimulus_intervals.Serialize(ar);
+		SortStimArray();
+
+		spike_list_array.RemoveAll();
+		ar >> n_items; spike_list_array.SetSize(n_items);
+		for (int i = 0; i < n_items; i++)
+			spike_list_array[i].Serialize(ar);
+		m_spike_class.Serialize(ar);
+	}
 }
 
 // CSpikeDoc commands

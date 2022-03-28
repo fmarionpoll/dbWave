@@ -261,15 +261,12 @@ bool SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		else
 		{
 			m_extrema_valid = FALSE;
-			m_only_valid_classes = FALSE;
-			m_n_classes = 1;
+
 			m_spike_class_descriptor_array.SetSize(1);
 			m_spike_class_descriptor_array.SetAt(0, SpikeClassDescriptor(0, 0));
 			long dummy;
-			ar >> dummy;
-			m_only_valid_classes = dummy;
-			ar >> dummy;
-			m_n_classes = dummy;
+			ar >> dummy; m_only_valid_classes = dummy;
+			ar >> dummy; m_n_classes = dummy;
 			
 			if (m_n_classes >= 0)
 			{

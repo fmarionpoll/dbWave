@@ -91,9 +91,9 @@ public:
 
 protected:
 	void Serialize(CArchive& ar) override;
+	void serialize_v7(CArchive& ar);
 	void read_before_version6(CArchive& ar, WORD wwVersion);
 	void read_version6(CArchive& ar);
-	void read_version7(CArchive& ar);
 	void set_file_extension_as_spk(CString& filename);
 
 	// Generated message map functions
