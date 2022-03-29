@@ -56,7 +56,7 @@ void SPKDETECTARRAY::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		wversion = 4;
-		ar << wversion; // wversion = 4
+		ar << wversion; // w_version_number = 4
 		const auto narrays = chanArrayMap.GetSize();
 		ar << narrays;
 		auto pos = chanArrayMap.GetStartPosition();

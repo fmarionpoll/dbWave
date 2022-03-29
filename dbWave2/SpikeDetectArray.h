@@ -4,8 +4,9 @@
 class SpikeDetectArray : public CObject
 {
 	DECLARE_SERIAL(SpikeDetectArray)
-public:
-	BOOL bChanged; // flag set TRUE if contents has changed
+
+	BOOL bChanged = FALSE; // flag set TRUE if contents has changed
+
 	int AddItem(); // add one parameter array item
 	int RemoveItem(int i);
 	SPKDETECTPARM* GetItem(int i) { return spkdetectparm_ptr_array.GetAt(i); }
@@ -14,7 +15,7 @@ public:
 	void SetSize(int nitems);
 
 protected:
-	WORD wversion; // version number
+	WORD w_version_number = 4;
 	void DeleteArray();
 	CArray<SPKDETECTPARM*, SPKDETECTPARM*> spkdetectparm_ptr_array; // array with SPKDETECTPARM objects
 

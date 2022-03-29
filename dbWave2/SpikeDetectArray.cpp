@@ -12,12 +12,10 @@ IMPLEMENT_SERIAL(SpikeDetectArray, CObject, 0)
 
 SpikeDetectArray::SpikeDetectArray()
 {
-	bChanged = FALSE;
-	wversion = 4;
-	auto pparm = new SPKDETECTPARM;
-	ASSERT(pparm != NULL);
+	const auto spk_detect_parameters = new SPKDETECTPARM;
+	ASSERT(spk_detect_parameters != NULL);
 	spkdetectparm_ptr_array.SetSize(0);
-	spkdetectparm_ptr_array.Add(pparm);
+	spkdetectparm_ptr_array.Add(spk_detect_parameters);
 }
 
 SpikeDetectArray::~SpikeDetectArray()
@@ -96,7 +94,7 @@ void SpikeDetectArray::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << wversion;
+		ar << w_version_number;
 		const WORD n_items = spkdetectparm_ptr_array.GetSize();
 		ar << n_items;
 		for (auto i = 0; i < n_items; i++)
