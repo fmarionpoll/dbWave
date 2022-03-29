@@ -230,9 +230,7 @@ void ViewSpikeDetection::update_legends()
 
 void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 {
-	// update spike doc and temporary spike list
 	const auto pdb_doc = GetDocument();
-	//CString filename = pdb_doc->GetDB_CurrentSpkFileName();
 	if (pdb_doc->OpenCurrentSpikeFile() == nullptr)
 	{
 		// file not found: create new object, and create file
@@ -255,10 +253,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	// select a spike list
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	if (m_pSpkList == nullptr && m_pSpkDoc->GetSpkList_Size() > 0)
-	{
-		// at least one spike list is available, select list[0]
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(0);
-	}
 
 	// no spikes list available, create one
 	if (m_pSpkList == nullptr)

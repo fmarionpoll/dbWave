@@ -40,8 +40,7 @@ void SpikeList::Serialize(CArchive& ar)
 			read_file_version1(ar);
 		else
 		{
-			WORD version;
-			ar >> version;
+			WORD version; ar >> version;
 			if (version == 6)
 				read_file_version6(ar);
 			else if (version == 5)
@@ -102,9 +101,9 @@ void SpikeList::write_file_version6(CArchive& ar)
 void SpikeList::read_file_version6(CArchive& ar)
 {
 	if (!serialize_data_parameters(ar)) return;
-	if (serialize_spike_elements(ar)) return;
-	if (serialize_spike_data(ar)) return;
-	if (serialize_spike_class_descriptors(ar)) return;
+	if (!serialize_spike_elements(ar)) return;
+	if (!serialize_spike_data(ar)) return;
+	if (!serialize_spike_class_descriptors(ar)) return;
 	serialize_additional_data(ar);
 }
 
@@ -219,9 +218,13 @@ bool SpikeList::serialize_spike_data(CArchive& ar)
 			m_spike_buffer.SetSpikeLength(spike_length);
 			m_spike_buffer.m_bin_zero = GetAcqBinzero();
 
-			const auto n_bytes = spike_length * sizeof(short) * n_spikes;
-			const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
-			ar.Read(lp_dest, n_bytes);
+			const auto n_bytes = spike_length * sizeof(short) ;
+			auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
+			for (auto i = 0; i < n_spikes; i++)
+			{
+				lp_dest = m_spike_buffer.GetSpike(i);
+				ar.Read(lp_dest, n_bytes);
+			}
 		}
 	}
 	catch (CArchiveException& e)

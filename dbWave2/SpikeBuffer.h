@@ -1,6 +1,6 @@
 #pragma once
 
-// CSpikeBuffer stores data collected from data acquisition files
+// stores data collected from data acquisition files
 
 class CSpikeBuffer : public CObject
 {
@@ -12,7 +12,7 @@ public:
 
 	// Attributes
 protected:
-	int m_spike_length{};					// length of one spike
+	int m_spike_length = 60;					// length of one spike
 public:
 	int m_spk_buffer_increment{};
 	int m_spk_buffer_length{};				// current buffer length
