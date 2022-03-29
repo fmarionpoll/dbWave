@@ -44,7 +44,7 @@ protected:
 
 	// (1) ---------------infos about data acquisition and spike detection ------------------
 	CWaveChan m_acquisition_channel{};	
-	WORD m_data_encoding_mode{};
+	WORD m_data_encoding_mode = 0;
 	long m_bin_zero = 4096; 
 	float m_sampling_rate = 10000.f;
 	float m_volts_per_bin = 0.001f; 
@@ -186,8 +186,8 @@ protected:
 	void read_file_version_before5(CArchive& ar, int version);
 	void read_file_version5(CArchive& ar);
 	void read_file_version6(CArchive& ar);
-
 	void write_file_version6(CArchive& ar);
+
 	void delete_arrays();
 	bool serialize_data_parameters(CArchive& ar);
 	bool serialize_spike_elements(CArchive& ar);

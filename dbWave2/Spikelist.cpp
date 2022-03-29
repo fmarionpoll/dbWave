@@ -26,6 +26,9 @@ void SpikeList::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
+		ar << ID_string;
+		m_version = 6;
+		ar << m_version;
 		write_file_version6(ar);
 	}
 	else
@@ -87,9 +90,6 @@ void SpikeList::remove_artefacts()
 
 void SpikeList::write_file_version6(CArchive& ar)
 {
-	ar << ID_string;
-	ar << m_version; 
-
 	serialize_data_parameters(ar);
 	serialize_spike_elements(ar);
 	serialize_spike_data(ar);
@@ -166,9 +166,7 @@ bool SpikeList::serialize_spike_elements(CArchive& ar)
 		}
 		else
 		{
-			WORD w1;
-			ar >> w1;
-			const int n_spikes = w1;
+			WORD w1; ar >> w1; const int n_spikes = w1;
 			m_spike_elements.SetSize(n_spikes);
 			for (auto i = 0; i < n_spikes; i++)
 			{
@@ -202,7 +200,7 @@ bool SpikeList::serialize_spike_data(CArchive& ar)
 		const auto n_spikes = m_spike_elements.GetSize();
 		if (ar.IsStoring())
 		{
-			const auto spike_length = m_spike_buffer.GetSpikeLength();
+			const WORD spike_length = m_spike_buffer.GetSpikeLength();
 			ar << spike_length;
 
 			const auto n_bytes = spike_length * sizeof(short);
@@ -301,7 +299,7 @@ bool SpikeList::serialize_additional_data(CArchive& ar)
 	{
 		if (ar.IsStoring())
 		{
-			constexpr auto n_parameters = 4;
+			constexpr int n_parameters = 4;
 			ar << n_parameters;
 			ar << m_icenter1SL;
 			ar << m_icenter2SL;
@@ -337,7 +335,6 @@ bool SpikeList::serialize_additional_data(CArchive& ar)
 
 void SpikeList::read_file_version5(CArchive& ar)
 {
-	
 	serialize_data_parameters(ar);
 
 	WORD w1;
