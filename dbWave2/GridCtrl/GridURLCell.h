@@ -1,4 +1,4 @@
-// GridURLCell.h: interface for the CGridURLCell class.
+// GridURLCell.h: interface for the GridURLCell class.
 //
 //////////////////////////////////////////////////////////////////////
 #pragma once
@@ -11,13 +11,13 @@ using URLStruct = struct
 	size_t nLength;
 };
 
-class CGridURLCell : public CGridCell
+class GridURLCell : public GridCell
 {
-	DECLARE_DYNCREATE(CGridURLCell)
+	DECLARE_DYNCREATE(GridURLCell)
 
 public:
-	CGridURLCell();
-	~CGridURLCell() override;
+	GridURLCell();
+	~GridURLCell() override;
 
 	BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
 	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;

@@ -34,8 +34,7 @@ CSpikeClassListBox::CSpikeClassListBox()
 }
 
 CSpikeClassListBox::~CSpikeClassListBox()
-{
-}
+= default;
 
 LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {

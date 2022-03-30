@@ -2,7 +2,7 @@
 //
 // MFC Grid Control - Drag/Drop target implementation
 //
-// CGridDropTarget is an OLE drop target for CGridCtrl. All it does
+// GridDropTarget is an OLE drop target for GridCtrl. All it does
 // is handle the drag and drop windows messages and pass them
 // directly onto the grid control.
 //
@@ -21,7 +21,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -38,22 +38,22 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CGridDropTarget
+// GridDropTarget
 
-CGridDropTarget::CGridDropTarget()
+GridDropTarget::GridDropTarget()
 {
 	m_pGridCtrl = nullptr;
 	m_bRegistered = FALSE;
 }
 
-CGridDropTarget::~CGridDropTarget()
+GridDropTarget::~GridDropTarget()
 {
 }
 
 // Overloaded Register() function performs the normal COleDropTarget::Register
 // but also serves to connect this COleDropTarget with the parent grid control,
 // where all drop messages will ultimately be forwarded.
-BOOL CGridDropTarget::Register(CGridCtrl* pGridCtrl)
+BOOL GridDropTarget::Register(GridCtrl* pGridCtrl)
 {
 	if (m_bRegistered)
 		return FALSE;
@@ -64,10 +64,10 @@ BOOL CGridDropTarget::Register(CGridCtrl* pGridCtrl)
 		return FALSE;
 	bInProcedure = TRUE;
 
-	ASSERT(pGridCtrl->IsKindOf(RUNTIME_CLASS(CGridCtrl)));
+	ASSERT(pGridCtrl->IsKindOf(RUNTIME_CLASS(GridCtrl)));
 	ASSERT(pGridCtrl);
 
-	if (!pGridCtrl || !pGridCtrl->IsKindOf(RUNTIME_CLASS(CGridCtrl)))
+	if (!pGridCtrl || !pGridCtrl->IsKindOf(RUNTIME_CLASS(GridCtrl)))
 	{
 		bInProcedure = FALSE;
 		return FALSE;
@@ -81,20 +81,20 @@ BOOL CGridDropTarget::Register(CGridCtrl* pGridCtrl)
 	return m_bRegistered;
 }
 
-void CGridDropTarget::Revoke()
+void GridDropTarget::Revoke()
 {
 	m_bRegistered = FALSE;
 	COleDropTarget::Revoke();
 }
 
-BEGIN_MESSAGE_MAP(CGridDropTarget, COleDropTarget)
+BEGIN_MESSAGE_MAP(GridDropTarget, COleDropTarget)
 
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CGridDropTarget message handlers
+// GridDropTarget message handlers
 
-DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint /*point*/)
+DROPEFFECT GridDropTarget::OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint /*point*/)
 {
 	if (m_pGridCtrl && ((p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())))
 	{
@@ -105,7 +105,7 @@ DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* p_wnd, DWORD dwKeyState, CPoint /
 	return DROPEFFECT_NONE;
 }
 
-DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject,
+DROPEFFECT GridDropTarget::OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject,
                                         DWORD dwKeyState, CPoint point)
 {
 	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
@@ -113,13 +113,13 @@ DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* p_wnd, COleDataObject* pDataObject
 	return DROPEFFECT_NONE;
 }
 
-void CGridDropTarget::OnDragLeave(CWnd* p_wnd)
+void GridDropTarget::OnDragLeave(CWnd* p_wnd)
 {
 	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
 		m_pGridCtrl->OnDragLeave();
 }
 
-DROPEFFECT CGridDropTarget::OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject,
+DROPEFFECT GridDropTarget::OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject,
                                        DWORD dwKeyState, CPoint point)
 {
 	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))
@@ -127,7 +127,7 @@ DROPEFFECT CGridDropTarget::OnDragOver(CWnd* p_wnd, COleDataObject* pDataObject,
 	return DROPEFFECT_NONE;
 }
 
-BOOL CGridDropTarget::OnDrop(CWnd* p_wnd, COleDataObject* pDataObject,
+BOOL GridDropTarget::OnDrop(CWnd* p_wnd, COleDataObject* pDataObject,
                              DROPEFFECT dropEffect, CPoint point)
 {
 	if ((m_pGridCtrl) && (p_wnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd()))

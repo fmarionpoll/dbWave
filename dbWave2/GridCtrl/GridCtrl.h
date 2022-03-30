@@ -18,180 +18,32 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_GRIDCTRL_H__519FA702_722C_11D1_ABBA_00A0243D1382__INCLUDED_)
-#define AFX_GRIDCTRL_H__519FA702_722C_11D1_ABBA_00A0243D1382__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
+#include "GridDefines.h"
 #include "GridCellRange.h"
 #include "GridCell.h"
 #include <vector>
 
 
-///////////////////////////////////////////////////////////////////////////////////
-// Defines - these determine the features (and the final size) of the final code
-///////////////////////////////////////////////////////////////////////////////////
-
-//#define GRIDCONTROL_NO_TITLETIPS   // Do not use titletips for cells with large data
-//#define GRIDCONTROL_NO_DRAGDROP    // Do not use OLE drag and drop
-//#define GRIDCONTROL_NO_CLIPBOARD   // Do not use clipboard routines
-
-#ifdef _WIN32_WCE
-#   define GRIDCONTROL_NO_TITLETIPS   // Do not use titletips for cells with large data
-#   define GRIDCONTROL_NO_DRAGDROP    // Do not use OLE drag and drop
-#   define GRIDCONTROL_NO_CLIPBOARD   // Do not use clipboard routines
-#   define GRIDCONTROL_NO_PRINTING    // Do not use printing routines
-#   ifdef WCE_NO_PRINTING			  // Older versions of CE had different #def's
-#       define _WIN32_WCE_NO_PRINTING
-#   endif
-#   ifdef WCE_NO_CURSOR
-#       define _WIN32_WCE_NO_CURSOR
-#   endif
-#endif  // _WIN32_WCE
-
-// Use this as the classname when inserting this control as a custom control
-// in the MSVC++ dialog editor
-#define GRIDCTRL_CLASSNAME    _T("MFCGridCtrl")  // Window class name
-#define IDC_INPLACE_CONTROL   8                  // ID of in-place edit controls
-
-///////////////////////////////////////////////////////////////////////////////////
-// Conditional includes
-///////////////////////////////////////////////////////////////////////////////////
-
-#ifndef GRIDCONTROL_NO_TITLETIPS
-#include "GridTitleTip.h"
-#endif
-
-#ifndef GRIDCONTROL_NO_DRAGDROP
-#include "GridDropTarget.h"
-#undef GRIDCONTROL_NO_CLIPBOARD     // Force clipboard functions on
-#endif
-
-#ifndef GRIDCONTROL_NO_CLIPBOARD
-#include <afxole.h>
-#endif
-#include "../GridDefaultCell.h"
-
-///////////////////////////////////////////////////////////////////////////////////
-// Helper functions
-///////////////////////////////////////////////////////////////////////////////////
-
-// Handy functions
-#define IsSHIFTpressed() ( (GetKeyState(VK_SHIFT) & (1 << (sizeof(SHORT)*8-1))) != 0   )
-#define IsCTRLpressed()  ( (GetKeyState(VK_CONTROL) & (1 << (sizeof(SHORT)*8-1))) != 0 )
-
-// Backwards compatibility for pre 2.20 grid versions
-#define DDX_GridControl(pDX, nIDC, rControl)  DDX_Control(pDX, nIDC, rControl)
-
-///////////////////////////////////////////////////////////////////////////////////
-// Structures
-///////////////////////////////////////////////////////////////////////////////////
-
-// This structure sent to Grid's parent in a WM_NOTIFY message
-using NM_GRIDVIEW = struct tagNM_GRIDVIEW
-{
-	NMHDR hdr{};
-	int iRow = 0;
-	int iColumn = 0;
-};
-
-// This is sent to the Grid from child in-place edit controls
-using GV_DISPINFO = struct tagGV_DISPINFO
-{
-	NMHDR hdr{};
-	GV_ITEM item{};
-};
-
-// This is sent to the Grid from child in-place edit controls
-using GV_CACHEHINT = struct tagGV_CACHEHINT
-{
-	NMHDR hdr{};
-	CCellRange range{};
-};
-
-// storage typedef for each row in the grid
-using GRID_ROW = CTypedPtrArray<CObArray, CGridCellBase*>;
-
-// For virtual mode callback
-using GRIDCALLBACK = BOOL(CALLBACK*)(GV_DISPINFO*, LPARAM);
-
-///////////////////////////////////////////////////////////////////////////////////
-// Defines
-///////////////////////////////////////////////////////////////////////////////////
-
-// Grid line/scrollbar selection
-#define GVL_NONE                0L      // Neither
-#define GVL_HORZ                1L      // Horizontal line or scrollbar
-#define GVL_VERT                2L      // Vertical line or scrollbar
-#define GVL_BOTH                3L      // Both
-
-// Autosizing option
-#define GVS_DEFAULT             0
-#define GVS_HEADER              1       // GetRectSize using column fixed cells data only
-#define GVS_DATA                2       // GetRectSize using column non-fixed cells data only
-#define GVS_BOTH                3       // GetRectSize using column fixed and non-fixed
-
-// Cell Searching options
-#define GVNI_FOCUSED            0x0001
-#define GVNI_SELECTED           0x0002
-#define GVNI_DROPHILITED        0x0004
-#define GVNI_READONLY           0x0008
-#define GVNI_FIXED              0x0010
-#define GVNI_MODIFIED           0x0020
-
-#define GVNI_ABOVE              LVNI_ABOVE
-#define GVNI_BELOW              LVNI_BELOW
-#define GVNI_TOLEFT             LVNI_TOLEFT
-#define GVNI_TORIGHT            LVNI_TORIGHT
-#define GVNI_ALL                (LVNI_BELOW|LVNI_TORIGHT|LVNI_TOLEFT)
-#define GVNI_AREA               (LVNI_BELOW|LVNI_TORIGHT)
-
-// Hit test values (not yet implemented)
-#define GVHT_DATA               0x0000
-#define GVHT_TOPLEFT            0x0001
-#define GVHT_COLHDR             0x0002
-#define GVHT_ROWHDR             0x0004
-#define GVHT_COLSIZER           0x0008
-#define GVHT_ROWSIZER           0x0010
-#define GVHT_LEFT               0x0020
-#define GVHT_RIGHT              0x0040
-#define GVHT_ABOVE              0x0080
-#define GVHT_BELOW              0x0100
-
-// Messages sent to the grid's parent (More will be added in future)
-#define GVN_BEGINDRAG           LVN_BEGINDRAG        // LVN_FIRST-9
-#define GVN_BEGINLABELEDIT      LVN_BEGINLABELEDIT   // LVN_FIRST-5
-#define GVN_BEGINRDRAG          LVN_BEGINRDRAG
-#define GVN_COLUMNCLICK         LVN_COLUMNCLICK
-#define GVN_DELETEITEM          LVN_DELETEITEM
-#define GVN_ENDLABELEDIT        LVN_ENDLABELEDIT     // LVN_FIRST-6
-#define GVN_SELCHANGING         LVN_ITEMCHANGING
-#define GVN_SELCHANGED          LVN_ITEMCHANGED
-#define GVN_GETDISPINFO         LVN_GETDISPINFO
-#define GVN_ODCACHEHINT         LVN_ODCACHEHINT
-
-class CGridCtrl;
-
 /////////////////////////////////////////////////////////////////////////////
-// CGridCtrl window
+// GridCtrl window
 
 using PVIRTUALCOMPARE = bool(*)(int, int);
 
-class CGridCtrl : public CWnd
+class GridCtrl : public CWnd
 {
-	DECLARE_DYNCREATE(CGridCtrl)
-	friend class CGridCell;
-	friend class CGridCellBase;
+	DECLARE_DYNCREATE(GridCtrl)
+	friend class GridCell;
+	friend class GridCellBase;
 
 	// Construction
 public:
-	CGridCtrl(int nRows = 0, int nCols = 0, int nFixedRows = 0, int nFixedCols = 0);
+	GridCtrl(int nRows = 0, int nCols = 0, int nFixedRows = 0, int nFixedCols = 0);
 
 	BOOL Create(const RECT& rect, CWnd* parent, UINT nID,
 	            DWORD dw_style = WS_CHILD | WS_BORDER | WS_TABSTOP | WS_VISIBLE);
@@ -215,14 +67,14 @@ public:
 	BOOL SetColumnWidth(int col, int width);
 
 	BOOL GetCellOrigin(int nRow, int nCol, LPPOINT p);
-	BOOL GetCellOrigin(const CCellID& cell, LPPOINT p);
+	BOOL GetCellOrigin(const GridCellID& cell, LPPOINT p);
 	BOOL GetCellRect(int nRow, int nCol, LPRECT pRect);
-	BOOL GetCellRect(const CCellID& cell, LPRECT pRect);
+	BOOL GetCellRect(const GridCellID& cell, LPRECT pRect);
 
-	BOOL GetTextRect(const CCellID& cell, LPRECT pRect);
+	BOOL GetTextRect(const GridCellID& cell, LPRECT pRect);
 	BOOL GetTextRect(int nRow, int nCol, LPRECT pRect);
 
-	CCellID GetCellFromPt(CPoint point, BOOL bAllowFixedCellCheck = TRUE);
+	GridCellID GetCellFromPt(CPoint point, BOOL bAllowFixedCellCheck = TRUE);
 
 	int GetFixedRowHeight() const;
 	int GetFixedColumnWidth() const;
@@ -306,9 +158,9 @@ public:
 
 	int GetSelectedCount() const { return m_SelectedCellMap.GetCount(); }
 
-	CCellID SetFocusCell(CCellID cell);
-	CCellID SetFocusCell(int nRow, int nCol);
-	CCellID GetFocusCell() const { return m_idCurrentCell; }
+	GridCellID SetFocusCell(GridCellID cell);
+	GridCellID SetFocusCell(int nRow, int nCol);
+	GridCellID GetFocusCell() const { return m_idCurrentCell; }
 
 	void SetVirtualMode(BOOL bVirtual);
 	BOOL GetVirtualMode() const { return m_bVirtualMode; }
@@ -387,13 +239,13 @@ public:
 	// default Grid cells. Use these for setting default values such as colors and fonts
 	///////////////////////////////////////////////////////////////////////////////////
 public:
-	CGridCellBase* GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const;
+	GridCellBase* GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// Grid cell Attributes
 	///////////////////////////////////////////////////////////////////////////////////
 public:
-	CGridCellBase* GetCell(int nRow, int nCol) const; // Get the actual cell!
+	GridCellBase* GetCell(int nRow, int nCol) const; // Get the actual cell!
 
 	void SetModified(BOOL bModified = TRUE, int nRow = -1, int nCol = -1);
 	BOOL GetModified(int nRow = -1, int nCol = -1);
@@ -403,7 +255,7 @@ public:
 	BOOL GetItem(GV_ITEM* pItem);
 	BOOL SetItemText(int nRow, int nCol, LPCTSTR str);
 	// The following was virtual. If you want to override, use
-	//  CGridCellBase-derived class's GetText() to accomplish same thing
+	//  GridCellBase-derived class's GetText() to accomplish same thing
 	CString GetItemText(int nRow, int nCol) const;
 
 	// EFW - 06/13/99 - Added to support printf-style formatting codes.
@@ -445,7 +297,7 @@ public:
 	BOOL DeleteNonFixedRows();
 	BOOL DeleteAllItems();
 
-	void ClearCells(CCellRange Selection);
+	void ClearCells(GridCellRange Selection);
 
 	BOOL AutoSizeRow(int nRow, BOOL bResetScroll = TRUE);
 	BOOL AutoSizeColumn(int nCol, UINT nAutoSizeStyle = GVS_DEFAULT, BOOL bResetScroll = TRUE);
@@ -460,20 +312,20 @@ public:
 	void Refresh();
 	void AutoFill(); // Fill grid with blank cells
 
-	void EnsureVisible(CCellID& cell) { EnsureVisible(cell.row, cell.col); }
+	void EnsureVisible(GridCellID& cell) { EnsureVisible(cell.row, cell.col); }
 	void EnsureVisible(int nRow, int nCol);
 	BOOL IsCellVisible(int nRow, int nCol);
-	BOOL IsCellVisible(CCellID cell);
+	BOOL IsCellVisible(GridCellID cell);
 	BOOL IsCellEditable(int nRow, int nCol) const;
-	BOOL IsCellEditable(CCellID& cell) const;
+	BOOL IsCellEditable(GridCellID& cell) const;
 	BOOL IsCellSelected(int nRow, int nCol) const;
-	BOOL IsCellSelected(CCellID& cell) const;
+	BOOL IsCellSelected(GridCellID& cell) const;
 
 	// SetRedraw stops/starts redraws on things like changing the # rows/columns
 	// and autosizing, but not for user-intervention such as resizes
 	void SetRedraw(BOOL bAllowDraw, BOOL bResetScrollBars = FALSE);
 	BOOL RedrawCell(int nRow, int nCol, CDC* p_dc = nullptr);
-	BOOL RedrawCell(const CCellID& cell, CDC* p_dc = nullptr);
+	BOOL RedrawCell(const GridCellID& cell, CDC* p_dc = nullptr);
 	BOOL RedrawRow(int row);
 	BOOL RedrawColumn(int col);
 
@@ -486,14 +338,14 @@ public:
 	// Cell Ranges
 	///////////////////////////////////////////////////////////////////////////////////
 public:
-	CCellRange GetCellRange() const;
-	CCellRange GetSelectedCellRange() const;
-	void SetSelectedRange(const CCellRange& Range, BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
+	GridCellRange GetCellRange() const;
+	GridCellRange GetSelectedCellRange() const;
+	void SetSelectedRange(const GridCellRange& Range, BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
 	void SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMaxCol,
 	                      BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
 	BOOL IsValid(int nRow, int nCol) const;
-	BOOL IsValid(const CCellID& cell) const;
-	BOOL IsValid(const CCellRange& range) const;
+	BOOL IsValid(const GridCellID& cell) const;
+	BOOL IsValid(const GridCellRange& range) const;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// Clipboard, drag and drop, and cut n' paste operations
@@ -501,7 +353,7 @@ public:
 #ifndef GRIDCONTROL_NO_CLIPBOARD
 	virtual void CutSelectedText();
 	virtual COleDataSource* CopyTextFromGrid();
-	virtual BOOL PasteTextToGrid(CCellID cell, COleDataObject* pDataObject, BOOL bSelectPastedCells = TRUE);
+	virtual BOOL PasteTextToGrid(GridCellID cell, COleDataObject* pDataObject, BOOL bSelectPastedCells = TRUE);
 #endif
 
 #ifndef GRIDCONTROL_NO_DRAGDROP
@@ -524,7 +376,7 @@ public:
 	// Misc.
 	///////////////////////////////////////////////////////////////////////////////////
 public:
-	CCellID GetNextItem(CCellID& cell, int nFlags) const;
+	GridCellID GetNextItem(GridCellID& cell, int nFlags) const;
 
 	BOOL SortItems(int nCol, BOOL bAscending, LPARAM data = 0);
 	BOOL SortTextItems(int nCol, BOOL bAscending, LPARAM data = 0);
@@ -571,7 +423,7 @@ public:
 
 	// Implementation
 public:
-	~CGridCtrl() override;
+	~GridCtrl() override;
 
 protected:
 	BOOL RegisterWindowClass();
@@ -580,16 +432,16 @@ protected:
 
 	LRESULT SendMessageToParent(int nRow, int nCol, int nMessage) const;
 	LRESULT SendDisplayRequestToParent(GV_DISPINFO* pDisplayInfo) const;
-	LRESULT SendCacheHintToParent(const CCellRange& range) const;
+	LRESULT SendCacheHintToParent(const GridCellRange& range) const;
 
 	BOOL InvalidateCellRect(int row, int col);
-	BOOL InvalidateCellRect(const CCellID& cell);
-	BOOL InvalidateCellRect(const CCellRange& cellRange);
+	BOOL InvalidateCellRect(const GridCellID& cell);
+	BOOL InvalidateCellRect(const GridCellRange& cellRange);
 	void EraseBkgnd(CDC* p_dc);
 
-	BOOL GetCellRangeRect(const CCellRange& cellRange, LPRECT lpRect);
+	BOOL GetCellRangeRect(const GridCellRange& cellRange, LPRECT lpRect);
 
-	BOOL SetCell(int nRow, int nCol, CGridCellBase* pCell);
+	BOOL SetCell(int nRow, int nCol, GridCellBase* pCell);
 
 	int SetMouseMode(int nMode)
 	{
@@ -603,10 +455,10 @@ protected:
 	BOOL MouseOverRowResizeArea(CPoint& point);
 	BOOL MouseOverColumnResizeArea(CPoint& point);
 
-	CCellID GetTopleftNonFixedCell(BOOL bForceRecalculation = FALSE);
-	CCellRange GetUnobstructedNonFixedCellRange(BOOL bForceRecalculation = FALSE);
-	CCellRange GetVisibleNonFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
-	CCellRange GetVisibleFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
+	GridCellID GetTopleftNonFixedCell(BOOL bForceRecalculation = FALSE);
+	GridCellRange GetUnobstructedNonFixedCellRange(BOOL bForceRecalculation = FALSE);
+	GridCellRange GetVisibleNonFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
+	GridCellRange GetVisibleFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
 
 	BOOL IsVisibleVScroll() { return ((m_nBarState & GVL_VERT) > 0); }
 	BOOL IsVisibleHScroll() { return ((m_nBarState & GVL_HORZ) > 0); }
@@ -626,7 +478,7 @@ protected:
 
 	// Overrrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CGridCtrl)
+	//{{AFX_VIRTUAL(GridCtrl)
 protected:
 	void PreSubclassWindow() override;
 	//}}AFX_VIRTUAL
@@ -648,8 +500,8 @@ protected:
 #endif
 
 	// Mouse Clicks
-	virtual void OnFixedColumnClick(CCellID& cell);
-	virtual void OnFixedRowClick(CCellID& cell);
+	virtual void OnFixedColumnClick(GridCellID& cell);
+	virtual void OnFixedRowClick(GridCellID& cell);
 
 	// Editing
 	virtual void OnEditCell(int nRow, int nCol, CPoint point, UINT nChar);
@@ -660,8 +512,8 @@ protected:
 	// Drawing
 	virtual void OnDraw(CDC* p_dc);
 
-	// CGridCellBase Creation and Cleanup
-	virtual CGridCellBase* CreateCell(int nRow, int nCol);
+	// GridCellBase Creation and Cleanup
+	virtual GridCellBase* CreateCell(int nRow, int nCol);
 	virtual void DestroyCell(int nRow, int nCol);
 
 	// Attributes
@@ -707,8 +559,8 @@ protected:
 
 	// Fonts and images
 	CRuntimeClass* m_pRtcDefault = nullptr; // determines kind of Grid Cell created by default
-	CGridDefaultCell m_cellDefault{}; // "default" cell. Contains default colours, font etc.
-	CGridDefaultCell m_cellFixedColDef{}, m_cellFixedRowDef{}, m_cellFixedRowColDef{};
+	GridDefaultCell m_cellDefault{}; // "default" cell. Contains default colours, font etc.
+	GridDefaultCell m_cellFixedColDef{}, m_cellFixedRowDef{}, m_cellFixedRowColDef{};
 	CFont m_PrinterFont{}; // for the printer
 	CImageList* m_pImageList = nullptr;
 
@@ -719,23 +571,23 @@ protected:
 	int m_MouseMode = 0;
 	BOOL m_bLMouseButtonDown = false, m_bRMouseButtonDown = false;
 	CPoint m_LeftClickDownPoint{}, m_LastMousePoint{};
-	CCellID m_LeftClickDownCell{}, m_SelectionStartCell{};
-	CCellID m_idCurrentCell{}, m_idTopLeftCell{};
+	GridCellID m_LeftClickDownCell{}, m_SelectionStartCell{};
+	GridCellID m_idCurrentCell{}, m_idTopLeftCell{};
 	INT_PTR m_nTimerID{};
 	int m_nTimerInterval = 0;
 	int m_nResizeCaptureRange = 0;
 	BOOL m_bAllowRowResize = false, m_bAllowColumnResize = false;
 	int m_nRowsPerWheelNotch = 0;
-	CMap<DWORD, DWORD, CCellID, CCellID&> m_SelectedCellMap{}, m_PrevSelectedCellMap{};
+	CMap<DWORD, DWORD, GridCellID, GridCellID&> m_SelectedCellMap{}, m_PrevSelectedCellMap{};
 
 #ifndef GRIDCONTROL_NO_TITLETIPS
-	CTitleTip m_TitleTip{}; // Title tips for cells
+	GridTitleTip m_TitleTip{}; // Title tips for cells
 #endif
 
 	// Drag and drop
-	CCellID m_LastDragOverCell{};
+	GridCellID m_LastDragOverCell{};
 #ifndef GRIDCONTROL_NO_DRAGDROP
-	CGridDropTarget m_DropTarget{}; // OLE Drop target for the grid
+	GridDropTarget m_DropTarget{}; // OLE Drop target for the grid
 #endif
 
 	// Printing information
@@ -766,10 +618,10 @@ protected:
 
 protected:
 	void SelectAllCells();
-	void SelectColumns(CCellID currentCell, BOOL bForceRedraw = FALSE, BOOL bSelectCells = TRUE);
-	void SelectRows(CCellID currentCell, BOOL bForceRedraw = FALSE, BOOL bSelectCells = TRUE);
-	void SelectCells(CCellID currentCell, BOOL bForceRedraw = FALSE, BOOL bSelectCells = TRUE);
-	void OnSelecting(const CCellID& currentCell);
+	void SelectColumns(GridCellID currentCell, BOOL bForceRedraw = FALSE, BOOL bSelectCells = TRUE);
+	void SelectRows(GridCellID currentCell, BOOL bForceRedraw = FALSE, BOOL bSelectCells = TRUE);
+	void SelectCells(GridCellID currentCell, BOOL bForceRedraw = FALSE, BOOL bSelectCells = TRUE);
+	void OnSelecting(const GridCellID& currentCell);
 
 	// Generated message map functions
 	afx_msg void OnPaint();
@@ -855,7 +707,7 @@ public:
 	void AllowSelectRowInFixedCol(bool b = true) { m_AllowSelectRowInFixedCol = b; } //
 	//    allow acces?
 	intlist m_arRowOrder{}, m_arColOrder{};
-	static CGridCtrl* m_This;
+	static GridCtrl* m_This;
 protected:
 	virtual void AddSubVirtualRow(int Num, int Nb);
 	bool m_bDragRowMode = false;
@@ -871,22 +723,22 @@ private:
 };
 
 // Returns the default cell implementation for the given grid region
-inline CGridCellBase* CGridCtrl::GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const
+inline GridCellBase* GridCtrl::GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const
 {
-	if (bFixedRow && bFixedCol) return (CGridCellBase*)&m_cellFixedRowColDef;
-	if (bFixedRow) return (CGridCellBase*)&m_cellFixedRowDef;
-	if (bFixedCol) return (CGridCellBase*)&m_cellFixedColDef;
-	return (CGridCellBase*)&m_cellDefault;
+	if (bFixedRow && bFixedCol) return (GridCellBase*)&m_cellFixedRowColDef;
+	if (bFixedRow) return (GridCellBase*)&m_cellFixedRowDef;
+	if (bFixedCol) return (GridCellBase*)&m_cellFixedColDef;
+	return (GridCellBase*)&m_cellDefault;
 }
 
-inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
+inline GridCellBase* GridCtrl::GetCell(int nRow, int nCol) const
 {
 	if (nRow < 0 || nRow >= m_nRows || nCol < 0 || nCol >= m_nCols)
 		return nullptr;
 
 	if (GetVirtualMode())
 	{
-		CGridCellBase* pCell = GetDefaultCell(nRow < m_nFixedRows, nCol < m_nFixedCols);
+		GridCellBase* pCell = GetDefaultCell(nRow < m_nFixedRows, nCol < m_nFixedCols);
 		static GV_DISPINFO gvdi;
 		gvdi.item.row = nRow;
 		gvdi.item.col = nCol;
@@ -905,7 +757,7 @@ inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
 		if (IsCellSelected(nRow, nCol)) gvdi.item.nState |= GVIS_SELECTED;
 		if (nRow < GetFixedRowCount()) gvdi.item.nState |= (GVIS_FIXED | GVIS_FIXEDROW);
 		if (nCol < GetFixedColumnCount()) gvdi.item.nState |= (GVIS_FIXED | GVIS_FIXEDCOL);
-		if (GetFocusCell() == CCellID(nRow, nCol)) gvdi.item.nState |= GVIS_FOCUSED;
+		if (GetFocusCell() == GridCellID(nRow, nCol)) gvdi.item.nState |= GVIS_FOCUSED;
 		if (!m_InDestructor)
 		{
 			gvdi.item.row = m_arRowOrder[nRow];
@@ -918,7 +770,7 @@ inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
 			gvdi.item.row = nRow;
 			gvdi.item.col = nCol;
 		}
-		static CGridCell cell;
+		static GridCell cell;
 		cell.SetState(gvdi.item.nState);
 		cell.SetFormat(gvdi.item.nFormat);
 		cell.SetImage(gvdi.item.iImage);
@@ -928,7 +780,7 @@ inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
 		cell.SetFont(&(gvdi.item.lfFont));
 		cell.SetMargin(gvdi.item.nMargin);
 		cell.SetText(gvdi.item.strText);
-		cell.SetGrid((CGridCtrl*)this);
+		cell.SetGrid((GridCtrl*)this);
 
 		return &cell;
 	}
@@ -938,7 +790,7 @@ inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
 	return pRow->GetAt(m_arColOrder[nCol]);
 }
 
-inline BOOL CGridCtrl::SetCell(int nRow, int nCol, CGridCellBase* pCell)
+inline BOOL GridCtrl::SetCell(int nRow, int nCol, GridCellBase* pCell)
 {
 	if (GetVirtualMode())
 		return FALSE;
@@ -955,9 +807,4 @@ inline BOOL CGridCtrl::SetCell(int nRow, int nCol, CGridCellBase* pCell)
 	return TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_GRIDCTRL_H__519FA702_722C_11D1_ABBA_00A0243D1382__INCLUDED_)

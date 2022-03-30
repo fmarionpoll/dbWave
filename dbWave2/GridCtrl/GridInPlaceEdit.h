@@ -18,18 +18,18 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 //////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-class CGridInPlaceEdit : public CEdit
+class GridInPlaceEdit : public CEdit
 {
 public:
-	CGridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+	GridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
 	             int nRow, int nColumn, CString sInitText, UINT nFirstChar);
-	~CGridInPlaceEdit() override;
+	~GridInPlaceEdit() override;
 
 	void EndEdit();
 

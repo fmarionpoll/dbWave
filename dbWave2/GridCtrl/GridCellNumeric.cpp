@@ -1,4 +1,4 @@
-// GridCellNumeric.cpp: implementation of the CGridCellNumeric class.
+// GridCellNumeric.cpp: implementation of the GridCellNumeric class.
 //
 // Written by Andrew Truckle [ajtruckle@wsatkins.co.uk]
 //
@@ -9,7 +9,7 @@
 #include "Gridinplaceedit.h"
 #include "GridCtrl.h"
 
-IMPLEMENT_DYNCREATE(CGridCellNumeric, CGridCell)
+IMPLEMENT_DYNCREATE(GridCellNumeric, GridCell)
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -22,20 +22,20 @@ static char THIS_FILE[] = __FILE__;
 //////////////////////////////////////////////////////////////////////
 
 // Create a control to do the editing
-BOOL CGridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
+BOOL GridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
 	m_bEditing = TRUE;
 
-	// CGridInPlaceEdit auto-deletes itself
-	m_pEditWnd = new CGridInPlaceEdit(GetGrid(), rect, /*GetStyle() |*/ ES_NUMBER, nID, nRow, nCol,
+	// GridInPlaceEdit auto-deletes itself
+	m_pEditWnd = new GridInPlaceEdit(GetGrid(), rect, /*GetStyle() |*/ ES_NUMBER, nID, nRow, nCol,
 	                              GetText(), nChar);
 
 	return TRUE;
 }
 
 // Cancel the editing.
-void CGridCellNumeric::EndEdit()
+void GridCellNumeric::EndEdit()
 {
 	if (m_pEditWnd)
-		static_cast<CGridInPlaceEdit*>(m_pEditWnd)->EndEdit();
+		static_cast<GridInPlaceEdit*>(m_pEditWnd)->EndEdit();
 }

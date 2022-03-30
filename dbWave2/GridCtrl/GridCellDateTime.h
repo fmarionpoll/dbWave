@@ -1,29 +1,29 @@
 #pragma once
 
-// GridCellDateTime.h: interface for the CGridCellDateTime class.
+// GridCellDateTime.h: interface for the GridCellDateTime class.
 //
 // Provides the implementation for a datetime picker cell type of the
 // grid control.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "GridCell.h"
 #include "afxdtctl.h"	// for CDateTimeCtrl
 
-class CGridCellDateTime : public CGridCell
+class GridCellDateTime : public GridCell
 {
-	friend class CGridCtrl;
-	DECLARE_DYNCREATE(CGridCellDateTime)
+	friend class GridCtrl;
+	DECLARE_DYNCREATE(GridCellDateTime)
 
 	CTime m_cTime;
 	DWORD m_dwStyle;
 
 public:
-	CGridCellDateTime();
-	CGridCellDateTime(DWORD dw_style);
-	~CGridCellDateTime() override;
+	GridCellDateTime();
+	GridCellDateTime(DWORD dw_style);
+	~GridCellDateTime() override;
 	CSize GetCellExtent(CDC* p_dc) override;
 
 	// editing cells
@@ -37,11 +37,11 @@ public:
 	void SetTime(CTime time);
 };
 
-class CInPlaceDateTime : public CDateTimeCtrl
+class InPlaceDateTime : public CDateTimeCtrl
 {
 	// Construction
 public:
-	CInPlaceDateTime(CWnd* pParent, // parent
+	InPlaceDateTime(CWnd* pParent, // parent
 	                 CRect& rect, // dimensions & location
 	                 DWORD dw_style, // window/combobox style
 	                 UINT nID, // control ID
@@ -64,7 +64,7 @@ protected:
 
 	// Implementation
 public:
-	~CInPlaceDateTime() override;
+	~InPlaceDateTime() override;
 	void EndEdit();
 
 	// Generated message map functions

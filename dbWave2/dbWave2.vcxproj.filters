@@ -477,12 +477,6 @@
     <ClCompile Include="IntervalsListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InPlaceEdit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GridDefaultCell.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SpikeClassDescriptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -500,6 +494,18 @@
     </ClCompile>
     <ClCompile Include="SpikeDetectArray.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl\GridDefaultCell.cpp">
+      <Filter>customctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\ComboEdit.cpp">
+      <Filter>customctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\InPlaceEdit.cpp">
+      <Filter>customctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl\GridInPlaceList.cpp">
+      <Filter>customctrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1061,12 +1067,6 @@
     <ClInclude Include="IntervalsListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InPlaceEdit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridDefaultCell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SpikeClassDescriptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1084,6 +1084,21 @@
     </ClInclude>
     <ClInclude Include="SpikeDetectArray.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridDefines.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridDefaultCell.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\ComboEdit.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\InPlaceEdit.h">
+      <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl\GridInPlaceList.h">
+      <Filter>customctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

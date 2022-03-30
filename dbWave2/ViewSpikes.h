@@ -42,7 +42,7 @@ protected:
 	CEditCtrl mm_dest_class;
 	CEditCtrl mm_jitter_ms;
 
-	CScrollBarEx m_file_scroll; 
+	ScrollBarEx m_file_scroll; 
 	SCROLLINFO m_file_scroll_infos{}; 
 
 	int m_zoom_factor = 1; 

@@ -1068,7 +1068,7 @@ void ViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	// trap messages from CScrollBarEx
+	// trap messages from ScrollBarEx
 	int l_first;
 	int l_last;
 	CString cs;

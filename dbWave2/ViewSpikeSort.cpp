@@ -1209,7 +1209,7 @@ void ViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
-	// trap messages from CScrollBarEx
+	// trap messages from ScrollBarEx
 	CString cs;
 	switch (nSBCode)
 	{

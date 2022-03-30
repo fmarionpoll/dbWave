@@ -32,8 +32,8 @@ protected:
 	DataTranslation_AD m_Acq32_AD;
 	DataTranslation_DA m_Acq32_DA;
 
-	CRulerBar m_AD_xRulerBar;
-	CRulerBar m_AD_yRulerBar;
+	RulerBar m_AD_xRulerBar;
+	RulerBar m_AD_yRulerBar;
 	CButton m_ZoomButton;
 	CButton m_BiasButton;
 	CButton m_UnZoomButton;

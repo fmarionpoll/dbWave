@@ -60,7 +60,7 @@ protected:
 	CEditCtrl mm_txyleft;
 	CEditCtrl mm_mVbin;
 
-	CScrollBarEx m_filescroll; // data position within file
+	ScrollBarEx m_filescroll; // data position within file
 	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
 
 	SPKCLASSIF* m_psC{};

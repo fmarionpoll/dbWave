@@ -338,7 +338,7 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc) const
 	}
 }
 
-void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler) const
+void ChartWnd::drawGridFromRuler(CDC* p_dc, Ruler* pRuler) const
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -394,7 +394,7 @@ void ChartWnd::drawGridFromRuler(CDC* p_dc, CRuler* pRuler) const
 	p_dc->SelectObject(p_old_pen);
 }
 
-void ChartWnd::drawScalefromRuler(CDC* p_dc, CRuler* pRuler)
+void ChartWnd::drawScalefromRuler(CDC* p_dc, Ruler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);

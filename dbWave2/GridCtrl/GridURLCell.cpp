@@ -1,19 +1,19 @@
-// GridURLCell.cpp: implementation of the CGridURLCell class.
+// GridURLCell.cpp: implementation of the GridURLCell class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "GridURLCell.h"
 #include "GridCtrl.h"
 
-IMPLEMENT_DYNCREATE(CGridURLCell, CGridCell)
+IMPLEMENT_DYNCREATE(GridURLCell, GridCell)
 
 #ifndef _WIN32_WCE
-HCURSOR CGridURLCell::g_hLinkCursor = nullptr;
+HCURSOR GridURLCell::g_hLinkCursor = nullptr;
 #endif
 
 // Possible prefixes that indicate a hyperlink
-URLStruct CGridURLCell::g_szURIprefixes[] = {
+URLStruct GridURLCell::g_szURIprefixes[] = {
 	{_T("www."), _tcslen(_T("www."))},
 	{_T("http:"), _tcslen(_T("http:"))},
 	{_T("mailto:"), _tcslen(_T("mailto:"))},
@@ -31,7 +31,7 @@ URLStruct CGridURLCell::g_szURIprefixes[] = {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CGridURLCell::CGridURLCell()
+GridURLCell::GridURLCell()
 {
 #ifndef _WIN32_WCE
 	g_hLinkCursor = GetHandCursor();
@@ -40,11 +40,10 @@ CGridURLCell::CGridURLCell()
 	m_clrUrl = GetSysColor(COLOR_HIGHLIGHT);
 }
 
-CGridURLCell::~CGridURLCell()
-{
-}
+GridURLCell::~GridURLCell()
+= default;
 
-BOOL CGridURLCell::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd)
+BOOL GridURLCell::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd)
 {
 	// If url is present then change text color
 	if (HasUrl(GetText()))
@@ -53,17 +52,17 @@ BOOL CGridURLCell::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 	// Good a place as any to store the bounds of the rect
 	m_Rect = rect;
 
-	return CGridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
+	return GridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
 }
 
 #pragma warning(disable:4100)
-BOOL CGridURLCell::Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar)
+BOOL GridURLCell::Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar)
 {
 	return FALSE;
 }
 #pragma warning(default:4100)
 
-void CGridURLCell::OnClick(CPoint PointCellRelative)
+void GridURLCell::OnClick(CPoint PointCellRelative)
 {
 #ifndef _WIN32_WCE
 	CString strURL;
@@ -73,7 +72,7 @@ void CGridURLCell::OnClick(CPoint PointCellRelative)
 }
 
 // Return TRUE if you set the cursor
-BOOL CGridURLCell::OnSetCursor()
+BOOL GridURLCell::OnSetCursor()
 {
 #ifndef _WIN32_WCE
 	CString strURL;
@@ -87,11 +86,11 @@ BOOL CGridURLCell::OnSetCursor()
 		return TRUE;
 	}
 #endif
-	return CGridCell::OnSetCursor();
+	return GridCell::OnSetCursor();
 }
 
 #ifndef _WIN32_WCE
-HCURSOR CGridURLCell::GetHandCursor()
+HCURSOR GridURLCell::GetHandCursor()
 {
 	if (g_hLinkCursor == nullptr) // No cursor handle - load our own
 	{
@@ -123,7 +122,7 @@ HCURSOR CGridURLCell::GetHandCursor()
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 
-BOOL CGridURLCell::HasUrl(CString str)
+BOOL GridURLCell::HasUrl(CString str)
 {
 	int nNumPrefixes = sizeof(g_szURIprefixes) / sizeof(g_szURIprefixes[0]);
 	for (int i = 0; i < nNumPrefixes; i++)
@@ -135,7 +134,7 @@ BOOL CGridURLCell::HasUrl(CString str)
 }
 
 // here we figure out if we are over a URL or not
-BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
+BOOL GridURLCell::OverURL(CPoint& pt, CString& strURL)
 {
 	//ATLTRACE2("Checking point %d,%d\n",pt.x,pt.y);
 

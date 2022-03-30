@@ -18,7 +18,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -26,25 +26,25 @@
 
 #include <afxole.h>
 
-class CGridCtrl;
+class GridCtrl;
 
 /////////////////////////////////////////////////////////////////////////////
-// CGridDropTarget command target
+// GridDropTarget command target
 
-class CGridDropTarget : public COleDropTarget
+class GridDropTarget : public COleDropTarget
 {
 public:
-	CGridDropTarget();
-	~CGridDropTarget() override;
+	GridDropTarget();
+	~GridDropTarget() override;
 
 	// Attributes
 public:
-	CGridCtrl* m_pGridCtrl;
+	GridCtrl* m_pGridCtrl;
 	BOOL m_bRegistered;
 
 	// Operations
 public:
-	BOOL Register(CGridCtrl* pGridCtrl);
+	BOOL Register(GridCtrl* pGridCtrl);
 	void Revoke() override;
 
 	BOOL OnDrop(CWnd* p_wnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point) override;

@@ -221,7 +221,7 @@ void CSpikeDoc::serialize_v7(CArchive& ar)
 
 	for (int i = 0; i < n_spike_arrays; i++)
 		spike_list_array[i].Serialize(ar);
-	//m_spike_class.Serialize(ar);
+	m_spike_class.Serialize(ar);
 }
 
 // CSpikeDoc commands

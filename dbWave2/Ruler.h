@@ -1,10 +1,10 @@
 #pragma once
 
-class CRuler : public CObject
+class Ruler : public CObject
 {
 public:
-	CRuler();
-	~CRuler() override;
+	Ruler();
+	~Ruler() override;
 
 	void SetRange(double dfirst, double dlast);
 	int GetScaleUnitPixels(int cx) const

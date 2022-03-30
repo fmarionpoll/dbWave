@@ -18,7 +18,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -27,14 +27,14 @@
 #define TITLETIP_CLASSNAME _T("ZTitleTip")
 
 /////////////////////////////////////////////////////////////////////////////
-// CTitleTip window
+// GridTitleTip window
 
-class CTitleTip : public CWnd
+class GridTitleTip : public CWnd
 {
 	// Construction
 public:
-	CTitleTip();
-	~CTitleTip() override;
+	GridTitleTip();
+	~GridTitleTip() override;
 	virtual BOOL Create(CWnd* pParentWnd);
 
 	// Attributes
@@ -52,7 +52,7 @@ public:
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CTitleTip)
+	//{{AFX_VIRTUAL(GridTitleTip)
 public:
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL DestroyWindow() override;

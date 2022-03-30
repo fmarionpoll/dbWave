@@ -25,13 +25,13 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 // History:
 // Eric Woodruff - 20 Feb 2000 - Added PrintCell() plus other minor changes
-// Ken Bertelson - 12 Apr 2000 - Split CGridCell into CGridCell and CGridCellBase
+// Ken Bertelson - 12 Apr 2000 - Split GridCell into GridCell and GridCellBase
 // <kenbertelson@hotmail.com>
-// C Maunder     - 17 Jun 2000 - Font handling optimsed, Added CGridDefaultCell
+// C Maunder     - 17 Jun 2000 - Font handling optimsed, Added GridDefaultCell
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -44,26 +44,26 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNCREATE(CGridCell, CGridCellBase)
+IMPLEMENT_DYNCREATE(GridCell, GridCellBase)
 
-CGridCell::CGridCell()
+GridCell::GridCell()
 {
-	CGridCell::Reset();
+	GridCell::Reset();
 }
 
-CGridCell::~CGridCell()
+GridCell::~GridCell()
 {
 	delete m_plfFont;
 }
 
-void CGridCell::operator=(const CGridCell& cell)
+void GridCell::operator=(const GridCell& cell)
 {
-	if (this != &cell) CGridCellBase::operator=(cell);
+	if (this != &cell) GridCellBase::operator=(cell);
 }
 
-void CGridCell::Reset()
+void GridCell::Reset()
 {
-	CGridCellBase::Reset();
+	GridCellBase::Reset();
 
 	m_strText.Empty();
 	m_nImage = -1;
@@ -72,16 +72,16 @@ void CGridCell::Reset()
 	m_bEditing = FALSE;
 	m_pEditWnd = nullptr;
 
-	m_nFormat = static_cast<DWORD>(-1); // Use default from CGridDefaultCell
+	m_nFormat = static_cast<DWORD>(-1); // Use default from GridDefaultCell
 	m_crBkClr = CLR_DEFAULT; // Background colour (or CLR_DEFAULT)
 	m_crFgClr = CLR_DEFAULT; // Forground colour (or CLR_DEFAULT)
-	m_nMargin = static_cast<UINT>(-1); // Use default from CGridDefaultCell
+	m_nMargin = static_cast<UINT>(-1); // Use default from GridDefaultCell
 
 	delete m_plfFont;
 	m_plfFont = nullptr; // Cell font
 }
 
-void CGridCell::SetFont(const LOGFONT* plf)
+void GridCell::SetFont(const LOGFONT* plf)
 {
 	if (plf == nullptr)
 	{
@@ -97,11 +97,11 @@ void CGridCell::SetFont(const LOGFONT* plf)
 	}
 }
 
-LOGFONT* CGridCell::GetFont() const
+LOGFONT* GridCell::GetFont() const
 {
 	if (m_plfFont == nullptr)
 	{
-		auto pDefaultCell = static_cast<CGridDefaultCell*>(GetDefaultCell());
+		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return nullptr;
 
@@ -111,12 +111,12 @@ LOGFONT* CGridCell::GetFont() const
 	return m_plfFont;
 }
 
-CFont* CGridCell::GetFontObject() const
+CFont* GridCell::GetFontObject() const
 {
 	// If the default font is specified, use the default cell implementation
 	if (m_plfFont == nullptr)
 	{
-		auto pDefaultCell = static_cast<CGridDefaultCell*>(GetDefaultCell());
+		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return nullptr;
 
@@ -128,11 +128,11 @@ CFont* CGridCell::GetFontObject() const
 	return &Font;
 }
 
-DWORD CGridCell::GetFormat() const
+DWORD GridCell::GetFormat() const
 {
 	if (m_nFormat == static_cast<DWORD>(-1))
 	{
-		auto pDefaultCell = static_cast<CGridDefaultCell*>(GetDefaultCell());
+		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return 0;
 
@@ -142,11 +142,11 @@ DWORD CGridCell::GetFormat() const
 	return m_nFormat;
 }
 
-UINT CGridCell::GetMargin() const
+UINT GridCell::GetMargin() const
 {
 	if (m_nMargin == static_cast<UINT>(-1))
 	{
-		auto pDefaultCell = static_cast<CGridDefaultCell*>(GetDefaultCell());
+		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return 0;
 
@@ -156,7 +156,7 @@ UINT CGridCell::GetMargin() const
 	return m_nMargin;
 }
 
-BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
+BOOL GridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
 	if (m_bEditing)
 	{
@@ -174,19 +174,19 @@ BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
 		m_bEditing = TRUE;
 
 		// InPlaceEdit auto-deletes itself
-		CGridCtrl* pGrid = GetGrid();
-		m_pEditWnd = new CGridInPlaceEdit(pGrid, rect, dw_style, nID, nRow, nCol, GetText(), nChar);
+		GridCtrl* pGrid = GetGrid();
+		m_pEditWnd = new GridInPlaceEdit(pGrid, rect, dw_style, nID, nRow, nCol, GetText(), nChar);
 	}
 	return TRUE;
 }
 
-void CGridCell::EndEdit()
+void GridCell::EndEdit()
 {
 	if (m_pEditWnd)
-		static_cast<CGridInPlaceEdit*>(m_pEditWnd)->EndEdit();
+		static_cast<GridInPlaceEdit*>(m_pEditWnd)->EndEdit();
 }
 
-void CGridCell::OnEndEdit()
+void GridCell::OnEndEdit()
 {
 	m_bEditing = FALSE;
 	m_pEditWnd = nullptr;

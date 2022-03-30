@@ -23,7 +23,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 // History:
 // 23 Jul 2001 - Complete rewrite
@@ -44,28 +44,28 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNCREATE(CGridCellCheck, CGridCell)
+IMPLEMENT_DYNCREATE(GridCellCheck, GridCell)
 
-CGridCellCheck::CGridCellCheck() : CGridCell()
+GridCellCheck::GridCellCheck() : GridCell()
 {
 	m_bChecked = FALSE;
 	//m_Rect.IsRectNull();
 }
 
-CSize CGridCellCheck::GetCellExtent(CDC* p_dc)
+CSize GridCellCheck::GetCellExtent(CDC* p_dc)
 {
 	// Using SM_CXHSCROLL as a guide to the size of the checkbox
 	int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2 * GetMargin();
-	CSize cellSize = CGridCell::GetCellExtent(p_dc);
+	CSize cellSize = GridCell::GetCellExtent(p_dc);
 	cellSize.cx += nWidth;
 	cellSize.cy = max(cellSize.cy, nWidth);
 	return cellSize;
 }
 
 // i/o:  i=dims of cell rect; o=dims of text rect
-BOOL CGridCellCheck::GetTextRect(LPRECT pRect)
+BOOL GridCellCheck::GetTextRect(LPRECT pRect)
 {
-	BOOL bResult = CGridCell::GetTextRect(pRect);
+	BOOL bResult = GridCell::GetTextRect(pRect);
 	if (bResult)
 	{
 		int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2 * GetMargin();
@@ -77,9 +77,9 @@ BOOL CGridCellCheck::GetTextRect(LPRECT pRect)
 }
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
-BOOL CGridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd /*=TRUE*/)
+BOOL GridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd /*=TRUE*/)
 {
-	BOOL bResult = CGridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
+	BOOL bResult = GridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
 
 #ifndef _WIN32_WCE
 	// Store the cell's dimensions for later
@@ -99,13 +99,13 @@ BOOL CGridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bErase
 	return bResult;
 }
 
-void CGridCellCheck::OnClick(CPoint PointCellRelative)
+void GridCellCheck::OnClick(CPoint PointCellRelative)
 {
 	// PointCellRelative is relative to the topleft of the cell. Convert to client coords
 	PointCellRelative += m_Rect.TopLeft();
 
 	// Bail if cell is read-only
-	CCellID cell = GetGrid()->GetCellFromPt(PointCellRelative);
+	GridCellID cell = GetGrid()->GetCellFromPt(PointCellRelative);
 	if (!GetGrid()->IsCellEditable(cell))
 		return;
 
@@ -122,7 +122,7 @@ void CGridCellCheck::OnClick(CPoint PointCellRelative)
 // Operations
 //////////////////////////////////////////////////////////////////////
 
-BOOL CGridCellCheck::SetCheck(BOOL bChecked /*=TRUE*/)
+BOOL GridCellCheck::SetCheck(BOOL bChecked /*=TRUE*/)
 {
 	BOOL bTemp = m_bChecked;
 	m_bChecked = bChecked;
@@ -132,7 +132,7 @@ BOOL CGridCellCheck::SetCheck(BOOL bChecked /*=TRUE*/)
 	return bTemp;
 }
 
-BOOL CGridCellCheck::GetCheck()
+BOOL GridCellCheck::GetCheck()
 {
 	return m_bChecked;
 }
@@ -142,7 +142,7 @@ BOOL CGridCellCheck::GetCheck()
 //////////////////////////////////////////////////////////////////////
 
 // Returns the dimensions and placement of the checkbox in client coords.
-CRect CGridCellCheck::GetCheckPlacement()
+CRect GridCellCheck::GetCheckPlacement()
 {
 	int nWidth = GetSystemMetrics(SM_CXHSCROLL);
 	CRect place = m_Rect + CSize(GetMargin(), GetMargin());

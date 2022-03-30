@@ -10,19 +10,18 @@
 #endif
 
 
-IMPLEMENT_DYNAMIC(CRulerBar, CWnd)
+IMPLEMENT_DYNAMIC(RulerBar, CWnd)
 
-CRulerBar::CRulerBar()
+RulerBar::RulerBar()
 {
 	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY,
 	                   VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
 }
 
-CRulerBar::~CRulerBar()
-{
-}
+RulerBar::~RulerBar()
+= default;
 
-BEGIN_MESSAGE_MAP(CRulerBar, CWnd)
+BEGIN_MESSAGE_MAP(RulerBar, CWnd)
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
@@ -31,14 +30,14 @@ BEGIN_MESSAGE_MAP(CRulerBar, CWnd)
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
-// CRulerBar message handlers
+// RulerBar message handlers
 
-void CRulerBar::OnPaint()
+void RulerBar::OnPaint()
 {
 	DrawScalefromRuler(nullptr);
 }
 
-void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
+void RulerBar::DrawScalefromRuler(Ruler* pRuler)
 {
 	CPaintDC dc(this);
 
@@ -169,19 +168,19 @@ void CRulerBar::DrawScalefromRuler(CRuler* pRuler)
 	dc.SelectObject(p_old_font);
 }
 
-BOOL CRulerBar::OnEraseBkgnd(CDC* p_dc)
+BOOL RulerBar::OnEraseBkgnd(CDC* p_dc)
 {
 	return TRUE;
 	//return CWnd::OnEraseBkgnd(p_dc);
 }
 
-void CRulerBar::OnSize(UINT nType, int cx, int cy)
+void RulerBar::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	GetClientRect(&m_rcClient);
 }
 
-void CRulerBar::PreSubclassWindow()
+void RulerBar::PreSubclassWindow()
 {
 	if (IsWindow(m_hWnd))
 	{
@@ -192,7 +191,7 @@ void CRulerBar::PreSubclassWindow()
 	CWnd::PreSubclassWindow();
 }
 
-BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect,
+BOOL RulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect,
                        CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	if ((rect.right - rect.left) < (rect.bottom - rect.top))
@@ -200,7 +199,7 @@ BOOL CRulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_s
 	return CWnd::Create(nullptr, _T("RulerBarWnd"), dw_style, rect, pParentWnd, nID);
 }
 
-BOOL CRulerBar::Create(CWnd* pParentWnd, ChartData* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID)
+BOOL RulerBar::Create(CWnd* pParentWnd, ChartData* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID)
 {
 	m_pChartDataWnd = pDataChartWnd;
 	CRect rect;
@@ -225,7 +224,7 @@ BOOL CRulerBar::Create(CWnd* pParentWnd, ChartData* pDataChartWnd, BOOL bAsXAxis
 #define MODEBIAS	1
 #define DELTA		10
 
-void CRulerBar::OnMouseMove(UINT nFlags, CPoint point)
+void RulerBar::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (!m_bHorizontal && (point.y < DELTA || point.y > m_rcClient.Height() - DELTA))
 		SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL));
@@ -235,7 +234,7 @@ void CRulerBar::OnMouseMove(UINT nFlags, CPoint point)
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CRulerBar::OnLButtonDown(UINT nFlags, CPoint point)
+void RulerBar::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (!m_bHorizontal && (point.y < DELTA || point.y > m_rcClient.Height() - DELTA))
 	{
@@ -257,7 +256,7 @@ void CRulerBar::OnLButtonDown(UINT nFlags, CPoint point)
 		CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CRulerBar::OnLButtonUp(UINT nFlags, CPoint point)
+void RulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_bCaptured)
 	{

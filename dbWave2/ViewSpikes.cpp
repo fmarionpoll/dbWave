@@ -1759,7 +1759,7 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	// trap messages from CScrollBarEx
+	// trap messages from ScrollBarEx
 	long l_first = m_lFirst;
 	long l_last = m_lLast;
 	CString cs;

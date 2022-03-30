@@ -14,7 +14,7 @@ protected:
 public:
 	enum { IDD = IDD_VIEWSPKDETECTION };
 
-	CRulerBar m_xspkdscale;
+	RulerBar m_xspkdscale;
 	CComboBox m_CBdetectWhat;
 	CComboBox m_CBdetectChan;
 	CComboBox m_CBtransform;
@@ -41,7 +41,7 @@ protected:
 	ChartSpikeBarWnd m_ChartSpkWnd_Bar;
 	ChartSpikeShapeWnd m_ChartSpkWnd_Shape;
 
-	CScrollBarEx m_filescroll;
+	ScrollBarEx m_filescroll;
 	SCROLLINFO m_filescroll_infos{};
 
 	CEditCtrl mm_spikeno;

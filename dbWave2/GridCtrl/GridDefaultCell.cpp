@@ -2,9 +2,9 @@
 #include "GridDefaultCell.h"
 
 
-IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
+IMPLEMENT_DYNCREATE(GridDefaultCell, GridCell)
 
-CGridDefaultCell::CGridDefaultCell()
+GridDefaultCell::GridDefaultCell()
 {
 #ifdef _WIN32_WCE
 	m_nFormat = DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
@@ -30,12 +30,12 @@ CGridDefaultCell::CGridDefaultCell()
 #endif
 }
 
-CGridDefaultCell::~CGridDefaultCell()
+GridDefaultCell::~GridDefaultCell()
 {
 	m_Font.DeleteObject();
 }
 
-void CGridDefaultCell::SetFont(const LOGFONT* plf)
+void GridDefaultCell::SetFont(const LOGFONT* plf)
 {
 	ASSERT(plf);
 
@@ -44,7 +44,7 @@ void CGridDefaultCell::SetFont(const LOGFONT* plf)
 	m_Font.DeleteObject();
 	m_Font.CreateFontIndirect(plf);
 
-	CGridCell::SetFont(plf);
+	GridCell::SetFont(plf);
 
 	// Get the font size and hence the default cell size
 	CDC* p_dc = CDC::FromHandle(GetDC(nullptr));
@@ -66,13 +66,13 @@ void CGridDefaultCell::SetFont(const LOGFONT* plf)
 	}
 }
 
-LOGFONT* CGridDefaultCell::GetFont() const
+LOGFONT* GridDefaultCell::GetFont() const
 {
 	ASSERT(m_plfFont); // This is the default - it CAN'T be NULL!
 	return m_plfFont;
 }
 
-CFont* CGridDefaultCell::GetFontObject() const
+CFont* GridDefaultCell::GetFontObject() const
 {
 	ASSERT(m_Font.GetSafeHandle());
 	return (CFont*)&m_Font;

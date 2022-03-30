@@ -1,18 +1,15 @@
 #pragma once
 
-// CRuler
-
-
-// CRulerBar
-class CRuler;
+class Ruler;
 class ChartData;
 
-class CRulerBar : public CWnd
+
+class RulerBar : public CWnd
 {
-	DECLARE_DYNAMIC(CRulerBar)
+	DECLARE_DYNAMIC(RulerBar)
 public:
-	CRulerBar();
-	~CRulerBar() override;
+	RulerBar();
+	~RulerBar() override;
 protected:
 	void PreSubclassWindow() override;
 private:
@@ -25,7 +22,7 @@ private:
 	int m_captureMode {-1};
 	CPoint oldpt;
 	CPoint newpt;
-	CRuler* m_pRuler { nullptr };
+	Ruler* m_pRuler { nullptr };
 	ChartData* m_pChartDataWnd { nullptr };
 	
 public:
@@ -33,7 +30,7 @@ public:
 	            DWORD dw_style, const RECT& rect, CWnd* pParentWnd,
 	            UINT nID, CCreateContext* pContext = nullptr) override;
 	BOOL Create(CWnd* pParentWnd, ChartData* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID);
-	void DrawScalefromRuler(CRuler* pRuler);
+	void DrawScalefromRuler(Ruler* pRuler);
 
 	void AttachScopeWnd(ChartData* pDataChartWnd, BOOL bXaxis)
 	{

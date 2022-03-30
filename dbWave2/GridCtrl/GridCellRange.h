@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////
 // GridCellRange.h: header file
 //
-// MFC Grid Control - interface for the CCellRange class.
+// MFC Grid Control - interface for the GridCellRange class.
 //
 // Written by Chris Maunder <cmaunder@mail.com>
 // Copyright (c) 1998-2002. All Rights Reserved.
@@ -18,7 +18,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@
 //      mailto:chinajoe@aol.com
 //      http://users.aol.com/chinajoe
 
-class CCellID
+class GridCellID
 {
 	// Attributes
 public:
@@ -42,20 +42,20 @@ public:
 
 	// Operations
 public:
-	explicit CCellID(int nRow = -1, int nCol = -1) : row(nRow), col(nCol)
+	explicit GridCellID(int nRow = -1, int nCol = -1) : row(nRow), col(nCol)
 
 	{
 	}
 
 	int IsValid() const { return (row >= 0 && col >= 0); }
-	int operator==(const CCellID& rhs) const { return (row == rhs.row && col == rhs.col); }
-	int operator!=(const CCellID& rhs) const { return !operator==(rhs); }
+	int operator==(const GridCellID& rhs) const { return (row == rhs.row && col == rhs.col); }
+	int operator!=(const GridCellID& rhs) const { return !operator==(rhs); }
 };
 
-class CCellRange
+class GridCellRange
 {
 public:
-	CCellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
+	GridCellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
 	{
 		m_nMinRow = -1;
 		m_nMinCol = -1;
@@ -68,11 +68,11 @@ public:
 
 	int IsValid() const;
 	int InRange(int row, int col) const;
-	int InRange(const CCellID& cellID) const;
+	int InRange(const GridCellID& cellID) const;
 	int Count() { return (m_nMaxRow - m_nMinRow + 1) * (m_nMaxCol - m_nMinCol + 1); }
 
-	CCellID GetTopLeft() const;
-	CCellRange Intersect(const CCellRange& rhs) const;
+	GridCellID GetTopLeft() const;
+	GridCellRange Intersect(const GridCellRange& rhs) const;
 
 	int GetMinRow() const { return m_nMinRow; }
 	void SetMinRow(int minRow) { m_nMinRow = minRow; }
@@ -89,9 +89,9 @@ public:
 	int GetRowSpan() const { return m_nMaxRow - m_nMinRow + 1; }
 	int GetColSpan() const { return m_nMaxCol - m_nMinCol + 1; }
 
-	void operator=(const CCellRange& rhs);
-	int operator==(const CCellRange& rhs);
-	int operator!=(const CCellRange& rhs);
+	void operator=(const GridCellRange& rhs);
+	int operator==(const GridCellRange& rhs);
+	int operator!=(const GridCellRange& rhs);
 
 protected:
 	int m_nMinRow;
@@ -100,7 +100,7 @@ protected:
 	int m_nMaxCol;
 };
 
-inline void CCellRange::Set(int minRow, int minCol, int maxRow, int maxCol)
+inline void GridCellRange::Set(int minRow, int minCol, int maxRow, int maxCol)
 {
 	m_nMinRow = minRow;
 	m_nMinCol = minCol;
@@ -108,46 +108,46 @@ inline void CCellRange::Set(int minRow, int minCol, int maxRow, int maxCol)
 	m_nMaxCol = maxCol;
 }
 
-inline void CCellRange::operator=(const CCellRange& rhs)
+inline void GridCellRange::operator=(const GridCellRange& rhs)
 {
 	if (this != &rhs) Set(rhs.m_nMinRow, rhs.m_nMinCol, rhs.m_nMaxRow, rhs.m_nMaxCol);
 }
 
-inline int CCellRange::operator==(const CCellRange& rhs)
+inline int GridCellRange::operator==(const GridCellRange& rhs)
 {
 	return ((m_nMinRow == rhs.m_nMinRow) && (m_nMinCol == rhs.m_nMinCol) &&
 		(m_nMaxRow == rhs.m_nMaxRow) && (m_nMaxCol == rhs.m_nMaxCol));
 }
 
-inline int CCellRange::operator!=(const CCellRange& rhs)
+inline int GridCellRange::operator!=(const GridCellRange& rhs)
 {
 	return !operator==(rhs);
 }
 
-inline int CCellRange::IsValid() const
+inline int GridCellRange::IsValid() const
 {
 	return (m_nMinRow >= 0 && m_nMinCol >= 0 && m_nMaxRow >= 0 && m_nMaxCol >= 0 &&
 		m_nMinRow <= m_nMaxRow && m_nMinCol <= m_nMaxCol);
 }
 
-inline int CCellRange::InRange(int row, int col) const
+inline int GridCellRange::InRange(int row, int col) const
 {
 	return (row >= m_nMinRow && row <= m_nMaxRow && col >= m_nMinCol && col <= m_nMaxCol);
 }
 
-inline int CCellRange::InRange(const CCellID& cellID) const
+inline int GridCellRange::InRange(const GridCellID& cellID) const
 {
 	return InRange(cellID.row, cellID.col);
 }
 
-inline CCellID CCellRange::GetTopLeft() const
+inline GridCellID GridCellRange::GetTopLeft() const
 {
-	return CCellID(m_nMinRow, m_nMinCol);
+	return GridCellID(m_nMinRow, m_nMinCol);
 }
 
-inline CCellRange CCellRange::Intersect(const CCellRange& rhs) const
+inline GridCellRange GridCellRange::Intersect(const GridCellRange& rhs) const
 {
-	return CCellRange(max(m_nMinRow, rhs.m_nMinRow), max(m_nMinCol, rhs.m_nMinCol),
+	return GridCellRange(max(m_nMinRow, rhs.m_nMinRow), max(m_nMinCol, rhs.m_nMinCol),
 	                  min(m_nMaxRow, rhs.m_nMaxRow), min(m_nMaxCol, rhs.m_nMaxCol));
 }
 

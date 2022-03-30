@@ -20,7 +20,7 @@ public:
 class CEnvelope : public CObject
 {
 public:
-	CEnvelope(); // protected constructor used by dynamic creation
+	CEnvelope(); 
 	DECLARE_SERIAL(CEnvelope)
 
 public:

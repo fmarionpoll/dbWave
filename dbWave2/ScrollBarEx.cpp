@@ -12,30 +12,29 @@
 #define new DEBUG_NEW
 #endif
 
-// CScrollBarEx
+// ScrollBarEx
 
-IMPLEMENT_DYNAMIC(CScrollBarEx, CScrollBar)
+IMPLEMENT_DYNAMIC(ScrollBarEx, CScrollBar)
 
-CScrollBarEx::CScrollBarEx() : m_scBarInfo_old(), m_scInfo(), m_scInfo_old()
+ScrollBarEx::ScrollBarEx() : m_scBarInfo_old(), m_scInfo(), m_scInfo_old()
 {
 	m_bCaptured = FALSE;
 	m_captureMode = 0;
 	m_scBarInfo.cbSize = sizeof(SCROLLBARINFO);
 }
 
-CScrollBarEx::~CScrollBarEx()
-{
-}
+ScrollBarEx::~ScrollBarEx()
+= default;
 
-BEGIN_MESSAGE_MAP(CScrollBarEx, CScrollBar)
+BEGIN_MESSAGE_MAP(ScrollBarEx, CScrollBar)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
-// CScrollBarEx message handlers
+// ScrollBarEx message handlers
 
-void CScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
+void ScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (!GetScrollBarInfo(&m_scBarInfo))
 		return;
@@ -104,7 +103,7 @@ void CScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 		CScrollBar::OnMouseMove(nFlags, point);
 }
 
-void CScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
+void ScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// capture mouse, get current scroll max and min values
 	if (!GetScrollBarInfo(&m_scBarInfo))
@@ -145,7 +144,7 @@ void CScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
 		CScrollBar::OnLButtonDown(nFlags, point);
 }
 
-void CScrollBarEx::OnLButtonUp(UINT nFlags, CPoint point)
+void ScrollBarEx::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_bCaptured)
 	{

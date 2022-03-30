@@ -1,11 +1,11 @@
 #pragma once
 #include <afxwin.h>
 
-class CInPlaceEdit : public CEdit
+class InPlaceEdit : public CEdit
 {
 public:
-    CInPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText);
-    ~CInPlaceEdit() override;
+    InPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText);
+    ~InPlaceEdit() override;
 
 protected:
 	BOOL PreTranslateMessage(MSG* pMsg) override;

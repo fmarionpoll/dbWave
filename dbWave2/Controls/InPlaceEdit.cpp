@@ -5,10 +5,10 @@
 
 
 // The code contained in this file is based on the original
-// CInPlaceEdit from
+// InPlaceEdit from
 // https://www.codeguru.com/cplusplus/editable-subitems/
 
-CInPlaceEdit::CInPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText)
+InPlaceEdit::InPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText)
 	:m_sInitText(sInitText)
 {
 	m_iItem = iItem;
@@ -17,11 +17,11 @@ CInPlaceEdit::CInPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitT
 	m_parent = parent;
 }
 
-CInPlaceEdit::~CInPlaceEdit()
+InPlaceEdit::~InPlaceEdit()
 {
 }
 
-BEGIN_MESSAGE_MAP(CInPlaceEdit, CEdit)
+BEGIN_MESSAGE_MAP(InPlaceEdit, CEdit)
 	ON_WM_KILLFOCUS()
 	ON_WM_NCDESTROY()
 	ON_WM_CHAR()
@@ -29,7 +29,7 @@ BEGIN_MESSAGE_MAP(CInPlaceEdit, CEdit)
 END_MESSAGE_MAP()
 
 
-BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
+BOOL InPlaceEdit::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN)
 	{
@@ -49,7 +49,7 @@ BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 }
 
 
-void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
+void InPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 {
 	CEdit::OnKillFocus(pNewWnd);
 
@@ -72,14 +72,14 @@ void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 	DestroyWindow();
 }
 
-void CInPlaceEdit::OnNcDestroy()
+void InPlaceEdit::OnNcDestroy()
 {
 	CEdit::OnNcDestroy();
 	delete this;
 }
 
 
-void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void InPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar == VK_ESCAPE || nChar == VK_RETURN)
 	{
@@ -122,7 +122,7 @@ void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-int CInPlaceEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int InPlaceEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CEdit::OnCreate(lpCreateStruct) == -1)
 		return -1;

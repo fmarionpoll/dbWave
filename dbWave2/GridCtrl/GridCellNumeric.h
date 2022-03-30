@@ -1,4 +1,4 @@
-// GridCellNumeric.h: interface for the CGridCellNumeric class.
+// GridCellNumeric.h: interface for the GridCellNumeric class.
 //
 // Written by Andrew Truckle [ajtruckle@wsatkins.co.uk]
 //
@@ -8,9 +8,9 @@
 
 #include "GridCell.h"
 
-class CGridCellNumeric : public CGridCell
+class GridCellNumeric : public GridCell
 {
-	DECLARE_DYNCREATE(CGridCellNumeric)
+	DECLARE_DYNCREATE(GridCellNumeric)
 
 public:
 	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;

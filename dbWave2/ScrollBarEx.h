@@ -1,14 +1,14 @@
 #pragma once
 
-// CScrollBarEx
+// ScrollBarEx
 
-class CScrollBarEx : public CScrollBar
+class ScrollBarEx : public CScrollBar
 {
-	DECLARE_DYNAMIC(CScrollBarEx)
+	DECLARE_DYNAMIC(ScrollBarEx)
 
 public:
-	CScrollBarEx();
-	~CScrollBarEx() override;
+	ScrollBarEx();
+	~ScrollBarEx() override;
 	int GetScrollHeight() { return (m_scBarInfo.rcScrollBar.bottom - m_scBarInfo.rcScrollBar.top + 1); }
 	int GetScrollWidth() { return (m_scBarInfo.rcScrollBar.right - m_scBarInfo.rcScrollBar.left + 1); }
 	int GetThumbSize() { return m_scBarInfo.dxyLineButton; }

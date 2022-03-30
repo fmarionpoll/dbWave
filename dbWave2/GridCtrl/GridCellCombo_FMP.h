@@ -1,9 +1,4 @@
-#if !defined(AFX_GRIDCELLCOMBO_H__ECD42822_16DF_11D1_992F_895E185F9C72__INCLUDED_)
-#define AFX_GRIDCELLCOMBO_H__ECD42822_16DF_11D1_992F_895E185F9C72__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 /////////////////////////////////////////////////////////////////////////////
 // GridCellCombo.h : header file
@@ -25,32 +20,22 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10
+// For use with GridCtrl v2.10
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "GridCell.h"
 
-class CGridCellCombo : public CGridCell
+class GridCellComboFMP : public GridCell
 {
-	friend class CGridCtrl;
-	DECLARE_DYNCREATE(CGridCellCombo)
+	friend class GridCtrl;
+	DECLARE_DYNCREATE(GridCellComboFMP)
 
-public:
-	CGridCellCombo();
-
-	// editing cells
-public:
+	GridCellComboFMP();
 	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
 	CWnd* GetEditWnd() const override;
 	void EndEdit() override;
 
-	// Operations
-public:
 	CSize GetCellExtent(CDC* p_dc) override;
-
-	// CGridCellCombo specific calls
-public:
 	void SetOptions(const CStringArray& ar);
 	void SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
 	DWORD GetStyle() { return m_dwStyle; }
@@ -64,96 +49,3 @@ protected:
 	DWORD m_dwStyle;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// CComboEdit window
-
-#define IDC_COMBOEDIT 1001
-
-class CComboEdit : public CEdit
-{
-	// Construction
-public:
-	CComboEdit();
-
-	// Attributes
-public:
-	// Operations
-public:
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CComboEdit)
-	BOOL PreTranslateMessage(MSG* pMsg) override;
-	//}}AFX_VIRTUAL
-
-	// Implementation
-public:
-	~CComboEdit() override;
-
-	// Generated message map functions
-protected:
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-
-	DECLARE_MESSAGE_MAP()
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CGridInPlaceList window
-
-class CGridInPlaceList : public CComboBox
-{
-	friend class CComboEdit;
-
-	// Construction
-public:
-	CGridInPlaceList(CWnd* pParent, // parent
-	                 CRect& rect, // dimensions & location
-	                 DWORD dw_style, // window/combobox style
-	                 UINT nID, // control ID
-	                 int nRow, int nColumn, // row and column
-	                 COLORREF crFore, COLORREF crBack, // Foreground, background colour
-	                 CStringArray& Items, // Items in list
-	                 CString sInitText, // initial selection
-	                 UINT nFirstChar); // first character to pass to control
-
-	// Attributes
-public:
-	CComboEdit m_comboedit; // subclassed edit control
-private:
-	int m_nNumLines;
-	CString m_sInitText;
-	int m_nRow;
-	int m_nCol;
-	UINT m_nLastChar;
-	BOOL m_bExitOnArrows;
-	COLORREF m_crForeClr, m_crBackClr;
-
-	// Operations
-public:
-protected:
-	void PostNcDestroy() override;
-	//}}AFX_VIRTUAL
-
-	// Implementation
-public:
-	~CGridInPlaceList() override;
-	void EndEdit();
-
-protected:
-	int GetCorrectDropWidth();
-
-	// Generated message map functions
-protected:
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnDropdown();
-	afx_msg UINT OnGetDlgCode();
-	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
-
-	DECLARE_MESSAGE_MAP()
-};
-
-
-#endif // !defined(AFX_GRIDCELLCOMBO_H__ECD42822_16DF_11D1_992F_895E185F9C72__INCLUDED_)

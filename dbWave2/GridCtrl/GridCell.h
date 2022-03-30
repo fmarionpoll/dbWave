@@ -18,7 +18,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -26,27 +26,27 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-class CGridCtrl;
+class GridCtrl;
 #include "GridCellBase.h"
 
 // Each cell contains one of these. Fields "row" and "column" are not stored since we
 // will usually have acces to them in other ways, and they are an extra 8 bytes per
 // cell that is probably unnecessary.
 
-class CGridCell : public CGridCellBase
+class GridCell : public GridCellBase
 {
-	friend class CGridCtrl;
-	DECLARE_DYNCREATE(CGridCell)
+	friend class GridCtrl;
+	DECLARE_DYNCREATE(GridCell)
 
-	CGridCell();
-	~CGridCell() override;
+	GridCell();
+	~GridCell() override;
 
-	void operator=(const CGridCell& cell);
+	void operator=(const GridCell& cell);
 
 	void SetText(LPCTSTR sz_text) override { m_strText = sz_text; }
 	void SetImage(int nImage) override { m_nImage = nImage; }
 	void SetData(LPARAM lParam) override { m_lParam = lParam; }
-	void SetGrid(CGridCtrl* pGrid) override { m_pGrid = pGrid; }
+	void SetGrid(GridCtrl* pGrid) override { m_pGrid = pGrid; }
 
 	void SetFormat(DWORD nFormat) override { m_nFormat = nFormat; }
 	void SetTextClr(COLORREF clr) override { m_crFgClr = clr; }
@@ -63,7 +63,7 @@ class CGridCell : public CGridCellBase
 	LPCTSTR GetText() const override { return (m_strText.IsEmpty()) ? _T("") : static_cast<LPCTSTR>(m_strText); }
 	int GetImage() const override { return m_nImage; }
 	LPARAM GetData() const override { return m_lParam; }
-	CGridCtrl* GetGrid() const override { return m_pGrid; }
+	GridCtrl* GetGrid() const override { return m_pGrid; }
 
 	DWORD GetFormat() const override;
 	COLORREF GetTextClr() const override { return m_crFgClr; } // TODO: change to use default cell
@@ -95,7 +95,7 @@ protected:
 
 	BOOL m_bEditing{};
 
-	CGridCtrl* m_pGrid{};
+	GridCtrl* m_pGrid{};
 	CWnd* m_pEditWnd{};
 };
 

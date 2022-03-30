@@ -29,7 +29,7 @@ protected:
 	CSize m_OldSize = CSize(-1, -1); // used to resize the form
 
 public:
-	CGridCtrl m_Grid;
+	GridCtrl m_Grid;
 
 	// parameters passed:
 	CWaveFormat* m_pwFormat = nullptr; // acquisition parameters

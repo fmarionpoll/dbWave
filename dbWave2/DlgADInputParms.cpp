@@ -13,7 +13,6 @@
 #define new DEBUG_NEW
 #endif
 
-// CDlgADInputs 
 
 // Static data : rows headers, content of comboboxes (high pass filter, AD gain, amplifier, headstage)
 // pszRowTitle: content of the row header
@@ -280,7 +279,7 @@ void DlgADInputs::InitADchannelCombo(int col, int iselect)
 	csArrayOptions.Add(_T("16 (Din)"));
 
 	// select cell and corresponding combo
-	auto p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(m_rowADchannel, col));
+	auto p_cell = static_cast<GridCellComboFMP*>(m_Grid.GetCell(m_rowADchannel, col));
 	if (p_cell != nullptr)
 	{
 		// if iselect negative, get current selection
@@ -327,13 +326,13 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 	//"A/D channel" - (col-1)
 	row++;
 	m_rowADchannel = row;
-	if (m_Grid.SetCellType(m_rowADchannel, col, RUNTIME_CLASS(CGridCellCombo)))
+	if (m_Grid.SetCellType(m_rowADchannel, col, RUNTIME_CLASS(GridCellComboFMP)))
 		InitADchannelCombo(col, col - 1);
 
 	// "A/D gain" - combo
 	row++;
 	m_row_ADgain = row;
-	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCombo)))
+	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellComboFMP)))
 	{
 		CStringArray csArrayOptions;
 		auto i = 0;
@@ -343,7 +342,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 			i++;
 		}
 		while (pszADGains[i] != _T(""));
-		auto* p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto* p_cell = static_cast<GridCellComboFMP*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN);
 		// init value
@@ -355,7 +354,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 
 	// "Amplifier type" - combo
 	row++;
-	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCombo)))
+	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellComboFMP)))
 	{
 		CStringArray cs_array_options;
 		auto i = 0;
@@ -365,7 +364,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 			i++;
 		}
 		while (pszAmplifier[i] != _T(""));
-		auto* p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto* p_cell = static_cast<GridCellComboFMP*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(cs_array_options);
 		p_cell->SetStyle(CBS_DROPDOWN);
 		// init value
@@ -377,7 +376,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 
 	// " output channel" - numeric
 	row++;
-	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
+	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
 	// init value
 	item.row = row;
 	item.strText.Format(_T("%d"), col);
@@ -386,7 +385,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 	// " gain" - numeric
 	row++;
 	m_row_ampgain = row; // save index for later
-	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
+	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
 	// init value
 	if (col > 1)
 		m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col - 1));
@@ -398,11 +397,11 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 	item.strText = _T("50 Hz");
 	item.row = row;
 	m_Grid.SetItem(&item);
-	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCheck));
+	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellCheck));
 
 	// " IN+" - combo
 	row++;
-	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCombo)))
+	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellComboFMP)))
 	{
 		CStringArray csArrayOptions;
 		int i = 0;
@@ -412,7 +411,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 			i++;
 		}
 		while (pszHighPass[i] != _T(""));
-		auto p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto p_cell = static_cast<GridCellComboFMP*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
@@ -424,7 +423,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 
 	// DC Offset (mV) " IN-" - combo
 	row++;
-	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
+	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
 	if (col > 1)
 		m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col - 1));
 	else
@@ -432,7 +431,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 
 	// " low pass filter" - numeric
 	row++;
-	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
+	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
 	if (col > 1)
 		m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col - 1));
 	else
@@ -440,7 +439,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 
 	// "Probe type" - combo
 	row++;
-	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCombo)))
+	if (m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellComboFMP)))
 	{
 		CStringArray csArrayOptions;
 		int i = 0;
@@ -451,7 +450,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 		}
 		while (pszProbeType[i] != _T(""));
 
-		auto p_cell = static_cast<CGridCellCombo*>(m_Grid.GetCell(row, col));
+		auto p_cell = static_cast<GridCellComboFMP*>(m_Grid.GetCell(row, col));
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
 		// init value
@@ -464,7 +463,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 	// " gain" - numeric
 	row++;
 	m_row_headstagegain = row; // save index for later
-	m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
+	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
 	// init value
 	if (col > 1)
 		m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col - 1));
@@ -477,7 +476,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 	for (auto i = 0; i < 3; i++)
 	{
 		row++;
-		m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellNumeric));
+		m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
 		m_Grid.SetItemState(row, col, m_Grid.GetItemState(1, 1) | GVIS_READONLY);
 		m_Grid.SetItemBkColour(row, col, clr);
 	}
@@ -638,7 +637,7 @@ void DlgADInputs::SaveGridToWavechanData(int col)
 
 	// amplifier notch filter
 	row++;
-	p_chan->am_notchfilt = static_cast<CGridCellCheck*>(m_Grid.GetCell(row, col))->GetCheck();
+	p_chan->am_notchfilt = static_cast<GridCellCheck*>(m_Grid.GetCell(row, col))->GetCheck();
 
 	// amplifier high pass filter (IN+)
 	row++;
@@ -857,7 +856,7 @@ void DlgADInputs::DisplayChannelAmplifier(GV_ITEM& item, const CWaveChan* p_chan
 	m_Grid.SetItem(&item);
 	// amplifier notch filter
 	item.row++;
-	static_cast<CGridCellCheck*>(m_Grid.GetCell(item.row, item.col))->SetCheck(p_chan->am_notchfilt);
+	static_cast<GridCellCheck*>(m_Grid.GetCell(item.row, item.col))->SetCheck(p_chan->am_notchfilt);
 	// IN+
 	item.row++;
 	item.strText = p_chan->am_csInputpos;

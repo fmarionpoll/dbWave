@@ -5,14 +5,14 @@
 
 // This class is for storing grid default values. It's a little heavy weight, so
 // don't use it in bulk
-class CGridDefaultCell : public CGridCell
+class GridDefaultCell : public GridCell
 {
-	DECLARE_DYNCREATE(CGridDefaultCell)
+	DECLARE_DYNCREATE(GridDefaultCell)
 
 	// Construction/Destruction
 public:
-	CGridDefaultCell();
-	~CGridDefaultCell() override;
+	GridDefaultCell();
+	~GridDefaultCell() override;
 
 public:
 	virtual DWORD GetStyle() const { return m_dwStyle; }
@@ -33,7 +33,7 @@ public:
 		ASSERT(FALSE);
 	}
 
-	DWORD GetState() const override { return CGridCell::GetState() | GVIS_READONLY; }
+	DWORD GetState() const override { return GridCell::GetState() | GVIS_READONLY; }
 
 	void SetCoords(int /*row*/, int /*col*/) override
 	{

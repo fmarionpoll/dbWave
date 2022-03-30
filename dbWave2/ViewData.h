@@ -34,8 +34,8 @@ public:
 	CEditCtrl mm_time_first_abcissa;
 	CEditCtrl mm_time_last_abcissa;
 	CComboBox m_comboSelectChan;
-	CRulerBar m_ADC_yRulerBar;
-	CRulerBar m_ADC_xRulerBar;
+	RulerBar m_ADC_yRulerBar;
+	RulerBar m_ADC_xRulerBar;
 
 protected:
 	// parameters related to data display and to document
@@ -72,7 +72,7 @@ protected:
 	BOOL m_bCommonScale = false;
 
 protected:
-	CScrollBarEx m_filescroll; // data position within file
+	ScrollBarEx m_filescroll; // data position within file
 	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
 	int m_VBarMode = 0; // flag V scrollbar state
 	CScrollBar m_scrolly; // V scrollbar

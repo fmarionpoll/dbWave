@@ -2,13 +2,13 @@
 #include "Ruler.h"
 
 
-CRuler::CRuler()
+Ruler::Ruler()
 = default;
 
-CRuler::~CRuler()
+Ruler::~Ruler()
 = default;
 
-void CRuler::SetRange(double dfirst, double dlast)
+void Ruler::SetRange(double dfirst, double dlast)
 {
 	m_lowest_value = dfirst;
 	m_highest_value = dlast;
@@ -22,13 +22,13 @@ void CRuler::SetRange(double dfirst, double dlast)
 }
 
 
-void CRuler::UpdateRange(double dfirst, double dlast)
+void Ruler::UpdateRange(double dfirst, double dlast)
 {
 	if (dfirst != m_lowest_value || dlast != m_highest_value)
 		SetRange(dfirst, dlast);
 }
 
-BOOL CRuler::AdjustScale()
+BOOL Ruler::AdjustScale()
 {
 	// cf Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
 	// http://drdobbs.com/184401258

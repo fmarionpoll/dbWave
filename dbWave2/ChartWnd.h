@@ -88,8 +88,8 @@ public:
 	int GetNyScaleCells() { return m_scopestruct.iYCells; }
 	void SetxScaleUnitValue(float x) { m_scopestruct.xScaleUnitValue = x; }
 	void SetyScaleUnitValue(float y) { m_scopestruct.yScaleUnitValue = y; }
-	void AttachExternalXRuler(CRulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
-	void AttachExternalYRuler(CRulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
+	void AttachExternalXRuler(RulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
+	void AttachExternalYRuler(RulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
 	void XorVTtag(int xpoint);
 	void XorTempVTtag(int xpoint);
@@ -119,14 +119,14 @@ public:
 	}
 
 public:
-	CRuler m_xRuler{};
-	CRuler m_yRuler{};
+	Ruler m_xRuler{};
+	Ruler m_yRuler{};
 	CFont m_hFont{};
 	BOOL m_bNiceGrid = false;
 	int m_abcissaheight = 10;
 	int m_ordinateswidth = 25;
-	CRulerBar* m_pXRulerBar = nullptr;
-	CRulerBar* m_pYRulerBar = nullptr;
+	RulerBar* m_pXRulerBar = nullptr;
+	RulerBar* m_pYRulerBar = nullptr;
 
 	TagList m_HZtags{}; // List of horizontal tag lines
 	TagList m_VTtags{}; // List of vertical tag lines
@@ -223,9 +223,9 @@ protected:
 	void zoomOut();
 	void zoomPop();
 	void drawGridEvenlySpaced(CDC* p_dc) const;
-	void drawGridFromRuler(CDC* p_dc, CRuler* pRuler) const;
+	void drawGridFromRuler(CDC* p_dc, Ruler* pRuler) const;
 	void drawGridNicelySpaced(CDC* p_dc);
-	void drawScalefromRuler(CDC* p_dc, CRuler* scale);
+	void drawScalefromRuler(CDC* p_dc, Ruler* scale);
 
 	// Generated message map functions
 protected:

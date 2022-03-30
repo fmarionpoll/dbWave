@@ -4,7 +4,7 @@
 // Copyright (c) 1998-2002. All Rights Reserved.
 //
 // The code contained in this file is based on the original
-// CGridInPlaceEdit from http://www.codeguru.com/listview/edit_subitems.shtml
+// GridInPlaceEdit from http://www.codeguru.com/listview/edit_subitems.shtml
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is
@@ -18,7 +18,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 // History:
 //         10 May 1998  Uses GVN_ notifications instead of LVN_,
@@ -57,7 +57,7 @@ static char THIS_FILE[] = __FILE__;
 
 
 
-CGridInPlaceEdit::CGridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+GridInPlaceEdit::GridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
                            int nRow, int nColumn, CString sInitText,
                            UINT nFirstChar)
 {
@@ -108,11 +108,11 @@ CGridInPlaceEdit::CGridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, U
 		PostMessage(WM_IME_CHAR, nFirstChar);
 }
 
-CGridInPlaceEdit::~CGridInPlaceEdit()
+GridInPlaceEdit::~GridInPlaceEdit()
 {
 }
 
-BEGIN_MESSAGE_MAP(CGridInPlaceEdit, CEdit)
+BEGIN_MESSAGE_MAP(GridInPlaceEdit, CEdit)
 	ON_WM_KILLFOCUS()
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
@@ -121,12 +121,12 @@ BEGIN_MESSAGE_MAP(CGridInPlaceEdit, CEdit)
 END_MESSAGE_MAP()
 
 ////////////////////////////////////////////////////////////////////////////
-// CGridInPlaceEdit message handlers
+// GridInPlaceEdit message handlers
 
 // If an arrow key (or associated) is pressed, then exit if
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
-void CGridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 			nChar == VK_DOWN || nChar == VK_UP ||
@@ -142,13 +142,13 @@ void CGridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // As soon as this edit loses focus, kill it.
-void CGridInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
+void GridInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 {
 	CEdit::OnKillFocus(pNewWnd);
 	EndEdit();
 }
 
-void CGridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar == VK_TAB || nChar == VK_RETURN)
 	{
@@ -196,16 +196,16 @@ void CGridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-UINT CGridInPlaceEdit::OnGetDlgCode()
+UINT GridInPlaceEdit::OnGetDlgCode()
 {
 	return DLGC_WANTALLKEYS;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// CGridInPlaceEdit overrides
+// GridInPlaceEdit overrides
 
 // Stoopid win95 accelerator key problem workaround - Matt Weagle.
-BOOL CGridInPlaceEdit::PreTranslateMessage(MSG* pMsg)
+BOOL GridInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 {
 	// Catch the Alt key so we don't choke if focus is going to an owner drawn button
 	if (pMsg->message == WM_SYSCHAR)
@@ -215,16 +215,16 @@ BOOL CGridInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 }
 
 // Auto delete
-void CGridInPlaceEdit::PostNcDestroy()
+void GridInPlaceEdit::PostNcDestroy()
 {
 	CEdit::PostNcDestroy();
 	delete this;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// CGridInPlaceEdit implementation
+// GridInPlaceEdit implementation
 
-void CGridInPlaceEdit::EndEdit()
+void GridInPlaceEdit::EndEdit()
 {
 	CString str;
 

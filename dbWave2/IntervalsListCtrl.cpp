@@ -245,7 +245,7 @@ CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
 
 	dw_style |= WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
 
-	const auto pEdit = new CInPlaceEdit(this, nItem, nCol, GetItemText(nItem, nCol));
+	const auto pEdit = new InPlaceEdit(this, nItem, nCol, GetItemText(nItem, nCol));
 	pEdit->Create(dw_style, rect, this, IDC_INPLACE_CONTROL);
 
 	return pEdit;

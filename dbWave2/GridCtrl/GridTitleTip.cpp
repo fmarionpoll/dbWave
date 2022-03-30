@@ -18,7 +18,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 // History
 //         10 Apr 1999  Now accepts a LOGFONT pointer and
@@ -45,10 +45,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CTitleTip
 
-CTitleTip::CTitleTip()
+GridTitleTip::GridTitleTip()
 {
 	// Register the window class if it has not already been registered.
 	WNDCLASS wndcls;
@@ -76,18 +74,18 @@ CTitleTip::CTitleTip()
 	m_pParentWnd = nullptr;
 }
 
-CTitleTip::~CTitleTip()
+GridTitleTip::~GridTitleTip()
 {
 }
 
-BEGIN_MESSAGE_MAP(CTitleTip, CWnd)
+BEGIN_MESSAGE_MAP(GridTitleTip, CWnd)
 	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CTitleTip message handlers
+// GridTitleTip message handlers
 
-BOOL CTitleTip::Create(CWnd* pParentWnd)
+BOOL GridTitleTip::Create(CWnd* pParentWnd)
 {
 	ASSERT_VALID(pParentWnd);
 
@@ -106,7 +104,7 @@ BOOL CTitleTip::Create(CWnd* pParentWnd)
 	return m_bCreated;
 }
 
-BOOL CTitleTip::DestroyWindow()
+BOOL GridTitleTip::DestroyWindow()
 {
 	m_bCreated = FALSE;
 
@@ -119,7 +117,7 @@ BOOL CTitleTip::DestroyWindow()
 // lpszTitleText - The text to be displayed
 // xoffset		 - Number of pixel that the text is offset from
 //				   left border of the cell
-void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
+void GridTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
                      LPRECT lpHoverRect /*=NULL*/,
                      const LOGFONT* lpLogFont /*=NULL*/,
                      COLORREF crTextClr /* CLR_DEFAULT */,
@@ -217,7 +215,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 	dc.SelectObject(pOldFont);
 }
 
-void CTitleTip::Hide()
+void GridTitleTip::Hide()
 {
 	if (!IsWindow(GetSafeHwnd()))
 		return;
@@ -228,7 +226,7 @@ void CTitleTip::Hide()
 	ShowWindow(SW_HIDE);
 }
 
-void CTitleTip::OnMouseMove(UINT nFlags, CPoint point)
+void GridTitleTip::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (!m_rectHover.PtInRect(point))
 	{
@@ -254,7 +252,7 @@ void CTitleTip::OnMouseMove(UINT nFlags, CPoint point)
 	}
 }
 
-BOOL CTitleTip::PreTranslateMessage(MSG* pMsg)
+BOOL GridTitleTip::PreTranslateMessage(MSG* pMsg)
 {
 	// Used to qualify WM_LBUTTONDOWN messages as double-clicks
 	DWORD dwTick = 0;

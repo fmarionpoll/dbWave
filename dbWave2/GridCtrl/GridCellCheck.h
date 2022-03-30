@@ -25,19 +25,19 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "GridCell.h"
 
-class CGridCellCheck : public CGridCell
+class GridCellCheck : public GridCell
 {
-	friend class CGridCtrl;
-	DECLARE_DYNCREATE(CGridCellCheck)
+	friend class GridCtrl;
+	DECLARE_DYNCREATE(GridCellCheck)
 
 public:
-	CGridCellCheck();
+	GridCellCheck();
 
 public:
 	BOOL SetCheck(BOOL bChecked = TRUE);
