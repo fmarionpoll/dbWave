@@ -15,6 +15,8 @@ SpikeList::SpikeList()
 {
 	m_spike_class_descriptor_array.SetSize(1);
 	m_spike_class_descriptor_array.Add(SpikeClassDescriptor(0,0));
+	m_spike_elements.SetSize(0);
+
 }
 
 SpikeList::~SpikeList()

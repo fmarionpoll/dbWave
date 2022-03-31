@@ -1,6 +1,5 @@
 #pragma once
 #include <afxdao.h>
-
 #pragma warning(disable : 4995)
 #include "CSpkListTabCtrl.h"
 #include "dbTableMain.h"
@@ -40,26 +39,26 @@ public:
 #endif
 	// print view
 protected:
-	CRect m_Margin; // margins (pixels)
-	int m_file0 = 0; // current file
+	CRect m_Margin;				// margins (pixels)
+	int m_file0 = 0;			// current file
 	long m_lFirst0 = 0;
 	long m_lLast0 = 0;
 	int m_npixels0 = 0;
-	int m_nfiles = 0; // nb of files in doc
-	int m_nbrowsperpage = 0; // USER: nb files/page
-	long m_lprintFirst = 0; // file index of first pt
-	long m_lprintLen = 0; // nb pts per line
+	int m_nfiles = 0;			// nb of files in doc
+	int m_nbrowsperpage = 0;	// USER: nb files/page
+	long m_lprintFirst = 0;		// file index of first pt
+	long m_lprintLen = 0;		// nb pts per line
 	long m_printFirst = 0;
 	long m_printLast = 0;
 	BOOL m_bIsPrinting = false;
 	CRect m_rData;
 	CRect m_rSpike;
 
-	// specific printer parameters
-	TEXTMETRIC m_tMetric{}; // onbegin/onendPrinting
-	LOGFONT m_logFont{}; // onbegin/onendPrinting
-	CFont* m_pOldFont = nullptr; // onbegin/onendPrinting
-	CFont m_fontPrint; // onbegin/onendPrinting
+	// printer parameters
+	TEXTMETRIC m_tMetric{}; 
+	LOGFONT m_logFont{}; 
+	CFont* m_pOldFont = nullptr; 
+	CFont m_fontPrint; 
 	CRect m_printRect;
 
 	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
@@ -68,7 +67,7 @@ protected:
 	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
-	// class and parameter for OnSize
+	// parameters for OnSize
 	CStretchControl m_stretch{};
 	BOOL m_binit = false;
 

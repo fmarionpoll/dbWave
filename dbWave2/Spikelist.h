@@ -56,7 +56,7 @@ protected:
 	BOOL m_extrema_valid = false;
 	int m_minimum_over_all_spikes = 0; 
 	int m_maximum_over_all_spikes = 0; 
-	CArray<SpikeElement*, SpikeElement*> m_spike_elements{}; 
+	CArray<SpikeElement*, SpikeElement*> m_spike_elements;
 
 	// (3) -------------unordered data buffers with spikes extracted from acq data-----------
 

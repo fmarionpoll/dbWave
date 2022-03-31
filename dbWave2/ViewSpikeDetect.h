@@ -33,7 +33,7 @@ public:
 
 	// form variables
 protected:
-	int m_scancount_doc = -1;
+	int m_scan_count_doc = -1;
 	CDWordArray m_DWintervals;
 
 	ChartData m_ChartDataWnd_Detect;
@@ -155,7 +155,7 @@ protected:
 	void UpdateGainScroll(int iID);
 	void UpdateBiasScroll(int iID);
 	void SetVBarMode(short bMode, int iID);
-	void UpdateTabs();
+	void update_tabs();
 
 	// Generated message map functions
 public:

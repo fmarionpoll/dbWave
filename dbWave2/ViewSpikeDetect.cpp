@@ -44,7 +44,7 @@ ViewSpikeDetection::~ViewSpikeDetection()
 		saveCurrentSpkFile();
 	}
 	// save spike detection parameters
-	const auto p_array = m_pArrayFromApp->GetChanArray(m_scancount_doc);
+	const auto p_array = m_pArrayFromApp->GetChanArray(m_scan_count_doc);
 	*p_array = m_spk_detect_array_current;
 }
 
@@ -286,7 +286,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	m_spikeno = -1;
 	if (bUpdateInterface)
 	{
-		UpdateTabs();
+		update_tabs();
 		update_detection_controls();
 		highlight_spikes(TRUE);
 	}
@@ -302,38 +302,35 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 
 void ViewSpikeDetection::highlight_spikes(BOOL flag)
 {
-	if (flag && m_pSpkList != nullptr && m_pSpkList->GetTotalSpikes() < 1)
+	if (!flag || m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() < 1) return;
+	
+	const auto array_size = m_pSpkList->GetTotalSpikes() * 2 + 3;
+	m_DWintervals.SetSize(array_size);
+	m_DWintervals.SetAt(0, 0);
+	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); // red 
+	m_DWintervals.SetAt(2, 1);
+	const auto total_spikes = m_pSpkList->GetTotalSpikes();
+	auto j_index = 3;
+	auto spike_length = m_pSpkList->GetSpikeLength();
+	const auto spike_pre_trigger = m_pSpkList->GetSpikePretrig();
+	spike_length--;
+
+	for (auto i = 0; i < total_spikes; i++)
 	{
-		CDWordArray* p_intervals = &m_DWintervals;
-
-		// init array
-		const auto array_size = m_pSpkList->GetTotalSpikes() * 2 + 3;
-		m_DWintervals.SetSize(array_size);
-		m_DWintervals.SetAt(0, 0);
-		m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); // red 
-		m_DWintervals.SetAt(2, 1);
-		const auto max = m_pSpkList->GetTotalSpikes();
-		auto j_index = 3;
-		auto spike_length = m_pSpkList->GetSpikeLength();
-		const auto spike_pre_trigger = m_pSpkList->GetSpikePretrig();
-		spike_length--;
-
-		for (auto i = 0; i < max; i++)
-		{
-			const auto p_s = m_pSpkList->GetSpikeElemt(i);
-			const auto l_first = p_s->get_time() - spike_pre_trigger;
-			m_DWintervals.SetAt(j_index, l_first);
-			j_index++;
-			m_DWintervals.SetAt(j_index, l_first + spike_length);
-			j_index++;
-		}
-
-		// tell source_view to highlight spk
-		m_ChartDataWnd_Detect.SetHighlightData(p_intervals);
-		m_ChartDataWnd_Detect.Invalidate();
-		m_ChartDataWnd_Source.SetHighlightData(p_intervals);
-		m_ChartDataWnd_Source.Invalidate();
+		const auto p_s = m_pSpkList->GetSpikeElemt(i);
+		const auto l_first = p_s->get_time() - spike_pre_trigger;
+		m_DWintervals.SetAt(j_index, l_first);
+		j_index++;
+		m_DWintervals.SetAt(j_index, l_first + spike_length);
+		j_index++;
 	}
+
+	// tell source_view to highlight spk
+	m_ChartDataWnd_Detect.SetHighlightData(&m_DWintervals);
+	m_ChartDataWnd_Detect.Invalidate();
+	m_ChartDataWnd_Source.SetHighlightData(&m_DWintervals);
+	m_ChartDataWnd_Source.Invalidate();
+	
 }
 
 void ViewSpikeDetection::update_file_parameters(BOOL bUpdateInterface)
@@ -392,15 +389,15 @@ void ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 
 	// if the number of data channels of the data source has changed, load a new set of parameters
 	// keep one array of spike detection parameters per data acquisition configuration (ie nb of acquisition channels)
-	if (m_scancount_doc != wave_format->scan_count)
+	if (m_scan_count_doc != wave_format->scan_count)
 	{
 		// save current set of parameters if scan count >= 0 this might not be necessary
-		const auto channel_array = m_pArrayFromApp->GetChanArray(m_scancount_doc);
-		if (m_scancount_doc >= 0)
+		const auto channel_array = m_pArrayFromApp->GetChanArray(m_scan_count_doc);
+		if (m_scan_count_doc >= 0)
 			*channel_array = m_spk_detect_array_current;
 		// Get parameters from the application array
-		m_scancount_doc = wave_format->scan_count;
-		m_spk_detect_array_current = *(m_pArrayFromApp->GetChanArray(m_scancount_doc));
+		m_scan_count_doc = wave_format->scan_count;
+		m_spk_detect_array_current = *(m_pArrayFromApp->GetChanArray(m_scan_count_doc));
 		// select by default the first set of detection parameters
 		m_i_detect_parameters = 0;
 		m_p_detect_parameters = m_spk_detect_array_current.GetItem(m_i_detect_parameters);
@@ -979,7 +976,7 @@ void ViewSpikeDetection::update_detection_parameters()
 	update_detection_settings(m_i_detect_parameters);
 
 	// make sure that tabs are identical to what has been changed
-	UpdateTabs();
+	update_tabs();
 	update_combo_box();
 	update_legend_detection_wnd();
 
@@ -1059,7 +1056,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	const auto db_document = GetDocument();
 	const auto data_document = db_document->m_pDat;
 	const auto data_document_name = db_document->GetDB_CurrentDatFileName();
-	m_pSpkDoc->m_acquisition_file = data_document_name;
+	m_pSpkDoc->m_acquisition_file_name = data_document_name;
 	m_pSpkDoc->InitSourceDoc(data_document);
 
 	m_pSpkDoc->SetDetectionDate(CTime::GetCurrentTime());
@@ -1156,7 +1153,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 
 	highlight_spikes(TRUE);
 	update_legends();
-	UpdateTabs();
+	update_tabs();
 }
 
 int ViewSpikeDetection::detect_stimulus_1(int channel_index)
@@ -3271,10 +3268,10 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 
 	highlight_spikes(TRUE);
 	update_legends();
-	UpdateTabs();
+	update_tabs();
 }
 
-void ViewSpikeDetection::UpdateTabs()
+void ViewSpikeDetection::update_tabs()
 {
 	// load initial data
 	const BOOL b_replace = (m_tabCtrl.GetItemCount() == m_pSpkDoc->GetSpkList_Size());
@@ -3302,6 +3299,6 @@ void ViewSpikeDetection::UpdateTabs()
 	}
 	m_pSpkDoc->SetSpkList_AsCurrent(currlist);
 
-	m_i_detect_parameters = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
+	m_i_detect_parameters = m_pSpkDoc->GetSpkList_CurrentIndex();
 	m_tabCtrl.SetCurSel(m_i_detect_parameters);
 }

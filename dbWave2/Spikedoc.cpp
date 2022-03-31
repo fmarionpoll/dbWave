@@ -107,7 +107,7 @@ void CSpikeDoc::read_before_version6(CArchive& ar, WORD wwVersion)
 		ar >> m_wave_format.csSensillum;
 	}
 	ar >> m_detection_date >> m_comment; // R2-3
-	ar >> m_acquisition_file >> m_acquisition_comment >> m_acquisition_time; // R4-6
+	ar >> m_acquisition_file_name >> m_acquisition_comment >> m_acquisition_time; // R4-6
 	ar >> m_acquisition_rate >> m_acquisition_size; // R7-8
 
 	if (wwVersion >= 3 && wwVersion <= 5)
@@ -145,7 +145,7 @@ void CSpikeDoc::read_version6(CArchive& ar)
 {
 	ar >> m_detection_date; // W2
 	ar >> m_comment; // W3
-	ar >> m_acquisition_file; // W4
+	ar >> m_acquisition_file_name; // W4
 	ar >> m_acquisition_comment; // W5
 	ar >> m_acquisition_time; // W6
 	ar >> m_acquisition_rate; // W7
@@ -182,7 +182,7 @@ void CSpikeDoc::serialize_v7(CArchive& ar)
 	{
 		ar << m_detection_date;			// W2
 		ar << m_comment;				// W3
-		ar << m_acquisition_file;		// W4
+		ar << m_acquisition_file_name;		// W4
 		ar << m_acquisition_comment;	// W5
 		ar << m_acquisition_time;		// W6
 		ar << m_acquisition_rate;		// W7
@@ -201,7 +201,7 @@ void CSpikeDoc::serialize_v7(CArchive& ar)
 	{
 		ar >> m_detection_date;
 		ar >> m_comment;
-		ar >> m_acquisition_file;
+		ar >> m_acquisition_file_name;
 		ar >> m_acquisition_comment;
 		ar >> m_acquisition_time;
 		ar >> m_acquisition_rate;
@@ -379,7 +379,7 @@ CString CSpikeDoc::GetFileInfos()
 	cs_out += psep_rc;
 
 	cs_out += _T("*** SOURCE DATA ***\r\n");
-	cs_out += m_acquisition_file + psep_rc;
+	cs_out += m_acquisition_file_name + psep_rc;
 	cs_out += m_acquisition_comment + psep_rc;
 	cs_out += m_acquisition_time.Format(_T("%#d-%B-%Y")) + psep_rc;
 

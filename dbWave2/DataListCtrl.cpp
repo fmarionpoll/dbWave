@@ -3,7 +3,7 @@
 #include "DataListCtrl.h"
 #include "dbTableMain.h"
 #include "dbWaveDoc.h"
-#include "Spikedoc.h"
+//#include "Spikedoc.h"
 #include "ChartWnd.h"
 #include "ChartData.h"
 #include "ChartSpikeBar.h"
@@ -69,13 +69,13 @@ void CDataListCtrl::OnDestroy()
 
 void CDataListCtrl::save_columns_width() const
 {
-	if (m_p_columns_width != nullptr)
+	if (m_width_columns != nullptr)
 	{
-		const auto n_columns_stored = m_p_columns_width->GetSize();
+		const auto n_columns_stored = m_width_columns->GetSize();
 		if (n_columns_stored != NCOLS)
-			m_p_columns_width->SetSize(NCOLS);
+			m_width_columns->SetSize(NCOLS);
 		for (auto i = 0; i < NCOLS; i++)
-			m_p_columns_width->SetAt(i, GetColumnWidth(i));
+			m_width_columns->SetAt(i, GetColumnWidth(i));
 	}
 }
 
@@ -92,30 +92,30 @@ void CDataListCtrl::delete_ptr_array()
 	ptr_rows.RemoveAll();
 }
 
-void CDataListCtrl::resize_ptr_array(int nitems)
+void CDataListCtrl::resize_ptr_array(int n_items)
 {
-	if (nitems == ptr_rows.GetSize())
+	if (n_items == ptr_rows.GetSize())
 		return;
 
 	// Resize m_image_list CImageList
-	m_image_list.SetImageCount(nitems);
+	m_image_list.SetImageCount(n_items);
 
 	// reduce size
-	if (ptr_rows.GetSize() > nitems)
+	if (ptr_rows.GetSize() > n_items)
 	{
-		for (auto i = ptr_rows.GetSize() - 1; i >= nitems; i--)
+		for (auto i = ptr_rows.GetSize() - 1; i >= n_items; i--)
 			delete ptr_rows.GetAt(i);
-		ptr_rows.SetSize(nitems);
+		ptr_rows.SetSize(n_items);
 	}
 	// grow size
 	else
 	{
 		const auto size_before_change = ptr_rows.GetSize();
-		ptr_rows.SetSize(nitems);
+		ptr_rows.SetSize(n_items);
 		auto index = 0;
 		if (size_before_change > 0)
 			index = ptr_rows.GetAt(size_before_change - 1)->index;
-		for (auto i = size_before_change; i < nitems; i++)
+		for (auto i = size_before_change; i < n_items; i++)
 		{
 			auto* ptr = new CDataListCtrl_Row;
 			ASSERT(ptr != NULL);
@@ -126,21 +126,21 @@ void CDataListCtrl::resize_ptr_array(int nitems)
 	}
 }
 
-void CDataListCtrl::InitColumns(CUIntArray* picolwidth)
+void CDataListCtrl::InitColumns(CUIntArray* width_columns)
 {
-	if (picolwidth != nullptr)
+	if (width_columns != nullptr)
 	{
-		m_p_columns_width = picolwidth;
-		const auto ncol_stored = picolwidth->GetSize();
-		if (ncol_stored < NCOLS)
-			picolwidth->SetSize(NCOLS);
-		for (auto i = 0; i < ncol_stored; i++)
-			m_column_width[i] = picolwidth->GetAt(i);
+		m_width_columns = width_columns;
+		const auto n_columns = width_columns->GetSize();
+		if (n_columns < NCOLS)
+			width_columns->SetSize(NCOLS);
+		for (auto i = 0; i < n_columns; i++)
+			m_column_width[i] = width_columns->GetAt(i);
 	}
 
-	for (int nCol = 0; nCol < NCOLS; nCol++)
+	for (auto i = 0; i < NCOLS; i++)
 	{
-		InsertColumn(nCol, m_column_headers[nCol], m_column_format[nCol], m_column_width[nCol], -1);
+		InsertColumn(i, m_column_headers[i], m_column_format[i], m_column_width[i], -1);
 	}
 
 	m_image_width = m_column_width[COL_CURVE];

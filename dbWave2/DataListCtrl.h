@@ -21,7 +21,7 @@ public:
 	CDataListCtrl();
 	~CDataListCtrl() override;
 
-	void InitColumns(CUIntArray* picolwidth = nullptr);
+	void InitColumns(CUIntArray* width_columns = nullptr);
 	void SetCurSel(int recposition);
 	void UpdateCache(int ifirst, int ilast);
 	void RefreshDisplay();
@@ -68,7 +68,7 @@ protected:
 	static int m_column_format[NCOLS];
 	static int m_column_index[NCOLS];
 
-	CUIntArray* m_p_columns_width = nullptr;
+	CUIntArray* m_width_columns = nullptr;
 	CBitmap* m_p_empty_bitmap = nullptr;
 
 	int m_image_width = 400;
@@ -86,7 +86,7 @@ protected:
 
 	void delete_ptr_array();
 	void save_columns_width() const;
-	void resize_ptr_array(int nitems);
+	void resize_ptr_array(int n_items);
 	void set_empty_bitmap(BOOL bForcedUpdate = FALSE);
 	void display_spike_wnd(CDataListCtrl_Row* ptr, int iImage);
 	void display_data_wnd(CDataListCtrl_Row* ptr, int iImage);

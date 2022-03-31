@@ -1007,11 +1007,11 @@ void ViewSpikeSort::OnToolsAlignspikes()
 {
 	// get source data
 	auto b_doc_exist = FALSE;
-	auto docname = m_pSpkDoc->GetSourceFilename();
-	if (!docname.IsEmpty())
+	auto data_file_name = m_pSpkDoc->GetAcqFilename();
+	if (!data_file_name.IsEmpty())
 	{
 		CFileStatus status;
-		b_doc_exist = CFile::GetStatus(docname, status);
+		b_doc_exist = CFile::GetStatus(data_file_name, status);
 	}
 	if (!b_doc_exist)
 	{
@@ -1075,7 +1075,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 
 	// get parameters from document
 	auto p_dat_doc = GetDocument()->m_pDat;
-	p_dat_doc->OnOpenDocument(docname);
+	p_dat_doc->OnOpenDocument(data_file_name);
 	const auto doc_chan = m_pSpkList->GetextractChan(); 
 	const auto number_channels = static_cast<int>(p_dat_doc->GetpWaveFormat()->scan_count); 
 	const auto method = m_pSpkList->GetextractTransform();

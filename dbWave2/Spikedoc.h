@@ -16,7 +16,7 @@ public:
 	WORD m_wVersion = 7;
 	CTime m_detection_date;
 	CString m_comment = _T(""); 
-	CString m_acquisition_file = _T("");
+	CString m_acquisition_file_name = _T("");
 	CString m_new_path = _T("");
 	CString m_acquisition_comment = _T("");
 	CWaveFormat m_wave_format {};
@@ -35,8 +35,8 @@ public:
 	CString GetFileInfos();
 	void InitSourceDoc(AcqDataDoc* p_document);
 
-	CString GetSourceFilename() const { return m_acquisition_file; }
-	CTime GetDate() const { return m_detection_date; }
+	CString GetAcqFilename() const { return m_acquisition_file_name; }
+	//CTime GetDate() const { return m_detection_date; }
 	CString GetComment() const { return m_comment; }
 	CTime GetAcqTime() const { return m_acquisition_time; }
 	float GetAcqDuration() const { return static_cast<float>(m_acquisition_size) / m_acquisition_rate; }
@@ -56,7 +56,7 @@ public:
 		return GetSpkList_Size();
 	}
 
-	void SetSourceFilename(CString file_name) { m_acquisition_file = file_name; }
+	void SetSourceFilename(CString file_name) { m_acquisition_file_name = file_name; }
 	void SetDetectionDate(CTime time) { m_detection_date = time; }
 	void SetComment(CString comment) { m_comment = comment; }
 
