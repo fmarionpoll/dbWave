@@ -9,26 +9,26 @@ class CSpikeDoc : public CDocument
 {
 	DECLARE_SERIAL(CSpikeDoc)
 
-public:
 	CSpikeDoc();
 	~CSpikeDoc() override;
 
+	SpikeClass m_spike_class{};
+	int m_current_spike_list = -1;
+	CIntervals m_stimulus_intervals{};
+	CWaveFormat m_wave_format{};
+
+protected:
+	CArray<SpikeList, SpikeList> spike_list_array{};
+	CTime m_detection_date{};
 	WORD m_wVersion = 7;
-	CTime m_detection_date;
-	CString m_comment = _T(""); 
+	CString m_comment = _T("");
 	CString m_acquisition_file_name = _T("");
 	CString m_new_path = _T("");
 	CString m_acquisition_comment = _T("");
-	CWaveFormat m_wave_format {};
-	CTime m_acquisition_time {}; 
+	CTime m_acquisition_time{};
 	float m_acquisition_rate = 1.f;
 	long m_acquisition_size = 0;
-	SpikeClass m_spike_class{};
-	int m_current_spike_list = -1;
-	CIntervals m_stimulus_intervals{}; 
 
-protected:
-	CArray<SpikeList, SpikeList> spike_list_array = {};
 
 	// Operations
 public:
@@ -36,7 +36,7 @@ public:
 	void InitSourceDoc(AcqDataDoc* p_document);
 
 	CString GetAcqFilename() const { return m_acquisition_file_name; }
-	//CTime GetDate() const { return m_detection_date; }
+	void SetAcqFilename(CString name) { m_acquisition_file_name = name; }
 	CString GetComment() const { return m_comment; }
 	CTime GetAcqTime() const { return m_acquisition_time; }
 	float GetAcqDuration() const { return static_cast<float>(m_acquisition_size) / m_acquisition_rate; }
@@ -61,8 +61,6 @@ public:
 	void SetComment(CString comment) { m_comment = comment; }
 
 	void SortStimArray();
-
-public:
 	void ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString& csFileComment); // 0
 	void ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist,
 	                              const CString& csFileComment); // 4
@@ -78,8 +76,6 @@ public:
 	void export_spk_PSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
 	void export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, int ispklist, int iclass);
 
-	// Implementation
-public:
 	BOOL OnSaveDocument(LPCTSTR pszPathName) override;
 	BOOL OnNewDocument() override;
 	BOOL OnOpenDocument(LPCTSTR pszPathName) override;

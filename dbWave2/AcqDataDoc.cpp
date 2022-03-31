@@ -368,7 +368,7 @@ BOOL AcqDataDoc::AdjustBUF(int i_num_elements)
 
 	ASSERT(m_pWBuf != NULL);
 	const auto p_wf = GetpWaveFormat();
-	m_lDOCchanLength = p_wf->sample_count / static_cast<long>(p_wf->scan_count);
+	m_lDOCchanLength = p_wf->get_nb_points_sampled_per_channel();
 	m_DOCnbchans = p_wf->scan_count;
 	p_wf->duration = static_cast<float>(m_lDOCchanLength) / p_wf->sampling_rate_per_channel;
 	m_lBUFSize = i_num_elements * p_wf->scan_count;
@@ -393,7 +393,7 @@ BOOL AcqDataDoc::AllocBUF()
 	ASSERT(m_pWBuf != NULL); // check object created properly
 	CWaveFormat* pwF = GetpWaveFormat();
 
-	m_lDOCchanLength = pwF->sample_count / static_cast<long>(pwF->scan_count);
+	m_lDOCchanLength = pwF->get_nb_points_sampled_per_channel();
 	m_DOCnbchans = pwF->scan_count;
 	pwF->duration = static_cast<float>(m_lDOCchanLength) / pwF->sampling_rate_per_channel;
 

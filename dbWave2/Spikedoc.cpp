@@ -14,11 +14,7 @@
 IMPLEMENT_SERIAL(CSpikeDoc, CDocument, 1 /* schema number*/)
 
 CSpikeDoc::CSpikeDoc()
-{
-	m_detection_date = CTime::GetCurrentTime();
-	m_acquisition_time = m_detection_date;
-	spike_list_array.SetSize(1);
-}
+= default;
 
 void CSpikeDoc::ClearData()
 {

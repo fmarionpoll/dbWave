@@ -123,7 +123,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	const auto pfirst = p_header + ACQDATE;
 	const auto str_date_time = CString(pfirst, 19);
 	COleDateTime myDtTime{};
-	CTime sys_time = {};
+	CTime sys_time {};
 	if (myDtTime.ParseDateTime(str_date_time))
 	{
 		SYSTEMTIME st;

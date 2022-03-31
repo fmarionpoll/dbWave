@@ -1055,8 +1055,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 
 	const auto db_document = GetDocument();
 	const auto data_document = db_document->m_pDat;
-	const auto data_document_name = db_document->GetDB_CurrentDatFileName();
-	m_pSpkDoc->m_acquisition_file_name = data_document_name;
+	m_pSpkDoc->SetAcqFilename(db_document->GetDB_CurrentDatFileName());
 	m_pSpkDoc->InitSourceDoc(data_document);
 
 	m_pSpkDoc->SetDetectionDate(CTime::GetCurrentTime());

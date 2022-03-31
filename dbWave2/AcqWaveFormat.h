@@ -70,9 +70,12 @@ protected:
 public:
 	CWaveFormat();
 	~CWaveFormat() override;
+
 	void Copy(const CWaveFormat* arg);
 	long Write(CFile* datafile);
 	BOOL Read(CFile* datafile);
 	void Serialize(CArchive& ar) override;
 	CString GetComments(const CString& p_separator, BOOL b_explanations = FALSE) const;
+	long get_nb_points_sampled_per_channel() {return sample_count / static_cast<long>(scan_count);
+	}
 };
