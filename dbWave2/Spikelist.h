@@ -64,11 +64,10 @@ protected:
 
 	// (4) miscellaneous
 
-	BOOL m_b_save_artefacts = false; // save (yes/no) artefacts - default = FALSE
-	BOOL m_only_valid_classes = false; // class list (array with classnb & nb spikes/class)
+	BOOL m_b_save_artefacts = false; 
+	BOOL m_keep_only_valid_classes = false;
 	int m_n_classes = 0;
 	CArray<SpikeClassDescriptor, SpikeClassDescriptor> m_spike_class_descriptor_array{};
-	// TODO enrich class to make use of indexes et al apparent into a class
 
 	//  (5) list of spikes flagged
 
@@ -77,11 +76,11 @@ protected:
 	// Operations
 public:
 	WORD GetVersion() const { return m_version; }
-	BOOL IsClassListValid() const { return m_only_valid_classes; }
+	BOOL IsClassListValid() const { return m_keep_only_valid_classes; }
 
 	int GetNbclasses() const
 	{
-		if (m_only_valid_classes) 
+		if (m_keep_only_valid_classes) 
 			return m_n_classes;
 		return -1;
 	}
@@ -103,7 +102,7 @@ public:
 	void SetSpikeClass(int no, const int nclass)
 	{
 		m_spike_elements[no]->set_class(nclass);
-		m_only_valid_classes = FALSE;
+		m_keep_only_valid_classes = FALSE;
 	}
 
 	void SetSpikeTime(int no, long ii_time) { m_spike_elements[no]->set_time(ii_time); }
@@ -135,24 +134,24 @@ public:
 	void SetDetectParms(SPKDETECTPARM* pSd) { m_detection_parameters = *pSd; }
 	SPKDETECTPARM* GetDetectParms() { return &m_detection_parameters; }
 
-	int AddSpike(short* lpsource, int nchans, long ii_time, int sourcechan, int iclass, BOOL bCheck);
-	BOOL TransferDataToSpikeBuffer(int no, short* lpsource, int nchans, BOOL badjust = FALSE);
+	int AddSpike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
+	BOOL TransferDataToSpikeBuffer(int no, short* lpsource, int n_channels, BOOL badjust = FALSE);
 	short* GetpSpikeData(int no) const { return m_spike_buffer.GetSpike(no); }
-	int RemoveSpike(int spikeindex);
-	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spikeindex, int ichan);
+	int RemoveSpike(int spike_index);
+	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spike_index, int channel_index);
 
-	void MeasureSpikeMaxMin(int no, int* max, int* imax, int* min, int* imin);
-	void MeasureSpikeMaxMinEx(int no, int* max, int* imax, int* min, int* imin, int ifirst, int ilast);
-	void MeasureSpikeMaxThenMin(int no, int* max, int* imax, int* min, int* imin);
-	void MeasureSpikeMaxThenMinEx(int no, int* max, int* imax, int* min, int* imin, int ifirst, int ilast);
+	void MeasureSpikeMaxMin(int no, int* max, int* max_index, int* min, int* min_index) const;
+	void MeasureSpikeMaxMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) const;
+	void MeasureSpikeMaxThenMin(int no, int* max, int* max_index, int* min, int* min_index) const;
+	void MeasureSpikeMaxThenMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) const;
 
 	void GetTotalMaxMin(BOOL b_recalculate, int* max, int* min);
-	void OffsetSpikeAmplitude(int no, int valfirst, int vallast, int center = 0);
-	void CenterSpikeAmplitude(int spkindex, int ifirst, int ilast, WORD method = 0);
+	void OffsetSpikeAmplitude(int no, int val_first, int val_last, int center = 0);
+	void CenterSpikeAmplitude(int spike_index, int i_first, int i_last, WORD method = 0);
 	BOOL InitSpikeList(AcqDataDoc* pDataFile, SPKDETECTPARM* pFC);
 	long UpdateClassList();
 	void EraseData();
-	void ChangeSpikeClassID(int oldclaID, int newclaID);
+	void ChangeSpikeClassID(int old_class_ID, int new_class_ID);
 
 	// measure parameters
 	void Measure_case0_AmplitudeMinToMax(int t1, int t2);
@@ -161,20 +160,20 @@ public:
 
 	CSize Measure_Y1_MaxMin();
 
-	BOOL SortSpikeWithY1(CSize fromclass_toclass, CSize timewindow, CSize limits);
-	BOOL SortSpikeWithY1AndY2(CSize fromclass_toclass, CSize timewindow, CSize limits1, CSize limits2);
+	BOOL SortSpikeWithY1(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits);
+	BOOL SortSpikeWithY1AndY2(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits1, CSize limits2);
 
-	int GetValidSpikeNumber(int ispike);
-	int GetNextSpike(int spikeno, int delta, BOOL bKeepSameClass);
+	int GetValidSpikeNumber(int spike_index) const;
+	int GetNextSpike(int spike_index, int delta, BOOL b_keep_same_class) const;
 
 public:
-	int SetSpikeFlag(int spikeno, BOOL bFlag);
-	int ToggleSpikeFlag(int spikeno);
-	void SetSingleSpikeFlag(int spikeno);
-	BOOL GetSpikeFlag(int spikeno);
+	int SetSpikeFlag(int spike_index, BOOL set_spike_flag);
+	int ToggleSpikeFlag(int spike_index);
+	void SetSingleSpikeFlag(int spike_index);
+	BOOL GetSpikeFlag(int spike_index);
 	void RemoveAllSpikeFlags() { if (m_spikes_flagged_.GetCount() > 0) m_spikes_flagged_.RemoveAll(); }
 	void FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
-	void SelectSpikeswithinRect(int vmin, int vmax, long l_first, long l_ast, BOOL bAdd);
+	void SelectSpikesWithinBounds(int v_min, int v_max, long l_first, long l_ast, BOOL b_add);
 
 	void GetRangeOfSpikeFlagged(long& l_first, long& l_last);
 	BOOL GetSpikeFlagArrayAt(int i) const { return m_spikes_flagged_.GetAt(i); }
@@ -185,13 +184,14 @@ protected:
 	void remove_artefacts();
 	void read_file_version_before5(CArchive& ar, int version);
 	void read_file_version5(CArchive& ar);
-	void read_file_version6(CArchive& ar);
-	void write_file_version6(CArchive& ar);
+	//void read_file_version6(CArchive& ar);
+	//void write_file_version6(CArchive& ar);
 
 	void delete_arrays();
-	bool serialize_data_parameters(CArchive& ar);
-	bool serialize_spike_elements(CArchive& ar);
-	bool serialize_spike_data(CArchive& ar);
-	bool serialize_spike_class_descriptors(CArchive& ar);
-	bool serialize_additional_data(CArchive& ar);
+	void serialize_version6(CArchive& ar);
+	void serialize_data_parameters(CArchive& ar);
+	void serialize_spike_elements(CArchive& ar);
+	void serialize_spike_data(CArchive& ar);
+	void serialize_spike_class_descriptors(CArchive& ar);
+	void serialize_additional_data(CArchive& ar);
 };

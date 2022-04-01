@@ -630,7 +630,7 @@ void ChartSpikeBarWnd::SelectSpikesWithinRect(CRect* p_rect, const UINT n_flags)
 	const auto vmin = MulDiv(p_rect->bottom - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto vmax = MulDiv(p_rect->top - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto b_flag = (n_flags & MK_SHIFT) || (n_flags & MK_CONTROL);
-	p_spikelist_->SelectSpikeswithinRect(vmin, vmax, l_first, l_last, b_flag);
+	p_spikelist_->SelectSpikesWithinBounds(vmin, vmax, l_first, l_last, b_flag);
 }
 
 void ChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
