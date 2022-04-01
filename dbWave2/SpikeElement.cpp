@@ -53,40 +53,44 @@ void SpikeElement::Serialize(CArchive& ar)
 	else
 	{
 		ar >> wVersion;
-		ar >> m_iitime;
-		ar >> w1; m_class = static_cast<int>(w1);
-		ar >> w1; m_chanparm = static_cast<int>(w1);
-		ar >> w1; m_max = static_cast<short>(w1);
-		ar >> w1; m_min = static_cast<short>(w1);
-		ar >> w1; m_offset = static_cast<short>(w1);
-		ar >> w1; m_dmaxmin = static_cast<short>(w1);
-		if (wVersion > 1)
-		{
-			WORD n_items = 0;
-			ar >> n_items;
-			ar >> y1_; n_items--;
-			ar >> dt_; n_items--;
-			ASSERT(n_items == 0);
-		}
+		if (wVersion <= 2)
+			read_version2(ar, wVersion);
 	}
 }
 
-void SpikeElement::Read0(CArchive& ar)
+void SpikeElement::read_version2(CArchive& ar, WORD wVersion)
+{
+	WORD w1;
+
+	ar >> m_iitime;
+	ar >> w1; m_class = static_cast<int>(w1);
+	ar >> w1; m_chanparm = static_cast<int>(w1);
+	ar >> w1; m_max = static_cast<short>(w1);
+	ar >> w1; m_min = static_cast<short>(w1);
+	ar >> w1; m_offset = static_cast<short>(w1);
+	ar >> w1; m_dmaxmin = static_cast<short>(w1);
+	if (wVersion > 1)
+	{
+		WORD n_items = 0;
+		ar >> n_items;
+		ar >> y1_; n_items--;
+		ar >> dt_; n_items--;
+		ASSERT(n_items == 0);
+	}
+}
+
+
+void SpikeElement::read_version0(CArchive& ar)
 {
 	WORD w1;
 
 	ASSERT(ar.IsStoring() == FALSE);
 
 	ar >> m_iitime;
-	ar >> w1;
-	m_class = static_cast<int>(w1);
-	ar >> w1;
-	m_chanparm = static_cast<int>(w1);
-	ar >> w1;
-	m_max = static_cast<short>(w1);
-	ar >> w1;
-	m_min = static_cast<short>(w1);
-	ar >> w1;
-	m_offset = static_cast<short>(w1);
+	ar >> w1; m_class = static_cast<int>(w1);
+	ar >> w1; m_chanparm = static_cast<int>(w1);
+	ar >> w1; m_max = static_cast<short>(w1);
+	ar >> w1; m_min = static_cast<short>(w1);
+	ar >> w1; m_offset = static_cast<short>(w1);
 	m_dmaxmin = 0;
 }

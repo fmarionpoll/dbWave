@@ -5,7 +5,6 @@
 #define new DEBUG_NEW
 #endif
 
-// CSpikeBuffer
 
 IMPLEMENT_SERIAL(CSpikeBuffer, CObject, 0 /* schema number*/)
 

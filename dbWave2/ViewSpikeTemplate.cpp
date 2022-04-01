@@ -245,8 +245,8 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
 	if (m_psC->kleft == 0 && m_psC->kright == 0)
 	{
-		m_psC->kleft = m_pSpkList->GetSpikePretrig();
-		m_psC->kright = m_psC->kleft + m_pSpkList->GetSpikeRefractory();
+		m_psC->kleft = m_pSpkList->GetDetectParms()->prethreshold;
+		m_psC->kright = m_psC->kleft + m_pSpkList->GetDetectParms()->refractory;
 	}
 	m_t1 = convertSpikeIndexToTime(m_psC->kleft);
 	m_t2 = convertSpikeIndexToTime(m_psC->kright);

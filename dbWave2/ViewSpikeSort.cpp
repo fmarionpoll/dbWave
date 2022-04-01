@@ -336,23 +336,23 @@ void ViewSpikeSort::updateFileParameters()
 	m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
 
 	// spike and classes
-	auto spikeno = m_pSpkList->m_selected_spike;
-	if (m_pSpkList->GetTotalSpikes() < spikeno || 0 > spikeno)
+	auto spike_index = m_pSpkList->m_selected_spike;
+	if (m_pSpkList->GetTotalSpikes() < spike_index || 0 > spike_index)
 	{
-		spikeno = -1;
+		spike_index = -1;
 		m_sourceclass = 0;
 	}
 	else
 	{
-		m_sourceclass = m_pSpkList->GetSpikeClass(spikeno);
+		m_sourceclass = m_pSpkList->GetSpikeClass(spike_index);
 		m_psC->sourceclass = m_sourceclass;
 	}
 	ASSERT(m_sourceclass < 32768);
 
 	if (0 == m_psC->ileft && 0 == m_psC->iright)
 	{
-		m_psC->ileft = m_pSpkList->GetSpikePretrig();
-		m_psC->iright = m_psC->ileft + m_pSpkList->GetSpikeRefractory();
+		m_psC->ileft = m_pSpkList->GetDetectParms()->prethreshold;
+		m_psC->iright = m_psC->ileft + m_pSpkList->GetDetectParms()->refractory;
 	}
 	m_t1 = (m_psC->ileft * m_tunit) / m_pSpkList->GetAcqSampRate();
 	m_t2 = (m_psC->iright * m_tunit) / m_pSpkList->GetAcqSampRate();
@@ -408,7 +408,7 @@ void ViewSpikeSort::updateFileParameters()
 		OnMeasure();
 	}
 
-	selectSpikeFromCurrentList(spikeno);
+	selectSpikeFromCurrentList(spike_index);
 }
 
 void ViewSpikeSort::updateLegends()
@@ -1076,10 +1076,10 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	// get parameters from document
 	auto p_dat_doc = GetDocument()->m_pDat;
 	p_dat_doc->OnOpenDocument(data_file_name);
-	const auto doc_chan = m_pSpkList->GetextractChan(); 
+	const auto doc_chan = m_pSpkList->GetDetectParms()->extractChan; 
 	const auto number_channels = static_cast<int>(p_dat_doc->GetpWaveFormat()->scan_count); 
-	const auto method = m_pSpkList->GetextractTransform();
-	const auto spike_pre_trigger = m_pSpkList->GetSpikePretrig();
+	const auto method = m_pSpkList->GetDetectParms()->extractTransform;
+	const auto spike_pre_trigger = m_pSpkList->GetDetectParms()->prethreshold;
 	const int offset = (method > 0) ? 1 : number_channels; 
 	const int span = p_dat_doc->GetTransfDataSpan(method); 
 
@@ -1092,7 +1092,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	auto p_data = p_dat_doc->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
 
 	// loop over all spikes now
-	const auto spkpretrig = m_pSpkList->GetSpikePretrig();
+	const auto spkpretrig = m_pSpkList->GetDetectParms()->prethreshold;
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
 		// exclude spikes that do not fall within time limits
@@ -1820,7 +1820,7 @@ void ViewSpikeSort::OnEnChangeNOspike()
 			{
 				// test if spike visible in the current time interval
 				const auto spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);
-				const auto spk_first = spike_element->get_time() - m_pSpkList->GetSpikePretrig();
+				const auto spk_first = spike_element->get_time() - m_pSpkList->GetDetectParms()->prethreshold;
 				const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 
 				if (spk_first < m_lFirst || spk_last > m_lLast)

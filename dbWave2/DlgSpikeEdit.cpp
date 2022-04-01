@@ -91,11 +91,11 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		const auto lvSize = m_ChartDataWnd.GetRectSize();
 		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
 		m_ChartDataWnd.RemoveAllChanlistItems();
-		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetextractChan(), m_pSpkList->GetextractTransform());
+		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extractChan, m_pSpkList->GetDetectParms()->extractTransform);
 
-		if (m_pSpkList->GetcompensateBaseline())
+		if (m_pSpkList->GetDetectParms()->compensateBaseline)
 		{
-			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetextractChan(), MOVAVG30);
+			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extractChan, MOVAVG30);
 			m_ChartDataWnd.GetChanlistItem(1)->SetColor(6);
 			m_ChartDataWnd.GetChanlistItem(1)->SetPenWidth(1);
 			static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
@@ -123,7 +123,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	}
 
 	m_displayratio = 20; // how much spike versus source data
-	m_spkpretrig = m_pSpkList->GetSpikePretrig(); // load parms used many times
+	m_spkpretrig = m_pSpkList->GetDetectParms()->prethreshold; // load parms used many times
 	m_spklen = m_pSpkList->GetSpikeLength(); // pre-trig and spike length
 	m_viewdatalen = MulDiv(m_spklen, 100, m_displayratio); // how wide is source window
 	if (m_yextent == 0)
@@ -290,7 +290,7 @@ void DlgSpikeEdit::OnEnChangeYextent()
 		{
 			m_yextent = m_yvextent;
 			m_ChartDataWnd.GetChanlistItem(0)->SetYextent(m_yextent);
-			if (m_pSpkList->GetcompensateBaseline())
+			if (m_pSpkList->GetDetectParms()->compensateBaseline)
 				m_ChartDataWnd.GetChanlistItem(1)->SetYextent(m_yextent);
 			m_SpkChartWnd.SetYWExtOrg(m_yextent, m_yzero);
 			m_ChartDataWnd.Invalidate();
@@ -331,7 +331,7 @@ void DlgSpikeEdit::LoadSourceData()
 	chan0->SetYzero(m_yzero + p_spike_element->get_amplitude_offset());
 	chan0->SetYextent(m_yextent);
 
-	if (m_pSpkList->GetcompensateBaseline())
+	if (m_pSpkList->GetDetectParms()->compensateBaseline)
 	{
 		CChanlistItem* chan1 = m_ChartDataWnd.GetChanlistItem(1);
 		chan1->SetYzero(m_yzero + p_spike_element->get_amplitude_offset());
@@ -353,7 +353,7 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 		const auto l_first = m_iitime - m_spkpretrig;
 
 		// get source data buffer address
-		const auto method = m_pSpkList->GetextractTransform();
+		const auto method = m_pSpkList->GetDetectParms()->extractTransform;
 		if (method == 0)
 		{
 			int nchans; // get buffer address and structure

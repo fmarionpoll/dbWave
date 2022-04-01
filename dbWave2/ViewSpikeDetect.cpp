@@ -200,6 +200,12 @@ void ViewSpikeDetection::update_legends()
 	m_timefirst = static_cast<float>(l_first) / m_samplingRate;
 	m_timelast = static_cast<float>(l_last + 1) / m_samplingRate;
 	m_spikeno = m_pSpkList->m_selected_spike;
+	if (m_spikeno > m_pSpkList->GetTotalSpikes())
+	{
+		m_pSpkList->m_selected_spike = -1;
+		m_spikeno = m_pSpkList->m_selected_spike;
+	}
+
 	m_bartefact = FALSE;
 	if (m_spikeno > 0)
 	{
@@ -312,7 +318,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	const auto total_spikes = m_pSpkList->GetTotalSpikes();
 	auto j_index = 3;
 	auto spike_length = m_pSpkList->GetSpikeLength();
-	const auto spike_pre_trigger = m_pSpkList->GetSpikePretrig();
+	const auto spike_pre_trigger = m_pSpkList->GetDetectParms()->prethreshold;
 	spike_length--;
 
 	for (auto i = 0; i < total_spikes; i++)
@@ -376,12 +382,11 @@ BOOL ViewSpikeDetection::check_detection_settings()
 	return flag;
 }
 
-void ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
+boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 {
 	const auto pdb_doc = GetDocument();
-	//CString filename = pdb_doc->GetDB_CurrentDatFileName();
 	if (pdb_doc->OpenCurrentDataFile() == nullptr)
-		return;
+		return false;
 
 	const auto p_data_file = pdb_doc->m_pDat;
 	p_data_file->ReadDataInfos();
@@ -480,6 +485,7 @@ void ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		m_samplingRate = wave_format->sampling_rate_per_channel;
 		m_bValidThreshold = FALSE;
 	}
+	return true;
 }
 
 void ViewSpikeDetection::update_combos_detect_and_transforms()
@@ -1412,11 +1418,11 @@ int ViewSpikeDetection::detect_method_1(WORD schan)
 void ViewSpikeDetection::OnToolsEdittransformspikes()
 {
 	DlgSpikeEdit dlg; // dialog box
-	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent(); // load display parameters
-	dlg.m_yzero = m_ChartSpkWnd_Shape.GetYWOrg(); // ordinates
-	dlg.m_xextent = m_ChartSpkWnd_Shape.GetXWExtent(); // and
-	dlg.m_xzero = m_ChartSpkWnd_Shape.GetXWOrg(); // abcissa
-	dlg.m_spikeno = m_spikeno; // load index of selected spike
+	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent();
+	dlg.m_yzero = m_ChartSpkWnd_Shape.GetYWOrg(); 
+	dlg.m_xextent = m_ChartSpkWnd_Shape.GetXWExtent(); 
+	dlg.m_xzero = m_ChartSpkWnd_Shape.GetXWOrg(); 
+	dlg.m_spikeno = m_spikeno; 
 	m_pSpkList->RemoveAllSpikeFlags();
 	dlg.m_pdbWaveDoc = GetDocument();
 	dlg.m_parent = this;
@@ -1487,9 +1493,9 @@ void ViewSpikeDetection::OnFormatXscale()
 
 void ViewSpikeDetection::OnBnClickedClearall()
 {
-	m_spikeno = -1; // unselect spike
-	m_ChartSpkWnd_Bar.SelectSpike(-1); // deselect spike bars
-	m_ChartSpkWnd_Shape.SelectSpikeShape(-1); // deselect superimposed spikes
+	m_spikeno = -1; 
+	m_ChartSpkWnd_Bar.SelectSpike(m_spikeno);
+	m_ChartSpkWnd_Shape.SelectSpikeShape(m_spikeno);
 
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
@@ -1514,14 +1520,14 @@ void ViewSpikeDetection::OnBnClickedClearall()
 void ViewSpikeDetection::OnClear()
 {
 	m_spikeno = -1;
-	m_ChartSpkWnd_Bar.SelectSpike(-1);
-	m_ChartSpkWnd_Shape.SelectSpikeShape(-1);
+	m_ChartSpkWnd_Bar.SelectSpike(m_spikeno);
+	m_ChartSpkWnd_Shape.SelectSpikeShape(m_spikeno);
 
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	m_pSpkList->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	highlight_spikes(FALSE);
 
-	if (m_pSpkList->GetdetectWhat() == DETECT_STIMULUS)
+	if (m_pSpkList->GetDetectParms()->detectWhat == DETECT_STIMULUS)
 	{
 		m_pSpkDoc->m_stimulus_intervals.n_items = 0;
 		m_pSpkDoc->m_stimulus_intervals.RemoveAll();
@@ -1537,29 +1543,29 @@ void ViewSpikeDetection::OnEnChangeSpikeno()
 {
 	if (mm_spikeno.m_bEntryDone)
 	{
-		auto spikeno = m_spikeno;
+		auto spike_no = m_spikeno;
 		switch (mm_spikeno.m_nChar)
 		{
 			// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
-			spikeno = m_spikeno;
+			spike_no = m_spikeno;
 			break;
 		case VK_UP:
 		case VK_PRIOR:
-			spikeno++;
+			spike_no++;
 			break;
 		case VK_DOWN:
 		case VK_NEXT:
-			spikeno--;
+			spike_no--;
 			break;
 		default:;
 		}
 		// check boundaries
-		if (spikeno < -1)
-			spikeno = -1;
-		if (spikeno >= m_pSpkList->GetTotalSpikes())
-			spikeno = m_pSpkList->GetTotalSpikes() - 1;
+		if (spike_no < -1)
+			spike_no = -1;
+		if (spike_no >= m_pSpkList->GetTotalSpikes())
+			spike_no = m_pSpkList->GetTotalSpikes() - 1;
 
 		// change display if necessary
 		mm_spikeno.m_bEntryDone = FALSE; // clear flag
@@ -1567,7 +1573,7 @@ void ViewSpikeDetection::OnEnChangeSpikeno()
 		mm_spikeno.SetSel(0, -1); // select all text
 
 		// update spike num and center display on the selected spike
-		select_spike_no(spikeno, FALSE);
+		select_spike_no(spike_no, FALSE);
 		update_spike_display();
 	}
 }
@@ -1611,9 +1617,9 @@ void ViewSpikeDetection::OnArtefact()
 	update_spike_display();
 
 	// update nb spikes
-	const UINT unspikes = m_pSpkList->GetTotalSpikes();
-	if (unspikes != GetDlgItemInt(IDC_NBSPIKES_NB))
-		SetDlgItemInt(IDC_NBSPIKES_NB, unspikes);
+	const int n_spikes = m_pSpkList->GetTotalSpikes();
+	if (n_spikes != GetDlgItemInt(IDC_NBSPIKES_NB))
+		SetDlgItemInt(IDC_NBSPIKES_NB, n_spikes);
 }
 
 void ViewSpikeDetection::align_display_to_current_spike()
@@ -1659,7 +1665,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		const auto x = static_cast<float>(_ttof(cs)) / 1000.0f;
 		ix_we = static_cast<int>(m_pSpkList->GetAcqSampRate() * x);
 		if (ix_we == 0)
-			ix_we = m_pSpkList->GetextractNpoints();
+			ix_we = m_pSpkList->GetDetectParms()->extractNpoints;
 		ASSERT(ix_we != 0);
 		m_ChartSpkWnd_Shape.SetXWExtOrg(ix_we, m_ChartSpkWnd_Shape.GetXWOrg());
 
@@ -1700,28 +1706,25 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 	m_ChartSpkWnd_Shape.SetxScaleUnitValue(xunit);
 }
 
-void ViewSpikeDetection::select_spike_no(int spikeno, BOOL bMultipleSelection)
+void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelection)
 {
-	// load spike parameters
-	if (spikeno >= 0)
+	if (spike_index >= 0)
 	{
-		// get address of spike parms
-		const auto p_spike_element = m_pSpkList->GetSpikeElemt(spikeno);
+		const auto p_spike_element = m_pSpkList->GetSpikeElemt(spike_index);
 		m_bartefact = (p_spike_element->get_class() < 0);
-		if (bMultipleSelection) // TRUE= multiple selection
+		if (bMultipleSelection)
 		{
-			/*auto nflaggedspikes =*/
-			m_pSpkList->ToggleSpikeFlag(spikeno);
+			m_pSpkList->ToggleSpikeFlag(spike_index);
 			if (m_pSpkList->GetSpikeFlagArrayCount() < 1)
-				spikeno = -1;
-			if (m_spikeno == spikeno)
-				spikeno = 0;
+				spike_index = -1;
+			if (m_spikeno == spike_index)
+				spike_index = 0;
 		}
 		else
 		{
-			m_pSpkList->SetSingleSpikeFlag(spikeno);
+			m_pSpkList->SetSingleSpikeFlag(spike_index);
 		}
-		m_spikeno = spikeno;
+		m_spikeno = spike_index;
 		align_display_to_current_spike();
 	}
 	else
@@ -3097,9 +3100,8 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 	}
 
 	// set new parameters
-	m_pSpkList->m_selected_spike = m_spikeno; // save spike selected
+	m_pSpkList->m_selected_spike = m_spikeno; 
 	m_i_detect_parameters = iSelParms;
-	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(iSelParms);
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(iSelParms);
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(iSelParms);
 	if (m_pSpkList != nullptr)
@@ -3111,19 +3113,19 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 
 void ViewSpikeDetection::update_detection_controls()
 {
-	m_CBdetectWhat.SetCurSel(m_pSpkList->GetdetectWhat());
-	m_CBdetectChan.SetCurSel(m_pSpkList->GetdetectChan());
-	m_CBtransform.SetCurSel(m_pSpkList->GetdetectTransform()); // this should remains = to detection parameters
+	m_CBdetectWhat.SetCurSel(m_pSpkList->GetDetectParms()->detectWhat);
+	m_CBdetectChan.SetCurSel(m_pSpkList->GetDetectParms()->detectChan);
+	m_CBtransform.SetCurSel(m_pSpkList->GetDetectParms()->detectTransform); // this should remains = to detection parameters
 
 	// check that spike detection parameters are compatible with current data doc
-	auto detectchan = m_pSpkList->GetdetectChan();
+	auto detectchan = m_pSpkList->GetDetectParms()->detectChan;
 	const auto p_dat = GetDocument()->m_pDat;
 	const int maxchan = p_dat->GetpWaveFormat()->scan_count;
 	if (detectchan >= maxchan)
 		detectchan = 0;
 
-	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, detectchan, m_pSpkList->GetdetectTransform());
-	m_CBtransform2.SetCurSel(m_pSpkList->GetextractTransform());
+	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, detectchan, m_pSpkList->GetDetectParms()->detectTransform);
+	m_CBtransform2.SetCurSel(m_pSpkList->GetDetectParms()->extractTransform);
 
 	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
 	pchan->SetColor(detectchan);
@@ -3132,7 +3134,7 @@ void ViewSpikeDetection::update_detection_controls()
 	//if (options_view_data->bSplitCurves)
 	//	m_displayDataFile.SplitChans();
 
-	const auto ithreshold = m_pSpkList->GetdetectThreshold();
+	const auto ithreshold = m_pSpkList->GetDetectParms()->detectThreshold;
 	m_thresholdval = pchan->ConvertDataBinsToVolts(ithreshold) * 1000.f;
 	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
 		m_ChartDataWnd_Detect.m_HZtags.AddTag(ithreshold, 0);
@@ -3223,15 +3225,15 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	const auto method = m_CBtransform2.GetCurSel(); // this is the extract method requested
 	auto p_dat_doc = GetDocument()->m_pDat;
 
-	const auto doc_chan = m_pSpkList->GetextractChan(); // source channel
-	//auto const nchans = p_dat_doc->GetpWaveFormat()->scan_count;	// number of data chans / source buffer
+	auto detect_parms = m_pSpkList->GetDetectParms();
+	const auto doc_chan = detect_parms->extractChan; 
 	const short offset = 1; //(method>0) ? 1 : nchans;				// offset between points / detection
 	const short nspan = p_dat_doc->GetTransfDataSpan(method); // nb pts to read before transf
-	m_pSpkList->SetextractTransform(method); // save transform method
+	detect_parms->extractTransform = method; 
 
 	// pre-load data
 	const auto spikelen = m_pSpkList->GetSpikeLength();
-	const auto spkpretrig = m_pSpkList->GetSpikePretrig();
+	const auto spkpretrig = detect_parms->prethreshold;
 	auto ii_time = m_pSpkList->GetSpikeTime(0) - spkpretrig;
 	auto l_rw_first0 = ii_time - spikelen;
 	auto l_rw_last0 = ii_time + spikelen;
@@ -3283,7 +3285,7 @@ void ViewSpikeDetection::update_tabs()
 	{
 		CString cs;
 		const auto current_spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
-		cs.Format(_T("#%i %s"), i, (LPCTSTR)current_spike_list->GetComment());
+		cs.Format(_T("#%i %s"), i, (LPCTSTR)current_spike_list->GetDetectParms()->comment);
 		if (!b_replace)
 			m_tabCtrl.InsertItem(i, cs);
 		else

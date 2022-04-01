@@ -86,7 +86,7 @@ protected:
 	void align_display_to_current_spike();
 	void highlight_spikes(BOOL flag = TRUE);
 	void scroll_File(UINT nSBCode, UINT nPos);
-	void select_spike_no(int spikeno, BOOL bMultipleSelection);
+	void select_spike_no(int spike_index, BOOL bMultipleSelection);
 	BOOL check_detection_settings();
 	void update_combo_box();
 	void update_combos_detect_and_transforms();
@@ -96,7 +96,7 @@ protected:
 	void update_detection_controls();
 	void update_detection_settings(int iSelParms);
 	void update_file_parameters(BOOL bUpdateInterface = TRUE);
-	void update_data_file(BOOL bUpdateInterface);
+	boolean update_data_file(BOOL bUpdateInterface);
 	void update_spike_file(BOOL bUpdateInterface = TRUE);
 	void update_file_scroll();
 	void update_legends();

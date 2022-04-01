@@ -1601,7 +1601,7 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 	// number of spikes
 	if (options_viewspikes->btotalspikes)
 	{
-		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->GetdetectThresholdmV());
+		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->GetDetectParms()->detectThresholdmV);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
 		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->GetTotalSpikes());
@@ -1616,11 +1616,11 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 	// spike list iColumn, spike class
 	if (options_viewspikes->spikeclassoption != 0)
 		cs_dummy.Format(_T("%s%i %s%s %s%i"), (LPCTSTR)cs_tab, options_viewspikes->ichan,
-			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetComment(),
+			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetDetectParms()->comment,
 			(LPCTSTR)cs_tab, kclass);
 	else
 		cs_dummy.Format(_T("%s%i %s%s \t(all)"), (LPCTSTR)cs_tab, options_viewspikes->ichan,
-			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetComment());
+			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetDetectParms()->comment);
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 

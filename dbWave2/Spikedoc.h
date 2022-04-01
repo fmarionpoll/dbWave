@@ -91,6 +91,9 @@ protected:
 	void read_before_version6(CArchive& ar, WORD wwVersion);
 	void read_version6(CArchive& ar);
 	void set_file_extension_as_spk(CString& filename);
+	void serialize_acquisition_parameters(CArchive& ar);
+	void serialize_stimulus_intervals(CArchive& ar);
+	void serialize_spike_list_arrays(CArchive& ar);
 
 	// Generated message map functions
 protected:

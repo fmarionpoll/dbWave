@@ -52,12 +52,12 @@ void CSpikeDoc::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		m_wVersion = 7;
-		ar << m_wVersion; // W1
+		ar << m_wVersion;
 		serialize_v7(ar);
 	}
 	else
 	{
-		WORD wwVersion; ar >> wwVersion; // W1
+		WORD wwVersion; ar >> wwVersion;
 		if (wwVersion == 7)
 			serialize_v7(ar);
 		else if (wwVersion == 6)
@@ -137,86 +137,99 @@ void CSpikeDoc::read_before_version6(CArchive& ar, WORD wwVersion)
 	//m_spike_class.Serialize(ar);
 }
 
-void CSpikeDoc::read_version6(CArchive& ar)
+
+void CSpikeDoc::serialize_acquisition_parameters(CArchive& ar)
 {
-	ar >> m_detection_date; // W2
-	ar >> m_comment; // W3
-	ar >> m_acquisition_file_name; // W4
-	ar >> m_acquisition_comment; // W5
-	ar >> m_acquisition_time; // W6
-	ar >> m_acquisition_rate; // W7
-	ar >> m_acquisition_size; // W8
-
-	// version 4
-	int nitems;
-	ar >> nitems; // W9
-	ASSERT(nitems == 1);
-	m_wave_format.Serialize(ar);
-
-	ar >> nitems;
-	if (nitems > 0)
-	{
-		int isize;
-		ar >> isize;
-		ASSERT(isize == 1);
-		for (int i = 0; i < isize; i++)
-			m_stimulus_intervals.Serialize(ar);
-	}
-
-	// read stimulus and spike classes
-	spike_list_array.RemoveAll();
-	spike_list_array.SetSize(1);
-	spike_list_array[0].Serialize(ar);
-	SortStimArray();
-	//m_spike_class.Serialize(ar);
-}
-
-void CSpikeDoc::serialize_v7(CArchive& ar)
-{
-	int n_spike_arrays = 0;
 	if (ar.IsStoring())
 	{
 		ar << m_detection_date;			// W2
 		ar << m_comment;				// W3
-		ar << m_acquisition_file_name;		// W4
+		ar << m_acquisition_file_name;	// W4
 		ar << m_acquisition_comment;	// W5
 		ar << m_acquisition_time;		// W6
 		ar << m_acquisition_rate;		// W7
 		ar << m_acquisition_size;		// W8
 
-		int n_items = 1; ar << n_items;
-		m_wave_format.Serialize(ar); 
-
-		n_items = 1; ar << n_items;
-		m_stimulus_intervals.Serialize(ar);
-
-		n_spike_arrays = spike_list_array.GetSize(); ar << n_spike_arrays;
-		n_spike_arrays = n_items;
+		constexpr int n_items = 1; ar << n_items;
 	}
 	else
 	{
-		ar >> m_detection_date;
-		ar >> m_comment;
-		ar >> m_acquisition_file_name;
-		ar >> m_acquisition_comment;
-		ar >> m_acquisition_time;
-		ar >> m_acquisition_rate;
-		ar >> m_acquisition_size;
+		ar >> m_detection_date;			// W2
+		ar >> m_comment;				// W3
+		ar >> m_acquisition_file_name;	// W4
+		ar >> m_acquisition_comment;	// W5
+		ar >> m_acquisition_time;		// W6
+		ar >> m_acquisition_rate;		// W7
+		ar >> m_acquisition_size;		// W8
 
-		int n_items; ar >> n_items; 
-		m_wave_format.Serialize(ar);
+		// version 4
+		int n_items; ar >> n_items;		// W9
+		ASSERT(n_items == 1);
+	}
+	m_wave_format.Serialize(ar);
+}
 
-		ar >> n_items;
-		m_stimulus_intervals.Serialize(ar);
+void CSpikeDoc::serialize_stimulus_intervals(CArchive& ar)
+{
+	int n_items = 1;
+	if (ar.IsStoring())
+	{
+		ar << n_items;
 		SortStimArray();
+	}
+	else
+	{
+		ar >> n_items;
+	}
+	m_stimulus_intervals.Serialize(ar);
+}
 
+void CSpikeDoc::serialize_spike_list_arrays(CArchive& ar)
+{
+	int n_spike_arrays = 0;
+	if (ar.IsStoring())
+	{
+		n_spike_arrays = spike_list_array.GetSize();
+		ar << n_spike_arrays;
+	}
+	else
+	{
+		ar >> n_spike_arrays;
 		spike_list_array.RemoveAll();
-		ar >> n_items; n_spike_arrays = n_items;
-		spike_list_array.SetSize(n_items);		
+		spike_list_array.SetSize(n_spike_arrays);
 	}
 
 	for (int i = 0; i < n_spike_arrays; i++)
 		spike_list_array[i].Serialize(ar);
+}
+
+void CSpikeDoc::read_version6(CArchive& ar)
+{
+	serialize_acquisition_parameters(ar);
+	
+	int n_items = 0; ar >> n_items;
+	if (n_items > 0)
+	{
+		int i_size; ar >> i_size;
+		ASSERT(i_size == 1);
+		for (int i = 0; i < i_size; i++)
+			m_stimulus_intervals.Serialize(ar);
+	}
+	SortStimArray();
+
+	// read stimulus and spike classes
+	spike_list_array.RemoveAll();
+	spike_list_array.SetSize(1);
+	spike_list_array[0].Serialize(ar);
+	
+	//m_spike_class.Serialize(ar);
+}
+
+void CSpikeDoc::serialize_v7(CArchive& ar)
+{
+	serialize_acquisition_parameters(ar);
+	serialize_stimulus_intervals(ar);
+	serialize_spike_list_arrays(ar);
 	m_spike_class.Serialize(ar);
 }
 
@@ -283,22 +296,28 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 	}
 
 	CFile f;
-	CFileException e;
-	try
+	CFileException fe;
+	if (f.Open(fileName, CFile::modeCreate | CFile::modeWrite, &fe))
 	{
-		f.Open(fileName, CFile::modeCreate | CFile::modeWrite, &e);
-		CArchive ar(&f, CArchive::store);
-		Serialize(ar);
-		ar.Flush();
-		ar.Close();
+		try
+		{
+			CArchive ar(&f, CArchive::store);
+			Serialize(ar);
+			ar.Flush();
+			ar.Close();
+		}
+		catch (CArchiveException* e)
+		{
+			e->Delete();
+		}
 		f.Close();
 		SetModifiedFlag(FALSE);
 	}
-	catch (CFileException* pe)
+	else
 	{
 		f.Abort();
-		ReportSaveLoadException(fileName, pe, FALSE, AFX_IDP_FAILED_TO_SAVE_DOC);
-		pe->Delete();
+		ReportSaveLoadException(fileName, &fe, FALSE, AFX_IDP_FAILED_TO_SAVE_DOC);
+		fe.Delete();
 		return FALSE;
 	}
 	SetModifiedFlag(FALSE);
@@ -318,15 +337,16 @@ BOOL CSpikeDoc::OnOpenDocument(LPCTSTR pszPathName)
 	const CString filename = pszPathName;
 	if (f.Open(filename, CFile::modeRead | CFile::shareDenyNone, &fe))
 	{
-		CArchive ar(&f, CArchive::load);
 		m_current_spike_list = 0;
 		try
 		{
+			CArchive ar(&f, CArchive::load);
 			Serialize(ar);
 			ar.Flush();
 			ar.Close();
 			f.Close();
 			SetModifiedFlag(FALSE);
+
 			// update nb of classes
 			for (auto i = 0; i < spike_list_array.GetSize(); i++)
 			{
@@ -354,12 +374,12 @@ BOOL CSpikeDoc::OnOpenDocument(LPCTSTR pszPathName)
 void CSpikeDoc::InitSourceDoc(AcqDataDoc* p_document)
 {
 	// load parameters from file
-	const auto pwave_format = p_document->GetpWaveFormat();
-	m_acquisition_time = pwave_format->acqtime;
+	const auto wave_format = p_document->GetpWaveFormat();
+	m_acquisition_time = wave_format->acqtime;
 	m_acquisition_size = p_document->GetDOCchanLength();
-	m_acquisition_rate = pwave_format->sampling_rate_per_channel;
-	m_acquisition_comment = pwave_format->cs_comment;
-	m_wave_format.Copy( pwave_format);
+	m_acquisition_rate = wave_format->sampling_rate_per_channel;
+	m_acquisition_comment = wave_format->cs_comment;
+	m_wave_format.Copy( wave_format);
 }
 
 CString CSpikeDoc::GetFileInfos()
@@ -1141,7 +1161,7 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 
 	if (vdS->btotalspikes)
 	{
-		cs_dummy.Format(_T("\t%f"), pspklist->GetdetectThresholdmV());
+		cs_dummy.Format(_T("\t%f"), pspklist->GetDetectParms()->detectThresholdmV);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("\t%i"), pspklist->GetTotalSpikes());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -1152,7 +1172,7 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 	// spike list item, spike class
-	cs_dummy.Format(_T("\t%i \t%s \t%i"), vdS->ichan, (LPCTSTR)pspklist->GetComment(), iclass);
+	cs_dummy.Format(_T("\t%i \t%s \t%i"), vdS->ichan, (LPCTSTR)pspklist->GetDetectParms()->comment, iclass);
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 

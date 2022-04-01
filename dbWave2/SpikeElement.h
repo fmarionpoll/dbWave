@@ -31,6 +31,11 @@ private:
 	int y2_ = 0;
 	int dt_ = 0;
 
+	short* m_spike_data_buffer = nullptr;	// buffer address
+	int m_spike_length = 0;					// length of buffer
+	int m_current_filter{};					// ID of last transform
+
+
 	// Operations set/change elements of spikeele
 public:
 	long get_time() const { return m_iitime; }
@@ -40,11 +45,21 @@ public:
 	short get_minimum() const { return m_min; }
 	int get_amplitude_offset() const { return m_offset; }
 
-	void GetSpikeMaxMin(int* max, int* min, int* dmaxmin)
+	void SetSpikeLength(int spike_length);
+	int GetSpikeLength() const { return m_spike_length; }
+	short* GetpSpikeData() const { return m_spike_data_buffer; }
+
+	int m_spk_buffer_increment{};
+	int m_spk_buffer_length{};				// current buffer length
+	int m_next_index{};						// next available index
+	int m_last_index{};						// index last free space for spike data
+	int m_bin_zero = 2048;					// zero (if 12 bits scale = 0-4095)
+
+	void GetSpikeMaxMin(int* max, int* min, int* d_max_to_min)
 	{
 		*max = m_max;
 		*min = m_min;
-		*dmaxmin = m_dmaxmin;
+		*d_max_to_min = m_dmaxmin;
 	}
 
 	void GetSpikeExtrema(int* max, int* min)
@@ -74,6 +89,7 @@ public:
 
 	// Implementation
 public:
-	void Read0(CArchive& ar);
+	void read_version0(CArchive& ar);
 	void Serialize(CArchive& ar) override;
+	void read_version2(CArchive& ar, WORD wVersion);
 };
