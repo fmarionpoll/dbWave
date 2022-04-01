@@ -538,7 +538,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	// ----------------    and remove from corresp line (destroy?)
 
 	const auto oldclass = p_spikelist_->GetSpike(spikeno)->get_class();
-	p_spikelist_->SetSpikeClass(spikeno, newclass);
+	p_spikelist_->GetSpike(spikeno)->set_class(newclass);
 
 	// get row corresponding to oldclass
 	rowStruct* pptr = nullptr;

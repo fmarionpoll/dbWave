@@ -438,7 +438,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 			continue;
 
 		// export time
-		const auto tval = static_cast<float>(pspklist->GetSpikeTime(j)) / rate;
+		const auto tval = static_cast<float>(pspklist->GetSpike(j)->get_time()) / rate;
 		cs_dummy.Format(_T("\t%lf"), tval);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
@@ -688,7 +688,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPI
 		for (auto j = 0; j < pspklist->GetTotalSpikes(); j++)
 		{
 			// skip intervals not requested
-			const auto ii_time = pspklist->GetSpikeTime(j) - iioffset0;
+			const auto ii_time = pspklist->GetSpike(j)->get_time() - iioffset0;
 			if ((ii_time < iitime0) || (ii_time >= iitime1))
 				break;
 
@@ -701,7 +701,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPI
 
 			// get value, compute statistics
 			int max, min;
-			pspklist->GetSpikeExtrema(j, &max, &min);
+			pspklist->GetSpike(j)->GetSpike(&max, &min);
 			auto val = max - min;
 			y_sum += val;
 			y_sum2 += val * val;
@@ -838,7 +838,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 	for (auto j = 0; j < pspklist->GetTotalSpikes(); j++)
 	{
 		// skip intervals not requested
-		const auto ii_time = pspklist->GetSpikeTime(j) - iioffset0;
+		const auto ii_time = pspklist->GetSpike(j)->get_time() - iioffset0;
 		if ((ii_time < iitime0) || (ii_time >= iitime1))
 			break;
 		// skip classes not requested
@@ -859,7 +859,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		// 3) export extrema
 		case EXPORT_EXTREMA:
 			int max, min;
-			pspklist->GetSpikeExtrema(j, &max, &min);
+			pspklist->GetSpike(j)->GetSpike(&max, &min);
 			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(max) - binzero) * vper_bin,
 			                (static_cast<double>(min) - binzero) * vper_bin);
 			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -874,7 +874,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		case EXPORT_SPIKEPOINTS:
 			for (auto index = 0; index < pspklist->GetSpikeLength(); index++)
 			{
-				const auto val = pspklist->GetSpikeValAt(j, index);
+				const auto val = pspklist->GetSpike(j)->GetSpikeValAt(index);
 				cs_dummy.Format(_T("\t%.3lf"), static_cast<double>(val) * vper_bin);
 				pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			}
@@ -1241,13 +1241,13 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 
 		// check file size and position pointer at the first spike within the bin
 		auto i0 = 0;
-		while ((i0 < nspikes) && (pspklist->GetSpikeTime(i0) < iitime_start))
+		while ((i0 < nspikes) && (pspklist->GetSpike(i0)->get_time() < iitime_start))
 			i0++;
 
 		for (auto j = i0; j < nspikes; j++)
 		{
 			// skip intervals not requested
-			const int ii_time = pspklist->GetSpikeTime(j);
+			const int ii_time = pspklist->GetSpike(j)->get_time();
 			if (ii_time >= iitime_end)
 				break;
 
@@ -1324,7 +1324,7 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		int j;
 		for (j = 0; j < nspikes; j++)
 		{
-			iitime0 = pspklist->GetSpikeTime(j);
+			iitime0 = pspklist->GetSpike(j)->get_time();
 			if (iitime0 <= iiend && iitime0 >= iistart)
 				break; // found!
 		}
@@ -1334,7 +1334,7 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 		// build histogram
 		for (auto i = j + 1; i < nspikes; i++)
 		{
-			const auto ii_time = pspklist->GetSpikeTime(i);
+			const auto ii_time = pspklist->GetSpike(i)->get_time();
 			if (ii_time > iiend)
 				break;
 			ASSERT(ii_time > iitime0);
@@ -1422,13 +1422,13 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 
 		// search with the first spike falling into that window
 		auto i0 = 0;
-		while ((i0 < nspikes) && (pspklist->GetSpikeTime(i0) < iistart))
+		while ((i0 < nspikes) && (pspklist->GetSpike(i0)->get_time() < iistart))
 			i0++;
 
 		// build histogram external loop search 'pivot spikes'
 		for (auto i = i0; i < nspikes; i++)
 		{
-			const auto iitime0 = pspklist->GetSpikeTime(i); // get spike time
+			const auto iitime0 = pspklist->GetSpike(i)->get_time(); // get spike time
 			if (iitime0 > iiend) // stop loop if out of range
 				break;
 			if (vdS->spikeclassoption && pspklist->GetSpike(i)->get_class() != iclass)
@@ -1437,7 +1437,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 			// search backwards first spike that is ok
 			auto i1 = i;
 			const int ifirst = iitime0 - iispan;
-			while (i1 > 0 && pspklist->GetSpikeTime(i1) > ifirst)
+			while (i1 > 0 && pspklist->GetSpike(i1)->get_time() > ifirst)
 				i1--;
 
 			// internal loop: build autoc
@@ -1445,7 +1445,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 			{
 				if (j == i) // discard spikes w. same time
 					continue;
-				const auto ii_time = pspklist->GetSpikeTime(j) - iitime0;
+				const auto ii_time = pspklist->GetSpike(j)->get_time() - iitime0;
 				if (abs(ii_time) >= iispan)
 					continue;
 				if (vdS->spikeclassoption && pspklist->GetSpike(j)->get_class() != iclass)
@@ -1531,7 +1531,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 
 		// build histogram
 		auto i0 = 0; // search first spike within interval
-		while (pspklist->GetSpikeTime(i0) < iistart)
+		while (pspklist->GetSpike(i0)->get_time() < iistart)
 		{
 			i0++; // loop until found
 			if (i0 >= nspikes)
@@ -1542,7 +1542,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 		for (auto i = i0; i < nspikes; i++) // loop over spikes A
 		{
 			// find an appropriate spike
-			const auto iitime0 = pspklist->GetSpikeTime(i);
+			const auto iitime0 = pspklist->GetSpike(i)->get_time();
 			if (iitime0 >= iiend) // exit loop
 				break;
 			if (vdS->spikeclassoption && pspklist->GetSpike(i)->get_class() != iclass)
@@ -1558,7 +1558,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 			// loop backwards to find first spike OK
 			const int ifirst = iitime0 - iispan; // temp value
 			auto i1 = i;
-			while (i1 > 0 && pspklist->GetSpikeTime(i1) > ifirst)
+			while (i1 > 0 && pspklist->GetSpike(i1)->get_time() > ifirst)
 				i1--;
 			// internal loop build histogram
 			for (auto j = i1; j < nspikes; j++)
@@ -1566,7 +1566,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 				if (j == i)
 					continue;
 
-				const auto ii_time = pspklist->GetSpikeTime(j) - iitime0;
+				const auto ii_time = pspklist->GetSpike(j)->get_time() - iitime0;
 				if (ii_time >= iispan)
 					break;
 				if (ii_time < -iispan)
@@ -1614,7 +1614,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vd
 
 	// check file size and position pointer at the first spike within the bin
 	i0 = 0;
-	while ((i0 < nspikes) && (pspklist->GetSpikeTime(i0) < iitime_start))
+	while ((i0 < nspikes) && (pspklist->GetSpike(i0)->get_time() < iitime_start))
 		i0++;
 
 	// ------- count total spk/interval (given bspkclass&bartefacts)
@@ -1622,7 +1622,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vd
 	for (auto j = i0; j < nspikes; j++)
 	{
 		// skip intervals not requested
-		const auto ii_time = pspklist->GetSpikeTime(j);
+		const auto ii_time = pspklist->GetSpike(j)->get_time();
 		if (ii_time >= iitime_end)
 			break;
 		// skip classes not requested
@@ -1632,7 +1632,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vd
 		if (vdS->spikeclassoption != 0 && cla != iclass)
 			continue;
 		// get value, compute statistics
-		auto p_spik = pspklist->GetpSpikeData(j);
+		auto p_spik = pspklist->GetSpike(j)->GetpSpikeData();
 		const auto p_n = pDoubl0 + 1;
 		auto p_sum = pDoubl0 + 2;
 		auto p_sum2 = pDoubl0 + 2 + spklen;

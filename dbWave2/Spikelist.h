@@ -85,22 +85,7 @@ public:
 	void SetclassNbspk(int i, int n_spikes) { m_spike_class_descriptor_array.GetAt(i).n_items = n_spikes; }
 
 	Spike* GetSpike(int no) { return m_spike_elements.GetAt(no); }
-
-	long GetSpikeTime(int no)  { return GetSpike(no)->get_time(); }
-	int GetSpikeChan(int no)  { return GetSpike(no)->get_source_channel(); }
-	void GetSpikeExtrema(int no, int* max, int* min) { GetSpike(no)->GetSpikeExtrema(max, min); }
-	void GetSpikeMaxmin(int no, int* max, int* min, int* dmaxmin) { GetSpike(no)->GetSpikeMaxMin(max, min, dmaxmin); }
-	int GetSpikeAmplitudeOffset(int no)  { return GetSpike(no)->get_amplitude_offset(); }
-
-	
 	int GetTotalSpikes() const { return m_spike_elements.GetCount(); }
-
-	void SetSpikeClass(int no, const int nclass)
-	{
-		GetSpike(no)->set_class(nclass);
-		m_keep_only_valid_classes = FALSE;
-	}
-	void SetSpikeTime(int no, long ii_time) { GetSpike(no)->set_time(ii_time); }
 
 	WORD GetAcqEncoding() const { return m_data_encoding_mode; }
 	float GetAcqSampRate() const { return m_sampling_rate; }

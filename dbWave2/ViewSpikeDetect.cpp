@@ -781,7 +781,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		long l_first;
 		long l_last;
 		m_pSpkList->GetRangeOfSpikeFlagged(l_first, l_last);
-		const auto l_time = m_pSpkList->GetSpikeTime(threshold);
+		const auto l_time = m_pSpkList->GetSpike(threshold)->get_time();
 		if (l_time < l_first)
 			l_first = l_time;
 		if (l_time > l_last)
@@ -1601,7 +1601,7 @@ void ViewSpikeDetection::OnArtefact()
 			// if not artefact: if spike has negative class, set to positive value
 			else if (spkclass < 0)
 				spkclass = -(spkclass + 1);
-			m_pSpkList->SetSpikeClass(spikeno, spkclass);
+			m_pSpkList->GetSpike(spikeno)->set_class(spkclass);
 		}
 
 		m_pSpkDoc->SetModifiedFlag(TRUE);
@@ -1627,7 +1627,7 @@ void ViewSpikeDetection::align_display_to_current_spike()
 	if (m_spikeno < 0)
 		return;
 
-	const auto l_spike_time = m_pSpkList->GetSpikeTime(m_spikeno);
+	const auto l_spike_time = m_pSpkList->GetSpike(m_spikeno)->get_time();
 	//long l_first = m_displayDetect.GetDataFirst();		// get source data time range
 	//long l_last = m_displayDetect.GetDataLast();
 
@@ -3234,7 +3234,7 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	// pre-load data
 	const auto spikelen = m_pSpkList->GetSpikeLength();
 	const auto spkpretrig = detect_parms->prethreshold;
-	auto ii_time = m_pSpkList->GetSpikeTime(0) - spkpretrig;
+	auto ii_time = m_pSpkList->GetSpike(0)->get_time() - spkpretrig;
 	auto l_rw_first0 = ii_time - spikelen;
 	auto l_rw_last0 = ii_time + spikelen;
 	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, nspan))
@@ -3246,7 +3246,7 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
 		// make sure that source data are loaded and get pointer to it (p_data)
-		ii_time = m_pSpkList->GetSpikeTime(ispk);
+		ii_time = m_pSpkList->GetSpike(ispk)->get_time();
 		auto l_rw_first = ii_time - spkpretrig; // first point
 		auto l_rw_last = l_rw_first + spikelen; // last pt needed
 		if (!p_dat_doc->LoadRawData(&l_rw_first, &l_rw_last, nspan))
@@ -3254,7 +3254,8 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 
 		p_data = p_dat_doc->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
 		const auto p_data_spike0 = p_data + (ii_time - spkpretrig - l_rw_first) * offset;
-		m_pSpkList->TransferDataToSpikeBuffer(ispk, p_data_spike0, offset);
+		Spike* pSpike = m_pSpkList->GetSpike(ispk);
+		m_pSpkList->TransferDataToSpikeBuffer(pSpike, p_data_spike0, offset);
 		// nchans should be 1 if they come from the transform buffer as data are not interleaved...
 		m_pSpkList->CenterSpikeAmplitude(ispk, 0, spikelen, 1); // 1=center average
 	}

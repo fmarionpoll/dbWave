@@ -1041,7 +1041,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		if (m_pSpkList->GetSpike(ispk)->get_class() != m_sourceclass)
 			continue;
 		nbspk_selclass++;
-		p_spk = m_pSpkList->GetpSpikeData(ispk);
+		p_spk = m_pSpkList->GetSpike(ispk)->GetpSpikeData();
 		p_sum = p_sum0;
 		for (auto i = 0; i < spikelen; i++, p_spk++, p_sum++)
 			*p_sum += *p_spk;
@@ -1084,7 +1084,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	const int span = p_dat_doc->GetTransfDataSpan(method); 
 
 	// pre-load data
-	auto iitime0 = m_pSpkList->GetSpikeTime(0); //-pretrig;
+	auto iitime0 = m_pSpkList->GetSpike(0)->get_time(); //-pretrig;
 	auto l_rw_first0 = iitime0 - spikelen;
 	auto l_rw_last0 = iitime0 + spikelen;
 	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, span))
@@ -1099,8 +1099,8 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		if (m_pSpkList->GetSpike(ispk)->get_class() != m_sourceclass)
 			continue;
 
-		iitime0 = m_pSpkList->GetSpikeTime(ispk);
-		iitime0 -= spike_pre_trigger; // offset beginning of spike
+		iitime0 = m_pSpkList->GetSpike(ispk)->get_time();
+		iitime0 -= spike_pre_trigger;
 
 		// make sure that source data are loaded and get pointer to it (p_data)
 		auto l_rw_first = iitime0 - spikelen; // first point (eventually) needed
@@ -1168,19 +1168,19 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		if (jdecal != 0)
 		{
 			p_data_spike0 = p_data + static_cast<WORD>(iitime0 + jdecal - l_rw_first) * offset + doc_chan;
-			m_pSpkList->TransferDataToSpikeBuffer(ispk, p_data_spike0, number_channels);
+			m_pSpkList->TransferDataToSpikeBuffer(m_pSpkList->GetSpike(ispk), p_data_spike0, number_channels);
 			m_pSpkDoc->SetModifiedFlag(TRUE);
-			m_pSpkList->SetSpikeTime(ispk, iitime0 + spkpretrig);
+			m_pSpkList->GetSpike(ispk)->set_time(iitime0 + spkpretrig);
 		}
 
 		// now offset spike vertically to align it with the mean
 		p_mean = p_mean0 + kstart;
-		p_spk = m_pSpkList->GetpSpikeData(ispk) + kstart;
+		p_spk = m_pSpkList->GetSpike(ispk)->GetpSpikeData() + kstart;
 		long l_diff = 0;
 		for (auto i = kstart; i < kend; i++, p_spk++, p_mean++)
 			l_diff += (*p_spk - *p_mean);
 		l_diff /= (kend - kstart + 1);
-		p_spk = m_pSpkList->GetpSpikeData(ispk);
+		p_spk = m_pSpkList->GetSpike(ispk)->GetpSpikeData();
 		const auto val = static_cast<short>(l_diff);
 		for (auto i = 0; i < spikelen; i++, p_spk++)
 			*p_spk -= short(val);
@@ -1864,7 +1864,7 @@ void ViewSpikeSort::OnEnChangeSpikenoclass()
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			const auto currentlist = m_tabCtrl.GetCurSel();
 			auto* spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-			spike_list->SetSpikeClass(m_spikeno, m_spikenoclass);
+			spike_list->GetSpike(m_spikeno)->set_class(m_spikenoclass);
 			updateLegends();
 		}
 	}

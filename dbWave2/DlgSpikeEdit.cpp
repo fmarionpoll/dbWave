@@ -215,7 +215,7 @@ void DlgSpikeEdit::OnEnChangeSpikeclass()
 		default: ;
 		}
 
-		m_pSpkList->SetSpikeClass(m_spikeno, m_spikeclass);
+		m_pSpkList->GetSpike(m_spikeno)->set_class(m_spikeclass);
 		mm_spikeclass.m_bEntryDone = FALSE; // clear flag
 		mm_spikeclass.m_nChar = 0; // empty buffer
 		mm_spikeclass.SetSel(0, -1); // select all text
@@ -229,7 +229,7 @@ void DlgSpikeEdit::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
 	m_spikeclass = (m_bartefact) ? -1 : 0;
-	m_pSpkList->SetSpikeClass(m_spikeno, m_spikeclass);
+	m_pSpkList->GetSpike(m_spikeno)->set_class(m_spikeclass);
 	UpdateData(FALSE); // update value
 	m_bchanged = TRUE;
 }
@@ -344,9 +344,9 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 {
 	if (m_pAcqDatDoc != nullptr)
 	{
-		auto offset = m_pSpkList->GetSpikeAmplitudeOffset(m_spikeno);
+		auto offset = m_pSpkList->GetSpike(m_spikeno)->get_amplitude_offset();
 		m_iitime += shift;
-		m_pSpkList->SetSpikeTime(m_spikeno, m_iitime);
+		m_pSpkList->GetSpike(m_spikeno)->set_time(m_iitime);
 		UpdateSpikeScroll();
 		LoadSourceData();
 
@@ -373,7 +373,7 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 		}
 
 		// copy data to spike buffer
-		offset += m_pSpkList->GetSpikeAmplitudeOffset(m_spikeno);
+		offset += m_pSpkList->GetSpike(m_spikeno)->get_amplitude_offset();
 		m_pSpkList->OffsetSpikeAmplitude(m_spikeno, offset, offset);
 
 		m_SpkChartWnd.Invalidate();

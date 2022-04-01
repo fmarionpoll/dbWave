@@ -98,8 +98,8 @@ void ChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 		{
 			// skip spike ?
 			if (m_rangemode == RANGE_TIMEINTERVALS
-				&& (p_spikelist_->GetSpikeTime(ispk) < m_lFirst
-					|| p_spikelist_->GetSpikeTime(ispk) > m_lLast))
+				&& (p_spikelist_->GetSpike(ispk)->get_time() < m_lFirst
+					|| p_spikelist_->GetSpike(ispk)->get_time() > m_lLast))
 				continue;
 
 			// select pen according to class
@@ -122,7 +122,7 @@ void ChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 			}
 
 			// display data
-			lpspk = p_spikelist_->GetpSpikeData(ispk);
+			lpspk = p_spikelist_->GetSpike(ispk)->GetpSpikeData();
 			fillPolypointOrdinates(lpspk);
 			p_dc->Polyline(&polypoints_[0], taillespk);
 		}
@@ -137,15 +137,15 @@ void ChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 			{
 				// skip spike ?
 				if (m_rangemode == RANGE_TIMEINTERVALS
-					&& (p_spikelist_->GetSpikeTime(ispk) < m_lFirst
-						|| p_spikelist_->GetSpikeTime(ispk) > m_lLast))
+					&& (p_spikelist_->GetSpike(ispk)->get_time() < m_lFirst
+						|| p_spikelist_->GetSpike(ispk)->get_time() > m_lLast))
 					continue;
 
 				// skip spikes with the wrong class
 				if (p_spikelist_->GetSpike(ispk)->get_class() != m_selclass)
 					continue;
 				// display data
-				lpspk = p_spikelist_->GetpSpikeData(ispk);
+				lpspk = p_spikelist_->GetSpike(ispk)->GetpSpikeData();
 				fillPolypointOrdinates(lpspk);
 				p_dc->Polyline(&polypoints_[0], taillespk);
 			}
@@ -212,7 +212,7 @@ void ChartSpikeShapeWnd::drawSelectedSpike(int nospike, CDC* p_dc)
 		auto* poldpen = p_dc->SelectObject(&new_pen);
 
 		// display data
-		auto* lpspk = p_spikelist_->GetpSpikeData(nospike);
+		auto* lpspk = p_spikelist_->GetSpike(nospike)->GetpSpikeData();
 		fillPolypointOrdinates(lpspk);
 		p_dc->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 
@@ -249,7 +249,7 @@ void ChartSpikeShapeWnd::drawFlaggedSpikes(CDC* pDC0)
 			continue;
 		//if (PLOT_ONECLASSONLY == m_plotmode && nospikeclass != m_selclass)
 		//	continue;
-		fillPolypointOrdinates(p_spikelist_->GetpSpikeData(nospike));
+		fillPolypointOrdinates(p_spikelist_->GetSpike(nospike)->GetpSpikeData());
 		p_dc->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
 	}
 
@@ -292,7 +292,7 @@ BOOL ChartSpikeShapeWnd::IsSpikeWithinRange(int spikeno) const
 	if (spikeno > p_spikelist_->GetTotalSpikes() - 1)
 		return FALSE;
 	if (m_rangemode == RANGE_TIMEINTERVALS
-		&& (p_spikelist_->GetSpikeTime(spikeno) < m_lFirst || p_spikelist_->GetSpikeTime(spikeno) > m_lLast))
+		&& (p_spikelist_->GetSpike(spikeno)->get_time() < m_lFirst || p_spikelist_->GetSpike(spikeno)->get_time() > m_lLast))
 		return FALSE;
 	if (m_rangemode == RANGE_INDEX
 		&& (spikeno > m_spklast || spikeno < m_spkfirst))
@@ -546,14 +546,14 @@ int ChartSpikeShapeWnd::hitCurve(const CPoint point)
 	for (auto ispk = ilast; ispk >= ifirst; ispk--)
 	{
 		if (m_rangemode == RANGE_TIMEINTERVALS
-			&& (p_spikelist_->GetSpikeTime(ispk) < m_lFirst
-				|| p_spikelist_->GetSpikeTime(ispk) > m_lLast))
+			&& (p_spikelist_->GetSpike(ispk)->get_time() < m_lFirst
+				|| p_spikelist_->GetSpike(ispk)->get_time() > m_lLast))
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
 			&& p_spikelist_->GetSpike(ispk)->get_class() != m_selclass)
 			continue;
 
-		const auto val = p_spikelist_->GetSpikeValAt(ispk, mouse_x);
+		const auto val = p_spikelist_->GetSpike(ispk)->GetSpikeValAt(mouse_x);
 		if (mouse_y + deltay < val && mouse_y - deltay > val)
 		{
 			hitspk = ispk;
@@ -705,9 +705,9 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 			continue;
 		if (m_rangemode == RANGE_TIMEINTERVALS)
 		{
-			if (p_spikelist_->GetSpikeTime(ispk) < m_lFirst)
+			if (p_spikelist_->GetSpike(ispk)->get_time() < m_lFirst)
 				continue;
-			if (p_spikelist_->GetSpikeTime(ispk) > m_lLast)
+			if (p_spikelist_->GetSpike(ispk)->get_time() > m_lLast)
 				continue;
 		}
 
@@ -717,7 +717,7 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 		if (m_plotmode == PLOT_ONECLASS && spkcla == m_selclass)
 			continue;
 
-		plotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(ispk));
+		plotArraytoDC(p_dc, p_spikelist_->GetSpike(ispk)->GetpSpikeData());
 	}
 
 	// display selected class if requested by option
@@ -728,13 +728,13 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 		{
 			if (m_rangemode == RANGE_TIMEINTERVALS)
 			{
-				const auto ltime = p_spikelist_->GetSpikeTime(ispk);
+				const auto ltime = p_spikelist_->GetSpike(ispk)->get_time();
 				if (ltime < m_lFirst || ltime > m_lLast)
 					continue;
 			}
 			if (p_spikelist_->GetSpike(ispk)->get_class() != m_selclass)
 				continue;
-			plotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(ispk));
+			plotArraytoDC(p_dc, p_spikelist_->GetSpike(ispk)->GetpSpikeData());
 		}
 	}
 
@@ -743,7 +743,7 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	{
 		CPen new_pen(PS_SOLID, 0, m_colorTable[m_colorselectedspike]);
 		p_dc->SelectObject(&new_pen);
-		plotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(m_selectedspike));
+		plotArraytoDC(p_dc, p_spikelist_->GetSpike(m_selectedspike)->GetpSpikeData());
 	}
 
 	// restore resources

@@ -1561,7 +1561,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				auto iitime0 = -1;
 				for (auto i = ispikefirst; i < nspikes; i++)
 				{
-					auto ii_time = p_spk_list->GetSpikeTime(i) - ii_first;
+					auto ii_time = p_spk_list->GetSpike(i)->get_time() - ii_first;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
 					if (ii_time < 0)
@@ -1629,7 +1629,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				auto iitime0 = -1;
 				for (auto i = 0; i < nspikes; i++)
 				{
-					auto ii_time = p_spk_list->GetSpikeTime(i) - istart;
+					auto ii_time = p_spk_list->GetSpike(i)->get_time() - istart;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
 					if (ii_time < 0)

@@ -1,6 +1,5 @@
 #pragma once
 
-
 // parameters associated to each spike detected 
 // stores:  time of occurence, initial data acq chan and a modifiable parameter
 // the class
@@ -47,6 +46,8 @@ public:
 
 	int GetSpikeLength() const { return m_spike_length; }
 	short* GetpSpikeData(int spike_length);
+	short* GetpSpikeData() { return m_spike_data_buffer; }
+	short GetSpikeValAt(int index) {return *(m_spike_data_buffer+index);}
 
 	int m_spk_buffer_increment{};
 	int m_spk_buffer_length{};				// current buffer length
@@ -61,7 +62,7 @@ public:
 		*d_max_to_min = m_dmaxmin;
 	}
 
-	void GetSpikeExtrema(int* max, int* min)
+	void GetSpike(int* max, int* min)
 	{
 		*max = m_max;
 		*min = m_min;

@@ -341,7 +341,7 @@ BOOL ViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
 	}
 	else if (m_pSpkList->GetSpike(spikeindex)->get_class() != m_class_destination)
 	{
-		m_pSpkList->SetSpikeClass(spikeindex, m_class_destination);
+		m_pSpkList->GetSpike(spikeindex)->set_class(m_class_destination);
 		m_pSpkDoc->SetModifiedFlag();
 	}
 
@@ -2162,7 +2162,7 @@ void ViewSpikes::OnArtefact()
 			// if not artefact: if spike has negative class, set to positive value
 		else if (spkclass < 0)
 			spkclass = -(spkclass + 1);
-		m_pSpkList->SetSpikeClass(m_spike_index, spkclass);
+		m_pSpkList->GetSpike(m_spike_index)->set_class(spkclass);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);

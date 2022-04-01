@@ -668,7 +668,7 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 		{
 			if (GetSpike(index)->get_class() >= 0)
 			{
-				GetSpikeExtrema(0, &max1, &min1);
+				GetSpike(0)->GetSpike(&max1, &min1);
 				break;
 			}
 		}
@@ -678,7 +678,7 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 		{
 			if (GetSpike(index)->get_class() >= 0)
 			{
-				GetSpikeExtrema(index, &max1, &min1);
+				GetSpike(index)->GetSpike(&max1, &min1);
 				if (max1 > m_maximum_over_all_spikes) m_maximum_over_all_spikes = max1;
 				if (min1 < m_minimum_over_all_spikes) m_minimum_over_all_spikes = min1;
 			}
@@ -816,7 +816,7 @@ void SpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 	for (auto i = m_spikes_flagged.GetCount() - 1; i >= 0; i--)
 	{
 		const int spike_index = m_spikes_flagged.GetAt(i);
-		l_time = GetSpikeTime(spike_index);
+		l_time = GetSpike(spike_index)->get_time();
 		if (l_time < l_first || l_time > l_last)
 			continue;
 		m_spikes_flagged.RemoveAt(i);
@@ -828,7 +828,7 @@ void SpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 	// then if bSet is ON, search spike file for spikes falling within this range and flag them
 	for (auto i = 0; i < GetTotalSpikes(); i++)
 	{
-		l_time = GetSpikeTime(i);
+		l_time = GetSpike(i)->get_time();
 		if (l_time < l_first || l_time > l_last)
 			continue;
 		m_spikes_flagged.Add(i);
@@ -841,12 +841,12 @@ void SpikeList::SelectSpikesWithinBounds(const int v_min, const int v_max, const
 		RemoveAllSpikeFlags();
 	for (auto i = 0; i < GetTotalSpikes(); i++)
 	{
-		const auto l_time = GetSpikeTime(i);
+		const auto l_time = GetSpike(i)->get_time();
 		if (l_time < l_first || l_time > l_last)
 			continue;
 
 		int max, min;
-		GetSpikeExtrema(i, &max, &min);
+		GetSpike(i)->GetSpike(&max, &min);
 		if (max > v_max) continue;
 		if (min < v_min) continue;
 		// found within boundaries= remove spike from array
@@ -865,13 +865,13 @@ void SpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 	}
 
 	// spikes flagged: init max and min to the first spike time
-	l_first = GetSpikeTime(m_spikes_flagged.GetAt(0));
+	l_first = GetSpike(m_spikes_flagged.GetAt(0))->get_time();
 	l_last = l_first;
 
 	// search if spike no is in the list
 	for (auto i = m_spikes_flagged.GetCount() - 1; i >= 0; i--)
 	{
-		const auto l_time = GetSpikeTime(m_spikes_flagged.GetAt(i));
+		const auto l_time = GetSpike(m_spikes_flagged.GetAt(i))->get_time();
 		if (l_time < l_first)
 			l_first = l_time;
 		if (l_time > l_last)
@@ -1027,7 +1027,7 @@ void SpikeList::ChangeSpikeClassID(const int old_class_ID, const int new_class_I
 	for (auto index = 0; index < m_spike_elements.GetSize(); index++)
 	{
 		if (GetSpike(index)->get_class() == old_class_ID)
-			SetSpikeClass(index, new_class_ID);
+			GetSpike(index)->set_class(new_class_ID);
 	}
 }
 

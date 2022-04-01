@@ -781,7 +781,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 			}
 
 			// get data and add spike
-			const auto p_spik = pSpkList->GetpSpikeData(i);
+			const auto p_spik = pSpkList->GetSpike(i)->GetpSpikeData();
 			pTPList->tAdd(j_templ, p_spik); // add spike to template j
 			pTPList->tAdd(p_spik); // add spike to template zero
 		}
@@ -840,7 +840,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		nspikes = spike_list->GetTotalSpikes();
 		for (auto i = 0; i < nspikes; i++)
-			m_templList.tAdd(m_pSpkList->GetpSpikeData(i));
+			m_templList.tAdd(m_pSpkList->GetSpike(i)->GetpSpikeData());
 	}
 	m_templList.tGlobalstats();
 
@@ -877,12 +877,12 @@ void ViewSpikeTemplates::OnBuildTemplates()
 				if (m_pSpkList->GetSpike(i)->get_class() != m_spikenoclass)
 					continue;
 			}
-			const auto ii_time = m_pSpkList->GetSpikeTime(i);
+			const auto ii_time = m_pSpkList->GetSpike(i)->get_time();
 			if (ii_time < m_lFirst || ii_time > m_lLast)
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
-			auto* p_spik = m_pSpkList->GetpSpikeData(i);
+			auto* p_spik = m_pSpkList->GetSpike(i)->GetpSpikeData();
 			auto b_within = FALSE;
 			int itpl;
 			for (itpl = 0; itpl < ntempl; itpl++)
@@ -998,12 +998,12 @@ void ViewSpikeTemplates::sortSpikes()
 			}
 
 			// skip spikes that do not fit into time interval selected
-			const auto ii_time = m_pSpkList->GetSpikeTime(ispike);
+			const auto ii_time = m_pSpkList->GetSpike(ispike)->get_time();
 			if (ii_time < m_lFirst || ii_time > m_lLast)
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
-			const auto p_spik = m_pSpkList->GetpSpikeData(ispike);
+			const auto p_spik = m_pSpkList->GetSpike(ispike)->GetpSpikeData();
 			auto b_within = FALSE;
 			double distmin;
 			int offsetmin;
@@ -1044,7 +1044,7 @@ void ViewSpikeTemplates::sortSpikes()
 				const auto class_id = (m_templList.GetTemplateWnd(tplmin))->m_classID;
 				if (m_pSpkList->GetSpike(ispike)->get_class() != class_id)
 				{
-					m_pSpkList->SetSpikeClass(ispike, class_id);
+					m_pSpkList->GetSpike(ispike)->set_class(class_id);
 					m_pSpkDoc->SetModifiedFlag(TRUE);
 				}
 			}

@@ -99,12 +99,12 @@ short* Spike::GetpSpikeData(int spike_length)
 	int delta = 6;
 	if (m_spike_data_buffer == nullptr)
 	{
-		m_spike_data_buffer = static_cast<short*>(malloc(sizeof(short) * (spike_length + delta));
+		m_spike_data_buffer = static_cast<short*>(malloc(sizeof(short) * (spike_length + delta)));
 		m_spk_buffer_length = spike_length;
 	}
 	if (spike_length != m_spk_buffer_length)
 	{
-		m_spike_data_buffer = static_cast<short*>(realloc(m_spike_data_buffer, sizeof(short) * (spike_length + delta));
+		m_spike_data_buffer = static_cast<short*>(malloc(sizeof(short) * (spike_length + delta)));
 		m_spk_buffer_length = spike_length;
 	}
 	return m_spike_data_buffer;
