@@ -84,24 +84,23 @@ public:
 	int GetclassNbspk(int i) const { return m_spike_class_descriptor_array.GetAt(i).n_items; }
 	void SetclassNbspk(int i, int n_spikes) { m_spike_class_descriptor_array.GetAt(i).n_items = n_spikes; }
 
-	SpikeElement* GetSpikeElemt(int no) { return m_spike_elements.GetAt(no); }
-	int GetSpikeClass(int no)  { return GetSpikeElemt(no)->get_class(); }
-	long GetSpikeTime(int no)  { return GetSpikeElemt(no)->get_time(); }
-	int GetSpikeChan(int no)  { return GetSpikeElemt(no)->get_source_channel(); }
-	void GetSpikeExtrema(int no, int* max, int* min) { GetSpikeElemt(no)->GetSpikeExtrema(max, min); }
-	void GetSpikeMaxmin(int no, int* max, int* min, int* dmaxmin) { GetSpikeElemt(no)->GetSpikeMaxMin(max, min, dmaxmin); }
-	int GetSpikeAmplitudeOffset(int no)  { return GetSpikeElemt(no)->get_amplitude_offset(); }
-	int GetSpikeValAt(int no, int index) { return *(GetpSpikeData(no) + index); }
-	short* GetpSpikeData(int no)  { return GetSpikeElemt(no)->GetpSpikeData(); }
+	SpikeElement* GetSpike(int no) { return m_spike_elements.GetAt(no); }
+
+	long GetSpikeTime(int no)  { return GetSpike(no)->get_time(); }
+	int GetSpikeChan(int no)  { return GetSpike(no)->get_source_channel(); }
+	void GetSpikeExtrema(int no, int* max, int* min) { GetSpike(no)->GetSpikeExtrema(max, min); }
+	void GetSpikeMaxmin(int no, int* max, int* min, int* dmaxmin) { GetSpike(no)->GetSpikeMaxMin(max, min, dmaxmin); }
+	int GetSpikeAmplitudeOffset(int no)  { return GetSpike(no)->get_amplitude_offset(); }
+
 	
 	int GetTotalSpikes() const { return m_spike_elements.GetCount(); }
 
 	void SetSpikeClass(int no, const int nclass)
 	{
-		GetSpikeElemt(no)->set_class(nclass);
+		GetSpike(no)->set_class(nclass);
 		m_keep_only_valid_classes = FALSE;
 	}
-	void SetSpikeTime(int no, long ii_time) { GetSpikeElemt(no)->set_time(ii_time); }
+	void SetSpikeTime(int no, long ii_time) { GetSpike(no)->set_time(ii_time); }
 
 	WORD GetAcqEncoding() const { return m_data_encoding_mode; }
 	float GetAcqSampRate() const { return m_sampling_rate; }
@@ -112,7 +111,7 @@ public:
 	SPKDETECTPARM* GetDetectParms() { return &m_detection_parameters; }
 
 	int AddSpike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
-	BOOL TransferDataToSpikeBuffer(int no, short* lpsource, int n_channels, BOOL badjust = FALSE);
+	BOOL TransferDataToSpikeBuffer(SpikeElement* pSpike, short* lpsource, int n_channels, BOOL badjust = FALSE);
 	
 	int  GetSpikeLength() const { return m_spike_length; }
 	void SetSpikeLength(int spike_length) { m_spike_length = spike_length; }
@@ -120,10 +119,10 @@ public:
 	int RemoveSpike(int spike_index);
 	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spike_index, int channel_index);
 
-	void MeasureSpikeMaxMin(int no, int* max, int* max_index, int* min, int* min_index) const;
-	void MeasureSpikeMaxMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) const;
-	void MeasureSpikeMaxThenMin(int no, int* max, int* max_index, int* min, int* min_index) const;
-	void MeasureSpikeMaxThenMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) const;
+	void MeasureSpikeMaxMin(int no, int* max, int* max_index, int* min, int* min_index);
+	void MeasureSpikeMaxMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) ;
+	void MeasureSpikeMaxThenMin(int no, int* max, int* max_index, int* min, int* min_index) ;
+	void MeasureSpikeMaxThenMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) ;
 
 	void GetTotalMaxMin(BOOL b_recalculate, int* max, int* min);
 	void OffsetSpikeAmplitude(int no, int val_first, int val_last, int center = 0);
@@ -144,7 +143,7 @@ public:
 	BOOL SortSpikeWithY1AndY2(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits1, CSize limits2);
 
 	int GetValidSpikeNumber(int spike_index) const;
-	int GetNextSpike(int spike_index, int delta, BOOL b_keep_same_class) const;
+	int GetNextSpike(int spike_index, int delta, BOOL b_keep_same_class) ;
 
 public:
 	int SetSpikeFlag(int spike_index, BOOL set_spike_flag);

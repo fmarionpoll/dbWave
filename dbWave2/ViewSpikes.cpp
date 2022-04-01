@@ -286,7 +286,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_DROPPED:
 		m_pSpkDoc->SetModifiedFlag();
-		m_spike_index_class = m_pSpkList->GetSpikeClass(m_spike_index);
+		m_spike_index_class = m_pSpkList->GetSpike(m_spike_index)->get_class();
 		UpdateData(FALSE);
 		break;
 
@@ -339,7 +339,7 @@ BOOL ViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
 
 		m_pSpkDoc->SetModifiedFlag();
 	}
-	else if (m_pSpkList->GetSpikeClass(spikeindex) != m_class_destination)
+	else if (m_pSpkList->GetSpike(spikeindex)->get_class() != m_class_destination)
 	{
 		m_pSpkList->SetSpikeClass(spikeindex, m_class_destination);
 		m_pSpkDoc->SetModifiedFlag();
@@ -381,7 +381,7 @@ void ViewSpikes::selectSpike(int spikeno)
 	if (spikeno >= 0 && spikeno < m_pSpkList->GetTotalSpikes())
 	{
 		// get address of spike parms
-		const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spike_index);
+		const auto p_spike_element = m_pSpkList->GetSpike(m_spike_index);
 		m_spike_index_class = p_spike_element->get_class();
 		m_b_artefact = (m_spike_index_class < 0);
 		const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetDetectParms()->prethreshold;
@@ -1534,7 +1534,7 @@ void ViewSpikes::OnEnChangeNOspike()
 void ViewSpikes::centerDataDisplayOnSpike(int spikeno)
 {
 	// test if spike visible in the current time interval
-	SpikeElement* p_spike_element = m_pSpkList->GetSpikeElemt(spikeno);
+	SpikeElement* p_spike_element = m_pSpkList->GetSpike(spikeno);
 	const long spk_first = p_spike_element->get_time() - m_pSpkList->GetDetectParms()->prethreshold;
 	const long spk_last = spk_first + m_pSpkList->GetSpikeLength();
 	const long lcenter = (spk_last + spk_first) / 2;
@@ -2154,7 +2154,7 @@ void ViewSpikes::OnArtefact()
 	else
 	{
 		// load old class nb
-		auto spkclass = m_pSpkList->GetSpikeClass(m_spike_index);
+		auto spkclass = m_pSpkList->GetSpike(m_spike_index)->get_class();
 		// if artefact: set class to negative value
 		if (m_b_artefact && spkclass >= 0)
 			spkclass = -(spkclass + 1);

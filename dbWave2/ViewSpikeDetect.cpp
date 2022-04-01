@@ -209,7 +209,7 @@ void ViewSpikeDetection::update_legends()
 	m_bartefact = FALSE;
 	if (m_spikeno > 0)
 	{
-		const auto p_s = m_pSpkList->GetSpikeElemt(m_spikeno);
+		const auto p_s = m_pSpkList->GetSpike(m_spikeno);
 		m_bartefact = (p_s->get_class() < 0);
 	}
 
@@ -323,7 +323,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 
 	for (auto i = 0; i < total_spikes; i++)
 	{
-		const auto p_s = m_pSpkList->GetSpikeElemt(i);
+		const auto p_s = m_pSpkList->GetSpike(i);
 		const auto l_first = p_s->get_time() - spike_pre_trigger;
 		m_DWintervals.SetAt(j_index, l_first);
 		j_index++;
@@ -1593,7 +1593,7 @@ void ViewSpikeDetection::OnArtefact()
 		for (auto i = 0; i < nspikes; i++)
 		{
 			const auto spikeno = m_pSpkList->GetSpikeFlagArrayAt(i);
-			auto spkclass = m_pSpkList->GetSpikeClass(spikeno);
+			auto spkclass = m_pSpkList->GetSpike(spikeno)->get_class();
 			// if artefact: set class to negative value
 			if (m_bartefact && spkclass >= 0)
 				spkclass = -(spkclass + 1);
@@ -1710,7 +1710,7 @@ void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelectio
 {
 	if (spike_index >= 0)
 	{
-		const auto p_spike_element = m_pSpkList->GetSpikeElemt(spike_index);
+		const auto p_spike_element = m_pSpkList->GetSpike(spike_index);
 		m_bartefact = (p_spike_element->get_class() < 0);
 		if (bMultipleSelection)
 		{

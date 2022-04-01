@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::LoadSpikeParms()
 {
-	SpikeElement* p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
+	SpikeElement* p_spike_element = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
 	m_spikeclass = p_spike_element->get_class(); // class number
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = p_spike_element->get_time();
@@ -304,7 +304,7 @@ void DlgSpikeEdit::LoadSourceData()
 	if (m_pAcqDatDoc == nullptr)
 		return;
 
-	const auto p_spike_element = m_pSpkList->GetSpikeElemt(m_spikeno); // get address of spike parms
+	const auto p_spike_element = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
 	const auto l_first = p_spike_element->get_time() - m_spkpretrig; // change selection
 	m_intervals_to_highlight_spikes.SetAt(3, l_first); // store interval
 	const auto l_last = l_first + m_spklen; // end interval
@@ -360,14 +360,16 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&nchans);
 			lp_source += ((l_first - m_pAcqDatDoc->GettBUFfirst()) * nchans
 				+ m_spikeChan);
-			m_pSpkList->TransferDataToSpikeBuffer(m_spikeno, lp_source, nchans);
+			SpikeElement* pSpike = m_pSpkList->GetSpike(m_spikeno);
+			m_pSpkList->TransferDataToSpikeBuffer(pSpike, lp_source, nchans);
 		}
 		else
 		{
 			m_pAcqDatDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
 			auto p_data = m_pAcqDatDoc->GetpTransfDataBUF();
 			p_data += (l_first - m_pAcqDatDoc->GettBUFfirst());
-			m_pSpkList->TransferDataToSpikeBuffer(m_spikeno, p_data, 1);
+			SpikeElement* pSpike = m_pSpkList->GetSpike(m_spikeno);
+			m_pSpkList->TransferDataToSpikeBuffer(pSpike, p_data, 1);
 		}
 
 		// copy data to spike buffer

@@ -45,9 +45,8 @@ public:
 	short get_minimum() const { return m_min; }
 	int get_amplitude_offset() const { return m_offset; }
 
-	void SetSpikeLength(int spike_length);
 	int GetSpikeLength() const { return m_spike_length; }
-	short* GetpSpikeData() const { return m_spike_data_buffer; }
+	short* GetpSpikeData(int spike_length);
 
 	int m_spk_buffer_increment{};
 	int m_spk_buffer_length{};				// current buffer length

@@ -544,7 +544,7 @@ void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first,
 	auto n_spikes = p_spk_list->GetTotalSpikes();
 	for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
 	{
-		const auto spike_element = p_spk_list->GetSpikeElemt(i_spike);
+		const auto spike_element = p_spk_list->GetSpike(i_spike);
 		const auto ii_time = spike_element->get_time();
 		if (ii_time < l_first || ii_time > l_last)
 			continue;

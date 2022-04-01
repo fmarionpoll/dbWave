@@ -370,7 +370,7 @@ int CSpikeClassListBox::SelectSpike(int spikeno)
 	if (spikeno >= 0)
 	{
 		// get address of spike parms
-		const auto p_spike_element = p_spikelist_->GetSpikeElemt(spikeno);
+		const auto p_spike_element = p_spikelist_->GetSpike(spikeno);
 		cla = p_spike_element->get_class();
 
 		// multiple selection
@@ -537,7 +537,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	// ---------------- 1) old spike : deselect spike
 	// ----------------    and remove from corresp line (destroy?)
 
-	const auto oldclass = p_spikelist_->GetSpikeClass(spikeno);
+	const auto oldclass = p_spikelist_->GetSpike(spikeno)->get_class();
 	p_spikelist_->SetSpikeClass(spikeno, newclass);
 
 	// get row corresponding to oldclass

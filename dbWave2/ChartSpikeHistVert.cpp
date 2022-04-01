@@ -545,7 +545,7 @@ void ChartSpikeHistVert::buildHistFromSpikeList(SpikeList* p_spk_list, long l_fi
 	auto nspikes = p_spk_list->GetTotalSpikes();
 	for (auto ispk = 0; ispk < nspikes; ispk++)
 	{
-		const auto spike_element = p_spk_list->GetSpikeElemt(ispk);
+		const auto spike_element = p_spk_list->GetSpike(ispk);
 
 		// check that the corresp spike fits within the time limits requested
 		const auto ii_time = spike_element->get_time();

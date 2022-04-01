@@ -357,7 +357,7 @@ void ChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 			continue;
 
 		// select correct pen
-		const auto wspkcla = p_spikelist_->GetSpikeClass(ispk);
+		const auto wspkcla = p_spikelist_->GetSpike(ispk)->get_class();
 		switch (m_plotmode)
 		{
 		case PLOT_ONECLASSONLY:
@@ -426,7 +426,7 @@ void ChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 	for (auto i = p_spikelist_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
 	{
 		const auto nospike = p_spikelist_->GetSpikeFlagArrayAt(i);
-		const auto nospikeclass = p_spikelist_->GetSpikeClass(nospike);
+		const auto nospikeclass = p_spikelist_->GetSpike(nospike)->get_class();
 		if (PLOT_ONECLASSONLY == m_plotmode && nospikeclass != m_selclass)
 			continue;
 
@@ -493,13 +493,13 @@ void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
 			color = BLACK_COLOR;
-			if (p_spikelist_->GetSpikeClass(nospike) != m_selclass)
+			if (p_spikelist_->GetSpike(nospike)->get_class() != m_selclass)
 				color = SILVER_COLOR;
 			break;
 		case PLOT_CLASSCOLORS:
 			if (nospike == m_selectedspike)
 				highlightOneBar(nospike, &dc);
-			color = p_spikelist_->GetSpikeClass(nospike) % NB_COLORS;
+			color = p_spikelist_->GetSpike(nospike)->get_class() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		default:
@@ -514,7 +514,7 @@ void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 		{
 		case PLOT_CLASSCOLORS:
 			highlightOneBar(nospike, &dc);
-			color = p_spikelist_->GetSpikeClass(nospike) % NB_COLORS;
+			color = p_spikelist_->GetSpike(nospike)->get_class() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		case PLOT_ONECLASSONLY:
@@ -560,7 +560,7 @@ BOOL ChartSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 	if (m_rangemode == RANGE_INDEX
 		&& (spikeno > m_spklast || spikeno < m_spkfirst))
 		return FALSE;
-	if (m_plotmode == PLOT_ONECLASSONLY && p_spikelist_->GetSpikeClass(spikeno) != m_selclass)
+	if (m_plotmode == PLOT_ONECLASSONLY && p_spikelist_->GetSpike(spikeno)->get_class() != m_selclass)
 		return FALSE;
 	return TRUE;
 }
@@ -835,7 +835,7 @@ int ChartSpikeBarWnd::hitCurve(const CPoint point)
 		if (l_spike_time < l_xmin || l_spike_time > l_xmax)
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& p_spikelist_->GetSpikeClass(ispk) != m_selclass)
+			&& p_spikelist_->GetSpike(ispk)->get_class() != m_selclass)
 			continue;
 
 		int max;

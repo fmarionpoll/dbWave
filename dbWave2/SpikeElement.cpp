@@ -33,7 +33,6 @@ IMPLEMENT_SERIAL(SpikeElement, CObject, 0 /* schema number*/)
 
 void SpikeElement::Serialize(CArchive& ar)
 {
-	WORD w1;
 	WORD wVersion = 2;
 
 	if (ar.IsStoring())
@@ -93,4 +92,20 @@ void SpikeElement::read_version0(CArchive& ar)
 	ar >> w1; m_min = static_cast<short>(w1);
 	ar >> w1; m_offset = static_cast<short>(w1);
 	m_dmaxmin = 0;
+}
+
+short* SpikeElement::GetpSpikeData(int spike_length)
+{
+	int delta = 6;
+	if (m_spike_data_buffer == nullptr)
+	{
+		m_spike_data_buffer = static_cast<short*>(malloc(sizeof(short) * (spike_length + delta));
+		m_spk_buffer_length = spike_length;
+	}
+	if (spike_length != m_spk_buffer_length)
+	{
+		m_spike_data_buffer = static_cast<short*>(realloc(m_spike_data_buffer, sizeof(short) * (spike_length + delta));
+		m_spk_buffer_length = spike_length;
+	}
+	return m_spike_data_buffer;
 }

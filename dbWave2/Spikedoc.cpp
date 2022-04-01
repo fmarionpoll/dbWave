@@ -431,7 +431,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	for (auto j = 0; j < nspikes; j++)
 	{
 		// skip classes not requested
-		const auto cla = pspklist->GetSpikeClass(j);
+		const auto cla = pspklist->GetSpike(j)->get_class();
 		if (cla < 0 /*&& !vdS->bartefacts*/)
 			continue;
 		if (vdS->spikeclassoption != 0 && cla != iclass)
@@ -693,7 +693,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPI
 				break;
 
 			// skip classes not requested
-			const auto cla = pspklist->GetSpikeClass(j);
+			const auto cla = pspklist->GetSpike(j)->get_class();
 			if (cla < 0 /*&& !vdS->bartefacts*/)
 				continue;
 			if (vdS->spikeclassoption != 0 && cla != iclass)
@@ -842,7 +842,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		if ((ii_time < iitime0) || (ii_time >= iitime1))
 			break;
 		// skip classes not requested
-		const auto cla = pspklist->GetSpikeClass(j);
+		const auto cla = pspklist->GetSpike(j)->get_class();
 		if (cla < 0 /*&& !vdS->bartefacts*/)
 			continue;
 
@@ -1252,9 +1252,9 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 				break;
 
 			// skip classes not requested (artefact or wrong class)
-			if (pspklist->GetSpikeClass(j) < 0 /*&& !vdS->bartefacts*/)
+			if (pspklist->GetSpike(j)->get_class() < 0 /*&& !vdS->bartefacts*/)
 				continue;
-			if (vdS->spikeclassoption != 0 && pspklist->GetSpikeClass(j) != iclass)
+			if (vdS->spikeclassoption != 0 && pspklist->GetSpike(j)->get_class() != iclass)
 				continue;
 
 			int ii = (ii_time - iitime_start) / iibinsize;
@@ -1343,7 +1343,7 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 				iitime0 = ii_time;
 				continue;
 			}
-			if (vdS->spikeclassoption && pspklist->GetSpikeClass(i) != iclass)
+			if (vdS->spikeclassoption && pspklist->GetSpike(i)->get_class() != iclass)
 				continue;
 			const auto ii = static_cast<int>((ii_time - iitime0) / iibinsize);
 			if (ii <= vdS->nbinsISI)
@@ -1431,7 +1431,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 			const auto iitime0 = pspklist->GetSpikeTime(i); // get spike time
 			if (iitime0 > iiend) // stop loop if out of range
 				break;
-			if (vdS->spikeclassoption && pspklist->GetSpikeClass(i) != iclass)
+			if (vdS->spikeclassoption && pspklist->GetSpike(i)->get_class() != iclass)
 				continue; // discard if class not requested
 			n++; // update nb of pivot spikes
 			// search backwards first spike that is ok
@@ -1448,7 +1448,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 				const auto ii_time = pspklist->GetSpikeTime(j) - iitime0;
 				if (abs(ii_time) >= iispan)
 					continue;
-				if (vdS->spikeclassoption && pspklist->GetSpikeClass(j) != iclass)
+				if (vdS->spikeclassoption && pspklist->GetSpike(j)->get_class() != iclass)
 					continue;
 
 				const int tiitime = ((ii_time + iispan) / iibinsize);
@@ -1545,7 +1545,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 			const auto iitime0 = pspklist->GetSpikeTime(i);
 			if (iitime0 >= iiend) // exit loop
 				break;
-			if (vdS->spikeclassoption && pspklist->GetSpikeClass(i) != iclass)
+			if (vdS->spikeclassoption && pspklist->GetSpike(i)->get_class() != iclass)
 				continue;
 			n++; // update nb of pivot spikes
 			// compute base index (where to store autocorrelation for this pivot spike)
@@ -1572,7 +1572,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 				if (ii_time < -iispan)
 					continue;
 
-				if (vdS->spikeclassoption && pspklist->GetSpikeClass(j) != iclass)
+				if (vdS->spikeclassoption && pspklist->GetSpike(j)->get_class() != iclass)
 					continue;
 
 				const int tiitime = (ii_time + iispan) / iiautocorrbinsize;
@@ -1626,7 +1626,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vd
 		if (ii_time >= iitime_end)
 			break;
 		// skip classes not requested
-		const auto cla = pspklist->GetSpikeClass(j);
+		const auto cla = pspklist->GetSpike(j)->get_class();
 		if (cla < 0 /*&& !vdS->bartefacts*/)
 			continue;
 		if (vdS->spikeclassoption != 0 && cla != iclass)

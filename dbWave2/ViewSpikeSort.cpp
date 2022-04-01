@@ -344,7 +344,7 @@ void ViewSpikeSort::updateFileParameters()
 	}
 	else
 	{
-		m_sourceclass = m_pSpkList->GetSpikeClass(spike_index);
+		m_sourceclass = m_pSpkList->GetSpike(spike_index)->get_class();
 		m_psC->sourceclass = m_sourceclass;
 	}
 	ASSERT(m_sourceclass < 32768);
@@ -942,7 +942,7 @@ void ViewSpikeSort::selectSpikeFromCurrentList(int spikeno)
 	auto n_cmd_show = SW_HIDE;
 	if (ispike_local >= 0)
 	{
-		const auto spike_elemt = m_pSpkList->GetSpikeElemt(ispike_local);
+		const auto spike_elemt = m_pSpkList->GetSpike(ispike_local);
 		m_spikenoclass = spike_elemt->get_class();
 		n_cmd_show = SW_SHOW;
 	}
@@ -1038,7 +1038,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	short* p_spk;
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
-		if (m_pSpkList->GetSpikeClass(ispk) != m_sourceclass)
+		if (m_pSpkList->GetSpike(ispk)->get_class() != m_sourceclass)
 			continue;
 		nbspk_selclass++;
 		p_spk = m_pSpkList->GetpSpikeData(ispk);
@@ -1096,7 +1096,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
 		// exclude spikes that do not fall within time limits
-		if (m_pSpkList->GetSpikeClass(ispk) != m_sourceclass)
+		if (m_pSpkList->GetSpike(ispk)->get_class() != m_sourceclass)
 			continue;
 
 		iitime0 = m_pSpkList->GetSpikeTime(ispk);
@@ -1819,7 +1819,7 @@ void ViewSpikeSort::OnEnChangeNOspike()
 			if (m_spikeno >= 0)
 			{
 				// test if spike visible in the current time interval
-				const auto spike_element = m_pSpkList->GetSpikeElemt(m_spikeno);
+				const auto spike_element = m_pSpkList->GetSpike(m_spikeno);
 				const auto spk_first = spike_element->get_time() - m_pSpkList->GetDetectParms()->prethreshold;
 				const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 

@@ -103,7 +103,7 @@ void ChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 				continue;
 
 			// select pen according to class
-			const auto wspkcla = p_spikelist_->GetSpikeClass(ispk);
+			const auto wspkcla = p_spikelist_->GetSpike(ispk)->get_class();
 			switch (m_plotmode)
 			{
 			case PLOT_ONECLASSONLY:
@@ -142,7 +142,7 @@ void ChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
 					continue;
 
 				// skip spikes with the wrong class
-				if (p_spikelist_->GetSpikeClass(ispk) != m_selclass)
+				if (p_spikelist_->GetSpike(ispk)->get_class() != m_selclass)
 					continue;
 				// display data
 				lpspk = p_spikelist_->GetpSpikeData(ispk);
@@ -298,7 +298,7 @@ BOOL ChartSpikeShapeWnd::IsSpikeWithinRange(int spikeno) const
 		&& (spikeno > m_spklast || spikeno < m_spkfirst))
 		return FALSE;
 	if (m_plotmode == PLOT_ONECLASSONLY
-		&& (p_spikelist_->GetSpikeClass(spikeno) != m_selclass))
+		&& (p_spikelist_->GetSpike(spikeno)->get_class() != m_selclass))
 		return FALSE;
 	return TRUE;
 }
@@ -550,7 +550,7 @@ int ChartSpikeShapeWnd::hitCurve(const CPoint point)
 				|| p_spikelist_->GetSpikeTime(ispk) > m_lLast))
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& p_spikelist_->GetSpikeClass(ispk) != m_selclass)
+			&& p_spikelist_->GetSpike(ispk)->get_class() != m_selclass)
 			continue;
 
 		const auto val = p_spikelist_->GetSpikeValAt(ispk, mouse_x);
@@ -711,7 +711,7 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 				continue;
 		}
 
-		const auto spkcla = p_spikelist_->GetSpikeClass(ispk);
+		const auto spkcla = p_spikelist_->GetSpike(ispk)->get_class();
 		if (m_plotmode == PLOT_ONECLASSONLY && spkcla != m_selclass)
 			continue;
 		if (m_plotmode == PLOT_ONECLASS && spkcla == m_selclass)
@@ -732,7 +732,7 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 				if (ltime < m_lFirst || ltime > m_lLast)
 					continue;
 			}
-			if (p_spikelist_->GetSpikeClass(ispk) != m_selclass)
+			if (p_spikelist_->GetSpike(ispk)->get_class() != m_selclass)
 				continue;
 			plotArraytoDC(p_dc, p_spikelist_->GetpSpikeData(ispk));
 		}
