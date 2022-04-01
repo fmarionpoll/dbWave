@@ -9,14 +9,14 @@
 // eventually the source data extracted from the data file
 // real data are stored in a separate object managing data buffers
 
-class SpikeElement : public CObject
+class Spike : public CObject
 {
-	DECLARE_SERIAL(SpikeElement)
+	DECLARE_SERIAL(Spike)
 
-	SpikeElement();
-	SpikeElement(long time, int channel);
-	SpikeElement(long time, int channel, int max, int min, int offset, int class_i, int d_maxmin);
-	~SpikeElement() override;
+	Spike();
+	Spike(long time, int channel);
+	Spike(long time, int channel, int max, int min, int offset, int class_i, int d_maxmin);
+	~Spike() override;
 
 	// Attributes
 private:

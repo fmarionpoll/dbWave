@@ -1,21 +1,21 @@
 #include "StdAfx.h"
-#include "SpikeElement.h"
+#include "Spike.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-SpikeElement::SpikeElement()
+Spike::Spike()
 = default;
 
-SpikeElement::SpikeElement(const long time, const int channel)
+Spike::Spike(const long time, const int channel)
 {
 	m_iitime = time;
 	m_chanparm = channel;
 }
 
-SpikeElement::SpikeElement(const long time, const int channel, const int max, const int min, const int offset, const int class_i, int d_maxmin)
+Spike::Spike(const long time, const int channel, const int max, const int min, const int offset, const int class_i, int d_maxmin)
 {
 	m_iitime = time;
 	m_chanparm = channel;
@@ -26,12 +26,12 @@ SpikeElement::SpikeElement(const long time, const int channel, const int max, co
 	m_dmaxmin = d_maxmin;
 }
 
-SpikeElement::~SpikeElement()
+Spike::~Spike()
 = default;
 
-IMPLEMENT_SERIAL(SpikeElement, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(Spike, CObject, 0 /* schema number*/)
 
-void SpikeElement::Serialize(CArchive& ar)
+void Spike::Serialize(CArchive& ar)
 {
 	WORD wVersion = 2;
 
@@ -57,7 +57,7 @@ void SpikeElement::Serialize(CArchive& ar)
 	}
 }
 
-void SpikeElement::read_version2(CArchive& ar, WORD wVersion)
+void Spike::read_version2(CArchive& ar, WORD wVersion)
 {
 	WORD w1;
 
@@ -79,7 +79,7 @@ void SpikeElement::read_version2(CArchive& ar, WORD wVersion)
 }
 
 
-void SpikeElement::read_version0(CArchive& ar)
+void Spike::read_version0(CArchive& ar)
 {
 	WORD w1;
 
@@ -94,7 +94,7 @@ void SpikeElement::read_version0(CArchive& ar)
 	m_dmaxmin = 0;
 }
 
-short* SpikeElement::GetpSpikeData(int spike_length)
+short* Spike::GetpSpikeData(int spike_length)
 {
 	int delta = 6;
 	if (m_spike_data_buffer == nullptr)

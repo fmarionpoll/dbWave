@@ -1534,7 +1534,7 @@ void ViewSpikes::OnEnChangeNOspike()
 void ViewSpikes::centerDataDisplayOnSpike(int spikeno)
 {
 	// test if spike visible in the current time interval
-	SpikeElement* p_spike_element = m_pSpkList->GetSpike(spikeno);
+	Spike* p_spike_element = m_pSpkList->GetSpike(spikeno);
 	const long spk_first = p_spike_element->get_time() - m_pSpkList->GetDetectParms()->prethreshold;
 	const long spk_last = spk_first + m_pSpkList->GetSpikeLength();
 	const long lcenter = (spk_last + spk_first) / 2;

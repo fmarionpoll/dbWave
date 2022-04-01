@@ -3,7 +3,7 @@
 #include "WaveBuf.h"
 #include "SpikeBuffer.h"
 #include "SpikeClassDescriptor.h"
-#include "SpikeElement.h"
+#include "Spike.h"
 #include "SPKDETECTPARM.h"
 
 
@@ -56,7 +56,7 @@ protected:
 	int m_minimum_over_all_spikes = 0; 
 	int m_maximum_over_all_spikes = 0;
 	int m_spike_length = 60;
-	CArray<SpikeElement*, SpikeElement*> m_spike_elements;
+	CArray<Spike*, Spike*> m_spike_elements;
 	//CSpikeBuffer m_spike_buffer{}; // spike data buffer
 
 	// (3) --------classes of spikes
@@ -84,7 +84,7 @@ public:
 	int GetclassNbspk(int i) const { return m_spike_class_descriptor_array.GetAt(i).n_items; }
 	void SetclassNbspk(int i, int n_spikes) { m_spike_class_descriptor_array.GetAt(i).n_items = n_spikes; }
 
-	SpikeElement* GetSpike(int no) { return m_spike_elements.GetAt(no); }
+	Spike* GetSpike(int no) { return m_spike_elements.GetAt(no); }
 
 	long GetSpikeTime(int no)  { return GetSpike(no)->get_time(); }
 	int GetSpikeChan(int no)  { return GetSpike(no)->get_source_channel(); }
@@ -111,7 +111,7 @@ public:
 	SPKDETECTPARM* GetDetectParms() { return &m_detection_parameters; }
 
 	int AddSpike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
-	BOOL TransferDataToSpikeBuffer(SpikeElement* pSpike, short* lpsource, int n_channels, BOOL badjust = FALSE);
+	BOOL TransferDataToSpikeBuffer(Spike* pSpike, short* lpsource, int n_channels, BOOL badjust = FALSE);
 	
 	int  GetSpikeLength() const { return m_spike_length; }
 	void SetSpikeLength(int spike_length) { m_spike_length = spike_length; }

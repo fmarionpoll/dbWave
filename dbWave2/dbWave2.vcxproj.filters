@@ -258,7 +258,7 @@
     <ClCompile Include="MeasureOptionsPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpikeElement.cpp">
+    <ClCompile Include="Spike.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpikeBuffer.cpp">
@@ -809,7 +809,7 @@
     <ClInclude Include="MeasureOptionsPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpikeElement.h">
+    <ClInclude Include="Spike.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeBuffer.h">

@@ -1203,7 +1203,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SpikeElement.cpp" />
+    <ClCompile Include="Spike.cpp" />
     <ClCompile Include="SpikeFromChan.cpp" />
     <ClCompile Include="ChartSpikeHist.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -1520,7 +1520,7 @@
     <ClInclude Include="SpikeClassListBox.h" />
     <ClInclude Include="DlgSpikeDetect.h" />
     <ClInclude Include="Spikedoc.h" />
-    <ClInclude Include="SpikeElement.h" />
+    <ClInclude Include="Spike.h" />
     <ClInclude Include="SpikeFromChan.h" />
     <ClInclude Include="ChartSpikeHist.h" />
     <ClInclude Include="Spikelist.h" />

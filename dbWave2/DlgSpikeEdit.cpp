@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::LoadSpikeParms()
 {
-	SpikeElement* p_spike_element = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
+	Spike* p_spike_element = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
 	m_spikeclass = p_spike_element->get_class(); // class number
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = p_spike_element->get_time();
@@ -360,7 +360,7 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&nchans);
 			lp_source += ((l_first - m_pAcqDatDoc->GettBUFfirst()) * nchans
 				+ m_spikeChan);
-			SpikeElement* pSpike = m_pSpkList->GetSpike(m_spikeno);
+			Spike* pSpike = m_pSpkList->GetSpike(m_spikeno);
 			m_pSpkList->TransferDataToSpikeBuffer(pSpike, lp_source, nchans);
 		}
 		else
@@ -368,7 +368,7 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 			m_pAcqDatDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
 			auto p_data = m_pAcqDatDoc->GetpTransfDataBUF();
 			p_data += (l_first - m_pAcqDatDoc->GettBUFfirst());
-			SpikeElement* pSpike = m_pSpkList->GetSpike(m_spikeno);
+			Spike* pSpike = m_pSpkList->GetSpike(m_spikeno);
 			m_pSpkList->TransferDataToSpikeBuffer(pSpike, p_data, 1);
 		}
 

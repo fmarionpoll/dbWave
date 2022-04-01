@@ -137,7 +137,7 @@ void SpikeList::serialize_spike_elements(CArchive& ar)
 		m_spike_elements.SetSize(n_spikes);
 		for (auto i = 0; i < n_spikes; i++)
 		{
-			auto* se = new(SpikeElement);
+			auto* se = new(Spike);
 			ASSERT(se != NULL);
 			se->Serialize(ar);
 			m_spike_elements.SetAt(i, se);
@@ -244,7 +244,7 @@ void SpikeList::read_file_version5(CArchive& ar)
 	m_spike_elements.SetSize(n_spikes); 
 	for (auto i = 0; i < n_spikes; i++) 
 	{
-		auto* se = new(SpikeElement);
+		auto* se = new(Spike);
 		ASSERT(se != NULL);
 		se->read_version0(ar);
 		m_spike_elements[i] = se;
@@ -312,7 +312,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	m_spike_elements.SetSize(n_spikes); // change size of the list
 	for (auto i = 0; i < n_spikes; i++)
 	{
-		const auto se = new(SpikeElement);
+		const auto se = new(Spike);
 		ASSERT(se != NULL);
 		se->read_version0(ar); 
 		m_spike_elements[i] = se;
@@ -320,15 +320,18 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 
 	// ----------------------------------------------------
 	// (4) load spike raw data
-	m_spike_buffer.DeleteAllSpikes(); // delete data buffers
 	ar >> w1; // read spike length
-	m_spike_buffer.SetSpikeLength(w1); // reset parms/buffer
-	m_spike_buffer.m_bin_zero = GetAcqBinzero();
+	SetSpikeLength(w1); // reset parms/buffer
+	m_bin_zero = GetAcqBinzero();
 
 	// loop through all data buffers
-	const auto n_bytes = w1 * sizeof(short) * n_spikes;
-	const auto lp_dest = m_spike_buffer.AllocateSpaceForSeveralSpikes(n_spikes);
-	ar.Read(lp_dest, n_bytes); // read data from disk
+	const auto n_bytes = w1 * sizeof(short);// *n_spikes;
+	for (int i = 0; i < n_spikes; i++)
+	{
+		const auto lp_dest = GetSpike(i)->GetpSpikeData(GetSpikeLength());
+		ar.Read(lp_dest, n_bytes); // read data from disk
+	}
+	
 	m_extrema_valid = FALSE;
 
 	// ----------------------------------------------------
@@ -377,7 +380,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 		m_icenter1SL = 0;
 		m_icenter2SL = m_detection_parameters.prethreshold;
 		m_imaxmin1SL = m_icenter2SL;
-		m_imaxmin2SL = m_spike_buffer.GetSpikeLength() - 1;
+		m_imaxmin2SL = GetSpikeLength() - 1;
 	}
 }
 
@@ -458,7 +461,7 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 	if (!b_found)
 	{
 		// create spike element and add pointer to array
-		auto* se = new SpikeElement(ii_time, source_channel, m_maximum_over_all_spikes, m_minimum_over_all_spikes, 0, i_class, 0);
+		auto* se = new Spike(ii_time, source_channel, m_maximum_over_all_spikes, m_minimum_over_all_spikes, 0, i_class, 0);
 		ASSERT(se != NULL);
 		m_spike_elements.InsertAt(index_added_spike, se);
 
@@ -470,7 +473,7 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 	return index_added_spike;
 }
 
-BOOL SpikeList::TransferDataToSpikeBuffer(SpikeElement* pSpike, short* source_data, const int n_channels, const BOOL b_adjust)
+BOOL SpikeList::TransferDataToSpikeBuffer(Spike* pSpike, short* source_data, const int n_channels, const BOOL b_adjust)
 {
 	// compute avg from m_icenter1SL to m_icenter2SL
 	auto lp_b = source_data + n_channels * m_icenter1SL;
