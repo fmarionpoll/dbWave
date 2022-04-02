@@ -27,7 +27,9 @@ Spike::Spike(const long time, const int channel, const int max, const int min, c
 }
 
 Spike::~Spike()
-= default;
+{
+	delete m_spike_data_buffer;
+}
 
 IMPLEMENT_SERIAL(Spike, CObject, 0 /* schema number*/)
 

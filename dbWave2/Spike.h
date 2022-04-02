@@ -33,8 +33,7 @@ private:
 	short* m_spike_data_buffer = nullptr;	// buffer address
 	int m_spike_length = 0;					// length of buffer
 	int m_spk_buffer_length{};				// n points in the buffer
-	
-	// Operations set/change elements of spikeele
+
 public:
 	int m_bin_zero = 2048;					// zero (if 12 bits scale = 0-4095)
 

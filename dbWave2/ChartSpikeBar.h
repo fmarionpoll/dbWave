@@ -30,8 +30,8 @@ protected:
 	BOOL m_ballFiles = false; // display data from all files in CdbWaveDoc*
 
 	CDWordArray* p_envelope_ = nullptr; // data envelope (should be 4 times greater than size)
-	SpikeList* p_spikelist_ = nullptr;
-	CSpikeDoc* p_spike_doc_ = nullptr;
+	SpikeList* p_spikelist_SPKBAR = nullptr;
+	CSpikeDoc* p_spike_doc_SPKBAR = nullptr;
 	CdbWaveDoc* p_dbwave_doc_ = nullptr;
 
 	// Helpers
@@ -48,18 +48,18 @@ public:
 	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	{
 		p_dbwave_doc_ = p_document;
-		p_spikelist_ = p_spk_list;
+		p_spikelist_SPKBAR = p_spk_list;
 		m_selectedspike = -1;
 	}
 
 	void SetSourceData(SpikeList* p_spk_list, CSpikeDoc* p_spkdoc)
 	{
 		p_dbwave_doc_ = nullptr;
-		p_spike_doc_ = p_spkdoc, p_spikelist_ = p_spk_list;
+		p_spike_doc_SPKBAR = p_spkdoc, p_spikelist_SPKBAR = p_spk_list;
 		m_selectedspike = -1;
 	}
 
-	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_SPKBAR = p_spk_list; }
 
 	void SetTimeIntervals(long l_first, long l_last)
 	{

@@ -200,9 +200,10 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		
 		if (m_n_classes >= 0)
 		{
+			m_spike_class_descriptors.SetSize(m_n_classes);
 			for (auto i = 0; i < m_n_classes; i++)
 			{
-				SpikeClassDescriptor item;
+				SpikeClassDescriptor item = m_spike_class_descriptors.GetAt(i);
 				item.Serialize(ar);
 				m_spike_class_descriptors.SetAt(i, item);
 			}
