@@ -380,7 +380,7 @@ void ChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 		// and draw spike: compute abcissa & draw from max to min
 		const auto llk = (l_spike_time - m_lFirst) * static_cast<float>(xextent) / len; //muldiv
 		const int abcissa = static_cast<int>(llk) + rect->left;
-		p_spikelist_->GetSpike(ispk)->GetSpike(&max, &min);
+		p_spikelist_->GetSpike(ispk)->GetMaxMin(&max, &min);
 		max = MulDiv(max - yzero, y_ve, yextent) + y_vo;
 		min = MulDiv(min - yzero, y_ve, yextent) + y_vo;
 		p_dc->MoveTo(abcissa, max);
@@ -463,7 +463,7 @@ void ChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 		const auto llk = (l_spike_time - m_lFirst) * static_cast<float>(m_xWE) / len;
 		const auto abcissa = static_cast<int>(llk) + m_xWO;
 		int max, min;
-		p_spikelist_->GetSpike(nospike)->GetSpike(&max, &min);
+		p_spikelist_->GetSpike(nospike)->GetMaxMin(&max, &min);
 
 		dc.MoveTo(abcissa, max);
 		dc.LineTo(abcissa, min);
@@ -536,7 +536,7 @@ void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 	const auto llk = (l_spike_time - m_lFirst) * static_cast<float>(m_xWE) / len;
 	const auto abcissa = static_cast<int>(llk) + m_xWO;
 	int max, min;
-	p_spikelist_->GetSpike(nospike)->GetSpike(&max, &min);
+	p_spikelist_->GetSpike(nospike)->GetMaxMin(&max, &min);
 
 	dc.MoveTo(abcissa, max);
 	dc.LineTo(abcissa, min);
@@ -840,7 +840,7 @@ int ChartSpikeBarWnd::hitCurve(const CPoint point)
 
 		int max;
 		int min;
-		p_spikelist_->GetSpike(ispk)->GetSpike(&max, &min);
+		p_spikelist_->GetSpike(ispk)->GetMaxMin(&max, &min);
 		if (mouse_y + deltay < max && mouse_y - deltay > min)
 		{
 			hitspk = ispk;

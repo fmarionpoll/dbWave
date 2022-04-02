@@ -1,7 +1,6 @@
 #pragma once
 
 #include "WaveBuf.h"
-#include "SpikeBuffer.h"
 #include "SpikeClassDescriptor.h"
 #include "Spike.h"
 #include "SPKDETECTPARM.h"
@@ -95,22 +94,15 @@ public:
 	SPKDETECTPARM* GetDetectParms() { return &m_detection_parameters; }
 
 	int AddSpike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
-	BOOL TransferDataToSpikeBuffer(Spike* pSpike, short* lpsource, int n_channels, BOOL badjust = FALSE);
-	
+
 	int  GetSpikeLength() const { return m_spike_length; }
 	void SetSpikeLength(int spike_length) { m_spike_length = spike_length; }
 
 	int RemoveSpike(int spike_index);
 	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spike_index, int channel_index);
 
-	void MeasureSpikeMaxMin(int no, int* max, int* max_index, int* min, int* min_index);
-	void MeasureSpikeMaxMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) ;
-	void MeasureSpikeMaxThenMin(int no, int* max, int* max_index, int* min, int* min_index) ;
-	void MeasureSpikeMaxThenMinEx(int no, int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) ;
-
 	void GetTotalMaxMin(BOOL b_recalculate, int* max, int* min);
-	void OffsetSpikeAmplitude(int no, int val_first, int val_last, int center = 0);
-	void CenterSpikeAmplitude(int spike_index, int i_first, int i_last, WORD method = 0);
+	
 	BOOL InitSpikeList(AcqDataDoc* pDataFile, SPKDETECTPARM* pFC);
 	long UpdateClassList();
 	void EraseData();

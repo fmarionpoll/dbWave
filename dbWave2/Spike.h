@@ -32,11 +32,12 @@ private:
 
 	short* m_spike_data_buffer = nullptr;	// buffer address
 	int m_spike_length = 0;					// length of buffer
-	int m_current_filter{};					// ID of last transform
-
-
+	int m_spk_buffer_length{};				// n points in the buffer
+	
 	// Operations set/change elements of spikeele
 public:
+	int m_bin_zero = 2048;					// zero (if 12 bits scale = 0-4095)
+
 	long get_time() const { return m_iitime; }
 	int get_class() const { return m_class; }
 	int get_source_channel() const { return m_chanparm; }
@@ -45,24 +46,16 @@ public:
 	int get_amplitude_offset() const { return m_offset; }
 
 	int GetSpikeLength() const { return m_spike_length; }
-	short* GetpSpikeData(int spike_length);
-	short* GetpSpikeData() { return m_spike_data_buffer; }
-	short GetSpikeValAt(int index) {return *(m_spike_data_buffer+index);}
-
-	int m_spk_buffer_increment{};
-	int m_spk_buffer_length{};				// current buffer length
-	int m_next_index{};						// next available index
-	int m_last_index{};						// index last free space for spike data
-	int m_bin_zero = 2048;					// zero (if 12 bits scale = 0-4095)
-
-	void GetSpikeMaxMin(int* max, int* min, int* d_max_to_min)
+	short* GetpData(int spike_length);
+	short* GetpData() { return m_spike_data_buffer; }
+	short GetValueAtOffset(int index) {return *(m_spike_data_buffer+index);}
+	void GetMaxMinEx(int* max, int* min, int* d_max_to_min)
 	{
 		*max = m_max;
 		*min = m_min;
 		*d_max_to_min = m_dmaxmin;
 	}
-
-	void GetSpike(int* max, int* min)
+	void GetMaxMin(int* max, int* min)
 	{
 		*max = m_max;
 		*min = m_min;
@@ -75,21 +68,32 @@ public:
 	void set_time(long ii) { m_iitime = ii; }
 	void set_class(int cl) { m_class = cl; }
 
-	void SetSpikeMaxMin(int max, int min, int dmaxmin)
+	void SetMaxMinEx(int max, int min, int dmaxmin)
 	{
 		m_max = max;
 		m_min = min;
 		m_dmaxmin = dmaxmin;
 	}
 
-	void SetSpikeAmplitudeOffset(int offset) { m_offset = offset; }
+	void SetAmplitudeOffset(int offset) { m_offset = offset; }
 	void set_y1(int y) { y1_ = y; }
 	void set_y2(int y) { y2_ = y; }
 	void set_dt(long x) { dt_ = x; }
+
+	void TransferDataToSpikeBuffer(short* source_data, int source_n_channels);
+	void MeasureMaxMinEx(int* max, int* max_index, int* min, int* min_index, int i_first, int i_last);
+	void MeasureMaxThenMinEx(int* max, int* max_index, int* min, int* min_index, int i_first, int i_last);
+	long MeasureSumEx(int i_first, int i_last);
+	void OffsetSpikeData(int offset);
+	void OffsetSpikeDataToAverageEx(int i_first, int i_last);
+	void OffsetSpikeDataToExtremaEx(int i_first, int i_last);
+	void CenterSpikeAmplitude(int i_first, int i_last, WORD method = 0);
 
 	// Implementation
 public:
 	void read_version0(CArchive& ar);
 	void Serialize(CArchive& ar) override;
+
+protected:
 	void read_version2(CArchive& ar, WORD wVersion);
 };

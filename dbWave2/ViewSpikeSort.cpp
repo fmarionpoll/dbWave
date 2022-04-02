@@ -874,10 +874,9 @@ void ViewSpikeSort::buildHistogram()
 
 void ViewSpikeSort::OnFormatCentercurve()
 {
-	// loop over all spikes of the list
-	const auto nspikes = m_pSpkList->GetTotalSpikes();
-	for (auto ispike = 0; ispike < nspikes; ispike++)
-		m_pSpkList->CenterSpikeAmplitude(ispike, m_psC->ileft, m_psC->iright, 1);
+	const auto n_spikes = m_pSpkList->GetTotalSpikes();
+	for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
+		m_pSpkList->GetSpike(i_spike)->CenterSpikeAmplitude( m_psC->ileft, m_psC->iright, 1);
 
 	int max, min;
 	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
@@ -1041,7 +1040,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		if (m_pSpkList->GetSpike(ispk)->get_class() != m_sourceclass)
 			continue;
 		nbspk_selclass++;
-		p_spk = m_pSpkList->GetSpike(ispk)->GetpSpikeData();
+		p_spk = m_pSpkList->GetSpike(ispk)->GetpData();
 		p_sum = p_sum0;
 		for (auto i = 0; i < spikelen; i++, p_spk++, p_sum++)
 			*p_sum += *p_spk;
@@ -1095,11 +1094,13 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	const auto spkpretrig = m_pSpkList->GetDetectParms()->prethreshold;
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
+		Spike* pSpike = m_pSpkList->GetSpike(ispk);
+
 		// exclude spikes that do not fall within time limits
-		if (m_pSpkList->GetSpike(ispk)->get_class() != m_sourceclass)
+		if (pSpike->get_class() != m_sourceclass)
 			continue;
 
-		iitime0 = m_pSpkList->GetSpike(ispk)->get_time();
+		iitime0 = pSpike->get_time();
 		iitime0 -= spike_pre_trigger;
 
 		// make sure that source data are loaded and get pointer to it (p_data)
@@ -1168,22 +1169,13 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		if (jdecal != 0)
 		{
 			p_data_spike0 = p_data + static_cast<WORD>(iitime0 + jdecal - l_rw_first) * offset + doc_chan;
-			m_pSpkList->TransferDataToSpikeBuffer(m_pSpkList->GetSpike(ispk), p_data_spike0, number_channels);
+			pSpike->TransferDataToSpikeBuffer(p_data_spike0, number_channels);
 			m_pSpkDoc->SetModifiedFlag(TRUE);
-			m_pSpkList->GetSpike(ispk)->set_time(iitime0 + spkpretrig);
+			pSpike->set_time(iitime0 + spkpretrig);
 		}
 
 		// now offset spike vertically to align it with the mean
-		p_mean = p_mean0 + kstart;
-		p_spk = m_pSpkList->GetSpike(ispk)->GetpSpikeData() + kstart;
-		long l_diff = 0;
-		for (auto i = kstart; i < kend; i++, p_spk++, p_mean++)
-			l_diff += (*p_spk - *p_mean);
-		l_diff /= (kend - kstart + 1);
-		p_spk = m_pSpkList->GetSpike(ispk)->GetpSpikeData();
-		const auto val = static_cast<short>(l_diff);
-		for (auto i = 0; i < spikelen; i++, p_spk++)
-			*p_spk -= short(val);
+		pSpike->OffsetSpikeDataToAverageEx(kstart, kend);
 	}
 
 	// exit : delete resources used locally

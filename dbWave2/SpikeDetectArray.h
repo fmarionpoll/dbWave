@@ -17,7 +17,7 @@ class SpikeDetectArray : public CObject
 protected:
 	WORD w_version_number = 4;
 	void DeleteArray();
-	CArray<SPKDETECTPARM*, SPKDETECTPARM*> spkdetectparm_ptr_array; // array with SPKDETECTPARM objects
+	CArray<SPKDETECTPARM*, SPKDETECTPARM*> spkdetectparm_ptr_array; 
 
 public:
 	SpikeDetectArray();

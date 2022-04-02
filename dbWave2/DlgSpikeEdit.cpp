@@ -353,28 +353,26 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 		const auto l_first = m_iitime - m_spkpretrig;
 
 		// get source data buffer address
+		Spike* pSpike = m_pSpkList->GetSpike(m_spikeno);
 		const auto method = m_pSpkList->GetDetectParms()->extractTransform;
 		if (method == 0)
 		{
-			int nchans; // get buffer address and structure
+			int nchans;
 			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&nchans);
-			lp_source += ((l_first - m_pAcqDatDoc->GettBUFfirst()) * nchans
-				+ m_spikeChan);
-			Spike* pSpike = m_pSpkList->GetSpike(m_spikeno);
-			m_pSpkList->TransferDataToSpikeBuffer(pSpike, lp_source, nchans);
+			lp_source += (l_first - m_pAcqDatDoc->GettBUFfirst()) * nchans+ m_spikeChan;
+			pSpike->TransferDataToSpikeBuffer(lp_source, nchans);
 		}
 		else
 		{
 			m_pAcqDatDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
 			auto p_data = m_pAcqDatDoc->GetpTransfDataBUF();
-			p_data += (l_first - m_pAcqDatDoc->GettBUFfirst());
-			Spike* pSpike = m_pSpkList->GetSpike(m_spikeno);
-			m_pSpkList->TransferDataToSpikeBuffer(pSpike, p_data, 1);
+			p_data += l_first - m_pAcqDatDoc->GettBUFfirst();
+			pSpike->TransferDataToSpikeBuffer(p_data, 1);
 		}
 
 		// copy data to spike buffer
-		offset += m_pSpkList->GetSpike(m_spikeno)->get_amplitude_offset();
-		m_pSpkList->OffsetSpikeAmplitude(m_spikeno, offset, offset);
+		offset += pSpike->get_amplitude_offset();
+		pSpike->OffsetSpikeDataToAverageEx(offset, offset);
 
 		m_SpkChartWnd.Invalidate();
 		m_bchanged = TRUE;
@@ -464,7 +462,7 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	m_pSpkList->OffsetSpikeAmplitude(m_spikeno, shift, shift);
+	m_pSpkList->GetSpike(m_spikeno)->OffsetSpikeData(shift);
 
 	LoadSpikeParms();
 	m_bchanged = TRUE;

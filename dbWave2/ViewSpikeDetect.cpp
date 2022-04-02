@@ -3245,8 +3245,9 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	const auto totalspikes = m_pSpkList->GetTotalSpikes();
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
+		Spike* pSpike = m_pSpkList->GetSpike(ispk);
 		// make sure that source data are loaded and get pointer to it (p_data)
-		ii_time = m_pSpkList->GetSpike(ispk)->get_time();
+		ii_time = pSpike->get_time();
 		auto l_rw_first = ii_time - spkpretrig; // first point
 		auto l_rw_last = l_rw_first + spikelen; // last pt needed
 		if (!p_dat_doc->LoadRawData(&l_rw_first, &l_rw_last, nspan))
@@ -3254,10 +3255,10 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 
 		p_data = p_dat_doc->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
 		const auto p_data_spike0 = p_data + (ii_time - spkpretrig - l_rw_first) * offset;
-		Spike* pSpike = m_pSpkList->GetSpike(ispk);
-		m_pSpkList->TransferDataToSpikeBuffer(pSpike, p_data_spike0, offset);
+		pSpike->TransferDataToSpikeBuffer(p_data_spike0, offset);
+
 		// nchans should be 1 if they come from the transform buffer as data are not interleaved...
-		m_pSpkList->CenterSpikeAmplitude(ispk, 0, spikelen, 1); // 1=center average
+		pSpike->CenterSpikeAmplitude(0, spikelen, 1); // 1=center average
 	}
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 
