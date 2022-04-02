@@ -56,17 +56,16 @@ protected:
 	int m_minimum_over_all_spikes = 0; 
 	int m_maximum_over_all_spikes = 0;
 	int m_spike_length = 60;
-	CArray<Spike*, Spike*> m_spike_elements;
-	//CSpikeBuffer m_spike_buffer{}; // spike data buffer
+	CArray<Spike*, Spike*> m_spikes;
 
 	// (3) --------classes of spikes
 	BOOL m_b_save_artefacts = false; 
 	BOOL m_keep_only_valid_classes = false;
 	int m_n_classes = 0;
-	CArray<SpikeClassDescriptor, SpikeClassDescriptor> m_spike_class_descriptor_array{};
+	CArray<SpikeClassDescriptor, SpikeClassDescriptor> m_spike_class_descriptors{};
 
 	//  (5) list of spikes flagged
-	CArray<int, int> m_spikes_flagged;
+	CArray<int, int> m_index_flagged_spikes;
 
 	// Operations
 public:
@@ -80,12 +79,12 @@ public:
 		return -1;
 	}
 
-	int GetclassID(int i) const { return m_spike_class_descriptor_array.GetAt(i).id_number; }
-	int GetclassNbspk(int i) const { return m_spike_class_descriptor_array.GetAt(i).n_items; }
-	void SetclassNbspk(int i, int n_spikes) { m_spike_class_descriptor_array.GetAt(i).n_items = n_spikes; }
+	int GetclassID(int i) const { return m_spike_class_descriptors.GetAt(i).id_number; }
+	int GetclassNbspk(int i) const { return m_spike_class_descriptors.GetAt(i).n_items; }
+	void SetclassNbspk(int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).n_items = n_spikes; }
 
-	Spike* GetSpike(int no) { return m_spike_elements.GetAt(no); }
-	int GetTotalSpikes() const { return m_spike_elements.GetCount(); }
+	Spike* GetSpike(int no) { return m_spikes.GetAt(no); }
+	int GetTotalSpikes() const { return m_spikes.GetCount(); }
 
 	WORD GetAcqEncoding() const { return m_data_encoding_mode; }
 	float GetAcqSampRate() const { return m_sampling_rate; }
@@ -135,13 +134,13 @@ public:
 	int ToggleSpikeFlag(int spike_index);
 	void SetSingleSpikeFlag(int spike_index);
 	BOOL GetSpikeFlag(int spike_index);
-	void RemoveAllSpikeFlags() { if (m_spikes_flagged.GetCount() > 0) m_spikes_flagged.RemoveAll(); }
+	void RemoveAllSpikeFlags() { if (m_index_flagged_spikes.GetCount() > 0) m_index_flagged_spikes.RemoveAll(); }
 	void FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
 	void SelectSpikesWithinBounds(int v_min, int v_max, long l_first, long l_ast, BOOL b_add);
 
 	void GetRangeOfSpikeFlagged(long& l_first, long& l_last);
-	BOOL GetSpikeFlagArrayAt(int i) const { return m_spikes_flagged.GetAt(i); }
-	int GetSpikeFlagArrayCount() const { return m_spikes_flagged.GetCount(); }
+	BOOL GetSpikeFlagArrayAt(int i) const { return m_index_flagged_spikes.GetAt(i); }
+	int GetSpikeFlagArrayCount() const { return m_index_flagged_spikes.GetCount(); }
 
 protected:
 	void read_file_version1(CArchive& ar);

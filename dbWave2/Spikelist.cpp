@@ -13,8 +13,8 @@ IMPLEMENT_SERIAL(SpikeList, CObject, 0)
 
 SpikeList::SpikeList()
 {
-	m_spike_class_descriptor_array.SetSize(1);
-	m_spike_class_descriptor_array.Add(SpikeClassDescriptor(0,0));
+	m_spike_class_descriptors.SetSize(1);
+	m_spike_class_descriptors.Add(SpikeClassDescriptor(0,0));
 }
 
 SpikeList::~SpikeList()
@@ -68,20 +68,20 @@ void SpikeList::read_file_version1(CArchive& ar)
 
 void SpikeList::remove_artefacts()
 {
-	auto n_spikes = m_spike_elements.GetSize();
+	auto n_spikes = m_spikes.GetSize();
 	auto n_spikes_ok = n_spikes;
 
 	for (auto i = n_spikes - 1; i >= 0; i--)
 	{
-		if (m_spike_elements.GetAt(i)->get_class() < 0)
+		if (m_spikes.GetAt(i)->get_class() < 0)
 		{
-			const auto se = m_spike_elements.GetAt(i);
+			const auto se = m_spikes.GetAt(i);
 			delete se;
-			m_spike_elements.RemoveAt(i);
+			m_spikes.RemoveAt(i);
 			n_spikes_ok--;
 		}
 	}
-	n_spikes = m_spike_elements.GetSize();
+	n_spikes = m_spikes.GetSize();
 	ASSERT(n_spikes_ok == n_spikes);
 	UpdateClassList();
 }
@@ -126,28 +126,28 @@ void SpikeList::serialize_spike_elements(CArchive& ar)
 	{
 		if (!m_b_save_artefacts)
 			remove_artefacts();
-		const auto n_spikes = m_spike_elements.GetSize();
+		const auto n_spikes = m_spikes.GetSize();
 		ar << static_cast<WORD>(n_spikes);
 		for (auto i = 0; i < n_spikes; i++)
-			m_spike_elements.GetAt(i)->Serialize(ar);
+			m_spikes.GetAt(i)->Serialize(ar);
 	}
 	else
 	{
 		WORD w1; ar >> w1; const int n_spikes = w1;
-		m_spike_elements.SetSize(n_spikes);
+		m_spikes.SetSize(n_spikes);
 		for (auto i = 0; i < n_spikes; i++)
 		{
 			auto* se = new(Spike);
 			ASSERT(se != NULL);
 			se->Serialize(ar);
-			m_spike_elements.SetAt(i, se);
+			m_spikes.SetAt(i, se);
 		}
 	}
 }
 
 void SpikeList::serialize_spike_data(CArchive& ar) 
 {
-	const auto n_spikes = m_spike_elements.GetSize();
+	const auto n_spikes = m_spikes.GetSize();
 	if (ar.IsStoring())
 	{
 		const WORD spike_length = static_cast<WORD>(GetSpikeLength());
@@ -184,7 +184,7 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		ar << static_cast<long>(m_n_classes);
 		for (auto i = 0; i < m_n_classes; i++)
 		{
-			SpikeClassDescriptor item = m_spike_class_descriptor_array.GetAt(i);
+			SpikeClassDescriptor item = m_spike_class_descriptors.GetAt(i);
 			if (item.n_items > 0 && !(m_keep_only_valid_classes && item.id_number < 0))
 				item.Serialize(ar);
 		}
@@ -193,8 +193,8 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 	{
 		m_extrema_valid = FALSE;
 
-		m_spike_class_descriptor_array.SetSize(1);
-		m_spike_class_descriptor_array.SetAt(0, SpikeClassDescriptor(0, 0));
+		m_spike_class_descriptors.SetSize(1);
+		m_spike_class_descriptors.SetAt(0, SpikeClassDescriptor(0, 0));
 		long dummy;
 		ar >> dummy; m_keep_only_valid_classes = dummy;
 		ar >> dummy; m_n_classes = dummy;
@@ -205,7 +205,7 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 			{
 				SpikeClassDescriptor item;
 				item.Serialize(ar);
-				m_spike_class_descriptor_array.SetAt(i, item);
+				m_spike_class_descriptors.SetAt(i, item);
 			}
 		}
 	}
@@ -241,13 +241,13 @@ void SpikeList::read_file_version5(CArchive& ar)
 	WORD w1;
 	ar >> w1;
 	const int n_spikes = w1;
-	m_spike_elements.SetSize(n_spikes); 
+	m_spikes.SetSize(n_spikes); 
 	for (auto i = 0; i < n_spikes; i++) 
 	{
 		auto* se = new(Spike);
 		ASSERT(se != NULL);
 		se->read_version0(ar);
-		m_spike_elements[i] = se;
+		m_spikes[i] = se;
 	}
 
 	serialize_spike_data(ar);
@@ -255,8 +255,8 @@ void SpikeList::read_file_version5(CArchive& ar)
 	m_extrema_valid = FALSE;
 	m_keep_only_valid_classes = FALSE; 
 	m_n_classes = 1;
-	m_spike_class_descriptor_array.SetSize(1);
-	m_spike_class_descriptor_array.SetAt(0, SpikeClassDescriptor(0, 0)); 
+	m_spike_class_descriptors.SetSize(1);
+	m_spike_class_descriptors.SetAt(0, SpikeClassDescriptor(0, 0)); 
 	long dummy;
 	ar >> dummy;
 	m_keep_only_valid_classes = dummy;
@@ -266,13 +266,13 @@ void SpikeList::read_file_version5(CArchive& ar)
 		m_n_classes = dummy;
 		if (m_n_classes != 0)
 		{
-			m_spike_class_descriptor_array.SetSize(m_n_classes);
+			m_spike_class_descriptors.SetSize(m_n_classes);
 			for (int i = 0; i < m_n_classes; i++)
 			{
 				int dummy1, dummy2;
 				ar >> dummy1;
 				ar >> dummy2;
-				m_spike_class_descriptor_array.SetAt(i, SpikeClassDescriptor(dummy1, dummy2));
+				m_spike_class_descriptors.SetAt(i, SpikeClassDescriptor(dummy1, dummy2));
 			}
 		}
 	}
@@ -309,13 +309,13 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	WORD w1;
 	ar >> w1;
 	const int n_spikes = w1;
-	m_spike_elements.SetSize(n_spikes); // change size of the list
+	m_spikes.SetSize(n_spikes); // change size of the list
 	for (auto i = 0; i < n_spikes; i++)
 	{
 		const auto se = new(Spike);
 		ASSERT(se != NULL);
 		se->read_version0(ar); 
-		m_spike_elements[i] = se;
+		m_spikes[i] = se;
 	}
 
 	// ----------------------------------------------------
@@ -339,8 +339,8 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	// reset elements of the list
 	m_keep_only_valid_classes = FALSE; // default: no valid array
 	m_n_classes = 1;
-	m_spike_class_descriptor_array.SetSize(2); // default size - some functions
-	m_spike_class_descriptor_array.SetAt(0, SpikeClassDescriptor(0, 0)); 
+	m_spike_class_descriptors.SetSize(2); // default size - some functions
+	m_spike_class_descriptors.SetAt(0, SpikeClassDescriptor(0, 0)); 
 
 	// load flag and load elements only if valid
 	long dummy;
@@ -352,13 +352,13 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 		m_n_classes = dummy;
 		if (m_n_classes != 0)
 		{
-			m_spike_class_descriptor_array.SetSize(m_n_classes);
+			m_spike_class_descriptors.SetSize(m_n_classes);
 			for (int i = 0; i < m_n_classes; i++)
 			{
 				int dummy1, dummy2;
 				ar >> dummy1;
 				ar >> dummy2;
-				m_spike_class_descriptor_array.SetAt(i, SpikeClassDescriptor(dummy1, dummy2));
+				m_spike_class_descriptors.SetAt(i, SpikeClassDescriptor(dummy1, dummy2));
 			}
 		}
 	}
@@ -386,39 +386,39 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 
 void SpikeList::delete_arrays()
 {
-	const int n_spikes = m_spike_elements.GetSize();
+	const int n_spikes = m_spikes.GetSize();
 	if (n_spikes > 0)
 	{
 		for (auto i = n_spikes - 1; i >= 0; i--)
-			delete m_spike_elements.GetAt(i);
-		m_spike_elements.RemoveAll();
+			delete m_spikes.GetAt(i);
+		m_spikes.RemoveAll();
 	}
 
-	m_spike_class_descriptor_array.RemoveAll();
+	m_spike_class_descriptors.RemoveAll();
 }
 
 int SpikeList::RemoveSpike(int spike_index)
 {
-	if (spike_index <= m_spike_elements.GetUpperBound())
+	if (spike_index <= m_spikes.GetUpperBound())
 	{
-		const auto element = m_spike_elements.GetAt(spike_index);
+		const auto element = m_spikes.GetAt(spike_index);
 		delete element;
-		m_spike_elements.RemoveAt(spike_index);
+		m_spikes.RemoveAt(spike_index);
 	}
-	return m_spike_elements.GetSize();
+	return m_spikes.GetSize();
 }
 
 BOOL SpikeList::IsAnySpikeAround(const long ii_time, const int jitter, int& spike_index, const int channel_index)
 {
 	// search spike index of first spike which time is > to present one
 	spike_index = 0;
-	if (m_spike_elements.GetSize() > 0)
+	if (m_spikes.GetSize() > 0)
 	{
 		// loop to find position of the new spike
-		for (auto j = m_spike_elements.GetUpperBound(); j >= 0; j--)
+		for (auto j = m_spikes.GetUpperBound(); j >= 0; j--)
 		{
 			// assumed ordered list
-			if (ii_time >= m_spike_elements[j]->get_time())
+			if (ii_time >= m_spikes[j]->get_time())
 			{
 				spike_index = j + 1; 
 				break; 
@@ -430,7 +430,7 @@ BOOL SpikeList::IsAnySpikeAround(const long ii_time, const int jitter, int& spik
 	long delta_time; 
 	if (spike_index > 0) 
 	{
-		delta_time = m_spike_elements[spike_index - 1]->get_time() - ii_time;
+		delta_time = m_spikes[spike_index - 1]->get_time() - ii_time;
 		if (labs(delta_time) <= jitter) // allow a detection jitter of 2 (?)
 		{
 			spike_index--; 
@@ -438,10 +438,10 @@ BOOL SpikeList::IsAnySpikeAround(const long ii_time, const int jitter, int& spik
 		}
 	}
 
-	if (spike_index <= m_spike_elements.GetUpperBound()) 
+	if (spike_index <= m_spikes.GetUpperBound()) 
 	{
-		delta_time = m_spike_elements[spike_index]->get_time() - ii_time;
-		const auto i_channel_2 = m_spike_elements[spike_index]->get_source_channel();
+		delta_time = m_spikes[spike_index]->get_time() - ii_time;
+		const auto i_channel_2 = m_spikes[spike_index]->get_source_channel();
 		if (i_channel_2 == channel_index && labs(delta_time) <= jitter) // allow a detection jitter of 2 (?)
 			return TRUE; 
 	}
@@ -463,7 +463,7 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 		// create spike element and add pointer to array
 		auto* se = new Spike(ii_time, source_channel, m_maximum_over_all_spikes, m_minimum_over_all_spikes, 0, i_class, 0);
 		ASSERT(se != NULL);
-		m_spike_elements.InsertAt(index_added_spike, se);
+		m_spikes.InsertAt(index_added_spike, se);
 
 		if (source_data != nullptr)
 		{
@@ -662,7 +662,7 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 	{
 		int min1 = 0;
 		int max1 = 65535;
-		const int n_spikes = m_spike_elements.GetCount();
+		const int n_spikes = m_spikes.GetCount();
 
 		for (auto index = 0; index < n_spikes; index++)
 		{
@@ -722,8 +722,8 @@ BOOL SpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
 	// reset classes
 	m_keep_only_valid_classes = FALSE; // default: no valid array
 	m_n_classes = 0;
-	m_spike_class_descriptor_array.SetSize(2); // default size - some functions
-	m_spike_class_descriptor_array.SetAt(0, SpikeClassDescriptor(0,0)); 
+	m_spike_class_descriptors.SetSize(2); // default size - some functions
+	m_spike_class_descriptors.SetAt(0, SpikeClassDescriptor(0,0)); 
 	return TRUE;
 }
 
@@ -740,7 +740,7 @@ int SpikeList::SetSpikeFlag(int spike_index, BOOL set_spike_flag)
 	{
 		// first look if spike_index is already flagged
 		if (!GetSpikeFlag(spike_index))
-			m_spikes_flagged.Add(spike_index);
+			m_index_flagged_spikes.Add(spike_index);
 	}
 
 	// remove flag
@@ -748,16 +748,16 @@ int SpikeList::SetSpikeFlag(int spike_index, BOOL set_spike_flag)
 	{
 		// find spike_index within the array and remove it
 		auto index = -1;
-		for (auto i = m_spikes_flagged.GetCount() - 1; i >= 0; i--)
+		for (auto i = m_index_flagged_spikes.GetCount() - 1; i >= 0; i--)
 		{
-			if (m_spikes_flagged.GetAt(i) == spike_index)
+			if (m_index_flagged_spikes.GetAt(i) == spike_index)
 			{
 				index = i;
 				break;
 			}
 		}
 		if (index >= 0)
-			m_spikes_flagged.RemoveAt(index);
+			m_index_flagged_spikes.RemoveAt(index);
 	}
 	// return the number of elements within the array
 	return GetSpikeFlagArrayCount();
@@ -767,9 +767,9 @@ int SpikeList::ToggleSpikeFlag(int spike_index)
 {
 	// find spike within array
 	auto index = -1;
-	for (auto i = m_spikes_flagged.GetCount() - 1; i >= 0; i--)
+	for (auto i = m_index_flagged_spikes.GetCount() - 1; i >= 0; i--)
 	{
-		if (m_spikes_flagged.GetAt(i) == spike_index)
+		if (m_index_flagged_spikes.GetAt(i) == spike_index)
 		{
 			index = i;
 			break;
@@ -778,29 +778,29 @@ int SpikeList::ToggleSpikeFlag(int spike_index)
 
 	// if found: remove it
 	if (index >= 0)
-		m_spikes_flagged.RemoveAt(index);
+		m_index_flagged_spikes.RemoveAt(index);
 
 	// if not found, add it
 	else
-		m_spikes_flagged.Add(spike_index);
+		m_index_flagged_spikes.Add(spike_index);
 
 	return GetSpikeFlagArrayCount();
 }
 
 void SpikeList::SetSingleSpikeFlag(int spike_index)
 {
-	if (m_spikes_flagged.GetCount() != 1)
-		m_spikes_flagged.SetSize(1);
-	m_spikes_flagged.SetAt(0, spike_index);
+	if (m_index_flagged_spikes.GetCount() != 1)
+		m_index_flagged_spikes.SetSize(1);
+	m_index_flagged_spikes.SetAt(0, spike_index);
 }
 
 BOOL SpikeList::GetSpikeFlag(int spike_index)
 {
 	BOOL bFlag = FALSE;
 	// search if spike_index is in the list
-	for (int i = m_spikes_flagged.GetCount() - 1; i >= 0; i--)
+	for (int i = m_index_flagged_spikes.GetCount() - 1; i >= 0; i--)
 	{
-		if (m_spikes_flagged.GetAt(i) == spike_index)
+		if (m_index_flagged_spikes.GetAt(i) == spike_index)
 		{
 			bFlag = TRUE;
 			break;
@@ -813,13 +813,13 @@ void SpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 {
 	// first clear flags of spikes within the flagged array which fall within limits
 	long l_time;
-	for (auto i = m_spikes_flagged.GetCount() - 1; i >= 0; i--)
+	for (auto i = m_index_flagged_spikes.GetCount() - 1; i >= 0; i--)
 	{
-		const int spike_index = m_spikes_flagged.GetAt(i);
+		const int spike_index = m_index_flagged_spikes.GetAt(i);
 		l_time = GetSpike(spike_index)->get_time();
 		if (l_time < l_first || l_time > l_last)
 			continue;
-		m_spikes_flagged.RemoveAt(i);
+		m_index_flagged_spikes.RemoveAt(i);
 	}
 	// if bSet was set to FALSE, the job is done
 	if (bSet == FALSE)
@@ -831,7 +831,7 @@ void SpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 		l_time = GetSpike(i)->get_time();
 		if (l_time < l_first || l_time > l_last)
 			continue;
-		m_spikes_flagged.Add(i);
+		m_index_flagged_spikes.Add(i);
 	}
 }
 
@@ -850,14 +850,14 @@ void SpikeList::SelectSpikesWithinBounds(const int v_min, const int v_max, const
 		if (max > v_max) continue;
 		if (min < v_min) continue;
 		// found within boundaries= remove spike from array
-		m_spikes_flagged.Add(i);
+		m_index_flagged_spikes.Add(i);
 	}
 }
 
 void SpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 {
 	// no spikes flagged, return dummy values
-	if (m_spikes_flagged.GetCount() < 1)
+	if (m_index_flagged_spikes.GetCount() < 1)
 	{
 		l_first = -1;
 		l_last = -1;
@@ -865,13 +865,13 @@ void SpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 	}
 
 	// spikes flagged: init max and min to the first spike time
-	l_first = GetSpike(m_spikes_flagged.GetAt(0))->get_time();
+	l_first = GetSpike(m_index_flagged_spikes.GetAt(0))->get_time();
 	l_last = l_first;
 
 	// search if spike no is in the list
-	for (auto i = m_spikes_flagged.GetCount() - 1; i >= 0; i--)
+	for (auto i = m_index_flagged_spikes.GetCount() - 1; i >= 0; i--)
 	{
-		const auto l_time = GetSpike(m_spikes_flagged.GetAt(i))->get_time();
+		const auto l_time = GetSpike(m_index_flagged_spikes.GetAt(i))->get_time();
 		if (l_time < l_first)
 			l_first = l_time;
 		if (l_time > l_last)
@@ -905,11 +905,11 @@ void SpikeList::OffsetSpikeAmplitude(const int index, const int val_first, const
 	}
 	const auto d_max_to_min = min_index - max_index; // assume that min comes after max in a "normal" spike
 
-	auto offset = m_spike_elements[index]->get_amplitude_offset();
+	auto offset = m_spikes[index]->get_amplitude_offset();
 	offset -= val_first; // change spike offset
-	m_spike_elements[index]->SetSpikeAmplitudeOffset(offset);
+	m_spikes[index]->SetSpikeAmplitudeOffset(offset);
 	m_extrema_valid = FALSE;
-	m_spike_elements[index]->SetSpikeMaxMin(max, min, d_max_to_min);
+	m_spikes[index]->SetSpikeMaxMin(max, min, d_max_to_min);
 }
 
 void SpikeList::CenterSpikeAmplitude(const int spike_index, const int i_first, const int i_last, const WORD method)
@@ -976,16 +976,16 @@ long SpikeList::UpdateClassList()
 {
 	const auto n_spikes = GetTotalSpikes();
 	m_n_classes = 1; // erase nb of classes
-	m_spike_class_descriptor_array.SetSize(0); // erase array
+	m_spike_class_descriptors.SetSize(0); // erase array
 	m_keep_only_valid_classes = TRUE; // class list OK when exit
 	if (n_spikes == 0)
 	{
 		// no spikes? dummy parameters
-		m_spike_class_descriptor_array.Add(SpikeClassDescriptor(0, 0)); 
+		m_spike_class_descriptors.Add(SpikeClassDescriptor(0, 0)); 
 		return 0L; // done
 	}
 
-	m_spike_class_descriptor_array.Add(SpikeClassDescriptor(GetSpike(0)->get_class(), 1));
+	m_spike_class_descriptors.Add(SpikeClassDescriptor(GetSpike(0)->get_class(), 1));
 	m_n_classes = 1; // total nb of classes
 
 	// loop over all spikes of the list
@@ -1000,12 +1000,12 @@ long SpikeList::UpdateClassList()
 			array_class = GetclassID(j); // class ID
 			if (spike_class == array_class) // class OK?
 			{
-				m_spike_class_descriptor_array.GetAt(j).n_items++; // increment spike count
+				m_spike_class_descriptors.GetAt(j).n_items++; // increment spike count
 				break; // exit spk class loop
 			}
 			if (spike_class < array_class) // insert new class?
 			{
-				m_spike_class_descriptor_array.InsertAt(j , SpikeClassDescriptor(spike_class, 1)); 
+				m_spike_class_descriptors.InsertAt(j , SpikeClassDescriptor(spike_class, 1)); 
 				m_n_classes++; // exit spk class loop
 				break;
 			}
@@ -1014,7 +1014,7 @@ long SpikeList::UpdateClassList()
 		// test if cla not found within array
 		if (spike_class > array_class)
 		{
-			m_spike_class_descriptor_array.Add(SpikeClassDescriptor(spike_class, 1)); 
+			m_spike_class_descriptors.Add(SpikeClassDescriptor(spike_class, 1)); 
 			m_n_classes++; // update nb classes
 		}
 	}
@@ -1024,7 +1024,7 @@ long SpikeList::UpdateClassList()
 void SpikeList::ChangeSpikeClassID(const int old_class_ID, const int new_class_ID)
 {
 	// first find valid max and min
-	for (auto index = 0; index < m_spike_elements.GetSize(); index++)
+	for (auto index = 0; index < m_spikes.GetSize(); index++)
 	{
 		if (GetSpike(index)->get_class() == old_class_ID)
 			GetSpike(index)->set_class(new_class_ID);
