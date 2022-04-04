@@ -85,7 +85,7 @@ protected:
 	void serialize_windows_state(BOOL bSave, int itab = -1);
 	void align_display_to_current_spike();
 	void highlight_spikes(BOOL flag = TRUE);
-	void scroll_File(UINT nSBCode, UINT nPos);
+	void scroll_file(UINT nSBCode, UINT nPos);
 	void select_spike_no(int spike_index, BOOL bMultipleSelection);
 	BOOL check_detection_settings();
 	void update_combo_box();

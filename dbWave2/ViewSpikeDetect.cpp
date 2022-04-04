@@ -308,8 +308,9 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 
 void ViewSpikeDetection::highlight_spikes(BOOL flag)
 {
-	if (!flag || m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() < 1) return;
-	
+	if (!flag || m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() < 1) 
+		return;
+	return;
 	const auto array_size = m_pSpkList->GetTotalSpikes() * 2 + 3;
 	m_DWintervals.SetSize(array_size);
 	m_DWintervals.SetAt(0, 0);
@@ -827,12 +828,12 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void ViewSpikeDetection::OnFirstFrame()
 {
-	scroll_File(SB_LEFT, 1L);
+	scroll_file(SB_LEFT, 1L);
 }
 
 void ViewSpikeDetection::OnLastFrame()
 {
-	scroll_File(SB_RIGHT, 1L);
+	scroll_file(SB_RIGHT, 1L);
 }
 
 void ViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -859,7 +860,7 @@ void ViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 		break;
 
 	default:
-		scroll_File(nSBCode, nPos);
+		scroll_file(nSBCode, nPos);
 		break;
 	}
 }
@@ -872,7 +873,7 @@ void ViewSpikeDetection::update_file_scroll()
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 
-void ViewSpikeDetection::scroll_File(UINT nSBCode, UINT nPos)
+void ViewSpikeDetection::scroll_file(UINT nSBCode, UINT nPos)
 {
 	auto b_result = FALSE;
 	// get corresponding data
@@ -1055,7 +1056,6 @@ void ViewSpikeDetection::OnMeasure()
 
 void ViewSpikeDetection::detect_all(BOOL bAll)
 {
-	// init spike document (erase spike list data & intervals)
 	m_bDetected = TRUE;
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 
@@ -1073,11 +1073,11 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	if (p_dat == nullptr)
 		return;
 	const auto wave_format = p_dat->GetpWaveFormat();
-	const auto chanmax = wave_format->scan_count - 1;
+	const auto chan_max = wave_format->scan_count - 1;
 	for (auto i = 0; i < m_spk_detect_array_current.GetSize(); i++)
 	{
 		const auto pspk_dp = m_spk_detect_array_current.GetItem(i);
-		if (pspk_dp->extractChan > chanmax)
+		if (pspk_dp->extractChan > chan_max)
 		{
 			MessageBox(_T(
 				"Check spike detection parameters \n- one of the detection channel requested \nis not available in the source data"));
@@ -1095,7 +1095,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		if (!bAll && m_i_detect_parameters != i)
 			continue;
 		// detect missing data channel
-		if ((m_spk_detect_array_current.GetItem(i))->extractChan > chanmax)
+		if ((m_spk_detect_array_current.GetItem(i))->extractChan > chan_max)
 			continue;
 
 		// select new spike list (list with no spikes for stimulus channel)
@@ -1156,7 +1156,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		update_spike_shape_window_scale(FALSE);
 	}
 
-	highlight_spikes(TRUE);
+	highlight_spikes(FALSE);
 	update_legends();
 	update_tabs();
 }
@@ -1628,9 +1628,6 @@ void ViewSpikeDetection::align_display_to_current_spike()
 		return;
 
 	const auto l_spike_time = m_pSpkList->GetSpike(m_spikeno)->get_time();
-	//long l_first = m_displayDetect.GetDataFirst();		// get source data time range
-	//long l_last = m_displayDetect.GetDataLast();
-
 	if (l_spike_time < m_ChartDataWnd_Detect.GetDataFirst()
 		|| l_spike_time > m_ChartDataWnd_Detect.GetDataLast())
 	{
@@ -1688,22 +1685,22 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 
 	if (ix_we != NULL && iy_we != NULL)
 	{
-		const auto yunit = m_ChartSpkWnd_Shape.GetExtent_mV() / m_ChartSpkWnd_Shape.GetNyScaleCells();
-		m_ChartSpkWnd_Shape.SetyScaleUnitValue(yunit);
-		const auto xunit = m_ChartSpkWnd_Shape.GetExtent_ms() / m_ChartSpkWnd_Shape.GetNxScaleCells();
-		m_ChartSpkWnd_Shape.SetxScaleUnitValue(xunit);
+		const auto y_unit = m_ChartSpkWnd_Shape.GetExtent_mV() / static_cast<float>(m_ChartSpkWnd_Shape.GetNyScaleCells());
+		m_ChartSpkWnd_Shape.SetyScaleUnitValue(y_unit);
+		const auto x_unit = m_ChartSpkWnd_Shape.GetExtent_ms() / static_cast<float>(m_ChartSpkWnd_Shape.GetNxScaleCells());
+		m_ChartSpkWnd_Shape.SetxScaleUnitValue(x_unit);
 	}
 
 	// output values
 	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_ChartSpkWnd_Shape.GetExtent_mV());
 	SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, m_sz_buffer);
-	const auto yunit = m_ChartSpkWnd_Shape.GetExtent_mV() / m_ChartSpkWnd_Shape.GetNyScaleCells();
-	m_ChartSpkWnd_Shape.SetyScaleUnitValue(yunit);
+	const auto y_unit = m_ChartSpkWnd_Shape.GetExtent_mV() / static_cast<float>(m_ChartSpkWnd_Shape.GetNyScaleCells());
+	m_ChartSpkWnd_Shape.SetyScaleUnitValue(y_unit);
 
 	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_ChartSpkWnd_Shape.GetExtent_ms());
 	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, m_sz_buffer);
-	const auto xunit = m_ChartSpkWnd_Shape.GetExtent_ms() / m_ChartSpkWnd_Shape.GetNxScaleCells();
-	m_ChartSpkWnd_Shape.SetxScaleUnitValue(xunit);
+	const auto x_unit = m_ChartSpkWnd_Shape.GetExtent_ms() / static_cast<float>(m_ChartSpkWnd_Shape.GetNxScaleCells());
+	m_ChartSpkWnd_Shape.SetxScaleUnitValue(x_unit);
 }
 
 void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelection)
@@ -3242,8 +3239,8 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	auto p_data = p_dat_doc->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
 
 	// loop over all spikes now
-	const auto totalspikes = m_pSpkList->GetTotalSpikes();
-	for (auto ispk = 0; ispk < totalspikes; ispk++)
+	const auto total_spikes = m_pSpkList->GetTotalSpikes();
+	for (auto ispk = 0; ispk < total_spikes; ispk++)
 	{
 		Spike* pSpike = m_pSpkList->GetSpike(ispk);
 		// make sure that source data are loaded and get pointer to it (p_data)

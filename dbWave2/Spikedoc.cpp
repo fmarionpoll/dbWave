@@ -133,7 +133,7 @@ void CSpikeDoc::read_before_version6(CArchive& ar, WORD wwVersion)
 	// read stimulus and spike classes
 	spike_list_array.RemoveAll();
 	spike_list_array.SetSize(1);
-	spike_list_array[0].Serialize(ar);
+	spike_list_array[0].Serialize(ar); // v2 to v5
 	//m_spike_class.Serialize(ar);
 }
 
@@ -200,7 +200,7 @@ void CSpikeDoc::serialize_spike_list_arrays(CArchive& ar)
 	}
 
 	for (int i = 0; i < n_spike_arrays; i++)
-		spike_list_array[i].Serialize(ar);
+		spike_list_array[i].Serialize(ar); // v6-v7
 }
 
 void CSpikeDoc::read_version6(CArchive& ar)
@@ -220,7 +220,7 @@ void CSpikeDoc::read_version6(CArchive& ar)
 	// read stimulus and spike classes
 	spike_list_array.RemoveAll();
 	spike_list_array.SetSize(1);
-	spike_list_array[0].Serialize(ar);
+	spike_list_array[0].Serialize(ar); // v6
 	
 	//m_spike_class.Serialize(ar);
 }

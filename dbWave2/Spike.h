@@ -33,9 +33,12 @@ private:
 	short* m_spike_data_buffer = nullptr;	// buffer address
 	int m_spike_length = 0;					// length of buffer
 	int m_spk_buffer_length{};				// n points in the buffer
+	boolean m_selected_state = false;
 
 public:
 	int m_bin_zero = 2048;					// zero (if 12 bits scale = 0-4095)
+	boolean get_selected() { return m_selected_state; }
+	void set_selected(boolean status) { m_selected_state = status; }
 
 	long get_time() const { return m_iitime; }
 	int get_class() const { return m_class; }

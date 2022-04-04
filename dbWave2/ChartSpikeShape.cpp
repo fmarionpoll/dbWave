@@ -747,12 +747,12 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	}
 
 	// restore resources
-	p_dc->SelectObject(old_pen); // restore pen
-	p_dc->RestoreDC(n_saved_dc); // restore DC
+	p_dc->SelectObject(old_pen);
+	p_dc->RestoreDC(n_saved_dc);
 
-	m_xWE = old_xextent; // restore old X extent
-	m_xWO = old_xorg; // restore old X origin
-	m_yVO = old_y_vo; // same with Y
+	m_xWE = old_xextent; 
+	m_xWO = old_xorg;
+	m_yVO = old_y_vo; 
 	m_yVE = old_y_ve;
 }
 
