@@ -47,7 +47,6 @@ void ChartSpikeBarWnd::PlotDatatoDC(CDC* p_dc)
 
 	// save context
 	const auto n_saved_dc = p_dc->SaveDC();
-	const auto bkcolor = p_dc->GetBkColor();
 	p_dc->IntersectClipRect(&m_clientRect);
 
 	long nfiles = 1;
@@ -350,14 +349,16 @@ void ChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 	auto selpen = BLACK_COLOR;
 	for (auto ispk = ilast; ispk >= ifirst; ispk--)
 	{
-		// skip spike if outside time range && option
-		const auto l_spike_time = p_spikelist_SPKBAR->GetSpike(ispk)->get_time();
+		Spike* pSpike = p_spikelist_SPKBAR->GetSpike(ispk);
+
+			// skip spike if outside time range && option
+		const auto l_spike_time = pSpike->get_time();
 		if (m_rangemode == RANGE_TIMEINTERVALS
 			&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
 			continue;
 
 		// select correct pen
-		const auto wspkcla = p_spikelist_SPKBAR->GetSpike(ispk)->get_class();
+		const auto wspkcla = pSpike->get_class();
 		switch (m_plotmode)
 		{
 		case PLOT_ONECLASSONLY:
@@ -426,7 +427,8 @@ void ChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 	for (auto i = p_spikelist_SPKBAR->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
 	{
 		const auto nospike = p_spikelist_SPKBAR->GetSpikeFlagArrayAt(i);
-		const auto nospikeclass = p_spikelist_SPKBAR->GetSpike(nospike)->get_class();
+		Spike* pSpike = p_spikelist_SPKBAR->GetSpike(nospike);
+		const auto nospikeclass = pSpike->get_class();
 		if (PLOT_ONECLASSONLY == m_plotmode && nospikeclass != m_selclass)
 			continue;
 
@@ -458,12 +460,12 @@ void ChartSpikeBarWnd::DisplayFlaggedSpikes(const BOOL b_high_light)
 		const auto oldpen = dc.SelectObject(&new_pen);
 
 		// display data
-		const auto l_spike_time = p_spikelist_SPKBAR->GetSpike(nospike)->get_time();
+		const auto l_spike_time = pSpike->get_time();
 		const auto len = (m_lLast - m_lFirst + 1);
 		const auto llk = (l_spike_time - m_lFirst) * static_cast<float>(m_xWE) / len;
 		const auto abcissa = static_cast<int>(llk) + m_xWO;
 		int max, min;
-		p_spikelist_SPKBAR->GetSpike(nospike)->GetMaxMin(&max, &min);
+		pSpike->GetMaxMin(&max, &min);
 
 		dc.MoveTo(abcissa, max);
 		dc.LineTo(abcissa, min);
@@ -485,6 +487,8 @@ void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 	prepareDC(&dc);
 
 	int color;
+	const Spike* pSpike = p_spikelist_SPKBAR->GetSpike(nospike);
+
 	// spike is not selected
 	if (!bselect)
 	{
@@ -493,13 +497,13 @@ void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
 			color = BLACK_COLOR;
-			if (p_spikelist_SPKBAR->GetSpike(nospike)->get_class() != m_selclass)
+			if (pSpike->get_class() != m_selclass)
 				color = SILVER_COLOR;
 			break;
 		case PLOT_CLASSCOLORS:
 			if (nospike == m_selectedspike)
 				highlightOneBar(nospike, &dc);
-			color = p_spikelist_SPKBAR->GetSpike(nospike)->get_class() % NB_COLORS;
+			color = pSpike->get_class() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		default:
@@ -514,7 +518,7 @@ void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 		{
 		case PLOT_CLASSCOLORS:
 			highlightOneBar(nospike, &dc);
-			color = p_spikelist_SPKBAR->GetSpike(nospike)->get_class() % NB_COLORS;
+			color = pSpike->get_class() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		case PLOT_ONECLASSONLY:
@@ -531,7 +535,7 @@ void ChartSpikeBarWnd::DisplaySpike(const int nospike, const BOOL bselect)
 	const auto oldpen = dc.SelectObject(&new_pen);
 
 	// display data
-	const auto l_spike_time = p_spikelist_SPKBAR->GetSpike(nospike)->get_time();
+	const auto l_spike_time = pSpike->get_time();
 	const auto len = (m_lLast - m_lFirst + 1);
 	const auto llk = (l_spike_time - m_lFirst) * static_cast<float>(m_xWE) / len;
 	const auto abcissa = static_cast<int>(llk) + m_xWO;
@@ -554,13 +558,14 @@ BOOL ChartSpikeBarWnd::IsSpikeWithinRange(const int spikeno)
 	if (spikeno < 0 || spikeno > p_spikelist_SPKBAR->GetTotalSpikes() - 1)
 		return FALSE;
 
+	Spike* pSpike = p_spikelist_SPKBAR->GetSpike(spikeno);
 	if (m_rangemode == RANGE_TIMEINTERVALS
-		&& (p_spikelist_SPKBAR->GetSpike(spikeno)->get_time() < m_lFirst || p_spikelist_SPKBAR->GetSpike(spikeno)->get_time() > m_lLast))
+		&& (pSpike->get_time() < m_lFirst || pSpike->get_time() > m_lLast))
 		return FALSE;
 	if (m_rangemode == RANGE_INDEX
 		&& (spikeno > m_spklast || spikeno < m_spkfirst))
 		return FALSE;
-	if (m_plotmode == PLOT_ONECLASSONLY && p_spikelist_SPKBAR->GetSpike(spikeno)->get_class() != m_selclass)
+	if (m_plotmode == PLOT_ONECLASSONLY && pSpike->get_class() != m_selclass)
 		return FALSE;
 	return TRUE;
 }
@@ -570,7 +575,8 @@ void ChartSpikeBarWnd::highlightOneBar(const int nospike, CDC* p_dc) const
 	const auto old_rop = p_dc->GetROP2();
 	p_dc->SetROP2(R2_NOTXORPEN);
 
-	const auto l_spike_time = p_spikelist_SPKBAR->GetSpike(nospike)->get_time();
+	Spike* pSpike = p_spikelist_SPKBAR->GetSpike(nospike);
+	const auto l_spike_time = pSpike->get_time();
 	const auto len = (m_lLast - m_lFirst + 1);
 	const auto llk = (l_spike_time - m_lFirst) * static_cast<float>(m_xWE) / len;
 	const auto abcissa = static_cast<int>(llk) + m_xWO;
@@ -666,7 +672,7 @@ void ChartSpikeBarWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 		}
 		break;
 
-	case CURSOR_ZOOM: // zoom operation
+	case CURSOR_ZOOM:
 		ZoomData(&rect_in, &rect_out);
 		m_ZoomFrom = rect_in;
 		m_ZoomTo = rect_out;
@@ -831,16 +837,17 @@ int ChartSpikeBarWnd::hitCurve(const CPoint point)
 
 	for (auto ispk = ilast; ispk >= ifirst; ispk--)
 	{
-		const auto l_spike_time = p_spikelist_SPKBAR->GetSpike(ispk)->get_time();
+		Spike* pSpike = p_spikelist_SPKBAR->GetSpike(ispk);
+		const auto l_spike_time = pSpike->get_time();
 		if (l_spike_time < l_xmin || l_spike_time > l_xmax)
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& p_spikelist_SPKBAR->GetSpike(ispk)->get_class() != m_selclass)
+			&& pSpike->get_class() != m_selclass)
 			continue;
 
 		int max;
 		int min;
-		p_spikelist_SPKBAR->GetSpike(ispk)->GetMaxMin(&max, &min);
+		pSpike->GetMaxMin(&max, &min);
 		if (mouse_y + deltay < max && mouse_y - deltay > min)
 		{
 			hitspk = ispk;

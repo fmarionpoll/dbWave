@@ -3,7 +3,6 @@
 #include "DataListCtrl.h"
 #include "dbTableMain.h"
 #include "dbWaveDoc.h"
-//#include "Spikedoc.h"
 #include "ChartWnd.h"
 #include "ChartData.h"
 #include "ChartSpikeBar.h"
@@ -326,9 +325,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 			new1 = 0;
 		}
 
-		// else: scroll out of range
-
-		//ntoTransfer = 0; ////////////////////////////////////////
+		// n to Transfer 
 		auto source = source1;
 		auto dest = dest1;
 		while (n_to_transfer > 0)
@@ -390,9 +387,9 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		else
 		{
 			p_database->GetRecordItemValue(CH_NSPIKES, &desc);
-			const int nspikes = desc.lVal;
+			const int n_spikes = desc.lVal;
 			p_database->GetRecordItemValue(CH_NSPIKECLASSES, &desc);
-			ptr->csNspk.Format(_T("%i (%i classes)"), nspikes, desc.lVal);
+			ptr->csNspk.Format(_T("%i (%i classes)"), n_spikes, desc.lVal);
 		}
 
 		// build bitmap corresponding to data/spikes/nothing
@@ -448,14 +445,12 @@ void CDataListCtrl::RefreshDisplay()
 {
 	if (ptr_rows.GetSize() == NULL)
 		return;
-	const int ifirst_row = ptr_rows.GetAt(0)->index;
-	const int ilast_row = ptr_rows.GetAt(ptr_rows.GetUpperBound())->index;
-
-	// left, top, right, bottom
+	const int first_row = ptr_rows.GetAt(0)->index;
+	const int last_row = ptr_rows.GetAt(ptr_rows.GetUpperBound())->index;
 	set_empty_bitmap();
 
-	const auto nrows = ptr_rows.GetSize();
-	for (auto index = 0; index < nrows; index++)
+	const auto n_rows = ptr_rows.GetSize();
+	for (auto index = 0; index < n_rows; index++)
 	{
 		auto* ptr = ptr_rows.GetAt(index);
 		if (ptr == nullptr)
@@ -473,7 +468,7 @@ void CDataListCtrl::RefreshDisplay()
 			break;
 		}
 	}
-	RedrawItems(ifirst_row, ilast_row); // CCtrlList standard function
+	RedrawItems(first_row, last_row);
 	Invalidate();
 	UpdateWindow();
 }
@@ -519,12 +514,12 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 ChartData* CDataListCtrl::GetDataViewCurrentRecord()
 {
-	UINT uSelectedCount = GetSelectedCount();
+	const UINT n_selected_items = GetSelectedCount();
 	int nItem = -1;
 	ChartData* ptr = nullptr;
 
 	// Update all of the selected items.
-	if (uSelectedCount > 0)
+	if (n_selected_items > 0)
 	{
 		nItem = GetNextItem(nItem, LVNI_SELECTED);
 		ASSERT(nItem != -1);
@@ -569,84 +564,20 @@ void CDataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 			p_wnd->GetScopeParameters()->crScopeFill = p_wnd->GetColor(15);
 
 		ptr->pdataDoc->ReadDataInfos();
+		ptr->cs_comment = ptr->pdataDoc->GetpWaveFormat()->GetComments(_T(" "));
 		p_wnd->AttachDataFile(ptr->pdataDoc);
+		p_wnd->load_all_channels(m_data_transform);
+		p_wnd->load_data_within_window(m_b_set_time_span, m_tFirst, m_tLast);
+		p_wnd->adjust_gain(m_b_set_mV_span, m_mV_span);
 
-		// display all channels : loop through all doc channels & add if necessary
-		CWaveFormat* pwaveFormat = ptr->pdataDoc->GetpWaveFormat();
-		ptr->cs_comment = pwaveFormat->GetComments(_T(" "));
-		const int ndocchans = pwaveFormat->scan_count;
-		auto lnvchans = p_wnd->GetChanlistSize();
-		// add channels if value is zero
-		// channels were all removed if file was not found in an earlier round
-		for (auto jdocchan = 0; jdocchan < ndocchans; jdocchan++)
-		{
-			// check if present in the list
-			auto b_present = FALSE; // pessimistic
-			for (auto j = lnvchans - 1; j >= 0; j--) // check all channels / display list
-			{
-				// test if this data chan is present + no transf
-				if (p_wnd->GetChanlistItem(j)->GetSourceChan() == jdocchan)
-				{
-					b_present = TRUE; // the wanted chan is present: stop loopint through disp list
-					p_wnd->SetChanlistTransformMode(j, m_data_transform);
-					break; // and examine next doc channel
-				}
-			}
-			if (b_present == FALSE)
-			{
-				p_wnd->AddChanlistItem(jdocchan, m_data_transform);
-				lnvchans++;
-			}
-			p_wnd->GetChanlistItem(jdocchan)->SetColor(jdocchan);
-		}
-
-		// load real data from file and update time parameters
-		const auto npixels = p_wnd->GetRectWidth();
-		const int doc_chan_len = ptr->pdataDoc->GetDOCchanLength();
-		long l_first = 0;
-		long l_last = doc_chan_len - 1;
-		if (m_b_set_time_span)
-		{
-			const auto p_wave_format = ptr->pdataDoc->GetpWaveFormat();
-			const auto samplingrate = p_wave_format->sampling_rate_per_channel;
-			l_first = static_cast<long>(m_tFirst * samplingrate);
-			l_last = static_cast<long>(m_tLast * samplingrate);
-			if (l_last == l_first)
-				l_last++;
-		}
-		p_wnd->ResizeChannels(npixels, l_last - l_first + 1);
-		p_wnd->GetDataFromDoc(l_first, l_last);
-
-		// maximize gain & split curves
-		auto j = lnvchans - 1;
-		int max, min;
-		for (auto i = j; i >= 0; i--)
-		{
-			CChanlistItem* pchan = p_wnd->GetChanlistItem(i);
-			pchan->GetMaxMin(&max, &min);
-			auto ispan = max - min + 1;
-			int iextent;
-			int izero;
-			if (m_b_set_mV_span)
-			{
-				ispan = pchan->ConvertVoltsToDataBins(m_mV_span / 1000.f);
-				izero = pchan->GetDataBinZero();
-				iextent = ispan;
-			}
-			else
-			{
-				// split curves
-				iextent = MulDiv(ispan, 11 * lnvchans, 10);
-				izero = (max + min) / 2 - MulDiv(iextent, j, lnvchans * 2);
-			}
-			j -= 2;
-			pchan->SetYextent(iextent);
-			pchan->SetYzero(izero);
-		}
 		ptr->pdataDoc->AcqCloseFile();
 	}
+	plot_data(ptr, p_wnd, iImage);
+}
 
-	// plot data
+
+void CDataListCtrl::plot_data(CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage)
+{
 	p_wnd->SetBottomComment(m_b_display_file_name, ptr->csDatafileName);
 	CRect client_rect;
 	p_wnd->GetClientRect(&client_rect);
@@ -656,7 +587,7 @@ void CDataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(p_dc));
 	bitmap_plot.CreateBitmap(client_rect.right, client_rect.bottom, p_dc->GetDeviceCaps(PLANES),
-	                         p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
+		p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 	mem_dc.SelectObject(&bitmap_plot);
 	mem_dc.SetMapMode(p_dc->GetMapMode());
 

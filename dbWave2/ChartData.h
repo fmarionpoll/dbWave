@@ -26,7 +26,6 @@ public:
 	BOOL	IsDefined() const { return (chanlistitem_ptr_array.GetSize() > 0); } // is data defined?
 	AcqDataDoc* GetpDataFile() const { return m_pDataFile; }
 
-
 	// export representation of data to the clipboard
 	BOOL	CopyAsText(int ioption, int iunit, int nabcissa);
 	LPTSTR	GetAsciiLine(LPTSTR lpCopy, int iunit);
@@ -143,6 +142,10 @@ public:
 	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 
 	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
+
+	void	adjust_gain(boolean set_mV_span, float mV_span) const;
+	void	load_data_within_window(boolean set_time_span, float t_first, float t_last);
+	void	load_all_channels(int data_transform);
 
 protected:
 	void	highlight_data(CDC* p_dc, int chan);

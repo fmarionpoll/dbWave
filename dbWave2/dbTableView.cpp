@@ -84,15 +84,11 @@ void dbTableView::OnSize(UINT nType, int cx, int cy)
 
 BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 {
-	//const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
-	//GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
-	//return flag;
 	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
 	if (m_autoDetect && p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
-		//return false;
 	}
 	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
@@ -109,13 +105,6 @@ void dbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	{
 	}
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
-}
-
-void dbTableView::OnDestroy()
-{
-	// Deactivate the item on destruction; this is important
-	// when a splitter view is being used.
-	CDaoRecordView::OnDestroy();
 }
 
 BOOL dbTableView::OnPreparePrinting(CPrintInfo* pInfo)

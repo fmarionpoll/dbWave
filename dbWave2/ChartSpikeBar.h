@@ -4,14 +4,11 @@
 
 class ChartSpikeBarWnd : public ChartWnd
 {
-	//Construction
 public:
 	ChartSpikeBarWnd();
 	~ChartSpikeBarWnd() override;
 	DECLARE_SERIAL(ChartSpikeBarWnd)
 	void Serialize(CArchive& archive) override;
-
-	// parameters
 
 protected:
 	int m_rangemode = RANGE_TIMEINTERVALS; // display range

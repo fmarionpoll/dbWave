@@ -56,9 +56,9 @@ public:
 	int GetSpikeClass() const { return m_selected_class; }
 
 	ChartData* GetDataViewCurrentRecord();
-	int GetVisibleRowsSize() { return ptr_rows.GetSize(); }
 	AcqDataDoc* GetVisibleRowsAcqDataDocAt(int index) { return ptr_rows[index]->pdataDoc; }
 	CSpikeDoc* GetVisibleRowsSpikeDocAt(int index) { return ptr_rows[index]->pspikeDoc; }
+	int GetVisibleRowsSize() { return ptr_rows.GetSize(); }
 
 protected:
 	CArray<CDataListCtrl_Row*, CDataListCtrl_Row*> ptr_rows;
@@ -91,6 +91,7 @@ protected:
 	void display_spike_wnd(CDataListCtrl_Row* ptr, int iImage);
 	void display_data_wnd(CDataListCtrl_Row* ptr, int iImage);
 	void display_empty_wnd(CDataListCtrl_Row* ptr, int iImage);
+	void plot_data(CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage);
 
 	// Generated message map functions
 	afx_msg void OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult);

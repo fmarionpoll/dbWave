@@ -1718,3 +1718,78 @@ void ChartData::SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, i
 	m_trackoffset = trackoffset;
 	m_trackchannel = trackchannel;
 }
+
+void ChartData::adjust_gain(const boolean set_mV_span, const float mV_span) const
+{
+	const auto channels_list_size = GetChanlistSize();
+	auto j = channels_list_size - 1;
+	int max, min;
+	for (auto i = j; i >= 0; i--)
+	{
+		CChanlistItem* chan = GetChanlistItem(i);
+		chan->GetMaxMin(&max, &min);
+		auto span = max - min + 1;
+		int extent;
+		int zero;
+		if (set_mV_span)
+		{
+			span = chan->ConvertVoltsToDataBins(mV_span / 1000.f);
+			zero = chan->GetDataBinZero();
+			extent = span;
+		}
+		else
+		{
+			extent = MulDiv(span, 11 * channels_list_size, 10);
+			zero = (max + min) / 2 - MulDiv(extent, j, channels_list_size * 2);
+		}
+		j -= 2;
+		chan->SetYextent(extent);
+		chan->SetYzero(zero);
+	}
+}
+
+void ChartData::load_data_within_window(const boolean set_time_span, const float t_first, const float t_last)
+{
+	const auto n_pixels = GetRectWidth();
+	long l_first = 0;
+	long l_last = m_pDataFile->GetDOCchanLength() - 1;
+	if (set_time_span)
+	{
+		l_first = static_cast<long>(t_first * m_samplingrate);
+		l_last = static_cast<long>(t_last * m_samplingrate);
+		if (l_last == l_first)
+			l_last++;
+	}
+	ResizeChannels(n_pixels, l_last - l_first + 1);
+	GetDataFromDoc(l_first, l_last);
+}
+
+void ChartData::load_all_channels(int data_transform)
+{
+	const int n_document_channels = m_pDataFile->GetpWaveFormat()->scan_count;
+	auto n_channels_to_plot = GetChanlistSize();
+
+	// add channels if value is zero
+	// channels were all removed if file was not found in an earlier round
+	for (auto channel = 0; channel < n_document_channels; channel++)
+	{
+		// check if present in the list
+		auto b_present = FALSE;
+		for (auto j = n_channels_to_plot - 1; j >= 0; j--) // check all channels / display list
+		{
+			// test if this data chan is present + no transf
+			if (GetChanlistItem(j)->GetSourceChan() == channel)
+			{
+				b_present = TRUE; // the wanted chan is present: stop loopint through disp list
+				SetChanlistTransformMode(j, data_transform);
+				break; // and examine next doc channel
+			}
+		}
+		if (b_present == FALSE)
+		{
+			AddChanlistItem(channel, data_transform);
+			n_channels_to_plot++;
+		}
+		GetChanlistItem(channel)->SetColor(channel);
+	}
+}

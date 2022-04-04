@@ -73,7 +73,6 @@ protected:
 
 protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnDestroy();
 	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 
