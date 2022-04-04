@@ -147,6 +147,8 @@ ChartWnd::ChartWnd()
 
 ChartWnd::~ChartWnd()
 {
+	DestroyWindow();
+
 	m_countcurs--;
 	if (m_countcurs == 0)
 	{

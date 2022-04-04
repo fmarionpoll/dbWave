@@ -52,8 +52,7 @@ BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
 	//ON_NOTIFY(NM_CLICK, IDC_TAB1, &dbTableView::OnNMClickTab1)
 END_MESSAGE_MAP()
 
-ViewdbWave::ViewdbWave()
-	: dbTableView(IDD)
+ViewdbWave::ViewdbWave() : dbTableView(IDD)
 {
 }
 

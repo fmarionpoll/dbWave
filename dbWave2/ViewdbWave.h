@@ -12,7 +12,6 @@ protected: // create from serialization only
 	ViewdbWave();
 	~ViewdbWave() override;
 
-
 	enum { IDD = IDD_VIEWDBWAVE };
 	CDataListCtrl m_dataListCtrl;
 

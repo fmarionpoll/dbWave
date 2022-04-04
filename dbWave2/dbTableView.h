@@ -10,8 +10,8 @@ class dbTableView : public CDaoRecordView
 	DECLARE_DYNAMIC(dbTableView)
 
 protected:
-	explicit dbTableView(LPCTSTR lpszTemplateName);
-	explicit dbTableView(UINT nIDTemplate);
+	dbTableView(LPCTSTR lpszTemplateName);
+	dbTableView(UINT nIDTemplate);
 	~dbTableView() override;
 
 public:

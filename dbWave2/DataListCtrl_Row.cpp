@@ -18,14 +18,9 @@ CDataListCtrl_Row::CDataListCtrl_Row(int i)
 
 CDataListCtrl_Row::~CDataListCtrl_Row()
 {
-	if (pDataChartWnd != nullptr)
-	{
-		delete pDataChartWnd;
-	}
-	if (pSpikeChartWnd != nullptr)
-	{
-		delete pSpikeChartWnd;
-	}
+	delete pDataChartWnd;
+	delete pSpikeChartWnd;
+	
 	SAFE_DELETE(pdataDoc)
 	SAFE_DELETE(pspikeDoc)
 	cs_comment.Empty();
