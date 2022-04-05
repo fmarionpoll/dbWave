@@ -68,6 +68,7 @@ protected:
 	TCHAR m_sz_buffer[64]{};
 
 	int m_cursor_state = 0;
+
 public:
 	void SetViewMouseCursor(int cursor_mode)
 	{

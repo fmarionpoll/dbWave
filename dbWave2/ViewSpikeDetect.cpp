@@ -200,6 +200,9 @@ void ViewSpikeDetection::update_legends()
 	m_timefirst = static_cast<float>(l_first) / m_samplingRate;
 	m_timelast = static_cast<float>(l_last + 1) / m_samplingRate;
 	m_spikeno = m_pSpkList->m_selected_spike;
+	const auto n_spikes0 = m_pSpkList->GetTotalSpikes();
+	ASSERT(n_spikes0 >= 0);
+
 	if (m_spikeno > m_pSpkList->GetTotalSpikes())
 	{
 		m_pSpkList->m_selected_spike = -1;
@@ -226,8 +229,9 @@ void ViewSpikeDetection::update_legends()
 	UpdateData(FALSE);
 
 	// update number of spikes
-	const auto n_spikes = static_cast<UINT>(m_pSpkList->GetTotalSpikes());
-	if (n_spikes != GetDlgItemInt(IDC_NBSPIKES_NB))
+	const auto n_spikes = m_pSpkList->GetTotalSpikes();
+	ASSERT(n_spikes >= 0);
+	if (n_spikes != static_cast<int>(GetDlgItemInt(IDC_NBSPIKES_NB, nullptr, TRUE)))
 	{
 		SetDlgItemInt(IDC_NBSPIKES_NB, n_spikes);
 		GetDlgItem(IDC_NBSPIKES_NB)->Invalidate();
@@ -301,16 +305,16 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	m_chart_spike_shape.Invalidate();
 
 	// update nb spikes
-	const auto n_spikes = static_cast<UINT>(m_pSpkList->GetTotalSpikes());
-	if (n_spikes != GetDlgItemInt(IDC_NBSPIKES_NB))
-		SetDlgItemInt(IDC_NBSPIKES_NB, n_spikes);
+	//const auto n_spikes = static_cast<UINT>(m_pSpkList->GetTotalSpikes());
+	//if (n_spikes != GetDlgItemInt(IDC_NBSPIKES_NB))
+	//	SetDlgItemInt(IDC_NBSPIKES_NB, n_spikes);
 }
 
 void ViewSpikeDetection::highlight_spikes(BOOL flag)
 {
 	if (!flag || m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() < 1) 
 		return;
-	return;
+	
 	const auto array_size = m_pSpkList->GetTotalSpikes() * 2 + 3;
 	m_DWintervals.SetSize(array_size);
 	m_DWintervals.SetAt(0, 0);

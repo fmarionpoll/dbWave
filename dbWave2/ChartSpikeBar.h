@@ -29,7 +29,7 @@ protected:
 	CDWordArray* p_envelope_ = nullptr; // data envelope (should be 4 times greater than size)
 	SpikeList* p_spikelist_SPKBAR = nullptr;
 	CSpikeDoc* p_spike_doc_SPKBAR = nullptr;
-	CdbWaveDoc* p_dbwave_doc_ = nullptr;
+	CdbWaveDoc* p_dbwave_doc_SPKBAR = nullptr;
 
 	// Helpers
 public:
@@ -44,20 +44,18 @@ public:
 
 	void SetSourceData_spklist_dbwavedoc(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	{
-		p_dbwave_doc_ = p_document;
-		p_spike_doc_SPKBAR = p_dbwave_doc_->m_pSpk;
+		p_dbwave_doc_SPKBAR = p_document;
+		p_spike_doc_SPKBAR = p_dbwave_doc_SPKBAR->m_pSpk;
 		p_spikelist_SPKBAR = p_spk_list;
 		m_selectedspike = -1;
-		TRACE("set source data - list = %i\n", (p_spikelist_SPKBAR != nullptr));
 	}
 
 	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document)
 	{
-		p_dbwave_doc_ = nullptr;
+		p_dbwave_doc_SPKBAR = nullptr;
 		p_spike_doc_SPKBAR = p_spike_document;
 		p_spikelist_SPKBAR = p_spk_list;
 		m_selectedspike = -1;
-		TRACE("set source data bis - list = %i\n", (p_spikelist_SPKBAR != nullptr));
 	}
 
 	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_SPKBAR = p_spk_list; }
@@ -92,7 +90,7 @@ public:
 	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document)
 	{
 		m_ballFiles = bON;
-		p_dbwave_doc_ = p_document;
+		p_dbwave_doc_SPKBAR = p_document;
 	}
 
 	void Print(CDC* p_dc, CRect* rect);

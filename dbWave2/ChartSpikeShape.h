@@ -111,7 +111,7 @@ protected:
 
 	int hitCurve(CPoint point) override;
 	int hitCurveInDoc(CPoint point);
-	void drawSelectedSpike(int nospike, CDC* p_dc);
+	void drawSelectedSpike(int no_spike, CDC* p_dc);
 	void drawFlaggedSpikes(CDC* p_dc);
 	void plotArraytoDC(CDC* p_dc, short* pspk);
 

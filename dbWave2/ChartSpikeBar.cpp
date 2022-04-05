@@ -38,9 +38,6 @@ void ChartSpikeBarWnd::PlotDataToDC(CDC* p_dc)
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
 
-	if (p_dbwave_doc_ == nullptr)
-		return;
-
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
@@ -53,27 +50,18 @@ void ChartSpikeBarWnd::PlotDataToDC(CDC* p_dc)
 	long current_file = 0;
 	if (m_ballFiles)
 	{
-		n_files = p_dbwave_doc_->GetDB_NRecords();
-		current_file = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		n_files = p_dbwave_doc_SPKBAR->GetDB_NRecords();
+		current_file = p_dbwave_doc_SPKBAR->GetDB_CurrentRecordPosition();
 	}
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(i_file);
-			p_spike_doc_SPKBAR = p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_SPKBAR = nullptr;
-			if (p_dbwave_doc_->m_pSpk != nullptr)
-				p_spikelist_SPKBAR = p_spike_doc_SPKBAR->GetSpkList_Current();
+			p_dbwave_doc_SPKBAR->SetDB_CurrentRecordPosition(i_file);
+			p_spike_doc_SPKBAR = p_dbwave_doc_SPKBAR->OpenCurrentSpikeFile();
 		}
-		if (p_spike_doc_SPKBAR == nullptr)
-		{
-			p_spike_doc_SPKBAR = p_dbwave_doc_->m_pSpk;
-			if (p_spike_doc_SPKBAR == nullptr)
-				continue;
-			p_spikelist_SPKBAR = p_spike_doc_SPKBAR->GetSpkList_Current();
-		}
+		p_spikelist_SPKBAR = p_spike_doc_SPKBAR->GetSpkList_Current();
 
 		// test presence of data
 		if (p_spikelist_SPKBAR == nullptr || p_spikelist_SPKBAR->GetTotalSpikes() <= 0)
@@ -85,10 +73,7 @@ void ChartSpikeBarWnd::PlotDataToDC(CDC* p_dc)
 
 		// plot comment at the bottom
 		if (m_bBottomComment)
-		{
-			p_dc->DrawText(m_csBottomComment, m_csBottomComment.GetLength(), rect,
-			               DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
-		}
+			p_dc->DrawText(m_csBottomComment, m_csBottomComment.GetLength(), rect,DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
 
 		// display data: trap error conditions
 		if (m_yWE == 1)
@@ -151,9 +136,9 @@ void ChartSpikeBarWnd::PlotDataToDC(CDC* p_dc)
 
 	if (m_ballFiles)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(current_file);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_SPKBAR = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc_SPKBAR->SetDB_CurrentRecordPosition(current_file);
+		p_dbwave_doc_SPKBAR->OpenCurrentSpikeFile();
+		p_spikelist_SPKBAR = p_dbwave_doc_SPKBAR->m_pSpk->GetSpkList_Current();
 	}
 }
 
@@ -203,7 +188,7 @@ void ChartSpikeBarWnd::PlotSingleSpkDataToDC(CDC* p_dc)
 	displayBars(p_dc, &m_displayRect);
 
 	if (p_spike_doc_SPKBAR == nullptr)
-		p_spike_doc_SPKBAR = p_dbwave_doc_->m_pSpk;
+		p_spike_doc_SPKBAR = p_dbwave_doc_SPKBAR->m_pSpk;
 	const CIntervals* p_intervals = &(p_spike_doc_SPKBAR->m_stimulus_intervals);
 
 	if (p_intervals->n_items > 0)
@@ -760,8 +745,8 @@ int ChartSpikeBarWnd::hitCurveInDoc(const CPoint point)
 	long current_file = 0;
 	if (m_ballFiles)
 	{
-		n_files = p_dbwave_doc_->GetDB_NRecords();
-		current_file = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		n_files = p_dbwave_doc_SPKBAR->GetDB_NRecords();
+		current_file = p_dbwave_doc_SPKBAR->GetDB_CurrentRecordPosition();
 	}
 
 	int result = -1;
@@ -769,9 +754,9 @@ int ChartSpikeBarWnd::hitCurveInDoc(const CPoint point)
 	{
 		if (m_ballFiles)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(i_file);
-			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_SPKBAR = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+			p_dbwave_doc_SPKBAR->SetDB_CurrentRecordPosition(i_file);
+			p_dbwave_doc_SPKBAR->OpenCurrentSpikeFile();
+			p_spikelist_SPKBAR = p_dbwave_doc_SPKBAR->m_pSpk->GetSpkList_Current();
 		}
 
 		if (p_spikelist_SPKBAR == nullptr || p_spikelist_SPKBAR->GetTotalSpikes() == 0)
@@ -785,9 +770,9 @@ int ChartSpikeBarWnd::hitCurveInDoc(const CPoint point)
 
 	if (m_ballFiles && result < 0)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(current_file);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_SPKBAR = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc_SPKBAR->SetDB_CurrentRecordPosition(current_file);
+		p_dbwave_doc_SPKBAR->OpenCurrentSpikeFile();
+		p_spikelist_SPKBAR = p_dbwave_doc_SPKBAR->m_pSpk->GetSpkList_Current();
 	}
 
 	return result;
@@ -889,7 +874,7 @@ void ChartSpikeBarWnd::Print(CDC* p_dc, CRect* rect)
 	const auto n_saved_dc = p_dc->SaveDC(); // save display context
 	displayBars(p_dc, rect);
 
-	if (p_dbwave_doc_->m_pSpk->m_stimulus_intervals.n_items > 0)
+	if (p_dbwave_doc_SPKBAR->m_pSpk->m_stimulus_intervals.n_items > 0)
 		displayStimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);
