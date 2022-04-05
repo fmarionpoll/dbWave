@@ -101,7 +101,7 @@ protected:
 	void update_file_scroll();
 	void update_legends();
 	void update_legend_detection_wnd();
-	void update_spike_shape_window_scale(BOOL bSetFromControls = TRUE);
+	void update_spike_shape_window_scale(BOOL b_set_from_controls = TRUE);
 	void update_VT_tags();
 	void update_spike_display();
 

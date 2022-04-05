@@ -73,10 +73,6 @@ public:
 		m_lLast = l_last;
 	}
 
-	void SetxScaleUnitValue() { m_scopestruct.xScaleUnitValue = GetExtent_ms() / static_cast<float>(GetNxScaleCells()); }
-
-	void SetyScaleUnitValue() { m_scopestruct.yScaleUnitValue = GetExtent_mV() / static_cast<float>(GetNyScaleCells()); }
-
 	float GetDisplayMaxMv()
 	{
 		getExtents();

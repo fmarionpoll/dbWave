@@ -1016,7 +1016,7 @@ void ViewSpikeDetection::OnToolsDetectionparameters()
 {
 	DlgSpikeDetect dlg;
 	dlg.m_dbDoc = GetDocument()->m_pDat;
-	dlg.m_iDetectParmsDlg = m_i_detect_parameters; // index spk detect parm currently selected / array
+	dlg.m_iDetectParmsDlg = m_i_detect_parameters; // index spk detect parameters currently selected / array
 	dlg.m_pDetectSettingsArray = &m_spk_detect_array_current; // spike detection parameters array
 	dlg.mdPM = options_view_data;
 	dlg.m_pChartDataDetectWnd = &m_chart_data_filtered;
@@ -1035,8 +1035,8 @@ void ViewSpikeDetection::OnSelchangeDetectchan()
 	m_p_detect_parameters->detectChan = m_CBdetectChan.GetCurSel();
 	m_p_detect_parameters->bChanged = TRUE;
 	m_chart_data_filtered.SetChanlistOrdinates(0, m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
-	CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(0);
-	m_p_detect_parameters->detectThreshold = pchan->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
+	const CChanlistItem* channel_list_item = m_chart_data_filtered.GetChanlistItem(0);
+	m_p_detect_parameters->detectThreshold = channel_list_item->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
 	m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
 	m_chart_data_filtered.GetDataFromDoc();
 	m_chart_data_filtered.AutoZoomChan(0);
@@ -1087,8 +1087,8 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	const auto chan_max = wave_format->scan_count - 1;
 	for (auto i = 0; i < m_spk_detect_array_current.GetSize(); i++)
 	{
-		const auto pspk_dp = m_spk_detect_array_current.GetItem(i);
-		if (pspk_dp->extractChan > chan_max)
+		const auto spike_detect_array = m_spk_detect_array_current.GetItem(i);
+		if (spike_detect_array->extractChan > chan_max)
 		{
 			MessageBox(_T(
 				"Check spike detection parameters \n- one of the detection channel requested \nis not available in the source data"));
@@ -1106,7 +1106,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		if (!bAll && m_i_detect_parameters != i)
 			continue;
 		// detect missing data channel
-		if ((m_spk_detect_array_current.GetItem(i))->extractChan > chan_max)
+		if (m_spk_detect_array_current.GetItem(i)->extractChan > chan_max)
 			continue;
 
 		// select new spike list (list with no spikes for stimulus channel)
@@ -1219,7 +1219,7 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 		const int i_buf_first = l_data_first - data_document->GetDOCchanIndexFirst();
 		const auto p_data_first = data_document->GetpTransfDataElmt(i_buf_first);
 
-		// DETECT STIM ---------------------------------------------------------------
+		// DETECT STIMULUS ---------------------------------------------------------------
 		// detect event if value above threshold
 		for (long cx = l_data_first; cx <= l_last; cx++)
 		{
@@ -1247,7 +1247,7 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 					continue;
 			}
 
-			const int pct_achieved = (cx - l_data_first0) * 100 / l_data_len;
+			const int pct_achieved = MulDiv(cx - l_data_first0, 100, l_data_len);
 			dlg.SetPos(pct_achieved);
 			CString comment;
 			comment.Format(_T("Processing stimulus event: %i"), m_pSpkDoc->m_stimulus_intervals.n_items + 1);
@@ -1308,16 +1308,16 @@ int ViewSpikeDetection::detect_method_1(WORD schan)
 	// set parameters (copy array into local parms)
 	const short threshold = pspkDP->detectThreshold; // threshold value
 	const auto method = pspkDP->detectTransform; // how source data are transformed
-	const auto sourcechan = pspkDP->detectChan; // source channel
-	const auto prethreshold = pspkDP->prethreshold; // pts before threshold
+	const auto source_channel = pspkDP->detectChan; // source channel
+	const auto pre_threshold = pspkDP->prethreshold; // pts before threshold
 	const auto refractory = pspkDP->refractory; // refractory period
-	const auto postthreshold = pspkDP->extractNpoints - prethreshold;
+	const auto post_threshold = pspkDP->extractNpoints - pre_threshold;
 
 	// get parameters from document
-	auto p_dat = GetDocument()->m_pDat;
-	int nchans; // number of data chans / source buffer
-	const auto p_buf = p_dat->LoadRawDataParams(&nchans);
-	const auto nspan = p_dat->GetTransfDataSpan(method); // nb pts to read before transf
+	const auto p_dat = GetDocument()->m_pDat;
+	int n_channels; // number of data chans / source buffer
+	const auto p_buf = p_dat->LoadRawDataParams(&n_channels);
+	const auto span = p_dat->GetTransfDataSpan(method); // nb pts to read before transf
 
 	// adjust detection method: if threshold lower than data zero detect lower crossing
 	auto b_cross_upw = TRUE;
@@ -1327,24 +1327,24 @@ int ViewSpikeDetection::detect_method_1(WORD schan)
 	// get data detection limits and clip limits according to size of spikes
 	auto l_data_first = m_chart_data_filtered.GetDataFirst(); // index first pt to test
 	auto l_data_last = m_chart_data_filtered.GetDataLast(); // index last pt to test
-	if (l_data_first < prethreshold + nspan)
-		l_data_first = static_cast<long>(prethreshold) + nspan;
-	if (l_data_last > p_dat->GetDOCchanLength() - postthreshold - nspan)
-		l_data_last = p_dat->GetDOCchanLength() - postthreshold - nspan;
+	if (l_data_first < pre_threshold + span)
+		l_data_first = static_cast<long>(pre_threshold) + span;
+	if (l_data_last > p_dat->GetDOCchanLength() - post_threshold - span)
+		l_data_last = p_dat->GetDOCchanLength() - post_threshold - span;
 
 	// loop through data defined in the lineview window
 	while (l_data_first < l_data_last)
 	{
-		auto l_rw_first = l_data_first - prethreshold; // index very first pt within buffers
+		auto l_rw_first = l_data_first - pre_threshold; // index very first pt within buffers
 		auto l_rw_last = l_data_last; // index very last pt within buffers
-		if (!p_dat->LoadRawData(&l_rw_first, &l_rw_last, nspan)) // load data from file
+		if (!p_dat->LoadRawData(&l_rw_first, &l_rw_last, span)) // load data from file
 			break; // exit if error reported
-		if (!p_dat->BuildTransfData(method, sourcechan)) // transfer data into a buffer with a single channel
+		if (!p_dat->BuildTransfData(method, source_channel)) // transfer data into a buffer with a single channel
 			break; // exit if fail
 
 		// load a chunk of data and see if any spikes are detected within it
 		// compute initial offset (address of first point
-		auto l_last = l_rw_last - postthreshold;
+		auto l_last = l_rw_last - post_threshold;
 		if (l_last > l_data_last)
 			l_last = l_data_last;
 		const int i_buf_first = l_data_first - p_dat->GetDOCchanIndexFirst();
@@ -1404,15 +1404,15 @@ int ViewSpikeDetection::detect_method_1(WORD schan)
 			// ........................................ SPIKE DETECTED
 			if (pspkDP->extractTransform == pspkDP->detectTransform)
 			{
-				const auto p_m = p_data - prethreshold;
-				m_pSpkList->AddSpike(p_m, 1, ii_time, sourcechan, 0, TRUE);
+				const auto p_m = p_data - pre_threshold;
+				m_pSpkList->AddSpike(p_m, 1, ii_time, source_channel, 0, TRUE);
 			}
 			else // extract from raw data
 			{
 				const auto pM = p_buf
-					+ nchans * (ii_time - prethreshold - l_rw_first + nspan)
+					+ n_channels * (ii_time - pre_threshold - l_rw_first + span)
 					+ pspkDP->extractChan;
-				m_pSpkList->AddSpike(pM, nchans, ii_time, sourcechan, 0, TRUE);
+				m_pSpkList->AddSpike(pM, n_channels, ii_time, source_channel, 0, TRUE);
 			}
 
 			// update loop parameters
@@ -1701,20 +1701,22 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 	TRACE("update_spike_shape_window_scale: 3 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 	if (ix_we != NULL && iy_we != NULL)
 	{
-		//m_chart_spike_shape.SetyScaleUnitValue();
-		//m_chart_spike_shape.SetxScaleUnitValue();
+		float x = m_chart_spike_shape.GetExtent_ms() / static_cast<float>(m_chart_spike_shape.GetNxScaleCells());
+		float y = m_chart_spike_shape.GetExtent_mV() / static_cast<float>(m_chart_spike_shape.GetNyScaleCells());
+		m_chart_spike_shape.SetyScaleUnitValue(y);
+		m_chart_spike_shape.SetxScaleUnitValue(x);
 	}
 	TRACE("update_spike_shape_window_scale: 4 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 
-	// output values
-	CString dummy1;
-	dummy1.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_mV());
-	SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, dummy1);
+	//CString dummy1;
+	//dummy1.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_mV());
+	//SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, dummy1);
 
 	TRACE("update_spike_shape_window_scale: 5 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
-	CString dummy2;
-	dummy2.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_ms());
-	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, dummy2);
+
+	//CString dummy2;
+	//dummy2.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_ms());
+	//SetDlgItemText(IDC_SPIKEWINDOWLENGTH, dummy2);
 
 	TRACE("update_spike_shape_window_scale: end - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 
@@ -3007,7 +3009,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 		}
 		const auto y_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetYWExtent()) * y / yold);
 		m_chart_spike_shape.SetYWExtOrg(y_we, m_chart_spike_shape.GetYWOrg());
-		m_chart_spike_shape.SetyScaleUnitValue();
+		m_chart_spike_shape.SetyScaleUnitValue(y);
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
@@ -3051,7 +3053,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 		}
 		const auto x_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetXWExtent()) * x / xold);
 		m_chart_spike_shape.SetXWExtOrg(x_we, m_chart_spike_shape.GetXWOrg());
-		m_chart_spike_shape.SetxScaleUnitValue();
+		m_chart_spike_shape.SetxScaleUnitValue(x);
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
