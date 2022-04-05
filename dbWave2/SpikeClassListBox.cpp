@@ -48,7 +48,7 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		SetMouseCursorType(threshold);
 		break;
 
-	case HINT_CHANGEHZLIMITS: // abcissa have changed
+	case HINT_CHANGEHZLIMITS: // abscissa have changed
 		{
 			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(icursel));
 			m_lFirst = (pptr->pspk_bars)->GetTimeFirst();
@@ -132,7 +132,7 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 			p_old_bmp = dc_mem.SelectObject(&bmp_mem);
 			//draw data
 			(pptr->pspk_shapes)->SetDisplayAreaSize(rect_spikes.Width(), rect_spikes.Height());
-			(pptr->pspk_shapes)->PlotDatatoDC(&dc_mem);
+			(pptr->pspk_shapes)->PlotDataToDC(&dc_mem);
 			// transfer data to DC and clean the memory DC
 			dc.BitBlt(rect_spikes.left, rect_spikes.top, rect_spikes.Width(), rect_spikes.Height(), &dc_mem, 0, 0,
 			          SRCCOPY);
@@ -152,7 +152,7 @@ void CSpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 			p_old_bmp = dc_mem.SelectObject(&bmp_mem);
 			// draw actual data
 			(pptr->pspk_bars)->SetDisplayAreaSize(rect_bars.Width(), rect_bars.Height());
-			(pptr->pspk_bars)->PlotDatatoDC(&dc_mem);
+			(pptr->pspk_bars)->PlotDataToDC(&dc_mem);
 			// transfer data to DC and clean the memory DC
 			dc.BitBlt(rect_bars.left, rect_bars.top, rect_bars.Width(), rect_bars.Height(), &dc_mem, 0, 0, SRCCOPY);
 			dc_mem.SelectObject(p_old_bmp);

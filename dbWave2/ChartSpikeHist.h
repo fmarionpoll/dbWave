@@ -1,7 +1,7 @@
 #pragma once
 
 // ChartSpikeHist build, stores and display a list of histograms
-// each histogram has the same abcissa limits (same nb of bins also)
+// each histogram has the same abscissa limits (same nb of bins also)
 // they are intended to store and display histograms of parameters measured
 // from spike classes and follow the same display conventions as CSpikFormButton
 // and CSpikBarsButton.
@@ -29,8 +29,8 @@ protected:
 	int m_selclass = 0; // index class selected
 
 	int m_binsize{}; // size of one bin
-	int m_abcissaminval = 0; // minimum value from which histogram is built (abcissa)
-	int m_abcissamaxval = 0; // maximum value (abcissa max)
+	int m_abcissaminval = 0; // minimum value from which histogram is built (abscissa)
+	int m_abcissamaxval = 0; // maximum value (abscissa max)
 	int m_nbins = 0; // n bins within histogram
 
 	DWORD m_lmax{}; // value max
@@ -85,7 +85,7 @@ protected:
 	                            BOOL bNew);
 
 public:
-	void PlotDatatoDC(CDC* p_dc) override;
+	void PlotDataToDC(CDC* p_dc) override;
 
 protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

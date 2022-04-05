@@ -81,7 +81,7 @@ public:
 		p_dbwave_doc_ = p_document;
 	}
 
-	void PlotDatatoDC(CDC* p_dc) override;
+	void PlotDataToDC(CDC* p_dc) override;
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:

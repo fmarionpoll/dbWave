@@ -60,7 +60,7 @@ public:
 	int GetYWExtent(); // load display parameters
 	int GetYWOrg(); // ordinates
 	int GetXWExtent(); // and
-	int GetXWOrg(); // abcissa
+	int GetXWOrg(); // abscissa
 
 	int SelectSpike(int spikeno);
 	void ChangeSpikeClass(int spikeno, int newclass);

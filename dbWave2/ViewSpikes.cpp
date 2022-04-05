@@ -658,7 +658,7 @@ void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 		|| m_lLast != m_spkClassListBox.GetTimeLast())
 		m_spkClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
 
-	// update text abcissa and horizontal scroll position
+	// update text abscissa and horizontal scroll position
 	m_time_first = static_cast<float>(m_lFirst) / m_pSpkDoc->GetAcqRate();
 	m_time_last = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
 	m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
@@ -789,7 +789,7 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	dlg.m_yextent = m_spkClassListBox.GetYWExtent(); // load display parameters
 	dlg.m_yzero = m_spkClassListBox.GetYWOrg(); // ordinates
 	dlg.m_xextent = m_spkClassListBox.GetXWExtent(); // and
-	dlg.m_xzero = m_spkClassListBox.GetXWOrg(); // abcissa
+	dlg.m_xzero = m_spkClassListBox.GetXWOrg(); // abscissa
 	dlg.m_spikeno = m_spike_index; // load index of selected spike
 	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();
@@ -950,7 +950,7 @@ CString ViewSpikes::PrintBars(CDC* p_dc, CRect* rect)
 	const auto horz_bar = 100;
 	const auto vert_bar = 100;
 
-	///// time abcissa ///////////////////////////
+	///// time abscissa ///////////////////////////
 	const int iifirst = m_spkClassListBox.GetTimeFirst();
 	const int iilast = m_spkClassListBox.GetTimeLast();
 	auto cs_comment = PrintConvertFileIndex(iifirst, iilast);

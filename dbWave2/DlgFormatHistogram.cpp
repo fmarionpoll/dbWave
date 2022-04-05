@@ -60,7 +60,7 @@ void DlgFormatHistogram::OnPaint()
 	ScreenToClient(&rect); // convert  coordinates
 	dc.Rectangle(&rect);
 
-	// display abcissa
+	// display abscissa
 	int binlen = rect.Width() / 8;
 	int baseline = rect.Height() / 8;
 	CRect rect0 = rect;

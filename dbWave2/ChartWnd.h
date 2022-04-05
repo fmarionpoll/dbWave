@@ -44,7 +44,7 @@ public:
 	virtual void ZoomData(CRect* prevRect, CRect* newRect);
 	virtual void DisplayVTtags_Value(CDC* p_dc);
 	virtual void DisplayHZtags(CDC* p_dc);
-	virtual void PlotDatatoDC(CDC* p_dc);
+	virtual void PlotDataToDC(CDC* p_dc);
 
 	void EraseBkgnd(CDC* p_dc);
 	void PlotToBitmap(CDC* p_dc);

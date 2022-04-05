@@ -1959,7 +1959,7 @@ void ViewSpikeDetection::OnEditCopy()
 			m_dc.TextOut(xcol, ypxrow, comments);
 			ypxrow += lineheight;
 
-			// abcissa
+			// abscissa
 			comments = _T("Abcissa: ");
 			CString content;
 			GetDlgItem(IDC_TIMEFIRST)->GetWindowText(content);

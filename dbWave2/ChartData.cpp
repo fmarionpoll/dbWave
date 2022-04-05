@@ -42,7 +42,7 @@ void ChartData::RemoveAllChanlistItems()
 
 int ChartData::AddChanlistItem(int ns, int mode)
 {
-	// first time??	create Envelope(0) with abcissa series
+	// first time??	create Envelope(0) with abscissa series
 	if (chanlistitem_ptr_array.GetSize() == 0)
 	{
 		m_PolyPoints.SetSize(m_npixels * 4);
@@ -419,7 +419,7 @@ int ChartData::ResizeChannels(const int npixels, const long l_size)
 	if (l_size != 0) // size of data to display
 		m_lxSize = l_size;
 
-	// change horizontal resolution	: m_Polypoints receives abcissa and ordinates
+	// change horizontal resolution	: m_Polypoints receives abscissa and ordinates
 	// make provision for max and min points
 	if (m_PolyPoints.GetSize() != m_npixels * 4)
 		m_PolyPoints.SetSize(m_npixels * 4);
@@ -485,7 +485,7 @@ BOOL ChartData::AttachDataFile(AcqDataDoc* p_data_file)
 
 	// Remove irrelevant Envelopes();
 	const auto n_envelopes = envelope_ptr_array.GetUpperBound();
-	for (auto i = n_envelopes; i > 0; i--) // ! Envelope(0)=abcissa
+	for (auto i = n_envelopes; i > 0; i--) // ! Envelope(0)=abscissa
 	{
 		const auto p_envelope = envelope_ptr_array.GetAt(i);
 		if (p_envelope->GetSourceChan() > docchanmax)
@@ -795,7 +795,7 @@ void ChartData::UpdateYRuler()
 	m_pYRulerBar->Invalidate();
 }
 
-void ChartData::PlotDatatoDC(CDC* p_dc)
+void ChartData::PlotDataToDC(CDC* p_dc)
 {
 	if (m_bADbuffers)
 		return;
@@ -1014,11 +1014,11 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		if (chanlist_item->GetflagPrintVisible() == FALSE)
 			continue;
 
-		// display: load abcissa   ----------------------------------------------
+		// display: load abscissa   ----------------------------------------------
 		if (pX != chanlist_item->pEnvelopeAbcissa)
 		{
-			pX = chanlist_item->pEnvelopeAbcissa; // load pointer to abcissa
-			pX->ExportToAbcissa(m_PolyPoints); // copy abcissa to polypts buffer
+			pX = chanlist_item->pEnvelopeAbcissa; // load pointer to abscissa
+			pX->ExportToAbcissa(m_PolyPoints); // copy abscissa to polypts buffer
 			nelements = pX->GetEnvelopeSize(); // update nb of elements
 		}
 		// display: load ordinates ---------------------------------------------
@@ -1332,7 +1332,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 
 			// modify polypoint and prepare for XORing curve tracked with mouse
 			const auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
-			const auto pX = chanlist_item->pEnvelopeAbcissa; // display: load abcissa
+			const auto pX = chanlist_item->pEnvelopeAbcissa; // display: load abscissa
 			pX->GetMeanToAbcissa(m_PolyPoints);
 			m_XORnelmts = pX->GetEnvelopeSize() / 2; // nb of elements
 			m_XORxext = pX->GetnElements() / 2; // extent

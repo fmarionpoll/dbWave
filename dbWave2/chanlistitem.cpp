@@ -16,7 +16,7 @@
 // lineview keeps a list of channels to be displayed in a list
 // each item of this list group together the parameters necessary to
 // display the channel, ie color, etc and a pointer to structures
-// describing the abcissa and the ordinates
+// describing the abscissa and the ordinates
 /////////////////////////////////////////////////////////////////////////////
 
 IMPLEMENT_SERIAL(CChanlistItem, CObject, 1)

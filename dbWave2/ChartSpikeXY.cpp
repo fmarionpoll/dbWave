@@ -25,7 +25,7 @@ ChartSpikeXYWnd::ChartSpikeXYWnd()
 ChartSpikeXYWnd::~ChartSpikeXYWnd()
 = default;
 
-void ChartSpikeXYWnd::PlotDatatoDC(CDC* p_dc)
+void ChartSpikeXYWnd::PlotDataToDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);
@@ -39,7 +39,7 @@ void ChartSpikeXYWnd::PlotDatatoDC(CDC* p_dc)
 	const auto bkcolor = p_dc->GetBkColor();
 
 	// display data: trap error conditions
-	const auto windowduration = m_lLast - m_lFirst + 1; // abcissa size
+	const auto windowduration = m_lLast - m_lFirst + 1; // abscissa size
 	getExtents(); // get origin and extents for xy axes
 	ASSERT(m_xWE != 1);
 	p_dc->SetMapMode(MM_TEXT);
@@ -526,7 +526,7 @@ int ChartSpikeXYWnd::hitCurveInDoc(CPoint point)
 
 int ChartSpikeXYWnd::hitCurve(CPoint point)
 {
-	// abcissa
+	// abscissa
 	const auto taille = (m_lLast - m_lFirst + 1);
 	time_max_ = m_lFirst + taille * (point.x + m_rwidth) / static_cast<long>(m_xVE);
 	time_min_ = m_lFirst + taille * (point.x - m_rwidth) / static_cast<long>(m_xVE);

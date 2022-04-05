@@ -100,7 +100,7 @@ public:
 	void Print(CDC* p_dc, CRect* rect);
 	int DisplayExData(short* p_data, int color = 9);
 	void DisplayFlaggedSpikes(BOOL bHighLight);
-	void PlotDatatoDC(CDC* p_dc) override;
+	void PlotDataToDC(CDC* p_dc) override;
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:

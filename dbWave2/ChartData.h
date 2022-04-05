@@ -33,8 +33,8 @@ public:
 
 	// Helper functions
 	long	GetNxPixels() const { return m_npixels; } // number of pixels defined in this window
-	long	GetDataFirst() const { return m_lxFirst; } // document index of first abcissa
-	long	GetDataLast() const { return m_lxLast; } // document index of last abcissa
+	long	GetDataFirst() const { return m_lxFirst; } // document index of first abscissa
+	long	GetDataLast() const { return m_lxLast; } // document index of last abscissa
 	long	GetDataSize() const { return m_lxSize; } // nb of data pts displayed
 	long	GetPageSize() const { return m_lxPage; } // size of page increment used to browse through doc
 	long	GetLineSize() const { return m_lxLine; } // size of line increment used to browse through doc
@@ -51,9 +51,9 @@ protected:
 	// these variables define the curves displayed on the screen (data from doc)
 	AcqDataDoc* m_pDataFile = nullptr; // pointer to data source file
 	CArray<CChanlistItem*, CChanlistItem*> chanlistitem_ptr_array;
-	// list of display items (abcissa, Envelope, disp. parms)
+	// list of display items (abscissa, Envelope, disp. parms)
 	CArray<CEnvelope*, CEnvelope*> envelope_ptr_array; // list of Envelopes
-	CArray<CPoint, CPoint> m_PolyPoints; // array with abcissa & ordinates
+	CArray<CPoint, CPoint> m_PolyPoints; // array with abscissa & ordinates
 	CHighLight m_highlighted;
 	CScale m_scale;
 
@@ -138,7 +138,7 @@ public:
 	void	MoveHZtagtoVal(int itag, int ival);
 	void	UpdateXRuler();
 	void	UpdateYRuler();
-	void	PlotDatatoDC(CDC* p_dc) override;
+	void	PlotDataToDC(CDC* p_dc) override;
 	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 
 	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);

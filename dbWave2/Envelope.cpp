@@ -116,10 +116,10 @@ void CEnvelope::FillEnvelopeWithAbcissa(int npixels, int npoints)
 	}
 }
 
-// init values to series (x abcissa)
+// init values to series (x abscissa)
 //	lSize	= nb pts to display
-//  xfirst	= first abcissa
-//	xlast	= last abcissa
+//  xfirst	= first abscissa
+//	xlast	= last abscissa
 // return nDataperPixel
 
 void CEnvelope::FillEnvelopeWithAbcissaEx(int pixfirst, int pixlast, int ndatapoints)

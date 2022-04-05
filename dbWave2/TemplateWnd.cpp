@@ -140,7 +140,7 @@ void CTemplateWnd::DeleteArrays()
 	m_pAvg = nullptr;
 }
 
-void CTemplateWnd::PlotDatatoDC(CDC* p_dc)
+void CTemplateWnd::PlotDataToDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);

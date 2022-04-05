@@ -515,7 +515,7 @@ void ViewData::UpdateFileParameters(BOOL bUpdateInterface)
 
 	// load real data from file and update time parameters
 	m_ChartDataWnd.GetDataFromDoc(l_first, l_last); // load data requested
-	m_time_first_abcissa = m_ChartDataWnd.GetDataFirst() / m_samplingRate; // update abcissa parameters
+	m_time_first_abcissa = m_ChartDataWnd.GetDataFirst() / m_samplingRate; // update abscissa parameters
 	m_time_last_abcissa = m_ChartDataWnd.GetDataLast() / m_samplingRate; // first - end
 	m_channel_selected = 0; // select chan 0
 

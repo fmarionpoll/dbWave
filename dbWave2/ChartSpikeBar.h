@@ -75,12 +75,12 @@ public:
 	int GetSelectedSpike() const { return m_selectedspike; }
 	int GetHitSpike() const { return m_hitspk; }
 
-	void DisplaySpike(int nospike, BOOL bselect);
+	void DisplaySpike(int no_spike, BOOL b_select);
 	void DisplayFlaggedSpikes(BOOL bHighlight);
 	int SelectSpike(int spikeno);
 
 	void SelectSpikesWithinRect(CRect* pRect, UINT nFlags) const;
-	BOOL IsSpikeWithinRange(int spikeno);
+	BOOL IsSpikeWithinRange(int no_spike);
 	void CenterCurve();
 	void MaxGain();
 	void MaxCenter();
@@ -92,16 +92,16 @@ public:
 	}
 
 	void Print(CDC* p_dc, CRect* rect);
-	void PlotDatatoDC(CDC* p_dc) override;
-	void PlotSingleSpkDatatoDC(CDC* p_dc);
+	void PlotDataToDC(CDC* p_dc) override;
+	void PlotSingleSpkDataToDC(CDC* p_dc);
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:
 	int hitCurve(CPoint point) override;
 	int hitCurveInDoc(CPoint point);
 	void displayBars(CDC* p_dc, CRect* rect);
-	void highlightOneBar(int nospike, CDC* p_dc) const;
-	void displayStimulus(CDC* p_dc, CRect* rect) const;
+	void highlightOneBar(int no_spike, CDC* p_dc) const;
+	void displayStimulus(CDC* p_dc, const CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

@@ -1462,8 +1462,8 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	getFileInfos(str_comment);
 
 	// histogram type and bin value
-	m_xfirst = m_timefirst; // abcissa first
-	m_xlast = m_timelast; // abcissa last
+	m_xfirst = m_timefirst; // abscissa first
+	m_xlast = m_timelast; // abscissa last
 	str_comment += _T("Dot Display"); // Dot display
 	const auto ui_flag = p_dc->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
 	auto line = p_dc->DrawText(str_comment, str_comment.GetLength(), comment_rect,
@@ -1479,12 +1479,12 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	disp_rect.left += tm.tmDescent;
 	disp_rect.right -= tm.tmDescent;
 
-	// print left abcissa value
+	// print left abscissa value
 	CString cs_xleft;
 	cs_xleft.Format(_T("%1.3f"), m_xfirst);
 	p_dc->TextOut(disp_rect.left, disp_rect.bottom, cs_xleft);
 
-	// print right abcissa value + unit
+	// print right abscissa value + unit
 	CString cs_xright;
 	cs_xright.Format(_T("%1.3f s"), m_xlast);
 	const auto left = p_dc->GetTextExtent(cs_xright);
@@ -1492,7 +1492,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 
 	// display XY axis
 	p_dc->SelectStockObject(BLACK_PEN);
-	// abcissa
+	// abscissa
 	p_dc->MoveTo(disp_rect.left, disp_rect.bottom);
 	p_dc->LineTo(disp_rect.right, disp_rect.bottom);
 
@@ -1726,8 +1726,8 @@ void ViewSpikeHist::displayHistogram(CDC* p_dc, CRect* pRect)
 
 	// histogram type and bin value
 	auto divisor = 1.f; // factor to normalize histograms
-	m_xfirst = m_timefirst; // abcissa first
-	m_xlast = m_timelast; // abcissa last
+	m_xfirst = m_timefirst; // abscissa first
+	m_xlast = m_timelast; // abscissa last
 	auto binms = 1.f;
 	switch (m_bhistType)
 	{
@@ -1765,7 +1765,7 @@ void ViewSpikeHist::displayHistogram(CDC* p_dc, CRect* pRect)
 	               DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK);
 	p_dc->SetTextAlign(ui_flag);
 
-	// print abcissa first and last values
+	// print abscissa first and last values
 	CString cs_xleft;
 	CString cs_xright;
 	switch (m_bhistType)
@@ -1845,8 +1845,8 @@ void ViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 	const auto pold_brush = static_cast<CBrush*>(p_dc->SelectStockObject(BLACK_BRUSH));
 
 	// histogram type and bin value
-	m_xfirst = m_timefirst; // abcissa first
-	m_xlast = m_timelast; // abcissa last
+	m_xfirst = m_timefirst; // abscissa first
+	m_xlast = m_timelast; // abscissa last
 
 	// update Peristimulus-Autocorrelation histogram rectangle
 	auto ipsheight = MulDiv(disp_rect.Width(), 25, 100);
@@ -1970,7 +1970,7 @@ void ViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 	               DT_NOPREFIX | DT_NOCLIP | DT_LEFT | DT_WORDBREAK);
 	p_dc->SetTextAlign(ui_flag);
 
-	// display abcissa of PSH
+	// display abscissa of PSH
 	CString cs_xleft;
 	CString cs_xright;
 	cs_xleft.Format(_T("%1.3f"), m_timefirst);
@@ -1991,7 +1991,7 @@ void ViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 	p_dc->TextOut(scaletop.x + delta_xpix, drect.top + tm.tmDescent, _T("0"));
 	p_dc->SetTextAlign(ui_flag);
 
-	// display abcissa of autocorrelation
+	// display abscissa of autocorrelation
 	// print value of ordinate max vertically
 	CFont v_font; // vertical font
 	LOGFONT logv_font; // array describing font parameters
@@ -2006,14 +2006,14 @@ void ViewSpikeHist::displayPSTHAutoc(CDC* p_dc, CRect* pRect)
 	CString cs_xautoc;
 	cs_xautoc.Format(_T("%1.0f ms"), bin_s);
 
-	p_dc->SetTextAlign(TA_TOP | TA_RIGHT | TA_NOUPDATECP); // max autoc abcissa
+	p_dc->SetTextAlign(TA_TOP | TA_RIGHT | TA_NOUPDATECP); // max autoc abscissa
 	p_dc->TextOut(leftx, auto_rect_histog.top, cs_xautoc);
 
 	cs_xautoc.Format(_T("-%1.0f"), bin_s);
-	p_dc->SetTextAlign(TA_TOP | TA_LEFT | TA_NOUPDATECP); // min autoc abcissa
+	p_dc->SetTextAlign(TA_TOP | TA_LEFT | TA_NOUPDATECP); // min autoc abscissa
 	p_dc->TextOut(leftx, auto_rect_histog.bottom, cs_xautoc);
 
-	p_dc->SetTextAlign(TA_TOP | TA_CENTER | TA_NOUPDATECP); // center autoc abcissa
+	p_dc->SetTextAlign(TA_TOP | TA_CENTER | TA_NOUPDATECP); // center autoc abscissa
 	p_dc->TextOut(leftx, (auto_rect_histog.bottom + auto_rect_histog.top) / 2, _T("0"));
 
 	// end of vertical font...

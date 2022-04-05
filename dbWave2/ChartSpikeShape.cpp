@@ -28,7 +28,7 @@ ChartSpikeShapeWnd::ChartSpikeShapeWnd()
 ChartSpikeShapeWnd::~ChartSpikeShapeWnd()
 = default;
 
-void ChartSpikeShapeWnd::PlotDatatoDC(CDC* p_dc)
+void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
 		EraseBkgnd(p_dc);

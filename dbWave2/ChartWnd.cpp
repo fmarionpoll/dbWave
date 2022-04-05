@@ -239,7 +239,7 @@ void ChartWnd::PlotToBitmap(CDC* p_dc)
 	                         p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 	m_PlotDC.CreateCompatibleDC(p_dc);
 	const auto pold_plot_bitmap = m_PlotDC.SelectObject(&bitmap_plot);
-	PlotDatatoDC(&m_PlotDC);
+	PlotDataToDC(&m_PlotDC);
 	p_dc->BitBlt(0, 0, m_displayRect.right, m_displayRect.bottom, &m_PlotDC, 0, 0, SRCCOPY);
 	m_PlotDC.SelectObject(pold_plot_bitmap);
 }
@@ -250,12 +250,12 @@ void ChartWnd::OnPaint()
 	dc.IntersectClipRect(&m_clientRect);
 
 	if (!m_bUseDIB)
-		PlotDatatoDC(&dc);
+		PlotDataToDC(&dc);
 	else
 		PlotToBitmap(&dc);
 }
 
-void ChartWnd::PlotDatatoDC(CDC* p_dc)
+void ChartWnd::PlotDataToDC(CDC* p_dc)
 {
 }
 
@@ -1139,7 +1139,7 @@ void ChartWnd::PlotToBitmap(CBitmap* pBitmap)
 	CDC mem_dc;
 	mem_dc.CreateCompatibleDC(&dc);
 	mem_dc.SelectObject(pBitmap);
-	PlotDatatoDC(&mem_dc);
+	PlotDataToDC(&mem_dc);
 }
 
 int ChartWnd::hitCurve(CPoint point)

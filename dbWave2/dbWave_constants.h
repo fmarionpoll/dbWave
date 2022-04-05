@@ -100,7 +100,7 @@ constexpr auto BAR_BIAS = 1;
 constexpr auto BAR_GAIN = 4;
 
 // used with UpdateLegends()
-constexpr auto UPD_ABCISSA = 1; // update abcissa (1st, last pt)
+constexpr auto UPD_ABCISSA = 1; // update abscissa (1st, last pt)
 constexpr auto CHG_XSCALE = 2; // change scale bar channel
 constexpr auto UPD_XSCALE = 4; // update x scale
 constexpr auto CHG_XBAR = 8; // change bar length

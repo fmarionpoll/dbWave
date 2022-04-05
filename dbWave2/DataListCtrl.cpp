@@ -591,7 +591,7 @@ void CDataListCtrl::plot_data(CDataListCtrl_Row* ptr, ChartData* p_wnd, int iIma
 	mem_dc.SelectObject(&bitmap_plot);
 	mem_dc.SetMapMode(p_dc->GetMapMode());
 
-	p_wnd->PlotDatatoDC(&mem_dc);
+	p_wnd->PlotDataToDC(&mem_dc);
 	CPen pen;
 	pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
 	mem_dc.MoveTo(1, 0);
@@ -663,7 +663,7 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		mem_dc.SetMapMode(p_dc->GetMapMode());
 
 		//if (pdb_doc != nullptr)
-		p_wnd->PlotSingleSpkDatatoDC(&mem_dc);
+		p_wnd->PlotSingleSpkDataToDC(&mem_dc);
 
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black

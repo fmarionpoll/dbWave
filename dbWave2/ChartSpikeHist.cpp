@@ -48,7 +48,7 @@ void ChartSpikeHist::RemoveHistData()
 	}
 }
 
-void ChartSpikeHist::PlotDatatoDC(CDC* p_dc)
+void ChartSpikeHist::PlotDataToDC(CDC* p_dc)
 {
 	if (m_displayRect.right <= 0 && m_displayRect.bottom <= 0)
 	{

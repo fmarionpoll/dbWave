@@ -32,8 +32,8 @@ protected:
 	CEditCtrl mm_binISIms; // bin size (ms)
 	CEditCtrl mm_nbinsISI; // nbins ISI
 
-	CEditCtrl mm_timefirst; // first abcissa value
-	CEditCtrl mm_timelast; // last abcissa value
+	CEditCtrl mm_timefirst; // first abscissa value
+	CEditCtrl mm_timelast; // last abscissa value
 	CEditCtrl mm_spikeclass; // selected spike class
 	CEditCtrl mm_dotheight; // dot height
 	CEditCtrl mm_rowheight; // row height

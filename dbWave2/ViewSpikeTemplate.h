@@ -36,8 +36,8 @@ protected:
 	CEditCtrl mm_hitratesort;
 	CEditCtrl mm_ktolerance;
 	CEditCtrl mm_spikenoclass;
-	CEditCtrl mm_timefirst; // first abcissa value
-	CEditCtrl mm_timelast; // last abcissa value
+	CEditCtrl mm_timefirst; // first abscissa value
+	CEditCtrl mm_timelast; // last abscissa value
 	CEditCtrl mm_ifirstsortedclass;
 
 	CTemplateListWnd m_avgList{};

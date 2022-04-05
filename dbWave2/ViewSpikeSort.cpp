@@ -413,7 +413,7 @@ void ViewSpikeSort::updateFileParameters()
 
 void ViewSpikeSort::updateLegends()
 {
-	// update text abcissa and horizontal scroll position
+	// update text abscissa and horizontal scroll position
 	m_timeFirst = m_lFirst / m_pSpkList->GetAcqSampRate();
 	m_timeLast = m_lLast / m_pSpkList->GetAcqSampRate();
 	updateFileScroll();
@@ -542,7 +542,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(shortValue, 0));
 		break;
 
-	case HINT_CHANGEHZLIMITS: // -------------  abcissa have changed
+	case HINT_CHANGEHZLIMITS: // -------------  abscissa have changed
 		if (4 != m_psC->iparameter)
 		{
 			m_lFirst = xygraph_wnd_.GetTimeFirst();
