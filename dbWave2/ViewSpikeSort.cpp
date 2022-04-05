@@ -357,7 +357,7 @@ void ViewSpikeSort::updateFileParameters()
 	m_t1 = (m_psC->ileft * m_tunit) / m_pSpkList->GetAcqSampRate();
 	m_t2 = (m_psC->iright * m_tunit) / m_pSpkList->GetAcqSampRate();
 
-	m_ChartSpkWnd_Bar.SetSourceData(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, GetDocument());
 	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
 
 	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
@@ -786,7 +786,7 @@ void ViewSpikeSort::OnMeasure()
 	}
 
 	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
-	m_ChartSpkWnd_Bar.SetSourceData(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, GetDocument());
 
 	xygraph_wnd_.m_HZtags.SetTagVal(m_itaglow, m_psC->ilower);
 	xygraph_wnd_.m_HZtags.SetTagVal(m_itagup, m_psC->iupper);

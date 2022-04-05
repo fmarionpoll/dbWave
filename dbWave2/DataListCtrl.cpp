@@ -629,7 +629,7 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		if (iTab < 0)
 			iTab = 0;
 		const auto pspk_list = ptr->pspikeDoc->SetSpkList_AsCurrent(iTab);
-		p_wnd->SetSourceData(pspk_list, ptr->pspikeDoc);
+		p_wnd->SetSourceData_spklist_spikedoc(pspk_list, ptr->pspikeDoc);
 		p_wnd->SetPlotMode(m_spike_plot_mode, m_selected_class);
 		long l_first = 0;
 		auto l_last = ptr->pspikeDoc->GetAcqSize();

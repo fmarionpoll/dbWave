@@ -76,7 +76,7 @@ void ChartSpikeBarWnd::PlotDataToDC(CDC* p_dc)
 		}
 
 		// test presence of data
-		if (p_spikelist_SPKBAR == nullptr || p_spikelist_SPKBAR->GetTotalSpikes() == 0)
+		if (p_spikelist_SPKBAR == nullptr || p_spikelist_SPKBAR->GetTotalSpikes() <= 0)
 		{
 			if (!m_ballFiles)
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
@@ -303,7 +303,7 @@ void ChartSpikeBarWnd::displayStimulus(CDC* p_dc, const CRect* rect) const
 	p_dc->SelectObject(old_pen);
 }
 
-void ChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
+void ChartSpikeBarWnd::displayBars(CDC* p_dc, const CRect* rect)
 {
 	// prepare loop to display spikes
 	auto* old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
@@ -345,7 +345,7 @@ void ChartSpikeBarWnd::displayBars(CDC* p_dc, CRect* rect)
 	{
 		const Spike* spike = p_spikelist_SPKBAR->GetSpike(i_spike);
 
-			// skip spike if outside time range && option
+		// skip spike if outside time range && option
 		const auto l_spike_time = spike->get_time();
 		if (m_rangemode == RANGE_TIMEINTERVALS
 			&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
@@ -593,17 +593,16 @@ void ChartSpikeBarWnd::highlightOneBar(const int no_spike, CDC* p_dc) const
 	p_dc->SetROP2(old_rop);
 }
 
-int ChartSpikeBarWnd::SelectSpike(const int spikeno)
+int ChartSpikeBarWnd::SelectSpike(const int spike_no)
 {
-	// erase old selected spike
-	const auto oldselected = m_selectedspike;
+	const auto old_selected = m_selectedspike;
 	if (m_selectedspike >= 0)
 		DisplaySpike(m_selectedspike, FALSE);
 
-	DisplaySpike(spikeno, TRUE);
-	m_selectedspike = spikeno;
+	DisplaySpike(spike_no, TRUE);
+	m_selectedspike = spike_no;
 
-	return oldselected;
+	return old_selected;
 }
 
 // flag all spikes within a rectangle in screen coordinates

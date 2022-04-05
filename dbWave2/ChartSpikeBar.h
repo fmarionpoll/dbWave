@@ -42,19 +42,22 @@ public:
 		m_selclass = selclass;
 	}
 
-	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
+	void SetSourceData_spklist_dbwavedoc(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	{
 		p_dbwave_doc_ = p_document;
+		p_spike_doc_SPKBAR = p_dbwave_doc_->m_pSpk;
 		p_spikelist_SPKBAR = p_spk_list;
 		m_selectedspike = -1;
 		TRACE("set source data - list = %i\n", (p_spikelist_SPKBAR != nullptr));
 	}
 
-	void SetSourceData(SpikeList* p_spk_list, CSpikeDoc* p_spkdoc)
+	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document)
 	{
 		p_dbwave_doc_ = nullptr;
-		p_spike_doc_SPKBAR = p_spkdoc, p_spikelist_SPKBAR = p_spk_list;
+		p_spike_doc_SPKBAR = p_spike_document;
+		p_spikelist_SPKBAR = p_spk_list;
 		m_selectedspike = -1;
+		TRACE("set source data bis - list = %i\n", (p_spikelist_SPKBAR != nullptr));
 	}
 
 	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_SPKBAR = p_spk_list; }
@@ -78,7 +81,7 @@ public:
 
 	void DisplaySpike(int no_spike, BOOL b_select);
 	void DisplayFlaggedSpikes(BOOL bHighlight);
-	int SelectSpike(int spikeno);
+	int SelectSpike(int spike_no);
 
 	void SelectSpikesWithinRect(CRect* pRect, UINT nFlags) const;
 	BOOL IsSpikeWithinRange(int no_spike);
@@ -100,7 +103,7 @@ public:
 protected:
 	int hitCurve(CPoint point) override;
 	int hitCurveInDoc(CPoint point);
-	void displayBars(CDC* p_dc, CRect* rect);
+	void displayBars(CDC* p_dc, const CRect* rect);
 	void highlightOneBar(int no_spike, CDC* p_dc) const;
 	void displayStimulus(CDC* p_dc, const CRect* rect) const;
 

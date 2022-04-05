@@ -275,7 +275,7 @@ void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 		ASSERT(pspk_bars != NULL);
 		pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
 
-		pspk_bars->SetSourceData(p_spikelist_, pdbDoc);
+		pspk_bars->SetSourceData_spklist_dbwavedoc(p_spikelist_, pdbDoc);
 		pspk_bars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
 		pspk_bars->SetRangeMode(RANGE_INDEX);
 		pspk_bars->SetSpkIndexes(0, nspikes - 1);

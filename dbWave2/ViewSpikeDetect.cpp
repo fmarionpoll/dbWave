@@ -282,7 +282,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		ASSERT(m_pSpkList != nullptr);
 	}
 
-	m_chart_spike_bar.SetSourceData(m_pSpkList, pdb_doc);
+	m_chart_spike_bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, pdb_doc);
 	m_chart_spike_bar.SetPlotMode(PLOT_BLACK, 0);
 	m_chart_spike_shape.SetSourceData(m_pSpkList, pdb_doc);
 	m_chart_spike_shape.SetPlotMode(PLOT_BLACK, 0);
@@ -1136,7 +1136,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		old_spike_list_index = 0;
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(old_spike_list_index);
 
-	m_chart_spike_bar.SetSourceData(m_pSpkList, db_document);
+	m_chart_spike_bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, db_document);
 	m_chart_spike_shape.SetSourceData(m_pSpkList, db_document);
 
 
