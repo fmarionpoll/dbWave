@@ -72,6 +72,7 @@ void ChartSpikeBarWnd::PlotDataToDC(CDC* p_dc)
 			p_spike_doc_SPKBAR = p_dbwave_doc_->m_pSpk;
 			if (p_spike_doc_SPKBAR == nullptr)
 				continue;
+			p_spikelist_SPKBAR = p_spike_doc_SPKBAR->GetSpkList_Current();
 		}
 
 		// test presence of data

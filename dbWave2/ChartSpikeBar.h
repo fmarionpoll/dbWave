@@ -47,6 +47,7 @@ public:
 		p_dbwave_doc_ = p_document;
 		p_spikelist_SPKBAR = p_spk_list;
 		m_selectedspike = -1;
+		TRACE("set source data - list = %i\n", (p_spikelist_SPKBAR != nullptr));
 	}
 
 	void SetSourceData(SpikeList* p_spk_list, CSpikeDoc* p_spkdoc)

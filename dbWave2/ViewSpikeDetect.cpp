@@ -180,20 +180,20 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 	{
 		serialize_windows_state(b_save);
 		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-		p_app->options_viewdata.viewdata = *(m_ChartDataWnd_Source.GetScopeParameters());
+		p_app->options_viewdata.viewdata = *(m_chart_data_source.GetScopeParameters());
 	}
 	dbTableView::OnActivateView(activate, activated_view, de_activated_view);
 }
 
 void ViewSpikeDetection::update_legends()
 {
-	const auto l_first = m_ChartDataWnd_Source.GetDataFirst();
-	const auto l_last = m_ChartDataWnd_Source.GetDataLast();
-	m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last);
+	const auto l_first = m_chart_data_source.GetDataFirst();
+	const auto l_last = m_chart_data_source.GetDataLast();
+	m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
 
 	// draw charts
-	m_ChartSpkWnd_Bar.SetTimeIntervals(l_first, l_last);
-	m_ChartSpkWnd_Shape.SetTimeIntervals(l_first, l_last);
+	m_chart_spike_bar.SetTimeIntervals(l_first, l_last);
+	m_chart_spike_shape.SetTimeIntervals(l_first, l_last);
 	update_spike_shape_window_scale(FALSE);
 
 	// update text abscissa and horizontal scroll position
@@ -219,10 +219,10 @@ void ViewSpikeDetection::update_legends()
 	update_legend_detection_wnd();
 
 	// update data displayed
-	m_ChartSpkWnd_Bar.Invalidate();
-	m_ChartDataWnd_Detect.Invalidate();
-	m_ChartDataWnd_Source.Invalidate();
-	m_ChartSpkWnd_Shape.Invalidate();
+	m_chart_spike_bar.Invalidate();
+	m_chart_data_filtered.Invalidate();
+	m_chart_data_source.Invalidate();
+	m_chart_spike_shape.Invalidate();
 	UpdateData(FALSE);
 
 	// update number of spikes
@@ -270,22 +270,22 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		m_pSpkDoc->SetSpkList_Size(i_size);
 		for (auto i = 0; i < i_size; i++)
 		{
-			auto p_l = m_pSpkDoc->SetSpkList_AsCurrent(i);
-			if (p_l == nullptr)
+			auto spike_list_current = m_pSpkDoc->SetSpkList_AsCurrent(i);
+			if (spike_list_current == nullptr)
 			{
 				m_pSpkDoc->AddSpkList();
-				p_l = m_pSpkDoc->GetSpkList_Current();
+				spike_list_current = m_pSpkDoc->GetSpkList_Current();
 			}
-			p_l->InitSpikeList(pdb_doc->m_pDat, m_spk_detect_array_current.GetItem(i));
+			spike_list_current->InitSpikeList(pdb_doc->m_pDat, m_spk_detect_array_current.GetItem(i));
 		}
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(0);
 		ASSERT(m_pSpkList != nullptr);
 	}
 
-	m_ChartSpkWnd_Bar.SetSourceData(m_pSpkList, pdb_doc);
-	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_BLACK, 0);
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, pdb_doc);
-	m_ChartSpkWnd_Shape.SetPlotMode(PLOT_BLACK, 0);
+	m_chart_spike_bar.SetSourceData(m_pSpkList, pdb_doc);
+	m_chart_spike_bar.SetPlotMode(PLOT_BLACK, 0);
+	m_chart_spike_shape.SetSourceData(m_pSpkList, pdb_doc);
+	m_chart_spike_shape.SetPlotMode(PLOT_BLACK, 0);
 	update_VT_tags();
 
 	// update interface elements
@@ -297,8 +297,8 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		highlight_spikes(TRUE);
 	}
 
-	m_ChartSpkWnd_Bar.Invalidate();
-	m_ChartSpkWnd_Shape.Invalidate();
+	m_chart_spike_bar.Invalidate();
+	m_chart_spike_shape.Invalidate();
 
 	// update nb spikes
 	const auto n_spikes = static_cast<UINT>(m_pSpkList->GetTotalSpikes());
@@ -333,10 +333,10 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	}
 
 	// tell source_view to highlight spk
-	m_ChartDataWnd_Detect.SetHighlightData(&m_DWintervals);
-	m_ChartDataWnd_Detect.Invalidate();
-	m_ChartDataWnd_Source.SetHighlightData(&m_DWintervals);
-	m_ChartDataWnd_Source.Invalidate();
+	m_chart_data_filtered.SetHighlightData(&m_DWintervals);
+	m_chart_data_filtered.Invalidate();
+	m_chart_data_source.SetHighlightData(&m_DWintervals);
+	m_chart_data_source.Invalidate();
 	
 }
 
@@ -418,23 +418,23 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		update_combos_detect_and_transforms();
 	}
 	// change doc attached to line view
-	m_ChartDataWnd_Detect.AttachDataFile(p_data_file);
-	m_ChartDataWnd_Source.AttachDataFile(p_data_file);
+	m_chart_data_filtered.AttachDataFile(p_data_file);
+	m_chart_data_source.AttachDataFile(p_data_file);
 
 	// update source view display
-	if (m_ChartDataWnd_Detect.GetChanlistSize() < 1)
+	if (m_chart_data_filtered.GetChanlistSize() < 1)
 	{
-		m_ChartDataWnd_Detect.RemoveAllChanlistItems();
-		m_ChartDataWnd_Detect.AddChanlistItem(0, 0);
-		CChanlistItem* channel_item = m_ChartDataWnd_Detect.GetChanlistItem(0);
+		m_chart_data_filtered.RemoveAllChanlistItems();
+		m_chart_data_filtered.AddChanlistItem(0, 0);
+		CChanlistItem* channel_item = m_chart_data_filtered.GetChanlistItem(0);
 		channel_item->SetColor(0);
-		m_ChartDataWnd_Detect.m_HZtags.RemoveAllTags();
+		m_chart_data_filtered.m_HZtags.RemoveAllTags();
 		m_p_detect_parameters->detectThreshold = channel_item->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
-		m_ChartDataWnd_Detect.m_HZtags.AddTag(m_p_detect_parameters->detectThreshold, 0);
+		m_chart_data_filtered.m_HZtags.AddTag(m_p_detect_parameters->detectThreshold, 0);
 	}
 
 	//add all channels to detection window
-	auto channel_list_size = m_ChartDataWnd_Source.GetChanlistSize();
+	auto channel_list_size = m_chart_data_source.GetChanlistSize();
 	const int n_document_channels = wave_format->scan_count;
 	for (auto i = 0; i < n_document_channels; i++)
 	{
@@ -443,7 +443,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		for (auto j = channel_list_size - 1; j >= 0; j--)
 		{
 			// test if this data chan is present + no transformation
-			const CChanlistItem* channel_item = m_ChartDataWnd_Source.GetChanlistItem(j);
+			const CChanlistItem* channel_item = m_chart_data_source.GetChanlistItem(j);
 			if (channel_item->GetSourceChan() == i
 				&& channel_item->GetTransformMode() == 0)
 			{
@@ -453,33 +453,33 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		}
 		if (b_present == FALSE) // no display chan contains that doc chan
 		{
-			m_ChartDataWnd_Source.AddChanlistItem(i, 0);
+			m_chart_data_source.AddChanlistItem(i, 0);
 			channel_list_size++;
 		}
-		m_ChartDataWnd_Source.GetChanlistItem(i)->SetColor(static_cast<WORD>(i));
+		m_chart_data_source.GetChanlistItem(i)->SetColor(static_cast<WORD>(i));
 	}
 
 	// if browse through another file ; keep previous display parameters & load data
-	auto l_first = m_ChartDataWnd_Detect.GetDataFirst();
-	auto l_last = m_ChartDataWnd_Detect.GetDataLast();
+	auto l_first = m_chart_data_filtered.GetDataFirst();
+	auto l_last = m_chart_data_filtered.GetDataLast();
 	if (options_view_data->bEntireRecord && bUpdateInterface)
 	{
 		l_first = 0;
 		l_last = p_data_file->GetDOCchanLength() - 1;
 	}
-	m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last);
-	m_ChartDataWnd_Source.GetDataFromDoc(l_first, l_last);
+	m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
+	m_chart_data_source.GetDataFromDoc(l_first, l_last);
 
 	if (bUpdateInterface)
 	{
-		m_ChartDataWnd_Detect.Invalidate();
-		m_ChartDataWnd_Source.Invalidate();
+		m_chart_data_filtered.Invalidate();
+		m_chart_data_source.Invalidate();
 		// adjust scroll bar (size of button and left/right limits)
 		m_filescroll_infos.fMask = SIF_ALL;
 		m_filescroll_infos.nMin = 0;
-		m_filescroll_infos.nMax = m_ChartDataWnd_Detect.GetDataLast();
+		m_filescroll_infos.nMax = m_chart_data_filtered.GetDataLast();
 		m_filescroll_infos.nPos = 0;
-		m_filescroll_infos.nPage = m_ChartDataWnd_Detect.GetDataLast() - m_ChartDataWnd_Detect.GetDataFirst() + 1;
+		m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLast() - m_chart_data_filtered.GetDataFirst() + 1;
 		m_filescroll.SetScrollInfo(&m_filescroll_infos);
 
 		m_datacomments = wave_format->GetComments(_T(" "));
@@ -589,10 +589,10 @@ void ViewSpikeDetection::define_sub_classed_items()
 	VERIFY(mm_ichanselected2.SubclassDlgItem(IDC_CHANSELECTED2, this));
 
 	// control derived from CChartWnd
-	VERIFY(m_ChartSpkWnd_Shape.SubclassDlgItem(IDC_DISPLAYSPIKES, this));
-	VERIFY(m_ChartSpkWnd_Bar.SubclassDlgItem(IDC_DISPLAYBARS, this));
-	VERIFY(m_ChartDataWnd_Detect.SubclassDlgItem(IDC_DISPLAYDETECT, this));
-	VERIFY(m_ChartDataWnd_Source.SubclassDlgItem(IDC_DISPLAYDATA, this));
+	VERIFY(m_chart_spike_shape.SubclassDlgItem(IDC_DISPLAYSPIKES, this));
+	VERIFY(m_chart_spike_bar.SubclassDlgItem(IDC_DISPLAYBARS, this));
+	VERIFY(m_chart_data_filtered.SubclassDlgItem(IDC_DISPLAYDETECT, this));
+	VERIFY(m_chart_data_source.SubclassDlgItem(IDC_DISPLAYDATA, this));
 
 	// load left scrollbar and button
 	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY, this));
@@ -630,14 +630,14 @@ void ViewSpikeDetection::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 
 	// load file data
-	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
-		m_ChartDataWnd_Detect.m_HZtags.AddTag(0, 0);
+	if (m_chart_data_filtered.m_HZtags.GetNTags() < 1)
+		m_chart_data_filtered.m_HZtags.AddTag(0, 0);
 
 	update_file_parameters(TRUE);
-	m_ChartDataWnd_Detect.SetScopeParameters(&(options_view_data->viewdata));
-	m_ChartDataWnd_Detect.Invalidate();
-	m_ChartDataWnd_Source.SetScopeParameters(&(options_view_data->viewdata));
-	m_ChartDataWnd_Source.Invalidate();
+	m_chart_data_filtered.SetScopeParameters(&(options_view_data->viewdata));
+	m_chart_data_filtered.Invalidate();
+	m_chart_data_source.SetScopeParameters(&(options_view_data->viewdata));
+	m_chart_data_source.Invalidate();
 }
 
 LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
@@ -660,10 +660,10 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 		// ----------------------------- move horizontal cursor / source data
 	case HINT_MOVEHZTAG:
-		m_p_detect_parameters->detectThreshold = m_ChartDataWnd_Detect.m_HZtags.GetValue(threshold);
-		m_thresholdval = m_ChartDataWnd_Detect.GetChanlistItem(0)
+		m_p_detect_parameters->detectThreshold = m_chart_data_filtered.m_HZtags.GetValue(threshold);
+		m_thresholdval = m_chart_data_filtered.GetChanlistItem(0)
 			->ConvertDataBinsToVolts(
-				m_ChartDataWnd_Detect.m_HZtags.GetValue(threshold)) * 1000.f;
+				m_chart_data_filtered.m_HZtags.GetValue(threshold)) * 1000.f;
 		m_p_detect_parameters->detectThresholdmV = m_thresholdval;
 		mm_thresholdval.m_bEntryDone = TRUE;
 		OnEnChangeThresholdval();
@@ -671,8 +671,8 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 		// ----------------------------- select bar/display bars or zoom
 	case HINT_CHANGEHZLIMITS: 
-		m_ChartDataWnd_Detect.GetDataFromDoc(m_ChartSpkWnd_Bar.GetTimeFirst(), m_ChartSpkWnd_Bar.GetTimeLast());
-		m_ChartDataWnd_Source.GetDataFromDoc(m_ChartSpkWnd_Bar.GetTimeFirst(), m_ChartSpkWnd_Bar.GetTimeLast());
+		m_chart_data_filtered.GetDataFromDoc(m_chart_spike_bar.GetTimeFirst(), m_chart_spike_bar.GetTimeLast());
+		m_chart_data_source.GetDataFromDoc(m_chart_spike_bar.GetTimeFirst(), m_chart_spike_bar.GetTimeLast());
 		update_legends();
 		break;
 
@@ -690,15 +690,15 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEZOOM:
 		update_spike_shape_window_scale(TRUE);
-		m_ChartSpkWnd_Shape.Invalidate();
+		m_chart_spike_shape.Invalidate();
 		break;
 
 	case HINT_VIEWSIZECHANGED:
-		if (i_id == m_ChartDataWnd_Source.GetDlgCtrlID())
+		if (i_id == m_chart_data_source.GetDlgCtrlID())
 		{
-			const auto l_first = m_ChartDataWnd_Source.GetDataFirst(); // get source data time range
-			const auto l_last = m_ChartDataWnd_Source.GetDataLast();
-			m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last);
+			const auto l_first = m_chart_data_source.GetDataFirst(); // get source data time range
+			const auto l_last = m_chart_data_source.GetDataLast();
+			m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
 		}
 		// else if(iID == m_displayDetect.GetDlgCtrlID())
 		// UpdateLegends updates data window from m_displayDetect
@@ -706,18 +706,18 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		options_view_data->viewspkdetectfiltered = *m_ChartDataWnd_Detect.GetScopeParameters();
-		options_view_data->viewspkdetectdata = *m_ChartDataWnd_Source.GetScopeParameters();
-		options_view_data->viewspkdetectspk = *m_ChartSpkWnd_Bar.GetScopeParameters();
-		options_view_data->viewspkdetectbars = *m_ChartSpkWnd_Shape.GetScopeParameters();
+		options_view_data->viewspkdetectfiltered = *m_chart_data_filtered.GetScopeParameters();
+		options_view_data->viewspkdetectdata = *m_chart_data_source.GetScopeParameters();
+		options_view_data->viewspkdetectspk = *m_chart_spike_bar.GetScopeParameters();
+		options_view_data->viewspkdetectbars = *m_chart_spike_shape.GetScopeParameters();
 		break;
 
 	case HINT_DEFINEDRECT:
 		if (m_cursor_state == CURSOR_CROSS)
 		{
-			const auto rect = m_ChartDataWnd_Detect.GetDefinedRect();
-			int l_limit_left = m_ChartDataWnd_Detect.GetDataOffsetfromPixel(rect.left);
-			int l_limit_right = m_ChartDataWnd_Detect.GetDataOffsetfromPixel(rect.right);
+			const auto rect = m_chart_data_filtered.GetDefinedRect();
+			int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(rect.left);
+			int l_limit_right = m_chart_data_filtered.GetDataOffsetfromPixel(rect.right);
 			if (l_limit_left > l_limit_right)
 			{
 				const int i = l_limit_right;
@@ -730,9 +730,9 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			m_pSpkDoc->m_stimulus_intervals.n_items++;
 			update_VT_tags();
 
-			m_ChartSpkWnd_Bar.Invalidate();
-			m_ChartDataWnd_Detect.Invalidate();
-			m_ChartDataWnd_Source.Invalidate();
+			m_chart_spike_bar.Invalidate();
+			m_chart_data_filtered.Invalidate();
+			m_chart_data_source.Invalidate();
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 		}
 		break;
@@ -746,17 +746,17 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEVERTTAG: //13
 	{
 		int lvalue = m_pSpkDoc->m_stimulus_intervals.GetAt(threshold);
-		if (i_id == m_ChartDataWnd_Detect.GetDlgCtrlID())
-			lvalue = m_ChartDataWnd_Detect.m_VTtags.GetTagLVal(threshold);
-		else if (i_id == m_ChartDataWnd_Source.GetDlgCtrlID())
-			lvalue = m_ChartDataWnd_Source.m_VTtags.GetTagLVal(threshold);
+		if (i_id == m_chart_data_filtered.GetDlgCtrlID())
+			lvalue = m_chart_data_filtered.m_VTtags.GetTagLVal(threshold);
+		else if (i_id == m_chart_data_source.GetDlgCtrlID())
+			lvalue = m_chart_data_source.m_VTtags.GetTagLVal(threshold);
 
 		m_pSpkDoc->m_stimulus_intervals.SetAt(threshold, lvalue);
 		update_VT_tags();
 
-		m_ChartSpkWnd_Bar.Invalidate();
-		m_ChartDataWnd_Detect.Invalidate();
-		m_ChartDataWnd_Source.Invalidate();
+		m_chart_spike_bar.Invalidate();
+		m_chart_data_filtered.Invalidate();
+		m_chart_data_source.Invalidate();
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 	}
 	break;
@@ -765,14 +765,14 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_LMOUSEBUTTONDOW_CTRL:
 	{
 		const int cx = LOWORD(lParam);
-		const int l_limit_left = m_ChartDataWnd_Detect.GetDataOffsetfromPixel(cx);
+		const int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(cx);
 		m_pSpkDoc->m_stimulus_intervals.SetAtGrow(m_pSpkDoc->m_stimulus_intervals.n_items, l_limit_left);
 		m_pSpkDoc->m_stimulus_intervals.n_items++;
 		update_VT_tags();
 
-		m_ChartSpkWnd_Bar.Invalidate();
-		m_ChartDataWnd_Detect.Invalidate();
-		m_ChartDataWnd_Source.Invalidate();
+		m_chart_spike_bar.Invalidate();
+		m_chart_data_filtered.Invalidate();
+		m_chart_data_source.Invalidate();
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 	}
 	break;
@@ -798,7 +798,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITCHANNEL: // change channel if different
-		if (i_id == m_ChartDataWnd_Detect.GetDlgCtrlID())
+		if (i_id == m_chart_data_filtered.GetDlgCtrlID())
 		{
 			if (m_ichanselected != threshold)
 			{
@@ -806,7 +806,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				SetDlgItemInt(IDC_CHANSELECTED, m_ichanselected);
 			}
 		}
-		else if (i_id == m_ChartDataWnd_Source.GetDlgCtrlID())
+		else if (i_id == m_chart_data_source.GetDlgCtrlID())
 		{
 			if (m_ichanselected2 != threshold)
 			{
@@ -854,8 +854,8 @@ void ViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 		m_filescroll.GetScrollInfo(&m_filescroll_infos, SIF_ALL);
 		l_first = m_filescroll_infos.nPos;
 		l_last = l_first + static_cast<long>(m_filescroll_infos.nPage) - 1;
-		m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last);
-		m_ChartDataWnd_Source.GetDataFromDoc(l_first, l_last);
+		m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
+		m_chart_data_source.GetDataFromDoc(l_first, l_last);
 		update_legends();
 		break;
 
@@ -868,8 +868,8 @@ void ViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 void ViewSpikeDetection::update_file_scroll()
 {
 	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
-	m_filescroll_infos.nPos = m_ChartDataWnd_Detect.GetDataFirst();
-	m_filescroll_infos.nPage = m_ChartDataWnd_Detect.GetDataLast() - m_ChartDataWnd_Detect.GetDataFirst() + 1;
+	m_filescroll_infos.nPos = m_chart_data_filtered.GetDataFirst();
+	m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLast() - m_chart_data_filtered.GetDataFirst() + 1;
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 
@@ -885,12 +885,12 @@ void ViewSpikeDetection::scroll_file(UINT nSBCode, UINT nPos)
 	case SB_PAGELEFT: // scroll one page left
 	case SB_PAGERIGHT: // scroll one page right
 	case SB_RIGHT: // scroll to end right
-		b_result = m_ChartDataWnd_Source.ScrollDataFromDoc(nSBCode);
+		b_result = m_chart_data_source.ScrollDataFromDoc(nSBCode);
 		break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		b_result = m_ChartDataWnd_Source.GetDataFromDoc(
-			static_cast<long>(nPos) * (m_ChartDataWnd_Source.GetDocumentLast()) / 100L);
+		b_result = m_chart_data_source.GetDataFromDoc(
+			static_cast<long>(nPos) * (m_chart_data_source.GetDocumentLast()) / 100L);
 		break;
 	default: // NOP: set position only
 		break;
@@ -902,74 +902,74 @@ void ViewSpikeDetection::scroll_file(UINT nSBCode, UINT nPos)
 
 void ViewSpikeDetection::OnFormatYscaleCentercurve()
 {
-	m_ChartDataWnd_Detect.CenterChan(0);
-	m_ChartDataWnd_Detect.Invalidate();
+	m_chart_data_filtered.CenterChan(0);
+	m_chart_data_filtered.Invalidate();
 
-	for (auto i = 0; i < m_ChartDataWnd_Source.GetChanlistSize(); i++)
-		m_ChartDataWnd_Source.CenterChan(i);
-	m_ChartDataWnd_Source.Invalidate();
+	for (auto i = 0; i < m_chart_data_source.GetChanlistSize(); i++)
+		m_chart_data_source.CenterChan(i);
+	m_chart_data_source.Invalidate();
 
-	m_ChartSpkWnd_Bar.CenterCurve();
-	m_ChartSpkWnd_Bar.Invalidate();
+	m_chart_spike_bar.CenterCurve();
+	m_chart_spike_bar.Invalidate();
 
-	m_ChartSpkWnd_Shape.SetYWExtOrg(m_ChartSpkWnd_Bar.GetYWExtent(), m_ChartSpkWnd_Bar.GetYWOrg());
+	m_chart_spike_shape.SetYWExtOrg(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
 	update_spike_shape_window_scale(TRUE);
-	m_ChartSpkWnd_Shape.Invalidate();
+	m_chart_spike_shape.Invalidate();
 }
 
 void ViewSpikeDetection::OnFormatYscaleGainadjust()
 {
-	m_ChartDataWnd_Detect.MaxgainChan(0);
-	m_ChartDataWnd_Detect.SetChanlistVoltsExtent(-1, nullptr);
-	m_ChartDataWnd_Detect.Invalidate();
+	m_chart_data_filtered.MaxgainChan(0);
+	m_chart_data_filtered.SetChanlistVoltsExtent(-1, nullptr);
+	m_chart_data_filtered.Invalidate();
 
-	for (int i = 0; i < m_ChartDataWnd_Source.GetChanlistSize(); i++)
-		m_ChartDataWnd_Source.MaxgainChan(i);
-	m_ChartDataWnd_Source.SetChanlistVoltsExtent(-1, nullptr);
-	m_ChartDataWnd_Source.Invalidate();
+	for (int i = 0; i < m_chart_data_source.GetChanlistSize(); i++)
+		m_chart_data_source.MaxgainChan(i);
+	m_chart_data_source.SetChanlistVoltsExtent(-1, nullptr);
+	m_chart_data_source.Invalidate();
 
-	m_ChartSpkWnd_Bar.MaxCenter();
-	m_ChartSpkWnd_Bar.Invalidate();
+	m_chart_spike_bar.MaxCenter();
+	m_chart_spike_bar.Invalidate();
 
-	m_ChartSpkWnd_Shape.SetYWExtOrg(m_ChartSpkWnd_Bar.GetYWExtent(), m_ChartSpkWnd_Bar.GetYWOrg());
-	m_ChartSpkWnd_Shape.SetXWExtOrg(m_pSpkList->GetSpikeLength(), 0);
+	m_chart_spike_shape.SetYWExtOrg(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
+	m_chart_spike_shape.SetXWExtOrg(m_pSpkList->GetSpikeLength(), 0);
 	update_spike_shape_window_scale(FALSE);
-	m_ChartSpkWnd_Shape.Invalidate();
+	m_chart_spike_shape.Invalidate();
 }
 
 void ViewSpikeDetection::OnFormatSplitcurves()
 {
-	m_ChartDataWnd_Detect.SplitChans();
-	m_ChartDataWnd_Detect.SetChanlistVoltsExtent(-1, nullptr);
-	m_ChartDataWnd_Detect.Invalidate();
+	m_chart_data_filtered.SplitChans();
+	m_chart_data_filtered.SetChanlistVoltsExtent(-1, nullptr);
+	m_chart_data_filtered.Invalidate();
 
-	m_ChartDataWnd_Source.SplitChans();
-	m_ChartDataWnd_Source.SetChanlistVoltsExtent(-1, nullptr);
-	m_ChartDataWnd_Source.Invalidate();
+	m_chart_data_source.SplitChans();
+	m_chart_data_source.SetChanlistVoltsExtent(-1, nullptr);
+	m_chart_data_source.Invalidate();
 
 	// center curve and display bar & spikes
-	m_ChartSpkWnd_Bar.MaxCenter();
-	m_ChartSpkWnd_Bar.Invalidate();
+	m_chart_spike_bar.MaxCenter();
+	m_chart_spike_bar.Invalidate();
 
-	m_ChartSpkWnd_Shape.SetYWExtOrg(m_ChartSpkWnd_Bar.GetYWExtent(), m_ChartSpkWnd_Bar.GetYWOrg());
+	m_chart_spike_shape.SetYWExtOrg(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
 	update_spike_shape_window_scale(FALSE);
-	m_ChartSpkWnd_Shape.Invalidate();
+	m_chart_spike_shape.Invalidate();
 }
 
 void ViewSpikeDetection::OnFormatAlldata()
 {
 	const auto l_last = GetDocument()->m_pDat->GetDOCchanLength();
-	m_ChartDataWnd_Detect.ResizeChannels(0, l_last);
-	m_ChartDataWnd_Detect.GetDataFromDoc(0, l_last);
+	m_chart_data_filtered.ResizeChannels(0, l_last);
+	m_chart_data_filtered.GetDataFromDoc(0, l_last);
 
-	m_ChartDataWnd_Source.ResizeChannels(0, l_last);
-	m_ChartDataWnd_Source.GetDataFromDoc(0, l_last);
+	m_chart_data_source.ResizeChannels(0, l_last);
+	m_chart_data_source.GetDataFromDoc(0, l_last);
 
 	const auto x_we = m_pSpkList->GetSpikeLength();
-	if (x_we != m_ChartSpkWnd_Shape.GetXWExtent() || 0 != m_ChartSpkWnd_Shape.GetXWOrg())
-		m_ChartSpkWnd_Shape.SetXWExtOrg(x_we, 0);
-	m_ChartSpkWnd_Bar.CenterCurve();
-	m_ChartSpkWnd_Shape.SetYWExtOrg(m_ChartSpkWnd_Bar.GetYWExtent(), m_ChartSpkWnd_Bar.GetYWOrg());
+	if (x_we != m_chart_spike_shape.GetXWExtent() || 0 != m_chart_spike_shape.GetXWOrg())
+		m_chart_spike_shape.SetXWExtOrg(x_we, 0);
+	m_chart_spike_bar.CenterCurve();
+	m_chart_spike_shape.SetYWExtOrg(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
 
 	update_legends();
 }
@@ -1008,7 +1008,7 @@ void ViewSpikeDetection::OnToolsDetectionparameters()
 	dlg.m_iDetectParmsDlg = m_i_detect_parameters; // index spk detect parm currently selected / array
 	dlg.m_pDetectSettingsArray = &m_spk_detect_array_current; // spike detection parameters array
 	dlg.mdPM = options_view_data;
-	dlg.m_pChartDataDetectWnd = &m_ChartDataWnd_Detect;
+	dlg.m_pChartDataDetectWnd = &m_chart_data_filtered;
 	if (IDOK == dlg.DoModal())
 	{
 		// copy modified parameters into array
@@ -1023,13 +1023,13 @@ void ViewSpikeDetection::OnSelchangeDetectchan()
 	UpdateData(TRUE);
 	m_p_detect_parameters->detectChan = m_CBdetectChan.GetCurSel();
 	m_p_detect_parameters->bChanged = TRUE;
-	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
-	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+	m_chart_data_filtered.SetChanlistOrdinates(0, m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
+	CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(0);
 	m_p_detect_parameters->detectThreshold = pchan->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
-	m_ChartDataWnd_Detect.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
-	m_ChartDataWnd_Detect.GetDataFromDoc();
-	m_ChartDataWnd_Detect.AutoZoomChan(0);
-	m_ChartDataWnd_Detect.Invalidate();
+	m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
+	m_chart_data_filtered.GetDataFromDoc();
+	m_chart_data_filtered.AutoZoomChan(0);
+	m_chart_data_filtered.Invalidate();
 }
 
 void ViewSpikeDetection::OnSelchangeTransform()
@@ -1037,10 +1037,10 @@ void ViewSpikeDetection::OnSelchangeTransform()
 	UpdateData(TRUE);
 	m_p_detect_parameters->detectTransform = m_CBtransform.GetCurSel();
 	m_p_detect_parameters->bChanged = TRUE;
-	m_ChartDataWnd_Detect.SetChanlistTransformMode(0, m_p_detect_parameters->detectTransform);
-	m_ChartDataWnd_Detect.GetDataFromDoc();
-	m_ChartDataWnd_Detect.AutoZoomChan(0);
-	m_ChartDataWnd_Detect.Invalidate();
+	m_chart_data_filtered.SetChanlistTransformMode(0, m_p_detect_parameters->detectTransform);
+	m_chart_data_filtered.GetDataFromDoc();
+	m_chart_data_filtered.AutoZoomChan(0);
+	m_chart_data_filtered.Invalidate();
 	update_legend_detection_wnd();
 }
 
@@ -1122,9 +1122,9 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		{
 			detect_stimulus_1(i); 
 			update_VT_tags(); 
-			m_ChartSpkWnd_Bar.Invalidate();
-			m_ChartDataWnd_Detect.Invalidate();
-			m_ChartDataWnd_Source.Invalidate();
+			m_chart_spike_bar.Invalidate();
+			m_chart_data_filtered.Invalidate();
+			m_chart_data_source.Invalidate();
 		}
 	}
 
@@ -1136,23 +1136,23 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		old_spike_list_index = 0;
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(old_spike_list_index);
 
-	m_ChartSpkWnd_Bar.SetSourceData(m_pSpkList, db_document);
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, db_document);
+	m_chart_spike_bar.SetSourceData(m_pSpkList, db_document);
+	m_chart_spike_shape.SetSourceData(m_pSpkList, db_document);
 
 
 	// center spikes, change nb spikes and update content of draw buttons
 	if (options_view_data->bMaximizeGain
-		|| m_ChartSpkWnd_Bar.GetYWExtent() == 0
-		|| m_ChartSpkWnd_Bar.GetYWOrg() == 0
-		|| m_ChartSpkWnd_Shape.GetYWExtent() == 0
-		|| m_ChartSpkWnd_Shape.GetYWOrg() == 0)
+		|| m_chart_spike_bar.GetYWExtent() == 0
+		|| m_chart_spike_bar.GetYWOrg() == 0
+		|| m_chart_spike_shape.GetYWExtent() == 0
+		|| m_chart_spike_shape.GetYWOrg() == 0)
 	{
-		m_ChartSpkWnd_Bar.MaxCenter();
-		m_ChartSpkWnd_Shape.SetYWExtOrg(m_ChartSpkWnd_Bar.GetYWExtent(), m_ChartSpkWnd_Bar.GetYWOrg());
+		m_chart_spike_bar.MaxCenter();
+		m_chart_spike_shape.SetYWExtOrg(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
 		int spklen = 60;
 		if (m_pSpkList != nullptr)
 			spklen = m_pSpkList->GetSpikeLength();
-		m_ChartSpkWnd_Shape.SetXWExtOrg(spklen, 0);
+		m_chart_spike_shape.SetXWExtOrg(spklen, 0);
 		update_spike_shape_window_scale(FALSE);
 	}
 
@@ -1180,8 +1180,8 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 	auto b_save_on = FALSE;
 
 	// get data detection limits and clip limits according to size of spikes
-	auto l_data_first = m_ChartDataWnd_Detect.GetDataFirst();
-	const auto l_data_last = m_ChartDataWnd_Detect.GetDataLast();
+	auto l_data_first = m_chart_data_filtered.GetDataFirst();
+	const auto l_data_last = m_chart_data_filtered.GetDataLast();
 
 	// plot progress dialog box
 	DlgProgress dlg;
@@ -1314,8 +1314,8 @@ int ViewSpikeDetection::detect_method_1(WORD schan)
 		b_cross_upw = FALSE;
 
 	// get data detection limits and clip limits according to size of spikes
-	auto l_data_first = m_ChartDataWnd_Detect.GetDataFirst(); // index first pt to test
-	auto l_data_last = m_ChartDataWnd_Detect.GetDataLast(); // index last pt to test
+	auto l_data_first = m_chart_data_filtered.GetDataFirst(); // index first pt to test
+	auto l_data_last = m_chart_data_filtered.GetDataLast(); // index last pt to test
 	if (l_data_first < prethreshold + nspan)
 		l_data_first = static_cast<long>(prethreshold) + nspan;
 	if (l_data_last > p_dat->GetDOCchanLength() - postthreshold - nspan)
@@ -1418,10 +1418,10 @@ int ViewSpikeDetection::detect_method_1(WORD schan)
 void ViewSpikeDetection::OnToolsEdittransformspikes()
 {
 	DlgSpikeEdit dlg; // dialog box
-	dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent();
-	dlg.m_yzero = m_ChartSpkWnd_Shape.GetYWOrg(); 
-	dlg.m_xextent = m_ChartSpkWnd_Shape.GetXWExtent(); 
-	dlg.m_xzero = m_ChartSpkWnd_Shape.GetXWOrg(); 
+	dlg.m_yextent = m_chart_spike_shape.GetYWExtent();
+	dlg.m_yzero = m_chart_spike_shape.GetYWOrg(); 
+	dlg.m_xextent = m_chart_spike_shape.GetXWExtent(); 
+	dlg.m_xzero = m_chart_spike_shape.GetXWOrg(); 
 	dlg.m_spikeno = m_spikeno; 
 	m_pSpkList->RemoveAllSpikeFlags();
 	dlg.m_pdbWaveDoc = GetDocument();
@@ -1444,27 +1444,27 @@ void ViewSpikeDetection::OnFormatXscale()
 	DlgXYParameters dlg;
 	CWnd* pFocus = GetFocus();
 
-	if (pFocus != nullptr && m_ChartDataWnd_Detect.m_hWnd == pFocus->m_hWnd)
+	if (pFocus != nullptr && m_chart_data_filtered.m_hWnd == pFocus->m_hWnd)
 	{
 		dlg.m_xparam = FALSE;
-		CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(m_p_detect_parameters->detectChan);
+		CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(m_p_detect_parameters->detectChan);
 		dlg.m_yzero = pchan->GetYzero();
 		dlg.m_yextent = pchan->GetYextent();
 		dlg.m_bDisplaysource = TRUE;
 	}
-	else if (pFocus != nullptr && m_ChartSpkWnd_Bar.m_hWnd == pFocus->m_hWnd)
+	else if (pFocus != nullptr && m_chart_spike_bar.m_hWnd == pFocus->m_hWnd)
 	{
 		dlg.m_xparam = FALSE;
-		dlg.m_yzero = m_ChartSpkWnd_Bar.GetYWOrg();
-		dlg.m_yextent = m_ChartSpkWnd_Bar.GetYWExtent();
+		dlg.m_yzero = m_chart_spike_bar.GetYWOrg();
+		dlg.m_yextent = m_chart_spike_bar.GetYWExtent();
 		dlg.m_bDisplaybars = TRUE;
 	}
 	else
 	{
-		dlg.m_xzero = m_ChartSpkWnd_Shape.GetXWOrg();
-		dlg.m_xextent = m_ChartSpkWnd_Shape.GetXWExtent();
-		dlg.m_yzero = m_ChartSpkWnd_Shape.GetYWOrg();
-		dlg.m_yextent = m_ChartSpkWnd_Shape.GetYWExtent();
+		dlg.m_xzero = m_chart_spike_shape.GetXWOrg();
+		dlg.m_xextent = m_chart_spike_shape.GetXWExtent();
+		dlg.m_yzero = m_chart_spike_shape.GetYWOrg();
+		dlg.m_yextent = m_chart_spike_shape.GetYWExtent();
 		dlg.m_bDisplayspikes = TRUE;
 	}
 
@@ -1472,21 +1472,21 @@ void ViewSpikeDetection::OnFormatXscale()
 	{
 		if (dlg.m_bDisplaysource)
 		{
-			CChanlistItem* chan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+			CChanlistItem* chan = m_chart_data_filtered.GetChanlistItem(0);
 			chan->SetYzero(dlg.m_yzero);
 			chan->SetYextent(dlg.m_yextent);
-			m_ChartDataWnd_Detect.Invalidate();
+			m_chart_data_filtered.Invalidate();
 		}
 		if (dlg.m_bDisplaybars)
 		{
-			m_ChartSpkWnd_Bar.SetYWExtOrg(dlg.m_yextent, dlg.m_yzero);
-			m_ChartSpkWnd_Bar.Invalidate();
+			m_chart_spike_bar.SetYWExtOrg(dlg.m_yextent, dlg.m_yzero);
+			m_chart_spike_bar.Invalidate();
 		}
 		if (dlg.m_bDisplayspikes)
 		{
-			m_ChartSpkWnd_Shape.SetYWExtOrg(dlg.m_yextent, dlg.m_yzero);
-			m_ChartSpkWnd_Shape.SetXWExtOrg(dlg.m_xextent, dlg.m_xzero);
-			m_ChartSpkWnd_Shape.Invalidate();
+			m_chart_spike_shape.SetYWExtOrg(dlg.m_yextent, dlg.m_yzero);
+			m_chart_spike_shape.SetXWExtOrg(dlg.m_xextent, dlg.m_xzero);
+			m_chart_spike_shape.Invalidate();
 		}
 	}
 }
@@ -1494,8 +1494,8 @@ void ViewSpikeDetection::OnFormatXscale()
 void ViewSpikeDetection::OnBnClickedClearall()
 {
 	m_spikeno = -1; 
-	m_ChartSpkWnd_Bar.SelectSpike(m_spikeno);
-	m_ChartSpkWnd_Shape.SelectSpikeShape(m_spikeno);
+	m_chart_spike_bar.SelectSpike(m_spikeno);
+	m_chart_spike_shape.SelectSpikeShape(m_spikeno);
 
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
@@ -1507,7 +1507,7 @@ void ViewSpikeDetection::OnBnClickedClearall()
 	ASSERT(m_pSpkList != NULL);
 
 	highlight_spikes(FALSE); // remove display of spikes
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
+	m_chart_spike_shape.SetSourceData(m_pSpkList, GetDocument());
 	m_pSpkDoc->m_stimulus_intervals.n_items = 0; // zero stimuli
 	m_pSpkDoc->m_stimulus_intervals.RemoveAll();
 
@@ -1520,8 +1520,8 @@ void ViewSpikeDetection::OnBnClickedClearall()
 void ViewSpikeDetection::OnClear()
 {
 	m_spikeno = -1;
-	m_ChartSpkWnd_Bar.SelectSpike(m_spikeno);
-	m_ChartSpkWnd_Shape.SelectSpikeShape(m_spikeno);
+	m_chart_spike_bar.SelectSpike(m_spikeno);
+	m_chart_spike_shape.SelectSpikeShape(m_spikeno);
 
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	m_pSpkList->InitSpikeList(GetDocument()->m_pDat, nullptr);
@@ -1628,21 +1628,21 @@ void ViewSpikeDetection::align_display_to_current_spike()
 		return;
 
 	const auto l_spike_time = m_pSpkList->GetSpike(m_spikeno)->get_time();
-	if (l_spike_time < m_ChartDataWnd_Detect.GetDataFirst()
-		|| l_spike_time > m_ChartDataWnd_Detect.GetDataLast())
+	if (l_spike_time < m_chart_data_filtered.GetDataFirst()
+		|| l_spike_time > m_chart_data_filtered.GetDataLast())
 	{
-		const auto l_size = m_ChartDataWnd_Detect.GetDataLast() - m_ChartDataWnd_Detect.GetDataFirst();
+		const auto l_size = m_chart_data_filtered.GetDataLast() - m_chart_data_filtered.GetDataFirst();
 		auto l_first = l_spike_time - l_size / 2;
 		if (l_first < 0)
 			l_first = 0;
 		auto l_last = l_first + l_size - 1;
-		if (l_last > m_ChartDataWnd_Detect.GetDocumentLast())
+		if (l_last > m_chart_data_filtered.GetDocumentLast())
 		{
-			l_last = m_ChartDataWnd_Detect.GetDocumentLast();
+			l_last = m_chart_data_filtered.GetDocumentLast();
 			l_first = l_last - l_size + 1;
 		}
-		m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last);
-		m_ChartDataWnd_Source.GetDataFromDoc(l_first, l_last);
+		m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
+		m_chart_data_source.GetDataFromDoc(l_first, l_last);
 		update_legends();
 	}
 }
@@ -1664,7 +1664,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		if (ix_we == 0)
 			ix_we = m_pSpkList->GetDetectParms()->extractNpoints;
 		ASSERT(ix_we != 0);
-		m_ChartSpkWnd_Shape.SetXWExtOrg(ix_we, m_ChartSpkWnd_Shape.GetXWOrg());
+		m_chart_spike_shape.SetXWExtOrg(ix_we, m_chart_spike_shape.GetXWOrg());
 
 		// set amplitude
 		GetDlgItem(IDC_SPIKEWINDOWAMPLITUDE)->GetWindowText(cs);
@@ -1674,39 +1674,40 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 			iy_we = static_cast<int>(y / m_pSpkList->GetAcqVoltsperBin());
 		}
 		if (iy_we == 0)
-			iy_we = m_ChartSpkWnd_Shape.GetYWExtent();
-		m_ChartSpkWnd_Shape.SetYWExtOrg(iy_we, m_ChartSpkWnd_Shape.GetYWOrg());
+			iy_we = m_chart_spike_shape.GetYWExtent();
+		m_chart_spike_shape.SetYWExtOrg(iy_we, m_chart_spike_shape.GetYWOrg());
 	}
 	else
 	{
-		ix_we = m_ChartSpkWnd_Shape.GetXWExtent();
-		iy_we = m_ChartSpkWnd_Shape.GetYWExtent();
+		ix_we = m_chart_spike_shape.GetXWExtent();
+		iy_we = m_chart_spike_shape.GetYWExtent();
 	}
 
 	if (ix_we != NULL && iy_we != NULL)
 	{
-		const auto y_unit = m_ChartSpkWnd_Shape.GetExtent_mV() / static_cast<float>(m_ChartSpkWnd_Shape.GetNyScaleCells());
-		m_ChartSpkWnd_Shape.SetyScaleUnitValue(y_unit);
-		const auto x_unit = m_ChartSpkWnd_Shape.GetExtent_ms() / static_cast<float>(m_ChartSpkWnd_Shape.GetNxScaleCells());
-		m_ChartSpkWnd_Shape.SetxScaleUnitValue(x_unit);
+		const auto y_unit = m_chart_spike_shape.GetExtent_mV() / static_cast<float>(m_chart_spike_shape.GetNyScaleCells());
+		m_chart_spike_shape.SetyScaleUnitValue(y_unit);
+		const auto x_unit = m_chart_spike_shape.GetExtent_ms() / static_cast<float>(m_chart_spike_shape.GetNxScaleCells());
+		m_chart_spike_shape.SetxScaleUnitValue(x_unit);
 	}
 
 	// output values
-	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_ChartSpkWnd_Shape.GetExtent_mV());
+	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_chart_spike_shape.GetExtent_mV());
 	SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, m_sz_buffer);
-	const auto y_unit = m_ChartSpkWnd_Shape.GetExtent_mV() / static_cast<float>(m_ChartSpkWnd_Shape.GetNyScaleCells());
-	m_ChartSpkWnd_Shape.SetyScaleUnitValue(y_unit);
+	const auto y_unit = m_chart_spike_shape.GetExtent_mV() / static_cast<float>(m_chart_spike_shape.GetNyScaleCells());
+	m_chart_spike_shape.SetyScaleUnitValue(y_unit);
 
-	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_ChartSpkWnd_Shape.GetExtent_ms());
+	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_chart_spike_shape.GetExtent_ms());
 	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, m_sz_buffer);
-	const auto x_unit = m_ChartSpkWnd_Shape.GetExtent_ms() / static_cast<float>(m_ChartSpkWnd_Shape.GetNxScaleCells());
-	m_ChartSpkWnd_Shape.SetxScaleUnitValue(x_unit);
+	const auto x_unit = m_chart_spike_shape.GetExtent_ms() / static_cast<float>(m_chart_spike_shape.GetNxScaleCells());
+	m_chart_spike_shape.SetxScaleUnitValue(x_unit);
 }
 
 void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelection)
 {
 	if (spike_index >= 0)
 	{
+		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 		const auto p_spike_element = m_pSpkList->GetSpike(spike_index);
 		m_bartefact = (p_spike_element->get_class() < 0);
 		if (bMultipleSelection)
@@ -1734,8 +1735,8 @@ void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelectio
 void ViewSpikeDetection::update_spike_display()
 {
 	// update spike display windows
-	m_ChartSpkWnd_Bar.Invalidate(TRUE);
-	m_ChartSpkWnd_Shape.Invalidate(TRUE);
+	m_chart_spike_bar.Invalidate(TRUE);
+	m_chart_spike_shape.Invalidate(TRUE);
 
 	// update Dlg interface
 	GetDlgItem(IDC_SPIKENO)->EnableWindow(!(m_pSpkList->GetSpikeFlagArrayCount() > 1));
@@ -1771,9 +1772,9 @@ void ViewSpikeDetection::OnEnChangeThresholdval()
 		{
 			m_thresholdval = thresholdval;
 			m_p_detect_parameters->detectThresholdmV = thresholdval;
-			CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+			CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(0);
 			m_p_detect_parameters->detectThreshold = pchan->ConvertVoltsToDataBins(m_thresholdval / 1000.f);
-			m_ChartDataWnd_Detect.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
+			m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
 		}
 
 		mm_thresholdval.m_bEntryDone = FALSE;
@@ -1805,9 +1806,9 @@ void ViewSpikeDetection::OnEnChangeTimefirst()
 			break;
 		default:;
 		}
-		m_ChartDataWnd_Detect.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
+		m_chart_data_filtered.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
-		m_ChartDataWnd_Source.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
+		m_chart_data_source.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
 		update_legends();
 
@@ -1836,9 +1837,9 @@ void ViewSpikeDetection::OnEnChangeTimelast()
 			break;
 		default:;
 		}
-		m_ChartDataWnd_Detect.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
+		m_chart_data_filtered.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
-		m_ChartDataWnd_Source.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
+		m_chart_data_source.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
 		update_legends();
 
@@ -1852,16 +1853,16 @@ void ViewSpikeDetection::OnToolsDataseries()
 {
 	// init dialog data
 	DlgDataSeries dlg;
-	dlg.m_pChartDataWnd = &m_ChartDataWnd_Detect;
+	dlg.m_pChartDataWnd = &m_chart_data_filtered;
 	dlg.m_pdbDoc = GetDocument()->m_pDat;
 	dlg.m_listindex = 0;
 
 	// invoke dialog box
 	dlg.DoModal();
-	if (m_ChartDataWnd_Detect.GetChanlistSize() < 1)
+	if (m_chart_data_filtered.GetChanlistSize() < 1)
 	{
-		m_ChartDataWnd_Detect.RemoveAllChanlistItems();
-		m_ChartDataWnd_Detect.AddChanlistItem(m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
+		m_chart_data_filtered.RemoveAllChanlistItems();
+		m_chart_data_filtered.AddChanlistItem(m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
 	}
 	update_legends();
 }
@@ -1911,18 +1912,18 @@ void ViewSpikeDetection::OnEditCopy()
 		options_view_data->vtResolution = dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
-			m_ChartDataWnd_Detect.CopyAsText(dlg.m_ioption, dlg.m_iunit, dlg.m_nabcissa);
+			m_chart_data_filtered.CopyAsText(dlg.m_ioption, dlg.m_iunit, dlg.m_nabcissa);
 		else
 		{
 			serialize_windows_state(b_save);
 
 			CRect old_rect1; // save size of lineview windows
-			m_ChartDataWnd_Detect.GetWindowRect(&old_rect1);
+			m_chart_data_filtered.GetWindowRect(&old_rect1);
 			CRect old_rect2;
-			m_ChartDataWnd_Source.GetWindowRect(&old_rect2);
+			m_chart_data_source.GetWindowRect(&old_rect2);
 
 			const CRect rect(0, 0, options_view_data->hzResolution, options_view_data->vtResolution);
-			m_npixels0 = m_ChartDataWnd_Detect.GetRectWidth();
+			m_npixels0 = m_chart_data_filtered.GetRectWidth();
 
 			// create metafile
 			CMetaFileDC m_dc;
@@ -1973,28 +1974,28 @@ void ViewSpikeDetection::OnEditCopy()
 			// define display sizes - dataview & datadetect are same, spkshape & spkbar = as on screen
 			auto rectdata = rect;
 			rectdata.top -= -3 * lineheight;
-			const auto rspkwidth = MulDiv(m_ChartSpkWnd_Shape.GetRectWidth(), rectdata.Width(),
-				m_ChartSpkWnd_Shape.GetRectWidth() + m_ChartDataWnd_Detect.GetRectWidth());
-			const auto rdataheight = MulDiv(m_ChartDataWnd_Detect.GetRectHeight(), rectdata.Height(),
-				m_ChartDataWnd_Detect.GetRectHeight() * 2 + m_ChartSpkWnd_Bar.
+			const auto rspkwidth = MulDiv(m_chart_spike_shape.GetRectWidth(), rectdata.Width(),
+				m_chart_spike_shape.GetRectWidth() + m_chart_data_filtered.GetRectWidth());
+			const auto rdataheight = MulDiv(m_chart_data_filtered.GetRectHeight(), rectdata.Height(),
+				m_chart_data_filtered.GetRectHeight() * 2 + m_chart_spike_bar.
 				GetRectHeight());
 			const auto separator = rspkwidth / 10;
 
 			// display curves : data
 			rectdata.bottom = rect.top + rdataheight - separator / 2;
 			rectdata.left = rect.left + rspkwidth + separator;
-			PrintDataCartridge(&m_dc, &m_ChartDataWnd_Source, &rectdata, TRUE, TRUE);
+			PrintDataCartridge(&m_dc, &m_chart_data_source, &rectdata, TRUE, TRUE);
 
 			// display curves: detect channel
 			rectdata.top = rectdata.bottom + separator;
 			rectdata.bottom = rectdata.top + rdataheight;
-			PrintDataCartridge(&m_dc, &m_ChartDataWnd_Detect, &rectdata, TRUE, TRUE);
+			PrintDataCartridge(&m_dc, &m_chart_data_filtered, &rectdata, TRUE, TRUE);
 
 			// display spike bars
 			auto rectbars = rectdata;
 			rectbars.top = rectdata.bottom + separator;
 			rectbars.bottom = rect.bottom - 2 * lineheight;
-			m_ChartSpkWnd_Bar.Print(&m_dc, &rectbars);
+			m_chart_spike_bar.Print(&m_dc, &rectbars);
 
 			// display spike shapes
 			auto rectspk = rect; // compute output rectangle
@@ -2002,7 +2003,7 @@ void ViewSpikeDetection::OnEditCopy()
 			rectspk.right = rect.left + rspkwidth;
 			rectspk.bottom = rect.bottom - 2 * lineheight;
 			rectspk.top = rectspk.bottom - rectbars.Height();
-			m_ChartSpkWnd_Shape.Print(&m_dc, &rectspk);
+			m_chart_spike_shape.Print(&m_dc, &rectspk);
 			comments = PrintSpkShapeBars(&m_dc, &rectspk, TRUE);
 
 			auto rect_comment = rect;
@@ -2049,20 +2050,20 @@ void ViewSpikeDetection::OnSelchangeDetectMode()
 	m_p_detect_parameters->detectWhat = m_CBdetectWhat.GetCurSel();
 	update_combo_box();
 	update_legend_detection_wnd();
-	m_ChartDataWnd_Detect.GetDataFromDoc();
-	m_ChartDataWnd_Detect.AutoZoomChan(0);
-	m_ChartDataWnd_Detect.Invalidate();
+	m_chart_data_filtered.GetDataFromDoc();
+	m_chart_data_filtered.AutoZoomChan(0);
+	m_chart_data_filtered.Invalidate();
 }
 
 void ViewSpikeDetection::update_combo_box()
 {
 	m_CBdetectChan.SetCurSel(m_p_detect_parameters->detectChan);
 	m_CBtransform.SetCurSel(m_p_detect_parameters->detectTransform);
-	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
-	m_p_detect_parameters->detectThreshold = m_ChartDataWnd_Detect.GetChanlistItem(0)->ConvertVoltsToDataBins(
+	m_chart_data_filtered.SetChanlistOrdinates(0, m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
+	m_p_detect_parameters->detectThreshold = m_chart_data_filtered.GetChanlistItem(0)->ConvertVoltsToDataBins(
 		m_thresholdval / 1000.f);
-	m_ChartDataWnd_Detect.m_HZtags.SetTagChan(0, 0);
-	m_ChartDataWnd_Detect.m_HZtags.SetTagVal(0, m_p_detect_parameters->detectThreshold);
+	m_chart_data_filtered.m_HZtags.SetTagChan(0, 0);
+	m_chart_data_filtered.m_HZtags.SetTagVal(0, m_p_detect_parameters->detectThreshold);
 	m_p_detect_parameters->detectThresholdmV = m_thresholdval;
 }
 
@@ -2081,18 +2082,18 @@ void ViewSpikeDetection::update_legend_detection_wnd()
 
 void ViewSpikeDetection::update_VT_tags()
 {
-	m_ChartSpkWnd_Bar.m_VTtags.RemoveAllTags();
-	m_ChartDataWnd_Detect.m_VTtags.RemoveAllTags();
-	m_ChartDataWnd_Source.m_VTtags.RemoveAllTags();
+	m_chart_spike_bar.m_VTtags.RemoveAllTags();
+	m_chart_data_filtered.m_VTtags.RemoveAllTags();
+	m_chart_data_source.m_VTtags.RemoveAllTags();
 	if (m_pSpkDoc->m_stimulus_intervals.n_items == 0)
 		return;
 
 	for (auto i = 0; i < m_pSpkDoc->m_stimulus_intervals.GetSize(); i++)
 	{
 		const int cx = m_pSpkDoc->m_stimulus_intervals.GetAt(i);
-		m_ChartSpkWnd_Bar.m_VTtags.AddLTag(cx, 0);
-		m_ChartDataWnd_Detect.m_VTtags.AddLTag(cx, 0);
-		m_ChartDataWnd_Source.m_VTtags.AddLTag(cx, 0);
+		m_chart_spike_bar.m_VTtags.AddLTag(cx, 0);
+		m_chart_data_filtered.m_VTtags.AddLTag(cx, 0);
+		m_chart_data_source.m_VTtags.AddLTag(cx, 0);
 	}
 }
 
@@ -2136,7 +2137,7 @@ CString ViewSpikeDetection::PrintConvertFileIndex(const long l_first, const long
 	CString cs_unit = _T(" s"); // get time,  prepare time unit
 	CString cs_comment;
 	float x_scale_factor; // scale factor returned by changeunit
-	const auto x1 = m_ChartDataWnd_Detect.ChangeUnit(static_cast<float>(l_first) / m_samplingRate, &cs_unit,
+	const auto x1 = m_chart_data_filtered.ChangeUnit(static_cast<float>(l_first) / m_samplingRate, &cs_unit,
 		&x_scale_factor);
 	const auto fraction1 = static_cast<int>((x1 - static_cast<int>(x1)) * static_cast<float>(1000.));
 	// separate fractional part
@@ -2347,7 +2348,7 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
 	{
 		// the following assume that spikes are higher than 1 mV...
 		cs_unit = _T(" mV");
-		z = m_ChartSpkWnd_Shape.GetExtent_mV() / 2.0f; // half of total height
+		z = m_chart_spike_shape.GetExtent_mV() / 2.0f; // half of total height
 		k = static_cast<int>(z); // clip to int
 		if ((static_cast<double>(z) - k) > 0.5) // make sure it is not zero
 			k++;
@@ -2381,7 +2382,7 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
 	// spike duration
 	if (m_pSpkList->GetTotalSpikes() > 0 && bAll)
 	{
-		z = m_ChartSpkWnd_Shape.GetExtent_ms();
+		z = m_chart_spike_shape.GetExtent_ms();
 		cs_unit = _T(" ms");
 		k = static_cast<int>(z);
 		wsprintf(m_sz_buffer, _T("Horz=%i."), k);
@@ -2436,10 +2437,10 @@ void ViewSpikeDetection::serialize_windows_state(BOOL bSave, int itab)
 		// save data into archive
 		CArchive ar(p_mem_file, CArchive::store);
 		p_mem_file->SeekToBegin();
-		m_ChartDataWnd_Source.Serialize(ar);
-		m_ChartDataWnd_Detect.Serialize(ar);
-		m_ChartSpkWnd_Bar.Serialize(ar);
-		m_ChartSpkWnd_Shape.Serialize(ar);
+		m_chart_data_source.Serialize(ar);
+		m_chart_data_filtered.Serialize(ar);
+		m_chart_spike_bar.Serialize(ar);
+		m_chart_spike_shape.Serialize(ar);
 		ar.Close();
 	}
 
@@ -2450,18 +2451,18 @@ void ViewSpikeDetection::serialize_windows_state(BOOL bSave, int itab)
 		{
 			CArchive ar(p_mem_file, CArchive::load);
 			p_mem_file->SeekToBegin();
-			m_ChartDataWnd_Source.Serialize(ar);
-			m_ChartDataWnd_Detect.Serialize(ar);
-			m_ChartSpkWnd_Bar.Serialize(ar);
-			m_ChartSpkWnd_Shape.Serialize(ar);
+			m_chart_data_source.Serialize(ar);
+			m_chart_data_filtered.Serialize(ar);
+			m_chart_spike_bar.Serialize(ar);
+			m_chart_spike_shape.Serialize(ar);
 			ar.Close(); // close archive
 		}
 		else
 		{
-			*m_ChartDataWnd_Source.GetScopeParameters() = options_view_data->viewspkdetectdata;
-			*m_ChartDataWnd_Detect.GetScopeParameters() = options_view_data->viewspkdetectfiltered;
-			*m_ChartSpkWnd_Bar.GetScopeParameters() = options_view_data->viewspkdetectspk;
-			*m_ChartSpkWnd_Shape.GetScopeParameters() = options_view_data->viewspkdetectbars;
+			*m_chart_data_source.GetScopeParameters() = options_view_data->viewspkdetectdata;
+			*m_chart_data_filtered.GetScopeParameters() = options_view_data->viewspkdetectfiltered;
+			*m_chart_spike_bar.GetScopeParameters() = options_view_data->viewspkdetectspk;
+			*m_chart_spike_shape.GetScopeParameters() = options_view_data->viewspkdetectbars;
 			//OnFormatSplitcurves();
 		}
 	}
@@ -2512,8 +2513,8 @@ int ViewSpikeDetection::PrintGetNPages()
 	auto pdb_doc = GetDocument();
 
 	// compute number of rows according to bmultirow & bentirerecord flag
-	m_lprintFirst = m_ChartDataWnd_Detect.GetDataFirst();
-	m_lprintLen = m_ChartDataWnd_Detect.GetDataLast() - m_lprintFirst + 1;
+	m_lprintFirst = m_chart_data_filtered.GetDataFirst();
+	m_lprintLen = m_chart_data_filtered.GetDataLast() - m_lprintFirst + 1;
 	m_file0 = GetDocument()->GetDB_CurrentRecordPosition();
 	ASSERT(m_file0 >= 0);
 	m_nfiles = 1;
@@ -2572,9 +2573,9 @@ int ViewSpikeDetection::PrintGetNPages()
 void ViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
-	m_lFirst0 = m_ChartDataWnd_Detect.GetDataFirst();
-	m_lLast0 = m_ChartDataWnd_Detect.GetDataLast();
-	m_npixels0 = m_ChartDataWnd_Detect.GetRectWidth();
+	m_lFirst0 = m_chart_data_filtered.GetDataFirst();
+	m_lLast0 = m_chart_data_filtered.GetDataLast();
+	m_npixels0 = m_chart_data_filtered.GetRectWidth();
 	PrintCreateFont();
 	p_dc->SetBkMode(TRANSPARENT);
 }
@@ -2620,7 +2621,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	const WORD chan0Drawmode = 1;
 	//WORD chan1Drawmode = 0;
 	if (!options_view_data->bFilterDataSource)
-		m_ChartDataWnd_Detect.SetChanlistTransformMode(0, 0);
+		m_chart_data_filtered.SetChanlistTransformMode(0, 0);
 
 	p_dc->SetMapMode(MM_TEXT); // change map mode to text (1 pixel = 1 logical point)
 	PrintFileBottomPage(p_dc, pInfo); // print bottom - text, date, etc
@@ -2668,10 +2669,10 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			p_dc->IntersectClipRect(&m_rData); // (eventually)
 
 		// print detected channel only data
-		m_ChartDataWnd_Detect.GetChanlistItem(0)->SetflagPrintVisible(chan0Drawmode);
-		m_ChartDataWnd_Detect.ResizeChannels(m_rData.Width(), 0);
-		m_ChartDataWnd_Detect.GetDataFromDoc(l_first, l_last); // load data from file
-		m_ChartDataWnd_Detect.Print(p_dc, &m_rData); // print data
+		m_chart_data_filtered.GetChanlistItem(0)->SetflagPrintVisible(chan0Drawmode);
+		m_chart_data_filtered.ResizeChannels(m_rData.Width(), 0);
+		m_chart_data_filtered.GetDataFromDoc(l_first, l_last); // load data from file
+		m_chart_data_filtered.Print(p_dc, &m_rData); // print data
 		p_dc->SelectClipRgn(nullptr); // no more clipping
 
 		// print spike bars ---------------------------------------------------------------
@@ -2682,8 +2683,8 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			BarsRect.left = m_rData.left;
 			BarsRect.right = m_rData.right;
 
-			m_ChartSpkWnd_Bar.SetTimeIntervals(l_first, l_last); // define time interval
-			m_ChartSpkWnd_Bar.Print(p_dc, &BarsRect); // print data
+			m_chart_spike_bar.SetTimeIntervals(l_first, l_last); // define time interval
+			m_chart_spike_bar.Print(p_dc, &BarsRect); // print data
 		}
 
 		// print spkform within a square (same width as height) ---------------------------
@@ -2692,8 +2693,8 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		m_rSpike.left += options_view_data->textseparator; // remove space for 4 lines of
 		m_rSpike.bottom = m_rSpike.top + r_sp_kheight; // legends
 
-		m_ChartSpkWnd_Shape.SetTimeIntervals(l_first, l_last);
-		m_ChartSpkWnd_Shape.Print(p_dc, &m_rSpike);
+		m_chart_spike_shape.SetTimeIntervals(l_first, l_last);
+		m_chart_spike_shape.Print(p_dc, &m_rSpike);
 
 		// restore DC and print comments ---------------------------------------------------
 		p_dc->RestoreDC(old_dc); // restore Display context
@@ -2707,13 +2708,13 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		if (b_all) // first row = full comment
 		{
 			cs_comment += PrintGetFileInfos(); // describe file, intervals & comments /chan
-			cs_comment += PrintDataBars(p_dc, &m_ChartDataWnd_Detect, &m_rData); // bars and bar legends
+			cs_comment += PrintDataBars(p_dc, &m_chart_data_filtered, &m_rData); // bars and bar legends
 		}
 		else
 		{
 			// other rows: time intervals only
-			cs_comment = PrintConvertFileIndex(m_ChartDataWnd_Detect.GetDataFirst(),
-				m_ChartDataWnd_Detect.GetDataLast());
+			cs_comment = PrintConvertFileIndex(m_chart_data_filtered.GetDataFirst(),
+				m_chart_data_filtered.GetDataLast());
 		}
 
 		// print comments stored into cs_comment
@@ -2750,14 +2751,14 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		if (ifile != filenumber)
 		{
 			update_file_parameters(FALSE);
-			m_ChartDataWnd_Detect.GetChanlistItem(0)->SetflagPrintVisible(0); // cancel printing channel zero
+			m_chart_data_filtered.GetChanlistItem(0)->SetflagPrintVisible(0); // cancel printing channel zero
 		}
 	}
 
 	// end of file loop : restore initial conditions
-	m_ChartDataWnd_Detect.GetChanlistItem(0)->SetflagPrintVisible(1);
+	m_chart_data_filtered.GetChanlistItem(0)->SetflagPrintVisible(1);
 	if (!options_view_data->bFilterDataSource)
-		m_ChartDataWnd_Detect.SetChanlistTransformMode(0, m_p_detect_parameters->detectTransform);
+		m_chart_data_filtered.SetChanlistTransformMode(0, m_p_detect_parameters->detectTransform);
 
 	if (m_pOldFont != nullptr)
 		p_dc->SelectObject(m_pOldFont);
@@ -2769,9 +2770,9 @@ void ViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	// restore file from index and display parameters
 	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
 
-	m_ChartDataWnd_Detect.ResizeChannels(m_npixels0, 0);
-	m_ChartDataWnd_Detect.GetDataFromDoc(m_lFirst0, m_lLast0);
-	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst0, m_lLast0);
+	m_chart_data_filtered.ResizeChannels(m_npixels0, 0);
+	m_chart_data_filtered.GetDataFromDoc(m_lFirst0, m_lLast0);
+	m_chart_spike_shape.SetTimeIntervals(m_lFirst0, m_lLast0);
 	update_file_parameters(TRUE);
 
 	m_bIsPrinting = FALSE;
@@ -2844,19 +2845,19 @@ void ViewSpikeDetection::UpdateGainScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 		m_scrolly.SetScrollPos(
-			MulDiv(m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
+			MulDiv(m_chart_data_filtered.GetChanlistItem(m_ichanselected)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 	else
 		m_scrolly2.SetScrollPos(
-			MulDiv(m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected2)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
+			MulDiv(m_chart_data_filtered.GetChanlistItem(m_ichanselected2)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
 }
 
 void ViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 {
-	ChartData* p_view = &m_ChartDataWnd_Detect;
+	ChartData* p_view = &m_chart_data_filtered;
 	int ichan = m_ichanselected;
 	if (iID == IDC_SCROLLY2)
 	{
-		p_view = &m_ChartDataWnd_Source;
+		p_view = &m_chart_data_source;
 		ichan = m_ichanselected2;
 	}
 	int lSize = p_view->GetChanlistItem(ichan)->GetYextent();
@@ -2896,14 +2897,14 @@ void ViewSpikeDetection::UpdateBiasScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 	{
-		CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected);
+		CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(m_ichanselected);
 		const auto i_pos = static_cast<int>((pchan->GetYzero() - pchan->GetDataBinZero())
 			* 100 / int(YZERO_SPAN)) + static_cast<int>(50);
 		m_scrolly.SetScrollPos(i_pos, TRUE);
 	}
 	else
 	{
-		CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(m_ichanselected2);
+		CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(m_ichanselected2);
 		const auto i_pos = static_cast<int>((pchan->GetYzero() - pchan->GetDataBinZero())
 			* 100 / int(YZERO_SPAN)) + static_cast<int>(50);
 		m_scrolly2.SetScrollPos(i_pos, TRUE);
@@ -2912,15 +2913,15 @@ void ViewSpikeDetection::UpdateBiasScroll(int iID)
 
 void ViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 {
-	auto p_view = &m_ChartDataWnd_Detect;
+	auto p_view = &m_chart_data_filtered;
 	auto ichan = m_ichanselected;
 	if (iID == IDC_SCROLLY2)
 	{
-		p_view = &m_ChartDataWnd_Source;
+		p_view = &m_chart_data_source;
 		ichan = m_ichanselected2;
 	}
 
-	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(ichan);
+	CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(ichan);
 	auto l_size = pchan->GetYzero() - pchan->GetDataBinZero();
 	const auto yextent = pchan->GetYextent();
 	// get corresponding data
@@ -2960,7 +2961,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 {
 	if (mm_spkWndAmplitude.m_bEntryDone)
 	{
-		auto y = m_ChartSpkWnd_Shape.GetExtent_mV();
+		auto y = m_chart_spike_shape.GetExtent_mV();
 		const auto yold = y;
 		CString cs;
 		switch (mm_spkWndAmplitude.m_nChar)
@@ -2986,10 +2987,10 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 			y = yold;
 			MessageBeep(-1);
 		}
-		const auto y_we = static_cast<int>(static_cast<float>(m_ChartSpkWnd_Shape.GetYWExtent()) * y / yold);
-		m_ChartSpkWnd_Shape.SetYWExtOrg(y_we, m_ChartSpkWnd_Shape.GetYWOrg());
-		m_ChartSpkWnd_Shape.SetyScaleUnitValue(y / m_ChartSpkWnd_Shape.GetNyScaleCells());
-		m_ChartSpkWnd_Shape.Invalidate();
+		const auto y_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetYWExtent()) * y / yold);
+		m_chart_spike_shape.SetYWExtOrg(y_we, m_chart_spike_shape.GetYWOrg());
+		m_chart_spike_shape.SetyScaleUnitValue(y / m_chart_spike_shape.GetNyScaleCells());
+		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
 		mm_spkWndAmplitude.m_bEntryDone = FALSE;
@@ -3004,7 +3005,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 {
 	if (mm_spkWndDuration.m_bEntryDone)
 	{
-		auto x = m_ChartSpkWnd_Shape.GetExtent_ms();
+		auto x = m_chart_spike_shape.GetExtent_ms();
 		const auto xold = x;
 		CString cs;
 		switch (mm_spkWndDuration.m_nChar)
@@ -3030,10 +3031,10 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 			MessageBeep(-1);
 			x = xold;
 		}
-		const auto x_we = static_cast<int>(static_cast<float>(m_ChartSpkWnd_Shape.GetXWExtent()) * x / xold);
-		m_ChartSpkWnd_Shape.SetXWExtOrg(x_we, m_ChartSpkWnd_Shape.GetXWOrg());
-		m_ChartSpkWnd_Shape.SetxScaleUnitValue(x / m_ChartSpkWnd_Shape.GetNxScaleCells());
-		m_ChartSpkWnd_Shape.Invalidate();
+		const auto x_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetXWExtent()) * x / xold);
+		m_chart_spike_shape.SetXWExtOrg(x_we, m_chart_spike_shape.GetXWOrg());
+		m_chart_spike_shape.SetxScaleUnitValue(x / m_chart_spike_shape.GetNxScaleCells());
+		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
 		mm_spkWndDuration.m_bEntryDone = FALSE;
@@ -3047,7 +3048,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 void ViewSpikeDetection::OnBnClickedLocatebttn()
 {
 	int max, min;
-	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+	CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(0);
 	pchan->GetMaxMin(&max, &min);
 
 	// modify value
@@ -3058,8 +3059,8 @@ void ViewSpikeDetection::OnBnClickedLocatebttn()
 	CString cs;
 	cs.Format(_T("%.3f"), m_thresholdval);
 	GetDlgItem(IDC_THRESHOLDVAL)->SetWindowText(cs);
-	m_ChartDataWnd_Detect.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
-	m_ChartDataWnd_Detect.Invalidate();
+	m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
+	m_chart_data_filtered.Invalidate();
 }
 
 void ViewSpikeDetection::update_detection_settings(int iSelParms)
@@ -3121,26 +3122,26 @@ void ViewSpikeDetection::update_detection_controls()
 	if (detectchan >= maxchan)
 		detectchan = 0;
 
-	m_ChartDataWnd_Detect.SetChanlistOrdinates(0, detectchan, m_pSpkList->GetDetectParms()->detectTransform);
+	m_chart_data_filtered.SetChanlistOrdinates(0, detectchan, m_pSpkList->GetDetectParms()->detectTransform);
 	m_CBtransform2.SetCurSel(m_pSpkList->GetDetectParms()->extractTransform);
 
-	CChanlistItem* pchan = m_ChartDataWnd_Detect.GetChanlistItem(0);
+	CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(0);
 	pchan->SetColor(detectchan);
 
-	m_ChartDataWnd_Detect.GetDataFromDoc(); // load data
+	m_chart_data_filtered.GetDataFromDoc(); // load data
 	//if (options_view_data->bSplitCurves)
 	//	m_displayDataFile.SplitChans();
 
 	const auto ithreshold = m_pSpkList->GetDetectParms()->detectThreshold;
 	m_thresholdval = pchan->ConvertDataBinsToVolts(ithreshold) * 1000.f;
-	if (m_ChartDataWnd_Detect.m_HZtags.GetNTags() < 1)
-		m_ChartDataWnd_Detect.m_HZtags.AddTag(ithreshold, 0);
+	if (m_chart_data_filtered.m_HZtags.GetNTags() < 1)
+		m_chart_data_filtered.m_HZtags.AddTag(ithreshold, 0);
 	else
-		m_ChartDataWnd_Detect.m_HZtags.SetTagVal(0, ithreshold);
+		m_chart_data_filtered.m_HZtags.SetTagVal(0, ithreshold);
 
 	// update spike channel displayed
-	m_ChartSpkWnd_Bar.SetSpkList(m_pSpkList);
-	m_ChartSpkWnd_Shape.SetSpkList(m_pSpkList);
+	m_chart_spike_bar.SetSpkList(m_pSpkList);
+	m_chart_spike_shape.SetSpkList(m_pSpkList);
 }
 
 void ViewSpikeDetection::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
@@ -3165,9 +3166,9 @@ void ViewSpikeDetection::OnToolsEditstimulus()
 	{
 		m_pSpkDoc->m_stimulus_intervals = dlg.intervals;
 		update_VT_tags();
-		m_ChartSpkWnd_Bar.Invalidate();
-		m_ChartDataWnd_Detect.Invalidate();
-		m_ChartDataWnd_Source.Invalidate();
+		m_chart_spike_bar.Invalidate();
+		m_chart_data_filtered.Invalidate();
+		m_chart_data_source.Invalidate();
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 	}
 }
@@ -3262,8 +3263,8 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	int max, min;
 	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
 	const auto middle = (max + min) / 2;
-	m_ChartSpkWnd_Shape.SetYWExtOrg(m_ChartSpkWnd_Shape.GetYWExtent(), middle);
-	m_ChartSpkWnd_Bar.SetYWExtOrg(m_ChartSpkWnd_Shape.GetYWExtent(), middle);
+	m_chart_spike_shape.SetYWExtOrg(m_chart_spike_shape.GetYWExtent(), middle);
+	m_chart_spike_bar.SetYWExtOrg(m_chart_spike_shape.GetYWExtent(), middle);
 	update_spike_shape_window_scale(FALSE);
 
 	highlight_spikes(TRUE);

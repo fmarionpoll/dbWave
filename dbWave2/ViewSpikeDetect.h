@@ -36,10 +36,10 @@ protected:
 	int m_scan_count_doc = -1;
 	CDWordArray m_DWintervals;
 
-	ChartData m_ChartDataWnd_Detect;
-	ChartData m_ChartDataWnd_Source;
-	ChartSpikeBarWnd m_ChartSpkWnd_Bar;
-	ChartSpikeShapeWnd m_ChartSpkWnd_Shape;
+	ChartData m_chart_data_filtered;
+	ChartData m_chart_data_source;
+	ChartSpikeBarWnd m_chart_spike_bar;
+	ChartSpikeShapeWnd m_chart_spike_shape;
 
 	ScrollBarEx m_filescroll;
 	SCROLLINFO m_filescroll_infos{};
@@ -71,10 +71,10 @@ protected:
 public:
 	void SetViewMouseCursor(int cursor_mode)
 	{
-		m_ChartSpkWnd_Bar.SetMouseCursorType(cursor_mode);
-		m_ChartSpkWnd_Shape.SetMouseCursorType(cursor_mode);
-		m_ChartDataWnd_Detect.SetMouseCursorType(cursor_mode);
-		m_ChartDataWnd_Source.SetMouseCursorType(cursor_mode);
+		m_chart_spike_bar.SetMouseCursorType(cursor_mode);
+		m_chart_spike_shape.SetMouseCursorType(cursor_mode);
+		m_chart_data_filtered.SetMouseCursorType(cursor_mode);
+		m_chart_data_source.SetMouseCursorType(cursor_mode);
 	}
 
 	// Implementation

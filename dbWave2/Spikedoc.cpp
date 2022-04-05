@@ -1735,15 +1735,15 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	}
 }
 
-SpikeList* CSpikeDoc::SetSpkList_AsCurrent(int ichan)
+SpikeList* CSpikeDoc::SetSpkList_AsCurrent(int spike_list_index)
 {
-	SpikeList* pspklist = nullptr;
-	if (spike_list_array.GetSize() > 0 && ichan >= 0 && ichan < spike_list_array.GetSize())
+	SpikeList* spike_list = nullptr;
+	if (spike_list_array.GetSize() > 0 && spike_list_index >= 0 && spike_list_index < spike_list_array.GetSize())
 	{
-		pspklist = &spike_list_array[ichan];
-		m_current_spike_list = ichan;
+		spike_list = &spike_list_array[spike_list_index];
+		m_current_spike_list = spike_list_index;
 	}
-	return pspklist;
+	return spike_list;
 }
 
 SpikeList* CSpikeDoc::GetSpkList_Current()
@@ -1753,7 +1753,7 @@ SpikeList* CSpikeDoc::GetSpkList_Current()
 	return nullptr;
 }
 
-SpikeList* CSpikeDoc::GetSpkList_At(int ichan)
+SpikeList* CSpikeDoc::GetSpkList_At(int spike_list_index)
 {
-	return &spike_list_array[ichan];
+	return &spike_list_array[spike_list_index];
 }
