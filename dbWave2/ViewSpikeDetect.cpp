@@ -187,6 +187,8 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 
 void ViewSpikeDetection::update_legends()
 {
+	TRACE("update_legends 00 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
+
 	const auto l_first = m_chart_data_source.GetDataFirst();
 	const auto l_last = m_chart_data_source.GetDataLast();
 	m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
@@ -200,9 +202,8 @@ void ViewSpikeDetection::update_legends()
 	m_timefirst = static_cast<float>(l_first) / m_samplingRate;
 	m_timelast = static_cast<float>(l_last + 1) / m_samplingRate;
 	m_spikeno = m_pSpkList->m_selected_spike;
-	const auto n_spikes0 = m_pSpkList->GetTotalSpikes();
-	ASSERT(n_spikes0 >= 0);
 
+	TRACE("update_legends 0 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 	if (m_spikeno > m_pSpkList->GetTotalSpikes())
 	{
 		m_pSpkList->m_selected_spike = -1;
@@ -231,6 +232,8 @@ void ViewSpikeDetection::update_legends()
 	// update number of spikes
 	const auto n_spikes = m_pSpkList->GetTotalSpikes();
 	ASSERT(n_spikes >= 0);
+	TRACE("update_legends 1 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
+
 	if (n_spikes != static_cast<int>(GetDlgItemInt(IDC_NBSPIKES_NB, nullptr, TRUE)))
 	{
 		SetDlgItemInt(IDC_NBSPIKES_NB, n_spikes);
@@ -285,6 +288,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(0);
 		ASSERT(m_pSpkList != nullptr);
 	}
+	TRACE("update_spike_file 0 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 
 	m_chart_spike_bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, pdb_doc);
 	m_chart_spike_bar.SetPlotMode(PLOT_BLACK, 0);
@@ -308,6 +312,9 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	//const auto n_spikes = static_cast<UINT>(m_pSpkList->GetTotalSpikes());
 	//if (n_spikes != GetDlgItemInt(IDC_NBSPIKES_NB))
 	//	SetDlgItemInt(IDC_NBSPIKES_NB, n_spikes);
+
+	TRACE("update_spike_file 1 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
+
 }
 
 void ViewSpikeDetection::highlight_spikes(BOOL flag)
@@ -1657,6 +1664,8 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 	int ix_we;
 	auto iy_we = 0;
 
+	TRACE("update_spike_shape_window_scale: start - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
+
 	// if set from controls, get value from the controls
 	if (b_set_from_controls && m_pSpkList->GetTotalSpikes() > 0)
 	{
@@ -1669,6 +1678,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 			ix_we = m_pSpkList->GetDetectParms()->extractNpoints;
 		ASSERT(ix_we != 0);
 		m_chart_spike_shape.SetXWExtOrg(ix_we, m_chart_spike_shape.GetXWOrg());
+		TRACE("update_spike_shape_window_scale: 1 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 
 		// set amplitude
 		GetDlgItem(IDC_SPIKEWINDOWAMPLITUDE)->GetWindowText(cs);
@@ -1680,6 +1690,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		if (iy_we == 0)
 			iy_we = m_chart_spike_shape.GetYWExtent();
 		m_chart_spike_shape.SetYWExtOrg(iy_we, m_chart_spike_shape.GetYWOrg());
+		TRACE("update_spike_shape_window_scale: 2 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 	}
 	else
 	{
@@ -1687,24 +1698,26 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		iy_we = m_chart_spike_shape.GetYWExtent();
 	}
 
+	TRACE("update_spike_shape_window_scale: 3 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 	if (ix_we != NULL && iy_we != NULL)
 	{
-		const auto y_unit = m_chart_spike_shape.GetExtent_mV() / static_cast<float>(m_chart_spike_shape.GetNyScaleCells());
-		m_chart_spike_shape.SetyScaleUnitValue(y_unit);
-		const auto x_unit = m_chart_spike_shape.GetExtent_ms() / static_cast<float>(m_chart_spike_shape.GetNxScaleCells());
-		m_chart_spike_shape.SetxScaleUnitValue(x_unit);
+		//m_chart_spike_shape.SetyScaleUnitValue();
+		//m_chart_spike_shape.SetxScaleUnitValue();
 	}
+	TRACE("update_spike_shape_window_scale: 4 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
 
 	// output values
-	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_chart_spike_shape.GetExtent_mV());
-	SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, m_sz_buffer);
-	const auto y_unit = m_chart_spike_shape.GetExtent_mV() / static_cast<float>(m_chart_spike_shape.GetNyScaleCells());
-	m_chart_spike_shape.SetyScaleUnitValue(y_unit);
+	CString dummy1;
+	dummy1.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_mV());
+	SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, dummy1);
 
-	_stprintf_s(m_sz_buffer, 64, _T("%.3lf"), m_chart_spike_shape.GetExtent_ms());
-	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, m_sz_buffer);
-	const auto x_unit = m_chart_spike_shape.GetExtent_ms() / static_cast<float>(m_chart_spike_shape.GetNxScaleCells());
-	m_chart_spike_shape.SetxScaleUnitValue(x_unit);
+	TRACE("update_spike_shape_window_scale: 5 - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
+	CString dummy2;
+	dummy2.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_ms());
+	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, dummy2);
+
+	TRACE("update_spike_shape_window_scale: end - total spikes = %i\n", m_pSpkList->GetTotalSpikes());
+
 }
 
 void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelection)
@@ -2342,7 +2355,6 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
 {
 	const CString rc("\n");
 	CString str_comment;
-	CString cs_comment;
 	CString cs_unit;
 	float z;
 	int k;
@@ -2358,28 +2370,28 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
 			k++;
 		if (bAll)
 		{
+			CString dummy;
 			if (k > 0)
-				wsprintf(m_sz_buffer, _T("Vbar=%i %s"), k, static_cast<LPCTSTR>(cs_unit));
+				dummy.Format( _T("Vbar=%i %s"), k, static_cast<LPCTSTR>(cs_unit));
 			else
-				_stprintf_s(m_sz_buffer, 64, _T("Vbar=%f.3 mV"), z);
-			cs_comment = m_sz_buffer; // store value into comment
-			str_comment = cs_comment + rc;
+				dummy.Format( _T("Vbar=%f.3 mV"), z);
+			str_comment = dummy + rc;
 		}
 
 		// display bar
 		const auto p_old_brush = static_cast<CBrush*>(p_dc->SelectStockObject(BLACK_BRUSH));
 		if (k > 0)
 			z = static_cast<float>(k) / z;
-		const auto vert_bar = static_cast<int>(rect->Height() * z) / 2;
+		const auto vertical_bar = static_cast<int>(rect->Height() * z) / 2;
 
 		// compute coordinates of the rect
-		CRect rect_vert_bar; // vertical bar rectangle
+		CRect rect_vertical_bar; // vertical bar rectangle
 		const auto bar_width = CSize(5, 5);
-		rect_vert_bar.left = rect->left - options_view_data->textseparator;
-		rect_vert_bar.right = rect_vert_bar.left + bar_width.cx;
-		rect_vert_bar.top = rect->top + (rect->Height() - vert_bar) / 2;
-		rect_vert_bar.bottom = rect_vert_bar.top + vert_bar;
-		p_dc->Rectangle(&rect_vert_bar);
+		rect_vertical_bar.left = rect->left - options_view_data->textseparator;
+		rect_vertical_bar.right = rect_vertical_bar.left + bar_width.cx;
+		rect_vertical_bar.top = rect->top + (rect->Height() - vertical_bar) / 2;
+		rect_vertical_bar.bottom = rect_vertical_bar.top + vertical_bar;
+		p_dc->Rectangle(&rect_vertical_bar);
 		p_dc->SelectObject(p_old_brush);
 	}
 
@@ -2389,20 +2401,22 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, CRect* rect, BOOL bAll)
 		z = m_chart_spike_shape.GetExtent_ms();
 		cs_unit = _T(" ms");
 		k = static_cast<int>(z);
-		wsprintf(m_sz_buffer, _T("Horz=%i."), k);
-		cs_comment = m_sz_buffer; // store value into comment
+		CString dummy3;
+		dummy3.Format(_T("Horz=%i."), k);
+		str_comment += dummy3;
+
 		k = static_cast<int>(1000.0f * (z - static_cast<float>(k)));
-		wsprintf(m_sz_buffer, _T("%i %s"), k, static_cast<LPCTSTR>(cs_unit));
-		cs_comment += m_sz_buffer; // store value into comment
-		str_comment += cs_comment;
+		CString dummy4;
+		dummy4.Format( _T("%i %s"), k, static_cast<LPCTSTR>(cs_unit));
+		str_comment += dummy4;
 		str_comment += rc;
 	}
 
 	// number of spikes
 	k = m_pSpkList->GetTotalSpikes();
-	wsprintf(m_sz_buffer, _T("n spk= %i"), k);
-	cs_comment = m_sz_buffer;
-	str_comment += cs_comment;
+	CString dummy5;
+	dummy5.Format( _T("n spk= %i"), k);
+	str_comment += dummy5;
 	str_comment += rc;
 
 	return str_comment;
@@ -2993,7 +3007,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 		}
 		const auto y_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetYWExtent()) * y / yold);
 		m_chart_spike_shape.SetYWExtOrg(y_we, m_chart_spike_shape.GetYWOrg());
-		m_chart_spike_shape.SetyScaleUnitValue(y / m_chart_spike_shape.GetNyScaleCells());
+		m_chart_spike_shape.SetyScaleUnitValue();
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
@@ -3037,7 +3051,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 		}
 		const auto x_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetXWExtent()) * x / xold);
 		m_chart_spike_shape.SetXWExtOrg(x_we, m_chart_spike_shape.GetXWOrg());
-		m_chart_spike_shape.SetxScaleUnitValue(x / m_chart_spike_shape.GetNxScaleCells());
+		m_chart_spike_shape.SetxScaleUnitValue();
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control

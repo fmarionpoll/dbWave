@@ -776,36 +776,6 @@ void ChartSpikeShapeWnd::plotArraytoDC(CDC* p_dc, short* pspk)
 	}
 }
 
-float ChartSpikeShapeWnd::GetDisplayMaxMv()
-{
-	getExtents();
-	return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWE - m_yWO - p_spikelist_->GetAcqBinzero()));
-}
-
-float ChartSpikeShapeWnd::GetDisplayMinMv()
-{
-	if (p_spikelist_ == nullptr)
-		return 1.f;
-	getExtents();
-	return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWO - m_yWE - p_spikelist_->GetAcqBinzero()));
-}
-
-float ChartSpikeShapeWnd::GetExtent_mV()
-{
-	if (p_spikelist_ == nullptr)
-		return 1.f;
-	getExtents();
-	return (p_spikelist_->GetAcqVoltsperBin() * m_yWE * 1000.f);
-}
-
-float ChartSpikeShapeWnd::GetExtent_ms()
-{
-	if (p_spikelist_ == nullptr)
-		return 1.f;
-	getExtents();
-	return (static_cast<float>(1000.0 * m_xWE) / p_spikelist_->GetAcqSampRate());
-}
-
 void ChartSpikeShapeWnd::MoveVTtrack(int itrack, int newval)
 {
 	CPoint point;

@@ -73,6 +73,41 @@ public:
 		m_lLast = l_last;
 	}
 
+	void SetxScaleUnitValue() { m_scopestruct.xScaleUnitValue = GetExtent_ms() / static_cast<float>(GetNxScaleCells()); }
+
+	void SetyScaleUnitValue() { m_scopestruct.yScaleUnitValue = GetExtent_mV() / static_cast<float>(GetNyScaleCells()); }
+
+	float GetDisplayMaxMv()
+	{
+		getExtents();
+		return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWE - m_yWO - p_spikelist_->GetAcqBinzero()));
+	}
+
+	float GetDisplayMinMv()
+	{
+		if (p_spikelist_ == nullptr)
+			return 1.f;
+		getExtents();
+		return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWO - m_yWE - p_spikelist_->GetAcqBinzero()));
+	}
+
+	float GetExtent_mV()
+	{
+		if (p_spikelist_ == nullptr)
+			return 1.f;
+		getExtents();
+		return (p_spikelist_->GetAcqVoltsperBin() * m_yWE * 1000.f);
+	}
+
+	float GetExtent_ms()
+	{
+		if (p_spikelist_ == nullptr)
+			return 1.f;
+		getExtents();
+		return (static_cast<float>(1000.0 * m_xWE) / p_spikelist_->GetAcqSampRate());
+	}
+
+
 	long GetTimeFirst() const { return m_lFirst; }
 	long GetTimeLast() const { return m_lLast; }
 
@@ -88,11 +123,6 @@ public:
 
 	// non-inline functions
 	void MoveVTtrack(int itrack, int newval);
-
-	float GetDisplayMaxMv();
-	float GetDisplayMinMv();
-	float GetExtent_mV();
-	float GetExtent_ms();
 
 	int SelectSpikeShape(int spikeno);
 	BOOL IsSpikeWithinRange(int spikeno) const;

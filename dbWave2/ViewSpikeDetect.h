@@ -65,7 +65,6 @@ protected:
 	float m_samplingRate = 0.f;
 	BOOL m_bValidThreshold = false;
 	BOOL m_bDetected = false;
-	TCHAR m_sz_buffer[64]{};
 
 	int m_cursor_state = 0;
 
