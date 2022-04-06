@@ -482,12 +482,15 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 		int min1 = 0;
 		int max1 = 65535;
 		const int n_spikes = m_spikes.GetCount();
+		if (n_spikes == 0)
+			return;
 
 		for (auto index = 0; index < n_spikes; index++)
 		{
-			if (GetSpike(index)->get_class() >= 0)
+			Spike* spike = GetSpike(index);
+			if (spike->get_class() >= 0)
 			{
-				GetSpike(0)->GetMaxMin(&max1, &min1);
+				spike->GetMaxMin(&max1, &min1);
 				break;
 			}
 		}
@@ -495,11 +498,14 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 		m_maximum_over_all_spikes = max1; 
 		for (auto index = 0; index < n_spikes; index++)
 		{
-			if (GetSpike(index)->get_class() >= 0)
+			Spike* spike = GetSpike(index);
+			if (spike->get_class() >= 0)
 			{
-				GetSpike(index)->GetMaxMin(&max1, &min1);
-				if (max1 > m_maximum_over_all_spikes) m_maximum_over_all_spikes = max1;
-				if (min1 < m_minimum_over_all_spikes) m_minimum_over_all_spikes = min1;
+				spike->GetMaxMin(&max1, &min1);
+				if (max1 > m_maximum_over_all_spikes) 
+					m_maximum_over_all_spikes = max1;
+				if (min1 < m_minimum_over_all_spikes) 
+					m_minimum_over_all_spikes = min1;
 			}
 		}
 		m_extrema_valid = TRUE;

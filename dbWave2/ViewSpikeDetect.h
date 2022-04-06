@@ -86,7 +86,7 @@ protected:
 	void detect_all(BOOL bAll); // detect from current set of parms or from all
 	int detect_method_1(WORD channel_index); // spike detection, method 1 / m_spkD chan channel
 	int detect_stimulus_1(int channel_index); // stimulus detection
-	void serialize_windows_state(BOOL b_save, int tab_index = -1);
+	void serialize_windows_state(BOOL save, int tab_index = -1);
 	void align_display_to_current_spike();
 	void highlight_spikes(BOOL flag = TRUE);
 	void scroll_file(UINT nSBCode, UINT nPos);
@@ -96,6 +96,7 @@ protected:
 	void update_combos_detect_and_transforms();
 	void define_stretch_parameters();
 	void define_sub_classed_items();
+
 	void update_detection_parameters();
 	void update_detection_controls();
 	void update_detection_settings(int iSelParms);
@@ -104,6 +105,7 @@ protected:
 	void update_spike_file(BOOL bUpdateInterface = TRUE);
 	void update_file_scroll();
 	void update_legends();
+	void update_number_of_spikes();
 	void update_legend_detection_wnd();
 	void update_spike_shape_window_scale(BOOL b_set_from_controls = TRUE);
 	void update_VT_tags();

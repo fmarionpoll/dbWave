@@ -12,8 +12,8 @@ class SCOPESTRUCT : public CObject
 public:
 	WORD wversion{2};
 	int iID{0};
-	int iXCells{0};
-	int iYCells{0};
+	int iXCells{1};
+	int iYCells{1};
 	int iXTicks{0};
 	int iYTicks{0};
 	int iXTickLine{0};

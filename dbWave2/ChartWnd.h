@@ -86,8 +86,8 @@ public:
 	void SetNyScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
 	int GetNxScaleCells() { return m_scopestruct.iXCells; }
 	int GetNyScaleCells() { return m_scopestruct.iYCells; }
-	void SetxScaleUnitValue(float x) { m_scopestruct.xScaleUnitValue = x; }
-	void SetyScaleUnitValue(float y) { m_scopestruct.yScaleUnitValue = y; }
+	void SetxScaleUnitValue(float x);
+	void SetyScaleUnitValue(float y);
 	void AttachExternalXRuler(RulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
 	void AttachExternalYRuler(RulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
@@ -223,7 +223,7 @@ protected:
 	void zoomOut();
 	void zoomPop();
 	void drawGridEvenlySpaced(CDC* p_dc) const;
-	void drawGridFromRuler(CDC* p_dc, Ruler* pRuler) const;
+	void drawGridFromRuler(CDC* p_dc, const Ruler* pRuler) const;
 	void drawGridNicelySpaced(CDC* p_dc);
 	void drawScalefromRuler(CDC* p_dc, Ruler* scale);
 

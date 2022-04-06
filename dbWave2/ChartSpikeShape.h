@@ -41,12 +41,7 @@ public:
 	void SetRangeMode(int mode) { m_rangemode = mode; }
 	int GetRangeMode() const { return m_rangemode; }
 
-	void SetPlotMode(int mode, int selclass)
-	{
-		m_plotmode = mode;
-		m_selclass = selclass;
-	}
-
+	void SetPlotMode(int mode, int selclass);
 	int GetPlotMode() const { return m_plotmode; }
 
 	void SetSelClass(int selclass) { m_selclass = selclass; }
@@ -55,54 +50,16 @@ public:
 	void SetTextOption(BOOL bText) { m_bText = bText; }
 	BOOL GetTextOption() const { return m_bText; }
 
-	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
-	{
-		p_dbwave_doc_ = p_document;
-		p_spikelist_ = p_spk_list;
-		m_selectedspike = -1;
-	}
-
+	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document);
 	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
 
 	void SetCurrentClass(int curcla) { m_currentclass = curcla; }
 	int GetCurrentClass() const { return m_currentclass; }
-
-	void SetTimeIntervals(long l_first, long l_last)
-	{
-		m_lFirst = l_first;
-		m_lLast = l_last;
-	}
-
-	float GetDisplayMaxMv()
-	{
-		getExtents();
-		return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWE - m_yWO - p_spikelist_->GetAcqBinzero()));
-	}
-
-	float GetDisplayMinMv()
-	{
-		if (p_spikelist_ == nullptr)
-			return 1.f;
-		getExtents();
-		return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWO - m_yWE - p_spikelist_->GetAcqBinzero()));
-	}
-
-	float GetExtent_mV()
-	{
-		if (p_spikelist_ == nullptr)
-			return 1.f;
-		getExtents();
-		return (p_spikelist_->GetAcqVoltsperBin() * m_yWE * 1000.f);
-	}
-
-	float GetExtent_ms()
-	{
-		if (p_spikelist_ == nullptr)
-			return 1.f;
-		getExtents();
-		return (static_cast<float>(1000.0 * m_xWE) / p_spikelist_->GetAcqSampRate());
-	}
-
+	void SetTimeIntervals(long l_first, long l_last);
+	float GetDisplayMaxMv();
+	float GetDisplayMinMv();
+	float GetExtent_mV();
+	float GetExtent_ms();
 
 	long GetTimeFirst() const { return m_lFirst; }
 	long GetTimeLast() const { return m_lLast; }

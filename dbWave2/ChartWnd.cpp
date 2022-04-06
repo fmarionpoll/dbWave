@@ -292,7 +292,7 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc) const
 
 	// Standard grid is 8 high by 10 wide
 	CPen pen_scale(PS_SOLID, 1, m_scopestruct.crScopeGrid);
-	const auto ppen_old = p_dc->SelectObject(&pen_scale);
+	const auto pen_old = p_dc->SelectObject(&pen_scale);
 	const auto i_x_ticks = m_scopestruct.iXCells * m_scopestruct.iXTicks;
 	const auto i_y_ticks = m_scopestruct.iYCells * m_scopestruct.iYTicks;
 
@@ -316,6 +316,7 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc) const
 		p_dc->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
 		p_dc->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
 	}
+
 	for (auto i = 1; i < i_y_ticks; i++)
 	{
 		constexpr auto i_tick_height = 2;
@@ -323,24 +324,24 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc) const
 		p_dc->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
 		p_dc->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
 	}
-	p_dc->SelectObject(ppen_old);
+	p_dc->SelectObject(pen_old);
 
 	// if grids, draw scale text (dummy)
 	if (m_scopestruct.iXCells > 1 && m_scopestruct.iYCells > 1)
 	{
 		// convert value into text
 		CString cs;
-		cs.Format(_T("%.3f mV; %.3f ms"), double(m_scopestruct.yScaleUnitValue), double(m_scopestruct.xScaleUnitValue));
-		const auto textlen = cs.GetLength();
+		cs.Format(_T("%.3f mV; %.3f ms"), static_cast<double>(m_scopestruct.yScaleUnitValue), static_cast<double>(m_scopestruct.xScaleUnitValue));
+		const auto text_length = cs.GetLength();
 		// plot text
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 		rect.DeflateRect(1, 1);
 		p_dc->SetTextColor(m_scopestruct.crScopeGrid);
-		p_dc->DrawText(cs, textlen, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE);
+		p_dc->DrawText(cs, text_length, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE);
 	}
 }
 
-void ChartWnd::drawGridFromRuler(CDC* p_dc, Ruler* pRuler) const
+void ChartWnd::drawGridFromRuler(CDC* p_dc, const Ruler* pRuler) const
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -1145,4 +1146,14 @@ void ChartWnd::PlotToBitmap(CBitmap* pBitmap)
 int ChartWnd::hitCurve(CPoint point)
 {
 	return 0;
+}
+
+void ChartWnd::SetxScaleUnitValue(float x)
+{
+	m_scopestruct.xScaleUnitValue = x;
+}
+
+void ChartWnd::SetyScaleUnitValue(float y)
+{
+	m_scopestruct.yScaleUnitValue = y;
 }

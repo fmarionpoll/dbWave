@@ -1,6 +1,6 @@
 // CEditCtrl.cpp : implementation file
 //
-// CEditCtrl is a control derived from the CEdit control, ie it accept
+// CEditCtrl is a control derived from the CEdit control, ie it accepts
 // characters from the keyboard and store them as text within the window.
 //
 // CEditCtrl is used to subclass edit controls and check the incoming keys
@@ -25,8 +25,8 @@
 // 	BOOL	m_bEntryDone;  TRUE only if CR, or up/down arrows = input is valid
 //	WORD	m_nChar;		number of characters within windows text buffer
 //
-// the parent window should therefore trap EN_CHANGE messages from the subclassed edit
-// control and take action oly when m_bEntryDone is TRUE. It is to the responsablility
+// the parent window should therefore trap EN_CHANGE messages from the sub-classed edit
+// control and take action oly when m_bEntryDone is TRUE. It is to the responsibility
 // of this parent to reset m_bEntryDone to FALSE when input is processed so that a new
 // value can be validated.
 //
@@ -39,12 +39,10 @@
 #endif
 
 CEditCtrl::CEditCtrl()
-{
-}
+= default;
 
 CEditCtrl::~CEditCtrl()
-{
-}
+= default;
 
 BEGIN_MESSAGE_MAP(CEditCtrl, CWnd)
 	ON_WM_GETDLGCODE()
@@ -61,7 +59,6 @@ UINT CEditCtrl::OnGetDlgCode()
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
 
-//--------------------------------------------------------------------------
 void CEditCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// VK_SPACE (20), _PRIOR, _NEXT, _END, _HOME, _LEFT, _UP, _RIGHT, _DOWN, _SELECT(28)
@@ -71,7 +68,6 @@ void CEditCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-//--------------------------------------------------------------------------
 void CEditCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (!ProcessKeys(nChar))
@@ -86,23 +82,24 @@ void CEditCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 //
 // de-select et select le prochain control en réponse à TAB, arrow left/right
 //--------------------------------------------------------------------------
+
 BOOL CEditCtrl::ProcessKeys(UINT nChar)
 {
 	switch (nChar)
 	{
-	case VK_TAB: // change selection with TAB
+	case VK_TAB: 
 		{
 			const auto b_next = (GetKeyState(VK_SHIFT) & 0x8000);
 			const auto h_next = ::GetNextDlgGroupItem(::GetParent(m_hWnd), m_hWnd, b_next);
-			::SetFocus(h_next); // select next dlg item
+			::SetFocus(h_next); 
 		}
 		break;
 
-	case VK_RETURN: // post message to parent
-	case VK_UP: // arrow up
-	case VK_DOWN: // arrow down
-	case VK_PRIOR: // page up
-	case VK_NEXT: // page down
+	case VK_RETURN: 
+	case VK_UP: 
+	case VK_DOWN: 
+	case VK_PRIOR:
+	case VK_NEXT: 
 		m_bEntryDone = TRUE;
 		m_nChar = nChar;
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
@@ -131,7 +128,6 @@ void CEditCtrl::OnSetFocus(CWnd* pOldWnd)
 	SetSel(0, -1);
 }
 
-// force validation if m_bEntry=FALSE (entry not processed)
 void CEditCtrl::OnKillFocus(CWnd* pNewWnd)
 {
 	if (!m_bEntryDone)
