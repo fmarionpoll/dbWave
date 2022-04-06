@@ -1,8 +1,12 @@
 #pragma once
+#include "ChartData.h"
+#include "ChartSpikeBar.h"
+#include "ChartSpikeShape.h"
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "./Controls/cdxCRotBevelLine.h"
 #include "dbTableView.h"
+#include "Editctrl.h"
 
 class ViewSpikeDetection : public dbTableView
 {
@@ -80,9 +84,9 @@ public:
 	// Implementation
 protected:
 	void detect_all(BOOL bAll); // detect from current set of parms or from all
-	int detect_method_1(WORD schan); // spike detection, method 1 / m_spkD chan schan
-	int detect_stimulus_1(int i); // stimulus detection
-	void serialize_windows_state(BOOL bSave, int itab = -1);
+	int detect_method_1(WORD channel_index); // spike detection, method 1 / m_spkD chan channel
+	int detect_stimulus_1(int channel_index); // stimulus detection
+	void serialize_windows_state(BOOL b_save, int tab_index = -1);
 	void align_display_to_current_spike();
 	void highlight_spikes(BOOL flag = TRUE);
 	void scroll_file(UINT nSBCode, UINT nPos);
@@ -124,18 +128,18 @@ public:
 	~ViewSpikeDetection() override;
 	// print view
 protected:
-	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
+	void PrintFileBottomPage(CDC* p_dc, const CPrintInfo* pInfo);
 	CString PrintConvertFileIndex(long l_first, long l_last);
 	void PrintComputePageSize();
 
 	CString PrintGetFileInfos();
-	CString PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, CRect* prect);
-	CString PrintSpkShapeBars(CDC* p_dc, CRect* prect, BOOL bAll);
+	CString PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, const CRect* prect);
+	CString PrintSpkShapeBars(CDC* p_dc, const CRect* prect, BOOL bAll);
 	void PrintCreateFont();
-	BOOL PrintGetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
-	BOOL PrintGetNextRow(int& filenumber, long& l_first, long& very_last);
+	BOOL PrintGetFileSeriesIndexFromPage(int page, int& file_number, long& l_first);
+	BOOL PrintGetNextRow(int& file_index, long& l_first, long& very_last);
 	int PrintGetNPages();
-	void PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd, CRect* prect, BOOL bComments, BOOL bBars);
+	void PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd, CRect* prect, BOOL bComments);
 
 	// gain and bias setting: data and functions
 	HICON m_hBias = nullptr;
@@ -193,7 +197,7 @@ public:
 	afx_msg void OnBnClickedLocatebttn();
 
 	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedClearall();
+	afx_msg void OnBnClickedClearAll();
 	afx_msg void OnToolsEditstimulus();
 	afx_msg void OnEnChangeChanselected();
 	afx_msg void OnBnClickedGain2();
