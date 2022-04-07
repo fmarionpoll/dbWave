@@ -42,7 +42,7 @@ protected:
 
 	ChartData m_chart_data_filtered;
 	ChartData m_chart_data_source;
-	ChartSpikeBarWnd m_chart_spike_bar;
+	ChartSpikeBar m_chart_spike_bar;
 	ChartSpikeShapeWnd m_chart_spike_shape;
 
 	ScrollBarEx m_filescroll;

@@ -2,6 +2,12 @@
 #include "ChartSpike.h"
 
 
+ChartSpike::ChartSpike()
+= default;
+
+ChartSpike::~ChartSpike()
+= default;
+
 int ChartSpike::get_color_according_to_plotmode(const Spike* spike, int plot_mode) const
 {
 	const auto no_spike_class = spike->get_class();

@@ -11,21 +11,6 @@ public:
 	~ChartSpikeXY() override;
 
 protected:
-	//int m_rangemode = RANGE_TIMEINTERVALS; // display range
-	//long m_lFirst = 0; // time index of first pt displayed
-	//long m_lLast = 0; // time index of last pt displayed
-	//int m_spkfirst{}; // index first spike
-	//int m_spklast{}; // index last spike
-	//int m_currentclass = 0; // current class in case of displaying classes
-	//int m_selectedspike = -1; // selected spike (display differently)
-	//int m_hitspk = -1; // no of spike selected
-	//int m_selclass{}; // index class selected
-	//BOOL m_btrackCurve = false; // track curve ?
-	//BOOL m_ballFiles = false; // display data from all files in CdbWaveDoc*
-	//SpikeList* p_spikelist_ = nullptr;
-	//CSpikeDoc* p_spike_doc_ = nullptr;
-	//CdbWaveDoc* p_dbwave_doc_ = nullptr;
-
 	int m_dot_width = 6;
 	long time_max_ = 0;
 	long time_min_ = 0;
@@ -34,28 +19,8 @@ protected:
 
 	// Helpers and public procedures
 public:
-	void SetRangeMode(int mode) { m_rangemode = mode; }
-
-	void SetPlotMode(int mode, int selclass)
-	{
-		m_plotmode = mode;
-		m_selclass = selclass;
-	}
-
-	void SetSelClass(int selclass) { m_selclass = selclass; }
-
-	void SetTimeIntervals(long l_first, long l_last)
-	{
-		m_lFirst = l_first;
-		m_lLast = l_last;
-	}
-
-	void SetCurrentClass(int curcla) { m_currentclass = curcla; }
 	void SetSpkIndexes(int first, int last) { m_spkfirst = first, m_spklast = last; }
 
-	int GetCurrentClass() const { return m_currentclass; }
-	long GetTimeFirst() const { return m_lFirst; }
-	long GetTimeLast() const { return m_lLast; }
 	int GetSelectedSpike() const { return m_selectedspike; }
 	int GetHitSpike() const { return m_hitspk; }
 

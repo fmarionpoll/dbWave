@@ -23,11 +23,6 @@ protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
 	SpikeList* m_pSL = nullptr;
 
-	//long m_lFirst = 0; // time index of first pt displayed
-	//long m_lLast = 0; // time index of last pt displayed
-	//int m_hitspk = -1; // no of spike selected
-	//int m_selclass = 0; // index class selected
-
 	int m_binsize = 0; // size of one bin
 	int m_abcissaminval = 0; // minimum value from which histogram is built (abscissa)
 	int m_abcissamaxval = 0; // maximum value (abscissa max)
@@ -39,21 +34,6 @@ protected:
 	int m_ilast{}; // index last interval with data
 
 public:
-	void SetPlotMode(int mode, int selclass)
-	{
-		m_plotmode = mode;
-		m_selclass = selclass;
-	}
-
-	void SetTimeIntervals(long l_first, long l_last)
-	{
-		m_lFirst = l_first;
-		m_lLast = l_last;
-	}
-
-	long GetTimeFirst() const { return m_lFirst; }
-	long GetTimeLast() const { return m_lLast; }
-
 	int GetBinsize() const { return m_binsize; }
 	int GetBinMinval() const { return m_abcissaminval; }
 	int GetBinMaxVal() const { return m_abcissamaxval; }

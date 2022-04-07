@@ -15,7 +15,7 @@ struct rowStruct
 {
 	CString* pcs;
 	ChartSpikeShapeWnd* pspk_shapes;
-	ChartSpikeBarWnd* pspk_bars;
+	ChartSpikeBar* pspk_bars;
 };
 
 BEGIN_MESSAGE_MAP(CSpikeClassListBox, CListBox)
@@ -271,7 +271,7 @@ void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 		}
 
 		// 2) bars with spike height
-		auto* pspk_bars = new (ChartSpikeBarWnd);
+		auto* pspk_bars = new (ChartSpikeBar);
 		ASSERT(pspk_bars != NULL);
 		pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
 

@@ -39,31 +39,16 @@ protected:
 
 	// Helpers
 public:
-	void SetRangeMode(int mode) { m_rangemode = mode; }
-	int GetRangeMode() const { return m_rangemode; }
-
-	void SetPlotMode(int mode, int selclass);
-	int GetPlotMode() const { return m_plotmode; }
-
-	void SetSelClass(int selclass) { m_selclass = selclass; }
-	int GetSelClass() const { return m_selclass; }
-
 	void SetTextOption(BOOL bText) { m_bText = bText; }
 	BOOL GetTextOption() const { return m_bText; }
 
 	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document);
 	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
 
-	void SetCurrentClass(int curcla) { m_currentclass = curcla; }
-	int GetCurrentClass() const { return m_currentclass; }
-	void SetTimeIntervals(long l_first, long l_last);
 	float GetDisplayMaxMv();
 	float GetDisplayMinMv();
 	float GetExtent_mV();
 	float GetExtent_ms();
-
-	long GetTimeFirst() const { return m_lFirst; }
-	long GetTimeLast() const { return m_lLast; }
 
 	void SetSpkIndexes(int first, int last) { m_spkfirst = first, m_spklast = last; }
 	int GetHitSpike() const { return m_hitspk; }

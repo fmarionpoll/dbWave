@@ -829,12 +829,6 @@ void ChartSpikeShapeWnd::Serialize(CArchive& ar)
 	}
 }
 
-void ChartSpikeShapeWnd::SetTimeIntervals(long l_first, long l_last)
-{
-	m_lFirst = l_first;
-	m_lLast = l_last;
-}
-
 float ChartSpikeShapeWnd::GetDisplayMaxMv()
 {
 	getExtents();
@@ -872,8 +866,3 @@ void ChartSpikeShapeWnd::SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_docu
 	m_selectedspike = -1;
 }
 
-void ChartSpikeShapeWnd::SetPlotMode(int mode, int selclass)
-{
-	m_plotmode = mode;
-	m_selclass = selclass;
-}

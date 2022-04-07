@@ -34,7 +34,7 @@ public:
 	AcqDataDoc* pdataDoc = nullptr;
 	ChartData* pDataChartWnd = nullptr;
 	CSpikeDoc* pspikeDoc = nullptr;
-	ChartSpikeBarWnd* pSpikeChartWnd = nullptr;
+	ChartSpikeBar* pSpikeChartWnd = nullptr;
 
 	CDataListCtrl_Row& operator =(const CDataListCtrl_Row& arg);
 	void Serialize(CArchive& ar) override;

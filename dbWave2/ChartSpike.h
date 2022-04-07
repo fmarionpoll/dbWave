@@ -7,6 +7,8 @@
 class ChartSpike : public ChartWnd
 {
 public:
+	ChartSpike();
+	~ChartSpike();
 
 protected:
 	int m_rangemode = RANGE_TIMEINTERVALS;	// display range
@@ -28,4 +30,28 @@ protected:
 
 	int get_color_according_to_plotmode(const Spike* spike, int plot_mode) const;
 
+public:
+	void SetRangeMode(int mode) { m_rangemode = mode; }
+	int GetRangeMode() const { return m_rangemode; }
+
+	void SetSelClass(int selclass) { m_selclass = selclass; }
+	int GetSelClass() const { return m_selclass; }
+
+	void SetPlotMode(int mode, int selclass)
+	{
+		m_plotmode = mode;
+		m_selclass = selclass;
+	}
+	int GetPlotMode() const { return m_plotmode; }
+
+	void SetCurrentClass(int curcla) { m_currentclass = curcla; }
+	int GetCurrentClass() const { return m_currentclass; }
+
+	long GetTimeFirst() const { return m_lFirst; }
+	long GetTimeLast() const { return m_lLast; }
+	void SetTimeIntervals(long l_first, long l_last)
+	{
+		m_lFirst = l_first;
+		m_lLast = l_last;
+	}
 };
