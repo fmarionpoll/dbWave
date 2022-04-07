@@ -1,18 +1,12 @@
 
 #include "StdAfx.h"
-#include "dbWave.h"
-#include "resource.h"
-#include "ChartWnd.h"
-#include "ChartData.h"
-#include "Editctrl.h"
-#include "dbWaveDoc.h"
-#include "Spikedoc.h"
-#include "SpikeClassListBox.h"
-#include "MainFrm.h"
 #include "ViewSpikes.h"
 
+#include "dbWave.h"
 #include "DlgCopyAs.h"
 #include "DlgSpikeEdit.h"
+#include "MainFrm.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,7 +16,7 @@ IMPLEMENT_DYNCREATE(ViewSpikes, dbTableView)
 
 ViewSpikes::ViewSpikes() : dbTableView(IDD)
 {
-	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
+	m_bEnableActiveAccessibility = FALSE; 
 }
 
 ViewSpikes::~ViewSpikes()
@@ -93,16 +87,16 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_BN_CLICKED(IDC_SAMECLASS, &ViewSpikes::OnBnClickedSameclass)
 END_MESSAGE_MAP()
 
-void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_deactivate_view)
 {
 	if (bActivate)
 	{
-		auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
+		const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
 	}
 	else
 	{
-		if (this != pActivateView && this == pDeactiveView)
+		if (this != pActivateView && this == p_deactivate_view)
 		{
 			saveCurrentSpkFile();
 			// save column parameters
@@ -123,11 +117,11 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDe
 			m_ChartDataWnd.Serialize(ar);
 			ar.Close();
 		}
-		
-		auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());
+
+		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
+		p_app->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());
 	}
-	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	dbTableView::OnActivateView(bActivate, pActivateView, p_deactivate_view);
 }
 
 BOOL ViewSpikes::OnMove(UINT nIDMoveCommand)
@@ -785,7 +779,7 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	const auto l_first = m_spkClassListBox.GetTimeFirst();
 	const auto l_last = m_spkClassListBox.GetTimeLast();
 
-	DlgSpikeEdit dlg; // dialog box
+	DlgSpikeEdit dlg;
 	dlg.m_yextent = m_spkClassListBox.GetYWExtent(); // load display parameters
 	dlg.m_yzero = m_spkClassListBox.GetYWOrg(); // ordinates
 	dlg.m_xextent = m_spkClassListBox.GetXWExtent(); // and

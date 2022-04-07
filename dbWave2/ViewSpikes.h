@@ -3,6 +3,12 @@
 #include "SpikeClassListBox.h"
 #include "ScrollBarEx.h"
 #include "dbTableView.h"
+#include <ChartData.h>
+
+#include "Editctrl.h"
+#include "OPTIONS_VIEWDATAMEASURE.h"
+#include "SPKCLASSIF.h"
+#include "SPKDETECTPARM.h"
 
 class ViewSpikes : public dbTableView
 {
@@ -103,7 +109,7 @@ protected:
 	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
 	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
 	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_deactivate_view) override;
 
 	// page format printing parameters (pixel unit)
 	OPTIONS_VIEWDATA* options_viewdata = nullptr; // view data options

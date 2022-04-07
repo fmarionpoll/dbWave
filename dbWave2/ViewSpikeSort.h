@@ -1,10 +1,13 @@
 #pragma once
-#include "ChartSpikeHist.h"
-#include "ChartSpikeXY.h"
-#include "ChartSpikeShape.h"
 #include "ChartSpikeBar.h"
-#include "ScrollBarEx.h"
+#include "ChartSpikeHist.h"
+#include "ChartSpikeShape.h"
+#include "ChartSpikeXY.h"
 #include "dbTableView.h"
+#include "Editctrl.h"
+#include "ScrollBarEx.h"
+#include "SPKCLASSIF.h"
+
 
 class ViewSpikeSort : public dbTableView
 {

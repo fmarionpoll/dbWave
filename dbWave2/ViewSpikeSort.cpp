@@ -1,19 +1,11 @@
 #include "StdAfx.h"
-#include <math.h>
-#include "dbWave.h"
-#include "resource.h"
-#include "Editctrl.h"
-#include "ChartWnd.h"
-#include "dbWaveDoc.h"
-#include "Spikedoc.h"
-#include "ChartSpikeShape.h"
-#include "ChartSpikeHist.h"
-#include "ChartSpikeXY.h"
-#include "MainFrm.h"
 #include "ViewSpikeSort.h"
 
+#include "dbWave.h"
 #include "DlgProgress.h"
 #include "DlgSpikeEdit.h"
+#include "MainFrm.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

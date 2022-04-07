@@ -1,8 +1,11 @@
 #pragma once
-
-#include "TemplateListWnd.h"
+#include "ChartSpikeShape.h"
 #include "dbTableView.h"
 #include "Editctrl.h"
+#include "OPTIONS_VIEWDATAMEASURE.h"
+#include "SPKCLASSIF.h"
+#include "TemplateListWnd.h"
+
 
 class ViewSpikeTemplates : public dbTableView
 {
