@@ -70,9 +70,9 @@ public:
 	void set_dt(long x) { dt_ = x; }
 
 	void TransferDataToSpikeBuffer(short* source_data, int source_n_channels);
-	void MeasureMaxMinEx(int* max, int* max_index, int* min, int* min_index, int i_first, int i_last);
-	void MeasureMaxThenMinEx(int* max, int* max_index, int* min, int* min_index, int i_first, int i_last);
-	long MeasureSumEx(int i_first, int i_last);
+	void measure_max_min_ex(int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) const;
+	void MeasureMaxThenMinEx(int* max, int* max_index, int* min, int* min_index, int i_first, int i_last) const;
+	long MeasureSumEx(int i_first, int i_last) const;
 	void OffsetSpikeData(int offset);
 	void OffsetSpikeDataToAverageEx(int i_first, int i_last);
 	void OffsetSpikeDataToExtremaEx(int i_first, int i_last);

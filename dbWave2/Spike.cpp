@@ -80,7 +80,6 @@ void Spike::read_version2(CArchive& ar, WORD wVersion)
 	}
 }
 
-
 void Spike::read_version0(CArchive& ar)
 {
 	WORD w1;
@@ -132,7 +131,7 @@ void Spike::get_max_min(int* max, int* min) const
 	*min = m_min;
 }
 
-void Spike::MeasureMaxMinEx(int* max, int* max_index, int* min, int* min_index, const int i_first, const int i_last)
+void Spike::measure_max_min_ex(int* max, int* max_index, int* min, int* min_index, const int i_first, const int i_last) const
 {
 	auto lp_buffer = get_p_data() + i_first;
 	int val = *lp_buffer;
@@ -156,7 +155,7 @@ void Spike::MeasureMaxMinEx(int* max, int* max_index, int* min, int* min_index, 
 	}
 }
 
-void Spike::MeasureMaxThenMinEx(int* max, int* max_index, int* min, int* min_index, const int i_first, const int i_last)
+void Spike::MeasureMaxThenMinEx(int* max, int* max_index, int* min, int* min_index, const int i_first, const int i_last) const
 {
 	auto lp_buffer = get_p_data() + i_first;
 	auto lp_buffer_max = lp_buffer;
@@ -193,7 +192,7 @@ void Spike::MeasureMaxThenMinEx(int* max, int* max_index, int* min, int* min_ind
 	}
 }
 
-long Spike::MeasureSumEx(int i_first, int i_last)
+long Spike::MeasureSumEx(int i_first, int i_last) const
 {
 	auto lp_b = get_p_data() + i_first;
 	long average_value = 0;
@@ -236,7 +235,7 @@ void Spike::OffsetSpikeDataToAverageEx(int i_first, int i_last)
 void Spike::OffsetSpikeDataToExtremaEx(int i_first, int i_last)
 {
 	int max, min, max_index, min_index;
-	MeasureMaxMinEx(&max, &max_index, &min, &min_index, i_first, i_last);
+	measure_max_min_ex(&max, &max_index, &min, &min_index, i_first, i_last);
 	const int offset = (max + min) / 2 - m_bin_zero;
 	OffsetSpikeData(offset);
 }
@@ -259,5 +258,4 @@ void Spike::CenterSpikeAmplitude(const int i_first, const int i_last, const WORD
 	//SetAmplitudeOffset(get_amplitude_offset() + val_first);
 	//SetMaxMinEx(max - val_first, min - val_first, d_max_to_min);
 	//OffsetSpikeData(val_first);
-
 }

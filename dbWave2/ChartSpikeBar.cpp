@@ -139,7 +139,6 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 	}
 }
 
-
 void ChartSpikeBar::PlotSingleSpkDataToDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
@@ -227,7 +226,6 @@ void ChartSpikeBar::PlotSingleSpkDataToDC(CDC* p_dc)
 
 	p_dc->RestoreDC(n_saved_dc);
 }
-
 
 void ChartSpikeBar::displayStimulus(CDC* p_dc, const CRect* rect) const
 {
@@ -404,7 +402,7 @@ void ChartSpikeBar::DisplayFlaggedSpikes(const BOOL b_high_light)
 		constexpr auto pen_size = 0;
 		const auto no_spike = p_spike_list->GetSpikeFlagArrayAt(i);
 
-		Spike* spike = p_spike_list->GetSpike(no_spike);
+		const Spike* spike = p_spike_list->GetSpike(no_spike);
 		const auto no_spike_class = spike->get_class();
 		if (PLOT_ONECLASSONLY == m_plotmode && no_spike_class != m_selected_class)
 			continue;
@@ -813,7 +811,7 @@ int ChartSpikeBar::hitCurve(const CPoint point)
 
 	for (auto i_spike = i_spike_last; i_spike >= i_spike_first; i_spike--)
 	{
-		Spike* spike = p_spike_list->GetSpike(i_spike);
+		const Spike* spike = p_spike_list->GetSpike(i_spike);
 		const auto l_spike_time = spike->get_time();
 		if (l_spike_time < x_min || l_spike_time > x_max)
 			continue;
@@ -858,6 +856,7 @@ void ChartSpikeBar::MaxCenter()
 		return;
 	int max, min;
 	p_spike_list->GetTotalMaxMin(TRUE, &max, &min);
+	
 	m_yWE = MulDiv(max - min + 1, 10, 8);
 	m_yWO = max / 2 + min / 2;
 }

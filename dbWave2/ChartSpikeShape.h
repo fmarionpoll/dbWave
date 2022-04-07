@@ -8,14 +8,11 @@ constexpr auto DISP_SELECTEDCLASS = 2; // mask: ON: display only selected spike/
 
 class ChartSpikeShapeWnd : public ChartSpike
 {
-	//Construction
 public:
 	ChartSpikeShapeWnd();
 	~ChartSpikeShapeWnd() override;
 	DECLARE_SERIAL(ChartSpikeShapeWnd)
 	void Serialize(CArchive& ar) override;
-
-	// parameters
 
 protected:
 	int m_colorselectedspike = RED_COLOR; // color selected spike (index / color table)
@@ -24,7 +21,6 @@ protected:
 
 	CArray<CPoint, CPoint> polypoints_; // points displayed with polyline
 
-	// Helpers
 public:
 	void SetTextOption(BOOL bText) { m_bText = bText; }
 	BOOL GetTextOption() const { return m_bText; }

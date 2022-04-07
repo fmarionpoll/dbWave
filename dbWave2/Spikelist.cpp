@@ -468,7 +468,7 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 			se->TransferDataToSpikeBuffer(source_data, n_channels);
 			// compute max min between brackets for new spike
 			int max, min, i_max, i_min;
-			se->MeasureMaxMinEx(&max, &i_max, &min, &i_min, m_imaxmin1SL, m_imaxmin2SL);
+			se->measure_max_min_ex(&max, &i_max, &min, &i_min, m_imaxmin1SL, m_imaxmin2SL);
 			se->SetMaxMinEx(max, min, i_min - i_max);
 		}
 	}
@@ -487,7 +487,7 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 
 		for (auto index = 0; index < n_spikes; index++)
 		{
-			Spike* spike = GetSpike(index);
+			const Spike* spike = GetSpike(index);
 			if (spike->get_class() >= 0)
 			{
 				spike->get_max_min(&max1, &min1);
@@ -498,7 +498,7 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 		m_maximum_over_all_spikes = max1; 
 		for (auto index = 0; index < n_spikes; index++)
 		{
-			Spike* spike = GetSpike(index);
+			const Spike* spike = GetSpike(index);
 			if (spike->get_class() >= 0)
 			{
 				spike->get_max_min(&max1, &min1);
