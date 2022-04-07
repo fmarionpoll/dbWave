@@ -37,11 +37,7 @@ public:
 	void SetSelClass(int selected_class) { m_selected_class = selected_class; }
 	int GetSelClass() const { return m_selected_class; }
 
-	void SetPlotMode(int mode, int selected_class)
-	{
-		m_plotmode = mode;
-		m_selected_class = selected_class;
-	}
+	void set_plot_mode(int mode, int selected_class);
 	int GetPlotMode() const { return m_plotmode; }
 
 	void SetCurrentClass(int current_class) { m_current_class = current_class; }
@@ -54,4 +50,9 @@ public:
 		m_lFirst = l_first;
 		m_lLast = l_last;
 	}
+
+	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
+	SpikeList* GetSpkList() const {return p_spike_list; }
+
+	void set_source_data(SpikeList* p_spk_list, CdbWaveDoc* p_document);
 };

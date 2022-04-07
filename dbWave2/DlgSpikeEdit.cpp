@@ -42,25 +42,25 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::LoadSpikeParms()
 {
-	Spike* p_spike_element = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
-	m_spikeclass = p_spike_element->get_class(); // class number
+	const Spike* spike = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
+	m_spikeclass = spike->get_class(); 
 	m_bartefact = (m_spikeclass < 0);
-	m_iitime = p_spike_element->get_time();
+	m_iitime = spike->get_time();
 
 	m_SpkChartWnd.SelectSpikeShape(m_spikeno);
 
-	LoadSourceData(); // load data from source file
-	UpdateData(FALSE); // update screen
+	LoadSourceData();
+	UpdateData(FALSE); 
 }
 
 BOOL DlgSpikeEdit::OnInitDialog()
 {
-	CDialog::OnInitDialog(); // call base class function
+	CDialog::OnInitDialog(); 
 	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
 	m_pSpkList = m_pdbWaveDoc->m_pSpk->GetSpkList_Current();
 	if (m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() == 0)
 	{
-		EndDialog(FALSE); // exit if no spikes to edit
+		EndDialog(FALSE); 
 		return TRUE;
 	}
 
@@ -76,12 +76,12 @@ BOOL DlgSpikeEdit::OnInitDialog()
 
 	// attach spike buffer
 	VERIFY(m_SpkChartWnd.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
-	m_SpkChartWnd.SetSourceData(m_pSpkList, m_pdbWaveDoc);
+	m_SpkChartWnd.set_source_data(m_pSpkList, m_pdbWaveDoc);
 	if (m_spikeno < 0) // select at least spike 0
 		m_spikeno = 0;
 
 	m_SpkChartWnd.SetRangeMode(RANGE_ALL); // display mode (lines)
-	m_SpkChartWnd.SetPlotMode(PLOT_BLACK, 0); // display also artefacts
+	m_SpkChartWnd.set_plot_mode(PLOT_BLACK, 0); // display also artefacts
 
 	if (m_pAcqDatDoc != nullptr)
 	{
@@ -183,10 +183,10 @@ void DlgSpikeEdit::OnEnChangeSpikeno()
 		if (m_spikeno >= m_pSpkList->GetTotalSpikes())
 			m_spikeno = m_pSpkList->GetTotalSpikes() - 1;
 
-		mm_spikeno.m_bEntryDone = FALSE; // clear flag
-		mm_spikeno.m_nChar = 0; // empty buffer
-		mm_spikeno.SetSel(0, -1); // select all text
-		if (m_spikeno != spikeno) // change display if necessary
+		mm_spikeno.m_bEntryDone = FALSE; 
+		mm_spikeno.m_nChar = 0; 
+		mm_spikeno.SetSel(0, -1); 
+		if (m_spikeno != spikeno) 
 		{
 			LoadSpikeParms();
 			m_iitimeold = m_iitime;
@@ -304,37 +304,37 @@ void DlgSpikeEdit::LoadSourceData()
 	if (m_pAcqDatDoc == nullptr)
 		return;
 
-	const auto p_spike_element = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
-	const auto l_first = p_spike_element->get_time() - m_spkpretrig; // change selection
-	m_intervals_to_highlight_spikes.SetAt(3, l_first); // store interval
-	const auto l_last = l_first + m_spklen; // end interval
-	m_intervals_to_highlight_spikes.SetAt(4, l_last); // store
+	const auto spike = m_pSpkList->GetSpike(m_spikeno); 
+	const auto l_first = spike->get_time() - m_spkpretrig;
+	m_intervals_to_highlight_spikes.SetAt(3, l_first); 
+	const auto l_last = l_first + m_spklen; 
+	m_intervals_to_highlight_spikes.SetAt(4, l_last);
 
 	// compute limits of m_sourceView
 	auto l_v_first = l_first + m_spklen / 2 - m_viewdatalen / 2;
-	if (l_v_first < 0) // check limits
-		l_v_first = 0; // clip to start of the file
-	auto l_v_last = l_v_first + m_viewdatalen - 1; // last pt
-	if (l_v_last > m_ChartDataWnd.GetDocumentLast()) // clip to size of data
+	if (l_v_first < 0) 
+		l_v_first = 0; 
+	auto l_v_last = l_v_first + m_viewdatalen - 1; 
+	if (l_v_last > m_ChartDataWnd.GetDocumentLast()) 
 	{
 		l_v_last = m_ChartDataWnd.GetDocumentLast();
 		l_v_first = l_v_last - m_viewdatalen + 1;
 	}
 	// get data from doc
-	m_spikeChan = p_spike_element->get_source_channel();
+	m_spikeChan = spike->get_source_channel();
 
 	m_ChartDataWnd.SetChanlistSourceChan(0, m_spikeChan);
-	m_ChartDataWnd.GetDataFromDoc(l_v_first, l_v_last); // load data from file
+	m_ChartDataWnd.GetDataFromDoc(l_v_first, l_v_last); 
 
 	// adjust offset (center spike) : use initial offset from spike
 	CChanlistItem* chan0 = m_ChartDataWnd.GetChanlistItem(0);
-	chan0->SetYzero(m_yzero + p_spike_element->get_amplitude_offset());
+	chan0->SetYzero(m_yzero + spike->get_amplitude_offset());
 	chan0->SetYextent(m_yextent);
 
 	if (m_pSpkList->GetDetectParms()->compensateBaseline)
 	{
 		CChanlistItem* chan1 = m_ChartDataWnd.GetChanlistItem(1);
-		chan1->SetYzero(m_yzero + p_spike_element->get_amplitude_offset());
+		chan1->SetYzero(m_yzero + spike->get_amplitude_offset());
 		chan1->SetYextent(m_yextent);
 	}
 	m_ChartDataWnd.Invalidate();
@@ -357,10 +357,10 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 		const auto method = m_pSpkList->GetDetectParms()->extractTransform;
 		if (method == 0)
 		{
-			int nchans;
-			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&nchans);
-			lp_source += (l_first - m_pAcqDatDoc->GettBUFfirst()) * nchans+ m_spikeChan;
-			pSpike->TransferDataToSpikeBuffer(lp_source, nchans);
+			int n_channels;
+			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&n_channels);
+			lp_source += (l_first - m_pAcqDatDoc->GettBUFfirst()) * n_channels+ m_spikeChan;
+			pSpike->TransferDataToSpikeBuffer(lp_source, n_channels);
 		}
 		else
 		{

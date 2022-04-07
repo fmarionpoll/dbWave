@@ -174,7 +174,7 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	m_hitratesort = m_psC->hitratesort;
 	m_ktolerance = m_psC->ktolerance;
 
-	m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECLASS, 0);
+	m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECLASS, 0);
 	m_spkformtagleft = m_ChartSpkWnd_Shape.m_VTtags.AddTag(m_psC->kleft, 0);
 	m_spkformtagright = m_ChartSpkWnd_Shape.m_VTtags.AddTag(m_psC->kright, 0);
 
@@ -234,7 +234,7 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 		m_spikenoclass = 0;
 
 	// prepare display source spikes
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
 	if (m_psC->kleft == 0 && m_psC->kright == 0)
 	{
 		m_psC->kleft = m_pSpkList->GetDetectParms()->prethreshold;
@@ -244,9 +244,9 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	m_t2 = convertSpikeIndexToTime(m_psC->kright);
 
 	if (!m_bDisplaySingleClass)
-		m_ChartSpkWnd_Shape.SetPlotMode(PLOT_BLACK, 0);
+		m_ChartSpkWnd_Shape.set_plot_mode(PLOT_BLACK, 0);
 	else
-		m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
+		m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECLASS, m_spikenoclass);
 
 	m_lFirst = 0;
 	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
@@ -393,7 +393,7 @@ void ViewSpikeTemplates::OnEnChangeclassno()
 
 		if (m_spikenoclass != spikenoclass) // change display if necessary
 		{
-			m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
+			m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECLASS, m_spikenoclass);
 			m_ChartSpkWnd_Shape.Invalidate();
 			updateLegends();
 		}
@@ -1062,7 +1062,7 @@ void ViewSpikeTemplates::sortSpikes()
 	// update display: average and spk form
 	displayAvg(FALSE, &m_avgList);
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
 	m_ChartSpkWnd_Shape.Invalidate();
 }
 
@@ -1312,12 +1312,12 @@ void ViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 	if (m_bDisplaySingleClass)
 	{
 		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_SHOW);
-		m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECLASS, m_spikenoclass);
+		m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECLASS, m_spikenoclass);
 	}
 	else
 	{
 		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_HIDE);
-		m_ChartSpkWnd_Shape.SetPlotMode(PLOT_BLACK, m_spikenoclass);
+		m_ChartSpkWnd_Shape.set_plot_mode(PLOT_BLACK, m_spikenoclass);
 	}
 	m_ChartSpkWnd_Shape.Invalidate();
 }

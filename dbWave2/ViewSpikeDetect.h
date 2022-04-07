@@ -92,6 +92,7 @@ protected:
 	void scroll_file(UINT nSBCode, UINT nPos);
 	void select_spike_no(int spike_index, BOOL bMultipleSelection);
 	BOOL check_detection_settings();
+
 	void update_combo_box();
 	void update_combos_detect_and_transforms();
 	void define_stretch_parameters();

@@ -1,4 +1,8 @@
 #pragma once
+#include "Spikelist.h"
+#include "Spikedoc.h"
+#include "dbWaveDoc.h"
+
 
 class CSpikeClassListBox : public CListBox
 {
@@ -34,7 +38,7 @@ protected:
 	HWND m_hwndBarsReflect = nullptr;
 
 public:
-	void SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc);
+	void set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc);
 	void SetSpkList(SpikeList* p_spike_list);
 
 	void SetTimeIntervals(long l_first, long l_last);

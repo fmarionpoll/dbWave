@@ -38,7 +38,7 @@ CSpikeClassListBox::~CSpikeClassListBox()
 
 LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
-	auto icursel = static_cast<int>(HIWORD(lParam)) / 2; // why lParam/2???
+	auto i_current_selected = static_cast<int>(HIWORD(lParam)) / 2; // why lParam/2???
 	const int threshold = LOWORD(lParam); // value associated
 
 	// ----------------------------- change mouse cursor (all 3 items)
@@ -50,7 +50,7 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEHZLIMITS: // abscissa have changed
 		{
-			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(icursel));
+			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i_current_selected));
 			m_lFirst = (pptr->pspk_bars)->GetTimeFirst();
 			m_lLast = (pptr->pspk_bars)->GetTimeLast();
 			SetTimeIntervals(m_lFirst, m_lLast);
@@ -60,13 +60,13 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_HITSPIKE: // spike is selected
 		SelectSpike(threshold);
 		m_selspikeLB = threshold; // selected spike
-		m_oldsel = icursel; // current line / CListBox
+		m_oldsel = i_current_selected; // current line / CListBox
 		m_bHitspk = TRUE;
 		break;
 
 	case HINT_CHANGEZOOM:
 		{
-			auto* pptr2 = reinterpret_cast<rowStruct*>(GetItemData(icursel));
+			auto* pptr2 = reinterpret_cast<rowStruct*>(GetItemData(i_current_selected));
 			const auto y_we = pptr2->pspk_bars->GetYWExtent();
 			const auto y_wo = pptr2->pspk_bars->GetYWOrg();
 			SetYzoom(y_we, y_wo);
@@ -77,12 +77,12 @@ LRESULT CSpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (!m_bHitspk)
 			return 0L;
 	// change selection
-		if (icursel != m_oldsel)
+		if (i_current_selected != m_oldsel)
 		{
 			// patch: when we displace a spike to line 0, the line nb is not correct (shadow window intercepting mouse?)
-			if (icursel < 0 || icursel > GetCount())
-				icursel = 0;
-			ChangeSpikeClass(m_selspikeLB, p_spikelist_->GetclassID(icursel));
+			if (i_current_selected < 0 || i_current_selected > GetCount())
+				i_current_selected = 0;
+			ChangeSpikeClass(m_selspikeLB, p_spikelist_->GetclassID(i_current_selected));
 		}
 		m_bHitspk = FALSE;
 		break;
@@ -230,7 +230,7 @@ int CSpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 	return iresult;
 }
 
-void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
+void CSpikeClassListBox::set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 {
 	// erase content of the list box
 	SetRedraw(FALSE);
@@ -261,8 +261,8 @@ void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 			ASSERT(pspkShapes != NULL);
 			pspkShapes->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i_id);
 
-			pspkShapes->SetSourceData(p_spikelist_, pdbDoc);
-			pspkShapes->SetPlotMode(PLOT_ONECLASSONLY, iclass);
+			pspkShapes->set_source_data(p_spikelist_, pdbDoc);
+			pspkShapes->set_plot_mode(PLOT_ONECLASSONLY, iclass);
 			pspkShapes->SetRangeMode(RANGE_INDEX);
 			pspkShapes->SetSpkIndexes(0, nspikes - 1);
 			pspkShapes->SetbDrawframe(TRUE);
@@ -275,8 +275,8 @@ void CSpikeClassListBox::SetSourceData(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 		ASSERT(pspk_bars != NULL);
 		pspk_bars->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_bars, this, i_id);
 
-		pspk_bars->SetSourceData_spklist_dbwavedoc(p_spikelist_, pdbDoc);
-		pspk_bars->SetPlotMode(PLOT_ONECLASSONLY, iclass);
+		pspk_bars->set_source_data(p_spikelist_, pdbDoc);
+		pspk_bars->set_plot_mode(PLOT_ONECLASSONLY, iclass);
 		pspk_bars->SetRangeMode(RANGE_INDEX);
 		pspk_bars->SetSpkIndexes(0, nspikes - 1);
 		pspk_bars->SetbDrawframe(TRUE);
@@ -344,7 +344,7 @@ void CSpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
 	}
 	else
 	{
-		SetSourceData(p_spike_list, p_dbwave_doc_);
+		set_source_data(p_spike_list, p_dbwave_doc_);
 	}
 }
 
@@ -569,7 +569,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
-		SetSourceData(p_spikelist_, p_dbwave_doc_);
+		set_source_data(p_spikelist_, p_dbwave_doc_);
 		SetTimeIntervals(l_first, l_last);
 		SelectSpike(spikeno);
 		return;
@@ -590,7 +590,7 @@ void CSpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
-		SetSourceData(p_spikelist_, p_dbwave_doc_);
+		set_source_data(p_spikelist_, p_dbwave_doc_);
 		SetTimeIntervals(l_first, l_last);
 	}
 	else

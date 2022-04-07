@@ -29,9 +29,6 @@ public:
 	void SetTextOption(BOOL bText) { m_bText = bText; }
 	BOOL GetTextOption() const { return m_bText; }
 
-	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document);
-	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
-
 	float GetDisplayMaxMv();
 	float GetDisplayMinMv();
 	float GetExtent_mV();

@@ -165,22 +165,22 @@ void ViewSpikeSort::OnInitialUpdate()
 	m_destinationclass = m_psC->destclass;
 
 	m_ChartSpkWnd_Shape.DisplayAllFiles(false, GetDocument());
-	m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
+	m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECOLOR, m_sourceclass);
 	m_ChartSpkWnd_Shape.SetScopeParameters(&(m_pOptionsViewData->spksort1spk));
 	m_spkformtagleft = m_ChartSpkWnd_Shape.m_VTtags.AddTag(m_psC->ileft, 0);
 	m_spkformtagright = m_ChartSpkWnd_Shape.m_VTtags.AddTag(m_psC->iright, 0);
 
 	xygraph_wnd_.DisplayAllFiles(false, GetDocument());
-	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	xygraph_wnd_.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
 	xygraph_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1parms));
 	m_itagup = xygraph_wnd_.m_HZtags.AddTag(m_psC->iupper, 0);
 	m_itaglow = xygraph_wnd_.m_HZtags.AddTag(m_psC->ilower, 0);
 
 	m_ChartSpkWnd_Bar.DisplayAllFiles(false, GetDocument());
-	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	m_ChartSpkWnd_Bar.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
 	m_ChartSpkWnd_Bar.SetScopeParameters(&(m_pOptionsViewData->spksort1bars));
 
-	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	yhistogram_wnd_.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
 	yhistogram_wnd_.SetScopeParameters(&(m_pOptionsViewData->spksort1hist));
 
 	// display tag lines at proper places
@@ -349,17 +349,17 @@ void ViewSpikeSort::updateFileParameters()
 	m_t1 = (m_psC->ileft * m_tunit) / m_pSpkList->GetAcqSampRate();
 	m_t2 = (m_psC->iright * m_tunit) / m_pSpkList->GetAcqSampRate();
 
-	m_ChartSpkWnd_Bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, GetDocument());
-	m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	m_ChartSpkWnd_Bar.set_source_data(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Bar.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
 
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
 	m_ChartSpkWnd_Shape.m_VTtags.SetTagVal(m_spkformtagleft, m_psC->ileft);
 	m_ChartSpkWnd_Shape.m_VTtags.SetTagVal(m_spkformtagright, m_psC->iright);
-	m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
+	m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECOLOR, m_sourceclass);
 
-	xygraph_wnd_.SetSourceData(m_pSpkList, GetDocument());
-	xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-	yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+	xygraph_wnd_.set_source_data(m_pSpkList, GetDocument());
+	xygraph_wnd_.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
+	yhistogram_wnd_.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
 
 	m_filescroll_infos.fMask = SIF_ALL;
 	m_filescroll_infos.nMin = 0;
@@ -777,8 +777,8 @@ void ViewSpikeSort::OnMeasure()
 		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	}
 
-	m_ChartSpkWnd_Shape.SetSourceData(m_pSpkList, GetDocument());
-	m_ChartSpkWnd_Bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
+	m_ChartSpkWnd_Bar.set_source_data(m_pSpkList, GetDocument());
 
 	xygraph_wnd_.m_HZtags.SetTagVal(m_itaglow, m_psC->ilower);
 	xygraph_wnd_.m_HZtags.SetTagVal(m_itagup, m_psC->iupper);
@@ -1398,10 +1398,10 @@ void ViewSpikeSort::OnEnChangeSourceclass()
 		if (sourceclass != m_sourceclass)
 		{
 			m_sourceclass = sourceclass;
-			m_ChartSpkWnd_Shape.SetPlotMode(PLOT_ONECOLOR, m_sourceclass);
-			xygraph_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-			yhistogram_wnd_.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
-			m_ChartSpkWnd_Bar.SetPlotMode(PLOT_CLASSCOLORS, m_sourceclass);
+			m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECOLOR, m_sourceclass);
+			xygraph_wnd_.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
+			yhistogram_wnd_.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
+			m_ChartSpkWnd_Bar.set_plot_mode(PLOT_CLASSCOLORS, m_sourceclass);
 		}
 		// change histogram accordingly
 		m_ChartSpkWnd_Shape.Invalidate();

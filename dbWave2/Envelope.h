@@ -68,7 +68,7 @@ public:
 	void SetSourceChan(int n) { m_sourceChan = n; }
 	void SetPointAt(int j, int val) { m_Envelope[j] = val; }
 
-	void SetSourceData(const int chan, const int transform)
+	void set_envelope_source_data(const int chan, const int transform)
 	{
 		m_sourceChan = chan;
 		m_sourceMode = transform;

@@ -29,3 +29,17 @@ int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mo
 	}
 	return color;
 }
+
+void ChartSpike::set_plot_mode(int mode, int selected_class)
+{
+	m_plotmode = mode;
+	m_selected_class = selected_class;
+}
+
+void ChartSpike::set_source_data(SpikeList* p_spk_list, CdbWaveDoc* p_document)
+{
+	p_dbwave_doc = p_document;
+	p_spike_doc = p_dbwave_doc->m_pSpk;
+	p_spike_list = p_spk_list;
+	m_selected_spike = -1;
+}

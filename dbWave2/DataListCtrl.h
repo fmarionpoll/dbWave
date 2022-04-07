@@ -1,8 +1,5 @@
 #pragma once
 
-#include "ChartWnd.h"
-#include "ChartData.h"
-#include "DataListCtrl_Row.h"
 
 #define COL_INDEX		1
 #define COL_CURVE		COL_INDEX+1
@@ -14,6 +11,7 @@
 #define COL_CONC2		COL_INDEX+7
 #define COL_NBSPK		COL_INDEX+8
 #define COL_FLAG		COL_INDEX+9
+#include "DataListCtrl_Row.h"
 
 class CDataListCtrl : public CListCtrl
 {

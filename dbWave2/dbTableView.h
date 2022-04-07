@@ -4,6 +4,8 @@
 #include "CSpkListTabCtrl.h"
 #include "dbTableMain.h"
 #include "StretchControls.h"
+#include "dbWaveDoc.h"
+
 
 class dbTableView : public CDaoRecordView
 {
@@ -19,7 +21,7 @@ public:
 	boolean m_autoDetect = false;
 	boolean m_autoIncrement = false;
 
-	virtual CdbWaveDoc* GetDocument();
+	CdbWaveDoc* GetDocument();
 	CDaoRecordset* OnGetRecordset() override;
 	BOOL OnMove(UINT nIDMoveCommand) override;
 	void OnDraw(CDC* pDC) override;

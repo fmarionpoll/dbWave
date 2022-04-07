@@ -270,10 +270,10 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		ASSERT(m_pSpkList != nullptr);
 	}
 
-	m_chart_spike_bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, pdb_doc);
-	m_chart_spike_bar.SetPlotMode(PLOT_BLACK, 0);
-	m_chart_spike_shape.SetSourceData(m_pSpkList, pdb_doc);
-	m_chart_spike_shape.SetPlotMode(PLOT_BLACK, 0);
+	m_chart_spike_bar.set_source_data(m_pSpkList, pdb_doc);
+	m_chart_spike_bar.set_plot_mode(PLOT_BLACK, 0);
+	m_chart_spike_shape.set_source_data(m_pSpkList, pdb_doc);
+	m_chart_spike_shape.set_plot_mode(PLOT_BLACK, 0);
 	update_VT_tags();
 
 	// update interface elements
@@ -282,7 +282,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	{
 		update_tabs();
 		update_detection_controls();
-		highlight_spikes(TRUE);
+		highlight_spikes(FALSE);
 		update_number_of_spikes();
 		m_chart_spike_bar.Invalidate();
 		m_chart_spike_shape.Invalidate();
@@ -297,7 +297,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	const auto array_size = m_pSpkList->GetTotalSpikes() * 2 + 3;
 	m_DWintervals.SetSize(array_size);
 	m_DWintervals.SetAt(0, 0);
-	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); 
+	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); // red color
 	m_DWintervals.SetAt(2, 1);
 	const auto total_spikes = m_pSpkList->GetTotalSpikes();
 	auto j_index = 3;
@@ -1119,8 +1119,8 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		old_spike_list_index = 0;
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(old_spike_list_index);
 
-	m_chart_spike_bar.SetSourceData_spklist_dbwavedoc(m_pSpkList, db_document);
-	m_chart_spike_shape.SetSourceData(m_pSpkList, db_document);
+	m_chart_spike_bar.set_source_data(m_pSpkList, db_document);
+	m_chart_spike_shape.set_source_data(m_pSpkList, db_document);
 
 
 	// center spikes, change nb spikes and update content of draw buttons
@@ -1490,7 +1490,7 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 	ASSERT(m_pSpkList != NULL);
 
 	highlight_spikes(FALSE); // remove display of spikes
-	m_chart_spike_shape.SetSourceData(m_pSpkList, GetDocument());
+	m_chart_spike_shape.set_source_data(m_pSpkList, GetDocument());
 	m_pSpkDoc->m_stimulus_intervals.n_items = 0; // zero stimuli
 	m_pSpkDoc->m_stimulus_intervals.RemoveAll();
 
@@ -3095,9 +3095,7 @@ void ViewSpikeDetection::update_detection_controls()
 	CChanlistItem* channel_item = m_chart_data_filtered.GetChanlistItem(0);
 	channel_item->SetColor(static_cast<WORD>(detection_channel));
 
-	m_chart_data_filtered.GetDataFromDoc(); // load data
-	//if (options_view_data->bSplitCurves)
-	//	m_displayDataFile.SplitChans();
+	m_chart_data_filtered.GetDataFromDoc(); 
 
 	const auto detect_threshold = detect_parameters->detectThreshold;
 	m_thresholdval = channel_item->ConvertDataBinsToVolts(detect_threshold) * 1000.f;

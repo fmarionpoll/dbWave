@@ -1,12 +1,8 @@
-// CMeasureOptionsPage.cpp : implementation file
-//
 // TODO : measure data and output to notedocview
 
 #include "StdAfx.h"
 #include "ChartWnd.h"
-//#include "ChartData.h"
-//#include "Editctrl.h"
-//#include "NoteDoc.h"
+
 #include "dbWaveDoc.h"
 #include "resource.h"
 

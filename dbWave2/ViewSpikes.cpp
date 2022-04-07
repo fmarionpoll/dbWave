@@ -587,7 +587,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 
 	if (nullptr == m_pSpkDoc)
 	{
-		m_spkClassListBox.SetSourceData(nullptr, nullptr);
+		m_spkClassListBox.set_source_data(nullptr, nullptr);
 	}
 	else
 	{
@@ -599,7 +599,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(icur);
 		m_pspkDP = m_pSpkList->GetDetectParms();
 
-		m_spkClassListBox.SetSourceData(m_pSpkList, GetDocument());
+		m_spkClassListBox.set_source_data(m_pSpkList, GetDocument());
 		if (bUpdateInterface)
 		{
 			m_tabCtrl.SetCurSel(icur);

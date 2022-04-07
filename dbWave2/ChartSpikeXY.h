@@ -24,15 +24,6 @@ public:
 	int GetSelectedSpike() const { return m_selected_spike; }
 	int GetHitSpike() const { return m_hit_spike; }
 
-	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
-	{
-		p_dbwave_doc = p_document;
-		p_spike_list = p_spk_list;
-		m_selected_spike = -1;
-	}
-
-	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
-
 	int SelectSpike(int spikeno);
 	void DisplaySpike(int nospike, BOOL bselect);
 	BOOL IsSpikeWithinRange(int spikeno);

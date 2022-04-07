@@ -1,13 +1,11 @@
 #include "StdAfx.h"
 
 #include "DataListCtrl.h"
-#include "dbTableMain.h"
-#include "dbWaveDoc.h"
-#include "ChartWnd.h"
-#include "ChartData.h"
-#include "ChartSpikeBar.h"
-#include "ViewdbWave.h"
+#include <ChartData.h>
+#include <dbTableView.h>
+
 #include "DataListCtrl_Row.h"
+#include "ViewdbWave.h"
 
 
 #ifdef _DEBUG
@@ -630,7 +628,7 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 			iTab = 0;
 		const auto pspk_list = ptr->pspikeDoc->SetSpkList_AsCurrent(iTab);
 		p_wnd->SetSourceData_spklist_spikedoc(pspk_list, ptr->pspikeDoc);
-		p_wnd->SetPlotMode(m_spike_plot_mode, m_selected_class);
+		p_wnd->set_plot_mode(m_spike_plot_mode, m_selected_class);
 		long l_first = 0;
 		auto l_last = ptr->pspikeDoc->GetAcqSize();
 		if (m_b_set_time_span)

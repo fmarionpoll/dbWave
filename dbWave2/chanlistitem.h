@@ -69,7 +69,7 @@ public:
 	void SetColor(WORD color) { dl_color = color; }
 	void SetflagPrintVisible(WORD drawmode) { dl_bprint = drawmode; }
 	void SetHZtagsPrintFlag(BOOL bPrint) { dl_bHZtagsPrint = bPrint; }
-	void SetOrdinatesSourceData(int chan, int transform) const { pEnvelopeOrdinates->SetSourceData(chan, transform); }
+	void SetOrdinatesSourceData(int chan, int transform) const { pEnvelopeOrdinates->set_envelope_source_data(chan, transform); }
 
 	float ConvertDataBinsToVolts(int bins) const { return static_cast<float>(bins) * dl_datavoltspbin; }
 	int ConvertVoltsToDataBins(float volts) const { return static_cast<int>(volts / dl_datavoltspbin); }

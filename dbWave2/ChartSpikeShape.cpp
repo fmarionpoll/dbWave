@@ -849,10 +849,4 @@ float ChartSpikeShapeWnd::GetExtent_ms()
 	return (static_cast<float>(1000.0 * m_xWE) / p_spike_list->GetAcqSampRate());
 }
 
-void ChartSpikeShapeWnd::SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
-{
-	p_dbwave_doc = p_document;
-	p_spike_list = p_spk_list;
-	m_selected_spike = -1;
-}
 

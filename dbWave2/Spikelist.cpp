@@ -1,7 +1,7 @@
 #include "StdAfx.h"
+#include "Spikelist.h"
 #include "AcqDataDoc.h"
 #include "SpikeFromChan.h"
-#include "Spikelist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

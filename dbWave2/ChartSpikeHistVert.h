@@ -49,7 +49,6 @@ public:
 	void MoveVTtagtoVal(int itag, int ival);
 	void MoveHZtagtoVal(int itag, int ival);
 
-	void SetSpkList(SpikeList* p_spk_list) { m_pSL = p_spk_list; }
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 	void PlotDataToDC(CDC* p_dc) override;
 

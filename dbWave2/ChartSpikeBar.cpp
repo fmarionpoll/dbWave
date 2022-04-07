@@ -234,7 +234,7 @@ void ChartSpikeBar::displayStimulus(CDC* p_dc, const CRect* rect) const
 	CPen blue_pen;
 	blue_pen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
 	const auto old_pen = p_dc->SelectObject(&blue_pen);
-	const int top = rect->bottom - m_barheight + 2;
+	const int top = rect->bottom - m_bar_height + 2;
 	const int bottom = rect->bottom - 3;
 	const auto display_width = rect->Width();
 
@@ -913,4 +913,11 @@ void ChartSpikeBar::Serialize(CArchive& ar)
 		ar >> dummy;
 		ar >> m_selected_pen;
 	}
+}
+
+void ChartSpikeBar::SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document)
+{
+	p_dbwave_doc = nullptr;
+	p_spike_doc = p_spike_document;
+	p_spike_list = p_spk_list;
 }

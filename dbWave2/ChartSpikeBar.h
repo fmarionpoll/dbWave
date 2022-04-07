@@ -12,28 +12,14 @@ public:
 	void Serialize(CArchive& archive) override;
 
 protected:
-	BOOL m_bDisplaySignal{};			// flag default:FALSE=bars; TRUE=spikes
-	int m_barheight = 10;
-	CDWordArray* p_envelope_ = nullptr; // data envelope (should be 4 times greater than size)
+	BOOL display_acquisition_data = FALSE;			// FALSE=bars; TRUE=spikes
+	int m_bar_height = 10;
+	CDWordArray* p_envelope_ = nullptr; 
 
 
 	// Helpers
 public:
-	void SetSourceData_spklist_dbwavedoc(SpikeList* p_spk_list, CdbWaveDoc* p_document)
-	{
-		p_dbwave_doc = p_document;
-		p_spike_doc = p_dbwave_doc->m_pSpk;
-		p_spike_list = p_spk_list;
-	}
-
-	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document)
-	{
-		p_dbwave_doc = nullptr;
-		p_spike_doc = p_spike_document;
-		p_spike_list = p_spk_list;
-	}
-
-	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
+	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document);
 
 	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
 
