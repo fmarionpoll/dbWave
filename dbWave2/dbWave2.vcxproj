@@ -780,6 +780,7 @@
   <ItemGroup>
     <ClCompile Include="AcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
+    <ClCompile Include="ChartSpike.cpp" />
     <ClCompile Include="Controls\ComboEdit.cpp" />
     <ClCompile Include="Controls\InPlaceEdit.cpp" />
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp" />
@@ -1360,6 +1361,7 @@
     <ClInclude Include="AcqDataDoc.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
+    <ClInclude Include="ChartSpike.h" />
     <ClInclude Include="Controls\ComboEdit.h" />
     <ClInclude Include="Controls\InPlaceEdit.h" />
     <ClInclude Include="GridCtrl\GridDefaultCell.h" />

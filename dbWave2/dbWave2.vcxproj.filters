@@ -507,6 +507,9 @@
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
+    <ClCompile Include="ChartSpike.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1099,6 +1102,9 @@
     </ClInclude>
     <ClInclude Include="GridCtrl\GridInPlaceList.h">
       <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="ChartSpike.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

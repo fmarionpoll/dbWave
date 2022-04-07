@@ -1,13 +1,5 @@
 #pragma once
 
-// parameters associated to each spike detected 
-// stores:  time of occurence, initial data acq chan and a modifiable parameter
-// the class
-// this basic object is part of a CSpikelist object that stores parameters
-// concerning the source document (file, date, acq rate and parms, etc) and
-// eventually the source data extracted from the data file
-// real data are stored in a separate object managing data buffers
-
 class Spike : public CObject
 {
 	DECLARE_SERIAL(Spike)
@@ -19,14 +11,14 @@ class Spike : public CObject
 
 	// Attributes
 private:
-	long m_iitime = 0;		// occurence time - multiply by rate to get time in seconds
-	int m_class = 0;		// spike class - init to zero at first
-	int m_chanparm = 0;		// spike detection array index
-	int m_max = 4096;		// spike max (used to scan rapidly to adjust display)
-	int m_min = 0;			// spike min (used to scan rapidly to adjust display)
+	long m_iitime = 0;						// occurrence time - multiply by rate to get time in seconds
+	int m_class = 0;						// spike class - init to zero at first
+	int m_chanparm = 0;						// spike detection array index
+	int m_max = 4096;						// spike max (used to scan rapidly to adjust display)
+	int m_min = 0;							// spike min (used to scan rapidly to adjust display)
 	int m_dmaxmin = 0;
-	int m_offset = 2048;	// offset voltage pt 1
-	int y1_ = 0;			// parameter measured and stored
+	int m_offset = 2048;					// offset voltage pt 1
+	int y1_ = 0;							// parameter measured and stored
 	int y2_ = 0;
 	int dt_ = 0;
 

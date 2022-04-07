@@ -9,10 +9,10 @@
 //		index 0 = "class" index (int)
 //		index 1 to nbins = data
 
-#include "ChartWnd.h"
+#include "ChartSpike.h"
 #include "dbWaveDoc.h"
 
-class ChartSpikeHist : public ChartWnd
+class ChartSpikeHist : public ChartSpike
 {
 	// Construction
 public:
@@ -21,12 +21,12 @@ public:
 
 protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
-	SpikeList* p_spikelist_ = nullptr;
+	//SpikeList* p_spikelist_ = nullptr;
 
-	long m_lFirst = 0; // time index of first pt displayed
-	long m_lLast = 0; // time index of last pt displayed
-	int m_hitspk = -1; // no of spike selected
-	int m_selclass = 0; // index class selected
+	//long m_lFirst = 0; // time index of first pt displayed
+	//long m_lLast = 0; // time index of last pt displayed
+	//int m_hitspk = -1; // no of spike selected
+	//int m_selclass = 0; // index class selected
 
 	int m_binsize{}; // size of one bin
 	int m_abcissaminval = 0; // minimum value from which histogram is built (abscissa)

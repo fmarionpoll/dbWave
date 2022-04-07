@@ -5,22 +5,16 @@
 // 		histograms are computed from various sources of data:
 //			Acqdata document
 //			Spike data
-// structure:
-// 		CWnd derived : MFC control.
-// 		CChartWnd derived : FMP enriched control (mouse cursors, HZTags)
-// 		evolved from CLineviewButton
 //
 
 #include "StdAfx.h"
-#include "ChartWnd.h"
-#include "Spikedoc.h"
 #include "ChartSpikeHist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-BEGIN_MESSAGE_MAP(ChartSpikeHist, ChartWnd)
+BEGIN_MESSAGE_MAP(ChartSpikeHist, ChartSpike)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
@@ -234,17 +228,17 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 			m_VTtags.SetTagVal(m_HCtrapped, val);
 			point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 			XorVTtag(point.x);
-			ChartWnd::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(nFlags, point);
 			postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 		}
 		break;
 
 	case TRACK_RECT:
 		{
-			ChartWnd::OnLButtonUp(nFlags, point); // else release mouse
+			ChartSpike::OnLButtonUp(nFlags, point); // else release mouse
 
 			// none: zoom data or offset display
-			ChartWnd::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(nFlags, point);
 			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 			const int jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
@@ -295,7 +289,7 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 		for (auto icur = m_VTtags.GetNTags() - 1; icur >= 0; icur--) // loop through all tags
 			m_VTtags.SetTagPix(icur, MulDiv(m_VTtags.GetValue(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
 	}
-	ChartWnd::OnLButtonDown(nFlags, point);
+	ChartSpike::OnLButtonDown(nFlags, point);
 	if (m_currCursorMode != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
 		return; // or any tag hit (VT, HZ) detected
 
@@ -346,7 +340,7 @@ void ChartSpikeHist::ZoomData(CRect* rFrom, CRect* rDest)
 void ChartSpikeHist::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if (m_hitspk < 0)
-		ChartWnd::OnLButtonDblClk(nFlags, point);
+		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 	{
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),
@@ -501,7 +495,7 @@ void ChartSpikeHist::reSize_And_Clear_Histograms(int n_bins, int max, int min)
 
 void ChartSpikeHist::OnSize(UINT nType, int cx, int cy)
 {
-	ChartWnd::OnSize(nType, cx, cy);
+	ChartSpike::OnSize(nType, cx, cy);
 	m_yVO = cy;
 }
 

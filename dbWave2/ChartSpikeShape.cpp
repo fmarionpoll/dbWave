@@ -1,7 +1,4 @@
 #include "StdAfx.h"
-#include "ChartWnd.h"
-#include "Spikedoc.h"
-#include "dbWaveDoc.h"
 #include "ChartSpikeShape.h"
 
 #ifdef _DEBUG
@@ -10,9 +7,9 @@
 
 // TODO loop through files when m_ballfiles is true: spike hit
 
-IMPLEMENT_SERIAL(ChartSpikeShapeWnd, ChartWnd, 1)
+IMPLEMENT_SERIAL(ChartSpikeShapeWnd, ChartSpike, 1)
 
-BEGIN_MESSAGE_MAP(ChartSpikeShapeWnd, ChartWnd)
+BEGIN_MESSAGE_MAP(ChartSpikeShapeWnd, ChartSpike)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
@@ -338,7 +335,7 @@ void ChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 				OnMouseMove(nFlags, point);
 			m_trackMode = TRACK_OFF;
 			releaseCursor();
-			ChartWnd::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(nFlags, point);
 		}
 		break;
 
@@ -350,7 +347,7 @@ void ChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 			m_VTtags.SetTagVal(m_HCtrapped, val);
 			point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 			XorVTtag(point.x);
-			ChartWnd::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(nFlags, point);
 			postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
 		}
 		break;
@@ -358,7 +355,7 @@ void ChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	default:
 		{
 			// none of those: zoom data or  offset display
-			ChartWnd::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(nFlags, point);
 			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 			const auto jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
@@ -405,7 +402,7 @@ void ChartSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// track rectangle or VTtag?
-	ChartWnd::OnLButtonDown(nFlags, point); // capture cursor eventually
+	ChartSpike::OnLButtonDown(nFlags, point); // capture cursor eventually
 	if (m_currCursorMode != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
 		return; // or any tag hit (VT, HZ) detected
 
@@ -427,7 +424,7 @@ void ChartSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 
 void ChartSpikeShapeWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
-	ChartWnd::OnMouseMove(nFlags, point);
+	ChartSpike::OnMouseMove(nFlags, point);
 }
 
 // ZoomData(CRect* rFrom, CRect* rDest)
@@ -469,7 +466,7 @@ void ChartSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 void ChartSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	if ((m_selectedspike < 0 && p_spikelist_->GetSpikeFlagArrayCount() < 1) || m_hitspk < 0)
-		ChartWnd::OnLButtonDblClk(nFlags, point);
+		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 	{
 		if (m_selectedspike >= 0)
@@ -796,7 +793,7 @@ void ChartSpikeShapeWnd::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ChartWnd::Serialize(ar);
+		ChartSpike::Serialize(ar);
 		polypoints_.Serialize(ar);
 
 		ar << m_rangemode; // display range (time OR storage index)
@@ -814,7 +811,7 @@ void ChartSpikeShapeWnd::Serialize(CArchive& ar)
 	}
 	else
 	{
-		ChartWnd::Serialize(ar);
+		ChartSpike::Serialize(ar);
 		polypoints_.Serialize(ar);
 
 		ar >> m_rangemode; // display range (time OR storage index)

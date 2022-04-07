@@ -1,8 +1,9 @@
 #pragma once
 
+#include "ChartSpike.h"
 #include "dbWaveDoc.h"
 
-class ChartSpikeBarWnd : public ChartWnd
+class ChartSpikeBarWnd : public ChartSpike
 {
 public:
 	ChartSpikeBarWnd();
@@ -11,25 +12,25 @@ public:
 	void Serialize(CArchive& archive) override;
 
 protected:
-	int m_rangemode = RANGE_TIMEINTERVALS; // display range
-	long m_lFirst = 0; // time index of first pt displayed
-	long m_lLast = 0; // time index of last pt displayed
-	int m_spkfirst = 0; // index first spike
-	int m_spklast = 0; // index last spike
-	int m_currentclass = 0; // current class in case of displaying classes
-	int m_selectedspike = -1; // selected spike (display differently)
-	int m_hitspk = -1; // no of spike selected
-	int m_selclass{}; // index class selected
-	BOOL m_btrackCurve = false; // track curve ?
+	//int m_rangemode = RANGE_TIMEINTERVALS; // display range
+	//long m_lFirst = 0; // time index of first pt displayed
+	//long m_lLast = 0; // time index of last pt displayed
+	//int m_spkfirst = 0; // index first spike
+	//int m_spklast = 0; // index last spike
+	//int m_currentclass = 0; // current class in case of displaying classes
+	//int m_selectedspike = -1; // selected spike (display differently)
+	//int m_hitspk = -1; // no of spike selected
+	//int m_selclass{}; // index class selected
+	//BOOL m_btrackCurve = false; // track curve ?
 	BOOL m_bDisplaySignal{}; // flag default:FALSE=bars; TRUE=spikes
-	int m_selpen{};
+	//int m_selpen{};
 	int m_barheight = 10;
-	BOOL m_ballFiles = false; // display data from all files in CdbWaveDoc*
+	//BOOL m_ballFiles = false; // display data from all files in CdbWaveDoc*
 
 	CDWordArray* p_envelope_ = nullptr; // data envelope (should be 4 times greater than size)
-	SpikeList* p_spikelist_SPKBAR = nullptr;
-	CSpikeDoc* p_spike_doc_SPKBAR = nullptr;
-	CdbWaveDoc* p_dbwave_doc_SPKBAR = nullptr;
+	//SpikeList* p_spikelist_ = nullptr;
+	//CSpikeDoc* p_spike_doc_ = nullptr;
+	//CdbWaveDoc* p_dbwave_doc_ = nullptr;
 
 	// Helpers
 public:
@@ -44,21 +45,21 @@ public:
 
 	void SetSourceData_spklist_dbwavedoc(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	{
-		p_dbwave_doc_SPKBAR = p_document;
-		p_spike_doc_SPKBAR = p_dbwave_doc_SPKBAR->m_pSpk;
-		p_spikelist_SPKBAR = p_spk_list;
+		p_dbwave_doc_ = p_document;
+		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
+		p_spikelist_ = p_spk_list;
 		m_selectedspike = -1;
 	}
 
 	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document)
 	{
-		p_dbwave_doc_SPKBAR = nullptr;
-		p_spike_doc_SPKBAR = p_spike_document;
-		p_spikelist_SPKBAR = p_spk_list;
+		p_dbwave_doc_ = nullptr;
+		p_spike_doc_ = p_spike_document;
+		p_spikelist_ = p_spk_list;
 		m_selectedspike = -1;
 	}
 
-	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_SPKBAR = p_spk_list; }
+	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
 
 	void SetTimeIntervals(long l_first, long l_last)
 	{
@@ -90,7 +91,7 @@ public:
 	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document)
 	{
 		m_ballFiles = bON;
-		p_dbwave_doc_SPKBAR = p_document;
+		p_dbwave_doc_ = p_document;
 	}
 
 	void Print(CDC* p_dc, CRect* rect);
