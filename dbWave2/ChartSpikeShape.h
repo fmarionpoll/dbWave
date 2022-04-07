@@ -18,24 +18,11 @@ public:
 	// parameters
 
 protected:
-	//int m_rangemode = RANGE_TIMEINTERVALS; // display range (time OR storage index)
-	//long m_lFirst = 0; // time first (real time = index/sampling rate)
-	//long m_lLast = 0; // time last
-	//int m_spkfirst{}; // index first spike
-	//int m_spklast{}; // index last spike
-	//int m_currentclass = -1; // selected class (different color) (-1 = display all)
-	//int m_selectedspike = -1;  // selected spike (display differently)
 	int m_colorselectedspike = RED_COLOR; // color selected spike (index / color table)
-	//int m_hitspk = -1; // index spike
-	//int m_selclass{}; // index class selected
-	//BOOL m_btrackCurve = FALSE; // track curve ?
 	BOOL m_bText = FALSE; // allow text default false
 	int m_ndisplayedspikes{}; // number of spikes displayed
-	//BOOL m_ballFiles = FALSE; // display data from all files in CdbWaveDoc*
-	CArray<CPoint, CPoint> polypoints_; // points displayed with polyline
 
-	//SpikeList* p_spikelist_ = nullptr;
-	//CdbWaveDoc* p_dbwave_doc_ = nullptr;
+	CArray<CPoint, CPoint> polypoints_; // points displayed with polyline
 
 	// Helpers
 public:
@@ -43,28 +30,28 @@ public:
 	BOOL GetTextOption() const { return m_bText; }
 
 	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document);
-	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
 
 	float GetDisplayMaxMv();
 	float GetDisplayMinMv();
 	float GetExtent_mV();
 	float GetExtent_ms();
 
-	void SetSpkIndexes(int first, int last) { m_spkfirst = first, m_spklast = last; }
-	int GetHitSpike() const { return m_hitspk; }
-	int GetSelectedSpike() const { return m_selectedspike; }
+	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
+	int GetHitSpike() const { return m_hit_spike; }
+	int GetSelectedSpike() const { return m_selected_spike; }
 
 	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document)
 	{
-		m_ballFiles = bON;
-		p_dbwave_doc_ = p_document;
+		m_display_all_files = bON;
+		p_dbwave_doc = p_document;
 	}
 
 	// non-inline functions
-	void MoveVTtrack(int itrack, int newval);
+	void MoveVTtrack(int i_track, int new_value);
 
 	int SelectSpikeShape(int spikeno);
-	BOOL IsSpikeWithinRange(int spikeno) const;
+	BOOL IsSpikeWithinRange(int spike_no) const;
 
 	void Print(CDC* p_dc, CRect* rect);
 	int DisplayExData(short* p_data, int color = 9);

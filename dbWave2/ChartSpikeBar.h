@@ -21,24 +21,24 @@ protected:
 public:
 	void SetSourceData_spklist_dbwavedoc(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	{
-		p_dbwave_doc_ = p_document;
-		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
-		p_spikelist_ = p_spk_list;
+		p_dbwave_doc = p_document;
+		p_spike_doc = p_dbwave_doc->m_pSpk;
+		p_spike_list = p_spk_list;
 	}
 
 	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document)
 	{
-		p_dbwave_doc_ = nullptr;
-		p_spike_doc_ = p_spike_document;
-		p_spikelist_ = p_spk_list;
+		p_dbwave_doc = nullptr;
+		p_spike_doc = p_spike_document;
+		p_spike_list = p_spk_list;
 	}
 
-	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
 
-	void SetSpkIndexes(int first, int last) { m_spkfirst = first, m_spklast = last; }
+	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
 
-	int GetSelectedSpike() const { return m_selectedspike; }
-	int GetHitSpike() const { return m_hitspk; }
+	int GetSelectedSpike() const { return m_selected_spike; }
+	int GetHitSpike() const { return m_hit_spike; }
 
 	void DisplaySpike(int no_spike, BOOL b_select);
 	void DisplayFlaggedSpikes(BOOL bHighlight);
@@ -52,8 +52,8 @@ public:
 
 	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document)
 	{
-		m_ballFiles = bON;
-		p_dbwave_doc_ = p_document;
+		m_display_all_files = bON;
+		p_dbwave_doc = p_document;
 	}
 
 	void Print(CDC* p_dc, CRect* rect);

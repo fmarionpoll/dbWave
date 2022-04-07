@@ -86,7 +86,7 @@ void ChartDataAD::ADdisplayBuffer(short* samples_buffer, long samples_number)
 		// load channel descriptors
 		const auto channel_item = chanlistitem_ptr_array[channel_number];
 		CPen temp_pen;
-		temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[channel_item->GetColor()]);
+		temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[channel_item->GetColorIndex()]);
 		p_dc->SelectObject(&temp_pen);
 
 		// compute max min and plot array

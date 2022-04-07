@@ -705,7 +705,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPI
 
 			// get value, compute statistics
 			int max, min;
-			pSpike->GetMaxMin(&max, &min);
+			pSpike->get_max_min(&max, &min);
 			auto val = max - min;
 			y_sum += val;
 			y_sum2 += val * val;
@@ -865,7 +865,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		// 3) export extrema
 		case EXPORT_EXTREMA:
 			int max, min;
-			pSpike->GetMaxMin(&max, &min);
+			pSpike->get_max_min(&max, &min);
 			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(max) - binzero) * vper_bin,
 			                (static_cast<double>(min) - binzero) * vper_bin);
 			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -880,7 +880,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		case EXPORT_SPIKEPOINTS:
 			for (auto index = 0; index < pspklist->GetSpikeLength(); index++)
 			{
-				const auto val = pSpike->GetValueAtOffset(index);
+				const auto val = pSpike->get_value_at_offset(index);
 				cs_dummy.Format(_T("\t%.3lf"), static_cast<double>(val) * vper_bin);
 				pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			}
@@ -1648,7 +1648,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vd
 		if (vdS->spikeclassoption != 0 && cla != iclass)
 			continue;
 		// get value, compute statistics
-		auto p_spik = pSpike->GetpData();
+		auto p_spik = pSpike->get_p_data();
 		const auto p_n = pDoubl0 + 1;
 		auto p_sum = pDoubl0 + 2;
 		auto p_sum2 = pDoubl0 + 2 + spklen;

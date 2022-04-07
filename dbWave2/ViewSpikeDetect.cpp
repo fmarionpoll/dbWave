@@ -297,7 +297,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	const auto array_size = m_pSpkList->GetTotalSpikes() * 2 + 3;
 	m_DWintervals.SetSize(array_size);
 	m_DWintervals.SetAt(0, 0);
-	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); // red 
+	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); 
 	m_DWintervals.SetAt(2, 1);
 	const auto total_spikes = m_pSpkList->GetTotalSpikes();
 	auto j_index = 3;

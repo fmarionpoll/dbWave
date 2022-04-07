@@ -52,48 +52,48 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 
 	long nfiles = 1;
 	long ncurrentfile = 0;
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		nfiles = p_dbwave_doc_->GetDB_NRecords();
-		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		nfiles = p_dbwave_doc->GetDB_NRecords();
+		ncurrentfile = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	}
 
 	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
-		if (m_ballFiles)
+		if (m_display_all_files)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
-			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
+			p_dbwave_doc->OpenCurrentSpikeFile();
 		}
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 
 		// test presence of data
-		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 		{
-			if (!m_ballFiles)
+			if (!m_display_all_files)
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 			continue;
 		}
 
-		auto ilast = p_spikelist_->GetTotalSpikes() - 1;
+		auto ilast = p_spike_list->GetTotalSpikes() - 1;
 		auto ifirst = 0;
-		if (m_rangemode == RANGE_INDEX)
+		if (m_range_mode == RANGE_INDEX)
 		{
-			if (m_spklast > ilast)
-				m_spklast = ilast;
-			if (m_spkfirst < 0)
-				m_spkfirst = 0;
-			ilast = m_spklast;
-			ifirst = m_spkfirst;
+			if (m_index_last_spike > ilast)
+				m_index_last_spike = ilast;
+			if (m_index_first_spike < 0)
+				m_index_first_spike = 0;
+			ilast = m_index_last_spike;
+			ifirst = m_index_first_spike;
 		}
 
 		// loop over all spikes
 		for (auto ispk = ilast; ispk >= ifirst; ispk--)
 		{
 			// check that spike fits within time limits of the display
-			const auto spike_element = p_spikelist_->GetSpike(ispk);
+			const auto spike_element = p_spike_list->GetSpike(ispk);
 			const auto l_spike_time = spike_element->get_time();
-			if (m_rangemode == RANGE_TIMEINTERVALS
+			if (m_range_mode == RANGE_TIMEINTERVALS
 				&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
 				continue;
 
@@ -102,14 +102,14 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 			switch (m_plotmode)
 			{
 			case PLOT_ONECLASSONLY:
-				if (wspkcla != m_selclass)
+				if (wspkcla != m_selected_class)
 					continue;
 				break;
 			case PLOT_CLASSCOLORS:
 				selbrush = wspkcla % NB_COLORS;
 				break;
 			case PLOT_ONECLASS:
-				if (wspkcla != m_selclass)
+				if (wspkcla != m_selected_class)
 					selbrush = SILVER_COLOR;
 				else
 					selbrush = m_colorselected;
@@ -117,7 +117,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 				break;
 			}
 			// adjust rectangle size
-			if (wspkcla == m_selclass)
+			if (wspkcla == m_selected_class)
 				recti = rect1;
 			else
 				recti = rect;
@@ -132,15 +132,15 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		p_dc->SetBkColor(bkcolor); // restore background color
 
 		// display spike selected
-		if (m_selectedspike >= 0)
-			highlightOnePoint(m_selectedspike, p_dc);
+		if (m_selected_spike >= 0)
+			highlightOnePoint(m_selected_spike, p_dc);
 
-		if (p_spikelist_->GetSpikeFlagArrayCount() > 0)
+		if (p_spike_list->GetSpikeFlagArrayCount() > 0)
 		{
 			// loop over the array of flagged spikes
-			for (auto i = p_spikelist_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
+			for (auto i = p_spike_list->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
 			{
-				const auto nospike = p_spikelist_->GetSpikeFlagArrayAt(i);
+				const auto nospike = p_spike_list->GetSpikeFlagArrayAt(i);
 				highlightOnePoint(nospike, p_dc);
 			}
 		}
@@ -157,11 +157,11 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 	// restore resources
 	p_dc->RestoreDC(n_saved_dc);
 	// restore selection to initial file
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc->SetDB_CurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 }
 
@@ -206,21 +206,21 @@ void ChartSpikeXY::displayHZtags(CDC* p_dc)
 
 BOOL ChartSpikeXY::IsSpikeWithinRange(int spikeno)
 {
-	if (p_spikelist_->GetTotalSpikes() < 1)
+	if (p_spike_list->GetTotalSpikes() < 1)
 		return FALSE;
 
-	const auto spike_element = p_spikelist_->GetSpike(spikeno);
+	const auto spike_element = p_spike_list->GetSpike(spikeno);
 	const auto ii_time = spike_element->get_time();
-	if (m_rangemode == RANGE_TIMEINTERVALS
+	if (m_range_mode == RANGE_TIMEINTERVALS
 		&& (ii_time < m_lFirst || ii_time > m_lLast))
 		return FALSE;
 
-	if (m_rangemode == RANGE_INDEX
-		&& (spikeno > m_spklast || spikeno < m_spkfirst))
+	if (m_range_mode == RANGE_INDEX
+		&& (spikeno > m_index_last_spike || spikeno < m_index_first_spike))
 		return FALSE;
 
 	if (m_plotmode == PLOT_ONECLASSONLY
-		&& spike_element->get_class() != m_selclass)
+		&& spike_element->get_class() != m_selected_class)
 		return FALSE;
 
 	return TRUE;
@@ -233,48 +233,48 @@ void ChartSpikeXY::DisplaySpike(int spikeno, BOOL bselect)
 
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	const auto spike_element = p_spikelist_->GetSpike(spikeno);
+	const auto spike_element = p_spike_list->GetSpike(spikeno);
 	const auto spike_class = spike_element->get_class();
-	int color;
+	int color_index;
 	if (!bselect)
 	{
 		switch (m_plotmode)
 		{
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
-			color = BLACK_COLOR; // Black
-			if (spike_class != m_selclass)
-				color = SILVER_COLOR; // LTgrey
+			color_index = BLACK_COLOR; 
+			if (spike_class != m_selected_class)
+				color_index = SILVER_COLOR; 
 			break;
 		case PLOT_CLASSCOLORS:
-			if (spikeno == m_selectedspike)
+			if (spikeno == m_selected_spike)
 				highlightOnePoint(spikeno, &dc);
-			color = spike_class % 8;
+			color_index = spike_class % 8;
 			break;
 		case PLOT_BLACK:
 		default:
-			color = BLACK_COLOR; // Black
+			color_index = BLACK_COLOR; 
 			break;
 		}
 	}
 	else
 	{
-		color = RED_COLOR;
+		color_index = RED_COLOR;
 		if (m_plotmode == PLOT_CLASSCOLORS)
 		{
 			highlightOnePoint(spikeno, &dc);
-			color = spike_class % 8;
+			color_index = spike_class % 8;
 		}
 	}
 
 	// display spike
-	drawSelectedSpike(spikeno, color, &dc);
+	drawSelectedSpike(spikeno, color_index, &dc);
 }
 
 void ChartSpikeXY::highlightOnePoint(int nospike, CDC* p_dc)
 {
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto spike_element = p_spikelist_->GetSpike(nospike);
+	const auto spike_element = p_spike_list->GetSpike(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration = m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
@@ -300,7 +300,7 @@ void ChartSpikeXY::highlightOnePoint(int nospike, CDC* p_dc)
 
 void ChartSpikeXY::drawSelectedSpike(int nospike, int color, CDC* p_dc)
 {
-	const auto spike_element = p_spikelist_->GetSpike(nospike);
+	const auto spike_element = p_spike_list->GetSpike(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration = m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
@@ -333,13 +333,13 @@ void ChartSpikeXY::MoveVTtagtoVal(int i, int val)
 int ChartSpikeXY::SelectSpike(int spikeno)
 {
 	// erase old selected spike (eventually)
-	const auto oldselected = m_selectedspike;
-	if (m_selectedspike >= 0) // && m_selectedspike != spikeno)
-		DisplaySpike(m_selectedspike, FALSE);
+	const auto oldselected = m_selected_spike;
+	if (m_selected_spike >= 0) // && m_selected_spike != spikeno)
+		DisplaySpike(m_selected_spike, FALSE);
 
 	if (spikeno >= 0)
 		DisplaySpike(spikeno, TRUE);
-	m_selectedspike = spikeno;
+	m_selected_spike = spikeno;
 
 	return oldselected;
 }
@@ -428,17 +428,17 @@ void ChartSpikeXY::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// test if mouse hit a spike
-	m_hitspk = hitCurveInDoc(point);
-	if (m_hitspk >= 0)
+	m_hit_spike = hitCurveInDoc(point);
+	if (m_hit_spike >= 0)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF; // flag trackrect
 		releaseCursor(); // release cursor capture
 		if (nFlags & MK_SHIFT)
-			postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
+			postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike);
 
 		else
-			postMyMessage(HINT_HITSPIKE, m_hitspk);
+			postMyMessage(HINT_HITSPIKE, m_hit_spike);
 	}
 }
 
@@ -476,7 +476,7 @@ void ChartSpikeXY::ZoomData(CRect* rFrom, CRect* rDest)
 
 void ChartSpikeXY::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if (m_selectedspike < 0 || m_hitspk < 0)
+	if (m_selected_spike < 0 || m_hit_spike < 0)
 		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),
@@ -487,23 +487,23 @@ int ChartSpikeXY::hitCurveInDoc(CPoint point)
 {
 	long nfiles = 1;
 	long ncurrentfile = 0;
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		nfiles = p_dbwave_doc_->GetDB_NRecords();
-		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		nfiles = p_dbwave_doc->GetDB_NRecords();
+		ncurrentfile = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	}
 
 	int result = -1;
 	for (long ifile = 0; ifile < nfiles; ifile++)
 	{
-		if (m_ballFiles)
+		if (m_display_all_files)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
-			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+			p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
+			p_dbwave_doc->OpenCurrentSpikeFile();
+			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 		}
 
-		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 		{
 			continue;
 		}
@@ -512,11 +512,11 @@ int ChartSpikeXY::hitCurveInDoc(CPoint point)
 			break;
 	}
 
-	if (m_ballFiles && result < 0)
+	if (m_display_all_files && result < 0)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc->SetDB_CurrentRecordPosition(ncurrentfile);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 
 	return result;
@@ -534,14 +534,14 @@ int ChartSpikeXY::hitCurve(CPoint point)
 
 	// first look at black spikes (foreground)
 	int ispk;
-	const auto upperbound = p_spikelist_->GetTotalSpikes() - 1;
+	const auto upperbound = p_spike_list->GetTotalSpikes() - 1;
 	if (m_plotmode == PLOT_ONECLASS)
 	{
 		for (ispk = upperbound; ispk >= 0; ispk--)
 		{
 			// skip non selected class
-			const auto spike_element = p_spikelist_->GetSpike(ispk);
-			if (spike_element->get_class() != m_selclass)
+			const auto spike_element = p_spike_list->GetSpike(ispk);
+			if (spike_element->get_class() != m_selected_class)
 				continue;
 			if (is_spike_within_limits(ispk))
 				return ispk;
@@ -561,7 +561,7 @@ int ChartSpikeXY::hitCurve(CPoint point)
 
 BOOL ChartSpikeXY::is_spike_within_limits(const int ispike)
 {
-	const auto spike_element = p_spikelist_->GetSpike(ispike);
+	const auto spike_element = p_spike_list->GetSpike(ispike);
 	const auto l_spike_time = spike_element->get_time();
 	if (l_spike_time < time_min_ || l_spike_time > time_max_)
 		return false;
@@ -578,16 +578,16 @@ void ChartSpikeXY::getExtents()
 	{
 		auto maxval = 4096;
 		auto minval = 0;
-		if (p_spikelist_ != nullptr)
+		if (p_spike_list != nullptr)
 		{
-			const auto upperbound = p_spikelist_->GetTotalSpikes() - 1;
+			const auto upperbound = p_spike_list->GetTotalSpikes() - 1;
 			if (upperbound >= 0)
 			{
-				maxval = p_spikelist_->GetSpike(upperbound)->get_y1();
+				maxval = p_spike_list->GetSpike(upperbound)->get_y1();
 				minval = maxval;
 				for (auto i = upperbound; i >= 0; i--)
 				{
-					const auto val = p_spikelist_->GetSpike(i)->get_y1();
+					const auto val = p_spike_list->GetSpike(i)->get_y1();
 					if (val > maxval) maxval = val;
 					if (val < minval) minval = val;
 				}

@@ -1269,7 +1269,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		r_wtext.right = r_wtext.left + rcol;
 		rw_spikes.left = r_wtext.right + rseparator;
-		//auto n = m_pSpkDoc->GetSpkListCurrent()->GetSpikeLength();
+		//auto n = m_pSpkDoc->GetSpkListCurrent()->get_spike_length();
 		if (m_pSpkDoc->GetSpkList_Current()->GetSpikeLength() > 1)
 			rw_spikes.right = rw_spikes.left + rcol;
 		else

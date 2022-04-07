@@ -39,7 +39,7 @@ void DlgDataSeriesFormat::GetParams(int index)
 	CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(index);
 	m_yzero = chan->GetYzero();
 	m_yextent = chan->GetYextent();
-	const auto color = chan->GetColor();
+	const auto color = chan->GetColorIndex();
 	m_colorbutton.SetColor(color);
 	m_mVperbin = chan->GetVoltsperDataBin() * 1000.0f;
 	m_binzero = 0; // m_dbDoc->m_pDataFile->GetpWaveFormat()->binzero;
@@ -55,11 +55,11 @@ void DlgDataSeriesFormat::SetParams(const int index)
 	chan->SetYzero(m_yzero);
 	chan->SetYextent(m_yextent);
 	const auto ccolor = m_colorbutton.GetColor();
-	auto icolor = m_pChartDataWnd->FindColor(ccolor);
+	auto icolor = m_pChartDataWnd->FindColorIndex(ccolor);
 	if (icolor < 0)
 	{
 		icolor = NB_COLORS - 1;
-		m_pChartDataWnd->SetColor(icolor, ccolor);
+		m_pChartDataWnd->SetColorTableAt(icolor, ccolor);
 	}
 	chan->SetColor(icolor);
 }
@@ -77,7 +77,7 @@ BOOL DlgDataSeriesFormat::OnInitDialog()
 	/*
 
 	for (int i=0; i<NB_COLORS; i++)
-		m_colors.AddColorItem( m_plineview->GetColor(i));
+		m_colors.AddColorItem( m_plineview->GetColorIndex(i));
 	*/
 
 	// load channel description CComboBox

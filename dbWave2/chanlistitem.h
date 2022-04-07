@@ -37,7 +37,7 @@ public:
 	int GetYzero() const { return dl_yzero; }
 	int GetYextent() const { return dl_yextent; }
 	WORD GetPenWidth() const { return dl_penwidth; }
-	WORD GetColor() const { return dl_color; }
+	WORD GetColorIndex() const { return dl_color; }
 	WORD GetflagPrintVisible() const { return dl_bprint; }
 	float GetVoltsperDataBin() const { return dl_datavoltspbin; }
 	BOOL GetHZtagsPrintFlag() const { return dl_bHZtagsPrint; }

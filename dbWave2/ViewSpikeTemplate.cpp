@@ -781,7 +781,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 			}
 
 			// get data and add spike
-			const auto p_spik = pSpkList->GetSpike(i)->GetpData();
+			const auto p_spik = pSpkList->GetSpike(i)->get_p_data();
 			pTPList->tAdd(j_templ, p_spik); // add spike to template j
 			pTPList->tAdd(p_spik); // add spike to template zero
 		}
@@ -840,7 +840,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
 		nspikes = spike_list->GetTotalSpikes();
 		for (auto i = 0; i < nspikes; i++)
-			m_templList.tAdd(m_pSpkList->GetSpike(i)->GetpData());
+			m_templList.tAdd(m_pSpkList->GetSpike(i)->get_p_data());
 	}
 	m_templList.tGlobalstats();
 
@@ -882,7 +882,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
-			auto* p_spik = m_pSpkList->GetSpike(i)->GetpData();
+			auto* p_spik = m_pSpkList->GetSpike(i)->get_p_data();
 			auto b_within = FALSE;
 			int itpl;
 			for (itpl = 0; itpl < ntempl; itpl++)
@@ -1003,7 +1003,7 @@ void ViewSpikeTemplates::sortSpikes()
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
-			const auto p_spik = m_pSpkList->GetSpike(ispike)->GetpData();
+			const auto p_spik = m_pSpkList->GetSpike(ispike)->get_p_data();
 			auto b_within = FALSE;
 			double distmin;
 			int offsetmin;

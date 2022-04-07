@@ -855,7 +855,7 @@ void ChartData::PlotDataToDC(CDC* p_dc)
 		const auto chanlist_item = chanlistitem_ptr_array[ichan];
 		const auto wext = chanlist_item->GetYextent();
 		const auto worg = chanlist_item->GetYzero();
-		p_dc->SelectObject(&m_penTable[chanlist_item->GetColor()]);
+		p_dc->SelectObject(&m_penTable[chanlist_item->GetColorIndex()]);
 		if (chanlist_item->GetPenWidth() == 0)
 			continue;
 
@@ -1028,9 +1028,9 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		// change extent, org and color ----------------------------------------
 		const auto yextent = chanlist_item->GetYextent();
 		const auto yzero = chanlist_item->GetYzero();
-		if (chanlist_item->GetColor() != color)
+		if (chanlist_item->GetColorIndex() != color)
 		{
-			color = chanlist_item->GetColor();
+			color = chanlist_item->GetColorIndex();
 			p_dc->SelectObject(&m_penTable[color]);
 		}
 		// transform ordinates ------------------------------------------------

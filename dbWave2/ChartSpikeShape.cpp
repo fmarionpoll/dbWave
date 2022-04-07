@@ -5,7 +5,7 @@
 #define new DEBUG_NEW
 #endif
 
-// TODO loop through files when m_ballfiles is true: spike hit
+// TODO loop through files when m_b_all_files is true: spike hit
 
 IMPLEMENT_SERIAL(ChartSpikeShapeWnd, ChartSpike, 1)
 
@@ -40,25 +40,25 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 	prepareDC(p_dc);
 	auto current_file = 0;
 	auto n_files = 1;
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		n_files = p_dbwave_doc_->GetDB_NRecords();
-		current_file = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		n_files = p_dbwave_doc->GetDB_NRecords();
+		current_file = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	}
 
 	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
-		if (m_ballFiles)
+		if (m_display_all_files)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(i_file);
-			p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_dbwave_doc->SetDB_CurrentRecordPosition(i_file);
+			p_dbwave_doc->OpenCurrentSpikeFile();
 		}
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 
 		//test if data are there - if none, display message and exit
-		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 		{
-			if (!m_ballFiles)
+			if (!m_display_all_files)
 			{
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT); 
 				return;
@@ -67,7 +67,7 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 		}
 
 		// load resources and prepare context
-		const auto spike_length = p_spikelist_->GetSpikeLength();
+		const auto spike_length = p_spike_list->GetSpikeLength();
 		ASSERT(spike_length > 0);
 		if (polypoints_.GetSize() != spike_length)
 		{
@@ -77,12 +77,12 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 
 		// loop through all spikes of the list
 		short* p_spike_data;
-		auto i_last_spike = p_spikelist_->GetTotalSpikes() - 1;
+		auto i_last_spike = p_spike_list->GetTotalSpikes() - 1;
 		auto i_first_spike = 0;
-		if (m_rangemode == RANGE_INDEX)
+		if (m_range_mode == RANGE_INDEX)
 		{
-			i_last_spike = m_spklast;
-			i_first_spike = m_spkfirst;
+			i_last_spike = m_index_last_spike;
+			i_first_spike = m_index_first_spike;
 		}
 		auto selected_pen_color = BLACK_COLOR;
 		if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECOLOR)
@@ -91,10 +91,10 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 
 		for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
 		{
-			Spike* spike = p_spikelist_->GetSpike(i_spike);
+			Spike* spike = p_spike_list->GetSpike(i_spike);
 
 			// skip spike ?
-			if (m_rangemode == RANGE_TIMEINTERVALS
+			if (m_range_mode == RANGE_TIMEINTERVALS
 				&& (spike->get_time() < m_lFirst || spike->get_time() > m_lLast))
 				continue;
 
@@ -103,7 +103,7 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 			switch (m_plotmode)
 			{
 			case PLOT_ONECLASSONLY:
-				if (spike_class != m_selclass)
+				if (spike_class != m_selected_class)
 					continue;
 				break;
 			case PLOT_CLASSCOLORS:
@@ -111,14 +111,14 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 				p_dc->SelectObject(&m_penTable[selected_pen_color]);
 				break;
 			case PLOT_ONECLASS:
-				if (spike_class == m_selclass)
+				if (spike_class == m_selected_class)
 					continue;
 			default:
 				break;
 			}
 
 			// display data
-			p_spike_data = spike->GetpData();
+			p_spike_data = spike->get_p_data();
 			fillPolypointOrdinates(p_spike_data);
 			p_dc->Polyline(&polypoints_[0], spike_length);
 		}
@@ -127,21 +127,21 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 		{
 			selected_pen_color = m_colorselected;
 			if (m_plotmode == PLOT_ONECOLOR)
-				selected_pen_color = m_selclass % NB_COLORS;
+				selected_pen_color = m_selected_class % NB_COLORS;
 			p_dc->SelectObject(&m_penTable[selected_pen_color]);
 			for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
 			{
-				Spike* spike = p_spikelist_->GetSpike(i_spike);
+				Spike* spike = p_spike_list->GetSpike(i_spike);
 				// skip spike ?
-				if (m_rangemode == RANGE_TIMEINTERVALS
+				if (m_range_mode == RANGE_TIMEINTERVALS
 					&& (spike->get_time() < m_lFirst || spike->get_time() > m_lLast))
 					continue;
 
 				// skip spikes with the wrong class
-				if (spike->get_class() != m_selclass)
+				if (spike->get_class() != m_selected_class)
 					continue;
 				// display data
-				p_spike_data = spike->GetpData();
+				p_spike_data = spike->get_p_data();
 				fillPolypointOrdinates(p_spike_data);
 				p_dc->Polyline(&polypoints_[0], spike_length);
 			}
@@ -149,11 +149,11 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 
 		// display selected spike
 		auto i_select = -1;
-		if (m_selectedspike >= 0 && (IsSpikeWithinRange(m_selectedspike)))
-			i_select = m_selectedspike;
+		if (m_selected_spike >= 0 && (IsSpikeWithinRange(m_selected_spike)))
+			i_select = m_selected_spike;
 		drawSelectedSpike(i_select, p_dc);
 
-		if (p_spikelist_->GetSpikeFlagArrayCount() > 0)
+		if (p_spike_list->GetSpikeFlagArrayCount() > 0)
 			drawFlaggedSpikes(p_dc);
 
 		// display tags
@@ -178,11 +178,11 @@ void ChartSpikeShapeWnd::PlotDataToDC(CDC* p_dc)
 	// restore resources
 	p_dc->RestoreDC(n_saved_dc);
 
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(current_file);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 }
 
@@ -195,34 +195,29 @@ void ChartSpikeShapeWnd::drawSelectedSpike(int no_spike, CDC* p_dc)
 
 	if (no_spike >= 0)
 	{
-		// change coordinate settings
 		getExtents();
 		prepareDC(p_dc);
 
 		p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2 + m_displayRect.top);
 		p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
 
-		// prepare pen and select pen
-		const auto pensize = 2;
-		CPen new_pen(PS_SOLID, pensize, m_colorTable[m_colorselectedspike]);
-		auto* poldpen = p_dc->SelectObject(&new_pen);
+		constexpr auto pen_size = 2;
+		CPen new_pen(PS_SOLID, pen_size, m_colorTable[m_colorselectedspike]);
+		auto* old_pen = p_dc->SelectObject(&new_pen);
 
-		// display data
-		auto* lpspk = p_spikelist_->GetSpike(no_spike)->GetpData();
-		fillPolypointOrdinates(lpspk);
-		p_dc->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
+		auto* p_data = p_spike_list->GetSpike(no_spike)->get_p_data();
+		fillPolypointOrdinates(p_data);
+		p_dc->Polyline(&polypoints_[0], p_spike_list->GetSpikeLength());
 
-		// restore resources
-		p_dc->SelectObject(poldpen);
+		p_dc->SelectObject(old_pen);
 	}
-	// restore ressources
 	p_dc->RestoreDC(n_saved_dc);
 }
 
 void ChartSpikeShapeWnd::drawFlaggedSpikes(CDC* pDC0)
 {
 	ASSERT(pDC0 != NULL);
-	auto p_dc = pDC0;
+	const auto p_dc = pDC0;
 	const auto n_saved_dc = p_dc->SaveDC();
 
 	// change coordinate settings
@@ -231,26 +226,21 @@ void ChartSpikeShapeWnd::drawFlaggedSpikes(CDC* pDC0)
 	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2);
 	p_dc->SetViewportExt(m_displayRect.right, -m_displayRect.Height());
 
-	// prepare pen and select pen
-	const auto pensize = 1;
-	CPen new_pen(PS_SOLID, pensize, m_colorTable[m_colorselectedspike]);
-	const auto oldpen = p_dc->SelectObject(&new_pen);
+	constexpr auto pen_size = 1;
+	CPen new_pen(PS_SOLID, pen_size, m_colorTable[m_colorselectedspike]);
+	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	// loop through all flagged spikes
-	for (auto i = p_spikelist_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
+	for (auto i = p_spike_list->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
 	{
-		const auto nospike = p_spikelist_->GetSpikeFlagArrayAt(i);
-		// skip spike if not valid in this display
-		if (!IsSpikeWithinRange(nospike))
+		const auto no_spike = p_spike_list->GetSpikeFlagArrayAt(i);
+		if (!IsSpikeWithinRange(no_spike))
 			continue;
-		//if (PLOT_ONECLASSONLY == m_plotmode && nospikeclass != m_selclass)
-		//	continue;
-		fillPolypointOrdinates(p_spikelist_->GetSpike(nospike)->GetpData());
-		p_dc->Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
+		fillPolypointOrdinates(p_spike_list->GetSpike(no_spike)->get_p_data());
+		p_dc->Polyline(&polypoints_[0], p_spike_list->GetSpikeLength());
 	}
 
-	// restore resources
-	p_dc->SelectObject(oldpen);
+	p_dc->SelectObject(old_pen);
 	pDC0->RestoreDC(n_saved_dc);
 }
 
@@ -264,10 +254,10 @@ void ChartSpikeShapeWnd::DisplayFlaggedSpikes(BOOL bHighLight)
 int ChartSpikeShapeWnd::DisplayExData(short* p_data, int color)
 {
 	// prepare array
-	const auto nelements = p_spikelist_->GetSpikeLength();
-	if (polypoints_.GetSize() != nelements)
+	const auto spike_length = p_spike_list->GetSpikeLength();
+	if (polypoints_.GetSize() != spike_length)
 	{
-		polypoints_.SetSize(nelements, 2);
+		polypoints_.SetSize(spike_length, 2);
 		initPolypointAbcissa();
 	}
 
@@ -275,47 +265,47 @@ int ChartSpikeShapeWnd::DisplayExData(short* p_data, int color)
 	dc.IntersectClipRect(&m_clientRect);
 	prepareDC(&dc);
 	CPen new_pen(PS_SOLID, 0, m_colorTable[color]);
-	const auto oldpen = dc.SelectObject(&new_pen);
+	const auto old_pen = dc.SelectObject(&new_pen);
 	fillPolypointOrdinates(p_data);
-	dc.Polyline(&polypoints_[0], p_spikelist_->GetSpikeLength());
+	dc.Polyline(&polypoints_[0], p_spike_list->GetSpikeLength());
 
-	dc.SelectObject(oldpen);
+	dc.SelectObject(old_pen);
 	return color;
 }
 
-BOOL ChartSpikeShapeWnd::IsSpikeWithinRange(int spikeno) const
+BOOL ChartSpikeShapeWnd::IsSpikeWithinRange(int spike_no) const
 {
-	if (spikeno > p_spikelist_->GetTotalSpikes() - 1)
+	if (spike_no > p_spike_list->GetTotalSpikes() - 1)
 		return FALSE;
-	if (m_rangemode == RANGE_TIMEINTERVALS
-		&& (p_spikelist_->GetSpike(spikeno)->get_time() < m_lFirst || p_spikelist_->GetSpike(spikeno)->get_time() > m_lLast))
+	if (m_range_mode == RANGE_TIMEINTERVALS
+		&& (p_spike_list->GetSpike(spike_no)->get_time() < m_lFirst || p_spike_list->GetSpike(spike_no)->get_time() > m_lLast))
 		return FALSE;
-	if (m_rangemode == RANGE_INDEX
-		&& (spikeno > m_spklast || spikeno < m_spkfirst))
+	if (m_range_mode == RANGE_INDEX
+		&& (spike_no > m_index_last_spike || spike_no < m_index_first_spike))
 		return FALSE;
 	if (m_plotmode == PLOT_ONECLASSONLY
-		&& (p_spikelist_->GetSpike(spikeno)->get_class() != m_selclass))
+		&& (p_spike_list->GetSpike(spike_no)->get_class() != m_selected_class))
 		return FALSE;
 	return TRUE;
 }
 
-int ChartSpikeShapeWnd::SelectSpikeShape(int spikeno)
+int ChartSpikeShapeWnd::SelectSpikeShape(int spike_no)
 {
 	// erase plane
-	const auto oldselected = m_selectedspike;
-	m_selectedspike = spikeno;
+	const auto old_selected = m_selected_spike;
+	m_selected_spike = spike_no;
 	if (!m_bUseDIB)
 	{
 		CClientDC dc(this);
-		drawSelectedSpike(m_selectedspike, &dc);
+		drawSelectedSpike(m_selected_spike, &dc);
 	}
 	else
 	{
 		if (m_PlotDC.GetSafeHdc())
-			drawSelectedSpike(m_selectedspike, &m_PlotDC);
+			drawSelectedSpike(m_selected_spike, &m_PlotDC);
 	}
 	Invalidate();
-	return oldselected;
+	return old_selected;
 }
 
 void ChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
@@ -357,7 +347,7 @@ void ChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 			// none of those: zoom data or  offset display
 			ChartSpike::OnLButtonUp(nFlags, point);
 			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
-			const auto jitter = 3;
+			constexpr auto jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
 				if (m_cursorType != CURSOR_ZOOM)
@@ -394,31 +384,31 @@ void ChartSpikeShapeWnd::OnLButtonUp(UINT nFlags, CPoint point)
 void ChartSpikeShapeWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	m_bLmouseDown = TRUE;
-	// call base class to test for horiz cursor or XORing rectangle
+	// call base class to test for horizontal cursor or XORing rectangle
 	if (m_VTtags.GetNTags() > 0)
 	{
-		for (auto icur = m_VTtags.GetNTags() - 1; icur >= 0; icur--) // loop through all tags
-			m_VTtags.SetTagPix(icur, MulDiv(m_VTtags.GetValue(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
+		for (auto i_tag = m_VTtags.GetNTags() - 1; i_tag >= 0; i_tag--) 
+			m_VTtags.SetTagPix(i_tag, MulDiv(m_VTtags.GetValue(i_tag) - m_xWO, m_xVE, m_xWE) + m_xVO);
 	}
 
 	// track rectangle or VTtag?
-	ChartSpike::OnLButtonDown(nFlags, point); // capture cursor eventually
-	if (m_currCursorMode != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
-		return; // or any tag hit (VT, HZ) detected
+	ChartSpike::OnLButtonDown(nFlags, point); 
+	if (m_currCursorMode != 0 || m_HCtrapped >= 0)
+		return; 
 
 	// test if mouse hit one spike
 	// if hit, then tell parent to select corresp spike
-	m_hitspk = hitCurveInDoc(point);
-	if (m_hitspk >= 0)
+	m_hit_spike = hitCurveInDoc(point);
+	if (m_hit_spike >= 0)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF; // flag trackrect
 		releaseCursor(); // release cursor capture
 		if (nFlags & MK_SHIFT)
-			postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk); // tell parent spike selected
+			postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike); // tell parent spike selected
 
 		else
-			postMyMessage(HINT_HITSPIKE, m_hitspk);
+			postMyMessage(HINT_HITSPIKE, m_hit_spike);
 	}
 }
 
@@ -465,44 +455,44 @@ void ChartSpikeShapeWnd::ZoomData(CRect* rFrom, CRect* rDest)
 
 void ChartSpikeShapeWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if ((m_selectedspike < 0 && p_spikelist_->GetSpikeFlagArrayCount() < 1) || m_hitspk < 0)
+	if ((m_selected_spike < 0 && p_spike_list->GetSpikeFlagArrayCount() < 1) || m_hit_spike < 0)
 		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 	{
-		if (m_selectedspike >= 0)
+		if (m_selected_spike >= 0)
 		{
-			postMyMessage(HINT_DBLCLKSEL, m_selectedspike);
+			postMyMessage(HINT_DBLCLKSEL, m_selected_spike);
 		}
 		else
 		{
-			const auto iselectedspike = hitCurve(point);
-			if (iselectedspike > 0)
-				postMyMessage(HINT_DBLCLKSEL, iselectedspike);
+			const auto selected_spike = hitCurve(point);
+			if (selected_spike > 0)
+				postMyMessage(HINT_DBLCLKSEL, selected_spike);
 		}
 	}
 }
 
 int ChartSpikeShapeWnd::hitCurveInDoc(CPoint point)
 {
-	long nfiles = 1;
-	long ncurrentfile = 0;
-	if (m_ballFiles)
+	long n_files = 1;
+	long current_file_index = 0;
+	if (m_display_all_files)
 	{
-		nfiles = p_dbwave_doc_->GetDB_NRecords();
-		ncurrentfile = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		n_files = p_dbwave_doc->GetDB_NRecords();
+		current_file_index = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	}
 
 	int result = -1;
-	for (long ifile = 0; ifile < nfiles; ifile++)
+	for (long ifile = 0; ifile < n_files; ifile++)
 	{
-		if (m_ballFiles)
+		if (m_display_all_files)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(ifile);
-			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+			p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
+			p_dbwave_doc->OpenCurrentSpikeFile();
+			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 		}
 
-		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 		{
 			continue;
 		}
@@ -511,11 +501,11 @@ int ChartSpikeShapeWnd::hitCurveInDoc(CPoint point)
 			break;
 	}
 
-	if (m_ballFiles && result < 0)
+	if (m_display_all_files && result < 0)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(ncurrentfile);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file_index);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 
 	return result;
@@ -526,30 +516,30 @@ int ChartSpikeShapeWnd::hitCurve(const CPoint point)
 	auto index_spike_hit = -1;
 	// convert device coordinates into logical coordinates
 	const auto mouse_x = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-	if (mouse_x < 0 || mouse_x > p_spikelist_->GetSpikeLength())
+	if (mouse_x < 0 || mouse_x > p_spike_list->GetSpikeLength())
 		return index_spike_hit;
 	const auto mouse_y = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto delta_y = MulDiv(3, m_yWE, m_yVE);
 
 	// loop through all spikes
-	auto index_last_spike = p_spikelist_->GetTotalSpikes() - 1;
+	auto index_last_spike = p_spike_list->GetTotalSpikes() - 1;
 	auto index_first_spike = 0;
-	if (m_rangemode == RANGE_INDEX)
+	if (m_range_mode == RANGE_INDEX)
 	{
-		index_last_spike = m_spklast;
-		index_first_spike = m_spkfirst;
+		index_last_spike = m_index_last_spike;
+		index_first_spike = m_index_first_spike;
 	}
 	for (auto spike_index = index_last_spike; spike_index >= index_first_spike; spike_index--)
 	{
-		if (m_rangemode == RANGE_TIMEINTERVALS
-			&& (p_spikelist_->GetSpike(spike_index)->get_time() < m_lFirst
-				|| p_spikelist_->GetSpike(spike_index)->get_time() > m_lLast))
+		if (m_range_mode == RANGE_TIMEINTERVALS
+			&& (p_spike_list->GetSpike(spike_index)->get_time() < m_lFirst
+				|| p_spike_list->GetSpike(spike_index)->get_time() > m_lLast))
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& p_spikelist_->GetSpike(spike_index)->get_class() != m_selclass)
+			&& p_spike_list->GetSpike(spike_index)->get_class() != m_selected_class)
 			continue;
 
-		const auto val = p_spikelist_->GetSpike(spike_index)->GetValueAtOffset(mouse_x);
+		const auto val = p_spike_list->GetSpike(spike_index)->get_value_at_offset(mouse_x);
 		if (mouse_y + delta_y < val && mouse_y - delta_y > val)
 		{
 			index_spike_hit = spike_index;
@@ -561,13 +551,13 @@ int ChartSpikeShapeWnd::hitCurve(const CPoint point)
 
 void ChartSpikeShapeWnd::getExtents()
 {
-	const auto current_file_index = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+	const auto current_file_index = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	auto file_first = current_file_index;
 	auto file_last = current_file_index;
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
 		file_first = 0;
-		file_last = p_dbwave_doc_->GetDB_NRecords() - 1;
+		file_last = p_dbwave_doc->GetDB_NRecords() - 1;
 	}
 
 	if (m_yWE == 1 || m_yWE == 0)
@@ -576,11 +566,11 @@ void ChartSpikeShapeWnd::getExtents()
 		{
 			if (file_index != current_file_index)
 			{
-				p_dbwave_doc_->SetDB_CurrentRecordPosition(file_index);
-				p_dbwave_doc_->OpenCurrentSpikeFile();
-				p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+				p_dbwave_doc->SetDB_CurrentRecordPosition(file_index);
+				p_dbwave_doc->OpenCurrentSpikeFile();
+				p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 			}
-			if (p_spikelist_ != nullptr)
+			if (p_spike_list != nullptr)
 			{
 				getExtentsCurrentSpkList();
 				if (m_yWE != 0)
@@ -592,9 +582,9 @@ void ChartSpikeShapeWnd::getExtents()
 	// exit 
 	if (file_first != current_file_index || file_last != current_file_index)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(current_file_index);
-		if (p_dbwave_doc_->OpenCurrentSpikeFile() != nullptr)
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file_index);
+		if (p_dbwave_doc->OpenCurrentSpikeFile() != nullptr)
+			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 }
 
@@ -603,14 +593,14 @@ void ChartSpikeShapeWnd::getExtentsCurrentSpkList()
 	if (m_yWE == 1 || m_yWE == 0)
 	{
 		int value_max, value_min;
-		p_spikelist_->GetTotalMaxMin(TRUE, &value_max, &value_min);
+		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = MulDiv((value_max - value_min), 10, 9) + 1;
 		m_yWO = value_max / 2 + value_min / 2;
 	}
 
 	if (m_xWE <= 1)
 	{
-		m_xWE = p_spikelist_->GetSpikeLength();
+		m_xWE = p_spike_list->GetSpikeLength();
 		m_xWO = 0;
 	}
 }
@@ -630,7 +620,7 @@ void ChartSpikeShapeWnd::fillPolypointOrdinates(short* lpSource)
 	auto n_elements = polypoints_.GetSize();
 	if (n_elements == 0)
 	{
-		n_elements = p_spikelist_->GetSpikeLength();
+		n_elements = p_spike_list->GetSpikeLength();
 		ASSERT(n_elements > 0);
 		polypoints_.SetSize(n_elements, 2);
 		initPolypointAbcissa();
@@ -643,7 +633,7 @@ void ChartSpikeShapeWnd::fillPolypointOrdinates(short* lpSource)
 void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 {
 	// check if there are valid data to display
-	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 		return;
 
 	const auto old_y_vo = m_yVO;
@@ -659,7 +649,7 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	if (m_yWE == 1) 
 	{
 		int value_max, value_min;
-		p_spikelist_->GetTotalMaxMin(TRUE, &value_max, &value_min);
+		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = value_max - value_min + 1;
 		m_yWO = (value_max + value_min) / 2;
 	}
@@ -667,7 +657,7 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	m_xWO = rect->left;
 	m_xWE = rect->Width() - 2;
 
-	const auto spike_length = p_spikelist_->GetSpikeLength();
+	const auto spike_length = p_spike_list->GetSpikeLength();
 	if (polypoints_.GetSize() != spike_length)
 		polypoints_.SetSize(spike_length, 2);
 
@@ -692,20 +682,20 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	}
 
 	const auto old_pen = p_dc->SelectObject(&m_penTable[selected_color]);
-	auto spike_index_last = p_spikelist_->GetTotalSpikes() - 1;
+	auto spike_index_last = p_spike_list->GetTotalSpikes() - 1;
 	auto spike_index_first = 0;
-	if (m_rangemode == RANGE_INDEX)
+	if (m_range_mode == RANGE_INDEX)
 	{
-		spike_index_last = m_spklast;
-		spike_index_first = m_spkfirst;
+		spike_index_last = m_index_last_spike;
+		spike_index_first = m_index_first_spike;
 	}
 
 	for (auto spike_index = spike_index_last; spike_index >= spike_index_first; spike_index--)
 	{
-		Spike* spike = p_spikelist_->GetSpike(spike_index);
-		if (m_rangemode == RANGE_INDEX && (spike_index > m_spklast || spike_index < m_spkfirst))
+		Spike* spike = p_spike_list->GetSpike(spike_index);
+		if (m_range_mode == RANGE_INDEX && (spike_index > m_index_last_spike || spike_index < m_index_first_spike))
 			continue;
-		if (m_rangemode == RANGE_TIMEINTERVALS)
+		if (m_range_mode == RANGE_TIMEINTERVALS)
 		{
 			if (spike->get_time() < m_lFirst)
 				continue;
@@ -713,13 +703,13 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 				continue;
 		}
 
-		const auto spike_class = p_spikelist_->GetSpike(spike_index)->get_class();
-		if (m_plotmode == PLOT_ONECLASSONLY && spike_class != m_selclass)
+		const auto spike_class = p_spike_list->GetSpike(spike_index)->get_class();
+		if (m_plotmode == PLOT_ONECLASSONLY && spike_class != m_selected_class)
 			continue;
-		if (m_plotmode == PLOT_ONECLASS && spike_class == m_selclass)
+		if (m_plotmode == PLOT_ONECLASS && spike_class == m_selected_class)
 			continue;
 
-		plotArraytoDC(p_dc, spike->GetpData() );
+		plotArraytoDC(p_dc, spike->get_p_data() );
 	}
 
 	// display selected class if requested by option
@@ -728,25 +718,25 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 		p_dc->SelectObject(&m_penTable[m_colorselected]);
 		for (auto spike_index = spike_index_last; spike_index >= spike_index_first; spike_index--)
 		{
-			Spike* spike = p_spikelist_->GetSpike(spike_index);
-			if (m_rangemode == RANGE_TIMEINTERVALS)
+			Spike* spike = p_spike_list->GetSpike(spike_index);
+			if (m_range_mode == RANGE_TIMEINTERVALS)
 			{
 				const auto spike_time = spike->get_time();
 				if (spike_time < m_lFirst || spike_time > m_lLast)
 					continue;
 			}
-			if (spike->get_class() != m_selclass)
+			if (spike->get_class() != m_selected_class)
 				continue;
-			plotArraytoDC(p_dc, spike->GetpData());
+			plotArraytoDC(p_dc, spike->get_p_data());
 		}
 	}
 
 	// display selected spike
-	if (m_selectedspike >= 0 && IsSpikeWithinRange(m_selectedspike))
+	if (m_selected_spike >= 0 && IsSpikeWithinRange(m_selected_spike))
 	{
 		CPen new_pen(PS_SOLID, 0, m_colorTable[m_colorselectedspike]);
 		p_dc->SelectObject(&new_pen);
-		plotArraytoDC(p_dc, p_spikelist_->GetSpike(m_selectedspike)->GetpData());
+		plotArraytoDC(p_dc, p_spike_list->GetSpike(m_selected_spike)->get_p_data());
 	}
 
 	// restore resources
@@ -780,13 +770,13 @@ void ChartSpikeShapeWnd::plotArraytoDC(CDC* p_dc, short* pspk)
 	}
 }
 
-void ChartSpikeShapeWnd::MoveVTtrack(int itrack, int newval)
+void ChartSpikeShapeWnd::MoveVTtrack(int i_track, int new_value)
 {
 	CPoint point;
-	m_ptLast.x = MulDiv(m_VTtags.GetValue(itrack) - m_xWO, m_xVE, m_xWE) + m_xVO;
-	m_VTtags.SetTagVal(itrack, newval); // set new value
-	point.x = MulDiv(newval - m_xWO, m_xVE, m_xWE) + m_xVO; // convert value into pixel
-	XorVTtag(point.x); // xor line
+	m_ptLast.x = MulDiv(m_VTtags.GetValue(i_track) - m_xWO, m_xVE, m_xWE) + m_xVO;
+	m_VTtags.SetTagVal(i_track, new_value); 
+	point.x = MulDiv(new_value - m_xWO, m_xVE, m_xWE) + m_xVO; 
+	XorVTtag(point.x);
 }
 
 void ChartSpikeShapeWnd::Serialize(CArchive& ar)
@@ -796,73 +786,73 @@ void ChartSpikeShapeWnd::Serialize(CArchive& ar)
 		ChartSpike::Serialize(ar);
 		polypoints_.Serialize(ar);
 
-		ar << m_rangemode; // display range (time OR storage index)
+		ar << m_range_mode; // display range (time OR storage index)
 		ar << m_lFirst; // time first (real time = index/sampling rate)
 		ar << m_lLast; // time last
-		ar << m_spkfirst; // index first spike
-		ar << m_spklast; // index last spike
-		ar << m_currentclass; // selected class (different color) (-1 = display all)
-		ar << m_selectedspike; // selected spike (display differently)
+		ar << m_index_first_spike; // index first spike
+		ar << m_index_last_spike; // index last spike
+		ar << m_current_class; // selected class (different color) (-1 = display all)
+		ar << m_selected_spike; // selected spike (display differently)
 		ar << m_colorselectedspike; // color selected spike (index / color table)
-		ar << m_hitspk; // index spike
-		ar << m_selclass; // index class selected
+		ar << m_hit_spike; // index spike
+		ar << m_selected_class; // index class selected
 		ar << m_bText; // allow text default false
-		ar << m_selclass; // dummy
+		ar << m_selected_class; // dummy
 	}
 	else
 	{
 		ChartSpike::Serialize(ar);
 		polypoints_.Serialize(ar);
 
-		ar >> m_rangemode; // display range (time OR storage index)
+		ar >> m_range_mode; // display range (time OR storage index)
 		ar >> m_lFirst; // time first (real time = index/sampling rate)
 		ar >> m_lLast; // time last
-		ar >> m_spkfirst; // index first spike
-		ar >> m_spklast; // index last spike
-		ar >> m_currentclass; // selected class (different color) (-1 = display all)
-		ar >> m_selectedspike; // selected spike (display differently)
+		ar >> m_index_first_spike; // index first spike
+		ar >> m_index_last_spike; // index last spike
+		ar >> m_current_class; // selected class (different color) (-1 = display all)
+		ar >> m_selected_spike; // selected spike (display differently)
 		ar >> m_colorselectedspike; // color selected spike (index / color table)
-		ar >> m_hitspk; // index spike
-		ar >> m_selclass; // index class selected
+		ar >> m_hit_spike; // index spike
+		ar >> m_selected_class; // index class selected
 		ar >> m_bText; // allow text default false
-		ar >> m_selclass; // dummy
+		ar >> m_selected_class; // dummy
 	}
 }
 
 float ChartSpikeShapeWnd::GetDisplayMaxMv()
 {
 	getExtents();
-	return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWE - m_yWO - p_spikelist_->GetAcqBinzero()));
+	return (p_spike_list->GetAcqVoltsperBin() * 1000.f * static_cast<float>(m_yWE - m_yWO - p_spike_list->GetAcqBinzero()));
 }
 
 float ChartSpikeShapeWnd::GetDisplayMinMv()
 {
-	if (p_spikelist_ == nullptr)
+	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (p_spikelist_->GetAcqVoltsperBin() * 1000.f * (m_yWO - m_yWE - p_spikelist_->GetAcqBinzero()));
+	return (p_spike_list->GetAcqVoltsperBin() * 1000.f * static_cast<float>(m_yWO - m_yWE - p_spike_list->GetAcqBinzero()));
 }
 
 float ChartSpikeShapeWnd::GetExtent_mV()
 {
-	if (p_spikelist_ == nullptr)
+	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (p_spikelist_->GetAcqVoltsperBin() * m_yWE * 1000.f);
+	return (p_spike_list->GetAcqVoltsperBin() * static_cast<float>(m_yWE) * 1000.f);
 }
 
 float ChartSpikeShapeWnd::GetExtent_ms()
 {
-	if (p_spikelist_ == nullptr)
+	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (static_cast<float>(1000.0 * m_xWE) / p_spikelist_->GetAcqSampRate());
+	return (static_cast<float>(1000.0 * m_xWE) / p_spike_list->GetAcqSampRate());
 }
 
 void ChartSpikeShapeWnd::SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 {
-	p_dbwave_doc_ = p_document;
-	p_spikelist_ = p_spk_list;
-	m_selectedspike = -1;
+	p_dbwave_doc = p_document;
+	p_spike_list = p_spk_list;
+	m_selected_spike = -1;
 }
 

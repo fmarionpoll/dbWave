@@ -11,12 +11,12 @@ class Spike : public CObject
 
 	// Attributes
 private:
-	long m_iitime = 0;						// occurrence time - multiply by rate to get time in seconds
+	long m_ii_time = 0;						// occurrence time - multiply by rate to get time in seconds
 	int m_class = 0;						// spike class - init to zero at first
-	int m_chanparm = 0;						// spike detection array index
+	int m_detection_parameters_index = 0;	// spike detection array index
 	int m_max = 4096;						// spike max (used to scan rapidly to adjust display)
 	int m_min = 0;							// spike min (used to scan rapidly to adjust display)
-	int m_dmaxmin = 0;
+	int m_d_max_min = 0;
 	int m_offset = 2048;					// offset voltage pt 1
 	int y1_ = 0;							// parameter measured and stored
 	int y2_ = 0;
@@ -24,49 +24,44 @@ private:
 
 	short* m_spike_data_buffer = nullptr;	// buffer address
 	int m_spike_length = 0;					// length of buffer
-	int m_spk_buffer_length{};				// n points in the buffer
+	int m_spk_buffer_length = 0;				// n points in the buffer
 	boolean m_selected_state = false;
+	int m_bin_zero = 2048;					// zero (if 12 bits scale = 0-4095)
 
 public:
-	int m_bin_zero = 2048;					// zero (if 12 bits scale = 0-4095)
-	boolean get_selected() { return m_selected_state; }
+	int get_bin_zero() const { return m_bin_zero; }
+	void set_bin_zero(int bin_zero) { m_bin_zero = bin_zero; }
+
+	boolean get_selected() const { return m_selected_state; }
 	void set_selected(boolean status) { m_selected_state = status; }
 
-	long get_time() const { return m_iitime; }
+	long get_time() const { return m_ii_time; }
 	int get_class() const { return m_class; }
-	int get_source_channel() const { return m_chanparm; }
-	short get_maximum() const { return m_max; }
-	short get_minimum() const { return m_min; }
+	int get_source_channel() const { return m_detection_parameters_index; }
+	int get_maximum() const { return m_max; }
+	int get_minimum() const { return m_min; }
 	int get_amplitude_offset() const { return m_offset; }
 
-	int GetSpikeLength() const { return m_spike_length; }
-	short* GetpData(int spike_length);
-	short* GetpData() { return m_spike_data_buffer; }
-	short GetValueAtOffset(int index) {return *(m_spike_data_buffer+index);}
-	void GetMaxMinEx(int* max, int* min, int* d_max_to_min)
-	{
-		*max = m_max;
-		*min = m_min;
-		*d_max_to_min = m_dmaxmin;
-	}
-	void GetMaxMin(int* max, int* min)
-	{
-		*max = m_max;
-		*min = m_min;
-	}
+	int get_spike_length() const { return m_spike_length; }
+	short* get_p_data(int spike_length);
+	short* get_p_data() const;
+	short get_value_at_offset(int index) const {return *(m_spike_data_buffer+index);}
+	void get_max_min_ex(int* max, int* min, int* d_max_to_min) const;
+
+	void get_max_min(int* max, int* min) const;
 
 	int get_y1() const { return y1_; }
 	int get_y2() const { return y2_; }
 	int get_dt() const { return dt_; }
 
-	void set_time(long ii) { m_iitime = ii; }
+	void set_time(long ii) { m_ii_time = ii; }
 	void set_class(int cl) { m_class = cl; }
 
-	void SetMaxMinEx(int max, int min, int dmaxmin)
+	void SetMaxMinEx(int max, int min, int d_max_min)
 	{
 		m_max = max;
 		m_min = min;
-		m_dmaxmin = dmaxmin;
+		m_d_max_min = d_max_min;
 	}
 
 	void SetAmplitudeOffset(int offset) { m_offset = offset; }

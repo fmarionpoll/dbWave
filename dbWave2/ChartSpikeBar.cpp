@@ -45,25 +45,25 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 
 	long n_files = 1;
 	long current_file = 0;
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		n_files = p_dbwave_doc_->GetDB_NRecords();
-		current_file = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		n_files = p_dbwave_doc->GetDB_NRecords();
+		current_file = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	}
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (m_ballFiles)
+		if (m_display_all_files)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(i_file);
-			p_spike_doc_ = p_dbwave_doc_->OpenCurrentSpikeFile();
+			p_dbwave_doc->SetDB_CurrentRecordPosition(i_file);
+			p_spike_doc = p_dbwave_doc->OpenCurrentSpikeFile();
 		}
-		p_spikelist_ = p_spike_doc_->GetSpkList_Current();
+		p_spike_list = p_spike_doc->GetSpkList_Current();
 
 		// test presence of data
-		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() <= 0)
+		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() <= 0)
 		{
-			if (!m_ballFiles)
+			if (!m_display_all_files)
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 			continue;
 		}
@@ -76,7 +76,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 		if (m_yWE == 1)
 		{
 			int value_max, value_min;
-			p_spikelist_->GetTotalMaxMin(TRUE, &value_max, &value_min);
+			p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 			m_yWE = value_max - value_min;
 			m_yWO = (value_max + value_min) / 2;
 		}
@@ -89,7 +89,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 
 		displayBars(p_dc, &m_displayRect);
 
-		const CIntervals* p_intervals = &(p_spike_doc_->m_stimulus_intervals);
+		const CIntervals* p_intervals = &(p_spike_doc->m_stimulus_intervals);
 
 		if (p_intervals->n_items > 0)
 			displayStimulus(p_dc, &m_displayRect);
@@ -131,11 +131,11 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 
 	p_dc->RestoreDC(n_saved_dc);
 
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(current_file);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 }
 
@@ -154,7 +154,7 @@ void ChartSpikeBar::PlotSingleSpkDataToDC(CDC* p_dc)
 	p_dc->IntersectClipRect(&m_clientRect);
 
 	// test presence of data
-	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 	{
 		p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 		p_dc->RestoreDC(n_saved_dc);
@@ -171,7 +171,7 @@ void ChartSpikeBar::PlotSingleSpkDataToDC(CDC* p_dc)
 	if (m_yWE == 1)
 	{
 		int value_max, value_min;
-		p_spikelist_->GetTotalMaxMin(TRUE, &value_max, &value_min);
+		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = value_max - value_min;
 		m_yWO = (value_max + value_min) / 2;
 	}
@@ -184,9 +184,9 @@ void ChartSpikeBar::PlotSingleSpkDataToDC(CDC* p_dc)
 
 	displayBars(p_dc, &m_displayRect);
 
-	if (p_spike_doc_ == nullptr)
-		p_spike_doc_ = p_dbwave_doc_->m_pSpk;
-	const CIntervals* p_intervals = &(p_spike_doc_->m_stimulus_intervals);
+	if (p_spike_doc == nullptr)
+		p_spike_doc = p_dbwave_doc->m_pSpk;
+	const CIntervals* p_intervals = &(p_spike_doc->m_stimulus_intervals);
 
 	if (p_intervals->n_items > 0)
 		displayStimulus(p_dc, &m_displayRect);
@@ -243,7 +243,7 @@ void ChartSpikeBar::displayStimulus(CDC* p_dc, const CRect* rect) const
 	const auto ii_last = m_lLast;
 	const auto ii_length = ii_last - ii_first;
 	auto i0 = 0;
-	CIntervals* p_intervals = &(p_spike_doc_->m_stimulus_intervals);
+	CIntervals* p_intervals = &(p_spike_doc->m_stimulus_intervals);
 
 	while (i0 < p_intervals->GetSize()
 		&& p_intervals->GetAt(i0) < ii_first)
@@ -293,7 +293,7 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 	if (m_yWE == 1)
 	{
 		int value_max, value_min;
-		p_spikelist_->GetTotalMaxMin(TRUE, &value_max, &value_min);
+		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = value_max - value_min;
 		m_yWO = (value_max + value_min) / 2;
 	}
@@ -303,21 +303,21 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 	const auto y_ve = -rect->Height();
 
 	// draw horizontal line
-	const int baseline = MulDiv(p_spikelist_->GetAcqBinzero() - y_wo, y_ve, y_we) + y_vo;
+	const int baseline = MulDiv(p_spike_list->GetAcqBinzero() - y_wo, y_ve, y_we) + y_vo;
 	p_dc->MoveTo(rect->left, baseline);
 	p_dc->LineTo(rect->right, baseline);
 
 	// loop through all spikes of the list
 	auto i_first = 0;
-	auto i_last = p_spikelist_->GetTotalSpikes() - 1;
-	if (m_rangemode == RANGE_INDEX)
+	auto i_last = p_spike_list->GetTotalSpikes() - 1;
+	if (m_range_mode == RANGE_INDEX)
 	{
-		if (m_spklast > i_last)
-			m_spklast = i_last;
-		if (m_spkfirst < 0)
-			m_spkfirst = 0;
-		i_last = m_spklast; // reduces the nb of spikes examined
-		i_first = m_spkfirst; // assuming an ordered list...
+		if (m_index_last_spike > i_last)
+			m_index_last_spike = i_last;
+		if (m_index_first_spike < 0)
+			m_index_first_spike = 0;
+		i_last = m_index_last_spike; // reduces the nb of spikes examined
+		i_first = m_index_first_spike; // assuming an ordered list...
 	}
 	const auto len = (m_lLast - m_lFirst + 1);
 	int max, min;
@@ -325,11 +325,11 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 	auto pen_color = BLACK_COLOR;
 	for (auto i_spike = i_last; i_spike >= i_first; i_spike--)
 	{
-		const Spike* spike = p_spikelist_->GetSpike(i_spike);
+		const Spike* spike = p_spike_list->GetSpike(i_spike);
 
 		// skip spike if outside time range && option
 		const auto l_spike_time = spike->get_time();
-		if (m_rangemode == RANGE_TIMEINTERVALS
+		if (m_range_mode == RANGE_TIMEINTERVALS
 			&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
 			continue;
 
@@ -338,14 +338,14 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 		switch (m_plotmode)
 		{
 		case PLOT_ONECLASSONLY:
-			if (spike_class != m_selclass)
+			if (spike_class != m_selected_class)
 				continue;
 			break;
 		case PLOT_CLASSCOLORS:
 			pen_color = spike_class % NB_COLORS;
 			break;
 		case PLOT_ONECLASS:
-			if (spike_class != m_selclass)
+			if (spike_class != m_selected_class)
 				pen_color = SILVER_COLOR;
 			else
 				pen_color = m_colorselected;
@@ -357,7 +357,7 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 		// and draw spike: compute abscissa & draw from max to min
 		const auto llk = MulDiv((l_spike_time - m_lFirst), rect_width, len); 
 		const int abscissa = static_cast<int>(llk) + rect->left;
-		p_spikelist_->GetSpike(i_spike)->GetMaxMin(&max, &min);
+		p_spike_list->GetSpike(i_spike)->get_max_min(&max, &min);
 		max = MulDiv(max - y_wo, y_ve, y_we) + y_vo;
 		min = MulDiv(min - y_wo, y_ve, y_we) + y_vo;
 		p_dc->MoveTo(abscissa, max);
@@ -376,9 +376,9 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 	}
 
 	// display selected spike
-	if (m_selectedspike >= 0)
-		DisplaySpike(m_selectedspike, TRUE);
-	if (p_spikelist_->GetSpikeFlagArrayCount() > 0)
+	if (m_selected_spike >= 0)
+		DisplaySpike(m_selected_spike, TRUE);
+	if (p_spike_list->GetSpikeFlagArrayCount() > 0)
 		DisplayFlaggedSpikes(TRUE);
 
 	p_dc->SelectObject(old_pen);
@@ -386,7 +386,7 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 
 void ChartSpikeBar::DisplayFlaggedSpikes(const BOOL b_high_light)
 {
-	if (p_spikelist_->GetSpikeFlagArrayCount() < 1)
+	if (p_spike_list->GetSpikeFlagArrayCount() < 1)
 		return;
 
 	CClientDC dc(this);
@@ -399,14 +399,14 @@ void ChartSpikeBar::DisplayFlaggedSpikes(const BOOL b_high_light)
 	prepareDC(&dc);
 
 	// loop over the array of flagged spikes
-	for (auto i = p_spikelist_->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
+	for (auto i = p_spike_list->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
 	{
 		constexpr auto pen_size = 0;
-		const auto no_spike = p_spikelist_->GetSpikeFlagArrayAt(i);
+		const auto no_spike = p_spike_list->GetSpikeFlagArrayAt(i);
 
-		Spike* spike = p_spikelist_->GetSpike(no_spike);
+		Spike* spike = p_spike_list->GetSpike(no_spike);
 		const auto no_spike_class = spike->get_class();
-		if (PLOT_ONECLASSONLY == m_plotmode && no_spike_class != m_selclass)
+		if (PLOT_ONECLASSONLY == m_plotmode && no_spike_class != m_selected_class)
 			continue;
 
 		auto color_index = RED_COLOR;
@@ -417,11 +417,11 @@ void ChartSpikeBar::DisplayFlaggedSpikes(const BOOL b_high_light)
 			case PLOT_ONECLASSONLY:
 			case PLOT_ONECLASS:
 				color_index = BLACK_COLOR;
-				if (no_spike_class != m_selclass)
+				if (no_spike_class != m_selected_class)
 					color_index = SILVER_COLOR;
 				break;
 			case PLOT_CLASSCOLORS:
-				if (no_spike == m_selectedspike)
+				if (no_spike == m_selected_spike)
 					highlightOneBar(no_spike, &dc);
 				color_index = no_spike_class % NB_COLORS;
 				break;
@@ -442,7 +442,7 @@ void ChartSpikeBar::DisplayFlaggedSpikes(const BOOL b_high_light)
 		const auto llk = MulDiv(l_spike_time - m_lFirst, m_xWE, len);
 		const auto abscissa = static_cast<int>(llk) + m_xWO;
 		int max, min;
-		spike->GetMaxMin(&max, &min);
+		spike->get_max_min(&max, &min);
 
 		dc.MoveTo(abscissa, max);
 		dc.LineTo(abscissa, min);
@@ -463,8 +463,8 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 	dc.IntersectClipRect(&m_clientRect);
 	prepareDC(&dc);
 
-	int color;
-	const Spike* spike = p_spikelist_->GetSpike(no_spike);
+	int color_index;
+	const Spike* spike = p_spike_list->GetSpike(no_spike);
 
 	// spike is not selected
 	if (!b_select)
@@ -473,18 +473,18 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 		{
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
-			color = BLACK_COLOR;
-			if (spike->get_class() != m_selclass)
-				color = SILVER_COLOR;
+			color_index = BLACK_COLOR;
+			if (spike->get_class() != m_selected_class)
+				color_index = SILVER_COLOR;
 			break;
 		case PLOT_CLASSCOLORS:
-			if (no_spike == m_selectedspike)
+			if (no_spike == m_selected_spike)
 				highlightOneBar(no_spike, &dc);
-			color = spike->get_class() % NB_COLORS;
+			color_index = spike->get_class() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		default:
-			color = BLACK_COLOR;
+			color_index = BLACK_COLOR;
 			break;
 		}
 	}
@@ -495,20 +495,20 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 		{
 		case PLOT_CLASSCOLORS:
 			highlightOneBar(no_spike, &dc);
-			color = spike->get_class() % NB_COLORS;
+			color_index = spike->get_class() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
 		default:
-			color = RED_COLOR;
+			color_index = RED_COLOR;
 			break;
 		}
 	}
 
 	CPen new_pen;
 	constexpr auto pen_size = 0;
-	new_pen.CreatePen(PS_SOLID, pen_size, m_colorTable[color]);
+	new_pen.CreatePen(PS_SOLID, pen_size, m_colorTable[color_index]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 
 	// display data
@@ -517,7 +517,7 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 	const auto llk = MulDiv(l_spike_time - m_lFirst, m_xWE, len);
 	const auto abscissa = static_cast<int>(llk) + m_xWO;
 	int max, min;
-	p_spikelist_->GetSpike(no_spike)->GetMaxMin(&max, &min);
+	p_spike_list->GetSpike(no_spike)->get_max_min(&max, &min);
 
 	dc.MoveTo(abscissa, max);
 	dc.LineTo(abscissa, min);
@@ -526,23 +526,23 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 
 BOOL ChartSpikeBar::IsSpikeWithinRange(const int no_spike)
 {
-	if (p_spikelist_->GetTotalSpikes() < 1)
+	if (p_spike_list->GetTotalSpikes() < 1)
 		return false;
 
-	if (m_spklast > p_spikelist_->GetTotalSpikes() - 1)
-		m_spklast = p_spikelist_->GetTotalSpikes() - 1;
-	if (m_spkfirst < 0) m_spkfirst = 0;
-	if (no_spike < 0 || no_spike > p_spikelist_->GetTotalSpikes() - 1)
+	if (m_index_last_spike > p_spike_list->GetTotalSpikes() - 1)
+		m_index_last_spike = p_spike_list->GetTotalSpikes() - 1;
+	if (m_index_first_spike < 0) m_index_first_spike = 0;
+	if (no_spike < 0 || no_spike > p_spike_list->GetTotalSpikes() - 1)
 		return FALSE;
 
-	const Spike* spike = p_spikelist_->GetSpike(no_spike);
-	if (m_rangemode == RANGE_TIMEINTERVALS
+	const Spike* spike = p_spike_list->GetSpike(no_spike);
+	if (m_range_mode == RANGE_TIMEINTERVALS
 		&& (spike->get_time() < m_lFirst || spike->get_time() > m_lLast))
 		return FALSE;
-	if (m_rangemode == RANGE_INDEX
-		&& (no_spike > m_spklast || no_spike < m_spkfirst))
+	if (m_range_mode == RANGE_INDEX
+		&& (no_spike > m_index_last_spike || no_spike < m_index_first_spike))
 		return FALSE;
-	if (m_plotmode == PLOT_ONECLASSONLY && spike->get_class() != m_selclass)
+	if (m_plotmode == PLOT_ONECLASSONLY && spike->get_class() != m_selected_class)
 		return FALSE;
 	return TRUE;
 }
@@ -552,7 +552,7 @@ void ChartSpikeBar::highlightOneBar(const int no_spike, CDC* p_dc) const
 	const auto old_rop = p_dc->GetROP2();
 	p_dc->SetROP2(R2_NOTXORPEN);
 
-	const Spike* spike = p_spikelist_->GetSpike(no_spike);
+	const Spike* spike = p_spike_list->GetSpike(no_spike);
 	const auto l_spike_time = spike->get_time();
 	const auto len = m_lLast - m_lFirst + 1;
 	const auto llk = MulDiv(l_spike_time - m_lFirst, m_xWE, len);
@@ -578,12 +578,12 @@ void ChartSpikeBar::highlightOneBar(const int no_spike, CDC* p_dc) const
 
 int ChartSpikeBar::SelectSpike(const int spike_no)
 {
-	const auto old_selected = m_selectedspike;
-	if (m_selectedspike >= 0)
-		DisplaySpike(m_selectedspike, FALSE);
+	const auto old_selected = m_selected_spike;
+	if (m_selected_spike >= 0)
+		DisplaySpike(m_selected_spike, FALSE);
 
 	DisplaySpike(spike_no, TRUE);
-	m_selectedspike = spike_no;
+	m_selected_spike = spike_no;
 
 	return old_selected;
 }
@@ -612,7 +612,7 @@ void ChartSpikeBar::SelectSpikesWithinRect(CRect* p_rect, const UINT n_flags) co
 	const auto v_min = MulDiv(p_rect->bottom - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto v_max = MulDiv(p_rect->top - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto b_flag = (n_flags & MK_SHIFT) || (n_flags & MK_CONTROL);
-	p_spikelist_->SelectSpikesWithinBounds(v_min, v_max, l_first, l_last, b_flag);
+	p_spike_list->SelectSpikesWithinBounds(v_min, v_max, l_first, l_last, b_flag);
 }
 
 void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
@@ -640,7 +640,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 	switch (m_cursorType)
 	{
 	case 0:
-		if (m_hitspk < 0)
+		if (m_hit_spike < 0)
 		{
 			auto rect = GetDefinedRect();
 			SelectSpikesWithinRect(&rect, n_flags);
@@ -668,17 +668,17 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 	// detect bar hit: test if curve hit -- specific to SpikeBarButton
 	if (m_currCursorMode == 0)
 	{
-		m_btrackCurve = FALSE;
-		m_hitspk = hitCurve(point);
+		m_track_curve = FALSE;
+		m_hit_spike = hitCurve(point);
 		// tell parent spike selected
-		if (m_hitspk >= 0)
+		if (m_hit_spike >= 0)
 		{
 			if (nFlags & MK_SHIFT)
-				postMyMessage(HINT_HITSPIKE_SHIFT, m_hitspk);
+				postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike);
 			else if (nFlags & MK_CONTROL)
-				postMyMessage(HINT_HITSPIKE_CTRL, m_hitspk);
+				postMyMessage(HINT_HITSPIKE_CTRL, m_hit_spike);
 			else
-				postMyMessage(HINT_HITSPIKE, m_hitspk);
+				postMyMessage(HINT_HITSPIKE, m_hit_spike);
 			return;
 		}
 	}
@@ -720,13 +720,13 @@ void ChartSpikeBar::ZoomData(CRect* rFrom, CRect* rDest)
 
 void ChartSpikeBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if ((m_selectedspike < 0 && p_spikelist_->GetSpikeFlagArrayCount() < 1) || m_hitspk < 0)
+	if ((m_selected_spike < 0 && p_spike_list->GetSpikeFlagArrayCount() < 1) || m_hit_spike < 0)
 		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 	{
-		if (m_selectedspike >= 0)
+		if (m_selected_spike >= 0)
 		{
-			postMyMessage(HINT_DBLCLKSEL, m_selectedspike);
+			postMyMessage(HINT_DBLCLKSEL, m_selected_spike);
 		}
 		else
 		{
@@ -741,23 +741,23 @@ int ChartSpikeBar::hitCurveInDoc(const CPoint point)
 {
 	long n_files = 1;
 	long current_file = 0;
-	if (m_ballFiles)
+	if (m_display_all_files)
 	{
-		n_files = p_dbwave_doc_->GetDB_NRecords();
-		current_file = p_dbwave_doc_->GetDB_CurrentRecordPosition();
+		n_files = p_dbwave_doc->GetDB_NRecords();
+		current_file = p_dbwave_doc->GetDB_CurrentRecordPosition();
 	}
 
 	int result = -1;
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (m_ballFiles)
+		if (m_display_all_files)
 		{
-			p_dbwave_doc_->SetDB_CurrentRecordPosition(i_file);
-			p_dbwave_doc_->OpenCurrentSpikeFile();
-			p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+			p_dbwave_doc->SetDB_CurrentRecordPosition(i_file);
+			p_dbwave_doc->OpenCurrentSpikeFile();
+			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 		}
 
-		if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 		{
 			continue;
 		}
@@ -766,11 +766,11 @@ int ChartSpikeBar::hitCurveInDoc(const CPoint point)
 			break;
 	}
 
-	if (m_ballFiles && result < 0)
+	if (m_display_all_files && result < 0)
 	{
-		p_dbwave_doc_->SetDB_CurrentRecordPosition(current_file);
-		p_dbwave_doc_->OpenCurrentSpikeFile();
-		p_spikelist_ = p_dbwave_doc_->m_pSpk->GetSpkList_Current();
+		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file);
+		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 
 	return result;
@@ -802,28 +802,28 @@ int ChartSpikeBar::hitCurve(const CPoint point)
 
 	// loop through all spikes
 	auto i_spike_first = 0;
-	auto i_spike_last = p_spikelist_->GetTotalSpikes() - 1;
-	if (m_rangemode == RANGE_INDEX)
+	auto i_spike_last = p_spike_list->GetTotalSpikes() - 1;
+	if (m_range_mode == RANGE_INDEX)
 	{
-		if (m_spklast > i_spike_last) m_spklast = i_spike_last;
-		if (m_spkfirst < 0) m_spkfirst = 0;
-		i_spike_last = m_spklast;
-		i_spike_first = m_spkfirst;
+		if (m_index_last_spike > i_spike_last) m_index_last_spike = i_spike_last;
+		if (m_index_first_spike < 0) m_index_first_spike = 0;
+		i_spike_last = m_index_last_spike;
+		i_spike_first = m_index_first_spike;
 	}
 
 	for (auto i_spike = i_spike_last; i_spike >= i_spike_first; i_spike--)
 	{
-		Spike* spike = p_spikelist_->GetSpike(i_spike);
+		Spike* spike = p_spike_list->GetSpike(i_spike);
 		const auto l_spike_time = spike->get_time();
 		if (l_spike_time < x_min || l_spike_time > x_max)
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& spike->get_class() != m_selclass)
+			&& spike->get_class() != m_selected_class)
 			continue;
 
 		int max;
 		int min;
-		spike->GetMaxMin(&max, &min);
+		spike->get_max_min(&max, &min);
 		if (mouse_y + delta_y < max && mouse_y - delta_y > min)
 		{
 			hit_spike = i_spike;
@@ -836,28 +836,28 @@ int ChartSpikeBar::hitCurve(const CPoint point)
 
 void ChartSpikeBar::CenterCurve()
 {
-	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() <= 0)
+	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() <= 0)
 		return;
 	int max, min;
-	p_spikelist_->GetTotalMaxMin(TRUE, &max, &min);
+	p_spike_list->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWO = max / 2 + min / 2;
 }
 
 void ChartSpikeBar::MaxGain()
 {
-	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() <= 0)
+	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() <= 0)
 		return;
 	int max, min;
-	p_spikelist_->GetTotalMaxMin(TRUE, &max, &min);
+	p_spike_list->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWE = MulDiv(max - min + 1, 10, 8);
 }
 
 void ChartSpikeBar::MaxCenter()
 {
-	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() <= 0)
+	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() <= 0)
 		return;
 	int max, min;
-	p_spikelist_->GetTotalMaxMin(TRUE, &max, &min);
+	p_spike_list->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWE = MulDiv(max - min + 1, 10, 8);
 	m_yWO = max / 2 + min / 2;
 }
@@ -865,14 +865,14 @@ void ChartSpikeBar::MaxCenter()
 void ChartSpikeBar::Print(CDC* p_dc, CRect* rect)
 {
 	// check if there are valid data to display
-	if (p_spikelist_ == nullptr || p_spikelist_->GetTotalSpikes() == 0)
+	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
 		return;
 
 	// set mapping mode and viewport
 	const auto n_saved_dc = p_dc->SaveDC(); // save display context
 	displayBars(p_dc, rect);
 
-	if (p_dbwave_doc_->m_pSpk->m_stimulus_intervals.n_items > 0)
+	if (p_dbwave_doc->m_pSpk->m_stimulus_intervals.n_items > 0)
 		displayStimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);
@@ -885,32 +885,32 @@ void ChartSpikeBar::Serialize(CArchive& ar)
 	auto dummy = TRUE;
 	if (ar.IsStoring())
 	{
-		ar << m_rangemode; // display range (time OR storage index)
+		ar << m_range_mode; // display range (time OR storage index)
 		ar << m_lFirst; // time index of first pt displayed
 		ar << m_lLast; // time index of last pt displayed
-		ar << m_spkfirst; // index first spike
-		ar << m_spklast; // index last spike
-		ar << m_currentclass; // current class in case of displaying classes
-		ar << m_selectedspike; // selected spike (display differently)
-		ar << m_hitspk; // no of spike selected
-		ar << m_selclass; // index class selected
-		ar << m_btrackCurve; // track curve ?
+		ar << m_index_first_spike; // index first spike
+		ar << m_index_last_spike; // index last spike
+		ar << m_current_class; // current class in case of displaying classes
+		ar << m_selected_spike; // selected spike (display differently)
+		ar << m_hit_spike; // no of spike selected
+		ar << m_selected_class; // index class selected
+		ar << m_track_curve; // track curve ?
 		ar << dummy;
-		ar << m_selpen;
+		ar << m_selected_pen;
 	}
 	else
 	{
-		ar >> m_rangemode; // display range (time OR storage index)
+		ar >> m_range_mode; // display range (time OR storage index)
 		ar >> m_lFirst; // time index of first pt displayed
 		ar >> m_lLast; // time index of last pt displayed
-		ar >> m_spkfirst; // index first spike
-		ar >> m_spklast; // index last spike
-		ar >> m_currentclass; // current class in case of displaying classes
-		ar >> m_selectedspike; // selected spike (display differently)
-		ar >> m_hitspk; // no of spike selected
-		ar >> m_selclass; // index class selected
-		ar >> m_btrackCurve; // track curve ?
+		ar >> m_index_first_spike; // index first spike
+		ar >> m_index_last_spike; // index last spike
+		ar >> m_current_class; // current class in case of displaying classes
+		ar >> m_selected_spike; // selected spike (display differently)
+		ar >> m_hit_spike; // no of spike selected
+		ar >> m_selected_class; // index class selected
+		ar >> m_track_curve; // track curve ?
 		ar >> dummy;
-		ar >> m_selpen;
+		ar >> m_selected_pen;
 	}
 }

@@ -96,11 +96,11 @@ void ChartSpikeHistVert::PlotDataToDC(CDC* p_dc)
 		{
 			const auto spkcla = static_cast<int>(p_dw->GetAt(0));
 			color = BLACK_COLOR;
-			if (PLOT_ONECLASSONLY == m_plotmode && spkcla != m_selclass)
+			if (PLOT_ONECLASSONLY == m_plotmode && spkcla != m_selected_class)
 				continue;
 			if (PLOT_CLASSCOLORS == m_plotmode)
 				color = spkcla % NB_COLORS;
-			else if (m_plotmode == PLOT_ONECLASS && spkcla == m_selclass)
+			else if (m_plotmode == PLOT_ONECLASS && spkcla == m_selected_class)
 			{
 				color = BLACK_COLOR;
 				continue;
@@ -114,7 +114,7 @@ void ChartSpikeHistVert::PlotDataToDC(CDC* p_dc)
 	{
 		color = BLACK_COLOR;
 		CDWordArray* p_dw = nullptr;
-		getClassArray(m_selclass, p_dw);
+		getClassArray(m_selected_class, p_dw);
 		if (p_dw != nullptr)
 		{
 			plotHistogram(p_dc, p_dw, color);
@@ -293,13 +293,13 @@ void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// test if mouse hit one histogram
 	// if hit, then tell parent to select corresp histogram (spike)
-	m_hitspk = hitCurve(point);
-	if (m_hitspk >= 0)
+	m_hit_spike = hitCurve(point);
+	if (m_hit_spike >= 0)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF; // flag trackrect
 		releaseCursor(); // release cursor capture
-		postMyMessage(HINT_HITSPIKE, m_hitspk);
+		postMyMessage(HINT_HITSPIKE, m_hit_spike);
 	}
 }
 
@@ -329,7 +329,7 @@ void ChartSpikeHistVert::ZoomData(CRect* rFrom, CRect* rDest)
 
 void ChartSpikeHistVert::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if (m_hitspk < 0)
+	if (m_hit_spike < 0)
 		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 	{
@@ -363,10 +363,10 @@ int ChartSpikeHistVert::hitCurve(CPoint point)
 	CDWordArray* pDW = nullptr;
 	if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECLASSONLY)
 	{
-		// get array corresp to m_selclass as well as histogram index
+		// get array corresp to m_selected_class as well as histogram index
 		for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
 		{
-			if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == m_selclass)
+			if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == m_selected_class)
 			{
 				pDW = histogram_ptr_array[i];
 				ihist = i;
@@ -394,7 +394,7 @@ int ChartSpikeHistVert::hitCurve(CPoint point)
 		for (auto jhist = 1; jhist < histogram_ptr_array.GetSize() && hitspk < 0; jhist++)
 		{
 			pDW = histogram_ptr_array.GetAt(jhist);
-			if (m_plotmode == PLOT_ONECLASS && static_cast<int>(pDW->GetAt(0)) == m_selclass)
+			if (m_plotmode == PLOT_ONECLASS && static_cast<int>(pDW->GetAt(0)) == m_selected_class)
 				continue;
 			for (auto i = mouse_x1; i <= mouse_x2; i++)
 			{

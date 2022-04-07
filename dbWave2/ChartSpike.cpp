@@ -8,7 +8,7 @@ ChartSpike::ChartSpike()
 ChartSpike::~ChartSpike()
 = default;
 
-int ChartSpike::get_color_according_to_plotmode(const Spike* spike, int plot_mode) const
+int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mode) const
 {
 	const auto no_spike_class = spike->get_class();
 	auto color = BLACK_COLOR;
@@ -16,7 +16,7 @@ int ChartSpike::get_color_according_to_plotmode(const Spike* spike, int plot_mod
 	{
 	case PLOT_ONECLASSONLY:
 	case PLOT_ONECLASS:
-		if (no_spike_class != m_selclass)
+		if (no_spike_class != m_selected_class)
 			color = SILVER_COLOR;
 		break;
 	case PLOT_CLASSCOLORS:

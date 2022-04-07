@@ -3,10 +3,11 @@
 #include "Ruler.h"
 #include "Taglist.h"
 
-// display parameters: m_rangemode
+// display parameters: m_range_mode
 constexpr auto RANGE_ALL = 0;
 constexpr auto RANGE_TIMEINTERVALS = 1;
 constexpr auto RANGE_INDEX = 2;
+
 // display parameters: m_plotmode
 constexpr auto PLOT_BLACK = 0;
 constexpr auto PLOT_ONECLASSONLY = 1;
@@ -16,6 +17,7 @@ constexpr auto PLOT_SINGLESPIKE = 4;
 constexpr auto PLOT_ALLGREY = 5;
 constexpr auto PLOT_WITHINBOUNDS = 6;
 constexpr auto PLOT_ONECOLOR = 7;
+
 constexpr auto NB_COLORS = 17;
 constexpr auto BLACK_COLOR = 0;
 constexpr auto SILVER_COLOR = 2;
@@ -48,10 +50,10 @@ public:
 
 	void EraseBkgnd(CDC* p_dc);
 	void PlotToBitmap(CDC* p_dc);
-	COLORREF GetColor(int i) const { return m_colorTable[i]; }
-	void SetColor(int i, COLORREF ccolor) { m_colorTable[i] = ccolor; }
+	COLORREF GetColor(const int color_index) const { return m_colorTable[color_index]; }
+	void SetColorTableAt(int color_index, COLORREF ccolor) { m_colorTable[color_index] = ccolor; }
 	void SetString(CString cs) { m_csEmpty = cs; }
-	int FindColor(COLORREF ccolor);
+	int FindColorIndex(COLORREF color_ref);
 
 	float ChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 	int NiceUnit(float y);
@@ -65,11 +67,7 @@ public:
 	int GetMouseCursorType() const { return m_cursorType; }
 	void SetMouseCursor(int cursorm);
 
-	void SetYWExtOrg(int extent, int zero)
-	{
-		m_yWE = extent;
-		m_yWO = zero;
-	}
+	void SetYWExtOrg(int extent, int zero);
 
 	void SetXWExtOrg(int extent, int zero)
 	{

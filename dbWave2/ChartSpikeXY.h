@@ -19,19 +19,19 @@ protected:
 
 	// Helpers and public procedures
 public:
-	void SetSpkIndexes(int first, int last) { m_spkfirst = first, m_spklast = last; }
+	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
 
-	int GetSelectedSpike() const { return m_selectedspike; }
-	int GetHitSpike() const { return m_hitspk; }
+	int GetSelectedSpike() const { return m_selected_spike; }
+	int GetHitSpike() const { return m_hit_spike; }
 
 	void SetSourceData(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	{
-		p_dbwave_doc_ = p_document;
-		p_spikelist_ = p_spk_list;
-		m_selectedspike = -1;
+		p_dbwave_doc = p_document;
+		p_spike_list = p_spk_list;
+		m_selected_spike = -1;
 	}
 
-	void SetSpkList(SpikeList* p_spk_list) { p_spikelist_ = p_spk_list; }
+	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
 
 	int SelectSpike(int spikeno);
 	void DisplaySpike(int nospike, BOOL bselect);
@@ -41,8 +41,8 @@ public:
 
 	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document)
 	{
-		m_ballFiles = bON;
-		p_dbwave_doc_ = p_document;
+		m_display_all_files = bON;
+		p_dbwave_doc = p_document;
 	}
 
 	void PlotDataToDC(CDC* p_dc) override;

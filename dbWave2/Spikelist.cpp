@@ -158,7 +158,7 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 		{
 			for (auto i = 0; i < n_spikes; i++)
 			{
-				ar.Write(GetSpike(i)->GetpData(spike_length), n_bytes);
+				ar.Write(GetSpike(i)->get_p_data(spike_length), n_bytes);
 			}
 		}
 	}
@@ -170,7 +170,7 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 		const auto n_bytes = spike_length * sizeof(short) ;
 		for (auto i = 0; i < n_spikes; i++)
 		{
-			ar.Read(GetSpike(i)->GetpData(spike_length), n_bytes);
+			ar.Read(GetSpike(i)->get_p_data(spike_length), n_bytes);
 		}
 	}
 }
@@ -328,7 +328,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	const auto n_bytes = w1 * sizeof(short);// *n_spikes;
 	for (int i = 0; i < n_spikes; i++)
 	{
-		const auto lp_dest = GetSpike(i)->GetpData(GetSpikeLength());
+		const auto lp_dest = GetSpike(i)->get_p_data(GetSpikeLength());
 		ar.Read(lp_dest, n_bytes); // read data from disk
 	}
 	
@@ -490,7 +490,7 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 			Spike* spike = GetSpike(index);
 			if (spike->get_class() >= 0)
 			{
-				spike->GetMaxMin(&max1, &min1);
+				spike->get_max_min(&max1, &min1);
 				break;
 			}
 		}
@@ -501,7 +501,7 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
 			Spike* spike = GetSpike(index);
 			if (spike->get_class() >= 0)
 			{
-				spike->GetMaxMin(&max1, &min1);
+				spike->get_max_min(&max1, &min1);
 				if (max1 > m_maximum_over_all_spikes) 
 					m_maximum_over_all_spikes = max1;
 				if (min1 < m_minimum_over_all_spikes) 
@@ -671,7 +671,7 @@ void SpikeList::SelectSpikesWithinBounds(const int v_min, const int v_max, const
 			continue;
 
 		int max, min;
-		GetSpike(i)->GetMaxMin(&max, &min);
+		GetSpike(i)->get_max_min(&max, &min);
 		if (max > v_max) continue;
 		if (min < v_min) continue;
 		// found within boundaries= remove spike from array
@@ -769,7 +769,7 @@ void SpikeList::Measure_case0_AmplitudeMinToMax(const int t1, const int t2)
 	for (auto spike_index = 0; spike_index < n_spikes; spike_index++)
 	{
 		const auto spike_element = GetSpike(spike_index);
-		auto lp_buffer = GetSpike(spike_index)->GetpData(GetSpikeLength());
+		auto lp_buffer = GetSpike(spike_index)->get_p_data(GetSpikeLength());
 		lp_buffer += t1;
 		int val = *lp_buffer;
 		auto max = val;
@@ -804,7 +804,7 @@ void SpikeList::Measure_case1_AmplitudeAtT(const int t)
 	for (auto spike_index = 0; spike_index < n_spikes; spike_index++)
 	{
 		const auto spike_element = GetSpike(spike_index);
-		auto lp_buffer = GetSpike(spike_index)->GetpData(GetSpikeLength());
+		auto lp_buffer = GetSpike(spike_index)->get_p_data(GetSpikeLength());
 		lp_buffer += t;
 		const int val = *lp_buffer;
 		spike_element->set_y1(val);
@@ -818,7 +818,7 @@ void SpikeList::Measure_case2_AmplitudeAtT2MinusAtT1(const int t1, const int t2)
 	for (auto spike_index = 0; spike_index < n_spikes; spike_index++)
 	{
 		const auto spike_element = GetSpike(spike_index);
-		const auto lp_buffer = GetSpike(spike_index)->GetpData(GetSpikeLength());
+		const auto lp_buffer = GetSpike(spike_index)->get_p_data(GetSpikeLength());
 		const int val1 = *(lp_buffer + t1);
 		const int val2 = *(lp_buffer + t2);
 		spike_element->set_y1(val2 - val1);

@@ -38,13 +38,13 @@ int ChartWnd::dUnitsPower[] = {9, 6, 0, 0, -3, -6, -9, -12, 0};
 int ChartWnd::dmaxIndex = 8;
 int ChartWnd::dniceIntervals[] = {1, 5, 10, 20, 25, 30, 40, 50, 75, 100, 200, 250, 300, 400, 500, 0};
 
-int ChartWnd::FindColor(COLORREF ccolor)
+int ChartWnd::FindColorIndex(COLORREF color_ref)
 {
-	auto icolor = -1;
+	auto color_index = -1;
 	for (auto i = 0; i < NB_COLORS; i++)
-		if (ccolor == m_colorTable[i])
-			icolor = i;
-	return icolor;
+		if (color_ref == m_colorTable[i])
+			color_index = i;
+	return color_index;
 }
 
 int ChartWnd::NiceUnit(float x_val)
@@ -593,6 +593,12 @@ void ChartWnd::SetMouseCursor(int cursorm)
 {
 	SetMouseCursorType(cursorm);
 	SetCursor(m_currCursor);
+}
+
+void ChartWnd::SetYWExtOrg(int extent, int zero)
+{
+	m_yWE = extent;
+	m_yWO = zero;
 }
 
 void ChartWnd::captureCursor()

@@ -1040,7 +1040,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		if (m_pSpkList->GetSpike(ispk)->get_class() != m_sourceclass)
 			continue;
 		nbspk_selclass++;
-		p_spk = m_pSpkList->GetSpike(ispk)->GetpData();
+		p_spk = m_pSpkList->GetSpike(ispk)->get_p_data();
 		p_sum = p_sum0;
 		for (auto i = 0; i < spikelen; i++, p_spk++, p_sum++)
 			*p_sum += *p_spk;
