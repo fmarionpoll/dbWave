@@ -511,8 +511,8 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, short* max, short* min)
 void SpikeList::get_total_max_min_read()
 {
 	const int index0 = get_index_first_spike(0, true);
-	m_minimum_over_all_spikes = 0;
-	m_maximum_over_all_spikes = static_cast<short>(32767);
+	m_minimum_over_all_spikes = m_bin_zero;
+	m_maximum_over_all_spikes = m_bin_zero;
 	if (index0 < 0)
 		return;
 
@@ -539,8 +539,8 @@ void SpikeList::get_total_max_min_read()
 void SpikeList::get_total_max_min_measure()
 {
 	const int index0 = get_index_first_spike(0, true);
-	m_minimum_over_all_spikes = 0;
-	m_maximum_over_all_spikes = static_cast<short>(32767);
+	m_minimum_over_all_spikes = m_bin_zero;
+	m_maximum_over_all_spikes = m_bin_zero;
 	if (index0 < 0)
 		return;
 
