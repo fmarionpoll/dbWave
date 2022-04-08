@@ -24,21 +24,21 @@ public:
 
 	float m_t1 = 0.f;
 	float m_t2 = 0.f;
-	float m_tunit = 1000.f; // 1=s, 1000f=ms, 1e6=us
+	float m_time_unit = 1000.f; // 1=s, 1000f=ms, 1e6=us
 	float m_lower = 0.f;
 	float m_upper = 0.f;
-	int m_sourceclass = 0;
-	int m_destinationclass = 0;
+	int m_source_class = 0;
+	int m_destination_class = 0;
 	float m_timeFirst = 0.f;
 	float m_timeLast = 0.f;
 	float m_mVMax = 0.f;
 	float m_mVMin = 0.f;
 	BOOL m_bAllFiles = false;
-	int m_spikeno = -1;
-	int m_spikenoclass = 0;
+	int m_spike_index = -1;
+	int m_spike_index_class = 0;
 	float m_txyright = 1.f;
 	float m_txyleft = 0.f;
-	float m_mVbin = 0.01f;
+	float m_mV_bin = 0.01f;
 
 	// Attributes
 protected:
@@ -51,20 +51,20 @@ protected:
 	CEditCtrl mm_t2;
 	CEditCtrl mm_lower;
 	CEditCtrl mm_upper;
-	CEditCtrl mm_sourceclass;
-	CEditCtrl mm_destinationclass;
+	CEditCtrl mm_source_class;
+	CEditCtrl mm_destination_class;
 	CEditCtrl mm_timeFirst;
 	CEditCtrl mm_timeLast;
 	CEditCtrl mm_mVMin;
 	CEditCtrl mm_mVMax;
-	CEditCtrl mm_spikeno;
-	CEditCtrl mm_spikenoclass;
+	CEditCtrl mm_spike_index;
+	CEditCtrl mm_spike_index_class;
 	CEditCtrl mm_txyright;
 	CEditCtrl mm_txyleft;
-	CEditCtrl mm_mVbin;
+	CEditCtrl mm_mV_bin;
 
-	ScrollBarEx m_filescroll; // data position within file
-	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
+	ScrollBarEx m_file_scroll; // data position within file
+	SCROLLINFO m_file_scroll_infos{}; // infos for scrollbar
 
 	SPKCLASSIF* m_psC{};
 	OPTIONS_VIEWDATA* m_pOptionsViewData{};
@@ -74,10 +74,10 @@ protected:
 	int m_ixyright{};
 	int m_ixyleft{};
 
-	int m_spkhistupper{};
-	int m_spkhistlower{};
-	int m_spkformtagleft{};
-	int m_spkformtagright{};
+	int m_spkhist_upper{};
+	int m_spkhist_lower{};
+	int m_spkform_tag_left{};
+	int m_spkform_tag_right{};
 
 	float m_vunit = 1000.f; // 1=V, 1000f=mV, 1e6=uV
 	float m_delta{};
@@ -113,7 +113,7 @@ protected:
 	void updateFileParameters();
 	void updateSpikeFile();
 	void updateLegends();
-	void selectSpikeFromCurrentList(int spikeno);
+	void selectSpikeFromCurrentList(int spike_index);
 	void updateGain();
 	void updateFileScroll();
 	void scrollFile(UINT nSBCode, UINT nPos);
@@ -148,7 +148,7 @@ public:
 	afx_msg void OnEnChangemVMin();
 	afx_msg void OnEnChangemVMax();
 	afx_msg void OnEnChangeNOspike();
-	afx_msg void OnEnChangeSpikenoclass();
+	afx_msg void OnEnChangespike_indexclass();
 	afx_msg void OnEnChangeEditleft2();
 	afx_msg void OnEnChangeEditright2();
 	afx_msg void OnEnChangeNBins();

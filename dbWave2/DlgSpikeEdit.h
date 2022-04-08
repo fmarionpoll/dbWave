@@ -11,12 +11,12 @@ public:
 	enum { IDD = IDD_EDITSPIKE };
 
 	int m_spikeclass{ 0 };
-	int m_spikeno{ 0 };
+	int m_spike_index{ 0 };
 	BOOL m_bartefact{ false };
 	int m_displayratio{ 0 };
 	int m_yvextent{ 0 };
 
-	CEditCtrl mm_spikeno;
+	CEditCtrl mm_spike_index;
 	CEditCtrl mm_spikeclass;
 	CEditCtrl mm_displayratio;
 	CEditCtrl mm_yvextent;
@@ -55,7 +55,7 @@ protected:
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;
-	afx_msg void OnEnChangeSpikeno();
+	afx_msg void OnEnChangespike_index();
 	afx_msg void OnEnChangeSpikeclass();
 	afx_msg void OnArtefact();
 	afx_msg void OnEnChangeDisplayratio();

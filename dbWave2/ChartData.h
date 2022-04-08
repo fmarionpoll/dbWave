@@ -33,8 +33,8 @@ public:
 
 	// Helper functions
 	long	GetNxPixels() const { return m_npixels; } // number of pixels defined in this window
-	long	GetDataFirst() const { return m_lxFirst; } // document index of first abscissa
-	long	GetDataLast() const { return m_lxLast; } // document index of last abscissa
+	long	GetDataFirstIndex() const { return m_lxFirst; } // document index of first abscissa
+	long	GetDataLastIndex() const { return m_lxLast; } // document index of last abscissa
 	long	GetDataSize() const { return m_lxSize; } // nb of data pts displayed
 	long	GetPageSize() const { return m_lxPage; } // size of page increment used to browse through doc
 	long	GetLineSize() const { return m_lxLine; } // size of line increment used to browse through doc

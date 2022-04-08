@@ -52,8 +52,8 @@ protected:
 
 	// (2) -------------ordered spike list with class, time, etc-----------------------------
 	BOOL m_extrema_valid = false;
-	int m_minimum_over_all_spikes = 0; 
-	int m_maximum_over_all_spikes = 0;
+	short m_minimum_over_all_spikes = 0; 
+	short m_maximum_over_all_spikes = 0;
 	int m_spike_length = 60;
 	CArray<Spike*, Spike*> m_spikes;
 
@@ -101,7 +101,7 @@ public:
 	int RemoveSpike(int spike_index);
 	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spike_index, int channel_index);
 
-	void GetTotalMaxMin(BOOL b_recalculate, int* max, int* min);
+	void GetTotalMaxMin(BOOL b_recalculate, short* max, short* min);
 	
 	BOOL InitSpikeList(AcqDataDoc* pDataFile, SPKDETECTPARM* pFC);
 	long UpdateClassList();
@@ -126,10 +126,9 @@ public:
 	int ToggleSpikeFlag(int spike_index);
 	void SetSingleSpikeFlag(int spike_index);
 	BOOL GetSpikeFlag(int spike_index);
-	void RemoveAllSpikeFlags() { if (m_index_flagged_spikes.GetCount() > 0) m_index_flagged_spikes.RemoveAll(); }
+	void RemoveAllSpikeFlags();
 	void FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
 	void SelectSpikesWithinBounds(int v_min, int v_max, long l_first, long l_ast, BOOL b_add);
-
 	void GetRangeOfSpikeFlagged(long& l_first, long& l_last);
 	BOOL GetSpikeFlagArrayAt(int i) const { return m_index_flagged_spikes.GetAt(i); }
 	int GetSpikeFlagArrayCount() const { return m_index_flagged_spikes.GetCount(); }
@@ -147,4 +146,9 @@ protected:
 	void serialize_spike_data(CArchive& ar);
 	void serialize_spike_class_descriptors(CArchive& ar);
 	void serialize_additional_data(CArchive& ar);
+
+	int get_index_first_spike(int index_start, boolean reject_artefacts);
+	void get_total_max_min_read();
+	void get_total_max_min_measure();
+
 };

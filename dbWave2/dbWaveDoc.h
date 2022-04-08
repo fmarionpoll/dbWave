@@ -75,7 +75,7 @@ public:
 	void	SetDB_n_spikes(long n_spikes) const; 
 	long	GetDB_n_spike_classes() const;
 	void	SetDB_n_spike_classes(long n_classes) const;
-	void	GetAllSpkMaxMin(BOOL bAll, BOOL b_recalculate, int* max, int* min);
+	void	GetAllSpkMaxMin(BOOL bAll, BOOL b_recalculate, short* max, short* min);
 	CSize	GetSpkMaxMin_y1(BOOL bAll);
 
 	void	SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }

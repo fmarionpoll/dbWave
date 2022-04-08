@@ -515,8 +515,8 @@ void ViewData::UpdateFileParameters(BOOL bUpdateInterface)
 
 	// load real data from file and update time parameters
 	m_ChartDataWnd.GetDataFromDoc(l_first, l_last); // load data requested
-	m_time_first_abcissa = m_ChartDataWnd.GetDataFirst() / m_samplingRate; // update abscissa parameters
-	m_time_last_abcissa = m_ChartDataWnd.GetDataLast() / m_samplingRate; // first - end
+	m_time_first_abcissa = m_ChartDataWnd.GetDataFirstIndex() / m_samplingRate; // update abscissa parameters
+	m_time_last_abcissa = m_ChartDataWnd.GetDataLastIndex() / m_samplingRate; // first - end
 	m_channel_selected = 0; // select chan 0
 
 	if (!b_first_update)
@@ -1324,7 +1324,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 	const auto vert_bar = m_ChartDataWnd.m_yRuler.GetScaleUnitPixels(m_ChartDataWnd.GetRectHeight());
 	ASSERT(vert_bar > 0);
 
-	auto cs_comment = ConvertFileIndex(m_ChartDataWnd.GetDataFirst(), m_ChartDataWnd.GetDataLast());
+	auto cs_comment = ConvertFileIndex(m_ChartDataWnd.GetDataFirstIndex(), m_ChartDataWnd.GetDataLastIndex());
 	if (options_viewdata->bTimeScaleBar)
 	{
 		// print horizontal bar
@@ -1452,8 +1452,8 @@ int ViewData::PrintGetNPages()
 	auto p_dbwave_doc = GetDocument();
 
 	// compute number of rows according to bmultirow & bentirerecord flag
-	m_lprintFirst = m_ChartDataWnd.GetDataFirst();
-	m_lprintLen = m_ChartDataWnd.GetDataLast() - m_lprintFirst + 1;
+	m_lprintFirst = m_ChartDataWnd.GetDataFirstIndex();
+	m_lprintLen = m_ChartDataWnd.GetDataLastIndex() - m_lprintFirst + 1;
 	m_file0 = GetDocument()->GetDB_CurrentRecordPosition();
 	ASSERT(m_file0 >= 0);
 	m_nfiles = 1;
@@ -1510,8 +1510,8 @@ int ViewData::PrintGetNPages()
 void ViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
-	m_lFirst0 = m_ChartDataWnd.GetDataFirst();
-	m_lLast0 = m_ChartDataWnd.GetDataLast();
+	m_lFirst0 = m_ChartDataWnd.GetDataFirstIndex();
+	m_lLast0 = m_ChartDataWnd.GetDataLastIndex();
 	m_npixels0 = m_ChartDataWnd.GetRectWidth();
 
 	//---------------------init objects-------------------------------------
@@ -1595,7 +1595,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			cs_comment += PrintBars(p_dc, &comment_rect); // bars and bar legends
 		}
 		else // other rows: time intervals only
-			cs_comment = ConvertFileIndex(m_ChartDataWnd.GetDataFirst(), m_ChartDataWnd.GetDataLast());
+			cs_comment = ConvertFileIndex(m_ChartDataWnd.GetDataFirstIndex(), m_ChartDataWnd.GetDataLastIndex());
 
 		// print comments stored into cs_comment
 		comment_rect.OffsetRect(options_viewdata->textseparator + comment_rect.Width(), 0);
@@ -1730,8 +1730,8 @@ void ViewData::UpdateFileScroll()
 	m_filescroll_infos.fMask = SIF_ALL | SIF_PAGE | SIF_POS;
 	m_filescroll_infos.nMin = 0;
 	m_filescroll_infos.nMax = GetDocument()->GetDB_DataLen();
-	m_filescroll_infos.nPos = m_ChartDataWnd.GetDataFirst();
-	m_filescroll_infos.nPage = m_ChartDataWnd.GetDataLast() - m_ChartDataWnd.GetDataFirst() + 1;
+	m_filescroll_infos.nPos = m_ChartDataWnd.GetDataFirstIndex();
+	m_filescroll_infos.nPage = m_ChartDataWnd.GetDataLastIndex() - m_ChartDataWnd.GetDataFirstIndex() + 1;
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 

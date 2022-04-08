@@ -20,17 +20,17 @@ public:
 #define MODE_ON_ON		2
 #define MODE_OFF_OFF	3
 	int detectFrom; // detection method - (stored as WORD): 0=chan; 1 = tag
-	int detectChan; // source channel
-	int detectTransform; // detect from data transformed - i = transform method cf AcqDataDoc
-	int detectThreshold; // value of threshold
+	int detect_channel; // source channel
+	int detect_transform; // detect from data transformed - i = transform method cf AcqDataDoc
+	int detect_threshold; // value of threshold
 	float detectThresholdmV; // mV value of threshold
 	BOOL compensateBaseline; // compensate for baseline shift?
 
-	int extractChan; // channel number of data to extract
-	int extractTransform; // transformed data extracted
-	int extractNpoints; // spike length (n data pts)
-	int prethreshold; // offset spike npts before threshold
-	int refractory; // re-start detection n pts after threshold
+	int extract_channel; // channel number of data to extract
+	int extract_transform; // transformed data extracted
+	int extract_n_points; // spike length (n data pts)
+	int detect_pre_threshold; // offset spike npts before threshold
+	int detect_refractory_period; // re-start detection n pts after threshold
 
 protected:
 	void ReadVersionlessthan6(CArchive& ar, int version);

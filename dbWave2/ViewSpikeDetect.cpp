@@ -52,7 +52,7 @@ void ViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TRANSFORM2, m_CBtransform2);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
-	DDX_Text(pDX, IDC_SPIKENO, m_spikeno);
+	DDX_Text(pDX, IDC_SPIKENO, m_spike_index);
 	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
 	DDX_Text(pDX, IDC_THRESHOLDVAL, m_thresholdval);
 	DDX_Text(pDX, IDC_CHANSELECTED, m_ichanselected);
@@ -181,8 +181,8 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 
 void ViewSpikeDetection::update_legends()
 {
-	const auto l_first = m_chart_data_source.GetDataFirst();
-	const auto l_last = m_chart_data_source.GetDataLast();
+	const auto l_first = m_chart_data_source.GetDataFirstIndex();
+	const auto l_last = m_chart_data_source.GetDataLastIndex();
 	m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
 
 	// draw charts
@@ -193,18 +193,18 @@ void ViewSpikeDetection::update_legends()
 	// update text abscissa and horizontal scroll position
 	m_timefirst = static_cast<float>(l_first) / m_samplingRate;
 	m_timelast = static_cast<float>(l_last + 1) / m_samplingRate;
-	m_spikeno = m_pSpkList->m_selected_spike;
+	m_spike_index = m_pSpkList->m_selected_spike;
 
-	if (m_spikeno > m_pSpkList->GetTotalSpikes())
+	if (m_spike_index > m_pSpkList->GetTotalSpikes())
 	{
 		m_pSpkList->m_selected_spike = -1;
-		m_spikeno = m_pSpkList->m_selected_spike;
+		m_spike_index = m_pSpkList->m_selected_spike;
 	}
 
 	m_bartefact = FALSE;
-	if (m_spikeno > 0)
+	if (m_spike_index > 0)
 	{
-		const auto p_s = m_pSpkList->GetSpike(m_spikeno);
+		const auto p_s = m_pSpkList->GetSpike(m_spike_index);
 		m_bartefact = (p_s->get_class() < 0);
 	}
 
@@ -277,7 +277,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	update_VT_tags();
 
 	// update interface elements
-	m_spikeno = -1;
+	m_spike_index = -1;
 	if (bUpdateInterface)
 	{
 		update_tabs();
@@ -302,7 +302,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	const auto total_spikes = m_pSpkList->GetTotalSpikes();
 	auto j_index = 3;
 	auto spike_length = m_pSpkList->GetSpikeLength();
-	const auto spike_pre_trigger = m_pSpkList->GetDetectParms()->prethreshold;
+	const auto spike_pre_trigger = m_pSpkList->GetDetectParms()->detect_pre_threshold;
 	spike_length--;
 
 	for (auto i = 0; i < total_spikes; i++)
@@ -348,18 +348,18 @@ BOOL ViewSpikeDetection::check_detection_settings()
 	const auto wave_format = data_file->GetpWaveFormat();
 
 	// check detection and extraction channels
-	if (m_p_detect_parameters->detectChan < 0
-		|| m_p_detect_parameters->detectChan >= wave_format->scan_count)
+	if (m_p_detect_parameters->detect_channel < 0
+		|| m_p_detect_parameters->detect_channel >= wave_format->scan_count)
 	{
-		m_p_detect_parameters->detectChan = 0;
+		m_p_detect_parameters->detect_channel = 0;
 		AfxMessageBox(_T("Spike detection parameters: detection channel modified"));
 		flag = FALSE;
 	}
 
-	if (m_p_detect_parameters->extractChan < 0
-		|| m_p_detect_parameters->extractChan >= wave_format->scan_count)
+	if (m_p_detect_parameters->extract_channel < 0
+		|| m_p_detect_parameters->extract_channel >= wave_format->scan_count)
 	{
-		m_p_detect_parameters->extractChan = 0;
+		m_p_detect_parameters->extract_channel = 0;
 		AfxMessageBox(_T("Spike detection parameters: channel extracted modified"));
 		flag = FALSE;
 	}
@@ -412,8 +412,8 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		CChanlistItem* channel_item = m_chart_data_filtered.GetChanlistItem(0);
 		channel_item->SetColor(0);
 		m_chart_data_filtered.m_HZtags.RemoveAllTags();
-		m_p_detect_parameters->detectThreshold = channel_item->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
-		m_chart_data_filtered.m_HZtags.AddTag(m_p_detect_parameters->detectThreshold, 0);
+		m_p_detect_parameters->detect_threshold = channel_item->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
+		m_chart_data_filtered.m_HZtags.AddTag(m_p_detect_parameters->detect_threshold, 0);
 	}
 
 	//add all channels to detection window
@@ -443,8 +443,8 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 	}
 
 	// if browse through another file ; keep previous display parameters & load data
-	auto l_first = m_chart_data_filtered.GetDataFirst();
-	auto l_last = m_chart_data_filtered.GetDataLast();
+	auto l_first = m_chart_data_filtered.GetDataFirstIndex();
+	auto l_last = m_chart_data_filtered.GetDataLastIndex();
 	if (options_view_data->bEntireRecord && bUpdateInterface)
 	{
 		l_first = 0;
@@ -460,9 +460,9 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		// adjust scroll bar (size of button and left/right limits)
 		m_filescroll_infos.fMask = SIF_ALL;
 		m_filescroll_infos.nMin = 0;
-		m_filescroll_infos.nMax = m_chart_data_filtered.GetDataLast();
+		m_filescroll_infos.nMax = m_chart_data_filtered.GetDataLastIndex();
 		m_filescroll_infos.nPos = 0;
-		m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLast() - m_chart_data_filtered.GetDataFirst() + 1;
+		m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLastIndex() - m_chart_data_filtered.GetDataFirstIndex() + 1;
 		m_filescroll.SetScrollInfo(&m_filescroll_infos);
 
 		m_datacomments = wave_format->GetComments(_T(" "));
@@ -499,7 +499,7 @@ void ViewSpikeDetection::update_combos_detect_and_transforms()
 		VERIFY(m_CBtransform.AddString(p_data_file->GetTransfDataName(j)) != CB_ERR);
 		VERIFY(m_CBtransform2.AddString(p_data_file->GetTransfDataName(j)) != CB_ERR);
 	}
-	m_CBdetectChan.SetCurSel(m_p_detect_parameters->detectChan);
+	m_CBdetectChan.SetCurSel(m_p_detect_parameters->detect_channel);
 }
 
 void ViewSpikeDetection::define_stretch_parameters()
@@ -643,7 +643,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 		// ----------------------------- move horizontal cursor / source data
 	case HINT_MOVEHZTAG:
-		m_p_detect_parameters->detectThreshold = m_chart_data_filtered.m_HZtags.GetValue(threshold);
+		m_p_detect_parameters->detect_threshold = m_chart_data_filtered.m_HZtags.GetValue(threshold);
 		m_thresholdval = m_chart_data_filtered.GetChanlistItem(0)
 			->ConvertDataBinsToVolts(
 				m_chart_data_filtered.m_HZtags.GetValue(threshold)) * 1000.f;
@@ -667,7 +667,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_DBLCLKSEL:
 		if (threshold < 0)
 			threshold = 0;
-		m_spikeno = threshold;
+		m_spike_index = threshold;
 		OnToolsEdittransformspikes();
 		break;
 
@@ -679,8 +679,8 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_VIEWSIZECHANGED:
 		if (i_id == m_chart_data_source.GetDlgCtrlID())
 		{
-			const auto l_first = m_chart_data_source.GetDataFirst(); // get source data time range
-			const auto l_last = m_chart_data_source.GetDataLast();
+			const auto l_first = m_chart_data_source.GetDataFirstIndex(); // get source data time range
+			const auto l_last = m_chart_data_source.GetDataLastIndex();
 			m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
 		}
 		// else if(iID == m_displayDetect.GetDlgCtrlID())
@@ -851,8 +851,8 @@ void ViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 void ViewSpikeDetection::update_file_scroll()
 {
 	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
-	m_filescroll_infos.nPos = m_chart_data_filtered.GetDataFirst();
-	m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLast() - m_chart_data_filtered.GetDataFirst() + 1;
+	m_filescroll_infos.nPos = m_chart_data_filtered.GetDataFirstIndex();
+	m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLastIndex() - m_chart_data_filtered.GetDataFirstIndex() + 1;
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 
@@ -935,8 +935,10 @@ void ViewSpikeDetection::OnFormatSplitcurves()
 	m_chart_spike_bar.Invalidate();
 
 	m_chart_spike_shape.SetYWExtOrg(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
-	update_spike_shape_window_scale(FALSE);
 	m_chart_spike_shape.Invalidate();
+
+	update_spike_shape_window_scale(FALSE);
+	
 }
 
 void ViewSpikeDetection::OnFormatAlldata()
@@ -1004,12 +1006,12 @@ void ViewSpikeDetection::OnToolsDetectionparameters()
 void ViewSpikeDetection::OnSelchangeDetectchan()
 {
 	UpdateData(TRUE);
-	m_p_detect_parameters->detectChan = m_CBdetectChan.GetCurSel();
+	m_p_detect_parameters->detect_channel = m_CBdetectChan.GetCurSel();
 	m_p_detect_parameters->bChanged = TRUE;
-	m_chart_data_filtered.SetChanlistOrdinates(0, m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
+	m_chart_data_filtered.SetChanlistOrdinates(0, m_p_detect_parameters->detect_channel, m_p_detect_parameters->detect_transform);
 	const CChanlistItem* channel_list_item = m_chart_data_filtered.GetChanlistItem(0);
-	m_p_detect_parameters->detectThreshold = channel_list_item->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
-	m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
+	m_p_detect_parameters->detect_threshold = channel_list_item->ConvertVoltsToDataBins(m_p_detect_parameters->detectThresholdmV / 1000.f);
+	m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detect_threshold);
 	m_chart_data_filtered.GetDataFromDoc();
 	m_chart_data_filtered.AutoZoomChan(0);
 	m_chart_data_filtered.Invalidate();
@@ -1018,9 +1020,9 @@ void ViewSpikeDetection::OnSelchangeDetectchan()
 void ViewSpikeDetection::OnSelchangeTransform()
 {
 	UpdateData(TRUE);
-	m_p_detect_parameters->detectTransform = m_CBtransform.GetCurSel();
+	m_p_detect_parameters->detect_transform = m_CBtransform.GetCurSel();
 	m_p_detect_parameters->bChanged = TRUE;
-	m_chart_data_filtered.SetChanlistTransformMode(0, m_p_detect_parameters->detectTransform);
+	m_chart_data_filtered.SetChanlistTransformMode(0, m_p_detect_parameters->detect_transform);
 	m_chart_data_filtered.GetDataFromDoc();
 	m_chart_data_filtered.AutoZoomChan(0);
 	m_chart_data_filtered.Invalidate();
@@ -1049,7 +1051,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 
 	m_pSpkDoc->SetDetectionDate(CTime::GetCurrentTime());
 	auto old_spike_list_index = db_document->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
-	m_spikeno = -1;
+	m_spike_index = -1;
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
 	const auto p_dat = db_document->m_pDat;
@@ -1060,7 +1062,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	for (auto i = 0; i < m_spk_detect_array_current.GetSize(); i++)
 	{
 		const auto spike_detect_array = m_spk_detect_array_current.GetItem(i);
-		if (spike_detect_array->extractChan > chan_max)
+		if (spike_detect_array->extract_channel > chan_max)
 		{
 			MessageBox(_T(
 				"Check spike detection parameters \n- one of the detection channel requested \nis not available in the source data"));
@@ -1078,7 +1080,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 		if (!bAll && m_i_detect_parameters != i)
 			continue;
 		// detect missing data channel
-		if (m_spk_detect_array_current.GetItem(i)->extractChan > chan_max)
+		if (m_spk_detect_array_current.GetItem(i)->extract_channel > chan_max)
 			continue;
 
 		// select new spike list (list with no spikes for stimulus channel)
@@ -1147,9 +1149,9 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 {
 	const auto detect_parameters = m_spk_detect_array_current.GetItem(channel_index);
-	const auto threshold = detect_parameters->detectThreshold;
-	const auto detect_transform = detect_parameters->detectTransform; 
-	const auto source_channel = detect_parameters->detectChan;
+	const auto threshold = detect_parameters->detect_threshold;
+	const auto detect_transform = detect_parameters->detect_transform; 
+	const auto source_channel = detect_parameters->detect_channel;
 	const auto data_document = GetDocument()->m_pDat;
 	const auto detect_transform_span = data_document->GetTransfDataSpan(detect_transform); 
 
@@ -1163,8 +1165,8 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 	auto b_save_on = FALSE;
 
 	// get data detection limits and clip limits according to size of spikes
-	auto l_data_first = m_chart_data_filtered.GetDataFirst();
-	const auto l_data_last = m_chart_data_filtered.GetDataLast();
+	auto l_data_first = m_chart_data_filtered.GetDataFirstIndex();
+	const auto l_data_last = m_chart_data_filtered.GetDataLastIndex();
 
 	// plot progress dialog box
 	DlgProgress dlg;
@@ -1269,8 +1271,8 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 int ViewSpikeDetection::detect_method_1(WORD channel_index)
 {
 	const SPKDETECTPARM* spike_detection_parameters = m_spk_detect_array_current.GetItem(channel_index);
-	if (spike_detection_parameters->extractTransform != spike_detection_parameters->detectTransform &&
-		spike_detection_parameters->extractTransform != 0)
+	if (spike_detection_parameters->extract_transform != spike_detection_parameters->detect_transform &&
+		spike_detection_parameters->extract_transform != 0)
 	{
 		AfxMessageBox(
 			_T("Options not implemented yet!\nd chan == extr chan or !extr chan=0\nChange detection parameters"));
@@ -1278,18 +1280,18 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 	}
 
 	// set parameters (copy array into local parms)
-	const short threshold = spike_detection_parameters->detectThreshold; // threshold value
-	const auto method = spike_detection_parameters->detectTransform; // how source data are transformed
-	const auto source_channel = spike_detection_parameters->detectChan; // source channel
-	const auto pre_threshold = spike_detection_parameters->prethreshold; // pts before threshold
-	const auto refractory = spike_detection_parameters->refractory; // refractory period
-	const auto post_threshold = spike_detection_parameters->extractNpoints - pre_threshold;
+	const auto threshold = static_cast<short>(spike_detection_parameters->detect_threshold); 
+	const auto method = spike_detection_parameters->detect_transform;
+	const auto source_channel = spike_detection_parameters->detect_channel; 
+	const auto pre_threshold = spike_detection_parameters->detect_pre_threshold; 
+	const auto refractory = spike_detection_parameters->detect_refractory_period; 
+	const auto post_threshold = spike_detection_parameters->extract_n_points - pre_threshold;
 
 	// get parameters from document
 	const auto p_dat = GetDocument()->m_pDat;
-	int n_channels; // number of data channels / source buffer
+	int n_channels; 
 	const auto p_buf = p_dat->LoadRawDataParams(&n_channels);
-	const auto span = p_dat->GetTransfDataSpan(method); // nb pts to read before transf
+	const auto span = p_dat->GetTransfDataSpan(method);
 
 	// adjust detection method: if threshold lower than data zero detect lower crossing
 	auto b_cross_upw = TRUE;
@@ -1297,8 +1299,8 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 		b_cross_upw = FALSE;
 
 	// get data detection limits and clip limits according to size of spikes
-	auto l_data_first = m_chart_data_filtered.GetDataFirst(); // index first pt to test
-	auto l_data_last = m_chart_data_filtered.GetDataLast(); // index last pt to test
+	auto l_data_first = m_chart_data_filtered.GetDataFirstIndex(); // index first pt to test
+	auto l_data_last = m_chart_data_filtered.GetDataLastIndex(); // index last pt to test
 	if (l_data_first < pre_threshold + span)
 		l_data_first = static_cast<long>(pre_threshold) + span;
 	if (l_data_last > p_dat->GetDOCchanLength() - post_threshold - span)
@@ -1307,12 +1309,12 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 	// loop through data defined in the lineview window
 	while (l_data_first < l_data_last)
 	{
-		auto l_rw_first = l_data_first - pre_threshold; // index very first pt within buffers
-		auto l_rw_last = l_data_last; // index very last pt within buffers
-		if (!p_dat->LoadRawData(&l_rw_first, &l_rw_last, span)) // load data from file
-			break; // exit if error reported
-		if (!p_dat->BuildTransfData(method, source_channel)) // transfer data into a buffer with a single channel
-			break; // exit if fail
+		auto l_rw_first = l_data_first - pre_threshold;
+		auto l_rw_last = l_data_last; 
+		if (!p_dat->LoadRawData(&l_rw_first, &l_rw_last, span)) 
+			break; 
+		if (!p_dat->BuildTransfData(method, source_channel)) 
+			break;
 
 		// load a chunk of data and see if any spikes are detected within it
 		// compute initial offset (address of first point
@@ -1334,21 +1336,21 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 			// detect > threshold ......... if found, search for max
 			if (b_cross_upw)
 			{
-				if (*p_data < threshold) // test if a spike is present
-					continue; // no: loop to next point
+				if (*p_data < threshold)
+					continue;
 
 				// search max and threshold crossing
-				auto max = *p_data; // init max
-				auto p_data1 = p_data; // init pointer
-				ii_time = cx; // init spike time
+				auto max = *p_data;
+				auto p_data1 = p_data; 
+				ii_time = cx; 
 				// loop to search max
 				for (auto i = cx; i < cx + refractory; i++, p_data1++)
 				{
-					if (max < *p_data1) // search max
+					if (max < *p_data1) 
 					{
 						max = *p_data1;
-						p_data = p_data1; // p_data = "center" of spike
-						ii_time = i; // ii_time = time of spike
+						p_data = p_data1;
+						ii_time = i;
 					}
 				}
 			}
@@ -1374,7 +1376,7 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 			}
 
 			// ........................................ SPIKE DETECTED
-			if (spike_detection_parameters->extractTransform == spike_detection_parameters->detectTransform)
+			if (spike_detection_parameters->extract_transform == spike_detection_parameters->detect_transform)
 			{
 				const auto p_m = p_data - pre_threshold;
 				m_pSpkList->AddSpike(p_m, 1, ii_time, source_channel, 0, TRUE);
@@ -1383,7 +1385,7 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 			{
 				const auto pM = p_buf
 					+ n_channels * (ii_time - pre_threshold - l_rw_first + span)
-					+ spike_detection_parameters->extractChan;
+					+ spike_detection_parameters->extract_channel;
 				m_pSpkList->AddSpike(pM, n_channels, ii_time, source_channel, 0, TRUE);
 			}
 
@@ -1405,7 +1407,7 @@ void ViewSpikeDetection::OnToolsEdittransformspikes()
 	dlg.m_yzero = m_chart_spike_shape.GetYWOrg(); 
 	dlg.m_xextent = m_chart_spike_shape.GetXWExtent(); 
 	dlg.m_xzero = m_chart_spike_shape.GetXWOrg(); 
-	dlg.m_spikeno = m_spikeno; 
+	dlg.m_spike_index = m_spike_index; 
 	m_pSpkList->RemoveAllSpikeFlags();
 	dlg.m_pdbWaveDoc = GetDocument();
 	dlg.m_parent = this;
@@ -1413,8 +1415,8 @@ void ViewSpikeDetection::OnToolsEdittransformspikes()
 	// open dialog box and wait for response
 	dlg.DoModal();
 
-	m_spikeno = dlg.m_spikeno;
-	select_spike_no(m_spikeno, FALSE);
+	m_spike_index = dlg.m_spike_index;
+	select_spike_no(m_spike_index, FALSE);
 	update_spike_display();
 	if (dlg.m_bchanged)
 		m_pSpkDoc->SetModifiedFlag(TRUE);
@@ -1430,7 +1432,7 @@ void ViewSpikeDetection::OnFormatXscale()
 	if (pFocus != nullptr && m_chart_data_filtered.m_hWnd == pFocus->m_hWnd)
 	{
 		dlg.m_xparam = FALSE;
-		CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(m_p_detect_parameters->detectChan);
+		CChanlistItem* pchan = m_chart_data_filtered.GetChanlistItem(m_p_detect_parameters->detect_channel);
 		dlg.m_yzero = pchan->GetYzero();
 		dlg.m_yextent = pchan->GetYextent();
 		dlg.m_bDisplaysource = TRUE;
@@ -1476,9 +1478,9 @@ void ViewSpikeDetection::OnFormatXscale()
 
 void ViewSpikeDetection::OnBnClickedClearAll()
 {
-	m_spikeno = -1; 
-	m_chart_spike_bar.SelectSpike(m_spikeno);
-	m_chart_spike_shape.SelectSpikeShape(m_spikeno);
+	m_spike_index = -1; 
+	m_chart_spike_bar.SelectSpike(m_spike_index);
+	m_chart_spike_shape.SelectSpikeShape(m_spike_index);
 
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
@@ -1502,9 +1504,9 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 
 void ViewSpikeDetection::OnClear()
 {
-	m_spikeno = -1;
-	m_chart_spike_bar.SelectSpike(m_spikeno);
-	m_chart_spike_shape.SelectSpikeShape(m_spikeno);
+	m_spike_index = -1;
+	m_chart_spike_bar.SelectSpike(m_spike_index);
+	m_chart_spike_shape.SelectSpikeShape(m_spike_index);
 
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	m_pSpkList->InitSpikeList(GetDocument()->m_pDat, nullptr);
@@ -1526,13 +1528,13 @@ void ViewSpikeDetection::OnEnChangeSpikeno()
 {
 	if (mm_spikeno.m_bEntryDone)
 	{
-		auto spike_no = m_spikeno;
+		auto spike_no = m_spike_index;
 		switch (mm_spikeno.m_nChar)
 		{
 			// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
-			spike_no = m_spikeno;
+			spike_no = m_spike_index;
 			break;
 		case VK_UP:
 		case VK_PRIOR:
@@ -1588,13 +1590,13 @@ void ViewSpikeDetection::OnArtefact()
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		saveCurrentSpkFile();
 	}
-	m_spikeno = -1;
+	m_spike_index = -1;
 
 	const auto i_sel_parameters = m_tabCtrl.GetCurSel();
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(i_sel_parameters);
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(i_sel_parameters);
 
-	select_spike_no(m_spikeno, FALSE);
+	select_spike_no(m_spike_index, FALSE);
 	update_spike_display();
 	update_number_of_spikes();
 }
@@ -1608,14 +1610,14 @@ void ViewSpikeDetection::update_number_of_spikes()
 
 void ViewSpikeDetection::align_display_to_current_spike()
 {
-	if (m_spikeno < 0)
+	if (m_spike_index < 0)
 		return;
 
-	const auto l_spike_time = m_pSpkList->GetSpike(m_spikeno)->get_time();
-	if (l_spike_time < m_chart_data_filtered.GetDataFirst()
-		|| l_spike_time > m_chart_data_filtered.GetDataLast())
+	const auto l_spike_time = m_pSpkList->GetSpike(m_spike_index)->get_time();
+	if (l_spike_time < m_chart_data_filtered.GetDataFirstIndex()
+		|| l_spike_time > m_chart_data_filtered.GetDataLastIndex())
 	{
-		const auto l_size = m_chart_data_filtered.GetDataLast() - m_chart_data_filtered.GetDataFirst();
+		const auto l_size = m_chart_data_filtered.GetDataLastIndex() - m_chart_data_filtered.GetDataFirstIndex();
 		auto l_first = l_spike_time - l_size / 2;
 		if (l_first < 0)
 			l_first = 0;
@@ -1646,7 +1648,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		const auto x = static_cast<float>(_ttof(cs)) / 1000.0f;
 		ix_we = static_cast<int>(m_pSpkList->GetAcqSampRate() * x);
 		if (ix_we == 0)
-			ix_we = m_pSpkList->GetDetectParms()->extractNpoints;
+			ix_we = m_pSpkList->GetDetectParms()->extract_n_points;
 		ASSERT(ix_we != 0);
 		m_chart_spike_shape.SetXWExtOrg(ix_we, m_chart_spike_shape.GetXWOrg());
 		
@@ -1698,14 +1700,14 @@ void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelectio
 			m_pSpkList->ToggleSpikeFlag(spike_index);
 			if (m_pSpkList->GetSpikeFlagArrayCount() < 1)
 				spike_index = -1;
-			if (m_spikeno == spike_index)
+			if (m_spike_index == spike_index)
 				spike_index = 0;
 		}
 		else
 		{
 			m_pSpkList->SetSingleSpikeFlag(spike_index);
 		}
-		m_spikeno = spike_index;
+		m_spike_index = spike_index;
 		align_display_to_current_spike();
 	}
 	else
@@ -1723,7 +1725,7 @@ void ViewSpikeDetection::update_spike_display()
 
 	// update Dlg interface
 	GetDlgItem(IDC_SPIKENO)->EnableWindow(!(m_pSpkList->GetSpikeFlagArrayCount() > 1));
-	SetDlgItemInt(IDC_SPIKENO, m_spikeno, TRUE);
+	SetDlgItemInt(IDC_SPIKENO, m_spike_index, TRUE);
 	CheckDlgButton(IDC_ARTEFACT, m_bartefact);
 }
 
@@ -1755,8 +1757,8 @@ void ViewSpikeDetection::OnEnChangeThresholdval()
 			m_thresholdval = threshold_value;
 			m_p_detect_parameters->detectThresholdmV = threshold_value;
 			const CChanlistItem* channel_item = m_chart_data_filtered.GetChanlistItem(0);
-			m_p_detect_parameters->detectThreshold = channel_item->ConvertVoltsToDataBins(m_thresholdval / 1000.f);
-			m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
+			m_p_detect_parameters->detect_threshold = channel_item->ConvertVoltsToDataBins(m_thresholdval / 1000.f);
+			m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detect_threshold);
 		}
 
 		mm_thresholdval.m_bEntryDone = FALSE;
@@ -1843,7 +1845,7 @@ void ViewSpikeDetection::OnToolsDataseries()
 	if (m_chart_data_filtered.GetChanlistSize() < 1)
 	{
 		m_chart_data_filtered.RemoveAllChanlistItems();
-		m_chart_data_filtered.AddChanlistItem(m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
+		m_chart_data_filtered.AddChanlistItem(m_p_detect_parameters->detect_channel, m_p_detect_parameters->detect_transform);
 	}
 	update_legends();
 }
@@ -2028,13 +2030,13 @@ void ViewSpikeDetection::OnSelchangeDetectMode()
 
 void ViewSpikeDetection::update_combo_box()
 {
-	m_CBdetectChan.SetCurSel(m_p_detect_parameters->detectChan);
-	m_CBtransform.SetCurSel(m_p_detect_parameters->detectTransform);
-	m_chart_data_filtered.SetChanlistOrdinates(0, m_p_detect_parameters->detectChan, m_p_detect_parameters->detectTransform);
-	m_p_detect_parameters->detectThreshold = m_chart_data_filtered.GetChanlistItem(0)->ConvertVoltsToDataBins(
+	m_CBdetectChan.SetCurSel(m_p_detect_parameters->detect_channel);
+	m_CBtransform.SetCurSel(m_p_detect_parameters->detect_transform);
+	m_chart_data_filtered.SetChanlistOrdinates(0, m_p_detect_parameters->detect_channel, m_p_detect_parameters->detect_transform);
+	m_p_detect_parameters->detect_threshold = m_chart_data_filtered.GetChanlistItem(0)->ConvertVoltsToDataBins(
 		m_thresholdval / 1000.f);
 	m_chart_data_filtered.m_HZtags.SetTagChan(0, 0);
-	m_chart_data_filtered.m_HZtags.SetTagVal(0, m_p_detect_parameters->detectThreshold);
+	m_chart_data_filtered.m_HZtags.SetTagVal(0, m_p_detect_parameters->detect_threshold);
 	m_p_detect_parameters->detectThresholdmV = m_thresholdval;
 }
 
@@ -2218,7 +2220,7 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 	auto i_horizontal_bar = pDataChartWnd->GetRectWidth() / 10; // initial horizontal bar length 1/10th of display rect
 	auto i_vertical_bar = pDataChartWnd->GetRectHeight() / 3; // initial vertical bar height 1/3rd  of display rect
 
-	auto str_comment = PrintConvertFileIndex(pDataChartWnd->GetDataFirst(), pDataChartWnd->GetDataLast());
+	auto str_comment = PrintConvertFileIndex(pDataChartWnd->GetDataFirstIndex(), pDataChartWnd->GetDataLastIndex());
 
 	///// horizontal time bar ///////////////////////////
 	if (options_view_data->bTimeScaleBar)
@@ -2481,8 +2483,8 @@ int ViewSpikeDetection::PrintGetNPages()
 	const auto p_document = GetDocument();
 
 	// compute number of rows according to b_multi_row & b_entire_record flag
-	m_lprintFirst = m_chart_data_filtered.GetDataFirst();
-	m_lprintLen = m_chart_data_filtered.GetDataLast() - m_lprintFirst + 1;
+	m_lprintFirst = m_chart_data_filtered.GetDataFirstIndex();
+	m_lprintLen = m_chart_data_filtered.GetDataLastIndex() - m_lprintFirst + 1;
 	m_file0 = GetDocument()->GetDB_CurrentRecordPosition();
 	ASSERT(m_file0 >= 0);
 	m_nfiles = 1;
@@ -2540,8 +2542,8 @@ int ViewSpikeDetection::PrintGetNPages()
 void ViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
-	m_lFirst0 = m_chart_data_filtered.GetDataFirst();
-	m_lLast0 = m_chart_data_filtered.GetDataLast();
+	m_lFirst0 = m_chart_data_filtered.GetDataFirstIndex();
+	m_lLast0 = m_chart_data_filtered.GetDataLastIndex();
 	m_npixels0 = m_chart_data_filtered.GetRectWidth();
 	PrintCreateFont();
 	p_dc->SetBkMode(TRANSPARENT);
@@ -2680,8 +2682,8 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		else
 		{
 			// other rows: time intervals only
-			cs_comment = PrintConvertFileIndex(m_chart_data_filtered.GetDataFirst(),
-				m_chart_data_filtered.GetDataLast());
+			cs_comment = PrintConvertFileIndex(m_chart_data_filtered.GetDataFirstIndex(),
+				m_chart_data_filtered.GetDataLastIndex());
 		}
 
 		// print comments stored into cs_comment
@@ -2725,7 +2727,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// end of file loop : restore initial conditions
 	m_chart_data_filtered.GetChanlistItem(0)->SetflagPrintVisible(1);
 	if (!options_view_data->bFilterDataSource)
-		m_chart_data_filtered.SetChanlistTransformMode(0, m_p_detect_parameters->detectTransform);
+		m_chart_data_filtered.SetChanlistTransformMode(0, m_p_detect_parameters->detect_transform);
 
 	if (m_pOldFont != nullptr)
 		p_dc->SelectObject(m_pOldFont);
@@ -3018,14 +3020,14 @@ void ViewSpikeDetection::OnBnClickedLocatebttn()
 	channel_item->GetMaxMin(&max, &min);
 
 	// modify value
-	m_p_detect_parameters->detectThreshold = (max + min) / 2;
-	m_thresholdval = channel_item->ConvertDataBinsToVolts(m_p_detect_parameters->detectThreshold) * 1000.f;
+	m_p_detect_parameters->detect_threshold = (max + min) / 2;
+	m_thresholdval = channel_item->ConvertDataBinsToVolts(m_p_detect_parameters->detect_threshold) * 1000.f;
 	m_p_detect_parameters->detectThresholdmV = m_thresholdval;
 	// update user-interface: edit control and threshold bar in sourceview
 	CString cs;
 	cs.Format(_T("%.3f"), m_thresholdval);
 	GetDlgItem(IDC_THRESHOLDVAL)->SetWindowText(cs);
-	m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detectThreshold);
+	m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detect_threshold);
 	m_chart_data_filtered.Invalidate();
 }
 
@@ -3064,7 +3066,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 	}
 
 	// set new parameters
-	m_pSpkList->m_selected_spike = m_spikeno; 
+	m_pSpkList->m_selected_spike = m_spike_index; 
 	m_i_detect_parameters = iSelParms;
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(iSelParms);
 	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(iSelParms);
@@ -3079,25 +3081,25 @@ void ViewSpikeDetection::update_detection_controls()
 {
 	const SPKDETECTPARM* detect_parameters = m_pSpkList->GetDetectParms();
 	m_CBdetectWhat.SetCurSel(detect_parameters->detectWhat);
-	m_CBdetectChan.SetCurSel(detect_parameters->detectChan);
-	m_CBtransform.SetCurSel(detect_parameters->detectTransform);
+	m_CBdetectChan.SetCurSel(detect_parameters->detect_channel);
+	m_CBtransform.SetCurSel(detect_parameters->detect_transform);
 
 	// check that spike detection parameters are compatible with current data doc
-	auto detection_channel = detect_parameters->detectChan;
+	auto detection_channel = detect_parameters->detect_channel;
 	const auto p_dat = GetDocument()->m_pDat;
 	const int scan_count = p_dat->GetpWaveFormat()->scan_count;
 	if (detection_channel >= scan_count)
 		detection_channel = 0;
 
-	m_chart_data_filtered.SetChanlistOrdinates(0, detection_channel, detect_parameters->detectTransform);
-	m_CBtransform2.SetCurSel(m_pSpkList->GetDetectParms()->extractTransform);
+	m_chart_data_filtered.SetChanlistOrdinates(0, detection_channel, detect_parameters->detect_transform);
+	m_CBtransform2.SetCurSel(m_pSpkList->GetDetectParms()->extract_transform);
 
 	CChanlistItem* channel_item = m_chart_data_filtered.GetChanlistItem(0);
 	channel_item->SetColor(static_cast<WORD>(detection_channel));
 
 	m_chart_data_filtered.GetDataFromDoc(); 
 
-	const auto detect_threshold = detect_parameters->detectThreshold;
+	const auto detect_threshold = detect_parameters->detect_threshold;
 	m_thresholdval = channel_item->ConvertDataBinsToVolts(detect_threshold) * 1000.f;
 	if (m_chart_data_filtered.m_HZtags.GetNTags() < 1)
 		m_chart_data_filtered.m_HZtags.AddTag(detect_threshold, 0);
@@ -3189,13 +3191,13 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	const auto data_document = GetDocument()->m_pDat;
 
 	const auto detect_parameters = m_pSpkList->GetDetectParms();
-	const auto doc_chan = detect_parameters->extractChan;
+	const auto doc_chan = detect_parameters->extract_channel;
 	const short span = data_document->GetTransfDataSpan(method); 
-	detect_parameters->extractTransform = method; 
+	detect_parameters->extract_transform = method; 
 
 	// pre-load data
 	const auto spike_length = m_pSpkList->GetSpikeLength();
-	const auto spike_pre_threshold = detect_parameters->prethreshold;
+	const auto spike_pre_threshold = detect_parameters->detect_pre_threshold;
 	auto ii_time = m_pSpkList->GetSpike(0)->get_time() - spike_pre_threshold;
 	auto l_rw_first0 = ii_time - spike_length;
 	auto l_rw_last0 = ii_time + spike_length;
@@ -3225,7 +3227,7 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	}
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 
-	int max, min;
+	short max, min;
 	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
 	const auto middle = (max + min) / 2;
 	m_chart_spike_shape.SetYWExtOrg(m_chart_spike_shape.GetYWExtent(), middle);

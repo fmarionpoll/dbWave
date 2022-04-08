@@ -401,7 +401,7 @@ CSpikeDoc* CdbWaveDoc::OpenCurrentSpikeFile()
 	return m_pSpk;
 }
 
-void CdbWaveDoc::GetAllSpkMaxMin(BOOL b_all_files, BOOL b_recalculate, int* max, int* min)
+void CdbWaveDoc::GetAllSpkMaxMin(BOOL b_all_files, BOOL b_recalculate, short* max, short* min)
 {
 	long n_files = 1;
 	long n_current_file = 0;
@@ -458,8 +458,10 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 		const CSize measure = p_spk_list->Measure_Y1_MaxMin();
 		if (initialized)
 		{
-			if (dummy.cx < measure.cx) dummy.cx = measure.cx;
-			if (dummy.cy > measure.cy) dummy.cy = measure.cy;
+			if (dummy.cx < measure.cx) 
+				dummy.cx = measure.cx;
+			if (dummy.cy > measure.cy) 
+				dummy.cy = measure.cy;
 		}
 		else
 		{

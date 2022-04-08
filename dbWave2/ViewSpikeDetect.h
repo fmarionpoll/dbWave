@@ -8,6 +8,7 @@
 #include "dbTableView.h"
 #include "Editctrl.h"
 
+
 class ViewSpikeDetection : public dbTableView
 {
 protected:
@@ -26,7 +27,7 @@ public:
 	float m_timefirst = 0.f;
 	float m_timelast = 0.f;
 	CString m_datacomments{};
-	int m_spikeno = -1;
+	int m_spike_index = -1;
 	BOOL m_bartefact = false;
 	float m_thresholdval = 0.f;
 	int m_ichanselected = 0;

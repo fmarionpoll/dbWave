@@ -700,7 +700,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPI
 				continue;
 
 			// get value, compute statistics
-			int max, min;
+			short max, min;
 			pSpike->get_max_min(&max, &min);
 			auto val = max - min;
 			y_sum += val;
@@ -860,16 +860,16 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 			break;
 		// 3) export extrema
 		case EXPORT_EXTREMA:
-			int max, min;
-			pSpike->get_max_min(&max, &min);
-			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(max) - binzero) * vper_bin,
-			                (static_cast<double>(min) - binzero) * vper_bin);
+			short value_max, value_min;
+			pSpike->get_max_min(&value_max, &value_min);
+			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(value_max) - binzero) * vper_bin,
+			                (static_cast<double>(value_min) - binzero) * vper_bin);
 			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			break;
 		// 4) export max - min
 		case EXPORT_AMPLIT:
-			pSpike->MeasureMaxThenMinEx(&max, &imax, &min, &imin, ifirst, ilast);
-			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(max) - min) * vper_bin,
+			pSpike->MeasureMaxThenMinEx(&value_max, &imax, &value_min, &imin, ifirst, ilast);
+			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(value_max) - value_min) * vper_bin,
 			                (static_cast<double>(imin) - imax) / ratems);
 			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			break;

@@ -22,14 +22,14 @@ void DlgSpikeEdit::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_SPIKECLASS, m_spikeclass);
-	DDX_Text(pDX, IDC_SPIKENO, m_spikeno);
+	DDX_Text(pDX, IDC_SPIKENO, m_spike_index);
 	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
 	DDX_Text(pDX, IDC_DISPLAYRATIO, m_displayratio);
 	DDX_Text(pDX, IDC_YEXTENT, m_yvextent);
 }
 
 BEGIN_MESSAGE_MAP(DlgSpikeEdit, CDialog)
-	ON_EN_CHANGE(IDC_SPIKENO, OnEnChangeSpikeno)
+	ON_EN_CHANGE(IDC_SPIKENO, OnEnChangespike_index)
 	ON_EN_CHANGE(IDC_SPIKECLASS, OnEnChangeSpikeclass)
 	ON_BN_CLICKED(IDC_ARTEFACT, OnArtefact)
 	ON_EN_CHANGE(IDC_DISPLAYRATIO, OnEnChangeDisplayratio)
@@ -42,12 +42,12 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::LoadSpikeParms()
 {
-	const Spike* spike = m_pSpkList->GetSpike(m_spikeno); // get address of spike parms
+	const Spike* spike = m_pSpkList->GetSpike(m_spike_index); // get address of spike parms
 	m_spikeclass = spike->get_class(); 
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = spike->get_time();
 
-	m_SpkChartWnd.SelectSpikeShape(m_spikeno);
+	m_SpkChartWnd.SelectSpikeShape(m_spike_index);
 
 	LoadSourceData();
 	UpdateData(FALSE); 
@@ -66,19 +66,19 @@ BOOL DlgSpikeEdit::OnInitDialog()
 
 	// subclass edit controls
 	VERIFY(mm_spikeclass.SubclassDlgItem(IDC_SPIKECLASS, this));
-	VERIFY(mm_spikeno.SubclassDlgItem(IDC_SPIKENO, this));
+	VERIFY(mm_spike_index.SubclassDlgItem(IDC_SPIKENO, this));
 	VERIFY(m_HScroll.SubclassDlgItem(IDC_SCROLLBAR1, this));
 	VERIFY(m_VScroll.SubclassDlgItem(IDC_SCROLLBAR2, this));
 
 	// add scrollbar to the left of edit controls
 	mm_spikeclass.ShowScrollBar(SB_VERT);
-	mm_spikeno.ShowScrollBar(SB_VERT);
+	mm_spike_index.ShowScrollBar(SB_VERT);
 
 	// attach spike buffer
 	VERIFY(m_SpkChartWnd.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
 	m_SpkChartWnd.set_source_data(m_pSpkList, m_pdbWaveDoc);
-	if (m_spikeno < 0) // select at least spike 0
-		m_spikeno = 0;
+	if (m_spike_index < 0) // select at least spike 0
+		m_spike_index = 0;
 
 	m_SpkChartWnd.SetRangeMode(RANGE_ALL); // display mode (lines)
 	m_SpkChartWnd.set_plot_mode(PLOT_BLACK, 0); // display also artefacts
@@ -91,11 +91,11 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		const auto lvSize = m_ChartDataWnd.GetRectSize();
 		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
 		m_ChartDataWnd.RemoveAllChanlistItems();
-		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extractChan, m_pSpkList->GetDetectParms()->extractTransform);
+		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extract_channel, m_pSpkList->GetDetectParms()->extract_transform);
 
 		if (m_pSpkList->GetDetectParms()->compensateBaseline)
 		{
-			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extractChan, MOVAVG30);
+			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extract_channel, MOVAVG30);
 			m_ChartDataWnd.GetChanlistItem(1)->SetColor(6);
 			m_ChartDataWnd.GetChanlistItem(1)->SetPenWidth(1);
 			static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
@@ -123,12 +123,12 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	}
 
 	m_displayratio = 20; // how much spike versus source data
-	m_spkpretrig = m_pSpkList->GetDetectParms()->prethreshold; // load parms used many times
+	m_spkpretrig = m_pSpkList->GetDetectParms()->detect_pre_threshold; // load parms used many times
 	m_spklen = m_pSpkList->GetSpikeLength(); // pre-trig and spike length
 	m_viewdatalen = MulDiv(m_spklen, 100, m_displayratio); // how wide is source window
 	if (m_yextent == 0)
 	{
-		int max, min;
+		short max, min;
 		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
 		m_yextent = (max - min);
 		m_yzero = (max + min) / 2;
@@ -158,35 +158,35 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void DlgSpikeEdit::OnEnChangeSpikeno()
+void DlgSpikeEdit::OnEnChangespike_index()
 {
-	if (mm_spikeno.m_bEntryDone)
+	if (mm_spike_index.m_bEntryDone)
 	{
-		const auto spikeno = m_spikeno;
-		switch (mm_spikeno.m_nChar)
+		const auto spike_index = m_spike_index;
+		switch (mm_spike_index.m_nChar)
 		{
 		// load data from edit controls
 		case VK_RETURN: UpdateData(TRUE);
 			break;
 		case VK_UP:
-		case VK_PRIOR: m_spikeno++;
+		case VK_PRIOR: m_spike_index++;
 			break;
 		case VK_DOWN:
-		case VK_NEXT: m_spikeno--;
+		case VK_NEXT: m_spike_index--;
 			break;
 		default: ;
 		}
 
 		// check boundaries
-		if (m_spikeno < 0)
-			m_spikeno = 0;
-		if (m_spikeno >= m_pSpkList->GetTotalSpikes())
-			m_spikeno = m_pSpkList->GetTotalSpikes() - 1;
+		if (m_spike_index < 0)
+			m_spike_index = 0;
+		if (m_spike_index >= m_pSpkList->GetTotalSpikes())
+			m_spike_index = m_pSpkList->GetTotalSpikes() - 1;
 
-		mm_spikeno.m_bEntryDone = FALSE; 
-		mm_spikeno.m_nChar = 0; 
-		mm_spikeno.SetSel(0, -1); 
-		if (m_spikeno != spikeno) 
+		mm_spike_index.m_bEntryDone = FALSE; 
+		mm_spike_index.m_nChar = 0; 
+		mm_spike_index.SetSel(0, -1); 
+		if (m_spike_index != spike_index) 
 		{
 			LoadSpikeParms();
 			m_iitimeold = m_iitime;
@@ -215,7 +215,7 @@ void DlgSpikeEdit::OnEnChangeSpikeclass()
 		default: ;
 		}
 
-		m_pSpkList->GetSpike(m_spikeno)->set_class(m_spikeclass);
+		m_pSpkList->GetSpike(m_spike_index)->set_class(m_spikeclass);
 		mm_spikeclass.m_bEntryDone = FALSE; // clear flag
 		mm_spikeclass.m_nChar = 0; // empty buffer
 		mm_spikeclass.SetSel(0, -1); // select all text
@@ -229,7 +229,7 @@ void DlgSpikeEdit::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
 	m_spikeclass = (m_bartefact) ? -1 : 0;
-	m_pSpkList->GetSpike(m_spikeno)->set_class(m_spikeclass);
+	m_pSpkList->GetSpike(m_spike_index)->set_class(m_spikeclass);
 	UpdateData(FALSE); // update value
 	m_bchanged = TRUE;
 }
@@ -304,7 +304,7 @@ void DlgSpikeEdit::LoadSourceData()
 	if (m_pAcqDatDoc == nullptr)
 		return;
 
-	const auto spike = m_pSpkList->GetSpike(m_spikeno); 
+	const auto spike = m_pSpkList->GetSpike(m_spike_index); 
 	const auto l_first = spike->get_time() - m_spkpretrig;
 	m_intervals_to_highlight_spikes.SetAt(3, l_first); 
 	const auto l_last = l_first + m_spklen; 
@@ -344,17 +344,17 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 {
 	if (m_pAcqDatDoc != nullptr)
 	{
-		auto offset = m_pSpkList->GetSpike(m_spikeno)->get_amplitude_offset();
+		auto offset = m_pSpkList->GetSpike(m_spike_index)->get_amplitude_offset();
 		m_iitime += shift;
-		m_pSpkList->GetSpike(m_spikeno)->set_time(m_iitime);
+		m_pSpkList->GetSpike(m_spike_index)->set_time(m_iitime);
 		UpdateSpikeScroll();
 		LoadSourceData();
 
 		const auto l_first = m_iitime - m_spkpretrig;
 
 		// get source data buffer address
-		Spike* pSpike = m_pSpkList->GetSpike(m_spikeno);
-		const auto method = m_pSpkList->GetDetectParms()->extractTransform;
+		Spike* pSpike = m_pSpkList->GetSpike(m_spike_index);
+		const auto method = m_pSpkList->GetDetectParms()->extract_transform;
 		if (method == 0)
 		{
 			int n_channels;
@@ -412,7 +412,7 @@ void DlgSpikeEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		shift = nPos - SCROLLCENTER - (m_iitime - m_iitimeold);
+		shift = static_cast<int>(nPos) - SCROLLCENTER - (m_iitime - m_iitimeold);
 		break;
 	default: // NOP: set position only
 		return;
@@ -445,13 +445,13 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		break; // scroll to the start
 	case SB_LINEUP: shift = -1;
 		break; // scroll one line left
-	case SB_LINEDOWN: shift = +1;
+	case SB_LINEDOWN: shift = 1;
 		break; // scroll one line right
 	case SB_PAGEUP: shift = -10;
 		break; // scroll one page left
-	case SB_PAGEDOWN: shift = +10;
+	case SB_PAGEDOWN: shift = 10;
 		break; // scroll one page right
-	case SB_BOTTOM: shift = +10;
+	case SB_BOTTOM: shift = 10;
 		break; // scroll to end right
 
 	case SB_THUMBPOSITION: // scroll to pos = nPos
@@ -462,7 +462,7 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	m_pSpkList->GetSpike(m_spikeno)->OffsetSpikeData(shift);
+	m_pSpkList->GetSpike(m_spike_index)->OffsetSpikeData(static_cast<short>(shift));
 
 	LoadSpikeParms();
 	m_bchanged = TRUE;

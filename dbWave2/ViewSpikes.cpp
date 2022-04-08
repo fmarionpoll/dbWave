@@ -171,8 +171,8 @@ void ViewSpikes::setAddspikesMode(int mousecursorType)
 			hwnd = nullptr;
 		m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
 		m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-		m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
-		                             m_pspkDP->extractChan);
+		m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
+		                             m_pspkDP->extract_channel);
 
 		if (m_b_add_spike_mode)
 			setTrackRectangle();
@@ -256,8 +256,8 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_VIEWSIZECHANGED:
 		if (HIWORD(lParam) == IDC_DISPLAYDAT)
 		{
-			m_lFirst = m_ChartDataWnd.GetDataFirst();
-			m_lLast = m_ChartDataWnd.GetDataLast();
+			m_lFirst = m_ChartDataWnd.GetDataFirstIndex();
+			m_lLast = m_ChartDataWnd.GetDataLastIndex();
 		}
 		else if (HIWORD(lParam) == IDC_LISTCLASSES) //[ne marche pas! HIWORD(lParam)==1]
 		{
@@ -300,9 +300,9 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 BOOL ViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
 {
-	const int method = m_pSpkList->GetDetectParms()->detectTransform;
-	const int doc_channel = m_pSpkList->GetDetectParms()->extractChan;
-	const int prethreshold = m_pSpkList->GetDetectParms()->prethreshold;
+	const int method = m_pSpkList->GetDetectParms()->detect_transform;
+	const int doc_channel = m_pSpkList->GetDetectParms()->extract_channel;
+	const int prethreshold = m_pSpkList->GetDetectParms()->detect_pre_threshold;
 	const int spikelen = m_pSpkList->GetSpikeLength();
 	const int nspan = m_pDataDoc->GetTransfDataSpan(method);
 	const auto iitime0 = ii_time - prethreshold;
@@ -328,7 +328,7 @@ BOOL ViewSpikes::addSpiketoList(long ii_time, BOOL bcheck_if_otheraround)
 		spikeindex = m_pSpkList->AddSpike(p_data_spike_0, //lpSource	= buff pointer to the buffer to copy
 		                                  1, //offset, /*nchans,*/							//nchans	= nb of interleaved channels
 		                                  iitime0 + prethreshold, //time = file index of first pt of the spk
-		                                  doc_channel, //detectChan	= data source chan index
+		                                  doc_channel, //detect_channel	= data source chan index
 		                                  m_class_destination, bcheck_if_otheraround);
 
 		m_pSpkDoc->SetModifiedFlag();
@@ -378,7 +378,7 @@ void ViewSpikes::selectSpike(int spikeno)
 		const auto p_spike_element = m_pSpkList->GetSpike(m_spike_index);
 		m_spike_index_class = p_spike_element->get_class();
 		m_b_artefact = (m_spike_index_class < 0);
-		const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetDetectParms()->prethreshold;
+		const auto spk_first = p_spike_element->get_time() - m_pSpkList->GetDetectParms()->detect_pre_threshold;
 		const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
 		n_cmd_show = SW_SHOW;
 		if (m_pDataDoc != nullptr)
@@ -499,8 +499,8 @@ void ViewSpikes::OnInitialUpdate()
 	if (m_b_add_spike_mode)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
-		m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
-		                             m_pspkDP->extractChan);
+		m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
+		                             m_pspkDP->extract_channel);
 	}
 }
 
@@ -521,18 +521,18 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 	m_ChartDataWnd.AttachDataFile(m_pDataDoc);
 
 	auto detect = m_pSpkList->GetDetectParms();
-	int isourceview = detect->extractChan;
+	int isourceview = detect->extract_channel;
 	if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
 	{
-		detect->extractChan = 0;
+		detect->extract_channel = 0;
 		isourceview = 0;
 	}
 	if (detect->detectWhat == DETECT_STIMULUS)
 	{
-		isourceview = detect->detectChan;
+		isourceview = detect->detect_channel;
 		if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
 		{
-			detect->detectChan = 0;
+			detect->detect_channel = 0;
 			isourceview = 0;
 		}
 	}
@@ -569,7 +569,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 		m_file_scroll_infos.nMin = 0;
 		m_file_scroll_infos.nMax = m_pDataDoc->GetDOCchanLength() - 1;
 		m_file_scroll_infos.nPos = 0;
-		m_file_scroll_infos.nPage = m_ChartDataWnd.GetDataLast() - m_ChartDataWnd.GetDataFirst() + 1;
+		m_file_scroll_infos.nPage = m_ChartDataWnd.GetDataLastIndex() - m_ChartDataWnd.GetDataFirstIndex() + 1;
 		m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 	}
 
@@ -644,8 +644,8 @@ void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 		hwnd = nullptr;
 	m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
 	m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extractNpoints, m_pspkDP->prethreshold,
-	                             m_pspkDP->extractChan);
+	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
+	                             m_pspkDP->extract_channel);
 
 	// update spike bars & forms CListBox
 	if (m_lFirst != m_spkClassListBox.GetTimeFirst()
@@ -667,7 +667,7 @@ void ViewSpikes::adjustYZoomToMaxMin(BOOL bForceSearchMaxMin)
 	if (m_yWE == 1 || bForceSearchMaxMin)
 	{
 		// adjust gain of spkform
-		int max, min;
+		short max, min;
 		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
 		m_yWE = MulDiv(max - min + 1, 10, 8);
 		m_yWO = (max + min) / 2;
@@ -686,10 +686,10 @@ void ViewSpikes::selectSpkList(int icursel)
 	m_pspkDP = m_pSpkList->GetDetectParms();
 
 	// update source data: change data channel and update display
-	int isourceview = m_pSpkList->GetDetectParms()->extractChan;
-	ASSERT(isourceview == m_pspkDP->extractChan);
+	int isourceview = m_pSpkList->GetDetectParms()->extract_channel;
+	ASSERT(isourceview == m_pspkDP->extract_channel);
 	if (m_pSpkList->GetDetectParms()->detectWhat == DETECT_STIMULUS)
-		isourceview = m_pSpkList->GetDetectParms()->detectChan;
+		isourceview = m_pSpkList->GetDetectParms()->detect_channel;
 
 	// no data available
 	if (m_ChartDataWnd.SetChanlistSourceChan(0, isourceview) < 0)
@@ -780,18 +780,18 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	const auto l_last = m_spkClassListBox.GetTimeLast();
 
 	DlgSpikeEdit dlg;
-	dlg.m_yextent = m_spkClassListBox.GetYWExtent(); // load display parameters
-	dlg.m_yzero = m_spkClassListBox.GetYWOrg(); // ordinates
-	dlg.m_xextent = m_spkClassListBox.GetXWExtent(); // and
-	dlg.m_xzero = m_spkClassListBox.GetXWOrg(); // abscissa
-	dlg.m_spikeno = m_spike_index; // load index of selected spike
+	dlg.m_yextent = m_spkClassListBox.GetYWExtent(); 
+	dlg.m_yzero = m_spkClassListBox.GetYWOrg(); 
+	dlg.m_xextent = m_spkClassListBox.GetXWExtent(); 
+	dlg.m_xzero = m_spkClassListBox.GetXWOrg();
+	dlg.m_spike_index = m_spike_index; 
 	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();
 
 	// open dialog box and wait for response
 	dlg.DoModal();
 	if (!dlg.m_bartefact)
-		m_spike_index = dlg.m_spikeno; // set no spike selected
+		m_spike_index = dlg.m_spike_index;
 
 	if (dlg.m_bchanged)
 	{
@@ -1310,7 +1310,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		//m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 		//AdjustYZoomToMaxMin(true); 
-		int max, min;
+		short max, min;
 		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
 		const short middle = max / 2 + min / 2;
 		m_spkClassListBox.SetYzoom(iextent, middle);
@@ -1529,7 +1529,7 @@ void ViewSpikes::centerDataDisplayOnSpike(int spikeno)
 {
 	// test if spike visible in the current time interval
 	Spike* p_spike_element = m_pSpkList->GetSpike(spikeno);
-	const long spk_first = p_spike_element->get_time() - m_pSpkList->GetDetectParms()->prethreshold;
+	const long spk_first = p_spike_element->get_time() - m_pSpkList->GetDetectParms()->detect_pre_threshold;
 	const long spk_last = spk_first + m_pSpkList->GetSpikeLength();
 	const long lcenter = (spk_last + spk_first) / 2;
 	if (spk_first < m_lFirst || spk_last > m_lLast)
@@ -1542,7 +1542,7 @@ void ViewSpikes::centerDataDisplayOnSpike(int spikeno)
 
 	// center curve vertically
 	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
-	const int doc_channel = m_pSpkList->GetDetectParms()->extractChan;
+	const int doc_channel = m_pSpkList->GetDetectParms()->extract_channel;
 	short maxdata = m_pDataDoc->BGetVal(doc_channel, spk_first);
 	short mindata = maxdata;
 	for (long i = spk_first; i <= spk_last; i++)
@@ -1773,8 +1773,8 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 
 	// adjust display
-	m_lFirst = m_ChartDataWnd.GetDataFirst();
-	m_lLast = m_ChartDataWnd.GetDataLast();
+	m_lFirst = m_ChartDataWnd.GetDataFirstIndex();
+	m_lLast = m_ChartDataWnd.GetDataLastIndex();
 	updateLegends(TRUE);
 	m_spkClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
@@ -1810,8 +1810,8 @@ void ViewSpikes::scrollFile(UINT nSBCode, UINT nPos)
 void ViewSpikes::updateFileScroll()
 {
 	m_file_scroll_infos.fMask = SIF_PAGE | SIF_POS;
-	m_file_scroll_infos.nPos = m_ChartDataWnd.GetDataFirst();
-	m_file_scroll_infos.nPage = m_ChartDataWnd.GetDataLast() - m_ChartDataWnd.GetDataFirst() + 1;
+	m_file_scroll_infos.nPos = m_ChartDataWnd.GetDataFirstIndex();
+	m_file_scroll_infos.nPage = m_ChartDataWnd.GetDataLastIndex() - m_ChartDataWnd.GetDataFirstIndex() + 1;
 	m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 }
 

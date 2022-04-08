@@ -237,8 +237,8 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
 	if (m_psC->kleft == 0 && m_psC->kright == 0)
 	{
-		m_psC->kleft = m_pSpkList->GetDetectParms()->prethreshold;
-		m_psC->kright = m_psC->kleft + m_pSpkList->GetDetectParms()->refractory;
+		m_psC->kleft = m_pSpkList->GetDetectParms()->detect_pre_threshold;
+		m_psC->kright = m_psC->kleft + m_pSpkList->GetDetectParms()->detect_refractory_period;
 	}
 	m_t1 = convertSpikeIndexToTime(m_psC->kleft);
 	m_t2 = convertSpikeIndexToTime(m_psC->kright);
@@ -553,7 +553,7 @@ void ViewSpikeTemplates::OnFormatAlldata()
 
 void ViewSpikeTemplates::OnFormatGainadjust()
 {
-	int maxval, minval;
+	short maxval, minval;
 	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
 	const auto extent = MulDiv(maxval - minval + 1, 10, 9);
 	const auto zero = (maxval + minval) / 2;
@@ -563,7 +563,7 @@ void ViewSpikeTemplates::OnFormatGainadjust()
 
 void ViewSpikeTemplates::OnFormatCentercurve()
 {
-	int maxval, minval;
+	short maxval, minval;
 	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
 	const auto extent = m_ChartSpkWnd_Shape.GetYWExtent();
 	const auto zero = (maxval + minval) / 2;
@@ -702,45 +702,45 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 	int extent = m_ChartSpkWnd_Shape.GetYWExtent();
 	if (zero == 0 && extent == 0)
 	{
-		int maxval, minval;
-		m_pSpkList->GetTotalMaxMin(TRUE, &maxval, &minval);
-		extent = maxval - minval;
-		zero = (maxval + minval) / 2;
+		short valuemax, valuemin;
+		m_pSpkList->GetTotalMaxMin(TRUE, &valuemax, &valuemin);
+		extent = valuemax - valuemin;
+		zero = (valuemax + valuemin) / 2;
 		m_ChartSpkWnd_Shape.SetYWExtOrg(extent, zero);
 	}
 	pTPList->SetYWExtOrg(extent, zero);
 
 	// set file indexes - assume only one file selected
 	auto p_dbwave_doc = GetDocument();
-	const int currentfile = p_dbwave_doc->GetDB_CurrentRecordPosition(); // index current file
-	auto firstfile = currentfile; // index first file in the series
-	auto lastfile = currentfile; // index last file in the series
+	const int current_file = p_dbwave_doc->GetDB_CurrentRecordPosition(); // index current file
+	auto first_file = current_file; // index first file in the series
+	auto last_file = current_file; // index last file in the series
 	// make sure we have the correct spike list here
-	const auto currentlist = m_tabCtrl.GetCurSel();
-	m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
+	const auto current_list = m_tabCtrl.GetCurSel();
+	m_pSpkDoc->SetSpkList_AsCurrent(current_list);
 
-	CString cscomment;
-	CString csfilecomment = _T("Analyze file: ");
+	CString cs_comment;
+	CString cs_file_comment = _T("Analyze file: ");
 	if (ballfiles)
 	{
-		firstfile = 0; // index first file
-		lastfile = p_dbwave_doc->GetDB_NRecords() - 1; // index last file
+		first_file = 0; // index first file
+		last_file = p_dbwave_doc->GetDB_NRecords() - 1; // index last file
 	}
 	// loop over files
-	for (auto ifile = firstfile; ifile <= lastfile; ifile++)
+	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
 		// load file
-		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
+		p_dbwave_doc->SetDB_CurrentRecordPosition(i_file);
 		auto pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		if (pSpkDoc == nullptr)
 			continue;
 		CString cs;
-		cs.Format(_T("%i/%i - "), ifile, lastfile);
+		cs.Format(_T("%i/%i - "), i_file, last_file);
 		cs += p_dbwave_doc->GetDB_CurrentSpkFileName(FALSE);
 		p_dbwave_doc->SetTitle(cs);
 		pSpkDoc->SetModifiedFlag(FALSE);
 
-		auto pSpkList = pSpkDoc->SetSpkList_AsCurrent(currentlist); // load pointer to spike list
+		auto pSpkList = pSpkDoc->SetSpkList_AsCurrent(current_list); // load pointer to spike list
 		if (!pSpkList->IsClassListValid()) // if class list not valid:
 		{
 			pSpkList->UpdateClassList(); // rebuild list of classes
@@ -782,7 +782,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 	// end of loop, select current file again if necessary
 	if (ballfiles)
 	{
-		p_dbwave_doc->SetDB_CurrentRecordPosition(currentfile);
+		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file);
 		m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}

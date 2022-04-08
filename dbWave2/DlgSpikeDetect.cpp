@@ -100,26 +100,26 @@ void DlgSpikeDetect::SaveChanParameters(int chan)
 	// spikes detection parameters
 	const auto flag2 = static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck();
 	m_pspkD->detectFrom = flag2 ? 0 : 1;
-	m_pspkD->detectChan = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
-	m_pspkD->detectTransform = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
-	m_pspkD->detectThreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
+	m_pspkD->detect_channel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
+	m_pspkD->detect_transform = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
+	m_pspkD->detect_threshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
 
 	// detect spikes
 	if (static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->GetCheck() == BST_CHECKED)
 	{
 		m_pspkD->detectWhat = DETECT_SPIKES;
-		m_pspkD->extractChan = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
-		m_pspkD->extractTransform = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
-		m_pspkD->extractNpoints = GetDlgItemInt(IDC_SPIKENPOINTS);
-		m_pspkD->prethreshold = GetDlgItemInt(IDC_PRETHRESHOLD);
-		m_pspkD->refractory = GetDlgItemInt(IDC_REFRACTORY);
+		m_pspkD->extract_channel = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
+		m_pspkD->extract_transform = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
+		m_pspkD->extract_n_points = GetDlgItemInt(IDC_SPIKENPOINTS);
+		m_pspkD->detect_pre_threshold = GetDlgItemInt(IDC_PRETHRESHOLD);
+		m_pspkD->detect_refractory_period = GetDlgItemInt(IDC_REFRACTORY);
 	}
 	// detect stimulus
 	else
 	{
 		m_pspkD->detectWhat = DETECT_STIMULUS;
 		m_pspkD->detectMode = static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
-		m_pspkD->extractChan = m_pspkD->detectChan;
+		m_pspkD->extract_channel = m_pspkD->detect_channel;
 	}
 }
 
@@ -146,15 +146,15 @@ void DlgSpikeDetect::LoadChanParameters(int chan)
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->SetCheck(flag);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMTAG))->SetCheck(!flag);
 	DisplayDetectFromChan();
-	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->SetCurSel(m_pspkD->detectChan);
-	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(m_pspkD->detectTransform);
-	SetDlgItemInt(IDC_DETECTTHRESHOLD, m_pspkD->detectThreshold);
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->SetCurSel(m_pspkD->detect_channel);
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(m_pspkD->detect_transform);
+	SetDlgItemInt(IDC_DETECTTHRESHOLD, m_pspkD->detect_threshold);
 
-	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->SetCurSel(m_pspkD->extractChan);
-	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->SetCurSel(m_pspkD->extractTransform);
-	SetDlgItemInt(IDC_SPIKENPOINTS, m_pspkD->extractNpoints);
-	SetDlgItemInt(IDC_PRETHRESHOLD, m_pspkD->prethreshold);
-	SetDlgItemInt(IDC_REFRACTORY, m_pspkD->refractory);
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->SetCurSel(m_pspkD->extract_channel);
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->SetCurSel(m_pspkD->extract_transform);
+	SetDlgItemInt(IDC_SPIKENPOINTS, m_pspkD->extract_n_points);
+	SetDlgItemInt(IDC_PRETHRESHOLD, m_pspkD->detect_pre_threshold);
+	SetDlgItemInt(IDC_REFRACTORY, m_pspkD->detect_refractory_period);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(mdPM->bDetectWhileBrowse);
 
 	// stimulus detection parameters

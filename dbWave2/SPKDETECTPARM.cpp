@@ -11,16 +11,16 @@ IMPLEMENT_SERIAL(SPKDETECTPARM, CObject, 0 /* schema number*/)
 SPKDETECTPARM::SPKDETECTPARM() : bChanged(0)
 {
 	wversion = 7; // version 6 (Aug 19 2005 FMP)
-	detectChan = 0; // source channel
-	detectTransform = 13; // detect from data transformed - i = transform method cf AcqDataDoc
+	detect_channel = 0; // source channel
+	detect_transform = 13; // detect from data transformed - i = transform method cf AcqDataDoc
 	detectFrom = 0; // detection method 0=data, 1=tags
-	extractChan = 0;
-	extractTransform = 13;
+	extract_channel = 0;
+	extract_transform = 13;
 	compensateBaseline = FALSE;
-	detectThreshold = 0; // value of threshold 1
-	extractNpoints = 60; // spike length (n data pts)
-	prethreshold = 20; // offset spike npts before threshold
-	refractory = 20; // re-start detection n pts after threshold
+	detect_threshold = 0; // value of threshold 1
+	extract_n_points = 60; // spike length (n data pts)
+	detect_pre_threshold = 20; // offset spike npts before threshold
+	detect_refractory_period = 20; // re-start detection n pts after threshold
 	detectThresholdmV = 0.5f; // detection threshold in mV
 	detectWhat = DETECT_SPIKES; // detect spikes, 1=detect stimulus
 	detectMode = MODE_ON_OFF; // if sti, = ON/OFF
@@ -36,15 +36,15 @@ SPKDETECTPARM& SPKDETECTPARM::operator =(const SPKDETECTPARM& arg)
 	{
 		comment = arg.comment;
 		detectFrom = arg.detectFrom;
-		detectChan = arg.detectChan;
-		detectTransform = arg.detectTransform;
-		detectThreshold = arg.detectThreshold;
+		detect_channel = arg.detect_channel;
+		detect_transform = arg.detect_transform;
+		detect_threshold = arg.detect_threshold;
 		compensateBaseline = arg.compensateBaseline;
-		extractChan = arg.extractChan;
-		extractTransform = arg.extractTransform;
-		extractNpoints = arg.extractNpoints;
-		prethreshold = arg.prethreshold;
-		refractory = arg.refractory;
+		extract_channel = arg.extract_channel;
+		extract_transform = arg.extract_transform;
+		extract_n_points = arg.extract_n_points;
+		detect_pre_threshold = arg.detect_pre_threshold;
+		detect_refractory_period = arg.detect_refractory_period;
 		detectThresholdmV = arg.detectThresholdmV;
 		detectWhat = arg.detectWhat;
 		detectMode = arg.detectMode;
@@ -58,23 +58,23 @@ void SPKDETECTPARM::ReadVersionlessthan6(CArchive& ar, int version)
 	WORD wi;
 	ar >> comment; // CString
 	ar >> lw;
-	detectChan = lw; // long
+	detect_channel = lw; // long
 	ar >> lw;
-	detectTransform = lw; // long
+	detect_transform = lw; // long
 	ar >> wi;
 	detectFrom = wi; // WORD
 	ar >> wi;
 	compensateBaseline = wi; // WORD
 	ar >> lw;
-	detectThreshold = lw; // long
+	detect_threshold = lw; // long
 	if (version < 3) // dummy reading (threshold2: removed version 3)
 		ar >> lw;
 	ar >> lw;
-	extractNpoints = lw; // long
+	extract_n_points = lw; // long
 	ar >> lw;
-	prethreshold = lw; // long
+	detect_pre_threshold = lw; // long
 	ar >> lw;
-	refractory = lw; // long
+	detect_refractory_period = lw; // long
 	if (version < 3) // dummy reading (threshold adjust method)
 	{
 		// removed at version 3, moved to SPKdetectARRAY
@@ -87,9 +87,9 @@ void SPKDETECTPARM::ReadVersionlessthan6(CArchive& ar, int version)
 	if (version > 1) // added at version 2
 	{
 		ar >> lw;
-		extractChan = lw; // long
+		extract_channel = lw; // long
 		ar >> lw;
-		extractTransform = lw; // long
+		extract_transform = lw; // long
 	}
 }
 
@@ -109,21 +109,21 @@ void SPKDETECTPARM::ReadVersion6(CArchive& ar)
 	ASSERT(nitems == 0);
 
 	ar >> nitems;
-	ar >> detectChan;
+	ar >> detect_channel;
 	nitems--;
-	ar >> detectTransform;
+	ar >> detect_transform;
 	nitems--;
-	ar >> detectThreshold;
+	ar >> detect_threshold;
 	nitems--;
-	ar >> extractNpoints;
+	ar >> extract_n_points;
 	nitems--;
-	ar >> prethreshold;
+	ar >> detect_pre_threshold;
 	nitems--;
-	ar >> refractory;
+	ar >> detect_refractory_period;
 	nitems--;
-	ar >> extractChan;
+	ar >> extract_channel;
 	nitems--;
-	ar >> extractTransform;
+	ar >> extract_transform;
 	nitems--;
 	if (nitems > 0) ar >> detectWhat;
 	nitems--;
@@ -150,21 +150,21 @@ void SPKDETECTPARM::ReadVersion7(CArchive& ar)
 	nitems--;
 	ar >> compensateBaseline;
 	nitems--;
-	ar >> detectChan;
+	ar >> detect_channel;
 	nitems--;
-	ar >> detectTransform;
+	ar >> detect_transform;
 	nitems--;
-	ar >> detectThreshold;
+	ar >> detect_threshold;
 	nitems--;
-	ar >> extractNpoints;
+	ar >> extract_n_points;
 	nitems--;
-	ar >> prethreshold;
+	ar >> detect_pre_threshold;
 	nitems--;
-	ar >> refractory;
+	ar >> detect_refractory_period;
 	nitems--;
-	ar >> extractChan;
+	ar >> extract_channel;
 	nitems--;
-	ar >> extractTransform;
+	ar >> extract_transform;
 	nitems--;
 	ar >> detectWhat;
 	nitems--;
@@ -193,14 +193,14 @@ void SPKDETECTPARM::Serialize(CArchive& ar)
 		ar << nitems;
 		ar << detectFrom;
 		ar << compensateBaseline;
-		ar << detectChan;
-		ar << detectTransform;
-		ar << detectThreshold;
-		ar << extractNpoints;
-		ar << prethreshold;
-		ar << refractory;
-		ar << extractChan;
-		ar << extractTransform;
+		ar << detect_channel;
+		ar << detect_transform;
+		ar << detect_threshold;
+		ar << extract_n_points;
+		ar << detect_pre_threshold;
+		ar << detect_refractory_period;
+		ar << extract_channel;
+		ar << extract_transform;
 		ar << detectWhat;
 		ar << detectMode;
 

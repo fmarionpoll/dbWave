@@ -61,7 +61,7 @@ void SpikeList::Serialize(CArchive& ar)
 void SpikeList::read_file_version1(CArchive& ar)
 {
 	m_icenter1SL = 0;
-	m_icenter2SL = m_detection_parameters.prethreshold;
+	m_icenter2SL = m_detection_parameters.detect_pre_threshold;
 	m_imaxmin1SL = m_icenter2SL;
 	m_imaxmin2SL = GetSpikeLength() - 1;
 }
@@ -378,7 +378,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	if (version < 3)
 	{
 		m_icenter1SL = 0;
-		m_icenter2SL = m_detection_parameters.prethreshold;
+		m_icenter2SL = m_detection_parameters.detect_pre_threshold;
 		m_imaxmin1SL = m_icenter2SL;
 		m_imaxmin2SL = GetSpikeLength() - 1;
 	}
@@ -459,7 +459,7 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 
 	if (!b_found)
 	{
-		auto* se = new Spike(ii_time, source_channel, m_maximum_over_all_spikes, m_minimum_over_all_spikes, 0, i_class, 0);
+		auto* se = new Spike(ii_time, source_channel, 0, i_class, m_spike_length);
 		ASSERT(se != NULL);
 		m_spikes.InsertAt(index_added_spike, se);
 
@@ -467,7 +467,8 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 		{
 			se->TransferDataToSpikeBuffer(source_data, n_channels);
 			// compute max min between brackets for new spike
-			int max, min, i_max, i_min;
+			short max, min;
+			int i_max, i_min;
 			se->measure_max_min_ex(&max, &i_max, &min, &i_min, m_imaxmin1SL, m_imaxmin2SL);
 			se->SetMaxMinEx(max, min, i_min - i_max);
 		}
@@ -475,43 +476,95 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 	return index_added_spike;
 }
 
-void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, int* max, int* min)
+int SpikeList::get_index_first_spike(const int index_start, const boolean reject_artefacts)
+{
+	int index_found = -1;
+	const int n_spikes = m_spikes.GetCount();
+	if (n_spikes == 0)
+		return index_found;
+	for (auto index = index_start; index < n_spikes; index++)
+	{
+		const Spike* spike = GetSpike(index);
+		if (!reject_artefacts)
+		{
+			index_found = index_start;
+			break;
+		}
+
+		if (spike->get_class() >= 0)
+		{
+			index_found = index;
+			break;
+		}
+	}
+	return index_found;
+}
+
+void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, short* max, short* min)
 {
 	if (b_recalculate || !m_extrema_valid)
-	{
-		int min1 = 0;
-		int max1 = 65535;
-		const int n_spikes = m_spikes.GetCount();
-		if (n_spikes == 0)
-			return;
-
-		for (auto index = 0; index < n_spikes; index++)
-		{
-			const Spike* spike = GetSpike(index);
-			if (spike->get_class() >= 0)
-			{
-				spike->get_max_min(&max1, &min1);
-				break;
-			}
-		}
-		m_minimum_over_all_spikes = min1;
-		m_maximum_over_all_spikes = max1; 
-		for (auto index = 0; index < n_spikes; index++)
-		{
-			const Spike* spike = GetSpike(index);
-			if (spike->get_class() >= 0)
-			{
-				spike->get_max_min(&max1, &min1);
-				if (max1 > m_maximum_over_all_spikes) 
-					m_maximum_over_all_spikes = max1;
-				if (min1 < m_minimum_over_all_spikes) 
-					m_minimum_over_all_spikes = min1;
-			}
-		}
-		m_extrema_valid = TRUE;
-	}
+		get_total_max_min_measure();
 	*max = m_maximum_over_all_spikes;
 	*min = m_minimum_over_all_spikes;
+}
+
+void SpikeList::get_total_max_min_read()
+{
+	const int index0 = get_index_first_spike(0, true);
+	m_minimum_over_all_spikes = 0;
+	m_maximum_over_all_spikes = static_cast<short>(32767);
+	if (index0 < 0)
+		return;
+
+	short max1, min1;
+	const int n_spikes = m_spikes.GetCount();
+	GetSpike(index0)->get_max_min(&max1, &min1);
+	m_minimum_over_all_spikes = min1;
+	m_maximum_over_all_spikes = max1;
+
+	for (auto index = index0; index < n_spikes; index++)
+	{
+		const Spike* spike = GetSpike(index);
+		if (spike->get_class() >= 0)
+		{
+			spike->get_max_min(&max1, &min1);
+			if (max1 > m_maximum_over_all_spikes)
+				m_maximum_over_all_spikes = max1;
+			if (min1 < m_minimum_over_all_spikes)
+				m_minimum_over_all_spikes = min1;
+		}
+	}
+}
+
+void SpikeList::get_total_max_min_measure()
+{
+	const int index0 = get_index_first_spike(0, true);
+	m_minimum_over_all_spikes = 0;
+	m_maximum_over_all_spikes = static_cast<short>(32767);
+	if (index0 < 0)
+		return;
+
+	const int n_spikes = m_spikes.GetCount();
+	short max1, min1;
+	int max_index, min_index;
+	constexpr int i_first = 0;
+	const int i_last = GetSpikeLength() - 1;
+	GetSpike(index0)->measure_max_min_ex(&max1, &max_index, &min1, &min_index, i_first, i_last);
+	m_minimum_over_all_spikes = min1;
+	m_maximum_over_all_spikes = max1;
+
+	for (auto index = index0; index < n_spikes; index++)
+	{
+		const Spike* spike = GetSpike(index);
+		if (spike->get_class() >= 0)
+		{
+			spike->measure_max_min_ex(&max1, &max_index, &min1, &min_index, i_first, i_last);
+			if (max1 > m_maximum_over_all_spikes)
+				m_maximum_over_all_spikes = max1;
+			if (min1 < m_minimum_over_all_spikes)
+				m_minimum_over_all_spikes = min1;
+		}
+	}
 }
 
 BOOL SpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
@@ -531,7 +584,7 @@ BOOL SpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
 		m_data_encoding_mode = wave_format->mode_encoding;
 		m_bin_zero = wave_format->binzero;
 		m_sampling_rate = wave_format->sampling_rate_per_channel;
-		flag = p_data_file->GetWBVoltsperBin(m_detection_parameters.detectChan, &m_volts_per_bin);
+		flag = p_data_file->GetWBVoltsperBin(m_detection_parameters.detect_channel, &m_volts_per_bin);
 	}
 
 	if (!flag)
@@ -542,7 +595,7 @@ BOOL SpikeList::InitSpikeList(AcqDataDoc* p_data_file, SPKDETECTPARM* pFC)
 	}
 
 	// reset buffers, list, spk params
-	SetSpikeLength(m_detection_parameters.extractNpoints);
+	SetSpikeLength(m_detection_parameters.extract_n_points);
 
 	// reset classes
 	m_keep_only_valid_classes = FALSE; // default: no valid array
@@ -634,6 +687,12 @@ BOOL SpikeList::GetSpikeFlag(int spike_index)
 	return bFlag;
 }
 
+void SpikeList::RemoveAllSpikeFlags()
+{
+	if (m_index_flagged_spikes.GetCount() > 0) 
+		m_index_flagged_spikes.RemoveAll();
+}
+
 void SpikeList::FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet)
 {
 	// first clear flags of spikes within the flagged array which fall within limits
@@ -670,7 +729,7 @@ void SpikeList::SelectSpikesWithinBounds(const int v_min, const int v_max, const
 		if (l_time < l_first || l_time > l_last)
 			continue;
 
-		int max, min;
+		short max, min;
 		GetSpike(i)->get_max_min(&max, &min);
 		if (max > v_max) continue;
 		if (min < v_min) continue;
@@ -833,8 +892,10 @@ CSize SpikeList::Measure_Y1_MaxMin()
 	for (auto spike_index = 0; spike_index < n_spikes; spike_index++)
 	{
 		const auto val = GetSpike(spike_index)->get_y1();
-		if (val > max) max = val;
-		if (val < min) min = val;
+		if (val > max) 
+			max = val;
+		if (val < min) 
+			min = val;
 	}
 
 	return {max, min};

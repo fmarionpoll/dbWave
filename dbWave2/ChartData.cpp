@@ -1132,10 +1132,10 @@ BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("%s\t\r\n"), static_cast<LPCTSTR>(pwave_format->GetComments(_T("\t"), 0)));
 			// time interval
-			auto tt = float(GetDataFirst()) / pwave_format->sampling_rate_per_channel; 
+			auto tt = float(GetDataFirstIndex()) / pwave_format->sampling_rate_per_channel; 
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("time start(s):\t%f\r\n"), tt);
-			tt = float(GetDataLast()) / pwave_format->sampling_rate_per_channel; 
+			tt = float(GetDataLastIndex()) / pwave_format->sampling_rate_per_channel; 
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("time end(s):\t%f"), tt);
 			if (iunit == 0)

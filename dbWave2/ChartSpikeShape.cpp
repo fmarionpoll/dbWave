@@ -592,7 +592,7 @@ void ChartSpikeShapeWnd::getExtentsCurrentSpkList()
 {
 	if (m_yWE == 1 || m_yWE == 0)
 	{
-		int value_max, value_min;
+		short value_max, value_min;
 		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = MulDiv((value_max - value_min), 10, 9) + 1;
 		m_yWO = value_max / 2 + value_min / 2;
@@ -648,7 +648,7 @@ void ChartSpikeShapeWnd::Print(CDC* p_dc, CRect* rect)
 	// check initial conditions
 	if (m_yWE == 1) 
 	{
-		int value_max, value_min;
+		short value_max, value_min;
 		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = value_max - value_min + 1;
 		m_yWO = (value_max + value_min) / 2;

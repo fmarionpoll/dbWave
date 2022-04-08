@@ -47,7 +47,7 @@ void SpikeFromChan::Serialize(CArchive& ar)
 		if (version < 3)
 		{
 			ar >> w;
-			parm.extractChan = w;
+			parm.extract_channel = w;
 		}
 		ar >> encoding;
 		ar >> voltsperbin;
@@ -55,18 +55,18 @@ void SpikeFromChan::Serialize(CArchive& ar)
 		if (version < 3)
 		{
 			ar >> w;
-			parm.detectTransform = w;
+			parm.detect_transform = w;
 			ar >> w;
 			parm.detectFrom = w;
 			ar >> w;
-			parm.detectThreshold = w;
+			parm.detect_threshold = w;
 			ar >> w; // unused parameter, removed at version 3
 			ar >> w;
-			parm.extractNpoints = w;
+			parm.extract_n_points = w;
 			ar >> w;
-			parm.prethreshold = w;
+			parm.detect_pre_threshold = w;
 			ar >> w;
-			parm.refractory = w;
+			parm.detect_refractory_period = w;
 		}
 		else
 		{

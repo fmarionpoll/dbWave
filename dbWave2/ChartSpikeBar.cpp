@@ -75,7 +75,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 		// display data: trap error conditions
 		if (m_yWE == 1)
 		{
-			int value_max, value_min;
+			short value_max, value_min;
 			p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 			m_yWE = value_max - value_min;
 			m_yWO = (value_max + value_min) / 2;
@@ -169,7 +169,7 @@ void ChartSpikeBar::PlotSingleSpkDataToDC(CDC* p_dc)
 	// display data: trap error conditions
 	if (m_yWE == 1)
 	{
-		int value_max, value_min;
+		short value_max, value_min;
 		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = value_max - value_min;
 		m_yWO = (value_max + value_min) / 2;
@@ -290,7 +290,7 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 	const long rect_width = rect->Width();
 	if (m_yWE == 1)
 	{
-		int value_max, value_min;
+		short value_max, value_min;
 		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
 		m_yWE = value_max - value_min;
 		m_yWO = (value_max + value_min) / 2;
@@ -318,8 +318,7 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 		i_first = m_index_first_spike; // assuming an ordered list...
 	}
 	const auto len = (m_lLast - m_lFirst + 1);
-	int max, min;
-
+	
 	auto pen_color = BLACK_COLOR;
 	for (auto i_spike = i_last; i_spike >= i_first; i_spike--)
 	{
@@ -353,11 +352,12 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 		p_dc->SelectObject(&m_penTable[pen_color]);
 
 		// and draw spike: compute abscissa & draw from max to min
-		const auto llk = MulDiv((l_spike_time - m_lFirst), rect_width, len); 
+		const auto llk = MulDiv((l_spike_time - m_lFirst), rect_width, len);
 		const int abscissa = static_cast<int>(llk) + rect->left;
+		short max, min;
 		p_spike_list->GetSpike(i_spike)->get_max_min(&max, &min);
-		max = MulDiv(max - y_wo, y_ve, y_we) + y_vo;
-		min = MulDiv(min - y_wo, y_ve, y_we) + y_vo;
+		max = static_cast<short>(MulDiv(max - y_wo, y_ve, y_we) + y_vo);
+		min = static_cast<short>(MulDiv(min - y_wo, y_ve, y_we) + y_vo);
 		p_dc->MoveTo(abscissa, max);
 		p_dc->LineTo(abscissa, min);
 
@@ -439,7 +439,7 @@ void ChartSpikeBar::DisplayFlaggedSpikes(const BOOL b_high_light)
 		const auto len = m_lLast - m_lFirst + 1;
 		const auto llk = MulDiv(l_spike_time - m_lFirst, m_xWE, len);
 		const auto abscissa = static_cast<int>(llk) + m_xWO;
-		int max, min;
+		short max, min;
 		spike->get_max_min(&max, &min);
 
 		dc.MoveTo(abscissa, max);
@@ -514,7 +514,7 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 	const auto len = m_lLast - m_lFirst + 1;
 	const auto llk = MulDiv(l_spike_time - m_lFirst, m_xWE, len);
 	const auto abscissa = static_cast<int>(llk) + m_xWO;
-	int max, min;
+	short max, min;
 	p_spike_list->GetSpike(no_spike)->get_max_min(&max, &min);
 
 	dc.MoveTo(abscissa, max);
@@ -819,8 +819,7 @@ int ChartSpikeBar::hitCurve(const CPoint point)
 			&& spike->get_class() != m_selected_class)
 			continue;
 
-		int max;
-		int min;
+		short max, min;
 		spike->get_max_min(&max, &min);
 		if (mouse_y + delta_y < max && mouse_y - delta_y > min)
 		{
@@ -836,7 +835,7 @@ void ChartSpikeBar::CenterCurve()
 {
 	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() <= 0)
 		return;
-	int max, min;
+	short max, min;
 	p_spike_list->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWO = max / 2 + min / 2;
 }
@@ -845,7 +844,7 @@ void ChartSpikeBar::MaxGain()
 {
 	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() <= 0)
 		return;
-	int max, min;
+	short max, min;
 	p_spike_list->GetTotalMaxMin(TRUE, &max, &min);
 	m_yWE = MulDiv(max - min + 1, 10, 8);
 }
@@ -854,7 +853,7 @@ void ChartSpikeBar::MaxCenter()
 {
 	if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() <= 0)
 		return;
-	int max, min;
+	short max, min;
 	p_spike_list->GetTotalMaxMin(TRUE, &max, &min);
 	
 	m_yWE = MulDiv(max - min + 1, 10, 8);
