@@ -17,8 +17,8 @@ private:
 	int m_detection_parameters_index = 0;	// spike detection array index
 	short m_value_max = 4096;				// spike max (used to scan rapidly to adjust display)
 	short m_value_min = 0;					// spike min (used to scan rapidly to adjust display)
-	int m_d_max_min = 0;
-	int m_offset = 2048;					// offset voltage pt 1
+	short m_d_max_min = 0;
+	short m_offset = 2048;					// offset voltage pt 1
 	int y1_ = 0;							// parameter measured and stored
 	int y2_ = 0;
 	int dt_ = 0;

@@ -547,7 +547,7 @@ void SpikeList::get_total_max_min_measure()
 	const int n_spikes = m_spikes.GetCount();
 	short max1, min1;
 	int max_index, min_index;
-	constexpr int i_first = 0;
+	constexpr int i_first = 1;
 	const int i_last = GetSpikeLength() - 1;
 	GetSpike(index0)->measure_max_min_ex(&max1, &max_index, &min1, &min_index, i_first, i_last);
 	m_minimum_over_all_spikes = min1;

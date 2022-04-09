@@ -107,7 +107,7 @@ void Spike::read_version0(CArchive& ar)
 
 short* Spike::get_p_data(int spike_length)
 {
-	constexpr int delta = 2;
+	constexpr int delta = 0;
 	const size_t spike_data_length = sizeof(short) * (spike_length + delta);
 	if (m_spike_data_buffer == nullptr)
 	{
@@ -146,9 +146,9 @@ void Spike::measure_max_min_ex(short* value_max, int* index_max, short* value_mi
 	auto lp_buffer = get_p_data() + i_first;
 	auto val = *lp_buffer;
 	*value_max = val;
-	*value_min = *value_max;
+	*value_min = val;
 	*index_min = *index_max = i_first;
-	for (auto i = i_first + 1; i <= i_last; i++)
+	for (auto i = i_first + 1; i < i_last; i++)
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -223,12 +223,13 @@ void Spike::TransferDataToSpikeBuffer(short* source_data, const int source_n_cha
 	}
 }
 
-void Spike::OffsetSpikeData(short offset)
+void Spike::OffsetSpikeData(const short offset)
 {
 	auto lp_dest = get_p_data(get_spike_length());
-	const auto offset_short = static_cast<short>(offset);
 	for (auto i = get_spike_length(); i > 0; i--, lp_dest++)
-		*lp_dest -= offset_short;
+	{
+		*lp_dest += offset; 
+	}
 	
 	m_offset = offset;
 	m_value_max -= offset;
@@ -239,7 +240,7 @@ void Spike::OffsetSpikeDataToAverageEx(int i_first, int i_last)
 {
 	const long average_value = MeasureSumEx(i_first, i_last);
 	const int offset = (average_value / (i_last - i_first + 1)) - m_bin_zero;
-	OffsetSpikeData(offset);
+	OffsetSpikeData(static_cast<short>(offset));
 }
 
 void Spike::OffsetSpikeDataToExtremaEx(int i_first, int i_last)
@@ -248,7 +249,7 @@ void Spike::OffsetSpikeDataToExtremaEx(int i_first, int i_last)
 	int max_index, min_index;
 	measure_max_min_ex(&value_max, &max_index, &value_min, &min_index, i_first, i_last);
 	const int offset = (value_max + value_min) / 2 - m_bin_zero;
-	OffsetSpikeData(offset);
+	OffsetSpikeData(static_cast<short>(offset));
 }
 
 void Spike::CenterSpikeAmplitude(const int i_first, const int i_last, const WORD method)
