@@ -469,7 +469,7 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 			// compute max min between brackets for new spike
 			short max, min;
 			int i_max, i_min;
-			se->measure_max_min_ex(&max, &i_max, &min, &i_min, m_imaxmin1SL, m_imaxmin2SL);
+			se->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, m_spike_length-1);
 			se->SetMaxMinEx(max, min, i_min - i_max);
 		}
 	}
@@ -511,16 +511,15 @@ void SpikeList::GetTotalMaxMin(const BOOL b_recalculate, short* max, short* min)
 void SpikeList::get_total_max_min_read()
 {
 	const int index0 = get_index_first_spike(0, true);
-	m_minimum_over_all_spikes = m_bin_zero;
-	m_maximum_over_all_spikes = m_bin_zero;
+	m_minimum_over_all_spikes = static_cast<short>(m_bin_zero);
+	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
 	if (index0 < 0)
 		return;
 
 	short max1, min1;
 	const int n_spikes = m_spikes.GetCount();
-	GetSpike(index0)->get_max_min(&max1, &min1);
-	m_minimum_over_all_spikes = min1;
-	m_maximum_over_all_spikes = max1;
+	m_minimum_over_all_spikes = GetSpike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL)/2);;
+	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
 
 	for (auto index = index0; index < n_spikes; index++)
 	{
@@ -539,25 +538,24 @@ void SpikeList::get_total_max_min_read()
 void SpikeList::get_total_max_min_measure()
 {
 	const int index0 = get_index_first_spike(0, true);
-	m_minimum_over_all_spikes = m_bin_zero;
-	m_maximum_over_all_spikes = m_bin_zero;
+	m_minimum_over_all_spikes = static_cast<short>(m_bin_zero);
+	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
 	if (index0 < 0)
 		return;
 
 	const int n_spikes = m_spikes.GetCount();
 	short max1, min1;
 	int max_index, min_index;
-	constexpr int i_first = 1;
 	const int i_last = GetSpikeLength() - 1;
-	GetSpike(index0)->measure_max_min_ex(&max1, &max_index, &min1, &min_index, i_first, i_last);
-	m_minimum_over_all_spikes = min1;
-	m_maximum_over_all_spikes = max1;
+	m_minimum_over_all_spikes = GetSpike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL) / 2);;
+	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
 
 	for (auto index = index0; index < n_spikes; index++)
 	{
 		const Spike* spike = GetSpike(index);
 		if (spike->get_class() >= 0)
 		{
+			constexpr int i_first = 1;
 			spike->measure_max_min_ex(&max1, &max_index, &min1, &min_index, i_first, i_last);
 			if (max1 > m_maximum_over_all_spikes)
 				m_maximum_over_all_spikes = max1;

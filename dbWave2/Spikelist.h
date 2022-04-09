@@ -33,7 +33,7 @@ public:
 	int m_icenter1SL = 0;
 	int m_icenter2SL = 60;
 	int m_imaxmin1SL = 0;
-	int m_imaxmin2SL = 60;
+	int m_imaxmin2SL = 59;
 
 	// Description
 protected:
