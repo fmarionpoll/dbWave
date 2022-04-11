@@ -35,7 +35,7 @@ public:
 protected:
 	void ReadVersionlessthan6(CArchive& ar, int version);
 	void ReadVersion6(CArchive& ar);
-	void ReadVersion7(CArchive& ar);
+	void Serialize_v7(CArchive& ar);
 
 public:
 	SPKDETECTPARM();

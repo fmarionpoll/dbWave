@@ -97,100 +97,43 @@ void SPKDETECTPARM::ReadVersion6(CArchive& ar)
 {
 	int nitems;
 	ar >> nitems;
-	ar >> comment;
-	nitems--;
+	ar >> comment; nitems--;
 	ASSERT(nitems == 0);
 
 	ar >> nitems;
-	ar >> detectFrom;
-	nitems--;
-	ar >> compensateBaseline;
-	nitems--;
+	ar >> detectFrom; nitems--;
+	ar >> compensateBaseline; nitems--;
 	ASSERT(nitems == 0);
 
 	ar >> nitems;
-	ar >> detect_channel;
-	nitems--;
-	ar >> detect_transform;
-	nitems--;
-	ar >> detect_threshold;
-	nitems--;
-	ar >> extract_n_points;
-	nitems--;
-	ar >> detect_pre_threshold;
-	nitems--;
-	ar >> detect_refractory_period;
-	nitems--;
-	ar >> extract_channel;
-	nitems--;
-	ar >> extract_transform;
-	nitems--;
-	if (nitems > 0) ar >> detectWhat;
-	nitems--;
-	if (nitems > 0) ar >> detectMode;
-	nitems--;
+	ar >> detect_channel; nitems--;
+	ar >> detect_transform; nitems--;
+	ar >> detect_threshold; nitems--;
+	ar >> extract_n_points; nitems--;
+	ar >> detect_pre_threshold; nitems--;
+	ar >> detect_refractory_period; nitems--;
+	ar >> extract_channel; nitems--;
+	ar >> extract_transform; nitems--;
+	if (nitems > 0) ar >> detectWhat; nitems--;
+	if (nitems > 0) ar >> detectMode; nitems--;
 
 	ar >> nitems;
-	ar >> detectThresholdmV;
-	nitems--;
+	ar >> detectThresholdmV; nitems--;
 	ASSERT(nitems == 0);
 }
 
-void SPKDETECTPARM::ReadVersion7(CArchive& ar)
-{
-	int nitems;
-	// string parameters
-	ar >> nitems;
-	ar >> comment;
-	nitems--;
-	ASSERT(nitems == 0);
-	// int parameters
-	ar >> nitems;
-	ar >> detectFrom;
-	nitems--;
-	ar >> compensateBaseline;
-	nitems--;
-	ar >> detect_channel;
-	nitems--;
-	ar >> detect_transform;
-	nitems--;
-	ar >> detect_threshold;
-	nitems--;
-	ar >> extract_n_points;
-	nitems--;
-	ar >> detect_pre_threshold;
-	nitems--;
-	ar >> detect_refractory_period;
-	nitems--;
-	ar >> extract_channel;
-	nitems--;
-	ar >> extract_transform;
-	nitems--;
-	ar >> detectWhat;
-	nitems--;
-	ar >> detectMode;
-	nitems--;
-
-	ASSERT(nitems == 0);
-	// float
-	ar >> nitems;
-	ar >> detectThresholdmV;
-	nitems--;
-	ASSERT(nitems == 0);
-}
-
-void SPKDETECTPARM::Serialize(CArchive& ar)
+void SPKDETECTPARM::Serialize_v7(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
 		// version 7 (Aug 19 2005 FMP)
 		ar << wversion;
-		int nitems = 1;
-		ar << nitems;
+		int n_items = 1;
+		ar << n_items;
 		ar << comment;
 
-		nitems = 12;
-		ar << nitems;
+		n_items = 12;
+		ar << n_items;
 		ar << detectFrom;
 		ar << compensateBaseline;
 		ar << detect_channel;
@@ -204,29 +147,59 @@ void SPKDETECTPARM::Serialize(CArchive& ar)
 		ar << detectWhat;
 		ar << detectMode;
 
-		nitems = 1;
-		ar << nitems;
+		n_items = 1;
+		ar << n_items;
 		ar << detectThresholdmV;
 	}
 	else
 	{
-		WORD version;
-		ar >> version;
-		if (version != wversion)
-		{
-			if (version > 0 && version < 5)
-				ReadVersionlessthan6(ar, version);
-			else if (version < 7) //== 6)
-				ReadVersion6(ar);
-			else
-			{
-				ASSERT(FALSE);
-				CString message;
-				message.Format(_T("Error: version (%i) not recognized"), version);
-				AfxMessageBox(message, MB_OK);
-			}
-		}
+		int nitems;  // string parameters
+		ar >> nitems;
+		ar >> comment; nitems--;
+		ASSERT(nitems == 0);
+		
+		ar >> nitems; // int parameters
+		ar >> detectFrom; nitems--;
+		ar >> compensateBaseline; nitems--;
+		ar >> detect_channel; nitems--;
+		ar >> detect_transform; nitems--;
+		ar >> detect_threshold; nitems--;
+		ar >> extract_n_points; nitems--;
+		ar >> detect_pre_threshold; nitems--;
+		ar >> detect_refractory_period; nitems--;
+		ar >> extract_channel; nitems--;
+		ar >> extract_transform; nitems--;
+		ar >> detectWhat; nitems--;
+		ar >> detectMode; nitems--;
+		ASSERT(nitems == 0);
+		
+		ar >> nitems; // float
+		ar >> detectThresholdmV; nitems--;
+		ASSERT(nitems == 0);
+	}
+}
+
+void SPKDETECTPARM::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{
+		Serialize_v7(ar);
+	}
+	else
+	{
+		WORD version; ar >> version;
+		if (version == 7)
+			Serialize_v7(ar);
+		else if (version > 0 && version < 5)
+			ReadVersionlessthan6(ar, version);
+		else if (version < 7) //== 6)
+			ReadVersion6(ar);
 		else
-			ReadVersion7(ar);
+		{
+			ASSERT(FALSE);
+			CString message;
+			message.Format(_T("Error: version (%i) not recognized"), version);
+			AfxMessageBox(message, MB_OK);
+		}
 	}
 }
