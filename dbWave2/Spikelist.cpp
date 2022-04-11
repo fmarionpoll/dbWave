@@ -158,7 +158,9 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 		{
 			for (auto i = 0; i < n_spikes; i++)
 			{
-				ar.Write(GetSpike(i)->get_p_data(spike_length), n_bytes);
+				Spike* spike = GetSpike(i);
+				const short* data = spike->get_p_data(spike_length);
+				ar.Write(data, n_bytes);
 			}
 		}
 	}
@@ -170,7 +172,9 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 		const auto n_bytes = spike_length * sizeof(short) ;
 		for (auto i = 0; i < n_spikes; i++)
 		{
-			ar.Read(GetSpike(i)->get_p_data(spike_length), n_bytes);
+			Spike* spike = GetSpike(i);
+			short* data = spike->get_p_data(spike_length);
+			ar.Read(data, n_bytes);
 		}
 	}
 }

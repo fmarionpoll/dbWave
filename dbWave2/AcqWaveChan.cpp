@@ -81,8 +81,8 @@ void CWaveChan::Serialize(CArchive& ar)
 		ar << am_csamplifier << static_cast<WORD>(am_amplifierchan);
 		ar << static_cast<WORD>(am_gainpre) << static_cast<WORD>(am_gainpost);
 		ar << static_cast<WORD>(am_notchfilt) << static_cast<WORD>(am_lowpass);
-		am_inputpos = 0; // dummy value (version april 2004 to add csInput)
-		am_inputneg = 0; // dummy value (version april 2004 to add csInput)
+		am_inputpos = 0; // dummy value
+		am_inputneg = 0; // dummy value
 		ar << am_inputpos << am_inputneg;
 		ar << am_offset;
 		ar << am_csInputpos;
@@ -97,15 +97,14 @@ void CWaveChan::Serialize(CArchive& ar)
 	{
 		WORD w1, w2, w3, w4;
 		ar >> am_csComment;
-		float gain;
-		ar >> gain; // dummy
+		float gain; ar >> gain; 
 		ar >> w1 >> w2;
 		am_adchannel = static_cast<short>(w1);
 		am_gainAD = static_cast<short>(w2);
 		ar >> am_csheadstage;
-		ar >> w1;
-		am_gainheadstage = w1;
-		ar >> am_csamplifier >> w1 >> w2 >> w3;
+		ar >> w1; am_gainheadstage = w1;
+		ar >> am_csamplifier;
+		ar >> w1 >> w2 >> w3;
 		am_amplifierchan = static_cast<short>(w1);
 		am_gainpre = static_cast<short>(w2);
 		am_gainpost = static_cast<short>(w3);
