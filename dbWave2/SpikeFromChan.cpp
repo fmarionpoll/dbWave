@@ -57,9 +57,9 @@ void SpikeFromChan::Serialize(CArchive& ar)
 			ar >> w;
 			parm.detect_transform = w;
 			ar >> w;
-			parm.detectFrom = w;
+			parm.detect_from = w;
 			ar >> w;
-			parm.detect_threshold = w;
+			parm.detect_threshold_bin = w;
 			ar >> w; // unused parameter, removed at version 3
 			ar >> w;
 			parm.extract_n_points = w;

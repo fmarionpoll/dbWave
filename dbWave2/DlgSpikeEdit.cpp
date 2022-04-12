@@ -93,7 +93,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		m_ChartDataWnd.RemoveAllChanlistItems();
 		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extract_channel, m_pSpkList->GetDetectParms()->extract_transform);
 
-		if (m_pSpkList->GetDetectParms()->compensateBaseline)
+		if (m_pSpkList->GetDetectParms()->compensate_Baseline)
 		{
 			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extract_channel, MOVAVG30);
 			m_ChartDataWnd.GetChanlistItem(1)->SetColor(6);
@@ -290,7 +290,7 @@ void DlgSpikeEdit::OnEnChangeYextent()
 		{
 			m_yextent = m_yvextent;
 			m_ChartDataWnd.GetChanlistItem(0)->SetYextent(m_yextent);
-			if (m_pSpkList->GetDetectParms()->compensateBaseline)
+			if (m_pSpkList->GetDetectParms()->compensate_Baseline)
 				m_ChartDataWnd.GetChanlistItem(1)->SetYextent(m_yextent);
 			m_SpkChartWnd.SetYWExtOrg(m_yextent, m_yzero);
 			m_ChartDataWnd.Invalidate();
@@ -331,7 +331,7 @@ void DlgSpikeEdit::LoadSourceData()
 	chan0->SetYzero(m_yzero + spike->get_amplitude_offset());
 	chan0->SetYextent(m_yextent);
 
-	if (m_pSpkList->GetDetectParms()->compensateBaseline)
+	if (m_pSpkList->GetDetectParms()->compensate_Baseline)
 	{
 		CChanlistItem* chan1 = m_ChartDataWnd.GetChanlistItem(1);
 		chan1->SetYzero(m_yzero + spike->get_amplitude_offset());

@@ -99,15 +99,15 @@ void DlgSpikeDetect::SaveChanParameters(int chan)
 
 	// spikes detection parameters
 	const auto flag2 = static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck();
-	m_pspkD->detectFrom = flag2 ? 0 : 1;
+	m_pspkD->detect_from = flag2 ? 0 : 1;
 	m_pspkD->detect_channel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
 	m_pspkD->detect_transform = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
-	m_pspkD->detect_threshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
+	m_pspkD->detect_threshold_bin = GetDlgItemInt(IDC_DETECTTHRESHOLD);
 
 	// detect spikes
 	if (static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->GetCheck() == BST_CHECKED)
 	{
-		m_pspkD->detectWhat = DETECT_SPIKES;
+		m_pspkD->detect_what = DETECT_SPIKES;
 		m_pspkD->extract_channel = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
 		m_pspkD->extract_transform = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
 		m_pspkD->extract_n_points = GetDlgItemInt(IDC_SPIKENPOINTS);
@@ -117,8 +117,8 @@ void DlgSpikeDetect::SaveChanParameters(int chan)
 	// detect stimulus
 	else
 	{
-		m_pspkD->detectWhat = DETECT_STIMULUS;
-		m_pspkD->detectMode = static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
+		m_pspkD->detect_what = DETECT_STIMULUS;
+		m_pspkD->detect_mode = static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
 		m_pspkD->extract_channel = m_pspkD->detect_channel;
 	}
 }
@@ -129,7 +129,7 @@ void DlgSpikeDetect::LoadChanParameters(int chan)
 	m_pspkD = m_pDetectSettingsArray->GetItem(chan);
 	GetDlgItem(IDC_COMMENT)->SetWindowText(m_pspkD->comment);
 
-	if (m_pspkD->detectWhat == DETECT_SPIKES)
+	if (m_pspkD->detect_what == DETECT_SPIKES)
 	{
 		static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_CHECKED);
 		static_cast<CButton*>(GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_UNCHECKED);
@@ -139,16 +139,16 @@ void DlgSpikeDetect::LoadChanParameters(int chan)
 		static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_UNCHECKED);
 		static_cast<CButton*>(GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_CHECKED);
 	}
-	SetDlgInterfaceState(m_pspkD->detectWhat);
+	SetDlgInterfaceState(m_pspkD->detect_what);
 
 	// spikes detection parameters
-	const BOOL flag = (m_pspkD->detectFrom == 0);
+	const BOOL flag = (m_pspkD->detect_from == 0);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->SetCheck(flag);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMTAG))->SetCheck(!flag);
 	DisplayDetectFromChan();
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->SetCurSel(m_pspkD->detect_channel);
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(m_pspkD->detect_transform);
-	SetDlgItemInt(IDC_DETECTTHRESHOLD, m_pspkD->detect_threshold);
+	SetDlgItemInt(IDC_DETECTTHRESHOLD, m_pspkD->detect_threshold_bin);
 
 	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->SetCurSel(m_pspkD->extract_channel);
 	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->SetCurSel(m_pspkD->extract_transform);
@@ -158,7 +158,7 @@ void DlgSpikeDetect::LoadChanParameters(int chan)
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(mdPM->bDetectWhileBrowse);
 
 	// stimulus detection parameters
-	static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(m_pspkD->detectMode);
+	static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(m_pspkD->detect_mode);
 
 	// select proper tab
 	m_cParameterTabCtrl.SetCurSel(chan);
@@ -226,14 +226,14 @@ void DlgSpikeDetect::SetDlgInterfaceState(int detectWhat)
 
 void DlgSpikeDetect::OnBnClickedSpikesradio()
 {
-	m_pspkD->detectWhat = DETECT_SPIKES;
-	SetDlgInterfaceState(m_pspkD->detectWhat);
+	m_pspkD->detect_what = DETECT_SPIKES;
+	SetDlgInterfaceState(m_pspkD->detect_what);
 }
 
 void DlgSpikeDetect::OnBnClickedStimradio()
 {
-	m_pspkD->detectWhat = DETECT_STIMULUS;
-	SetDlgInterfaceState(m_pspkD->detectWhat);
+	m_pspkD->detect_what = DETECT_STIMULUS;
+	SetDlgInterfaceState(m_pspkD->detect_what);
 }
 
 void DlgSpikeDetect::OnBnClickedAddparambttn()

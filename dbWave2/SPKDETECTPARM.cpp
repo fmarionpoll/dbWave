@@ -8,22 +8,22 @@
 
 IMPLEMENT_SERIAL(SPKDETECTPARM, CObject, 0 /* schema number*/)
 
-SPKDETECTPARM::SPKDETECTPARM() : bChanged(0)
+SPKDETECTPARM::SPKDETECTPARM() : b_changed(0)
 {
-	wversion = 7; // version 6 (Aug 19 2005 FMP)
+	w_version = 7; // version 6 (Aug 19 2005 FMP)
 	detect_channel = 0; // source channel
 	detect_transform = 13; // detect from data transformed - i = transform method cf AcqDataDoc
-	detectFrom = 0; // detection method 0=data, 1=tags
+	detect_from = 0; // detection method 0=data, 1=tags
 	extract_channel = 0;
 	extract_transform = 13;
-	compensateBaseline = FALSE;
-	detect_threshold = 0; // value of threshold 1
+	compensate_Baseline = FALSE;
+	detect_threshold_bin = 0; // value of threshold 1
 	extract_n_points = 60; // spike length (n data pts)
 	detect_pre_threshold = 20; // offset spike npts before threshold
 	detect_refractory_period = 20; // re-start detection n pts after threshold
-	detectThresholdmV = 0.5f; // detection threshold in mV
-	detectWhat = DETECT_SPIKES; // detect spikes, 1=detect stimulus
-	detectMode = MODE_ON_OFF; // if sti, = ON/OFF
+	detect_threshold_mv = 0.5f; // detection threshold in mV
+	detect_what = DETECT_SPIKES; // detect spikes, 1=detect stimulus
+	detect_mode = MODE_ON_OFF; // if sti, = ON/OFF
 }
 
 SPKDETECTPARM::~SPKDETECTPARM()
@@ -35,24 +35,24 @@ SPKDETECTPARM& SPKDETECTPARM::operator =(const SPKDETECTPARM& arg)
 	if (this != &arg)
 	{
 		comment = arg.comment;
-		detectFrom = arg.detectFrom;
+		detect_from = arg.detect_from;
 		detect_channel = arg.detect_channel;
 		detect_transform = arg.detect_transform;
-		detect_threshold = arg.detect_threshold;
-		compensateBaseline = arg.compensateBaseline;
+		detect_threshold_bin = arg.detect_threshold_bin;
+		compensate_Baseline = arg.compensate_Baseline;
 		extract_channel = arg.extract_channel;
 		extract_transform = arg.extract_transform;
 		extract_n_points = arg.extract_n_points;
 		detect_pre_threshold = arg.detect_pre_threshold;
 		detect_refractory_period = arg.detect_refractory_period;
-		detectThresholdmV = arg.detectThresholdmV;
-		detectWhat = arg.detectWhat;
-		detectMode = arg.detectMode;
+		detect_threshold_mv = arg.detect_threshold_mv;
+		detect_what = arg.detect_what;
+		detect_mode = arg.detect_mode;
 	}
 	return *this;
 }
 
-void SPKDETECTPARM::ReadVersionlessthan6(CArchive& ar, int version)
+void SPKDETECTPARM::Read_v5(CArchive& ar, int version)
 {
 	long lw;
 	WORD wi;
@@ -62,11 +62,11 @@ void SPKDETECTPARM::ReadVersionlessthan6(CArchive& ar, int version)
 	ar >> lw;
 	detect_transform = lw; // long
 	ar >> wi;
-	detectFrom = wi; // WORD
+	detect_from = wi; // WORD
 	ar >> wi;
-	compensateBaseline = wi; // WORD
+	compensate_Baseline = wi; // WORD
 	ar >> lw;
-	detect_threshold = lw; // long
+	detect_threshold_bin = lw; // long
 	if (version < 3) // dummy reading (threshold2: removed version 3)
 		ar >> lw;
 	ar >> lw;
@@ -93,7 +93,7 @@ void SPKDETECTPARM::ReadVersionlessthan6(CArchive& ar, int version)
 	}
 }
 
-void SPKDETECTPARM::ReadVersion6(CArchive& ar)
+void SPKDETECTPARM::Read_v6(CArchive& ar)
 {
 	int nitems;
 	ar >> nitems;
@@ -101,24 +101,24 @@ void SPKDETECTPARM::ReadVersion6(CArchive& ar)
 	ASSERT(nitems == 0);
 
 	ar >> nitems;
-	ar >> detectFrom; nitems--;
-	ar >> compensateBaseline; nitems--;
+	ar >> detect_from; nitems--;
+	ar >> compensate_Baseline; nitems--;
 	ASSERT(nitems == 0);
 
 	ar >> nitems;
 	ar >> detect_channel; nitems--;
 	ar >> detect_transform; nitems--;
-	ar >> detect_threshold; nitems--;
+	ar >> detect_threshold_bin; nitems--;
 	ar >> extract_n_points; nitems--;
 	ar >> detect_pre_threshold; nitems--;
 	ar >> detect_refractory_period; nitems--;
 	ar >> extract_channel; nitems--;
 	ar >> extract_transform; nitems--;
-	if (nitems > 0) ar >> detectWhat; nitems--;
-	if (nitems > 0) ar >> detectMode; nitems--;
+	if (nitems > 0) ar >> detect_what; nitems--;
+	if (nitems > 0) ar >> detect_mode; nitems--;
 
 	ar >> nitems;
-	ar >> detectThresholdmV; nitems--;
+	ar >> detect_threshold_mv; nitems--;
 	ASSERT(nitems == 0);
 }
 
@@ -127,29 +127,29 @@ void SPKDETECTPARM::Serialize_v7(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		// version 7 (Aug 19 2005 FMP)
-		ar << wversion;
+		ar << w_version;
 		int n_items = 1;
 		ar << n_items;
 		ar << comment;
 
 		n_items = 12;
 		ar << n_items;
-		ar << detectFrom;
-		ar << compensateBaseline;
+		ar << detect_from;
+		ar << compensate_Baseline;
 		ar << detect_channel;
 		ar << detect_transform;
-		ar << detect_threshold;
+		ar << detect_threshold_bin;
 		ar << extract_n_points;
 		ar << detect_pre_threshold;
 		ar << detect_refractory_period;
 		ar << extract_channel;
 		ar << extract_transform;
-		ar << detectWhat;
-		ar << detectMode;
+		ar << detect_what;
+		ar << detect_mode;
 
 		n_items = 1;
 		ar << n_items;
-		ar << detectThresholdmV;
+		ar << detect_threshold_mv;
 	}
 	else
 	{
@@ -159,22 +159,22 @@ void SPKDETECTPARM::Serialize_v7(CArchive& ar)
 		ASSERT(nitems == 0);
 		
 		ar >> nitems; // int parameters
-		ar >> detectFrom; nitems--;
-		ar >> compensateBaseline; nitems--;
+		ar >> detect_from; nitems--;
+		ar >> compensate_Baseline; nitems--;
 		ar >> detect_channel; nitems--;
 		ar >> detect_transform; nitems--;
-		ar >> detect_threshold; nitems--;
+		ar >> detect_threshold_bin; nitems--;
 		ar >> extract_n_points; nitems--;
 		ar >> detect_pre_threshold; nitems--;
 		ar >> detect_refractory_period; nitems--;
 		ar >> extract_channel; nitems--;
 		ar >> extract_transform; nitems--;
-		ar >> detectWhat; nitems--;
-		ar >> detectMode; nitems--;
+		ar >> detect_what; nitems--;
+		ar >> detect_mode; nitems--;
 		ASSERT(nitems == 0);
 		
 		ar >> nitems; // float
-		ar >> detectThresholdmV; nitems--;
+		ar >> detect_threshold_mv; nitems--;
 		ASSERT(nitems == 0);
 	}
 }
@@ -191,9 +191,9 @@ void SPKDETECTPARM::Serialize(CArchive& ar)
 		if (version == 7)
 			Serialize_v7(ar);
 		else if (version > 0 && version < 5)
-			ReadVersionlessthan6(ar, version);
+			Read_v5(ar, version);
 		else if (version < 7) //== 6)
-			ReadVersion6(ar);
+			Read_v6(ar);
 		else
 		{
 			ASSERT(FALSE);

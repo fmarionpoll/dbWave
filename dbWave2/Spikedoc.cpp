@@ -1163,7 +1163,7 @@ void CSpikeDoc::ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 
 	if (vdS->btotalspikes)
 	{
-		cs_dummy.Format(_T("\t%f"), pspklist->GetDetectParms()->detectThresholdmV);
+		cs_dummy.Format(_T("\t%f"), pspklist->GetDetectParms()->detect_threshold_mv);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("\t%i"), pspklist->GetTotalSpikes());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));

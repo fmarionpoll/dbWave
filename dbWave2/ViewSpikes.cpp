@@ -527,7 +527,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 		detect->extract_channel = 0;
 		isourceview = 0;
 	}
-	if (detect->detectWhat == DETECT_STIMULUS)
+	if (detect->detect_what == DETECT_STIMULUS)
 	{
 		isourceview = detect->detect_channel;
 		if (isourceview >= m_pDataDoc->GetpWaveFormat()->scan_count)
@@ -688,7 +688,7 @@ void ViewSpikes::selectSpkList(int icursel)
 	// update source data: change data channel and update display
 	int isourceview = m_pSpkList->GetDetectParms()->extract_channel;
 	ASSERT(isourceview == m_pspkDP->extract_channel);
-	if (m_pSpkList->GetDetectParms()->detectWhat == DETECT_STIMULUS)
+	if (m_pSpkList->GetDetectParms()->detect_what == DETECT_STIMULUS)
 		isourceview = m_pSpkList->GetDetectParms()->detect_channel;
 
 	// no data available

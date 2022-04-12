@@ -1603,7 +1603,7 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 	// number of spikes
 	if (options_viewspikes->btotalspikes)
 	{
-		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->GetDetectParms()->detectThresholdmV);
+		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->GetDetectParms()->detect_threshold_mv);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
 		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->GetTotalSpikes());
