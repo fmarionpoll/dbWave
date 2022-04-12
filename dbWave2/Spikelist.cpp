@@ -189,24 +189,22 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		for (auto i = 0; i < m_n_classes; i++)
 		{
 			SpikeClassDescriptor item = m_spike_class_descriptors.GetAt(i);
-			if (item.n_items > 0 && !(m_keep_only_valid_classes && item.id_number < 0))
-				item.Serialize(ar);
+			item.Serialize(ar);
 		}
 	}
 	else
 	{
 		m_extrema_valid = FALSE;
-		m_spike_class_descriptors.SetSize(1);
-		m_spike_class_descriptors.SetAt(0, SpikeClassDescriptor(0, 0));
+		m_spike_class_descriptors.RemoveAll();
 		long dummy;
 		ar >> dummy; m_keep_only_valid_classes = dummy;
 		ar >> dummy; m_n_classes = dummy;
 		m_spike_class_descriptors.SetSize(m_n_classes);
 		for (auto i = 0; i < m_n_classes; i++)
 		{
-			SpikeClassDescriptor item = m_spike_class_descriptors.GetAt(i);
+			SpikeClassDescriptor item;
 			item.Serialize(ar);
-			m_spike_class_descriptors.SetAt(i, item);
+			m_spike_class_descriptors.Add(item);
 		}
 	}
 }
@@ -518,7 +516,7 @@ void SpikeList::get_total_max_min_read()
 
 	short max1, min1;
 	const int n_spikes = m_spikes.GetCount();
-	m_minimum_over_all_spikes = GetSpike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL)/2);;
+	m_minimum_over_all_spikes = GetSpike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL)/2);
 	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
 
 	for (auto index = index0; index < n_spikes; index++)
@@ -547,7 +545,7 @@ void SpikeList::get_total_max_min_measure()
 	short max1, min1;
 	int max_index, min_index;
 	const int i_last = GetSpikeLength() - 1;
-	m_minimum_over_all_spikes = GetSpike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL) / 2);;
+	m_minimum_over_all_spikes = GetSpike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL) / 2);
 	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
 
 	for (auto index = index0; index < n_spikes; index++)
