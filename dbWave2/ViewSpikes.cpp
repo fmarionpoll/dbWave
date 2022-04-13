@@ -2,6 +2,8 @@
 #include "StdAfx.h"
 #include "ViewSpikes.h"
 
+#include <strsafe.h>
+
 #include "dbWave.h"
 #include "DlgCopyAs.h"
 #include "DlgSpikeEdit.h"
@@ -71,7 +73,7 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
 	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikes::OnEnChangeNOspike)
-	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikes::OnEnChangespike_noclass)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikes::OnEnChangeSpikenoclass)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikes::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikes::OnEnChangeTimelast)
 	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikes::OnEnChangeZoom)
@@ -844,19 +846,22 @@ void ViewSpikes::PrintFileBottomPage(CDC* p_dc, const CPrintInfo* pInfo)
 CString ViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
 {
 	CString cs_unit = _T(" s");
-	TCHAR sz_value[64];
-	const auto psz_value = sz_value;
+	int constexpr array_size = 64;
+	TCHAR sz_dest[array_size];
+	constexpr size_t cbDest = array_size * sizeof(TCHAR);
+
 	float x_scale_factor;
 	auto x = PrintChangeUnit(
 		static_cast<float>(l_first) / m_pSpkDoc->GetAcqRate(), &cs_unit, &x_scale_factor);
-	auto fraction = static_cast<int>((x - static_cast<int>(x)) * static_cast<float>(1000.));
-	wsprintf(psz_value, _T("time = %i.%03.3i - "), static_cast<int>(x), fraction);
-	CString cs_comment = psz_value;
+	auto fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
+	StringCbPrintf(sz_dest, cbDest, TEXT("time = %i.%03.3i - "), static_cast<int>(x), fraction);
+	CString cs_comment = sz_dest;
 
 	x = static_cast<float>(l_last) / (m_pSpkDoc->GetAcqRate() * x_scale_factor); 
 	fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
-	wsprintf(psz_value, _T("%i.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
-	cs_comment += psz_value;
+	StringCbPrintf(sz_dest, cbDest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
+	StringCbPrintf(sz_dest, cbDest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
+	cs_comment += sz_dest;
 	return cs_comment;
 }
 
