@@ -6,12 +6,12 @@ constexpr auto DISPLAY_TIMEINTERVAL = 0; // mask: ON: display spikes within spk 
 constexpr auto DISPLAY_INDEXRANGE = 1; // mask: ON: display spikes within spk index range/OFF=within time interval;
 constexpr auto DISP_SELECTEDCLASS = 2; // mask: ON: display only selected spike/OFF=all classes
 
-class ChartSpikeShapeWnd : public ChartSpike
+class ChartSpikeShape : public ChartSpike
 {
 public:
-	ChartSpikeShapeWnd();
-	~ChartSpikeShapeWnd() override;
-	DECLARE_SERIAL(ChartSpikeShapeWnd)
+	ChartSpikeShape();
+	~ChartSpikeShape() override;
+	DECLARE_SERIAL(ChartSpikeShape)
 	void Serialize(CArchive& ar) override;
 
 protected:

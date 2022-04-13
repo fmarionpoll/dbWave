@@ -44,7 +44,7 @@ public:
 protected:
 	ChartSpikeHist yhistogram_wnd_; // spike histogram
 	ChartSpikeXY xygraph_wnd_; // points with spike height or different measures
-	ChartSpikeShapeWnd m_ChartSpkWnd_Shape; // spike shapes
+	ChartSpikeShape m_ChartSpkWnd_Shape; // spike shapes
 	ChartSpikeBar m_ChartSpkWnd_Bar; // bars with spike height
 
 	CEditCtrl mm_t1;
