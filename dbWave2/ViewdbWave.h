@@ -13,7 +13,7 @@ protected: // create from serialization only
 	~ViewdbWave() override;
 
 	enum { IDD = IDD_VIEWDBWAVE };
-	CDataListCtrl m_dataListCtrl;
+	DataListCtrl m_dataListCtrl;
 
 protected:
 	CEditCtrl mm_spikeclass;

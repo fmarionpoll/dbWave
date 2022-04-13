@@ -36,7 +36,7 @@ public:
 	// Attributes
 protected:
 	ChartData m_ChartDataWnd;
-	CSpikeClassListBox m_spkClassListBox;
+	SpikeClassListBox m_spkClassListBox;
 	int m_max_classes = 1;
 
 	CEditCtrl mm_spike_index;

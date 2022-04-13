@@ -4,17 +4,17 @@
 #include "dbWaveDoc.h"
 
 
-class CSpikeClassListBox : public CListBox
+class SpikeClassListBox : public CListBox
 {
 public:
-	CSpikeClassListBox();
-	~CSpikeClassListBox() override;
+	SpikeClassListBox();
+	~SpikeClassListBox() override;
 protected:
 	BOOL m_bText = true;
 	BOOL m_bSpikes = true;
 	BOOL m_bBars = true;
-	int m_leftcolwidth = 20;
-	int m_rowheight = 20;
+	int m_left_column_width = 20;
+	int m_row_height = 20;
 	int m_widthSeparator = 5;
 	int m_widthText = -1;
 	int m_widthSpikes = -1;
@@ -26,16 +26,16 @@ protected:
 	int m_cursorIndexMax = 3;
 
 	// logic to drag spikes
-	BOOL m_bHitspk = false; // one spike is hit
-	int m_selspikeLB = 0; // spike selected & hit
-	int m_oldsel = 0; // selected row from which spike is hit
+	BOOL m_is_spike_hit = false; // one spike is hit
+	int m_spike_hit = 0; // spike selected & hit
+	int m_spike_hit_row = 0; // selected row from which spike is hit
 
 	long m_lFirst = 0;
 	long m_lLast = 0;
-	SpikeList* p_spikelist_ = nullptr;
-	CSpikeDoc* p_spike_doc_ = nullptr;
-	CdbWaveDoc* p_dbwave_doc_ = nullptr;
-	HWND m_hwndBarsReflect = nullptr;
+	SpikeList* m_spike_list = nullptr;
+	CSpikeDoc* m_spike_doc = nullptr;
+	CdbWaveDoc* m_dbwave_doc = nullptr;
+	HWND m_hwnd_bars_reflect = nullptr;
 
 public:
 	void set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc);
@@ -50,8 +50,8 @@ public:
 	void SetLeftColWidth(int rowwidth);
 	void SetColsWidth(int coltext, int colspikes, int colseparator);
 
-	int GetRowHeight() const { return m_rowheight; }
-	int GetLeftColWidth() const { return m_leftcolwidth; }
+	int GetRowHeight() const { return m_row_height; }
+	int GetLeftColWidth() const { return m_left_column_width; }
 	int GetColsTextWidth() const { return m_widthText; }
 	int GetColsSpikesWidth() const { return m_widthSpikes; }
 	int GetColsTimeWidth() const { return m_widthBars; }

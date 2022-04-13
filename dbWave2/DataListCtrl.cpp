@@ -12,59 +12,59 @@
 #define new DEBUG_NEW
 #endif
 
-int CDataListCtrl::m_column_width[] = {
+int DataListCtrl::m_column_width[] = {
 	1,
 	10, 300, 15, 30,
 	30, 50, 40, 40,
 	40, 40
 };
-CString CDataListCtrl::m_column_headers[] = {
+CString DataListCtrl::m_column_headers[] = {
 	__T(""),
 	__T("#"), __T("data"), __T("insect ID"), __T("sensillum"),
 	__T("stim1"), __T("conc1"), __T("stim2"), __T("conc2"),
 	__T("spikes"), __T("flag")
 };
 
-int CDataListCtrl::m_column_format[] = {
+int DataListCtrl::m_column_format[] = {
 	LVCFMT_LEFT,
 	LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER,
 	LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER,
 	LVCFMT_CENTER, LVCFMT_CENTER
 };
 
-int CDataListCtrl::m_column_index[] = {
+int DataListCtrl::m_column_index[] = {
 	0,
 	COL_INDEX, COL_CURVE, COL_INSECT, COL_SENSI,
 	COL_STIM1, COL_CONC1, COL_STIM2, COL_CONC2,
 	COL_NBSPK, COL_FLAG
 };
 
-BEGIN_MESSAGE_MAP(CDataListCtrl, CListCtrl)
+BEGIN_MESSAGE_MAP(DataListCtrl, CListCtrl)
 
 	ON_WM_VSCROLL()
 	ON_WM_KEYUP()
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
-	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnGetdispinfo)
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnGetDisplayInfo)
 	ON_WM_DESTROY()
 
 END_MESSAGE_MAP()
 
-CDataListCtrl::CDataListCtrl()
+DataListCtrl::DataListCtrl()
 = default;
 
-CDataListCtrl::~CDataListCtrl()
+DataListCtrl::~DataListCtrl()
 {
 	delete_ptr_array();
 	SAFE_DELETE(m_p_empty_bitmap)
 }
 
-void CDataListCtrl::OnDestroy()
+void DataListCtrl::OnDestroy()
 {
 	save_columns_width();
 }
 
-void CDataListCtrl::save_columns_width() const
+void DataListCtrl::save_columns_width() const
 {
 	if (m_width_columns != nullptr)
 	{
@@ -76,7 +76,7 @@ void CDataListCtrl::save_columns_width() const
 	}
 }
 
-void CDataListCtrl::delete_ptr_array()
+void DataListCtrl::delete_ptr_array()
 {
 	if (ptr_rows.GetSize() == NULL)
 		return;
@@ -89,7 +89,7 @@ void CDataListCtrl::delete_ptr_array()
 	ptr_rows.RemoveAll();
 }
 
-void CDataListCtrl::resize_ptr_array(int n_items)
+void DataListCtrl::resize_ptr_array(int n_items)
 {
 	if (n_items == ptr_rows.GetSize())
 		return;
@@ -123,7 +123,7 @@ void CDataListCtrl::resize_ptr_array(int n_items)
 	}
 }
 
-void CDataListCtrl::InitColumns(CUIntArray* width_columns)
+void DataListCtrl::InitColumns(CUIntArray* width_columns)
 {
 	if (width_columns != nullptr)
 	{
@@ -132,7 +132,7 @@ void CDataListCtrl::InitColumns(CUIntArray* width_columns)
 		if (n_columns < NCOLS)
 			width_columns->SetSize(NCOLS);
 		for (auto i = 0; i < n_columns; i++)
-			m_column_width[i] = width_columns->GetAt(i);
+			m_column_width[i] = static_cast<int>(width_columns->GetAt(i));
 	}
 
 	for (auto i = 0; i < NCOLS; i++)
@@ -141,43 +141,43 @@ void CDataListCtrl::InitColumns(CUIntArray* width_columns)
 	}
 
 	m_image_width = m_column_width[COL_CURVE];
-	m_image_list.Create(m_image_width, m_image_height, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
+	m_image_list.Create(m_image_width, m_image_height, ILC_COLOR4, 10, 10);
 	SetImageList(&m_image_list, LVSIL_SMALL);
 }
 
-void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
+void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// check if first if the requested line is stored into the buffer
-	auto ifirst_array = 0;
-	auto ilast_array = 0;
+	auto first_array = 0;
+	auto last_array = 0;
 	if (ptr_rows.GetSize() > 0)
 	{
-		ifirst_array = ptr_rows.GetAt(0)->index;
-		ilast_array = ptr_rows.GetAt(ptr_rows.GetUpperBound())->index;
+		first_array = ptr_rows.GetAt(0)->index;
+		last_array = ptr_rows.GetAt(ptr_rows.GetUpperBound())->index;
 	}
 
 	// is item within the cache?
-	auto* p_disp_info = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
-	LV_ITEM* p_item = &(p_disp_info)->item;
+	auto* display_info = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
+	LV_ITEM* item = &(display_info)->item;
 	*pResult = 0;
-	const auto i_item_index = p_item->iItem;
+	const auto item_index = item->iItem;
 
 	// item before first visible item? selected item becomes first (scroll up)
-	if (i_item_index < ifirst_array)
+	if (item_index < first_array)
 	{
-		ifirst_array = i_item_index;
-		ilast_array = ifirst_array + GetCountPerPage() - 1;
-		UpdateCache(ifirst_array, ilast_array);
+		first_array = item_index;
+		last_array = first_array + GetCountPerPage() - 1;
+		UpdateCache(first_array, last_array);
 	}
 	// item after last visible item? iItem becomes last visible (scroll down)
-	else if (i_item_index > ilast_array)
+	else if (item_index > last_array)
 	{
-		ilast_array = i_item_index;
-		ifirst_array = ilast_array - GetCountPerPage() + 1;
-		UpdateCache(ifirst_array, ilast_array);
+		last_array = item_index;
+		first_array = last_array - GetCountPerPage() + 1;
+		UpdateCache(first_array, last_array);
 	}
 	else if (ptr_rows.GetSize() == 0)
-		UpdateCache(ifirst_array, ilast_array);
+		UpdateCache(first_array, last_array);
 
 	// now, the requested item is in the cache
 	// get data from database
@@ -186,67 +186,67 @@ void CDataListCtrl::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 
 	const int i_first_visible = ptr_rows.GetAt(0)->index;
-	auto i_cache_index = i_item_index - i_first_visible;
+	auto i_cache_index = item_index - i_first_visible;
 	if (i_cache_index > (ptr_rows.GetSize() - 1))
 		i_cache_index = ptr_rows.GetSize() - 1;
 
-	auto* ptr = ptr_rows.GetAt(i_cache_index);
+	const auto* row = ptr_rows.GetAt(i_cache_index);
 
-	if (p_item->mask & LVIF_TEXT) //valid text buffer?
+	if (item->mask & LVIF_TEXT) //valid text buffer?
 	{
 		CString cs;
 		auto flag = TRUE;
-		switch (p_item->iSubItem)
+		switch (item->iSubItem)
 		{
 		case COL_CURVE: flag = FALSE;
 			break;
-		case COL_INDEX: cs.Format(_T("%i"), ptr->index);
+		case COL_INDEX: cs.Format(_T("%i"), row->index);
 			break;
-		case COL_INSECT: cs.Format(_T("%i"), ptr->insectID);
+		case COL_INSECT: cs.Format(_T("%i"), row->insectID);
 			break;
-		case COL_SENSI: cs = ptr->csSensillumname;
+		case COL_SENSI: cs = row->csSensillumname;
 			break;
-		case COL_STIM1: cs = ptr->csStim1;
+		case COL_STIM1: cs = row->csStim1;
 			break;
-		case COL_CONC1: cs = ptr->csConc1;
+		case COL_CONC1: cs = row->csConc1;
 			break;
-		case COL_STIM2: cs = ptr->csStim2;
+		case COL_STIM2: cs = row->csStim2;
 			break;
-		case COL_CONC2: cs = ptr->csConc2;
+		case COL_CONC2: cs = row->csConc2;
 			break;
-		case COL_NBSPK: cs = ptr->csNspk;
+		case COL_NBSPK: cs = row->csNspk;
 			break;
-		case COL_FLAG: cs = ptr->csFlag;
+		case COL_FLAG: cs = row->csFlag;
 			break;
 		default: flag = FALSE;
 			break;
 		}
 		if (flag)
-			lstrcpy(p_item->pszText, cs);
+			lstrcpy(item->pszText, cs);
 	}
 
 	// display images
-	if (p_item->mask & LVIF_IMAGE
-		&& p_item->iSubItem == COL_CURVE)
-		p_item->iImage = i_cache_index;
+	if (item->mask & LVIF_IMAGE
+		&& item->iSubItem == COL_CURVE)
+		item->iImage = i_cache_index;
 }
 
-void CDataListCtrl::SetCurSel(int recposition)
+void DataListCtrl::SetCurSel(int record_position)
 {
 	// get current item which has the focus
 	constexpr auto flag = LVNI_FOCUSED | LVNI_ALL;
 	const auto current_position = GetNextItem(-1, flag);
 
 	// exit if it is the same
-	if (current_position == recposition)
+	if (current_position == record_position)
 		return;
 
 	// focus new
 	if (current_position >= 0)
 		SetItemState(current_position, 0, LVIS_SELECTED | LVIS_FOCUSED);
 
-	SetItemState(recposition, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	EnsureVisible(recposition, FALSE);
+	SetItemState(record_position, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	EnsureVisible(record_position, FALSE);
 }
 
 // Update data in cache
@@ -254,22 +254,22 @@ void CDataListCtrl::SetCurSel(int recposition)
 // create objects if necessary
 // scroll or load new data
 
-void CDataListCtrl::UpdateCache(int ifirst, int ilast)
+void DataListCtrl::UpdateCache(int index_first, int index_last)
 {
-	// adjust number of items in the array and adjust ifirst and ilast
-	const auto inb_visible = ilast - ifirst + 1;
-	if (ifirst < 0)
+	// adjust number of items in the array and adjust index_first and index_last
+	const auto inb_visible = index_last - index_first + 1;
+	if (index_first < 0)
 	{
-		ifirst = 0;
-		ilast = inb_visible - 1;
+		index_first = 0;
+		index_last = inb_visible - 1;
 	}
-	if (ilast < 0 || ilast >= GetItemCount())
+	if (index_last < 0 || index_last >= GetItemCount())
 	{
-		ilast = GetItemCount() - 1;
-		ifirst = ilast - inb_visible + 1;
+		index_last = GetItemCount() - 1;
+		index_first = index_last - inb_visible + 1;
 	}
 
-	// resize array if the number of visible records is different from the number of lines / listcontrol
+	// resize array if the number of visible records < all records
 	auto b_forced_update = FALSE;
 	if (inb_visible != ptr_rows.GetSize())
 	{
@@ -281,10 +281,10 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	}
 
 	// get data file pointer and pointer to database
-	const auto p_dbwave_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
-	if (p_dbwave_doc == nullptr)
+	const auto db_wave_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
+	if (db_wave_doc == nullptr)
 		return;
-	const int index_current_file = p_dbwave_doc->GetDB_CurrentRecordPosition();
+	const int index_current_file = db_wave_doc->GetDB_CurrentRecordPosition();
 
 	// which update is necessary?
 	// conditions for out of range (renew all items)
@@ -293,7 +293,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	auto i_first_array = 0;
 	if (ptr_rows.GetSize() > 0)
 		i_first_array = ptr_rows.GetAt(0)->index;
-	const auto difference = ifirst - i_first_array;
+	const auto difference = index_first - i_first_array;
 
 	// change indexes according to case
 	// scroll up (go forwards i.e. towards indexes of higher value)
@@ -342,7 +342,7 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		}
 	}
 
-	// set file and update filenames
+	// set file and update file names
 	int index = new1;
 
 	// left, top, right, bottom
@@ -352,42 +352,42 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 	while (n_to_rebuild > 0)
 	{
 		// get data; create object if null
-		auto ptr = ptr_rows.GetAt(index);
+		const auto row = ptr_rows.GetAt(index);
 
-		// create lineview and spike superposition
-		ptr->index = index + ifirst;
-		p_dbwave_doc->SetDB_CurrentRecordPosition(ptr->index); // select the other file
-		ptr->csDatafileName = p_dbwave_doc->GetDB_CurrentDatFileName(TRUE);
-		ptr->csSpikefileName = p_dbwave_doc->GetDB_CurrentSpkFileName(TRUE);
-		auto p_database = p_dbwave_doc->m_pDB;
-		p_database->GetRecordItemValue(CH_IDINSECT, &desc);
-		ptr->insectID = desc.lVal;
+		// create line view and spike superposition
+		row->index = index + index_first;
+		db_wave_doc->SetDB_CurrentRecordPosition(row->index); 
+		row->csDatafileName = db_wave_doc->GetDB_CurrentDatFileName(TRUE);
+		row->csSpikefileName = db_wave_doc->GetDB_CurrentSpkFileName(TRUE);
+		const auto database = db_wave_doc->m_pDB;
+		database->GetRecordItemValue(CH_IDINSECT, &desc);
+		row->insectID = desc.lVal;
 
 		// column: stim, conc, type = load indirect data from database
-		p_database->GetRecordItemValue(CH_STIM_ID, &desc);
-		ptr->csStim1 = desc.csVal;
-		p_database->GetRecordItemValue(CH_CONC_ID, &desc);
-		ptr->csConc1 = desc.csVal;
-		p_database->GetRecordItemValue(CH_STIM2_ID, &desc);
-		ptr->csStim2 = desc.csVal;
-		p_database->GetRecordItemValue(CH_CONC2_ID, &desc);
-		ptr->csConc2 = desc.csVal;
+		database->GetRecordItemValue(CH_STIM_ID, &desc);
+		row->csStim1 = desc.csVal;
+		database->GetRecordItemValue(CH_CONC_ID, &desc);
+		row->csConc1 = desc.csVal;
+		database->GetRecordItemValue(CH_STIM2_ID, &desc);
+		row->csStim2 = desc.csVal;
+		database->GetRecordItemValue(CH_CONC2_ID, &desc);
+		row->csConc2 = desc.csVal;
 
-		p_database->GetRecordItemValue(CH_SENSILLUM_ID, &desc);
-		ptr->csSensillumname = desc.csVal;
+		database->GetRecordItemValue(CH_SENSILLUM_ID, &desc);
+		row->csSensillumname = desc.csVal;
 
-		p_database->GetRecordItemValue(CH_FLAG, &desc);
-		ptr->csFlag.Format(_T("%i"), desc.lVal);
+		database->GetRecordItemValue(CH_FLAG, &desc);
+		row->csFlag.Format(_T("%i"), desc.lVal);
 
-		// colum: number of spike = verify that spike file is defined, if yes, load nb spikes
-		if (p_dbwave_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
-			ptr->csNspk.Empty();
+		// column: number of spike = verify that spike file is defined, if yes, load nb spikes
+		if (db_wave_doc->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
+			row->csNspk.Empty();
 		else
 		{
-			p_database->GetRecordItemValue(CH_NSPIKES, &desc);
+			database->GetRecordItemValue(CH_NSPIKES, &desc);
 			const int n_spikes = desc.lVal;
-			p_database->GetRecordItemValue(CH_NSPIKECLASSES, &desc);
-			ptr->csNspk.Format(_T("%i (%i classes)"), n_spikes, desc.lVal);
+			database->GetRecordItemValue(CH_NSPIKECLASSES, &desc);
+			row->csNspk.Format(_T("%i (%i classes)"), n_spikes, desc.lVal);
 		}
 
 		// build bitmap corresponding to data/spikes/nothing
@@ -395,14 +395,14 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 		{
 		// data mode
 		case 1:
-			display_data_wnd(ptr, index);
+			display_data_wnd(row, index);
 			break;
 		// spike bars
 		case 2:
-			display_spike_wnd(ptr, index);
+			display_spike_wnd(row, index);
 			break;
 		default:
-			display_empty_wnd(ptr, index);
+			display_empty_wnd(row, index);
 			break;
 		}
 		index++;
@@ -411,11 +411,10 @@ void CDataListCtrl::UpdateCache(int ifirst, int ilast)
 
 	// restore document conditions
 	if (index_current_file >= 0)
-		p_dbwave_doc->SetDB_CurrentRecordPosition(index_current_file);
+		db_wave_doc->SetDB_CurrentRecordPosition(index_current_file);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void CDataListCtrl::set_empty_bitmap(const BOOL b_forced_update)
+void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)
 {
 	if (m_p_empty_bitmap != nullptr && !b_forced_update)
 		return;
@@ -433,13 +432,13 @@ void CDataListCtrl::set_empty_bitmap(const BOOL b_forced_update)
 	CBrush brush(RGB(204, 204, 204)); //light gray
 	mem_dc.SelectObject(&brush);
 	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0)); // black
+	pen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
 	mem_dc.SelectObject(&pen);
-	auto rect_data = CRect(1, 0, m_image_width, m_image_height);
+	const auto rect_data = CRect(1, 0, m_image_width, m_image_height);
 	mem_dc.Rectangle(&rect_data);
 }
 
-void CDataListCtrl::RefreshDisplay()
+void DataListCtrl::RefreshDisplay()
 {
 	if (ptr_rows.GetSize() == NULL)
 		return;
@@ -471,7 +470,7 @@ void CDataListCtrl::RefreshDisplay()
 	UpdateWindow();
 }
 
-void CDataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void DataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	switch (nSBCode)
 	{
@@ -487,7 +486,7 @@ void CDataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 }
 
-void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void DataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	switch (nChar)
 	{
@@ -510,7 +509,7 @@ void CDataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-ChartData* CDataListCtrl::GetDataViewCurrentRecord()
+ChartData* DataListCtrl::GetDataViewCurrentRecord()
 {
 	const UINT n_selected_items = GetSelectedCount();
 	int nItem = -1;
@@ -528,7 +527,7 @@ ChartData* CDataListCtrl::GetDataViewCurrentRecord()
 	return ptr;
 }
 
-void CDataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
+void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	// create objects if necessary : CLineView and AcqDataDoc
 	if (ptr->pDataChartWnd == nullptr)
@@ -538,7 +537,7 @@ void CDataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 		ptr->pDataChartWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_image_width, m_image_height), this, iImage * 100);
 		ptr->pDataChartWnd->SetbUseDIB(FALSE);
 	}
-	auto p_wnd = ptr->pDataChartWnd;
+	const auto p_wnd = ptr->pDataChartWnd;
 	p_wnd->SetString(ptr->cs_comment);
 
 	// open data document
@@ -574,7 +573,7 @@ void CDataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 }
 
 
-void CDataListCtrl::plot_data(CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage)
+void DataListCtrl::plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage)
 {
 	p_wnd->SetBottomComment(m_b_display_file_name, ptr->csDatafileName);
 	CRect client_rect;
@@ -597,7 +596,7 @@ void CDataListCtrl::plot_data(CDataListCtrl_Row* ptr, ChartData* p_wnd, int iIma
 	m_image_list.Replace(iImage, &bitmap_plot, nullptr);
 }
 
-void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
+void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	// create spike window and spike document if necessary
 	if (ptr->pSpikeChartWnd == nullptr)
@@ -607,7 +606,7 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		ptr->pSpikeChartWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_image_width, m_image_height), this, ptr->index * 1000);
 		ptr->pSpikeChartWnd->SetbUseDIB(FALSE);
 	}
-	auto p_wnd = ptr->pSpikeChartWnd;
+	const auto p_wnd = ptr->pSpikeChartWnd;
 
 	// open spike document
 	if (ptr->pspikeDoc == nullptr)
@@ -622,7 +621,7 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 	else
 	{
-		auto pParent = static_cast<ViewdbWave*>(GetParent());
+		const auto pParent = static_cast<ViewdbWave*>(GetParent());
 		int iTab = pParent->m_tabCtrl.GetCurSel();
 		if (iTab < 0)
 			iTab = 0;
@@ -641,8 +640,8 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		p_wnd->SetTimeIntervals(l_first, l_last);
 		if (m_b_set_mV_span)
 		{
-			const auto vperbin = pspk_list->GetAcqVoltsperBin();
-			const auto y_we = static_cast<int>(m_mV_span / 1000.f / vperbin);
+			const auto volts_per_bin = pspk_list->GetAcqVoltsperBin();
+			const auto y_we = static_cast<int>(m_mV_span / 1000.f / volts_per_bin);
 			const auto y_wo = pspk_list->GetAcqBinzero();
 			p_wnd->SetYWExtOrg(y_we, y_wo);
 		}
@@ -671,17 +670,17 @@ void CDataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 }
 
-void CDataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, int iImage)
+void DataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, int iImage)
 {
 	m_image_list.Replace(iImage, m_p_empty_bitmap, nullptr);
 }
 
-void CDataListCtrl::ResizeSignalColumn(int npixels)
+void DataListCtrl::ResizeSignalColumn(const int n_pixels)
 {
-	m_column_width[COL_CURVE] = npixels;
+	m_column_width[COL_CURVE] = n_pixels;
 	m_image_list.DeleteImageList();
 	m_image_width = m_column_width[COL_CURVE];
-	m_image_list.Create(m_image_width, m_image_height, /*ILC_COLORDDB*/ ILC_COLOR4, 10, 10);
+	m_image_list.Create(m_image_width, m_image_height, ILC_COLOR4, 10, 10);
 	SetImageList(&m_image_list, LVSIL_SMALL);
 	m_image_list.SetImageCount(ptr_rows.GetSize());
 
@@ -694,19 +693,19 @@ void CDataListCtrl::ResizeSignalColumn(int npixels)
 	RefreshDisplay();
 }
 
-void CDataListCtrl::FitColumnsToSize(int npixels)
+void DataListCtrl::FitColumnsToSize(int n_pixels)
 {
-	// compute size of fixed columns
-	auto fixedsize = 0;
-	for (auto i : m_column_width)
+	// compute width of fixed columns
+	auto fixed_width = 0;
+	for (const auto i : m_column_width)
 	{
-		fixedsize += i;
+		fixed_width += i;
 	}
-	fixedsize -= m_column_width[COL_CURVE];
-	const auto signalcolsize = npixels - fixedsize;
-	if (signalcolsize != m_column_width[COL_CURVE] && signalcolsize > 2)
+	fixed_width -= m_column_width[COL_CURVE];
+	const auto signal_column_width = n_pixels - fixed_width;
+	if (signal_column_width != m_column_width[COL_CURVE] && signal_column_width > 2)
 	{
-		SetColumnWidth(COL_CURVE, signalcolsize);
-		ResizeSignalColumn(signalcolsize);
+		SetColumnWidth(COL_CURVE, signal_column_width);
+		ResizeSignalColumn(signal_column_width);
 	}
 }

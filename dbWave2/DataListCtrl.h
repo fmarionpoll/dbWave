@@ -13,18 +13,18 @@
 #define COL_FLAG		COL_INDEX+9
 #include "DataListCtrl_Row.h"
 
-class CDataListCtrl : public CListCtrl
+class DataListCtrl : public CListCtrl
 {
 public:
-	CDataListCtrl();
-	~CDataListCtrl() override;
+	DataListCtrl();
+	~DataListCtrl() override;
 
 	void InitColumns(CUIntArray* width_columns = nullptr);
-	void SetCurSel(int recposition);
-	void UpdateCache(int ifirst, int ilast);
+	void SetCurSel(int record_position);
+	void UpdateCache(int index_first, int index_last);
 	void RefreshDisplay();
-	void ResizeSignalColumn(int npixels);
-	void FitColumnsToSize(int npixels);
+	void ResizeSignalColumn(int n_pixels);
+	void FitColumnsToSize(int n_pixels);
 
 	void SetTransformMode(int imode) { m_data_transform = imode; }
 	void SetDisplayMode(int imode) { m_display_mode = imode; }
@@ -35,14 +35,14 @@ public:
 		m_tLast = tlast;
 	}
 
-	void SetAmplitudeSpan(float vspan) { m_mV_span = vspan; } // TODO ; get extent, mode from current line
-	void SetDisplayFileName(BOOL flag) { m_b_display_file_name = flag; }
-	void SetAmplitudeAdjustMode(BOOL flag) { m_b_set_mV_span = flag; }
-	void SetTimespanAdjustMode(BOOL flag) { m_b_set_time_span = flag; }
+	void SetAmplitudeSpan(float mv_span) { m_mV_span = mv_span; } // TODO ; get extent, mode from current line
+	void SetDisplayFileName(boolean flag) { m_b_display_file_name = flag; }
+	void SetAmplitudeAdjustMode(boolean flag) { m_b_set_mV_span = flag; }
+	void SetTimespanAdjustMode(boolean flag) { m_b_set_time_span = flag; }
 
-	void SetSpikePlotMode(int imode, int iclass)
+	void SetSpikePlotMode(const int spike_plot_mode, const int iclass)
 	{
-		m_spike_plot_mode = imode;
+		m_spike_plot_mode = spike_plot_mode;
 		m_selected_class = iclass;
 	}
 
@@ -78,21 +78,21 @@ protected:
 	float m_tFirst = 0.f;
 	float m_tLast = 0.f;
 	float m_mV_span = 0.f;
-	BOOL m_b_set_time_span = false;
-	BOOL m_b_set_mV_span = false;
-	BOOL m_b_display_file_name = false;
+	boolean m_b_set_time_span = false;
+	boolean m_b_set_mV_span = false;
+	boolean m_b_display_file_name = false;
 
 	void delete_ptr_array();
 	void save_columns_width() const;
 	void resize_ptr_array(int n_items);
-	void set_empty_bitmap(BOOL bForcedUpdate = FALSE);
+	void set_empty_bitmap(boolean b_forced_update = false);
 	void display_spike_wnd(CDataListCtrl_Row* ptr, int iImage);
 	void display_data_wnd(CDataListCtrl_Row* ptr, int iImage);
 	void display_empty_wnd(CDataListCtrl_Row* ptr, int iImage);
-	void plot_data(CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage);
+	void plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage);
 
 	// Generated message map functions
-	afx_msg void OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnDestroy();
