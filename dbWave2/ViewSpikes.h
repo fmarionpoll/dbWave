@@ -3,8 +3,7 @@
 #include "SpikeClassListBox.h"
 #include "ScrollBarEx.h"
 #include "dbTableView.h"
-#include <ChartData.h>
-
+#include "ChartData.h"
 #include "Editctrl.h"
 #include "OPTIONS_VIEWDATAMEASURE.h"
 #include "SPKCLASSIF.h"
@@ -82,21 +81,21 @@ protected:
 	void updateSpikeFile(BOOL bUpdateInterface);
 	void updateGainScroll();
 	void updateBiasScroll();
-	void adjustYZoomToMaxMin(BOOL bForceSearchMaxMin);
-	void selectSpike(int spikeno);
+	void adjust_y_zoom_to_max_min(BOOL bForceSearchMaxMin);
+	void selectSpike(int spike_no);
 	void defineSubClassedItems();
 	void defineStretchParameters();
 	void zoomOnPresetInterval(int iistart);
 	void scrollGain(UINT nSBCode, UINT nPos);
 	void scrollBias(UINT nSBCode, UINT nPos);
 	void setVBarMode(short bMode);
-	BOOL addSpiketoList(long ii_time, BOOL bcheck_if_otheraround);
-	void setAddspikesMode(int mousecursorType);
-	void selectSpkList(int icursel);
+	BOOL add_spike_to_list(long ii_time, BOOL check_if_spike_nearby);
+	void setAddspikesMode(int mouse_cursor_type);
+	void select_spike_list(int current_selection);
 	void setTrackRectangle();
 	void scrollFile(UINT nSBCode, UINT nPos);
 	void updateFileScroll();
-	void centerDataDisplayOnSpike(int spikeno);
+	void centerDataDisplayOnSpike(int spike_no);
 
 	// public interface to view
 public:
@@ -118,11 +117,11 @@ protected:
 	SPKDETECTPARM* m_pspkDP = nullptr; // spike detection parameters
 
 protected:
-	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
+	void PrintFileBottomPage(CDC* p_dc, const CPrintInfo* pInfo);
 	CString PrintConvertFileIndex(long l_first, long l_last);
 	void PrintComputePageSize();
 	CString PrintGetFileInfos();
-	CString PrintBars(CDC* p_dc, CRect* rect);
+	CString PrintBars(CDC* p_dc, const CRect* rect);
 	long PrintGetFileSeriesIndexFromPage(int page, int* file);
 	float PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
 
