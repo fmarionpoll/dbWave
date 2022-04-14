@@ -1183,7 +1183,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SpikeBuffer.cpp" />
     <ClCompile Include="SpikeClass.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1517,7 +1516,6 @@
     <ClInclude Include="DlgChartProps.h" />
     <ClInclude Include="ScrollBarEx.h" />
     <ClInclude Include="ChartSpikeBar.h" />
-    <ClInclude Include="SpikeBuffer.h" />
     <ClInclude Include="SpikeClass.h" />
     <ClInclude Include="SpikeClassListBox.h" />
     <ClInclude Include="DlgSpikeDetect.h" />

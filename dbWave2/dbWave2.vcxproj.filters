@@ -261,9 +261,6 @@
     <ClCompile Include="Spike.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpikeBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SpikeFromChan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -813,9 +810,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spike.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpikeBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeFromChan.h">
