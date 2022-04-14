@@ -1,8 +1,17 @@
 #pragma once
+#include "ChartSpikeBar.h"
+#include "ChartSpikeShape.h"
 #include "Spikelist.h"
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"
 
+
+struct RowStruct
+{
+	CString* row_comment;
+	ChartSpikeShape* row_chart_shapes;
+	ChartSpikeBar* row_chart_bars;
+};
 
 class SpikeClassListBox : public CListBox
 {
@@ -61,15 +70,15 @@ public:
 	void SetYzoom(int y_we, int y_wo);
 	void SetXzoom(int x_we, int x_wo);
 
-	int GetYWExtent(); // load display parameters
-	int GetYWOrg(); // ordinates
-	int GetXWExtent(); // and
-	int GetXWOrg(); // abscissa
+	int GetYWExtent(); 
+	int GetYWOrg();
+	int GetXWExtent(); 
+	int GetXWOrg(); 
 
-	int SelectSpike(int spikeno);
-	void ChangeSpikeClass(int spikeno, int newclass);
-	int SetMouseCursorType(int cursorm);
-	void XorTempVTtag(int xpoint);
+	int SelectSpike(int spike_no);
+	void ChangeSpikeClass(int spike_no, int new_class);
+	int SetMouseCursorType(int cursor_m);
+	void XorTempVTtag(int x_point);
 	void ResetBarsXortag();
 	void ReflectBarsMouseMoveMessg(HWND hwnd);
 	void SetCursorMaxOnDblClick(int imax) { m_cursorIndexMax = imax; }
@@ -77,7 +86,9 @@ public:
 	void PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect* prect3, int i);
 
 protected:
-	void UpdateString(void* pptr, int iclass, int nbspikes);
+	void update_string(void* pptr, int i_class, int nb_spikes);
+	void remove_spike_from_row(int spike_no);
+	int get_row_index_of_spike_class(int spike_class);
 
 	// Implementation
 public:

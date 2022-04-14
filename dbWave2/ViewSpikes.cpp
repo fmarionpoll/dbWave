@@ -1567,14 +1567,11 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 	switch (mm_spike_index_class.m_nChar)
 	{
 	// load data from edit controls
-	case VK_RETURN: UpdateData(TRUE);
-		break;
+	case VK_RETURN: UpdateData(TRUE); break;
 	case VK_UP:
-	case VK_PRIOR: m_spike_index_class++;
-		break;
+	case VK_PRIOR: m_spike_index_class++; break;
 	case VK_DOWN:
-	case VK_NEXT: m_spike_index_class--;
-		break;
+	case VK_NEXT: m_spike_index_class--; break;
 	default: ;
 	}
 
@@ -1700,21 +1697,18 @@ void ViewSpikes::OnEnChangeSourceclass()
 	{
 		switch (mm_source_class.m_nChar)
 		{
-		case VK_RETURN: UpdateData(TRUE);
-			break;
+		case VK_RETURN: UpdateData(TRUE); break;
 		case VK_UP:
-		case VK_PRIOR: m_class_source++;
-			break;
+		case VK_PRIOR: m_class_source++; break;
 		case VK_DOWN:
-		case VK_NEXT: m_class_source--;
-			break;
+		case VK_NEXT: m_class_source--; break;
 		default: ;
 		}
 
 		// check boundaries
-		mm_source_class.m_bEntryDone = FALSE; // clear flag
-		mm_source_class.m_nChar = 0; // empty buffer
-		mm_source_class.SetSel(0, -1); // select all text
+		mm_source_class.m_bEntryDone = FALSE; 
+		mm_source_class.m_nChar = 0; 
+		mm_source_class.SetSel(0, -1);
 		UpdateData(FALSE);
 	}
 }
@@ -1726,21 +1720,18 @@ void ViewSpikes::OnEnChangeDestclass()
 		switch (mm_dest_class.m_nChar)
 		{
 		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
+		case VK_RETURN: UpdateData(TRUE); break;
 		case VK_UP:
-		case VK_PRIOR: m_class_destination++;
-			break;
+		case VK_PRIOR: m_class_destination++; break;
 		case VK_DOWN:
-		case VK_NEXT: m_class_destination--;
-			break;
+		case VK_NEXT: m_class_destination--; break;
 		default: ;
 		}
 
 		// check boundaries
-		mm_dest_class.m_bEntryDone = FALSE; // clear flag
-		mm_dest_class.m_nChar = 0; // empty buffer
-		mm_dest_class.SetSel(0, -1); // select all text
+		mm_dest_class.m_bEntryDone = FALSE; 
+		mm_dest_class.m_nChar = 0; 
+		mm_dest_class.SetSel(0, -1);
 		UpdateData(FALSE);
 	}
 }

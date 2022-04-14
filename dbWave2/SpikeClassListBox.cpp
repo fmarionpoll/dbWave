@@ -2,8 +2,6 @@
 #include "dbWaveDoc.h"
 #include "SpikeClassListBox.h"
 
-#include "ChartSpikeBar.h"
-#include "ChartSpikeShape.h"
 #include "DlgListBClaSize.h"
 
 
@@ -11,12 +9,7 @@
 #define new DEBUG_NEW
 #endif
 
-struct rowStruct
-{
-	CString* row_comment;
-	ChartSpikeShape* row_chart_shapes;
-	ChartSpikeBar* row_chart_bars;
-};
+
 
 BEGIN_MESSAGE_MAP(SpikeClassListBox, CListBox)
 	ON_WM_SIZE()
@@ -49,7 +42,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEHZLIMITS: // abscissa have changed
 		{
-			const rowStruct* row = reinterpret_cast<rowStruct*>(GetItemData(i_current_selected));
+			const RowStruct* row = reinterpret_cast<RowStruct*>(GetItemData(i_current_selected));
 			m_lFirst = (row->row_chart_bars)->GetTimeFirst();
 			m_lLast = (row->row_chart_bars)->GetTimeLast();
 			SetTimeIntervals(m_lFirst, m_lLast);
@@ -65,7 +58,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEZOOM:
 		{
-			const auto* pptr2 = reinterpret_cast<rowStruct*>(GetItemData(i_current_selected));
+			const auto* pptr2 = reinterpret_cast<RowStruct*>(GetItemData(i_current_selected));
 			const auto y_we = pptr2->row_chart_bars->GetYWExtent();
 			const auto y_wo = pptr2->row_chart_bars->GetYWOrg();
 			SetYzoom(y_we, y_wo);
@@ -111,7 +104,7 @@ void SpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 		// get data
 		CRect rc_text = lpDIS->rcItem;
 		rc_text.right = rc_text.left + m_widthText;
-		const auto pptr = reinterpret_cast<rowStruct*>(lpDIS->itemData);
+		const auto pptr = reinterpret_cast<RowStruct*>(lpDIS->itemData);
 
 		// display text
 		const auto textlen = (pptr->row_comment)->GetLength();
@@ -179,7 +172,7 @@ void SpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 void SpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
 {
-	const auto item = reinterpret_cast<rowStruct*>(lpDI->itemData);
+	const auto item = reinterpret_cast<RowStruct*>(lpDI->itemData);
 	const auto item_comment = item->row_comment;
 	delete item_comment;
 
@@ -216,8 +209,8 @@ void SpikeClassListBox::SetColsWidth(int coltext, int colspikes, int colseparato
 
 int SpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 {
-	const auto pptr1 = reinterpret_cast<rowStruct*>(lpCIS->itemData1);
-	const auto pptr2 = reinterpret_cast<rowStruct*>(lpCIS->itemData2);
+	const auto pptr1 = reinterpret_cast<RowStruct*>(lpCIS->itemData1);
+	const auto pptr2 = reinterpret_cast<RowStruct*>(lpCIS->itemData2);
 	auto iresult = 1; // value to return (default:clas1>clas2)
 	const auto clas1 = (pptr1->row_chart_bars)->GetSelClass();
 	const auto clas2 = (pptr2->row_chart_bars)->GetSelClass();
@@ -288,7 +281,7 @@ void SpikeClassListBox::set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 		ASSERT(pcs != NULL);
 
 		// 4) create array of 3 pointers and pass it to the listbox
-		const auto pptr = new(rowStruct);
+		const auto pptr = new(RowStruct);
 		ASSERT(pptr != NULL);
 		pptr->row_comment = pcs;
 		pptr->row_chart_shapes = pspkShapes;
@@ -305,7 +298,7 @@ void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 	m_lLast = l_last;
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+		const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 		if (pptr->row_chart_shapes != nullptr)
 		{
 			(pptr->row_chart_shapes)->SetRangeMode(RANGE_TIMEINTERVALS);
@@ -336,7 +329,7 @@ void SpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
 	{
 		for (auto i = 0; i < GetCount(); i++)
 		{
-			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+			const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 			(pptr->row_chart_shapes)->SetSpkList(p_spike_list);
 			(pptr->row_chart_bars)->SetSpkList(p_spike_list);
 		}
@@ -347,14 +340,14 @@ void SpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
 	}
 }
 
-int SpikeClassListBox::SelectSpike(int spikeno)
+int SpikeClassListBox::SelectSpike(int spike_no)
 {
 	/*
 	BOOL bAll = TRUE;
 	int cla = 0;
-	if (spikeno >= 0)
+	if (spike_no >= 0)
 	{
-		cla = m_pSList->get_class(spikeno);		// load spike class
+		cla = m_pSList->get_class(spike_no);		// load spike class
 		bAll = FALSE;
 	}
 
@@ -366,32 +359,32 @@ int SpikeClassListBox::SelectSpike(int spikeno)
 	auto cla = 0;
 
 	// select spike
-	if (spikeno >= 0)
+	if (spike_no >= 0)
 	{
 		// get address of spike parms
-		const auto p_spike_element = m_spike_list->GetSpike(spikeno);
+		const auto p_spike_element = m_spike_list->GetSpike(spike_no);
 		cla = p_spike_element->get_class();
 
 		// multiple selection
 		if (false)
 		{
-			auto nflaggedspikes = m_spike_list->ToggleSpikeFlag(spikeno);
+			auto nflaggedspikes = m_spike_list->ToggleSpikeFlag(spike_no);
 			if (m_spike_list->GetSpikeFlagArrayCount() < 1)
-				spikeno = -1;
+				spike_no = -1;
 		}
 		// single selection
-		m_spike_list->SetSingleSpikeFlag(spikeno);
+		m_spike_list->SetSingleSpikeFlag(spike_no);
 	}
 	// un-select all spikes
 	else
 		m_spike_list->RemoveAllSpikeFlags();
 
 	// select corresponding row
-	if (spikeno >= 0)
+	if (spike_no >= 0)
 	{
 		for (auto i = 0; i < GetCount(); i++) // search row where this class is stored
 		{
-			const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i)); // get pointer to row objects
+			const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i)); // get pointer to row objects
 			if ((pptr->row_chart_bars)->GetSelClass() == cla)
 			{
 				SetCurSel(i); // select corresponding row
@@ -405,20 +398,20 @@ int SpikeClassListBox::SelectSpike(int spikeno)
 
 	// return spike selected
 	auto oldspk = 0;
-	if (spikeno > 0)
-		oldspk = spikeno;
+	if (spike_no > 0)
+		oldspk = spike_no;
 	return oldspk;
 }
 
-int SpikeClassListBox::SetMouseCursorType(int cursorm)
+int SpikeClassListBox::SetMouseCursorType(int cursor_m)
 {
 	auto oldcursor = 0;
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+		auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 		if (pptr->row_chart_shapes != nullptr)
-			(pptr->row_chart_shapes)->SetMouseCursorType(cursorm);
-		oldcursor = (pptr->row_chart_bars)->SetMouseCursorType(cursorm);
+			(pptr->row_chart_shapes)->SetMouseCursorType(cursor_m);
+		oldcursor = (pptr->row_chart_bars)->SetMouseCursorType(cursor_m);
 	}
 	return oldcursor;
 }
@@ -430,7 +423,7 @@ void SpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 	// move all windows out of the way to prevent displaying old rows
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+		const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 		CRect rect(0, 0, 0, 0);
 		if (pptr->row_chart_shapes != nullptr)
 			(pptr->row_chart_shapes)->MoveWindow(rect, FALSE);
@@ -442,7 +435,7 @@ void SpikeClassListBox::SetYzoom(int y_we, int y_wo)
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+		const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 		if (pptr->row_chart_shapes != nullptr)
 			(pptr->row_chart_shapes)->SetYWExtOrg(y_we, y_wo);
 		(pptr->row_chart_bars)->SetYWExtOrg(y_we, y_wo);
@@ -453,7 +446,7 @@ void SpikeClassListBox::SetXzoom(int x_we, int x_wo)
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+		const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 		if (pptr->row_chart_shapes != nullptr)
 			(pptr->row_chart_shapes)->SetXWExtOrg(x_we, x_wo);
 	}
@@ -462,21 +455,21 @@ void SpikeClassListBox::SetXzoom(int x_we, int x_wo)
 int SpikeClassListBox::GetYWExtent()
 {
 	ASSERT(GetCount() > 0);
-	const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(0));
+	const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(0));
 	return (pptr->row_chart_bars)->GetYWExtent();
 }
 
 int SpikeClassListBox::GetYWOrg()
 {
 	ASSERT(GetCount() > 0);
-	const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(0));
+	const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(0));
 	return (pptr->row_chart_bars)->GetYWOrg();
 }
 
 int SpikeClassListBox::GetXWExtent()
 {
 	ASSERT(GetCount() > 0);
-	const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(0));
+	const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(0));
 	auto i = 0;
 	if ((pptr->row_chart_shapes) != nullptr)
 		i = (pptr->row_chart_shapes)->GetXWExtent();
@@ -486,7 +479,7 @@ int SpikeClassListBox::GetXWExtent()
 int SpikeClassListBox::GetXWOrg()
 {
 	ASSERT(GetCount() > 0);
-	const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(0));
+	const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(0));
 	auto i = 0;
 	if ((pptr->row_chart_shapes) != nullptr)
 		i = (pptr->row_chart_shapes)->GetXWOrg();
@@ -496,7 +489,7 @@ int SpikeClassListBox::GetXWOrg()
 float SpikeClassListBox::GetExtent_mV()
 {
 	ASSERT(GetCount() > 0);
-	const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(0));
+	const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(0));
 	auto x = 0.f;
 	if ((pptr->row_chart_shapes) != nullptr)
 		x = (pptr->row_chart_shapes)->GetExtent_mV();
@@ -528,64 +521,84 @@ HBRUSH SpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor)
 	// Return a non-NULL brush if the parent's handler should not be called
 }
 
-void SpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
+int SpikeClassListBox::get_row_index_of_spike_class(int spike_class)
 {
-	if (0 == GetCount())
-		return;
-
-	// ---------------- 1) old spike : deselect spike
-	// ----------------    and remove from corresp line (destroy?)
-
-	const auto oldclass = m_spike_list->GetSpike(spikeno)->get_class();
-	m_spike_list->GetSpike(spikeno)->set_class(newclass);
-
-	// get row corresponding to oldclass
-	rowStruct* pptr = nullptr;
-	int irow;
-	for (irow = 0; irow < GetCount(); irow++)
+	RowStruct* row_item = nullptr;
+	int row_index;
+	for (row_index = 0; row_index < GetCount(); row_index++)
 	{
-		pptr = reinterpret_cast<rowStruct*>(GetItemData(irow)); // get pointer to row objects
-		if ((pptr->row_chart_bars)->GetSelClass() == oldclass)
+		row_item = reinterpret_cast<RowStruct*>(GetItemData(row_index));
+		if ((row_item->row_chart_bars)->GetSelClass() == spike_class)
 			break;
 	}
-	//ASSERT((pptr->pspkBars)->GetSelClass() == oldclass);
-	if (pptr != nullptr)
+	return row_index;
+}
+
+void SpikeClassListBox::remove_spike_from_row(int spike_no)
+{
+	const auto old_class = m_spike_list->GetSpike(spike_no)->get_class();
+
+	// get row corresponding to old_class
+	RowStruct* row_item = nullptr;
+	int row_old;
+	for (row_old = 0; row_old < GetCount(); row_old++)
 	{
-		if (pptr->row_chart_shapes != nullptr)
-			(pptr->row_chart_shapes)->SelectSpikeShape(-1); // de-select old spike / spike
-		(pptr->row_chart_bars)->SelectSpike(-1); // de-select old spike / bars
+		row_item = reinterpret_cast<RowStruct*>(GetItemData(row_old)); 
+		if ((row_item->row_chart_bars)->GetSelClass() == old_class)
+			break;
 	}
+
+	// unselect spike
+	if (row_item != nullptr)
+	{
+		if (row_item->row_chart_shapes != nullptr)
+			(row_item->row_chart_shapes)->SelectSpikeShape(-1);
+		(row_item->row_chart_bars)->SelectSpike(-1);
+	}
+
 	// decrease total nb of spikes within class
-	CRect rect;
-	auto n_spikes = m_spike_list->GetclassNbspk(irow) - 1;
-	// reset all if line ought to be suppressed
+	const auto n_spikes = m_spike_list->GetclassNbspk(row_old) - 1;
+
+	// reset all if row should be removed
 	if (n_spikes > 0)
 	{
-		m_spike_list->SetclassNbspk(irow, n_spikes);
-		UpdateString(pptr, oldclass, n_spikes);
+		m_spike_list->SetclassNbspk(row_old, n_spikes);
+		update_string(row_item, old_class, n_spikes);
 	}
 	else
 	{
+		// row suppressed here?
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
 		set_source_data(m_spike_list, m_dbwave_doc);
 		SetTimeIntervals(l_first, l_last);
-		SelectSpike(spikeno);
-		return;
+		SelectSpike(spike_no);
 	}
+}
+
+void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class)
+{
+	if (0 == GetCount() || new_class == m_spike_list->GetSpike(spike_no)->get_class())
+		return;
+
+	// ---------------- 1) old spike : deselect spike and remove from corresp line (destroy?)
+	remove_spike_from_row(spike_no);
+	
 
 	// ---------------- 2) new class? add to other row and select
+	m_spike_list->GetSpike(spike_no)->set_class(new_class);
 
 	// new row?
-	pptr = nullptr;
-	for (irow = 0; irow < GetCount(); irow++)
+	RowStruct* pptr = nullptr;
+	int i_row;
+	for (i_row = 0; i_row < GetCount(); i_row++)
 	{
-		pptr = reinterpret_cast<rowStruct*>(GetItemData(irow)); // get pointer to row objects
-		if ((pptr->row_chart_bars)->GetSelClass() == newclass)
+		pptr = reinterpret_cast<RowStruct*>(GetItemData(i_row)); 
+		if ((pptr->row_chart_bars)->GetSelClass() == new_class)
 			break;
 	}
 	// reset all if line ought to be added
-	if (irow >= GetCount())
+	if (i_row >= GetCount())
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
@@ -594,23 +607,25 @@ void SpikeClassListBox::ChangeSpikeClass(int spikeno, int newclass)
 	}
 	else
 	{
-		n_spikes = m_spike_list->GetclassNbspk(irow) + 1;
-		m_spike_list->SetclassNbspk(irow, n_spikes);
-		UpdateString(pptr, newclass, n_spikes);
+		int n_spikes = m_spike_list->GetclassNbspk(i_row) + 1;
+		m_spike_list->SetclassNbspk(i_row, n_spikes);
+		update_string(pptr, new_class, n_spikes);
 	}
-	if (!GetItemRect(irow, &rect))
+
+	CRect rect;
+	if (!GetItemRect(i_row, &rect))
 		return;
-	SelectSpike(spikeno);
+	SelectSpike(spike_no);
 }
 
-void SpikeClassListBox::UpdateString(void* ptr, int iclass, int nbspikes)
+void SpikeClassListBox::update_string(void* ptr, int i_class, int nb_spikes)
 {
 	// create text
-	const auto pptr = static_cast<rowStruct*>(ptr);
+	const auto pptr = static_cast<RowStruct*>(ptr);
 	delete pptr->row_comment;
 	auto pcs = new CString;
 	ASSERT(pcs != NULL);
-	pcs->Format(_T("class %i\nn=%i"), iclass, nbspikes);
+	pcs->Format(_T("class %i\nn=%i"), i_class, nb_spikes);
 	pptr->row_comment = pcs;
 }
 
@@ -618,7 +633,7 @@ void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect
 {
 	if ((i < 0) || (i > GetCount() - 1))
 		return;
-	const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+	const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 
 	// print text
 	const auto textlen = (pptr->row_comment)->GetLength();
@@ -633,12 +648,12 @@ void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect
 		pptr->row_chart_bars->Print(p_dc, prect3);
 }
 
-void SpikeClassListBox::XorTempVTtag(int xpoint)
+void SpikeClassListBox::XorTempVTtag(int x_point)
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
-		pptr->row_chart_bars->XorTempVTtag(xpoint);
+		const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
+		pptr->row_chart_bars->XorTempVTtag(x_point);
 	}
 }
 
@@ -646,7 +661,7 @@ void SpikeClassListBox::ResetBarsXortag()
 {
 	for (int i = 0; i < GetCount(); i++)
 	{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+		const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 		pptr->row_chart_bars->ResetXortag();
 	}
 }
@@ -656,7 +671,7 @@ void SpikeClassListBox::ReflectBarsMouseMoveMessg(HWND hwnd)
 	m_hwnd_bars_reflect = hwnd;
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto pptr = reinterpret_cast<rowStruct*>(GetItemData(i));
+		const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 		(pptr->row_chart_bars)->ReflectMouseMoveMessg(hwnd);
 		if (hwnd != nullptr)
 			pptr->row_chart_bars->SetMouseCursorType(CURSOR_CROSS);
