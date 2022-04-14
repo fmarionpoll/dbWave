@@ -2,16 +2,22 @@
 class SpikeClassDescriptor : public CObject
 {
 	DECLARE_SERIAL(SpikeClassDescriptor)
-
-	int id_number = 0;
+protected:
+	int class_id = 0;
 	int n_items = 0;
 
-	SpikeClassDescriptor();                                     // simple constructor
-    ~SpikeClassDescriptor() override;                           // destructor
+public:
+	SpikeClassDescriptor(); 
+    ~SpikeClassDescriptor() override;                         
     SpikeClassDescriptor(int number, int items);
-    SpikeClassDescriptor(const SpikeClassDescriptor& other);    // copy constructor
+    SpikeClassDescriptor(const SpikeClassDescriptor& other);    
 	void Serialize(CArchive& ar) override;
-	SpikeClassDescriptor& operator=(const SpikeClassDescriptor& arg); // copy assignment operator
+	SpikeClassDescriptor& operator=(const SpikeClassDescriptor& arg);
+
+	int GetClassID() const {return class_id; }
+	void SetClassID(int id) { class_id = id; }
+	int GetNItems() const {return n_items; }
+	void SetNItems(int n) { n_items = n; }
 
 };
 

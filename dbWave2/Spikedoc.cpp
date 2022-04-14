@@ -460,7 +460,7 @@ void CSpikeDoc::ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, in
 		// search item index with correct class ID
 		auto i = pspklist->GetNbclasses() - 1;
 		for (auto j = i; j >= 0; j--, i--)
-			if (pspklist->GetclassID(i) == vdS->classnb)
+			if (pspklist->Get_class_ID(i) == vdS->classnb)
 				break;
 		class0 = i;
 		class1 = i;
@@ -472,10 +472,10 @@ void CSpikeDoc::ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, in
 	for (auto kclass = class0; kclass <= class1; kclass++)
 	{
 		// check if class is Ok
-		const auto nbspk_for_thisclass = pspklist->GetclassNbspk(kclass);
+		const auto nbspk_for_thisclass = pspklist->Get_class_NItems(kclass);
 		if ((FALSE == vdS->bexportzero) && (nbspk_for_thisclass == 0))
 			continue;
-		const auto iclass = pspklist->GetclassID(kclass);
+		const auto iclass = pspklist->Get_class_ID(kclass);
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
 		export_spk_latencies(pSF, vdS, nintervals, m_current_spike_list, iclass);
 	}
@@ -595,7 +595,7 @@ void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* p
 		// search item index with correct class ID
 		auto i = pspklist->GetNbclasses() - 1;
 		for (auto j = i; j >= 0; i--, j--)
-			if (pspklist->GetclassID(i) == vdS->classnb)
+			if (pspklist->Get_class_ID(i) == vdS->classnb)
 				break;
 		// if none is found, export descriptor and exit
 		if (i < 0)
@@ -624,8 +624,8 @@ void CSpikeDoc::ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* p
 	for (int kclass = class0; kclass <= class1; kclass++)
 	{
 		// check if class is Ok
-		const auto nbspk_for_thisclass = pspklist->GetclassNbspk(kclass);
-		const auto iclass = pspklist->GetclassID(kclass);
+		const auto nbspk_for_thisclass = pspklist->Get_class_NItems(kclass);
+		const auto iclass = pspklist->Get_class_ID(kclass);
 		// export the comments
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
 		// test if we should continue
@@ -758,7 +758,7 @@ void CSpikeDoc::ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* v
 		// search item index with correct class ID
 		auto i = pspklist->GetNbclasses() - 1;
 		for (auto j = i; j >= 0; i--, j--)
-			if (pspklist->GetclassID(i) == vdS->classnb)
+			if (pspklist->Get_class_ID(i) == vdS->classnb)
 				break;
 		// if none is found, export descriptor and exit
 		if (i < 0)
@@ -773,7 +773,7 @@ void CSpikeDoc::ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* v
 	// loop over all classes..................
 	for (auto kclass = class0; kclass <= class1; kclass++)
 	{
-		const auto iclass = pspklist->GetclassID(kclass);
+		const auto iclass = pspklist->Get_class_ID(kclass);
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
 		export_spk_amplitude_histogram(pSF, vdS, pHist0, m_current_spike_list, iclass);
 	}
@@ -1706,7 +1706,7 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 		// search item index with correct class ID
 		auto i = pspklist->GetNbclasses() - 1;
 		for (auto j = i; j >= 0; i--, j--)
-			if (pspklist->GetclassID(i) == vdS->classnb)
+			if (pspklist->Get_class_ID(i) == vdS->classnb)
 				break;
 
 		// if none is found, export descriptor and exit
@@ -1725,7 +1725,7 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	for (auto kclass = class0; kclass <= class1; kclass++)
 	{
 		// ................................COMMENTS
-		const auto iclass = pspklist->GetclassID(kclass);
+		const auto iclass = pspklist->Get_class_ID(kclass);
 		ExportSpkFileComment(pSF, vdS, iclass, csFileComment);
 		export_spk_average_wave(pSF, vdS, pDoubl0, m_current_spike_list, iclass);
 	}

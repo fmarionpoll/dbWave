@@ -8,9 +8,9 @@
 
 struct RowStruct
 {
-	CString* row_comment;
-	ChartSpikeShape* row_chart_shapes;
-	ChartSpikeBar* row_chart_bars;
+	CString* comment;
+	ChartSpikeShape* chart_shapes;
+	ChartSpikeBar* chart_bars;
 };
 
 class SpikeClassListBox : public CListBox
@@ -88,7 +88,7 @@ public:
 protected:
 	void update_string(void* pptr, int i_class, int nb_spikes);
 	void remove_spike_from_row(int spike_no);
-	int get_row_index_of_spike_class(int spike_class);
+	int get_row_index_of_spike_class(int spike_class) const;
 
 	// Implementation
 public:

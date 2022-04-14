@@ -762,32 +762,31 @@ void SpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 long SpikeList::UpdateClassList()
 {
 	const auto n_spikes = GetTotalSpikes();
-	m_n_classes = 1; // erase nb of classes
-	m_spike_class_descriptors.SetSize(0); // erase array
-	m_keep_only_valid_classes = TRUE; // class list OK when exit
+	m_n_classes = 1; 
+	m_spike_class_descriptors.RemoveAll(); 
+	m_keep_only_valid_classes = TRUE; 
 	if (n_spikes == 0)
 	{
-		// no spikes? dummy parameters
 		m_spike_class_descriptors.Add(SpikeClassDescriptor(0, 0)); 
-		return 0L; // done
+		return 0L; 
 	}
 
 	m_spike_class_descriptors.Add(SpikeClassDescriptor(GetSpike(0)->get_class(), 1));
-	m_n_classes = 1; // total nb of classes
+	m_n_classes = 1; 
 
 	// loop over all spikes of the list
 	for (auto i = 1; i < n_spikes; i++)
 	{
-		const auto spike_class = GetSpike(i)->get_class(); // class of spike i
+		const auto spike_class = GetSpike(i)->get_class(); 
 		auto array_class = 0;
 
 		// loop over all existing classes to find if there is one
 		for (auto j = 0; j < m_n_classes; j++)
 		{
-			array_class = GetclassID(j); // class ID
+			array_class = Get_class_ID(j); // class ID
 			if (spike_class == array_class) // class OK?
 			{
-				m_spike_class_descriptors.GetAt(j).n_items++; // increment spike count
+				Set_class_NItems(j, Get_class_NItems(j) + 1); 
 				break; // exit spk class loop
 			}
 			if (spike_class < array_class) // insert new class?
