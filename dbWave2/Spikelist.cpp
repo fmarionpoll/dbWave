@@ -446,6 +446,47 @@ BOOL SpikeList::IsAnySpikeAround(const long ii_time, const int jitter, int& spik
 	return FALSE;
 }
 
+int SpikeList::GetNbclasses() const
+{
+	int n_classes = 0;
+	if (m_keep_only_valid_classes) 
+		n_classes = m_n_classes;
+	else
+	{
+		for (int i = 0; i < m_n_classes; i++)
+		{
+			if (m_spike_class_descriptors.GetAt(i).GetClassID() >= 0)
+				n_classes++;
+		}
+	}
+	return n_classes;
+}
+
+int SpikeList::Get_class_ID_index(int classID)
+{
+	int item_index = -1;
+	for (int i = 0; i < m_n_classes; i++)
+	{
+		if (m_spike_class_descriptors.GetAt(i).GetClassID() != classID)
+			continue;
+		item_index = i;
+		break;
+	}
+	return item_index;
+}
+
+int SpikeList::Increment_class_NItems(int classID)
+{
+	const int index = Get_class_ID_index(classID);
+	return m_spike_class_descriptors.GetAt(index).IncrementNItems();
+}
+
+int SpikeList::Decrement_class_NItems(int classID)
+{
+	const int index = Get_class_ID_index(classID);
+	return m_spike_class_descriptors.GetAt(index).DecrementNItems();
+}
+
 int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_time, const int source_channel, const int i_class, const BOOL b_check)
 {
 	// search spike index of first spike for which time is > to present one

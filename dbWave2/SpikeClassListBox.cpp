@@ -538,62 +538,29 @@ int SpikeClassListBox::get_row_index_of_spike_class(int spike_class) const
 void SpikeClassListBox::remove_spike_from_row(int spike_no)
 {
 	const auto old_class = m_spike_list->GetSpike(spike_no)->get_class();
+	const int row_old_index = get_row_index_of_spike_class(old_class);
+	if (row_old_index < 0)
+		return;
+	const auto row_old_item = reinterpret_cast<RowStruct*>(GetItemData(row_old_index));
 
-	// get row corresponding to old_class
-	const int row_old = get_row_index_of_spike_class(old_class);
-
-	// unselect spike
-	if (row_old >= 0)
-	{
-		const RowStruct* row_item = reinterpret_cast<RowStruct*>(GetItemData(row_old));
-		if (row_item->chart_shapes != nullptr)
-			(row_item->chart_shapes)->SelectSpikeShape(-1);
-		(row_item->chart_bars)->SelectSpike(-1);
-	}
-
-	// decrease total nb of spikes within class
-	const auto n_spikes = m_spike_list->Get_class_NItems(row_old) - 1;
+	if (row_old_item->chart_shapes != nullptr)
+		(row_old_item->chart_shapes)->SelectSpikeShape(-1);
+	row_old_item->chart_bars->SelectSpike(-1);
+	const auto n_spikes = m_spike_list->Decrement_class_NItems(old_class);
 
 	// reset all if row should be removed
 	if (n_spikes > 0)
 	{
-		m_spike_list->Set_class_NItems(row_old, n_spikes);
-		update_string(row_item, old_class, n_spikes);
-	}
-	else
-	{
-		// row suppressed here?
-		const auto l_first = m_lFirst;
-		const auto l_last = m_lLast;
-		set_source_data(m_spike_list, m_dbwave_doc);
-		SetTimeIntervals(l_first, l_last);
-		SelectSpike(spike_no);
+		update_string(row_old_item, old_class, n_spikes);
 	}
 }
 
-void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class)
+void SpikeClassListBox::add_spike_to_row(int spike_no)
 {
-	if (0 == GetCount() || new_class == m_spike_list->GetSpike(spike_no)->get_class())
-		return;
+	const auto current_class = m_spike_list->GetSpike(spike_no)->get_class();
 
-	// ---------------- 1) old spike : deselect spike and remove from corresp line (destroy?)
-	remove_spike_from_row(spike_no);
-	
-
-	// ---------------- 2) new class? add to other row and select
-	m_spike_list->GetSpike(spike_no)->set_class(new_class);
-
-	// new row?
-	RowStruct* pptr = nullptr;
-	int i_row;
-	for (i_row = 0; i_row < GetCount(); i_row++)
-	{
-		pptr = reinterpret_cast<RowStruct*>(GetItemData(i_row)); 
-		if ((pptr->chart_bars)->GetSelClass() == new_class)
-			break;
-	}
-	// reset all if line ought to be added
-	if (i_row >= GetCount())
+	const int row_old_index = get_row_index_of_spike_class(current_class);
+	if (row_old_index < 0)
 	{
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
@@ -607,16 +574,56 @@ void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class)
 		update_string(pptr, new_class, n_spikes);
 	}
 
+
+}
+
+void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class)
+{
+	if (0 == GetCount() || new_class == m_spike_list->GetSpike(spike_no)->get_class())
+		return;
+
+	// ---------------- 1) old spike : deselect spike and remove from corresp line (destroy?)
+	remove_spike_from_row(spike_no);
+
+	// ---------------- 2) new class? add to other row and select
+	m_spike_list->GetSpike(spike_no)->set_class(new_class);
+	add_spike_to_row(spike_no);
+
+
+	//// new row?
+	//RowStruct* pptr = nullptr;
+	//int i_row;
+	//for (i_row = 0; i_row < GetCount(); i_row++)
+	//{
+	//	pptr = reinterpret_cast<RowStruct*>(GetItemData(i_row)); 
+	//	if ((pptr->chart_bars)->GetSelClass() == new_class)
+	//		break;
+	//}
+	//// reset all if line ought to be added
+	//if (i_row >= GetCount())
+	//{
+	//	const auto l_first = m_lFirst;
+	//	const auto l_last = m_lLast;
+	//	set_source_data(m_spike_list, m_dbwave_doc);
+	//	SetTimeIntervals(l_first, l_last);
+	//}
+	//else
+	//{
+	//	int n_spikes = m_spike_list->Get_class_NItems(i_row) + 1;
+	//	m_spike_list->Set_class_NItems(i_row, n_spikes);
+	//	update_string(pptr, new_class, n_spikes);
+	//}
+
 	CRect rect;
 	if (!GetItemRect(i_row, &rect))
 		return;
 	SelectSpike(spike_no);
 }
 
-void SpikeClassListBox::update_string(void* ptr, int i_class, int nb_spikes)
+void SpikeClassListBox::update_string(void* row_item, int i_class, int nb_spikes)
 {
 	// create text
-	const auto pptr = static_cast<RowStruct*>(ptr);
+	const auto pptr = static_cast<RowStruct*>(row_item);
 	delete pptr->comment;
 	auto pcs = new CString;
 	ASSERT(pcs != NULL);
@@ -624,23 +631,23 @@ void SpikeClassListBox::update_string(void* ptr, int i_class, int nb_spikes)
 	pptr->comment = pcs;
 }
 
-void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect* prect3, int i)
+void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i)
 {
 	if ((i < 0) || (i > GetCount() - 1))
 		return;
 	const auto pptr = reinterpret_cast<RowStruct*>(GetItemData(i));
 
 	// print text
-	const auto textlen = (pptr->comment)->GetLength();
-	p_dc->DrawText(*(pptr->comment), textlen, prect1, DT_LEFT | DT_WORDBREAK);
+	const auto text_length = (pptr->comment)->GetLength();
+	p_dc->DrawText(*(pptr->comment), text_length, rect1, DT_LEFT | DT_WORDBREAK);
 
 	// spike shape
 	if (pptr->chart_shapes != nullptr)
-		pptr->chart_shapes->Print(p_dc, prect2);
+		pptr->chart_shapes->Print(p_dc, rect2);
 
 	// spike bars
 	if (pptr->chart_bars != nullptr)
-		pptr->chart_bars->Print(p_dc, prect3);
+		pptr->chart_bars->Print(p_dc, rect3);
 }
 
 void SpikeClassListBox::XorTempVTtag(int x_point)

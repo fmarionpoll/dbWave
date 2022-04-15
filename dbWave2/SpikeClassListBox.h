@@ -83,11 +83,12 @@ public:
 	void ReflectBarsMouseMoveMessg(HWND hwnd);
 	void SetCursorMaxOnDblClick(int imax) { m_cursorIndexMax = imax; }
 
-	void PrintItem(CDC* p_dc, CRect* prect1, CRect* prect2, CRect* prect3, int i);
+	void PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i);
 
 protected:
 	void update_string(void* pptr, int i_class, int nb_spikes);
 	void remove_spike_from_row(int spike_no);
+	void add_spike_to_row(int spike_no);
 	int get_row_index_of_spike_class(int spike_class) const;
 
 	// Implementation

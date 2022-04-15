@@ -71,17 +71,14 @@ public:
 	WORD GetVersion() const { return m_version; }
 	BOOL IsClassListValid() const { return m_keep_only_valid_classes; }
 
-	int GetNbclasses() const
-	{
-		if (m_keep_only_valid_classes) 
-			return m_n_classes;
-		return -1;
-	}
-
+	int GetNbclasses() const;
 	int Get_class_ID(int i) const { return m_spike_class_descriptors.GetAt(i).GetClassID();}
 	int Set_class_ID(int i, int id) { m_spike_class_descriptors.GetAt(i).SetClassID(id); }
 	int Get_class_NItems(int i) const { return m_spike_class_descriptors.GetAt(i).GetNItems(); }
 	void Set_class_NItems(int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).SetNItems(n_spikes); }
+	int Get_class_ID_index(int classID);
+	int Increment_class_NItems(int classID);
+	int Decrement_class_NItems(int classID);
 
 	Spike* GetSpike(int no) { return m_spikes.GetAt(no); }
 	int GetTotalSpikes() const { return m_spikes.GetCount(); }

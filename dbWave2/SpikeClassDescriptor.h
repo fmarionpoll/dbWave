@@ -18,6 +18,8 @@ public:
 	void SetClassID(int id) { class_id = id; }
 	int GetNItems() const {return n_items; }
 	void SetNItems(int n) { n_items = n; }
+	int IncrementNItems() { n_items++; return n_items; }
+	int DecrementNItems() { if (n_items > 0)  n_items--; ; return n_items; }
 
 };
 
