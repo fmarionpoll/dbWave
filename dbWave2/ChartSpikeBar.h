@@ -21,8 +21,6 @@ protected:
 public:
 	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document);
 
-	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
-
 	int GetSelectedSpike() const { return m_selected_spike; }
 	int GetHitSpike() const { return m_hit_spike; }
 
@@ -44,6 +42,7 @@ public:
 
 	void Print(CDC* p_dc, CRect* rect);
 	void PlotDataToDC(CDC* p_dc) override;
+	void plot_spikes(CDC* p_dc) override;
 	void PlotSingleSpkDataToDC(CDC* p_dc);
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 

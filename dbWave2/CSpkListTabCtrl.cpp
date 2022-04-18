@@ -33,9 +33,9 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc)
 		if (!p_spike_list)
 			continue;
 		CString cs;
-		if (p_spike_list->GetDetectParms()->detect_what != DETECT_SPIKES)
+		if (p_spike_list->get_detection_parameters()->detect_what != DETECT_SPIKES)
 			continue;
-		cs.Format(_T("#%i %s"), i, (LPCTSTR) p_spike_list->GetDetectParms()->comment);
+		cs.Format(_T("#%i %s"), i, (LPCTSTR) p_spike_list->get_detection_parameters()->comment);
 		InsertItem(j, cs);
 		j++;
 	}

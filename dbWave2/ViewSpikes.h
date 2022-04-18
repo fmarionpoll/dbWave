@@ -90,7 +90,7 @@ protected:
 	void scrollBias(UINT nSBCode, UINT nPos);
 	void setVBarMode(short bMode);
 	BOOL add_spike_to_list(long ii_time, BOOL check_if_spike_nearby);
-	void setAddspikesMode(int mouse_cursor_type);
+	void set_add_spikes_mode(int mouse_cursor_type);
 	void select_spike_list(int current_selection);
 	void setTrackRectangle();
 	void scrollFile(UINT nSBCode, UINT nPos);

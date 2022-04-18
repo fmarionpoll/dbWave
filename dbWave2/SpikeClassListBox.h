@@ -1,17 +1,9 @@
 #pragma once
-#include "ChartSpikeBar.h"
-#include "ChartSpikeShape.h"
+
 #include "Spikelist.h"
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"
 
-
-struct RowStruct
-{
-	CString* comment;
-	ChartSpikeShape* chart_shapes;
-	ChartSpikeBar* chart_bars;
-};
 
 class SpikeClassListBox : public CListBox
 {
@@ -29,9 +21,9 @@ protected:
 	int m_widthSpikes = -1;
 	int m_widthBars = -1;
 	int m_topIndex = -1;
-	COLORREF m_clrText = RGB(0, 0, 0);
-	COLORREF m_clrBkgnd;
-	CBrush m_brBkgnd;
+	COLORREF m_color_text = RGB(0, 0, 0);
+	COLORREF m_color_background;
+	CBrush m_brush_background;
 	int m_cursorIndexMax = 3;
 
 	// logic to drag spikes
@@ -51,13 +43,13 @@ public:
 	void SetSpkList(SpikeList* p_spike_list);
 
 	void SetTimeIntervals(long l_first, long l_last);
-	int GetHowManyClassesInCurrentSpikeList();
+	int count_classes_in_current_spike_list();
 	long GetTimeFirst() const { return m_lFirst; }
 	long GetTimeLast() const { return m_lLast; }
 
-	void SetRowHeight(int rowheight);
-	void SetLeftColWidth(int rowwidth);
-	void SetColsWidth(int coltext, int colspikes, int colseparator);
+	void SetRowHeight(int row_height);
+	void SetLeftColWidth(int row_width);
+	void SetColsWidth(int width_spikes, int width_separator);
 
 	int GetRowHeight() const { return m_row_height; }
 	int GetLeftColWidth() const { return m_left_column_width; }
@@ -78,15 +70,15 @@ public:
 	int SelectSpike(int spike_no);
 	void ChangeSpikeClass(int spike_no, int new_class);
 	int SetMouseCursorType(int cursor_m);
-	void XorTempVTtag(int x_point);
-	void ResetBarsXortag();
+	void XorTempVTtag(int x_point) const;
+	void ResetBarsXortag() const;
 	void ReflectBarsMouseMoveMessg(HWND hwnd);
 	void SetCursorMaxOnDblClick(int imax) { m_cursorIndexMax = imax; }
 
-	void PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i);
+	void PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i) const;
 
 protected:
-	void update_string(void* pptr, int i_class, int nb_spikes);
+	static void update_string(void* ptr, int i_class, int n_spikes);
 	void remove_spike_from_row(int spike_no);
 	void add_spike_to_row(int spike_no);
 	int get_row_index_of_spike_class(int spike_class) const;

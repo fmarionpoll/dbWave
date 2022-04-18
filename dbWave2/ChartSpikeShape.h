@@ -30,7 +30,6 @@ public:
 	float GetExtent_mV();
 	float GetExtent_ms();
 
-	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
 	int GetHitSpike() const { return m_hit_spike; }
 	int GetSelectedSpike() const { return m_selected_spike; }
 
@@ -50,6 +49,7 @@ public:
 	int DisplayExData(short* p_data, int color = 9);
 	void DisplayFlaggedSpikes(BOOL bHighLight);
 	void PlotDataToDC(CDC* p_dc) override;
+	void plot_spikes(CDC* p_dc) override;
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:

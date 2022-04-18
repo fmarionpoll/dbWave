@@ -94,7 +94,7 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 	if (bActivate)
 	{
 		const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
-		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, (LPARAM)pActivateView->GetDocument());
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
 	{
@@ -152,33 +152,33 @@ void ViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void ViewSpikes::setAddspikesMode(int mouse_cursor_type)
+void ViewSpikes::set_add_spikes_mode(int mouse_cursor_type)
 {
 	// display or hide corresponding controls within this view
 	const BOOL set_add_spike_mode = (mouse_cursor_type == CURSOR_CROSS);
-	if (m_b_add_spike_mode != set_add_spike_mode)
-	{
-		m_b_add_spike_mode = set_add_spike_mode;
-		const int n_cmd_show = set_add_spike_mode ? SW_SHOW : SW_HIDE;
-		GetDlgItem(IDC_SOURCECLASS)->ShowWindow(n_cmd_show);
-		GetDlgItem(IDC_DESTCLASS)->ShowWindow(n_cmd_show);
-		GetDlgItem(IDC_EDIT4)->ShowWindow(n_cmd_show);
-		GetDlgItem(IDC_EDIT5)->ShowWindow(n_cmd_show);
-		GetDlgItem(IDC_GROUPBOX)->ShowWindow(n_cmd_show);
-		GetDlgItem(IDC_JITTER)->ShowWindow(n_cmd_show);
-		GetDlgItem(IDC_JITTERSTATIC)->ShowWindow(n_cmd_show);
+	if (m_b_add_spike_mode == set_add_spike_mode)
+		return;
+	
+	m_b_add_spike_mode = set_add_spike_mode;
+	const int n_cmd_show = set_add_spike_mode ? SW_SHOW : SW_HIDE;
+	GetDlgItem(IDC_SOURCECLASS)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_DESTCLASS)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_EDIT4)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_EDIT5)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_GROUPBOX)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_JITTER)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_JITTERSTATIC)->ShowWindow(n_cmd_show);
 
-		auto hwnd = GetSafeHwnd();
-		if (!m_b_add_spike_mode)
-			hwnd = nullptr;
-		m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
-		m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
-		m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
-		                             m_pspkDP->extract_channel);
+	auto hwnd = GetSafeHwnd();
+	if (!m_b_add_spike_mode)
+		hwnd = nullptr;
+	m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
+	m_spkClassListBox.ReflectBarsMouseMoveMessg(hwnd);
+	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
+	                             m_pspkDP->extract_channel);
 
-		if (m_b_add_spike_mode)
-			setTrackRectangle();
-	}
+	if (m_b_add_spike_mode)
+		setTrackRectangle();
 }
 
 void ViewSpikes::setTrackRectangle()
@@ -240,7 +240,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	{
 	case HINT_SETMOUSECURSOR:
 		if (m_ChartDataWnd.GetMouseCursorType() != shortValue)
-			setAddspikesMode(shortValue);
+			set_add_spikes_mode(shortValue);
 		m_ChartDataWnd.SetMouseCursorType(shortValue);
 		m_spkClassListBox.SetMouseCursorType(shortValue);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(shortValue, 0));
@@ -282,7 +282,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_DROPPED:
 		m_pSpkDoc->SetModifiedFlag();
-		m_spike_index_class = m_pSpkList->GetSpike(m_spike_index)->get_class();
+		m_spike_index_class = m_pSpkList->get_spike(m_spike_index)->get_class();
 		UpdateData(FALSE);
 		break;
 
@@ -302,10 +302,10 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 {
-	const int method = m_pSpkList->GetDetectParms()->detect_transform;
-	const int doc_channel = m_pSpkList->GetDetectParms()->extract_channel;
-	const int pre_threshold = m_pSpkList->GetDetectParms()->detect_pre_threshold;
-	const int spike_length = m_pSpkList->GetSpikeLength();
+	const int method = m_pSpkList->get_detection_parameters()->detect_transform;
+	const int doc_channel = m_pSpkList->get_detection_parameters()->extract_channel;
+	const int pre_threshold = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+	const int spike_length = m_pSpkList->get_spike_length();
 	const int transformation_data_span = m_pDataDoc->GetTransfDataSpan(method);
 	const auto ii_time0 = ii_time - pre_threshold;
 	auto l_read_write_first = ii_time0;
@@ -335,9 +335,9 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 
 		m_pSpkDoc->SetModifiedFlag();
 	}
-	else if (m_pSpkList->GetSpike(spike_index)->get_class() != m_class_destination)
+	else if (m_pSpkList->get_spike(spike_index)->get_class() != m_class_destination)
 	{
-		m_pSpkList->GetSpike(spike_index)->set_class(m_class_destination);
+		m_pSpkList->get_spike(spike_index)->set_class(m_class_destination);
 		m_pSpkDoc->SetModifiedFlag();
 	}
 
@@ -347,8 +347,8 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 		m_pSpkList->UpdateClassList();
 		m_pSpkDoc->OnSaveDocument(GetDocument()->GetDB_CurrentSpkFileName(FALSE));
 		m_pSpkDoc->SetModifiedFlag(FALSE);
-		GetDocument()->SetDB_n_spikes(m_pSpkList->GetTotalSpikes());
-		GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
+		GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
+		GetDocument()->SetDB_n_spike_classes(m_pSpkList->get_classes_count());
 		const auto b_reset_zoom_old = m_b_reset_zoom;
 		m_b_reset_zoom = FALSE;
 		updateSpikeFile(TRUE);
@@ -366,7 +366,7 @@ void ViewSpikes::selectSpike(int spike_no)
 {
 	if (m_pSpkDoc == nullptr)
 		return;
-	if (spike_no >= m_pSpkList->GetTotalSpikes())
+	if (spike_no >= m_pSpkList->get_spikes_count())
 		spike_no = -1;
 	m_spike_index = spike_no;
 	m_pSpkList->m_selected_spike = spike_no;
@@ -374,13 +374,13 @@ void ViewSpikes::selectSpike(int spike_no)
 
 	m_spike_index_class = -1;
 	int n_cmd_show;
-	if (spike_no >= 0 && spike_no < m_pSpkList->GetTotalSpikes())
+	if (spike_no >= 0 && spike_no < m_pSpkList->get_spikes_count())
 	{
-		const auto spike = m_pSpkList->GetSpike(m_spike_index);
+		const auto spike = m_pSpkList->get_spike(m_spike_index);
 		m_spike_index_class = spike->get_class();
 		m_b_artefact = (m_spike_index_class < 0);
-		const auto spk_first = spike->get_time() - m_pSpkList->GetDetectParms()->detect_pre_threshold;
-		const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
+		const auto spk_first = spike->get_time() - m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+		const auto spk_last = spk_first + m_pSpkList->get_spike_length();
 		n_cmd_show = SW_SHOW;
 		if (m_pDataDoc != nullptr)
 		{
@@ -489,7 +489,7 @@ void ViewSpikes::OnInitialUpdate()
 		}
 	}
 	m_psC->coltext = left_col_width - m_psC->colspikes - 2 * m_psC->colseparator;
-	m_spkClassListBox.SetColsWidth(m_psC->coltext, m_psC->colspikes, m_psC->colseparator);
+	m_spkClassListBox.SetColsWidth(m_psC->colspikes, m_psC->colseparator);
 	m_spkClassListBox.SetCursorMaxOnDblClick(3);
 
 	// init relation with document, display data, adjust parameters
@@ -521,7 +521,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 	m_ChartDataWnd.SetbUseDIB(FALSE);
 	m_ChartDataWnd.AttachDataFile(m_pDataDoc);
 
-	const auto detect = m_pSpkList->GetDetectParms();
+	const auto detect = m_pSpkList->get_detection_parameters();
 	int source_data_view = detect->extract_channel;
 	if (source_data_view >= m_pDataDoc->GetpWaveFormat()->scan_count)
 	{
@@ -574,12 +574,12 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 		m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 	}
 
-	m_DW_intervals.SetSize(3 + 2); // total size
-	m_DW_intervals.SetAt(0, 0); // source channel
-	m_DW_intervals.SetAt(1, RGB(255, 0, 0)); // red color
-	m_DW_intervals.SetAt(2, 1); // pen size
-	m_DW_intervals.SetAt(3, 0); // pen size
-	m_DW_intervals.SetAt(4, 0); // pen size
+	m_DW_intervals.SetSize(3 + 2);					// total size
+	m_DW_intervals.SetAt(0, 0);		// source channel
+	m_DW_intervals.SetAt(1, RGB(255, 0, 0));	// red color
+	m_DW_intervals.SetAt(2, 1);		// pen size
+	m_DW_intervals.SetAt(3, 0);		// pen size
+	m_DW_intervals.SetAt(4, 0);		// pen size
 }
 
 void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
@@ -598,7 +598,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 
 		const int current_index = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(current_index);
-		m_pspkDP = m_pSpkList->GetDetectParms();
+		m_pspkDP = m_pSpkList->get_detection_parameters();
 
 		m_spkClassListBox.set_source_data(m_pSpkList, GetDocument());
 		if (bUpdateInterface)
@@ -683,13 +683,13 @@ void ViewSpikes::select_spike_list(int current_selection)
 	m_spkClassListBox.SetSpkList(m_pSpkList);
 
 	m_spkClassListBox.Invalidate();
-	m_pspkDP = m_pSpkList->GetDetectParms();
+	m_pspkDP = m_pSpkList->get_detection_parameters();
 
 	// update source data: change data channel and update display
-	int extract_channel = m_pSpkList->GetDetectParms()->extract_channel;
+	int extract_channel = m_pSpkList->get_detection_parameters()->extract_channel;
 	ASSERT(extract_channel == m_pspkDP->extract_channel);
-	if (m_pSpkList->GetDetectParms()->detect_what == DETECT_STIMULUS)
-		extract_channel = m_pSpkList->GetDetectParms()->detect_channel;
+	if (m_pSpkList->get_detection_parameters()->detect_what == DETECT_STIMULUS)
+		extract_channel = m_pSpkList->get_detection_parameters()->detect_channel;
 
 	// no data available
 	if (m_ChartDataWnd.SetChanlistSourceChan(0, extract_channel) < 0)
@@ -719,7 +719,7 @@ void ViewSpikes::OnFormatAlldata()
 	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
 	// spikes: center spikes horizontally and adjust hz size of display
 	constexpr short x_wo = 0;
-	const short x_we = static_cast<short>(m_pSpkList->GetSpikeLength());
+	const short x_we = static_cast<short>(m_pSpkList->get_spike_length());
 	m_spkClassListBox.SetXzoom(x_we, x_wo);
 
 	updateLegends(TRUE);
@@ -730,24 +730,25 @@ void ViewSpikes::OnFormatAlldata()
 
 void ViewSpikes::OnFormatCentercurve()
 {
-	/*
-	if (m_bSpkDocExists)
-	{
-		// loop over all spikes of the list
-		int nspikes = m_pSpkList->GetTotalSpikes();
-		CdbWaveApp* p_app = (CdbWaveApp*) AfxGetApp();		// get pointer to application
-		SPKCLASSIF* m_psC= &(p_app->spkC);					// get address of spike classif parms
-		short it1 = m_psC->ileft;
-		short it2 = m_psC->iright;
-		for (int ispike = 0; ispike < nspikes; ispike++)
-			m_pSpkList->CenterSpikeAmplitude(ispike, it1, it2, 1);
+	// TODO 
 
-		int max, min;
-		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
-		WORD middle = max/2 + min/2;
-		m_spkClass.SetYzoom(m_spkClass.GetYWExtent(), middle);
+	// loop over all spikes of the list
+	const int n_spikes = m_pSpkList->get_spikes_count();
+	const SPKCLASSIF* m_psC= &(static_cast<CdbWaveApp*>(AfxGetApp())->spkC);
+	const auto i_t1 = m_psC->ileft;
+	const auto i_t2 = m_psC->iright;
+	for (int i_spike = 0; i_spike < n_spikes; i_spike++)
+	{
+		Spike* spike = m_pSpkList->get_spike(i_spike);
+		spike->CenterSpikeAmplitude(i_t1, i_t2, 1);
 	}
-	*/
+
+	short max, min;
+	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+	const WORD middle = max/2 + min/2;
+	m_spkClassListBox.SetYzoom(m_spkClassListBox.GetYWExtent(), middle);
+
+	
 	if (m_pDataDoc != nullptr)
 		m_ChartDataWnd.CenterChan(0);
 
@@ -1120,8 +1121,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 			}
 
 			int n_classes = 1;
-			if (m_pSpkList->GetTotalSpikes() > 0)
-				n_classes = m_pSpkList->GetNbclasses();
+			if (m_pSpkList->get_spikes_count() > 0)
+				n_classes = m_pSpkList->get_classes_count();
 			ASSERT(n_classes > 0);
 			p_dbwave_doc->SetDB_n_spike_classes(n_classes);
 			nn_classes += n_classes;
@@ -1265,7 +1266,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		rw_text.right = rw_text.left + r_col;
 		rw_spikes.left = rw_text.right + r_separator;
 		//auto n = m_pSpkDoc->GetSpkListCurrent()->get_spike_length();
-		if (m_pSpkDoc->GetSpkList_Current()->GetSpikeLength() > 1)
+		if (m_pSpkDoc->GetSpkList_Current()->get_spike_length() > 1)
 			rw_spikes.right = rw_spikes.left + r_col;
 		else
 			rw_spikes.right = rw_spikes.left;
@@ -1529,9 +1530,9 @@ void ViewSpikes::OnEnChangeNOspike()
 void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 {
 	// test if spike visible in the current time interval
-	const Spike* spike = m_pSpkList->GetSpike(spike_no);
-	const long spk_first = spike->get_time() - m_pSpkList->GetDetectParms()->detect_pre_threshold;
-	const long spk_last = spk_first + m_pSpkList->GetSpikeLength();
+	const Spike* spike = m_pSpkList->get_spike(spike_no);
+	const long spk_first = spike->get_time() - m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+	const long spk_last = spk_first + m_pSpkList->get_spike_length();
 	const long spk_center = (spk_last + spk_first) / 2;
 	if (spk_first < m_lFirst || spk_last > m_lLast)
 	{
@@ -1543,7 +1544,7 @@ void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 
 	// center curve vertically
 	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
-	const int doc_channel = m_pSpkList->GetDetectParms()->extract_channel;
+	const int doc_channel = m_pSpkList->get_detection_parameters()->extract_channel;
 	short max_data = m_pDataDoc->BGetVal(doc_channel, spk_first);
 	short min_data = max_data;
 	for (long i = spk_first; i <= spk_last; i++)
@@ -2138,7 +2139,7 @@ void ViewSpikes::OnArtefact()
 	else
 	{
 		// load old class nb
-		auto spk_class = m_pSpkList->GetSpike(m_spike_index)->get_class();
+		auto spk_class = m_pSpkList->get_spike(m_spike_index)->get_class();
 		// if artefact: set class to negative value
 		if (m_b_artefact && spk_class >= 0)
 			spk_class = -(spk_class + 1);
@@ -2146,7 +2147,7 @@ void ViewSpikes::OnArtefact()
 			// if not artefact: if spike has negative class, set to positive value
 		else if (spk_class < 0)
 			spk_class = -(spk_class + 1);
-		m_pSpkList->GetSpike(m_spike_index)->set_class(spk_class);
+		m_pSpkList->get_spike(m_spike_index)->set_class(spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);

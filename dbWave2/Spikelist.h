@@ -1,6 +1,7 @@
 #pragma once
 
-#include "WaveBuf.h"
+#include "AcqDataDoc.h"
+#include "AcqWaveChan.h"
 #include "SpikeClassDescriptor.h"
 #include "Spike.h"
 #include "SPKDETECTPARM.h"
@@ -71,46 +72,46 @@ public:
 	WORD GetVersion() const { return m_version; }
 	BOOL IsClassListValid() const { return m_keep_only_valid_classes; }
 
-	int GetNbclasses() const;
-	int Get_class_ID(int i) const { return m_spike_class_descriptors.GetAt(i).GetClassID();}
-	int Set_class_ID(int i, int id) { m_spike_class_descriptors.GetAt(i).SetClassID(id); }
-	int Get_class_NItems(int i) const { return m_spike_class_descriptors.GetAt(i).GetNItems(); }
-	void Set_class_NItems(int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).SetNItems(n_spikes); }
-	int Get_class_ID_index(int classID);
-	int Increment_class_NItems(int classID);
-	int Decrement_class_NItems(int classID);
+	int get_classes_count() const;
+	int get_class_id(const int i) const { return m_spike_class_descriptors.GetAt(i).get_class_id();}
+	void set_class_id(const int i, const int id) { m_spike_class_descriptors.GetAt(i).set_class_id(id); }
 
-	Spike* GetSpike(int no) { return m_spikes.GetAt(no); }
-	int GetTotalSpikes() const { return m_spikes.GetCount(); }
+	int get_class_n_items(const int i) const { return m_spike_class_descriptors.GetAt(i).get_n_items(); }
+	void set_class_n_items(const int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).set_n_items(n_spikes); }
+	int get_class_id_index(int class_id);
+	int get_class_id_n_items(const int class_id);
+	int increment_class_n_items(int class_id);
+	int decrement_class_n_items(int class_id);
+
+	Spike* get_spike(int no) { return m_spikes.GetAt(no); }
+	int get_spikes_count() const { return m_spikes.GetCount(); }
 
 	WORD GetAcqEncoding() const { return m_data_encoding_mode; }
 	float GetAcqSampRate() const { return m_sampling_rate; }
 	float GetAcqVoltsperBin() const { return m_volts_per_bin; }
 	int GetAcqBinzero() const { return m_bin_zero; }
 
-	void SetDetectParms(SPKDETECTPARM* pSd) { m_detection_parameters = *pSd; }
-	SPKDETECTPARM* GetDetectParms() { return &m_detection_parameters; }
+	void set_detection_parameters(SPKDETECTPARM* pSd) { m_detection_parameters = *pSd; }
+	SPKDETECTPARM* get_detection_parameters() { return &m_detection_parameters; }
 
 	int AddSpike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
 
-	int  GetSpikeLength() const { return m_spike_length; }
-	void SetSpikeLength(int spike_length) { m_spike_length = spike_length; }
+	int  get_spike_length() const { return m_spike_length; }
+	void set_spike_length(int spike_length) { m_spike_length = spike_length; }
 
 	int RemoveSpike(int spike_index);
 	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spike_index, int channel_index);
 
 	void GetTotalMaxMin(BOOL b_recalculate, short* max, short* min);
-	
+
 	BOOL InitSpikeList(AcqDataDoc* pDataFile, SPKDETECTPARM* pFC);
 	long UpdateClassList();
 	void EraseData();
 	void ChangeSpikeClassID(int old_class_ID, int new_class_ID);
 
-	// measure parameters
 	void Measure_case0_AmplitudeMinToMax(int t1, int t2);
 	void Measure_case1_AmplitudeAtT(int t);
 	void Measure_case2_AmplitudeAtT2MinusAtT1(int t1, int t2);
-
 	CSize Measure_Y1_MaxMin();
 
 	BOOL SortSpikeWithY1(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits);
@@ -126,7 +127,7 @@ public:
 	BOOL GetSpikeFlag(int spike_index);
 	void RemoveAllSpikeFlags();
 	void FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
-	void SelectSpikesWithinBounds(int v_min, int v_max, long l_first, long l_ast, BOOL b_add);
+	void SelectSpikesWithinBounds(int v_min, int v_max, long l_first, long l_last, BOOL b_add);
 	void GetRangeOfSpikeFlagged(long& l_first, long& l_last);
 	BOOL GetSpikeFlagArrayAt(int i) const { return m_index_flagged_spikes.GetAt(i); }
 	int GetSpikeFlagArrayCount() const { return m_index_flagged_spikes.GetCount(); }

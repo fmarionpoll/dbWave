@@ -19,8 +19,6 @@ protected:
 
 	// Helpers and public procedures
 public:
-	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
-
 	int GetSelectedSpike() const { return m_selected_spike; }
 	int GetHitSpike() const { return m_hit_spike; }
 

@@ -507,6 +507,9 @@
     <ClCompile Include="ChartSpike.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="RowItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1098,6 +1101,9 @@
       <Filter>customctrl</Filter>
     </ClInclude>
     <ClInclude Include="ChartSpike.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RowItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

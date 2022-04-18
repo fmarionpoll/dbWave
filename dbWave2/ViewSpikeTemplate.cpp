@@ -220,12 +220,12 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 
 	// change pointer to select new spike list & test if one spike is selected
 	int spikeno = m_pSpkList->m_selected_spike;
-	if (spikeno > m_pSpkList->GetTotalSpikes() - 1 || spikeno < 0)
+	if (spikeno > m_pSpkList->get_spikes_count() - 1 || spikeno < 0)
 		spikeno = -1;
 	else
 	{
 		// set source class to the class of the selected spike
-		m_spikenoclass = m_pSpkList->GetSpike(spikeno)->get_class();
+		m_spikenoclass = m_pSpkList->get_spike(spikeno)->get_class();
 		m_psC->sourceclass = m_spikenoclass;
 	}
 
@@ -237,8 +237,8 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
 	if (m_psC->kleft == 0 && m_psC->kright == 0)
 	{
-		m_psC->kleft = m_pSpkList->GetDetectParms()->detect_pre_threshold;
-		m_psC->kright = m_psC->kleft + m_pSpkList->GetDetectParms()->detect_refractory_period;
+		m_psC->kleft = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+		m_psC->kright = m_psC->kleft + m_pSpkList->get_detection_parameters()->detect_refractory_period;
 	}
 	m_t1 = convertSpikeIndexToTime(m_psC->kleft);
 	m_t2 = convertSpikeIndexToTime(m_psC->kright);
@@ -546,7 +546,7 @@ void ViewSpikeTemplates::OnFormatAlldata()
 	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
 	// spikes: center spikes horizontally and adjust hz size of display
 	const short x_wo = 0;
-	const short x_we = m_pSpkList->GetSpikeLength();
+	const short x_we = m_pSpkList->get_spike_length();
 	m_ChartSpkWnd_Shape.SetXWExtOrg(x_we, x_wo);
 	updateLegends();
 }
@@ -694,7 +694,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 
 	// reinit all templates to zero
 	pTPList->DeleteAllItems();
-	int spikelen = m_pSpkList->GetSpikeLength();
+	int spikelen = m_pSpkList->get_spike_length();
 	pTPList->SetTemplateLength(spikelen, 0, spikelen - 1);
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
 
@@ -746,13 +746,13 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 			pSpkList->UpdateClassList(); // rebuild list of classes
 			pSpkDoc->SetModifiedFlag(); // and set modified flag
 		}
-		const auto nspikes = pSpkList->GetTotalSpikes();
+		const auto nspikes = pSpkList->get_spikes_count();
 
 		// add spikes to templates - create templates on the fly
 		int j_templ;
 		for (auto i = 0; i < nspikes; i++)
 		{
-			const auto cla = pSpkList->GetSpike(i)->get_class();
+			const auto cla = pSpkList->get_spike(i)->get_class();
 			auto b_found = FALSE;
 			for (j_templ = 0; j_templ < pTPList->GetTemplateDataSize(); j_templ++)
 			{
@@ -773,7 +773,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 			}
 
 			// get data and add spike
-			const auto p_spik = pSpkList->GetSpike(i)->get_p_data();
+			const auto p_spik = pSpkList->get_spike(i)->get_p_data();
 			pTPList->tAdd(j_templ, p_spik); // add spike to template j
 			pTPList->tAdd(p_spik); // add spike to template zero
 		}
@@ -811,7 +811,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 
 	// add as many forms as we have classes
 	m_templList.DeleteAllItems(); // reinit all templates to zero
-	m_templList.SetTemplateLength(m_pSpkList->GetSpikeLength(), m_psC->kleft, m_psC->kright);
+	m_templList.SetTemplateLength(m_pSpkList->get_spike_length(), m_psC->kleft, m_psC->kright);
 	m_templList.SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
 
 	// compute global std
@@ -830,9 +830,9 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		}
 
 		const auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-		nspikes = spike_list->GetTotalSpikes();
+		nspikes = spike_list->get_spikes_count();
 		for (auto i = 0; i < nspikes; i++)
-			m_templList.tAdd(m_pSpkList->GetSpike(i)->get_p_data());
+			m_templList.tAdd(m_pSpkList->get_spike(i)->get_p_data());
 	}
 	m_templList.tGlobalstats();
 
@@ -858,7 +858,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		}
 
 		auto spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-		nspikes = spike_list->GetTotalSpikes();
+		nspikes = spike_list->get_spikes_count();
 
 		// create template CListCtrl
 		for (auto i = 0; i < nspikes; i++)
@@ -866,15 +866,15 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			// filter out undesirable spikes
 			if (m_bDisplaySingleClass)
 			{
-				if (m_pSpkList->GetSpike(i)->get_class() != m_spikenoclass)
+				if (m_pSpkList->get_spike(i)->get_class() != m_spikenoclass)
 					continue;
 			}
-			const auto ii_time = m_pSpkList->GetSpike(i)->get_time();
+			const auto ii_time = m_pSpkList->get_spike(i)->get_time();
 			if (ii_time < m_lFirst || ii_time > m_lLast)
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
-			auto* p_spik = m_pSpkList->GetSpike(i)->get_p_data();
+			auto* p_spik = m_pSpkList->get_spike(i)->get_p_data();
 			auto b_within = FALSE;
 			int itpl;
 			for (itpl = 0; itpl < ntempl; itpl++)
@@ -978,24 +978,24 @@ void ViewSpikeTemplates::sortSpikes()
 		}
 
 		// spike loop
-		const auto nspikes = m_pSpkList->GetTotalSpikes(); // loop over all spikes
+		const auto nspikes = m_pSpkList->get_spikes_count(); // loop over all spikes
 		for (auto ispike = 0; ispike < nspikes; ispike++)
 		{
 			// filter out undesirable spikes - i.e. not relevant to the sort
 			if (m_bDisplaySingleClass)
 			{
 				// skip spikes that do not belong to selected class
-				if (m_pSpkList->GetSpike(ispike)->get_class() != m_spikenoclass)
+				if (m_pSpkList->get_spike(ispike)->get_class() != m_spikenoclass)
 					continue;
 			}
 
 			// skip spikes that do not fit into time interval selected
-			const auto ii_time = m_pSpkList->GetSpike(ispike)->get_time();
+			const auto ii_time = m_pSpkList->get_spike(ispike)->get_time();
 			if (ii_time < m_lFirst || ii_time > m_lLast)
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
-			const auto p_spik = m_pSpkList->GetSpike(ispike)->get_p_data();
+			const auto p_spik = m_pSpkList->get_spike(ispike)->get_p_data();
 			auto b_within = FALSE;
 			double distmin;
 			int offsetmin;
@@ -1034,9 +1034,9 @@ void ViewSpikeTemplates::sortSpikes()
 
 				// change spike class ID
 				const auto class_id = (m_templList.GetTemplateWnd(tplmin))->m_classID;
-				if (m_pSpkList->GetSpike(ispike)->get_class() != class_id)
+				if (m_pSpkList->get_spike(ispike)->get_class() != class_id)
 				{
-					m_pSpkList->GetSpike(ispike)->set_class(class_id);
+					m_pSpkList->get_spike(ispike)->set_class(class_id);
 					m_pSpkDoc->SetModifiedFlag(TRUE);
 				}
 			}
@@ -1046,8 +1046,8 @@ void ViewSpikeTemplates::sortSpikes()
 			m_pSpkDoc->OnSaveDocument(p_dbwave_doc->GetDB_CurrentSpkFileName(FALSE));
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
-			GetDocument()->SetDB_n_spikes(m_pSpkList->GetTotalSpikes());
-			GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
+			GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
+			GetDocument()->SetDB_n_spike_classes(m_pSpkList->get_classes_count());
 		}
 	}
 
@@ -1183,8 +1183,8 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 					m_pSpkDoc->OnSaveDocument(p_dbwave_doc->GetDB_CurrentSpkFileName(FALSE));
 					m_pSpkDoc->SetModifiedFlag(FALSE);
 
-					GetDocument()->SetDB_n_spikes(m_pSpkList->GetTotalSpikes());
-					GetDocument()->SetDB_n_spike_classes(m_pSpkList->GetNbclasses());
+					GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
+					GetDocument()->SetDB_n_spike_classes(m_pSpkList->get_classes_count());
 				}
 			}
 
@@ -1399,7 +1399,7 @@ void ViewSpikeTemplates::OnEnChangeT2()
 		if (t2 < m_t1)
 			t2 = m_t1 + delta;
 
-		int spikelen = m_pSpkList->GetSpikeLength();
+		int spikelen = m_pSpkList->get_spike_length();
 		const auto tmax = convertSpikeIndexToTime(spikelen - 1);
 		if (t2 >= tmax)
 			t2 = tmax;

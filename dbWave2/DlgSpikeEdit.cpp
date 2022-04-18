@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::LoadSpikeParms()
 {
-	const Spike* spike = m_pSpkList->GetSpike(m_spike_index); // get address of spike parms
+	const Spike* spike = m_pSpkList->get_spike(m_spike_index); // get address of spike parms
 	m_spikeclass = spike->get_class(); 
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = spike->get_time();
@@ -58,7 +58,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	CDialog::OnInitDialog(); 
 	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
 	m_pSpkList = m_pdbWaveDoc->m_pSpk->GetSpkList_Current();
-	if (m_pSpkList == nullptr || m_pSpkList->GetTotalSpikes() == 0)
+	if (m_pSpkList == nullptr || m_pSpkList->get_spikes_count() == 0)
 	{
 		EndDialog(FALSE); 
 		return TRUE;
@@ -91,11 +91,11 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		const auto lvSize = m_ChartDataWnd.GetRectSize();
 		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
 		m_ChartDataWnd.RemoveAllChanlistItems();
-		m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extract_channel, m_pSpkList->GetDetectParms()->extract_transform);
+		m_ChartDataWnd.AddChanlistItem(m_pSpkList->get_detection_parameters()->extract_channel, m_pSpkList->get_detection_parameters()->extract_transform);
 
-		if (m_pSpkList->GetDetectParms()->compensate_Baseline)
+		if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
 		{
-			m_ChartDataWnd.AddChanlistItem(m_pSpkList->GetDetectParms()->extract_channel, MOVAVG30);
+			m_ChartDataWnd.AddChanlistItem(m_pSpkList->get_detection_parameters()->extract_channel, MOVAVG30);
 			m_ChartDataWnd.GetChanlistItem(1)->SetColor(6);
 			m_ChartDataWnd.GetChanlistItem(1)->SetPenWidth(1);
 			static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
@@ -123,8 +123,8 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	}
 
 	m_displayratio = 20; // how much spike versus source data
-	m_spkpretrig = m_pSpkList->GetDetectParms()->detect_pre_threshold; // load parms used many times
-	m_spklen = m_pSpkList->GetSpikeLength(); // pre-trig and spike length
+	m_spkpretrig = m_pSpkList->get_detection_parameters()->detect_pre_threshold; // load parms used many times
+	m_spklen = m_pSpkList->get_spike_length(); // pre-trig and spike length
 	m_viewdatalen = MulDiv(m_spklen, 100, m_displayratio); // how wide is source window
 	if (m_yextent == 0)
 	{
@@ -180,8 +180,8 @@ void DlgSpikeEdit::OnEnChangespike_index()
 		// check boundaries
 		if (m_spike_index < 0)
 			m_spike_index = 0;
-		if (m_spike_index >= m_pSpkList->GetTotalSpikes())
-			m_spike_index = m_pSpkList->GetTotalSpikes() - 1;
+		if (m_spike_index >= m_pSpkList->get_spikes_count())
+			m_spike_index = m_pSpkList->get_spikes_count() - 1;
 
 		mm_spike_index.m_bEntryDone = FALSE; 
 		mm_spike_index.m_nChar = 0; 
@@ -215,7 +215,7 @@ void DlgSpikeEdit::OnEnChangeSpikeclass()
 		default: ;
 		}
 
-		m_pSpkList->GetSpike(m_spike_index)->set_class(m_spikeclass);
+		m_pSpkList->get_spike(m_spike_index)->set_class(m_spikeclass);
 		mm_spikeclass.m_bEntryDone = FALSE; // clear flag
 		mm_spikeclass.m_nChar = 0; // empty buffer
 		mm_spikeclass.SetSel(0, -1); // select all text
@@ -229,7 +229,7 @@ void DlgSpikeEdit::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
 	m_spikeclass = (m_bartefact) ? -1 : 0;
-	m_pSpkList->GetSpike(m_spike_index)->set_class(m_spikeclass);
+	m_pSpkList->get_spike(m_spike_index)->set_class(m_spikeclass);
 	UpdateData(FALSE); // update value
 	m_bchanged = TRUE;
 }
@@ -290,7 +290,7 @@ void DlgSpikeEdit::OnEnChangeYextent()
 		{
 			m_yextent = m_yvextent;
 			m_ChartDataWnd.GetChanlistItem(0)->SetYextent(m_yextent);
-			if (m_pSpkList->GetDetectParms()->compensate_Baseline)
+			if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
 				m_ChartDataWnd.GetChanlistItem(1)->SetYextent(m_yextent);
 			m_SpkChartWnd.SetYWExtOrg(m_yextent, m_yzero);
 			m_ChartDataWnd.Invalidate();
@@ -304,7 +304,7 @@ void DlgSpikeEdit::LoadSourceData()
 	if (m_pAcqDatDoc == nullptr)
 		return;
 
-	const auto spike = m_pSpkList->GetSpike(m_spike_index); 
+	const auto spike = m_pSpkList->get_spike(m_spike_index); 
 	const auto l_first = spike->get_time() - m_spkpretrig;
 	m_intervals_to_highlight_spikes.SetAt(3, l_first); 
 	const auto l_last = l_first + m_spklen; 
@@ -331,7 +331,7 @@ void DlgSpikeEdit::LoadSourceData()
 	chan0->SetYzero(m_yzero + spike->get_amplitude_offset());
 	chan0->SetYextent(m_yextent);
 
-	if (m_pSpkList->GetDetectParms()->compensate_Baseline)
+	if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
 	{
 		CChanlistItem* chan1 = m_ChartDataWnd.GetChanlistItem(1);
 		chan1->SetYzero(m_yzero + spike->get_amplitude_offset());
@@ -344,17 +344,17 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 {
 	if (m_pAcqDatDoc != nullptr)
 	{
-		auto offset = m_pSpkList->GetSpike(m_spike_index)->get_amplitude_offset();
+		auto offset = m_pSpkList->get_spike(m_spike_index)->get_amplitude_offset();
 		m_iitime += shift;
-		m_pSpkList->GetSpike(m_spike_index)->set_time(m_iitime);
+		m_pSpkList->get_spike(m_spike_index)->set_time(m_iitime);
 		UpdateSpikeScroll();
 		LoadSourceData();
 
 		const auto l_first = m_iitime - m_spkpretrig;
 
 		// get source data buffer address
-		Spike* pSpike = m_pSpkList->GetSpike(m_spike_index);
-		const auto method = m_pSpkList->GetDetectParms()->extract_transform;
+		Spike* pSpike = m_pSpkList->get_spike(m_spike_index);
+		const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
 		if (method == 0)
 		{
 			int n_channels;
@@ -462,7 +462,7 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	m_pSpkList->GetSpike(m_spike_index)->OffsetSpikeData(static_cast<short>(shift));
+	m_pSpkList->get_spike(m_spike_index)->OffsetSpikeData(static_cast<short>(shift));
 
 	LoadSpikeParms();
 	m_bchanged = TRUE;

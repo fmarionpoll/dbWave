@@ -536,10 +536,10 @@ void ChartSpikeHistVert::buildHistFromSpikeList(SpikeList* p_spk_list, long l_fi
 		reSize_And_Clear_Histograms(nbins, max, min);
 
 	CDWordArray* p_dw = nullptr;
-	auto nspikes = p_spk_list->GetTotalSpikes();
+	auto nspikes = p_spk_list->get_spikes_count();
 	for (auto ispk = 0; ispk < nspikes; ispk++)
 	{
-		const auto spike_element = p_spk_list->GetSpike(ispk);
+		const auto spike_element = p_spk_list->get_spike(ispk);
 
 		// check that the corresp spike fits within the time limits requested
 		const auto ii_time = spike_element->get_time();
@@ -597,7 +597,7 @@ void ChartSpikeHistVert::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles
 			p_doc->OpenCurrentSpikeFile();
 		}
 		SpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
-		if (p_spikelist != nullptr && p_spikelist->GetTotalSpikes() > 0)
+		if (p_spikelist != nullptr && p_spikelist->get_spikes_count() > 0)
 			buildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, nbins, bNew);
 	}
 

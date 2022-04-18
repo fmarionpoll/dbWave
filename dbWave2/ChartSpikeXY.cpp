@@ -68,14 +68,14 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 
 		// test presence of data
-		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
+		if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
 		{
 			if (!m_display_all_files)
 				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
 			continue;
 		}
 
-		auto ilast = p_spike_list->GetTotalSpikes() - 1;
+		auto ilast = p_spike_list->get_spikes_count() - 1;
 		auto ifirst = 0;
 		if (m_range_mode == RANGE_INDEX)
 		{
@@ -91,7 +91,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		for (auto ispk = ilast; ispk >= ifirst; ispk--)
 		{
 			// check that spike fits within time limits of the display
-			const auto spike_element = p_spike_list->GetSpike(ispk);
+			const auto spike_element = p_spike_list->get_spike(ispk);
 			const auto l_spike_time = spike_element->get_time();
 			if (m_range_mode == RANGE_TIMEINTERVALS
 				&& (l_spike_time < m_lFirst || l_spike_time > m_lLast))
@@ -206,10 +206,10 @@ void ChartSpikeXY::displayHZtags(CDC* p_dc)
 
 BOOL ChartSpikeXY::IsSpikeWithinRange(int spikeno)
 {
-	if (p_spike_list->GetTotalSpikes() < 1)
+	if (p_spike_list->get_spikes_count() < 1)
 		return FALSE;
 
-	const auto spike_element = p_spike_list->GetSpike(spikeno);
+	const auto spike_element = p_spike_list->get_spike(spikeno);
 	const auto ii_time = spike_element->get_time();
 	if (m_range_mode == RANGE_TIMEINTERVALS
 		&& (ii_time < m_lFirst || ii_time > m_lLast))
@@ -233,7 +233,7 @@ void ChartSpikeXY::DisplaySpike(int spikeno, BOOL bselect)
 
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	const auto spike_element = p_spike_list->GetSpike(spikeno);
+	const auto spike_element = p_spike_list->get_spike(spikeno);
 	const auto spike_class = spike_element->get_class();
 	int color_index;
 	if (!bselect)
@@ -274,7 +274,7 @@ void ChartSpikeXY::DisplaySpike(int spikeno, BOOL bselect)
 void ChartSpikeXY::highlightOnePoint(int nospike, CDC* p_dc)
 {
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto spike_element = p_spike_list->GetSpike(nospike);
+	const auto spike_element = p_spike_list->get_spike(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration = m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
@@ -300,7 +300,7 @@ void ChartSpikeXY::highlightOnePoint(int nospike, CDC* p_dc)
 
 void ChartSpikeXY::drawSelectedSpike(int nospike, int color, CDC* p_dc)
 {
-	const auto spike_element = p_spike_list->GetSpike(nospike);
+	const auto spike_element = p_spike_list->get_spike(nospike);
 	const auto l_spike_time = spike_element->get_time();
 	const auto windowduration = m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, windowduration) + m_xVO;
@@ -503,7 +503,7 @@ int ChartSpikeXY::hitCurveInDoc(CPoint point)
 			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 		}
 
-		if (p_spike_list == nullptr || p_spike_list->GetTotalSpikes() == 0)
+		if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
 		{
 			continue;
 		}
@@ -534,13 +534,13 @@ int ChartSpikeXY::hitCurve(CPoint point)
 
 	// first look at black spikes (foreground)
 	int ispk;
-	const auto upperbound = p_spike_list->GetTotalSpikes() - 1;
+	const auto upperbound = p_spike_list->get_spikes_count() - 1;
 	if (m_plotmode == PLOT_ONECLASS)
 	{
 		for (ispk = upperbound; ispk >= 0; ispk--)
 		{
 			// skip non selected class
-			const auto spike_element = p_spike_list->GetSpike(ispk);
+			const auto spike_element = p_spike_list->get_spike(ispk);
 			if (spike_element->get_class() != m_selected_class)
 				continue;
 			if (is_spike_within_limits(ispk))
@@ -561,7 +561,7 @@ int ChartSpikeXY::hitCurve(CPoint point)
 
 BOOL ChartSpikeXY::is_spike_within_limits(const int ispike)
 {
-	const auto spike_element = p_spike_list->GetSpike(ispike);
+	const auto spike_element = p_spike_list->get_spike(ispike);
 	const auto l_spike_time = spike_element->get_time();
 	if (l_spike_time < time_min_ || l_spike_time > time_max_)
 		return false;
@@ -580,14 +580,14 @@ void ChartSpikeXY::getExtents()
 		auto minval = 0;
 		if (p_spike_list != nullptr)
 		{
-			const auto upperbound = p_spike_list->GetTotalSpikes() - 1;
+			const auto upperbound = p_spike_list->get_spikes_count() - 1;
 			if (upperbound >= 0)
 			{
-				maxval = p_spike_list->GetSpike(upperbound)->get_y1();
+				maxval = p_spike_list->get_spike(upperbound)->get_y1();
 				minval = maxval;
 				for (auto i = upperbound; i >= 0; i--)
 				{
-					const auto val = p_spike_list->GetSpike(i)->get_y1();
+					const auto val = p_spike_list->get_spike(i)->get_y1();
 					if (val > maxval) maxval = val;
 					if (val < minval) minval = val;
 				}

@@ -1533,7 +1533,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 		const auto ii_frame_first = static_cast<long>(m_timefirst * samprate);
 		const auto ii_frame_last = static_cast<long>(m_timelast * samprate);
 		const auto ii_frame_length = ii_frame_last - ii_frame_first;
-		const auto nspikes = p_spk_list->GetTotalSpikes();
+		const auto nspikes = p_spk_list->get_spikes_count();
 
 		// display spikes and stimuli either on one line or on multiple lines
 		if (m_pvdS->babsolutetime)
@@ -1561,7 +1561,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				auto iitime0 = -1;
 				for (auto i = ispikefirst; i < nspikes; i++)
 				{
-					auto ii_time = p_spk_list->GetSpike(i)->get_time() - ii_first;
+					auto ii_time = p_spk_list->get_spike(i)->get_time() - ii_first;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
 					if (ii_time < 0)
@@ -1573,7 +1573,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 					}
 					// check spike class
 					if (m_pvdS->spikeclassoption
-						&& p_spk_list->GetSpike(i)->get_class() != m_spikeclass)
+						&& p_spk_list->get_spike(i)->get_class() != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
 					const auto spktime = ii_time / samprate;
@@ -1629,7 +1629,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 				auto iitime0 = -1;
 				for (auto i = 0; i < nspikes; i++)
 				{
-					auto ii_time = p_spk_list->GetSpike(i)->get_time() - istart;
+					auto ii_time = p_spk_list->get_spike(i)->get_time() - istart;
 					// check if this spike should be processed
 					// assume that spikes occurence times are ordered
 					if (ii_time < 0)
@@ -1638,7 +1638,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 						break;
 					// check spike class
 					if (m_pvdS->spikeclassoption
-						&& p_spk_list->GetSpike(i)->get_class() != m_spikeclass)
+						&& p_spk_list->get_spike(i)->get_class() != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
 					const auto spktime = ii_time / samprate;
@@ -2199,9 +2199,9 @@ void ViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 		{
 			const auto p_spike_list = p_spike_doc_->SetSpkList_AsCurrent(i);
 			CString cs;
-			if (p_spike_list->GetDetectParms()->detect_what != DETECT_SPIKES)
+			if (p_spike_list->get_detection_parameters()->detect_what != DETECT_SPIKES)
 				continue;
-			cs.Format(_T("#%i %s"), i, (LPCTSTR)p_spike_list->GetDetectParms()->comment);
+			cs.Format(_T("#%i %s"), i, (LPCTSTR)p_spike_list->get_detection_parameters()->comment);
 			m_tabCtrl.InsertItem(j, cs);
 			j++;
 		}

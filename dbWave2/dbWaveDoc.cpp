@@ -452,7 +452,7 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 			m_pSpk->SetSpkList_AsCurrent(0);
 		}
 		const auto p_spk_list = m_pSpk->GetSpkList_Current();
-		if (p_spk_list->GetTotalSpikes() == 0)
+		if (p_spk_list->get_spikes_count() == 0)
 			continue;
 
 		const CSize measure = p_spk_list->Measure_Y1_MaxMin();
@@ -1145,10 +1145,10 @@ boolean CdbWaveDoc::set_record_spk_classes(sourceData* record)
 	boolean flag = m_pSpk->OnOpenDocument(record->cs_spk_file);
 	if (flag)
 	{
-		m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkList_Current()->GetTotalSpikes();
-		if (m_pSpk->GetSpkList_Current()->GetNbclasses() < 0)
+		m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkList_Current()->get_spikes_count();
+		if (m_pSpk->GetSpkList_Current()->get_classes_count() < 0)
 			m_pSpk->GetSpkList_Current()->UpdateClassList();
-		m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->GetNbclasses();
+		m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->get_classes_count();
 		m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_wave_format.get_nb_points_sampled_per_channel();
 	}
 	return flag;
@@ -1603,12 +1603,12 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 	// number of spikes
 	if (options_viewspikes->btotalspikes)
 	{
-		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->GetDetectParms()->detect_threshold_mv);
+		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->get_detection_parameters()->detect_threshold_mv);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
-		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->GetTotalSpikes());
+		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->get_spikes_count());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->GetNbclasses());
+		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->get_classes_count());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		const auto tduration = m_pSpk->GetAcqDuration();
 		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, tduration);
@@ -1618,11 +1618,11 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 	// spike list iColumn, spike class
 	if (options_viewspikes->spikeclassoption != 0)
 		cs_dummy.Format(_T("%s%i %s%s %s%i"), (LPCTSTR)cs_tab, options_viewspikes->ichan,
-			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetDetectParms()->comment,
+			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment,
 			(LPCTSTR)cs_tab, kclass);
 	else
 		cs_dummy.Format(_T("%s%i %s%s \t(all)"), (LPCTSTR)cs_tab, options_viewspikes->ichan,
-			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->GetDetectParms()->comment);
+			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment);
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 
@@ -1760,8 +1760,8 @@ void CdbWaveDoc::Export_NumberOfSpikes(CSharedFile* pSF)
 			n_bins = options_viewspikes->histampl_nbins + 2;
 			break;
 		case EXPORT_AVERAGE: // assume that all spikes have the same length
-			p_doubl = new double[m_pSpk->GetSpkList_Current()->GetSpikeLength() * 2 + 1 + 2];
-			*p_doubl = m_pSpk->GetSpkList_Current()->GetSpikeLength();
+			p_doubl = new double[m_pSpk->GetSpkList_Current()->get_spike_length() * 2 + 1 + 2];
+			*p_doubl = m_pSpk->GetSpkList_Current()->get_spike_length();
 			break;
 		case EXPORT_INTERV: // feb 23, 2009
 			break;

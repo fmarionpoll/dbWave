@@ -217,7 +217,7 @@ void ViewSpikeSort::activateMode4()
 
 		if (nullptr != m_pSpkList)
 		{
-			const auto spikelen_ms = (static_cast<float>(m_pSpkList->GetSpikeLength()) * m_time_unit) / m_pSpkList->GetAcqSampRate();
+			const auto spikelen_ms = (static_cast<float>(m_pSpkList->get_spike_length()) * m_time_unit) / m_pSpkList->GetAcqSampRate();
 			CString cs_dummy;
 			cs_dummy.Format(_T("%0.1f ms"), spikelen_ms);
 			GetDlgItem(IDC_STATICRIGHT)->SetWindowText(cs_dummy);
@@ -329,22 +329,22 @@ void ViewSpikeSort::updateFileParameters()
 
 	// spike and classes
 	auto spike_index = m_pSpkList->m_selected_spike;
-	if (m_pSpkList->GetTotalSpikes() < spike_index || 0 > spike_index)
+	if (m_pSpkList->get_spikes_count() < spike_index || 0 > spike_index)
 	{
 		spike_index = -1;
 		m_source_class = 0;
 	}
 	else
 	{
-		m_source_class = m_pSpkList->GetSpike(spike_index)->get_class();
+		m_source_class = m_pSpkList->get_spike(spike_index)->get_class();
 		m_psC->sourceclass = m_source_class;
 	}
 	ASSERT(m_source_class < 32768);
 
 	if (0 == m_psC->ileft && 0 == m_psC->iright)
 	{
-		m_psC->ileft = m_pSpkList->GetDetectParms()->detect_pre_threshold;
-		m_psC->iright = m_psC->ileft + m_pSpkList->GetDetectParms()->detect_refractory_period;
+		m_psC->ileft = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+		m_psC->iright = m_psC->ileft + m_pSpkList->get_detection_parameters()->detect_refractory_period;
 	}
 	m_t1 = static_cast<float>(m_psC->ileft) * m_time_unit / m_pSpkList->GetAcqSampRate();
 	m_t2 = static_cast<float>(m_psC->iright) * m_time_unit / m_pSpkList->GetAcqSampRate();
@@ -384,7 +384,7 @@ void ViewSpikeSort::updateFileParameters()
 		}
 		else
 		{
-			xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
+			xygraph_wnd_.SetTimeIntervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
 			if (1 > xygraph_wnd_.m_VTtags.GetNTags())
 			{
 				m_ixyright = xygraph_wnd_.m_VTtags.AddTag(m_psC->ixyright, 0);
@@ -413,7 +413,7 @@ void ViewSpikeSort::updateLegends()
 	if (4 != m_psC->iparameter)
 		xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
 	else
-		xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
+		xygraph_wnd_.SetTimeIntervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
 	xygraph_wnd_.Invalidate();
 
 	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
@@ -476,7 +476,7 @@ void ViewSpikeSort::OnSort()
 
 		// load spike list
 		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(current_list);
-		if ((nullptr == m_pSpkList) || (0 == m_pSpkList->GetSpikeLength()))
+		if ((nullptr == m_pSpkList) || (0 == m_pSpkList->get_spike_length()))
 			continue;
 
 		// loop over all spikes of the list and compare to a single parameter
@@ -498,7 +498,7 @@ void ViewSpikeSort::OnSort()
 		if (flag_changed)
 		{
 			m_pSpkDoc->OnSaveDocument(pdb_doc->GetDB_CurrentSpkFileName(FALSE));
-			pdb_doc->SetDB_n_spikes(m_pSpkList->GetTotalSpikes());
+			pdb_doc->SetDB_n_spikes(m_pSpkList->get_spikes_count());
 		}
 	}
 
@@ -738,8 +738,8 @@ void ViewSpikeSort::OnMeasure()
 		if (m_pSpkList == nullptr)
 			continue;
 
-		const auto nspikes = m_pSpkList->GetTotalSpikes();
-		if (nspikes <= 0 || m_pSpkList->GetSpikeLength() == 0)
+		const auto nspikes = m_pSpkList->get_spikes_count();
+		if (nspikes <= 0 || m_pSpkList->get_spike_length() == 0)
 			continue;
 
 		switch (m_psC->iparameter)
@@ -823,7 +823,7 @@ void ViewSpikeSort::OnFormatAlldata()
 		if (m_psC->iparameter != 4) // then, we need imax imin ...
 			xygraph_wnd_.SetTimeIntervals(m_lFirst, m_lLast);
 		else
-			xygraph_wnd_.SetTimeIntervals(-m_pSpkList->GetSpikeLength(), m_pSpkList->GetSpikeLength());
+			xygraph_wnd_.SetTimeIntervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
 		xygraph_wnd_.Invalidate();
 
 		m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
@@ -836,7 +836,7 @@ void ViewSpikeSort::OnFormatAlldata()
 
 	// spikes: center spikes horizontally and adjust hz size of display
 
-	const auto x_we = m_pSpkList->GetSpikeLength();
+	const auto x_we = m_pSpkList->get_spike_length();
 	if (x_we != m_ChartSpkWnd_Shape.GetXWExtent() || 0 != m_ChartSpkWnd_Shape.GetXWOrg())
 		m_ChartSpkWnd_Shape.SetXWExtOrg(x_we, 0);
 
@@ -866,9 +866,9 @@ void ViewSpikeSort::buildHistogram()
 
 void ViewSpikeSort::OnFormatCentercurve()
 {
-	const auto n_spikes = m_pSpkList->GetTotalSpikes();
+	const auto n_spikes = m_pSpkList->get_spikes_count();
 	for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
-		m_pSpkList->GetSpike(i_spike)->CenterSpikeAmplitude( m_psC->ileft, m_psC->iright, 1);
+		m_pSpkList->get_spike(i_spike)->CenterSpikeAmplitude( m_psC->ileft, m_psC->iright, 1);
 
 	short max, min;
 	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
@@ -933,7 +933,7 @@ void ViewSpikeSort::selectSpikeFromCurrentList(int spike_index)
 	auto n_cmd_show = SW_HIDE;
 	if (ispike_local >= 0)
 	{
-		const auto spike_elemt = m_pSpkList->GetSpike(ispike_local);
+		const auto spike_elemt = m_pSpkList->get_spike(ispike_local);
 		m_spike_index_class = spike_elemt->get_class();
 		n_cmd_show = SW_SHOW;
 	}
@@ -1012,8 +1012,8 @@ void ViewSpikeSort::OnToolsAlignspikes()
 
 	// first prepare array with SUM
 
-	const auto spikelen = m_pSpkList->GetSpikeLength(); // length of one spike
-	const auto totalspikes = m_pSpkList->GetTotalSpikes(); // total nb of spikes /record
+	const auto spikelen = m_pSpkList->get_spike_length(); // length of one spike
+	const auto totalspikes = m_pSpkList->get_spikes_count(); // total nb of spikes /record
 	const auto p_sum0 = new double[spikelen]; // array with results / SUMy
 	const auto p_cxy0 = new double[spikelen]; // temp array to store correlat
 	auto* const p_mean0 = new short[spikelen]; // mean (template) / at scale
@@ -1029,10 +1029,10 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	short* p_spk;
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
-		if (m_pSpkList->GetSpike(ispk)->get_class() != m_source_class)
+		if (m_pSpkList->get_spike(ispk)->get_class() != m_source_class)
 			continue;
 		nbspk_selclass++;
-		p_spk = m_pSpkList->GetSpike(ispk)->get_p_data();
+		p_spk = m_pSpkList->get_spike(ispk)->get_p_data();
 		p_sum = p_sum0;
 		for (auto i = 0; i < spikelen; i++, p_spk++, p_sum++)
 			*p_sum += *p_spk;
@@ -1067,15 +1067,15 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	// get parameters from document
 	auto p_dat_doc = GetDocument()->m_pDat;
 	p_dat_doc->OnOpenDocument(data_file_name);
-	const auto doc_chan = m_pSpkList->GetDetectParms()->extract_channel; 
+	const auto doc_chan = m_pSpkList->get_detection_parameters()->extract_channel; 
 	const auto number_channels = static_cast<int>(p_dat_doc->GetpWaveFormat()->scan_count); 
-	const auto method = m_pSpkList->GetDetectParms()->extract_transform;
-	const auto spike_pre_trigger = m_pSpkList->GetDetectParms()->detect_pre_threshold;
+	const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
+	const auto spike_pre_trigger = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 	const int offset = (method > 0) ? 1 : number_channels; 
 	const int span = p_dat_doc->GetTransfDataSpan(method); 
 
 	// pre-load data
-	auto iitime0 = m_pSpkList->GetSpike(0)->get_time(); //-pretrig;
+	auto iitime0 = m_pSpkList->get_spike(0)->get_time(); //-pretrig;
 	auto l_rw_first0 = iitime0 - spikelen;
 	auto l_rw_last0 = iitime0 + spikelen;
 	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, span))
@@ -1083,10 +1083,10 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	auto p_data = p_dat_doc->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
 
 	// loop over all spikes now
-	const auto spkpretrig = m_pSpkList->GetDetectParms()->detect_pre_threshold;
+	const auto spkpretrig = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 	for (auto ispk = 0; ispk < totalspikes; ispk++)
 	{
-		Spike* pSpike = m_pSpkList->GetSpike(ispk);
+		Spike* pSpike = m_pSpkList->get_spike(ispk);
 
 		// exclude spikes that do not fall within time limits
 		if (pSpike->get_class() != m_source_class)
@@ -1614,7 +1614,7 @@ void ViewSpikeSort::OnEnChangeT2()
 		// check boundaries
 		if (t2 < m_t1)
 			t2 = m_t1 + delta;
-		const auto tmax = (float(m_pSpkList->GetSpikeLength()) - 1.f) * delta;
+		const auto tmax = (float(m_pSpkList->get_spike_length()) - 1.f) * delta;
 		if (t2 >= tmax)
 			t2 = tmax;
 		// change display if necessary
@@ -1792,8 +1792,8 @@ void ViewSpikeSort::OnEnChangeNOspike()
 		// check boundaries
 		if (m_spike_index < 0)
 			m_spike_index = -1;
-		if (m_spike_index >= m_pSpkList->GetTotalSpikes())
-			m_spike_index = m_pSpkList->GetTotalSpikes() - 1;
+		if (m_spike_index >= m_pSpkList->get_spikes_count())
+			m_spike_index = m_pSpkList->get_spikes_count() - 1;
 
 		mm_spike_index.m_bEntryDone = FALSE;
 		mm_spike_index.m_nChar = 0;
@@ -1803,9 +1803,9 @@ void ViewSpikeSort::OnEnChangeNOspike()
 			if (m_spike_index >= 0)
 			{
 				// test if spike visible in the current time interval
-				const auto spike_element = m_pSpkList->GetSpike(m_spike_index);
-				const auto spk_first = spike_element->get_time() - m_pSpkList->GetDetectParms()->detect_pre_threshold;
-				const auto spk_last = spk_first + m_pSpkList->GetSpikeLength();
+				const auto spike_element = m_pSpkList->get_spike(m_spike_index);
+				const auto spk_first = spike_element->get_time() - m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+				const auto spk_last = spk_first + m_pSpkList->get_spike_length();
 
 				if (spk_first < m_lFirst || spk_last > m_lLast)
 				{
@@ -1848,7 +1848,7 @@ void ViewSpikeSort::OnEnChangespike_indexclass()
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			const auto currentlist = m_tabCtrl.GetCurSel();
 			auto* spike_list = m_pSpkDoc->SetSpkList_AsCurrent(currentlist);
-			spike_list->GetSpike(m_spike_index)->set_class(m_spike_index_class);
+			spike_list->get_spike(m_spike_index)->set_class(m_spike_index_class);
 			updateLegends();
 		}
 	}
