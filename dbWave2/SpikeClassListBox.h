@@ -3,6 +3,7 @@
 #include "Spikelist.h"
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"
+#include "SpikeClassListBoxContext.h"
 
 
 class SpikeClassListBox : public CListBox
@@ -10,20 +11,12 @@ class SpikeClassListBox : public CListBox
 public:
 	SpikeClassListBox();
 	~SpikeClassListBox() override;
+
 protected:
 	BOOL m_bText = true;
 	BOOL m_bSpikes = true;
 	BOOL m_bBars = true;
-	int m_left_column_width = 20;
-	int m_row_height = 20;
-	int m_widthSeparator = 5;
-	int m_widthText = -1;
-	int m_widthSpikes = -1;
-	int m_widthBars = -1;
-	int m_topIndex = -1;
-	COLORREF m_color_text = RGB(0, 0, 0);
-	COLORREF m_color_background;
-	CBrush m_brush_background;
+	SpikeClassListBoxContext context;
 	int m_cursorIndexMax = 3;
 
 	// logic to drag spikes
@@ -43,7 +36,7 @@ public:
 	void SetSpkList(SpikeList* p_spike_list);
 
 	void SetTimeIntervals(long l_first, long l_last);
-	int count_classes_in_current_spike_list();
+	int count_classes_in_current_spike_list() const;
 	long GetTimeFirst() const { return m_lFirst; }
 	long GetTimeLast() const { return m_lLast; }
 
@@ -51,16 +44,16 @@ public:
 	void SetLeftColWidth(int row_width);
 	void SetColsWidth(int width_spikes, int width_separator);
 
-	int GetRowHeight() const { return m_row_height; }
-	int GetLeftColWidth() const { return m_left_column_width; }
-	int GetColsTextWidth() const { return m_widthText; }
-	int GetColsSpikesWidth() const { return m_widthSpikes; }
-	int GetColsTimeWidth() const { return m_widthBars; }
-	int GetColsSeparatorWidth() const { return m_widthSeparator; }
+	int GetRowHeight() const { return context.m_row_height; }
+	int GetLeftColWidth() const { return context.m_left_column_width; }
+	int GetColsTextWidth() const { return context.m_widthText; }
+	int GetColsSpikesWidth() const { return context.m_widthSpikes; }
+	int GetColsTimeWidth() const { return context.m_widthBars; }
+	int GetColsSeparatorWidth() const { return context.m_widthSeparator; }
 	float GetExtent_mV();
 
-	void SetYzoom(int y_we, int y_wo);
-	void SetXzoom(int x_we, int x_wo);
+	void SetYzoom(int y_we, int y_wo) const;
+	void SetXzoom(int x_we, int x_wo) const;
 
 	int GetYWExtent(); 
 	int GetYWOrg();
@@ -69,7 +62,7 @@ public:
 
 	int SelectSpike(int spike_no);
 	void ChangeSpikeClass(int spike_no, int new_class);
-	int SetMouseCursorType(int cursor_m);
+	int SetMouseCursorType(int cursor_m) const;
 	void XorTempVTtag(int x_point) const;
 	void ResetBarsXortag() const;
 	void ReflectBarsMouseMoveMessg(HWND hwnd);
@@ -78,7 +71,6 @@ public:
 	void PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i) const;
 
 protected:
-	static void update_string(void* ptr, int i_class, int n_spikes);
 	void remove_spike_from_row(int spike_no);
 	void add_spike_to_row(int spike_no);
 	int get_row_index_of_spike_class(int spike_class) const;

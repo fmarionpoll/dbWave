@@ -59,6 +59,6 @@ public:
 	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
 
 	void sub_item_draw(CDC& dc, CRect& rect);
-	void sub_item_create(const CRect& rect, int i_id, int i_class, CdbWaveDoc* pdbDoc, SpikeList* spike_list);
+	void sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, int i_class, CdbWaveDoc* pdbDoc, SpikeList* spike_list);
 	void virtual plot_spikes(CDC* p_dc);
 };

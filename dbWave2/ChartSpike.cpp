@@ -69,9 +69,9 @@ void ChartSpike::plot_spikes(CDC* p_dc)
 }
 
 
-void ChartSpike::sub_item_create(const CRect& rect, int i_id, int i_class, CdbWaveDoc* pdbDoc, SpikeList* spike_list)
+void ChartSpike::sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, int i_class, CdbWaveDoc* pdbDoc, SpikeList* spike_list)
 {
-	Create(_T(""), WS_CHILD | WS_VISIBLE, rect, this, i_id);
+	Create(_T(""), WS_CHILD | WS_VISIBLE, rect, parentWnd, i_id);
 	const auto n_spikes = spike_list->get_spikes_count();
 
 	set_source_data(spike_list, pdbDoc);

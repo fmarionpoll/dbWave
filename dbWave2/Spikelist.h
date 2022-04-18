@@ -75,9 +75,11 @@ public:
 	int get_classes_count() const;
 	int get_class_id(const int i) const { return m_spike_class_descriptors.GetAt(i).get_class_id();}
 	void set_class_id(const int i, const int id) { m_spike_class_descriptors.GetAt(i).set_class_id(id); }
+	int add_class_id(const int id);
 
 	int get_class_n_items(const int i) const { return m_spike_class_descriptors.GetAt(i).get_n_items(); }
 	void set_class_n_items(const int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).set_n_items(n_spikes); }
+
 	int get_class_id_index(int class_id);
 	int get_class_id_n_items(const int class_id);
 	int increment_class_n_items(int class_id);

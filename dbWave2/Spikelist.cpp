@@ -483,7 +483,12 @@ int SpikeList::get_class_id_n_items(const int class_id)
 
 int SpikeList::increment_class_n_items(const int class_id)
 {
-	const int index = get_class_id_index(class_id);
+	int index = get_class_id_index(class_id);
+	if (index < 0)
+	{
+		index = add_class_id(class_id);
+		return m_spike_class_descriptors.GetAt(index).get_n_items();
+	}
 	return m_spike_class_descriptors.GetAt(index).increment_n_items();
 }
 
@@ -830,28 +835,33 @@ long SpikeList::UpdateClassList()
 		// loop over all existing classes to find if there is one
 		for (auto j = 0; j < m_n_classes; j++)
 		{
-			array_class = get_class_id(j); // class ID
-			if (spike_class == array_class) // class OK?
+			array_class = get_class_id(j);
+			if (spike_class == array_class) 
 			{
-				set_class_n_items(j, get_class_n_items(j) + 1); 
-				break; // exit spk class loop
+				increment_class_n_items(j); 
+				break; 
 			}
 			if (spike_class < array_class) // insert new class?
 			{
 				m_spike_class_descriptors.InsertAt(j , SpikeClassDescriptor(spike_class, 1)); 
-				m_n_classes++; // exit spk class loop
+				m_n_classes++; 
 				break;
 			}
 		}
 
 		// test if cla not found within array
 		if (spike_class > array_class)
-		{
-			m_spike_class_descriptors.Add(SpikeClassDescriptor(spike_class, 1)); 
-			m_n_classes++; // update nb classes
-		}
+			add_class_id(spike_class);
+
 	}
 	return m_n_classes;
+}
+
+int SpikeList::add_class_id(const int id)
+{
+	int index = m_spike_class_descriptors.Add(SpikeClassDescriptor(id, 1));
+	m_n_classes++;
+	return index;
 }
 
 void SpikeList::ChangeSpikeClassID(const int old_class_ID, const int new_class_ID)

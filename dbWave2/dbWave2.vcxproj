@@ -786,6 +786,7 @@
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp" />
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp" />
     <ClCompile Include="RowItem.cpp" />
+    <ClCompile Include="SpikeClassListBoxContext.cpp" />
     <ClCompile Include="SpikeDetectArray.cpp" />
     <ClCompile Include="IntervalsListCtrl.cpp" />
     <ClCompile Include="DataTranslation_AD.cpp" />
@@ -1368,6 +1369,7 @@
     <ClInclude Include="GridCtrl\GridDefines.h" />
     <ClInclude Include="GridCtrl\GridInPlaceList.h" />
     <ClInclude Include="RowItem.h" />
+    <ClInclude Include="SpikeClassListBoxContext.h" />
     <ClInclude Include="SpikeDetectArray.h" />
     <ClInclude Include="IntervalsListCtrl.h" />
     <ClInclude Include="DataTranslation_AD.h" />

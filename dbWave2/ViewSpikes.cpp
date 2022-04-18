@@ -748,7 +748,6 @@ void ViewSpikes::OnFormatCentercurve()
 	const WORD middle = max/2 + min/2;
 	m_spkClassListBox.SetYzoom(m_spkClassListBox.GetYWExtent(), middle);
 
-	
 	if (m_pDataDoc != nullptr)
 		m_ChartDataWnd.CenterChan(0);
 
