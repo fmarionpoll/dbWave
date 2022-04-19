@@ -62,7 +62,7 @@ public:
 	int GetXWOrg() const; 
 
 	int SelectSpike(int spike_no);
-	void ChangeSpikeClass(int spike_no, int new_class);
+	void ChangeSpikeClass(int spike_no, int new_class_id);
 	int SetMouseCursorType(int cursor_m) const;
 	void XorTempVTtag(int x_point) const;
 	void ResetBarsXortag() const;

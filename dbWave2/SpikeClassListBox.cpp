@@ -447,15 +447,19 @@ void SpikeClassListBox::add_spike_to_row(int spike_no)
 	row_item->update_string(current_class, n_spikes);
 }
 
-void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class)
+void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class_id)
 {
-	if (0 == GetCount() || new_class == m_spike_list->get_spike(spike_no)->get_class())
+	Spike* spike = m_spike_list->get_spike(spike_no);
+	if (0 == GetCount() || new_class_id == spike->get_class())
 		return;
 
 	remove_spike_from_row(spike_no);
-	m_spike_list->get_spike(spike_no)->set_class(new_class);
-	add_spike_to_row(spike_no);
-	SelectSpike(spike_no);
+	spike->set_class(new_class_id);
+	if (new_class_id >= 0)
+	{
+		add_spike_to_row(spike_no);
+		SelectSpike(spike_no);
+	}
 }
 
 void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i) const
