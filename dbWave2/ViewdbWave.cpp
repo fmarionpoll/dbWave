@@ -245,7 +245,7 @@ void ViewdbWave::updateControls()
 
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+		CSpikeDoc* pSpkDoc = GetDocument()->open_current_spike_file();
 		if (pSpkDoc != nullptr)
 		{
 			const auto curr_listsize = pSpkDoc->GetSpkList_Size();
@@ -317,7 +317,7 @@ void ViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	// get item clicked and select it
 	const auto p_item_activate = (NMITEMACTIVATE*)pNMHDR;
 	if (p_item_activate->iItem >= 0)
-		GetDocument()->SetDB_CurrentRecordPosition(p_item_activate->iItem);
+		GetDocument()->set_db_current_record_position(p_item_activate->iItem);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	dbTableView::OnInitialUpdate();
 	*pResult = 0;
@@ -338,7 +338,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_VIEWTABHASCHANGED:
-		GetDocument()->GetCurrent_Spk_Document()->SetSpkList_AsCurrent(threshold);
+		GetDocument()->GetCurrent_Spk_Document()->set_spk_list_as_current(threshold);
 		m_dataListCtrl.RefreshDisplay();
 		break;
 
@@ -440,12 +440,12 @@ void ViewdbWave::DeleteRecords()
 	while (pos)
 	{
 		const auto n_item = m_dataListCtrl.GetNextSelectedItem(pos);
-		pdb_doc->SetDB_CurrentRecordPosition(n_item - ndel);
+		pdb_doc->set_db_current_record_position(n_item - ndel);
 		pdb_doc->DBDeleteCurrentRecord();
 		ndel++;
 	}
 
-	pdb_doc->SetDB_CurrentRecordPosition(currentindex);
+	pdb_doc->set_db_current_record_position(currentindex);
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 

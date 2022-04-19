@@ -59,7 +59,7 @@ BOOL DlgExportData::DestroyWindow()
 	{
 		try
 		{
-			m_dbDoc->SetDB_CurrentRecordPosition(m_icurrentfile);
+			m_dbDoc->set_db_current_record_position(m_icurrentfile);
 			m_dbDoc->OpenCurrentDataFile();
 		}
 		catch (CDaoException* e)
@@ -125,13 +125,13 @@ BOOL DlgExportData::OnInitDialog()
 		int nfiles = m_dbDoc->GetDB_NRecords();
 		for (int i = 0; i < nfiles; i++)
 		{
-			m_dbDoc->SetDB_CurrentRecordPosition(i);
+			m_dbDoc->set_db_current_record_position(i);
 			CString filename = m_dbDoc->GetDB_CurrentDatFileName();
 			int icount = filename.GetLength() - filename.ReverseFind('\\') - 1;
 			m_filedroplist.AddString(filename.Right(icount));
 			m_filedroplist.SetItemData(i, i);
 		}
-		m_dbDoc->SetDB_CurrentRecordPosition(m_icurrentfile);
+		m_dbDoc->set_db_current_record_position(m_icurrentfile);
 		m_filedroplist.SetCurSel(m_icurrentfile);
 	}
 	else
@@ -225,7 +225,7 @@ void DlgExportData::Export()
 	int cursel = m_filedroplist.GetCurSel(); // get file name index
 	int index = m_filedroplist.GetItemData(cursel); // get multidoc corresp index
 
-	m_dbDoc->SetDB_CurrentRecordPosition(index);
+	m_dbDoc->set_db_current_record_position(index);
 	m_dbDoc->OpenCurrentDataFile();
 	m_filesource = m_dbDoc->GetDB_CurrentDatFileName(); // now, extract path to source file
 

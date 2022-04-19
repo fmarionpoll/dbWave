@@ -356,7 +356,7 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 
 		// create line view and spike superposition
 		row->index = index + index_first;
-		db_wave_doc->SetDB_CurrentRecordPosition(row->index); 
+		db_wave_doc->set_db_current_record_position(row->index); 
 		row->csDatafileName = db_wave_doc->GetDB_CurrentDatFileName(TRUE);
 		row->csSpikefileName = db_wave_doc->GetDB_CurrentSpkFileName(TRUE);
 		const auto database = db_wave_doc->m_pDB;
@@ -411,7 +411,7 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 
 	// restore document conditions
 	if (index_current_file >= 0)
-		db_wave_doc->SetDB_CurrentRecordPosition(index_current_file);
+		db_wave_doc->set_db_current_record_position(index_current_file);
 }
 
 void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)
@@ -625,7 +625,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		int iTab = pParent->m_tabCtrl.GetCurSel();
 		if (iTab < 0)
 			iTab = 0;
-		const auto pspk_list = ptr->pspikeDoc->SetSpkList_AsCurrent(iTab);
+		const auto pspk_list = ptr->pspikeDoc->set_spk_list_as_current(iTab);
 		p_wnd->SetSourceData_spklist_spikedoc(pspk_list, ptr->pspikeDoc);
 		p_wnd->set_plot_mode(m_spike_plot_mode, m_selected_class);
 		long l_first = 0;

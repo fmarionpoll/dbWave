@@ -55,8 +55,8 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 	{
 		if (m_display_all_files)
 		{
-			p_dbwave_doc->SetDB_CurrentRecordPosition(i_file);
-			p_dbwave_doc->OpenCurrentSpikeFile();
+			p_dbwave_doc->set_db_current_record_position(i_file);
+			p_dbwave_doc->open_current_spike_file();
 		}
 		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 
@@ -185,8 +185,8 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 
 	if (m_display_all_files)
 	{
-		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file);
-		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_dbwave_doc->set_db_current_record_position(current_file);
+		p_dbwave_doc->open_current_spike_file();
 		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 }
@@ -492,8 +492,8 @@ int ChartSpikeShape::hitCurveInDoc(CPoint point)
 	{
 		if (m_display_all_files)
 		{
-			p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
-			p_dbwave_doc->OpenCurrentSpikeFile();
+			p_dbwave_doc->set_db_current_record_position(ifile);
+			p_dbwave_doc->open_current_spike_file();
 			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 		}
 
@@ -508,8 +508,8 @@ int ChartSpikeShape::hitCurveInDoc(CPoint point)
 
 	if (m_display_all_files && result < 0)
 	{
-		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file_index);
-		p_dbwave_doc->OpenCurrentSpikeFile();
+		p_dbwave_doc->set_db_current_record_position(current_file_index);
+		p_dbwave_doc->open_current_spike_file();
 		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 
@@ -571,8 +571,8 @@ void ChartSpikeShape::getExtents()
 		{
 			if (file_index != current_file_index)
 			{
-				p_dbwave_doc->SetDB_CurrentRecordPosition(file_index);
-				p_dbwave_doc->OpenCurrentSpikeFile();
+				p_dbwave_doc->set_db_current_record_position(file_index);
+				p_dbwave_doc->open_current_spike_file();
 				p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 			}
 			if (p_spike_list != nullptr)
@@ -587,8 +587,8 @@ void ChartSpikeShape::getExtents()
 	// exit 
 	if (file_first != current_file_index || file_last != current_file_index)
 	{
-		p_dbwave_doc->SetDB_CurrentRecordPosition(current_file_index);
-		if (p_dbwave_doc->OpenCurrentSpikeFile() != nullptr)
+		p_dbwave_doc->set_db_current_record_position(current_file_index);
+		if (p_dbwave_doc->open_current_spike_file() != nullptr)
 			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 }

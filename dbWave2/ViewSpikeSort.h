@@ -42,10 +42,10 @@ public:
 
 	// Attributes
 protected:
-	ChartSpikeHist yhistogram_wnd_; // spike histogram
-	ChartSpikeXY xygraph_wnd_; // points with spike height or different measures
-	ChartSpikeShape m_ChartSpkWnd_Shape; // spike shapes
-	ChartSpikeBar m_ChartSpkWnd_Bar; // bars with spike height
+	ChartSpikeHist m_chart_histogram; 
+	ChartSpikeXY m_chart_measures; 
+	ChartSpikeShape m_chart_spike_shapes; 
+	ChartSpikeBar m_chart_spike_bars; 
 
 	CEditCtrl mm_t1;
 	CEditCtrl mm_t2;
@@ -63,8 +63,8 @@ protected:
 	CEditCtrl mm_txyleft;
 	CEditCtrl mm_mV_bin;
 
-	ScrollBarEx m_file_scroll; // data position within file
-	SCROLLINFO m_file_scroll_infos{}; // infos for scrollbar
+	ScrollBarEx m_file_scroll; 
+	SCROLLINFO m_file_scroll_infos{}; 
 
 	SPKCLASSIF* m_psC{};
 	OPTIONS_VIEWDATA* m_pOptionsViewData{};
@@ -93,8 +93,8 @@ protected:
 public:
 	void SetViewMouseCursor(int cursormode)
 	{
-		xygraph_wnd_.SetMouseCursorType(cursormode);
-		m_ChartSpkWnd_Shape.SetMouseCursorType(cursormode);
+		m_chart_measures.SetMouseCursorType(cursormode);
+		m_chart_spike_shapes.SetMouseCursorType(cursormode);
 	}
 
 	// Overrides
@@ -103,24 +103,22 @@ public:
 protected:
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
-	void defineSubClassedItems();
-	void defineStretchParameters();
+	void define_sub_classed_items();
+	void define_stretch_parameters();
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
-	// Implementation
-protected:
-	void updateFileParameters();
-	void updateSpikeFile();
-	void updateLegends();
-	void selectSpikeFromCurrentList(int spike_index);
-	void updateGain();
-	void updateFileScroll();
-	void scrollFile(UINT nSBCode, UINT nPos);
-	void selectSpkList(int icursel);
-	void activateMode4();
-	void buildHistogram();
-	void unflagAllSpikes();
+	void update_file_parameters();
+	void update_spike_file();
+	void update_legends();
+	void select_spike_from_current_list(int spike_index);
+	void update_gain();
+	void update_file_scroll();
+	void scroll_file(UINT nSBCode, UINT nPos);
+	void select_spike_list(int icursel);
+	void activate_mode4();
+	void build_histogram();
+	void unflag_all_spikes();
 
 	// Generated message map functions
 public:

@@ -944,7 +944,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		// refresh data if necessary
 		if (m_nfiles == 1) //??? (m_nfiles > 1)
 		{
-			p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
+			p_dbwave_doc->set_db_current_record_position(ifile);
 			buildData();
 		}
 		// print the histogram
@@ -972,8 +972,8 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	if (p_old_font != nullptr)
 		p_dc->SelectObject(p_old_font);
 
-	p_dbwave_doc->SetDB_CurrentRecordPosition(file0);
-	p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
+	p_dbwave_doc->set_db_current_record_position(file0);
+	p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
 }
 
 void ViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
@@ -1149,12 +1149,12 @@ void ViewSpikeHist::buildData()
 		}
 
 		// select spike file
-		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
-		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
+		p_dbwave_doc->set_db_current_record_position(ifile);
+		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
 		if (nullptr == p_spike_doc_)
 			continue;
 
-		p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
+		p_spike_doc_->set_spk_list_as_current(currentlist_index);
 
 		switch (m_bhistType)
 		{
@@ -1202,9 +1202,9 @@ void ViewSpikeHist::buildData()
 
 	if (currentfile != p_dbwave_doc->GetDB_CurrentRecordPosition())
 	{
-		p_dbwave_doc->SetDB_CurrentRecordPosition(currentfile);
-		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
-		p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
+		p_dbwave_doc->set_db_current_record_position(currentfile);
+		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+		p_spike_doc_->set_spk_list_as_current(currentlist_index);
 	}
 	SAFE_DELETE(pdlg)
 }
@@ -1523,9 +1523,9 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	     ifile <= lastfile && row < disp_rect.bottom;
 	     ifile++)
 	{
-		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
-		p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
-		p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
+		p_dbwave_doc->set_db_current_record_position(ifile);
+		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+		p_spike_doc_->set_spk_list_as_current(currentlist_index);
 
 		// load pointers to spike file and spike list
 		const auto p_spk_list = p_spike_doc_->GetSpkList_Current();
@@ -1671,9 +1671,9 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 		row += dotlineheight;
 	}
 
-	p_dbwave_doc->SetDB_CurrentRecordPosition(currentfile);
-	p_spike_doc_ = p_dbwave_doc->OpenCurrentSpikeFile();
-	p_spike_doc_->SetSpkList_AsCurrent(currentlist_index);
+	p_dbwave_doc->set_db_current_record_position(currentfile);
+	p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+	p_spike_doc_->set_spk_list_as_current(currentlist_index);
 
 	p_dc->SelectObject(pold_pen);
 	p_dc->SelectObject(pold_brush);
@@ -2197,7 +2197,7 @@ void ViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 		auto j = 0;
 		for (auto i = 0; i < p_spike_doc_->GetSpkList_Size(); i++)
 		{
-			const auto p_spike_list = p_spike_doc_->SetSpkList_AsCurrent(i);
+			const auto p_spike_list = p_spike_doc_->set_spk_list_as_current(i);
 			CString cs;
 			if (p_spike_list->get_detection_parameters()->detect_what != DETECT_SPIKES)
 				continue;
@@ -2208,7 +2208,7 @@ void ViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 	}
 
 	// select spike list
-	GetDocument()->GetCurrent_Spk_Document()->SetSpkList_AsCurrent(icur);
+	GetDocument()->GetCurrent_Spk_Document()->set_spk_list_as_current(icur);
 	m_tabCtrl.SetCurSel(icur);
 }
 

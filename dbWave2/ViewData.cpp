@@ -1474,7 +1474,7 @@ int ViewData::PrintGetNPages()
 	else
 	{
 		ntotal_rows = 0;
-		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile0);
+		p_dbwave_doc->set_db_current_record_position(ifile0);
 		for (auto i = ifile0; i < ifile1; i++, p_dbwave_doc->DBMoveNext())
 		{
 			// get size of document for all files
@@ -1495,7 +1495,7 @@ int ViewData::PrintGetNPages()
 
 	if (m_file0 >= 0)
 	{
-		p_dbwave_doc->SetDB_CurrentRecordPosition(m_file0);
+		p_dbwave_doc->set_db_current_record_position(m_file0);
 		p_dbwave_doc->OpenCurrentDataFile();
 	}
 
@@ -1661,7 +1661,7 @@ void ViewData::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	m_bIsPrinting = FALSE;
-	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
+	GetDocument()->set_db_current_record_position(m_file0);
 	m_ChartDataWnd.ResizeChannels(m_npixels0, 0);
 	m_ChartDataWnd.GetDataFromDoc(m_lFirst0, m_lLast0);
 	UpdateFileParameters();

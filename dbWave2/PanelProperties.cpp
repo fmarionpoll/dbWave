@@ -515,7 +515,7 @@ void CPropertiesWnd::OnBnClickedUpdateinfos()
 {
 	const auto l_index = m_pDoc->GetDB_CurrentRecordPosition();
 	UpdateTableFromProp();
-	m_pDoc->SetDB_CurrentRecordPosition(l_index);
+	m_pDoc->set_db_current_record_position(l_index);
 	m_pDoc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 }
 

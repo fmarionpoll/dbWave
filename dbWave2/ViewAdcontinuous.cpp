@@ -417,7 +417,7 @@ void ViewADcontinuous::TransferFilesToDatabase()
 	CdbTableMain* pSet = &(GetDocument()->m_pDB->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
-	pdbDoc->SetDB_CurrentRecordPosition(pdbDoc->m_pDB->GetNRecords() - 1);
+	pdbDoc->set_db_current_record_position(pdbDoc->m_pDB->GetNRecords() - 1);
 	pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 

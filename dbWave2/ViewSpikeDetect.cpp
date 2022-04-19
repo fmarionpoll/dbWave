@@ -225,7 +225,7 @@ void ViewSpikeDetection::update_legends()
 void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 {
 	const auto pdb_doc = GetDocument();
-	if (pdb_doc->OpenCurrentSpikeFile() == nullptr)
+	if (pdb_doc->open_current_spike_file() == nullptr)
 	{
 		// file not found: create new object, and create file
 		auto* p_spike = new CSpikeDoc;
@@ -247,7 +247,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	// select a spike list
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	if (m_pSpkList == nullptr && m_pSpkDoc->GetSpkList_Size() > 0)
-		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(0);
+		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(0);
 
 	// no spikes list available, create one
 	if (m_pSpkList == nullptr)
@@ -258,7 +258,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		m_pSpkDoc->SetSpkList_Size(i_size);
 		for (auto i = 0; i < i_size; i++)
 		{
-			auto spike_list_current = m_pSpkDoc->SetSpkList_AsCurrent(i);
+			auto spike_list_current = m_pSpkDoc->set_spk_list_as_current(i);
 			if (spike_list_current == nullptr)
 			{
 				m_pSpkDoc->AddSpkList();
@@ -266,7 +266,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 			}
 			spike_list_current->InitSpikeList(pdb_doc->m_pDat, m_spk_detect_array_current.GetItem(i));
 		}
-		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(0);
+		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(0);
 		ASSERT(m_pSpkList != nullptr);
 	}
 
@@ -1084,7 +1084,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 			continue;
 
 		// select new spike list (list with no spikes for stimulus channel)
-		SpikeList* spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
+		SpikeList* spike_list = m_pSpkDoc->set_spk_list_as_current(i);
 		if (spike_list == nullptr)
 		{
 			m_pSpkDoc->AddSpkList();
@@ -1119,7 +1119,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	// display data
 	if (old_spike_list_index < 0)
 		old_spike_list_index = 0;
-	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(old_spike_list_index);
+	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(old_spike_list_index);
 
 	m_chart_spike_bar.set_source_data(m_pSpkList, db_document);
 	m_chart_spike_shape.set_source_data(m_pSpkList, db_document);
@@ -1485,7 +1485,7 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
 	{
-		SpikeList* pspklist = m_pSpkDoc->SetSpkList_AsCurrent(i);
+		SpikeList* pspklist = m_pSpkDoc->set_spk_list_as_current(i);
 		pspklist->InitSpikeList(GetDocument()->m_pDat, nullptr);
 	}
 	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
@@ -1594,7 +1594,7 @@ void ViewSpikeDetection::OnArtefact()
 
 	const auto i_sel_parameters = m_tabCtrl.GetCurSel();
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(i_sel_parameters);
-	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(i_sel_parameters);
+	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(i_sel_parameters);
 
 	select_spike_no(m_spike_index, FALSE);
 	update_spike_display();
@@ -2505,7 +2505,7 @@ int ViewSpikeDetection::PrintGetNPages()
 	else
 	{
 		n_total_rows = 0;
-		p_document->SetDB_CurrentRecordPosition(i_file_0);
+		p_document->set_db_current_record_position(i_file_0);
 		for (auto i = i_file_0; i < i_file_1; i++, p_document->DBMoveNext())
 		{
 			// get size of document for all files
@@ -2528,7 +2528,7 @@ int ViewSpikeDetection::PrintGetNPages()
 
 	if (m_file0 >= 0)
 	{
-		p_document->SetDB_CurrentRecordPosition(m_file0);
+		p_document->set_db_current_record_position(m_file0);
 		p_document->OpenCurrentDataFile();
 	}
 
@@ -2737,7 +2737,7 @@ void ViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	// restore file from index and display parameters
-	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
+	GetDocument()->set_db_current_record_position(m_file0);
 
 	m_chart_data_filtered.ResizeChannels(m_npixels0, 0);
 	m_chart_data_filtered.GetDataFromDoc(m_lFirst0, m_lLast0);
@@ -3042,7 +3042,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 		for (int i = 0; i < spike_list_size; i++)
 		{
 			// select new spike list (list with no spikes for stimulus channel)
-			const auto spike_list_current = m_pSpkDoc->SetSpkList_AsCurrent(i);
+			const auto spike_list_current = m_pSpkDoc->set_spk_list_as_current(i);
 			ASSERT(spike_list_current != NULL);
 			const auto ps_d = spike_list_current->get_detection_parameters();
 			m_spk_detect_array_current.SetItem(i, ps_d); 
@@ -3053,7 +3053,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 	for (auto i = 0; i < m_spk_detect_array_current.GetSize(); i++)
 	{
 		// select new spike list (list with no spikes for stimulus channel)
-		auto spike_list_current = m_pSpkDoc->SetSpkList_AsCurrent(i);
+		auto spike_list_current = m_pSpkDoc->set_spk_list_as_current(i);
 		const auto p_sd = m_spk_detect_array_current.GetItem(i);
 		if (spike_list_current == nullptr)
 		{
@@ -3069,7 +3069,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 	m_pSpkList->m_selected_spike = m_spike_index; 
 	m_i_detect_parameters = iSelParms;
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(iSelParms);
-	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(iSelParms);
+	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(iSelParms);
 	if (m_pSpkList != nullptr)
 		highlight_spikes(TRUE);
 
@@ -3251,7 +3251,7 @@ void ViewSpikeDetection::update_tabs()
 	for (auto i = 0; i < m_pSpkDoc->GetSpkList_Size(); i++)
 	{
 		CString cs;
-		const auto current_spike_list = m_pSpkDoc->SetSpkList_AsCurrent(i);
+		const auto current_spike_list = m_pSpkDoc->set_spk_list_as_current(i);
 		cs.Format(_T("#%i %s"), i, (LPCTSTR)current_spike_list->get_detection_parameters()->comment);
 		if (!b_replace)
 			m_tabCtrl.InsertItem(i, cs);
@@ -3265,7 +3265,7 @@ void ViewSpikeDetection::update_tabs()
 			cs.ReleaseBuffer();
 		}
 	}
-	m_pSpkDoc->SetSpkList_AsCurrent(current_spike_list_index);
+	m_pSpkDoc->set_spk_list_as_current(current_spike_list_index);
 
 	m_i_detect_parameters = m_pSpkDoc->GetSpkList_CurrentIndex();
 	m_tabCtrl.SetCurSel(m_i_detect_parameters);

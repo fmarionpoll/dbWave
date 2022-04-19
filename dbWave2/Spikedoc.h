@@ -45,7 +45,7 @@ public:
 
 	int GetSpkList_Size() const { return spike_list_array.GetSize(); }
 	void SetSpkList_Size(int i) { return spike_list_array.SetSize(i); }
-	SpikeList* SetSpkList_AsCurrent(int channel);
+	SpikeList* set_spk_list_as_current(int channel);
 	SpikeList* GetSpkList_Current();
 	SpikeList* GetSpkList_At(int channel);
 	int GetSpkList_CurrentIndex() const { return m_current_spike_list; }

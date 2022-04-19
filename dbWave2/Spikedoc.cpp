@@ -1731,7 +1731,7 @@ void CSpikeDoc::ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 	}
 }
 
-SpikeList* CSpikeDoc::SetSpkList_AsCurrent(int spike_list_index)
+SpikeList* CSpikeDoc::set_spk_list_as_current(int spike_list_index)
 {
 	SpikeList* spike_list = nullptr;
 	if (spike_list_array.GetSize() > 0 && spike_list_index >= 0 && spike_list_index < spike_list_array.GetSize())

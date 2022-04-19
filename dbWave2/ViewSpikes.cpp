@@ -584,7 +584,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 
 void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 {
-	m_pSpkDoc = GetDocument()->OpenCurrentSpikeFile();
+	m_pSpkDoc = GetDocument()->open_current_spike_file();
 
 	if (nullptr == m_pSpkDoc)
 	{
@@ -597,7 +597,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 
 		const int current_index = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
-		m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(current_index);
+		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 		m_pspkDP = m_pSpkList->get_detection_parameters();
 
 		m_spkClassListBox.set_source_data(m_pSpkList, GetDocument());
@@ -677,7 +677,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(BOOL bForceSearchMaxMin)
 
 void ViewSpikes::select_spike_list(int current_selection)
 {
-	m_pSpkList = m_pSpkDoc->SetSpkList_AsCurrent(current_selection);
+	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_selection);
 	ASSERT(m_pSpkList != NULL);
 
 	m_spkClassListBox.SetSpkList(m_pSpkList);
@@ -874,7 +874,7 @@ long ViewSpikes::PrintGetFileSeriesIndexFromPage(const int page, int* file_numbe
 	if (options_viewdata->bPrintSelection)
 		i_file = m_file0;
 	const auto current = GetDocument()->GetDB_CurrentRecordPosition();
-	GetDocument()->SetDB_CurrentRecordPosition(i_file);
+	GetDocument()->set_db_current_record_position(i_file);
 	auto very_last = GetDocument()->GetDB_DataLen() - 1;
 	for (auto row = 0; row < max_row; row++)
 	{
@@ -894,7 +894,7 @@ long ViewSpikes::PrintGetFileSeriesIndexFromPage(const int page, int* file_numbe
 		}
 	}
 	*file_number = i_file; // return index / file list
-	GetDocument()->SetDB_CurrentRecordPosition(current);
+	GetDocument()->set_db_current_record_position(current);
 	return l_first; // return index first point / data file
 }
 
@@ -1104,14 +1104,14 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 
 	// update the nb of classes per file selected and add this number
 	m_max_classes = 1;
-	p_dbwave_doc->SetDB_CurrentRecordPosition(m_printFirst);
+	p_dbwave_doc->set_db_current_record_position(m_printFirst);
 	auto nb_rect = 0; // total nb of rows
 	for (auto i = m_printFirst; i <= m_printLast; i++, p_dbwave_doc->DBMoveNext())
 	{
 		// get number of classes
 		if (p_dbwave_doc->GetDB_n_spike_classes() <= 0)
 		{
-			m_pSpkDoc = p_dbwave_doc->OpenCurrentSpikeFile();
+			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 			m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 			if (!m_pSpkList->IsClassListValid()) // if class list not valid:
 			{
@@ -1181,7 +1181,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		pInfo->SetMaxPage(n_pages);
 	}
 
-	p_dbwave_doc->SetDB_CurrentRecordPosition(m_file0);
+	p_dbwave_doc->set_db_current_record_position(m_file0);
 	return flag;
 }
 
@@ -1212,7 +1212,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// print only current selection - transform current page into file index
 	int file_index; 
 	auto l_first = PrintGetFileSeriesIndexFromPage(current_page - 1, &file_index);
-	GetDocument()->SetDB_CurrentRecordPosition(file_index);
+	GetDocument()->set_db_current_record_position(file_index);
 	updateFileParameters(FALSE);
 	updateFileScroll();
 	auto very_last = m_pSpkDoc->GetAcqSize() - 1; 
@@ -1434,7 +1434,7 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_fontPrint.DeleteObject();
 	m_bIsPrinting = FALSE;
 
-	GetDocument()->SetDB_CurrentRecordPosition(m_file0);
+	GetDocument()->set_db_current_record_position(m_file0);
 	updateFileParameters(TRUE);
 	m_spkClassListBox.SetTimeIntervals(m_lFirst0, m_lLast0);
 	m_spkClassListBox.Invalidate();

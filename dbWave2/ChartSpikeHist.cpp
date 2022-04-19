@@ -603,8 +603,8 @@ void ChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_f
 	{
 		if (b_all_files)
 		{
-			p_doc->SetDB_CurrentRecordPosition(i_file);
-			p_doc->OpenCurrentSpikeFile();
+			p_doc->set_db_current_record_position(i_file);
+			p_doc->open_current_spike_file();
 		}
 		SpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
 		if (p_spikelist != nullptr && p_spikelist->get_spikes_count() > 0)
@@ -613,7 +613,7 @@ void ChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_f
 
 	if (b_all_files)
 	{
-		p_doc->SetDB_CurrentRecordPosition(current_file);
-		p_doc->OpenCurrentSpikeFile();
+		p_doc->set_db_current_record_position(current_file);
+		p_doc->open_current_spike_file();
 	}
 }

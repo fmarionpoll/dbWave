@@ -63,7 +63,7 @@ public:
 	AcqDataDoc* OpenCurrentDataFile();
 	AcqDataDoc* GetCurrent_Dat_Document() const { return m_pDat; }
 	void	CloseCurrentDataFile() const;
-	CSpikeDoc* OpenCurrentSpikeFile();
+	CSpikeDoc* open_current_spike_file();
 	CSpikeDoc* GetCurrent_Spk_Document() const { return m_pSpk; }
 
 	void	Remove_DuplicateFiles();
@@ -151,7 +151,7 @@ public:
 
 	long	GetDB_CurrentRecordPosition() const;
 	long	GetDB_CurrentRecordID() const;
-	BOOL	SetDB_CurrentRecordPosition(long i_file) { return m_pDB->SetIndexCurrentFile(i_file); }
+	BOOL	set_db_current_record_position(long i_file) { return m_pDB->SetIndexCurrentFile(i_file); }
 	BOOL	DBMoveToID(long record_id) { return m_pDB->MoveToID(record_id); }
 	BOOL	DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
 	BOOL	DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }

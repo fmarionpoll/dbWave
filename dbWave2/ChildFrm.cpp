@@ -598,7 +598,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		dlg.SetStatus(cscomment);
 
 		// load file
-		p_dbwave_doc->SetDB_CurrentRecordPosition(ifile);
+		p_dbwave_doc->set_db_current_record_position(ifile);
 		const auto b_ok = p_dbwave_doc->OpenCurrentDataFile();
 		if (!b_ok)
 			continue;
@@ -668,7 +668,7 @@ void CChildFrame::OnRecordGotorecord()
 	{
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
 		if (!dlg.m_bGotoRecordID)
-			p_dbwave_doc->SetDB_CurrentRecordPosition(dlg.m_recordPos);
+			p_dbwave_doc->set_db_current_record_position(dlg.m_recordPos);
 		else
 			p_dbwave_doc->DBMoveToID(dlg.m_recordID);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -758,7 +758,7 @@ void CChildFrame::OnRecordDeletecurrent()
 
 		// update views and rename "erased" files
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
-		p_dbwave_doc->SetDB_CurrentRecordPosition(currentindex);
+		p_dbwave_doc->set_db_current_record_position(currentindex);
 		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 
 		// delete erased files

@@ -512,7 +512,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		// export Ascii: begin //////////////////////////////////////////////
 		BeginWaitCursor();
 		OutputTitle();
-		m_pdbDoc->SetDB_CurrentRecordPosition(i_first);
+		m_pdbDoc->set_db_current_record_position(i_first);
 		const CString filename = m_pdbDoc->GetDB_CurrentDatFileName();
 		auto* p_vd = new OPTIONS_VIEWDATA;
 		ASSERT(p_vd != NULL);
@@ -591,7 +591,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		}
 
 		*p_copy = 0;
-		m_pdbDoc->SetDB_CurrentRecordPosition(current_file_index);
+		m_pdbDoc->set_db_current_record_position(current_file_index);
 		//CString filename2 = m_pdbDoc->GetDB_CurrentDatFileName();
 		m_pdbDoc->OpenCurrentDataFile();
 		EndWaitCursor(); // it's done
