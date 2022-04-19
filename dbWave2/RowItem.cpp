@@ -16,6 +16,7 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 	const auto rect_spikes = CRect(0, 0, 0, 0); 
 	const auto rect_bars = CRect(0, 0, 0, 0);
 	parent_context = context;
+	class_id = i_class;
 
 	// 1) create chart_spike_shape
 	ChartSpikeShape* chart_spike_shape = nullptr;
@@ -23,7 +24,6 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 	{
 		chart_shapes = new (ChartSpikeShape);
 		ASSERT(chart_shapes != NULL);
-
 		chart_shapes->sub_item_create(parentWnd, rect_spikes, i_id, i_class, pdbDoc, spike_list);
 		i_id++;
 	}
@@ -32,7 +32,6 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 	chart_bars = new (ChartSpikeBar);
 	ASSERT(chart_bars != NULL);
 	chart_bars->sub_item_create(parentWnd, rect_bars, i_id, i_class, pdbDoc, spike_list);
-	i_id++;
 
 	// 3) create text
 	comment = new CString();

@@ -483,12 +483,9 @@ int SpikeList::get_class_id_n_items(const int class_id)
 
 int SpikeList::increment_class_n_items(const int class_id)
 {
-	int index = get_class_id_index(class_id);
+	const int index = get_class_id_index(class_id);
 	if (index < 0)
-	{
-		index = add_class_id(class_id);
-		return m_spike_class_descriptors.GetAt(index).get_n_items();
-	}
+		return 0;
 	return m_spike_class_descriptors.GetAt(index).increment_n_items();
 }
 

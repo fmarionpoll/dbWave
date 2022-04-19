@@ -157,25 +157,27 @@ void SpikeClassListBox::set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 	}
 
 	// add as many windows as necessary; store pointer into listbox
-	const auto rect_spikes = CRect(0, 0, 0, 0); 
-	const auto rect_bars = CRect(0, 0, 0, 0);
-
 	auto i_id = 0;
 	const int n_classes = count_classes_in_current_spike_list();
-	
 	for (auto i_row = 0; i_row < n_classes; i_row++)
 	{
-		const auto i_class = m_spike_list->get_class_id(i_row);
-		const auto row_item = new(RowItem);
-		ASSERT(row_item != NULL);
-		row_item->CreateItem(this, m_dbwave_doc, m_spike_list, i_class, i_id, &context);
+		const int class_id = m_spike_list->get_class_id(i_row);
+		if (class_id < 0)
+			continue;
+		add_row_item(class_id, i_id);
 		i_id += 2;
-		AddString(reinterpret_cast<LPTSTR>(row_item));
 	}
-	// exit: allow data redrawing
 	SetRedraw(TRUE);
 }
 
+RowItem* SpikeClassListBox::add_row_item(int class_id, int i_id)
+{
+	const auto row_item = new(RowItem);
+	ASSERT(row_item != NULL);
+	row_item->CreateItem(this, m_dbwave_doc, m_spike_list, class_id, i_id, &context);
+	AddString(reinterpret_cast<LPTSTR>(row_item));
+	return row_item;
+}
 
 void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 {
@@ -190,8 +192,7 @@ void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 
 int SpikeClassListBox::count_classes_in_current_spike_list() const
 {
-	if (!m_spike_list->IsClassListValid())
-		m_spike_list->UpdateClassList();
+	m_spike_list->UpdateClassList();
 	const auto n_spikes = m_spike_list->get_spikes_count();
 	auto n_classes = 1;
 	if (n_spikes > 0)
@@ -274,10 +275,10 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	Invalidate();
 
 	// return spike selected
-	auto oldspk = 0;
+	auto spike_selected = 0;
 	if (spike_no > 0)
-		oldspk = spike_no;
-	return oldspk;
+		spike_selected = spike_no;
+	return spike_selected;
 }
 
 int SpikeClassListBox::SetMouseCursorType(int cursor_m) const
@@ -321,7 +322,7 @@ void SpikeClassListBox::SetXzoom(int x_we, int x_wo) const
 	}
 }
 
-int SpikeClassListBox::GetYWExtent()
+int SpikeClassListBox::GetYWExtent() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
@@ -330,7 +331,7 @@ int SpikeClassListBox::GetYWExtent()
 	return we;
 }
 
-int SpikeClassListBox::GetYWOrg()
+int SpikeClassListBox::GetYWOrg() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
@@ -339,7 +340,7 @@ int SpikeClassListBox::GetYWOrg()
 	return wo;
 }
 
-int SpikeClassListBox::GetXWExtent()
+int SpikeClassListBox::GetXWExtent() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
@@ -348,7 +349,7 @@ int SpikeClassListBox::GetXWExtent()
 	return we;
 }
 
-int SpikeClassListBox::GetXWOrg()
+int SpikeClassListBox::GetXWOrg() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
@@ -357,7 +358,7 @@ int SpikeClassListBox::GetXWOrg()
 	return wo;
 }
 
-float SpikeClassListBox::GetExtent_mV()
+float SpikeClassListBox::GetExtent_mV() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
@@ -404,7 +405,7 @@ int SpikeClassListBox::get_row_index_of_spike_class(int spike_class) const
 	return row_index;
 }
 
-void SpikeClassListBox::remove_spike_from_row(int spike_no)
+void SpikeClassListBox::remove_spike_from_row(int spike_no) 
 {
 	const auto old_class = m_spike_list->get_spike(spike_no)->get_class();
 	const int row_old_index = get_row_index_of_spike_class(old_class);
@@ -414,8 +415,6 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 
 	row_old_item->select_individual_spike(-1);
 	const auto n_spikes = m_spike_list->decrement_class_n_items(old_class);
-
-	// reset all if row should be removed
 	if (n_spikes > 0)
 		row_old_item->update_string(old_class, n_spikes);
 	else
@@ -425,19 +424,25 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 void SpikeClassListBox::add_spike_to_row(int spike_no)
 {
 	const auto current_class = m_spike_list->get_spike(spike_no)->get_class();
-
+	if (current_class < 0)
+		return;
 	int row_index = get_row_index_of_spike_class(current_class);
+	int n_spikes = 1;
 	if (row_index < 0)
 	{
+		m_spike_list->add_class_id(current_class);
+		
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
 		set_source_data(m_spike_list, m_dbwave_doc);
 		SetTimeIntervals(l_first, l_last);
-		// TODO here: add row
 		row_index = get_row_index_of_spike_class(current_class);
+		if (row_index < 0)
+			return;
 	}
+	else
+		n_spikes = m_spike_list->increment_class_n_items(current_class);
 
-	const int n_spikes = m_spike_list->increment_class_n_items(current_class);
 	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(row_index));
 	row_item->update_string(current_class, n_spikes);
 }
@@ -447,41 +452,9 @@ void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class)
 	if (0 == GetCount() || new_class == m_spike_list->get_spike(spike_no)->get_class())
 		return;
 
-	// ---------------- 1) old spike : deselect spike and remove from corresp line (destroy?)
 	remove_spike_from_row(spike_no);
-
-	// ---------------- 2) new class? add to other row and select
 	m_spike_list->get_spike(spike_no)->set_class(new_class);
 	add_spike_to_row(spike_no);
-
-
-	//// new row?
-	//RowItem* row_item = nullptr;
-	//int i_row;
-	//for (i_row = 0; i_row < GetCount(); i_row++)
-	//{
-	//	row_item = reinterpret_cast<RowItem*>(GetItemData(i_row)); 
-	//	if ((row_item->chart_bars)->GetSelClass() == new_class)
-	//		break;
-	//}
-	//// reset all if line ought to be added
-	//if (i_row >= GetCount())
-	//{
-	//	const auto l_first = m_lFirst;
-	//	const auto l_last = m_lLast;
-	//	set_source_data(m_spike_list, m_dbwave_doc);
-	//	SetTimeIntervals(l_first, l_last);
-	//}
-	//else
-	//{
-	//	int n_spikes = m_spike_list->get_class_n_items(i_row) + 1;
-	//	m_spike_list->set_class_n_items(i_row, n_spikes);
-	//	update_string(row_item, new_class, n_spikes);
-	//}
-
-	//CRect rect;
-	//if (!GetItemRect(i_row, &rect))
-	//	return;
 	SelectSpike(spike_no);
 }
 

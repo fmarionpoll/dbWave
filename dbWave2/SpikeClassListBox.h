@@ -3,6 +3,7 @@
 #include "Spikelist.h"
 #include "Spikedoc.h"
 #include "dbWaveDoc.h"
+#include "RowItem.h"
 #include "SpikeClassListBoxContext.h"
 
 
@@ -50,15 +51,15 @@ public:
 	int GetColsSpikesWidth() const { return context.m_widthSpikes; }
 	int GetColsTimeWidth() const { return context.m_widthBars; }
 	int GetColsSeparatorWidth() const { return context.m_widthSeparator; }
-	float GetExtent_mV();
+	float GetExtent_mV() const;
 
 	void SetYzoom(int y_we, int y_wo) const;
 	void SetXzoom(int x_we, int x_wo) const;
 
-	int GetYWExtent(); 
-	int GetYWOrg();
-	int GetXWExtent(); 
-	int GetXWOrg(); 
+	int GetYWExtent() const; 
+	int GetYWOrg() const;
+	int GetXWExtent() const; 
+	int GetXWOrg() const; 
 
 	int SelectSpike(int spike_no);
 	void ChangeSpikeClass(int spike_no, int new_class);
@@ -74,6 +75,7 @@ protected:
 	void remove_spike_from_row(int spike_no);
 	void add_spike_to_row(int spike_no);
 	int get_row_index_of_spike_class(int spike_class) const;
+	RowItem* add_row_item(int class_id, int i_id);
 
 	// Implementation
 public:

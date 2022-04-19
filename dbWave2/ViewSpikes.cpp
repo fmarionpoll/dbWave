@@ -2130,23 +2130,22 @@ void ViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void ViewSpikes::OnArtefact()
 {
-	UpdateData(TRUE); // load value from control
+	UpdateData(TRUE);
 	if (m_spike_index < 0)
 	{
-		m_b_artefact = FALSE; // no action if spike index < 0
+		m_b_artefact = FALSE; 
 	}
 	else
 	{
-		// load old class nb
 		auto spk_class = m_pSpkList->get_spike(m_spike_index)->get_class();
 		// if artefact: set class to negative value
 		if (m_b_artefact && spk_class >= 0)
 			spk_class = -(spk_class + 1);
-
-			// if not artefact: if spike has negative class, set to positive value
+		// if not artefact: if spike has negative class, set to positive value
 		else if (spk_class < 0)
 			spk_class = -(spk_class + 1);
-		m_pSpkList->get_spike(m_spike_index)->set_class(spk_class);
+		//m_pSpkList->get_spike(m_spike_index)->set_class(spk_class);
+		m_spkClassListBox.ChangeSpikeClass(m_spike_index, spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);
