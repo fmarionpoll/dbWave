@@ -471,7 +471,7 @@ void SpikeClassListBox::XorTempVTtag(int x_point) const
 	for (auto i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
-		row_item->get_chart_shape()->XorTempVTtag(x_point);
+		row_item->get_chart_bars()->XorTempVTtag(x_point);
 	}
 }
 
