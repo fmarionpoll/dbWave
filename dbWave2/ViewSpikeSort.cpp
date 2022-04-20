@@ -217,11 +217,11 @@ void ViewSpikeSort::activate_mode4()
 
 		if (nullptr != m_pSpkList)
 		{
-			const auto spikelen_ms = (static_cast<float>(m_pSpkList->get_spike_length()) * m_time_unit) / m_pSpkList->GetAcqSampRate();
+			const auto spike_length_ms = (static_cast<double>(static_cast<float>(m_pSpkList->get_spike_length()) * m_time_unit / m_pSpkList->GetAcqSampRate()));
 			CString cs_dummy;
-			cs_dummy.Format(_T("%0.1f ms"), spikelen_ms);
+			cs_dummy.Format(_T("%0.1f ms"), spike_length_ms);
 			GetDlgItem(IDC_STATICRIGHT)->SetWindowText(cs_dummy);
-			cs_dummy.Format(_T("%0.1f ms"), -spikelen_ms);
+			cs_dummy.Format(_T("%0.1f ms"), -spike_length_ms);
 			GetDlgItem(IDC_STATICLEFT)->SetWindowText(cs_dummy);
 		}
 	}
@@ -238,7 +238,7 @@ void ViewSpikeSort::activate_mode4()
 	m_chart_measures.Invalidate();
 }
 
-void ViewSpikeSort::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -685,10 +685,10 @@ void ViewSpikeSort::unflag_all_spikes()
 {
 	if (m_bAllFiles)
 	{
-		auto pdb_doc = GetDocument();
-		for (auto ifile = 0; ifile < pdb_doc->GetDB_NRecords(); ifile++)
+		const auto pdb_doc = GetDocument();
+		for (auto i_file = 0; i_file < pdb_doc->GetDB_NRecords(); i_file++)
 		{
-			pdb_doc->set_db_current_record_position(ifile);
+			pdb_doc->set_db_current_record_position(i_file);
 			m_pSpkDoc = pdb_doc->open_current_spike_file();
 
 			for (auto j = 0; j < m_pSpkDoc->GetSpkList_Size(); j++)
@@ -708,7 +708,7 @@ void ViewSpikeSort::unflag_all_spikes()
 void ViewSpikeSort::OnMeasure()
 {
 	// set file indexes - assume only one file selected
-	auto pdb_doc = GetDocument();
+	const auto pdb_doc = GetDocument();
 	int index_current_file = pdb_doc->GetDB_CurrentRecordPosition(); // index current file
 	const int n_files = pdb_doc->GetDB_NRecords();
 	const auto current_spike_list = m_pSpkDoc->GetSpkList_CurrentIndex();
@@ -850,18 +850,17 @@ void ViewSpikeSort::OnFormatAlldata()
 
 void ViewSpikeSort::build_histogram()
 {
-	auto pdb_doc = GetDocument();
+	const auto pdb_doc = GetDocument();
 	if (pdb_doc == nullptr)
 		return;
 
 	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 	m_parmmax = static_cast<int>(m_mVMax / delta);
 	m_parmmin = static_cast<int>(m_mVMin / delta);
-	const int nbins = static_cast<int>((m_mVMax - m_mVMin) / m_mV_bin);
-	if (nbins <= 0)
+	const int n_bins = static_cast<int>((m_mVMax - m_mVMin) / m_mV_bin);
+	if (n_bins <= 0)
 		return;
-
-	m_chart_histogram.BuildHistFromDocument(pdb_doc, m_bAllFiles, m_lFirst, m_lLast, m_parmmax, m_parmmin, nbins, TRUE);
+	m_chart_histogram.BuildHistFromDocument(pdb_doc, m_bAllFiles, m_lFirst, m_lLast, m_parmmax, m_parmmin, n_bins, TRUE);
 }
 
 void ViewSpikeSort::OnFormatCentercurve()
@@ -881,12 +880,12 @@ void ViewSpikeSort::OnFormatCentercurve()
 
 void ViewSpikeSort::OnFormatGainadjust()
 {
-	// adjust gain of spkform and spkbar: data = raw signal
-	short maxval, minval;
-	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
+	// adjust gain
+	short maxvalue, minvalue;
+	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxvalue, &minvalue);
 
-	auto y_we = MulDiv(maxval - minval + 1, 10, 9);
-	auto y_wo = (maxval + minval) / 2;
+	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
+	auto y_wo = (maxvalue + minvalue) / 2;
 	m_chart_spike_shapes.SetYWExtOrg(y_we, y_wo);
 	m_chart_spike_bars.SetYWExtOrg(y_we, y_wo);
 	//m_chart_spike_bars.MaxCenter();
@@ -894,52 +893,50 @@ void ViewSpikeSort::OnFormatGainadjust()
 	// adjust gain for spk_hist_wnd_ and XYp: data = computed values
 	// search max min of parameter values
 	const CSize measure = GetDocument()->GetSpkMaxMin_y1(m_bAllFiles);
-	maxval = static_cast<short>(measure.cx);
-	minval = static_cast<short>(measure.cy);
+	maxvalue = static_cast<short>(measure.cx);
+	minvalue = static_cast<short>(measure.cy);
 
 	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-	const auto max2 = static_cast<int>(m_upper / delta);
-	const auto min2 = static_cast<int>(m_lower / delta);
-	if (max2 > maxval)
-		maxval = max2;
-	if (min2 < minval)
-		minval = min2;
-	y_we = MulDiv(maxval - minval + 1, 10, 8);
-	y_wo = (maxval + minval) / 2;
+	const auto max2 = static_cast<short>(m_upper / delta);
+	const auto min2 = static_cast<short>(m_lower / delta);
+	if (max2 > maxvalue)
+		maxvalue = max2;
+	if (min2 < minvalue)
+		minvalue = min2;
+	y_we = MulDiv(maxvalue - minvalue + 1, 10, 8);
+	y_wo = (maxvalue + minvalue) / 2;
 
 	// update display
 	m_chart_measures.SetYWExtOrg(y_we, y_wo);
-	const auto ymax = static_cast<int>(m_chart_histogram.GetHistMax());
+	const auto y_max = static_cast<int>(m_chart_histogram.GetHistMax());
 	m_chart_histogram.SetXWExtOrg(y_we, y_wo - y_we / 2);
-	m_chart_histogram.SetYWExtOrg(MulDiv(ymax, 10, 8), 0);
+	m_chart_histogram.SetYWExtOrg(MulDiv(y_max, 10, 8), 0);
 
 	// update edit controls
-	m_mVMax = static_cast<float>(maxval) * delta;
-	m_mVMin = static_cast<float>(minval) * delta;
+	m_mVMax = static_cast<float>(maxvalue) * delta;
+	m_mVMin = static_cast<float>(minvalue) * delta;
 	build_histogram();
 	update_legends();
 }
 
 void ViewSpikeSort::select_spike_from_current_list(int spike_index)
 {
-	const auto ispike_local = spike_index;
-
-	m_chart_spike_shapes.SelectSpikeShape(ispike_local);
-	m_chart_spike_bars.SelectSpike(ispike_local);
-	m_chart_measures.SelectSpike(ispike_local);
-	m_pSpkList->m_selected_spike = ispike_local;
+	m_chart_spike_shapes.SelectSpikeShape(spike_index);
+	m_chart_spike_bars.SelectSpike(spike_index);
+	m_chart_measures.SelectSpike(spike_index);
+	m_pSpkList->m_selected_spike = spike_index;
 
 	m_spike_index_class = -1;
 	auto n_cmd_show = SW_HIDE;
-	if (ispike_local >= 0)
+	if (spike_index >= 0)
 	{
-		const auto spike_elemt = m_pSpkList->get_spike(ispike_local);
-		m_spike_index_class = spike_elemt->get_class();
+		const auto spike = m_pSpkList->get_spike(spike_index);
+		m_spike_index_class = spike->get_class();
 		n_cmd_show = SW_SHOW;
 	}
 	GetDlgItem(IDC_STATIC2)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_SPIKECLASS)->ShowWindow(n_cmd_show);
-	m_spike_index = ispike_local;
+	m_spike_index = spike_index;
 	UpdateData(FALSE);
 }
 
@@ -955,12 +952,12 @@ void ViewSpikeSort::OnToolsEdittransformspikes()
 	dlg.m_pdbWaveDoc = GetDocument();
 
 	// refresh pointer to data file because it not used elsewhere in the view
-	const auto docname = GetDocument()->GetDB_CurrentDatFileName();
+	const auto dat_name = GetDocument()->GetDB_CurrentDatFileName();
 	auto b_doc_exists = FALSE;
-	if (!docname.IsEmpty())
+	if (!dat_name.IsEmpty())
 	{
 		CFileStatus status;
-		b_doc_exists = CFile::GetStatus(docname, status);
+		b_doc_exists = CFile::GetStatus(dat_name, status);
 	}
 	if (b_doc_exists)
 	{
@@ -973,8 +970,8 @@ void ViewSpikeSort::OnToolsEdittransformspikes()
 	if (dlg.m_bchanged)
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
-		const auto currentlist = m_tabCtrl.GetCurSel();
-		m_pSpkDoc->set_spk_list_as_current(currentlist);
+		const auto current_list = m_tabCtrl.GetCurSel();
+		m_pSpkDoc->set_spk_list_as_current(current_list);
 	}
 
 	if (!dlg.m_bartefact && m_spike_index != dlg.m_spike_index)
@@ -1012,29 +1009,28 @@ void ViewSpikeSort::OnToolsAlignspikes()
 
 	// first prepare array with SUM
 
-	const auto spikelen = m_pSpkList->get_spike_length(); // length of one spike
-	const auto totalspikes = m_pSpkList->get_spikes_count(); // total nb of spikes /record
-	const auto p_sum0 = new double[spikelen]; // array with results / SUMy
-	const auto p_cxy0 = new double[spikelen]; // temp array to store correlat
-	auto* const p_mean0 = new short[spikelen]; // mean (template) / at scale
-	const auto p_dummy0 = new short[spikelen]; // results of correlation / at scale
+	const auto spike_length = m_pSpkList->get_spike_length(); 
+	const auto total_spikes = m_pSpkList->get_spikes_count(); 
+	const auto p_sum0 = new double[spike_length]; // array with results / SUMy
+	const auto p_cxy0 = new double[spike_length]; // temp array to store correlation
+	auto* const p_mean0 = new short[spike_length]; // mean (template) / at scale
+	const auto p_dummy0 = new short[spike_length]; // results of correlation / at scale
 
 	// init pSUM with zeros
 	auto p_sum = p_sum0;
-	for (auto i = 0; i < spikelen; i++, p_sum++)
+	for (auto i = 0; i < spike_length; i++, p_sum++)
 		*p_sum = 0;
 
 	// compute mean
-	auto nbspk_selclass = 0;
-	short* p_spk;
-	for (auto ispk = 0; ispk < totalspikes; ispk++)
+	auto nb_spk_selected_class = 0;
+	for (auto i_spike = 0; i_spike < total_spikes; i_spike++)
 	{
-		if (m_pSpkList->get_spike(ispk)->get_class() != m_source_class)
+		if (m_pSpkList->get_spike(i_spike)->get_class() != m_source_class)
 			continue;
-		nbspk_selclass++;
-		p_spk = m_pSpkList->get_spike(ispk)->get_p_data();
+		nb_spk_selected_class++;
+		short* p_spk = m_pSpkList->get_spike(i_spike)->get_p_data();
 		p_sum = p_sum0;
-		for (auto i = 0; i < spikelen; i++, p_spk++, p_sum++)
+		for (auto i = 0; i < spike_length; i++, p_spk++, p_sum++)
 			*p_sum += *p_spk;
 	}
 
@@ -1042,30 +1038,30 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	auto p_mean = p_mean0;
 	p_sum = p_sum0;
 
-	for (auto i = 0; i < spikelen; i++, p_mean++, p_sum++)
-		*p_mean = static_cast<short>(*p_sum / nbspk_selclass);
+	for (auto i = 0; i < spike_length; i++, p_mean++, p_sum++)
+		*p_mean = static_cast<short>(*p_sum / nb_spk_selected_class);
 
 	m_chart_spike_shapes.DisplayExData(p_mean0);
 
 	// for each spike, compute correlation and take max value correlation
-	const auto kstart = m_psC->ileft; // start of template match
-	const auto kend = m_psC->iright; // end of template match
-	if (kend <= kstart)
+	const auto k_start = m_psC->ileft; // start of template match
+	const auto k_end = m_psC->iright; // end of template match
+	if (k_end <= k_start)
 		return;
-	const auto j0 = kstart - (kend - kstart) / 2; // start time lag
-	const auto j1 = kend - (kend - kstart) / 2 + 1; // last lag
+	const auto j0 = k_start - (k_end - k_start) / 2; // start time lag
+	const auto j1 = k_end - (k_end - k_start) / 2 + 1; // last lag
 
 	// compute autocorrelation for mean;
 	double cxx_mean = 0;
-	p_mean = p_mean0 + kstart;
-	for (auto i = kstart; i < kend; i++, p_mean++)
+	p_mean = p_mean0 + k_start;
+	for (auto i = k_start; i < k_end; i++, p_mean++)
 	{
 		const auto val = static_cast<double>(*p_mean);
 		cxx_mean += val * val;
 	}
 
 	// get parameters from document
-	auto p_dat_doc = GetDocument()->m_pDat;
+	const auto p_dat_doc = GetDocument()->m_pDat;
 	p_dat_doc->OnOpenDocument(data_file_name);
 	const auto doc_chan = m_pSpkList->get_detection_parameters()->extract_channel; 
 	const auto number_channels = static_cast<int>(p_dat_doc->GetpWaveFormat()->scan_count); 
@@ -1075,71 +1071,72 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	const int span = p_dat_doc->GetTransfDataSpan(method); 
 
 	// pre-load data
-	auto iitime0 = m_pSpkList->get_spike(0)->get_time(); //-pretrig;
-	auto l_rw_first0 = iitime0 - spikelen;
-	auto l_rw_last0 = iitime0 + spikelen;
+	auto ii_time0 = m_pSpkList->get_spike(0)->get_time(); 
+	auto l_rw_first0 = ii_time0 - spike_length;
+	auto l_rw_last0 = ii_time0 + spike_length;
 	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, span))
-		return; // exit if error reported
+		return;
+
 	auto p_data = p_dat_doc->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
 
 	// loop over all spikes now
-	const auto spkpretrig = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
-	for (auto ispk = 0; ispk < totalspikes; ispk++)
+	const auto pre_trigger = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+	for (auto i_spike = 0; i_spike < total_spikes; i_spike++)
 	{
-		Spike* pSpike = m_pSpkList->get_spike(ispk);
+		Spike* spike = m_pSpkList->get_spike(i_spike);
 
 		// exclude spikes that do not fall within time limits
-		if (pSpike->get_class() != m_source_class)
+		if (spike->get_class() != m_source_class)
 			continue;
 
-		iitime0 = pSpike->get_time();
-		iitime0 -= spike_pre_trigger;
+		ii_time0 = spike->get_time();
+		ii_time0 -= spike_pre_trigger;
 
 		// make sure that source data are loaded and get pointer to it (p_data)
-		auto l_rw_first = iitime0 - spikelen; // first point (eventually) needed
-		auto l_rw_last = iitime0 + spikelen; // last pt needed
-		if (iitime0 > m_lLast || iitime0 < m_lFirst)
+		auto l_rw_first = ii_time0 - spike_length; 
+		auto l_rw_last = ii_time0 + spike_length; 
+		if (ii_time0 > m_lLast || ii_time0 < m_lFirst)
 			continue;
 		if (!p_dat_doc->LoadRawData(&l_rw_first, &l_rw_last, span))
-			break; // exit if error reported
+			break; 
 
 		// load data only if necessary
 		if (l_rw_first != l_rw_first0 || l_rw_last != l_rw_last0)
 		{
 			p_data = p_dat_doc->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
-			l_rw_last0 = l_rw_last; // index las pt within p_data
-			l_rw_first0 = l_rw_first; // index first pt within p_data
+			l_rw_last0 = l_rw_last; 
+			l_rw_first0 = l_rw_first;
 		}
 
 		// pointer to first point of spike
-		auto p_data_spike0 = p_data + (iitime0 - l_rw_first) * offset;
+		auto p_data_spike0 = p_data + (ii_time0 - l_rw_first) * offset;
 
-		// for spike ispk: loop over spikelen time lags centered over interval center
+		// for spike i_spk: loop over spike_len time lags centered over interval center
 
 		// compute autocorrelation & cross correlation at first time lag
-		auto p_cxy_lag = p_cxy0; // pointer to array with correl coeffs
-		*p_cxy_lag = 0; // init cross corr
-		auto pdat_k0 = p_data_spike0 + j0 * offset; // source data start
+		auto p_cxy_lag = p_cxy0; // pointer to array with correlation coefficients
+		*p_cxy_lag = 0;
+		auto p_data_k0 = p_data_spike0 + j0 * offset; // source data start
 
 		// loop over all time lag requested
-		for (auto j = j0; j < j1; j++, p_cxy_lag++, pdat_k0 += offset)
+		for (auto j = j0; j < j1; j++, p_cxy_lag++, p_data_k0 += offset)
 		{
 			*p_cxy_lag = 0;
 
 			// add cross product for each point: data * meanlong ii_time
-			auto p_mean_k = p_mean0 + kstart; // first point / template
-			short* pdat_k = pdat_k0; // first data point
+			auto p_mean_k = p_mean0 + k_start; // first point / template
+			short* p_data_k = p_data_k0; // first data point
 			double cxx_spike = 0; // autocorrelation
 
 			// loop over all points of source data and mean
-			for (auto k = kstart; k < kend; k++, p_mean_k++, pdat_k += offset)
+			for (auto k = k_start; k < k_end; k++, p_mean_k++, p_data_k += offset)
 			{
-				const auto val = static_cast<double>(*pdat_k);
+				const auto val = static_cast<double>(*p_data_k);
 				*p_cxy_lag += static_cast<double>(*p_mean_k) * val;
 				cxx_spike += val * val;
 			}
 
-			*p_cxy_lag /= (static_cast<double>(kend) - kstart + 1);
+			*p_cxy_lag /= (static_cast<double>(k_end) - k_start + 1);
 			*p_cxy_lag = *p_cxy_lag / sqrt(cxx_mean * cxx_spike);
 		}
 
@@ -1147,7 +1144,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		auto p_cxy = p_cxy0;
 		auto cxy_max = *p_cxy; // correlation max value
 		auto i_cxy_max = 0; // correlation max index
-		for (auto i = 0; i < kend - kstart; p_cxy++, i++)
+		for (auto i = 0; i < k_end - k_start; p_cxy++, i++)
 		{
 			if (cxy_max < *p_cxy) // get max and max position
 			{
@@ -1156,18 +1153,18 @@ void ViewSpikeSort::OnToolsAlignspikes()
 			}
 		}
 
-		// offset spike so that max is at spikelen/2
-		const auto jdecal = i_cxy_max - (kend - kstart) / 2;
-		if (jdecal != 0)
+		// offset spike so that max is at spike_len/2
+		const auto j_decal = i_cxy_max - (k_end - k_start) / 2;
+		if (j_decal != 0)
 		{
-			p_data_spike0 = p_data + static_cast<WORD>(iitime0 + jdecal - l_rw_first) * offset + doc_chan;
-			pSpike->TransferDataToSpikeBuffer(p_data_spike0, number_channels);
+			p_data_spike0 = p_data + static_cast<WORD>(ii_time0 + j_decal - l_rw_first) * offset + doc_chan;
+			spike->TransferDataToSpikeBuffer(p_data_spike0, number_channels);
 			m_pSpkDoc->SetModifiedFlag(TRUE);
-			pSpike->set_time(iitime0 + spkpretrig);
+			spike->set_time(ii_time0 + pre_trigger);
 		}
 
 		// now offset spike vertically to align it with the mean
-		pSpike->OffsetSpikeDataToAverageEx(kstart, kend);
+		spike->OffsetSpikeDataToAverageEx(k_start, k_end);
 	}
 
 	// exit : delete resources used locally
@@ -1187,7 +1184,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 
 void ViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	// formview scroll: if pointer null
+	// view scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
 		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
@@ -1222,30 +1219,16 @@ void ViewSpikeSort::scroll_file(UINT nSBCode, UINT nPos)
 	auto l_first = m_lFirst;
 	switch (nSBCode)
 	{
-	case SB_LEFT:
-		l_first = 0;
-		break; // Scroll to far left.
-	case SB_LINELEFT:
-		l_first -= sb_scroll;
-		break; // Scroll left.
-	case SB_LINERIGHT:
-		l_first += sb_scroll;
-		break; // Scroll right
-	case SB_PAGELEFT:
-		l_first -= page_scroll;
-		break; // Scroll one page left
-	case SB_PAGERIGHT:
-		l_first += page_scroll;
-		break; // Scroll one page right.
-	case SB_RIGHT:
-		l_first = total_scroll - page_scroll + 1;
-		break;
+	case SB_LEFT: l_first = 0; break; // Scroll to far left.
+	case SB_LINELEFT: l_first -= sb_scroll; break; // Scroll left.
+	case SB_LINERIGHT: l_first += sb_scroll; break; // Scroll right
+	case SB_PAGELEFT: l_first -= page_scroll; break; // Scroll one page left
+	case SB_PAGERIGHT: l_first += page_scroll; break; // Scroll one page right.
+	case SB_RIGHT: l_first = total_scroll - page_scroll + 1;break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		l_first = static_cast<int>(nPos);
-		break;
-	default:
-		return;
+		l_first = static_cast<int>(nPos);break;
+	default:return;
 	}
 
 	if (l_first < 0)
@@ -1270,10 +1253,10 @@ void ViewSpikeSort::update_file_scroll()
 	m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 }
 
-void ViewSpikeSort::select_spike_list(int icursel)
+void ViewSpikeSort::select_spike_list(int current_index)
 {
-	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(icursel);
-	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(icursel);
+	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
+	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(current_index);
 	ASSERT(m_pSpkList != NULL);
 	OnMeasure();
 
@@ -1361,11 +1344,11 @@ void ViewSpikeSort::OnEnChangeEditright2()
 		mm_txyright.SetSel(0, -1);
 		m_txyright = right;
 		right = m_txyright / delta;
-		const auto itright = static_cast<int>(right);
-		if (itright != m_chart_measures.m_VTtags.GetValue(m_ixyright))
+		const auto i_right = static_cast<int>(right);
+		if (i_right != m_chart_measures.m_VTtags.GetValue(m_ixyright))
 		{
-			m_psC->ixyright = itright;
-			m_chart_measures.MoveVTtagtoVal(m_ixyright, itright);
+			m_psC->ixyright = i_right;
+			m_chart_measures.MoveVTtagtoVal(m_ixyright, i_right);
 		}
 		UpdateData(FALSE);
 	}
@@ -1375,19 +1358,19 @@ void ViewSpikeSort::OnEnChangeSourceclass()
 {
 	if (mm_source_class.m_bEntryDone)
 	{
-		auto sourceclass = m_source_class;
+		auto source_class = m_source_class;
 		switch (mm_source_class.m_nChar)
 		{
 		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
-			sourceclass = m_source_class;
+			source_class = m_source_class;
 			break;
 		case VK_UP:
-		case VK_PRIOR: sourceclass++;
+		case VK_PRIOR: source_class++;
 			break;
 		case VK_DOWN:
-		case VK_NEXT: sourceclass--;
+		case VK_NEXT: source_class--;
 			break;
 		default: ;
 		}
@@ -1395,9 +1378,9 @@ void ViewSpikeSort::OnEnChangeSourceclass()
 		mm_source_class.m_bEntryDone = FALSE; // clear flag
 		mm_source_class.m_nChar = 0; // empty buffer
 		mm_source_class.SetSel(0, -1); // select all text
-		if (sourceclass != m_source_class)
+		if (source_class != m_source_class)
 		{
-			m_source_class = sourceclass;
+			m_source_class = source_class;
 			m_chart_spike_shapes.set_plot_mode(PLOT_ONECOLOR, m_source_class);
 			m_chart_measures.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
 			m_chart_histogram.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
@@ -1418,27 +1401,27 @@ void ViewSpikeSort::OnEnChangeDestinationclass()
 {
 	if (mm_destination_class.m_bEntryDone)
 	{
-		short destinationclass = m_destination_class;
+		auto destination_class = m_destination_class;
 		switch (mm_destination_class.m_nChar)
 		{
 		// load data from edit controls
 		case VK_RETURN:
 			UpdateData(TRUE);
-			destinationclass = m_destination_class;
+			destination_class = m_destination_class;
 			break;
 		case VK_UP:
-		case VK_PRIOR: destinationclass++;
+		case VK_PRIOR: destination_class++;
 			break;
 		case VK_DOWN:
-		case VK_NEXT: destinationclass--;
+		case VK_NEXT: destination_class--;
 			break;
 		default: ;
 		}
 		// change display if necessary
-		mm_destination_class.m_bEntryDone = FALSE; // clear flag
-		mm_destination_class.m_nChar = 0; // empty buffer
-		mm_destination_class.SetSel(0, -1); // select all text
-		m_destination_class = destinationclass;
+		mm_destination_class.m_bEntryDone = FALSE; 
+		mm_destination_class.m_nChar = 0; 
+		mm_destination_class.SetSel(0, -1); 
+		m_destination_class = destination_class;
 		select_spike_from_current_list(-1);
 		UpdateData(FALSE);
 	}
@@ -1446,10 +1429,10 @@ void ViewSpikeSort::OnEnChangeDestinationclass()
 
 void ViewSpikeSort::OnSelchangeParameter()
 {
-	const auto iparameter = m_CBparameter.GetCurSel();
-	if (iparameter != m_psC->iparameter)
+	const auto i_parameter = m_CBparameter.GetCurSel();
+	if (i_parameter != m_psC->iparameter)
 	{
-		m_psC->iparameter = iparameter;
+		m_psC->iparameter = i_parameter;
 		activate_mode4();
 		OnMeasure();
 		OnFormatCentercurve();
@@ -1614,13 +1597,13 @@ void ViewSpikeSort::OnEnChangeT2()
 		// check boundaries
 		if (t2 < m_t1)
 			t2 = m_t1 + delta;
-		const auto tmax = (float(m_pSpkList->get_spike_length()) - 1.f) * delta;
-		if (t2 >= tmax)
-			t2 = tmax;
+		const auto t_max = (static_cast<float>(m_pSpkList->get_spike_length()) - 1.f) * delta;
+		if (t2 >= t_max)
+			t2 = t_max;
 		// change display if necessary
-		mm_t2.m_bEntryDone = FALSE; // clear flag
-		mm_t2.m_nChar = 0; // empty buffer
-		mm_t2.SetSel(0, -1); // select all text
+		mm_t2.m_bEntryDone = FALSE; 
+		mm_t2.m_nChar = 0; 
+		mm_t2.SetSel(0, -1); 
 		m_t2 = t2;
 		const auto it2 = static_cast<int>(m_t2 / delta);
 		if (it2 != m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_right))
@@ -1689,7 +1672,7 @@ void ViewSpikeSort::OnEnChangetimeLast()
 
 		// check boundaries
 		if (time_last <= m_timeFirst)
-			m_lLast = static_cast<long>(float((m_pSpkDoc->GetAcqSize()) - 1.f) / m_pSpkList->GetAcqSampRate());
+			m_lLast = static_cast<long>(static_cast<float>(m_pSpkDoc->GetAcqSize() - 1) / m_pSpkList->GetAcqSampRate());
 
 		// change display if necessary
 		mm_timeLast.m_bEntryDone = FALSE;
@@ -1809,10 +1792,10 @@ void ViewSpikeSort::OnEnChangeNOspike()
 
 				if (spk_first < m_lFirst || spk_last > m_lLast)
 				{
-					const auto lspan = (m_lLast - m_lFirst) / 2;
-					const auto lcenter = (spk_last + spk_first) / 2;
-					m_lFirst = lcenter - lspan;
-					m_lLast = lcenter + lspan;
+					const auto l_span = (m_lLast - m_lFirst) / 2;
+					const auto l_center = (spk_last + spk_first) / 2;
+					m_lFirst = l_center - l_span;
+					m_lLast = l_center + l_span;
 					update_legends();
 				}
 			}
@@ -1825,7 +1808,7 @@ void ViewSpikeSort::OnEnChangespike_indexclass()
 {
 	if (mm_spike_index_class.m_bEntryDone)
 	{
-		const auto spike_indexclass = m_spike_index_class;
+		const auto spike_index_class = m_spike_index_class;
 		switch (mm_spike_index_class.m_nChar)
 		{
 		case VK_RETURN: UpdateData(TRUE);
@@ -1843,11 +1826,11 @@ void ViewSpikeSort::OnEnChangespike_indexclass()
 		mm_spike_index_class.m_nChar = 0;
 		mm_spike_index_class.SetSel(0, -1);
 
-		if (m_spike_index_class != spike_indexclass)
+		if (m_spike_index_class != spike_index_class)
 		{
 			m_pSpkDoc->SetModifiedFlag(TRUE);
-			const auto currentlist = m_tabCtrl.GetCurSel();
-			auto* spike_list = m_pSpkDoc->set_spk_list_as_current(currentlist);
+			const auto current_list = m_tabCtrl.GetCurSel();
+			auto* spike_list = m_pSpkDoc->set_spk_list_as_current(current_list);
 			spike_list->get_spike(m_spike_index)->set_class(m_spike_index_class);
 			update_legends();
 		}
@@ -1858,18 +1841,18 @@ void ViewSpikeSort::OnEnChangeNBins()
 {
 	if (mm_mV_bin.m_bEntryDone)
 	{
-		auto mVbin = m_mV_bin;
+		auto mV_bin = m_mV_bin;
 		const auto delta = (m_mVMax - m_mVMin) / 10.f;
 		switch (mm_mV_bin.m_nChar)
 		{
 		case VK_RETURN: UpdateData(TRUE);
-			mVbin = m_mV_bin;
+			mV_bin = m_mV_bin;
 			break;
 		case VK_UP:
-		case VK_PRIOR: mVbin += delta;
+		case VK_PRIOR: mV_bin += delta;
 			break;
 		case VK_DOWN:
-		case VK_NEXT: mVbin -= delta;
+		case VK_NEXT: mV_bin -= delta;
 			break;
 		default: ;
 		}
@@ -1878,9 +1861,9 @@ void ViewSpikeSort::OnEnChangeNBins()
 		mm_mV_bin.m_nChar = 0;
 		mm_mV_bin.SetSel(0, -1);
 
-		if (m_mV_bin != mVbin)
+		if (m_mV_bin != mV_bin)
 		{
-			m_mV_bin = mVbin;
+			m_mV_bin = mV_bin;
 			build_histogram();
 			update_legends();
 		}

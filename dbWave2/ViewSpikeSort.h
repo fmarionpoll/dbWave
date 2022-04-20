@@ -115,7 +115,7 @@ protected:
 	void update_gain();
 	void update_file_scroll();
 	void scroll_file(UINT nSBCode, UINT nPos);
-	void select_spike_list(int icursel);
+	void select_spike_list(int current_index);
 	void activate_mode4();
 	void build_histogram();
 	void unflag_all_spikes();
