@@ -4,6 +4,8 @@
 
 #include <strsafe.h>
 
+#include <cmath>
+
 #include "dbWave.h"
 #include "DlgCopyAs.h"
 #include "DlgSpikeEdit.h"
@@ -416,10 +418,10 @@ void ViewSpikes::defineSubClassedItems()
 	VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAYDAT, this));
 	VERIFY(mm_zoom.SubclassDlgItem(IDC_EDIT3, this));
 	mm_zoom.ShowScrollBar(SB_VERT);
-	VERIFY(mm_source_class.SubclassDlgItem(IDC_EDIT4, this));
-	mm_source_class.ShowScrollBar(SB_VERT);
-	VERIFY(mm_dest_class.SubclassDlgItem(IDC_EDIT5, this));
-	mm_dest_class.ShowScrollBar(SB_VERT);
+	VERIFY(mm_class_source.SubclassDlgItem(IDC_EDIT4, this));
+	mm_class_source.ShowScrollBar(SB_VERT);
+	VERIFY(mm_class_destination.SubclassDlgItem(IDC_EDIT5, this));
+	mm_class_destination.ShowScrollBar(SB_VERT);
 	VERIFY(mm_jitter_ms.SubclassDlgItem(IDC_JITTER, this));
 
 	// left scrollbar and button
@@ -1449,17 +1451,13 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	}
 }
 
-static char vs_units[] = {"GM  mµpf  "}; // units 
+static char vs_units[] = {"GM  mµpf  "};  
 static int vs_units_power[] = {9, 6, 0, 0, -3, -6, -9, -12, 0};
-static int vsmax_index = 8; // nb of elements
-//static int  niceIntervals[] = {1, 5,
-//						10,  20,  25,  30,  40, 50,
-//						100, 200, 250, 300, 400, 500,  /*600,*/ /*700,*//* 800, *//*900,*/
-//						0};
+static int vsmax_index = 8; 
 
 float ViewSpikes::PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
 {
-	if (xVal == 0) // prevent division by zero
+	if (xVal == 0.f) 
 	{
 		*xScalefactor = 1.0f;
 		return 0.0f;
@@ -1472,18 +1470,19 @@ float ViewSpikes::PrintChangeUnit(float xVal, CString* xUnit, float* xScalefacto
 		i_sign = -1;
 		xVal = -xVal;
 	}
-	const auto ip_rec = static_cast<short> (floor(log10(xVal))); 
-	if ((ip_rec <= 0) && (xVal < 1.)) // perform extra checking if iprec <= 0
-		i = 4 - ip_rec / 3; // change equation if Units values change!
+	const auto ip_rec = static_cast<short> (floor(std::log10(xVal))); 
+	if (ip_rec <= 0 && xVal < 1.) 
+		i = 4 - ip_rec / 3; 
 	else
-		i = 3 - ip_rec / 3; // change equation if Units values change!
-	if (i > vsmax_index) // clip to max index
+		i = 3 - ip_rec / 3;
+
+	if (i > vsmax_index) 
 		i = vsmax_index;
-	else if (i < 0) // or clip to min index
+	else if (i < 0) 
 		i = 0;
 	*xScalefactor = static_cast<float>(pow(10.0f, vs_units_power[i])); // convert & store
-	xUnit->SetAt(0, vs_units[i]); // replace character corresp to unit
-	return xVal * i_sign / *xScalefactor; // return value/scale_factor
+	xUnit->SetAt(0, vs_units[i]); 
+	return xVal * static_cast<float>(i_sign) / *xScalefactor; 
 }
 
 void ViewSpikes::OnEnChangeNOspike()
@@ -1491,28 +1490,9 @@ void ViewSpikes::OnEnChangeNOspike()
 	if (mm_spike_index.m_bEntryDone)
 	{
 		const auto spike_no = m_spike_index;
-
-		switch (mm_spike_index.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_spike_index = m_pSpkList->GetNextSpike(spike_no, 1, m_b_keep_same_class);
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_spike_index = m_pSpkList->GetNextSpike(spike_no, -1, m_b_keep_same_class);
-			break;
-		default:
-			break;
-		}
-
-		mm_spike_index.m_bEntryDone = FALSE;
-		mm_spike_index.m_nChar = 0;
-		mm_spike_index.SetSel(0, -1);
+		mm_spike_index.OnEnChange(this, m_spike_index,
+			m_pSpkList->GetNextSpike(spike_no, 1, m_b_keep_same_class) - m_spike_index,
+			m_spike_index - m_pSpkList->GetNextSpike(spike_no, -1, m_b_keep_same_class));
 
 		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
 		if (m_spike_index != spike_no)
@@ -1564,20 +1544,7 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 	if (!mm_spike_index_class.m_bEntryDone)
 		return;
 	const auto spike_noclass = m_spike_index_class;
-	switch (mm_spike_index_class.m_nChar)
-	{
-	// load data from edit controls
-	case VK_RETURN: UpdateData(TRUE); break;
-	case VK_UP:
-	case VK_PRIOR: m_spike_index_class++; break;
-	case VK_DOWN:
-	case VK_NEXT: m_spike_index_class--; break;
-	default: ;
-	}
-
-	mm_spike_index_class.m_bEntryDone = FALSE; // clear flag
-	mm_spike_index_class.m_nChar = 0; // empty buffer
-	mm_spike_index_class.SetSel(0, -1); // select all text
+	mm_spike_index_class.OnEnChange(this, m_spike_index_class, 1, -1);
 
 	if (m_spike_index_class != spike_noclass) // change display if necessary
 	{
@@ -1593,26 +1560,7 @@ void ViewSpikes::OnEnChangeTimefirst()
 {
 	if (mm_time_first.m_bEntryDone)
 	{
-		switch (mm_time_first.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_time_first++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_time_first--;
-			break;
-		default: ;
-		}
-
-		mm_time_first.m_bEntryDone = FALSE;
-		mm_time_first.m_nChar = 0;
-		mm_time_first.SetSel(0, -1); //select all text
-
+		mm_time_first.OnEnChange(this, m_time_first, 1.f, -1.f);
 		const auto l_first = static_cast<long>(m_time_first * m_pSpkDoc->GetAcqRate());
 		if (l_first != m_lFirst)
 		{
@@ -1628,25 +1576,7 @@ void ViewSpikes::OnEnChangeTimelast()
 {
 	if (mm_time_last.m_bEntryDone)
 	{
-		switch (mm_time_last.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_time_last++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_time_last--;
-			break;
-		default: ;
-		}
-		mm_time_last.m_bEntryDone = FALSE;
-		mm_time_last.m_nChar = 0;
-		mm_time_last.SetSel(0, -1);
-
+		mm_time_last.OnEnChange(this, m_time_last, 1.f, -1.f);
 		const auto l_last = static_cast<long>(m_time_last * m_pSpkDoc->GetAcqRate());
 		if (l_last != m_lLast)
 		{
@@ -1663,28 +1593,13 @@ void ViewSpikes::OnEnChangeZoom()
 	if (mm_zoom.m_bEntryDone)
 	{
 		const auto zoom = m_zoom;
-		switch (mm_zoom.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_zoom++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_zoom--;
-			break;
-		default: ;
-		}
+		mm_zoom.OnEnChange(this, m_zoom, 1.f, -1.f);
 
 		// check boundaries
 		if (m_zoom < 0.0f)
 			m_zoom = 1.0f;
 
-		mm_zoom.m_bEntryDone = FALSE; // clear flag
-		mm_zoom.m_nChar = 0; // empty buffer
-		mm_zoom.SetSel(0, -1); // select all text
-		if (m_zoom != zoom) // change display if necessary
+		if (m_zoom != zoom)
 			zoomOnPresetInterval(0);
 		else
 			UpdateData(FALSE);
@@ -1693,45 +1608,18 @@ void ViewSpikes::OnEnChangeZoom()
 
 void ViewSpikes::OnEnChangeSourceclass()
 {
-	if (mm_source_class.m_bEntryDone)
+	if (mm_class_source.m_bEntryDone)
 	{
-		switch (mm_source_class.m_nChar)
-		{
-		case VK_RETURN: UpdateData(TRUE); break;
-		case VK_UP:
-		case VK_PRIOR: m_class_source++; break;
-		case VK_DOWN:
-		case VK_NEXT: m_class_source--; break;
-		default: ;
-		}
-
-		// check boundaries
-		mm_source_class.m_bEntryDone = FALSE; 
-		mm_source_class.m_nChar = 0; 
-		mm_source_class.SetSel(0, -1);
+		mm_class_source.OnEnChange(this, m_class_source, 1, -1);
 		UpdateData(FALSE);
 	}
 }
 
 void ViewSpikes::OnEnChangeDestclass()
 {
-	if (mm_dest_class.m_bEntryDone)
+	if (mm_class_destination.m_bEntryDone)
 	{
-		switch (mm_dest_class.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE); break;
-		case VK_UP:
-		case VK_PRIOR: m_class_destination++; break;
-		case VK_DOWN:
-		case VK_NEXT: m_class_destination--; break;
-		default: ;
-		}
-
-		// check boundaries
-		mm_dest_class.m_bEntryDone = FALSE; 
-		mm_dest_class.m_nChar = 0; 
-		mm_dest_class.SetSel(0, -1);
+		mm_class_destination.OnEnChange(this, m_class_destination, 1, -1);
 		UpdateData(FALSE);
 	}
 }
@@ -2157,24 +2045,7 @@ void ViewSpikes::OnEnChangeJitter()
 {
 	if (mm_jitter_ms.m_bEntryDone)
 	{
-		switch (mm_jitter_ms.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_jitter_ms++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_jitter_ms--;
-			break;
-		default: ;
-		}
-
-		// check boundaries
-		mm_jitter_ms.m_bEntryDone = FALSE; // clear flag
-		mm_jitter_ms.m_nChar = 0; // empty buffer
-		mm_jitter_ms.SetSel(0, -1); // select all text
+		mm_jitter_ms.OnEnChange(this, m_jitter_ms, 1.f, -1.f);
 		UpdateData(FALSE);
 	}
 }

@@ -112,6 +112,50 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 	return TRUE;
 }
 
+void CEditCtrl::OnEnChange(CFormView* parent_wnd, float& parameter, float delta_up, float delta_down)
+{
+	switch (m_nChar)
+	{
+	case VK_RETURN:
+		parent_wnd->UpdateData(TRUE);
+		break;
+	case VK_UP:
+	case VK_PRIOR:
+		parameter += delta_up;
+		break;
+	case VK_DOWN:
+	case VK_NEXT:
+		parameter += delta_down;
+		break;
+	default:;
+	}
+	m_bEntryDone = FALSE;
+	m_nChar = 0;
+	SetSel(0, -1);
+}
+
+void CEditCtrl::OnEnChange(CFormView* parent_wnd, int& parameter, int delta_up, int delta_down)
+{
+	switch (m_nChar)
+	{
+	case VK_RETURN:
+		parent_wnd->UpdateData(TRUE);
+		break;
+	case VK_UP:
+	case VK_PRIOR:
+		parameter += delta_up;
+		break;
+	case VK_DOWN:
+	case VK_NEXT:
+		parameter += delta_down;
+		break;
+	default:;
+	}
+	m_bEntryDone = FALSE;
+	m_nChar = 0;
+	SetSel(0, -1);
+}
+
 //--------------------------------------------------------------------------
 // OnSetFocus()
 // quand le control est en mode "caret" (barre vertic clignotante)

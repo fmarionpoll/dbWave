@@ -43,8 +43,8 @@ protected:
 	CEditCtrl mm_time_first; 
 	CEditCtrl mm_time_last; 
 	CEditCtrl mm_zoom;
-	CEditCtrl mm_source_class;
-	CEditCtrl mm_dest_class;
+	CEditCtrl mm_class_source;
+	CEditCtrl mm_class_destination;
 	CEditCtrl mm_jitter_ms;
 
 	ScrollBarEx m_file_scroll; 
