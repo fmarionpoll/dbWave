@@ -1671,28 +1671,11 @@ void ViewData::OnEnChangeTimefirst()
 {
 	if (mm_time_first_abcissa.m_bEntryDone)
 	{
-		switch (mm_time_first_abcissa.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_time_first_abcissa++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_time_first_abcissa--;
-			break;
-		default: ;
-		}
+		mm_time_first_abcissa.OnEnChange(this, m_time_first_abcissa, 1.f, -1.f);
 		m_ChartDataWnd.GetDataFromDoc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
 		UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 		m_ChartDataWnd.Invalidate();
-		mm_time_first_abcissa.m_bEntryDone = FALSE;
-		mm_time_first_abcissa.m_nChar = 0;
-		mm_time_first_abcissa.SetSel(0, -1);
 	}
 }
 
@@ -1700,28 +1683,11 @@ void ViewData::OnEnChangeTimelast()
 {
 	if (mm_time_last_abcissa.m_bEntryDone)
 	{
-		switch (mm_time_last_abcissa.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_time_last_abcissa++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_time_last_abcissa--;
-			break;
-		default: ;
-		}
+		mm_time_last_abcissa.OnEnChange(this, m_time_last_abcissa, 1.f, -1.f);
 		m_ChartDataWnd.GetDataFromDoc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
 		UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 		m_ChartDataWnd.Invalidate();
-		mm_time_last_abcissa.m_bEntryDone = FALSE;
-		mm_time_last_abcissa.m_nChar = 0;
-		mm_time_last_abcissa.SetSel(0, -1);
 	}
 }
 

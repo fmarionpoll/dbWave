@@ -69,36 +69,18 @@ void DlgChartProps::OnEnChangeXCells()
 {
 	if (mm_xcells.m_bEntryDone)
 	{
-		auto xcells = m_xcells;
-		switch (mm_xcells.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			xcells = m_xcells;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			xcells++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			xcells--;
-			break;
-		default: ;
-		}
-		// check boundaries
-		if (xcells < 1) xcells = 1;
+		const auto x_cells = m_xcells;
+		mm_xcells.OnEnChange(this, m_xcells, 1, -1);
 
-		// change display if necessary
-		mm_xcells.m_bEntryDone = FALSE; // clear flag
-		mm_xcells.m_nChar = 0; // empty buffer
-		mm_xcells.SetSel(0, -1); // select all text
-		if (m_xcells != xcells)
+		// check boundaries
+		if (m_xcells < 1)
+			m_xcells = 1;
+
+		if (m_xcells != x_cells)
 		{
 			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
-			pStruct->xScaleUnitValue = pStruct->xScaleUnitValue * m_xcells / xcells;
-			m_xcells = xcells;
+			pStruct->xScaleUnitValue = pStruct->xScaleUnitValue * x_cells / m_xcells;
+			m_xcells = x_cells;
 			m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
@@ -110,34 +92,13 @@ void DlgChartProps::OnEnChangeXYTicks()
 {
 	if (mm_xyticks.m_bEntryDone)
 	{
-		auto xyticks = m_xyticks;
-		switch (mm_xyticks.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			xyticks = m_xyticks;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			xyticks++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			xyticks--;
-			break;
-		default: ;
-		}
-		// check boundaries
-		if (xyticks < 0) xyticks = 0;
+		const auto xy_ticks = m_xyticks;
+		mm_xyticks.OnEnChange(this, m_xyticks, 1, -1);
 
-		// change display if necessary
-		mm_xyticks.m_bEntryDone = FALSE; // clear flag
-		mm_xyticks.m_nChar = 0; // empty buffer
-		mm_xyticks.SetSel(0, -1); // select all text
-		if (m_xyticks != xyticks)
+		// check boundaries
+		if (m_xyticks < 0) m_xyticks = 0;
+		if (m_xyticks != xy_ticks)
 		{
-			m_xyticks = xyticks;
 			if (m_xcells > 0)
 				m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
 			if (m_ycells > 0)
@@ -152,34 +113,12 @@ void DlgChartProps::OnEnChangeXYTicksLine()
 {
 	if (mm_xytickline.m_bEntryDone)
 	{
-		auto xytickline = m_xytickline;
-		switch (mm_xytickline.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			xytickline = m_xytickline;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			xytickline++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			xytickline--;
-			break;
-		default: ;
-		}
-		// check boundaries
-		if (xytickline < 0) xytickline = 0;
+		const auto xy_tick_line = m_xytickline;
+		mm_xytickline.OnEnChange(this, m_xytickline, 1, -1);
 
-		// change display if necessary
-		mm_xytickline.m_bEntryDone = FALSE; // clear flag
-		mm_xytickline.m_nChar = 0; // empty buffer
-		mm_xytickline.SetSel(0, -1); // select all text
-		if (m_xytickline != xytickline)
+		if (m_xytickline < 0) m_xytickline = 0;
+		if (m_xytickline != xy_tick_line)
 		{
-			m_xytickline = xytickline;
 			if (m_xcells > 0)
 				m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
 			if (m_ycells > 0)
@@ -194,36 +133,14 @@ void DlgChartProps::OnEnChangeYCells()
 {
 	if (mm_ycells.m_bEntryDone)
 	{
-		auto ycells = m_ycells;
-		switch (mm_ycells.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			ycells = m_ycells;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			ycells++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			ycells--;
-			break;
-		default: ;
-		}
-		// check boundaries
-		if (ycells < 1) ycells = 1;
+		auto y_cells = m_ycells;
+		mm_ycells.OnEnChange(this, m_ycells, 1, -1);
 
-		// change display if necessary
-		mm_ycells.m_bEntryDone = FALSE; // clear flag
-		mm_ycells.m_nChar = 0; // empty buffer
-		mm_ycells.SetSel(0, -1); // select all text
-		if (m_ycells != ycells)
+		if (m_ycells < 1) m_ycells = 1;
+		if (m_ycells != y_cells)
 		{
 			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
-			pStruct->yScaleUnitValue = pStruct->yScaleUnitValue * m_ycells / ycells;
-			m_ycells = ycells;
+			pStruct->yScaleUnitValue = pStruct->yScaleUnitValue * y_cells / m_ycells;
 			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}

@@ -13,7 +13,7 @@ public:
 
 	int m_buffer_N_items{ 0 };
 	float m_ad_rate_channel{ 0.f };
-	float m_duration_to_acquire{ 0.f };
+	float m_acquisition_duration{ 0.f };
 	float m_sweep_duration{ 1.f };
 	UINT m_buffer_W_size{ 0 };
 	UINT m_under_sample_factor{ 1 };

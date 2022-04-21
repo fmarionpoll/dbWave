@@ -16,7 +16,7 @@ public:
 	OPTIONS_IMPORT* piivO{ nullptr };
 	BOOL bConvert{ false };
 	CStringArray* m_pfilenameArray{ nullptr };
-	CEditCtrl mm_nbADchannels;
+	CEditCtrl mm_nb_AD_channels;
 	CEditCtrl mm_adChannelChan;
 	CEditCtrl mm_skipNbytes;
 	AcqDataDoc m_AcqDataFile;
@@ -35,7 +35,7 @@ public:
 	CString m_adChannelComment{ _T("")};
 	float m_adChannelGain{ 0.f };
 	UINT m_adChannelChan{ 0 };
-	UINT m_nbADchannels{ 0 };
+	UINT m_nb_AD_channels{ 0 };
 	UINT m_nbRuns{ 0 };
 	float m_samplingrate{ 0.f };
 	UINT m_skipNbytes{ 0 };

@@ -94,22 +94,7 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 {
 	if (mm_datachannel.m_bEntryDone)
 	{
-		switch (mm_datachannel.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_datachannel++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_datachannel--;
-			break;
-		default: ;
-		}
-		mm_datachannel.m_bEntryDone = FALSE; // clear flag
-		mm_datachannel.m_nChar = 0; // empty buffer
-		mm_datachannel.SetSel(0, -1); // select all text
+		mm_datachannel.OnEnChange(this, m_datachannel, 1, -1);
 
 		// update dependent parameters
 		if (m_datachannel < 0)
@@ -129,22 +114,7 @@ void CMeasureHZtagsPage::OnEnChangeIndex()
 {
 	if (mm_index.m_bEntryDone)
 	{
-		switch (mm_index.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_index++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_index--;
-			break;
-		default: ;
-		}
-		mm_index.m_bEntryDone = FALSE; // clear flag
-		mm_index.m_nChar = 0; // empty buffer
-		mm_index.SetSel(0, -1); // select all text
+		mm_index.OnEnChange(this, m_index, 1, -1);
 		// update dependent parameters
 		if (m_index >= m_nbcursors)
 			m_index = m_nbcursors - 1;
@@ -159,24 +129,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 {
 	if (mm_mvlevel.m_bEntryDone)
 	{
-		switch (mm_mvlevel.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_mvlevel++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_mvlevel--;
-			break;
-		default: ;
-		}
-		mm_mvlevel.m_bEntryDone = FALSE; // clear flag
-		mm_mvlevel.m_nChar = 0; // empty buffer
-		mm_mvlevel.SetSel(0, -1); // select all text
-
-		// update dependent parameters
+		mm_mvlevel.OnEnChange(this, m_mvlevel, 1.f, -1.f);
 		UpdateData(FALSE);
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{

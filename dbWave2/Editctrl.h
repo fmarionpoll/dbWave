@@ -12,8 +12,9 @@ public:
 	UINT m_nChar{ 0 };
 	
 	BOOL ProcessKeys(UINT nChar);
-	void OnEnChange(CFormView* parent_wnd, float& parameter, float delta_up, float delta_down);
-	void OnEnChange(CFormView* parent_wnd, int& parameter, int delta_up, int delta_down);
+	void OnEnChange(CWnd* parent_wnd, float& parameter, float delta_up, float delta_down);
+	void OnEnChange(CWnd* parent_wnd, int& parameter, int delta_up, int delta_down);
+	void OnEnChange(CWnd* parent_wnd, UINT& parameter, UINT delta_up, UINT delta_down);
 
 protected:
 	afx_msg UINT OnGetDlgCode();

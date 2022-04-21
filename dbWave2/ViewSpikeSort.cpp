@@ -1278,35 +1278,18 @@ void ViewSpikeSort::OnEnChangeEditleft2()
 	{
 		auto left = m_txyleft;
 		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
-		switch (mm_txyleft.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			left = m_txyleft;
-			break;
-		case VK_UP:
-		case VK_PRIOR: left += delta;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: left -= delta;
-			break;
-		default: ;
-		}
+		mm_txyleft.OnEnChange(this, m_txyleft, delta, -delta);
 		// check boundaries
-		if (left >= m_txyright)
-			left = m_txyright - delta;
+		if (m_txyleft >= m_txyright)
+			m_txyleft = m_txyright - delta;
 
 		// change display if necessary
-		mm_txyleft.m_bEntryDone = FALSE;
-		mm_txyleft.m_nChar = 0;
-		mm_txyleft.SetSel(0, -1);
-		m_txyleft = left;
 		left = m_txyleft / delta;
-		const auto itleft = static_cast<int>(left);
-		if (itleft != m_chart_measures.m_VTtags.GetValue(m_ixyleft))
+		const auto it_left = static_cast<int>(left);
+		if (it_left != m_chart_measures.m_VTtags.GetValue(m_ixyleft))
 		{
-			m_psC->ixyleft = itleft;
-			m_chart_measures.MoveVTtagtoVal(m_ixyleft, itleft);
+			m_psC->ixyleft = it_left;
+			m_chart_measures.MoveVTtagtoVal(m_ixyleft, it_left);
 		}
 		UpdateData(FALSE);
 	}
@@ -1318,31 +1301,13 @@ void ViewSpikeSort::OnEnChangeEditright2()
 	{
 		auto right = m_txyright;
 		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
-		switch (mm_txyright.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			right = m_txyright;
-			break;
-		case VK_UP:
-		case VK_PRIOR: right += delta;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: right -= delta;
-			break;
-		default: ;
-		}
+		mm_txyright.OnEnChange(this, m_txyright, delta, -delta);
 
 		// check boundaries
-		if (right <= m_txyleft)
-			right = m_txyleft + delta;
+		if (m_txyright <= m_txyleft)
+			m_txyright = m_txyleft + delta;
 
 		// change display if necessary
-		mm_txyright.m_bEntryDone = FALSE;
-		mm_txyright.m_nChar = 0;
-		mm_txyright.SetSel(0, -1);
-		m_txyright = right;
 		right = m_txyright / delta;
 		const auto i_right = static_cast<int>(right);
 		if (i_right != m_chart_measures.m_VTtags.GetValue(m_ixyright))
@@ -1358,29 +1323,10 @@ void ViewSpikeSort::OnEnChangeSourceclass()
 {
 	if (mm_source_class.m_bEntryDone)
 	{
-		auto source_class = m_source_class;
-		switch (mm_source_class.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			source_class = m_source_class;
-			break;
-		case VK_UP:
-		case VK_PRIOR: source_class++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: source_class--;
-			break;
-		default: ;
-		}
-		// change display if necessary
-		mm_source_class.m_bEntryDone = FALSE; // clear flag
-		mm_source_class.m_nChar = 0; // empty buffer
-		mm_source_class.SetSel(0, -1); // select all text
+		const auto source_class = m_source_class;
+		mm_source_class.OnEnChange(this, m_source_class, 1, -1);
 		if (source_class != m_source_class)
 		{
-			m_source_class = source_class;
 			m_chart_spike_shapes.set_plot_mode(PLOT_ONECOLOR, m_source_class);
 			m_chart_measures.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
 			m_chart_histogram.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
@@ -1401,27 +1347,7 @@ void ViewSpikeSort::OnEnChangeDestinationclass()
 {
 	if (mm_destination_class.m_bEntryDone)
 	{
-		auto destination_class = m_destination_class;
-		switch (mm_destination_class.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			destination_class = m_destination_class;
-			break;
-		case VK_UP:
-		case VK_PRIOR: destination_class++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: destination_class--;
-			break;
-		default: ;
-		}
-		// change display if necessary
-		mm_destination_class.m_bEntryDone = FALSE; 
-		mm_destination_class.m_nChar = 0; 
-		mm_destination_class.SetSel(0, -1); 
-		m_destination_class = destination_class;
+		mm_destination_class.OnEnChange(this, m_destination_class, 1, -1);
 		select_spike_from_current_list(-1);
 		UpdateData(FALSE);
 	}
@@ -1448,32 +1374,11 @@ void ViewSpikeSort::OnEnChangelower()
 {
 	if (mm_lower.m_bEntryDone)
 	{
-		auto lower = m_lower;
 		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-		switch (mm_lower.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			lower = m_lower;
-			break;
-		case VK_UP:
-		case VK_PRIOR: lower += m_delta;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: lower -= m_delta;
-			break;
-		default: ;
-		}
-		// check boundaries
-		//if (lower < 0) lower = 0;
-		if (lower >= m_upper)
-			lower = m_upper - m_delta * 10.f;
-		// change display if necessary
-		mm_lower.m_bEntryDone = FALSE; 
-		mm_lower.m_nChar = 0; 
-		mm_lower.SetSel(0, -1);
-		m_lower = lower;
+		mm_lower.OnEnChange(this, m_lower, m_delta, -m_delta);
+		if (m_lower >= m_upper)
+			m_lower = m_upper - m_delta * 10.f;
+
 		m_psC->ilower = static_cast<int>(m_lower / m_delta);
 		if (m_psC->ilower != m_chart_measures.m_HZtags.GetValue(m_itaglow))
 			m_chart_measures.MoveHZtagtoVal(m_itaglow, m_psC->ilower);
@@ -1487,35 +1392,13 @@ void ViewSpikeSort::OnEnChangeupper()
 {
 	if (mm_upper.m_bEntryDone)
 	{
-		auto upper = m_upper;
 		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-
-		switch (mm_upper.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			upper = m_upper;
-			break;
-		case VK_UP:
-		case VK_PRIOR: upper += m_delta;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: upper -= m_delta;
-			break;
-		default: ;
-		}
-
+		mm_upper.OnEnChange(this, m_upper,m_delta, -m_delta);
 		// check boundaries
-		//if (upper < 0) upper = 0;
-		if (upper <= m_lower)
-			upper = m_lower + m_delta * 10.f;
+		if (m_upper <= m_lower)
+			m_upper = m_lower + m_delta * 10.f;
 
-		// change display if necessary
-		mm_upper.m_bEntryDone = FALSE;
-		mm_upper.m_nChar = 0;
-		mm_upper.SetSel(0, -1);
-		m_upper = upper;
+	
 		m_psC->iupper = static_cast<int>(m_upper / m_delta);
 		if (m_psC->iupper != m_chart_measures.m_HZtags.GetValue(m_itagup))
 			m_chart_measures.MoveHZtagtoVal(m_itagup, m_psC->iupper);
@@ -1529,36 +1412,15 @@ void ViewSpikeSort::OnEnChangeT1()
 {
 	if (mm_t1.m_bEntryDone)
 	{
-		auto t1 = m_t1;
 		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
-
-		switch (mm_t1.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			t1 = m_t1;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			t1 += delta;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			t1 -= delta;
-			break;
-		default: ;
-		}
+		
+		mm_t1.OnEnChange(this, m_t1, delta, -delta);
 		// check boundaries
-		if (t1 < 0)
-			t1 = 0.0f;
-		if (t1 >= m_t2)
-			t1 = m_t2 - delta;
-		// change display if necessary
-		mm_t1.m_bEntryDone = FALSE; // clear flag
-		mm_t1.m_nChar = 0; // empty buffer
-		mm_t1.SetSel(0, -1); // select all text
-		m_t1 = t1;
+		if (m_t1 < 0)
+			m_t1 = 0.0f;
+		if (m_t1 >= m_t2)
+			m_t1 = m_t2 - delta;
+	;
 		const auto it1 = static_cast<int>(m_t1 / delta);
 		if (it1 != m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_left))
 		{
@@ -1574,37 +1436,16 @@ void ViewSpikeSort::OnEnChangeT2()
 {
 	if (mm_t2.m_bEntryDone)
 	{
-		auto t2 = m_t2;
 		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
-		switch (mm_t2.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			t2 = m_t2;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			t2 += delta;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			t2 -= delta;
-			break;
-		default: ;
-		}
+		mm_t2.OnEnChange(this, m_t2, delta, -delta);
 
 		// check boundaries
-		if (t2 < m_t1)
-			t2 = m_t1 + delta;
+		if (m_t2 < m_t1)
+			m_t2 = m_t1 + delta;
 		const auto t_max = (static_cast<float>(m_pSpkList->get_spike_length()) - 1.f) * delta;
-		if (t2 >= t_max)
-			t2 = t_max;
-		// change display if necessary
-		mm_t2.m_bEntryDone = FALSE; 
-		mm_t2.m_nChar = 0; 
-		mm_t2.SetSel(0, -1); 
-		m_t2 = t2;
+		if (m_t2 >= t_max)
+			m_t2 = t_max;
+
 		const auto it2 = static_cast<int>(m_t2 / delta);
 		if (it2 != m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_right))
 		{
@@ -1620,32 +1461,14 @@ void ViewSpikeSort::OnEnChangetimeFirst()
 {
 	if (mm_timeFirst.m_bEntryDone)
 	{
-		auto time_first = m_timeFirst;
-		switch (mm_timeFirst.m_nChar)
-		{
-		case VK_RETURN: UpdateData(TRUE);
-			time_first = m_timeFirst;
-			break;
-		case VK_UP:
-		case VK_PRIOR: time_first++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: time_first--;
-			break;
-		default: ;
-		}
+		mm_timeFirst.OnEnChange(this, m_timeFirst, 1.f, -1.f);
 
 		// check boundaries
-		if (time_first < 0.f)
-			time_first = 0.f;
-		if (time_first >= m_timeLast)
-			time_first = 0.f;
+		if (m_timeFirst < 0.f)
+			m_timeFirst = 0.f;
+		if (m_timeFirst >= m_timeLast)
+			m_timeFirst = 0.f;
 
-		// change display if necessary
-		mm_timeFirst.m_bEntryDone = FALSE;
-		mm_timeFirst.m_nChar = 0;
-		mm_timeFirst.SetSel(0, -1);
-		m_timeFirst = time_first;
 		m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->GetAcqSampRate());
 		update_legends();
 	}
@@ -1655,30 +1478,12 @@ void ViewSpikeSort::OnEnChangetimeLast()
 {
 	if (mm_timeLast.m_bEntryDone)
 	{
-		auto time_last = m_timeLast;
-		switch (mm_timeLast.m_nChar)
-		{
-		case VK_RETURN: UpdateData(TRUE);
-			time_last = m_timeLast;
-			break;
-		case VK_UP:
-		case VK_PRIOR: time_last++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: time_last--;
-			break;
-		default: ;
-		}
+		mm_timeLast.OnEnChange(this, m_timeLast, 1.f, -1.f);
 
 		// check boundaries
-		if (time_last <= m_timeFirst)
+		if (m_timeLast <= m_timeFirst)
 			m_lLast = static_cast<long>(static_cast<float>(m_pSpkDoc->GetAcqSize() - 1) / m_pSpkList->GetAcqSampRate());
 
-		// change display if necessary
-		mm_timeLast.m_bEntryDone = FALSE;
-		mm_timeLast.m_nChar = 0;
-		mm_timeLast.SetSel(0, -1);
-		m_timeLast = time_last;
 		m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
 		update_legends();
 	}
@@ -1688,31 +1493,13 @@ void ViewSpikeSort::OnEnChangemVMin()
 {
 	if (mm_mVMin.m_bEntryDone)
 	{
-		auto mv_min = m_mVMin;
-		switch (mm_mVMin.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			mv_min = m_mVMin;
-			break;
-		case VK_UP:
-		case VK_PRIOR: mv_min++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: mv_min--;
-			break;
-		default: ;
-		}
+		mm_mVMin.OnEnChange(this, m_mVMin, 1.f, -1.f);
+
 		// check boundaries
-		if (mv_min >= m_mVMax)
-			mv_min = m_mVMax - 1.f;
+		if (m_mVMin >= m_mVMax)
+			m_mVMin = m_mVMax - 1.f;
 
 		// change display if necessary
-		mm_mVMin.m_bEntryDone = FALSE;
-		mm_mVMin.m_nChar = 0;
-		mm_mVMin.SetSel(0, -1);
-		m_mVMin = mv_min;
-
 		update_gain();
 		update_legends();
 	}
@@ -1722,32 +1509,13 @@ void ViewSpikeSort::OnEnChangemVMax()
 {
 	if (mm_mVMax.m_bEntryDone)
 	{
-		auto mv_max = m_mVMax;
-		switch (mm_mVMax.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			mv_max = m_mVMax;
-			break;
-		case VK_UP:
-		case VK_PRIOR: mv_max++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: mv_max--;
-			break;
-		default: ;
-		}
+		mm_mVMax.OnEnChange(this, m_mVMax, 1.f, -1.f);
 
 		// check boundaries
-		if (mv_max <= m_mVMin)
-			mv_max = m_mVMin + 1.f;
+		if (m_mVMax <= m_mVMin)
+			m_mVMax = m_mVMin + 1.f;
 
 		// change display if necessary
-		mm_mVMax.m_bEntryDone = FALSE;
-		mm_mVMax.m_nChar = 0;
-		mm_mVMax.SetSel(0, -1);
-		m_mVMax = mv_max;
-
 		update_gain();
 		update_legends();
 	}
@@ -1757,20 +1525,8 @@ void ViewSpikeSort::OnEnChangeNOspike()
 {
 	if (mm_spike_index.m_bEntryDone)
 	{
-		const auto spike_index = m_spike_index;
-		switch (mm_spike_index.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_spike_index++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_spike_index--;
-			break;
-		default: ;
-		}
+		const int spike_index = m_spike_index;
+		mm_spike_index.OnEnChange(this, m_spike_index, 1, -1);
 
 		// check boundaries
 		if (m_spike_index < 0)
@@ -1778,9 +1534,6 @@ void ViewSpikeSort::OnEnChangeNOspike()
 		if (m_spike_index >= m_pSpkList->get_spikes_count())
 			m_spike_index = m_pSpkList->get_spikes_count() - 1;
 
-		mm_spike_index.m_bEntryDone = FALSE;
-		mm_spike_index.m_nChar = 0;
-		mm_spike_index.SetSel(0, -1);
 		if (m_spike_index != spike_index)
 		{
 			if (m_spike_index >= 0)
@@ -1809,22 +1562,7 @@ void ViewSpikeSort::OnEnChangespike_indexclass()
 	if (mm_spike_index_class.m_bEntryDone)
 	{
 		const auto spike_index_class = m_spike_index_class;
-		switch (mm_spike_index_class.m_nChar)
-		{
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_spike_index_class++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_spike_index_class--;
-			break;
-		default: ;
-		}
-
-		mm_spike_index_class.m_bEntryDone = FALSE;
-		mm_spike_index_class.m_nChar = 0;
-		mm_spike_index_class.SetSel(0, -1);
+		mm_spike_index_class.OnEnChange(this, m_spike_index_class, 1, -1);
 
 		if (m_spike_index_class != spike_index_class)
 		{
@@ -1841,29 +1579,12 @@ void ViewSpikeSort::OnEnChangeNBins()
 {
 	if (mm_mV_bin.m_bEntryDone)
 	{
-		auto mV_bin = m_mV_bin;
+		const auto mV_bin = m_mV_bin;
 		const auto delta = (m_mVMax - m_mVMin) / 10.f;
-		switch (mm_mV_bin.m_nChar)
-		{
-		case VK_RETURN: UpdateData(TRUE);
-			mV_bin = m_mV_bin;
-			break;
-		case VK_UP:
-		case VK_PRIOR: mV_bin += delta;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: mV_bin -= delta;
-			break;
-		default: ;
-		}
-
-		mm_mV_bin.m_bEntryDone = FALSE;
-		mm_mV_bin.m_nChar = 0;
-		mm_mV_bin.SetSel(0, -1);
+		mm_mV_bin.OnEnChange(this, m_mV_bin, delta, -delta);
 
 		if (m_mV_bin != mV_bin)
 		{
-			m_mV_bin = mV_bin;
 			build_histogram();
 			update_legends();
 		}

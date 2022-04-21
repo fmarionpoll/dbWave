@@ -267,33 +267,17 @@ void ViewSpikeHist::OnEnChangeTimefirst()
 {
 	if (mm_timefirst.m_bEntryDone)
 	{
-		const auto timefirst = m_timefirst;
-		switch (mm_timefirst.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_timefirst++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_timefirst--;
-			break;
-		default: ;
-		}
-		mm_timefirst.m_bEntryDone = FALSE;
-		mm_timefirst.m_nChar = 0;
-		mm_timefirst.SetSel(0, -1); //select all text
+		const auto time_first = m_timefirst;
+		mm_timefirst.OnEnChange(this, m_timefirst, 1.f, -1.f);
+
 		if (m_timefirst > m_timelast)
 		{
-			m_timefirst = timefirst;
+			m_timefirst = time_first;
 			MessageBeep(-1);
 		}
 		m_pvdS->timestart = m_timefirst;
 		UpdateData(FALSE);
-		if (timefirst != m_timefirst)
+		if (time_first != m_timefirst)
 			buildDataAndDisplay();
 	}
 }
@@ -303,24 +287,7 @@ void ViewSpikeHist::OnEnChangeTimelast()
 	if (mm_timelast.m_bEntryDone)
 	{
 		const auto timelast = m_timelast;
-		switch (mm_timelast.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_timelast++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_timelast--;
-			break;
-		default: ;
-		}
-		mm_timelast.m_bEntryDone = FALSE;
-		mm_timelast.m_nChar = 0;
-		mm_timelast.SetSel(0, -1);
+		mm_timelast.OnEnChange(this, m_timelast, 1.f, -1.f);
 		if (m_timelast < m_timefirst)
 		{
 			m_timelast = timelast;
@@ -338,24 +305,7 @@ void ViewSpikeHist::OnEnChangeTimebin()
 	if (mm_timebinms.m_bEntryDone)
 	{
 		const auto binms = m_timebinms;
-		switch (mm_timebinms.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_timebinms++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_timebinms--;
-			break;
-		default: ;
-		}
-		mm_timebinms.m_bEntryDone = FALSE;
-		mm_timebinms.m_nChar = 0;
-		mm_timebinms.SetSel(0, -1);
+		mm_timebinms.OnEnChange(this, m_timebinms, 1.f, -1.f);
 		m_pvdS->timebin = m_timebinms / t1000;
 		UpdateData(FALSE);
 		if (binms != m_timebinms)
@@ -367,28 +317,11 @@ void ViewSpikeHist::OnEnChangebinISI()
 {
 	if (mm_binISIms.m_bEntryDone)
 	{
-		const auto binms = m_binISIms;
-		switch (mm_binISIms.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_binISIms++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_binISIms--;
-			break;
-		default: ;
-		}
-		mm_binISIms.m_bEntryDone = FALSE;
-		mm_binISIms.m_nChar = 0;
-		mm_binISIms.SetSel(0, -1);
+		const auto bin_ms = m_binISIms;
+		mm_binISIms.OnEnChange(this, m_binISIms, 1.f, -1.f);
 		m_pvdS->binISI = m_binISIms / t1000;
 		UpdateData(FALSE);
-		if (binms != m_binISIms)
+		if (bin_ms != m_binISIms)
 			buildDataAndDisplay();
 	}
 }
@@ -397,28 +330,11 @@ void ViewSpikeHist::OnEnChangeSpikeclass()
 {
 	if (mm_spikeclass.m_bEntryDone)
 	{
-		const auto spikeclassoption = m_spikeclass;
-		switch (mm_spikeclass.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_spikeclass++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_spikeclass--;
-			break;
-		default: ;
-		}
-		mm_spikeclass.m_bEntryDone = FALSE;
-		mm_spikeclass.m_nChar = 0;
-		mm_spikeclass.SetSel(0, -1); //select all text
+		const auto spike_class_option = m_spikeclass;
+		mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
 		m_pvdS->classnb = m_spikeclass;
 		UpdateData(FALSE);
-		if (spikeclassoption != m_spikeclass)
+		if (spike_class_option != m_spikeclass)
 			buildDataAndDisplay();
 	}
 }
@@ -677,24 +593,7 @@ void ViewSpikeHist::OnEnChangenbins()
 	if (mm_nbinsISI.m_bEntryDone)
 	{
 		const auto nbins = m_nbinsISI;
-		switch (mm_nbinsISI.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_nbinsISI++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_nbinsISI--;
-			break;
-		default: ;
-		}
-		mm_nbinsISI.m_bEntryDone = FALSE;
-		mm_nbinsISI.m_nChar = 0;
-		mm_nbinsISI.SetSel(0, -1); //select all text
+		mm_nbinsISI.OnEnChange(this, m_nbinsISI, 1, -1);
 		m_pvdS->nbinsISI = m_nbinsISI;
 		UpdateData(FALSE);
 		if (nbins != m_nbinsISI)
@@ -707,24 +606,7 @@ void ViewSpikeHist::OnEnChangerowheight()
 	if (mm_rowheight.m_bEntryDone)
 	{
 		const auto rowheight = m_rowheight;
-		switch (mm_rowheight.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_rowheight++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_rowheight--;
-			break;
-		default: ;
-		}
-		mm_rowheight.m_bEntryDone = FALSE;
-		mm_rowheight.m_nChar = 0;
-		mm_rowheight.SetSel(0, -1); //select all text
+		mm_rowheight.OnEnChange(this, m_rowheight, 1, -1);
 		m_pvdS->dotlineheight = m_rowheight + m_pvdS->dotheight;
 		UpdateData(FALSE);
 		if (rowheight != m_rowheight)
@@ -737,24 +619,7 @@ void ViewSpikeHist::OnEnChangeDotheight()
 	if (mm_dotheight.m_bEntryDone)
 	{
 		const auto dotheight = m_dotheight;
-		switch (mm_dotheight.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_dotheight++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_dotheight--;
-			break;
-		default: ;
-		}
-		mm_dotheight.m_bEntryDone = FALSE;
-		mm_dotheight.m_nChar = 0;
-		mm_dotheight.SetSel(0, -1); //select all text
+		mm_dotheight.OnEnChange(this, m_dotheight, 1, -1);
 		m_pvdS->dotheight = m_dotheight;
 		m_pvdS->dotlineheight = m_rowheight + m_dotheight;
 		UpdateData(FALSE);

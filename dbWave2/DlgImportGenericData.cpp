@@ -19,7 +19,7 @@ void DlgImportGenericData::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_CHANNELCOMMENT, m_adChannelComment);
 	DDX_Text(pDX, IDC_CHANNELGAIN, m_adChannelGain);
 	DDX_Text(pDX, IDC_CHANNELNO, m_adChannelChan);
-	DDX_Text(pDX, IDC_NUMBEROFCHANNELS, m_nbADchannels);
+	DDX_Text(pDX, IDC_NUMBEROFCHANNELS, m_nb_AD_channels);
 	DDX_Text(pDX, IDC_NUMBEROFRUNS, m_nbRuns);
 	DDX_Text(pDX, IDC_SAMPLINGRATE, m_samplingrate);
 	DDX_Text(pDX, IDC_SKIPNBYTES, m_skipNbytes);
@@ -61,7 +61,7 @@ BOOL DlgImportGenericData::OnInitDialog()
 	CDialog::OnInitDialog(); // normal initialization CSpinButtonCtrl
 
 	// subclass edit control
-	VERIFY(mm_nbADchannels.SubclassDlgItem(IDC_NUMBEROFCHANNELS, this));
+	VERIFY(mm_nb_AD_channels.SubclassDlgItem(IDC_NUMBEROFCHANNELS, this));
 	VERIFY(mm_adChannelChan.SubclassDlgItem(IDC_CHANNELNO, this));
 	VERIFY(mm_skipNbytes.SubclassDlgItem(IDC_SKIPNBYTES, this));
 	VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAYSOURCE, this));
@@ -140,7 +140,7 @@ void DlgImportGenericData::UpdateControlsFromStruct()
 	GetDlgItem(IDC_SAMPLINGRATE)->EnableWindow(!piivO->bSapid3_5);
 	EnableRunParameters(); // enable dependent dlg items
 	m_samplingrate = piivO->samplingRate; // sampling rate per channel (in Herz)
-	m_nbADchannels = piivO->nbChannels; // number of data acquisition channels
+	m_nb_AD_channels = piivO->nbChannels; // number of data acquisition channels
 	piivO->pwave_chan_array->ChanArray_setSize(piivO->nbChannels);
 
 	int IDC_button = IDC_OFFSETBINARY; // check button concerning data encoding mode
@@ -170,7 +170,7 @@ void DlgImportGenericData::UpdateControlsFromStruct()
 
 	// set limits associated spin controls
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN2))->SetRange(1, 1024);
-	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nbADchannels);
+	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nb_AD_channels);
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN3))->SetRange(1, 32767);
 
 	UpdateData(FALSE); // refresh controls
@@ -192,7 +192,7 @@ void DlgImportGenericData::UpdateStructFromControls()
 		piivO->nbRuns = m_nbRuns;
 	}
 	piivO->samplingRate = m_samplingrate; // sampling rate per channel (in Herz)
-	piivO->nbChannels = m_nbADchannels; // number of data acquisition channels
+	piivO->nbChannels = m_nb_AD_channels; // number of data acquisition channels
 	// encoding
 	if (IsDlgButtonChecked(IDC_OFFSETBINARY))
 		piivO->encodingMode = OLx_ENC_BINARY;
@@ -216,7 +216,7 @@ void DlgImportGenericData::UpdateStructFromControls()
 	pChannel->am_csComment = m_adChannelComment; // and comment
 
 	// adjust size of chan descriptors array
-	piivO->pwave_chan_array->ChanArray_setSize(m_nbADchannels);
+	piivO->pwave_chan_array->ChanArray_setSize(m_nb_AD_channels);
 
 	m_bChanged = FALSE;
 }
@@ -317,42 +317,25 @@ void DlgImportGenericData::OnSinglerun()
 
 void DlgImportGenericData::OnEnChangeNumberofchannels()
 {
-	if (!mm_nbADchannels.m_bEntryDone)
+	if (!mm_nb_AD_channels.m_bEntryDone)
 		return;
 
-	UINT nbADchannels = m_nbADchannels;
-	switch (mm_nbADchannels.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE); // load data from edit controls
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_nbADchannels++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_nbADchannels--;
-		break;
-	}
-
-	mm_nbADchannels.m_bEntryDone = FALSE;
-	mm_nbADchannels.m_nChar = 0;
-	mm_nbADchannels.SetSel(0, -1); //select all text
+	const UINT nb_AD_channels = m_nb_AD_channels;
+	mm_nb_AD_channels.OnEnChange(this, m_nb_AD_channels, 1, -1);
 
 	// modif limit max of chan parameters
-	if (m_nbADchannels < 1) // check that there is at least one chan
-		m_nbADchannels = 1; // then change the limit of the spin
+	if (m_nb_AD_channels < 1) // check that there is at least one chan
+		m_nb_AD_channels = 1; // then change the limit of the spin
 
 	// action if value has changed
-	if (m_nbADchannels != nbADchannels)
+	if (m_nb_AD_channels != nb_AD_channels)
 	{
-		piivO->nbChannels = m_nbADchannels;
-		piivO->pwave_chan_array->ChanArray_setSize(m_nbADchannels);
-		static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nbADchannels);
-		if (m_adChannelChan > m_nbADchannels) // and update dependent chan no
+		piivO->nbChannels = m_nb_AD_channels;
+		piivO->pwave_chan_array->ChanArray_setSize(m_nb_AD_channels);
+		static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nb_AD_channels);
+		if (m_adChannelChan > m_nb_AD_channels) // and update dependent chan no
 		{
-			m_adChannelChan = m_nbADchannels;
+			m_adChannelChan = m_nb_AD_channels;
 			UpdateData(FALSE);
 		}
 		UpdatePreview();
@@ -376,39 +359,26 @@ void DlgImportGenericData::OnEnChangeChannelno()
 	if (!mm_adChannelChan.m_bEntryDone)
 		return;
 
-	UINT previouschan = m_adChannelChan;
-	switch (mm_adChannelChan.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE); // load data from edit controls
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_adChannelChan++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_adChannelChan--;
-		break;
-	}
+	UINT previous_channel = m_adChannelChan;
+	mm_adChannelChan.OnEnChange(this, m_adChannelChan, 1, -1);
 
 	// check limits of m_adChannelChan
 	if (m_adChannelChan < 1)
 		m_adChannelChan = 1;
-	if (m_adChannelChan > m_nbADchannels)
-		m_adChannelChan = m_nbADchannels;
-	if (m_adChannelChan != previouschan)
+	if (m_adChannelChan > m_nb_AD_channels)
+		m_adChannelChan = m_nb_AD_channels;
+	if (m_adChannelChan != previous_channel)
 	{
 		// save previous data
-		previouschan = m_adChannelChan;
+		previous_channel = m_adChannelChan;
 		UpdateData(TRUE); // load data from controls
-		m_adChannelChan = previouschan;
-		CWaveChan* pChannel = piivO->pwave_chan_array->Get_p_channel(previouschan - 1);
+		m_adChannelChan = previous_channel;
+		CWaveChan* pChannel = piivO->pwave_chan_array->Get_p_channel(previous_channel - 1);
 		pChannel->am_gaintotal = m_adChannelGain; // set gain
 		pChannel->am_gainamplifier = pChannel->am_gaintotal;
 		pChannel->am_csComment = m_adChannelComment; // and comment
 		// point to new channel: add new descriptors if necessary
-		piivO->pwave_chan_array->ChanArray_setSize(m_nbADchannels);
+		piivO->pwave_chan_array->ChanArray_setSize(m_nb_AD_channels);
 
 		// load data from new current channel
 		pChannel = piivO->pwave_chan_array->Get_p_channel(m_adChannelChan - 1);
@@ -417,9 +387,6 @@ void DlgImportGenericData::OnEnChangeChannelno()
 		UpdateData(FALSE);
 	}
 
-	mm_adChannelChan.m_bEntryDone = FALSE;
-	mm_adChannelChan.m_nChar = 0;
-	mm_adChannelChan.SetSel(0, -1); //select all text
 	m_bChanged = TRUE;
 }
 
@@ -431,20 +398,7 @@ void DlgImportGenericData::OnEnChangeSkipnbytes()
 		return;
 
 	UINT skipNbytes = m_skipNbytes;
-	switch (mm_skipNbytes.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE); // load data from edit controls
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_skipNbytes++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_skipNbytes--;
-		break;
-	}
+	mm_skipNbytes.OnEnChange(this, m_skipNbytes, 1, -1);
 
 	// check limits of m_adChannelChan
 	if (m_skipNbytes < 0)
@@ -456,9 +410,6 @@ void DlgImportGenericData::OnEnChangeSkipnbytes()
 		piivO->skipNbytes = m_skipNbytes;
 		UpdatePreview();
 	}
-	mm_skipNbytes.m_bEntryDone = FALSE;
-	mm_skipNbytes.m_nChar = 0;
-	mm_skipNbytes.SetSel(0, -1); //select all text
 	m_bChanged = TRUE;
 }
 
@@ -469,10 +420,10 @@ void DlgImportGenericData::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pRes
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	if (pNMUpDown->iDelta > 0)
-		mm_nbADchannels.m_nChar = VK_UP;
+		mm_nb_AD_channels.m_nChar = VK_UP;
 	else
-		mm_nbADchannels.m_nChar = VK_DOWN;
-	mm_nbADchannels.m_bEntryDone = TRUE;
+		mm_nb_AD_channels.m_nChar = VK_DOWN;
+	mm_nb_AD_channels.m_bEntryDone = TRUE;
 	*pResult = 0;
 }
 

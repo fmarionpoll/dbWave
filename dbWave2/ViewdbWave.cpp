@@ -500,26 +500,8 @@ void ViewdbWave::OnEnChangeTimefirst()
 {
 	if (!mm_timefirst.m_bEntryDone)
 		return;
+	mm_timefirst.OnEnChange(this, m_timefirst, 1.f, -1.f);
 
-	switch (mm_timefirst.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE); // load data from edit controls
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_timefirst++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_timefirst--;
-		break;
-	default: ;
-	}
-
-	mm_timefirst.m_bEntryDone = FALSE;
-	mm_timefirst.m_nChar = 0;
-	mm_timefirst.SetSel(0, -1); //select all text
 	m_options_viewdata->tFirst = m_timefirst;
 	if (m_timefirst > m_timelast)
 		m_timefirst = 0.f;
@@ -532,25 +514,7 @@ void ViewdbWave::OnEnChangeTimelast()
 	if (!mm_timelast.m_bEntryDone)
 		return;
 
-	switch (mm_timelast.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE); // load data from edit controls
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_timelast++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_timelast--;
-		break;
-	default: ;
-	}
-
-	mm_timelast.m_bEntryDone = FALSE;
-	mm_timelast.m_nChar = 0;
-	mm_timelast.SetSel(0, -1); //select all text
+	mm_timelast.OnEnChange(this, m_timelast, 1.f, -1.f);
 	m_options_viewdata->tLast = m_timelast;
 	m_dataListCtrl.SetTimeIntervals(m_timefirst, m_timelast);
 	m_dataListCtrl.RefreshDisplay();
@@ -561,34 +525,10 @@ void ViewdbWave::OnEnChangeAmplitudespan()
 	if (!mm_amplitudespan.m_bEntryDone)
 		return;
 
-	auto y = m_amplitudespan;
-	CString cs;
-	switch (mm_amplitudespan.m_nChar)
-	{
-	case VK_RETURN:
-		mm_amplitudespan.GetWindowText(cs);
-		y = static_cast<float>(_ttof(cs));
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		y++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		y--;
-		break;
-	default: ;
-	}
-
-	// update the dialog control
-	mm_amplitudespan.m_bEntryDone = FALSE;
-	mm_amplitudespan.m_nChar = 0;
-	mm_amplitudespan.SetSel(0, -1); //select all text
-	cs.Format(_T("%.3f"), y);
-	GetDlgItem(IDC_AMPLITUDESPAN)->SetWindowText(cs);
-	m_amplitudespan = y;
-	m_options_viewdata->mVspan = y;
-	m_dataListCtrl.SetAmplitudeSpan(y);
+	mm_amplitudespan.OnEnChange(this, m_amplitudespan, 1.f, -1.f);
+	UpdateData(FALSE);
+	m_options_viewdata->mVspan = m_amplitudespan;
+	m_dataListCtrl.SetAmplitudeSpan(m_amplitudespan);
 	m_dataListCtrl.RefreshDisplay();
 }
 
@@ -678,25 +618,7 @@ void ViewdbWave::OnEnChangeSpikeclass()
 	if (!mm_spikeclass.m_bEntryDone)
 		return;
 
-	//auto spikeclassoption = m_spikeclass;
-	switch (mm_spikeclass.m_nChar)
-	{
-	case VK_RETURN:
-		UpdateData(TRUE);
-		break;
-	case VK_UP:
-	case VK_PRIOR:
-		m_spikeclass++;
-		break;
-	case VK_DOWN:
-	case VK_NEXT:
-		m_spikeclass--;
-		break;
-	default: ;
-	}
-	mm_spikeclass.m_bEntryDone = FALSE;
-	mm_spikeclass.m_nChar = 0;
-	mm_spikeclass.SetSel(0, -1); //select all text
+	mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
 	m_options_viewdata->spikeclass = m_spikeclass;
 	UpdateData(FALSE);
 	m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);

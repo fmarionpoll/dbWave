@@ -1528,37 +1528,15 @@ void ViewSpikeDetection::OnEnChangeSpikeno()
 {
 	if (mm_spikeno.m_bEntryDone)
 	{
-		auto spike_no = m_spike_index;
-		switch (mm_spikeno.m_nChar)
-		{
-			// load data from edit controls
-		case VK_RETURN:
-			UpdateData(TRUE);
-			spike_no = m_spike_index;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			spike_no++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			spike_no--;
-			break;
-		default:;
-		}
+		mm_spikeno.OnEnChange(this, m_spike_index, 1, -1);
 		// check boundaries
-		if (spike_no < -1)
-			spike_no = -1;
-		if (spike_no >= m_pSpkList->get_spikes_count())
-			spike_no = m_pSpkList->get_spikes_count() - 1;
-
-		// change display if necessary
-		mm_spikeno.m_bEntryDone = FALSE; // clear flag
-		mm_spikeno.m_nChar = 0; // empty buffer
-		mm_spikeno.SetSel(0, -1); // select all text
+		if (m_spike_index < -1)
+			m_spike_index = -1;
+		if (m_spike_index >= m_pSpkList->get_spikes_count())
+			m_spike_index = m_pSpkList->get_spikes_count() - 1;
 
 		// update spike num and center display on the selected spike
-		select_spike_no(spike_no, FALSE);
+		select_spike_no(m_spike_index, FALSE);
 		update_spike_display();
 	}
 }
@@ -1734,22 +1712,7 @@ void ViewSpikeDetection::OnEnChangeThresholdval()
 	if (mm_thresholdval.m_bEntryDone)
 	{
 		auto threshold_value = m_thresholdval;
-		switch (mm_thresholdval.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			threshold_value = m_thresholdval;
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			threshold_value++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			threshold_value--;
-			break;
-		default:;
-		}
+		mm_thresholdval.OnEnChange(this, m_thresholdval, 1.f, -1.f);
 
 		// change display if necessary
 		if (m_thresholdval != threshold_value)
@@ -1760,13 +1723,7 @@ void ViewSpikeDetection::OnEnChangeThresholdval()
 			m_p_detect_parameters->detect_threshold_bin = channel_item->ConvertVoltsToDataBins(m_thresholdval / 1000.f);
 			m_chart_data_filtered.MoveHZtagtoVal(0, m_p_detect_parameters->detect_threshold_bin);
 		}
-
-		mm_thresholdval.m_bEntryDone = FALSE;
-		mm_thresholdval.m_nChar = 0;
-		CString cs;
-		cs.Format(_T("%.3f"), m_thresholdval);
-		GetDlgItem(IDC_THRESHOLDVAL)->SetWindowText(cs);
-		mm_thresholdval.SetSel(0, -1);
+		UpdateData(FALSE);
 	}
 }
 
@@ -1774,30 +1731,12 @@ void ViewSpikeDetection::OnEnChangeTimefirst()
 {
 	if (mm_timefirst.m_bEntryDone)
 	{
-		switch (mm_timefirst.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_timefirst++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_timefirst--;
-			break;
-		default:;
-		}
+		mm_timefirst.OnEnChange(this, m_timefirst, 1.f, -1.f);
 		m_chart_data_filtered.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
 		m_chart_data_source.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
 		update_legends();
-
-		mm_timefirst.m_bEntryDone = FALSE;
-		mm_timefirst.m_nChar = 0;
-		mm_timefirst.SetSel(0, -1);
 	}
 }
 
@@ -1805,30 +1744,13 @@ void ViewSpikeDetection::OnEnChangeTimelast()
 {
 	if (mm_timelast.m_bEntryDone)
 	{
-		switch (mm_timelast.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_timelast++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_timelast--;
-			break;
-		default:;
-		}
+		mm_timelast.OnEnChange(this, m_timelast, 1.f, -1.f);
+
 		m_chart_data_filtered.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
 		m_chart_data_source.GetDataFromDoc(static_cast<long>(m_timefirst * m_samplingRate),
 			static_cast<long>(m_timelast * m_samplingRate));
 		update_legends();
-
-		mm_timelast.m_bEntryDone = FALSE;
-		mm_timelast.m_nChar = 0;
-		mm_timelast.SetSel(0, -1); //select all text
 	}
 }
 
@@ -2932,22 +2854,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 		auto y = m_chart_spike_shape.GetExtent_mV();
 		const auto y_old = y;
 		CString cs;
-		switch (mm_spkWndAmplitude.m_nChar)
-		{
-		case VK_RETURN:
-			mm_spkWndAmplitude.GetWindowText(cs);
-			y = static_cast<float>(_ttof(cs));
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			y++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			y--;
-			break;
-		default:;
-		}
+		mm_spkWndAmplitude.OnEnChange(this, y, 1.f, -1.f);
 
 		// compute new extent and change the display
 		if (y <= 0)
@@ -2961,9 +2868,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
-		mm_spkWndAmplitude.m_bEntryDone = FALSE;
-		mm_spkWndAmplitude.m_nChar = 0;
-		mm_spkWndAmplitude.SetSel(0, -1);
+		
 		cs.Format(_T("%.3f"), y);
 		GetDlgItem(IDC_SPIKEWINDOWAMPLITUDE)->SetWindowText(cs);
 	}
@@ -2976,22 +2881,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 		auto x = m_chart_spike_shape.GetExtent_ms();
 		const auto xold = x;
 		CString cs;
-		switch (mm_spkWndDuration.m_nChar)
-		{
-		case VK_RETURN:
-			mm_spkWndDuration.GetWindowText(cs);
-			x = static_cast<float>(_ttof(cs));
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			x++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			x--;
-			break;
-		default:;
-		}
+		mm_spkWndDuration.OnEnChange(this, x, 1.f, -1.f);
 
 		// compute new extent and change the display
 		if (x <= 0)
@@ -3005,9 +2895,6 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
-		mm_spkWndDuration.m_bEntryDone = FALSE;
-		mm_spkWndDuration.m_nChar = 0;
-		mm_spkWndDuration.SetSel(0, -1); //select all text
 		cs.Format(_T("%.3f"), x);
 		GetDlgItem(IDC_SPIKEWINDOWLENGTH)->SetWindowText(cs);
 	}
@@ -3143,21 +3030,7 @@ void ViewSpikeDetection::OnEnChangeChanselected()
 {
 	if (mm_ichanselected.m_bEntryDone)
 	{
-		switch (mm_ichanselected.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_ichanselected++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_ichanselected--;
-			break;
-		default:;
-		}
+		mm_ichanselected.OnEnChange(this, m_ichanselected, 1, -1);
 		SetDlgItemInt(IDC_CHANSELECTED, m_ichanselected);
 	}
 }
@@ -3166,21 +3039,7 @@ void ViewSpikeDetection::OnEnChangeChanselected2()
 {
 	if (mm_ichanselected2.m_bEntryDone)
 	{
-		switch (mm_ichanselected2.m_nChar)
-		{
-		case VK_RETURN:
-			UpdateData(TRUE); // load data from edit controls
-			break;
-		case VK_UP:
-		case VK_PRIOR:
-			m_ichanselected2++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT:
-			m_ichanselected2--;
-			break;
-		default:;
-		}
+		mm_ichanselected2.OnEnChange(this, m_ichanselected2, 1, -1);
 		SetDlgItemInt(IDC_CHANSELECTED2, m_ichanselected2);
 	}
 }

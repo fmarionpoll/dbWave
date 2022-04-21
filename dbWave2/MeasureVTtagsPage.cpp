@@ -178,22 +178,7 @@ void CMeasureVTtagsPage::OnEnChangeItem()
 {
 	if (mm_index.m_bEntryDone)
 	{
-		switch (mm_index.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_index++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_index--;
-			break;
-		default: ;
-		}
-		mm_index.m_bEntryDone = FALSE; // clear flag
-		mm_index.m_nChar = 0; // empty buffer
-		mm_index.SetSel(0, -1); // select all text
+		mm_index.OnEnChange(this, m_index, 1, -1);
 		// update dependent parameters
 		if (m_index >= m_nbtags)
 			m_index = m_nbtags - 1;
@@ -208,22 +193,7 @@ void CMeasureVTtagsPage::OnEnChangeTimesec()
 {
 	if (mm_timesec.m_bEntryDone)
 	{
-		switch (mm_timesec.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_timesec++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_timesec--;
-			break;
-		default: ;
-		}
-		mm_timesec.m_bEntryDone = FALSE; // clear flag
-		mm_timesec.m_nChar = 0; // empty buffer
-		mm_timesec.SetSel(0, -1); // select all text
+		mm_timesec.OnEnChange(this, m_timesec, 1.f, -1.f);
 		// update dependent parameters
 		if (m_timesec < 0)
 			m_timesec = 0.0f;
@@ -246,22 +216,7 @@ void CMeasureVTtagsPage::OnEnChangeDuration()
 {
 	if (mm_duration.m_bEntryDone)
 	{
-		switch (mm_duration.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_duration++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_duration--;
-			break;
-		default: ;
-		}
-		mm_duration.m_bEntryDone = FALSE; // clear flag
-		mm_duration.m_nChar = 0; // empty buffer
-		mm_duration.SetSel(0, -1); // select all text
+		mm_duration.OnEnChange(this, m_duration, 1.f, -1.f);
 		// update dependent parameters
 		if (m_duration < 0.)
 			m_duration = 0.0f;
@@ -276,22 +231,7 @@ void CMeasureVTtagsPage::OnEnChangePeriod()
 {
 	if (mm_period.m_bEntryDone)
 	{
-		switch (mm_period.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_period++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_period--;
-			break;
-		default: ;
-		}
-		mm_period.m_bEntryDone = FALSE; // clear flag
-		mm_period.m_nChar = 0; // empty buffer
-		mm_period.SetSel(0, -1); // select all text
+		mm_period.OnEnChange(this, m_period, 1.f, -1.f);
 		// update dependent parameters
 		if (m_period < m_duration)
 			m_period = m_duration;
@@ -304,22 +244,7 @@ void CMeasureVTtagsPage::OnEnChangeNperiodsedit()
 {
 	if (mm_nperiods.m_bEntryDone)
 	{
-		switch (mm_nperiods.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_nperiods++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_nperiods--;
-			break;
-		default: ;
-		}
-		mm_nperiods.m_bEntryDone = FALSE; // clear flag
-		mm_nperiods.m_nChar = 0; // empty buffer
-		mm_nperiods.SetSel(0, -1); // select all text
+		mm_nperiods.OnEnChange(this, m_nperiods, 1, -1);
 		// update dependent parameters
 		if (m_nperiods < 1)
 			m_nperiods = 1;
@@ -332,22 +257,7 @@ void CMeasureVTtagsPage::OnEnChangeTimeshift()
 {
 	if (mm_timeshift.m_bEntryDone)
 	{
-		switch (mm_timeshift.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_timeshift++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_timeshift--;
-			break;
-		default: ;
-		}
-		mm_timeshift.m_bEntryDone = FALSE; // clear flag
-		mm_timeshift.m_nChar = 0; // empty buffer
-		mm_timeshift.SetSel(0, -1); // select all text
+		mm_timeshift.OnEnChange(this, m_timeshift, 1.f, -1.f);
 		// update dependent parameters
 		m_pMO->timeshift = m_timeshift;
 		UpdateData(FALSE);

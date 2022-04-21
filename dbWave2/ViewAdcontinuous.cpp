@@ -832,7 +832,7 @@ void ViewADcontinuous::OnSamplingMode()
 	dlg.m_buffer_W_size_maximum = static_cast<UINT>(65536) * 4;
 	dlg.m_under_sample_factor = m_pOptions_AD->iundersample;
 	dlg.m_b_audible_sound = m_pOptions_AD->baudiblesound;
-	dlg.m_duration_to_acquire = m_pOptions_AD->duration_to_acquire;
+	dlg.m_acquisition_duration = m_pOptions_AD->duration_to_acquire;
 	dlg.m_sweep_duration = m_sweepduration;
 	dlg.m_b_chain_dialog = TRUE;
 
@@ -846,7 +846,7 @@ void ViewADcontinuous::OnSamplingMode()
 
 		m_pOptions_AD->iundersample = static_cast<int>(dlg.m_under_sample_factor);
 		m_pOptions_AD->baudiblesound = dlg.m_b_audible_sound;
-		m_pOptions_AD->duration_to_acquire = dlg.m_duration_to_acquire;
+		m_pOptions_AD->duration_to_acquire = dlg.m_acquisition_duration;
 		m_sweepduration = dlg.m_sweep_duration;
 		m_pOptions_AD->sweepduration = m_sweepduration;
 		InitOutput_AD();

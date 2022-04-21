@@ -163,19 +163,7 @@ void DlgSpikeEdit::OnEnChangespike_index()
 	if (mm_spike_index.m_bEntryDone)
 	{
 		const auto spike_index = m_spike_index;
-		switch (mm_spike_index.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_spike_index++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_spike_index--;
-			break;
-		default: ;
-		}
+		mm_spike_index.OnEnChange(this, m_spike_index, 1, -1);
 
 		// check boundaries
 		if (m_spike_index < 0)
@@ -183,9 +171,6 @@ void DlgSpikeEdit::OnEnChangespike_index()
 		if (m_spike_index >= m_pSpkList->get_spikes_count())
 			m_spike_index = m_pSpkList->get_spikes_count() - 1;
 
-		mm_spike_index.m_bEntryDone = FALSE; 
-		mm_spike_index.m_nChar = 0; 
-		mm_spike_index.SetSel(0, -1); 
 		if (m_spike_index != spike_index) 
 		{
 			LoadSpikeParms();
@@ -201,24 +186,8 @@ void DlgSpikeEdit::OnEnChangeSpikeclass()
 {
 	if (mm_spikeclass.m_bEntryDone)
 	{
-		switch (mm_spikeclass.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_spikeclass++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_spikeclass--;
-			break;
-		default: ;
-		}
-
+		mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
 		m_pSpkList->get_spike(m_spike_index)->set_class(m_spikeclass);
-		mm_spikeclass.m_bEntryDone = FALSE; // clear flag
-		mm_spikeclass.m_nChar = 0; // empty buffer
-		mm_spikeclass.SetSel(0, -1); // select all text
 		m_bartefact = (m_spikeclass < 0);
 		UpdateData(FALSE);
 		m_bchanged = TRUE;
@@ -238,22 +207,8 @@ void DlgSpikeEdit::OnEnChangeDisplayratio()
 {
 	if (mm_displayratio.m_bEntryDone)
 	{
-		switch (mm_displayratio.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_displayratio++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_displayratio--;
-			break;
-		default: ;
-		}
-		mm_displayratio.m_bEntryDone = FALSE; // clear flag
-		mm_displayratio.m_nChar = 0; // empty buffer
-		mm_displayratio.SetSel(0, -1); // select all text
+		mm_displayratio.OnEnChange(this, m_displayratio, 1, -1);
+
 		if (m_displayratio < 1)
 			m_displayratio = 1;
 		UpdateData(FALSE);
@@ -266,26 +221,9 @@ void DlgSpikeEdit::OnEnChangeYextent()
 {
 	if (mm_yvextent.m_bEntryDone)
 	{
-		switch (mm_yvextent.m_nChar)
-		{
-		// load data from edit controls
-		case VK_RETURN: UpdateData(TRUE);
-			break;
-		case VK_UP:
-		case VK_PRIOR: m_yvextent++;
-			break;
-		case VK_DOWN:
-		case VK_NEXT: m_yvextent--;
-			break;
-		default: ;
-		}
-		mm_yvextent.m_bEntryDone = FALSE; // clear flag
-		mm_yvextent.m_nChar = 0; // empty buffer
-		mm_yvextent.SetSel(0, -1); // select all text
+		mm_yvextent.OnEnChange(this, m_yvextent, 1, -1);
 		UpdateData(FALSE);
-
 		ASSERT(m_yvextent != 0);
-
 		if (m_yvextent != m_yextent)
 		{
 			m_yextent = m_yvextent;
