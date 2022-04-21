@@ -68,6 +68,8 @@ protected:
 	OPTIONS_VIEWDATAMEASURE* options_view_data_measure = nullptr;
 
 	float m_samplingRate = 0.f;
+	float m_spkWndAmplitude = 1.f;
+	float m_spkWndDuration = 6.f;
 	BOOL m_bValidThreshold = false;
 	BOOL m_bDetected = false;
 

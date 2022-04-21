@@ -55,6 +55,8 @@ void ViewSpikeDetection::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SPIKENO, m_spike_index);
 	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
 	DDX_Text(pDX, IDC_THRESHOLDVAL, m_thresholdval);
+	DDX_Text(pDX, IDC_SPIKEWINDOWAMPLITUDE, m_spkWndAmplitude);
+	DDX_Text(pDX, IDC_SPIKEWINDOWLENGTH, m_spkWndDuration);
 	DDX_Text(pDX, IDC_CHANSELECTED, m_ichanselected);
 	DDX_Text(pDX, IDC_CHANSELECTED2, m_ichanselected2);
 	DDX_Control(pDX, IDC_XSCALE, m_xspkdscale);
@@ -2851,25 +2853,25 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 {
 	if (mm_spkWndAmplitude.m_bEntryDone)
 	{
-		auto y = m_chart_spike_shape.GetExtent_mV();
-		const auto y_old = y;
+		m_spkWndAmplitude = m_chart_spike_shape.GetExtent_mV();
+		const auto y_old = m_spkWndAmplitude;
 		CString cs;
-		mm_spkWndAmplitude.OnEnChange(this, y, 1.f, -1.f);
+		mm_spkWndAmplitude.OnEnChange(this, m_spkWndAmplitude, 1.f, -1.f);
 
 		// compute new extent and change the display
-		if (y <= 0)
+		if (m_spkWndAmplitude <= 0)
 		{
-			y = y_old;
+			m_spkWndAmplitude = y_old;
 			MessageBeep(-1);
 		}
-		const auto y_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetYWExtent()) * y / y_old);
+		const auto y_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetYWExtent()) * m_spkWndAmplitude / y_old);
 		m_chart_spike_shape.SetYWExtOrg(y_we, m_chart_spike_shape.GetYWOrg());
-		m_chart_spike_shape.SetyScaleUnitValue(y);
+		m_chart_spike_shape.SetyScaleUnitValue(m_spkWndAmplitude);
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
 		
-		cs.Format(_T("%.3f"), y);
+		cs.Format(_T("%.3f"), m_spkWndAmplitude);
 		GetDlgItem(IDC_SPIKEWINDOWAMPLITUDE)->SetWindowText(cs);
 	}
 }
@@ -2878,24 +2880,24 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 {
 	if (mm_spkWndDuration.m_bEntryDone)
 	{
-		auto x = m_chart_spike_shape.GetExtent_ms();
-		const auto xold = x;
+		m_spkWndDuration = m_chart_spike_shape.GetExtent_ms();
+		const auto xold = m_spkWndDuration;
 		CString cs;
-		mm_spkWndDuration.OnEnChange(this, x, 1.f, -1.f);
+		mm_spkWndDuration.OnEnChange(this, m_spkWndDuration, 1.f, -1.f);
 
 		// compute new extent and change the display
-		if (x <= 0)
+		if (m_spkWndDuration <= 0)
 		{
 			MessageBeep(-1);
-			x = xold;
+			m_spkWndDuration = xold;
 		}
-		const auto x_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetXWExtent()) * x / xold);
+		const auto x_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetXWExtent()) * m_spkWndDuration / xold);
 		m_chart_spike_shape.SetXWExtOrg(x_we, m_chart_spike_shape.GetXWOrg());
-		m_chart_spike_shape.SetxScaleUnitValue(x);
+		m_chart_spike_shape.SetxScaleUnitValue(m_spkWndDuration);
 		m_chart_spike_shape.Invalidate();
 
 		// update the dialog control
-		cs.Format(_T("%.3f"), x);
+		cs.Format(_T("%.3f"), m_spkWndDuration);
 		GetDlgItem(IDC_SPIKEWINDOWLENGTH)->SetWindowText(cs);
 	}
 }
