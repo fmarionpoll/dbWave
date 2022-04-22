@@ -114,10 +114,17 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 
 void CEditCtrl::OnEnChange(CWnd* parent_wnd, float& parameter, float delta_up, float delta_down)
 {
+	
+	;
 	switch (m_nChar)
 	{
 	case VK_RETURN:
-		parent_wnd->UpdateData(TRUE);
+		//parent_wnd->UpdateData(TRUE);
+		{
+			CString cs;
+			GetWindowText(cs);
+			parameter = static_cast<float>(_ttof(cs));
+		}
 		break;
 	case VK_UP:
 	case VK_PRIOR:
@@ -139,7 +146,12 @@ void CEditCtrl::OnEnChange(CWnd* parent_wnd, int& parameter, int delta_up, int d
 	switch (m_nChar)
 	{
 	case VK_RETURN:
-		parent_wnd->UpdateData(TRUE);
+		//parent_wnd->UpdateData(TRUE);
+		{
+			CString cs;
+			GetWindowText(cs);
+			parameter = static_cast<int>(_ttoi(cs));
+		}
 		break;
 	case VK_UP:
 	case VK_PRIOR:
@@ -161,7 +173,12 @@ void CEditCtrl::OnEnChange(CWnd* parent_wnd, UINT& parameter, UINT delta_up, UIN
 	switch (m_nChar)
 	{
 	case VK_RETURN:
-		parent_wnd->UpdateData(TRUE);
+		//parent_wnd->UpdateData(TRUE);
+		{
+			CString cs;
+			GetWindowText(cs);
+			parameter = static_cast<int>(_ttoi(cs));
+		}
 		break;
 	case VK_UP:
 	case VK_PRIOR:
