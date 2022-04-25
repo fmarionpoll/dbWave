@@ -39,7 +39,7 @@ protected:
 	int m_max_classes = 1;
 
 	CEditCtrl mm_spike_index;
-	CEditCtrl mm_spike_index_class;
+	CEditCtrl mm_spike_class;
 	CEditCtrl mm_time_first; 
 	CEditCtrl mm_time_last; 
 	CEditCtrl mm_zoom;

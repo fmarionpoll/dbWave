@@ -38,7 +38,7 @@ void ViewSpikes::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first);
 	DDX_Text(pDX, IDC_TIMELAST, m_time_last);
 	DDX_Text(pDX, IDC_NSPIKES, m_spike_index);
-	DDX_Text(pDX, IDC_EDIT2, m_spike_index_class);
+	DDX_Text(pDX, IDC_SPIKE_CLASS, m_spike_index_class);
 	DDX_Text(pDX, IDC_EDIT3, m_zoom);
 	DDX_Text(pDX, IDC_EDIT4, m_class_source);
 	DDX_Text(pDX, IDC_EDIT5, m_class_destination);
@@ -75,7 +75,7 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
 	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikes::OnEnChangeNOspike)
-	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikes::OnEnChangeSpikenoclass)
+	ON_EN_CHANGE(IDC_SPIKE_CLASS, &ViewSpikes::OnEnChangeSpikenoclass)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikes::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikes::OnEnChangeTimelast)
 	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikes::OnEnChangeZoom)
@@ -397,7 +397,7 @@ void ViewSpikes::selectSpike(int spike_no)
 		n_cmd_show = SW_HIDE;
 	}
 	GetDlgItem(IDC_STATIC2)->ShowWindow(n_cmd_show);
-	GetDlgItem(IDC_EDIT2)->ShowWindow(n_cmd_show);
+	mm_spike_class.ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_ARTEFACT)->ShowWindow(n_cmd_show);
 
 	UpdateData(FALSE);
@@ -410,8 +410,8 @@ void ViewSpikes::defineSubClassedItems()
 	m_file_scroll.SetScrollRange(0, 100, FALSE);
 	VERIFY(mm_spike_index.SubclassDlgItem(IDC_NSPIKES, this));
 	mm_spike_index.ShowScrollBar(SB_VERT);
-	VERIFY(mm_spike_index_class.SubclassDlgItem(IDC_EDIT2, this));
-	mm_spike_index_class.ShowScrollBar(SB_VERT);
+	VERIFY(mm_spike_class.SubclassDlgItem(IDC_SPIKE_CLASS, this));
+	mm_spike_class.ShowScrollBar(SB_VERT);
 	VERIFY(m_spkClassListBox.SubclassDlgItem(IDC_LISTCLASSES, this));
 	VERIFY(mm_time_first.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_time_last.SubclassDlgItem(IDC_TIMELAST, this));
@@ -1541,12 +1541,12 @@ void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 
 void ViewSpikes::OnEnChangeSpikenoclass()
 {
-	if (!mm_spike_index_class.m_bEntryDone)
+	if (!mm_spike_class.m_bEntryDone)
 		return;
-	const auto spike_noclass = m_spike_index_class;
-	mm_spike_index_class.OnEnChange(this, m_spike_index_class, 1, -1);
+	const auto spike_no_class = m_spike_index_class;
+	mm_spike_class.OnEnChange(this, m_spike_index_class, 1, -1);
 
-	if (m_spike_index_class != spike_noclass) // change display if necessary
+	if (m_spike_index_class != spike_no_class) 
 	{
 		m_spkClassListBox.ChangeSpikeClass(m_spike_index, m_spike_index_class);
 		m_pSpkDoc->SetModifiedFlag(TRUE);

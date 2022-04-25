@@ -821,6 +821,7 @@
 #define IDC_USBPXXS1CTL1                1516
 #define IDC_EDIT_TEXT                   1519
 #define IDC_DISPLAYNOTHING              1520
+#define IDC_SPIKE_CLASS                 1521
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -947,7 +948,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        579
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1521
+#define _APS_NEXT_CONTROL_VALUE         1522
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif
