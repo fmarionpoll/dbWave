@@ -175,6 +175,7 @@ RowItem* SpikeClassListBox::add_row_item(int class_id, int i_id)
 	const auto row_item = new(RowItem);
 	ASSERT(row_item != NULL);
 	row_item->CreateItem(this, m_dbwave_doc, m_spike_list, class_id, i_id, &context);
+	
 	AddString(reinterpret_cast<LPTSTR>(row_item));
 	return row_item;
 }
@@ -451,18 +452,48 @@ void SpikeClassListBox::add_spike_to_row(int spike_no)
 
 void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class_id)
 {
-	Spike* spike = m_spike_list->get_spike(spike_no);
-	if (0 == GetCount() || new_class_id == spike->get_class())
-		return;
+	m_spike_list->change_spike_class_id(spike_no, new_class_id);
+	update_rows_from_spike_list();
+}
 
-	remove_spike_from_row(spike_no);
-
-	spike->set_class(new_class_id);
-	if (new_class_id >= 0)
+void SpikeClassListBox::update_rows_from_spike_list()
+{
+	const int n_classes = count_classes_in_current_spike_list();
+	const int n_row_items = GetCount();
+	int i_id = 0;
+	int i_row = 0;
+	if (n_row_items > 0)
 	{
-		add_spike_to_row(spike_no);
-		SelectSpike(spike_no);
+		const auto lastItem = reinterpret_cast<RowItem*>(GetItemData(n_row_items - 1));
+		i_id = (lastItem->get_row_id() / 2 + 1) * 2;
 	}
+
+	for (auto i_class = 0; i_class < n_classes; i_class++)
+	{
+		const int class_id = m_spike_list->get_class_id(i_class);
+		if (class_id < 0)
+			continue;
+
+		const int descriptor_index = m_spike_list->get_class_id_descriptor_index(class_id);
+		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i_row));
+		if (i_row < n_row_items)
+		{
+			row_item->set_class_id(class_id);
+			row_item->update_string(class_id, m_spike_list->get_class_n_items(descriptor_index));
+		}
+		else
+		{
+			add_row_item(class_id, i_id);
+		}
+		i_id += 2;
+		i_row++;
+	}
+	if (i_row < n_classes)
+	{
+		for (int i = n_classes - 1; i >= i_row; i--)
+			DeleteString(i);
+	}
+	SetRedraw(TRUE);
 }
 
 void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i) const

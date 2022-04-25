@@ -80,10 +80,11 @@ public:
 	int get_class_n_items(const int i) const { return m_spike_class_descriptors.GetAt(i).get_n_items(); }
 	void set_class_n_items(const int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).set_n_items(n_spikes); }
 
-	int get_class_id_index(int class_id);
+	int get_class_id_descriptor_index(int class_id);
 	int get_class_id_n_items(const int class_id);
 	int increment_class_n_items(int class_id);
 	int decrement_class_n_items(int class_id);
+	void change_spike_class_id(int spike_no, int class_id);
 
 	Spike* get_spike(int no) { return m_spikes.GetAt(no); }
 	int get_spikes_count() const { return m_spikes.GetCount(); }
@@ -109,7 +110,7 @@ public:
 	BOOL InitSpikeList(AcqDataDoc* pDataFile, SPKDETECTPARM* pFC);
 	long UpdateClassList();
 	void EraseData();
-	void ChangeSpikeClassID(int old_class_ID, int new_class_ID);
+	void ChangeAllSpikeFromClassIDToNewClassID(int old_class_ID, int new_class_ID);
 
 	void Measure_case0_AmplitudeMinToMax(int t1, int t2);
 	void Measure_case1_AmplitudeAtT(int t);

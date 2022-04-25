@@ -17,6 +17,7 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 	const auto rect_bars = CRect(0, 0, 0, 0);
 	parent_context = context;
 	class_id = i_class;
+	row_id = i_id;
 
 	// 1) create chart_spike_shape
 	ChartSpikeShape* chart_spike_shape = nullptr;

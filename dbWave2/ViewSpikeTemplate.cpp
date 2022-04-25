@@ -1067,7 +1067,7 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero
 				m_pSpkList->UpdateClassList(); // rebuild list of classes
-				m_pSpkList->ChangeSpikeClassID(oldclass, dlg.m_iClass);
+				m_pSpkList->ChangeAllSpikeFromClassIDToNewClassID(oldclass, dlg.m_iClass);
 				m_pSpkList->UpdateClassList(); // rebuild list of classes
 				m_pSpkDoc->SetModifiedFlag(TRUE);
 

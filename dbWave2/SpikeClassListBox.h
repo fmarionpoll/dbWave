@@ -76,6 +76,7 @@ protected:
 	void add_spike_to_row(int spike_no);
 	int get_row_index_of_spike_class(int spike_class) const;
 	RowItem* add_row_item(int class_id, int i_id);
+	void update_rows_from_spike_list();
 
 	// Implementation
 public:

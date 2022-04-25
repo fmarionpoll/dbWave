@@ -17,8 +17,12 @@ public:
 	void	set_time_intervals(long l_first, long l_last) const;
 	void	set_spk_list(SpikeList* p_spike_list) const;
 	int		set_mouse_cursor_type(int cursor_m) const;
+
 	int		get_class_id() const { return class_id; }
 	void	set_class_id(int new_class_id) { class_id = new_class_id; }
+	int		get_row_id() const { return row_id; }
+	void	set_row_id(int new_row_id) { row_id = new_row_id; }
+
 	void	move_row_out_of_the_way() const;
 	void	set_y_zoom(int y_we, int y_wo) const;
 	void	set_x_zoom(int x_we, int x_wo) const;
@@ -37,7 +41,9 @@ protected:
 	CString* comment = nullptr;
 	ChartSpikeShape* chart_shapes = nullptr;
 	ChartSpikeBar* chart_bars = nullptr;
+	// TODO replace with spikeclassdescriptor?
 	int class_id = 0;
+	int row_id = 0;
 	SpikeClassListBoxContext* parent_context = nullptr;
 };
 

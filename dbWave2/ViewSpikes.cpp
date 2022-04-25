@@ -1528,7 +1528,7 @@ void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 	short min_data = max_data;
 	for (long i = spk_first; i <= spk_last; i++)
 	{
-		short value = m_pDataDoc->BGetVal(doc_channel, i);
+		const short value = m_pDataDoc->BGetVal(doc_channel, i);
 		if (value > max_data) max_data = value;
 		if (value < min_data) min_data = value;
 	}
@@ -1549,6 +1549,7 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 	if (m_spike_class != spike_class_old) 
 	{
 		m_spkClassListBox.ChangeSpikeClass(m_spike_index, m_spike_class);
+
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		updateLegends(TRUE);
 		m_spkClassListBox.Invalidate();

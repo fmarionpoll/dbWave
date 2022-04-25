@@ -462,7 +462,7 @@ int SpikeList::get_classes_count() const
 	return n_classes;
 }
 
-int SpikeList::get_class_id_index(int class_id)
+int SpikeList::get_class_id_descriptor_index(int class_id)
 {
 	int item_index = -1;
 	for (int i = 0; i < m_n_classes; i++)
@@ -477,13 +477,13 @@ int SpikeList::get_class_id_index(int class_id)
 
 int SpikeList::get_class_id_n_items(const int class_id)
 {
-	const int index = get_class_id_index(class_id);
+	const int index = get_class_id_descriptor_index(class_id);
 	return m_spike_class_descriptors.GetAt(index).get_n_items();
 }
 
 int SpikeList::increment_class_n_items(const int class_id)
 {
-	const int index = get_class_id_index(class_id);
+	const int index = get_class_id_descriptor_index(class_id);
 	if (index < 0)
 		return 0;
 	return m_spike_class_descriptors.GetAt(index).increment_n_items();
@@ -491,8 +491,16 @@ int SpikeList::increment_class_n_items(const int class_id)
 
 int SpikeList::decrement_class_n_items(const int class_id)
 {
-	const int index = get_class_id_index(class_id);
+	const int index = get_class_id_descriptor_index(class_id);
 	return m_spike_class_descriptors.GetAt(index).decrement_n_items();
+}
+
+void SpikeList::change_spike_class_id(int spike_no, int class_id)
+{
+	Spike* spike = get_spike(spike_no);
+	decrement_class_n_items(spike->get_class());
+	spike->set_class(class_id);
+	increment_class_n_items(class_id);
 }
 
 int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_time, const int source_channel, const int i_class, const BOOL b_check)
@@ -861,7 +869,7 @@ int SpikeList::add_class_id(const int id)
 	return index;
 }
 
-void SpikeList::ChangeSpikeClassID(const int old_class_ID, const int new_class_ID)
+void SpikeList::ChangeAllSpikeFromClassIDToNewClassID(const int old_class_ID, const int new_class_ID)
 {
 	// first find valid max and min
 	for (auto index = 0; index < m_spikes.GetSize(); index++)
