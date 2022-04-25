@@ -716,16 +716,16 @@ void ViewSpikes::select_spike_list(int current_selection)
 
 void ViewSpikes::OnFormatAlldata()
 {
-	// dots: spk file length
+
 	m_lFirst = 0;
 	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
 	// spikes: center spikes horizontally and adjust hz size of display
-	constexpr short x_wo = 0;
-	const short x_we = static_cast<short>(m_pSpkList->get_spike_length());
+	constexpr int x_wo = 0;
+	const auto x_we = m_pSpkList->get_spike_length();
 	m_spkClassListBox.SetXzoom(x_we, x_wo);
 
 	updateLegends(TRUE);
-	// display data
+
 	m_spkClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 }

@@ -318,7 +318,7 @@ void SpikeClassListBox::SetXzoom(int x_we, int x_wo) const
 	for (auto i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
-		row_item->set_y_zoom(x_we, x_wo);
+		row_item->set_x_zoom(x_we, x_wo);
 	}
 }
 
