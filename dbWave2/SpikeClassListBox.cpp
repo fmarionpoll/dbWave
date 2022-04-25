@@ -407,18 +407,20 @@ int SpikeClassListBox::get_row_index_of_spike_class(int spike_class) const
 
 void SpikeClassListBox::remove_spike_from_row(int spike_no) 
 {
-	const auto old_class = m_spike_list->get_spike(spike_no)->get_class();
-	const int row_old_index = get_row_index_of_spike_class(old_class);
-	if (row_old_index < 0)
+	const auto current_class = m_spike_list->get_spike(spike_no)->get_class();
+	const int row_index = get_row_index_of_spike_class(current_class);
+	if (row_index < 0)
 		return;
-	const auto row_old_item = reinterpret_cast<RowItem*>(GetItemData(row_old_index));
 
-	row_old_item->select_individual_spike(-1);
-	const auto n_spikes = m_spike_list->decrement_class_n_items(old_class);
+	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(row_index));
+	row_item->select_individual_spike(-1);
+	const auto n_spikes = m_spike_list->decrement_class_n_items(current_class);
 	if (n_spikes > 0)
-		row_old_item->update_string(old_class, n_spikes);
+		row_item->update_string(current_class, n_spikes);
 	else
-		DeleteString(row_old_index);
+	{
+		DeleteString(row_index);
+	}
 }
 
 void SpikeClassListBox::add_spike_to_row(int spike_no)
@@ -454,6 +456,7 @@ void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class_id)
 		return;
 
 	remove_spike_from_row(spike_no);
+
 	spike->set_class(new_class_id);
 	if (new_class_id >= 0)
 	{

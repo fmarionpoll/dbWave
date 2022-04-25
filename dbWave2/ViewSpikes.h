@@ -23,7 +23,7 @@ public:
 	float m_time_first = 0.f;
 	float m_time_last = 0.f;
 	int m_spike_index = -1;
-	int m_spike_index_class = 0;
+	int m_spike_class = 0;
 	float m_zoom = .2f;
 	int m_class_source = 0;
 	int m_class_destination = 1;

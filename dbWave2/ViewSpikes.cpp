@@ -38,7 +38,7 @@ void ViewSpikes::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first);
 	DDX_Text(pDX, IDC_TIMELAST, m_time_last);
 	DDX_Text(pDX, IDC_NSPIKES, m_spike_index);
-	DDX_Text(pDX, IDC_SPIKE_CLASS, m_spike_index_class);
+	DDX_Text(pDX, IDC_SPIKE_CLASS, m_spike_class);
 	DDX_Text(pDX, IDC_EDIT3, m_zoom);
 	DDX_Text(pDX, IDC_EDIT4, m_class_source);
 	DDX_Text(pDX, IDC_EDIT5, m_class_destination);
@@ -284,7 +284,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_DROPPED:
 		m_pSpkDoc->SetModifiedFlag();
-		m_spike_index_class = m_pSpkList->get_spike(m_spike_index)->get_class();
+		m_spike_class = m_pSpkList->get_spike(m_spike_index)->get_class();
 		UpdateData(FALSE);
 		break;
 
@@ -374,13 +374,13 @@ void ViewSpikes::selectSpike(int spike_no)
 	m_pSpkList->m_selected_spike = spike_no;
 	m_spkClassListBox.SelectSpike(spike_no);
 
-	m_spike_index_class = -1;
+	m_spike_class = -1;
 	int n_cmd_show;
 	if (spike_no >= 0 && spike_no < m_pSpkList->get_spikes_count())
 	{
 		const auto spike = m_pSpkList->get_spike(m_spike_index);
-		m_spike_index_class = spike->get_class();
-		m_b_artefact = (m_spike_index_class < 0);
+		m_spike_class = spike->get_class();
+		m_b_artefact = (m_spike_class < 0);
 		const auto spk_first = spike->get_time() - m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 		const auto spk_last = spk_first + m_pSpkList->get_spike_length();
 		n_cmd_show = SW_SHOW;
@@ -1543,12 +1543,12 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 {
 	if (!mm_spike_class.m_bEntryDone)
 		return;
-	const auto spike_no_class = m_spike_index_class;
-	mm_spike_class.OnEnChange(this, m_spike_index_class, 1, -1);
+	const auto spike_class_old = m_spike_class;
+	mm_spike_class.OnEnChange(this, m_spike_class, 1, -1);
 
-	if (m_spike_index_class != spike_no_class) 
+	if (m_spike_class != spike_class_old) 
 	{
-		m_spkClassListBox.ChangeSpikeClass(m_spike_index, m_spike_index_class);
+		m_spkClassListBox.ChangeSpikeClass(m_spike_index, m_spike_class);
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		updateLegends(TRUE);
 		m_spkClassListBox.Invalidate();
