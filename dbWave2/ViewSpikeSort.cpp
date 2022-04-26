@@ -336,7 +336,7 @@ void ViewSpikeSort::update_file_parameters()
 	}
 	else
 	{
-		m_source_class = m_pSpkList->get_spike(spike_index)->get_class();
+		m_source_class = m_pSpkList->get_spike(spike_index)->get_class_id();
 		m_psC->sourceclass = m_source_class;
 	}
 	ASSERT(m_source_class < 32768);
@@ -931,7 +931,7 @@ void ViewSpikeSort::select_spike_from_current_list(int spike_index)
 	if (spike_index >= 0)
 	{
 		const auto spike = m_pSpkList->get_spike(spike_index);
-		m_spike_index_class = spike->get_class();
+		m_spike_index_class = spike->get_class_id();
 		n_cmd_show = SW_SHOW;
 	}
 	GetDlgItem(IDC_STATIC2)->ShowWindow(n_cmd_show);
@@ -1025,7 +1025,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	auto nb_spk_selected_class = 0;
 	for (auto i_spike = 0; i_spike < total_spikes; i_spike++)
 	{
-		if (m_pSpkList->get_spike(i_spike)->get_class() != m_source_class)
+		if (m_pSpkList->get_spike(i_spike)->get_class_id() != m_source_class)
 			continue;
 		nb_spk_selected_class++;
 		short* p_spk = m_pSpkList->get_spike(i_spike)->get_p_data();
@@ -1086,7 +1086,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		Spike* spike = m_pSpkList->get_spike(i_spike);
 
 		// exclude spikes that do not fall within time limits
-		if (spike->get_class() != m_source_class)
+		if (spike->get_class_id() != m_source_class)
 			continue;
 
 		ii_time0 = spike->get_time();
@@ -1569,7 +1569,7 @@ void ViewSpikeSort::OnEnChangespike_indexclass()
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			const auto current_list = m_tabCtrl.GetCurSel();
 			auto* spike_list = m_pSpkDoc->set_spk_list_as_current(current_list);
-			spike_list->get_spike(m_spike_index)->set_class(m_spike_index_class);
+			spike_list->get_spike(m_spike_index)->set_class_id(m_spike_index_class);
 			update_legends();
 		}
 	}

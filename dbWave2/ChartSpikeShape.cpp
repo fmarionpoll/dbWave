@@ -104,7 +104,7 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 				continue;
 
 			// select pen according to class
-			const auto spike_class = spike->get_class();
+			const auto spike_class = spike->get_class_id();
 			switch (m_plotmode)
 			{
 			case PLOT_ONECLASSONLY:
@@ -143,7 +143,7 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 					continue;
 
 				// skip spikes with the wrong class
-				if (spike->get_class() != m_selected_class)
+				if (spike->get_class_id() != m_selected_class)
 					continue;
 				// display data
 				p_spike_data = spike->get_p_data();
@@ -289,7 +289,7 @@ BOOL ChartSpikeShape::IsSpikeWithinRange(int spike_no) const
 		&& (spike_no > m_index_last_spike || spike_no < m_index_first_spike))
 		return FALSE;
 	if (m_plotmode == PLOT_ONECLASSONLY
-		&& (p_spike_list->get_spike(spike_no)->get_class() != m_selected_class))
+		&& (p_spike_list->get_spike(spike_no)->get_class_id() != m_selected_class))
 		return FALSE;
 	return TRUE;
 }
@@ -541,7 +541,7 @@ int ChartSpikeShape::hitCurve(const CPoint point)
 				|| p_spike_list->get_spike(spike_index)->get_time() > m_lLast))
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& p_spike_list->get_spike(spike_index)->get_class() != m_selected_class)
+			&& p_spike_list->get_spike(spike_index)->get_class_id() != m_selected_class)
 			continue;
 
 		const auto val = p_spike_list->get_spike(spike_index)->get_value_at_offset(mouse_x);
@@ -708,7 +708,7 @@ void ChartSpikeShape::Print(CDC* p_dc, CRect* rect)
 				continue;
 		}
 
-		const auto spike_class = p_spike_list->get_spike(spike_index)->get_class();
+		const auto spike_class = p_spike_list->get_spike(spike_index)->get_class_id();
 		if (m_plotmode == PLOT_ONECLASSONLY && spike_class != m_selected_class)
 			continue;
 		if (m_plotmode == PLOT_ONECLASS && spike_class == m_selected_class)
@@ -730,7 +730,7 @@ void ChartSpikeShape::Print(CDC* p_dc, CRect* rect)
 				if (spike_time < m_lFirst || spike_time > m_lLast)
 					continue;
 			}
-			if (spike->get_class() != m_selected_class)
+			if (spike->get_class_id() != m_selected_class)
 				continue;
 			plotArraytoDC(p_dc, spike->get_p_data());
 		}

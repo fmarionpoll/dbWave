@@ -554,7 +554,7 @@ void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first,
 		p_dword_array->SetAt(index, dw_data);
 
 		// dispatch into corresponding class histogram (create one if necessary)
-		const auto spike_class = spike_element->get_class();
+		const auto spike_class = spike_element->get_class_id();
 		getClassArray(spike_class, p_dw);
 		if (p_dw == nullptr)
 			p_dw = initClassArray(n_bins, spike_class);

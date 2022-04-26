@@ -1438,7 +1438,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 					}
 					// check spike class
 					if (m_pvdS->spikeclassoption
-						&& p_spk_list->get_spike(i)->get_class() != m_spikeclass)
+						&& p_spk_list->get_spike(i)->get_class_id() != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
 					const auto spktime = ii_time / samprate;
@@ -1503,7 +1503,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 						break;
 					// check spike class
 					if (m_pvdS->spikeclassoption
-						&& p_spk_list->get_spike(i)->get_class() != m_spikeclass)
+						&& p_spk_list->get_spike(i)->get_class_id() != m_spikeclass)
 						continue;
 					// convert interval into a pixel bin
 					const auto spktime = ii_time / samprate;

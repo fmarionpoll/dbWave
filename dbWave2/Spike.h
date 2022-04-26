@@ -13,7 +13,7 @@ class Spike : public CObject
 	// Attributes
 private:
 	long m_ii_time = 0;						// occurrence time - multiply by rate to get time in seconds
-	int m_class = 0;						// spike class - init to zero at first
+	int m_class_id = 0;						// spike class - init to zero at first
 	int m_detection_parameters_index = 0;	// spike detection array index
 	short m_value_max = 4096;				// spike max (used to scan rapidly to adjust display)
 	short m_value_min = 0;					// spike min (used to scan rapidly to adjust display)
@@ -37,7 +37,7 @@ public:
 	void	set_selected(boolean status) { m_selected_state = status; }
 
 	long	get_time() const { return m_ii_time; }
-	int		get_class() const { return m_class; }
+	int		get_class_id() const { return m_class_id; }
 	int		get_source_channel() const { return m_detection_parameters_index; }
 	int		get_maximum() const { return m_value_max; }
 	int		get_minimum() const { return m_value_min; }
@@ -56,7 +56,7 @@ public:
 	int		get_dt() const { return dt_; }
 
 	void	set_time(long ii) { m_ii_time = ii; }
-	void	set_class(int cl) { m_class = cl; }
+	void	set_class_id(int cl) { m_class_id = cl; }
 
 	void	SetMaxMinEx(int max, int min, int d_max_min) {
 				m_value_max = max;

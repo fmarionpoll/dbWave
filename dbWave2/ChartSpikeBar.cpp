@@ -336,7 +336,7 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 			continue;
 
 		// select correct pen
-		const auto spike_class = spike->get_class();
+		const auto spike_class = spike->get_class_id();
 		switch (m_plotmode)
 		{
 		case PLOT_ONECLASSONLY:
@@ -408,7 +408,7 @@ void ChartSpikeBar::DisplayFlaggedSpikes(const BOOL b_high_light)
 		const auto no_spike = p_spike_list->GetSpikeFlagArrayAt(i);
 
 		const Spike* spike = p_spike_list->get_spike(no_spike);
-		const auto no_spike_class = spike->get_class();
+		const auto no_spike_class = spike->get_class_id();
 		if (PLOT_ONECLASSONLY == m_plotmode && no_spike_class != m_selected_class)
 			continue;
 
@@ -477,13 +477,13 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 		case PLOT_ONECLASSONLY:
 		case PLOT_ONECLASS:
 			color_index = BLACK_COLOR;
-			if (spike->get_class() != m_selected_class)
+			if (spike->get_class_id() != m_selected_class)
 				color_index = SILVER_COLOR;
 			break;
 		case PLOT_CLASSCOLORS:
 			if (no_spike == m_selected_spike)
 				highlightOneBar(no_spike, &dc);
-			color_index = spike->get_class() % NB_COLORS;
+			color_index = spike->get_class_id() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		default:
@@ -498,7 +498,7 @@ void ChartSpikeBar::DisplaySpike(const int no_spike, const BOOL b_select)
 		{
 		case PLOT_CLASSCOLORS:
 			highlightOneBar(no_spike, &dc);
-			color_index = spike->get_class() % NB_COLORS;
+			color_index = spike->get_class_id() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
 		case PLOT_ONECLASSONLY:
@@ -545,7 +545,7 @@ BOOL ChartSpikeBar::IsSpikeWithinRange(const int no_spike)
 	if (m_range_mode == RANGE_INDEX
 		&& (no_spike > m_index_last_spike || no_spike < m_index_first_spike))
 		return FALSE;
-	if (m_plotmode == PLOT_ONECLASSONLY && spike->get_class() != m_selected_class)
+	if (m_plotmode == PLOT_ONECLASSONLY && spike->get_class_id() != m_selected_class)
 		return FALSE;
 	return TRUE;
 }
@@ -821,7 +821,7 @@ int ChartSpikeBar::hitCurve(const CPoint point)
 		if (l_spike_time < x_min || l_spike_time > x_max)
 			continue;
 		if (m_plotmode == PLOT_ONECLASSONLY
-			&& spike->get_class() != m_selected_class)
+			&& spike->get_class_id() != m_selected_class)
 			continue;
 
 		short max, min;

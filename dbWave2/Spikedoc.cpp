@@ -429,7 +429,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, 
 		Spike* pSpike = pspklist->get_spike(j);
 
 		// skip classes not requested
-		const auto cla = pSpike->get_class();
+		const auto cla = pSpike->get_class_id();
 		if (cla < 0 /*&& !vdS->bartefacts*/)
 			continue;
 		if (vdS->spikeclassoption != 0 && cla != iclass)
@@ -693,7 +693,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPI
 				break;
 
 			// skip classes not requested
-			const auto cla = pSpike->get_class();
+			const auto cla = pSpike->get_class_id();
 			if (cla < 0 /*&& !vdS->bartefacts*/)
 				continue;
 			if (vdS->spikeclassoption != 0 && cla != iclass)
@@ -844,7 +844,7 @@ void CSpikeDoc::ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES*
 		if ((ii_time < iitime0) || (ii_time >= iitime1))
 			break;
 		// skip classes not requested
-		const auto cla = pSpike->get_class();
+		const auto cla = pSpike->get_class_id();
 		if (cla < 0 /*&& !vdS->bartefacts*/)
 			continue;
 
@@ -1256,9 +1256,9 @@ long CSpikeDoc::BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 				break;
 
 			// skip classes not requested (artefact or wrong class)
-			if (pSpike->get_class() < 0 /*&& !vdS->bartefacts*/)
+			if (pSpike->get_class_id() < 0 /*&& !vdS->bartefacts*/)
 				continue;
-			if (vdS->spikeclassoption != 0 && pSpike->get_class() != iclass)
+			if (vdS->spikeclassoption != 0 && pSpike->get_class_id() != iclass)
 				continue;
 
 			int ii = (ii_time - iitime_start) / iibinsize;
@@ -1349,7 +1349,7 @@ long CSpikeDoc::BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 				iitime0 = ii_time;
 				continue;
 			}
-			if (vdS->spikeclassoption && pSpike->get_class() != iclass)
+			if (vdS->spikeclassoption && pSpike->get_class_id() != iclass)
 				continue;
 			const auto ii = static_cast<int>((ii_time - iitime0) / iibinsize);
 			if (ii <= vdS->nbinsISI)
@@ -1437,7 +1437,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 			const auto iitime0 = pspklist->get_spike(i)->get_time(); // get spike time
 			if (iitime0 > iiend) // stop loop if out of range
 				break;
-			if (vdS->spikeclassoption && pspklist->get_spike(i)->get_class() != iclass)
+			if (vdS->spikeclassoption && pspklist->get_spike(i)->get_class_id() != iclass)
 				continue; // discard if class not requested
 			n++; // update nb of pivot spikes
 			// search backwards first spike that is ok
@@ -1456,7 +1456,7 @@ long CSpikeDoc::BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass)
 				const auto ii_time = pSpike->get_time() - iitime0;
 				if (abs(ii_time) >= iispan)
 					continue;
-				if (vdS->spikeclassoption && pSpike->get_class() != iclass)
+				if (vdS->spikeclassoption && pSpike->get_class_id() != iclass)
 					continue;
 
 				const int tiitime = ((ii_time + iispan) / iibinsize);
@@ -1555,7 +1555,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 			const auto iitime0 = pSpike->get_time();
 			if (iitime0 >= iiend) // exit loop
 				break;
-			if (vdS->spikeclassoption && pSpike->get_class() != iclass)
+			if (vdS->spikeclassoption && pSpike->get_class_id() != iclass)
 				continue;
 			n++; // update nb of pivot spikes
 			// compute base index (where to store autocorrelation for this pivot spike)
@@ -1583,7 +1583,7 @@ long CSpikeDoc::BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int icl
 				if (ii_time < -iispan)
 					continue;
 
-				if (vdS->spikeclassoption && p_spike_j->get_class() != iclass)
+				if (vdS->spikeclassoption && p_spike_j->get_class_id() != iclass)
 					continue;
 
 				const int tiitime = (ii_time + iispan) / iiautocorrbinsize;
@@ -1638,7 +1638,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vd
 		if (ii_time >= iitime_end)
 			break;
 		// skip classes not requested
-		const auto cla = pSpike->get_class();
+		const auto cla = pSpike->get_class_id();
 		if (cla < 0 /*&& !vdS->bartefacts*/)
 			continue;
 		if (vdS->spikeclassoption != 0 && cla != iclass)

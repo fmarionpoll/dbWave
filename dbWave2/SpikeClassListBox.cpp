@@ -226,7 +226,7 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	int cla = 0;
 	if (spike_no >= 0)
 	{
-		cla = m_pSList->get_class(spike_no);		// load spike class
+		cla = m_pSList->get_class_id(spike_no);		// load spike class
 		bAll = FALSE;
 	}
 
@@ -242,7 +242,7 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	{
 		// get address of spike parms
 		const auto p_spike_element = m_spike_list->get_spike(spike_no);
-		cla = p_spike_element->get_class();
+		cla = p_spike_element->get_class_id();
 
 		// multiple selection
 		if (false)
@@ -408,7 +408,7 @@ int SpikeClassListBox::get_row_index_of_spike_class(int spike_class) const
 
 void SpikeClassListBox::remove_spike_from_row(int spike_no) 
 {
-	const auto current_class = m_spike_list->get_spike(spike_no)->get_class();
+	const auto current_class = m_spike_list->get_spike(spike_no)->get_class_id();
 	const int row_index = get_row_index_of_spike_class(current_class);
 	if (row_index < 0)
 		return;
@@ -426,7 +426,7 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 
 void SpikeClassListBox::add_spike_to_row(int spike_no)
 {
-	const auto current_class = m_spike_list->get_spike(spike_no)->get_class();
+	const auto current_class = m_spike_list->get_spike(spike_no)->get_class_id();
 	if (current_class < 0)
 		return;
 	int row_index = get_row_index_of_spike_class(current_class);
@@ -488,6 +488,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 		i_id += 2;
 		i_row++;
 	}
+
 	if (i_row < n_classes)
 	{
 		for (int i = n_classes - 1; i >= i_row; i--)

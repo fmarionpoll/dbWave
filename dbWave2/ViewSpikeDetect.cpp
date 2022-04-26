@@ -207,7 +207,7 @@ void ViewSpikeDetection::update_legends()
 	if (m_spike_index > 0)
 	{
 		const auto p_s = m_pSpkList->get_spike(m_spike_index);
-		m_bartefact = (p_s->get_class() < 0);
+		m_bartefact = (p_s->get_class_id() < 0);
 	}
 
 	update_file_scroll();
@@ -1559,12 +1559,12 @@ void ViewSpikeDetection::OnArtefact()
 		{
 			const auto spike_no = m_pSpkList->GetSpikeFlagArrayAt(i);
 			Spike* spike = m_pSpkList->get_spike(spike_no);
-			auto spike_class = spike->get_class();
+			auto spike_class = spike->get_class_id();
 
 			// if artefact: set class to negative value
 			if ((m_bartefact && spike_class >= 0) || (spike_class < 0))
 				spike_class = -(spike_class + 1);
-			spike->set_class(spike_class);
+			spike->set_class_id(spike_class);
 		}
 
 		m_pSpkDoc->SetModifiedFlag(TRUE);
@@ -1674,7 +1674,7 @@ void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelectio
 	{
 		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 		const auto p_spike_element = m_pSpkList->get_spike(spike_index);
-		m_bartefact = (p_spike_element->get_class() < 0);
+		m_bartefact = (p_spike_element->get_class_id() < 0);
 		if (bMultipleSelection)
 		{
 			m_pSpkList->ToggleSpikeFlag(spike_index);

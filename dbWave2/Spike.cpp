@@ -22,7 +22,7 @@ Spike::Spike(const long time, const int channel, const int max, const int min, c
 	m_value_min = min;
 	m_value_max = max;
 	m_offset = offset;
-	m_class = class_i;
+	m_class_id = class_i;
 	m_d_max_min = d_max_min;
 	m_spike_length = spike_length;
 }
@@ -32,7 +32,7 @@ Spike::Spike(const long time, const int channel, const int offset, const int cla
 	m_ii_time = time;
 	m_detection_parameters_index = channel;
 	m_offset = offset;
-	m_class = class_i;
+	m_class_id = class_i;
 	m_spike_length = spike_length;
 }
 
@@ -51,7 +51,7 @@ void Spike::Serialize(CArchive& ar)
 	{
 		ar << wVersion;
 		ar << m_ii_time;
-		ar << static_cast<WORD>(m_class);
+		ar << static_cast<WORD>(m_class_id);
 		ar << static_cast<WORD>(m_detection_parameters_index);
 		ar << static_cast<WORD>(m_value_max);
 		ar << static_cast<WORD>(m_value_min);
@@ -74,7 +74,7 @@ void Spike::read_version2(CArchive& ar, WORD wVersion)
 	WORD w1;
 
 	ar >> m_ii_time;
-	ar >> w1; m_class = static_cast<int>(w1);
+	ar >> w1; m_class_id = static_cast<int>(w1);
 	ar >> w1; m_detection_parameters_index = static_cast<int>(w1);
 	ar >> w1; m_value_max = static_cast<short>(w1);
 	ar >> w1; m_value_min = static_cast<short>(w1);
@@ -97,7 +97,7 @@ void Spike::read_version0(CArchive& ar)
 	ASSERT(ar.IsStoring() == FALSE);
 
 	ar >> m_ii_time;
-	ar >> w1; m_class = static_cast<int>(w1);
+	ar >> w1; m_class_id = static_cast<int>(w1);
 	ar >> w1; m_detection_parameters_index = static_cast<int>(w1);
 	ar >> w1; m_value_max = static_cast<short>(w1);
 	ar >> w1; m_value_min = static_cast<short>(w1);

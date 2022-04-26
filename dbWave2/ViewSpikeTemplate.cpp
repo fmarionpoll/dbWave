@@ -225,7 +225,7 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	else
 	{
 		// set source class to the class of the selected spike
-		m_spikenoclass = m_pSpkList->get_spike(spikeno)->get_class();
+		m_spikenoclass = m_pSpkList->get_spike(spikeno)->get_class_id();
 		m_psC->sourceclass = m_spikenoclass;
 	}
 
@@ -645,7 +645,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 		int j_templ;
 		for (auto i = 0; i < nspikes; i++)
 		{
-			const auto cla = pSpkList->get_spike(i)->get_class();
+			const auto cla = pSpkList->get_spike(i)->get_class_id();
 			auto b_found = FALSE;
 			for (j_templ = 0; j_templ < pTPList->GetTemplateDataSize(); j_templ++)
 			{
@@ -759,7 +759,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			// filter out undesirable spikes
 			if (m_bDisplaySingleClass)
 			{
-				if (m_pSpkList->get_spike(i)->get_class() != m_spikenoclass)
+				if (m_pSpkList->get_spike(i)->get_class_id() != m_spikenoclass)
 					continue;
 			}
 			const auto ii_time = m_pSpkList->get_spike(i)->get_time();
@@ -878,7 +878,7 @@ void ViewSpikeTemplates::sortSpikes()
 			if (m_bDisplaySingleClass)
 			{
 				// skip spikes that do not belong to selected class
-				if (m_pSpkList->get_spike(ispike)->get_class() != m_spikenoclass)
+				if (m_pSpkList->get_spike(ispike)->get_class_id() != m_spikenoclass)
 					continue;
 			}
 
@@ -927,9 +927,9 @@ void ViewSpikeTemplates::sortSpikes()
 
 				// change spike class ID
 				const auto class_id = (m_templList.GetTemplateWnd(tplmin))->m_classID;
-				if (m_pSpkList->get_spike(ispike)->get_class() != class_id)
+				if (m_pSpkList->get_spike(ispike)->get_class_id() != class_id)
 				{
-					m_pSpkList->get_spike(ispike)->set_class(class_id);
+					m_pSpkList->get_spike(ispike)->set_class_id(class_id);
 					m_pSpkDoc->SetModifiedFlag(TRUE);
 				}
 			}

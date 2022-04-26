@@ -10,7 +10,7 @@ ChartSpike::~ChartSpike()
 
 int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mode) const
 {
-	const auto no_spike_class = spike->get_class();
+	const auto no_spike_class = spike->get_class_id();
 	auto color = BLACK_COLOR;
 	switch (plot_mode)
 	{

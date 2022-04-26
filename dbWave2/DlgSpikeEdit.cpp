@@ -43,7 +43,7 @@ END_MESSAGE_MAP()
 void DlgSpikeEdit::LoadSpikeParms()
 {
 	const Spike* spike = m_pSpkList->get_spike(m_spike_index); // get address of spike parms
-	m_spikeclass = spike->get_class(); 
+	m_spikeclass = spike->get_class_id(); 
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = spike->get_time();
 
@@ -187,7 +187,7 @@ void DlgSpikeEdit::OnEnChangeSpikeclass()
 	if (mm_spikeclass.m_bEntryDone)
 	{
 		mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
-		m_pSpkList->get_spike(m_spike_index)->set_class(m_spikeclass);
+		m_pSpkList->get_spike(m_spike_index)->set_class_id(m_spikeclass);
 		m_bartefact = (m_spikeclass < 0);
 		UpdateData(FALSE);
 		m_bchanged = TRUE;
@@ -198,7 +198,7 @@ void DlgSpikeEdit::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
 	m_spikeclass = (m_bartefact) ? -1 : 0;
-	m_pSpkList->get_spike(m_spike_index)->set_class(m_spikeclass);
+	m_pSpkList->get_spike(m_spike_index)->set_class_id(m_spikeclass);
 	UpdateData(FALSE); // update value
 	m_bchanged = TRUE;
 }

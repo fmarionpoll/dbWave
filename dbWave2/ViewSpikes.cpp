@@ -284,7 +284,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_DROPPED:
 		m_pSpkDoc->SetModifiedFlag();
-		m_spike_class = m_pSpkList->get_spike(m_spike_index)->get_class();
+		m_spike_class = m_pSpkList->get_spike(m_spike_index)->get_class_id();
 		UpdateData(FALSE);
 		break;
 
@@ -337,9 +337,9 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 
 		m_pSpkDoc->SetModifiedFlag();
 	}
-	else if (m_pSpkList->get_spike(spike_index)->get_class() != m_class_destination)
+	else if (m_pSpkList->get_spike(spike_index)->get_class_id() != m_class_destination)
 	{
-		m_pSpkList->get_spike(spike_index)->set_class(m_class_destination);
+		m_pSpkList->get_spike(spike_index)->set_class_id(m_class_destination);
 		m_pSpkDoc->SetModifiedFlag();
 	}
 
@@ -379,7 +379,7 @@ void ViewSpikes::selectSpike(int spike_no)
 	if (spike_no >= 0 && spike_no < m_pSpkList->get_spikes_count())
 	{
 		const auto spike = m_pSpkList->get_spike(m_spike_index);
-		m_spike_class = spike->get_class();
+		m_spike_class = spike->get_class_id();
 		m_b_artefact = (m_spike_class < 0);
 		const auto spk_first = spike->get_time() - m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 		const auto spk_last = spk_first + m_pSpkList->get_spike_length();
@@ -2026,14 +2026,14 @@ void ViewSpikes::OnArtefact()
 	}
 	else
 	{
-		auto spk_class = m_pSpkList->get_spike(m_spike_index)->get_class();
+		auto spk_class = m_pSpkList->get_spike(m_spike_index)->get_class_id();
 		// if artefact: set class to negative value
 		if (m_b_artefact && spk_class >= 0)
 			spk_class = -(spk_class + 1);
 		// if not artefact: if spike has negative class, set to positive value
 		else if (spk_class < 0)
 			spk_class = -(spk_class + 1);
-		//m_pSpkList->get_spike(m_spike_index)->set_class(spk_class);
+		//m_pSpkList->get_spike(m_spike_index)->set_class_id(spk_class);
 		m_spkClassListBox.ChangeSpikeClass(m_spike_index, spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);

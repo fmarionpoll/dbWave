@@ -98,7 +98,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 				continue;
 
 			// select correct brush
-			const auto wspkcla = spike_element->get_class();
+			const auto wspkcla = spike_element->get_class_id();
 			switch (m_plotmode)
 			{
 			case PLOT_ONECLASSONLY:
@@ -220,7 +220,7 @@ BOOL ChartSpikeXY::IsSpikeWithinRange(int spikeno)
 		return FALSE;
 
 	if (m_plotmode == PLOT_ONECLASSONLY
-		&& spike_element->get_class() != m_selected_class)
+		&& spike_element->get_class_id() != m_selected_class)
 		return FALSE;
 
 	return TRUE;
@@ -234,7 +234,7 @@ void ChartSpikeXY::DisplaySpike(int spikeno, BOOL bselect)
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
 	const auto spike_element = p_spike_list->get_spike(spikeno);
-	const auto spike_class = spike_element->get_class();
+	const auto spike_class = spike_element->get_class_id();
 	int color_index;
 	if (!bselect)
 	{
@@ -541,7 +541,7 @@ int ChartSpikeXY::hitCurve(CPoint point)
 		{
 			// skip non selected class
 			const auto spike_element = p_spike_list->get_spike(ispk);
-			if (spike_element->get_class() != m_selected_class)
+			if (spike_element->get_class_id() != m_selected_class)
 				continue;
 			if (is_spike_within_limits(ispk))
 				return ispk;
