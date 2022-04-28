@@ -104,10 +104,10 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 		{
 			saveCurrentSpkFile();
 			// save column parameters
-			m_psC->colseparator = m_spkClassListBox.GetColsSeparatorWidth();
+			m_psC->colseparator = m_spkClassListBox.GetColumnsSeparatorWidth();
 			m_psC->rowheight = m_spkClassListBox.GetRowHeight();
-			m_psC->colspikes = m_spkClassListBox.GetColsSpikesWidth();
-			m_psC->coltext = m_spkClassListBox.GetColsTextWidth();
+			m_psC->colspikes = m_spkClassListBox.GetColumnsSpikesWidth();
+			m_psC->coltext = m_spkClassListBox.GetColumnsTextWidth();
 
 			auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 			if (p_app->m_pviewspikesMemFile == nullptr)
@@ -478,7 +478,7 @@ void ViewSpikes::OnInitialUpdate()
 	CRect rect2;
 	GetDlgItem(IDC_DISPLAYDAT)->GetWindowRect(&rect2);
 	const int left_col_width = rect2.left - rect.left - 2;
-	m_spkClassListBox.SetLeftColWidth(left_col_width);
+	m_spkClassListBox.SetLeftColumnWidth(left_col_width);
 	if (m_psC->coltext < 0)
 	{
 		m_psC->colspikes = m_psC->rowheight;
@@ -491,7 +491,7 @@ void ViewSpikes::OnInitialUpdate()
 		}
 	}
 	m_psC->coltext = left_col_width - m_psC->colspikes - 2 * m_psC->colseparator;
-	m_spkClassListBox.SetColsWidth(m_psC->colspikes, m_psC->colseparator);
+	m_spkClassListBox.SetColumnsWidth(m_psC->colspikes, m_psC->colseparator);
 	m_spkClassListBox.SetCursorMaxOnDblClick(3);
 
 	// init relation with document, display data, adjust parameters
@@ -1754,7 +1754,7 @@ void ViewSpikes::OnEditCopy()
 		// display data: source data and spikes
 		auto extent = m_spkClassListBox.GetYWExtent(); 
 		const auto r_height = MulDiv(m_spkClassListBox.GetRowHeight(), rect.Width(),
-		                            m_spkClassListBox.GetColsTimeWidth());
+		                            m_spkClassListBox.GetColumnsTimeWidth());
 		auto rw_spikes = rect;
 		rw_spikes.bottom = r_height; 
 		auto rw_text = rw_spikes;

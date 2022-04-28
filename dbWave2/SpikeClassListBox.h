@@ -42,15 +42,15 @@ public:
 	long GetTimeLast() const { return m_lLast; }
 
 	void SetRowHeight(int row_height);
-	void SetLeftColWidth(int row_width);
-	void SetColsWidth(int width_spikes, int width_separator);
+	void SetLeftColumnWidth(int row_width);
+	void SetColumnsWidth(int width_spikes, int width_separator);
 
 	int GetRowHeight() const { return context.m_row_height; }
-	int GetLeftColWidth() const { return context.m_left_column_width; }
-	int GetColsTextWidth() const { return context.m_widthText; }
-	int GetColsSpikesWidth() const { return context.m_widthSpikes; }
-	int GetColsTimeWidth() const { return context.m_widthBars; }
-	int GetColsSeparatorWidth() const { return context.m_widthSeparator; }
+	int GetLeftColumnWidth() const { return context.m_left_column_width; }
+	int GetColumnsTextWidth() const { return context.m_widthText; }
+	int GetColumnsSpikesWidth() const { return context.m_widthSpikes; }
+	int GetColumnsTimeWidth() const { return context.m_widthBars; }
+	int GetColumnsSeparatorWidth() const { return context.m_widthSeparator; }
 	float GetExtent_mV() const;
 
 	void SetYzoom(int y_we, int y_wo) const;

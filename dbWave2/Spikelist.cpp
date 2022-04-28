@@ -499,6 +499,7 @@ void SpikeList::change_spike_class_id(int spike_no, int class_id)
 {
 	Spike* spike = get_spike(spike_no);
 	decrement_class_n_items(spike->get_class_id());
+
 	spike->set_class_id(class_id);
 	increment_class_n_items(class_id);
 }

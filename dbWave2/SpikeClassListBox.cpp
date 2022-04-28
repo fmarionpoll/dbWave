@@ -112,12 +112,12 @@ void SpikeClassListBox::SetRowHeight(int row_height)
 		SetItemHeight(n_index, row_height);
 }
 
-void SpikeClassListBox::SetLeftColWidth(int left_width)
+void SpikeClassListBox::SetLeftColumnWidth(int left_width)
 {
 	context.m_left_column_width = left_width;
 }
 
-void SpikeClassListBox::SetColsWidth(int width_spikes, int width_separator)
+void SpikeClassListBox::SetColumnsWidth(int width_spikes, int width_separator)
 {
 	context.m_widthSpikes = width_spikes;
 	context.m_widthSeparator = width_separator;
@@ -373,13 +373,13 @@ void SpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 	// change row and col sizes
 	DlgListBClaSize dlg;
 	dlg.m_rowheight = GetRowHeight();
-	dlg.m_textcol = GetColsTextWidth();
-	dlg.m_superpcol = GetColsSpikesWidth();
-	dlg.m_intercolspace = GetColsSeparatorWidth();
+	dlg.m_textcol = GetColumnsTextWidth();
+	dlg.m_superpcol = GetColumnsSpikesWidth();
+	dlg.m_intercolspace = GetColumnsSeparatorWidth();
 	if (IDOK == dlg.DoModal())
 	{
 		SetRowHeight(dlg.m_rowheight);
-		SetColsWidth(dlg.m_superpcol, dlg.m_intercolspace);
+		SetColumnsWidth(dlg.m_superpcol, dlg.m_intercolspace);
 		Invalidate();
 	}
 }
@@ -557,12 +557,10 @@ void SpikeClassListBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_hwnd_bars_reflect != nullptr && point.x >= (context.m_widthText + context.m_widthSpikes))
 	{
-		// convert coordinates
+		// convert coordinates and reflect move message
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
 		::GetWindowRect(m_hwnd_bars_reflect, &rect0);
-
-		// reflect mouse move message
 		::SendMessage(m_hwnd_bars_reflect, WM_LBUTTONUP, nFlags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left),
 		                         point.y + (rect1.top - rect0.top)));
