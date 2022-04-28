@@ -43,7 +43,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEHZLIMITS: // abscissa have changed
 		{
-			auto row_item = reinterpret_cast<RowItem*>(GetItemData(i_current_selected));
+			const auto row_item = get_row_item(i_current_selected);
 			row_item->get_time_intervals(m_lFirst, m_lLast);
 			SetTimeIntervals(m_lFirst, m_lLast);
 		}
@@ -58,7 +58,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEZOOM:
 		{
-			const auto* row_item = reinterpret_cast<RowItem*>(GetItemData(i_current_selected));
+			const auto* row_item = get_row_item(i_current_selected);
 			int y_we, y_wo;
 			row_item->get_zoom_y(y_we, y_wo);
 			SetYzoom(y_we, y_wo);
@@ -186,7 +186,7 @@ void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 	m_lLast = l_last;
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		row_item->set_time_intervals(l_first, l_last);
 	}
 }
@@ -209,7 +209,7 @@ void SpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
 	{
 		for (auto i = 0; i < GetCount(); i++)
 		{
-			const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+			const auto row_item = get_row_item(i);
 			row_item->set_spk_list(p_spike_list);
 		}
 	}
@@ -263,7 +263,7 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	{
 		for (auto i = 0; i < GetCount(); i++) // search row where this class is stored
 		{
-			const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i)); 
+			const auto row_item = get_row_item(i); 
 			if (row_item->get_class_id() == cla)
 			{
 				SetCurSel(i); // select corresponding row
@@ -287,7 +287,7 @@ int SpikeClassListBox::SetMouseCursorType(int cursor_m) const
 	auto old_cursor = 0;
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		old_cursor = row_item->set_mouse_cursor_type(cursor_m);
 	}
 	return old_cursor;
@@ -300,7 +300,7 @@ void SpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 	// move all windows out of the way to prevent displaying old rows
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		row_item->move_row_out_of_the_way();
 	}
 }
@@ -309,7 +309,7 @@ void SpikeClassListBox::SetYzoom(int y_we, int y_wo) const
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		row_item->set_y_zoom(y_we, y_wo);
 	}
 }
@@ -318,7 +318,7 @@ void SpikeClassListBox::SetXzoom(int x_we, int x_wo) const
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		row_item->set_x_zoom(x_we, x_wo);
 	}
 }
@@ -326,7 +326,7 @@ void SpikeClassListBox::SetXzoom(int x_we, int x_wo) const
 int SpikeClassListBox::GetYWExtent() const
 {
 	ASSERT(GetCount() > 0);
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
+	const auto row_item = get_row_item(0);
 	int we, wo;
 	row_item->get_zoom_y(we, wo);
 	return we;
@@ -335,7 +335,7 @@ int SpikeClassListBox::GetYWExtent() const
 int SpikeClassListBox::GetYWOrg() const
 {
 	ASSERT(GetCount() > 0);
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
+	const auto row_item = get_row_item(0);
 	int we, wo;
 	row_item->get_zoom_y(we, wo);
 	return wo;
@@ -344,7 +344,7 @@ int SpikeClassListBox::GetYWOrg() const
 int SpikeClassListBox::GetXWExtent() const
 {
 	ASSERT(GetCount() > 0);
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
+	const auto row_item = get_row_item(0);
 	int we, wo = 0;
 	row_item->get_zoom_x_shapes(we, wo);
 	return we;
@@ -353,7 +353,7 @@ int SpikeClassListBox::GetXWExtent() const
 int SpikeClassListBox::GetXWOrg() const
 {
 	ASSERT(GetCount() > 0);
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
+	const auto row_item = get_row_item(0);
 	int we, wo = 0;
 	row_item->get_zoom_x_shapes(we, wo);
 	return wo;
@@ -362,8 +362,8 @@ int SpikeClassListBox::GetXWOrg() const
 float SpikeClassListBox::GetExtent_mV() const
 {
 	ASSERT(GetCount() > 0);
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(0));
-	auto x = row_item->get_zoom_y_shapes_mv();
+	const auto row_item = get_row_item(0);
+	const auto x = row_item->get_zoom_y_shapes_mv();
 	return x;
 }
 
@@ -396,7 +396,7 @@ int SpikeClassListBox::get_row_index_of_spike_class(int spike_class) const
 	int row_index = -1;
 	for (int index = 0; index < GetCount(); index++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(index));
+		const auto row_item = get_row_item(index);
 		if (row_item->get_class_id() == spike_class)
 		{
 			row_index = index;
@@ -413,7 +413,7 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 	if (row_index < 0)
 		return;
 
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(row_index));
+	const auto row_item = get_row_item(row_index);
 	row_item->select_individual_spike(-1);
 	const auto n_spikes = m_spike_list->decrement_class_n_items(current_class);
 	if (n_spikes > 0)
@@ -446,7 +446,7 @@ void SpikeClassListBox::add_spike_to_row(int spike_no)
 	else
 		n_spikes = m_spike_list->increment_class_n_items(current_class);
 
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(row_index));
+	const auto row_item = get_row_item(row_index);
 	row_item->update_string(current_class, n_spikes);
 }
 
@@ -464,7 +464,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 	int i_row = 0;
 	if (n_row_items > 0)
 	{
-		const auto lastItem = reinterpret_cast<RowItem*>(GetItemData(n_row_items - 1));
+		const auto lastItem = get_row_item(n_row_items - 1);
 		i_id = (lastItem->get_row_id() / 2 + 1) * 2;
 	}
 
@@ -475,7 +475,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 			continue;
 
 		const int descriptor_index = m_spike_list->get_class_id_descriptor_index(class_id);
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i_row));
+		const auto row_item = get_row_item(i_row);
 		if (i_row < n_row_items)
 		{
 			row_item->set_class_id(class_id);
@@ -501,7 +501,7 @@ void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* 
 {
 	if ((i < 0) || (i > GetCount() - 1))
 		return;
-	const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+	const auto row_item = get_row_item(i);
 	row_item->print(p_dc, rect1, rect2, rect3);
 }
 
@@ -509,7 +509,7 @@ void SpikeClassListBox::XorTempVTtag(int x_point) const
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		row_item->get_chart_bars()->XorTempVTtag(x_point);
 	}
 }
@@ -518,7 +518,7 @@ void SpikeClassListBox::ResetBarsXortag() const
 {
 	for (int i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		row_item->get_chart_bars()->ResetXortag();
 	}
 }
@@ -528,7 +528,7 @@ void SpikeClassListBox::ReflectBarsMouseMoveMessg(const HWND hwnd)
 	m_hwnd_bars_reflect = hwnd;
 	for (auto i = 0; i < GetCount(); i++)
 	{
-		const auto row_item = reinterpret_cast<RowItem*>(GetItemData(i));
+		const auto row_item = get_row_item(i);
 		row_item->get_chart_bars()->ReflectMouseMoveMessg(hwnd);
 		if (hwnd != nullptr)
 			row_item->get_chart_bars()->SetMouseCursorType(CURSOR_CROSS);

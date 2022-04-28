@@ -77,6 +77,7 @@ protected:
 	int get_row_index_of_spike_class(int spike_class) const;
 	RowItem* add_row_item(int class_id, int i_id);
 	void update_rows_from_spike_list();
+	RowItem* get_row_item(int i) const { return reinterpret_cast<RowItem*>(GetItemData(i)); }
 
 	// Implementation
 public:
