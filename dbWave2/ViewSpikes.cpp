@@ -1490,9 +1490,9 @@ void ViewSpikes::OnEnChangeNOspike()
 	if (mm_spike_index.m_bEntryDone)
 	{
 		const auto spike_no = m_spike_index;
-		mm_spike_index.OnEnChange(this, m_spike_index,
-			m_pSpkList->GetNextSpike(spike_no, 1, m_b_keep_same_class) - m_spike_index,
-			m_spike_index - m_pSpkList->GetNextSpike(spike_no, -1, m_b_keep_same_class));
+		const int delta_up = m_pSpkList->GetNextSpike(spike_no, 1, m_b_keep_same_class) - m_spike_index;
+		const int delta_down = m_spike_index - m_pSpkList->GetNextSpike(spike_no, -1, m_b_keep_same_class);
+		mm_spike_index.OnEnChange(this, m_spike_index, delta_up, -delta_down);
 
 		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
 		if (m_spike_index != spike_no)

@@ -489,7 +489,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 		i_row++;
 	}
 
-	if (i_row < n_classes)
+	if (i_row <= n_classes)
 	{
 		for (int i = n_classes - 1; i >= i_row; i--)
 			DeleteString(i);

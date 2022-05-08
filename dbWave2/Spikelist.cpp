@@ -865,7 +865,7 @@ long SpikeList::UpdateClassList()
 
 int SpikeList::add_class_id(const int id)
 {
-	int index = m_spike_class_descriptors.Add(SpikeClassDescriptor(id, 1));
+	const int index = m_spike_class_descriptors.Add(SpikeClassDescriptor(id, 1));
 	m_n_classes++;
 	return index;
 }
