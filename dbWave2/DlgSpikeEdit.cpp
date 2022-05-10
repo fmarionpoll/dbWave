@@ -282,35 +282,27 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 {
 	if (m_pAcqDatDoc != nullptr)
 	{
-		auto offset = m_pSpkList->get_spike(m_spike_index)->get_amplitude_offset();
-		m_iitime += shift;
-		m_pSpkList->get_spike(m_spike_index)->set_time(m_iitime);
-		UpdateSpikeScroll();
-		LoadSourceData();
-
-		const auto l_first = m_iitime - m_spkpretrig;
-
-		// get source data buffer address
 		Spike* pSpike = m_pSpkList->get_spike(m_spike_index);
+		//auto offset = pSpike->get_amplitude_offset();
+		m_iitime += shift;
+		pSpike->set_time(m_iitime);
+		UpdateSpikeScroll();
+
+		LoadSourceData();
+		const auto l_first = m_iitime - m_spkpretrig;
 		const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
-		if (method == 0)
-		{
-			int n_channels;
-			auto lp_source = m_pAcqDatDoc->LoadRawDataParams(&n_channels);
-			lp_source += (l_first - m_pAcqDatDoc->GettBUFfirst()) * n_channels+ m_spikeChan;
-			pSpike->TransferDataToSpikeBuffer(lp_source, n_channels);
-		}
-		else
-		{
-			m_pAcqDatDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
-			auto p_data = m_pAcqDatDoc->GetpTransfDataBUF();
-			p_data += l_first - m_pAcqDatDoc->GettBUFfirst();
-			pSpike->TransferDataToSpikeBuffer(p_data, 1);
-		}
+		m_pAcqDatDoc->LoadTransfData(l_first, l_first + m_spklen, method, m_spikeChan);
+		auto lp_source = m_pAcqDatDoc->GetpTransfDataBUF();
+		lp_source += l_first - m_pAcqDatDoc->GettBUFfirst();
+		pSpike->TransferDataToSpikeBuffer(lp_source, 1);
+		short max, min;
+		int i_max, i_min;
+		pSpike->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, m_pSpkList->get_spike_length() - 1);
+		pSpike->SetMaxMinEx(max, min, i_min - i_max);
 
 		// copy data to spike buffer
-		offset += pSpike->get_amplitude_offset();
-		pSpike->OffsetSpikeDataToAverageEx(offset, offset);
+		//offset += pSpike->get_amplitude_offset();
+		//pSpike->OffsetSpikeDataToAverageEx(offset, offset);
 
 		m_SpkChartWnd.Invalidate();
 		m_bchanged = TRUE;

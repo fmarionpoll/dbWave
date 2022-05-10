@@ -416,7 +416,7 @@ BOOL AcqDataDoc::AllocBUF()
 
 // returns the address of the raw data buffer
 // and the number of interleaved channels
-short* AcqDataDoc::LoadRawDataParams(int* nb_channels)
+short* AcqDataDoc::LoadRawDataParams(int* nb_channels) const
 {
 	*nb_channels = GetScanCount();
 	return m_pWBuf->getWBAdrRawDataBuf();

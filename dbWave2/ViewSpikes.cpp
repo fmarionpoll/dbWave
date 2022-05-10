@@ -1,11 +1,8 @@
-
 #include "StdAfx.h"
 #include "ViewSpikes.h"
 
 #include <strsafe.h>
-
 #include <cmath>
-
 #include "dbWave.h"
 #include "DlgCopyAs.h"
 #include "DlgSpikeEdit.h"
@@ -437,7 +434,7 @@ void ViewSpikes::defineSubClassedItems()
 
 void ViewSpikes::defineStretchParameters()
 {
-	m_stretch.AttachParent(this); // attach formview pointer
+	m_stretch.AttachParent(this);
 	m_stretch.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 
@@ -716,7 +713,6 @@ void ViewSpikes::select_spike_list(int current_selection)
 
 void ViewSpikes::OnFormatAlldata()
 {
-
 	m_lFirst = 0;
 	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
 	// spikes: center spikes horizontally and adjust hz size of display
@@ -914,9 +910,9 @@ CString ViewSpikes::PrintGetFileInfos()
 			str_comment += GetDocument()->GetDB_CurrentSpkFileName(FALSE) + tab;
 		if (options_viewdata->bAcqDateTime) // print data acquisition date & time
 		{
-			auto acqtime = m_pSpkDoc->GetAcqTime();
-			const auto date = acqtime.Format(_T("%#d %m %Y %X")); //("%x %X");
-			// or more explicitely %d-%b-%Y %H:%M:%S");
+			const auto acquisition_time = m_pSpkDoc->GetAcqTime();
+			const auto date = acquisition_time.Format(_T("%#d %m %Y %X")); //("%x %X");
+			// or more explicitly %d-%b-%Y %H:%M:%S");
 			str_comment += date;
 		}
 		str_comment += rc;
@@ -1635,17 +1631,17 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 
 	// trap messages from ScrollBarEx
-	long l_first = m_lFirst;
-	long l_last = m_lLast;
 	CString cs;
 	switch (nSBCode)
 	{
 	case SB_THUMBTRACK:
 	case SB_THUMBPOSITION:
-		m_file_scroll.GetScrollInfo(&m_file_scroll_infos, SIF_ALL);
-		l_first = m_file_scroll_infos.nPos;
-		l_last = l_first + m_file_scroll_infos.nPage - 1;
-		m_ChartDataWnd.GetDataFromDoc(l_first, l_last);
+		{
+			m_file_scroll.GetScrollInfo(&m_file_scroll_infos, SIF_ALL);
+			const long l_first = m_file_scroll_infos.nPos;
+			const long l_last = l_first + static_cast<long>(m_file_scroll_infos.nPage) - 1;
+			m_ChartDataWnd.GetDataFromDoc(l_first, l_last);
+		}
 		break;
 
 	default:
@@ -1752,7 +1748,7 @@ void ViewSpikes::OnEditCopy()
 
 		CString comments;
 		// display data: source data and spikes
-		auto extent = m_spkClassListBox.GetYWExtent(); 
+		//auto extent = m_spkClassListBox.GetYWExtent(); 
 		const auto r_height = MulDiv(m_spkClassListBox.GetRowHeight(), rect.Width(),
 		                            m_spkClassListBox.GetColumnsTimeWidth());
 		auto rw_spikes = rect;
@@ -1772,7 +1768,7 @@ void ViewSpikes::OnEditCopy()
 			m_ChartDataWnd.CenterChan(0);
 			m_ChartDataWnd.Print(&mDC, &rw_bars);
 
-			extent = m_ChartDataWnd.GetChanlistItem(0)->GetYextent();
+			//auto extent = m_ChartDataWnd.GetChanlistItem(0)->GetYextent();
 			rw_spikes.OffsetRect(0, r_height);
 			rw_bars.OffsetRect(0, r_height);
 			rw_text.OffsetRect(0, r_height);

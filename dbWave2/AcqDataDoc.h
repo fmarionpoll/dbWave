@@ -73,7 +73,7 @@ public:
 	short* LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL BuildTransfData(int transform_type, int ns);
 	BOOL LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
-	short* LoadRawDataParams(int* n_channels);
+	short* LoadRawDataParams(int* n_channels) const;
 
 	// write data
 	BOOL WriteHZtags(TagList* ptags);
