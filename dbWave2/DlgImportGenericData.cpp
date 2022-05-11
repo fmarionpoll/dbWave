@@ -643,7 +643,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 	pDataF->m_pXFile->GetStatus(status);
 	pDataF->SetbOffsetToData(m_skipNbytes);
 
-	pDataF->m_pWBuf->WBDatachanSetnum(piivO->nbChannels);
+	pDataF->m_pWBuf->create_buffer_with_n_channels(piivO->nbChannels);
 	CWaveFormat* pwF = pDataF->GetpWaveFormat();
 
 	// define parameters within CWaveFormat

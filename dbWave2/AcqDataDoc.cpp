@@ -192,7 +192,7 @@ BOOL AcqDataDoc::OnNewDocument()
 		CreateAcqFile(cs_dummy);
 		ASSERT(m_pWBuf != NULL);
 	}
-	m_pWBuf->WBDatachanSetnum(1); // create at least one channel
+	m_pWBuf->create_buffer_with_n_channels(1); // create at least one channel
 	return TRUE;
 }
 
@@ -419,7 +419,7 @@ BOOL AcqDataDoc::AllocBUF()
 short* AcqDataDoc::LoadRawDataParams(int* nb_channels) const
 {
 	*nb_channels = GetScanCount();
-	return m_pWBuf->getWBAdrRawDataBuf();
+	return m_pWBuf->get_pointer_to_raw_data_buffer();
 }
 
 BOOL AcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
@@ -468,7 +468,7 @@ BOOL AcqDataDoc::readDataBlock(long l_first)
 	// read data from file
 	if (m_pXFile != nullptr)
 	{
-		short* p_buffer = m_pWBuf->getWBAdrRawDataBuf();
+		short* p_buffer = m_pWBuf->get_pointer_to_raw_data_buffer();
 		ASSERT(p_buffer != NULL);
 		//TRACE("ReadDataBlock l_first= %i nbPoints = %i doc length= %i \n", l_first, m_lBUFSize, m_lDOCchanLength);
 		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, GetpWavechanArray());
@@ -483,7 +483,7 @@ BOOL AcqDataDoc::readDataBlock(long l_first)
 		const auto w_bin_zero = static_cast<WORD>(m_pWBuf->m_waveFormat.binzero);
 		if (m_bRemoveOffset && w_bin_zero != NULL)
 		{
-			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->getWBAdrRawDataBuf());
+			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->get_pointer_to_raw_data_buffer());
 			for (long i = 0; i < l_size; i++, pw_buf++)
 				*pw_buf -= w_bin_zero;
 		}
@@ -504,7 +504,7 @@ short AcqDataDoc::BGetVal(const int channel, const long l_index)
 	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
 		readDataBlock(l_index);
 	const int index = l_index - m_lBUFchanFirst;
-	return *(m_pWBuf->getWBAdrRawDataElmt(channel, index));
+	return *(m_pWBuf->get_pointer_to_raw_data_element(channel, index));
 }
 
 short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const int transform_type,
@@ -520,7 +520,7 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 	m_tBUFfirst = l_first;
 	m_tBUFlast = l_last;
 
-	if (m_pWBuf->getWBAdrTransfData() == nullptr)
+	if (m_pWBuf->get_pointer_to_transformed_data_buffer() == nullptr)
 		m_pWBuf->InitWBTransformBuffer();
 
 	const auto i_span = m_pWBuf->GetWBTransformSpan(transform_type);
@@ -535,10 +535,10 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 	const int n_channels = GetpWaveFormat()->scan_count;
 	ASSERT(source_channel < n_channels); // make sure this is a valid channel
 	const int i_offset = (l_first - m_lBUFchanFirst) * n_channels + source_channel;
-	auto lp_source = m_pWBuf->getWBAdrRawDataBuf() + i_offset;
+	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + i_offset;
 
 	// call corresponding one-pass routine
-	auto lp_destination = m_pWBuf->getWBAdrTransfData();
+	auto lp_destination = m_pWBuf->get_pointer_to_transformed_data_buffer();
 
 	// check if source l_first can be used
 	const auto b_isLFirstLower = (l_first < l_span);
@@ -560,7 +560,7 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 	{
 		// erase data at the end of the buffer
 		const int i_cx = i_span + l_last - l_first + 1;
-		auto lp_dest0 = m_pWBuf->getWBAdrTransfData();
+		auto lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer();
 		for (auto cx = 0; cx < i_cx; cx++, lp_dest0++)
 			*lp_dest0 = 0;
 	}
@@ -605,7 +605,7 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 		// set undefined pts equal to first valid point
 		if (b_isLFirstLower)
 		{
-			auto lp_dest0 = m_pWBuf->getWBAdrTransfData();
+			auto lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer();
 			for (auto cx = i_span; cx > 0; cx--, lp_dest0++)
 				*lp_dest0 = 0;
 			n_points += i_span;
@@ -627,17 +627,17 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 BOOL AcqDataDoc::BuildTransfData(const int transform_type, const int source_channel)
 {
 	// make sure that transform buffer is ready
-	if (m_pWBuf->getWBAdrTransfData() == nullptr)
+	if (m_pWBuf->get_pointer_to_transformed_data_buffer() == nullptr)
 		m_pWBuf->InitWBTransformBuffer();
 	auto flag = TRUE;
 
 	// init parameters
-	auto lp_source = m_pWBuf->getWBAdrRawDataBuf() + source_channel;
+	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + source_channel;
 	const int nb_channels = GetpWaveFormat()->scan_count;
 	ASSERT(source_channel < nb_channels);
 
 	// adjust pointers according to nspan - (fringe data) and set flags erase these data at the end
-	auto lp_dest = m_pWBuf->getWBAdrTransfData();
+	auto lp_dest = m_pWBuf->get_pointer_to_transformed_data_buffer();
 	const auto i_span_between_points = m_pWBuf->GetWBTransformSpan(transform_type);
 	const auto l_span_between_points = static_cast<long>(i_span_between_points);
 	const auto l_first = m_lBUFchanFirst + l_span_between_points;
@@ -687,12 +687,12 @@ BOOL AcqDataDoc::BuildTransfData(const int transform_type, const int source_chan
 	// set undefined pts equal to first valid point
 	if (i_span_between_points > 0)
 	{
-		auto lp_dest0 = m_pWBuf->getWBAdrTransfData();
+		auto lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer();
 		for (auto cx = i_span_between_points; cx > 0; cx--, lp_dest0++)
 			*lp_dest0 = 0;
 		n_points += i_span_between_points;
 
-		lp_dest0 = m_pWBuf->getWBAdrTransfData() + n_points;
+		lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer() + n_points;
 		for (auto cx = i_span_between_points; cx > 0; cx--, lp_dest0++)
 			*lp_dest0 = 0;
 	}
@@ -860,7 +860,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 
 	// position source file index to start of data
 	m_pXFile->Seek(m_pXFile->m_ulOffsetData, CFile::begin);
-	auto p_buf = m_pWBuf->getWBAdrRawDataBuf(); // buffer to store data
+	auto p_buf = m_pWBuf->get_pointer_to_raw_data_buffer(); // buffer to store data
 	auto l_buf_size = m_lBUFSize; // length of the buffer
 
 	while (n_samples > 0) // loop until the end of the file
@@ -904,7 +904,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 		m_pXFile->SeekToBegin();
 		p_new_doc->m_pXFile->SeekToBegin();
 
-		p_buf = m_pWBuf->getWBAdrRawDataBuf(); // buffer to store data
+		p_buf = m_pWBuf->get_pointer_to_raw_data_buffer(); // buffer to store data
 		const auto n_bytes = m_lBUFSize * sizeof(short);
 		DWORD dw_read;
 		do

@@ -14,10 +14,10 @@ class CWaveBuf : public CObject
 
 	// Attributes
 protected:
-	short* getWBAdrRawDataBuf() const;
-	short* getWBAdrRawDataElmt(int chan, int index) const;
-	short* getWBAdrTransfData() const;
-	short* getWBAdrTransfDataElmt(int index) const;
+	short* get_pointer_to_raw_data_buffer() const;
+	short* get_pointer_to_raw_data_element(int chan, int index) const;
+	short* get_pointer_to_transformed_data_buffer() const;
+	short* get_pointer_to_transformed_data_element(int index) const;
 
 public:
 	int GetWBNumElements() const;
@@ -34,7 +34,7 @@ public:
 	CWaveBuf();
 	~CWaveBuf() override;
 	void Serialize(CArchive& ar) override;
-	int WBDatachanSetnum(int i);
+	int create_buffer_with_n_channels(int i);
 
 	// Transform Data
 	//------------
@@ -80,11 +80,11 @@ protected:
 	TagList m_vt_tags{}; // list of vertical tags
 
 
-	static int m_maxtransform; // number of transformations allowed
-	static std::string m_pTransformsAllowed[]; // ASCII description of each transformation
-	static int m_TransformBufferSpan[]; // size of sliding window necessary to filter data
-	static float m_correctionFact[]; // correction factor to transform binary data into voltage
-	static int m_bvariableSpan[]; // flag to tell if the sliding window size can be changed
+	static int m_maxtransform;					// number of transformations allowed
+	static std::string m_pTransformsAllowed[];	// ASCII description of each transformation
+	static int m_TransformBufferSpan[];			// size of sliding window necessary to filter data
+	static float m_correctionFact[];			// correction factor to transform binary data into voltage
+	static int m_bvariableSpan[];				// flag to tell if the sliding window size can be changed
 
 private:
 	short* m_pWData = nullptr; // Pointer to the origin of the primary data array

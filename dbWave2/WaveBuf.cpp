@@ -15,43 +15,43 @@ CWaveBuf::CWaveBuf()
 CWaveBuf::~CWaveBuf()
 {
 	deleteBuffers();
-	SAFE_DELETE_ARRAY(m_parraySorted);
-	SAFE_DELETE_ARRAY(m_parrayCircular);
+	SAFE_DELETE_ARRAY(m_parraySorted)
+	SAFE_DELETE_ARRAY(m_parrayCircular)
 }
 
-int CWaveBuf::WBDatachanSetnum(const int i)
+int CWaveBuf::create_buffer_with_n_channels(const int i)
 {
 	// no action if the number of data channels is right
 	if (m_waveFormat.scan_count == i
 		&& m_chanArray.ChanArray_getSize() == i)
 		return i;
-	const auto iNumElements = m_waveFormat.buffersize / m_waveFormat.scan_count;
-	m_waveFormat.scan_count = i;
+	const auto i_num_elements = m_waveFormat.buffersize / m_waveFormat.scan_count;
+	m_waveFormat.scan_count = static_cast<short>(i);
 	m_chanArray.ChanArray_setSize(i);
 	ASSERT(m_chanArray.ChanArray_getSize() == m_waveFormat.scan_count);
-	createWBuffer(iNumElements, i);
+	createWBuffer(i_num_elements, i);
 	return m_waveFormat.scan_count;
 }
 
-short* CWaveBuf::getWBAdrRawDataBuf() const
+short* CWaveBuf::get_pointer_to_raw_data_buffer() const
 {
 	ASSERT(m_pWData != NULL);
 	return m_pWData;
 }
 
-short* CWaveBuf::getWBAdrRawDataElmt(const int chan, const int index) const
+short* CWaveBuf::get_pointer_to_raw_data_element(const int chan, const int index) const
 {
 	ASSERT(chan < m_waveFormat.scan_count);
 	ASSERT(m_pWData != NULL);
 	return m_pWData + index * m_waveFormat.scan_count + chan;
 }
 
-short* CWaveBuf::getWBAdrTransfData() const
+short* CWaveBuf::get_pointer_to_transformed_data_buffer() const
 {
 	return m_pWTransf;
 }
 
-short* CWaveBuf::getWBAdrTransfDataElmt(const int index) const
+short* CWaveBuf::get_pointer_to_transformed_data_element(const int index) const
 {
 	return m_pWTransf + index;
 }

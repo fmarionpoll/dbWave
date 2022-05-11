@@ -1283,7 +1283,7 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 
 	// set parameters (copy array into local parms)
 	const auto threshold = static_cast<short>(spike_detection_parameters->detect_threshold_bin); 
-	const auto method = spike_detection_parameters->detect_transform;
+	const auto detect_transform = spike_detection_parameters->detect_transform;
 	const auto source_channel = spike_detection_parameters->detect_channel; 
 	const auto pre_threshold = spike_detection_parameters->detect_pre_threshold; 
 	const auto refractory = spike_detection_parameters->detect_refractory_period; 
@@ -1293,7 +1293,7 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 	const auto p_dat = GetDocument()->m_pDat;
 	int n_channels; 
 	const auto p_buf = p_dat->LoadRawDataParams(&n_channels);
-	const auto span = p_dat->GetTransfDataSpan(method);
+	const auto span = p_dat->GetTransfDataSpan(detect_transform);
 
 	// adjust detection method: if threshold lower than data zero detect lower crossing
 	auto b_cross_upw = TRUE;
@@ -1315,7 +1315,7 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 		auto l_rw_last = l_data_last; 
 		if (!p_dat->LoadRawData(&l_rw_first, &l_rw_last, span)) 
 			break; 
-		if (!p_dat->BuildTransfData(method, source_channel)) 
+		if (!p_dat->BuildTransfData(detect_transform, source_channel)) 
 			break;
 
 		// load a chunk of data and see if any spikes are detected within it

@@ -103,15 +103,15 @@ public:
 
 	int GetScanCount() const { return m_pWBuf->m_waveFormat.scan_count; }
 
-	short* GetpRawDataBUF() const { return m_pWBuf->getWBAdrRawDataBuf(); }
+	short* GetpRawDataBUF() const { return m_pWBuf->get_pointer_to_raw_data_buffer(); }
 
 	short* GetpRawDataElmt(int chan, int index) const
 	{
-		return m_pWBuf->getWBAdrRawDataElmt(chan, index - m_lBUFchanFirst);
+		return m_pWBuf->get_pointer_to_raw_data_element(chan, index - m_lBUFchanFirst);
 	}
 
-	short* GetpTransfDataBUF() const { return m_pWBuf->getWBAdrTransfData(); }
-	short* GetpTransfDataElmt(int index) const { return (m_pWBuf->getWBAdrTransfData() + index); }
+	short* GetpTransfDataBUF() const { return m_pWBuf->get_pointer_to_transformed_data_buffer(); }
+	short* GetpTransfDataElmt(int index) const { return (m_pWBuf->get_pointer_to_transformed_data_buffer() + index); }
 	int GetTransfDataSpan(int i) const { return m_pWBuf->GetWBTransformSpan(i); }
 	WORD GetTransfDataNTypes() const { return m_pWBuf->GetWBNTypesofTransforms(); }
 	CString GetTransfDataName(int i) const { return m_pWBuf->GetWBTransformsAllowed(i); }
