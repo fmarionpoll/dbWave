@@ -42,18 +42,21 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_CHANGEHZLIMITS: // abscissa have changed
-		{
-			const auto row_item = get_row_item(i_current_selected);
-			row_item->get_time_intervals(m_lFirst, m_lLast);
-			SetTimeIntervals(m_lFirst, m_lLast);
-		}
-		break;
+	{
+		const auto row_item = get_row_item(i_current_selected);
+		row_item->get_time_intervals(m_lFirst, m_lLast);
+		SetTimeIntervals(m_lFirst, m_lLast);
+	}
+	break;
 
 	case HINT_HITSPIKE: // spike is selected
-		SelectSpike(threshold);
-		m_spike_hit = threshold; 
-		m_spike_hit_row = i_current_selected; 
-		m_is_spike_hit = TRUE;
+		if (i_current_selected != threshold) 
+		{
+			SelectSpike(threshold);
+			m_spike_hit = threshold;
+			m_spike_hit_row = i_current_selected;
+			m_is_spike_hit = TRUE;
+		}
 		break;
 
 	case HINT_CHANGEZOOM:
@@ -66,20 +69,16 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_DROPPED: 
-		if (!m_is_spike_hit)
-			return 0L;
-	// change selection
-		if (i_current_selected != m_spike_hit_row)
 		{
-			// patch: when we displace a spike to line 0, the line nb is not correct (shadow window intercepting mouse?)
-			if (i_current_selected < 0 || i_current_selected > GetCount())
-				i_current_selected = 0;
-			int new_class_id = get_row_item(i_current_selected)->get_class_id();
-			ChangeSpikeClass(m_spike_hit, new_class_id);
+			// TODO : get all selected spikes and change class into row where cursor was dropped
+			const int spike_hit_class_id = m_spike_list->get_spike(m_spike_hit)->get_class_id();
+			const int new_class_id = get_row_item(i_current_selected)->get_class_id();
+			// change selection
+			if (spike_hit_class_id != new_class_id)
+				ChangeSpikeClass(m_spike_hit, new_class_id);
+			m_is_spike_hit = FALSE;
+			SelectSpike(m_spike_hit);
 		}
-		m_is_spike_hit = FALSE;
-		SelectSpike(m_spike_hit);
-
 		break;
 
 	default:
