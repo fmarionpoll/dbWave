@@ -175,7 +175,7 @@ BOOL CdbWaveApp::InitInstance()
 	AddDocTemplate(m_pNoteViewTemplate);
 
 	// create main MDI Frame window
-	auto p_main_frame = new CMainFrame;
+	const auto p_main_frame = new CMainFrame;
 	if (!p_main_frame || !p_main_frame->LoadFrame(IDR_MAINFRAME))
 	{
 		delete p_main_frame;

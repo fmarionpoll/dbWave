@@ -420,7 +420,7 @@ void CMainFrame::OnOptions()
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext)
 {
 	// base class does the real work
-	if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
+	if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext)) 
 		return FALSE;
 
 	CString str_customize;
@@ -429,7 +429,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 	for (auto i = 0; i < i_max_user_toolbars; i++)
 	{
-		auto p_user_toolbar = GetUserToolBarByIndex(i);
+		const auto p_user_toolbar = GetUserToolBarByIndex(i);
 		if (p_user_toolbar != nullptr)
 		{
 			p_user_toolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, str_customize);

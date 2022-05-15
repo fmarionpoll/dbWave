@@ -74,9 +74,12 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			// patch: when we displace a spike to line 0, the line nb is not correct (shadow window intercepting mouse?)
 			if (i_current_selected < 0 || i_current_selected > GetCount())
 				i_current_selected = 0;
-			ChangeSpikeClass(m_spike_hit, m_spike_list->get_class_id(i_current_selected));
+			int new_class_id = get_row_item(i_current_selected)->get_class_id();
+			ChangeSpikeClass(m_spike_hit, new_class_id);
 		}
 		m_is_spike_hit = FALSE;
+		SelectSpike(m_spike_hit);
+
 		break;
 
 	default:
