@@ -1545,7 +1545,7 @@ void ViewSpikeDetection::OnEnChangeSpikeno()
 
 void ViewSpikeDetection::OnArtefact()
 {
-	UpdateData(TRUE); // load value from control
+	UpdateData(TRUE); 
 	const auto n_spikes = m_pSpkList->GetSpikeFlagArrayCount();
 	if (n_spikes < 1)
 	{

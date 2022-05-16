@@ -819,7 +819,13 @@ void SpikeList::GetRangeOfSpikeFlagged(long& l_first, long& l_last)
 
 void SpikeList::change_class_of_flagged_spikes(int new_class_id)
 {
-	// TODO
+	const auto n_spikes = GetSpikeFlagArrayCount();
+	for (auto i = 0; i < n_spikes; i++)
+	{
+		const auto spike_no = GetSpikeFlagArrayAt(i);
+		Spike* spike = get_spike(spike_no);
+		spike->set_class_id(new_class_id);
+	}
 }
 
 long SpikeList::UpdateClassList()
