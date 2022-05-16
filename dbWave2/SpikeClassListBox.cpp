@@ -74,10 +74,10 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			const int spike_hit_class_id = m_spike_list->get_spike(m_spike_hit)->get_class_id();
 			const int new_class_id = get_row_item(i_current_selected)->get_class_id();
 			// change selection
-			if (spike_hit_class_id != new_class_id)
-				ChangeSpikeClass(m_spike_hit, new_class_id);
+			m_spkList->change_class_of_flagged_spikes(new_class_id);
+			//if (spike_hit_class_id != new_class_id)
+			//	ChangeSpikeClass(m_spike_hit, new_class_id);
 			m_is_spike_hit = FALSE;
-			SelectSpike(m_spike_hit);
 		}
 		break;
 

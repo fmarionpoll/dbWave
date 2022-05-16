@@ -134,6 +134,7 @@ public:
 	void GetRangeOfSpikeFlagged(long& l_first, long& l_last);
 	BOOL GetSpikeFlagArrayAt(int i) const { return m_index_flagged_spikes.GetAt(i); }
 	int GetSpikeFlagArrayCount() const { return m_index_flagged_spikes.GetCount(); }
+	void change_class_of_flagged_spikes(int new_class_id);
 
 protected:
 	void read_file_version1(CArchive& ar);
@@ -152,5 +153,4 @@ protected:
 	int get_index_first_spike(int index_start, boolean reject_artefacts);
 	void get_total_max_min_read();
 	void get_total_max_min_measure();
-
 };

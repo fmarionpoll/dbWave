@@ -402,15 +402,15 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 		return; 
 
 	// test if mouse hit one spike
-	// if hit, then tell parent to select corresp spike
+	// if hit, then tell parent to select corresponding spike
 	m_hit_spike = hitCurveInDoc(point);
 	if (m_hit_spike >= 0)
 	{
 		// cancel track rect mode
-		m_trackMode = TRACK_OFF; // flag trackrect
-		releaseCursor(); // release cursor capture
+		m_trackMode = TRACK_OFF; 
+		releaseCursor(); 
 		if (nFlags & MK_SHIFT)
-			postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike); // tell parent spike selected
+			postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike); 
 
 		else
 			postMyMessage(HINT_HITSPIKE, m_hit_spike);
