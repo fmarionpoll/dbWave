@@ -126,7 +126,7 @@ public:
 public:
 	int SetSpikeFlag(int spike_index, BOOL set_spike_flag);
 	int ToggleSpikeFlag(int spike_index);
-	void SetSingleSpikeFlag(int spike_index);
+	void set_single_spike_flag(int spike_index);
 	BOOL GetSpikeFlag(int spike_index);
 	void RemoveAllSpikeFlags();
 	void FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);

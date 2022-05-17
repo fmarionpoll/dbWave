@@ -250,7 +250,7 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 				spike_no = -1;
 		}
 		// single selection
-		m_spike_list->SetSingleSpikeFlag(spike_no);
+		m_spike_list->set_single_spike_flag(spike_no);
 	}
 	// un-select all spikes
 	else

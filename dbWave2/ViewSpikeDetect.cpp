@@ -1685,7 +1685,7 @@ void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelectio
 		}
 		else
 		{
-			m_pSpkList->SetSingleSpikeFlag(spike_index);
+			m_pSpkList->set_single_spike_flag(spike_index);
 		}
 		m_spike_index = spike_index;
 		align_display_to_current_spike();

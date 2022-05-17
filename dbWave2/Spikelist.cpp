@@ -719,7 +719,7 @@ int SpikeList::ToggleSpikeFlag(int spike_index)
 	return GetSpikeFlagArrayCount();
 }
 
-void SpikeList::SetSingleSpikeFlag(int spike_index)
+void SpikeList::set_single_spike_flag(int spike_index)
 {
 	if (m_index_flagged_spikes.GetCount() != 1)
 		m_index_flagged_spikes.SetSize(1);
