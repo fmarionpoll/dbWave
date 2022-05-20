@@ -867,7 +867,12 @@ void ViewSpikeSort::OnFormatCentercurve()
 {
 	const auto n_spikes = m_pSpkList->get_spikes_count();
 	for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
-		m_pSpkList->get_spike(i_spike)->CenterSpikeAmplitude( m_psC->ileft, m_psC->iright, 1);
+	{
+		auto spike = m_pSpkList->get_spike(i_spike);
+		spike->set_spike_length(m_pSpkList->get_spike_length());
+		spike->CenterSpikeAmplitude(m_psC->ileft, m_psC->iright, 1);
+	}
+		
 
 	short max, min;
 	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);

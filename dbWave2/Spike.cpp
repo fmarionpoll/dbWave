@@ -245,7 +245,7 @@ void Spike::OffsetSpikeDataToAverageEx(int i_first, int i_last)
 {
 	const long average_value = MeasureSumEx(i_first, i_last);
 	const int offset = (average_value / (i_last - i_first + 1)) - m_bin_zero;
-	OffsetSpikeData(static_cast<short>(offset));
+	OffsetSpikeData(static_cast<short>(-offset));
 }
 
 void Spike::OffsetSpikeDataToExtremaEx(int i_first, int i_last)
