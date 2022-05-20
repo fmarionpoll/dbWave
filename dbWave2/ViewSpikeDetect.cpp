@@ -3081,7 +3081,7 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 
 		p_data = data_document->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
 		const auto p_data_spike0 = p_data + (ii_time - spike_pre_threshold - l_rw_first) * offset;
-		p_spike->TransferDataToSpikeBuffer(p_data_spike0, offset);
+		p_spike->TransferDataToSpikeBuffer(p_data_spike0, offset, m_pSpkList->get_spike_length());
 
 		// n channels should be 1 if they come from the transform buffer as data are not interleaved...
 		p_spike->CenterSpikeAmplitude(0, spike_length, 1); // 1=center average

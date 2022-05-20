@@ -44,6 +44,7 @@ public:
 	int		get_amplitude_offset() const { return m_offset; }
 
 	int		get_spike_length() const { return m_spike_length; }
+	void	set_spike_length(int spike_length) { m_spike_length = spike_length; }
 	short*	get_p_data(int spike_length);
 	short*	get_p_data() const;
 	short	get_value_at_offset(int index) const {return *(m_spike_data_buffer+index);}
@@ -68,7 +69,8 @@ public:
 	void	set_y2(int y) { y2_ = y; }
 	void	set_dt(long x) { dt_ = x; }
 
-	void	TransferDataToSpikeBuffer(short* source_data, int source_n_channels);
+	//void	TransferDataToSpikeBuffer(short* source_data, int source_n_channels);
+	void	TransferDataToSpikeBuffer(short* source_data, int source_n_channels, int spike_length);
 
 	void	measure_max_min_ex(short* value_max, int* index_max, short* value_min, int* index_min, int i_first, int i_last) const;
 	void	MeasureMaxThenMinEx(short* value_max, int* index_max, short* value_min, int* index_min, int i_first, int i_last) const;

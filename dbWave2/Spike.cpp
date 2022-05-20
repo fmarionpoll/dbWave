@@ -109,12 +109,7 @@ short* Spike::get_p_data(int spike_length)
 {
 	constexpr int delta = 0;
 	const size_t spike_data_length = sizeof(short) * (spike_length + delta);
-	if (m_spike_data_buffer == nullptr)
-	{
-		m_spike_data_buffer = static_cast<short*>(malloc(spike_data_length));
-		m_spk_buffer_length = spike_length;
-	}
-	else if (spike_length != m_spk_buffer_length)
+	if (m_spike_data_buffer == nullptr || spike_length != m_spk_buffer_length)
 	{
 		delete m_spike_data_buffer;
 		m_spike_data_buffer = static_cast<short*>(malloc(spike_data_length));
@@ -214,10 +209,20 @@ long Spike::MeasureSumEx(int i_first, int i_last) const
 	return average_value;
 }
 
-void Spike::TransferDataToSpikeBuffer(short* source_data, const int source_n_channels)
+//void Spike::TransferDataToSpikeBuffer(short* source_data, const int source_n_channels)
+//{
+//	auto lp_dest = get_p_data(m_spike_length);
+//	for (auto i = m_spike_length; i > 0; i--, source_data += source_n_channels, lp_dest++)
+//	{
+//		*lp_dest = *source_data;
+//	}
+//}
+
+void Spike::TransferDataToSpikeBuffer(short* source_data, const int source_n_channels, const int spike_length)
 {
-	auto lp_dest = get_p_data(get_spike_length());
-	for (auto i = get_spike_length(); i > 0; i--, source_data += source_n_channels, lp_dest++)
+	m_spike_length = spike_length;
+	auto lp_dest = get_p_data(spike_length);
+	for (auto i = m_spike_length; i > 0; i--, source_data += source_n_channels, lp_dest++)
 	{
 		*lp_dest = *source_data;
 	}

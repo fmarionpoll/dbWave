@@ -1158,7 +1158,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		if (j_decal != 0)
 		{
 			p_data_spike0 = p_data + static_cast<WORD>(ii_time0 + j_decal - l_rw_first) * offset + doc_chan;
-			spike->TransferDataToSpikeBuffer(p_data_spike0, number_channels);
+			spike->TransferDataToSpikeBuffer(p_data_spike0, number_channels, spike_length);
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			spike->set_time(ii_time0 + pre_trigger);
 		}

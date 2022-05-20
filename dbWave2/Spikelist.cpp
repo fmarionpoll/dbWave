@@ -327,7 +327,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	for (int i = 0; i < n_spikes; i++)
 	{
 		const auto lp_dest = get_spike(i)->get_p_data(get_spike_length());
-		ar.Read(lp_dest, n_bytes); // read data from disk
+		ar.Read(lp_dest, n_bytes); 
 	}
 	
 	m_extrema_valid = FALSE;
@@ -521,7 +521,7 @@ int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_
 
 		if (source_data != nullptr)
 		{
-			se->TransferDataToSpikeBuffer(source_data, n_channels);
+			se->TransferDataToSpikeBuffer(source_data, n_channels, m_spike_length);
 			// compute max min between brackets for new spike
 			short max, min;
 			int i_max, i_min;
