@@ -14,14 +14,13 @@ public:
 public:
 	UINT m_SecondToolBarID;
 	CMFCToolBar* m_pSecondToolBar;
-	void ActivatePropertyPane(BOOL bDisplay);
-	void ActivateFilterPane(BOOL bDisplay);
+	void ActivatePropertyPane(BOOL bActivate);
+	void ActivateFilterPane(BOOL bActivate);
 
 	// Overrides
 public:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-	               CWnd* pParentWnd = nullptr, CCreateContext* pContext = nullptr) override;
+	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext ) override;
 
 	// Implementation
 public:

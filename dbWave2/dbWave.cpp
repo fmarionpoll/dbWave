@@ -176,7 +176,10 @@ BOOL CdbWaveApp::InitInstance()
 
 	// create main MDI Frame window
 	const auto p_main_frame = new CMainFrame;
-	if (!p_main_frame || !p_main_frame->LoadFrame(IDR_MAINFRAME))
+	constexpr DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE;
+	CWnd* pParentWnd = nullptr;
+	CCreateContext* pContext = nullptr;
+	if (!p_main_frame || !p_main_frame->LoadFrame(IDR_MAINFRAME, dwDefaultStyle, pParentWnd, pContext))
 	{
 		delete p_main_frame;
 		return FALSE;

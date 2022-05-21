@@ -156,7 +156,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// Switch the order of document name and application name on the window title bar. This
-	// improves the usability of the taskbar because the document name is visible with the thumbnail.
+	// improves the usability of the task_bar because the document name is visible with the thumbnail.
 	ModifyStyle(0, FWS_PREFIXTITLE);
 
 	return 0;
@@ -242,14 +242,14 @@ CdbWaveDoc* CMainFrame::GetMDIActiveDocument()
 	const auto p_child = MDIGetActive();
 	if (p_child == nullptr)
 		return nullptr;
-	auto* p_view = static_cast<dbTableView*>(p_child->GetActiveView());
-	return p_view->GetDocument();
+	const auto db_table_view = static_cast<dbTableView*>(p_child->GetActiveView());
+	return db_table_view->GetDocument();
 }
 
 BOOL CMainFrame::CreateOutlookBar()
 {
 	CMFCOutlookBarTabCtrl::EnableAnimation();
-	const auto nInitialWidth = 60;
+	constexpr auto nInitialWidth = 60;
 	const CString strCaption = _T("Shortcuts");
 	if (!m_wndOutlookBar.Create(strCaption, this, CRect(0, 0, nInitialWidth, nInitialWidth), ID_VIEW_OUTLOOKBAR,
 	                            WS_CHILD | WS_VISIBLE | CBRS_LEFT))
@@ -265,15 +265,15 @@ BOOL CMainFrame::CreateOutlookBar()
 
 	img1.Create(IDB_NAVIGATIONLARGE, 32, 0, RGB(255, 0, 255));
 
-#define NBUTTONS 8
-	const WORD dw_style = TBSTYLE_BUTTON | TBSTYLE_AUTOSIZE;
-	struct
+#define N_BUTTONS 8
+	constexpr WORD dw_style = TBSTYLE_BUTTON | TBSTYLE_AUTOSIZE;
+	constexpr struct
 	{
 		UINT id; // command ID
-		UINT strid; // string ID
+		UINT string_id; // string ID
 		UINT style; // button style
-		UINT iImage; // index of image in normal/hot bitmaps
-	} Buttons[NBUTTONS] = {
+		int i_image; // index of image in normal/hot bitmaps
+	} Buttons[N_BUTTONS] = {
 			// command ID              button style                        image index
 			{ID_VIEW_DATABASE, IDS_BTTNDATABASE, dw_style, 0},
 			{ID_VIEW_DATAFILE, IDS_BTTNDATA, dw_style, 1},
@@ -291,16 +291,16 @@ BOOL CMainFrame::CreateOutlookBar()
 	m_wndOutlookPane.EnableTextLabels();
 	m_wndOutlookPane.EnableDocking(CBRS_ALIGN_ANY);
 
-	for (int i = 0; i < NBUTTONS; i++)
+	for (int i = 0; i < N_BUTTONS; i++)
 	{
 		CString str;
-		if (!str.LoadString(Buttons[i].strid))
+		if (!str.LoadString(Buttons[i].string_id))
 			str = _T("??");
 		m_wndOutlookPane.AddButton(img1.ExtractIconW(i), str, Buttons[i].id);
 		m_wndOutlookPane.SetButtonInfo(i,
 		                               Buttons[i].id, // command id
 		                               Buttons[i].style, // buttons style
-		                               Buttons[i].iImage); // index of image in bitmap
+		                               Buttons[i].i_image); // index of image in bitmap
 	}
 	pShortcutsBarContainer->AddTab(&m_wndOutlookPane, _T("Views"), static_cast<UINT>(-1), FALSE);
 	img1.Detach();
@@ -376,7 +376,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 
 	m_wndRibbonBar.SetWindows7Look(b_windows7);
 	RedrawWindow(nullptr, nullptr, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
-	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
+	theApp.WriteInt(_T("ApplicationLook"), static_cast<int>(theApp.m_nAppLook));
 }
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
@@ -393,11 +393,11 @@ void CMainFrame::OnViewCustomize()
 
 LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp, LPARAM lp)
 {
-	const auto lres = CMDIFrameWndEx::OnToolbarCreateNew(wp, lp);
-	if (lres == 0)
+	const auto l_result_create_toolbar = CMDIFrameWndEx::OnToolbarCreateNew(wp, lp);
+	if (l_result_create_toolbar == 0)
 		return 0;
 
-	auto* pUserToolbar = reinterpret_cast<CMFCToolBar*>(lres);
+	auto* pUserToolbar = reinterpret_cast<CMFCToolBar*>(l_result_create_toolbar);
 	ASSERT_VALID(pUserToolbar);
 
 	CString str_customize;
@@ -405,12 +405,12 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp, LPARAM lp)
 	ASSERT(b_name_valid);
 
 	pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, str_customize);
-	return lres;
+	return l_result_create_toolbar;
 }
 
 void CMainFrame::OnOptions()
 {
-	auto p_options_dlg = new CMFCRibbonCustomizeDialog(this, &m_wndRibbonBar);
+	const auto p_options_dlg = new CMFCRibbonCustomizeDialog(this, &m_wndRibbonBar);
 	ASSERT(p_options_dlg != NULL);
 
 	p_options_dlg->DoModal();
