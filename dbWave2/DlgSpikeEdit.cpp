@@ -395,7 +395,9 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	m_pSpkList->get_spike(m_spike_index)->OffsetSpikeData(static_cast<short>(shift));
+	auto spike = m_pSpkList->get_spike(m_spike_index);
+	spike->set_spike_length(m_pSpkList->get_spike_length());
+	spike->OffsetSpikeData(static_cast<short>(shift));
 
 	LoadSpikeParms();
 	m_bchanged = TRUE;
