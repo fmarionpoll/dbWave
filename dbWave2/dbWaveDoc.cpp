@@ -2379,7 +2379,7 @@ void CdbWaveDoc::Remove_DuplicateFiles()
 		p_source->CacheGlobalData(CF_TEXT, h_mem); 
 		p_source->SetClipboard();
 		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+		CMultiDocTemplate* p_templ = p_app->m_NoteView_Template;
 		const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
 		auto pos = pdb_doc_export->GetFirstViewPosition();
 		auto* p_view = static_cast<ViewNoteDoc*>(pdb_doc_export->GetNextView(pos));

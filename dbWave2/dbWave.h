@@ -21,15 +21,24 @@
 class CdbWaveApp final : public CWinAppEx
 {
 public:
-	BOOL PreTranslateMessage(MSG* pMsg) override;
-	CdbWaveApp();
+	CdbWaveApp() noexcept;
+	BOOL InitInstance() override;
+	int ExitInstance() override;
+	void PreLoadState() override;
+	void LoadCustomState() override;
+	void SaveCustomState() override;
 
-	CdbMultiDocTemplate* m_pdbWaveViewTemplate = nullptr;
-	CdbMultiDocTemplate* m_pdbBrowseViewTemplate = nullptr;
-	CdbMultiDocTemplate* m_pNoteViewTemplate = nullptr;
-	CdbMultiDocTemplate* m_pdataViewTemplate = nullptr;
-	CdbMultiDocTemplate* m_pspikeViewTemplate = nullptr;
-	CdbMultiDocTemplate* m_pADViewTemplate = nullptr;
+	UINT m_nAppLook{};
+	BOOL m_bHiColorIcons = TRUE;
+
+	BOOL PreTranslateMessage(MSG* pMsg) override;
+
+	CdbMultiDocTemplate* m_dbWaveView_Template = nullptr;
+	CdbMultiDocTemplate* m_dbBrowseView_Template = nullptr;
+	CdbMultiDocTemplate* m_NoteView_Template = nullptr;
+	CdbMultiDocTemplate* m_dataView_Template = nullptr;
+	CdbMultiDocTemplate* m_spikeView_Template = nullptr;
+	CdbMultiDocTemplate* m_ADView_Template = nullptr;
 
 	HMENU m_hDBView{};
 	HMENU m_hDataView{};
@@ -37,19 +46,7 @@ public:
 	HMENU m_hBrowseView{};
 	HMENU m_hAcqView{};
 
-	// Overrides
-public:
-	BOOL InitInstance() override;
-	int ExitInstance() override;
-
 	// Implementation
-	UINT m_nAppLook{};
-	BOOL m_bHiColorIcons = TRUE;
-
-	void PreLoadState() override;
-	void LoadCustomState() override;
-	void SaveCustomState() override;
-
 	CStringArray m_csParmFiles;
 	CString m_comment;
 	STIMDETECT stim_detect;
@@ -71,11 +68,11 @@ public:
 	CSharedFile* m_psf = nullptr;
 	BOOL m_bADcardFound = TRUE;
 
-	void Defaultparameters(BOOL b_read);
+	void default_parameters(BOOL b_read);
 	BOOL archive_parameter_files(const CString& filename, BOOL b_read);
 	void serialize_parameters(int n, CArchive& ar);
 	void SetPrinterOrientation();
-	BOOL GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames);
+	BOOL get_file_names_dlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames);
 	void FilePrintSetup();
 	CString Get_MyDocuments_MydbWavePath();
 

@@ -262,7 +262,7 @@ void CChildFrame::exportASCII(int option)
 				flag = exportToExcel();
 			if (!p_app->options_viewdata.btoExcel || !flag)
 			{
-				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+				CMultiDocTemplate* p_templ = p_app->m_NoteView_Template;
 				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
 				auto pos = pdb_doc_export->GetFirstViewPosition();
 				const auto p_view = static_cast<ViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
@@ -279,7 +279,7 @@ void CChildFrame::exportASCII(int option)
 
 			if (!p_app->options_viewspikes.bexporttoExcel || !flag)
 			{
-				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+				CMultiDocTemplate* p_templ = p_app->m_NoteView_Template;
 				const auto pdb_doc_export = p_templ->OpenDocumentFile(nullptr);
 				auto pos = pdb_doc_export->GetFirstViewPosition();
 				const auto p_view = static_cast<ViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
@@ -326,7 +326,7 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 			if (p_app->m_psf != nullptr)
 			{
-				CMultiDocTemplate* p_templ = p_app->m_pNoteViewTemplate;
+				CMultiDocTemplate* p_templ = p_app->m_NoteView_Template;
 				const auto p_doc_export = p_templ->OpenDocumentFile(nullptr);
 				auto pos = p_doc_export->GetFirstViewPosition();
 				auto* p_view = static_cast<ViewNoteDoc*>(p_doc_export->GetNextView(pos));

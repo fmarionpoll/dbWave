@@ -112,7 +112,7 @@ BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStri
                             int nColumns)
 {
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	auto p_dbwave_doc = static_cast<CdbWaveDoc*>((p_app->m_pdbWaveViewTemplate)->CreateNewDocument());
+	auto p_dbwave_doc = static_cast<CdbWaveDoc*>((p_app->m_dbWaveView_Template)->CreateNewDocument());
 	BOOL flag = FALSE;
 	if (p_dbwave_doc != nullptr)
 	{
@@ -140,9 +140,9 @@ BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStri
 				p_dbwave_doc->ImportFileList(csFileList);
 			}
 
-			auto p_wave_format = (p_app->m_pdbWaveViewTemplate)->CreateNewFrame(p_dbwave_doc, nullptr);
+			auto p_wave_format = (p_app->m_dbWaveView_Template)->CreateNewFrame(p_dbwave_doc, nullptr);
 			ASSERT(p_wave_format != NULL);
-			p_app->m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+			p_app->m_dbWaveView_Template->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 		}
 	}
 	return flag;

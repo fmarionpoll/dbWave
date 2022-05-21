@@ -2,7 +2,6 @@
 #include "dbWave.h"
 
 #include <winspool.h>
-#include "Fileversion.h"
 #include "MainFrm.h"
 #include "ChildFrm.h"
 #include "ViewData.h"
@@ -67,11 +66,14 @@ void DisplayDaoException(CDaoException* e, int iID = 0)
 	}
 }
 
-CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
+CdbWaveApp::CdbWaveApp()  noexcept
 {
-	EnableHtmlHelp();
-	// support Restart Manager: yes
+	m_bHiColorIcons = TRUE;
+	m_nAppLook = 0;
+	// support Restart Manager
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_ALL_ASPECTS;
+	EnableHtmlHelp();
+
 #ifdef _MANAGED
 	// If the application is built using Common Language Runtime support (/clr):
 	//     1) This additional setting is needed for Restart Manager support to work properly.
@@ -79,7 +81,7 @@ CdbWaveApp::CdbWaveApp() : CWinAppEx(TRUE /* m_bResourceSmartUpdate */)
 	System::Windows::Forms::Application::SetUnhandledExceptionMode(System::Windows::Forms::UnhandledExceptionMode::ThrowException);
 #endif
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
-	SetAppID(_T("FMP.dbWave2.VS2019.Jan-2019"));
+	SetAppID(_T("FMP.dbWave2.VS2019.May-2022"));
 }
 
 BOOL CdbWaveApp::InitInstance()
@@ -88,7 +90,6 @@ BOOL CdbWaveApp::InitInstance()
 	InitCtrls.dwSize = sizeof(InitCtrls);
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
-
 	CWinAppEx::InitInstance();
 
 	// Initialize OLE libraries
@@ -115,9 +116,9 @@ BOOL CdbWaveApp::InitInstance()
 	//AfxGetModuleState()->m_dwVersion = 0x0601; // enable Access2000
 
 	// Change the registry key under which our settings are stored.
-	SetRegistryKey(_T("FMP\\dbWave2"));
+	SetRegistryKey(_T("FMP"));
 	SetRegistryBase(_T("Settings"));
-	Defaultparameters(TRUE);
+	default_parameters(TRUE);
 	LoadStdProfileSettings(4); 
 
 	InitContextMenuManager();
@@ -132,47 +133,47 @@ BOOL CdbWaveApp::InitInstance()
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
 
-	m_pdbWaveViewTemplate = new CdbMultiDocTemplate(IDR_DBWAVETYPE,
+	m_dbWaveView_Template = new CdbMultiDocTemplate(IDR_DBWAVETYPE,
 	                                                RUNTIME_CLASS(CdbWaveDoc),
 	                                                RUNTIME_CLASS(CChildFrame), // custom MDI child frame
 	                                                RUNTIME_CLASS(ViewdbWave));
-	m_pdbWaveViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
-	AddDocTemplate(m_pdbWaveViewTemplate);
-	m_hDBView = m_pdbWaveViewTemplate->m_hMenuShared;
+	m_dbWaveView_Template->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
+	AddDocTemplate(m_dbWaveView_Template);
+	m_hDBView = m_dbWaveView_Template->m_hMenuShared;
 
 	// ---------------------------------------------
-	m_pdataViewTemplate = new CdbMultiDocTemplate(IDR_DBDATATYPE,
+	m_dataView_Template = new CdbMultiDocTemplate(IDR_DBDATATYPE,
 	                                              RUNTIME_CLASS(CdbWaveDoc),
 	                                              RUNTIME_CLASS(CChildFrame), // custom MDI child frame
 	                                              RUNTIME_CLASS(ViewData));
-	m_pdataViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
-	AddDocTemplate(m_pdataViewTemplate);
-	m_hDataView = m_pdataViewTemplate->m_hMenuShared;
+	m_dataView_Template->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
+	AddDocTemplate(m_dataView_Template);
+	m_hDataView = m_dataView_Template->m_hMenuShared;
 
 	// continuous A/D view with data translation card
-	m_pADViewTemplate = new CdbMultiDocTemplate(IDR_DBDATATYPE,
+	m_ADView_Template = new CdbMultiDocTemplate(IDR_DBDATATYPE,
 	                                            RUNTIME_CLASS(CdbWaveDoc),
 	                                            RUNTIME_CLASS(CChildFrame), // multifile MDI child frame
 	                                            RUNTIME_CLASS(ViewADcontinuous)); // AD view
-	ASSERT(m_pADViewTemplate != NULL);
-	m_pADViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
-	AddDocTemplate(m_pADViewTemplate);
-	m_hAcqView = m_pADViewTemplate->m_hMenuShared;
+	ASSERT(m_ADView_Template != NULL);
+	m_ADView_Template->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
+	AddDocTemplate(m_ADView_Template);
+	m_hAcqView = m_ADView_Template->m_hMenuShared;
 
-	m_pspikeViewTemplate = new CdbMultiDocTemplate(IDR_DBSPIKETYPE,
+	m_spikeView_Template = new CdbMultiDocTemplate(IDR_DBSPIKETYPE,
 	                                               RUNTIME_CLASS(CdbWaveDoc),
 	                                               RUNTIME_CLASS(CChildFrame), // custom MDI child frame
 	                                               RUNTIME_CLASS(ViewSpikes));
-	m_pspikeViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
-	AddDocTemplate(m_pspikeViewTemplate);
-	m_hSpikeView = m_pspikeViewTemplate->m_hMenuShared;
+	m_spikeView_Template->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
+	AddDocTemplate(m_spikeView_Template);
+	m_hSpikeView = m_spikeView_Template->m_hMenuShared;
 
-	m_pNoteViewTemplate = new CdbMultiDocTemplate(IDR_PROJECTTYPE,
+	m_NoteView_Template = new CdbMultiDocTemplate(IDR_PROJECTTYPE,
 	                                              RUNTIME_CLASS(CNoteDoc),
 	                                              RUNTIME_CLASS(CMDIChildWndEx), // standard MDI child frame
 	                                              RUNTIME_CLASS(ViewNoteDoc));
-	m_pNoteViewTemplate->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
-	AddDocTemplate(m_pNoteViewTemplate);
+	m_NoteView_Template->SetContainerInfo(IDR_DBWAVETYPE_CNTR_IP);
+	AddDocTemplate(m_NoteView_Template);
 
 	// create main MDI Frame window
 	const auto p_main_frame = new CMainFrame;
@@ -199,12 +200,12 @@ BOOL CdbWaveApp::InitInstance()
 	RegisterShellFileTypes(TRUE); // this works only if user has administrative rights
 
 	// Dispatch commands specified on the command line.  Will return FALSE if
-	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
+	// app was launched with /RegServer, /Register, /Un-reg-server or /Un-register.
 	if (!ProcessShellCommand(cmd_info))
 		return FALSE;
 
 	// The main window has been initialized, so show and update it.
-	m_nCmdShow = SW_SHOWNORMAL; //SW_SHOWMAXIMIZED;  // change into THIS to start dbwave maximized
+	m_nCmdShow = SW_SHOWNORMAL;
 	p_main_frame->ShowWindow(m_nCmdShow);
 	p_main_frame->UpdateWindow();
 
@@ -213,7 +214,7 @@ BOOL CdbWaveApp::InitInstance()
 
 int CdbWaveApp::ExitInstance()
 {
-	Defaultparameters(FALSE);
+	default_parameters(FALSE);
 	AfxOleTerm(FALSE);
 
 	SAFE_DELETE(m_pviewdataMemFile)
@@ -245,31 +246,6 @@ void CdbWaveApp::OnAppAbout()
 	about_dlg.DoModal();
 }
 
-BOOL DlgAbout::OnInitDialog()
-{
-	CDialog::OnInitDialog();
-
-	CDaoWorkspace ws;
-	try
-	{
-		ws.Create(_T("VersionWorkspace"), _T("Admin"), _T(""));
-		GetDlgItem(IDC_VERSION)->SetWindowText(ws.GetVersion());
-	}
-	catch (CDaoException* e)
-	{
-		e->ReportError();
-		e->Delete();
-	}
-
-	CFileVersion c_fv;
-	const CString cs_app_name = _T("dbwave2.exe");
-	c_fv.Open(cs_app_name);
-	GetDlgItem(IDC_DBWAVEVERSION)->SetWindowText(c_fv.GetProductVersion());
-	GetDlgItem(IDC_STATIC7)->SetWindowText(c_fv.GetLegalCopyright());
-
-	return TRUE;
-}
-
 void CdbWaveApp::PreLoadState()
 {
 	CString str_name;
@@ -296,7 +272,7 @@ BOOL CdbWaveApp::PreTranslateMessage(MSG* pMsg)
 	return CWinAppEx::PreTranslateMessage(pMsg);
 }
 
-void CdbWaveApp::Defaultparameters(BOOL b_read)
+void CdbWaveApp::default_parameters(BOOL b_read)
 {
 	TCHAR sz_path[MAX_PATH];
 	CString cspath;
@@ -470,7 +446,7 @@ void CdbWaveApp::SetPrinterOrientation()
 	}
 }
 
-BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames)
+BOOL CdbWaveApp::get_file_names_dlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames)
 {
 	//---------------------------    open dialog
 	constexpr DWORD buffer_size = 16384 * sizeof(TCHAR); // buffer / file names
@@ -556,7 +532,7 @@ void CdbWaveApp::OnFileOpen()
 	//Spikes (*.spk)|*.spk|
 	//Text (*.txt)|*.txt|
 	//Project (*.prj)|*.prj|
-	GetFilenamesDlg(IDS_FILEDESCRIP, nullptr, &options_viewdata.nfilterindex, &filenames);
+	get_file_names_dlg(IDS_FILEDESCRIP, nullptr, &options_viewdata.nfilterindex, &filenames);
 	if (filenames.GetSize() == 0)
 		return;
 
@@ -568,17 +544,17 @@ void CdbWaveApp::OnFileOpen()
 	case 2: // dat
 	case 3: // spk
 		{
-			auto p_dbwave_doc = static_cast<CdbWaveDoc*>(m_pdataViewTemplate->CreateNewDocument());
+			auto p_dbwave_doc = static_cast<CdbWaveDoc*>(m_dataView_Template->CreateNewDocument());
 			if (p_dbwave_doc != nullptr)
 			{
 				p_dbwave_doc->SetClearMdbOnExit(TRUE);
 				if (p_dbwave_doc->OnNewDocument()) // create table
 				{
 					p_dbwave_doc->ImportFileList(filenames);
-					auto p_wave_format = static_cast<CMDIFrameWnd*>(m_pdbWaveViewTemplate->CreateNewFrame(
+					auto p_wave_format = static_cast<CMDIFrameWnd*>(m_dbWaveView_Template->CreateNewFrame(
 						p_dbwave_doc, nullptr));
 					ASSERT(p_wave_format != NULL);
-					m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+					m_dbWaveView_Template->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 				}
 			}
 		}
@@ -624,31 +600,31 @@ void CdbWaveApp::OnFileNew()
 		{
 		case 1: // ---------------------------------------create notebook document
 			{
-				auto* p_dbwave_doc = static_cast<CNoteDoc*>(m_pNoteViewTemplate->CreateNewDocument());
+				auto* p_dbwave_doc = static_cast<CNoteDoc*>(m_NoteView_Template->CreateNewDocument());
 				if (p_dbwave_doc != nullptr)
 				{
 					if (p_dbwave_doc->OnNewDocument()) // create table
 					{
-						auto p_wave_format = static_cast<CMDIFrameWnd*>(m_pNoteViewTemplate->CreateNewFrame(
+						auto p_wave_format = static_cast<CMDIFrameWnd*>(m_NoteView_Template->CreateNewFrame(
 							p_dbwave_doc, nullptr));
 						ASSERT(p_wave_format != NULL);
-						m_pNoteViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+						m_NoteView_Template->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 					}
 				}
 			}
 			break;
 		default: // -------------------------------------- create database document
 			{
-				auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(m_pdataViewTemplate->CreateNewDocument());
+				auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(m_dataView_Template->CreateNewDocument());
 				if (p_dbwave_doc != nullptr)
 				{
 					p_dbwave_doc->SetClearMdbOnExit(FALSE); // keep file on exit
 					if (p_dbwave_doc->OnNewDocument()) // create table
 					{
-						auto* p_wave_format = static_cast<CMDIFrameWnd*>(m_pdbWaveViewTemplate->CreateNewFrame(
+						auto* p_wave_format = static_cast<CMDIFrameWnd*>(m_dbWaveView_Template->CreateNewFrame(
 							p_dbwave_doc, nullptr));
 						ASSERT(p_wave_format != NULL);
-						m_pdbWaveViewTemplate->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+						m_dbWaveView_Template->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 					}
 				}
 			}

@@ -203,7 +203,7 @@ void DlgEditStimArray::OnBnClickedExport()
 	}
 
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	CMultiDocTemplate* pTempl = p_app->m_pNoteViewTemplate;
+	CMultiDocTemplate* pTempl = p_app->m_NoteView_Template;
 	const auto p_document = pTempl->OpenDocumentFile(nullptr);
 	auto pos = p_document->GetFirstViewPosition();
 	auto p_view = static_cast<CRichEditView*>(p_document->GetNextView(pos));

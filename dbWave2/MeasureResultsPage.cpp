@@ -49,7 +49,7 @@ void CMeasureResultsPage::OnExport()
 	m_CEditResults.GetWindowText(csBuffer);
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 
-	CMultiDocTemplate* p_template = p_app->m_pNoteViewTemplate;
+	CMultiDocTemplate* p_template = p_app->m_NoteView_Template;
 	const auto p_doc = p_template->OpenDocumentFile(nullptr);
 	auto pos = p_doc->GetFirstViewPosition();
 	const auto p_view = static_cast<CRichEditView*>(p_doc->GetNextView(pos));
