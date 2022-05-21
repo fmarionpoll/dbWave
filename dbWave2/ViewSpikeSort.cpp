@@ -153,7 +153,7 @@ void ViewSpikeSort::OnInitialUpdate()
 
 	// load global parameters
 	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	m_psC = &(p_app->spkC);
+	m_psC = &(p_app->spk_classif);
 	m_pOptionsViewData = &(p_app->options_viewdata);
 
 	// assign values to controls

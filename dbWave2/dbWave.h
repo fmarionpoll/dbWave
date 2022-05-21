@@ -52,9 +52,9 @@ public:
 
 	CStringArray m_csParmFiles;
 	CString m_comment;
-	STIMDETECT stiD;
-	SPKDETECTARRAY spkDA;
-	SPKCLASSIF spkC;
+	STIMDETECT stim_detect;
+	SPKDETECTARRAY spk_detect_array;
+	SPKCLASSIF spk_classif;
 
 	OPTIONS_VIEWDATA options_viewdata;
 	OPTIONS_VIEWSPIKES options_viewspikes;
@@ -72,7 +72,8 @@ public:
 	BOOL m_bADcardFound = TRUE;
 
 	void Defaultparameters(BOOL b_read);
-	BOOL ParmFile(CString& filename, BOOL b_read);
+	BOOL archive_parameter_files(const CString& filename, BOOL b_read);
+	void serialize_parameters(int n, CArchive& ar);
 	void SetPrinterOrientation();
 	BOOL GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames);
 	void FilePrintSetup();

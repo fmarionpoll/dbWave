@@ -118,7 +118,7 @@ BOOL CdbWaveApp::InitInstance()
 	SetRegistryKey(_T("FMP\\dbWave2"));
 	SetRegistryBase(_T("Settings"));
 	Defaultparameters(TRUE);
-	LoadStdProfileSettings(4); // Load standard INI file options (including MRU)
+	LoadStdProfileSettings(4); 
 
 	InitContextMenuManager();
 	InitShellManager();
@@ -322,7 +322,7 @@ void CdbWaveApp::Defaultparameters(BOOL b_read)
 	if (cs_ext.IsEmpty())
 		cs_ext = _T("dbWave2");
 	cs_ext += _T(".prefs2");
-	const auto cs_default_parmfile = cspath + "\\" + cs_ext;
+	const auto cs_default_parameters_file = cspath + "\\" + cs_ext;
 
 	// read data and copy into vdP
 	if (b_read)
@@ -342,21 +342,21 @@ void CdbWaveApp::Defaultparameters(BOOL b_read)
 		}
 		// get default parameter file and load data
 		if (m_csParmFiles.GetSize() <= 0)
-			m_csParmFiles.Add(cs_default_parmfile);
-		ParmFile(m_csParmFiles[0], b_read);
+			m_csParmFiles.Add(cs_default_parameters_file);
+		archive_parameter_files(m_csParmFiles[0], b_read);
 	}
-	// Save informations
+	// Save information
 	else
 	{
 		// save default parameter file
 		if (m_csParmFiles.GetSize() <= 0)
-			m_csParmFiles.Add(cs_default_parmfile);
-		if (!ParmFile(m_csParmFiles[0], b_read))
+			m_csParmFiles.Add(cs_default_parameters_file);
+		if (!archive_parameter_files(m_csParmFiles[0], b_read))
 		{
-			m_csParmFiles[0] = cs_default_parmfile;
-			ParmFile(m_csParmFiles[0], b_read);
+			m_csParmFiles[0] = cs_default_parameters_file;
+			archive_parameter_files(m_csParmFiles[0], b_read);
 		}
-		// save profile with locations of parmfiles
+		// save profile with locations of parameter files
 		for (auto i = 0; i < m_csParmFiles.GetSize(); i++)
 		{
 			wsprintf(&szEntry[0], sz_file_entry, i + 1);
@@ -365,70 +365,62 @@ void CdbWaveApp::Defaultparameters(BOOL b_read)
 	}
 }
 
-BOOL CdbWaveApp::ParmFile(CString& csParmfile, BOOL b_read)
+BOOL CdbWaveApp::archive_parameter_files(const CString& filename, const BOOL b_read)
 {
-	CFile f; // file object
-	CFileException fe; // trap exceptions
-	auto bsuccess = TRUE;
+	CFile f;
+	CFileException fe; 
+	auto is_success = TRUE;
 
-	if (b_read) // read informations ...........................
+	if (b_read)
 	{
-		if (f.Open(csParmfile, CFile::modeReadWrite | CFile::shareDenyNone, &fe))
+		if (f.Open(filename, CFile::modeReadWrite | CFile::shareDenyNone, &fe))
 		{
 			CArchive ar(&f, CArchive::load);
 			WORD m;
-			ar >> m; // nb items to load
-			int n = m;
-			ar >> m_comment; // comment
-			n--;
-			if (n > 0) stiD.Serialize(ar); // STIMDETECT
-			n--;
-			if (n > 0) spkDA.Serialize(ar); // SPKDETECTARRAY
-			n--;
-			if (n > 0) options_viewdata.Serialize(ar); // OPTIONS_VIEWDATA
-			n--;
-			if (n > 0) options_viewspikes.Serialize(ar); // OPTIONS_VIEWSPIKES
-			n--;
-			if (n > 0) spkC.Serialize(ar); // SPKCLASSIF
-			n--;
-			if (n > 0) options_viewdata_measure.Serialize(ar); // OPTIONS_VIEWDATAMEASURE
-			n--;
-			if (n > 0) options_import.Serialize(ar); // OPTIONS_IMPORT
-			n--;
-			if (n > 0) options_acqdata.Serialize(ar); // OPTIONS_ACQDATA
-			n--;
-			if (n > 0) options_outputdata.Serialize(ar); //OPTIONS_OUTPUTDATA
+			ar >> m; 
+			ar >> m_comment; 
 
-			ar.Close(); // close archive
-			f.Close(); // close file
+			const int n = m;
+			serialize_parameters(n, ar);
+
+			ar.Close(); 
+			f.Close(); 
 		}
 	}
-	else // Save informations .............................
+	else 
 	{
-		if (f.Open(csParmfile, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, &fe))
+		if (f.Open(filename, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone, &fe))
 		{
 			CArchive ar(&f, CArchive::store);
-			ar << static_cast<WORD>(10); // nb items
-			ar << m_comment; // 1 comment
-			stiD.Serialize(ar); // 2 STIMDETECT
-			spkDA.Serialize(ar); // 3 SPKDETECTARRAY
-			options_viewdata.Serialize(ar); // 4 OPTIONS_VIEWDATA
-			options_viewspikes.Serialize(ar); // 5 OPTIONS_VIEWSPIKES
-			spkC.Serialize(ar); // 6 SPKCLASSIF
-			options_viewdata_measure.Serialize(ar); // 7 OPTIONS_VIEWDATAMEASURE
-			options_import.Serialize(ar); // 8 OPTIONS_IMPORT
-			options_acqdata.Serialize(ar); // 9 OPTIONS_ACQDATA
-			options_outputdata.Serialize(ar); // 10 OPTIONS_OUTPUTDATA
+			int n = 10;
+			ar << static_cast<WORD>(10);
+			ar << m_comment; 
+
+			serialize_parameters( n, ar);
+
 			ar.Close();
 			f.Close();
 		}
 		else
 		{
 			AfxMessageBox(IDS_PARAMETERFILE_FAILEDTOSAVE);
-			bsuccess = FALSE;
+			is_success = FALSE;
 		}
 	}
-	return bsuccess;
+	return is_success;
+}
+
+void CdbWaveApp::serialize_parameters(int n, CArchive& ar)
+{
+	n--; if (n > 0) stim_detect.Serialize(ar);
+	n--; if (n > 0) spk_detect_array.Serialize(ar);
+	n--; if (n > 0) options_viewdata.Serialize(ar);
+	n--; if (n > 0) options_viewspikes.Serialize(ar);
+	n--; if (n > 0) spk_classif.Serialize(ar);
+	n--; if (n > 0) options_viewdata_measure.Serialize(ar);
+	n--; if (n > 0) options_import.Serialize(ar);
+	n--; if (n > 0) options_acqdata.Serialize(ar);
+	n--; if (n > 0) options_outputdata.Serialize(ar);
 }
 
 void CdbWaveApp::SetPrinterOrientation()
@@ -478,7 +470,7 @@ void CdbWaveApp::SetPrinterOrientation()
 BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CStringArray* filenames)
 {
 	//---------------------------    open dialog
-	const DWORD buffer_size = 16384 * sizeof(TCHAR); // buffer / file names
+	constexpr DWORD buffer_size = 16384 * sizeof(TCHAR); // buffer / file names
 	const auto h_text = GlobalAlloc(GHND, buffer_size); // allocate memory for this buffer
 	if (!h_text) // memory low conditions detection
 	{
@@ -491,7 +483,7 @@ BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CS
 	const auto lp_text = static_cast<LPTSTR>(GlobalLock(h_text)); // lock this buffer and get a pointer to it
 	if (nullptr != lp_text)
 	{
-		const DWORD wflag = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
+		constexpr DWORD w_flag = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
 
 		// prepare dialog box
 		CString filedesc; // load file description from resources
@@ -499,8 +491,8 @@ BOOL CdbWaveApp::GetFilenamesDlg(int iIDS, LPCSTR szTitle, int* iFilterIndex, CS
 			AfxMessageBox(_T("error loading the title of message box"));
 
 		// call file open common dialog box
-		CFileDialog fd(TRUE, nullptr, nullptr, wflag, filedesc, nullptr);
-		fd.m_ofn.lpstrFile = lp_text; // attach local buffer to get file nameslp_texyt
+		CFileDialog fd(TRUE, nullptr, nullptr, w_flag, filedesc, nullptr);
+		fd.m_ofn.lpstrFile = lp_text; // attach local buffer to get file names lp_text
 		fd.m_ofn.nMaxFile = buffer_size / sizeof(TCHAR); // declare max size of buffer
 		fd.m_ofn.nFilterIndex = *iFilterIndex; // select filter item
 		const CString cs_title(szTitle);

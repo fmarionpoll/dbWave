@@ -74,11 +74,11 @@ void DlgLoadSaveOptions::UpdateFileList()
 
 	// SAVE parameter file?
 	if (static_cast<CButton*>(GetDlgItem(IDC_SAVE))->GetCheck())
-		static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, FALSE);
+		static_cast<CdbWaveApp*>(AfxGetApp())->archive_parameter_files(dummy, FALSE);
 		// b_read=FALSE
 
 		// LOAD parameter file?
-	else if (!static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, TRUE))
+	else if (!static_cast<CdbWaveApp*>(AfxGetApp())->archive_parameter_files(dummy, TRUE))
 		// b_read=TRUE
 		AfxMessageBox(_T("Parameter file not found!"), MB_ICONSTOP | MB_OK);
 
@@ -144,7 +144,7 @@ void DlgLoadSaveOptions::OnOK()
 
 void DlgLoadSaveOptions::OnCancel()
 {
-	static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(m_currentFile, TRUE); // b_read=TRUE
+	static_cast<CdbWaveApp*>(AfxGetApp())->archive_parameter_files(m_currentFile, TRUE); // b_read=TRUE
 	CDialog::OnCancel();
 }
 
@@ -190,7 +190,7 @@ void DlgLoadSaveOptions::OnSelchangeNamelist()
 		m_CBnamelist.GetLBText(m_cursel, dummy);
 		GetDlgItem(IDC_COMMENT)->GetWindowText(m_ddxcomment);
 		*pcomment = m_ddxcomment;
-		static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, FALSE); // b_read=FALSE
+		static_cast<CdbWaveApp*>(AfxGetApp())->archive_parameter_files(dummy, FALSE); // b_read=FALSE
 		m_bcommentchanged = FALSE;
 	}
 
@@ -200,7 +200,7 @@ void DlgLoadSaveOptions::OnSelchangeNamelist()
 	CString dummy;
 	m_cursel = m_CBnamelist.GetCurSel();
 	m_CBnamelist.GetLBText(m_cursel, dummy);
-	static_cast<CdbWaveApp*>(AfxGetApp())->ParmFile(dummy, TRUE); // b_read=TRUE
+	static_cast<CdbWaveApp*>(AfxGetApp())->archive_parameter_files(dummy, TRUE); // b_read=TRUE
 	m_ddxcomment = *pcomment; // load comment into string
 	UpdateData(FALSE); // display changes
 }

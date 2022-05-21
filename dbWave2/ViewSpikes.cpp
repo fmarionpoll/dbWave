@@ -462,7 +462,7 @@ void ViewSpikes::OnInitialUpdate()
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	options_viewdata = &(p_app->options_viewdata); // viewdata options
 	mdMO = &(p_app->options_viewdata_measure); // measure options
-	m_psC = &(p_app->spkC); // get address of spike classif parms
+	m_psC = &(p_app->spk_classif); // get address of spike classif parms
 
 	m_class_destination = m_psC->vdestclass;
 	m_class_source = m_psC->vsourceclass;
