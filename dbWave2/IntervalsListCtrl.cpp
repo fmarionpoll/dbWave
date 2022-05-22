@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "IntervalsListCtrl.h"
 #include "InPlaceEdit.h"
-#include "GridCtrl/GridCtrl.h"
+#include "GridCtrl.h"
 
 IMPLEMENT_DYNCREATE(CIntervalsListCtrl, CListCtrl)
 

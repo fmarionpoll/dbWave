@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 
 #include "DataListCtrl.h"
-#include <ChartData.h>
-#include <dbTableView.h>
+#include <../ChartData.h>
+#include <../dbTableView.h>
 
 #include "DataListCtrl_Row.h"
 #include "ViewdbWave.h"

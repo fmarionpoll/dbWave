@@ -52,12 +52,12 @@ public:
 	BOOL CreateMainTable(CString cs);
 	void CreateTables();
 	BOOL OpenTables();
-	void add_column_28(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_column_26_27(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_column_24_25(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_column_22_23(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_column_21(CDaoTableDef& table_def, CString cs_table, long l_attr);
-	void add_column_19_20(CDaoTableDef& table_def, CString cs_table, long l_attr);
+	void add_column_28(CDaoTableDef& table_def, const CString& cs_table, long l_attr);
+	void add_column_26_27(CDaoTableDef& table_def, const CString& cs_table, long l_attr) const;
+	void add_column_24_25(CDaoTableDef& table_def, const CString& cs_table, long l_attr) const;
+	void add_column_22_23(CDaoTableDef& table_def, const CString& cs_table, long l_attr);
+	void add_column_21(CDaoTableDef& table_def, const CString& cs_table, long l_attr) const;
+	void add_column_19_20(CDaoTableDef& table_def, const CString& cs_table, long l_attr);
 
 	void OpenIndexTable(CdbTableAssociated* p_index_table_set);
 	void CloseDatabase();
@@ -73,7 +73,7 @@ public:
 	BOOL MoveToID(long recordID);
 	CString GetFilePath(int ID);
 	BOOL IsRelativePath(CString cspath) { return (cspath[0] == '.'); }
-	CString GetRelativePathFromString(const CString& csAbsolutePath);
+	CString GetRelativePathFromString(const CString& csAbsolutePath) const;
 	long GetRelativePathFromID(long iID);
 	void ConvertPathtoRelativePath(long icol);
 	void ConvertPathTabletoRelativePath();
@@ -93,7 +93,7 @@ public:
 	// get associated table?
 	// get list of items in associated tables?
 
-	BOOL SetIndexCurrentFile(long ifile);
+	BOOL SetIndexCurrentFile(long i_file);
 	DB_ITEMDESC* GetRecordItemDescriptor(int icol);
 	BOOL GetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
 	DB_ITEMDESC* GetRecordItemValue(const int i_column);
@@ -104,7 +104,7 @@ public:
 
 
 	BOOL ImportRecordfromDatabase(CdbTable* pdbW);
-	void TransferWaveFormatDataToRecord(CWaveFormat* p_wave_format);
+	void TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* pIndexTable, int column1, int column2);
 	static void CompactDataBase(CString file_name, CString file_name_new);
