@@ -1082,7 +1082,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, span))
 		return;
 
-	auto p_data = p_dat_doc->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
+	auto p_data = p_dat_doc->LoadTransformedData(l_rw_first0, l_rw_last0, method, doc_chan);
 
 	// loop over all spikes now
 	const auto pre_trigger = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
@@ -1108,7 +1108,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		// load data only if necessary
 		if (l_rw_first != l_rw_first0 || l_rw_last != l_rw_last0)
 		{
-			p_data = p_dat_doc->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
+			p_data = p_dat_doc->LoadTransformedData(l_rw_first, l_rw_last, method, doc_chan);
 			l_rw_last0 = l_rw_last; 
 			l_rw_first0 = l_rw_first;
 		}

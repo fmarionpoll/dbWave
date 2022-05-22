@@ -11,34 +11,34 @@ Spike::Spike()
 
 Spike::Spike(const long time, const int channel)
 {
-	m_ii_time = time;
-	m_detection_parameters_index = channel;
+	m_ii_time_ = time;
+	m_detection_parameters_index_ = channel;
 }
 
-Spike::Spike(const long time, const int channel, const int max, const int min, const int offset, const int class_i, const int d_max_min, const int spike_length)
+Spike::Spike(const long time, const int channel, const short max, const short min, const short offset, const int class_i, const short d_max_min, const int spike_length)
 {
-	m_ii_time = time;
-	m_detection_parameters_index = channel;
-	m_value_min = min;
-	m_value_max = max;
-	m_offset = offset;
-	m_class_id = class_i;
-	m_d_max_min = d_max_min;
-	m_spike_length = spike_length;
+	m_ii_time_ = time;
+	m_detection_parameters_index_ = channel;
+	m_value_min_ = min;
+	m_value_max_ = max;
+	m_offset_ = offset;
+	m_class_id_ = class_i;
+	m_d_max_min_ = d_max_min;
+	m_spike_length_ = spike_length;
 }
 
-Spike::Spike(const long time, const int channel, const int offset, const int class_i, const int spike_length)
+Spike::Spike(const long time, const int channel, const short offset, const int class_i, const int spike_length)
 {
-	m_ii_time = time;
-	m_detection_parameters_index = channel;
-	m_offset = offset;
-	m_class_id = class_i;
-	m_spike_length = spike_length;
+	m_ii_time_ = time;
+	m_detection_parameters_index_ = channel;
+	m_offset_ = offset;
+	m_class_id_ = class_i;
+	m_spike_length_ = spike_length;
 }
 
 Spike::~Spike()
 {
-	delete m_spike_data_buffer;
+	delete m_spike_data_buffer_;
 }
 
 IMPLEMENT_SERIAL(Spike, CObject, 0 /* schema number*/)
@@ -50,13 +50,13 @@ void Spike::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		ar << wVersion;
-		ar << m_ii_time;
-		ar << static_cast<WORD>(m_class_id);
-		ar << static_cast<WORD>(m_detection_parameters_index);
-		ar << static_cast<WORD>(m_value_max);
-		ar << static_cast<WORD>(m_value_min);
-		ar << static_cast<WORD>(m_offset);
-		ar << static_cast<WORD>(m_d_max_min);
+		ar << m_ii_time_;
+		ar << static_cast<WORD>(m_class_id_);
+		ar << static_cast<WORD>(m_detection_parameters_index_);
+		ar << static_cast<WORD>(m_value_max_);
+		ar << static_cast<WORD>(m_value_min_);
+		ar << static_cast<WORD>(m_offset_);
+		ar << static_cast<WORD>(m_d_max_min_);
 		ar << static_cast<WORD>(2);
 		ar << y1_;
 		ar << dt_;
@@ -73,13 +73,13 @@ void Spike::read_version2(CArchive& ar, WORD wVersion)
 {
 	WORD w1;
 
-	ar >> m_ii_time;
-	ar >> w1; m_class_id = static_cast<int>(w1);
-	ar >> w1; m_detection_parameters_index = static_cast<int>(w1);
-	ar >> w1; m_value_max = static_cast<short>(w1);
-	ar >> w1; m_value_min = static_cast<short>(w1);
-	ar >> w1; m_offset = static_cast<short>(w1);
-	ar >> w1; m_d_max_min = static_cast<short>(w1);
+	ar >> m_ii_time_;
+	ar >> w1; m_class_id_ = static_cast<int>(w1);
+	ar >> w1; m_detection_parameters_index_ = static_cast<int>(w1);
+	ar >> w1; m_value_max_	= static_cast<short>(w1);
+	ar >> w1; m_value_min_	= static_cast<short>(w1);
+	ar >> w1; m_offset_		= static_cast<short>(w1);
+	ar >> w1; m_d_max_min_	= static_cast<short>(w1);
 	if (wVersion > 1)
 	{
 		WORD n_items = 0;
@@ -96,44 +96,44 @@ void Spike::read_version0(CArchive& ar)
 
 	ASSERT(ar.IsStoring() == FALSE);
 
-	ar >> m_ii_time;
-	ar >> w1; m_class_id = static_cast<int>(w1);
-	ar >> w1; m_detection_parameters_index = static_cast<int>(w1);
-	ar >> w1; m_value_max = static_cast<short>(w1);
-	ar >> w1; m_value_min = static_cast<short>(w1);
-	ar >> w1; m_offset = static_cast<short>(w1);
-	m_d_max_min = 0;
+	ar >> m_ii_time_;
+	ar >> w1; m_class_id_ = static_cast<int>(w1);
+	ar >> w1; m_detection_parameters_index_ = static_cast<int>(w1);
+	ar >> w1; m_value_max_ = static_cast<short>(w1);
+	ar >> w1; m_value_min_ = static_cast<short>(w1);
+	ar >> w1; m_offset_ = static_cast<short>(w1);
+	m_d_max_min_ = 0;
 }
 
 short* Spike::get_p_data(int spike_length)
 {
 	constexpr int delta = 0;
 	const size_t spike_data_length = sizeof(short) * (spike_length + delta);
-	if (m_spike_data_buffer == nullptr || spike_length != m_spk_buffer_length)
+	if (m_spike_data_buffer_ == nullptr || spike_length != m_spk_buffer_length_)
 	{
-		delete m_spike_data_buffer;
-		m_spike_data_buffer = static_cast<short*>(malloc(spike_data_length));
-		m_spk_buffer_length = spike_length;
+		delete m_spike_data_buffer_;
+		m_spike_data_buffer_ = static_cast<short*>(malloc(spike_data_length));
+		m_spk_buffer_length_ = spike_length;
 	}
-	return m_spike_data_buffer;
+	return m_spike_data_buffer_;
 }
 
 short* Spike::get_p_data() const
 {
-	return m_spike_data_buffer;
+	return m_spike_data_buffer_;
 }
 
 void Spike::get_max_min_ex(short* max, short* min, int* d_max_to_min) const
 {
-	*max = m_value_max;
-	*min = m_value_min;
-	*d_max_to_min = m_d_max_min;
+	*max = m_value_max_;
+	*min = m_value_min_;
+	*d_max_to_min = m_d_max_min_;
 }
 
 void Spike::get_max_min(short* max, short* min) const
 {
-	*max = m_value_max;
-	*min = m_value_min;
+	*max = m_value_max_;
+	*min = m_value_min_;
 }
 
 void Spike::measure_max_min_ex(short* value_max, int* index_max, short* value_min, int* index_min, const int i_first, const int i_last) const
@@ -220,9 +220,9 @@ long Spike::MeasureSumEx(int i_first, int i_last) const
 
 void Spike::TransferDataToSpikeBuffer(short* source_data, const int source_n_channels, const int spike_length)
 {
-	m_spike_length = spike_length;
+	m_spike_length_ = spike_length;
 	auto lp_dest = get_p_data(spike_length);
-	for (auto i = m_spike_length; i > 0; i--, source_data += source_n_channels, lp_dest++)
+	for (auto i = m_spike_length_; i > 0; i--, source_data += source_n_channels, lp_dest++)
 	{
 		*lp_dest = *source_data;
 	}
@@ -236,15 +236,15 @@ void Spike::OffsetSpikeData(const short offset)
 		*lp_dest += offset; 
 	}
 	
-	m_offset = offset;
-	m_value_max -= offset;
-	m_value_min -= offset;
+	m_offset_ = offset;
+	m_value_max_ -= offset;
+	m_value_min_ -= offset;
 }
 
 void Spike::OffsetSpikeDataToAverageEx(int i_first, int i_last)
 {
 	const long average_value = MeasureSumEx(i_first, i_last);
-	const int offset = (average_value / (i_last - i_first + 1)) - m_bin_zero;
+	const int offset = (average_value / (i_last - i_first + 1)) - m_bin_zero_;
 	OffsetSpikeData(static_cast<short>(-offset));
 }
 
@@ -253,7 +253,7 @@ void Spike::OffsetSpikeDataToExtremaEx(int i_first, int i_last)
 	short value_max, value_min;
 	int max_index, min_index;
 	measure_max_min_ex(&value_max, &max_index, &value_min, &min_index, i_first, i_last);
-	const int offset = (value_max + value_min) / 2 - m_bin_zero;
+	const int offset = (value_max + value_min) / 2 - m_bin_zero_;
 	OffsetSpikeData(static_cast<short>(offset));
 }
 

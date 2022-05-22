@@ -21,12 +21,10 @@ BEGIN_MESSAGE_MAP(AcqDataDoc, CDocument)
 END_MESSAGE_MAP()
 
 AcqDataDoc::AcqDataDoc()
-{
-}
+= default;
 
 AcqDataDoc::~AcqDataDoc()
 {
-	// delete structures created
 	SAFE_DELETE(m_pWBuf)
 	SAFE_DELETE(m_pXFile)
 }
@@ -86,7 +84,7 @@ int AcqDataDoc::importFile(CString& sz_path_name)
 
 	m_pXFile = new CDataFileAWAVE;
 	ASSERT(m_pXFile != NULL);
-	int b_found_match = openAcqFile(sz_path_name);
+	const int b_found_match = openAcqFile(sz_path_name);
 	return b_found_match;
 }
 
@@ -116,13 +114,13 @@ void AcqDataDoc::renameFile2As1(CString file1, CString file2)
 
 bool AcqDataDoc::dlgImportDataFile(CString& sz_path_name)
 {
-	auto cs_array = new CStringArray; // dlg needs an array of strings
+	const auto cs_array = new CStringArray; 
 	ASSERT(cs_array != NULL);
 	cs_array->Add(sz_path_name);
 
-	auto p_dlg = new DlgImportGenericData;
-	p_dlg->m_pfilenameArray = cs_array; // address of array
-	p_dlg->bConvert = TRUE; // conversion is allowed
+	const auto p_dlg = new DlgImportGenericData;
+	p_dlg->m_pfilenameArray = cs_array;
+	p_dlg->bConvert = TRUE; 
 	p_dlg->piivO = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import);
 	if (IDOK != p_dlg->DoModal() || 0 == cs_array->GetSize())
 		return false;
@@ -140,16 +138,15 @@ BOOL AcqDataDoc::openAcqFile(CString& cs_filename)
 	UINT u_open_flag = (status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
 	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary;
 
-	int dataTypesArray[] = {
+	int data_types_array[] = {
 		DOCTYPE_AWAVE, DOCTYPE_SMR, DOCTYPE_ATLAB, DOCTYPE_ASDSYNTECH, DOCTYPE_MCID, DOCTYPE_UNKNOWN
 	};
-	int arrSize = sizeof(dataTypesArray) / sizeof(dataTypesArray[0]);
+	constexpr int arrSize = std::size(data_types_array);
 	auto id_type = DOCTYPE_UNKNOWN;
 	for (int id = 0; id < arrSize; id++)
 	{
-		if (m_pXFile != nullptr)
-			delete m_pXFile;
-		instanciateDataFileObject(id);
+		delete m_pXFile;
+		instantiate_data_file_object(id);
 		if (0 != m_pXFile->OpenDataFile(cs_filename, u_open_flag))
 			id_type = m_pXFile->CheckFileType(cs_filename);
 		if (id_type != DOCTYPE_UNKNOWN)
@@ -196,14 +193,12 @@ BOOL AcqDataDoc::OnNewDocument()
 	return TRUE;
 }
 
-CString AcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
+CString AcqDataDoc::GetDataFileInfos(const OPTIONS_VIEWDATA* pVD) const
 {
 	const CString sep('\t');
-
 	CString cs_dummy;
 	auto cs_out = GetPathName();
-	cs_out.MakeLower(); // lower case
-
+	cs_out.MakeLower();
 	const auto p_wave_format = GetpWaveFormat();
 
 	// date and time
@@ -251,11 +246,11 @@ CString AcqDataDoc::GetDataFileInfos(OPTIONS_VIEWDATA* pVD)
 
 void AcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 {
-	const _TCHAR sep = '\n'; // lines separator "\n\r"
-	const _TCHAR sep2 = ','; // columns separator
+	constexpr _TCHAR sep = '\n'; 
+	constexpr _TCHAR sep2 = ',';
 
 	auto cs_out = _T("filename=") + GetPathName();
-	cs_out.MakeLower(); // lower case
+	cs_out.MakeLower();
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
@@ -331,9 +326,9 @@ void AcqDataDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-void AcqDataDoc::instanciateDataFileObject(int docType)
+void AcqDataDoc::instantiate_data_file_object(const int doc_type)
 {
-	switch (docType)
+	switch (doc_type)
 	{
 	case DOCTYPE_AWAVE:
 		m_pXFile = new CDataFileAWAVE;
@@ -470,21 +465,17 @@ BOOL AcqDataDoc::readDataBlock(long l_first)
 	{
 		short* p_buffer = m_pWBuf->get_pointer_to_raw_data_buffer();
 		ASSERT(p_buffer != NULL);
-		//TRACE("ReadDataBlock l_first= %i nbPoints = %i doc length= %i \n", l_first, m_lBUFSize, m_lDOCchanLength);
 		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, GetpWavechanArray());
-		//if (l_size == 0)
-		//	return FALSE;
 
-		// ugly patch:
-		l_size = m_lBUFSize;
-		m_lBUFchanLast = m_lBUFchanFirst + l_size / m_DOCnbchans - 1;
+		// ugly patch: should fail if l_size < m_lBUFSize
+		m_lBUFchanLast = m_lBUFchanFirst + m_lBUFSize / m_DOCnbchans - 1;
 
 		// remove offset so that data are signed short (for offset binary data of 12 or 16 bits resolution)
 		const auto w_bin_zero = static_cast<WORD>(m_pWBuf->m_waveFormat.binzero);
 		if (m_bRemoveOffset && w_bin_zero != NULL)
 		{
 			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->get_pointer_to_raw_data_buffer());
-			for (long i = 0; i < l_size; i++, pw_buf++)
+			for (long i = 0; i < m_lBUFSize; i++, pw_buf++)
 				*pw_buf -= w_bin_zero;
 		}
 		return TRUE;
@@ -507,7 +498,7 @@ short AcqDataDoc::BGetVal(const int channel, const long l_index)
 	return *(m_pWBuf->get_pointer_to_raw_data_element(channel, index));
 }
 
-short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const int transform_type,
+short* AcqDataDoc::LoadTransformedData(const long l_first, const long l_last, const int transform_type,
                                   const int source_channel)
 {
 	const BOOL b_already_done = (m_bValidTransfBuffer
@@ -523,7 +514,7 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 	if (m_pWBuf->get_pointer_to_transformed_data_buffer() == nullptr)
 		m_pWBuf->InitWBTransformBuffer();
 
-	const auto i_span = m_pWBuf->GetWBTransformSpan(transform_type);
+	const auto i_span = CWaveBuf::GetWBTransformSpan(transform_type);
 	const auto l_span = static_cast<long>(i_span);
 
 	// ASSERT make sure that all data requested are within the buffer ...
@@ -542,7 +533,7 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 
 	// check if source l_first can be used
 	const auto b_isLFirstLower = (l_first < l_span);
-	if (b_isLFirstLower) // no: skip these data and erase later corresp transform
+	if (b_isLFirstLower) // no: skip these data and erase later 
 	{
 		lp_source += n_channels * i_span;
 		lp_destination += i_span;
@@ -551,7 +542,7 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 
 	// check if source l_last can be used
 	const auto b_isLLastGreater = (l_last > m_lDOCchanLength - l_span);
-	if (b_isLLastGreater) // no: skip these data and erase later corresp transform
+	if (b_isLLastGreater) // no: skip these data and erase later 
 	{
 		n_points -= i_span;
 	}
@@ -624,7 +615,7 @@ short* AcqDataDoc::LoadTransfData(const long l_first, const long l_last, const i
 	return lp_destination;
 }
 
-BOOL AcqDataDoc::BuildTransfData(const int transform_type, const int source_channel)
+BOOL AcqDataDoc::BuildTransformedData(const int transform_type, const int source_channel) const
 {
 	// make sure that transform buffer is ready
 	if (m_pWBuf->get_pointer_to_transformed_data_buffer() == nullptr)
@@ -636,9 +627,9 @@ BOOL AcqDataDoc::BuildTransfData(const int transform_type, const int source_chan
 	const int nb_channels = GetpWaveFormat()->scan_count;
 	ASSERT(source_channel < nb_channels);
 
-	// adjust pointers according to nspan - (fringe data) and set flags erase these data at the end
+	// adjust pointers according to n_span - (fringe data) and set flags erase these data at the end
 	auto lp_dest = m_pWBuf->get_pointer_to_transformed_data_buffer();
-	const auto i_span_between_points = m_pWBuf->GetWBTransformSpan(transform_type);
+	const auto i_span_between_points = CWaveBuf::GetWBTransformSpan(transform_type);
 	const auto l_span_between_points = static_cast<long>(i_span_between_points);
 	const auto l_first = m_lBUFchanFirst + l_span_between_points;
 	const auto l_last = m_lBUFchanLast - l_span_between_points;
@@ -717,7 +708,6 @@ BOOL AcqDataDoc::CreateAcqFile(CString& cs_file_name)
 		}
 
 		if (!m_pXFile->OpenDataFile(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone))
-		//shareDenyNone
 		{
 			AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);
 			return FALSE;
@@ -766,7 +756,7 @@ BOOL AcqDataDoc::AcqDoc_DataAppend(short* p_buffer, const UINT bytes_length) con
 	return m_pXFile->DataAppend(p_buffer, bytes_length);
 }
 
-BOOL AcqDataDoc::AcqDoc_DataAppendStop()
+BOOL AcqDataDoc::AcqDoc_DataAppendStop() const
 {
 	m_pXFile->DataAppendStop();
 	const auto p_wave_format = GetpWaveFormat();
@@ -779,7 +769,7 @@ BOOL AcqDataDoc::AcqDoc_DataAppendStop()
 	return TRUE;
 }
 
-BOOL AcqDataDoc::AcqSaveDataDescriptors()
+BOOL AcqDataDoc::AcqSaveDataDescriptors() const
 {
 	const auto flag = m_pXFile->WriteDataInfos(GetpWaveFormat(), GetpWavechanArray());
 	m_pXFile->Flush();
@@ -814,7 +804,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 	}
 
 	auto dummy_name = new_name;
-	auto cs_former_name = m_pXFile->GetFilePath();
+	const auto cs_former_name = m_pXFile->GetFilePath();
 
 	// check if same file already exist
 	CFileStatus status;
@@ -904,7 +894,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 		m_pXFile->SeekToBegin();
 		p_new_doc->m_pXFile->SeekToBegin();
 
-		p_buf = m_pWBuf->get_pointer_to_raw_data_buffer(); // buffer to store data
+		p_buf = m_pWBuf->get_pointer_to_raw_data_buffer(); 
 		const auto n_bytes = m_lBUFSize * sizeof(short);
 		DWORD dw_read;
 		do
@@ -916,7 +906,6 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 
 		// file is transferred, destroy temporary file
 		p_new_doc->m_pXFile->CloseDataFile();
-		//CFile::Remove(dummyName);
 
 		// delete current file object and open saved-as file ??
 		m_pXFile->CloseDataFile();

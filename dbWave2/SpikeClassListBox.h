@@ -20,11 +20,6 @@ protected:
 	SpikeClassListBoxContext context;
 	int m_cursorIndexMax = 3;
 
-	// logic to drag spikes
-	BOOL m_is_spike_hit = false; // one spike is hit
-	int m_spike_hit = 0; // spike selected & hit
-	int m_spike_hit_row = 0; // selected row from which spike is hit
-
 	long m_lFirst = 0;
 	long m_lLast = 0;
 	SpikeList* m_spike_list = nullptr;
@@ -67,7 +62,7 @@ public:
 	void XorTempVTtag(int x_point) const;
 	void ResetBarsXortag() const;
 	void ReflectBarsMouseMoveMessg(HWND hwnd);
-	void SetCursorMaxOnDblClick(int imax) { m_cursorIndexMax = imax; }
+	void SetCursorMaxOnDblClick(const int i_max) { m_cursorIndexMax = i_max; }
 
 	void PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i) const;
 
@@ -77,7 +72,7 @@ protected:
 	int get_row_index_of_spike_class(int spike_class) const;
 	RowItem* add_row_item(int class_id, int i_id);
 	void update_rows_from_spike_list();
-	RowItem* get_row_item(int i) const { return reinterpret_cast<RowItem*>(GetItemData(i)); }
+	RowItem* get_row_item(int i) const { return (RowItem*) GetItemData(i); }
 
 	// Implementation
 public:

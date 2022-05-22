@@ -49,13 +49,11 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	}
 	break;
 
-	case HINT_HITSPIKE: // spike is selected
+	case HINT_HITSPIKE:
+		TRACE("hist spike\n");
 		if (i_current_selected != threshold) 
 		{
 			SelectSpike(threshold);
-			m_spike_hit = threshold;
-			m_spike_hit_row = i_current_selected;
-			m_is_spike_hit = TRUE;
 		}
 		break;
 
@@ -68,12 +66,11 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
-	case HINT_DROPPED: 
+	case HINT_DROPPED:
+		TRACE("drop spike \n");
 		{
-			//const int spike_hit_class_id = m_spike_list->get_spike(m_spike_hit)->get_class_id();
 			const int new_class_id = get_row_item(i_current_selected)->get_class_id();
 			m_spike_list->change_class_of_flagged_spikes(new_class_id);
-			m_is_spike_hit = FALSE;
 		}
 		break;
 

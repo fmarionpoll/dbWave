@@ -323,7 +323,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	m_bin_zero = GetAcqBinzero();
 
 	// loop through all data buffers
-	const auto n_bytes = w1 * sizeof(short);// *n_spikes;
+	const auto n_bytes = w1 * sizeof(short);
 	for (int i = 0; i < n_spikes; i++)
 	{
 		const auto lp_dest = get_spike(i)->get_p_data(get_spike_length());

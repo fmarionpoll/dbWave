@@ -1185,7 +1185,7 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 		auto l_rw_last = l_data_last; 
 		if (!data_document->LoadRawData(&l_rw_first, &l_rw_last, detect_transform_span))
 			break; 
-		if (!data_document->BuildTransfData(detect_transform, source_channel))
+		if (!data_document->BuildTransformedData(detect_transform, source_channel))
 			break;
 
 		// compute initial offset (address of first point)
@@ -1315,7 +1315,7 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 		auto l_rw_last = l_data_last; 
 		if (!p_dat->LoadRawData(&l_rw_first, &l_rw_last, span)) 
 			break; 
-		if (!p_dat->BuildTransfData(detect_transform, source_channel)) 
+		if (!p_dat->BuildTransformedData(detect_transform, source_channel)) 
 			break;
 
 		// load a chunk of data and see if any spikes are detected within it
@@ -3064,7 +3064,7 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	auto l_rw_last0 = ii_time + spike_length;
 	if (!data_document->LoadRawData(&l_rw_first0, &l_rw_last0, span))
 		return; 
-	auto p_data = data_document->LoadTransfData(l_rw_first0, l_rw_last0, method, doc_chan);
+	auto p_data = data_document->LoadTransformedData(l_rw_first0, l_rw_last0, method, doc_chan);
 
 	// loop over all spikes now
 	const auto total_spikes = m_pSpkList->get_spikes_count();
@@ -3079,7 +3079,7 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 		if (!data_document->LoadRawData(&l_rw_first, &l_rw_last, span))
 			break; 
 
-		p_data = data_document->LoadTransfData(l_rw_first, l_rw_last, method, doc_chan);
+		p_data = data_document->LoadTransformedData(l_rw_first, l_rw_last, method, doc_chan);
 		const auto p_data_spike0 = p_data + (ii_time - spike_pre_threshold - l_rw_first) * offset;
 		p_spike->TransferDataToSpikeBuffer(p_data_spike0, offset, m_pSpkList->get_spike_length());
 

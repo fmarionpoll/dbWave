@@ -620,7 +620,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 				break; // exit if error reported
 			if (l_read_write_last > l_data_last)
 				l_read_write_last = l_data_last;
-			const auto p_data0 = p_dat->LoadTransfData(l_data_first, l_read_write_last, 0, 0);
+			const auto p_data0 = p_dat->LoadTransformedData(l_data_first, l_read_write_last, 0, 0);
 
 			// compute initial offset (address of first point)
 			// assume that detection is on channel 1

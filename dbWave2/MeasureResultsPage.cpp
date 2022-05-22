@@ -208,7 +208,7 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 	m_pdatDoc->LoadRawData(&buf_chan_first, &buf_chan_last, span);
 	if (transform_mode > 0)
 	{
-		p_data = m_pdatDoc->LoadTransfData(l_first, buf_chan_last, transform_mode, source_chan);
+		p_data = m_pdatDoc->LoadTransformedData(l_first, buf_chan_last, transform_mode, source_chan);
 		offset = 1;
 	}
 	else
@@ -232,7 +232,7 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 		if (l_last < buf_chan_last)
 			buf_chan_last = l_last;
 		if (transform_mode > 0)
-			p_data = m_pdatDoc->LoadTransfData(l_first, buf_chan_last, transform_mode, source_chan);
+			p_data = m_pdatDoc->LoadTransformedData(l_first, buf_chan_last, transform_mode, source_chan);
 		else
 			p_data = p_buf + (l_first - buf_chan_first) * n_channels + source_chan;
 		// now search for max and min

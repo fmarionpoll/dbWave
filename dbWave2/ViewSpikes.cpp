@@ -167,11 +167,11 @@ void ViewSpikes::set_add_spikes_mode(int mouse_cursor_type)
 	GetDlgItem(IDC_JITTER)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_JITTERSTATIC)->ShowWindow(n_cmd_show);
 
-	auto hwnd = GetSafeHwnd();
+	auto hWnd = GetSafeHwnd();
 	if (!m_b_add_spike_mode)
-		hwnd = nullptr;
-	m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
-	m_ChartSpikesListBox.ReflectBarsMouseMoveMessg(hwnd);
+		hWnd = nullptr;
+	m_ChartDataWnd.ReflectMouseMoveMessg(hWnd);
+	m_ChartSpikesListBox.ReflectBarsMouseMoveMessg(hWnd);
 	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
 	                             m_pspkDP->extract_channel);
 
@@ -323,7 +323,7 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 		if (!m_pDataDoc->LoadRawData(&l_read_write_first, &l_read_write_last, transformation_data_span))
 			return FALSE;
 
-		m_pDataDoc->LoadTransfData(l_read_write_first, l_read_write_last, method, doc_channel);
+		m_pDataDoc->LoadTransformedData(l_read_write_first, l_read_write_last, method, doc_channel);
 		const auto p_data_spike_0 = m_pDataDoc->GetpTransfDataElmt(ii_time0 - l_read_write_first);
 
 		spike_index = m_pSpkList->AddSpike(p_data_spike_0,	//lpSource	= buff pointer to the buffer to copy

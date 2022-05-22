@@ -265,7 +265,7 @@ void DlgSpikeEdit::LoadSourceViewData()
 	m_ChartDataWnd.GetDataFromDoc(source_view_first, source_view_last);
 
 	const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
-	m_pAcqDatDoc->LoadTransfData(source_view_first, source_view_last, method, m_spikeChan);
+	m_pAcqDatDoc->LoadTransformedData(source_view_first, source_view_last, method, m_spikeChan);
 
 	// adjust offset (center spike) : use initial offset from spike
 	CChanlistItem* chan0 = m_ChartDataWnd.GetChanlistItem(0);

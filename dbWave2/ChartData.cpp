@@ -564,7 +564,7 @@ BOOL ChartData::GetDataFromDoc()
 				const auto itransf = p_cont->GetSourceMode(); 
 				if (itransf > 0)
 				{
-					const auto lp_data = m_pDataFile->LoadTransfData(l_first, lBUFchanLast, itransf, source_chan);
+					const auto lp_data = m_pDataFile->LoadTransformedData(l_first, lBUFchanLast, itransf, source_chan);
 					p_cont->FillEnvelopeWithMxMi(ipixel, lp_data, 1, npoints, b_new);
 				}
 				else 
@@ -643,7 +643,7 @@ BOOL ChartData::GetSmoothDataFromDoc(int ioption)
 				int intervals = nchans;
 				if (itransf > 0) 
 				{
-					lp_data = m_pDataFile->LoadTransfData(l_first, l_buf_chan_last, itransf, source_chan);
+					lp_data = m_pDataFile->LoadTransformedData(l_first, l_buf_chan_last, itransf, source_chan);
 					intervals = 1;
 				}
 				else 

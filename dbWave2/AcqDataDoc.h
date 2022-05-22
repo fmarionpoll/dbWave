@@ -22,13 +22,13 @@ public:
 	~AcqDataDoc() override;
 
 public:
-	CString GetDataFileInfos(OPTIONS_VIEWDATA* pVD);
+	CString GetDataFileInfos(const OPTIONS_VIEWDATA* pVD) const;
 	void ExportDataFile_to_TXTFile(CStdioFile* pdataDest);
 	BOOL OnSaveDocument(CString& sz_path_name);
 	BOOL OnOpenDocument(CString& sz_path_name);
 	BOOL OnNewDocument() override;
 
-	BOOL openAcqFile(CString& szfilename);
+	BOOL openAcqFile(CString& cs_filename);
 protected:
 	bool dlgImportDataFile(CString& sz_path_name);
 	int importFile(CString& sz_path_name);
@@ -61,7 +61,7 @@ public:
 	BOOL m_bdefined = false;
 	BOOL m_bRemoveOffset = true; // transform data read in short values if binary offset encoding
 
-	// use with caution - parameters set by last call to LoadTransfData
+	// use with caution - parameters set by last call to LoadTransformedData
 	long m_tBUFfirst = 0;
 	long m_tBUFlast = 1;
 	int m_tBUFtransform = 0;
@@ -69,25 +69,25 @@ public:
 
 public:
 	long GettBUFfirst() const { return m_tBUFfirst; }
-	short BGetVal(int chan, long l_index);
-	short* LoadTransfData(long l_first, long l_last, int transform_type, int source_channel);
-	BOOL BuildTransfData(int transform_type, int ns);
+	short BGetVal(int channel, long l_index);
+	short* LoadTransformedData(long l_first, long l_last, int transform_type, int source_channel);
+	BOOL BuildTransformedData(int transform_type, int source_channel) const;
 	BOOL LoadRawData(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
 	short* LoadRawDataParams(int* n_channels) const;
 
 	// write data
-	BOOL WriteHZtags(TagList* ptags);
-	BOOL WriteVTtags(TagList* ptags);
+	BOOL WriteHZtags(TagList* p_tags);
+	BOOL WriteVTtags(TagList* p_tags);
 	BOOL AcqDoc_DataAppendStart();
 	BOOL AcqDoc_DataAppend(short* pBU, UINT uilbytesLength) const;
-	BOOL AcqDoc_DataAppendStop();
+	BOOL AcqDoc_DataAppendStop() const;
 	void AcqDeleteFile() const;
 	void AcqCloseFile() const;
-	BOOL AcqSaveDataDescriptors();
+	BOOL AcqSaveDataDescriptors() const;
 
 	// AwaveFile operations -- could add parameter to create other type
-	BOOL CreateAcqFile(CString& csFileName);
-	BOOL SaveAs(CString& sznewName, BOOL bCheckOverWrite = TRUE, int iType = 0);
+	BOOL CreateAcqFile(CString& cs_file_name);
+	BOOL SaveAs(CString& new_name, BOOL b_check_over_write = TRUE, int i_type = 0);
 
 	// helpers
 	long GetDOCchanLength() const { return m_lDOCchanLength; }
@@ -141,7 +141,7 @@ public:
 
 protected:
 	BOOL readDataBlock(long l_first);
-	void instanciateDataFileObject(int docType);
+	void instantiate_data_file_object(int doc_type);
 
 	DECLARE_MESSAGE_MAP()
 };
