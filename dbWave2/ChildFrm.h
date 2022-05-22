@@ -9,9 +9,9 @@ public:
 	void ActivateFrame(int n_cmd_show = -1) override;
 	~CChildFrame() override;
 
-	UINT m_viewON =  ID_VIEW_DATABASE;
-	int m_previousviewON = ID_VIEW_DATABASE ;
-	int m_cursorstate = 0;
+	UINT m_view_ON =  ID_VIEW_DATABASE;
+	int m_previous_view_ON = ID_VIEW_DATABASE ;
+	int m_cursor_state = 0;
 	int m_nStatus = 0;
 
 #ifdef _DEBUG
@@ -45,7 +45,7 @@ protected:
 	afx_msg void OnToolsExportnumberofspikes();
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void ReplaceViewIndex(UINT nID);
-	afx_msg void OnUpdateViewmenu(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateViewMenu(CCmdUI* pCmdUI);
 
 public:
 	afx_msg void OnRecordGotorecord();

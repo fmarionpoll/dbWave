@@ -627,7 +627,7 @@ void ViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CVi
 	if (bActivate)
 	{
 		pmF->ActivatePropertyPane(FALSE);
-		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursorstate = 0;
+		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursor_state = 0;
 	}
 	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
