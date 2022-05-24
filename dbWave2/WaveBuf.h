@@ -22,7 +22,7 @@ protected:
 public:
 	int GetWBNumElements() const;
 	int GetWBNumChannels() const;
-	void SetWBSampleRate(float fSampRate);
+	void SetWBSampleRate(float sampling_rate);
 	float GetWBSampleRate() const;
 	BOOL GetWBVoltsperBin(int ch_index, float* volts_per_bin, int mode = 0) const;
 	TagList* GetpHZtags() { return &m_hz_tags; }
@@ -40,7 +40,7 @@ public:
 	//------------
 	static CString GetWBTransformsAllowed(int i);
 	static BOOL IsWBTransformAllowed(int i);
-	static WORD GetWBNTypesofTransforms();
+	static int GetWBNTypesofTransforms();
 	BOOL InitWBTransformBuffer();
 	static int GetWBTransformSpan(int i);
 	static int IsWBSpanChangeAllowed(int i);

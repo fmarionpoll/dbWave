@@ -66,9 +66,9 @@ int CWaveBuf::GetWBNumChannels() const
 	return m_waveFormat.scan_count;
 }
 
-void CWaveBuf::SetWBSampleRate(const float fSampRate)
+void CWaveBuf::SetWBSampleRate(const float sampling_rate)
 {
-	m_waveFormat.sampling_rate_per_channel = fSampRate;
+	m_waveFormat.sampling_rate_per_channel = sampling_rate;
 }
 
 float CWaveBuf::GetWBSampleRate() const
@@ -96,9 +96,9 @@ BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int n_channels)
 {
 	ASSERT(this);
 	ASSERT(i_num_elements >= 1); // must have at least one
-	m_waveFormat.scan_count = n_channels;
+	m_waveFormat.scan_count = static_cast<short>(n_channels);
 
-	const DWORD dwSafeFactor = 256; // safety factor to fit data in buffer
+	constexpr DWORD dwSafeFactor = 256; // safety factor to fit data in buffer
 	const size_t dwBufferSize = i_num_elements * n_channels * sizeof(short) + dwSafeFactor;
 	if (m_dwBufferSize != dwBufferSize)
 	{
@@ -119,7 +119,7 @@ BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int n_channels)
 		}
 		m_iNumElements = i_num_elements;
 	}
-	m_waveFormat.buffersize = i_num_elements * n_channels;
+	m_waveFormat.buffersize = static_cast<WORD>(i_num_elements * n_channels);
 	return TRUE;
 }
 
@@ -137,8 +137,8 @@ void CWaveBuf::Serialize(CArchive& ar)
 	}
 	else
 	{
-		WORD wversion;
-		ar >> wversion;
+		WORD version;
+		ar >> version;
 	}
 }
 
@@ -237,7 +237,7 @@ float CWaveBuf::m_correctionFact[] = {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-WORD CWaveBuf::GetWBNTypesofTransforms()
+int CWaveBuf::GetWBNTypesofTransforms()
 {
 	if (m_maxtransform < 0)
 	{
@@ -248,8 +248,6 @@ WORD CWaveBuf::GetWBNTypesofTransforms()
 	return m_maxtransform;
 }
 
-// -----------------------------------------------------------
-
 CString CWaveBuf::GetWBTransformsAllowed(int i)
 {
 	if (i < 0)
@@ -259,16 +257,13 @@ CString CWaveBuf::GetWBTransformsAllowed(int i)
 	return CString(m_pTransformsAllowed[i].c_str());
 }
 
-// -----------------------------------------------------------
-
 BOOL CWaveBuf::IsWBTransformAllowed(int i)
 {
 	auto flag = TRUE;
-	if (i < 0 || i > m_maxtransform) flag = FALSE;
+	if (i < 0 || i > m_maxtransform) 
+		flag = FALSE;
 	return flag;
 }
-
-// -----------------------------------------------------------
 
 BOOL CWaveBuf::InitWBTransformBuffer()
 {
@@ -288,8 +283,6 @@ BOOL CWaveBuf::InitWBTransformBuffer()
 	return flag;
 }
 
-// -----------------------------------------------------------
-
 int CWaveBuf::GetWBTransformSpan(int i)
 {
 	if (i < 0 || i > m_maxtransform)
@@ -307,16 +300,12 @@ int CWaveBuf::IsWBSpanChangeAllowed(const int i)
 	return m_bvariableSpan[i];
 }
 
-// -----------------------------------------------------------
-
 int CWaveBuf::SetWBTransformSpan(const int i, const int span)
 {
 	if (m_bvariableSpan[i] > 0)
 		m_TransformBufferSpan[i] = span;
 	return m_TransformBufferSpan[i];
 }
-
-// -----------------------------------------------------------
 
 int CWaveBuf::GetWBcorrectionFactor(int i, float* correct)
 {
@@ -362,31 +351,32 @@ int CWaveBuf::GetWBcorrectionFactor(int i, float* correct)
 	   (3 points before beginning and 3 points after end are
 	   undoubtedly unknown).
  **************************************************************************/
+
 void CWaveBuf::BDeriv(const short* lp_source, short* lp_dest, int cx) const
 {
-	const auto ispan = 4; // nb of dummy pts on each side of dest buffer
+	constexpr auto i_span = 4; // nb of dummy pts on each side of dest buffer
 	auto lp_dest0 = lp_dest; // store initial address (clear at the end)
-	const int nchans = m_waveFormat.scan_count;
-	lp_source -= ispan * nchans; // init source address: k-3
-	cx += ispan; // modify nb of pts
+	const int n_channels = m_waveFormat.scan_count;
+	lp_source -= i_span * n_channels; // init source address: k-3
+	cx += i_span; // modify nb of pts
 	int bx = *lp_source; // xk+1 load first data pts
-	lp_source += nchans; // update offset
+	lp_source += n_channels; // update offset
 	int dx = *lp_source; // xk+2
-	lp_source += nchans; // update offset
+	lp_source += n_channels; // update offset
 
 	// compute the derivative
-	for (auto i = cx; i > 0; i--, lp_source += nchans, lp_dest++)
+	for (auto i = cx; i > 0; i--, lp_source += n_channels, lp_dest++)
 	{
 		auto ax = bx; // ax=xk+1 -- register to reg
 		bx = dx; // bx=xk+2 -- register to reg
 		dx = *lp_source; // dx=xk+3 -- load from memory
 		ax += bx + dx; // =SUM(k+4) -- build intermediate result
-		*(lp_dest + ispan) = -ax; // y(k+4) = 2048 - SUM(k+4) -- store
-		*lp_dest += ax; // y(k) = 2048 - SUM(k-4) + SUM(k) -- store final
+		*(lp_dest + i_span) = static_cast<short>(-ax); // y(k+4) = 2048 - SUM(k+4) -- store
+		*lp_dest += static_cast<short>(ax); // y(k) = 2048 - SUM(k-4) + SUM(k) -- store final
 	}
 
 	// set undefined pts to zero
-	for (auto icx = ispan; icx > 0; icx--, lp_dest++, lp_dest0++)
+	for (auto icx = i_span; icx > 0; icx--, lp_dest++, lp_dest0++)
 	{
 		*lp_dest = 0;
 		*lp_dest0 = 0;
@@ -406,8 +396,8 @@ void CWaveBuf::BDeriv(const short* lp_source, short* lp_dest, int cx) const
 
 void CWaveBuf::BCopy(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const int n_channels = m_waveFormat.scan_count;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = *lp_source;
 }
 
@@ -428,10 +418,10 @@ comment:	the difference is computed as
 
 void CWaveBuf::BDiffer3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
+	const int n_channels = m_waveFormat.scan_count;
 	// compute the difference
-	const auto offset3 = 3 * nchans;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const auto offset3 = 3 * n_channels;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = static_cast<short>(*(lp_source + offset3) - *(lp_source - offset3));
 }
 
@@ -440,9 +430,9 @@ void CWaveBuf::BDiffer3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BDiffer2(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset2 = 2 * nchans;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset2 = 2 * n_channels;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = static_cast<short>(*(lp_source + offset2) - *(lp_source - offset2));
 }
 
@@ -451,9 +441,9 @@ void CWaveBuf::BDiffer2(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BDiffer1(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset = nchans;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset = n_channels;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = static_cast<short>(*(lp_source + offset) - *(lp_source - offset));
 }
 
@@ -462,9 +452,9 @@ void CWaveBuf::BDiffer1(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BDiffer10(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset2 = 10 * nchans;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset2 = 10 * n_channels;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = static_cast<short>(*(lp_source + offset2) - *(lp_source - offset2));
 }
 
@@ -473,10 +463,10 @@ void CWaveBuf::BDiffer10(const short* lp_source, short* lp_dest, const int cx) c
 //**************************************************************************
 void CWaveBuf::BLanczo2(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset1 = nchans;
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset1 = n_channels;
 	const auto offset2 = 2 * offset1;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 	{
 		*lp_dest = static_cast<short>((*(lp_source + offset1) - *(lp_source - offset1))
 			+ 2 * (*(lp_source + offset2) - *(lp_source - offset2)));
@@ -488,11 +478,11 @@ void CWaveBuf::BLanczo2(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BLanczo3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset1 = nchans;
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset1 = n_channels;
 	const auto offset2 = offset1 * 2;
 	const auto offset3 = offset2 + offset1;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 	{
 		*lp_dest = static_cast<short>((*(lp_source + offset1) - *(lp_source - offset1))
 			+ (2 * (*(lp_source + offset2) - *(lp_source - offset2)))
@@ -505,10 +495,10 @@ void CWaveBuf::BLanczo3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BDeri1f3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset1 = nchans;
-	const auto offset2 = 2 * nchans;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset1 = n_channels;
+	const auto offset2 = 2 * n_channels;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 	{
 		*lp_dest = static_cast<short>((*(lp_source + offset1) - *(lp_source - offset1))
 			+ (*(lp_source + offset2) - *(lp_source - offset2)));
@@ -520,11 +510,11 @@ void CWaveBuf::BDeri1f3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BDeri2f3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset1 = nchans;
-	const auto offset2 = nchans * 2;
-	const auto offset3 = nchans * 3;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset1 = n_channels;
+	const auto offset2 = n_channels * 2;
+	const auto offset3 = n_channels * 3;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 	{
 		*lp_dest = static_cast<short>((*(lp_source + offset1) - *(lp_source - offset1))
 			+ (*(lp_source + offset2) - *(lp_source - offset2))
@@ -537,12 +527,12 @@ void CWaveBuf::BDeri2f3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BDeri2f5(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset1 = nchans;
-	const auto offset2 = nchans * 2;
-	const auto offset3 = nchans * 3;
-	const auto offset4 = nchans * 4;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset1 = n_channels;
+	const auto offset2 = n_channels * 2;
+	const auto offset3 = n_channels * 3;
+	const auto offset4 = n_channels * 4;
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 	{
 		*lp_dest = static_cast<short>((*(lp_source + offset1) - *(lp_source - offset1))
 			+ (*(lp_source + offset2) - *(lp_source - offset2))
@@ -556,11 +546,11 @@ void CWaveBuf::BDeri2f5(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 void CWaveBuf::BDeri3f3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offset2 = nchans * 2;
-	const auto offset3 = nchans * 3;
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset2 = n_channels * 2;
+	const auto offset3 = n_channels * 3;
 	const auto offset4 = 2 * offset2;
-	for (auto icx = cx; icx > 0; icx--, lp_source += nchans, lp_dest++)
+	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 	{
 		*lp_dest = (*(lp_source + offset2) - *(lp_source - offset2))
 			+ (*(lp_source + offset3) - *(lp_source - offset3))
@@ -614,29 +604,29 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 
 void CWaveBuf::BMovAvg30(short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offsetnextpoint = nchans;
-	auto nbspan = m_TransformBufferSpan[MOVAVG30];
-	const auto offsetspan = offsetnextpoint * nbspan;
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offset_next_point = n_channels;
+	auto n_span = m_TransformBufferSpan[MOVAVG30];
+	const auto offset_span = offset_next_point * n_span;
 
 	// init sum
 	auto sum = 0;
 	auto n = 0;
 	auto lp = lp_source;
-	lp -= offsetspan;
-	nbspan += nbspan;
-	for (auto i = 0; i < nbspan; i++)
+	lp -= offset_span;
+	n_span += n_span;
+	for (auto i = 0; i < n_span; i++)
 	{
 		sum += *lp;
-		lp += offsetnextpoint;
+		lp += offset_next_point;
 		n++;
 	}
 
 	// moving average
-	for (auto icx = cx; icx > 0; icx--, lp_source += offsetnextpoint, lp_dest++)
+	for (auto icx = cx; icx > 0; icx--, lp_source += offset_next_point, lp_dest++)
 	{
 		*lp_dest = static_cast<short>(sum / n);
-		sum += (-*(lp_source - offsetspan) + *(lp_source + offsetspan));
+		sum += (-*(lp_source - offset_span) + *(lp_source + offset_span));
 	}
 }
 
@@ -671,8 +661,8 @@ void CWaveBuf::BMedian30(short* lp_source, short* lp_dest, const int cx)
 void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspan)
 {
 	// assume source buffer is with interleaved channels; if not: scan_count=1
-	const int nchans = m_waveFormat.scan_count;
-	const auto lp_source_offset_nextpoint = nchans; // number of chans within source buffer
+	const int n_channels = m_waveFormat.scan_count;
+	const auto lp_source_offset_nextpoint = n_channels; // number of chans within source buffer
 	const auto lp_source_offset_span = lp_source_offset_nextpoint * nbspan; // offset between center of window & end
 
 	if (m_parray_size != nbspan * 2 + 1) // adjust size of temporary array or create if not previously set
@@ -842,8 +832,8 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 
 void CWaveBuf::BRMS(short* lp_source, short* lp_dest, const int cx) const
 {
-	const int nchans = m_waveFormat.scan_count;
-	const auto offsetnextpoint = nchans;
+	const int n_channels = m_waveFormat.scan_count;
+	const auto offsetnextpoint = n_channels;
 	auto nbspan = m_TransformBufferSpan[14] / 2;
 	const auto offsetspan = offsetnextpoint * nbspan;
 
