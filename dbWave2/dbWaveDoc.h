@@ -144,7 +144,7 @@ public:
 	long	GetDB_DataLen();
 	void	SetDB_CurrentRecordFlag(int flag) const;
 	int		GetDB_CurrentRecordFlag() const { return m_pDB->m_mainTableSet.m_flag; }
-	void	SetDB_PathsRelative_to_DataBaseFile() const;
+	void	SetDB_PathsRelative() const;
 	void	SetDB_PathsAbsolute() const;
 	void	DBTransferDatPathToSpkPath() const;
 	void	DBDeleteUnusedEntries() const;

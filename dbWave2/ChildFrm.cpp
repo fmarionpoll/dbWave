@@ -1022,8 +1022,15 @@ void CChildFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeact
 
 void CChildFrame::OnToolsPathsRelative()
 {
-	const auto p_dbwave_doc = dynamic_cast<CdbWaveDoc*>(GetActiveDocument());
-	p_dbwave_doc->SetDB_PathsRelative_to_DataBaseFile();
+	BOOL pbMaximized = false;
+	/*
+	 * Have a look at Knowledge Base articles Q108587 "HOWTO: Get Current
+CDocument or CView from Anywhere" and Q111814 "HOWTO: Get the Current
+Document in an MDI Application". 
+	 */
+	const CMDIChildWnd* mdiWindow = MDIGetActive(&pbMaximized);
+	const auto p_dbwave_doc = static_cast<CdbWaveDoc*>(GetActiveDocument());
+	p_dbwave_doc->SetDB_PathsRelative();
 	p_dbwave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 

@@ -508,14 +508,14 @@ void CdbWaveDoc::SetDB_CurrentRecordFlag(const int flag) const
 	m_pDB->m_mainTableSet.Update();
 }
 
-void CdbWaveDoc::SetDB_PathsRelative_to_DataBaseFile() const
+void CdbWaveDoc::SetDB_PathsRelative() const
 {
-	m_pDB->ConvertPathTabletoRelativePath();
+	m_pDB->set_path_relative();
 }
 
 void CdbWaveDoc::SetDB_PathsAbsolute() const
 {
-	m_pDB->ConvertPathTabletoAbsolutePath();
+	m_pDB->set_path_absolute();
 }
 
 void CdbWaveDoc::DBTransferDatPathToSpkPath() const

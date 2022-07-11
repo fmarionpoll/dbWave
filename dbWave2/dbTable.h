@@ -73,14 +73,17 @@ public:
 	BOOL MoveToID(long recordID);
 	CString GetFilePath(int ID);
 	BOOL IsRelativePath(CString cspath) { return (cspath[0] == '.'); }
-	CString GetRelativePathFromString(const CString& csAbsolutePath) const;
-	long GetRelativePathFromID(long iID);
-	void ConvertPathtoRelativePath(long icol);
-	void ConvertPathTabletoRelativePath();
-	CString GetAbsolutePathFromString(CString csPath);
-	long GetAbsolutePathFromID(long iID);
-	void ConvertPathtoAbsolutePath(int icolpath);
-	void ConvertPathTabletoAbsolutePath();
+
+	CString get_relative_path_from_string(const CString& csAbsolutePath) const;
+	long get_relative_path_from_ID(long iID);
+	void convert_path_to_relative_path(long icol, CString cs_origin);
+	void set_path_relative();
+
+	CString get_absolute_path_from_string(CString csPath);
+	long get_absolute_path_from_ID(long iID);
+	void convert_path_to_absolute_path(int icolpath, CString cs_origin);
+	void set_path_absolute();
+
 	BOOL MoveRecord(UINT nIDMoveCommand);
 	BOOL MoveFirst() { return MoveRecord(ID_RECORD_FIRST); }
 	BOOL MoveNext() { return MoveRecord(ID_RECORD_NEXT); }

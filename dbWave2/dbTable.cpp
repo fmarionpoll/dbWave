@@ -555,7 +555,7 @@ CString CdbTable::GetFilePath(const int i_id)
 	return cs_path;
 }
 
-CString CdbTable::GetRelativePathFromString(const CString& cs_path) const
+CString CdbTable::get_relative_path_from_string(const CString& cs_path) const
 {
 	TCHAR sz_out[MAX_PATH] = _T("");
 	if (cs_path.IsEmpty())
@@ -570,13 +570,13 @@ CString CdbTable::GetRelativePathFromString(const CString& cs_path) const
 	return cs_out;
 }
 
-long CdbTable::GetRelativePathFromID(const long i_id)
+long CdbTable::get_relative_path_from_ID(const long i_id)
 {
 	long new_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
 	if (!IsRelativePath(cs_path))
 	{
-		const auto cs_relative_path = GetRelativePathFromString(cs_path);
+		const auto cs_relative_path = get_relative_path_from_string(cs_path);
 		if (!cs_relative_path.IsEmpty())
 		{
 			new_id = m_pathSet.GetStringInLinkedTable(cs_relative_path);
@@ -587,12 +587,12 @@ long CdbTable::GetRelativePathFromID(const long i_id)
 	return new_id;
 }
 
-void CdbTable::ConvertPathtoRelativePath(const long i_col_path)
+void CdbTable::convert_path_to_relative_path(const long i_col_path, const CString cs_origin)
 {
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
-	const auto i_id = GetRelativePathFromID(path_id);
+	const auto i_id = get_relative_path_from_ID(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
 		m_mainTableSet.Edit();
@@ -602,7 +602,7 @@ void CdbTable::ConvertPathtoRelativePath(const long i_col_path)
 	}
 }
 
-void CdbTable::ConvertPathTabletoRelativePath()
+void CdbTable::set_path_relative()
 {
 	const auto cs_origin = GetDataBasePath();
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
@@ -620,8 +620,8 @@ void CdbTable::ConvertPathTabletoRelativePath()
 
 		while (!m_mainTableSet.IsEOF())
 		{
-			ConvertPathtoRelativePath(i_col_path);
-			ConvertPathtoRelativePath(i_col_path2);
+			convert_path_to_relative_path(i_col_path, cs_origin);
+			convert_path_to_relative_path(i_col_path2, cs_origin);
 			m_mainTableSet.MoveNext();
 		}
 		m_mainTableSet.SetBookmark(ol);
@@ -633,7 +633,7 @@ void CdbTable::ConvertPathTabletoRelativePath()
 	}
 }
 
-CString CdbTable::GetAbsolutePathFromString(CString cs_path)
+CString CdbTable::get_absolute_path_from_string(CString cs_path)
 {
 	TCHAR sz_out[MAX_PATH] = _T("");
 	if (cs_path.IsEmpty())
@@ -647,13 +647,13 @@ CString CdbTable::GetAbsolutePathFromString(CString cs_path)
 	return cs_out;
 }
 
-long CdbTable::GetAbsolutePathFromID(const long i_id)
+long CdbTable::get_absolute_path_from_ID(const long i_id)
 {
 	long new_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
 	if (IsRelativePath(cs_path))
 	{
-		const auto cs_absolute_path = GetAbsolutePathFromString(cs_path);
+		const auto cs_absolute_path = get_absolute_path_from_string(cs_path);
 		if (!cs_absolute_path.IsEmpty())
 		{
 			new_id = m_pathSet.GetStringInLinkedTable(cs_absolute_path);
@@ -664,12 +664,12 @@ long CdbTable::GetAbsolutePathFromID(const long i_id)
 	return new_id;
 }
 
-void CdbTable::ConvertPathtoAbsolutePath(const int i_col_path)
+void CdbTable::convert_path_to_absolute_path(const int i_col_path, const CString cs_origin)
 {
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
-	const auto i_id = GetAbsolutePathFromID(path_id);
+	const auto i_id = get_absolute_path_from_ID(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
 		m_mainTableSet.Edit();
@@ -679,7 +679,7 @@ void CdbTable::ConvertPathtoAbsolutePath(const int i_col_path)
 	}
 }
 
-void CdbTable::ConvertPathTabletoAbsolutePath()
+void CdbTable::set_path_absolute()
 {
 	const auto cs_origin = GetDataBasePath();
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
@@ -697,8 +697,8 @@ void CdbTable::ConvertPathTabletoAbsolutePath()
 
 		while (!m_mainTableSet.IsEOF())
 		{
-			ConvertPathtoAbsolutePath(col_path);
-			ConvertPathtoAbsolutePath(col_path2);
+			convert_path_to_absolute_path(col_path, cs_origin);
+			convert_path_to_absolute_path(col_path2, cs_origin);
 			m_mainTableSet.MoveNext();
 		}
 		m_mainTableSet.SetBookmark(ol);
