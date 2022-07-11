@@ -20,23 +20,9 @@ struct sourceData
 
 class CdbWaveDoc : public COleDocument
 {
-protected: // create from serialization only
+protected: 
 	CdbWaveDoc();
 	DECLARE_DYNCREATE(CdbWaveDoc)
-
-	// Attributes
-public:
-	AcqDataDoc* m_pDat = nullptr;
-	CSpikeDoc* m_pSpk = nullptr;
-	HMENU m_hMyMenu = nullptr;
-	CIntervals m_stimsaved;
-
-	// database
-	CdbTable* m_pDB = nullptr;
-	BOOL m_validTables = false;
-	CDWordArray m_selectedRecords;
-	CString m_dbFilename;
-	CString m_ProposedDataPathName;
 
 protected:
 	CString m_currentDatafileName;
@@ -47,8 +33,18 @@ protected:
 	BOOL m_bClearMdbOnExit = false;
 	BOOL m_bTranspose = false;
 
-	// Operations
 public:
+	AcqDataDoc* m_pDat = nullptr;
+	CSpikeDoc* m_pSpk = nullptr;
+	HMENU m_hMyMenu = nullptr;
+	CIntervals m_stimsaved;
+
+	CdbTable* m_pDB = nullptr;
+	BOOL m_validTables = false;
+	CDWordArray m_selectedRecords;
+	CString m_dbFilename;
+	CString m_ProposedDataPathName;
+
 	void	ImportFileList(CStringArray& fileList, int nColumns = 1, boolean bHeader = false);
 	BOOL	IsExtensionRecognizedAsDataFile(CString string) const;
 
@@ -124,16 +120,14 @@ public:
 	HMENU	GetDefaultMenu() override; // get menu depending on state
 	void	UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint);
 
-	// Implementation
-public:
 	~CdbWaveDoc() override;
 #ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
 #endif
+	static CdbWaveDoc* get_doc();
 
 	// DAO database functions
-public:
 	long	GetDB_NRecords() const { return m_pDB->GetNRecords(); }
 	CdbTableMain* GetDB_Recordset() const { return &m_pDB->m_mainTableSet; }
 	void	DBDeleteCurrentRecord();
@@ -165,7 +159,5 @@ public:
 protected:
 	BOOL	OpenDatabase(LPCTSTR lpszPathName);
 
-	// Generated message map functions
-protected:
 	DECLARE_MESSAGE_MAP()
 };

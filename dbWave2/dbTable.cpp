@@ -670,7 +670,7 @@ void CdbTable::convert_path_to_absolute_path(const int i_col_path, const CString
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
 	const auto i_id = get_absolute_path_from_ID(path_id);
-	if (i_id != path_id && i_id != -1)
+	if (/*i_id != path_id &&*/ i_id != -1)
 	{
 		m_mainTableSet.Edit();
 		var_value.lVal = i_id;

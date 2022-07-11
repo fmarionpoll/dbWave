@@ -177,6 +177,29 @@ void CdbWaveDoc::Dump(CDumpContext& dc) const
 {
 	COleDocument::Dump(dc);
 }
+
+/*
+ * Knowledge Base articles Q108587 "HOWTO: Get Current CDocument or CView from Anywhere" and
+ * Q111814 "HOWTO: Get the Current Document in an MDI Application".
+ */
+CdbWaveDoc* CdbWaveDoc::get_doc()
+{
+	CMDIChildWnd* pChild =
+		static_cast<CMDIFrameWnd*>(AfxGetApp()->m_pMainWnd)->MDIGetActive();
+
+	if (!pChild)
+		return nullptr;
+
+	CDocument* pDoc = pChild->GetActiveDocument();
+	if (!pDoc)
+		return nullptr;
+
+	// Fail if doc is of wrong kind
+	if (!pDoc->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+		return nullptr;
+
+	return static_cast<CdbWaveDoc*>(pDoc);
+}
 #endif
 
 BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
