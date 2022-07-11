@@ -86,7 +86,6 @@ void SpikeList::remove_artefacts()
 	UpdateClassList();
 }
 
-
 void SpikeList::serialize_version7(CArchive& ar)
 {
 	serialize_data_parameters(ar);
