@@ -14,35 +14,35 @@
 db_column_properties CdbTable::m_desctab[NTABLECOLS] =
 {
 	//table col header---friendly description for properties--type of field--name of attached table
-	{CH_ID, _T("ID"), _T("ID record"), FIELD_LONG, _T("")}, // 0
-	{CH_ACQDATE, _T("acq_date"), _T("acquisition date & time"), FIELD_DATE, _T("")}, // 1
-	{CH_FILENAME, _T("filename"), _T("dat file"), FIELD_TEXT, _T("") }, // 2
-	{CH_FILESPK, _T("filespk"), _T("spk file"), FIELD_TEXT, _T("")}, // 3
-	{CH_ACQ_COMMENTS, _T("acq_comment"), _T("comment"), FIELD_TEXT, _T("")}, // 4
-	{CH_MORE, _T("more"), _T("comment"), FIELD_TEXT, _T("")}, // 5
-	{CH_IDINSECT, _T("insectID"), _T("ID insect"), FIELD_LONG, _T("")}, // 6
-	{CH_IDSENSILLUM, _T("sensillumID"), _T("ID sensillum"), FIELD_LONG, _T("")}, // 7
-	{CH_DATALEN, _T("datalen"), _T("data length (n points)"), FIELD_LONG, _T("")}, // 8
-	{CH_NSPIKES, _T("nspikes"), _T("n spikes detected"), FIELD_LONG, _T("")}, // 9
-	{CH_NSPIKECLASSES, _T("nspikeclasses"),_T("n spike classes"), FIELD_LONG, _T("")}, // 10
-	{CH_FLAG, _T("flag"), _T("flag"), FIELD_LONG, _T("")}, // 11
-	{CH_INSECT_ID, _T("insectname_ID"),_T("insect"), FIELD_IND_TEXT, _T("insectname")}, // 12
-	{CH_SENSILLUM_ID, _T("sensillumname_ID"),_T("sensillum"), FIELD_IND_TEXT, _T("sensillumname")}, // 13
-	{CH_OPERATOR_ID, _T("operator_ID"), _T("operator"), FIELD_IND_TEXT, _T("operator")}, // 14
-	{CH_STIM_ID, _T("stim_ID"), _T("compound(1)"), FIELD_IND_TEXT, _T("stim")}, // 15
-	{CH_CONC_ID, _T("conc_ID"), _T("concentration(1)"), FIELD_IND_TEXT, _T("conc")}, // 16
-	{CH_LOCATION_ID, _T("location_ID"), _T("location"), FIELD_IND_TEXT, _T("location")}, // 17
-	{CH_PATH_ID, _T("path_ID"), _T("path (*.dat)"), FIELD_IND_FILEPATH, _T("path")}, // 18
-	{CH_PATH2_ID, _T("path2_ID"), _T("path (*.spk)"), FIELD_IND_FILEPATH, _T("path")}, // 19
-	{CH_STIM2_ID, _T("stim2_ID"), _T("compound(2)"), FIELD_IND_TEXT, _T("stim")}, // 20
-	{CH_CONC2_ID, _T("conc2_ID"), _T("concentration(2)"), FIELD_IND_TEXT, _T("conc")}, // 21
-	{CH_STRAIN_ID, _T("strain_ID"), _T("insect strain"), FIELD_IND_TEXT, _T("strain")}, // 22
-	{CH_SEX_ID, _T("sex_ID"), _T("insect sex"), FIELD_IND_TEXT, _T("sex")}, // 23
-	{CH_REPEAT, _T("repeat"), _T("repeat(1)"), FIELD_LONG, _T("")}, // 24
-	{CH_REPEAT2, _T("repeat2"), _T("repeat(2)"), FIELD_LONG, _T("")}, // 25
-	{CH_ACQDATE_DAY, _T("acqdate_day"), _T("date"), FIELD_DATE_YMD, _T("")}, // 26
-	{CH_ACQDATE_TIME, _T("acqdate_time"), _T("time"), FIELD_DATE_HMS, _T("")}, // 27
-	{CH_EXPT_ID, _T("expt_ID"), _T("Experiment"), FIELD_IND_TEXT, _T("expt")} // 28
+	{COL_ID, _T("ID"), _T("ID record"), FIELD_LONG, _T("")}, // 0
+	{COL_ACQDATE, _T("acq_date"), _T("acquisition date & time"), FIELD_DATE, _T("")}, // 1
+	{COL_FILENAME, _T("filename"), _T("dat file"), FIELD_TEXT, _T("") }, // 2
+	{COL_FILESPK, _T("filespk"), _T("spk file"), FIELD_TEXT, _T("")}, // 3
+	{COL_ACQ_COMMENTS, _T("acq_comment"), _T("comment"), FIELD_TEXT, _T("")}, // 4
+	{COL_MORE, _T("more"), _T("comment"), FIELD_TEXT, _T("")}, // 5
+	{COL_IDINSECT, _T("insectID"), _T("ID insect"), FIELD_LONG, _T("")}, // 6
+	{COL_IDSENSILLUM, _T("sensillumID"), _T("ID sensillum"), FIELD_LONG, _T("")}, // 7
+	{COL_DATALEN, _T("datalen"), _T("data length (n points)"), FIELD_LONG, _T("")}, // 8
+	{COL_NSPIKES, _T("nspikes"), _T("n spikes detected"), FIELD_LONG, _T("")}, // 9
+	{COL_NSPIKECLASSES, _T("nspikeclasses"),_T("n spike classes"), FIELD_LONG, _T("")}, // 10
+	{COL_FLAG, _T("flag"), _T("flag"), FIELD_LONG, _T("")}, // 11
+	{COL_INSECT_ID, _T("insectname_ID"),_T("insect"), FIELD_IND_TEXT, _T("insectname")}, // 12
+	{COL_SENSILLUM_ID, _T("sensillumname_ID"),_T("sensillum"), FIELD_IND_TEXT, _T("sensillumname")}, // 13
+	{COL_OPERATOR_ID, _T("operator_ID"), _T("operator"), FIELD_IND_TEXT, _T("operator")}, // 14
+	{COL_STIM_ID, _T("stim_ID"), _T("compound(1)"), FIELD_IND_TEXT, _T("stim")}, // 15
+	{COL_CONC_ID, _T("conc_ID"), _T("concentration(1)"), FIELD_IND_TEXT, _T("conc")}, // 16
+	{COL_LOCATION_ID, _T("location_ID"), _T("location"), FIELD_IND_TEXT, _T("location")}, // 17
+	{COL_PATH_ID, _T("path_ID"), _T("path (*.dat)"), FIELD_IND_FILEPATH, _T("path")}, // 18
+	{COL_PATH2_ID, _T("path2_ID"), _T("path (*.spk)"), FIELD_IND_FILEPATH, _T("path")}, // 19
+	{COL_STIM2_ID, _T("stim2_ID"), _T("compound(2)"), FIELD_IND_TEXT, _T("stim")}, // 20
+	{COL_CONC2_ID, _T("conc2_ID"), _T("concentration(2)"), FIELD_IND_TEXT, _T("conc")}, // 21
+	{COL_STRAIN_ID, _T("strain_ID"), _T("insect strain"), FIELD_IND_TEXT, _T("strain")}, // 22
+	{COL_SEX_ID, _T("sex_ID"), _T("insect sex"), FIELD_IND_TEXT, _T("sex")}, // 23
+	{COL_REPEAT, _T("repeat"), _T("repeat(1)"), FIELD_LONG, _T("")}, // 24
+	{COL_REPEAT2, _T("repeat2"), _T("repeat(2)"), FIELD_LONG, _T("")}, // 25
+	{COL_ACQDATE_DAY, _T("acqdate_day"), _T("date"), FIELD_DATE_YMD, _T("")}, // 26
+	{COL_ACQDATE_TIME, _T("acqdate_time"), _T("time"), FIELD_DATE_HMS, _T("")}, // 27
+	{COL_EXPT_ID, _T("expt_ID"), _T("Experiment"), FIELD_IND_TEXT, _T("expt")} // 28
 };
 
 CdbTable::CdbTable() 
@@ -557,14 +557,20 @@ CString CdbTable::get_file_path(const int i_id)
 
 CString CdbTable::get_relative_path_from_string(const CString& cs_path) const
 {
-	TCHAR sz_out[MAX_PATH] = _T("");
+	char sz_out[MAX_PATH] = "";
 	if (cs_path.IsEmpty())
 		return cs_path;
 
-	const auto flag = PathRelativePathTo(sz_out, 
-										m_database_path, FILE_ATTRIBUTE_DIRECTORY, 
-										cs_path, FILE_ATTRIBUTE_DIRECTORY);
-	CString cs_out = sz_out;
+	const CStringA str_from(m_database_path);
+	const LPCSTR psz_from = str_from;
+	const CStringA str_to(cs_path);
+	const LPCSTR psz_to = str_to;
+	const auto flag = PathRelativePathToA(sz_out, 
+									psz_from, 
+									FILE_ATTRIBUTE_DIRECTORY, 
+									psz_to, 
+									FILE_ATTRIBUTE_DIRECTORY);
+	CString cs_out (sz_out);
 	if (!flag)
 		cs_out.Empty();
 
@@ -575,6 +581,7 @@ long CdbTable::get_relative_path_from_id(const long i_id)
 {
 	long new_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
+	
 	if (!is_relative_path(cs_path))
 	{
 		const auto cs_relative_path = get_relative_path_from_string(cs_path);
@@ -593,6 +600,16 @@ void CdbTable::convert_path_to_relative_path(const long i_col_path)
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
+	CDaoFieldInfo fieldInfo;
+	DWORD dwInfoOptions = AFX_DAO_PRIMARY_INFO;
+	m_mainTableSet.GetFieldInfo(i_col_path, fieldInfo, dwInfoOptions);
+
+	// TODO: check if path is ok
+	CString file_path0 = get_file_path(m_mainTableSet.m_path_ID);
+	CString file_path1 = get_file_path(path_id);
+	CString file_path2 = m_pathSet.GetStringFromID(path_id);
+
+	
 	const auto i_id = get_relative_path_from_id(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
@@ -613,8 +630,8 @@ void CdbTable::set_path_relative()
 	{
 		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
-		constexpr auto i_col_path = CH_PATH_ID - 1;
-		constexpr auto i_col_path2 = CH_PATH2_ID - 1;
+		const auto i_col_path = m_desctab[CH_PATH_ID].column_number;
+		const auto i_col_path2 = m_desctab[CH_PATH2_ID].column_number;
 		
 		while (!m_mainTableSet.IsEOF())
 		{
@@ -662,7 +679,7 @@ long CdbTable::get_absolute_path_from_id(const long i_id)
 	return new_id;
 }
 
-void CdbTable::convert_path_to_absolute_path(const int i_col_path)
+void CdbTable::convert_to_absolute_path(const int i_col_path)
 {
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
@@ -692,8 +709,8 @@ void CdbTable::set_path_absolute()
 		
 		while (!m_mainTableSet.IsEOF())
 		{
-			convert_path_to_absolute_path(col_path);
-			convert_path_to_absolute_path(col_path2);
+			convert_to_absolute_path(col_path);
+			convert_to_absolute_path(col_path2);
 			m_mainTableSet.MoveNext();
 		}
 		m_mainTableSet.SetBookmark(ol);

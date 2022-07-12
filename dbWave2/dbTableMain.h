@@ -1,6 +1,36 @@
 #pragma once
 #include "dbTableColumnDescriptor.h"
 
+constexpr auto COL_ID = 0;		// 0
+constexpr auto COL_FILENAME = 1;  // 2
+constexpr auto COL_FILESPK = 2;		// 3
+constexpr auto COL_ACQDATE = 3;	// 1
+constexpr auto COL_ACQ_COMMENTS = 4;	// 4
+constexpr auto COL_IDINSECT = 5;		// 6
+constexpr auto COL_IDSENSILLUM = 6;		// 7
+constexpr auto COL_MORE = 7;		// 5
+constexpr auto COL_INSECT_ID = 8;		// 12
+constexpr auto COL_LOCATION_ID = 9;		// 17
+constexpr auto COL_OPERATOR_ID = 10;		// 14
+constexpr auto COL_SENSILLUM_ID = 11;		// 13
+constexpr auto COL_PATH_ID = 12;		// 18
+constexpr auto COL_PATH2_ID = 13;		// 19
+constexpr auto COL_DATALEN = 14;		// 8
+constexpr auto COL_NSPIKES = 15;		// 9
+constexpr auto COL_NSPIKECLASSES = 16;		// 10
+constexpr auto COL_STIM_ID = 17;		// 15
+constexpr auto COL_CONC_ID = 18;		// 16
+constexpr auto COL_STIM2_ID = 19;		// 20
+constexpr auto COL_CONC2_ID = 20;		// 21
+constexpr auto COL_FLAG = 21;		// 11
+constexpr auto COL_STRAIN_ID = 22;		// 22
+constexpr auto COL_SEX_ID = 23;		// 23
+constexpr auto COL_REPEAT = 24;		// 24
+constexpr auto COL_REPEAT2 = 25;		// 25
+constexpr auto COL_ACQDATE_DAY = 26;		// 26
+constexpr auto COL_ACQDATE_TIME = 27;		// 27
+constexpr auto COL_EXPT_ID = 28;		// 28
+
 constexpr auto CH_ID = 0;
 constexpr auto CH_ACQDATE = 1;
 constexpr auto CH_FILENAME = 2;
@@ -35,7 +65,6 @@ constexpr auto CH_REPEAT2 = 25;
 constexpr auto CH_ACQDATE_DAY = 26;
 constexpr auto CH_ACQDATE_TIME = 27;
 constexpr auto CH_EXPT_ID = 28;
-
 constexpr int NCOLUMNS = 30;
 
 #pragma warning(disable : 4995)

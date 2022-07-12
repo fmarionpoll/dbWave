@@ -82,40 +82,40 @@ void SpikeClass::Serialize(CArchive& ar)
 			for (auto i = 0; i < buffer_total_size; i++)
 			{
 				ar >> w1;
-				*(m_class_buffer + i) = w1;
+				*(m_class_buffer + i) = static_cast<short>(w1);
 			}
 		}
 	}
 }
 
-BOOL SpikeClass::SizeNclasses(int nclasses, int spikesize)
+BOOL SpikeClass::SizeNclasses(const int n_classes, const int spike_size)
 {
-	if (nclasses * spikesize == 0)
+	if (n_classes * spike_size == 0)
 		return FALSE;
 
 	auto b_ret = FALSE;
-	const auto wsize = nclasses * spikesize * sizeof(short);
-	const auto isize = nclasses * sizeof(int);
+	const auto w_size = n_classes * spike_size * sizeof(short);
+	const auto i_size = n_classes * sizeof(int);
 	short* p_rw_buffer;
 	int* p_e_array;
 
 	if (m_class_buffer == nullptr)
 	{
-		p_rw_buffer = static_cast<short*>(malloc(wsize));
-		p_e_array = static_cast<int*>(malloc(isize));
+		p_rw_buffer = static_cast<short*>(malloc(w_size));
+		p_e_array = static_cast<int*>(malloc(i_size));
 	}
 	else
 	{
-		p_rw_buffer = static_cast<short*>(realloc(m_class_buffer, wsize));
-		p_e_array = static_cast<int*>(realloc(m_elements_array, isize));
+		p_rw_buffer = static_cast<short*>(realloc(m_class_buffer, w_size));
+		p_e_array = static_cast<int*>(realloc(m_elements_array, i_size));
 	}
 
 	if (p_rw_buffer != nullptr && p_e_array != nullptr)
 	{
 		m_class_buffer = p_rw_buffer;
 		m_elements_array = p_e_array;
-		m_n_classes = nclasses;
-		m_spike_size = spikesize;
+		m_n_classes = n_classes;
+		m_spike_size = spike_size;
 		b_ret = TRUE;
 	}
 

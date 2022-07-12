@@ -12,7 +12,7 @@ protected:
 	short* m_class_buffer = nullptr;		// pointer to the buffer
 	int m_EArraySize = 0;
 	int* m_elements_array = nullptr;		// array of class elemt
-	BOOL SizeNclasses(int nclasses, int spikesize);
+	BOOL SizeNclasses(int n_classes, int spike_size);
 
 public:
 	void EraseData();

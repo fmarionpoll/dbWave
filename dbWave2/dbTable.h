@@ -81,7 +81,7 @@ public:
 
 	CString get_absolute_path_from_string(const CString& cs_path) const;
 	long get_absolute_path_from_id(long i_id);
-	void convert_path_to_absolute_path(int i_col_path);
+	void convert_to_absolute_path(int i_col_path);
 	void set_path_absolute();
 
 	BOOL MoveRecord(UINT nIDMoveCommand);
