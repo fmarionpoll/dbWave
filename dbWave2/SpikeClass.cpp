@@ -46,16 +46,18 @@ void SpikeClass::Serialize(CArchive& ar)
 		ar << m_buffer_size;
 
 		// store array
-		for (auto i = 0; i < m_n_classes; i++)
-		{
-			ar << static_cast<WORD>(*(m_elements_array + i));
+		if (m_elements_array != nullptr) {
+			for (auto i = 0; i < m_n_classes; i++)
+				ar << static_cast<WORD>(*(m_elements_array + i));
 		}
 
 		// store buffer
 		const int buffer_total_size = m_n_classes * m_spike_size;
-		for (auto i = 0; i < buffer_total_size; i++)
-		{
-			ar << static_cast<WORD>(*(m_class_buffer + i));
+		if (m_class_buffer != nullptr) {
+			for (auto i = 0; i < buffer_total_size; i++)
+			{
+				ar << static_cast<WORD>(*(m_class_buffer + i));
+			}
 		}
 	}
 	else
@@ -67,15 +69,21 @@ void SpikeClass::Serialize(CArchive& ar)
 		SizeNclasses(w1, w2);
 
 		// load array
-		for (auto i = 0; i < m_n_classes; i++)
-		{
-			ar >> w1; *(m_elements_array + i) = w1;
+		if (m_elements_array != nullptr) {
+			for (auto i = 0; i < m_n_classes; i++)
+			{
+				ar >> w1;
+				*(m_elements_array + i) = w1;
+			}
 		}
 
 		const int buffer_total_size = m_n_classes * m_spike_size;
-		for (auto i = 0; i < buffer_total_size; i++)
-		{
-			ar >> w1; *(m_class_buffer + i) = w1;
+		if (m_class_buffer != nullptr) {
+			for (auto i = 0; i < buffer_total_size; i++)
+			{
+				ar >> w1;
+				*(m_class_buffer + i) = w1;
+			}
 		}
 	}
 }

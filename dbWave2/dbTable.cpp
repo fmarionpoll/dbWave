@@ -78,7 +78,7 @@ void CdbTable::SetAttachedTablesNames()
 
 }
 
-boolean CdbTable::CreateRelationsWithAttachedTables(CString csTable)
+boolean CdbTable::CreateRelationsWithAttachedTables(const CString& csTable)
 {
 	// create relations
 	const long l_attr = dbRelationDontEnforce; //dbRelationUpdateCascade;
@@ -108,7 +108,7 @@ CdbTable::~CdbTable()
 	CloseDatabase();
 }
 
-BOOL CdbTable::CreateMainTable(CString csTable)
+BOOL CdbTable::CreateMainTable(const CString& csTable)
 {
 	CDaoTableDef table_def(this);
 	table_def.Create(csTable);
@@ -547,10 +547,10 @@ BOOL CdbTable::MoveToID(const long record_id)
 	return TRUE;
 }
 
-CString CdbTable::GetFilePath(const int i_id)
+CString CdbTable::get_file_path(const int i_id)
 {
 	auto cs_path = m_pathSet.GetStringFromID(i_id);
-	if (IsRelativePath(cs_path))
+	if (is_relative_path(cs_path))
 		cs_path = m_database_path + cs_path;
 	return cs_path;
 }
@@ -571,11 +571,11 @@ CString CdbTable::get_relative_path_from_string(const CString& cs_path) const
 	return cs_out;
 }
 
-long CdbTable::get_relative_path_from_ID(const long i_id)
+long CdbTable::get_relative_path_from_id(const long i_id)
 {
 	long new_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
-	if (!IsRelativePath(cs_path))
+	if (!is_relative_path(cs_path))
 	{
 		const auto cs_relative_path = get_relative_path_from_string(cs_path);
 		if (!cs_relative_path.IsEmpty())
@@ -593,7 +593,7 @@ void CdbTable::convert_path_to_relative_path(const long i_col_path)
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
-	const auto i_id = get_relative_path_from_ID(path_id);
+	const auto i_id = get_relative_path_from_id(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
 		m_mainTableSet.Edit();
@@ -605,7 +605,6 @@ void CdbTable::convert_path_to_relative_path(const long i_col_path)
 
 void CdbTable::set_path_relative()
 {
-	//const auto cs_origin = GetDataBasePath();
 	ASSERT(m_mainTableSet.CanBookmark()); 
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
 		return;
@@ -632,7 +631,7 @@ void CdbTable::set_path_relative()
 	}
 }
 
-CString CdbTable::get_absolute_path_from_string(CString cs_path)
+CString CdbTable::get_absolute_path_from_string(const CString& cs_path) const
 {
 	TCHAR sz_out[MAX_PATH] = _T("");
 	if (cs_path.IsEmpty())
@@ -646,11 +645,11 @@ CString CdbTable::get_absolute_path_from_string(CString cs_path)
 	return cs_out;
 }
 
-long CdbTable::get_absolute_path_from_ID(const long i_id)
+long CdbTable::get_absolute_path_from_id(const long i_id)
 {
 	long new_id = -1;
 	const auto cs_path = m_pathSet.GetStringFromID(i_id);
-	if (IsRelativePath(cs_path))
+	if (is_relative_path(cs_path))
 	{
 		const auto cs_absolute_path = get_absolute_path_from_string(cs_path);
 		if (!cs_absolute_path.IsEmpty())
@@ -668,7 +667,7 @@ void CdbTable::convert_path_to_absolute_path(const int i_col_path)
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
-	const auto i_id = get_absolute_path_from_ID(path_id);
+	const auto i_id = get_absolute_path_from_id(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
 		m_mainTableSet.Edit();
@@ -718,7 +717,7 @@ CString CdbTable::GetDatFilenameFromCurrentRecord()
 	filename.Empty();
 	if (!m_mainTableSet.IsFieldNull(&m_mainTableSet.m_Filedat) && !m_mainTableSet.m_Filedat.IsEmpty())
 	{
-		filename = GetFilePath(m_mainTableSet.m_path_ID) + '\\' + m_mainTableSet.m_Filedat;
+		filename = get_file_path(m_mainTableSet.m_path_ID) + '\\' + m_mainTableSet.m_Filedat;
 	}
 	return filename;
 }
@@ -737,7 +736,7 @@ CString CdbTable::GetSpkFilenameFromCurrentRecord()
 			m_mainTableSet.m_path2_ID = m_mainTableSet.m_path_ID;
 			m_mainTableSet.Update();
 		}
-		filename = GetFilePath(m_mainTableSet.m_path2_ID) + '\\' + m_mainTableSet.m_Filespk;
+		filename = get_file_path(m_mainTableSet.m_path2_ID) + '\\' + m_mainTableSet.m_Filespk;
 	}
 	return filename;
 }
@@ -1135,7 +1134,7 @@ void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_ta
 	}
 }
 
-void CdbTable::CompactDataBase(CString file_name, CString file_name_new)
+void CdbTable::CompactDataBase(const CString& file_name, const CString& file_name_new)
 {
 	// compact database and save new file
 	CDaoWorkspace::CompactDatabase(file_name, file_name_new, dbLangGeneral, 0);

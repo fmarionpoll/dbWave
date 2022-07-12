@@ -356,7 +356,7 @@ BOOL CSpikeDoc::OnOpenDocument(LPCTSTR pszPathName)
 		catch (CArchiveException* e)
 		{
 			e->Delete();
-			b_read = FALSE;
+			//b_read = FALSE;
 		}
 	}
 	else

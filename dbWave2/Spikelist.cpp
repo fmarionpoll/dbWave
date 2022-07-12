@@ -38,7 +38,9 @@ void SpikeList::Serialize(CArchive& ar)
 		if (cs_id == ID_string)
 		{
 			WORD version; ar >> version;
-			if (version == 7 || version == 6)
+			if (version == 7) 
+				serialize_version7(ar);
+			else if (version == 6)
 				serialize_version7(ar);
 			else if (version == 5)
 				read_file_version5(ar);

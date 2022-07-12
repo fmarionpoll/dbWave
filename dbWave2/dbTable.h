@@ -49,7 +49,7 @@ public:
 	void Attach(CString* pstrData, CString* pstrSpk);
 
 	// operations
-	BOOL CreateMainTable(CString cs);
+	BOOL CreateMainTable(const CString& cs);
 	void CreateTables();
 	BOOL OpenTables();
 	void add_column_28(CDaoTableDef& table_def, const CString& cs_table, long l_attr);
@@ -70,18 +70,18 @@ public:
 	CString GetSpkFilenameFromCurrentRecord();
 
 	// operations on main table
-	BOOL MoveToID(long recordID);
-	CString GetFilePath(int ID);
-	BOOL IsRelativePath(CString cspath) { return (cspath[0] == '.'); }
+	BOOL MoveToID(long record_id);
+	CString get_file_path(int i_id);
+	static BOOL is_relative_path(const CString& cs_path) { return (cs_path[0] == '.'); }
 
-	CString get_relative_path_from_string(const CString& csAbsolutePath) const;
-	long get_relative_path_from_ID(long iID);
-	void convert_path_to_relative_path(long icol);
+	CString get_relative_path_from_string(const CString& cs_path) const;
+	long get_relative_path_from_id(long i_id);
+	void convert_path_to_relative_path(long i_col_path);
 	void set_path_relative();
 
-	CString get_absolute_path_from_string(CString csPath);
-	long get_absolute_path_from_ID(long iID);
-	void convert_path_to_absolute_path(int icolpath);
+	CString get_absolute_path_from_string(const CString& cs_path) const;
+	long get_absolute_path_from_id(long i_id);
+	void convert_path_to_absolute_path(int i_col_path);
 	void set_path_absolute();
 
 	BOOL MoveRecord(UINT nIDMoveCommand);
@@ -110,11 +110,11 @@ public:
 	void TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* pIndexTable, int column1, int column2);
-	static void CompactDataBase(CString file_name, CString file_name_new);
+	static void CompactDataBase(const CString& file_name, const CString& file_name_new);
 
 protected:
 	BOOL CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbTableAssociated* plink);
 	BOOL CreateRelationwith2AssocTables(LPCTSTR lpszForeignTable, int icol1, int icol2);
 	void SetAttachedTablesNames();
-	boolean CreateRelationsWithAttachedTables(CString csTable);
+	boolean CreateRelationsWithAttachedTables(const CString& csTable);
 };
