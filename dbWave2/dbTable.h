@@ -76,12 +76,12 @@ public:
 
 	CString get_relative_path_from_string(const CString& csAbsolutePath) const;
 	long get_relative_path_from_ID(long iID);
-	void convert_path_to_relative_path(long icol, CString cs_origin);
+	void convert_path_to_relative_path(long icol);
 	void set_path_relative();
 
 	CString get_absolute_path_from_string(CString csPath);
 	long get_absolute_path_from_ID(long iID);
-	void convert_path_to_absolute_path(int icolpath, CString cs_origin);
+	void convert_path_to_absolute_path(int icolpath);
 	void set_path_absolute();
 
 	BOOL MoveRecord(UINT nIDMoveCommand);

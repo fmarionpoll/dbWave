@@ -561,8 +561,9 @@ CString CdbTable::get_relative_path_from_string(const CString& cs_path) const
 	if (cs_path.IsEmpty())
 		return cs_path;
 
-	const auto flag = PathRelativePathTo(sz_out, m_database_path, FILE_ATTRIBUTE_DIRECTORY, cs_path,
-	                                     FILE_ATTRIBUTE_DIRECTORY);
+	const auto flag = PathRelativePathTo(sz_out, 
+										m_database_path, FILE_ATTRIBUTE_DIRECTORY, 
+										cs_path, FILE_ATTRIBUTE_DIRECTORY);
 	CString cs_out = sz_out;
 	if (!flag)
 		cs_out.Empty();
@@ -587,7 +588,7 @@ long CdbTable::get_relative_path_from_ID(const long i_id)
 	return new_id;
 }
 
-void CdbTable::convert_path_to_relative_path(const long i_col_path, const CString cs_origin)
+void CdbTable::convert_path_to_relative_path(const long i_col_path)
 {
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
@@ -604,24 +605,22 @@ void CdbTable::convert_path_to_relative_path(const long i_col_path, const CStrin
 
 void CdbTable::set_path_relative()
 {
-	const auto cs_origin = GetDataBasePath();
+	//const auto cs_origin = GetDataBasePath();
+	ASSERT(m_mainTableSet.CanBookmark()); 
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
 		return;
-
-	ASSERT(m_mainTableSet.CanBookmark());
+	
 	try
 	{
 		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
 		constexpr auto i_col_path = CH_PATH_ID - 1;
-		// m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH_ID].header_name);
 		constexpr auto i_col_path2 = CH_PATH2_ID - 1;
-		//  m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH2_ID].header_name);
-
+		
 		while (!m_mainTableSet.IsEOF())
 		{
-			convert_path_to_relative_path(i_col_path, cs_origin);
-			convert_path_to_relative_path(i_col_path2, cs_origin);
+			convert_path_to_relative_path(i_col_path);
+			convert_path_to_relative_path(i_col_path2);
 			m_mainTableSet.MoveNext();
 		}
 		m_mainTableSet.SetBookmark(ol);
@@ -664,13 +663,13 @@ long CdbTable::get_absolute_path_from_ID(const long i_id)
 	return new_id;
 }
 
-void CdbTable::convert_path_to_absolute_path(const int i_col_path, const CString cs_origin)
+void CdbTable::convert_path_to_absolute_path(const int i_col_path)
 {
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
 	const auto i_id = get_absolute_path_from_ID(path_id);
-	if (/*i_id != path_id &&*/ i_id != -1)
+	if (i_id != path_id && i_id != -1)
 	{
 		m_mainTableSet.Edit();
 		var_value.lVal = i_id;
@@ -681,24 +680,21 @@ void CdbTable::convert_path_to_absolute_path(const int i_col_path, const CString
 
 void CdbTable::set_path_absolute()
 {
-	const auto cs_origin = GetDataBasePath();
+	ASSERT(m_mainTableSet.CanBookmark());
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
 		return;
 
-	ASSERT(m_mainTableSet.CanBookmark());
 	try
 	{
 		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
 		constexpr auto col_path = CH_PATH_ID - 1;
-		// m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH_ID].header_name);
 		constexpr auto col_path2 = CH_PATH2_ID - 1;
-		//  m_mainTableSet.GetColumnIndex(m_mainTableSet.m_desc[CH_PATH2_ID].header_name);
-
+		
 		while (!m_mainTableSet.IsEOF())
 		{
-			convert_path_to_absolute_path(col_path, cs_origin);
-			convert_path_to_absolute_path(col_path2, cs_origin);
+			convert_path_to_absolute_path(col_path);
+			convert_path_to_absolute_path(col_path2);
 			m_mainTableSet.MoveNext();
 		}
 		m_mainTableSet.SetBookmark(ol);
