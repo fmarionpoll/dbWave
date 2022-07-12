@@ -34,9 +34,9 @@ int DataListCtrl::m_column_format[] = {
 
 int DataListCtrl::m_column_index[] = {
 	0,
-	COL_INDEX, COL_CURVE, COL_INSECT, COL_SENSI,
-	COL_STIM1, COL_CONC1, COL_STIM2, COL_CONC2,
-	COL_NBSPK, COL_FLAG
+	CTRL_COL_INDEX, CTRL_COL_CURVE, CTRL_COL_INSECT, CTRL_COL_SENSI,
+	CTRL_COL_STIM1, CTRL_COL_CONC1, CTRL_COL_STIM2, CTRL_COL_CONC2,
+	CTRL_COL_NBSPK, CTRL_COL_FLAG
 };
 
 BEGIN_MESSAGE_MAP(DataListCtrl, CListCtrl)
@@ -140,7 +140,7 @@ void DataListCtrl::InitColumns(CUIntArray* width_columns)
 		InsertColumn(i, m_column_headers[i], m_column_format[i], m_column_width[i], -1);
 	}
 
-	m_image_width = m_column_width[COL_CURVE];
+	m_image_width = m_column_width[CTRL_COL_CURVE];
 	m_image_list.Create(m_image_width, m_image_height, ILC_COLOR4, 10, 10);
 	SetImageList(&m_image_list, LVSIL_SMALL);
 }
@@ -198,25 +198,25 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 		auto flag = TRUE;
 		switch (item->iSubItem)
 		{
-		case COL_CURVE: flag = FALSE;
+		case CTRL_COL_CURVE: flag = FALSE;
 			break;
-		case COL_INDEX: cs.Format(_T("%i"), row->index);
+		case CTRL_COL_INDEX: cs.Format(_T("%i"), row->index);
 			break;
-		case COL_INSECT: cs.Format(_T("%i"), row->insectID);
+		case CTRL_COL_INSECT: cs.Format(_T("%i"), row->insectID);
 			break;
-		case COL_SENSI: cs = row->csSensillumname;
+		case CTRL_COL_SENSI: cs = row->csSensillumname;
 			break;
-		case COL_STIM1: cs = row->csStim1;
+		case CTRL_COL_STIM1: cs = row->csStim1;
 			break;
-		case COL_CONC1: cs = row->csConc1;
+		case CTRL_COL_CONC1: cs = row->csConc1;
 			break;
-		case COL_STIM2: cs = row->csStim2;
+		case CTRL_COL_STIM2: cs = row->csStim2;
 			break;
-		case COL_CONC2: cs = row->csConc2;
+		case CTRL_COL_CONC2: cs = row->csConc2;
 			break;
-		case COL_NBSPK: cs = row->csNspk;
+		case CTRL_COL_NBSPK: cs = row->csNspk;
 			break;
-		case COL_FLAG: cs = row->csFlag;
+		case CTRL_COL_FLAG: cs = row->csFlag;
 			break;
 		default: flag = FALSE;
 			break;
@@ -227,7 +227,7 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 
 	// display images
 	if (item->mask & LVIF_IMAGE
-		&& item->iSubItem == COL_CURVE)
+		&& item->iSubItem == CTRL_COL_CURVE)
 		item->iImage = i_cache_index;
 }
 
@@ -677,9 +677,9 @@ void DataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, int iImage)
 
 void DataListCtrl::ResizeSignalColumn(const int n_pixels)
 {
-	m_column_width[COL_CURVE] = n_pixels;
+	m_column_width[CTRL_COL_CURVE] = n_pixels;
 	m_image_list.DeleteImageList();
-	m_image_width = m_column_width[COL_CURVE];
+	m_image_width = m_column_width[CTRL_COL_CURVE];
 	m_image_list.Create(m_image_width, m_image_height, ILC_COLOR4, 10, 10);
 	SetImageList(&m_image_list, LVSIL_SMALL);
 	m_image_list.SetImageCount(ptr_rows.GetSize());
@@ -701,11 +701,11 @@ void DataListCtrl::FitColumnsToSize(int n_pixels)
 	{
 		fixed_width += i;
 	}
-	fixed_width -= m_column_width[COL_CURVE];
+	fixed_width -= m_column_width[CTRL_COL_CURVE];
 	const auto signal_column_width = n_pixels - fixed_width;
-	if (signal_column_width != m_column_width[COL_CURVE] && signal_column_width > 2)
+	if (signal_column_width != m_column_width[CTRL_COL_CURVE] && signal_column_width > 2)
 	{
-		SetColumnWidth(COL_CURVE, signal_column_width);
+		SetColumnWidth(CTRL_COL_CURVE, signal_column_width);
 		ResizeSignalColumn(signal_column_width);
 	}
 }

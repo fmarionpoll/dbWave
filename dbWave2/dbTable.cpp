@@ -630,8 +630,8 @@ void CdbTable::set_path_relative()
 	{
 		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
-		const auto i_col_path = m_desctab[CH_PATH_ID].column_number;
-		const auto i_col_path2 = m_desctab[CH_PATH2_ID].column_number;
+		const auto i_col_path = m_desctab[CH_PATH_ID+1].column_number;
+		const auto i_col_path2 = m_desctab[CH_PATH2_ID+1].column_number;
 		
 		while (!m_mainTableSet.IsEOF())
 		{

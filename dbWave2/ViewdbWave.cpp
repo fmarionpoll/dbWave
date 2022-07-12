@@ -457,23 +457,23 @@ void ViewdbWave::OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto pdb_doc = GetDocument();
 	switch (pNMLV->iSubItem)
 	{
-	case COL_CURVE: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_DATALEN].header_name;
+	case CTRL_COL_CURVE: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_DATALEN].header_name;
 		break; // datalen
-	case COL_INDEX: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_ID].header_name;
+	case CTRL_COL_INDEX: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_ID].header_name;
 		break; // ID
-	case COL_SENSI: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_SENSILLUM_ID].header_name;
+	case CTRL_COL_SENSI: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_SENSILLUM_ID].header_name;
 		break; // sensillum_ID
-	case COL_STIM1: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM_ID].header_name;
+	case CTRL_COL_STIM1: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM_ID].header_name;
 		break; // stim_ID
-	case COL_CONC1: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC_ID].header_name;
+	case CTRL_COL_CONC1: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC_ID].header_name;
 		break; // conc_ID
-	case COL_STIM2: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM2_ID].header_name;
+	case CTRL_COL_STIM2: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM2_ID].header_name;
 		break; // stim2_ID
-	case COL_CONC2: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC2_ID].header_name;
+	case CTRL_COL_CONC2: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC2_ID].header_name;
 		break; // conc2_ID
-	case COL_NBSPK: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_NSPIKES].header_name;
+	case CTRL_COL_NBSPK: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_NSPIKES].header_name;
 		break; // nspikes
-	case COL_FLAG: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_FLAG].header_name;
+	case CTRL_COL_FLAG: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_FLAG].header_name;
 		break; // flag
 	default:
 		break;
@@ -542,7 +542,7 @@ void ViewdbWave::OnBnClickedCheckfilename()
 void ViewdbWave::OnHdnEndtrackListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
-	if (phdr->iItem == COL_CURVE)
+	if (phdr->iItem == CTRL_COL_CURVE)
 		m_dataListCtrl.ResizeSignalColumn(phdr->pitem->cxy);
 	*pResult = 0;
 }
