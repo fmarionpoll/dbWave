@@ -90,6 +90,7 @@ public:
 
 protected:
 	static numberIDToText headers[];
+
 	BOOL	transpose_file_for_excel(CSharedFile* pSF);
 	sourceData get_wave_format_from_either_file(CString cs_filename);
 	void	set_record_file_names(sourceData* record);
@@ -107,7 +108,7 @@ protected:
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
 	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns,
 	                             boolean bHeader);
-	int		find_header(CString& text);
+	int		find_header(const CString& text);
 	void	remove_file_from_disk(CString file_name);
 
 	// Overrides
@@ -151,10 +152,8 @@ public:
 	BOOL	DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
 	BOOL	DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
 	BOOL	DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
-	void	 DBRefreshQuery() const {
-		if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
-		m_pDB->m_mainTableSet.RefreshQuery();
-	}
+	void	DBRefreshQuery() const { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
+								m_pDB->m_mainTableSet.RefreshQuery(); }
 
 protected:
 	BOOL	OpenDatabase(LPCTSTR lpszPathName);

@@ -149,7 +149,7 @@ public:
 	BOOL CheckIfAcqDateTimeIsUnique(COleDateTime* ptime);
 	void GetMaxIDs();
 	BOOL FindIDinColumn(long iID, int icolumn);
-	int GetColumnIndex(CString csName);
+	int	 GetColumnIndex(CString csName);
 
 	void BuildFilters();
 	void ClearFilters();

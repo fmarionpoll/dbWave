@@ -255,7 +255,7 @@ CString CdbTable::GetDataBasePath()
 
 void CdbTable::SetDataBasePath()
 {
-	auto filename = GetName();
+	const auto filename = GetName();
 	const auto last_slash = filename.ReverseFind('\\');
 	m_database_path = filename.Left(last_slash + 1);
 	m_database_path.MakeLower();
@@ -529,24 +529,6 @@ void CdbTable::UpdateTables()
 		m_exptSet.Update();
 }
 
-BOOL CdbTable::MoveToID(const long record_id)
-{
-	CString str;
-	str.Format(_T("ID=%li"), record_id);
-	try
-	{
-		if (!m_mainTableSet.FindFirst(str))
-			return FALSE;
-	}
-	catch (CDaoException* e)
-	{
-		DisplayDaoException(e, 36);
-		e->Delete();
-	}
-	GetFilenamesFromCurrentRecord();
-	return TRUE;
-}
-
 CString CdbTable::get_file_path(const int i_id)
 {
 	auto cs_path = m_pathSet.GetStringFromID(i_id);
@@ -600,16 +582,7 @@ void CdbTable::convert_path_to_relative_path(const long i_col_path)
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
-	CDaoFieldInfo fieldInfo;
-	DWORD dwInfoOptions = AFX_DAO_PRIMARY_INFO;
-	m_mainTableSet.GetFieldInfo(i_col_path, fieldInfo, dwInfoOptions);
 
-	// TODO: check if path is ok
-	CString file_path0 = get_file_path(m_mainTableSet.m_path_ID);
-	CString file_path1 = get_file_path(path_id);
-	CString file_path2 = m_pathSet.GetStringFromID(path_id);
-
-	
 	const auto i_id = get_relative_path_from_id(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
@@ -630,8 +603,8 @@ void CdbTable::set_path_relative()
 	{
 		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
-		const auto i_col_path = m_desctab[CH_PATH_ID+1].column_number;
-		const auto i_col_path2 = m_desctab[CH_PATH2_ID+1].column_number;
+		const auto i_col_path = m_mainTableSet.GetColumnIndex(_T("path_ID"));
+		const auto i_col_path2 = m_mainTableSet.GetColumnIndex(_T("path2_ID"));
 		
 		while (!m_mainTableSet.IsEOF())
 		{
@@ -684,6 +657,7 @@ void CdbTable::convert_to_absolute_path(const int i_col_path)
 	COleVariant var_value;
 	m_mainTableSet.GetFieldValue(i_col_path, var_value);
 	const auto path_id = var_value.lVal;
+
 	const auto i_id = get_absolute_path_from_id(path_id);
 	if (i_id != path_id && i_id != -1)
 	{
@@ -704,8 +678,8 @@ void CdbTable::set_path_absolute()
 	{
 		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
-		constexpr auto col_path = CH_PATH_ID - 1;
-		constexpr auto col_path2 = CH_PATH2_ID - 1;
+		const auto col_path = m_mainTableSet.GetColumnIndex(_T("path_ID"));
+		const auto col_path2 = m_mainTableSet.GetColumnIndex(_T("path2_ID"));
 		
 		while (!m_mainTableSet.IsEOF())
 		{
@@ -756,6 +730,24 @@ CString CdbTable::GetSpkFilenameFromCurrentRecord()
 		filename = get_file_path(m_mainTableSet.m_path2_ID) + '\\' + m_mainTableSet.m_Filespk;
 	}
 	return filename;
+}
+
+BOOL CdbTable::MoveToID(const long record_id)
+{
+	CString str;
+	str.Format(_T("ID=%li"), record_id);
+	try
+	{
+		if (!m_mainTableSet.FindFirst(str))
+			return FALSE;
+	}
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 36);
+		e->Delete();
+	}
+	GetFilenamesFromCurrentRecord();
+	return TRUE;
 }
 
 BOOL CdbTable::MoveRecord(UINT nIDMoveCommand)

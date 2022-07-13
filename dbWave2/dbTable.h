@@ -70,7 +70,6 @@ public:
 	CString GetSpkFilenameFromCurrentRecord();
 
 	// operations on main table
-	BOOL MoveToID(long record_id);
 	CString get_file_path(int i_id);
 	static BOOL is_relative_path(const CString& cs_path) { return (cs_path[0] == '.'); }
 
@@ -84,6 +83,7 @@ public:
 	void convert_to_absolute_path(int i_col_path);
 	void set_path_absolute();
 
+	BOOL MoveToID(long record_id);
 	BOOL MoveRecord(UINT nIDMoveCommand);
 	BOOL MoveFirst() { return MoveRecord(ID_RECORD_FIRST); }
 	BOOL MoveNext() { return MoveRecord(ID_RECORD_NEXT); }
@@ -103,8 +103,6 @@ public:
 	BOOL SetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
 	boolean GetRecordValueString(int column_index, CString& output_string);
 	boolean GetRecordValueLong(int column_index, long& value);
-
-
 
 	BOOL ImportRecordfromDatabase(CdbTable* pdbW);
 	void TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format);

@@ -20,8 +20,8 @@ numberIDToText CdbWaveDoc::headers[] = {
 	{5, _T("strain")}, {6, _T("sex")}, {7, _T("location")}, {8, _T("operator")}, {9, _T("more")},
 	{10, _T("stim1")}, {11, _T("conc1")}, {12, _T("repeat1")}, {13, _T("stim2")}, {14, _T("conc2")},
 	{15, _T("repeat2")},
-	{16, _T("type")}, {16, _T("sensillum")},
-	{17, _T("flag")}
+	{16, _T("type")}, {17, _T("sensillum")},
+	{18, _T("flag")}
 };
 
 IMPLEMENT_DYNCREATE(CdbWaveDoc, COleDocument)
@@ -49,7 +49,7 @@ CdbWaveDoc::~CdbWaveDoc()
 	// (it seems it is not possible to erase the file from here)
 	if (m_bClearMdbOnExit)
 	{
-		auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->m_tempMDBfiles.Add(m_dbFilename);
 	}
 }
@@ -58,8 +58,8 @@ void CdbWaveDoc::UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	CDocument::UpdateAllViews(pSender, lHint, pHint);
 	// passes message OnUpdate() to the mainframe and add a reference to the document that sends it
-	auto pmain = static_cast<CMainFrame*>(AfxGetMainWnd());
-	pmain->OnUpdate(reinterpret_cast<CView*>(this), lHint, pHint);
+	const auto mainFrame = static_cast<CMainFrame*>(AfxGetMainWnd());
+	mainFrame->OnUpdate(reinterpret_cast<CView*>(this), lHint, pHint);
 }
 
 // TODO here: ask where data are to be saved (call make directory/explore directory)
@@ -184,8 +184,7 @@ void CdbWaveDoc::Dump(CDumpContext& dc) const
  */
 CdbWaveDoc* CdbWaveDoc::get_doc()
 {
-	CMDIChildWnd* pChild =
-		static_cast<CMDIFrameWnd*>(AfxGetApp()->m_pMainWnd)->MDIGetActive();
+	CMDIChildWnd* pChild = static_cast<CMDIFrameWnd*>(AfxGetApp()->m_pMainWnd)->MDIGetActive();
 
 	if (!pChild)
 		return nullptr;
@@ -245,7 +244,7 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL CdbWaveDoc::OpenDatabase(LPCTSTR lpszPathName)
 {
-	auto tmp_db = new CdbTable;
+	const auto tmp_db = new CdbTable;
 	tmp_db->Attach(&m_currentDatafileName, &m_currentSpikefileName);
 
 	// Attempt to open the new database before replacing our ptr
@@ -506,17 +505,17 @@ CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
 
 long CdbWaveDoc::GetDB_CurrentRecordPosition() const
 {
-	long ifile = -1;
+	long i_file = -1;
 	try
 	{
-		ifile = m_pDB->m_mainTableSet.GetAbsolutePosition();
+		i_file = m_pDB->m_mainTableSet.GetAbsolutePosition();
 	}
 	catch (CDaoException* e)
 	{
 		DisplayDaoException(e, 14);
 		e->Delete();
 	}
-	return ifile;
+	return i_file;
 }
 
 long CdbWaveDoc::GetDB_CurrentRecordID() const
@@ -600,7 +599,7 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 	CString cs_comment;
 	CString cs_file_comment = _T("Analyze file: ");
 	CString cs_dummy;
-	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	const auto p_view_data_options = &(p_app->options_viewdata);
 	const int index_current = GetDB_CurrentRecordPosition();
 	const int n_files = GetDB_NRecords();
@@ -675,7 +674,7 @@ BOOL CdbWaveDoc::CreateDirectories(const CString& path) const
 	}
 	while (f_pos > 0 && b_exists == FALSE);
 
-	// now, newPath should be something like "c:" (if data are on a disk) or "" (if data are on a network like "\\partage" )
+	// now, newPath should be something like "c:" (if data are on a disk) or "" (if data are on a network like "\\folder" )
 	for (auto i = cs_sub_paths.GetUpperBound(); i >= 0; i--)
 	{
 		cs_new_path = cs_new_path + cs_sub_paths.GetAt(i);
@@ -1069,7 +1068,7 @@ sourceData CdbWaveDoc::get_wave_format_from_either_file(CString cs_filename)
 	return record;
 }
 
-int CdbWaveDoc::find_header(CString& text)
+int CdbWaveDoc::find_header(const CString& text)
 {
 	int found = -1;
 	for (int i = 0; i < 18; i++)
@@ -1084,8 +1083,7 @@ int CdbWaveDoc::find_header(CString& text)
 	return found;
 }
 
-void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns,
-                                         boolean bHeader)
+void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns, boolean bHeader)
 {
 	CWaveFormat* p_wave_format = pRecord->p_wave_format;
 	const int index = index_2d_array(irecord, nColumns, bHeader);
@@ -1094,12 +1092,10 @@ void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file
 	{
 		int i_column = i;
 		if (bHeader)
-		{
-			CString text = filenames.GetAt(i);
-			i_column = find_header(text);
-		}
+			i_column = find_header(filenames.GetAt(i));
+		
 		const int index_i_record = index + i;
-		CString cs_item = filenames.GetAt(index_i_record);
+		const CString& cs_item = filenames.GetAt(index_i_record);
 		switch (i_column)
 		{
 		case 1: p_wave_format->cs_comment = cs_item;
@@ -1134,7 +1130,9 @@ void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file
 			break;
 		case 16: p_wave_format->csSensillum = cs_item;
 			break;
-		case 17: p_wave_format->flag = _ttoi(cs_item);
+		case 17: p_wave_format->csADcardName = cs_item; // TODO: check if this is ok
+			break;
+		case 18: p_wave_format->flag = _ttoi(cs_item);
 			break;
 		default:
 			break;
@@ -1206,16 +1204,16 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 	// browse existing database array - collect data file acquisition time and IDs already used
 	m_pDB->m_mainTableSet.GetMaxIDs();
 	long m_id = m_pDB->m_mainTableSet.max_ID;
-	const auto nfilesok = check_files_can_be_opened(fileList, psf, nColumns, bHeader);
+	const auto n_files_ok = check_files_can_be_opened(fileList, psf, nColumns, bHeader);
 
 	// ---------------------------------------------file loop: read infos --------------------------------
 	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
 	dlg.SetPos(0);
-	dlg.SetRange(0, nfilesok);
+	dlg.SetRange(0, n_files_ok);
 
-	for (auto irec = 0; irec < nfilesok; irec++)
+	for (auto irec = 0; irec < n_files_ok; irec++)
 	{
 		// check if user wants to stop and update progression bar
 		if (dlg.CheckCancelButton())
@@ -1225,7 +1223,7 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 		int index = index_2d_array(irec, nColumns, bHeader);
 		auto cs_filename = CString(fileList[index]);
 		CString cs_comment;
-		cs_comment.Format(_T("Import file [%i / %i] %s"), irec + 1, nfilesok, (LPCTSTR)cs_filename);
+		cs_comment.Format(_T("Import file [%i / %i] %s"), irec + 1, n_files_ok, (LPCTSTR)cs_filename);
 		dlg.SetStatus(cs_comment);
 		dlg.StepIt();
 
@@ -1260,7 +1258,7 @@ boolean CdbWaveDoc::import_file_single(CString& cs_filename, long& m_id, int ire
 		getInfosFromStringArray(&record, csArray, irecord, nColumns, bHeader);
 
 	// check data acquisition time - go to next file if already exist and if flag set
-	auto t = record.p_wave_format->acqtime;
+	const auto t = record.p_wave_format->acqtime;
 	COleDateTime o_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 	if (!dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import.bDiscardDuplicateFiles)
@@ -1357,10 +1355,6 @@ BOOL CdbWaveDoc::ExtractFilenamesFromDatabase(const LPCSTR filename, CStringArra
 	CdbTableMain table_set(p_temp_database);
 	CdbTableAssociated path_set(p_temp_database);
 	path_set.Set_DFX_SQL_Names(_T("path"), _T("path"), _T("pathID"));
-	CDaoFieldInfo fieldinfo_filename; // 2
-	CDaoFieldInfo fieldinfo_filespk; // 3
-	CDaoFieldInfo fieldinfo_path_id; // 18
-	CDaoFieldInfo fieldinfo_path2_id; // 19
 	const CString cs_table = _T("table");
 
 	// check for the presence of Table 'table'
@@ -1368,10 +1362,14 @@ BOOL CdbWaveDoc::ExtractFilenamesFromDatabase(const LPCSTR filename, CStringArra
 	{
 		record_set.Open(dbOpenTable, cs_table);
 		// check if column "filename" is present
-		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_FILENAME].header_name, fieldinfo_filename);
-		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_FILESPK].header_name, fieldinfo_filespk);
-		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_PATH_ID].header_name, fieldinfo_path_id);
-		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_PATH2_ID].header_name, fieldinfo_path2_id);
+		CDaoFieldInfo field_info_filename;
+		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_FILENAME].header_name, field_info_filename);
+		CDaoFieldInfo field_info_filespk;
+		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_FILESPK].header_name, field_info_filespk);
+		CDaoFieldInfo field_info_path_id;
+		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_PATH_ID].header_name, field_info_path_id);
+		CDaoFieldInfo field_info_path2_id;
+		record_set.GetFieldInfo(m_pDB->m_mainTableSet.m_desc[CH_PATH2_ID].header_name, field_info_path2_id);
 	}
 
 	catch (CDaoException* e)
