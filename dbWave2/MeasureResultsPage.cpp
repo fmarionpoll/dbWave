@@ -481,14 +481,14 @@ BOOL CMeasureResultsPage::OnInitDialog()
 BOOL CMeasureResultsPage::MeasureParameters()
 {
 	// compute file indexes
-	const int current_file_index = m_pdbDoc->GetDB_CurrentRecordPosition();
+	const int current_file_index = m_pdbDoc->DB_GetCurrentRecordPosition();
 	ASSERT(current_file_index >= 0);
 	auto i_first = current_file_index;
 	auto i_last = i_first;
 	if (m_pMO->bAllFiles)
 	{
 		i_first = 0;
-		i_last = m_pdbDoc->GetDB_NRecords() - 1;
+		i_last = m_pdbDoc->DB_GetNRecords() - 1;
 	}
 
 	// prepare listcontrol
@@ -512,13 +512,13 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		// export Ascii: begin //////////////////////////////////////////////
 		BeginWaitCursor();
 		OutputTitle();
-		m_pdbDoc->set_db_current_record_position(i_first);
-		const CString filename = m_pdbDoc->GetDB_CurrentDatFileName();
+		m_pdbDoc->DB_SetCurrentRecordPosition(i_first);
+		const CString filename = m_pdbDoc->DB_GetCurrentDatFileName();
 		auto* p_vd = new OPTIONS_VIEWDATA;
 		ASSERT(p_vd != NULL);
 		const CString cs_out = _T("**filename\tdate\ttime\tcomment\tchannel\r\n");
 
-		for (auto i = i_first; i <= i_last; i++, m_pdbDoc->DBMoveNext())
+		for (auto i = i_first; i <= i_last; i++, m_pdbDoc->DB_MoveNext())
 		{
 			// open data file
 			m_pdbDoc->OpenCurrentDataFile();
@@ -591,8 +591,8 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		}
 
 		*p_copy = 0;
-		m_pdbDoc->set_db_current_record_position(current_file_index);
-		//CString filename2 = m_pdbDoc->GetDB_CurrentDatFileName();
+		m_pdbDoc->DB_SetCurrentRecordPosition(current_file_index);
+		//CString filename2 = m_pdbDoc->DB_GetCurrentDatFileName();
 		m_pdbDoc->OpenCurrentDataFile();
 		EndWaitCursor(); // it's done
 

@@ -380,7 +380,7 @@ void ViewADcontinuous::SaveAndCloseFile()
 			// if so, skip
 			// otherwise add data file name to the database
 			CdbWaveDoc* pdbDoc = GetDocument();
-			if (m_szFileName.CompareNoCase(pdbDoc->GetDB_CurrentDatFileName(FALSE)) != 0)
+			if (m_szFileName.CompareNoCase(pdbDoc->DB_GetCurrentDatFileName(FALSE)) != 0)
 			{
 				// add document to database
 				m_csNameArray.Add(m_szFileName);
@@ -417,7 +417,7 @@ void ViewADcontinuous::TransferFilesToDatabase()
 	CdbTableMain* pSet = &(GetDocument()->m_pDB->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
-	pdbDoc->set_db_current_record_position(pdbDoc->m_pDB->GetNRecords() - 1);
+	pdbDoc->DB_SetCurrentRecordPosition(pdbDoc->m_pDB->GetNRecords() - 1);
 	pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 

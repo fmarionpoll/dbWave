@@ -113,7 +113,7 @@ void ViewSpikeHist::OnInitialUpdate()
 	// fill controls with initial values
 	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pvdS->ballfiles);
 	if (m_pvdS->ballfiles)
-		m_nfiles = GetDocument()->GetDB_NRecords();
+		m_nfiles = GetDocument()->DB_GetNRecords();
 	else
 		m_nfiles = 1;
 	SetDlgItemInt(IDC_EDITNSTIPERCYCLE, m_pvdS->nstipercycle);
@@ -213,7 +213,7 @@ void ViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 	case HINT_REQUERY:
 		if (m_pvdS->ballfiles)
-			m_nfiles = GetDocument()->GetDB_NRecords();
+			m_nfiles = GetDocument()->DB_GetNRecords();
 		else
 			m_nfiles = 1;
 		break;
@@ -232,7 +232,7 @@ BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 {
 	const auto flag = dbTableView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
-	if (p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
+	if (p_document->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 		return false;
@@ -436,7 +436,7 @@ void ViewSpikeHist::getFileInfos(CString& str_comment)
 			{
 				if (mdPM->bDocName) // print file name
 				{
-					const auto filename = GetDocument()->GetDB_CurrentSpkFileName(FALSE);
+					const auto filename = GetDocument()->DB_GetCurrentSpkFileName(FALSE);
 					str_comment += filename + tab;
 				}
 				if (mdPM->bAcqDateTime) // print data acquisition date & time
@@ -455,7 +455,7 @@ void ViewSpikeHist::OnClickAllfiles()
 	if (static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck())
 	{
 		m_pvdS->ballfiles = TRUE;
-		m_nfiles = GetDocument()->GetDB_NRecords();
+		m_nfiles = GetDocument()->DB_GetNRecords();
 	}
 	else
 	{
@@ -720,7 +720,7 @@ BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 	auto nbrowsperpage = (mdPM->vertRes - 2 * mdPM->topPageMargin) / size_row;
 	auto nfiles = 1;
 	if (m_nfiles == 1)
-		nfiles = GetDocument()->GetDB_NRecords();
+		nfiles = GetDocument()->DB_GetNRecords();
 
 	if (nbrowsperpage == 0) // prevent zero pages
 		nbrowsperpage = 1;
@@ -751,7 +751,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	const auto p_old_font = p_dc->SelectObject(&m_fontPrint);
 
 	m_bPrint = TRUE;
-	const int file0 = GetDocument()->GetDB_CurrentRecordPosition();
+	const int file0 = GetDocument()->DB_GetCurrentRecordPosition();
 
 	// print page footer: file path, page number/total pages, date
 	auto t = CTime::GetCurrentTime(); // current date & time
@@ -759,7 +759,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	cs_footer.Format(_T("  page %d:%d %d-%d-%d"), // page and time infos
 	                 pInfo->m_nCurPage, pInfo->GetMaxPage(),
 	                 t.GetDay(), t.GetMonth(), t.GetYear());
-	CString ch_date = GetDocument()->GetDB_CurrentSpkFileName(FALSE);
+	CString ch_date = GetDocument()->DB_GetCurrentSpkFileName(FALSE);
 	ch_date = ch_date.Left(ch_date.GetLength() - 1) + cs_footer;
 	p_dc->SetTextAlign(TA_CENTER); // and print the footer
 	p_dc->TextOut(mdPM->horzRes / 2, mdPM->vertRes - 57, ch_date);
@@ -780,7 +780,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// prepare file loop
 	auto p_dbwave_doc = GetDocument();
 	/*int nfiles = */
-	p_dbwave_doc->GetDB_NRecords();
+	p_dbwave_doc->DB_GetNRecords();
 	const auto size_row = mdPM->HeightDoc + mdPM->heightSeparator; // size of one row
 	auto nbrowsperpage = pInfo->m_rectDraw.Height() / size_row; // nb of rows per page
 	if (nbrowsperpage == 0)
@@ -789,8 +789,8 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	auto file2 = file1 + nbrowsperpage; // index last file
 	if (m_nfiles != 1) // special case: all together
 		file2 = file1 + 1;
-	if (file2 > p_dbwave_doc->GetDB_NRecords())
-		file2 = p_dbwave_doc->GetDB_NRecords();
+	if (file2 > p_dbwave_doc->DB_GetNRecords())
+		file2 = p_dbwave_doc->DB_GetNRecords();
 
 	// loop through all files
 	for (auto ifile = file1; ifile < file2; ifile++)
@@ -809,7 +809,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		// refresh data if necessary
 		if (m_nfiles == 1) //??? (m_nfiles > 1)
 		{
-			p_dbwave_doc->set_db_current_record_position(ifile);
+			p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
 			buildData();
 		}
 		// print the histogram
@@ -837,7 +837,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	if (p_old_font != nullptr)
 		p_dc->SelectObject(p_old_font);
 
-	p_dbwave_doc->set_db_current_record_position(file0);
+	p_dbwave_doc->DB_SetCurrentRecordPosition(file0);
 	p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
 }
 
@@ -976,7 +976,7 @@ void ViewSpikeHist::buildData()
 	}
 
 	auto p_dbwave_doc = GetDocument();
-	const int currentfile = p_dbwave_doc->GetDB_CurrentRecordPosition(); // index current file
+	const int currentfile = p_dbwave_doc->DB_GetCurrentRecordPosition(); // index current file
 	auto firstfile = currentfile; // index first file in the series
 	auto lastfile = currentfile; // index last file in the series
 
@@ -1014,7 +1014,7 @@ void ViewSpikeHist::buildData()
 		}
 
 		// select spike file
-		p_dbwave_doc->set_db_current_record_position(ifile);
+		p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
 		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
 		if (nullptr == p_spike_doc_)
 			continue;
@@ -1065,9 +1065,9 @@ void ViewSpikeHist::buildData()
 		}
 	}
 
-	if (currentfile != p_dbwave_doc->GetDB_CurrentRecordPosition())
+	if (currentfile != p_dbwave_doc->DB_GetCurrentRecordPosition())
 	{
-		p_dbwave_doc->set_db_current_record_position(currentfile);
+		p_dbwave_doc->DB_SetCurrentRecordPosition(currentfile);
 		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
 		p_spike_doc_->set_spk_list_as_current(currentlist_index);
 	}
@@ -1373,7 +1373,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 
 	// prepare loop / files (stop when no more space is available)
 	auto p_dbwave_doc = GetDocument();
-	const int currentfile = p_dbwave_doc->GetDB_CurrentRecordPosition(); // index current file
+	const int currentfile = p_dbwave_doc->DB_GetCurrentRecordPosition(); // index current file
 	auto firstfile = currentfile; // index first file in the series
 	auto lastfile = firstfile; // index last file in the series
 	if (m_nfiles > 1)
@@ -1388,7 +1388,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	     ifile <= lastfile && row < disp_rect.bottom;
 	     ifile++)
 	{
-		p_dbwave_doc->set_db_current_record_position(ifile);
+		p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
 		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
 		p_spike_doc_->set_spk_list_as_current(currentlist_index);
 
@@ -1536,7 +1536,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 		row += dotlineheight;
 	}
 
-	p_dbwave_doc->set_db_current_record_position(currentfile);
+	p_dbwave_doc->DB_SetCurrentRecordPosition(currentfile);
 	p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
 	p_spike_doc_->set_spk_list_as_current(currentlist_index);
 

@@ -126,33 +126,34 @@ public:
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
 #endif
-	static CdbWaveDoc* get_doc();
+
+	static CdbWaveDoc* get_active_mdi_document();
 
 	// DAO database functions
-	long	GetDB_NRecords() const { return m_pDB->GetNRecords(); }
-	CdbTableMain* GetDB_Recordset() const { return &m_pDB->m_mainTableSet; }
-	void	DBDeleteCurrentRecord();
-	CString GetDB_CurrentDatFileName(BOOL bTest = FALSE);
-	CString GetDB_CurrentSpkFileName(BOOL bTest = FALSE);
-	CString SetDB_CurrentSpikeFileName();
-	void	SetDB_DataLen(long len) const { m_pDB->SetDataLen(len); }
-	long	GetDB_DataLen();
-	void	SetDB_CurrentRecordFlag(int flag) const;
-	int		GetDB_CurrentRecordFlag() const { return m_pDB->m_mainTableSet.m_flag; }
-	void	SetDB_PathsRelative() const;
-	void	SetDB_PathsAbsolute() const;
+	long	DB_GetNRecords() const { return m_pDB->GetNRecords(); }
+	CdbTableMain* DB_GetRecordset() const { return &m_pDB->m_mainTableSet; }
+	void	DB_DeleteCurrentRecord();
+	CString DB_GetCurrentDatFileName(BOOL bTest = FALSE);
+	CString DB_GetCurrentSpkFileName(BOOL bTest = FALSE);
+	CString DB_SetCurrentSpikeFileName();
+	void	DB_SetDataLen(long len) const { m_pDB->SetDataLen(len); }
+	long	DB_GetDataLen();
+	void	DB_SetCurrentRecordFlag(int flag) const;
+	int		DB_GetCurrentRecordFlag() const { return m_pDB->m_mainTableSet.m_flag; }
+	void	DB_SetPathsRelative() const;
+	void	DB_SetPathsAbsolute() const;
 	void	DBTransferDatPathToSpkPath() const;
 	void	DBDeleteUnusedEntries() const;
 
-	long	GetDB_CurrentRecordPosition() const;
-	long	GetDB_CurrentRecordID() const;
-	BOOL	set_db_current_record_position(long i_file) { return m_pDB->SetIndexCurrentFile(i_file); }
-	BOOL	DBMoveToID(long record_id) { return m_pDB->MoveToID(record_id); }
-	BOOL	DBMoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
-	BOOL	DBMoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
-	BOOL	DBMovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
+	long	DB_GetCurrentRecordPosition() const;
+	long	DB_GetCurrentRecordID() const;
+	BOOL	DB_SetCurrentRecordPosition(long i_file) { return m_pDB->SetIndexCurrentFile(i_file); }
+	BOOL	DB_MoveToID(long record_id) { return m_pDB->MoveToID(record_id); }
+	BOOL	DB_MoveFirst() { return m_pDB->MoveRecord(ID_RECORD_FIRST); }
+	BOOL	DB_MoveNext() { return m_pDB->MoveRecord(ID_RECORD_NEXT); }
+	BOOL	DB_MovePrev() { return m_pDB->MoveRecord(ID_RECORD_PREV); }
 	BOOL	DBMoveLast() { return m_pDB->MoveRecord(ID_RECORD_LAST); }
-	void	DBRefreshQuery() const { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
+	void	DB_RefreshQuery() const { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
 								m_pDB->m_mainTableSet.RefreshQuery(); }
 
 protected:

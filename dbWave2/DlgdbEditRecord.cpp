@@ -531,7 +531,7 @@ void DlgdbEditRecord::OnBnClickedSynchroall()
 void DlgdbEditRecord::OnBnClickedPrevious()
 {
 	UpdateDatabaseFromDialog();
-	m_pdbDoc->DBMovePrev();
+	m_pdbDoc->DB_MovePrev();
 
 	m_pdbDoc->UpdateAllViews(nullptr, 0L, nullptr);
 	PopulateControls();
@@ -541,7 +541,7 @@ void DlgdbEditRecord::OnBnClickedPrevious()
 void DlgdbEditRecord::OnBnClickedNext()
 {
 	UpdateDatabaseFromDialog();
-	m_pdbDoc->DBMoveNext();
+	m_pdbDoc->DB_MoveNext();
 
 	m_pdbDoc->UpdateAllViews(nullptr, 0L, nullptr);
 

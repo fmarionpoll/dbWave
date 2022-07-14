@@ -296,7 +296,7 @@ void ViewSpikeSort::update_spike_file()
 	if (nullptr != m_pSpkDoc)
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
-		m_pSpkDoc->SetPathName(GetDocument()->GetDB_CurrentSpkFileName(), FALSE);
+		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
 		const int current_index = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 
@@ -431,10 +431,10 @@ void ViewSpikeSort::OnSort()
 {
 	// set file indexes - assume only one file selected
 	const auto pdb_doc = GetDocument();
-	const int current_file = pdb_doc->GetDB_CurrentRecordPosition();
+	const int current_file = pdb_doc->DB_GetCurrentRecordPosition();
 	auto first_file = current_file;
 	auto last_file = first_file;
-	const auto n_files = pdb_doc->GetDB_NRecords();
+	const auto n_files = pdb_doc->DB_GetNRecords();
 	const auto current_list = m_pSpkDoc->GetSpkList_CurrentIndex();
 
 	// change indexes if ALL files selected
@@ -444,7 +444,7 @@ void ViewSpikeSort::OnSort()
 	if (m_bAllFiles)
 	{
 		first_file = 0; // index first file
-		last_file = pdb_doc->GetDB_NRecords() - 1; // index last file
+		last_file = pdb_doc->DB_GetNRecords() - 1; // index last file
 		dlg_progress = new DlgProgress;
 		dlg_progress->Create();
 		dlg_progress->SetStep(1);
@@ -454,7 +454,7 @@ void ViewSpikeSort::OnSort()
 	{
 		// load spike file
 		BOOL flag_changed;
-		pdb_doc->set_db_current_record_position(i_file);
+		pdb_doc->DB_SetCurrentRecordPosition(i_file);
 		m_pSpkDoc = pdb_doc->open_current_spike_file();
 		if (nullptr == m_pSpkDoc)
 			continue;
@@ -497,7 +497,7 @@ void ViewSpikeSort::OnSort()
 
 		if (flag_changed)
 		{
-			m_pSpkDoc->OnSaveDocument(pdb_doc->GetDB_CurrentSpkFileName(FALSE));
+			m_pSpkDoc->OnSaveDocument(pdb_doc->DB_GetCurrentSpkFileName(FALSE));
 			pdb_doc->SetDB_n_spikes(m_pSpkList->get_spikes_count());
 		}
 	}
@@ -506,7 +506,7 @@ void ViewSpikeSort::OnSort()
 	if (m_bAllFiles)
 	{
 		delete dlg_progress;
-		pdb_doc->set_db_current_record_position(current_file);
+		pdb_doc->DB_SetCurrentRecordPosition(current_file);
 		m_pSpkDoc = pdb_doc->open_current_spike_file();
 		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	}
@@ -686,9 +686,9 @@ void ViewSpikeSort::unflag_all_spikes()
 	if (m_bAllFiles)
 	{
 		const auto pdb_doc = GetDocument();
-		for (auto i_file = 0; i_file < pdb_doc->GetDB_NRecords(); i_file++)
+		for (auto i_file = 0; i_file < pdb_doc->DB_GetNRecords(); i_file++)
 		{
-			pdb_doc->set_db_current_record_position(i_file);
+			pdb_doc->DB_SetCurrentRecordPosition(i_file);
 			m_pSpkDoc = pdb_doc->open_current_spike_file();
 
 			for (auto j = 0; j < m_pSpkDoc->GetSpkList_Size(); j++)
@@ -709,8 +709,8 @@ void ViewSpikeSort::OnMeasure()
 {
 	// set file indexes - assume only one file selected
 	const auto pdb_doc = GetDocument();
-	int index_current_file = pdb_doc->GetDB_CurrentRecordPosition(); // index current file
-	const int n_files = pdb_doc->GetDB_NRecords();
+	int index_current_file = pdb_doc->DB_GetCurrentRecordPosition(); // index current file
+	const int n_files = pdb_doc->DB_GetNRecords();
 	const auto current_spike_list = m_pSpkDoc->GetSpkList_CurrentIndex();
 	int first_file = index_current_file;
 	int last_file = index_current_file;
@@ -728,7 +728,7 @@ void ViewSpikeSort::OnMeasure()
 		// check if user wants to continue
 		//if (m_bAllfiles)
 		//{
-		pdb_doc->set_db_current_record_position(i_file);
+		pdb_doc->DB_SetCurrentRecordPosition(i_file);
 		m_pSpkDoc = pdb_doc->open_current_spike_file();
 		//}
 		// check if this file is ok
@@ -766,13 +766,13 @@ void ViewSpikeSort::OnMeasure()
 		}
 
 		//save only if changed?
-		m_pSpkDoc->OnSaveDocument(pdb_doc->GetDB_CurrentSpkFileName(FALSE));
+		m_pSpkDoc->OnSaveDocument(pdb_doc->DB_GetCurrentSpkFileName(FALSE));
 	}
 
 	if (m_bAllFiles)
 	{
-		index_current_file = pdb_doc->GetDB_CurrentRecordPosition();
-		pdb_doc->set_db_current_record_position(index_current_file);
+		index_current_file = pdb_doc->DB_GetCurrentRecordPosition();
+		pdb_doc->DB_SetCurrentRecordPosition(index_current_file);
 		m_pSpkDoc = pdb_doc->open_current_spike_file();
 		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	}
@@ -957,7 +957,7 @@ void ViewSpikeSort::OnToolsEdittransformspikes()
 	dlg.m_pdbWaveDoc = GetDocument();
 
 	// refresh pointer to data file because it not used elsewhere in the view
-	const auto dat_name = GetDocument()->GetDB_CurrentDatFileName();
+	const auto dat_name = GetDocument()->DB_GetCurrentDatFileName();
 	auto b_doc_exists = FALSE;
 	if (!dat_name.IsEmpty())
 	{

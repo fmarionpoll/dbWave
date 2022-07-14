@@ -60,7 +60,7 @@ BOOL dbTableView::PreCreateWindow(CREATESTRUCT& cs)
 
 CDaoRecordset* dbTableView::OnGetRecordset()
 {
-	return GetDocument()->GetDB_Recordset();
+	return GetDocument()->DB_GetRecordset();
 }
 
 void dbTableView::OnSize(UINT nType, int cx, int cy)
@@ -86,7 +86,7 @@ BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 {
 	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
-	if (m_autoDetect && p_document->GetDB_CurrentSpkFileName(TRUE).IsEmpty())
+	if (m_autoDetect && p_document->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 	}
@@ -148,7 +148,7 @@ void dbTableView::saveCurrentSpkFile()
 		if (m_pSpkList != nullptr && !m_pSpkList->IsClassListValid())
 			m_pSpkList->UpdateClassList();
 
-		auto spkfile_name = p_doc->SetDB_CurrentSpikeFileName();
+		auto spkfile_name = p_doc->DB_SetCurrentSpikeFileName();
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
@@ -173,9 +173,9 @@ void dbTableView::IncrementSpikeFlag()
 	{
 		auto p_doc = GetDocument();
 		// change flag is button is checked
-		int flag = p_doc->GetDB_CurrentRecordFlag();
+		int flag = p_doc->DB_GetCurrentRecordFlag();
 		flag++;
-		p_doc->SetDB_CurrentRecordFlag(flag);
+		p_doc->DB_SetCurrentRecordFlag(flag);
 	}
 }
 

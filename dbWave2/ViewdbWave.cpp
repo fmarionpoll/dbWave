@@ -236,10 +236,10 @@ void ViewdbWave::updateControls()
 	auto pdb_doc = GetDocument();
 	CFileStatus status;
 
-	m_bvalidDat = CFile::GetStatus(pdb_doc->GetDB_CurrentDatFileName(), status);
-	m_bvalidSpk = CFile::GetStatus(pdb_doc->GetDB_CurrentSpkFileName(TRUE), status);
+	m_bvalidDat = CFile::GetStatus(pdb_doc->DB_GetCurrentDatFileName(), status);
+	m_bvalidSpk = CFile::GetStatus(pdb_doc->DB_GetCurrentSpkFileName(TRUE), status);
 
-	const int ifile = pdb_doc->GetDB_CurrentRecordPosition();
+	const int ifile = pdb_doc->DB_GetCurrentRecordPosition();
 	m_dataListCtrl.SetCurSel(ifile);
 	m_dataListCtrl.EnsureVisible(ifile, FALSE);
 
@@ -308,7 +308,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDe
 void ViewdbWave::fillListBox()
 {
 	m_dataListCtrl.DeleteAllItems();
-	const int imax = GetDocument()->GetDB_NRecords();
+	const int imax = GetDocument()->DB_GetNRecords();
 	m_dataListCtrl.SetItemCountEx(imax);
 }
 
@@ -317,7 +317,7 @@ void ViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	// get item clicked and select it
 	const auto p_item_activate = (NMITEMACTIVATE*)pNMHDR;
 	if (p_item_activate->iItem >= 0)
-		GetDocument()->set_db_current_record_position(p_item_activate->iItem);
+		GetDocument()->DB_SetCurrentRecordPosition(p_item_activate->iItem);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	dbTableView::OnInitialUpdate();
 	*pResult = 0;
@@ -422,7 +422,7 @@ void ViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 void ViewdbWave::DeleteRecords()
 {
 	// save index current file
-	auto currentindex = GetDocument()->GetDB_CurrentRecordPosition() - 1;
+	auto currentindex = GetDocument()->DB_GetCurrentRecordPosition() - 1;
 	if (currentindex < 0)
 		currentindex = 0;
 
@@ -440,12 +440,12 @@ void ViewdbWave::DeleteRecords()
 	while (pos)
 	{
 		const auto n_item = m_dataListCtrl.GetNextSelectedItem(pos);
-		pdb_doc->set_db_current_record_position(n_item - ndel);
-		pdb_doc->DBDeleteCurrentRecord();
+		pdb_doc->DB_SetCurrentRecordPosition(n_item - ndel);
+		pdb_doc->DB_DeleteCurrentRecord();
 		ndel++;
 	}
 
-	pdb_doc->set_db_current_record_position(currentindex);
+	pdb_doc->DB_SetCurrentRecordPosition(currentindex);
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
