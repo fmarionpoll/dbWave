@@ -69,8 +69,11 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_DROPPED:
 		TRACE("drop spike \n");
 		{
-			const int new_class_id = get_row_item(i_current_selected)->get_class_id();
-			m_spike_list->change_class_of_flagged_spikes(new_class_id);
+			const auto row_item = get_row_item(i_current_selected);
+			if (row_item != nullptr) {
+				const int new_class_id = row_item->get_class_id();
+				m_spike_list->change_class_of_flagged_spikes(new_class_id);
+			}
 		}
 		break;
 
@@ -235,7 +238,7 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	// select spike
 	if (spike_no >= 0)
 	{
-		// get address of spike parms
+		// get address of spike parameters
 		const auto p_spike_element = m_spike_list->get_spike(spike_no);
 		cla = p_spike_element->get_class_id();
 
