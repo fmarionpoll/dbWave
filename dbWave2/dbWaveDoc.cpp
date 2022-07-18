@@ -1068,7 +1068,7 @@ sourceData CdbWaveDoc::get_wave_format_from_either_file(CString cs_filename)
 	return record;
 }
 
-int CdbWaveDoc::find_header(const CString& text)
+int CdbWaveDoc::find_column_associated_to_header(const CString& text)
 {
 	int found = -1;
 	for (int i = 0; i < 18; i++)
@@ -1092,7 +1092,7 @@ void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file
 	{
 		int i_column = i;
 		if (bHeader)
-			i_column = find_header(filenames.GetAt(i));
+			i_column = find_column_associated_to_header(filenames.GetAt(i));
 		
 		const int index_i_record = index + i;
 		const CString& cs_item = filenames.GetAt(index_i_record);

@@ -108,7 +108,7 @@ protected:
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
 	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns,
 	                             boolean bHeader);
-	int		find_header(const CString& text);
+	int		find_column_associated_to_header(const CString& text);
 	void	remove_file_from_disk(CString file_name);
 
 	// Overrides
