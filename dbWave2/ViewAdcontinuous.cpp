@@ -26,10 +26,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(ViewADcontinuous, dbTableView)
+IMPLEMENT_DYNCREATE(ViewADcontinuous, CFormView)
 
 ViewADcontinuous::ViewADcontinuous()
-	: dbTableView(IDD)
+	: CFormView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
@@ -40,7 +40,7 @@ ViewADcontinuous::~ViewADcontinuous()
 
 void ViewADcontinuous::DoDataExchange(CDataExchange * pDX)
 {
-	dbTableView::DoDataExchange(pDX);
+	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_AD);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DA);
 	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
@@ -53,7 +53,7 @@ void ViewADcontinuous::DoDataExchange(CDataExchange * pDX)
 	DDX_Control(pDX, IDC_OSCILLOSCOPE, m_Button_Oscilloscope);
 }
 
-BEGIN_MESSAGE_MAP(ViewADcontinuous, dbTableView)
+BEGIN_MESSAGE_MAP(ViewADcontinuous, CFormView)
 	ON_MESSAGE(WM_MYMESSAGE, &ViewADcontinuous::OnMyMessage)
 	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewADcontinuous::OnInputChannels)
 	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &ViewADcontinuous::OnSamplingMode)
@@ -94,7 +94,7 @@ void ViewADcontinuous::OnDestroy()
 			m_Acq32_DA.DeleteBuffers();
 	}
 
-	dbTableView::OnDestroy();
+	CFormView::OnDestroy();
 	delete m_pBackgroundBrush;
 }
 
@@ -111,13 +111,13 @@ HBRUSH ViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 		break;
 
 	default:
-		hbr = dbTableView::OnCtlColor(pDC, pWnd, nCtlColor);
+		hbr = CFormView::OnCtlColor(pDC, pWnd, nCtlColor);
 		break;
 	}
 	return hbr;
 }
 
-BEGIN_EVENTSINK_MAP(ViewADcontinuous, dbTableView)
+BEGIN_EVENTSINK_MAP(ViewADcontinuous, CFormView)
 
 	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 1, ViewADcontinuous::OnBufferDone_ADC, VTS_NONE)
 	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 2, ViewADcontinuous::OnQueueDone_ADC, VTS_NONE)
@@ -178,7 +178,7 @@ void ViewADcontinuous::AttachControls()
 
 void ViewADcontinuous::OnInitialUpdate()
 {
-	dbTableView::OnInitialUpdate();
+	CFormView::OnInitialUpdate();
 
 	AttachControls();
 
@@ -192,7 +192,7 @@ void ViewADcontinuous::OnInitialUpdate()
 	m_ComboStartOutput.SetCurSel(m_bStartOutPutMode);
 
 	// open document and remove database filters
-	CdbWaveDoc* pdbDoc = GetDocument();
+	CdbWaveDoc* pdbDoc = static_cast<CdbWaveDoc*>(GetDocument());
 	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
@@ -339,12 +339,12 @@ void ViewADcontinuous::StopAcquisition()
 	// close file and update display
 	if (m_bFileOpen)
 	{
-		SaveAndCloseFile();
+		save_and_close_file();
 		UpdateViewDataFinal();
 	}
 }
 
-void ViewADcontinuous::SaveAndCloseFile()
+void ViewADcontinuous::save_and_close_file()
 {
 	m_inputDataFile.AcqDoc_DataAppendStop();
 	const CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
@@ -361,15 +361,15 @@ void ViewADcontinuous::SaveAndCloseFile()
 	// normal data acquisition mode --------------------------------------
 	else
 	{
-		int ires = IDCANCEL;
+		int result = IDCANCEL;
 		if (pWFormat->sample_count > 1) // make sure real data have been acquired
 		{
 			DlgConfirmSave dlg;
 			dlg.m_csfilename = m_szFileName;
-			ires = dlg.DoModal();
+			result = dlg.DoModal();
 		}
 		// if no data or user answered no, erase the data
-		if (IDOK != ires)
+		if (IDOK != result)
 		{
 			m_inputDataFile.AcqDeleteFile();
 		}
@@ -379,8 +379,8 @@ void ViewADcontinuous::SaveAndCloseFile()
 			// if current document name is the same, it means something happened and we have erased a previously existing file
 			// if so, skip
 			// otherwise add data file name to the database
-			CdbWaveDoc* pdbDoc = GetDocument();
-			if (m_szFileName.CompareNoCase(pdbDoc->DB_GetCurrentDatFileName(FALSE)) != 0)
+			auto* pdb_doc = static_cast<CdbWaveDoc*>(GetDocument());
+			if (m_szFileName.CompareNoCase(pdb_doc->DB_GetCurrentDatFileName(FALSE)) != 0)
 			{
 				// add document to database
 				m_csNameArray.Add(m_szFileName);
@@ -394,27 +394,27 @@ void ViewADcontinuous::SaveAndCloseFile()
 void ViewADcontinuous::UpdateViewDataFinal()
 {
 	// update view data	
-	CdbWaveDoc* pdbDoc = GetDocument();
-	AcqDataDoc* pDocDat = pdbDoc->OpenCurrentDataFile();
+	auto* pdb_doc = static_cast<CdbWaveDoc*>(GetDocument());
+	AcqDataDoc* pDocDat = pdb_doc->OpenCurrentDataFile();
 	if (pDocDat == nullptr)
 	{
 		ATLTRACE2(_T("error reading current document "));
 		return;
 	}
 	pDocDat->ReadDataInfos();
-	const long lsizeDOCchan = pDocDat->GetDOCchanLength();
+	const long length_doc_channel = pDocDat->GetDOCchanLength();
 	m_chartDataAD.AttachDataFile(pDocDat);
-	m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), lsizeDOCchan);
-	m_chartDataAD.GetDataFromDoc(0, lsizeDOCchan);
+	m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), length_doc_channel);
+	m_chartDataAD.GetDataFromDoc(0, length_doc_channel);
 }
 
 void ViewADcontinuous::TransferFilesToDatabase()
 {
-	CdbWaveDoc* pdbDoc = GetDocument();
+	const auto pdbDoc = static_cast<CdbWaveDoc*>(GetDocument());
 	pdbDoc->ImportFileList(m_csNameArray); // add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll(); // clear file names
 
-	CdbTableMain* pSet = &(GetDocument()->m_pDB->m_mainTableSet);
+	CdbTableMain* pSet = &(pdbDoc->m_pDB->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
 	pdbDoc->DB_SetCurrentRecordPosition(pdbDoc->m_pDB->GetNRecords() - 1);
@@ -456,21 +456,21 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 	}
 
 	// adapt source view 
-	int iextent = MulDiv(pWFormat->binspan, 12, 10);
+	int i_extent = MulDiv(pWFormat->binspan, 12, 10);
 	if (m_pOptions_AD->izoomCursel != 0)
-		iextent = m_pOptions_AD->izoomCursel;
+		i_extent = m_pOptions_AD->izoomCursel;
 
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
-		constexpr int ioffset = 0;
+		constexpr int i_offset = 0;
 		CChanlistItem* pD = m_chartDataAD.GetChanlistItem(i);
-		pD->SetYzero(ioffset);
-		pD->SetYextent(iextent);
-		pD->SetColor(WORD(i));
-		float doc_voltsperb;
-		m_inputDataFile.GetWBVoltsperBin(i, &doc_voltsperb);
+		pD->SetYzero(i_offset);
+		pD->SetYextent(i_extent);
+		pD->SetColor(static_cast<WORD>(i));
+		float doc_volts_per_bin;
+		m_inputDataFile.GetWBVoltsperBin(i, &doc_volts_per_bin);
 		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
-		pD->SetDataVoltsFormat(doc_voltsperb, pWFormat->fullscale_volts);
+		pD->SetDataVoltsFormat(doc_volts_per_bin, pWFormat->fullscale_volts);
 	}
 
 	UpdateGainScroll();
@@ -480,7 +480,7 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 BOOL ViewADcontinuous::StartAcquisition()
 {
 	// set display
-	if (m_bADwritetofile && !Defineexperiment())
+	if (m_bADwritetofile && !define_experiment())
 	{
 		StopAcquisition();
 		UpdateStartStop(m_Acq32_AD.IsInProgress());
@@ -496,8 +496,8 @@ BOOL ViewADcontinuous::StartAcquisition()
 	m_chartDataAD.ADdisplayStart(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0; // no samples yet
-	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / float(m_pOptions_AD->iundersample);
-	m_fclockrate = pWFormat->sampling_rate_per_channel * float(pWFormat->scan_count);
+	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(m_pOptions_AD->iundersample);
+	m_fclockrate = pWFormat->sampling_rate_per_channel * static_cast<float>(pWFormat->scan_count);
 	pWFormat->acqtime = CTime::GetCurrentTime();
 
 	// data format
@@ -569,7 +569,7 @@ ECODE ViewADcontinuous::StartSimultaneousList()
 	if (ecode != OLNOERROR)
 	{
 		olDaGetErrorString(ecode, error_string, 255);
-		DisplayolDaErrorMessage(error_string);
+		display_ol_da_error_message(error_string);
 	}
 
 	// start simultaneously
@@ -577,7 +577,7 @@ ECODE ViewADcontinuous::StartSimultaneousList()
 	if (ecode != OLNOERROR)
 	{
 		olDaGetErrorString(ecode, error_string, 255);
-		DisplayolDaErrorMessage(error_string);
+		display_ol_da_error_message(error_string);
 	}
 
 	m_Acq32_AD.SetInProgress();
@@ -585,23 +585,23 @@ ECODE ViewADcontinuous::StartSimultaneousList()
 	return ecode;
 }
 
-void ViewADcontinuous::DisplayolDaErrorMessage(const CHAR * error_string) const
+void ViewADcontinuous::display_ol_da_error_message(const CHAR * error_string) const
 {
 	CString csError;
-	const CStringA cstringa(error_string);
-	csError = cstringa;
+	const CStringA string_a(error_string);
+	csError = string_a;
 	AfxMessageBox(csError);
 }
 
 #ifdef _DEBUG
 void ViewADcontinuous::AssertValid() const
 {
-	dbTableView::AssertValid();
+	CFormView::AssertValid();
 }
 
 void ViewADcontinuous::Dump(CDumpContext & dc) const
 {
-	dbTableView::Dump(dc);
+	CFormView::Dump(dc);
 }
 
 #endif //_DEBUG
@@ -629,7 +629,7 @@ void ViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CVi
 		pmF->ActivatePropertyPane(FALSE);
 		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursor_state = 0;
 	}
-	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void ViewADcontinuous::OnSize(UINT nType, int cx, int cy)
@@ -651,7 +651,7 @@ void ViewADcontinuous::OnSize(UINT nType, int cx, int cy)
 	default:
 		break;
 	}
-	dbTableView::OnSize(nType, cx, cy);
+	CFormView::OnSize(nType, cx, cy);
 }
 
 LRESULT ViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
@@ -733,10 +733,10 @@ void ViewADcontinuous::UpdateStartStop(BOOL bStart)
 
 void ViewADcontinuous::OnHardwareDefineexperiment()
 {
-	Defineexperiment();
+	define_experiment();
 }
 
-BOOL ViewADcontinuous::Defineexperiment()
+BOOL ViewADcontinuous::define_experiment()
 {
 	CString file_name;
 	m_bFileOpen = FALSE;
@@ -745,7 +745,7 @@ BOOL ViewADcontinuous::Defineexperiment()
 		DlgADExperiment dlg;
 		dlg.m_bFilename = true;
 		dlg.m_pADC_options = m_pOptions_AD;
-		dlg.m_pdbDoc = GetDocument();
+		dlg.m_pdbDoc = static_cast<CdbWaveDoc*>(GetDocument());
 		dlg.m_bhidesubsequent = m_bhidesubsequent;
 		if (IDOK != dlg.DoModal())
 			return FALSE;
@@ -1089,7 +1089,7 @@ void ViewADcontinuous::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBa
 {
 	if (pScrollBar == nullptr)
 	{
-		dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+		CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 

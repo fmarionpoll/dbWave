@@ -13,10 +13,10 @@
 #include "USBPxxS1Ctl.h"
 #include "OPTIONS_ACQDATA.h"
 #include "OPTIONS_OUTPUTDATA.h"
-#include "dbTableView.h"
 
 
-class ViewADcontinuous : public dbTableView
+
+class ViewADcontinuous : public CFormView
 {
 	friend class CBoard;
 
@@ -112,7 +112,7 @@ protected:
 	void SetCombostartoutput(int option);
 
 	void StopAcquisition();
-	void SaveAndCloseFile();
+	void save_and_close_file();
 	BOOL StartAcquisition();
 	ECODE StartSimultaneousList();
 	BOOL StartOutput();
@@ -121,12 +121,12 @@ protected:
 	void InitAcquisitionDisplay();
 
 	BOOL InitCyberAmp() const;
-	BOOL Defineexperiment();
+	BOOL define_experiment();
 	void TransferFilesToDatabase();
 	BOOL InitOutput_DA();
 	BOOL InitOutput_AD();
 	void UpdateViewDataFinal();
-	void DisplayolDaErrorMessage(const CHAR* error_string) const;
+	void display_ol_da_error_message(const CHAR* error_string) const;
 	void ChainDialog(WORD iID);
 
 	void ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat);
