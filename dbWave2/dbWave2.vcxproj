@@ -156,7 +156,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
     <LibraryPath>C:\Users\fred\source\repos\dbWave2\dbWave2\include\CED\win32;C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>C:\Users\fred\source\repos\dbWave2\dbWave2\include\CED\win32;$(ExecutablePath)</ExecutablePath>
+    <ExecutablePath>C:\Users\fred\source\repos\dbWave2\dbWave2\debug;$(ExecutablePath)</ExecutablePath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
     <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
