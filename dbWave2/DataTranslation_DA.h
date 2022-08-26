@@ -35,7 +35,7 @@ public:
 	void StopAndLiberateBuffers();
 
 protected:
-	OPTIONS_OUTPUTDATA* m_pOptions = nullptr; // pointer to data output options
+	OPTIONS_OUTPUTDATA _options_outputdata; // = nullptr; // pointer to data output options
 	int m_digitalchannel = 0;
 	BOOL m_digitalfirst = false;
 	int m_listsize = 0;

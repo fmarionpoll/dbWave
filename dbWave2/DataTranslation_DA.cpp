@@ -81,8 +81,8 @@ BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_ACQDATA* pADC_options)
 
 		// set clock the same as for A/D
 		SetClockSource(OLx_CLK_INTERNAL);
-		const double clockrate = ADC_channel_samplingrate;
-		SetFrequency(clockrate); // set sampling frequency (total throughput)
+		const double clock_rate = ADC_channel_samplingrate;
+		SetFrequency(clock_rate); // set sampling frequency (total throughput)
 
 		// set trigger mode
 		int trig = ADC_trigger_mode;
@@ -91,19 +91,19 @@ BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_ACQDATA* pADC_options)
 		SetTrigger(trig);
 
 		SetChannelList();
-		const double resolutionfactor = pow(2.0, GetResolution());
+		const double resolution_factor = pow(2.0, GetResolution());
 		m_msbit = static_cast<long>(pow(2.0, double(GetResolution()) - 1.));
-		m_lRes = static_cast<long>(resolutionfactor - 1.);
+		m_lRes = static_cast<long>(resolution_factor - 1.);
 
-		for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
+		for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &m_pOptions->outputparms_array.GetAt(i);
+			OUTPUTPARMS* pParms = &_options_outputdata.outputparms_array.GetAt(i);
 			//MSequence(TRUE, pParms);
 			if (pParms->bDigital)
 				continue;
 			const double delta = static_cast<double>(GetMaxRange()) - static_cast<double>(GetMinRange());
-			pParms->ampUp = pParms->dAmplitudeMaxV * resolutionfactor / delta;
-			pParms->ampLow = pParms->dAmplitudeMinV * resolutionfactor / delta;
+			pParms->ampUp = pParms->dAmplitudeMaxV * resolution_factor / delta;
+			pParms->ampLow = pParms->dAmplitudeMinV * resolution_factor / delta;
 		}
 
 		// pass parameters to the board and check if errors
@@ -123,9 +123,9 @@ void DataTranslation_DA::SetChannelList()
 	int nanalogOutputs = 0;
 	int ndigitalOutputs = 0;
 
-	for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
+	for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
 	{
-		const OUTPUTPARMS* pParms = &m_pOptions->outputparms_array.GetAt(i);
+		const OUTPUTPARMS* pParms = &_options_outputdata.outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 		if (!pParms->bDigital)
@@ -210,9 +210,9 @@ void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_ACQDATA* pADC_optio
 	m_chbuflen = chsweeplength / nbuffers;
 	m_buflen = m_chbuflen * m_listsize;
 
-	for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
+	for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* outputparms_array = &(m_pOptions->outputparms_array.GetAt(i));
+		OUTPUTPARMS* outputparms_array = &(_options_outputdata.outputparms_array.GetAt(i));
 		outputparms_array->lastphase = 0;
 		outputparms_array->lastamp = 0;
 	}
@@ -565,9 +565,9 @@ void DataTranslation_DA::FillBuffer(short* pDTbuf)
 {
 	int janalog = 0;
 	m_digitalfirst = 0;
-	for (int i = 0; i < m_pOptions->outputparms_array.GetSize(); i++)
+	for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* pParms = &m_pOptions->outputparms_array.GetAt(i);
+		OUTPUTPARMS* pParms = &_options_outputdata.outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 
@@ -614,7 +614,6 @@ void DataTranslation_DA::FillBuffer(short* pDTbuf)
 				Dig_FillBufferWith_MSEQ(pDTbuf, m_digitalchannel, pParms);
 				break;
 			case DA_ONE:
-				break;
 			case DA_ZERO:
 			default:
 				break;
@@ -688,6 +687,6 @@ void DataTranslation_DA::OnBufferDone()
 	if (m_ecode == OLNOERROR)
 	{
 		FillBuffer(pDTbuf);
-		SetQueue((long)m_bufhandle);
+		SetQueue(reinterpret_cast<long>(m_bufhandle));
 	}
 }
