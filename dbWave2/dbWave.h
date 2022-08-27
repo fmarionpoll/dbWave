@@ -7,7 +7,7 @@
 #include <afxdao.h>
 
 #include "dbMultiDocTemplate.h"
-#include "OPTIONS_ACQDATA.h"
+#include "OPTIONS_INPUTDATA.h"
 #include "OPTIONS_VIEWDATAMEASURE.h"
 #include "OPTIONS_IMPORT.h"
 #include "OPTIONS_OUTPUTDATA.h"
@@ -57,7 +57,7 @@ public:
 	OPTIONS_VIEWSPIKES options_viewspikes;
 	OPTIONS_VIEWDATAMEASURE options_viewdata_measure;
 	OPTIONS_IMPORT options_import;
-	OPTIONS_ACQDATA options_acqdata;
+	OPTIONS_INPUTDATA options_acqdata;
 	OPTIONS_OUTPUTDATA options_outputdata;
 
 	CMemFile* m_pviewdataMemFile = nullptr;

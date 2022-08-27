@@ -26,7 +26,7 @@ BOOL DataTranslation_AD::OpenSubSystem(const CString card_name)
 	return TRUE;
 }
 
-BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
+BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 {
 	try
 	{
@@ -124,7 +124,7 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_ACQDATA* pADC_options)
 	return TRUE;
 }
 
-void DataTranslation_AD::DeclareBuffers(OPTIONS_ACQDATA* pADC_options)
+void DataTranslation_AD::DeclareBuffers(OPTIONS_INPUTDATA* pADC_options)
 {
 	DeleteBuffers();
 

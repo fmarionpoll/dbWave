@@ -793,7 +793,7 @@
     <ClCompile Include="DataTranslation_DA.cpp" />
     <ClCompile Include="dbTableColumnDescriptor.cpp" />
     <ClCompile Include="IntervalPoints.cpp" />
-    <ClCompile Include="OPTIONS_ACQDATA.cpp" />
+    <ClCompile Include="OPTIONS_INPUTDATA.cpp" />
     <ClCompile Include="OPTIONS_IMPORT.cpp" />
     <ClCompile Include="OPTIONS_OUTPUTDATA.cpp" />
     <ClCompile Include="OPTIONS_VIEWDATA.cpp" />
@@ -1376,7 +1376,7 @@
     <ClInclude Include="DataTranslation_DA.h" />
     <ClInclude Include="dbTableColumnDescriptor.h" />
     <ClInclude Include="IntervalPoints.h" />
-    <ClInclude Include="OPTIONS_ACQDATA.h" />
+    <ClInclude Include="OPTIONS_INPUTDATA.h" />
     <ClInclude Include="OPTIONS_IMPORT.h" />
     <ClInclude Include="OPTIONS_OUTPUTDATA.h" />
     <ClInclude Include="OPTIONS_VIEWDATA.h" />

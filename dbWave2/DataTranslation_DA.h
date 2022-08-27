@@ -1,7 +1,7 @@
 #pragma once
 #include <Olmem.h>
 #include "dtacq32.h"
-#include "OPTIONS_ACQDATA.h"
+#include "OPTIONS_INPUTDATA.h"
 #include "OPTIONS_OUTPUTDATA.h"
 #include "OUTPUTPARMS.h"
 
@@ -13,9 +13,9 @@ public:
 	BOOL OpenSubSystem(CString card_name);
 	BOOL ClearAllOutputs();
 	void SetChannelList();
-	BOOL InitSubSystem(const OPTIONS_ACQDATA* pADC_options);
+	BOOL InitSubSystem(const OPTIONS_INPUTDATA* pADC_options);
 	void DeleteBuffers();
-	void DeclareAndFillBuffers(const OPTIONS_ACQDATA* pADC_options);
+	void DeclareAndFillBuffers(const OPTIONS_INPUTDATA* pADC_options);
 	void FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 	void FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);
 	void FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array);

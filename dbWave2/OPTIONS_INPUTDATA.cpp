@@ -1,16 +1,16 @@
 ﻿#include "StdAfx.h"
-#include "OPTIONS_ACQDATA.h"
+#include "OPTIONS_INPUTDATA.h"
 
 
-IMPLEMENT_SERIAL(OPTIONS_ACQDATA, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(OPTIONS_INPUTDATA, CObject, 0 /* schema number*/)
 
-OPTIONS_ACQDATA::OPTIONS_ACQDATA()
+OPTIONS_INPUTDATA::OPTIONS_INPUTDATA()
 = default;
 
-OPTIONS_ACQDATA::~OPTIONS_ACQDATA()
+OPTIONS_INPUTDATA::~OPTIONS_INPUTDATA()
 = default;
 
-OPTIONS_ACQDATA& OPTIONS_ACQDATA::operator =(const OPTIONS_ACQDATA& arg)
+OPTIONS_INPUTDATA& OPTIONS_INPUTDATA::operator =(const OPTIONS_INPUTDATA& arg)
 {
 	if (this != &arg)
 	{
@@ -66,7 +66,7 @@ OPTIONS_ACQDATA& OPTIONS_ACQDATA::operator =(const OPTIONS_ACQDATA& arg)
 	return *this;
 }
 
-void OPTIONS_ACQDATA::Serialize(CArchive& ar)
+void OPTIONS_INPUTDATA::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
@@ -145,7 +145,7 @@ void OPTIONS_ACQDATA::Serialize(CArchive& ar)
 	}
 }
 
-int OPTIONS_ACQDATA::serialize_all_string_arrays(CArchive& ar, int& n)
+int OPTIONS_INPUTDATA::serialize_all_string_arrays(CArchive& ar, int& n)
 {
 	serialize_one_string_array(ar, csA_stimulus, n);
 	serialize_one_string_array(ar, csA_concentration, n);
@@ -161,7 +161,7 @@ int OPTIONS_ACQDATA::serialize_all_string_arrays(CArchive& ar, int& n)
 	return n;
 }
 
-int OPTIONS_ACQDATA::serialize_one_string_array(CArchive& ar, CStringArray& string_array, int& n)
+int OPTIONS_INPUTDATA::serialize_one_string_array(CArchive& ar, CStringArray& string_array, int& n)
 {
 	if (ar.IsStoring())
 	{
@@ -193,7 +193,7 @@ int OPTIONS_ACQDATA::serialize_one_string_array(CArchive& ar, CStringArray& stri
 }
 
 
-int OPTIONS_ACQDATA::serialize_all_int(CArchive& ar, int& n)
+int OPTIONS_INPUTDATA::serialize_all_int(CArchive& ar, int& n)
 {
 	serialize_one_int(ar, exptnumber, n);
 	serialize_one_int(ar,icsA_stimulus, n);
@@ -217,7 +217,7 @@ int OPTIONS_ACQDATA::serialize_all_int(CArchive& ar, int& n)
 	return n;
 }
 
-int OPTIONS_ACQDATA::serialize_one_int(CArchive& ar, int& value, int& n)
+int OPTIONS_INPUTDATA::serialize_one_int(CArchive& ar, int& value, int& n)
 {
 	if (ar.IsStoring())
 	{

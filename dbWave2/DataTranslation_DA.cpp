@@ -4,7 +4,7 @@
 #include <Olmem.h>
 #include <Olxdadefs.h>
 #include "DlgDAChannels.h"
-#include "OPTIONS_ACQDATA.h"
+#include "OPTIONS_INPUTDATA.h"
 #include "IntervalPoints.h"
 
 
@@ -65,7 +65,7 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 	return TRUE;
 }
 
-BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_ACQDATA* pADC_options)
+BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_INPUTDATA* pADC_options)
 {
 	const auto ADC_channel_samplingrate = double(pADC_options->waveFormat.sampling_rate_per_channel);
 	const int ADC_trigger_mode = int( pADC_options->waveFormat.trig_mode);
@@ -196,7 +196,7 @@ void DataTranslation_DA::DeleteBuffers()
 	}
 }
 
-void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_ACQDATA* pADC_options)
+void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_INPUTDATA* pADC_options)
 {
 	const float sweepduration = pADC_options->sweepduration;
 	const float chrate = pADC_options->waveFormat.sampling_rate_per_channel;

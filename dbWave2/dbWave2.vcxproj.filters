@@ -417,7 +417,7 @@
     <ClCompile Include="USBPxxPARAMETERS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_ACQDATA.cpp">
+    <ClCompile Include="OPTIONS_INPUTDATA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SCOPECHANNEL.cpp">
@@ -1004,7 +1004,7 @@
     <ClInclude Include="CDTBoardParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_ACQDATA.h">
+    <ClInclude Include="OPTIONS_INPUTDATA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OPTIONS_OUTPUTDATA.h">

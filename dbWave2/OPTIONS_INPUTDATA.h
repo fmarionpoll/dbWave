@@ -4,12 +4,12 @@
 #include "AcqWaveFormat.h"
 
 
-class OPTIONS_ACQDATA : public CObject
+class OPTIONS_INPUTDATA : public CObject
 {
-	DECLARE_SERIAL(OPTIONS_ACQDATA)
-	OPTIONS_ACQDATA();
-	~OPTIONS_ACQDATA() override;
-	OPTIONS_ACQDATA& operator =(const OPTIONS_ACQDATA& arg);
+	DECLARE_SERIAL(OPTIONS_INPUTDATA)
+	OPTIONS_INPUTDATA();
+	~OPTIONS_INPUTDATA() override;
+	OPTIONS_INPUTDATA& operator =(const OPTIONS_INPUTDATA& arg);
 	void Serialize(CArchive& ar) override;
 	int serialize_all_string_arrays(CArchive& ar, int& n);
 

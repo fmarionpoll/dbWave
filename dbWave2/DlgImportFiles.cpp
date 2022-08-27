@@ -413,7 +413,7 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 	DlgADExperiment dlg; 
 	dlg.m_bFilename = FALSE; 
 	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
-	OPTIONS_ACQDATA* pacqD = &(p_app->options_acqdata);
+	OPTIONS_INPUTDATA* pacqD = &(p_app->options_acqdata);
 	dlg.m_pADC_options = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
 	const BOOL flag = dlg.DoModal();

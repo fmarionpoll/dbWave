@@ -11,7 +11,7 @@
 #include "DataTranslation_AD.h"
 #include "DataTranslation_DA.h"
 #include "USBPxxS1Ctl.h"
-#include "OPTIONS_ACQDATA.h"
+#include "OPTIONS_INPUTDATA.h"
 #include "OPTIONS_OUTPUTDATA.h"
 
 
@@ -92,7 +92,7 @@ protected:
 	BOOL m_bSimultaneousStart{ false };
 
 	// DT buffer
-	OPTIONS_ACQDATA* m_pOptions_AD{ nullptr };
+	OPTIONS_INPUTDATA* m_pOptions_AD{ nullptr };
 	OPTIONS_OUTPUTDATA* m_pOptions_DA{ nullptr };
 	BOOL m_bsimultaneousStartDA{ false };
 
