@@ -8,7 +8,7 @@
 #include "DlgADIntervals.h"
 #include "DlgADExperiment.h"
 #include "dtacq32.h"
-#include "CyberAmp.h"
+
 #include "ChartData.h"
 #include "ViewADcontinuous.h"
 #include "ChildFrm.h"

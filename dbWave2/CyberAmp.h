@@ -153,9 +153,9 @@ protected:
 	HANDLE m_hComm; // handle to file used to communicate with COM
 
 	static void C300_ResetParms();
-
 	static void C300_StringConcatChar(char* lpsz_string, int c);
 	static int C300_FoundListMatch(int nFilterValue, int* lpnList, int nListItems);
+
 	int C300_INT_TranslateABUSError(int ABUSError);
 	int C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed,
 	                                      int* pnOutputPort, int* pnOutputSpeed);

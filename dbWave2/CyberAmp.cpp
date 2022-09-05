@@ -954,9 +954,9 @@ int CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed)
 
 	// ! note: the following section code returns an error on TASTE3 under Windows XP2
 	//// set com input and output buffer size
-	/*fsuccess = SetupComm(m_hComm, RCVBUFSIZE, RCVBUFSIZE);
+	fsuccess = SetupComm(m_hComm, RCVBUFSIZE, RCVBUFSIZE);
 	if (!fsuccess)
-		return GetLastError();*/
+		return GetLastError();
 
 	fsuccess = GetCommTimeouts(m_hComm, &m_CommTimeOuts);
 	if (!fsuccess)

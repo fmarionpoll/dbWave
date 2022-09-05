@@ -13,12 +13,13 @@
 #include "USBPxxS1Ctl.h"
 #include "OPTIONS_INPUTDATA.h"
 #include "OPTIONS_OUTPUTDATA.h"
+#include "CyberAmp.h"
 
 
 
 class ViewADcontinuous : public CFormView
 {
-	friend class CBoard;
+	//friend class CBoard;
 
 protected:
 	ViewADcontinuous();

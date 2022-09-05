@@ -39,9 +39,9 @@ public:
 	WORD m_postmessage = 0; // launch assoc dialog
 
 	BOOL m_bchantype = OLx_CHNT_SINGLEENDED; // flag TRUE=single ended; false=differential - default: false
-	int m_numchansMAXDI = 8; // = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
-	int m_numchansMAXSE = 16; // = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
-	BOOL m_bcommandAmplifier = false; // change ampli settings on the fly (if present); default = none
+	int m_numchansMAXDI = 8;				// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
+	int m_numchansMAXSE = 16;				// = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
+	BOOL m_bcommandAmplifier = false;		// change ampli settings on the fly (if present); default = none
 
 	CUSBPxxS1* m_palligator = nullptr;
 	CCyberAmp* m_pcyber_amp = nullptr;
