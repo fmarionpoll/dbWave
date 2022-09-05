@@ -95,9 +95,9 @@ BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_INPUTDATA* pADC_options)
 		m_msbit = static_cast<long>(pow(2.0, double(GetResolution()) - 1.));
 		m_lRes = static_cast<long>(resolution_factor - 1.);
 
-		for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
+		for (int i = 0; i < _options_OutputData.outputparms_array.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &_options_outputdata.outputparms_array.GetAt(i);
+			OUTPUTPARMS* pParms = &_options_OutputData.outputparms_array.GetAt(i);
 			//MSequence(TRUE, pParms);
 			if (pParms->bDigital)
 				continue;
@@ -123,9 +123,9 @@ void DataTranslation_DA::SetChannelList()
 	int nanalogOutputs = 0;
 	int ndigitalOutputs = 0;
 
-	for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
+	for (int i = 0; i < _options_OutputData.outputparms_array.GetSize(); i++)
 	{
-		const OUTPUTPARMS* pParms = &_options_outputdata.outputparms_array.GetAt(i);
+		const OUTPUTPARMS* pParms = &_options_OutputData.outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 		if (!pParms->bDigital)
@@ -210,9 +210,9 @@ void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_INPUTDATA* pADC_opt
 	m_chbuflen = chsweeplength / nbuffers;
 	m_buflen = m_chbuflen * m_listsize;
 
-	for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
+	for (int i = 0; i < _options_OutputData.outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* outputparms_array = &(_options_outputdata.outputparms_array.GetAt(i));
+		OUTPUTPARMS* outputparms_array = &(_options_OutputData.outputparms_array.GetAt(i));
 		outputparms_array->lastphase = 0;
 		outputparms_array->lastamp = 0;
 	}
@@ -565,9 +565,9 @@ void DataTranslation_DA::FillBuffer(short* pDTbuf)
 {
 	int janalog = 0;
 	m_digitalfirst = 0;
-	for (int i = 0; i < _options_outputdata.outputparms_array.GetSize(); i++)
+	for (int i = 0; i < _options_OutputData.outputparms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* pParms = &_options_outputdata.outputparms_array.GetAt(i);
+		OUTPUTPARMS* pParms = &_options_OutputData.outputparms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 
