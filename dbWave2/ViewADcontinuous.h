@@ -130,9 +130,9 @@ protected:
 	void display_ol_da_error_message(const CHAR* error_string) const;
 	void ChainDialog(WORD iID);
 
-	void ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat);
+	short* ADC_Transfer(short* acquisition_data_buffer, const CWaveFormat* pWFormat);
 	void under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, const CWaveFormat* pWFormat, const int under_sample_factor);
-	void ADC_TransferToChart(const CWaveFormat* pWFormat);
+	void ADC_TransferToChart(short* pRawDataBuf, const CWaveFormat* pWFormat);
 	void ADC_TransferToFile(CWaveFormat* pWFormat);
 	void InitializeAmplifiers();
 

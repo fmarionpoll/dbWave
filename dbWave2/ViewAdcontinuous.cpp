@@ -812,9 +812,14 @@ void ViewADcontinuous::OnInputChannels()
 	if (IDOK == dlg.DoModal())
 	{
 		m_pOptions_AD->bChannelType = dlg.m_bchantype;
+		const boolean is_acquisition_running = m_Acq32_AD.IsInProgress();
+		if (is_acquisition_running)
+			StopAcquisition();;
 		InitOutput_AD();
 		UpdateData(FALSE);
 		UpdateGainScroll();
+		if (is_acquisition_running)
+			StartAcquisition();
 	}
 	delete p_alligator;
 
@@ -920,12 +925,12 @@ void ViewADcontinuous::OnBufferDone_ADC()
 		return;
 
 	CWaveFormat* wave_format = m_inputDataFile.GetpWaveFormat();
-	ADC_Transfer(p_buffer_done, wave_format);
+	short* pRawDataBuf = ADC_Transfer(p_buffer_done, wave_format);
 	ADC_TransferToFile(wave_format);
-	ADC_TransferToChart(wave_format);
+	ADC_TransferToChart(pRawDataBuf, wave_format);
 }
 
-void ViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
+short* ViewADcontinuous::ADC_Transfer(short* acquisition_data_buffer, const CWaveFormat * pWFormat)
 {
 	short* pRawDataBuf = m_inputDataFile.GetpRawDataBUF();
 
@@ -940,18 +945,20 @@ void ViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat
 	if ((m_pOptions_AD->waveFormat).binzero != NULL)
 	{
 		const auto bin_zero_value = static_cast<short>(m_pOptions_AD->waveFormat.binzero);
-		short* pDTbuf = pDTbuf0;
-		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, pDTbuf++)
-			*pDTbuf -= bin_zero_value;
+		short* p_data_acquisition_value = acquisition_data_buffer;
+		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, p_data_acquisition_value++)
+			*p_data_acquisition_value -= bin_zero_value;
 	}
 
 	if (m_pOptions_AD->iundersample <= 1)
-		memcpy(pRawDataBuf, pDTbuf0, m_Acq32_AD.Getbuflen() * sizeof(short));
+		memcpy(pRawDataBuf, acquisition_data_buffer, m_Acq32_AD.Getbuflen() * sizeof(short));
 	else
-		under_sample_buffer(pRawDataBuf, pDTbuf0, pWFormat, m_pOptions_AD->iundersample);
+		under_sample_buffer(pRawDataBuf, acquisition_data_buffer, pWFormat, m_pOptions_AD->iundersample);
 	
 	// update byte length of buffer
 	m_bytesweepRefresh = m_chsweepRefresh * static_cast<int>(sizeof(short)) * static_cast<int>(pWFormat->scan_count);
+
+	return pRawDataBuf;
 }
 
 void ViewADcontinuous::under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, const CWaveFormat* pWFormat, const int under_sample_factor)
@@ -978,11 +985,11 @@ void ViewADcontinuous::under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, c
 	}
 }
 
-void ViewADcontinuous::ADC_TransferToChart(const CWaveFormat * pWFormat)
+void ViewADcontinuous::ADC_TransferToChart(short* pdataBuf, const CWaveFormat * pWFormat)
 {
 	if (pWFormat->bOnlineDisplay)
 	{
-		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
+		//short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 		m_chartDataAD.display_buffer(pdataBuf, m_chsweepRefresh);
 	}
 	const double duration = static_cast<double>(pWFormat->sample_count) / static_cast<double>(m_fclockrate);
