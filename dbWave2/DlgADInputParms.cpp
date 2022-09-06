@@ -97,6 +97,7 @@ END_MESSAGE_MAP()
 BOOL DlgADInputs::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+	is_AD_changed = false;
 
 	CRect rect;
 	GetClientRect(rect);
@@ -181,6 +182,7 @@ void DlgADInputs::OnEnChangeNacqchans()
 
 	AdjustGridSize();
 	UpdateData(FALSE);
+	is_AD_changed = true;
 }
 
 void DlgADInputs::AdjustGridSize()
@@ -490,6 +492,7 @@ void DlgADInputs::OnBnClickedSingleended()
 	m_maxchans = m_numchansMAXSE;
 	m_bchantype = OLx_CHNT_SINGLEENDED;
 	OnEnChangeNacqchans();
+	is_AD_changed = true;
 }
 
 void DlgADInputs::OnBnClickedDifferential()
@@ -497,6 +500,7 @@ void DlgADInputs::OnBnClickedDifferential()
 	m_maxchans = m_numchansMAXDI;
 	m_bchantype = OLx_CHNT_DIFFERENTIAL;
 	OnEnChangeNacqchans();
+	is_AD_changed = true;
 }
 
 void DlgADInputs::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
@@ -556,6 +560,7 @@ void DlgADInputs::OnCbnSelchangeResolution()
 			DisplayChannelReadOnlyFields(i);
 		m_Grid.Refresh();
 	}
+	is_AD_changed = true;
 }
 
 // load column data (index = 1, n)

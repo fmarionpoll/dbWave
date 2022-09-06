@@ -814,8 +814,9 @@ void ViewADcontinuous::OnInputChannels()
 		m_pOptions_AD->bChannelType = dlg.m_bchantype;
 		const boolean is_acquisition_running = m_Acq32_AD.IsInProgress();
 		if (is_acquisition_running)
-			StopAcquisition();;
-		InitOutput_AD();
+			StopAcquisition();
+		if (dlg.is_AD_changed)
+			InitOutput_AD();
 		UpdateData(FALSE);
 		UpdateGainScroll();
 		if (is_acquisition_running)

@@ -44,7 +44,7 @@ public:
 	BOOL m_bcommandAmplifier = false;		// change ampli settings on the fly (if present); default = none
 
 	CUSBPxxS1* m_palligator = nullptr;
-
+	boolean is_AD_changed = false;
 
 	// Implementation
 protected:
