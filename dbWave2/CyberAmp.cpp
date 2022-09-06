@@ -11,26 +11,26 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CCyberAmp
+// CyberAmp
 
 #define szLEN 100
 
-char CCyberAmp::m_C300szCommands[];
-char CCyberAmp::m_C300szRcvText[];
-int CCyberAmp::m_C300nLastError;
-int CCyberAmp::m_C300nDevNumber;
-int CCyberAmp::m_C300nOutputPort;
-int CCyberAmp::m_C300nOutputSpeed;
-int CCyberAmp::m_C300nDebugVersion;
-DWORD CCyberAmp::m_C300fReceiveDelay;
+char CyberAmp::m_C300szCommands[];
+char CyberAmp::m_C300szRcvText[];
+int CyberAmp::m_C300nLastError;
+int CyberAmp::m_C300nDevNumber;
+int CyberAmp::m_C300nOutputPort;
+int CyberAmp::m_C300nOutputSpeed;
+int CyberAmp::m_C300nDebugVersion;
+DWORD CyberAmp::m_C300fReceiveDelay;
 
-CCyberAmp::CCyberAmp()
+CyberAmp::CyberAmp()
 {
 	C300_ResetParms();
 	m_hComm = nullptr;
 }
 
-void CCyberAmp::C300_ResetParms()
+void CyberAmp::C300_ResetParms()
 {
 	m_C300nLastError = C300_SUCCESS;
 	m_C300nOutputPort = ABUS_CLOSED;
@@ -40,7 +40,7 @@ void CCyberAmp::C300_ResetParms()
 	m_C300fReceiveDelay = DEFAULTRCVDELAY;
 }
 
-CCyberAmp::~CCyberAmp()
+CyberAmp::~CyberAmp()
 {
 	if (m_hComm != nullptr)
 		CloseHandle(m_hComm);
@@ -48,15 +48,15 @@ CCyberAmp::~CCyberAmp()
 
 // Do not edit the following lines, which are needed by ClassWizard.
 #if 0
-BEGIN_MESSAGE_MAP(CCyberAmp, CFile)
+BEGIN_MESSAGE_MAP(CyberAmp, CFile)
 
 END_MESSAGE_MAP()
 #endif	// 0
 
 /////////////////////////////////////////////////////////////////////////////
-// CCyberAmp member functions
+// CyberAmp member functions
 
-int CCyberAmp::Initialize()
+int CyberAmp::Initialize()
 {
 	C300_ResetParms();
 	if (m_hComm != nullptr)
@@ -68,7 +68,7 @@ int CCyberAmp::Initialize()
 	return (m_C300nLastError);
 }
 
-int CCyberAmp::C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed)
+int CyberAmp::C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed)
 {
 	// Clear the last error flag
 	m_C300nLastError = C300_SUCCESS;
@@ -82,7 +82,7 @@ int CCyberAmp::C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed)
 	return (m_C300nLastError);
 }
 
-int CCyberAmp::C300_INT_TranslateABUSError(int ABUSError)
+int CyberAmp::C300_INT_TranslateABUSError(int ABUSError)
 {
 	switch (ABUSError)
 	{
@@ -108,7 +108,7 @@ int CCyberAmp::C300_INT_TranslateABUSError(int ABUSError)
 	return (m_C300nLastError);
 }
 
-int CCyberAmp::C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed,
+int CyberAmp::C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed,
                                                  int* pnOutputPort, int* pnOutputSpeed)
 {
 	// Clear the last error flag
@@ -156,7 +156,7 @@ int CCyberAmp::C300_INT_TranslateABUSCOMSettings(int nWhichPort, int nWhichSpeed
 
 //  Internal routine to add the necessary command prefix to the   command string
 
-void CCyberAmp::C300_INT_StartCommand()
+void CyberAmp::C300_INT_StartCommand()
 {
 	char sz_buffer[20];
 	strcat_s(m_C300szCommands, 4 * MAXCMDLEN, COMMANDPREFIX);
@@ -171,7 +171,7 @@ void CCyberAmp::C300_INT_StartCommand()
 
 //  Internal routine to append a command sequence to the current  command string
 
-void CCyberAmp::C300_INT_AddCommand(char* lpszCommandText)
+void CyberAmp::C300_INT_AddCommand(char* lpszCommandText)
 {
 	// If this is the start of a new command, then flush the
 	//     hardware receive buffer and apply the necessary
@@ -202,7 +202,7 @@ void CCyberAmp::C300_INT_AddCommand(char* lpszCommandText)
 }
 
 //  Flushes any pending command portions one at a time and awaits the response from the CyberAmp
-int CCyberAmp::C300_FlushCommandsAndAwaitResponse()
+int CyberAmp::C300_FlushCommandsAndAwaitResponse()
 {
 	char* lpszEndCommand;
 
@@ -270,7 +270,7 @@ int CCyberAmp::C300_FlushCommandsAndAwaitResponse()
 
 //  Returns the status text for a single channel
 
-int CCyberAmp::C300_GetChannelStatus(int nChannel, char* lpszStatusText)
+int CyberAmp::C300_GetChannelStatus(int nChannel, char* lpszStatusText)
 {
 	char sz_text[szLEN];
 	if (C300_FlushCommandsAndAwaitResponse() == C300_SUCCESS)
@@ -287,7 +287,7 @@ int CCyberAmp::C300_GetChannelStatus(int nChannel, char* lpszStatusText)
 
 //  Set the AXOBUS device number of the CyberAmp
 
-int CCyberAmp::C300_SetDeviceNumber(int nDevNum)
+int CyberAmp::C300_SetDeviceNumber(int nDevNum)
 {
 	// Check the device number for validity
 	if ((nDevNum < 0 || nDevNum > 9) && nDevNum != C300_DEVICENULL)
@@ -308,7 +308,7 @@ int CCyberAmp::C300_SetDeviceNumber(int nDevNum)
 
 //   Set the gain for a given channel
 
-int CCyberAmp::SetGain(int nChannel, int nGainValue)
+int CyberAmp::SetGain(int nChannel, int nGainValue)
 {
 	char sz_text[szLEN];
 	int nPreAmp, nGainDivisor;
@@ -367,7 +367,7 @@ int CCyberAmp::SetGain(int nChannel, int nGainValue)
 
 //   Set the pre-amp and output gains
 
-int CCyberAmp::C300_SetAmpGains(int nChannel, int nPreAmpGain, int nOutputGain)
+int CyberAmp::C300_SetAmpGains(int nChannel, int nPreAmpGain, int nOutputGain)
 {
 	char szPreAmp[20], szOutput[20];
 	char sz_text[szLEN];
@@ -433,7 +433,7 @@ int CCyberAmp::C300_SetAmpGains(int nChannel, int nPreAmpGain, int nOutputGain)
 
 //   Set the input coupling for a given channel
 
-int CCyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
+int CyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
 {
 	char sz_text[szLEN];
 
@@ -478,7 +478,7 @@ int CCyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
 	return (m_C300nLastError);
 }
 
-int CCyberAmp::SetWaveChanParms(CWaveChan* pchan)
+int CyberAmp::SetWaveChanParms(CWaveChan* pchan)
 {
 	// chan, gain, filter +, lowpass, notch
 	SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
@@ -492,7 +492,7 @@ int CCyberAmp::SetWaveChanParms(CWaveChan* pchan)
 	return C300_FlushCommandsAndAwaitResponse();
 }
 
-int CCyberAmp::GetWaveChanParms(CWaveChan* pchan)
+int CyberAmp::GetWaveChanParms(CWaveChan* pchan)
 {
 	// chan, gain, filter +, lowpass, notch
 	//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
@@ -508,7 +508,7 @@ int CCyberAmp::GetWaveChanParms(CWaveChan* pchan)
 
 //  Set the input offset for a given channel (in mV)
 
-int CCyberAmp::SetmVOffset(int nChannel, float fOffset)
+int CyberAmp::SetmVOffset(int nChannel, float fOffset)
 {
 	char sz_text[szLEN];
 
@@ -557,7 +557,7 @@ static int nFilterValueList[] =
 #define NUM_ENTRIES     58
 #define NOT_FOUND       -1
 
-int CCyberAmp::SetLPFilter(int nChannel, int nFilterValue)
+int CyberAmp::SetLPFilter(int nChannel, int nFilterValue)
 {
 	char sz_text[szLEN];
 	char sz_buffer[20];
@@ -597,7 +597,7 @@ int CCyberAmp::SetLPFilter(int nChannel, int nFilterValue)
 
 //  Set the notch filter ON or OFF for a given channel
 
-int CCyberAmp::SetNotchFilter(int nChannel, int nEnabled)
+int CyberAmp::SetNotchFilter(int nChannel, int nEnabled)
 {
 	char sz_text[szLEN];
 	// Clear the last error flag
@@ -620,7 +620,7 @@ int CCyberAmp::SetNotchFilter(int nChannel, int nEnabled)
 }
 
 //  Zero the DC offset for a given channel.  Returns the actual offset (in mV)
-int CCyberAmp::C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned)
+int CyberAmp::C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned)
 {
 	char* lpsz_offset;
 	char sz_text[szLEN];
@@ -666,7 +666,7 @@ int CCyberAmp::C300_ZeroDCOffset(int nChannel, float* pfOffsetReturned)
 
 //  Reload the factory defaults  for all settings
 
-int CCyberAmp::C300_LoadFactoryDefaults(void)
+int CyberAmp::C300_LoadFactoryDefaults(void)
 {
 	// Clear the last error flag
 	m_C300nLastError = C300_SUCCESS;
@@ -680,7 +680,7 @@ int CCyberAmp::C300_LoadFactoryDefaults(void)
 
 //  CyberAmp to save the current state in the EEPROM
 
-int CCyberAmp::C300_SaveCurrentState(void)
+int CyberAmp::C300_SaveCurrentState(void)
 {
 	// Output the write EEPROM command
 	C300_INT_AddCommand("W");
@@ -691,7 +691,7 @@ int CCyberAmp::C300_SaveCurrentState(void)
 
 //  Enter or exit the electrode test mode
 
-int CCyberAmp::C300_ElectrodeTest(int nEnabled)
+int CyberAmp::C300_ElectrodeTest(int nEnabled)
 {
 	// Clear the last error flag
 	m_C300nLastError = C300_SUCCESS;
@@ -708,7 +708,7 @@ int CCyberAmp::C300_ElectrodeTest(int nEnabled)
 
 //  Set the receive timeout value
 
-int CCyberAmp::C300_SetReceiveTimeout(DWORD fTimeoutVal)
+int CyberAmp::C300_SetReceiveTimeout(DWORD fTimeoutVal)
 {
 	// Check the timeout value for a return to the default
 	if (fTimeoutVal > 0.0)
@@ -722,7 +722,7 @@ int CCyberAmp::C300_SetReceiveTimeout(DWORD fTimeoutVal)
 
 //  Return the overload status of all channels
 
-int CCyberAmp::C300_GetOverloadStatus(int* lpnChannelMask)
+int CyberAmp::C300_GetOverloadStatus(int* lpnChannelMask)
 {
 	char* lpsz_temp;
 	int n_channel;
@@ -757,7 +757,7 @@ int CCyberAmp::C300_GetOverloadStatus(int* lpnChannelMask)
 
 //  Return the last error generated by a call to the CyberAmp 300 support module
 
-int CCyberAmp::C300_GetLastError(void)
+int CyberAmp::C300_GetLastError(void)
 {
 	// Return the most recent error flag
 	return (m_C300nLastError);
@@ -765,7 +765,7 @@ int CCyberAmp::C300_GetLastError(void)
 
 //  Return the raw text from the last communication with theCyberAmp
 
-int CCyberAmp::C300_GetLastReception(char* lpszResultText)
+int CyberAmp::C300_GetLastReception(char* lpszResultText)
 {
 	auto p_charend = strchr(m_C300szRcvText, ENDCOMMAND);
 	if (p_charend != nullptr)
@@ -789,7 +789,7 @@ int CCyberAmp::C300_GetLastReception(char* lpszResultText)
 
 //  Return the library version number as a string
 
-int CCyberAmp::C300_GetLibraryVersion(char* sz_txt)
+int CyberAmp::C300_GetLibraryVersion(char* sz_txt)
 {
 	strcpy_s(sz_txt, strlen(sz_txt), VERSIONCYB);
 	return (m_C300nLastError = C300_SUCCESS);
@@ -797,7 +797,7 @@ int CCyberAmp::C300_GetLibraryVersion(char* sz_txt)
 
 //  Internal routine to concatenate a single char to a string
 
-void CCyberAmp::C300_StringConcatChar(char* lpsz_string, int c)
+void CyberAmp::C300_StringConcatChar(char* lpsz_string, int c)
 {
 	int n_len = strlen(lpsz_string);
 	lpsz_string[n_len++] = static_cast<char>(c);
@@ -806,7 +806,7 @@ void CCyberAmp::C300_StringConcatChar(char* lpsz_string, int c)
 
 //  Internal routine which finds a match using a binary search
 
-int CCyberAmp::C300_FoundListMatch(int nFilterValue, int* lpn_list, const int nListItems)
+int CyberAmp::C300_FoundListMatch(int nFilterValue, int* lpn_list, const int nListItems)
 {
 	// Test for a match with the 0 offset element of the list;
 	//     the following algorithm will not find this entry
@@ -847,7 +847,7 @@ int CCyberAmp::C300_FoundListMatch(int nFilterValue, int* lpn_list, const int nL
 
 // Initialize bus
 
-int CCyberAmp::ABUS_Initialize()
+int CyberAmp::ABUS_Initialize()
 {
 	const auto iCOM4 = 4;
 	char sz_status_text[RCVBUFSIZE + 1]; //512];
@@ -896,7 +896,7 @@ int CCyberAmp::ABUS_Initialize()
 	return C300_BADDEVICE;
 }
 
-int CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed)
+int CyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed)
 {
 	// close file if already opened
 	if (m_hComm != nullptr)
@@ -965,7 +965,7 @@ int CCyberAmp::ABUS_SetOutput(int nWhichPort, int nWhichSpeed)
 	return 0;
 }
 
-int CCyberAmp::ABUS_SendString(int nOutputPort, char* lpszCmdString, DWORD fDelay)
+int CyberAmp::ABUS_SendString(int nOutputPort, char* lpszCmdString, DWORD fDelay)
 {
 	if (nOutputPort != m_C300nOutputPort)
 	{
@@ -985,7 +985,7 @@ int CCyberAmp::ABUS_SendString(int nOutputPort, char* lpszCmdString, DWORD fDela
 	return GetLastError();
 }
 
-int CCyberAmp::ABUS_ReceiveString(char* lpszCmdString, int nWaitOK, DWORD fDelay)
+int CyberAmp::ABUS_ReceiveString(char* lpszCmdString, int nWaitOK, DWORD fDelay)
 {
 	DWORD dw_number_of_bytes_read;
 	const auto dw_number_of_bytes_to_read = 256; //RCVBUFSIZE; //strlen(lpszCmdString);
@@ -1026,7 +1026,7 @@ int CCyberAmp::ABUS_ReceiveString(char* lpszCmdString, int nWaitOK, DWORD fDelay
 	return GetLastError();
 }
 
-void CCyberAmp::ABUS_FlushReceiveBuffer(int nOutputPort, DWORD fDelay)
+void CyberAmp::ABUS_FlushReceiveBuffer(int nOutputPort, DWORD fDelay)
 {
 	const DWORD flag = PURGE_RXABORT | PURGE_RXCLEAR;
 

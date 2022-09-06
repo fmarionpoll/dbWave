@@ -1038,41 +1038,41 @@ void ViewADcontinuous::InitializeAmplifiers()
 
 BOOL ViewADcontinuous::InitCyberAmp() const
 {
-	CCyberAmp m_cyber;
-	BOOL bcyberPresent = FALSE;
+	CyberAmp cyber_amp;
+	BOOL is_CyberAmp_present = FALSE;
 	int nchans = (m_pOptions_AD->chanArray).ChanArray_getSize();
 
 	// test if Cyberamp320 selected
 	for (int i = 0; i < nchans; i++)
 	{
-		CWaveChan* pchan = (m_pOptions_AD->chanArray).Get_p_channel(i);
+		const CWaveChan* p_wave_channel = (m_pOptions_AD->chanArray).Get_p_channel(i);
 
-		int a = pchan->am_csamplifier.Find(_T("CyberAmp"));
-		int b = pchan->am_csamplifier.Find(_T("Axon Instrument"));
+		const int a = p_wave_channel->am_csamplifier.Find(_T("CyberAmp"));
+		const int b = p_wave_channel->am_csamplifier.Find(_T("Axon Instrument"));
 		if (a == 0 || b == 0)
 		{
-			// test if cyberamp present
-			if (!bcyberPresent)
-				bcyberPresent = (m_cyber.Initialize() == C300_SUCCESS);
-			if (!bcyberPresent)
+			if (!is_CyberAmp_present)
+				is_CyberAmp_present = (cyber_amp.Initialize() == C300_SUCCESS);
+			if (!is_CyberAmp_present)
 			{
 				AfxMessageBox(_T("CyberAmp not found"), MB_OK);
 				continue;
 			}
 
-			// chan, gain, filter +, lowpass, notch	
-			m_cyber.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
-			m_cyber.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
+			// chan, gain, filter + low-pass, notch	
+			cyber_amp.SetHPFilter(p_wave_channel->am_amplifierchan, C300_POSINPUT, p_wave_channel->am_csInputpos);
+			cyber_amp.SetmVOffset(p_wave_channel->am_amplifierchan, p_wave_channel->am_offset);
 
-			m_cyber.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-			m_cyber.SetGain(
-				pchan->am_amplifierchan,
-				int(pchan->am_gaintotal / (double(pchan->am_gainheadstage) * double(pchan->am_gainAD))));
-			m_cyber.SetLPFilter(pchan->am_amplifierchan, int(pchan->am_lowpass));
-			int errorcode = m_cyber.C300_FlushCommandsAndAwaitResponse();
+			cyber_amp.SetNotchFilter(p_wave_channel->am_amplifierchan, p_wave_channel->am_notchfilt);
+			cyber_amp.SetGain(
+				p_wave_channel->am_amplifierchan,
+				static_cast<int>(p_wave_channel->am_gaintotal / (static_cast<double>(p_wave_channel->am_gainheadstage) * static_cast<double>(p_wave_channel->
+					am_gainAD))));
+			cyber_amp.SetLPFilter(p_wave_channel->am_amplifierchan, static_cast<int>(p_wave_channel->am_lowpass));
+			cyber_amp.C300_FlushCommandsAndAwaitResponse();
 		}
 	}
-	return bcyberPresent;
+	return is_CyberAmp_present;
 }
 
 void ViewADcontinuous::OnBnClickedGainbutton()

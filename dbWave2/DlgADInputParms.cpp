@@ -691,12 +691,13 @@ void DlgADInputs::SetAmplifierParms(int col)
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0)
 	{
-		if (m_pcyber_amp == nullptr || !(m_pcyber_amp->Initialize() == NULL))
+		CyberAmp cyber_amp;
+		if (!(cyber_amp.Initialize() == NULL))
 			return;
 
 		p_chan->am_csInputneg = pszHighPass[0];
 		/*auto error_code = */
-		m_pcyber_amp->SetWaveChanParms(p_chan);
+		cyber_amp.SetWaveChanParms(p_chan);
 	}
 
 	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_palligator != nullptr)
@@ -715,9 +716,10 @@ void DlgADInputs::GetAmplifierParms(CWaveChan* p_chan)
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0)
 	{
-		if (m_pcyber_amp == nullptr || !(m_pcyber_amp->Initialize() == NULL))
+		CyberAmp cyber_amp;
+		if (!(cyber_amp.Initialize() == NULL))
 			return;
-		m_pcyber_amp->GetWaveChanParms(p_chan);
+		cyber_amp.GetWaveChanParms(p_chan);
 	}
 
 	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_palligator != nullptr)

@@ -106,11 +106,11 @@
 
 // CCyberAmp command target
 
-class CCyberAmp : public CFile
+class CyberAmp : public CFile
 {
 public:
-	CCyberAmp();
-	~CCyberAmp() override;
+	CyberAmp();
+	~CyberAmp() override;
 
 	int Initialize(void);
 	int SetGain(int nChannel, int nGainValue);

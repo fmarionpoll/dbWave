@@ -44,7 +44,6 @@ public:
 	BOOL m_bcommandAmplifier = false;		// change ampli settings on the fly (if present); default = none
 
 	CUSBPxxS1* m_palligator = nullptr;
-	CCyberAmp* m_pcyber_amp = nullptr;
 
 
 	// Implementation
