@@ -52,7 +52,7 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 
 		Config();
 
-		GetSSCaps(OLSSC_NUMCHANNELS) - 1;
+		GetSSCaps(OLSSC_NUMCHANNELS);
 		for (int i = 0; i < 2; i++)
 		{
 			PutSingleValue(i, 1.0, value_out);
