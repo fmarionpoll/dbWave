@@ -3,13 +3,13 @@
 
 
 
-void ChartDataAD::ADdisplayStart(int chsamples)
+void ChartDataAD::start_display(int points_per_channel)
 {
 	// init parameters related to AD display
 	m_bADbuffers = TRUE; // yes, display ADbuffers
 	m_lADbufferdone = 0; // length of data already displayed
-	auto envelope = envelope_ptr_array.GetAt(0);
-	envelope->FillEnvelopeWithAbcissaEx(1, m_displayRect.right - 1, chsamples);
+	const auto envelope = envelope_ptr_array.GetAt(0);
+	envelope->FillEnvelopeWithAbcissaEx(1, m_displayRect.right - 1, points_per_channel);
 	envelope->ExportToAbcissa(m_PolyPoints);
 	SetbUseDIB(FALSE);
 
@@ -22,11 +22,11 @@ void ChartDataAD::ADdisplayStart(int chsamples)
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
 	CString cs = _T("Waiting for trigger");
-	const auto textlen = cs.GetLength();
-	dc.DrawText(cs, textlen, rect, DT_LEFT);
+	const auto text_length = cs.GetLength();
+	dc.DrawText(cs, text_length, rect, DT_LEFT);
 }
 
-void ChartDataAD::ADdisplayBuffer(short* samples_buffer, long samples_number)
+void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 {
 	// check data wrap
 	if (m_lADbufferdone + samples_number > m_lxSize)
@@ -34,10 +34,9 @@ void ChartDataAD::ADdisplayBuffer(short* samples_buffer, long samples_number)
 		const long pixels_left_until_end_of_Display = m_lxSize - m_lADbufferdone;
 		if (pixels_left_until_end_of_Display > 0)
 		{
-			ADdisplayBuffer(samples_buffer, pixels_left_until_end_of_Display);
+			display_buffer(samples_buffer, pixels_left_until_end_of_Display);
 			samples_number -= pixels_left_until_end_of_Display;
-			samples_buffer += (pixels_left_until_end_of_Display * static_cast<long>(m_pDataFile->GetpWaveFormat()->
-				scan_count));
+			samples_buffer += (pixels_left_until_end_of_Display * m_pDataFile->GetpWaveFormat()->scan_count);
 		}
 		m_lADbufferdone = 0;
 	}

@@ -46,15 +46,16 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 		}
 		ClearError();
 		SetDataFlow(OLx_DF_SINGLEVALUE);
-		long out_value = 0;
+		long value_out = 0;
 		if (GetEncoding() == OLx_ENC_BINARY)
-			out_value = static_cast<WORD>((out_value ^ m_msbit) & m_lRes);
+			value_out = static_cast<WORD>((value_out ^ m_msbit) & m_lRes);
 
 		Config();
-		int nchansmax = GetSSCaps(OLSSC_NUMCHANNELS) - 1;
+
+		GetSSCaps(OLSSC_NUMCHANNELS) - 1;
 		for (int i = 0; i < 2; i++)
 		{
-			PutSingleValue(i, 1.0, out_value);
+			PutSingleValue(i, 1.0, value_out);
 		}
 	}
 	catch (COleDispatchException* e)
@@ -92,18 +93,18 @@ BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_INPUTDATA* pADC_options)
 
 		SetChannelList();
 		const double resolution_factor = pow(2.0, GetResolution());
-		m_msbit = static_cast<long>(pow(2.0, double(GetResolution()) - 1.));
+		m_msbit = static_cast<long>(pow(2.0, static_cast<double>(GetResolution()) - 1.));
 		m_lRes = static_cast<long>(resolution_factor - 1.);
 
 		for (int i = 0; i < _options_OutputData.outputparms_array.GetSize(); i++)
 		{
-			OUTPUTPARMS* pParms = &_options_OutputData.outputparms_array.GetAt(i);
+			OUTPUTPARMS* output_parameters = &_options_OutputData.outputparms_array.GetAt(i);
 			//MSequence(TRUE, pParms);
-			if (pParms->bDigital)
+			if (output_parameters->bDigital)
 				continue;
 			const double delta = static_cast<double>(GetMaxRange()) - static_cast<double>(GetMinRange());
-			pParms->ampUp = pParms->dAmplitudeMaxV * resolution_factor / delta;
-			pParms->ampLow = pParms->dAmplitudeMinV * resolution_factor / delta;
+			output_parameters->ampUp = output_parameters->dAmplitudeMaxV * resolution_factor / delta;
+			output_parameters->ampLow = output_parameters->dAmplitudeMinV * resolution_factor / delta;
 		}
 
 		// pass parameters to the board and check if errors
@@ -120,46 +121,48 @@ BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_INPUTDATA* pADC_options)
 
 void DataTranslation_DA::SetChannelList()
 {
-	int nanalogOutputs = 0;
-	int ndigitalOutputs = 0;
+	int n_analog_outputs = 0;
+	int n_digital_outputs = 0;
 
 	for (int i = 0; i < _options_OutputData.outputparms_array.GetSize(); i++)
 	{
-		const OUTPUTPARMS* pParms = &_options_OutputData.outputparms_array.GetAt(i);
-		if (!pParms->bON)
+		const OUTPUTPARMS* output_parameters = &_options_OutputData.outputparms_array.GetAt(i);
+		if (!output_parameters->bON)
 			continue;
-		if (!pParms->bDigital)
-			nanalogOutputs++;
+		if (!output_parameters->bDigital)
+			n_analog_outputs++;
 		else
-			ndigitalOutputs++;
+			n_digital_outputs++;
 	}
 	m_digitalchannel = 0;
-	int nchans = nanalogOutputs;
-	nchans += (ndigitalOutputs > 0);
+	int n_channels_out = n_analog_outputs;
+	n_channels_out += (n_digital_outputs > 0);
+	if (n_channels_out < 1)
+		return;
 
 	try
 	{
 		// number of D/A channels
-		int nchansmax = GetSSCaps(OLSSC_NUMCHANNELS);
-		ASSERT(nchans <= nchansmax);
-		SetListSize(nchans);
+		const int max_n_channels = GetSSCaps(OLSSC_NUMCHANNELS);
+		ASSERT(n_channels_out <= max_n_channels);
+		SetListSize(n_channels_out);
 
-		if (nanalogOutputs)
+		if (n_analog_outputs)
 		{
-			for (int i = 0; i < nchansmax; i++)
+			for (int i = 0; i < max_n_channels; i++)
 			{
-				if (nanalogOutputs > 0)
+				if (n_analog_outputs > 0)
 				{
 					CDTAcq32::SetChannelList(i, i);
-					nanalogOutputs--;
+					n_analog_outputs--;
 					m_digitalchannel++;
 				}
 			}
 		}
 
-		if (ndigitalOutputs)
+		if (n_digital_outputs)
 		{
-			CDTAcq32::SetChannelList(m_digitalchannel, nchansmax - 1);
+			CDTAcq32::SetChannelList(m_digitalchannel, max_n_channels - 1);
 		}
 
 		m_listsize = GetListSize();
@@ -628,12 +631,12 @@ void DataTranslation_DA::ConfigAndStart()
 {
 	Config();
 	Start();
-	m_inprogress = true;
+	m_is_DA_in_progress = true;
 }
 
 void DataTranslation_DA::StopAndLiberateBuffers()
 {
-	if (!m_inprogress)
+	if (!m_is_DA_in_progress)
 		return;
 
 	try
@@ -659,7 +662,7 @@ void DataTranslation_DA::StopAndLiberateBuffers()
 	{
 		DispatchException(e);
 	}
-	m_inprogress = FALSE;
+	m_is_DA_in_progress = FALSE;
 }
 
 

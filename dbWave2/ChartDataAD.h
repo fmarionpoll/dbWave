@@ -5,8 +5,8 @@ class ChartDataAD :
 	public ChartData
 {
 public:
-	void ADdisplayStart(int chsamplesw);
-	void ADdisplayBuffer(short* samples_buffer, long nchsamples);
-	void ADdisplayStop() { m_bADbuffers = FALSE; }
+	void start_display(int points_per_channel);
+	void display_buffer(short* samples_buffer, long points_per_channel);
+	void stop_display() { m_bADbuffers = FALSE; }
 
 };

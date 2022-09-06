@@ -329,7 +329,7 @@ void ViewADcontinuous::StopAcquisition()
 
 	// stop AD, liberate DTbuffers
 	m_Acq32_AD.StopAndLiberateBuffers();
-	m_chartDataAD.ADdisplayStop();
+	m_chartDataAD.stop_display();
 	m_bchanged = TRUE;
 
 	// stop DA, liberate buffers
@@ -493,7 +493,7 @@ BOOL ViewADcontinuous::StartAcquisition()
 	// start AD display
 	m_channel_sweep_start = 0;
 	m_channel_sweep_end = -1;
-	m_chartDataAD.ADdisplayStart(m_chsweeplength);
+	m_chartDataAD.start_display(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0; // no samples yet
 	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(m_pOptions_AD->iundersample);
@@ -915,14 +915,14 @@ void ViewADcontinuous::OnTriggerError_DAC()
 
 void ViewADcontinuous::OnBufferDone_ADC()
 {
-	short* pDTbuf = m_Acq32_AD.OnBufferDone();
-	if (pDTbuf == nullptr)
+	short* p_buffer_done = m_Acq32_AD.OnBufferDone();
+	if (p_buffer_done == nullptr)
 		return;
 
-	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
-	ADC_Transfer(pDTbuf, pWFormat);
-	ADC_TransferToFile(pWFormat);
-	ADC_TransferToChart(pWFormat);
+	CWaveFormat* wave_format = m_inputDataFile.GetpWaveFormat();
+	ADC_Transfer(p_buffer_done, wave_format);
+	ADC_TransferToFile(wave_format);
+	ADC_TransferToChart(wave_format);
 }
 
 void ViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat)
@@ -939,44 +939,43 @@ void ViewADcontinuous::ADC_Transfer(short* pDTbuf0, const CWaveFormat * pWFormat
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
 	if ((m_pOptions_AD->waveFormat).binzero != NULL)
 	{
-		const WORD binzero = WORD((m_pOptions_AD->waveFormat).binzero);
-		auto pDTbuf = reinterpret_cast<WORD*>(pDTbuf0);
+		const auto bin_zero_value = static_cast<short>(m_pOptions_AD->waveFormat.binzero);
+		short* pDTbuf = pDTbuf0;
 		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, pDTbuf++)
-			*pDTbuf -= binzero;
+			*pDTbuf -= bin_zero_value;
 	}
 
-	// no undersampling.. copy DTbuffer into data file buffer
 	if (m_pOptions_AD->iundersample <= 1)
-	{
 		memcpy(pRawDataBuf, pDTbuf0, m_Acq32_AD.Getbuflen() * sizeof(short));
-	}
-	// undersampling (assume that buffer length is a multiple of iundersample) and copy into data file buffer
 	else
+		under_sample_buffer(pRawDataBuf, pDTbuf0, pWFormat, m_pOptions_AD->iundersample);
+	
+	// update byte length of buffer
+	m_bytesweepRefresh = m_chsweepRefresh * static_cast<int>(sizeof(short)) * static_cast<int>(pWFormat->scan_count);
+}
+
+void ViewADcontinuous::under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, const CWaveFormat* pWFormat, const int under_sample_factor)
+{
+	short* pdataBuf2 = pRawDataBuf;
+	short* pDTbuf = pDTbuf0;
+	m_chsweepRefresh = m_chsweepRefresh / under_sample_factor;
+	// loop and compute average between consecutive points
+	for (int j = 0; j < pWFormat->scan_count; j++, pdataBuf2++, pDTbuf++)
 	{
-		short* pdataBuf2 = pRawDataBuf;
-		short* pDTbuf = pDTbuf0;
-		const int undersample_factor = m_pOptions_AD->iundersample;
-		m_chsweepRefresh = m_chsweepRefresh / undersample_factor;
-		// loop and compute average between consecutive points
-		for (int j = 0; j < pWFormat->scan_count; j++, pdataBuf2++, pDTbuf++)
+		short* pSource = pDTbuf;
+		short* pDest = pdataBuf2;
+		for (int i = 0; i < m_Acq32_AD.Getchbuflen(); i += under_sample_factor)
 		{
-			short* pSource = pDTbuf;
-			short* pDest = pdataBuf2;
-			for (int i = 0; i < m_Acq32_AD.Getchbuflen(); i += undersample_factor)
+			long SUM = 0;
+			for (int k = 0; k < under_sample_factor; k++)
 			{
-				long SUM = 0;
-				for (int k = 0; k < undersample_factor; k++)
-				{
-					SUM += *pSource;
-					pSource += pWFormat->scan_count;
-				}
-				*pDest = static_cast<short>(SUM / undersample_factor);
-				pDest += pWFormat->scan_count;
+				SUM += *pSource;
+				pSource += pWFormat->scan_count;
 			}
+			*pDest = static_cast<short>(SUM / under_sample_factor);
+			pDest += pWFormat->scan_count;
 		}
 	}
-	// update byte length of buffer
-	m_bytesweepRefresh = m_chsweepRefresh * int(sizeof(short)) * int(pWFormat->scan_count);
 }
 
 void ViewADcontinuous::ADC_TransferToChart(const CWaveFormat * pWFormat)
@@ -984,11 +983,11 @@ void ViewADcontinuous::ADC_TransferToChart(const CWaveFormat * pWFormat)
 	if (pWFormat->bOnlineDisplay)
 	{
 		short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
-		m_chartDataAD.ADdisplayBuffer(pdataBuf, m_chsweepRefresh);
+		m_chartDataAD.display_buffer(pdataBuf, m_chsweepRefresh);
 	}
-	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
+	const double duration = static_cast<double>(pWFormat->sample_count) / static_cast<double>(m_fclockrate);
 	CString cs;
-	cs.Format(_T("%.3lf"), double(duration));
+	cs.Format(_T("%.3lf"), duration);
 	SetDlgItemText(IDC_STATIC1, cs);
 }
 
@@ -1012,11 +1011,8 @@ void ViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 			{
 				if (!StartAcquisition())
 					StopAcquisition();
-				else
-				{
-					if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
-						OnBufferDone_ADC();
-				}
+				else if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
+					OnBufferDone_ADC();
 				return;
 			}
 			UpdateStartStop(FALSE);
@@ -1038,12 +1034,12 @@ void ViewADcontinuous::InitializeAmplifiers()
 
 BOOL ViewADcontinuous::InitCyberAmp() const
 {
-	CyberAmp cyber_amp;
-	BOOL is_CyberAmp_present = FALSE;
-	int nchans = (m_pOptions_AD->chanArray).ChanArray_getSize();
+	CyberAmp cyberAmp;
+	BOOL cyberAmp_is_present = FALSE;
+	const int n_ad_channels = (m_pOptions_AD->chanArray).ChanArray_getSize();
 
 	// test if Cyberamp320 selected
-	for (int i = 0; i < nchans; i++)
+	for (int i = 0; i < n_ad_channels; i++)
 	{
 		const CWaveChan* p_wave_channel = (m_pOptions_AD->chanArray).Get_p_channel(i);
 
@@ -1051,28 +1047,28 @@ BOOL ViewADcontinuous::InitCyberAmp() const
 		const int b = p_wave_channel->am_csamplifier.Find(_T("Axon Instrument"));
 		if (a == 0 || b == 0)
 		{
-			if (!is_CyberAmp_present)
-				is_CyberAmp_present = (cyber_amp.Initialize() == C300_SUCCESS);
-			if (!is_CyberAmp_present)
+			if (!cyberAmp_is_present)
+				cyberAmp_is_present = (cyberAmp.Initialize() == C300_SUCCESS);
+			if (!cyberAmp_is_present)
 			{
 				AfxMessageBox(_T("CyberAmp not found"), MB_OK);
 				continue;
 			}
 
 			// chan, gain, filter + low-pass, notch	
-			cyber_amp.SetHPFilter(p_wave_channel->am_amplifierchan, C300_POSINPUT, p_wave_channel->am_csInputpos);
-			cyber_amp.SetmVOffset(p_wave_channel->am_amplifierchan, p_wave_channel->am_offset);
+			cyberAmp.SetHPFilter(p_wave_channel->am_amplifierchan, C300_POSINPUT, p_wave_channel->am_csInputpos);
+			cyberAmp.SetmVOffset(p_wave_channel->am_amplifierchan, p_wave_channel->am_offset);
 
-			cyber_amp.SetNotchFilter(p_wave_channel->am_amplifierchan, p_wave_channel->am_notchfilt);
-			cyber_amp.SetGain(
+			cyberAmp.SetNotchFilter(p_wave_channel->am_amplifierchan, p_wave_channel->am_notchfilt);
+			cyberAmp.SetGain(
 				p_wave_channel->am_amplifierchan,
 				static_cast<int>(p_wave_channel->am_gaintotal / (static_cast<double>(p_wave_channel->am_gainheadstage) * static_cast<double>(p_wave_channel->
 					am_gainAD))));
-			cyber_amp.SetLPFilter(p_wave_channel->am_amplifierchan, static_cast<int>(p_wave_channel->am_lowpass));
-			cyber_amp.C300_FlushCommandsAndAwaitResponse();
+			cyberAmp.SetLPFilter(p_wave_channel->am_amplifierchan, static_cast<int>(p_wave_channel->am_lowpass));
+			cyberAmp.C300_FlushCommandsAndAwaitResponse();
 		}
 	}
-	return is_CyberAmp_present;
+	return cyberAmp_is_present;
 }
 
 void ViewADcontinuous::OnBnClickedGainbutton()

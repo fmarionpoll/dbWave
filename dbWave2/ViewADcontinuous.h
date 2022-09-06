@@ -131,6 +131,7 @@ protected:
 	void ChainDialog(WORD iID);
 
 	void ADC_Transfer(short* pDTbuf0, const CWaveFormat* pWFormat);
+	void under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, const CWaveFormat* pWFormat, const int under_sample_factor);
 	void ADC_TransferToChart(const CWaveFormat* pWFormat);
 	void ADC_TransferToFile(CWaveFormat* pWFormat);
 	void InitializeAmplifiers();

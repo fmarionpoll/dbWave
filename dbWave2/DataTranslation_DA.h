@@ -42,7 +42,7 @@ protected:
 	long m_msbit = 0;
 	long m_lRes = 0;
 
-	BOOL m_inprogress = false; // D/A in progress
+	BOOL m_is_DA_in_progress = false; // D/A in progress
 	HBUF m_bufhandle = nullptr;
 	long m_buflen = 0; // nb of acq sample per DT buffer
 	long m_chbuflen = 0;
@@ -55,6 +55,6 @@ protected:
 public:
 	void OnBufferDone();
 	int GetDigitalChannel() const { return m_digitalchannel; }
-	bool IsInProgress() const { return m_inprogress; }
-	void SetInProgress() { m_inprogress = true; }
+	bool IsInProgress() const { return m_is_DA_in_progress; }
+	void SetInProgress() { m_is_DA_in_progress = true; }
 };
