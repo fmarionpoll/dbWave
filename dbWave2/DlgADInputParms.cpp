@@ -423,7 +423,7 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 			p_cell->SetCurSel(1);
 	}
 
-	// DC Offset (mV) " IN-" - combo
+	// DC Offset (mV) " IN-" - numeric - float
 	row++;
 	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
 	if (col > 1)
@@ -509,9 +509,12 @@ void DlgADInputs::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 	switch (p_item->iRow)
 	{
 	//case 1: // title - no action
-	//case 2: // A/D channel (0-7), (0-15)
+	case 2: // A/D channel (0-7), (0-15)
+		is_AD_changed = true;
+		break;
 	case 3: // A/D gain
 		DisplayChannelReadOnlyFields(p_item->iColumn);
+		is_AD_changed = true;
 		break;
 	case 4: // ampli
 	case 5: // ampli out chan

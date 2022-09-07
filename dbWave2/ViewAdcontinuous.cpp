@@ -813,13 +813,15 @@ void ViewADcontinuous::OnInputChannels()
 	{
 		m_pOptions_AD->bChannelType = dlg.m_bchantype;
 		const boolean is_acquisition_running = m_Acq32_AD.IsInProgress();
-		if (is_acquisition_running)
-			StopAcquisition();
-		if (dlg.is_AD_changed)
+		if (dlg.is_AD_changed) 
+		{
+			if (is_acquisition_running)
+				StopAcquisition();
 			InitOutput_AD();
+		}
 		UpdateData(FALSE);
 		UpdateGainScroll();
-		if (is_acquisition_running)
+		if (is_acquisition_running && dlg.is_AD_changed)
 			StartAcquisition();
 	}
 	delete p_alligator;
