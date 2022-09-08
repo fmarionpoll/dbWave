@@ -5,10 +5,18 @@ class InPlaceEdit : public CEdit
 {
 public:
     InPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText);
+    InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+        int nRow, int nColumn, CString sInitText, UINT nFirstChar);
     ~InPlaceEdit() override;
+
+    void EndEdit();
 
 protected:
 	BOOL PreTranslateMessage(MSG* pMsg) override;
+    virtual void PostNcDestroy();
+
+public:
+    CRect   m_Rect;
 
 private:
     int m_iItem = 0;
@@ -16,6 +24,11 @@ private:
     CString m_sInitText = _T("");
     BOOL m_bESC = false;
     CWnd* m_parent = nullptr;
+
+    int     m_nRow;
+    int     m_nColumn;
+    UINT    m_nLastChar;
+    BOOL    m_bExitOnArrows;
 
 protected:
     afx_msg void OnKillFocus(CWnd* pNewWnd);

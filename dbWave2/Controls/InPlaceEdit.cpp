@@ -1,6 +1,5 @@
 #include <StdAfx.h>
 #include "InPlaceEdit.h"
-
 #include "GridCtrl.h"
 
 
@@ -17,6 +16,56 @@ InPlaceEdit::InPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitTex
 	m_parent = parent;
 }
 
+InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+	int nRow, int nColumn, CString sInitText,
+	UINT nFirstChar)
+{
+	m_sInitText = sInitText;
+	m_nRow = nRow;
+	m_nColumn = nColumn;
+	m_nLastChar = 0;
+
+	// pja - I find 'exit on arrows' to be counter intuitive. Ctrl-arrow or Tab
+	//       should be good enough.
+	m_bExitOnArrows = 0;//(nFirstChar != VK_LBUTTON);    // If mouse click brought us here,
+													 // then no exit on arrows
+
+	m_Rect = rect;  // For bizarre CE bug.
+
+	DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
+		| dwStyle;
+	if (!Create(dwEditStyle, rect, pParent, nID)) return;
+
+	SetFont(pParent->GetFont());
+
+	SetWindowText(sInitText);
+	SetFocus();
+
+	switch (nFirstChar) {
+	case VK_LBUTTON:
+	case VK_RETURN:   SetSel((int)_tcslen(m_sInitText), -1); return;
+	case VK_BACK:     SetSel((int)_tcslen(m_sInitText), -1); break;
+	case VK_TAB:
+	case VK_DOWN:
+	case VK_UP:
+	case VK_RIGHT:
+	case VK_LEFT:
+	case VK_NEXT:
+	case VK_PRIOR:
+	case VK_HOME:
+	case VK_SPACE:
+	case VK_END:      SetSel(0, -1); return;
+	default:          SetSel(0, -1);
+	}
+
+	// Added by KiteFly. When entering DBCS chars into cells the first char was being lost
+	// SendMessage changed to PostMessage (John Lagerquist)
+	if (nFirstChar < 0x80)
+		PostMessage(WM_CHAR, nFirstChar);
+	else
+		PostMessage(WM_IME_CHAR, nFirstChar);
+}
+
 InPlaceEdit::~InPlaceEdit()
 {
 }
@@ -27,7 +76,6 @@ BEGIN_MESSAGE_MAP(InPlaceEdit, CEdit)
 	ON_WM_CHAR()
 	ON_WM_CREATE()
 END_MESSAGE_MAP()
-
 
 BOOL InPlaceEdit::PreTranslateMessage(MSG* pMsg)
 {
@@ -48,6 +96,11 @@ BOOL InPlaceEdit::PreTranslateMessage(MSG* pMsg)
 	return CEdit::PreTranslateMessage(pMsg);
 }
 
+void InPlaceEdit::PostNcDestroy()
+{
+	CEdit::PostNcDestroy();
+	delete this;
+}
 
 void InPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 {
@@ -77,7 +130,6 @@ void InPlaceEdit::OnNcDestroy()
 	CEdit::OnNcDestroy();
 	delete this;
 }
-
 
 void InPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
@@ -136,4 +188,43 @@ int InPlaceEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetDlgCtrlID(IDC_INPLACE_CONTROL);
 	return 0;
 }
+
+void InPlaceEdit::EndEdit()
+{
+	CString str;
+
+	// EFW - BUG FIX - Clicking on a grid scroll bar in a derived class
+	// that validates input can cause this to get called multiple times
+	// causing assertions because the edit control goes away the first time.
+	static BOOL bAlreadyEnding = FALSE;
+
+	if (bAlreadyEnding)
+		return;
+
+	bAlreadyEnding = TRUE;
+	GetWindowText(str);
+
+	// Send Notification to parent
+	GV_DISPINFO dispinfo;
+
+	dispinfo.hdr.hwndFrom = GetSafeHwnd();
+	dispinfo.hdr.idFrom = GetDlgCtrlID();
+	dispinfo.hdr.code = GVN_ENDLABELEDIT;
+
+	dispinfo.item.mask = LVIF_TEXT | LVIF_PARAM;
+	dispinfo.item.row = m_nRow;
+	dispinfo.item.col = m_nColumn;
+	dispinfo.item.strText = str;
+	dispinfo.item.lParam = (LPARAM)m_nLastChar;
+
+	CWnd* pOwner = GetOwner();
+	if (pOwner)
+		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+
+	// Close this window (PostNcDestroy will delete this)
+	if (IsWindow(GetSafeHwnd()))
+		SendMessage(WM_CLOSE, 0, 0);
+	bAlreadyEnding = FALSE;
+}
+
 

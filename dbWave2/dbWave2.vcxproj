@@ -783,6 +783,7 @@
     <ClCompile Include="ChartSpike.cpp" />
     <ClCompile Include="Controls\ComboEdit.cpp" />
     <ClCompile Include="Controls\InPlaceEdit.cpp" />
+    <ClCompile Include="GridCtrl\GridCellNumeric2.cpp" />
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp" />
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp" />
     <ClCompile Include="RowItem.cpp" />
@@ -1365,6 +1366,7 @@
     <ClInclude Include="ChartSpike.h" />
     <ClInclude Include="Controls\ComboEdit.h" />
     <ClInclude Include="Controls\InPlaceEdit.h" />
+    <ClInclude Include="GridCtrl\GridCellNumeric2.h" />
     <ClInclude Include="GridCtrl\GridDefaultCell.h" />
     <ClInclude Include="GridCtrl\GridDefines.h" />
     <ClInclude Include="GridCtrl\GridInPlaceList.h" />
