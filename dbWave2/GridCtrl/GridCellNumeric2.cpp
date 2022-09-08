@@ -84,14 +84,8 @@ CInPlaceNumEdit::CInPlaceNumEdit(CWnd* pParent,
                                  UINT nFirstChar,
                                  double InitialValue,
                                  DWORD dwFlags) :
-InPlaceEdit(pParent, rect, dwStyle, nID, nRow, nColumn, InitialText, nFirstChar),
-LastValid(_T("0")),
-Updating(0),
-Sel(0),
-cDecimal(0),
-cNegative(0),
-iNegative(-1),
-Flags(dwFlags)
+			InPlaceEdit(pParent, rect, dwStyle, nID, nRow, nColumn, InitialText, nFirstChar),
+			LastValid(_T("0")),Updating(0),Sel(0),cDecimal(0),cNegative(0),iNegative(-1),Flags(dwFlags)
 {
     int count = 0;
     CString buffer;

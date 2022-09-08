@@ -25,8 +25,6 @@ static char THIS_FILE[] = __FILE__;
 BOOL GridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
 	m_bEditing = TRUE;
-
-	// GridInPlaceEdit auto-deletes itself
 	m_pEditWnd = new GridInPlaceEdit(GetGrid(), rect, /*GetStyle() |*/ ES_NUMBER, nID, nRow, nCol,
 	                              GetText(), nChar);
 
