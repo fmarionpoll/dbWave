@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "DlgImportFiles.h"
+
+#include "ADAcqDataDoc.h"
 #include "resource.h"
 
 #include "dataheader_Atlab.H"
@@ -178,7 +180,7 @@ BOOL DlgImportFiles::ImportATFFile()
 		return FALSE;
 	}
 
-	auto pTo = new AcqDataDoc;
+	auto pTo = new ADAcqDataDoc;
 	ASSERT(pTo != NULL);
 	if (!pTo->CreateAcqFile(m_fileto))
 	{

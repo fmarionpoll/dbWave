@@ -1,6 +1,8 @@
 ﻿#include "StdAfx.h"
 #include "Taglist.h"
 #include "AcqDataDoc.h"
+
+#include "ADAcqDataDoc.h"
 #include "datafile_Atlab.h"
 #include "datafile_ASD.h"
 #include "datafile_mcid.h"
@@ -739,35 +741,7 @@ BOOL AcqDataDoc::WriteVTtags(TagList* p_tags)
 	return m_pXFile->WriteVTtags(p_tags);
 }
 
-BOOL AcqDataDoc::AcqDoc_DataAppendStart()
-{
-	// start from fresh?
-	if (m_pXFile == nullptr || m_pXFile->m_idType != DOCTYPE_AWAVE)
-	{
-		delete m_pXFile;
-		m_pXFile = new CDataFileAWAVE;
-		ASSERT(m_pXFile != NULL);
-	}
-	return m_pXFile->DataAppendStart();
-}
 
-BOOL AcqDataDoc::AcqDoc_DataAppend(short* p_buffer, const UINT bytes_length) const
-{
-	return m_pXFile->DataAppend(p_buffer, bytes_length);
-}
-
-BOOL AcqDataDoc::AcqDoc_DataAppendStop() const
-{
-	m_pXFile->DataAppendStop();
-	const auto p_wave_format = GetpWaveFormat();
-	p_wave_format->sample_count = static_cast<long>(m_pXFile->m_ulbytescount / sizeof(short));
-	p_wave_format->duration = static_cast<float>(p_wave_format->sample_count) / static_cast<float>(p_wave_format->
-			scan_count)
-		/ p_wave_format->sampling_rate_per_channel;
-	m_pXFile->WriteDataInfos(p_wave_format, GetpWavechanArray());
-	m_pXFile->Flush();
-	return TRUE;
-}
 
 BOOL AcqDataDoc::AcqSaveDataDescriptors() const
 {
@@ -828,7 +802,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 	}
 
 	// create new file
-	auto* p_new_doc = new AcqDataDoc;
+	auto* p_new_doc = new ADAcqDataDoc;
 	if (!p_new_doc->CreateAcqFile(dummy_name))
 	{
 		AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);

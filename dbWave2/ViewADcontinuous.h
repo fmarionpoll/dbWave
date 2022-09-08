@@ -4,6 +4,7 @@
 #include <afxext.h>
 #endif
 
+#include "ADAcqDataDoc.h"
 #include "RulerBar.h"
 #include "afxwin.h"
 #include "ChartDataAD.h"
@@ -82,7 +83,7 @@ protected:
 	BOOL m_bFoundDTOPenLayerDLL{ false };
 	BOOL m_bhidesubsequent{ false };
 
-	AcqDataDoc m_inputDataFile;
+	ADAcqDataDoc m_inputDataFile;
 	//AcqDataDoc m_outputDataFile;	
 	CStringArray m_csNameArray;
 	BOOL m_bFileOpen{ false };
@@ -130,7 +131,7 @@ protected:
 	void display_ol_da_error_message(const CHAR* error_string) const;
 	void ChainDialog(WORD iID);
 
-	short* ADC_Transfer(short* acquisition_data_buffer, const CWaveFormat* pWFormat);
+	short* ADC_Transfer(short* source_data, const CWaveFormat* pWFormat);
 	void under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, const CWaveFormat* pWFormat, const int under_sample_factor);
 	void ADC_TransferToChart(short* pRawDataBuf, const CWaveFormat* pWFormat);
 	void ADC_TransferToFile(CWaveFormat* pWFormat);

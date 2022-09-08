@@ -933,7 +933,7 @@ void ViewADcontinuous::OnBufferDone_ADC()
 	ADC_TransferToChart(pRawDataBuf, wave_format);
 }
 
-short* ViewADcontinuous::ADC_Transfer(short* acquisition_data_buffer, const CWaveFormat * pWFormat)
+short* ViewADcontinuous::ADC_Transfer(short* source_data, const CWaveFormat * pWFormat)
 {
 	short* pRawDataBuf = m_inputDataFile.GetpRawDataBUF();
 
@@ -948,15 +948,15 @@ short* ViewADcontinuous::ADC_Transfer(short* acquisition_data_buffer, const CWav
 	if ((m_pOptions_AD->waveFormat).binzero != NULL)
 	{
 		const auto bin_zero_value = static_cast<short>(m_pOptions_AD->waveFormat.binzero);
-		short* p_data_acquisition_value = acquisition_data_buffer;
+		short* p_data_acquisition_value = source_data;
 		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, p_data_acquisition_value++)
 			*p_data_acquisition_value -= bin_zero_value;
 	}
 
 	if (m_pOptions_AD->iundersample <= 1)
-		memcpy(pRawDataBuf, acquisition_data_buffer, m_Acq32_AD.Getbuflen() * sizeof(short));
+		memcpy(pRawDataBuf, source_data, m_Acq32_AD.Getbuflen() * sizeof(short));
 	else
-		under_sample_buffer(pRawDataBuf, acquisition_data_buffer, pWFormat, m_pOptions_AD->iundersample);
+		under_sample_buffer(pRawDataBuf, source_data, pWFormat, m_pOptions_AD->iundersample);
 	
 	// update byte length of buffer
 	m_bytesweepRefresh = m_chsweepRefresh * static_cast<int>(sizeof(short)) * static_cast<int>(pWFormat->scan_count);

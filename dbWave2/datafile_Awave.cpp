@@ -310,7 +310,7 @@ void CDataFileAWAVE::ReportSaveLoadException(const LPCTSTR lpsz_path_name,
 BOOL CDataFileAWAVE::DataAppendStart()
 {
 	CSubfileItem* p_struct; // get descriptor
-	auto itemmax = 0;
+	auto item_max = 0;
 	WORD w_key; // key value
 	auto pos = m_structMap.GetStartPosition(); // position
 	// search nb of STRUCT_DATA items
@@ -319,21 +319,21 @@ BOOL CDataFileAWAVE::DataAppendStart()
 		// get pointer to object & key
 		m_structMap.GetNextAssoc(pos, w_key, reinterpret_cast<CObject*&>(p_struct));
 		if (w_key == STRUCT_DATA) // skip struct_end
-			if (p_struct->GetItemnb() > itemmax)
-				itemmax = p_struct->GetItemnb();
+			if (p_struct->GetItemnb() > item_max)
+				item_max = p_struct->GetItemnb();
 	}
-	itemmax++;
+	item_max++;
 	const auto l_actual = Seek(0, end); // file pointer position
 
 	if (m_structMap.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
 		delete p_struct;
 
-	p_struct = new CSubfileItem(STRUCT_DATA, // ucCode
-	                            "DATA:", // csLabel x
+	p_struct = new CSubfileItem(STRUCT_DATA,	// ucCode
+	                            "DATA:",		// csLabel x
 	                            static_cast<long>(l_actual), // lOffset x
-	                            0, // lLength
-	                            NORMAL_MODE, // ucEncoding
-	                            itemmax); // itemnb
+	                            0,				// lLength
+	                            NORMAL_MODE,	// ucEncoding
+	                            item_max);		// itemnb
 	ASSERT(p_struct != NULL);
 	m_structMap.SetAt(STRUCT_DATA, p_struct); // create new descriptor
 
@@ -348,17 +348,17 @@ BOOL CDataFileAWAVE::DataAppendStart()
 
 BOOL CDataFileAWAVE::DataAppend(short* pBU, UINT uibytesLength)
 {
-	m_bmodified = TRUE; // tell awave that data were added
-	Write(pBU, uibytesLength); // write data
+	m_bmodified = TRUE; 
+	Write(pBU, uibytesLength); 
 	m_ulbytescount += static_cast<ULONGLONG>(uibytesLength);
-	return TRUE; //
+	return TRUE; 
 }
 
 // stop appending data, update pointers, structures
 
 BOOL CDataFileAWAVE::DataAppendStop()
 {
-	CSubfileItem* p_struct; // get descriptor
+	CSubfileItem* p_struct; 
 	if (!m_structMap.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
 		return 0;
 	p_struct->SetDataLength(m_ulbytescount);

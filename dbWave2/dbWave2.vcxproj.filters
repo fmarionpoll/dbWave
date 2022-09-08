@@ -516,6 +516,9 @@
     <ClCompile Include="GridCtrl\GridCellNumeric2.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
+    <ClCompile Include="ADAcqDataDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1117,6 +1120,9 @@
     </ClInclude>
     <ClInclude Include="GridCtrl\GridCellNumeric2.h">
       <Filter>customctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="ADAcqDataDoc.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

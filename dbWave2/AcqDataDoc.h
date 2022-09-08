@@ -78,9 +78,6 @@ public:
 	// write data
 	BOOL WriteHZtags(TagList* p_tags);
 	BOOL WriteVTtags(TagList* p_tags);
-	BOOL AcqDoc_DataAppendStart();
-	BOOL AcqDoc_DataAppend(short* pBU, UINT uilbytesLength) const;
-	BOOL AcqDoc_DataAppendStop() const;
 	void AcqDeleteFile() const;
 	void AcqCloseFile() const;
 	BOOL AcqSaveDataDescriptors() const;

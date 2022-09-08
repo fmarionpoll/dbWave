@@ -3,6 +3,8 @@
 #include "dbWaveDoc.h"
 #include "DlgExportData.h"
 
+#include "ADAcqDataDoc.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -794,7 +796,7 @@ void DlgExportData::saveCString_BIFF(CFile* fp, int row, int col, CString& data)
 BOOL DlgExportData::ExportDataAsdbWaveFile()
 {
 	// create new file
-	auto pDatDest = new AcqDataDoc;
+	auto pDatDest = new ADAcqDataDoc;
 	pDatDest->CreateAcqFile(m_filedest);
 
 	// load data header and save it into dest file

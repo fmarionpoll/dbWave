@@ -779,6 +779,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AcqDataDoc.cpp" />
+    <ClCompile Include="ADAcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
     <ClCompile Include="Controls\ComboEdit.cpp" />
@@ -1361,6 +1362,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="AcqDataDoc.h" />
+    <ClInclude Include="ADAcqDataDoc.h" />
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
