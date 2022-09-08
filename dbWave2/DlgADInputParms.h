@@ -23,27 +23,26 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override;
 
 	// number of input channels
-	int m_nacqchans = 1; // number of acquisition channels
-	int m_maxchans = 32; // max nb for channel input number (0-7 or 0-15; exception for channel 16=DIN)
-	int m_inputlistmax = 32; // dt9800 = 32 (set when creating the object)
+	int m_nacqchans = 1;					// number of acquisition channels
+	int m_maxchans = 32;					// max nb for channel input number (0-7 or 0-15; exception for channel 16=DIN)
+	int m_inputlistmax = 32;				// dt9800 = 32 (set when creating the object)
 	CSize m_OldSize = CSize(-1, -1); // used to resize the form
 
 public:
 	GridCtrl m_Grid;
 
 	// parameters passed:
-	CWaveFormat* m_pwFormat = nullptr; // acquisition parameters
-	CWaveChanArray* m_pchArray = nullptr; // acquisition channels
-	BOOL m_bchainDialog = false; // chain dialog (no= FALSE)
-	// parameter set on exit to chain dialog
-	WORD m_postmessage = 0; // launch assoc dialog
+	CWaveFormat* m_pwFormat = nullptr;		// acquisition parameters
+	CWaveChanArray* m_pchArray = nullptr;	// acquisition channels
+	BOOL m_bchainDialog = false;			// chain dialog (no= FALSE)
+	WORD m_postmessage = 0;					// launch assoc dialog
 
 	BOOL m_bchantype = OLx_CHNT_SINGLEENDED; // flag TRUE=single ended; false=differential - default: false
 	int m_numchansMAXDI = 8;				// = m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default = 8
 	int m_numchansMAXSE = 16;				// = m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default = 16
 	BOOL m_bcommandAmplifier = false;		// change ampli settings on the fly (if present); default = none
 
-	CUSBPxxS1* m_palligator = nullptr;
+	CUSBPxxS1* m_alligator_amplifier = nullptr;
 	boolean is_AD_changed = false;
 
 	// Implementation
@@ -80,7 +79,6 @@ protected:
 	void DisplayChannelAmplifier(GV_ITEM& item, const CWaveChan* p_chan);
 	void DisplayChannelProbe(GV_ITEM& item, const CWaveChan* p_chan);
 	void DisplayChannelReadOnlyFields(int col);
-
 
 public:
 	BOOL OnInitDialog() override;

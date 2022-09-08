@@ -32,7 +32,7 @@ InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 
 	m_Rect = rect;  // For bizarre CE bug.
 
-	DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
+	const DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
 		| dwStyle;
 	if (!Create(dwEditStyle, rect, pParent, nID)) return;
 
@@ -43,8 +43,8 @@ InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 
 	switch (nFirstChar) {
 	case VK_LBUTTON:
-	case VK_RETURN:   SetSel((int)_tcslen(m_sInitText), -1); return;
-	case VK_BACK:     SetSel((int)_tcslen(m_sInitText), -1); break;
+	case VK_RETURN:   SetSel(static_cast<int>(_tcslen(m_sInitText)), -1); return;
+	case VK_BACK:     SetSel(static_cast<int>(_tcslen(m_sInitText)), -1); break;
 	case VK_TAB:
 	case VK_DOWN:
 	case VK_UP:
@@ -118,10 +118,10 @@ void InPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 	dispinfo.item.mask = LVIF_TEXT;
 	dispinfo.item.iItem = m_iItem;
 	dispinfo.item.iSubItem = m_iSubItem;
-	dispinfo.item.pszText = m_bESC ? NULL : LPTSTR((LPCTSTR)str);
+	dispinfo.item.pszText = m_bESC ? NULL : const_cast<LPTSTR>(static_cast<LPCTSTR>(str));
 	dispinfo.item.cchTextMax = str.GetLength();
 
-	m_parent -> SendMessage(WM_NOTIFY, IDC_INPLACE_CONTROL, (LPARAM)&dispinfo);
+	m_parent -> SendMessage(WM_NOTIFY, IDC_INPLACE_CONTROL, reinterpret_cast<LPARAM>(&dispinfo));
 	DestroyWindow();
 }
 
@@ -215,11 +215,11 @@ void InPlaceEdit::EndEdit()
 	dispinfo.item.row = m_nRow;
 	dispinfo.item.col = m_nColumn;
 	dispinfo.item.strText = str;
-	dispinfo.item.lParam = (LPARAM)m_nLastChar;
+	dispinfo.item.lParam = static_cast<LPARAM>(m_nLastChar);
 
 	CWnd* pOwner = GetOwner();
 	if (pOwner)
-		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), reinterpret_cast<LPARAM>(&dispinfo));
 
 	// Close this window (PostNcDestroy will delete this)
 	if (IsWindow(GetSafeHwnd()))

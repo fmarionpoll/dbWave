@@ -27,10 +27,12 @@
 
 class GridCellComboFMP : public GridCell
 {
-	friend class GridCtrl;
+	//friend class GridCtrl;
 	DECLARE_DYNCREATE(GridCellComboFMP)
 
 	GridCellComboFMP();
+	~GridCellComboFMP();
+
 	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
 	CWnd* GetEditWnd() const override;
 	void EndEdit() override;

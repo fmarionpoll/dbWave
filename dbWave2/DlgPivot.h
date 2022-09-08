@@ -18,7 +18,7 @@ public:
 	int m_nCols{ 3 };
 	int m_nRows{ 26 };
 
-	CGridCtrl m_Grid;
+	CGridCtrl m_GridPivot;
 	CSize m_OldSize;
 	static bool VirtualCompare(int c1, int c2);
 

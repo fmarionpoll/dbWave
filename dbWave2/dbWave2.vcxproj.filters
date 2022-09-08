@@ -513,9 +513,6 @@
     <ClCompile Include="SpikeClassListBoxContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GridCtrl\GridCellNumeric2.cpp">
-      <Filter>customctrl</Filter>
-    </ClCompile>
     <ClCompile Include="ADAcqDataDoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1117,9 +1114,6 @@
     </ClInclude>
     <ClInclude Include="SpikeClassListBoxContext.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl\GridCellNumeric2.h">
-      <Filter>customctrl</Filter>
     </ClInclude>
     <ClInclude Include="ADAcqDataDoc.h">
       <Filter>Header Files</Filter>

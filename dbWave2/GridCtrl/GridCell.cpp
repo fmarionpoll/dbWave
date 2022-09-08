@@ -48,6 +48,7 @@ IMPLEMENT_DYNCREATE(GridCell, GridCellBase)
 
 GridCell::GridCell()
 {
+	m_plfFont = NULL;
 	GridCell::Reset();
 }
 
@@ -67,18 +68,18 @@ void GridCell::Reset()
 
 	m_strText.Empty();
 	m_nImage = -1;
-	m_lParam = NULL; // BUG FIX J. Bloggs 20/10/03
+	m_lParam = NULL;				// BUG FIX J. Bloggs 20/10/03
 	m_pGrid = nullptr;
 	m_bEditing = FALSE;
 	m_pEditWnd = nullptr;
 
 	m_nFormat = static_cast<DWORD>(-1); // Use default from GridDefaultCell
-	m_crBkClr = CLR_DEFAULT; // Background colour (or CLR_DEFAULT)
-	m_crFgClr = CLR_DEFAULT; // Forground colour (or CLR_DEFAULT)
-	m_nMargin = static_cast<UINT>(-1); // Use default from GridDefaultCell
+	m_crBkClr = CLR_DEFAULT;			// Background colour (or CLR_DEFAULT)
+	m_crFgClr = CLR_DEFAULT;			// Foreground colour (or CLR_DEFAULT)
+	m_nMargin = static_cast<UINT>(-1);	// Use default from GridDefaultCell
 
 	delete m_plfFont;
-	m_plfFont = nullptr; // Cell font
+	m_plfFont = nullptr;				// Cell font
 }
 
 void GridCell::SetFont(const LOGFONT* plf)
@@ -101,7 +102,7 @@ LOGFONT* GridCell::GetFont() const
 {
 	if (m_plfFont == nullptr)
 	{
-		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return nullptr;
 
@@ -116,7 +117,7 @@ CFont* GridCell::GetFontObject() const
 	// If the default font is specified, use the default cell implementation
 	if (m_plfFont == nullptr)
 	{
-		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return nullptr;
 
@@ -132,7 +133,7 @@ DWORD GridCell::GetFormat() const
 {
 	if (m_nFormat == static_cast<DWORD>(-1))
 	{
-		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return 0;
 
@@ -146,7 +147,7 @@ UINT GridCell::GetMargin() const
 {
 	if (m_nMargin == static_cast<UINT>(-1))
 	{
-		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return 0;
 
@@ -183,7 +184,7 @@ BOOL GridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID
 void GridCell::EndEdit()
 {
 	if (m_pEditWnd)
-		static_cast<GridInPlaceEdit*>(m_pEditWnd)->EndEdit();
+		dynamic_cast<GridInPlaceEdit*>(m_pEditWnd)->EndEdit();
 }
 
 void GridCell::OnEndEdit()

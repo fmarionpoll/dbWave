@@ -64,8 +64,7 @@ GridCellBase::GridCellBase()
 }
 
 GridCellBase::~GridCellBase()
-{
-}
+= default;
 
 /////////////////////////////////////////////////////////////////////////////
 // GridCellBase Operations
@@ -126,19 +125,19 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 
 	//TRACE3("Drawing %scell %d, %d\n", IsFixed()? _T("Fixed ") : _T(""), nRow, nCol);
 
-	int nSavedDC = p_dc->SaveDC();
+	const int nSavedDC = p_dc->SaveDC();
 	p_dc->SetBkMode(TRANSPARENT);
 
 	// Get the default cell implementation for this kind of cell. We use it if this cell
 	// has anything marked as "default"
-	auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
+	const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
 	if (!pDefaultCell)
 		return FALSE;
 
 	// Set up text and background colours
-	COLORREF TextClr, TextBkClr;
+	COLORREF TextBkClr;
 
-	TextClr = (GetTextClr() == CLR_DEFAULT) ? pDefaultCell->GetTextClr() : GetTextClr();
+	COLORREF TextClr = (GetTextClr() == CLR_DEFAULT) ? pDefaultCell->GetTextClr() : GetTextClr();
 	if (GetBackClr() == CLR_DEFAULT)
 		TextBkClr = pDefaultCell->GetBackClr();
 	else
@@ -235,11 +234,11 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 	// Draw lines only when wanted
 	if (IsFixed() && pGrid->GetGridLines() != GVL_NONE)
 	{
-		GridCellID FocusCell = pGrid->GetFocusCell();
+		const GridCellID FocusCell = pGrid->GetFocusCell();
 
 		// As above, always show current location even in list mode so
 		// that we know where the cursor is at.
-		BOOL bHiliteFixed = pGrid->GetTrackFocusCell() && pGrid->IsValid(FocusCell) &&
+		const BOOL bHiliteFixed = pGrid->GetTrackFocusCell() && pGrid->IsValid(FocusCell) &&
 			(FocusCell.row == nRow || FocusCell.col == nCol);
 
 		// If this fixed cell is on the same row/col as the focus cell,
@@ -313,8 +312,8 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 			}
 			*/
 			// Added by Yogurt
-			int nImageWidth = Info.rcImage.right - Info.rcImage.left;
-			int nImageHeight = Info.rcImage.bottom - Info.rcImage.top;
+			const int nImageWidth = Info.rcImage.right - Info.rcImage.left;
+			const int nImageHeight = Info.rcImage.bottom - Info.rcImage.top;
 			if ((nImageWidth + rect.left <= rect.right) && (nImageHeight + rect.top <= rect.bottom))
 				pGrid->GetImageList()->Draw(p_dc, GetImage(), rect.TopLeft(), ILD_NORMAL);
 
@@ -326,7 +325,7 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 	if (pGrid->GetSortColumn() == nCol && nRow == 0)
 	{
 		CSize size = p_dc->GetTextExtent(_T("M"));
-		int nOffset = 2;
+		const int nOffset = 2;
 
 		// Base the size of the triangle on the smaller of the column
 		// height or text height with a slight offset top and bottom.
@@ -339,13 +338,13 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 		size.cx = size.cy; // Make the dimensions square
 
 		// Kludge for vertical text
-		BOOL bVertical = (GetFont()->lfEscapement == 900);
+		const BOOL bVertical = (GetFont()->lfEscapement == 900);
 
 		// Only draw if it'll fit!
 		//if (size.cx + rect.left < rect.right + (int)(2*GetMargin())) - changed / Yogurt
 		if (size.cx + rect.left < rect.right)
 		{
-			int nTriangleBase = rect.bottom - nOffset - size.cy; // Triangle bottom right
+			const int nTriangleBase = rect.bottom - nOffset - size.cy; // Triangle bottom right
 			//int nTriangleBase = (rect.top + rect.bottom - size.cy)/2; // Triangle middle right
 			//int nTriangleBase = rect.top + nOffset;                 // Triangle top right
 
@@ -364,7 +363,7 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 			if (pGrid->GetSortAscending())
 			{
 				// Draw triangle pointing upwards
-				auto pOldPen = p_dc->SelectObject(&penLight);
+				const auto pOldPen = p_dc->SelectObject(&penLight);
 				p_dc->MoveTo(nTriangleLeft + 1, nTriangleBase + size.cy + 1);
 				p_dc->LineTo(nTriangleLeft + (size.cx / 2) + 1, nTriangleBase + 1);
 				p_dc->LineTo(nTriangleLeft + size.cx + 1, nTriangleBase + size.cy + 1);
@@ -380,7 +379,7 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 			else
 			{
 				// Draw triangle pointing downwards
-				auto pOldPen = p_dc->SelectObject(&penLight);
+				const auto pOldPen = p_dc->SelectObject(&penLight);
 				p_dc->MoveTo(nTriangleLeft + 1, nTriangleBase + 1);
 				p_dc->LineTo(nTriangleLeft + (size.cx / 2) + 1, nTriangleBase + size.cy + 1);
 				p_dc->LineTo(nTriangleLeft + size.cx + 1, nTriangleBase + 1);
@@ -487,12 +486,12 @@ BOOL GridCellBase::GetTextRect(LPRECT pRect) // i/o:  i=dims of cell rect; o=dim
 	{
 		IMAGEINFO Info;
 
-		GridCtrl* pGrid = GetGrid();
-		CImageList* pImageList = pGrid->GetImageList();
+		const GridCtrl* pGrid = GetGrid();
+		const CImageList* pImageList = pGrid->GetImageList();
 
 		if (pImageList && pImageList->GetImageInfo(GetImage(), &Info))
 		{
-			int nImageWidth = Info.rcImage.right - Info.rcImage.left + 1;
+			const int nImageWidth = Info.rcImage.right - Info.rcImage.left + 1;
 			pRect->left += nImageWidth + GetMargin();
 		}
 	}
@@ -513,7 +512,7 @@ CSize GridCellBase::GetTextExtent(LPCTSTR sz_text, CDC* p_dc /*= NULL*/)
 			p_dc = pGrid->GetDC();
 		if (p_dc == nullptr || sz_text == nullptr)
 		{
-			auto pDefCell = static_cast<GridDefaultCell*>(GetDefaultCell());
+			const auto pDefCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
 			ASSERT(pDefCell);
 			CSize value(0, 0);
 			if (pDefCell != nullptr)
@@ -529,7 +528,7 @@ CSize GridCellBase::GetTextExtent(LPCTSTR sz_text, CDC* p_dc /*= NULL*/)
 		pOldFont = p_dc->SelectObject(pFont);
 
 	CSize size;
-	int nFormat = GetFormat();
+	const int nFormat = GetFormat();
 
 	// If the cell is a multiline cell, then use the width of the cell
 	// to get the height
@@ -539,9 +538,9 @@ CSize GridCellBase::GetTextExtent(LPCTSTR sz_text, CDC* p_dc /*= NULL*/)
 		int nMaxWidth = 0;
 		while (TRUE)
 		{
-			int nPos = str.Find(_T('\n'));
+			const int nPos = str.Find(_T('\n'));
 			CString TempStr = (nPos < 0) ? str : str.Left(nPos);
-			int nTempWidth = p_dc->GetTextExtent(TempStr).cx;
+			const int nTempWidth = p_dc->GetTextExtent(TempStr).cx;
 			if (nTempWidth > nMaxWidth)
 				nMaxWidth = nTempWidth;
 
@@ -572,7 +571,7 @@ CSize GridCellBase::GetTextExtent(LPCTSTR sz_text, CDC* p_dc /*= NULL*/)
 	LOGFONT* pLF = GetFont();
 	if (pLF->lfEscapement == 900 || pLF->lfEscapement == -900)
 	{
-		int nTemp = size.cx;
+		const int nTemp = size.cx;
 		size.cx = size.cy;
 		size.cy = nTemp;
 		size += CSize(0, 4 * GetMargin());
@@ -589,10 +588,10 @@ CSize GridCellBase::GetCellExtent(CDC* p_dc)
 	CSize size = GetTextExtent(GetText(), p_dc);
 	CSize ImageSize(0, 0);
 
-	int nImage = GetImage();
+	const int nImage = GetImage();
 	if (nImage >= 0)
 	{
-		GridCtrl* pGrid = GetGrid();
+		const GridCtrl* pGrid = GetGrid();
 		ASSERT(pGrid);
 		IMAGEINFO Info;
 		if (pGrid != nullptr && pGrid->GetImageList() && pGrid->GetImageList()->GetImageInfo(nImage, &Info))
@@ -632,7 +631,7 @@ BOOL GridCellBase::PrintCell(CDC* p_dc, int /*nRow*/, int /*nCol*/, CRect rect)
 		|| rect.Height() <= 0) // prevents imagelist item from drawing even
 		return FALSE; //  though cell is hidden
 
-	int nSavedDC = p_dc->SaveDC();
+	const int nSavedDC = p_dc->SaveDC();
 
 	p_dc->SetBkMode(TRANSPARENT);
 
@@ -640,7 +639,7 @@ BOOL GridCellBase::PrintCell(CDC* p_dc, int /*nRow*/, int /*nCol*/, CRect rect)
 	{
 		// Get the default cell implementation for this kind of cell. We use it if this cell
 		// has anything marked as "default"
-		auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return FALSE;
 
@@ -656,7 +655,9 @@ BOOL GridCellBase::PrintCell(CDC* p_dc, int /*nRow*/, int /*nCol*/, CRect rect)
 		// Use custom color if the background is different or if it doesn't
 		// match the default color and the default grid text color.
 		if (IsFixed())
+		{
 			crFG = (GetBackClr() != CLR_DEFAULT) ? GetTextClr() : pDefaultCell->GetTextClr();
+		}
 		else
 			crFG = (GetBackClr() != CLR_DEFAULT) ? GetTextClr() : pDefaultCell->GetTextClr();
 
@@ -754,7 +755,7 @@ BOOL GridCellBase::PrintCell(CDC* p_dc, int /*nRow*/, int /*nCol*/, CRect rect)
 		IMAGEINFO Info;
 		if (pGrid->GetImageList()->GetImageInfo(GetImage(), &Info))
 		{
-			int nImageWidth = Info.rcImage.right - Info.rcImage.left;
+			const int nImageWidth = Info.rcImage.right - Info.rcImage.left;
 			pGrid->GetImageList()->Draw(p_dc, GetImage(), rect.TopLeft(), ILD_NORMAL);
 			rect.left += nImageWidth + GetMargin();
 		}
@@ -776,7 +777,7 @@ Callable by derived classes, only
 *****************************************************************************/
 LRESULT GridCellBase::SendMessageToParent(int nRow, int nCol, int nMessage)
 {
-	GridCtrl* pGrid = GetGrid();
+	const GridCtrl* pGrid = GetGrid();
 	if (pGrid)
 		return pGrid->SendMessageToParent(nRow, nCol, nMessage);
 	return 0;

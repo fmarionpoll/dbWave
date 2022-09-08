@@ -423,9 +423,9 @@ BOOL DlgADInputs::InitGridColumnDefaults(int col)
 			p_cell->SetCurSel(1);
 	}
 
-	// DC Offset (mV) " IN-" - numeric - float
+	// DC Offset (mV) " IN-" - normal - float
 	row++;
-	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellNumeric));
+	m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCell));
 	if (col > 1)
 		m_Grid.SetItemText(row, col, m_Grid.GetItemText(row, col - 1));
 	else
@@ -708,10 +708,10 @@ void DlgADInputs::SetAmplifierParms(int col)
 		cyber_amp.SetWaveChanParms(p_chan);
 	}
 
-	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_palligator != nullptr)
+	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_alligator_amplifier != nullptr)
 	{
-		if (m_palligator->IsValidHandle())
-			m_palligator->SetWaveChanParms(p_chan);
+		if (m_alligator_amplifier->IsValidHandle())
+			m_alligator_amplifier->SetWaveChanParms(p_chan);
 	}
 }
 
@@ -730,10 +730,10 @@ void DlgADInputs::GetAmplifierParms(CWaveChan* p_chan)
 		cyber_amp.GetWaveChanParms(p_chan);
 	}
 
-	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_palligator != nullptr)
+	if (p_chan->am_csamplifier.Find(_T("Alligator")) >= 0 && m_alligator_amplifier != nullptr)
 	{
-		if (m_palligator->IsValidHandle())
-			m_palligator->GetWaveChanParms(p_chan);
+		if (m_alligator_amplifier->IsValidHandle())
+			m_alligator_amplifier->GetWaveChanParms(p_chan);
 	}
 }
 

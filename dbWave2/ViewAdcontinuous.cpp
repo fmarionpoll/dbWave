@@ -806,7 +806,7 @@ void ViewADcontinuous::OnInputChannels()
 	dlg.m_bcommandAmplifier = TRUE;
 
 	const auto p_alligator = new CUSBPxxS1();
-	dlg.m_palligator = p_alligator;
+	dlg.m_alligator_amplifier = p_alligator;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())

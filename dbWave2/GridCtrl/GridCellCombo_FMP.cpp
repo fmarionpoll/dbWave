@@ -57,6 +57,10 @@ GridCellComboFMP::GridCellComboFMP() : GridCell()
 	SetStyle(m_dwStyle);
 }
 
+GridCellComboFMP::~GridCellComboFMP() 
+{
+}
+
 // Create a control to do the editing
 BOOL GridCellComboFMP::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
@@ -71,14 +75,14 @@ BOOL GridCellComboFMP::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, 
 CWnd* GridCellComboFMP::GetEditWnd() const
 {
 	if (m_pEditWnd && (m_pEditWnd->GetStyle() & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST)
-		return &(static_cast<GridInPlaceList*>(m_pEditWnd)->m_comboedit);
+		return &(dynamic_cast<GridInPlaceList*>(m_pEditWnd)->m_comboedit);
 
 	return nullptr;
 }
 
 CSize GridCellComboFMP::GetCellExtent(CDC* p_dc)
 {
-	CSize sizeScroll(GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));
+	const CSize sizeScroll(GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));
 	CSize sizeCell(GridCell::GetCellExtent(p_dc));
 	sizeCell.cx += sizeScroll.cx;
 	sizeCell.cy = max(sizeCell.cy, sizeScroll.cy);
@@ -89,7 +93,7 @@ CSize GridCellComboFMP::GetCellExtent(CDC* p_dc)
 void GridCellComboFMP::EndEdit()
 {
 	if (m_pEditWnd)
-		static_cast<GridInPlaceList*>(m_pEditWnd)->EndEdit();
+		dynamic_cast<GridInPlaceList*>(m_pEditWnd)->EndEdit();
 }
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
@@ -103,7 +107,7 @@ BOOL GridCellComboFMP::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEra
 	if (GetGrid()->IsCellEditable(nRow, nCol) && !IsEditing())
 	{
 		// Get the size of the scroll box
-		CSize sizeScroll(GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));
+		const CSize sizeScroll(GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));
 
 		// enough room to draw?
 		if (sizeScroll.cy < rect.Width() && sizeScroll.cy < rect.Height())
@@ -121,12 +125,12 @@ BOOL GridCellComboFMP::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEra
 		}
 	}
 
-	CString strTempText = GetText();
+	const CString strTempText = GetText();
 	if (IsEditing())
 		SetText(_T(""));
 
 	// drop through and complete the cell drawing using the base class' method
-	BOOL bResult = GridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
+	const BOOL bResult = GridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
 
 	if (IsEditing())
 		SetText(strTempText);

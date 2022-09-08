@@ -25,7 +25,7 @@ DlgPivot::~DlgPivot()
 void DlgPivot::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_GRID, m_Grid);
+	DDX_Control(pDX, IDC_GRID, m_GridPivot);
 }
 
 BEGIN_MESSAGE_MAP(DlgPivot, CDialogEx)
@@ -70,7 +70,7 @@ BOOL CALLBACK EnumProc2(HWND hwnd, LPARAM lParam)
 	p_wnd->GetWindowRect(rect);
 
 	p_dlg->ScreenToClient(rect);
-	if (hwnd == p_dlg->m_Grid.GetSafeHwnd())
+	if (hwnd == p_dlg->m_GridPivot.GetSafeHwnd())
 	{
 		if (((rect.top >= 7 && p_translate->cy > 0) || rect.Height() > 20) &&
 			((rect.left >= 7 && p_translate->cx > 0) || rect.Width() > 20))

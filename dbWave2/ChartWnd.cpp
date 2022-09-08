@@ -882,6 +882,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			else
 				postMyMessage(HINT_WINDOWPROPSCHANGED, NULL);
 			m_bAllowProps = TRUE;
+			delete parms_old;
 		}
 		break;
 

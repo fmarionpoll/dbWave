@@ -35,5 +35,5 @@ BOOL GridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, U
 void GridCellNumeric::EndEdit()
 {
 	if (m_pEditWnd)
-		static_cast<GridInPlaceEdit*>(m_pEditWnd)->EndEdit();
+		dynamic_cast<GridInPlaceEdit*>(m_pEditWnd)->EndEdit();
 }

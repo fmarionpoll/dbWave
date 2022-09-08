@@ -70,7 +70,7 @@ GridInPlaceEdit::GridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 
 	m_Rect = rect; // For bizarre CE bug.
 
-	DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
+	const DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
 		| dw_style;
 	if (!Create(dwEditStyle, rect, pParent, nID)) return;
 
@@ -177,7 +177,7 @@ void GridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	CWindowDC dc(this);
 	CFont* pFontDC = dc.SelectObject(GetFont());
-	CSize size = dc.GetTextExtent(str);
+	const CSize size = dc.GetTextExtent(str);
 	dc.SelectObject(pFontDC);
 
 	// Get client rect
@@ -252,9 +252,9 @@ void GridInPlaceEdit::EndEdit()
 	dispinfo.item.strText = str;
 	dispinfo.item.lParam = static_cast<LPARAM>(m_nLastChar);
 
-	CWnd* pOwner = GetOwner();
+	const CWnd* pOwner = GetOwner();
 	if (pOwner)
-		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), reinterpret_cast<LPARAM>(&dispinfo));
 
 	// Close this window (PostNcDestroy will delete this)
 	if (IsWindow(GetSafeHwnd()))

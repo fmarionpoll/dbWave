@@ -50,7 +50,7 @@ GridTitleTip::GridTitleTip()
 {
 	// Register the window class if it has not already been registered.
 	WNDCLASS wndcls;
-	HINSTANCE hInst = AfxGetInstanceHandle();
+	const HINSTANCE hInst = AfxGetInstanceHandle();
 	if (!(::GetClassInfo(hInst, TITLETIP_CLASSNAME, &wndcls)))
 	{
 		// otherwise we need to register a new class
@@ -60,7 +60,7 @@ GridTitleTip::GridTitleTip()
 		wndcls.hInstance = hInst;
 		wndcls.hIcon = nullptr;
 		wndcls.hCursor = LoadCursor(hInst, IDC_ARROW);
-		wndcls.hbrBackground = (HBRUSH)(COLOR_INFOBK + 1);
+		wndcls.hbrBackground = reinterpret_cast<HBRUSH>((COLOR_INFOBK + 1));
 		wndcls.lpszMenuName = nullptr;
 		wndcls.lpszClassName = TITLETIP_CLASSNAME;
 
@@ -93,8 +93,8 @@ BOOL GridTitleTip::Create(CWnd* pParentWnd)
 	if (m_bCreated)
 		return TRUE;
 
-	DWORD dw_style = WS_BORDER | WS_POPUP;
-	DWORD dwExStyle = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
+	const DWORD dw_style = WS_BORDER | WS_POPUP;
+	const DWORD dwExStyle = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 	m_pParentWnd = pParentWnd;
 
 	m_bCreated = CreateEx(dwExStyle, TITLETIP_CLASSNAME, nullptr, dw_style,
@@ -238,7 +238,7 @@ void GridTitleTip::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			if (p_wnd == this)
 				p_wnd = m_pParentWnd;
-			int hittest = static_cast<int>(p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y)));
+			const int hittest = static_cast<int>(p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y)));
 			if (hittest == HTCLIENT)
 			{
 				p_wnd->ScreenToClient(&point);
@@ -258,8 +258,6 @@ BOOL GridTitleTip::PreTranslateMessage(MSG* pMsg)
 	DWORD dwTick = 0;
 	BOOL bDoubleClick = FALSE;
 
-	CWnd* p_wnd;
-	int hittest;
 	switch (pMsg->message)
 	{
 	case WM_LBUTTONDOWN:
@@ -272,7 +270,7 @@ BOOL GridTitleTip::PreTranslateMessage(MSG* pMsg)
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 		{
-			POINTS pts = MAKEPOINTS(pMsg->lParam);
+			const POINTS pts = MAKEPOINTS(pMsg->lParam);
 			POINT point;
 			point.x = pts.x;
 			point.y = pts.y;
@@ -280,14 +278,14 @@ BOOL GridTitleTip::PreTranslateMessage(MSG* pMsg)
 			ClientToScreen(&point);
 			Hide();
 
-			p_wnd = WindowFromPoint(point);
+			CWnd* p_wnd = WindowFromPoint(point);
 			if (!p_wnd)
 				return CWnd::PreTranslateMessage(pMsg);
 
 			if (p_wnd->GetSafeHwnd() == GetSafeHwnd())
 				p_wnd = m_pParentWnd;
 
-			hittest = static_cast<int>(p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y)));
+			const int hittest = static_cast<int>(p_wnd->SendMessage(WM_NCHITTEST, 0, MAKELONG(point.x, point.y)));
 
 			if (hittest == HTCLIENT)
 			{

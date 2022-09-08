@@ -113,7 +113,7 @@
 //            is a simple fix but it's been a low priority
 //
 // ISSUES: 1) WindowFromPoint seems to do weird things in W2K. Causing problems for
-//            the rigt-click-on-titletip code.
+//            the right-click-on-title tip code.
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -161,7 +161,7 @@ GridCtrl::GridCtrl(int nRows, int nCols, int nFixedRows, int nFixedCols)
 	RegisterWindowClass();
 
 #if !defined(GRIDCONTROL_NO_DRAGDROP) || !defined(GRIDCONTROL_NO_CLIPBOARD)
-	_AFX_THREAD_STATE* pState = AfxGetThreadState();
+	const _AFX_THREAD_STATE* pState = AfxGetThreadState();
 	if (!pState->m_bNeedTerm && !AfxOleInit())
 		AfxMessageBox(_T("OLE initialization failed. Make sure that the OLE libraries are the correct version"));
 #endif
@@ -293,7 +293,7 @@ BOOL GridCtrl::RegisterWindowClass()
 {
 	WNDCLASS wndcls;
 	//HINSTANCE hInst = AfxGetInstanceHandle();
-	HINSTANCE hInst = AfxGetResourceHandle();
+	const HINSTANCE hInst = AfxGetResourceHandle();
 
 	if (!(::GetClassInfo(hInst, GRIDCTRL_CLASSNAME, &wndcls)))
 	{
@@ -308,7 +308,7 @@ BOOL GridCtrl::RegisterWindowClass()
 #else
 		wndcls.hCursor = 0;
 #endif
-		wndcls.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
+		wndcls.hbrBackground = reinterpret_cast<HBRUSH>((COLOR_3DFACE + 1));
 		wndcls.lpszMenuName = nullptr;
 		wndcls.lpszClassName = GRIDCTRL_CLASSNAME;
 
@@ -440,9 +440,9 @@ LRESULT GridCtrl::SendMessageToParent(int nRow, int nCol, int nMessage) const
 	nmgv.hdr.idFrom = GetDlgCtrlID();
 	nmgv.hdr.code = nMessage;
 
-	CWnd* pOwner = GetOwner();
+	const CWnd* pOwner = GetOwner();
 	if (pOwner && IsWindow(pOwner->m_hWnd))
-		return pOwner->SendMessage(WM_NOTIFY, nmgv.hdr.idFrom, (LPARAM)&nmgv);
+		return pOwner->SendMessage(WM_NOTIFY, nmgv.hdr.idFrom, reinterpret_cast<LPARAM>(&nmgv));
 	return 0;
 }
 
@@ -458,9 +458,9 @@ LRESULT GridCtrl::SendDisplayRequestToParent(GV_DISPINFO* pDisplayInfo) const
 	pDisplayInfo->hdr.code = GVN_GETDISPINFO;
 
 	// Send the message
-	CWnd* pOwner = GetOwner();
+	const CWnd* pOwner = GetOwner();
 	if (pOwner && IsWindow(pOwner->m_hWnd))
-		return pOwner->SendMessage(WM_NOTIFY, pDisplayInfo->hdr.idFrom, (LPARAM)pDisplayInfo);
+		return pOwner->SendMessage(WM_NOTIFY, pDisplayInfo->hdr.idFrom, reinterpret_cast<LPARAM>(pDisplayInfo));
 	return 0;
 }
 
@@ -480,9 +480,9 @@ LRESULT GridCtrl::SendCacheHintToParent(const GridCellRange& range) const
 	CacheHint.range = range;
 
 	// Send the message
-	CWnd* pOwner = GetOwner();
+	const CWnd* pOwner = GetOwner();
 	if (pOwner && IsWindow(pOwner->m_hWnd))
-		return pOwner->SendMessage(WM_NOTIFY, CacheHint.hdr.idFrom, (LPARAM)&CacheHint);
+		return pOwner->SendMessage(WM_NOTIFY, CacheHint.hdr.idFrom, reinterpret_cast<LPARAM>(&CacheHint));
 	return 0;
 }
 
@@ -596,8 +596,8 @@ void GridCtrl::EraseBkgnd(CDC* p_dc)
 		return;
 	GetVisibleNonFixedCellRange(VisRect);
 
-	int nFixedColumnWidth = GetFixedColumnWidth();
-	int nFixedRowHeight = GetFixedRowHeight();
+	const int nFixedColumnWidth = GetFixedColumnWidth();
+	const int nFixedRowHeight = GetFixedRowHeight();
 
 	// Draw Fixed row/column background
 	if (ClipRect.left < nFixedColumnWidth && ClipRect.top < nFixedRowHeight)
@@ -795,8 +795,8 @@ void GridCtrl::OnTimer(UINT nIDEvent)
 	CRect rect;
 	GetClientRect(rect);
 
-	int nFixedRowHeight = GetFixedRowHeight();
-	int nFixedColWidth = GetFixedColumnWidth();
+	const int nFixedRowHeight = GetFixedRowHeight();
+	const int nFixedColWidth = GetFixedColumnWidth();
 
 	pt = origPt;
 	if (pt.y > rect.bottom)
@@ -886,6 +886,7 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case 'V':
 			OnEditPaste();
 			break;
+		default: ;
 #endif
 		}
 	}
@@ -1032,12 +1033,12 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	else if (nChar == VK_NEXT)
 	{
-		GridCellID idOldTopLeft = GetTopleftNonFixedCell();
+		const GridCellID idOldTopLeft = GetTopleftNonFixedCell();
 		SendMessage(WM_VSCROLL, SB_PAGEDOWN, 0);
 		bVertScrollAction = TRUE;
-		GridCellID idNewTopLeft = GetTopleftNonFixedCell();
+		const GridCellID idNewTopLeft = GetTopleftNonFixedCell();
 
-		int increment = idNewTopLeft.row - idOldTopLeft.row;
+		const int increment = idNewTopLeft.row - idOldTopLeft.row;
 		if (increment)
 		{
 			next.row += increment;
@@ -1049,12 +1050,12 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	else if (nChar == VK_PRIOR)
 	{
-		GridCellID idOldTopLeft = GetTopleftNonFixedCell();
+		const GridCellID idOldTopLeft = GetTopleftNonFixedCell();
 		SendMessage(WM_VSCROLL, SB_PAGEUP, 0);
 		bVertScrollAction = TRUE;
-		GridCellID idNewTopLeft = GetTopleftNonFixedCell();
+		const GridCellID idNewTopLeft = GetTopleftNonFixedCell();
 
-		int increment = idNewTopLeft.row - idOldTopLeft.row;
+		const int increment = idNewTopLeft.row - idOldTopLeft.row;
 		if (increment)
 		{
 			next.row += increment;
@@ -1213,6 +1214,7 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					bHorzScrollAction = TRUE;
 				}
 				break;
+			default: ;
 			}
 			EnsureVisible(next); // Make sure cell is visible
 			Invalidate();
@@ -1267,8 +1269,8 @@ LRESULT GridCtrl::OnImeChar(WPARAM wCharCode, LPARAM)
 // from the edit says we should.
 void GridCtrl::OnEndInPlaceEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	auto pgvDispInfo = (GV_DISPINFO*)pNMHDR;
-	GV_ITEM* pgvItem = &pgvDispInfo->item;
+	const auto pgvDispInfo = reinterpret_cast<GV_DISPINFO*>(pNMHDR);
+	const GV_ITEM* pgvItem = &pgvDispInfo->item;
 
 	// In case OnEndInPlaceEdit called as window is being destroyed
 	if (!IsWindow(GetSafeHwnd()))
@@ -1304,7 +1306,7 @@ void GridCtrl::OnHScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 	m_TitleTip.Hide(); // hide any titletips
 #endif
 
-	int scrollPos = GetScrollPos32(SB_HORZ);
+	const int scrollPos = GetScrollPos32(SB_HORZ);
 
 	GridCellID idTopLeft = GetTopleftNonFixedCell();
 
@@ -1322,7 +1324,7 @@ void GridCtrl::OnHScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 			{
 				idTopLeft.col++;
 			}
-			int xScroll = GetColumnWidth(idTopLeft.col);
+			const int xScroll = GetColumnWidth(idTopLeft.col);
 			SetScrollPos32(SB_HORZ, scrollPos + xScroll);
 			if (GetScrollPos32(SB_HORZ) == scrollPos)
 				break; // didn't work
@@ -1346,7 +1348,7 @@ void GridCtrl::OnHScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 				iColToUse--;
 			}
 
-			int xScroll = GetColumnWidth(iColToUse);
+			const int xScroll = GetColumnWidth(iColToUse);
 			SetScrollPos32(SB_HORZ, __max(0, scrollPos - xScroll));
 			rect.left = GetFixedColumnWidth();
 			//ScrollWindow(xScroll, 0, rect);
@@ -1359,8 +1361,8 @@ void GridCtrl::OnHScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 		if (scrollPos < m_nHScrollMax)
 		{
 			rect.left = GetFixedColumnWidth();
-			int offset = rect.Width();
-			int pos = min(m_nHScrollMax, scrollPos + offset);
+			const int offset = rect.Width();
+			const int pos = min(m_nHScrollMax, scrollPos + offset);
 			SetScrollPos32(SB_HORZ, pos);
 			rect.left = GetFixedColumnWidth();
 			InvalidateRect(rect);
@@ -1371,8 +1373,8 @@ void GridCtrl::OnHScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 		if (scrollPos > 0)
 		{
 			rect.left = GetFixedColumnWidth();
-			int offset = -rect.Width();
-			int pos = __max(0, scrollPos + offset);
+			const int offset = -rect.Width();
+			const int pos = __max(0, scrollPos + offset);
 			SetScrollPos32(SB_HORZ, pos);
 			rect.left = GetFixedColumnWidth();
 			InvalidateRect(rect);
@@ -1384,7 +1386,7 @@ void GridCtrl::OnHScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 		{
 			SetScrollPos32(SB_HORZ, GetScrollPos32(SB_HORZ, TRUE));
 			m_idTopLeftCell.row = -1;
-			GridCellID idNewTopLeft = GetTopleftNonFixedCell();
+			const GridCellID idNewTopLeft = GetTopleftNonFixedCell();
 			if (idNewTopLeft != idTopLeft)
 			{
 				rect.left = GetFixedColumnWidth();
@@ -1443,7 +1445,7 @@ void GridCtrl::OnVScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 				idTopLeft.row++;
 			}
 
-			int yScroll = GetRowHeight(idTopLeft.row);
+			const int yScroll = GetRowHeight(idTopLeft.row);
 			SetScrollPos32(SB_VERT, scrollPos + yScroll);
 			if (GetScrollPos32(SB_VERT) == scrollPos)
 				break; // didn't work
@@ -1467,7 +1469,7 @@ void GridCtrl::OnVScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 				iRowToUse--;
 			}
 
-			int yScroll = GetRowHeight(iRowToUse);
+			const int yScroll = GetRowHeight(iRowToUse);
 			SetScrollPos32(SB_VERT, __max(0, scrollPos - yScroll));
 			rect.top = GetFixedRowHeight();
 			//ScrollWindow(0, yScroll, rect);
@@ -1491,8 +1493,8 @@ void GridCtrl::OnVScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 		if (scrollPos > 0)
 		{
 			rect.top = GetFixedRowHeight();
-			int offset = -rect.Height();
-			int pos = __max(0, scrollPos + offset);
+			const int offset = -rect.Height();
+			const int pos = __max(0, scrollPos + offset);
 			SetScrollPos32(SB_VERT, pos);
 			rect.top = GetFixedRowHeight();
 			InvalidateRect(rect);
@@ -1504,7 +1506,7 @@ void GridCtrl::OnVScroll(UINT nSBCode, UINT /*nPos*/, CScrollBar* /*pScrollBar*/
 		{
 			SetScrollPos32(SB_VERT, GetScrollPos32(SB_VERT, TRUE));
 			m_idTopLeftCell.row = -1;
-			GridCellID idNewTopLeft = GetTopleftNonFixedCell();
+			const GridCellID idNewTopLeft = GetTopleftNonFixedCell();
 			if (idNewTopLeft != idTopLeft)
 			{
 				rect.top = GetFixedRowHeight();
@@ -1557,17 +1559,17 @@ void GridCtrl::OnDraw(CDC* p_dc)
 	int row, col;
 	GridCellBase* pCell;
 
-	int nFixedRowHeight = GetFixedRowHeight();
-	int nFixedColWidth = GetFixedColumnWidth();
+	const int nFixedRowHeight = GetFixedRowHeight();
+	const int nFixedColWidth = GetFixedColumnWidth();
 
-	GridCellID idTopLeft = GetTopleftNonFixedCell();
-	int minVisibleRow = idTopLeft.row,
-	    minVisibleCol = idTopLeft.col;
+	const GridCellID idTopLeft = GetTopleftNonFixedCell();
+	const int minVisibleRow = idTopLeft.row;
+	const int minVisibleCol = idTopLeft.col;
 
 	CRect VisRect;
-	GridCellRange VisCellRange = GetVisibleNonFixedCellRange(VisRect);
-	int maxVisibleRow = VisCellRange.GetMaxRow(),
-	    maxVisibleCol = VisCellRange.GetMaxCol();
+	const GridCellRange VisCellRange = GetVisibleNonFixedCellRange(VisRect);
+	const int maxVisibleRow = VisCellRange.GetMaxRow();
+	const int maxVisibleCol = VisCellRange.GetMaxCol();
 
 	if (GetVirtualMode())
 		SendCacheHintToParent(VisCellRange);
@@ -2056,7 +2058,7 @@ void GridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMaxC
 				if (!IsValid(cell))
 					continue;
 
-				int nState = GetItemState(cell.row, cell.col);
+				const int nState = GetItemState(cell.row, cell.col);
 
 				// Set state as Selected. This will add the cell to m_SelectedCellMap
 				SetItemState(cell.row, cell.col, nState | GVIS_SELECTED);
@@ -2083,7 +2085,7 @@ void GridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMaxC
 		for (int row = nMinRow; row <= nMaxRow; row++)
 			for (int col = nMinCol; col <= nMaxCol; col++)
 			{
-				BOOL bCellSelected = IsCellSelected(row, col);
+				const BOOL bCellSelected = IsCellSelected(row, col);
 				if (bSelectCells == bCellSelected)
 					continue; // Already selected or deselected - ignore
 
@@ -2224,7 +2226,7 @@ void GridCtrl::ValidateAndModifyCellContents(int nRow, int nCol, LPCTSTR strText
 
 	if (SendMessageToParent(nRow, nCol, GVN_BEGINLABELEDIT) >= 0)
 	{
-		CString strCurrentText = GetItemText(nRow, nCol);
+		const CString strCurrentText = GetItemText(nRow, nCol);
 		if (strCurrentText != strText)
 		{
 			SetItemText(nRow, nCol, strText);
@@ -2283,7 +2285,7 @@ COleDataSource* GridCtrl::CopyTextFromGrid()
 {
 	USES_CONVERSION;
 
-	GridCellRange Selection = GetSelectedCellRange();
+	const GridCellRange Selection = GetSelectedCellRange();
 	if (!IsValid(Selection))
 		return nullptr;
 
@@ -2295,7 +2297,6 @@ COleDataSource* GridCtrl::CopyTextFromGrid()
 
 	// Get a tab delimited string to copy to cache
 	CString str;
-	GridCellBase* pCell;
 	for (int row = Selection.GetMinRow(); row <= Selection.GetMaxRow(); row++)
 	{
 		// don't copy hidden cells
@@ -2309,7 +2310,7 @@ COleDataSource* GridCtrl::CopyTextFromGrid()
 			if (m_arColWidths[col] <= 0)
 				continue;
 
-			pCell = GetCell(row, col);
+			const GridCellBase* pCell = GetCell(row, col);
 			if (pCell && (pCell->GetState() & GVIS_SELECTED))
 			{
 				str += pCell->GetText();
@@ -2330,7 +2331,7 @@ COleDataSource* GridCtrl::CopyTextFromGrid()
 	if (GetVirtualMode())
 		SendCacheHintToParent(GridCellRange(-1, -1, -1, -1));
 
-	DWORD dwLen = static_cast<DWORD>(sf.GetLength());
+	const DWORD dwLen = static_cast<DWORD>(sf.GetLength());
 	HGLOBAL hMem = sf.Detach();
 	if (!hMem)
 		return nullptr;
@@ -2340,8 +2341,8 @@ COleDataSource* GridCtrl::CopyTextFromGrid()
 		return nullptr;
 
 	// Cache data
-	auto p_source = new COleDataSource();
-	p_source->CacheGlobalData(CF_UNICODETEXT, hMem); //mofified: CF_TEXT
+	const auto p_source = new COleDataSource();
+	p_source->CacheGlobalData(CF_UNICODETEXT, hMem); //modified: CF_TEXT
 
 	return p_source;
 }
@@ -2354,12 +2355,12 @@ BOOL GridCtrl::PasteTextToGrid(GridCellID cell, COleDataObject* pDataObject,
 		return FALSE;
 
 	// Get the text from the COleDataObject
-	HGLOBAL hmem = pDataObject->GetGlobalData(CF_TEXT);
+	const HGLOBAL hmem = pDataObject->GetGlobalData(CF_TEXT);
 	CMemFile sf(static_cast<BYTE*>(GlobalLock(hmem)), (GlobalSize(hmem)));
 
 	// CF_TEXT is ANSI text, so we need to allocate a char* buffer
 	// to hold this.
-	auto sz_buffer = new char[GlobalSize(hmem)]; // FIX: Use LPSTR char here
+	const auto sz_buffer = new char[GlobalSize(hmem)]; // FIX: Use LPSTR char here
 	if (!sz_buffer)
 		return FALSE;
 
@@ -2385,7 +2386,7 @@ BOOL GridCtrl::PasteTextToGrid(GridCellID cell, COleDataObject* pDataObject,
 		nIndex = strLine.Find(_T("\n"));
 
 		// Store the remaining chars after the newline
-		CString strNext = (nIndex < 0) ? _T("") : strLine.Mid(nIndex + 1);
+		const CString strNext = (nIndex < 0) ? _T("") : strLine.Mid(nIndex + 1);
 
 		// Remove all chars after the newline
 		if (nIndex >= 0)
@@ -2533,7 +2534,7 @@ DROPEFFECT GridCtrl::OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState,
 		// Set the previously drop-highlighted cell as no longer drop-highlighted
 		if (IsValid(m_LastDragOverCell))
 		{
-			UINT nState = GetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col);
+			const UINT nState = GetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col);
 			SetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col,
 			             nState & ~GVIS_DROPHILITED);
 			RedrawCell(m_LastDragOverCell);
@@ -2544,7 +2545,7 @@ DROPEFFECT GridCtrl::OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState,
 		// Set the new cell as drop-highlighted
 		if (IsValid(m_LastDragOverCell))
 		{
-			UINT nState = GetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col);
+			const UINT nState = GetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col);
 			SetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col,
 			             nState | GVIS_DROPHILITED);
 			RedrawCell(m_LastDragOverCell);
@@ -2603,7 +2604,7 @@ void GridCtrl::OnDragLeave()
 	// Set the previously drop-highlighted cell as no longer drop-highlighted
 	if (IsValid(m_LastDragOverCell))
 	{
-		UINT nState = GetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col);
+		const UINT nState = GetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col);
 		SetItemState(m_LastDragOverCell.row, m_LastDragOverCell.col,
 		             nState & ~GVIS_DROPHILITED);
 		RedrawCell(m_LastDragOverCell);
@@ -2692,14 +2693,14 @@ void GridCtrl::OnEditPaste()
 	// If a cell is being edited, then call it's edit window paste function.
 	if (IsItemEditing(cell.row, cell.col))
 	{
-		GridCellBase* pCell = GetCell(cell.row, cell.col);
+		const GridCellBase* pCell = GetCell(cell.row, cell.col);
 		ASSERT(pCell);
 		if (!pCell) return;
 
 		CWnd* pEditWnd = pCell->GetEditWnd();
 		if (pEditWnd && pEditWnd->IsKindOf(RUNTIME_CLASS(CEdit)))
 		{
-			static_cast<CEdit*>(pEditWnd)->Paste();
+			dynamic_cast<CEdit*>(pEditWnd)->Paste();
 			return;
 		}
 	}
@@ -2737,7 +2738,7 @@ void GridCtrl::OnUpdateEditPaste(CCmdUI* pCmdUI)
 {
 	GridCellID cell = GetFocusCell();
 
-	BOOL bCanPaste = IsValid(cell) && IsCellEditable(cell) &&
+	const BOOL bCanPaste = IsValid(cell) && IsCellEditable(cell) &&
 		IsClipboardFormatAvailable(CF_TEXT);
 
 	pCmdUI->Enable(bCanPaste);
@@ -2758,7 +2759,7 @@ BOOL GridCtrl::MouseOverRowResizeArea(CPoint& point)
 	if (point.x >= GetFixedColumnWidth())
 		return FALSE;
 
-	GridCellID idCurrentCell = GetCellFromPt(point);
+	const GridCellID idCurrentCell = GetCellFromPt(point);
 	CPoint start;
 	if (!GetCellOrigin(idCurrentCell, &start))
 		return FALSE;
@@ -2779,12 +2780,12 @@ BOOL GridCtrl::MouseOverColumnResizeArea(CPoint& point)
 	if (point.y >= GetFixedRowHeight())
 		return FALSE;
 
-	GridCellID idCurrentCell = GetCellFromPt(point);
+	const GridCellID idCurrentCell = GetCellFromPt(point);
 	CPoint start;
 	if (!GetCellOrigin(idCurrentCell, &start))
 		return FALSE;
 
-	int endx = start.x + GetColumnWidth(idCurrentCell.col);
+	const int endx = start.x + GetColumnWidth(idCurrentCell.col);
 
 	if ((point.x - start.x < m_nResizeCaptureRange && idCurrentCell.col != 0) ||
 		endx - point.x < m_nResizeCaptureRange)
@@ -2801,12 +2802,12 @@ GridCellID GridCtrl::GetCellFromPt(CPoint point, BOOL bAllowFixedCellCheck /*=TR
 {
 	GridCellID cellID; // return value
 
-	GridCellID idTopLeft = GetTopleftNonFixedCell();
+	const GridCellID idTopLeft = GetTopleftNonFixedCell();
 	if (!bAllowFixedCellCheck && !IsValid(idTopLeft))
 		return cellID;
 
 	// calculate column index
-	int fixedColWidth = GetFixedColumnWidth();
+	const int fixedColWidth = GetFixedColumnWidth();
 
 	if (point.x < 0 || (!bAllowFixedCellCheck && point.x < fixedColWidth)) // not in window
 		cellID.col = -1;
@@ -2843,7 +2844,7 @@ GridCellID GridCtrl::GetCellFromPt(CPoint point, BOOL bAllowFixedCellCheck /*=TR
 	}
 
 	// calculate row index
-	int fixedRowHeight = GetFixedRowHeight();
+	const int fixedRowHeight = GetFixedRowHeight();
 	if (point.y < 0 || (!bAllowFixedCellCheck && point.y < fixedRowHeight)) // not in window
 		cellID.row = -1;
 	else if (point.y < fixedRowHeight) // in fixed col
@@ -2889,8 +2890,8 @@ GridCellID GridCtrl::GetTopleftNonFixedCell(BOOL bForceRecalculation /*=FALSE*/)
 	if (m_idTopLeftCell.IsValid() && !bForceRecalculation)
 		return m_idTopLeftCell;
 
-	int nVertScroll = GetScrollPos(SB_VERT),
-	    nHorzScroll = GetScrollPos(SB_HORZ);
+	const int nVertScroll = GetScrollPos(SB_VERT);
+	int nHorzScroll = GetScrollPos(SB_HORZ);
 
 	m_idTopLeftCell.col = m_nFixedCols;
 	int nRight = 0;
@@ -2927,7 +2928,7 @@ GridCellRange GridCtrl::GetVisibleNonFixedCellRange(LPRECT pRect /*=NULL*/,
 			break;
 		}
 	}
-	int maxVisibleRow = min(i, GetRowCount() - 1);
+	const int maxVisibleRow = min(i, GetRowCount() - 1);
 
 	// calc right
 	int right = GetFixedColumnWidth();
@@ -2940,7 +2941,7 @@ GridCellRange GridCtrl::GetVisibleNonFixedCellRange(LPRECT pRect /*=NULL*/,
 			break;
 		}
 	}
-	int maxVisibleCol = min(i, GetColumnCount() - 1);
+	const int maxVisibleCol = min(i, GetColumnCount() - 1);
 	if (pRect)
 	{
 		pRect->left = pRect->top = 0;
@@ -2971,7 +2972,7 @@ GridCellRange GridCtrl::GetVisibleFixedCellRange(LPRECT pRect /*=NULL*/,
 			break;
 		}
 	}
-	int maxVisibleRow = min(i, GetRowCount() - 1);
+	const int maxVisibleRow = min(i, GetRowCount() - 1);
 
 	// calc right
 	int right = 0;
@@ -2984,7 +2985,7 @@ GridCellRange GridCtrl::GetVisibleFixedCellRange(LPRECT pRect /*=NULL*/,
 			break;
 		}
 	}
-	int maxVisibleCol = min(i, GetColumnCount() - 1);
+	const int maxVisibleCol = min(i, GetColumnCount() - 1);
 	if (pRect)
 	{
 		pRect->left = pRect->top = 0;
@@ -3001,7 +3002,7 @@ GridCellRange GridCtrl::GetUnobstructedNonFixedCellRange(BOOL bForceRecalculatio
 	CRect rect;
 	GetClientRect(rect);
 
-	GridCellID idTopLeft = GetTopleftNonFixedCell(bForceRecalculation);
+	const GridCellID idTopLeft = GetTopleftNonFixedCell(bForceRecalculation);
 
 	// calc bottom
 	int i;
@@ -3165,8 +3166,8 @@ void GridCtrl::ResetScrollBars()
 
 	CRect VisibleRect(GetFixedColumnWidth(), GetFixedRowHeight(),
 	                  rect.right, rect.bottom);
-	CRect VirtualRect(GetFixedColumnWidth(), GetFixedRowHeight(),
-	                  GetVirtualWidth(), GetVirtualHeight());
+	const CRect VirtualRect(GetFixedColumnWidth(), GetFixedRowHeight(),
+	                        GetVirtualWidth(), GetVirtualHeight());
 
 	// If vertical scroll bar, horizontal space is reduced
 	if (VisibleRect.Height() < VirtualRect.Height())
@@ -3561,9 +3562,8 @@ BOOL GridCtrl::SetRowCount(int nRows)
 					DestroyCell(row, col);
 
 				// Delete rows
-				GRID_ROW* pRow = m_RowData[row];
-				if (pRow)
-					delete pRow;
+				const GRID_ROW* pRow = m_RowData[row];
+				delete pRow;
 			}
 		}
 		m_nRows = nRows;
@@ -3578,7 +3578,7 @@ BOOL GridCtrl::SetRowCount(int nRows)
 				m_nRows = nRows;
 				if (addedRows > 0)
 				{
-					int startRow = nRows - addedRows;
+					const int startRow = nRows - addedRows;
 					for (int row = startRow; row < nRows; row++)
 						m_arRowHeights[row] = m_cellDefault.GetHeight();
 				}
@@ -3594,7 +3594,7 @@ BOOL GridCtrl::SetRowCount(int nRows)
 				if (addedRows > 0)
 				{
 					// initialize row heights and data
-					int startRow = nRows - addedRows;
+					const int startRow = nRows - addedRows;
 					for (int row = startRow; row < nRows; row++)
 					{
 						m_arRowHeights[row] = m_cellDefault.GetHeight();
@@ -3673,7 +3673,7 @@ BOOL GridCtrl::SetColumnCount(int nCols)
 				int row, col;
 
 				// initialized column widths
-				int startCol = nCols - addedCols;
+				const int startCol = nCols - addedCols;
 				for (col = startCol; col < nCols; col++)
 					m_arColWidths[col] = m_cellFixedColDef.GetWidth();
 
@@ -3946,7 +3946,7 @@ GridCellBase* GridCtrl::CreateCell(int nRow, int nCol)
 		ASSERT(FALSE);
 		return nullptr;
 	}
-	auto pCell = static_cast<GridCellBase*>(m_pRtcDefault->CreateObject());
+	const auto pCell = dynamic_cast<GridCellBase*>(m_pRtcDefault->CreateObject());
 	if (!pCell)
 		return nullptr;
 
@@ -4035,7 +4035,7 @@ BOOL GridCtrl::DeleteRow(int nRow)
 
 	if (!GetVirtualMode())
 	{
-		GRID_ROW* pRow = m_RowData[nRow];
+		const GRID_ROW* pRow = m_RowData[nRow];
 		if (!pRow)
 			return FALSE;
 
@@ -4070,8 +4070,8 @@ BOOL GridCtrl::DeleteRow(int nRow)
 BOOL GridCtrl::DeleteNonFixedRows()
 {
 	ResetSelectedRange();
-	int nFixed = GetFixedRowCount();
-	int nCount = GetRowCount();
+	const int nFixed = GetFixedRowCount();
+	const int nCount = GetRowCount();
 	if (GetVirtualMode())
 	{
 		if (nCount != nFixed)
@@ -4164,7 +4164,7 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 				col = GetFixedColumnCount();
 			for (; col < GetColumnCount(); col++)
 			{
-				int nState = GetItemState(row, col);
+				const int nState = GetItemState(row, col);
 				if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
 					(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
 					(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
@@ -4193,7 +4193,7 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 				col = GetFixedColumnCount();
 			for (; col < GetColumnCount(); col++)
 			{
-				int nState = GetItemState(row, col);
+				const int nState = GetItemState(row, col);
 				if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
 					(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
 					(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
@@ -4208,7 +4208,7 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 	{
 		for (int row = cell.row - 1; row >= GetFixedRowCount(); row--)
 		{
-			int nState = GetItemState(row, cell.col);
+			const int nState = GetItemState(row, cell.col);
 			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
 				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
 				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
@@ -4222,7 +4222,7 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 	{
 		for (int row = cell.row + 1; row < GetRowCount(); row++)
 		{
-			int nState = GetItemState(row, cell.col);
+			const int nState = GetItemState(row, cell.col);
 			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
 				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
 				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
@@ -4236,7 +4236,7 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 	{
 		for (int col = cell.col - 1; col >= GetFixedColumnCount(); col--)
 		{
-			int nState = GetItemState(cell.row, col);
+			const int nState = GetItemState(cell.row, col);
 			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
 				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
 				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
@@ -4250,7 +4250,7 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 	{
 		for (int col = cell.col + 1; col < GetColumnCount(); col++)
 		{
-			int nState = GetItemState(cell.row, col);
+			const int nState = GetItemState(cell.row, col);
 			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
 				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
 				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
@@ -4304,8 +4304,8 @@ int CALLBACK GridCtrl::pfnCellTextCompare(LPARAM lParam1, LPARAM lParam2, LPARAM
 {
 	UNUSED_ALWAYS(lParamSort);
 
-	auto pCell1 = (GridCellBase*)lParam1;
-	auto pCell2 = (GridCellBase*)lParam2;
+	const auto pCell1 = reinterpret_cast<GridCellBase*>(lParam1);
+	const auto pCell2 = reinterpret_cast<GridCellBase*>(lParam2);
 	if (!pCell1 || !pCell2) return 0;
 
 	return _tcscmp(pCell1->GetText(), pCell2->GetText());
@@ -4315,12 +4315,12 @@ int CALLBACK GridCtrl::pfnCellNumericCompare(LPARAM lParam1, LPARAM lParam2, LPA
 {
 	UNUSED_ALWAYS(lParamSort);
 
-	auto pCell1 = (GridCellBase*)lParam1;
-	auto pCell2 = (GridCellBase*)lParam2;
+	const auto pCell1 = reinterpret_cast<GridCellBase*>(lParam1);
+	const auto pCell2 = reinterpret_cast<GridCellBase*>(lParam2);
 	if (!pCell1 || !pCell2) return 0;
 
-	int nValue1 = _ttol(pCell1->GetText());
-	int nValue2 = _ttol(pCell2->GetText());
+	const int nValue1 = _ttol(pCell1->GetText());
+	const int nValue2 = _ttol(pCell2->GetText());
 
 	if (nValue1 < nValue2)
 		return -1;
@@ -4363,7 +4363,7 @@ BOOL GridCtrl::SortItems(PFNLVCOMPARE pfnCompare, int nCol, BOOL bAscending, LPA
 	}
 
 	//LPARAM midItem = GetItemData((lo + hi)/2, nCol);
-	LPARAM pMidCell = (LPARAM)GetCell((lo + hi) / 2, nCol);
+	const LPARAM pMidCell = reinterpret_cast<LPARAM>(GetCell((lo + hi) / 2, nCol));
 
 	// loop through the list until indices cross
 	while (lo <= hi)
@@ -4371,26 +4371,26 @@ BOOL GridCtrl::SortItems(PFNLVCOMPARE pfnCompare, int nCol, BOOL bAscending, LPA
 		// Find the first element that is greater than or equal to the partition
 		// element starting from the left Index.
 		if (bAscending)
-			while (lo < high && pfnCompare((LPARAM)GetCell(lo, nCol), pMidCell, data) < 0)
+			while (lo < high && pfnCompare(reinterpret_cast<LPARAM>(GetCell(lo, nCol)), pMidCell, data) < 0)
 				++lo;
 		else
-			while (lo < high && pfnCompare((LPARAM)GetCell(lo, nCol), pMidCell, data) > 0)
+			while (lo < high && pfnCompare(reinterpret_cast<LPARAM>(GetCell(lo, nCol)), pMidCell, data) > 0)
 				++lo;
 
 		// Find an element that is smaller than or equal to  the partition
 		// element starting from the right Index.
 		if (bAscending)
-			while (hi > low && pfnCompare((LPARAM)GetCell(hi, nCol), pMidCell, data) > 0)
+			while (hi > low && pfnCompare(reinterpret_cast<LPARAM>(GetCell(hi, nCol)), pMidCell, data) > 0)
 				--hi;
 		else
-			while (hi > low && pfnCompare((LPARAM)GetCell(hi, nCol), pMidCell, data) < 0)
+			while (hi > low && pfnCompare(reinterpret_cast<LPARAM>(GetCell(hi, nCol)), pMidCell, data) < 0)
 				--hi;
 
 		// If the indexes have not crossed, swap if the items are not equal
 		if (lo <= hi)
 		{
 			// swap only if the items are not equal
-			if (pfnCompare((LPARAM)GetCell(lo, nCol), (LPARAM)GetCell(hi, nCol), data) != 0)
+			if (pfnCompare(reinterpret_cast<LPARAM>(GetCell(lo, nCol)), reinterpret_cast<LPARAM>(GetCell(hi, nCol)), data) != 0)
 			{
 				for (int col = 0; col < GetColumnCount(); col++)
 				{
@@ -4398,7 +4398,7 @@ BOOL GridCtrl::SortItems(PFNLVCOMPARE pfnCompare, int nCol, BOOL bAscending, LPA
 					SetCell(lo, col, GetCell(hi, col));
 					SetCell(hi, col, pCell);
 				}
-				UINT nRowHeight = m_arRowHeights[lo];
+				const UINT nRowHeight = m_arRowHeights[lo];
 				m_arRowHeights[lo] = m_arRowHeights[hi];
 				m_arRowHeights[hi] = nRowHeight;
 			}
@@ -4461,7 +4461,7 @@ BOOL GridCtrl::GetItem(GV_ITEM* pItem)
 {
 	if (!pItem)
 		return FALSE;
-	GridCellBase* pCell = GetCell(pItem->row, pItem->col);
+	const GridCellBase* pCell = GetCell(pItem->row, pItem->col);
 	if (!pCell)
 		return FALSE;
 
@@ -4604,7 +4604,7 @@ int GridCtrl::GetItemImage(int nRow, int nCol) const
 
 BOOL GridCtrl::SetItemState(int nRow, int nCol, UINT state)
 {
-	BOOL bSelected = IsCellSelected(nRow, nCol);
+	const BOOL bSelected = IsCellSelected(nRow, nCol);
 
 	// If the cell is being unselected, remove it from the selected list
 	if (bSelected && !(state & GVIS_SELECTED))
@@ -4639,7 +4639,7 @@ BOOL GridCtrl::SetItemState(int nRow, int nCol, UINT state)
 
 UINT GridCtrl::GetItemState(int nRow, int nCol) const
 {
-	GridCellBase* pCell = GetCell(nRow, nCol);
+	const GridCellBase* pCell = GetCell(nRow, nCol);
 	ASSERT(pCell);
 	if (!pCell)
 		return 0;
@@ -4663,7 +4663,7 @@ BOOL GridCtrl::SetItemFormat(int nRow, int nCol, UINT nFormat)
 
 UINT GridCtrl::GetItemFormat(int nRow, int nCol) const
 {
-	GridCellBase* pCell = GetCell(nRow, nCol);
+	const GridCellBase* pCell = GetCell(nRow, nCol);
 	ASSERT(pCell);
 	if (!pCell)
 		return 0;
@@ -4687,7 +4687,7 @@ BOOL GridCtrl::SetItemBkColour(int nRow, int nCol, COLORREF cr /* = CLR_DEFAULT 
 
 COLORREF GridCtrl::GetItemBkColour(int nRow, int nCol) const
 {
-	GridCellBase* pCell = GetCell(nRow, nCol);
+	const GridCellBase* pCell = GetCell(nRow, nCol);
 	ASSERT(pCell);
 	if (!pCell)
 		return 0;
@@ -4711,7 +4711,7 @@ BOOL GridCtrl::SetItemFgColour(int nRow, int nCol, COLORREF cr /* = CLR_DEFAULT 
 
 COLORREF GridCtrl::GetItemFgColour(int nRow, int nCol) const
 {
-	GridCellBase* pCell = GetCell(nRow, nCol);
+	const GridCellBase* pCell = GetCell(nRow, nCol);
 	ASSERT(pCell);
 	if (!pCell)
 		return 0;
@@ -4736,7 +4736,7 @@ BOOL GridCtrl::SetItemFont(int nRow, int nCol, const LOGFONT* plf)
 
 const LOGFONT* GridCtrl::GetItemFont(int nRow, int nCol)
 {
-	GridCellBase* pCell = GetCell(nRow, nCol);
+	const GridCellBase* pCell = GetCell(nRow, nCol);
 	ASSERT(pCell);
 	if (!pCell)
 		return GetDefaultCell(nRow < GetFixedRowCount(), nCol < GetFixedColumnCount())->GetFont();
@@ -4746,7 +4746,7 @@ const LOGFONT* GridCtrl::GetItemFont(int nRow, int nCol)
 
 BOOL GridCtrl::IsItemEditing(int nRow, int nCol)
 {
-	GridCellBase* pCell = GetCell(nRow, nCol);
+	const GridCellBase* pCell = GetCell(nRow, nCol);
 	ASSERT(pCell);
 	if (!pCell)
 		return FALSE;
@@ -4760,7 +4760,7 @@ BOOL GridCtrl::IsItemEditing(int nRow, int nCol)
 long GridCtrl::GetVirtualWidth() const
 {
 	long lVirtualWidth = 0;
-	int iColCount = GetColumnCount();
+	const int iColCount = GetColumnCount();
 	for (int i = 0; i < iColCount; i++)
 		lVirtualWidth += m_arColWidths[i];
 
@@ -4770,7 +4770,7 @@ long GridCtrl::GetVirtualWidth() const
 long GridCtrl::GetVirtualHeight() const
 {
 	long lVirtualHeight = 0;
-	int iRowCount = GetRowCount();
+	const int iRowCount = GetRowCount();
 	for (int i = 0; i < iRowCount; i++)
 		lVirtualHeight += m_arRowHeights[i];
 
@@ -4859,8 +4859,8 @@ BOOL GridCtrl::AutoSizeColumn(int nCol, UINT nAutoSizeStyle /*=GVS_DEFAULT*/,
 	if (nAutoSizeStyle == GVS_DEFAULT)
 		nAutoSizeStyle = GetAutoSizeStyle();
 
-	int nStartRow = (nAutoSizeStyle & GVS_HEADER) ? 0 : GetFixedRowCount();
-	int nEndRow = (nAutoSizeStyle & GVS_DATA) ? GetRowCount() - 1 : GetFixedRowCount() - 1;
+	const int nStartRow = (nAutoSizeStyle & GVS_HEADER) ? 0 : GetFixedRowCount();
+	const int nEndRow = (nAutoSizeStyle & GVS_DATA) ? GetRowCount() - 1 : GetFixedRowCount() - 1;
 
 	if (GetVirtualMode())
 		SendCacheHintToParent(GridCellRange(nStartRow, nCol, nEndRow, nCol));
@@ -4902,7 +4902,7 @@ BOOL GridCtrl::AutoSizeRow(int nRow, BOOL bResetScroll /*=TRUE*/)
 		return FALSE;
 
 	int nHeight = 0;
-	int nNumColumns = GetColumnCount();
+	const int nNumColumns = GetColumnCount();
 
 	if (GetVirtualMode())
 		SendCacheHintToParent(GridCellRange(nRow, 0, nRow, nNumColumns));
@@ -4929,7 +4929,7 @@ BOOL GridCtrl::AutoSizeRow(int nRow, BOOL bResetScroll /*=TRUE*/)
 
 void GridCtrl::AutoSizeColumns(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
 {
-	int nNumColumns = GetColumnCount();
+	const int nNumColumns = GetColumnCount();
 	for (int nCol = 0; nCol < nNumColumns; nCol++)
 	{
 		//  Skip hidden columns when autosizing
@@ -4941,7 +4941,7 @@ void GridCtrl::AutoSizeColumns(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
 
 void GridCtrl::AutoSizeRows()
 {
-	int nNumRows = GetRowCount();
+	const int nNumRows = GetRowCount();
 	for (int nRow = 0; nRow < nNumRows; nRow++)
 	{
 		//  Skip hidden rows when autosizing
@@ -4959,16 +4959,16 @@ void GridCtrl::AutoSize(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
 	if (!p_dc)
 		return;
 
-	int nNumColumns = GetColumnCount();
+	const int nNumColumns = GetColumnCount();
 
-	int nCol, nRow;
+	int nRow;
 
 	ASSERT(GVS_DEFAULT <= nAutoSizeStyle && nAutoSizeStyle <= GVS_BOTH);
 	if (nAutoSizeStyle == GVS_DEFAULT)
 		nAutoSizeStyle = GetAutoSizeStyle();
 
-	int nStartRow = (nAutoSizeStyle & GVS_HEADER) ? 0 : GetFixedRowCount();
-	int nEndRow = (nAutoSizeStyle & GVS_DATA) ? GetRowCount() - 1 : GetFixedRowCount() - 1;
+	const int nStartRow = (nAutoSizeStyle & GVS_HEADER) ? 0 : GetFixedRowCount();
+	const int nEndRow = (nAutoSizeStyle & GVS_DATA) ? GetRowCount() - 1 : GetFixedRowCount() - 1;
 
 	if (GetVirtualMode())
 		SendCacheHintToParent(GridCellRange(nStartRow, 0, nEndRow, nNumColumns));
@@ -4981,7 +4981,7 @@ void GridCtrl::AutoSize(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
 	}
 
 	CSize size;
-	for (nCol = 0; nCol < nNumColumns; nCol++)
+	for (int nCol = 0; nCol < nNumColumns; nCol++)
 	{
 		//  Don't size hidden columns or rows
 		if (GetColumnWidth(nCol) > 0)
@@ -5032,7 +5032,7 @@ void GridCtrl::ExpandColumnsToFit(BOOL bExpandFixed /*=TRUE*/)
 	CRect rect;
 	GetClientRect(rect);
 
-	int nFirstColumn = (bExpandFixed) ? 0 : GetFixedColumnCount();
+	const int nFirstColumn = (bExpandFixed) ? 0 : GetFixedColumnCount();
 
 	int nNumColumnsAffected = 0;
 	for (col = nFirstColumn; col < GetColumnCount(); col++)
@@ -5044,9 +5044,9 @@ void GridCtrl::ExpandColumnsToFit(BOOL bExpandFixed /*=TRUE*/)
 	if (nNumColumnsAffected <= 0)
 		return;
 
-	long virtualWidth = GetVirtualWidth();
-	int nDifference = rect.Width() - static_cast<int>(virtualWidth);
-	int nColumnAdjustment = nDifference / nNumColumnsAffected;
+	const long virtualWidth = GetVirtualWidth();
+	const int nDifference = rect.Width() - static_cast<int>(virtualWidth);
+	const int nColumnAdjustment = nDifference / nNumColumnsAffected;
 
 	for (col = nFirstColumn; col < GetColumnCount(); col++)
 	{
@@ -5056,7 +5056,7 @@ void GridCtrl::ExpandColumnsToFit(BOOL bExpandFixed /*=TRUE*/)
 
 	if (nDifference > 0)
 	{
-		int leftOver = nDifference % nNumColumnsAffected;
+		const int leftOver = nDifference % nNumColumnsAffected;
 		for (int nCount = 0, col = nFirstColumn;
 		     (col < GetColumnCount()) && (nCount < leftOver); col++, nCount++)
 		{
@@ -5066,7 +5066,7 @@ void GridCtrl::ExpandColumnsToFit(BOOL bExpandFixed /*=TRUE*/)
 	}
 	else
 	{
-		int leftOver = (-nDifference) % nNumColumnsAffected;
+		const int leftOver = (-nDifference) % nNumColumnsAffected;
 		for (int nCount = 0, col = nFirstColumn;
 		     (col < GetColumnCount()) && (nCount < leftOver); col++, nCount++)
 		{
@@ -5098,8 +5098,8 @@ void GridCtrl::ExpandLastColumn()
 	CRect rect;
 	GetClientRect(rect);
 
-	long virtualWidth = GetVirtualWidth();
-	int nDifference = rect.Width() - static_cast<int>(virtualWidth);
+	const long virtualWidth = GetVirtualWidth();
+	const int nDifference = rect.Width() - static_cast<int>(virtualWidth);
 
 	if (nDifference > 0)
 	{
@@ -5132,7 +5132,7 @@ void GridCtrl::ExpandRowsToFit(BOOL bExpandFixed /*=TRUE*/)
 	CRect rect;
 	GetClientRect(rect);
 
-	int nFirstRow = (bExpandFixed) ? 0 : GetFixedRowCount();
+	const int nFirstRow = (bExpandFixed) ? 0 : GetFixedRowCount();
 
 	int nNumRowsAffected = 0;
 	for (row = nFirstRow; row < GetRowCount(); row++)
@@ -5144,9 +5144,9 @@ void GridCtrl::ExpandRowsToFit(BOOL bExpandFixed /*=TRUE*/)
 	if (nNumRowsAffected <= 0)
 		return;
 
-	long virtualHeight = GetVirtualHeight();
-	int nDifference = rect.Height() - static_cast<int>(virtualHeight);
-	int nRowAdjustment = nDifference / nNumRowsAffected;
+	const long virtualHeight = GetVirtualHeight();
+	const int nDifference = rect.Height() - static_cast<int>(virtualHeight);
+	const int nRowAdjustment = nDifference / nNumRowsAffected;
 
 	for (row = nFirstRow; row < GetRowCount(); row++)
 	{
@@ -5156,7 +5156,7 @@ void GridCtrl::ExpandRowsToFit(BOOL bExpandFixed /*=TRUE*/)
 
 	if (nDifference > 0)
 	{
-		int leftOver = nDifference % nNumRowsAffected;
+		const int leftOver = nDifference % nNumRowsAffected;
 		for (int nCount = 0, row = nFirstRow;
 		     (row < GetRowCount()) && (nCount < leftOver); row++, nCount++)
 		{
@@ -5166,7 +5166,7 @@ void GridCtrl::ExpandRowsToFit(BOOL bExpandFixed /*=TRUE*/)
 	}
 	else
 	{
-		int leftOver = (-nDifference) % nNumRowsAffected;
+		const int leftOver = (-nDifference) % nNumRowsAffected;
 		for (int nCount = 0, row = nFirstRow;
 		     (row < GetRowCount()) && (nCount < leftOver); row++, nCount++)
 		{
@@ -5322,10 +5322,7 @@ void GridCtrl::EnsureVisible(int nRow, int nCol)
 	int down = nRow - VisibleCells.GetMaxRow();
 	int up = VisibleCells.GetMinRow() - nRow;
 
-	int iColumnStart;
-	int iRowStart;
-
-	iColumnStart = VisibleCells.GetMaxCol() + 1;
+	int iColumnStart = VisibleCells.GetMaxCol() + 1;
 	while (right > 0)
 	{
 		if (GetColumnWidth(iColumnStart) > 0)
@@ -5344,7 +5341,7 @@ void GridCtrl::EnsureVisible(int nRow, int nCol)
 		iColumnStart--;
 	}
 
-	iRowStart = VisibleCells.GetMaxRow() + 1;
+	int iRowStart = VisibleCells.GetMaxRow() + 1;
 	while (down > 0)
 	{
 		if (GetRowHeight(iRowStart) > 0)
@@ -5537,7 +5534,7 @@ BOOL GridCtrl::InvalidateCellRect(const GridCellRange& cellRange)
 	if (!IsWindow(GetSafeHwnd()) || !m_bAllowDraw)
 		return FALSE;
 
-	GridCellRange visibleCellRange = GetVisibleNonFixedCellRange().Intersect(cellRange);
+	const GridCellRange visibleCellRange = GetVisibleNonFixedCellRange().Intersect(cellRange);
 
 	CRect rect;
 	if (!GetCellRangeRect(visibleCellRange, rect))
@@ -5562,7 +5559,7 @@ BOOL GridCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	// wheel scrolls whole pages, not just lines.
 	if (m_nRowsPerWheelNotch == -1)
 	{
-		int nPagesScrolled = zDelta / 120;
+		const int nPagesScrolled = zDelta / 120;
 
 		if (nPagesScrolled > 0)
 		{
@@ -5670,10 +5667,11 @@ void GridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 			// Titletips anyone? anyone?
 			if (m_bTitleTips)
 			{
-				CRect TextRect, CellRect;
+				CRect TextRect;
 				if (pCell)
 				{
-					LPCTSTR szTipText = pCell->GetTipText();
+					CRect CellRect;
+					const LPCTSTR szTipText = pCell->GetTipText();
 					if (!m_bRMouseButtonDown
 						&& szTipText && szTipText[0]
 						&& !pCell->IsEditing()
@@ -5712,7 +5710,7 @@ void GridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		case MOUSE_SELECT_ROW:
 		case MOUSE_SELECT_CELLS:
 			{
-				GridCellID idCurrentCell = GetCellFromPt(point);
+				const GridCellID idCurrentCell = GetCellFromPt(point);
 				if (!IsValid(idCurrentCell))
 					return;
 
@@ -5740,11 +5738,11 @@ void GridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 				if (!p_dc)
 					break;
 
-				CRect oldInvertedRect(m_LastMousePoint.x, rect.top,
-				                      m_LastMousePoint.x + 2, rect.bottom);
+				const CRect oldInvertedRect(m_LastMousePoint.x, rect.top,
+				                            m_LastMousePoint.x + 2, rect.bottom);
 				p_dc->InvertRect(&oldInvertedRect);
-				CRect newInvertedRect(point.x, rect.top,
-				                      point.x + 2, rect.bottom);
+				const CRect newInvertedRect(point.x, rect.top,
+				                            point.x + 2, rect.bottom);
 				p_dc->InvertRect(&newInvertedRect);
 				ReleaseDC(p_dc);
 			}
@@ -5756,11 +5754,11 @@ void GridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 				if (!p_dc)
 					break;
 
-				CRect oldInvertedRect(rect.left, m_LastMousePoint.y,
-				                      rect.right, m_LastMousePoint.y + 2);
+				const CRect oldInvertedRect(rect.left, m_LastMousePoint.y,
+				                            rect.right, m_LastMousePoint.y + 2);
 				p_dc->InvertRect(&oldInvertedRect);
-				CRect newInvertedRect(rect.left, point.y,
-				                      rect.right, point.y + 2);
+				const CRect newInvertedRect(rect.left, point.y,
+				                            rect.right, point.y + 2);
 				p_dc->InvertRect(&newInvertedRect);
 				ReleaseDC(p_dc);
 			}
@@ -5772,6 +5770,7 @@ void GridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 			m_MouseMode = MOUSE_PREPARE_DRAG;
 			OnBeginDrag();
 			break;
+		default: ;
 #endif
 		}
 	}
@@ -5864,8 +5863,7 @@ void GridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 	else if (m_MouseMode == MOUSE_NOTHING)
 	{
-		CPoint pointClickedRel;
-		pointClickedRel = GetPointClicked(cell.row, cell.col, point);
+		const CPoint pointClickedRel = GetPointClicked(cell.row, cell.col, point);
 
 		GridCellBase* pCell = nullptr;
 		if (IsValid(cell))
@@ -6092,7 +6090,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 
 		CRect rect;
 		GetClientRect(rect);
-		CRect invertedRect(point.x, rect.top, point.x + 2, rect.bottom);
+		const CRect invertedRect(point.x, rect.top, point.x + 2, rect.bottom);
 
 		CDC* p_dc = GetDC();
 		if (p_dc)
@@ -6116,7 +6114,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 
 		// Allow a cell resize width no greater than that which can be viewed within
 		// the grid itself
-		int nMaxCellWidth = rect.Width() - GetFixedColumnWidth();
+		const int nMaxCellWidth = rect.Width() - GetFixedColumnWidth();
 		rect.left = start.x + 1;
 		rect.right = rect.left + nMaxCellWidth;
 
@@ -6146,7 +6144,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 			//  ignore rows that are hidden and look up towards first visible row
 			BOOL bLookForVisible = TRUE;
-			BOOL bIsCellBottomBorder = point.y - start.y >= m_nResizeCaptureRange;
+			const BOOL bIsCellBottomBorder = point.y - start.y >= m_nResizeCaptureRange;
 
 			if (bIsCellBottomBorder
 				&& m_LeftClickDownCell.row + 1 >= GetRowCount())
@@ -6183,7 +6181,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 
 		CRect rect;
 		GetClientRect(rect);
-		CRect invertedRect(rect.left, point.y, rect.right, point.y + 2);
+		const CRect invertedRect(rect.left, point.y, rect.right, point.y + 2);
 
 		CDC* p_dc = GetDC();
 		if (p_dc)
@@ -6205,7 +6203,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 			}
 		}
 
-		int nMaxCellHeight = rect.Height() - GetFixedRowHeight();
+		const int nMaxCellHeight = rect.Height() - GetFixedRowHeight();
 		rect.top = start.y + 1;
 		rect.bottom = rect.top + nMaxCellHeight;
 
@@ -6307,7 +6305,7 @@ void GridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		CRect rect;
 		GetClientRect(rect);
-		CRect invertedRect(m_LastMousePoint.x, rect.top, m_LastMousePoint.x + 2, rect.bottom);
+		const CRect invertedRect(m_LastMousePoint.x, rect.top, m_LastMousePoint.x + 2, rect.bottom);
 
 		CDC* p_dc = GetDC();
 		if (p_dc)
@@ -6333,7 +6331,7 @@ void GridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		CRect rect;
 		GetClientRect(rect);
-		CRect invertedRect(rect.left, m_LastMousePoint.y, rect.right, m_LastMousePoint.y + 2);
+		const CRect invertedRect(rect.left, m_LastMousePoint.y, rect.right, m_LastMousePoint.y + 2);
 
 		CDC* p_dc = GetDC();
 		if (p_dc)
@@ -6348,7 +6346,7 @@ void GridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 			if (!GetCellOrigin(m_LeftClickDownCell, &start))
 				return;
 
-			int nRowHeight = __max(point.y - start.y, m_bAllowRowHide ? 0 : 1);
+			const int nRowHeight = __max(point.y - start.y, m_bAllowRowHide ? 0 : 1);
 
 			SetRowHeight(m_LeftClickDownCell.row, nRowHeight);
 			ResetScrollBars();
@@ -6377,7 +6375,7 @@ void GridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 	CWnd* pOwner = GetOwner();
 	if (pOwner && IsWindow(pOwner->m_hWnd))
 		pOwner->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_CLICKED),
-		                    (LPARAM)GetSafeHwnd());
+		                    reinterpret_cast<LPARAM>(GetSafeHwnd()));
 }
 
 #ifndef _WIN32_WCE
@@ -6400,8 +6398,7 @@ void GridCtrl::OnRButtonUp(UINT nFlags, CPoint point)
 
 	m_bRMouseButtonDown = FALSE;
 
-	GridCellID FocusCell;
-	FocusCell = GetCellFromPt(point);
+	const GridCellID FocusCell = GetCellFromPt(point);
 
 	EndEditing(); // Auto-destroy any InPlaceEdit's
 
@@ -6546,12 +6543,12 @@ void GridCtrl::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	CDC* pCurrentDC = GetDC(); // will have dimensions of the client area
 	if (!pCurrentDC) return;
 
-	CSize PaperPixelsPerInch(p_dc->GetDeviceCaps(LOGPIXELSX), p_dc->GetDeviceCaps(LOGPIXELSY));
-	CSize ScreenPixelsPerInch(pCurrentDC->GetDeviceCaps(LOGPIXELSX), pCurrentDC->GetDeviceCaps(LOGPIXELSY));
+	const CSize PaperPixelsPerInch(p_dc->GetDeviceCaps(LOGPIXELSX), p_dc->GetDeviceCaps(LOGPIXELSY));
+	const CSize ScreenPixelsPerInch(pCurrentDC->GetDeviceCaps(LOGPIXELSX), pCurrentDC->GetDeviceCaps(LOGPIXELSY));
 
 	// Create the printer font
-	int nFontSize = -10;
-	CString strFontName = _T("Arial");
+	const int nFontSize = -10;
+	const CString strFontName = _T("Arial");
 	m_PrinterFont.CreateFont(nFontSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 	                         OUT_CHARACTER_PRECIS, CLIP_CHARACTER_PRECIS, DEFAULT_QUALITY,
 	                         DEFAULT_PITCH | FF_DONTCARE, strFontName);
@@ -6850,7 +6847,7 @@ void GridCtrl::PrintFixedRowCells(int nStartColumn, int nStopColumn, int& row, C
 
 		if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_HORZ)
 		{
-			int Overlap = (col == 0) ? 0 : 1;
+			const int Overlap = (col == 0) ? 0 : 1;
 
 			p_dc->MoveTo(rect.left - Overlap, rect.bottom);
 			p_dc->LineTo(rect.right, rect.bottom);
@@ -6864,7 +6861,7 @@ void GridCtrl::PrintFixedRowCells(int nStartColumn, int nStopColumn, int& row, C
 
 		if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_VERT)
 		{
-			int Overlap = (row == 0) ? 0 : 1;
+			const int Overlap = (row == 0) ? 0 : 1;
 
 			p_dc->MoveTo(rect.right, rect.top - Overlap);
 			p_dc->LineTo(rect.right, rect.bottom);
@@ -6887,7 +6884,6 @@ void GridCtrl::PrintColumnHeadings(CDC* p_dc, CPrintInfo* /*pInfo*/)
 	rect.bottom = -1;
 
 	BOOL bFirst = TRUE;
-	BOOL bOriginal;
 
 	// modified to allow column hdr printing of multi-page wide grids
 	for (int row = 0; row < GetFixedRowCount(); row++)
@@ -6902,7 +6898,7 @@ void GridCtrl::PrintColumnHeadings(CDC* p_dc, CPrintInfo* /*pInfo*/)
 		// added by M.Fletcher 12/17/00
 		if (m_nPrintColumn >= GetFixedColumnCount())
 		{
-			bOriginal = bFirst;
+			const BOOL bOriginal = bFirst;
 			// lets print the missing fixed cells on left first out to last fixed column
 			PrintFixedRowCells(0, GetFixedColumnCount(), row, rect, p_dc, bFirst);
 			bFirst = bOriginal;
@@ -6950,7 +6946,7 @@ void GridCtrl::PrintRowButtons(CDC* p_dc, CPrintInfo* /*pInfo*/)
 
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_HORZ)
 			{
-				int Overlap = (iCol == 0) ? 0 : 1;
+				const int Overlap = (iCol == 0) ? 0 : 1;
 				p_dc->MoveTo(rect.left - Overlap, rect.bottom);
 				p_dc->LineTo(rect.right, rect.bottom);
 				if (bFirst)
@@ -6962,7 +6958,7 @@ void GridCtrl::PrintRowButtons(CDC* p_dc, CPrintInfo* /*pInfo*/)
 			}
 			if (m_nGridLines == GVL_BOTH || m_nGridLines == GVL_VERT)
 			{
-				int Overlap = (iRow == 0) ? 0 : 1;
+				const int Overlap = (iRow == 0) ? 0 : 1;
 				p_dc->MoveTo(rect.right, rect.top - Overlap);
 				p_dc->LineTo(rect.right, rect.bottom);
 				if (iCol == 0)
@@ -6984,7 +6980,7 @@ void GridCtrl::PrintHeader(CDC* p_dc, CPrintInfo* pInfo)
 
 	// print parent window title in the centre (Gert Rijs)
 	CString strCenter;
-	CWnd* pParentWnd = GetParent();
+	const CWnd* pParentWnd = GetParent();
 	while (pParentWnd)
 	{
 		pParentWnd->GetWindowText(strCenter);
@@ -7002,7 +6998,7 @@ void GridCtrl::PrintHeader(CDC* p_dc, CPrintInfo* pInfo)
 	VERIFY(BoldFont.CreateFontIndirect(&lf));
 
 	CFont* pNormalFont = p_dc->SelectObject(&BoldFont);
-	int nPrevBkMode = p_dc->SetBkMode(TRANSPARENT);
+	const int nPrevBkMode = p_dc->SetBkMode(TRANSPARENT);
 
 	CRect rc(pInfo->m_rectDraw);
 	if (!strCenter.IsEmpty())
@@ -7079,7 +7075,7 @@ BOOL GridCtrl::Save(LPCTSTR filename, TCHAR chSeparator/*=_T(',')*/)
 {
 	CStdioFile File;
 	CFileException ex;
-	CString strSeparator(chSeparator);
+	const CString strSeparator(chSeparator);
 
 	if (!File.Open(filename, CFile::modeWrite | CFile::modeCreate | CFile::typeText, &ex))
 	{
@@ -7089,7 +7085,7 @@ BOOL GridCtrl::Save(LPCTSTR filename, TCHAR chSeparator/*=_T(',')*/)
 
 	TRY
 		{
-			int nNumColumns = GetColumnCount();
+			const int nNumColumns = GetColumnCount();
 			for (int i = 0; i < GetRowCount(); i++)
 			{
 				for (int j = 0; j < nNumColumns; j++)
@@ -7117,8 +7113,6 @@ BOOL GridCtrl::Load(LPCTSTR filename, TCHAR chSeparator/*=_T(',')*/)
 	if (GetVirtualMode())
 		return FALSE;
 
-	TCHAR *token, *end;
-	TCHAR buffer[1024];
 	CStdioFile File;
 	CFileException ex;
 
@@ -7132,6 +7126,9 @@ BOOL GridCtrl::Load(LPCTSTR filename, TCHAR chSeparator/*=_T(',')*/)
 
 	TRY
 		{
+			TCHAR *token;
+			TCHAR *end;
+			TCHAR buffer[1024];
 			// Read Header off file
 			File.ReadString(buffer, 1024);
 
@@ -7222,7 +7219,7 @@ CImageList* GridCtrl::CreateDragImage(CPoint* pHotSpot)
 		return nullptr;
 
 	CRect rect;
-	GridCellID cell = GetFocusCell();
+	const GridCellID cell = GetFocusCell();
 	if (!GetCellRect(cell.row, cell.col, rect))
 		return nullptr;
 
@@ -7233,11 +7230,10 @@ CImageList* GridCtrl::CreateDragImage(CPoint* pHotSpot)
 
 	// Create a new imagelist (the caller of this function has responsibility
 	// for deleting this list)
-	auto pList = new CImageList;
+	const auto pList = new CImageList;
 	if (!pList || !pList->Create(rect.Width(), rect.Height(), ILC_MASK, 1, 1))
 	{
-		if (pList)
-			delete pList;
+		delete pList;
 		return nullptr;
 	}
 
@@ -7381,7 +7377,7 @@ void GridCtrl::EndEditing()
 // virtual
 void GridCtrl::OnEndEditCell(int nRow, int nCol, CString str)
 {
-	CString strCurrentText = GetItemText(nRow, nCol);
+	const CString strCurrentText = GetItemText(nRow, nCol);
 	if (strCurrentText != str)
 	{
 		SetItemText(nRow, nCol, str);
@@ -7420,7 +7416,7 @@ CString GridCtrl::GetItemText(int nRow, int nCol) const
 	if (nRow < 0 || nRow >= m_nRows || nCol < 0 || nCol >= m_nCols)
 		return _T("");
 
-	GridCellBase* pCell = GetCell(nRow, nCol);
+	const GridCellBase* pCell = GetCell(nRow, nCol);
 	ASSERT(pCell);
 	if (!pCell)
 		return _T("");
@@ -7441,8 +7437,8 @@ void GridCtrl::Reorder(int From, int To)
 {
 	// Set line From just after Line To
 	ASSERT(From >= GetFixedRowCount() && To >= GetFixedRowCount() - 1 && From < m_nRows&& To < m_nRows);
-	int Value = m_arRowOrder[From];
+	const int Value = m_arRowOrder[From];
 	m_arRowOrder.erase(m_arRowOrder.begin() + From);
-	int Offset = (From >= To ? 1 : 0);
+	const int Offset = (From >= To ? 1 : 0);
 	m_arRowOrder.insert(m_arRowOrder.begin() + To + Offset, Value);
 }

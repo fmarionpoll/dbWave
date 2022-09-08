@@ -21,9 +21,9 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 	m_bExitOnArrows = FALSE; //(nFirstChar != VK_LBUTTON);	// If mouse click brought us here,
 
 	// Create the combobox
-	DWORD dwComboStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL |
+	const DWORD dwComboStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL |
 		CBS_AUTOHSCROLL | dw_style;
-	int nHeight = rect.Height();
+	const int nHeight = rect.Height();
 	rect.bottom = rect.bottom + m_nNumLines * nHeight + GetSystemMetrics(SM_CYHSCROLL);
 	if (!Create(dwComboStyle, rect, pParent, nID)) return;
 
@@ -34,7 +34,7 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 	SetFont(pParent->GetFont());
 	SetItemHeight(-1, nHeight);
 
-	int nMaxLength = GetCorrectDropWidth();
+	const int nMaxLength = GetCorrectDropWidth();
 	/*
 	if (nMaxLength > rect.GetRectWidth())
 		rect.right = rect.left + nMaxLength;
@@ -104,7 +104,7 @@ void GridInPlaceList::EndEdit()
 	dispinfo.item.strText = str;
 	dispinfo.item.lParam = static_cast<LPARAM>(m_nLastChar);
 
-	CWnd* pOwner = GetOwner();
+	const CWnd* pOwner = GetOwner();
 	if (IsWindow(pOwner->GetSafeHwnd()))
 		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
 
@@ -115,18 +115,18 @@ void GridInPlaceList::EndEdit()
 
 int GridInPlaceList::GetCorrectDropWidth()
 {
-	const int nMaxWidth = 200; // don't let the box be bigger than this
+	constexpr int nMaxWidth = 200; // don't let the box be bigger than this
 
 	// Reset the dropped width
-	int nNumEntries = GetCount();
+	const int nNumEntries = GetCount();
 	int nWidth = 0;
 	CString str;
 
 	CClientDC dc(this);
-	int nSave = dc.SaveDC();
+	const int nSave = dc.SaveDC();
 	dc.SelectObject(GetFont());
 
-	int nScrollWidth = GetSystemMetrics(SM_CXVSCROLL);
+	const int nScrollWidth = GetSystemMetrics(SM_CXVSCROLL);
 	for (int i = 0; i < nNumEntries; i++)
 	{
 		GetLBText(i, str);

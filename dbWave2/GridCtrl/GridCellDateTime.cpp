@@ -51,7 +51,7 @@ GridCellDateTime::~GridCellDateTime()
 
 CSize GridCellDateTime::GetCellExtent(CDC* p_dc)
 {
-	CSize sizeScroll(GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));
+	const CSize sizeScroll(GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));
 	CSize sizeCell(GridCell::GetCellExtent(p_dc));
 	sizeCell.cx += sizeScroll.cx;
 	sizeCell.cy = max(sizeCell.cy, sizeScroll.cy);
@@ -77,7 +77,7 @@ CWnd* GridCellDateTime::GetEditWnd() const
 
 void GridCellDateTime::EndEdit()
 {
-	if (m_pEditWnd) static_cast<InPlaceDateTime*>(m_pEditWnd)->EndEdit();
+	if (m_pEditWnd) dynamic_cast<InPlaceDateTime*>(m_pEditWnd)->EndEdit();
 }
 
 void GridCellDateTime::Init(DWORD dw_style)
@@ -142,7 +142,7 @@ InPlaceDateTime::InPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 	m_bExitOnArrows = FALSE;
 	m_pcTime = pcTime;
 
-	DWORD dwStl = WS_BORDER | WS_VISIBLE | WS_CHILD | dw_style;
+	const DWORD dwStl = WS_BORDER | WS_VISIBLE | WS_CHILD | dw_style;
 
 	if (!Create(dwStl, rect, pParent, nID))
 	{
@@ -198,7 +198,7 @@ void InPlaceDateTime::EndEdit()
 	dispinfo.item.strText = str;
 	dispinfo.item.lParam = static_cast<LPARAM>(m_nLastChar);
 
-	CWnd* pOwner = GetOwner();
+	const CWnd* pOwner = GetOwner();
 	if (IsWindow(pOwner->GetSafeHwnd()))
 	{
 		pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);

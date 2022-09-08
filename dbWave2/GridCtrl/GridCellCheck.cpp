@@ -55,7 +55,7 @@ GridCellCheck::GridCellCheck() : GridCell()
 CSize GridCellCheck::GetCellExtent(CDC* p_dc)
 {
 	// Using SM_CXHSCROLL as a guide to the size of the checkbox
-	int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2 * GetMargin();
+	const int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2 * GetMargin();
 	CSize cellSize = GridCell::GetCellExtent(p_dc);
 	cellSize.cx += nWidth;
 	cellSize.cy = max(cellSize.cy, nWidth);
@@ -65,10 +65,10 @@ CSize GridCellCheck::GetCellExtent(CDC* p_dc)
 // i/o:  i=dims of cell rect; o=dims of text rect
 BOOL GridCellCheck::GetTextRect(LPRECT pRect)
 {
-	BOOL bResult = GridCell::GetTextRect(pRect);
+	const BOOL bResult = GridCell::GetTextRect(pRect);
 	if (bResult)
 	{
-		int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2 * GetMargin();
+		const int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2 * GetMargin();
 		pRect->left += nWidth;
 		if (pRect->left > pRect->right)
 			pRect->left = pRect->right;
@@ -79,13 +79,13 @@ BOOL GridCellCheck::GetTextRect(LPRECT pRect)
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
 BOOL GridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd /*=TRUE*/)
 {
-	BOOL bResult = GridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
+	const BOOL bResult = GridCell::Draw(p_dc, nRow, nCol, rect, bEraseBkgnd);
 
 #ifndef _WIN32_WCE
 	// Store the cell's dimensions for later
 	m_Rect = rect;
 
-	CRect CheckRect = GetCheckPlacement();
+	const CRect CheckRect = GetCheckPlacement();
 	rect.left = CheckRect.right;
 
 	// enough room to draw?
@@ -93,7 +93,6 @@ BOOL GridCellCheck::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseB
 	// Do the draw
 	p_dc->DrawFrameControl(GetCheckPlacement(), DFC_BUTTON,
 	                       (m_bChecked) ? DFCS_BUTTONCHECK | DFCS_CHECKED : DFCS_BUTTONCHECK);
-
 	// }
 #endif
 	return bResult;
@@ -124,7 +123,7 @@ void GridCellCheck::OnClick(CPoint PointCellRelative)
 
 BOOL GridCellCheck::SetCheck(BOOL bChecked /*=TRUE*/)
 {
-	BOOL bTemp = m_bChecked;
+	const BOOL bTemp = m_bChecked;
 	m_bChecked = bChecked;
 	if (!m_Rect.IsRectEmpty())
 		GetGrid()->InvalidateRect(m_Rect);
@@ -144,7 +143,7 @@ BOOL GridCellCheck::GetCheck()
 // Returns the dimensions and placement of the checkbox in client coords.
 CRect GridCellCheck::GetCheckPlacement()
 {
-	int nWidth = GetSystemMetrics(SM_CXHSCROLL);
+	const int nWidth = GetSystemMetrics(SM_CXHSCROLL);
 	CRect place = m_Rect + CSize(GetMargin(), GetMargin());
 	place.right = place.left + nWidth;
 	place.bottom = place.top + nWidth;
