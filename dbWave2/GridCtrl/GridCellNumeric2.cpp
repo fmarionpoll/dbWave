@@ -1,3 +1,8 @@
+#include "stdafx.h"
+#include "GridCellNumeric2.h"
+#include "GridCtrl.h"
+#include "inplaceedit.h"
+
 // GridCellNumeric.cpp: implementation of the GridCellNumeric2 class.
 //
 // Written by Andrew Truckle [ajtruckle@wsatkins.co.uk]
@@ -12,10 +17,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#include "GridCellNumeric2.h"
-#include "GridCtrl.h"
-#include "inplaceedit.h"
+
 
 IMPLEMENT_DYNCREATE(GridCellNumeric2, GridCell)
 
@@ -190,8 +192,9 @@ CInPlaceNumEdit::CInPlaceNumEdit(CWnd* pParent,
         }
     }
 
+	/* filter disabled here
     // Replace the digits with the locale specific ones
-    LPSTR Iptr = sInitText.GetBuffer(sInitText.GetLength() + 1);
+    auto Iptr = (LPSTR) sInitText.GetBuffer(sInitText.GetLength() + 1);
     LPCTSTR Dptr = sDigits;
     while (*Iptr)
     {
@@ -200,7 +203,8 @@ CInPlaceNumEdit::CInPlaceNumEdit(CWnd* pParent,
         Iptr = CharNext(Iptr);
     }
     sInitText.ReleaseBuffer();
-    
+    */
+
     // resize the window so that the string fits.
     // first, get the required size
     CWindowDC DC(this);
@@ -756,7 +760,7 @@ BOOL GridCellNumeric2::Format(CString &TheString)
     for(int i = str.GetLength() - 1; i >= 0; --i)
     {
         // Remove invalid characters such as currency signs
-        TCHAR *ptr = _tcschr(digits, str[i]);
+        wchar_t const* ptr = _tcschr(digits, str[i]);
         if (ptr == NULL)
             str.Delete(i);
         else
