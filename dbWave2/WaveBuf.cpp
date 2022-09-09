@@ -579,7 +579,7 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 	{
 		if (m_chanArray.Get_p_channel(ch_index)->am_gaintotal == 0.)
 		{
-			m_chanArray.Get_p_channel(ch_index)->am_gaintotal = m_chanArray.Get_p_channel(ch_index)->am_gainamplifier
+			m_chanArray.Get_p_channel(ch_index)->am_gaintotal = m_chanArray.Get_p_channel(ch_index)->am_amplifiergain
 				* static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gainpre)
 				* static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gainpost)
 				* static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gainheadstage)

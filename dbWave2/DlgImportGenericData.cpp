@@ -208,7 +208,7 @@ void DlgImportGenericData::UpdateStructFromControls()
 
 	CWaveChan* pChannel = piivO->pwave_chan_array->Get_p_channel(m_adChannelChan - 1);
 	pChannel->am_gaintotal = m_adChannelGain; // set gain
-	pChannel->am_gainamplifier = pChannel->am_gaintotal;
+	pChannel->am_amplifiergain = pChannel->am_gaintotal;
 	pChannel->am_gainAD = 1;
 	pChannel->am_gainpre = 1;
 	pChannel->am_gainpost = 1;
@@ -375,7 +375,7 @@ void DlgImportGenericData::OnEnChangeChannelno()
 		m_adChannelChan = previous_channel;
 		CWaveChan* pChannel = piivO->pwave_chan_array->Get_p_channel(previous_channel - 1);
 		pChannel->am_gaintotal = m_adChannelGain; // set gain
-		pChannel->am_gainamplifier = pChannel->am_gaintotal;
+		pChannel->am_amplifiergain = pChannel->am_gaintotal;
 		pChannel->am_csComment = m_adChannelComment; // and comment
 		// point to new channel: add new descriptors if necessary
 		piivO->pwave_chan_array->ChanArray_setSize(m_nb_AD_channels);

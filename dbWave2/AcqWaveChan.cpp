@@ -28,7 +28,7 @@ CWaveChan::CWaveChan()
 	am_csInputpos = _T("DC");
 	am_csInputneg = _T("GND");
 	am_offset = 0.0f;
-	am_gainamplifier = 1.0f;
+	am_amplifiergain = 1.0f;
 	am_version = 1;
 	am_csversion = _T("mcid");
 }
@@ -62,7 +62,7 @@ void CWaveChan::Copy(const CWaveChan* arg)
 	am_offset = arg->am_offset;
 	am_csInputpos = arg->am_csInputpos;
 	am_csInputneg = arg->am_csInputneg;
-	am_gainamplifier = arg->am_gainamplifier;
+	am_amplifiergain = arg->am_amplifiergain;
 	am_gaintotal = arg->am_gaintotal;
 	am_resolutionV = arg->am_resolutionV;
 }
@@ -89,7 +89,7 @@ void CWaveChan::Serialize(CArchive& ar)
 		ar << am_csInputneg;
 		// addition 5 nov 2010
 		ar << am_version;
-		ar << am_gainamplifier;
+		ar << am_amplifiergain;
 		ar << am_gaintotal;
 		ar << am_resolutionV;
 	}
@@ -134,7 +134,7 @@ void CWaveChan::Serialize(CArchive& ar)
 			am_csComment = dummy.Right(dummy.GetLength() - n_chars);
 			// read the rest of the archive
 			ar >> w1;
-			ar >> am_gainamplifier;
+			ar >> am_amplifiergain;
 			ar >> am_gaintotal;
 			ar >> am_resolutionV;
 		}

@@ -226,7 +226,7 @@ BOOL DlgImportFiles::ImportATFFile()
 		pChannel->am_gaintotal = static_cast<float>(m_xinstgain);
 		m_dspan[i] = 20000. / m_xinstgain; // span= 20 V max to min
 		m_dbinval[i] = m_dspan[i] / 65536.; // divide voltage span into 2exp16 bins
-		pChannel->am_gainamplifier = pChannel->am_gaintotal;
+		pChannel->am_amplifiergain = pChannel->am_gaintotal;
 		pChannel->am_gainAD = 1;
 		pChannel->am_gainpre = 1;
 		pChannel->am_gainpost = 1;

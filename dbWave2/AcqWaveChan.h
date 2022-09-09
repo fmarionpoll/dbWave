@@ -29,7 +29,7 @@ public:
 	CString am_csInputpos;		// in+ filter settings GND= inactive input
 	CString am_csInputneg;		// in- filter settings GND= inactive input
 
-	double am_gainamplifier = 1.; // double value to allow fractional gain
+	double am_amplifiergain = 1.; // double value to allow fractional gain
 	double am_gaintotal = 1.;	// total gain as double
 	double am_resolutionV = 10.; // resolution
 

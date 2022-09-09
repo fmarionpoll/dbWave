@@ -57,7 +57,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 		auto pChan = pArray->Get_p_channel(i);
 		pChan->am_csComment = CString(" ");
 		pChan->am_resolutionV = mcidHeader.sensitivity[i] / 2000.;
-		pChan->am_gainamplifier = 1. / pChan->am_resolutionV;
+		pChan->am_amplifiergain = 1. / pChan->am_resolutionV;
 
 		pChan->am_adchannel = 0; // channel scan list
 		pChan->am_gainAD = 1; // channel gain list
@@ -72,7 +72,7 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 		pChan->am_offset = 0.0f; // assume no offset compensation
 		pChan->am_csInputpos = "DC"; // assume input + = DC
 		pChan->am_csInputneg = "GND"; // assume input - = GND
-		pChan->am_gaintotal = pChan->am_gainamplifier;
+		pChan->am_gaintotal = pChan->am_amplifiergain;
 	}
 
 	//	tentative

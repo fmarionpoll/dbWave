@@ -105,9 +105,9 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 			const double dGain = GetGainList(i);
 			pChannel->am_gainAD = static_cast<short>(dGain);
 			// compute dependent parameters
-			pChannel->am_gainamplifier = static_cast<double>(pChannel->am_gainheadstage) * static_cast<double>(pChannel
+			pChannel->am_amplifiergain = static_cast<double>(pChannel->am_gainheadstage) * static_cast<double>(pChannel
 				->am_gainpre) * static_cast<double>(pChannel->am_gainpost);
-			pChannel->am_gaintotal = pChannel->am_gainamplifier * static_cast<double>(pChannel->am_gainAD);
+			pChannel->am_gaintotal = pChannel->am_amplifiergain * static_cast<double>(pChannel->am_gainAD);
 			pChannel->am_resolutionV = static_cast<double>(pWFormat->fullscale_volts) / pChannel->am_gaintotal /
 				static_cast<double>(pWFormat->binspan);
 		}

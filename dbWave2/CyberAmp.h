@@ -119,6 +119,7 @@ public:
 	int SetLPFilter(int nChannel, int nFilterValue);
 	int SetNotchFilter(int nChannel, int nEnabled);
 	int SetHPFilter(int nChannel, int nInput, const CString& cs_coupling);
+	int GetHPFilterToken(CString value);
 	int SetWaveChanParms(CWaveChan* pchan);
 	int GetWaveChanParms(CWaveChan* pchan);
 
@@ -158,7 +159,7 @@ protected:
 	static void C300_StringConcatChar(char* lpsz_string, int c);
 	static int C300_FoundListMatch(int nFilterValue, int* lpn_list, const int nListItems);
 
-	int C300_INT_TranslateAXOBUS_Error(int AXOBUS_Error);
+	int C300_INT_TranslateAXOBUS_Error(int error);
 	int C300_INT_TranslateAXOBUS_COMSettings(int nWhichPort, int nWhichSpeed,
 	                                      int* pnOutputPort, int* pnOutputSpeed);
 	void C300_INT_StartCommand(void) const;

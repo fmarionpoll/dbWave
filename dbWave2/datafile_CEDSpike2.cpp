@@ -235,9 +235,9 @@ void CDataFileFromCEDSpike2::read_ChannelParameters(CWaveChan* pChan, int cedCha
 	int flag = S64GetChanOffset(m_nFid, cedChan, &pChan->am_CEDoffset);
 	flag = S64GetChanScale(m_nFid, cedChan, &pChan->am_CEDscale);
 
-	pChan->am_gainamplifier = pChan->am_CEDscale * 10.;
-	pChan->am_resolutionV = 2.5 / pChan->am_gainamplifier / 65536;
-	pChan->am_gaintotal = pChan->am_gainamplifier;
+	pChan->am_amplifiergain = pChan->am_CEDscale * 10.;
+	pChan->am_resolutionV = 2.5 / pChan->am_amplifiergain / 65536;
+	pChan->am_gaintotal = pChan->am_amplifiergain;
 
 	pChan->am_CEDticksPerSample = S64ChanDivide(m_nFid, cedChan);
 	pChan->am_CEDmaxTimeInTicks = S64ChanMaxTime(m_nFid, cedChan);

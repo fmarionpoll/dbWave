@@ -669,9 +669,9 @@ void DlgADInputs::SaveGridToWavechanData(int col)
 	row++;
 	cs = m_Grid.GetItemText(row, col);
 	p_chan->am_gainheadstage = _ttoi(cs);
-	p_chan->am_gainamplifier = static_cast<double>(p_chan->am_gainheadstage) * static_cast<double>(p_chan->am_gainpre) *
+	p_chan->am_amplifiergain = static_cast<double>(p_chan->am_gainheadstage) * static_cast<double>(p_chan->am_gainpre) *
 		static_cast<double>(p_chan->am_gainpost);
-	p_chan->am_gaintotal = p_chan->am_gainamplifier * p_chan->am_gainAD;
+	p_chan->am_gaintotal = p_chan->am_amplifiergain * p_chan->am_gainAD;
 	// compute dependent parameters
 	p_chan->am_resolutionV = m_pwFormat->fullscale_volts / p_chan->am_gaintotal / m_pwFormat->binspan;
 }

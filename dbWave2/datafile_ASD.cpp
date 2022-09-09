@@ -146,9 +146,9 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	pChan->am_offset = 0.0f; // assume no offset compensation
 	pChan->am_csInputpos = "25";
 	pChan->am_csInputneg = "GND";
-	pChan->am_gainamplifier = static_cast<float>(rec_factor);
+	pChan->am_amplifiergain = static_cast<float>(rec_factor);
 
-	pChan->am_gaintotal = pChan->am_gainamplifier * pChan->am_gainheadstage; // total gain
+	pChan->am_gaintotal = pChan->am_amplifiergain * pChan->am_gainheadstage; // total gain
 	pChan->am_resolutionV = wave_format->fullscale_volts / pChan->am_gaintotal / wave_format->binspan;
 
 	// ---------------- ASD -- capture date and time

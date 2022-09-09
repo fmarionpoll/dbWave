@@ -77,9 +77,9 @@ int CyberAmp::C300_SetOutputPortAndSpeed(int nWhichPort, int nWhichSpeed)
 	return (m_C300nLastError);
 }
 
-int CyberAmp::C300_INT_TranslateAXOBUS_Error(int AXOBUS_Error)
+int CyberAmp::C300_INT_TranslateAXOBUS_Error(int error)
 {
-	switch (AXOBUS_Error)
+	switch (error)
 	{
 	case AXOBUS_SUCCESS: m_C300nLastError = C300_SUCCESS;
 		break;
@@ -135,8 +135,7 @@ int CyberAmp::C300_INT_TranslateAXOBUS_COMSettings(int nWhichPort, int nWhichSpe
 		break;
 	case C300_SPEED300: *pnOutputSpeed = AXOBUS_SPEED300;
 		break;
-	case C300_SPEEDDEFAULT: *pnOutputSpeed = AXOBUS_SPEEDDEFAULT;
-		break;
+	case C300_SPEEDDEFAULT: 
 	default: *pnOutputSpeed = AXOBUS_SPEEDDEFAULT;
 		break;
 	}
@@ -454,6 +453,21 @@ int CyberAmp::SetHPFilter(int nChannel, int nInput, const CString& cs_coupling)
 	return (m_C300nLastError);
 }
 
+int CyberAmp::GetHPFilterToken(CString value)
+{
+	int filter_item = 0;
+	if (value.IsEmpty() || value.Find(_T("DC")) >= 0)
+		return filter_item;
+	if (value.Find(_T("GND") >= 0))
+		filter_item = -10;
+	else
+	{
+		const double dValue = _ttof(value)* 10;
+		filter_item = static_cast<int>(dValue);
+	}
+	return filter_item;
+}
+
 int CyberAmp::SetWaveChanParms(CWaveChan* pchan)
 {
 	// chan, gain, filter +, lowpass, notch
@@ -461,8 +475,9 @@ int CyberAmp::SetWaveChanParms(CWaveChan* pchan)
 	SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pchan->am_csInputneg);
 	SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
 	SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-	const auto gain = static_cast<double>(pchan->am_gaintotal) / (static_cast<double>(pchan->am_gainheadstage) *
-		static_cast<double>(pchan->am_gainAD));
+	const auto gain = static_cast<double>(pchan->am_gaintotal)
+		/ (static_cast<double>(pchan->am_gainheadstage) 
+		* static_cast<double>(pchan->am_gainAD));
 	SetGain(pchan->am_amplifierchan, static_cast<int>(gain));
 	SetLPFilter(pchan->am_amplifierchan, static_cast<int>(pchan->am_lowpass));
 	return C300_FlushCommandsAndAwaitResponse();
@@ -471,29 +486,37 @@ int CyberAmp::SetWaveChanParms(CWaveChan* pchan)
 int CyberAmp::GetWaveChanParms(CWaveChan* pchan)
 {
 	char sz_text[RCVBUFSIZE];
-
 	C300_GetChannelStatus(pchan->am_amplifierchan, &sz_text[0]);
 	const CString result(sz_text);
 
-	CString string_value = get_token_value(result, _T("X="));
-	string_value = get_token_value(result, _T("+="));
-	string_value = get_token_value(result, _T("-="));
-	string_value = get_token_value(result, _T("P="));
-	string_value = get_token_value(result, _T("O="));
-	string_value = get_token_value(result, _T("N="));
-	string_value = get_token_value(result, _T("D="));
-	string_value = get_token_value(result, _T("F="));
-	
+	const CString string1 = get_token_value(result, _T("X="));
+	if (!string1.IsEmpty() && string1.Find(_T("0")) > 0)
+		pchan->am_csheadstage = string1;
 
-	// chan, gain, filter +, lowpass, notch
-	//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_POSINPUT, pchan->am_csInputpos);
-	//cyberAmp.SetHPFilter(pchan->am_amplifierchan, C300_NEGINPUT, pszHighPass[0]);
-	//cyberAmp.SetmVOffset(pchan->am_amplifierchan, pchan->am_offset);
-	//cyberAmp.SetNotchFilter(pchan->am_amplifierchan, pchan->am_notchfilt);
-	//double gain = pchan->am_gaintotal / (pchan->am_gainheadstage*pchan->am_gainAD);
-	//cyberAmp.SetGain(pchan->am_amplifierchan, (int)gain);
-	//cyberAmp.SetLPFilter(pchan->am_amplifierchan, (int)(pchan->am_lowpass));
-	//int errorcode = cyberAmp.C300_FlushCommandsAndAwaitResponse();
+	const CString string2 = get_token_value(result, _T("+="));
+	pchan->am_csInputpos = string2;
+
+	const CString string3 = get_token_value(result, _T("-="));
+	pchan->am_csInputneg = string3;
+
+	CString string4 = get_token_value(result, _T("P="));
+	pchan->am_gainpre = _ttoi(string4);
+
+	string4 = get_token_value(result, _T("O="));
+	pchan->am_gainpost = _ttoi(string4);
+
+	string4 = get_token_value(result, _T("N="));
+	pchan->am_notchfilt = _ttoi(string4);
+
+	string4 = get_token_value(result, _T("D="));
+	pchan->am_offset = static_cast<float>(_ttof(string4)/1000.);
+
+	string4 = get_token_value(result, _T("F="));
+	pchan->am_lowpass = _ttoi(string4);
+
+	const short gain = pchan->am_gainpost * pchan->am_gainpre;
+	pchan->am_amplifiergain = gain;
+
 	return 0;
 }
 
@@ -521,7 +544,7 @@ int CyberAmp::SetmVOffset(int nChannel, float fOffset)
 		return (m_C300nLastError);
 
 	// Build the offset command and the channel no.
-	// Check the offset for valid range
+	// Check the offset for valid range 
 	if (fOffset >= -3000.0F && fOffset <= 3000.0F)
 	{
 		char sz_text[szLEN];
