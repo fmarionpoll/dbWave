@@ -47,12 +47,12 @@ public:
 
 	// Implementation
 protected:
-	static TCHAR* pszRowTitle[];
-	static TCHAR* pszHighPass[];
-	static TCHAR* pszADGains[];
-	static TCHAR* pszAmplifier[];
-	static TCHAR* pszProbeType[];
-	static TCHAR* pszEncoding[];
+	static const TCHAR* pszRowTitle[];
+	static const TCHAR* pszHighPass[];
+	static const TCHAR* pszADGains[];
+	static const TCHAR* pszAmplifier[];
+	static const TCHAR* pszProbeType[];
+	static const TCHAR* pszEncoding[];
 	static int iEncoding[];
 
 	int m_rowADchannel = 0;
