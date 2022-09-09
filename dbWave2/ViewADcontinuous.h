@@ -14,14 +14,11 @@
 #include "USBPxxS1Ctl.h"
 #include "OPTIONS_INPUTDATA.h"
 #include "OPTIONS_OUTPUTDATA.h"
-#include "CyberAmp.h"
+#include "dbTableView.h"
 
 
-
-class ViewADcontinuous : public CFormView
+class ViewADcontinuous : public dbTableView
 {
-	//friend class CBoard;
-
 protected:
 	ViewADcontinuous();
 	~ViewADcontinuous() override;
@@ -184,3 +181,4 @@ public:
 	afx_msg void OnBnClickedStartstop2();
 	afx_msg void OnBnClickedUnzoom();
 };
+

@@ -26,10 +26,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(ViewADcontinuous, CFormView)
+IMPLEMENT_DYNCREATE(ViewADcontinuous, dbTableView)
 
 ViewADcontinuous::ViewADcontinuous()
-	: CFormView(IDD)
+	: dbTableView(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
@@ -161,9 +161,9 @@ void ViewADcontinuous::AttachControls()
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
 	m_hUnZoom = AfxGetApp()->LoadIcon(IDI_UNZOOM);
-	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hBias)));
-	m_ZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hZoom)));
-	m_UnZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), LPARAM(static_cast<HANDLE>(m_hUnZoom)));
+	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hBias)));
+	m_ZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hZoom)));
+	m_UnZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hUnZoom)));
 
 	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
 	m_btnStartStop_AD.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
@@ -184,15 +184,15 @@ void ViewADcontinuous::OnInitialUpdate()
 
 	const auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_pOptions_AD = &(pApp->options_acqdata);
-
 	m_pOptions_DA = &(pApp->options_outputdata);
+
 	m_bFoundDTOPenLayerDLL = FALSE;
 	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
 	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
 	m_ComboStartOutput.SetCurSel(m_bStartOutPutMode);
 
 	// open document and remove database filters
-	CdbWaveDoc* pdbDoc = static_cast<CdbWaveDoc*>(GetDocument());
+	const auto pdbDoc = GetDocument();
 	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
 	m_ptableSet->m_strFilter.Empty();
 	m_ptableSet->ClearFilters();
@@ -201,8 +201,8 @@ void ViewADcontinuous::OnInitialUpdate()
 	// if current document, load parameters from current document into the local set of parameters
 	if (pdbDoc->m_pDB->GetNRecords() > 0)
 	{
-		pdbDoc->OpenCurrentDataFile(); 
-		AcqDataDoc* pDat = pdbDoc->m_pDat;
+		pdbDoc->OpenCurrentDataFile();
+		const AcqDataDoc* pDat = pdbDoc->m_pDat;
 		if (pDat != nullptr)
 		{
 			m_pOptions_AD->waveFormat.Copy( pDat->GetpWaveFormat()); 
@@ -270,7 +270,7 @@ BOOL ViewADcontinuous::FindDTOpenLayersBoards()
 	short isel = 0;
 	// if name already defined, check if board present
 	if (!(m_pOptions_AD->waveFormat).csADcardName.IsEmpty())
-		isel = short(m_ADcardCombo.FindString(-1, (m_pOptions_AD->waveFormat).csADcardName));
+		isel = static_cast<short>(m_ADcardCombo.FindString(-1, (m_pOptions_AD->waveFormat).csADcardName));
 	if (isel < 0)
 		isel = 0;
 
@@ -379,7 +379,7 @@ void ViewADcontinuous::save_and_close_file()
 			// if current document name is the same, it means something happened and we have erased a previously existing file
 			// if so, skip
 			// otherwise add data file name to the database
-			auto* pdb_doc = static_cast<CdbWaveDoc*>(GetDocument());
+			auto* pdb_doc = GetDocument();
 			if (m_szFileName.CompareNoCase(pdb_doc->DB_GetCurrentDatFileName(FALSE)) != 0)
 			{
 				// add document to database
@@ -394,7 +394,7 @@ void ViewADcontinuous::save_and_close_file()
 void ViewADcontinuous::UpdateViewDataFinal()
 {
 	// update view data	
-	auto* pdb_doc = static_cast<CdbWaveDoc*>(GetDocument());
+	auto* pdb_doc = GetDocument();
 	AcqDataDoc* pDocDat = pdb_doc->OpenCurrentDataFile();
 	if (pDocDat == nullptr)
 	{
@@ -410,7 +410,7 @@ void ViewADcontinuous::UpdateViewDataFinal()
 
 void ViewADcontinuous::TransferFilesToDatabase()
 {
-	const auto pdbDoc = static_cast<CdbWaveDoc*>(GetDocument());
+	const auto pdbDoc = GetDocument();
 	pdbDoc->ImportFileList(m_csNameArray); // add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll(); // clear file names
 
@@ -495,7 +495,7 @@ BOOL ViewADcontinuous::StartAcquisition()
 	m_channel_sweep_end = -1;
 	m_chartDataAD.start_display(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
-	pWFormat->sample_count = 0; // no samples yet
+	pWFormat->sample_count = 0; 
 	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(m_pOptions_AD->iundersample);
 	m_fclockrate = pWFormat->sampling_rate_per_channel * static_cast<float>(pWFormat->scan_count);
 	pWFormat->acqtime = CTime::GetCurrentTime();
@@ -504,7 +504,6 @@ BOOL ViewADcontinuous::StartAcquisition()
 	pWFormat->binspan = (m_pOptions_AD->waveFormat).binspan;
 	pWFormat->fullscale_volts = (m_pOptions_AD->waveFormat).fullscale_volts;
 	// trick: if OLx_ENC_BINARY, it is changed on the fly within AD_Transfer function 
-	// when a DT buffer into a Coptions_acqdataataDoc buffer
 	pWFormat->mode_encoding = OLx_ENC_2SCOMP;
 	pWFormat->binzero = 0;
 
@@ -665,16 +664,16 @@ LRESULT ViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	// code = 0: chan hit 			lowp = channel
 	// code = 1: cursor change		lowp = new cursor value
 	// code = 2: horiz cursor hit	lowp = cursor index	
-	int lowp = LOWORD(lParam); // value associated with code
+	int low_lParam = LOWORD(lParam); // value associated with code
 
 	if (code == HINT_SETMOUSECURSOR) {
-		if (lowp > CURSOR_ZOOM)
-			lowp = 0;
-		m_cursorstate = m_chartDataAD.SetMouseCursorType(lowp);
+		if (low_lParam > CURSOR_ZOOM)
+			low_lParam = 0;
+		m_cursorstate = m_chartDataAD.SetMouseCursorType(low_lParam);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	}
 	else {
-		if (lowp == 0)
+		if (low_lParam == 0)
 			MessageBeep(MB_ICONEXCLAMATION);
 	}
 	return 0L;
@@ -711,7 +710,6 @@ void ViewADcontinuous::OnBnClickedStartstop()
 
 void ViewADcontinuous::UpdateStartStop(BOOL bStart)
 {
-	//bool isrunning = m_Acq32_AD.IsInProgress();
 	if (bStart)
 	{
 		m_btnStartStop_AD.SetWindowText(_T("STOP"));
@@ -745,7 +743,7 @@ BOOL ViewADcontinuous::define_experiment()
 		DlgADExperiment dlg;
 		dlg.m_bFilename = true;
 		dlg.m_pADC_options = m_pOptions_AD;
-		dlg.m_pdbDoc = static_cast<CdbWaveDoc*>(GetDocument());
+		dlg.m_pdbDoc = GetDocument();
 		dlg.m_bhidesubsequent = m_bhidesubsequent;
 		if (IDOK != dlg.DoModal())
 			return FALSE;
@@ -957,8 +955,7 @@ short* ViewADcontinuous::ADC_Transfer(short* source_data, const CWaveFormat * pW
 		memcpy(pRawDataBuf, source_data, m_Acq32_AD.Getbuflen() * sizeof(short));
 	else
 		under_sample_buffer(pRawDataBuf, source_data, pWFormat, m_pOptions_AD->iundersample);
-	
-	// update byte length of buffer
+
 	m_bytesweepRefresh = m_chsweepRefresh * static_cast<int>(sizeof(short)) * static_cast<int>(pWFormat->scan_count);
 
 	return pRawDataBuf;
@@ -1120,40 +1117,40 @@ void ViewADcontinuous::SetVBarMode(short bMode)
 void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
-	int yextent = pChan->GetYextent();
+	int y_extent = pChan->GetYextent();
 	const int span = pChan->GetDataBinSpan();
 
 	switch (nSBCode)
 	{
-		case SB_LEFT: yextent = YEXTENT_MIN;
+		case SB_LEFT: y_extent = YEXTENT_MIN;
 			break;
-		case SB_LINELEFT: yextent -= int(float(span) / 100.f) + 1;
+		case SB_LINELEFT: y_extent -= static_cast<int>(static_cast<float>(span) / 100.f) + 1;
 			break;
-		case SB_LINERIGHT: yextent += int(float(span) / 100.f) + 1;
+		case SB_LINERIGHT: y_extent += static_cast<int>(static_cast<float>(span) / 100.f) + 1;
 			break;
-		case SB_PAGELEFT: yextent -= int(float(span) / 10.f) + 1;
+		case SB_PAGELEFT: y_extent -= static_cast<int>(static_cast<float>(span) / 10.f) + 1;
 			break;
-		case SB_PAGERIGHT: yextent += int(float(span) / 10.f) + 1;
+		case SB_PAGERIGHT: y_extent += static_cast<int>(static_cast<float>(span) / 10.f) + 1;
 			break;
-		case SB_RIGHT: yextent = YEXTENT_MAX;
+		case SB_RIGHT: y_extent = YEXTENT_MAX;
 			break;
 		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK: yextent = MulDiv(int(nPos - 50), pChan->GetDataBinSpan(), 100);
+		case SB_THUMBTRACK: y_extent = MulDiv(static_cast<int>(nPos - 50), pChan->GetDataBinSpan(), 100);
 			break;
 		default: break;
 	}
 
-	if (yextent > 0) 
+	if (y_extent > 0) 
 	{
 		const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-		const int ichanlast = pWFormat->scan_count - 1;
-		for (int channel = 0; channel <= ichanlast; channel++)
+		const int last_channel = pWFormat->scan_count - 1;
+		for (int channel = 0; channel <= last_channel; channel++)
 		{
-			CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(channel);
-			pChan->SetYextent(yextent);
+			CChanlistItem* ppChan = m_chartDataAD.GetChanlistItem(channel);
+			ppChan->SetYextent(y_extent);
 		}
 		m_chartDataAD.Invalidate();
-		m_pOptions_AD->izoomCursel = yextent;
+		m_pOptions_AD->izoomCursel = y_extent;
 	}
 
 	UpdateGainScroll();
@@ -1163,44 +1160,44 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
 	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
-	int yzero = pChan->GetYzero();
+	int y_zero = pChan->GetYzero();
 	const int span = pChan->GetDataBinSpan() / 2;
-	const int initial = yzero;
+	const int initial = y_zero;
 	switch (nSBCode)
 	{
 		case SB_LEFT: 
-			yzero = YZERO_MIN;
+			y_zero = YZERO_MIN;
 			break;
 		case SB_LINELEFT: 
-			yzero -= int(float(span) / 100.f) + 1;
+			y_zero -= static_cast<int>(static_cast<float>(span) / 100.f) + 1;
 			break;
 		case SB_LINERIGHT: 
-			yzero += int(float(span) / 100.f) + 1;
+			y_zero += static_cast<int>(static_cast<float>(span) / 100.f) + 1;
 			break;
 		case SB_PAGELEFT:
-			yzero -= int(float(span) / 10.f) + 1;
+			y_zero -= static_cast<int>(static_cast<float>(span) / 10.f) + 1;
 			break;
 		case SB_PAGERIGHT:
-			yzero += int(float(span) / 10.f) + 1;
+			y_zero += static_cast<int>(static_cast<float>(span) / 10.f) + 1;
 			break;
 		case SB_RIGHT: 
-			yzero = YZERO_MAX;
+			y_zero = YZERO_MAX;
 			break;
 		case SB_THUMBPOSITION: 		
 		case SB_THUMBTRACK:
-			yzero = static_cast<int>(nPos - 50) * (YZERO_SPAN / 100);
+			y_zero = static_cast<int>(nPos - 50) * (YZERO_SPAN / 100);
 			break;
 		default: // NOP: set position only
 			break;
 	}
 	
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-	constexpr int ichanfirst = 0;
-	const int ichanlast = pWFormat->scan_count - 1;
-	for (int i = ichanfirst; i <= ichanlast; i++)
+	constexpr int first_channel = 0;
+	const int last_channel = pWFormat->scan_count - 1;
+	for (int i = first_channel; i <= last_channel; i++)
 	{
 		CChanlistItem* pChani = m_chartDataAD.GetChanlistItem(i);
-		pChani->SetYzero(yzero);
+		pChani->SetYzero(y_zero);
 	}
 	m_chartDataAD.Invalidate();
 
@@ -1243,8 +1240,8 @@ void ViewADcontinuous::SetCombostartoutput(int option)
 void ViewADcontinuous::OnBnClickedDaparameters2()
 {
 	DlgDAChannels dlg;
-	const auto isize = m_pOptions_DA->outputparms_array.GetSize();
-	if (isize < 10)
+	const auto i_size = m_pOptions_DA->outputparms_array.GetSize();
+	if (i_size < 10)
 		m_pOptions_DA->outputparms_array.SetSize(10);
 	dlg.outputparms_array.SetSize(10);
 	for (auto i = 0; i < 10; i++)
@@ -1340,14 +1337,14 @@ void ViewADcontinuous::InitAcquisitionInputFile()
 void ViewADcontinuous::OnBnClickedUnzoom()
 {
 	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
-	const int iextent = pWFormat->binspan;
+	const int i_extent = pWFormat->binspan;
 
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
-		constexpr int ioffset = 0;
+		constexpr int i_offset = 0;
 		CChanlistItem* pD = m_chartDataAD.GetChanlistItem(i);
-		pD->SetYzero(ioffset);
-		pD->SetYextent(iextent);
+		pD->SetYzero(i_offset);
+		pD->SetYextent(i_extent);
 	}
 
 	SetVBarMode(BAR_GAIN);

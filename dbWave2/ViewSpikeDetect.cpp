@@ -125,8 +125,8 @@ void ViewSpikeDetection::OnFileSave()
 {
 	CFile f;
 	CFileDialog dlg(FALSE,
-		_T("spk"), // default filename extension
-		GetDocument()->DB_GetCurrentSpkFileName(), // initial file name
+		_T("spk"),										// default filename extension
+		GetDocument()->DB_GetCurrentSpkFileName(),	// initial file name
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("Awave Spikes (*.spk) | *.spk |All Files (*.*) | *.* ||"));
 
@@ -169,8 +169,8 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 {
 	if (activate)
 	{
-		const auto p_main_frame = static_cast<CMainFrame*>(AfxGetMainWnd());
-		p_main_frame->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, LPARAM(activated_view->GetDocument()));
+		const auto p_main_frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+		p_main_frame->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(activated_view->GetDocument()));
 	}
 	else
 	{
@@ -216,7 +216,6 @@ void ViewSpikeDetection::update_legends()
 	update_legend_detection_wnd();
 	update_number_of_spikes();
 
-	// update data displayed
 	m_chart_spike_bar.Invalidate();
 	m_chart_data_filtered.Invalidate();
 	m_chart_data_source.Invalidate();
@@ -299,7 +298,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	const auto array_size = m_pSpkList->get_spikes_count() * 2 + 3;
 	m_DWintervals.SetSize(array_size);
 	m_DWintervals.SetAt(0, 0);
-	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); // red color
+	m_DWintervals.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); // red 
 	m_DWintervals.SetAt(2, 1);
 	const auto total_spikes = m_pSpkList->get_spikes_count();
 	auto j_index = 3;
@@ -585,17 +584,17 @@ void ViewSpikeDetection::define_sub_classed_items()
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
 	GetDlgItem(IDC_BIAS)->PostMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON),
-		(LPARAM)static_cast<HANDLE>(m_hBias));
+		reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hBias)));
 	GetDlgItem(IDC_GAIN)->PostMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON),
-		(LPARAM)static_cast<HANDLE>(m_hZoom));
+		reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hZoom)));
 	VERIFY(m_scrolly2.SubclassDlgItem(IDC_SCROLLY2, this));
 	m_scrolly2.SetScrollRange(0, 100);
 	m_hBias2 = AfxGetApp()->LoadIcon(IDI_BIAS);
 	m_hZoom2 = AfxGetApp()->LoadIcon(IDI_ZOOM);
 	GetDlgItem(IDC_BIAS2)->PostMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON),
-		(LPARAM)static_cast<HANDLE>(m_hBias2));
+		reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hBias2)));
 	GetDlgItem(IDC_GAIN2)->PostMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON),
-		(LPARAM)static_cast<HANDLE>(m_hZoom2));
+		reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hZoom2)));
 }
 
 void ViewSpikeDetection::OnInitialUpdate()

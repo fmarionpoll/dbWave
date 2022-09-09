@@ -281,23 +281,23 @@ void ViewdbWave::OnClickMedianFilter()
 
 void ViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
-	auto* p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
+	auto* p_mainframe = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
 	{
-		// make sure the secondary toolbar is not visible
-		// (none is defined for the database)
+		// make sure the secondary toolbar is not visible (none is defined for the database)
 		if (p_mainframe->m_pSecondToolBar != nullptr)
 			p_mainframe->ShowPane(p_mainframe->m_pSecondToolBar, FALSE, FALSE, TRUE);
 		// load status
 		m_nStatus = static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus;
-		p_mainframe->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATEVIEW, LPARAM(pActivateView->GetDocument()));
+		p_mainframe->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
 	{
 		ChartData* pDataChartWnd = m_dataListCtrl.GetDataViewCurrentRecord();
 		if (pDataChartWnd != nullptr)
 		{
-			static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(pDataChartWnd->GetScopeParameters());
+			dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(pDataChartWnd->GetScopeParameters());
+
 		}
 		if (pActivateView != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;
@@ -315,7 +315,7 @@ void ViewdbWave::fillListBox()
 void ViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// get item clicked and select it
-	const auto p_item_activate = (NMITEMACTIVATE*)pNMHDR;
+	const auto p_item_activate = reinterpret_cast<NMITEMACTIVATE*>(pNMHDR);
 	if (p_item_activate->iItem >= 0)
 		GetDocument()->DB_SetCurrentRecordPosition(p_item_activate->iItem);
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -332,7 +332,7 @@ void ViewdbWave::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 
 LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
-	int threshold = LOWORD(lParam); // value associated
+	const int threshold = LOWORD(lParam); // value associated
 	const int i_id = HIWORD(lParam);
 
 	switch (wParam)
@@ -357,7 +357,7 @@ void ViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 	case HINT_GETSELECTEDRECORDS:
 		{
-			auto p_document = GetDocument();
+			const auto p_document = GetDocument();
 			p_document->m_selectedRecords.RemoveAll();
 			const auto u_selected_count = m_dataListCtrl.GetSelectedCount();
 
@@ -422,36 +422,35 @@ void ViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 void ViewdbWave::DeleteRecords()
 {
 	// save index current file
-	auto currentindex = GetDocument()->DB_GetCurrentRecordPosition() - 1;
-	if (currentindex < 0)
-		currentindex = 0;
+	auto current_index = GetDocument()->DB_GetCurrentRecordPosition() - 1;
+	if (current_index < 0)
+		current_index = 0;
 
 	// loop on Cdatalistctrl to delete all selected items
-	auto pdb_doc = GetDocument();
+	const auto pdb_doc = GetDocument();
 	auto pos = m_dataListCtrl.GetFirstSelectedItemPosition();
 	if (pos == nullptr)
 	{
 		AfxMessageBox(_T("No item selected: delete operation failed"));
 		return;
 	}
-	// assume that no one else accesses to the database at the same time
-	auto ndel = 0;
-	// delete file names from database
+	// assume no one else accesses to the database at the same time
+	auto n_files_to_delete = 0;
 	while (pos)
 	{
 		const auto n_item = m_dataListCtrl.GetNextSelectedItem(pos);
-		pdb_doc->DB_SetCurrentRecordPosition(n_item - ndel);
+		pdb_doc->DB_SetCurrentRecordPosition(n_item - n_files_to_delete);
 		pdb_doc->DB_DeleteCurrentRecord();
-		ndel++;
+		n_files_to_delete++;
 	}
 
-	pdb_doc->DB_SetCurrentRecordPosition(currentindex);
+	pdb_doc->DB_SetCurrentRecordPosition(current_index);
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void ViewdbWave::OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	const auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	auto filter0 = m_pSet->GetSQL();
 	CString cs;
 	const auto pdb_doc = GetDocument();
@@ -598,7 +597,7 @@ void ViewdbWave::OnBnClickedDisplaySpikes()
 	m_dataListCtrl.RefreshDisplay();
 
 	// update tab control
-	int nrows = m_dataListCtrl.GetVisibleRowsSize();
+	const int nrows = m_dataListCtrl.GetVisibleRowsSize();
 	if (nrows > 0)
 	{
 		const auto pSpkDoc = m_dataListCtrl.GetVisibleRowsSpikeDocAt(0);
