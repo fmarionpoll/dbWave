@@ -1,33 +1,34 @@
 #pragma once
 
 #include <afxwin.h>
-#include "ComboEdit.h"
+#include "GridComboEdit.h"
 
 class GridInPlaceList : public CComboBox
 {
-	friend class ComboEdit;
+	friend class GridComboEdit;
 
 	// Construction
 public:
-	GridInPlaceList(CWnd* pParent, // parent
-		CRect& rect, // dimensions & location
-		DWORD dw_style, // window/combobox style
-		UINT nID, // control ID
-		int nRow, int nColumn, // row and column
-		COLORREF crFore, COLORREF crBack, // Foreground, background colour
-		CStringArray& Items, // Items in list
-		CString sInitText, // initial selection
-		UINT nFirstChar); // first character to pass to control
+	GridInPlaceList(CWnd* pParent,	// parent
+		CRect& rect,				// dimensions & location
+		DWORD dw_style,				// window/combobox style
+		UINT nID,					// control ID
+		int nRow, int nColumn,		// row and column
+		COLORREF crFore,			// Foreground colour
+		COLORREF crBack,			// Background colour
+		CStringArray& Items,		// Items in list
+		CString sInitText,			// initial selection
+		UINT nFirstChar);			// first character to pass to control
 
-	ComboEdit m_comboedit; // subclassed edit control
+	GridComboEdit m_comboedit;		// subclassed edit control
 private:
-	int m_nNumLines;
-	CString m_sInitText;
-	int m_nRow;
-	int m_nCol;
-	UINT m_nLastChar;
-	BOOL m_bExitOnArrows;
-	COLORREF m_crForeClr, m_crBackClr;
+	int			m_nNumLines;
+	CString		m_sInitText;
+	int			m_nRow;
+	int			m_nCol;
+	UINT		m_nLastChar;
+	BOOL		m_bExitOnArrows;
+	COLORREF	m_crForeClr, m_crBackClr;
 
 public:
 	~GridInPlaceList() override;

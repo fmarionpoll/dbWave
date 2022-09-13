@@ -782,7 +782,7 @@
     <ClCompile Include="ADAcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
-    <ClCompile Include="Controls\ComboEdit.cpp" />
+    <ClCompile Include="Controls\GridComboEdit.cpp" />
     <ClCompile Include="Controls\InPlaceEdit.cpp" />
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp" />
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp" />
@@ -1365,7 +1365,7 @@
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
-    <ClInclude Include="Controls\ComboEdit.h" />
+    <ClInclude Include="Controls\GridComboEdit.h" />
     <ClInclude Include="Controls\InPlaceEdit.h" />
     <ClInclude Include="GridCtrl\GridDefaultCell.h" />
     <ClInclude Include="GridCtrl\GridDefines.h" />

@@ -495,7 +495,7 @@
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="Controls\ComboEdit.cpp">
+    <ClCompile Include="Controls\GridComboEdit.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
     <ClCompile Include="Controls\InPlaceEdit.cpp">
@@ -1097,7 +1097,7 @@
     <ClInclude Include="GridCtrl\GridDefaultCell.h">
       <Filter>customctrl</Filter>
     </ClInclude>
-    <ClInclude Include="Controls\ComboEdit.h">
+    <ClInclude Include="Controls\GridComboEdit.h">
       <Filter>customctrl</Filter>
     </ClInclude>
     <ClInclude Include="Controls\InPlaceEdit.h">

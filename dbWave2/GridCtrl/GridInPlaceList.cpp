@@ -12,7 +12,6 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 {
 	m_crForeClr = crFore;
 	m_crBackClr = crBack;
-
 	m_nNumLines = 4;
 	m_sInitText = sInitText;
 	m_nRow = nRow;
@@ -25,7 +24,8 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 		CBS_AUTOHSCROLL | dw_style;
 	const int nHeight = rect.Height();
 	rect.bottom = rect.bottom + m_nNumLines * nHeight + GetSystemMetrics(SM_CYHSCROLL);
-	if (!Create(dwComboStyle, rect, pParent, nID)) return;
+	if (!Create(dwComboStyle, rect, pParent, nID)) 
+		return;
 
 	// Add the strings
 	for (int i = 0; i < Items.GetSize(); i++)
@@ -60,9 +60,11 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 		switch (nFirstChar)
 		{
 		case VK_LBUTTON:
-		case VK_RETURN: m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+		case VK_RETURN:
+			m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
 			return;
-		case VK_BACK: m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+		case VK_BACK: 
+			m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
 			break;
 		case VK_DOWN:
 		case VK_UP:
@@ -71,9 +73,11 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 		case VK_NEXT:
 		case VK_PRIOR:
 		case VK_HOME:
-		case VK_END: m_comboedit.SetSel(0, -1);
+		case VK_END:
+			m_comboedit.SetSel(0, -1);
 			return;
-		default: m_comboedit.SetSel(0, -1);
+		default: 
+			m_comboedit.SetSel(0, -1);
 		}
 		SendMessage(WM_CHAR, nFirstChar);
 	}

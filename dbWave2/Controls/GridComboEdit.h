@@ -4,13 +4,13 @@
 
 #define IDC_COMBOEDIT 1001
 
-class ComboEdit : public CEdit
+class GridComboEdit : public CEdit
 {
 	// Construction
 public:
-	ComboEdit();
+	GridComboEdit();
 	BOOL PreTranslateMessage(MSG* pMsg) override;
-	~ComboEdit() override;
+	~GridComboEdit() override;
 
 protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);

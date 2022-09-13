@@ -220,6 +220,13 @@ void GridInPlaceEdit::PostNcDestroy()
 	delete this;
 }
 
+void GridInPlaceEdit::OnNcDestroy()
+{
+	CEdit::OnNcDestroy();
+	delete this;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////
 // GridInPlaceEdit implementation
 
