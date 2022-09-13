@@ -55,16 +55,16 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 	// Subclass the combobox edit control if style includes CBS_DROPDOWN
 	if ((dw_style & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST)
 	{
-		m_comboedit.SubclassDlgItem(IDC_COMBOEDIT, this);
+		m_edit.SubclassDlgItem(IDC_COMBOEDIT, this);
 		SetFocus();
 		switch (nFirstChar)
 		{
 		case VK_LBUTTON:
 		case VK_RETURN:
-			m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+			m_edit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
 			return;
 		case VK_BACK: 
-			m_comboedit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
+			m_edit.SetSel(static_cast<int>(_tcslen(m_sInitText)), -1);
 			break;
 		case VK_DOWN:
 		case VK_UP:
@@ -74,10 +74,10 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 		case VK_PRIOR:
 		case VK_HOME:
 		case VK_END:
-			m_comboedit.SetSel(0, -1);
+			m_edit.SetSel(0, -1);
 			return;
 		default: 
-			m_comboedit.SetSel(0, -1);
+			m_edit.SetSel(0, -1);
 		}
 		SendMessage(WM_CHAR, nFirstChar);
 	}
@@ -86,8 +86,7 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 }
 
 GridInPlaceList::~GridInPlaceList()
-{
-}
+= default;
 
 void GridInPlaceList::EndEdit()
 {

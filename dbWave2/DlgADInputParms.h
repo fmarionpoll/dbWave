@@ -55,7 +55,7 @@ protected:
 	static const TCHAR* pszEncoding[];
 	static int iEncoding[];
 
-	int m_rowADchannel = 0;
+	int m_row_ADchannel = 0;
 	int m_row_ADgain = 0;
 	int m_row_headstagegain = 1;
 	int m_row_ampgain = 1;

@@ -57,6 +57,9 @@ GridCellComboFMP::GridCellComboFMP() : GridCell()
 	SetStyle(m_dwStyle);
 }
 
+GridCellComboFMP::~GridCellComboFMP()
+= default;
+
 // Create a control to do the editing
 BOOL GridCellComboFMP::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
@@ -69,9 +72,16 @@ BOOL GridCellComboFMP::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, 
 CWnd* GridCellComboFMP::GetEditWnd() const
 {
 	if (m_pEditWnd && (m_pEditWnd->GetStyle() & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST)
-		return &(dynamic_cast<GridInPlaceList*>(m_pEditWnd)->m_comboedit);
+		return &((GridInPlaceList*)m_pEditWnd)->m_edit;
 
 	return nullptr;
+}
+
+// Cancel the editing.
+void GridCellComboFMP::EndEdit()
+{
+	if (m_pEditWnd)
+		((GridInPlaceList*)m_pEditWnd)->EndEdit();
 }
 
 CSize GridCellComboFMP::GetCellExtent(CDC* p_dc)
@@ -81,13 +91,6 @@ CSize GridCellComboFMP::GetCellExtent(CDC* p_dc)
 	sizeCell.cx += sizeScroll.cx;
 	sizeCell.cy = max(sizeCell.cy, sizeScroll.cy);
 	return sizeCell;
-}
-
-// Cancel the editing.
-void GridCellComboFMP::EndEdit()
-{
-	if (m_pEditWnd)
-		dynamic_cast<GridInPlaceList*>(m_pEditWnd)->EndEdit();
 }
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
@@ -183,18 +186,18 @@ int GridCellComboFMP::SetCurSel(int sel)
 
 int GridCellComboFMP::GetCurSel()
 {
-	CString cs = GetText();
-	int cursel = CB_ERR;
+	const CString cs = GetText();
+	int current_selection = CB_ERR;
 	if (!cs.IsEmpty())
 	{
 		for (int i = 0; i < m_Strings.GetSize(); i++)
 		{
 			if (cs.Compare(m_Strings[i]) == 0)
 			{
-				cursel = i;
+				current_selection = i;
 				break;
 			}
 		}
 	}
-	return cursel;
+	return current_selection;
 }

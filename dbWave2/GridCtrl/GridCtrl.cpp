@@ -4109,7 +4109,7 @@ BOOL GridCtrl::DeleteAllItems()
 			for (int col = 0; col < m_nCols; col++)
 				DestroyCell(row, col);
 
-			GRID_ROW* pRow = m_RowData[row];
+			const GRID_ROW* pRow = m_RowData[row];
 			delete pRow;
 		}
 
@@ -7367,7 +7367,7 @@ void GridCtrl::OnEditCell(int nRow, int nCol, CPoint point, UINT nChar)
 // virtual
 void GridCtrl::EndEditing()
 {
-	GridCellID cell = GetFocusCell();
+	const GridCellID cell = GetFocusCell();
 	if (!IsValid(cell)) return;
 	GridCellBase* pCell = GetCell(cell.row, cell.col);
 	if (pCell)

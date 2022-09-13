@@ -169,7 +169,7 @@ BOOL GridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID
 void GridCell::EndEdit()
 {
 	if (m_pEditWnd)
-		dynamic_cast<GridInPlaceEdit*>(m_pEditWnd)->EndEdit();
+		((GridInPlaceEdit*)m_pEditWnd)->EndEdit();
 }
 
 void GridCell::OnEndEdit()

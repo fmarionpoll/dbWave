@@ -20,7 +20,7 @@ public:
 		CString sInitText,			// initial selection
 		UINT nFirstChar);			// first character to pass to control
 
-	GridComboEdit m_comboedit;		// subclassed edit control
+	GridComboEdit m_edit;			// subclassed edit control
 private:
 	int			m_nNumLines;
 	CString		m_sInitText;

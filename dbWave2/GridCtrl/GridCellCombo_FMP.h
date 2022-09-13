@@ -27,15 +27,18 @@
 
 class GridCellComboFMP : public GridCell
 {
+	friend class GridCtrl;
 	DECLARE_DYNCREATE(GridCellComboFMP)
 
 	GridCellComboFMP();
+	~GridCellComboFMP();
 
 	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
 	CWnd* GetEditWnd() const override;
 	void EndEdit() override;
 
 	CSize GetCellExtent(CDC* p_dc) override;
+
 	void SetOptions(const CStringArray& ar);
 	void SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
 	DWORD GetStyle() const { return m_dwStyle; }
@@ -45,7 +48,7 @@ class GridCellComboFMP : public GridCell
 protected:
 	BOOL Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
 
-	CStringArray m_Strings;
-	DWORD m_dwStyle;
+	CStringArray	m_Strings;
+	DWORD			m_dwStyle;
 };
 
