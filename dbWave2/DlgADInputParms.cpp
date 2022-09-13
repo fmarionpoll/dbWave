@@ -289,12 +289,10 @@ void DlgADInputs::InitADchannelCombo(int col, int iselect)
 	const auto p_cell = dynamic_cast<GridCellComboFMP*>(m_Grid.GetCell(m_rowADchannel, col));
 	if (p_cell != nullptr)
 	{
-		// if iselect negative, get current selection
 		if (iselect < 0)
 			iselect = p_cell->GetCurSel();
 		p_cell->SetOptions(csArrayOptions);
 		p_cell->SetStyle(CBS_DROPDOWN); //CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE
-		// init value
 		p_cell->SetCurSel(iselect);
 	}
 }

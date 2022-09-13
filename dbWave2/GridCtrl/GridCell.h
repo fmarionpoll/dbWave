@@ -26,7 +26,7 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-class GridCtrl;
+//class GridCtrl;
 #include "GridCellBase.h"
 
 // Each cell contains one of these. Fields "row" and "column" are not stored since we
@@ -35,7 +35,7 @@ class GridCtrl;
 
 class GridCell : public GridCellBase
 {
-	friend class GridCtrl;
+	//friend class GridCtrl;
 	DECLARE_DYNCREATE(GridCell)
 
 	GridCell();
@@ -55,10 +55,8 @@ class GridCell : public GridCellBase
 	void SetMargin(UINT nMargin) override { m_nMargin = nMargin; }
 	CWnd* GetEditWnd() const override { return m_pEditWnd; }
 
-	void SetCoords(int /*nRow*/, int /*nCol*/) override
-	{
-	} // don't need to know the row and
-	// column for base implementation
+	void SetCoords(int /*nRow*/, int /*nCol*/) override {}
+	 // don't need to know the row and column for base implementation
 
 	LPCTSTR GetText() const override { return (m_strText.IsEmpty()) ? _T("") : static_cast<LPCTSTR>(m_strText); }
 	int GetImage() const override { return m_nImage; }
@@ -83,19 +81,18 @@ public:
 protected:
 	void OnEndEdit() override;
 
-protected:
 	CString m_strText{};			// Cell text (or binary data if you wish...)
-	LPARAM m_lParam{};				// 32-bit value to associate with item
-	int m_nImage = 0;				// Index of the list view item’s icon
-	DWORD m_nFormat{};
-	COLORREF m_crFgClr{};
-	COLORREF m_crBkClr{};
+	LPARAM m_lParam = NULL;			// 32-bit value to associate with item
+	int m_nImage = -1;				// Index of the list view item’s icon
+	DWORD m_nFormat = static_cast<DWORD>(-1); // Use default from GridDefaultCell
+	COLORREF m_crFgClr = CLR_DEFAULT;
+	COLORREF m_crBkClr = CLR_DEFAULT;
 	LOGFONT* m_plfFont = nullptr;
-	UINT m_nMargin{};
+	UINT m_nMargin = static_cast<UINT>(-1);	// Use default from GridDefaultCell
 
-	BOOL m_bEditing{};
+	BOOL m_bEditing = false;
 
-	GridCtrl* m_pGrid{};
-	CWnd* m_pEditWnd{};
+	GridCtrl* m_pGrid = nullptr;
+	CWnd* m_pEditWnd = nullptr;
 };
 

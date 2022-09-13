@@ -43,7 +43,7 @@ void ViewADcontinuous::DoDataExchange(CDataExchange * pDX)
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_AD);
 	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DA);
-	DDX_Control(pDX, IDC_COMBOBOARD, m_ADcardCombo);
+	DDX_Control(pDX, IDC_COMBOBOARD, m_Combo_ADcard);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop_AD);
 	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
 	DDX_Control(pDX, IDC_STARTSTOP2, m_Button_StartStop_DA);
@@ -140,7 +140,7 @@ void ViewADcontinuous::AttachControls()
 	VERIFY(m_BiasButton.SubclassDlgItem(IDC_BIAS_button, this));
 	VERIFY(m_ZoomButton.SubclassDlgItem(IDC_GAIN_button, this));
 	VERIFY(m_UnZoomButton.SubclassDlgItem(IDC_UNZOOM, this));
-	VERIFY(m_ComboStartOutput.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
+	VERIFY(m_Combo_StartOutput.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
 
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
 	m_AD_xRulerBar.AttachScopeWnd(&m_chartDataAD, TRUE);
@@ -189,7 +189,7 @@ void ViewADcontinuous::OnInitialUpdate()
 	m_bFoundDTOPenLayerDLL = FALSE;
 	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
 	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
-	m_ComboStartOutput.SetCurSel(m_bStartOutPutMode);
+	m_Combo_StartOutput.SetCurSel(m_bStartOutPutMode);
 
 	// open document and remove database filters
 	const auto pdbDoc = GetDocument();
@@ -234,7 +234,7 @@ void ViewADcontinuous::OnInitialUpdate()
 		m_Button_OutputChannels.ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_ADGROUP)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_DAGROUP)->ShowWindow(SW_HIDE);
-		m_ComboStartOutput.ShowWindow(SW_HIDE);
+		m_Combo_StartOutput.ShowWindow(SW_HIDE);
 		m_Button_StartStop_DA.ShowWindow(SW_HIDE);
 	}
 
@@ -245,36 +245,36 @@ void ViewADcontinuous::OnInitialUpdate()
 
 void ViewADcontinuous::OnCbnSelchangeComboboard()
 {
-	const int item_selected = m_ADcardCombo.GetCurSel();
+	const int item_selected = m_Combo_ADcard.GetCurSel();
 	CString card_name;
-	m_ADcardCombo.GetLBText(item_selected, card_name);
+	m_Combo_ADcard.GetLBText(item_selected, card_name);
 	SelectDTOpenLayersBoard(card_name);
 }
 
 BOOL ViewADcontinuous::FindDTOpenLayersBoards()
 {
-	m_ADcardCombo.ResetContent();
+	m_Combo_ADcard.ResetContent();
 
 	// load board name - skip dialog if only one is present
 	const short uiNumBoards = m_Acq32_AD.GetNumBoards();
 	if (uiNumBoards == 0)
 	{
-		m_ADcardCombo.AddString(_T("No Board"));
-		m_ADcardCombo.SetCurSel(0);
+		m_Combo_ADcard.AddString(_T("No Board"));
+		m_Combo_ADcard.SetCurSel(0);
 		return FALSE;
 	}
 
 	for (short i = 0; i < uiNumBoards; i++)
-		m_ADcardCombo.AddString(m_Acq32_AD.GetBoardList(i));
+		m_Combo_ADcard.AddString(m_Acq32_AD.GetBoardList(i));
 
 	short isel = 0;
 	// if name already defined, check if board present
 	if (!(m_pOptions_AD->waveFormat).csADcardName.IsEmpty())
-		isel = static_cast<short>(m_ADcardCombo.FindString(-1, (m_pOptions_AD->waveFormat).csADcardName));
+		isel = static_cast<short>(m_Combo_ADcard.FindString(-1, (m_pOptions_AD->waveFormat).csADcardName));
 	if (isel < 0)
 		isel = 0;
 
-	m_ADcardCombo.SetCurSel(isel);
+	m_Combo_ADcard.SetCurSel(isel);
 	m_boardName = m_Acq32_AD.GetBoardList(isel);
 	SelectDTOpenLayersBoard(m_boardName);
 	return TRUE;
@@ -298,12 +298,12 @@ BOOL ViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
 	int show = (flag_AD ? SW_SHOW : SW_HIDE);
 	m_Button_SamplingMode.ShowWindow(show);
 	m_Button_OutputChannels.ShowWindow(show);
-	m_ComboStartOutput.ShowWindow(show);
+	m_Combo_StartOutput.ShowWindow(show);
 
 	show = (flag_DA ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_DAPARAMETERS2)->ShowWindow(show);
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(show);
-	m_ComboStartOutput.ShowWindow(show);
+	m_Combo_StartOutput.ShowWindow(show);
 	m_Button_StartStop_DA.ShowWindow(show);
 	if (show == SW_SHOW)
 		SetCombostartoutput(m_pOptions_DA->bAllowDA);
@@ -1223,15 +1223,15 @@ void ViewADcontinuous::UpdateGainScroll()
 
 void ViewADcontinuous::OnCbnSelchangeCombostartoutput()
 {
-	m_bStartOutPutMode = m_ComboStartOutput.GetCurSel();
+	m_bStartOutPutMode = m_Combo_StartOutput.GetCurSel();
 	m_pOptions_DA->bAllowDA = m_bStartOutPutMode;
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
 void ViewADcontinuous::SetCombostartoutput(int option)
 {
-	m_ComboStartOutput.SetCurSel(option);
-	option = m_ComboStartOutput.GetCurSel();
+	m_Combo_StartOutput.SetCurSel(option);
+	option = m_Combo_StartOutput.GetCurSel();
 	m_bStartOutPutMode = option;
 	m_pOptions_DA->bAllowDA = option;
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);

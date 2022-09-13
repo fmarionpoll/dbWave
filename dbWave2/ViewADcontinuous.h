@@ -41,8 +41,8 @@ protected:
 	CButton m_Button_OutputChannels;
 	CButton m_Button_WriteToDisk;
 	CButton m_Button_Oscilloscope;
-	CComboBox m_ComboStartOutput;
-	CComboBox m_ADcardCombo;
+	CComboBox m_Combo_StartOutput;
+	CComboBox m_Combo_ADcard;
 	CMFCButton m_btnStartStop_AD;
 	
 	BOOL m_bADwritetofile{ false };

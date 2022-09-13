@@ -282,7 +282,7 @@ GridCtrl::~GridCtrl()
 
 #if !defined(GRIDCONTROL_NO_DRAGDROP) || !defined(GRIDCONTROL_NO_CLIPBOARD)
 	// BUG FIX - EFW
-	COleDataSource* p_source = COleDataSource::GetClipboardOwner();
+	const COleDataSource* p_source = COleDataSource::GetClipboardOwner();
 	if (p_source)
 		COleDataSource::FlushClipboard();
 #endif

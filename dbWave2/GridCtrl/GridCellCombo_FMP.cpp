@@ -57,16 +57,10 @@ GridCellComboFMP::GridCellComboFMP() : GridCell()
 	SetStyle(m_dwStyle);
 }
 
-GridCellComboFMP::~GridCellComboFMP() 
-{
-}
-
 // Create a control to do the editing
 BOOL GridCellComboFMP::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
 	m_bEditing = TRUE;
-
-	// GridInPlaceList auto-deletes itself
 	m_pEditWnd = new GridInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol,
 	                                  GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
 	return TRUE;

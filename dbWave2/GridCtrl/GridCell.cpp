@@ -48,13 +48,13 @@ IMPLEMENT_DYNCREATE(GridCell, GridCellBase)
 
 GridCell::GridCell()
 {
-	m_plfFont = NULL;
 	GridCell::Reset();
 }
 
 GridCell::~GridCell()
 {
 	delete m_plfFont;
+	delete m_pEditWnd;
 }
 
 void GridCell::operator=(const GridCell& cell)
@@ -65,21 +65,6 @@ void GridCell::operator=(const GridCell& cell)
 void GridCell::Reset()
 {
 	GridCellBase::Reset();
-
-	m_strText.Empty();
-	m_nImage = -1;
-	m_lParam = NULL;				// BUG FIX J. Bloggs 20/10/03
-	m_pGrid = nullptr;
-	m_bEditing = FALSE;
-	m_pEditWnd = nullptr;
-
-	m_nFormat = static_cast<DWORD>(-1); // Use default from GridDefaultCell
-	m_crBkClr = CLR_DEFAULT;			// Background colour (or CLR_DEFAULT)
-	m_crFgClr = CLR_DEFAULT;			// Foreground colour (or CLR_DEFAULT)
-	m_nMargin = static_cast<UINT>(-1);	// Use default from GridDefaultCell
-
-	delete m_plfFont;
-	m_plfFont = nullptr;				// Cell font
 }
 
 void GridCell::SetFont(const LOGFONT* plf)

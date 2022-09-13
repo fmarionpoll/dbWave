@@ -27,11 +27,9 @@
 
 class GridCellComboFMP : public GridCell
 {
-	//friend class GridCtrl;
 	DECLARE_DYNCREATE(GridCellComboFMP)
 
 	GridCellComboFMP();
-	~GridCellComboFMP();
 
 	BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
 	CWnd* GetEditWnd() const override;
@@ -40,7 +38,7 @@ class GridCellComboFMP : public GridCell
 	CSize GetCellExtent(CDC* p_dc) override;
 	void SetOptions(const CStringArray& ar);
 	void SetStyle(DWORD dw_style) { m_dwStyle = dw_style; }
-	DWORD GetStyle() { return m_dwStyle; }
+	DWORD GetStyle() const { return m_dwStyle; }
 	int SetCurSel(int sel);
 	int GetCurSel();
 

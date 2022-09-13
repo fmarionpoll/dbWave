@@ -109,8 +109,7 @@ GridInPlaceEdit::GridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 }
 
 GridInPlaceEdit::~GridInPlaceEdit()
-{
-}
+= default;
 
 BEGIN_MESSAGE_MAP(GridInPlaceEdit, CEdit)
 	ON_WM_KILLFOCUS()
@@ -122,10 +121,10 @@ END_MESSAGE_MAP()
 
 ////////////////////////////////////////////////////////////////////////////
 // GridInPlaceEdit message handlers
-
 // If an arrow key (or associated) is pressed, then exit if
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
+
 void GridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
