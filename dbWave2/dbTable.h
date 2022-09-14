@@ -97,6 +97,7 @@ public:
 	// get list of items in associated tables?
 
 	BOOL SetIndexCurrentFile(long i_file);
+
 	DB_ITEMDESC* GetRecordItemDescriptor(int icol);
 	BOOL GetRecordItemValue(int icol, DB_ITEMDESC* pdesc);
 	DB_ITEMDESC* GetRecordItemValue(const int i_column);

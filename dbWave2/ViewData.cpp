@@ -139,19 +139,19 @@ void ViewData::OnInitialUpdate()
 	DefineStretchParameters();
 
 	// init relation with document, display data, adjust parameters
-	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	options_viewdata = &(p_app->options_viewdata);
 	mdMO = &(p_app->options_viewdata_measure);
 
 	// set data file
 	dbTableView::OnInitialUpdate();
-	UpdateFileParameters(TRUE); // load file parameters
+	UpdateFileParameters(TRUE); 
 
 	m_ChartDataWnd.SetScopeParameters(&(options_viewdata->viewdata));
-	int ioperation = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
+	constexpr int legends_options = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_ChartDataWnd.GetChanlistSize());
-	UpdateLegends(ioperation);
+	UpdateLegends(legends_options);
 }
 
 void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -164,10 +164,10 @@ void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 	case HINT_REPLACEVIEW:
 		return;
-	case HINT_CLOSEFILEMODIFIED: // save current file parms
+	case HINT_CLOSEFILEMODIFIED: 
 		SaveModifiedFile();
 		break;
-	case HINT_DOCHASCHANGED: // file has changed?
+	case HINT_DOCHASCHANGED: 
 	case HINT_DOCMOVERECORD:
 		m_bInitComment = TRUE;
 		UpdateFileParameters();
@@ -184,20 +184,20 @@ void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	SetVBarMode(m_VBarMode);
 }
 
-void ViewData::UpdateLegends(int ioperation)
+void ViewData::UpdateLegends(int legends_options)
 {
 	if (!m_ChartDataWnd.IsDefined() && !m_bvalidDoc)
 		return;
-	if (ioperation & UPD_ABCISSA)
+	if (legends_options & UPD_ABCISSA)
 		UpdateFileScroll();
-	if (ioperation & CHG_YSCALE)
+	if (legends_options & CHG_YSCALE)
 	{
 		UpdateHZtagsVal();
-		ioperation |= CHG_YBAR;
+		legends_options |= CHG_YBAR;
 	}
-	if (ioperation & UPD_YSCALE)
-		ioperation |= CHG_YBAR;
-	if (ioperation & CHG_YBAR)
+	if (legends_options & UPD_YSCALE)
+		legends_options |= CHG_YBAR;
+	if (legends_options & CHG_YBAR)
 		UpdateYZero(m_channel_selected, m_ChartDataWnd.GetChanlistItem(m_channel_selected)->GetYzero());
 
 	UpdateData(FALSE);
@@ -221,13 +221,15 @@ void ViewData::OnClickedGain()
 void ViewData::UpdateChannel(int channel)
 {
 	m_channel_selected = channel;
-	if (m_channel_selected > m_ChartDataWnd.GetChanlistSize() - 1) // less or equal than max nb of chans?
-		m_channel_selected = m_ChartDataWnd.GetChanlistSize() - 1; // clip to maximum
-	else if (m_channel_selected < 0) // less than 1 channel?
-		m_channel_selected = 0; // clip to minimum (and if 0?)
-	if (m_channel_selected != channel) // new value is different than previous
+	if (m_channel_selected > m_ChartDataWnd.GetChanlistSize() - 1) 
+		m_channel_selected = m_ChartDataWnd.GetChanlistSize() - 1; 
+	else if (m_channel_selected < 0) 
+		m_channel_selected = 0;
+
+	if (m_channel_selected == channel)
+		UpdateData(FALSE);
+	else 
 	{
-		// change other dependent parameters
 		if (m_cursorstate == CURSOR_CROSS && mdMO->wOption == 1
 			&& m_ChartDataWnd.m_HZtags.GetNTags() > 0)
 		{
@@ -237,11 +239,6 @@ void ViewData::UpdateChannel(int channel)
 			m_ChartDataWnd.Invalidate();
 		}
 		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
-	}
-	else // new value is same as previous
-	{
-		// change content of control
-		UpdateData(FALSE); // put data into edit controls
 	}
 }
 
@@ -390,12 +387,8 @@ void ViewData::OnUpdateEditCopy(CCmdUI* pCmdUI)
 void ViewData::ADC_OnHardwareChannelsDlg()
 {
 	DlgADInputs dlg;
-
-	// init dialog data
 	dlg.m_pwFormat = m_pdatDoc->GetpWaveFormat();
 	dlg.m_pchArray = m_pdatDoc->GetpWavechanArray();
-
-	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
 		m_pdatDoc->AcqSaveDataDescriptors();
@@ -406,10 +399,7 @@ void ViewData::ADC_OnHardwareChannelsDlg()
 void ViewData::ADC_OnHardwareIntervalsDlg()
 {
 	DlgADIntervals dlg;
-	// init dialog data
 	dlg.m_p_wave_format = m_pdatDoc->GetpWaveFormat();
-
-	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
 		m_pdatDoc->AcqSaveDataDescriptors();
@@ -448,27 +438,27 @@ void ViewData::UpdateFileParameters(BOOL bUpdateInterface)
 {
 	// load parameters from document file: none yet loaded?
 	const BOOL b_first_update = (m_pdatDoc == nullptr);
-	auto p_dbwave_doc = GetDocument();
-	auto cs_dat_file = p_dbwave_doc->DB_GetCurrentDatFileName();
+	const auto dbwave_doc = GetDocument();
+	const auto cs_dat_file = dbwave_doc->DB_GetCurrentDatFileName();
 	if ((m_bvalidDoc = cs_dat_file.IsEmpty()))
 		return;
 
 	// open data file
-	if (p_dbwave_doc->OpenCurrentDataFile() == nullptr)
+	if (dbwave_doc->OpenCurrentDataFile() == nullptr)
 	{
 		MessageBox(_T("This data file could not be opened"), _T("The file might be missing, or inaccessible..."),
 		           MB_OK);
 		m_bvalidDoc = FALSE;
 		return;
 	}
-	m_pdatDoc = p_dbwave_doc->m_pDat;
+	m_pdatDoc = dbwave_doc->m_pDat;
 	m_pdatDoc->ReadDataInfos();
-	const auto pwave_format = m_pdatDoc->GetpWaveFormat();
+	const auto wave_format = m_pdatDoc->GetpWaveFormat();
 
 	if (b_first_update)
 	{
-		m_samplingRate = pwave_format->sampling_rate_per_channel; // load sampling rate
-		m_time_first_abcissa = 0.0f; // init file size
+		m_samplingRate = wave_format->sampling_rate_per_channel; 
+		m_time_first_abcissa = 0.0f; 
 		m_time_last_abcissa = (m_pdatDoc->GetDOCchanLength()) / m_samplingRate;
 	}
 
@@ -487,11 +477,11 @@ void ViewData::UpdateFileParameters(BOOL bUpdateInterface)
 		if (l_last > m_pdatDoc->GetDOCchanLength() - 1) // last OK?
 			l_last = m_pdatDoc->GetDOCchanLength() - 1; // clip to the end of the file
 	}
-	m_samplingRate = pwave_format->sampling_rate_per_channel; // update sampling rate
+	m_samplingRate = wave_format->sampling_rate_per_channel; // update sampling rate
 
 	// display all channels
 	auto lnvchans = m_ChartDataWnd.GetChanlistSize();
-	const int ndocchans = pwave_format->scan_count;
+	const int ndocchans = wave_format->scan_count;
 
 	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
 	if (options_viewdata->bAllChannels || lnvchans == 0)
@@ -877,7 +867,7 @@ void ViewData::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 }
 
-void ViewData::SetVBarMode(short bMode)
+void ViewData::SetVBarMode(int bMode)
 {
 	if (bMode == BAR_BIAS)
 		m_VBarMode = bMode;

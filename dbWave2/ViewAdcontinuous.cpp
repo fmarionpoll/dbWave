@@ -105,7 +105,6 @@ HBRUSH ViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 	{
 	case CTLCOLOR_EDIT:
 	case CTLCOLOR_MSGBOX:
-		// Set color to green on black and return the background brush.
 		pDC->SetBkColor(m_backgroundColor);
 		hbr = static_cast<HBRUSH>(m_pBackgroundBrush->GetSafeHandle());
 		break;
@@ -176,6 +175,24 @@ void ViewADcontinuous::AttachControls()
 	m_scrolly.SetScrollRange(0, 100);
 }
 
+void ViewADcontinuous::get_acquisition_parameters_from_data_file(CdbWaveDoc* pdbDoc) const
+{
+	if (pdbDoc->m_pDB->GetNRecords() > 0)
+	{
+		const auto cs_dat_file = pdbDoc->DB_GetCurrentDatFileName();
+		if (cs_dat_file.IsEmpty())
+			return;
+		const AcqDataDoc* pDat = pdbDoc->OpenCurrentDataFile();
+		if (pDat != nullptr)
+		{
+			m_pOptions_AD->waveFormat.Copy(pDat->GetpWaveFormat());
+			m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
+			m_pOptions_AD->chanArray.Copy(pDat->GetpWavechanArray());
+			m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
+		}
+	}
+}
+
 void ViewADcontinuous::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
@@ -199,18 +216,7 @@ void ViewADcontinuous::OnInitialUpdate()
 	m_ptableSet->RefreshQuery();
 
 	// if current document, load parameters from current document into the local set of parameters
-	if (pdbDoc->m_pDB->GetNRecords() > 0)
-	{
-		pdbDoc->OpenCurrentDataFile();
-		const AcqDataDoc* pDat = pdbDoc->m_pDat;
-		if (pDat != nullptr)
-		{
-			m_pOptions_AD->waveFormat.Copy( pDat->GetpWaveFormat()); 
-			m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-			m_pOptions_AD->chanArray.Copy(pDat->GetpWavechanArray());
-			m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
-		}
-	}
+	get_acquisition_parameters_from_data_file(pdbDoc);
 
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument(); 

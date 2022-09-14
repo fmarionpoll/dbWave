@@ -1118,8 +1118,7 @@ void CdbTable::DeleteUnusedEntriesInAccessoryTables()
 	DeleteUnusedEntriesInAttachedTable(&m_pathSet, CH_PATH_ID, CH_PATH2_ID);
 }
 
-void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_table, const int first_column,
-                                                      const int last_column)
+void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_table, const int first_column, const int last_column)
 {
 	COleVariant var_value0, var_value1;
 

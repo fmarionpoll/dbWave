@@ -84,9 +84,9 @@ protected:
 	void OnBiasScroll(UINT nSBCode, UINT nPos);
 	void UpdateGainScroll();
 	void UpdateBiasScroll();
-	void SetVBarMode(short bMode);
+	void SetVBarMode(int bMode);
 	void UpdateFileScroll();
-	void UpdateLegends(int operation);
+	void UpdateLegends(int legends_options);
 	void UpdateHZtagsVal();
 	void SetCursorAssociatedWindows();
 	void UpdateChannel(int channel);
