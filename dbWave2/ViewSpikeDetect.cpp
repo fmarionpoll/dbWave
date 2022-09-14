@@ -370,10 +370,10 @@ BOOL ViewSpikeDetection::check_detection_settings()
 boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 {
 	const auto pdb_doc = GetDocument();
-	if (pdb_doc->OpenCurrentDataFile() == nullptr)
+	const auto p_data_file = pdb_doc->OpenCurrentDataFile();
+	if (p_data_file == nullptr)
 		return false;
 
-	const auto p_data_file = pdb_doc->m_pDat;
 	p_data_file->ReadDataInfos();
 	const auto wave_format = p_data_file->GetpWaveFormat();
 
@@ -599,7 +599,6 @@ void ViewSpikeDetection::define_sub_classed_items()
 
 void ViewSpikeDetection::OnInitialUpdate()
 {
-	// load spike detection parameters from .INI file
 	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_pArrayFromApp = &(p_app->spk_detect_array); 
 	options_view_data = &(p_app->options_viewdata); 

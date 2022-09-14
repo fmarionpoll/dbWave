@@ -72,14 +72,14 @@ void ViewdbWave::DoDataExchange(CDataExchange* pDX)
 void ViewdbWave::OnInitialUpdate()
 {
 	// init document and dbTableView
-	const CdbWaveDoc* p_dbwave_doc = GetDocument();
-	m_pSet = &p_dbwave_doc->m_pDB->m_mainTableSet;
+	const auto dbwavedoc = GetDocument();
+	m_pSet = &dbwavedoc->m_pDB->m_mainTableSet;
 	dbTableView::OnInitialUpdate();
 
 	subclass_dialog_controls();
 	make_controls_stretchable();
 
-	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
 	m_options_viewdata = &p_app->options_viewdata;
 	m_dataListCtrl.InitColumns(&m_options_viewdata->icolwidth);
 
@@ -297,7 +297,6 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDe
 		if (pDataChartWnd != nullptr)
 		{
 			dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(pDataChartWnd->GetScopeParameters());
-
 		}
 		if (pActivateView != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;

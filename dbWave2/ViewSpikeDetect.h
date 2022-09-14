@@ -87,8 +87,8 @@ public:
 	// Implementation
 protected:
 	void detect_all(BOOL bAll); // detect from current set of parms or from all
-	int detect_method_1(WORD channel_index); // spike detection, method 1 / m_spkD chan channel
-	int detect_stimulus_1(int channel_index); // stimulus detection
+	int	 detect_method_1(WORD channel_index); // spike detection, method 1 / m_spkD chan channel
+	int  detect_stimulus_1(int channel_index); // stimulus detection
 	void serialize_windows_state(BOOL save, int tab_index = -1);
 	void align_display_to_current_spike();
 	void highlight_spikes(BOOL flag = TRUE);

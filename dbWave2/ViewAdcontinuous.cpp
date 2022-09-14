@@ -177,19 +177,14 @@ void ViewADcontinuous::AttachControls()
 
 void ViewADcontinuous::get_acquisition_parameters_from_data_file(CdbWaveDoc* pdbDoc) const
 {
-	if (pdbDoc->m_pDB->GetNRecords() > 0)
+	const auto pDat = pdbDoc->OpenCurrentDataFile();
+	if (pDat != nullptr)
 	{
-		const auto cs_dat_file = pdbDoc->DB_GetCurrentDatFileName();
-		if (cs_dat_file.IsEmpty())
-			return;
-		const AcqDataDoc* pDat = pdbDoc->OpenCurrentDataFile();
-		if (pDat != nullptr)
-		{
-			m_pOptions_AD->waveFormat.Copy(pDat->GetpWaveFormat());
-			m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-			m_pOptions_AD->chanArray.Copy(pDat->GetpWavechanArray());
-			m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
-		}
+		pDat->ReadDataInfos();
+		m_pOptions_AD->waveFormat.Copy(pDat->GetpWaveFormat());
+		m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
+		m_pOptions_AD->chanArray.Copy(pDat->GetpWavechanArray());
+		m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
 	}
 }
 
@@ -210,10 +205,10 @@ void ViewADcontinuous::OnInitialUpdate()
 
 	// open document and remove database filters
 	const auto pdbDoc = GetDocument();
-	m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
-	m_ptableSet->m_strFilter.Empty();
-	m_ptableSet->ClearFilters();
-	m_ptableSet->RefreshQuery();
+	//m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
+	//m_ptableSet->m_strFilter.Empty();
+	//m_ptableSet->ClearFilters();
+	//m_ptableSet->RefreshQuery();
 
 	// if current document, load parameters from current document into the local set of parameters
 	get_acquisition_parameters_from_data_file(pdbDoc);

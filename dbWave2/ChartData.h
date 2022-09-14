@@ -39,17 +39,15 @@ public:
 	long	GetPageSize() const { return m_lxPage; } // size of page increment used to browse through doc
 	long	GetLineSize() const { return m_lxLine; } // size of line increment used to browse through doc
 	long	GetDocumentLast() const { return m_lxVeryLast; } // index of document's last pt
-	long	GetDataOffsetfromPixel(int pix) const
-	{
-		return static_cast<long>(pix) * (m_lxLast - m_lxFirst + 1) / static_cast<long>(m_displayRect.right) + m_lxFirst;
-	}
+	long	GetDataOffsetfromPixel(int pix) const {
+				return static_cast<long>(pix) * (m_lxLast - m_lxFirst + 1) / static_cast<long>(m_displayRect.right) + m_lxFirst; }
 
 	void UpdatePageLineSize(); // update page and line size parameters
 
 	// Attributes
 protected:
 	// these variables define the curves displayed on the screen (data from doc)
-	AcqDataDoc* m_pDataFile = nullptr; // pointer to data source file
+	AcqDataDoc*	m_pDataFile = nullptr; // pointer to data source file
 	CArray<CChanlistItem*, CChanlistItem*> chanlistitem_ptr_array;
 	// list of display items (abscissa, Envelope, disp. parms)
 	CArray<CEnvelope*, CEnvelope*> envelope_ptr_array; // list of Envelopes
