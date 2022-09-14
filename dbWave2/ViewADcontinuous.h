@@ -134,7 +134,7 @@ protected:
 	void ADC_TransferToFile(CWaveFormat* pWFormat);
 	void InitializeAmplifiers();
 
-	void get_acquisition_parameters_from_data_file(CdbWaveDoc* pdbDoc) const;
+	void get_acquisition_parameters_from_data_file();
 
 	// Overrides
 	CdbTableMain* OnGetRecordset();

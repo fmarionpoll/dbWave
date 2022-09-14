@@ -332,7 +332,7 @@ void ViewdbWave::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	const int threshold = LOWORD(lParam); // value associated
-	const int i_id = HIWORD(lParam);
+	//const int i_id = HIWORD(lParam);
 
 	switch (wParam)
 	{
@@ -358,14 +358,14 @@ void ViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		{
 			const auto p_document = GetDocument();
 			p_document->m_selectedRecords.RemoveAll();
-			const auto u_selected_count = m_dataListCtrl.GetSelectedCount();
+			const int selected_count = static_cast<int>(m_dataListCtrl.GetSelectedCount());
 
 			// Update all of the selected items.
-			if (u_selected_count > 0)
+			if (selected_count > 0)
 			{
-				p_document->m_selectedRecords.SetSize(u_selected_count);
+				p_document->m_selectedRecords.SetSize(selected_count);
 				auto n_item = -1;
-				for (UINT i = 0; i < u_selected_count; i++)
+				for (int i = 0; i < selected_count; i++)
 				{
 					n_item = m_dataListCtrl.GetNextItem(n_item, LVNI_SELECTED);
 					ASSERT(n_item != -1);
@@ -394,7 +394,7 @@ void ViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			{
 				for (UINT i = 0; i < u_selected_count; i++)
 				{
-					item = p_document->m_selectedRecords.GetAt(i);
+					item = static_cast<int>(p_document->m_selectedRecords.GetAt(i));
 					m_dataListCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 				}
 			}

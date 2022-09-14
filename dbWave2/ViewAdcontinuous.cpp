@@ -175,8 +175,9 @@ void ViewADcontinuous::AttachControls()
 	m_scrolly.SetScrollRange(0, 100);
 }
 
-void ViewADcontinuous::get_acquisition_parameters_from_data_file(CdbWaveDoc* pdbDoc) const
+void ViewADcontinuous::get_acquisition_parameters_from_data_file() 
 {
+	const auto pdbDoc = GetDocument();
 	const auto pDat = pdbDoc->OpenCurrentDataFile();
 	if (pDat != nullptr)
 	{
@@ -203,15 +204,8 @@ void ViewADcontinuous::OnInitialUpdate()
 	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
 	m_Combo_StartOutput.SetCurSel(m_bStartOutPutMode);
 
-	// open document and remove database filters
-	const auto pdbDoc = GetDocument();
-	//m_ptableSet = &pdbDoc->m_pDB->m_mainTableSet;
-	//m_ptableSet->m_strFilter.Empty();
-	//m_ptableSet->ClearFilters();
-	//m_ptableSet->RefreshQuery();
-
 	// if current document, load parameters from current document into the local set of parameters
-	get_acquisition_parameters_from_data_file(pdbDoc);
+	get_acquisition_parameters_from_data_file();
 
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument(); 
