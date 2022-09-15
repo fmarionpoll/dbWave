@@ -191,7 +191,7 @@ void ViewADcontinuous::get_acquisition_parameters_from_data_file()
 
 void ViewADcontinuous::OnInitialUpdate()
 {
-	CFormView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 
 	AttachControls();
 
@@ -590,12 +590,12 @@ void ViewADcontinuous::display_ol_da_error_message(const CHAR * error_string) co
 #ifdef _DEBUG
 void ViewADcontinuous::AssertValid() const
 {
-	CFormView::AssertValid();
+	dbTableView::AssertValid();
 }
 
 void ViewADcontinuous::Dump(CDumpContext & dc) const
 {
-	CFormView::Dump(dc);
+	dbTableView::Dump(dc);
 }
 
 #endif //_DEBUG
@@ -623,7 +623,7 @@ void ViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CVi
 		pmF->ActivatePropertyPane(FALSE);
 		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursor_state = 0;
 	}
-	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void ViewADcontinuous::OnSize(UINT nType, int cx, int cy)
