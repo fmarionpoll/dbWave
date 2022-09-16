@@ -28,9 +28,11 @@ private:
 	int			m_nCol;
 	UINT		m_nLastChar;
 	BOOL		m_bExitOnArrows;
-	COLORREF	m_crForeClr, m_crBackClr;
+	COLORREF	m_crForeClr;
+	COLORREF	m_crBackClr;
 
 public:
+	void PostNcDestroy() override;
 	~GridInPlaceList() override;
 	void EndEdit();
 

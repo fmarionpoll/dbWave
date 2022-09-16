@@ -166,6 +166,13 @@ void GridInPlaceList::OnSelendOK()
 }
 */
 
+void GridInPlaceList::PostNcDestroy()
+{
+	CComboBox::PostNcDestroy();
+
+	delete this;
+}
+
 BEGIN_MESSAGE_MAP(GridInPlaceList, CComboBox)
 	ON_WM_KILLFOCUS()
 	ON_WM_KEYDOWN()
