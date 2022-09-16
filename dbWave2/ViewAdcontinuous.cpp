@@ -590,12 +590,12 @@ void ViewADcontinuous::display_ol_da_error_message(const CHAR * error_string) co
 #ifdef _DEBUG
 void ViewADcontinuous::AssertValid() const
 {
-	dbTableView::AssertValid();
+	CFormView::AssertValid();
 }
 
 void ViewADcontinuous::Dump(CDumpContext & dc) const
 {
-	dbTableView::Dump(dc);
+	CFormView::Dump(dc);
 }
 
 #endif //_DEBUG
@@ -623,7 +623,7 @@ void ViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CVi
 		pmF->ActivatePropertyPane(FALSE);
 		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursor_state = 0;
 	}
-	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void ViewADcontinuous::OnSize(UINT nType, int cx, int cy)
