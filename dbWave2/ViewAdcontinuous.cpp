@@ -191,7 +191,7 @@ void ViewADcontinuous::get_acquisition_parameters_from_data_file()
 
 void ViewADcontinuous::OnInitialUpdate()
 {
-	dbTableView::OnInitialUpdate();
+	CFormView::OnInitialUpdate();
 
 	AttachControls();
 
