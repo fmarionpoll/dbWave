@@ -276,7 +276,7 @@ void ChartWnd::EraseBkgnd(CDC* p_dc)
 	CBrush brush;
 	brush.CreateSolidBrush(m_scopestruct.crScopeFill);
 	const auto p_old_brush = p_dc->SelectObject(&brush);
-	const auto p_old_pen = dynamic_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
+	const auto p_old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	p_dc->Rectangle(&m_displayRect);
 	p_dc->SelectObject(p_old_pen);
 	p_dc->SelectObject(p_old_brush);
@@ -991,7 +991,7 @@ int ChartWnd::hitVTtagPix(int x)
 void ChartWnd::invertTracker(CPoint point)
 {
 	CClientDC dc(this); // get dc to fbutton window
-	const auto old_brush = dynamic_cast<CBrush*>(dc.SelectStockObject(NULL_BRUSH));
+	const auto old_brush = static_cast<CBrush*>(dc.SelectStockObject(NULL_BRUSH));
 	const auto old_rop = dc.SetROP2(R2_NOTXORPEN);
 	const auto old_pen = dc.SelectObject(&m_blackDottedPen);
 	dc.Rectangle(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);

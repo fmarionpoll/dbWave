@@ -87,7 +87,7 @@ LOGFONT* GridCell::GetFont() const
 {
 	if (m_plfFont == nullptr)
 	{
-		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return nullptr;
 
@@ -102,7 +102,7 @@ CFont* GridCell::GetFontObject() const
 	// If the default font is specified, use the default cell implementation
 	if (m_plfFont == nullptr)
 	{
-		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return nullptr;
 
@@ -118,7 +118,7 @@ DWORD GridCell::GetFormat() const
 {
 	if (m_nFormat == static_cast<DWORD>(-1))
 	{
-		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return 0;
 
@@ -132,7 +132,7 @@ UINT GridCell::GetMargin() const
 {
 	if (m_nMargin == static_cast<UINT>(-1))
 	{
-		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return 0;
 

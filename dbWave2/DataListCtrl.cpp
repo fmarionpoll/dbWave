@@ -181,7 +181,7 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 
 	// now, the requested item is in the cache
 	// get data from database
-	const auto pdb_doc = dynamic_cast<ViewdbWave*>(GetParent())->GetDocument();
+	const auto pdb_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
 	if (pdb_doc == nullptr)
 		return;
 
@@ -281,7 +281,7 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 	}
 
 	// get data file pointer and pointer to database
-	const auto db_wave_doc = dynamic_cast<ViewdbWave*>(GetParent())->GetDocument();
+	const auto db_wave_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
 	if (db_wave_doc == nullptr)
 		return;
 	const int index_current_file = db_wave_doc->DB_GetCurrentRecordPosition();
@@ -475,10 +475,10 @@ void DataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	switch (nSBCode)
 	{
 	case SB_LINEUP:
-		dynamic_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case SB_LINEDOWN:
-		dynamic_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 	default:
 		CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -497,10 +497,10 @@ void DataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		SendMessage(WM_VSCROLL, SB_PAGEDOWN, NULL);
 		break;
 	case VK_UP:
-		dynamic_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case VK_DOWN:
-		dynamic_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 
 	default:
@@ -621,7 +621,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 	else
 	{
-		const auto pParent = dynamic_cast<ViewdbWave*>(GetParent());
+		const auto pParent = static_cast<ViewdbWave*>(GetParent());
 		int iTab = pParent->m_tabCtrl.GetCurSel();
 		if (iTab < 0)
 			iTab = 0;

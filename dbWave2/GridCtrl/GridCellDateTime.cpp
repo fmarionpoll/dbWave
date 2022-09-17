@@ -77,7 +77,7 @@ CWnd* GridCellDateTime::GetEditWnd() const
 
 void GridCellDateTime::EndEdit()
 {
-	if (m_pEditWnd) dynamic_cast<InPlaceDateTime*>(m_pEditWnd)->EndEdit();
+	if (m_pEditWnd) static_cast<InPlaceDateTime*>(m_pEditWnd)->EndEdit();
 }
 
 void GridCellDateTime::Init(DWORD dw_style)

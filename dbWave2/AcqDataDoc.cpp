@@ -123,7 +123,7 @@ bool AcqDataDoc::dlgImportDataFile(CString& sz_path_name)
 	const auto p_dlg = new DlgImportGenericData;
 	p_dlg->m_pfilenameArray = cs_array;
 	p_dlg->bConvert = TRUE; 
-	p_dlg->piivO = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import);
+	p_dlg->piivO = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_import);
 	if (IDOK != p_dlg->DoModal() || 0 == cs_array->GetSize())
 		return false;
 

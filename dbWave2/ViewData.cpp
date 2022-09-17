@@ -139,7 +139,7 @@ void ViewData::OnInitialUpdate()
 	DefineStretchParameters();
 
 	// init relation with document, display data, adjust parameters
-	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	options_viewdata = &(p_app->options_viewdata);
 	mdMO = &(p_app->options_viewdata_measure);
 

@@ -291,7 +291,7 @@ void ChartSpikeBar::displayStimulus(CDC* p_dc, const CRect* rect) const
 void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 {
 	// prepare loop to display spikes
-	auto* old_pen = dynamic_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
+	auto* old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	const long rect_width = rect->Width();
 	if (m_yWE == 1)
 	{

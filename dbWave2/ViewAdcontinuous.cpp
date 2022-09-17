@@ -195,7 +195,7 @@ void ViewADcontinuous::OnInitialUpdate()
 
 	AttachControls();
 
-	const auto pApp = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto pApp = static_cast<CdbWaveApp*>(AfxGetApp());
 	m_pOptions_AD = &(pApp->options_acqdata);
 	m_pOptions_DA = &(pApp->options_outputdata);
 
@@ -617,11 +617,11 @@ void ViewADcontinuous::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 
 void ViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
 {
-	const auto pmF = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	const auto pmF = static_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
 	{
 		pmF->ActivatePropertyPane(FALSE);
-		dynamic_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursor_state = 0;
+		static_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursor_state = 0;
 	}
 	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }

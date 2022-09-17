@@ -414,7 +414,7 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 {
 	DlgADExperiment dlg; 
 	dlg.m_bFilename = FALSE; 
-	auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	OPTIONS_INPUTDATA* pacqD = &(p_app->options_acqdata);
 	dlg.m_pADC_options = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;

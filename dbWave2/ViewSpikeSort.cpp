@@ -152,7 +152,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	m_autoDetect = true;
 
 	// load global parameters
-	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	m_psC = &(p_app->spk_classif);
 	m_pOptionsViewData = &(p_app->options_viewdata);
 
@@ -249,7 +249,7 @@ void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, C
 	else
 	{
 		saveCurrentSpkFile();
-		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		if (nullptr == p_app->m_psort1spikesMemFile)
 		{
 			p_app->m_psort1spikesMemFile = new CMemFile;
@@ -987,7 +987,7 @@ void ViewSpikeSort::OnToolsEdittransformspikes()
 
 void ViewSpikeSort::OnSelectAllFiles()
 {
-	m_bAllFiles = dynamic_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_bAllFiles = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	m_chart_spike_bars.DisplayAllFiles(m_bAllFiles, GetDocument());
 	m_chart_spike_shapes.DisplayAllFiles(m_bAllFiles, GetDocument());
 	m_chart_measures.DisplayAllFiles(m_bAllFiles, GetDocument());

@@ -71,7 +71,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	p_dc->IntersectClipRect(rect);
 	p_dc->FillSolidRect(&rect, m_scopestruct.crScopeFill);
 
-	auto* ppen_old = dynamic_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
+	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	p_dc->SetViewportExt(m_xVE, m_yVE);

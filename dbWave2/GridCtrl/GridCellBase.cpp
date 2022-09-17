@@ -130,7 +130,7 @@ BOOL GridCellBase::Draw(CDC* p_dc, int nRow, int nCol, CRect rect, BOOL bEraseBk
 
 	// Get the default cell implementation for this kind of cell. We use it if this cell
 	// has anything marked as "default"
-	const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
+	const auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 	if (!pDefaultCell)
 		return FALSE;
 
@@ -512,7 +512,7 @@ CSize GridCellBase::GetTextExtent(LPCTSTR sz_text, CDC* p_dc /*= NULL*/)
 			p_dc = pGrid->GetDC();
 		if (p_dc == nullptr || sz_text == nullptr)
 		{
-			const auto pDefCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
+			const auto pDefCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 			ASSERT(pDefCell);
 			CSize value(0, 0);
 			if (pDefCell != nullptr)
@@ -639,7 +639,7 @@ BOOL GridCellBase::PrintCell(CDC* p_dc, int /*nRow*/, int /*nCol*/, CRect rect)
 	{
 		// Get the default cell implementation for this kind of cell. We use it if this cell
 		// has anything marked as "default"
-		const auto pDefaultCell = dynamic_cast<GridDefaultCell*>(GetDefaultCell());
+		const auto pDefaultCell = static_cast<GridDefaultCell*>(GetDefaultCell());
 		if (!pDefaultCell)
 			return FALSE;
 

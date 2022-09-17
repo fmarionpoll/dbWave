@@ -79,7 +79,7 @@ void ViewdbWave::OnInitialUpdate()
 	subclass_dialog_controls();
 	make_controls_stretchable();
 
-	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	m_options_viewdata = &p_app->options_viewdata;
 	m_dataListCtrl.InitColumns(&m_options_viewdata->icolwidth);
 
@@ -281,7 +281,7 @@ void ViewdbWave::OnClickMedianFilter()
 
 void ViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
-	auto* p_mainframe = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	auto* p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
 	{
 		// make sure the secondary toolbar is not visible (none is defined for the database)
@@ -296,7 +296,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDe
 		ChartData* pDataChartWnd = m_dataListCtrl.GetDataViewCurrentRecord();
 		if (pDataChartWnd != nullptr)
 		{
-			dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(pDataChartWnd->GetScopeParameters());
+			static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(pDataChartWnd->GetScopeParameters());
 		}
 		if (pActivateView != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;

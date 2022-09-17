@@ -49,7 +49,7 @@ CdbWaveDoc::~CdbWaveDoc()
 	// (it seems it is not possible to erase the file from here)
 	if (m_bClearMdbOnExit)
 	{
-		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->m_tempMDBfiles.Add(m_dbFilename);
 	}
 }
@@ -71,7 +71,7 @@ BOOL CdbWaveDoc::OnNewDocument()
 		return FALSE;
 
 	m_bcallnew = FALSE;
-	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	auto cs_path = p_app->Get_MyDocuments_MydbWavePath();
 	TCHAR sz_entry[MAX_PATH];
 	unsigned long len = MAX_PATH;
@@ -96,7 +96,7 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 	if (cs_name.Find(_T(':')) < 0
 		&& cs_name.Find(_T("\\\\")) < 0)
 	{
-		const auto cs_path = dynamic_cast<CdbWaveApp*>(AfxGetApp())->Get_MyDocuments_MydbWavePath();
+		const auto cs_path = static_cast<CdbWaveApp*>(AfxGetApp())->Get_MyDocuments_MydbWavePath();
 		cs_name = cs_path + _T('\\') + cs_name;
 	}
 
@@ -599,7 +599,7 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 	CString cs_comment;
 	CString cs_file_comment = _T("Analyze file: ");
 	CString cs_dummy;
-	const auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto p_view_data_options = &(p_app->options_viewdata);
 	const int index_current = DB_GetCurrentRecordPosition();
 	const int n_files = DB_GetNRecords();
@@ -1187,9 +1187,9 @@ void CdbWaveDoc::ImportFileList(CStringArray& fileList, int nColumns, boolean bH
 	if (nfiles == 0)
 		return;
 
-	CSharedFile* psf = dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
+	CSharedFile* psf = static_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
 	SAFE_DELETE(psf)
-	dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf = nullptr;
+	static_cast<CdbWaveApp*>(AfxGetApp())->m_psf = nullptr;
 	psf = new CSharedFile(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 
 	// -------------------------- cancel any pending edit or add operation
@@ -1261,7 +1261,7 @@ boolean CdbWaveDoc::import_file_single(CString& cs_filename, long& m_id, int ire
 	const auto t = record.p_wave_format->acqtime;
 	COleDateTime o_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
-	if (!dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_import.bDiscardDuplicateFiles)
+	if (!static_cast<CdbWaveApp*>(AfxGetApp())->options_import.bDiscardDuplicateFiles)
 	{
 		if (!m_pDB->m_mainTableSet.CheckIfAcqDateTimeIsUnique(&o_time))
 			return false;
@@ -1607,7 +1607,7 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 	CString cs_dummy;
 	const CString cs_tab = _T("\t");
 
-	const auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_viewspikes = &(p_app->options_viewspikes);
 
 	const auto cs_file_comment = _T("\r\n") + Export_DatabaseData();
@@ -1649,7 +1649,7 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 
 CString CdbWaveDoc::Export_DatabaseData(const int ioption)
 {
-	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_viewspikes = &(p_app->options_viewspikes);
 	CString separator = _T("\t");
 	if (ioption == 1)
@@ -1743,7 +1743,7 @@ void CdbWaveDoc::Export_NumberOfSpikes(CSharedFile* pSF)
 		m_pSpk->set_spk_list_as_current(GetCurrent_Spk_Document()->GetSpkList_CurrentIndex());
 	}
 
-	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_viewspikes = &(p_app->options_viewspikes);
 
 	const auto i_old_list = m_pSpk->GetSpkList_CurrentIndex();
@@ -2609,10 +2609,10 @@ void CdbWaveDoc::Export_DatafilesAsTXTfiles()
 	}
 
 	// prepare clipboard to receive names of files exported
-	auto psf = dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
+	auto psf = static_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
 	SAFE_DELETE(psf)
 
-	dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf = nullptr;
+	static_cast<CdbWaveApp*>(AfxGetApp())->m_psf = nullptr;
 	psf = new CSharedFile(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 
 	// prepare progress dialog box
@@ -2673,5 +2673,5 @@ void CdbWaveDoc::Export_DatafilesAsTXTfiles()
 
 	// restore current data position
 	DB_SetCurrentRecordPosition(index_current_record);
-	dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_psf = psf;
+	static_cast<CdbWaveApp*>(AfxGetApp())->m_psf = psf;
 }

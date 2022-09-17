@@ -169,13 +169,13 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 {
 	if (activate)
 	{
-		const auto p_main_frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+		const auto p_main_frame = static_cast<CMainFrame*>(AfxGetMainWnd());
 		p_main_frame->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(activated_view->GetDocument()));
 	}
 	else
 	{
 		serialize_windows_state(b_save);
-		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_viewdata.viewdata = *(m_chart_data_source.GetScopeParameters());
 	}
 	dbTableView::OnActivateView(activate, activated_view, de_activated_view);
@@ -599,7 +599,7 @@ void ViewSpikeDetection::define_sub_classed_items()
 
 void ViewSpikeDetection::OnInitialUpdate()
 {
-	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	m_pArrayFromApp = &(p_app->spk_detect_array); 
 	options_view_data = &(p_app->options_viewdata); 
 
@@ -2300,7 +2300,7 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, const CRect* rect, BOOL
 
 void ViewSpikeDetection::serialize_windows_state(const BOOL save, int tab_index)
 {
-	const auto p_dbWave_app = dynamic_cast<CdbWaveApp*>(AfxGetApp()); 
+	const auto p_dbWave_app = static_cast<CdbWaveApp*>(AfxGetApp()); 
 	if (tab_index < 0 || tab_index >= m_tabCtrl.GetItemCount())
 	{
 		int tab_selected = m_tabCtrl.GetCurSel(); 

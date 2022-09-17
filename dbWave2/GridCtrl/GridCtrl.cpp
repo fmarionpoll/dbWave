@@ -2700,7 +2700,7 @@ void GridCtrl::OnEditPaste()
 		CWnd* pEditWnd = pCell->GetEditWnd();
 		if (pEditWnd && pEditWnd->IsKindOf(RUNTIME_CLASS(CEdit)))
 		{
-			dynamic_cast<CEdit*>(pEditWnd)->Paste();
+			static_cast<CEdit*>(pEditWnd)->Paste();
 			return;
 		}
 	}
@@ -3946,7 +3946,7 @@ GridCellBase* GridCtrl::CreateCell(int nRow, int nCol)
 		ASSERT(FALSE);
 		return nullptr;
 	}
-	const auto pCell = dynamic_cast<GridCellBase*>(m_pRtcDefault->CreateObject());
+	const auto pCell = static_cast<GridCellBase*>(m_pRtcDefault->CreateObject());
 	if (!pCell)
 		return nullptr;
 

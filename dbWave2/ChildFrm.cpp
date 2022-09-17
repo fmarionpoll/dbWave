@@ -164,14 +164,14 @@ void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI* pCmdUI)
 void CChildFrame::OnOptionsBrowsemode()
 {
 	DlgBrowseFile dlg;
-	dlg.mfBR = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
+	dlg.mfBR = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
 	dlg.DoModal();
 }
 
 void CChildFrame::OnOptionsPrintmargins()
 {
 	DlgPrintMargins dlg;
-	const auto psource = &(dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
+	const auto psource = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
 	dlg.mdPM = psource;
 	dlg.DoModal();
 }
@@ -181,7 +181,7 @@ void CChildFrame::OnOptionsLoadsaveoptions()
 	DlgLoadSaveOptions dlg;
 	if (IDOK == dlg.DoModal())
 	{
-		const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		auto p_parm_files = &(p_app->m_csParmFiles);
 		p_parm_files->RemoveAll();
 		for (auto i = 0; i < dlg.pFiles.GetSize(); i++)
@@ -192,7 +192,7 @@ void CChildFrame::OnOptionsLoadsaveoptions()
 void CChildFrame::OnToolsExportdatacomments()
 {
 	DlgDataComments dlg;
-	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	dlg.m_pvO = &(p_app->options_viewdata);
 	if (IDOK == dlg.DoModal())
 	{
@@ -205,7 +205,7 @@ void CChildFrame::OnToolsExportdatacomments()
 void CChildFrame::OnToolsExportnumberofspikes()
 {
 	DlgExportSpikeInfos dlg;
-	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	dlg.m_pvdS = &p_app->options_viewspikes;
 	if (IDOK == dlg.DoModal())
 	{
@@ -233,7 +233,7 @@ void CChildFrame::exportASCII(int option)
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	switch (option)
 	{
 	case 0:
@@ -270,7 +270,7 @@ void CChildFrame::exportASCII(int option)
 				CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
 				const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
 				auto pos = p_dbWave_doc_export->GetFirstViewPosition();
-				const auto p_view = dynamic_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
+				const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
 				auto& p_edit = p_view->GetRichEditCtrl();
 				p_edit.Paste();
 			}
@@ -287,7 +287,7 @@ void CChildFrame::exportASCII(int option)
 				CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
 				const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
 				auto pos = p_dbWave_doc_export->GetFirstViewPosition();
-				const auto p_view = dynamic_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
+				const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
 				auto& p_edit = p_view->GetRichEditCtrl();
 				p_edit.Paste();
 			}
@@ -328,13 +328,13 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_SHAREDMEMFILLED:
 		{
-			auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+			auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 			if (p_app->m_psf != nullptr)
 			{
 				CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
 				const auto p_doc_export = note_view_template->OpenDocumentFile(nullptr);
 				auto pos = p_doc_export->GetFirstViewPosition();
-				const auto* p_view = dynamic_cast<ViewNoteDoc*>(p_doc_export->GetNextView(pos));
+				const auto* p_view = static_cast<ViewNoteDoc*>(p_doc_export->GetNextView(pos));
 				auto& p_edit = p_view->GetRichEditCtrl();
 				OpenClipboard();
 				EmptyClipboard();
@@ -357,45 +357,45 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	const auto p_mainframe = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	auto b_active_panes = TRUE;
 	switch (iID)
 	{
 	case ID_VIEW_DATABASE:
-		replaceView(RUNTIME_CLASS(ViewdbWave), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
+		replaceView(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATAFILE:
 		if (!p_dbWave_doc->DB_GetCurrentDatFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(ViewData), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(ViewData), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDETECTION:
 		if (!p_dbWave_doc->DB_GetCurrentDatFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(ViewSpikeDetection), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+			replaceView(RUNTIME_CLASS(ViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
 		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(ViewSpikes), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
 		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(ViewSpikeSort), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(ViewSpikeTemplates), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
 		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
-			replaceView(RUNTIME_CLASS(ViewSpikeHist), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replaceView(RUNTIME_CLASS(ViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
-		replaceView(RUNTIME_CLASS(ViewADcontinuous), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(ViewADcontinuous), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		b_active_panes = FALSE;
 		break;
 
 	default:
 		iID = 0;
-		replaceView(RUNTIME_CLASS(ViewdbWave), dynamic_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+		replaceView(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	}
 	p_mainframe->ActivatePropertyPane(b_active_panes);
@@ -416,7 +416,7 @@ void CChildFrame::OnUpdateViewMenu(CCmdUI* pCmdUI)
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	const auto p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	BOOL flag = (p_dbWave_doc != nullptr);
 
 	switch (pCmdUI->m_nID)
@@ -478,7 +478,7 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	context.m_pCurrentFrame = nullptr;
 
 	// create view inside a splitter
-	const auto p_new_view = dynamic_cast<CView*>(CreateView(&context));
+	const auto p_new_view = static_cast<CView*>(CreateView(&context));
 	p_new_view->SendMessage(WM_INITIALUPDATE, 0, 0);
 	GetMDIFrame()->MDISetMenu(CMenu::FromHandle(hmenu), nullptr);
 	GetMDIFrame()->DrawMenuBar();
@@ -693,11 +693,11 @@ void CChildFrame::OnRecordGotorecord()
 		return;
 	dlg.m_recordPos = p_dbWave_doc->DB_GetCurrentRecordPosition();
 	dlg.m_recordID = p_dbWave_doc->DB_GetCurrentRecordID();
-	dlg.m_bGotoRecordID = dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID;
+	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID;
 
 	if (IDOK == dlg.DoModal())
 	{
-		dynamic_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
+		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
 		if (!dlg.m_bGotoRecordID)
 			p_dbWave_doc->DB_SetCurrentRecordPosition(dlg.m_recordPos);
 		else
@@ -796,7 +796,7 @@ void CChildFrame::OnRecordDeletecurrent()
 		// delete records from the database and collect names of files to change
 		// save list of data files to delete into a temporary array
 		if (p_view->IsKindOf(RUNTIME_CLASS(ViewdbWave)))
-			dynamic_cast<ViewdbWave*>(p_view)->DeleteRecords();
+			static_cast<ViewdbWave*>(p_view)->DeleteRecords();
 		else
 			p_dbWave_doc->DB_DeleteCurrentRecord();
 
@@ -908,7 +908,7 @@ BOOL CChildFrame::exportToExcelAndBuildPivot(int option)
 		cs2 = odata_sheet.get_Name();
 		cs1 = cs2 + _T("!") + cs1;
 
-		auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		if (p_app->options_viewspikes.bexportPivot)
 		{
 			CString cs_bin;
@@ -960,7 +960,7 @@ void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSour
 	pivot_sheet1.put_Name(csNameSheet);
 
 	// get options
-	auto* p_app = dynamic_cast<CdbWaveApp*>(AfxGetApp());
+	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto option_view_spikes = &(p_app->options_viewspikes);
 
 	// add fields to pivot table
@@ -1068,7 +1068,7 @@ void CChildFrame::OnToolsExportdatafile()
 void CChildFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd)
 {
 	CMDIChildWndEx::OnMDIActivate(bActivate, pActivateWnd, pDeactivateWnd);
-	const auto p_mainframe = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
 		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_MDIACTIVATE, NULL);
 }

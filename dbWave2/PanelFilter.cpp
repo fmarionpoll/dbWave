@@ -173,7 +173,7 @@ LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			const auto p_document = p_child->GetActiveDocument();
 			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
 				return NULL;
-			m_pDoc = dynamic_cast<CdbWaveDoc*>(p_document);
+			m_pDoc = static_cast<CdbWaveDoc*>(p_document);
 			InitFilterList();
 		}
 		break;
