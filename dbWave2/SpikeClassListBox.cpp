@@ -269,8 +269,6 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 			}
 		}
 	}
-
-	// update display
 	Invalidate();
 
 	// return spike selected
@@ -368,7 +366,7 @@ float SpikeClassListBox::GetExtent_mV() const
 void SpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	CListBox::OnRButtonUp(nFlags, point);
-	// change row and col sizes
+
 	DlgListBClaSize dlg;
 	dlg.m_rowheight = GetRowHeight();
 	dlg.m_textcol = GetColumnsTextWidth();

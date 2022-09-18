@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Spikelist.h"
-#include "Spikedoc.h"
-#include "dbWaveDoc.h"
 #include "RowItem.h"
 #include "SpikeClassListBoxContext.h"
 
