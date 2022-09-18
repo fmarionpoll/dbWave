@@ -835,10 +835,9 @@ long SpikeList::UpdateClassList()
 	m_keep_only_valid_classes = TRUE; 
 	if (n_spikes == 0)
 	{
-		m_spike_class_descriptors.Add(SpikeClassDescriptor(0, 0)); 
+		//m_spike_class_descriptors.Add(SpikeClassDescriptor(0, 0)); 
 		return 0L; 
 	}
-
 	m_spike_class_descriptors.Add(SpikeClassDescriptor(get_spike(0)->get_class_id(), 1));
 	m_n_classes = 1; 
 
