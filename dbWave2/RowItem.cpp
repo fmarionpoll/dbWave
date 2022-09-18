@@ -11,13 +11,14 @@ RowItem::~RowItem()
 	delete chart_spike_bar;
 }
 
-void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_list, int i_class, int i_id, SpikeClassListBoxContext* context)
+void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* p_spike_list, int i_class, int i_id, SpikeClassListBoxContext* context)
 {
 	const auto rect_spikes = CRect(0, 0, 0, 0); 
 	const auto rect_bars = CRect(0, 0, 0, 0);
 	parent_context = context;
 	class_id = i_class;
 	row_id = i_id;
+	spike_list = p_spike_list;
 
 	// 1) create chart_spike_shape
 	if (spike_list->get_spike_length() > 0)
@@ -25,10 +26,10 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 		chart_spike_shape = new (ChartSpikeShape);
 		ASSERT(chart_spike_shape != NULL);
 		chart_spike_shape->sub_item_create(parentWnd, rect_spikes, i_id, i_class, pdbDoc, spike_list);
-		i_id++;
 	}
 
 	// 2) create chart_spike_bar with spike height
+	i_id++;
 	chart_spike_bar = new (ChartSpikeBar);
 	ASSERT(chart_spike_bar != NULL);
 	chart_spike_bar->sub_item_create(parentWnd, rect_bars, i_id, i_class, pdbDoc, spike_list);
@@ -37,6 +38,14 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 	row_comment = new CString();
 	ASSERT(row_comment != NULL);
 	row_comment->Format(_T("class %i\nn=%i"), i_class, spike_list->get_class_id_n_items(i_class));
+}
+
+void RowItem::set_class_id(int new_class_id)
+{
+	class_id = new_class_id;
+	chart_spike_bar->set_plot_mode(PLOT_ONECLASSONLY, class_id);
+	chart_spike_shape->set_plot_mode(PLOT_ONECLASSONLY, class_id);
+	row_comment->Format(_T("class %i\nn=%i"), class_id, spike_list->get_class_id_n_items(class_id));
 }
 
 void RowItem::DrawItem(LPDRAWITEMSTRUCT lpDIS) const
@@ -155,7 +164,7 @@ float RowItem::get_zoom_y_shapes_mv() const
 	return chart_spike_shape->GetExtent_mV();
 }
 
-int RowItem::select_individual_spike(int no_spike)
+int RowItem::select_individual_spike(int no_spike) const
 {
 	if (chart_spike_shape != nullptr)
 		chart_spike_shape->SelectSpikeShape(no_spike);
@@ -168,13 +177,8 @@ void RowItem::print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const
 	const auto text_length = row_comment->GetLength();
 	p_dc->DrawText(*row_comment, text_length, rect1, DT_LEFT | DT_WORDBREAK);
 
-	// spike shape
-	if (chart_spike_shape != nullptr)
-		chart_spike_shape->Print(p_dc, rect2);
-
-	// spike bars
-	if (chart_spike_bar != nullptr)
-		chart_spike_bar->Print(p_dc, rect3);
+	if (chart_spike_shape != nullptr) chart_spike_shape->Print(p_dc, rect2);
+	if (chart_spike_bar != nullptr) chart_spike_bar->Print(p_dc, rect3);
 }
 
 void RowItem::update_string(int i_class, int n_spikes)

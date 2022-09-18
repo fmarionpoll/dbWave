@@ -5,21 +5,22 @@
 #include "ChartSpikeShape.h"
 #include "SpikeClassListBoxContext.h"
 
-class RowItem :
-    public CWnd
+class RowItem : public CWnd
 {
 public:
 	RowItem();
 	~RowItem() override;
 
-	void	CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_list, int i_class, int i_id, SpikeClassListBoxContext* context);
+	void	CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* p_spike_list, int i_class, int i_id, SpikeClassListBoxContext* context);
 	void	DrawItem(LPDRAWITEMSTRUCT lpDIS) const;
+
 	void	set_time_intervals(long l_first, long l_last) const;
 	void	set_spk_list(SpikeList* p_spike_list) const;
 	int		set_mouse_cursor_type(int cursor_m) const;
 
 	int		get_class_id() const { return class_id; }
-	void	set_class_id(int new_class_id) { class_id = new_class_id; }
+	void	set_class_id(int new_class_id);
+
 	int		get_row_id() const { return row_id; }
 	void	set_row_id(int new_row_id) { row_id = new_row_id; }
 
@@ -30,7 +31,7 @@ public:
 	void	get_zoom_y(int& we, int& wo) const;
 	void	get_zoom_x_shapes(int& we, int& wo) const;
 	float	get_zoom_y_shapes_mv() const;
-	int		select_individual_spike(int no_spike);
+	int		select_individual_spike(int no_spike) const;
 	void	print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const;
 	void	update_string(int i_class, int n_spikes);
 
@@ -41,6 +42,7 @@ protected:
 	CString* row_comment = nullptr;
 	ChartSpikeShape* chart_spike_shape = nullptr;
 	ChartSpikeBar* chart_spike_bar = nullptr;
+	SpikeList* spike_list = nullptr;
 
 	// TODO replace with spikeclassdescriptor?
 	int class_id = 0;

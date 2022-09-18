@@ -475,10 +475,12 @@ int SpikeList::get_class_id_descriptor_index(int class_id)
 int SpikeList::get_class_id_n_items(const int class_id)
 {
 	const int index = get_class_id_descriptor_index(class_id);
+	if (index < 0)
+		return 0;
 	return m_spike_class_descriptors.GetAt(index).get_n_items();
 }
 
-int SpikeList::increment_class_n_items(const int class_id)
+int SpikeList::increment_class_id_n_items(const int class_id)
 {
 	const int index = get_class_id_descriptor_index(class_id);
 	if (index < 0)
@@ -486,7 +488,7 @@ int SpikeList::increment_class_n_items(const int class_id)
 	return m_spike_class_descriptors.GetAt(index).increment_n_items();
 }
 
-int SpikeList::decrement_class_n_items(const int class_id)
+int SpikeList::decrement_class_id_n_items(const int class_id)
 {
 	const int index = get_class_id_descriptor_index(class_id);
 	return m_spike_class_descriptors.GetAt(index).decrement_n_items();
@@ -495,10 +497,10 @@ int SpikeList::decrement_class_n_items(const int class_id)
 void SpikeList::change_spike_class_id(int spike_no, int class_id)
 {
 	Spike* spike = get_spike(spike_no);
-	decrement_class_n_items(spike->get_class_id());
+	decrement_class_id_n_items(spike->get_class_id());
 
 	spike->set_class_id(class_id);
-	increment_class_n_items(class_id);
+	increment_class_id_n_items(class_id);
 }
 
 int SpikeList::AddSpike(short* source_data, const int n_channels, const long ii_time, const int source_channel, const int i_class, const BOOL b_check)
@@ -843,36 +845,38 @@ long SpikeList::UpdateClassList()
 	for (auto i = 1; i < n_spikes; i++)
 	{
 		const auto spike_class = get_spike(i)->get_class_id(); 
-		auto array_class = 0;
-
-		// loop over all existing classes to find if there is one
+		boolean found = false;
 		for (auto j = 0; j < m_n_classes; j++)
 		{
-			array_class = get_class_id(j);
+			SpikeClassDescriptor* class_descriptor = &m_spike_class_descriptors.GetAt(j);
+			const auto array_class = class_descriptor->get_class_id();
 			if (spike_class == array_class) 
 			{
-				increment_class_n_items(j); 
+				found = true;
+				class_descriptor->increment_n_items(); 
 				break; 
 			}
-			if (spike_class < array_class) // insert new class?
-			{
-				m_spike_class_descriptors.InsertAt(j , SpikeClassDescriptor(spike_class, 1)); 
-				m_n_classes++; 
-				break;
-			}
 		}
-
-		// test if cla not found within array
-		if (spike_class > array_class)
+		if (!found)
 			add_class_id(spike_class);
-
 	}
 	return m_n_classes;
 }
 
 int SpikeList::add_class_id(const int id)
 {
-	const int index = m_spike_class_descriptors.Add(SpikeClassDescriptor(id, 1));
+	int index = -1;
+	for (int i = 0; i< m_spike_class_descriptors.GetCount(); i++)
+	{
+		if (id < m_spike_class_descriptors.GetAt(i).get_class_id())
+		{
+			m_spike_class_descriptors.InsertAt(i, SpikeClassDescriptor(id, 1));
+			index = i;
+			break;
+		}
+	}
+	if (index < 0)
+		index = m_spike_class_descriptors.Add(SpikeClassDescriptor(id, 1));
 	m_n_classes++;
 	return index;
 }

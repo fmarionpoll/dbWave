@@ -139,30 +139,25 @@ int SpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 	return result;
 }
 
-void SpikeClassListBox::set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc)
+void SpikeClassListBox::set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc) // TODO
 {
 	// erase content of the list box
 	SetRedraw(FALSE);
 	ResetContent();
 
-	if (pdbDoc != nullptr)
-	{
-		m_dbwave_doc = pdbDoc;
-		m_spike_list = pSList;
-		if (pSList == nullptr || pdbDoc == nullptr)
-			return;
-		m_spike_doc = pdbDoc->m_pSpk;
-	}
-
+	m_dbwave_doc = pdbDoc;
+	m_spike_list = pSList;
+	if (pSList == nullptr || pdbDoc == nullptr)
+		return;
+	m_spike_doc = pdbDoc->m_pSpk;
+	
 	// add as many windows as necessary; store pointer into listbox
 	auto i_id = 0;
 	const int n_classes = count_classes_in_current_spike_list();
 	for (auto i_row = 0; i_row < n_classes; i_row++)
 	{
 		const int class_id = m_spike_list->get_class_id(i_row);
-		if (class_id < 0)
-			continue;
-		add_row_item(class_id, i_id);  // TODO
+		add_row_item(class_id, i_id); 
 		i_id += 2;
 	}
 	SetRedraw(TRUE);
@@ -407,7 +402,7 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 
 	const auto row_item = get_row_item(row_index);
 	row_item->select_individual_spike(-1);
-	const auto n_spikes = m_spike_list->decrement_class_n_items(current_class);
+	const auto n_spikes = m_spike_list->decrement_class_id_n_items(current_class);
 	if (n_spikes > 0)
 		row_item->update_string(current_class, n_spikes);
 	else
@@ -418,28 +413,28 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 
 void SpikeClassListBox::add_spike_to_row(int spike_no)
 {
-	const auto current_class = m_spike_list->get_spike(spike_no)->get_class_id();
-	if (current_class < 0)
-		return;
-	int row_index = get_row_index_of_spike_class(current_class);
+	const auto class_id = m_spike_list->get_spike(spike_no)->get_class_id();
+	//if (class_id < 0)
+	//	return;
+	int row_index = get_row_index_of_spike_class(class_id);
 	int n_spikes = 1;
 	if (row_index < 0)
 	{
-		m_spike_list->add_class_id(current_class);
+		m_spike_list->add_class_id(class_id);
 		
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
 		set_source_data(m_spike_list, m_dbwave_doc);
 		SetTimeIntervals(l_first, l_last);
-		row_index = get_row_index_of_spike_class(current_class);
+		row_index = get_row_index_of_spike_class(class_id);
 		if (row_index < 0)
 			return;
 	}
 	else
-		n_spikes = m_spike_list->increment_class_n_items(current_class);
+		n_spikes = m_spike_list->increment_class_id_n_items(class_id);
 
 	const auto row_item = get_row_item(row_index);
-	row_item->update_string(current_class, n_spikes);
+	row_item->update_string(class_id, n_spikes);
 }
 
 void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class_id)
@@ -448,42 +443,24 @@ void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class_id)
 	update_rows_from_spike_list();
 }
 
-void SpikeClassListBox::update_rows_from_spike_list()
+void SpikeClassListBox::update_rows_from_spike_list() 
 {
 	const int n_classes = count_classes_in_current_spike_list();
-	const int n_row_items = GetCount();
-	int i_id = 0;
-	int i_row = 0;
-	if (n_row_items > 0)
-	{
-		const auto lastItem = get_row_item(n_row_items - 1);
-		i_id = (lastItem->get_row_id() / 2 + 1) * 2;
-	}
+	int n_row_items = GetCount();
 
 	for (auto i_class = 0; i_class < n_classes; i_class++)
 	{
-		const int class_id = m_spike_list->get_class_id(i_class);
-		if (class_id < 0)
-			continue;
-
-		const int descriptor_index = m_spike_list->get_class_id_descriptor_index(class_id);
-		const auto row_item = get_row_item(i_row);
-		if (i_row < n_row_items)
-		{
-			row_item->set_class_id(class_id);
-			row_item->update_string(class_id, m_spike_list->get_class_n_items(descriptor_index));
-		}
+		const int spike_list_class_id = m_spike_list->get_class_id(i_class);
+		if (i_class < n_row_items) 
+			get_row_item(i_class)->set_class_id(spike_list_class_id);
 		else
-		{
-			add_row_item(class_id, i_id);  // TODO
-		}
-		i_id += 2;
-		i_row++;
+			add_row_item(spike_list_class_id, i_class * 2);
 	}
 
-	if (i_row <= n_classes)
+	if (GetCount() > n_classes)
 	{
-		for (int i = n_classes - 1; i >= i_row; i--)
+		n_row_items = GetCount() -1;
+		for (int i = n_row_items; i >= n_classes; i--)
 			DeleteString(i);
 	}
 	SetRedraw(TRUE);

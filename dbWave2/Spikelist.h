@@ -81,9 +81,10 @@ public:
 	void set_class_n_items(const int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).set_n_items(n_spikes); }
 
 	int get_class_id_descriptor_index(int class_id);
-	int get_class_id_n_items(const int class_id);
-	int increment_class_n_items(int class_id);
-	int decrement_class_n_items(int class_id);
+	int get_class_id_n_items(int class_id);
+	int increment_class_id_n_items(int class_id);
+	int decrement_class_id_n_items(int class_id);
+
 	void change_spike_class_id(int spike_no, int class_id);
 
 	Spike* get_spike(int no) { return m_spikes.GetAt(no); }

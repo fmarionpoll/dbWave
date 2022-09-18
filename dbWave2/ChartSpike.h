@@ -14,15 +14,15 @@ protected:
 	int m_range_mode = RANGE_TIMEINTERVALS;	// display range
 	long m_lFirst = 0;						// time index of first pt displayed
 	long m_lLast = 0;						// time index of last pt displayed
-	int m_index_first_spike = 0;						// index first spike
-	int m_index_last_spike = 0;						// index last spike
-	int m_current_class = 0;					// current class in case of displaying classes
+	int m_index_first_spike = 0;			// index first spike
+	int m_index_last_spike = 0;				// index last spike
+	int m_current_class = 0;				// current class in case of displaying classes
 	int m_selected_spike = -1;				// selected spike (display differently)
 	int m_selected_pen{};
-	int m_hit_spike = -1;						// no of spike selected
-	int m_selected_class{};						// index class selected
+	int m_hit_spike = -1;					// no of spike selected
+	int m_selected_class{};					// index class selected
 	BOOL m_track_curve = false;				// track curve ?
-	BOOL m_display_all_files = false;				// display data from all files in CdbWaveDoc*
+	BOOL m_display_all_files = false;		// display data from all files in CdbWaveDoc*
 
 	SpikeList* p_spike_list = nullptr;
 	CSpikeDoc* p_spike_doc = nullptr;
