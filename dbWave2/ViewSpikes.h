@@ -128,27 +128,31 @@ protected:
 protected:
 	// Generated message map functions
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
+
 	afx_msg void OnFormatAlldata();
 	afx_msg void OnFormatCentercurve();
 	afx_msg void OnFormatGainadjust();
+	afx_msg void OnFormatPreviousframe();
+	afx_msg void OnFormatNextframe();
+
 	afx_msg void OnToolsEdittransformspikes();
+
 	afx_msg void OnEnChangeNOspike();
 	afx_msg void OnEnChangeSpikenoclass();
 	afx_msg void OnEnChangeTimefirst();
 	afx_msg void OnEnChangeTimelast();
+	afx_msg void OnEnChangeSourceclass();
+	afx_msg void OnEnChangeDestclass();
+	afx_msg void OnEnChangeJitter();
+	afx_msg void OnEnChangeZoom();
+
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnEditCopy();
 	afx_msg void OnZoom();
-	afx_msg void OnEnChangeZoom();
-	afx_msg void OnEnChangeSourceclass();
-	afx_msg void OnEnChangeDestclass();
-	afx_msg void OnFormatPreviousframe();
-	afx_msg void OnFormatNextframe();
 	afx_msg void OnGAINbutton();
 	afx_msg void OnBIASbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnArtefact();
-	afx_msg void OnEnChangeJitter();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

@@ -34,13 +34,13 @@ public:
 	void	print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const;
 	void	update_string(int i_class, int n_spikes);
 
-	ChartSpikeShape* get_chart_shape() const { return chart_shapes; };
-	ChartSpikeBar* get_chart_bars() const { return chart_bars; }
+	ChartSpikeShape* get_chart_shape() const { return chart_spike_shape; };
+	ChartSpikeBar* get_chart_bars() const { return chart_spike_bar; }
 
 protected:
 	CString* row_comment = nullptr;
-	ChartSpikeShape* chart_shapes = nullptr;
-	ChartSpikeBar* chart_bars = nullptr;
+	ChartSpikeShape* chart_spike_shape = nullptr;
+	ChartSpikeBar* chart_spike_bar = nullptr;
 
 	// TODO replace with spikeclassdescriptor?
 	int class_id = 0;

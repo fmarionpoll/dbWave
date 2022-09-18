@@ -712,62 +712,6 @@ void ViewSpikes::select_spike_list(int current_selection)
 	m_ChartDataWnd.Invalidate();
 }
 
-void ViewSpikes::OnFormatAlldata()
-{
-	m_lFirst = 0;
-	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
-	// spikes: center spikes horizontally and adjust hz size of display
-	constexpr int x_wo = 0;
-	const auto x_we = m_pSpkList->get_spike_length();
-	m_ChartSpikesListBox.SetXzoom(x_we, x_wo);
-
-	updateLegends(TRUE);
-
-	m_ChartSpikesListBox.Invalidate();
-	m_ChartDataWnd.Invalidate();
-}
-
-void ViewSpikes::OnFormatCentercurve()
-{
-	// TODO 
-
-	// loop over all spikes of the list
-	const int n_spikes = m_pSpkList->get_spikes_count();
-	const auto i_t1 = m_psC->ileft;
-	const auto i_t2 = m_psC->iright;
-	for (int i_spike = 0; i_spike < n_spikes; i_spike++)
-	{
-		Spike* spike = m_pSpkList->get_spike(i_spike);
-		spike->CenterSpikeAmplitude(i_t1, i_t2, 1);
-	}
-
-	short max, min;
-	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
-	const WORD middle = max/2 + min/2;
-	m_ChartSpikesListBox.SetYzoom(m_ChartSpikesListBox.GetYWExtent(), middle);
-
-	if (m_pDataDoc != nullptr)
-		m_ChartDataWnd.CenterChan(0);
-
-	updateLegends(TRUE);
-	m_ChartSpikesListBox.Invalidate();
-	m_ChartDataWnd.Invalidate();
-}
-
-void ViewSpikes::OnFormatGainadjust()
-{
-	if (m_pSpkDoc != nullptr)
-	{
-		adjust_y_zoom_to_max_min(true);
-	}
-	if (m_pDataDoc != nullptr)
-		m_ChartDataWnd.MaxgainChan(0);
-
-	updateLegends(TRUE);
-	m_ChartSpikesListBox.Invalidate();
-	m_ChartDataWnd.Invalidate();
-}
-
 void ViewSpikes::OnToolsEdittransformspikes()
 {
 	// return if no spike shape
@@ -1481,27 +1425,6 @@ float ViewSpikes::PrintChangeUnit(float xVal, CString* xUnit, float* xScalefacto
 	return xVal * static_cast<float>(i_sign) / *xScalefactor; 
 }
 
-void ViewSpikes::OnEnChangeNOspike()
-{
-	if (mm_spike_index.m_bEntryDone)
-	{
-		const auto spike_no = m_spike_index;
-		const int delta_up = m_pSpkList->GetNextSpike(spike_no, 1, m_b_keep_same_class) - m_spike_index;
-		const int delta_down = m_spike_index - m_pSpkList->GetNextSpike(spike_no, -1, m_b_keep_same_class);
-		mm_spike_index.OnEnChange(this, m_spike_index, delta_up, -delta_down);
-
-		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
-		if (m_spike_index != spike_no)
-		{
-			selectSpike(m_spike_index);
-			if (m_spike_index >= 0)
-				centerDataDisplayOnSpike(m_spike_index);
-		}
-		else
-			UpdateData(FALSE);
-	}
-}
-
 void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 {
 	// test if spike visible in the current time interval
@@ -1533,92 +1456,6 @@ void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 	// display data
 	m_ChartSpikesListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
-}
-
-void ViewSpikes::OnEnChangeSpikenoclass()
-{
-	if (!mm_spike_class.m_bEntryDone)
-		return;
-	const auto spike_class_old = m_spike_class;
-	mm_spike_class.OnEnChange(this, m_spike_class, 1, -1);
-
-	if (m_spike_class != spike_class_old) 
-	{
-		m_ChartSpikesListBox.ChangeSpikeClass(m_spike_index, m_spike_class);
-
-		m_pSpkDoc->SetModifiedFlag(TRUE);
-		updateLegends(TRUE);
-		m_ChartSpikesListBox.Invalidate();
-		m_ChartDataWnd.Invalidate();
-	}
-}
-
-void ViewSpikes::OnEnChangeTimefirst()
-{
-	if (mm_time_first.m_bEntryDone)
-	{
-		mm_time_first.OnEnChange(this, m_time_first, 1.f, -1.f);
-		const auto l_first = static_cast<long>(m_time_first * m_pSpkDoc->GetAcqRate());
-		if (l_first != m_lFirst)
-		{
-			m_lFirst = l_first;
-			updateLegends(TRUE);
-			m_ChartSpikesListBox.Invalidate();
-			m_ChartDataWnd.Invalidate();
-		}
-	}
-}
-
-void ViewSpikes::OnEnChangeTimelast()
-{
-	if (mm_time_last.m_bEntryDone)
-	{
-		mm_time_last.OnEnChange(this, m_time_last, 1.f, -1.f);
-		const auto l_last = static_cast<long>(m_time_last * m_pSpkDoc->GetAcqRate());
-		if (l_last != m_lLast)
-		{
-			m_lLast = l_last;
-			updateLegends(TRUE);
-			m_ChartSpikesListBox.Invalidate();
-			m_ChartDataWnd.Invalidate();
-		}
-	}
-}
-
-void ViewSpikes::OnEnChangeZoom()
-{
-	if (mm_zoom.m_bEntryDone)
-	{
-		const auto zoom = m_zoom;
-		mm_zoom.OnEnChange(this, m_zoom, 1.f, -1.f);
-
-		// check boundaries
-		if (m_zoom < 0.0f)
-			m_zoom = 1.0f;
-
-		if (m_zoom != zoom)
-			zoomOnPresetInterval(0);
-		else
-			UpdateData(FALSE);
-	}
-}
-
-void ViewSpikes::OnEnChangeSourceclass()
-{
-	if (mm_class_source.m_bEntryDone)
-	{
-		mm_class_source.OnEnChange(this, m_class_source, 1, -1);
-		UpdateData(FALSE);
-	}
-}
-
-void ViewSpikes::OnEnChangeDestclass()
-{
-	if (mm_class_destination.m_bEntryDone)
-	{
-		mm_class_destination.OnEnChange(this, m_class_destination, 1, -1);
-		UpdateData(FALSE);
-	}
 }
 
 void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -1844,20 +1681,6 @@ void ViewSpikes::zoomOnPresetInterval(int iistart)
 	m_ChartDataWnd.Invalidate();
 }
 
-void ViewSpikes::OnFormatPreviousframe()
-{
-	zoomOnPresetInterval(m_lFirst * 2 - m_lLast);
-}
-
-void ViewSpikes::OnFormatNextframe()
-{
-	const long len = m_lLast - m_lFirst;
-	auto last = m_lLast + len;
-	if (last > m_pSpkDoc->GetAcqSize())
-		last = m_lLast - len;
-	zoomOnPresetInterval(last);
-}
-
 void ViewSpikes::OnGAINbutton()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(0);
@@ -2033,15 +1856,6 @@ void ViewSpikes::OnArtefact()
 	m_ChartSpikesListBox.Invalidate();
 }
 
-void ViewSpikes::OnEnChangeJitter()
-{
-	if (mm_jitter_ms.m_bEntryDone)
-	{
-		mm_jitter_ms.OnEnChange(this, m_jitter_ms, 1.f, -1.f);
-		UpdateData(FALSE);
-	}
-}
-
 void ViewSpikes::OnHScrollLeft()
 {
 	OnHScroll(SB_PAGELEFT, NULL, static_cast<CScrollBar*>(GetDlgItem(IDC_FILESCROLL)));
@@ -2056,3 +1870,193 @@ void ViewSpikes::OnBnClickedSameclass()
 {
 	m_b_keep_same_class = static_cast<CButton*>(GetDlgItem(IDC_SAMECLASS))->GetCheck();
 }
+
+
+void ViewSpikes::OnFormatAlldata()
+{
+	m_lFirst = 0;
+	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+	// spikes: center spikes horizontally and adjust hz size of display
+	constexpr int x_wo = 0;
+	const auto x_we = m_pSpkList->get_spike_length();
+	m_ChartSpikesListBox.SetXzoom(x_we, x_wo);
+
+	updateLegends(TRUE);
+
+	m_ChartSpikesListBox.Invalidate();
+	m_ChartDataWnd.Invalidate();
+}
+
+void ViewSpikes::OnFormatCentercurve()
+{
+	// TODO 
+
+	// loop over all spikes of the list
+	const int n_spikes = m_pSpkList->get_spikes_count();
+	const auto i_t1 = m_psC->ileft;
+	const auto i_t2 = m_psC->iright;
+	for (int i_spike = 0; i_spike < n_spikes; i_spike++)
+	{
+		Spike* spike = m_pSpkList->get_spike(i_spike);
+		spike->CenterSpikeAmplitude(i_t1, i_t2, 1);
+	}
+
+	short max, min;
+	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+	const WORD middle = max / 2 + min / 2;
+	m_ChartSpikesListBox.SetYzoom(m_ChartSpikesListBox.GetYWExtent(), middle);
+
+	if (m_pDataDoc != nullptr)
+		m_ChartDataWnd.CenterChan(0);
+
+	updateLegends(TRUE);
+	m_ChartSpikesListBox.Invalidate();
+	m_ChartDataWnd.Invalidate();
+}
+
+void ViewSpikes::OnFormatGainadjust()
+{
+	if (m_pSpkDoc != nullptr)
+	{
+		adjust_y_zoom_to_max_min(true);
+	}
+	if (m_pDataDoc != nullptr)
+		m_ChartDataWnd.MaxgainChan(0);
+
+	updateLegends(TRUE);
+	m_ChartSpikesListBox.Invalidate();
+	m_ChartDataWnd.Invalidate();
+}
+
+void ViewSpikes::OnFormatPreviousframe()
+{
+	zoomOnPresetInterval(m_lFirst * 2 - m_lLast);
+}
+
+void ViewSpikes::OnFormatNextframe()
+{
+	const long len = m_lLast - m_lFirst;
+	auto last = m_lLast + len;
+	if (last > m_pSpkDoc->GetAcqSize())
+		last = m_lLast - len;
+	zoomOnPresetInterval(last);
+}
+
+
+void ViewSpikes::OnEnChangeSpikenoclass()
+{
+	if (!mm_spike_class.m_bEntryDone)
+		return;
+	const auto spike_class_old = m_spike_class;
+	mm_spike_class.OnEnChange(this, m_spike_class, 1, -1);
+
+	if (m_spike_class != spike_class_old)
+	{
+		m_ChartSpikesListBox.ChangeSpikeClass(m_spike_index, m_spike_class);
+
+		m_pSpkDoc->SetModifiedFlag(TRUE);
+		updateLegends(TRUE);
+		m_ChartSpikesListBox.Invalidate();
+		m_ChartDataWnd.Invalidate();
+	}
+}
+
+void ViewSpikes::OnEnChangeTimefirst()
+{
+	if (mm_time_first.m_bEntryDone)
+	{
+		mm_time_first.OnEnChange(this, m_time_first, 1.f, -1.f);
+		const auto l_first = static_cast<long>(m_time_first * m_pSpkDoc->GetAcqRate());
+		if (l_first != m_lFirst)
+		{
+			m_lFirst = l_first;
+			updateLegends(TRUE);
+			m_ChartSpikesListBox.Invalidate();
+			m_ChartDataWnd.Invalidate();
+		}
+	}
+}
+
+void ViewSpikes::OnEnChangeTimelast()
+{
+	if (mm_time_last.m_bEntryDone)
+	{
+		mm_time_last.OnEnChange(this, m_time_last, 1.f, -1.f);
+		const auto l_last = static_cast<long>(m_time_last * m_pSpkDoc->GetAcqRate());
+		if (l_last != m_lLast)
+		{
+			m_lLast = l_last;
+			updateLegends(TRUE);
+			m_ChartSpikesListBox.Invalidate();
+			m_ChartDataWnd.Invalidate();
+		}
+	}
+}
+
+void ViewSpikes::OnEnChangeZoom()
+{
+	if (mm_zoom.m_bEntryDone)
+	{
+		const auto zoom = m_zoom;
+		mm_zoom.OnEnChange(this, m_zoom, 1.f, -1.f);
+
+		// check boundaries
+		if (m_zoom < 0.0f)
+			m_zoom = 1.0f;
+
+		if (m_zoom != zoom)
+			zoomOnPresetInterval(0);
+		else
+			UpdateData(FALSE);
+	}
+}
+
+void ViewSpikes::OnEnChangeSourceclass()
+{
+	if (mm_class_source.m_bEntryDone)
+	{
+		mm_class_source.OnEnChange(this, m_class_source, 1, -1);
+		UpdateData(FALSE);
+	}
+}
+
+void ViewSpikes::OnEnChangeDestclass()
+{
+	if (mm_class_destination.m_bEntryDone)
+	{
+		mm_class_destination.OnEnChange(this, m_class_destination, 1, -1);
+		UpdateData(FALSE);
+	}
+}
+
+void ViewSpikes::OnEnChangeJitter()
+{
+	if (mm_jitter_ms.m_bEntryDone)
+	{
+		mm_jitter_ms.OnEnChange(this, m_jitter_ms, 1.f, -1.f);
+		UpdateData(FALSE);
+	}
+}
+
+void ViewSpikes::OnEnChangeNOspike()
+{
+	if (mm_spike_index.m_bEntryDone)
+	{
+		const auto spike_no = m_spike_index;
+		const int delta_up = m_pSpkList->GetNextSpike(spike_no, 1, m_b_keep_same_class) - m_spike_index;
+		const int delta_down = m_spike_index - m_pSpkList->GetNextSpike(spike_no, -1, m_b_keep_same_class);
+		mm_spike_index.OnEnChange(this, m_spike_index, delta_up, -delta_down);
+
+		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
+		if (m_spike_index != spike_no)
+		{
+			selectSpike(m_spike_index);
+			if (m_spike_index >= 0)
+				centerDataDisplayOnSpike(m_spike_index);
+		}
+		else
+			UpdateData(FALSE);
+	}
+}
+
+
