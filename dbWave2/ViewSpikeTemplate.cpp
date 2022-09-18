@@ -1034,35 +1034,35 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 			pList->SetTemplateclassID(controlItem, _T("c"), dlg.m_iClass);
 
 			// set file indexes - assume only one file selected
-			auto p_dbwave_doc = GetDocument();
-			const int currentfile = p_dbwave_doc->DB_GetCurrentRecordPosition(); // index current file
-			auto firstfile = currentfile; // index first file in the series
-			auto lastfile = firstfile; // index last file in the series
-			const auto currentlist = m_tabCtrl.GetCurSel();
+			const auto dbwave_doc = GetDocument();
+			const int current_file_index = dbwave_doc->DB_GetCurrentRecordPosition(); 
+			auto index_first_file = current_file_index; // index first file in the series
+			auto index_last_file = index_first_file; // index last file in the series
+			const auto current_list = m_tabCtrl.GetCurSel();
 
 			// change indexes if ALL files selected
-			CString cscomment;
-			CString csfilecomment = _T("Analyze file: ");
+			CString cs_comment;
+			CString cs_file_comment = _T("Analyze file: ");
 			if (b_all_files)
 			{
-				firstfile = 0; // index first file
-				lastfile = p_dbwave_doc->DB_GetNRecords() - 1; // index last file
+				index_first_file = 0; // index first file
+				index_last_file = dbwave_doc->DB_GetNRecords() - 1; // index last file
 			}
 
 			// loop CFrameWnd
-			for (auto ifile = firstfile; ifile <= lastfile; ifile++)
+			for (auto index_file = index_first_file; index_file <= index_last_file; index_file++)
 			{
 				// store nb of spikes within array
 				if (b_all_files)
 				{
-					p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-					m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+					dbwave_doc->DB_SetCurrentRecordPosition(index_file);
+					m_pSpkDoc = dbwave_doc->open_current_spike_file();
 					CString cs;
-					cs.Format(_T("%i/%i - "), ifile, lastfile);
-					cs += p_dbwave_doc->DB_GetCurrentSpkFileName(FALSE);
-					p_dbwave_doc->SetTitle(cs);
+					cs.Format(_T("%i/%i - "), index_file, index_last_file);
+					cs += dbwave_doc->DB_GetCurrentSpkFileName(FALSE);
+					dbwave_doc->SetTitle(cs);
 					m_pSpkDoc->SetModifiedFlag(FALSE);
-					m_pSpkList = m_pSpkDoc->set_spk_list_as_current(currentlist);
+					m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_list);
 				}
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero
@@ -1073,7 +1073,7 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 
 				if (m_pSpkDoc->IsModified())
 				{
-					m_pSpkDoc->OnSaveDocument(p_dbwave_doc->DB_GetCurrentSpkFileName(FALSE));
+					m_pSpkDoc->OnSaveDocument(dbwave_doc->DB_GetCurrentSpkFileName(FALSE));
 					m_pSpkDoc->SetModifiedFlag(FALSE);
 
 					GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
@@ -1084,9 +1084,9 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 			// end of loop, select current file again if necessary
 			if (b_all_files)
 			{
-				p_dbwave_doc->DB_SetCurrentRecordPosition(currentfile);
-				m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
-				p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
+				dbwave_doc->DB_SetCurrentRecordPosition(current_file_index);
+				m_pSpkDoc = dbwave_doc->open_current_spike_file();
+				dbwave_doc->SetTitle(dbwave_doc->GetPathName());
 			}
 		}
 	}

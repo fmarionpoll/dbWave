@@ -63,7 +63,7 @@ protected:
 	int m_lFirst = 0;
 	int m_lLast = -1;
 
-	CDWordArray m_DW_intervals; // intervals to highlight spikes
+	CDWordArray m_highlighted_intervals;
 	BOOL m_b_add_spike_mode = false;
 
 	int m_yWE = 1;

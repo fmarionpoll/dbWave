@@ -162,7 +162,7 @@ void SpikeClassListBox::set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc)
 		const int class_id = m_spike_list->get_class_id(i_row);
 		if (class_id < 0)
 			continue;
-		add_row_item(class_id, i_id);
+		add_row_item(class_id, i_id);  // TODO
 		i_id += 2;
 	}
 	SetRedraw(TRUE);
@@ -192,11 +192,7 @@ void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 int SpikeClassListBox::count_classes_in_current_spike_list() const
 {
 	m_spike_list->UpdateClassList();
-	const auto n_spikes = m_spike_list->get_spikes_count();
-	auto n_classes = 1;
-	if (n_spikes > 0)
-		n_classes = m_spike_list->get_classes_count();
-	return n_classes;
+	return m_spike_list->get_classes_count();
 }
 
 void SpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
@@ -479,7 +475,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 		}
 		else
 		{
-			add_row_item(class_id, i_id);
+			add_row_item(class_id, i_id);  // TODO
 		}
 		i_id += 2;
 		i_row++;

@@ -6,7 +6,7 @@ RowItem::RowItem()
 
 RowItem::~RowItem()
 {
-	delete comment;
+	delete row_comment;
 	delete chart_shapes;
 	delete chart_bars;
 }
@@ -20,7 +20,6 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 	row_id = i_id;
 
 	// 1) create chart_spike_shape
-	ChartSpikeShape* chart_spike_shape = nullptr;
 	if (spike_list->get_spike_length() > 0)
 	{
 		chart_shapes = new (ChartSpikeShape);
@@ -35,9 +34,9 @@ void RowItem::CreateItem(CWnd* parentWnd, CdbWaveDoc* pdbDoc, SpikeList* spike_l
 	chart_bars->sub_item_create(parentWnd, rect_bars, i_id, i_class, pdbDoc, spike_list);
 
 	// 3) create text
-	comment = new CString();
-	ASSERT(comment != NULL);
-	comment->Format(_T("class %i\nn=%i"), i_class, spike_list->get_class_id_n_items(i_class));
+	row_comment = new CString();
+	ASSERT(row_comment != NULL);
+	row_comment->Format(_T("class %i\nn=%i"), i_class, spike_list->get_class_id_n_items(i_class));
 }
 
 void RowItem::DrawItem(LPDRAWITEMSTRUCT lpDIS) const
@@ -53,8 +52,8 @@ void RowItem::DrawItem(LPDRAWITEMSTRUCT lpDIS) const
 	
 
 		// display text
-		const auto text_length = comment->GetLength();
-		dc.DrawText(*comment, text_length, rc_text, DT_LEFT | DT_WORDBREAK);
+		const auto text_length = row_comment->GetLength();
+		dc.DrawText(*row_comment, text_length, rc_text, DT_LEFT | DT_WORDBREAK);
 
 		// display spikes
 		const auto col1 = parent_context->m_widthText + parent_context->m_widthSeparator;
@@ -166,8 +165,8 @@ int RowItem::select_individual_spike(int no_spike)
 void RowItem::print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const
 {
 	// print text
-	const auto text_length = comment->GetLength();
-	p_dc->DrawText(*comment, text_length, rect1, DT_LEFT | DT_WORDBREAK);
+	const auto text_length = row_comment->GetLength();
+	p_dc->DrawText(*row_comment, text_length, rect1, DT_LEFT | DT_WORDBREAK);
 
 	// spike shape
 	if (chart_shapes != nullptr)
@@ -180,13 +179,13 @@ void RowItem::print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const
 
 void RowItem::update_string(int i_class, int n_spikes)
 {
-	delete comment;
+	delete row_comment;
 	const auto c_string = new CString;
 	ASSERT(c_string != NULL);
 	c_string->Format(_T("class %i\nn=%i"), i_class, n_spikes);
 	class_id = i_class;
 
-	comment = c_string;
+	row_comment = c_string;
 }
 
 

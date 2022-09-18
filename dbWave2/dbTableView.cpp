@@ -152,17 +152,16 @@ void dbTableView::saveCurrentSpkFile()
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
-		auto nclasses = 1;
-		const auto ntotalspikes = (m_pSpkList != nullptr) ? m_pSpkList->get_spikes_count() : 0;
-		if (ntotalspikes > 0)
+		auto n_spike_classes = 1;
+		const auto n_spikes = (m_pSpkList != nullptr) ? m_pSpkList->get_spikes_count() : 0;
+		if (n_spikes > 0)
 		{
-			if (!m_pSpkList->IsClassListValid()) // if class list not valid:
-				nclasses = m_pSpkList->UpdateClassList();
-			else
-				nclasses = m_pSpkList->get_classes_count();
+			n_spike_classes = m_pSpkList->get_classes_count();
+			if (!m_pSpkList->IsClassListValid()) 
+				n_spike_classes = m_pSpkList->UpdateClassList();				
 		}
-		p_doc->SetDB_n_spikes(ntotalspikes);
-		p_doc->SetDB_n_spike_classes(nclasses);
+		p_doc->SetDB_n_spikes(n_spikes);
+		p_doc->SetDB_n_spike_classes(n_spike_classes);
 
 	}
 }

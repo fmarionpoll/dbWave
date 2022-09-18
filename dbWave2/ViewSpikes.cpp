@@ -203,7 +203,7 @@ void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		m_ChartDataWnd.XorTempVTtag(m_ptVT);
 		m_ChartSpikesListBox.XorTempVTtag(m_ptVT);
 	}
-	dbTableView::OnMouseMove(nFlags, point);
+	CFormView::OnMouseMove(nFlags, point);
 }
 
 void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
@@ -221,27 +221,27 @@ void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 		add_spike_to_list(ii_time, b_check);
 		m_bdummy = FALSE;
 	}
-	dbTableView::OnLButtonUp(nFlags, point);
+	CFormView::OnLButtonUp(nFlags, point);
 }
 
 void ViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_rectVTtrack.PtInRect(point))
 		SetCapture();
-	dbTableView::OnLButtonDown(nFlags, point);
+	CFormView::OnLButtonDown(nFlags, point);
 }
 
 LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
-	short shortValue = LOWORD(lParam);
+	short param_value = LOWORD(lParam);
 	switch (wParam)
 	{
 	case HINT_SETMOUSECURSOR:
-		if (m_ChartDataWnd.GetMouseCursorType() != shortValue)
-			set_add_spikes_mode(shortValue);
-		m_ChartDataWnd.SetMouseCursorType(shortValue);
-		m_ChartSpikesListBox.SetMouseCursorType(shortValue);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(shortValue, 0));
+		if (m_ChartDataWnd.GetMouseCursorType() != param_value)
+			set_add_spikes_mode(param_value);
+		m_ChartDataWnd.SetMouseCursorType(param_value);
+		m_ChartSpikesListBox.SetMouseCursorType(param_value);
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(param_value, 0));
 		break;
 
 	case HINT_SELECTSPIKES:
@@ -268,13 +268,13 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE:
-		selectSpike(shortValue);
+		selectSpike(param_value);
 		break;
 
 	case HINT_DBLCLKSEL:
-		if (shortValue < 0)
-			shortValue = 0;
-		m_spike_index = shortValue;
+		if (param_value < 0)
+			param_value = 0;
+		m_spike_index = param_value;
 		OnToolsEdittransformspikes();
 		break;
 
@@ -289,7 +289,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE_SHIFT:
-		selectSpike(shortValue);
+		selectSpike(param_value);
 		break;
 
 	default:
@@ -383,9 +383,9 @@ void ViewSpikes::selectSpike(int spike_no)
 		n_cmd_show = SW_SHOW;
 		if (m_pDataDoc != nullptr)
 		{
-			m_DW_intervals.SetAt(3, spk_first);
-			m_DW_intervals.SetAt(4, spk_last);
-			m_ChartDataWnd.SetHighlightData(&m_DW_intervals);
+			m_highlighted_intervals.SetAt(3, spk_first);
+			m_highlighted_intervals.SetAt(4, spk_last);
+			m_ChartDataWnd.SetHighlightData(&m_highlighted_intervals);
 			m_ChartDataWnd.Invalidate();
 		}
 	}
@@ -451,7 +451,7 @@ void ViewSpikes::defineStretchParameters()
 
 void ViewSpikes::OnInitialUpdate()
 {
-	dbTableView::OnInitialUpdate();
+	CFormView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -574,12 +574,12 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 		m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 	}
 
-	m_DW_intervals.SetSize(3 + 2);					// total size
-	m_DW_intervals.SetAt(0, 0);		// source channel
-	m_DW_intervals.SetAt(1, RGB(255, 0, 0));	// red color
-	m_DW_intervals.SetAt(2, 1);		// pen size
-	m_DW_intervals.SetAt(3, 0);		// pen size
-	m_DW_intervals.SetAt(4, 0);		// pen size
+	m_highlighted_intervals.SetSize(3 + 2);					// total size
+	m_highlighted_intervals.SetAt(0, 0);		// source channel
+	m_highlighted_intervals.SetAt(1, RGB(255, 0, 0));	// red color
+	m_highlighted_intervals.SetAt(2, 1);		// pen size
+	m_highlighted_intervals.SetAt(3, 0);		// pen size
+	m_highlighted_intervals.SetAt(4, 0);		// pen size
 }
 
 void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
@@ -1623,10 +1623,9 @@ void ViewSpikes::OnEnChangeDestclass()
 
 void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	// form_view scroll: if pointer null
 	if (pScrollBar == nullptr)
 	{
-		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		CFormView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -1992,25 +1991,21 @@ void ViewSpikes::scrollBias(UINT nSBCode, UINT nPos)
 
 void ViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	// formview scroll: if pointer null
-	if (pScrollBar == nullptr)
+	if (pScrollBar != nullptr)
 	{
-		dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
-		return;
+		// CViewData scroll: vertical scroll bar
+		switch (m_VBarMode)
+		{
+		case BAR_GAIN:
+			scrollGain(nSBCode, nPos);
+			break;
+		case BAR_BIAS:
+			scrollBias(nSBCode, nPos);
+		default:
+			break;
+		}
 	}
-
-	// CViewData scroll: vertical scroll bar
-	switch (m_VBarMode)
-	{
-	case BAR_GAIN:
-		scrollGain(nSBCode, nPos);
-		break;
-	case BAR_BIAS:
-		scrollBias(nSBCode, nPos);
-	default:
-		break;
-	}
-	dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+	CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void ViewSpikes::OnArtefact()

@@ -1167,7 +1167,7 @@ boolean CdbWaveDoc::set_record_spk_classes(sourceData* record)
 	if (flag)
 	{
 		m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkList_Current()->get_spikes_count();
-		if (m_pSpk->GetSpkList_Current()->get_classes_count() < 0)
+		if (m_pSpk->GetSpkList_Current()->get_classes_count() <= 0)
 			m_pSpk->GetSpkList_Current()->UpdateClassList();
 		m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->get_classes_count();
 		m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_wave_format.get_nb_points_sampled_per_channel();

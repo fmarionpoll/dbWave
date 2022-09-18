@@ -72,7 +72,7 @@ public:
 	WORD GetVersion() const { return m_version; }
 	BOOL IsClassListValid() const { return m_keep_only_valid_classes; }
 
-	int get_classes_count() const;
+	int get_classes_count() const {return  m_spike_class_descriptors.GetCount();};
 	int get_class_id(const int i) const { return m_spike_class_descriptors.GetAt(i).get_class_id();}
 	void set_class_id(const int i, const int id) { m_spike_class_descriptors.GetAt(i).set_class_id(id); }
 	int add_class_id(const int id);

@@ -38,9 +38,10 @@ public:
 	ChartSpikeBar* get_chart_bars() const { return chart_bars; }
 
 protected:
-	CString* comment = nullptr;
+	CString* row_comment = nullptr;
 	ChartSpikeShape* chart_shapes = nullptr;
 	ChartSpikeBar* chart_bars = nullptr;
+
 	// TODO replace with spikeclassdescriptor?
 	int class_id = 0;
 	int row_id = 0;

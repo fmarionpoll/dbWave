@@ -445,21 +445,19 @@ BOOL SpikeList::IsAnySpikeAround(const long ii_time, const int jitter, int& spik
 	return FALSE;
 }
 
-int SpikeList::get_classes_count() const
-{
-	int n_classes = 0;
-	if (m_keep_only_valid_classes) 
-		n_classes = m_n_classes;
-	else
-	{
-		for (int i = 0; i < m_n_classes; i++)
-		{
-			if (m_spike_class_descriptors.GetAt(i).get_class_id() >= 0)
-				n_classes++;
-		}
-	}
-	return n_classes;
-}
+//int SpikeList::get_classes_count() const
+//{
+//	int n_classes = m_spike_class_descriptors.GetCount();
+//	if (m_keep_only_valid_classes) 
+//	{
+//		for (int i = 0; i < m_spike_class_descriptors.GetCount(); i++)
+//		{
+//			if (m_spike_class_descriptors.GetAt(i).get_class_id() < 0)
+//				n_classes--;
+//		}
+//	}
+//	return n_classes;
+//}
 
 int SpikeList::get_class_id_descriptor_index(int class_id)
 {

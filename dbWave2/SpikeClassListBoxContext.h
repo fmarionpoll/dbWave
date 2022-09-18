@@ -1,5 +1,6 @@
 #pragma once
 #include <afx.h>
+
 class SpikeClassListBoxContext :
     public CObject
 {
