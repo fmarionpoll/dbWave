@@ -203,7 +203,7 @@ void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		m_ChartDataWnd.XorTempVTtag(m_ptVT);
 		m_ChartSpikesListBox.XorTempVTtag(m_ptVT);
 	}
-	CFormView::OnMouseMove(nFlags, point);
+	dbTableView::OnMouseMove(nFlags, point);
 }
 
 void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
@@ -221,14 +221,14 @@ void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 		add_spike_to_list(ii_time, b_check);
 		m_bdummy = FALSE;
 	}
-	CFormView::OnLButtonUp(nFlags, point);
+	dbTableView::OnLButtonUp(nFlags, point);
 }
 
 void ViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_rectVTtrack.PtInRect(point))
 		SetCapture();
-	CFormView::OnLButtonDown(nFlags, point);
+	dbTableView::OnLButtonDown(nFlags, point);
 }
 
 LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
@@ -451,7 +451,7 @@ void ViewSpikes::defineStretchParameters()
 
 void ViewSpikes::OnInitialUpdate()
 {
-	CFormView::OnInitialUpdate();
+	dbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
 	m_binit = TRUE;
@@ -1462,7 +1462,7 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (pScrollBar == nullptr)
 	{
-		CFormView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
 		return;
 	}
 
@@ -1665,7 +1665,14 @@ void ViewSpikes::OnEditCopy()
 
 void ViewSpikes::OnZoom()
 {
-	zoomOnPresetInterval(0);
+	int ii_start = 0;
+	if (m_spike_index != -1)
+	{
+		ii_start = m_pSpkList->get_spike(m_spike_index)->get_time();
+		const int delta = static_cast<int>(m_zoom * m_pSpkDoc->GetAcqRate());
+		ii_start -= delta/2;
+	}
+	zoomOnPresetInterval(ii_start);
 }
 
 void ViewSpikes::zoomOnPresetInterval(int iistart)
@@ -1828,7 +1835,7 @@ void ViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			break;
 		}
 	}
-	CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
+	dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void ViewSpikes::OnArtefact()
@@ -1953,7 +1960,6 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 	if (m_spike_class != spike_class_old)
 	{
 		m_ChartSpikesListBox.ChangeSpikeClass(m_spike_index, m_spike_class);
-
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		updateLegends(TRUE);
 		m_ChartSpikesListBox.Invalidate();

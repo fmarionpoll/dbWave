@@ -168,7 +168,6 @@ RowItem* SpikeClassListBox::add_row_item(int class_id, int i_id)
 	const auto row_item = new(RowItem);
 	ASSERT(row_item != NULL);
 	row_item->CreateItem(this, m_dbwave_doc, m_spike_list, class_id, i_id, &context);
-	
 	AddString(reinterpret_cast<LPTSTR>(row_item));
 	return row_item;
 }
@@ -454,7 +453,10 @@ void SpikeClassListBox::update_rows_from_spike_list()
 		if (i_class < n_row_items) 
 			get_row_item(i_class)->set_class_id(spike_list_class_id);
 		else
-			add_row_item(spike_list_class_id, i_class * 2);
+		{
+			const RowItem* row_item = add_row_item(spike_list_class_id, i_class * 2);
+			row_item->set_time_intervals(m_lFirst, m_lLast);
+		}
 	}
 
 	if (GetCount() > n_classes)
