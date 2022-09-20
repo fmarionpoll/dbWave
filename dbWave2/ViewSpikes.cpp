@@ -102,10 +102,10 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 		{
 			saveCurrentSpkFile();
 			// save column parameters
-			m_psC->colseparator = m_ChartSpikesListBox.GetColumnsSeparatorWidth();
-			m_psC->rowheight = m_ChartSpikesListBox.GetRowHeight();
-			m_psC->colspikes = m_ChartSpikesListBox.GetColumnsSpikesWidth();
-			m_psC->coltext = m_ChartSpikesListBox.GetColumnsTextWidth();
+			m_psC->colseparator = m_spikeClassListBox.GetColumnsSeparatorWidth();
+			m_psC->rowheight = m_spikeClassListBox.GetRowHeight();
+			m_psC->colspikes = m_spikeClassListBox.GetColumnsSpikesWidth();
+			m_psC->coltext = m_spikeClassListBox.GetColumnsTextWidth();
 
 			if (p_app->m_pviewspikesMemFile == nullptr)
 			{
@@ -171,7 +171,7 @@ void ViewSpikes::set_add_spikes_mode(int mouse_cursor_type)
 	if (!m_b_add_spike_mode)
 		hWnd = nullptr;
 	m_ChartDataWnd.ReflectMouseMoveMessg(hWnd);
-	m_ChartSpikesListBox.ReflectBarsMouseMoveMessg(hWnd);
+	m_spikeClassListBox.ReflectBarsMouseMoveMessg(hWnd);
 	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
 	                             m_pspkDP->extract_channel);
 
@@ -184,7 +184,7 @@ void ViewSpikes::setTrackRectangle()
 	CRect rect0, rect1, rect2;
 	GetWindowRect(&rect0);
 	m_ChartDataWnd.GetWindowRect(&rect1);
-	m_ChartSpikesListBox.GetWindowRect(&rect2);
+	m_spikeClassListBox.GetWindowRect(&rect2);
 	m_rectVTtrack.top = rect1.top - rect0.top;
 	m_rectVTtrack.bottom = rect2.bottom - rect0.top;
 	m_rectVTtrack.left = rect1.left - rect0.left;
@@ -201,15 +201,13 @@ void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 			m_ptVT = -1;
 		m_bdummy = TRUE;
 		m_ChartDataWnd.XorTempVTtag(m_ptVT);
-		m_ChartSpikesListBox.XorTempVTtag(m_ptVT);
+		m_spikeClassListBox.XorTempVTtag(m_ptVT);
 	}
 	dbTableView::OnMouseMove(nFlags, point);
 }
 
 void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	ATLTRACE("ViewSpikes OnLButtonUp \n");
-
 	if (m_rectVTtrack.PtInRect(point))
 	{
 		ReleaseCapture();
@@ -231,44 +229,52 @@ void ViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 	dbTableView::OnLButtonDown(nFlags, point);
 }
 
+void ViewSpikes::set_mouse_cursor(short param_value)
+{
+	if (m_ChartDataWnd.GetMouseCursorType() != param_value)
+		set_add_spikes_mode(param_value);
+	m_ChartDataWnd.SetMouseCursorType(param_value);
+	m_spikeClassListBox.SetMouseCursorType(param_value);
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(param_value, 0));
+}
+
+void ViewSpikes::change_zoom(LPARAM lParam)
+{
+	if (HIWORD(lParam) == IDC_DISPLAYDAT)
+	{
+		m_lFirst = m_ChartDataWnd.GetDataFirstIndex();
+		m_lLast = m_ChartDataWnd.GetDataLastIndex();
+	}
+	else if (HIWORD(lParam) == IDC_LISTCLASSES) //[ne marche pas! HIWORD(lParam)==1]
+	{
+		m_lFirst = m_spikeClassListBox.GetTimeFirst();
+		m_lLast = m_spikeClassListBox.GetTimeLast();
+	}
+	updateLegends(TRUE);
+}
+
 LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	short param_value = LOWORD(lParam);
 	switch (wParam)
 	{
 	case HINT_SETMOUSECURSOR:
-		if (m_ChartDataWnd.GetMouseCursorType() != param_value)
-			set_add_spikes_mode(param_value);
-		m_ChartDataWnd.SetMouseCursorType(param_value);
-		m_ChartSpikesListBox.SetMouseCursorType(param_value);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(param_value, 0));
+		set_mouse_cursor(param_value);
 		break;
 
 	case HINT_SELECTSPIKES:
 		m_ChartDataWnd.Invalidate();
-		m_ChartSpikesListBox.Invalidate();
+		m_spikeClassListBox.Invalidate();
 		break;
 
-	// ----------------------------- select bar/display bars or zoom
-	// if (HIWORD(lParam) == IDC_DISPLAYBARS || HIWORD(lParam) == NULL)
 	case HINT_CHANGEHZLIMITS:
 	case HINT_CHANGEZOOM:
 	case HINT_VIEWSIZECHANGED:
-		if (HIWORD(lParam) == IDC_DISPLAYDAT)
-		{
-			m_lFirst = m_ChartDataWnd.GetDataFirstIndex();
-			m_lLast = m_ChartDataWnd.GetDataLastIndex();
-		}
-		else if (HIWORD(lParam) == IDC_LISTCLASSES) //[ne marche pas! HIWORD(lParam)==1]
-		{
-			m_lFirst = m_ChartSpikesListBox.GetTimeFirst();
-			m_lLast = m_ChartSpikesListBox.GetTimeLast();
-		}
-		updateLegends(TRUE);
+		change_zoom(lParam);
 		break;
 
 	case HINT_HITSPIKE:
-		selectSpike(param_value);
+		select_spike(param_value);
 		break;
 
 	case HINT_DBLCLKSEL:
@@ -289,7 +295,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE_SHIFT:
-		selectSpike(param_value);
+		select_spike(param_value);
 		break;
 
 	default:
@@ -357,11 +363,11 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 
 	updateDataFile(TRUE);
 	updateLegends(TRUE);
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	return TRUE;
 }
 
-void ViewSpikes::selectSpike(int spike_no)
+void ViewSpikes::select_spike(int spike_no)
 {
 	if (m_pSpkDoc == nullptr)
 		return;
@@ -369,7 +375,7 @@ void ViewSpikes::selectSpike(int spike_no)
 		spike_no = -1;
 	m_spike_index = spike_no;
 	m_pSpkList->m_selected_spike = spike_no;
-	m_ChartSpikesListBox.SelectSpike(spike_no);
+	m_spikeClassListBox.SelectSpike(spike_no);
 
 	m_spike_class = -1;
 	int n_cmd_show;
@@ -409,7 +415,7 @@ void ViewSpikes::defineSubClassedItems()
 	mm_spike_index.ShowScrollBar(SB_VERT);
 	VERIFY(mm_spike_class.SubclassDlgItem(IDC_SPIKE_CLASS, this));
 	mm_spike_class.ShowScrollBar(SB_VERT);
-	VERIFY(m_ChartSpikesListBox.SubclassDlgItem(IDC_LISTCLASSES, this));
+	VERIFY(m_spikeClassListBox.SubclassDlgItem(IDC_LISTCLASSES, this));
 	VERIFY(mm_time_first.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_time_last.SubclassDlgItem(IDC_TIMELAST, this));
 	VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAYDAT, this));
@@ -472,11 +478,11 @@ void ViewSpikes::OnInitialUpdate()
 	// adjust size of the row and cols with text, spikes, and bars
 	CRect rect;
 	GetDlgItem(IDC_LISTCLASSES)->GetWindowRect(&rect);
-	m_ChartSpikesListBox.SetRowHeight(m_psC->rowheight);
+	m_spikeClassListBox.SetRowHeight(m_psC->rowheight);
 	CRect rect2;
 	GetDlgItem(IDC_DISPLAYDAT)->GetWindowRect(&rect2);
 	const int left_col_width = rect2.left - rect.left - 2;
-	m_ChartSpikesListBox.SetLeftColumnWidth(left_col_width);
+	m_spikeClassListBox.SetLeftColumnWidth(left_col_width);
 	if (m_psC->coltext < 0)
 	{
 		m_psC->colspikes = m_psC->rowheight;
@@ -489,8 +495,8 @@ void ViewSpikes::OnInitialUpdate()
 		}
 	}
 	m_psC->coltext = left_col_width - m_psC->colspikes - 2 * m_psC->colseparator;
-	m_ChartSpikesListBox.SetColumnsWidth(m_psC->colspikes, m_psC->colseparator);
-	m_ChartSpikesListBox.SetCursorMaxOnDblClick(3);
+	m_spikeClassListBox.SetColumnsWidth(m_psC->colspikes, m_psC->colseparator);
+	m_spikeClassListBox.SetCursorMaxOnDblClick(3);
 
 	// init relation with document, display data, adjust parameters
 	m_ChartDataWnd.SetScopeParameters(&(options_viewdata->viewdata));
@@ -588,7 +594,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 
 	if (nullptr == m_pSpkDoc)
 	{
-		m_ChartSpikesListBox.set_source_data(nullptr, nullptr);
+		m_spikeClassListBox.set_source_data(nullptr, nullptr);
 	}
 	else
 	{
@@ -600,7 +606,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 		m_pspkDP = m_pSpkList->get_detection_parameters();
 
-		m_ChartSpikesListBox.set_source_data(m_pSpkList, GetDocument());
+		m_spikeClassListBox.set_source_data(m_pSpkList, GetDocument());
 		if (bUpdateInterface)
 		{
 			m_tabCtrl.SetCurSel(current_index);
@@ -608,21 +614,21 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 			ASSERT(m_lFirst >= 0);
 			if (m_b_reset_zoom)
 			{
-				m_ChartSpikesListBox.SetRedraw(FALSE);
+				m_spikeClassListBox.SetRedraw(FALSE);
 				zoomOnPresetInterval(0);
-				m_ChartSpikesListBox.SetRedraw(TRUE);
+				m_spikeClassListBox.SetRedraw(TRUE);
 			}
 			else if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
 				m_lLast = m_pSpkDoc->GetAcqSize() - 1; 
 
-			m_ChartSpikesListBox.SetTimeIntervals(m_lFirst, m_lLast);
+			m_spikeClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
 			adjust_y_zoom_to_max_min(false);
 		}
 	}
 
 	// select row
 	if (bUpdateInterface)
-		m_ChartSpikesListBox.SetCurSel(0);
+		m_spikeClassListBox.SetCurSel(0);
 }
 
 void ViewSpikes::updateLegends(BOOL bUpdateInterface)
@@ -644,14 +650,14 @@ void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 	if (!m_b_add_spike_mode)
 		hwnd = nullptr;
 	m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
-	m_ChartSpikesListBox.ReflectBarsMouseMoveMessg(hwnd);
+	m_spikeClassListBox.ReflectBarsMouseMoveMessg(hwnd);
 	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
 	                             m_pspkDP->extract_channel);
 
 	// update spike bars & forms CListBox
-	if (m_lFirst != m_ChartSpikesListBox.GetTimeFirst()
-		|| m_lLast != m_ChartSpikesListBox.GetTimeLast())
-		m_ChartSpikesListBox.SetTimeIntervals(m_lFirst, m_lLast);
+	if (m_lFirst != m_spikeClassListBox.GetTimeFirst()
+		|| m_lLast != m_spikeClassListBox.GetTimeLast())
+		m_spikeClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
 
 	// update text abscissa and horizontal scroll position
 	m_time_first = static_cast<float>(m_lFirst) / m_pSpkDoc->GetAcqRate();
@@ -659,7 +665,7 @@ void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 	m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
 
 	// update scrollbar and select spikes
-	selectSpike(m_spike_index);
+	select_spike(m_spike_index);
 	updateFileScroll();
 }
 
@@ -672,7 +678,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(BOOL bForceSearchMaxMin)
 		m_yWE = MulDiv(max - min + 1, 10, 8);
 		m_yWO = (max + min) / 2;
 	}
-	m_ChartSpikesListBox.SetYzoom(m_yWE, m_yWO);
+	m_spikeClassListBox.SetYzoom(m_yWE, m_yWO);
 }
 
 void ViewSpikes::select_spike_list(int current_selection)
@@ -680,9 +686,9 @@ void ViewSpikes::select_spike_list(int current_selection)
 	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_selection);
 	ASSERT(m_pSpkList != NULL);
 
-	m_ChartSpikesListBox.SetSpkList(m_pSpkList);
+	m_spikeClassListBox.SetSpkList(m_pSpkList);
 
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_pspkDP = m_pSpkList->get_detection_parameters();
 
 	// update source data: change data channel and update display
@@ -715,17 +721,17 @@ void ViewSpikes::select_spike_list(int current_selection)
 void ViewSpikes::OnToolsEdittransformspikes()
 {
 	// return if no spike shape
-	if (m_ChartSpikesListBox.GetXWExtent() == 0) 
+	if (m_spikeClassListBox.GetXWExtent() == 0) 
 		return;
 	// save time frame to restore it on return
-	const auto l_first = m_ChartSpikesListBox.GetTimeFirst();
-	const auto l_last = m_ChartSpikesListBox.GetTimeLast();
+	const auto l_first = m_spikeClassListBox.GetTimeFirst();
+	const auto l_last = m_spikeClassListBox.GetTimeLast();
 
 	DlgSpikeEdit dlg;
-	dlg.m_yextent = m_ChartSpikesListBox.GetYWExtent(); 
-	dlg.m_yzero = m_ChartSpikesListBox.GetYWOrg(); 
-	dlg.m_xextent = m_ChartSpikesListBox.GetXWExtent(); 
-	dlg.m_xzero = m_ChartSpikesListBox.GetXWOrg();
+	dlg.m_yextent = m_spikeClassListBox.GetYWExtent(); 
+	dlg.m_yzero = m_spikeClassListBox.GetYWOrg(); 
+	dlg.m_xextent = m_spikeClassListBox.GetXWExtent(); 
+	dlg.m_xzero = m_spikeClassListBox.GetXWOrg();
 	dlg.m_spike_index = m_spike_index; 
 	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();
@@ -746,7 +752,7 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	updateDataFile(TRUE);
 	updateLegends(TRUE);
 	// display data
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -886,8 +892,8 @@ CString ViewSpikes::PrintBars(CDC* p_dc, const CRect* rect)
 	const CSize bar_size(5, 5); 
 
 	///// time abscissa ///////////////////////////
-	const int ii_first = m_ChartSpikesListBox.GetTimeFirst();
-	const int ii_last = m_ChartSpikesListBox.GetTimeLast();
+	const int ii_first = m_spikeClassListBox.GetTimeFirst();
+	const int ii_last = m_spikeClassListBox.GetTimeLast();
 	auto cs_comment = PrintConvertFileIndex(ii_first, ii_last);
 
 	///// horizontal time bar ///////////////////////////
@@ -1025,8 +1031,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		m_nbrowsperpage = 1;
 
 	// compute number of rows according to multiple row flag
-	m_lprintFirst = m_ChartSpikesListBox.GetTimeFirst();
-	m_lprintLen = m_ChartSpikesListBox.GetTimeLast() - m_lprintFirst + 1;
+	m_lprintFirst = m_spikeClassListBox.GetTimeFirst();
+	m_lprintLen = m_spikeClassListBox.GetTimeLast() - m_lprintFirst + 1;
 
 	// make sure the number of classes per file is known
 	auto nn_classes = 0; // store sum (n classes from file (i=i_file0, i_file1))
@@ -1109,8 +1115,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		m_nfiles = 1;
 		if (options_viewdata->bMultirowDisplay)
 		{
-			const auto l_first0 = m_ChartSpikesListBox.GetTimeFirst();
-			const auto l_last0 = m_ChartSpikesListBox.GetTimeLast();
+			const auto l_first0 = m_spikeClassListBox.GetTimeFirst();
+			const auto l_last0 = m_spikeClassListBox.GetTimeLast();
 			const auto len = m_pSpkDoc->GetAcqSize() - l_first0;
 			nb_rect = len / (l_last0 - l_first0);
 			if (nb_rect * (l_last0 - l_first0) < len)
@@ -1130,8 +1136,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 void ViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
-	m_lFirst0 = m_ChartSpikesListBox.GetTimeFirst();
-	m_lLast0 = m_ChartSpikesListBox.GetTimeLast();
+	m_lFirst0 = m_spikeClassListBox.GetTimeFirst();
+	m_lLast0 = m_spikeClassListBox.GetTimeLast();
 
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT)); 
@@ -1227,7 +1233,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// ------------------------ print data
 
-		auto extent = m_ChartSpikesListBox.GetYWExtent(); // get current extents
+		auto extent = m_spikeClassListBox.GetYWExtent(); // get current extents
 		//auto zero = m_spkClass.GetYWOrg();
 
 		if (m_pDataDoc != nullptr)
@@ -1256,13 +1262,13 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		short max, min;
 		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
 		const int middle = (static_cast<int>(max) + static_cast<int>(min)) / 2;
-		m_ChartSpikesListBox.SetYzoom(extent, middle);
-		const auto n_count = m_ChartSpikesListBox.GetCount(); 
+		m_spikeClassListBox.SetYzoom(extent, middle);
+		const auto n_count = m_spikeClassListBox.GetCount(); 
 
 		for (auto i_count = 0; i_count < n_count; i_count++)
 		{
-			m_ChartSpikesListBox.SetTimeIntervals(l_first, l_last);
-			m_ChartSpikesListBox.PrintItem(p_dc, &rw_text, &rw_spikes, &rw_bars, i_count);
+			m_spikeClassListBox.SetTimeIntervals(l_first, l_last);
+			m_spikeClassListBox.PrintItem(p_dc, &rw_text, &rw_spikes, &rw_bars, i_count);
 			rw_text.OffsetRect(0, r_height);
 			rw_spikes.OffsetRect(0, r_height);
 			rw_bars.OffsetRect(0, r_height);
@@ -1378,8 +1384,8 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 
 	GetDocument()->DB_SetCurrentRecordPosition(m_file0);
 	updateFileParameters(TRUE);
-	m_ChartSpikesListBox.SetTimeIntervals(m_lFirst0, m_lLast0);
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.SetTimeIntervals(m_lFirst0, m_lLast0);
+	m_spikeClassListBox.Invalidate();
 
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	if (p_app->m_pviewspikesMemFile != nullptr)
@@ -1454,7 +1460,7 @@ void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 	chan->SetYzero((max_data + min_data) / 2);
 
 	// display data
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -1489,7 +1495,7 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	m_lFirst = m_ChartDataWnd.GetDataFirstIndex();
 	m_lLast = m_ChartDataWnd.GetDataLastIndex();
 	updateLegends(TRUE);
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 
 	if (m_pDataDoc != nullptr)
@@ -1585,8 +1591,8 @@ void ViewSpikes::OnEditCopy()
 		CString comments;
 		// display data: source data and spikes
 		//auto extent = m_ChartSpikesListBox.GetYWExtent(); 
-		const auto r_height = MulDiv(m_ChartSpikesListBox.GetRowHeight(), rect.Width(),
-		                            m_ChartSpikesListBox.GetColumnsTimeWidth());
+		const auto r_height = MulDiv(m_spikeClassListBox.GetRowHeight(), rect.Width(),
+		                            m_spikeClassListBox.GetColumnsTimeWidth());
 		auto rw_spikes = rect;
 		rw_spikes.bottom = r_height; 
 		auto rw_text = rw_spikes;
@@ -1612,11 +1618,11 @@ void ViewSpikes::OnEditCopy()
 
 		// display spikes and bars
 		adjust_y_zoom_to_max_min(true);
-		const auto n_count = m_ChartSpikesListBox.GetCount(); // get nb of items in this file
+		const auto n_count = m_spikeClassListBox.GetCount(); // get nb of items in this file
 
 		for (int i_count = 0; i_count < n_count; i_count++)
 		{
-			m_ChartSpikesListBox.PrintItem(&mDC, &rw_text, &rw_spikes, &rw_bars, i_count);
+			m_spikeClassListBox.PrintItem(&mDC, &rw_text, &rw_spikes, &rw_bars, i_count);
 			rw_spikes.OffsetRect(0, r_height);
 			rw_bars.OffsetRect(0, r_height);
 			rw_text.OffsetRect(0, r_height);
@@ -1654,7 +1660,7 @@ void ViewSpikes::OnEditCopy()
 	// restore screen in previous state
 	updateSpikeFile(TRUE);
 	updateFileScroll();
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	if (m_pDataDoc != nullptr)
 	{
 		m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
@@ -1684,7 +1690,7 @@ void ViewSpikes::zoomOnPresetInterval(int iistart)
 	m_lLast = static_cast<long>((m_lFirst / acqrate + m_zoom) * acqrate);
 	updateLegends(TRUE);
 	// display data
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -1855,12 +1861,12 @@ void ViewSpikes::OnArtefact()
 		else if (spk_class < 0)
 			spk_class = -(spk_class + 1);
 		//m_pSpkList->get_spike(m_spike_index)->set_class_id(spk_class);
-		m_ChartSpikesListBox.ChangeSpikeClass(m_spike_index, spk_class);
+		m_spikeClassListBox.ChangeSpikeClass(m_spike_index, spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 	updateLegends(TRUE);
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 }
 
 void ViewSpikes::OnHScrollLeft()
@@ -1886,11 +1892,11 @@ void ViewSpikes::OnFormatAlldata()
 	// spikes: center spikes horizontally and adjust hz size of display
 	constexpr int x_wo = 0;
 	const auto x_we = m_pSpkList->get_spike_length();
-	m_ChartSpikesListBox.SetXzoom(x_we, x_wo);
+	m_spikeClassListBox.SetXzoom(x_we, x_wo);
 
 	updateLegends(TRUE);
 
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -1911,13 +1917,13 @@ void ViewSpikes::OnFormatCentercurve()
 	short max, min;
 	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
 	const WORD middle = max / 2 + min / 2;
-	m_ChartSpikesListBox.SetYzoom(m_ChartSpikesListBox.GetYWExtent(), middle);
+	m_spikeClassListBox.SetYzoom(m_spikeClassListBox.GetYWExtent(), middle);
 
 	if (m_pDataDoc != nullptr)
 		m_ChartDataWnd.CenterChan(0);
 
 	updateLegends(TRUE);
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -1931,7 +1937,7 @@ void ViewSpikes::OnFormatGainadjust()
 		m_ChartDataWnd.MaxgainChan(0);
 
 	updateLegends(TRUE);
-	m_ChartSpikesListBox.Invalidate();
+	m_spikeClassListBox.Invalidate();
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -1959,10 +1965,10 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 
 	if (m_spike_class != spike_class_old)
 	{
-		m_ChartSpikesListBox.ChangeSpikeClass(m_spike_index, m_spike_class);
+		m_spikeClassListBox.ChangeSpikeClass(m_spike_index, m_spike_class);
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		updateLegends(TRUE);
-		m_ChartSpikesListBox.Invalidate();
+		m_spikeClassListBox.Invalidate();
 		m_ChartDataWnd.Invalidate();
 	}
 }
@@ -1977,7 +1983,7 @@ void ViewSpikes::OnEnChangeTimefirst()
 		{
 			m_lFirst = l_first;
 			updateLegends(TRUE);
-			m_ChartSpikesListBox.Invalidate();
+			m_spikeClassListBox.Invalidate();
 			m_ChartDataWnd.Invalidate();
 		}
 	}
@@ -1993,7 +1999,7 @@ void ViewSpikes::OnEnChangeTimelast()
 		{
 			m_lLast = l_last;
 			updateLegends(TRUE);
-			m_ChartSpikesListBox.Invalidate();
+			m_spikeClassListBox.Invalidate();
 			m_ChartDataWnd.Invalidate();
 		}
 	}
@@ -2056,7 +2062,7 @@ void ViewSpikes::OnEnChangeNOspike()
 		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
 		if (m_spike_index != spike_no)
 		{
-			selectSpike(m_spike_index);
+			select_spike(m_spike_index);
 			if (m_spike_index >= 0)
 				centerDataDisplayOnSpike(m_spike_index);
 		}

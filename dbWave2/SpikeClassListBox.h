@@ -70,6 +70,9 @@ protected:
 	RowItem* add_row_item(int class_id, int i_id);
 	void update_rows_from_spike_list();
 	RowItem* get_row_item(int i) const { return (RowItem*) GetItemData(i); }
+	void set_horizontal_limits(int row_selected);
+	void set_y_zoom(int row_selected) const;
+	void set_class_of_dropped_spike(int row_selected);
 
 	// Implementation
 public:
@@ -79,10 +82,10 @@ public:
 	void DeleteItem(LPDELETEITEMSTRUCT lpDI) override;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };

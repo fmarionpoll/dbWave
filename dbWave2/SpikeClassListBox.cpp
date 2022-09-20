@@ -29,62 +29,6 @@ SpikeClassListBox::SpikeClassListBox()
 SpikeClassListBox::~SpikeClassListBox()
 = default;
 
-LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
-{
-	auto i_current_selected = static_cast<int>(HIWORD(lParam)) / 2; // why lParam/2???
-	const int threshold = LOWORD(lParam);
-
-	// ----------------------------- change mouse cursor (all 3 items)
-	switch (wParam)
-	{
-	case HINT_SETMOUSECURSOR:
-		SetMouseCursorType(threshold);
-		break;
-
-	case HINT_CHANGEHZLIMITS: // abscissa have changed
-	{
-		const auto row_item = get_row_item(i_current_selected);
-		row_item->get_time_intervals(m_lFirst, m_lLast);
-		SetTimeIntervals(m_lFirst, m_lLast);
-	}
-	break;
-
-	case HINT_HITSPIKE:
-		TRACE("hist spike\n");
-		if (i_current_selected != threshold) 
-		{
-			SelectSpike(threshold);
-		}
-		break;
-
-	case HINT_CHANGEZOOM:
-		{
-			const auto* row_item = get_row_item(i_current_selected);
-			int y_we, y_wo;
-			row_item->get_zoom_y(y_we, y_wo);
-			SetYzoom(y_we, y_wo);
-		}
-		break;
-
-	case HINT_DROPPED:
-		TRACE("drop spike \n");
-		{
-			const auto row_item = get_row_item(i_current_selected);
-			if (row_item != nullptr) {
-				const int new_class_id = row_item->get_class_id();
-				m_spike_list->change_class_of_flagged_spikes(new_class_id);
-			}
-		}
-		break;
-
-	default:
-		break;
-	}
-	// forward message to parent
-	GetParent()->PostMessage(WM_MYMESSAGE, wParam, MAKELPARAM(threshold, GetDlgCtrlID()));
-	return 0L;
-}
-
 void SpikeClassListBox::MeasureItem(LPMEASUREITEMSTRUCT lpMIS)
 {
 	lpMIS->itemHeight = context.m_row_height;
@@ -353,22 +297,6 @@ float SpikeClassListBox::GetExtent_mV() const
 	return x;
 }
 
-void SpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
-{
-	CListBox::OnRButtonUp(nFlags, point);
-
-	DlgListBClaSize dlg;
-	dlg.m_rowheight = GetRowHeight();
-	dlg.m_textcol = GetColumnsTextWidth();
-	dlg.m_superpcol = GetColumnsSpikesWidth();
-	dlg.m_intercolspace = GetColumnsSeparatorWidth();
-	if (IDOK == dlg.DoModal())
-	{
-		SetRowHeight(dlg.m_rowheight);
-		SetColumnsWidth(dlg.m_superpcol, dlg.m_intercolspace);
-		Invalidate();
-	}
-}
 
 HBRUSH SpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor)
 {
@@ -413,8 +341,7 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 void SpikeClassListBox::add_spike_to_row(int spike_no)
 {
 	const auto class_id = m_spike_list->get_spike(spike_no)->get_class_id();
-	//if (class_id < 0)
-	//	return;
+
 	int row_index = get_row_index_of_spike_class(class_id);
 	int n_spikes = 1;
 	if (row_index < 0)
@@ -506,6 +433,65 @@ void SpikeClassListBox::ReflectBarsMouseMoveMessg(const HWND hwnd)
 	}
 }
 
+LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
+{
+	const auto row_selected = static_cast<int>(HIWORD(lParam)) / 2; // row index
+	const int threshold = LOWORD(lParam);
+	switch (wParam)
+	{
+	case HINT_SETMOUSECURSOR:
+		SetMouseCursorType(threshold);
+		break;
+
+	case HINT_CHANGEHZLIMITS:
+		set_horizontal_limits(row_selected);
+		break;
+
+	case HINT_HITSPIKE:
+		SelectSpike(threshold);
+		break;
+
+	case HINT_CHANGEZOOM:
+		set_y_zoom(row_selected);
+		break;
+
+	case HINT_DROPPED:
+		set_class_of_dropped_spike(row_selected);
+		break;
+
+	default:
+		break;
+	}
+	// forward message to parent
+	GetParent()->PostMessage(WM_MYMESSAGE, wParam, MAKELPARAM(threshold, GetDlgCtrlID()));
+	return 0L;
+}
+
+void SpikeClassListBox::set_horizontal_limits(const int row_selected)
+{
+	const auto row_item = get_row_item(row_selected);
+	row_item->get_time_intervals(m_lFirst, m_lLast);
+	SetTimeIntervals(m_lFirst, m_lLast);
+}
+
+void SpikeClassListBox::set_y_zoom(const int row_selected) const
+{
+	const auto* row_item = get_row_item(row_selected);
+	int y_we, y_wo;
+	row_item->get_zoom_y(y_we, y_wo);
+	SetYzoom(y_we, y_wo);
+}
+
+void SpikeClassListBox::set_class_of_dropped_spike(const int row_selected)
+{
+	const auto row_item = get_row_item(row_selected);
+	if (row_item != nullptr)
+	{
+		const int new_class_id = row_item->get_class_id();
+		m_spike_list->change_class_of_flagged_spikes(new_class_id);
+	}
+}
+
 void SpikeClassListBox::OnMouseMove(const UINT nFlags, CPoint point)
 {
 	if (m_hwnd_bars_reflect != nullptr && point.x >= (context.m_widthText + context.m_widthSpikes))
@@ -538,4 +524,21 @@ void SpikeClassListBox::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	else
 		CListBox::OnLButtonUp(nFlags, point);
+}
+
+void SpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	CListBox::OnRButtonUp(nFlags, point);
+
+	DlgListBClaSize dlg;
+	dlg.m_rowheight = GetRowHeight();
+	dlg.m_textcol = GetColumnsTextWidth();
+	dlg.m_superpcol = GetColumnsSpikesWidth();
+	dlg.m_intercolspace = GetColumnsSeparatorWidth();
+	if (IDOK == dlg.DoModal())
+	{
+		SetRowHeight(dlg.m_rowheight);
+		SetColumnsWidth(dlg.m_superpcol, dlg.m_intercolspace);
+		Invalidate();
+	}
 }

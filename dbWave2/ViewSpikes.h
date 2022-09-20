@@ -35,7 +35,7 @@ public:
 	// Attributes
 protected:
 	ChartData m_ChartDataWnd;
-	SpikeClassListBox m_ChartSpikesListBox;
+	SpikeClassListBox m_spikeClassListBox;
 	int m_max_classes = 1;
 
 	CEditCtrl mm_spike_index;
@@ -82,7 +82,7 @@ protected:
 	void updateGainScroll();
 	void updateBiasScroll();
 	void adjust_y_zoom_to_max_min(BOOL bForceSearchMaxMin);
-	void selectSpike(int spike_no);
+	void select_spike(int spike_no);
 	void defineSubClassedItems();
 	void defineStretchParameters();
 	void zoomOnPresetInterval(int iistart);
@@ -96,6 +96,8 @@ protected:
 	void scrollFile(UINT nSBCode, UINT nPos);
 	void updateFileScroll();
 	void centerDataDisplayOnSpike(int spike_no);
+	void set_mouse_cursor(short param_value);
+	void change_zoom(LPARAM lParam);
 
 	// public interface to view
 public:
