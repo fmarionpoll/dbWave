@@ -154,6 +154,7 @@ protected:
 	HANDLE m_hComm; // handle to file used to communicate with COM
 
 	CString get_token_value(const CString& result, CString token);
+	CString get_coupling_value(const CString& result);
 
 	static void C300_ResetParameters();
 	static void C300_StringConcatChar(char* lpsz_string, int c);

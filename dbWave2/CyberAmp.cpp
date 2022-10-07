@@ -494,10 +494,10 @@ int CyberAmp::GetWaveChanParms(CWaveChan* pchan)
 		pchan->am_csheadstage = string1;
 
 	const CString string2 = get_token_value(result, _T("+="));
-	pchan->am_csInputpos = string2;
+	pchan->am_csInputpos = get_coupling_value(string2);
 
 	const CString string3 = get_token_value(result, _T("-="));
-	pchan->am_csInputneg = string3;
+	pchan->am_csInputneg = get_coupling_value(string3);
 
 	CString string4 = get_token_value(result, _T("P="));
 	pchan->am_gainpre = _ttoi(string4);
@@ -518,6 +518,19 @@ int CyberAmp::GetWaveChanParms(CWaveChan* pchan)
 	pchan->am_amplifiergain = gain;
 
 	return 0;
+}
+
+CString CyberAmp::get_coupling_value(const CString& result)
+{
+	if (result.CompareNoCase(_T("GND")) == 0 || result.CompareNoCase(_T("DC")) == 0)
+		return result;
+	const double hp_filter = _ttof(result);
+	CString cs_value;
+	if (hp_filter < 1.)
+		cs_value.Format(_T("%.1f"), hp_filter);
+	else 
+		cs_value.Format(_T("%i"), static_cast<int>(hp_filter));
+	return cs_value;
 }
 
 CString CyberAmp::get_token_value(const CString& result, CString token)

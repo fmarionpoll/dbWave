@@ -129,7 +129,8 @@ BOOL DlgADInputs::OnInitDialog()
 
 	// set spin  max list: dt9800 = up to 32 channels
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_inputlistmax);
-	// load encoding combo with data
+
+	// load encoding
 	int i = 0;
 	do
 	{
@@ -143,7 +144,6 @@ BOOL DlgADInputs::OnInitDialog()
 	LoadADparameters_From_pwFormat();
 
 	// initialise grid properties
-
 	m_Grid.EnableDragAndDrop(TRUE);
 	m_Grid.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xFF, 0xFF, 0xFF));
 	m_Grid.SetColumnCount(m_nacqchans + 1);
@@ -270,8 +270,6 @@ void DlgADInputs::OnSize(UINT nType, int cx, int cy)
 	if (p_wnd)
 		p_wnd->ShowWindow((nType == SIZE_MAXIMIZED) ? SW_HIDE : SW_SHOW);
 }
-
-// set column with proper header, combos, etc and data
 
 void DlgADInputs::InitADchannelCombo(int col, int iselect)
 {
