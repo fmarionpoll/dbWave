@@ -1607,6 +1607,7 @@ void ViewSpikeDetection::align_display_to_current_spike()
 		}
 		m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
 		m_chart_data_source.GetDataFromDoc(l_first, l_last);
+
 		update_legends();
 	}
 }
@@ -1684,6 +1685,7 @@ void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelectio
 		else
 		{
 			m_pSpkList->set_single_spike_flag(spike_index);
+			m_pSpkList->m_selected_spike = m_spike_index;
 		}
 		m_spike_index = spike_index;
 		align_display_to_current_spike();
