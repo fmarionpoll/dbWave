@@ -141,14 +141,14 @@ void dbTableView::saveCurrentSpkFile()
 {
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
-		auto p_doc = GetDocument();
+		const auto p_doc = GetDocument();
 		auto currentlist = 0;
 		if (m_tabCtrl.m_hWnd != nullptr) currentlist = m_tabCtrl.GetCurSel();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(currentlist);
 		if (m_pSpkList != nullptr && !m_pSpkList->IsClassListValid())
 			m_pSpkList->UpdateClassList();
 
-		auto spkfile_name = p_doc->DB_SetCurrentSpikeFileName();
+		const auto spkfile_name = p_doc->DB_SetCurrentSpikeFileName();
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
@@ -170,7 +170,7 @@ void dbTableView::IncrementSpikeFlag()
 {
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
-		auto p_doc = GetDocument();
+		const auto p_doc = GetDocument();
 		// change flag is button is checked
 		int flag = p_doc->DB_GetCurrentRecordFlag();
 		flag++;

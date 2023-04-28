@@ -233,15 +233,15 @@ void ViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 
 void ViewdbWave::updateControls()
 {
-	auto pdb_doc = GetDocument();
+	const auto pdb_doc = GetDocument();
 	CFileStatus status;
 
 	m_bvalidDat = CFile::GetStatus(pdb_doc->DB_GetCurrentDatFileName(), status);
 	m_bvalidSpk = CFile::GetStatus(pdb_doc->DB_GetCurrentSpkFileName(TRUE), status);
 
-	const int ifile = pdb_doc->DB_GetCurrentRecordPosition();
-	m_dataListCtrl.SetCurSel(ifile);
-	m_dataListCtrl.EnsureVisible(ifile, FALSE);
+	const int i_file = pdb_doc->DB_GetCurrentRecordPosition();
+	m_dataListCtrl.SetCurSel(i_file);
+	m_dataListCtrl.EnsureVisible(i_file, FALSE);
 
 	if (m_options_viewdata->displaymode == 2)
 	{

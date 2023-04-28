@@ -184,8 +184,9 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 	{
 		m_keep_only_valid_classes = FALSE;
 		ar << static_cast<long>(m_keep_only_valid_classes);
-		ar << static_cast<long>(m_n_classes);
-		for (auto i = 0; i < m_n_classes; i++)
+		auto n_descriptors = m_spike_class_descriptors.GetSize();
+		ar << static_cast<long>(n_descriptors);
+		for (auto i = 0; i < n_descriptors; i++)
 		{
 			SpikeClassDescriptor item = m_spike_class_descriptors.GetAt(i);
 			item.Serialize(ar);
