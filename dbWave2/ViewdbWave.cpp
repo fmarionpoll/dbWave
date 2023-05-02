@@ -164,6 +164,8 @@ void ViewdbWave::make_controls_stretchable()
 void ViewdbWave::display_data()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_CHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_UNCHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_UNCHECKED);
 
 	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
 	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(FALSE);
@@ -181,6 +183,8 @@ void ViewdbWave::display_data()
 void ViewdbWave::display_spikes()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_CHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_UNCHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_UNCHECKED);
 
 	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
 	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(TRUE);
@@ -208,6 +212,8 @@ void ViewdbWave::display_spikes()
 
 void ViewdbWave::display_nothing() 
 {
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_UNCHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_UNCHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_CHECKED);
 
 	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
@@ -488,6 +494,27 @@ void ViewdbWave::OnBnClickedData()
 	m_dataListCtrl.RefreshDisplay();
 }
 
+void ViewdbWave::OnBnClickedDisplaySpikes()
+{
+	display_spikes();
+	m_dataListCtrl.RefreshDisplay();
+
+	// update tab control
+	const int nrows = m_dataListCtrl.GetVisibleRowsSize();
+	if (nrows > 0)
+	{
+		const auto pSpkDoc = m_dataListCtrl.GetVisibleRowsSpikeDocAt(0);
+		if (pSpkDoc->GetSpkList_Size() > 1)
+		{
+			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
+			m_tabCtrl.ShowWindow(SW_SHOW);
+			m_tabCtrl.SetCurSel(pSpkDoc->GetSpkList_CurrentIndex());
+			m_tabCtrl.Invalidate();
+		}
+	}
+	m_dataListCtrl.RefreshDisplay();
+}
+
 void ViewdbWave::OnBnClickedDisplayNothing()
 {
 	display_nothing();
@@ -587,27 +614,6 @@ void ViewdbWave::OnBnClickedRadiooneclass()
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
 	m_options_viewdata->bDisplayAllClasses = FALSE;
 	m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
-	m_dataListCtrl.RefreshDisplay();
-}
-
-void ViewdbWave::OnBnClickedDisplaySpikes()
-{
-	display_spikes();
-	m_dataListCtrl.RefreshDisplay();
-
-	// update tab control
-	const int nrows = m_dataListCtrl.GetVisibleRowsSize();
-	if (nrows > 0)
-	{
-		const auto pSpkDoc = m_dataListCtrl.GetVisibleRowsSpikeDocAt(0);
-		if (pSpkDoc->GetSpkList_Size() > 1)
-		{
-			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
-			m_tabCtrl.ShowWindow(SW_SHOW);
-			m_tabCtrl.SetCurSel(pSpkDoc->GetSpkList_CurrentIndex());
-			m_tabCtrl.Invalidate();
-		}
-	}
 	m_dataListCtrl.RefreshDisplay();
 }
 
