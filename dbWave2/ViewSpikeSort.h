@@ -130,6 +130,7 @@ public:
 
 	afx_msg void OnFormatCentercurve();
 	afx_msg void OnFormatGainadjust();
+	afx_msg void OnFormatSplitcurves();
 	afx_msg void OnToolsEdittransformspikes();
 	afx_msg void OnSelectAllFiles();
 	afx_msg void OnToolsAlignspikes();

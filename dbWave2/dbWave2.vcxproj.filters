@@ -504,9 +504,6 @@
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="ChartSpike.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="RowItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -514,6 +511,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ADAcqDataDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChartSpike.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

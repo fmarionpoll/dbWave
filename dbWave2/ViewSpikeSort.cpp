@@ -5,6 +5,7 @@
 #include "DlgProgress.h"
 #include "DlgSpikeEdit.h"
 #include "MainFrm.h"
+#include "ViewSpikeDetect.h"
 
 
 #ifdef _DEBUG
@@ -79,8 +80,10 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikeSort::OnFormatAlldata)
 	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeSort::OnFormatCentercurve)
 	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeSort::OnFormatGainadjust)
+	ON_COMMAND(ID_FORMAT_SPLITCURVES, &ViewSpikeSort::OnFormatSplitcurves)
 	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikeSort::OnToolsEdittransformspikes)
 	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &ViewSpikeSort::OnToolsAlignspikes)
+
 	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeSort::OnEnChangetimeFirst)
 	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeSort::OnEnChangetimeLast)
 	ON_EN_CHANGE(IDC_EDIT7, &ViewSpikeSort::OnEnChangemVMin)
@@ -868,7 +871,7 @@ void ViewSpikeSort::OnFormatCentercurve()
 	const auto n_spikes = m_pSpkList->get_spikes_count();
 	for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
 	{
-		auto spike = m_pSpkList->get_spike(i_spike);
+		const auto spike = m_pSpkList->get_spike(i_spike);
 		spike->set_spike_length(m_pSpkList->get_spike_length());
 		spike->CenterSpikeAmplitude(m_psC->ileft, m_psC->iright, 1);
 	}
@@ -881,6 +884,11 @@ void ViewSpikeSort::OnFormatCentercurve()
 	m_chart_spike_bars.SetYWExtOrg(m_chart_spike_shapes.GetYWExtent(), middle);
 
 	update_legends();
+}
+
+void ViewSpikeSort::OnFormatSplitcurves()
+{
+	OnFormatGainadjust();
 }
 
 void ViewSpikeSort::OnFormatGainadjust()
