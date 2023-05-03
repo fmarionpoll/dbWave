@@ -88,8 +88,8 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeSort::OnEnChangetimeLast)
 	ON_EN_CHANGE(IDC_EDIT7, &ViewSpikeSort::OnEnChangemVMin)
 	ON_EN_CHANGE(IDC_EDIT6, &ViewSpikeSort::OnEnChangemVMax)
-	ON_EN_CHANGE(IDC_EDITLEFT2, &ViewSpikeSort::OnEnChangeEditleft2)
-	ON_EN_CHANGE(IDC_EDITRIGHT2, &ViewSpikeSort::OnEnChangeEditright2)
+	ON_EN_CHANGE(IDC_EDITLEFT2, &ViewSpikeSort::OnEnChangeEditLeft2)
+	ON_EN_CHANGE(IDC_EDITRIGHT2, &ViewSpikeSort::OnEnChangeEditRight2)
 	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikeSort::OnEnChangeNOspike)
 	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &ViewSpikeSort::OnToolsEdittransformspikes)
 	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeSort::OnEnChangespike_indexclass)
@@ -630,7 +630,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				m_psC->ixyright = m_chart_measures.m_VTtags.GetValue(m_ixyright);
 				m_txyright = static_cast<float>(m_psC->ixyright) / delta;
 				mm_txyright.m_bEntryDone = TRUE;
-				OnEnChangeEditright2();
+				OnEnChangeEditRight2();
 			}
 			else if (shortValue == m_ixyleft)
 			{
@@ -638,7 +638,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				m_psC->ixyleft = m_chart_measures.m_VTtags.GetValue(m_ixyleft);
 				m_txyleft = static_cast<float>(m_psC->ixyleft) / delta;
 				mm_txyleft.m_bEntryDone = TRUE;
-				OnEnChangeEditleft2();
+				OnEnChangeEditLeft2();
 			}
 		}
 		break;
@@ -1285,7 +1285,7 @@ void ViewSpikeSort::select_spike_list(int current_index)
 	m_chart_spike_bars.Invalidate();
 }
 
-void ViewSpikeSort::OnEnChangeEditleft2()
+void ViewSpikeSort::OnEnChangeEditLeft2()
 {
 	if (mm_txyleft.m_bEntryDone)
 	{
@@ -1308,7 +1308,7 @@ void ViewSpikeSort::OnEnChangeEditleft2()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeEditright2()
+void ViewSpikeSort::OnEnChangeEditRight2()
 {
 	if (mm_txyright.m_bEntryDone)
 	{

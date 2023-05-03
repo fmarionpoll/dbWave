@@ -148,8 +148,8 @@ public:
 	afx_msg void OnEnChangemVMax();
 	afx_msg void OnEnChangeNOspike();
 	afx_msg void OnEnChangespike_indexclass();
-	afx_msg void OnEnChangeEditleft2();
-	afx_msg void OnEnChangeEditright2();
+	afx_msg void OnEnChangeEditLeft2();
+	afx_msg void OnEnChangeEditRight2();
 	afx_msg void OnEnChangeNBins();
 
 	DECLARE_MESSAGE_MAP()
