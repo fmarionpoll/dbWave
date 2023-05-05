@@ -134,7 +134,7 @@ void ViewdbWave::OnInitialUpdate()
 	// init display controls
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* pSpkDoc = GetDocument()->GetCurrent_Spk_Document();
+		CSpikeDoc* pSpkDoc = GetDocument()->Get_Current_Spike_File();
 		if (pSpkDoc != nullptr) 
 		{
 			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
@@ -251,7 +251,7 @@ void ViewdbWave::updateControls()
 
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* pSpkDoc = GetDocument()->open_current_spike_file();
+		CSpikeDoc* pSpkDoc = GetDocument()->Open_Current_Spike_File();
 		if (pSpkDoc != nullptr)
 		{
 			const auto curr_listsize = pSpkDoc->GetSpkList_Size();
@@ -343,7 +343,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_VIEWTABHASCHANGED:
-		GetDocument()->GetCurrent_Spk_Document()->set_spk_list_as_current(threshold);
+		GetDocument()->Get_Current_Spike_File()->set_spk_list_as_current(threshold);
 		m_dataListCtrl.RefreshDisplay();
 		break;
 

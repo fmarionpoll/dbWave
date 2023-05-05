@@ -590,7 +590,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 
 void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 {
-	m_pSpkDoc = GetDocument()->open_current_spike_file();
+	m_pSpkDoc = GetDocument()->Open_Current_Spike_File();
 
 	if (nullptr == m_pSpkDoc)
 	{
@@ -602,7 +602,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 
-		const int current_index = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
+		const int current_index = GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 		m_pspkDP = m_pSpkList->get_detection_parameters();
 
@@ -1059,7 +1059,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		// get number of classes
 		if (p_dbwave_doc->GetDB_n_spike_classes() <= 0)
 		{
-			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+			m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
 			m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 			if (!m_pSpkList->IsClassListValid()) // if class list not valid:
 			{

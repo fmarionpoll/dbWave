@@ -721,7 +721,7 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 		CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 		if (p_dbWave_doc == nullptr)
 			return;
-		p_dbWave_doc->ImportFileList(file_names);
+		p_dbWave_doc->Import_FileList(file_names);
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
@@ -754,7 +754,7 @@ void CChildFrame::OnToolsImportATFfiles()
 			CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 			if (p_dbWave_doc == nullptr)
 				return;
-			p_dbWave_doc->ImportFileList(convertedFiles);
+			p_dbWave_doc->Import_FileList(convertedFiles);
 			p_dbWave_doc->DBMoveLast();
 			p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
@@ -1023,8 +1023,8 @@ void CChildFrame::OnToolsImportDatabase()
 {
 	CFileDialog dlgFile(TRUE);
 	CString fileName;
-	const int c_cMaxFiles = 100;
-	const int c_cbBuffSize = (c_cMaxFiles * (MAX_PATH + 1)) + 1;
+	constexpr int c_cMaxFiles = 100;
+	constexpr int c_cbBuffSize = (c_cMaxFiles * (MAX_PATH + 1)) + 1;
 	dlgFile.GetOFN().lpstrFile = fileName.GetBuffer(c_cbBuffSize);
 	dlgFile.GetOFN().nMaxFile = c_cbBuffSize;
 	dlgFile.GetOFN().lpstrFilter = _T("Database Files\0*.mdb");
@@ -1034,7 +1034,8 @@ void CChildFrame::OnToolsImportDatabase()
 		CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 		if (p_dbWave_doc == nullptr)
 			return;
-		p_dbWave_doc->ImportDatabase(fileName);
+		//p_dbWave_doc->ImportDatabase(fileName);
+		p_dbWave_doc->import_data_files_from_other_data_base(fileName);
 		p_dbWave_doc->DBMoveLast();
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
@@ -1051,7 +1052,7 @@ void CChildFrame::OnToolsCopyAllProjectFiles()
 		CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 		if (p_dbWave_doc == nullptr)
 			return;
-		p_dbWave_doc->CopyAllFilesToDirectory(destination_path);
+		p_dbWave_doc->copy_all_files_to_directory(destination_path);
 	}
 }
 

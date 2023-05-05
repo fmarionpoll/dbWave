@@ -63,7 +63,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		if (m_display_all_files)
 		{
 			p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-			p_dbwave_doc->open_current_spike_file();
+			p_dbwave_doc->Open_Current_Spike_File();
 		}
 		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 
@@ -160,7 +160,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 	if (m_display_all_files)
 	{
 		p_dbwave_doc->DB_SetCurrentRecordPosition(ncurrentfile);
-		p_dbwave_doc->open_current_spike_file();
+		p_dbwave_doc->Open_Current_Spike_File();
 		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 }
@@ -499,7 +499,7 @@ int ChartSpikeXY::hitCurveInDoc(CPoint point)
 		if (m_display_all_files)
 		{
 			p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-			p_dbwave_doc->open_current_spike_file();
+			p_dbwave_doc->Open_Current_Spike_File();
 			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 		}
 
@@ -515,7 +515,7 @@ int ChartSpikeXY::hitCurveInDoc(CPoint point)
 	if (m_display_all_files && result < 0)
 	{
 		p_dbwave_doc->DB_SetCurrentRecordPosition(ncurrentfile);
-		p_dbwave_doc->open_current_spike_file();
+		p_dbwave_doc->Open_Current_Spike_File();
 		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
 	}
 

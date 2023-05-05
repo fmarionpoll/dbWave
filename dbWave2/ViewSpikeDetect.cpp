@@ -226,7 +226,7 @@ void ViewSpikeDetection::update_legends()
 void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 {
 	const auto pdb_doc = GetDocument();
-	if (pdb_doc->open_current_spike_file() == nullptr)
+	if (pdb_doc->Open_Current_Spike_File() == nullptr)
 	{
 		// file not found: create new object, and create file
 		auto* p_spike = new CSpikeDoc;
@@ -339,7 +339,7 @@ BOOL ViewSpikeDetection::check_detection_settings()
 	ASSERT_VALID(m_p_detect_parameters);
 	if (nullptr == m_p_detect_parameters)
 	{
-		m_i_detect_parameters = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
+		m_i_detect_parameters = GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
 		m_p_detect_parameters = m_spk_detect_array_current.GetItem(m_i_detect_parameters);
 	}
 
@@ -1050,7 +1050,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	m_pSpkDoc->InitSourceDoc(data_document);
 
 	m_pSpkDoc->SetDetectionDate(CTime::GetCurrentTime());
-	auto old_spike_list_index = db_document->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
+	auto old_spike_list_index = db_document->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
 	m_spike_index = -1;
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist

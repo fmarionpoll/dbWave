@@ -219,7 +219,7 @@ void ViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		break;
 	case HINT_DOCHASCHANGED: // file has changed?
 	case HINT_DOCMOVERECORD:
-		selectSpkList(GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex(), TRUE);
+		selectSpkList(GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex(), TRUE);
 		buildDataAndDisplay();
 		break;
 
@@ -241,7 +241,7 @@ BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	if (!m_pvdS->ballfiles)
 		buildDataAndDisplay();
-	selectSpkList(GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex(), TRUE);
+	selectSpkList(GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex(), TRUE);
 	return flag;
 }
 
@@ -838,7 +838,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		p_dc->SelectObject(p_old_font);
 
 	p_dbwave_doc->DB_SetCurrentRecordPosition(file0);
-	p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+	p_spike_doc_ = p_dbwave_doc->Open_Current_Spike_File();
 }
 
 void ViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
@@ -994,7 +994,7 @@ void ViewSpikeHist::buildData()
 		lastfile = m_nfiles - 1;
 	}
 
-	auto currentlist_index = p_dbwave_doc->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
+	auto currentlist_index = p_dbwave_doc->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
 
 	for (auto ifile = firstfile; ifile <= lastfile; ifile++)
 	{
@@ -1015,7 +1015,7 @@ void ViewSpikeHist::buildData()
 
 		// select spike file
 		p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+		p_spike_doc_ = p_dbwave_doc->Open_Current_Spike_File();
 		if (nullptr == p_spike_doc_)
 			continue;
 
@@ -1068,7 +1068,7 @@ void ViewSpikeHist::buildData()
 	if (currentfile != p_dbwave_doc->DB_GetCurrentRecordPosition())
 	{
 		p_dbwave_doc->DB_SetCurrentRecordPosition(currentfile);
-		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+		p_spike_doc_ = p_dbwave_doc->Open_Current_Spike_File();
 		p_spike_doc_->set_spk_list_as_current(currentlist_index);
 	}
 	SAFE_DELETE(pdlg)
@@ -1383,13 +1383,13 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	}
 
 	// external loop: browse from file to file
-	auto currentlist_index = p_dbwave_doc->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
+	auto currentlist_index = p_dbwave_doc->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
 	for (auto ifile = firstfile;
 	     ifile <= lastfile && row < disp_rect.bottom;
 	     ifile++)
 	{
 		p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-		p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+		p_spike_doc_ = p_dbwave_doc->Open_Current_Spike_File();
 		p_spike_doc_->set_spk_list_as_current(currentlist_index);
 
 		// load pointers to spike file and spike list
@@ -1537,7 +1537,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 	}
 
 	p_dbwave_doc->DB_SetCurrentRecordPosition(currentfile);
-	p_spike_doc_ = p_dbwave_doc->open_current_spike_file();
+	p_spike_doc_ = p_dbwave_doc->Open_Current_Spike_File();
 	p_spike_doc_->set_spk_list_as_current(currentlist_index);
 
 	p_dc->SelectObject(pold_pen);
@@ -2073,7 +2073,7 @@ void ViewSpikeHist::selectSpkList(int icur, BOOL bRefreshInterface)
 	}
 
 	// select spike list
-	GetDocument()->GetCurrent_Spk_Document()->set_spk_list_as_current(icur);
+	GetDocument()->Get_Current_Spike_File()->set_spk_list_as_current(icur);
 	m_tabCtrl.SetCurSel(icur);
 }
 

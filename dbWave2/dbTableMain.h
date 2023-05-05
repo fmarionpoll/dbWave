@@ -80,7 +80,7 @@ public:
 	long m_ID = 0;					// 1
 	CString m_Filedat = _T("");		// 2
 	CString m_Filespk = _T("");		// 3
-	COleDateTime m_acq_date = static_cast<DATE>(0); // 4
+	COleDateTime m_table_acq_date = static_cast<DATE>(0); // 4
 	CString m_acq_comment = _T(""); // 5
 	long m_IDinsect = 0;			// 6
 	long m_IDsensillum = 0;			// 7
@@ -118,7 +118,6 @@ public:
 	long max_ID = 0;
 	CString m_defaultName = _T("");
 
-public:
 	void BuildAndSortIDArrays();
 	void CopyPathToPath2();
 	void AddCurrentRecordtoIDArrays();

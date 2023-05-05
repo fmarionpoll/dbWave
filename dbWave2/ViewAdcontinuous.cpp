@@ -406,7 +406,7 @@ void ViewADcontinuous::UpdateViewDataFinal()
 void ViewADcontinuous::TransferFilesToDatabase()
 {
 	const auto pdbDoc = GetDocument();
-	pdbDoc->ImportFileList(m_csNameArray); // add file name(s) to the list of records in the database
+	pdbDoc->Import_FileList(m_csNameArray); // add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll(); // clear file names
 
 	CdbTableMain* pSet = &(pdbDoc->m_pDB->m_mainTableSet);

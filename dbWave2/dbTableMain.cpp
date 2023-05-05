@@ -121,7 +121,7 @@ void CdbTableMain::DoFieldExchange(CDaoFieldExchange* pFX)
 	DFX_Long(pFX, m_desc[CH_NSPIKECLASSES].dfx_name_with_brackets, m_nspikeclasses);
 	DFX_Long(pFX, m_desc[CH_PATH_ID].dfx_name_with_brackets, m_path_ID);
 	DFX_Long(pFX, m_desc[CH_PATH2_ID].dfx_name_with_brackets, m_path2_ID);
-	DFX_DateTime(pFX, m_desc[CH_ACQDATE].dfx_name_with_brackets, m_acq_date);
+	DFX_DateTime(pFX, m_desc[CH_ACQDATE].dfx_name_with_brackets, m_table_acq_date);
 
 	int i = CH_IDINSECT;
 	DFX_Long(pFX, m_desc[i].dfx_name_with_brackets, m_IDinsect);
@@ -260,7 +260,7 @@ void CdbTableMain::GetAcqdateArray(CPtrArray* pacqdate)
 	while (!IsEOF())
 	{
 		const auto ptime = new COleDateTime;
-		*ptime = m_acq_date;
+		*ptime = m_table_acq_date;
 		pacqdate->Add(ptime);
 
 		MoveNext();
@@ -275,7 +275,7 @@ BOOL CdbTableMain::CheckIfAcqDateTimeIsUnique(COleDateTime* ptimeNewVal)
 	MoveFirst();
 	while (!IsEOF())
 	{
-		if (*ptimeNewVal == m_acq_date)
+		if (*ptimeNewVal == m_table_acq_date)
 			return FALSE;
 		MoveNext();
 	}
@@ -644,7 +644,7 @@ void CdbTableMain::BuildAndSortIDArrays()
 	SetBookmark(bookmark_current);
 }
 
-// loop over the entire database and copy field m_math into m_path2
+// loop over the entire database and copy field m_path into m_path2
 void CdbTableMain::CopyPathToPath2()
 {
 	if (IsBOF())

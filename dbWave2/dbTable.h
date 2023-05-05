@@ -41,7 +41,6 @@ public:
 	//CdbTableAssociated	m_stim2Set; // TODO
 	//CdbTableAssociated	m_conc2Set;	// TODO
 
-public:
 	CString* m_current_data_filename = nullptr;
 	CString* m_p_current_spike_filename = nullptr;
 	CString m_database_path = _T("");
@@ -110,6 +109,7 @@ public:
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* pIndexTable, int column1, int column2);
 	static void CompactDataBase(const CString& file_name, const CString& file_name_new);
+	boolean IsRecordTimeUnique(COleDateTime acq_date);
 
 protected:
 	BOOL CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbTableAssociated* plink);

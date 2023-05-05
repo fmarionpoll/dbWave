@@ -25,42 +25,42 @@ protected:
 	DECLARE_DYNCREATE(CdbWaveDoc)
 
 protected:
-	CString m_currentDatafileName;
-	CString m_currentSpikefileName;
+	CString		m_currentDatafileName;
+	CString		m_currentSpikefileName;
 
-	BOOL m_bcallnew = true;
+	BOOL		m_bcallnew = true;
 	CStringArray m_csfiles_to_delete;
-	BOOL m_bClearMdbOnExit = false;
-	BOOL m_bTranspose = false;
+	BOOL		m_bClearMdbOnExit = false;
+	BOOL		m_bTranspose = false;
 
 public:
 	AcqDataDoc* m_pDat = nullptr;
-	CSpikeDoc* m_pSpk = nullptr;
-	HMENU m_hMyMenu = nullptr;
-	CIntervals m_stimsaved;
+	CSpikeDoc*	m_pSpk = nullptr;
+	HMENU		m_hMyMenu = nullptr;
+	CIntervals	m_stimsaved;
 
-	CdbTable* m_pDB = nullptr;
-	BOOL m_validTables = false;
+	CdbTable*	m_pDB = nullptr;
+	BOOL		m_validTables = false;
 	CDWordArray m_selectedRecords;
-	CString m_dbFilename;
-	CString m_ProposedDataPathName;
+	CString		m_dbFilename;
+	CString		m_ProposedDataPathName;
 
-	void	ImportFileList(CStringArray& fileList, int nColumns = 1, boolean bHeader = false);
+	void	Import_FileList(CStringArray& fileList, int n_columns = 1, boolean bHeader = false);
+	BOOL	Import_Database(CString& filename);
+
 	BOOL	IsExtensionRecognizedAsDataFile(CString string) const;
-
 	BOOL	IsFilePresent(CString csFilename) {
 		CFileStatus status;
 		return CFile::GetStatus(csFilename, status); }
 
 	CWaveFormat* GetWaveFormat(CString filename, BOOL bIsDatFile);
-	BOOL	ExtractFilenamesFromDatabase(LPCSTR filename, CStringArray& filenames);
-	BOOL	ImportDatabase(CString& filename);
+
 	BOOL	OnNewDocument(LPCTSTR lpszPathName);
 	AcqDataDoc* OpenCurrentDataFile();
 	AcqDataDoc* GetCurrent_Dat_Document() const { return m_pDat; }
 	void	CloseCurrentDataFile() const;
-	CSpikeDoc* open_current_spike_file();
-	CSpikeDoc* GetCurrent_Spk_Document() const { return m_pSpk; }
+	CSpikeDoc* Open_Current_Spike_File();
+	CSpikeDoc* Get_Current_Spike_File() const { return m_pSpk; }
 
 	void	Remove_DuplicateFiles();
 	void	Remove_MissingFiles();
@@ -80,13 +80,13 @@ public:
 	void	Export_NumberOfSpikes(CSharedFile* pSF);
 	CString Export_DatabaseData(int ioption = 0);
 	void	Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list, int kclass);
+	void	Export_DatafilesAsTXTfiles();
+
 	void	SynchronizeSourceInfos(BOOL bAll);
 	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 
-	void	Export_DatafilesAsTXTfiles();
-	BOOL	CopyAllFilesToDirectory(const CString& path);
-	bool	BinaryFileCopy(LPCTSTR pszSource, LPCTSTR pszDest);
-	BOOL	CreateDirectories(const CString& path) const;
+	
+	
 
 protected:
 	static numberIDToText headers[];
@@ -98,23 +98,32 @@ protected:
 	void	set_record_wave_format(sourceData* record);
 	boolean import_file_single(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns,
 	                         boolean bHeader);
-	int		check_files_can_be_opened(CStringArray& filenames, CSharedFile* psf, int nColumns, boolean bHeader);
+	int		check_files_can_be_opened(CStringArray& file_names_array, CSharedFile* psf, int nColumns, boolean bHeader);
 
-	int		index_2d_array(int iRow, int nColumns, boolean bHeader) {
+	static int index_2d_array(int iRow, int nColumns, boolean bHeader) {
 		return (iRow + (bHeader ? 1 : 0)) * nColumns; };
-	int		get_size_2d_array(CStringArray& csArray, int nColumns, boolean bHeader) {
-		return csArray.GetSize() / nColumns - (bHeader ? 1 : 0); }
-	void	remove_row_at(CStringArray& filenames, int iRow, int nColumns, boolean bHeader);
+
+	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) {
+		return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
+	void	remove_row_at(CStringArray& file_name_array, int iRow, int nColumns, boolean bHeader);
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
-	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& filenames, int irecord, int nColumns,
+	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& file_names_array, int irecord, int nColumns,
 	                             boolean bHeader);
 	int		find_column_associated_to_header(const CString& text);
 	void	remove_file_from_disk(CString file_name);
+	CString get_full_path_name_without_extension() const;
+	static CString get_path_directory(CString& full_name);
+	boolean	create_directory_if_does_not_exists(const CString& path) const;
+	BOOL	copy_all_files_to_directory(const CString& path);
+	bool	binary_file_copy(LPCTSTR pszSource, LPCTSTR pszDest) const;
+	void copy_files_to_directory(CStringArray& files_to_copy_array, CString mdb_directory) const;
+	CString copy_file_to_directory(const LPCTSTR pszSource, CString& directory) const;
+	BOOL	import_data_files_from_other_data_base(const CString& otherDataBaseFileName) const;
+
 
 	// Overrides
 public:
 	void	Serialize(CArchive& ar) override;
-
 	BOOL	OnNewDocument() override;
 	BOOL	OnOpenDocument(LPCTSTR lpszPathName) override;
 	BOOL	OnSaveDocument(LPCTSTR lpszPathName) override;

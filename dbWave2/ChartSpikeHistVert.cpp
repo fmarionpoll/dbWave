@@ -594,7 +594,7 @@ void ChartSpikeHistVert::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles
 		if (ballFiles)
 		{
 			p_doc->DB_SetCurrentRecordPosition(ifile);
-			p_doc->open_current_spike_file();
+			p_doc->Open_Current_Spike_File();
 		}
 		SpikeList* p_spikelist = p_doc->m_pSpk->GetSpkList_Current();
 		if (p_spikelist != nullptr && p_spikelist->get_spikes_count() > 0)
@@ -604,6 +604,6 @@ void ChartSpikeHistVert::BuildHistFromDocument(CdbWaveDoc* p_doc, BOOL ballFiles
 	if (ballFiles)
 	{
 		p_doc->DB_SetCurrentRecordPosition(currentfile);
-		p_doc->open_current_spike_file();
+		p_doc->Open_Current_Spike_File();
 	}
 }

@@ -294,13 +294,13 @@ BOOL ViewSpikeSort::OnMove(UINT nIDMoveCommand)
 
 void ViewSpikeSort::update_spike_file()
 {
-	m_pSpkDoc = GetDocument()->open_current_spike_file();
+	m_pSpkDoc = GetDocument()->Open_Current_Spike_File();
 
 	if (nullptr != m_pSpkDoc)
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
-		const int current_index = GetDocument()->GetCurrent_Spk_Document()->GetSpkList_CurrentIndex();
+		const int current_index = GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 
 		// update Tab at the bottom
@@ -458,7 +458,7 @@ void ViewSpikeSort::OnSort()
 		// load spike file
 		BOOL flag_changed;
 		pdb_doc->DB_SetCurrentRecordPosition(i_file);
-		m_pSpkDoc = pdb_doc->open_current_spike_file();
+		m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
 		if (nullptr == m_pSpkDoc)
 			continue;
 
@@ -510,7 +510,7 @@ void ViewSpikeSort::OnSort()
 	{
 		delete dlg_progress;
 		pdb_doc->DB_SetCurrentRecordPosition(current_file);
-		m_pSpkDoc = pdb_doc->open_current_spike_file();
+		m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
 		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	}
 
@@ -692,7 +692,7 @@ void ViewSpikeSort::unflag_all_spikes()
 		for (auto i_file = 0; i_file < pdb_doc->DB_GetNRecords(); i_file++)
 		{
 			pdb_doc->DB_SetCurrentRecordPosition(i_file);
-			m_pSpkDoc = pdb_doc->open_current_spike_file();
+			m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
 
 			for (auto j = 0; j < m_pSpkDoc->GetSpkList_Size(); j++)
 			{
@@ -732,7 +732,7 @@ void ViewSpikeSort::OnMeasure()
 		//if (m_bAllfiles)
 		//{
 		pdb_doc->DB_SetCurrentRecordPosition(i_file);
-		m_pSpkDoc = pdb_doc->open_current_spike_file();
+		m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
 		//}
 		// check if this file is ok
 		if (m_pSpkDoc == nullptr)
@@ -776,7 +776,7 @@ void ViewSpikeSort::OnMeasure()
 	{
 		index_current_file = pdb_doc->DB_GetCurrentRecordPosition();
 		pdb_doc->DB_SetCurrentRecordPosition(index_current_file);
-		m_pSpkDoc = pdb_doc->open_current_spike_file();
+		m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
 		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 	}
 

@@ -1011,7 +1011,8 @@ BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* p_desc)
 BOOL CdbTable::SetRecordItemValue(const int i_column, DB_ITEMDESC* p_desc)
 {
 	auto flag = TRUE;
-	switch (p_desc->data_code_number) {
+	const int data_code_number = m_desctab[i_column].format_code_number;
+	switch (data_code_number) {
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
 			{
@@ -1070,8 +1071,8 @@ void CdbTable::TransferWaveFormatDataToRecord(const CWaveFormat* p_wf)
 	COleDateTime o_time;
 	auto t = p_wf->acqtime;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
-	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_acq_date), FALSE);
-	m_mainTableSet.m_acq_date = o_time;
+	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_table_acq_date), FALSE);
+	m_mainTableSet.m_table_acq_date = o_time;
 	m_mainTableSet.m_acqdate_time = o_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
 	m_mainTableSet.m_acqdate_day = o_time;
@@ -1120,14 +1121,13 @@ void CdbTable::DeleteUnusedEntriesInAccessoryTables()
 
 void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_table, const int first_column, const int last_column)
 {
-	COleVariant var_value0, var_value1;
-
 	if (p_index_table->IsBOF() && p_index_table->IsEOF())
 		return;
 
 	p_index_table->MoveFirst();
 	while (!p_index_table->IsEOF())
 	{
+		COleVariant var_value1;
 		p_index_table->GetFieldValue(1, var_value1);
 		const auto id_current = var_value1.lVal;
 		const auto flag1 = m_mainTableSet.FindIDinColumn(id_current, first_column);
@@ -1140,6 +1140,39 @@ void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_ta
 		}
 		p_index_table->MoveNext();
 	}
+}
+
+boolean CdbTable::IsRecordTimeUnique(COleDateTime acq_date)
+{
+	boolean unique = true;
+
+	ASSERT(m_mainTableSet.CanBookmark());
+	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
+		return unique;
+
+	try
+	{
+		const auto ol = m_mainTableSet.GetBookmark();
+		m_mainTableSet.MoveFirst();
+
+
+		while (!m_mainTableSet.IsEOF())
+		{
+			if (acq_date == m_mainTableSet.m_table_acq_date)
+			{
+				unique = false;
+				break;
+			}
+			m_mainTableSet.MoveNext();
+		}
+		m_mainTableSet.SetBookmark(ol);
+	}
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 9);
+		e->Delete();
+	}
+	return unique;
 }
 
 void CdbTable::CompactDataBase(const CString& file_name, const CString& file_name_new)

@@ -133,11 +133,11 @@ BOOL CNoteDoc::openFileList(CString& cspathname, CStringArray& csFileList, CStri
 			if (p_app->options_import.bReadColumns)
 			{
 				int nColumns2 = csDescriptorsList.GetCount() / (csFileList.GetCount() + p_app->options_import.bHeader);
-				p_dbwave_doc->ImportFileList(csDescriptorsList, nColumns, p_app->options_import.bHeader);
+				p_dbwave_doc->Import_FileList(csDescriptorsList, nColumns, p_app->options_import.bHeader);
 			}
 			else
 			{
-				p_dbwave_doc->ImportFileList(csFileList);
+				p_dbwave_doc->Import_FileList(csFileList);
 			}
 
 			auto p_wave_format = (p_app->m_dbWaveView_Template)->CreateNewFrame(p_dbwave_doc, nullptr);
