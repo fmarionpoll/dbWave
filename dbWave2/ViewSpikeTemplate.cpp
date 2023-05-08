@@ -502,7 +502,7 @@ void ViewSpikeTemplates::OnFormatAlldata()
 void ViewSpikeTemplates::OnFormatGainadjust()
 {
 	short maxval, minval;
-	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
+	GetDocument()->Get_MaxMin_Of_All_Spikes(m_bAllFiles, TRUE, &maxval, &minval);
 	const auto extent = MulDiv(maxval - minval + 1, 10, 9);
 	const auto zero = (maxval + minval) / 2;
 
@@ -512,7 +512,7 @@ void ViewSpikeTemplates::OnFormatGainadjust()
 void ViewSpikeTemplates::OnFormatCentercurve()
 {
 	short maxval, minval;
-	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxval, &minval);
+	GetDocument()->Get_MaxMin_Of_All_Spikes(m_bAllFiles, TRUE, &maxval, &minval);
 	const auto extent = m_ChartSpkWnd_Shape.GetYWExtent();
 	const auto zero = (maxval + minval) / 2;
 	setExtentZeroAllDisplay(extent, zero);

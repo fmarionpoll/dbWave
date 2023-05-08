@@ -895,7 +895,7 @@ void ViewSpikeSort::OnFormatGainadjust()
 {
 	// adjust gain
 	short maxvalue, minvalue;
-	GetDocument()->GetAllSpkMaxMin(m_bAllFiles, TRUE, &maxvalue, &minvalue);
+	GetDocument()->Get_MaxMin_Of_All_Spikes(m_bAllFiles, TRUE, &maxvalue, &minvalue);
 
 	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	auto y_wo = (maxvalue + minvalue) / 2;
@@ -905,7 +905,7 @@ void ViewSpikeSort::OnFormatGainadjust()
 
 	// adjust gain for spk_hist_wnd_ and XYp: data = computed values
 	// search max min of parameter values
-	const CSize measure = GetDocument()->GetSpkMaxMin_y1(m_bAllFiles);
+	const CSize measure = GetDocument()->Get_MaxMin_Of_Single_Spike(m_bAllFiles);
 	maxvalue = static_cast<short>(measure.cx);
 	minvalue = static_cast<short>(measure.cy);
 

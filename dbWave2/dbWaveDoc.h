@@ -71,22 +71,21 @@ public:
 	void	SetDB_n_spikes(long n_spikes) const; 
 	long	GetDB_n_spike_classes() const;
 	void	SetDB_n_spike_classes(long n_classes) const;
-	void	GetAllSpkMaxMin(BOOL bAll, BOOL b_recalculate, short* max, short* min);
-	CSize	GetSpkMaxMin_y1(BOOL bAll);
+	void	Get_MaxMin_Of_All_Spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min);
+	CSize	Get_MaxMin_Of_Single_Spike(BOOL bAll);
 
 	void	SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
 
 	void	Export_DataAsciiComments(CSharedFile* p_shared_file);
 	void	Export_NumberOfSpikes(CSharedFile* pSF);
-	CString Export_DatabaseData(int ioption = 0);
+	CString Export_DatabaseData(int option = 0) const;
 	void	Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list, int kclass);
 	void	Export_DatafilesAsTXTfiles();
 
 	void	SynchronizeSourceInfos(BOOL bAll);
 	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
-
-	
-	
+	BOOL	Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) ;
+	BOOL	Copy_Files_To_Directory(const CString& path);
 
 protected:
 	static numberIDToText headers[];
@@ -114,13 +113,11 @@ protected:
 	CString get_full_path_name_without_extension() const;
 	static CString get_path_directory(CString& full_name);
 	boolean	create_directory_if_does_not_exists(const CString& path) const;
-	BOOL	copy_all_files_to_directory(const CString& path);
+	
 	bool	binary_file_copy(LPCTSTR pszSource, LPCTSTR pszDest) const;
 	void copy_files_to_directory(CStringArray& files_to_copy_array, CString mdb_directory) const;
 	CString copy_file_to_directory(const LPCTSTR pszSource, CString& directory) const;
-	BOOL	import_data_files_from_other_data_base(const CString& otherDataBaseFileName) const;
-
-
+	
 	// Overrides
 public:
 	void	Serialize(CArchive& ar) override;

@@ -423,7 +423,7 @@ CSpikeDoc* CdbWaveDoc::Open_Current_Spike_File()
 	return m_pSpk;
 }
 
-void CdbWaveDoc::GetAllSpkMaxMin(BOOL b_all_files, BOOL b_recalculate, short* max, short* min)
+void CdbWaveDoc::Get_MaxMin_Of_All_Spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min)
 {
 	long n_files = 1;
 	long n_current_file = 0;
@@ -453,7 +453,7 @@ void CdbWaveDoc::GetAllSpkMaxMin(BOOL b_all_files, BOOL b_recalculate, short* ma
 	}
 }
 
-CSize CdbWaveDoc::GetSpkMaxMin_y1(BOOL bAll)
+CSize CdbWaveDoc::Get_MaxMin_Of_Single_Spike(BOOL bAll)
 {
 	long n_files = 1;
 	long n_current_file = 0;
@@ -688,7 +688,7 @@ boolean CdbWaveDoc::create_directory_if_does_not_exists(const CString& path) con
 	return TRUE;
 }
 
-BOOL CdbWaveDoc::copy_all_files_to_directory(const CString& path)
+BOOL CdbWaveDoc::Copy_Files_To_Directory(const CString& path)
 {
 	// prepare dialog box to tell what is going on ----------------------
 	DlgProgress dlg;
@@ -1398,7 +1398,7 @@ CString CdbWaveDoc::get_full_path_name_without_extension() const
 
 CString CdbWaveDoc::get_path_directory(CString& full_name)
 {
-	const auto i_position_of_extension = full_name.ReverseFind('\');
+	const auto i_position_of_extension = full_name.ReverseFind('\\');
 	return full_name.Left(i_position_of_extension);
 }
 
@@ -1413,7 +1413,7 @@ void CdbWaveDoc::copy_files_to_directory(CStringArray& files_to_copy, CString md
 	}
 }
 
-BOOL CdbWaveDoc::import_data_files_from_other_data_base(const CString& otherDataBaseFileName) const
+BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) 
 {
 	const auto p_new_doc = new CdbWaveDoc; // open database
 	if (!p_new_doc->OnOpenDocument(otherDataBaseFileName))
@@ -1635,12 +1635,12 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list
 	pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 
-CString CdbWaveDoc::Export_DatabaseData(const int ioption)
+CString CdbWaveDoc::Export_DatabaseData(const int option) const
 {
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_viewspikes = &(p_app->options_viewspikes);
 	CString separator = _T("\t");
-	if (ioption == 1)
+	if (option == 1)
 		separator = _T(" | ");
 
 	// export data comment into csFileComment

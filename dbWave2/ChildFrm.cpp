@@ -1035,7 +1035,7 @@ void CChildFrame::OnToolsImportDatabase()
 		if (p_dbWave_doc == nullptr)
 			return;
 		//p_dbWave_doc->ImportDatabase(fileName);
-		p_dbWave_doc->import_data_files_from_other_data_base(fileName);
+		p_dbWave_doc->Import_Data_Files_From_Another_DataBase(fileName);
 		p_dbWave_doc->DBMoveLast();
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
@@ -1052,7 +1052,7 @@ void CChildFrame::OnToolsCopyAllProjectFiles()
 		CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 		if (p_dbWave_doc == nullptr)
 			return;
-		p_dbWave_doc->copy_all_files_to_directory(destination_path);
+		p_dbWave_doc->Copy_Files_To_Directory(destination_path);
 	}
 }
 
