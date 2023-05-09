@@ -104,7 +104,7 @@ public:
 	boolean GetRecordValueString(int column_index, CString& output_string);
 	boolean GetRecordValueLong(int column_index, long& value);
 
-	BOOL ImportRecordfromDatabase(CdbTable* pdbW);
+	BOOL ImportRecordFromDatabase(CdbTable* pdbW);
 	void TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* pIndexTable, int column1, int column2);
@@ -112,8 +112,8 @@ public:
 	boolean IsRecordTimeUnique(COleDateTime acq_date);
 
 protected:
-	BOOL CreateRelationwithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbTableAssociated* plink);
-	BOOL CreateRelationwith2AssocTables(LPCTSTR lpszForeignTable, int icol1, int icol2);
+	BOOL CreateRelationWithAssocTable(LPCTSTR lpszForeignTable, int icol, long lAttributes, CdbTableAssociated* plink);
+	BOOL CreateRelationWith2AssocTables(LPCTSTR lpszForeignTable, int icol1, int icol2);
 	void SetAttachedTablesNames();
 	boolean CreateRelationsWithAttachedTables(const CString& csTable);
 };

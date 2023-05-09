@@ -1370,7 +1370,7 @@ BOOL CdbWaveDoc::Import_Database(CString& filename)
 	auto n_added_records = 0;
 	while (!p_new_database->m_mainTableSet.IsEOF())
 	{
-		this->m_pDB->ImportRecordfromDatabase(p_new_database);
+		this->m_pDB->ImportRecordFromDatabase(p_new_database);
 		n_added_records++;
 		p_new_database->m_mainTableSet.MoveNext();
 	}
@@ -1426,12 +1426,12 @@ BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDat
 	{
 		if (this->m_pDB->IsRecordTimeUnique(p_new_database->m_mainTableSet.m_table_acq_date))
 		{
-			this->m_pDB->ImportRecordfromDatabase(p_new_database);
+			this->m_pDB->ImportRecordFromDatabase(p_new_database);
 			CString dat_name = p_new_database->GetDatFilenameFromCurrentRecord();
-			if (!dat_name.IsEmpty()) 
+			if (!dat_name.IsEmpty() && file_exists(dat_name)) 
 				file_list_dat.Add(dat_name);
 			CString spk_name = p_new_database->GetSpkFilenameFromCurrentRecord();
-			if (!spk_name.IsEmpty())
+			if (!spk_name.IsEmpty() && file_exists(spk_name))
 				file_list_spk.Add(spk_name);
 			n_added_records++;
 		}
@@ -1456,6 +1456,12 @@ BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDat
 	m_pDB->m_mainTableSet.BuildAndSortIDArrays();
 
 	return TRUE;
+}
+
+boolean CdbWaveDoc::file_exists(const CString& file_name) const
+{
+	CFileStatus status;
+	return CFile::GetStatus(file_name, status);
 }
 
 void CdbWaveDoc::SynchronizeSourceInfos(const BOOL b_all)

@@ -223,7 +223,7 @@ protected:
 	void drawGridEvenlySpaced(CDC* p_dc) const;
 	void drawGridFromRuler(CDC* p_dc, const Ruler* pRuler) const;
 	void drawGridNicelySpaced(CDC* p_dc);
-	void drawScalefromRuler(CDC* p_dc, Ruler* scale);
+	void DrawScaleFromRuler(CDC* p_dc, Ruler* scale);
 
 	// Generated message map functions
 protected:

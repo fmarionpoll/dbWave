@@ -397,7 +397,7 @@ void ChartWnd::drawGridFromRuler(CDC* p_dc, const Ruler* pRuler) const
 	p_dc->SelectObject(p_old_pen);
 }
 
-void ChartWnd::drawScalefromRuler(CDC* p_dc, Ruler* pRuler)
+void ChartWnd::DrawScaleFromRuler(CDC* p_dc, Ruler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -501,7 +501,7 @@ void ChartWnd::drawScalefromRuler(CDC* p_dc, Ruler* pRuler)
 void ChartWnd::drawGridNicelySpaced(CDC* p_dc)
 {
 	if (m_pXRulerBar == nullptr)
-		drawScalefromRuler(p_dc, &m_xRuler);
+		DrawScaleFromRuler(p_dc, &m_xRuler);
 	else
 	{
 		m_pXRulerBar->DrawScalefromRuler(&m_xRuler);
@@ -510,7 +510,7 @@ void ChartWnd::drawGridNicelySpaced(CDC* p_dc)
 	}
 
 	if (m_pYRulerBar == nullptr)
-		drawScalefromRuler(p_dc, &m_yRuler);
+		DrawScaleFromRuler(p_dc, &m_yRuler);
 	else
 	{
 		m_pYRulerBar->DrawScalefromRuler(&m_yRuler);

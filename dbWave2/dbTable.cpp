@@ -82,17 +82,17 @@ boolean CdbTable::CreateRelationsWithAttachedTables(const CString& csTable)
 {
 	// create relations
 	const long l_attr = dbRelationDontEnforce; //dbRelationUpdateCascade;
-	if (!CreateRelationwithAssocTable(csTable, CH_INSECT_ID, l_attr, &m_insectSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_SENSILLUM_ID, l_attr, &m_sensillumSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_OPERATOR_ID, l_attr, &m_operatorSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_LOCATION_ID, l_attr, &m_locationSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_STRAIN_ID, l_attr, &m_strainSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_SEX_ID, l_attr, &m_sexSet)) return FALSE;
-	if (!CreateRelationwithAssocTable(csTable, CH_EXPT_ID, l_attr, &m_exptSet)) return FALSE;
+	if (!CreateRelationWithAssocTable(csTable, CH_INSECT_ID, l_attr, &m_insectSet)) return FALSE;
+	if (!CreateRelationWithAssocTable(csTable, CH_SENSILLUM_ID, l_attr, &m_sensillumSet)) return FALSE;
+	if (!CreateRelationWithAssocTable(csTable, CH_OPERATOR_ID, l_attr, &m_operatorSet)) return FALSE;
+	if (!CreateRelationWithAssocTable(csTable, CH_LOCATION_ID, l_attr, &m_locationSet)) return FALSE;
+	if (!CreateRelationWithAssocTable(csTable, CH_STRAIN_ID, l_attr, &m_strainSet)) return FALSE;
+	if (!CreateRelationWithAssocTable(csTable, CH_SEX_ID, l_attr, &m_sexSet)) return FALSE;
+	if (!CreateRelationWithAssocTable(csTable, CH_EXPT_ID, l_attr, &m_exptSet)) return FALSE;
 
-	if (!CreateRelationwith2AssocTables(csTable, CH_PATH_ID, CH_PATH2_ID)) return FALSE;
-	if (!CreateRelationwith2AssocTables(csTable, CH_STIM_ID, CH_STIM2_ID)) return FALSE;
-	if (!CreateRelationwith2AssocTables(csTable, CH_CONC_ID, CH_CONC2_ID)) return FALSE;
+	if (!CreateRelationWith2AssocTables(csTable, CH_PATH_ID, CH_PATH2_ID)) return FALSE;
+	if (!CreateRelationWith2AssocTables(csTable, CH_STIM_ID, CH_STIM2_ID)) return FALSE;
+	if (!CreateRelationWith2AssocTables(csTable, CH_CONC_ID, CH_CONC2_ID)) return FALSE;
 
 	return true;
 }
@@ -186,7 +186,7 @@ BOOL CdbTable::CreateMainTable(const CString& csTable)
 	return CreateRelationsWithAttachedTables(csTable);
 }
 
-BOOL CdbTable::CreateRelationwith2AssocTables(const LPCTSTR lpsz_foreign_table, const int column_first,
+BOOL CdbTable::CreateRelationWith2AssocTables(const LPCTSTR lpsz_foreign_table, const int column_first,
                                                   const int column_last)
 {
 	try
@@ -224,7 +224,7 @@ BOOL CdbTable::CreateRelationwith2AssocTables(const LPCTSTR lpsz_foreign_table, 
 }
 
 // insect name: "table_insectname" relates "insect" table with "ID" and "insectname_ID"
-BOOL CdbTable::CreateRelationwithAssocTable(const LPCTSTR lpsz_foreign_table, const int column,
+BOOL CdbTable::CreateRelationWithAssocTable(const LPCTSTR lpsz_foreign_table, const int column,
                                                 const long l_attributes, CdbTableAssociated* p_link)
 {
 	try
@@ -1047,7 +1047,7 @@ BOOL CdbTable::SetRecordItemValue(const int i_column, DB_ITEMDESC* p_desc)
 	return flag;
 }
 
-BOOL CdbTable::ImportRecordfromDatabase(CdbTable* p_w_database)
+BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_w_database)
 {
 	// variables
 	DB_ITEMDESC desc;
@@ -1152,9 +1152,8 @@ boolean CdbTable::IsRecordTimeUnique(COleDateTime acq_date)
 
 	try
 	{
-		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
-
+		const auto ol = m_mainTableSet.GetBookmark();
 
 		while (!m_mainTableSet.IsEOF())
 		{

@@ -115,8 +115,9 @@ protected:
 	boolean	create_directory_if_does_not_exists(const CString& path) const;
 	
 	bool	binary_file_copy(LPCTSTR pszSource, LPCTSTR pszDest) const;
-	void copy_files_to_directory(CStringArray& files_to_copy_array, CString mdb_directory) const;
+	void	copy_files_to_directory(CStringArray& files_to_copy_array, CString mdb_directory) const;
 	CString copy_file_to_directory(const LPCTSTR pszSource, CString& directory) const;
+	boolean	file_exists(const CString& file_name) const;
 	
 	// Overrides
 public:
