@@ -1406,7 +1406,7 @@ void CdbWaveDoc::copy_files_to_directory(CStringArray& files_to_copy, CString md
 {
 	for (int i = 0; i < files_to_copy.GetCount(); i++)
 	{
-		TRACE("copy file i=%i", i, " name=" , files_to_copy[i], "\n");
+		TRACE("copy file i=%i", i, " name=" , files_to_copy[i], "\r");
 		const CString file_copied = copy_file_to_directory(files_to_copy[i], mdb_directory);
 		files_to_copy[i] = file_copied;
 	}
@@ -1431,9 +1431,12 @@ BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDat
 		if (this->m_pDB->IsRecordTimeUnique(p_new_database->m_mainTableSet.m_table_acq_date))
 		{
 			this->m_pDB->ImportRecordfromDatabase(p_new_database);
-			file_list_dat.Add(p_new_database->GetDatFilenameFromCurrentRecord());
-			file_list_spk.Add(p_new_database->GetSpkFilenameFromCurrentRecord());
-
+			CString dat_name = p_new_database->GetDatFilenameFromCurrentRecord();
+			if (!dat_name.IsEmpty()) 
+				file_list_dat.Add(dat_name);
+			CString spk_name = p_new_database->GetSpkFilenameFromCurrentRecord();
+			if (!spk_name.IsEmpty())
+				file_list_spk.Add(spk_name);
 			n_added_records++;
 		}
 		p_new_database->m_mainTableSet.MoveNext();
