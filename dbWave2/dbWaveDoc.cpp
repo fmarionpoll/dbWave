@@ -1406,8 +1406,7 @@ void CdbWaveDoc::copy_files_to_directory(CStringArray& files_to_copy, CString md
 {
 	for (int i = 0; i < files_to_copy.GetCount(); i++)
 	{
-		CString filename;
-		CString dest = mdb_directory + "\\" + filename;
+		TRACE("copy file i=%i", i, " name=" , files_to_copy[i], "\n");
 		const CString file_copied = copy_file_to_directory(files_to_copy[i], mdb_directory);
 		files_to_copy[i] = file_copied;
 	}
