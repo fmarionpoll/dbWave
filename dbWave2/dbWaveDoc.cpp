@@ -1405,11 +1405,7 @@ CString CdbWaveDoc::get_path_directory(CString& full_name)
 void CdbWaveDoc::copy_files_to_directory(CStringArray& files_to_copy, CString mdb_directory) const
 {
 	for (int i = 0; i < files_to_copy.GetCount(); i++)
-	{
-		TRACE("copy file i=%i", i, " name=" , files_to_copy[i], "\r");
-		const CString file_copied = copy_file_to_directory(files_to_copy[i], mdb_directory);
-		files_to_copy[i] = file_copied;
-	}
+		files_to_copy[i] = copy_file_to_directory(files_to_copy[i], mdb_directory);
 }
 
 BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) 

@@ -286,7 +286,15 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_DROPPED:
 		m_pSpkDoc->SetModifiedFlag();
-		m_spike_class = m_pSpkList->get_spike(m_spike_index)->get_class_id();
+		{
+			const int old_class = m_spike_class;
+			m_spike_class = m_pSpkList->get_spike(m_spike_index)->get_class_id();
+			if (old_class != m_spike_class)
+			{
+				m_ChartDataWnd.Invalidate();
+				m_spikeClassListBox.Invalidate();
+			}
+		}
 		UpdateData(FALSE);
 		break;
 
