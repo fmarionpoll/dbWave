@@ -67,11 +67,11 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_SOURCECLASS, &ViewSpikeSort::OnEnChangeSourceclass)
-	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &ViewSpikeSort::OnEnChangeDestinationclass)
+	ON_EN_CHANGE(IDC_SOURCECLASS, &ViewSpikeSort::OnEnChangeSourceSpikeClass)
+	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &ViewSpikeSort::OnEnChangeDestinationSpikeClass)
 	ON_CBN_SELCHANGE(IDC_PARAMETER, &ViewSpikeSort::OnSelchangeParameter)
-	ON_EN_CHANGE(IDC_LIMITLOWER, &ViewSpikeSort::OnEnChangelower)
-	ON_EN_CHANGE(IDC_LIMITUPPER, &ViewSpikeSort::OnEnChangeupper)
+	ON_EN_CHANGE(IDC_LIMITLOWER, &ViewSpikeSort::OnEnChangeLower)
+	ON_EN_CHANGE(IDC_LIMITUPPER, &ViewSpikeSort::OnEnChangeUpper)
 	ON_EN_CHANGE(IDC_T1, &ViewSpikeSort::OnEnChangeT1)
 	ON_EN_CHANGE(IDC_T2, &ViewSpikeSort::OnEnChangeT2)
 	ON_BN_CLICKED(IDC_EXECUTE, &ViewSpikeSort::OnSort)
@@ -84,15 +84,15 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikeSort::OnToolsEdittransformspikes)
 	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &ViewSpikeSort::OnToolsAlignspikes)
 
-	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeSort::OnEnChangetimeFirst)
-	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeSort::OnEnChangetimeLast)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeSort::OnEnChangeTimeFirst)
+	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeSort::OnEnChangeTimeLast)
 	ON_EN_CHANGE(IDC_EDIT7, &ViewSpikeSort::OnEnChangemVMin)
 	ON_EN_CHANGE(IDC_EDIT6, &ViewSpikeSort::OnEnChangemVMax)
 	ON_EN_CHANGE(IDC_EDITLEFT2, &ViewSpikeSort::OnEnChangeEditLeft2)
 	ON_EN_CHANGE(IDC_EDITRIGHT2, &ViewSpikeSort::OnEnChangeEditRight2)
 	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikeSort::OnEnChangeNOspike)
 	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &ViewSpikeSort::OnToolsEdittransformspikes)
-	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeSort::OnEnChangespike_indexclass)
+	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeSort::OnEnChangeSpikeClass)
 	ON_EN_CHANGE(IDC_BINMV, &ViewSpikeSort::OnEnChangeNBins)
 END_MESSAGE_MAP()
 
@@ -652,14 +652,14 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				m_psC->ilower = m_chart_measures.m_HZtags.GetValue(m_itaglow);
 				m_lower = static_cast<float>(m_psC->ilower) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				mm_lower.m_bEntryDone = TRUE;
-				OnEnChangelower();
+				OnEnChangeLower();
 			}
 			else if (shortValue == m_itagup) // second tag
 			{
 				m_psC->iupper = m_chart_measures.m_HZtags.GetValue(m_itagup); 
 				m_upper = static_cast<float>(m_psC->iupper) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				mm_upper.m_bEntryDone = TRUE;
-				OnEnChangeupper();
+				OnEnChangeUpper();
 			}
 		}
 		break;
@@ -1332,7 +1332,7 @@ void ViewSpikeSort::OnEnChangeEditRight2()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeSourceclass()
+void ViewSpikeSort::OnEnChangeSourceSpikeClass()
 {
 	if (mm_source_class.m_bEntryDone)
 	{
@@ -1356,7 +1356,7 @@ void ViewSpikeSort::OnEnChangeSourceclass()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeDestinationclass()
+void ViewSpikeSort::OnEnChangeDestinationSpikeClass()
 {
 	if (mm_destination_class.m_bEntryDone)
 	{
@@ -1383,7 +1383,7 @@ void ViewSpikeSort::OnSelchangeParameter()
 	// 2  mS      vis    mS      vis    vis     vis  vis   vis
 }
 
-void ViewSpikeSort::OnEnChangelower()
+void ViewSpikeSort::OnEnChangeLower()
 {
 	if (mm_lower.m_bEntryDone)
 	{
@@ -1401,7 +1401,7 @@ void ViewSpikeSort::OnEnChangelower()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeupper()
+void ViewSpikeSort::OnEnChangeUpper()
 {
 	if (mm_upper.m_bEntryDone)
 	{
@@ -1470,7 +1470,7 @@ void ViewSpikeSort::OnEnChangeT2()
 	}
 }
 
-void ViewSpikeSort::OnEnChangetimeFirst()
+void ViewSpikeSort::OnEnChangeTimeFirst()
 {
 	if (mm_timeFirst.m_bEntryDone)
 	{
@@ -1487,7 +1487,7 @@ void ViewSpikeSort::OnEnChangetimeFirst()
 	}
 }
 
-void ViewSpikeSort::OnEnChangetimeLast()
+void ViewSpikeSort::OnEnChangeTimeLast()
 {
 	if (mm_timeLast.m_bEntryDone)
 	{
@@ -1570,7 +1570,7 @@ void ViewSpikeSort::OnEnChangeNOspike()
 	}
 }
 
-void ViewSpikeSort::OnEnChangespike_indexclass()
+void ViewSpikeSort::OnEnChangeSpikeClass()
 {
 	if (mm_spike_index_class.m_bEntryDone)
 	{

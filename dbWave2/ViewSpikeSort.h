@@ -136,18 +136,18 @@ public:
 	afx_msg void OnToolsAlignspikes();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
-	afx_msg void OnEnChangelower();
-	afx_msg void OnEnChangeupper();
+	afx_msg void OnEnChangeLower();
+	afx_msg void OnEnChangeUpper();
 	afx_msg void OnEnChangeT1();
 	afx_msg void OnEnChangeT2();
-	afx_msg void OnEnChangeSourceclass();
-	afx_msg void OnEnChangeDestinationclass();
-	afx_msg void OnEnChangetimeFirst();
-	afx_msg void OnEnChangetimeLast();
+	afx_msg void OnEnChangeSourceSpikeClass();
+	afx_msg void OnEnChangeDestinationSpikeClass();
+	afx_msg void OnEnChangeTimeFirst();
+	afx_msg void OnEnChangeTimeLast();
 	afx_msg void OnEnChangemVMin();
 	afx_msg void OnEnChangemVMax();
 	afx_msg void OnEnChangeNOspike();
-	afx_msg void OnEnChangespike_indexclass();
+	afx_msg void OnEnChangeSpikeClass();
 	afx_msg void OnEnChangeEditLeft2();
 	afx_msg void OnEnChangeEditRight2();
 	afx_msg void OnEnChangeNBins();
