@@ -194,23 +194,23 @@ BOOL DlgADExperiment::OnInitDialog()
 
 	m_csMoreComment = m_pwaveFormat->csMoreComment;
 	LoadList(&m_coConcentration, &(m_pADC_options->csA_concentration), m_pADC_options->icsA_concentration,
-	         &(m_pdbDoc->m_pDB->m_concSet));
+	         &(m_pdbDoc->m_pDB->m_conc_set));
 	LoadList(&m_coStimulus, &(m_pADC_options->csA_stimulus), m_pADC_options->icsA_stimulus,
-	         &(m_pdbDoc->m_pDB->m_stimSet));
+	         &(m_pdbDoc->m_pDB->m_stim_set));
 	LoadList(&m_coConcentration2, &(m_pADC_options->csA_concentration2), m_pADC_options->icsA_concentration2,
-	         &(m_pdbDoc->m_pDB->m_concSet));
+	         &(m_pdbDoc->m_pDB->m_conc_set));
 	LoadList(&m_coStimulus2, &(m_pADC_options->csA_stimulus2), m_pADC_options->icsA_stimulus2,
-	         &(m_pdbDoc->m_pDB->m_stimSet));
-	LoadList(&m_coInsect, &(m_pADC_options->csA_insect), m_pADC_options->icsA_insect, &(m_pdbDoc->m_pDB->m_insectSet));
+	         &(m_pdbDoc->m_pDB->m_stim_set));
+	LoadList(&m_coInsect, &(m_pADC_options->csA_insect), m_pADC_options->icsA_insect, &(m_pdbDoc->m_pDB->m_insect_set));
 	LoadList(&m_coLocation, &(m_pADC_options->csA_location), m_pADC_options->icsA_location,
 	         &(m_pdbDoc->m_pDB->m_locationSet));
 	LoadList(&m_coSensillum, &(m_pADC_options->csA_sensillum), m_pADC_options->icsA_sensillum,
-	         &(m_pdbDoc->m_pDB->m_sensillumSet));
-	LoadList(&m_coStrain, &(m_pADC_options->csA_strain), m_pADC_options->icsA_strain, &(m_pdbDoc->m_pDB->m_strainSet));
-	LoadList(&m_coSex, &(m_pADC_options->csA_sex), m_pADC_options->icsA_sex, &(m_pdbDoc->m_pDB->m_sexSet));
+	         &(m_pdbDoc->m_pDB->m_sensillum_set));
+	LoadList(&m_coStrain, &(m_pADC_options->csA_strain), m_pADC_options->icsA_strain, &(m_pdbDoc->m_pDB->m_strain_set));
+	LoadList(&m_coSex, &(m_pADC_options->csA_sex), m_pADC_options->icsA_sex, &(m_pdbDoc->m_pDB->m_sex_set));
 	LoadList(&m_coOperator, &(m_pADC_options->csA_operatorname), m_pADC_options->icsA_operatorname,
-	         &(m_pdbDoc->m_pDB->m_operatorSet));
-	LoadList(&m_coExpt, &(m_pADC_options->csA_expt), m_pADC_options->icsA_expt, &(m_pdbDoc->m_pDB->m_exptSet));
+	         &(m_pdbDoc->m_pDB->m_operator_set));
+	LoadList(&m_coExpt, &(m_pADC_options->csA_expt), m_pADC_options->icsA_expt, &(m_pdbDoc->m_pDB->m_expt_set));
 	LoadList(&m_coRepeat, nullptr, m_pADC_options->icsA_repeat, nullptr);
 	LoadList(&m_coRepeat2, nullptr, m_pADC_options->icsA_repeat2, nullptr);
 

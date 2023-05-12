@@ -34,7 +34,7 @@ protected:
 	CFont m_fntPropList;
 
 	static int m_noCol[]; // [26] succession of fields
-	static int m_propCol[NTABLECOLS]; // no col (0 to 28), no group (1, 2, 3 or -1 if not displayed) and type ()
+	static int m_propCol[N_TABLE_COLUMNS]; // no col (0 to 28), no group (1, 2, 3 or -1 if not displayed) and type ()
 	CUIntArray m_typeProps;
 	CUIntArray m_iIDProps;
 	CUIntArray m_groupProps;

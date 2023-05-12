@@ -225,10 +225,10 @@ void CFilterWnd::InitFilterList()
 	ASSERT(ID_RECORD_SORT == m_wndToolBar.GetItemID(3));
 	if (p_combo->GetCount() <= 0)
 	{
-		for (auto i = 0; i < NTABLECOLS; i++)
+		for (auto i = 0; i < N_TABLE_COLUMNS; i++)
 		{
-			//p_combo->AddSortedItem(p_db->m_desctab[i].descriptor, i);
-			p_combo->AddSortedItem(CdbTable::m_desctab[i].description, i);
+			//p_combo->AddSortedItem(p_db->m_column_properties[i].descriptor, i);
+			p_combo->AddSortedItem(CdbTable::m_column_properties[i].description, i);
 		}
 	}
 	p_combo->SelectItem(p_db->m_mainTableSet.m_strSort);
@@ -249,13 +249,13 @@ void CFilterWnd::InitFilterList()
 	{
 		const auto icol = m_noCol[i];
 		const auto pdesc = p_db->GetRecordItemDescriptor(icol);
-		m_htreeitem[i] = m_wndFilterView.InsertItem(CdbTable::m_desctab[icol].description, TVI_ROOT); //hRoot);
-		//m_htreeitem[i] = m_wndFilterView.InsertItem(p_db->m_desctab[icol].descriptor, TVI_ROOT); //hRoot);
+		m_htreeitem[i] = m_wndFilterView.InsertItem(CdbTable::m_column_properties[icol].description, TVI_ROOT); //hRoot);
+		//m_htreeitem[i] = m_wndFilterView.InsertItem(p_db->m_column_properties[icol].descriptor, TVI_ROOT); //hRoot);
 		m_wndFilterView.SetItemData(m_htreeitem[i], m_noCol[i]); // save table index into head of the list
 
 		cs_comment.Format(_T("Category %i: "), i);
-		cs_comment += CdbTable::m_desctab[icol].description;
-		//cs_comment += p_db->m_desctab[icol].descriptor;
+		cs_comment += CdbTable::m_column_properties[icol].description;
+		//cs_comment += p_db->m_column_properties[icol].descriptor;
 		dlg.SetStatus(cs_comment);
 
 		// collect data (array of unique descriptors)
@@ -571,7 +571,7 @@ void CFilterWnd::OnSortRecords()
 	const auto isel = p_combo->GetCurSel();
 	ASSERT(isel != CB_ERR);
 	const int i = p_combo->GetItemData(isel);
-	p_database->m_mainTableSet.m_strSort = p_database->m_desctab[i].header_name;
+	p_database->m_mainTableSet.m_strSort = p_database->m_column_properties[i].header_name;
 
 	p_database->m_mainTableSet.RefreshQuery();
 	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);

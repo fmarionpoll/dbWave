@@ -95,19 +95,19 @@ void DlgdbEditRecord::PopulateControls()
 {
 	auto p_db = m_pdbDoc->m_pDB;
 	// fill combo boxes associated with a secondary table
-	PopulateCombo_WithText(p_db->m_stimSet, m_ctlstim, m_pSet->m_stim_ID);
-	PopulateCombo_WithText(p_db->m_concSet, m_ctlconc, m_pSet->m_conc_ID);
-	PopulateCombo_WithText(p_db->m_stimSet, m_ctlstim2, m_pSet->m_stim2_ID);
-	PopulateCombo_WithText(p_db->m_concSet, m_ctlconc2, m_pSet->m_conc2_ID);
-	PopulateCombo_WithText(p_db->m_insectSet, m_ctlinsect, m_pSet->m_insect_ID);
-	PopulateCombo_WithText(p_db->m_strainSet, m_ctlstrain, m_pSet->m_strain_ID);
-	PopulateCombo_WithText(p_db->m_sexSet, m_ctlsex, m_pSet->m_sex_ID);
-	PopulateCombo_WithText(p_db->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
+	PopulateCombo_WithText(p_db->m_stim_set, m_ctlstim, m_pSet->m_stim_ID);
+	PopulateCombo_WithText(p_db->m_conc_set, m_ctlconc, m_pSet->m_conc_ID);
+	PopulateCombo_WithText(p_db->m_stim_set, m_ctlstim2, m_pSet->m_stim2_ID);
+	PopulateCombo_WithText(p_db->m_conc_set, m_ctlconc2, m_pSet->m_conc2_ID);
+	PopulateCombo_WithText(p_db->m_insect_set, m_ctlinsect, m_pSet->m_insect_ID);
+	PopulateCombo_WithText(p_db->m_strain_set, m_ctlstrain, m_pSet->m_strain_ID);
+	PopulateCombo_WithText(p_db->m_sex_set, m_ctlsex, m_pSet->m_sex_ID);
+	PopulateCombo_WithText(p_db->m_sensillum_set, m_ctlsensillum, m_pSet->m_sensillum_ID);
 	PopulateCombo_WithText(p_db->m_locationSet, m_ctllocation, m_pSet->m_location_ID);
-	PopulateCombo_WithText(p_db->m_operatorSet, m_ctlOperator, m_pSet->m_operator_ID);
-	PopulateCombo_WithText(p_db->m_pathSet, m_ctlpathdat, m_pSet->m_path_ID);
-	PopulateCombo_WithText(p_db->m_pathSet, m_ctlpathspk, m_pSet->m_path2_ID);
-	PopulateCombo_WithText(p_db->m_exptSet, m_ctlexpt, m_pSet->m_expt_ID);
+	PopulateCombo_WithText(p_db->m_operator_set, m_ctlOperator, m_pSet->m_operator_ID);
+	PopulateCombo_WithText(p_db->m_path_set, m_ctlpathdat, m_pSet->m_path_ID);
+	PopulateCombo_WithText(p_db->m_path_set, m_ctlpathspk, m_pSet->m_path2_ID);
+	PopulateCombo_WithText(p_db->m_expt_set, m_ctlexpt, m_pSet->m_expt_ID);
 	// ID combos
 	PopulateCombo_WithNumbers(m_ctlinsectID, &m_pSet->m_desc[CH_IDINSECT].liArray, m_pSet->m_IDinsect);
 	PopulateCombo_WithNumbers(m_ctlSensillumID, &m_pSet->m_desc[CH_IDSENSILLUM].liArray, m_pSet->m_IDsensillum);
@@ -190,17 +190,17 @@ void DlgdbEditRecord::UpdateDatabaseFromDialog()
 	m_pSet->Edit();
 
 	CdbTable* p_database = m_pdbDoc->m_pDB;
-	UpdateSetFromCombo(p_database->m_stimSet, m_ctlstim, m_pSet->m_stim_ID);
-	UpdateSetFromCombo(p_database->m_concSet, m_ctlconc, m_pSet->m_conc_ID);
-	UpdateSetFromCombo(p_database->m_stimSet, m_ctlstim2, m_pSet->m_stim2_ID);
-	UpdateSetFromCombo(p_database->m_concSet, m_ctlconc2, m_pSet->m_conc2_ID);
-	UpdateSetFromCombo(p_database->m_insectSet, m_ctlinsect, m_pSet->m_insect_ID);
-	UpdateSetFromCombo(p_database->m_strainSet, m_ctlstrain, m_pSet->m_strain_ID);
-	UpdateSetFromCombo(p_database->m_sexSet, m_ctlsex, m_pSet->m_sex_ID);
-	UpdateSetFromCombo(p_database->m_sensillumSet, m_ctlsensillum, m_pSet->m_sensillum_ID);
+	UpdateSetFromCombo(p_database->m_stim_set, m_ctlstim, m_pSet->m_stim_ID);
+	UpdateSetFromCombo(p_database->m_conc_set, m_ctlconc, m_pSet->m_conc_ID);
+	UpdateSetFromCombo(p_database->m_stim_set, m_ctlstim2, m_pSet->m_stim2_ID);
+	UpdateSetFromCombo(p_database->m_conc_set, m_ctlconc2, m_pSet->m_conc2_ID);
+	UpdateSetFromCombo(p_database->m_insect_set, m_ctlinsect, m_pSet->m_insect_ID);
+	UpdateSetFromCombo(p_database->m_strain_set, m_ctlstrain, m_pSet->m_strain_ID);
+	UpdateSetFromCombo(p_database->m_sex_set, m_ctlsex, m_pSet->m_sex_ID);
+	UpdateSetFromCombo(p_database->m_sensillum_set, m_ctlsensillum, m_pSet->m_sensillum_ID);
 	UpdateSetFromCombo(p_database->m_locationSet, m_ctllocation, m_pSet->m_location_ID);
-	UpdateSetFromCombo(p_database->m_operatorSet, m_ctlOperator, m_pSet->m_operator_ID);
-	UpdateSetFromCombo(p_database->m_exptSet, m_ctlexpt, m_pSet->m_expt_ID);
+	UpdateSetFromCombo(p_database->m_operator_set, m_ctlOperator, m_pSet->m_operator_ID);
+	UpdateSetFromCombo(p_database->m_expt_set, m_ctlexpt, m_pSet->m_expt_ID);
 
 	//// save fixed parameters
 

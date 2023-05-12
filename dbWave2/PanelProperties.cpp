@@ -423,7 +423,7 @@ int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int ico
 
 		CMFCPropertyGridProperty* p_prop = nullptr;
 		CString cs_comment;
-		CString cs_title = CdbTable::m_desctab[idesctab].description;
+		CString cs_title = CdbTable::m_column_properties[idesctab].description;
 
 		switch (desc.data_code_number)
 		{
