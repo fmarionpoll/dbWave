@@ -533,7 +533,7 @@ void DlgdbEditRecord::OnBnClickedPrevious()
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->DB_MovePrev();
 
-	m_pdbDoc->UpdateAllViews(nullptr, 0L, nullptr);
+	m_pdbDoc->UpdateAllViews_dbWave(nullptr, 0L, nullptr);
 	PopulateControls();
 	UpdateData(FALSE);
 }
@@ -543,7 +543,7 @@ void DlgdbEditRecord::OnBnClickedNext()
 	UpdateDatabaseFromDialog();
 	m_pdbDoc->DB_MoveNext();
 
-	m_pdbDoc->UpdateAllViews(nullptr, 0L, nullptr);
+	m_pdbDoc->UpdateAllViews_dbWave(nullptr, 0L, nullptr);
 
 	PopulateControls();
 	UpdateData(FALSE);

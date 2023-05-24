@@ -536,7 +536,8 @@ CString CdbTable::get_file_path(const int i_id)
 {
 	auto cs_path = m_path_set.GetStringFromID(i_id);
 	if (is_relative_path(cs_path))
-		cs_path = m_database_path + cs_path;
+		cs_path = cs_path.Right(cs_path.GetLength()-2);
+	cs_path = m_database_path + cs_path;
 	return cs_path;
 }
 

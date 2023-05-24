@@ -496,13 +496,13 @@ void CPropertiesWnd::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
 
 void CPropertiesWnd::OnBnClickedEditinfos()
 {
-	m_pDoc->UpdateAllViews(nullptr, HINT_GETSELECTEDRECORDS, nullptr);
+	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_GETSELECTEDRECORDS, nullptr);
 	DlgdbEditRecord dlg;
 	dlg.m_pdbDoc = m_pDoc;
 	if (IDOK == dlg.DoModal())
 	{
-		m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
-		m_pDoc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
+		m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+		m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
 	}
 }
 
@@ -516,7 +516,7 @@ void CPropertiesWnd::OnBnClickedUpdateinfos()
 	const auto l_index = m_pDoc->DB_GetCurrentRecordPosition();
 	UpdateTableFromProp();
 	m_pDoc->DB_SetCurrentRecordPosition(l_index);
-	m_pDoc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
+	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
 }
 
 LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM, LPARAM lParam)

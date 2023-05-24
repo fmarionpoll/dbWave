@@ -227,12 +227,16 @@
 #define HIDD_PRINTDRAWAREA                      0x200D5
 #define HIDD_DATASERIESFORMAT                   0x200D6
 #define HIDD_PRINTDATADRAWOPTIONS               0x200D7
+#define HIDD_OPTIONSPRINTDATADRAW               0x200D7
 #define HIDD_EDITLIST                           0x200D8
 #define HIDD_PRINTDATACOMMENTSOPTIONS           0x200D9
+#define HIDD_OPTIONSPRINTDATACOMMENTS           0x200D9
 #define HIDD_EDITSPIKECLASS                     0x200DA
 #define HIDD_DUPLICATEFOUND                     0x200DC
 #define HIDD_DELRECORDOPTIONS                   0x200DD
+#define HIDD_OPTIONSOVERWRITEFILE               0x200DD
 #define HIDD_LOADSAVEOPTIONS                    0x200DF
+#define HIDD_OPTIONSLOADSAVE                    0x200DF
 #define HIDD_ERASEFILE                          0x200E0
 #define HIDD_LISTBCLAPARAMETERS                 0x200E1
 #define HIDD_ORDINATES                          0x200E2
@@ -254,6 +258,7 @@
 #define HIDD_IMPORTOPTIONS                      0x20215
 #define HIDD_DBEDITRECORDFIELD                  0x20217
 #define HIDD_DTBOARD                            0x2022E
+#define HIDD_OPTIONSDELETEDATFILE               0x2022F
 #define HIDD_STATICLEFT2                        0x203F4
 #define HIDD_STATICRIGHT2                       0x2052F
  

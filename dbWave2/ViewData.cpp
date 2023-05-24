@@ -1155,9 +1155,9 @@ void ViewData::ADC_OnHardwareDefineexperiment()
 	{
 		auto p_dbwave_doc = GetDocument();
 		const auto record_id = p_dbwave_doc->DB_GetCurrentRecordID();
-		GetDocument()->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
+		GetDocument()->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
 		p_dbwave_doc->DB_MoveToID(record_id);
-		p_dbwave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_dbwave_doc->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
 	}
 }
 

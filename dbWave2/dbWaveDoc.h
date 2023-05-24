@@ -85,6 +85,8 @@ public:
 	void	SynchronizeSourceInfos(BOOL bAll);
 	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 	BOOL	Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) const;
+	int		import_records_from_another_data_base(const CString& otherDataBaseFileName, CStringArray& file_list_dat,
+	                                          CStringArray& file_list_spk) const;
 	BOOL	Copy_Files_To_Directory(const CString& path);
 
 protected:
@@ -109,13 +111,12 @@ protected:
 	void	remove_file_from_disk(CString file_name);
 	CString get_full_path_name_without_extension() const;
 	static CString get_path_directory(const CString& full_name);
+	CString get_destination_name(const CString& source_file, const CString& directory) const;
 	boolean	create_directory_if_does_not_exists(const CString& path) const;
 	
 	bool	binary_file_copy(LPCTSTR pszSource, LPCTSTR pszDest) const;
-	void	copy_files_to_directory(CStringArray& files_to_copy_array, CString mdb_directory) const;
-	CString copy_file_to_directory(const LPCTSTR pszSource, const CString& directory) const;
-	bool is_file_already_present(const CString& cs_new_name) const;
-	boolean	file_exists(const CString& file_name) const;
+	void	copy_files_to_directory(CStringArray& files_to_copy, const CString& mdb_directory) const;
+	boolean is_file_present(const CString& cs_new_name) const;
 	
 	// Overrides
 public:
@@ -124,7 +125,7 @@ public:
 	BOOL	OnOpenDocument(LPCTSTR lpszPathName) override;
 	BOOL	OnSaveDocument(LPCTSTR lpszPathName) override;
 	HMENU	GetDefaultMenu() override; // get menu depending on state
-	void	UpdateAllViews(CView* pSender, LPARAM lHint, CObject* pHint);
+	void	UpdateAllViews_dbWave(CView* pSender, LPARAM lHint, CObject* pHint);
 
 	~CdbWaveDoc() override;
 #ifdef _DEBUG

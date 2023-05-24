@@ -22,7 +22,7 @@ void DlgOverwriteFileOptions::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(DlgOverwriteFileOptions, CDialogEx)
+BEGIN_MESSAGE_MAP(DlgOverwriteFileOptions, CDialog)
 END_MESSAGE_MAP()
 
 

@@ -221,7 +221,7 @@ void CChildFrame::OnToolsExportdataAsText()
 	if (p_dbWave_doc != nullptr)
 	{
 		p_dbWave_doc->Export_DatafilesAsTXTfiles();
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 	}
 }
@@ -407,7 +407,7 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 	auto doctype = 1;
 	if (iID < ID_VIEW_SPIKEDISPLAY || iID == ID_VIEW_ACQUIREDATA)
 		doctype = 0;
-	p_dbWave_doc->UpdateAllViews(nullptr, MAKELPARAM(HINT_REPLACEVIEW, doctype), nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, MAKELPARAM(HINT_REPLACEVIEW, doctype), nullptr);
 }
 
 void CChildFrame::OnUpdateViewMenu(CCmdUI* pCmdUI)
@@ -463,11 +463,11 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	size.cy = rect.bottom;
 
 	// delete old view without deleting document
-	const auto bautodel = p_dbWave_doc->m_bAutoDelete;
+	const auto b_auto_delete = p_dbWave_doc->m_bAutoDelete;
 	p_dbWave_doc->m_bAutoDelete = FALSE;
 	p_dbWave_doc->CloseCurrentDataFile();
 	p_current_view->DestroyWindow();
-	p_dbWave_doc->m_bAutoDelete = bautodel;
+	p_dbWave_doc->m_bAutoDelete = b_auto_delete;
 
 	// create new view
 	CCreateContext context;
@@ -496,7 +496,7 @@ void CChildFrame::OnToolsRemoveMissingFiles()
 		return;
 
 	p_dbWave_doc->Remove_MissingFiles();
-	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsRemoveduplicatefiles()
@@ -506,7 +506,7 @@ void CChildFrame::OnToolsRemoveduplicatefiles()
 		return;
 
 	p_dbWave_doc->Remove_DuplicateFiles();
-	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsCheckFilelistsConsistency()
@@ -516,7 +516,7 @@ void CChildFrame::OnToolsCheckFilelistsConsistency()
 		return;
 
 	p_dbWave_doc->Remove_FalseSpkFiles();
-	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsRestoredeletedfiles()
@@ -564,7 +564,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
@@ -573,7 +573,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 	if (p_dbWave_doc == nullptr)
 		return;
 	p_dbWave_doc->SynchronizeSourceInfos(FALSE);
-	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
@@ -582,7 +582,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 	if (p_dbWave_doc == nullptr)
 		return;
 	p_dbWave_doc->SynchronizeSourceInfos(TRUE);
-	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsRemoveartefactfiles()
@@ -682,7 +682,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		}
 	}
 	// exit: update all views
-	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnRecordGotorecord()
@@ -702,7 +702,7 @@ void CChildFrame::OnRecordGotorecord()
 			p_dbWave_doc->DB_SetCurrentRecordPosition(dlg.m_recordPos);
 		else
 			p_dbWave_doc->DB_MoveToID(dlg.m_recordID);
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
 	}
 }
 
@@ -722,7 +722,7 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 		if (p_dbWave_doc == nullptr)
 			return;
 		p_dbWave_doc->Import_FileList(file_names);
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 	}
@@ -756,7 +756,7 @@ void CChildFrame::OnToolsImportATFfiles()
 				return;
 			p_dbWave_doc->Import_FileList(convertedFiles);
 			p_dbWave_doc->DBMoveLast();
-			p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+			p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
 			PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 		}
@@ -801,9 +801,9 @@ void CChildFrame::OnRecordDeletecurrent()
 			p_dbWave_doc->DB_DeleteCurrentRecord();
 
 		// update views and rename "erased" files
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
 		p_dbWave_doc->DB_SetCurrentRecordPosition(current_index);
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
 
 		// delete erased files
 		if (m_bDeleteFile)
@@ -1037,7 +1037,7 @@ void CChildFrame::OnToolsImportDatabase()
 		//p_dbWave_doc->ImportDatabase(fileName);
 		p_dbWave_doc->Import_Data_Files_From_Another_DataBase(fileName);
 		p_dbWave_doc->DBMoveLast();
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 	}
 }
 
@@ -1080,7 +1080,7 @@ void CChildFrame::OnToolsPathsRelative()
 	if (p_dbWave_doc != nullptr)
 	{
 		p_dbWave_doc->DB_SetPathsRelative();
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 	}
 }
 
@@ -1090,7 +1090,7 @@ void CChildFrame::OnToolsPathsAbsolute()
 	if (p_dbWave_doc != nullptr)
 	{
 		p_dbWave_doc->DB_SetPathsAbsolute();
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 	}
 }
 

@@ -558,7 +558,7 @@ void CFilterWnd::OnApplyFilter()
 	// update recordset and tell other views...
 	p_db->m_mainTableSet.BuildFilters();
 	p_db->m_mainTableSet.RefreshQuery();
-	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterWnd::OnSortRecords()
@@ -574,7 +574,7 @@ void CFilterWnd::OnSortRecords()
 	p_database->m_mainTableSet.m_strSort = p_database->m_column_properties[i].header_name;
 
 	p_database->m_mainTableSet.RefreshQuery();
-	m_pDoc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterWnd::SelectNext(BOOL bNext)

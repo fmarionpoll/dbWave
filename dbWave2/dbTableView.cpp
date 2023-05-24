@@ -90,7 +90,7 @@ BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 	}
-	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	p_document->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 

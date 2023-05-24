@@ -413,7 +413,7 @@ void ViewADcontinuous::TransferFilesToDatabase()
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
 	pdbDoc->DB_SetCurrentRecordPosition(pdbDoc->m_pDB->GetNRecords() - 1);
-	pdbDoc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	pdbDoc->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
 BOOL ViewADcontinuous::InitOutput_DA()

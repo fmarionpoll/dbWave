@@ -323,7 +323,7 @@ void ViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto p_item_activate = reinterpret_cast<NMITEMACTIVATE*>(pNMHDR);
 	if (p_item_activate->iItem >= 0)
 		GetDocument()->DB_SetCurrentRecordPosition(p_item_activate->iItem);
-	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	GetDocument()->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
 	dbTableView::OnInitialUpdate();
 	*pResult = 0;
 }
@@ -450,7 +450,7 @@ void ViewdbWave::DeleteRecords()
 	}
 
 	pdb_doc->DB_SetCurrentRecordPosition(current_index);
-	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	pdb_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void ViewdbWave::OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult)
@@ -484,7 +484,7 @@ void ViewdbWave::OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 	m_pSet->m_strSort = cs;
 	m_pSet->Requery();
-	GetDocument()->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	GetDocument()->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 	*pResult = 0;
 }
 

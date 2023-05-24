@@ -238,7 +238,7 @@ BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 		return false;
 	}
 
-	p_document->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	p_document->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
 	if (!m_pvdS->ballfiles)
 		buildDataAndDisplay();
 	selectSpkList(GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex(), TRUE);
