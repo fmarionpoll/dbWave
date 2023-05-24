@@ -555,7 +555,7 @@ void CdbTableMain::AddtoIDArray(CUIntArray* puiIDArray, long iID)
 		puiIDArray->Add(ui_id);
 }
 
-void CdbTableMain::AddCurrentRecordtoIDArrays()
+void CdbTableMain::AddCurrentRecordToIDArrays()
 {
 	COleVariant var_value;
 
@@ -629,7 +629,7 @@ void CdbTableMain::BuildAndSortIDArrays()
 	auto i = 0;
 	while (!IsEOF())
 	{
-		AddCurrentRecordtoIDArrays();
+		AddCurrentRecordToIDArrays();
 		MoveNext();
 		i++;
 	}

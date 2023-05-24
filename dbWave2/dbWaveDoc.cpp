@@ -1080,10 +1080,10 @@ int CdbWaveDoc::find_column_associated_to_header(const CString& text)
 	return found;
 }
 
-void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file_names_array, int irecord, int nColumns, boolean bHeader)
+void CdbWaveDoc::getInfosFromStringArray(const sourceData* pRecord, const CStringArray& file_names_array, const int i_record, int nColumns, boolean bHeader)
 {
 	CWaveFormat* p_wave_format = pRecord->p_wave_format;
-	const int index = index_2d_array(irecord, nColumns, bHeader);
+	const int index = index_2d_array(i_record, nColumns, bHeader);
 
 	for (int i = 1; i < nColumns; i++)
 	{
@@ -1137,7 +1137,7 @@ void CdbWaveDoc::getInfosFromStringArray(sourceData* pRecord, CStringArray& file
 	}
 }
 
-void CdbWaveDoc::set_record_file_names(sourceData* record)
+void CdbWaveDoc::set_record_file_names(const sourceData* record) const
 {
 	// save file names
 	if (record->b_dat_present)
@@ -1212,12 +1212,11 @@ void CdbWaveDoc::Import_FileList(CStringArray& fileList, int n_columns, boolean 
 
 	for (auto i_record = 0; i_record < n_files_ok; i_record++)
 	{
-		// check if user wants to stop and update progression bar
 		if (dlg.CheckCancelButton())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
-		// get file name
-		int index = index_2d_array(i_record, n_columns, bHeader);
+
+		const int index = index_2d_array(i_record, n_columns, bHeader);
 		auto cs_filename = CString(fileList[index]);
 		CString cs_comment;
 		cs_comment.Format(_T("Import file [%i / %i] %s"), i_record + 1, n_files_ok, (LPCTSTR)cs_filename);
@@ -1464,6 +1463,29 @@ BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDat
 	return TRUE;
 }
 
+/*
+ void CdbWaveDoc::set_record_file_names(const sourceData* record) const
+{
+	// save file names
+	if (record->b_dat_present)
+	{
+		m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_path_set.GetStringInLinkedTable(record->cs_path);
+		m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filedat), FALSE);
+		m_pDB->m_mainTableSet.m_Filedat = record->cs_dat_file.Right(
+			record->cs_dat_file.GetLength() - record->i_last_backslash_position - 1);
+		m_pDB->m_mainTableSet.m_datalen = m_pDat->GetDOCchanLength();
+	}
+
+	if (record->b_spik_present)
+	{
+		m_pDB->m_mainTableSet.m_path2_ID = m_pDB->m_path_set.GetStringInLinkedTable(record->cs_path);
+		m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filespk), FALSE);
+		m_pDB->m_mainTableSet.m_Filespk = record->cs_spk_file.Right(
+			record->cs_spk_file.GetLength() - record->i_last_backslash_position - 1);
+	}
+}
+ */
+
 int CdbWaveDoc::import_records_from_another_data_base(const CString& otherDataBaseFileName, CStringArray& file_list_dat, CStringArray& file_list_spk) const
 {
 	const auto p_new_doc = new CdbWaveDoc; // open database
@@ -1471,26 +1493,32 @@ int CdbWaveDoc::import_records_from_another_data_base(const CString& otherDataBa
 		return 0;
 
 	// get names of data files of otherDataBase
-	const auto p_new_database = p_new_doc->m_pDB;
-	p_new_database->m_mainTableSet.MoveFirst();
+	const auto external_table = p_new_doc->m_pDB;
+	external_table->m_mainTableSet.MoveFirst();
 	auto n_added_records = 0;
+	// TODO update here directory name in the database
+	CString cs_path; // = directory of database
 
-	while (!p_new_database->m_mainTableSet.IsEOF())
+	while (!external_table->m_mainTableSet.IsEOF())
 	{
-		if (this->m_pDB->IsRecordTimeUnique(p_new_database->m_mainTableSet.m_table_acq_date))
+		if (m_pDB->IsRecordTimeUnique(external_table->m_mainTableSet.m_table_acq_date))
 		{
-			this->m_pDB->ImportRecordFromDatabase(p_new_database);
-			CString dat_name = p_new_database->GetCurrentRecord_DataFileName();
-			if (!dat_name.IsEmpty() && is_file_present(dat_name))
+			m_pDB->ImportRecordFromDatabase(external_table);
+			CString dat_name = external_table->GetCurrentRecord_DataFileName();
+			if (!dat_name.IsEmpty() && is_file_present(dat_name)) {
 				file_list_dat.Add(dat_name);
-			CString spk_name = p_new_database->GetCurrentRecord_SpikeFileName();
-			if (!spk_name.IsEmpty() && is_file_present(spk_name))
+				m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_path_set.GetStringInLinkedTable(cs_path);
+			}
+			CString spk_name = external_table->GetCurrentRecord_SpikeFileName();
+			if (!spk_name.IsEmpty() && is_file_present(spk_name)) {
 				file_list_spk.Add(spk_name);
+				m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_path_set.GetStringInLinkedTable(cs_path);
+			}
 			n_added_records++;
 		}
-		p_new_database->m_mainTableSet.MoveNext();
+		external_table->m_mainTableSet.MoveNext();
 	}
-	p_new_database->m_mainTableSet.Close();
+	external_table->m_mainTableSet.Close();
 	delete p_new_doc;
 
 	return n_added_records;

@@ -120,7 +120,7 @@ public:
 
 	void BuildAndSortIDArrays();
 	void CopyPathToPath2();
-	void AddCurrentRecordtoIDArrays();
+	void AddCurrentRecordToIDArrays();
 	boolean OpenTable(int nOpenType = AFX_DAO_USE_DEFAULT_TYPE, LPCTSTR lpszSQL = nullptr, int nOptions = 0);
 
 protected:

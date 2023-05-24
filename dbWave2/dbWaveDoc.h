@@ -94,7 +94,7 @@ protected:
 
 	BOOL	transpose_file_for_excel(CSharedFile* pSF);
 	sourceData get_wave_format_from_either_file(CString cs_filename);
-	void	set_record_file_names(sourceData* record);
+	void	set_record_file_names(const sourceData* record) const;
 	boolean set_record_spk_classes(sourceData* record);
 	void	set_record_wave_format(sourceData* record);
 	boolean import_file_single(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns,
@@ -106,7 +106,7 @@ protected:
 	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) {return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
 	void	remove_row_at(CStringArray& file_name_array, int iRow, int nColumns, boolean bHeader);
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
-	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& file_names_array, int irecord, int nColumns, boolean bHeader);
+	void	getInfosFromStringArray(const sourceData* pRecord, const CStringArray& file_names_array, int i_record, int nColumns, boolean bHeader);
 	int		find_column_associated_to_header(const CString& text);
 	void	remove_file_from_disk(CString file_name);
 	CString get_full_path_name_without_extension() const;
