@@ -1,6 +1,7 @@
 #pragma once
+#include "resource.h"
 
-class DlgDeleteRecordOptions : public CDialog
+class DlgDeleteRecordOptions final : public CDialog
 {
 	DECLARE_DYNAMIC(DlgDeleteRecordOptions)
 
@@ -9,7 +10,7 @@ public:
 	~DlgDeleteRecordOptions() override;
 
 	// Dialog Data
-	enum { IDD = IDD_DELRECORDOPTIONS };
+	enum { IDD = IDD_OPTIONSDELETEDATFILE };
 
 public:
 	BOOL m_bKeepChoice {true};

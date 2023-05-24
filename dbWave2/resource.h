@@ -172,14 +172,18 @@
 #define IDD_DATASERIESFORMAT            214
 #define IDB_ZOOMOUT                     214
 #define IDD_PRINTDATADRAWOPTIONS        215
+#define IDD_OPTIONSPRINTDATADRAW        215
 #define IDC_ADRATECHAN                  216
 #define IDD_EDITLIST                    216
 #define IDD_PRINTDATACOMMENTSOPTIONS    217
+#define IDD_OPTIONSPRINTDATACOMMENTS    217
 #define IDD_EDITSPIKECLASS              218
 #define IDD_DUPLICATEFOUND              220
 #define IDD_DELRECORDOPTIONS            221
+#define IDD_OPTIONSOVERWRITEFILE        221
 #define IDC_TRIGSOFT                    222
 #define IDD_LOADSAVEOPTIONS             223
+#define IDD_OPTIONSLOADSAVE             223
 #define IDC_TRIGKEYBOARD                224
 #define IDD_ERASEFILE                   224
 #define IDC_TRIGEXTERNAL                225
@@ -443,6 +447,7 @@
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA   553
 #define ID_VIEW_APPLOOK_WINDOWS_7       554
 #define IDD_DTBOARD                     558
+#define IDD_OPTIONSDELETEDATFILE        559
 #define IDR_DBDATATYPE_256              571
 #define IDR_DBSPIKETYPE_256             572
 #define IDB_CHECK1                      573
@@ -946,7 +951,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        579
+#define _APS_NEXT_RESOURCE_VALUE        580
 #define _APS_NEXT_COMMAND_VALUE         33021
 #define _APS_NEXT_CONTROL_VALUE         1522
 #define _APS_NEXT_SYMED_VALUE           555

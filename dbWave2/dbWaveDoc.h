@@ -84,7 +84,7 @@ public:
 
 	void	SynchronizeSourceInfos(BOOL bAll);
 	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
-	BOOL	Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) ;
+	BOOL	Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) const;
 	BOOL	Copy_Files_To_Directory(const CString& path);
 
 protected:
@@ -99,24 +99,22 @@ protected:
 	                         boolean bHeader);
 	int		check_files_can_be_opened(CStringArray& file_names_array, CSharedFile* psf, int nColumns, boolean bHeader);
 
-	static int index_2d_array(int iRow, int nColumns, boolean bHeader) {
-		return (iRow + (bHeader ? 1 : 0)) * nColumns; };
+	static int index_2d_array(int iRow, int nColumns, boolean bHeader) {return (iRow + (bHeader ? 1 : 0)) * nColumns; }
 
-	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) {
-		return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
+	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) {return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
 	void	remove_row_at(CStringArray& file_name_array, int iRow, int nColumns, boolean bHeader);
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
-	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& file_names_array, int irecord, int nColumns,
-	                             boolean bHeader);
+	void	getInfosFromStringArray(sourceData* pRecord, CStringArray& file_names_array, int irecord, int nColumns, boolean bHeader);
 	int		find_column_associated_to_header(const CString& text);
 	void	remove_file_from_disk(CString file_name);
 	CString get_full_path_name_without_extension() const;
-	static CString get_path_directory(CString& full_name);
+	static CString get_path_directory(const CString& full_name);
 	boolean	create_directory_if_does_not_exists(const CString& path) const;
 	
 	bool	binary_file_copy(LPCTSTR pszSource, LPCTSTR pszDest) const;
 	void	copy_files_to_directory(CStringArray& files_to_copy_array, CString mdb_directory) const;
-	CString copy_file_to_directory(const LPCTSTR pszSource, CString& directory) const;
+	CString copy_file_to_directory(const LPCTSTR pszSource, const CString& directory) const;
+	bool is_file_already_present(const CString& cs_new_name) const;
 	boolean	file_exists(const CString& file_name) const;
 	
 	// Overrides

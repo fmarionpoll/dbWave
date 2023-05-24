@@ -37,7 +37,7 @@ public:
 	CPrintDataCommentsDlg(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
-	enum { IDD = IDD_PRINTDATACOMMENTSOPTIONS };
+	enum { IDD = IDD_OPTIONSPRINTDATACOMMENTS };
 
 	BOOL m_bacqcomment;
 	BOOL m_bacqdatetime;

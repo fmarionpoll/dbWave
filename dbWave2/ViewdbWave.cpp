@@ -134,13 +134,13 @@ void ViewdbWave::OnInitialUpdate()
 	// init display controls
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* pSpkDoc = GetDocument()->Get_Current_Spike_File();
-		if (pSpkDoc != nullptr) 
+		CSpikeDoc* p_spk_doc = GetDocument()->Get_Current_Spike_File();
+		if (p_spk_doc != nullptr) 
 		{
-			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
-			m_tabCtrl.SetCurSel(pSpkDoc->GetSpkList_CurrentIndex());
+			m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+			m_tabCtrl.SetCurSel(p_spk_doc->GetSpkList_CurrentIndex());
 		}
-		m_tabCtrl.ShowWindow(pSpkDoc != nullptr ? SW_SHOW: SW_HIDE);
+		m_tabCtrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW: SW_HIDE);
 	}
 }
 
@@ -251,12 +251,12 @@ void ViewdbWave::updateControls()
 
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* pSpkDoc = GetDocument()->Open_Current_Spike_File();
-		if (pSpkDoc != nullptr)
+		CSpikeDoc* p_spk_doc = GetDocument()->Open_Current_Spike_File();
+		if (p_spk_doc != nullptr)
 		{
-			const auto curr_listsize = pSpkDoc->GetSpkList_Size();
-			if (m_tabCtrl.GetItemCount() < curr_listsize)
-				m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
+			const auto spklist_size = p_spk_doc->GetSpkList_Size();
+			if (m_tabCtrl.GetItemCount() < spklist_size)
+				m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
 		}
 	}
 }
@@ -313,8 +313,8 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDe
 void ViewdbWave::fillListBox()
 {
 	m_dataListCtrl.DeleteAllItems();
-	const int imax = GetDocument()->DB_GetNRecords();
-	m_dataListCtrl.SetItemCountEx(imax);
+	const int n_records = GetDocument()->DB_GetNRecords();
+	m_dataListCtrl.SetItemCountEx(n_records);
 }
 
 void ViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)

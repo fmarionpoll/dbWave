@@ -516,6 +516,9 @@
     <ClCompile Include="ChartSpike.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DlgOverwriteFileOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1116,6 +1119,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ADAcqDataDoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgOverwriteFileOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

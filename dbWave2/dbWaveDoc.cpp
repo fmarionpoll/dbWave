@@ -157,14 +157,14 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 
 void CdbWaveDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
-		// TODO: add storing code here
-	}
-	else
-	{
-		// TODO: add loading code here
-	}
+	//if (ar.IsStoring())
+	//{
+	//	// TODO: add storing code here
+	//}
+	//else
+	//{
+	//	// TODO: add loading code here
+	//}
 }
 
 #ifdef _DEBUG
@@ -190,15 +190,15 @@ CdbWaveDoc* CdbWaveDoc::get_active_mdi_document()
 	if (!pChild)
 		return nullptr;
 
-	CDocument* pDoc = pChild->GetActiveDocument();
-	if (!pDoc)
+	CDocument* p_doc = pChild->GetActiveDocument();
+	if (!p_doc)
 		return nullptr;
 
 	// Fail if doc is of wrong kind
-	if (!pDoc->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+	if (!p_doc->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
 		return nullptr;
 
-	return static_cast<CdbWaveDoc*>(pDoc);
+	return static_cast<CdbWaveDoc*>(p_doc);
 }
 
 BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
@@ -958,7 +958,7 @@ BOOL CdbWaveDoc::Copy_Files_To_Directory(const CString& path)
 	return true;
 }
 
-CString CdbWaveDoc::copy_file_to_directory (const LPCTSTR pszSource, CString& directory) const
+CString CdbWaveDoc::copy_file_to_directory (const LPCTSTR pszSource, const CString& directory) const
 {
 	CFileException ex;
 	CFile source_file;
@@ -975,29 +975,30 @@ CString CdbWaveDoc::copy_file_to_directory (const LPCTSTR pszSource, CString& di
 		return nullptr;
 	}
 
-	CString dest_name = directory + "\\" + source_file.GetFileName();
-	if (!binary_file_copy(pszSource, dest_name))
+	CString destination_name = directory + "\\" + source_file.GetFileName();
+	if (is_file_already_present(destination_name))
+	{
+		auto prompt = destination_name;
+		prompt += _T("\nThis file seems to exist already.\nDelete the old file?");
+		if (AfxMessageBox(prompt, MB_YESNO) == IDYES)
+			CFile::Remove(destination_name);
+		else
+			return destination_name;
+	}
+	if (!binary_file_copy(pszSource, destination_name))
 		return nullptr;
-	return dest_name;
+	return destination_name;
 }
 
+bool CdbWaveDoc::is_file_already_present(const CString& cs_new_name) const
+{
+	CFileStatus status;
+	return CFile::GetStatus(cs_new_name, status);
+
+}
 
 bool CdbWaveDoc::binary_file_copy(const LPCTSTR pszSource, LPCTSTR pszDest) const
 {
-	// check that destination file does not exist
-	// check if same file already exists: if yes, destroy it
-	CFileStatus status;
-	const CString cs_new_name = pszDest;
-	if (CFile::GetStatus(cs_new_name, status))
-	{
-		auto prompt = cs_new_name;
-		prompt += _T("\nThis file seems to exist already.\nDelete the old file?");
-		if (AfxMessageBox(prompt, MB_YESNO) == IDYES)
-			CFile::Remove(cs_new_name);
-		else
-			return false;
-	}
-
 	// constructing these file objects doesn't open them
 	CFile source_file;
 	CFile destination_file;
@@ -1360,7 +1361,7 @@ BOOL CdbWaveDoc::Import_Database(CString& filename)
 {
 	// create dbWaveDoc, open database from this new document, then
 	// read all files from this and import them into current document
-	const auto p_new_doc = new CdbWaveDoc; // open database
+	const auto p_new_doc = new CdbWaveDoc;
 	if (!p_new_doc->OnOpenDocument(filename))
 		return FALSE;
 
@@ -1396,7 +1397,7 @@ CString CdbWaveDoc::get_full_path_name_without_extension() const
 	return path_name.Left(i_position_of_extension);
 }
 
-CString CdbWaveDoc::get_path_directory(CString& full_name)
+CString CdbWaveDoc::get_path_directory(const CString& full_name)
 {
 	const auto i_position_of_extension = full_name.ReverseFind('\\');
 	return full_name.Left(i_position_of_extension);
@@ -1404,11 +1405,12 @@ CString CdbWaveDoc::get_path_directory(CString& full_name)
 
 void CdbWaveDoc::copy_files_to_directory(CStringArray& files_to_copy, CString mdb_directory) const
 {
-	for (int i = 0; i < files_to_copy.GetCount(); i++)
+	for (int i = 0; i < files_to_copy.GetCount(); i++) {
 		files_to_copy[i] = copy_file_to_directory(files_to_copy[i], mdb_directory);
+	}
 }
 
-BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) 
+BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) const
 {
 	const auto p_new_doc = new CdbWaveDoc; // open database
 	if (!p_new_doc->OnOpenDocument(otherDataBaseFileName))
@@ -1421,7 +1423,7 @@ BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDat
 	CStringArray file_list_dat;
 	CStringArray file_list_spk;
 	CStringArray files_copied;
-
+	
 	while (!p_new_database->m_mainTableSet.IsEOF())
 	{
 		if (this->m_pDB->IsRecordTimeUnique(p_new_database->m_mainTableSet.m_table_acq_date))
@@ -1444,6 +1446,7 @@ BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDat
 	const CString path_to_mdb_sub_directory = get_full_path_name_without_extension();
 	if (!create_directory_if_does_not_exists(path_to_mdb_sub_directory))
 		return false;
+	
 	copy_files_to_directory(file_list_dat, path_to_mdb_sub_directory);
 	copy_files_to_directory(file_list_spk, path_to_mdb_sub_directory);
 
@@ -2072,55 +2075,55 @@ void CdbWaveDoc::remove_row_at(CStringArray& file_name_array, int iRow, int nCol
 int CdbWaveDoc::check_files_can_be_opened(CStringArray& file_names_array, CSharedFile* psf, int nColumns, boolean bHeader)
 {
 	// prepare progress dialog box
-	auto nfilesok = 0;
-	const int nfiles = get_size_2d_array(file_names_array, nColumns, bHeader);
+	auto n_files_ok = 0;
+	const int n_files = get_size_2d_array(file_names_array, nColumns, bHeader);
 	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
-	dlg.SetRange(0, nfiles);
+	dlg.SetRange(0, n_files);
 
-	for (auto irec = nfiles - 1; irec >= 0; irec--)
+	for (auto record_item = n_files - 1; record_item >= 0; record_item--)
 	{
 		// check if filename not already defined
-		int index = index_2d_array(irec, nColumns, bHeader);
+		const int index = index_2d_array(record_item, nColumns, bHeader);
 		auto cs_filename = CString(file_names_array[index]);
 		cs_filename.MakeLower();
 
 		if (lstrlen(cs_filename) >= _MAX_PATH)
 			continue;
 
-		CString cscomment;
-		cscomment.Format(_T("Checking file type and status on disk [%i / %i] %s"), nfiles - irec, nfiles, (LPCTSTR)cs_filename);
-		dlg.SetStatus(cscomment);
+		CString comment;
+		comment.Format(_T("Checking file type and status on disk [%i / %i] %s"), n_files - record_item, n_files, (LPCTSTR)cs_filename);
+		dlg.SetStatus(comment);
 		dlg.StepIt();
 
 		// check if file of correct type
 		CString cs_ext;
 		const auto i_ext = cs_filename.ReverseFind('.');
 		cs_ext = cs_filename.Right(cs_filename.GetLength() - i_ext - 1);
-		BOOL b_dat = IsExtensionRecognizedAsDataFile(cs_ext);
+		const BOOL b_dat = IsExtensionRecognizedAsDataFile(cs_ext);
 
 		if ((!b_dat && cs_ext.Compare(_T("spk")) != 0) || (cs_filename.Find(_T("tmp.dat")) >= 0))
 		{
-			psf = file_discarded_message(psf, cs_filename, irec);
-			remove_row_at(file_names_array, irec, nColumns, bHeader);
+			psf = file_discarded_message(psf, cs_filename, record_item);
+			remove_row_at(file_names_array, record_item, nColumns, bHeader);
 			continue;
 		}
 
 		// open document and read data
 		CFileStatus status;
-		const BOOL bflag = CFile::GetStatus(cs_filename, status);
+		const BOOL flag = CFile::GetStatus(cs_filename, status);
 
 		// GOTO next file if it not possible to open the file either as a spk or a dat file
-		if (!bflag)
+		if (!flag)
 		{
-			psf = file_discarded_message(psf, cs_filename, irec);
-			remove_row_at(file_names_array, irec, nColumns, bHeader);
+			psf = file_discarded_message(psf, cs_filename, record_item);
+			remove_row_at(file_names_array, record_item, nColumns, bHeader);
 			continue;
 		}
-		nfilesok++;
+		n_files_ok++;
 	}
-	return nfilesok;
+	return n_files_ok;
 }
 
 CSharedFile* CdbWaveDoc::file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec)
@@ -2137,9 +2140,9 @@ void CdbWaveDoc::Delete_ErasedFiles()
 	if (m_pDat != nullptr)
 		m_pDat->AcqCloseFile();
 
-	const auto nfiles = m_csfiles_to_delete.GetSize() - 1;
+	const auto n_files_to_delete = m_csfiles_to_delete.GetSize() - 1;
 
-	for (auto i = nfiles; i >= 0; i--)
+	for (auto i = n_files_to_delete; i >= 0; i--)
 	{
 		// get data file name and rename file
 		auto file_name = m_csfiles_to_delete.GetAt(i);

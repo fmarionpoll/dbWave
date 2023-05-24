@@ -8,7 +8,7 @@ public:
 	DlgLoadSaveOptions(CWnd* pParent = nullptr); // standard constructor
 
 	// Dialog Data
-	enum { IDD = IDD_LOADSAVEOPTIONS };
+	enum { IDD = IDD_OPTIONSLOADSAVE };
 
 	CComboBox m_CBnamelist;
 	CString m_ddxcomment{ _T("")};
