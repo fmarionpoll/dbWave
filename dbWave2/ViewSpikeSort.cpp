@@ -150,7 +150,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	define_sub_classed_items();
 	define_stretch_parameters();
-	m_binit = TRUE;
+	m_b_init = TRUE;
 	m_autoIncrement = true;
 	m_autoDetect = true;
 
@@ -267,7 +267,7 @@ void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, C
 
 void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (m_binit)
+	if (m_b_init)
 	{
 		switch (LOWORD(lHint))
 		{

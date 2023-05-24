@@ -158,7 +158,7 @@ void ViewdbWave::make_controls_stretchable()
 	m_stretch.AttachParent(this);
 	m_stretch.newProp(IDC_LISTCTRL, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
-	m_binit = TRUE;
+	m_b_init = TRUE;
 }
 
 void ViewdbWave::display_data()
@@ -355,7 +355,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void ViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (!m_binit)
+	if (!m_b_init)
 		return;
 
 	switch (LOWORD(lHint))

@@ -71,7 +71,7 @@ protected:
 
 	// parameters for OnSize
 	CStretchControl m_stretch{};
-	BOOL m_binit = false;
+	BOOL m_b_init = false;
 
 protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);

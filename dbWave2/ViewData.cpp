@@ -123,7 +123,7 @@ void ViewData::DefineStretchParameters()
 	m_stretch.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
 	m_stretch.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
-	m_binit = TRUE;
+	m_b_init = TRUE;
 }
 
 void ViewData::OnInitialUpdate()
@@ -156,7 +156,7 @@ void ViewData::OnInitialUpdate()
 
 void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (!m_binit)
+	if (!m_b_init)
 		return;
 
 	auto i_update = NULL;

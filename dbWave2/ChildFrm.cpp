@@ -755,7 +755,7 @@ void CChildFrame::OnToolsImportATFfiles()
 			if (p_dbWave_doc == nullptr)
 				return;
 			p_dbWave_doc->Import_FileList(convertedFiles);
-			p_dbWave_doc->DBMoveLast();
+			p_dbWave_doc->DB_MoveLast();
 			p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
 			PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
@@ -1036,7 +1036,7 @@ void CChildFrame::OnToolsImportDatabase()
 			return;
 		//p_dbWave_doc->ImportDatabase(fileName);
 		p_dbWave_doc->Import_Data_Files_From_Another_DataBase(fileName);
-		p_dbWave_doc->DBMoveLast();
+		p_dbWave_doc->DB_MoveLast();
 		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 	}
 }
@@ -1104,7 +1104,7 @@ void CChildFrame::OnToolsRemoveunused()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc != nullptr)
 	{
-		p_dbWave_doc->DBDeleteUnusedEntries();
+		p_dbWave_doc->DB_DeleteUnusedEntries();
 		AfxMessageBox(_T("Accessory tables cleaned of all un-used entries"));
 	}
 }

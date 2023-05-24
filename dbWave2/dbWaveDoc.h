@@ -85,8 +85,6 @@ public:
 	void	SynchronizeSourceInfos(BOOL bAll);
 	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
 	BOOL	Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) const;
-	int		import_records_from_another_data_base(const CString& otherDataBaseFileName, CStringArray& file_list_dat,
-	                                          CStringArray& file_list_spk) const;
 	BOOL	Copy_Files_To_Directory(const CString& path);
 
 protected:
@@ -100,9 +98,7 @@ protected:
 	boolean import_file_single(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns,
 	                         boolean bHeader);
 	int		check_files_can_be_opened(CStringArray& file_names_array, CSharedFile* psf, int nColumns, boolean bHeader);
-
 	static int index_2d_array(int iRow, int nColumns, boolean bHeader) {return (iRow + (bHeader ? 1 : 0)) * nColumns; }
-
 	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) {return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
 	void	remove_row_at(CStringArray& file_name_array, int iRow, int nColumns, boolean bHeader);
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
@@ -114,6 +110,8 @@ protected:
 	CString get_destination_name(const CString& source_file, const CString& directory) const;
 	boolean	create_directory_if_does_not_exists(const CString& path) const;
 	
+	int		import_records_from_another_data_base(const CString& otherDataBaseFileName, CStringArray& file_list_dat,
+		CStringArray& file_list_spk) const;
 	bool	binary_file_copy(LPCTSTR pszSource, LPCTSTR pszDest) const;
 	void	copy_files_to_directory(CStringArray& files_to_copy, const CString& mdb_directory) const;
 	boolean is_file_present(const CString& cs_new_name) const;
@@ -148,8 +146,8 @@ public:
 	int		DB_GetCurrentRecordFlag() const { return m_pDB->m_mainTableSet.m_flag; }
 	void	DB_SetPathsRelative() const;
 	void	DB_SetPathsAbsolute() const;
-	void	DBTransferDatPathToSpkPath() const;
-	void	DBDeleteUnusedEntries() const;
+	void	DB_TransferDatPathToSpkPath() const;
+	void	DB_DeleteUnusedEntries() const;
 
 	long	DB_GetCurrentRecordPosition() const;
 	long	DB_GetCurrentRecordID() const;
@@ -158,7 +156,7 @@ public:
 	BOOL	DB_MoveFirst() { return m_pDB->MoveTo(ID_RECORD_FIRST); }
 	BOOL	DB_MoveNext() { return m_pDB->MoveTo(ID_RECORD_NEXT); }
 	BOOL	DB_MovePrev() { return m_pDB->MoveTo(ID_RECORD_PREV); }
-	BOOL	DBMoveLast() { return m_pDB->MoveTo(ID_RECORD_LAST); }
+	BOOL	DB_MoveLast() { return m_pDB->MoveTo(ID_RECORD_LAST); }
 	void	DB_RefreshQuery() const { if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
 								m_pDB->m_mainTableSet.RefreshQuery(); }
 

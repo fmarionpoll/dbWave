@@ -541,12 +541,12 @@ void CdbWaveDoc::DB_SetPathsAbsolute() const
 	m_pDB->set_path_absolute();
 }
 
-void CdbWaveDoc::DBTransferDatPathToSpkPath() const
+void CdbWaveDoc::DB_TransferDatPathToSpkPath() const
 {
 	m_pDB->m_mainTableSet.CopyPathToPath2();
 }
 
-void CdbWaveDoc::DBDeleteUnusedEntries() const
+void CdbWaveDoc::DB_DeleteUnusedEntries() const
 {
 	m_pDB->DeleteUnusedEntriesInAccessoryTables();
 }
@@ -617,7 +617,6 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 		cs_dummy.Format(_T("%i\t%i\t"), i_file + 1, m_pDB->m_mainTableSet.m_ID);
 		p_shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
-		// set message for dialog box
 		// check if user wants to stop
 		if (dlg.CheckCancelButton())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
@@ -628,7 +627,7 @@ void CdbWaveDoc::Export_DataAsciiComments(CSharedFile* p_shared_file)
 		cs_dummy.Empty();
 		if (OpenCurrentDataFile() != nullptr)
 		{
-			cs_dummy += m_pDat->GetDataFileInfos(p_view_data_options); // get infos
+			cs_dummy += m_pDat->GetDataFileInfos(p_view_data_options); 
 			if (p_view_data_options->bdatabasecols)
 				cs_dummy += Export_DatabaseData();
 		}
@@ -706,7 +705,7 @@ BOOL CdbWaveDoc::Copy_Files_To_Directory(const CString& path)
 	CStringArray cs_dest_path_array;
 	CUIntArray ui_id_array;
 	const auto cs_path = path + _T('\\');
-	auto flag = create_directory_if_does_not_exists(path); // create root destination directory if necessary
+	auto flag = create_directory_if_does_not_exists(path);
 	if (!flag)
 		return FALSE;
 
@@ -930,7 +929,6 @@ BOOL CdbWaveDoc::Copy_Files_To_Directory(const CString& path)
 	if (p_new->m_pDB->m_mainTableSet.GetEditMode() != dbEditNone)
 		p_new->m_pDB->m_mainTableSet.Update();
 	p_new->m_pDB->m_mainTableSet.Close(); // close dynaset and open as datatable
-
 	if (!p_new->m_pDB->m_mainTableSet.OpenTable(dbOpenTable, nullptr, 0))
 		return FALSE;
 
@@ -1463,41 +1461,16 @@ BOOL CdbWaveDoc::Import_Data_Files_From_Another_DataBase(const CString& otherDat
 	return TRUE;
 }
 
-/*
- void CdbWaveDoc::set_record_file_names(const sourceData* record) const
-{
-	// save file names
-	if (record->b_dat_present)
-	{
-		m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_path_set.GetStringInLinkedTable(record->cs_path);
-		m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filedat), FALSE);
-		m_pDB->m_mainTableSet.m_Filedat = record->cs_dat_file.Right(
-			record->cs_dat_file.GetLength() - record->i_last_backslash_position - 1);
-		m_pDB->m_mainTableSet.m_datalen = m_pDat->GetDOCchanLength();
-	}
-
-	if (record->b_spik_present)
-	{
-		m_pDB->m_mainTableSet.m_path2_ID = m_pDB->m_path_set.GetStringInLinkedTable(record->cs_path);
-		m_pDB->m_mainTableSet.SetFieldNull(&(m_pDB->m_mainTableSet.m_Filespk), FALSE);
-		m_pDB->m_mainTableSet.m_Filespk = record->cs_spk_file.Right(
-			record->cs_spk_file.GetLength() - record->i_last_backslash_position - 1);
-	}
-}
- */
-
 int CdbWaveDoc::import_records_from_another_data_base(const CString& otherDataBaseFileName, CStringArray& file_list_dat, CStringArray& file_list_spk) const
 {
 	const auto p_new_doc = new CdbWaveDoc; // open database
 	if (!p_new_doc->OnOpenDocument(otherDataBaseFileName))
 		return 0;
 
-	// get names of data files of otherDataBase
 	const auto external_table = p_new_doc->m_pDB;
 	external_table->m_mainTableSet.MoveFirst();
 	auto n_added_records = 0;
-	// TODO update here directory name in the database
-	CString cs_path; // = directory of database
+	const CString cs_path = get_full_path_name_without_extension();
 
 	while (!external_table->m_mainTableSet.IsEOF())
 	{

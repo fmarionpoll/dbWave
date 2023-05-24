@@ -65,7 +65,7 @@ CDaoRecordset* dbTableView::OnGetRecordset()
 
 void dbTableView::OnSize(UINT nType, int cx, int cy)
 {
-	if (m_binit)
+	if (m_b_init)
 	{
 		switch (nType)
 		{

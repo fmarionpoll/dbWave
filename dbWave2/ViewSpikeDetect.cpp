@@ -147,7 +147,7 @@ BOOL ViewSpikeDetection::OnMove(UINT nIDMoveCommand)
 
 void ViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (m_binit)
+	if (m_b_init)
 	{
 		switch (LOWORD(lHint))
 		{
@@ -604,7 +604,7 @@ void ViewSpikeDetection::OnInitialUpdate()
 	options_view_data = &(p_app->options_viewdata); 
 
 	define_stretch_parameters();
-	m_binit = TRUE;
+	m_b_init = TRUE;
 	m_autoIncrement = true;
 	m_autoDetect = true;
 

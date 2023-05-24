@@ -88,7 +88,7 @@ BOOL ViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
 
 void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (m_binit)
+	if (m_b_init)
 	{
 		switch (LOWORD(lHint))
 		{
@@ -145,7 +145,7 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	defineSubClassedItems();
 	defineStretchParameters();
-	m_binit = TRUE;
+	m_b_init = TRUE;
 	m_autoIncrement = true;
 	m_autoDetect = true;
 

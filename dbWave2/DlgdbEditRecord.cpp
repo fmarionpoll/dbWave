@@ -497,7 +497,7 @@ void DlgdbEditRecord::OnBnClickedButton1()
 		EditChangeItem_IndirectField(IDC_COMBO_PATHSPK);
 	else
 	{
-		m_pdbDoc->DBTransferDatPathToSpkPath();
+		m_pdbDoc->DB_TransferDatPathToSpkPath();
 	}
 }
 
