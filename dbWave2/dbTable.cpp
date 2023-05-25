@@ -1052,7 +1052,7 @@ BOOL CdbTable::SetRecordItemValue(const int column_index, DB_ITEMDESC* dbItem_de
 	return flag;
 }
 
-BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable)
+BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable, boolean force_path_id, long path_id)
 {
 	// variables
 	DB_ITEMDESC desc;
@@ -1066,6 +1066,13 @@ BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable)
 		p_external_dbTable->GetRecordItemValue(i, &desc);
 		SetRecordItemValue(i, &desc);
 	}
+
+	if (force_path_id) {
+		m_mainTableSet.m_path_ID = path_id;
+		m_mainTableSet.m_path2_ID = path_id;
+
+	}
+
 	m_mainTableSet.Update();
 	return flag;
 }

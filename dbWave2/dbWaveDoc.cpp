@@ -1471,21 +1471,20 @@ int CdbWaveDoc::import_records_from_another_data_base(const CString& otherDataBa
 	external_table->m_mainTableSet.MoveFirst();
 	auto n_added_records = 0;
 	const CString cs_path = get_full_path_name_without_extension();
+	const long path_id = m_pDB->m_path_set.GetStringInLinkedTable(cs_path);
 
 	while (!external_table->m_mainTableSet.IsEOF())
 	{
 		if (m_pDB->IsRecordTimeUnique(external_table->m_mainTableSet.m_table_acq_date))
 		{
-			m_pDB->ImportRecordFromDatabase(external_table);
+			m_pDB->ImportRecordFromDatabase(external_table, true, path_id);
 			CString dat_name = external_table->GetCurrentRecord_DataFileName();
 			if (!dat_name.IsEmpty() && is_file_present(dat_name)) {
 				file_list_dat.Add(dat_name);
-				m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_path_set.GetStringInLinkedTable(cs_path);
 			}
 			CString spk_name = external_table->GetCurrentRecord_SpikeFileName();
 			if (!spk_name.IsEmpty() && is_file_present(spk_name)) {
 				file_list_spk.Add(spk_name);
-				m_pDB->m_mainTableSet.m_path_ID = m_pDB->m_path_set.GetStringInLinkedTable(cs_path);
 			}
 			n_added_records++;
 		}

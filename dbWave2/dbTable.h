@@ -105,7 +105,7 @@ public:
 	boolean GetRecordValueString(int column_index, CString& output_string);
 	boolean GetRecordValueLong(int column_index, long& value);
 
-	BOOL ImportRecordFromDatabase(CdbTable* p_external_dbTable);
+	BOOL ImportRecordFromDatabase(CdbTable* p_external_dbTable, boolean force_path_id = false, long path_id = 0);
 	void TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_table, int index_column1, int index_column2);
