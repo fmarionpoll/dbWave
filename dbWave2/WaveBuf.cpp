@@ -347,9 +347,8 @@ int CWaveBuf::GetWBcorrectionFactor(int i, float* correct)
 	from y(k), using ax, bx, and dx to store x(k+1), x(k+2)
 	and x(k+3).
 
-  !!! this kind of filter produces an array with 6 missing points
-	   (3 points before beginning and 3 points after end are
-	   undoubtedly unknown).
+  !!! this filter produces an array with 2 to 6 missing points
+	   at the beginning and at the end of the array
  **************************************************************************/
 
 void CWaveBuf::BDeriv(const short* lp_source, short* lp_dest, int cx) const
