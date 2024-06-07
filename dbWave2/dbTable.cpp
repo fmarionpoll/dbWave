@@ -45,7 +45,7 @@ column_properties CdbTable::m_column_properties[N_TABLE_COLUMNS] =
 	{COL_EXPT_ID, _T("expt_ID"), _T("Experiment"), FIELD_IND_TEXT, _T("expt")} // 28
 };
 
-CdbTable::CdbTable() 
+CdbTable::CdbTable()
 {
 	for (auto i = 0; i < N_TABLE_COLUMNS; i++)
 	{
@@ -58,7 +58,7 @@ CdbTable::CdbTable()
 	}
 
 	set_attached_tables_names();
-	
+
 	m_mainTableSet.m_strSort = m_column_properties[CH_ACQDATE].header_name;
 }
 
@@ -187,7 +187,7 @@ BOOL CdbTable::CreateMainTable(const CString& csTable)
 }
 
 BOOL CdbTable::create_relation_between_associated_table_and_2_columns(const LPCTSTR lpsz_foreign_table, const int column_index_1,
-                                                  const int column_index_2)
+	const int column_index_2)
 {
 	try
 	{
@@ -225,7 +225,7 @@ BOOL CdbTable::create_relation_between_associated_table_and_2_columns(const LPCT
 
 // insect name: "table_insectname" relates "insect" table with "ID" and "insectname_ID"
 BOOL CdbTable::create_relation_between_associated_table_and_1_column(const LPCTSTR lpsz_foreign_table, const int column_index,
-                                                const long l_attributes, CdbTableAssociated* p_to_associated_table)
+	const long l_attributes, CdbTableAssociated* p_to_associated_table)
 {
 	try
 	{
@@ -236,7 +236,7 @@ BOOL CdbTable::create_relation_between_associated_table_and_1_column(const LPCTS
 		CString sz_field = lpsz_table;
 		sz_field += _T("ID");
 		CreateRelation(cs_rel, lpsz_table, lpsz_foreign_table, l_attributes, sz_field,
-		               m_mainTableSet.m_desc[column_index].header_name);
+			m_mainTableSet.m_desc[column_index].header_name);
 		m_mainTableSet.m_desc[column_index].plinkedSet = p_to_associated_table;
 	}
 	catch (CDaoException* e)
@@ -383,10 +383,10 @@ BOOL CdbTable::OpenTables()
 void CdbTable::add_column_28(CDaoTableDef& table_def, const CString& cs_table, const long l_attr)
 {
 	table_def.Open(cs_table);
-	table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].header_name, dbLong, 4, 0); 
+	table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].header_name, dbLong, 4, 0);
 	m_expt_set.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
 	CreateRelation(_T("table_expt"), _T("expt"), cs_table, l_attr, _T("exptID"),
-		m_mainTableSet.m_desc[CH_EXPT_ID].header_name); 
+		m_mainTableSet.m_desc[CH_EXPT_ID].header_name);
 	table_def.Close();
 }
 
@@ -394,15 +394,15 @@ void CdbTable::add_column_26_27(CDaoTableDef& table_def, const CString& cs_table
 {
 	table_def.Open(cs_table);
 	table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_DAY].header_name, dbDate, 8, 0);
-	table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_TIME].header_name, dbDate, 8, 0); 
+	table_def.CreateField(m_mainTableSet.m_desc[CH_ACQDATE_TIME].header_name, dbDate, 8, 0);
 	table_def.Close();
 }
 
 void CdbTable::add_column_24_25(CDaoTableDef& table_def, const CString& cs_table, long l_attr) const
 {
 	table_def.Open(cs_table);
-	table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].header_name, dbLong, 4, 0); 
-	table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].header_name, dbLong, 4, 0); 
+	table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT].header_name, dbLong, 4, 0);
+	table_def.CreateField(m_mainTableSet.m_desc[CH_REPEAT2].header_name, dbLong, 4, 0);
 	table_def.Close();
 }
 
@@ -457,7 +457,7 @@ void CdbTable::add_column_22_23(CDaoTableDef& table_def, const CString& cs_table
 void CdbTable::add_column_21(CDaoTableDef& table_def, const CString& cs_table, long l_attr) const
 {
 	table_def.Open(cs_table);
-	table_def.CreateField(m_mainTableSet.m_desc[CH_FLAG].header_name, dbLong, 4, 0); 
+	table_def.CreateField(m_mainTableSet.m_desc[CH_FLAG].header_name, dbLong, 4, 0);
 	table_def.Close();
 }
 
@@ -466,11 +466,11 @@ void CdbTable::add_column_19_20(CDaoTableDef& table_def, const CString& cs_table
 	table_def.Open(cs_table);
 	CString cs_rel = _T("table_Rel1");
 	const auto i_pos = cs_rel.GetLength() - 1;
-	table_def.CreateField(m_mainTableSet.m_desc[CH_STIM2_ID].header_name, dbLong, 4, 0); 
+	table_def.CreateField(m_mainTableSet.m_desc[CH_STIM2_ID].header_name, dbLong, 4, 0);
 	table_def.CreateField(m_mainTableSet.m_desc[CH_CONC2_ID].header_name, dbLong, 4, 0);
 	cs_rel.SetAt(i_pos, '9');
 	CreateRelation(cs_rel, _T("stim"), cs_table, l_attr, _T("stimID"),
-		m_mainTableSet.m_desc[CH_STIM2_ID].header_name); 
+		m_mainTableSet.m_desc[CH_STIM2_ID].header_name);
 	cs_rel.SetAt(i_pos, 'A');
 	CreateRelation(cs_rel, _T("conc"), cs_table, l_attr, _T("concID"),
 		m_mainTableSet.m_desc[CH_CONC2_ID].header_name);
@@ -535,10 +535,8 @@ void CdbTable::UpdateAllDatabaseTables()
 CString CdbTable::get_file_path(const int i_id)
 {
 	auto cs_path = m_path_set.GetStringFromID(i_id);
-	if (is_relative_path(cs_path)) {
-		cs_path = cs_path.Right(cs_path.GetLength() - 2);
+	if (is_relative_path(cs_path))
 		cs_path = m_database_path + cs_path;
-	}
 	return cs_path;
 }
 
@@ -552,12 +550,12 @@ CString CdbTable::get_relative_path_from_string(const CString& cs_path) const
 	const LPCSTR psz_from = str_from;
 	const CStringA str_to(cs_path);
 	const LPCSTR psz_to = str_to;
-	const auto flag = PathRelativePathToA(sz_out, 
-									psz_from, 
-									FILE_ATTRIBUTE_DIRECTORY, 
-									psz_to, 
-									FILE_ATTRIBUTE_DIRECTORY);
-	CString cs_out (sz_out);
+	const auto flag = PathRelativePathToA(sz_out,
+		psz_from,
+		FILE_ATTRIBUTE_DIRECTORY,
+		psz_to,
+		FILE_ATTRIBUTE_DIRECTORY);
+	CString cs_out(sz_out);
 	if (!flag)
 		cs_out.Empty();
 
@@ -568,7 +566,7 @@ long CdbTable::get_relative_path_from_id(const long i_id)
 {
 	long new_id = -1;
 	const auto cs_path = m_path_set.GetStringFromID(i_id);
-	
+
 	if (!is_relative_path(cs_path))
 	{
 		const auto cs_relative_path = get_relative_path_from_string(cs_path);
@@ -600,17 +598,17 @@ void CdbTable::convert_path_to_relative_path(const long i_col_path)
 
 void CdbTable::set_path_relative()
 {
-	ASSERT(m_mainTableSet.CanBookmark()); 
+	ASSERT(m_mainTableSet.CanBookmark());
 	if (m_mainTableSet.IsBOF() && m_mainTableSet.IsEOF())
 		return;
-	
+
 	try
 	{
 		const auto ol = m_mainTableSet.GetBookmark();
 		m_mainTableSet.MoveFirst();
 		const auto i_col_path = m_mainTableSet.GetColumnIndex(_T("path_ID"));
 		const auto i_col_path2 = m_mainTableSet.GetColumnIndex(_T("path2_ID"));
-		
+
 		while (!m_mainTableSet.IsEOF())
 		{
 			convert_path_to_relative_path(i_col_path);
@@ -685,7 +683,7 @@ void CdbTable::set_path_absolute()
 		m_mainTableSet.MoveFirst();
 		const auto col_path = m_mainTableSet.GetColumnIndex(_T("path_ID"));
 		const auto col_path2 = m_mainTableSet.GetColumnIndex(_T("path2_ID"));
-		
+
 		while (!m_mainTableSet.IsEOF())
 		{
 			convert_to_absolute_path(col_path);
@@ -765,7 +763,7 @@ BOOL CdbTable::MoveTo(UINT nIDMoveCommand)
 		m_mainTableSet.MovePrev();
 		if (!m_mainTableSet.IsBOF())
 			break;
-	// Fall through to reset to first record
+		// Fall through to reset to first record
 		flag = FALSE;
 
 	case ID_RECORD_FIRST:
@@ -776,7 +774,7 @@ BOOL CdbTable::MoveTo(UINT nIDMoveCommand)
 		m_mainTableSet.MoveNext();
 		if (!m_mainTableSet.IsEOF())
 			break;
-	// Fall through to reset to last record
+		// Fall through to reset to last record
 		flag = FALSE;
 
 	case ID_RECORD_LAST:
@@ -941,11 +939,11 @@ DB_ITEMDESC* CdbTable::GetRecordItemDescriptor(int column_index)
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_ACQDATE_DAY:
-		p_desc->pdataItem = nullptr; 
+		p_desc->pdataItem = nullptr;
 		ASSERT(p_desc->data_code_number == FIELD_DATE_YMD);
 		break;
 	case CH_ACQDATE_TIME:
-		p_desc->pdataItem = nullptr; 
+		p_desc->pdataItem = nullptr;
 		ASSERT(p_desc->data_code_number == FIELD_DATE_HMS);
 		break;
 	case CH_EXPT_ID:
@@ -954,7 +952,7 @@ DB_ITEMDESC* CdbTable::GetRecordItemDescriptor(int column_index)
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 
-	// if it comes here, the program must have crashed because pdesc is not defined...
+		// if it comes here, the program must have crashed because pdesc is not defined...
 	default:
 		return nullptr;
 	}
@@ -979,35 +977,35 @@ BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* dbItem_descri
 
 	switch (data_code_number)
 	{
-		case FIELD_IND_TEXT:
-		case FIELD_IND_FILEPATH:
-			dbItem_descriptor->lVal = var_value.lVal;
-			dbItem_descriptor->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
-			if (i_column == CH_EXPT_ID && dbItem_descriptor->csVal.IsEmpty() )
-			{
-				const auto cs = dbItem_descriptor->csVal = GetName();
-				const auto left = cs.ReverseFind(_T('\\'));
-				const auto right = cs.ReverseFind(_T('.'));
-				dbItem_descriptor->csVal = cs.Mid(left + 1, right - left - 1);
-			}
-			break;
-		case FIELD_LONG:
-			dbItem_descriptor->lVal = var_value.lVal;
-			if (var_value.vt == VT_NULL)
-				dbItem_descriptor->lVal = 0;
-			break;
-		case FIELD_TEXT:
-			m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
-			dbItem_descriptor->csVal = V_BSTRT(&var_value);
-			break;
-		case FIELD_DATE:
-		case FIELD_DATE_HMS:
-		case FIELD_DATE_YMD:
-			dbItem_descriptor->oVal = var_value.date;
-			break;
-		default:
-			flag = FALSE;
-			break;
+	case FIELD_IND_TEXT:
+	case FIELD_IND_FILEPATH:
+		dbItem_descriptor->lVal = var_value.lVal;
+		dbItem_descriptor->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
+		if (i_column == CH_EXPT_ID && dbItem_descriptor->csVal.IsEmpty())
+		{
+			const auto cs = dbItem_descriptor->csVal = GetName();
+			const auto left = cs.ReverseFind(_T('\\'));
+			const auto right = cs.ReverseFind(_T('.'));
+			dbItem_descriptor->csVal = cs.Mid(left + 1, right - left - 1);
+		}
+		break;
+	case FIELD_LONG:
+		dbItem_descriptor->lVal = var_value.lVal;
+		if (var_value.vt == VT_NULL)
+			dbItem_descriptor->lVal = 0;
+		break;
+	case FIELD_TEXT:
+		m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
+		dbItem_descriptor->csVal = V_BSTRT(&var_value);
+		break;
+	case FIELD_DATE:
+	case FIELD_DATE_HMS:
+	case FIELD_DATE_YMD:
+		dbItem_descriptor->oVal = var_value.date;
+		break;
+	default:
+		flag = FALSE;
+		break;
 	}
 
 	return flag;
@@ -1018,41 +1016,41 @@ BOOL CdbTable::SetRecordItemValue(const int column_index, DB_ITEMDESC* dbItem_de
 	auto flag = TRUE;
 	const int data_code_number = m_column_properties[column_index].format_code_number;
 	switch (data_code_number) {
-		case FIELD_IND_TEXT:
-		case FIELD_IND_FILEPATH:
-			{
-				long dummy_id = m_mainTableSet.m_desc[column_index].plinkedSet->GetStringInLinkedTable(dbItem_descriptor->csVal);
-				if (dummy_id >= 0)
-				{
-					COleVariant var_value;
-					var_value.lVal = dummy_id;
-					m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, var_value.lVal);
-				}
-			}
-			break;
-		case FIELD_LONG:
-			m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, dbItem_descriptor->lVal);
-			break;
-		case FIELD_TEXT:
-			{
-				COleVariant var_value = dbItem_descriptor->csVal;
-				m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, var_value);
-			}
-			break;
-		case FIELD_DATE:
-		case FIELD_DATE_HMS:
-		case FIELD_DATE_YMD:
-			m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, dbItem_descriptor->oVal);
-			break;
-		default:
-			flag = FALSE;
-			break;
+	case FIELD_IND_TEXT:
+	case FIELD_IND_FILEPATH:
+	{
+		long dummy_id = m_mainTableSet.m_desc[column_index].plinkedSet->GetStringInLinkedTable(dbItem_descriptor->csVal);
+		if (dummy_id >= 0)
+		{
+			COleVariant var_value;
+			var_value.lVal = dummy_id;
+			m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, var_value.lVal);
+		}
+	}
+	break;
+	case FIELD_LONG:
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, dbItem_descriptor->lVal);
+		break;
+	case FIELD_TEXT:
+	{
+		COleVariant var_value = dbItem_descriptor->csVal;
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, var_value);
+	}
+	break;
+	case FIELD_DATE:
+	case FIELD_DATE_HMS:
+	case FIELD_DATE_YMD:
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, dbItem_descriptor->oVal);
+		break;
+	default:
+		flag = FALSE;
+		break;
 	}
 
 	return flag;
 }
 
-BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable, boolean force_path_id, long path_id)
+BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable)
 {
 	// variables
 	DB_ITEMDESC desc;
@@ -1066,13 +1064,6 @@ BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable, boolean fo
 		p_external_dbTable->GetRecordItemValue(i, &desc);
 		SetRecordItemValue(i, &desc);
 	}
-
-	if (force_path_id) {
-		m_mainTableSet.m_path_ID = path_id;
-		m_mainTableSet.m_path2_ID = path_id;
-
-	}
-
 	m_mainTableSet.Update();
 	return flag;
 }

@@ -11,7 +11,7 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_PRINTDATADRAWOPTIONS };
 
-	BOOL m_bClipRect{ false};
+	BOOL m_bClipRect{ false };
 	BOOL m_bFrameRect{ false };
 	BOOL m_bTimeScaleBar{ false };
 	BOOL m_bVoltageScaleBar{ false };

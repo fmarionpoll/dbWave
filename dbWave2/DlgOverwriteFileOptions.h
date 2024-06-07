@@ -9,14 +9,14 @@ class DlgOverwriteFileOptions : public CDialog
 	DECLARE_DYNAMIC(DlgOverwriteFileOptions)
 
 public:
-	DlgOverwriteFileOptions(CWnd* pParent = nullptr);  
-	~DlgOverwriteFileOptions() override;
+	DlgOverwriteFileOptions(CWnd* pParent = nullptr);
+	//~DlgOverwriteFileOptions();
 
 public:
 	BOOL m_bKeepChoice{ true };
 	BOOL m_bOverwriteFile{ false };
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_OPTIONSOVERWRITEFILE };
 #endif

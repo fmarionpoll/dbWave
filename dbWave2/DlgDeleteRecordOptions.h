@@ -13,8 +13,8 @@ public:
 	enum { IDD = IDD_OPTIONSDELETEDATFILE };
 
 public:
-	BOOL m_bKeepChoice {true};
-	BOOL m_bDeleteFile {false};
+	BOOL m_bKeepChoice{ true };
+	BOOL m_bDeleteFile{ false };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support

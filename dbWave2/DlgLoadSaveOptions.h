@@ -11,12 +11,12 @@ public:
 	enum { IDD = IDD_OPTIONSLOADSAVE };
 
 	CComboBox m_CBnamelist;
-	CString m_ddxcomment{ _T("")};
+	CString m_ddxcomment{ _T("") };
 	CStringArray* pParmFiles{ nullptr };
 	CString* pcomment{ nullptr };
 
 	CStringArray pFiles;
-	CString m_currentFile; 
+	CString m_currentFile;
 	int m_cursel{ 0 };
 	BOOL m_bfilenamechanged{ false };
 	BOOL m_bcommentchanged{ false };

@@ -4,7 +4,6 @@
 #include "DlgADExperiment.h"
 #include "DlgEditList.h"
 
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -194,22 +193,22 @@ BOOL DlgADExperiment::OnInitDialog()
 
 	m_csMoreComment = m_pwaveFormat->csMoreComment;
 	LoadList(&m_coConcentration, &(m_pADC_options->csA_concentration), m_pADC_options->icsA_concentration,
-	         &(m_pdbDoc->m_pDB->m_conc_set));
+		&(m_pdbDoc->m_pDB->m_conc_set));
 	LoadList(&m_coStimulus, &(m_pADC_options->csA_stimulus), m_pADC_options->icsA_stimulus,
-	         &(m_pdbDoc->m_pDB->m_stim_set));
+		&(m_pdbDoc->m_pDB->m_stim_set));
 	LoadList(&m_coConcentration2, &(m_pADC_options->csA_concentration2), m_pADC_options->icsA_concentration2,
-	         &(m_pdbDoc->m_pDB->m_conc_set));
+		&(m_pdbDoc->m_pDB->m_conc_set));
 	LoadList(&m_coStimulus2, &(m_pADC_options->csA_stimulus2), m_pADC_options->icsA_stimulus2,
-	         &(m_pdbDoc->m_pDB->m_stim_set));
+		&(m_pdbDoc->m_pDB->m_stim_set));
 	LoadList(&m_coInsect, &(m_pADC_options->csA_insect), m_pADC_options->icsA_insect, &(m_pdbDoc->m_pDB->m_insect_set));
 	LoadList(&m_coLocation, &(m_pADC_options->csA_location), m_pADC_options->icsA_location,
-	         &(m_pdbDoc->m_pDB->m_locationSet));
+		&(m_pdbDoc->m_pDB->m_locationSet));
 	LoadList(&m_coSensillum, &(m_pADC_options->csA_sensillum), m_pADC_options->icsA_sensillum,
-	         &(m_pdbDoc->m_pDB->m_sensillum_set));
+		&(m_pdbDoc->m_pDB->m_sensillum_set));
 	LoadList(&m_coStrain, &(m_pADC_options->csA_strain), m_pADC_options->icsA_strain, &(m_pdbDoc->m_pDB->m_strain_set));
 	LoadList(&m_coSex, &(m_pADC_options->csA_sex), m_pADC_options->icsA_sex, &(m_pdbDoc->m_pDB->m_sex_set));
 	LoadList(&m_coOperator, &(m_pADC_options->csA_operatorname), m_pADC_options->icsA_operatorname,
-	         &(m_pdbDoc->m_pDB->m_operator_set));
+		&(m_pdbDoc->m_pDB->m_operator_set));
 	LoadList(&m_coExpt, &(m_pADC_options->csA_expt), m_pADC_options->icsA_expt, &(m_pdbDoc->m_pDB->m_expt_set));
 	LoadList(&m_coRepeat, nullptr, m_pADC_options->icsA_repeat, nullptr);
 	LoadList(&m_coRepeat2, nullptr, m_pADC_options->icsA_repeat2, nullptr);
@@ -248,16 +247,16 @@ BOOL DlgADExperiment::OnInitDialog()
 // save content of the list
 int DlgADExperiment::SaveList(CComboBox* p_combo, CStringArray* p_s)
 {
-	int iexist = -1;
+	int exists = -1;
 	if (p_s != nullptr)
 	{
 		CString csEdit;
 		p_combo->GetWindowText(csEdit);
 		if (!csEdit.IsEmpty())
 		{
-			iexist = p_combo->FindStringExact(-1, csEdit);
-			if (iexist == CB_ERR)
-				iexist = p_combo->AddString(csEdit);
+			exists = p_combo->FindStringExact(-1, csEdit);
+			if (exists == CB_ERR)
+				exists = p_combo->AddString(csEdit);
 		}
 
 		// loop over each entry of the combo box and save it in the string array
@@ -267,10 +266,10 @@ int DlgADExperiment::SaveList(CComboBox* p_combo, CStringArray* p_s)
 		for (auto i = 0; i < i_s_count; i++)
 		{
 			p_combo->GetLBText(i, cs_dummy); // load string from combo box
-			p_s->SetAt(i, cs_dummy); // save string into string list
+			p_s->SetAt(i, cs_dummy);			// save string into string list
 		}
 	}
-	return iexist;
+	return exists;
 }
 
 // load content of the list and of the corresponding DAOrecordset

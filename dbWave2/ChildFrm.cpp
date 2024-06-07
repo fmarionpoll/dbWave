@@ -108,7 +108,7 @@ CChildFrame::CChildFrame()
 CChildFrame::~CChildFrame()
 = default;
 
-BOOL CChildFrame::PreCreateWindow(CREATESTRUCT& cs)
+BOOL CChildFrame::PreCreateWindow(CREATESTRUCT & cs)
 {
 	if (!CMDIChildWndEx::PreCreateWindow(cs))
 		return FALSE;
@@ -121,7 +121,7 @@ void CChildFrame::AssertValid() const
 	CMDIChildWndEx::AssertValid();
 }
 
-void CChildFrame::Dump(CDumpContext& dc) const
+void CChildFrame::Dump(CDumpContext & dc) const
 {
 	CMDIChildWndEx::Dump(dc);
 }
@@ -134,7 +134,7 @@ void CChildFrame::OnViewCursormodeNormal()
 	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
-void CChildFrame::OnUpdateViewCursormodeNormal(CCmdUI* pCmdUI)
+void CChildFrame::OnUpdateViewCursormodeNormal(CCmdUI * pCmdUI)
 {
 	pCmdUI->SetCheck(m_cursor_state == CURSOR_ARROW);
 }
@@ -145,7 +145,7 @@ void CChildFrame::OnViewCursormodeMeasure()
 	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
-void CChildFrame::OnUpdateViewCursormodeMeasure(CCmdUI* pCmdUI)
+void CChildFrame::OnUpdateViewCursormodeMeasure(CCmdUI * pCmdUI)
 {
 	pCmdUI->SetCheck(m_cursor_state == CURSOR_CROSS);
 }
@@ -156,7 +156,7 @@ void CChildFrame::OnViewCursormodeZoomin()
 	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
-void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI* pCmdUI)
+void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI * pCmdUI)
 {
 	pCmdUI->SetCheck(m_cursor_state == CURSOR_ZOOM);
 }
@@ -221,7 +221,7 @@ void CChildFrame::OnToolsExportdataAsText()
 	if (p_dbWave_doc != nullptr)
 	{
 		p_dbWave_doc->Export_DatafilesAsTXTfiles();
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 	}
 }
@@ -261,38 +261,38 @@ void CChildFrame::exportASCII(int option)
 	switch (option)
 	{
 	case 0: // export CAcqData
+	{
+		auto flag = FALSE;
+		if (p_app->options_viewdata.btoExcel)
+			flag = exportToExcel();
+		if (!p_app->options_viewdata.btoExcel || !flag)
 		{
-			auto flag = FALSE;
-			if (p_app->options_viewdata.btoExcel)
-				flag = exportToExcel();
-			if (!p_app->options_viewdata.btoExcel || !flag)
-			{
-				CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
-				const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
-				auto pos = p_dbWave_doc_export->GetFirstViewPosition();
-				const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
-				auto& p_edit = p_view->GetRichEditCtrl();
-				p_edit.Paste();
-			}
+			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
+			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
+			auto pos = p_dbWave_doc_export->GetFirstViewPosition();
+			const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
+			auto& p_edit = p_view->GetRichEditCtrl();
+			p_edit.Paste();
 		}
-		break;
+	}
+	break;
 	case 1:
-		{
-			auto flag = FALSE;
-			if (p_app->options_viewspikes.bexporttoExcel)
-				flag = exportToExcelAndBuildPivot(option);
+	{
+		auto flag = FALSE;
+		if (p_app->options_viewspikes.bexporttoExcel)
+			flag = exportToExcelAndBuildPivot(option);
 
-			if (!p_app->options_viewspikes.bexporttoExcel || !flag)
-			{
-				CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
-				const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
-				auto pos = p_dbWave_doc_export->GetFirstViewPosition();
-				const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
-				auto& p_edit = p_view->GetRichEditCtrl();
-				p_edit.Paste();
-			}
+		if (!p_app->options_viewspikes.bexporttoExcel || !flag)
+		{
+			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
+			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
+			auto pos = p_dbWave_doc_export->GetFirstViewPosition();
+			const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
+			auto& p_edit = p_view->GetRichEditCtrl();
+			p_edit.Paste();
 		}
-		break;
+	}
+	break;
 	default:
 		break;
 	}
@@ -310,40 +310,40 @@ LRESULT CChildFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_SETMOUSECURSOR:
-		{
-			const short lowp = LOWORD(lParam);
-			//switch (lowp)
-			//{
-			//case CURSOR_ZOOM:
-			//case CURSOR_MEASURE:
-			//case CURSOR_VERTICAL:
-			//	break;
-			//default:
-			//	m_cursor_state=CURSOR_ARROW;
-			//	break;
-			//}
-			m_cursor_state = lowp;
-		}
-		break;
+	{
+		const short lowp = LOWORD(lParam);
+		//switch (lowp)
+		//{
+		//case CURSOR_ZOOM:
+		//case CURSOR_MEASURE:
+		//case CURSOR_VERTICAL:
+		//	break;
+		//default:
+		//	m_cursor_state=CURSOR_ARROW;
+		//	break;
+		//}
+		m_cursor_state = lowp;
+	}
+	break;
 
 	case HINT_SHAREDMEMFILLED:
+	{
+		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
+		if (p_app->m_psf != nullptr)
 		{
-			auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-			if (p_app->m_psf != nullptr)
-			{
-				CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
-				const auto p_doc_export = note_view_template->OpenDocumentFile(nullptr);
-				auto pos = p_doc_export->GetFirstViewPosition();
-				const auto* p_view = static_cast<ViewNoteDoc*>(p_doc_export->GetNextView(pos));
-				auto& p_edit = p_view->GetRichEditCtrl();
-				OpenClipboard();
-				EmptyClipboard();
-				SetClipboardData(CF_UNICODETEXT, (p_app->m_psf)->Detach());
-				CloseClipboard();
-				p_edit.Paste();
-			}
+			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
+			const auto p_doc_export = note_view_template->OpenDocumentFile(nullptr);
+			auto pos = p_doc_export->GetFirstViewPosition();
+			const auto* p_view = static_cast<ViewNoteDoc*>(p_doc_export->GetNextView(pos));
+			auto& p_edit = p_view->GetRichEditCtrl();
+			OpenClipboard();
+			EmptyClipboard();
+			SetClipboardData(CF_UNICODETEXT, (p_app->m_psf)->Detach());
+			CloseClipboard();
+			p_edit.Paste();
 		}
-		break;
+	}
+	break;
 
 	default:
 		break;
@@ -407,10 +407,10 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 	auto doctype = 1;
 	if (iID < ID_VIEW_SPIKEDISPLAY || iID == ID_VIEW_ACQUIREDATA)
 		doctype = 0;
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, MAKELPARAM(HINT_REPLACEVIEW, doctype), nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, MAKELPARAM(HINT_REPLACEVIEW, doctype), nullptr);
 }
 
-void CChildFrame::OnUpdateViewMenu(CCmdUI* pCmdUI)
+void CChildFrame::OnUpdateViewMenu(CCmdUI * pCmdUI)
 {
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc == nullptr)
@@ -443,7 +443,7 @@ void CChildFrame::OnUpdateViewMenu(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(m_view_ON == pCmdUI->m_nID);
 }
 
-void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
+void CChildFrame::replaceView(CRuntimeClass * pViewClass, HMENU hmenu)
 {
 	// assume that the views replaced are of dbTableView type
 	const auto p_current_view = GetActiveView();
@@ -463,11 +463,11 @@ void CChildFrame::replaceView(CRuntimeClass* pViewClass, HMENU hmenu)
 	size.cy = rect.bottom;
 
 	// delete old view without deleting document
-	const auto b_auto_delete = p_dbWave_doc->m_bAutoDelete;
+	const auto bautodel = p_dbWave_doc->m_bAutoDelete;
 	p_dbWave_doc->m_bAutoDelete = FALSE;
 	p_dbWave_doc->CloseCurrentDataFile();
 	p_current_view->DestroyWindow();
-	p_dbWave_doc->m_bAutoDelete = b_auto_delete;
+	p_dbWave_doc->m_bAutoDelete = bautodel;
 
 	// create new view
 	CCreateContext context;
@@ -496,7 +496,7 @@ void CChildFrame::OnToolsRemoveMissingFiles()
 		return;
 
 	p_dbWave_doc->Remove_MissingFiles();
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsRemoveduplicatefiles()
@@ -506,7 +506,7 @@ void CChildFrame::OnToolsRemoveduplicatefiles()
 		return;
 
 	p_dbWave_doc->Remove_DuplicateFiles();
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsCheckFilelistsConsistency()
@@ -516,7 +516,7 @@ void CChildFrame::OnToolsCheckFilelistsConsistency()
 		return;
 
 	p_dbWave_doc->Remove_FalseSpkFiles();
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsRestoredeletedfiles()
@@ -531,7 +531,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 	if (p_dbWave_doc == nullptr)
 		return;
 	dlg.m_pdbDoc = p_dbWave_doc;
-	
+
 
 	const auto i_result = dlg.DoModal();
 
@@ -564,7 +564,7 @@ void CChildFrame::OnToolsRestoredeletedfiles()
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
@@ -573,7 +573,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 	if (p_dbWave_doc == nullptr)
 		return;
 	p_dbWave_doc->SynchronizeSourceInfos(FALSE);
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
@@ -582,7 +582,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 	if (p_dbWave_doc == nullptr)
 		return;
 	p_dbWave_doc->SynchronizeSourceInfos(TRUE);
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnToolsRemoveartefactfiles()
@@ -682,7 +682,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		}
 	}
 	// exit: update all views
-	p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CChildFrame::OnRecordGotorecord()
@@ -702,7 +702,7 @@ void CChildFrame::OnRecordGotorecord()
 			p_dbWave_doc->DB_SetCurrentRecordPosition(dlg.m_recordPos);
 		else
 			p_dbWave_doc->DB_MoveToID(dlg.m_recordID);
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	}
 }
 
@@ -722,7 +722,7 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 		if (p_dbWave_doc == nullptr)
 			return;
 		p_dbWave_doc->Import_FileList(file_names);
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 	}
@@ -756,7 +756,7 @@ void CChildFrame::OnToolsImportATFfiles()
 				return;
 			p_dbWave_doc->Import_FileList(convertedFiles);
 			p_dbWave_doc->DB_MoveLast();
-			p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+			p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
 			PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 		}
@@ -801,9 +801,9 @@ void CChildFrame::OnRecordDeletecurrent()
 			p_dbWave_doc->DB_DeleteCurrentRecord();
 
 		// update views and rename "erased" files
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
 		p_dbWave_doc->DB_SetCurrentRecordPosition(current_index);
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 
 		// delete erased files
 		if (m_bDeleteFile)
@@ -927,7 +927,7 @@ BOOL CChildFrame::exportToExcelAndBuildPivot(int option)
 }
 
 void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSourceDataAddress, CString csNameSheet,
-                                  short XlConsolidationFunction, int col2)
+	short XlConsolidationFunction, int col2)
 {
 	COleVariant cov_xl_database(static_cast<short>(1));
 	COleVariant v_opt(DISP_E_PARAMNOTFOUND, VT_ERROR);
@@ -1003,7 +1003,6 @@ void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSour
 	}
 }
 
-
 void CChildFrame::OnRecordAdd()
 {
 	ReplaceViewIndex(ID_VIEW_ACQUIREDATA);
@@ -1037,7 +1036,7 @@ void CChildFrame::OnToolsImportDatabase()
 		//p_dbWave_doc->ImportDatabase(fileName);
 		p_dbWave_doc->Import_Data_Files_From_Another_DataBase(fileName);
 		p_dbWave_doc->DB_MoveLast();
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }
 
@@ -1066,7 +1065,7 @@ void CChildFrame::OnToolsExportdatafile()
 	dlg.DoModal();
 }
 
-void CChildFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd)
+void CChildFrame::OnMDIActivate(BOOL bActivate, CWnd * pActivateWnd, CWnd * pDeactivateWnd)
 {
 	CMDIChildWndEx::OnMDIActivate(bActivate, pActivateWnd, pDeactivateWnd);
 	const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
@@ -1080,7 +1079,7 @@ void CChildFrame::OnToolsPathsRelative()
 	if (p_dbWave_doc != nullptr)
 	{
 		p_dbWave_doc->DB_SetPathsRelative();
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }
 
@@ -1090,7 +1089,7 @@ void CChildFrame::OnToolsPathsAbsolute()
 	if (p_dbWave_doc != nullptr)
 	{
 		p_dbWave_doc->DB_SetPathsAbsolute();
-		p_dbWave_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }
 
@@ -1144,7 +1143,7 @@ void CChildFrame::OnToolsCompactdatabase()
 
 	if (result == IDOK)
 	{
-		file_name = dlg.GetPathName(); 
+		file_name = dlg.GetPathName();
 		const auto ipos = file_name.ReverseFind('.');
 		const auto file_name_new = file_name.Left(ipos) + _T("_new.mdb");
 

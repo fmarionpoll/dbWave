@@ -3,14 +3,14 @@
 #define N_TABLE_COLUMNS	29
 #include "AcqWaveFormat.h"
 
-typedef struct 
+typedef struct
 {
 	int column_number;
 	CString header_name;
 	CString description;
 	int format_code_number;
 	CString attached_table;
-} column_properties, *lp_database_column_properties;
+} column_properties, * lp_database_column_properties;
 
 // CdbTable command target
 #pragma warning(disable : 4995)
@@ -26,7 +26,7 @@ public:
 	// CDaoRecordSets
 	CdbTableMain m_mainTableSet;
 
-//protected:
+	//protected:
 	CdbTableAssociated m_operator_set;
 	CdbTableAssociated m_insect_set;
 	CdbTableAssociated m_locationSet;
@@ -50,7 +50,7 @@ public:
 	// operations
 	BOOL CreateMainTable(const CString& cs);
 	void CreateAllTables();
-	
+
 	BOOL OpenTables();
 	void add_column_28(CDaoTableDef& table_def, const CString& cs_table, long l_attr);
 	void add_column_26_27(CDaoTableDef& table_def, const CString& cs_table, long l_attr) const;
@@ -105,7 +105,7 @@ public:
 	boolean GetRecordValueString(int column_index, CString& output_string);
 	boolean GetRecordValueLong(int column_index, long& value);
 
-	BOOL ImportRecordFromDatabase(CdbTable* p_external_dbTable, boolean force_path_id = false, long path_id = 0);
+	BOOL ImportRecordFromDatabase(CdbTable* p_external_dbTable);
 	void TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format);
 	void DeleteUnusedEntriesInAccessoryTables();
 	void DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_table, int index_column1, int index_column2);

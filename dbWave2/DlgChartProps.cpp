@@ -69,19 +69,36 @@ void DlgChartProps::OnEnChangeXCells()
 {
 	if (mm_xcells.m_bEntryDone)
 	{
-		const auto x_cells = m_xcells;
+		auto x_cells = m_xcells;
 		mm_xcells.OnEnChange(this, m_xcells, 1, -1);
 
 		// check boundaries
-		if (m_xcells < 1)
-			m_xcells = 1;
+		if (m_xcells < 1) m_xcells = 1;
 
 		if (m_xcells != x_cells)
 		{
 			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
 			pStruct->xScaleUnitValue = pStruct->xScaleUnitValue * x_cells / m_xcells;
-			m_xcells = x_cells;
 			m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
+			m_pscope->Invalidate();
+		}
+		UpdateData(FALSE);
+	}
+}
+
+void DlgChartProps::OnEnChangeYCells()
+{
+	if (mm_ycells.m_bEntryDone)
+	{
+		auto y_cells = m_ycells;
+		mm_ycells.OnEnChange(this, m_ycells, 1, -1);
+
+		if (m_ycells < 1) m_ycells = 1;
+		if (m_ycells != y_cells)
+		{
+			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
+			pStruct->yScaleUnitValue = pStruct->yScaleUnitValue * y_cells / m_ycells;
+			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -123,25 +140,6 @@ void DlgChartProps::OnEnChangeXYTicksLine()
 				m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
 			if (m_ycells > 0)
 				m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
-			m_pscope->Invalidate();
-		}
-		UpdateData(FALSE);
-	}
-}
-
-void DlgChartProps::OnEnChangeYCells()
-{
-	if (mm_ycells.m_bEntryDone)
-	{
-		auto y_cells = m_ycells;
-		mm_ycells.OnEnChange(this, m_ycells, 1, -1);
-
-		if (m_ycells < 1) m_ycells = 1;
-		if (m_ycells != y_cells)
-		{
-			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
-			pStruct->yScaleUnitValue = pStruct->yScaleUnitValue * y_cells / m_ycells;
-			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
 		UpdateData(FALSE);

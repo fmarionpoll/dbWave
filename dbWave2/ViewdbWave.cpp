@@ -59,7 +59,7 @@ ViewdbWave::ViewdbWave() : dbTableView(IDD)
 ViewdbWave::~ViewdbWave()
 = default;
 
-void ViewdbWave::DoDataExchange(CDataExchange* pDX)
+void ViewdbWave::DoDataExchange(CDataExchange * pDX)
 {
 	dbTableView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
@@ -135,12 +135,12 @@ void ViewdbWave::OnInitialUpdate()
 	if (m_options_viewdata->displaymode == 2)
 	{
 		CSpikeDoc* p_spk_doc = GetDocument()->Get_Current_Spike_File();
-		if (p_spk_doc != nullptr) 
+		if (p_spk_doc != nullptr)
 		{
 			m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
 			m_tabCtrl.SetCurSel(p_spk_doc->GetSpkList_CurrentIndex());
 		}
-		m_tabCtrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW: SW_HIDE);
+		m_tabCtrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW : SW_HIDE);
 	}
 }
 
@@ -210,7 +210,7 @@ void ViewdbWave::display_spikes()
 	}
 }
 
-void ViewdbWave::display_nothing() 
+void ViewdbWave::display_nothing()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_UNCHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_UNCHECKED);
@@ -285,7 +285,7 @@ void ViewdbWave::OnClickMedianFilter()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void ViewdbWave::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
 {
 	auto* p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	if (bActivate)
@@ -317,18 +317,18 @@ void ViewdbWave::fillListBox()
 	m_dataListCtrl.SetItemCountEx(n_records);
 }
 
-void ViewdbWave::OnItemActivateListctrl(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewdbWave::OnItemActivateListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	// get item clicked and select it
 	const auto p_item_activate = reinterpret_cast<NMITEMACTIVATE*>(pNMHDR);
 	if (p_item_activate->iItem >= 0)
 		GetDocument()->DB_SetCurrentRecordPosition(p_item_activate->iItem);
-	GetDocument()->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
+	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	dbTableView::OnInitialUpdate();
 	*pResult = 0;
 }
 
-void ViewdbWave::OnDblclkListctrl(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewdbWave::OnDblclkListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	*pResult = 0;
 	// quit the current view and switch to spike detection view
@@ -353,60 +353,60 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void ViewdbWave::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 {
-	if (!m_b_init)
+	if (!m_b_init )
 		return;
 
 	switch (LOWORD(lHint))
 	{
 	case HINT_GETSELECTEDRECORDS:
-		{
-			const auto p_document = GetDocument();
-			p_document->m_selectedRecords.RemoveAll();
-			const int selected_count = static_cast<int>(m_dataListCtrl.GetSelectedCount());
+	{
+		const auto p_document = GetDocument();
+		p_document->m_selectedRecords.RemoveAll();
+		const int selected_count = static_cast<int>(m_dataListCtrl.GetSelectedCount());
 
-			// Update all of the selected items.
-			if (selected_count > 0)
+		// Update all of the selected items.
+		if (selected_count > 0)
+		{
+			p_document->m_selectedRecords.SetSize(selected_count);
+			auto n_item = -1;
+			for (int i = 0; i < selected_count; i++)
 			{
-				p_document->m_selectedRecords.SetSize(selected_count);
-				auto n_item = -1;
-				for (int i = 0; i < selected_count; i++)
-				{
-					n_item = m_dataListCtrl.GetNextItem(n_item, LVNI_SELECTED);
-					ASSERT(n_item != -1);
-					p_document->m_selectedRecords.SetAt(i, n_item);
-				}
+				n_item = m_dataListCtrl.GetNextItem(n_item, LVNI_SELECTED);
+				ASSERT(n_item != -1);
+				p_document->m_selectedRecords.SetAt(i, n_item);
 			}
 		}
-		break;
+	}
+	break;
 
 	case HINT_SETSELECTEDRECORDS:
+	{
+		const auto p_document = GetDocument();
+		const UINT u_selected_count = p_document->m_selectedRecords.GetSize();
+
+		// clear previous selection in the CListCtrl if any
+		auto item = -1;
+		item = m_dataListCtrl.GetNextItem(item, LVNI_SELECTED);
+		while (item != -1)
 		{
-			const auto p_document = GetDocument();
-			const UINT u_selected_count = p_document->m_selectedRecords.GetSize();
-
-			// clear previous selection in the CListCtrl if any
-			auto item = -1;
+			m_dataListCtrl.SetItemState(item, 0, LVIS_SELECTED);
 			item = m_dataListCtrl.GetNextItem(item, LVNI_SELECTED);
-			while (item != -1)
-			{
-				m_dataListCtrl.SetItemState(item, 0, LVIS_SELECTED);
-				item = m_dataListCtrl.GetNextItem(item, LVNI_SELECTED);
-			}
-
-			// select items
-			if (u_selected_count > 0)
-			{
-				for (UINT i = 0; i < u_selected_count; i++)
-				{
-					item = static_cast<int>(p_document->m_selectedRecords.GetAt(i));
-					m_dataListCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-				}
-			}
-			m_dataListCtrl.EnsureVisible(item, FALSE);
 		}
-		break;
+
+		// select items
+		if (u_selected_count > 0)
+		{
+			for (UINT i = 0; i < u_selected_count; i++)
+			{
+				item = static_cast<int>(p_document->m_selectedRecords.GetAt(i));
+				m_dataListCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+			}
+		}
+		m_dataListCtrl.EnsureVisible(item, FALSE);
+	}
+	break;
 
 	case HINT_REPLACEVIEW:
 		m_dataListCtrl.UpdateCache(-2, -2);
@@ -450,10 +450,10 @@ void ViewdbWave::DeleteRecords()
 	}
 
 	pdb_doc->DB_SetCurrentRecordPosition(current_index);
-	pdb_doc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
-void ViewdbWave::OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewdbWave::OnLvnColumnclickListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	const auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	auto filter0 = m_pSet->GetSQL();
@@ -484,7 +484,7 @@ void ViewdbWave::OnLvnColumnclickListctrl(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 	m_pSet->m_strSort = cs;
 	m_pSet->Requery();
-	GetDocument()->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
+	GetDocument()->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	*pResult = 0;
 }
 
@@ -564,7 +564,7 @@ void ViewdbWave::OnBnClickedCheckfilename()
 	m_dataListCtrl.RefreshDisplay();
 }
 
-void ViewdbWave::OnHdnEndtrackListctrl(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewdbWave::OnHdnEndtrackListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	const auto phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
 	if (phdr->iItem == CTRL_COL_CURVE)

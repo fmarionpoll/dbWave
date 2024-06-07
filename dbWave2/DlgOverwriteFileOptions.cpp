@@ -2,7 +2,7 @@
 #include "DlgOverwriteFileOptions.h"
 
 
-IMPLEMENT_DYNAMIC(DlgOverwriteFileOptions, CDialogEx)
+IMPLEMENT_DYNAMIC(DlgOverwriteFileOptions, CDialog)
 
 DlgOverwriteFileOptions::DlgOverwriteFileOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(IDD_OPTIONSOVERWRITEFILE, pParent)
@@ -10,9 +10,8 @@ DlgOverwriteFileOptions::DlgOverwriteFileOptions(CWnd* pParent /*=nullptr*/)
 
 }
 
-DlgOverwriteFileOptions::~DlgOverwriteFileOptions()
-{
-}
+//DlgOverwriteFileOptions::~DlgOverwriteFileOptions()
+//= default;
 
 void DlgOverwriteFileOptions::DoDataExchange(CDataExchange* pDX)
 {
@@ -23,7 +22,7 @@ void DlgOverwriteFileOptions::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(DlgOverwriteFileOptions, CDialog)
+
 END_MESSAGE_MAP()
 
 
-// DlgOverwriteFileOptions message handlers
