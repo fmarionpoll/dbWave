@@ -22,12 +22,12 @@ using DB_ITEMDESC = struct db_table_column_descriptor
 	CString associated_table_name;
 
 	// ------------------filtering
-	BOOL	b_single_filter = false;					// TRUE: only 1 value  selected - stored in l_param_single_filter
+	BOOL	b_single_filter = false;	// TRUE: only 1 value  selected - stored in l_param_single_filter
 	long	l_param_single_filter = 0;
 	COleDateTime date_time_param_single_filter;
 	CString cs_param_single_filter = nullptr;
 
-	BOOL	b_array_filter = false;						// TRUE: selected values - stored in l_param_filter_array ;
+	BOOL	b_array_filter = false;		// TRUE: selected values - stored in l_param_filter_array ;
 	CArray<long, long> l_param_filter_array;
 	CArray<COleDateTime, COleDateTime> data_time_array_filter;
 	CStringArray cs_array_filter;

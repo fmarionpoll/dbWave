@@ -39,7 +39,7 @@ public:
 	HMENU		m_hMyMenu = nullptr;
 	CIntervals	m_stimsaved;
 
-	CdbTable* m_pDB = nullptr;
+	CdbTable*	m_pDB = nullptr;
 	BOOL		m_validTables = false;
 	CDWordArray m_selectedRecords;
 	CString		m_dbFilename;

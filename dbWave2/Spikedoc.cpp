@@ -976,7 +976,7 @@ void CSpikeDoc::ExportTableColHeaders_db(CSharedFile* pSF, OPTIONS_VIEWSPIKES* v
 		// ................     acq comments, stim, conc, type
 		cs_dummy += _T("\tExpt\tinsectID\tssID\tinsect\tstrain\tsex\tlocation\toperator\tmore");
 		ncolumns += 9;
-		cs_dummy += _T("\tstim1\tconc1\trepeat1\tstim2\tconc2\trepeat2\ttype\ttag");
+		cs_dummy += _T("\tstim1\tconc1\trepeat1\tstim2\tconc2\trepeat2\ttype\tflag");
 		ncolumns += 8;
 	}
 
