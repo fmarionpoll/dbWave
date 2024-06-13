@@ -416,7 +416,7 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 	dlg.m_bFilename = FALSE; 
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	OPTIONS_INPUTDATA* pacqD = &(p_app->options_acqdata);
-	dlg.m_pADC_options = pacqD;
+	dlg.options_inputdata_ = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
 	const BOOL flag = dlg.DoModal();
 	if (IDOK == flag)

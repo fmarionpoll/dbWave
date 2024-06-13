@@ -43,7 +43,7 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 public:
-	OPTIONS_INPUTDATA* m_pADC_options{nullptr};
+	OPTIONS_INPUTDATA* options_inputdata_{nullptr};
 	BOOL			m_bADexpt{true};
 	CWaveFormat*	m_pwaveFormat{nullptr};
 	CdbWaveDoc*		m_pdbDoc{nullptr};

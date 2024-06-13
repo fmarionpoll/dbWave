@@ -91,8 +91,8 @@ protected:
 	BOOL m_bSimultaneousStart{ false };
 
 	// DT buffer
-	OPTIONS_INPUTDATA* m_pOptions_AD{ nullptr };
-	OPTIONS_OUTPUTDATA* m_pOptions_DA{ nullptr };
+	OPTIONS_INPUTDATA* options_inputdata_{ nullptr };
+	OPTIONS_OUTPUTDATA* options_outputdata_{ nullptr };
 	BOOL m_bsimultaneousStartDA{ false };
 
 	// sweep

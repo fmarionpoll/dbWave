@@ -182,10 +182,10 @@ void ViewADcontinuous::get_acquisition_parameters_from_data_file()
 	if (pDat != nullptr)
 	{
 		pDat->ReadDataInfos();
-		m_pOptions_AD->waveFormat.Copy(pDat->GetpWaveFormat());
-		m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-		m_pOptions_AD->chanArray.Copy(pDat->GetpWavechanArray());
-		m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
+		options_inputdata_->waveFormat.Copy(pDat->GetpWaveFormat());
+		options_inputdata_->chanArray.ChanArray_setSize(options_inputdata_->waveFormat.scan_count);
+		options_inputdata_->chanArray.Copy(pDat->GetpWavechanArray());
+		options_inputdata_->waveFormat.bADwritetofile = m_bADwritetofile;
 	}
 }
 
@@ -196,12 +196,12 @@ void ViewADcontinuous::OnInitialUpdate()
 	AttachControls();
 
 	const auto pApp = static_cast<CdbWaveApp*>(AfxGetApp());
-	m_pOptions_AD = &(pApp->options_acqdata);
-	m_pOptions_DA = &(pApp->options_outputdata);
+	options_inputdata_ = &(pApp->options_acqdata);
+	options_outputdata_ = &(pApp->options_outputdata);
 
 	m_bFoundDTOPenLayerDLL = FALSE;
-	m_bADwritetofile = m_pOptions_AD->waveFormat.bADwritetofile;
-	m_bStartOutPutMode = m_pOptions_DA->bAllowDA;
+	m_bADwritetofile = options_inputdata_->waveFormat.bADwritetofile;
+	m_bStartOutPutMode = options_outputdata_->bAllow_outputdata;
 	m_Combo_StartOutput.SetCurSel(m_bStartOutPutMode);
 
 	// if current document, load parameters from current document into the local set of parameters
@@ -209,9 +209,9 @@ void ViewADcontinuous::OnInitialUpdate()
 
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument(); 
-	m_inputDataFile.GetpWaveFormat()->Copy( &m_pOptions_AD->waveFormat);
-	m_pOptions_AD->chanArray.ChanArray_setSize(m_pOptions_AD->waveFormat.scan_count);
-	m_inputDataFile.GetpWavechanArray()->Copy(&m_pOptions_AD->chanArray);
+	m_inputDataFile.GetpWaveFormat()->Copy( &options_inputdata_->waveFormat);
+	options_inputdata_->chanArray.ChanArray_setSize(options_inputdata_->waveFormat.scan_count);
+	m_inputDataFile.GetpWavechanArray()->Copy(&options_inputdata_->chanArray);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();
@@ -219,7 +219,7 @@ void ViewADcontinuous::OnInitialUpdate()
 	{
 		InitOutput_AD();
 		InitializeAmplifiers(); 
-		m_Acq32_DA.InitSubSystem(m_pOptions_AD);
+		m_Acq32_DA.InitSubSystem(options_inputdata_);
 		m_Acq32_DA.ClearAllOutputs();
 	}
 	else
@@ -264,8 +264,8 @@ BOOL ViewADcontinuous::FindDTOpenLayersBoards()
 
 	short isel = 0;
 	// if name already defined, check if board present
-	if (!(m_pOptions_AD->waveFormat).csADcardName.IsEmpty())
-		isel = static_cast<short>(m_Combo_ADcard.FindString(-1, (m_pOptions_AD->waveFormat).csADcardName));
+	if (!(options_inputdata_->waveFormat).csADcardName.IsEmpty())
+		isel = static_cast<short>(m_Combo_ADcard.FindString(-1, (options_inputdata_->waveFormat).csADcardName));
 	if (isel < 0)
 		isel = 0;
 
@@ -279,7 +279,7 @@ BOOL ViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
 {
 	// get infos
 	m_bFoundDTOPenLayerDLL = TRUE;
-	(m_pOptions_AD->waveFormat).csADcardName = card_name;
+	(options_inputdata_->waveFormat).csADcardName = card_name;
 
 	// connect A/D subsystem and display/hide buttons
 	m_bStartOutPutMode = 0;
@@ -301,7 +301,7 @@ BOOL ViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
 	m_Combo_StartOutput.ShowWindow(show);
 	m_Button_StartStop_DA.ShowWindow(show);
 	if (show == SW_SHOW)
-		SetCombostartoutput(m_pOptions_DA->bAllowDA);
+		SetCombostartoutput(options_outputdata_->bAllow_outputdata);
 
 	return TRUE;
 }
@@ -418,18 +418,18 @@ void ViewADcontinuous::TransferFilesToDatabase()
 
 BOOL ViewADcontinuous::InitOutput_DA()
 {
-	m_DA_present = m_Acq32_DA.InitSubSystem(m_pOptions_AD);
+	m_DA_present = m_Acq32_DA.InitSubSystem(options_inputdata_);
 	if (m_bStartOutPutMode == 0 && m_DA_present)
-		m_Acq32_DA.DeclareAndFillBuffers(m_pOptions_AD);
+		m_Acq32_DA.DeclareAndFillBuffers(options_inputdata_);
 	return m_DA_present;
 }
 
 BOOL ViewADcontinuous::InitOutput_AD()
 {
-	m_AD_present = m_Acq32_AD.InitSubSystem(m_pOptions_AD);
+	m_AD_present = m_Acq32_AD.InitSubSystem(options_inputdata_);
 	if (m_AD_present)
 	{
-		m_Acq32_AD.DeclareBuffers(m_pOptions_AD);
+		m_Acq32_AD.DeclareBuffers(options_inputdata_);
 		InitAcquisitionInputFile();
 		InitAcquisitionDisplay();
 	}
@@ -438,7 +438,7 @@ BOOL ViewADcontinuous::InitOutput_AD()
 
 void ViewADcontinuous::InitAcquisitionDisplay()
 {
-	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+	const CWaveFormat* pWFormat = &(options_inputdata_->waveFormat);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
 	m_chartDataAD.ResizeChannels(0, m_chsweeplength);
 	if (m_chartDataAD.GetChanlistSize() != pWFormat->scan_count)
@@ -452,8 +452,8 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 
 	// adapt source view 
 	int i_extent = MulDiv(pWFormat->binspan, 12, 10);
-	if (m_pOptions_AD->izoomCursel != 0)
-		i_extent = m_pOptions_AD->izoomCursel;
+	if (options_inputdata_->izoomCursel != 0)
+		i_extent = options_inputdata_->izoomCursel;
 
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
@@ -491,13 +491,13 @@ BOOL ViewADcontinuous::StartAcquisition()
 	m_chartDataAD.start_display(m_chsweeplength);
 	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
 	pWFormat->sample_count = 0; 
-	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(m_pOptions_AD->iundersample);
+	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(options_inputdata_->iundersample);
 	m_fclockrate = pWFormat->sampling_rate_per_channel * static_cast<float>(pWFormat->scan_count);
 	pWFormat->acqtime = CTime::GetCurrentTime();
 
 	// data format
-	pWFormat->binspan = (m_pOptions_AD->waveFormat).binspan;
-	pWFormat->fullscale_volts = (m_pOptions_AD->waveFormat).fullscale_volts;
+	pWFormat->binspan = (options_inputdata_->waveFormat).binspan;
+	pWFormat->fullscale_volts = (options_inputdata_->waveFormat).fullscale_volts;
 	// trick: if OLx_ENC_BINARY, it is changed on the fly within AD_Transfer function 
 	pWFormat->mode_encoding = OLx_ENC_2SCOMP;
 	pWFormat->binzero = 0;
@@ -716,7 +716,7 @@ void ViewADcontinuous::UpdateStartStop(BOOL bStart)
 		m_btnStartStop_AD.SetWindowText(_T("START"));
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
-		if (m_pOptions_AD->baudiblesound)
+		if (options_inputdata_->baudiblesound)
 			Beep(500, 400);
 		ASSERT(m_Acq32_AD.IsInProgress() == FALSE);
 	}
@@ -737,7 +737,7 @@ BOOL ViewADcontinuous::define_experiment()
 	{
 		DlgADExperiment dlg;
 		dlg.m_bFilename = true;
-		dlg.m_pADC_options = m_pOptions_AD;
+		dlg.options_inputdata_ = options_inputdata_;
 		dlg.m_pdbDoc = GetDocument();
 		dlg.m_bhidesubsequent = m_bhidesubsequent;
 		if (IDOK != dlg.DoModal())
@@ -751,9 +751,9 @@ BOOL ViewADcontinuous::define_experiment()
 	{
 		// build file name
 		CString csBufTemp;
-		m_pOptions_AD->exptnumber++;
-		csBufTemp.Format(_T("%06.6lu"), m_pOptions_AD->exptnumber);
-		file_name = m_pOptions_AD->csPathname + m_pOptions_AD->csBasename + csBufTemp + _T(".dat");
+		options_inputdata_->exptnumber++;
+		csBufTemp.Format(_T("%06.6lu"), options_inputdata_->exptnumber);
+		file_name = options_inputdata_->csPathname + options_inputdata_->csBasename + csBufTemp + _T(".dat");
 
 		// check if this file is already present, exit if not...
 		CFileStatus status;
@@ -766,9 +766,9 @@ BOOL ViewADcontinuous::define_experiment()
 			BOOL flag = TRUE;
 			while (flag)
 			{
-				m_pOptions_AD->exptnumber++;
-				csBufTemp.Format(_T("%06.6lu"), m_pOptions_AD->exptnumber);
-				file_name = m_pOptions_AD->csPathname + m_pOptions_AD->csBasename + csBufTemp + _T(".dat");
+				options_inputdata_->exptnumber++;
+				csBufTemp.Format(_T("%06.6lu"), options_inputdata_->exptnumber);
+				file_name = options_inputdata_->csPathname + options_inputdata_->csBasename + csBufTemp + _T(".dat");
 				flag = CFile::GetStatus(file_name, status);
 			}
 			const CString cs = _T("Next available file name: ") + file_name;
@@ -790,11 +790,11 @@ void ViewADcontinuous::OnInputChannels()
 	UpdateData(TRUE);
 
 	DlgADInputs dlg;
-	dlg.m_pwFormat = &(m_pOptions_AD->waveFormat);
-	dlg.m_pchArray = &(m_pOptions_AD->chanArray);
+	dlg.m_pwFormat = &(options_inputdata_->waveFormat);
+	dlg.m_pchArray = &(options_inputdata_->chanArray);
 	dlg.m_numchansMAXDI = m_Acq32_AD.GetSSCaps(OLSSC_MAXDICHANS);
 	dlg.m_numchansMAXSE = m_Acq32_AD.GetSSCaps(OLSSC_MAXSECHANS);
-	dlg.m_bchantype = m_pOptions_AD->bChannelType;
+	dlg.m_bchantype = options_inputdata_->bChannelType;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
 
@@ -804,7 +804,7 @@ void ViewADcontinuous::OnInputChannels()
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		m_pOptions_AD->bChannelType = dlg.m_bchantype;
+		options_inputdata_->bChannelType = dlg.m_bchantype;
 		const boolean is_acquisition_running = m_Acq32_AD.IsInProgress();
 		if (dlg.is_AD_changed) 
 		{
@@ -826,14 +826,14 @@ void ViewADcontinuous::OnInputChannels()
 void ViewADcontinuous::OnSamplingMode()
 {
 	DlgADIntervals dlg;
-	CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+	CWaveFormat* pWFormat = &(options_inputdata_->waveFormat);
 	dlg.m_p_wave_format = pWFormat;
 	dlg.m_rate_minimum = 1.0f;
 	dlg.m_rate_maximum = static_cast<float>(m_Acq32_AD.GetMaximumFrequency() / pWFormat->scan_count);
 	dlg.m_buffer_W_size_maximum = static_cast<UINT>(65536) * 4;
-	dlg.m_under_sample_factor = m_pOptions_AD->iundersample;
-	dlg.m_b_audible_sound = m_pOptions_AD->baudiblesound;
-	dlg.m_acquisition_duration = m_pOptions_AD->duration_to_acquire;
+	dlg.m_under_sample_factor = options_inputdata_->iundersample;
+	dlg.m_b_audible_sound = options_inputdata_->baudiblesound;
+	dlg.m_acquisition_duration = options_inputdata_->duration_to_acquire;
 	dlg.m_sweep_duration = m_sweepduration;
 	dlg.m_b_chain_dialog = TRUE;
 
@@ -845,11 +845,11 @@ void ViewADcontinuous::OnSamplingMode()
 			UpdateStartStop(m_Acq32_AD.IsInProgress());
 		}
 
-		m_pOptions_AD->iundersample = static_cast<int>(dlg.m_under_sample_factor);
-		m_pOptions_AD->baudiblesound = dlg.m_b_audible_sound;
-		m_pOptions_AD->duration_to_acquire = dlg.m_acquisition_duration;
+		options_inputdata_->iundersample = static_cast<int>(dlg.m_under_sample_factor);
+		options_inputdata_->baudiblesound = dlg.m_b_audible_sound;
+		options_inputdata_->duration_to_acquire = dlg.m_acquisition_duration;
 		m_sweepduration = dlg.m_sweep_duration;
-		m_pOptions_AD->sweepduration = m_sweepduration;
+		options_inputdata_->sweepduration = m_sweepduration;
 		InitOutput_AD();
 		UpdateData(FALSE);
 	}
@@ -938,18 +938,18 @@ short* ViewADcontinuous::ADC_Transfer(short* source_data, const CWaveFormat * pW
 	pRawDataBuf += (m_channel_sweep_start * pWFormat->scan_count);
 
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
-	if ((m_pOptions_AD->waveFormat).binzero != NULL)
+	if ((options_inputdata_->waveFormat).binzero != NULL)
 	{
-		const auto bin_zero_value = static_cast<short>(m_pOptions_AD->waveFormat.binzero);
+		const auto bin_zero_value = static_cast<short>(options_inputdata_->waveFormat.binzero);
 		short* p_data_acquisition_value = source_data;
 		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, p_data_acquisition_value++)
 			*p_data_acquisition_value -= bin_zero_value;
 	}
 
-	if (m_pOptions_AD->iundersample <= 1)
+	if (options_inputdata_->iundersample <= 1)
 		memcpy(pRawDataBuf, source_data, m_Acq32_AD.Getbuflen() * sizeof(short));
 	else
-		under_sample_buffer(pRawDataBuf, source_data, pWFormat, m_pOptions_AD->iundersample);
+		under_sample_buffer(pRawDataBuf, source_data, pWFormat, options_inputdata_->iundersample);
 
 	m_bytesweepRefresh = m_chsweepRefresh * static_cast<int>(sizeof(short)) * static_cast<int>(pWFormat->scan_count);
 
@@ -1006,7 +1006,7 @@ void ViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 		const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_bytesweepRefresh);
 		ASSERT(flag);
 		// end of acquisition
-		if (duration >= m_pOptions_AD->duration_to_acquire)
+		if (duration >= options_inputdata_->duration_to_acquire)
 		{
 			StopAcquisition();
 			if (m_bhidesubsequent)
@@ -1038,12 +1038,12 @@ BOOL ViewADcontinuous::InitCyberAmp() const
 {
 	CyberAmp cyberAmp;
 	BOOL cyberAmp_is_present = FALSE;
-	const int n_ad_channels = (m_pOptions_AD->chanArray).ChanArray_getSize();
+	const int n_ad_channels = (options_inputdata_->chanArray).ChanArray_getSize();
 
 	// test if Cyberamp320 selected
 	for (int i = 0; i < n_ad_channels; i++)
 	{
-		const CWaveChan* p_wave_channel = (m_pOptions_AD->chanArray).Get_p_channel(i);
+		const CWaveChan* p_wave_channel = (options_inputdata_->chanArray).Get_p_channel(i);
 
 		const int a = p_wave_channel->am_csamplifier.Find(_T("CyberAmp"));
 		const int b = p_wave_channel->am_csamplifier.Find(_T("Axon Instrument"));
@@ -1137,7 +1137,7 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 
 	if (y_extent > 0) 
 	{
-		const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+		const CWaveFormat* pWFormat = &(options_inputdata_->waveFormat);
 		const int last_channel = pWFormat->scan_count - 1;
 		for (int channel = 0; channel <= last_channel; channel++)
 		{
@@ -1145,7 +1145,7 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 			ppChan->SetYextent(y_extent);
 		}
 		m_chartDataAD.Invalidate();
-		m_pOptions_AD->izoomCursel = y_extent;
+		options_inputdata_->izoomCursel = y_extent;
 	}
 
 	UpdateGainScroll();
@@ -1186,7 +1186,7 @@ void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 			break;
 	}
 	
-	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+	const CWaveFormat* pWFormat = &(options_inputdata_->waveFormat);
 	constexpr int first_channel = 0;
 	const int last_channel = pWFormat->scan_count - 1;
 	for (int i = first_channel; i <= last_channel; i++)
@@ -1219,7 +1219,7 @@ void ViewADcontinuous::UpdateGainScroll()
 void ViewADcontinuous::OnCbnSelchangeCombostartoutput()
 {
 	m_bStartOutPutMode = m_Combo_StartOutput.GetCurSel();
-	m_pOptions_DA->bAllowDA = m_bStartOutPutMode;
+	options_outputdata_->bAllow_outputdata = m_bStartOutPutMode;
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
@@ -1228,26 +1228,26 @@ void ViewADcontinuous::SetCombostartoutput(int option)
 	m_Combo_StartOutput.SetCurSel(option);
 	option = m_Combo_StartOutput.GetCurSel();
 	m_bStartOutPutMode = option;
-	m_pOptions_DA->bAllowDA = option;
+	options_outputdata_->bAllow_outputdata = option;
 	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
 }
 
 void ViewADcontinuous::OnBnClickedDaparameters2()
 {
 	DlgDAChannels dlg;
-	const auto i_size = m_pOptions_DA->outputparms_array.GetSize();
+	const auto i_size = options_outputdata_->outputparms_array.GetSize();
 	if (i_size < 10)
-		m_pOptions_DA->outputparms_array.SetSize(10);
+		options_outputdata_->outputparms_array.SetSize(10);
 	dlg.outputparms_array.SetSize(10);
 	for (auto i = 0; i < 10; i++)
-		dlg.outputparms_array[i] = m_pOptions_DA->outputparms_array[i];
-	const CWaveFormat* wave_format = &(m_pOptions_AD->waveFormat);
+		dlg.outputparms_array[i] = options_outputdata_->outputparms_array[i];
+	const CWaveFormat* wave_format = &(options_inputdata_->waveFormat);
 	dlg.m_samplingRate = wave_format->sampling_rate_per_channel;
 
 	if (IDOK == dlg.DoModal())
 	{
 		for (int i = 0; i < 10; i++)
-			m_pOptions_DA->outputparms_array[i] = dlg.outputparms_array[i];
+			options_outputdata_->outputparms_array[i] = dlg.outputparms_array[i];
 		m_Acq32_DA.SetChannelList();
 		m_Button_StartStop_DA.EnableWindow(m_Acq32_DA.GetDigitalChannel() > 0);
 	}
@@ -1256,14 +1256,14 @@ void ViewADcontinuous::OnBnClickedDaparameters2()
 void ViewADcontinuous::OnBnClickedWriteToDisk()
 {
 	m_bADwritetofile = TRUE;
-	m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
+	options_inputdata_->waveFormat.bADwritetofile = m_bADwritetofile;
 	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
 }
 
 void ViewADcontinuous::OnBnClickedOscilloscope()
 {
 	m_bADwritetofile = FALSE;
-	m_pOptions_AD->waveFormat.bADwritetofile = m_bADwritetofile;
+	options_inputdata_->waveFormat.bADwritetofile = m_bADwritetofile;
 	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
 }
 
@@ -1302,10 +1302,10 @@ void ViewADcontinuous::OnBnClickedStartstop2()
 
 BOOL ViewADcontinuous::StartOutput()
 {
-	if (!m_Acq32_DA.InitSubSystem(m_pOptions_AD))
+	if (!m_Acq32_DA.InitSubSystem(options_inputdata_))
 		return FALSE;
-	m_Acq32_DA.DeclareAndFillBuffers(m_pOptions_AD);
-	m_Acq32_AD.DeclareBuffers(m_pOptions_AD);
+	m_Acq32_DA.DeclareAndFillBuffers(options_inputdata_);
+	m_Acq32_AD.DeclareBuffers(options_inputdata_);
 	m_Acq32_DA.ConfigAndStart();
 	return TRUE;
 }
@@ -1317,12 +1317,12 @@ void ViewADcontinuous::StopOutput()
 
 void ViewADcontinuous::InitAcquisitionInputFile()
 {
-	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+	const CWaveFormat* pWFormat = &(options_inputdata_->waveFormat);
 
-	m_chsweeplength = static_cast<long>(m_sweepduration * pWFormat->sampling_rate_per_channel / static_cast<float>(m_pOptions_AD->iundersample));
+	m_chsweeplength = static_cast<long>(m_sweepduration * pWFormat->sampling_rate_per_channel / static_cast<float>(options_inputdata_->iundersample));
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
-	m_inputDataFile.GetpWavechanArray()->Copy(&m_pOptions_AD->chanArray);
-	m_inputDataFile.GetpWaveFormat()->Copy( &m_pOptions_AD->waveFormat);
+	m_inputDataFile.GetpWavechanArray()->Copy(&options_inputdata_->chanArray);
+	m_inputDataFile.GetpWaveFormat()->Copy( &options_inputdata_->waveFormat);
 
 	// set sweep length to the nb of data buffers
 	m_inputDataFile.GetpWaveFormat()->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);
@@ -1331,7 +1331,7 @@ void ViewADcontinuous::InitAcquisitionInputFile()
 
 void ViewADcontinuous::OnBnClickedUnzoom()
 {
-	const CWaveFormat* pWFormat = &(m_pOptions_AD->waveFormat);
+	const CWaveFormat* pWFormat = &(options_inputdata_->waveFormat);
 	const int i_extent = pWFormat->binspan;
 
 	for (int i = 0; i < pWFormat->scan_count; i++)

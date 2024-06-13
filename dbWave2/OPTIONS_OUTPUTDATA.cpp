@@ -15,7 +15,7 @@ OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator =(const OPTIONS_OUTPUTDATA& arg
 	if (this != &arg)
 	{
 		wversion = arg.wversion;
-		bAllowDA = arg.bAllowDA;
+		bAllow_outputdata = arg.bAllow_outputdata;
 		csOutputFile = arg.csOutputFile;
 		bPresetWave = arg.bPresetWave;
 		iDAbufferlength = arg.iDAbufferlength;
@@ -43,7 +43,7 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 		ar << csOutputFile;
 
 		ar << static_cast<WORD>(2); // BOOL
-		ar << bAllowDA;
+		ar << bAllow_outputdata;
 		ar << bPresetWave;
 
 		ar << static_cast<WORD>(3); // int
@@ -83,7 +83,7 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 		// BOOL parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> bAllowDA;
+		if (n > 0) ar >> bAllow_outputdata;
 		n--;
 		if (n > 0) ar >> bPresetWave;
 		n--;
