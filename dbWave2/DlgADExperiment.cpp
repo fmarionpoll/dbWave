@@ -278,11 +278,15 @@ void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 {
 	// add string from the string array
 	p_combo->ResetContent();
+
 	// associated list available? yes
 	if (p_s != nullptr)
 	{
-		for (auto i = 0; i < p_s->GetSize(); i++)
-			p_combo->AddString(p_s->GetAt(i));
+		for (auto i = 0; i < p_s->GetSize(); i++) {
+			const CString& descriptor = p_s->GetAt(i);
+			if (!descriptor.IsEmpty())
+				p_combo->AddString(descriptor);
+		}
 	}
 	// no associated list -  insert provisional values in the table
 	else
@@ -310,7 +314,7 @@ void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 		{
 			pm_set->GetFieldValue(0, var_value1);
 			CString cs_field = var_value1.bstrVal;
-			if (p_combo->FindStringExact(0, cs_field) == CB_ERR)
+			if (!cs_field.IsEmpty() && p_combo->FindStringExact(0, cs_field) == CB_ERR)
 			{
 				p_combo->AddString(cs_field);
 				i_sel = 0; // reset selection if a chain is added
