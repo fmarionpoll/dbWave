@@ -12,7 +12,7 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CPropDockPane - properdies docking panel that allows trapping command messages
+// CPropDockPane - properties docking panel that allows trapping command messages
 
 IMPLEMENT_DYNAMIC(CPropertiesWnd, CDockablePane)
 
@@ -247,7 +247,6 @@ void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) 
 			p_prop->SetValue(desc.csVal);
 			p_prop->SetOriginalValue(desc.csVal);
 			break;
-
 		default:
 			break;
 		}
@@ -567,13 +566,11 @@ LRESULT CPropertiesWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 void CPropertiesWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
-
 	switch (LOWORD(lHint))
 	{
 	case HINT_CLOSEFILEMODIFIED: // save current file parms
 		m_pDocOld = nullptr;
 		break;
-
 	case HINT_REQUERY:
 	case HINT_DOCHASCHANGED:
 	case HINT_DOCMOVERECORD:
