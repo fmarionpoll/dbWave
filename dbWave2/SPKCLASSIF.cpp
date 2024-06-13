@@ -13,8 +13,8 @@ SPKCLASSIF::SPKCLASSIF() : bChanged(0), nintparms(0), nfloatparms(0)
 	iparameter = 0; // type of parameter measured
 	ileft = 10; // position of first cursor
 	iright = 40; // position of second cursor
-	ilower = 0; // second threshold
-	iupper = 10; // first threshold
+	lower_threshold = 0; // second threshold
+	upper_threshold = 10; // first threshold
 	ixyleft = 10;
 	ixyright = 40;
 	sourceclass = 0; // source class
@@ -51,8 +51,8 @@ SPKCLASSIF& SPKCLASSIF::operator =(const SPKCLASSIF& arg)
 		iparameter = arg.iparameter; // type of parameter measured
 		ileft = arg.ileft; // position of first cursor
 		iright = arg.iright; // position of second cursor
-		ilower = arg.ilower; // second threshold
-		iupper = arg.iupper; // first threshold
+		lower_threshold = arg.lower_threshold; // second threshold
+		upper_threshold = arg.upper_threshold; // first threshold
 		ixyright = arg.ixyright;
 		ixyleft = arg.ixyleft;
 		sourceclass = arg.sourceclass; // source class
@@ -95,8 +95,8 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 		ar << static_cast<WORD>(iparameter);
 		ar << static_cast<WORD>(ileft);
 		ar << static_cast<WORD>(iright);
-		ar << static_cast<WORD>(ilower);
-		ar << static_cast<WORD>(iupper);
+		ar << static_cast<WORD>(lower_threshold);
+		ar << static_cast<WORD>(upper_threshold);
 		const auto dummy = static_cast<WORD>(0);
 		ar << dummy;
 		ar << dummy;
@@ -144,9 +144,9 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 		ar >> w1;
 		iright = w1;
 		ar >> w1;
-		ilower = w1;
+		lower_threshold = w1;
 		ar >> w1;
-		iupper = w1;
+		upper_threshold = w1;
 		ar >> w1;
 		sourceclass = w1; // dummy in v4
 		ar >> w1;

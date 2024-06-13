@@ -28,11 +28,11 @@ ViewSpikeSort::~ViewSpikeSort()
 	if (m_pSpkDoc != nullptr)
 		saveCurrentSpkFile(); // save file if modified
 	// save current spike detection parameters
-	m_psC->bChanged = TRUE;
-	m_psC->sourceclass = m_source_class;
-	m_psC->destclass = m_destination_class;
-	m_psC->mvmax = m_mVMax;
-	m_psC->mvmin = m_mVMin;
+	spkclassif_->bChanged = TRUE;
+	spkclassif_->sourceclass = m_source_class;
+	spkclassif_->destclass = m_destination_class;
+	spkclassif_->mvmax = m_mVMax;
+	spkclassif_->mvmin = m_mVMin;
 }
 
 void ViewSpikeSort::DoDataExchange(CDataExchange* pDX)
@@ -42,8 +42,8 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PARAMETER, m_CBparameter);
 	DDX_Text(pDX, IDC_T1, m_t1);
 	DDX_Text(pDX, IDC_T2, m_t2);
-	DDX_Text(pDX, IDC_LIMITLOWER, m_lower);
-	DDX_Text(pDX, IDC_LIMITUPPER, m_upper);
+	DDX_Text(pDX, IDC_LIMITLOWER, limit_lower_threshold_);
+	DDX_Text(pDX, IDC_LIMITUPPER, limit_upper_threshold_);
 	DDX_Text(pDX, IDC_SOURCECLASS, m_source_class);
 	DDX_Text(pDX, IDC_DESTINATIONCLASS, m_destination_class);
 	DDX_Text(pDX, IDC_EDIT2, m_timeFirst);
@@ -106,8 +106,8 @@ void ViewSpikeSort::define_sub_classed_items()
 
 	VERIFY(mm_t1.SubclassDlgItem(IDC_T1, this));
 	VERIFY(mm_t2.SubclassDlgItem(IDC_T2, this));
-	VERIFY(mm_lower.SubclassDlgItem(IDC_LIMITLOWER, this));
-	VERIFY(mm_upper.SubclassDlgItem(IDC_LIMITUPPER, this));
+	VERIFY(mm_limitlower.SubclassDlgItem(IDC_LIMITLOWER, this));
+	VERIFY(mm_limitupper.SubclassDlgItem(IDC_LIMITUPPER, this));
 	VERIFY(mm_source_class.SubclassDlgItem(IDC_SOURCECLASS, this));
 	VERIFY(mm_destination_class.SubclassDlgItem(IDC_DESTINATIONCLASS, this));
 	VERIFY(mm_timeFirst.SubclassDlgItem(IDC_EDIT2, this));
@@ -156,46 +156,46 @@ void ViewSpikeSort::OnInitialUpdate()
 
 	// load global parameters
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	m_psC = &(p_app->spk_classif);
-	m_pOptionsViewData = &(p_app->options_viewdata);
+	spkclassif_ = &(p_app->spk_classif);
+	options_view_data_ = &(p_app->options_viewdata);
 
 	// assign values to controls
-	m_CBparameter.SetCurSel(m_psC->iparameter);
-	m_mVMax = m_psC->mvmax;
-	m_mVMin = m_psC->mvmin;
+	m_CBparameter.SetCurSel(spkclassif_->iparameter);
+	m_mVMax = spkclassif_->mvmax;
+	m_mVMin = spkclassif_->mvmin;
 
-	m_source_class = m_psC->sourceclass;
-	m_destination_class = m_psC->destclass;
+	m_source_class = spkclassif_->sourceclass;
+	m_destination_class = spkclassif_->destclass;
 
 	m_chart_spike_shapes.DisplayAllFiles(false, GetDocument());
 	m_chart_spike_shapes.set_plot_mode(PLOT_ONECOLOR, m_source_class);
-	m_chart_spike_shapes.SetScopeParameters(&(m_pOptionsViewData->spksort1spk));
-	m_spkform_tag_left = m_chart_spike_shapes.m_VTtags.AddTag(m_psC->ileft, 0);
-	m_spkform_tag_right = m_chart_spike_shapes.m_VTtags.AddTag(m_psC->iright, 0);
+	m_chart_spike_shapes.SetScopeParameters(&(options_view_data_->spksort1spk));
+	m_spkform_tag_left = m_chart_spike_shapes.m_VTtags.AddTag(spkclassif_->ileft, 0);
+	m_spkform_tag_right = m_chart_spike_shapes.m_VTtags.AddTag(spkclassif_->iright, 0);
 
 	m_chart_measures.DisplayAllFiles(false, GetDocument());
 	m_chart_measures.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-	m_chart_measures.SetScopeParameters(&(m_pOptionsViewData->spksort1parms));
-	m_itagup = m_chart_measures.m_HZtags.AddTag(m_psC->iupper, 0);
-	m_itaglow = m_chart_measures.m_HZtags.AddTag(m_psC->ilower, 0);
+	m_chart_measures.SetScopeParameters(&(options_view_data_->spksort1parms));
+	m_itagup = m_chart_measures.m_HZtags.AddTag(spkclassif_->upper_threshold, 0);
+	m_itaglow = m_chart_measures.m_HZtags.AddTag(spkclassif_->lower_threshold, 0);
 
 	m_chart_spike_bars.DisplayAllFiles(false, GetDocument());
 	m_chart_spike_bars.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-	m_chart_spike_bars.SetScopeParameters(&(m_pOptionsViewData->spksort1bars));
+	m_chart_spike_bars.SetScopeParameters(&(options_view_data_->spksort1bars));
 
 	m_chart_histogram.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-	m_chart_histogram.SetScopeParameters(&(m_pOptionsViewData->spksort1hist));
+	m_chart_histogram.SetScopeParameters(&(options_view_data_->spksort1hist));
 
 	// display tag lines at proper places
-	m_spkhist_upper = m_chart_histogram.m_VTtags.AddTag(m_psC->iupper, 0);
-	m_spkhist_lower = m_chart_histogram.m_VTtags.AddTag(m_psC->ilower, 0);
+	m_spkhist_upper_threshold = m_chart_histogram.m_VTtags.AddTag(spkclassif_->upper_threshold, 0);
+	m_spkhist_lower_threshold = m_chart_histogram.m_VTtags.AddTag(spkclassif_->lower_threshold, 0);
 
 	update_file_parameters();
 	if (nullptr != m_pSpkList)
 	{
 		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-		m_lower = static_cast<float>(m_psC->ilower) * m_delta;
-		m_upper = static_cast<float>(m_psC->iupper) * m_delta;
+		limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_delta;
+		limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_delta;
 		UpdateData(false);
 	}
 	activate_mode4();
@@ -204,16 +204,16 @@ void ViewSpikeSort::OnInitialUpdate()
 void ViewSpikeSort::activate_mode4()
 {
 	auto n_cmd_show = SW_HIDE;
-	if (4 == m_psC->iparameter)
+	if (4 == spkclassif_->iparameter)
 	{
 		n_cmd_show = SW_SHOW;
 		if (1 > m_chart_measures.m_VTtags.GetNTags())
 		{
-			m_ixyright = m_chart_measures.m_VTtags.AddTag(m_psC->ixyright, 0);
-			m_ixyleft = m_chart_measures.m_VTtags.AddTag(m_psC->ixyleft, 0);
+			m_ixyright = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyright, 0);
+			m_ixyleft = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyleft, 0);
 			const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
-			m_txyright = static_cast<float>(m_psC->ixyright) / delta;
-			m_txyleft = static_cast<float>(m_psC->ixyleft) / delta;
+			m_txyright = static_cast<float>(spkclassif_->ixyright) / delta;
+			m_txyleft = static_cast<float>(spkclassif_->ixyleft) / delta;
 		}
 		m_chart_measures.SetNxScaleCells(2, 0, 0);
 		m_chart_measures.GetScopeParameters()->crScopeGrid = RGB(128, 128, 128);
@@ -320,7 +320,7 @@ void ViewSpikeSort::update_file_parameters()
 	const BOOL first_update = (m_pSpkDoc == nullptr);
 	update_spike_file();
 
-	if (first_update || m_pOptionsViewData->bEntireRecord)
+	if (first_update || options_view_data_->bEntireRecord)
 	{
 		if (m_pSpkDoc == nullptr)
 			return;
@@ -340,24 +340,24 @@ void ViewSpikeSort::update_file_parameters()
 	else
 	{
 		m_source_class = m_pSpkList->get_spike(spike_index)->get_class_id();
-		m_psC->sourceclass = m_source_class;
+		spkclassif_->sourceclass = m_source_class;
 	}
 	ASSERT(m_source_class < 32768);
 
-	if (0 == m_psC->ileft && 0 == m_psC->iright)
+	if (0 == spkclassif_->ileft && 0 == spkclassif_->iright)
 	{
-		m_psC->ileft = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
-		m_psC->iright = m_psC->ileft + m_pSpkList->get_detection_parameters()->detect_refractory_period;
+		spkclassif_->ileft = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+		spkclassif_->iright = spkclassif_->ileft + m_pSpkList->get_detection_parameters()->detect_refractory_period;
 	}
-	m_t1 = static_cast<float>(m_psC->ileft) * m_time_unit / m_pSpkList->GetAcqSampRate();
-	m_t2 = static_cast<float>(m_psC->iright) * m_time_unit / m_pSpkList->GetAcqSampRate();
+	m_t1 = static_cast<float>(spkclassif_->ileft) * m_time_unit / m_pSpkList->GetAcqSampRate();
+	m_t2 = static_cast<float>(spkclassif_->iright) * m_time_unit / m_pSpkList->GetAcqSampRate();
 
 	m_chart_spike_bars.set_source_data(m_pSpkList, GetDocument());
 	m_chart_spike_bars.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
 
 	m_chart_spike_shapes.set_source_data(m_pSpkList, GetDocument());
-	m_chart_spike_shapes.m_VTtags.SetTagVal(m_spkform_tag_left, m_psC->ileft);
-	m_chart_spike_shapes.m_VTtags.SetTagVal(m_spkform_tag_right, m_psC->iright);
+	m_chart_spike_shapes.m_VTtags.SetTagVal(m_spkform_tag_left, spkclassif_->ileft);
+	m_chart_spike_shapes.m_VTtags.SetTagVal(m_spkform_tag_right, spkclassif_->iright);
 	m_chart_spike_shapes.set_plot_mode(PLOT_ONECOLOR, m_source_class);
 
 	m_chart_measures.set_source_data(m_pSpkList, GetDocument());
@@ -376,7 +376,7 @@ void ViewSpikeSort::update_file_parameters()
 	// display & compute parameters
 	if (!m_bAllFiles || !m_bMeasureDone)
 	{
-		if (4 != m_psC->iparameter)
+		if (4 != spkclassif_->iparameter)
 		{
 			m_chart_measures.SetTimeIntervals(m_lFirst, m_lLast);
 			if (m_chart_measures.m_VTtags.GetNTags() > 0)
@@ -390,11 +390,11 @@ void ViewSpikeSort::update_file_parameters()
 			m_chart_measures.SetTimeIntervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
 			if (1 > m_chart_measures.m_VTtags.GetNTags())
 			{
-				m_ixyright = m_chart_measures.m_VTtags.AddTag(m_psC->ixyright, 0);
-				m_ixyleft = m_chart_measures.m_VTtags.AddTag(m_psC->ixyleft, 0);
+				m_ixyright = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyright, 0);
+				m_ixyleft = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyleft, 0);
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
-				m_txyright = static_cast<float>(m_psC->ixyright) / delta;
-				m_txyleft = static_cast<float>(m_psC->ixyleft) / delta;
+				m_txyright = static_cast<float>(spkclassif_->ixyright) / delta;
+				m_txyleft = static_cast<float>(spkclassif_->ixyleft) / delta;
 				m_chart_measures.Invalidate();
 			}
 		}
@@ -413,7 +413,7 @@ void ViewSpikeSort::update_legends()
 	m_timeLast = static_cast<float>(m_lLast) / m_pSpkList->GetAcqSampRate();
 	update_file_scroll();
 
-	if (4 != m_psC->iparameter)
+	if (4 != spkclassif_->iparameter)
 		m_chart_measures.SetTimeIntervals(m_lFirst, m_lLast);
 	else
 		m_chart_measures.SetTimeIntervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
@@ -483,18 +483,18 @@ void ViewSpikeSort::OnSort()
 			continue;
 
 		// loop over all spikes of the list and compare to a single parameter
-		const CSize limits1(m_psC->ilower, m_psC->iupper);
+		const CSize limits1(spkclassif_->lower_threshold, spkclassif_->upper_threshold);
 		const CSize from_class_id_to_class_id(m_source_class, m_destination_class);
 		const CSize time_window(m_lFirst, m_lLast);
 		// sort on 1 parameter
-		if (4 != m_psC->iparameter)
+		if (4 != spkclassif_->iparameter)
 		{
 			flag_changed = m_pSpkList->SortSpikeWithY1(from_class_id_to_class_id, time_window, limits1);
 		}
 		// sort on 2 parameters
 		else
 		{
-			const CSize limits2(m_psC->ixyleft, m_psC->ixyright);
+			const CSize limits2(spkclassif_->ixyleft, spkclassif_->ixyright);
 			flag_changed = m_pSpkList->SortSpikeWithY1AndY2(from_class_id_to_class_id, time_window, limits1, limits2);
 		}
 
@@ -538,7 +538,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_CHANGEHZLIMITS: // -------------  abscissa have changed
-		if (4 != m_psC->iparameter)
+		if (4 != spkclassif_->iparameter)
 		{
 			m_lFirst = m_chart_measures.GetTimeFirst();
 			m_lLast = m_chart_measures.GetTimeLast();
@@ -594,31 +594,31 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (shortValue == m_spkform_tag_left) // first tag
 			{
-				m_psC->ileft = m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_left);
-				m_t1 = static_cast<float>(m_psC->ileft) * m_time_unit / m_pSpkList->GetAcqSampRate();
+				spkclassif_->ileft = m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_left);
+				m_t1 = static_cast<float>(spkclassif_->ileft) * m_time_unit / m_pSpkList->GetAcqSampRate();
 				mm_t1.m_bEntryDone = TRUE;
 				OnEnChangeT1();
 			}
 			else if (shortValue == m_spkform_tag_right) // second tag
 			{
-				m_psC->iright = m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_right);
-				m_t2 = static_cast<float>(m_psC->iright) * m_time_unit / m_pSpkList->GetAcqSampRate();
+				spkclassif_->iright = m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_right);
+				m_t2 = static_cast<float>(spkclassif_->iright) * m_time_unit / m_pSpkList->GetAcqSampRate();
 				mm_t2.m_bEntryDone = TRUE;
 				OnEnChangeT2();
 			}
 		}
 		else if (HIWORD(lParam) == IDC_HISTOGRAM)
 		{
-			if (shortValue == m_spkhist_lower) // first tag
+			if (shortValue == m_spkhist_lower_threshold) // first tag
 			{
-				m_psC->ilower = m_chart_histogram.m_VTtags.GetValue(m_spkhist_lower);
-				m_lower = static_cast<float>(m_psC->ilower) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				spkclassif_->lower_threshold = m_chart_histogram.m_VTtags.GetValue(m_spkhist_lower_threshold);
+				limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				UpdateData(false);
 			}
-			else if (shortValue == m_spkhist_upper) // second tag
+			else if (shortValue == m_spkhist_upper_threshold) // second tag
 			{
-				m_psC->iupper = m_chart_histogram.m_VTtags.GetValue(m_spkhist_upper); // load new value
-				m_upper = static_cast<float>(m_psC->iupper) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				spkclassif_->upper_threshold = m_chart_histogram.m_VTtags.GetValue(m_spkhist_upper_threshold); // load new value
+				limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
 				UpdateData(false);
 			}
 		}
@@ -627,16 +627,16 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (shortValue == m_ixyright)
 			{
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
-				m_psC->ixyright = m_chart_measures.m_VTtags.GetValue(m_ixyright);
-				m_txyright = static_cast<float>(m_psC->ixyright) / delta;
+				spkclassif_->ixyright = m_chart_measures.m_VTtags.GetValue(m_ixyright);
+				m_txyright = static_cast<float>(spkclassif_->ixyright) / delta;
 				mm_txyright.m_bEntryDone = TRUE;
 				OnEnChangeEditRight2();
 			}
 			else if (shortValue == m_ixyleft)
 			{
 				const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
-				m_psC->ixyleft = m_chart_measures.m_VTtags.GetValue(m_ixyleft);
-				m_txyleft = static_cast<float>(m_psC->ixyleft) / delta;
+				spkclassif_->ixyleft = m_chart_measures.m_VTtags.GetValue(m_ixyleft);
+				m_txyleft = static_cast<float>(spkclassif_->ixyleft) / delta;
 				mm_txyleft.m_bEntryDone = TRUE;
 				OnEnChangeEditLeft2();
 			}
@@ -649,16 +649,16 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (shortValue == m_itaglow) // first tag
 			{
-				m_psC->ilower = m_chart_measures.m_HZtags.GetValue(m_itaglow);
-				m_lower = static_cast<float>(m_psC->ilower) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-				mm_lower.m_bEntryDone = TRUE;
+				spkclassif_->lower_threshold = m_chart_measures.m_HZtags.GetValue(m_itaglow);
+				limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				mm_limitlower.m_bEntryDone = TRUE;
 				OnEnChangeLower();
 			}
 			else if (shortValue == m_itagup) // second tag
 			{
-				m_psC->iupper = m_chart_measures.m_HZtags.GetValue(m_itagup); 
-				m_upper = static_cast<float>(m_psC->iupper) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-				mm_upper.m_bEntryDone = TRUE;
+				spkclassif_->upper_threshold = m_chart_measures.m_HZtags.GetValue(m_itagup); 
+				limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				mm_limitupper.m_bEntryDone = TRUE;
 				OnEnChangeUpper();
 			}
 		}
@@ -669,10 +669,10 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		m_pOptionsViewData->spksort1spk = *m_chart_spike_shapes.GetScopeParameters();
-		m_pOptionsViewData->spksort1parms = *m_chart_measures.GetScopeParameters();
-		m_pOptionsViewData->spksort1hist = *m_chart_histogram.GetScopeParameters();
-		m_pOptionsViewData->spksort1bars = *m_chart_spike_bars.GetScopeParameters();
+		options_view_data_->spksort1spk = *m_chart_spike_shapes.GetScopeParameters();
+		options_view_data_->spksort1parms = *m_chart_measures.GetScopeParameters();
+		options_view_data_->spksort1hist = *m_chart_histogram.GetScopeParameters();
+		options_view_data_->spksort1bars = *m_chart_spike_bars.GetScopeParameters();
 		break;
 	case HINT_VIEWTABHASCHANGED:
 		select_spike_list(shortValue);
@@ -745,26 +745,26 @@ void ViewSpikeSort::OnMeasure()
 		if (n_spikes <= 0 || m_pSpkList->get_spike_length() == 0)
 			continue;
 
-		switch (m_psC->iparameter)
+		switch (spkclassif_->iparameter)
 		{
 		case 1: // value at t1
-			m_pSpkList->Measure_case1_AmplitudeAtT(m_psC->ileft);
+			m_pSpkList->Measure_case1_AmplitudeAtT(spkclassif_->ileft);
 			m_bMeasureDone = TRUE;
 			break;
 		case 2: // value at t2
-			m_pSpkList->Measure_case1_AmplitudeAtT(m_psC->iright);
+			m_pSpkList->Measure_case1_AmplitudeAtT(spkclassif_->iright);
 			m_bMeasureDone = TRUE;
 			break;
 
 		case 3: // value at t2- value at t1
-			m_pSpkList->Measure_case2_AmplitudeAtT2MinusAtT1(m_psC->ileft, m_psC->iright);
+			m_pSpkList->Measure_case2_AmplitudeAtT2MinusAtT1(spkclassif_->ileft, spkclassif_->iright);
 			m_bMeasureDone = TRUE;
 			break;
 
 		case 0: // max - min between t1 and t2
 		case 4: // max-min vs tmax-tmin
 		default:
-			m_pSpkList->Measure_case0_AmplitudeMinToMax(m_psC->ileft, m_psC->iright);
+			m_pSpkList->Measure_case0_AmplitudeMinToMax(spkclassif_->ileft, spkclassif_->iright);
 			break;
 		}
 
@@ -783,12 +783,12 @@ void ViewSpikeSort::OnMeasure()
 	m_chart_spike_shapes.set_source_data(m_pSpkList, GetDocument());
 	m_chart_spike_bars.set_source_data(m_pSpkList, GetDocument());
 
-	m_chart_measures.m_HZtags.SetTagVal(m_itaglow, m_psC->ilower);
-	m_chart_measures.m_HZtags.SetTagVal(m_itagup, m_psC->iupper);
+	m_chart_measures.m_HZtags.SetTagVal(m_itaglow, spkclassif_->lower_threshold);
+	m_chart_measures.m_HZtags.SetTagVal(m_itagup, spkclassif_->upper_threshold);
 
 	build_histogram();
-	m_chart_histogram.m_VTtags.SetTagVal(m_itaglow, m_psC->ilower);
-	m_chart_histogram.m_VTtags.SetTagVal(m_itagup, m_psC->iupper);
+	m_chart_histogram.m_VTtags.SetTagVal(m_itaglow, spkclassif_->lower_threshold);
+	m_chart_histogram.m_VTtags.SetTagVal(m_itagup, spkclassif_->upper_threshold);
 
 	update_gain();
 	UpdateData(FALSE);
@@ -823,7 +823,7 @@ void ViewSpikeSort::OnFormatAlldata()
 		m_lFirst = 0;
 		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
 
-		if (m_psC->iparameter != 4) // then, we need imax imin ...
+		if (spkclassif_->iparameter != 4) // then, we need imax imin ...
 			m_chart_measures.SetTimeIntervals(m_lFirst, m_lLast);
 		else
 			m_chart_measures.SetTimeIntervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
@@ -873,7 +873,7 @@ void ViewSpikeSort::OnFormatCentercurve()
 	{
 		const auto spike = m_pSpkList->get_spike(i_spike);
 		spike->set_spike_length(m_pSpkList->get_spike_length());
-		spike->CenterSpikeAmplitude(m_psC->ileft, m_psC->iright, 1);
+		spike->CenterSpikeAmplitude(spkclassif_->ileft, spkclassif_->iright, 1);
 	}
 		
 
@@ -910,8 +910,8 @@ void ViewSpikeSort::OnFormatGainadjust()
 	minvalue = static_cast<short>(measure.cy);
 
 	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-	const auto max2 = static_cast<short>(m_upper / delta);
-	const auto min2 = static_cast<short>(m_lower / delta);
+	const auto max2 = static_cast<short>(limit_upper_threshold_ / delta);
+	const auto min2 = static_cast<short>(limit_lower_threshold_ / delta);
 	if (max2 > maxvalue)
 		maxvalue = max2;
 	if (min2 < minvalue)
@@ -1057,8 +1057,8 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	m_chart_spike_shapes.DisplayExData(p_mean0);
 
 	// for each spike, compute correlation and take max value correlation
-	const auto k_start = m_psC->ileft; // start of template match
-	const auto k_end = m_psC->iright; // end of template match
+	const auto k_start = spkclassif_->ileft; // start of template match
+	const auto k_end = spkclassif_->iright; // end of template match
 	if (k_end <= k_start)
 		return;
 	const auto j0 = k_start - (k_end - k_start) / 2; // start time lag
@@ -1301,7 +1301,7 @@ void ViewSpikeSort::OnEnChangeEditLeft2()
 		const auto it_left = static_cast<int>(left);
 		if (it_left != m_chart_measures.m_VTtags.GetValue(m_ixyleft))
 		{
-			m_psC->ixyleft = it_left;
+			spkclassif_->ixyleft = it_left;
 			m_chart_measures.MoveVTtagtoVal(m_ixyleft, it_left);
 		}
 		UpdateData(FALSE);
@@ -1325,7 +1325,7 @@ void ViewSpikeSort::OnEnChangeEditRight2()
 		const auto i_right = static_cast<int>(right);
 		if (i_right != m_chart_measures.m_VTtags.GetValue(m_ixyright))
 		{
-			m_psC->ixyright = i_right;
+			spkclassif_->ixyright = i_right;
 			m_chart_measures.MoveVTtagtoVal(m_ixyright, i_right);
 		}
 		UpdateData(FALSE);
@@ -1369,9 +1369,9 @@ void ViewSpikeSort::OnEnChangeDestinationSpikeClass()
 void ViewSpikeSort::OnSelchangeParameter()
 {
 	const auto i_parameter = m_CBparameter.GetCurSel();
-	if (i_parameter != m_psC->iparameter)
+	if (i_parameter != spkclassif_->iparameter)
 	{
-		m_psC->iparameter = i_parameter;
+		spkclassif_->iparameter = i_parameter;
 		activate_mode4();
 		OnMeasure();
 		OnFormatCentercurve();
@@ -1383,40 +1383,51 @@ void ViewSpikeSort::OnSelchangeParameter()
 	// 2  mS      vis    mS      vis    vis     vis  vis   vis
 }
 
+void ViewSpikeSort::checkValidThresholdLimits()
+{
+	
+	if (limit_lower_threshold_ >= limit_upper_threshold_)
+		limit_lower_threshold_ = limit_upper_threshold_ - m_delta * 10.f;
+
+	if (limit_lower_threshold_ < 0) {
+		limit_lower_threshold_ = 0;
+	}
+
+	if (limit_upper_threshold_ <= limit_lower_threshold_)
+		limit_upper_threshold_ = limit_lower_threshold_ + m_delta * 10.f;
+}
+
 void ViewSpikeSort::OnEnChangeLower()
 {
-	if (mm_lower.m_bEntryDone)
+	if (mm_limitlower.m_bEntryDone)
 	{
 		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-		mm_lower.OnEnChange(this, m_lower, m_delta, -m_delta);
-		if (m_lower >= m_upper)
-			m_lower = m_upper - m_delta * 10.f;
+		mm_limitlower.OnEnChange(this, limit_lower_threshold_, m_delta, -m_delta);
+		checkValidThresholdLimits();
 
-		m_psC->ilower = static_cast<int>(m_lower / m_delta);
-		if (m_psC->ilower != m_chart_measures.m_HZtags.GetValue(m_itaglow))
-			m_chart_measures.MoveHZtagtoVal(m_itaglow, m_psC->ilower);
-		if (m_psC->ilower != m_chart_histogram.m_VTtags.GetValue(m_spkhist_lower))
-			m_chart_histogram.MoveVTtagtoVal(m_spkhist_lower, m_psC->ilower);
+		spkclassif_->lower_threshold = static_cast<int>(limit_lower_threshold_ / m_delta);
+		if (spkclassif_->lower_threshold != m_chart_measures.m_HZtags.GetValue(m_itaglow))
+			m_chart_measures.MoveHZtagtoVal(m_itaglow, spkclassif_->lower_threshold);
+		if (spkclassif_->lower_threshold != m_chart_histogram.m_VTtags.GetValue(m_spkhist_lower_threshold))
+			m_chart_histogram.MoveVTtagtoVal(m_spkhist_lower_threshold, spkclassif_->lower_threshold);
 		UpdateData(FALSE);
 	}
 }
 
 void ViewSpikeSort::OnEnChangeUpper()
 {
-	if (mm_upper.m_bEntryDone)
+	if (mm_limitupper.m_bEntryDone)
 	{
 		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
-		mm_upper.OnEnChange(this, m_upper,m_delta, -m_delta);
+		mm_limitupper.OnEnChange(this, limit_upper_threshold_,m_delta, -m_delta);
 		// check boundaries
-		if (m_upper <= m_lower)
-			m_upper = m_lower + m_delta * 10.f;
+		checkValidThresholdLimits();
 
-	
-		m_psC->iupper = static_cast<int>(m_upper / m_delta);
-		if (m_psC->iupper != m_chart_measures.m_HZtags.GetValue(m_itagup))
-			m_chart_measures.MoveHZtagtoVal(m_itagup, m_psC->iupper);
-		if (m_psC->ilower != m_chart_histogram.m_VTtags.GetValue(m_spkhist_upper))
-			m_chart_histogram.MoveVTtagtoVal(m_spkhist_upper, m_psC->iupper);
+		spkclassif_->upper_threshold = static_cast<int>(limit_upper_threshold_ / m_delta);
+		if (spkclassif_->upper_threshold != m_chart_measures.m_HZtags.GetValue(m_itagup))
+			m_chart_measures.MoveHZtagtoVal(m_itagup, spkclassif_->upper_threshold);
+		if (spkclassif_->lower_threshold != m_chart_histogram.m_VTtags.GetValue(m_spkhist_upper_threshold))
+			m_chart_histogram.MoveVTtagtoVal(m_spkhist_upper_threshold, spkclassif_->upper_threshold);
 		UpdateData(FALSE);
 	}
 }
@@ -1437,9 +1448,9 @@ void ViewSpikeSort::OnEnChangeT1()
 		const auto it1 = static_cast<int>(m_t1 / delta);
 		if (it1 != m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_left))
 		{
-			m_psC->ileft = it1;
-			m_chart_spike_shapes.MoveVTtrack(m_spkform_tag_left, m_psC->ileft);
-			m_pSpkList->m_imaxmin1SL = m_psC->ileft;
+			spkclassif_->ileft = it1;
+			m_chart_spike_shapes.MoveVTtrack(m_spkform_tag_left, spkclassif_->ileft);
+			m_pSpkList->m_imaxmin1SL = spkclassif_->ileft;
 		}
 		UpdateData(FALSE);
 	}
@@ -1462,9 +1473,9 @@ void ViewSpikeSort::OnEnChangeT2()
 		const auto it2 = static_cast<int>(m_t2 / delta);
 		if (it2 != m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_right))
 		{
-			m_psC->iright = it2;
-			m_chart_spike_shapes.MoveVTtrack(m_spkform_tag_right, m_psC->iright);
-			m_pSpkList->m_imaxmin2SL = m_psC->iright;
+			spkclassif_->iright = it2;
+			m_chart_spike_shapes.MoveVTtrack(m_spkform_tag_right, spkclassif_->iright);
+			m_pSpkList->m_imaxmin2SL = spkclassif_->iright;
 		}
 		UpdateData(FALSE);
 	}

@@ -14,8 +14,8 @@ public:
 	int iparameter; // type of parameter measured
 	int ileft; // position of first cursor
 	int iright; // position of second cursor
-	int ilower; // binary value of lower
-	int iupper; // binary value of upper
+	int lower_threshold; // binary value of lower
+	int upper_threshold; // binary value of upper
 	int ixyleft; // position of left cursor on xy display
 	int ixyright; // position of right cursor on xy display
 	int sourceclass; // source class

@@ -25,8 +25,8 @@ public:
 	float m_t1 = 0.f;
 	float m_t2 = 0.f;
 	float m_time_unit = 1000.f; // 1=s, 1000f=ms, 1e6=us
-	float m_lower = 0.f;
-	float m_upper = 0.f;
+	float limit_lower_threshold_ = 0.f;
+	float limit_upper_threshold_ = 0.f;
 	int m_source_class = 0;
 	int m_destination_class = 0;
 	float m_timeFirst = 0.f;
@@ -49,8 +49,8 @@ protected:
 
 	CEditCtrl mm_t1;
 	CEditCtrl mm_t2;
-	CEditCtrl mm_lower;
-	CEditCtrl mm_upper;
+	CEditCtrl mm_limitlower;
+	CEditCtrl mm_limitupper;
 	CEditCtrl mm_source_class;
 	CEditCtrl mm_destination_class;
 	CEditCtrl mm_timeFirst;
@@ -66,16 +66,16 @@ protected:
 	ScrollBarEx m_file_scroll; 
 	SCROLLINFO m_file_scroll_infos{}; 
 
-	SPKCLASSIF* m_psC{};
-	OPTIONS_VIEWDATA* m_pOptionsViewData{};
+	SPKCLASSIF* spkclassif_{};
+	OPTIONS_VIEWDATA* options_view_data_{};
 
 	int m_itaglow{};
 	int m_itagup{};
 	int m_ixyright{};
 	int m_ixyleft{};
 
-	int m_spkhist_upper{};
-	int m_spkhist_lower{};
+	int m_spkhist_upper_threshold{};
+	int m_spkhist_lower_threshold{};
 	int m_spkform_tag_left{};
 	int m_spkform_tag_right{};
 
@@ -119,6 +119,7 @@ protected:
 	void activate_mode4();
 	void build_histogram();
 	void unflag_all_spikes();
+	void checkValidThresholdLimits();
 
 	// Generated message map functions
 public:
