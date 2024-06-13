@@ -14,10 +14,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // CPropDockPane - properties docking panel that allows trapping command messages
 
-IMPLEMENT_DYNAMIC(CPropertiesWnd, CDockablePane)
+IMPLEMENT_DYNAMIC(CPropertiesPanel, CDockablePane)
 
-// the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameteres
-int CPropertiesWnd::m_noCol[] = {
+// the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameters
+int CPropertiesPanel::m_noCol[] = {
 	// ------1
 	CH_ACQDATE_DAY,
 	CH_ACQDATE_TIME,
@@ -52,7 +52,7 @@ int CPropertiesWnd::m_noCol[] = {
 	-1
 }; // 22-25 measures: n spikes, spikeclasses, flag, more
 
-int CPropertiesWnd::m_propCol[] = {
+int CPropertiesPanel::m_propCol[] = {
 	// TRUE = allow edit; list all possible columns
 	FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE,
 	TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE,
@@ -60,7 +60,7 @@ int CPropertiesWnd::m_propCol[] = {
 	TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE
 };
 
-CPropertiesWnd::CPropertiesWnd()
+CPropertiesPanel::CPropertiesPanel()
 {
 	m_wndEditInfosHeight = 0;
 	m_pDoc = nullptr;
@@ -69,11 +69,11 @@ CPropertiesWnd::CPropertiesWnd()
 	m_bchangedProperty = FALSE;
 }
 
-CPropertiesWnd::~CPropertiesWnd()
+CPropertiesPanel::~CPropertiesPanel()
 {
 }
 
-BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
+BEGIN_MESSAGE_MAP(CPropertiesPanel, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_EXPAND_ALL, OnExpandAllProperties)
@@ -93,7 +93,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CResourceViewBar message handlers
 
-void CPropertiesWnd::AdjustLayout()
+void CPropertiesPanel::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
 		return;
@@ -113,7 +113,7 @@ void CPropertiesWnd::AdjustLayout()
 	                           SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CPropertiesPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -141,32 +141,32 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CPropertiesWnd::OnSize(UINT nType, int cx, int cy)
+void CPropertiesPanel::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CPropertiesWnd::OnExpandAllProperties()
+void CPropertiesPanel::OnExpandAllProperties()
 {
 	m_wndPropList.ExpandAll();
 }
 
-void CPropertiesWnd::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
+void CPropertiesPanel::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
 {
 }
 
-void CPropertiesWnd::OnSortProperties()
+void CPropertiesPanel::OnSortProperties()
 {
 	m_wndPropList.SetAlphabeticMode(!m_wndPropList.IsAlphabeticMode());
 }
 
-void CPropertiesWnd::OnUpdateSortProperties(CCmdUI* pCmdUI)
+void CPropertiesPanel::OnUpdateSortProperties(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_wndPropList.IsAlphabeticMode());
 }
 
-void CPropertiesWnd::UpdatePropList()
+void CPropertiesPanel::UpdatePropList()
 {
 	m_bchangedProperty = FALSE; // reset flag
 
@@ -190,7 +190,7 @@ void CPropertiesWnd::UpdatePropList()
 	m_bUpdateCombos = FALSE;
 }
 
-void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) const
+void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) const
 {
 	auto p_db = m_pDoc->m_pDB;
 	DB_ITEMDESC desc;
@@ -253,7 +253,7 @@ void CPropertiesWnd::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) 
 	}
 }
 
-void CPropertiesWnd::UpdateTableFromProp()
+void CPropertiesPanel::UpdateTableFromProp()
 {
 	auto p_database = m_pDoc->m_pDB;
 	auto p_maintable_set = &p_database->m_mainTableSet;
@@ -269,7 +269,7 @@ void CPropertiesWnd::UpdateTableFromProp()
 	p_maintable_set->Update();
 }
 
-void CPropertiesWnd::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
+void CPropertiesPanel::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 {
 	auto p_database = m_pDoc->m_pDB;
 	const auto nsubitems = pGroup->GetSubItemsCount();
@@ -317,7 +317,7 @@ void CPropertiesWnd::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 
 #define ID_BASE	1000
 
-void CPropertiesWnd::InitPropList()
+void CPropertiesPanel::InitPropList()
 {
 	// exit if doc is not defined
 	if (!m_pDoc || m_pDoc == nullptr)
@@ -333,7 +333,7 @@ void CPropertiesWnd::InitPropList()
 	m_pDocOld = m_pDoc;
 	m_wndPropList.RemoveAll();
 
-	// house keeping
+	// housekeeping
 	m_wndPropList.EnableHeaderCtrl(FALSE);
 	m_wndPropList.EnableDescriptionArea(TRUE);
 	m_wndPropList.SetVSDotNetLook(TRUE);
@@ -400,7 +400,7 @@ void CPropertiesWnd::InitPropList()
 // init all elements pointed at within m_noCol table from element icol0 to element = -1 (stop value)
 // returns next position after the stop tag
 
-int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
+int CPropertiesPanel::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
 {
 	auto p_database = m_pDoc->m_pDB;
 	/*int nrecords = */
@@ -460,19 +460,19 @@ int CPropertiesWnd::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int ico
 	return i + 1;
 }
 
-void CPropertiesWnd::OnSetFocus(CWnd* pOldWnd)
+void CPropertiesPanel::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 	m_wndPropList.SetFocus();
 }
 
-void CPropertiesWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
+void CPropertiesPanel::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
 	CDockablePane::OnSettingChange(uFlags, lpszSection);
 	SetPropListFont();
 }
 
-void CPropertiesWnd::SetPropListFont()
+void CPropertiesPanel::SetPropListFont()
 {
 	DeleteObject(m_fntPropList.Detach());
 
@@ -489,11 +489,11 @@ void CPropertiesWnd::SetPropListFont()
 	m_wndPropList.SetFont(&m_fntPropList);
 }
 
-void CPropertiesWnd::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
+void CPropertiesPanel::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
 {
 }
 
-void CPropertiesWnd::OnBnClickedEditinfos()
+void CPropertiesPanel::OnBnClickedEditinfos()
 {
 	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_GETSELECTEDRECORDS, nullptr);
 	DlgdbEditRecord dlg;
@@ -505,12 +505,12 @@ void CPropertiesWnd::OnBnClickedEditinfos()
 	}
 }
 
-void CPropertiesWnd::OnUpdateBnUpdateinfos(CCmdUI* pCmdUI)
+void CPropertiesPanel::OnUpdateBnUpdateinfos(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_bchangedProperty);
 }
 
-void CPropertiesWnd::OnBnClickedUpdateinfos()
+void CPropertiesPanel::OnBnClickedUpdateinfos()
 {
 	const auto l_index = m_pDoc->DB_GetCurrentRecordPosition();
 	UpdateTableFromProp();
@@ -518,14 +518,14 @@ void CPropertiesWnd::OnBnClickedUpdateinfos()
 	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
 }
 
-LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM, LPARAM lParam)
+LRESULT CPropertiesPanel::OnPropertyChanged(WPARAM, LPARAM lParam)
 {
 	//auto p_prop = reinterpret_cast<CMFCPropertyGridProperty*>(lParam);
 	m_bchangedProperty = TRUE;
 	return 0;
 }
 
-LRESULT CPropertiesWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT CPropertiesPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	//auto p_app = (CdbWaveApp*)AfxGetApp();
 	//short lowp = LOWORD(lParam);
@@ -563,7 +563,7 @@ LRESULT CPropertiesWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CPropertiesWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CPropertiesPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))

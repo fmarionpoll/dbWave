@@ -11,11 +11,11 @@ class CFilterToolBar : public CMFCToolBar
 	BOOL AllowShowOnList() const override { return FALSE; }
 };
 
-class CFilterWnd : public CDockablePane
+class CFilterPanel : public CDockablePane
 {
 	// Construction
 public:
-	CFilterWnd();
+	CFilterPanel();
 	void AdjustLayout() override;
 
 	// Attributes
@@ -24,11 +24,10 @@ protected:
 	CFilterToolBar m_wndToolBar;
 
 	CdbWaveDoc* m_pDoc{nullptr};
-	CdbWaveDoc* m_pDocOld{ nullptr };
+	CdbWaveDoc* m_pDocOld{nullptr};
 	static int m_noCol[]; // [26] succession of fields that can be filtered
 	HTREEITEM m_htreeitem[26]{};
 
-protected:
 	void InitFilterList();
 	void PopulateItemFromTableLong(DB_ITEMDESC* pdesc);
 	void PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc);
@@ -41,7 +40,7 @@ protected:
 
 	// Implementation
 public:
-	~CFilterWnd() override;
+	~CFilterPanel() override;
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

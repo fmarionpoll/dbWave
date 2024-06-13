@@ -16,9 +16,9 @@
 
 IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
 
-const int i_max_user_toolbars = 10;
-const UINT ui_first_user_tool_bar_id = AFX_IDW_CONTROLBAR_FIRST + 40;
-const UINT ui_last_user_tool_bar_id = ui_first_user_tool_bar_id + i_max_user_toolbars - 1;
+constexpr int i_max_user_toolbars = 10;
+constexpr UINT ui_first_user_tool_bar_id = AFX_IDW_CONTROLBAR_FIRST + 40;
+constexpr UINT ui_last_user_tool_bar_id = ui_first_user_tool_bar_id + i_max_user_toolbars - 1;
 
 BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_WM_CREATE()
@@ -61,7 +61,6 @@ CMainFrame::CMainFrame()
 	m_pSecondToolBar = nullptr;
 	m_bPropertiesPaneVisible = TRUE;
 	m_bFilterPaneVisible = TRUE;
-
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 }
 
@@ -79,14 +78,14 @@ void CMainFrame::OnDestroy()
 
 void CMainFrame::ActivatePropertyPane(BOOL bActivate)
 {
-	if (bActivate != m_wndProperties.IsVisible())
-		m_wndProperties.ShowPane(bActivate, FALSE, FALSE);
+	if (bActivate != panel_properties.IsVisible())
+		panel_properties.ShowPane(bActivate, FALSE, FALSE);
 }
 
 void CMainFrame::ActivateFilterPane(BOOL bActivate)
 {
-	if (bActivate != m_wndFilter.IsVisible())
-		m_wndFilter.ShowPane(bActivate, FALSE, FALSE);
+	if (bActivate != panel_filter.IsVisible())
+		panel_filter.ShowPane(bActivate, FALSE, FALSE);
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -141,10 +140,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	// enable docking and attach
 	// TODO - see model VS as they have more calls here
-	m_wndFilter.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndFilter);
-	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndProperties);
+	panel_filter.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&panel_filter);
+	panel_properties.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&panel_properties);
 
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
@@ -191,9 +190,9 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	CString str_filter_view;
 	auto b_name_valid = str_filter_view.LoadString(IDS_FILTERPANE);
 	ASSERT(b_name_valid);
-	if (!m_wndFilter.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
-	                        ID_PANE_FILTERWND,
-	                        WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+	if (!panel_filter.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
+	                         ID_PANE_FILTERWND,
+	                         WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create filter properties window\n");
 		return FALSE; // failed to create
@@ -203,10 +202,10 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	CString str_properties_view;
 	b_name_valid = str_properties_view.LoadString(IDS_PROPERTIESPANE);
 	ASSERT(b_name_valid);
-	if (!m_wndProperties.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
-	                            ID_PANE_PROPERTIESWND,
-	                            WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT |
-	                            CBRS_FLOAT_MULTI))
+	if (!panel_properties.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
+	                             ID_PANE_PROPERTIESWND,
+	                             WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT |
+	                             CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create record properties window\n");
 		return FALSE; // failed to create
@@ -224,7 +223,7 @@ void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 		                                                               IDI_FILE_VIEW),
 	                                                               IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
 	                                                               GetSystemMetrics(SM_CYSMICON), 0));
-	m_wndFilter.SetIcon(h_filter_pane_icon, FALSE);
+	panel_filter.SetIcon(h_filter_pane_icon, FALSE);
 
 	const auto h_properties_pane_icon = static_cast<HICON>(::LoadImage(AfxGetResourceHandle(),
 	                                                                   MAKEINTRESOURCE(
@@ -232,7 +231,7 @@ void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 		                                                                   IDI_PROPERTIES_WND),
 	                                                                   IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
 	                                                                   GetSystemMetrics(SM_CYSMICON), 0));
-	m_wndProperties.SetIcon(h_properties_pane_icon, FALSE);
+	panel_properties.SetIcon(h_properties_pane_icon, FALSE);
 
 	UpdateMDITabbedBarsIcons();
 }
@@ -420,7 +419,7 @@ void CMainFrame::OnOptions()
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext)
 {
 	// base class does the real work
-	if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext)) 
+	if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
 		return FALSE;
 
 	CString str_customize;
@@ -443,8 +442,8 @@ void CMainFrame::OnViewPropertiesWindow()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	m_wndProperties.ShowPane(TRUE, FALSE, TRUE);
-	m_wndProperties.SetFocus();
+	panel_properties.ShowPane(TRUE, FALSE, TRUE);
+	panel_properties.SetFocus();
 	m_bPropertiesPaneVisible = TRUE;
 }
 
@@ -458,8 +457,8 @@ void CMainFrame::OnViewFilterWindow()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	m_wndFilter.ShowPane(TRUE, FALSE, TRUE);
-	m_wndFilter.SetFocus();
+	panel_filter.ShowPane(TRUE, FALSE, TRUE);
+	panel_filter.SetFocus();
 	m_bFilterPaneVisible = TRUE;
 }
 
@@ -471,22 +470,22 @@ void CMainFrame::OnUpdateViewFilterWindow(CCmdUI* pCmdUI)
 
 void CMainFrame::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	m_wndProperties.OnUpdate(pSender, lHint, pHint);
-	m_wndFilter.OnUpdate(pSender, lHint, pHint);
+	panel_properties.OnUpdate(pSender, lHint, pHint);
+	panel_filter.OnUpdate(pSender, lHint, pHint);
 }
 
 LRESULT CMainFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	// pass message to PropertiesPane
-	m_wndProperties.OnMyMessage(wParam, lParam);
-	m_wndFilter.OnMyMessage(wParam, lParam);
+	panel_properties.OnMyMessage(wParam, lParam);
+	panel_filter.OnMyMessage(wParam, lParam);
 	return 0L;
 }
 
 void CMainFrame::OnCheckFilterpane()
 {
 	m_bFilterPaneVisible = !m_bFilterPaneVisible;
-	m_wndFilter.ShowPane(m_bFilterPaneVisible, FALSE, TRUE);
+	panel_filter.ShowPane(m_bFilterPaneVisible, FALSE, TRUE);
 }
 
 void CMainFrame::OnUpdateCheckFilterpane(CCmdUI* pCmdUI)
@@ -497,7 +496,7 @@ void CMainFrame::OnUpdateCheckFilterpane(CCmdUI* pCmdUI)
 void CMainFrame::OnCheckPropertiespane()
 {
 	m_bPropertiesPaneVisible = !m_bPropertiesPaneVisible;
-	m_wndProperties.ShowPane(m_bPropertiesPaneVisible, FALSE, TRUE);
+	panel_properties.ShowPane(m_bPropertiesPaneVisible, FALSE, TRUE);
 }
 
 void CMainFrame::OnUpdateCheckPropertiespane(CCmdUI* pCmdUI)

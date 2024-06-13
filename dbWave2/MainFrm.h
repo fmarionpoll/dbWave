@@ -7,23 +7,19 @@
 class CMainFrame : public CMDIFrameWndEx
 {
 	DECLARE_DYNAMIC(CMainFrame)
-public:
 	CMainFrame();
 
 	// Attributes
-public:
 	UINT m_SecondToolBarID;
 	CMFCToolBar* m_pSecondToolBar;
 	void ActivatePropertyPane(BOOL bActivate);
 	void ActivateFilterPane(BOOL bActivate);
 
 	// Overrides
-public:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext ) override;
+	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) override;
 
 	// Implementation
-public:
 	~CMainFrame() override;
 #ifdef _DEBUG
 	void AssertValid() const override;
@@ -38,8 +34,8 @@ protected: // control bar embedded members
 	CMFCRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCToolBarImages m_UserImages;
-	CPropertiesWnd m_wndProperties;
-	CFilterWnd m_wndFilter;
+	CPropertiesPanel panel_properties;
+	CFilterPanel panel_filter;
 	CMFCOutlookBar m_wndOutlookBar;
 	CMFCOutlookBarPane m_wndOutlookPane;
 
@@ -49,7 +45,6 @@ protected: // control bar embedded members
 	CdbWaveDoc* GetMDIActiveDocument();
 
 	// Generated message map functions
-protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnWindowManager();
 	afx_msg void OnViewCustomize();

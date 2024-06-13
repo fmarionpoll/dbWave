@@ -14,7 +14,7 @@
 
 
 // the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameteres
-int CFilterWnd::m_noCol[] = {
+int CFilterPanel::m_noCol[] = {
 	CH_EXPT_ID,
 	CH_IDINSECT, CH_IDSENSILLUM, CH_INSECT_ID, CH_SENSILLUM_ID,
 	CH_LOCATION_ID, CH_STRAIN_ID, CH_SEX_ID, CH_OPERATOR_ID,
@@ -22,13 +22,13 @@ int CFilterWnd::m_noCol[] = {
 	CH_FLAG, CH_ACQDATE_DAY, -1
 };
 
-CFilterWnd::CFilterWnd()
+CFilterPanel::CFilterPanel()
 = default;
 
-CFilterWnd::~CFilterWnd()
+CFilterPanel::~CFilterPanel()
 = default;
 
-BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
+BEGIN_MESSAGE_MAP(CFilterPanel, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
@@ -43,7 +43,7 @@ BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
 
 END_MESSAGE_MAP()
 
-int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CFilterPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -74,13 +74,13 @@ int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CFilterWnd::OnSize(UINT nType, int cx, int cy)
+void CFilterPanel::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CFilterWnd::OnContextMenu(CWnd* p_wnd, CPoint point)
+void CFilterPanel::OnContextMenu(CWnd* p_wnd, CPoint point)
 {
 	auto p_wnd_tree = static_cast<CTreeCtrl*>(&m_wndFilterView);
 	ASSERT_VALID(p_wnd_tree);
@@ -109,7 +109,7 @@ void CFilterWnd::OnContextMenu(CWnd* p_wnd, CPoint point)
 	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
-void CFilterWnd::AdjustLayout()
+void CFilterPanel::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 		return;
@@ -125,7 +125,7 @@ void CFilterWnd::AdjustLayout()
 	                             rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFilterWnd::OnPaint()
+void CFilterPanel::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -137,19 +137,19 @@ void CFilterWnd::OnPaint()
 	dc.Draw3dRect(rect_tree, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 }
 
-void CFilterWnd::OnSetFocus(CWnd* pOldWnd)
+void CFilterPanel::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 	m_wndFilterView.SetFocus();
 }
 
-void CFilterWnd::OnUpdateTree()
+void CFilterPanel::OnUpdateTree()
 {
 	m_pDocOld = nullptr;
 	InitFilterList();
 }
 
-LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT CFilterPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	//auto p_app = (CdbWaveApp*)AfxGetApp();
 	//short lowp = LOWORD(lParam);
@@ -184,7 +184,7 @@ LRESULT CFilterWnd::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CFilterWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CFilterPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
@@ -205,7 +205,7 @@ void CFilterWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CFilterWnd::InitFilterList()
+void CFilterPanel::InitFilterList()
 {
 	if (m_pDocOld == m_pDoc)
 		return;
@@ -323,7 +323,7 @@ void CFilterWnd::InitFilterList()
 	m_wndFilterView.UnlockWindowUpdate();
 }
 
-void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
+void CFilterPanel::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 {
 	CString cs; // to construct insect and sensillum number (for example)
 	CString str; // to store FindFirst filter
@@ -360,7 +360,7 @@ void CFilterWnd::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 	}
 }
 
-void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
+void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 {
 	CString cs;
 	auto str2 = pdesc->header_name;
@@ -403,7 +403,7 @@ void CFilterWnd::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 	}
 }
 
-void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
+void CFilterPanel::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 {
 	CString cs; // to construct date
 	const auto cscolhead = pdesc->header_name;
@@ -438,7 +438,7 @@ void CFilterWnd::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 	}
 }
 
-void CFilterWnd::InsertAlphabetic(const CString& cs, CStringArray& csArray)
+void CFilterPanel::InsertAlphabetic(const CString& cs, CStringArray& csArray)
 {
 	auto k = 0;
 	for (auto i = 0; i < csArray.GetSize(); i++, k++)
@@ -451,7 +451,7 @@ void CFilterWnd::InsertAlphabetic(const CString& cs, CStringArray& csArray)
 	csArray.InsertAt(k, cs);
 }
 
-void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
+void CFilterPanel::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	auto i = 0;
 	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
@@ -475,7 +475,7 @@ void CFilterWnd::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITE
 	}
 }
 
-void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
+void CFilterPanel::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	auto i = 0;
 	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
@@ -491,7 +491,7 @@ void CFilterWnd::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 	}
 }
 
-void CFilterWnd::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
+void CFilterPanel::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	auto i = 0;
 	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
@@ -508,7 +508,7 @@ void CFilterWnd::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM start
 	}
 }
 
-void CFilterWnd::OnApplyFilter()
+void CFilterPanel::OnApplyFilter()
 {
 	if (!m_pDoc)
 		return;
@@ -561,7 +561,7 @@ void CFilterWnd::OnApplyFilter()
 	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CFilterWnd::OnSortRecords()
+void CFilterPanel::OnSortRecords()
 {
 	auto p_database = m_pDoc->m_pDB;
 	ASSERT(p_database);
@@ -577,7 +577,7 @@ void CFilterWnd::OnSortRecords()
 	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CFilterWnd::SelectNext(BOOL bNext)
+void CFilterPanel::SelectNext(BOOL bNext)
 {
 	const auto p_tree = static_cast<CTreeCtrl*>(&m_wndFilterView);
 	ASSERT_VALID(p_tree);
@@ -619,12 +619,12 @@ void CFilterWnd::SelectNext(BOOL bNext)
 	}
 }
 
-void CFilterWnd::OnSelectNext()
+void CFilterPanel::OnSelectNext()
 {
 	SelectNext(TRUE);
 }
 
-void CFilterWnd::OnSelectPrevious()
+void CFilterPanel::OnSelectPrevious()
 {
 	SelectNext(FALSE);
 }

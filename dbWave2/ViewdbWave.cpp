@@ -259,8 +259,21 @@ void ViewdbWave::updateControls()
 				m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
 		}
 	}
-
+	//pdb_doc->SetModifiedFlag(true);
 	pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
+
+	//POSITION pos = pdb_doc->GetFirstViewPosition();
+	//int nviews = 0;
+	//while (pos != NULL)
+	//{
+	//	CView* pView = pdb_doc->GetNextView(pos);
+	//	CMainFrame* frame = (CMainFrame*)pView->GetParentFrame();
+	//	frame->OnUpdate(this, HINT_DOCMOVERECORD, nullptr);
+
+	//	//pView->UpdateWindow();
+	//	nviews++;
+	//}
+	//TRACE("nviews", nviews);
 }
 
 void ViewdbWave::OnRecordPageup()

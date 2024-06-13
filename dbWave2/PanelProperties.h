@@ -14,12 +14,12 @@ public:
 	BOOL AllowShowOnList() const override { return FALSE; }
 };
 
-class CPropertiesWnd : public CDockablePane
+class CPropertiesPanel : public CDockablePane
 {
-	DECLARE_DYNAMIC(CPropertiesWnd)
+	DECLARE_DYNAMIC(CPropertiesPanel)
 public:
-	CPropertiesWnd();
-	~CPropertiesWnd() override;
+	CPropertiesPanel();
+	~CPropertiesPanel() override;
 	void AdjustLayout() override;
 
 protected:
