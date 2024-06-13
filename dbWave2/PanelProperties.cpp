@@ -570,16 +570,13 @@ void CPropertiesWnd::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 	switch (LOWORD(lHint))
 	{
-	case HINT_REQUERY:
-	case HINT_DOCHASCHANGED:
-	case HINT_DOCMOVERECORD:
-		InitPropList();
-		break;
-
 	case HINT_CLOSEFILEMODIFIED: // save current file parms
 		m_pDocOld = nullptr;
 		break;
 
+	case HINT_REQUERY:
+	case HINT_DOCHASCHANGED:
+	case HINT_DOCMOVERECORD:
 	case HINT_REPLACEVIEW:
 	default:
 		InitPropList();

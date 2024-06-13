@@ -187,7 +187,7 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 BOOL CMainFrame::CreateDockingPropertiesPanes()
 {
-	// Create filter view
+	// Create filter pane
 	CString str_filter_view;
 	auto b_name_valid = str_filter_view.LoadString(IDS_FILTERPANE);
 	ASSERT(b_name_valid);
@@ -199,7 +199,7 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 		return FALSE; // failed to create
 	}
 
-	// Create properties window
+	// Create properties pane
 	CString str_properties_view;
 	b_name_valid = str_properties_view.LoadString(IDS_PROPERTIESPANE);
 	ASSERT(b_name_valid);

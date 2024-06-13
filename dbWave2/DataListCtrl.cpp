@@ -238,15 +238,15 @@ void DataListCtrl::SetCurSel(int record_position)
 	const auto current_position = GetNextItem(-1, flag);
 
 	// exit if it is the same
-	if (current_position == record_position)
-		return;
+	if (current_position != record_position)
+	{
+		// focus new
+		if (current_position >= 0)
+			SetItemState(current_position, 0, LVIS_SELECTED | LVIS_FOCUSED);
 
-	// focus new
-	if (current_position >= 0)
-		SetItemState(current_position, 0, LVIS_SELECTED | LVIS_FOCUSED);
-
-	SetItemState(record_position, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	EnsureVisible(record_position, FALSE);
+		SetItemState(record_position, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+		EnsureVisible(record_position, FALSE);
+	}
 }
 
 // Update data in cache

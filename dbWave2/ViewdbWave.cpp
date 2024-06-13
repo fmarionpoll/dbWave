@@ -1,4 +1,3 @@
-
 #include "StdAfx.h"
 #include "dbWave.h"
 #include "resource.h"
@@ -246,6 +245,7 @@ void ViewdbWave::updateControls()
 	m_bvalidSpk = CFile::GetStatus(pdb_doc->DB_GetCurrentSpkFileName(TRUE), status);
 
 	const int i_file = pdb_doc->DB_GetCurrentRecordPosition();
+
 	m_dataListCtrl.SetCurSel(i_file);
 	m_dataListCtrl.EnsureVisible(i_file, FALSE);
 
@@ -259,6 +259,8 @@ void ViewdbWave::updateControls()
 				m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
 		}
 	}
+
+	pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
 }
 
 void ViewdbWave::OnRecordPageup()
@@ -323,8 +325,10 @@ void ViewdbWave::OnItemActivateListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 	const auto p_item_activate = reinterpret_cast<NMITEMACTIVATE*>(pNMHDR);
 	if (p_item_activate->iItem >= 0)
 		GetDocument()->DB_SetCurrentRecordPosition(p_item_activate->iItem);
-	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	
 	dbTableView::OnInitialUpdate();
+	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+
 	*pResult = 0;
 }
 
