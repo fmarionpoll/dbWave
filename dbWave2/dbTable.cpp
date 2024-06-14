@@ -803,8 +803,16 @@ BOOL CdbTable::SetIndexCurrentFile(long i_file)
 	{
 		if (i_file >= record_count)
 			i_file = record_count - 1;
-		if (i_file != m_mainTableSet.GetAbsolutePosition())
+		if (i_file != m_mainTableSet.GetAbsolutePosition()) {
+			//m_varBookmarkCurrent = 1L;   // <<- re-initialize
+			//m_varBookmarkFirst =         // <<- the bookmark
+			//	m_varBookmarkLast = 0L;   // <<- member variables!
+			//// Enable toolbar buttons
+			//m_nStatus |= AFX_DAOVIEW_SCROLL_BACKWARD;// First & Prev buttons
+			//m_nStatus |= AFX_DAOVIEW_SCROLL_NEXT;    // next toolbar button
+			//m_nStatus |= AFX_DAOVIEW_SCROLL_LAST;    // last toolbar button
 			m_mainTableSet.SetAbsolutePosition(i_file);
+		}
 		GetCurrentRecord_FileNames();
 	}
 	catch (CDaoException* e)

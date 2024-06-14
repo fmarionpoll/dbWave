@@ -260,7 +260,7 @@ void ViewdbWave::updateControls()
 		}
 	}
 	//pdb_doc->SetModifiedFlag(true);
-	pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
+	//pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
 
 	//POSITION pos = pdb_doc->GetFirstViewPosition();
 	//int nviews = 0;
