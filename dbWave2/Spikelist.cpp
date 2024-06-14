@@ -224,11 +224,13 @@ void SpikeList::serialize_additional_data(CArchive& ar)
 	{
 		int n_parameters;
 		ar >> n_parameters;
-		ar >> m_icenter1SL; n_parameters--;
-		ar >> m_icenter2SL; n_parameters--;
-		ar >> m_imaxmin1SL; n_parameters--;
-		ar >> m_imaxmin2SL; n_parameters--;
-		ASSERT(n_parameters < 1);
+		if (n_parameters < 5) {
+			ar >> m_icenter1SL; n_parameters--;
+			ar >> m_icenter2SL; n_parameters--;
+			ar >> m_imaxmin1SL; n_parameters--;
+			ar >> m_imaxmin2SL; n_parameters--;
+			ASSERT(n_parameters < 1);
+		}
 	}
 }
 
