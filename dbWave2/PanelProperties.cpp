@@ -565,6 +565,7 @@ LRESULT CPropertiesPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void CPropertiesPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
+	TRACE("CPropertiesPanel::::OnUpdate");
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
 	{
