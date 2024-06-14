@@ -336,7 +336,7 @@ void ViewdbWave::OnItemActivateListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	// get item clicked and select it
 	const auto p_item_activate = reinterpret_cast<NMITEMACTIVATE*>(pNMHDR);
-	if (p_item_activate->iItem >= 0)
+	if (p_item_activate->iItem >= 0) 
 		GetDocument()->DB_SetCurrentRecordPosition(p_item_activate->iItem);
 	
 	dbTableView::OnInitialUpdate();
