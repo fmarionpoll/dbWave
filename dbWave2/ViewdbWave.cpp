@@ -238,13 +238,13 @@ void ViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 
 void ViewdbWave::updateControls()
 {
-	const auto pdb_doc = GetDocument();
+	const auto dbWaveDoc = GetDocument();
 	CFileStatus status;
 
-	m_bvalidDat = CFile::GetStatus(pdb_doc->DB_GetCurrentDatFileName(), status);
-	m_bvalidSpk = CFile::GetStatus(pdb_doc->DB_GetCurrentSpkFileName(TRUE), status);
+	m_bvalidDat = CFile::GetStatus(dbWaveDoc->DB_GetCurrentDatFileName(), status);
+	m_bvalidSpk = CFile::GetStatus(dbWaveDoc->DB_GetCurrentSpkFileName(TRUE), status);
 
-	const int i_file = pdb_doc->DB_GetCurrentRecordPosition();
+	const int i_file = dbWaveDoc->DB_GetCurrentRecordPosition();
 
 	m_dataListCtrl.SetCurSel(i_file);
 	m_dataListCtrl.EnsureVisible(i_file, FALSE);
@@ -261,6 +261,7 @@ void ViewdbWave::updateControls()
 	}
 	//pdb_doc->SetModifiedFlag(true);
 	//pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
+	dbWaveDoc->UpdateAllViews_dbWave(this, HINT_DOCMOVERECORD, nullptr);
 
 	//POSITION pos = pdb_doc->GetFirstViewPosition();
 	//int nviews = 0;
