@@ -173,7 +173,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	m_spkform_tag_left = m_chart_spike_shapes.m_VTtags.AddTag(spkclassif_->ileft, 0);
 	m_spkform_tag_right = m_chart_spike_shapes.m_VTtags.AddTag(spkclassif_->iright, 0);
 
-	m_chart_measures.DisplayAllFiles(false, GetDocument());
+	m_chart_measures.display_all_files(false, GetDocument());
 	m_chart_measures.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
 	m_chart_measures.SetScopeParameters(&(options_view_data_->spksort1parms));
 	m_itagup = m_chart_measures.m_HZtags.AddTag(spkclassif_->upper_threshold, 0);
@@ -561,7 +561,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
 				spike_index = m_chart_spike_bars.GetHitSpike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
-				spike_index = m_chart_measures.GetHitSpike();
+				spike_index = m_chart_measures.get_hit_spike();
 
 			select_spike_from_current_list(spike_index);
 		}
@@ -581,7 +581,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
 				spike_index = m_chart_spike_bars.GetHitSpike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
-				spike_index = m_chart_measures.GetHitSpike();
+				spike_index = m_chart_measures.get_hit_spike();
 			// if m_bAllFiles, spike_index is global, otherwise it comes from a single file...
 			select_spike_from_current_list(spike_index);
 			OnToolsEdittransformspikes();
@@ -939,7 +939,7 @@ void ViewSpikeSort::select_spike_from_current_list(int spike_index)
 {
 	m_chart_spike_shapes.SelectSpikeShape(spike_index);
 	m_chart_spike_bars.SelectSpike(spike_index);
-	m_chart_measures.SelectSpike(spike_index);
+	m_chart_measures.select_spike(spike_index);
 	m_pSpkList->m_selected_spike = spike_index;
 
 	m_spike_index_class = -1;
@@ -1001,7 +1001,7 @@ void ViewSpikeSort::OnSelectAllFiles()
 	m_bAllFiles = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	m_chart_spike_bars.DisplayAllFiles(m_bAllFiles, GetDocument());
 	m_chart_spike_shapes.DisplayAllFiles(m_bAllFiles, GetDocument());
-	m_chart_measures.DisplayAllFiles(m_bAllFiles, GetDocument());
+	m_chart_measures.display_all_files(m_bAllFiles, GetDocument());
 
 	m_bMeasureDone = FALSE;
 	OnMeasure();
@@ -1305,7 +1305,7 @@ void ViewSpikeSort::OnEnChangeEditLeft2()
 		if (it_left != m_chart_measures.m_VTtags.GetValue(m_ixyleft))
 		{
 			spkclassif_->ixyleft = it_left;
-			m_chart_measures.MoveVTtagtoVal(m_ixyleft, it_left);
+			m_chart_measures.move_vt_tag(m_ixyleft, it_left);
 		}
 		UpdateData(FALSE);
 	}
@@ -1329,7 +1329,7 @@ void ViewSpikeSort::OnEnChangeEditRight2()
 		if (i_right != m_chart_measures.m_VTtags.GetValue(m_ixyright))
 		{
 			spkclassif_->ixyright = i_right;
-			m_chart_measures.MoveVTtagtoVal(m_ixyright, i_right);
+			m_chart_measures.move_vt_tag(m_ixyright, i_right);
 		}
 		UpdateData(FALSE);
 	}
@@ -1410,7 +1410,7 @@ void ViewSpikeSort::OnEnChangeLower()
 
 		spkclassif_->lower_threshold = static_cast<int>(limit_lower_threshold_ / m_delta);
 		if (spkclassif_->lower_threshold != m_chart_measures.m_HZtags.GetValue(m_itaglow))
-			m_chart_measures.MoveHZtagtoVal(m_itaglow, spkclassif_->lower_threshold);
+			m_chart_measures.move_hz_tag(m_itaglow, spkclassif_->lower_threshold);
 		if (spkclassif_->lower_threshold != m_chart_histogram.m_VTtags.GetValue(m_spkhist_lower_threshold))
 			m_chart_histogram.MoveVTtagtoVal(m_spkhist_lower_threshold, spkclassif_->lower_threshold);
 		UpdateData(FALSE);
@@ -1428,7 +1428,7 @@ void ViewSpikeSort::OnEnChangeUpper()
 
 		spkclassif_->upper_threshold = static_cast<int>(limit_upper_threshold_ / m_delta);
 		if (spkclassif_->upper_threshold != m_chart_measures.m_HZtags.GetValue(m_itagup))
-			m_chart_measures.MoveHZtagtoVal(m_itagup, spkclassif_->upper_threshold);
+			m_chart_measures.move_hz_tag(m_itagup, spkclassif_->upper_threshold);
 		if (spkclassif_->lower_threshold != m_chart_histogram.m_VTtags.GetValue(m_spkhist_upper_threshold))
 			m_chart_histogram.MoveVTtagtoVal(m_spkhist_upper_threshold, spkclassif_->upper_threshold);
 		UpdateData(FALSE);
