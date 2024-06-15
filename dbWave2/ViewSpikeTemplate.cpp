@@ -192,13 +192,13 @@ void ViewSpikeTemplates::updateFileParameters()
 
 void ViewSpikeTemplates::updateSpikeFile()
 {
-	m_pSpkDoc = GetDocument()->Open_Current_Spike_File();
+	m_pSpkDoc = GetDocument()->open_current_spike_file();
 
 	if (nullptr != m_pSpkDoc)
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
-		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
-		int icur = GetDocument()->Get_Current_Spike_File()->get_spk_list_current_index();
+		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
+		int icur = GetDocument()->get_current_spike_file()->get_spk_list_current_index();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(icur);
 
 		// update Tab at the bottom
@@ -502,7 +502,7 @@ void ViewSpikeTemplates::OnFormatAlldata()
 void ViewSpikeTemplates::OnFormatGainadjust()
 {
 	short maxval, minval;
-	GetDocument()->Get_MaxMin_Of_All_Spikes(m_bAllFiles, TRUE, &maxval, &minval);
+	GetDocument()->get_max_min_of_all_spikes(m_bAllFiles, TRUE, &maxval, &minval);
 	const auto extent = MulDiv(maxval - minval + 1, 10, 9);
 	const auto zero = (maxval + minval) / 2;
 
@@ -512,7 +512,7 @@ void ViewSpikeTemplates::OnFormatGainadjust()
 void ViewSpikeTemplates::OnFormatCentercurve()
 {
 	short maxval, minval;
-	GetDocument()->Get_MaxMin_Of_All_Spikes(m_bAllFiles, TRUE, &maxval, &minval);
+	GetDocument()->get_max_min_of_all_spikes(m_bAllFiles, TRUE, &maxval, &minval);
 	const auto extent = m_ChartSpkWnd_Shape.GetYWExtent();
 	const auto zero = (maxval + minval) / 2;
 	setExtentZeroAllDisplay(extent, zero);
@@ -605,7 +605,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 
 	// set file indexes - assume only one file selected
 	auto p_dbwave_doc = GetDocument();
-	const int current_file = p_dbwave_doc->DB_GetCurrentRecordPosition(); // index current file
+	const int current_file = p_dbwave_doc->db_get_current_record_position(); // index current file
 	auto first_file = current_file; // index first file in the series
 	auto last_file = current_file; // index last file in the series
 	// make sure we have the correct spike list here
@@ -617,19 +617,19 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 	if (ballfiles)
 	{
 		first_file = 0; // index first file
-		last_file = p_dbwave_doc->DB_GetNRecords() - 1; // index last file
+		last_file = p_dbwave_doc->db_get_n_records() - 1; // index last file
 	}
 	// loop over files
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
 		// load file
-		p_dbwave_doc->DB_SetCurrentRecordPosition(i_file);
-		auto pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
+		p_dbwave_doc->db_set_current_record_position(i_file);
+		auto pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		if (pSpkDoc == nullptr)
 			continue;
 		CString cs;
 		cs.Format(_T("%i/%i - "), i_file, last_file);
-		cs += p_dbwave_doc->DB_GetCurrentSpkFileName(FALSE);
+		cs += p_dbwave_doc->db_get_current_spk_file_name(FALSE);
 		p_dbwave_doc->SetTitle(cs);
 		pSpkDoc->SetModifiedFlag(FALSE);
 
@@ -675,8 +675,8 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 	// end of loop, select current file again if necessary
 	if (ballfiles)
 	{
-		p_dbwave_doc->DB_SetCurrentRecordPosition(current_file);
-		m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
+		p_dbwave_doc->db_set_current_record_position(current_file);
+		m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
@@ -692,14 +692,14 @@ void ViewSpikeTemplates::OnBuildTemplates()
 
 	// set file indexes
 	auto p_dbwave_doc = GetDocument();
-	const int currentfile = p_dbwave_doc->DB_GetCurrentRecordPosition();
+	const int currentfile = p_dbwave_doc->db_get_current_record_position();
 	const auto currentlist = m_tabCtrl.GetCurSel();
 	auto firstfile = currentfile;
 	auto lastfile = firstfile;
 	if (m_bAllFiles)
 	{
 		firstfile = 0;
-		lastfile = p_dbwave_doc->DB_GetNRecords() - 1;
+		lastfile = p_dbwave_doc->db_get_n_records() - 1;
 	}
 
 	// add as many forms as we have classes
@@ -718,8 +718,8 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		// store nb of spikes within array
 		if (m_bAllFiles)
 		{
-			p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-			m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
+			p_dbwave_doc->db_set_current_record_position(ifile);
+			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		}
 
 		const auto spike_list = m_pSpkDoc->set_spk_list_as_current(currentlist);
@@ -741,12 +741,12 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		// store nb of spikes within array
 		if (m_bAllFiles)
 		{
-			p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-			p_dbwave_doc->Open_Current_Spike_File();
+			p_dbwave_doc->db_set_current_record_position(ifile);
+			p_dbwave_doc->open_current_spike_file();
 			m_pSpkDoc = p_dbwave_doc->m_pSpk;
 			CString cs;
 			cs.Format(_T("%i/%i - "), ifile, lastfile);
-			cs += p_dbwave_doc->DB_GetCurrentSpkFileName(FALSE);
+			cs += p_dbwave_doc->db_get_current_spk_file_name(FALSE);
 			p_dbwave_doc->SetTitle(cs);
 		}
 
@@ -817,8 +817,8 @@ void ViewSpikeTemplates::OnBuildTemplates()
 	// end of loop, select current file again if necessary
 	if (m_bAllFiles)
 	{
-		p_dbwave_doc->DB_SetCurrentRecordPosition(currentfile);
-		m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
+		p_dbwave_doc->db_set_current_record_position(currentfile);
+		m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
@@ -833,7 +833,7 @@ void ViewSpikeTemplates::sortSpikes()
 
 	// set file indexes - assume only one file selected
 	auto p_dbwave_doc = GetDocument();
-	const int currentfile = p_dbwave_doc->DB_GetCurrentRecordPosition(); // index current file
+	const int currentfile = p_dbwave_doc->db_get_current_record_position(); // index current file
 	auto firstfile = currentfile; // index first file in the series
 	auto lastfile = firstfile; // index last file in the series
 	const auto currentlist = m_tabCtrl.GetCurSel();
@@ -844,7 +844,7 @@ void ViewSpikeTemplates::sortSpikes()
 	if (m_bAllFiles)
 	{
 		firstfile = 0; // index first file
-		lastfile = p_dbwave_doc->DB_GetNRecords() - 1; // index last file
+		lastfile = p_dbwave_doc->db_get_n_records() - 1; // index last file
 	}
 
 	// loop CFrameWnd
@@ -854,11 +854,11 @@ void ViewSpikeTemplates::sortSpikes()
 		// store nb of spikes within array
 		if (m_bAllFiles)
 		{
-			p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
-			m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
+			p_dbwave_doc->db_set_current_record_position(ifile);
+			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 			CString cs;
 			cs.Format(_T("%i/%i - "), ifile, lastfile);
-			cs += p_dbwave_doc->DB_GetCurrentSpkFileName(FALSE);
+			cs += p_dbwave_doc->db_get_current_spk_file_name(FALSE);
 			p_dbwave_doc->SetTitle(cs);
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
@@ -936,19 +936,19 @@ void ViewSpikeTemplates::sortSpikes()
 		}
 		if (m_pSpkDoc->IsModified())
 		{
-			m_pSpkDoc->OnSaveDocument(p_dbwave_doc->DB_GetCurrentSpkFileName(FALSE));
+			m_pSpkDoc->OnSaveDocument(p_dbwave_doc->db_get_current_spk_file_name(FALSE));
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
-			GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
-			GetDocument()->SetDB_n_spike_classes(m_pSpkList->get_classes_count());
+			GetDocument()->set_db_n_spikes(m_pSpkList->get_spikes_count());
+			GetDocument()->set_db_n_spike_classes(m_pSpkList->get_classes_count());
 		}
 	}
 
 	// end of loop, select current file again if necessary
 	if (m_bAllFiles)
 	{
-		p_dbwave_doc->DB_SetCurrentRecordPosition(currentfile);
-		m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
+		p_dbwave_doc->db_set_current_record_position(currentfile);
+		m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
@@ -1035,7 +1035,7 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 
 			// set file indexes - assume only one file selected
 			const auto dbwave_doc = GetDocument();
-			const int current_file_index = dbwave_doc->DB_GetCurrentRecordPosition(); 
+			const int current_file_index = dbwave_doc->db_get_current_record_position(); 
 			auto index_first_file = current_file_index; // index first file in the series
 			auto index_last_file = index_first_file; // index last file in the series
 			const auto current_list = m_tabCtrl.GetCurSel();
@@ -1046,7 +1046,7 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 			if (b_all_files)
 			{
 				index_first_file = 0; // index first file
-				index_last_file = dbwave_doc->DB_GetNRecords() - 1; // index last file
+				index_last_file = dbwave_doc->db_get_n_records() - 1; // index last file
 			}
 
 			// loop CFrameWnd
@@ -1055,11 +1055,11 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 				// store nb of spikes within array
 				if (b_all_files)
 				{
-					dbwave_doc->DB_SetCurrentRecordPosition(index_file);
-					m_pSpkDoc = dbwave_doc->Open_Current_Spike_File();
+					dbwave_doc->db_set_current_record_position(index_file);
+					m_pSpkDoc = dbwave_doc->open_current_spike_file();
 					CString cs;
 					cs.Format(_T("%i/%i - "), index_file, index_last_file);
-					cs += dbwave_doc->DB_GetCurrentSpkFileName(FALSE);
+					cs += dbwave_doc->db_get_current_spk_file_name(FALSE);
 					dbwave_doc->SetTitle(cs);
 					m_pSpkDoc->SetModifiedFlag(FALSE);
 					m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_list);
@@ -1073,19 +1073,19 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 
 				if (m_pSpkDoc->IsModified())
 				{
-					m_pSpkDoc->OnSaveDocument(dbwave_doc->DB_GetCurrentSpkFileName(FALSE));
+					m_pSpkDoc->OnSaveDocument(dbwave_doc->db_get_current_spk_file_name(FALSE));
 					m_pSpkDoc->SetModifiedFlag(FALSE);
 
-					GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
-					GetDocument()->SetDB_n_spike_classes(m_pSpkList->get_classes_count());
+					GetDocument()->set_db_n_spikes(m_pSpkList->get_spikes_count());
+					GetDocument()->set_db_n_spike_classes(m_pSpkList->get_classes_count());
 				}
 			}
 
 			// end of loop, select current file again if necessary
 			if (b_all_files)
 			{
-				dbwave_doc->DB_SetCurrentRecordPosition(current_file_index);
-				m_pSpkDoc = dbwave_doc->Open_Current_Spike_File();
+				dbwave_doc->db_set_current_record_position(current_file_index);
+				m_pSpkDoc = dbwave_doc->open_current_spike_file();
 				dbwave_doc->SetTitle(dbwave_doc->GetPathName());
 			}
 		}

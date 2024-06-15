@@ -547,10 +547,10 @@ void CdbWaveApp::OnFileOpen()
 			auto p_dbwave_doc = static_cast<CdbWaveDoc*>(m_dataView_Template->CreateNewDocument());
 			if (p_dbwave_doc != nullptr)
 			{
-				p_dbwave_doc->SetClearMdbOnExit(TRUE);
+				p_dbwave_doc->set_clean_db_on_exit(TRUE);
 				if (p_dbwave_doc->OnNewDocument()) // create table
 				{
-					p_dbwave_doc->Import_FileList(filenames);
+					p_dbwave_doc->import_file_list(filenames);
 					auto p_wave_format = static_cast<CMDIFrameWnd*>(m_dbWaveView_Template->CreateNewFrame(
 						p_dbwave_doc, nullptr));
 					ASSERT(p_wave_format != NULL);
@@ -618,7 +618,7 @@ void CdbWaveApp::OnFileNew()
 				auto* p_dbwave_doc = static_cast<CdbWaveDoc*>(m_dataView_Template->CreateNewDocument());
 				if (p_dbwave_doc != nullptr)
 				{
-					p_dbwave_doc->SetClearMdbOnExit(FALSE); // keep file on exit
+					p_dbwave_doc->set_clean_db_on_exit(FALSE); // keep file on exit
 					if (p_dbwave_doc->OnNewDocument()) // create table
 					{
 						auto* p_wave_format = static_cast<CMDIFrameWnd*>(m_dbWaveView_Template->CreateNewFrame(

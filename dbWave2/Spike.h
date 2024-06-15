@@ -59,27 +59,26 @@ public:
 	void	set_time(long ii) { m_ii_time_ = ii; }
 	void	set_class_id(int cl) { m_class_id_ = cl; }
 
-	void	SetMaxMinEx(const short max, const short min, const short d_max_min) {
+	void	set_max_min_ex(const short max, const short min, const short d_max_min) {
 				m_value_max_ = max;
 				m_value_min_ = min;
 				m_d_max_min_ = d_max_min; }
 
-	void	SetAmplitudeOffset(const short offset) { m_offset_ = offset; }
+	void	set_amplitude_offset(const short offset) { m_offset_ = offset; }
 	void	set_y1(int y) { y1_ = y; }
 	void	set_y2(int y) { y2_ = y; }
 	void	set_dt(long x) { dt_ = x; }
 
-	//void	TransferDataToSpikeBuffer(short* source_data, int source_n_channels);
-	void	TransferDataToSpikeBuffer(short* source_data, int source_n_channels, int spike_length);
+	void	transfer_data_to_spike_buffer(short* source_data, int source_n_channels, int spike_length);
 
 	void	measure_max_min_ex(short* value_max, int* index_max, short* value_min, int* index_min, int i_first, int i_last) const;
-	void	MeasureMaxThenMinEx(short* value_max, int* index_max, short* value_min, int* index_min, int i_first, int i_last) const;
-	long	MeasureSumEx(int i_first, int i_last) const;
+	void	measure_max_then_min_ex(short* value_max, int* index_max, short* value_min, int* index_min, int i_first, int i_last) const;
+	long	measure_sum_ex(int i_first, int i_last) const;
 
-	void	OffsetSpikeData(short offset);
-	void	OffsetSpikeDataToAverageEx(int i_first, int i_last);
-	void	OffsetSpikeDataToExtremaEx(int i_first, int i_last);
-	void	CenterSpikeAmplitude(int i_first, int i_last, WORD method = 0);
+	void	offset_spike_data(short offset);
+	void	offset_spike_data_to_average_ex(int i_first, int i_last);
+	void	offset_spike_data_to_extrema_ex(int i_first, int i_last);
+	void	center_spike_amplitude(int i_first, int i_last, WORD method = 0);
 
 	// Implementation
 public:

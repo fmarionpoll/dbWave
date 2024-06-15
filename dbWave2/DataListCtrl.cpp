@@ -284,7 +284,7 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 	const auto db_wave_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
 	if (db_wave_doc == nullptr)
 		return;
-	const int index_current_file = db_wave_doc->DB_GetCurrentRecordPosition();
+	const int index_current_file = db_wave_doc->db_get_current_record_position();
 
 	// which update is necessary?
 	// conditions for out of range (renew all items)
@@ -356,9 +356,9 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 
 		// create line view and spike superposition
 		row->index = index + index_first;
-		db_wave_doc->DB_SetCurrentRecordPosition(row->index); 
-		row->csDatafileName = db_wave_doc->DB_GetCurrentDatFileName(TRUE);
-		row->csSpikefileName = db_wave_doc->DB_GetCurrentSpkFileName(TRUE);
+		db_wave_doc->db_set_current_record_position(row->index); 
+		row->csDatafileName = db_wave_doc->db_get_current_dat_file_name(TRUE);
+		row->csSpikefileName = db_wave_doc->db_get_current_spk_file_name(TRUE);
 		const auto database = db_wave_doc->m_pDB;
 		database->GetRecordItemValue(CH_IDINSECT, &desc);
 		row->insectID = desc.lVal;
@@ -380,7 +380,7 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 		row->csFlag.Format(_T("%i"), desc.lVal);
 
 		// column: number of spike = verify that spike file is defined, if yes, load nb spikes
-		if (db_wave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
+		if (db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			row->csNspk.Empty();
 		else
 		{
@@ -411,7 +411,7 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 
 	// restore document conditions
 	if (index_current_file >= 0)
-		db_wave_doc->DB_SetCurrentRecordPosition(index_current_file);
+		db_wave_doc->db_set_current_record_position(index_current_file);
 }
 
 void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)

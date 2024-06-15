@@ -358,10 +358,10 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 	if (m_pSpkDoc->IsModified())
 	{
 		m_pSpkList->update_class_list();
-		m_pSpkDoc->OnSaveDocument(GetDocument()->DB_GetCurrentSpkFileName(FALSE));
+		m_pSpkDoc->OnSaveDocument(GetDocument()->db_get_current_spk_file_name(FALSE));
 		m_pSpkDoc->SetModifiedFlag(FALSE);
-		GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
-		GetDocument()->SetDB_n_spike_classes(m_pSpkList->get_classes_count());
+		GetDocument()->set_db_n_spikes(m_pSpkList->get_spikes_count());
+		GetDocument()->set_db_n_spike_classes(m_pSpkList->get_classes_count());
 		const auto b_reset_zoom_old = m_b_reset_zoom;
 		m_b_reset_zoom = FALSE;
 		updateSpikeFile(TRUE);
@@ -528,7 +528,7 @@ void ViewSpikes::updateFileParameters(BOOL bUpdateInterface)
 
 void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 {
-	m_pDataDoc = GetDocument()->OpenCurrentDataFile();
+	m_pDataDoc = GetDocument()->open_current_data_file();
 	if (m_pDataDoc == nullptr)
 		return;
 
@@ -598,7 +598,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 
 void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 {
-	m_pSpkDoc = GetDocument()->Open_Current_Spike_File();
+	m_pSpkDoc = GetDocument()->open_current_spike_file();
 
 	if (nullptr == m_pSpkDoc)
 	{
@@ -607,10 +607,10 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 	else
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
-		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
+		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 
-		const int current_index = GetDocument()->Get_Current_Spike_File()->get_spk_list_current_index();
+		const int current_index = GetDocument()->get_current_spike_file()->get_spk_list_current_index();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 		m_pspkDP = m_pSpkList->get_detection_parameters();
 
@@ -794,7 +794,7 @@ void ViewSpikes::PrintFileBottomPage(CDC* p_dc, const CPrintInfo* pInfo)
 	ch.Format(_T("  page %d:%d %d-%d-%d"), // %d:%d",
 	          pInfo->m_nCurPage, pInfo->GetMaxPage(),
 	          t.GetDay(), t.GetMonth(), t.GetYear());
-	const auto ch_date = GetDocument()->DB_GetCurrentSpkFileName();
+	const auto ch_date = GetDocument()->db_get_current_spk_file_name();
 	p_dc->SetTextAlign(TA_CENTER);
 	p_dc->TextOut(options_viewdata->horzRes / 2, options_viewdata->vertRes - 57, ch_date);
 }
@@ -829,9 +829,9 @@ long ViewSpikes::PrintGetFileSeriesIndexFromPage(const int page, int* file_numbe
 	auto i_file = 0; 
 	if (options_viewdata->bPrintSelection)
 		i_file = m_file0;
-	const auto current = GetDocument()->DB_GetCurrentRecordPosition();
-	GetDocument()->DB_SetCurrentRecordPosition(i_file);
-	auto very_last = GetDocument()->DB_GetDataLen() - 1;
+	const auto current = GetDocument()->db_get_current_record_position();
+	GetDocument()->db_set_current_record_position(i_file);
+	auto very_last = GetDocument()->db_get_data_len() - 1;
 	for (auto row = 0; row < max_row; row++)
 	{
 		l_first += m_lprintLen; // end of row
@@ -844,13 +844,13 @@ long ViewSpikes::PrintGetFileSeriesIndexFromPage(const int page, int* file_numbe
 				break;
 			}
 			// update end-of-file
-			GetDocument()->DB_MoveNext();
-			very_last = GetDocument()->DB_GetDataLen() - 1;
+			GetDocument()->db_move_next();
+			very_last = GetDocument()->db_get_data_len() - 1;
 			l_first = m_lprintFirst;
 		}
 	}
 	*file_number = i_file; // return index / file list
-	GetDocument()->DB_SetCurrentRecordPosition(current);
+	GetDocument()->db_set_current_record_position(current);
 	return l_first; // return index first point / data file
 }
 
@@ -865,7 +865,7 @@ CString ViewSpikes::PrintGetFileInfos()
 	if (options_viewdata->bDocName || options_viewdata->bAcqDateTime) // print doc infos?
 	{
 		if (options_viewdata->bDocName) // print file name
-			str_comment += GetDocument()->DB_GetCurrentSpkFileName(FALSE) + tab;
+			str_comment += GetDocument()->db_get_current_spk_file_name(FALSE) + tab;
 		if (options_viewdata->bAcqDateTime) // print data acquisition date & time
 		{
 			const auto acquisition_time = m_pSpkDoc->get_acq_time();
@@ -1045,7 +1045,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	// make sure the number of classes per file is known
 	auto nn_classes = 0; // store sum (n classes from file (i=i_file0, i_file1))
 	const auto p_dbwave_doc = GetDocument();
-	m_file0 = p_dbwave_doc->DB_GetCurrentRecordPosition();
+	m_file0 = p_dbwave_doc->db_get_current_record_position();
 	ASSERT(m_file0 >= 0);
 	m_printFirst = m_file0;
 	m_printLast = m_file0;
@@ -1054,20 +1054,20 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 	if (!options_viewdata->bPrintSelection)
 	{
 		m_printFirst = 0;
-		m_nfiles = p_dbwave_doc->DB_GetNRecords();
+		m_nfiles = p_dbwave_doc->db_get_n_records();
 		m_printLast = m_nfiles - 1;
 	}
 
 	// update the nb of classes per file selected and add this number
 	m_max_classes = 1;
-	p_dbwave_doc->DB_SetCurrentRecordPosition(m_printFirst);
+	p_dbwave_doc->db_set_current_record_position(m_printFirst);
 	auto nb_rect = 0; // total nb of rows
-	for (auto i = m_printFirst; i <= m_printLast; i++, p_dbwave_doc->DB_MoveNext())
+	for (auto i = m_printFirst; i <= m_printLast; i++, p_dbwave_doc->db_move_next())
 	{
 		// get number of classes
-		if (p_dbwave_doc->GetDB_n_spike_classes() <= 0)
+		if (p_dbwave_doc->get_db_n_spike_classes() <= 0)
 		{
-			m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
+			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 			m_pSpkList = m_pSpkDoc->get_spk_list_current();
 			if (!m_pSpkList->is_class_list_valid()) // if class list not valid:
 			{
@@ -1079,16 +1079,16 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 			if (m_pSpkList->get_spikes_count() > 0)
 				n_classes = m_pSpkList->get_classes_count();
 			ASSERT(n_classes > 0);
-			p_dbwave_doc->SetDB_n_spike_classes(n_classes);
+			p_dbwave_doc->set_db_n_spike_classes(n_classes);
 			nn_classes += n_classes;
 		}
 
-		if (p_dbwave_doc->GetDB_n_spike_classes() > m_max_classes)
-			m_max_classes = p_dbwave_doc->GetDB_n_spike_classes();
+		if (p_dbwave_doc->get_db_n_spike_classes() > m_max_classes)
+			m_max_classes = p_dbwave_doc->get_db_n_spike_classes();
 
 		if (options_viewdata->bMultirowDisplay)
 		{
-			const auto len = p_dbwave_doc->DB_GetDataLen() - m_lprintFirst; // file length
+			const auto len = p_dbwave_doc->db_get_data_len() - m_lprintFirst; // file length
 			auto n_rows = len / m_lprintLen; // how many rows for this file?
 			if (len > n_rows * m_lprintLen) // remainder?
 				n_rows++;
@@ -1137,7 +1137,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		pInfo->SetMaxPage(n_pages);
 	}
 
-	p_dbwave_doc->DB_SetCurrentRecordPosition(m_file0);
+	p_dbwave_doc->db_set_current_record_position(m_file0);
 	return flag;
 }
 
@@ -1168,7 +1168,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// print only current selection - transform current page into file index
 	int file_index; 
 	auto l_first = PrintGetFileSeriesIndexFromPage(current_page - 1, &file_index);
-	GetDocument()->DB_SetCurrentRecordPosition(file_index);
+	GetDocument()->db_set_current_record_position(file_index);
 	updateFileParameters(FALSE);
 	updateFileScroll();
 	auto very_last = m_pSpkDoc->get_acq_size() - 1; 
@@ -1370,7 +1370,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			if (file_index < m_nfiles) // last file ??
 			{
 				// NO: select new file
-				GetDocument()->DB_MoveNext();
+				GetDocument()->db_move_next();
 				updateFileParameters(FALSE);
 				updateFileScroll();
 				very_last = m_pSpkDoc->get_acq_size() - 1;
@@ -1390,7 +1390,7 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_fontPrint.DeleteObject();
 	m_bIsPrinting = FALSE;
 
-	GetDocument()->DB_SetCurrentRecordPosition(m_file0);
+	GetDocument()->db_set_current_record_position(m_file0);
 	updateFileParameters(TRUE);
 	m_spikeClassListBox.SetTimeIntervals(m_lFirst0, m_lLast0);
 	m_spikeClassListBox.Invalidate();
@@ -1919,7 +1919,7 @@ void ViewSpikes::OnFormatCentercurve()
 	for (int i_spike = 0; i_spike < n_spikes; i_spike++)
 	{
 		Spike* spike = m_pSpkList->get_spike(i_spike);
-		spike->CenterSpikeAmplitude(i_t1, i_t2, 1);
+		spike->center_spike_amplitude(i_t1, i_t2, 1);
 	}
 
 	short max, min;

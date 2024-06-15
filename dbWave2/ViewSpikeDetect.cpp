@@ -126,15 +126,15 @@ void ViewSpikeDetection::OnFileSave()
 	CFile f;
 	CFileDialog dlg(FALSE,
 		_T("spk"),										// default filename extension
-		GetDocument()->DB_GetCurrentSpkFileName(),	// initial file name
+		GetDocument()->db_get_current_spk_file_name(),	// initial file name
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("Awave Spikes (*.spk) | *.spk |All Files (*.*) | *.* ||"));
 
 	if (IDOK == dlg.DoModal())
 	{
 		m_pSpkDoc->OnSaveDocument(dlg.GetPathName());
-		GetDocument()->SetDB_n_spikes(m_pSpkDoc->get_spk_list_current()->get_spikes_count());
-		GetDocument()->SetDB_n_spike_classes(1);
+		GetDocument()->set_db_n_spikes(m_pSpkDoc->get_spk_list_current()->get_spikes_count());
+		GetDocument()->set_db_n_spike_classes(1);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 	}
 }
@@ -226,7 +226,7 @@ void ViewSpikeDetection::update_legends()
 void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 {
 	const auto pdb_doc = GetDocument();
-	if (pdb_doc->Open_Current_Spike_File() == nullptr)
+	if (pdb_doc->open_current_spike_file() == nullptr)
 	{
 		// file not found: create new object, and create file
 		auto* p_spike = new CSpikeDoc;
@@ -242,7 +242,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	{
 		m_pSpkDoc = pdb_doc->m_pSpk;
 		m_pSpkDoc->SetModifiedFlag(FALSE);
-		m_pSpkDoc->SetPathName(pdb_doc->DB_GetCurrentSpkFileName(), FALSE);
+		m_pSpkDoc->SetPathName(pdb_doc->db_get_current_spk_file_name(), FALSE);
 	}
 
 	// select a spike list
@@ -339,7 +339,7 @@ BOOL ViewSpikeDetection::check_detection_settings()
 	ASSERT_VALID(m_p_detect_parameters);
 	if (nullptr == m_p_detect_parameters)
 	{
-		m_i_detect_parameters = GetDocument()->Get_Current_Spike_File()->get_spk_list_current_index();
+		m_i_detect_parameters = GetDocument()->get_current_spike_file()->get_spk_list_current_index();
 		m_p_detect_parameters = m_spk_detect_array_current.GetItem(m_i_detect_parameters);
 	}
 
@@ -370,7 +370,7 @@ BOOL ViewSpikeDetection::check_detection_settings()
 boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 {
 	const auto pdb_doc = GetDocument();
-	const auto p_data_file = pdb_doc->OpenCurrentDataFile();
+	const auto p_data_file = pdb_doc->open_current_data_file();
 	if (p_data_file == nullptr)
 		return false;
 
@@ -1046,11 +1046,11 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 
 	const auto db_document = GetDocument();
 	const auto data_document = db_document->m_pDat;
-	m_pSpkDoc->set_acq_filename(db_document->DB_GetCurrentDatFileName());
+	m_pSpkDoc->set_acq_filename(db_document->db_get_current_dat_file_name());
 	m_pSpkDoc->init_source_doc(data_document);
 
 	m_pSpkDoc->set_detection_date(CTime::GetCurrentTime());
-	auto old_spike_list_index = db_document->Get_Current_Spike_File()->get_spk_list_current_index();
+	auto old_spike_list_index = db_document->get_current_spike_file()->get_spk_list_current_index();
 	m_spike_index = -1;
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
@@ -1855,7 +1855,7 @@ void ViewSpikeDetection::OnEditCopy()
 			const auto column = 10;
 
 			// comment and descriptors
-			auto comments = GetDocument()->Export_DatabaseData(1);
+			auto comments = GetDocument()->export_database_data(1);
 			m_dc.TextOut(column, row, comments);
 			row += line_height;
 
@@ -2024,7 +2024,7 @@ void ViewSpikeDetection::PrintFileBottomPage(CDC* p_dc, const CPrintInfo* p_info
 	ch.Format(_T("  page %d:%d %d-%d-%d"),
 		p_info->m_nCurPage, p_info->GetMaxPage(),
 		t.GetDay(), t.GetMonth(), t.GetYear());
-	const auto ch_date = GetDocument()->DB_GetCurrentSpkFileName();
+	const auto ch_date = GetDocument()->db_get_current_spk_file_name();
 	p_dc->SetTextAlign(TA_CENTER);
 	p_dc->TextOut(options_view_data->horzRes / 2, options_view_data->vertRes - 57, ch_date);
 }
@@ -2057,11 +2057,11 @@ BOOL ViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int& file_num
 	if (options_view_data->bPrintSelection) 
 		file_number = m_file0;
 	else
-		GetDocument()->DB_MoveFirst();
+		GetDocument()->db_move_first();
 
 	auto very_last = m_lprintFirst + m_lprintLen;
 	if (options_view_data->bEntireRecord)
-		very_last = GetDocument()->DB_GetDataLen() - 1;
+		very_last = GetDocument()->db_get_data_len() - 1;
 
 	for (auto row = 0; row < total_rows; row++)
 	{
@@ -2080,11 +2080,11 @@ BOOL ViewSpikeDetection::PrintGetNextRow(int& file_index, long& l_first, long& v
 		if (file_index >= m_nfiles)
 			return FALSE;
 
-		GetDocument()->DB_MoveNext();
-		if (l_first < GetDocument()->DB_GetDataLen() - 1)
+		GetDocument()->db_move_next();
+		if (l_first < GetDocument()->db_get_data_len() - 1)
 		{
 			if (options_view_data->bEntireRecord)
-				very_last = GetDocument()->DB_GetDataLen() - 1;
+				very_last = GetDocument()->db_get_data_len() - 1;
 		}
 	}
 	else
@@ -2096,8 +2096,8 @@ BOOL ViewSpikeDetection::PrintGetNextRow(int& file_index, long& l_first, long& v
 			if (file_index >= m_nfiles) // last file ??
 				return FALSE;
 
-			GetDocument()->DB_MoveNext();
-			very_last = GetDocument()->DB_GetDataLen() - 1;
+			GetDocument()->db_move_next();
+			very_last = GetDocument()->db_get_data_len() - 1;
 			l_first = m_lprintFirst;
 		}
 	}
@@ -2116,7 +2116,7 @@ CString ViewSpikeDetection::PrintGetFileInfos()
 	if (options_view_data->bDocName || options_view_data->bAcqDateTime)
 	{
 		if (options_view_data->bDocName) 
-			str_comment += GetDocument()->DB_GetCurrentDatFileName() + tab;
+			str_comment += GetDocument()->db_get_current_dat_file_name() + tab;
 
 		if (options_view_data->bAcqDateTime) 
 		{
@@ -2128,7 +2128,7 @@ CString ViewSpikeDetection::PrintGetFileInfos()
 
 	// document's main comment (print on multiple lines if necessary)
 	if (options_view_data->bAcqComment)
-		str_comment += GetDocument()->Export_DatabaseData(); 
+		str_comment += GetDocument()->export_database_data(); 
 
 	return str_comment;
 }
@@ -2409,7 +2409,7 @@ int ViewSpikeDetection::PrintGetNPages()
 	// compute number of rows according to b_multi_row & b_entire_record flag
 	m_lprintFirst = m_chart_data_filtered.GetDataFirstIndex();
 	m_lprintLen = m_chart_data_filtered.GetDataLastIndex() - m_lprintFirst + 1;
-	m_file0 = GetDocument()->DB_GetCurrentRecordPosition();
+	m_file0 = GetDocument()->db_get_current_record_position();
 	ASSERT(m_file0 >= 0);
 	m_nfiles = 1;
 	auto i_file_0 = m_file0;
@@ -2417,7 +2417,7 @@ int ViewSpikeDetection::PrintGetNPages()
 	if (!options_view_data->bPrintSelection)
 	{
 		i_file_0 = 0;
-		m_nfiles = p_document->DB_GetNRecords();
+		m_nfiles = p_document->db_get_n_records();
 		i_file_1 = m_nfiles;
 	}
 
@@ -2429,18 +2429,18 @@ int ViewSpikeDetection::PrintGetNPages()
 	else
 	{
 		n_total_rows = 0;
-		p_document->DB_SetCurrentRecordPosition(i_file_0);
-		for (auto i = i_file_0; i < i_file_1; i++, p_document->DB_MoveNext())
+		p_document->db_set_current_record_position(i_file_0);
+		for (auto i = i_file_0; i < i_file_1; i++, p_document->db_move_next())
 		{
 			// get size of document for all files
-			auto len = p_document->DB_GetDataLen();
+			auto len = p_document->db_get_data_len();
 			if (len <= 0)
 			{
-				p_document->OpenCurrentDataFile();
+				p_document->open_current_data_file();
 				len = p_document->m_pDat->GetDOCchanLength();
-				const auto len1 = GetDocument()->DB_GetDataLen() - 1;
+				const auto len1 = GetDocument()->db_get_data_len() - 1;
 				ASSERT(len == len1);
-				p_document->DB_SetDataLen(len);
+				p_document->db_set_data_len(len);
 			}
 			len -= m_lprintFirst;
 			auto n_rows = len / m_lprintLen; 
@@ -2452,8 +2452,8 @@ int ViewSpikeDetection::PrintGetNPages()
 
 	if (m_file0 >= 0)
 	{
-		p_document->DB_SetCurrentRecordPosition(m_file0);
-		p_document->OpenCurrentDataFile();
+		p_document->db_set_current_record_position(m_file0);
+		p_document->open_current_data_file();
 	}
 
 	auto n_pages = n_total_rows / m_nbrowsperpage;
@@ -2525,10 +2525,10 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	auto index_last_data_point = m_lprintFirst + m_lprintLen; 
 	const auto current_page_number = pInfo->m_nCurPage;
 	PrintGetFileSeriesIndexFromPage(current_page_number, file_index, index_first_data_point);
-	if (index_first_data_point < GetDocument()->DB_GetDataLen() - 1)
+	if (index_first_data_point < GetDocument()->db_get_data_len() - 1)
 		update_file_parameters(FALSE);
 	if (options_view_data->bEntireRecord)
-		index_last_data_point = GetDocument()->DB_GetDataLen() - 1;
+		index_last_data_point = GetDocument()->db_get_data_len() - 1;
 
 	// loop through all files	--------------------------------------------------------
 	for (auto i = 0; i < m_nbrowsperpage; i++)
@@ -2661,7 +2661,7 @@ void ViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	// restore file from index and display parameters
-	GetDocument()->DB_SetCurrentRecordPosition(m_file0);
+	GetDocument()->db_set_current_record_position(m_file0);
 
 	m_chart_data_filtered.ResizeChannels(m_npixels0, 0);
 	m_chart_data_filtered.GetDataFromDoc(m_lFirst0, m_lLast0);
@@ -3081,10 +3081,10 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 
 		p_data = data_document->LoadTransformedData(l_rw_first, l_rw_last, method, doc_chan);
 		const auto p_data_spike0 = p_data + (ii_time - spike_pre_threshold - l_rw_first) * offset;
-		p_spike->TransferDataToSpikeBuffer(p_data_spike0, offset, m_pSpkList->get_spike_length());
+		p_spike->transfer_data_to_spike_buffer(p_data_spike0, offset, m_pSpkList->get_spike_length());
 
 		// n channels should be 1 if they come from the transform buffer as data are not interleaved...
-		p_spike->CenterSpikeAmplitude(0, spike_length, 1); // 1=center average
+		p_spike->center_spike_amplitude(0, spike_length, 1); // 1=center average
 	}
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 

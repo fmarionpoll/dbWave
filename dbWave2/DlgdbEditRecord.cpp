@@ -497,7 +497,7 @@ void DlgdbEditRecord::OnBnClickedButton1()
 		EditChangeItem_IndirectField(IDC_COMBO_PATHSPK);
 	else
 	{
-		m_pdbDoc->DB_TransferDatPathToSpkPath();
+		m_pdbDoc->db_transfer_dat_path_to_spk_path();
 	}
 }
 
@@ -519,21 +519,21 @@ void DlgdbEditRecord::OnBnClickedButtonexpt2()
 void DlgdbEditRecord::OnBnClickedSynchrosingle()
 {
 	UpdateDatabaseFromDialog();
-	m_pdbDoc->SynchronizeSourceInfos(FALSE);
+	m_pdbDoc->synchronize_source_infos(FALSE);
 }
 
 void DlgdbEditRecord::OnBnClickedSynchroall()
 {
 	UpdateDatabaseFromDialog();
-	m_pdbDoc->SynchronizeSourceInfos(TRUE);
+	m_pdbDoc->synchronize_source_infos(TRUE);
 }
 
 void DlgdbEditRecord::OnBnClickedPrevious()
 {
 	UpdateDatabaseFromDialog();
-	m_pdbDoc->DB_MovePrev();
+	m_pdbDoc->db_move_prev();
 
-	m_pdbDoc->UpdateAllViews_dbWave(nullptr, 0L, nullptr);
+	m_pdbDoc->update_all_views_db_wave(nullptr, 0L, nullptr);
 	PopulateControls();
 	UpdateData(FALSE);
 }
@@ -541,9 +541,9 @@ void DlgdbEditRecord::OnBnClickedPrevious()
 void DlgdbEditRecord::OnBnClickedNext()
 {
 	UpdateDatabaseFromDialog();
-	m_pdbDoc->DB_MoveNext();
+	m_pdbDoc->db_move_next();
 
-	m_pdbDoc->UpdateAllViews_dbWave(nullptr, 0L, nullptr);
+	m_pdbDoc->update_all_views_db_wave(nullptr, 0L, nullptr);
 
 	PopulateControls();
 	UpdateData(FALSE);

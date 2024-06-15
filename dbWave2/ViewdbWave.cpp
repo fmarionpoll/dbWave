@@ -133,7 +133,7 @@ void ViewdbWave::OnInitialUpdate()
 	// init display controls
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* p_spk_doc = GetDocument()->Get_Current_Spike_File();
+		CSpikeDoc* p_spk_doc = GetDocument()->get_current_spike_file();
 		if (p_spk_doc != nullptr)
 		{
 			m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
@@ -241,17 +241,17 @@ void ViewdbWave::updateControls()
 	const auto dbWaveDoc = GetDocument();
 	CFileStatus status;
 
-	m_bvalidDat = CFile::GetStatus(dbWaveDoc->DB_GetCurrentDatFileName(), status);
-	m_bvalidSpk = CFile::GetStatus(dbWaveDoc->DB_GetCurrentSpkFileName(TRUE), status);
+	m_bvalidDat = CFile::GetStatus(dbWaveDoc->db_get_current_dat_file_name(), status);
+	m_bvalidSpk = CFile::GetStatus(dbWaveDoc->db_get_current_spk_file_name(TRUE), status);
 
-	const int i_file = dbWaveDoc->DB_GetCurrentRecordPosition();
+	const int i_file = dbWaveDoc->db_get_current_record_position();
 
 	m_dataListCtrl.SetCurSel(i_file);
 	m_dataListCtrl.EnsureVisible(i_file, FALSE);
 
 	if (m_options_viewdata->displaymode == 2)
 	{
-		CSpikeDoc* p_spk_doc = GetDocument()->Open_Current_Spike_File();
+		CSpikeDoc* p_spk_doc = GetDocument()->open_current_spike_file();
 		if (p_spk_doc != nullptr)
 		{
 			const auto spklist_size = p_spk_doc->get_spk_list_size();
@@ -261,7 +261,7 @@ void ViewdbWave::updateControls()
 	}
 	//pdb_doc->SetModifiedFlag(true);
 	//pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
-	dbWaveDoc->UpdateAllViews_dbWave(this, HINT_DOCMOVERECORD, nullptr);
+	dbWaveDoc->update_all_views_db_wave(this, HINT_DOCMOVERECORD, nullptr);
 
 	//POSITION pos = pdb_doc->GetFirstViewPosition();
 	//int nviews = 0;
@@ -329,7 +329,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 void ViewdbWave::fillListBox()
 {
 	m_dataListCtrl.DeleteAllItems();
-	const int n_records = GetDocument()->DB_GetNRecords();
+	const int n_records = GetDocument()->db_get_n_records();
 	m_dataListCtrl.SetItemCountEx(n_records);
 }
 
@@ -338,7 +338,7 @@ void ViewdbWave::OnItemActivateListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 	// get item clicked and select it
 	const auto p_item_activate = reinterpret_cast<NMITEMACTIVATE*>(pNMHDR);
 	if (p_item_activate->iItem >= 0) 
-		GetDocument()->DB_SetCurrentRecordPosition(p_item_activate->iItem);
+		GetDocument()->db_set_current_record_position(p_item_activate->iItem);
 	
 	dbTableView::OnInitialUpdate();
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
@@ -361,7 +361,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_VIEWTABHASCHANGED:
-		GetDocument()->Get_Current_Spike_File()->set_spk_list_as_current(threshold);
+		GetDocument()->get_current_spike_file()->set_spk_list_as_current(threshold);
 		m_dataListCtrl.RefreshDisplay();
 		break;
 
@@ -445,7 +445,7 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 void ViewdbWave::DeleteRecords()
 {
 	// save index current file
-	auto current_index = GetDocument()->DB_GetCurrentRecordPosition() - 1;
+	auto current_index = GetDocument()->db_get_current_record_position() - 1;
 	if (current_index < 0)
 		current_index = 0;
 
@@ -462,12 +462,12 @@ void ViewdbWave::DeleteRecords()
 	while (pos)
 	{
 		const auto n_item = m_dataListCtrl.GetNextSelectedItem(pos);
-		pdb_doc->DB_SetCurrentRecordPosition(n_item - n_files_to_delete);
-		pdb_doc->DB_DeleteCurrentRecord();
+		pdb_doc->db_set_current_record_position(n_item - n_files_to_delete);
+		pdb_doc->db_delete_current_record();
 		n_files_to_delete++;
 	}
 
-	pdb_doc->DB_SetCurrentRecordPosition(current_index);
+	pdb_doc->db_set_current_record_position(current_index);
 	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 

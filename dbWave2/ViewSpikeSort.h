@@ -118,8 +118,8 @@ protected:
 	void select_spike_list(int current_index);
 	void activate_mode4();
 	void build_histogram();
-	void unflag_all_spikes();
-	void checkValidThresholdLimits();
+	void clear_flag_all_spikes();
+	void check_valid_threshold_limits();
 
 	// Generated message map functions
 public:

@@ -220,7 +220,7 @@ void CChildFrame::OnToolsExportdataAsText()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc != nullptr)
 	{
-		p_dbWave_doc->Export_DatafilesAsTXTfiles();
+		p_dbWave_doc->export_datafiles_as_text_files();
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
 	}
@@ -237,10 +237,10 @@ void CChildFrame::exportASCII(int option)
 	switch (option)
 	{
 	case 0:
-		p_dbWave_doc->Export_DataAsciiComments(&sf);
+		p_dbWave_doc->export_data_ascii_comments(&sf);
 		break;
 	case 1:
-		p_dbWave_doc->Export_NumberOfSpikes(&sf);
+		p_dbWave_doc->export_number_of_spikes(&sf);
 		break;
 	default:
 		break;
@@ -365,27 +365,27 @@ void CChildFrame::ReplaceViewIndex(UINT iID)
 		replaceView(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATAFILE:
-		if (!p_dbWave_doc->DB_GetCurrentDatFileName(TRUE).IsEmpty())
+		if (!p_dbWave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
 			replaceView(RUNTIME_CLASS(ViewData), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDETECTION:
-		if (!p_dbWave_doc->DB_GetCurrentDatFileName(TRUE).IsEmpty())
+		if (!p_dbWave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
 			replaceView(RUNTIME_CLASS(ViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKEDISPLAY:
-		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replaceView(RUNTIME_CLASS(ViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGAMPLITUDE:
-		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replaceView(RUNTIME_CLASS(ViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
-		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replaceView(RUNTIME_CLASS(ViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKETIMESERIES:
-		if (!p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
+		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replaceView(RUNTIME_CLASS(ViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIREDATA:
@@ -426,7 +426,7 @@ void CChildFrame::OnUpdateViewMenu(CCmdUI * pCmdUI)
 	case ID_VIEW_SPIKESORTINGTEMPLATES:
 	case ID_VIEW_SPIKETIMESERIES:
 		flag = (flag
-			&& !p_dbWave_doc->DB_GetCurrentSpkFileName(TRUE).IsEmpty()
+			&& !p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty()
 			&& m_view_ON != ID_VIEW_ACQUIREDATA);
 		break;
 
@@ -435,7 +435,7 @@ void CChildFrame::OnUpdateViewMenu(CCmdUI * pCmdUI)
 		break;
 
 	default:
-		flag = (flag && !p_dbWave_doc->DB_GetCurrentDatFileName().IsEmpty());
+		flag = (flag && !p_dbWave_doc->db_get_current_dat_file_name().IsEmpty());
 		break;
 	}
 
@@ -465,7 +465,7 @@ void CChildFrame::replaceView(CRuntimeClass * pViewClass, HMENU hmenu)
 	// delete old view without deleting document
 	const auto bautodel = p_dbWave_doc->m_bAutoDelete;
 	p_dbWave_doc->m_bAutoDelete = FALSE;
-	p_dbWave_doc->CloseCurrentDataFile();
+	p_dbWave_doc->close_current_data_file();
 	p_current_view->DestroyWindow();
 	p_dbWave_doc->m_bAutoDelete = bautodel;
 
@@ -495,7 +495,7 @@ void CChildFrame::OnToolsRemoveMissingFiles()
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	p_dbWave_doc->Remove_MissingFiles();
+	p_dbWave_doc->remove_missing_files();
 	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -505,7 +505,7 @@ void CChildFrame::OnToolsRemoveduplicatefiles()
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	p_dbWave_doc->Remove_DuplicateFiles();
+	p_dbWave_doc->remove_duplicate_files();
 	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -515,7 +515,7 @@ void CChildFrame::OnToolsCheckFilelistsConsistency()
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	p_dbWave_doc->Remove_FalseSpkFiles();
+	p_dbWave_doc->remove_false_spk_files();
 	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -572,7 +572,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsCurrentfile()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc == nullptr)
 		return;
-	p_dbWave_doc->SynchronizeSourceInfos(FALSE);
+	p_dbWave_doc->synchronize_source_infos(FALSE);
 	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -581,7 +581,7 @@ void CChildFrame::OnToolsSynchronizesourceinformationsAllfiles()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc == nullptr)
 		return;
-	p_dbWave_doc->SynchronizeSourceInfos(TRUE);
+	p_dbWave_doc->synchronize_source_infos(TRUE);
 	p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -613,7 +613,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc == nullptr)
 		return;
-	const int n_files = p_dbWave_doc->DB_GetNRecords();
+	const int n_files = p_dbWave_doc->db_get_n_records();
 
 	for (int i_file = 0; i_file < n_files; i_file++)
 	{
@@ -623,12 +623,12 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 				break;
 
 		cs_comment.Format(_T("Processing file [%i / %i] "), i_file + 1, n_files);
-		cs_comment += p_dbWave_doc->DB_GetCurrentDatFileName();
+		cs_comment += p_dbWave_doc->db_get_current_dat_file_name();
 		dlg.SetStatus(cs_comment);
 
 		// load file
-		p_dbWave_doc->DB_SetCurrentRecordPosition(i_file);
-		const auto b_ok = p_dbWave_doc->OpenCurrentDataFile();
+		p_dbWave_doc->db_set_current_record_position(i_file);
+		const auto b_ok = p_dbWave_doc->open_current_data_file();
 		if (!b_ok)
 			continue;
 
@@ -672,7 +672,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		}
 		// change flag if condition met
 		if (nconsecutivepoints >= n_consecutive_points)
-			p_dbWave_doc->DB_SetCurrentRecordFlag(flag_rejected_file_as);
+			p_dbWave_doc->db_set_current_record_flag(flag_rejected_file_as);
 
 		// update interface
 		if (MulDiv(i_file, 100, n_files) > i_step)
@@ -691,17 +691,17 @@ void CChildFrame::OnRecordGotorecord()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc == nullptr)
 		return;
-	dlg.m_recordPos = p_dbWave_doc->DB_GetCurrentRecordPosition();
-	dlg.m_recordID = p_dbWave_doc->DB_GetCurrentRecordID();
+	dlg.m_recordPos = p_dbWave_doc->db_get_current_record_position();
+	dlg.m_recordID = p_dbWave_doc->db_get_current_record_id();
 	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID;
 
 	if (IDOK == dlg.DoModal())
 	{
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
 		if (!dlg.m_bGotoRecordID)
-			p_dbWave_doc->DB_SetCurrentRecordPosition(dlg.m_recordPos);
+			p_dbWave_doc->db_set_current_record_position(dlg.m_recordPos);
 		else
-			p_dbWave_doc->DB_MoveToID(dlg.m_recordID);
+			p_dbWave_doc->db_move_to_id(dlg.m_recordID);
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 	}
 }
@@ -721,7 +721,7 @@ void CChildFrame::OnToolsImportfiles(int ifilter)
 		CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 		if (p_dbWave_doc == nullptr)
 			return;
-		p_dbWave_doc->Import_FileList(file_names);
+		p_dbWave_doc->import_file_list(file_names);
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
 		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
@@ -754,8 +754,8 @@ void CChildFrame::OnToolsImportATFfiles()
 			CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 			if (p_dbWave_doc == nullptr)
 				return;
-			p_dbWave_doc->Import_FileList(convertedFiles);
-			p_dbWave_doc->DB_MoveLast();
+			p_dbWave_doc->import_file_list(convertedFiles);
+			p_dbWave_doc->db_move_last();
 			p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
 			PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
@@ -771,7 +771,7 @@ void CChildFrame::OnRecordDeletecurrent()
 		return;
 
 	// save index current file
-	auto current_index = p_dbWave_doc->DB_GetCurrentRecordPosition();
+	auto current_index = p_dbWave_doc->db_get_current_record_position();
 	if (current_index < 0)
 		current_index = 0;
 
@@ -798,16 +798,16 @@ void CChildFrame::OnRecordDeletecurrent()
 		if (p_view->IsKindOf(RUNTIME_CLASS(ViewdbWave)))
 			static_cast<ViewdbWave*>(p_view)->DeleteRecords();
 		else
-			p_dbWave_doc->DB_DeleteCurrentRecord();
+			p_dbWave_doc->db_delete_current_record();
 
 		// update views and rename "erased" files
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
-		p_dbWave_doc->DB_SetCurrentRecordPosition(current_index);
+		p_dbWave_doc->db_set_current_record_position(current_index);
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 
 		// delete erased files
 		if (m_bDeleteFile)
-			p_dbWave_doc->Delete_ErasedFiles();
+			p_dbWave_doc->delete_erased_files();
 	}
 }
 
@@ -1034,8 +1034,8 @@ void CChildFrame::OnToolsImportDatabase()
 		if (p_dbWave_doc == nullptr)
 			return;
 		//p_dbWave_doc->ImportDatabase(fileName);
-		p_dbWave_doc->Import_Data_Files_From_Another_DataBase(fileName);
-		p_dbWave_doc->DB_MoveLast();
+		p_dbWave_doc->import_data_files_from_another_data_base(fileName);
+		p_dbWave_doc->db_move_last();
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }
@@ -1051,7 +1051,7 @@ void CChildFrame::OnToolsCopyAllProjectFiles()
 		CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 		if (p_dbWave_doc == nullptr)
 			return;
-		p_dbWave_doc->Copy_Files_To_Directory(destination_path);
+		p_dbWave_doc->copy_files_to_directory(destination_path);
 	}
 }
 
@@ -1078,7 +1078,7 @@ void CChildFrame::OnToolsPathsRelative()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc != nullptr)
 	{
-		p_dbWave_doc->DB_SetPathsRelative();
+		p_dbWave_doc->db_set_paths_relative();
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }
@@ -1088,7 +1088,7 @@ void CChildFrame::OnToolsPathsAbsolute()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc != nullptr)
 	{
-		p_dbWave_doc->DB_SetPathsAbsolute();
+		p_dbWave_doc->db_set_paths_absolute();
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }
@@ -1103,7 +1103,7 @@ void CChildFrame::OnToolsRemoveunused()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc != nullptr)
 	{
-		p_dbWave_doc->DB_DeleteUnusedEntries();
+		p_dbWave_doc->db_delete_unused_entries();
 		AfxMessageBox(_T("Accessory tables cleaned of all un-used entries"));
 	}
 }

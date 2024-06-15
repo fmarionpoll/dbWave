@@ -868,7 +868,7 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* pSF, OPTIONS_VIEWSPI
 			break;
 		// 4) export max - min
 		case EXPORT_AMPLIT:
-			pSpike->MeasureMaxThenMinEx(&value_max, &imax, &value_min, &imin, ifirst, ilast);
+			pSpike->measure_max_then_min_ex(&value_max, &imax, &value_min, &imin, ifirst, ilast);
 			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(value_max) - value_min) * vper_bin,
 			                (static_cast<double>(imin) - imax) / ratems);
 			pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));

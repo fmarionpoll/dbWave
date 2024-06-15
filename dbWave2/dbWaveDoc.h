@@ -13,8 +13,8 @@ struct sourceData
 	CString cs_spk_file{};
 	CString cs_path{};
 	int i_last_backslash_position = -1;
-	boolean b_dat_present = false;
-	boolean b_spik_present = false;
+	boolean data_file_present = false;
+	boolean spike_file_present = false;
 	CWaveFormat* p_wave_format = nullptr;
 };
 
@@ -25,12 +25,12 @@ protected:
 	DECLARE_DYNCREATE(CdbWaveDoc)
 
 protected:
-	CString		m_currentDatafileName;
-	CString		m_currentSpikefileName;
+	CString		m_current_datafile_name_;
+	CString		m_current_spikefile_name_;
 
 	BOOL		m_bcallnew = true;
-	CStringArray m_csfiles_to_delete;
-	BOOL		m_bClearMdbOnExit = false;
+	CStringArray m_names_of_files_to_delete;
+	BOOL		m_clean_database_on_exit_ = false;
 	BOOL		m_bTranspose = false;
 
 public:
@@ -45,48 +45,48 @@ public:
 	CString		m_dbFilename;
 	CString		m_ProposedDataPathName;
 
-	void	Import_FileList(CStringArray& fileList, int n_columns = 1, boolean bHeader = false);
-	BOOL	Import_Database(CString& filename);
+	void	import_file_list(CStringArray& fileList, int n_columns = 1, boolean bHeader = false);
+	BOOL	import_database(CString& filename);
 
-	BOOL	IsExtensionRecognizedAsDataFile(CString string) const;
-	BOOL	IsFilePresent(CString csFilename) {
+	BOOL	is_extension_recognized_as_data_file(CString string) const;
+	BOOL	is_file_present(CString csFilename) {
 		CFileStatus status;
 		return CFile::GetStatus(csFilename, status);
 	}
 
-	CWaveFormat* GetWaveFormat(CString filename, BOOL bIsDatFile);
+	CWaveFormat* get_wave_format(CString filename, BOOL bIsDatFile);
 
 	BOOL	OnNewDocument(LPCTSTR lpszPathName);
-	AcqDataDoc* OpenCurrentDataFile();
-	AcqDataDoc* GetCurrent_Dat_Document() const { return m_pDat; }
-	void	CloseCurrentDataFile() const;
-	CSpikeDoc* Open_Current_Spike_File();
-	CSpikeDoc* Get_Current_Spike_File() const { return m_pSpk; }
+	AcqDataDoc* open_current_data_file();
+	AcqDataDoc* get_current_dat_document() const { return m_pDat; }
+	void	close_current_data_file() const;
+	CSpikeDoc* open_current_spike_file();
+	CSpikeDoc* get_current_spike_file() const { return m_pSpk; }
 
-	void	Remove_DuplicateFiles();
-	void	Remove_MissingFiles();
-	void	Remove_FalseSpkFiles();
-	void	Delete_ErasedFiles();
+	void	remove_duplicate_files();
+	void	remove_missing_files();
+	void	remove_false_spk_files();
+	void	delete_erased_files();
 
-	long	GetDB_n_spikes() const;
-	void	SetDB_n_spikes(long n_spikes) const;
-	long	GetDB_n_spike_classes() const;
-	void	SetDB_n_spike_classes(long n_classes) const;
-	void	Get_MaxMin_Of_All_Spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min);
-	CSize	Get_MaxMin_Of_Single_Spike(BOOL bAll);
+	long	get_db_n_spikes() const;
+	void	set_db_n_spikes(long n_spikes) const;
+	long	get_db_n_spike_classes() const;
+	void	set_db_n_spike_classes(long n_classes) const;
+	void	get_max_min_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min);
+	CSize	get_max_min_of_single_spike(BOOL bAll);
 
-	void	SetClearMdbOnExit(BOOL bClear) { m_bClearMdbOnExit = bClear; }
+	void	set_clean_db_on_exit(BOOL bClear) { m_clean_database_on_exit_ = bClear; }
 
-	void	Export_DataAsciiComments(CSharedFile* p_shared_file);
-	void	Export_NumberOfSpikes(CSharedFile* pSF);
-	CString Export_DatabaseData(int option = 0) const;
-	void	Export_SpkDescriptors(CSharedFile* pSF, SpikeList* p_spike_list, int kclass);
-	void	Export_DatafilesAsTXTfiles();
+	void	export_data_ascii_comments(CSharedFile* p_shared_file);
+	void	export_number_of_spikes(CSharedFile* pSF);
+	CString export_database_data(int option = 0) const;
+	void	export_spk_descriptors(CSharedFile* pSF, SpikeList* p_spike_list, int kclass);
+	void	export_datafiles_as_text_files();
 
-	void	SynchronizeSourceInfos(BOOL bAll);
-	BOOL	UpdateWaveFmtFromDatabase(CWaveFormat* p_wave_format) const;
-	BOOL	Import_Data_Files_From_Another_DataBase(const CString& otherDataBaseFileName) const;
-	BOOL	Copy_Files_To_Directory(const CString& path);
+	void	synchronize_source_infos(const BOOL b_all);
+	BOOL	update_waveformat_from_database(CWaveFormat* p_wave_format) const;
+	BOOL	import_data_files_from_another_data_base(const CString& otherDataBaseFileName) const;
+	BOOL	copy_files_to_directory(const CString& path);
 
 protected:
 	static numberIDToText headers[];
@@ -105,7 +105,7 @@ protected:
 	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) { return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
 	void	remove_row_at(CStringArray& file_name_array, int iRow, int nColumns, boolean bHeader);
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
-	void	getInfosFromStringArray(const sourceData* pRecord, const CStringArray& file_names_array, int i_record, int nColumns, boolean bHeader);
+	void	get_infos_from_string_array(const sourceData* pRecord, const CStringArray& file_names_array, int const irecord, int nColumns, boolean bHeader);
 	int		find_column_associated_to_header(const CString& text);
 	void	remove_file_from_disk(CString file_name);
 	CString get_full_path_name_without_extension() const;
@@ -125,7 +125,7 @@ public:
 	BOOL	OnOpenDocument(LPCTSTR lpszPathName) override;
 	BOOL	OnSaveDocument(LPCTSTR lpszPathName) override;
 	HMENU	GetDefaultMenu() override; // get menu depending on state
-	void	UpdateAllViews_dbWave(CView* pSender, LPARAM lHint, CObject* pHint);
+	void	update_all_views_db_wave(CView* pSender, LPARAM lHint, CObject* pHint);
 
 	~CdbWaveDoc() override;
 #ifdef _DEBUG
@@ -136,36 +136,36 @@ public:
 	static CdbWaveDoc* get_active_mdi_document();
 
 	// DAO database functions
-	long	DB_GetNRecords() const { return m_pDB->GetNRecords(); }
-	CdbTableMain* DB_GetRecordset() const { return &m_pDB->m_mainTableSet; }
-	void	DB_DeleteCurrentRecord();
-	CString DB_GetCurrentDatFileName(BOOL bTest = FALSE);
-	CString DB_GetCurrentSpkFileName(BOOL bTest = FALSE);
-	CString DB_SetCurrentSpikeFileName();
-	void	DB_SetDataLen(long len) const { m_pDB->SetDataLength(len); }
-	long	DB_GetDataLen();
-	void	DB_SetCurrentRecordFlag(int flag) const;
-	int		DB_GetCurrentRecordFlag() const { return m_pDB->m_mainTableSet.m_flag; }
-	void	DB_SetPathsRelative() const;
-	void	DB_SetPathsAbsolute() const;
-	void	DB_TransferDatPathToSpkPath() const;
-	void	DB_DeleteUnusedEntries() const;
+	long	db_get_n_records() const { return m_pDB->GetNRecords(); }
+	CdbTableMain* db_get_recordset() const { return &m_pDB->m_mainTableSet; }
+	void	db_delete_current_record();
+	CString db_get_current_dat_file_name(BOOL b_test = FALSE);
+	CString db_get_current_spk_file_name(BOOL b_test = FALSE);
+	CString db_set_current_spike_file_name();
+	void	db_set_data_len(long len) const { m_pDB->SetDataLength(len); }
+	long	db_get_data_len();
+	void	db_set_current_record_flag(int flag) const;
+	int		db_get_current_record_flag() const { return m_pDB->m_mainTableSet.m_flag; }
+	void	db_set_paths_relative() const;
+	void	db_set_paths_absolute() const;
+	void	db_transfer_dat_path_to_spk_path() const;
+	void	db_delete_unused_entries() const;
 
-	long	DB_GetCurrentRecordPosition() const;
-	long	DB_GetCurrentRecordID() const;
-	BOOL	DB_SetCurrentRecordPosition(long i_file) { return m_pDB->SetIndexCurrentFile(i_file); }
-	BOOL	DB_MoveToID(long record_id) { return m_pDB->MoveToID(record_id); }
-	BOOL	DB_MoveFirst() { return m_pDB->MoveTo(ID_RECORD_FIRST); }
-	BOOL	DB_MoveNext() { return m_pDB->MoveTo(ID_RECORD_NEXT); }
-	BOOL	DB_MovePrev() { return m_pDB->MoveTo(ID_RECORD_PREV); }
-	BOOL	DB_MoveLast() { return m_pDB->MoveTo(ID_RECORD_LAST); }
-	void	DB_RefreshQuery() const {
+	long	db_get_current_record_position() const;
+	long	db_get_current_record_id() const;
+	BOOL	db_set_current_record_position(long i_file) const { return m_pDB->SetIndexCurrentFile(i_file); }
+	BOOL	db_move_to_id(long record_id) const { return m_pDB->MoveToID(record_id); }
+	BOOL	db_move_first() const { return m_pDB->MoveTo(ID_RECORD_FIRST); }
+	BOOL	db_move_next() const { return m_pDB->MoveTo(ID_RECORD_NEXT); }
+	BOOL	db_move_prev() const { return m_pDB->MoveTo(ID_RECORD_PREV); }
+	BOOL	db_move_last() const { return m_pDB->MoveTo(ID_RECORD_LAST); }
+	void	db_refresh_query() const {
 		if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
 		m_pDB->m_mainTableSet.RefreshQuery();
 	}
 
 protected:
-	BOOL	OpenDatabase(LPCTSTR lpszPathName);
+	BOOL	open_database(LPCTSTR lpszPathName);
 
 	DECLARE_MESSAGE_MAP()
 };

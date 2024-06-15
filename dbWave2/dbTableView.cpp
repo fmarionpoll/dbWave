@@ -60,7 +60,7 @@ BOOL dbTableView::PreCreateWindow(CREATESTRUCT& cs)
 
 CDaoRecordset* dbTableView::OnGetRecordset()
 {
-	return GetDocument()->DB_GetRecordset();
+	return GetDocument()->db_get_recordset();
 }
 
 void dbTableView::OnSize(UINT nType, int cx, int cy)
@@ -86,11 +86,11 @@ BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 {
 	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
-	if (m_autoDetect && p_document->DB_GetCurrentSpkFileName(TRUE).IsEmpty())
+	if (m_autoDetect && p_document->db_get_current_spk_file_name(TRUE).IsEmpty())
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 	}
-	p_document->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
+	p_document->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
 	return flag;
 }
 
@@ -148,7 +148,7 @@ void dbTableView::saveCurrentSpkFile()
 		if (m_pSpkList != nullptr && !m_pSpkList->is_class_list_valid())
 			m_pSpkList->update_class_list();
 
-		const auto spkfile_name = p_doc->DB_SetCurrentSpikeFileName();
+		const auto spkfile_name = p_doc->db_set_current_spike_file_name();
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
@@ -160,8 +160,8 @@ void dbTableView::saveCurrentSpkFile()
 			if (!m_pSpkList->is_class_list_valid()) 
 				n_spike_classes = m_pSpkList->update_class_list();				
 		}
-		p_doc->SetDB_n_spikes(n_spikes);
-		p_doc->SetDB_n_spike_classes(n_spike_classes);
+		p_doc->set_db_n_spikes(n_spikes);
+		p_doc->set_db_n_spike_classes(n_spike_classes);
 
 	}
 }
@@ -172,9 +172,9 @@ void dbTableView::IncrementSpikeFlag()
 	{
 		const auto p_doc = GetDocument();
 		// change flag is button is checked
-		int flag = p_doc->DB_GetCurrentRecordFlag();
+		int flag = p_doc->db_get_current_record_flag();
 		flag++;
-		p_doc->DB_SetCurrentRecordFlag(flag);
+		p_doc->db_set_current_record_flag(flag);
 	}
 }
 

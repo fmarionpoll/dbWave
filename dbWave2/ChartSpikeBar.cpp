@@ -52,16 +52,16 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 	long current_file = 0;
 	if (m_display_all_files)
 	{
-		n_files = p_dbwave_doc->DB_GetNRecords();
-		current_file = p_dbwave_doc->DB_GetCurrentRecordPosition();
+		n_files = p_dbwave_doc->db_get_n_records();
+		current_file = p_dbwave_doc->db_get_current_record_position();
 	}
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
 		if (m_display_all_files)
 		{
-			p_dbwave_doc->DB_SetCurrentRecordPosition(i_file);
-			p_spike_doc = p_dbwave_doc->Open_Current_Spike_File();
+			p_dbwave_doc->db_set_current_record_position(i_file);
+			p_spike_doc = p_dbwave_doc->open_current_spike_file();
 		}
 		p_spike_list = p_spike_doc->get_spk_list_current();
 
@@ -138,8 +138,8 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 
 	if (m_display_all_files)
 	{
-		p_dbwave_doc->DB_SetCurrentRecordPosition(current_file);
-		p_dbwave_doc->Open_Current_Spike_File();
+		p_dbwave_doc->db_set_current_record_position(current_file);
+		p_dbwave_doc->open_current_spike_file();
 		p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 	}
 }
@@ -746,8 +746,8 @@ int ChartSpikeBar::hitCurveInDoc(const CPoint point)
 	long current_file = 0;
 	if (m_display_all_files)
 	{
-		n_files = p_dbwave_doc->DB_GetNRecords();
-		current_file = p_dbwave_doc->DB_GetCurrentRecordPosition();
+		n_files = p_dbwave_doc->db_get_n_records();
+		current_file = p_dbwave_doc->db_get_current_record_position();
 	}
 
 	int result = -1;
@@ -755,8 +755,8 @@ int ChartSpikeBar::hitCurveInDoc(const CPoint point)
 	{
 		if (m_display_all_files)
 		{
-			p_dbwave_doc->DB_SetCurrentRecordPosition(i_file);
-			p_dbwave_doc->Open_Current_Spike_File();
+			p_dbwave_doc->db_set_current_record_position(i_file);
+			p_dbwave_doc->open_current_spike_file();
 			p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 		}
 
@@ -771,8 +771,8 @@ int ChartSpikeBar::hitCurveInDoc(const CPoint point)
 
 	if (m_display_all_files && result < 0)
 	{
-		p_dbwave_doc->DB_SetCurrentRecordPosition(current_file);
-		p_dbwave_doc->Open_Current_Spike_File();
+		p_dbwave_doc->db_set_current_record_position(current_file);
+		p_dbwave_doc->open_current_spike_file();
 		p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 	}
 

@@ -178,7 +178,7 @@ void ViewADcontinuous::AttachControls()
 void ViewADcontinuous::get_acquisition_parameters_from_data_file() 
 {
 	const auto pdbDoc = GetDocument();
-	const auto pDat = pdbDoc->OpenCurrentDataFile();
+	const auto pDat = pdbDoc->open_current_data_file();
 	if (pDat != nullptr)
 	{
 		pDat->ReadDataInfos();
@@ -375,7 +375,7 @@ void ViewADcontinuous::save_and_close_file()
 			// if so, skip
 			// otherwise add data file name to the database
 			auto* pdb_doc = GetDocument();
-			if (m_szFileName.CompareNoCase(pdb_doc->DB_GetCurrentDatFileName(FALSE)) != 0)
+			if (m_szFileName.CompareNoCase(pdb_doc->db_get_current_dat_file_name(FALSE)) != 0)
 			{
 				// add document to database
 				m_csNameArray.Add(m_szFileName);
@@ -390,7 +390,7 @@ void ViewADcontinuous::UpdateViewDataFinal()
 {
 	// update view data	
 	auto* pdb_doc = GetDocument();
-	AcqDataDoc* pDocDat = pdb_doc->OpenCurrentDataFile();
+	AcqDataDoc* pDocDat = pdb_doc->open_current_data_file();
 	if (pDocDat == nullptr)
 	{
 		ATLTRACE2(_T("error reading current document "));
@@ -406,14 +406,14 @@ void ViewADcontinuous::UpdateViewDataFinal()
 void ViewADcontinuous::TransferFilesToDatabase()
 {
 	const auto pdbDoc = GetDocument();
-	pdbDoc->Import_FileList(m_csNameArray); // add file name(s) to the list of records in the database
+	pdbDoc->import_file_list(m_csNameArray); // add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll(); // clear file names
 
 	CdbTableMain* pSet = &(pdbDoc->m_pDB->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
-	pdbDoc->DB_SetCurrentRecordPosition(pdbDoc->m_pDB->GetNRecords() - 1);
-	pdbDoc->UpdateAllViews_dbWave(nullptr, HINT_DOCMOVERECORD, nullptr);
+	pdbDoc->db_set_current_record_position(pdbDoc->m_pDB->GetNRecords() - 1);
+	pdbDoc->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
 BOOL ViewADcontinuous::InitOutput_DA()

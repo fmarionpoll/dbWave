@@ -297,11 +297,11 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 		auto lp_source = m_pAcqDatDoc->GetpTransfDataBUF();
 		const auto delta = spike_first - m_pAcqDatDoc->GettBUFfirst();
 		lp_source += delta;
-		pSpike->TransferDataToSpikeBuffer(lp_source, 1, m_spklen);
+		pSpike->transfer_data_to_spike_buffer(lp_source, 1, m_spklen);
 		short max, min;
 		int i_max, i_min;
 		pSpike->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, m_pSpkList->get_spike_length() - 1);
-		pSpike->SetMaxMinEx(max, min, i_min - i_max);
+		pSpike->set_max_min_ex(max, min, i_min - i_max);
 
 		// copy data to spike buffer
 		//offset += pSpike->get_amplitude_offset();
@@ -397,7 +397,7 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	auto spike = m_pSpkList->get_spike(m_spike_index);
 	spike->set_spike_length(m_pSpkList->get_spike_length());
-	spike->OffsetSpikeData(static_cast<short>(shift));
+	spike->offset_spike_data(static_cast<short>(shift));
 
 	LoadSpikeParms();
 	m_bchanged = TRUE;

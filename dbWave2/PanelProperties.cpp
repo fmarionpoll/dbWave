@@ -171,8 +171,8 @@ void CPropertiesPanel::UpdatePropList()
 	m_bchangedProperty = FALSE; // reset flag
 
 	// database general section
-	const int ipos = m_pDoc->DB_GetCurrentRecordPosition() + 1;
-	const int irows = m_pDoc->DB_GetNRecords();
+	const int ipos = m_pDoc->db_get_current_record_position() + 1;
+	const int irows = m_pDoc->db_get_n_records();
 	if (irows == 0)
 		return;
 
@@ -388,7 +388,7 @@ void CPropertiesPanel::InitPropList()
 	InitGroupFromTable(p_group4, icol0);
 	m_wndPropList.AddProperty(p_group4);
 
-	if (p_database && m_pDoc->DB_GetNRecords() > 0)
+	if (p_database && m_pDoc->db_get_n_records() > 0)
 	{
 		m_bUpdateCombos = TRUE;
 		UpdatePropList();
@@ -495,13 +495,13 @@ void CPropertiesPanel::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
 
 void CPropertiesPanel::OnBnClickedEditinfos()
 {
-	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_GETSELECTEDRECORDS, nullptr);
+	m_pDoc->update_all_views_db_wave(nullptr, HINT_GETSELECTEDRECORDS, nullptr);
 	DlgdbEditRecord dlg;
 	dlg.m_pdbDoc = m_pDoc;
 	if (IDOK == dlg.DoModal())
 	{
-		m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_REQUERY, nullptr);
-		m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
+		m_pDoc->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
+		m_pDoc->update_all_views_db_wave(nullptr, HINT_DOCHASCHANGED, nullptr);
 	}
 }
 
@@ -512,10 +512,10 @@ void CPropertiesPanel::OnUpdateBnUpdateinfos(CCmdUI* pCmdUI)
 
 void CPropertiesPanel::OnBnClickedUpdateinfos()
 {
-	const auto l_index = m_pDoc->DB_GetCurrentRecordPosition();
+	const auto l_index = m_pDoc->db_get_current_record_position();
 	UpdateTableFromProp();
-	m_pDoc->DB_SetCurrentRecordPosition(l_index);
-	m_pDoc->UpdateAllViews_dbWave(nullptr, HINT_DOCHASCHANGED, nullptr);
+	m_pDoc->db_set_current_record_position(l_index);
+	m_pDoc->update_all_views_db_wave(nullptr, HINT_DOCHASCHANGED, nullptr);
 }
 
 LRESULT CPropertiesPanel::OnPropertyChanged(WPARAM, LPARAM lParam)

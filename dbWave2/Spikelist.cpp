@@ -523,12 +523,12 @@ int SpikeList::add_spike(short* source_data, const int n_channels, const long ii
 
 		if (source_data != nullptr)
 		{
-			se->TransferDataToSpikeBuffer(source_data, n_channels, m_spike_length);
+			se->transfer_data_to_spike_buffer(source_data, n_channels, m_spike_length);
 			// compute max min between brackets for new spike
 			short max, min;
 			int i_max, i_min;
 			se->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, m_spike_length-1);
-			se->SetMaxMinEx(max, min, i_min - i_max);
+			se->set_max_min_ex(max, min, i_min - i_max);
 		}
 	}
 	return index_added_spike;
@@ -923,7 +923,7 @@ void SpikeList::measure_case0_amplitude_min_to_max(const int t1, const int t2)
 			}
 		}
 
-		spike_element->SetMaxMinEx(max, min, min_index - max_index);
+		spike_element->set_max_min_ex(max, min, min_index - max_index);
 		spike_element->set_y1(max - min);
 	}
 }

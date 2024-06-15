@@ -160,7 +160,7 @@ void Spike::measure_max_min_ex(short* value_max, int* index_max, short* value_mi
 	}
 }
 
-void Spike::MeasureMaxThenMinEx(short* value_max, int* index_max, short* value_min, int* index_min, const int i_first, const int i_last) const
+void Spike::measure_max_then_min_ex(short* value_max, int* index_max, short* value_min, int* index_min, const int i_first, const int i_last) const
 {
 	auto lp_buffer = get_p_data() + i_first;
 	auto lp_buffer_max = lp_buffer;
@@ -197,7 +197,7 @@ void Spike::MeasureMaxThenMinEx(short* value_max, int* index_max, short* value_m
 	}
 }
 
-long Spike::MeasureSumEx(int i_first, int i_last) const
+long Spike::measure_sum_ex(int i_first, int i_last) const
 {
 	auto lp_b = get_p_data() + i_first;
 	long average_value = 0;
@@ -218,7 +218,7 @@ long Spike::MeasureSumEx(int i_first, int i_last) const
 //	}
 //}
 
-void Spike::TransferDataToSpikeBuffer(short* source_data, const int source_n_channels, const int spike_length)
+void Spike::transfer_data_to_spike_buffer(short* source_data, const int source_n_channels, const int spike_length)
 {
 	m_spike_length_ = spike_length;
 	auto lp_dest = get_p_data(spike_length);
@@ -228,7 +228,7 @@ void Spike::TransferDataToSpikeBuffer(short* source_data, const int source_n_cha
 	}
 }
 
-void Spike::OffsetSpikeData(const short offset)
+void Spike::offset_spike_data(const short offset)
 {
 	auto lp_dest = get_p_data(get_spike_length());
 	for (auto i = get_spike_length(); i > 0; i--, lp_dest++)
@@ -241,31 +241,31 @@ void Spike::OffsetSpikeData(const short offset)
 	m_value_min_ -= offset;
 }
 
-void Spike::OffsetSpikeDataToAverageEx(int i_first, int i_last)
+void Spike::offset_spike_data_to_average_ex(int i_first, int i_last)
 {
-	const long average_value = MeasureSumEx(i_first, i_last);
+	const long average_value = measure_sum_ex(i_first, i_last);
 	const int offset = (average_value / (i_last - i_first + 1)) - m_bin_zero_;
-	OffsetSpikeData(static_cast<short>(-offset));
+	offset_spike_data(static_cast<short>(-offset));
 }
 
-void Spike::OffsetSpikeDataToExtremaEx(int i_first, int i_last)
+void Spike::offset_spike_data_to_extrema_ex(int i_first, int i_last)
 {
 	short value_max, value_min;
 	int max_index, min_index;
 	measure_max_min_ex(&value_max, &max_index, &value_min, &min_index, i_first, i_last);
 	const int offset = (value_max + value_min) / 2 - m_bin_zero_;
-	OffsetSpikeData(static_cast<short>(offset));
+	offset_spike_data(static_cast<short>(offset));
 }
 
-void Spike::CenterSpikeAmplitude(const int i_first, const int i_last, const WORD method)
+void Spike::center_spike_amplitude(const int i_first, const int i_last, const WORD method)
 {
 	switch (method)
 	{
 		case 0:
-			OffsetSpikeDataToExtremaEx(i_first, i_last);
+			offset_spike_data_to_extrema_ex(i_first, i_last);
 			break;
 		case 1: 
-			OffsetSpikeDataToAverageEx(i_first, i_last);
+			offset_spike_data_to_average_ex(i_first, i_last);
 			break;
 		default:
 			break;
