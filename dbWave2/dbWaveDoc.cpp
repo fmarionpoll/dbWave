@@ -441,8 +441,8 @@ void CdbWaveDoc::Get_MaxMin_Of_All_Spikes(BOOL b_all_files, BOOL b_recalculate, 
 			Open_Current_Spike_File();
 			m_pSpk->set_spk_list_as_current(0);
 		}
-		const auto p_spk_list = m_pSpk->GetSpkList_Current();
-		p_spk_list->GetTotalMaxMin(b_recalculate, max, min);
+		const auto p_spk_list = m_pSpk->get_spk_list_current();
+		p_spk_list->get_total_max_min(b_recalculate, max, min);
 	}
 
 	if (b_all_files)
@@ -473,11 +473,11 @@ CSize CdbWaveDoc::Get_MaxMin_Of_Single_Spike(BOOL bAll)
 			Open_Current_Spike_File();
 			m_pSpk->set_spk_list_as_current(0);
 		}
-		const auto p_spk_list = m_pSpk->GetSpkList_Current();
+		const auto p_spk_list = m_pSpk->get_spk_list_current();
 		if (p_spk_list->get_spikes_count() == 0)
 			continue;
 
-		const CSize measure = p_spk_list->Measure_Y1_MaxMin();
+		const CSize measure = p_spk_list->measure_y1_max_min();
 		if (initialized)
 		{
 			if (dummy.cx < measure.cx)
@@ -1189,10 +1189,10 @@ boolean CdbWaveDoc::set_record_spk_classes(sourceData * record)
 	boolean flag = m_pSpk->OnOpenDocument(record->cs_spk_file);
 	if (flag)
 	{
-		m_pDB->m_mainTableSet.m_nspikes = m_pSpk->GetSpkList_Current()->get_spikes_count();
-		if (m_pSpk->GetSpkList_Current()->get_classes_count() <= 0)
-			m_pSpk->GetSpkList_Current()->UpdateClassList();
-		m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->GetSpkList_Current()->get_classes_count();
+		m_pDB->m_mainTableSet.m_nspikes = m_pSpk->get_spk_list_current()->get_spikes_count();
+		if (m_pSpk->get_spk_list_current()->get_classes_count() <= 0)
+			m_pSpk->get_spk_list_current()->update_class_list();
+		m_pDB->m_mainTableSet.m_nspikeclasses = m_pSpk->get_spk_list_current()->get_classes_count();
 		m_pDB->m_mainTableSet.m_datalen = m_pSpk->m_wave_format.get_nb_points_sampled_per_channel();
 	}
 	return flag;
@@ -1587,7 +1587,7 @@ BOOL CdbWaveDoc::UpdateWaveFmtFromDatabase(CWaveFormat * p_wave_format) const
 	b_changed |= m_pDB->GetRecordValueLong(CH_REPEAT2, p_wave_format->repeat2);
 
 	const auto npercycle = static_cast<int>(m_pSpk->m_stimulus_intervals.n_items / 2.f
-		/ m_pSpk->GetAcqDuration() / 8.192f);
+		/ m_pSpk->get_acq_duration() / 8.192f);
 	b_changed |= (npercycle != m_pSpk->m_stimulus_intervals.n_per_cycle);
 	m_pSpk->m_stimulus_intervals.n_per_cycle = npercycle;
 
@@ -1609,7 +1609,7 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile * pSF, SpikeList * p_spike_li
 	if (options_viewspikes->bspkcomments)
 	{
 		pSF->Write(cs_tab, cs_tab.GetLength() * sizeof(TCHAR));
-		const auto cs_temp = m_pSpk->GetComment();
+		const auto cs_temp = m_pSpk->get_comment();
 		pSF->Write(cs_temp, cs_temp.GetLength() * sizeof(TCHAR));
 	}
 
@@ -1623,7 +1623,7 @@ void CdbWaveDoc::Export_SpkDescriptors(CSharedFile * pSF, SpikeList * p_spike_li
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->get_classes_count());
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		const auto tduration = m_pSpk->GetAcqDuration();
+		const auto tduration = m_pSpk->get_acq_duration();
 		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, tduration);
 		pSF->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
@@ -1732,16 +1732,16 @@ void CdbWaveDoc::Export_NumberOfSpikes(CSharedFile * pSF)
 	{
 		m_pSpk = new CSpikeDoc;
 		ASSERT(m_pSpk != NULL);
-		m_pSpk->set_spk_list_as_current(Get_Current_Spike_File()->GetSpkList_CurrentIndex());
+		m_pSpk->set_spk_list_as_current(Get_Current_Spike_File()->get_spk_list_current_index());
 	}
 
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_viewspikes = &(p_app->options_viewspikes);
 
-	const auto i_old_list = m_pSpk->GetSpkList_CurrentIndex();
-	m_pSpk->ExportTableTitle(pSF, options_viewspikes, n_files);
-	m_pSpk->ExportTableColHeaders_db(pSF, options_viewspikes);
-	m_pSpk->ExportTableColHeaders_data(pSF, options_viewspikes); // this is for the measure
+	const auto i_old_list = m_pSpk->get_spk_list_current_index();
+	m_pSpk->export_table_title(pSF, options_viewspikes, n_files);
+	m_pSpk->export_table_col_headers_db(pSF, options_viewspikes);
+	m_pSpk->export_table_col_headers_data(pSF, options_viewspikes); // this is for the measure
 
 	// single file export operation: EXTREMA, AMPLIT, SPIKEPOINTS
 	m_bTranspose = FALSE;
@@ -1753,8 +1753,8 @@ void CdbWaveDoc::Export_NumberOfSpikes(CSharedFile * pSF)
 		|| options_viewspikes->exportdatatype == EXPORT_SPIKEPOINTS) /*|| parms->exportdatatype == EXPORT_INTERV*/
 	{
 		const CString cs_file_desc;
-		m_pSpk->ExportSpkFileComment(pSF, options_viewspikes, 0, cs_file_desc);
-		m_pSpk->ExportSpkAttributesOneFile(pSF, options_viewspikes);
+		m_pSpk->export_spk_file_comment(pSF, options_viewspikes, 0, cs_file_desc);
+		m_pSpk->export_spk_attributes_one_file(pSF, options_viewspikes);
 	}
 	// multiple file export operations: ISI, AUTOCORR, HISTAMPL, AVERAGE, INTERV, PSTH
 	else
@@ -1773,8 +1773,8 @@ void CdbWaveDoc::Export_NumberOfSpikes(CSharedFile * pSF)
 			n_bins = options_viewspikes->histampl_nbins + 2;
 			break;
 		case EXPORT_AVERAGE: // assume that all spikes have the same length
-			p_doubl = new double[m_pSpk->GetSpkList_Current()->get_spike_length() * 2 + 1 + 2];
-			*p_doubl = m_pSpk->GetSpkList_Current()->get_spike_length();
+			p_doubl = new double[m_pSpk->get_spk_list_current()->get_spike_length() * 2 + 1 + 2];
+			*p_doubl = m_pSpk->get_spk_list_current()->get_spike_length();
 			break;
 		case EXPORT_INTERV: // feb 23, 2009
 			break;
@@ -1832,7 +1832,7 @@ void CdbWaveDoc::Export_NumberOfSpikes(CSharedFile * pSF)
 
 			// loop over the spike lists stored in that file
 			auto ichan1 = 0;
-			auto ichan2 = m_pSpk->GetSpkList_Size();
+			auto ichan2 = m_pSpk->get_spk_list_size();
 			if (!options_viewspikes->ballChannels)
 			{
 				ichan1 = i_old_list;

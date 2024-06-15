@@ -58,7 +58,7 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 			p_dbwave_doc->DB_SetCurrentRecordPosition(i_file);
 			p_dbwave_doc->Open_Current_Spike_File();
 		}
-		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
+		p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 
 		//test if data are there - if none, display message and exit
 		if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
@@ -158,7 +158,7 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 			i_select = m_selected_spike;
 		drawSelectedSpike(i_select, p_dc);
 
-		if (p_spike_list->GetSpikeFlagArrayCount() > 0)
+		if (p_spike_list->get_spike_flag_array_count() > 0)
 			drawFlaggedSpikes(p_dc);
 
 		// display tags
@@ -187,7 +187,7 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 	{
 		p_dbwave_doc->DB_SetCurrentRecordPosition(current_file);
 		p_dbwave_doc->Open_Current_Spike_File();
-		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
+		p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 	}
 }
 
@@ -236,9 +236,9 @@ void ChartSpikeShape::drawFlaggedSpikes(CDC* pDC0)
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	// loop through all flagged spikes
-	for (auto i = p_spike_list->GetSpikeFlagArrayCount() - 1; i >= 0; i--)
+	for (auto i = p_spike_list->get_spike_flag_array_count() - 1; i >= 0; i--)
 	{
-		const auto no_spike = p_spike_list->GetSpikeFlagArrayAt(i);
+		const auto no_spike = p_spike_list->get_spike_flag_array_at(i);
 		if (!IsSpikeWithinRange(no_spike))
 			continue;
 		fillPolypointOrdinates(p_spike_list->get_spike(no_spike)->get_p_data());
@@ -460,7 +460,7 @@ void ChartSpikeShape::ZoomData(CRect* rFrom, CRect* rDest)
 
 void ChartSpikeShape::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if ((m_selected_spike < 0 && p_spike_list->GetSpikeFlagArrayCount() < 1) || m_hit_spike < 0)
+	if ((m_selected_spike < 0 && p_spike_list->get_spike_flag_array_count() < 1) || m_hit_spike < 0)
 		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 	{
@@ -494,7 +494,7 @@ int ChartSpikeShape::hitCurveInDoc(CPoint point)
 		{
 			p_dbwave_doc->DB_SetCurrentRecordPosition(ifile);
 			p_dbwave_doc->Open_Current_Spike_File();
-			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
+			p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 		}
 
 		if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
@@ -510,7 +510,7 @@ int ChartSpikeShape::hitCurveInDoc(CPoint point)
 	{
 		p_dbwave_doc->DB_SetCurrentRecordPosition(current_file_index);
 		p_dbwave_doc->Open_Current_Spike_File();
-		p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
+		p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 	}
 
 	return result;
@@ -573,7 +573,7 @@ void ChartSpikeShape::getExtents()
 			{
 				p_dbwave_doc->DB_SetCurrentRecordPosition(file_index);
 				p_dbwave_doc->Open_Current_Spike_File();
-				p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
+				p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 			}
 			if (p_spike_list != nullptr)
 			{
@@ -589,7 +589,7 @@ void ChartSpikeShape::getExtents()
 	{
 		p_dbwave_doc->DB_SetCurrentRecordPosition(current_file_index);
 		if (p_dbwave_doc->Open_Current_Spike_File() != nullptr)
-			p_spike_list = p_dbwave_doc->m_pSpk->GetSpkList_Current();
+			p_spike_list = p_dbwave_doc->m_pSpk->get_spk_list_current();
 	}
 }
 
@@ -598,7 +598,7 @@ void ChartSpikeShape::getExtentsCurrentSpkList()
 	if (m_yWE == 1 || m_yWE == 0)
 	{
 		short value_max, value_min;
-		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
+		p_spike_list->get_total_max_min(TRUE, &value_max, &value_min);
 		m_yWE = MulDiv((value_max - value_min), 10, 9) + 1;
 		m_yWO = value_max / 2 + value_min / 2;
 	}
@@ -654,7 +654,7 @@ void ChartSpikeShape::Print(CDC* p_dc, CRect* rect)
 	if (m_yWE == 1) 
 	{
 		short value_max, value_min;
-		p_spike_list->GetTotalMaxMin(TRUE, &value_max, &value_min);
+		p_spike_list->get_total_max_min(TRUE, &value_max, &value_min);
 		m_yWE = value_max - value_min + 1;
 		m_yWO = (value_max + value_min) / 2;
 	}
@@ -827,7 +827,7 @@ void ChartSpikeShape::Serialize(CArchive& ar)
 float ChartSpikeShape::GetDisplayMaxMv()
 {
 	getExtents();
-	return (p_spike_list->GetAcqVoltsperBin() * 1000.f * static_cast<float>(m_yWE - m_yWO - p_spike_list->GetAcqBinzero()));
+	return (p_spike_list->get_acq_voltsper_bin() * 1000.f * static_cast<float>(m_yWE - m_yWO - p_spike_list->get_acq_binzero()));
 }
 
 float ChartSpikeShape::GetDisplayMinMv()
@@ -835,7 +835,7 @@ float ChartSpikeShape::GetDisplayMinMv()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (p_spike_list->GetAcqVoltsperBin() * 1000.f * static_cast<float>(m_yWO - m_yWE - p_spike_list->GetAcqBinzero()));
+	return (p_spike_list->get_acq_voltsper_bin() * 1000.f * static_cast<float>(m_yWO - m_yWE - p_spike_list->get_acq_binzero()));
 }
 
 float ChartSpikeShape::GetExtent_mV()
@@ -843,7 +843,7 @@ float ChartSpikeShape::GetExtent_mV()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (p_spike_list->GetAcqVoltsperBin() * static_cast<float>(m_yWE) * 1000.f);
+	return (p_spike_list->get_acq_voltsper_bin() * static_cast<float>(m_yWE) * 1000.f);
 }
 
 float ChartSpikeShape::GetExtent_ms()
@@ -851,7 +851,7 @@ float ChartSpikeShape::GetExtent_ms()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (static_cast<float>(1000.0 * m_xWE) / p_spike_list->GetAcqSampRate());
+	return (static_cast<float>(1000.0 * m_xWE) / p_spike_list->get_acq_samp_rate());
 }
 
 

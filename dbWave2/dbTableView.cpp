@@ -145,8 +145,8 @@ void dbTableView::saveCurrentSpkFile()
 		auto currentlist = 0;
 		if (m_tabCtrl.m_hWnd != nullptr) currentlist = m_tabCtrl.GetCurSel();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(currentlist);
-		if (m_pSpkList != nullptr && !m_pSpkList->IsClassListValid())
-			m_pSpkList->UpdateClassList();
+		if (m_pSpkList != nullptr && !m_pSpkList->is_class_list_valid())
+			m_pSpkList->update_class_list();
 
 		const auto spkfile_name = p_doc->DB_SetCurrentSpikeFileName();
 		m_pSpkDoc->OnSaveDocument(spkfile_name);
@@ -157,8 +157,8 @@ void dbTableView::saveCurrentSpkFile()
 		if (n_spikes > 0)
 		{
 			n_spike_classes = m_pSpkList->get_classes_count();
-			if (!m_pSpkList->IsClassListValid()) 
-				n_spike_classes = m_pSpkList->UpdateClassList();				
+			if (!m_pSpkList->is_class_list_valid()) 
+				n_spike_classes = m_pSpkList->update_class_list();				
 		}
 		p_doc->SetDB_n_spikes(n_spikes);
 		p_doc->SetDB_n_spike_classes(n_spike_classes);

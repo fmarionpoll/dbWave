@@ -629,10 +629,10 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		p_wnd->SetSourceData_spklist_spikedoc(pspk_list, ptr->pspikeDoc);
 		p_wnd->set_plot_mode(m_spike_plot_mode, m_selected_class);
 		long l_first = 0;
-		auto l_last = ptr->pspikeDoc->GetAcqSize();
+		auto l_last = ptr->pspikeDoc->get_acq_size();
 		if (m_b_set_time_span)
 		{
-			const auto sampling_rate = ptr->pspikeDoc->GetAcqRate();
+			const auto sampling_rate = ptr->pspikeDoc->get_acq_rate();
 			l_first = static_cast<long>(m_tFirst * sampling_rate);
 			l_last = static_cast<long>(m_tLast * sampling_rate);
 		}
@@ -640,9 +640,9 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		p_wnd->SetTimeIntervals(l_first, l_last);
 		if (m_b_set_mV_span)
 		{
-			const auto volts_per_bin = pspk_list->GetAcqVoltsperBin();
+			const auto volts_per_bin = pspk_list->get_acq_voltsper_bin();
 			const auto y_we = static_cast<int>(m_mV_span / 1000.f / volts_per_bin);
-			const auto y_wo = pspk_list->GetAcqBinzero();
+			const auto y_wo = pspk_list->get_acq_binzero();
 			p_wnd->SetYWExtOrg(y_we, y_wo);
 		}
 		p_wnd->SetBottomComment(m_b_display_file_name, ptr->csSpikefileName);

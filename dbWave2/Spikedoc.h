@@ -32,45 +32,45 @@ protected:
 
 	// Operations
 public:
-	CString GetFileInfos();
-	void InitSourceDoc(AcqDataDoc* p_document);
+	CString get_file_infos();
+	void init_source_doc(AcqDataDoc* p_document);
 
-	CString GetAcqFilename() const { return m_acquisition_file_name; }
-	void SetAcqFilename(CString name) { m_acquisition_file_name = name; }
-	CString GetComment() const { return m_comment; }
-	CTime GetAcqTime() const { return m_acquisition_time; }
-	float GetAcqDuration() const { return static_cast<float>(m_acquisition_size) / m_acquisition_rate; }
-	long GetAcqSize() const { return m_acquisition_size; }
-	float GetAcqRate() const { return m_acquisition_rate; }
+	CString get_acq_filename() const { return m_acquisition_file_name; }
+	void set_acq_filename(CString name) { m_acquisition_file_name = name; }
+	CString get_comment() const { return m_comment; }
+	CTime get_acq_time() const { return m_acquisition_time; }
+	float get_acq_duration() const { return static_cast<float>(m_acquisition_size) / m_acquisition_rate; }
+	long get_acq_size() const { return m_acquisition_size; }
+	float get_acq_rate() const { return m_acquisition_rate; }
 
-	int GetSpkList_Size() const { return spike_list_array.GetSize(); }
-	void SetSpkList_Size(int i) { return spike_list_array.SetSize(i); }
-	SpikeList* set_spk_list_as_current(int channel);
-	SpikeList* GetSpkList_Current();
-	SpikeList* GetSpkList_At(int channel);
-	int GetSpkList_CurrentIndex() const { return m_current_spike_list; }
+	int get_spk_list_size() const { return spike_list_array.GetSize(); }
+	void set_spk_list_size(int i) { return spike_list_array.SetSize(i); }
+	SpikeList* set_spk_list_as_current(int spike_list_index);
+	SpikeList* get_spk_list_current();
+	SpikeList* get_spk_list_at(int spike_list_index);
+	int get_spk_list_current_index() const { return m_current_spike_list; }
 
-	int AddSpkList()
+	int add_spk_list()
 	{
-		spike_list_array.SetSize(GetSpkList_Size() + 1);
-		return GetSpkList_Size();
+		spike_list_array.SetSize(get_spk_list_size() + 1);
+		return get_spk_list_size();
 	}
 
-	void SetSourceFilename(CString file_name) { m_acquisition_file_name = file_name; }
-	void SetDetectionDate(CTime time) { m_detection_date = time; }
-	void SetComment(CString comment) { m_comment = comment; }
+	void set_source_filename(CString file_name) { m_acquisition_file_name = file_name; }
+	void set_detection_date(CTime time) { m_detection_date = time; }
+	void set_comment(CString comment) { m_comment = comment; }
 
-	void SortStimArray();
-	void ExportSpkPSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString& csFileComment); // 0
-	void ExportSpkAmplitHistogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist,
+	void sort_stim_array();
+	void export_spk_PSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, const CString& csFileComment); // 0
+	void export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist,
 	                              const CString& csFileComment); // 4
-	void ExportSpkAttributesOneFile(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS); // 1,2,3
-	void ExportSpkFileComment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int iclass, const CString& csFileComment);
-	void ExportSpkLatencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, CString csFileComment);
-	void ExportSpkAverageWave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl, CString csFileComment);
-	void ExportTableTitle(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nfiles);
-	void ExportTableColHeaders_db(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
-	void ExportTableColHeaders_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
+	void export_spk_attributes_one_file(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS); // 1,2,3
+	void export_spk_file_comment(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int iclass, const CString& csFileComment);
+	void export_spk_latencies(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nintervals, CString csFileComment);
+	void export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl, CString csFileComment);
+	void export_table_title(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, int nfiles);
+	void export_table_col_headers_db(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
+	void export_table_col_headers_data(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS);
 	void export_spk_amplitude_histogram(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* pHist, int ispklist, int iclass);
 	void export_spk_average_wave(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, double* pDoubl0, int ispklist, int iclass);
 	void export_spk_PSTH(CSharedFile* pSF, OPTIONS_VIEWSPIKES* vdS, long* plSum0, int ispklist, int iclass);
@@ -79,11 +79,11 @@ public:
 	BOOL OnSaveDocument(LPCTSTR pszPathName) override;
 	BOOL OnNewDocument() override;
 	BOOL OnOpenDocument(LPCTSTR pszPathName) override;
-	void ClearData();
-	long BuildPSTH(OPTIONS_VIEWSPIKES* vdS, long* pSum0, int iclass);
-	long BuildISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
-	long BuildAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
-	long BuildPSTHAUTOCORR(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
+	void clear_data();
+	long build_PSTH(OPTIONS_VIEWSPIKES* options_view_spikes, long* plSum0, int iclass);
+	long build_ISI(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
+	long build_autocorr(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
+	long build_PSTHautocorr(OPTIONS_VIEWSPIKES* vdS, long* plSum0, int iclass);
 
 protected:
 	void Serialize(CArchive& ar) override;

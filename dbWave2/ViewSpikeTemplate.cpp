@@ -186,7 +186,7 @@ void ViewSpikeTemplates::updateFileParameters()
 {
 	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
 	updateSpikeFile();
-	int icur = m_pSpkDoc->GetSpkList_CurrentIndex();
+	int icur = m_pSpkDoc->get_spk_list_current_index();
 	selectSpikeList(icur);
 }
 
@@ -198,7 +198,7 @@ void ViewSpikeTemplates::updateSpikeFile()
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
-		int icur = GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
+		int icur = GetDocument()->Get_Current_Spike_File()->get_spk_list_current_index();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(icur);
 
 		// update Tab at the bottom
@@ -212,9 +212,9 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(icur);
 	m_tabCtrl.SetCurSel(icur);
 
-	if (!m_pSpkList->IsClassListValid())
+	if (!m_pSpkList->is_class_list_valid())
 	{
-		m_pSpkList->UpdateClassList();
+		m_pSpkList->update_class_list();
 		m_pSpkDoc->SetModifiedFlag();
 	}
 
@@ -249,7 +249,7 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 		m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECLASS, m_spikenoclass);
 
 	m_lFirst = 0;
-	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+	m_lLast = m_pSpkDoc->get_acq_size() - 1;
 	m_scrollFilePos_infos.nMin = 0;
 	m_scrollFilePos_infos.nMax = m_lLast;
 	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
@@ -292,13 +292,13 @@ void ViewSpikeTemplates::updateLegends()
 		m_lFirst = 0;
 	if (m_lLast <= m_lFirst)
 		m_lLast = m_lFirst + 120;
-	if (m_lLast >= m_pSpkDoc->GetAcqSize())
-		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+	if (m_lLast >= m_pSpkDoc->get_acq_size())
+		m_lLast = m_pSpkDoc->get_acq_size() - 1;
 	if (m_lFirst > m_lLast)
 		m_lFirst = m_lLast - 120;
 
-	m_timefirst = m_lFirst / m_pSpkDoc->GetAcqRate();
-	m_timelast = (m_lLast + 1) / m_pSpkDoc->GetAcqRate();
+	m_timefirst = m_lFirst / m_pSpkDoc->get_acq_rate();
+	m_timelast = (m_lLast + 1) / m_pSpkDoc->get_acq_rate();
 
 	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Shape.Invalidate();
@@ -390,7 +390,7 @@ void ViewSpikeTemplates::OnEnChangeTimefirst()
 	{
 		mm_timefirst.OnEnChange(this, m_timefirst, 1.f, -1.f);
 
-		const auto l_first = static_cast<long>(m_timefirst * m_pSpkDoc->GetAcqRate());
+		const auto l_first = static_cast<long>(m_timefirst * m_pSpkDoc->get_acq_rate());
 		if (l_first != m_lFirst)
 		{
 			m_lFirst = l_first;
@@ -405,7 +405,7 @@ void ViewSpikeTemplates::OnEnChangeTimelast()
 	{
 		mm_timelast.OnEnChange(this, m_timelast, 1.f, -1.f);
 
-		const auto l_last = static_cast<long>(m_timelast * m_pSpkDoc->GetAcqRate());
+		const auto l_last = static_cast<long>(m_timelast * m_pSpkDoc->get_acq_rate());
 		if (l_last != m_lLast)
 		{
 			m_lLast = l_last;
@@ -424,7 +424,7 @@ void ViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 	}
 
 	// get corresponding data
-	const auto total_scroll = m_pSpkDoc->GetAcqSize();
+	const auto total_scroll = m_pSpkDoc->get_acq_size();
 	const long page_scroll = (m_lLast - m_lFirst);
 	auto sb_scroll = page_scroll / 10;
 	if (sb_scroll == 0)
@@ -475,7 +475,7 @@ void ViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 
 void ViewSpikeTemplates::updateScrollBar()
 {
-	if (m_lFirst == 0 && m_lLast >= m_pSpkDoc->GetAcqSize() - 1)
+	if (m_lFirst == 0 && m_lLast >= m_pSpkDoc->get_acq_size() - 1)
 		GetDlgItem(IDC_SCROLLBAR1)->ShowWindow(SW_HIDE);
 	else
 	{
@@ -491,7 +491,7 @@ void ViewSpikeTemplates::OnFormatAlldata()
 {
 	// dots: spk file length
 	m_lFirst = 0;
-	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+	m_lLast = m_pSpkDoc->get_acq_size() - 1;
 	// spikes: center spikes horizontally and adjust hz size of display
 	const short x_wo = 0;
 	const short x_we = m_pSpkList->get_spike_length();
@@ -570,7 +570,7 @@ void ViewSpikeTemplates::OnEnChangeTolerance()
 
 void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList)
 {
-	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+	m_pSpkList = m_pSpkDoc->get_spk_list_current();
 
 	// get list of classes
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
@@ -596,7 +596,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 	if (zero == 0 && extent == 0)
 	{
 		short valuemax, valuemin;
-		m_pSpkList->GetTotalMaxMin(TRUE, &valuemax, &valuemin);
+		m_pSpkList->get_total_max_min(TRUE, &valuemax, &valuemin);
 		extent = valuemax - valuemin;
 		zero = (valuemax + valuemin) / 2;
 		m_ChartSpkWnd_Shape.SetYWExtOrg(extent, zero);
@@ -634,9 +634,9 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 		pSpkDoc->SetModifiedFlag(FALSE);
 
 		auto pSpkList = pSpkDoc->set_spk_list_as_current(current_list); // load pointer to spike list
-		if (!pSpkList->IsClassListValid()) // if class list not valid:
+		if (!pSpkList->is_class_list_valid()) // if class list not valid:
 		{
-			pSpkList->UpdateClassList(); // rebuild list of classes
+			pSpkList->update_class_list(); // rebuild list of classes
 			pSpkDoc->SetModifiedFlag(); // and set modified flag
 		}
 		const auto nspikes = pSpkList->get_spikes_count();
@@ -688,7 +688,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 
 void ViewSpikeTemplates::OnBuildTemplates()
 {
-	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+	m_pSpkList = m_pSpkDoc->get_spk_list_current();
 
 	// set file indexes
 	auto p_dbwave_doc = GetDocument();
@@ -863,9 +863,9 @@ void ViewSpikeTemplates::sortSpikes()
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
 			m_pSpkList = m_pSpkDoc->set_spk_list_as_current(currentlist); // load pointer to spike list
-			if (!m_pSpkList->IsClassListValid()) // if class list not valid:
+			if (!m_pSpkList->is_class_list_valid()) // if class list not valid:
 			{
-				m_pSpkList->UpdateClassList(); // rebuild list of classes
+				m_pSpkList->update_class_list(); // rebuild list of classes
 				m_pSpkDoc->SetModifiedFlag(); // and set modified flag
 			}
 		}
@@ -954,7 +954,7 @@ void ViewSpikeTemplates::sortSpikes()
 
 	// update display: average and spk form
 	displayAvg(FALSE, &m_avgList);
-	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+	m_pSpkList = m_pSpkDoc->get_spk_list_current();
 	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
 	m_ChartSpkWnd_Shape.Invalidate();
 }
@@ -1066,9 +1066,9 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 				}
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero
-				m_pSpkList->UpdateClassList(); // rebuild list of classes
-				m_pSpkList->ChangeAllSpikeFromClassIDToNewClassID(oldclass, dlg.m_iClass);
-				m_pSpkList->UpdateClassList(); // rebuild list of classes
+				m_pSpkList->update_class_list(); // rebuild list of classes
+				m_pSpkList->change_all_spike_from_class_id_to_new_class_id(oldclass, dlg.m_iClass);
+				m_pSpkList->update_class_list(); // rebuild list of classes
 				m_pSpkDoc->SetModifiedFlag(TRUE);
 
 				if (m_pSpkDoc->IsModified())
@@ -1199,11 +1199,11 @@ void ViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 
 void ViewSpikeTemplates::OnEnChangeT1()
 {
-	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+	m_pSpkList = m_pSpkDoc->get_spk_list_current();
 
 	if (mm_t1.m_bEntryDone)
 	{
-		const auto delta = m_tunit / m_pSpkList->GetAcqSampRate();
+		const auto delta = m_tunit / m_pSpkList->get_acq_samp_rate();
 		
 		mm_t1.OnEnChange(this, m_t1, delta, -delta);
 		// check boundaries
@@ -1225,11 +1225,11 @@ void ViewSpikeTemplates::OnEnChangeT1()
 
 void ViewSpikeTemplates::OnEnChangeT2()
 {
-	m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+	m_pSpkList = m_pSpkDoc->get_spk_list_current();
 
 	if (mm_t2.m_bEntryDone)
 	{
-		const auto delta = m_tunit / m_pSpkList->GetAcqSampRate();
+		const auto delta = m_tunit / m_pSpkList->get_acq_samp_rate();
 		mm_t2.OnEnChange(this, m_t2, delta, -delta);
 
 		// check boundaries

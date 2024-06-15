@@ -69,8 +69,8 @@ protected:
 
 	// Operations
 public:
-	WORD GetVersion() const { return m_version; }
-	BOOL IsClassListValid() const { return m_keep_only_valid_classes; }
+	WORD get_version() const { return m_version; }
+	BOOL is_class_list_valid() const { return m_keep_only_valid_classes; }
 
 	int get_classes_count() const {return  m_spike_class_descriptors.GetCount();}
 	int get_class_id(const int i) const { return m_spike_class_descriptors.GetAt(i).get_class_id();}
@@ -90,51 +90,51 @@ public:
 	Spike* get_spike(int no) { return m_spikes.GetAt(no); }
 	int get_spikes_count() const { return m_spikes.GetCount(); }
 
-	WORD GetAcqEncoding() const { return m_data_encoding_mode; }
-	float GetAcqSampRate() const { return m_sampling_rate; }
-	float GetAcqVoltsperBin() const { return m_volts_per_bin; }
-	int GetAcqBinzero() const { return m_bin_zero; }
+	WORD get_acq_encoding() const { return m_data_encoding_mode; }
+	float get_acq_samp_rate() const { return m_sampling_rate; }
+	float get_acq_voltsper_bin() const { return m_volts_per_bin; }
+	int get_acq_binzero() const { return m_bin_zero; }
 
 	void set_detection_parameters(SPKDETECTPARM* pSd) { m_detection_parameters = *pSd; }
 	SPKDETECTPARM* get_detection_parameters() { return &m_detection_parameters; }
 
-	int AddSpike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
+	int add_spike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
 
 	int  get_spike_length() const { return m_spike_length; }
 	void set_spike_length(int spike_length) { m_spike_length = spike_length; }
 
-	int RemoveSpike(int spike_index);
-	BOOL IsAnySpikeAround(long ii_time, int jitter, int& spike_index, int channel_index);
+	int remove_spike(int spike_index);
+	BOOL is_any_spike_around(long ii_time, int jitter, int& spike_index, int channel_index);
 
-	void GetTotalMaxMin(BOOL b_recalculate, short* max, short* min);
+	void get_total_max_min(BOOL b_recalculate, short* max, short* min);
 
-	BOOL InitSpikeList(AcqDataDoc* pDataFile, SPKDETECTPARM* pFC);
-	long UpdateClassList();
-	void EraseData();
-	void ChangeAllSpikeFromClassIDToNewClassID(int old_class_ID, int new_class_ID);
+	BOOL init_spike_list(AcqDataDoc* acq_data_doc, SPKDETECTPARM* spk_detect_parm);
+	long update_class_list();
+	void erase_data();
+	void change_all_spike_from_class_id_to_new_class_id(int old_class_ID, int new_class_ID);
 
-	void Measure_case0_AmplitudeMinToMax(int t1, int t2);
-	void Measure_case1_AmplitudeAtT(int t);
-	void Measure_case2_AmplitudeAtT2MinusAtT1(int t1, int t2);
-	CSize Measure_Y1_MaxMin();
+	void measure_case0_amplitude_min_to_max(int t1, int t2);
+	void measure_case1_amplitude_at_t(int t);
+	void measure_case2_amplitude_at_t2_minus_at_t1(int t1, int t2);
+	CSize measure_y1_max_min();
 
-	BOOL SortSpikeWithY1(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits);
-	BOOL SortSpikeWithY1AndY2(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits1, CSize limits2);
+	BOOL sort_spike_with_y1(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits);
+	BOOL sort_spike_with_y1_and_y2(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits1, CSize limits2);
 
-	int GetValidSpikeNumber(int spike_index) const;
-	int GetNextSpike(int spike_index, int delta, BOOL b_keep_same_class) ;
+	int get_valid_spike_number(int spike_index) const;
+	int get_next_spike(int spike_index, int delta, BOOL b_keep_same_class) ;
 
 public:
-	int SetSpikeFlag(int spike_index, BOOL set_spike_flag);
-	int ToggleSpikeFlag(int spike_index);
+	int set_spike_flag(int spike_index, BOOL set_spike_flag);
+	int toggle_spike_flag(int spike_index);
 	void set_single_spike_flag(int spike_index);
-	BOOL GetSpikeFlag(int spike_index);
-	void RemoveAllSpikeFlags();
-	void FlagRangeOfSpikes(long l_first, long l_last, BOOL bSet);
-	void SelectSpikesWithinBounds(int v_min, int v_max, long l_first, long l_last, BOOL b_add);
-	void GetRangeOfSpikeFlagged(long& l_first, long& l_last);
-	BOOL GetSpikeFlagArrayAt(int i) const { return m_index_flagged_spikes.GetAt(i); }
-	int GetSpikeFlagArrayCount() const { return m_index_flagged_spikes.GetCount(); }
+	BOOL get_spike_flag(int spike_index);
+	void remove_all_spike_flags();
+	void flag_range_of_spikes(long l_first, long l_last, BOOL bSet);
+	void select_spikes_within_bounds(int v_min, int v_max, long l_first, long l_last, BOOL b_add);
+	void get_range_of_spike_flagged(long& l_first, long& l_last);
+	BOOL get_spike_flag_array_at(int i) const { return m_index_flagged_spikes.GetAt(i); }
+	int get_spike_flag_array_count() const { return m_index_flagged_spikes.GetCount(); }
 	void change_class_of_flagged_spikes(int new_class_id);
 
 protected:

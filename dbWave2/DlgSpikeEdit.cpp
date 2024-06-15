@@ -57,7 +57,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 {
 	CDialog::OnInitDialog(); 
 	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
-	m_pSpkList = m_pdbWaveDoc->m_pSpk->GetSpkList_Current();
+	m_pSpkList = m_pdbWaveDoc->m_pSpk->get_spk_list_current();
 	if (m_pSpkList == nullptr || m_pSpkList->get_spikes_count() == 0)
 	{
 		EndDialog(FALSE); 
@@ -129,7 +129,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	if (m_yextent == 0)
 	{
 		short max, min;
-		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+		m_pSpkList->get_total_max_min(TRUE, &max, &min);
 		m_yextent = (max - min);
 		m_yzero = (max + min) / 2;
 	}

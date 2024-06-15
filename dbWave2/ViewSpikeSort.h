@@ -26,7 +26,7 @@ public:
 	float m_t2 = 0.f;
 	float m_time_unit = 1000.f; // 1=s, 1000f=ms, 1e6=us
 	float limit_lower_threshold_ = 0.f;
-	float limit_upper_threshold_ = 0.f;
+	float limit_upper_threshold_ = 1.f;
 	int m_source_class = 0;
 	int m_destination_class = 0;
 	float m_timeFirst = 0.f;

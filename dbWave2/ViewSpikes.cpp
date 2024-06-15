@@ -328,8 +328,8 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 	auto is_found = FALSE;
 	if (check_if_spike_nearby)
 	{
-		const auto jitter = static_cast<int>((m_pSpkDoc->GetAcqRate() * m_jitter) / 1000);
-		is_found = m_pSpkList->IsAnySpikeAround(ii_time0 + pre_threshold, jitter, spike_index, doc_channel);
+		const auto jitter = static_cast<int>((m_pSpkDoc->get_acq_rate() * m_jitter) / 1000);
+		is_found = m_pSpkList->is_any_spike_around(ii_time0 + pre_threshold, jitter, spike_index, doc_channel);
 	}
 
 	if (!is_found)
@@ -340,7 +340,7 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 		m_pDataDoc->LoadTransformedData(l_read_write_first, l_read_write_last, method, doc_channel);
 		const auto p_data_spike_0 = m_pDataDoc->GetpTransfDataElmt(ii_time0 - l_read_write_first);
 
-		spike_index = m_pSpkList->AddSpike(p_data_spike_0,	//lpSource	= buff pointer to the buffer to copy
+		spike_index = m_pSpkList->add_spike(p_data_spike_0,	//lpSource	= buff pointer to the buffer to copy
 		                                  1,				//nb of interleaved channels
 		                                  ii_time0 + pre_threshold, //time = file index of first pt of the spk
 		                                  doc_channel,		//detect_channel	= data source chan index
@@ -357,7 +357,7 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 	// save the modified data into the spike file
 	if (m_pSpkDoc->IsModified())
 	{
-		m_pSpkList->UpdateClassList();
+		m_pSpkList->update_class_list();
 		m_pSpkDoc->OnSaveDocument(GetDocument()->DB_GetCurrentSpkFileName(FALSE));
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		GetDocument()->SetDB_n_spikes(m_pSpkList->get_spikes_count());
@@ -610,7 +610,7 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 
-		const int current_index = GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
+		const int current_index = GetDocument()->Get_Current_Spike_File()->get_spk_list_current_index();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 		m_pspkDP = m_pSpkList->get_detection_parameters();
 
@@ -626,8 +626,8 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 				zoomOnPresetInterval(0);
 				m_spikeClassListBox.SetRedraw(TRUE);
 			}
-			else if (m_lLast > m_pSpkDoc->GetAcqSize() - 1 || m_lLast <= m_lFirst)
-				m_lLast = m_pSpkDoc->GetAcqSize() - 1; 
+			else if (m_lLast > m_pSpkDoc->get_acq_size() - 1 || m_lLast <= m_lFirst)
+				m_lLast = m_pSpkDoc->get_acq_size() - 1; 
 
 			m_spikeClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
 			adjust_y_zoom_to_max_min(false);
@@ -648,8 +648,8 @@ void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 		m_lFirst = 0;
 	if (m_lLast <= m_lFirst)
 		m_lLast = m_lFirst + 120;
-	if (m_lLast >= m_pSpkDoc->GetAcqSize())
-		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+	if (m_lLast >= m_pSpkDoc->get_acq_size())
+		m_lLast = m_pSpkDoc->get_acq_size() - 1;
 	if (m_lFirst > m_lLast)
 		m_lFirst = m_lLast - 120;
 
@@ -668,8 +668,8 @@ void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 		m_spikeClassListBox.SetTimeIntervals(m_lFirst, m_lLast);
 
 	// update text abscissa and horizontal scroll position
-	m_time_first = static_cast<float>(m_lFirst) / m_pSpkDoc->GetAcqRate();
-	m_time_last = static_cast<float>(m_lLast + 1) / m_pSpkDoc->GetAcqRate();
+	m_time_first = static_cast<float>(m_lFirst) / m_pSpkDoc->get_acq_rate();
+	m_time_last = static_cast<float>(m_lLast + 1) / m_pSpkDoc->get_acq_rate();
 	m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
 
 	// update scrollbar and select spikes
@@ -682,7 +682,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(BOOL bForceSearchMaxMin)
 	if (m_yWE == 1 || bForceSearchMaxMin)
 	{
 		short max, min;
-		m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+		m_pSpkList->get_total_max_min(TRUE, &max, &min);
 		m_yWE = MulDiv(max - min + 1, 10, 8);
 		m_yWO = (max + min) / 2;
 	}
@@ -808,12 +808,12 @@ CString ViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
 
 	float x_scale_factor;
 	auto x = PrintChangeUnit(
-		static_cast<float>(l_first) / m_pSpkDoc->GetAcqRate(), &cs_unit, &x_scale_factor);
+		static_cast<float>(l_first) / m_pSpkDoc->get_acq_rate(), &cs_unit, &x_scale_factor);
 	auto fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
 	StringCbPrintf(sz_dest, cbDest, TEXT("time = %i.%03.3i - "), static_cast<int>(x), fraction);
 	CString cs_comment = sz_dest;
 
-	x = static_cast<float>(l_last) / (m_pSpkDoc->GetAcqRate() * x_scale_factor); 
+	x = static_cast<float>(l_last) / (m_pSpkDoc->get_acq_rate() * x_scale_factor); 
 	fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
 	StringCbPrintf(sz_dest, cbDest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
 	StringCbPrintf(sz_dest, cbDest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
@@ -868,7 +868,7 @@ CString ViewSpikes::PrintGetFileInfos()
 			str_comment += GetDocument()->DB_GetCurrentSpkFileName(FALSE) + tab;
 		if (options_viewdata->bAcqDateTime) // print data acquisition date & time
 		{
-			const auto acquisition_time = m_pSpkDoc->GetAcqTime();
+			const auto acquisition_time = m_pSpkDoc->get_acq_time();
 			const auto date = acquisition_time.Format(_T("%#d %m %Y %X")); //("%x %X");
 			// or more explicitly %d-%b-%Y %H:%M:%S");
 			str_comment += date;
@@ -916,7 +916,7 @@ CString ViewSpikes::PrintBars(CDC* p_dc, const CRect* rect)
 		p_dc->Rectangle(&rect_horizontal_bar);
 		//get time equivalent of bar length
 		const auto ii_bar = MulDiv(ii_last - ii_first, rect_horizontal_bar.Width(), rect->Width());
-		const auto x_bar = static_cast<float>(ii_bar) / m_pSpkDoc->GetAcqRate();
+		const auto x_bar = static_cast<float>(ii_bar) / m_pSpkDoc->get_acq_rate();
 		CString cs;
 		cs.Format(_T("\nbar = %f s"), x_bar);
 		cs_comment += cs;
@@ -1068,10 +1068,10 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		if (p_dbwave_doc->GetDB_n_spike_classes() <= 0)
 		{
 			m_pSpkDoc = p_dbwave_doc->Open_Current_Spike_File();
-			m_pSpkList = m_pSpkDoc->GetSpkList_Current();
-			if (!m_pSpkList->IsClassListValid()) // if class list not valid:
+			m_pSpkList = m_pSpkDoc->get_spk_list_current();
+			if (!m_pSpkList->is_class_list_valid()) // if class list not valid:
 			{
-				m_pSpkList->UpdateClassList(); // rebuild list of classes
+				m_pSpkList->update_class_list(); // rebuild list of classes
 				m_pSpkDoc->SetModifiedFlag(); // and set modified flag
 			}
 
@@ -1125,7 +1125,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		{
 			const auto l_first0 = m_spikeClassListBox.GetTimeFirst();
 			const auto l_last0 = m_spikeClassListBox.GetTimeLast();
-			const auto len = m_pSpkDoc->GetAcqSize() - l_first0;
+			const auto len = m_pSpkDoc->get_acq_size() - l_first0;
 			nb_rect = len / (l_last0 - l_first0);
 			if (nb_rect * (l_last0 - l_first0) < len)
 				nb_rect++;
@@ -1171,7 +1171,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	GetDocument()->DB_SetCurrentRecordPosition(file_index);
 	updateFileParameters(FALSE);
 	updateFileScroll();
-	auto very_last = m_pSpkDoc->GetAcqSize() - 1; 
+	auto very_last = m_pSpkDoc->get_acq_size() - 1; 
 
 	CRect r_where(m_printRect.left,
 	              m_printRect.top, 
@@ -1221,7 +1221,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		rw_text.right = rw_text.left + r_col;
 		rw_spikes.left = rw_text.right + r_separator;
 		//auto n = m_pSpkDoc->GetSpkListCurrent()->get_spike_length();
-		if (m_pSpkDoc->GetSpkList_Current()->get_spike_length() > 1)
+		if (m_pSpkDoc->get_spk_list_current()->get_spike_length() > 1)
 			rw_spikes.right = rw_spikes.left + r_col;
 		else
 			rw_spikes.right = rw_spikes.left;
@@ -1268,7 +1268,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		//m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 		//AdjustYZoomToMaxMin(true); 
 		short max, min;
-		m_pSpkDoc->GetSpkList_Current()->GetTotalMaxMin(TRUE, &max, &min);
+		m_pSpkDoc->get_spk_list_current()->get_total_max_min(TRUE, &max, &min);
 		const int middle = (static_cast<int>(max) + static_cast<int>(min)) / 2;
 		m_spikeClassListBox.SetYzoom(extent, middle);
 		const auto n_count = m_spikeClassListBox.GetCount(); 
@@ -1373,7 +1373,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 				GetDocument()->DB_MoveNext();
 				updateFileParameters(FALSE);
 				updateFileScroll();
-				very_last = m_pSpkDoc->GetAcqSize() - 1;
+				very_last = m_pSpkDoc->get_acq_size() - 1;
 			}
 			else
 				i = m_nbrowsperpage; // YES: break
@@ -1683,7 +1683,7 @@ void ViewSpikes::OnZoom()
 	if (m_spike_index != -1)
 	{
 		ii_start = m_pSpkList->get_spike(m_spike_index)->get_time();
-		const int delta = static_cast<int>(m_zoom * m_pSpkDoc->GetAcqRate());
+		const int delta = static_cast<int>(m_zoom * m_pSpkDoc->get_acq_rate());
 		ii_start -= delta/2;
 	}
 	zoomOnPresetInterval(ii_start);
@@ -1694,7 +1694,7 @@ void ViewSpikes::zoomOnPresetInterval(int iistart)
 	if (iistart < 0)
 		iistart = 0;
 	m_lFirst = iistart;
-	const auto acqrate = m_pSpkDoc->GetAcqRate();
+	const auto acqrate = m_pSpkDoc->get_acq_rate();
 	m_lLast = static_cast<long>((m_lFirst / acqrate + m_zoom) * acqrate);
 	updateLegends(TRUE);
 	// display data
@@ -1896,7 +1896,7 @@ void ViewSpikes::OnBnClickedSameclass()
 void ViewSpikes::OnFormatAlldata()
 {
 	m_lFirst = 0;
-	m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+	m_lLast = m_pSpkDoc->get_acq_size() - 1;
 	// spikes: center spikes horizontally and adjust hz size of display
 	constexpr int x_wo = 0;
 	const auto x_we = m_pSpkList->get_spike_length();
@@ -1923,7 +1923,7 @@ void ViewSpikes::OnFormatCentercurve()
 	}
 
 	short max, min;
-	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+	m_pSpkList->get_total_max_min(TRUE, &max, &min);
 	const WORD middle = max / 2 + min / 2;
 	m_spikeClassListBox.SetYzoom(m_spikeClassListBox.GetYWExtent(), middle);
 
@@ -1958,7 +1958,7 @@ void ViewSpikes::OnFormatNextframe()
 {
 	const long len = m_lLast - m_lFirst;
 	auto last = m_lLast + len;
-	if (last > m_pSpkDoc->GetAcqSize())
+	if (last > m_pSpkDoc->get_acq_size())
 		last = m_lLast - len;
 	zoomOnPresetInterval(last);
 }
@@ -1986,7 +1986,7 @@ void ViewSpikes::OnEnChangeTimefirst()
 	if (mm_time_first.m_bEntryDone)
 	{
 		mm_time_first.OnEnChange(this, m_time_first, 1.f, -1.f);
-		const auto l_first = static_cast<long>(m_time_first * m_pSpkDoc->GetAcqRate());
+		const auto l_first = static_cast<long>(m_time_first * m_pSpkDoc->get_acq_rate());
 		if (l_first != m_lFirst)
 		{
 			m_lFirst = l_first;
@@ -2002,7 +2002,7 @@ void ViewSpikes::OnEnChangeTimelast()
 	if (mm_time_last.m_bEntryDone)
 	{
 		mm_time_last.OnEnChange(this, m_time_last, 1.f, -1.f);
-		const auto l_last = static_cast<long>(m_time_last * m_pSpkDoc->GetAcqRate());
+		const auto l_last = static_cast<long>(m_time_last * m_pSpkDoc->get_acq_rate());
 		if (l_last != m_lLast)
 		{
 			m_lLast = l_last;
@@ -2063,11 +2063,11 @@ void ViewSpikes::OnEnChangeNOspike()
 	if (mm_spike_index.m_bEntryDone)
 	{
 		const auto spike_no = m_spike_index;
-		const int delta_up = m_pSpkList->GetNextSpike(spike_no, 1, m_b_keep_same_class) - m_spike_index;
-		const int delta_down = m_spike_index - m_pSpkList->GetNextSpike(spike_no, -1, m_b_keep_same_class);
+		const int delta_up = m_pSpkList->get_next_spike(spike_no, 1, m_b_keep_same_class) - m_spike_index;
+		const int delta_down = m_spike_index - m_pSpkList->get_next_spike(spike_no, -1, m_b_keep_same_class);
 		mm_spike_index.OnEnChange(this, m_spike_index, delta_up, -delta_down);
 
-		m_spike_index = m_pSpkList->GetValidSpikeNumber(m_spike_index);
+		m_spike_index = m_pSpkList->get_valid_spike_number(m_spike_index);
 		if (m_spike_index != spike_no)
 		{
 			select_spike(m_spike_index);

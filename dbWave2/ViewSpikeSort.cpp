@@ -193,7 +193,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	update_file_parameters();
 	if (nullptr != m_pSpkList)
 	{
-		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+		m_delta = m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 		limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_delta;
 		limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_delta;
 		UpdateData(false);
@@ -211,7 +211,7 @@ void ViewSpikeSort::activate_mode4()
 		{
 			m_ixyright = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyright, 0);
 			m_ixyleft = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyleft, 0);
-			const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
+			const auto delta = m_pSpkList->get_acq_samp_rate() / m_time_unit;
 			m_txyright = static_cast<float>(spkclassif_->ixyright) / delta;
 			m_txyleft = static_cast<float>(spkclassif_->ixyleft) / delta;
 		}
@@ -220,7 +220,7 @@ void ViewSpikeSort::activate_mode4()
 
 		if (nullptr != m_pSpkList)
 		{
-			const auto spike_length_ms = (static_cast<double>(static_cast<float>(m_pSpkList->get_spike_length()) * m_time_unit / m_pSpkList->GetAcqSampRate()));
+			const auto spike_length_ms = (static_cast<double>(static_cast<float>(m_pSpkList->get_spike_length()) * m_time_unit / m_pSpkList->get_acq_samp_rate()));
 			CString cs_dummy;
 			cs_dummy.Format(_T("%0.1f ms"), spike_length_ms);
 			GetDlgItem(IDC_STATICRIGHT)->SetWindowText(cs_dummy);
@@ -300,7 +300,7 @@ void ViewSpikeSort::update_spike_file()
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->DB_GetCurrentSpkFileName(), FALSE);
-		const int current_index = GetDocument()->Get_Current_Spike_File()->GetSpkList_CurrentIndex();
+		const int current_index = GetDocument()->Get_Current_Spike_File()->get_spk_list_current_index();
 		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
 
 		// update Tab at the bottom
@@ -325,10 +325,10 @@ void ViewSpikeSort::update_file_parameters()
 		if (m_pSpkDoc == nullptr)
 			return;
 		m_timeFirst = 0.f;
-		m_timeLast = (static_cast<float>(m_pSpkDoc->GetAcqSize()) - 1) / m_pSpkList->GetAcqSampRate();
+		m_timeLast = (static_cast<float>(m_pSpkDoc->get_acq_size()) - 1) / m_pSpkList->get_acq_samp_rate();
 	}
-	m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->GetAcqSampRate());
-	m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
+	m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->get_acq_samp_rate());
+	m_lLast = static_cast<long>(m_timeLast * m_pSpkList->get_acq_samp_rate());
 
 	// spike and classes
 	auto spike_index = m_pSpkList->m_selected_spike;
@@ -349,8 +349,8 @@ void ViewSpikeSort::update_file_parameters()
 		spkclassif_->ileft = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 		spkclassif_->iright = spkclassif_->ileft + m_pSpkList->get_detection_parameters()->detect_refractory_period;
 	}
-	m_t1 = static_cast<float>(spkclassif_->ileft) * m_time_unit / m_pSpkList->GetAcqSampRate();
-	m_t2 = static_cast<float>(spkclassif_->iright) * m_time_unit / m_pSpkList->GetAcqSampRate();
+	m_t1 = static_cast<float>(spkclassif_->ileft) * m_time_unit / m_pSpkList->get_acq_samp_rate();
+	m_t2 = static_cast<float>(spkclassif_->iright) * m_time_unit / m_pSpkList->get_acq_samp_rate();
 
 	m_chart_spike_bars.set_source_data(m_pSpkList, GetDocument());
 	m_chart_spike_bars.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
@@ -366,9 +366,9 @@ void ViewSpikeSort::update_file_parameters()
 
 	m_file_scroll_infos.fMask = SIF_ALL;
 	m_file_scroll_infos.nMin = 0;
-	m_file_scroll_infos.nMax = m_pSpkDoc->GetAcqSize() - 1;
+	m_file_scroll_infos.nMax = m_pSpkDoc->get_acq_size() - 1;
 	m_file_scroll_infos.nPos = 0;
-	m_file_scroll_infos.nPage = m_pSpkDoc->GetAcqSize();
+	m_file_scroll_infos.nPage = m_pSpkDoc->get_acq_size();
 	m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
 
 	update_legends();
@@ -392,7 +392,7 @@ void ViewSpikeSort::update_file_parameters()
 			{
 				m_ixyright = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyright, 0);
 				m_ixyleft = m_chart_measures.m_VTtags.AddTag(spkclassif_->ixyleft, 0);
-				const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
+				const auto delta = m_pSpkList->get_acq_samp_rate() / m_time_unit;
 				m_txyright = static_cast<float>(spkclassif_->ixyright) / delta;
 				m_txyleft = static_cast<float>(spkclassif_->ixyleft) / delta;
 				m_chart_measures.Invalidate();
@@ -409,8 +409,8 @@ void ViewSpikeSort::update_file_parameters()
 void ViewSpikeSort::update_legends()
 {
 	// update text abscissa and horizontal scroll position
-	m_timeFirst = static_cast<float>(m_lFirst) / m_pSpkList->GetAcqSampRate();
-	m_timeLast = static_cast<float>(m_lLast) / m_pSpkList->GetAcqSampRate();
+	m_timeFirst = static_cast<float>(m_lFirst) / m_pSpkList->get_acq_samp_rate();
+	m_timeLast = static_cast<float>(m_lLast) / m_pSpkList->get_acq_samp_rate();
 	update_file_scroll();
 
 	if (4 != spkclassif_->iparameter)
@@ -438,7 +438,7 @@ void ViewSpikeSort::OnSort()
 	auto first_file = current_file;
 	auto last_file = first_file;
 	const auto n_files = pdb_doc->DB_GetNRecords();
-	const auto current_list = m_pSpkDoc->GetSpkList_CurrentIndex();
+	const auto current_list = m_pSpkDoc->get_spk_list_current_index();
 
 	// change indexes if ALL files selected
 	DlgProgress* dlg_progress = nullptr;
@@ -489,13 +489,13 @@ void ViewSpikeSort::OnSort()
 		// sort on 1 parameter
 		if (4 != spkclassif_->iparameter)
 		{
-			flag_changed = m_pSpkList->SortSpikeWithY1(from_class_id_to_class_id, time_window, limits1);
+			flag_changed = m_pSpkList->sort_spike_with_y1(from_class_id_to_class_id, time_window, limits1);
 		}
 		// sort on 2 parameters
 		else
 		{
 			const CSize limits2(spkclassif_->ixyleft, spkclassif_->ixyright);
-			flag_changed = m_pSpkList->SortSpikeWithY1AndY2(from_class_id_to_class_id, time_window, limits1, limits2);
+			flag_changed = m_pSpkList->sort_spike_with_y1_and_y2(from_class_id_to_class_id, time_window, limits1, limits2);
 		}
 
 		if (flag_changed)
@@ -511,7 +511,7 @@ void ViewSpikeSort::OnSort()
 		delete dlg_progress;
 		pdb_doc->DB_SetCurrentRecordPosition(current_file);
 		m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
-		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+		m_pSpkList = m_pSpkDoc->get_spk_list_current();
 	}
 
 	// refresh data windows
@@ -553,7 +553,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 
 	case HINT_HITSPIKE: // -------------  spike is selected or deselected
 		{
-			if (m_pSpkList->GetSpikeFlagArrayCount() > 0)
+			if (m_pSpkList->get_spike_flag_array_count() > 0)
 				unflag_all_spikes();
 			auto spike_index = 0;
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
@@ -595,14 +595,14 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (shortValue == m_spkform_tag_left) // first tag
 			{
 				spkclassif_->ileft = m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_left);
-				m_t1 = static_cast<float>(spkclassif_->ileft) * m_time_unit / m_pSpkList->GetAcqSampRate();
+				m_t1 = static_cast<float>(spkclassif_->ileft) * m_time_unit / m_pSpkList->get_acq_samp_rate();
 				mm_t1.m_bEntryDone = TRUE;
 				OnEnChangeT1();
 			}
 			else if (shortValue == m_spkform_tag_right) // second tag
 			{
 				spkclassif_->iright = m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_right);
-				m_t2 = static_cast<float>(spkclassif_->iright) * m_time_unit / m_pSpkList->GetAcqSampRate();
+				m_t2 = static_cast<float>(spkclassif_->iright) * m_time_unit / m_pSpkList->get_acq_samp_rate();
 				mm_t2.m_bEntryDone = TRUE;
 				OnEnChangeT2();
 			}
@@ -612,13 +612,13 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (shortValue == m_spkhist_lower_threshold) // first tag
 			{
 				spkclassif_->lower_threshold = m_chart_histogram.m_VTtags.GetValue(m_spkhist_lower_threshold);
-				limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 				UpdateData(false);
 			}
 			else if (shortValue == m_spkhist_upper_threshold) // second tag
 			{
 				spkclassif_->upper_threshold = m_chart_histogram.m_VTtags.GetValue(m_spkhist_upper_threshold); // load new value
-				limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 				UpdateData(false);
 			}
 		}
@@ -626,7 +626,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (shortValue == m_ixyright)
 			{
-				const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
+				const auto delta = m_pSpkList->get_acq_samp_rate() / m_time_unit;
 				spkclassif_->ixyright = m_chart_measures.m_VTtags.GetValue(m_ixyright);
 				m_txyright = static_cast<float>(spkclassif_->ixyright) / delta;
 				mm_txyright.m_bEntryDone = TRUE;
@@ -634,7 +634,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			}
 			else if (shortValue == m_ixyleft)
 			{
-				const auto delta = m_pSpkList->GetAcqSampRate() / m_time_unit;
+				const auto delta = m_pSpkList->get_acq_samp_rate() / m_time_unit;
 				spkclassif_->ixyleft = m_chart_measures.m_VTtags.GetValue(m_ixyleft);
 				m_txyleft = static_cast<float>(spkclassif_->ixyleft) / delta;
 				mm_txyleft.m_bEntryDone = TRUE;
@@ -650,14 +650,14 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (shortValue == m_itaglow) // first tag
 			{
 				spkclassif_->lower_threshold = m_chart_measures.m_HZtags.GetValue(m_itaglow);
-				limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				limit_lower_threshold_ = static_cast<float>(spkclassif_->lower_threshold) * m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 				mm_limitlower.m_bEntryDone = TRUE;
 				OnEnChangeLower();
 			}
 			else if (shortValue == m_itagup) // second tag
 			{
 				spkclassif_->upper_threshold = m_chart_measures.m_HZtags.GetValue(m_itagup); 
-				limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+				limit_upper_threshold_ = static_cast<float>(spkclassif_->upper_threshold) * m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 				mm_limitupper.m_bEntryDone = TRUE;
 				OnEnChangeUpper();
 			}
@@ -694,15 +694,15 @@ void ViewSpikeSort::unflag_all_spikes()
 			pdb_doc->DB_SetCurrentRecordPosition(i_file);
 			m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
 
-			for (auto j = 0; j < m_pSpkDoc->GetSpkList_Size(); j++)
+			for (auto j = 0; j < m_pSpkDoc->get_spk_list_size(); j++)
 			{
 				m_pSpkList = m_pSpkDoc->set_spk_list_as_current(j);
-				m_pSpkList->RemoveAllSpikeFlags();
+				m_pSpkList->remove_all_spike_flags();
 			}
 		}
 	}
 	else
-		m_pSpkList->RemoveAllSpikeFlags();
+		m_pSpkList->remove_all_spike_flags();
 	m_chart_measures.Invalidate();
 	m_chart_spike_shapes.Invalidate();
 	m_chart_spike_bars.Invalidate();
@@ -714,7 +714,7 @@ void ViewSpikeSort::OnMeasure()
 	const auto pdb_doc = GetDocument();
 	int index_current_file = pdb_doc->DB_GetCurrentRecordPosition(); // index current file
 	const int n_files = pdb_doc->DB_GetNRecords();
-	const auto current_spike_list = m_pSpkDoc->GetSpkList_CurrentIndex();
+	const auto current_spike_list = m_pSpkDoc->get_spk_list_current_index();
 	int first_file = index_current_file;
 	int last_file = index_current_file;
 	// change size of arrays and prepare temporary dialog
@@ -748,23 +748,23 @@ void ViewSpikeSort::OnMeasure()
 		switch (spkclassif_->iparameter)
 		{
 		case 1: // value at t1
-			m_pSpkList->Measure_case1_AmplitudeAtT(spkclassif_->ileft);
+			m_pSpkList->measure_case1_amplitude_at_t(spkclassif_->ileft);
 			m_bMeasureDone = TRUE;
 			break;
 		case 2: // value at t2
-			m_pSpkList->Measure_case1_AmplitudeAtT(spkclassif_->iright);
+			m_pSpkList->measure_case1_amplitude_at_t(spkclassif_->iright);
 			m_bMeasureDone = TRUE;
 			break;
 
 		case 3: // value at t2- value at t1
-			m_pSpkList->Measure_case2_AmplitudeAtT2MinusAtT1(spkclassif_->ileft, spkclassif_->iright);
+			m_pSpkList->measure_case2_amplitude_at_t2_minus_at_t1(spkclassif_->ileft, spkclassif_->iright);
 			m_bMeasureDone = TRUE;
 			break;
 
 		case 0: // max - min between t1 and t2
 		case 4: // max-min vs tmax-tmin
 		default:
-			m_pSpkList->Measure_case0_AmplitudeMinToMax(spkclassif_->ileft, spkclassif_->iright);
+			m_pSpkList->measure_case0_amplitude_min_to_max(spkclassif_->ileft, spkclassif_->iright);
 			break;
 		}
 
@@ -777,7 +777,7 @@ void ViewSpikeSort::OnMeasure()
 		index_current_file = pdb_doc->DB_GetCurrentRecordPosition();
 		pdb_doc->DB_SetCurrentRecordPosition(index_current_file);
 		m_pSpkDoc = pdb_doc->Open_Current_Spike_File();
-		m_pSpkList = m_pSpkDoc->GetSpkList_Current();
+		m_pSpkList = m_pSpkDoc->get_spk_list_current();
 	}
 
 	m_chart_spike_shapes.set_source_data(m_pSpkList, GetDocument());
@@ -796,7 +796,7 @@ void ViewSpikeSort::OnMeasure()
 
 void ViewSpikeSort::update_gain()
 {
-	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+	const auto delta = m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 	const auto max = static_cast<int>(m_mVMax / delta);
 	const auto min = static_cast<int>(m_mVMin / delta);
 	if (max == min)
@@ -818,10 +818,10 @@ void ViewSpikeSort::OnFormatAlldata()
 	auto calculate_histogram = FALSE;
 
 	// dots: spk file length
-	if (m_lFirst != 0 || m_lLast != m_pSpkDoc->GetAcqSize() - 1)
+	if (m_lFirst != 0 || m_lLast != m_pSpkDoc->get_acq_size() - 1)
 	{
 		m_lFirst = 0;
-		m_lLast = m_pSpkDoc->GetAcqSize() - 1;
+		m_lLast = m_pSpkDoc->get_acq_size() - 1;
 
 		if (spkclassif_->iparameter != 4) // then, we need imax imin ...
 			m_chart_measures.SetTimeIntervals(m_lFirst, m_lLast);
@@ -857,7 +857,7 @@ void ViewSpikeSort::build_histogram()
 	if (pdb_doc == nullptr)
 		return;
 
-	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+	const auto delta = m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 	m_parmmax = static_cast<int>(m_mVMax / delta);
 	m_parmmin = static_cast<int>(m_mVMin / delta);
 	const int n_bins = static_cast<int>((m_mVMax - m_mVMin) / m_mV_bin);
@@ -878,7 +878,7 @@ void ViewSpikeSort::OnFormatCentercurve()
 		
 
 	short max, min;
-	m_pSpkList->GetTotalMaxMin(TRUE, &max, &min);
+	m_pSpkList->get_total_max_min(TRUE, &max, &min);
 	const auto middle = (max + min) / 2;
 	m_chart_spike_shapes.SetYWExtOrg(m_chart_spike_shapes.GetYWExtent(), middle);
 	m_chart_spike_bars.SetYWExtOrg(m_chart_spike_shapes.GetYWExtent(), middle);
@@ -909,7 +909,7 @@ void ViewSpikeSort::OnFormatGainadjust()
 	maxvalue = static_cast<short>(measure.cx);
 	minvalue = static_cast<short>(measure.cy);
 
-	const auto delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+	const auto delta = m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 	const auto max2 = static_cast<short>(limit_upper_threshold_ / delta);
 	const auto min2 = static_cast<short>(limit_lower_threshold_ / delta);
 	if (max2 > maxvalue)
@@ -1008,7 +1008,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 {
 	// get source data
 	auto b_doc_exist = FALSE;
-	auto data_file_name = m_pSpkDoc->GetAcqFilename();
+	auto data_file_name = m_pSpkDoc->get_acq_filename();
 	if (!data_file_name.IsEmpty())
 	{
 		CFileStatus status;
@@ -1224,7 +1224,7 @@ void ViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void ViewSpikeSort::scroll_file(UINT nSBCode, UINT nPos)
 {
 	// get corresponding data
-	const auto total_scroll = m_pSpkDoc->GetAcqSize();
+	const auto total_scroll = m_pSpkDoc->get_acq_size();
 	const auto page_scroll = (m_lLast - m_lFirst);
 	auto sb_scroll = MulDiv(page_scroll, 10, 100);
 	if (sb_scroll == 0)
@@ -1290,7 +1290,7 @@ void ViewSpikeSort::OnEnChangeEditLeft2()
 	if (mm_txyleft.m_bEntryDone)
 	{
 		auto left = m_txyleft;
-		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
+		const auto delta = m_time_unit / m_pSpkList->get_acq_samp_rate();
 		mm_txyleft.OnEnChange(this, m_txyleft, delta, -delta);
 		// check boundaries
 		if (m_txyleft >= m_txyright)
@@ -1313,7 +1313,7 @@ void ViewSpikeSort::OnEnChangeEditRight2()
 	if (mm_txyright.m_bEntryDone)
 	{
 		auto right = m_txyright;
-		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
+		const auto delta = m_time_unit / m_pSpkList->get_acq_samp_rate();
 		mm_txyright.OnEnChange(this, m_txyright, delta, -delta);
 
 		// check boundaries
@@ -1401,7 +1401,7 @@ void ViewSpikeSort::OnEnChangeLower()
 {
 	if (mm_limitlower.m_bEntryDone)
 	{
-		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+		m_delta = m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 		mm_limitlower.OnEnChange(this, limit_lower_threshold_, m_delta, -m_delta);
 		checkValidThresholdLimits();
 
@@ -1418,7 +1418,7 @@ void ViewSpikeSort::OnEnChangeUpper()
 {
 	if (mm_limitupper.m_bEntryDone)
 	{
-		m_delta = m_pSpkList->GetAcqVoltsperBin() * m_vunit;
+		m_delta = m_pSpkList->get_acq_voltsper_bin() * m_vunit;
 		mm_limitupper.OnEnChange(this, limit_upper_threshold_,m_delta, -m_delta);
 		// check boundaries
 		checkValidThresholdLimits();
@@ -1436,7 +1436,7 @@ void ViewSpikeSort::OnEnChangeT1()
 {
 	if (mm_t1.m_bEntryDone)
 	{
-		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
+		const auto delta = m_time_unit / m_pSpkList->get_acq_samp_rate();
 		
 		mm_t1.OnEnChange(this, m_t1, delta, -delta);
 		// check boundaries
@@ -1460,7 +1460,7 @@ void ViewSpikeSort::OnEnChangeT2()
 {
 	if (mm_t2.m_bEntryDone)
 	{
-		const auto delta = m_time_unit / m_pSpkList->GetAcqSampRate();
+		const auto delta = m_time_unit / m_pSpkList->get_acq_samp_rate();
 		mm_t2.OnEnChange(this, m_t2, delta, -delta);
 
 		// check boundaries
@@ -1493,7 +1493,7 @@ void ViewSpikeSort::OnEnChangeTimeFirst()
 		if (m_timeFirst >= m_timeLast)
 			m_timeFirst = 0.f;
 
-		m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->GetAcqSampRate());
+		m_lFirst = static_cast<long>(m_timeFirst * m_pSpkList->get_acq_samp_rate());
 		update_legends();
 	}
 }
@@ -1506,9 +1506,9 @@ void ViewSpikeSort::OnEnChangeTimeLast()
 
 		// check boundaries
 		if (m_timeLast <= m_timeFirst)
-			m_lLast = static_cast<long>(static_cast<float>(m_pSpkDoc->GetAcqSize() - 1) / m_pSpkList->GetAcqSampRate());
+			m_lLast = static_cast<long>(static_cast<float>(m_pSpkDoc->get_acq_size() - 1) / m_pSpkList->get_acq_samp_rate());
 
-		m_lLast = static_cast<long>(m_timeLast * m_pSpkList->GetAcqSampRate());
+		m_lLast = static_cast<long>(m_timeLast * m_pSpkList->get_acq_samp_rate());
 		update_legends();
 	}
 }

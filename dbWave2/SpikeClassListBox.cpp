@@ -129,7 +129,7 @@ void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 
 int SpikeClassListBox::count_classes_in_current_spike_list() const
 {
-	m_spike_list->UpdateClassList();
+	m_spike_list->update_class_list();
 	return m_spike_list->get_classes_count();
 }
 
@@ -179,8 +179,8 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 		// multiple selection
 		if (false)
 		{
-			auto nflaggedspikes = m_spike_list->ToggleSpikeFlag(spike_no);
-			if (m_spike_list->GetSpikeFlagArrayCount() < 1)
+			auto nflaggedspikes = m_spike_list->toggle_spike_flag(spike_no);
+			if (m_spike_list->get_spike_flag_array_count() < 1)
 				spike_no = -1;
 		}
 		// single selection
@@ -188,7 +188,7 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	}
 	// un-select all spikes
 	else
-		m_spike_list->RemoveAllSpikeFlags();
+		m_spike_list->remove_all_spike_flags();
 
 	// select corresponding row
 	if (spike_no >= 0)
