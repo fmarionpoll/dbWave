@@ -1478,15 +1478,16 @@ void ViewSpikeDetection::OnFormatXscale()
 
 void ViewSpikeDetection::OnBnClickedClearAll()
 {
-	m_spike_index = -1; 
-	m_chart_spike_bar.select_spike(m_spike_index);
-	m_chart_spike_shape.SelectSpikeShape(m_spike_index);
+	m_spike_index = -1;
+	Spike_selected spike_sel(-1, -1, -1);
+	m_chart_spike_bar.select_spike(spike_sel);
+	m_chart_spike_shape.select_spike_shape(spike_sel);
 
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->get_spike_list_size(); i++)
 	{
-		SpikeList* pspklist = m_pSpkDoc->set_spike_list_as_current(i);
-		pspklist->init_spike_list(GetDocument()->m_pDat, nullptr);
+		SpikeList* p_spk_list = m_pSpkDoc->set_spike_list_as_current(i);
+		p_spk_list->init_spike_list(GetDocument()->m_pDat, nullptr);
 	}
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	ASSERT(m_pSpkList != NULL);
@@ -1505,8 +1506,9 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 void ViewSpikeDetection::OnClear()
 {
 	m_spike_index = -1;
-	m_chart_spike_bar.select_spike(m_spike_index);
-	m_chart_spike_shape.SelectSpikeShape(m_spike_index);
+	Spike_selected spike_sel(-1, -1, -1);
+	m_chart_spike_bar.select_spike(spike_sel);
+	m_chart_spike_shape.select_spike_shape(spike_sel);
 
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	m_pSpkList->init_spike_list(GetDocument()->m_pDat, nullptr);
@@ -1650,20 +1652,20 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 
 	if (ix_we != NULL && iy_we != NULL)
 	{
-		const float x = m_chart_spike_shape.GetExtent_ms() / static_cast<float>(m_chart_spike_shape.GetNxScaleCells());
+		const float x = m_chart_spike_shape.get_extent_ms() / static_cast<float>(m_chart_spike_shape.GetNxScaleCells());
 		m_chart_spike_shape.SetxScaleUnitValue(x);
 
-		const float y = m_chart_spike_shape.GetExtent_mV() / static_cast<float>(m_chart_spike_shape.GetNyScaleCells());
+		const float y = m_chart_spike_shape.get_extent_m_v() / static_cast<float>(m_chart_spike_shape.GetNyScaleCells());
 		m_chart_spike_shape.SetyScaleUnitValue(y);
 		
 	}
 	
 	CString dummy1;
-	dummy1.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_mV());
+	dummy1.Format(_T("%.3lf"), m_chart_spike_shape.get_extent_m_v());
 	SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, dummy1);
 
 	CString dummy2;
-	dummy2.Format(_T("%.3lf"), m_chart_spike_shape.GetExtent_ms());
+	dummy2.Format(_T("%.3lf"), m_chart_spike_shape.get_extent_ms());
 	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, dummy2);
 }
 
@@ -2242,7 +2244,7 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, const CRect* rect, BOOL
 	{
 		// the following assume that spikes are higher than 1 mV...
 		const CString cs_unit = _T("mV");
-		z = m_chart_spike_shape.GetExtent_mV() / 2.0f; 
+		z = m_chart_spike_shape.get_extent_m_v() / 2.0f; 
 		k = static_cast<int>(z); 
 		if ((static_cast<double>(z) - k) > 0.5)
 			k++;
@@ -2276,7 +2278,7 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, const CRect* rect, BOOL
 	// spike duration
 	if (m_pSpkList->get_spikes_count() > 0 && bAll)
 	{
-		z = m_chart_spike_shape.GetExtent_ms();
+		z = m_chart_spike_shape.get_extent_ms();
 		const CString cs_unit = _T(" ms");
 		k = static_cast<int>(z);
 		CString dummy3;
@@ -2853,7 +2855,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 {
 	if (mm_spkWndAmplitude.m_bEntryDone)
 	{
-		m_spkWndAmplitude = m_chart_spike_shape.GetExtent_mV();
+		m_spkWndAmplitude = m_chart_spike_shape.get_extent_m_v();
 		const auto y_old = m_spkWndAmplitude;
 		CString cs;
 		mm_spkWndAmplitude.OnEnChange(this, m_spkWndAmplitude, 1.f, -1.f);
@@ -2880,7 +2882,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 {
 	if (mm_spkWndDuration.m_bEntryDone)
 	{
-		m_spkWndDuration = m_chart_spike_shape.GetExtent_ms();
+		m_spkWndDuration = m_chart_spike_shape.get_extent_ms();
 		const auto xold = m_spkWndDuration;
 		CString cs;
 		mm_spkWndDuration.OnEnChange(this, m_spkWndDuration, 1.f, -1.f);

@@ -35,7 +35,12 @@ protected:
 	int get_color_according_to_plot_mode(const Spike* spike, int plot_mode) const;
 
 public:
-	Spike_selected get_selected_spike() const { return spike_selected_; }
+	SpikeList* get_spike_list() { return p_spike_list; }
+	CSpikeDoc* get_spike_doc() const { return p_spike_doc; }
+	CdbWaveDoc* get_db_wave_doc() const { return p_dbwave_doc; }
+
+	Spike_selected* get_selected_spike() { return &spike_selected_; }
+	boolean is_spike_within_range(const Spike_selected& spike_selected) const;
 
 	void set_range_mode(int mode) { m_range_mode = mode; }
 	int get_range_mode() const { return m_range_mode; }

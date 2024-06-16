@@ -15,54 +15,53 @@ public:
 	void Serialize(CArchive& ar) override;
 
 protected:
-	int m_colorselectedspike = RED_COLOR; // color selected spike (index / color table)
+	int m_color_selected_spike = RED_COLOR; // color selected spike (index / color table)
 	BOOL m_bText = FALSE; // allow text default false
-	int m_ndisplayedspikes{}; // number of spikes displayed
+	int m_n_displayed_spikes{}; // number of spikes displayed
 
 	CArray<CPoint, CPoint> polypoints_; // points displayed with polyline
 
 public:
-	void SetTextOption(BOOL bText) { m_bText = bText; }
-	BOOL GetTextOption() const { return m_bText; }
+	void set_text_option(BOOL bText) { m_bText = bText; }
+	BOOL get_text_option() const { return m_bText; }
 
-	float GetDisplayMaxMv();
-	float GetDisplayMinMv();
-	float GetExtent_mV();
-	float GetExtent_ms();
+	float get_display_max_mv();
+	float get_display_min_mv();
+	float get_extent_m_v();
+	float get_extent_ms();
 
-	int GetHitSpike() const { return m_hit_spike; }
-	int GetSelectedSpike() const { return m_selected_spike; }
+	int get_hit_spike() const { return m_hit_spike; }
 
-	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document)
+	void display_all_files(BOOL bON, CdbWaveDoc* p_document)
 	{
 		m_display_all_files = bON;
 		p_dbwave_doc = p_document;
 	}
 
 	// non-inline functions
-	void MoveVTtrack(int i_track, int new_value);
+	void move_vt_track(int i_track, int new_value);
 
-	int SelectSpikeShape(int spikeno);
-	BOOL IsSpikeWithinRange(int spike_no) const;
+	void select_spike_shape(const Spike_selected& spike_sel);
+	void select_spike_shape(const Spike* spike);
 
 	void Print(CDC* p_dc, CRect* rect);
-	int DisplayExData(short* p_data, int color = 9);
-	void DisplayFlaggedSpikes(BOOL bHighLight);
+	int display_ex_data(short* p_data, int color = 9);
+	void display_flagged_spikes(BOOL bHighLight);
 	void PlotDataToDC(CDC* p_dc) override;
 	void plot_spikes(CDC* p_dc) override;
-	void ZoomData(CRect* prevRect, CRect* newRect) override;
+	void ZoomData(CRect* rFrom, CRect* rDest) override;
 
 protected:
-	void initPolypointAbcissa();
-	void fillPolypointOrdinates(short* lpSource);
-	void getExtents();
-	void getExtentsCurrentSpkList();
+	void init_polypoint_x_axis();
+	void fill_polypoint_y_axis(short* lpSource);
+	void get_extents();
+	void get_extents_current_spk_list();
 
 	int hitCurve(CPoint point) override;
-	int hitCurveInDoc(CPoint point);
-	void drawSelectedSpike(int no_spike, CDC* p_dc);
-	void drawFlaggedSpikes(CDC* p_dc);
-	void plotArraytoDC(CDC* p_dc, short* pspk);
+	int hit_curve_in_doc(CPoint point);
+	void draw_selected_spike(const Spike* spike, CDC* p_dc);
+	void draw_flagged_spikes(CDC* p_dc);
+	void plot_array_to_dc(CDC* p_dc, short* pspk);
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

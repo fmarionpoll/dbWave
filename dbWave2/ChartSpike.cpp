@@ -80,3 +80,25 @@ void ChartSpike::sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, i
 	SetbDrawframe(TRUE);
 	SetCursorMaxOnDblClick(m_cursorIndexMax);
 }
+
+boolean ChartSpike::is_spike_within_range(const Spike_selected& spike_selected) const
+{
+	if (m_range_mode == RANGE_INDEX
+		&& (spike_selected.spike_index > m_index_last_spike || spike_selected.spike_index < m_index_first_spike))
+		return false;
+
+	const auto spike = p_dbwave_doc->get_spike(spike_selected);
+	if (spike == nullptr)
+		return false;
+
+	const auto ii_time = spike->get_time();
+	if (m_range_mode == RANGE_TIMEINTERVALS
+		&& (ii_time < m_lFirst || ii_time > m_lLast))
+		return false;
+
+	if (m_plotmode == PLOT_ONECLASSONLY
+		&& spike->get_class_id() != m_selected_class)
+		return false;
+
+	return true;
+}

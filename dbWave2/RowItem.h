@@ -31,7 +31,7 @@ public:
 	void	get_zoom_y(int& we, int& wo) const;
 	void	get_zoom_x_shapes(int& we, int& wo) const;
 	float	get_zoom_y_shapes_mv() const;
-	int		select_individual_spike(int no_spike) const;
+	void	select_individual_spike(int no_spike) const;
 	void	print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const;
 	void	update_string(int i_class, int n_spikes);
 

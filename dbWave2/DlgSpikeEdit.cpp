@@ -47,7 +47,7 @@ void DlgSpikeEdit::LoadSpikeParms()
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = spike->get_time();
 
-	m_SpkChartWnd.SelectSpikeShape(m_spike_index);
+	m_SpkChartWnd.select_spike_shape(spike);
 
 	LoadSourceViewData();
 	UpdateData(FALSE); 

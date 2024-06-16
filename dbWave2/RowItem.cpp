@@ -161,14 +161,16 @@ void RowItem::get_zoom_x_shapes(int& we, int& wo) const
 float RowItem::get_zoom_y_shapes_mv() const
 {
 	if (chart_spike_shape == nullptr) return 0.f;
-	return chart_spike_shape->GetExtent_mV();
+	return chart_spike_shape->get_extent_m_v();
 }
 
-int RowItem::select_individual_spike(int no_spike) const
+void RowItem::select_individual_spike(int no_spike) const
 {
+	CdbWaveDoc* pDoc = chart_spike_shape->get_db_wave_doc();
+	Spike_selected spike_sel(pDoc->db_get_current_record_position(), pDoc->m_pSpk->get_spike_list_current_index(), no_spike);
 	if (chart_spike_shape != nullptr)
-		chart_spike_shape->SelectSpikeShape(no_spike);
-	return chart_spike_bar->select_spike(no_spike);
+		chart_spike_shape->select_spike_shape(spike_sel);
+	return chart_spike_bar->select_spike(spike_sel);
 }
 
 void RowItem::print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const

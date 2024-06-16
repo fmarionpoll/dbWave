@@ -167,7 +167,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	m_source_class = spkclassif_->sourceclass;
 	m_destination_class = spkclassif_->destclass;
 
-	m_chart_spike_shapes.DisplayAllFiles(false, GetDocument());
+	m_chart_spike_shapes.display_all_files(false, GetDocument());
 	m_chart_spike_shapes.set_plot_mode(PLOT_ONECOLOR, m_source_class);
 	m_chart_spike_shapes.SetScopeParameters(&(options_view_data_->spksort1spk));
 	m_spkform_tag_left = m_chart_spike_shapes.m_VTtags.AddTag(spkclassif_->ileft, 0);
@@ -557,7 +557,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				clear_flag_all_spikes();
 			auto spike_index = 0;
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-				spike_index = m_chart_spike_shapes.GetHitSpike();
+				spike_index = m_chart_spike_shapes.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
 				spike_index = m_chart_spike_bars.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
@@ -577,7 +577,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			auto spike_index = 0;
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-				spike_index = m_chart_spike_shapes.GetHitSpike();
+				spike_index = m_chart_spike_shapes.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
 				spike_index = m_chart_spike_bars.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
@@ -937,9 +937,13 @@ void ViewSpikeSort::OnFormatGainadjust()
 
 void ViewSpikeSort::select_spike_from_current_list(const int spike_index)
 {
-	m_chart_spike_shapes.SelectSpikeShape(spike_index);
-	m_chart_spike_bars.select_spike(spike_index);
-	m_chart_measures.select_spike(spike_index);
+	CdbWaveDoc* pDoc = m_chart_spike_shapes.get_db_wave_doc();
+	Spike_selected spike_sel(pDoc->db_get_current_record_position(),
+		pDoc->m_pSpk->get_spike_list_current_index(),
+		spike_index);
+	m_chart_spike_shapes.select_spike_shape(spike_sel);
+	m_chart_spike_bars.select_spike(spike_sel);
+	m_chart_measures.select_spike(spike_sel);
 	m_pSpkList->m_selected_spike = spike_index;
 
 	m_spike_index_class = -1;
@@ -1002,7 +1006,7 @@ void ViewSpikeSort::OnSelectAllFiles()
 {
 	m_bAllFiles = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	m_chart_spike_bars.display_all_files(m_bAllFiles, GetDocument());
-	m_chart_spike_shapes.DisplayAllFiles(m_bAllFiles, GetDocument());
+	m_chart_spike_shapes.display_all_files(m_bAllFiles, GetDocument());
 	m_chart_measures.display_all_files(m_bAllFiles, GetDocument());
 
 	m_bMeasureDone = FALSE;
@@ -1059,7 +1063,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	for (auto i = 0; i < spike_length; i++, p_mean++, p_sum++)
 		*p_mean = static_cast<short>(*p_sum / nb_spk_selected_class);
 
-	m_chart_spike_shapes.DisplayExData(p_mean0);
+	m_chart_spike_shapes.display_ex_data(p_mean0);
 
 	// for each spike, compute correlation and take max value correlation
 	const auto k_start = spkclassif_->ileft; // start of template match
@@ -1189,7 +1193,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	if (m_pSpkDoc->IsModified())
 	{
 		m_chart_spike_shapes.Invalidate();
-		m_chart_spike_shapes.DisplayExData(p_mean0);
+		m_chart_spike_shapes.display_ex_data(p_mean0);
 	}
 
 	delete[] p_sum0;
@@ -1454,7 +1458,7 @@ void ViewSpikeSort::OnEnChangeT1()
 		if (it1 != m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_left))
 		{
 			spkclassif_->ileft = it1;
-			m_chart_spike_shapes.MoveVTtrack(m_spkform_tag_left, spkclassif_->ileft);
+			m_chart_spike_shapes.move_vt_track(m_spkform_tag_left, spkclassif_->ileft);
 			m_pSpkList->m_imaxmin1SL = spkclassif_->ileft;
 		}
 		UpdateData(FALSE);
@@ -1479,7 +1483,7 @@ void ViewSpikeSort::OnEnChangeT2()
 		if (it2 != m_chart_spike_shapes.m_VTtags.GetValue(m_spkform_tag_right))
 		{
 			spkclassif_->iright = it2;
-			m_chart_spike_shapes.MoveVTtrack(m_spkform_tag_right, spkclassif_->iright);
+			m_chart_spike_shapes.move_vt_track(m_spkform_tag_right, spkclassif_->iright);
 			m_pSpkList->m_imaxmin2SL = spkclassif_->iright;
 		}
 		UpdateData(FALSE);

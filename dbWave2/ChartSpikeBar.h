@@ -19,8 +19,6 @@ protected:
 
 	// Helpers
 public:
-	void set_source_data(SpikeList* p_spk_list, CSpikeDoc* p_spike_document);
-
 	int get_hit_spike() const { return m_hit_spike; }
 
 	void display_spike(const Spike* spike, BOOL b_select);
@@ -28,7 +26,7 @@ public:
 	void select_spike(const Spike_selected& new_spike_selected);
 
 	void select_spikes_within_rect(CRect* pRect, UINT nFlags) const;
-	BOOL is_spike_within_range(int no_spike);
+	
 	void center_curve();
 	void max_gain();
 	void max_center();

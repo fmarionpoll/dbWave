@@ -525,29 +525,6 @@ void ChartSpikeBar::display_spike(const Spike* spike, const BOOL b_select)
 	dc.SelectObject(old_pen);
 }
 
-BOOL ChartSpikeBar::is_spike_within_range(const int no_spike)
-{
-	if (p_spike_list->get_spikes_count() < 1)
-		return false;
-
-	if (m_index_last_spike > p_spike_list->get_spikes_count() - 1)
-		m_index_last_spike = p_spike_list->get_spikes_count() - 1;
-	if (m_index_first_spike < 0) m_index_first_spike = 0;
-	if (no_spike < 0 || no_spike > p_spike_list->get_spikes_count() - 1)
-		return FALSE;
-
-	const Spike* spike = p_spike_list->get_spike(no_spike);
-	if (m_range_mode == RANGE_TIMEINTERVALS
-		&& (spike->get_time() < m_lFirst || spike->get_time() > m_lLast))
-		return FALSE;
-	if (m_range_mode == RANGE_INDEX
-		&& (no_spike > m_index_last_spike || no_spike < m_index_first_spike))
-		return FALSE;
-	if (m_plotmode == PLOT_ONECLASSONLY && spike->get_class_id() != m_selected_class)
-		return FALSE;
-	return TRUE;
-}
-
 void ChartSpikeBar::highlight_one_bar(const Spike* spike, CDC* p_dc) const
 {
 	const auto old_rop = p_dc->GetROP2();
@@ -578,20 +555,16 @@ void ChartSpikeBar::highlight_one_bar(const Spike* spike, CDC* p_dc) const
 
 void ChartSpikeBar::select_spike(const Spike_selected& new_spike_selected)
 {
-	/*const auto old_selected = m_selected_spike;
-	if (m_selected_spike >= 0)
-		display_spike(m_selected_spike, FALSE);
-
-	display_spike(spike_no, TRUE);
-	m_selected_spike = spike_no;*/
-	// erase old selected spike (eventually)
-	if (spike_selected_.spike_index >= 0) // && m_selected_spike != spike_no)
-		display_spike(spike_selected_, FALSE);
+	if (spike_selected_.spike_index >= 0) {
+		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+		display_spike(spike, FALSE);
+	}
 
 	spike_selected_ = new_spike_selected;
-	if (spike_selected_.spike_index >= 0)
-		display_spike(spike_selected_, TRUE);
-
+	if (spike_selected_.spike_index >= 0) {
+		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+		display_spike(spike, TRUE);
+	}
 }
 
 // flag all spikes within a rectangle in screen coordinates
@@ -889,6 +862,7 @@ void ChartSpikeBar::Serialize(CArchive& ar)
 	ChartSpike::Serialize(ar);
 
 	auto dummy = TRUE;
+	int dummy_int = 1;
 	if (ar.IsStoring())
 	{
 		ar << m_range_mode; // display range (time OR storage index)
@@ -897,7 +871,7 @@ void ChartSpikeBar::Serialize(CArchive& ar)
 		ar << m_index_first_spike; // index first spike
 		ar << m_index_last_spike; // index last spike
 		ar << m_current_class; // current class in case of displaying classes
-		ar << dummy;
+		ar << dummy_int;
 		ar << m_hit_spike; // no of spike selected
 		ar << m_selected_class; // index class selected
 		ar << m_track_curve; // track curve ?
@@ -912,7 +886,7 @@ void ChartSpikeBar::Serialize(CArchive& ar)
 		ar >> m_index_first_spike; // index first spike
 		ar >> m_index_last_spike; // index last spike
 		ar >> m_current_class; // current class in case of displaying classes
-		ar >> dummy; 
+		ar >> dummy_int; 
 		ar >> m_hit_spike; // no of spike selected
 		ar >> m_selected_class; // index class selected
 		ar >> m_track_curve; // track curve ?
@@ -921,9 +895,4 @@ void ChartSpikeBar::Serialize(CArchive& ar)
 	}
 }
 
-void ChartSpikeBar::set_source_data(SpikeList* p_spk_list, CSpikeDoc* p_spike_document)
-{
-	p_dbwave_doc = nullptr;
-	p_spike_doc = p_spike_document;
-	p_spike_list = p_spk_list;
-}
+

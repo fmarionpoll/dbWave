@@ -309,7 +309,11 @@ void ViewSpikeTemplates::updateLegends()
 
 void ViewSpikeTemplates::selectSpike(short spikeno)
 {
-	m_ChartSpkWnd_Shape.SelectSpikeShape(spikeno);
+	CdbWaveDoc* pDoc = m_ChartSpkWnd_Shape.get_db_wave_doc();
+	Spike_selected spike_sel(pDoc->db_get_current_record_position(),
+		pDoc->m_pSpk->get_spike_list_current_index(),
+		spikeno);
+	m_ChartSpkWnd_Shape.select_spike_shape(spike_sel);
 	m_spikeno = spikeno;
 	m_pSpkList->m_selected_spike = spikeno;
 }
@@ -1216,7 +1220,7 @@ void ViewSpikeTemplates::OnEnChangeT1()
 		if (it1 != m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagleft))
 		{
 			m_psC->kleft = it1;
-			m_ChartSpkWnd_Shape.MoveVTtrack(m_spkformtagleft, m_psC->kleft);
+			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagleft, m_psC->kleft);
 			m_pSpkList->m_imaxmin1SL = m_psC->kleft;
 		}
 		UpdateData(FALSE);
@@ -1245,7 +1249,7 @@ void ViewSpikeTemplates::OnEnChangeT2()
 		if (it2 != m_ChartSpkWnd_Shape.m_VTtags.GetValue(m_spkformtagright))
 		{
 			m_psC->kright = it2;
-			m_ChartSpkWnd_Shape.MoveVTtrack(m_spkformtagright, m_psC->kright);
+			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagright, m_psC->kright);
 			m_pSpkList->m_imaxmin2SL = m_psC->kright;
 		}
 		UpdateData(FALSE);
